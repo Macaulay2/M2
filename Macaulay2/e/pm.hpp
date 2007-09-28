@@ -12,16 +12,27 @@
 
 int pm_sign = 1;
 
+
+template <typename BIN> struct pmonomial { BIN * const contents; };
+template <typename BIN> struct vmonomial { BIN * const contents; };
 template <typename EXP, typename BIN>
 struct pm {
-protected:
-  const BIN * const identity;
+private:
+  pm() {}
 public:
+  virtual ~pm() {}
   const int numexps;
   const int numbins;
-  virtual void encode(BIN *dest, EXP *);
-  virtual void decode(EXP *dest, BIN *);
-  int compare(BIN *x, BIN *y) {
+  const pmonomial<BIN> identity;
+  pm(int numexps0,int numbins0,pmonomial<BIN> identity0) : numexps(numexps0), numbins(numbins0), identity(identity0) {}
+  virtual EXP exponent(int varnum);
+  virtual void encode(pmonomial<BIN> dest, const EXP[]);
+  virtual void encode(vmonomial<BIN> dest, const EXP[], EXP component);
+  virtual void decode(EXP dest[], const pmonomial<BIN>);
+  virtual void decode(EXP dest[], EXP &component, const vmonomial<BIN>);
+  virtual int compare_to_identity(pmonomial<BIN> x);
+  virtual int compare_to_identity_partial(pmonomial<BIN> x, int numparts);
+  int compare(pmonomial<BIN> x, pmonomial<BIN> y) {
     int j = 0, n = numbins;
     while (1) {
       if expect_false (x[j] > y[j]) return  1; 
@@ -31,24 +42,43 @@ public:
       if expect_false (n == 0) return 0;
     }
   }
-  void mult(BIN *dest, BIN *, BIN *);
-  void mult_unsafe(BIN *dest, BIN *x, BIN *y) { 
+  virtual int compare_partial(pmonomial<BIN> x, pmonomial<BIN> y, int numparts);
+  virtual int Schreyer_compare(vmonomial<BIN> x, vmonomial<BIN> y, pmonomial<BIN> *sch, int *tiebreaker);
+  virtual void mult(pmonomial<BIN> dest, const pmonomial<BIN> , const pmonomial<BIN> );
+  virtual void mult_unsafe(pmonomial<BIN> dest, const pmonomial<BIN> x, const pmonomial<BIN> y) { 
     int j = numbins;
-    while (--j >= 0) dest[j] = x[j] + y[j] - identity[j];
+    while (--j >= 0) dest.contents[j] = x.contents[j] + y.contents[j] - identity.contents[j];
   }
-  virtual void div(BIN *dest, BIN *, BIN *);
-  void div_unsafe(BIN *dest, BIN *x, BIN *y) {
+  virtual void div(pmonomial<BIN> dest, const pmonomial<BIN> , const pmonomial<BIN> );
+  virtual void div_unsafe(pmonomial<BIN> dest, const pmonomial<BIN> x, const pmonomial<BIN> y) {
     int j = numbins;
-    while (--j >= 0) dest[j] = x[j] - y[j] + identity[j];
+    while (--j >= 0) dest.contents[j] = x.contents[j] - y.contents[j] + identity.contents[j];
   }
-  virtual bool divides(BIN *, BIN *);
-  virtual void lcm(BIN *dest, BIN *fac1, BIN *fac2, BIN *, BIN *);
-  virtual void gcd(BIN *dest, BIN *fac1, BIN *fac2, BIN *, BIN *);
-  virtual EXP  degree(BIN *m, EXP *wt);
-  virtual EXP  degree_unsafe(BIN *m, EXP *wt);
-  virtual EXP  degree_bound(EXP *wt);
+  virtual bool divides(const pmonomial<BIN> , const pmonomial<BIN> );
+  virtual void lcm(pmonomial<BIN> dest, pmonomial<BIN> fac1, pmonomial<BIN> fac2, const pmonomial<BIN> , const pmonomial<BIN> );
+  virtual void gcd(pmonomial<BIN> dest, pmonomial<BIN> fac1, pmonomial<BIN> fac2, const pmonomial<BIN> , const pmonomial<BIN> );
+  virtual EXP  degree(const pmonomial<BIN> m, const EXP *wt);
+  virtual EXP  degree_unsafe(const pmonomial<BIN> m, const EXP *wt);
+  virtual EXP  degree_bound(const EXP *wt);
 };
 
+template <typename EXP, typename BIN> 
+struct pm_makers {
+  pm<EXP,BIN> *grevlex(int numvars, int bitsperfield);
+  pm<EXP,BIN> *lrevlex(int numvars, int bitsperfield);
+  pm<EXP,BIN> *wrevlex(int numvars, int bitsperfield, const EXP *wts);
+  pm<EXP,BIN> *revlex(int numvars, int bitsperfield);
+  pm<EXP,BIN> *lex(int numvars, int bitsperfield);
+  pm<EXP,BIN> *grouplex(int numvars, int bitsperfield);
+  pm<EXP,BIN> *grouprevlex(int numvars, int bitsperfield);
+  pm<EXP,BIN> *extalg(int numvars);
+  pm<EXP,BIN> *addweights(int numwts, int bitsperfield, const EXP *wts, pm<EXP,BIN> *);
+  pm<EXP,BIN> *product(int nummonoids, pm<EXP,BIN> **);
+  pm<EXP,BIN> *position_up();
+  pm<EXP,BIN> *position_down();
+};
+
+
 // Local Variables:
-// compile-command: "g++ -Wall -c -x c++ pm.hpp -o /dev/null"
+// compile-command: "cd $M2BUILDDIR/Macaulay2/e && make pm-test.o"
 // End:
