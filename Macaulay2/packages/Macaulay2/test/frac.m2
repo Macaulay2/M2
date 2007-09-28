@@ -93,14 +93,31 @@ B = frac A
 getNonUnit B
 isField B
 
-T = QQ[x,y]/(x^3-1,y-3)
+T = QQ[symbol x,symbol y]/(x^3-1,y-3)
 F = frac T
 use F
 (x-1)/(x^2+x+1) + (x^2+x+1)/(x-1)
 getNonUnit F
 assert(class getNonUnit F === F)
 
+(1/x)^3
+
 -----------------------------------------------------------------------------
+T = QQ[symbol x,symbol y]/(x^3*y^3)
+F = frac T
+use F
+(x-1)/(x^2+x+1) + (x^2+x+1)/(x-1) -- We see that the system is getting 
+                                  -- close to discovering a zero divisor...
+getNonUnit F
+
+(1/x)^3
+assert(null === getNonUnit F)
+assert isField F
+assert try ((1/y)^3 + (1/x)^3; false) else true
+getNonUnit F
+assert not isField F
+-----------------------------------------------------------------------------
+
 end
 -- Local Variables:
 -- compile-command: "make -C $M2BUILDDIR/Macaulay2/test frac.out"
