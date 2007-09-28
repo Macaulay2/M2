@@ -91,6 +91,8 @@ Initial choices:
   5. Overflow is signalled with "throw(exc::overflow_error(char *))".
   6. All routines will update references to pointers, so composite areas can be
      implemented.  Thus the caller has to save a separate copy of the pointer.
+  7. monoid creation routines should offer safe multiplication and degree up to a
+     certain weight
 
 Thus the description of a monomial type will include:
    (choice of U, the integer type used to hold a field)
