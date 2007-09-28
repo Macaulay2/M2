@@ -214,7 +214,7 @@ toField Ring := R -> (
      R.frac = R;
      if R.?Engine and R.Engine then (
 	  rawDeclareField raw R;
-	  R / R := (x,y) -> notImplemented();
+	  R / R := (x,y) -> x * y^-1;
 	  );
      R)
 
