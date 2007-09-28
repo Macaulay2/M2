@@ -6,18 +6,20 @@ int pm_sign = 1;
 
 template <typename EXP, typename BIN>
 struct pm {
-  int numvars;
+  int numexps;
   int numbins;
-  virtual void encode(BIN *&dest, EXP *&);
-  virtual void decode(EXP *&dest, BIN *&);
-  virtual int compare(BIN *&dest, BIN *&);
-  virtual void mult(BIN *&dest, BIN *&, BIN *&);
-  virtual void unsafe_mult(BIN *&dest, BIN *&, BIN *&);
-  virtual void div(BIN *&dest, BIN *&, BIN *&);
-  virtual void unsafe_div(BIN *&dest, BIN *&, BIN *&);
-  virtual int divides(BIN *&, BIN *&);
-  virtual void lcm(BIN *&dest, BIN *&fac1, BIN *&fac2, BIN *&, BIN *&);
-  virtual void gcd(BIN *&dest, BIN *&fac1, BIN *&fac2, BIN *&, BIN *&);
+
+  virtual void encode(BIN *dest, EXP *);
+  virtual void decode(EXP *dest, BIN *);
+  virtual int compare(BIN *, BIN *);
+  virtual void mult(BIN *dest, BIN *, BIN *);
+  virtual void unsafe_mult(BIN *dest, BIN *, BIN *);
+  virtual void div(BIN *dest, BIN *, BIN *);
+  virtual void unsafe_div(BIN *dest, BIN *, BIN *);
+  virtual bool divides(BIN *, BIN *);
+  virtual void lcm(BIN *dest, BIN *fac1, BIN *fac2, BIN *, BIN *);
+  virtual void gcd(BIN *dest, BIN *fac1, BIN *fac2, BIN *, BIN *);
+
 };
 
 // Local Variables:
