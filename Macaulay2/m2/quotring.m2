@@ -209,13 +209,12 @@ singularLocus(Ring) := QuotientRing => (R) -> (
 singularLocus(Ideal) := QuotientRing => (I) -> singularLocus(ring I / I)
 
 toField = method()
-
 toField Ring := R -> (
-     R.frac = R;
      if R.?Engine and R.Engine then (
 	  rawDeclareField raw R;
 	  R / R := (x,y) -> x * y^-1;
-	  );
+	  )
+     else notImplemented();
      R)
 
 toField FractionField := F -> error "toField: fraction field is already a field"
