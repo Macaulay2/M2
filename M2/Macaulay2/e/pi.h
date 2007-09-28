@@ -1,6 +1,6 @@
-/* pi.cc -- routines for packed integers and monomials -*- c++ -*- */
-
-/* see pi-readme.txt for the design */
+// Copyright, Daniel R. Grayson, 2007
+// pi.h -- routines for packed integers and monomials -*- c++ -*-
+// see pi-readme.txt for the design
 
 #include "overflow.hpp"
 #ifdef __GNUC__
