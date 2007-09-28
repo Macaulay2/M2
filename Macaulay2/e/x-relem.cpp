@@ -339,7 +339,7 @@ M2_bool IM2_Ring_is_field(const Ring *K)
   /* Returns true if K is a field, or has been declared to be one.
      In the latter case, if an operation shows that K cannot be a field,
      then this function will thereafter return false, and 
-     IM2_Ring_get_zero_divisor(K) can be used to obtain a non-unit, if one
+     rawGetNonUnit(K) can be used to obtain a non-unit, if one
      has been found. */
 {
   return K->is_field();
@@ -352,9 +352,9 @@ void IM2_Ring_declare_field(const Ring *K)
   const_cast<Ring *>(K)->declare_field(); // Note: this modifies a const value...
 }
 
-const RingElement * IM2_Ring_get_zero_divisor(const Ring *K)
+const RingElement * rawGetNonUnit(const Ring *K)
 {
-  return RingElement::make_raw(K, K->get_zero_divisor());
+  return RingElement::make_raw(K, K->get_non_unit());
 }
 
 const RingOrNull *rawAmbientRing(const Ring *R)

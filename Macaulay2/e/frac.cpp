@@ -47,7 +47,7 @@ bool FractionField::initialize_frac(const PolyRingFlat *R)
 #warning "frac simplify: doesn't handle towers of fracs"
 #endif
 
-  set_zero_divisor(zeroV);
+  set_non_unit(zeroV);
   declare_field();
   return true;
 }
@@ -127,7 +127,7 @@ void FractionField::simplify(frac_elem *f) const
 	  frac_elem *zerodiv = new_frac_elem();
 	  zerodiv->numer = f->denom;
 	  zerodiv->denom = R_->one();
-	  set_zero_divisor(FRAC_RINGELEM(zerodiv));
+	  set_non_unit(FRAC_RINGELEM(zerodiv));
 	  R_->remove(x);
 	  f->numer = R_->zero();
 	  f->denom = R_->one();

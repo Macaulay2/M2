@@ -70,7 +70,21 @@ f = ((x^3*(x-1)*(1/2))/((x^5-1)))
 g = ((x^3*(x-1))/(2*(x^5-1)))
 assert( f === g )
 assert( numerator f === numerator g )
-
+-----------------------------------------------------------------------------
+A = ZZ/101[a,b]/(a*b)
+B = frac A
+b/b
+(-a-b)/(a+b)
+getNonUnit B
+a/b
+getNonUnit B
+isField B
+-----------------------------------------------------------------------------
+A = ZZ/101[a,b]/(a*b)
+toField A
+1/(a+b)
+getNonUnit A
+-----------------------------------------------------------------------------
 end
 -- Local Variables:
 -- compile-command: "make -C $M2BUILDDIR/Macaulay2/test frac.out"

@@ -22,7 +22,7 @@ void Ring::initialize_ring(int P0,
   else
     degree_ring = DR;
 
-  _zero_divisor = ZERO_RINGELEM;
+  _non_unit = ZERO_RINGELEM;
   _isfield = false;
 
   zeroV = ZERO_RINGELEM;
@@ -57,14 +57,15 @@ void Ring::declare_field()
 { 
   _isfield = true; 
 }
-ring_elem Ring::get_zero_divisor() const 
+ring_elem Ring::get_non_unit() const 
 { 
-  return copy(_zero_divisor); 
+  return copy(_non_unit); 
 }
 
-void Ring::set_zero_divisor(ring_elem zero_div) const
+void Ring::set_non_unit(ring_elem zero_div) const
 { 
-  const_cast<Ring *>(this)->_zero_divisor = zero_div;
+  const_cast<Ring *>(this)->_isfield = false;
+  const_cast<Ring *>(this)->_non_unit = zero_div;
 }
 
 ring_elem Ring::var(int v) const
