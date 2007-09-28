@@ -133,6 +133,10 @@ Thus the description of a monomial type will include:
            masks to flip the reversed fields
      the lcm routine, extended to provide the factors
      the gcd routine, extended to provide the factors
+     noncommutative versions of the multiplication, division, lcm, and gcd routines, which
+         return an integer (or two) on the side
+     a flag indicating whether to use the noncommutative version -- try hard to 
+         optimize the checking of this flag out (?)
 
 From: Michael Stillman <mike@math.cornell.edu>
 Subject: Re: Re: 
