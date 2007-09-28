@@ -62,6 +62,11 @@ ring_elem Ring::get_zero_divisor() const
   return copy(_zero_divisor); 
 }
 
+void Ring::set_zero_divisor(ring_elem zero_div) const
+{ 
+  const_cast<Ring *>(this)->_zero_divisor = zero_div;
+}
+
 ring_elem Ring::var(int v) const
 {
   // The default behavior is to just return 0.

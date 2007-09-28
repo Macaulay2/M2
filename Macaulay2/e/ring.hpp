@@ -111,6 +111,7 @@ public:
   bool is_field() const;
   void declare_field();
   ring_elem get_zero_divisor() const;
+  void set_zero_divisor(ring_elem zero_div) const; // not really const: sets "_zero_divisor"
 
   typedef enum {COEFF_ZZ, COEFF_QQ, COEFF_BASIC} CoefficientType;
   virtual  CoefficientType coefficient_type() const { return COEFF_BASIC; }
