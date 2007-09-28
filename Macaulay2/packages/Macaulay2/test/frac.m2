@@ -92,6 +92,14 @@ A = ZZ/101[a,b]/(a*b)
 B = frac A
 getNonUnit B
 isField B
+
+T = QQ[x,y]/(x^3-1,y-3)
+F = frac T
+use F
+(x-1)/(x^2+x+1) + (x^2+x+1)/(x-1)
+getNonUnit F
+assert(class getNonUnit F === F)
+
 -----------------------------------------------------------------------------
 end
 -- Local Variables:
