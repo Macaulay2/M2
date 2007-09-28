@@ -80,6 +80,17 @@ Initial choices:
      area by area.
   3. Limit weight vectors so each is supported in a single area.  (Is this
      flexible enough?)
+  4. Each area is represented by a template class.  To make it appear that
+     a monomial ordering has just one area, we can have two types of area:
+         -- a normal area, as described below
+	 -- a composite area, which contains a sequence of others, and
+  	    implements composite operations for them.  A composite area could (eventually)
+  	    have weight vectors of its own that involve variables from all the
+	    areas it contains, and the weights would be stored in their own
+  	    bins.  A composite area would normally possess just
+	    the variables that are possessed by each of its subareas, and no
+	    others.  There could be (eventually) various types of composite
+	    area.
 
 Thus the description of a monomial type will include:
    TEMPLATE: (choice of U, the integer type used to hold a field)
@@ -95,7 +106,8 @@ Thus the description of a monomial type will include:
      the number of fields
      TEMPLATE: the number of bits per field (although future implementations of new
      	 area types might allow fields of varying widths, in which case
-	 this would be an array of numbers)
+	 this would be an array of numbers).  This number is silently increased
+         to the highest number that packs just as many fields into each bin.
      the number of fields per bin (as many as will fit, except with
      	 signed fields, we may reduce that by one when the field width
 	 is a power of 2 in order to provide a guard bit at the top)
@@ -103,7 +115,13 @@ Thus the description of a monomial type will include:
      TEMPLATE: the choice of SIGNED, SIGNED_REVERSED, UNSIGNED, UNSIGNED_REVERSED;
      	 this need not agree with whether U is signed
      the encoding/decoding routines
-     the comparison routine (overall ordering is lex, area by area)
+     the comparison routine (overall ordering is lex, area by area);
+     	 Optimization idea: if the user gives weights, one may be able to precompute
+	 the minimum number of fields that need to be examined to give a total 
+	 ordering; if grevlex is stored redundantly, e.g., as (i+j+k,-k,-j,-i),
+	 the same remark applies: just check 3 fields.  If we can omit looking
+   	 at enough fields, maybe we could omit looking at an entire bin, which
+	 is when it would be worthwhile.   
      the multiplication routine, with overflow checking
      the multiplication routine, without overflow checking
      the division routine, with overflow checking (if the fields
