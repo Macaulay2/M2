@@ -685,8 +685,9 @@ setupfun("rawIsField",rawIsField);
 
 export rawDeclareField(e:Expr):Expr := (
      when e is K:RawRing do (
-	  Ccode(void, "IM2_Ring_declare_field(", "(Ring *)", K, ")" );
-	  nullE)
+	  r := Ccode(bool, "IM2_Ring_declare_field(", "(Ring *)", K, ")" );
+	  if !r then buildErrorPacket(EngineError("ring can't be declared to be field"))
+	  else nullE)
      else WrongArg("a raw ring"));
 setupfun("rawDeclareField",rawDeclareField);
 

@@ -188,37 +188,37 @@ coefficientRing FractionField := F -> coefficientRing last F.baseRings
 
 isHomogeneous FractionField := (F) -> isHomogeneous last F.baseRings
 
-frac EngineRing := (stashValue symbol frac) (R -> (
-	  o := options R;
-	  if o.Inverses then error "not implemented : fraction fields of rings with inverses";
-	  if o.WeylAlgebra =!= {} or R.?SkewCommutative
-	  then error "fraction field of non-commutative ring requested";
-	  R.frac = F := new FractionField from rawFractionRing R.RawRing;
-	  F.frac = F;
-	  F.baseRings = append(R.baseRings,R);
-	  -- F.promoteDegree = makepromoter 0;
-	  -- F.liftDegree = makepromoter degreeLength R;
-	  commonEngineRingInitializations F;
-	  factor F := options -> f -> factor numerator f / factor denominator f;
-	  toString F := x -> toString expression x;
-	  net F := x -> net expression x;
-	  baseName F := (f) -> (
-	       if denominator f != 1 
-	       then error "expected a generator"
-	       else baseName numerator f);
-	  expression F := (f) -> expression numerator f / expression denominator f;
-	  numerator F := (f) -> new R from rawNumerator raw f;
-	  denominator F := (f) -> new R from rawDenominator raw f;
-	  fraction(F,F) := F / F := (x,y) -> if y != 0 then x//y else error "division by 0";
-	  fraction(R,R) := (r,s) -> new F from rawFraction(F.RawRing,raw r,raw s);
-     	  F % F := (x,y) -> if y == 0 then x else 0_F;	    -- not implemented in the engine, for some reason
-	  F.generators = apply(generators R, m -> promote(m,F));
-	  if R.?generatorSymbols then F.generatorSymbols = R.generatorSymbols;
-	  if R.?generatorExpressions then F.generatorExpressions = R.generatorExpressions;
-	  if R.?generators then F.generators = apply(R.generators, r -> promote(r,F));
-	  if R.?indexSymbols then F.indexSymbols = applyValues(R.indexSymbols, r -> promote(r,F));
-	  if R.?indexStrings then F.indexStrings = applyValues(R.indexStrings, r -> promote(r,F));
-	  F))
+frac EngineRing := R -> if isField R then R else if R.?frac then R.frac else (
+     o := options R;
+     if o.Inverses then error "not implemented : fraction fields of rings with inverses";
+     if o.WeylAlgebra =!= {} or R.?SkewCommutative
+     then error "fraction field of non-commutative ring requested";
+     R.frac = F := new FractionField from rawFractionRing R.RawRing;
+     F.frac = F;
+     F.baseRings = append(R.baseRings,R);
+     -- F.promoteDegree = makepromoter 0;
+     -- F.liftDegree = makepromoter degreeLength R;
+     commonEngineRingInitializations F;
+     factor F := options -> f -> factor numerator f / factor denominator f;
+     toString F := x -> toString expression x;
+     net F := x -> net expression x;
+     baseName F := (f) -> (
+	  if denominator f != 1 
+	  then error "expected a generator"
+	  else baseName numerator f);
+     expression F := (f) -> expression numerator f / expression denominator f;
+     numerator F := (f) -> new R from rawNumerator raw f;
+     denominator F := (f) -> new R from rawDenominator raw f;
+     fraction(F,F) := F / F := (x,y) -> if y != 0 then x//y else error "division by 0";
+     fraction(R,R) := (r,s) -> new F from rawFraction(F.RawRing,raw r,raw s);
+     F % F := (x,y) -> if y == 0 then x else 0_F;	    -- not implemented in the engine, for some reason
+     F.generators = apply(generators R, m -> promote(m,F));
+     if R.?generatorSymbols then F.generatorSymbols = R.generatorSymbols;
+     if R.?generatorExpressions then F.generatorExpressions = R.generatorExpressions;
+     if R.?generators then F.generators = apply(R.generators, r -> promote(r,F));
+     if R.?indexSymbols then F.indexSymbols = applyValues(R.indexSymbols, r -> promote(r,F));
+     if R.?indexStrings then F.indexStrings = applyValues(R.indexStrings, r -> promote(r,F));
+     F)
 
 -- methods for all ring elements
 
