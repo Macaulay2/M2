@@ -692,7 +692,7 @@ setupfun("rawDeclareField",rawDeclareField);
 
 export rawGetNonUnit(e:Expr):Expr := (
      when e is K:RawRing do Expr(Ccode(RawRingElement, 
-	       "(engine_RawRingElement)IM2_Ring_get_zero_divisor(", "(Ring *)", K, ")" ))
+	       "(engine_RawRingElement)rawGetNonUnit(", "(Ring *)", K, ")" ))
      else WrongArg("a raw ring"));
 setupfun("rawGetNonUnit",rawGetNonUnit);
 
