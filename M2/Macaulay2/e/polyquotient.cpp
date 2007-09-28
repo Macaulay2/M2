@@ -269,7 +269,9 @@ ring_elem PolyRingQuotient::remainderAndQuotient(const ring_elem f, const ring_e
 
 
 ring_elem PolyRingQuotient::ann(const ring_elem a, const ring_elem b) const
-  // return an element h such that h*a is in (b).
+  // return an element h such that h*a is in (b). (Actually: h*a = b)...
+// The lift does the following:
+// ma = mquot*b + mrem
 {
   MatrixConstructor mata(make_FreeModule(1),1);
   mata.set_entry(0,0,a);
@@ -279,7 +281,13 @@ ring_elem PolyRingQuotient::ann(const ring_elem a, const ring_elem b) const
 
   Matrix *mrem, *mquot;
   G->matrix_lift(ma, &mrem, &mquot);
-  if (mquot->n_cols() == 0) return from_int(0);
+  if (mquot->n_cols() == 0 || !mrem->is_zero())
+    {
+      // We have just determined that a/b does not exist.
+      // So b is not a unit in this ring.
+      set_zero_divisor(b);
+      return from_int(0);
+    }
   return mquot->elem(0,0);
 }
 
