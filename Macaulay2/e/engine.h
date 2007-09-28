@@ -397,9 +397,10 @@ extern "C" {
        rawGetNonUnit(K) can be used to obtain a non-unit, if one
        has been found. */
   
-  void IM2_Ring_declare_field(const Ring *K); /* drg: connected rawDeclareField*/
+  M2_bool IM2_Ring_declare_field(const Ring *K); /* drg: connected rawDeclareField*/
     /* Declare that K is a field.  The ring K can then be used as the coefficient
-       ring for computing Groebner bases,etc.  */
+       ring for computing Groebner bases,etc.  If false is returned, then
+       the ring K has known non-units, and an error has been issued */
 
   const RingElement * rawGetNonUnit(const Ring *K); /* drg: connected rawGetNonUnit */
     /* Return a non-unit for the ring K, if one has been found, or the zero

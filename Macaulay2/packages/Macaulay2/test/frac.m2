@@ -71,19 +71,27 @@ g = ((x^3*(x-1))/(2*(x^5-1)))
 assert( f === g )
 assert( numerator f === numerator g )
 -----------------------------------------------------------------------------
-A = ZZ/101[a,b]/(a*b)
+A = ZZ/101[symbol a,symbol b]/(a*b)
 B = frac A
 b/b
 (-a-b)/(a+b)
 getNonUnit B
-a/b
+assert try (a/b; false) else true
 getNonUnit B
 isField B
 -----------------------------------------------------------------------------
 A = ZZ/101[a,b]/(a*b)
 toField A
-1/(a+b)
+assert try (1/(a+b); false) else true
+isField A
+B = frac A
 getNonUnit A
+
+A = ZZ/101[a,b]/(a*b)
+1/(a+b)
+B = frac A
+getNonUnit B
+isField B
 -----------------------------------------------------------------------------
 end
 -- Local Variables:

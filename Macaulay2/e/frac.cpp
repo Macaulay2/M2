@@ -47,7 +47,6 @@ bool FractionField::initialize_frac(const PolyRingFlat *R)
 #warning "frac simplify: doesn't handle towers of fracs"
 #endif
 
-  set_non_unit(zeroV);
   declare_field();
   return true;
 }

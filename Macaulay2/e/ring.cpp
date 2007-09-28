@@ -23,7 +23,7 @@ void Ring::initialize_ring(int P0,
     degree_ring = DR;
 
   _non_unit = ZERO_RINGELEM;
-  _isfield = false;
+  _isfield = 0;
 
   zeroV = ZERO_RINGELEM;
   oneV = ZERO_RINGELEM;
@@ -51,21 +51,32 @@ FreeModule *Ring::make_FreeModule(int n) const
 
 bool Ring::is_field() const 
 { 
-  return _isfield; 
+  return _isfield == 1; 
 }
-void Ring::declare_field() 
+
+bool Ring::declare_field() 
 { 
-  _isfield = true; 
+  if (_isfield >= 0)
+    {
+      _isfield = 1; 
+      return true;
+    }
+  else 
+    {
+      ERROR("attempting to declare a ring with known non-units to be a field");
+      return false;
+    }
 }
 ring_elem Ring::get_non_unit() const 
 { 
+  if (_isfield >= 0 then return zero();
   return copy(_non_unit); 
 }
 
-void Ring::set_non_unit(ring_elem zero_div) const
+void Ring::set_non_unit(ring_elem non_unit) const
 { 
-  const_cast<Ring *>(this)->_isfield = false;
-  const_cast<Ring *>(this)->_non_unit = zero_div;
+  const_cast<Ring *>(this)->_isfield = -1;
+  const_cast<Ring *>(this)->_non_unit = non_unit;
 }
 
 ring_elem Ring::var(int v) const

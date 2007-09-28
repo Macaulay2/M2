@@ -41,8 +41,11 @@ protected:
   const PolynomialRing *degree_ring;
 
   ring_elem _non_unit;
-  bool _isfield;		// true means yes, or declared yes.
-				// If a zero divisor is found, isfield is set to false.
+  int _isfield;		// 1: means yes, or declared yes.
+                        // 0: means not declared to be so.
+                        // -1: means a non unit was found, and that _non_unit contains
+                        //    a non-zero non-unit.
+                        // If a non unit is found, then _isfield is set to -1.
 
   ring_elem zeroV;              // Three generally useful values in a ring.
   ring_elem oneV;
@@ -109,7 +112,8 @@ public:
   // quotient polynomial rings can be graded or not.
 
   bool is_field() const;
-  void declare_field();
+  bool declare_field(); // if false is returned, then an ERROR has been set.
+
   ring_elem get_non_unit() const;
   void set_non_unit(ring_elem zero_div) const; // not really const: sets "_non_unit"
 
