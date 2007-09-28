@@ -25,9 +25,6 @@ As a result, arithmetic comparison of two (unsigned) bins results in a lexicogra
 
 An "area" will consist of a consecutive portion of an array of bins, each with the same number of
   bits per field; some fields in the last bin of the area may be unused.
-Routines operating on an area will update references to pointers, so the
-  next area can continue processing; thus area routines
-  need not know their offset, just their length.
 
 Justification(s) for having multiple areas (are they strong enough?) :
   1. Some exponents are allowed to be negative, and some are not.  The division algorithm depends
@@ -91,10 +88,13 @@ Initial choices:
 	    the variables that are possessed by each of its subareas, and no
 	    others.  There could be (eventually) various types of composite
 	    area.
+  5. Overflow is signalled with "throw(exc::overflow_error(char *))".
+  6. All routines will update references to pointers, so composite areas can be
+     implemented.  Thus the caller has to save a separate copy of the pointer.
 
 Thus the description of a monomial type will include:
-   TEMPLATE: (choice of U, the integer type used to hold a field)
-   TEMPLATE: (choice of T, the unsigned integer type of a bin (either uint32_t or uint64_t))
+   (choice of U, the integer type used to hold a field)
+   (choice of T, the unsigned integer type of a bin)
    the size of a bin (T) in bytes
    the total number of variables
    the total number of fields
@@ -104,24 +104,31 @@ Thus the description of a monomial type will include:
      the offset of the starting bin
      the number of variables
      the number of fields
-     TEMPLATE: the number of bits per field (although future implementations of new
+     the choice of SIGNED, SIGNED_REVERSED, UNSIGNED, UNSIGNED_REVERSED;
+     	 this need not agree with whether U is signed
+     the number of bits per field (although future implementations of new
      	 area types might allow fields of varying widths, in which case
 	 this would be an array of numbers).  This number is silently increased
          to the highest number that packs just as many fields into each bin.
+	 The type U should be large enough to hold a field value, even though
+	 they may differ in signedness: for example, if U is int32_t, and the 
+	 fields are to be unsigned, then the maximum number of bits per field 
+	 is 31, but if the fields are to be signed, then it's 32 bits per field
      the number of fields per bin (as many as will fit, except with
      	 signed fields, we may reduce that by one when the field width
 	 is a power of 2 in order to provide a guard bit at the top)
      the number of bins (as many as are needed)
-     TEMPLATE: the choice of SIGNED, SIGNED_REVERSED, UNSIGNED, UNSIGNED_REVERSED;
-     	 this need not agree with whether U is signed
-     the encoding/decoding routines
+     the encoding routine, with overflow checking
+     the decoding routine
      the comparison routine (overall ordering is lex, area by area);
      	 Optimization idea: if the user gives weights, one may be able to precompute
 	 the minimum number of fields that need to be examined to give a total 
 	 ordering; if grevlex is stored redundantly, e.g., as (i+j+k,-k,-j,-i),
 	 the same remark applies: just check 3 fields.  If we can omit looking
    	 at enough fields, maybe we could omit looking at an entire bin, which
-	 is when it would be worthwhile.   
+	 is when it would be worthwhile.
+     <noncommutative versions of the following routines may multiply a static
+        variable by a sign or zero or binomial coefficient>
      the multiplication routine, with overflow checking
      the multiplication routine, without overflow checking
      the division routine, with overflow checking (if the fields
@@ -133,30 +140,3 @@ Thus the description of a monomial type will include:
            masks to flip the reversed fields
      the lcm routine, extended to provide the factors
      the gcd routine, extended to provide the factors
-     noncommutative versions of the multiplication, division, lcm, and gcd routines, which
-         return an integer (or two) on the side
-     a flag indicating whether to use the noncommutative version -- try hard to 
-         optimize the checking of this flag out (?)
-
-From: Michael Stillman <mike@math.cornell.edu>
-Subject: Re: Re: 
-Date: Thu, 1 Feb 2007 09:59:53 -0500
-
-The following orders are the ones that we would like to be really fast:
-
-1. grevlex -- and perhaps weighted grevlex
-2. an elimination order (again perhaps weighted), or an order which  
-is given first by the value of a weight vector, with ties broken by  
-grevlex (or revlex).
-3. lex
-4. a product order, with grevlex in each block (2 blocks is the most  
-important here).
-
-Other orders are a convenience, but the ones above are the most  
-heavily used.
-
-As for different sizes in different blocks, if it is simpler and  
-faster to not allow that, I would be fine with that.
-
-Finally, I do not mind writing several "polynomial add" routines with  
-different inlined calls to comparison, depending on the order.
