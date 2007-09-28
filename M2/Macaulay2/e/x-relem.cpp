@@ -345,11 +345,11 @@ M2_bool IM2_Ring_is_field(const Ring *K)
   return K->is_field();
 }
 
-void IM2_Ring_declare_field(const Ring *K)
+M2_bool IM2_Ring_declare_field(const Ring *K)
   /* Declare that K is a field.  The ring K can then be used as the coefficient
      ring for computing Groebner bases,etc.  */
 {
-  const_cast<Ring *>(K)->declare_field(); // Note: this modifies a const value...
+  return const_cast<Ring *>(K)->declare_field();
 }
 
 const RingElement * rawGetNonUnit(const Ring *K)
