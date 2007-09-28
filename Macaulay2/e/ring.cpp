@@ -69,7 +69,7 @@ bool Ring::declare_field()
 }
 ring_elem Ring::get_non_unit() const 
 { 
-  if (_isfield >= 0 then return zero();
+  if (_isfield >= 0) return zero();
   return copy(_non_unit); 
 }
 
