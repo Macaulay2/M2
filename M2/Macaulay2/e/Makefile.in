@@ -132,6 +132,9 @@ pi-test : exceptions.o overflow.o
 pi-test-run : pi-test ; ./pi-test
 pi-masks.h : pi-genmask
 	./$^ >$@
+
+pm-test.o : pm.hpp
+
 clean :: ; rm -f pi-demangled.s pi-test.s pi-test.o pi.s pi.E pi.o pi-test pi-test-run pi-masks.h
 
 all::; @ echo "LOGFILE: `wc -l LOGFILE` entries `wc -c LOGFILE` bytes."
