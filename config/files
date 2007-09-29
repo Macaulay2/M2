@@ -78,4 +78,5 @@ Macaulay2/packages/Macaulay2/test/Makefile
 Macaulay2/packages/Macaulay2/test/Makefile.test
 Macaulay2/packages/Macaulay2/test/engine/Makefile
 Macaulay2/packages/Macaulay2/test/slow/Makefile
+Macaulay2/packages/Macaulay2/test/gigantic/Makefile
 Macaulay2/util/Makefile

@@ -89,7 +89,7 @@ clean::; rm -f TAGS @srcdir@/TAGS @srcdir@/TAGS.doc
 		../emacs/Makefile.in \
 		../packages/Macaulay2/basictests/Makefile.in \
 		../packages/Macaulay2/test/Makefile.in \
-		../packages/Macaulay2/test/Makefile.test \
+		../packages/Macaulay2/test/Makefile.test.in \
 		../packages/Macaulay2/test/slow/Makefile.in \
 		../packages/Macaulay2/test/engine/Makefile.in \
 		../packages/Makefile.in \
