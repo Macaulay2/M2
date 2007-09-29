@@ -33,9 +33,9 @@ status ::
 	: $(MAKE) -C goals $@
 	: $(MAKE) -C gigantic $@
 
-MIKE_TESTS := $(wildcard @srcdir@/mt-*.m2)
+MIKE_TESTS := $(wildcard @srcdir@/mt-*.m2 @srcdir@/gigantic/mt-*.m2)
 MIKE_RESULTS := $(patsubst @srcdir@/%.m2, %.out, $(MIKE_TESTS))
-mike-tests: $(MIKE_RESULTS) ; grep system $^ 
+mike-tests:: $(MIKE_RESULTS) ; grep sys $^ 
 
 # Local Variables:
 # compile-command: "make -k -C $M2BUILDDIR/Macaulay2/packages/Macaulay2/test "
