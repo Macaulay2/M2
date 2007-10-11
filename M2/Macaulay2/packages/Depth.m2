@@ -50,7 +50,11 @@ depth(Ideal,Module) := ZZ => (I,M) -> (
      );
 
 depth(Ideal,Ring) := ZZ => (I,A) -> (
-     depth(I,A^1)
+     depth(I,module A)
+     );
+
+depth(Ideal,Ideal) := ZZ => (I,A) -> (
+     depth(I,module A)
      );
 
 depth(Ideal,PolynomialRing) := ZZ => (I,A) -> (
