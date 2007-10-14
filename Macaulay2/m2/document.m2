@@ -409,7 +409,7 @@ doneit := false;
 deprecated := z -> if not doneit then (
      doneit = true;
      stderr << "--warning: using '" << z << "' alone in documentation is deprecated, use '" << z << "{}' instead" << endl;
-     if z === PARA then stderr << "--        andgroup PARA{...} around entire paragraphs" << endl;
+     if z === PARA then stderr << "--        and use PARA{...} around entire paragraphs" << endl;
      )
 fixup MarkUpType := z -> (
      if z === PARA or z === BR or z === HR
