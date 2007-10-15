@@ -113,9 +113,11 @@ make
 make install
 
 ## I do this:
-../../configure --prefix=/home/mike/m2-installed --enable-experimental-code --enable-static
+../../configure --prefix=/home/mike/src/M2/BUILD/normal-installed --enable-experimental-code --enable-static
 ## sometimes (depending on configuration), I need to add
-## --enable-build-libraries=""
+../../configure --prefix=/home/mike/src/M2/BUILD/normal-installed \
+  --enable-experimental-code --enable-static \
+  --enable-build-libraries="gc gdbm gmp readline ntl factory libfac blas lapack"
 
 
 ## This file consists of my (MES) notes for quickly getting the Macaulay2
