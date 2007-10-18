@@ -1024,7 +1024,9 @@ const RingElementOrNull *IM2_RingElement_fraction(const Ring *R,
 						  const RingElement *b)
 {
      try {
-	  return a->fraction(R,b);
+       const RingElement *f = a->fraction(R,b);
+       if (error()) return NULL;
+       return f;
      }
      catch (exc::engine_error e) {
 	  ERROR(e.what());

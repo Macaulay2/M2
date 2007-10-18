@@ -117,6 +117,10 @@ assert try ((1/y)^3 + (1/x)^3; false) else true
 getNonUnit F
 assert not isField F
 -----------------------------------------------------------------------------
+ A = ZZ/101[symbol a,symbol b]/(a*b)
+ (a+b)/(a-b)
+ assert try (a/b;false) else true			    -- should detect a non-unit here
+-----------------------------------------------------------------------------
 
 end
 -- Local Variables:
