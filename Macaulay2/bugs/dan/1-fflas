@@ -1,0 +1,57 @@
+-*- coding: utf-8 -*-
+
+Subject: faster computations over finite fields desired
+From: jakob kroeker <kroeker@gdv.uni-hannover.de>
+To: Macaulay2@math.uiuc.edu
+Date: Thu, 18 Oct 2007 16:16:19 +0200
+
+Dear Macaulay developers!
+
+
+
+
+
+For many algebraic problems, like matrix rank computation of a big 
+Matrix over an finite field Macaulay routines could be much faster.
+
+
+Let me give an example:
+
+Recently i was asked by Dr. Matthias Schuett (Harward University ) and
+Prof. v. Bothmer (University of Hannover) to compute the rank of 14.000
+x 14.000 Matrix. They told me, that in Macaulay it would take too much
+time. (rank computation of a 1.000x 1.000 dense matrix costs 80 seconds
+on a common PC, so the same operation for a 14.000 x 14.000 Matrix
+would cost approximately 50-90 Hours)
+
+I implemented a 'naive' gaussian elimination and could solve the
+described problem in just two hours. 
+
+But there exists a better solution for this class of problems, namely
+the FFLAS-FFPACK-Library (Finite field linear algebra subroutines).
+Using this library the problem above was solved in 8 minutes!
+
+
+
+
+
+So my opinion (and my concern) is:
+It may be a good idea to integrate this library in the Macaulay-System.
+
+FFLAS-FFPACK URL: 
+http://ljk.imag.fr/membres/Jean-Guillaume.Dumas/FFLAS/
+
+
+
+
+
+
+
+Thanks,
+
+
+
+
+Jakob Kröker
+
+Institute of Man-Machine-Communication at University of Hannover
