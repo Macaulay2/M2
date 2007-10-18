@@ -1,3 +1,11 @@
+R = QQ
+M = mutableZero(QQ,3,5)
+M_(0,0) = 1_QQ
+M_(2,4) = 3/4
+M
+debug Core
+rawSubmatrix(raw M,(0,1),(0,1))
+
 R = QQ[x,y,z]
 f = vars R
 f = f ++ f

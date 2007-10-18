@@ -3248,7 +3248,7 @@ setupfun("rawSVD", rawSVD);
 
 export rawLeastSquares(e:Expr):Expr := (
      when e is s:Sequence do
-     if length(s) != 3 then WrongNumArgs(3) else
+     if length(s) != 4 then WrongNumArgs(4) else
      when s.0 
      is M:RawMutableMatrix do 
      when s.1 is b:RawMutableMatrix do 
@@ -3262,7 +3262,7 @@ export rawLeastSquares(e:Expr):Expr := (
      else WrongArgMutableMatrix(3)
      else WrongArgMutableMatrix(2)
      else WrongArgMutableMatrix(1)
-     else WrongNumArgs(3));
+     else WrongNumArgs(4));
 setupfun("rawLeastSquares", rawLeastSquares);
 
 -- Local Variables:
