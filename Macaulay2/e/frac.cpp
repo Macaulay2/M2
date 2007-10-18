@@ -140,6 +140,7 @@ void FractionField::simplify(frac_elem *f) const
 	  set_non_unit_frac(f->denom);
 	  f->numer = R_->zero();
 	  f->denom = R_->one();
+	  return;
 	}
       R_->negate_to(y);
       R_->remove(f->numer);
