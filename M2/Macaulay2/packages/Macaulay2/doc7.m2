@@ -1211,9 +1211,8 @@ document {
      EXAMPLE lines ///
      	  A = ZZ/101[a,b]/(a*b)
 	  (a+b)/(a-b)
-	  f = a/b
 	  ///,
-     "At this point, if one types ", TT "f^2", ", then Macaulay2 would give an error
+     "At this point, if one types ", TT "a/b", ", then Macaulay2 would give an error
      saying that a zero divisor was found in the denominator.",
      SeeAlso => {symbol //}
      }
