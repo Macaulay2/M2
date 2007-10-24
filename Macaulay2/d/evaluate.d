@@ -595,7 +595,9 @@ export applyFCC(fc:FunctionClosure,ec:Code):Expr := (
 		    ret := nullE;
 		    while true do (
 			 localFrame = f;
+	  		 recursionDepth = recursionDepth + 1;
 			 tailCode := evalAllButTail(model.body);
+	  		 recursionDepth = recursionDepth - 1;
 			 -- formerly, just ret := eval(model.body); now do tail recursion instead
 			 when tailCode
 			 is e:Error do (
