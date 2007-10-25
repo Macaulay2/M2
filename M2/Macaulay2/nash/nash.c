@@ -143,6 +143,9 @@ static void redirect(){
 
 static void usage() {
   fprintf(stderr,"usage: %s -c \"exec command arg1 arg2 ...\"\n",argv[0]);
+  fprintf(stderr,"environment variables:\n");
+  fprintf(stderr,"    OLDSHELL=foo   set SHELL to foo and erase OLDSHELL\n");
+  fprintf(stderr,"    OLDARG0=foo    set argv[0] to foo and erase OLDARG0\n");
   exit(1);
 }
 
@@ -160,6 +163,7 @@ int main (int _argc, char **_argv) {
     xargv[0] = getenv("OLDARG0");
     unsetenv("OLDARG0");
   }
+  /* fprintf(stderr,"%s: executing \"%s\"\n", argv[0], xargv[0]); */
   execvp(xargv[0],xargv);
   fprintf(stderr,"%s: failed to exec \"%s\"\n", argv[0], xargv[0]);
   return 1;
