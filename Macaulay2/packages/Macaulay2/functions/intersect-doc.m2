@@ -22,5 +22,8 @@ document {
 	  "N=image matrix{{5*y},{5*y}};",
 	  "P=image matrix{{7*z},{7*z}};",
 	  "intersect{M,N,P}"
-	  }
+	  },
+     PARA {"The command ", TO "intersect", " will only work with proper
+     ideals. To intersect an ideal with a ring, use ",
+     TO "selectInSubring", "."}
      }

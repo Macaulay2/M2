@@ -99,6 +99,7 @@ document {
 	  "N = Ext^0(I,R)",
 	  "dim N"
 	  },
+     "Note that the dimension of the zero module is ", TT "-1", ".",
      SeeAlso => {(dim,Ring),(dim,Ideal)}
      }
 document { 
@@ -146,5 +147,6 @@ document {
           "dim D",
 	  "dim I"
 	  },
+     "Note that the dimension of the zero ideal is ", TT "-1", ".",
      SeeAlso => {ideal, monomialIdeal, "SimplicialComplexes::SimplicialComplexes"}
      }
