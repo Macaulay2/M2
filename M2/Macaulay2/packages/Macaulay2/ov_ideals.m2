@@ -322,7 +322,10 @@ document {
      EXAMPLE {
 	  "R = QQ[a..d];",
 	  "intersect(ideal(a,b),ideal(c*d,a*b),ideal(b*d,a*c))"
-	  }
+	  },
+     "The command ", TO "intersect", " will only work with proper
+     ideals. To intersect an ideal with a ring, use ",
+     TO "selectInSubring", "."
      }
 
 document {
