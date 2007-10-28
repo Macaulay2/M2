@@ -1,0 +1,42 @@
+make "quotient" do this, too:
+
+
+o2 = comodule -- submodule to quotient module
+     ****************************************
+
+     Synopsis
+     ========
+
+       * Usage: comodule M
+       * Inputs:
+           * M, a module, or an ideal
+       * Outputs:
+           * a module, If M is given as a submodule I \subset Nwhere N is either a free module or a quotient,
+             then the module N/I is returned.
+
+
+     Description
+     ===========
+
+     +---------------------+
+     |R = QQ[a..d];        |
+     +---------------------+
+     |I = ideal(a,b,c,d^3);|
+     +---------------------+
+     |comodule I           |
+     +---------------------+
+
+     See also
+     ========
+
+       * "image" -- image of a map
+       * "cokernel" -- cokernel of a map of modules, graded modules, or chaincomplexes
+       * "kernel" -- kernel of a ringmap, matrix, or chain complex
+
+     Ways to use comodule :
+     ======================
+
+       * comodule(Ideal)
+       * comodule(Module)
+
+o2 : DIV

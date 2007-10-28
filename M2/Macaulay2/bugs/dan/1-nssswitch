@@ -1,0 +1,37 @@
+accessing the web can fail if loaddata has been done, with a crash
+in the nsssswitching routine of glibc, called eventually by getaddrinfo:
+
+    + M2 --no-readline --print-width 138
+    Macaulay 2, version 0.9.97
+    with packages: Classic, Core, Elimination, IntegralClosure, LLLBases, Parsing, PrimaryDecomposition, SchurRings, TangentCone
+
+    i1 : openInOut "$yahoo.com:http"
+    -- SIGSEGV
+    -- stack trace:
+    level 0 -- return addr: 0x080522d0 -- frame: 0xbfa33c18
+    level 1 -- return addr: 0xffffe420 -- frame: 0xbfa33c38
+    level 2 -- return addr: 0x4000848f -- frame: 0xbfa33f28
+    level 3 -- return addr: 0x40007f09 -- frame: 0xbfa33fcc
+    level 4 -- return addr: 0x40010f84 -- frame: 0xbfa3425c
+    level 5 -- return addr: 0x4000d016 -- frame: 0xbfa342bc
+    level 6 -- return addr: 0x4001099e -- frame: 0xbfa3439c
+    level 7 -- return addr: 0x40a1a0b2 -- frame: 0xbfa343fc
+    level 8 -- return addr: 0x4000d016 -- frame: 0xbfa34428
+    level 9 -- return addr: 0x40a1a275 -- frame: 0xbfa34508 __libc_dlopen_mode
+    level 10 -- return addr: 0x409f47b7 -- frame: 0xbfa34538 __nss_lookup_function
+    level 11 -- return addr: 0x409f48d0 -- frame: 0xbfa345a8
+    level 12 -- return addr: 0x409f6466 -- frame: 0xbfa345c0 __nss_services_lookup
+    level 13 -- return addr: 0x409fc4d5 -- frame: 0xbfa345e8 getservbyname_r
+    level 14 -- return addr: 0x409c81c1 -- frame: 0xbfa34620
+    level 15 -- return addr: 0x409c84d3 -- frame: 0xbfa34a84
+    level 16 -- return addr: 0x409ca688 -- frame: 0xbfa34be4 getaddrinfo
+    level 17 -- return addr: 0x0804eecb -- frame: 0xbfa34ce8 opensocket (in scclib.c)
+    level 18 -- return addr: 0x0804efa5 -- frame: 0xbfa34d18 system_opensocket
+    level 19 -- return addr: 0x08106ad0 -- frame: 0xbfa34d38 opensocket (in stdio.d)
+    level 20 -- return addr: 0x08106f8e -- frame: 0xbfa34d78 stdio_openInOut
+    -- end stack trace
+    Segmentation fault (core dumped)
+
+    Process M2 exited abnormally with code 139
+
+Another reason we might have to give up on dumpdata/loaddata???
