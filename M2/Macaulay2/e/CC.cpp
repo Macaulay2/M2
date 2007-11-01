@@ -124,6 +124,7 @@ int CC::compare_CC(double a, double b) const
   double c = a-b;
   if (c > _epsilon) return GT;
   if (c < -_epsilon) return LT;
+  if (a != a || b != b) return INCOMPARABLE;
   return EQ;
 }
 
@@ -132,7 +133,7 @@ void CC::elem_text_out(buffer &o, const ring_elem ap) const
   double a = CC_RE(ap);
   double b = CC_IM(ap);
 
-  char s[100];
+  char s[1000];
 
   bool is_real = compare_CC(b,0.0) == EQ;
   bool is_imag = compare_CC(a,0.0) == EQ;

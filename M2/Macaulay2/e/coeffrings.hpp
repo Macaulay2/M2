@@ -6,6 +6,145 @@
 class Z_mod;
 #include "ringelem.hpp"
 
+class CoefficientRingZZpLog
+{
+  // Integers mod p, implemented as 
+  // exponents of a primitive element a
+  // Representation:
+  // 0  means 0
+  // n  means a^n (mod p)
+
+
+  int p;
+  int p1; // p-1
+  int primitive_elem;
+
+  int minus_one;
+  int *one; // 1 table: indexing is -(p-1) .. p-1
+  int *log_table; // 0..p-1   (really needed?)
+  int *exp_table; // 0..p-1   (really needed?)
+
+  static inline int modulus_add(int a, int b, int p)
+  {
+    int t = a+b;
+    return (t < p ? t : t-p);
+  }
+
+  static inline int modulus_sub(int a, int b, int p)
+  {
+    int t = a-b;
+    return (t < 0 ? t+p : t);
+  }
+
+public:
+  typedef Z_mod ring_type;
+  typedef int elem;
+
+  CoefficientRingZZpLog(int p0, int primitive_elem0)
+    : p(p0),
+      p1(p0-1),
+      primitive_elem(primitive_elem0)
+  {
+    if (p==2)
+      minus_one = 0;
+    else
+      minus_one = (p-1)/2;
+
+    // We need to compute the 
+  }
+
+  void to_double(elem a, double &result)
+  {
+    result = static_cast<double>(a);
+  }
+
+  void from_double(double d, elem &result)
+  {
+    result = static_cast<elem>(d);
+  }
+
+  int to_int(int f) const { return exp_table[f]; }
+
+  void init_set(elem &result, elem a) const
+  {
+    result = a;
+  }
+
+  void set_zero(elem &result) const 
+  { 
+    result = 0;
+  }
+
+  bool is_zero(elem result) const 
+  { 
+    return result == 0; 
+  }
+
+  void invert(elem &result, elem a) const
+  {
+    // TODO: MES: write this
+  }
+
+  void add(elem &result, elem a, elem b) const
+  {
+    // TODO: MES: write this
+  }
+
+  void subtract(elem &result, elem a, elem b) const
+  {
+    // TODO: MES: write this
+  }
+
+  void subtract_multiple(elem &result, elem a, elem b) const
+  {
+    // we assume: a, b are NONZERO!!
+    // result -= a*b
+    elem ab = modulus_add(a,b,p1);
+    subtract(result, result, ab);
+    return;
+    if (result==0)
+      result = ab;
+    else
+      {
+	int n = modulus_sub(exp_table[result], exp_table[ab], p);
+	result = log_table[n];
+      }
+  }
+
+  void mult(elem &result, elem a, elem b) const
+  {
+    if (a == 0 || b == 0) 
+      result = 0;
+    else
+      result = modulus_add(a,b,p1);
+  }
+
+  void divide(elem &result, elem a, elem b) const
+  {
+    if (a == 0 || b == 0) 
+      result = 0;
+    else
+      result = modulus_sub(a,b,p1);
+  }
+
+  void to_ring_elem(ring_elem &result, const elem a) const
+  {
+    result.int_val = a;
+  }
+
+  void from_ring_elem(elem &result, const ring_elem &a) const
+  {
+    result = a.int_val;
+  }
+
+  void swap(elem &a, elem &b) const
+  {
+    elem tmp = a;
+    a = b;
+    b = tmp;
+  }
+};
+
 class CoefficientRingZZp : public our_new_delete
 {
   int p;
@@ -194,11 +333,13 @@ public:
 };
 
 #include "CC.hpp"
+#include "complex.hpp"
 class CoefficientRingCC : public our_new_delete
 {
 public:
   typedef CC ring_type;
   typedef M2_CC_struct elem; // components are re, im
+  typedef CoefficientRingRR::elem real_elem;
 
   CoefficientRingCC() {}
 
@@ -208,42 +349,20 @@ public:
 
   bool is_zero(elem result) const { return result.re == 0.0 && result.im == 0.0; }
 
-  void invert(elem &result, elem a) const
-  {
-    double c = a.re*a.re + a.im*a.im;
-    result.re = a.re/c;
-    result.im = -a.im/c;
-  }
+  void invert(elem &result, elem a) const { CCArithmetic::invert(result, a); }
 
-  void subtract_multiple(elem &result, elem a, elem b) const;
+  void subtract_multiple(elem &result, elem a, elem b) const { 
     // result -= a*b
-
-  void add(elem &result, elem a, elem b) const
-  {
-    result.re = a.re + b.re;
-    result.im = a.im + b.im;
+    CCArithmetic::subtract_multiple(result,a,b);
   }
 
-  void subtract(elem &result, elem a, elem b) const
-  {
-    result.re = a.re - b.re;
-    result.im = a.im - b.im;
-  }
+  void add(elem &result, elem a, elem b) const { CCArithmetic::add(result,a,b); }
 
-  void mult(elem &result, elem a, elem b) const
-  {
-    result.re = a.re*b.re - a.im*b.im;
-    result.im = a.re*b.im + a.im*b.re;
-  }
+  void subtract(elem &result, elem a, elem b) const { CCArithmetic::subtract(result,a,b); }
 
-  void divide(elem &result, elem a, elem b) const
-  {
-    double bot = b.re*b.re + b.im*b.im;
-    result.re = a.re*b.re + a.im*b.im;
-    result.re /= bot;
-    result.im = a.im*b.re - a.re*b.im;
-    result.im /= bot;
-  }
+  void mult(elem &result, elem a, elem b) const { CCArithmetic::mult(result,a,b); }
+
+  void divide(elem &result, elem a, elem b) const { CCArithmetic::divide(result,a,b); }
 
   void to_ring_elem(ring_elem &result, elem a) const
   {
@@ -261,7 +380,7 @@ public:
     elem tmp = a;
     a = b;
     b = tmp;
-  }
+  }  
 };
 
 class CoefficientRingR : public our_new_delete
