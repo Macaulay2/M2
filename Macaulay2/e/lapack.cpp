@@ -586,7 +586,7 @@ M2_arrayint_OrNull Lapack::LU(const LMatrixCC *A,
   L->resize(rows, rows);
   U->resize(rows, cols);
 
-  zgetrf_(&rows, &cols, A->get_lapack_array(), 
+  zgetrf_(&rows, &cols, copyA->get_lapack_array(), 
 	  &rows, perm, &info);
 
   // set the lower triangular matrix L

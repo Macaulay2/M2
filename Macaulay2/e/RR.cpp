@@ -100,6 +100,7 @@ int RingRR::compare_RR(double a, double b) const
   double c = a-b;
   if (c > _epsilon) return GT;
   if (c < -_epsilon) return LT;
+  if (c != c) return INCOMPARABLE;
   return EQ;
 }
 
@@ -107,7 +108,7 @@ void RingRR::elem_text_out(buffer &o, const ring_elem ap) const
 {
   double a = RR_VAL(ap);
 
-  char s[100];
+  char s[1000];
 
   bool is_neg = compare_RR(a,0.0) == LT;
   a = fabs(a);
