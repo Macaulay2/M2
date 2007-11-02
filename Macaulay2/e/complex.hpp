@@ -21,19 +21,32 @@ public:
 
   static bool is_zero(elem result)
   { 
+    // This code should change...?  to allow nearby values to be 0
     return result.re == 0.0 && result.im == 0.0; 
   }
 
-  static void invert(elem &result, elem a)
+  static void invert(elem &result, elem v)
   {
-    double c = a.re*a.re + a.im*a.im;
-    result.re = a.re/c;
-    result.im = -a.im/c;
+    if (fabs(v.re) >= fabs(v.im))
+      {
+	double p = v.im/v.re;
+	double denom = v.re + p * v.im;
+	result.re = 1.0/denom;
+	result.im = - p/denom;
+      }
+    else
+      {
+	double p = v.re/v.im;
+	double denom = v.im + p * v.re;
+	result.re = p/denom;
+	result.im = -1.0/denom;
+      }
   }
 
   static void subtract_multiple(elem &result, elem a, elem b)
   {
-    // result -= a*b
+    result.re -= a.re*b.re - a.im*b.im;
+    result.im -= a.re*b.im + a.im*b.re;
   }
 
   static void add(elem &result, elem a, elem b)
@@ -54,13 +67,26 @@ public:
     result.im = a.re*b.im + a.im*b.re;
   }
 
-  static void divide(elem &result, elem a, elem b)
+  static void divide(elem &result, elem u, elem v)
   {
-    double bot = b.re*b.re + b.im*b.im;
-    result.re = a.re*b.re + a.im*b.im;
-    result.re /= bot;
-    result.im = a.im*b.re - a.re*b.im;
-    result.im /= bot;
+    if (fabs(v.re) >= fabs(v.im))
+      {
+	// for u = c + d*i,
+	// p = d/c
+	// c+di = c(1+p*i), so denom is c(1+p^2)
+	// which is c + d*p
+	double p = v.im/v.re;
+	double denom = v.re + p * v.im;
+	result.re = (u.re + p*u.im)/denom;
+	result.im = (u.im - p*u.re)/denom;
+      }
+    else
+      {
+	double p = v.re/v.im;
+	double denom = v.im + p * v.re;
+	result.re = (u.re * p + u.im)/denom;
+	result.im = (-u.re + p * u.im)/denom;
+      }
   }
 
   // Routines more specific to complex arithmetic:

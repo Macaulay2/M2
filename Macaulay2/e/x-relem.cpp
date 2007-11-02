@@ -1034,6 +1034,40 @@ const RingElementOrNull *IM2_RingElement_fraction(const Ring *R,
      }
 }
 
+const RingElementOrNull *rawAbs(const RingElement *a)
+{
+  if (a->get_ring() == globalCC)
+    {
+      double b;
+      CCArithmetic::abs(b,*CCELEM_VAL(a->get_value()));
+      return RingElement::make_raw(globalRR,globalRR->from_double(b));
+    }
+  if (a->get_ring() == globalCCC)
+    {
+      // TODO: MES, to be written
+    }
+  
+  ERROR("expected an element of CC or CCC");
+  return 0;
+}
+
+const RingElementOrNull *rawSqrt(const RingElement *a)
+{
+  if (a->get_ring() == globalCC)
+    {
+      M2_CC_struct b;
+      CCArithmetic::sqrt(b,*CCELEM_VAL(a->get_value()));
+      return RingElement::make_raw(globalCC,globalCC->from_complex(&b));
+    }
+  if (a->get_ring() == globalCCC)
+    {
+      // TODO: MES, to be written
+    }
+
+  ERROR("expected an element of CC or CCC");
+  return 0;
+}
+
 M2_IntegerOrNull rawSchurDimension(const RingElement *f)
 {
      try {

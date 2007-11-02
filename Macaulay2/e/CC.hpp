@@ -10,8 +10,9 @@ class CoefficientRingCC;
 class CC : public Ring
 // Elements of this ring are two real numbers: 'double's representing real and imaginary parts
 {
-
   double _epsilon;  // Elements closer than this are considered identical.
+
+  ring_elem from_M2_CC_struct(M2_CC_struct &a) const;
 
   M2_CC new_elem() const;
   void remove_elem(M2_CC f) const;
@@ -20,6 +21,7 @@ class CC : public Ring
   int compare_CC(double a, double b) const;
 
   CoefficientRingCC *coeffR;
+
 protected:
   CC() {}
  ~CC() {}
@@ -63,9 +65,9 @@ public:
   virtual ring_elem copy(const ring_elem f) const;
   virtual void remove(ring_elem &f) const;
 
-  void internal_negate_to(ring_elem &f) const;
-  void internal_add_to(ring_elem &f, ring_elem &g) const;
-  void internal_subtract_to(ring_elem &f, ring_elem &g) const;
+  //  void internal_negate_to(ring_elem &f) const;
+  //  void internal_add_to(ring_elem &f, ring_elem &g) const;
+  //  void internal_subtract_to(ring_elem &f, ring_elem &g) const;
 
   virtual ring_elem negate(const ring_elem f) const;
   virtual ring_elem add(const ring_elem f, const ring_elem g) const;
