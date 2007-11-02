@@ -8,7 +8,6 @@
 #include "random.hpp"
 #include "coeffrings.hpp"
 
-
 extern "C" M2_CC make_M2_Complex(double re, double im)
 {
   M2_CC z = newitem_atomic(M2_CC_struct);
@@ -50,6 +49,14 @@ M2_CC CC::new_elem() const
   result->im = 0.0;
   return result;
 }
+
+ring_elem CC::from_M2_CC_struct(M2_CC_struct &a) const
+{
+  M2_CC result = reinterpret_cast<M2_CC>(getmem(sizeof(M2_CC_struct)));
+  *result = a;
+  return CC_RINGELEM(result);
+}
+
 ring_elem CC::from_double(double a) const
 {
   M2_CC result = reinterpret_cast<M2_CC>(getmem(sizeof(M2_CC_struct)));
@@ -256,29 +263,6 @@ ring_elem CC::preferred_associate(ring_elem f) const
   return CC::from_double(-1.0);
 }
 
-void CC::internal_negate_to(ring_elem &f) const
-{
-  M2_CC a = CCELEM_VAL(f);
-  a->re = - a->re;
-  a->im = - a->im;
-}
-
-void CC::internal_add_to(ring_elem &f, ring_elem &g) const
-{
-  M2_CC a = CCELEM_VAL(f);
-  a->re += CC_RE(g);
-  a->im += CC_IM(g);
-  remove(g);
-}
-
-void CC::internal_subtract_to(ring_elem &f, ring_elem &g) const
-{
-  M2_CC a = CCELEM_VAL(f);
-  a->re -= CC_RE(g);
-  a->im -= CC_IM(g);
-  remove(g);
-}
-
 ring_elem CC::negate(const ring_elem f) const
 {
   return CC::from_doubles(-CC_RE(f), -CC_IM(f));
@@ -286,28 +270,45 @@ ring_elem CC::negate(const ring_elem f) const
 
 ring_elem CC::add(const ring_elem f, const ring_elem g) const
 {
-  return CC::from_doubles(CC_RE(f)+CC_RE(g), CC_IM(f)+CC_IM(g));
+  M2_CC_struct result;
+  CCArithmetic::add(result,*CCELEM_VAL(f),*CCELEM_VAL(g));
+  return CC::from_M2_CC_struct(result);
 }
 
 ring_elem CC::subtract(const ring_elem f, const ring_elem g) const
 {
-  return CC::from_doubles(CC_RE(f)-CC_RE(g), CC_IM(f)-CC_IM(g));
+  M2_CC_struct result;
+  CCArithmetic::subtract(result,*CCELEM_VAL(f),*CCELEM_VAL(g));
+  return CC::from_M2_CC_struct(result);
 }
 
 ring_elem CC::mult(const ring_elem f, const ring_elem g) const
 {
-  return CC::from_doubles(CC_RE(f)*CC_RE(g) - CC_IM(f)*CC_IM(g),
-			  CC_RE(f)*CC_IM(g) + CC_IM(f)*CC_RE(g));
+  M2_CC_struct result;
+  CCArithmetic::mult(result,*CCELEM_VAL(f),*CCELEM_VAL(g));
+  return CC::from_M2_CC_struct(result);
 }
 
 ring_elem CC::power(const ring_elem f, int n) const
 {
   double a1 = CC_RE(f);
   double a2 = CC_IM(f);
+
+  if (n == 0)
+    return CC::from_doubles(1.0,0.0);
+
+  if (n < 0)
+    {
+      M2_CC_struct g;
+      CCArithmetic::invert(g, *CCELEM_VAL(f));
+      a1 = g.re;
+      a2 = g.im;
+      n = -n;
+    }
   double b1 = a1;
   double b2 = a2;
   double c1, c2;
-  for (int i=0; i<n; i++) {
+  for (int i=1; i<n; i++) {
     c1 = a1*b1 - a2*b2;
     c2 = a1*b2 + a2*b1;
     b1 = c1;
@@ -315,6 +316,7 @@ ring_elem CC::power(const ring_elem f, int n) const
   }
   return CC::from_doubles(b1, b2);
 }
+
 ring_elem CC::power(const ring_elem f, mpz_t n) const
 {
   int n1;
@@ -325,20 +327,16 @@ ring_elem CC::power(const ring_elem f, mpz_t n) const
 
 ring_elem CC::invert(const ring_elem f) const
 {
-  double a = CC_RE(f);
-  double b = CC_IM(f);
-  double det = a*a + b*b;
-  return CC::from_doubles(a/det, -b/det);
+  M2_CC_struct result;
+  CCArithmetic::invert(result,*CCELEM_VAL(f));
+  return CC::from_M2_CC_struct(result);
 }
 
 ring_elem CC::divide(const ring_elem f, const ring_elem g) const
 {
-  double a = CC_RE(f);
-  double b = CC_IM(f);
-  double c = CC_RE(g);
-  double d = CC_IM(g);
-  double det = a*a + b*b;
-  return CC::from_doubles((a*c+b*d)/det, (-b*c+a*d)/det);
+  M2_CC_struct result;
+  CCArithmetic::divide(result,*CCELEM_VAL(f),*CCELEM_VAL(g));
+  return CC::from_M2_CC_struct(result);
 }
 
 void CC::syzygy(const ring_elem a, const ring_elem b,
