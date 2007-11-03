@@ -81,7 +81,7 @@ varPrep = (X,I) -> (
 lastCheck = (X,G,d) -> (
      M := gens G;
      i := 0;
-     while i < numgens source M and not isSubset(support M_(0,i),toList(X_0..X_(d-1))) do ( 
+     while i < numgens source M and not isSubset(support M_(0,i),toList(X_{0..d-1})) do ( 
 	  i = i+1;
 	  );
      if i != numgens source M then return false

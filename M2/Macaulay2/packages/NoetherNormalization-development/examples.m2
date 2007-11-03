@@ -18,6 +18,27 @@ help noetherNormalization
 
 viewHelp
 
+-- Joe's example
+
+clearAll
+installPackage "NoetherNormalization"
+n = 3;
+A = QQ[x_(1,1)..x_(n,n),y_(1,1)..y_(n,n)]
+X = transpose genericMatrix(A,n,n)
+Y = transpose genericMatrix(A,y_(1,1),n,n)
+bracket = ideal flatten entries (X*Y - Y*X)
+(f,J,j) = noetherNormalization(bracket,Verbose=>true)
+
+-- recieve the following error:
+-- -- code just attempted: -- ../../.Macaulay2/local/share/Macaulay2/NoetherNormalization.m2:84
+--              while i < numgens source M and not isSubset(support M_(0,i),toList(X_0..X_(d-1))) do ( 
+-- ../../.Macaulay2/local/share/Macaulay2/NoetherNormalization.m2:84:76:(1):[4]: unmatching base names in y_(3,3) .. x_(3,1)
+
+--This is telling us that we are trying to type x..y which doesn't make sense!!!!
+
+
+{a,b,c}_(0..2)
+
 
 
 --Example 1
