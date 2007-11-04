@@ -203,10 +203,6 @@ noetherNormalization(Ideal) := opts -> I -> (
 	       );
 	  if counter == 5 then << "--warning: no good linear transformation found by noetherNormalization" <<endl;
 	  if done or counter == 5 then(
-	       if opts.Verbose then (
-		    << "--coordinate transformations tested: " << counter << endl;
-		    << "--BasisElementLimit option used with gb: " << first limitsequence_{seqindex - 1} << endl;
-		    );
 	       ffinal = ffinverse*f*ff;
 	       ffinalInverse = ffinverse*finverse*ff;	     	  
 	       ffinal.cache.inverse = ffinalInverse;

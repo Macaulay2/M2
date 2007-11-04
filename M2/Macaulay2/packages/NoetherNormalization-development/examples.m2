@@ -12,6 +12,7 @@ viewHelp use
 clearAll
 uninstallPackage "NoetherNormalization"
 installPackage "NoetherNormalization"
+loadPackage "NoetherNormalization"
 methods noetherNormalization
 help NoetherNormalization
 help noetherNormalization
@@ -143,7 +144,7 @@ support (independentSets(I,Limit=>1))_0
 --Example 8 -- kills m2 in AltNN! 
 R = QQ[x_6,x_5,x_4,x_3,x_2,x_1];
 I = ideal(x_6^3+x_5^2*x_3*x_4-2,x_4^4*x_3^2+x_1,x_2*x_1^3);
-noetherNormalization I
+noetherNormalization(I,Verbose => true)
 support (independentSets(I,Limit=>1))_0
 
 
@@ -189,7 +190,7 @@ noetherNormalization I
 
 R = QQ[x_1..x_4,MonomialOrder => Lex];
 I = ideal((4/7)*x_3^2*x_4-(4/3)*x_4^2-(3/7)*x_3,(5/4)*x_2*x_4^2+(7/8)*x_1+(7/2),-(10/9)*x_1^2*x_4-(7/9)*x_2^2+(7/4)*x_4+(3/2))
-noetherNormalization I
+noetherNormalization(I,Verbose => true)
 
 
 
