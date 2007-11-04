@@ -18,6 +18,8 @@ help noetherNormalization
 
 viewHelp
 
+
+
 -- Joe's example
 
 clearAll
@@ -27,7 +29,7 @@ A = QQ[x_(1,1)..x_(n,n),y_(1,1)..y_(n,n)]
 X = transpose genericMatrix(A,n,n)
 Y = transpose genericMatrix(A,y_(1,1),n,n)
 bracket = ideal flatten entries (X*Y - Y*X)
-(f,J,j) = noetherNormalization(bracket,Verbose=>true)
+(f,J,j) = noetherNormalization(bracket,Verbose=>true,LimitSequence => {20})
 
 -- recieve the following error:
 -- -- code just attempted: -- ../../.Macaulay2/local/share/Macaulay2/NoetherNormalization.m2:84
