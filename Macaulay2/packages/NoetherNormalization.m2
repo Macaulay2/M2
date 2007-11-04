@@ -28,7 +28,7 @@ newPackage(
 
 --=========================================================================--
      
-export{noetherNormalization} 
+export{noetherNormalization,LimitSequence} 
         
 --=========================================================================--
 
@@ -60,7 +60,7 @@ integralSet = G -> (
 
 -- varPrep is the initial function we run on the Groebner basis of the
 -- inputted ideal I. It returns sets U and V, with U being
--- algebraically independent and V being algebracially dependent. For
+-- algebraically independent and V being algebraically dependent. For
 -- all prime ideals it returns a maximal algebraically independent set
 -- of variables whose cardinality is equal to d.
 
@@ -157,7 +157,7 @@ randomSum = (U,V,k) -> (
 -- start the process again. While doing all this we keep track of the
 -- maps and the inverses of the maps that we use.
 
-noetherNormalization = method(Options => {Verbose => false})
+noetherNormalization = method(Options => {Verbose => false, LimitSequence => {5,20,40,60,80,infinity}})
 noetherNormalization(Ideal) := opts -> I -> (
      A := ring I;
      (flatA,fAtoFlatA) := flattenRing A;
@@ -174,8 +174,8 @@ noetherNormalization(Ideal) := opts -> I -> (
      d := dim I;
      X := sort gens R;
      (U,V) := varPrep(X,I);
-     counter := 0; --counts the number of times lastCheck is called
-     limitsequence := {5,20,40,60,80,infinity}; -- this is for the basiselementlimit setting for computing gb and is based on experience (and nothing else)
+     counter := 1; --counts the number of times lastCheck is called
+     limitsequence := opts.LimitSequence; -- {5,20,40,60,80,infinity}; -- this is for the basiselementlimit setting for computing gb and is based on experience (and nothing else)
      done := false;
      indep := U;
      f := map(R,R,inverseSequence(U|V,X));
@@ -201,7 +201,6 @@ noetherNormalization(Ideal) := opts -> I -> (
 	       done = lastCheck(X,G,d);-- may want to define f I above, but this causes noetherNormalization to fail at the moment
      	       seqindex = seqindex + 1;
 	       );
-	  counter = counter + 1;
 	  if counter == 5 then << "--warning: no good linear transformation found by noetherNormalization" <<endl;
 	  if done or counter == 5 then(
 	       if opts.Verbose then (
@@ -216,6 +215,7 @@ noetherNormalization(Ideal) := opts -> I -> (
 	     --  return (ffinal, ffinverse f I,map(A, k[X_{0..d-1}], X_{0..d-1}));
 	       return (ffinal, ffinverse f I,X_{0..d-1});
 	       );
+	  counter = counter + 1;
      	  ); -- f puts the ideal into noether normal position. f inverse goes back to the original ring 
      );  
 
@@ -331,8 +331,20 @@ document {
 	  "I = ideal(x_2^2+x_1*x_2+1, x_1*x_2*x_3*x_4+1);",
 	  "(f,J,X) = noetherNormalization(I,Verbose => true)"
 	  },
-     "The first number in the output visible above gives the number of linear transformations constructed by the routine while attempting to place ", TT "I", " into the desired position.
-     The second number tells which ", TO "BasisElementLimit", " was used when computing the (partial) Groebner basis.", 
+     "The first number in the output above gives the number of
+     linear transformations performed by the routine while attempting to
+     place ", TT "I", " into the desired position.
+     The second number tells which ", TO "BasisElementLimit", " was used when computing the (partial) Groebner basis.
+     By default, ", TT "noetherNormalization", " tries to use a partial
+     Groebner basis. It does this by sequentially computing a Groebner
+     basis with the option ", TO "BasisElementLimit", " set to
+     predetermined values. The default values come from the following list:", TT "{5,20,40,60,80,infinity}", 
+     ". To set the values manually, use the option ", TT "LimitSequence", ":",
+     EXAMPLE {
+	  "R = QQ[x_1..x_4];",
+	  "I = ideal(x_2^2+x_1*x_2+1, x_1*x_2*x_3*x_4+1);",
+	  "(f,J,X) = noetherNormalization(I,Verbose => true,LimitSequence => {5,10})"
+	  },
      PARA {
      "This symbol is provided by the package ", TO NoetherNormalization, "."
      }
