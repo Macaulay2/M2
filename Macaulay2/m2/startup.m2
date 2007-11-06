@@ -329,7 +329,7 @@ usage := arg -> (
      << "                       directory containing the Macaulay2 executable" << newline
      << "    EDITOR             default text editor" << newline
      << "    LOADDATA_IGNORE_CHECKSUMS	   (for debugging)" << newline
-     ;exit 0)
+     ;)
 
 tryLoad := (ofn,fn) -> if fileExists fn then (
      r := simpleLoad fn;
@@ -381,7 +381,7 @@ dump := () -> (
 argno := 1
 
 action := hashTable {
-     "-h" => usage,
+     "-h" => arg -> (usage(); exit 0),
      "-mpwprompt" => notyeterr,
      "-n" => obsolete,
      "-q" => arg -> noinitfile = true,
@@ -390,7 +390,7 @@ action := hashTable {
      "-tty" => notyet,
      "--copyright" => arg -> if phase == 1 then fullCopyright = true,
      "--dumpdata" => arg -> (noinitfile = noloaddata = true; if phase == 3 then dump()),
-     "--help" => usage,
+     "--help" => arg -> (usage(); exit 0),
      "--int" => arg -> arg,
      "--no-backtrace" => arg -> if phase == 1 then backtrace = false,
      "--no-debug" => arg -> debuggingMode = false,
