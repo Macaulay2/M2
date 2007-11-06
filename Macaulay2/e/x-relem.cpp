@@ -1051,21 +1051,18 @@ const RingElementOrNull *rawAbs(const RingElement *a)
   return 0;
 }
 
-const RingElementOrNull *rawSqrt(const RingElement *a)
+extern "C" M2_CC rawCCSqrt(const M2_CC a)
 {
-  if (a->get_ring() == globalCC)
-    {
-      M2_CC_struct b;
-      CCArithmetic::sqrt(b,*CCELEM_VAL(a->get_value()));
-      return RingElement::make_raw(globalCC,globalCC->from_complex(&b));
-    }
-  if (a->get_ring() == globalCCC)
-    {
-      // TODO: MES, to be written
-    }
+  M2_CC_struct result;
+  CCArithmetic::sqrt(result,*a);
+  return make_M2_Complex(result.re, result.im);
+}
 
-  ERROR("expected an element of CC or CCC");
-  return 0;
+extern "C" double rawCCAbs(const M2_CC a)
+{
+  double result;
+  CCArithmetic::abs(result,*a);
+  return result;
 }
 
 M2_IntegerOrNull rawSchurDimension(const RingElement *f)

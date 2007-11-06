@@ -192,26 +192,6 @@ ring_elem RingRR::preferred_associate(ring_elem f) const
   return RingRR::from_double(-1.0);
 }
 
-void RingRR::internal_negate_to(ring_elem &f) const
-{
-  RRelem a = RRELEM_VAL(f);
-  a->val = - a->val;
-}
-
-void RingRR::internal_add_to(ring_elem &f, ring_elem &g) const
-{
-  RRelem a = RRELEM_VAL(f);
-  a->val += RR_VAL(g);
-  remove(g);
-}
-
-void RingRR::internal_subtract_to(ring_elem &f, ring_elem &g) const
-{
-  RRelem a = RRELEM_VAL(f);
-  a->val -= RR_VAL(g);
-  remove(g);
-}
-
 ring_elem RingRR::negate(const ring_elem f) const
 {
   return RingRR::from_double(- RR_VAL(f));

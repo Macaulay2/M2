@@ -644,11 +644,9 @@ extern "C" {
      (otherwise NULL is returned).  If so, the dimension of the corresponding
      (virtual) GL(n) representation is returned. */
 
-  const RingElement *rawCCSqrt(const RingElement *f); 
-  // f must be an element of CC,CCC, answer in same ring
+  M2_CC rawCCSqrt(const M2_CC a);
 
-  const RingElement *rawAbs(const RingElement *f); 
-  // f must be an element of CC,CCC, answer in RR, RRR resectively
+  double rawCCAbs(const M2_CC a);
 
   /**************************************************/
   /**** FreeModule routines *************************/

@@ -10,3 +10,11 @@ M = matrix{{1.3,2.4567}}
 M = matrix{{1.0,2.0}}
 --status: this is waiting for Mike to implement this case in the engine, in rawLift
 lift(M,RR,ZZ)
+
+
+debug Core
+rawFromNumber(raw RRR, 1.2)
+rawFromNumber(raw CCC, 1.2)
+rawFromNumber(raw RR, 1.2)
+rawFromNumber(raw CC, 1.2)
+rawFromNumber(raw CCC, 1.2)
