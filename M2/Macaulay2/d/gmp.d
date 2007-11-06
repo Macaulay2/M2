@@ -978,18 +978,6 @@ export floor(x:RRR) : Integer := (
      Ccode( void, "mpz_set_f((__mpz_struct *)", y, ",(__mpf_struct *)", z, ")" );
      y);
 
-----------------------------------------------
--- CC routines from the engine ---------------
-----------------------------------------------
-
-export abs(z:Complex) : double := (
-     Ccode(double, "rawCCAbs((M2_CC)", z, ")")
-     )
-
-export sqrt(z:Complex) : Complex := (
-     Ccode(Complex, "rawCCSqrt((M2_CC)", z, ")")
-     )
-
 -- Local Variables:
 -- compile-command: "make -C $M2BUILDDIR/Macaulay2/d "
 -- End:
