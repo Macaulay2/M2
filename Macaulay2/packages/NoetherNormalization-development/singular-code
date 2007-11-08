@@ -7,6 +7,25 @@ ideal I = (x_6^3 + x_5^3*x_3^3*x_4^3-2,x_4^4*x_3^2+x_1,x_2*x_1^3);
 noetherNormal(I);
 
 
+LIB "algebra.lib";
+
+ring R = 0,x(1..18),dp;
+
+LIB "matrix.lib";
+
+matrix X = genericmat(3,3);
+
+matrix Y = genericmat(3,3,ideal(x(10..18)));
+
+ideal b = flatten(X*Y-Y*X);
+
+noetherNormal(b);
+
+
+
+
+
+
 
 
 

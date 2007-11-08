@@ -25,16 +25,12 @@ viewHelp
 clearAll
 installPackage "NoetherNormalization"
 loadPackage "NoetherNormalization"
-n = 3;
+n = 2;
 A = QQ[x_(1,1)..x_(n,n),y_(1,1)..y_(n,n)]
 X = transpose genericMatrix(A,n,n)
 Y = transpose genericMatrix(A,y_(1,1),n,n)
 bracket = ideal flatten entries (X*Y - Y*X)
-
--- can you use Nat's super alg?
-
-
-(f,J,j) = noetherNormalization(bracket,Verbose=>true,LimitSequence => {100})
+(f,J,j) = noetherNormalization(bracket,Verbose=>true,LimitSequence => {5,10})
 transpose gens J
 
 

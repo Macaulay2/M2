@@ -25,5 +25,5 @@ document {
 	  },
      PARA {"The command ", TO "intersect", " will only work with proper
      ideals. To intersect an ideal with a ring, use ",
-     TO "selectInSubring", "."}
+     TO "selectInSubring", " along with the elimination ordering, see ", TO "Eliminate", "."}
      }
