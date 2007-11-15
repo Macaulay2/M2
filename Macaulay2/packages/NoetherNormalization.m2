@@ -344,7 +344,7 @@ document {
 	  "I = ideal(x_2^2+x_1*x_2+1, x_1*x_2*x_3*x_4+1);",
 	  "(f,J,X) = noetherNormalization(I,Verbose => true,LimitSequence => {5,10})"
 	  },
-     "To limit the randomness of the coefficients, use option ", TT "RandomRange", 
+     "To limit the randomness of the coefficients, use the option ", TT "RandomRange", 
      ". Here is an example where the coefficients of the linear transformation are 
      random integers from ", TT "-1", " to ", TT "2", ":", 
      EXAMPLE {
