@@ -28,7 +28,7 @@ newPackage(
 
 --=========================================================================--
      
-export{noetherNormalization,LimitSequence} 
+export{noetherNormalization,LimitSequence,RandomRange} 
         
 --=========================================================================--
 
@@ -135,9 +135,11 @@ inversePermutation = f -> (
 -- first with random coefficients.
 
 
-randomSum = (U,V,k) -> (
+randomSum = (U,V,k,rr) -> (
      for j to #V - 1 do (
-	  U = apply(U, i -> i + random(k)*V_j);
+	  if rr == {0} then 
+	  U = apply(U, i -> i + random(k)*V_j) else 
+	  U = apply(U, i -> i + random(rr_0,rr_1)*V_j);
 	  );
      return U;
      );
@@ -157,7 +159,7 @@ randomSum = (U,V,k) -> (
 -- start the process again. While doing all this we keep track of the
 -- maps and the inverses of the maps that we use.
 
-noetherNormalization = method(Options => {Verbose => false, LimitSequence => {5,20,40,60,80,infinity}})
+noetherNormalization = method(Options => {Verbose => false, LimitSequence => {5,20,40,60,80,infinity}, RandomRange => {0}})
 noetherNormalization(Ideal) := opts -> I -> (
      A := ring I;
      (flatA,fAtoFlatA) := flattenRing A;
@@ -188,8 +190,9 @@ noetherNormalization(Ideal) := opts -> I -> (
      	  if opts.Verbose then << "--trying random transformation: " << counter << endl;
 	  seqindex := 0;
      	  stuff := Uold;
-     	  if counter == 0 then U = randomSum(U,V-set J,k);
-	  if counter >= 1 then U = randomSum(U,V-set integralSet(G),k);
+	  rr := opts.RandomRange;
+     	  if counter == 0 then U = randomSum(U,V-set J,k,rr);
+	  if counter >= 1 then U = randomSum(U,V-set integralSet(G),k,rr);
 	  stuff = stuff + (stuff - U);
     	  g := map(R,R,reverse(U|V));
 	  ginverse := map(R,R,reverse(stuff|V));
@@ -230,7 +233,7 @@ homNoetherNormalization = (I,R,k,X) -> (
      U := apply(algind,i->f i);
      V := apply(X-set algind,i->f i);
      while d > 0 do (
-	  g = map(R,R,V|randomSum(U,V,k));
+	  g = map(R,R,V|randomSum(U,V,k,rr));
      	  J := g f I;
 	  d = dim(J+ideal(apply(algind,i->f i)));
 	  );
@@ -340,6 +343,14 @@ document {
 	  "R = QQ[x_1..x_4];",
 	  "I = ideal(x_2^2+x_1*x_2+1, x_1*x_2*x_3*x_4+1);",
 	  "(f,J,X) = noetherNormalization(I,Verbose => true,LimitSequence => {5,10})"
+	  },
+     "To limit the randomness of the coefficients, use option ", TT "RandomRange", 
+     ". Here is an example where the coefficients of the linear transformation are 
+     random integers from ", TT "-1", " to ", TT "2", ":", 
+     EXAMPLE {
+	  "R = QQ[x_1..x_4];",
+	  "I = ideal(x_2^2+x_1*x_2+1, x_1*x_2*x_3*x_4+1);",
+	  "(f,J,X) = noetherNormalization(I,Verbose => true,RandomRange => {-1,2})"
 	  },
      PARA {
      "This symbol is provided by the package ", TO NoetherNormalization, "."

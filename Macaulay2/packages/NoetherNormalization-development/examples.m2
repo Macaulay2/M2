@@ -26,10 +26,16 @@ clearAll
 installPackage "NoetherNormalization"
 loadPackage "NoetherNormalization"
 n = 2;
-A = QQ[x_(1,1)..x_(n,n),y_(1,1)..y_(n,n)]
+A = QQ[x_(1,1)..x_(n,n),y_(1,1)..y_(n,n),MonomialOrder => Lex]
 X = transpose genericMatrix(A,n,n)
 Y = transpose genericMatrix(A,y_(1,1),n,n)
 bracket = ideal flatten entries (X*Y - Y*X)
+f = map(A,A,toList apply(0..(2*n^2-1), i -> sum(gens A)_{0..i}))
+f bracket
+
+viewHelp sum
+
+
 (f,J,j) = noetherNormalization(bracket,Verbose=>true,LimitSequence => {5,10})
 transpose gens J
 
