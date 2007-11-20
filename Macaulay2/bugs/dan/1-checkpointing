@@ -1,0 +1,51 @@
+From gene@ccs.neu.edu Sun Nov 19 22:38:56 2007
+To: dan@math.uiuc.edu
+Subject: dmtcp: checkpointing for Linux
+From: Gene Cooperman <gene@ccs.neu.edu>
+Date: Mon, 19 Nov 2007 23:38:48 -0500
+
+Dan,
+    It was good to see you at the NSF workshop.
+    Our checkpointing package now works also for Ubuntu, if using MTCP.
+We fixed the bug.  So, MTCP now works for all Linux dialects that
+we have tried (recent versions of:  Debian, Gentoo, Suse, Ubuntu).
+It also works for Linux kernels as old as version 2.6.9 (and maybe
+older -- we didn't try).
+The distributed version, DMTCP, is still under development,
+but you don't really need that for Macaulay2.
+
+    Are you interested in trying out our checkpointing package?
+The code is in svn at:  http://sourceforge.net/projects/dmtcp
+It is GPL.  I would recommend _only_ using mtcp.  To do that,
+unpack the source, and:  cd dmtcp/mtcp; make
+That make produces:
+  libmtcp.so  /* library to be linked to application */
+  mtcp_restore /* restart done as:  ./mtcp_restore macaulay2.mtcp */
+
+Then look at testmtcp.c for an example of how it is linked in.
+Roughly, at the beginning of the main routine, you add a call
+to mtcp_init().  More verbosely, this example shows some of the flexibility.
+
+  int main () {
+    /* Checkpoint file name is macaulay2.mtcp, checkpoint every
+       10 seconds, start with checkpointing disabled (set to 0) */
+    mtcp_init("macaulay2.mtcp", 10, 0);
+    mtcp_ok(); /* allow checkpointing */
+    mtcp_no(); /* don't allow checkpointing */
+    mtcp_ok(); /* allow checkpointing */
+    ...
+)
+
+Then compile macaulay2, and run as something like:
+  LD_LIBRARY_PATH=_path_to_libmtcp_  macaulay2
+
+If libmtcp.so is installed in a standard place, then it is enough just
+to run    macaulay2   (no LD_LIBRARY_PATH).
+
+
+If you like the functionality and decide you want to use it, we would
+be happy to work with you to customize  MTCP  to fit better with
+the design of macaulay2.
+							Have fun,
+							- Gene
+
