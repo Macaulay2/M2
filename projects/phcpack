@@ -1,0 +1,74 @@
+-*- M2 -*-
+
+Title: interfacing M2 with PHCpack
+
+Description:
+
+    Date: Sat, 24 Nov 2007 11:24:19 -0600 (CST)
+    From: Jan Verschelde <jan@math.uic.edu>
+    To: Michael Stillman <mike@math.cornell.edu>, Dan Grayson <dan@math.uiuc.edu>,
+	    David Eisenbud <de@msri.org>
+    cc: Andrew Sommese <sommese@nd.edu>, Anton Leykin <leykin@math.uic.edu>
+    Subject: Re: Macaulay2 grant
+    In-Reply-To: <00B4506E-AA33-4545-93B7-819950101371@math.cornell.edu>
+
+    Dear Mike, Dan, and David,
+
+    thanks for your email and your interest in using
+    numerical algebraic geometry in Macaulay 2.
+
+    Currently PHCpack is already available as one of
+    the experimental packages in SAGE.  Kathy Piret
+    has collaborated with William Stein on this.
+    As my knowledge of Python has increased this semester,
+    I have plans to polish the PHClib C code and merge it
+    into a Python module in the winter break.
+    We use the PHClib C code in the binding with MPI,
+    used in collaboration with Anton and Yun Guan.
+    Yun Guan has used the MPI toolbox for Octave,
+    when we developed PHClab.  And of course, there
+    is PHCmaple, now being further developed by Anton.
+    Deflation is already implemented in PHCpack
+    -- both in symbolic and in algorithmic form --
+    although its use of linear algebra should be improved.
+    PHCpack is open source (using gcc) and I distribute
+    executable versions for many platforms -- the
+    most recent version (PHCv2.3.34 is about to come out)
+    will also run directly on the MacIntel.
+
+    Writing an interface from Macaulay 2 to PHCpack should
+    be -- at least at first -- a project that one student
+    could handle (like PHClab and PHCmaple).  I am CC-ing
+    Anton in this email, because he knowns both Macaulay 2
+    and PHCpack quite well and he could be the most suitable
+    person to bring such a project then to the next level.
+
+    I would be happy to guide an RA during a summer.
+    As the NSF recently awarded me a new grant, I am not
+    sure if it would be good for me to commit time on
+    your grant as a co-PI, but I am willing to write
+    a letter in which I promise to help guiding a grad
+    student in building an interface from Macaulay 2 to
+    PHCpack, and then -- as I always try to do now --
+    be very responsive to any kind of bugs that will surface.
+
+    Just let me know if you would need a letter from me
+    and when it is due, is it for the computational
+    math program whose due date is in early December?
+
+    Best regards,
+	   Jan
+
+=============================================================================
+
+Proposed by: dan and mike
+Potential Advisor: Jan Verschelde
+Project assigned to: 
+Current status:
+
+=============================================================================
+
+Progress log:
+
+
+
