@@ -214,6 +214,13 @@ assert( 3 === position({a,b,c,d,e,f},i->i===d ) )
 "
 
 document {
+     Key => [position, Reverse],
+     Headline => "search the list in reverse order",
+     Usage => "position(...,Reverse=>true)",
+     Consequences => {"the search is conducted in the reverse direction, starting at the end"}
+     }
+
+document {
      Key => {position,(position, VisibleList, Function)},
      Headline => "find first element of a list satisfying a condition",
      TT "position(v,f)", " -- returns the index of the first element of ", TT "v", " satisfying 
@@ -585,7 +592,7 @@ undocumented {
      (symbol _,Expression,Thing), (symbol _,Thing,Expression)
      }
 
-undocumented {(value, RingElement),(value, Nothing)}
+undocumented {(value, RingElement),(value, Nothing), (value, IndexedVariableTable)}
 
 document {
      Key => {Expression,

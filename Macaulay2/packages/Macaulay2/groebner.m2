@@ -28,8 +28,8 @@ document {
 	  TO "Groebner basis examples and applications",
 	  "fine control of Groebner basis computations",
 	  TO "computing Groebner bases",
-	  TO "partial computation of a Groebner basis",
-	  TO "Hilbert driven Groebner basis",
+	  -- Mike wanted this: TO "partial computation of a Groebner basis",
+	  -- Mike wanted this: TO "Hilbert driven Groebner basis",
 	  --TO "finding a Groebner basis",
 	  --TO "rings that are available for Groebner basis computations",
 	  --TO "fine control of a Groebner basis computation"
@@ -40,10 +40,10 @@ document {
      Key => "Groebner basis examples and applications",
      Subnodes => {
 	  TO "simple Groebner basis computations over various rings",
-	  TO "Groebner bases in local rings",
-	  -- TO "normal forms",
-	  -- TO "elimination of variables",
-	  -- TO "saturation"
+	  -- Mike wanted this: TO "Groebner bases in local rings",
+	  -- this is already a subnode somewhere else: TO "normal forms",
+	  -- this is already a subnode somewhere else: TO "elimination of variables",
+	  -- Mike wanted this: TO "saturation"
 	  }
      }
 
@@ -52,7 +52,7 @@ document {
      "For a definition of Groebner basis, see ", TO "what is a Groebner basis?", ".",
      SUBSECTION "A first Groebner basis",
      SUBSECTION "Weight vectors and non-strict monomial orders",
-        "The monomial order may be given by a weight vector (see ", TO "monomial orders", "),",
+        "The monomial order may be given by a weight vector (see ", TO "monomial orderings", "),",
         EXAMPLE lines ///
 	  R = QQ[a..f,MonomialOrder=>Weights=>{1,1,1,1,0,0}]
 	  I = ideal(a*b*c-d*e*f,a*c*e-b*d*f,a*d*f-b*c*e)

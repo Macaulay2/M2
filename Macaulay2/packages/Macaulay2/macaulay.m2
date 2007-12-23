@@ -131,7 +131,9 @@ document {
 		    LI ("shout -- ", TO "not documented yet"),
 		    LI ("size -- ", TO "not documented yet"),
 		    LI ("smult -- ", TO "*"),
-		    LI ("space -- ", TO "engineMemory"),
+		    LI ("space -- ", 
+			 TO "not documented yet" -- Mike wanted this: TO "engineMemory"
+			 ),
 		    LI ("spairs -- ", TO "not documented yet"),
 		    LI ("spare -- ", TO "not documented yet"),
 		    LI ("sparse -- ", TO "not documented yet"),
@@ -362,9 +364,8 @@ document {
      TT "codim M", ".",
      "One use of this command in Macaulay1 was to compute the codimension 
      of a partially
-     computed Groebner basis.  See ", TO "computing with partial results", 
-     " for examples of doing this.",
-
+     computed Groebner basis.  ",
+     -- Mike wanted this: "See ", TO "computing with partial results", " for examples of doing this.",
      HEADER3 "coef <matrix> <result monoms> <result coefs> [variable list]",
      "To obtain the matrices of monomials and their coefficients, use ", 
      TO "coefficients", ".  The following example obtains the coefficients 
@@ -433,8 +434,8 @@ document {
      only the degree.  Use ", TT "codim M", " to obtain the codimension.",
      "One use of this command in Macaulay1 was to compute the degree
      of a partially
-     computed Groebner basis.  See ", TO "computing with partial results", 
-     " for examples of doing this.",
+     computed Groebner basis.  ",
+     -- Mike wanted this: "See ", TO "computing with partial results", " for examples of doing this.",
 
      HEADER3 "determinants <matrix> <p> <result>",
      "Use ", TT "minors(p,m)", " to compute the ideal of p by p minors

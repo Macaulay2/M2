@@ -671,6 +671,8 @@ document {
 -- GB nodes -------
 -------------------
 
+{*
+-- Mike wanted this: 
 document {
      Key => "Hilbert functions",
      }
@@ -690,6 +692,7 @@ document {
 document {
      Key => "solving systems of polynomial equations",
      }
+*}
 
 /// 
 Plan for the next node:

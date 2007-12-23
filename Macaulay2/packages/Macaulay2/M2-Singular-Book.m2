@@ -7,7 +7,7 @@ document {
 	"Each example is numbered as it is in Greuel and Pfister's book.  Links to 
 	Macaulay2 routines and concepts are also provided. ",
 	PARA{},
-	TO "Macaulay2 implementation bugs and problems",
+	-- Mike wanted this: TO "Macaulay2 implementation bugs and problems",
 	Subnodes => {
 	     "Chapter 1",
 	     TO "Singular Book 1.1.8",
@@ -900,8 +900,8 @@ document {
 	  },
      "H is a subquotient module.  In Macaulay2, the most general form of a
      module is as a subquotient: a submodule of a cokernel module.  For more about
-     subquotient modules, see ", TO "modules", ".  For more about Hom and their
-     corresponding homorphisms, see ", TO "Hom and homomorphisms", ".",
+     subquotient modules, see ", TO "modules", ".  ",
+     -- Mike wanted this: "For more about Hom and their corresponding homorphisms, see ", TO "Hom and homomorphisms", ".",
      EXAMPLE {
 	  "f = homomorphism H_{0}",
           "target f === N",

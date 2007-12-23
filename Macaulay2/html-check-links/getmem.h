@@ -2,7 +2,6 @@
 #define GETMEM_H
 #include <string.h>
 
-#include "config.h"
 #include <gc/gc.h>
 
 extern void outofmem() __attribute__ ((noreturn));

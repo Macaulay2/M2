@@ -16,7 +16,7 @@
 \
 Welcome to Macaulay2!\
 \
-This file tells how to get Macaulay2 installed and running on your MacOS X 10.3 or 10.4 system, for either power pc, or intel macs.  If you have any difficulty with these instructions (which are not complete yet), please email us.\
+This file tells how to get Macaulay2 installed and running on your MacOS X 10.4 or 10.5 system, for either power pc, or intel macs.  If you have any difficulty with these instructions, please email us.\
 \
 
 \f0\b Step 1.  Download and unpack Macaulay2.
@@ -24,11 +24,12 @@ This file tells how to get Macaulay2 installed and running on your MacOS X 10.3 
 \
 In your browser, download one of the files\
 \
-	http://www.math.uiuc.edu/Macaulay2/Downloads/Macaulay2-0.9.95-macosx-ppc.dmg\
-or\
-	http://www.math.uiuc.edu/Macaulay2/Downloads/Macaulay2-0.9.95-macosx-i386.dmg\
+	http://www.math.uiuc.edu/Macaulay2/Downloads/Macaulay2-1.0-macosx-ppc.dmg\
+	http://www.math.uiuc.edu/Macaulay2/Downloads/Macaulay2-1.0-macosx-i386.dmg\
+	http://www.math.uiuc.edu/Macaulay2/Downloads/Macaulay2-1.0-macosx-ppc-64.dmg\
+	http://www.math.uiuc.edu/Macaulay2/Downloads/Macaulay2-1.0-macosx-i386-64.dmg\
 \
-If there is a later version, use that instead. Mount this disk image by double-clicking on it, and drag the Macaulay2 folder in this mounted disk to somewhere on your disk. One possible location is your Applications folder (your system Applications folder, at top level on your main disk).\
+If there is a later version, use that instead. Mount this disk image by double-clicking on it, and drag the Macaulay2 folder in this mounted disk to somewhere on your disk. One possible location is your Applications folder (your system Applications folder, at top level on your main disk).  64 bit versions (which run on G5's or Intel Core 2 Duo's) are available too.\
 \
 
 \f0\b Step 2. Installation
@@ -40,9 +41,11 @@ The easiest way to setup these files is to do the following in a Terminal window
 \
 First change to the Macaulay2 folder (here we suppose that it is in your Applications directory), and then run the 'setup' routine in Macaulay2:\
 \
-	cd /Applications/Macaulay2-0.9.95\
+	cd /Applications/Macaulay2-1.0\
 	cd bin\
-	./M2 -e 'setup();exit 0' \
+	./M2\
+	  setup()  -- this line and the next are typed inside of Macaulay2\
+	  exit\
 \
 It is important that you change the directory to the Macaulay2 folder first.  The 'setup' script uses this information to correctly set the init files.\
 \
@@ -59,7 +62,7 @@ In a Terminal window, type 'M2' (without the quotes).  If Macaulay2 has been ins
 \pard\tx560\tx1120\tx1680\tx2240\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\ql\qnatural\pardirnatural
 
 \f2\fs18 \cf0 	indigo% M2\
-	Macaulay 2, version 0.9.95\
+	Macaulay 2, version 1.0\
 	with packages: Classic, Elimination, LLLBases, PrimaryDecomposition, SchurRings, TangentCone\
 	i1 : \
 \
@@ -140,10 +143,10 @@ The directories "encap" and "local" are used by Macaulay2 to manage installed pa
 \
 You should now be up and running.  From the bookmarked web page, choose 'Macaulay2', and then 'getting started', for a first Macaulay2 session, as well as how to use the Macaulay2 emacs interface.\
 \
-If you have any questions, or problems, please contact one of us, or post a message at our sourceforge web site:\
-	http://sourceforge.net/projects/macaulay2\
+If you have any questions, or problems, please contact one of us, or post a message at our google groups site:\
+	http://groups.google.com/group/macaulay2\
 \
-You may need to create a sourceforge user id in order to post messages, but this is easy: choose the 'create user account' found near the top of the page.\
+You may need to join the group in order to post messages, but this is easy: click on 'Join this group' found on the right-hand side of the page.\
 \
 
 \f0\b Step 5.  Some suggestions to streamline your Macintosh for use with Macaulay2.

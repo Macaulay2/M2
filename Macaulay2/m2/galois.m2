@@ -72,7 +72,7 @@ GF(ZZ,ZZ) := GaloisField => opts -> (p,n) -> (
      if n === 1 then ZZ/p
      else (
 	  x := opts.Variable;
-	  x = if x === null then global a else baseName x;
+	  x = if x === null then getGlobalSymbol "a" else baseName x;
 	  R := (ZZ/p) (monoid [x]);
 	  t := R_0;
 	  while ( f := t^n + sum(n, i-> random p * t^i); not isPrime f) do ();

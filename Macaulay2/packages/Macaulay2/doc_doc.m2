@@ -9,19 +9,18 @@
 -- the changes.
 
 document {  
-     Key => {document,(document, List)},
+     Key => {document,(document, List),[document,SourceCode]},
      Usage => "document { Key => key, ... }",
      Headline => "package item: documentation node",
      Inputs => {
 	  List => {"a hypertext list including special documentation entries; any optional arguments are to be placed in this list"},
-	  Usage => String => "a string giving a template for using the function or feature being documented",
 	  SourceCode => List => "a list of functions whose source code should be displayed in the documentation"
 	  },
      Consequences => {"formatted documentation is created and stored"},
      PARA {
      	  "There are two basic types of documentation.  The first type documents a function or a method, as in ", TO (resolution,Module), ". The second type of 
 	  documentation is for overviews or functions with methods, as in ", TO "chain complexes", " or ", TO resolution, " respectively.
-	  The headings ", TO "Usage", ", ", TO2 {"Function ", "Function"}, ", ", TO "Inputs", ", ", TO "Outputs", ", and ", TO "Consequences", ", are 
+	  The headings ", TO "Usage", ", ", TO "Function", ", ", TO "Inputs", ", ", TO "Outputs", ", and ", TO "Consequences", ", are 
 	  useful only for documentation of the first type."
 	  },
      PARA {
@@ -32,6 +31,7 @@ document {
      Headline => "one line description", -- not needed for overviews
      Usage => "usage",
      BaseFunction => "function", -- usually not needed
+     SourceCode => {METHOD1,...}, -- usually not needed
      Inputs => {
           inputs
 	  },
@@ -61,7 +61,7 @@ document {
      }///,
      PARA "Hypertext markup items that you may use:",
      UL {
-	  TOH "hypertext format",
+	  -- Mike wanted this: TOH "hypertext format",
 	  TOH EXAMPLE,
 	  },
      SeeAlso => {"writing documentation", "conventions for documentation", hypertext}
@@ -97,7 +97,7 @@ document {
 
 
 document { -- This node is used as an example in the node: Consequences 
-     Key => Headline,
+     Key => {Headline,[document, Headline]},
      Headline => "make a headline for a documentation node",
      Usage => "document { Key => key,
      Headline => \"one line description\", ... }",
@@ -112,16 +112,19 @@ document { -- This node is used as an example in the node: Consequences
      SeeAlso => {document, hypertext, TOH}
      }
 document {
-     Key => Usage, 
+     Key => {Usage,[document, Usage]}, 
 	Headline => "shows the usage of a function",
 	Usage => "document { ... , Usage => \"usage\", ... }",
      BaseFunction => document,
 	"The ", TT "Usage", " entry should give a formal example showing the usage of the function. 
 	The variables used in this formal example should be the ones used in the ", TO "Inputs", " and ", TO "Outputs",
-	" sections of the documentation. Here is the code for the ", TT "Usage", " entry of the method ", TO (matrix, List), ":",
+	" sections of the documentation.  Here is the code for the ", TT "Usage", " entry of the method ", TO (matrix, List), ":",
 	PRE ///Usage => "matrix v"///,
 	"Here is the code for the ", TT "Usage", " entry of the method ", TO (resolution, Module), ":",
 	PRE ///Usage => "resolution M\nres M"///,
+	PARA {
+	     "This option also can be used within a ", TO "SYNOPSIS", " section.",
+	     },
 	SeeAlso => {document, Inputs, Outputs} 
 	}
 

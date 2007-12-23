@@ -47,12 +47,24 @@ document {
      }
 
 document {
-     Key => {loadPackage,(loadPackage,String)},
+     Key => {loadPackage,(loadPackage,String),
+	  [loadPackage,FileName],[loadPackage,DebuggingMode],[loadPackage,Configuration],[loadPackage,LoadDocumentation]},
      Headline => "load a package",     
-     Usage => "loadPackage PACKAGENAME",
-     Inputs => { "PACKAGENAME" => String => "the name of the package" },
+     Usage => "loadPackage \"PACKAGENAME\"",
+     Inputs => { 
+	  "PACKAGENAME" => String => "the name of the package",
+	  FileName => String => "the name of the file containing the source code of the package, from which it should be loaded",
+	  LoadDocumentation => Boolean => {"whether to load the documentation of the package, too; see ", TO "beginDocumentation"},
+	  DebuggingMode => Boolean => {
+	       "the value of ", TO "debuggingMode", " during loading the package; specifying it here overrides the 
+	       value specified as an option to ", TO "newPackage", " by the package itself"
+	       },
+	  Configuration => List => {"a list of options ", TT "KEY => VALUE", ", overriding the defaults specified in 
+	       the source code of the package and the (possibly updated) values in the file in the user's application
+	       directory."}
+	  },
      Outputs => { Package => "the package just loaded." },
-     Consequences => { {"Loads the package 'PACKAGENAME' which is in the file 'PACKAGENAME.m2'"} },
+     Consequences => { {"Loads the package PACKAGENAME that is in the file PACKAGENAME.m2"} },
      PARA { "The file ", TT "PACKAGENAME.m2", " should be on the load ", TO "path", "
     	   and should contain a package named ", TT "PACKAGENAME", "." },
      EXAMPLE {
@@ -61,10 +73,22 @@ document {
      SeeAlso => {"packages", "an example of a package", needsPackage, load }
      }
 document {
-     Key => {needsPackage,(needsPackage,String)},
+     Key => {needsPackage,(needsPackage,String),
+	  [needsPackage, LoadDocumentation],[needsPackage,Configuration],[needsPackage,DebuggingMode],[needsPackage,FileName]},
      Headline => "load a package if not already loaded",
-     Usage => "needsPackage PACKAGENAME",
-     Inputs => { "PACKAGENAME" => "the name of the package" },
+     Usage => "needsPackage \"PACKAGENAME\"",
+     Inputs => { 
+	  "PACKAGENAME" => "the name of the package",
+	  FileName => String => "the name of the file containing the source code of the package, from which it should be loaded",
+	  LoadDocumentation => Boolean => {"whether to load the documentation of the package, too; see ", TO "beginDocumentation"},
+	  DebuggingMode => Boolean => {
+	       "the value of ", TO "debuggingMode", " during loading the package; specifying it here overrides the 
+	       value specified as an option to ", TO "newPackage", " by the package itself"
+	       },
+	  Configuration => List => {"a list of options ", TT "KEY => VALUE", ", overriding the defaults specified in 
+	       the source code of the package and the (possibly updated) values in the file in the user's application
+	       directory."}
+	  },
      Outputs => { { "either the ", TO Package, " just loaded, or ", TO null, " if the package has already been loaded."} },
      Consequences => { {"Loads the package ", TT "PACKAGENAME", " in the file ", TT "PACKAGENAME.m2"} },
      PARA { "The file ", TT "PACKAGENAME.m2", " should be on the load ", TO "path", " and should contain a package named ", TT "PACKAGENAME", "." },
@@ -152,8 +176,8 @@ document {
 
 document {
      Key => {(newPackage,String), newPackage, Date, [newPackage,Date], Authors, [newPackage,Authors], Version, [newPackage, Version],
-	  [newPackage,Headline],HomePage, [newPackage,HomePage],[newPackage,DebuggingMode],Email,Name,[newPackage,Configuration],
-	  InfoDirSection, [newPackage,InfoDirSection],[newPackage,AuxiliaryFiles]
+	  [newPackage,Headline],HomePage, [newPackage,HomePage],[newPackage,DebuggingMode],Email,Name,Configuration,[newPackage,Configuration],
+	  InfoDirSection, [newPackage,InfoDirSection],AuxiliaryFiles,[newPackage,AuxiliaryFiles]
 	  }, 
      Headline => "package item: start a new package",
      Usage => "newPackage ( title )",

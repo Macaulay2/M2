@@ -2,7 +2,7 @@
 --- author(s): 
 --- notes: 
 
-undocumented (primaryDecomposition,MonomialIdeal)
+undocumented {(primaryDecomposition,MonomialIdeal)}
 document { 
      Key => {primaryDecomposition,(primaryDecomposition,Ideal)},
      Headline => "irredundant primary decomposition of an ideal",

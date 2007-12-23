@@ -155,7 +155,10 @@ document {
 	       x
 	       y
 	  ///,
-	  PARA "Multiple assignment effectively means that functions can return multiple values usefully.",
+	  PARA {
+	       "Multiple assignment enables functions to return multiple values
+	       usefully.  See ", TO "making functions with multiple return values", "."
+	       },
 	  EXAMPLE lines ///
 	       f = i -> (i,i^2)
 	       (x,y) = f 9

@@ -62,15 +62,17 @@ UNTARCMD ?= tar xzf $(TARFILE)
 
 ifneq (@CURL@,)
 FETCHER = @CURL@
+FETCHOPTS = -o "$(TARFILE)"
 else
 ifneq (@WGET@,)
 FETCHER = @WGET@
+FETCHOPTS = 
 else
 $(error either curl or wget is needed for downloading library source code, please install one of them and reconfigure)
 endif
 endif
 
-.fetched : ; $(FETCHER) $(URL)/$(TARFILE) -o "$(TARFILE)" && touch $@
+.fetched : ; $(FETCHER) $(URL)/$(TARFILE) $(FETCHOPTS) && touch $@
 
 clean ::; rm -rf .patched $(TARDIR) .fetched .untarred $(TARFILE) .compiled .configured .installed .untarred2 diffs tmp
 distclean :: clean ; rm -rf Makefile

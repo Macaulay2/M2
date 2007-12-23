@@ -80,7 +80,8 @@ verifyKey Sequence := s -> (				    -- e.g., (res,Module) or (symbol **, Module,
 verifyKey Array   := s -> (				    -- e.g., [res, Strategy]
      fn := s#0;
      opt := s#1;
-     if not instance(fn, Function) then error "expected first element of document key for optional argument to be a function";
+     if not instance(fn, Function) and not instance(fn, Sequence)
+     then error "expected first element of document key for optional argument to be a function or sequence";
      if not (options fn)#?opt then error("expected ", opt, " to be an option of ", fn))
 
 -----------------------------------------------------------------------------
@@ -114,7 +115,11 @@ mdt := makeDocumentTag Thing := opts -> key -> (
      nkey := normalizeDocumentKey key;
      verifyKey nkey;
      fkey := formatDocumentTag nkey;
-     pkg := if opts#Package =!= null then opts#Package else packageKey fkey;
+     pkg := (
+	  if class nkey === Symbol and package nkey =!= Core then package nkey
+	  else if opts#Package =!= null then opts#Package 
+	  else packageKey fkey
+	  );
      new DocumentTag from {nkey,fkey,pkg,pkgTitle pkg})
 makeDocumentTag String := opts -> key -> (
      m := regex("[[:space:]]*::[[:space:]]*",key);
@@ -222,7 +227,7 @@ getPrimary = tag -> (
      do tag = d#PrimaryTag;
      tag)
 
-fetchPrimaryRawDocumentation := tag -> (
+fetchPrimaryRawDocumentation = tag -> (
      while (
      	  d := fetchRawDocumentation tag;
      	  d =!= null and d#?PrimaryTag
@@ -376,7 +381,11 @@ formatDocumentTag Sequence := record(
 	  else if             fSeq#?(class s#-1,#s)             then fSeq#(class s#-1,#s)
 	  else if             fSeq#?#s                          then fSeq#(#s)
 								else toString) s)
-formatDocumentTag Array := s -> concatenate( toString s#0, "(..., ", toString s#1, " => ...)" )
+formatDocumentTag Array := s -> (
+     if class s#0 === Sequence and # s#0 > 0
+     then concatenate( toString s#0#0, "(",between(",",apply(drop(s#0,1),toString)),", ", toString s#1, " => ...)" )
+     else concatenate( toString s#0, "(..., ", toString s#1, " => ...)" )
+     )
 
 -----------------------------------------------------------------------------
 -- fixing up hypertext
@@ -659,19 +668,23 @@ apropos String := (pattern) -> first \ sort unique select(flatten \\ pairs \ dic
 headline = method(Dispatch => Thing)
 headline Thing := key -> getOption(key,Headline)	    -- old method
 headline FinalDocumentTag := headline DocumentTag := tag -> (
+     if debugLevel > 0 and class DocumentTag.Key tag === Array and first DocumentTag.Key tag === SYNOPSIS then error "debug me";
      d := fetchPrimaryRawDocumentation tag;
      if d === null then (
 	  -- if debugLevel > 0 and formattedKey tag == "Ring ^ ZZ" then error "debug me";
 	  d = fetchAnyRawDocumentation formattedKey tag;    -- this is a kludge!  Our heuristics for determining the package of a tag are bad.
 	  if d === null then (
-	       if signalDocError tag then stderr << "--warning: tag has no documentation: " << tag << ", key " << toExternalString DocumentTag.Key tag << endl;
-	       return "missing documentation";
+	       if signalDocError tag
+	       and DocumentTag.Package tag === currentPackage
+	       then stderr << "--warning: tag has no documentation: " << tag << ", key " << toExternalString DocumentTag.Key tag << endl;
+	       return null;
 	       ));
      if d#?Headline then d#Headline
      else headline DocumentTag.Key tag			    -- revert to old method, eliminate?
      )
 commentize = s -> if s =!= null then concatenate(" -- ",s)
 -----------------------------------------------------------------------------
+isMissingDoc = tag -> null === fetchPrimaryRawDocumentation tag
 isUndocumented = tag -> (
      d := fetchRawDocumentation tag;
      d =!= null and d#?"undocumented" and d#"undocumented" === true)
@@ -851,7 +864,7 @@ processInputOutputItems := (key,fn) -> x -> (
      default := if optsymb =!= null and text =!= null and #text > 0 then (
 	  if fn === null or fn === () then error ("default value for option ",toString optsymb, " not accessible, function not specified");
 	  t := toString (options fn)#optsymb;
-	  if not match("^--Function",t) then SPAN{"default value " ,t});
+	  if not match("^\\{\\*Function",t) then SPAN{"default value " ,t});
      r := SPAN splice between_", " nonnull nonempty { 
 	  if idname =!= null then TT idname, 
 	  if type =!= null and type =!= Nothing then ofClass type, -- type Nothing, treated as above
@@ -860,7 +873,13 @@ processInputOutputItems := (key,fn) -> x -> (
 	  };
      if optsymb =!= null then r = (
 	  if #r == 0
-	  then SPAN between(", ", nonnull ( TO2{ [fn,optsymb], concatenate(toString optsymb," => ...") }, LATER { () -> commentize (headline [fn,optsymb]) } ))
+	  then SPAN between(", ", 
+	       nonnull ( 
+		    TO2{ 
+			 [ if options key =!= null then key else fn, optsymb],
+			 concatenate(toString optsymb," => ...") },
+		    LATER { () -> commentize (headline [fn,optsymb]) }
+		    ))
 	  else SPAN (TT ( toString optsymb, " => " ), r));
      r)
 
@@ -1062,12 +1081,36 @@ help String := key -> (
 	       );
 	  fixup DIV {topheader key, b, caveat key, seealso key, theMenu key}))
 
-optionFor := s -> unique select( value \ flatten(values \ dictionaryPath), f -> instance(f, Function) and (options f)#?s) -- this is slow!
+instances = method()
+instances Type := HashTable => X -> hashTable apply(select(flatten(values \ dictionaryPath), i -> instance(value i,X)), i -> (i,value i))
 
---ret := k -> (
---     t := typicalValue k;
---     if t =!= Thing then fixup DIV {"Class of returned value: ", TO t, commentize headline t}
---     )
+reverseOptionTable := null
+addro := (sym,meth) -> (
+     if not reverseOptionTable#?sym then reverseOptionTable#sym = new MutableHashTable;
+     reverseOptionTable#sym#meth = true;
+     )
+initializeReverseOptionTable := () -> (
+     reverseOptionTable = new MutableHashTable;
+     scan(dictionaryPath, 
+	  d -> scan(values d,
+	       x -> (
+		    x = value x;
+		    if instance(x, Type) then (
+			 scan(pairs x, (m,mf) -> (
+				   if (instance(m,Sequence) or instance(m,MethodFunctionWithOptions)) and instance(mf,Function) 
+				   then (
+					om := options mf;
+					if om =!= null then (
+					     if instance(m,MethodFunctionWithOptions) then m = (m,x);
+					     scanKeys(om, s -> addro(s,m)))))))
+		    else if instance(x, MethodFunctionWithOptions) then (
+			 o := options x;
+			 if o =!= null then scanKeys(o, s -> addro(s,x)))))))
+optionFor := s -> (
+     initializeReverseOptionTable();
+     ret := if reverseOptionTable#?s then keys reverseOptionTable#s else {};
+     reverseOptionTable = null;
+     ret)
 
 documentationValue := method()
 

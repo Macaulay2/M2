@@ -45,6 +45,7 @@ document {
 	      TO "making functions",
 	      TO "local variables in a function",
 	      TO "making functions with a variable number of arguments",
+	      TO "making functions with multiple return values",
 	      TO "making new functions with optional arguments",
 	  "classes and types",
 	      TO "what a class is",
@@ -67,7 +68,7 @@ document {
 	      TO "using sockets",
      	  "packages",
 	      TO "packages",
-	      TO "a sample package: Quaternions",
+	      -- Mike wanted this: TO "a sample package: Quaternions",
      	  "system facilities",
 	      TO "system facilities",
 	  "debugging",
@@ -457,6 +458,33 @@ document {
      values assigned to the parameters ", TT "f", " and ", TT "g", ".",
      PARA{},
      "The class of all functions is ", TO "Function", "."
+     }
+
+document {
+     Key => "making functions with multiple return values",
+     PARA {
+	  "A function may return multiple values by returning ", ofClass Sequence, ".
+	  Multiple assignment (see ", TO "=", ") or multiple local assignment (see ", TO ":=", ")
+	  can be used to assign the values to separate variables, if the number of values to be returned
+	  is known."
+	  },
+     EXAMPLE lines ///
+     	  f = i -> (i, i^2, i^3);
+	  (x,y,z) = f 3
+	  x
+	  y
+	  z
+     ///,
+     PARA {
+	  "Simple assignment may be used if the number of values to be returned is unknown."
+	  },
+     EXAMPLE lines ///
+     	  s = f 4
+	  #s
+	  s_0
+	  s_1
+	  s_2
+     ///
      }
 
 document {
@@ -948,6 +976,16 @@ document {
 sp := seeParsing()
 
 dictionaryPath = select(dictionaryPath, d -> d =!= Core#"private dictionary")
+
+document {
+     Key => seeParsing,
+     Usage => "seeParsing()",
+     Headline => "display parsing precedence table for Macaulay2 operators",
+     PARA {
+	  "We intend to eliminate this function in favor of ", TO "operatorAttributes", "."
+	  },
+     SeeAlso => {"parsing precedence, in detail"}
+     }
 
 document {
      Key => "parsing precedence, in detail",

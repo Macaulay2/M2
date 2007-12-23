@@ -79,7 +79,7 @@ document {
      ", TT "rows", ", and c is the length of the list of integers ", TT "cols", ".  
      The ", TT "(i,j)", "-th entry of the result is ", TT "f_(rows_i, cols_j)", ".",
      PARA{},
-     "Each ", TO "list of integers", " may contain ranges and repetitions, as in ", 
+     "Each list of integers may contain ranges and repetitions, as in ", 
      TT "{3, 5..7, 3:0}",
      PARA{},
      "If ", TT "rows", " or ", TT "cols", " is omitted, all the corresponding indices are used.",
@@ -121,7 +121,7 @@ document {
      c is the length of the list of integers ", TT "cols", ".  
      The ", TT "(i,j)", "-th entry of the result is ", TT "f_(i, cols_j)", ".",
      PARA{},
-     "The ", TO "list of integers", ", ", TT "cols", " may contain ranges and repetitions, as in ", 
+     "The list of integers, ", TT "cols", ", may contain ranges and repetitions, as in ", 
      TT "{3, 5..7, 3:0}",
      PARA{},
      "If the list of column indices is a permutation of 0 .. n-1, where n is
@@ -197,8 +197,8 @@ document {
 	  },
      Outputs => {
 	  {"the result of differentiating ", TT "f", " by the ",
-	       TO2("differential operator corresponding to a polynomial", 
-	       "differential operator"), " corresponding to ", TT "x", "."}
+	       "differential operator", -- Mike wanted this: TO2("differential operator corresponding to a polynomial", "differential operator"),
+	       " corresponding to ", TT "x", "."}
 	  },
      "If ", TT "x", " is an indeterminate this is simply the usual differentiation.",
      EXAMPLE {
@@ -211,7 +211,7 @@ document {
      SeeAlso => {
 	  contract,
 	  jacobian,
-	  "differential operator corresponding to a polynomial",
+	  -- Mike wanted this: "differential operator corresponding to a polynomial",
 	  "diff and contract"
 	  },
      }
@@ -226,8 +226,8 @@ document {
      Outputs => {
 	  Matrix => {"having the same shape as f, whose (i,j) entry is the 
 	       result of differentiating ", TT "f_(i,j)", " by the ",
-	       TO2("differential operator corresponding to a polynomial",
-	       "differential operator"), " corresponding to ", TT "x", "."}
+	       "differential operator", -- Mike wanted this: TO2("differential operator corresponding to a polynomial", "differential operator"),
+	       " corresponding to ", TT "x", "."}
 	  },
      "The shape of the resulting matrix is the same as the shape of f, 
      but the degrees of the source module are different
@@ -241,7 +241,7 @@ document {
      SeeAlso => {
 	  contract,
 	  jacobian,
-	  "differential operator corresponding to a polynomial",
+	  -- Mike wanted this: "differential operator corresponding to a polynomial",
 	  "diff and contract"
 	  },
      }
@@ -255,8 +255,8 @@ document {
 	  },
      Outputs => {
 	  {"the result of differentiating ", TT "g", " by the ",
-	       TO2("differential operator corresponding to a polynomial", 
-	       "differential operator"), " corresponding to each entry of ", TT "f", "."}
+	       "differential operator", -- Mike wanted this: TO2("differential operator corresponding to a polynomial", "differential operator"),
+	       " corresponding to each entry of ", TT "f", "."}
 	  },
      "The shape of the resulting matrix is the same as the shape of f, 
      but the degrees of the source module are different
@@ -271,7 +271,7 @@ document {
      SeeAlso => {
 	  contract,
 	  jacobian,
-	  "differential operator corresponding to a polynomial",
+	  -- Mike wanted this: "differential operator corresponding to a polynomial",
 	  "diff and contract"
 	  },
      }
@@ -286,7 +286,8 @@ document {
      Outputs => {
 	  Matrix => {"with the shape ", TT "h : dual F ** G <--- dual P ** Q", ", whose entry in the slot ", TT {"h", SUB "g*i+j,q*k+l"}, "
 	       is the result of differentiating ", TT { "n", SUB "j,l" }, " by the ",
-	       TO2("differential operator corresponding to a polynomial", "differential operator"), " corresponding to  ", TT {"m", SUB "i,k", "."
+	       "differential operator", -- Mike wanted this: TO2("differential operator corresponding to a polynomial", "differential operator"),
+	       " corresponding to  ", TT {"m", SUB "i,k", "."
 		    }
 	       }
 	  },
@@ -317,7 +318,7 @@ document {
      SeeAlso => {
 	  diff',
 	  contract,
-	  "differential operator corresponding to a polynomial",
+	  -- Mike wanted this: "differential operator corresponding to a polynomial",
 	  "diff and contract"
 	  }
      }
@@ -349,7 +350,7 @@ document {
 	  diff(z, f)
      ///,
      SeeAlso => {
-	  "differential operator corresponding to a polynomial",
+	  -- Mike wanted this: "differential operator corresponding to a polynomial",
 	  "diff and contract",
 	  diff',
 	  contract,
@@ -585,11 +586,11 @@ document {
      Usage => "leadTerm f",
      Inputs => {"f" => "in a polynomial ring"},
      Outputs => { RingElement => {"the lead term of ", TT "f", ""}},
-     "Each polynomial ring comes equipped with a ", TO2("monomial orders", "monomial ordering"),
+     "Each polynomial ring comes equipped with a ", TO2("monomial orderings", "monomial ordering"),
      " and this routine
      returns the lead (greatest) monomial and its coefficient.  
      Recall that the default monomial order is
-     the ", TO "graded reverse lexicographic order", ".",
+     the graded reverse lexicographic order.", -- Mike wanted this: TO "graded reverse lexicographic order"
      EXAMPLE {
 	  "R = QQ[a..d];",
 	  "leadTerm (3*b*c^2-d^3-1)",
@@ -610,7 +611,7 @@ document {
      Inputs => {"f" => "in a polynomial ring"},
      Outputs => { Matrix => {"the lead term matrix of ", TT "f", ""}},
      "In Macaulay2, each free module over a polynomial ring comes equipped with a ", 
-     TO2("monomial orders", "monomial order"),
+     TO2("monomial orderings", "monomial order"),
      " and this routine
      returns the matrix whose ", TT "i", "-th column is the lead term of the ", 
      TT "i", " th column of ", TT "f", ".",
@@ -657,7 +658,8 @@ document {
      Inputs => {"n", "f" => "in a polynomial ring" },
      Outputs => { RingElement => {"the lead term of ", TT "f", " using the first ", TT "n", " parts of the monomial order"}},
      "Returns the sum of the terms of ", TT "f", " which are greatest using the      first ", TT "n", " parts of
-     the monomial order in the ring of ", TT "f", ".  See ", TO "parts of monomial orders", " for an explanation.",
+     the monomial order in the ring of ", TT "f", ".",
+     -- Mike wanted this: "  See ", TO "parts of monomial orders", " for an explanation.",
      PARA{},
      "In the following example, the lead terms using the first part refers to all the
      monomials which have the lead monomial in the indeterminates a and b.  This has a
@@ -679,7 +681,7 @@ document {
      "Returns the matrix whose ", TT "i", "-th column is the lead term of the ", 
      TT "i", "-th column of ", TT "f", ", using the first ", TT "n", " parts 
      of the monomial order.  ",
-     "See ", TO "parts of monomial orders", " for an explanation.",
+     -- Mike wanted this: "See ", TO "parts of monomial orders", " for an explanation.",
      EXAMPLE {
 	  "R = QQ[x,y,z,a..d,MonomialOrder=>ProductOrder{3,4}];",
 	  "f = matrix{{0,x^2*(a+b)}, {a*x+2*b*y, y^2*(c+d)}}",
@@ -696,7 +698,8 @@ document {
 	       " using the first ", TT "n", " parts of the monomial order"}},
      "Compute a ", TO2("Groebner bases", "Groebner basis"), 
      " and return the ideal generated by the lead terms of the Groebner 
-     basis elements using the first n . See ", TO "parts of monomial orders", " for an explanation.",
+     basis elements using the first n.  ",
+     -- Mike wanted this: "See ", TO "parts of monomial orders", " for an explanation.",
      EXAMPLE {
 	  "R = QQ[a..d,MonomialOrder=>ProductOrder{1,3}];",
 	  "I = ideal(a*b-c*d, a*c-b*d)",
@@ -715,7 +718,7 @@ document {
      PARA{},
      "If an initial integer ", TT "n", " is specified, then the returned value contains the sum
      of all of the terms with the greatest value on the first ", TT "n", " ",
-     TO2 ("parts of a monomial order", "parts of the monomial order"), "."
+     "parts of the monomial order." -- Mike wanted this: TO2 ("parts of a monomial order", "parts of the monomial order"), "."
      }
 document {
      Key => {(borel, Matrix),borel,(borel, MonomialIdeal)},

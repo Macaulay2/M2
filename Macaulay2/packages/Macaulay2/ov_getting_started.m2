@@ -33,35 +33,32 @@ document {
 	  TO "a first Macaulay 2 session",
 	  TO "reading the documentation",
 	  TO "getting help or reporting bugs",
-	  TO "what to read next??"
+	  -- Mike wanted this: TO "what to read next??"
 	  }
      }
 
 document {
      Key => "teaching M2 how to find its shared libraries",
-     "Perhaps you know that your M2 executable is locate at ", TT "/foo/bar/bin/M2", ", say, but when you run
+     "Perhaps you know that your M2 executable is located at ", TT "/foo/bar/bin/M2", ", say, but when you run
      it, you get something like this:",
      PRE ////foo/bar/bin/M2
 M2: error while loading shared libraries: liblapack.so: cannot open shared object file: No such file or directory///,
      "What that means is that M2 hasn't been told where its shared libraries are.  Actually, it's the operating
      system that has to be told, since otherwise M2 can't even start up.  Hopefully, the missing shared libraries
      are located in ", TT "/foo/bar/lib", ", and all we have to do is to tell the operating system by
-     setting the environment variable ", TT "LD_LIBRARY_PATH", ".",
-     PARA {},
-     "Alternatively, you may be getting something like this:",
+     setting the environment variable ", TT "LD_LIBRARY_PATH", ", if you are running a Unix operating system.
+     If you have down loaded a version of Macaulay 2 that comes with dynamically loaded libraries of its own,
+     they will be in the directory ", TT concatenate("/foo/bar/",LAYOUT#"libm2"), ".
+     After setting ", TT "LD_LIBRARY_PATH", " temporarily you may use ", TO "setup", " to record the correct value in your 
+     system start up files.",
+     PARA {"Alternatively, you may be getting something like this:"},
      PRE ///$ /foo/bar/bin/M2
 dyld: Library not loaded: /capybara/lib/libgmp.3.dylib
   Referenced from: /foo/bar/bin/M2
   Reason: image not found
 Trace/BPT trap///,
-     "That would mean that you are running under MacOS, and the instructions here may not apply.",
-     PARA {},
-     "The simplest way to teach your operating system how to find M2's shared libraries is to let M2 do it for you.  Assuming that
-     M2 is located at ", TT "/foo/bar/bin/M2", ", run the following command:",
-     PRE ////foo/bar/bin/M2-load-libs///,
-     "and then, in response to Macaulay2's input prompt, enter ", TT "setup()", ".  If that works,
-     the next time you log in or start a new shell, the operating system should know how to find
-     M2's shared libraries, and running ", TT "/foo/bar/bin/M2", " should work, and you can move on to the next step."
+     "That would mean that you are running under Mac OS, and the suggestion above would not apply.  On such systems,
+     Macaulay 2 must be installed in the system application folder, or Macaulay 2 will not be able to find its libraries."
      }
 
 document {
@@ -588,10 +585,12 @@ document {
      try to handle these requests quickly."
      }
 
+{*
+-- Mike wanted this: 
 document {
      Key => "what to read next??",
      }
-
+*}
 
 document {
      Key => "a first Macaulay 2 session",
@@ -830,7 +829,7 @@ found."
 document {
      Key => "emacs",
      "The best way to edit Macaulay 2 code or to run Macaulay 2 is
-     with ", TO2{ "http://www.gnu.org/software/emacs/emacs.html", "GNU emacs"}, ", a versatile text 
+     with ", HREF { "http://www.gnu.org/software/emacs/emacs.html", "GNU emacs"}, ", a versatile text 
      editor written by Richard Stallman.",
      PARA{},
      "There is a version of emacs for Windows NT and Windows 95 called ", TT "NTemacs", ".

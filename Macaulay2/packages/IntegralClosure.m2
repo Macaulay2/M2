@@ -451,17 +451,17 @@ document {
      the integral closure.  Unfortunately, all of the added features 
      currently only work on affine domains.
      The map and the corresponding fractions are obtained as 
-     a matrix using the function ", TT "ICfractions,Ring", " where R is 
+     a matrix using the function ", TO "ICfractions", " where R is 
      an affine domain.  This function can be run without first 
-     using ", TT "integralClosure", ".  The natrual map from ", TT "R", " into 
+     using ", TO "integralClosure", ".  The natural map from ", TT "R", " into 
      its integral closure is obtained using the function ", TO "ICmap", " and 
      the conductor of the integral closure of R into R is found 
      using ", TT "conductor (ICmap R)", ".  Note that 
-     both ", TT "ICfractions", " and ", TT "ICmap", " take the input 
+     both ", TO "ICfractions", " and ", TO "ICmap", " take the input 
      ring ", TT "R", " as input rather than the output 
-     of ", TT "integralClosure", ".  In this way you can use these 
-     functions without running ", TT "integralClosure", ".  The 
-     function ", TT "integralClosure", " is based on
+     of ", TO "integralClosure", ".  In this way you can use these 
+     functions without running ", TO "integralClosure", ".  The 
+     function ", TO "integralClosure", " is based on
      Theo De Jong's paper, An Algorithm for 
      Computing the Integral Closure, J. Symbolic Computation, 
      (1998) 26, 273-277.  This implementation is written and maintained 
@@ -518,13 +518,13 @@ document {
      The map and the corresponding fractions are obtained as 
      a matrix using the function ", TO (ICfractions,Ring), " where R is 
      an affine domain.  This function can be run without first 
-     using ", TT "integralClosure", ".  The natrual map from ", TT "R", " into 
+     using ", TO "integralClosure", ".  The natural map from ", TT "R", " into 
      its integral closure is obtained using the function ", TO "ICmap", " and 
      the conductor of the integral closure of R into R is found 
      using ", TT "conductor (ICmap R)", ".  Note that 
-     both ", TT "ICfractions", " and ", TT "ICmap", " take the input 
+     both ", TO "ICfractions", " and ", TT "ICmap", " take the input 
      ring ", TT "R", " as input rather than the output 
-     of ", TT "integralClosure", ".  In this way you can use these 
+     of ", TO "integralClosure", ".  In this way you can use these 
      functions without running ", TT "integralClosure", ".",
      SeeAlso => {"conductor", "isNormal"},
      }

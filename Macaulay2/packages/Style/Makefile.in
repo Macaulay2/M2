@@ -4,7 +4,7 @@
 
 include ../../../include/config.Makefile
 VPATH = @srcdir@
-IMAGES = up.gif next.gif previous.gif top.gif index.gif null.gif recbg.jpg 9planets.gif Grayson2.jpg toc.gif home.gif
+IMAGES = up.gif next.gif previous.gif top.gif index.gif null.gif recbg.jpg 9planets.gif grayson2005.jpg toc.gif home.gif stillman.jpg
 clean::
 distclean: clean; rm -f Makefile
 install:: @encapdir@/@docpackagesdirtail@/Core/images

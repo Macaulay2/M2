@@ -28,8 +28,18 @@ document {
 document {
      Key => flagLookup,
      Headline => "flag a symbol",
-     TT "flagLookup x", " -- arranges for each subsequent reference to a
-     symbol ", TT "x", " to be flagged with a error message."
+     Usage => "flagLookup x",
+     Inputs => { "x" => Symbol },
+     Outputs => {
+	  Boolean => {"whether each subsequent reference to the symbol ", TT "x", " will result in an error message"}
+	  },
+     Consequences => {{ 
+	       "The first use arranges for each subsequent reference to the symbol ", TT "x", " to result in an error message.
+	       The second use cancels the arrangement.  Each subsequent use toggles the state."
+	       }},
+     PARA {
+	  "To get access to a flagged symbol without signalling an error, use ", TO "getGlobalSymbol", "."
+	  }
      }
 
 document {
@@ -884,11 +894,12 @@ document { Key => Wrap,
      }
 
 document { Key => {BettiTally,
-	  (symbol ++,BettiTally,BettiTally), 
-	  (symbol **,BettiTally,BettiTally), 
+	  (symbol ++,BettiTally,BettiTally), (symbol SPACE,BettiTally,ZZ),
+	  (symbol **,BettiTally,BettiTally), (symbol *,QQ,BettiTally),(symbol *,ZZ,BettiTally),(lift, BettiTally, ZZ),
 	  (symbol SPACE,BettiTally,Array), 
-	  (dual,BettiTally),
-	  (regularity,BettiTally)},
+	  (dual,BettiTally),(degree, BettiTally),(codim, BettiTally),(regularity,BettiTally),(hilbertPolynomial, ZZ, BettiTally),
+	  (hilbertSeries, ZZ, BettiTally),(pdim, BettiTally),(poincare, BettiTally)
+	  },
      Headline => "the class of all Betti tallies",
      "A Betti tally is a special type of ", TO "Tally", " that is printed as a display of 
      graded Betti numbers.  The class was created
@@ -903,26 +914,44 @@ document { Key => {BettiTally,
 	  peek oo
      ///,
      "For convenience, the operations of direct sum (", TO "++", "), tensor product (", TO "**", "), ", 
-     TO "dual", ", ", TO regularity, ", and degree shifting (numbers in brackets), have
+     TO codim, ", ",
+     TO degree, ", ",
+     TO dual, ", ",
+     TO hilbertPolynomial, ", ",
+     TO hilbertSeries, ", ",
+     TO pdim, ", ",
+     TO poincare, ", ",
+     TO regularity, ", and degree shifting (numbers in brackets or parentheses), have
      been implemented for Betti tallies.  These operations mimic the corresponding operations on chain complexes.",
      EXAMPLE lines ///
-     	  t ++ t[-5]
+     	  t(5)
+     	  t[-5]
+     	  t ++ oo
 	  t ** t
 	  dual t
 	  regularity t
      ///,
-     "Different combinations of the degree vectors can be displayed by using ", TO (betti,BettiTally), "."
+     "A Betti tally can be multiplied by an integer or by a rational number, and the values can be lifted
+     to integers, when possible.",
+     EXAMPLE lines ///
+     	  (1/2) * t
+	  2 * oo
+	  lift(oo,ZZ)
+     ///,     
+     "Various combinations of the degree vectors can be displayed by using ", TO (betti,BettiTally), "."
      }
-document { Key => (betti,BettiTally),
+
+document { Key => {(betti,BettiTally)},
      Headline => "view and set the weights of a betti display",
-     Usage => "betti(t, Weights=>w)",
+     Usage => "betti(t, Weights => w)",
      Inputs => { 
 	  "t",
-	  Weights => List => { "w is a list with the same degree length as that of t" }
+	  Weights => List => { "a list of integers, ", TT "w", ", with the same degree length as that of ", TT "t"}
 	  },
-     Outputs => { BettiTally => {"different from the input only in its degree weights.  If ", 
-	       TT "w", " is
-	       non-null, then a new betti tally with new weight values is returned"} },
+     Outputs => {
+	  BettiTally => {"different from the input only in its degree weights.  If ", TT "w", " is
+	       non-null, then a new betti tally with new weight values is returned"}
+	       },
      EXAMPLE lines ///
      	  R = ZZ/101[a..d,Degrees=>{2:{1,0},2:{0,1}},Heft=>{1,1}];
 	  I = ideal random(R^1, R^{2:{-2,-2},2:{-3,-3}});
@@ -1061,6 +1090,7 @@ document { Key => listLocalSymbols,
 	  listLocalSymbols symbol x
      ///,
      SYNOPSIS (
+	  Heading => "listing local symbols with a certain type of value",
      	  Usage => "listLocalSymbols(X,f)",
      	  Inputs => { "X" => Type, "f" => {ofClass{Pseudocode,Symbol,Dictionary,Function}}},
      	  Outputs => { Net => {"a compact display of the symbols in the local dictionaries attached to the closure ", TT "f", ", and their values, provided their

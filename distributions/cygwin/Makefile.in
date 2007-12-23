@@ -23,6 +23,7 @@ $(error expected --enable-encap, in order to make a cygwin package)
 endif
 
 include ../../include/config.Makefile
+include ../Makefile.filenames
 VPATH = @srcdir@
 
 finalprefix=@FINALPREFIX@
@@ -38,17 +39,18 @@ all install :: \
 	@ echo "============================================================================="
 	@ echo "the cygwin package files have been prepared in cygwin/server"
 	@ echo "============================================================================="
-server/setup.ini : ; cd server && PATH=`cd @srcdir@; pwd`:$(PATH) $(MAKE) setup.ini
+server/setup.ini : ; PATH=`cd @srcdir@; pwd`:$(PATH) $(MAKE) -C server setup.ini
 server/Macaulay2 : ; @MKDIR_P@ $@
 server/Macaulay2/@package@-@CYGWIN_RELEASE@.tar.bz2 : Makefile server/Macaulay2 postinstall.sh preremove.sh
 	rm -rf files
 	mkdir files
 	@MKDIR_P@ files$(prefixdir)
-	@FAKEROOT@ tar xzf ../../@PKG_TGZ@ -C files$(prefixdir)
+	@FAKEROOT@ tar xzf ../../$(PKG_TGZ) -C files$(prefixdir)
 	mv files$(prefixdir)/@package@ files$(prefixdir)/$(prefixtail)
 	cd files$(finalprefix) && rm -f INSTALL encapinfo postinstall preremove
 	@MKDIR_P@ files/etc/postinstall files@FINALPREFIX@
 	@INSTALL_PROGRAM@ postinstall.sh files/etc/postinstall/@PACKAGE_TARNAME@.sh
+	@MKDIR_P@ files/etc/preremove files@FINALPREFIX@
 	@INSTALL_PROGRAM@ preremove.sh files/etc/preremove/@PACKAGE_TARNAME@.sh
 ifneq (@FAKEROOT@,)
 	@FAKEROOT@ chown -R root.root files
@@ -74,16 +76,15 @@ endif
 server/Macaulay2/@package@-@CYGWIN_RELEASE@-src.tar.bz2 : server/Macaulay2 mkrt ; @FAKEROOT@ tar cfj $@ @package@-@CYGWIN_RELEASE@/.
 endif
 
-install :: Macaulay2.README Macaulay2.sh
+install :: Macaulay2.README
 	@INSTALL@ -d @encapdir@@FINALPREFIX@/share/doc/Cygwin
 	@INSTALL@ Macaulay2.README @encapdir@@FINALPREFIX@/share/doc/Cygwin
 
 clean ::; rm -rf server files src-files
-distclean : clean; rm -f Makefile Macaulay2.README Macaulay2.sh setup.hint
-Makefile : Makefile.in; cd ..; ./config.status distributions/cygwin/Makefile
-Macaulay2.sh : Macaulay2.sh.in; cd ..; ./config.status distributions/cygwin/Macaulay2.sh
-setup.hint : setup.hint.in; cd ..; ./config.status distributions/cygwin/setup.hint
-Macaulay2.README : Macaulay2.README.in; cd ..; ./config.status distributions/cygwin/Macaulay2.README
+distclean : clean; rm -f Makefile Macaulay2.README setup.hint
+Makefile : Makefile.in; cd ../..; ./config.status distributions/cygwin/Makefile
+setup.hint : setup.hint.in; cd ../..; ./config.status distributions/cygwin/setup.hint
+Macaulay2.README : Macaulay2.README.in; cd ../..; ./config.status distributions/cygwin/Macaulay2.README
 
 # Local Variables:
 # compile-command: "make -C $M2BUILDDIR/distributions/cygwin "

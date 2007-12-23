@@ -17,7 +17,6 @@ pushForward1 = method(
 	  MonomialOrder => EliminationOrder,
 	  StopWithMinimalGenerators => false,            -- determine the minimal generators of the subring
 	  BasisElementLimit => infinity,  -- number of generators of GB in the subring
-
 	  StopBeforeComputation => false,
 	  DegreeLimit => {},
 	  PairLimit => infinity
@@ -117,7 +116,7 @@ pushForward1(RingMap, Module) := Matrix => opts -> (f,M) -> (
 
 pushForward = method (Options => options pushForward1)
 
-pushForward(RingMap, Module) := Module => options -> (f,M) -> (
+pushForward(RingMap, Module) := Module => opts -> (f,M) -> (
      if isHomogeneous f and isHomogeneous M then (
 	  -- given f:R-->S, and M an S-module, finite over R, find R-presentation for M
 	  S := target f;
@@ -126,7 +125,7 @@ pushForward(RingMap, Module) := Module => options -> (f,M) -> (
 	  d := dim M1;
 	  if d > 0 then error("module given is not finite over base: dim of M/vars = "|d);
 	  M2 := subquotient(matrix (basis M1), relations M);
-	  cokernel pushForward1(f,M2,options)
+	  cokernel pushForward1(f,M2,opts)
 	  )
      else error "not implemented yet for inhomogeneous modules or maps"
      )

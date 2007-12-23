@@ -19,7 +19,13 @@ newMonomialIdeal = (R,rawI) -> new MonomialIdeal from {
 
 monomialIdealOfRow := (i,m) -> newMonomialIdeal(ring m,rawMonomialIdeal(raw m, i))
 
-codim Module := opts -> (cacheValue (symbol codim,opts)) (M -> runHooks(Module, symbol codim, (opts,M)))
+codim MonomialIdeal := { Generic => false } >> opts -> m -> (
+     if not opts.Generic and not isAffineRing ring m then error "codim MonomialIdeal: expected an affine ring";
+     rawCodimension raw m)
+codim Module := options (codim,MonomialIdeal) >> opts -> (cacheValue (symbol codim,opts)) (M -> runHooks(Module, symbol codim, (opts,M)))
+codim Ideal := options (codim,Module) >> opts -> I -> codim( cokernel generators I, opts)
+codim PolynomialRing := options (codim,Module) >> opts -> R -> 0
+codim QuotientRing := options (codim,Module) >> opts -> (R) -> codim( cokernel presentation R, opts)
 
 addHook(Module, symbol codim, (opts,M) -> break (
      R := ring M;
@@ -132,9 +138,6 @@ intersect(Sequence) := args -> (
 
 borel MonomialIdeal := MonomialIdeal => (I) -> newMonomialIdeal(ring I, rawStronglyStableClosure raw I)
 isBorel MonomialIdeal := Boolean => m -> rawIsStronglyStable raw m
-codim MonomialIdeal := opts -> m -> (
-     if not opts.Generic and not isAffineRing ring m then error "codim MonomialIdeal: expected an affine ring";
-     rawCodimension raw m)
 
 poincare MonomialIdeal := M -> (
      R := ring M;
@@ -218,7 +221,7 @@ ZZ // MonomialIdeal := (r,I) -> r_(ring I) // forceGB generators I
 
 dim MonomialIdeal := I -> dim ring I - codim I
 
-degree MonomialIdeal := opts -> I -> degree(cokernel generators I, opts)   -- maybe it's faster with 'poincare'
+degree MonomialIdeal := I -> degree cokernel generators I   -- maybe it's faster with 'poincare'
 
 jacobian MonomialIdeal := Matrix => (I) -> jacobian generators I
 

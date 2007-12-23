@@ -1,5 +1,3 @@
-document { Key => Increment, "A symbol used as the name of an optional argument, for some function(s)." }
-
 document {
      Key => {associatedPrimes,(associatedPrimes, Ideal),(associatedPrimes, MonomialIdeal)},
      Headline => "find the associated primes of an ideal",
@@ -24,15 +22,15 @@ document {
 	  "associatedPrimes I"
 	  },
      PARA{},
-     "In general, the associated primes are found using Ext modules: The 
+     "In general, the associated primes are found using Ext modules: the 
      associated primes of codimension ", TT "i", " of ", TT "I", " and ",
      TT "Ext^i(R^1/I,R)", " are identical, as shown in 
      Eisenbud-Huneke-Vasconcelos, Invent. Math. 110 (1992) 207-235.",
      PARA{},
      TO primaryDecomposition, " also computes the associated primes.  After doing 
-     a primaryDecomposition, calling ", TT "associatedPrimes", " requires no new computation,
+     a primaryDecomposition, calling ", TO "associatedPrimes", " requires no new computation,
      and the list of associated primes is in the same order as 
-     the list of primary components returned by ", TT "primaryDecomposition", ".",
+     the list of primary components returned by ", TO "primaryDecomposition", ".",
      PARA{},
      "If the ideal is ", ofClass MonomialIdeal, ", then a more efficient 
      method is used.  This monomial ideal
@@ -177,7 +175,7 @@ document {
      }
 
 document {
-     Key => [primaryComponent,Increment],
+     Key => {[primaryComponent,Increment],Increment},
       "The Increment option value should be an integer.  As explained in ",
       TO (primaryComponent,Ideal,Ideal), " the algorithm, given in 
       Eisenbud-Huneke-Vasconcelos, Invent. Math. 110 (1992) 207-235,

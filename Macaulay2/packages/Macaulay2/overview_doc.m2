@@ -25,27 +25,27 @@ document {
      or templates, and then modify it.",
      UL {
 	  { "package header ", 
-	       TO2("package documentation template", "template"),", ", 
-	       TO2("package documentation example", "example") 
+	       TO2("package documentation template", "template")
+	       -- Bart wanted this: ,", ", TO2("package documentation example", "example") 
 	  },
 	  { "function name ", 
-	       TO2("function name documentation template", "template"),", ", 
-	       TO2("function name documentation example", "example") 
+	       TO2("function name documentation template", "template")
+	       -- Bart wanted this: ,", ", TO2("function name documentation example", "example") 
 	  },
 	  { "function call (includes classes of function arguments) ", 
-	       TO2("function documentation template", "template"),", ", 
-	       TO2("function documentation example", "example") 
+	       TO2("function documentation template", "template")
+	       -- Bart wanted this: ,", ", TO2("function documentation example", "example") 
 	  },
 	  { "optional argument name ", 
-	       TO2("optional argument name documentation template", "template"),", ", 
-	       TO2("optional argument name documentation example", "example") 
+	       TO2("optional argument name documentation template", "template")
+	       -- Bart wanted this: ,", ", TO2("optional argument name documentation example", "example") 
 	  },
 	  { "optional argument ", 
-	       TO2("optional argument documentation template", "template"),", ", 
-	       TO2("optional argument documentation example", "example") 
+	       TO2("optional argument documentation template", "template")
+	       -- Bart wanted this: ,", ", TO2("optional argument documentation example", "example") 
 	  },
-	  { "overview ", TO2("overview documentation template", "template"),", ", 
-	       TO2("overview documentation example", "example") 
+	  { "overview ", TO2("overview documentation template", "template")
+	       -- Bart wanted this: ,", ", TO2("overview documentation example", "example") 
 	  }
      },
      HEADER3 "The documentation writing cycle",
@@ -167,12 +167,11 @@ SeeAlso => {
      
 document {
      Key => "conventions for documentation",
-     "While not hardfast rules, keeping these stylistic conventions
+     "While not hard and fast rules, keeping these stylistic conventions
      in mind makes for easier reading by users",
      UL {
-	  { "Start with a ", TO "documentation template" },
-	  { TO Inputs, ", ", TO Outputs, ", and ", TO Consequences, 
-	       "should not end with periods."}
+	  { "Start with a documentation template, see ", TO "writing documentation", "." },
+	  { TO Inputs, ", ", TO Outputs, ", and ", TO Consequences, "should not end with periods."}
 	  }
      }
 document {
@@ -316,7 +315,14 @@ document {
      }
 
 undocumented {(SYNOPSIS, Sequence),(SYNOPSIS, Thing),(SYNOPSIS, List)}
-document { Key => {SYNOPSIS, Heading},
+
+document {
+     Key => [SYNOPSIS, Heading],
+     "Specifies a subheading for the synopsis.  The default is simply \"Synopsis\"."
+     }
+
+document { Key => {SYNOPSIS,[SYNOPSIS, Usage],[SYNOPSIS, Outputs],[SYNOPSIS, Inputs],[SYNOPSIS, Consequences],
+	  [SYNOPSIS, BaseFunction]},
      PARA {
 	  "This function prepares a standardized synopsis in hypertext for use in documentation nodes."
 	  },
@@ -337,6 +343,9 @@ document { Key => {SYNOPSIS, Heading},
 	  ///
 	  ),
 ",
+     PARA {
+	  "The options are used just as with ", TO "document", "."
+	  },
      "Here is an example of its use.",
      PRE "     SYNOPSIS {
 	  Heading => \"using binary methods for method functions\",

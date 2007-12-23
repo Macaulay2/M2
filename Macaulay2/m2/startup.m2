@@ -356,8 +356,6 @@ showMaps := () -> (
 
 dump := () -> (
      if not version#"dumpdata" then error "not configured for dumping data with this version of Macaulay 2";
-     -- Core := if isGlobalSymbol "Core" then value getGlobalSymbol "Core" else error "dump: Core package not made yet";
-     -- if member(Core#"private dictionary", dictionaryPath) then error "dump: Core private dictionary is open";
      arch := if getenv "M2ARCH" =!= "" then getenv "M2ARCH" else version#"architecture";
      fn := (
 	  if buildHomeDirectory =!= null then concatenate(buildHomeDirectory , "cache/", "Macaulay2-", arch, "-data") else 

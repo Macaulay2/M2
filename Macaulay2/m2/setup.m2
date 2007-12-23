@@ -6,7 +6,17 @@ dashes  = n -> concatenate (n:"-")
 spaces  = n -> concatenate n
 
 -- let's get these reserved variables defined all in the same spot
-a; b; c; d; e; f; g; h; i; j; k; l; m; n; o; p; q; r; s; t; u; v; w; x; y; z; A; B; C; D; E; F; G; H; I; J; K; L; M; N; O; P; Q; R; S; T; U; V; W; X; Y; Z;
+flagLookup a; flagLookup b; flagLookup c; flagLookup d; flagLookup e;
+flagLookup f; flagLookup g; flagLookup h; flagLookup i; flagLookup j;
+flagLookup k; flagLookup l; flagLookup m; flagLookup n; flagLookup o;
+flagLookup p; flagLookup q; flagLookup r; flagLookup s; flagLookup t;
+flagLookup u; flagLookup v; flagLookup w; flagLookup x; flagLookup y;
+flagLookup z; flagLookup A; flagLookup B; flagLookup C; flagLookup D;
+flagLookup E; flagLookup F; flagLookup G; flagLookup H; flagLookup I;
+flagLookup J; flagLookup K; flagLookup L; flagLookup M; flagLookup N;
+flagLookup O; flagLookup P; flagLookup Q; flagLookup R; flagLookup S;
+flagLookup T; flagLookup U; flagLookup V; flagLookup W; flagLookup X;
+flagLookup Y; flagLookup Z
 
 centerString = (wid,s) -> (
      n := width s;

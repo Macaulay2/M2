@@ -23,18 +23,15 @@ document {
 	  [gb,Syzygies],
 	  [gb,SyzygyLimit],
 	  [gb,SyzygyRows],
-	  F4,
-	  Faugere,
-	  Homogeneous2,
-	  Sugarless,
-	  LinearAlgebra
+	  F4, Faugere, Homogeneous2, Sugarless, LinearAlgebra, Toric,
+	  UseSyzygies
 	  },
      Headline => "compute a Groebner basis",
      Usage => "gb I",
      Inputs => {
 	  "I" => "an ideal, module, or matrix",
 	  Algorithm => Symbol => {"possible values: ", TT "Homogeneous", ", ", TT "Inhomogeneous", ", ", TT "Sugarless", ".  Experimental options
-	   include ", TT "Homogeneous2", ", ", TT "F4", ", ", TT "Faugere", " and ", TT "LinearAlgebra"},
+	   include ", TT "Homogeneous2", ", ", TT "F4", ", ", TT "Faugere", ", ", TT "Toric", ", and ", TO "LinearAlgebra"},
      	  BasisElementLimit => ZZ => "stop when this number of (nonminimal) Groebner basis elements has been found",
 	  ChangeMatrix => Boolean => { 
 	       "whether to compute the change of basis matrix from Groebner basis elements to original generators.  Use ", TO "getChangeMatrix", " to recover it."},
@@ -50,8 +47,12 @@ document {
 	  StopBeforeComputation => Boolean => "initializes the Groebner basis engine but return before doing any computation (useful for 
 	    using or viewing partially computed Groebner bases)",
 	  StopWithMinimalGenerators => Boolean => "stop as soon as the minimal set (or a trimmed set, if not homogeneous or local) of generators is known.  Intended for internal use only",
-	  Strategy => {"either ", TT "LongPolynomial", ", ", TT "Sort", ", or a list of these.  ", TT "LongPolynomial", ": use a geobucket data structure while reducing polynomials;
-	   ", TT "Sort", ": sort the S-pairs.  Usually S-pairs are processed degree by degree in the order that they were constructed."},
+	  Strategy => {
+	       "either ", TO "LongPolynomial", ", ", TO "Sort", ", or a list of these.  ", TO "LongPolynomial", ": 
+	       use a geobucket data structure while reducing polynomials;
+	       ", TO "Sort", ": sort the S-pairs.
+	       Another symbol usable here is ", TT "UseSyzygies", ".
+	       Usually S-pairs are processed degree by degree in the order that they were constructed."},
 	  SubringLimit => ZZ => "stop after this number of elements of the Groebner basis lie in the first subring",
 	  Syzygies => Boolean => "whether to collect syzygies on the original generators during the computation.  Intended for internal use only",
 	  SyzygyLimit => ZZ => "stop when this number of non-zero syzygies has been found",
@@ -79,10 +80,16 @@ document {
 	  (generators,GroebnerBasis),
 	  "gbTrace",
 	  installHilbertFunction,
-	  installGroebner,
+	  -- Mike wanted this: installGroebner,
 	  gbSnapshot,
 	  gbRemove
 	  }
+     }
+
+document {
+     Key => GroebnerBasisOptions,
+     "This class is used internally to record the options used with ", TO "gb", " when the resulting Groebner basis is
+     cached inside a matrix."
      }
 
 -- document {

@@ -172,8 +172,6 @@ presentation(PolynomialRing,PolynomialRing) := (R,S) -> (
 	  );
      v)
 
-codim PolynomialRing := opts -> R -> 0
-codim QuotientRing := opts -> (R) -> codim( cokernel presentation R, opts)
 dim QuotientRing := (R) -> (
      if isField R then 0
      else if R.?SkewCommutative then notImplemented()

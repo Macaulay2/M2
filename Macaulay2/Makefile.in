@@ -37,9 +37,6 @@ install install install-others install-Macaulay2 :: @encapdir@/@corecachedirtail
 ################################# util
 initialize::; $(MAKE) -C util all
 distclean clean ::; $(MAKE) DEPENDS=no -C util $@
-################################# html-check-links
-#initialize::; $(MAKE) -C html-check-links all
-distclean clean ::; $(MAKE) DEPENDS=no -C html-check-links $@
 ################################# c
 distclean clean ::; $(MAKE) DEPENDS=no -C c $@
 all justM2 ::; $(MAKE) -C c all
@@ -86,6 +83,10 @@ check ::; $(MAKE) -C packages/Macaulay2/test -k
 distclean clean ::; $(MAKE) -C packages/Macaulay2/test $@
 ################################# packages
 all check install install-others install-Macaulay2 clean distclean ::; $(MAKE) -C packages $@
+################################# html-check-links
+initialize::; $(MAKE) -C html-check-links all
+install ::; $(MAKE) DEPENDS=no -C html-check-links check
+distclean clean ::; $(MAKE) DEPENDS=no -C html-check-links $@
 ################################# probe
 clean distclean ::; $(MAKE) -C probe $@
 ################################# book, currently not made

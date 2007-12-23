@@ -22,7 +22,7 @@ endsWithIdentifier := s -> (
 bigParenthesize = n -> (
      h := height n;
      d := depth n;
-     if h <= 1 and d === 0 then return "(" | n | ")";
+     if (h === 2 or h === 1) and (d === 0 or d === 1) then return "(" | n | ")";
      if h+d <= 1 then return "("^-d | n | ")"^-d;
      (stack("/",h+d-2:"|","\\"))^(h-1) | n | (stack("\\",h+d-2:"|","/"))^(h-1)
      )

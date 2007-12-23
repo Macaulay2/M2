@@ -103,7 +103,7 @@ Ext(Module,Module) := Module => (M,N) -> (
     M' := cokernel ( pM | p ** id_(target pM) );
     N' := cokernel ( pN | p ** id_(target pN) );
     C := complete resolution M';
-    X := global X;
+    X := getGlobalSymbol "X";
     K := coefficientRing A;
     -- compute the fudge factor for the adjustment of bidegrees
     fudge := if #f > 0 then 1 + max(first \ degree \ f) // 2 else 0;

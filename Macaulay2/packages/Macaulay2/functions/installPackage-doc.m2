@@ -2,24 +2,26 @@ document {
      Key => {installPackage,
 	  (installPackage,String),
 	  (installPackage,Package),
-	  [installPackage,AbsoluteLinks], AbsoluteLinks,
-	  [installPackage,CheckDocumentation], CheckDocumentation,
+	  [installPackage,AbsoluteLinks],
+	  [installPackage,CheckDocumentation],
 	  [installPackage,DebuggingMode],
 	  [installPackage,Encapsulate],
-	  [installPackage,IgnoreExampleErrors], IgnoreExampleErrors,
+	  [installPackage,FileName],
+	  [installPackage,IgnoreExampleErrors],
 	  [installPackage,InstallPrefix],
-	  [installPackage,MakeDocumentation], MakeDocumentation,
-	  [installPackage,MakeInfo], MakeInfo,
-	  [installPackage,MakeLinks], MakeLinks,
+	  [installPackage,MakeDocumentation],
+	  [installPackage,MakeInfo],
+	  [installPackage,MakeLinks],
 	  [installPackage,PackagePrefix],
-	  [installPackage,RemakeAllDocumentation], RemakeAllDocumentation,
-	  [installPackage,RerunExamples], RerunExamples,
-	  [installPackage,UserMode], UserMode
+	  [installPackage,RemakeAllDocumentation],
+	  [installPackage,RerunExamples],
+	  [installPackage,UserMode]
 	  },
      Headline => "load and install a package and its documentation ",
      Usage => "installPackage PACKAGENAME",
      Inputs => {
 	  "PACKAGENAME" => {"a ", TO String, " or ", TO Package},
+	  FileName => String => "the name of the file containing the source code of the package, from which it should be loaded",
 	  UserMode => Boolean => { "whether the installation will ignore packages installed in the user's 
 	       ", TO2{"applicationDirectory", "application directory"}, " and will ignore the user's ", TO "initialization file", " when running
 	       examples" 

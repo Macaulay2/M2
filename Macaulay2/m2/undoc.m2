@@ -14,6 +14,7 @@ undocumented {
     (expression, Expression),
     (expression, VisibleList),
     (expression, Ideal),
+    (expression, IndexedVariableTable),
     (expression, ZZ),
     (expression, RingMap),
     (expression, QQ),

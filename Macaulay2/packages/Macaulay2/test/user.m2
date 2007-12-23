@@ -1,6 +1,8 @@
 assert( userSymbols() === {} )
 x = 4
 xx = 4
+assert( userSymbols() === {symbol x, symbol xx} )
+x = symbol x
 assert( userSymbols() === {symbol xx} )
 end
 -- Local Variables:

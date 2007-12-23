@@ -96,7 +96,7 @@ isField B
 T = QQ[symbol x,symbol y]/(x^3-1,y-3)
 F = frac T
 use F
-(x-1)/(x^2+x+1) + (x^2+x+1)/(x-1)
+assert try ((x-1)/(x^2+x+1) + (x^2+x+1)/(x-1); false ) else true
 getNonUnit F
 assert(class getNonUnit F === F)
 

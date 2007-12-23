@@ -3,26 +3,26 @@
 --- notes: 
 
 document {
-     Key => "xdegree (old)",
-     Headline => "the degree",
-     TT "degree X", " -- returns the degree of a polynomial, vector, 
-     matrix, monomial, or module.",
-     PARA{},
-     "The degree may be an integer, or a vector of integers.  The length
-     of that vector is referred to as the 'number of degrees', and is
-     provided by ", TO "degreeLength", ".",
-     PARA{},
-     EXAMPLE {
-	  "R = ZZ/101[x,y,z]",
-      	  "degree (x^2+y^2)^5",
-      	  "F = R^{2,3,4}",
-      	  "v = F_2",
-      	  "degree v",
+     Key => Parenthesize,
+     "This class is used internally to implement the parentheses inserted by ", TO "parts", "."
+     }
+
+document {
+     Key => {(parts,RingElement),parts},
+     Headline => "display a polynomial degree by degree",
+     Usage => "parts f",
+     Inputs => {
+	  "f"
 	  },
-     "The degree of a module of finite length is the same as its length.",
-     EXAMPLE "degree cokernel symmetricPower ( 2, vars R )",
-     PARA{},
-     "Implemented with a method of the same name."
+     Outputs => {
+	  Expression => {"an expression with the terms of ", TT "f", " of the each degree parenthesized, in increasing order"}
+	  },
+     EXAMPLE lines ///
+     	  R = QQ[x,y];
+	  f = (x+y+1)^2
+     	  parts f
+	  ///,
+     SeeAlso => { Parenthesize }
      }
 
 undocumented {
@@ -56,7 +56,9 @@ document {
 	  TO (degree,ChainComplexMap),
 	  TO (degree,GradedModuleMap)
 	  },
-     SeeAlso => {degreeLength, degreesRing, "multigraded polynomial rings"}
+     SeeAlso => {degreeLength, degreesRing
+	  -- Mike wanted this: , "multigraded polynomial rings"
+	  }
      }
 document { 
      Key => (degree,ProjectiveVariety),
@@ -145,22 +147,52 @@ document {
      Outputs => {
 	  ZZ => {"the degree of ", TT "M"}
 	  },
-     "We assume that ", TT "M", " is a graded module over a singly graded 
+     "We assume that ", TT "M", " is a graded (homogeneous) module over a singly graded 
      polynomal ring or a quotient of a polynomial ring, 
      over a field ", TT "k", ".",
-     PARA{},
-     "If ", TT "M", " is finite dimensional over ", TT "k", ", the degree of ", TT "M", " is its dimension over ", TT "k", ".  Otherwise, 
-     the degree of ", TT "M", " is the integer ", TT "d", " such that the hilbert polynomial of ", TT "M", "
-     has the form ", TT "z |--> d z^e/e! + lower terms in z.",
-     EXAMPLE {
-	  "R = ZZ/101[x,y,z];",
-	  "degree cokernel symmetricPower ( 2, vars R )"
+     PARA{
+	  "If ", TT "M", " is finite dimensional over ", TT "k", ", the degree
+	  of ", TT "M", " is its dimension over ", TT "k", ".  Otherwise, the
+	  degree of ", TT "M", " is the multiplicity of ", TT "M", ", i.e., the
+	  integer ", TT "d", " such that the Hilbert polynomial of ", TT "M", "
+	  has the form ", TT "z |--> d z^e/e! + lower terms in z.",
 	  },
-     Caveat => {"The degree in multigraded rings is not defined.  If the base ring is ZZ, it is likely
-	  that the answer is not what you would expect.  Similarly, if the degrees of the variables
+     EXAMPLE lines ///
+	  R = ZZ/101[t,x,y,z];
+	  degree (R^1 / (ideal vars R)^6)
+	  degree minors_2 matrix {{t,x,y},{x,y,z}}
+	  ///,
+     PARA {
+     	  "The algorithm computes the ", TO "hilbertSeries", " of ", TT "M", "
+	  (as a rational function), divides both numerator and denominator by ", TT "1-T", " 
+	  as often as possible, then evaluates both at ", TT "T=1", " and returns
+	  the resulting quotient as a (possibly rational) number.  When the module                                                                                 
+ 	  has finite length, then the rational function is a polynomial, and evaluating                                                                                
+ 	  it at 1 returns the dimension over the ground field, which for a graded (homogenous)
+	  is the same as the length."
+	  },
+     Caveat => {"The degree in multigraded rings is not defined.  If the base ring is ", TO "ZZ", ",
+	  or the module is not homogeneous, it is likely that the answer is not what
+	  you would expect.  Similarly, if the degrees of the variables
 	  are not all one, the answer is harder to interpret."},
-     SeeAlso => {hilbertPolynomial}
+     SeeAlso => {hilbertPolynomial, isHomogeneous}
      }
+
+document { 
+     Key => (length,Module),
+     Usage => "length M",
+     Inputs => {
+	  "M"
+	  },
+     Outputs => {
+	  ZZ => {"the length of ", TT "M"}
+	  },
+     "We assume that ", TT "M", " is a graded module over a singly graded 
+     polynomal ring or a quotient of a polynomial ring, 
+     over a field ", TT "k", ".  In this case, the length is the same as the degree, 
+     see ", TO (degree,Module), "."
+     }
+
 document { 
      Key => (degree,Ring),
      Usage => "degree R",

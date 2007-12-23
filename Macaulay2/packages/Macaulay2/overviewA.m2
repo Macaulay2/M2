@@ -61,7 +61,7 @@ document {
      Key => "varieties",
      HEADER2 "An overview",
      Subnodes => {
-	  TO "algebraic varieties",
+	  -- Mike wanted this: TO "algebraic varieties",
 	  TO "coherent sheaves",
 	  TO "Variety"
 	  },

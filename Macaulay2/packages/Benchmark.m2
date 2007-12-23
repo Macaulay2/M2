@@ -161,21 +161,35 @@ Here is another possible benchmark, but it doesn't work for us yet:
 -- res39: 0.21 seconds
 -- resG25: 2.51 seconds
 
+-- Lenovo/IBM Thinkpad R61i with Core 2 Duo at 1.5 Ghz
+  -- Linux gallium 2.6.22-14-generic #1 SMP Sun Oct 14 23:05:12 GMT 2007 i686 GNU/Linux
+    -- beginning computation Wed Nov 14 18:58:46 CET 2007
+    -- Macaulay2 1.0beta, compiled with gcc 4.1.3
+    -- res39: res of a generic 3 by 9 matrix over ZZ/101: 0.352022 seconds
+    -- resG25: res of the coordinate ring of Grassmannian(2,5): 4.10826 seconds
+    -- gbB148: gb of Bayesian graph ideal #148: 31.818 seconds
+  -- Linux gallium 2.6.22-14-generic #1 SMP Sun Oct 14 21:45:15 GMT 2007 x86_64 GNU/Linux
+    -- beginning computation Wed Nov 14 10:52:29 CST 2007
+    -- Macaulay2 1.0beta, compiled with gcc 4.1.3
+    -- res39: res of a generic 3 by 9 matrix over ZZ/101: 0.252016 seconds
+    -- resG25: res of the coordinate ring of Grassmannian(2,5): 3.66823 seconds
+    -- gbB148: gb of Bayesian graph ideal #148: 32.8221 seconds
+
 -- Lenovo Thinkpad X61, new
--- Linux
--- beginning computation Mon Sep 17 15:03:59 CDT 2007
--- Linux dubnium 2.6.20-16-generic #2 SMP Fri Aug 31 00:55:27 UTC 2007 i686 GNU/Linux
--- Macaulay2 0.9.97, compiled with gcc 4.1.2
--- res39: res of a generic 3 by 9 matrix over ZZ/101: 0.304019 seconds
--- resG25: res of the coordinate ring of Grassmannian(2,5): 3.02419 seconds
--- gbB148: gb of Bayesian graph ideal #148: 22.0254 seconds
--- Windows Vista
--- beginning computation Mon Sep 17 20:37:59 GMTDT 2007
--- CYGWIN_NT-6.0 LENOVO-PC 1.5.24(0.156/4/2) 2007-01-31 10:57 i686 Cygwin
--- Macaulay2 0.9.97, compiled with gcc 3.4.4
--- res39: res of a generic 3 by 9 matrix over ZZ/101: 0.578 seconds
--- resG25: res of the coordinate ring of Grassmannian(2,5): 8.424 seconds
--- gbB148: gb of Bayesian graph ideal #148: 32.916 seconds
+  -- Linux
+    -- beginning computation Mon Sep 17 15:03:59 CDT 2007
+    -- Linux dubnium 2.6.20-16-generic #2 SMP Fri Aug 31 00:55:27 UTC 2007 i686 GNU/Linux
+    -- Macaulay2 0.9.97, compiled with gcc 4.1.2
+    -- res39: res of a generic 3 by 9 matrix over ZZ/101: 0.304019 seconds
+    -- resG25: res of the coordinate ring of Grassmannian(2,5): 3.02419 seconds
+    -- gbB148: gb of Bayesian graph ideal #148: 22.0254 seconds
+  -- Windows Vista
+    -- beginning computation Mon Sep 17 20:37:59 GMTDT 2007
+    -- CYGWIN_NT-6.0 LENOVO-PC 1.5.24(0.156/4/2) 2007-01-31 10:57 i686 Cygwin
+    -- Macaulay2 0.9.97, compiled with gcc 3.4.4
+    -- res39: res of a generic 3 by 9 matrix over ZZ/101: 0.578 seconds
+    -- resG25: res of the coordinate ring of Grassmannian(2,5): 8.424 seconds
+    -- gbB148: gb of Bayesian graph ideal #148: 32.916 seconds
 
 -- beginning computation Tue Apr 11 20:14:38 EDT 2006
 -- Linux mathvader1.math.cornell.edu 2.6.9-34.ELsmp #1 SMP Fri Feb 24 16:56:28 EST 2006 x86_64 x86_64 x86_64 GNU/Linux

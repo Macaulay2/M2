@@ -1,4 +1,4 @@
-AC_INIT(Macaulay 2, 0.9.97, Macaulay2@math.uiuc.edu, Macaulay2) dnl -*- autoconf -*-
+AC_INIT(Macaulay 2, 1.0, Macaulay2@math.uiuc.edu, Macaulay2) dnl -*- autoconf -*-
 AC_SUBST(CYGWIN_RELEASE,2)
 AC_CONFIG_HEADERS(include/config.h)
 AC_CONFIG_FILES(m4_include(config/files))
@@ -96,10 +96,10 @@ AC_CANONICAL_HOST()
 AC_SUBST(ARCH,$build_cpu)
 AC_DEFINE_UNQUOTED(ARCH,"$ARCH",[machine hardware type])
 
-AC_SUBST(DEBIANARCH,"")
+AC_SUBST(UBUNTUARCH,"")
 case $ARCH in
-  x86_64) DEBIANARCH=amd64 ;;
-  *) DEBIANARCH=$ARCH ;;
+  x86_64) UBUNTUARCH=amd64 ;;
+  *) UBUNTUARCH=$ARCH ;;
 esac
 
 AC_VALIDATE_CACHED_SYSTEM_TUPLE()
@@ -292,6 +292,7 @@ AC_SUBST(PACKAGES,"
   ChainComplexExtras
   Benchmark
   Schubert2
+  Browse
 ")
 
 # convert the newlines in the list above to spaces
@@ -367,9 +368,9 @@ then ENCAP=yes STRIP=yes M2TARFILE=yes
      fi
 fi
 
-AC_SUBST(DEBIAN,no)
-AC_ARG_ENABLE(debian,  AS_HELP_STRING(--enable-debian,prepare a binary package for debian (enables encap)), DEBIAN=$enableval)
-test "$DEBIAN" = yes && ENCAP=yes M2TARFILE=yes
+AC_SUBST(UBUNTU,no)
+AC_ARG_ENABLE(ubuntu,  AS_HELP_STRING(--enable-ubuntu,prepare a binary package for ubuntu (enables encap)), UBUNTU=$enableval)
+test "$UBUNTU" = yes && ENCAP=yes M2TARFILE=yes
 
 AC_SUBST(RPM,no)
 AC_ARG_ENABLE(rpm,  AS_HELP_STRING(--enable-rpm,prepare a binary rpm package (enables encap)), RPM=$enableval)
@@ -408,7 +409,8 @@ AC_SUBST(BUILTLIBS,"")
 # this list reflects dependencies
 #  factory needs ntl and gmp, libfac needs factory
 #  lapack needs blas
-AC_SUBST(LIBLIST,"gc gdbm gmp readline ntl factory libfac blas lapack")
+AC_SUBST(LIBLIST, "gc    gdbm    gmp    readline    ntl    factory        libfac blas    lapack")
+AC_SUBST(LIBFILES,"libgc libgdbm libgmp libreadline libntl libcf libcfmem libfac libblas liblapack")
 for i in $LIBLIST
 do eval BUILD_$i=no
 done
@@ -560,7 +562,7 @@ fi
 
 AC_SUBST(FINALPREFIX,/usr)
 AC_ARG_WITH(final-prefix,
-    AS_HELP_STRING(--with-final-prefix=...,final installation prefix (/usr) (used by libtool and debian installation scripts)),
+    AS_HELP_STRING(--with-final-prefix=...,final installation prefix (/usr) (used by libtool and ubuntu installation scripts)),
     FINALPREFIX=$withval)
 case $FINALPREFIX in
     /*) ;;
@@ -667,8 +669,8 @@ AC_SUBST(DESC,$PACKAGE_VERSION-$host_cpu-$OS-$REL)
 # by the 'configure' script, will be simply "alpha".
 
 if ! test "$FAKEROOT"
-then if test "$DEBIAN" = yes -o "$RPM" = yes
-     then AC_MSG_ERROR([program "fakeroot" not installed, required for creating debian or rpm distributions])
+then if test "$UBUNTU" = yes -o "$RPM" = yes
+     then AC_MSG_ERROR([program "fakeroot" not installed, required for creating ubuntu or rpm distributions])
      elif test "$M2TARFILE" = yes
      then AC_MSG_NOTICE([warning: program "fakeroot" not installed, tar file will appear to contain files not owned by root])
      fi

@@ -52,7 +52,9 @@ document {
 	  D = res coker gens (I + ideal(a*b*c))
 	  F = extend(D,C,map(D_0,C_0,1))
 	  ///,
-     SeeAlso => {syz, "kernel, cokernel and image of a map of modules", genericSkewMatrix}
+     SeeAlso => {syz, 
+	  -- Mike wanted this: "kernel, cokernel and image of a map of modules",
+	  genericSkewMatrix}
      }
 
 document { 
@@ -75,5 +77,7 @@ document {
 	  M = genericSkewMatrix(R,a,5)
 	  ker M
 	  ///,
-     SeeAlso => {syz, "kernel, cokernel and image of a map of modules", genericSkewMatrix}
+     SeeAlso => {syz, 
+	  -- Mike wanted this: "kernel, cokernel and image of a map of modules",
+	  genericSkewMatrix}
      }

@@ -29,3 +29,24 @@ time (g,t,s) = smithNormalForm ( f = random(R^8,R^3,MaximalRank=>true) * matrix 
 time assert ( t*f*s == g )
 time assert ( # pivots g == 3 )
 
+S = QQ [x, MonomialOrder => {Position => Down}]
+f = first smithNormalForm(vars S,ChangeMatrix => {true, false})
+debug Core
+assert( degrees raw source f == degrees source raw f )
+
+R = QQ[x]
+assert isHomogeneous minimalPresentation coker vars R
+assert isHomogeneous first smithNormalForm vars R
+
+chk = M -> (
+     (D,P,Q) = smithNormalForm M;
+     assert isHomogeneous D;
+     assert( P*M*Q === D );
+     assert( target P === target D );
+     assert( target M === source P );
+     assert( target Q === source M );
+     assert( source Q === source D );
+     )
+chk vars R
+chk matrix {{x^5}}
+chk matrix {{x^5,x^7},{x^15,x^3}}

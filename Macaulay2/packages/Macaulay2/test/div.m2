@@ -21,9 +21,10 @@ R = QQ[x]
 gcdCoefficients(x,x^2-5)
 rawExtendedGCD(raw x, raw(x^2-5))
 
-R = ZZ[x]
-gcdCoefficients(x,x^2-5)
-rawExtendedGCD(raw x, raw(x^2-5))
+-- this never could have worked:
+-- R = ZZ[x]
+-- gcdCoefficients(x,x^2-5)
+-- rawExtendedGCD(raw x, raw(x^2-5))
 
 R = QQ[x,y]/(x^2-5)
 1//x

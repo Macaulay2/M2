@@ -1,13 +1,26 @@
 scan((
-	  FollowLinks,Hilbert,Options,InstallPrefix,PackagePrefix,Exclude,Encapsulate,
+	  FollowLinks,Hilbert,Options,InstallPrefix,PackagePrefix,Exclude,Encapsulate,CompleteIntersection,MaximalRank,MaxReductionCount,Reverse,
 	  Algorithm,DebuggingMode,Dense,DivideConquer,First,Format,GBDegrees,Hermitian,CoefficientRing,Undo,SourceCode,Description,Variables,
-	  Boxes,BaseRow,HorizontalSpace,VerticalSpace,Alignment,Minimize
+	  Boxes,BaseRow,HorizontalSpace,VerticalSpace,Alignment,Minimize,FileName,Unmixed,Decompose, AbsoluteLinks,
+	  CheckDocumentation, IgnoreExampleErrors, MakeDocumentation, MakeInfo, MakeLinks, RemakeAllDocumentation, RerunExamples, UserMode, Generic,
+	  KeepZeroes,Heading
 	  ),
-     s -> document { Key => s, "A symbol used as the name of an optional argument, for some function(s)." })
+     s -> if s =!= null then document {
+	  Key => s,
+	  Headline => "name for an optional argument",
+	  "A symbol used as the name of an optional argument, for some function(s)."
+	  }
+     )
+
 scan((
-     	  Center, Right, Left, Quotient
+     	  Center, Right, Left, Quotient, Intersection
 	  ),
-     s -> document { Key => s, "A symbol used as the value of an optional argument, for some function(s)." })
+     s -> document {
+	  Key => s,
+	  Headline => "value for an optional argument",
+	  "A symbol used as the value of an optional argument, for some function(s)."
+	  }
+     )
 
 document {
      Key => "initial help",				    -- display by the help command by default
@@ -57,7 +70,7 @@ document {
 	  },
      "Some other potential help topics:",
      UL {
-	  TT "help \"monomial orders\"",
+	  -- Mike wanted this: TT "help \"monomial orders\"",
 	  TT "help \"Groebner bases\"",
 	  TT "help \"multigraded polynomial rings\""
 	  },
@@ -291,13 +304,14 @@ document {
      SeeAlso => ">>" }
 document {
      Key => {(symbol >>, OptionTable, Function),
-	  (symbol >>, List, Function)},
+	  (symbol >>, List, Function),(symbol >>, Boolean, Function)},
      Headline => "attaching options to a function",
      Usage => "g = defs >> fun",
      Inputs => {
 	  "defs" => { "(or ", ofClass List, " of option pairs), 
 	       whose keys are the names of the optional arguments, and whose values are the
-	       corresponding default values"},
+	       corresponding default values.  Alternatively, if ", TT "defs", " is ", TO "true", ",
+	       then all optional arguments are accepted and no defaults are provided."},
 	  "fun" => { "a function that expects optional arguments" }
 	  },
      Outputs => {
@@ -322,8 +336,26 @@ document {
 	  g x
 	  g(x,y,b=>66)
 	  g(t,u,a=>44,b=>77)
+	  h = true >> opts -> args -> {args, opts}
+	  h(t,u,c=>55)
 	  ///,
      SeeAlso => {"making new functions with optional arguments", "OptionTable", "Option", "=>"}
+     }
+
+document {
+     Key => {(symbol ++, OptionTable, OptionTable),(symbol ++, OptionTable, List)},
+     Usage => "x ++ y",
+     Inputs => { "x", "y" },
+     Outputs => {
+	  {"a new ", TO "OptionTable", " obtained by merging x and y, preferring the default values provided by ", TT "y"}
+	  },
+     PARA {
+	  "Alternatively, y can be a list of options."
+	  },
+     EXAMPLE lines ///
+     	  options res ++ { Alpha => Omega }
+     ///,
+     SeeAlso => { Option }
      }
 
 document {
@@ -348,10 +380,20 @@ document {
      "This function should be replaced by something more generally useful."
      }
 document {
-     Key => {baseName,(baseName, Symbol),(baseName, IndexedVariable),(baseName, RingElement),(baseName, Subscript),(baseName, Holder)},
+     Key => {baseName,(baseName, Symbol),(baseName, IndexedVariable),(baseName, RingElement),
+	  (baseName, Subscript),(baseName, Holder),(baseName,IndexedVariableTable)},
      Headline => "the base name of a generator",
-     TT "baseName x", " -- returns the variable or symbol upon which a generator of a
-     monoid or polynomial ring is based."
+     TT "baseName x", " -- returns the variable or symbol upon which an indexed variable table
+     or a generator of a monoid or polynomial ring is based.",
+     EXAMPLE lines ///
+     	  R = QQ[x_1 .. x_4,y]
+	  y
+	  baseName y
+	  x_1
+	  baseName x_1
+	  x
+	  baseName x
+     ///
      }
 document {
      Key => {isIsomorphism,(isIsomorphism, Matrix)},
@@ -522,10 +564,13 @@ document {
      Usage => "options f",
      Inputs => { "f" },
      Outputs => {
-	  { "a hash table whose keys are the names of the optional arguments accepted by the function ", TT "f", " and whose values are the corresponding default values" }
+	  { "a hash table whose keys are the names of the optional arguments accepted by 
+	       the function ", TT "f", " and whose values are the corresponding default values;
+	       or ", TO "true", ", if the function accepts all option names and provides no default values" }
 	  },
      EXAMPLE {
 	  "options res",
+	  "options codim"
 	  }
      }
 document {
@@ -708,14 +753,14 @@ document {
      SeeAlso =>{ ".", "#?" }
      }
 
-undocumented (autoload, Function, String)
+undocumented {(autoload, Function, String)}
 document {
      Key => {(autoload, Symbol, String),autoload},
      Headline => "arrange for a function to be loaded automatically",
      Usage => "autoload(f,x)",
      Inputs => { "f", "x" },
-     Consequences => { "arranges for a function named ", TT "f", " to be automatically loaded from the file ", TT "x", " the first time it is used.
-	  This is accomplished by creating a suitable function that will load the file and assigning the function to ", TT "f", "." },
+     Consequences => {{ "arranges for a function named ", TT "f", " to be automatically loaded from the file ", TT "x", " the first time it is used.
+	  This is accomplished by creating a suitable function that will load the file and assigning the function to ", TT "f", "." }},
      EXAMPLE lines ///
      	  fn = temporaryFileName()
 	  fn << "f = x -> x+1\n" << close
@@ -1004,11 +1049,13 @@ document {
      Key => newClass,
      Headline => "set the class and parent of an object",
      SYNOPSIS (
+	  Heading => "setting the class and parent",
 	  Usage => "newClass(A,B,x)",
 	  Inputs => { "A" => HashTable, "B" => HashTable, "x" },
 	  Outputs => {{"a copy (possibly) of ", TT "x", " with ", TT "A", " as class and ", TT "B", " as parent"}},
 	  ),
      SYNOPSIS (
+	  Heading => "setting the class",
 	  Usage => "newClass(A,x)",
 	  Inputs => { "A" => HashTable, "x" },
 	  Outputs => {{"a copy (possibly) of ", TT "x", " with ", TT "A", " as the new class"}},

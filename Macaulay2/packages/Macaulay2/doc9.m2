@@ -1,4 +1,154 @@
---		Copyright 1993-1999 by Daniel R. Grayson
+-- -*- coding: utf-8 -*-
+--		Copyright 1993-2007 by Daniel R. Grayson 
+
+document {
+     Key => {powermod,(powermod,ZZ,ZZ,ZZ)},
+     Headline => "powers of integers mod N",
+     Usage => "powermod(x,i,N)",
+     Inputs => {
+	  "x" => ZZ,
+	  "i" => ZZ,
+	  "N" => ZZ
+	  },
+     Outputs => {
+	  ZZ => {"the ", TT "i", "-th power of ", TT "x", " modulo ", TT "N"}
+	  },
+     EXAMPLE lines ///
+     	  powermod(2,3,10)
+     	  powermod(2,4,10)
+     	  powermod(2,30000,100000)
+     	  powermod(2,30000,100000000000000000000)
+	  powermod(2,3331333,3331333)
+     ///
+     }     
+
+document {
+     Key => {(markedGB, Matrix, Matrix), markedGB},
+     Usage => "markedGB(lt,m)",
+     Headline => "make a marked Gröbner basis",
+     Inputs => {
+	  "lt" => {"the matrix of monomials in (the columns of) ", TT "m", " to mark as lead terms, with respect to an
+	       unspecified monomial ordering"},
+	  "m" => {"the matrix whose columns are to form the generators of a Gröbner basis"}
+	  },
+     Outputs => {
+	  GroebnerBasis => {"the resulting Gröbner basis"}
+	  }
+     }
+
+document {
+     Key => utf8,
+     Headline => "encode and decode unicode utf-8-encoded strings",
+     SYNOPSIS (
+     	  Usage => "utf8 x",
+	  Inputs => {
+	       "x" => List => {"a list of small natural numbers to serve as character codes"}
+	       },
+	  Outputs => {
+	       String => {"a string obtained by encoding the character codes in ", TT "x", " according to the utf-8 encoding standard"}
+	       },
+	  EXAMPLE lines ///
+	       s = utf8 {119, 111, 51, 32, 25105}
+	  ///
+	  ),
+     SYNOPSIS (
+     	  Usage => "utf8 s",
+	  Inputs => {
+	       "s" => String
+	       },
+	  Outputs => {
+	       List => {"a list of the integer codes obtained by decoding the string ", TT "s", " according to the utf-8 encoding standard"}
+	       },
+	  EXAMPLE lines ///
+	       utf8 s
+	  ///
+	  ),
+     PARA {
+	  "The two operations described above are inverse to each other."
+	  },
+     SeeAlso => {ascii},
+     }
+
+document {
+     Key => "topLevelMode",
+     Headline => "the current top level mode",
+     Usage => "topLevelMode = x",
+     Inputs => {
+	  "x" => Symbol => {TO "TeXmacs", ", or ", TO "Standard"}
+	  },
+     Consequences => {
+	  {"the interpreter will produce input and output prompts appropriate for the mode, and will
+	       format output values appropriately"}
+	  },
+     PARA "This variable is intended for internal use only."
+     }
+
+document {
+     Key => {(httpHeaders,String),httpHeaders},
+     Headline => "prepend http headers to a string",
+     Usage => "httpHeaders s",
+     Inputs => {
+	  "s" => String
+	  },
+     Outputs => {
+	  String => {"the string obtained from ", TT "s", " by prepending appropriate headers to it"}
+	  },
+     PARA {
+	  "This function is experimental, and is intended to support the development of web servers."
+	  },
+     EXAMPLE ///httpHeaders "hi there"///
+     }
+
+document {
+     Key => globalAssign,
+     Headline => "global assignment, in function form",
+     Usage => "globalAssign(s,v)",
+     Inputs => {
+	  "s" => Symbol => "the symbol whose value is to be set",
+	  "v" => Thing => {"the value to be assigned to ", TT "s"},
+	  },
+     Outputs => {
+	  Thing => "v"
+	  },
+     PARA {
+	  "This function mimics what happens in the interpreter when an assignment to a
+	  global variable occurs, and can be useful if the name of the symbol is not
+	  known when the code is written.  If the value changes,
+	  then ", TO "GlobalReleaseHook", " and ", TO "GlobalAssignHook", " are called appropriately."
+	  },
+     EXAMPLE lines ///
+     	  x = y
+	  globalAssign(x,4)
+	  x
+	  y
+     ///
+     }
+
+document {
+     Key => getSymbol,
+     Headline => "make a global symbol from a string",
+     Usage => "getSymbol s",
+     Inputs => {
+	  "s" => String => "the name of the global symbol"
+	  },
+     Outputs => {
+	  Symbol => {"a previously existing global symbol whose name is contained in the string ", TT "s", ", if
+	       one exists and is visible in one of the dictionaries in ", TO "dictionaryPath", ", or, a new
+	       global symbol with that name, created in the first mutable dictionary in ", TO "dictionaryPath", "."
+	       }
+	  },
+     PARA {
+	  "This function mimics what the interpreter does when it encounters and parses the name of a global
+	  symbol, and can be used when the name of the symbol is not known at the time the code is written."
+	  },
+     EXAMPLE lines ///
+     	  x = "aaaa"
+     	  getSymbol x
+	  dictionary oo
+	  ooo === getSymbol x
+     ///,
+     SeeAlso => { getGlobalSymbol }
+     }
 
 document {
      Key => {(Ext,Module,Module),(Ext,Ideal,Ideal),(Ext,Ideal,Module),(Ext,Ideal,Ring),(Ext,Module,Ideal),

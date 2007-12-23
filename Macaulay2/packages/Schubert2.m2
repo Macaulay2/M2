@@ -629,4 +629,8 @@ schubertCycle(FlagBundle,List) := (X,b) -> (
 
 beginDocumentation()
 
--- various demos moved to Schubert2/.
+document {
+     Key => Schubert2,
+     "This package is a preliminary (undocumented) package intended to provide the same functionality
+     as the package ", EM "Schubert", " written for an old version of Maple."
+     }

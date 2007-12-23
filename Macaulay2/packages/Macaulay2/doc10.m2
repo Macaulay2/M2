@@ -325,7 +325,8 @@ assert( rank C_5 == 0 )
 ///
 
 document {
-     Key => {status,(status, GroebnerBasis),(status, Resolution),(status, ChainComplex)},
+     Key => {status,(status, GroebnerBasis),(status, Resolution),(status, ChainComplex),
+	  [status, TotalPairs],[status, Monomials],[status, PairsRemaining]},
      Headline => "status of a resolution computation",
      TT "status C", " -- displays the status of the computation of a
      chain complex ", TT "C", " constructed by ", TO "resolution", ".  The display has
@@ -367,32 +368,6 @@ document {
      Headline => "whether to display the number of monomial",
      TT "Monomials", " -- an option for ", TO "status", " which specifies
      whether to display the number of monomials."
-     }
-
-document {
-     Key => CompleteIntersection,
-     Headline => "provide a hint when computing a radical",
-     TT "CompleteIntersection => J", " -- an option to ", TO "radical", " 
-     which indicates that the ideal ", TT "I", " provided by the user is unmixed,
-     and that ", TT "J", " is an ideal in ", TT "I", " which is a complete intersection of
-     the same codimension.",
-     PARA{},
-     "Providing this option allows a separate, often faster,
-     algorithm to be used to compute the radical.  This option
-     should only be used if ", TT "J", " is nice in some way.  For example,
-     if ", TT "J", " is randomly generated, but ", TT "I", " is relatively sparse, 
-     then this will most likely run slower than just giving the
-     ", TO "Unmixed", " option."
-     }
-
-document {
-     Key => Unmixed,
-     Headline => "provide a hint when computing a radical",
-     TT "Unmixed => true", " -- an option to ", TO "radical", " which asserts
-     that the ideal provided by the user is known to be unmixed.",
-     PARA{},
-     "An ideal is said to be unmixed if all associated primes of R/I
-     have the same dimension.  In this case the algorithm tends to be much faster."
      }
 
 document {
@@ -474,6 +449,12 @@ document {
      PARA{},
      "Accessing a secure web site (whose URL begins with ", TT "https:", ")
      depends on your having installed ", TT "openssl", " on your system."
+     }
+
+document {
+     Key => Descent,
+     "A type of mutable hash table used by ", TO "showUserStructure", ", ", TO "showClassStructure", ", 
+     and ", TO "showStructure", " to display their tree of results conveniently."
      }
 
 document {
@@ -743,6 +724,25 @@ document {
      SeeAlso => {CoherentSheaf, cohomology}
      }
 
+document {
+     Key => {(instances, Type),instances},
+     Usage => "instances X",
+     Inputs => { "X" },
+     Outputs => {{"a hashtable listing global symbols whose values are instances of type ", TT "X"}},
+     EXAMPLE lines ///
+     	  20!
+	  instances ZZ
+	  ///
+     }
+
+document { Key => Core,
+     Headline => "the core part of Macaulay 2",
+     PARA {
+     	  "This package contains the core functionality of Macaulay 2, without the documentation, 
+     	  which is in the package ", TO "Macaulay2", ".  It doesn't get installed in the usual way,
+	  and we hope to rename to ", TO "Macaulay2", " in the future."
+	  }
+     }
 
 -- Local Variables:
 -- compile-command: "make -C $M2BUILDDIR/Macaulay2/m2 "

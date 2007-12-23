@@ -72,7 +72,7 @@ chkopts := x -> if class x === OptionTable then scan(keys x,chkopt0) else if cla
 
 SingleArgWithOptions := (opts,outputs) -> (
      -- chkopts opts;
-     if class opts =!= OptionTable then opts = new OptionTable from opts;
+     if instance(opts, OptionTable) then opts = new OptionTable from opts;
      methodFunction := opts >> 
      o ->
          arg -> (
@@ -88,15 +88,27 @@ BinaryWithOptions := (opts,outputs) -> (
      )
 
 MultipleArgsWithOptions := (methopts,opts,outputs) -> (
-     if class opts =!= OptionTable then opts = new OptionTable from opts;
+     if instance(opts,List) then opts = new OptionTable from opts;
      local innerMethodFunction;
      methodFunction := new MethodFunctionWithOptions from (opts >> o -> arg -> innerMethodFunction(o,arg));
-     innerMethodFunction = newmethod1234c(methodFunction, args -> noMethod(methodFunction,args,outputs), (i,args) -> badClass(methodFunction,i,args), outputs, true);
+     innerMethodFunction = newmethod1234c(
+	  methodFunction,
+	  args -> noMethod(methodFunction,args,outputs),
+	  (i,args) -> badClass(methodFunction,i,args),
+	  outputs,
+	  opts =!= true
+	  );
      methodFunction)     
 MultipleArgsWithOptionsGetMethodOptions := meth -> (frames (frames meth)#0#1)#0#0 -- this recovers the value of methopts
 
 MultipleArgsNoOptions := (methopts,outputs) -> (
-     methodFunction := newmethod1234c(MethodFunction,args -> noMethod(methodFunction,args,outputs), (i,args) -> badClass(methodFunction,i,args), outputs, false)
+     methodFunction := newmethod1234c(
+	  MethodFunction,
+	  args -> noMethod(methodFunction,args,outputs),
+	  (i,args) -> badClass(methodFunction,i,args),
+	  outputs,
+	  null
+	  )
      )
 MultipleArgsNoOptionsGetMethodOptions := meth -> (frames (frames meth)#0#1)#0#0
 
@@ -154,7 +166,7 @@ setupMethods((), {
 use = method()
 use Thing := identity
 
-degree = method ( Options => { Weights => null } )
+degree = method ( )
 
 random = method(Options => {
 	  MaximalRank => false
@@ -208,7 +220,7 @@ setupMethods(TypicalValue => ZZ,
 setupMethods(TypicalValue => List,
      {eulers, genera})
 
-codim = method( Options => { Generic => false })
+codim = method( Options => true )
 radical = method( Options=>{ Unmixed=>false, CompleteIntersection => null, Strategy => Decompose } )
 regularity = method( TypicalValue => ZZ, Options => { Weights => null } )
 primaryDecomposition = method( TypicalValue => List, Options => { Strategy => null } )
@@ -310,15 +322,20 @@ denominator QQ := olddenominator
 
 emptyOptionTable := new OptionTable
 options     Ring := x -> null
-options Sequence := s -> if lookup s =!= null then options lookup s
+options Sequence := s -> (
+     m := lookup s;
+     if m === null then error "method not found";
+     options m)
 
- optionFunction1 := {} >> identity
- optionFunction2 := method(Options => {})
- optionFunction3 := method(Options => {}, Dispatch => Thing)
-options Function := OptionTable => function -> (
-     if functionBody function === functionBody optionFunction1 then first frame function
-     else if functionBody function === functionBody optionFunction2 then notImplemented()
-     else if functionBody function === functionBody optionFunction3 then notImplemented()
+oftab := hashTable {
+     functionBody (method(Options => {})) => f -> notImplemented(),
+     functionBody (method(Options => {}, Dispatch => Thing)) => f -> notImplemented(),
+     functionBody ({} >> identity) => f -> first frame f,
+     functionBody (true >> identity) => f -> null
+     }
+options Function := OptionTable => f -> (
+     fb := functionBody f;
+     if oftab#?fb then oftab#fb f
      )
 
 computeAndCache := (M,options,Name,goodEnough,computeIt) -> (
@@ -455,6 +472,7 @@ protect QuotientRingHook
 -- stashing or caching computed values for future reference in functions that take a mutable hash table as input
 
 CacheFunction = new Type of FunctionClosure
+CacheFunction.synonym = "a cache function"
 net CacheFunction := f -> "{*a cache function*}"
 cacheValue = key -> f -> new CacheFunction from (x -> (
      	  c := try x.cache else x.cache = new CacheTable;
