@@ -20,13 +20,14 @@ smithNormalForm = method(
 	  }
      )
 smithNormalForm Matrix := o -> (f) -> (
+     if not isFreeModule source f or not isFreeModule target f then error "expected map between free modules";
      (tchg,schg,keepz) := (o.ChangeMatrix#0, o.ChangeMatrix#1,o.KeepZeroes);
      (tmat,smat) := (null,null);	-- null represents the identity, lazily
      (tzer,szer) := (null,null);	-- null represents zero, lazily
      R := ring f;
      R' := R[MonomialOrder => Position => Up];
-     f = promote(f,R');
-     g := f;
+     f' := promote(f,R');
+     g := f';
      op := false;	       -- whether we are working on the transposed side
      count := 0;
      while true do (
@@ -75,7 +76,7 @@ smithNormalForm Matrix := o -> (f) -> (
      if op then g = transpose g;
      if tchg then (
 	  if tmat === null
-	  then tchange := id_(target f)
+	  then tchange := id_(target f')
 	  else (
      	       tmat = transpose tmat;
 	       if keepz then (
@@ -85,13 +86,18 @@ smithNormalForm Matrix := o -> (f) -> (
 	       else tchange = tmat));
      if schg then (
 	  if smat === null
-	  then schange := id_(source f)
+	  then schange := id_(source f')
 	  else (
 	       if keepz then (
 	       	    schange = smat | szer;
 	       	    g = g | map(target g, source szer, 0))
 	       else schange = smat));
-     unsequence nonnull ( lift(g,R), if tchg then lift(tchange,R), if schg then lift(schange,R) ))
+     g = lift(g,R);
+     -- D == P f Q ;
+     D := map(R^(numgens target g),,g);			    -- this makes D homogeneous, if possible
+     P := if tchg then map(target D,target f,lift(tchange,R));
+     Q := if schg then map(source f, source D,lift(schange,R));
+     unsequence nonnull ( D, P, Q ))
 
 complement = method()
 
@@ -287,7 +293,7 @@ Matrix % RingElement := (f,r) -> f % (r * id_(target f))    -- this could be spe
 index = method()
 index RingElement := f -> rawIndexIfVariable raw f
 
-degree (RingElement, RingElement) := opts -> (x,f) -> (
+degree (RingElement, RingElement) := (x,f) -> (
      if index x === null then error "expected a variable";
      first max degrees source first coefficients(f,Variables=>x)
      )

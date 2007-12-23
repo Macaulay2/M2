@@ -2,12 +2,41 @@
 --- author(s): caviglia, kummini 
 --- notes: 
 
+document {
+     Key => [betti, Weights],
+     Usage => "betti(..., Weights => w)",
+     Inputs => {
+	  "w" => List => { "a list of integers" }
+	  },
+     PARA {
+	  "The module or chain complex provided should be over a ring whose degree length
+	  (see ", TO "degreeLength", ") is the same as the length of the list ", TT "w", ".
+	  The dot products of w with the multi-degrees occurring will be used to construct
+	  the resulting betti tally (see ", TO "BettiTally", ")."
+	  }
+     }
+
+document {
+     Key => [regularity, Weights],
+     Usage => "regularity(..., Weights => w)",
+     Inputs => {
+	  "w" => List => { "a list of integers" }
+	  },
+     PARA {
+	  "The module or chain complex provided should be over a ring whose degree length
+	  (see ", TO "degreeLength", ") is the same as the length of the list ", TT "w", ".
+	  The dot products of w with the multi-degrees occurring will be used in
+	  the resulting computation."
+	  }
+     }
+
 document { 
-     Key => betti,
+     Key => {betti},
      Headline => "display degrees",
-	"The function ", TT "betti", " displays the degrees of generators and
-	relations of graded modules and ideals."
-      }
+     "The function ", TT "betti", " displays the degrees of generators and
+     relations of graded modules and ideals."
+     }
+
 document { 
      Key => (betti,GroebnerBasis),
      Headline => "diagram of the degrees of a groebner basis",
@@ -29,10 +58,10 @@ document {
      Headline => "display of the degrees of a map",
      Usage => "betti f",
      Inputs => { "f" => Matrix },
-	Outputs => { { "a diagram showing the degrees of the generators of the source and target modules of ", TT "f" } },
+     Outputs => { { "a diagram showing the degrees of the generators of the source and target modules of ", TT "f" } },
      EXAMPLE {
-		   "S = ZZ/10007[x,y];",
-		   "betti matrix{{x^3,x*y^2},{y*x,y^2}}"
+	  "S = ZZ/10007[x,y];",
+	  "betti matrix{{x^3,x*y^2},{y*x,y^2}}"
 	  },
      "For an explanation of the diagram, see ", TO (betti, ChainComplex), ".",
      Caveat => {"The diagram ignores the degree of the map itself."},
@@ -40,8 +69,7 @@ document {
      }
 document { 
      Key => {(betti,Module),(betti,CoherentSheaf)},
-	Headline => "gives the generators and relations of a module or a coherent
-	sheaf.",
+     Headline => "show the degrees of the generators and relations of a module or a coherent sheaf",
      Usage => "betti M",
      Inputs => { "M" => Module => " graded." },
      Outputs => {{ "a diagram showing the degrees of the generators and the relations in the module ", TT "M" }
@@ -66,8 +94,7 @@ document {
      Headline => "display of degrees in a chain complex",
      Usage => "betti C",
      Inputs => { "C" => ChainComplex },
-	Outputs => { { "a diagram showing the degrees of the generators of the
-	modules in ", TT "C"} },
+     Outputs => { { "a diagram showing the degrees of the generators of the modules in ", TT "C"} },
      "The diagram can be used to determine the degrees of the entries in the matrices
      of the differentials in the chain complex, provided they are homogeneous maps
      of degree 0.",

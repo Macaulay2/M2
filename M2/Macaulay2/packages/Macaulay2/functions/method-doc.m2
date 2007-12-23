@@ -5,8 +5,11 @@ document {
      Inputs => {
 	  TypicalValue => Type => { "the type of the value returned by ", TT "f", ", typically.  This information is used only to build
 	       documentation automatically, and is stored in the hash table ", TO "typicalValues", "." },
-	  Options => List => { "a list of options ", TT "J => v", ", where ", TT "J", " is the name of an optional argument for ", TT "f", ", and ", TT "v", " is its default value.
-	       Alternatively, the list of options could be replaced by the corresponding ", TO "OptionTable", "." },
+	  Options => List => { "a list of options ", TT "J => v", ", where ", TT "J", " is the name of an optional argument 
+	       for ", TT "f", ", and ", TT "v", " is its default value.
+	       The list of options could be also replaced by the corresponding ", TO "OptionTable", ".
+	       Specifying ", TT "true", " here indicates that option handling is done by the individual method
+	       functions, which may have various sets of acceptable option names." },
 	  Binary => Boolean => { "whether the method is to be binary: for three arguments or more the result will be computed by calling binary methods installed for
 	       ", TT "f", " with two arguments at a time." },
 	  Dispatch => { "the method for getting a list of types from the parameters; the value of this option should be ", TO "Thing", " or ", TO "Type", "

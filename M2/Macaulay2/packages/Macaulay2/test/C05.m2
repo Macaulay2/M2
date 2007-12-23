@@ -22,6 +22,7 @@ assert ( toString version =!= "version" )
 assert ( version#"VERSION" =!= "" )
 
 -- test override
+--status: fixing this will be a minor improvement to the way functions with optional arguments work
 assert ( override (new OptionTable from {a=>1},(1:(3,4,5))) === (new OptionTable from {a => 1}, 1: (3, 4, 5)) )
 assert ( override (new OptionTable from {a=>1},((3,4,5),a=>2)) === (new OptionTable from {a => 2}, (3, 4, 5)) )
 

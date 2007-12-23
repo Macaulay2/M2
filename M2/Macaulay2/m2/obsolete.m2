@@ -1,11 +1,5 @@
 --		Copyright 1997-2002 by Daniel R. Grayson
 
-scan({autoReduce,ConvertJoin,ConvertRepeat,ConvertApply},
-     s -> (
-	  undocumented s;
-	  s <- X -> error ("'", s, "' has been removed");
-	  ))
-
 undocumented unlist
 unlist = X -> error "'unlist' has been replaced by toSequence"
 

@@ -40,6 +40,18 @@ document {
      }
 
 document {
+     Key => {"powers",
+	  (symbol ^,RingMap,ZZ)
+	  },
+     Usage => "x^n",
+     Inputs => { 
+	  "x" => { ofClass{RingMap} },
+	  "n" => ZZ
+	  },
+     Outputs => { {"the ", TT "n", "-th power of ", TT "x"} }
+     }
+
+document {
      Key => {(symbol SPACE, RingMap, RingElement),
 	  (symbol SPACE, RingMap, Ideal),
 	  (symbol SPACE, RingMap, Matrix),

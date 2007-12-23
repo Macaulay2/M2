@@ -190,7 +190,7 @@ GradedModuleMap == ZZ := (f,i) -> (
      else source f == target f and f == i id_(source f))
 ZZ == GradedModuleMap := (i,f) -> f == i
 
-degree GradedModuleMap := opts -> G -> G.degree
+degree GradedModuleMap := G -> G.degree
 
 directSum GradedModule := GradedModule => M -> directSum(1 : M)
 GradedModule.directSum = v -> (

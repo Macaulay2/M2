@@ -1,3 +1,49 @@
+## Building a disk image for Macaulay2 on MacOSX from source code
+## On 10.4, make sure that you have installed subversion (svn)
+## On 10.5, subversion comes standard with leopard.
+
+cd
+mkdir M2-builds
+mkdir M2-builds/Macaulay2-1.0
+cd M2-builds/Macaulay2-1.0
+svn co  svn://macaulay2.math.uiuc.edu/Macaulay2/release-branches/1.0 M2-1.0
+cd M2-1.0
+make
+cd ..
+mkdir installed
+mkdir build
+cd build
+### now make it
+../M2-1.0/configure --prefix=/Users/mike/M2-build/Macaulay2-1.0/installed \
+  --enable-experimental-code LIBS=-lgcc_s.10.5 \
+  --enable-build-libraries="gc gdbm gmp readline ntl factory libfac"
+make
+make install
+cd ../installed
+#VERSION=`grep AC_INIT ../M2/configure.ac | awk -F, '{print $2}'`
+VERSION=1.0
+cp ../M2-1.0/arch/MacOSX/ReadMe-MacOSX.rtf .
+cp ../M2-1.0/arch/MacOSX/ReadMe-MacOSX.rtf Macaulay2-$VERSION/
+rm Macaulay2-$VERSION/encapinfo
+rm Macaulay2-$VERSION/postinstall
+rm Macaulay2-$VERSION/preremove
+cd .. # to original directory
+hdiutil create -srcfolder installed -volname Macaulay2-$VERSION-`uname -m` Macaulay2-$VERSION-macosx-`uname -m`.dmg
+hdiutil create -srcfolder installed -volname Macaulay2-$VERSION-ppc Macaulay2-$VERSION-macosx-ppc.dmg
+scp Macaulay2-$VERSION-macosx-`uname -m`.dmg ssh.math.uiuc.edu:~
+scp Macaulay2-$VERSION-macosx-ppc.dmg ssh.math.uiuc.edu:~
+
+
+../../configure --prefix=/Users/mike/M2-builds/Macaulay2-1.0/installed \
+  --enable-experimental-code --enable-static \
+  --enable-build-libraries="gc gdbm gmp readline ntl factory libfac blas lapack"
+
+
+svn co svn://macaulay2.math.uiuc.edu/Macaulay2/trunk/M2 M2
+cd M2
+make
+
+
 ## Building Macaulay2
 
 svn co svn://macaulay2.math.uiuc.edu/Macaulay2/trunk/M2 M2

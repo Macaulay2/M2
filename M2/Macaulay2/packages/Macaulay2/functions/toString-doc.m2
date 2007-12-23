@@ -8,6 +8,8 @@ undocumented {
     (toString, Array),
     (toString, Power),
     (toString, QQ),
+    (toString, Parenthesize),
+    (toString, IndexedVariableTable),
     (toString, Subscript),
     (toString, SparseMonomialVectorExpression),
     (toString, Package),

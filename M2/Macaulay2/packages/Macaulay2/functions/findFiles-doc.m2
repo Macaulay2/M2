@@ -1,6 +1,6 @@
 --- author(s): dan
 document { 
-     Key => {(findFiles,String),findFiles},
+     Key => {(findFiles,String),findFiles,[findFiles, Exclude],[findFiles, FollowLinks]},
      Headline => "find files recursively",
      Usage => "findFiles p",
      Inputs => {

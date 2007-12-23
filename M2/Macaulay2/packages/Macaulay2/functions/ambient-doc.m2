@@ -156,7 +156,7 @@ document {
 	  },
      Caveat => {},
      SeeAlso => {
-	  "homomorphisms of modules",
+	  -- Mike wanted this: "homomorphisms of modules",
 	  (cover,Module),
 	  (cover,Matrix),
 	  (matrix,Matrix)}

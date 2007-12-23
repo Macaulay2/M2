@@ -34,3 +34,18 @@ document {
 	  },
      SeeAlso => {index, (indices,RingElement), (symbol_,Ring,ZZ)}
      }
+
+document { 
+     Key => {(support,Ideal)},
+     Headline => "list of variables occuring in the generators of an ideal",
+     Usage => "support I",
+     Inputs => { "I" => "an ideal in a polynomial ring" },
+     Outputs => {
+	  List => {"of ", TO2 (RingElement, "ring elements"), ", the variables occuring in the generators of the ideal"}
+	  },
+     EXAMPLE lines ///
+	  R = QQ[a..g]
+	  I = ideal(b,c,e+f)
+	  support I
+	  ///
+     }

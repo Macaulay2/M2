@@ -3,10 +3,23 @@
 --- notes: 
 
 document { 
-     Key => {radical, (radical,Ideal),  (radical,MonomialIdeal)},
+     Key => {radical, (radical,Ideal),(radical,MonomialIdeal),[radical,Strategy],[radical,Unmixed],[radical,CompleteIntersection]},
      Headline => "the radical of an ideal",
      Usage => "radical I",
-     Inputs => { "I" => Ideal },
+     Inputs => { 
+	  "I" => Ideal,
+	  Unmixed => Boolean => {"whether it is known that the ideal ", TT "I", " is unmixed.  The ideal ", TT "I", " is
+	       said to be unmixed if all associated primes of ", TT "R/I", "
+     	       have the same dimension.  In this case the algorithm tends to be much faster."},
+	  Strategy => {"the strategy to use, either ", TT "Decompose", " or ", TT "Unmixed"},
+	  CompleteIntersection => Ideal => {"an ideal ", TT "J", " of the same height as ", TT "I", " whose
+	       generators form a maximal regular sequence contained in ", TT "I", ".
+	       Providing this option as a hint allows a separate, often faster, algorithm to be used to compute the radical.  This option
+     	       should only be used if ", TT "J", " is nice in some way.  
+	       For example, if ", TT "J", " is randomly generated, but ", TT "I", " is relatively sparse, 
+     	       then this will most likely run slower than just giving the ", TO "Unmixed", " option."
+	       },
+	  },
      Outputs => {
 	  Ideal => {"the radical of ", TT "I", " ."}
 	  },

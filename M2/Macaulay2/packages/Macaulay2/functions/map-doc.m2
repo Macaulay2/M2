@@ -304,7 +304,9 @@ document {
      EXAMPLE {
       	  "p = map(R^2,3,{(0,0) => x+y, (1,1) => x^2, (0,2) => x-1, (0,0) => x-y})"
 	  },
-     SeeAlso => {matrix, (map,Module,Nothing,List), "input a matrix"}
+     SeeAlso => {matrix, (map,Module,Nothing,List)
+	  -- Mike wanted this: , "input a matrix"
+	  }
      }
 document {
      Key => (map,Module,Nothing,List),
@@ -349,7 +351,9 @@ document {
       	  "degrees source f",
       	  "isHomogeneous f",
 	  },
-     SeeAlso => {matrix, (map,Module,Module,List), "input a matrix"}
+     SeeAlso => {matrix, (map,Module,Module,List)
+	  -- Mike wanted this: , "input a matrix"
+	  }
      }
 document {
      Key => (map,Ring,Ring,Matrix),

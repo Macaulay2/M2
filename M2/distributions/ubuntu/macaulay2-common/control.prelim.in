@@ -1,0 +1,17 @@
+Package: macaulay2-common
+Version: @PACKAGE_VERSION@
+Section: math
+Priority: extra
+Maintainer: Daniel R. Grayson <dan@math.uiuc.edu>
+Architecture: all
+Description: a software system for algebraic geometry research
+ Macaulay 2 is a software system for algebraic geometry research, written by
+ Daniel R. Grayson and Michael E. Stillman.  Based on Groebner bases, it
+ provides algorithms for computing homological invariants of rings and
+ modules.
+ .
+ Home page: http://www.math.uiuc.edu/Macaulay2/.
+ .
+ This package contains the architecture independent portion of Macaulay2, and is
+ normally installed automatically when one of the architecture dependent packages
+ is installed.

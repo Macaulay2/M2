@@ -9,6 +9,70 @@ extern int yyparse(void);
 extern int yydebug;
 #endif
 
+static char *tab[][2] = {
+   {" " , "sp"},
+   {"*" , "st"},
+   {"|" , "vb"},
+   {"(" , "lp"},
+   {")" , "rp"},
+   {"<" , "lt"},
+   {">" , "gt"},
+   {"&" , "am"},
+   {"@" , "at"},
+   {"=" , "eq"},
+   {"," , "cm"},
+   {"#" , "sh"},
+   {"+" , "pl"},
+   {"$" , "do"},
+   {"%" , "pc"},
+   {"'" , "sq"},
+   {"/" , "sl"},
+   {":" , "co"},
+   {";" , "se"},
+   {"?" , "qu"},
+   {"\"", "dq"},
+   {"\\", "bs"},
+   {"_" , "us"}
+};
+
+static char *lookup(char b, char c) {
+  int i;
+  for (i=0; i < sizeof(tab)/sizeof(*tab); i++) {
+    if (tab[i][1][0] == b &&tab[i][1][1] == c) return tab[i][0];
+  }
+  return NULL;
+}
+
+static char buf[1000];
+static int bufpos;
+static void addchar(char c) {
+  if (bufpos < sizeof(buf)-1) buf[bufpos++]=c;
+}
+
+char *demangle (char *s) {
+  char *p;
+  int c=0, b=0, a=0;
+  bufpos = 0;
+  while (1) {
+    if (a != 0) addchar(a);
+    a=b;
+    b=c;
+    c=*s++;
+    if (c == 0) break;
+    if (b == '/' && c == '_') c=0;
+    else if (a == '_' && b == '_') a=b=0;
+    else if (a == '_') {
+      p = lookup(b,c);
+      if (p != NULL) a=b=c=0, addchar(*p);
+    }
+  }
+  if (a != 0) addchar(a);
+  if (b != 0) addchar(b);
+  if (c != 0) addchar(c);
+  addchar(0);
+  return buf;
+}
+
 static char *dir(char *s) {
   char *t = strrchr(s,'/');
   if (t == NULL) return "";
@@ -31,7 +95,7 @@ static void process(char *f) {
 int main(int argc, char **argv) {
   int i = 1;
 # ifdef DEBUG
-    yydebug = 1;
+  /*    yydebug = 1; */
 # endif
   if (argc > i+1 && 0 == strcmp("--root",argv[i])) rootname = argv[i+1], i += 2;
   for (; i<argc; i++) process(argv[i]);

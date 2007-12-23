@@ -24,29 +24,29 @@ use basic;
 use struct;
 use objects;
 -----------------------------------------------------------------------------
-isOption(c:HashTable,e:Expr):bool := (
+isOption(e:Expr):bool := (
      when e
      is b:List do b.class == optionClass && length(b.v) == 2 
-     is q:HashTable do q.class == c
+     is q:HashTable do q.class == optionTableClass
      else false
      );
-numOptions(c:HashTable,w:Sequence):int := (
+numOptions(w:Sequence):int := (
      n := 0;
-     foreach x in w do if isOption(c,x) then n = n+1;
+     foreach x in w do if isOption(x) then n = n+1;
      n);
 override(h:HashTable,v:Sequence,numopts:int):Expr := (
      numargs := length(v) - numopts;
      newargs := nullE;
      if numargs == 0 then (newargs = emptySequenceE;)
-     else if numargs == 1 then foreach x in v do (if !isOption(h.class,x) then newargs = x)
+     else if numargs == 1 then foreach x in v do (if !isOption(x) then newargs = x)
      else (
 	  newargs = Expr(
 	       new Sequence len numargs do (
-	       	    foreach x in v do if !isOption(h.class,x) then provide x));
+	       	    foreach x in v do if !isOption(x) then provide x));
 	  );
      z := copy(h);
      z.mutable = true;
-     foreach x in v do if isOption(h.class,x) then (
+     foreach x in v do if isOption(x) then (
 	  when x is b:List do (
 	       key := b.v.0;
 	       keyhash := hash(key);
@@ -64,18 +64,50 @@ override(h:HashTable,v:Sequence,numopts:int):Expr := (
 	  );
      sethash(z,h.mutable);
      Expr(Sequence(Expr(z),newargs)));
+emptyOptionTable := newHashTable(optionTableClass,nothingClass);
+override(v:Sequence,numopts:int):Expr := (
+     numargs := length(v) - numopts;
+     newargs := nullE;
+     if numargs == 0 then (newargs = emptySequenceE;)
+     else if numargs == 1 then foreach x in v do (if !isOption(x) then newargs = x)
+     else (
+	  newargs = Expr(
+	       new Sequence len numargs do (
+	       	    foreach x in v do if !isOption(x) then provide x));
+	  );
+     z := copy(emptyOptionTable);
+     z.mutable = true;
+     foreach x in v do if isOption(x) then (
+	  when x is b:List do (
+	       key := b.v.0;
+	       keyhash := hash(key);
+	       r := storeInHashTable(z,key,keyhash,b.v.1);
+	       when r is Error do return r else nothing;
+	       )
+	  is y:HashTable do (
+	       foreach bucket in y.table do (
+		    q := bucket;
+		    while q != q.next do (
+			 r := storeInHashTable(z,q.key,q.hash,q.value);
+			 when r is Error do return r else nothing;
+			 q = q.next)))
+	  else nothing;					    -- shouldn't occur
+	  );
+     sethash(z,false);
+     Expr(Sequence(Expr(z),newargs)));
 override(e:Expr):Expr := (
      when e is args:Sequence do (
 	  if length(args) == 2 then (
-	       when args.0 is h:HashTable do (
+	       when args.0
+	       is h:HashTable do (
 		    if h.mutable then WrongArg("an immutable hash table")
-		    else when args.1 is v:Sequence do (
-			 n := numOptions(h.class,v);
-			 if n == 0 then e else override(h,v,n)
-			 )
-		    else (
-			 if !isOption(h.class,args.1) then e
-			 else override(h,Sequence(args.1),1)))
+		    else when args.1 is v:Sequence do override(h,v,numOptions(v))
+		    else override(h,Sequence(args.1),if isOption(args.1) then 1 else 0)
+		    )
+	       is Nothing do (
+		    when args.1 is v:Sequence do override(v,numOptions(v))
+		    else override(Sequence(args.1),if isOption(args.1) then 1 else 0)
+		    )
 	       else WrongArg(1,"a hashtable"))
 	  else WrongNumArgs(2))
      else WrongNumArgs(2));

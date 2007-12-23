@@ -228,8 +228,9 @@ document {
      "Notice the use of ", TO ":", " above to indicate repetition.",
      PARA{},
      "If the variables of the ring have multi-degrees represented by
-     lists (vectors) of integers, as described in
-     ", TO "multi-graded polynomial rings", ", then the degrees of a
+     lists (vectors) of integers,",
+     -- Mike wanted this: " as described in ", TO "multi-graded polynomial rings", ",",
+     " then the degrees of a
      free module must also be multi-degrees.",
      EXAMPLE {
 	  "S = ZZ[a,b,c, Degrees=>{{1,2},{2,0},{3,3}}]",
@@ -238,7 +239,7 @@ document {
 	  "degree (a*b*N_1)",
 	  },
      SeeAlso => {
-	  "multigraded polynomial rings",
+	  -- Mike wanted this: "multigraded polynomial rings",
 	  "graded modules"
 	  },
      }
@@ -798,9 +799,11 @@ document {
      }
 
 -- no links to this node
+{* -- Mike wanted this: 
 document {
      Key => "kernel, cokernel and image of a map of modules",
      }
+*}
 
 -- no links to this node
 document {
@@ -815,6 +818,8 @@ document {
 	  },
      "Include here: generators, relations."
      }
+
+{* -- Mike wanted this: 
 
 -- no links to this node
 document {
@@ -836,4 +841,5 @@ document {
 document {
      Key => "Hom module",
      }
+*}
 

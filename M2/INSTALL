@@ -274,7 +274,7 @@ In that case, files will be installed in the following directories:
 
 To make an encapsulated directory tree or distribution tarball
 suitable for use with the program epkg (see
-http://encap.cites.uiuc.edu/), replace the configuration command with:
+http://www.encap.org/epkg/), replace the configuration command with:
 
 	./configure
 

@@ -124,9 +124,11 @@ document {
      geometry and the predecessor of this program."
      }
 
+{* -- Mike wanted this: 
 document {
      Key => "preface",
      }
+*}
 
 document {
      Key => "LAYOUT",
@@ -138,7 +140,7 @@ document {
 	  the main Macaulay 2 system.  The remaining entries are functions.  These provide paths to various
 	  types of files associated with packages, and accept a string containing the name of the package
 	  as argument.  Finally, for convenience, many Macaulay 2 files are regarded as being associated
-	  with a special package called ", TO "Core", ", and the corresponding documentation files
+	  with a special package called ", TO2{"Macaulay2::Core", "Core"}, ", and the corresponding documentation files
 	  are part of the package ", TT "Macaulay2", "."
      	  },
      EXAMPLE "LAYOUT",
@@ -221,9 +223,10 @@ document {
 	  }
      }
 
-
+{* -- Mike wanted this: 
 document { Key => "frequently encountered problems",
      }
+*}
 
 document {
      Key => "specifying typical values",
@@ -285,31 +288,33 @@ document {
      Key => "Daniel R. Grayson",
      HREF {"http://www.math.uiuc.edu/~dan/", "Daniel R. Grayson"}, " ",
      HREF {"mailto:dan@math.uiuc.edu", "<dan@math.uiuc.edu>"}, ".",
-     PARA{},
-     "Daniel Grayson received his PhD in Mathematics from MIT in 1976, taught
-     at Columbia from 1976 to 1981, and came to the University of Illinois at
-     Urbana-Champaign in 1981, where he is a Professor.  His mathematical
-     research concerns algebraic K-theory, but he has always been intrigued
-     by computers.  In 1986 he joined with Stephen Wolfram and six other
-     co-authors to write ", ITALIC "Mathematica", " which in the years since
-     its introduction in 1988 has become the pre-eminent system for
-     mathematics on the computer.",
-     PARA{},
-     IMG { "src" => "../../Images/Grayson2.jpg", "alt" => "picture of Grayson" }
+     PARA{
+	  "Daniel Grayson received his PhD in Mathematics from MIT in 1976, taught
+	  at Columbia from 1976 to 1981, and became a faculty member at the University of Illinois at
+	  Urbana-Champaign in 1981; he retired from the university in 2007.  His mathematical
+	  research concerns algebraic K-theory, which is on the theoretical side, but he has always been intrigued
+	  by computers.  In 1986 he joined Stephen Wolfram and six other
+	  co-authors to write ", HREF { "http://www.wolfram.com/products/mathematica/", ITALIC "Mathematica"}, ",
+	  which in the years since its introduction in 1988 has become the pre-eminent 
+	  system for mathematics on the computer.",
+	  },
+     IMG { "src" => LAYOUT#"packagesrc" "Style" | "grayson2005.jpg", "alt" => "picture of Grayson" }
      }
 
 document {
      Key => "Michael E. Stillman",
      HREF { "http://www.math.cornell.edu/~mike/", "Michael E. Stillman"}, " ",
      HREF {"mailto:mike@math.cornell.edu", "<mike@math.cornell.edu>"}, ".",
-     PARA{},
-     "Michael E. Stillman received his PhD in Mathematics from Harvard in 1983,
-     taught at University of Chicago 1983-85, was at Brandeis and then MIT 1985-87,
-     and then came to Cornell University.  His mathematical research concerns
-     computational algebraic geometry and algebraic geometry.  He started writing
-     syzygy programs as an undergraduate at the University of Illinois, and from
-     1983 to 1992 with Dave Bayer he wrote Macaulay, a specialized computer
-     algebra system for algebraic geometry and the predecessor of this program."
+     PARA{
+	  "Michael E. Stillman received his PhD in Mathematics from Harvard in 1983,
+	  taught at University of Chicago 1983-85, was at Brandeis and then MIT 1985-87,
+	  and then came to Cornell University.  His mathematical research concerns
+	  computational algebraic geometry and algebraic geometry.  He started writing
+	  syzygy programs as an undergraduate at the University of Illinois, and from
+	  1983 to 1992 with Dave Bayer he wrote Macaulay, a specialized computer
+	  algebra system for algebraic geometry and the predecessor of this program.",
+	  },
+     IMG { "src" => LAYOUT#"packagesrc" "Style" | "stillman.jpg", "alt" => "picture of Stillman" }
      }
 
 document {
@@ -330,10 +335,11 @@ document {
      
      }
 
+{* -- Mike wanted this: 
 document {
      Key => "Resources required",
      }
-
+*}
 
 document {
      Key => "debugging",

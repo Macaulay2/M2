@@ -125,6 +125,8 @@ g = quot(f,1-x)
 g = quot(g,1-x)
 rem(g,1-x)
 checkremquot(f,1-x^-1)
+
+--status: the engine goes into an infinite loop on this and fills memory
 checkremquot(f,1-x^-1-y^-1) -- HANGS
 
 f % (1-x^-1)

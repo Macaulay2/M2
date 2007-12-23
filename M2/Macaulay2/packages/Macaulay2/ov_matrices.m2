@@ -14,7 +14,7 @@ document {
 	  TO "extracting information about a matrix",
 	  TO "basic arithmetic of matrices",
 	  TO "concatenating matrices",
- 	  TO "submatrices",
+ 	  -- Mike wanted this: TO "submatrices",
 	  TO "differentiation",
 	  "determinants and related computations",
 	  TO "rank of a matrix",
@@ -26,9 +26,8 @@ document {
 	  TO "importing and exporting matrices",
 	  },
      PARA{},
-     "For an overview of matrices as homomorphisms between modules, 
-     see ", TO "homomorphisms of modules", ".  
-     For additional common operations and a comprehensive list of all routines
+     -- Mike wanted this: "For an overview of matrices as homomorphisms between modules, see ", TO "homomorphisms of modules", ".  ",
+     "For additional common operations and a comprehensive list of all routines
      in Macaulay 2 which return or use matrices, see ", TO "Matrix", "."
      }
 
@@ -322,9 +321,12 @@ document {
        "++"
      }
 
+{*
+-- Mike wanted this: 
 document {
      Key => "submatrices",
      }
+*}
 
 document {
      Key => "differentiation",

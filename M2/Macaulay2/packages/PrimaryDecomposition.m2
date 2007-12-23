@@ -130,9 +130,10 @@ document {
 	  TO (primaryComponent, Ideal, Ideal),
 	  TO [primaryComponent,Strategy],
 	  TO [primaryComponent,Increment],
-	  TO (primaryDecomposition, Ideal),
+	  -- this is part of the Macaulay2 package, sorry! TO (primaryDecomposition, Ideal),
 	  TO [primaryDecomposition,Strategy]
-	  }
+	  },
+     SeeAlso => { (primaryDecomposition, Ideal) }
      }
 
 load "PrimaryDecomposition/doc.m2"

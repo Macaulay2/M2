@@ -15,11 +15,12 @@ Prefix: @FINALPREFIX@
 %post
 #!/bin/sh -e
 prefix=@FINALPREFIX@
+mkdir $prefix/@corecachedirtail@
 [ @DUMPDATA@ = yes ] && $prefix/bin/M2 --dumpdata
 %preun
 #! /bin/sh -e
 prefix=@FINALPREFIX@
-rm -f $prefix/lib/Macaulay2/Core/cache/*
+rm -f $prefix/@corecachedirtail@/*
 %description
 Macaulay 2 is a software system for algebraic geometry research, written by
 Daniel R. Grayson and Michael E. Stillman.  Based on Groebner bases, it
@@ -27,5 +28,5 @@ provides algorithms for computing homological invariants of rings and
 modules.
 %files
 # Local Variables:
-# compile-command: "make -C $M2BUILDDIR/rpm "
+# compile-command: "make -C $M2BUILDDIR/distributions/rpm "
 # End:

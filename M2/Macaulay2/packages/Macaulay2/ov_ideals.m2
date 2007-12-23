@@ -419,7 +419,7 @@ document {
        "An alternate way to find the radical of an 
        ideal ", TT "I", " is to take the intersection of its 
        minimal prime ideals.  To find 
-       the ", TO "minimal primes of an ideal ", TT "I", " use the 
+       the ", TO "minimal primes of an ideal", TT "I", " use the 
        function ", TO "minimalPrimes", ".  Then use ", TO "intersect", ".",
        EXAMPLE {
 	    "intersect minimalPrimes I"

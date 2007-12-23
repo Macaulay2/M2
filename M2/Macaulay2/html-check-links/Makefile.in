@@ -10,7 +10,7 @@ YACC = bison
 	sed 's="bison.simple"="/usr/share/bison.simple"=' <$< >$@.tmp
 	mv $@.tmp $@
 LEX = flex
-LFLAGS += -f -s -i
+LFLAGS += -f -s -i -8 -v
 CFLAGS += -Wall -g
 HSRC := buffer.h html-check-links.h getmem.h grammar.h
 CSRC := html-check-links.c getmem.c buffer.c
@@ -21,6 +21,9 @@ CFILES := $(CSRC) $(LSRC:.l=.c) $(YSRC:.y=.fixed.c)
 YFLAGS += -d
 YFLAGS += --verbose
 LOADLIBES += -lgc -ldl
+ifeq (@DEBUG@,yes)
+CPPFLAGS += -DYYDEBUG
+endif
 ifdef FULLDEBUG
 LDFLAGS := -g
 CPPFLAGS += -DDEBUG
@@ -38,7 +41,21 @@ include $(CFILES:.c=.dep)
 endif
 TAGS: $(SRC); @ETAGS@ $^
 lex.o : grammar.fixed.c
+
+DIR = $(shell pwd)
+NEW = @encapdir@/@htmldirtail@/Macaulay2/html
+check : html-check-links
+	@echo "make: Entering directory \`$(NEW)'"
+	(cd $(NEW) && find . -name \*.html | xargs "$(DIR)"/html-check-links) || true
+	@echo "make: Leaving directory \`$(NEW)'"
+
+Makefile : Makefile.in
+	cd ../..; ./config.status Macaulay2/html-check-links/Makefile
 clean:; rm -f	*.o html-check-links *.dep y.tab.h lex.yy.c TAGS y.output \
 		core grammar.c grammar.tab.* lex.c grammar.fixed.* grammar.output
 distclean : clean
 	rm -f Makefile
+
+# Local Variables:
+# compile-command: "make -C $M2BUILDDIR/Macaulay2/html-check-links "
+# End:

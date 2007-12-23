@@ -227,7 +227,7 @@ document {
      ", TT"a*r + b*s", " is the greatest common divisor ", TT "d", " of ", TT "a", "
      and ", TT "b", ".",
      PARA{},
-     "Works for integers or elements of polynomial rings.",
+     "Works for integers or elements of polynomial rings in onve variable.",
      SeeAlso => "gcd"}
 document {
      Key => mod,
@@ -346,6 +346,20 @@ document {
      "Warning: the values of the indexed variables ", TT "t_i", " are stored in a global location,
      behind the scenes, so may not get garbage collected, even if ", TT "t", " is a local variable."
      }
+
+undocumented {(NewFromMethod,IndexedVariableTable,Symbol)}
+document {
+     Key => {IndexedVariableTable,((symbol _,symbol =),IndexedVariableTable,Thing),(symbol _,IndexedVariableTable,Thing)},
+     "This class is used as part of the implementation of indexed variables.  Objects of this class contain
+     the values of the indexed variables that share the same base.",
+     EXAMPLE lines ///
+     	  p_1 = a
+	  p_2 = b
+	  p
+	  peek p
+     ///,
+     SeeAlso => {IndexedVariable}
+     }
 document {
      Key => MonoidElement,
      Headline => "the class of all monoid elements",
@@ -375,6 +389,15 @@ document {
      "This is the customary way to make a polynomial ring.",
      PARA{},
      "Optional arguments (placed inside the array):",
+     UL (TO \ keys value Core#"private dictionary"#"monoidDefaults"),
+     SeeAlso => "polynomial rings"}
+document {
+     Key => (symbol SPACE, Ring, List),
+     Headline => "make a local polynomial ring",
+     TT "R{...}", " -- produces the monoid ring from a ring ", TT "R", " and the
+     ordered monoid specified by ", TT "...", ", together with the option ", TT "Local => true", ".",
+     PARA{},
+     "Optional arguments (placed inside the list):",
      UL (TO \ keys value Core#"private dictionary"#"monoidDefaults"),
      SeeAlso => "polynomial rings"}
 document {

@@ -87,10 +87,28 @@ html HREF := x -> (
      )
 tex  HREF := x -> concatenate("\\special{html:<a href=\"", texLiteral rel first x, "\">}", tex last x, "\\special{html:</a>}")
 html TO   := x -> (
-     r := htmlLiteral DocumentTag.FormattedKey x#0;
+     tag := x#0;
+     d := fetchPrimaryRawDocumentation tag;
+     r := htmlLiteral DocumentTag.FormattedKey tag;
      if match("^ +$",r) then r = #r : "&nbsp;&nbsp;";
-     concatenate( "<a href=\"", rel htmlFilename getPrimary x#0, "\" title=\"", headline x#0, "\">", r, "</a>", if x#?1 then x#1))
-html TO2  := x -> concatenate("<a href=\"", rel htmlFilename getPrimary x#0, "\">", htmlLiteral x#1, "</a>")
+     if d#?"undocumented" and d#"undocumented" === true then (
+	  if signalDocError tag then stderr << "--warning: tag cited also declared as undocumented: " << tag << endl;
+	  concatenate( "<em>", r, "</em>", if x#?1 then x#1, " (missing documentation <!-- tag: ",toString DocumentTag.Key tag," -->)")
+	  )
+     else if d === null					    -- isMissingDoc
+     then concatenate( "<em>", r, "</em>", if x#?1 then x#1, " (missing documentation <!-- tag: ",toString DocumentTag.Key tag," -->)")
+     else concatenate( "<a href=\"", rel htmlFilename getPrimary x#0, "\" title=\"", headline x#0, "\">", r, "</a>", if x#?1 then x#1))
+html TO2  := x -> (
+     tag := x#0;
+     headline tag;		   -- this is a kludge, just to generate error messages about missing links
+     d := fetchPrimaryRawDocumentation tag;
+     if d#?"undocumented" and d#"undocumented" === true then (
+	  if signalDocError tag then stderr << "--warning: tag cited also declared as undocumented: " << tag << endl;
+	  concatenate("<em>", htmlLiteral x#1, "</em> (missing documentation <!-- tag: ",DocumentTag.FormattedKey tag," -->)")
+	  )
+     else if d === null					    -- isMissingDoc
+     then concatenate("<em>", htmlLiteral x#1, "</em> (missing documentation <!-- tag: ",DocumentTag.FormattedKey tag," -->)")
+     else concatenate("<a href=\"", rel htmlFilename getPrimary x#0, "\">", htmlLiteral x#1, "</a>"))
 
 next := tag -> ( if NEXT#?tag then HREF { htmlFilename NEXT#tag, nextButton } else nextButton, " | ")
 prev := tag -> ( if PREV#?tag then HREF { htmlFilename PREV#tag, prevButton } else prevButton, " | ")
@@ -143,7 +161,8 @@ BUTTON := (s,alt) -> (
      else IMG("src" => s, "alt" => concatenate("[",alt,"]")))
 
 html HTML := t -> concatenate(
-///<?xml version="1.0" encoding="us-ascii" ?>
+///<?xml version="1.0" encoding="utf-8" ?>  <!-- for emacs: -*- coding: utf-8 -*- -->
+<!-- Apache may like this line in the file .htaccess: AddCharset utf-8 .html -->
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.1 plus MathML 2.0 plus SVG 1.1//EN"	 "http://www.w3.org/Math/DTD/mathml2/xhtml-math11-f.dtd" >
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en">
 ///,
@@ -246,7 +265,10 @@ makeTree := x -> (
      else (
 	  if not missingReferences#?x then (
 	       missingReferences#x = true;
-	       if chkdoc then stderr << "--warning: missing reference to documentation as subnode: " << x << endl;
+	       if chkdoc then (
+	       	    stderr << "--warning: missing reference to documentation as subnode: " << x << endl;
+		    -- error("missing reference to documentation as subnode: ", toString x);
+		    );
 	       );
 	  new TreeNode from { x , new ForestNode}
 	  ))
@@ -646,18 +668,6 @@ installPackage Package := opts -> pkg -> (
 		    str();
 		    ));
 
-     	  {*
-     	  -- Make sure the processed documentation database exists, even if empty, so when running the examples,
-	  -- M2 doesn't read in all the documentation sources each time.  For the package Macaulay2 this makes a big
-	  -- difference.
-	  dbname := docDir | "documentation" | databaseSuffix;
-     	  if opts.RemakeAllDocumentation and fileExists dbname then removeFile dbname;
-     	  if not fileExists dbname then (
-	       stderr << "--creating empty database for processed documentation in " << dbname << endl;
-	       close openDatabaseOut dbname;
-	       );
-     	  *}
-
 	  -- make example output files, or else copy them from old package directory tree
 	  exampleDir' := realpath(currentSourceDir|buildPackage|"/examples") | "/";
 	  infn' := fkey -> exampleDir'|toFilename fkey|".m2";
@@ -718,7 +728,9 @@ installPackage Package := opts -> pkg -> (
 		    )
 	       else (
 		    fkey := DocumentTag.FormattedKey tag;
-		    if not opts.RemakeAllDocumentation and rawDocUnchanged#?fkey then (
+		    if not opts.MakeInfo 		    -- when making the info file, we need to process all the documentation
+		    and not opts.RemakeAllDocumentation
+		    and rawDocUnchanged#?fkey then (
 			 if debugLevel > 0 then stderr << "--skipping     " << tag << endl;
 			 )
 		    else (
@@ -733,32 +745,9 @@ installPackage Package := opts -> pkg -> (
 		    )
 	       );
 
-          {*
-     	  -- the processed documentation database isn't used
-
-	  -- cache processed documentation in database
-	  dbnametmp := dbname | ".tmp";
-	  if fileExists dbnametmp then removeFile dbnametmp;
-	  if fileExists dbname then (
-	       tmp2 := openDatabase dbname;   -- just to make sure the database file isn't open for writing
-	       copyFile(dbname,dbnametmp);
-	       close tmp2;
-	       );
-	  stderr << "--storing processed documentation in " << dbname << endl;
-	  prockey := "processed documentation database";
-	  if pkg#?prockey and isOpen pkg#prockey then close pkg#prockey;
-	  docDatabase := openDatabaseOut dbnametmp;
-	  scan(pairs pkg#"processed documentation", (k,v) -> docDatabase#k = toExternalString v);
-	  close docDatabase;
-     	  *}
-
 	  shield (
-     --	       moveFile(dbnametmp,dbname);
 	       moveFile(rawdbnametmp,rawdbname);
 	       );
-
-     --   pkg#prockey = openDatabase dbname;
-     --	  addEndFunction(() -> if pkg#?prockey and isOpen pkg#prockey then close pkg#prockey);
 
 	  rawkey := "raw documentation database";
 	  pkg#rawkey = openDatabase rawdbname;
@@ -798,12 +787,7 @@ installPackage Package := opts -> pkg -> (
 	  -- helper routine
 	  getPDoc := fkey -> (
 	       if pkg#"processed documentation"#?fkey then pkg#"processed documentation"#fkey
-	       {*
-	       else if pkg#"processed documentation database"#?fkey then value pkg#"processed documentation database"#fkey 
-	       else (
-		    if debugLevel > 0 then stderr << "--warning: missing documentation node: " << fkey << endl;
-		    );
-	       *}
+	       else error("internal error: documentation node not processed yet: ",fkey)
 	       );
 
 	  -- make info file
@@ -1183,7 +1167,7 @@ indexHtml = dir -> (
 	  if not match("generated by indexHtml",get ind) then error("file not made by indexHtml already present: ",ind);
 	  );
      ind = openOut ind;
-     ind << ///<?xml version="1.0" encoding="us-ascii"?>
+     ind << ///<?xml version="1.0" encoding="utf-8"?>  <!-- for emacs: -*- coding: utf-8 -*- -->
 <!-- generated by indexHtml -->
 <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
 <html>

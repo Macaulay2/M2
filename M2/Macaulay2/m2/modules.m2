@@ -81,7 +81,7 @@ toString Vector := v -> concatenate ( "vector ", toString entries super v )
 ring Vector := v -> ring class v
 module Vector := v -> target first v
 leadTerm Vector := v -> new class v from leadTerm v#0
-degree Vector := opts -> v -> (
+degree Vector := v -> (
      f := ambient v#0;
      first degrees source map(target f,,f))
 new Matrix from Vector := (Matrix,v) -> v#0

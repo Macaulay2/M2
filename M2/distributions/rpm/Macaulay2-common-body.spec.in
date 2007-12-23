@@ -14,15 +14,17 @@ Prefix: @FINALPREFIX@
 %post
 #!/bin/sh -e
 prefix=@FINALPREFIX@
+cd $prefix/@infodirtail@
 for p in @PACKAGES@
-do install-info --quiet --info-dir="$prefix/share/info" $p.info
+do install-info --quiet --info-dir=. $p.info
 done
 %preun
 #! /bin/sh -e
 prefix=@FINALPREFIX@
-rm -f $prefix/lib/Macaulay2/Core/cache/*
+rm -f $prefix/@corecachedirtail@/*
+cd $prefix/@infodirtail@
 for p in @PACKAGES@
-do install-info --remove --quiet --info-dir="$prefix/share/info" $p.info
+do install-info --remove --quiet --info-dir=. $p.info
 done
 %description
 Macaulay 2 is a software system for algebraic geometry research, written by
@@ -31,5 +33,5 @@ provides algorithms for computing homological invariants of rings and
 modules.
 %files
 # Local Variables:
-# compile-command: "make -C $M2BUILDDIR/rpm "
+# compile-command: "make -C $M2BUILDDIR/distributions/rpm "
 # End:

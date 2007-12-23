@@ -162,7 +162,7 @@ listLocalSymbols = Command(f -> listSymbols localSymbols f)
 
 userSymbols = type -> (
      if type === () then type = Thing;
-     select2(type,values User#"private dictionary"))
+     select2(type,join(values User#"private dictionary",toList select(vars (0 .. 51), s -> value s =!= s))))
 
 listUserSymbols = Command ( type -> listSymbols userSymbols type )
 

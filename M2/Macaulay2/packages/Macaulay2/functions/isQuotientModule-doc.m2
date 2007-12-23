@@ -13,7 +13,7 @@ document {
 	  Boolean => {TO "true", " if the given representation of ", TT "M", " a quotient of a free module."}
 	  },
      "This function checks if the module ", TT "M", " is a quotient of its ", TO "ambient", 
-     " free module by examining its matrix of ", TO2("generators Module","generators"), ".",     
+     " free module by examining its matrix of ", TO2((generators, Module),"generators"), ".",     
      EXAMPLE {
 	  "R = ZZ/101[a,b,c];",
 	  "M = R^1/(a^2,b^2,c^2)",

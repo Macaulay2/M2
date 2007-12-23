@@ -1,0 +1,10 @@
+Consider putting an M2 startup file in
+
+	 /etc/emacs/site-start.d/
+
+where under debian systems it seems it will get run.
+
+This would have to be done by the postinstall/preremove scripts, since it's not
+under /usr.
+
+If installing under something other than /usr, don't do it.

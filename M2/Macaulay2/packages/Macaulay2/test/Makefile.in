@@ -26,6 +26,7 @@ distclean ::
 docStructure.out : docStructure.m2
 
 Makefile : Makefile.in; cd $(DOTS)/..; ./config.status Macaulay2/packages/Macaulay2/test/Makefile
+Makefile.test : Makefile.test.in; cd $(DOTS)/..; ./config.status Macaulay2/packages/Macaulay2/test/Makefile.test
 
 status ::
 	$(MAKE) -C engine $@

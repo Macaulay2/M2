@@ -18,7 +18,7 @@ document {
      Key => tensor,
      Headline => "tensor product",
      PARA{
-	  "This is the same as ", TT "A ** B", " except that options are allowed
+	  "This is the same as ", TT "A ** B", " except that options are allowed.
            These optional arguments are only valid in the ", TO (tensor,Ring,Ring), " or ",
            TO (tensor,Monoid,Monoid), " cases."
           }

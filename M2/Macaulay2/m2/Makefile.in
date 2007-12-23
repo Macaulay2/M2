@@ -189,26 +189,7 @@ else
 ENCAPVALUE = false
 endif
 
-
 install:: all
-
-M2OPTIONS := -q
-ifndef INTERACTIVE
-M2OPTIONS += --stop
-M2OPTIONS += --no-debug
-endif
-M2OPTIONS += -e errorDepth=0
-M2OPTIONS += -e debugLevel=0
-M2OPTIONS += -e 'installPackage(Core, Encapsulate => false, PackagePrefix => "@encapdir@/", MakeLinks => false, MakeDocumentation => false, UserMode => false)'
-ifndef INTERACTIVE
-M2OPTIONS += -e 'exit 0 '
-endif
-
-# $(TMPDIR) :; mkdir "$@"
-# install :: $(TMPDIR)
-install ::
-	@ echo installing the Core package
-	@ set -x ; time ../bin/M2@EXE@ $(M2OPTIONS)
 
 clean::; rm -rf ../cache/@DUMPDATAFILE@ cache *.obj *.exe runexample temp.data distfiles loads.m2 mpcodes.m2 version.m2 core gmon.out
 distclean : clean; rm -f Makefile

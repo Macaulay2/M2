@@ -27,7 +27,7 @@ exponents(ZZ,RawMonomial) := (nvars,x) -> (
      scan(rawSparseListFormMonomial x, (i,e) -> z#i = z#i + e);
      toList z)
 net RawMonomial := x -> net expression x
-degree RawMonomial := opts -> x -> error "degree of raw monomial not defined (no monoid)"
+degree RawMonomial := x -> error "degree of raw monomial not defined (no monoid)"
 gcd(RawMonomial,RawMonomial) := (x,y) -> rawGCD(x,y)
 
 -- monomial orderings
@@ -204,7 +204,7 @@ RawRingElement _ RawRing := (x,R) -> rawPromote(R,x)
 RawRingElement == RawRingElement := (x,y) -> x === y
 
 ring RawRingElement := rawRing
-degree RawRingElement := opts -> rawMultiDegree
+degree RawRingElement := rawMultiDegree
 denominator RawRingElement := rawDenominator
 numerator RawRingElement := rawNumerator
 isHomogeneous RawRingElement := rawIsHomogeneous
@@ -311,6 +311,9 @@ new RawMatrix from RawMutableMatrix := rawMatrix
 new RawMutableMatrix from RawMatrix := rawMutableMatrix
 
 RawMutableMatrix _ Sequence = (M,ij,val) -> ((i,j) -> (rawSetMatrixEntry(M,i,j,val); val)) ij
+
+degree RawMatrix := rawMultiDegree
+degrees RawMatrix :=f -> {rawMultiDegree rawTarget f,rawMultiDegree rawSource f}
 
 -- computations
 

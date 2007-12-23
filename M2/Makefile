@@ -75,7 +75,38 @@ include/config.h.in.stamp : configure.ac # aclocal.m4
 monitor:
 	@[ -f include/config.h.in ] || (set -x ; rm -f include/config.h.in.stamp)
 
+count count-source-code-lines:
+	find . \( \
+	-name BUILD -prune -false -o \
+	-name .svn -prune -false -o \
+	-name bugs -prune -false -o \
+	-name autoconf-\* -prune -false -o \
+	-name regex -prune -false -o \
+	-name examples -prune -false -o \
+	-name test -prune -false -o \
+	-name TST -prune -false -o \
+	-name EXA -prune -false -o \
+	-name ComputationsBook -prune -false -o \
+	-name basictests -prune -false -o \
+	-name \*.m2 -o \
+	-name \*.c -o \
+	-name \*.h -o \
+	-name \*.hpp -o \
+	-name \*.cpp -o \
+	-name configure.ac -o \
+	-name Makefile.in -o \
+	-name Makefile -o \
+	-name GNUMakefile \) \
+	-not -name bug\* \
+	-not -name demo\* \
+	-not -name test\* \
+	| xargs wc -l > /tmp/$@-$$$$ && \
+	egrep -v ' total$$' /tmp/$@-$$$$ && \
+	egrep ' total$$' /tmp/$@-$$$$ && \
+	egrep ' total$$' /tmp/$@-$$$$ | awk '{sum += $$1}; END { print sum, "grand total" }' && \
+	rm /tmp/$@-$$$$
+
 # Local Variables:
 # mode: Makefile
-# compile-command: "make -f Makefile"
+# compile-command: "make -f Makefile "
 # End:

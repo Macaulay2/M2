@@ -70,6 +70,21 @@ document {
      }
 
 document {
+     Key => Standard,
+     Headline => "the standard top level printing method",
+     "This symbol is used (tentatively) as the first element of a pair to specify various top level interpreter methods.",
+     SeeAlso => { TeXmacs, Print, NoPrint, BeforePrint, AfterPrint,AfterNoPrint}
+     }
+
+document {
+     Key => TeXmacs,
+     Headline => "the TeXmacs top level printing method",
+     "This symbol is used (tentatively) as the first element of a pair to specify various top level interpreter methods, in connection with
+     the use of TeXmacs as front end.",
+     SeeAlso => { Standard, Print, NoPrint, BeforePrint, AfterPrint,AfterNoPrint}
+     }
+
+document {
      Key => Print,
      Headline => "top level method for printing results",
      Usage => "X#{Standard,Print} = f",
@@ -182,15 +197,15 @@ document {
 document {
      Key => Function,
      Headline => "the class of all functions",
-     "Common ways to make a function:",
-     UL {
-	  TO "->"
-	  },
-     "Returning from functions:",
-     UL {
-	  TO "return"
-	  },
-     SeeAlso => "functions"
+     SeeAlso => { 
+	  "using functions",
+	  "using functions with optional inputs",
+	  "making functions",
+	  "local variables in a function",
+	  "making functions with a variable number of arguments",
+	  "making functions with multiple return values",
+	  "making new functions with optional arguments"
+	  }
      }
 
 document {
@@ -434,7 +449,7 @@ document {
      TT "describe x", " -- returns ", ofClass Net, " containing the 
      real description of ", TT "x", ", bypassing the feature which causes
      certain types of things to acquire, for brevity, the names of global variables to which
-     they are assigned.",
+     they are assigned.  For polynomial rings, it also displays the options used at creation.",
      PARA{},
      EXAMPLE lines ///
 	  R = ZZ/101[a,b,c_1,c_2];
@@ -442,6 +457,8 @@ document {
       	  describe R
 	  toString describe R
 	  toExternalString R
+	  QQ[x,d,WeylAlgebra=>{x=>d}]
+	  describe oo
 	  ///,
      SeeAlso => {"toString", "toExternalString"}
      }
@@ -1793,19 +1810,48 @@ document {
      }
 
 document {
-     Key => (random, Module, Module),
+     Key => {(random, Module, Module),[random, MaximalRank]},
      Headline => "make a random module map",
-	Usage => "f = random(F,G)",
-	Inputs => {
-		"F" => {"a free module"},
-		"G" => {"a free module"}
-		},
-	Outputs => {"f" => {"a random, graded, degree ", TT "0", " map, from ", TT "G", " to ", TT "F"}},
-     EXAMPLE {
-	  "R = ZZ/101[x,y];",
-      	  "random(R^{1,2,3},R^{1,2,3})"
+     Usage => "f = random(F,G)",
+     Inputs => {
+	  "F" => {"a free module"},
+	  "G" => {"a free module"},
+	  MaximalRank => {"whether to ensure that the resulting map has maximal rank"}
+	  },
+     Outputs => {"f" => {"a random, graded, degree ", TT "0", " map, from ", TT "G", " to ", TT "F"}},
+     EXAMPLE lines ///
+	  R = ZZ/101[x,y];
+      	  random(R^{1,2,3},R^{1,2,3})
+	  random(ZZ^3,ZZ^6,MaximalRank=>true)
+	  ///,
+     Caveat => {
+	  "Over a polynomial ring, specifying ", TT "MaximalRank=>true", " will yield a non-homogeneous matrix."
 	  },
      SeeAlso => {"setRandomSeed"}
+     }
+
+document {
+     Key => (random,List),
+     Headline => "shuffle a list randomly",
+     Usage => "random x",
+     Inputs => { "x" },
+     Outputs => { List => {"a new list containing the elements of ", TT "x", " in a shuffled random order"} },
+     EXAMPLE lines ///
+     	  random toList (0 .. 12)
+     ///
+     }
+
+document {
+     Key => {scanLines, (scanLines,Function,String)},
+     Headline => "apply a function to each line of a file",
+     Usage => "scanLines(f,fn)",
+     Inputs => { "f", "fn" => "the name of a file" },
+     Outputs => {
+	  {
+	       "returns ", TO "null", " unless the function uses ", TT "break x", " with a non-null value for ", TT "x", ",
+	       in which case scanning stops and ", TT "x", " is returned immediately"
+	       }
+	  }
      }
 
 document {

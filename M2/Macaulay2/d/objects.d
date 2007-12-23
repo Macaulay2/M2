@@ -537,6 +537,7 @@ setupconst("Symbol",Expr(symbolClass));
 setupconst("Keyword",Expr(keywordClass));
 setupconst("Time",Expr(timeClass));
 setupconst("Option",Expr(optionClass));
+setupconst("OptionTable",Expr(optionTableClass));
 setupconst("Net",Expr(netClass));
 setupconst("NetFile",Expr(netFileClass));
 setupconst("true",True);

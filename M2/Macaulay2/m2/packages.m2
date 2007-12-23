@@ -179,8 +179,8 @@ newPackage(String) := opts -> (title) -> (
 	  "exported symbols" => {},
 	  "exported mutable symbols" => {},
 	  "example results" => new MutableHashTable,
-	  "source directory" => currentFileDirectory,
-	  "source file" => currentFileName,
+	  "source directory" => toAbsolutePath currentFileDirectory,
+	  "source file" => toAbsolutePath currentFileName,
 	  "undocumented keys" => new MutableHashTable,
 	  "package prefix" => (
 	       m := regex("(/|^)" | LAYOUT#"packages" | "$", currentFileDirectory);
@@ -227,9 +227,7 @@ newPackage(String) := opts -> (title) -> (
      global currentPackage <- newpkg;
      ReverseDictionary#newpkg = pkgsym;
      pkgsym <- newpkg;
-     loadedPackages = join( 
-	  -- if title === "Core" then {} else {newpkg}, 
-	  {Core} );
+     loadedPackages = {Core};
      dictionaryPath = join( {newpkg#"private dictionary"}, {Core.Dictionary, OutputDictionary, PackageDictionary});
      if Core#?"base packages" then (
 	  if member(title,Core#"base packages") then (

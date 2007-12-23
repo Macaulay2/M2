@@ -164,6 +164,7 @@ frames(Sequence) := frames
 frames(Symbol) := frames
 frames(Function) := frames
 frames(Pseudocode) := frames
+powermod(ZZ,ZZ,ZZ) := ZZ => powermod
 
 -- Local Variables:
 -- compile-command: "make -C $M2BUILDDIR/Macaulay2/m2 "

@@ -408,7 +408,6 @@ export {
 	symbol TT,
 	symbol Table,
         symbol TeXmacs,
-        symbol TeXmacsEvaluate,
 	symbol Tally,
 	symbol Thing,
 	symbol Time,
@@ -430,7 +429,8 @@ export {
 	symbol UseSyzygies,
 	symbol GroebnerBasisOptions,
 	symbol installHilbertFunction,
-	symbol installGroebner,
+	symbol instances,
+	-- Mike wanted this: symbol installGroebner,
 	symbol gbSnapshot,
 	symbol gbRemove,
 	symbol UserMode,
@@ -1133,7 +1133,7 @@ export {
 	symbol ~
 }
 
-exportMutable toList (a .. Z)
+exportMutable toList vars (0 .. 51)
 
 exportMutable {
 	symbol applicationDirectorySuffix,

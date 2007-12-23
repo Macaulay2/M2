@@ -1,4 +1,4 @@
---status: new code needs to be implemented to make this one work
+--status: new code converting between various types of numbers needs to be implemented to make this one work
 
 -- Test of moving numbers from one ring to another,
 -- and matrices of such too.

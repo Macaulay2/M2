@@ -5,17 +5,26 @@ document {
      Headline => "override default values for optional arguments",
      TT "override(defaults,args)", " overrides default values for
      optional arguments present in the argument sequence ", TT "args", ".",
-     PARA{},
-     "The argument ", TT "defaults", " should be an immutable hash table (
-     usually of type ", TO "OptionTable", "), and ", TT "args", " should be
-     a sequence of arguments, some of which are optional arguments of
-     the form ", TT "x => v", ".  Each such optional argument
-     is removed from ", TT "args", ", and the value in ", TT "defaults", "
-     corresponding to the key ", TT "x", " is replaced by ", TT "v", ".
-     The value returned is the modified pair ", TT "(defaults, args)", ".",
-     PARA{},
-     "This function is intended for internal use only, and is used in the processing
-     of optional arguments for method functions which accept them.",
+     PARA{
+	  "One possibility is for the argument ", TT "defaults", " to be an immutable hash table 
+	  (of type ", TO "OptionTable", "), and ", TT "args", " should be
+     	  a sequence of arguments, some of which are optional arguments of
+     	  the form ", TT "x => v", ".  Each such optional argument
+     	  is removed from ", TT "args", ", and the value in ", TT "defaults", "
+     	  corresponding to the key ", TT "x", " is replaced by ", TT "v", ".
+     	  The value returned is the modified pair ", TT "(defaults, args)", ".
+	  An error is signalled if the key ", TT "x", " does not occur in ", TT "defaults", "."
+	  },
+     PARA {
+	  "A second possibility is for the argument ", TT "defaults", " to be ", TO "true", ",
+	  in which case the keys x are not checked for validity, and no default values
+	  are provided.  The main use of this is to separate the optional arguments from
+	  the other arguments, which can then be used for dispatching to the correct method."
+	  },
+     PARA{
+	  "This function is intended for internal use only, and is used in the processing
+     	  of optional arguments for method functions which accept them."
+	  },
      EXAMPLE {
 	  "defs = new HashTable from { a => 1, b => 2 };",
 	  "override(defs, (4,b=>6,5))"
@@ -235,7 +244,22 @@ assert( a == 3 )
 document {
      Key => Tally,
      Headline => "the class of all tally results",
-     TT "Tally", " -- a class designed to hold tally results, i.e., multisets."
+     TT "Tally", " -- a class designed to hold tally results, i.e., multisets.",
+     SeeAlso => {VirtualTally}
+     }
+
+document {
+     Key => {VirtualTally,(symbol -,VirtualTally,VirtualTally)},
+     "The only difference between this class and ", TO "Tally", " is that this class allows negative numbers.",
+     EXAMPLE lines ///
+     	  x = tally {a,b,b,c,c,c}
+     	  y = tally {a,a,a,b,b,c}
+     	  x' = new VirtualTally from x
+     	  y' = new VirtualTally from y
+	  x-y
+	  x'-y'
+     ///,
+     SeeAlso => { BettiTally }
      }
 
 document {

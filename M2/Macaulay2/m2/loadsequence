@@ -38,6 +38,7 @@ monoids.m2
 powers.m2
 orderedmonoidrings.m2
 variables.m2
+indeterminates.m2
 ofcm.m2
 tables.m2
 modules.m2
@@ -71,7 +72,6 @@ monomcurve.m2
 fano.m2
 schubert.m2
 code.m2
-indeterminates.m2
 local.m2
 typicalvalues.m2
 packages.m2

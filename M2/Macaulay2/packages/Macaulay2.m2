@@ -23,5 +23,5 @@ then error splice("Macaulay2 documentation: global symbols inadvertently defined
 	       )))
 
 -- Local Variables:
--- compile-command: "make -C $M2BUILDDIR/Macaulay2/packages NAMEOFPACKAGE=Macaulay2 install-one"
+-- compile-command: "make -C $M2BUILDDIR/Macaulay2/packages install-Macaulay2"
 -- End:

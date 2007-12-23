@@ -7,7 +7,6 @@
 #include "dumpdata.h"
 #include "std.h"
 
-bool notify = TRUE;
 static int i;
 static char *x = "initial value";
 static char message[100];
@@ -45,7 +44,7 @@ int main(int argc, char **argv) {
       fprintf(stderr,"  data dumped\n");
     }
     else if (argc > 1 && 0 == strcmp(argv[1],"load")) {
-      if (ERROR == loaddata(filename)) { fprintf(stderr, "--loaddata: can not load data from file %s\n", filename); return 1; }
+      if (ERROR == loaddata(TRUE,filename)) { fprintf(stderr, "--loaddata: can not load data from file %s\n", filename); return 1; }
       fprintf(stderr,"  data loaded\n");
       longjmp(j,1);
     }

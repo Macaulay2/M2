@@ -23,35 +23,42 @@ STRING   "\""(\\.|[^"\\])*"\""
 WORD	 [^ \t\r\n\"=>]+
 NEWLINE	 \r\n|\r|\n
 
-%x string tag
+%x string tag comment
 
 %%
 
 {NEWLINE}			BOL; lastcount = 0;
-"<"				tagline = lineno; tagcol = column; COUNT; BEGIN(tag); return '<';
+"<"				tagline = lineno; tagcol = column; COUNT; BEGIN tag; return '<';
 [^<\n\r]+			COUNT;
+"<!--"                          COUNT; BEGIN comment;
 
 <tag>background			COUNT; yylval = strperm(yytext); return BACKGROUND;
 <tag>href			COUNT; yylval = strperm(yytext); return HREF;
 <tag>src			COUNT; yylval = strperm(yytext); return SRC;
 <tag>{STRING}			COUNTN; yylval = strperm(yytext); return WORD;
 <tag>{WORD}			COUNTN; yylval = strperm(yytext); return WORD;
-<tag>\"				BEGIN(string);
+<tag>\"				BEGIN string;
 <tag>=				COUNT; return *yytext;
 <tag>[ \t]*			COUNT;
 <tag>{NEWLINE}			BOL; lastcount = 0;
-<tag>">"			COUNT; BEGIN(INITIAL); return '>';
+<tag>">"			COUNT; BEGIN INITIAL; return '>';
 <tag><<EOF>>			{
 				fprintf(stderr,"%s:%d:%d: unterminated tag starting here\n", 
 					filename, tagline, tagcol );
 				lastcount = 0; return 0;
 				}
 
-<string>[^\\\"]+
-<string>\"
-<string>\\.
-<string>\\
-<string><<EOF>>		{ fprintf(stderr,"%s:%d:%d: unterminated string starting here\n", filename, lineno, column);
-		  	  lastcount = 0; return 0; }
+<string>[^\\\"]+                COUNT;
+<string>\"                      COUNT;
+<string>\\.                     COUNT;
+<string>\\                      COUNT;
+<string><<EOF>>		{ fprintf(stderr,"%s:%d:%d: unterminated string starting here\n", filename, lineno, column); lastcount = 0; return 0; }
+
+<comment>"-->"                  COUNT; BEGIN INITIAL;
+<comment>[^-]"->"               COUNT;
+<comment>[^-]">"                COUNT;
+<comment>[^-]                   COUNT;
+<comment>[^>]                   COUNT;
+<comment><<EOF>>	{ fprintf(stderr,"%s:%d:%d: unterminated comment starting here\n", filename, lineno, column); lastcount = 0; return 0; }
 
 <<EOF>>				lastcount = 0; return 0;

@@ -35,6 +35,9 @@ gcd(RingElement,RingElement) := RingElement => (r,s) -> (
 gcdCoefficients(RingElement,RingElement) := (f,g) -> (	    -- ??
      R := ring f;
      if R =!= ring g then error "expected elements of the same ring";
+     if not isPolynomialRing R then error "expected a polynomial ring";
+     if not isField coefficientRing R then error "expected a polynomial ring over a field";
+     if numgens R > 1 then error "expected a polynomial ring in at most one variable";
      toList apply(rawExtendedGCD(raw f, raw g), r -> new R from r))
 
 pseudoRemainder = method()
