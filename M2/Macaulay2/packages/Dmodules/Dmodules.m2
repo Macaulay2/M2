@@ -14,7 +14,8 @@ export {ExternalProduct,TwistMap,twistMap,twistInvMap,projMap1,projMap2,
 	DintegrationClasses,DintegrateAll,DintegrationAll,gkz,Vars,AppellF1,PolyAnn,
 	RatAnn,WeylClosure,deRham,deRhamAll,TransferCycles,CohomologyGroups,PreCycles,OmegaRes,
 	diffOps,PolyGens,BasisElts,putWeylAlgebra,inw,gbw,
-	Dprune,pInfo,optGB,FourierInverse,Output,stafford,BMM,pruneCechComplexCC,populateCechComplexCC
+	Dprune,pInfo,optGB,FourierInverse,Output,stafford,BMM,pruneCechComplexCC,populateCechComplexCC,
+	logCohomology
 	}
    
 scan({"Local", "Global"}, nm -> assert (isGlobalSymbol nm and value getGlobalSymbol nm === getGlobalSymbol nm))
