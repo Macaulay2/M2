@@ -50,6 +50,87 @@ svn co svn://macaulay2.math.uiuc.edu/Macaulay2/trunk/M2 M2
 cd M2
 make
 
+############################################
+## Macintosh source code install, leopard ##
+############################################
+# subversion is installed by leopard.
+svn co svn://macaulay2.math.uiuc.edu/Macaulay2/trunk/M2 M2
+cd M2
+make
+
+# 32 bit debug version
+# (currently: 31 Dec 2007, need to put in libgmp* from the tiger build)
+mkdir BUILD/debug32
+cd BUILD/debug32
+../../configure \
+      --prefix=/Users/mike/local/M2-builds/M2/BUILD/debug32-installed \
+      --enable-debug \
+      --disable-optimize \
+      --enable-experimental-code \
+      --enable-build-libraries="gc gdbm gmp readline ntl factory libfac" \
+      LIBS="-lgcc_s.10.5"
+make
+make install
+
+# 32 bit optimized version
+# (currently: 31 Dec 2007, need to put in libgmp* from the tiger build)
+mkdir BUILD/opt32
+cd BUILD/opt32
+../../configure \
+      --prefix=/Users/mike/local/M2-builds/M2/BUILD/opt32-installed \
+      --enable-experimental-code \
+      --enable-build-libraries="gc gdbm gmp readline ntl factory libfac" \
+      LIBS="-lgcc_s.10.5"
+make
+make install
+
+# 64 bit optimized version
+# (currently: 31 Dec 2007, need to put in libgmp* from the tiger build)
+mkdir BUILD/opt64
+cd BUILD/opt64
+../../configure \
+      --prefix=/Users/mike/local/M2-builds/M2/BUILD/opt64-installed \
+      --enable-experimental-code \
+      --enable-build-libraries="gc gdbm gmp readline ntl factory libfac" \
+      LIBS="-lgcc_s.10.5" \
+      --build=x86_64-apple-darwin \
+      CC="gcc -m64" \
+      CXX="g++ -m64"
+make
+make install
+
+# 64 bit debug version
+# (currently: 31 Dec 2007, need to put in libgmp* from the tiger build)
+mkdir BUILD/debug64
+cd BUILD/debug64
+../../configure \
+      --prefix=/Users/mike/local/M2-builds/M2/BUILD/debug64-installed \
+      --enable-debug \
+      --disable-optimize \
+      --enable-experimental-code \
+      --enable-build-libraries="gc gdbm gmp readline ntl factory libfac" \
+      LIBS="-lgcc_s.10.5" \
+      --build=x86_64-apple-darwin \
+      CC="gcc -m64" \
+      CXX="g++ -m64"
+make
+make install
+
+# 64 bit profile version
+# (currently: 31 Dec 2007, need to put in libgmp* from the tiger build)
+mkdir BUILD/profile64
+cd BUILD/profile64
+../../configure \
+      --prefix=/Users/mike/local/M2-builds/M2/BUILD/profile64-installed \
+      --enable-profile \
+      --enable-experimental-code \
+      --enable-build-libraries="gc gdbm gmp readline ntl factory libfac" \
+      LIBS="-lgcc_s.10.5" \
+      --build=x86_64-apple-darwin \
+      CC="gcc -m64" \
+      CXX="g++ -m64"
+make
+
 ###################################
 ## Macintosh source code install ##
 ###################################
