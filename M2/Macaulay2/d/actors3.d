@@ -716,7 +716,7 @@ floor(e:Expr):Expr := (
      when e
      is x:Real do (
 	  if finite(x.v) then Expr(Floor(x.v))
-	  else WrongArg("a finite real number")
+	  else e
 	  )
      is x:RRR do Expr(floor(x))
      is x:Rational do Expr(floor(x))
