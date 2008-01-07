@@ -791,6 +791,11 @@ newBigReal(prec:int):RRR := (
      Ccode( void, "mpfr_init2(", "(__mpfr_struct *)", x, ",",prec,")" );
      x);
 
+export toBigReal(x:RRR,prec:int):RRR := (
+     z := newBigReal(prec);
+     Ccode( void, "mpfr_set(", "(__mpfr_struct *)", z, ",", "(__mpfr_struct *)", x, ", GMP_RNDN)" );
+     z);
+
 export toBigReal(x:Rational,prec:int):RRR := (
      z := newBigReal(prec);
      Ccode( void, "mpfr_set_q(", "(__mpfr_struct *)", z, ",", "(__mpq_struct *)", x, ", GMP_RNDN)" );
