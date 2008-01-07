@@ -11,18 +11,12 @@
 #include "gbring.hpp"
 #include "../d/M2mem.h"
 
-mpfr_ptr CCC::_epsilon = NULL;
-
 bool CCC::initialize_CCC() 
 {
   initialize_ring(0);
   declare_field();
   _elem_size = sizeof(M2_CCC_struct);
   _zero_elem = new_elem();
-  if (_epsilon == NULL) {
-    _epsilon = reinterpret_cast<mpfr_ptr>(getmem(sizeof(mpfr_t)));
-    mpfr_init(_epsilon);
-  }
 
   zeroV = from_int(0);
   oneV = from_int(1);
@@ -105,23 +99,6 @@ void CCC::elem_text_out(buffer &o, const ring_elem ap) const
   o << "+ (." << str << "*10^" << expptr << ") ii";
 
   // if (size > 1000) deletearray(allocstr);
-}
-
-void CCC::set_epsilon(mpfr_ptr epsilon)
-{
-  if (_epsilon == NULL) {
-    _epsilon = reinterpret_cast<mpfr_ptr>(getmem(sizeof(mpfr_t)));
-    mpfr_init(_epsilon);
-  }
-  mpfr_set(_epsilon, epsilon, GMP_RNDN);
-}
-
-mpfr_ptr CCC::get_epsilon()
-{
-  mpfr_ptr epsilon = reinterpret_cast<mpfr_ptr>(getmem(sizeof(mpfr_t)));
-  mpfr_init(epsilon);
-  mpfr_set(epsilon, _epsilon, GMP_RNDN);
-  return epsilon;
 }
 
 ring_elem CCC::from_int(int n) const
@@ -237,28 +214,7 @@ bool CCC::is_zero(const ring_elem f) const
 
 bool CCC::is_equal(const ring_elem f, const ring_elem g) const
 {
-  mpfr_ptr ar = BIGCC_RE(f);
-  mpfr_ptr ai = BIGCC_IM(f);
-  mpfr_ptr br = BIGCC_RE(g);
-  mpfr_ptr bi = BIGCC_IM(g);
-
-  if (mpfr_sgn(_epsilon) == 0) 
-    {
-      return (mpfr_cmp(ar, br) == 0 && mpfr_cmp(ai, bi) == 0);
-    }    
-  else
-    {
-      mpfr_ptr cr = new_mpfr();
-      mpfr_ptr ci = new_mpfr();
-      mpfr_ptr dr = new_mpfr();
-      mpfr_ptr di = new_mpfr();
-      mpfr_sub(cr, ar, br, GMP_RNDN);
-      mpfr_sub(ci, ai, bi, GMP_RNDN);
-      mpfr_sub(dr, br, ar, GMP_RNDN);
-      mpfr_sub(di, bi, ai, GMP_RNDN);
-      return (mpfr_cmp(cr, _epsilon) < 0 && mpfr_cmp(ci, _epsilon) < 0 &&
-	      mpfr_cmp(dr, _epsilon) < 0 && mpfr_cmp(di, _epsilon) < 0);
-    }
+  return mpfr_equal_p(BIGCC_RE(f), BIGCC_RE(g)) && mpfr_equal_p(BIGCC_IM(f), BIGCC_IM(g));
 }
 bool CCC::is_greater(const ring_elem f, const ring_elem g) const
 {
