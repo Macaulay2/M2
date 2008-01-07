@@ -1,6 +1,6 @@
 URL = http://www.hpl.hp.com/personal/Hans_Boehm/gc/gc_source
 VERSION = 7.0
-CONFIGOPTIONS  = --disable-threads
+CONFIGOPTIONS  = --enable-threads=posix
 ifeq (@SHARED@,no)
 CONFIGOPTIONS += --disable-shared
 endif
