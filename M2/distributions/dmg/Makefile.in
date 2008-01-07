@@ -15,14 +15,14 @@ endif
 
 ../../$(PKG_DMG) : ../../$(PKG_TZ) Makefile
 	rm -rf files
-	umask 022 ; @MKDIR_P@ files@FINALPREFIX@
-	umask 022 ; tar xfp ../../$(PKG_TZ) @TAR_COMPRESS_OPTION@ -C files@FINALPREFIX@
-	mv files@FINALPREFIX@/@package@/* files@FINALPREFIX@
-	rmdir files@FINALPREFIX@/@package@
-	cd files@FINALPREFIX@ && rm -f INSTALL encapinfo postinstall preremove
-	cp @srcdir@/ReadMe-MacOSX.rtf files@FINALPREFIX@
-	ln -s .@FINALPREFIX@/ReadMe-MacOSX.rtf files
-	hdiutil create -srcfolder files -volname @package@-@ARCH@ $@
+	umask 022 ; @MKDIR_P@ files
+	umask 022 ; tar xfp ../../$(PKG_TZ) @TAR_COMPRESS_OPTION@ -C files
+	umask 022 ; tar xfp ../../$(PKG_COM_TZ) @TAR_COMPRESS_OPTION@ -C files
+	cd files/@package@ && rm -f INSTALL encapinfo postinstall preremove
+	cp @srcdir@/ReadMe-MacOSX.rtf files/@package@
+	ln -s @package@/ReadMe-MacOSX.rtf files
+	rm -f $@
+	hdiutil create -srcfolder files -volname @package@-@ARCH@-@OS@-@REL@ $@
 tidy : ; rm -rf files
 
 clean :: tidy; rm -f ../../$(PKG_DMG)
