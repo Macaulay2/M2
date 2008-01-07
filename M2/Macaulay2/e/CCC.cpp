@@ -11,7 +11,7 @@
 #include "gbring.hpp"
 #include "../d/M2mem.h"
 
-mpf_ptr CCC::_epsilon = NULL;
+mpfr_ptr CCC::_epsilon = NULL;
 
 bool CCC::initialize_CCC() 
 {
@@ -20,8 +20,8 @@ bool CCC::initialize_CCC()
   _elem_size = sizeof(M2_CCC_struct);
   _zero_elem = new_elem();
   if (_epsilon == NULL) {
-    _epsilon = reinterpret_cast<mpf_ptr>(getmem(sizeof(mpf_t)));
-    mpf_init(_epsilon);
+    _epsilon = reinterpret_cast<mpfr_ptr>(getmem(sizeof(mpfr_t)));
+    mpfr_init(_epsilon);
   }
 
   zeroV = from_int(0);
@@ -43,23 +43,23 @@ void CCC::text_out(buffer &o) const
   o << "CCC";
 }
 
-mpf_ptr CCC::new_mpf() const
+mpfr_ptr CCC::new_mpfr() const
 {
-  mpf_ptr result = reinterpret_cast<mpf_ptr>(getmem(_elem_size));
-  mpf_init(result);
+  mpfr_ptr result = reinterpret_cast<mpfr_ptr>(getmem(_elem_size));
+  mpfr_init(result);
   return result;
 }
 
 M2_CCC CCC::new_elem() const
 {
   M2_CCC result = reinterpret_cast<M2_CCC>(getmem(_elem_size));
-  mpf_init(&result->re);
-  mpf_init(&result->im);
+  mpfr_init(&result->re);
+  mpfr_init(&result->im);
   return result;
 }
 void CCC::remove_elem(M2_CCC f) const
 {
-  // mpf_clear(f);
+  // mpfr_clear(f);
 }
 
 ring_elem CCC::random() const
@@ -69,8 +69,8 @@ ring_elem CCC::random() const
 
 void CCC::elem_text_out(buffer &o, const ring_elem ap) const
 {
-  mpf_ptr a = BIGCC_RE(ap);
-  mpf_ptr b = BIGCC_IM(ap);
+  mpfr_ptr a = BIGCC_RE(ap);
+  mpfr_ptr b = BIGCC_IM(ap);
   mp_exp_t expptr;
 
   // easier to call RRR::elem_text_out here ???
@@ -79,10 +79,10 @@ void CCC::elem_text_out(buffer &o, const ring_elem ap) const
   char *s = newarray_atomic(char,1000);
   char *str;
 
-  bool is_neg = (mpf_cmp_si(a, 0) == -1);
-  bool is_one = (mpf_cmp_si(a, 1) == 0 || mpf_cmp_si(a, -1) == 0);
+  bool is_neg = (mpfr_cmp_si(a, 0) == -1);
+  bool is_one = (mpfr_cmp_si(a, 1) == 0 || mpfr_cmp_si(a, -1) == 0);
 
-  // int size = mpf_sizeinbase(a, 10) + 2;
+  // int size = mpfr_sizeinbase(a, 10) + 2;
 
   // char *allocstr = (size > 1000 ? newarray(char,size) : s);
 
@@ -94,40 +94,40 @@ void CCC::elem_text_out(buffer &o, const ring_elem ap) const
     }
   else
     {
-      str = mpf_get_str(s, &expptr, 10, 0, a);
+      str = mpfr_get_str(s, &expptr, 10, 0, a, GMP_RNDN);
       o << "." << str << "*10^" << expptr;
     }
 
-  is_neg = (mpf_cmp_si(b, 0) == -1);
-  is_one = (mpf_cmp_si(b, 1) == 0 || mpf_cmp_si(b, -1) == 0);
+  is_neg = (mpfr_cmp_si(b, 0) == -1);
+  is_one = (mpfr_cmp_si(b, 1) == 0 || mpfr_cmp_si(b, -1) == 0);
 
-  str = mpf_get_str(s, &expptr, 10, 0, b);
+  str = mpfr_get_str(s, &expptr, 10, 0, b, GMP_RNDN);
   o << "+ (." << str << "*10^" << expptr << ") ii";
 
   // if (size > 1000) deletearray(allocstr);
 }
 
-void CCC::set_epsilon(mpf_ptr epsilon)
+void CCC::set_epsilon(mpfr_ptr epsilon)
 {
   if (_epsilon == NULL) {
-    _epsilon = reinterpret_cast<mpf_ptr>(getmem(sizeof(mpf_t)));
-    mpf_init(_epsilon);
+    _epsilon = reinterpret_cast<mpfr_ptr>(getmem(sizeof(mpfr_t)));
+    mpfr_init(_epsilon);
   }
-  mpf_set(_epsilon, epsilon);
+  mpfr_set(_epsilon, epsilon, GMP_RNDN);
 }
 
-mpf_ptr CCC::get_epsilon()
+mpfr_ptr CCC::get_epsilon()
 {
-  mpf_ptr epsilon = reinterpret_cast<mpf_ptr>(getmem(sizeof(mpf_t)));
-  mpf_init(epsilon);
-  mpf_set(epsilon, _epsilon);
+  mpfr_ptr epsilon = reinterpret_cast<mpfr_ptr>(getmem(sizeof(mpfr_t)));
+  mpfr_init(epsilon);
+  mpfr_set(epsilon, _epsilon, GMP_RNDN);
   return epsilon;
 }
 
 ring_elem CCC::from_int(int n) const
 {
   M2_CCC result = new_elem();
-  mpf_set_si(&result->re, n);
+  mpfr_set_si(&result->re, n, GMP_RNDN);
 
   return BIGCC_RINGELEM(result);
 }
@@ -135,7 +135,7 @@ ring_elem CCC::from_int(int n) const
 ring_elem CCC::from_int(mpz_ptr n) const
 {
   M2_CCC result = new_elem();
-  mpf_set_z(&result->re, n);
+  mpfr_set_z(&result->re, n, GMP_RNDN);
 
   return BIGCC_RINGELEM(result);
 }
@@ -143,7 +143,7 @@ ring_elem CCC::from_int(mpz_ptr n) const
 ring_elem CCC::from_double(double r) const
 {
   M2_CCC result = new_elem();
-  mpf_set_d(&result->re, r);
+  mpfr_set_d(&result->re, r, GMP_RNDN);
 
   return BIGCC_RINGELEM(result);
 }
@@ -151,8 +151,8 @@ ring_elem CCC::from_double(double r) const
 ring_elem CCC::from_doubles(double r, double s) const
 {
   M2_CCC result = new_elem();
-  mpf_set_d(&result->re, r);
-  mpf_set_d(&result->im, s);
+  mpfr_set_d(&result->re, r, GMP_RNDN);
+  mpfr_set_d(&result->im, s, GMP_RNDN);
 
   return BIGCC_RINGELEM(result);
 }
@@ -160,7 +160,7 @@ ring_elem CCC::from_doubles(double r, double s) const
 ring_elem CCC::from_rational(mpq_ptr r) const
 {
   M2_CCC result = new_elem();
-  mpf_set_q(&result->re, r);
+  mpfr_set_q(&result->re, r, GMP_RNDN);
 
   return BIGCC_RINGELEM(result);
 }
@@ -168,25 +168,25 @@ ring_elem CCC::from_rational(mpq_ptr r) const
 ring_elem CCC::from_complex(M2_CC z) const
 {
   M2_CCC result = new_elem();
-  mpf_set_d(&result->re, z->re);
-  mpf_set_d(&result->im, z->im);
+  mpfr_set_d(&result->re, z->re, GMP_RNDN);
+  mpfr_set_d(&result->im, z->im, GMP_RNDN);
 
   return BIGCC_RINGELEM(result);
 }
 
-ring_elem CCC::from_BigReal(mpf_ptr r) const
+ring_elem CCC::from_BigReal(mpfr_ptr r) const
 {
   M2_CCC result = new_elem();
-  mpf_set(&result->re, r);
+  mpfr_set(&result->re, r, GMP_RNDN);
 
   return BIGCC_RINGELEM(result);
 }
 
-ring_elem CCC::from_BigReals(mpf_ptr a, mpf_ptr b) const
+ring_elem CCC::from_BigReals(mpfr_ptr a, mpfr_ptr b) const
 {
   M2_CCC result = new_elem();
-  mpf_set(&result->re, a);
-  mpf_set(&result->im, b);
+  mpfr_set(&result->re, a, GMP_RNDN);
+  mpfr_set(&result->im, b, GMP_RNDN);
 
   return BIGCC_RINGELEM(result);
 }
@@ -194,13 +194,13 @@ ring_elem CCC::from_BigReals(mpf_ptr a, mpf_ptr b) const
 ring_elem CCC::from_BigComplex(M2_CCC z) const
 {
   M2_CCC result = new_elem();
-  mpf_set(&result->re, &z->re);
-  mpf_set(&result->im, &z->im);
+  mpfr_set(&result->re, &z->re, GMP_RNDN);
+  mpfr_set(&result->im, &z->im, GMP_RNDN);
 
   return BIGCC_RINGELEM(result);
 }
 
-mpf_ptr CCC::to_BigReal(ring_elem f) const
+mpfr_ptr CCC::to_BigReal(ring_elem f) const
 {
   return BIGCC_RE(f);
 }
@@ -210,8 +210,8 @@ bool CCC::promote(const Ring *Rf, const ring_elem f, ring_elem &result) const
   if (Rf == globalRRR)
     {
       M2_CCC g = new_elem();
-      mpf_set(&g->re, MPF_VAL(f));
-      mpf_init(&g->im);
+      mpfr_set(&g->re, MPF_VAL(f), GMP_RNDN);
+      mpfr_init(&g->im);
       
       result = BIGCC_RINGELEM(g);
     }
@@ -230,34 +230,34 @@ bool CCC::is_unit(const ring_elem f) const
 
 bool CCC::is_zero(const ring_elem f) const
 {
-  mpf_ptr a = BIGCC_RE(f);
-  mpf_ptr b = BIGCC_IM(f);
-  return (mpf_sgn(a) == 0 && mpf_sgn(b) == 0);
+  mpfr_ptr a = BIGCC_RE(f);
+  mpfr_ptr b = BIGCC_IM(f);
+  return (mpfr_sgn(a) == 0 && mpfr_sgn(b) == 0);
 }
 
 bool CCC::is_equal(const ring_elem f, const ring_elem g) const
 {
-  mpf_ptr ar = BIGCC_RE(f);
-  mpf_ptr ai = BIGCC_IM(f);
-  mpf_ptr br = BIGCC_RE(g);
-  mpf_ptr bi = BIGCC_IM(g);
+  mpfr_ptr ar = BIGCC_RE(f);
+  mpfr_ptr ai = BIGCC_IM(f);
+  mpfr_ptr br = BIGCC_RE(g);
+  mpfr_ptr bi = BIGCC_IM(g);
 
-  if (mpf_sgn(_epsilon) == 0) 
+  if (mpfr_sgn(_epsilon) == 0) 
     {
-      return (mpf_cmp(ar, br) == 0 && mpf_cmp(ai, bi) == 0);
+      return (mpfr_cmp(ar, br) == 0 && mpfr_cmp(ai, bi) == 0);
     }    
   else
     {
-      mpf_ptr cr = new_mpf();
-      mpf_ptr ci = new_mpf();
-      mpf_ptr dr = new_mpf();
-      mpf_ptr di = new_mpf();
-      mpf_sub(cr, ar, br);
-      mpf_sub(ci, ai, bi);
-      mpf_sub(dr, br, ar);
-      mpf_sub(di, bi, ai);
-      return (mpf_cmp(cr, _epsilon) < 0 && mpf_cmp(ci, _epsilon) < 0 &&
-	      mpf_cmp(dr, _epsilon) < 0 && mpf_cmp(di, _epsilon) < 0);
+      mpfr_ptr cr = new_mpfr();
+      mpfr_ptr ci = new_mpfr();
+      mpfr_ptr dr = new_mpfr();
+      mpfr_ptr di = new_mpfr();
+      mpfr_sub(cr, ar, br, GMP_RNDN);
+      mpfr_sub(ci, ai, bi, GMP_RNDN);
+      mpfr_sub(dr, br, ar, GMP_RNDN);
+      mpfr_sub(di, bi, ai, GMP_RNDN);
+      return (mpfr_cmp(cr, _epsilon) < 0 && mpfr_cmp(ci, _epsilon) < 0 &&
+	      mpfr_cmp(dr, _epsilon) < 0 && mpfr_cmp(di, _epsilon) < 0);
     }
 }
 bool CCC::is_greater(const ring_elem f, const ring_elem g) const
@@ -265,21 +265,21 @@ bool CCC::is_greater(const ring_elem f, const ring_elem g) const
   M2_CCC a = new_elem();
   M2_CCC b = new_elem();
 
-  mpf_pow_ui(&a->re, BIGCC_RE(f), 2);
-  mpf_pow_ui(&a->im, BIGCC_IM(f), 2);
-  mpf_pow_ui(&b->re, BIGCC_RE(g), 2);
-  mpf_pow_ui(&b->im, BIGCC_IM(g), 2);
-  mpf_add(&a->re, &a->re, &a->im);
-  mpf_add(&b->re, &b->re, &b->im);
-  return mpf_cmp(&a->re,&b->re) > 0;
+  mpfr_pow_ui(&a->re, BIGCC_RE(f), 2, GMP_RNDN);
+  mpfr_pow_ui(&a->im, BIGCC_IM(f), 2, GMP_RNDN);
+  mpfr_pow_ui(&b->re, BIGCC_RE(g), 2, GMP_RNDN);
+  mpfr_pow_ui(&b->im, BIGCC_IM(g), 2, GMP_RNDN);
+  mpfr_add(&a->re, &a->re, &a->im, GMP_RNDN);
+  mpfr_add(&b->re, &b->re, &b->im, GMP_RNDN);
+  return mpfr_cmp(&a->re,&b->re) > 0;
 }
 
 int CCC::compare_elems(const ring_elem f, const ring_elem g) const
 {
-  int cmp = mpf_cmp(BIGCC_RE(f), BIGCC_RE(g));
+  int cmp = mpfr_cmp(BIGCC_RE(f), BIGCC_RE(g));
   if (cmp > 0) return 1;
   if (cmp < 0) return -1;
-  cmp = mpf_cmp(BIGCC_IM(f),BIGCC_IM(g));
+  cmp = mpfr_cmp(BIGCC_IM(f),BIGCC_IM(g));
   if (cmp > 0) return 1;
   if (cmp < 0) return -1;
   return 0;
@@ -287,18 +287,18 @@ int CCC::compare_elems(const ring_elem f, const ring_elem g) const
 
 bool CCC::is_real(const ring_elem f) const
 {
-  mpf_ptr im = BIGCC_IM(f);
-  return mpf_sgn(im) == 0;
+  mpfr_ptr im = BIGCC_IM(f);
+  return mpfr_sgn(im) == 0;
 }
 
-void CCC::zeroize_tiny_lead_components(vec &v, mpf_ptr epsilon) const
+void CCC::zeroize_tiny_lead_components(vec &v, mpfr_ptr epsilon) const
 {
   while (v != NULL) {
-    mpf_ptr re = new_mpf();
-    mpf_ptr im = new_mpf();
-    mpf_abs(re, BIGCC_RE(v->coeff));
-    mpf_abs(im, BIGCC_IM(v->coeff));
-    if (epsilon != NULL && mpf_cmp(re, epsilon) < 0 && mpf_cmp(im, epsilon)) {
+    mpfr_ptr re = new_mpfr();
+    mpfr_ptr im = new_mpfr();
+    mpfr_abs(re, BIGCC_RE(v->coeff), GMP_RNDN);
+    mpfr_abs(im, BIGCC_IM(v->coeff), GMP_RNDN);
+    if (epsilon != NULL && mpfr_cmp(re, epsilon) < 0 && mpfr_cmp(im, epsilon)) {
       v = v->next;
     } else return;    
   }
@@ -308,23 +308,23 @@ ring_elem CCC::absolute(const ring_elem f) const
 {
   M2_CCC result = new_elem();
 
-  mpf_pow_ui(&result->re, BIGCC_RE(f), 2);
-  mpf_pow_ui(&result->im, BIGCC_IM(f), 2);
-  mpf_add(&result->re, &result->re, &result->im);
-  mpf_sqrt(&result->re, &result->re);
-  mpf_set_ui(&result->im, 0);
+  mpfr_pow_ui(&result->re, BIGCC_RE(f), 2, GMP_RNDN);
+  mpfr_pow_ui(&result->im, BIGCC_IM(f), 2, GMP_RNDN);
+  mpfr_add(&result->re, &result->re, &result->im, GMP_RNDN);
+  mpfr_sqrt(&result->re, &result->re, GMP_RNDN);
+  mpfr_set_ui(&result->im, 0, GMP_RNDN);
 
   return BIGCC_RINGELEM(result);
 }
 
 ring_elem CCC::copy(const ring_elem f) const
 {
-  mpf_ptr a = BIGCC_RE(f);
-  mpf_ptr b = BIGCC_IM(f);
+  mpfr_ptr a = BIGCC_RE(f);
+  mpfr_ptr b = BIGCC_IM(f);
 
   M2_CCC result = new_elem();
-  mpf_set(&result->re, a);
-  mpf_set(&result->im, b);
+  mpfr_set(&result->re, a, GMP_RNDN);
+  mpfr_set(&result->im, b, GMP_RNDN);
   return BIGCC_RINGELEM(result);
 }
 
@@ -345,45 +345,45 @@ ring_elem CCC::preferred_associate(ring_elem f) const
 
 void CCC::internal_negate_to(ring_elem &f) const
 {
-  mpf_neg(BIGCC_RE(f), BIGCC_RE(f));
-  mpf_neg(BIGCC_IM(f), BIGCC_IM(f));
+  mpfr_neg(BIGCC_RE(f), BIGCC_RE(f), GMP_RNDN);
+  mpfr_neg(BIGCC_IM(f), BIGCC_IM(f), GMP_RNDN);
 }
 
 void CCC::internal_add_to(ring_elem &f, ring_elem &g) const
 {
-  mpf_add(BIGCC_RE(f), BIGCC_RE(f), BIGCC_RE(g));
-  mpf_add(BIGCC_IM(f), BIGCC_IM(f), BIGCC_IM(g));
+  mpfr_add(BIGCC_RE(f), BIGCC_RE(f), BIGCC_RE(g), GMP_RNDN);
+  mpfr_add(BIGCC_IM(f), BIGCC_IM(f), BIGCC_IM(g), GMP_RNDN);
   // remove(g); should this be removed?
 }
 
 void CCC::internal_subtract_to(ring_elem &f, ring_elem &g) const
 {
-  mpf_sub(BIGCC_RE(f), BIGCC_RE(f), BIGCC_RE(g));
-  mpf_sub(BIGCC_IM(f), BIGCC_IM(f), BIGCC_IM(g));
+  mpfr_sub(BIGCC_RE(f), BIGCC_RE(f), BIGCC_RE(g), GMP_RNDN);
+  mpfr_sub(BIGCC_IM(f), BIGCC_IM(f), BIGCC_IM(g), GMP_RNDN);
   // remove(g); should g be removed?
 }
 
 ring_elem CCC::negate(const ring_elem f) const
 {
   M2_CCC result = new_elem();
-  mpf_neg(&result->re, BIGCC_RE(f));
-  mpf_neg(&result->im, BIGCC_IM(f));
+  mpfr_neg(&result->re, BIGCC_RE(f), GMP_RNDN);
+  mpfr_neg(&result->im, BIGCC_IM(f), GMP_RNDN);
   return BIGCC_RINGELEM(result);
 }
 
 ring_elem CCC::add(const ring_elem f, const ring_elem g) const
 {
   M2_CCC result = new_elem();
-  mpf_add(&result->re, BIGCC_RE(f), BIGCC_RE(g));
-  mpf_add(&result->im, BIGCC_IM(f), BIGCC_IM(g));
+  mpfr_add(&result->re, BIGCC_RE(f), BIGCC_RE(g), GMP_RNDN);
+  mpfr_add(&result->im, BIGCC_IM(f), BIGCC_IM(g), GMP_RNDN);
   return BIGCC_RINGELEM(result);
 }
 
 ring_elem CCC::subtract(const ring_elem f, const ring_elem g) const
 {
   M2_CCC result = new_elem();
-  mpf_sub(&result->re, BIGCC_RE(f), BIGCC_RE(g));
-  mpf_sub(&result->im, BIGCC_IM(f), BIGCC_IM(g));
+  mpfr_sub(&result->re, BIGCC_RE(f), BIGCC_RE(g), GMP_RNDN);
+  mpfr_sub(&result->im, BIGCC_IM(f), BIGCC_IM(g), GMP_RNDN);
   return BIGCC_RINGELEM(result);
 }
 
@@ -391,12 +391,12 @@ ring_elem CCC::mult(const ring_elem f, const ring_elem g) const
 {
   M2_CCC result = new_elem();
   M2_CCC tmp = new_elem();
-  mpf_mul(&result->re, BIGCC_RE(f), BIGCC_RE(g));
-  mpf_mul(&tmp->re, BIGCC_IM(f), BIGCC_IM(g));
-  mpf_sub(&result->re, &result->re, &tmp->re);
-  mpf_mul(&result->im, BIGCC_RE(f), BIGCC_IM(g));
-  mpf_mul(&tmp->im, BIGCC_IM(f), BIGCC_RE(g));
-  mpf_add(&result->im, &result->im, &tmp->im);
+  mpfr_mul(&result->re, BIGCC_RE(f), BIGCC_RE(g), GMP_RNDN);
+  mpfr_mul(&tmp->re, BIGCC_IM(f), BIGCC_IM(g), GMP_RNDN);
+  mpfr_sub(&result->re, &result->re, &tmp->re, GMP_RNDN);
+  mpfr_mul(&result->im, BIGCC_RE(f), BIGCC_IM(g), GMP_RNDN);
+  mpfr_mul(&tmp->im, BIGCC_IM(f), BIGCC_RE(g), GMP_RNDN);
+  mpfr_add(&result->im, &result->im, &tmp->im, GMP_RNDN);
   return BIGCC_RINGELEM(result);
 }
 
@@ -447,12 +447,12 @@ ring_elem CCC::invert(const ring_elem f) const
   else {
     M2_CCC result = new_elem();
     M2_CCC tmp = new_elem();
-    mpf_mul(&tmp->re, BIGCC_RE(f), BIGCC_RE(f));
-    mpf_mul(&tmp->im, BIGCC_IM(f), BIGCC_IM(f));
-    mpf_add(&tmp->re, &tmp->re, &tmp->im);
-    mpf_div(&result->re, BIGCC_RE(f), &tmp->re);
-    mpf_div(&result->im, BIGCC_IM(f), &tmp->re);
-    mpf_neg(&result->im, &result->im);
+    mpfr_mul(&tmp->re, BIGCC_RE(f), BIGCC_RE(f), GMP_RNDN);
+    mpfr_mul(&tmp->im, BIGCC_IM(f), BIGCC_IM(f), GMP_RNDN);
+    mpfr_add(&tmp->re, &tmp->re, &tmp->im, GMP_RNDN);
+    mpfr_div(&result->re, BIGCC_RE(f), &tmp->re, GMP_RNDN);
+    mpfr_div(&result->im, BIGCC_IM(f), &tmp->re, GMP_RNDN);
+    mpfr_neg(&result->im, &result->im, GMP_RNDN);
     return BIGCC_RINGELEM(result);
   }
 }

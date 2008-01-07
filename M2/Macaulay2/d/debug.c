@@ -8,6 +8,7 @@
 
 #include "debug.h"
 #include <gmp.h>
+#include <mpfr.h>
 #include <string.h>
 
 void *trapaddr = (void *)1;

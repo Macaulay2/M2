@@ -75,10 +75,10 @@ ring_elem RingRR::from_rational(mpq_ptr r) const
   result->val = mpq_get_d(r);
   return RR_RINGELEM(result);
 }
-ring_elem RingRR::from_BigReal(mpf_ptr a) const
+ring_elem RingRR::from_BigReal(mpfr_ptr a) const
 {
   RRelem result = reinterpret_cast<RRelem>(getmem(sizeof(RRelem_rec)));
-  result->val = mpf_get_d(a);
+  result->val = mpfr_get_d(a,GMP_RNDN);
   return RR_RINGELEM(result);
 }
 

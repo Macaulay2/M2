@@ -4,6 +4,7 @@
 #define _ringelem_hh_
 
 #include <gmp.h>
+#include <mpfr.h>
 #include "newdelete.hpp"
 
 struct Nterm;

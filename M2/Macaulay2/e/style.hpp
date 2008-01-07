@@ -11,6 +11,7 @@
 #include <string.h>
 #include <algorithm>
 #include <gmp.h>
+#include <mpfr.h>
 
 #define VECTOR(T) std::vector< T, gc_allocator< T > >
 

@@ -2,6 +2,7 @@
 #define _ntl_interface_hpp_
 
 #include <gmp.h>
+#include <mpfr.h>
 #include <NTL/ZZ.h>
 #include <NTL/mat_ZZ.h>
 #include <NTL/LLL.h>

@@ -9,7 +9,8 @@
 #include "random.hpp"
 #include "ZZ.hpp"
 #include "relem.hpp"
-#include "gmp.h"
+#include <gmp.h>
+#include <mpfr.h>
 
 extern RingZZ *globalZZ;
 int32_t RandomSeed = MASK;

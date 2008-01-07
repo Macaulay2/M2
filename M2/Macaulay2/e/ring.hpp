@@ -186,7 +186,7 @@ public:
   // The default version calls from_int(0). Change it?
   virtual ring_elem from_complex(M2_CC z) const;
   // The default version calls from_int(0). Change it?
-  virtual ring_elem from_BigReal(mpf_ptr a) const;  
+  virtual ring_elem from_BigReal(mpfr_ptr a) const;  
   // The default version calls from_int(0). Change it?
   virtual ring_elem from_BigComplex(M2_CCC z) const;  
   // The default version calls from_int(0). Change it?

@@ -5,6 +5,7 @@
 
 #include "ring.hpp"
 #include <gmp.h>
+#include <mpfr.h>
 class CoefficientRingZZ_NTL;
 
 // #define MPZ_VAL(f) (reinterpret_cast<mpz_ptr>((f).poly_val))
@@ -19,7 +20,7 @@ class CoefficientRingZZ_NTL;
 #define CC_RE(f) ((CCELEM_VAL(f))->re)
 #define CC_NORM(f) (sqrt(CC_RE(f)*CC_RE(f) + CC_IM(f)*CC_IM(f)))
 
-#define MPF_VAL(f) (reinterpret_cast<mpf_ptr>((f).poly_val))
+#define MPF_VAL(f) (reinterpret_cast<mpfr_ptr>((f).poly_val))
 #define MPF_RINGELEM(a) (ring_elem(reinterpret_cast<Nterm *>(a)))
 
 #define BIGCC_VAL(f) (reinterpret_cast<M2_CCC>((f).poly_val))

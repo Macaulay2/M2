@@ -766,7 +766,7 @@ export (x:Rational) >= (y:double) : bool := numeratorRef(x) >= y * denominatorRe
 -- big reals
 -----------------------------------------------------------------------------
 
-export RRR := { prec:int, size:int, exp:int, limbs:limbPointer }; -- must agree with __mpf_struct in gmp.h, and with M2_RRR in M2types.h
+export RRR := { prec:int, size:int, exp:int, limbs:limbPointer }; -- must agree with __mpfr_struct in mpfr.h, and with M2_RRR in M2types.h
 export CCC := { 					    -- must agree with M2_CCC in M2types.h
      REprec:int, REsize:int, REexp:int, RElimbs:limbPointer,
      IMprec:int, IMsize:int, IMexp:int, IMlimbs:limbPointer
@@ -776,11 +776,11 @@ export realPart(z:CCC):RRR := RRR(z.REprec, z.REsize, z.REexp, z.RElimbs);
 export imaginaryPart(z:CCC):RRR := RRR(z.IMprec, z.IMsize, z.IMexp, z.IMlimbs);
 export bigComplex(x:RRR,y:RRR):CCC := CCC(x.prec, x.size, x.exp, x.limbs, y.prec, y.size, y.exp, y.limbs);
 
-isPositive(x:RRR):bool ::=  1 == Ccode(int, "mpf_sgn((__mpf_struct *)", x, ")");
-isZero    (x:RRR):bool ::=  0 == Ccode(int, "mpf_sgn((__mpf_struct *)", x, ")");
-isNegative(x:RRR):bool ::= -1 == Ccode(int, "mpf_sgn((__mpf_struct *)", x, ")");
+isPositive(x:RRR):bool ::=  1 == Ccode(int, "mpfr_sgn((__mpfr_struct *)", x, ")");
+isZero    (x:RRR):bool ::=  0 == Ccode(int, "mpfr_sgn((__mpfr_struct *)", x, ")");
+isNegative(x:RRR):bool ::= -1 == Ccode(int, "mpfr_sgn((__mpfr_struct *)", x, ")");
 
-export precision(x:RRR):int := int(Ccode(ulong, "mpf_get_prec((__mpf_struct*)",x,")"));
+export precision(x:RRR):int := int(Ccode(ulong, "mpfr_get_prec((__mpfr_struct*)",x,")"));
 
 BitsPerLimb := int(Ccode(int,"__GMP_BITS_PER_MP_LIMB"));
 accuracy(x:RRR):int := BitsPerLimb * (x.prec - x.exp);
@@ -790,50 +790,50 @@ bigprec := 0;
 export setprec(prec:int):int := (
      oldprec := bigprec;
      bigprec = prec;
-     Ccode(void, "mpf_set_default_prec((unsigned long)", bigprec, ")");
+     Ccode(void, "mpfr_set_default_prec((unsigned long)", bigprec, ")");
      oldprec);
 setprec(100);
 
 newBigReal():RRR := (
      x := RRR(0,0,0,null());
-     Ccode( void, "mpf_init(", "(__mpf_struct *)", x, ")" );
+     Ccode( void, "mpfr_init(", "(__mpfr_struct *)", x, ")" );
      x);
 
 export toBigReal(x:Rational):RRR := (
      z := newBigReal();
-     Ccode( void, "mpf_set_q(", "(__mpf_struct *)", z, ",", "(__mpq_struct *)", x, ")" );
+     Ccode( void, "mpfr_set_q(", "(__mpfr_struct *)", z, ",", "(__mpq_struct *)", x, ", GMP_RNDN)" );
      z);
 
 export toBigReal(x:Integer):RRR := (
      z := newBigReal();
-     Ccode( void, "mpf_set_z(", "(__mpf_struct *)", z, ",", "(__mpz_struct *)", x, ")" );
+     Ccode( void, "mpfr_set_z(", "(__mpfr_struct *)", z, ",", "(__mpz_struct *)", x, ", GMP_RNDN)" );
      z);
 
 export toBigReal(n:int):RRR := (
      x := newBigReal();
-     Ccode( void, "mpf_set_si(", "(__mpf_struct *)", x, ",(long)", n, ")" );
+     Ccode( void, "mpfr_set_si(", "(__mpfr_struct *)", x, ",(long)", n, ", GMP_RNDN)" );
      x);
 
 export toBigReal(n:ulong):RRR := (
      x := newBigReal();
-     Ccode( void, "mpf_set_ui(", "(__mpf_struct *)", x, ",(unsigned long)", n, ")" );
+     Ccode( void, "mpfr_set_ui(", "(__mpfr_struct *)", x, ",(unsigned long)", n, ", GMP_RNDN)" );
      x);
 
 export toBigReal(n:double):RRR := (
      x := newBigReal();
-     Ccode( void, "mpf_set_d(", "(__mpf_struct *)", x, ",", n, ")" );
+     Ccode( void, "mpfr_set_d(", "(__mpfr_struct *)", x, ",", n, ", GMP_RNDN)" );
      x);
 
-export toDouble(x:RRR):double := Ccode( double, "mpf_get_d(", "(__mpf_struct *)", x, ")" );
+export toDouble(x:RRR):double := Ccode( double, "mpfr_get_d(", "(__mpfr_struct *)", x, ", GMP_RNDN)" );
 
 getstr(str:Cstring, exp:long, base:int, digits:int, x:RRR):Cstring ::= Ccode(Cstring,
-     "(Cstring) mpf_get_str(",
+     "(Cstring) mpfr_get_str(",
 	 "(char *)", str, ",",				    -- target string
 	 "&", exp, ",",					   -- target exponent
 	 base, ",",					    -- base
 	 "(size_t)", digits, ",",	      -- number of digits to generate
-	 "(__mpf_struct *)", x,
-     ")"
+	 "(__mpfr_struct *)", x,
+     ", GMP_RNDN)"
      );
 
 export tostring(x:RRR):string := (
@@ -846,15 +846,15 @@ export tostring(x:RRR,digits:int):string := (
      s := getstr(Cstring(null()), e, base, digits, x);
      "."+tostring(s) + "*10^" + tostring(int(e)));
 
-compare0(x:RRR, y:RRR):int ::= Ccode( int, "mpf_cmp(", "(__mpf_struct *)", x, ",", "(__mpf_struct *)", y, ")" );
-export compare(x:RRR, y:RRR):int := Ccode( int, "mpf_cmp(", "(__mpf_struct *)", x, ",", "(__mpf_struct *)", y, ")" );
+compare0(x:RRR, y:RRR):int ::= Ccode( int, "mpfr_cmp(", "(__mpfr_struct *)", x, ",", "(__mpfr_struct *)", y, ")" );
+export compare(x:RRR, y:RRR):int := Ccode( int, "mpfr_cmp(", "(__mpfr_struct *)", x, ",", "(__mpfr_struct *)", y, ")" );
 export (x:RRR) === (y:RRR) : bool := compare0(x,y) == 0;
 export (x:RRR)  >  (y:RRR) : bool := compare0(x,y) >  0;
 export (x:RRR)  <  (y:RRR) : bool := compare0(x,y) <  0;
 export (x:RRR)  >= (y:RRR) : bool := compare0(x,y) >= 0;
 export (x:RRR)  <= (y:RRR) : bool := compare0(x,y) <= 0;
 
-compare0(x:RRR, y:long):int ::= Ccode( int, "mpf_cmp_si(", "(__mpf_struct *)", x, ",", y, ")" );
+compare0(x:RRR, y:long):int ::= Ccode( int, "mpfr_cmp_si(", "(__mpfr_struct *)", x, ",", y, ")" );
 export (x:RRR)  >  (y:int) : bool :=  compare0(x,long(y)) >  0;
 export (x:RRR)  >= (y:int) : bool :=  compare0(x,long(y)) >= 0;
 export (x:RRR) === (y:int) : bool :=  compare0(x,long(y)) == 0;
@@ -862,51 +862,51 @@ export (x:RRR)  <  (y:int) : bool :=  compare0(x,long(y)) <  0;
 export (x:RRR)  <= (y:int) : bool :=  compare0(x,long(y)) <= 0;
 
 export (x:CCC) === (y:CCC) : bool := (
-     0 == Ccode( int, "mpf_cmp((__mpf_struct *)", x, ",(__mpf_struct *)", y, ")" )
+     0 == Ccode( int, "mpfr_cmp((__mpfr_struct *)", x, ",(__mpfr_struct *)", y, ")" )
      &&
-     0 == Ccode( int, "mpf_cmp((__mpf_struct *)(&", x, "->IMprec),(__mpf_struct *)(&", y, "->IMprec))" )
+     0 == Ccode( int, "mpfr_cmp((__mpfr_struct *)(&", x, "->IMprec),(__mpfr_struct *)(&", y, "->IMprec))" )
      );
 
 export hash(x:RRR):int := Ccode(int, 
-     "mpf_hash(",					    -- see gmp_aux.c for this function
-         "(__mpf_struct *)", x, 
+     "mpfr_hash(",					    -- see gmp_aux.c for this function
+         "(__mpfr_struct *)", x, 
      ")"
      );
 export hash(x:CCC):int := (
-     Ccode(int, "mpf_hash(", "(__mpf_struct *)", x, ")" )
+     Ccode(int, "mpfr_hash(", "(__mpfr_struct *)", x, ")" )
      + 111 * 
-     Ccode(int, "mpf_hash(", "(__mpf_struct *)(&", x, "->IMprec))" )
+     Ccode(int, "mpfr_hash(", "(__mpfr_struct *)(&", x, "->IMprec))" )
      );
      
 export (x:RRR) + (y:RRR) : RRR := (
      z := newBigReal();
      Ccode( void,
-          "mpf_add(",
-	      "(__mpf_struct *)", z, ",", 
-	      "(__mpf_struct *)", x, ",", 
-	      "(__mpf_struct *)", y,
-	  ")" 
+          "mpfr_add(",
+	      "(__mpfr_struct *)", z, ",", 
+	      "(__mpfr_struct *)", x, ",", 
+	      "(__mpfr_struct *)", y,
+	  ", GMP_RNDN)" 
      );
      z);
 
 export (x:RRR) - (y:RRR) : RRR := (
      z := newBigReal();
      Ccode( void,
-          "mpf_sub(",
-	      "(__mpf_struct *)", z, ",", 
-	      "(__mpf_struct *)", x, ",", 
-	      "(__mpf_struct *)", y,
-	  ")" 
+          "mpfr_sub(",
+	      "(__mpfr_struct *)", z, ",", 
+	      "(__mpfr_struct *)", x, ",", 
+	      "(__mpfr_struct *)", y,
+	  ", GMP_RNDN)" 
      );
      z);
 
 export - (y:RRR) : RRR := (
      z := newBigReal();
      Ccode( void,
-	  "mpf_neg(",
-	      "(__mpf_struct *)", z, ",", 
-	      "(__mpf_struct *)", y,
-	  ")" 
+	  "mpfr_neg(",
+	      "(__mpfr_struct *)", z, ",", 
+	      "(__mpfr_struct *)", y,
+	  ", GMP_RNDN)" 
      );
      z);
 
@@ -915,31 +915,31 @@ export abs(x:RRR) : RRR := if isNegative(x) then -x else x;
 export (x:RRR) * (y:RRR) : RRR := (
      z := newBigReal();
      Ccode( void,
-          "mpf_mul(",
-	      "(__mpf_struct *)", z, ",", 
-	      "(__mpf_struct *)", x, ",", 
-	      "(__mpf_struct *)", y,
-	  ")" 
+          "mpfr_mul(",
+	      "(__mpfr_struct *)", z, ",", 
+	      "(__mpfr_struct *)", x, ",", 
+	      "(__mpfr_struct *)", y,
+	  ", GMP_RNDN)" 
      );
      z);
 
 export (x:RRR) / (y:RRR) : RRR := (
      z := newBigReal();
      Ccode( void,
-          "mpf_div(",
-	      "(__mpf_struct *)", z, ",", 
-	      "(__mpf_struct *)", x, ",", 
-	      "(__mpf_struct *)", y,
-	  ")" 
+          "mpfr_div(",
+	      "(__mpfr_struct *)", z, ",", 
+	      "(__mpfr_struct *)", x, ",", 
+	      "(__mpfr_struct *)", y,
+	  ", GMP_RNDN)" 
      );
      z);
 
 pow(x:RRR, y:RRR, n:ulong):void ::= Ccode( void,
-     "mpf_pow_ui(",
-	 "(__mpf_struct *)", x, ",", 
-	 "(__mpf_struct *)", y, ",", 
+     "mpfr_pow_ui(",
+	 "(__mpfr_struct *)", x, ",", 
+	 "(__mpfr_struct *)", y, ",", 
 	 n,
-     ")" 
+     ", GMP_RNDN)" 
      );
 
 export (x:RRR) ^ (n:int) : RRR := (
@@ -954,28 +954,28 @@ export (x:RRR) ^ (n:int) : RRR := (
 export sqrt(y:RRR) : RRR := (
      z := newBigReal();
      Ccode( void,
-	  "mpf_sqrt(",
-	      "(__mpf_struct *)", z, ",", 
-	      "(__mpf_struct *)", y,
-	  ")" 
+	  "mpfr_sqrt(",
+	      "(__mpfr_struct *)", z, ",", 
+	      "(__mpfr_struct *)", y,
+	  ", GMP_RNDN)" 
      );
      z);
 
 export floor(x:RRR) : Integer := (
--- - Function: void mpz_set_f (mpz_t ROP, mpf_t OP)
+-- - Function: void mpz_set_f (mpz_t ROP, mpfr_t OP)
 --     Set the value of ROP from OP.
 
---  - Function: void mpf_ceil (mpf_t ROP, mpf_t OP)
---  - Function: void mpf_floor (mpf_t ROP, mpf_t OP)
---  - Function: void mpf_trunc (mpf_t ROP, mpf_t OP)
---      Set ROP to OP rounded to an integer.  `mpf_ceil' rounds to the
---      next higher integer, `mpf_floor' to the next lower, and `mpf_trunc'
+--  - Function: void mpfr_ceil (mpfr_t ROP, mpfr_t OP)
+--  - Function: void mpfr_floor (mpfr_t ROP, mpfr_t OP)
+--  - Function: void mpfr_trunc (mpfr_t ROP, mpfr_t OP)
+--      Set ROP to OP rounded to an integer.  `mpfr_ceil' rounds to the
+--      next higher integer, `mpfr_floor' to the next lower, and `mpfr_trunc'
 --      to the integer towards zero.
 
      z := newBigReal();
-     Ccode( void, "mpf_floor((__mpf_struct *)", z, ",(__mpf_struct *)", x, ")" );
+     Ccode( void, "mpfr_floor((__mpfr_struct *)", z, ",(__mpfr_struct *)", x, ")" );
      y := newInteger();
-     Ccode( void, "mpz_set_f((__mpz_struct *)", y, ",(__mpf_struct *)", z, ")" );
+     Ccode( void, "mpfr_get_z((__mpz_struct *)", y, ",(__mpfr_struct *)", z, ", GMP_RNDN)" );
      y);
 
 -- Local Variables:

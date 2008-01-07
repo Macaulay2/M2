@@ -3,6 +3,7 @@
 #define _text_io_hh_
 
 #include <gmp.h>
+#include <mpfr.h>
 #include "buffer.hpp"
 #include "debug.hpp"
 
