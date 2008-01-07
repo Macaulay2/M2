@@ -1391,20 +1391,6 @@ document { Key => precision,
      Inputs => { "x" => RRR },
      Outputs => { ZZ => {"the precision of x"}}}
 
-document { Key => setPrecision,
-     Caveat => "this routine is provisional, and may be replaced",
-     Usage => "setPrecision n",
-     Inputs => { "n" => ZZ },
-     Consequences => {{"the current precision is set to ", TT "n", " bits"}},
-     Outputs => { ZZ => {"the previous precision"}},
-     EXAMPLE lines ///
-     	  setPrecision 200
-	  x = sqrt toRRR 2
-	  precision x
-	  x^2-2
-     ///
-     }
-
 document { Key => "printingTimeLimit",
      "This variable specifies the number of seconds to allow for printing an output line"
      }
@@ -1684,13 +1670,14 @@ document { Key => "synonym",
 
 document { Key => toRRR,
      Headline => "convert to high-precision real",
-     Caveat => "this routine is provisional, and may be replaced",
-     Usage => "toRRR x",
-     Inputs => { "x" => {ofClass{RR,ZZ,QQ}}},
-     Outputs => {RRR => {"the result of converting ", TT "x", " to a high-precision real number, at the current precision"}},
+     Usage => "toRRR(prec,x)",
+     Inputs => { 
+	  "prec" => ZZ => {"the number of bits of precision desired"}
+	  "x" => {ofClass{RR,ZZ,QQ}}
+	  },
+     Outputs => {RRR => {"the result of converting ", TT "x", " to a high-precision real number"}},
      EXAMPLE lines ///
-     	  setPrecision 200
-	  toRRR(1/7)
+	  toRRR(200,1/7)
 	  precision oo
      ///}
 
