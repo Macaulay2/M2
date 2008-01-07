@@ -68,6 +68,9 @@ absfun(e:Expr):Expr := (
      is i:Integer do Expr(abs(i))
      is d:Real do Expr(Real(if d.v < 0. then -d.v else d.v))
      is x:RRR do Expr(if x < 0 then -x else x)
+     is z:Complex do Expr(Real(
+	       Ccode(double, "rawCCAbs((M2_CC)", z, ")")
+	  ))
      is r:Rational do Expr(abs(r))
      else WrongArg("a number, real or complex"));
 setupfun("abs",absfun);
