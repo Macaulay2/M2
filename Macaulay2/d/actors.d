@@ -34,7 +34,7 @@ export (lhs:Expr) + (rhs:Expr) : Expr := (
 	  when rhs
 	  is y:Integer do Expr(x + y)
      	  is y:Rational do Expr(x + y)
-     	  is y:RRR do Expr(toBigReal(x) + y)
+     	  is y:RRR do Expr(y + x)
      	  is y:Real do Expr(Real(x + y.v))
 	  is Error do rhs
 	  else binarymethod(lhs,rhs,PlusS))
@@ -42,7 +42,7 @@ export (lhs:Expr) + (rhs:Expr) : Expr := (
 	  when rhs
 	  is y:Integer do Expr(x + y)
      	  is y:Rational do Expr(x + y)
-     	  is y:RRR do Expr(toBigReal(x) + y)
+     	  is y:RRR do Expr(y + x)
 	  is y:Real do Expr(Real(x + y.v))
 	  is Error do rhs
 	  else binarymethod(lhs,rhs,PlusS))
@@ -57,17 +57,17 @@ export (lhs:Expr) + (rhs:Expr) : Expr := (
 	  else binarymethod(lhs,rhs,PlusS))
      is x:RRR do (
 	  when rhs
-	  is y:Integer do Expr(x + toBigReal(y))
-     	  is y:Rational do Expr(x + toBigReal(y))
+	  is y:Integer do Expr(x + y)
+     	  is y:Rational do Expr(x + y)
      	  is y:RRR do Expr(x + y)
-	  is y:Real do Expr(x + toBigReal(y.v))
+	  is y:Real do Expr(x + toBigReal(y.v,x.prec))
 	  is Error do rhs
 	  else binarymethod(lhs,rhs,PlusS))
      is x:Real do (
 	  when rhs
      	  is y:Integer do Expr(Real(x.v+y))
      	  is y:Rational do Expr(Real(x.v+y))
-     	  is y:RRR do Expr(toBigReal(x.v)+y)
+     	  is y:RRR do Expr(toBigReal(x.v,y.prec)+y)
 	  is y:Real do Expr(Real(x.v+y.v))
      	  is Error do rhs
 	  else binarymethod(lhs,rhs,PlusS))
@@ -147,7 +147,7 @@ export (lhs:Expr) - (rhs:Expr) : Expr := (
      is x:Real do (
 	  when rhs
 	  is y:Real do Expr(Real(x.v-y.v))
-	  is y:RRR do Expr(toBigReal(x.v) - y)
+	  is y:RRR do Expr(toBigReal(x.v,y.prec) - y)
 	  is y:Integer do Expr(Real(x.v-y))
 	  is y:Rational do Expr(Real(x.v-y))
      	  is Error do rhs
@@ -157,7 +157,7 @@ export (lhs:Expr) - (rhs:Expr) : Expr := (
 	  is y:Integer do Expr(x - y)
      	  is y:Rational do Expr(x - y)
 	  is y:Real do Expr(Real(x - y.v))
-	  is y:RRR do Expr(toBigReal(x) - y)
+	  is y:RRR do Expr(toBigReal(x,y.prec) - y)
 	  is Error do rhs
 	  else binarymethod(lhs,rhs,MinusS))
      is x:Rational do (
@@ -165,7 +165,7 @@ export (lhs:Expr) - (rhs:Expr) : Expr := (
 	  is y:Integer do Expr(x - y)
      	  is y:Rational do Expr(x - y)
 	  is y:Real do Expr(Real(x - y.v))
-	  is y:RRR do Expr(toBigReal(x) - y)
+	  is y:RRR do Expr(toBigReal(x,y.prec) - y)
 	  is Error do rhs
 	  else binarymethod(lhs,rhs,MinusS))
      is x:RawRingElement do (
@@ -179,9 +179,9 @@ export (lhs:Expr) - (rhs:Expr) : Expr := (
 	  else binarymethod(lhs,rhs,MinusS))
      is x:RRR do (
 	  when rhs
-	  is y:Integer do Expr(x - toBigReal(y))
-     	  is y:Rational do Expr(x - toBigReal(y))
-	  is y:Real do Expr(x - toBigReal(y.v))
+	  is y:Integer do Expr(x - y)
+     	  is y:Rational do Expr(x - y)
+	  is y:Real do Expr(x - toBigReal(y.v,x.prec))
 	  is y:RRR do Expr(x - y)
 	  is Error do rhs
 	  else binarymethod(lhs,rhs,MinusS))
@@ -246,14 +246,14 @@ export (lhs:Expr) * (rhs:Expr) : Expr := (
 	  is y:Real do Expr(Real(x.v*y.v))
 	  is y:Integer do Expr(Real(x.v*y))
 	  is y:Rational do Expr(Real(x.v*y))
-	  is y:RRR do Expr(toBigReal(x.v)*y)
+	  is y:RRR do Expr(toBigReal(x.v,y.prec)*y)
      	  is Error do rhs
 	  else binarymethod(lhs,rhs,StarS))
      is x:Integer do (
 	  when rhs
 	  is y:Integer do Expr(x * y)
      	  is y:Rational do Expr(x * y)
-     	  is y:RRR do Expr(toBigReal(x) * y)
+     	  is y:RRR do Expr(toBigReal(x,y.prec) * y)
 	  is y:Real do Expr(Real(x * y.v))
 	  is Error do rhs
 	  else binarymethod(lhs,rhs,StarS))
@@ -261,7 +261,7 @@ export (lhs:Expr) * (rhs:Expr) : Expr := (
 	  when rhs
 	  is y:Integer do Expr(x * y)
      	  is y:Rational do Expr(x * y)
-     	  is y:RRR do Expr(toBigReal(x) * y)
+     	  is y:RRR do Expr(y * x)
 	  is y:Real do Expr(Real(x * y.v))
 	  is Error do rhs
 	  else binarymethod(lhs,rhs,StarS))
@@ -286,10 +286,10 @@ export (lhs:Expr) * (rhs:Expr) : Expr := (
 	  else binarymethod(lhs,rhs,StarS))
      is x:RRR do (
 	  when rhs
-	  is y:Integer do Expr(x * toBigReal(y))
-     	  is y:Rational do Expr(x * toBigReal(y))
+	  is y:Integer do Expr(x * y)
+     	  is y:Rational do Expr(x * y)
      	  is y:RRR do Expr(x * y)
-	  is y:Real do Expr(x * toBigReal(y.v))
+	  is y:Real do Expr(x * toBigReal(y.v,x.prec))
 	  is Error do rhs
 	  else binarymethod(lhs,rhs,StarS))
      is x:RawMonomial do (
@@ -358,7 +358,7 @@ export (lhs:Expr) / (rhs:Expr) : Expr := (
      	  is y:RRR do (
 	       if y === 0
 	       then buildErrorPacket("division by zero")
-	       else Expr(toBigReal(x) / y))
+	       else Expr(toBigReal(x,y.prec) / y))
 	  is y:Real do (
 	       --if y.v == 0.
 	       --then buildErrorPacket("division by zero")
@@ -381,7 +381,7 @@ export (lhs:Expr) / (rhs:Expr) : Expr := (
      	  is y:RRR do (
 	       if y === 0
 	       then buildErrorPacket("division by zero")
-	       else Expr(toBigReal(x.v) / y))
+	       else Expr(toBigReal(x.v,y.prec) / y))
      	  is y:Rational do (
 	       --if y === 0
 	       --then buildErrorPacket("division by zero")
@@ -402,7 +402,7 @@ export (lhs:Expr) / (rhs:Expr) : Expr := (
      	  is y:RRR do (
 	       if y === 0
 	       then buildErrorPacket("division by zero")
-	       else Expr(toBigReal(x) / y))
+	       else Expr(toBigReal(x,y.prec) / y))
 	  is y:Real do (
 	       --if y.v == 0.
 	       --then buildErrorPacket("division by zero")
@@ -415,11 +415,11 @@ export (lhs:Expr) / (rhs:Expr) : Expr := (
 	  is y:Integer do (
 	       if y === 0
 	       then buildErrorPacket("division by zero")
-	       else Expr(x / toBigReal(y)))
+	       else Expr(x / y))
      	  is y:Rational do (
 	       if y === 0
 	       then buildErrorPacket("division by zero")
-	       else Expr(x / toBigReal(y)))
+	       else Expr(x / y))
      	  is y:RRR do (
 	       if y === 0
 	       then buildErrorPacket("division by zero")
@@ -427,7 +427,7 @@ export (lhs:Expr) / (rhs:Expr) : Expr := (
 	  is y:Real do (
 	       if y.v == 0.
 	       then buildErrorPacket("division by zero")
-	       else Expr(x / toBigReal(y.v)))
+	       else Expr(x / toBigReal(y.v,x.prec)))
 	  is Error do rhs
 	  else binarymethod(lhs,rhs,DivideS))
      is x:RawMonomial do (
@@ -584,20 +584,27 @@ export (lhs:Expr) ^ (rhs:Expr) : Expr := (
 		    else Expr(toInteger(-1)))
 	       else Expr(newRationalCanonical(toInteger(1),x^-y)))
 	  is y:Real do Expr(Real(pow(double(toInt(x)),y.v)))
+	  is y:RRR do (
+	       if isInt(x) then (
+		    n := toInt(x);
+		    if n<0 then WrongArg(1,"a nonnegative integer")
+		    else Expr(uint(n) ^ y)
+		    )
+	       else Expr(toBigReal(x,y.prec) ^ y)
+	       )
      	  is Error do rhs
 	  else binarymethod(lhs,rhs,PowerS))
      is x:Rational do (
 	  when rhs
 	  is y:Integer do Expr(x^y)
+	  is y:RRR do Expr(toBigReal(x,y.prec) ^ y)
      	  is Error do rhs
 	  else binarymethod(lhs,rhs,PowerS))
      is x:RRR do (
 	  when rhs
-	  is y:Integer do (
-	       if isInt(y)
-	       then Expr(x^toInt(y))
-	       else WrongArgSmallInteger(2)
-	       )
+	  is y:Integer do Expr(x^y)
+	  is y:Rational do Expr(x ^ toBigReal(y,x.prec))
+	  is y:RRR do Expr(x^y)
      	  is Error do rhs
 	  else binarymethod(lhs,rhs,PowerS))
      is x:RawRingElement do (

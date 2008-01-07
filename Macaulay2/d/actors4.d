@@ -1105,11 +1105,21 @@ setupfun("youngest", youngest);
 
 toBigReal(e:Expr):Expr := (
      when e
-     is x:Rational do Expr(toBigReal(x))
-     is x:Integer do Expr(toBigReal(x))
-     is x:Real do Expr(toBigReal(x.v))
-     else WrongArg("a number")
-     );
+     is s:Sequence do (
+	  if length(s) != 2 then WrongNumArgs(2) else
+	  when s.0 is prec:Integer do (
+	       if !isInt(prec) then WrongArgSmallInteger(1)
+	       else (
+	       	    when s.1 
+	       	    is x:Rational do Expr(toBigReal(x,toInt(prec)))
+     	       	    is x:Integer do Expr(toBigReal(x,toInt(prec)))
+     	       	    is x:Real do Expr(toBigReal(x.v,toInt(prec)))
+		    else WrongArg("a number")
+		    )
+	       )
+	  else WrongArgInteger(1)
+	  )
+     else WrongNumArgs(2));
 setupfun("toRRR",toBigReal);
 
 toRR(e:Expr):Expr := (
@@ -1125,14 +1135,6 @@ precision(e:Expr):Expr := (
      else WrongArg("a big real number")
      );
 setupfun("precision",precision);
-
-setprec(e:Expr):Expr := (
-     when e
-     is i:Integer do (
-	  if isInt(i) then Expr(toInteger(setprec(toInt(i))))
-	  else WrongArgSmallInteger())
-     else WrongArgInteger());
-setupfun("setPrecision",setprec);
 
 -- locate:
 

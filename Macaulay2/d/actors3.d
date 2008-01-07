@@ -125,7 +125,7 @@ EqualEqualfun(x:Expr,y:Expr):Expr := (
      is xx:Integer do (
 	  when y 
 	  is Integer do equal(x,y) 
-	  is yy:RRR do if isInt(xx) then toExpr(yy === toInt(xx)) else toExpr(yy === toBigReal(xx))
+	  is yy:RRR do if isInt(xx) then toExpr(yy === toInt(xx)) else toExpr(yy === xx)
 	  else equalmethod(x,y)
 	  )
      is SymbolClosure do when y is SymbolClosure do equal(x,y) else equalmethod(x,y)
@@ -134,7 +134,7 @@ EqualEqualfun(x:Expr,y:Expr):Expr := (
      is xx:RRR do (
 	  when y
 	  is yy:RRR do toExpr(xx === yy)
-	  is i:Integer do if isInt(i) then toExpr(xx === toInt(i)) else toExpr(xx === toBigReal(i))
+	  is i:Integer do if isInt(i) then toExpr(xx === toInt(i)) else toExpr(xx === i)
 	  else equalmethod(x,y)
 	  )
      is Boolean do when y is Boolean do equal(x,y) else equalmethod(x,y)
@@ -205,7 +205,7 @@ compare(left:Expr,right:Expr):Expr := (
 	  is y:Rational do
 	  if x < y then LessE else if x > y then GreaterE else EqualEqualE
 	  is y:RRR do (
-	       r := compare(toBigReal(x),y);
+	       r := compare(x,y);
 	       if r < 0 then LessE else if r > 0 then GreaterE else EqualEqualE
 	       )
      	  is Error do right
@@ -252,7 +252,7 @@ compare(left:Expr,right:Expr):Expr := (
 	  is y:Rational do
 	  if x < y then LessE else if x > y then GreaterE else EqualEqualE
 	  is y:RRR do (
-	       r := compare(toBigReal(x),y);
+	       r := compare(x,y);
 	       if r < 0 then LessE else if r > 0 then GreaterE else EqualEqualE
 	       )
      	  is Error do right
@@ -260,15 +260,15 @@ compare(left:Expr,right:Expr):Expr := (
      is x:RRR do (
 	  when right
 	  is y:Real do (
-	       r := compare(x,toBigReal(y.v));
+	       r := compare(x,y.v);
 	       if r < 0 then LessE else if r > 0 then GreaterE else EqualEqualE
 	       )
 	  is y:Integer do (
-	       r := compare(x,toBigReal(y));
+	       r := compare(x,y);
 	       if r < 0 then LessE else if r > 0 then GreaterE else EqualEqualE
 	       )
 	  is y:Rational do (
-	       r := compare(x,toBigReal(y));
+	       r := compare(x,y);
 	       if r < 0 then LessE else if r > 0 then GreaterE else EqualEqualE
 	       )
 	  is y:RRR do (
@@ -286,7 +286,7 @@ compare(left:Expr,right:Expr):Expr := (
 	  is y:Rational do
 	  if x.v < y then LessE else if x.v > y then GreaterE else EqualEqualE
 	  is y:RRR do (
-	       r := compare(toBigReal(x.v),y);
+	       r := compare(x.v,y);
 	       if r < 0 then LessE else if r > 0 then GreaterE else EqualEqualE
 	       )
      	  is Error do right

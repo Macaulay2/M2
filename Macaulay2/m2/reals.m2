@@ -58,8 +58,8 @@ liftable'(RR,ZZ) := (r,ZZ) -> r == floor r
 -- big reals: RRR
 
 RRR.isBasic = true
-RRR#0 = toRRR 0						    -- deceptive, since the precision gets fixed!
-RRR#1 = toRRR 1
+RRR#0 = 0						    -- deceptive, since it's an integer
+RRR#1 = 1
 RRR.char = 0
 RRR.InverseMethod = x -> 1/x
 RRR.degreeLength = 0
@@ -76,9 +76,9 @@ new RRR from RawRingElement := (RRR,x) -> rawToRRR x
 
 promote(RRR,RRR) := (i,RRR) -> i
 
-promote(QQ,RRR) := promote(ZZ,RRR) := (i,RRR) -> toRRR i
+-- promote(QQ,RRR) := promote(ZZ,RRR) := (i,RRR) -> toRRR i
 promote(RRR,RR) := (i,RR) -> toRR i	    -- which should it be?
-lift(RR,RRR) := (i,RRR) -> toRRR i
+-- lift(RR,RRR) := (i,RRR) -> toRRR i
 
 lift(RRR,ZZ) := (r,ZZ) -> if r == floor r then floor r else error("can't lift ",toString r, " to ZZ")
 liftable'(RRR,ZZ) := (r,ZZ) -> r == floor r
