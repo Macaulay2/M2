@@ -1,0 +1,34 @@
+# @configure_input@
+include ../../include/config.Makefile
+TIDY = yes
+VPATH = @srcdir@
+DEPENDS = yes
+include ../Makefile.filenames
+
+PKG_DMG = @package@-@ARCH@-@OS@-@REL@.dmg
+
+############################## main targets
+all install :: ../../$(PKG_DMG)
+ifeq ($(TIDY),yes)
+all install :: tidy
+endif
+
+../../$(PKG_DMG) : ../../$(PKG_TZ) Makefile
+	rm -rf files
+	umask 022 ; @MKDIR_P@ files@FINALPREFIX@
+	umask 022 ; tar xfp ../../$(PKG_TZ) @TAR_COMPRESS_OPTION@ -C files@FINALPREFIX@
+	mv files@FINALPREFIX@/@package@/* files@FINALPREFIX@
+	rmdir files@FINALPREFIX@/@package@
+	cd files@FINALPREFIX@ && rm -f INSTALL encapinfo postinstall preremove
+	cp @srcdir@/ReadMe-MacOSX.rtf files@FINALPREFIX@
+	ln -s .@FINALPREFIX@/ReadMe-MacOSX.rtf files
+	hdiutil create -srcfolder files -volname @package@-@ARCH@ $@
+tidy : ; rm -rf files
+
+clean :: tidy; rm -f ../../$(PKG_DMG)
+distclean : clean; rm -f Makefile
+Makefile : Makefile.in; cd ../..; ./config.status distributions/dmg/Makefile
+
+# Local Variables:
+# compile-command: "make -C $M2BUILDDIR/distributions/dmg "
+# End:
