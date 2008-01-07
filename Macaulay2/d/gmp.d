@@ -766,15 +766,15 @@ export (x:Rational) >= (y:double) : bool := numeratorRef(x) >= y * denominatorRe
 -- big reals
 -----------------------------------------------------------------------------
 
-export RRR := { prec:int, size:int, exp:int, limbs:limbPointer }; -- must agree with __mpfr_struct in mpfr.h, and with M2_RRR in M2types.h
+export RRR := { prec:int, sign:int, exp:int, limbs:limbPointer }; -- must agree with __mpfr_struct in mpfr.h, and with M2_RRR in M2types.h
 export CCC := { 					    -- must agree with M2_CCC in M2types.h
-     REprec:int, REsize:int, REexp:int, RElimbs:limbPointer,
-     IMprec:int, IMsize:int, IMexp:int, IMlimbs:limbPointer
+     REprec:int, REsign:int, REexp:int, RElimbs:limbPointer,
+     IMprec:int, IMsign:int, IMexp:int, IMlimbs:limbPointer
      };
 
-export realPart(z:CCC):RRR := RRR(z.REprec, z.REsize, z.REexp, z.RElimbs);
-export imaginaryPart(z:CCC):RRR := RRR(z.IMprec, z.IMsize, z.IMexp, z.IMlimbs);
-export bigComplex(x:RRR,y:RRR):CCC := CCC(x.prec, x.size, x.exp, x.limbs, y.prec, y.size, y.exp, y.limbs);
+export realPart(z:CCC):RRR := RRR(z.REprec, z.REsign, z.REexp, z.RElimbs);
+export imaginaryPart(z:CCC):RRR := RRR(z.IMprec, z.IMsign, z.IMexp, z.IMlimbs);
+export bigComplex(x:RRR,y:RRR):CCC := CCC(x.prec, x.sign, x.exp, x.limbs, y.prec, y.sign, y.exp, y.limbs);
 
 isPositive(x:RRR):bool ::=  1 == Ccode(int, "mpfr_sgn((__mpfr_struct *)", x, ")");
 isZero    (x:RRR):bool ::=  0 == Ccode(int, "mpfr_sgn((__mpfr_struct *)", x, ")");
