@@ -9,7 +9,7 @@
 We thank the United States National Science Foundation for generous funding
 to develop Macaulay 2.
 
-Macaulay 2 is copyright 1993-2001 by Daniel R. Grayson and Michael
+Macaulay 2 is copyright 1993-2008 by Daniel R. Grayson and Michael
 E. Stillman.  We permit you to use it under the terms of the GNU General
 Public License, version 2, as published by the Free Software Foundation; see
 the file Macaulay2/COPYING.  This is free software.  There is no warranty;
@@ -18,142 +18,6 @@ not even for merchantability or fitness for a particular purpose.
 This file describes how to build the software from sources and is not included
 in binary distributions.  Most users will prefer to download a binary
 distribution.
-
----------
-Libraries
----------
-
-Here are the libraries you have to download and install on your system
-before you can compile and link Macaulay 2.  We always compile with
-gcc, the latest version, now 4.0.0.  It's a good idea to compile them
-in the order listed here, as some of the later ones depend on some of
-the earlier ones.
-
-    library: gc
-    release: 6.5 (see file gc/version.h)
-     author: Hans Boehm <hboehm@exch.hpl.hp.com>
-  home page: http://www.hpl.hp.com/personal/Hans_Boehm/gc/
-     get at: http://www.hpl.hp.com/personal/Hans_Boehm/gc/gc_source/gc6.5.tar.gz
-	     Precompiled linux version at http://www.math.uiuc.edu/Macaulay2/ftp-site/gc-6.5.tar.gz
-      email: 
-    license: gc/README
-    install: -- edit Makefile
-		    set CC=gcc
-		    value of CFLAGS : keep -DALL_INTERIOR_POINTERS
-				      add -DLARGE_CONFIG
-	     -- make
-	     -- cp gc.a /usr/lib/libgc.a
-	     -- cp include/gc.h include/gc_cpp.h /usr/include
-
-    library: gmp
-    release: gmp-4.1.2
-     author: Torbjorn Granlund <tege@nada.kth.se>
-  home page: 
-    bugs to: <bug-gmp@prep.ai.mit.edu>
-     get at: ftp://ftp.gnu.org/gnu/gmp
-	     This package is now part of standard linux distributions;
-	     to verify, check for the presence of the file /usr/lib/libgmp.a
-      email: 
-    license: gmp/COPYING.LIB
-      notes: on Solaris, gmp will use both cc and gcc; don't worry
-
-    library: NTL
-    release: 5.4
-     author: Victor Shoup
-  home page: http://www.shoup.net/
-     get at: http://shoup.net/ntl
-      email: 
-    license: GPL
-      notes: 
-    install: configure with NTL_GMP_LIP=on NTL_STD_CXX=on NTL_NO_INIT_TRANS=on NTL_CXX_ONLY=on CC=c++
-
-    library: Singular-factory (libcf libcfmem)
-    release: factory-3.0.2
-     author: G-M. Greuel <greuel@mathematik.uni-kl.de>
-	     R. Stobbe <stobbe@mathematik.uni-kl.de>
-	     J. Schmidt
-	     G. Pfister <pfister@mathematik.uni-kl.de>
-	     H. Schoenemann <hannes@mathematik.uni-kl.de>
-  home page: http://www.singular.uni-kl.de/
-     get at: ftp://www.mathematik.uni-kl.de/pub/Math/Singular/Factory/
-      email: 
-    license: GPL
- depends on: ntl gmp
-      notes: ./configure --enable-NTL
-	     make
-	     make install
-		-- don't bother with 'make gftables'
-	     for good debugging: configure with option --enable-assertions and with environment CFLAGS='-O0 -g' CXXFLAGS='-g -O0 --no-rtti --no-exceptions'
-
-    library: Singular-libfac
-    release: libfac-3.0.2
-     author: Michael Messollen <mmessollen@web.de>
-  home page: http://www.singular.uni-kl.de/
-     get at: ftp://www.mathematik.uni-kl.de/pub/Math/Singular/Libfac/
-      email: 
-    license: GPL
-      notes: ./configure --with-NOSTREAMIO
-	     make DEFS=-DHAVE_SINGULAR_ERROR
-	     make install
-
-	     Sometimes the configure script doesn't work.  For example, if
-		factory.h has been installed under $prefix/include, it won't find it.
-		And it can erroneously decide that 'const' and 'inline' keywords don't
-		work, and add -Dconst= -Dinline= to DEFS.  This results in a stream of
-		error messages about duplicate declarations.
-	     Also, ignore the warning message about factory.h being missing, if you think you've put
-		it in $prefix/include.
-
-    library: gdbm
-    release: gdbm-1.8.3
-     author: phil@cs.wwu.edu
-  home page: 
-    bugs to: downsj@downsj.com
-     get at: ftp://ftp.gnu.org/pub/gnu/gdbm/
-	     This package is now part of standard linux distributions;
-	     to verify, check for the presence of the file /usr/lib/libgdbm.a
-      email: 
-    license: GNU GENERAL PUBLIC LICENSE
-      notes: Makefile.in has "prefix = /usr/local", so when installing, you must
-		use "make prefix=/whatever" to install in a nonstandard place.
-	        Also, if you aren't root, it will try to change the ownership of
-		the installed files, so change BINOWN and BINGRP to suit you.
-
-The following packages may be needed in experimental versions of Macaulay2.
-
-    library: blas - Basic Linear Algebra Subprograms
-    release: unnumbered
-     author: Jack Dongarra, Argonne National Laboratory, et al.
-  home page: http://www.netlib.org/blas/
-     get at: http://www.netlib.org/blas/blas.tgz
-      email: 
-    license: presumably public domain
-      notes: Provides libf77blas.a
-
-    library: lapack
-    release: 3.0
-     author: Jack Dongarra
-  home page: http://www.netlib.org/lapack/
-     get at: http://www.netlib.org/lapack/lapack.tgz
-      email: lapack@cs.utk.edu
-    license: copyright but "freely available", "it can be included in commercial packages".
-	     See the users' guide at http://www.netlib.org/lapack/lug/node13.html
-      notes: Provides liblapack.a
-	     Includes a copy of blas.
-
-    library: cblas -- C interface to the BLAS
-    release: unnumbered
-     author: 
-  home page: http://www.netlib.org/blas/blast-forum/
-     get at: 
-      email: 
-    license: 
-      notes: Provides libcblas.a
-
-Other common libraries that we assume are on your system already:
-
-	GNU readline (provides libreadline.so and libhistory.so)
-	GNU ncurses (provides libcurses.so)
 
 -------------------------------------------
 Compiling on multiple machine architectures
@@ -324,7 +188,7 @@ CFLAGS, and its default value is "-g -O2".  That will be supplanted if
 you override it.
 
 -----------------------
-Microsoft Windows NT notes
+Microsoft Windows XP and Vista notes
 -----------------------
 
     ----------------------
@@ -365,11 +229,17 @@ There are several methods for installing Macaulay2 under Mac OS X.
     mathematicians, and is highly recommended. 
 
 (3) Build from source yourself.  
-
+    
     The following are the steps we take to build a binary disk image for
-    Macaulay2.  This downloads gc, gdbm, gmp, readline, ntl, factory and
+    Macaulay2.  First, you must have installed the developer tools from apple:
+    use either the packages that are on your system install DVD, or download
+    from http://connect.apple.com.
+
+    The script below downloads gc, gdbm, gmp, readline, ntl, factory and
     libfac, builds them, and then builds Macaulay2.  The libraries are
     statically linked in, to make installation simpler for most people.
+
+    To make a 64 bit (intel) distribution disk image:
 
 	  svn co svn://Macaulay2.math.uiuc.edu/Macaulay2/trunk/M2 M2
 	  cd M2
@@ -377,6 +247,7 @@ There are several methods for installing Macaulay2 under Mac OS X.
 	  mkdir BUILD/opt64
 	  cd BUILD/opt64
 	  ../../configure --prefix=$PWD/installed \ 
+                --enable-dmg \
                 --enable-build-libraries="gc gdbm gmp readline ntl factory libfac" \
 		--build=x86_64-apple-darwin \
 		CC="gcc -m64" \
@@ -386,7 +257,7 @@ There are several methods for installing Macaulay2 under Mac OS X.
 	  # now there is a dmg file in BUILD/opt64
 	  make check # optional, but recommended
 
-   To make a 32 bit version, use this instead:
+   To make a 32 bit version (intel or ppc), use this instead:
 
 	  svn co svn://Macaulay2.math.uiuc.edu/Macaulay2/trunk/M2 M2
 	  cd M2
@@ -394,55 +265,96 @@ There are several methods for installing Macaulay2 under Mac OS X.
 	  mkdir BUILD/opt32
 	  cd BUILD/opt32
 	  ../../configure --prefix=$PWD/installed \ 
+                --enable-dmg \
                 --enable-build-libraries="gc gdbm gmp readline ntl factory libfac"
           make
 	  make install
 	  # now there is a dmg file in BUILD/opt32
 	  make check # optional, but recommended
 
-    To make a 64 bit debug version:
+    To make a 64 bit (intel) debug version:
 
-    To make a 64 bit profile version (for use with gprof, and other tools):
+	  svn co svn://Macaulay2.math.uiuc.edu/Macaulay2/trunk/M2 M2
+	  cd M2
+	  make
+	  mkdir BUILD/debug64
+	  cd BUILD/debug64
+	  ../../configure --prefix=$PWD/installed \ 
+	        --enable-debug --disable-optimize \
+                --enable-build-libraries="gc gdbm gmp readline ntl factory libfac" \
+		--build=x86_64-apple-darwin \
+		CC="gcc -m64" \
+		CXX="g++ -m64"
+          make
+	  make install
+	  make check # optional, but recommended
 
-----------------------
-HPUX notes
-----------------------
+    To make a 64 bit (intel) profile version (for use with gprof, and other tools):
 
-On hppa-2.0w systems, gmp will not compile with gcc, so the configure script
-for gmp prefers to use /usr/ccs/bin/cc.  So it is best to install gmp
-separately, making sure /usr/ccs/bin is before /usr/local/bin on the path
-(just in case gnu nm is in /usr/local/bin).  To use the previously installed
-version of gmp when compiling M2, specify the option --with-gmp to configure,
-or in configure.options.
+	  svn co svn://Macaulay2.math.uiuc.edu/Macaulay2/trunk/M2 M2
+	  cd M2
+	  make
+	  mkdir BUILD/opt64
+	  cd BUILD/opt64
+	  ../../configure --prefix=$PWD/installed \ 
+	        --enable-profile \
+                --enable-build-libraries="gc gdbm gmp readline ntl factory libfac" \
+		--build=x86_64-apple-darwin \
+		CC="gcc -m64" \
+		CXX="g++ -m64"
+          make
+	  make install
 
-Why don't we simply unset CC when automatically configuring gmp?  Because
-under other operating systems, it is desirable for the same compiler to be
-used for the whole package.  For example, under Windows, gcc and cl aren't
-library compatible.
+-------------------------------
+-- Ubuntu linux, from source --
+-------------------------------
 
-Another strange problem: the . command in /bin/sh seems to look along the
-path instead in the current directory to find the file.  This causes a
-problem for 'configure'.  Just edit its first line to use 'bash' instead.
+Here are the steps to take a newly installed ubuntu 7.10 system (64 bit),
+and to get Macaulay2 running (either via an ubuntu package or via source.
 
-----------------------
-FreeBSD notes
-----------------------
+From the package file:
 
-The gmp package didn't compile, but luckily I was able to use
-the installed libgmp.a instead.  I did this:
+     You may prepare for installing Macaulay 2 (with apt-get, gdebi-gtk, or the
+     Synaptic Package Manager) by adding the following line to the file
+     /etc/apt/sources.list:
 
-	cd lib
-	ln -s /usr/lib/libgmp.a libgmp.a
+         deb http://www.math.uiuc.edu/Macaulay2/Repositories/Debian stable main
 
-and commented out the Makefile line
+     One way to add this line to that file is with the Synaptic Package
+     Manager. Pull down the "Settings" menu, and select "Repositories".
 
-	all:: GMP
+     You may see a tab labelled "Third Party Software" (for example, under
+     Debian). Click on it, then click on "Add", and add the entry. If you make
+     a mistake, be prepared to use an editor to edit the file to correct it.
 
-Dumpdata doesn't work, so configure with the option --disable-dumpdata.
+     Alternatively, you may see a tab labelled "Installation Media" (for
+     example, under Debian 4.0). Click on it, then click on "Add" and then
+     "Custom", and add the entry.
 
-----------------------
-DEC Alpha notes
-----------------------
+     Having added the line, now reload the package lists from the repositories
+     (i.e., click on the "Reload" button) and then click on the Mathematics
+     (Math) section. You should see "macaulay2" on the list, available for
+     download. (The package manager will consult
+     http://www.math.uiuc.edu/Macaulay2/Repositories/Debian/dists/.)
 
-Use gcc 3.0 for best results.  If the compiler crashes on one of the files in
-Macaulay2/e, compile that one file without --fexpensive-optimizations -O3 .
+     Another way to install Macaulay 2, after those lines are added to
+     /etc/apt/sources.list, is with this command line.
+
+	sudo apt-get install macaulay2
+
+From source:
+
+     Install required packages (via the command line, as here, or via the
+     synaptic package manager):
+
+     	     sudo apt-get install ...
+
+     Now grab, configure, compile and install Macaulay2:
+
+	  svn co svn://Macaulay2.math.uiuc.edu/Macaulay2/trunk/M2 M2
+	  cd M2; make
+	  mkdir BUILD/opt64; cd BUILD/opt64
+	  ../../configure
+          make
+	  make install # places M2 into /usr/local
+	  make check # optional, but recommended
