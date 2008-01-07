@@ -72,6 +72,41 @@ RRR.char = 0
 RRR.Engine = true
 isConstant RRR := i -> true
 
+RealNumberRing = new Type of Ring
+new RealNumberRing of RRR from ZZ := (RealNumberRing,RRR,prec) -> hashTable { 
+     symbol precision => prec,
+     symbol RawRing => rawRRR prec
+     }
+isField RealNumberRing := R -> true
+degreeLength RealNumberRing := R -> 0
+liftable(ZZ,RealNumberRing) := 
+liftable(RR,RealNumberRing) := 
+liftable(RRR,RealNumberRing) := 
+liftable(QQ,RealNumberRing) := R -> true
+ZZ _ RealNumberRing :=
+QQ _ RealNumberRing :=
+RR _ RealNumberRing :=
+RRR _ RealNumberRing :=
+lift(ZZ,RealNumberRing) := 
+lift(RR,RealNumberRing) := 
+lift(RRR,RealNumberRing) := 
+lift(QQ,RealNumberRing) := 
+promote(ZZ,RealNumberRing) := 
+promote(RR,RealNumberRing) := 
+promote(RRR,RealNumberRing) := 
+promote(QQ,RealNumberRing) := (x,R) -> toRRR(R.precision,x)
+frac RealNumberRing := identity
+numgens RealNumberRing := R -> 0
+dim RealNumberRing := R -> 0
+char RealNumberRing := R -> 0
+generators RealNumberRing := R -> {}
+expression RealNumberRing := R -> new Subscript from {symbol RRR, R.precision}
+BigNumberRing _ ZZ := (T,prec) -> new T.NumberRing of T from prec
+RRR.NumberRing = RealNumberRing
+net RealNumberRing := R -> net expression R
+toString RealNumberRing := R -> concatenate("RRR ",toString R.precision)
+ring RRR := x -> new RealNumberRing of RRR from precision x
+
 new RRR from RawRingElement := (RRR,x) -> rawToRRR x
 
 promote(RRR,RRR) := (i,RRR) -> i

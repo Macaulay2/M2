@@ -580,14 +580,18 @@ export missingMethodClass := newtypeof(errorMessageClass);
 
 export ringClass := newtypeof(typeClass);
 export numberClass := newtypeof(thingClass);
-       newnumbertype():HashTable := newHashTable(ringClass,numberClass);
+export bigNumberClass := newtypeof(numberClass);
 
+       newnumbertype():HashTable := newHashTable(ringClass,numberClass);
 export integerClass := newnumbertype();
 export rationalClass := newnumbertype();
-export bigRealClass := newnumbertype();
-export bigComplexClass := newnumbertype();
 export doubleClass := newnumbertype();
 export complexClass := newnumbertype();
+
+export bigNumberRingClass := newtypeof(typeClass);
+       newbignumbertype():HashTable := newHashTable(bigNumberRingClass,bigNumberClass);
+export bigRealClass := newbignumbertype();
+export bigComplexClass := newbignumbertype();
 
 export rawObjectClass := newbasictype();		    -- RawObject
 export rawMonomialClass := newtypeof(rawObjectClass);	    -- RawMonomial
