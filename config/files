@@ -28,6 +28,7 @@ libraries/Makefile.library
 libraries/gc/Makefile
 libraries/gdbm/Makefile
 libraries/gmp/Makefile
+libraries/mpfr/Makefile
 libraries/readline/Makefile
 libraries/ntl/Makefile
 libraries/libtool/Makefile
