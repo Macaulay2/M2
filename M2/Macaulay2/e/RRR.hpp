@@ -15,8 +15,6 @@ class RRR : public Ring
   mpfr_ptr new_elem() const;
   void remove_elem(mpfr_ptr f) const;
 
-  static mpfr_ptr _epsilon;  // Elements less than this are considered zero.
-
 protected:
   RRR() {}
   virtual ~RRR() {}
@@ -26,9 +24,6 @@ public:
 
   RRR * cast_to_RRR() { return this; }
   const RRR * cast_to_RRR() const { return this; }
-
-  static void set_epsilon(mpfr_ptr epsilon);
-  static mpfr_ptr get_epsilon();
 
   void zeroize_tiny_lead_components(vec &v, mpfr_ptr epsilon) const; 
   // zeroizes coeffs until lead coeff no longer less than epsilon in abs value

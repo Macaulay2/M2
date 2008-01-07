@@ -17,8 +17,6 @@ class CCC : public Ring
   M2_CCC new_elem() const;
   void remove_elem(M2_CCC f) const;
 
-  static mpfr_ptr _epsilon;  // Components (real or imag) less than this are considered zero.
-
 protected:
   CCC() {}
   virtual ~CCC() {}
@@ -28,9 +26,6 @@ public:
 
   CCC * cast_to_CCC() { return this; }
   const CCC * cast_to_CCC() const { return this; }
-
-  static void set_epsilon(mpfr_ptr epsilon);
-  static mpfr_ptr get_epsilon();
 
   // should there be a complex conjugation function?
 

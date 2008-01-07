@@ -17,18 +17,12 @@
 // #define MPF_RINGELEM(a) ((ring_elem) ((Nterm *) (a)))
 #endif
 
-mpfr_ptr RRR::_epsilon = NULL;
-
 bool RRR::initialize_RRR() 
 {
   initialize_ring(0);
   declare_field();
   _elem_size = sizeof(mpfr_t);
   _zero_elem = new_elem();
-  if (_epsilon == NULL) {
-    _epsilon = new_elem();
-    mpfr_init(_epsilon);
-  }
 
   zeroV = from_int(0);
   oneV = from_int(1);
@@ -94,23 +88,6 @@ void RRR::elem_text_out(buffer &o, const ring_elem ap) const
       o << "." << str << "*10^" << expptr;
     }
   // if (size > 1000) deletearray(allocstr);
-}
-
-void RRR::set_epsilon(mpfr_ptr epsilon)
-{
-  if (_epsilon == NULL) {
-    _epsilon = reinterpret_cast<mpfr_ptr>(getmem(sizeof(mpfr_t)));
-    mpfr_init(_epsilon);
-  }  
-  mpfr_set(_epsilon, epsilon, GMP_RNDN);
-}
-
-mpfr_ptr RRR::get_epsilon()
-{
-  mpfr_ptr epsilon = reinterpret_cast<mpfr_ptr>(getmem(sizeof(mpfr_t)));
-  mpfr_init(epsilon);
-  mpfr_set(epsilon, _epsilon, GMP_RNDN);
-  return epsilon;
 }
 
 bool RRR::from_string(M2_string s, ring_elem &f) const
@@ -211,22 +188,9 @@ bool RRR::is_zero(const ring_elem f) const
 
 bool RRR::is_equal(const ring_elem f, const ring_elem g) const
 {
-  mpfr_ptr a = MPF_VAL(f);
-  mpfr_ptr b = MPF_VAL(g);
-
-  if (mpfr_sgn(_epsilon) == 0) 
-    {
-      return mpfr_cmp(a, b) == 0;
-    }
-  else
-    {
-      mpfr_ptr c = new_elem();
-      mpfr_ptr d = new_elem();
-      mpfr_sub(c, a, b, GMP_RNDN);
-      mpfr_sub(d, b, a, GMP_RNDN);
-      return (mpfr_cmp(c, _epsilon) < 0 && mpfr_cmp(d, _epsilon) < 0);
-    }
+  return mpfr_equal_p(MPF_VAL(f), MPF_VAL(g));
 }
+
 bool RRR::is_greater(const ring_elem f, const ring_elem g) const
 {
   mpfr_ptr a = MPF_VAL(f);
