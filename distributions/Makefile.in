@@ -56,6 +56,12 @@ endif
 rpm : ../$(PKG_TZ) ../$(PKG_COM_TZ) ; $(MAKE) -C rpm install
 clean distclean :: ; $(MAKE) -C rpm $@
 
+ifeq "@DMG@" "yes"
+install :: dmg
+endif
+dmg : ../$(PKG_TZ) ../$(PKG_COM_TZ) ; $(MAKE) -C dmg install
+clean distclean :: ; $(MAKE) -C dmg $@
+
 ifeq "@CYGWIN@" "yes"
 install :: cygwin
 endif

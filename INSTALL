@@ -349,7 +349,7 @@ MacOS X notes
 There are several methods for installing Macaulay2 under Mac OS X.
 
 (1) Download the ppc or i386 disk images and follow the directions in
-    the read me file.
+    the read me file.  This is the easiest and fastest method.
 
 (2) Use the fink system (http://fink.sourceforge.net).
 
@@ -367,31 +367,42 @@ There are several methods for installing Macaulay2 under Mac OS X.
 (3) Build from source yourself.  
 
     The following are the steps we take to build a binary disk image for
-    Macaulay2.  First, the libraries mentioned above must have been built.
-    The code below assumes that the library files are in /capybara/lib and the
-    include files are in /capybara/include.
+    Macaulay2.  This downloads gc, gdbm, gmp, readline, ntl, factory and
+    libfac, builds them, and then builds Macaulay2.  The libraries are
+    statically linked in, to make installation simpler for most people.
 
-	  svn co svn://Macaulay2.math.uiuc.edu/Macaulay2/trunk/M2
+	  svn co svn://Macaulay2.math.uiuc.edu/Macaulay2/trunk/M2 M2
 	  cd M2
-	  mkdir tmp-opt
-	  cd tmp-opt
-	  ../configure \
-	      --prefix=../../M2-installed \
-	      --with-veclib \
-	      --enable-altivec \
-	      LOADLIBES=-lgcc_s.10.5 \
-	      CPPFLAGS="-I/capybara/include" \
-	      LDFLAGS="-L/capybara/lib" 
 	  make
+	  mkdir BUILD/opt64
+	  cd BUILD/opt64
+	  ../../configure --prefix=$PWD/installed \ 
+                --enable-build-libraries="gc gdbm gmp readline ntl factory libfac" \
+		--build=x86_64-apple-darwin \
+		CC="gcc -m64" \
+		CXX="g++ -m64"
+          make
 	  make install
+	  # now there is a dmg file in BUILD/opt64
+	  make check # optional, but recommended
 
-    For compiling a 64-bit version, add
-	  CC='gcc -m64' CXX='g++ -m64'
-    to the configure command line above.
+   To make a 32 bit version, use this instead:
 
-    Warning: it seems to be a bad idea to link with dynamic libraries,
-    for memory allocation errors may occur, at least for 64 bit intel
-    mac darwin.
+	  svn co svn://Macaulay2.math.uiuc.edu/Macaulay2/trunk/M2 M2
+	  cd M2
+	  make
+	  mkdir BUILD/opt32
+	  cd BUILD/opt32
+	  ../../configure --prefix=$PWD/installed \ 
+                --enable-build-libraries="gc gdbm gmp readline ntl factory libfac"
+          make
+	  make install
+	  # now there is a dmg file in BUILD/opt32
+	  make check # optional, but recommended
+
+    To make a 64 bit debug version:
+
+    To make a 64 bit profile version (for use with gprof, and other tools):
 
 ----------------------
 HPUX notes

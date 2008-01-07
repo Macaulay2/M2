@@ -84,11 +84,22 @@ fi
 AC_SUBST(NODENAME,"`uname -n`")
 AC_DEFINE_UNQUOTED(NODENAME,"$NODENAME",hostname used for compilation)
 
-AC_SUBST(REL,"`  uname -r | sed -e s=/=-=g -e 's= =+=' -e 's=[()]==g'  `")
-AC_DEFINE_UNQUOTED(REL,"$REL",[operating system release, obtained with uname -r])
-
 AC_SUBST(OS,"`  uname -s | sed s=/=-=g  `")
-AC_DEFINE_UNQUOTED(OS,"$OS",[operating system name, obtained with uname -s])
+AC_SUBST(REL,"`  uname -r | sed -e s=/=-=g -e 's= =+=' -e 's=[()]==g'  `")
+
+case $OS in
+  Darwin) LIBS="$LIBS -lgcc_s.10.5" ;; # what kind of crock is this??
+esac
+
+case $OS-$REL in
+  Darwin-7.*) REL=10.3 ; OS=MacOS ;;
+  Darwin-8.*) REL=10.4 ; OS=MacOS ;;
+  Darwin-9.*) REL=10.5 ; OS=MacOS ;;
+  Darwin-*) echo "Darwin release number translation needed in configure.ac" >&2 ; exit 1
+esac
+
+AC_DEFINE_UNQUOTED(OS,"$OS",[operating system name, obtained with uname -s, perhaps modified])
+AC_DEFINE_UNQUOTED(REL,"$REL",[operating system release, obtained with uname -r])
 
 AC_CONFIG_AUX_DIR(config)
 
@@ -375,6 +386,10 @@ test "$UBUNTU" = yes && ENCAP=yes M2TARFILE=yes
 AC_SUBST(RPM,no)
 AC_ARG_ENABLE(rpm,  AS_HELP_STRING(--enable-rpm,prepare a binary rpm package (enables encap)), RPM=$enableval)
 test "$RPM" = yes && ENCAP=yes M2TARFILE=yes
+
+AC_SUBST(DMG,no)
+AC_ARG_ENABLE(dmg,  AS_HELP_STRING(--enable-dmg,prepare a binary dmg package for Mac OS (enables encap)), DMG=$enableval)
+test "$DMG" = yes && ENCAP=yes M2TARFILE=yes
 
 AC_SUBST(M2SUFFIX,"")
 test "$program_suffix" != NONE && M2SUFFIX=$program_suffix

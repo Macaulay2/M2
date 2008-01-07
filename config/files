@@ -2,6 +2,7 @@ GNUmakefile
 include/config.Makefile
 distributions/Makefile
 distributions/Makefile.filenames
+distributions/dmg/Makefile
 distributions/rpm/Makefile
 distributions/rpm/Macaulay2-body.spec
 distributions/rpm/Macaulay2-common-body.spec

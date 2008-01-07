@@ -21,7 +21,6 @@ GBComputation *createF4GB(const Matrix *m,
 			  M2_bool use_max_degree,
 			  int max_degree)
 {
-#ifdef EXPERIMENT
   const PolynomialRing *R = m->get_ring()->cast_to_PolynomialRing();
   const Ring *K = R->getCoefficients();
   Gausser *KK = Gausser::newGausser(K);
@@ -41,10 +40,6 @@ GBComputation *createF4GB(const Matrix *m,
 			use_max_degree,
 			max_degree);
   return G;
-#else
-  ERROR("not implemented yet: Strategy => F4");
-  return NULL;
-#endif
 }
 
 F4Computation::F4Computation(

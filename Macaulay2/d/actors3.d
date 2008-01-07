@@ -738,6 +738,8 @@ sqrt(a:Expr):Expr := (
      when a
      is x:Real do Expr(Real(sqrt(x.v)))
      is x:RRR do Expr(sqrt(x))
+     is z:Complex do Expr(
+	  Ccode(Complex, "(tokens_Complex) rawCCSqrt((M2_CC)", z, ")"))
      is Error do a
      else WrongArg("a double or big real"));
 setupfun("sqrt",sqrt);
