@@ -1024,25 +1024,6 @@ const RingElementOrNull *IM2_RingElement_fraction(const Ring *R,
      }
 }
 
-const RingElementOrNull *rawAbs(const RingElement *a)
-{
-  if (a->get_ring() == globalCC)
-    {
-      double b;
-      CCArithmetic::abs(b,*CCELEM_VAL(a->get_value()));
-      return RingElement::make_raw(globalRR,globalRR->from_double(b));
-    }
-#warning "to be written"
-#if 0
-  if (a->get_ring() == globalCCC)
-    {
-      // TODO: MES, to be written
-    }
-#endif  
-  ERROR("expected an element of CC");
-  return 0;
-}
-
 extern "C" M2_CC rawCCSqrt(const M2_CC a)
 {
   M2_CC_struct result;

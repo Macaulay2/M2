@@ -70,6 +70,7 @@ public:
   virtual bool is_ZZ() const { return false; }
   virtual bool is_QQ() const { return false; }
   virtual bool is_RRR() const { return false; }
+  virtual bool is_CCC() const { return false; }
   virtual bool is_fraction_field() const { return false; }
 
   virtual bool is_fraction_poly_ring() const { return false; }
