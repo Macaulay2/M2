@@ -53,8 +53,6 @@ void IM2_initialize()
   globalQQ = QQ::create();
   globalRR = RingRR::create(0.000000000000001);
   globalCC = CC::create(0.000000000000001);
-  globalRRR = RRR::create();
-  globalCCC = CCC::create();
 
   Random::i_random();
   factory_setup_1();

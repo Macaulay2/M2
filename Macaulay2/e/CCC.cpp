@@ -11,10 +11,11 @@
 #include "gbring.hpp"
 #include "../d/M2mem.h"
 
-bool CCC::initialize_CCC() 
+bool CCC::initialize_CCC(int prec) 
 {
   initialize_ring(0);
   declare_field();
+  precision = prec;
   _elem_size = sizeof(M2_CCC_struct);
   _zero_elem = new_elem();
 
@@ -25,10 +26,10 @@ bool CCC::initialize_CCC()
   return true;
 }
 
-CCC *CCC::create()
+CCC *CCC::create(int prec)
 {
   CCC *result = new CCC;
-  result->initialize_CCC();
+  result->initialize_CCC(prec);
   return result;
 }
 
@@ -37,18 +38,11 @@ void CCC::text_out(buffer &o) const
   o << "CCC";
 }
 
-mpfr_ptr CCC::new_mpfr() const
-{
-  mpfr_ptr result = reinterpret_cast<mpfr_ptr>(getmem(_elem_size));
-  mpfr_init(result);
-  return result;
-}
-
 M2_CCC CCC::new_elem() const
 {
   M2_CCC result = reinterpret_cast<M2_CCC>(getmem(_elem_size));
-  mpfr_init(&result->re);
-  mpfr_init(&result->im);
+  mpfr_init2(&result->re,precision);
+  mpfr_init2(&result->im,precision);
   return result;
 }
 void CCC::remove_elem(M2_CCC f) const
@@ -184,12 +178,14 @@ mpfr_ptr CCC::to_BigReal(ring_elem f) const
 
 bool CCC::promote(const Ring *Rf, const ring_elem f, ring_elem &result) const
 {
+#warning "replace this test for globalRRR with a test for RRR"
+#if 0
   if (Rf == globalRRR)
+#endif
     {
       M2_CCC g = new_elem();
       mpfr_set(&g->re, MPF_VAL(f), GMP_RNDN);
-      mpfr_init(&g->im);
-      
+      mpfr_init2(&g->im,mpfr_get_prec(MPF_VAL(f)));
       result = BIGCC_RINGELEM(g);
     }
   return false;
@@ -216,19 +212,6 @@ bool CCC::is_equal(const ring_elem f, const ring_elem g) const
 {
   return mpfr_equal_p(BIGCC_RE(f), BIGCC_RE(g)) && mpfr_equal_p(BIGCC_IM(f), BIGCC_IM(g));
 }
-bool CCC::is_greater(const ring_elem f, const ring_elem g) const
-{
-  M2_CCC a = new_elem();
-  M2_CCC b = new_elem();
-
-  mpfr_pow_ui(&a->re, BIGCC_RE(f), 2, GMP_RNDN);
-  mpfr_pow_ui(&a->im, BIGCC_IM(f), 2, GMP_RNDN);
-  mpfr_pow_ui(&b->re, BIGCC_RE(g), 2, GMP_RNDN);
-  mpfr_pow_ui(&b->im, BIGCC_IM(g), 2, GMP_RNDN);
-  mpfr_add(&a->re, &a->re, &a->im, GMP_RNDN);
-  mpfr_add(&b->re, &b->re, &b->im, GMP_RNDN);
-  return mpfr_cmp(&a->re,&b->re) > 0;
-}
 
 int CCC::compare_elems(const ring_elem f, const ring_elem g) const
 {
@@ -245,19 +228,6 @@ bool CCC::is_real(const ring_elem f) const
 {
   mpfr_ptr im = BIGCC_IM(f);
   return mpfr_sgn(im) == 0;
-}
-
-void CCC::zeroize_tiny_lead_components(vec &v, mpfr_ptr epsilon) const
-{
-  while (v != NULL) {
-    mpfr_ptr re = new_mpfr();
-    mpfr_ptr im = new_mpfr();
-    mpfr_abs(re, BIGCC_RE(v->coeff), GMP_RNDN);
-    mpfr_abs(im, BIGCC_IM(v->coeff), GMP_RNDN);
-    if (epsilon != NULL && mpfr_cmp(re, epsilon) < 0 && mpfr_cmp(im, epsilon)) {
-      v = v->next;
-    } else return;    
-  }
 }
 
 ring_elem CCC::absolute(const ring_elem f) const

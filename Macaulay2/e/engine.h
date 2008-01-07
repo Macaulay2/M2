@@ -325,13 +325,13 @@ extern "C" {
        However, currently, not all of this is checked...
     */
 
-  const RingOrNull *IM2_Ring_RR(double precision); /* drg: connected rawRR */
+  const RingOrNull *IM2_Ring_RR(); /* drg: connected rawRR */
 
-  const RingOrNull *IM2_Ring_CC(double precision); /* drg: connected rawCC */
+  const RingOrNull *IM2_Ring_CC(); /* drg: connected rawCC */
 
-  const RingOrNull *IM2_Ring_RRR(void); /* drg: connected rawRRR */
+  const RingOrNull *IM2_Ring_RRR(int prec); /* drg: connected rawRRR */
 
-  const RingOrNull *IM2_Ring_CCC(void); /* drg: connected rawCCC */
+  const RingOrNull *IM2_Ring_CCC(int prec); /* drg: connected rawCCC */
 
   const RingOrNull *IM2_Ring_polyring(const Ring *K, 
 				      const Monoid *M); /* drg: connected rawPolynomialRing(,) */
@@ -449,8 +449,6 @@ extern "C" {
   M2_CC IM2_RingElement_to_complex(const RingElement *a); /* rawToComplex */
     /* If the ring of a is RR, this returns the underlying representation of 'a'.
        Otherwise 0.0 is returned. */
-
-  const RingElement *rawRRRFromString(M2_string *s);
 
   const RingElementOrNull *IM2_RingElement_from_BigReal(const Ring *R, 
 							M2_RRR d); /* drg: waiting, rawFromNumber*/

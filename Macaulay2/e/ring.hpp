@@ -399,8 +399,6 @@ extern RingZZ *globalZZ;
 extern QQ *globalQQ;
 extern RingRR *globalRR;
 extern CC *globalCC;
-extern RRR *globalRRR;
-extern CCC *globalCCC;
 #endif
 
 // Local Variables:

@@ -93,26 +93,24 @@ const RingOrNull *rawGaloisField(const RingElement *f)
      }
 }
 
-const RingOrNull *IM2_Ring_RR(double precision)
+const RingOrNull *IM2_Ring_RR()
 {
   return globalRR;
-  //  return RR::create(precision);
 }
 
-const RingOrNull *IM2_Ring_CC(double precision)
+const RingOrNull *IM2_Ring_CC()
 {
   return globalCC;
-  //  return CC::create(precision);
 }
 
-const RingOrNull *IM2_Ring_RRR()
+const RingOrNull *IM2_Ring_RRR(int prec)
 {
-  return RRR::create();
+  return RRR::create(prec);
 }
 
-const RingOrNull *IM2_Ring_CCC()
+const RingOrNull *IM2_Ring_CCC(int prec)
 {
-  return CCC::create();
+  return CCC::create(prec);
 }
 
 const Ring *IM2_Ring_trivial_polyring()
@@ -496,14 +494,6 @@ M2_CCOrNull IM2_RingElement_to_complex(const RingElement *a)
     }
   void *f = a->get_value().poly_val;
   return static_cast<M2_CC>(f);
-}
-
-const RingElementOrNull *rawRRRFromString(M2_string s)
-{
-  ring_elem f;
-  if (globalRRR->from_string(s,f))
-    return RingElement::make_raw(globalRRR, f);
-  return 0;
 }
 
 const RingElementOrNull *IM2_RingElement_make_var(const Ring *R, int v)
@@ -1042,12 +1032,14 @@ const RingElementOrNull *rawAbs(const RingElement *a)
       CCArithmetic::abs(b,*CCELEM_VAL(a->get_value()));
       return RingElement::make_raw(globalRR,globalRR->from_double(b));
     }
+#warning "to be written"
+#if 0
   if (a->get_ring() == globalCCC)
     {
       // TODO: MES, to be written
     }
-  
-  ERROR("expected an element of CC or CCC");
+#endif  
+  ERROR("expected an element of CC");
   return 0;
 }
 

@@ -9,6 +9,7 @@
 
 class RRR : public Ring
 {
+  int precision;
   int _elem_size;
   mpfr_ptr _zero_elem;
 
@@ -18,24 +19,17 @@ class RRR : public Ring
 protected:
   RRR() {}
   virtual ~RRR() {}
-  bool initialize_RRR();
+  bool initialize_RRR(int prec);
 public:
-  static RRR * create();
+  static RRR * create(int prec);
 
   RRR * cast_to_RRR() { return this; }
   const RRR * cast_to_RRR() const { return this; }
-
-  void zeroize_tiny_lead_components(vec &v, mpfr_ptr epsilon) const; 
-  // zeroizes coeffs until lead coeff no longer less than epsilon in abs value
 
   bool is_greater(const ring_elem a, const ring_elem b) const;
   bool is_less(const ring_elem a, const ring_elem b) const;
   ring_elem absolute(const ring_elem f) const;
   ring_elem sqrt(const ring_elem f) const;
-
-  bool from_string(M2_string s, ring_elem &f) const;
-  // returns false if an error has occurred.  f is initialized and set with value
-  // only if true is returned.
 
   virtual mpfr_ptr to_BigReal(ring_elem f) const;
 

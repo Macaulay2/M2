@@ -34,10 +34,9 @@ errorDepth = 0
 
 assert(raw ZZ === rawZZ())
 assert(raw QQ === rawQQ())
-print "ERROR: remove the precision from rawRR, rawCC"
-print "WARNING: how to change the precision for RR, CC, BigReal, BigComplex"
-assert(raw RR === rawRR .000000000001)
-assert(raw CC === rawCC .000000000001)
+print "WARNING: how to change the precision for RR, CC, RRR, CCC?"
+assert(raw RR === rawRR())
+assert(raw CC === rawCC())
 rawZZp 32003
 assert (raw (ZZ/32003) =!= rawZZp 32003)
 R = ZZ/5

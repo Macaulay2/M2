@@ -507,19 +507,27 @@ export rawZZp(e:Expr):Expr := (
 setupfun("rawZZp", rawZZp);
 
 export rawRR(e:Expr):Expr := (
-     when e is epsilon:Real do toExpr(Ccode(RawRingOrNull, "(engine_RawRingOrNull)IM2_Ring_RR(", epsilon.v, ")" ))
-     else WrongArg("a real number"));
+     when e is s:Sequence do if length(s) != 0 then WrongNumArgs(0) 
+     else toExpr(Ccode(RawRingOrNull, "(engine_RawRingOrNull)IM2_Ring_RR()" ))
+     else WrongNumArgs(0));
 setupfun("rawRR",rawRR);
 
 export rawCC(e:Expr):Expr := (
-     when e is epsilon:Real do toExpr(Ccode(RawRingOrNull, "(engine_RawRingOrNull)IM2_Ring_CC(", epsilon.v, ")" ))
-     else WrongArg("a real number"));
+     when e is s:Sequence do if length(s) != 0 then WrongNumArgs(0) 
+     else toExpr(Ccode(RawRingOrNull, "(engine_RawRingOrNull)IM2_Ring_CC()" ))
+     else WrongNumArgs(0));
 setupfun("rawCC",rawCC);
 
-export rawRRR(e:Expr):Expr := when e is s:Sequence do if length(s) != 0 then WrongNumArgs(0) else toExpr(Ccode(RawRingOrNull, "(engine_RawRingOrNull)IM2_Ring_RRR()" )) else WrongNumArgs(0);
+export rawRRR(e:Expr):Expr := (
+     when e is prec:Integer do if !isInt(prec) then WrongArgSmallInteger(1)
+     else toExpr(Ccode(RawRingOrNull, "(engine_RawRingOrNull)IM2_Ring_RRR(",toInt(prec),")" ))
+     else WrongArgInteger(1));
 setupfun("rawRRR",rawRRR);
 
-export rawCCC(e:Expr):Expr := when e is s:Sequence do if length(s) != 0 then WrongNumArgs(0) else toExpr(Ccode(RawRingOrNull, "(engine_RawRingOrNull)IM2_Ring_CCC()" )) else WrongNumArgs(0);
+export rawCCC(e:Expr):Expr := (
+     when e is prec:Integer do if !isInt(prec) then WrongArgSmallInteger(1)
+     else toExpr(Ccode(RawRingOrNull, "(engine_RawRingOrNull)IM2_Ring_CCC(",toInt(prec),")" ))
+     else WrongArgInteger(1));
 setupfun("rawCCC",rawCCC);
 
 export rawIndexIfVariable(e:Expr):Expr := (
