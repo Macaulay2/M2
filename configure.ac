@@ -658,7 +658,7 @@ fi
 test "$MEMDEBUG" = yes && CPPFLAGS="$CPPFLAGS -DMEMDEBUG"
 test "$DEBUG" = yes && CPPFLAGS="$CPPFLAGS -DGC_DEBUG"
 
-if test "$OS" = Darwin 
+if test "$OS" = MacOS 
 then 
     # we don't know what this does, but some apple documentation writers seem to like it:
     LDFLAGS="$LDFLAGS -bind_at_load"
