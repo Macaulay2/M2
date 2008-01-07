@@ -1,0 +1,21 @@
+see also 3-real-field-ideas: lots of light-weight
+    rings: RRR 533, also in the engine
+
+pi, ii, etc, should be a new type of Number called "Constant"
+
+operations like this should be provided:
+
+	   2.3 * pi
+	   toRRR_200 pi
+
+mpfr has a routine for computing pi accurately
+
+make format(...) work for RRR and CCC:
+
+     -4.33234234234p345e9
+     -4.33234234234p345*10^9
+
+make an input syntax for RRR numbers, namely:
+
+     -4.33234234234p345e9
+
