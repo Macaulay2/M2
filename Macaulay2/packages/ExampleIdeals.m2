@@ -247,6 +247,18 @@ examplesSingular1#1 = (R) -> (
      use R;
      ideal"5t3x2z+2t2y3x5,7y+4x2y+y2x+2zt,3tz+3yz2+2yz4"
      )
+
+toClassic = method()
+toClassic Ideal := (I) -> (
+     g = concatenate between(",\n   ", apply(numgens I, i -> replace(///[\*\^]///,"",toString I_i)));
+     "ideal\"" | g | "\""
+     )
+toSingular = method()
+toSingular Ideal := (I) -> (
+     g = concatenate between(",\n   ", apply(numgens I, i -> replace(///[\*\^]///,"",toString I_i)));
+     "ideal i = " | g | ";\n"
+     )
+
 end
 
 restart

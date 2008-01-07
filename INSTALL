@@ -246,7 +246,7 @@ There are several methods for installing Macaulay2 under Mac OS X.
 	  make
 	  mkdir BUILD/opt64
 	  cd BUILD/opt64
-	  ../../configure --prefix=$PWD/installed \ 
+	  ../../configure --prefix=$PWD/installed \
                 --enable-dmg \
                 --enable-build-libraries="gc gdbm gmp readline ntl factory libfac" \
 		--build=x86_64-apple-darwin \
@@ -264,7 +264,7 @@ There are several methods for installing Macaulay2 under Mac OS X.
 	  make
 	  mkdir BUILD/opt32
 	  cd BUILD/opt32
-	  ../../configure --prefix=$PWD/installed \ 
+	  ../../configure --prefix=$PWD/installed \
                 --enable-dmg \
                 --enable-build-libraries="gc gdbm gmp readline ntl factory libfac"
           make
@@ -279,7 +279,7 @@ There are several methods for installing Macaulay2 under Mac OS X.
 	  make
 	  mkdir BUILD/debug64
 	  cd BUILD/debug64
-	  ../../configure --prefix=$PWD/installed \ 
+	  ../../configure --prefix=$PWD/installed \
 	        --enable-debug --disable-optimize \
                 --enable-build-libraries="gc gdbm gmp readline ntl factory libfac" \
 		--build=x86_64-apple-darwin \
@@ -296,7 +296,7 @@ There are several methods for installing Macaulay2 under Mac OS X.
 	  make
 	  mkdir BUILD/opt64
 	  cd BUILD/opt64
-	  ../../configure --prefix=$PWD/installed \ 
+	  ../../configure --prefix=$PWD/installed \
 	        --enable-profile \
                 --enable-build-libraries="gc gdbm gmp readline ntl factory libfac" \
 		--build=x86_64-apple-darwin \
