@@ -7,6 +7,7 @@
 #include "config.h"
 #include <gc/gc.h>
 #include <gmp.h>
+#include <mpfr.h>
 #include "ntl-interface.hpp"
 
 #define ALLOC(p) (((long *) (p))[0])

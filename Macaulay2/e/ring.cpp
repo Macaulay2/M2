@@ -255,7 +255,7 @@ ring_elem Ring::from_double(double a) const
 //  return from_int(0);
 //}
 
-ring_elem Ring::from_BigReal(mpf_ptr a) const
+ring_elem Ring::from_BigReal(mpfr_ptr a) const
 {
 #ifdef DEVELOPMENT
 #warning "not implemented yet"

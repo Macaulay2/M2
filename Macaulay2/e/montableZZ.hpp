@@ -6,6 +6,7 @@
 #include <algorithm>
 #include <stdio.h>
 #include <gmp.h>
+#include <mpfr.h>
 
 #include "newdelete.hpp"
 #include "style.hpp"

@@ -424,14 +424,15 @@ AC_SUBST(BUILTLIBS,"")
 # this list reflects dependencies
 #  factory needs ntl and gmp, libfac needs factory
 #  lapack needs blas
-AC_SUBST(LIBLIST, "gc    gdbm    gmp    readline    ntl    factory        libfac blas    lapack")
-AC_SUBST(LIBFILES,"libgc libgdbm libgmp libreadline libntl libcf libcfmem libfac libblas liblapack")
+#  mpfr needs gmp
+AC_SUBST(LIBLIST, "gc    gdbm    gmp    mpfr    readline    ntl    factory        libfac blas    lapack")
+AC_SUBST(LIBFILES,"libgc libgdbm libgmp libmpfr libreadline libntl libcf libcfmem libfac libblas liblapack")
 for i in $LIBLIST
 do eval BUILD_$i=no
 done
 
 LIBLIST=" $LIBLIST "
-AC_ARG_ENABLE(build-libraries, AS_HELP_STRING(--enable-build-libraries=...,list of libraries to build from downloaded source code (e.g., gc gdbm gmp readline ntl factory libfac blas lapack)),
+AC_ARG_ENABLE(build-libraries, AS_HELP_STRING(--enable-build-libraries=...,list of libraries to build from downloaded source code (e.g., gc gdbm gmp mpfr readline ntl factory libfac blas lapack)),
     [for i in $enableval
     do case $LIBLIST in
 	    *" $i "*) eval BUILD_$i=yes ;;
@@ -457,6 +458,13 @@ then AC_SEARCH_LIBS(__gmpz_init,gmp,,BUILD_gmp=yes)
      AC_CHECK_HEADER(gmp.h,,BUILD_gmp=yes)
 fi
 test $BUILD_gmp = yes && BUILTLIBS="-lgmp $BUILTLIBS"
+
+AC_LANG(C)
+if test $BUILD_mpfr = no
+then AC_SEARCH_LIBS(mpfr_init,mpfr,,BUILD_mpfr=yes)
+     AC_CHECK_HEADER(mpfr.h,,BUILD_mpfr=yes)
+fi
+test $BUILD_mpfr = yes && BUILTLIBS="-lmpfr $BUILTLIBS"
 
 AC_LANG(C)
 if test $BUILD_gc = no

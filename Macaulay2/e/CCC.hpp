@@ -13,11 +13,11 @@ class CCC : public Ring
 
   M2_CCC _zero_elem;
 
-  mpf_ptr new_mpf() const;
+  mpfr_ptr new_mpfr() const;
   M2_CCC new_elem() const;
   void remove_elem(M2_CCC f) const;
 
-  static mpf_ptr _epsilon;  // Components (real or imag) less than this are considered zero.
+  static mpfr_ptr _epsilon;  // Components (real or imag) less than this are considered zero.
 
 protected:
   CCC() {}
@@ -29,21 +29,21 @@ public:
   CCC * cast_to_CCC() { return this; }
   const CCC * cast_to_CCC() const { return this; }
 
-  static void set_epsilon(mpf_ptr epsilon);
-  static mpf_ptr get_epsilon();
+  static void set_epsilon(mpfr_ptr epsilon);
+  static mpfr_ptr get_epsilon();
 
   // should there be a complex conjugation function?
 
   ring_elem from_doubles(double r, double s) const;
-  ring_elem from_BigReals(mpf_ptr a, mpf_ptr b) const;
+  ring_elem from_BigReals(mpfr_ptr a, mpfr_ptr b) const;
 
-  virtual mpf_ptr to_BigReal(ring_elem f) const;
+  virtual mpfr_ptr to_BigReal(ring_elem f) const;
 
   bool is_real(const ring_elem f) const;  // see if |f| is purely real
   bool is_greater(const ring_elem f, const ring_elem g) const;  // compares |f| and |g|
   ring_elem absolute(const ring_elem f) const;  // norm |f| of f
 
-  void zeroize_tiny_lead_components(vec &v, mpf_ptr epsilon) const; 
+  void zeroize_tiny_lead_components(vec &v, mpfr_ptr epsilon) const; 
   // zeroizes coeffs until imag or real part of lead coeff greater than epsilon in abs value
 
   // The following are all the routines required by 'ring'
@@ -56,7 +56,7 @@ public:
   virtual ring_elem from_double(double r) const;
   virtual ring_elem from_rational(mpq_ptr r) const;
   virtual ring_elem from_complex(M2_CC z) const;
-  virtual ring_elem from_BigReal(mpf_ptr r) const;
+  virtual ring_elem from_BigReal(mpfr_ptr r) const;
   virtual ring_elem from_BigComplex(M2_CCC z) const;
   virtual bool promote(const Ring *R, const ring_elem f, ring_elem &result) const;
   virtual bool lift(const Ring *R, const ring_elem f, ring_elem &result) const;

@@ -10,12 +10,12 @@
 class RRR : public Ring
 {
   int _elem_size;
-  mpf_ptr _zero_elem;
+  mpfr_ptr _zero_elem;
 
-  mpf_ptr new_elem() const;
-  void remove_elem(mpf_ptr f) const;
+  mpfr_ptr new_elem() const;
+  void remove_elem(mpfr_ptr f) const;
 
-  static mpf_ptr _epsilon;  // Elements less than this are considered zero.
+  static mpfr_ptr _epsilon;  // Elements less than this are considered zero.
 
 protected:
   RRR() {}
@@ -27,10 +27,10 @@ public:
   RRR * cast_to_RRR() { return this; }
   const RRR * cast_to_RRR() const { return this; }
 
-  static void set_epsilon(mpf_ptr epsilon);
-  static mpf_ptr get_epsilon();
+  static void set_epsilon(mpfr_ptr epsilon);
+  static mpfr_ptr get_epsilon();
 
-  void zeroize_tiny_lead_components(vec &v, mpf_ptr epsilon) const; 
+  void zeroize_tiny_lead_components(vec &v, mpfr_ptr epsilon) const; 
   // zeroizes coeffs until lead coeff no longer less than epsilon in abs value
 
   bool is_greater(const ring_elem a, const ring_elem b) const;
@@ -42,7 +42,7 @@ public:
   // returns false if an error has occurred.  f is initialized and set with value
   // only if true is returned.
 
-  virtual mpf_ptr to_BigReal(ring_elem f) const;
+  virtual mpfr_ptr to_BigReal(ring_elem f) const;
 
 // The following are all the routines required by 'ring'
   virtual bool is_RRR() const         { return true; }
@@ -53,7 +53,7 @@ public:
   virtual ring_elem from_int(mpz_ptr n) const;
   virtual ring_elem from_double(double r) const;
   virtual ring_elem from_rational(mpq_ptr r) const;
-  virtual ring_elem from_BigReal(mpf_ptr r) const;
+  virtual ring_elem from_BigReal(mpfr_ptr r) const;
   virtual bool promote(const Ring *R, const ring_elem f, ring_elem &result) const;
   virtual bool lift(const Ring *R, const ring_elem f, ring_elem &result) const;
 
