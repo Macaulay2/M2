@@ -15,13 +15,13 @@ FINALLIBRARIESDIR = @FINALPREFIX@/@librariesdirtail@
 CPPFLAGS := -I$(LIBRARIESDIR)/include $(CPPFLAGS)
 LDFLAGS := -L$(LIBRARIESDIR)/lib $(LDFLAGS)
 
-all install :: .installed
-unconfigure : ; rm -f .configured .compiled .installed
-reconfigure : unconfigure .configured
-uninstall   : ; rm -f .installed
-reinstall   : uninstall .installed
-diffs : .untarred .untarred2 ; diff -ur --exclude=configure tmp/$(TARDIR) $(TARDIR) |egrep -v '^Only in ' >$@ || echo diffs: `pwd`/$@
-unmark : ; rm -f .configured .compiled
+all install :: .installed-$(VERSION)
+unconfigure : ; rm -f .configured-$(VERSION) .compiled-$(VERSION) .installed-$(VERSION)
+reconfigure : unconfigure .configured-$(VERSION)
+uninstall   : ; rm -f .installed-$(VERSION)
+reinstall   : uninstall .installed-$(VERSION)
+diffs : .untarred-$(VERSION) .untarred2-$(VERSION) ; diff -ur --exclude=configure tmp/$(TARDIR) $(TARDIR) |egrep -v '^Only in ' >$@ || echo diffs: `pwd`/$@
+unmark : ; rm -f .configured-$(VERSION) .compiled-$(VERSION)
 package-clean : unmark ; $(MAKE) -C $(BUILDDIR) clean
 package-distclean : unmark ; $(MAKE) -C $(BUILDDIR) distclean
 
@@ -46,19 +46,19 @@ INSTALLTARGET ?= install
 INSTALLCMD    ?= $(MAKE) $(INSTALLOPTIONS) prefix=$(LIBRARIESDIR) $(INSTALLTARGET)
 
 BUILDDIR      ?= $(TARDIR)
-.installed  : .compiled   ; @ set -x ; ( cd $(BUILDDIR) && $(INSTALLCMD)   ) && touch $@
-.compiled   : .configured ; @ set -x ; ( cd $(BUILDDIR) && $(BUILDCMD)     ) && touch $@
-.configured : .patched    ; @ set -x ; ( cd $(BUILDDIR) && $(CONFIGURECMD) ) && touch $@
+.installed-$(VERSION)  : .compiled-$(VERSION)   ; @ set -x ; ( cd $(BUILDDIR) && $(INSTALLCMD)   ) && touch $@
+.compiled-$(VERSION)   : .configured-$(VERSION) ; @ set -x ; ( cd $(BUILDDIR) && $(BUILDCMD)     ) && touch $@
+.configured-$(VERSION) : .patched-$(VERSION)    ; @ set -x ; ( cd $(BUILDDIR) && $(CONFIGURECMD) ) && touch $@
 
 ifneq ($(PATCHFILE),)
-.patched : $(PATCHFILE) .untarred ; patch -p0 <$< && touch $@
+.patched-$(VERSION) : $(PATCHFILE) .untarred-$(VERSION) ; patch -p0 <$< && touch $@
 else
-.patched : .untarred ; touch $@
+.patched-$(VERSION) : .untarred-$(VERSION) ; touch $@
 endif
 
 UNTARCMD ?= tar xzf $(TARFILE)
-.untarred : .fetched ; $(UNTARCMD) && touch $@
-.untarred2 : .fetched ; mkdir tmp ; $(UNTARCMD) -C tmp && touch $@
+.untarred-$(VERSION) : .fetched-$(VERSION) ; $(UNTARCMD) && touch $@
+.untarred2-$(VERSION) : .fetched-$(VERSION) ; mkdir tmp ; $(UNTARCMD) -C tmp && touch $@
 
 ifneq (@CURL@,)
 FETCHER = @CURL@
@@ -72,9 +72,9 @@ $(error either curl or wget is needed for downloading library source code, pleas
 endif
 endif
 
-.fetched : ; $(FETCHER) $(URL)/$(TARFILE) $(FETCHOPTS) && touch $@
+.fetched-$(VERSION) : ; $(FETCHER) $(URL)/$(TARFILE) $(FETCHOPTS) && touch $@
 
-clean ::; rm -rf .patched $(TARDIR) .fetched .untarred $(TARFILE) .compiled .configured .installed .untarred2 diffs tmp
+clean ::; rm -rf .patched-$(VERSION) $(TARDIR) .fetched-$(VERSION) .untarred-$(VERSION) $(TARFILE) .compiled-$(VERSION) .configured-$(VERSION) .installed-$(VERSION) .untarred2-$(VERSION) diffs tmp
 distclean :: clean ; rm -rf Makefile
 check ::
 
