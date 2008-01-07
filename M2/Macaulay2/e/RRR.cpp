@@ -17,10 +17,11 @@
 // #define MPF_RINGELEM(a) ((ring_elem) ((Nterm *) (a)))
 #endif
 
-bool RRR::initialize_RRR() 
+bool RRR::initialize_RRR(int prec) 
 {
   initialize_ring(0);
   declare_field();
+  precision = prec;
   _elem_size = sizeof(mpfr_t);
   _zero_elem = new_elem();
 
@@ -31,10 +32,10 @@ bool RRR::initialize_RRR()
   return true;
 }
 
-RRR *RRR::create()
+RRR *RRR::create(int prec)
 {
   RRR *result = new RRR;
-  result->initialize_RRR();
+  result->initialize_RRR(prec);
   return result;
 }
 
@@ -46,9 +47,10 @@ void RRR::text_out(buffer &o) const
 mpfr_ptr RRR::new_elem() const
 {
   mpfr_ptr result = reinterpret_cast<mpfr_ptr>(getmem(_elem_size));
-  mpfr_init(result);
+  mpfr_init2(result,precision);
   return result;
 }
+
 void RRR::remove_elem(mpfr_ptr f) const
 {
   // mpfr_clear(f);
@@ -88,19 +90,6 @@ void RRR::elem_text_out(buffer &o, const ring_elem ap) const
       o << "." << str << "*10^" << expptr;
     }
   // if (size > 1000) deletearray(allocstr);
-}
-
-bool RRR::from_string(M2_string s, ring_elem &f) const
-  // returns false if an error has occurred.  f is initialized and set with value
-  // only if true is returned.
-{
-  char *s1 = tocharstar(s);
-  mpfr_ptr result = new_elem();
-  if (!mpfr_set_str(result, s1, 10, GMP_RNDN))
-    return false;
-
-  f = MPF_RINGELEM(result);
-  return true;
 }
 
 mpfr_ptr RRR::to_BigReal(ring_elem f) const
@@ -218,18 +207,6 @@ int RRR::is_positive(const ring_elem f) const
 {
   mpfr_ptr a = MPF_VAL(f);
   return mpfr_sgn(a) > 0;
-}
-
-
-void RRR::zeroize_tiny_lead_components(vec &v, mpfr_ptr epsilon) const
-{
-  while (v != NULL) {
-    mpfr_ptr r = new_elem();
-    mpfr_abs(r, MPF_VAL(v->coeff), GMP_RNDN);
-    if (epsilon != NULL && mpfr_cmp(r, epsilon) < 0) {
-      v = v->next;
-    } else return;
-  }
 }
 
 ring_elem RRR::absolute(const ring_elem f) const

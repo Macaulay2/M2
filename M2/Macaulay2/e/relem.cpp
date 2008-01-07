@@ -11,8 +11,6 @@ RingZZ *globalZZ;
 QQ *globalQQ;
 RingRR *globalRR;
 CC *globalCC;
-RRR *globalRRR;
-CCC *globalCCC;
 
 RingElement * RingElement::make_raw(const Ring *R, ring_elem f)
 {

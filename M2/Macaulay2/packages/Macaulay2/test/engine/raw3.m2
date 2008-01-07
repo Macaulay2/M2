@@ -4,18 +4,6 @@ needs "raw-util.m2"
 -- ring is a singly graded polynomial ring over ZZ.
 -- raw* routines not yet tested here, for this ring:
 
-///
--- Ring routines not yet functional
-rGF -- can't do GF yet, until quotients are connected.
-rC = rawCC(.0000000001, trivmonoid) -- NOT FUNCTIONAL
-rbigRR = rawRRR(trivmonoid) -- NOT FUNCTIONAL
-rbigCC = rawCCC(trivmonoid) -- NOT FUNCTIONAL
-rawSolvableAlgebra -- NOT FUNCTIONAL
-rawFractionRing -- not quite functional, needs gb's
-rawLocalRing -- NOT FUNCTIONAL, needs gb's?
-rawColonRing -- NOT FUNCTIONAL, needs gbs.
-///
-
 --  
 -- Test monoid creation
 M = degmonoid 4

@@ -9,20 +9,20 @@
 
 class CCC : public Ring
 {
+  int precision;
   int _elem_size;
 
   M2_CCC _zero_elem;
 
-  mpfr_ptr new_mpfr() const;
   M2_CCC new_elem() const;
   void remove_elem(M2_CCC f) const;
 
 protected:
   CCC() {}
   virtual ~CCC() {}
-  bool initialize_CCC();
+  bool initialize_CCC(int prec);
 public:
-  static CCC * create();
+  static CCC * create(int prec);
 
   CCC * cast_to_CCC() { return this; }
   const CCC * cast_to_CCC() const { return this; }
@@ -35,11 +35,7 @@ public:
   virtual mpfr_ptr to_BigReal(ring_elem f) const;
 
   bool is_real(const ring_elem f) const;  // see if |f| is purely real
-  bool is_greater(const ring_elem f, const ring_elem g) const;  // compares |f| and |g|
   ring_elem absolute(const ring_elem f) const;  // norm |f| of f
-
-  void zeroize_tiny_lead_components(vec &v, mpfr_ptr epsilon) const; 
-  // zeroizes coeffs until imag or real part of lead coeff greater than epsilon in abs value
 
   // The following are all the routines required by 'ring'
   virtual bool is_CCC() const         { return true; }
