@@ -1,7 +1,7 @@
 RELAX = yes
 URL = ftp://ftp.gnu.org/gnu/gmp
-VERSION = 4.2.1
-PATCHFILE = @srcdir@/patch-4.2.1
+VERSION = 4.2.2
+PATCHFILE = @srcdir@/patch-$(VERSION)
 CONFIGOPTIONS += --enable-cxx
 ifeq (@SHARED@,no)
 CONFIGOPTIONS += --disable-shared
