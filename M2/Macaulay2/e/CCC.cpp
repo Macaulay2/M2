@@ -178,10 +178,7 @@ mpfr_ptr CCC::to_BigReal(ring_elem f) const
 
 bool CCC::promote(const Ring *Rf, const ring_elem f, ring_elem &result) const
 {
-#warning "replace this test for globalRRR with a test for RRR"
-#if 0
-  if (Rf == globalRRR)
-#endif
+  if (Rf->is_RRR())
     {
       M2_CCC g = new_elem();
       mpfr_set(&g->re, MPF_VAL(f), GMP_RNDN);
