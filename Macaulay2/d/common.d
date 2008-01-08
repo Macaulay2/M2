@@ -291,6 +291,7 @@ export MissingMethod(method:SymbolClosure):Expr := buildErrorPacket("expected a 
 export MissingMethodPair(method:string):Expr := buildErrorPacket("expected pair to have a method for "+quoteit(method));
 export MissingMethodPair(method:SymbolClosure):Expr := buildErrorPacket("expected pair to have a method for " + quoteit(method.symbol.word.name));
 export MissingMethodPair(method:SymbolClosure,left:Expr,right:Expr):Expr := buildErrorPacket( "expected pair to have a method for " + quoteit(method.symbol.word.name) );
+export MissingMethodPair(methodname:string,left:Expr,right:Expr):Expr := buildErrorPacket( "expected pair to have a method for " + quoteit(methodname) );
 export MissingAssignmentMethod(method:Expr,left:Expr):Expr := (
      when method is sc:SymbolClosure do buildErrorPacket("expected object to have an assignment method for " + quoteit(sc.symbol.word.name))
      else buildErrorPacket("expected object to have an assignment method"));

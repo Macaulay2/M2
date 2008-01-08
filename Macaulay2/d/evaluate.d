@@ -1743,6 +1743,11 @@ export binarymethod(left:Expr,right:Expr,methodkey:SymbolClosure):Expr := (
      if method == nullE then MissingMethodPair(methodkey,left,right)
      else applyEEE(method,left,right));
 
+export binarymethod(left:Expr,right:Expr,methodkey:Expr,methodkeyname:string):Expr := (
+     method := lookupBinaryMethod(Class(left),Class(right),methodkey,hash(methodkey));
+     if method == nullE then MissingMethodPair(methodkeyname,left,right)
+     else applyEEE(method,left,right));
+
 -- Local Variables:
 -- compile-command: "make -C $M2BUILDDIR/Macaulay2/d "
 -- End:

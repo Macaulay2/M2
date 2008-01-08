@@ -1103,6 +1103,7 @@ youngest(e:Expr):Expr := (
      else nullE);
 setupfun("youngest", youngest);
 
+toRRRS := dummySymbol;
 toBigReal(e:Expr):Expr := (
      when e
      is s:Sequence do (
@@ -1115,13 +1116,13 @@ toBigReal(e:Expr):Expr := (
      	       	    is x:Integer do Expr(toBigReal(x,toInt(prec)))
      	       	    is x:Real do Expr(toBigReal(x.v,toInt(prec)))
      	       	    is x:RRR do Expr(toBigReal(x,toInt(prec)))
-		    else WrongArg("a rational number, real number, or an integer")
+		    else binarymethod(s.0,s.1,getGlobalVariable(toRRRS),toRRRS.word.name)
 		    )
 	       )
 	  else WrongArgInteger(1)
 	  )
      else WrongNumArgs(2));
-setupfun("toRRR",toBigReal);
+toRRRS = setupfun("toRRR",toBigReal);
 
 toBigComplex(e:Expr):Expr := (
      when e
