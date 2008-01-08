@@ -295,6 +295,8 @@ export SpecialExpr := {					    -- this allows specialization of arbitrary types
 export Boolean := {v:bool};
 export Nothing := {nothing:void};
 export Real := {v:double};
+export (x:Real) + (y:Real) : Real := Real(x.v + y.v);
+export (x:Real) - (y:Real) : Real := Real(x.v - y.v);
 export Complex := { re:double, im:double };
 export ComplexOrNull := Complex or null;
 export (z:Complex) === (m:int) : bool := z.re == double(m) && z.im == 0.;
@@ -368,6 +370,8 @@ export globalFrame := Frame(self, 0, globalFramesize, true,
      Sequence(
 	  nullE						    -- one value for dummySymbol
 	  ));
+export setGlobalVariable(x:Symbol,y:Expr):void := globalFrame.values.(x.frameindex) = y;
+export getGlobalVariable(x:Symbol):Expr := globalFrame.values.(x.frameindex);
 
 export Macaulay2Dictionary := Dictionary(nextHash(),newSymbolHashTable(),self,0,globalFramesize,false,false);
 

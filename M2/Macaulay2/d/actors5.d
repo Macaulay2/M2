@@ -1763,9 +1763,6 @@ storeGlobalDictionaries(e:Expr):Expr := (			    -- called with (symbol,newvalue)
      else WrongNumArgs(2));
 storeInHashTable(globalAssignmentHooks,Expr(SymbolClosure(globalFrame,dictionaryPathS)),Expr(CompiledFunction(storeGlobalDictionaries,nextHash())));
 
-export setGlobalVariable(x:Symbol,y:Expr):void := globalFrame.values.(x.frameindex) = y;
-export getGlobalVariable(x:Symbol):Expr := globalFrame.values.(x.frameindex);
-
 -- getcwdfun(e:Expr):Expr := (
 --      when e
 --      is s:Sequence do

@@ -779,12 +779,12 @@ isNegative(x:RRR):bool ::= -1 == Ccode(int, "mpfr_sgn((__mpfr_struct *)", x, ")"
 export precision(x:RRR):int := int(Ccode(ulong, "mpfr_get_prec((__mpfr_struct*)",x,")"));
 export precision(x:CCC):int := int(Ccode(ulong, "mpfr_get_prec((__mpfr_struct*)",x,")"));
 
-newBigReal(prec:int):RRR := (
+export newBigReal(prec:int):RRR := (
      x := RRR(0,0,0,null());
      Ccode( void, "mpfr_init2(", "(__mpfr_struct *)", x, ",",prec,")" );
      x);
 
-newBigComplex(prec:int):CCC := CCC(newBigReal(prec),newBigReal(prec));
+export newBigComplex(prec:int):CCC := CCC(newBigReal(prec),newBigReal(prec));
 
 export toBigReal(x:RRR,prec:int):RRR := (
      if x.prec == prec then return x;

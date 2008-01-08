@@ -69,7 +69,7 @@ export (lhs:Expr) + (rhs:Expr) : Expr := (
      	  is y:CCC do Expr(x + y)
 	  -- DO THESE
      	  -- is y:Complex do Expr(x + y)
-	  is y:Real do Expr(x + toBigReal(y.v,x.prec))
+	  is y:Real do Expr(Real(toDouble(x) + y.v))
 	  is Error do rhs
 	  else binarymethod(lhs,rhs,PlusS))
      is x:CCC do (
@@ -99,7 +99,7 @@ export (lhs:Expr) + (rhs:Expr) : Expr := (
 	  when rhs
      	  is y:Integer do Expr(Real(x.v+y))
      	  is y:Rational do Expr(Real(x.v+y))
-     	  is y:RRR do Expr(toBigReal(x.v,y.prec)+y)
+     	  is y:RRR do Expr(Real(x.v+toDouble(y)))
 	  -- DO THESE
      	  -- is y:Complex do Expr(x+y)
      	  is y:CCC do Expr(toBigReal(x.v,y.re.prec)+y)

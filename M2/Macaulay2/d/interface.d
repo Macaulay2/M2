@@ -3273,6 +3273,14 @@ export rawLeastSquares(e:Expr):Expr := (
      else WrongNumArgs(4));
 setupfun("rawLeastSquares", rawLeastSquares);
 
+mpfrConstantPi(e:Expr):Expr := (
+     when e is prec:Integer do if !isInt(prec) then WrongArgSmallInteger(1) else (
+	  z := newBigReal(toInt(prec));
+	  Ccode( void, "mpfr_const_pi(", "(__mpfr_struct *)", z, ", GMP_RNDN)" );
+	  Expr(z))
+     else WrongArgInteger(1));
+setupfun("mpfrConstantPi",mpfrConstantPi);
+
 -- Local Variables:
 -- compile-command: "make -C $M2BUILDDIR/Macaulay2/d "
 -- End:
