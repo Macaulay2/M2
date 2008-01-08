@@ -12,7 +12,7 @@ ideal"5t3x2z+2t2y3x5,7y+4x2y+y2x+2zt,3tz+3yz2+2yz4"
 --------------------------------------------------------
 --std2
 R = kk{t,x,y,z,u,v}
-ideal"xy+xz+2xu+yu+zu+2u2+yv+zv+2uv-3txz-y2z-yz2-3tzu-2yzu3tzv+3tyz2,
+ideal"xy+xz+2xu+yu+zu+2u2+yv+zv+2uv-3txz-y2z-yz2-3tzu-2yzu-3tzv+3tyz2,
       y2+z2+2u2-3u2v,
       tx+z2+2xv-txy,
       -yz-z2-xu-u2+tv-v2,
@@ -147,7 +147,7 @@ R = kk{x,y,z}
 I = ideal"x3+y4+2xz3+z5-3x4y2+2z6+3z7,
        xz3-2x4y2+z6+2z7,
        9x3z2+18x2z5-5z7+12x4y2z2+42x2z6+40x3y2z4+7z9+24x3y2z5,
-       -4y3z3-12x6y+32x3y5-2x4y3,
+       -4y3z3-12x6y+32x3y5-2x4yz3,
        12xy3z2+6x5yz2+24y3z5+20x4yz4+56y3z6+12x4yz5"
 --------------------------------------------------------
 --std18
