@@ -121,19 +121,29 @@ equalmethod(x:Expr,y:Expr):Expr := (
 EqualEqualfun(x:Expr,y:Expr):Expr := (
      -- some cases, where the types are equal, call immediately for strict equality
      -- some cases call for simple recursive routines
+     if x == y then True else
      when x
-     is xx:Integer do (
+     is xx:ZZ do (
 	  when y 
-	  is Integer do equal(x,y) 
-	  is yy:RR do if isInt(xx) then toExpr(yy === toInt(xx)) else toExpr(yy === xx)
+	  is yy:ZZ do toExpr(yy === xx)
+	  is yy:RR do toExpr(yy === xx)
+	  is yy:CC do toExpr(yy === xx)
 	  else equalmethod(x,y)
 	  )
      is SymbolClosure do when y is SymbolClosure do equal(x,y) else equalmethod(x,y)
-     is Rational do when y is Rational do equal(x,y) else equalmethod(x,y)
+     is QQ do when y is QQ do equal(x,y) else equalmethod(x,y)
      is xx:RR do (
 	  when y
 	  is yy:RR do toExpr(xx === yy)
-	  is i:Integer do toExpr(xx === i)
+	  is yy:CC do toExpr(xx === yy)
+	  is yy:ZZ do toExpr(xx === yy)
+	  else equalmethod(x,y)
+	  )
+     is xx:CC do (
+	  when y
+	  is yy:RR do toExpr(xx === yy)
+	  is yy:CC do toExpr(xx === yy)
+	  is yy:ZZ do toExpr(xx === yy)
 	  else equalmethod(x,y)
 	  )
      is Boolean do when y is Boolean do equal(x,y) else equalmethod(x,y)
@@ -195,11 +205,11 @@ setup(NotEqualS,NotEqualfun);
 compare(left:Expr,right:Expr):Expr := (
      if left == right then EqualEqualE else
      when left
-     is x:Integer do (
+     is x:ZZ do (
 	  when right
-	  is y:Integer do
+	  is y:ZZ do
 	  if x < y then LessE else if x > y then GreaterE else EqualEqualE
-	  is y:Rational do
+	  is y:QQ do
 	  if x < y then LessE else if x > y then GreaterE else EqualEqualE
 	  is y:RR do (
 	       r := compare(x,y);
@@ -240,11 +250,11 @@ compare(left:Expr,right:Expr):Expr := (
 		    )
 	       )
 	  else binarymethod(left,right,QuestionS))
-     is x:Rational do (
+     is x:QQ do (
 	  when right
-	  is y:Integer do 
+	  is y:ZZ do 
 	  if x < y then LessE else if x > y then GreaterE else EqualEqualE
-	  is y:Rational do
+	  is y:QQ do
 	  if x < y then LessE else if x > y then GreaterE else EqualEqualE
 	  is y:RR do (
 	       r := compare(x,y);
@@ -254,11 +264,11 @@ compare(left:Expr,right:Expr):Expr := (
 	  else binarymethod(left,right,QuestionS))
      is x:RR do (
 	  when right
-	  is y:Integer do (
+	  is y:ZZ do (
 	       r := compare(x,y);
 	       if r < 0 then LessE else if r > 0 then GreaterE else EqualEqualE
 	       )
-	  is y:Rational do (
+	  is y:QQ do (
 	       r := compare(x,y);
 	       if r < 0 then LessE else if r > 0 then GreaterE else EqualEqualE
 	       )
@@ -548,10 +558,10 @@ bitxorfun(e:Expr):Expr := (
      if length(a) == 2 then
      when a.0
      is err:Error do Expr(err)
-     is x:Integer do
+     is x:ZZ do
      when a.1
      is err:Error do Expr(err)
-     is y:Integer do Expr(x ^^ y)
+     is y:ZZ do Expr(x ^^ y)
      else WrongArgInteger(2)
      else WrongArgInteger(1)
      else WrongNumArgs(2)
@@ -574,8 +584,8 @@ setup(StarS,starfun,timesfun);
 sin(e:Expr):Expr := (
      when e
      is x:RR do Expr(sin(x))
-     is x:Integer do Expr(sin(toRR(x)))
-     is x:Rational do Expr(sin(toRR(x)))
+     is x:ZZ do Expr(sin(toRR(x)))
+     is x:QQ do Expr(sin(toRR(x)))
      is x:Error do Expr(x)
      else buildErrorPacket("expected a number")
      );
@@ -583,8 +593,8 @@ setupfun("sin",sin);
 cos(e:Expr):Expr := (
      when e
      is x:RR do Expr(cos(x))
-     is x:Integer do Expr(cos(toRR(x)))
-     is x:Rational do Expr(cos(toRR(x)))
+     is x:ZZ do Expr(cos(toRR(x)))
+     is x:QQ do Expr(cos(toRR(x)))
      is x:Error do Expr(x)
      else buildErrorPacket("expected a number")
      );
@@ -592,8 +602,8 @@ setupfun("cos",cos);
 tan(e:Expr):Expr := (
      when e
      is x:RR do Expr(tan(x))
-     is x:Integer do Expr(tan(toRR(x)))
-     is x:Rational do Expr(tan(toRR(x)))
+     is x:ZZ do Expr(tan(toRR(x)))
+     is x:QQ do Expr(tan(toRR(x)))
      is x:Error do Expr(x)
      else buildErrorPacket("expected a number")
      );
@@ -601,8 +611,8 @@ setupfun("tan",tan);
 acos(e:Expr):Expr := (
      when e
      is x:RR do Expr(acos(x))
-     is x:Integer do Expr(acos(toRR(x)))
-     is x:Rational do Expr(acos(toRR(x)))
+     is x:ZZ do Expr(acos(toRR(x)))
+     is x:QQ do Expr(acos(toRR(x)))
      is x:Error do Expr(x)
      else buildErrorPacket("expected a number")
      );
@@ -610,8 +620,8 @@ setupfun("acos",acos);
 asin(e:Expr):Expr := (
      when e
      is x:RR do Expr(asin(x))
-     is x:Integer do Expr(asin(toRR(x)))
-     is x:Rational do Expr(asin(toRR(x)))
+     is x:ZZ do Expr(asin(toRR(x)))
+     is x:QQ do Expr(asin(toRR(x)))
      is x:Error do Expr(x)
      else buildErrorPacket("expected a number")
      );
@@ -619,8 +629,8 @@ setupfun("asin",asin);
 atan(e:Expr):Expr := (
      when e
      is x:RR do Expr(atan(x))
-     is x:Integer do Expr(atan(toRR(x)))
-     is x:Rational do Expr(atan(toRR(x)))
+     is x:ZZ do Expr(atan(toRR(x)))
+     is x:QQ do Expr(atan(toRR(x)))
      is x:Error do Expr(x)
      is a:Sequence do if length(a) != 2
      then WrongNumArgs(1,2)
@@ -629,20 +639,20 @@ atan(e:Expr):Expr := (
      is y:RR do (
 	  when a.0
 	  is x:RR do Expr(atan2(y,x))
-	  is x:Integer do Expr(atan2(y,toRR(x,y.prec)))
-	  is x:Rational do Expr(atan2(y,toRR(x,y.prec)))
+	  is x:ZZ do Expr(atan2(y,toRR(x,y.prec)))
+	  is x:QQ do Expr(atan2(y,toRR(x,y.prec)))
 	  else WrongArg(1,"a number"))
-     is y:Integer do (
+     is y:ZZ do (
 	  when a.0
 	  is x:RR do Expr(atan2(toRR(y,x.prec),x))
-	  is x:Integer do Expr(atan2(toRR(y),toRR(x)))
-	  is x:Rational do Expr(atan2(toRR(y),toRR(x)))
+	  is x:ZZ do Expr(atan2(toRR(y),toRR(x)))
+	  is x:QQ do Expr(atan2(toRR(y),toRR(x)))
 	  else WrongArg(1,"a number"))
-     is y:Rational do (
+     is y:QQ do (
 	  when a.0
 	  is x:RR do Expr(atan2(toRR(y,x.prec),x))
-	  is x:Integer do Expr(atan2(toRR(y),toRR(x)))
-	  is x:Rational do Expr(atan2(toRR(y),toRR(x)))
+	  is x:ZZ do Expr(atan2(toRR(y),toRR(x)))
+	  is x:QQ do Expr(atan2(toRR(y),toRR(x)))
      	  else WrongArg(1,"a number"))
      else WrongArg(2,"a number")
      else buildErrorPacket("expected a number or a pair of numbers")
@@ -651,8 +661,8 @@ setupfun("atan",atan);
 cosh(e:Expr):Expr := (
      when e
      is x:RR do Expr(atan(x))
-     is x:Integer do Expr(atan(toRR(x)))
-     is x:Rational do Expr(atan(toRR(x)))
+     is x:ZZ do Expr(atan(toRR(x)))
+     is x:QQ do Expr(atan(toRR(x)))
      is x:Error do Expr(x)
      else buildErrorPacket("expected a number")
      );
@@ -660,8 +670,8 @@ setupfun("cosh",cosh);
 sinh(e:Expr):Expr := (
      when e
      is x:RR do Expr(cosh(x))
-     is x:Integer do Expr(cosh(toRR(x)))
-     is x:Rational do Expr(cosh(toRR(x)))
+     is x:ZZ do Expr(cosh(toRR(x)))
+     is x:QQ do Expr(cosh(toRR(x)))
      is x:Error do Expr(x)
      else buildErrorPacket("expected a number")
      );
@@ -669,8 +679,8 @@ setupfun("sinh",sinh);
 tanh(e:Expr):Expr := (
      when e
      is x:RR do Expr(tanh(x))
-     is x:Integer do Expr(tanh(toRR(x)))
-     is x:Rational do Expr(tanh(toRR(x)))
+     is x:ZZ do Expr(tanh(toRR(x)))
+     is x:QQ do Expr(tanh(toRR(x)))
      is x:Error do Expr(x)
      else buildErrorPacket("expected a number")
      );
@@ -678,8 +688,8 @@ setupfun("tanh",tanh);
 exp(e:Expr):Expr := (
      when e
      is x:RR do Expr(exp(x))
-     is x:Integer do Expr(exp(toRR(x)))
-     is x:Rational do Expr(exp(toRR(x)))
+     is x:ZZ do Expr(exp(toRR(x)))
+     is x:QQ do Expr(exp(toRR(x)))
      is x:Error do Expr(x)
      else buildErrorPacket("expected a number")
      );
@@ -687,8 +697,8 @@ setupfun("exp",exp);
 log(e:Expr):Expr := (
      when e
      is x:RR do Expr(log(x))
-     is x:Integer do Expr(log(toRR(x)))
-     is x:Rational do Expr(log(toRR(x)))
+     is x:ZZ do Expr(log(toRR(x)))
+     is x:QQ do Expr(log(toRR(x)))
      is x:Error do Expr(x)
      else buildErrorPacket("expected a number")
      );
@@ -697,8 +707,8 @@ abs(x:double):double := if x < 0. then -x else x;
 floor(e:Expr):Expr := (
      when e
      is x:RR do Expr(floor(x))
-     is x:Rational do Expr(floor(x))
-     is Integer do e
+     is x:QQ do Expr(floor(x))
+     is ZZ do e
      is x:Error do Expr(x)
      else buildErrorPacket("expected a real number")
      );
@@ -1188,7 +1198,7 @@ map(e:Expr,f:Expr):Expr := (
 	  is v:Sequence do list(b.class,v,b.mutable)
 	  else nullE			  -- will not happen
 	  )
-     is i:Integer do (
+     is i:ZZ do (
 	  if !isInt(i)
 	  then WrongArgSmallInteger()
 	  else map(toInt(i),f))
@@ -1663,7 +1673,7 @@ scan(e:Expr,f:Expr):Expr := (
      when e
      is a:Sequence do scan(a,f)
      is b:List do scan(b.v,f)
-     is i:Integer do (
+     is i:ZZ do (
 	  if !isInt(i)
 	  then WrongArgSmallInteger(1)
 	  else scan(toInt(i),f))
@@ -1679,9 +1689,9 @@ scan(e:Expr):Expr := (
 setupfun("scan",scan);
 gcd(x:Expr,y:Expr):Expr := (
      when x
-     is a:Integer do (
+     is a:ZZ do (
 	  when y
-	  is b:Integer do Expr(gcd(a,b))
+	  is b:ZZ do Expr(gcd(a,b))
 	  else buildErrorPacket("expected an integer"))
      else buildErrorPacket("expected an integer"));
 gcdfun(e:Expr):Expr := accumulate(plus0,plus1,gcd,e);

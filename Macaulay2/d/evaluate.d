@@ -103,7 +103,7 @@ assignvector(m:List,i:Code,rhs:Code):Expr := (
      x := m.v;
      ival := eval(i);
      when ival
-     is j:Integer do (
+     is j:ZZ do (
 	  if isInt(j)
 	  then (
 	       k := toInt(j);
@@ -310,7 +310,7 @@ evalForCode(c:forCode):Expr := (
 	       fromvalue := eval(c.fromClause);
 	       when fromvalue 
 	       is Error do return fromvalue
-	       is f:Integer do (
+	       is f:ZZ do (
 		    if isInt(f) then j = toInt(f)
 		    else return printErrorMessageE(c.fromClause,"expected a small integer"))
 	       else return printErrorMessageE(c.fromClause,"expected an integer"));
@@ -319,7 +319,7 @@ evalForCode(c:forCode):Expr := (
 	       tovalue := eval(c.toClause);
 	       when tovalue 
 	       is Error do return tovalue
-	       is f:Integer do (
+	       is f:ZZ do (
 		    if isInt(f) then n = toInt(f)
 		    else return printErrorMessageE(c.toClause,"expected a small integer"))
 	       else return printErrorMessageE(c.toClause,"expected an integer"));
@@ -1389,7 +1389,7 @@ export eval(c:Code):Expr := (
 			      if z.message == breakMessage then return buildErrorPacket(unwindMessage);
 			      if z.message == returnMessage then return z.value;
 			      if z.message == continueMessageWithArg || z.message == continueMessage then (
-				   when z.value is step:Integer do (
+				   when z.value is step:ZZ do (
 					if isInt(step) then (
 					     steppingFlag = true;
 					     lastCode = c;

@@ -13,23 +13,23 @@ export max(x:int,y:int):int := if x<y then y else x;
 export (o:file) << (s:Cstring) : file := o << if s == null() then "(null)" else tostring(s);
 
 export limbPointer := {limbPointer:void} or null;
-export Integer := { alloc:int, size:int, limbs:limbPointer};
+export ZZ := { alloc:int, size:int, limbs:limbPointer};
 
-isPositive(x:Integer):bool ::=  1 == Ccode(int, "mpz_sgn((__mpz_struct *)", x, ")");
-isZero    (x:Integer):bool ::=  0 == Ccode(int, "mpz_sgn((__mpz_struct *)", x, ")");
-isNegative(x:Integer):bool ::= -1 == Ccode(int, "mpz_sgn((__mpz_struct *)", x, ")");
+isPositive(x:ZZ):bool ::=  1 == Ccode(int, "mpz_sgn((__mpz_struct *)", x, ")");
+isZero    (x:ZZ):bool ::=  0 == Ccode(int, "mpz_sgn((__mpz_struct *)", x, ")");
+isNegative(x:ZZ):bool ::= -1 == Ccode(int, "mpz_sgn((__mpz_struct *)", x, ")");
 
-export isInt(x:Integer):bool := 0 != Ccode(int, "mpz_fits_sint_p((__mpz_struct *)", x, ")");
-export toInt(x:Integer):int  := Ccode(int, "mpz_get_si((__mpz_struct *)", x, ")");
+export isInt(x:ZZ):bool := 0 != Ccode(int, "mpz_fits_sint_p((__mpz_struct *)", x, ")");
+export toInt(x:ZZ):int  := Ccode(int, "mpz_get_si((__mpz_struct *)", x, ")");
 
-export hash(x:Integer):int := (
+export hash(x:ZZ):int := (
      if isInt(x) then 0x7fffffff & toInt(x)
      else Ccode(int, 
      	  "mpz_hash(",					    -- see gmp_aux.c for this function
           "(__mpz_struct *)", x, 
      	  ")"));
 
-getstr(str:Cstring, base:int, x:Integer):Cstring ::= Ccode(Cstring,
+getstr(str:Cstring, base:int, x:ZZ):Cstring ::= Ccode(Cstring,
      "(Cstring) mpz_get_str(",
 	 "(char *)", str, ",",
 	 base, ",",
@@ -37,29 +37,29 @@ getstr(str:Cstring, base:int, x:Integer):Cstring ::= Ccode(Cstring,
      ")"
      );
 
-init(x:Integer):void ::= Ccode( void, "mpz_init(", "(__mpz_struct *)", x, ")" );
+init(x:ZZ):void ::= Ccode( void, "mpz_init(", "(__mpz_struct *)", x, ")" );
 
-newInteger():Integer := (
-     x := Integer(0,0,null());
+newInteger():ZZ := (
+     x := ZZ(0,0,null());
      init(x);
      x);
 
-sizeinbase(x:Integer,b:int):int ::= Ccode( int, "mpz_sizeinbase(", "(__mpz_struct *)", x, ",", b, ")" );
+sizeinbase(x:ZZ,b:int):int ::= Ccode( int, "mpz_sizeinbase(", "(__mpz_struct *)", x, ",", b, ")" );
 
-set(x:Integer, y:Integer):void ::= Ccode( void,
+set(x:ZZ, y:ZZ):void ::= Ccode( void,
      "mpz_set(",
 	 "(__mpz_struct *)", x, ",",
 	 "(__mpz_struct *)", y,
      ")" 
      );
 
-export copy(i:Integer):Integer := (
-     x := Integer(0,0,null());
+export copy(i:ZZ):ZZ := (
+     x := ZZ(0,0,null());
      init(x);
      set(x,i);
      x);
 
-set(x:Integer, n:int):void ::= Ccode( void,
+set(x:ZZ, n:int):void ::= Ccode( void,
      "mpz_set_si(",
 	 "(__mpz_struct *)", x, ",",
 	 "(unsigned long)", n,
@@ -68,70 +68,70 @@ set(x:Integer, n:int):void ::= Ccode( void,
 
 negsmall := -100;
 possmall := 300;
-smallints := new array(Integer) len possmall - negsmall + 1 do for i from negsmall to possmall do (
-     x := Integer(0,0,null());
+smallints := new array(ZZ) len possmall - negsmall + 1 do for i from negsmall to possmall do (
+     x := ZZ(0,0,null());
      init(x);
      set(x,i);
      provide x
      );
 
-isSmall(x:Integer):bool := isInt(x) && (
+isSmall(x:ZZ):bool := isInt(x) && (
      i := toInt(x);
      negsmall <= i && i <= possmall);
 
-export toInteger(i:int):Integer := (
+export toInteger(i:int):ZZ := (
      if i >= negsmall && i <= possmall then smallints.(i-negsmall)
      else (
-	  x := Integer(0,0,null());
+	  x := ZZ(0,0,null());
 	  init(x);
 	  set(x,i);
 	  x));
 
-set(x:Integer, n:ulong):void ::= Ccode( void,
+set(x:ZZ, n:ulong):void ::= Ccode( void,
      "mpz_set_ui(",
 	 "(__mpz_struct *)", x, ",",
 	 n,
      ")" 
      );
 
-export toInteger(i:ulong):Integer := (
+export toInteger(i:ulong):ZZ := (
      if i <= ulong(possmall)
      then smallints.(int(i)-negsmall)
      else (
-	  x := Integer(0,0,null());
+	  x := ZZ(0,0,null());
 	  init(x);
 	  set(x,i);
 	  x));
 
-neg(x:Integer, y:Integer):void ::= Ccode( void,
+neg(x:ZZ, y:ZZ):void ::= Ccode( void,
      "mpz_neg(",
 	 "(__mpz_struct *)", x, ",", 
 	 "(__mpz_struct *)", y,
      ")" 
      );
 
-export - (x:Integer) : Integer := (
-     y := Integer(0,0,null());
+export - (x:ZZ) : ZZ := (
+     y := ZZ(0,0,null());
      init(y);
      neg(y,x);
      y);
 
-abs(x:Integer, y:Integer):void ::= Ccode( void,
+abs(x:ZZ, y:ZZ):void ::= Ccode( void,
      "mpz_abs(",
 	 "(__mpz_struct *)", x, ",", 
 	 "(__mpz_struct *)", y,
      ")" 
      );
 
-export abs(x:Integer) : Integer := (
+export abs(x:ZZ) : ZZ := (
      if isNegative(x) then (
-	  y := Integer(0,0,null());
+	  y := ZZ(0,0,null());
 	  init(y);
 	  abs(y,x);
 	  y)
      else x);
 
-add(x:Integer, y:Integer, z:Integer):void ::= Ccode( void,
+add(x:ZZ, y:ZZ, z:ZZ):void ::= Ccode( void,
      "mpz_add(",
 	 "(__mpz_struct *)", x, ",", 
 	 "(__mpz_struct *)", y, ",", 
@@ -139,13 +139,13 @@ add(x:Integer, y:Integer, z:Integer):void ::= Ccode( void,
      ")" 
      );
 
-export (x:Integer) + (y:Integer) : Integer := (
-     z := Integer(0,0,null());
+export (x:ZZ) + (y:ZZ) : ZZ := (
+     z := ZZ(0,0,null());
      init(z);
      add(z,x,y);
      z);
 
-add(x:Integer, y:Integer, z:ulong):void ::= Ccode( void,
+add(x:ZZ, y:ZZ, z:ulong):void ::= Ccode( void,
      "mpz_add_ui(",
 	 "(__mpz_struct *)", x, ",", 
 	 "(__mpz_struct *)", y, ",", 
@@ -153,7 +153,7 @@ add(x:Integer, y:Integer, z:ulong):void ::= Ccode( void,
      ")" 
      );
 
-sub(x:Integer, y:Integer, z:Integer):void ::= Ccode( void,
+sub(x:ZZ, y:ZZ, z:ZZ):void ::= Ccode( void,
      "mpz_sub(",
 	 "(__mpz_struct *)", x, ",", 
 	 "(__mpz_struct *)", y, ",", 
@@ -161,39 +161,39 @@ sub(x:Integer, y:Integer, z:Integer):void ::= Ccode( void,
      ")" 
      );
 
-export (x:Integer) - (y:Integer) : Integer := (
-     z := Integer(0,0,null());
+export (x:ZZ) - (y:ZZ) : ZZ := (
+     z := ZZ(0,0,null());
      init(z);
      sub(z,x,y);
      z);
 
-compare(x:Integer, y:Integer):int ::= Ccode( int,
+compare(x:ZZ, y:ZZ):int ::= Ccode( int,
      "mpz_cmp(",
 	 "(__mpz_struct *)", x, ",", 
 	 "(__mpz_struct *)", y,
      ")" 
      );
-export (x:Integer) === (y:Integer) : bool := compare(x,y) == 0;
-export (x:Integer)  >  (y:Integer) : bool := compare(x,y) >  0;
-export (x:Integer)  <  (y:Integer) : bool := compare(x,y) <  0;
-export (x:Integer)  >= (y:Integer) : bool := compare(x,y) >= 0;
-export (x:Integer)  <= (y:Integer) : bool := compare(x,y) <= 0;
+export (x:ZZ) === (y:ZZ) : bool := compare(x,y) == 0;
+export (x:ZZ)  >  (y:ZZ) : bool := compare(x,y) >  0;
+export (x:ZZ)  <  (y:ZZ) : bool := compare(x,y) <  0;
+export (x:ZZ)  >= (y:ZZ) : bool := compare(x,y) >= 0;
+export (x:ZZ)  <= (y:ZZ) : bool := compare(x,y) <= 0;
 
-compare(x:Integer, y:long):int ::= Ccode( int, "mpz_cmp_si(", "(__mpz_struct *)", x, ",", y, ")" );
+compare(x:ZZ, y:long):int ::= Ccode( int, "mpz_cmp_si(", "(__mpz_struct *)", x, ",", y, ")" );
 
-export (x:Integer)  >  (y:int) : bool :=  compare(x,long(y)) >  0;
-export (x:Integer)  >= (y:int) : bool :=  compare(x,long(y)) >= 0;
-export (x:Integer) === (y:int) : bool :=  compare(x,long(y)) == 0;
-export (x:Integer)  <  (y:int) : bool :=  compare(x,long(y)) <  0;
-export (x:Integer)  <= (y:int) : bool :=  compare(x,long(y)) <= 0;
+export (x:ZZ)  >  (y:int) : bool :=  compare(x,long(y)) >  0;
+export (x:ZZ)  >= (y:int) : bool :=  compare(x,long(y)) >= 0;
+export (x:ZZ) === (y:int) : bool :=  compare(x,long(y)) == 0;
+export (x:ZZ)  <  (y:int) : bool :=  compare(x,long(y)) <  0;
+export (x:ZZ)  <= (y:int) : bool :=  compare(x,long(y)) <= 0;
 
-export (x:int) < (y:Integer) : bool := y > x;
-export (x:int) > (y:Integer) : bool := y < x;
-export (x:int) <= (y:Integer) : bool := y >= x;
-export (x:int) >= (y:Integer) : bool := y <= x;
-export (x:int) === (y:Integer) : bool := y === x;
+export (x:int) < (y:ZZ) : bool := y > x;
+export (x:int) > (y:ZZ) : bool := y < x;
+export (x:int) <= (y:ZZ) : bool := y >= x;
+export (x:int) >= (y:ZZ) : bool := y <= x;
+export (x:int) === (y:ZZ) : bool := y === x;
 
-sub(x:Integer, y:Integer, z:ulong):void ::= Ccode( void,
+sub(x:ZZ, y:ZZ, z:ulong):void ::= Ccode( void,
      "mpz_sub_ui(",
 	 "(__mpz_struct *)", x, ",", 
 	 "(__mpz_struct *)", y, ",", 
@@ -201,7 +201,7 @@ sub(x:Integer, y:Integer, z:ulong):void ::= Ccode( void,
      ")" 
      );
 
-mul(x:Integer, y:Integer, z:Integer):void ::= Ccode( void,
+mul(x:ZZ, y:ZZ, z:ZZ):void ::= Ccode( void,
      "mpz_mul(",
 	 "(__mpz_struct *)", x, ",", 
 	 "(__mpz_struct *)", y, ",", 
@@ -209,13 +209,13 @@ mul(x:Integer, y:Integer, z:Integer):void ::= Ccode( void,
      ")" 
      );
 
-export (x:Integer) * (y:Integer) : Integer := (
-     z := Integer(0,0,null());
+export (x:ZZ) * (y:ZZ) : ZZ := (
+     z := ZZ(0,0,null());
      init(z);
      mul(z,x,y);
      z);
 
-mul(x:Integer, y:Integer, z:int):void ::= Ccode( void,
+mul(x:ZZ, y:ZZ, z:int):void ::= Ccode( void,
      "mpz_mul_si(",
 	 "(__mpz_struct *)", x, ",", 
 	 "(__mpz_struct *)", y, ",", 
@@ -223,7 +223,7 @@ mul(x:Integer, y:Integer, z:int):void ::= Ccode( void,
      ")" 
      );
 
-mul(x:Integer, y:Integer, z:ulong):void ::= Ccode( void,
+mul(x:ZZ, y:ZZ, z:ulong):void ::= Ccode( void,
      "mpz_mul_ui(",
 	 "(__mpz_struct *)", x, ",", 
 	 "(__mpz_struct *)", y, ",", 
@@ -231,7 +231,7 @@ mul(x:Integer, y:Integer, z:ulong):void ::= Ccode( void,
      ")" 
      );
 
-pow(x:Integer, y:Integer, n:int):void ::= Ccode( void,
+pow(x:ZZ, y:ZZ, n:int):void ::= Ccode( void,
      "mpz_pow_ui(",
 	 "(__mpz_struct *)", x, ",", 
 	 "(__mpz_struct *)", y, ",", 
@@ -239,25 +239,25 @@ pow(x:Integer, y:Integer, n:int):void ::= Ccode( void,
      ")" 
      );
 
-export (x:Integer) ^ (n:int) : Integer := (
+export (x:ZZ) ^ (n:int) : ZZ := (
      if n < 0 then return toInteger(0);
      y := newInteger();
      pow(y,x,n);
      y);
 
-export (x:Integer) ^ (n:Integer) : Integer := (
+export (x:ZZ) ^ (n:ZZ) : ZZ := (
      if isNegative(n) then fatal("negative exponent for integer power"); -- what else can we do???
      if isZero(x) then return x;
      if !isInt(n) then fatal("integer exponent too large");
      x^toInt(n));
 
-export powermod(x:Integer, y:Integer, n:Integer) : Integer := (
+export powermod(x:ZZ, y:ZZ, n:ZZ) : ZZ := (
      -- z = x^y mod n
      z := newInteger();
      Ccode( void, "mpz_powm(", "(__mpz_struct *)", z, ",", "(__mpz_struct *)", x, ",", "(__mpz_struct *)", y, ",", "(__mpz_struct *)", n, ")" );
      z);
 
-cdiv(x:Integer, y:Integer, z:Integer):void ::= Ccode( void,
+cdiv(x:ZZ, y:ZZ, z:ZZ):void ::= Ccode( void,
      "mpz_cdiv_q(",
 	 "(__mpz_struct *)", x, ",", 
 	 "(__mpz_struct *)", y, ",", 
@@ -265,7 +265,7 @@ cdiv(x:Integer, y:Integer, z:Integer):void ::= Ccode( void,
      ")" 
      );
 
-fdiv(x:Integer, y:Integer, z:Integer):void ::= Ccode( void,
+fdiv(x:ZZ, y:ZZ, z:ZZ):void ::= Ccode( void,
      "mpz_fdiv_q(",
 	 "(__mpz_struct *)", x, ",", 
 	 "(__mpz_struct *)", y, ",", 
@@ -273,15 +273,15 @@ fdiv(x:Integer, y:Integer, z:Integer):void ::= Ccode( void,
      ")" 
      );
 
-export (x:Integer) // (y:Integer) : Integer := (
-     z := Integer(0,0,null());
+export (x:ZZ) // (y:ZZ) : ZZ := (
+     z := ZZ(0,0,null());
      init(z);
      if isPositive(y) then fdiv(z,x,y) else cdiv(z,x,y);
      z);
 
-divexact(x:Integer, y:Integer):Integer := (
+divexact(x:ZZ, y:ZZ):ZZ := (
      if y === 1 then return x;
-     z := Integer(0,0,null());
+     z := ZZ(0,0,null());
      init(z);
      Ccode( void,
 	  "mpz_divexact(",
@@ -292,7 +292,7 @@ divexact(x:Integer, y:Integer):Integer := (
      	  );
      z);
 
-fmod(x:Integer, y:Integer, z:Integer):void ::= Ccode( void,
+fmod(x:ZZ, y:ZZ, z:ZZ):void ::= Ccode( void,
      "mpz_fdiv_r(",
 	 "(__mpz_struct *)", x, ",", 
 	 "(__mpz_struct *)", y, ",", 
@@ -300,7 +300,7 @@ fmod(x:Integer, y:Integer, z:Integer):void ::= Ccode( void,
      ")" 
      );
 
-cmod(x:Integer, y:Integer, z:Integer):void ::= Ccode( void,
+cmod(x:ZZ, y:ZZ, z:ZZ):void ::= Ccode( void,
      "mpz_cdiv_r(",
 	 "(__mpz_struct *)", x, ",", 
 	 "(__mpz_struct *)", y, ",", 
@@ -308,13 +308,13 @@ cmod(x:Integer, y:Integer, z:Integer):void ::= Ccode( void,
      ")" 
      );
 
-export (x:Integer) % (y:Integer) : Integer := (
-     z := Integer(0,0,null());
+export (x:ZZ) % (y:ZZ) : ZZ := (
+     z := ZZ(0,0,null());
      init(z);
      if isPositive(y) then fmod(z,x,y) else cmod(z,x,y);
      z);
 
-fdiv(x:Integer, y:Integer, z:ulong):void ::= Ccode( void,
+fdiv(x:ZZ, y:ZZ, z:ulong):void ::= Ccode( void,
      "mpz_fdiv_q_ui(",
 	 "(__mpz_struct *)", x, ",", 
 	 "(__mpz_struct *)", y, ",", 
@@ -322,26 +322,26 @@ fdiv(x:Integer, y:Integer, z:ulong):void ::= Ccode( void,
      ")" 
      );
 
-export (x:Integer) // (y:ulong) : Integer := (
-     z := Integer(0,0,null());
+export (x:ZZ) // (y:ulong) : ZZ := (
+     z := ZZ(0,0,null());
      init(z);
      fdiv(z,x,y);
      z);
 
-export (x:Integer) // (y:ushort) : Integer := x // ulong(y);
+export (x:ZZ) // (y:ushort) : ZZ := x // ulong(y);
 
-fmod(y:Integer, z:ulong):ulong ::= Ccode( ulong,
+fmod(y:ZZ, z:ulong):ulong ::= Ccode( ulong,
      "mpz_fdiv_ui(",
 	 "(__mpz_struct *)", y, ",", 
 	 z,
      ")" 
      );
 
-export (x:Integer) % (y:ulong) : ulong := fmod(x,y);
-export (x:Integer) % (y:ushort) : ushort := ushort(x % ulong(y));
+export (x:ZZ) % (y:ulong) : ulong := fmod(x,y);
+export (x:ZZ) % (y:ushort) : ushort := ushort(x % ulong(y));
 
 
-gcd(x:Integer, y:Integer, z:Integer):void ::= Ccode( void,
+gcd(x:ZZ, y:ZZ, z:ZZ):void ::= Ccode( void,
      "mpz_gcd(",
 	 "(__mpz_struct *)", x, ",", 
 	 "(__mpz_struct *)", y, ",", 
@@ -349,13 +349,13 @@ gcd(x:Integer, y:Integer, z:Integer):void ::= Ccode( void,
      ")" 
      );
 
-export gcd(x:Integer,y:Integer):Integer := (
-     z := Integer(0,0,null());
+export gcd(x:ZZ,y:ZZ):ZZ := (
+     z := ZZ(0,0,null());
      init(z);
      gcd(z,x,y);
      z);
 
-mul_2exp(x:Integer, y:Integer, z:ulong):void ::= Ccode( void,
+mul_2exp(x:ZZ, y:ZZ, z:ulong):void ::= Ccode( void,
      "mpz_mul_2exp(",
 	 "(__mpz_struct *)", x, ",", 
 	 "(__mpz_struct *)", y, ",", 
@@ -363,13 +363,13 @@ mul_2exp(x:Integer, y:Integer, z:ulong):void ::= Ccode( void,
      ")" 
      );
 
-leftshift(x:Integer,n:ulong):Integer := (
-     z := Integer(0,0,null());
+leftshift(x:ZZ,n:ulong):ZZ := (
+     z := ZZ(0,0,null());
      init(z);
      mul_2exp(z,x,n);
      z);
 
-tdiv_q_2exp(x:Integer, y:Integer, z:ulong):void ::= Ccode( void,
+tdiv_q_2exp(x:ZZ, y:ZZ, z:ulong):void ::= Ccode( void,
      "mpz_tdiv_q_2exp(",
 	 "(__mpz_struct *)", x, ",", 
 	 "(__mpz_struct *)", y, ",", 
@@ -377,106 +377,106 @@ tdiv_q_2exp(x:Integer, y:Integer, z:ulong):void ::= Ccode( void,
      ")" 
      );
 
-rightshift(x:Integer,n:ulong):Integer := (
-     z := Integer(0,0,null());
+rightshift(x:ZZ,n:ulong):ZZ := (
+     z := ZZ(0,0,null());
      init(z);
      tdiv_q_2exp(z,x,n);
      z);
 
-export (x:Integer) << (n:int) : Integer := (
+export (x:ZZ) << (n:int) : ZZ := (
      if n >= 0 then leftshift(x,ulong(n)) else rightshift(x,ulong(-n))
      );
-export (x:Integer) >> (n:int) : Integer := (
+export (x:ZZ) >> (n:int) : ZZ := (
      if n >= 0 then rightshift(x,ulong(n)) else leftshift(x,ulong(-n))
      );     
 
-and(x:Integer, y:Integer, z:Integer):void ::= Ccode( void,
+and(x:ZZ, y:ZZ, z:ZZ):void ::= Ccode( void,
      "mpz_and(",
 	 "(__mpz_struct *)", x, ",", 
 	 "(__mpz_struct *)", y, ",", 
 	 "(__mpz_struct *)", z,
      ")" 
      );
-export (x:Integer) & (y:Integer) : Integer := (
-     z := Integer(0,0,null());
+export (x:ZZ) & (y:ZZ) : ZZ := (
+     z := ZZ(0,0,null());
      init(z);
      and(z,x,y);
      z);
 
-ior(x:Integer, y:Integer, z:Integer):void ::= Ccode( void,
+ior(x:ZZ, y:ZZ, z:ZZ):void ::= Ccode( void,
      "mpz_ior(",
 	 "(__mpz_struct *)", x, ",", 
 	 "(__mpz_struct *)", y, ",", 
 	 "(__mpz_struct *)", z,
      ")" 
      );
-export (x:Integer) | (y:Integer) : Integer := (
-     z := Integer(0,0,null());
+export (x:ZZ) | (y:ZZ) : ZZ := (
+     z := ZZ(0,0,null());
      init(z);
      ior(z,x,y);
      z);
 
-xor(x:Integer, y:Integer, z:Integer):void ::= Ccode( void,
+xor(x:ZZ, y:ZZ, z:ZZ):void ::= Ccode( void,
      "mpz_xor(",
 	 "(__mpz_struct *)", x, ",", 
 	 "(__mpz_struct *)", y, ",", 
 	 "(__mpz_struct *)", z,
      ")" 
      );
-export (x:Integer) ^^ (y:Integer) : Integer := (
-     z := Integer(0,0,null());
+export (x:ZZ) ^^ (y:ZZ) : ZZ := (
+     z := ZZ(0,0,null());
      init(z);
      xor(z,x,y);
      z);
 
 base := 10;
-toCstring(x:Integer):Cstring ::= getstr(Cstring(null()), base, x);
-export tostring(x:Integer):string := tostring(toCstring(x));
+toCstring(x:ZZ):Cstring ::= getstr(Cstring(null()), base, x);
+export tostring(x:ZZ):string := tostring(toCstring(x));
 
-export (x:int) + (y:Integer) : Integer := toInteger(x) + y;
-export (x:Integer) + (y:int) : Integer := x + toInteger(y);
+export (x:int) + (y:ZZ) : ZZ := toInteger(x) + y;
+export (x:ZZ) + (y:int) : ZZ := x + toInteger(y);
 
-export (x:ulong) + (y:Integer) : Integer := toInteger(x) + y;
-export (x:Integer) + (y:ulong) : Integer := x + toInteger(y);
+export (x:ulong) + (y:ZZ) : ZZ := toInteger(x) + y;
+export (x:ZZ) + (y:ulong) : ZZ := x + toInteger(y);
 
-export (x:int) - (y:Integer) : Integer := toInteger(x) - y;
-export (x:Integer) - (y:int) : Integer := x - toInteger(y);
+export (x:int) - (y:ZZ) : ZZ := toInteger(x) - y;
+export (x:ZZ) - (y:int) : ZZ := x - toInteger(y);
 
-export (x:int) * (y:Integer) : Integer := toInteger(x) * y;
-export (x:Integer) * (y:int) : Integer := x * toInteger(y);
+export (x:int) * (y:ZZ) : ZZ := toInteger(x) * y;
+export (x:ZZ) * (y:int) : ZZ := x * toInteger(y);
 
-export (x:ulong) * (y:Integer) : Integer := toInteger(x) * y;
-export (x:Integer) * (y:ulong) : Integer := x * toInteger(y);
+export (x:ulong) * (y:ZZ) : ZZ := toInteger(x) * y;
+export (x:ZZ) * (y:ulong) : ZZ := x * toInteger(y);
 
-export (x:int) ^ (y:int) : Integer := toInteger(x) ^ y;
+export (x:int) ^ (y:int) : ZZ := toInteger(x) ^ y;
 
-export (o:file) << (x:Integer) : file := o << tostring(x);
+export (o:file) << (x:ZZ) : file := o << tostring(x);
 
 
 -- Integers and doubles
 
-get_d(x:Integer):double ::= Ccode( double, "mpz_get_d(", "(__mpz_struct *)", x, ")" );
-export toDouble(x:Integer):double := get_d(x);
+get_d(x:ZZ):double ::= Ccode( double, "mpz_get_d(", "(__mpz_struct *)", x, ")" );
+export toDouble(x:ZZ):double := get_d(x);
 
-export (x:double) + (y:Integer) : double := x + toDouble(y);
-export (x:Integer) + (y:double) : double := toDouble(x) + y;
-export (x:double) - (y:Integer) : double := x - toDouble(y);
-export (x:Integer) - (y:double) : double := toDouble(x) - y;
-export (x:double) * (y:Integer) : double := x * toDouble(y);
-export (x:Integer) * (y:double) : double := toDouble(x) * y;
-export (x:double) / (y:Integer) : double := x / toDouble(y);
-export (x:Integer) / (y:double) : double := toDouble(x) / y;
-export (x:double) ^ (n:Integer) : double := pow(x,toDouble(n));
+export (x:double) + (y:ZZ) : double := x + toDouble(y);
+export (x:ZZ) + (y:double) : double := toDouble(x) + y;
+export (x:double) - (y:ZZ) : double := x - toDouble(y);
+export (x:ZZ) - (y:double) : double := toDouble(x) - y;
+export (x:double) * (y:ZZ) : double := x * toDouble(y);
+export (x:ZZ) * (y:double) : double := toDouble(x) * y;
+export (x:double) / (y:ZZ) : double := x / toDouble(y);
+export (x:ZZ) / (y:double) : double := toDouble(x) / y;
+export (x:double) ^ (n:ZZ) : double := pow(x,toDouble(n));
 
-export (x:Integer) > (y:double) : bool := toDouble(x) > y;
-export (x:Integer) < (y:double) : bool := toDouble(x) < y;
-export (x:Integer) >= (y:double) : bool := toDouble(x) >= y;
-export (x:Integer) <= (y:double) : bool := toDouble(x) <= y;
+export (x:ZZ) > (y:double) : bool := toDouble(x) > y;
+export (x:ZZ) < (y:double) : bool := toDouble(x) < y;
+export (x:ZZ) >= (y:double) : bool := toDouble(x) >= y;
+export (x:ZZ) <= (y:double) : bool := toDouble(x) <= y;
 
-export (x:double) < (y:Integer) : bool := x < toDouble(y);
-export (x:double) > (y:Integer) : bool := x > toDouble(y);
-export (x:double) <= (y:Integer) : bool := x <= toDouble(y);
-export (x:double) >= (y:Integer) : bool := x >= toDouble(y);
+export (x:double) < (y:ZZ) : bool := x < toDouble(y);
+export (x:double) > (y:ZZ) : bool := x > toDouble(y);
+export (x:double) <= (y:ZZ) : bool := x <= toDouble(y);
+export (x:double) >= (y:ZZ) : bool := x >= toDouble(y);
 
 logtwo := log(2.);
 bigint := 2147483647.; -- 2^31-1
@@ -484,7 +484,7 @@ bigint := 2147483647.; -- 2^31-1
 (x:double) << (n:int) : double ::= ldexp(x, n);
 (x:double) >> (n:int) : double ::= ldexp(x,-n);
 
-export Floor(x:double):Integer := (
+export Floor(x:double):ZZ := (
      x = floor(x);
      if x < bigint && x > -bigint
      then toInteger(int(x))
@@ -515,18 +515,18 @@ export Floor(x:double):Integer := (
 	       if x > 0. then r = r-1;
 	       );
 	  r));
-export Round(x:double):Integer := Floor(x + 0.5);
+export Round(x:double):ZZ := Floor(x + 0.5);
 
 -----------------------------------------------------------------------------
 -- rationals
 -----------------------------------------------------------------------------
 
-export Rational := {
+export QQ := {
      Nalloc:int, Nsize:int, Nlimbs:limbPointer,
      Dalloc:int, Dsize:int, Dlimbs:limbPointer
      };
 
-export numerator(x:Rational):Integer := (
+export numerator(x:QQ):ZZ := (
      z := newInteger();
      Ccode( void,
 	  "mpq_get_num(",
@@ -536,7 +536,7 @@ export numerator(x:Rational):Integer := (
      );
      z);
 
-export denominator(x:Rational):Integer := (
+export denominator(x:QQ):ZZ := (
      z := newInteger();
      Ccode( void,
 	  "mpq_get_den(",
@@ -546,59 +546,59 @@ export denominator(x:Rational):Integer := (
      );
      z);
 
-numeratorRef  (x:Rational):Integer ::= Ccode( Integer,
-     "(gmp_Integer) mpq_numref(", "(__mpq_struct *)", x, ")"
+numeratorRef  (x:QQ):ZZ ::= Ccode( ZZ,
+     "(gmp_ZZ) mpq_numref(", "(__mpq_struct *)", x, ")"
      );
-denominatorRef(x:Rational):Integer ::= Ccode( Integer, 
-     "(gmp_Integer) mpq_denref(", "(__mpq_struct *)", x, ")"
+denominatorRef(x:QQ):ZZ ::= Ccode( ZZ, 
+     "(gmp_ZZ) mpq_denref(", "(__mpq_struct *)", x, ")"
      );
 
-export hash(x:Rational):int := hash(numeratorRef(x))+1299841*hash(denominatorRef(x));
+export hash(x:QQ):int := hash(numeratorRef(x))+1299841*hash(denominatorRef(x));
 
-isNegative(x:Rational):bool := -1 == Ccode(int, "mpq_sgn((__mpq_struct*)",x,")");
+isNegative(x:QQ):bool := -1 == Ccode(int, "mpq_sgn((__mpq_struct*)",x,")");
 
-init(x:Rational):void ::= Ccode( void, "mpq_init(", "(__mpq_struct *)", x, ")" );
+init(x:QQ):void ::= Ccode( void, "mpq_init(", "(__mpq_struct *)", x, ")" );
 
-newRational():Rational := (
-     x := Rational(0,0,null(),0,0,null());
+newRational():QQ := (
+     x := QQ(0,0,null(),0,0,null());
      init(x);
      x);
 
-export newRational(i:Integer,j:Integer):Rational := (
-     x := Rational(0,0,null(),0,0,null());
+export newRational(i:ZZ,j:ZZ):QQ := (
+     x := QQ(0,0,null(),0,0,null());
      init(x);
      set(  numeratorRef(x),i);
      set(denominatorRef(x),j);
      Ccode(void, "mpq_canonicalize((__mpq_struct *)",x,")");
      x);
 
-export newRationalCanonical(i:Integer,j:Integer):Rational := ( -- assume gcd(i,j)=1, j>0, and j==1 if i==0
-     x := Rational(0,0,null(),0,0,null());
+export newRationalCanonical(i:ZZ,j:ZZ):QQ := ( -- assume gcd(i,j)=1, j>0, and j==1 if i==0
+     x := QQ(0,0,null(),0,0,null());
      init(x);
      set(  numeratorRef(x),i);
      set(denominatorRef(x),j);
      x);
 
-export toRational(n:int):Rational := (
+export toRational(n:int):QQ := (
      x := newRational();
      Ccode( void, "mpq_set_si(", "(__mpq_struct *)", x, ",(long)", n, ",(long)1)" );
      x);
 
-export toRational(n:ulong):Rational := (
+export toRational(n:ulong):QQ := (
      x := newRational();
      Ccode( void, "mpq_set_ui(", "(__mpq_struct *)", x, ",(unsigned long)", n, ",(unsigned long)1)" );
      x);
 
 -- integers and rationals
      
-export toRational(x:Integer):Rational := (
+export toRational(x:ZZ):QQ := (
      z := newRational();
      Ccode(void, "mpq_set_z((__mpq_struct *)", z, ",(__mpz_struct *)", x, ")");
      z);
 
-export floor(x:Rational):Integer := numeratorRef(x)//denominatorRef(x);
+export floor(x:QQ):ZZ := numeratorRef(x)//denominatorRef(x);
 
-export (x:Rational) + (y:Rational) : Rational := (
+export (x:QQ) + (y:QQ) : QQ := (
      z := newRational();
      Ccode( void,
           "mpq_add(",
@@ -609,7 +609,7 @@ export (x:Rational) + (y:Rational) : Rational := (
      );
      z);
 
-export - (y:Rational) : Rational := (
+export - (y:QQ) : QQ := (
      z := newRational();
      Ccode( void,
 	  "mpq_neg(",
@@ -619,9 +619,9 @@ export - (y:Rational) : Rational := (
      );
      z);
 
-export abs(x:Rational) : Rational := if isNegative(x) then -x else x;
+export abs(x:QQ) : QQ := if isNegative(x) then -x else x;
 
-export inv(y:Rational) : Rational := (			    -- reciprocal
+export inv(y:QQ) : QQ := (			    -- reciprocal
      z := newRational();
      Ccode( void,
 	  "mpq_inv(",
@@ -631,7 +631,7 @@ export inv(y:Rational) : Rational := (			    -- reciprocal
      );
      z);
 
-export (x:Rational) - (y:Rational) : Rational := (
+export (x:QQ) - (y:QQ) : QQ := (
      z := newRational();
      Ccode( void,
           "mpq_sub(",
@@ -642,7 +642,7 @@ export (x:Rational) - (y:Rational) : Rational := (
      );
      z);
 
-export (x:Rational) * (y:Rational) : Rational := (
+export (x:QQ) * (y:QQ) : QQ := (
      z := newRational();
      Ccode( void,
           "mpq_mul(",
@@ -653,7 +653,7 @@ export (x:Rational) * (y:Rational) : Rational := (
      );
      z);
 
-export (x:Rational) / (y:Rational) : Rational := (
+export (x:QQ) / (y:QQ) : QQ := (
      z := newRational();
      Ccode( void,
           "mpq_div(",
@@ -664,35 +664,35 @@ export (x:Rational) / (y:Rational) : Rational := (
      );
      z);
 
-export (x:Rational) === (y:Rational) : bool := (
+export (x:QQ) === (y:QQ) : bool := (
      Ccode( bool,
           "mpq_equal(",
 	      "(__mpq_struct *)", x, ",", 
 	      "(__mpq_struct *)", y,
 	      ")"));
 
-export (x:Rational) + (y:Integer ) : Rational := x + toRational(y);
-export (x:Rational) + (y:int     ) : Rational := x + toRational(y);
-export (x:Integer ) + (y:Rational) : Rational := toRational(x) + y;
-export (x:int     ) + (y:Rational) : Rational := toRational(x) + y;
+export (x:QQ) + (y:ZZ ) : QQ := x + toRational(y);
+export (x:QQ) + (y:int     ) : QQ := x + toRational(y);
+export (x:ZZ ) + (y:QQ) : QQ := toRational(x) + y;
+export (x:int     ) + (y:QQ) : QQ := toRational(x) + y;
 
-export (x:Rational) - (y:Integer ) : Rational := x - toRational(y);
-export (x:Rational) - (y:int     ) : Rational := x - toRational(y);
-export (x:Integer ) - (y:Rational) : Rational := toRational(x) - y;
-export (x:int     ) - (y:Rational) : Rational := toRational(x) - y;
+export (x:QQ) - (y:ZZ ) : QQ := x - toRational(y);
+export (x:QQ) - (y:int     ) : QQ := x - toRational(y);
+export (x:ZZ ) - (y:QQ) : QQ := toRational(x) - y;
+export (x:int     ) - (y:QQ) : QQ := toRational(x) - y;
 
-export (x:Rational) * (y:Integer ) : Rational := x * toRational(y);
-export (x:Rational) * (y:int     ) : Rational := x * toRational(y);
-export (x:Integer ) * (y:Rational) : Rational := toRational(x) * y;
-export (x:int     ) * (y:Rational) : Rational := toRational(x) * y;
+export (x:QQ) * (y:ZZ ) : QQ := x * toRational(y);
+export (x:QQ) * (y:int     ) : QQ := x * toRational(y);
+export (x:ZZ ) * (y:QQ) : QQ := toRational(x) * y;
+export (x:int     ) * (y:QQ) : QQ := toRational(x) * y;
 
-export (x:Integer ) / (y:Integer ) : Rational := toRational(x)/toRational(y);
-export (x:Rational) / (y:Integer ) : Rational := x / toRational(y);
-export (x:Rational) / (y:int     ) : Rational := x / toRational(y);
-export (x:Integer ) / (y:Rational) : Rational := toRational(x) / y;
-export (x:int     ) / (y:Rational) : Rational := toRational(x) / y;
+export (x:ZZ ) / (y:ZZ ) : QQ := toRational(x)/toRational(y);
+export (x:QQ) / (y:ZZ ) : QQ := x / toRational(y);
+export (x:QQ) / (y:int     ) : QQ := x / toRational(y);
+export (x:ZZ ) / (y:QQ) : QQ := toRational(x) / y;
+export (x:int     ) / (y:QQ) : QQ := toRational(x) / y;
 
-export (x:Rational) ^ (nn:Integer) : Rational := (
+export (x:QQ) ^ (nn:ZZ) : QQ := (
      if !isInt(nn) then fatal("integer exponent too large");
      n := toInt(nn);
      if n == 0 then return toRational(1);
@@ -702,65 +702,65 @@ export (x:Rational) ^ (nn:Integer) : Rational := (
      newRationalCanonical(numeratorRef(x)^n, denominatorRef(x)^n)
      );
 
-export tostring(x:Rational):string := tostring(numeratorRef(x)) + '/' + tostring(denominatorRef(x));
-export (o:file) << (x:Rational) : file := o << numeratorRef(x) << '/' << denominatorRef(x);
+export tostring(x:QQ):string := tostring(numeratorRef(x)) + '/' + tostring(denominatorRef(x));
+export (o:file) << (x:QQ) : file := o << numeratorRef(x) << '/' << denominatorRef(x);
 
-export (x:Rational) === (y:Integer) : bool := denominatorRef(x) === 1 && numeratorRef(x) === y;
-export (x:Rational) === (y:int) : bool := denominatorRef(x) === 1 && numeratorRef(x) === y;
-export (y:Integer) === (x:Rational) : bool := denominatorRef(x) === 1 && numeratorRef(x) === y;
-export (y:int) === (x:Rational) : bool := denominatorRef(x) === 1 && numeratorRef(x) === y;
+export (x:QQ) === (y:ZZ) : bool := denominatorRef(x) === 1 && numeratorRef(x) === y;
+export (x:QQ) === (y:int) : bool := denominatorRef(x) === 1 && numeratorRef(x) === y;
+export (y:ZZ) === (x:QQ) : bool := denominatorRef(x) === 1 && numeratorRef(x) === y;
+export (y:int) === (x:QQ) : bool := denominatorRef(x) === 1 && numeratorRef(x) === y;
 
-compare(x:Rational, y:Rational):int ::= Ccode( int, 
+compare(x:QQ, y:QQ):int ::= Ccode( int, 
      "mpq_cmp((__mpq_struct *)", x, ",(__mpq_struct *)", y, ")" );
-compare(x:Rational, y:ulong):int ::= Ccode( int, "mpq_cmp_ui((__mpq_struct *)", x, ",", y, ",1)");
-compare(x:Rational, y: long):int ::= Ccode( int, "mpq_cmp_si((__mpq_struct *)", x, ",", y, ",1)");
-compare(x:Rational, y: int):int ::= Ccode( int, "mpq_cmp_si((__mpq_struct *)", x, ",(long)", y, ",1)");
+compare(x:QQ, y:ulong):int ::= Ccode( int, "mpq_cmp_ui((__mpq_struct *)", x, ",", y, ",1)");
+compare(x:QQ, y: long):int ::= Ccode( int, "mpq_cmp_si((__mpq_struct *)", x, ",", y, ",1)");
+compare(x:QQ, y: int):int ::= Ccode( int, "mpq_cmp_si((__mpq_struct *)", x, ",(long)", y, ",1)");
 
-export (x:Rational) <  (y:Rational) : bool := compare(x,y) <  0;
-export (x:Rational) >= (y:Rational) : bool := compare(x,y) >= 0;
-export (x:Rational) >  (y:Rational) : bool := compare(x,y) >  0;
-export (x:Rational) <= (y:Rational) : bool := compare(x,y) <= 0;
+export (x:QQ) <  (y:QQ) : bool := compare(x,y) <  0;
+export (x:QQ) >= (y:QQ) : bool := compare(x,y) >= 0;
+export (x:QQ) >  (y:QQ) : bool := compare(x,y) >  0;
+export (x:QQ) <= (y:QQ) : bool := compare(x,y) <= 0;
 
-export (x:Integer) <  (y:Rational) : bool := toRational(x) <  y;
-export (x:Integer) <= (y:Rational) : bool := toRational(x) <= y;
-export (x:Integer) >  (y:Rational) : bool := toRational(x) >  y;
-export (x:Integer) >= (y:Rational) : bool := toRational(x) >= y;
-export (x:Rational) <  (y:Integer) : bool := x <  toRational(y);
-export (x:Rational) <= (y:Integer) : bool := x <= toRational(y);
-export (x:Rational) >  (y:Integer) : bool := x >  toRational(y);
-export (x:Rational) >= (y:Integer) : bool := x >= toRational(y);
+export (x:ZZ) <  (y:QQ) : bool := toRational(x) <  y;
+export (x:ZZ) <= (y:QQ) : bool := toRational(x) <= y;
+export (x:ZZ) >  (y:QQ) : bool := toRational(x) >  y;
+export (x:ZZ) >= (y:QQ) : bool := toRational(x) >= y;
+export (x:QQ) <  (y:ZZ) : bool := x <  toRational(y);
+export (x:QQ) <= (y:ZZ) : bool := x <= toRational(y);
+export (x:QQ) >  (y:ZZ) : bool := x >  toRational(y);
+export (x:QQ) >= (y:ZZ) : bool := x >= toRational(y);
 
-export (x:Rational) <  (y:int) : bool := compare(x,y) <  0;
-export (x:Rational) >= (y:int) : bool := compare(x,y) >= 0;
-export (x:Rational) >  (y:int) : bool := compare(x,y) >  0;
-export (x:Rational) <= (y:int) : bool := compare(x,y) <= 0;
+export (x:QQ) <  (y:int) : bool := compare(x,y) <  0;
+export (x:QQ) >= (y:int) : bool := compare(x,y) >= 0;
+export (x:QQ) >  (y:int) : bool := compare(x,y) >  0;
+export (x:QQ) <= (y:int) : bool := compare(x,y) <= 0;
 
-export (x:int) <  (y:Rational) : bool := y >  x;
-export (x:int) <= (y:Rational) : bool := y >= x;
-export (x:int) >  (y:Rational) : bool := y <  x;
-export (x:int) >= (y:Rational) : bool := y <= x;
+export (x:int) <  (y:QQ) : bool := y >  x;
+export (x:int) <= (y:QQ) : bool := y >= x;
+export (x:int) >  (y:QQ) : bool := y <  x;
+export (x:int) >= (y:QQ) : bool := y <= x;
 
 -- double and rationals
 
-export toDouble(x:Rational):double := Ccode( double, "mpq_get_d(", "(__mpq_struct *)", x, ")" );
+export toDouble(x:QQ):double := Ccode( double, "mpq_get_d(", "(__mpq_struct *)", x, ")" );
 
-export (x:double) + (y:Rational) : double := x + toDouble(y);
-export (x:double) - (y:Rational) : double := x - toDouble(y);
-export (x:double) * (y:Rational) : double := x * toDouble(y);
-export (x:double) / (y:Rational) : double := x / toDouble(y);
-export (x:Rational) + (y:double) : double := toDouble(x) + y;
-export (x:Rational) - (y:double) : double := toDouble(x) - y;
-export (x:Rational) * (y:double) : double := toDouble(x) * y;
-export (x:Rational) / (y:double) : double := toDouble(x) / y;
+export (x:double) + (y:QQ) : double := x + toDouble(y);
+export (x:double) - (y:QQ) : double := x - toDouble(y);
+export (x:double) * (y:QQ) : double := x * toDouble(y);
+export (x:double) / (y:QQ) : double := x / toDouble(y);
+export (x:QQ) + (y:double) : double := toDouble(x) + y;
+export (x:QQ) - (y:double) : double := toDouble(x) - y;
+export (x:QQ) * (y:double) : double := toDouble(x) * y;
+export (x:QQ) / (y:double) : double := toDouble(x) / y;
 
-export (x:double) <  (y:Rational) : bool := x * denominatorRef(y) < numeratorRef(y);
-export (x:double) <= (y:Rational) : bool := x * denominatorRef(y) <= numeratorRef(y);
-export (x:double) >  (y:Rational) : bool := x * denominatorRef(y) > numeratorRef(y);
-export (x:double) >= (y:Rational) : bool := x * denominatorRef(y) >= numeratorRef(y);
-export (x:Rational) <  (y:double) : bool := numeratorRef(x) < y * denominatorRef(x);
-export (x:Rational) <= (y:double) : bool := numeratorRef(x) <= y * denominatorRef(x);
-export (x:Rational) >  (y:double) : bool := numeratorRef(x) > y * denominatorRef(x);
-export (x:Rational) >= (y:double) : bool := numeratorRef(x) >= y * denominatorRef(x);
+export (x:double) <  (y:QQ) : bool := x * denominatorRef(y) < numeratorRef(y);
+export (x:double) <= (y:QQ) : bool := x * denominatorRef(y) <= numeratorRef(y);
+export (x:double) >  (y:QQ) : bool := x * denominatorRef(y) > numeratorRef(y);
+export (x:double) >= (y:QQ) : bool := x * denominatorRef(y) >= numeratorRef(y);
+export (x:QQ) <  (y:double) : bool := numeratorRef(x) < y * denominatorRef(x);
+export (x:QQ) <= (y:double) : bool := numeratorRef(x) <= y * denominatorRef(x);
+export (x:QQ) >  (y:double) : bool := numeratorRef(x) > y * denominatorRef(x);
+export (x:QQ) >= (y:double) : bool := numeratorRef(x) >= y * denominatorRef(x);
 
 -----------------------------------------------------------------------------
 -- big reals
@@ -792,19 +792,19 @@ export toRR(x:RR,prec:int):RR := (
      Ccode( void, "mpfr_set(", "(__mpfr_struct *)", z, ",", "(__mpfr_struct *)", x, ", GMP_RNDN)" );
      z);
 
-export toRR(x:Rational,prec:int):RR := (
+export toRR(x:QQ,prec:int):RR := (
      z := newRRR(prec);
      Ccode( void, "mpfr_set_q(", "(__mpfr_struct *)", z, ",", "(__mpq_struct *)", x, ", GMP_RNDN)" );
      z);
 
-export toRR(x:Rational):RR := toRR(x,defaultPrecision);
+export toRR(x:QQ):RR := toRR(x,defaultPrecision);
 
-export toRR(x:Integer,prec:int):RR := (
+export toRR(x:ZZ,prec:int):RR := (
      z := newRRR(prec);
      Ccode( void, "mpfr_set_z(", "(__mpfr_struct *)", z, ",", "(__mpz_struct *)", x, ", GMP_RNDN)" );
      z);
 
-export toRR(x:Integer):RR := toRR(x,defaultPrecision);
+export toRR(x:ZZ):RR := toRR(x,defaultPrecision);
 
 export toRR(n:int,prec:int):RR := (
      x := newRRR(prec);
@@ -828,8 +828,8 @@ export toCC(x:CC,prec:int):CC := (
      if x.re.prec == prec then x
      else CC(toRR(x.re,prec),toRR(x.im,prec)));
 export toCC(x:RR,y:RR,prec:int):CC := CC(toRR(x,prec),toRR(y,prec));
-export toCC(x:Rational,prec:int):CC := CC(toRR(x,prec),toRR(0,prec));
-export toCC(x:Integer,prec:int):CC := CC(toRR(x,prec),toRR(0,prec));
+export toCC(x:QQ,prec:int):CC := CC(toRR(x,prec),toRR(0,prec));
+export toCC(x:ZZ,prec:int):CC := CC(toRR(x,prec),toRR(0,prec));
 export toCC(x:int,prec:int):CC := CC(toRR(x,prec),toRR(0,prec));
 export toCC(x:ulong,prec:int):CC := CC(toRR(x,prec),toRR(0,prec));
 export toCC(x:double,prec:int):CC := CC(toRR(x,prec),toRR(0,prec));
@@ -895,25 +895,25 @@ export (x:RR) === (y:double) : bool :=  compare0(x,y) == 0 && !flagged0();
 export (x:RR)  <  (y:double) : bool :=  compare0(x,y) <  0 && !flagged0();
 export (x:RR)  <= (y:double) : bool :=  compare0(x,y) <= 0 && !flagged0();
 
-compare0(x:RR, y:Integer):int ::= Ccode( int, "mpfr_cmp_z(", "(__mpfr_struct *)", x, ",(__mpz_struct *)", y, ")" );
-export compare(x:RR, y:Integer):int := Ccode( int, "mpfr_cmp_z(", "(__mpfr_struct *)", x, ",(__mpz_struct *)", y, ")" );
-export compare(y:Integer, x:RR):int := Ccode( int, "-mpfr_cmp_z(", "(__mpfr_struct *)", x, ",(__mpz_struct *)", y, ")" );
-export (x:RR)  >  (y:Integer) : bool :=  compare0(x,y) >  0 && !flagged0();
-export (x:RR)  >= (y:Integer) : bool :=  compare0(x,y) >= 0 && !flagged0();
-export (x:RR) === (y:Integer) : bool :=  compare0(x,y) == 0 && !flagged0();
-export (x:RR)  <  (y:Integer) : bool :=  compare0(x,y) <  0 && !flagged0();
-export (x:RR)  <= (y:Integer) : bool :=  compare0(x,y) <= 0 && !flagged0();
+compare0(x:RR, y:ZZ):int ::= Ccode( int, "mpfr_cmp_z(", "(__mpfr_struct *)", x, ",(__mpz_struct *)", y, ")" );
+export compare(x:RR, y:ZZ):int := Ccode( int, "mpfr_cmp_z(", "(__mpfr_struct *)", x, ",(__mpz_struct *)", y, ")" );
+export compare(y:ZZ, x:RR):int := Ccode( int, "-mpfr_cmp_z(", "(__mpfr_struct *)", x, ",(__mpz_struct *)", y, ")" );
+export (x:RR)  >  (y:ZZ) : bool :=  compare0(x,y) >  0 && !flagged0();
+export (x:RR)  >= (y:ZZ) : bool :=  compare0(x,y) >= 0 && !flagged0();
+export (x:RR) === (y:ZZ) : bool :=  compare0(x,y) == 0 && !flagged0();
+export (y:ZZ) === (x:RR) : bool :=  compare0(x,y) == 0 && !flagged0();
+export (x:RR)  <  (y:ZZ) : bool :=  compare0(x,y) <  0 && !flagged0();
+export (x:RR)  <= (y:ZZ) : bool :=  compare0(x,y) <= 0 && !flagged0();
 
-compare0(x:RR, y:Rational):int ::= Ccode( int, "mpfr_cmp_q(", "(__mpfr_struct *)", x, ",(__mpq_struct *)", y, ")" );
-export compare(x:RR, y:Rational):int := Ccode( int, "mpfr_cmp_q(", "(__mpfr_struct *)", x, ",(__mpq_struct *)", y, ")" );
-export compare(y:Rational, x:RR):int := Ccode( int, "-mpfr_cmp_q(", "(__mpfr_struct *)", x, ",(__mpq_struct *)", y, ")" );
-export (x:RR)  >  (y:Rational) : bool :=  compare0(x,y) >  0 && !flagged0();
-export (x:RR)  >= (y:Rational) : bool :=  compare0(x,y) >= 0 && !flagged0();
-export (x:RR) === (y:Rational) : bool :=  compare0(x,y) == 0 && !flagged0();
-export (x:RR)  <  (y:Rational) : bool :=  compare0(x,y) <  0 && !flagged0();
-export (x:RR)  <= (y:Rational) : bool :=  compare0(x,y) <= 0 && !flagged0();
-
-export (x:CC) === (y:CC) : bool := x.re === y.re && x.im == y.im;
+compare0(x:RR, y:QQ):int ::= Ccode( int, "mpfr_cmp_q(", "(__mpfr_struct *)", x, ",(__mpq_struct *)", y, ")" );
+export compare(x:RR, y:QQ):int := Ccode( int, "mpfr_cmp_q(", "(__mpfr_struct *)", x, ",(__mpq_struct *)", y, ")" );
+export compare(y:QQ, x:RR):int := Ccode( int, "-mpfr_cmp_q(", "(__mpfr_struct *)", x, ",(__mpq_struct *)", y, ")" );
+export (x:RR)  >  (y:QQ) : bool :=  compare0(x,y) >  0 && !flagged0();
+export (x:RR)  >= (y:QQ) : bool :=  compare0(x,y) >= 0 && !flagged0();
+export (x:RR) === (y:QQ) : bool :=  compare0(x,y) == 0 && !flagged0();
+export (y:QQ) === (x:RR) : bool :=  compare0(x,y) == 0 && !flagged0();
+export (x:RR)  <  (y:QQ) : bool :=  compare0(x,y) <  0 && !flagged0();
+export (x:RR)  <= (y:QQ) : bool :=  compare0(x,y) <= 0 && !flagged0();
 
 export hash(x:RR):int := Ccode(int, 
      "mpfr_hash(",					    -- see gmp_aux.c for this function
@@ -933,7 +933,7 @@ export (x:RR) + (y:RR) : RR := (
      );
      z);
      
-export (x:RR) + (y:Integer) : RR := (
+export (x:RR) + (y:ZZ) : RR := (
      z := newRRR(x.prec);
      Ccode( void,
           "mpfr_add_z(",
@@ -944,7 +944,7 @@ export (x:RR) + (y:Integer) : RR := (
      );
      z);
      
-export (x:RR) + (y:Rational) : RR := (
+export (x:RR) + (y:QQ) : RR := (
      z := newRRR(x.prec);
      Ccode( void,
           "mpfr_add_q(",
@@ -966,7 +966,7 @@ export (x:RR) - (y:RR) : RR := (
      );
      z);
      
-export (x:RR) - (y:Integer) : RR := (
+export (x:RR) - (y:ZZ) : RR := (
      z := newRRR(x.prec);
      Ccode( void,
           "mpfr_sub_z(",
@@ -977,7 +977,7 @@ export (x:RR) - (y:Integer) : RR := (
      );
      z);
      
-export (x:RR) - (y:Rational) : RR := (
+export (x:RR) - (y:QQ) : RR := (
      z := newRRR(x.prec);
      Ccode( void,
           "mpfr_sub_q(",
@@ -1010,7 +1010,7 @@ export (x:RR) * (y:RR) : RR := (
      );
      z);
 
-export (x:RR) * (y:Integer) : RR := (
+export (x:RR) * (y:ZZ) : RR := (
      z := newRRR(x.prec);
      Ccode( void,
           "mpfr_mul_z(",
@@ -1021,7 +1021,7 @@ export (x:RR) * (y:Integer) : RR := (
      );
      z);
      
-export (x:RR) * (y:Rational) : RR := (
+export (x:RR) * (y:QQ) : RR := (
      z := newRRR(x.prec);
      Ccode( void,
           "mpfr_mul_q(",
@@ -1043,7 +1043,7 @@ export (x:RR) / (y:RR) : RR := (
      );
      z);
      
-export (x:RR) / (y:Integer) : RR := (
+export (x:RR) / (y:ZZ) : RR := (
      z := newRRR(x.prec);
      Ccode( void,
           "mpfr_div_z(",
@@ -1054,7 +1054,7 @@ export (x:RR) / (y:Integer) : RR := (
      );
      z);
      
-export (x:RR) / (y:Rational) : RR := (
+export (x:RR) / (y:QQ) : RR := (
      z := newRRR(x.prec);
      Ccode( void,
           "mpfr_div_q(",
@@ -1080,7 +1080,7 @@ export (n:uint) ^ (x:RR) : RR := (
      Ccode( void, "mpfr_ui_pow(", "(__mpfr_struct *)", z, ",", n, ",", "(__mpfr_struct *)", x, ", GMP_RNDN)" );
      z);
 
-export (x:RR) ^ (y:Integer) : RR := (
+export (x:RR) ^ (y:ZZ) : RR := (
      z := newRRR(x.prec);
      Ccode( void, "mpfr_pow_z(", "(__mpfr_struct *)", z, ",", "(__mpfr_struct *)", x, ",(__mpz_struct *)", y, ", GMP_RNDN)" );
      z);
@@ -1090,7 +1090,7 @@ export (x:RR) ^ (y:RR) : RR := (
      Ccode( void, "mpfr_pow(", "(__mpfr_struct *)", z, ",", "(__mpfr_struct *)", x, ",(__mpfr_struct *)", y, ", GMP_RNDN)" );
      z);
 
-export floor(x:RR) : Integer := (
+export floor(x:RR) : ZZ := (
 -- - Function: void mpz_set_f (mpz_t ROP, mpfr_t OP)
 --     Set the value of ROP from OP.
 
@@ -1106,6 +1106,8 @@ export floor(x:RR) : Integer := (
      y := newInteger();
      Ccode( void, "mpfr_get_z((__mpz_struct *)", y, ",(__mpfr_struct *)", z, ", GMP_RNDN)" );
      y);
+
+-- complex arithmetic
 
 export (x:CC) + (y:CC) : CC := CC(x.re+y.re, x.im+y.im);
 export (x:CC) - (y:CC) : CC := CC(x.re-y.re, x.im-y.im);
@@ -1123,7 +1125,13 @@ export norm2(x:CC):RR := x.re*x.re + x.im*x.im;
 export (x:CC) / (y:CC) : CC := x * conj(y) / norm2(y);
 export (x:RR) / (y:CC) : CC := x * conj(y) / norm2(y);
 
--- transcendental functions
+export (x:CC) === (y:CC) : bool := x.re === y.re && x.im === y.im;
+export (x:CC) === (y:RR) : bool := x.re === y && x.im === 0;
+export (x:RR) === (y:CC) : bool := x === y.re && y.im === 0;
+export (x:CC) === (y:ZZ) : bool := x.re === y && x.im === 0;
+export (x:ZZ) === (y:CC) : bool := x === y.re && y.im === 0;
+
+-- real transcendental functions
 
 export exp(x:RR):RR := (
      z := newRRR(x.prec);

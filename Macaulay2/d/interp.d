@@ -215,11 +215,11 @@ InputContinuationPrompt := makeProtectedSymbolClosure("InputContinuationPrompt")
 
 topLevelPrompt():string := (
      method := lookup(
-	  integerClass,
+	  ZZClass,
 	  list(topLevelMode, Expr(if lineNumber == previousLineNumber then InputContinuationPrompt else (previousLineNumber = lineNumber; InputPrompt))));
      if method == nullE then ""
      else when applyEE(method,toExpr(lineNumber)) is s:string do s
-     is n:Integer do if isInt(n) then blanks(toInt(n)) else ""
+     is n:ZZ do if isInt(n) then blanks(toInt(n)) else ""
      else "\n<--bad prompt--> : " -- unfortunately, we are not printing the error message!
      );
 
@@ -481,7 +481,7 @@ export process():void := (
 	  else if !topLevel()				    -- give a prompt for debugging
 	  then Exit(err))
      else nothing;
-     when ret is n:Integer do (
+     when ret is n:ZZ do (
 	  if isInt(n) then (
      	       value(Expr("exit " + tostring(toInt(n))));   -- try to exit the user's way
      	       ))

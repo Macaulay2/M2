@@ -25,10 +25,10 @@ export RawMatrix := {Matrix:void};
 export RawMatrixOrNull := {Matrix:void} or null;
 export RawMutableMatrix := {MutableMatrix:void};
 export RawMutableMatrixOrNull := {MutableMatrix:void} or null;
-export IntegerPair := {a:Integer,b:Integer};
+export IntegerPair := {a:ZZ,b:ZZ};
 export IntegerPairOrNull := IntegerPair or null;
-export IntegerOrNull := Integer or null;
-export RationalOrNull := Rational or null;
+export IntegerOrNull := ZZ or null;
+export RationalOrNull := QQ or null;
 export RRRorNull := RR or null;
 export RawMonomialOrderingArray := array(RawMonomialOrdering);
 export RawMatrixPair := { a:RawMatrix, b:RawMatrix };
@@ -89,7 +89,7 @@ export (x:RawRingElement) % (y:RawRingElement) : RawRingElementOrNull := (
      Ccode(RawRingElementOrNull, 
 	  "(engine_RawRingElementOrNull)IM2_RingElement_mod(",
 	  "(RingElement *)", x, ",(RingElement *)", y, ")" ) );
-export (x:RawRingElement) ^ (y:Integer) : RawRingElementOrNull := ( 
+export (x:RawRingElement) ^ (y:ZZ) : RawRingElementOrNull := ( 
      Ccode(RawRingElementOrNull, "(engine_RawRingElementOrNull)IM2_RingElement_power(", "(RingElement *)", x, ",(M2_Integer)", y, ")" ) );
 export (x:RawMatrix) + (y:RawMatrix) : RawMatrixOrNull := (
      Ccode(RawMatrixOrNull, "(engine_RawMatrixOrNull)IM2_Matrix_add(", "(Matrix *)", x, ",(Matrix *)", y, ")" )

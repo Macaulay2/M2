@@ -175,7 +175,7 @@ export parallelAssignmentCode := {
 
 export nullCode := {};
 export RRRCode := {x:RR,position:Position};
-export integerCode := {x:Integer,position:Position};
+export integerCode := {x:ZZ,position:Position};
 export stringCode := {x:string};
 export unaryCode := {f:unop,rhs:Code,position:Position};
 export binaryCode := {f:binop,lhs:Code,rhs:Code,position:Position};
@@ -309,12 +309,12 @@ export Expr := (
      functionCode or
      FunctionClosure or
      HashTable or
-     Integer or
+     ZZ or
      List or
      Net or
      NetFile or
      Nothing or
-     Rational or
+     QQ or
      RawComputation or
      RawFreeModule or
      RawMatrix or
@@ -580,8 +580,8 @@ export numberClass := newtypeof(thingClass);
 export bigNumberClass := newtypeof(numberClass);
 
        newnumbertype():HashTable := newHashTable(ringClass,numberClass);
-export integerClass := newnumbertype();
-export rationalClass := newnumbertype();
+export ZZClass := newnumbertype();
+export QQClass := newnumbertype();
 
 export bigNumberRingClass := newtypeof(typeClass);
        newbignumbertype():HashTable := newHashTable(bigNumberRingClass,bigNumberClass);
