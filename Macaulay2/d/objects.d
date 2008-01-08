@@ -149,18 +149,6 @@ export equal(lhs:Expr,rhs:Expr):Expr := (
      if lhs == rhs then True else 
      when lhs
      is Error do lhs
-     is x:Real do (
-	  when rhs 
-	  is y:Real do Expr(toExpr(x.v==y.v))
-     	  is err:Error do Expr(err)
-	  else False
-	  )
-     is x:Complex do (
-	  when rhs 
-	  is y:Complex do Expr(toExpr(x.re==y.re && x.im==y.im))
-     	  is err:Error do Expr(err)
-	  else False
-	  )
      is x:List do (
 	  when rhs
 	  is y:List do (
@@ -235,15 +223,15 @@ export equal(lhs:Expr,rhs:Expr):Expr := (
 	       then True else False)
 	  else False
 	  )
-     is x:RRR do (
+     is x:RR do (
 	  when rhs
-	  is y:RRR do (
+	  is y:RR do (
 	       if x === y then True else False
 	       )
 	  else False)
-     is x:CCC do (
+     is x:CC do (
 	  when rhs
-	  is y:CCC do (
+	  is y:CC do (
 	       if x === y then True else False
 	       )
 	  else False)
@@ -452,8 +440,6 @@ export Class(e:Expr):HashTable := (
      is functionCode do functionBodyClass
      is CompiledFunctionBody do compiledFunctionBodyClass
      is Rational do rationalClass
-     is Real do doubleClass
-     is Complex do complexClass
      is file do fileClass
      is dc:DictionaryClosure do if isglobaldict(dc.dictionary) then globalDictionaryClass else localDictionaryClass
      is string do stringClass
@@ -465,8 +451,8 @@ export Class(e:Expr):HashTable := (
      is CompiledFunction do compiledFunctionClass
      is CompiledFunctionClosure do compiledFunctionClosureClass
      is s:SymbolClosure do if s.symbol.word.parse == parseWORD then symbolClass else keywordClass
-     is RRR do bigRealClass
-     is CCC do bigComplexClass
+     is RR do bigRealClass
+     is CC do bigComplexClass
      is RawComputation do rawComputationClass
      is Nothing do nothingClass
      is Database do dbClass
@@ -510,11 +496,9 @@ setupconst("List",Expr(listClass));
 setupconst("MutableList",Expr(mutableListClass));
 setupconst("ZZ",Expr(integerClass));
 setupconst("QQ",Expr(rationalClass));
-setupconst("RR",Expr(doubleClass));
-setupconst("CC",Expr(complexClass));
-setupconst("BigNumberRing",Expr(bigNumberRingClass));
-setupconst("RRR",Expr(bigRealClass));
-setupconst("CCC",Expr(bigComplexClass));
+setupconst("BigNumberType",Expr(bigNumberRingClass));
+setupconst("RR",Expr(bigRealClass));
+setupconst("CC",Expr(bigComplexClass));
 setupconst("Number",Expr(numberClass));
 setupconst("BigNumber",Expr(bigNumberClass));
 setupconst("RawObject",Expr(rawObjectClass));

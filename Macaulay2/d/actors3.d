@@ -125,16 +125,15 @@ EqualEqualfun(x:Expr,y:Expr):Expr := (
      is xx:Integer do (
 	  when y 
 	  is Integer do equal(x,y) 
-	  is yy:RRR do if isInt(xx) then toExpr(yy === toInt(xx)) else toExpr(yy === xx)
+	  is yy:RR do if isInt(xx) then toExpr(yy === toInt(xx)) else toExpr(yy === xx)
 	  else equalmethod(x,y)
 	  )
      is SymbolClosure do when y is SymbolClosure do equal(x,y) else equalmethod(x,y)
      is Rational do when y is Rational do equal(x,y) else equalmethod(x,y)
-     is Real do when y is Real do equal(x,y) else equalmethod(x,y)
-     is xx:RRR do (
+     is xx:RR do (
 	  when y
-	  is yy:RRR do toExpr(xx === yy)
-	  is i:Integer do if isInt(i) then toExpr(xx === toInt(i)) else toExpr(xx === i)
+	  is yy:RR do toExpr(xx === yy)
+	  is i:Integer do toExpr(xx === i)
 	  else equalmethod(x,y)
 	  )
      is Boolean do when y is Boolean do equal(x,y) else equalmethod(x,y)
@@ -198,13 +197,11 @@ compare(left:Expr,right:Expr):Expr := (
      when left
      is x:Integer do (
 	  when right
-	  is y:Real do 
-	  if x < y.v then LessE else if x > y.v then GreaterE else EqualEqualE
 	  is y:Integer do
 	  if x < y then LessE else if x > y then GreaterE else EqualEqualE
 	  is y:Rational do
 	  if x < y then LessE else if x > y then GreaterE else EqualEqualE
-	  is y:RRR do (
+	  is y:RR do (
 	       r := compare(x,y);
 	       if r < 0 then LessE else if r > 0 then GreaterE else EqualEqualE
 	       )
@@ -245,24 +242,18 @@ compare(left:Expr,right:Expr):Expr := (
 	  else binarymethod(left,right,QuestionS))
      is x:Rational do (
 	  when right
-	  is y:Real do
-	  if x < y.v then LessE else if x > y.v then GreaterE else EqualEqualE
 	  is y:Integer do 
 	  if x < y then LessE else if x > y then GreaterE else EqualEqualE
 	  is y:Rational do
 	  if x < y then LessE else if x > y then GreaterE else EqualEqualE
-	  is y:RRR do (
+	  is y:RR do (
 	       r := compare(x,y);
 	       if r < 0 then LessE else if r > 0 then GreaterE else EqualEqualE
 	       )
      	  is Error do right
 	  else binarymethod(left,right,QuestionS))
-     is x:RRR do (
+     is x:RR do (
 	  when right
-	  is y:Real do (
-	       r := compare(x,y.v);
-	       if r < 0 then LessE else if r > 0 then GreaterE else EqualEqualE
-	       )
 	  is y:Integer do (
 	       r := compare(x,y);
 	       if r < 0 then LessE else if r > 0 then GreaterE else EqualEqualE
@@ -271,22 +262,9 @@ compare(left:Expr,right:Expr):Expr := (
 	       r := compare(x,y);
 	       if r < 0 then LessE else if r > 0 then GreaterE else EqualEqualE
 	       )
-	  is y:RRR do (
+	  is y:RR do (
 	       r := compare(x,y);
-	       if r < 0 then LessE else if r > 0 then GreaterE else EqualEqualE
-	       )
-     	  is Error do right
-	  else binarymethod(left,right,QuestionS))
-     is x:Real do (
-	  when right
-	  is y:Real do
-	  if x.v < y.v then LessE else if x.v > y.v then GreaterE else EqualEqualE
-	  is y:Integer do
-	  if x.v < y then LessE else if x.v > y then GreaterE else EqualEqualE
-	  is y:Rational do
-	  if x.v < y then LessE else if x.v > y then GreaterE else EqualEqualE
-	  is y:RRR do (
-	       r := compare(x.v,y);
+	       if flagged() then incomparableE else
 	       if r < 0 then LessE else if r > 0 then GreaterE else EqualEqualE
 	       )
      	  is Error do right
@@ -595,118 +573,122 @@ setup(StarS,starfun,timesfun);
 
 sin(e:Expr):Expr := (
      when e
-     is x:Real do Expr(Real(sin(x.v)))
-     is x:Integer do Expr(Real(sin(toDouble(x))))
-     is x:Rational do Expr(Real(sin(toDouble(x))))
+     is x:RR do Expr(sin(x))
+     is x:Integer do Expr(sin(toRR(x)))
+     is x:Rational do Expr(sin(toRR(x)))
      is x:Error do Expr(x)
      else buildErrorPacket("expected a number")
      );
 setupfun("sin",sin);
 cos(e:Expr):Expr := (
      when e
-     is x:Real do Expr(Real(cos(x.v)))
-     is x:Integer do Expr(Real(cos(toDouble(x))))
-     is x:Rational do Expr(Real(cos(toDouble(x))))
+     is x:RR do Expr(cos(x))
+     is x:Integer do Expr(cos(toRR(x)))
+     is x:Rational do Expr(cos(toRR(x)))
      is x:Error do Expr(x)
      else buildErrorPacket("expected a number")
      );
 setupfun("cos",cos);
 tan(e:Expr):Expr := (
      when e
-     is x:Real do Expr(Real(tan(x.v)))
-     is x:Integer do Expr(Real(tan(toDouble(x))))
-     is x:Rational do Expr(Real(tan(toDouble(x))))
+     is x:RR do Expr(tan(x))
+     is x:Integer do Expr(tan(toRR(x)))
+     is x:Rational do Expr(tan(toRR(x)))
      is x:Error do Expr(x)
      else buildErrorPacket("expected a number")
      );
 setupfun("tan",tan);
 acos(e:Expr):Expr := (
      when e
-     is x:Real do Expr(Real(acos(x.v)))
-     is x:Integer do Expr(Real(acos(toDouble(x))))
-     is x:Rational do Expr(Real(acos(toDouble(x))))
+     is x:RR do Expr(acos(x))
+     is x:Integer do Expr(acos(toRR(x)))
+     is x:Rational do Expr(acos(toRR(x)))
      is x:Error do Expr(x)
      else buildErrorPacket("expected a number")
      );
 setupfun("acos",acos);
 asin(e:Expr):Expr := (
      when e
-     is x:Real do Expr(Real(asin(x.v)))
-     is x:Integer do Expr(Real(asin(toDouble(x))))
-     is x:Rational do Expr(Real(asin(toDouble(x))))
+     is x:RR do Expr(asin(x))
+     is x:Integer do Expr(asin(toRR(x)))
+     is x:Rational do Expr(asin(toRR(x)))
      is x:Error do Expr(x)
      else buildErrorPacket("expected a number")
      );
 setupfun("asin",asin);
 atan(e:Expr):Expr := (
      when e
-     is x:Real do Expr(Real(atan(x.v)))
-     is x:Integer do Expr(Real(atan(toDouble(x))))
-     is x:Rational do Expr(Real(atan(toDouble(x))))
+     is x:RR do Expr(atan(x))
+     is x:Integer do Expr(atan(toRR(x)))
+     is x:Rational do Expr(atan(toRR(x)))
      is x:Error do Expr(x)
      is a:Sequence do if length(a) != 2
      then WrongNumArgs(1,2)
-     else when a.1
-     is y:Real do when a.0
-     is x:Real do Expr(Real(atan2(y.v,x.v)))
-     is x:Integer do Expr(Real(atan2(y.v,toDouble(x))))
-     is x:Rational do Expr(Real(atan2(y.v,toDouble(x))))
+     else
+     when a.1
+     is y:RR do (
+	  when a.0
+	  is x:RR do Expr(atan2(y,x))
+	  is x:Integer do Expr(atan2(y,toRR(x,y.prec)))
+	  is x:Rational do Expr(atan2(y,toRR(x,y.prec)))
+	  else WrongArg(1,"a number"))
+     is y:Integer do (
+	  when a.0
+	  is x:RR do Expr(atan2(toRR(y,x.prec),x))
+	  is x:Integer do Expr(atan2(toRR(y),toRR(x)))
+	  is x:Rational do Expr(atan2(toRR(y),toRR(x)))
+	  else WrongArg(1,"a number"))
+     is y:Rational do (
+	  when a.0
+	  is x:RR do Expr(atan2(toRR(y,x.prec),x))
+	  is x:Integer do Expr(atan2(toRR(y),toRR(x)))
+	  is x:Rational do Expr(atan2(toRR(y),toRR(x)))
+     	  else WrongArg(1,"a number"))
      else WrongArg(2,"a number")
-     is y:Integer do when a.0
-     is x:Real do Expr(Real(atan2(toDouble(y),x.v)))
-     is x:Integer do Expr(Real(atan2(toDouble(y),toDouble(x))))
-     is x:Rational do Expr(Real(atan2(toDouble(y),toDouble(x))))
-     else WrongArg(2,"a number")
-     is y:Rational do when a.0
-     is x:Real do Expr(Real(atan2(toDouble(y),x.v)))
-     is x:Integer do Expr(Real(atan2(toDouble(y),toDouble(x))))
-     is x:Rational do Expr(Real(atan2(toDouble(y),toDouble(x))))
-     else WrongArg(2,"a number")
-     else WrongArg(1,"a number")
      else buildErrorPacket("expected a number or a pair of numbers")
      );
 setupfun("atan",atan);
 cosh(e:Expr):Expr := (
      when e
-     is x:Real do Expr(Real(cosh(x.v)))
-     is x:Integer do Expr(Real(cosh(toDouble(x))))
-     is x:Rational do Expr(Real(cosh(toDouble(x))))
+     is x:RR do Expr(atan(x))
+     is x:Integer do Expr(atan(toRR(x)))
+     is x:Rational do Expr(atan(toRR(x)))
      is x:Error do Expr(x)
      else buildErrorPacket("expected a number")
      );
 setupfun("cosh",cosh);
 sinh(e:Expr):Expr := (
      when e
-     is x:Real do Expr(Real(sinh(x.v)))
-     is x:Integer do Expr(Real(sinh(toDouble(x))))
-     is x:Rational do Expr(Real(sinh(toDouble(x))))
+     is x:RR do Expr(cosh(x))
+     is x:Integer do Expr(cosh(toRR(x)))
+     is x:Rational do Expr(cosh(toRR(x)))
      is x:Error do Expr(x)
      else buildErrorPacket("expected a number")
      );
 setupfun("sinh",sinh);
 tanh(e:Expr):Expr := (
      when e
-     is x:Real do Expr(Real(tanh(x.v)))
-     is x:Integer do Expr(Real(tanh(toDouble(x))))
-     is x:Rational do Expr(Real(tanh(toDouble(x))))
+     is x:RR do Expr(tanh(x))
+     is x:Integer do Expr(tanh(toRR(x)))
+     is x:Rational do Expr(tanh(toRR(x)))
      is x:Error do Expr(x)
      else buildErrorPacket("expected a number")
      );
 setupfun("tanh",tanh);
 exp(e:Expr):Expr := (
      when e
-     is x:Real do Expr(Real(exp(x.v)))
-     is x:Integer do Expr(Real(exp(toDouble(x))))
-     is x:Rational do Expr(Real(exp(toDouble(x))))
+     is x:RR do Expr(exp(x))
+     is x:Integer do Expr(exp(toRR(x)))
+     is x:Rational do Expr(exp(toRR(x)))
      is x:Error do Expr(x)
      else buildErrorPacket("expected a number")
      );
 setupfun("exp",exp);
 log(e:Expr):Expr := (
      when e
-     is x:Real do Expr(Real(log(x.v)))
-     is x:Integer do Expr(Real(log(toDouble(x))))
-     is x:Rational do Expr(Real(log(toDouble(x))))
+     is x:RR do Expr(log(x))
+     is x:Integer do Expr(log(toRR(x)))
+     is x:Rational do Expr(log(toRR(x)))
      is x:Error do Expr(x)
      else buildErrorPacket("expected a number")
      );
@@ -714,11 +696,7 @@ setupfun("log",log);
 abs(x:double):double := if x < 0. then -x else x;
 floor(e:Expr):Expr := (
      when e
-     is x:Real do (
-	  if finite(x.v) then Expr(Floor(x.v))
-	  else e
-	  )
-     is x:RRR do Expr(floor(x))
+     is x:RR do Expr(floor(x))
      is x:Rational do Expr(floor(x))
      is Integer do e
      is x:Error do Expr(x)
@@ -736,10 +714,7 @@ setupfun("run",run);
 
 sqrt(a:Expr):Expr := (
      when a
-     is x:Real do Expr(Real(sqrt(x.v)))
-     is x:RRR do Expr(sqrt(x))
-     is z:Complex do Expr(
-	  Ccode(Complex, "(tokens_Complex) rawCCSqrt((M2_CC)", z, ")"))
+     is x:RR do Expr(sqrt(x))
      is Error do a
      else WrongArg("a double or big real"));
 setupfun("sqrt",sqrt);

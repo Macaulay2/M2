@@ -15,8 +15,6 @@ errorDepth = 0
 --   rawGaloisField
 --   rawRR
 --   rawCC
---   rawRRR
---   rawCCC
 --   rawPolynomialRing (2 forms)
 --   rawSkewPolynomialRing
 --   rawWeylAlgebra
@@ -34,7 +32,6 @@ errorDepth = 0
 
 assert(raw ZZ === rawZZ())
 assert(raw QQ === rawQQ())
-print "WARNING: how to change the precision for RR, CC, RRR, CCC?"
 assert(raw RR === rawRR())
 assert(raw CC === rawCC())
 rawZZp 32003

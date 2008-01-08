@@ -232,7 +232,6 @@ undocumented {
      (NewFromMethod, TO, List),
      (NewFromMethod, TO2, List),
      (NewFromMethod, TOH, List),
-     (NewFromMethod, CC, Sequence),
      (NewFromMethod, MarkUpType, Sequence),
      (NewFromMethod, Module, Sequence),
      (NewFromMethod, TO2, Sequence),

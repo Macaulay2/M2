@@ -507,28 +507,16 @@ export rawZZp(e:Expr):Expr := (
 setupfun("rawZZp", rawZZp);
 
 export rawRR(e:Expr):Expr := (
-     when e is s:Sequence do if length(s) != 0 then WrongNumArgs(0) 
-     else toExpr(Ccode(RawRingOrNull, "(engine_RawRingOrNull)IM2_Ring_RR()" ))
-     else WrongNumArgs(0));
-setupfun("rawRR",rawRR);
-
-export rawCC(e:Expr):Expr := (
-     when e is s:Sequence do if length(s) != 0 then WrongNumArgs(0) 
-     else toExpr(Ccode(RawRingOrNull, "(engine_RawRingOrNull)IM2_Ring_CC()" ))
-     else WrongNumArgs(0));
-setupfun("rawCC",rawCC);
-
-export rawRRR(e:Expr):Expr := (
      when e is prec:Integer do if !isInt(prec) then WrongArgSmallInteger(1)
      else toExpr(Ccode(RawRingOrNull, "(engine_RawRingOrNull)IM2_Ring_RRR(",toInt(prec),")" ))
      else WrongArgInteger(1));
-setupfun("rawRRR",rawRRR);
+setupfun("rawRR",rawRR);
 
-export rawCCC(e:Expr):Expr := (
+export rawCC(e:Expr):Expr := (
      when e is prec:Integer do if !isInt(prec) then WrongArgSmallInteger(1)
      else toExpr(Ccode(RawRingOrNull, "(engine_RawRingOrNull)IM2_Ring_CCC(",toInt(prec),")" ))
      else WrongArgInteger(1));
-setupfun("rawCCC",rawCCC);
+setupfun("rawCC",rawCC);
 
 export rawIndexIfVariable(e:Expr):Expr := (
      when e is f:RawRingElement do (
@@ -728,15 +716,7 @@ export rawFromNumber(e:Expr):Expr := (
      when s.1
      is n:Integer do Expr(Ccode( RawRingElement, "(engine_RawRingElement)IM2_RingElement_from_Integer(", "(Ring*)",R,",", "(M2_Integer)",n, ")"))
      is x:Rational do Expr(Ccode( RawRingElement, "(engine_RawRingElement)IM2_RingElement_from_rational(", "(Ring*)",R,",", "(M2_Rational)",x, ")"))
-     is x:Real do (
-	  when Ccode(RawRingElementOrNull, "(engine_RawRingElementOrNull)IM2_RingElement_from_double((Ring*)",R,",",x.v,")")
-	  is r:RawRingElement do Expr(r)
-	  is null do buildErrorPacket(EngineError("promoting real number to ring element: not implemented yet")))
-     is x:Complex do (
-	  when Ccode(RawRingElementOrNull, "(engine_RawRingElementOrNull)IM2_RingElement_from_complex((Ring*)",R,",(M2_CC)", x,")")
-	  is r:RawRingElement do Expr(r)
-	  is null do buildErrorPacket(EngineError("promoting real number to ring element: not implemented yet")))
-     is x:RRR do (
+     is x:RR do (
 	  when Ccode(RawRingElementOrNull, "(engine_RawRingElementOrNull)IM2_RingElement_from_BigReal((Ring*)",R,",(M2_RRR)",x,")")
 	  is r:RawRingElement do Expr(r)
 	  is null do
@@ -833,27 +813,11 @@ export rawToRational(e:Expr):Expr := (
      );
 setupfun("rawToRational",rawToRational);
 
-export rawToReal(e:Expr):Expr := (
-     when e
-     is x:RawRingElement do Expr( 
-	  Real(Ccode( double, "IM2_RingElement_to_double(", "(RingElement*)",x, ")" )))
-     else WrongArg("a raw ring element")
-     );
-setupfun("rawToReal",rawToReal);
-
-export rawToRRR(e:Expr):Expr := (
+export rawToRR(e:Expr):Expr := (
      when e
      is x:RawRingElement do toExpr(Ccode(RRRorNull, "(engine_RRRorNull)IM2_RingElement_to_BigReal((RingElement*)",x, ")" ))
      else WrongArg("a raw ring element"));
-setupfun("rawToRRR",rawToRRR);
-
-export rawToComplex(e:Expr):Expr := (
-     when e
-     is x:RawRingElement do toExpr( 
-	  Ccode( ComplexOrNull, "(tokens_ComplexOrNull)IM2_RingElement_to_complex(", "(RingElement*)",x, ")" ))
-     else WrongArg("a raw ring element")
-     );
-setupfun("rawToComplex",rawToComplex);
+setupfun("rawToRR",rawToRR);
 
 export rawLeadCoefficient(e:Expr):Expr := (
      when e
@@ -1541,7 +1505,7 @@ export rawMatrixRandom(e:Expr):Expr := (
      when s.0 is R:RawRing do 
      when s.1 is r:Integer do if !isInt(r) then WrongArgSmallInteger(2) else
      when s.2 is c:Integer do if !isInt(c) then WrongArgSmallInteger(3) else
-     when s.3 is fractionNonZero:Real do
+     when s.3 is fractionNonZero:RR do
      when s.4 is specialType:Integer do if !isInt(specialType) then WrongArgSmallInteger(5) else
      when s.5 is preference:Integer do if !isInt(preference) then WrongArgSmallInteger(6) else
      toExpr(Ccode(RawMatrixOrNull, 
@@ -1549,7 +1513,7 @@ export rawMatrixRandom(e:Expr):Expr := (
      	       "(Ring *)", R, ",",
 	       toInt(r), ",",
 	       toInt(c), ",",
-	       fractionNonZero.v, ",",
+	       toDouble(fractionNonZero), ",",
      	       toInt(specialType), ",",
 	       toInt(preference),
 	       ")"))
@@ -3107,18 +3071,6 @@ setupfun("rawSubduction",rawSubduction);
 -- LAPACK 
 -----------------------------------------------------------------------------
 
-M2CC(e:Expr):Expr := (
-     when e is s:Sequence do
-     if length(s) == 2 then
-     when s.0 is re:Real do 
-     when s.1 is im:Real do (
-	  Expr( Ccode(Complex, "(tokens_Complex)make_M2_Complex(", re.v, ",", im.v, ")")) )
-     else WrongArg(2, "a double")
-     else WrongArg(1, "a double")
-     else WrongNumArgs(2)
-     else WrongNumArgs(2));
-setupfun("M2CC", M2CC);
-
 export rawSetMatrixEntry(e:Expr):Expr := (
      when e is s:Sequence do
      if length(s) == 4 then 
@@ -3275,20 +3227,20 @@ setupfun("rawLeastSquares", rawLeastSquares);
 
 mpfrConstantPi(e:Expr):Expr := (
      when e is prec:Integer do if !isInt(prec) then WrongArgSmallInteger(1) else (
-	  z := newBigReal(toInt(prec));
+	  z := newRRR(toInt(prec));
 	  Ccode( void, "mpfr_const_pi(", "(__mpfr_struct *)", z, ", GMP_RNDN)" );
 	  Expr(z))
      else WrongArgInteger(1));
 setupfun("mpfrConstantPi",mpfrConstantPi);
 
 mpfrSetStr(prec:int, base:int, s:string):Expr := (
-     z := newBigReal(prec);
+     z := newRRR(prec);
      r := Ccode( int, "mpfr_set_str(", 
 	  "(__mpfr_struct *)", z, ",",
 	  "(char *)", s, "->array_,",			    -- don't forget to terminate it with NUL
 	  base, ",",					    -- 2 .. 36
 	  "GMP_RNDN)" );
-     if r == 0 then Expr(z) else buildErrorPacket("failed to convert string to RRR"));
+     if r == 0 then Expr(z) else buildErrorPacket("failed to convert string to RR"));
 
 mpfrSetStr(e:Expr):Expr := (
      when e is s:Sequence do (

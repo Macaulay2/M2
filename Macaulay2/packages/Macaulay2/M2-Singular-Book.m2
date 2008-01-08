@@ -74,7 +74,7 @@ document {
 -- 	  "Local remainder is wrong",
 -- 	  "Local GB can be improved: x13+x14y can be reduced??",
 -- 	  "Highest corner use in local computations can speed things up...",
--- 	  "1.1.8: RRR and CCC: how to use them!?",
+-- 	  "1.1.8: RR and CC: how to use them!?",
 -- 	  "1.8.2: how are we doing local division?",
 -- 	  "1.8.2: write this node",
 -- 	  "1.8.7: solving equations is not quite implemented.  
@@ -123,7 +123,7 @@ document {
      SUBSECTION "Computing with real and complex numbers",
      EXAMPLE {
 	  "n = 123456789.0",
-	  "n = n * 1_RRR",
+	  "n = n * 1_RR",
 	  "n^5",
 	  },
      SUBSECTION "Computing with parameters",

@@ -47,10 +47,6 @@ k  = 27_Z
 
 3.5_Z
 
-
--- not implemented yet:
--- (toRRR 3.5)_Z
-
 -- try single grading
 
 errorDepth = 0
@@ -281,8 +277,6 @@ assert( 11_R == 11_Z_R )
 -- rawQQ()
 -- rawRR()
 -- rawCC()
--- rawRRR()
--- rawCCC()
 -- rawAssociativeRing(K,noncommM)
 -- rawQuiverAlgebra(R,quiver)
 -- Other rings to implement:

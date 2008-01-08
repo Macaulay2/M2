@@ -28,11 +28,11 @@ export parseinfo := {
 export TCnone := 0;			-- for artificial words: dummyWord, wordEOF, wordEOC
 export TCid := 1;			-- identifiers and operators
 export TCint := 2;
-export TCdouble := 3;
+export TCRRR := 3;
 export TCstring := 4;
 export Word := {		-- a word, one for each name made by makeUniqueWord()
      name:string,		--   the string representing it in this language
-     typecode:int,		--   TCid, TCint, TCdouble, or TCstring
+     typecode:int,		--   TCid, TCint, TCRRR, or TCstring
      hash:int,	    		--   the hash value
      parse:parseinfo		--   parsing information
      };
@@ -174,7 +174,7 @@ export parallelAssignmentCode := {
      position:Position};
 
 export nullCode := {};
-export realCode := {x:double,position:Position};
+export RRRCode := {x:RR,position:Position};
 export integerCode := {x:Integer,position:Position};
 export stringCode := {x:string};
 export unaryCode := {f:unop,rhs:Code,position:Position};
@@ -223,7 +223,7 @@ export functionCode := {
      hash:int
      };
 export Code := (
-     nullCode or realCode or stringCode or integerCode or globalMemoryReferenceCode or localMemoryReferenceCode or globalAssignmentCode
+     nullCode or RRRCode or stringCode or integerCode or globalMemoryReferenceCode or localMemoryReferenceCode or globalAssignmentCode
      or localAssignmentCode or parallelAssignmentCode or globalSymbolClosureCode or localSymbolClosureCode
      or unaryCode or binaryCode or ternaryCode or multaryCode or forCode
      or sequenceCode or listCode or arrayCode or semiCode
@@ -294,22 +294,15 @@ export SpecialExpr := {					    -- this allows specialization of arbitrary types
      };
 export Boolean := {v:bool};
 export Nothing := {nothing:void};
-export Real := {v:double};
-export (x:Real) + (y:Real) : Real := Real(x.v + y.v);
-export (x:Real) - (y:Real) : Real := Real(x.v - y.v);
-export Complex := { re:double, im:double };
-export ComplexOrNull := Complex or null;
-export (z:Complex) === (m:int) : bool := z.re == double(m) && z.im == 0.;
 
 export Expr := (
-     CCC or
-     RRR or
+     CC or
+     RR or
      Boolean or
      CodeClosure or
      CompiledFunction or
      CompiledFunctionBody or
      CompiledFunctionClosure or
-     Complex or
      Database or
      DictionaryClosure or 
      Error or
@@ -333,7 +326,6 @@ export Expr := (
      RawRing or
      RawRingElement or
      RawRingMap or
-     Real or
      Sequence or
      SpecialExpr or
      SymbolClosure or
@@ -590,8 +582,6 @@ export bigNumberClass := newtypeof(numberClass);
        newnumbertype():HashTable := newHashTable(ringClass,numberClass);
 export integerClass := newnumbertype();
 export rationalClass := newnumbertype();
-export doubleClass := newnumbertype();
-export complexClass := newnumbertype();
 
 export bigNumberRingClass := newtypeof(typeClass);
        newbignumbertype():HashTable := newHashTable(bigNumberRingClass,bigNumberClass);

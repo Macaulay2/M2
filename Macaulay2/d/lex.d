@@ -278,7 +278,7 @@ gettoken1(file:PosFile,sawNewline:bool):Token := (
 		    tokenbuf << char(getc(file))
 		    );
 	       if peek(file)==int('.') && peek(file,1)!=int('.') then (
-		    typecode = TCdouble;
+		    typecode = TCRRR;
 		    tokenbuf << char(getc(file));
 		    while isdigit(peek(file)) do (
 			 tokenbuf << char(getc(file))

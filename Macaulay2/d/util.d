@@ -193,6 +193,7 @@ export getSequenceOfMatrices(e:Expr) : RawMatrixArray := (
 export engineErrorMessage():Expr := buildErrorPacket(EngineError("unknown engine error"));
 export possibleEngineError(ret:bool):Expr := if ret then nullE else engineErrorMessage();
 
+export toExpr(x:double):Expr := Expr(toRR(x));
 export toExpr(x:RawRingOrNull):Expr := when x is r:RawRing do Expr(r) is null do engineErrorMessage();
 export toExpr(x:RawMonomialPairOrNull):Expr := when x is r:RawMonomialPair do Expr(Sequence(Expr(r.a), Expr(r.b))) else engineErrorMessage();
 export toExprOrNull(x:RawRingOrNull):Expr := when x is r:RawRing do Expr(r) is null do nullE;
@@ -213,8 +214,7 @@ export toExpr(x:RawMatrixOrNull):Expr := when x is r:RawMatrix do Expr(r) is nul
 export toExpr(x:RawMutableMatrixOrNull):Expr := when x is r:RawMutableMatrix do Expr(r) is null do engineErrorMessage();
 export toExpr(x:IntegerOrNull):Expr := when x is i:Integer do Expr(i) is null do engineErrorMessage();
 export toExpr(x:RationalOrNull):Expr := when x is i:Rational do Expr(i) is null do engineErrorMessage();
-export toExpr(x:RRRorNull):Expr := when x is i:RRR do Expr(i) is null do engineErrorMessage();
-export toExpr(x:ComplexOrNull):Expr := when x is i:Complex do Expr(i) is null do engineErrorMessage();
+export toExpr(x:RRRorNull):Expr := when x is i:RR do Expr(i) is null do engineErrorMessage();
 export toExpr(x:RawMatrixPairOrNull):Expr := when x is p:RawMatrixPair do seq(Expr(p.a),Expr(p.b)) is null do engineErrorMessage();
 export toExpr(x:RawMatrixArray):Expr := Expr( list( new Sequence len length(x) do foreach m in x do provide Expr(m) ) );
 export toExpr(x:RawMatrixArrayOrNull):Expr := when x is r:RawMatrixArray do toExpr(r) is null do engineErrorMessage();
@@ -228,61 +228,6 @@ export toExpr(x:RawArrayPairOrNull):Expr := (
 	       new Sequence len length(r.monoms) at i do foreach x in r.monoms do provide Expr(x)
 	       ))
      is null do engineErrorMessage());
-
-------------------------------
--- for lapack
-------------------------------
-
----- these routines were too lenient:
--- export isSequenceOfReals(e:Expr) : bool := (
---      when e
---      is s:Sequence do (
--- 	  foreach i in s do (
--- 	       when i is a:Real do nothing else return false);
--- 	  true)
---      is Real do true
---      else false);
--- export getSequenceOfReals(e:Expr) : array(double) := (
---      when e
---      is s:Sequence do (
--- 	  new array(double) len length(s) do (
--- 	       foreach i in s do 
--- 	       when i 
--- 	       is a:Real do provide a.v
--- 	       else abort("internal error: getSequenceOfReals");
--- 	       abort("internal error: getSequenceOfReals");
--- 	       )
--- 	  )
---      is a:Real do array(double)(a.v)
---      else array(double)());
-
-export isSequenceOfReals(e:Expr) : bool := (
-     when e is l:Sequence do (
-     	  foreach i in l do (
-	       when i is a:Real do nothing else return false);
-	  true)
-     else false);
-export getSequenceOfReals(e:Expr) : array(double) := (
-     when e is l:Sequence do 
-     new array(double) len length(l) do (
-	  foreach i in l do when i is a:Real do provide a.v else nothing;
-	  )
-     else array(double)()
-     );
-
-export isSequenceOfComplex(e:Expr) : bool := (
-     when e is l:Sequence do (
-     	  foreach i in l do (
-	       when i is a:Complex do nothing else return false);
-	  true)
-     else false);
-export getSequenceOfComplex(e:Expr) : array(Complex) := (
-     when e is l:Sequence do 
-     new array(Complex) len length(l) do (
-	  foreach i in l do when i is a:Complex do provide a else nothing;
-	  )
-     else array(Complex)()
-     );
 
 -- Local Variables:
 -- compile-command: "make -C $M2BUILDDIR/Macaulay2/d "

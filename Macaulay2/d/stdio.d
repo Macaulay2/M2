@@ -643,7 +643,7 @@ export finite(x:double):bool := x==x && x-x == x-x;
 export isinf(x:double):bool := x==x && x-x != x-x;
 export isnan(x:double):bool := x!=x;
 export tostring(x:bool):string := if x then "true" else "false";
-export tostring5(
+export tostring5(					    -- we need to rewrite this for RR
      x:double,						-- the number to format
      s:int,					-- number of significant digits
      l:int,					   -- max number leading zeroes
