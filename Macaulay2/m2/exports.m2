@@ -1077,6 +1077,7 @@ export {
 	symbol timing,
 	symbol to,
 	symbol toAbsolutePath,
+	symbol toCCC,
 	symbol toDual,
 	symbol toExternalString,
 	symbol toField,

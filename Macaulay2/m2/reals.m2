@@ -72,8 +72,11 @@ RRR.char = 0
 RRR.Engine = true
 isConstant RRR := i -> true
 
+BigNumberRing.synonym = "big number ring"
+BigNumber.synonym = "big number"
 RealNumberRing = new Type of Ring
-new RealNumberRing of RRR from ZZ := (RealNumberRing,RRR,prec) -> hashTable { 
+RealNumberRing.synonym = "real number ring"
+new RealNumberRing {* of RRR *} from ZZ := (RealNumberRing {* ,RRR *} ,prec) -> hashTable { 
      symbol precision => prec,
      symbol RawRing => rawRRR prec
      }
@@ -105,7 +108,7 @@ BigNumberRing _ ZZ := (T,prec) -> new T.NumberRing of T from prec
 RRR.NumberRing = RealNumberRing
 net RealNumberRing := R -> net expression R
 toString RealNumberRing := R -> concatenate("RRR ",toString R.precision)
-ring RRR := x -> new RealNumberRing of RRR from precision x
+ring RRR := x -> new RealNumberRing {* of RRR *} from precision x
 
 new RRR from RawRingElement := (RRR,x) -> rawToRRR x
 
