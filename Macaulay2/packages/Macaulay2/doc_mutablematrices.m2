@@ -42,7 +42,7 @@ document {
      PARA{},
      "Some other methods for creating mutable matrices.",
      EXAMPLE {
-	  "mutableIdentity(RR,5)",
+	  "mutableIdentity(RR_100,5)",
 	  "mutableZero(QQ,3,5)",
 	  "randomMutableMatrix(4,4,.5,100)"
 	  }

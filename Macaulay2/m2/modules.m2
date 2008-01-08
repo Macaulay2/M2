@@ -336,6 +336,8 @@ Ring ^ ZZ := Module => (R,n) -> (
      else notImplemented()
      )
 
+BigNumberType ^ ZZ := Module => (T,n) -> T_53^n		    -- 53!!
+
 schreyerOrder = method()
 schreyerOrder Module := Matrix => (F) -> (
      if not isFreeModule F then error "expected a free module";
