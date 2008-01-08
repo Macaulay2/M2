@@ -33,7 +33,7 @@ globalAssignment ImmutableType
 -----------------------------------------------------------------------------
 
 BigNumberType.synonym = "big number ring"
-BigNumberType _ ZZ := (T,prec) -> new T.NumberRing of T from prec
+BigNumberType _ ZZ := (T,prec) -> new T.BigNumberRing of T from prec
 Thing ** BigNumberType := (X,T) -> X ** T_53		    -- default precision (??)
 dim BigNumberType := R -> 0
 char BigNumberType := R -> 0
@@ -77,7 +77,7 @@ dim RealNumberRing := R -> 0
 char RealNumberRing := R -> 0
 generators RealNumberRing := R -> {}
 expression RealNumberRing := R -> new Subscript from {symbol RR, R.precision}
-RR.NumberRing = RealNumberRing
+RR.BigNumberRing = RealNumberRing
 net RealNumberRing := R -> net expression R
 toString RealNumberRing := R -> concatenate("RR_",toString R.precision)
 ring RR := x -> new RealNumberRing of RR from precision x

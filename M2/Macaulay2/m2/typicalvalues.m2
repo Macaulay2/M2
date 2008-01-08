@@ -165,6 +165,12 @@ frames(Function) := frames
 frames(Pseudocode) := frames
 powermod(ZZ,ZZ,ZZ) := ZZ => powermod
 
+typval = method()
+typval(Function,Type,Type,Type) := (f,X,Y,Z) -> f(X,Y) := Z => f
+typval(Keyword,Type,Type,Type) := (f,X,Y,Z) -> installMethod(f, X, Y, Z => dummy)
+
+load "tvalues.m2"
+
 -- Local Variables:
 -- compile-command: "make -C $M2BUILDDIR/Macaulay2/m2 "
 -- End:
