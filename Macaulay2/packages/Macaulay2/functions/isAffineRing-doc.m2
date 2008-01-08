@@ -16,7 +16,6 @@ document {
      "For our purposes, an affine ring is a quotient of a (not necessarily commutative) ", TO2("PolynomialRing","polynomial ring"), 
      " over a field.",
      EXAMPLE {
-	  "isAffineRing CC",
 	  "isAffineRing (ZZ[a,b,c,d])",
 	  "isAffineRing (ZZ/101[a,b,c,d])",	  
 	  "isAffineRing (ZZ/2[x,y,z]/(x^2-y*z))",

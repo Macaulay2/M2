@@ -10,7 +10,7 @@ lift(CC,QQ) := lift(CC,ZZ) := (z,R) -> if imaginaryPart z == 0 then lift(realPar
 CC.isBasic = true
 CC.synonym = "complex number"
 CC.texMath = ///{\mathbb C}///
-conjugate CC := z -> toCC(realPart z, - imaginaryPart z)
+conjugate CC := z -> toCC(precision z, realPart z, - imaginaryPart z)
 
 ComplexNumberRing = new Type of {* ImmutableType *} Ring
 ComplexNumberRing.synonym = "real number ring"
