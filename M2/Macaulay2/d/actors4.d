@@ -1126,23 +1126,48 @@ setupfun("toRRR",toBigReal);
 toBigComplex(e:Expr):Expr := (
      when e
      is s:Sequence do (
-	  if length(s) != 2 then WrongNumArgs(2) else
-	  when s.0 is prec:Integer do (
-	       if !isInt(prec) then WrongArgSmallInteger(1)
-	       else (
-	       	    when s.1 
-	       	    is x:Rational do Expr(toBigComplex(x,toInt(prec)))
-     	       	    is x:Integer do Expr(toBigComplex(x,toInt(prec)))
-     	       	    is x:Real do Expr(toBigComplex(x.v,toInt(prec)))
-     	       	    is x:Complex do Expr(toBigComplex(x.re,x.im,toInt(prec)))
-     	       	    is x:RRR do Expr(toBigComplex(x,toInt(prec)))
-     	       	    is x:CCC do Expr(toBigComplex(x,toInt(prec)))
-		    else WrongArg("a rational number, real number, or an integer")
+	  if length(s) == 2 then (
+	       when s.0 is prec:Integer do (
+		    if !isInt(prec) then WrongArgSmallInteger(1)
+		    else (
+			 when s.1 
+			 is x:Rational do Expr(toBigComplex(x,toInt(prec)))
+			 is x:Integer do Expr(toBigComplex(x,toInt(prec)))
+			 is x:Real do Expr(toBigComplex(x.v,toInt(prec)))
+			 is x:Complex do Expr(toBigComplex(x.re,x.im,toInt(prec)))
+			 is x:RRR do Expr(toBigComplex(x,toInt(prec)))
+			 is x:CCC do Expr(toBigComplex(x,toInt(prec)))
+			 else WrongArg("a rational number, real number, or an integer")
+			 )
 		    )
+	       else WrongArgInteger(1)
 	       )
-	  else WrongArgInteger(1)
-	  )
-     else WrongNumArgs(2));
+	  else if length(s) == 3 then (
+	       when s.0 is prec:Integer do (
+		    if !isInt(prec) then WrongArgSmallInteger(1)
+		    else Expr(CCC(
+			      when s.1 
+			      is x:Rational do toBigReal(x,toInt(prec))
+			      is x:Integer do toBigReal(x,toInt(prec))
+			      is x:Real do toBigReal(x.v,toInt(prec))
+			      is x:RRR do toBigReal(x,toInt(prec))
+			      else (
+				   return WrongArg("a rational number, real number, or an integer");
+				   toBigReal(0,toInt(prec)) -- dummy
+				   )
+			      ,
+			      when s.2
+			      is x:Rational do toBigReal(x,toInt(prec))
+			      is x:Integer do toBigReal(x,toInt(prec))
+			      is x:Real do toBigReal(x.v,toInt(prec))
+			      is x:RRR do toBigReal(x,toInt(prec))
+			      else (
+				   return WrongArg("a rational number, real number, or an integer");
+				   toBigReal(0,toInt(prec)) -- dummy
+				   ))))
+	       else WrongArgInteger(1))
+	  else WrongNumArgs(2,3))
+     else WrongNumArgs(2,3));
 setupfun("toCCC",toBigComplex);
 
 toRR(e:Expr):Expr := (
