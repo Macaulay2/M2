@@ -43,7 +43,10 @@ frac BigNumberType := R -> R
 
 BigNumber.synonym = "big number"
 
-RealNumberRing = new Type of {* ImmutableType *} Ring
+BigNumberRing = new Type of Ring
+BigNumberRing.synonym = "big number ring"
+
+RealNumberRing = new Type of {* ImmutableType *} BigNumberRing
 RealNumberRing.synonym = "real number ring"
 new RealNumberRing of RR from ZZ := memoize (
      (RealNumberRing, RR,prec) -> newClass(RealNumberRing,RR,

@@ -139,11 +139,11 @@ solve(Matrix,Matrix) := (A,b) -> (
 
 eigenvalues = method(Options => {Hermitian => false})
 eigenvalues(MutableMatrix) := o -> (A) -> (
-     if ring A =!= RR and ring A =!= CC then
-       error "eigenvalues requires matrices over RR or CC";
+     k := ring A;
+     if not instance(k,BigNumberRing) then error "eigenvalues requires matrices over RR or CC";
      e := if o.Hermitian 
-          then mutableZero(RR,0,0)
-          else mutableZero(CC,0,0);
+          then mutableZero(RR_(k.precision),0,0)
+          else mutableZero(CC_(k.precision),0,0);
      rawEigenvalues(raw A,raw e,o.Hermitian);
      e)
 eigenvalues(Matrix) := o -> (A) -> (

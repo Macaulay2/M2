@@ -87,6 +87,7 @@ export {
 	symbol BeforePrint,
 	symbol BettiTally,
 	symbol BigNumber,
+	symbol BigNumberRing,
 	symbol BigNumberType,
 	symbol Binary,
 	symbol BinaryOperation,
