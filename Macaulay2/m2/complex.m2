@@ -83,10 +83,10 @@ toString ComplexNumberRing := R -> concatenate("CCC_",toString R.precision)
 ring CCC := x -> new ComplexNumberRing {* of CCC *} from precision x
 CCC ^ ZZ := BinaryPowerMethod
 CCC.InverseMethod = y -> conjugate y / y^2
+expression CCC := z -> realPart z + imaginaryPart z * hold symbol ii
 
 conjugate CC := CC => z -> new CC from (realPart z,-imaginaryPart z)
-exprI := symbol ii
-expression CC := z -> realPart z + imaginaryPart z * hold exprI
+expression CC := z -> realPart z + imaginaryPart z * hold symbol ii
 toExternalString CC := toString CC := z -> toString expression z
 net CC := z -> net expression z
 
