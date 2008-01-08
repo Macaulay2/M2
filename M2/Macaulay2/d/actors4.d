@@ -1123,6 +1123,28 @@ toBigReal(e:Expr):Expr := (
      else WrongNumArgs(2));
 setupfun("toRRR",toBigReal);
 
+toBigComplex(e:Expr):Expr := (
+     when e
+     is s:Sequence do (
+	  if length(s) != 2 then WrongNumArgs(2) else
+	  when s.0 is prec:Integer do (
+	       if !isInt(prec) then WrongArgSmallInteger(1)
+	       else (
+	       	    when s.1 
+	       	    is x:Rational do Expr(toBigComplex(x,toInt(prec)))
+     	       	    is x:Integer do Expr(toBigComplex(x,toInt(prec)))
+     	       	    is x:Real do Expr(toBigComplex(x.v,toInt(prec)))
+     	       	    is x:Complex do Expr(toBigComplex(x.re,x.im,toInt(prec)))
+     	       	    is x:RRR do Expr(toBigComplex(x,toInt(prec)))
+     	       	    is x:CCC do Expr(toBigComplex(x,toInt(prec)))
+		    else WrongArg("a rational number, real number, or an integer")
+		    )
+	       )
+	  else WrongArgInteger(1)
+	  )
+     else WrongNumArgs(2));
+setupfun("toCCC",toBigComplex);
+
 toRR(e:Expr):Expr := (
      when e
      is x:RRR do Expr(Real(toDouble(x)))

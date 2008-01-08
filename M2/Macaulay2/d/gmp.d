@@ -791,6 +791,12 @@ newBigReal(prec:int):RRR := (
      Ccode( void, "mpfr_init2(", "(__mpfr_struct *)", x, ",",prec,")" );
      x);
 
+newBigComplex(prec:int):CCC := (
+     x := CCC(0,0,0,null(),0,0,0,null());
+     Ccode( void, "mpfr_init2(", "(__mpfr_struct *)", x, ",",prec,")" );
+     Ccode( void, "mpfr_init2(", "(__mpfr_struct *)&", x, "->IMprec,",prec,")" );
+     x);
+
 export toBigReal(x:RRR,prec:int):RRR := (
      z := newBigReal(prec);
      Ccode( void, "mpfr_set(", "(__mpfr_struct *)", z, ",", "(__mpfr_struct *)", x, ", GMP_RNDN)" );
@@ -820,6 +826,60 @@ export toBigReal(n:double,prec:int):RRR := (
      x := newBigReal(prec);
      Ccode( void, "mpfr_set_d(", "(__mpfr_struct *)", x, ",", n, ", GMP_RNDN)" );
      x);
+
+export toBigComplex(x:RRR,prec:int):CCC := (
+     z := newBigComplex(prec);
+     Ccode( void, "mpfr_set(", "(__mpfr_struct *)", z, ",", "(__mpfr_struct *)", x, ", GMP_RNDN)" );
+     Ccode( void, "mpfr_set_si(", "(__mpfr_struct *)&", z, "->IMprec,", 0, ", GMP_RNDN)" );
+     z);
+
+export toBigComplex(x:CCC,prec:int):CCC := (
+     z := newBigComplex(prec);
+     Ccode( void, "mpfr_set(", "(__mpfr_struct *)", z, ",", "(__mpfr_struct *)", x, ", GMP_RNDN)" );
+     Ccode( void, "mpfr_set(", "(__mpfr_struct *)&", z, "->IMprec,", "(__mpfr_struct *)&", x, "->IMprec, GMP_RNDN)" );
+     z);
+
+export toBigComplex(x:RRR,y:RRR,prec:int):CCC := (
+     z := newBigComplex(prec);
+     Ccode( void, "mpfr_set(", "(__mpfr_struct *)", z, ",", "(__mpfr_struct *)", x, ", GMP_RNDN)" );
+     Ccode( void, "mpfr_set(", "(__mpfr_struct *)&", z, "->IMprec,", "(__mpfr_struct *)", x, ", GMP_RNDN)" );
+     z);
+
+export toBigComplex(x:Rational,prec:int):CCC := (
+     z := newBigComplex(prec);
+     Ccode( void, "mpfr_set_q(", "(__mpfr_struct *)", z, ",", "(__mpq_struct *)", x, ", GMP_RNDN)" );
+     Ccode( void, "mpfr_set_si(", "(__mpfr_struct *)&", z, "->IMprec,", 0, ", GMP_RNDN)" );
+     z);
+
+export toBigComplex(x:Integer,prec:int):CCC := (
+     z := newBigComplex(prec);
+     Ccode( void, "mpfr_set_z(", "(__mpfr_struct *)", z, ",", "(__mpz_struct *)", x, ", GMP_RNDN)" );
+     Ccode( void, "mpfr_set_si(", "(__mpfr_struct *)&", z, "->IMprec,", 0, ", GMP_RNDN)" );
+     z);
+
+export toBigComplex(x:int,prec:int):CCC := (
+     z := newBigComplex(prec);
+     Ccode( void, "mpfr_set_si(", "(__mpfr_struct *)", z, ",(long)", x, ", GMP_RNDN)" );
+     Ccode( void, "mpfr_set_si(", "(__mpfr_struct *)&", z, "->IMprec,", 0, ", GMP_RNDN)" );
+     z);
+
+export toBigComplex(x:ulong,prec:int):CCC := (
+     z := newBigComplex(prec);
+     Ccode( void, "mpfr_set_ui(", "(__mpfr_struct *)", z, ",(unsigned long)", x, ", GMP_RNDN)" );
+     Ccode( void, "mpfr_set_si(", "(__mpfr_struct *)&", z, "->IMprec,", 0, ", GMP_RNDN)" );
+     z);
+
+export toBigComplex(x:double,prec:int):CCC := (
+     z := newBigComplex(prec);
+     Ccode( void, "mpfr_set_d(", "(__mpfr_struct *)", z, ",", x, ", GMP_RNDN)" );
+     Ccode( void, "mpfr_set_si(", "(__mpfr_struct *)&", z, "->IMprec,", 0, ", GMP_RNDN)" );
+     z);
+
+export toBigComplex(x:double,y:double,prec:int):CCC := (
+     z := newBigComplex(prec);
+     Ccode( void, "mpfr_set_d(", "(__mpfr_struct *)", z, ",", x, ", GMP_RNDN)" );
+     Ccode( void, "mpfr_set_d(", "(__mpfr_struct *)&", z, "->IMprec,", y, ", GMP_RNDN)" );
+     z);
 
 export toDouble(x:RRR):double := Ccode( double, "mpfr_get_d(", "(__mpfr_struct *)", x, ", GMP_RNDN)" );
 

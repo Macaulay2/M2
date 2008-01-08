@@ -1668,19 +1668,6 @@ document { Key => "synonym",
 	  ofClass Stack
      ///}
 
-document { Key => toRRR,
-     Headline => "convert to high-precision real",
-     Usage => "toRRR(prec,x)",
-     Inputs => { 
-	  "prec" => ZZ => {"the number of bits of precision desired"}
-	  "x" => {ofClass{RR,ZZ,QQ}}
-	  },
-     Outputs => {RRR => {"the result of converting ", TT "x", " to a high-precision real number"}},
-     EXAMPLE lines ///
-	  toRRR(200,1/7)
-	  precision oo
-     ///}
-
 document { Key => {
 	  (sheafHom, CoherentSheaf, CoherentSheaf),
 	  sheafHom,

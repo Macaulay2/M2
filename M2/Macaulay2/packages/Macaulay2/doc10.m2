@@ -744,6 +744,58 @@ document { Key => Core,
 	  }
      }
 
+document { Key => toRRR,
+     Headline => "convert to high-precision real number",
+     Usage => "toRRR(prec,x)",
+     Inputs => { 
+	  "prec" => ZZ => {"the number of bits of precision desired"}
+	  "x" => {ofClass{RR,ZZ,QQ,RRR}}
+	  },
+     Outputs => {RRR => {"the result of converting ", TT "x", " to a high-precision real number"}},
+     EXAMPLE lines ///
+	  toRRR(200,1/7)
+	  precision oo
+     ///}
+
+document { Key => toCCC,
+     Headline => "convert to high-precision complex number",
+     Usage => "toCCC(prec,x)",
+     Inputs => { 
+	  "prec" => ZZ => {"the number of bits of precision desired"}
+	  "x" => {ofClass{RR,ZZ,QQ,CCC,RRR}}
+	  },
+     Outputs => {CCC => {"the result of converting ", TT "x", " to a high-precision complex number"}},
+     EXAMPLE lines ///
+	  toCCC(200,1/7)
+	  precision oo
+     ///}
+
+document { Key => BigNumber,
+     PARA {
+	  "This type of number is intended to serve as a parent class for those types of numbers
+	  that have settable precision."
+	  }
+     }
+
+document { Key => BigNumberRing,
+     PARA {
+	  "This type of ring is intended to serve as a parent class for those types of rings of numbers
+	  that have settable precision."
+	  }
+     }
+
+document { Key => RealNumberRing,
+     PARA {
+	  "A real number ring is a ring whose elements are real numbers of variable precision."
+	  }
+     }
+
+document { Key => ComplexNumberRing,
+     PARA {
+	  "A complex number ring is a ring whose elements are complex numbers of variable precision."
+	  }
+     }
+
 -- Local Variables:
 -- compile-command: "make -C $M2BUILDDIR/Macaulay2/m2 "
 -- End:
