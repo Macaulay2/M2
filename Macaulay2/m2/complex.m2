@@ -12,7 +12,7 @@ CC.synonym = "complex number"
 CC.texMath = ///{\mathbb C}///
 conjugate CC := z -> toCC(precision z, realPart z, - imaginaryPart z)
 
-ComplexNumberRing = new Type of {* ImmutableType *} Ring
+ComplexNumberRing = new Type of {* ImmutableType *} BigNumberRing
 ComplexNumberRing.synonym = "real number ring"
 new ComplexNumberRing of CC from ZZ := memoize(
      (ComplexNumberRing, CC, prec) -> newClass(ComplexNumberRing,CC,
