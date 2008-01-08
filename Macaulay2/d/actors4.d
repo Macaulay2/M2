@@ -901,6 +901,7 @@ tostringfun(e:Expr):Expr := (
      is DictionaryClosure do Expr("<<a dictionary>>")
      is NetFile do Expr("<<a netfile>>")
      is x:RRR do Expr(tostring(x))
+     is z:CCC do Expr(tostring(z))
      is Error do Expr("<<an error message>>")
      is Sequence do Expr("<<a sequence>>")
      is HashTable do Expr("<<a hash table>>")
@@ -919,7 +920,6 @@ tostringfun(e:Expr):Expr := (
 	  "<<raw monomial ideal>>"
 	  -- Ccode(string, "IM2_MonomialIdeal_to_string((MonomialIdeal*)",x,")" )
 	  )
-     is CCC do Expr("<<big complex number>>")
      is c:RawComputation do Expr(Ccode(string, "(string)IM2_GB_to_string((Computation*)",c,")" ))
      );
 setupfun("simpleToString",tostringfun);

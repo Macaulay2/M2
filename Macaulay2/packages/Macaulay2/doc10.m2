@@ -748,7 +748,7 @@ document { Key => toRRR,
      Headline => "convert to high-precision real number",
      Usage => "toRRR(prec,x)",
      Inputs => { 
-	  "prec" => ZZ => {"the number of bits of precision desired"}
+	  "prec" => ZZ => {"the number of bits of precision desired"},
 	  "x" => {ofClass{RR,ZZ,QQ,RRR}}
 	  },
      Outputs => {RRR => {"the result of converting ", TT "x", " to a high-precision real number"}},
@@ -761,7 +761,7 @@ document { Key => toCCC,
      Headline => "convert to high-precision complex number",
      Usage => "toCCC(prec,x)",
      Inputs => { 
-	  "prec" => ZZ => {"the number of bits of precision desired"}
+	  "prec" => ZZ => {"the number of bits of precision desired"},
 	  "x" => {ofClass{RR,ZZ,QQ,CCC,RRR}}
 	  },
      Outputs => {CCC => {"the result of converting ", TT "x", " to a high-precision complex number"}},
