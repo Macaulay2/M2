@@ -781,10 +781,7 @@ isZero    (x:RRR):bool ::=  0 == Ccode(int, "mpfr_sgn((__mpfr_struct *)", x, ")"
 isNegative(x:RRR):bool ::= -1 == Ccode(int, "mpfr_sgn((__mpfr_struct *)", x, ")");
 
 export precision(x:RRR):int := int(Ccode(ulong, "mpfr_get_prec((__mpfr_struct*)",x,")"));
-
-BitsPerLimb := int(Ccode(int,"__GMP_BITS_PER_MP_LIMB"));
-accuracy(x:RRR):int := BitsPerLimb * (x.prec - x.exp);
-size(x:RRR):int := BitsPerLimb * x.exp;
+export precision(x:CCC):int := int(Ccode(ulong, "mpfr_get_prec((__mpfr_struct*)",x,")"));
 
 newBigReal(prec:int):RRR := (
      x := RRR(0,0,0,null());
@@ -922,6 +919,11 @@ export (x:RRR) === (y:int) : bool :=  compare0(x,long(y)) == 0;
 export (x:RRR)  <  (y:int) : bool :=  compare0(x,long(y)) <  0;
 export (x:RRR)  <= (y:int) : bool :=  compare0(x,long(y)) <= 0;
 
+export (x:CCC) === (y:int) : bool :=  (
+     0 == Ccode( int, "mpfr_cmp_si(", "(__mpfr_struct *)", x, ",", y, ")" )
+     && 
+     0 == Ccode( int, "mpfr_cmp_si(", "(__mpfr_struct *)&", x, "->IMprec,", 0, ")" ));
+
 compare0(x:RRR, y:double):int ::= Ccode( int, "mpfr_cmp_d(", "(__mpfr_struct *)", x, ",", y, ")" );
 export compare(x:RRR, y:double):int := Ccode( int, "mpfr_cmp_d(", "(__mpfr_struct *)", x, ",", y, ")" );
 export compare(y:double, x:RRR):int := Ccode( int, "-mpfr_cmp_d(", "(__mpfr_struct *)", x, ",", y, ")" );
@@ -973,8 +975,54 @@ export (x:RRR) + (y:RRR) : RRR := (
 	      "(__mpfr_struct *)", z, ",", 
 	      "(__mpfr_struct *)", x, ",", 
 	      "(__mpfr_struct *)", y,
-	  ", GMP_RNDN)" 
+	      ", GMP_RNDN)" 
      );
+     z);
+     
+export (x:CCC) + (y:CCC) : CCC := (
+     z := newBigComplex(min(x.REprec,y.REprec));
+     Ccode( void,
+          "mpfr_add(",
+	      "(__mpfr_struct *)", z, ",", 
+	      "(__mpfr_struct *)", x, ",", 
+	      "(__mpfr_struct *)", y,
+	      ", GMP_RNDN)" );
+     Ccode( void,
+          "mpfr_add(",
+	      "(__mpfr_struct *)&", z, "->IMprec,", 
+	      "(__mpfr_struct *)&", x, "->IMprec,", 
+	      "(__mpfr_struct *)&", y, "->IMprec",
+	      ", GMP_RNDN)" );
+     z);
+     
+export (x:CCC) + (y:RRR) : CCC := (
+     z := newBigComplex(min(x.REprec,y.prec));
+     Ccode( void,
+          "mpfr_add(",
+	      "(__mpfr_struct *)", z, ",", 
+	      "(__mpfr_struct *)", x, ",", 
+	      "(__mpfr_struct *)", y,
+	      ", GMP_RNDN)" );
+     Ccode( void,
+          "mpfr_set(",
+	      "(__mpfr_struct *)&", z, "->IMprec,", 
+	      "(__mpfr_struct *)&", x, "->IMprec,", 
+	      "GMP_RNDN)" );
+     z);
+     
+export (y:RRR) + (x:CCC) : CCC := (
+     z := newBigComplex(min(x.REprec,y.prec));
+     Ccode( void,
+          "mpfr_add(",
+	      "(__mpfr_struct *)", z, ",", 
+	      "(__mpfr_struct *)", x, ",", 
+	      "(__mpfr_struct *)", y,
+	      ", GMP_RNDN)" );
+     Ccode( void,
+          "mpfr_set(",
+	      "(__mpfr_struct *)&", z, "->IMprec,", 
+	      "(__mpfr_struct *)&", x, "->IMprec,", 
+	      "GMP_RNDN)" );
      z);
      
 export (x:RRR) + (y:Integer) : RRR := (
@@ -984,7 +1032,7 @@ export (x:RRR) + (y:Integer) : RRR := (
 	      "(__mpfr_struct *)", z, ",", 
 	      "(__mpfr_struct *)", x, ",", 
 	      "(__mpz_struct *)", y,
-	  ", GMP_RNDN)" 
+	      ", GMP_RNDN)" 
      );
      z);
      

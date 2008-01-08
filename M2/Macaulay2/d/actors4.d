@@ -1155,6 +1155,7 @@ setupfun("toRR",toRR);
 precision(e:Expr):Expr := (
      when e 
      is x:RRR do Expr(toInteger(precision(x)))
+     is x:CCC do Expr(toInteger(precision(x)))
      else WrongArg("a big real number")
      );
 setupfun("precision",precision);
