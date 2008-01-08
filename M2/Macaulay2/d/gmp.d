@@ -828,6 +828,11 @@ export toCC(x:CC,prec:int):CC := (
      if x.re.prec == prec then x
      else CC(toRR(x.re,prec),toRR(x.im,prec)));
 export toCC(x:RR,y:RR,prec:int):CC := CC(toRR(x,prec),toRR(y,prec));
+export toCC(x:RR,y:RR):CC := (
+     if x.prec == y.prec then CC(x,y)
+     else if x.prec < y.prec then CC(x,toRR(y,x.prec))
+     else CC(toRR(x,y.prec),y)
+     );
 export toCC(x:QQ,prec:int):CC := CC(toRR(x,prec),toRR(0,prec));
 export toCC(x:ZZ,prec:int):CC := CC(toRR(x,prec),toRR(0,prec));
 export toCC(x:int,prec:int):CC := CC(toRR(x,prec),toRR(0,prec));

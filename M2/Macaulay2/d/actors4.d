@@ -1134,6 +1134,10 @@ toCC(e:Expr):Expr := (
 			 else WrongArg("a rational number, real number, or an integer")
 			 )
 		    )
+	       is x:RR do (
+		    when s.1 is y:RR do Expr(toCC(x,y))
+		    else WrongArg("a real number")
+		    )
 	       else WrongArgInteger(1)
 	       )
 	  else if length(s) == 3 then (
