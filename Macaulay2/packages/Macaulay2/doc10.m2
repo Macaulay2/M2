@@ -777,6 +777,42 @@ document { Key => BigNumber,
 	  }
      }
 
+document { Key => Pi,
+     PARA {
+	  TEX "This constant represents the mathematical constant $\\pi$."
+	  },
+     EXAMPLE lines ///
+     	  Pi
+     	  toRR_100 Pi
+	  2. * Pi
+     ///
+     }
+
+document { Key => Constant,
+     PARA {
+	  "A constant is a symbolic entity that can be approximated by a real or complex
+	  number to any desired accuracy.  They are intended (eventually) to be usable
+	  everywhere a real or complex number can be used."
+	  },
+     EXAMPLE lines ///
+     	  Pi
+     	  toRR_100 Pi
+	  2. * Pi
+     ///
+     }
+
+document { Key => BigNumberRing,
+     PARA {
+	  "A big number ring is one whose elements are real or complex numbers."
+	  },
+     EXAMPLE lines ///
+     	  toRR_100 Pi
+	  ring oo
+	  class oo
+	  parent oo
+     ///
+     }
+
 document { Key => BigNumberType,
      PARA {
 	  "This type of ring is intended to serve as a parent class for those types of rings of numbers

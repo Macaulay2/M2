@@ -32,8 +32,8 @@ export (lhs:Expr) + (rhs:Expr) : Expr := (
      when lhs
      is x:ZZ do (
 	  when rhs
-	  is y:ZZ do Expr(x + y)
-     	  is y:QQ do Expr(x + y)
+	  is y:ZZ do Expr(x + y)			    -- # typical value: symbol +, ZZ, ZZ, ZZ
+     	  is y:QQ do Expr(x + y)			    -- # typical value: symbol +, ZZ, QQ, QQ
      	  is y:RR do Expr(y + x)
      	  is y:CC do Expr(toCC(x,y.re.prec) + y)
 	  is Error do rhs

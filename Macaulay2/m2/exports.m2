@@ -306,7 +306,6 @@ export {
 	symbol NonLinear,
 	symbol Nothing,
 	symbol Number,
-	symbol NumberRing,
 	symbol Numeric,
 	symbol OO,
 	symbol OneExpression,

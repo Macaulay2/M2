@@ -47,6 +47,13 @@ MADEM2FILES += loads.m2
 loads.m2 : loads.awk loadsequence
 	@echo making $@
 	@awk -f $^ >$@
+
+############################## tvalues.m2
+MADEM2FILES += tvalues.m2
+TVFILES := $(shell cd @srcdir@/../d && egrep -l -e "-- . typical value: " *.d)
+all :: tvalues.m2
+tvalues.m2 : always
+	(cd @srcdir@/../d && egrep -e "-- . typical value: " $(TVFILES) | sed 's/.*-- . typical value: \(.*\)/typval(\1)/') >$@
 ############################## installedpackages.m2
 INSTALLEDPACKAGES := $(shell cat @srcdir@/installedpackages)
 MADEM2FILES += installedpackages.m2
