@@ -575,7 +575,7 @@ C = directImageComplex((Mstrict**S^{2*{1,1}}), RegularityBound=>2)
 -- The following lines are tests for Mike to speed this up --------
 -- or fix localPrune...
 restart
-loadPackage "Local"
+loadPackage "LocalRings"
 loadPackage "BGG"
 debug BGG
 kk=ZZ/101

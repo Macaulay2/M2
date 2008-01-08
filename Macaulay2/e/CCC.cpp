@@ -180,12 +180,21 @@ mpfr_ptr CCC::to_BigReal(ring_elem f) const
 
 bool CCC::promote(const Ring *Rf, const ring_elem f, ring_elem &result) const
 {
+  if (Rf->is_ZZ())
+    {
+      M2_CCC g = new_elem();
+      mpfr_set_z(g->re, f.get_mpz(), GMP_RNDN);
+      mpfr_set_si(g->im, 0, GMP_RNDN);
+      result = BIGCC_RINGELEM(g);
+      return true;
+    }
   if (Rf->is_RRR())
     {
       M2_CCC g = new_elem();
       mpfr_set(g->re, MPF_VAL(f), GMP_RNDN);
-      mpfr_init2(g->im,mpfr_get_prec(MPF_VAL(f)));
+      mpfr_set_si(g->im, 0, GMP_RNDN);
       result = BIGCC_RINGELEM(g);
+      return true;
     }
   return false;
 }

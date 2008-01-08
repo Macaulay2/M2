@@ -29,6 +29,7 @@ ideal"xy+xz+2xu+yu+zu+2u2+yv+zv+2uv-3txz-y2z-yz2-3tzu-2yzu-3tzv+3tyz2,
   timer=1;
   option(prot);
   std(i);
+  mres(i,0);
 *}
 --------------------------------------------------------
 --std3

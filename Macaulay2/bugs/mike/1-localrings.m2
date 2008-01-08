@@ -25,6 +25,16 @@ pivot = (D, ell, r, c) -> (
      D#(ell+1) = mutableMatrix submatrix(matrix D#(ell+1), {0..last1-1},);
      peek D
      )
+
+-- minimal gens in local case
+minbase = method()
+minbase Ideal := (I) -> (
+     g1 := gb I;
+     g2 := gb ((ideal vars ring I)*I);
+     m1 := monomialIdeal leadTerm g1;
+     m2 := monomialIdeal leadTerm g2;
+     m1 - m2
+     )
 end
 
 restart
