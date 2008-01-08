@@ -36,7 +36,7 @@ internalName(s:string):string := (
 
 sleepfun(e:Expr):Expr := (
      when e
-     is i:Integer do (
+     is i:ZZ do (
 	  if isInt(i)
 	  then Expr(toInteger(sleep(toInt(i))))
 	  else WrongArgSmallInteger(1))
@@ -65,9 +65,9 @@ setupfun("processID",getpidfun);
 
 absfun(e:Expr):Expr := (
      when e
-     is i:Integer do Expr(abs(i))
+     is i:ZZ do Expr(abs(i))
      is x:RR do Expr(if x < 0 then -x else x)
-     is r:Rational do Expr(abs(r))
+     is r:QQ do Expr(abs(r))
      else WrongArg("a number, real or complex"));
 setupfun("abs",absfun);
 
@@ -139,7 +139,7 @@ select(n:Expr,e:Expr,f:Expr):Expr := (
      when f is subj:string do select(pat,rep,subj)
      else WrongArgString(3)
      else WrongArgString(2)
-     is nn:Integer do
+     is nn:ZZ do
      if isInt(n) then
      when e
      is obj:HashTable do (
@@ -285,7 +285,7 @@ ascii(e:Expr):Expr := (
      when e is s:string do list(
 	  new Sequence len length(s) do (
 	       foreach c in s do provide toInteger(int(uchar(c)))))
-     is i:Integer do (
+     is i:ZZ do (
 	  if isInt(i)
 	  then Expr(new string len 1 do provide char(toInt(i)))
 	  else WrongArgSmallInteger(1))
@@ -353,7 +353,7 @@ utf8(y:Expr):Expr := (
 	       );
 	  a := takearrayint(x);
      	  Expr(list(new Sequence len length(a) do foreach i in a do provide Expr(toInteger(i)))))
-     is i:Integer do (
+     is i:ZZ do (
 	  if !isInt(i) then return WrongArgSmallInteger();
 	  Expr(utf8(array(int)(toInt(i)))))
      else buildErrorPacket("expects a string, a small integer, or an array of small integers"));
@@ -383,7 +383,7 @@ outseq(x:file,y:Sequence):Expr := (
 	       then y.symbol.word.name
 	       else internalName(y.symbol.word.name);
 	       )
-	  is y:Integer do (
+	  is y:ZZ do (
 	       if isInt(y) 
 	       then for toInt(y) do x << ' '
 	       else return WrongArg(2,"a string, or list or sequence of strings and small integers, or null"))
@@ -410,7 +410,7 @@ outstringfun(e:Expr):Expr := (
 			 )
 		    is y:List do outseq(x,y.v)
 		    is n:Net do Expr(x << n)
-		    is y:Integer do (
+		    is y:ZZ do (
 			 if isInt(y) 
 			 then (
 			      for toInt(y) do x << ' ';
@@ -434,7 +434,7 @@ lenseq(y:Sequence):int := (
 	       )
 	  is Nothing do nothing
 	  is y:SymbolClosure do l = l + length(y.symbol.word.name)
-	  is y:Integer do (
+	  is y:ZZ do (
 	       if isInt(y) 
 	       then l = l + toInt(y)
 	       else return -1)
@@ -459,7 +459,7 @@ stringlenfun(e:Expr):Expr := (
 	  then WrongArg(1,"a string, or list or sequence of strings and integers, or null")
 	  else Expr(toInteger(l))
 	  )
-     is y:Integer do e
+     is y:ZZ do e
      is y:Sequence do (
 	  l := lenseq(y);
 	  if l == -1 
@@ -475,7 +475,7 @@ stringcat2(a:Sequence,s:string,i:int):int := ( -- returns next available index
 	  is a:Sequence do i = stringcat2(a,s,i)
      	  is y:SymbolClosure do foreach c in y.symbol.word.name do (s.i = c; i = i+1;)
 	  is a:List do i = stringcat2(a.v,s,i)
-	  is n:Integer do for toInt(n) do (s.i = ' '; i = i+1;)
+	  is n:ZZ do for toInt(n) do (s.i = ' '; i = i+1;)
 	  is t:string do foreach c in t do (s.i = c; i = i+1;)
 	  else nothing;
 	  );
@@ -494,7 +494,7 @@ stringcatfun(e:Expr):Expr := (
      is a:List do stringcatseq(a.v)
      is Nothing do Expr("")
      is y:SymbolClosure do Expr(y.symbol.word.name)
-     is n:Integer do (
+     is n:ZZ do (
 	  if isInt(n) then (
 	       m := toInt(n);
 	       if m >= 0 
@@ -548,7 +548,7 @@ packfun(e:Expr):Expr := (
      is a:Sequence do (
      	  if length(a) == 2 then (
 	       when a.0
-	       is n:Integer do (
+	       is n:ZZ do (
 		    if isInt(n)
 		    then (
 			 nn := toInt(n);
@@ -570,7 +570,7 @@ packfun(e:Expr):Expr := (
 		    )
 	       is x:Sequence do (
 		    when a.1
-		    is n:Integer do (
+		    is n:ZZ do (
 			 if isInt(n) 
 			 then (
 			      nn := toInt(n);
@@ -581,7 +581,7 @@ packfun(e:Expr):Expr := (
 		    else WrongArgInteger(2))
 	       is x:List do (
 		    when a.1
-		    is n:Integer do (
+		    is n:ZZ do (
 			 if isInt(n) 
 			 then (
 			      nn := toInt(n);
@@ -655,7 +655,7 @@ allInputFilesOrListeners(s:Sequence):bool := (
      true);
 allIntegers(s:Sequence):bool := (
      foreach f in s do (
-     	  when f is g:Integer do ( if !isInt(g) || toInt(g) < 0 then return false; )
+     	  when f is g:ZZ do ( if !isInt(g) || toInt(g) < 0 then return false; )
      	  else return false;
 	  );
      true);
@@ -696,7 +696,7 @@ wait(e:Expr):Expr := (
      is f:List do wait(f.v)
      is v:Sequence do wait(v)
      is f:file do wait(f)
-     is x:Integer do (
+     is x:ZZ do (
 	  if isInt(x) then (
 	       ret := wait(toInt(x));
 	       if ret == ERROR 
@@ -736,7 +736,7 @@ readfun(e:Expr):Expr := (
 		    if ! f.input
 		    then return WrongArg(1,"expected an input file");
 		    when s.1
-		    is n:Integer do (
+		    is n:ZZ do (
 			 if isInt(n)
 			 then (
 			      nn := toInt(n);
@@ -774,14 +774,14 @@ substrfun(e:Expr):Expr := (
      when e is args:Sequence do
      if length(args) == 3 then
      when args.0
-     is i:Integer do if !isInt(i) then WrongArgSmallInteger(1) else (
-	  when args.1 is j:Integer do if !isInt(j) then WrongArgSmallInteger(2) else
+     is i:ZZ do if !isInt(i) then WrongArgSmallInteger(1) else (
+	  when args.1 is j:ZZ do if !isInt(j) then WrongArgSmallInteger(2) else
 	  when args.2 is s:string do Expr(substr(s,toInt(i),toInt(j)))
 	  else WrongArgString(3)
 	  else WrongArgInteger(2))
      is s:string do (
-	  when args.1 is i:Integer do if !isInt(i) then WrongArgSmallInteger(2) else
-	  when args.2 is j:Integer do if !isInt(j) then WrongArgSmallInteger(3) else Expr(substr(s,toInt(i),toInt(j)))
+	  when args.1 is i:ZZ do if !isInt(i) then WrongArgSmallInteger(2) else
+	  when args.2 is j:ZZ do if !isInt(j) then WrongArgSmallInteger(3) else Expr(substr(s,toInt(i),toInt(j)))
 	  else WrongArgInteger(3)
 	  else WrongArgInteger(2))
      else WrongArg(1,"a string or an integer")
@@ -789,9 +789,9 @@ substrfun(e:Expr):Expr := (
      when args.0
      is s:string do (
 	  when args.1 
-	  is i:Integer do if !isInt(i) then WrongArgSmallInteger(2) else Expr(substr(s,toInt(i)))
+	  is i:ZZ do if !isInt(i) then WrongArgSmallInteger(2) else Expr(substr(s,toInt(i)))
 	  else WrongArgInteger(2))
-     is i:Integer do if !isInt(i) then WrongArgSmallInteger(1) else (
+     is i:ZZ do if !isInt(i) then WrongArgSmallInteger(1) else (
 	  when args.1
 	  is s:string do Expr(substr(s,toInt(i)))
 	  else WrongArgString(2))
@@ -877,8 +877,8 @@ setupfun("separate",linesfun);
 
 tostringfun(e:Expr):Expr := (
      when e 
-     is i:Integer do Expr(tostring(i))
-     is x:Rational do Expr(tostring(x))
+     is i:ZZ do Expr(tostring(i))
+     is x:QQ do Expr(tostring(x))
      is s:string do e
      is q:SymbolClosure do Expr( if q.frame == globalFrame then q.symbol.word.name else internalName(q.symbol.word.name) )
      is f:file do Expr(f.filename)
@@ -931,9 +931,9 @@ format(e:Expr):Expr := (
      is a:Sequence do 
      if length(a) != 5 then WrongNumArgs(5) else
      when a.0 is x:RR do 
-     when a.1 is s:Integer do if !isInt(s) then WrongArgSmallInteger(2) else
-     when a.2 is l:Integer do if !isInt(l) then WrongArgSmallInteger(3) else
-     when a.3 is t:Integer do if !isInt(t) then WrongArgSmallInteger(4) else
+     when a.1 is s:ZZ do if !isInt(s) then WrongArgSmallInteger(2) else
+     when a.2 is l:ZZ do if !isInt(l) then WrongArgSmallInteger(3) else
+     when a.3 is t:ZZ do if !isInt(t) then WrongArgSmallInteger(4) else
      when a.4 is e:string do Expr(tostring5(
 	       toDouble(x),				    -- we need to rewrite tostring5 for RR
 	       toInt(s),toInt(l),toInt(t),e))
@@ -947,12 +947,12 @@ setupfun("format",format);
 
 numfun(e:Expr):Expr := (
      when e
-     is r:Rational do Expr(numerator(r))
+     is r:QQ do Expr(numerator(r))
      else WrongArg("a rational number"));
 setupfun("numerator",numfun);
 denfun(e:Expr):Expr := (
      when e
-     is r:Rational do Expr(denominator(r))
+     is r:QQ do Expr(denominator(r))
      else WrongArg("a rational number"));
 setupfun("denominator",denfun);
 
@@ -1104,12 +1104,12 @@ toRR(e:Expr):Expr := (
      when e
      is s:Sequence do (
 	  if length(s) != 2 then WrongNumArgs(2) else
-	  when s.0 is prec:Integer do (
+	  when s.0 is prec:ZZ do (
 	       if !isInt(prec) then WrongArgSmallInteger(1)
 	       else (
 	       	    when s.1 
-	       	    is x:Rational do Expr(toRR(x,toInt(prec)))
-     	       	    is x:Integer do Expr(toRR(x,toInt(prec)))
+	       	    is x:QQ do Expr(toRR(x,toInt(prec)))
+     	       	    is x:ZZ do Expr(toRR(x,toInt(prec)))
      	       	    is x:RR do Expr(toRR(x,toInt(prec)))
 		    else binarymethod(s.0,s.1,getGlobalVariable(toRRS),toRRS.word.name)
 		    )
@@ -1123,12 +1123,12 @@ toCC(e:Expr):Expr := (
      when e
      is s:Sequence do (
 	  if length(s) == 2 then (
-	       when s.0 is prec:Integer do (
+	       when s.0 is prec:ZZ do (
 		    if !isInt(prec) then WrongArgSmallInteger(1)
 		    else (
 			 when s.1 
-			 is x:Rational do Expr(toCC(x,toInt(prec)))
-			 is x:Integer do Expr(toCC(x,toInt(prec)))
+			 is x:QQ do Expr(toCC(x,toInt(prec)))
+			 is x:ZZ do Expr(toCC(x,toInt(prec)))
 			 is x:RR do Expr(toCC(x,toInt(prec)))
 			 is x:CC do Expr(toCC(x,toInt(prec)))
 			 else WrongArg("a rational number, real number, or an integer")
@@ -1137,12 +1137,12 @@ toCC(e:Expr):Expr := (
 	       else WrongArgInteger(1)
 	       )
 	  else if length(s) == 3 then (
-	       when s.0 is prec:Integer do (
+	       when s.0 is prec:ZZ do (
 		    if !isInt(prec) then WrongArgSmallInteger(1)
 		    else Expr(CC(
 			      when s.1 
-			      is x:Rational do toRR(x,toInt(prec))
-			      is x:Integer do toRR(x,toInt(prec))
+			      is x:QQ do toRR(x,toInt(prec))
+			      is x:ZZ do toRR(x,toInt(prec))
 			      is x:RR do toRR(x,toInt(prec))
 			      else (
 				   return WrongArg("a rational number, real number, or an integer");
@@ -1150,8 +1150,8 @@ toCC(e:Expr):Expr := (
 				   )
 			      ,
 			      when s.2
-			      is x:Rational do toRR(x,toInt(prec))
-			      is x:Integer do toRR(x,toInt(prec))
+			      is x:QQ do toRR(x,toInt(prec))
+			      is x:ZZ do toRR(x,toInt(prec))
 			      is x:RR do toRR(x,toInt(prec))
 			      else (
 				   return WrongArg("a rational number, real number, or an integer");
@@ -1336,9 +1336,9 @@ setupfun("hashTable",toHashTable);
 powermod(e:Expr):Expr := (
      when e is s:Sequence do 
      if length(s) == 3 then
-     when s.0 is base:Integer do 
-     when s.1 is exp:Integer do
-     when s.2 is mod:Integer do
+     when s.0 is base:ZZ do 
+     when s.1 is exp:ZZ do
+     when s.2 is mod:ZZ do
      Expr(powermod(base,exp,mod))
      else WrongArgInteger(3)
      else WrongArgInteger(2)

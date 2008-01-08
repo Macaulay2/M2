@@ -89,8 +89,8 @@ export subarray(v:Sequence,start:int,leng:int):Sequence := (
      new Sequence len leng at i do provide v.(start+i));
 export subarray(v:Sequence,leng:int):Sequence := subarray(v,0,leng);
 
-export isInteger(e:Expr):bool := when e is Integer do true else false;
-export isInt(e:Expr):bool := when e is i:Integer do isInt(i) else false;
+export isInteger(e:Expr):bool := when e is ZZ do true else false;
+export isInt(e:Expr):bool := when e is i:ZZ do isInt(i) else false;
 export isIntArray(e:Sequence):bool := (
      foreach x in e do if !isInt(x) then return false;
      true);
@@ -101,7 +101,7 @@ export isIntArray(e:Expr):bool := (
      else false);     
 export toInt(e:Expr):int := (
      when e 
-     is i:Integer do toInt(i)
+     is i:ZZ do toInt(i)
      else (fatal("internal error"); 0));
 export toIntArray(e:Sequence):array(int) := (
      new array(int) len length(e) do foreach x in e do provide toInt(x));

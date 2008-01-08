@@ -28,12 +28,12 @@ export isBoolean(e:Expr):bool := e == True || e == False;
 export toBoolean(e:Expr):bool := e == True;
 
 export isSmallInt(e:Expr):bool := (
-     when e is i:Integer do 
+     when e is i:ZZ do 
      if isInt(i) then true else false
      else false
      );
 
-export getSmallInt(e:Expr):int := when e is i:Integer do toInt(i) else -333;
+export getSmallInt(e:Expr):int := when e is i:ZZ do toInt(i) else -333;
 
 export isSequenceOfPairsOfSmallIntegers(v:Sequence) : (string or null) := (
      foreach i in v do 
@@ -43,7 +43,7 @@ export isSequenceOfPairsOfSmallIntegers(v:Sequence) : (string or null) := (
      then return "a list of pairs of integers" 
      else foreach j in pair do
      when j 
-     is a:Integer do
+     is a:ZZ do
      if isInt(a) 
      then nothing
      else return "a list of pairs of small integers"
@@ -63,7 +63,7 @@ export getSequenceOfPairsOfSmallIntegers(v:Sequence) : array(int) := (
 	  foreach i in v do (
 	       when i
 	       is pair:Sequence 
-	       do foreach j in pair do when j is a:Integer do provide toInt(a) else nothing
+	       do foreach j in pair do when j is a:ZZ do provide toInt(a) else nothing
 	       else nothing
 	       );
 	  provide -333;					    -- shouldn't happen
@@ -79,13 +79,13 @@ export getSequenceOfPairsOfSmallIntegers(e:Expr) : array(int) := (
 export getReverseSequenceOfPairsOfSmallIntegers(v:Sequence) : array(int) := (
      new array(int) len 2*length(v) do 
      for k from length(v)-1 to 0 by -1 do 
-     when v.k is pair:Sequence do foreach j in pair do when j is a:Integer do provide toInt(a) else provide(0)
+     when v.k is pair:Sequence do foreach j in pair do when j is a:ZZ do provide toInt(a) else provide(0)
      else provide(0)
      );
 
 export isSequenceOfSmallIntegers(s:Sequence) : bool := (
      foreach i in s do (
-	  when i is a:Integer do (
+	  when i is a:ZZ do (
 	       if !isInt(a) then return false;
 	       )
 	  else return false);
@@ -106,7 +106,7 @@ export getSequenceOfSmallIntegers(s:Sequence) : array(int) := (
      new array(int) len length(s) do (
 	  foreach i in s do 
 	  when i 
-	  is a:Integer do provide toInt(a) 
+	  is a:ZZ do provide toInt(a) 
 	  else abort("internal error: getSequenceOfSmallIntegers");
 	  abort("internal error: getSequenceOfSmallIntegers");
 	  )
@@ -212,8 +212,8 @@ export toExpr(x:RawRingElementOrNull):Expr := when x is r:RawRingElement do Expr
 export toExpr(x:RawFreeModuleOrNull):Expr := when x is r:RawFreeModule do Expr(r) is null do engineErrorMessage();
 export toExpr(x:RawMatrixOrNull):Expr := when x is r:RawMatrix do Expr(r) is null do engineErrorMessage();
 export toExpr(x:RawMutableMatrixOrNull):Expr := when x is r:RawMutableMatrix do Expr(r) is null do engineErrorMessage();
-export toExpr(x:IntegerOrNull):Expr := when x is i:Integer do Expr(i) is null do engineErrorMessage();
-export toExpr(x:RationalOrNull):Expr := when x is i:Rational do Expr(i) is null do engineErrorMessage();
+export toExpr(x:IntegerOrNull):Expr := when x is i:ZZ do Expr(i) is null do engineErrorMessage();
+export toExpr(x:RationalOrNull):Expr := when x is i:QQ do Expr(i) is null do engineErrorMessage();
 export toExpr(x:RRRorNull):Expr := when x is i:RR do Expr(i) is null do engineErrorMessage();
 export toExpr(x:RawMatrixPairOrNull):Expr := when x is p:RawMatrixPair do seq(Expr(p.a),Expr(p.b)) is null do engineErrorMessage();
 export toExpr(x:RawMatrixArray):Expr := Expr( list( new Sequence len length(x) do foreach m in x do provide Expr(m) ) );

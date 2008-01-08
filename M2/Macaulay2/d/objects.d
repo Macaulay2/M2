@@ -164,9 +164,9 @@ export equal(lhs:Expr,rhs:Expr):Expr := (
 			 );
 		    True ) )
 	  else False)
-     is x:Integer do (
+     is x:ZZ do (
 	  when rhs 
-	  is y:Integer do (
+	  is y:ZZ do (
 	       if x === y then True else False
 	       )
 	  -- other cases needed soon
@@ -208,9 +208,9 @@ export equal(lhs:Expr,rhs:Expr):Expr := (
 	       then True else False
 	       )
 	  else False)
-     is x:Rational do (
+     is x:QQ do (
 	  when rhs
-	  is y:Rational do (
+	  is y:QQ do (
 	       if x === y then True else False
 	       )
 	  -- other cases needed soon
@@ -435,11 +435,11 @@ export Class(e:Expr):HashTable := (
      when e 
      is obj:HashTable do obj.class
      is x:List do x.class
-     is Integer do integerClass
+     is ZZ do ZZClass
      is CodeClosure do codeClass
      is functionCode do functionBodyClass
      is CompiledFunctionBody do compiledFunctionBodyClass
-     is Rational do rationalClass
+     is QQ do QQClass
      is file do fileClass
      is dc:DictionaryClosure do if isglobaldict(dc.dictionary) then globalDictionaryClass else localDictionaryClass
      is string do stringClass
@@ -494,8 +494,8 @@ setupconst("CacheTable",Expr(cacheTableClass));
 setupconst("BasicList",Expr(basicListClass));
 setupconst("List",Expr(listClass));
 setupconst("MutableList",Expr(mutableListClass));
-setupconst("ZZ",Expr(integerClass));
-setupconst("QQ",Expr(rationalClass));
+setupconst("ZZ",Expr(ZZClass));
+setupconst("QQ",Expr(QQClass));
 setupconst("BigNumberType",Expr(bigNumberRingClass));
 setupconst("RR",Expr(bigRealClass));
 setupconst("CC",Expr(bigComplexClass));
@@ -988,7 +988,7 @@ modify(object:HashTable,key:Expr,f:function(Expr):Expr,v:Expr):void := (
 	  );
      storeInHashTable(object,key,keyhash,v);
      );
-addone(i:Expr):Expr := when i is j:Integer do Expr(j+1) else i;
+addone(i:Expr):Expr := when i is j:ZZ do Expr(j+1) else i;
 makeTally(v:Sequence):Expr := (
      o := newHashTable(Tally,nothingClass);
      foreach e at i in v do modify(o,e,addone,one);
@@ -1062,7 +1062,7 @@ getvalue(x:Sequence,i:int):Expr := (
 export subvalue(left:Expr,right:Expr):Expr := (
      -- don't change this without changing subvalueQ below
      when left is x:Sequence do (
-	  when right is r:Integer do (
+	  when right is r:ZZ do (
 	       if isInt(r) then getvalue(x,toInt(r))
 	       else buildErrorPacket("array index "
 		    + tostring(r)
@@ -1079,7 +1079,7 @@ export subvalue(left:Expr,right:Expr):Expr := (
 	       else buildErrorPacket("encountered missing value"))
 	  else buildErrorPacket("expected a string as key to database"))
      is x:List do (
-	  when right is r:Integer do (
+	  when right is r:ZZ do (
 	       if isInt(r) then getvalue(x.v,toInt(r))
 	       else buildErrorPacket("array index "
 		    + tostring(r)
@@ -1097,7 +1097,7 @@ export subvalue(left:Expr,right:Expr):Expr := (
 	  else buildErrorPacket("expected subscript to be a string")
 	  )
      is x:string do (
-	  when right is r:Integer do (
+	  when right is r:ZZ do (
 	       if isInt(r) then (
 		    rr := toInt(r);
 		    if rr < 0 then rr = rr + length(x);
@@ -1108,7 +1108,7 @@ export subvalue(left:Expr,right:Expr):Expr := (
 	  else buildErrorPacket("expected subscript to be an integer"))
      is n:Net do (
 	  x := n.body;
-	  when right is r:Integer do (
+	  when right is r:ZZ do (
 	       if isInt(r) then (
 		    rr := toInt(r);
 		    if rr < 0 then rr = rr + length(x);
@@ -1121,7 +1121,7 @@ export subvalue(left:Expr,right:Expr):Expr := (
 export subvalueQ(left:Expr,right:Expr):Expr := (
      -- don't change this without changing subvalue above
      when left is x:Sequence do (
-	  when right is r:Integer do (
+	  when right is r:ZZ do (
 	       if isInt(r) then (
 	       	    i := toInt(r);
 		    if i < -length(x) || i >= length(x) then False else True
@@ -1139,7 +1139,7 @@ export subvalueQ(left:Expr,right:Expr):Expr := (
 	  is key:string do dbmquery(x,key)
 	  else buildErrorPacket("expected a string as key to database"))
      is x:List do (
-	  when right is r:Integer do (
+	  when right is r:ZZ do (
 	       if isInt(r) then (
 	       	    i := toInt(r);
 		    if i < -length(x.v) || i >= length(x.v) then False else True
@@ -1147,7 +1147,7 @@ export subvalueQ(left:Expr,right:Expr):Expr := (
 	       else False)
 	  else False)
      is x:string do (
-	  when right is r:Integer do (
+	  when right is r:ZZ do (
 	       if isInt(r) then (
 		    rr := toInt(r);
 		    if rr < 0 || rr >= length(x) 
@@ -1157,7 +1157,7 @@ export subvalueQ(left:Expr,right:Expr):Expr := (
 	  else False)
      is n:Net do (
 	  x := n.body;
-	  when right is r:Integer do (
+	  when right is r:ZZ do (
 	       if isInt(r) then (
 		    rr := toInt(r);
 		    if rr < 0 || rr >= length(x) 

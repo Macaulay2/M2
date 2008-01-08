@@ -18,14 +18,14 @@ export hash(e:Expr):int := (
      is x:HashTable do x.hash
      is x:SymbolClosure do x.symbol.hash
      is x:Database do x.hash
-     is x:Integer do hash(x)
+     is x:ZZ do hash(x)
      is b:Boolean do if b.v then 444777 else 777333
      is Nothing do 333889
      is x:List do x.hash
      is f:functionCode do f.hash
      is CodeClosure do 73889				    -- improve this later!
      is x:DictionaryClosure do x.dictionary.hash	    -- there may be many dictionary closures with the same dictionary and different frames, too bad
-     is x:Rational do hash(x)
+     is x:QQ do hash(x)
      is x:RR do hash(x)
      is x:CC do hash(x)
      is x:Sequence do (

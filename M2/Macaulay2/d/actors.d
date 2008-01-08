@@ -30,18 +30,18 @@ times1 := plus1;
 
 export (lhs:Expr) + (rhs:Expr) : Expr := (
      when lhs
-     is x:Integer do (
+     is x:ZZ do (
 	  when rhs
-	  is y:Integer do Expr(x + y)
-     	  is y:Rational do Expr(x + y)
+	  is y:ZZ do Expr(x + y)
+     	  is y:QQ do Expr(x + y)
      	  is y:RR do Expr(y + x)
      	  is y:CC do Expr(toCC(x,y.re.prec) + y)
 	  is Error do rhs
 	  else binarymethod(lhs,rhs,PlusS))
-     is x:Rational do (
+     is x:QQ do (
 	  when rhs
-	  is y:Integer do Expr(x + y)
-     	  is y:Rational do Expr(x + y)
+	  is y:ZZ do Expr(x + y)
+     	  is y:QQ do Expr(x + y)
      	  is y:RR do Expr(y + x)
      	  is y:CC do Expr(toCC(x,y.re.prec) + y)
 	  is Error do rhs
@@ -57,16 +57,16 @@ export (lhs:Expr) + (rhs:Expr) : Expr := (
 	  else binarymethod(lhs,rhs,PlusS))
      is x:RR do (
 	  when rhs
-	  is y:Integer do Expr(x + y)
-     	  is y:Rational do Expr(x + y)
+	  is y:ZZ do Expr(x + y)
+     	  is y:QQ do Expr(x + y)
      	  is y:RR do Expr(x + y)
      	  is y:CC do Expr(x + y)
 	  is Error do rhs
 	  else binarymethod(lhs,rhs,PlusS))
      is x:CC do (
 	  when rhs
-	  is y:Integer do Expr(x + toCC(y,x.re.prec))
-     	  is y:Rational do Expr(x + toCC(y,x.re.prec))
+	  is y:ZZ do Expr(x + toCC(y,x.re.prec))
+     	  is y:QQ do Expr(x + toCC(y,x.re.prec))
      	  is y:RR do Expr(x + y)
      	  is y:CC do Expr(x + y)
 	  is Error do rhs
@@ -107,10 +107,10 @@ plusfun1(rhs:Code):Expr := (
      r := eval(rhs);
      when r
      is Error do r
-     is Integer do r
+     is ZZ do r
      is RR do r
      is CC do r
-     is Rational do r
+     is QQ do r
      is RawRingElement do r
      is RawMatrix do r
      is RawMutableMatrix do r
@@ -125,10 +125,10 @@ plusfun(lhs:Code,rhs:Code):Expr := (
 setup(PlusS,plusfun1,plusfun);
 export - (rhs:Expr) : Expr := (
      when rhs
-     is x:Integer do Expr(-x)
+     is x:ZZ do Expr(-x)
      is x:RR do Expr(-x)
      is x:CC do Expr(-x)
-     is x:Rational do Expr(-x)
+     is x:QQ do Expr(-x)
      is x:RawRingElement do Expr(-x)
      is x:RawMatrix do (
 	  when -x is y:RawMatrix do Expr(y) else buildErrorPacket(EngineError("polynomial minus failed"))
@@ -144,18 +144,18 @@ minusfun1(rhs:Code):Expr := - eval(rhs);
 
 export (lhs:Expr) - (rhs:Expr) : Expr := (
      when lhs
-     is x:Integer do (
+     is x:ZZ do (
 	  when rhs
-	  is y:Integer do Expr(x - y)
-     	  is y:Rational do Expr(x - y)
+	  is y:ZZ do Expr(x - y)
+     	  is y:QQ do Expr(x - y)
 	  is y:RR do Expr(toRR(x,y.prec) - y)
 	  is y:CC do Expr(toCC(x,y.re.prec) - y)
 	  is Error do rhs
 	  else binarymethod(lhs,rhs,MinusS))
-     is x:Rational do (
+     is x:QQ do (
 	  when rhs
-	  is y:Integer do Expr(x - y)
-     	  is y:Rational do Expr(x - y)
+	  is y:ZZ do Expr(x - y)
+     	  is y:QQ do Expr(x - y)
 	  is y:RR do Expr(toRR(x,y.prec) - y)
 	  is y:CC do Expr(toCC(x,y.re.prec) - y)
 	  is Error do rhs
@@ -171,16 +171,16 @@ export (lhs:Expr) - (rhs:Expr) : Expr := (
 	  else binarymethod(lhs,rhs,MinusS))
      is x:RR do (
 	  when rhs
-	  is y:Integer do Expr(x - y)
-     	  is y:Rational do Expr(x - y)
+	  is y:ZZ do Expr(x - y)
+     	  is y:QQ do Expr(x - y)
 	  is y:RR do Expr(x - y)
 	  is y:CC do Expr(x - y)
 	  is Error do rhs
 	  else binarymethod(lhs,rhs,MinusS))
      is x:CC do (
 	  when rhs
-	  is y:Integer do Expr(x - toCC(y,x.re.prec))
-     	  is y:Rational do Expr(x - toCC(y,x.re.prec))
+	  is y:ZZ do Expr(x - toCC(y,x.re.prec))
+     	  is y:QQ do Expr(x - toCC(y,x.re.prec))
 	  is y:RR do Expr(x - y)
 	  is y:CC do Expr(x - y)
 	  is Error do rhs
@@ -241,18 +241,18 @@ minusone := toInteger(-1);
 
 export (lhs:Expr) * (rhs:Expr) : Expr := (
      when lhs
-     is x:Integer do (
+     is x:ZZ do (
 	  when rhs
-	  is y:Integer do Expr(x * y)
-     	  is y:Rational do Expr(x * y)
+	  is y:ZZ do Expr(x * y)
+     	  is y:QQ do Expr(x * y)
      	  is y:RR do Expr(toRR(x,y.prec) * y)
      	  is y:CC do Expr(toCC(x,y.re.prec) * y)
 	  is Error do rhs
 	  else binarymethod(lhs,rhs,StarS))
-     is x:Rational do (
+     is x:QQ do (
 	  when rhs
-	  is y:Integer do Expr(x * y)
-     	  is y:Rational do Expr(x * y)
+	  is y:ZZ do Expr(x * y)
+     	  is y:QQ do Expr(x * y)
      	  is y:RR do Expr(y * x)
      	  is y:CC do Expr(y * toRR(x,y.re.prec))
 	  is Error do rhs
@@ -278,16 +278,16 @@ export (lhs:Expr) * (rhs:Expr) : Expr := (
 	  else binarymethod(lhs,rhs,StarS))
      is x:RR do (
 	  when rhs
-	  is y:Integer do Expr(x * y)
-     	  is y:Rational do Expr(x * y)
+	  is y:ZZ do Expr(x * y)
+     	  is y:QQ do Expr(x * y)
      	  is y:RR do Expr(x * y)
      	  is y:CC do Expr(x * y)
 	  is Error do rhs
 	  else binarymethod(lhs,rhs,StarS))
      is x:CC do (
 	  when rhs
-	  is y:Integer do Expr(x * toRR(y,x.re.prec))
-     	  is y:Rational do Expr(x * toRR(y,x.re.prec))
+	  is y:ZZ do Expr(x * toRR(y,x.re.prec))
+     	  is y:QQ do Expr(x * toRR(y,x.re.prec))
      	  is y:RR do Expr(y * x)
      	  is y:CC do Expr(y * x)
 	  is Error do rhs
@@ -345,13 +345,13 @@ setupfun("times",times);
 
 export (lhs:Expr) / (rhs:Expr) : Expr := (
      when lhs
-     is x:Integer do (
+     is x:ZZ do (
 	  when rhs
-	  is y:Integer do (
+	  is y:ZZ do (
 	       if y === 0
 	       then buildErrorPacket("division by zero")
 	       else Expr(x / y))
-     	  is y:Rational do (
+     	  is y:QQ do (
 	       if y === 0
 	       then buildErrorPacket("division by zero")
 	       else Expr(x / y))
@@ -366,13 +366,13 @@ export (lhs:Expr) / (rhs:Expr) : Expr := (
 	       )
 	  is Error do rhs
 	  else binarymethod(lhs,rhs,DivideS))
-     is x:Rational do (
+     is x:QQ do (
 	  when rhs
-	  is y:Integer do (
+	  is y:ZZ do (
 	       if y === 0
 	       then buildErrorPacket("division by zero")
 	       else Expr(x / y))
-     	  is y:Rational do (
+     	  is y:QQ do (
 	       if y === 0
 	       then buildErrorPacket("division by zero")
 	       else Expr(x / y))
@@ -389,11 +389,11 @@ export (lhs:Expr) / (rhs:Expr) : Expr := (
 	  else binarymethod(lhs,rhs,DivideS))
      is x:RR do (
 	  when rhs
-	  is y:Integer do (
+	  is y:ZZ do (
 	       if y === 0
 	       then buildErrorPacket("division by zero")
 	       else Expr(x / y))
-     	  is y:Rational do (
+     	  is y:QQ do (
 	       if y === 0
 	       then buildErrorPacket("division by zero")
 	       else Expr(x / y))
@@ -410,12 +410,12 @@ export (lhs:Expr) / (rhs:Expr) : Expr := (
 	  else binarymethod(lhs,rhs,DivideS))
      is x:CC do (
 	  when rhs
-	  is y:Integer do (
+	  is y:ZZ do (
 	       if y === 0
 	       then buildErrorPacket("division by zero")
 	       else Expr(x / toRR(y,x.re.prec))
 	       )
-     	  is y:Rational do (
+     	  is y:QQ do (
 	       if y === 0
 	       then buildErrorPacket("division by zero")
 	       else Expr(x / toRR(y,x.re.prec))
@@ -452,9 +452,9 @@ divideC(lhs:Code,rhs:Code):Expr := (
 setup(DivideS,divideC);
 export (lhs:Expr) // (rhs:Expr) : Expr := (
      when lhs
-     is x:Integer do (
+     is x:ZZ do (
 	  when rhs
-	  is y:Integer do (
+	  is y:ZZ do (
 	       if y === 0
 	       then Expr(toInteger(0))
 	       else Expr(x//y)
@@ -502,7 +502,7 @@ doublepower(x:double,n:int):double := (
      );
 OneE := Expr(toInteger(1));
 BinaryPowerMethod(x:Expr,y:Expr):Expr := (
-     when y is i:Integer do (
+     when y is i:ZZ do (
 	  if i === 0 then (
 	       onex := lookup(Class(x),OneE);
 	       if onex == nullE then (
@@ -542,7 +542,7 @@ BinaryPowerMethodFun(e:Expr):Expr := (
      else WrongNumArgs(2));
 setupfun("BinaryPowerMethod",BinaryPowerMethodFun);
 SimplePowerMethod(x:Expr,y:Expr):Expr := (
-     when y is i:Integer do (
+     when y is i:ZZ do (
 	  if i === 0 then (
 	       onex := lookup(Class(x),OneE);
 	       if onex == nullE
@@ -575,9 +575,9 @@ setupfun("SimplePowerMethod",SimplePowerMethodFun);
 export (lhs:Expr) ^ (rhs:Expr) : Expr := (
      when lhs
      is Error do lhs
-     is x:Integer do (
+     is x:ZZ do (
 	  when rhs
-	  is y:Integer do (
+	  is y:ZZ do (
 	       if y >= 0 then Expr(x^y) 
 	       else if x === 1 then Expr(x)
 	       else if x === -1 then (
@@ -595,28 +595,28 @@ export (lhs:Expr) ^ (rhs:Expr) : Expr := (
 	       )
      	  is Error do rhs
 	  else binarymethod(lhs,rhs,PowerS))
-     is x:Rational do (
+     is x:QQ do (
 	  when rhs
-	  is y:Integer do Expr(x^y)
+	  is y:ZZ do Expr(x^y)
 	  is y:RR do Expr(toRR(x,y.prec) ^ y)
      	  is Error do rhs
 	  else binarymethod(lhs,rhs,PowerS))
      is x:RR do (
 	  when rhs
-	  is y:Integer do Expr(x^y)
-	  is y:Rational do Expr(x ^ toRR(y,x.prec))
+	  is y:ZZ do Expr(x^y)
+	  is y:QQ do Expr(x ^ toRR(y,x.prec))
 	  is y:RR do Expr(x^y)
      	  is Error do rhs
 	  else binarymethod(lhs,rhs,PowerS))
      is x:CC do (
 	  when rhs
 	  -- DO THESE
-	  -- is y:Integer do Expr(x^y)
+	  -- is y:ZZ do Expr(x^y)
      	  is Error do rhs
 	  else binarymethod(lhs,rhs,PowerS))
      is x:RawRingElement do (
 	  when rhs
-	  is y:Integer do (
+	  is y:ZZ do (
 	       when x^y
 	       is t:RawRingElement do Expr(t)
 	       is null do buildErrorPacket(EngineError("polynomial power failed"))
@@ -625,7 +625,7 @@ export (lhs:Expr) ^ (rhs:Expr) : Expr := (
 	  else binarymethod(lhs,rhs,StarS))
      is x:RawMonomial do (
 	  when rhs
-	  is y:Integer do
+	  is y:ZZ do
 	  if isInt(y)
 	  then (
 	       when x ^ toInt(y)
@@ -695,7 +695,7 @@ setup(notS,notFun);
 factorial(rhs:Code):Expr := (
      when eval(rhs)
      is x:Error do Expr(x)
-     is x:Integer do (
+     is x:ZZ do (
 	  if !isInt(x) then return printErrorMessageE(rhs,"argument too large");
 	  n := toInt(x);
 	  if n==0 || n==1 then return Expr(toInteger(1));
@@ -730,11 +730,11 @@ DotDotfun(lhs:Code,rhs:Code):Expr := (
      left := eval(lhs);
      when left
      is Error do left
-     is x:Integer do (
+     is x:ZZ do (
 	  right := eval(rhs);
 	  when right
 	  is Error do right
-	  is y:Integer do (
+	  is y:ZZ do (
 	       if isInt(x) && isInt(y) then (
 	  	    i := toInt(x);
 		    j := toInt(y);

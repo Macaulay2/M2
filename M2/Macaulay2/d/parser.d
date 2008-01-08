@@ -11,7 +11,7 @@ use gmp;
 use nets;
 use tokens;
 
-export parseInt(s:string):Integer := (
+export parseInt(s:string):ZZ := (
      i := toInteger(0);
      foreach c in s do (
 	  if c == '\"'

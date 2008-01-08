@@ -191,7 +191,7 @@ setupfun("append",appendfun);
 
 exitfun(e:Expr):Expr := (
      when e
-     is Integer do (
+     is ZZ do (
 	  if isInt(e) 
 	  then (
 	       exit(toInt(e));
@@ -256,15 +256,15 @@ setupfun("collectGarbage",CollectGarbage);
 integermod(e:Expr):Expr := (
      when e is a:Sequence do 
      if length(a) == 2 then 
-     when a.0 is x:Integer do 
-     when a.1 is y:Integer do 
+     when a.0 is x:ZZ do 
+     when a.1 is y:ZZ do 
      if y === 0 then a.0
      else Expr(x % y)
      else WrongArgInteger(2)
      else WrongArgInteger(1)
      else WrongNumArgs(2)
      else WrongNumArgs(2));
-installMethod(PercentS,integerClass,integerClass,integermod);
+installMethod(PercentS,ZZClass,ZZClass,integermod);
 
 modC(lhs:Code,rhs:Code):Expr := binarymethod(lhs,rhs,PercentS);
 setup(PercentS,modC);
@@ -422,7 +422,7 @@ raisef(e:Expr):Expr := (
      is s:Sequence do (
 	  if length(s) == 2 then
 	  when s.0 is n:Net do
-	  when s.1 is i:Integer do
+	  when s.1 is i:ZZ do
 	  if isInt(i) then Expr(RaiseNet(n,toInt(i)))
 	  else WrongArgSmallInteger()
 	  else WrongArgInteger()
@@ -435,7 +435,7 @@ replicate(e:Expr):Expr := (
      when e
      is a:Sequence do (
 	  if length(a) == 2 then (
-	       when a.0 is n:Integer do (
+	       when a.0 is n:ZZ do (
 		    if isInt(n) then (
 			 x := a.1;
 			 m := toInt(n);
@@ -445,30 +445,30 @@ replicate(e:Expr):Expr := (
 	       else WrongArgInteger(1))
 	  else WrongNumArgs(2))
      else WrongNumArgs(2));
-installMethod(ColonS,integerClass,thingClass,replicate);
+installMethod(ColonS,ZZClass,thingClass,replicate);
 
 bitorfun(e:Expr):Expr := (
      when e is a:Sequence do (
      	  if length(a) == 2 then (
-     	       when a.0 is x:Integer do (
-     		    when a.1 is y:Integer do Expr(x | y) 
+     	       when a.0 is x:ZZ do (
+     		    when a.1 is y:ZZ do Expr(x | y) 
      		    else WrongArgInteger(2)
 		    )
 	       else WrongArgInteger(1))
 	  else WrongNumArgs(2))
      else WrongNumArgs(2));
-installMethod(BarS,integerClass,integerClass,bitorfun);
+installMethod(BarS,ZZClass,ZZClass,bitorfun);
 
 bitandfun(e:Expr):Expr := (
      when e is a:Sequence do (
      	  if length(a) == 2 then (
-	       when a.0 is x:Integer do (
-		    when a.1 is y:Integer do Expr(x & y)
+	       when a.0 is x:ZZ do (
+		    when a.1 is y:ZZ do Expr(x & y)
 		    else WrongArgInteger(2))
 	       else WrongArgInteger(1))
  	  else WrongNumArgs(2))
      else WrongNumArgs(2));
-installMethod(AmpersandS,integerClass,integerClass,bitandfun);
+installMethod(AmpersandS,ZZClass,ZZClass,bitandfun);
 
 newNetFile(e:Expr):Expr := (
      when e is a:Sequence do (
@@ -634,7 +634,7 @@ unstack(e:Expr):Expr := (
 setupfun("unstack",unstack);
 
 alarm(e:Expr):Expr := (
-     when e is i:Integer do 
+     when e is i:ZZ do 
      if isInt(i)
      then Expr(toInteger(alarm(toInt(i))))
      else WrongArgSmallInteger()
@@ -733,11 +733,11 @@ removefun(e:Expr):Expr := (
 	  else (
 	       when args.0
 	       is x:List do (
-		    when args.1 is i:Integer do
+		    when args.1 is i:ZZ do
 		     if isInt(i) then Expr(remove(x,toInt(i))) else WrongArgSmallInteger(2)
 		    else WrongArgInteger(2))
 	       is x:Sequence do (
-		    when args.1 is i:Integer do
+		    when args.1 is i:ZZ do
 		    if isInt(i) then Expr(remove(x,toInt(i))) else WrongArgSmallInteger(2)
 		    else WrongArgInteger(2))
 	       is f:Database do (
@@ -837,7 +837,7 @@ factorInt(n:int):Expr := (
      Expr(facs));
 
 factorInteger(e:Expr):Expr := (
-     when e is i:Integer do (
+     when e is i:ZZ do (
 	  if isInt(i) then factorInt(toInt(i))
 	  else WrongArgSmallInteger())
      else WrongArgSmallInteger());
@@ -1125,7 +1125,7 @@ setupfun("newmethod1234c",newmethod1234c);
 
 drop(v:Sequence,b:Expr):Expr := (
      when b
-     is n:Integer do (
+     is n:ZZ do (
 	  if isInt(n) then (
 	       m := toInt(n);
 	       if m < 0 then (
@@ -1142,12 +1142,12 @@ drop(v:Sequence,b:Expr):Expr := (
      is w:List do (
 	  if length(w.v) == 2 then (
 	       when w.v.0
-	       is ii:Integer do (
+	       is ii:ZZ do (
 		    if isInt(ii) then (
 			 i := toInt(ii);
 			 if i < 0 then i = 0;
 			 when w.v.1
-			 is jj:Integer do (
+			 is jj:ZZ do (
 			      if isInt(jj) then (
 				   j := toInt(jj);
 				   if j > length(v)-1 then j = length(v)-1;
@@ -1185,7 +1185,7 @@ setupfun("drop",drop);
 
 take(v:Sequence,b:Expr):Expr := (
      when b
-     is n:Integer do (
+     is n:ZZ do (
 	  if isInt(n) then (
 	       m := toInt(n);
 	       if m < 0 then (
@@ -1206,12 +1206,12 @@ take(v:Sequence,b:Expr):Expr := (
      is w:List do (
 	  if length(w.v) == 2 then (
 	       when w.v.0
-	       is ii:Integer do (
+	       is ii:ZZ do (
 		    if isInt(ii) then (
 			 i := toInt(ii);
 			 if i < 0 then i = 0;
 			 when w.v.1
-			 is jj:Integer do (
+			 is jj:ZZ do (
 			      if isInt(jj) then (
 				   j := toInt(jj);
 				   if j > length(v)-1 then j = length(v)-1;
@@ -1299,7 +1299,7 @@ echoOff(e:Expr):Expr := (
 setupfun("echoOff",echoOff);
 kill(e:Expr):Expr := (
      when e 
-     is pid:Integer do if !isInt(pid) then WrongArgSmallInteger() else (
+     is pid:ZZ do if !isInt(pid) then WrongArgSmallInteger() else (
 	  id := toInt(pid);
 	  if kill(id,9) == ERROR then buildErrorPacket("can't kill process")
 	  else if wait(id) == ERROR then buildErrorPacket("process killed, but wait fails") 
@@ -1436,7 +1436,7 @@ fileTime(e:Expr):Expr := (
 	  else Expr(toInteger(r))
 	  )
      is args:Sequence do if length(args) != 2 then WrongNumArgs(2) else (
-	  when args.0 is modtime:Integer do if !isInt(modtime) then WrongArgSmallInteger(2) else (
+	  when args.0 is modtime:ZZ do if !isInt(modtime) then WrongArgSmallInteger(2) else (
 	       when args.1 is name:string do (
 		    r := setFileTime(name,toInt(modtime));
 		    if r == -1 then buildErrorPacket("can't set modification time of file '" + name + "' : " + syserrmsg())
@@ -1466,7 +1466,7 @@ setupfun("mkdir",mkdir);
 
 --import setFactorySeed(s:int):void;
 --setFactorySeed(e:Expr):Expr := (
---     when e is s:Integer do (
+--     when e is s:ZZ do (
 --	  if isInt(s) then (
 --	       setFactorySeed(toInt(s));
 --	       nullE
@@ -1487,11 +1487,11 @@ wrap(e:Expr):Expr := (
      is s:Sequence do (
 	  if length(s) == 3 then (
 	       when s.0 
-	       is Wid:Integer do if !isInt(Wid) then return WrongArgSmallInteger(1) else wid = toInt(Wid)
+	       is Wid:ZZ do if !isInt(Wid) then return WrongArgSmallInteger(1) else wid = toInt(Wid)
 	       is Sep:string do if length(Sep) == 0 then sep = char(0) else if length(Sep) == 1 then sep = Sep.0 else return WrongArg(1,"a string of length 0 or 1")
 	       else return WrongArg(1,"a string or an integer");
 	       when s.1
-	       is Wid:Integer do if !isInt(Wid) then return WrongArgSmallInteger(1) else wid = toInt(Wid)
+	       is Wid:ZZ do if !isInt(Wid) then return WrongArgSmallInteger(1) else wid = toInt(Wid)
 	       is Sep:string do if length(Sep) == 0 then sep = char(0) else if length(Sep) == 1 then sep = Sep.0 else return WrongArg(1,"a string of length 0 or 1")
 	       else return WrongArg(1,"a string or an integer");
 	       when s.2
@@ -1501,7 +1501,7 @@ wrap(e:Expr):Expr := (
 	       )
 	  else if length(s) == 2 then (
 	       when s.0 
-	       is Wid:Integer do if !isInt(Wid) then return WrongArgSmallInteger(1) else wid = toInt(Wid)
+	       is Wid:ZZ do if !isInt(Wid) then return WrongArgSmallInteger(1) else wid = toInt(Wid)
 	       is Sep:string do if length(Sep) == 0 then sep = char(0) else if length(Sep) == 1 then sep = Sep.0 else return WrongArg(1,"a string of length 0 or 1")
 	       else return WrongArg(1,"a string or an integer");
 	       when s.1
@@ -1636,7 +1636,7 @@ regexmatch(e:Expr):Expr := (
      else WrongArgString(1)
      else if length(a) == 3 then
      when a.0 is regexp:string do
-     when a.1 is offset:Integer do if !isInt(offset) then WrongArgSmallInteger(2) else
+     when a.1 is offset:ZZ do if !isInt(offset) then WrongArgSmallInteger(2) else
      when a.2 is text:string do (
 	  r := regexmatch(regexp,toInt(offset),text);
 	  if length(r) != 0 then toPairs(r) 
@@ -1865,7 +1865,7 @@ store(e:Expr):Expr := (			    -- called with (symbol,newvalue)
 	  is s:string do (
 	       if sym === printingSeparatorS then (printingSeparator = s; e)
 	       else buildErrorPacket(msg))
-	  is i:Integer do if !isInt(i) then buildErrorPacket(msg)
+	  is i:ZZ do if !isInt(i) then buildErrorPacket(msg)
 	  else (
 	       n := toInt(i);
 	       if sym === loadDepthS then (loadDepth = n; e)
@@ -1903,7 +1903,7 @@ fileMode(e:Expr):Expr := (
 	       when s.1 
 	       is o:file do (
 	  	    when s.0
-		    is mode:Integer do (
+		    is mode:ZZ do (
 	  		 if !isInt(mode)
 			 then WrongArgSmallInteger(1)
 			 else (
@@ -1914,7 +1914,7 @@ fileMode(e:Expr):Expr := (
 	  	    else WrongArgInteger(1))
 	       is filename:string do (
 		    when s.0 
-		    is mode:Integer do (
+		    is mode:ZZ do (
 			 if !isInt(mode)
 			 then WrongArgSmallInteger(1)
 			 else (

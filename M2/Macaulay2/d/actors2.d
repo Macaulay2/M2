@@ -564,8 +564,8 @@ leftshiftfun(e:Expr):Expr := (
      is a:Sequence do (
 	  if length(a) == 2 then (
 	       when a.0 
-	       is x:Integer do (
-		    when a.1 is y:Integer do (
+	       is x:ZZ do (
+		    when a.1 is y:ZZ do (
 			 if isInt(y) 
 			 then Expr(x << toInt(y))
 			 else WrongArgSmallInteger(2))
@@ -573,7 +573,7 @@ leftshiftfun(e:Expr):Expr := (
 	       else  WrongArgInteger(1))
 	  else WrongNumArgs(2))
      else WrongNumArgs(2));
-installMethod(Expr(LessLessS),integerClass,integerClass,
+installMethod(Expr(LessLessS),ZZClass,ZZClass,
      Expr(CompiledFunction(leftshiftfun,nextHash()))
      );
 
@@ -582,8 +582,8 @@ rightshiftfun(e:Expr):Expr := (
      is a:Sequence do (
 	  if length(a) == 2 then (
 	       when a.0 
-	       is x:Integer do (
-		    when a.1 is y:Integer do (
+	       is x:ZZ do (
+		    when a.1 is y:ZZ do (
 			 if isInt(y) 
 			 then Expr(x >> toInt(y))
 			 else WrongArgSmallInteger(2))
@@ -591,7 +591,7 @@ rightshiftfun(e:Expr):Expr := (
 	       else  WrongArgInteger(1))
 	  else WrongNumArgs(2))
      else WrongNumArgs(2));
-installMethod(Expr(GreaterGreaterS),integerClass,integerClass,
+installMethod(Expr(GreaterGreaterS),ZZClass,ZZClass,
      Expr(CompiledFunction(rightshiftfun,nextHash()))
      );
 
@@ -646,18 +646,18 @@ setupop(timeS,showtimefun);
 
 realPart(e:Expr):Expr := (
      when e
-     is Integer do e
+     is ZZ do e
      is RR do e
      is z:CC do Expr(realPart(z))
-     is Rational do e
+     is QQ do e
      else WrongArg("a number"));
 setupfun("realPart",realPart);
 imaginaryPart(e:Expr):Expr := (
      when e
-     is Integer do Expr(toInteger(0))
+     is ZZ do Expr(toInteger(0))
      is RR do toExpr(0)
      is z:CC do Expr(imaginaryPart(z))
-     is Rational do toExpr(0)
+     is QQ do toExpr(0)
      else WrongArg("a number"));
 setupfun("imaginaryPart",imaginaryPart);
 
