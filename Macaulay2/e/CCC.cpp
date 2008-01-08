@@ -35,7 +35,7 @@ CCC *CCC::create(int prec)
 
 void CCC::text_out(buffer &o) const
 {
-  o << "CCC";
+  o << "CCC_" << precision;
 }
 
 M2_CCC CCC::new_elem() const

@@ -117,7 +117,7 @@ expression RealNumberRing := R -> new Subscript from {symbol RRR, R.precision}
 BigNumberRing _ ZZ := (T,prec) -> new T.NumberRing of T from prec
 RRR.NumberRing = RealNumberRing
 net RealNumberRing := R -> net expression R
-toString RealNumberRing := R -> concatenate("RRR ",toString R.precision)
+toString RealNumberRing := R -> concatenate("RRR_",toString R.precision)
 ring RRR := x -> new RealNumberRing {* of RRR *} from precision x
 
 new RRR from RawRingElement := (RRR,x) -> rawToRRR x
