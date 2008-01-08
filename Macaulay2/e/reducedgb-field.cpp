@@ -122,9 +122,6 @@ void ReducedGB_Field::remainder(POLY &f, bool use_denom, ring_elem &denom)
 					   h.f, h.fsyz,
 					   g.f, g.fsyz,
 					   use_denom, denom);
-#ifdef DEVELOPMENT
-#warning "reduce h.fsyz??"
-#endif
 	    }
 	  else
 	    {
@@ -138,6 +135,7 @@ void ReducedGB_Field::remainder(POLY &f, bool use_denom, ring_elem &denom)
   h.f = head.next;
   //  R->gbvector_remove_content(h.f, h.fsyz, use_denom, denom);
   f.f = h.f;
+  originalR->get_quotient_info()->gbvector_normal_form(Fsyz, h.fsyz);
   f.fsyz = h.fsyz;
   R->exponents_delete(_EXP);
 }

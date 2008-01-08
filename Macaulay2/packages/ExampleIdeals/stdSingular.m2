@@ -11,7 +11,7 @@ ideal"5t3x2z+2t2y3x5,7y+4x2y+y2x+2zt,3tz+3yz2+2yz4"
 *}
 --------------------------------------------------------
 --std2
-R = kk{t,x,y,z,u,v}
+R = kk{t,x,y,z,u,v, MonomialSize=>8}
 ideal"xy+xz+2xu+yu+zu+2u2+yv+zv+2uv-3txz-y2z-yz2-3tzu-2yzu-3tzv+3tyz2,
       y2+z2+2u2-3u2v,
       tx+z2+2xv-txy,
@@ -45,7 +45,7 @@ ideal(diff(x,F),diff(y,F),diff(z,F))
 *}
 --------------------------------------------------------
 --std4
-R = kk{t,x,y,z,u}
+R = kk{t,x,y,z,u, MonomialSize=>8}
 ideal"2yz+2xu+t2x,
     2tx+z2+2yu+x2y,
     x2+2ty+yz+2zu,
@@ -77,7 +77,7 @@ ideal(diff(x,F),diff(y,F),diff(z,F))
 *}
 --------------------------------------------------------
 --std6
-R = kk{x,y,z}
+R = kk{x,y,z, MonomialSize=>8}
 F = singG(6,8,10,5,5,0)
 ideal(F,diff(x,F),diff(y,F),diff(z,F))
 {*
@@ -91,7 +91,7 @@ ideal(F,diff(x,F),diff(y,F),diff(z,F))
 *}
 --------------------------------------------------------
 --std7
-R = kk{t,x,y,z}
+R = kk{t,x,y,z, MonomialSize=>8}
 J = ideal"17y6+49y5-9y4+12y3+33y2+11y+73x2z,
   21x2y+17x2z+63y3+11xz+77y2+91y+xz2,
   26y2+44xz+12y+9zxy"
@@ -113,7 +113,7 @@ J^2 + x^2*z^2*J
 *}
 --------------------------------------------------------
 --std8
-R = kk{t,x,y,z,u,v,w,a,b,c,d}
+R = kk{t,x,y,z,u,v,w,a,b,c,d, MonomialSize=>8}
 ideal"bcd-u5,
   y2b2c2-2yzu4bc+z2u8,
   t2a2b2-2tyzu3ab+y2z2u6,
@@ -220,7 +220,9 @@ ideal"txz+xyz+xy2z+xyz2,
 *}
 --------------------------------------------------------
 --std14
-R = kk{t,x,y,z}
+R = kk{t,x,y,z, MonomialSize=>8}
+R = kk[t,x,y,z,MonomialOrder=>{Weights=>{-32,-32,-24,-117}},Global=>false]
+	   -- Does this order help out??
 J = ideal"-3x2-t3+x3-y4,ty+5x3-3t4,-20t2+x2-y2"
 J^3 + z*J^2 + z^2*J
 {* -- Singular code
@@ -256,6 +258,13 @@ ideal"47x7y8z3+91x7y4z7+28x3y6z8+63x2y,
     32x7y4z8+53x6y6z2+17x3y7z2+74xy5z,
     32x10y9z6+23x5y8z8+21x2y3z7+27y5z,
     81x10y10z+19x3y5z5+79x5z7+36xy2z3"
+R = kk{x,y,z}
+ideal"x2y,
+    21x3y2z10+57xy7z+15x3yz5+51xy3z3,
+    32x7y4z8+53x6y6z2+17x3y7z2+74xy5z,
+    32x10y9z6+23x5y8z8+21x2y3z7+27y5z,
+    81x10y10z+19x3y5z5+79x5z7+36xy2z3"
+
 {* -- Singular code
   ring R=32003,(x,y,z),ds;
   ideal i = 63x2y+28x3y6z8+47x7y8z3+91x7y4z7,

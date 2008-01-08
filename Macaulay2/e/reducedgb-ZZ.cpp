@@ -169,6 +169,7 @@ void ReducedGB_ZZ::remainder(POLY &f, bool use_denom, ring_elem &denom)
     }
   h.f = head.next;
   f.f = h.f;
+  originalR->get_quotient_info()->gbvector_normal_form(Fsyz, h.fsyz);
   f.fsyz = h.fsyz;
   R->exponents_delete(_EXP);
 }
