@@ -45,12 +45,14 @@ BigNumber.synonym = "big number"
 
 RealNumberRing = new Type of {* ImmutableType *} Ring
 RealNumberRing.synonym = "real number ring"
-new RealNumberRing of RR from ZZ := (RealNumberRing, RR,prec) -> hashTable { 
-     symbol precision => prec,
-     symbol Engine => true,
-     symbol baseRings => {},
-     symbol RawRing => rawRR prec
-     }
+new RealNumberRing of RR from ZZ := memoize (
+     (RealNumberRing, RR,prec) -> newClass(RealNumberRing,RR,
+	  hashTable { 
+	       symbol precision => prec,
+	       symbol Engine => true,
+	       symbol baseRings => {},
+	       symbol RawRing => rawRR prec
+	       }))
 raw RealNumberRing := R -> R.RawRing
 isField RealNumberRing := R -> true
 degreeLength RealNumberRing := R -> 0

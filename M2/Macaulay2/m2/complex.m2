@@ -14,12 +14,14 @@ conjugate CC := z -> toCC(realPart z, - imaginaryPart z)
 
 ComplexNumberRing = new Type of {* ImmutableType *} Ring
 ComplexNumberRing.synonym = "real number ring"
-new ComplexNumberRing of CC from ZZ := (ComplexNumberRing, CC, prec) -> hashTable { 
-     symbol precision => prec,
-     symbol Engine => true,
-     symbol baseRings => {},
-     symbol RawRing => rawCC prec
-     }
+new ComplexNumberRing of CC from ZZ := memoize(
+     (ComplexNumberRing, CC, prec) -> newClass(ComplexNumberRing,CC,
+	  hashTable {
+	       symbol precision => prec,
+	       symbol Engine => true,
+	       symbol baseRings => {},
+	       symbol RawRing => rawCC prec
+	       }))
 raw ComplexNumberRing := R -> R.RawRing
 isField ComplexNumberRing := R -> true
 degreeLength ComplexNumberRing := R -> 0
