@@ -41,9 +41,9 @@ ComplexNumberRing = new Type of ImmutableType
 ComplexNumberRing.synonym = "real number ring"
 new ComplexNumberRing {* of CCC *} from ZZ := (ComplexNumberRing {* ,CCC *} ,prec) -> hashTable { 
      symbol precision => prec,
-     symbol RawRing => rawCCC prec
+     symbol cache => new CacheTable from { symbol RawRing => rawCCC prec }
      }
-raw ComplexNumberRing := R -> R.RawRing
+raw ComplexNumberRing := R -> R.cache.RawRing
 isField ComplexNumberRing := R -> true
 degreeLength ComplexNumberRing := R -> 0
 liftable(ZZ,ComplexNumberRing) := 

@@ -87,9 +87,9 @@ RealNumberRing = new Type of ImmutableType
 RealNumberRing.synonym = "real number ring"
 new RealNumberRing {* of RRR *} from ZZ := (RealNumberRing {* ,RRR *} ,prec) -> hashTable { 
      symbol precision => prec,
-     symbol RawRing => rawRRR prec
+     symbol cache => new CacheTable from { symbol RawRing => rawRRR prec }
      }
-raw RealNumberRing := R -> R.RawRing
+raw RealNumberRing := R -> R.cache.RawRing
 isField RealNumberRing := R -> true
 degreeLength RealNumberRing := R -> 0
 liftable(ZZ,RealNumberRing) := 
