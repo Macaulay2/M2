@@ -41,7 +41,7 @@ RRR *RRR::create(int prec)
 
 void RRR::text_out(buffer &o) const
 {
-  o << "RRR";
+  o << "RRR_" << precision;
 }
 
 mpfr_ptr RRR::new_elem() const
