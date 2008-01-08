@@ -117,13 +117,6 @@ Ring * Vector := (R,v) -> (
 isHomogeneous Vector := (v) -> isHomogeneous v#0
 
 -----------------------------------------------------------------------------
--- ImmutableType
-
-ImmutableType = new Type of HashTable
-ImmutableType.synonym = "immutable type"
-globalAssignment ImmutableType
-
------------------------------------------------------------------------------
 -- Module
 
 Module = new Type of ImmutableType

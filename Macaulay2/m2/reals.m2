@@ -72,14 +72,24 @@ RRR.char = 0
 RRR.Engine = true
 isConstant RRR := i -> true
 
+-----------------------------------------------------------------------------
+-- ImmutableType
+
+ImmutableType = new Type of HashTable
+ImmutableType.synonym = "immutable type"
+globalAssignment ImmutableType
+
+-----------------------------------------------------------------------------
+
 BigNumberRing.synonym = "big number ring"
 BigNumber.synonym = "big number"
-RealNumberRing = new Type of Ring
+RealNumberRing = new Type of ImmutableType
 RealNumberRing.synonym = "real number ring"
 new RealNumberRing {* of RRR *} from ZZ := (RealNumberRing {* ,RRR *} ,prec) -> hashTable { 
      symbol precision => prec,
      symbol RawRing => rawRRR prec
      }
+raw RealNumberRing := R -> R.RawRing
 isField RealNumberRing := R -> true
 degreeLength RealNumberRing := R -> 0
 liftable(ZZ,RealNumberRing) := 

@@ -46,7 +46,7 @@ typedef struct M2_CC_struct { double re, im; } *M2_CC; /* same as Complex (see t
 typedef __mpz_struct *M2_Integer;
 typedef __mpq_struct *M2_Rational;
 typedef __mpfr_struct *M2_RRR; /* must agree with RRR in gmp.d */
-typedef struct M2_CCC_struct { __mpfr_struct re, im; } *M2_CCC; /* must agree with CCC in gmp.d */
+typedef struct M2_CCC_struct { __mpfr_struct *re, *im; } *M2_CCC; /* must agree with CCC in gmp.d */
 
 #ifndef DCODE
   /* The C code produced from the D language has its own declarations for these things */
