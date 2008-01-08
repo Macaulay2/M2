@@ -180,6 +180,22 @@ matrixTable := options -> (f) -> (
 	  if instance(type,Ring) then (
 	       R := type;
 	       map(R^#f,, f, options))
+	  else if instance(type,BigNumberType) then (
+	       rings := unique apply(flatten f, ring);
+	       if # rings === 1 then (
+		    R = rings#0;
+		    map(R^#f,, f, options))
+	       else (
+		    prec := min apply(flatten f, precision);
+		    f = applyTable(f, 
+			 if type === RR 			    -- improve this code by implementing "setPrecision(prec,x)"
+			 then ( x -> toRR(prec,x) )
+			 else if type === CC
+			 then ( x -> toCC(prec,x) )
+			 else notImplemented()
+			 );
+		    R = ring f#0#0;
+		    map(R^#f,, f, options)))
 	  else if type.?matrix then (type.matrix options)(f)
 	  else error "no method for forming a matrix from elements of this type")
      else if all(types, T -> instance(T,Ring)) then (
@@ -189,7 +205,7 @@ matrixTable := options -> (f) -> (
 	       );
 	  map(R^#f,,f,options))
      else if all(types, T -> instance(T,Ring) or T === Matrix) then (
-	  rings := unique apply(select(flatten f,m -> class m === Matrix), ring);
+	  rings = unique apply(select(flatten f,m -> class m === Matrix), ring);
 	  if #rings > 1 then error "matrices over different rings";
 	  R = rings#0;
 	  f = apply(f, row -> new MutableList from row);
