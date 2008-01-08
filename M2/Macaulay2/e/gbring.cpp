@@ -848,7 +848,8 @@ void GBRing::gbvector_text_out(buffer &o,
       return;
     }
 
-  bool rank1 = (F->rank() == 1);
+#warning "rank1 is always set to false"
+  bool rank1 = false && (F->rank() == 1);
   int old_one = p_one;
   int old_parens = p_parens;
   int old_plus = p_plus;
