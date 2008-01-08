@@ -266,7 +266,7 @@ There are several methods for installing Macaulay2 under Mac OS X.
 	  cd BUILD/opt32
 	  ../../configure --prefix=$PWD/installed \
                 --enable-dmg \
-                --enable-build-libraries="gc gdbm gmp readline ntl factory libfac"
+                --enable-build-libraries="gc gdbm gmp mpfr readline ntl factory libfac"
           make
 	  make install
 	  # now there is a dmg file in BUILD/opt32
