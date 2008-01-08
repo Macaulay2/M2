@@ -3281,6 +3281,36 @@ mpfrConstantPi(e:Expr):Expr := (
      else WrongArgInteger(1));
 setupfun("mpfrConstantPi",mpfrConstantPi);
 
+mpfrSetStr(prec:int, base:int, s:string):Expr := (
+     z := newBigReal(prec);
+     r := Ccode( int, "mpfr_set_str(", 
+	  "(__mpfr_struct *)", z, ",",
+	  "(char *)", s, "->array_,",			    -- don't forget to terminate it with NUL
+	  base, ",",					    -- 2 .. 36
+	  "GMP_RNDN)" );
+     if r == 0 then Expr(z) else buildErrorPacket("failed to convert string to RRR"));
+
+mpfrSetStr(e:Expr):Expr := (
+     when e is s:Sequence do (
+	  if length(s) == 2 then (
+	       when s.0 is prec:Integer do (
+		    if !isInt(prec) then WrongArgSmallInteger(1) else
+		    when s.1 is s:string do mpfrSetStr(toInt(prec),10,s)
+		    else WrongArgString(2))
+	       else WrongArgInteger(1))
+	  else if length(s) == 3 then (
+	       when s.0 is prec:Integer do 
+	       when s.1 is base:Integer do (
+		    if !isInt(prec) then WrongArgSmallInteger(1) else
+		    if !isInt(base) then WrongArgSmallInteger(2) else
+		    when s.2 is s:string do mpfrSetStr(toInt(prec),toInt(base),s)
+		    else WrongArgString(3))
+	       else WrongArgInteger(2)
+	       else WrongArgInteger(1))
+	  else WrongNumArgs(2,3))
+     else WrongNumArgs(2,3));
+setupfun("mpfrSetStr",mpfrSetStr);
+
 -- Local Variables:
 -- compile-command: "make -C $M2BUILDDIR/Macaulay2/d "
 -- End:

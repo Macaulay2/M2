@@ -1049,7 +1049,7 @@ Expression#{Standard,AfterPrint} = x -> (
 
 expression VisibleList := v -> new Holder from {apply(v,expression)}
 
-expression RR := x -> if x < 0 then new Minus from {-x} else new Holder from {x}
+expression RR := expression RRR := x -> if x < 0 then new Minus from {-x} else new Holder from {x}
 
 expression Thing := x -> new Holder from { if ReverseDictionary#?x then ReverseDictionary#x else x }
 expression Symbol := x -> new Holder from { x }

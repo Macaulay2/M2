@@ -777,7 +777,7 @@ isZero    (x:RRR):bool ::=  0 == Ccode(int, "mpfr_sgn((__mpfr_struct *)", x, ")"
 isNegative(x:RRR):bool ::= -1 == Ccode(int, "mpfr_sgn((__mpfr_struct *)", x, ")");
 
 export precision(x:RRR):int := int(Ccode(ulong, "mpfr_get_prec((__mpfr_struct*)",x,")"));
-export precision(x:CCC):int := int(Ccode(ulong, "mpfr_get_prec((__mpfr_struct*)",x,")"));
+export precision(x:CCC):int := precision(x.re);
 
 export newBigReal(prec:int):RRR := (
      x := RRR(0,0,0,null());
