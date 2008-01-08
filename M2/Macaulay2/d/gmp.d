@@ -898,6 +898,8 @@ export tostring(x:RRR):string := (
      s := getstr(Cstring(null()), e, base, 0, x);
      "."+tostring(s) + "*10^" + tostring(int(e)));
 
+export tostring(z:CCC):string := tostring(realPart(z)) + " + " + tostring(imaginaryPart(z)) + " * ii";
+
 export tostring(x:RRR,digits:int):string := (
      e := long(0);
      s := getstr(Cstring(null()), e, base, digits, x);
