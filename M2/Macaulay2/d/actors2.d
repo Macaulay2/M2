@@ -21,6 +21,7 @@ use actors;
 use basic;
 use struct;
 use objects;
+use util;
 
 dbmfirst(e:Expr):Expr := (
      when e
@@ -188,16 +189,6 @@ newClassParent(e:Expr,class:HashTable,parent:HashTable,returned:bool):Expr := (
 	  else if !ancestor(class,c) then buildErrorPacket("expected new class to be a specialization of the old one")
 	  else if Parent(e) != parent then buildErrorPacket("unable to set new parent")
 	  else Expr(SpecialExpr(class,e))));
-
-newComplex(args:Expr):Expr := (
-     when args is v:Sequence do
-     if length(v) != 2 then WrongNumArgs(2) else
-     when v.0 is r0:Real do
-     when v.1 is r1:Real do Expr(Complex(r0.v,r1.v))
-     else WrongArg(2,"a real number")
-     else WrongArg(1,"a real number")
-     else WrongArg("a pair of real numbers"));
-setupfun("newCC",newComplex);
 
 newClass(e:Expr,class:HashTable,returned:bool):Expr := (
      -- same as above, but no parent specified, so leave what s provided alone
@@ -630,7 +621,7 @@ setupfun("pseudocode", pseudocode);
 
 cpuTime(e:Expr):Expr := (
      when e
-     is s:Sequence do if length(s) == 0 then Expr(Real(etime()))
+     is s:Sequence do if length(s) == 0 then toExpr(etime())
      else WrongNumArgs(0)
      else WrongNumArgs(0));
 setupfun("cpuTime",cpuTime);
@@ -642,7 +633,7 @@ timefun(a:Code):Expr := (
      y := etime();
      when ret
      is Error do ret
-     else list(timeClass,Sequence(Expr(Real((x-v)-(y-x))),ret)));
+     else list(timeClass,Sequence(toExpr((x-v)-(y-x)),ret)));
 setupop(timingS,timefun);
 showtimefun(a:Code):Expr := (
      v := etime();
@@ -656,19 +647,17 @@ setupop(timeS,showtimefun);
 realPart(e:Expr):Expr := (
      when e
      is Integer do e
-     is Real do e
-     is z:Complex do Expr(Real(z.re))
-     is z:CCC do Expr(realPart(z))
+     is RR do e
+     is z:CC do Expr(realPart(z))
      is Rational do e
      else WrongArg("a number"));
 setupfun("realPart",realPart);
 imaginaryPart(e:Expr):Expr := (
      when e
      is Integer do Expr(toInteger(0))
-     is Real do Expr(Real(0.))
-     is z:Complex do Expr(Real(z.im))
-     is z:CCC do Expr(imaginaryPart(z))
-     is Rational do Expr(newRational(toInteger(0),toInteger(1)))
+     is RR do toExpr(0)
+     is z:CC do Expr(imaginaryPart(z))
+     is Rational do toExpr(0)
      else WrongArg("a number"));
 setupfun("imaginaryPart",imaginaryPart);
 

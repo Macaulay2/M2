@@ -34,7 +34,7 @@ promote(Matrix,RingElement) := promote(Matrix,Number) := Matrix => (f,S) -> (
      promote(f, ring f, S))
 
 scan({
-	  (QQ, { RR, RRR })
+	  (QQ, { RR })
 	  }, 
      (K,Ls) -> scan(Ls, L -> (
 	       promote(Matrix,K,L) := (m,K,L) -> map(L^(numgens target m),L^(numgens source m),applyTable(entries m, x -> promote(x,L)));
@@ -42,12 +42,10 @@ scan({
 	       )))
 
 scan((
-	  (ZZ, { QQ, RR, RRR, CC, CCC }),		    -- Mike gave me this list of basic promotions
-	  (QQ, { RR, RRR, CC, CCC }),
-	  (RR, { RRR, CC, CCC }),
-	  (RRR,{ CCC }),
-	  (CC, { CCC }),
-	  (CCC,{  })
+	  (ZZ, { QQ, RR, CC }),
+	  (QQ, { RR, CC }),
+	  (RR,{ CC }),
+	  (CC,{  })
 	  ), 
      (K,Ls) -> (
 	  promote(K,K) := (f,K) -> f;

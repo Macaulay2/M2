@@ -206,6 +206,7 @@ bump();
      export notS := makeKeyword(unaryword("not"));
 -- binary predicates on terms:
 bump();
+     export incomparableS := makeProtectedSymbolClosure("incomparable");
      export LessS := makeKeyword(unaryright("<"));
      export GreaterS := makeKeyword(unaryright(">"));
      export LessEqualS := makeKeyword(unaryright("<="));
@@ -327,6 +328,7 @@ export LeftArrowE := Expr(LeftArrowS);
 export EqualEqualE := Expr(EqualEqualS);
 export LessE := Expr(LessS);
 export GreaterE := Expr(GreaterS);
+export incomparableE := Expr(incomparableS);
 
 export NewS := makeProtectedSymbolClosure("NewMethod");
 export NewE := Expr(NewS);

@@ -266,7 +266,7 @@ document { Key => {(irreducibleDecomposition,MonomialIdeal),irreducibleDecomposi
 	assert( I == intersect w )
      ///,
      Outputs => {{ "a list of irreducible monomial ideals whose intersection is ", TT "I" }}}
-undocumented {(isConstant, ZZ),(isConstant, QQ),(isConstant, RRR),(isConstant, RR),(isConstant, CC)}
+undocumented {(isConstant, ZZ),(isConstant, QQ),(isConstant, RR),(isConstant, CC)}
 document { Key => {isConstant,(isConstant, RingElement)},
      Headline => "whether a ring element is constant",
      Usage => "isConstant f",

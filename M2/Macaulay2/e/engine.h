@@ -428,11 +428,11 @@ extern "C" {
   const RingElementOrNull *IM2_RingElement_from_rational(const Ring *R, 
 							 M2_Rational r); /* rawFromNumber*/
 
-  const RingElement *IM2_RingElement_from_double(const Ring *R, 
-						 double d); /* drg: connected rawFromNumber*/
+  //  const RingElement *IM2_RingElement_from_double(const Ring *R, 
+  //						 double d); /* drg: connected rawFromNumber*/
 
-  const RingElement *IM2_RingElement_from_complex(const Ring *R, 
-						  M2_CC z); /* drg: connected rawFromNumber*/
+  // const RingElement *IM2_RingElement_from_complex(const Ring *R, 
+  //						  M2_CC z); /* drg: connected rawFromNumber*/
 
   M2_IntegerOrNull IM2_RingElement_to_Integer(const RingElement *a); /* drg: connected rawToInteger*/
     /* If the ring of a is ZZ, or ZZ/p, this returns the underlying representation.
@@ -442,11 +442,11 @@ extern "C" {
     /* If the ring of a is ZZ, or ZZ/p, this returns the underlying representation.
        Otherwise, NULL is returned, and an error is given */
 
-  double IM2_RingElement_to_double(const RingElement *a); /* rawToReal */
+  //  double IM2_RingElement_to_double(const RingElement *a); /* rawToReal */
     /* If the ring of a is RR, this returns the underlying representation of 'a'.
        Otherwise 0.0 is returned. */
 
-  M2_CC IM2_RingElement_to_complex(const RingElement *a); /* rawToComplex */
+  //  M2_CC IM2_RingElement_to_complex(const RingElement *a); /* rawToComplex */
     /* If the ring of a is RR, this returns the underlying representation of 'a'.
        Otherwise 0.0 is returned. */
 

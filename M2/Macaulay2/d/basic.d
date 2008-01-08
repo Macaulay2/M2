@@ -26,16 +26,14 @@ export hash(e:Expr):int := (
      is CodeClosure do 73889				    -- improve this later!
      is x:DictionaryClosure do x.dictionary.hash	    -- there may be many dictionary closures with the same dictionary and different frames, too bad
      is x:Rational do hash(x)
-     is x:RRR do hash(x)
-     is x:CCC do hash(x)
+     is x:RR do hash(x)
+     is x:CC do hash(x)
      is x:Sequence do (
 	  -- the numbers here are the same as in binary lookup() in objects.d!!
 	  h := 27449;
 	  foreach y in x do h = h * 27457 + hash(y);
 	  h)
      is x:string do hash(x)				    -- for strings, keep internal and external hash the same
-     is x:Real do hash(x.v)
-     is x:Complex do hash(x.re) + 7 * hash(x.im)
      is n:Net do hash(n)
      is n:NetFile do hash(n)
      is x:file do x.hash

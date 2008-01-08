@@ -469,10 +469,9 @@ document {
 
 undocumented liftable'
 undocumented {(liftable', ZZ, ZZ), 
-     (liftable', RRR, ZZ), 
+     (liftable', RR, ZZ), 
      --(liftable', QQ, QQ), 
      (liftable', Matrix, Number), 
-     (liftable', RR, ZZ), 
      (liftable', Matrix, RingElement)}
 
 document { Key => MethodFunction,
@@ -779,10 +778,6 @@ document { Key => Cofactor,
      SeeAlso => {[exteriorPower,Strategy], [minors,Strategy], [det,Strategy]}
      }
 
-document { Key => CCC,
-     Headline => "high-precision complex numbers", "This class is experimental." }
-document { Key => RRR,
-     Headline => "high-precision real numbers", "This class is experimental." }
 document { Key => GlobalDictionary,
      Headline => "the class of all global dictionaries",
      SeeAlso => { "dictionaryPath", LocalDictionary }
@@ -1386,9 +1381,8 @@ document { Key => pager,
 	       }}}
 
 document { Key => precision,
-     Caveat => "this routine is provisional, and may be replaced",
      Usage => "precision x",
-     Inputs => { "x" => RRR },
+     Inputs => { "x" => RR },
      Outputs => { ZZ => {"the precision of x"}}}
 
 document { Key => "printingTimeLimit",

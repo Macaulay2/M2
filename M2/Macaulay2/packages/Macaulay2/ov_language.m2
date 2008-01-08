@@ -163,29 +163,19 @@ document {
 	  },
      HEADER3 "Real and complex numbers",
      "Real and complex numbers are approximate numbers, 
-     implemented using the machine's double
-     precision arithmetic.",
+     implemented using the ", EM "mpfr", " library.",
      EXAMPLE {
 	  "1.372489274987",
 	  "1.3454353 * 10^20",
-	  "sqrt 4.5"
+	  "sqrt 4.5",
+	  "toRR_200 4.5",
+	  "sqrt oo"
 	  },
      EXAMPLE {
 	  "1/(1+ii)",
 	  },
-     "There are also arbitrary precision real and complex numbers.  See
-     ", TO "RRR", " or ", TO "CCC", " for more details.",
-     SeeAlso => {
-	  ZZ,
-	  QQ,
-	  RR,
-	  CC,
-	  RRR,
-	  CCC
-	  }
+     SeeAlso => { Number, ZZ, QQ, RR, CC, toRR, toCC }
      }
-
-
 
 ------------------------------------------------------------------
 

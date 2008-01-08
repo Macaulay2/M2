@@ -12,7 +12,7 @@ document {
      PARA{},
      "See also ", TO "odd", "."}
 
-undocumented {(numeric, CC),(numeric, CCC),(numeric, Number),(numeric, RR),(numeric, RRR),(numeric, Thing),(numeric, VisibleList)}
+undocumented {(numeric, CC),(numeric, Number),(numeric, RR),(numeric, Thing),(numeric, VisibleList)}
 document {
      Key => numeric,
      Headline => "convert to floating point",
@@ -128,30 +128,6 @@ document {
      SeeAlso => {format, "printingPrecision", "printingLeadLimit", "printingTrailLimit", "printingSeparator"}
      }
 
-undocumented {
-	  (symbol -,ZZ,CC), 
-	  (symbol +,ZZ,CC), 
-	  (symbol -,RR,CC), 
-	  (symbol +,RR,CC), 
-	  (symbol /,ZZ,CC), 
-	  (symbol /,RR,CC), 
-	  (symbol -,CC), 
-	  (symbol -,CC,ZZ), 
-	  (symbol -,CC,QQ), 
-	  (symbol -,QQ,CC), 
-	  (symbol +,CC,ZZ), 
-	  (symbol +,CC,QQ), 
-	  (symbol +,QQ,CC), 
-	  (symbol -,CC,RR), 
-	  (symbol -,CC,CC), 
-	  (symbol +,CC,RR), 
-	  (symbol +,CC,CC), 
-	  (symbol /,CC,ZZ), 
-	  (symbol /,CC,QQ), 
-	  (symbol /,QQ,CC), 
-	  (symbol /,CC,RR), 
-	  (symbol /,CC,CC), 
-	  (symbol ^,CC,ZZ)}
 document {
      Key => CC,
      Headline => "the class of all complex numbers",
@@ -175,11 +151,12 @@ document {
      are used.  Consequently, functions which rely on Groebner bases are notoriously unreliable with
      rings such as ", TT "RR", " or ", TT "CC", "."}
      }
-
      
 document {
      Key => ii,
-     Headline => "square root of -1"}
+     Headline => "square root of -1"
+     }
+
 document {
      Key => realPart,
      Headline => "real part",
@@ -210,7 +187,7 @@ document {
      Headline => "complex conjugate",
      TT "conjugate z", " -- the complex conjugate of the complex number z."}
 document {
-     Key => {(conjugate,CC),(conjugate,CCC),(conjugate,Number)},
+     Key => {(conjugate,CC),(conjugate,Number)},
      Headline => "complex conjugate",
      Usage => "conjugate z",
      Inputs => {"z"},

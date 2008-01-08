@@ -3,7 +3,7 @@
 -- Test of moving numbers from one ring to another,
 -- and matrices of such too.
 
--- rings considered: ZZ, QQ, RR, RRR, CC, CCC
+-- rings considered: ZZ, QQ, RR, CC
 
 assert try (lift(1.3,ZZ); false) else true
 M = matrix{{1.3,2.4567}}
@@ -13,8 +13,5 @@ lift(M,RR,ZZ)
 
 
 debug Core
-rawFromNumber(raw RRR, 1.2)
-rawFromNumber(raw CCC, 1.2)
 rawFromNumber(raw RR, 1.2)
 rawFromNumber(raw CC, 1.2)
-rawFromNumber(raw CCC, 1.2)

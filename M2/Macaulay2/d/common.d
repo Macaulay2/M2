@@ -43,7 +43,7 @@ export codePosition(c:Code):Position := (
      is f:nullCode do dummyPosition
      is f:newLocalFrameCode do codePosition(f.body)
      is f:parallelAssignmentCode do f.position
-     is f:realCode do f.position
+     is f:RRRCode do f.position
      is f:sequenceCode do f.position
      is f:listCode do f.position
      is f:arrayCode do f.position
@@ -106,7 +106,7 @@ export tostring(c:Code):string := (
 			 then provide concatenate(array(string)("(",tostring(x.frameindex.i)," ",tostring(x.nestingDepth.i),")"))
 			 else provide join("'",x.lhs.i.word.name)),
 		    ") ", tostring(x.rhs), ")" ) ) )
-     is x:realCode do tostringRR(x.x)
+     is x:RRRCode do tostring(x.x)
      is x:sequenceCode do (
 	  concatenate(array(string)(
 		    "(sequence ",

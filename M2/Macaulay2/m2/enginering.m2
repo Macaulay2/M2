@@ -520,6 +520,7 @@ random Ring := RingElement => opts -> (R) -> (
      else error "no method found for item of class Ring"
      )
 
+ZZ _ BigNumberType := 
 ZZ _ Ring := RingElement => (i,R) -> (
      if i === 1 then R#1
      else if i === 0 then R#0

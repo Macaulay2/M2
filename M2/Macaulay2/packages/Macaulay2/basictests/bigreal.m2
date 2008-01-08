@@ -1,7 +1,7 @@
 assert = x -> if not x then error "assertion failed "
 
-x = toRRR(2/3)
-y = toRRR(5)
+x = toRR(2/3)
+y = toRR(5)
 
 assert( -4*x < x )
 assert( -3*x < x )

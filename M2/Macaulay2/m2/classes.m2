@@ -26,7 +26,6 @@ File.synonym = "file"
 Array.synonym = "array"
 Symbol.synonym = "symbol"
 Keyword.synonym = "keyword"
-RRR.synonym = "big real number"
 Dictionary.synonym = "dictionary"
 -- Pseudocode.synonym = "pseudocode" -- "a pseudocode" doesn't sound so great
 ZZ.synonym = "integer"

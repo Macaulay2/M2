@@ -1325,7 +1325,7 @@ export eval(c:Code):Expr := (
 	  is c:newFromCode do NewFromFun(c.newClause,c.fromClause)
 	  is c:newOfFromCode do NewOfFromFun(c.newClause,c.ofClause,c.fromClause)
 	  is nullCode do return nullE
-	  is v:realCode do return Expr(Real(v.x))
+	  is v:RRRCode do return Expr(v.x)
 	  is v:integerCode do return Expr(v.x)
 	  is v:stringCode do return Expr(v.x)
      	  is v:Error do Expr(v)

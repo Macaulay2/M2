@@ -744,29 +744,29 @@ document { Key => Core,
 	  }
      }
 
-document { Key => toRRR,
+document { Key => toRR,
      Headline => "convert to high-precision real number",
-     Usage => "toRRR(prec,x)",
+     Usage => "toRR(prec,x)",
      Inputs => { 
 	  "prec" => ZZ => {"the number of bits of precision desired"},
-	  "x" => {ofClass{RR,ZZ,QQ,RRR}}
+	  "x" => {ofClass{RR,ZZ,QQ}}
 	  },
-     Outputs => {RRR => {"the result of converting ", TT "x", " to a high-precision real number"}},
+     Outputs => {RR => {"the result of converting ", TT "x", " to a high-precision real number"}},
      EXAMPLE lines ///
-	  toRRR(200,1/7)
+	  toRR(200,1/7)
 	  precision oo
      ///}
 
-document { Key => toCCC,
+document { Key => toCC,
      Headline => "convert to high-precision complex number",
-     Usage => "toCCC(prec,x)",
+     Usage => "toCC(prec,x)",
      Inputs => { 
 	  "prec" => ZZ => {"the number of bits of precision desired"},
-	  "x" => {ofClass{RR,ZZ,QQ,CCC,RRR}}
+	  "x" => {ofClass{RR,ZZ,QQ,CC,RR}}
 	  },
-     Outputs => {CCC => {"the result of converting ", TT "x", " to a high-precision complex number"}},
+     Outputs => {CC => {"the result of converting ", TT "x", " to a high-precision complex number"}},
      EXAMPLE lines ///
-	  toCCC(200,1/7)
+	  toCC(200,1/7)
 	  precision oo
      ///}
 
@@ -777,7 +777,7 @@ document { Key => BigNumber,
 	  }
      }
 
-document { Key => BigNumberRing,
+document { Key => BigNumberType,
      PARA {
 	  "This type of ring is intended to serve as a parent class for those types of rings of numbers
 	  that have settable precision."

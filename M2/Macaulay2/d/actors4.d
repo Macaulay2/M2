@@ -66,11 +66,7 @@ setupfun("processID",getpidfun);
 absfun(e:Expr):Expr := (
      when e
      is i:Integer do Expr(abs(i))
-     is d:Real do Expr(Real(if d.v < 0. then -d.v else d.v))
-     is x:RRR do Expr(if x < 0 then -x else x)
-     is z:Complex do Expr(Real(
-	       Ccode(double, "rawCCAbs((M2_CC)", z, ")")
-	  ))
+     is x:RR do Expr(if x < 0 then -x else x)
      is r:Rational do Expr(abs(r))
      else WrongArg("a number, real or complex"));
 setupfun("abs",absfun);
@@ -882,8 +878,6 @@ setupfun("separate",linesfun);
 tostringfun(e:Expr):Expr := (
      when e 
      is i:Integer do Expr(tostring(i))
-     is x:Real do Expr(tostringRR(x.v))
-     is z:Complex do Expr(tostringRR(z.re) + " + ii * " + tostringRR(z.im))
      is x:Rational do Expr(tostring(x))
      is s:string do e
      is q:SymbolClosure do Expr( if q.frame == globalFrame then q.symbol.word.name else internalName(q.symbol.word.name) )
@@ -900,8 +894,8 @@ tostringfun(e:Expr):Expr := (
      is FunctionClosure do Expr("<<a function closure>>")
      is DictionaryClosure do Expr("<<a dictionary>>")
      is NetFile do Expr("<<a netfile>>")
-     is x:RRR do Expr(tostring(x))
-     is z:CCC do Expr(tostring(z))
+     is x:RR do Expr(tostring(x))
+     is z:CC do Expr(tostring(z))
      is Error do Expr("<<an error message>>")
      is Sequence do Expr("<<a sequence>>")
      is HashTable do Expr("<<a hash table>>")
@@ -936,11 +930,13 @@ format(e:Expr):Expr := (
      is s:string do Expr("\"" + present(s) + "\"")
      is a:Sequence do 
      if length(a) != 5 then WrongNumArgs(5) else
-     when a.0 is x:Real do 
+     when a.0 is x:RR do 
      when a.1 is s:Integer do if !isInt(s) then WrongArgSmallInteger(2) else
      when a.2 is l:Integer do if !isInt(l) then WrongArgSmallInteger(3) else
      when a.3 is t:Integer do if !isInt(t) then WrongArgSmallInteger(4) else
-     when a.4 is e:string do Expr(tostring5(x.v,toInt(s),toInt(l),toInt(t),e))
+     when a.4 is e:string do Expr(tostring5(
+	       toDouble(x),				    -- we need to rewrite tostring5 for RR
+	       toInt(s),toInt(l),toInt(t),e))
      else WrongArg(1,"a real number")
      else WrongArgInteger(2)
      else WrongArgInteger(3)
@@ -1103,8 +1099,8 @@ youngest(e:Expr):Expr := (
      else nullE);
 setupfun("youngest", youngest);
 
-toRRRS := dummySymbol;
-toBigReal(e:Expr):Expr := (
+toRRS := dummySymbol;
+toRR(e:Expr):Expr := (
      when e
      is s:Sequence do (
 	  if length(s) != 2 then WrongNumArgs(2) else
@@ -1112,19 +1108,18 @@ toBigReal(e:Expr):Expr := (
 	       if !isInt(prec) then WrongArgSmallInteger(1)
 	       else (
 	       	    when s.1 
-	       	    is x:Rational do Expr(toBigReal(x,toInt(prec)))
-     	       	    is x:Integer do Expr(toBigReal(x,toInt(prec)))
-     	       	    is x:Real do Expr(toBigReal(x.v,toInt(prec)))
-     	       	    is x:RRR do Expr(toBigReal(x,toInt(prec)))
-		    else binarymethod(s.0,s.1,getGlobalVariable(toRRRS),toRRRS.word.name)
+	       	    is x:Rational do Expr(toRR(x,toInt(prec)))
+     	       	    is x:Integer do Expr(toRR(x,toInt(prec)))
+     	       	    is x:RR do Expr(toRR(x,toInt(prec)))
+		    else binarymethod(s.0,s.1,getGlobalVariable(toRRS),toRRS.word.name)
 		    )
 	       )
 	  else WrongArgInteger(1)
 	  )
      else WrongNumArgs(2));
-toRRRS = setupfun("toRRR",toBigReal);
+toRRS = setupfun("toRR",toRR);
 
-toBigComplex(e:Expr):Expr := (
+toCC(e:Expr):Expr := (
      when e
      is s:Sequence do (
 	  if length(s) == 2 then (
@@ -1132,12 +1127,10 @@ toBigComplex(e:Expr):Expr := (
 		    if !isInt(prec) then WrongArgSmallInteger(1)
 		    else (
 			 when s.1 
-			 is x:Rational do Expr(toBigComplex(x,toInt(prec)))
-			 is x:Integer do Expr(toBigComplex(x,toInt(prec)))
-			 is x:Real do Expr(toBigComplex(x.v,toInt(prec)))
-			 is x:Complex do Expr(toBigComplex(x.re,x.im,toInt(prec)))
-			 is x:RRR do Expr(toBigComplex(x,toInt(prec)))
-			 is x:CCC do Expr(toBigComplex(x,toInt(prec)))
+			 is x:Rational do Expr(toCC(x,toInt(prec)))
+			 is x:Integer do Expr(toCC(x,toInt(prec)))
+			 is x:RR do Expr(toCC(x,toInt(prec)))
+			 is x:CC do Expr(toCC(x,toInt(prec)))
 			 else WrongArg("a rational number, real number, or an integer")
 			 )
 		    )
@@ -1146,42 +1139,33 @@ toBigComplex(e:Expr):Expr := (
 	  else if length(s) == 3 then (
 	       when s.0 is prec:Integer do (
 		    if !isInt(prec) then WrongArgSmallInteger(1)
-		    else Expr(CCC(
+		    else Expr(CC(
 			      when s.1 
-			      is x:Rational do toBigReal(x,toInt(prec))
-			      is x:Integer do toBigReal(x,toInt(prec))
-			      is x:Real do toBigReal(x.v,toInt(prec))
-			      is x:RRR do toBigReal(x,toInt(prec))
+			      is x:Rational do toRR(x,toInt(prec))
+			      is x:Integer do toRR(x,toInt(prec))
+			      is x:RR do toRR(x,toInt(prec))
 			      else (
 				   return WrongArg("a rational number, real number, or an integer");
-				   toBigReal(0,toInt(prec)) -- dummy
+				   toRR(0,toInt(prec)) -- dummy
 				   )
 			      ,
 			      when s.2
-			      is x:Rational do toBigReal(x,toInt(prec))
-			      is x:Integer do toBigReal(x,toInt(prec))
-			      is x:Real do toBigReal(x.v,toInt(prec))
-			      is x:RRR do toBigReal(x,toInt(prec))
+			      is x:Rational do toRR(x,toInt(prec))
+			      is x:Integer do toRR(x,toInt(prec))
+			      is x:RR do toRR(x,toInt(prec))
 			      else (
 				   return WrongArg("a rational number, real number, or an integer");
-				   toBigReal(0,toInt(prec)) -- dummy
+				   toRR(0,toInt(prec)) -- dummy
 				   ))))
 	       else WrongArgInteger(1))
 	  else WrongNumArgs(2,3))
      else WrongNumArgs(2,3));
-setupfun("toCCC",toBigComplex);
-
-toRR(e:Expr):Expr := (
-     when e
-     is x:RRR do Expr(Real(toDouble(x)))
-     else WrongArg("a big real number")
-     );
-setupfun("toRR",toRR);
+setupfun("toCC",toCC);
 
 precision(e:Expr):Expr := (
      when e 
-     is x:RRR do Expr(toInteger(precision(x)))
-     is x:CCC do Expr(toInteger(precision(x)))
+     is x:RR do Expr(toInteger(precision(x)))
+     is x:CC do Expr(toInteger(precision(x)))
      else WrongArg("a big real number")
      );
 setupfun("precision",precision);
@@ -1240,7 +1224,7 @@ locate(e:Code):void := (
      is v:newOfCode do ( lookat(v.position); locate(v.newClause); locate(v.ofClause); )
      is v:newOfFromCode do ( lookat(v.position); locate(v.newClause); locate(v.ofClause); locate(v.fromClause); )
      is v:parallelAssignmentCode do (lookat(v.position); locate(v.rhs);)
-     is v:realCode do lookat(v.position)
+     is v:RRRCode do lookat(v.position)
      is v:sequenceCode do foreach c in v.x do locate(c)
      is v:stringCode do nothing
      is v:ternaryCode do ( lookat(v.position); locate(v.arg1); locate(v.arg2); locate(v.arg3);)
