@@ -37,12 +37,13 @@ CCC.char = 0
 CCC.degreeLength = 0
 conjugate CCC := notImplemented
 
-ComplexNumberRing = new Type of Ring
+ComplexNumberRing = new Type of ImmutableType
 ComplexNumberRing.synonym = "real number ring"
 new ComplexNumberRing {* of CCC *} from ZZ := (ComplexNumberRing {* ,CCC *} ,prec) -> hashTable { 
      symbol precision => prec,
      symbol RawRing => rawCCC prec
      }
+raw ComplexNumberRing := R -> R.RawRing
 isField ComplexNumberRing := R -> true
 degreeLength ComplexNumberRing := R -> 0
 liftable(ZZ,ComplexNumberRing) := 
@@ -80,6 +81,8 @@ CCC.NumberRing = ComplexNumberRing
 net ComplexNumberRing := R -> net expression R
 toString ComplexNumberRing := R -> concatenate("CCC ",toString R.precision)
 ring CCC := x -> new ComplexNumberRing {* of CCC *} from precision x
+CCC ^ ZZ := BinaryPowerMethod
+CCC.InverseMethod = y -> conjugate y / y^2
 
 conjugate CC := CC => z -> new CC from (realPart z,-imaginaryPart z)
 exprI := symbol ii

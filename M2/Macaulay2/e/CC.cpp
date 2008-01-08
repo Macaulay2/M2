@@ -104,8 +104,8 @@ ring_elem CC::from_doubles(double a, double b) const
 ring_elem CC::from_BigComplex(M2_CCC z) const
 {
   M2_CC result = reinterpret_cast<M2_CC>(getmem(sizeof(M2_CC_struct)));
-  result->re = mpfr_get_d(&z->re, GMP_RNDN);
-  result->im = mpfr_get_d(&z->im, GMP_RNDN);
+  result->re = mpfr_get_d(z->re, GMP_RNDN);
+  result->im = mpfr_get_d(z->im, GMP_RNDN);
   return CC_RINGELEM(result);
 }
 

@@ -25,8 +25,8 @@ class CoefficientRingZZ_NTL;
 
 #define BIGCC_VAL(f) (reinterpret_cast<M2_CCC>((f).poly_val))
 #define BIGCC_RINGELEM(a) (ring_elem(reinterpret_cast<Nterm *>(a)))
-#define BIGCC_RE(f) (&BIGCC_VAL(f)->re)  // returns actual value, not copy
-#define BIGCC_IM(f) (&BIGCC_VAL(f)->im)
+#define BIGCC_RE(f) (BIGCC_VAL(f)->re)  // returns actual value, not copy
+#define BIGCC_IM(f) (BIGCC_VAL(f)->im)
 
 
 // The following lines are here only to remove complaints about old style casts from gmp

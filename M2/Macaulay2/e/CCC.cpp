@@ -41,8 +41,10 @@ void CCC::text_out(buffer &o) const
 M2_CCC CCC::new_elem() const
 {
   M2_CCC result = reinterpret_cast<M2_CCC>(getmem(_elem_size));
-  mpfr_init2(&result->re,precision);
-  mpfr_init2(&result->im,precision);
+  result->re = reinterpret_cast<mpfr_ptr>(getmem(sizeof(mpfr_t)));
+  result->im = reinterpret_cast<mpfr_ptr>(getmem(sizeof(mpfr_t)));
+  mpfr_init2(result->re,precision);
+  mpfr_init2(result->im,precision);
   return result;
 }
 void CCC::remove_elem(M2_CCC f) const
@@ -98,7 +100,7 @@ void CCC::elem_text_out(buffer &o, const ring_elem ap) const
 ring_elem CCC::from_int(int n) const
 {
   M2_CCC result = new_elem();
-  mpfr_set_si(&result->re, n, GMP_RNDN);
+  mpfr_set_si(result->re, n, GMP_RNDN);
 
   return BIGCC_RINGELEM(result);
 }
@@ -106,7 +108,7 @@ ring_elem CCC::from_int(int n) const
 ring_elem CCC::from_int(mpz_ptr n) const
 {
   M2_CCC result = new_elem();
-  mpfr_set_z(&result->re, n, GMP_RNDN);
+  mpfr_set_z(result->re, n, GMP_RNDN);
 
   return BIGCC_RINGELEM(result);
 }
@@ -114,7 +116,7 @@ ring_elem CCC::from_int(mpz_ptr n) const
 ring_elem CCC::from_double(double r) const
 {
   M2_CCC result = new_elem();
-  mpfr_set_d(&result->re, r, GMP_RNDN);
+  mpfr_set_d(result->re, r, GMP_RNDN);
 
   return BIGCC_RINGELEM(result);
 }
@@ -122,8 +124,8 @@ ring_elem CCC::from_double(double r) const
 ring_elem CCC::from_doubles(double r, double s) const
 {
   M2_CCC result = new_elem();
-  mpfr_set_d(&result->re, r, GMP_RNDN);
-  mpfr_set_d(&result->im, s, GMP_RNDN);
+  mpfr_set_d(result->re, r, GMP_RNDN);
+  mpfr_set_d(result->im, s, GMP_RNDN);
 
   return BIGCC_RINGELEM(result);
 }
@@ -131,7 +133,7 @@ ring_elem CCC::from_doubles(double r, double s) const
 ring_elem CCC::from_rational(mpq_ptr r) const
 {
   M2_CCC result = new_elem();
-  mpfr_set_q(&result->re, r, GMP_RNDN);
+  mpfr_set_q(result->re, r, GMP_RNDN);
 
   return BIGCC_RINGELEM(result);
 }
@@ -139,8 +141,8 @@ ring_elem CCC::from_rational(mpq_ptr r) const
 ring_elem CCC::from_complex(M2_CC z) const
 {
   M2_CCC result = new_elem();
-  mpfr_set_d(&result->re, z->re, GMP_RNDN);
-  mpfr_set_d(&result->im, z->im, GMP_RNDN);
+  mpfr_set_d(result->re, z->re, GMP_RNDN);
+  mpfr_set_d(result->im, z->im, GMP_RNDN);
 
   return BIGCC_RINGELEM(result);
 }
@@ -148,7 +150,7 @@ ring_elem CCC::from_complex(M2_CC z) const
 ring_elem CCC::from_BigReal(mpfr_ptr r) const
 {
   M2_CCC result = new_elem();
-  mpfr_set(&result->re, r, GMP_RNDN);
+  mpfr_set(result->re, r, GMP_RNDN);
 
   return BIGCC_RINGELEM(result);
 }
@@ -156,8 +158,8 @@ ring_elem CCC::from_BigReal(mpfr_ptr r) const
 ring_elem CCC::from_BigReals(mpfr_ptr a, mpfr_ptr b) const
 {
   M2_CCC result = new_elem();
-  mpfr_set(&result->re, a, GMP_RNDN);
-  mpfr_set(&result->im, b, GMP_RNDN);
+  mpfr_set(result->re, a, GMP_RNDN);
+  mpfr_set(result->im, b, GMP_RNDN);
 
   return BIGCC_RINGELEM(result);
 }
@@ -165,8 +167,8 @@ ring_elem CCC::from_BigReals(mpfr_ptr a, mpfr_ptr b) const
 ring_elem CCC::from_BigComplex(M2_CCC z) const
 {
   M2_CCC result = new_elem();
-  mpfr_set(&result->re, &z->re, GMP_RNDN);
-  mpfr_set(&result->im, &z->im, GMP_RNDN);
+  mpfr_set(result->re, z->re, GMP_RNDN);
+  mpfr_set(result->im, z->im, GMP_RNDN);
 
   return BIGCC_RINGELEM(result);
 }
@@ -181,8 +183,8 @@ bool CCC::promote(const Ring *Rf, const ring_elem f, ring_elem &result) const
   if (Rf->is_RRR())
     {
       M2_CCC g = new_elem();
-      mpfr_set(&g->re, MPF_VAL(f), GMP_RNDN);
-      mpfr_init2(&g->im,mpfr_get_prec(MPF_VAL(f)));
+      mpfr_set(g->re, MPF_VAL(f), GMP_RNDN);
+      mpfr_init2(g->im,mpfr_get_prec(MPF_VAL(f)));
       result = BIGCC_RINGELEM(g);
     }
   return false;
@@ -231,11 +233,11 @@ ring_elem CCC::absolute(const ring_elem f) const
 {
   M2_CCC result = new_elem();
 
-  mpfr_pow_ui(&result->re, BIGCC_RE(f), 2, GMP_RNDN);
-  mpfr_pow_ui(&result->im, BIGCC_IM(f), 2, GMP_RNDN);
-  mpfr_add(&result->re, &result->re, &result->im, GMP_RNDN);
-  mpfr_sqrt(&result->re, &result->re, GMP_RNDN);
-  mpfr_set_ui(&result->im, 0, GMP_RNDN);
+  mpfr_pow_ui(result->re, BIGCC_RE(f), 2, GMP_RNDN);
+  mpfr_pow_ui(result->im, BIGCC_IM(f), 2, GMP_RNDN);
+  mpfr_add(result->re, result->re, result->im, GMP_RNDN);
+  mpfr_sqrt(result->re, result->re, GMP_RNDN);
+  mpfr_set_ui(result->im, 0, GMP_RNDN);
 
   return BIGCC_RINGELEM(result);
 }
@@ -246,8 +248,8 @@ ring_elem CCC::copy(const ring_elem f) const
   mpfr_ptr b = BIGCC_IM(f);
 
   M2_CCC result = new_elem();
-  mpfr_set(&result->re, a, GMP_RNDN);
-  mpfr_set(&result->im, b, GMP_RNDN);
+  mpfr_set(result->re, a, GMP_RNDN);
+  mpfr_set(result->im, b, GMP_RNDN);
   return BIGCC_RINGELEM(result);
 }
 
@@ -289,24 +291,24 @@ void CCC::internal_subtract_to(ring_elem &f, ring_elem &g) const
 ring_elem CCC::negate(const ring_elem f) const
 {
   M2_CCC result = new_elem();
-  mpfr_neg(&result->re, BIGCC_RE(f), GMP_RNDN);
-  mpfr_neg(&result->im, BIGCC_IM(f), GMP_RNDN);
+  mpfr_neg(result->re, BIGCC_RE(f), GMP_RNDN);
+  mpfr_neg(result->im, BIGCC_IM(f), GMP_RNDN);
   return BIGCC_RINGELEM(result);
 }
 
 ring_elem CCC::add(const ring_elem f, const ring_elem g) const
 {
   M2_CCC result = new_elem();
-  mpfr_add(&result->re, BIGCC_RE(f), BIGCC_RE(g), GMP_RNDN);
-  mpfr_add(&result->im, BIGCC_IM(f), BIGCC_IM(g), GMP_RNDN);
+  mpfr_add(result->re, BIGCC_RE(f), BIGCC_RE(g), GMP_RNDN);
+  mpfr_add(result->im, BIGCC_IM(f), BIGCC_IM(g), GMP_RNDN);
   return BIGCC_RINGELEM(result);
 }
 
 ring_elem CCC::subtract(const ring_elem f, const ring_elem g) const
 {
   M2_CCC result = new_elem();
-  mpfr_sub(&result->re, BIGCC_RE(f), BIGCC_RE(g), GMP_RNDN);
-  mpfr_sub(&result->im, BIGCC_IM(f), BIGCC_IM(g), GMP_RNDN);
+  mpfr_sub(result->re, BIGCC_RE(f), BIGCC_RE(g), GMP_RNDN);
+  mpfr_sub(result->im, BIGCC_IM(f), BIGCC_IM(g), GMP_RNDN);
   return BIGCC_RINGELEM(result);
 }
 
@@ -314,12 +316,12 @@ ring_elem CCC::mult(const ring_elem f, const ring_elem g) const
 {
   M2_CCC result = new_elem();
   M2_CCC tmp = new_elem();
-  mpfr_mul(&result->re, BIGCC_RE(f), BIGCC_RE(g), GMP_RNDN);
-  mpfr_mul(&tmp->re, BIGCC_IM(f), BIGCC_IM(g), GMP_RNDN);
-  mpfr_sub(&result->re, &result->re, &tmp->re, GMP_RNDN);
-  mpfr_mul(&result->im, BIGCC_RE(f), BIGCC_IM(g), GMP_RNDN);
-  mpfr_mul(&tmp->im, BIGCC_IM(f), BIGCC_RE(g), GMP_RNDN);
-  mpfr_add(&result->im, &result->im, &tmp->im, GMP_RNDN);
+  mpfr_mul(result->re, BIGCC_RE(f), BIGCC_RE(g), GMP_RNDN);
+  mpfr_mul(tmp->re, BIGCC_IM(f), BIGCC_IM(g), GMP_RNDN);
+  mpfr_sub(result->re, result->re, tmp->re, GMP_RNDN);
+  mpfr_mul(result->im, BIGCC_RE(f), BIGCC_IM(g), GMP_RNDN);
+  mpfr_mul(tmp->im, BIGCC_IM(f), BIGCC_RE(g), GMP_RNDN);
+  mpfr_add(result->im, result->im, tmp->im, GMP_RNDN);
   return BIGCC_RINGELEM(result);
 }
 
@@ -370,12 +372,12 @@ ring_elem CCC::invert(const ring_elem f) const
   else {
     M2_CCC result = new_elem();
     M2_CCC tmp = new_elem();
-    mpfr_mul(&tmp->re, BIGCC_RE(f), BIGCC_RE(f), GMP_RNDN);
-    mpfr_mul(&tmp->im, BIGCC_IM(f), BIGCC_IM(f), GMP_RNDN);
-    mpfr_add(&tmp->re, &tmp->re, &tmp->im, GMP_RNDN);
-    mpfr_div(&result->re, BIGCC_RE(f), &tmp->re, GMP_RNDN);
-    mpfr_div(&result->im, BIGCC_IM(f), &tmp->re, GMP_RNDN);
-    mpfr_neg(&result->im, &result->im, GMP_RNDN);
+    mpfr_mul(tmp->re, BIGCC_RE(f), BIGCC_RE(f), GMP_RNDN);
+    mpfr_mul(tmp->im, BIGCC_IM(f), BIGCC_IM(f), GMP_RNDN);
+    mpfr_add(tmp->re, tmp->re, tmp->im, GMP_RNDN);
+    mpfr_div(result->re, BIGCC_RE(f), tmp->re, GMP_RNDN);
+    mpfr_div(result->im, BIGCC_IM(f), tmp->re, GMP_RNDN);
+    mpfr_neg(result->im, result->im, GMP_RNDN);
     return BIGCC_RINGELEM(result);
   }
 }

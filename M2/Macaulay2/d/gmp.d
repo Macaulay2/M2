@@ -767,14 +767,10 @@ export (x:Rational) >= (y:double) : bool := numeratorRef(x) >= y * denominatorRe
 -----------------------------------------------------------------------------
 
 export RRR := { prec:int, sign:int, exp:int, limbs:limbPointer }; -- must agree with __mpfr_struct in mpfr.h, and with M2_RRR in M2types.h
-export CCC := { 					    -- must agree with M2_CCC in M2types.h
-     REprec:int, REsign:int, REexp:int, RElimbs:limbPointer,
-     IMprec:int, IMsign:int, IMexp:int, IMlimbs:limbPointer
-     };
+export CCC := { re:RRR, im:RRR };			    -- must agree with M2_CCC in M2types.h
 
-export realPart(z:CCC):RRR := RRR(z.REprec, z.REsign, z.REexp, z.RElimbs);
-export imaginaryPart(z:CCC):RRR := RRR(z.IMprec, z.IMsign, z.IMexp, z.IMlimbs);
-export bigComplex(x:RRR,y:RRR):CCC := CCC(x.prec, x.sign, x.exp, x.limbs, y.prec, y.sign, y.exp, y.limbs);
+export realPart(z:CCC):RRR := z.re;
+export imaginaryPart(z:CCC):RRR := z.im;
 
 isPositive(x:RRR):bool ::=  1 == Ccode(int, "mpfr_sgn((__mpfr_struct *)", x, ")");
 isZero    (x:RRR):bool ::=  0 == Ccode(int, "mpfr_sgn((__mpfr_struct *)", x, ")");
@@ -788,13 +784,10 @@ newBigReal(prec:int):RRR := (
      Ccode( void, "mpfr_init2(", "(__mpfr_struct *)", x, ",",prec,")" );
      x);
 
-newBigComplex(prec:int):CCC := (
-     x := CCC(0,0,0,null(),0,0,0,null());
-     Ccode( void, "mpfr_init2(", "(__mpfr_struct *)", x, ",",prec,")" );
-     Ccode( void, "mpfr_init2(", "(__mpfr_struct *)&", x, "->IMprec,",prec,")" );
-     x);
+newBigComplex(prec:int):CCC := CCC(newBigReal(prec),newBigReal(prec));
 
 export toBigReal(x:RRR,prec:int):RRR := (
+     if x.prec == prec then return x;
      z := newBigReal(prec);
      Ccode( void, "mpfr_set(", "(__mpfr_struct *)", z, ",", "(__mpfr_struct *)", x, ", GMP_RNDN)" );
      z);
@@ -824,59 +817,17 @@ export toBigReal(n:double,prec:int):RRR := (
      Ccode( void, "mpfr_set_d(", "(__mpfr_struct *)", x, ",", n, ", GMP_RNDN)" );
      x);
 
-export toBigComplex(x:RRR,prec:int):CCC := (
-     z := newBigComplex(prec);
-     Ccode( void, "mpfr_set(", "(__mpfr_struct *)", z, ",", "(__mpfr_struct *)", x, ", GMP_RNDN)" );
-     Ccode( void, "mpfr_set_si(", "(__mpfr_struct *)&", z, "->IMprec,", 0, ", GMP_RNDN)" );
-     z);
-
+export toBigComplex(x:RRR,prec:int):CCC := CCC(toBigReal(x,prec),toBigReal(0,prec));
 export toBigComplex(x:CCC,prec:int):CCC := (
-     z := newBigComplex(prec);
-     Ccode( void, "mpfr_set(", "(__mpfr_struct *)", z, ",", "(__mpfr_struct *)", x, ", GMP_RNDN)" );
-     Ccode( void, "mpfr_set(", "(__mpfr_struct *)&", z, "->IMprec,", "(__mpfr_struct *)&", x, "->IMprec, GMP_RNDN)" );
-     z);
-
-export toBigComplex(x:RRR,y:RRR,prec:int):CCC := (
-     z := newBigComplex(prec);
-     Ccode( void, "mpfr_set(", "(__mpfr_struct *)", z, ",", "(__mpfr_struct *)", x, ", GMP_RNDN)" );
-     Ccode( void, "mpfr_set(", "(__mpfr_struct *)&", z, "->IMprec,", "(__mpfr_struct *)", x, ", GMP_RNDN)" );
-     z);
-
-export toBigComplex(x:Rational,prec:int):CCC := (
-     z := newBigComplex(prec);
-     Ccode( void, "mpfr_set_q(", "(__mpfr_struct *)", z, ",", "(__mpq_struct *)", x, ", GMP_RNDN)" );
-     Ccode( void, "mpfr_set_si(", "(__mpfr_struct *)&", z, "->IMprec,", 0, ", GMP_RNDN)" );
-     z);
-
-export toBigComplex(x:Integer,prec:int):CCC := (
-     z := newBigComplex(prec);
-     Ccode( void, "mpfr_set_z(", "(__mpfr_struct *)", z, ",", "(__mpz_struct *)", x, ", GMP_RNDN)" );
-     Ccode( void, "mpfr_set_si(", "(__mpfr_struct *)&", z, "->IMprec,", 0, ", GMP_RNDN)" );
-     z);
-
-export toBigComplex(x:int,prec:int):CCC := (
-     z := newBigComplex(prec);
-     Ccode( void, "mpfr_set_si(", "(__mpfr_struct *)", z, ",(long)", x, ", GMP_RNDN)" );
-     Ccode( void, "mpfr_set_si(", "(__mpfr_struct *)&", z, "->IMprec,", 0, ", GMP_RNDN)" );
-     z);
-
-export toBigComplex(x:ulong,prec:int):CCC := (
-     z := newBigComplex(prec);
-     Ccode( void, "mpfr_set_ui(", "(__mpfr_struct *)", z, ",(unsigned long)", x, ", GMP_RNDN)" );
-     Ccode( void, "mpfr_set_si(", "(__mpfr_struct *)&", z, "->IMprec,", 0, ", GMP_RNDN)" );
-     z);
-
-export toBigComplex(x:double,prec:int):CCC := (
-     z := newBigComplex(prec);
-     Ccode( void, "mpfr_set_d(", "(__mpfr_struct *)", z, ",", x, ", GMP_RNDN)" );
-     Ccode( void, "mpfr_set_si(", "(__mpfr_struct *)&", z, "->IMprec,", 0, ", GMP_RNDN)" );
-     z);
-
-export toBigComplex(x:double,y:double,prec:int):CCC := (
-     z := newBigComplex(prec);
-     Ccode( void, "mpfr_set_d(", "(__mpfr_struct *)", z, ",", x, ", GMP_RNDN)" );
-     Ccode( void, "mpfr_set_d(", "(__mpfr_struct *)&", z, "->IMprec,", y, ", GMP_RNDN)" );
-     z);
+     if x.re.prec == prec then x
+     else CCC(toBigReal(x.re,prec),toBigReal(x.im,prec)));
+export toBigComplex(x:RRR,y:RRR,prec:int):CCC := CCC(toBigReal(x,prec),toBigReal(y,prec));
+export toBigComplex(x:Rational,prec:int):CCC := CCC(toBigReal(x,prec),toBigReal(0,prec));
+export toBigComplex(x:Integer,prec:int):CCC := CCC(toBigReal(x,prec),toBigReal(0,prec));
+export toBigComplex(x:int,prec:int):CCC := CCC(toBigReal(x,prec),toBigReal(0,prec));
+export toBigComplex(x:ulong,prec:int):CCC := CCC(toBigReal(x,prec),toBigReal(0,prec));
+export toBigComplex(x:double,prec:int):CCC := CCC(toBigReal(x,prec),toBigReal(0,prec));
+export toBigComplex(x:double,y:double,prec:int):CCC := CCC(toBigReal(x,prec),toBigReal(y,prec));
 
 export toDouble(x:RRR):double := Ccode( double, "mpfr_get_d(", "(__mpfr_struct *)", x, ", GMP_RNDN)" );
 
@@ -919,10 +870,7 @@ export (x:RRR) === (y:int) : bool :=  compare0(x,long(y)) == 0;
 export (x:RRR)  <  (y:int) : bool :=  compare0(x,long(y)) <  0;
 export (x:RRR)  <= (y:int) : bool :=  compare0(x,long(y)) <= 0;
 
-export (x:CCC) === (y:int) : bool :=  (
-     0 == Ccode( int, "mpfr_cmp_si(", "(__mpfr_struct *)", x, ",", y, ")" )
-     && 
-     0 == Ccode( int, "mpfr_cmp_si(", "(__mpfr_struct *)&", x, "->IMprec,", 0, ")" ));
+export (x:CCC) === (y:int) : bool :=  x.re === y && x.im === 0;
 
 compare0(x:RRR, y:double):int ::= Ccode( int, "mpfr_cmp_d(", "(__mpfr_struct *)", x, ",", y, ")" );
 export compare(x:RRR, y:double):int := Ccode( int, "mpfr_cmp_d(", "(__mpfr_struct *)", x, ",", y, ")" );
@@ -951,22 +899,14 @@ export (x:RRR) === (y:Rational) : bool :=  compare0(x,y) == 0;
 export (x:RRR)  <  (y:Rational) : bool :=  compare0(x,y) <  0;
 export (x:RRR)  <= (y:Rational) : bool :=  compare0(x,y) <= 0;
 
-export (x:CCC) === (y:CCC) : bool := (
-     0 == Ccode( int, "mpfr_cmp((__mpfr_struct *)", x, ",(__mpfr_struct *)", y, ")" )
-     &&
-     0 == Ccode( int, "mpfr_cmp((__mpfr_struct *)(&", x, "->IMprec),(__mpfr_struct *)(&", y, "->IMprec))" )
-     );
+export (x:CCC) === (y:CCC) : bool := x.re === y.re && x.im == y.im;
 
 export hash(x:RRR):int := Ccode(int, 
      "mpfr_hash(",					    -- see gmp_aux.c for this function
          "(__mpfr_struct *)", x, 
      ")"
      );
-export hash(x:CCC):int := (
-     Ccode(int, "mpfr_hash(", "(__mpfr_struct *)", x, ")" )
-     + 111 * 
-     Ccode(int, "mpfr_hash(", "(__mpfr_struct *)(&", x, "->IMprec))" )
-     );
+export hash(x:CCC):int := 123 + hash(x.re) + 111 * hash(x.im);
      
 export (x:RRR) + (y:RRR) : RRR := (
      z := newBigReal(min(x.prec,y.prec));
@@ -977,52 +917,6 @@ export (x:RRR) + (y:RRR) : RRR := (
 	      "(__mpfr_struct *)", y,
 	      ", GMP_RNDN)" 
      );
-     z);
-     
-export (x:CCC) + (y:CCC) : CCC := (
-     z := newBigComplex(min(x.REprec,y.REprec));
-     Ccode( void,
-          "mpfr_add(",
-	      "(__mpfr_struct *)", z, ",", 
-	      "(__mpfr_struct *)", x, ",", 
-	      "(__mpfr_struct *)", y,
-	      ", GMP_RNDN)" );
-     Ccode( void,
-          "mpfr_add(",
-	      "(__mpfr_struct *)&", z, "->IMprec,", 
-	      "(__mpfr_struct *)&", x, "->IMprec,", 
-	      "(__mpfr_struct *)&", y, "->IMprec",
-	      ", GMP_RNDN)" );
-     z);
-     
-export (x:CCC) + (y:RRR) : CCC := (
-     z := newBigComplex(min(x.REprec,y.prec));
-     Ccode( void,
-          "mpfr_add(",
-	      "(__mpfr_struct *)", z, ",", 
-	      "(__mpfr_struct *)", x, ",", 
-	      "(__mpfr_struct *)", y,
-	      ", GMP_RNDN)" );
-     Ccode( void,
-          "mpfr_set(",
-	      "(__mpfr_struct *)&", z, "->IMprec,", 
-	      "(__mpfr_struct *)&", x, "->IMprec,", 
-	      "GMP_RNDN)" );
-     z);
-     
-export (y:RRR) + (x:CCC) : CCC := (
-     z := newBigComplex(min(x.REprec,y.prec));
-     Ccode( void,
-          "mpfr_add(",
-	      "(__mpfr_struct *)", z, ",", 
-	      "(__mpfr_struct *)", x, ",", 
-	      "(__mpfr_struct *)", y,
-	      ", GMP_RNDN)" );
-     Ccode( void,
-          "mpfr_set(",
-	      "(__mpfr_struct *)&", z, "->IMprec,", 
-	      "(__mpfr_struct *)&", x, "->IMprec,", 
-	      "GMP_RNDN)" );
      z);
      
 export (x:RRR) + (y:Integer) : RRR := (
@@ -1091,7 +985,6 @@ export - (y:RRR) : RRR := (
      z);
 
 export abs(x:RRR) : RRR := if isNegative(x) then -x else x;
-
 export (x:RRR) * (y:RRR) : RRR := (
      z := newBigReal(min(x.prec,y.prec));
      Ccode( void,
@@ -1102,7 +995,7 @@ export (x:RRR) * (y:RRR) : RRR := (
 	  ", GMP_RNDN)" 
      );
      z);
-     
+
 export (x:RRR) * (y:Integer) : RRR := (
      z := newBigReal(x.prec);
      Ccode( void,
@@ -1199,6 +1092,22 @@ export floor(x:RRR) : Integer := (
      y := newInteger();
      Ccode( void, "mpfr_get_z((__mpz_struct *)", y, ",(__mpfr_struct *)", z, ", GMP_RNDN)" );
      y);
+
+export (x:CCC) + (y:CCC) : CCC := CCC(x.re+y.re, x.im+y.im);
+export (x:CCC) - (y:CCC) : CCC := CCC(x.re-y.re, x.im-y.im);
+export (x:RRR) - (y:CCC) : CCC := CCC(x-y.re,-y.im);
+export (x:CCC) - (y:RRR) : CCC := CCC(x.re-y,x.im);
+export (x:CCC) + (y:RRR) : CCC := CCC(x.re+y,x.im);
+export (x:RRR) + (y:CCC) : CCC := CCC(x+y.re,y.im);
+export -(y:CCC) : CCC := CCC(-y.re,-y.im);
+export (x:CCC) * (y:RRR) : CCC := CCC(x.re*y, x.im*y);
+export (y:RRR) * (x:CCC) : CCC := CCC(x.re*y, x.im*y);
+export (x:CCC) * (y:CCC) : CCC := CCC(x.re*y.re-x.im*y.im, x.im*y.re+x.re*y.im);
+export (x:CCC) / (y:RRR) : CCC := CCC(x.re/y, x.im/y);
+export conj(x:CCC):CCC := CCC(x.re,-x.im);
+export norm2(x:CCC):RRR := x.re*x.re + x.im*x.im;
+export (x:CCC) / (y:CCC) : CCC := x * conj(y) / norm2(y);
+export (x:RRR) / (y:CCC) : CCC := x * conj(y) / norm2(y);
 
 -- Local Variables:
 -- compile-command: "make -C $M2BUILDDIR/Macaulay2/d "
