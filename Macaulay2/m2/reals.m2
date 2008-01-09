@@ -111,7 +111,7 @@ toExternalString RR := toExternalString0
 
 logten2 := log 10. / log 2.
 
-RR#{Standard,Print} = x ->  (
+BigNumber#{Standard,Print} = x ->  (
      << newline << concatenate(interpreterDepth:"o") << lineNumber << " = ";
      save := printingPrecision;
      try (
@@ -122,7 +122,7 @@ RR#{Standard,Print} = x ->  (
      << newline << flush;
      );
 
-RR#{Standard,AfterPrint} = x -> (
+BigNumber#{Standard,AfterPrint} = x -> (
      << endl;                             -- double space
      << concatenate(interpreterDepth:"o") << lineNumber << " : " << ring x;
      << endl;
