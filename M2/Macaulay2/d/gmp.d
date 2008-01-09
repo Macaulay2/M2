@@ -1310,10 +1310,15 @@ export tostring5(
 	       t = 0;
 	       )
 	  else if ex <= s+t then (
+	       pt = int(ex);
 	       t = int(ex)-s;
 	       ex = long(0);
 	       )
 	  else t = 0);
+     if pt == 0 && l == 0 && ex != long(0) then (
+	  pt = 1;
+	  ex = ex - 1;
+	  );
      (sgn + (if pt == 0 then "." else "") + (new string len l do provide '0'))
      + (
 	  if pt > 0 && pt < s
