@@ -64,7 +64,7 @@ net BigNumberRing := R -> net expression R
 RealNumberRing = new Type of {* ImmutableType *} BigNumberRing
 RealNumberRing.synonym = "real number ring"
 new RealNumberRing of RR from ZZ := memoize (
-     (RealNumberRing, RR,prec) -> newClass(RealNumberRing,RR,
+     (RealNumberRing,RR,prec) -> newClass(RealNumberRing,RR,
 	  hashTable { 
 	       symbol precision => prec,
 	       symbol Engine => true,
@@ -86,7 +86,9 @@ RR.BigNumberRing = RealNumberRing
 toString RealNumberRing := R -> concatenate("RR_",toString R.precision)
 ring RR := x -> new RealNumberRing of RR from precision x
 
-new RR from RawRingElement := (RR,x) -> rawToRR x
+new RR from RawRingElement := (RRR,x) -> (
+     assert( RRR === RR );				    -- the danger is that maybe RRR === RR_53, for example
+     rawToRR x)
 
 promote(RR,RR) := (i,RR) -> i
 lift(RR,ZZ) := (r,ZZ) -> if r == floor r then floor r else error("can't lift ",toString r, " to ZZ")
@@ -115,10 +117,10 @@ logten2 := log 10. / log 2.
 BigNumber#{Standard,Print} = x ->  (
      << newline << concatenate(interpreterDepth:"o") << lineNumber << " = ";
      save := printingPrecision;
-     try (
-     	  printingPrecision = max(printingPrecision, floor (precision x / logten2));
-     	  << x;
-	  );
+     try printingPrecision = max(printingPrecision, floor (precision x / logten2));
+     try << x
+     else try << toString x
+     else << "<<a number that fails to print>>";
      printingPrecision = save;
      << newline << flush;
      );
