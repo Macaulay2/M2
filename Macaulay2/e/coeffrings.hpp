@@ -447,6 +447,8 @@ public:
   }
 
   void set_zero(elem &result) const { 
+    result.re = newitem(__mpfr_struct);
+    result.im = newitem(__mpfr_struct);
     mpfr_init2(result.re, R->get_precision());
     mpfr_init2(result.im, R->get_precision());
     CCCArithmetic::set_zero(result); 
