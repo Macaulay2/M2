@@ -428,6 +428,11 @@ const RingElement *IM2_RingElement_from_BigReal(const Ring *R, M2_RRR z)
   return RingElement::make_raw(R, R->from_BigReal(z));
 }
 
+const RingElement *IM2_RingElement_from_BigComplex(const Ring *R, M2_CCC z)
+{
+  return RingElement::make_raw(R, R->from_BigComplex(z));
+}
+
 M2_IntegerOrNull IM2_RingElement_to_Integer(const RingElement *a)
   /* If the ring of a is ZZ, or ZZ/p, this returns the underlying representation.
      Otherwise, NULL is returned, and an error is given */
@@ -468,6 +473,17 @@ M2_RRRorNull IM2_RingElement_to_BigReal(const RingElement *a)
     }
   void *f = a->get_value().poly_val;
   return static_cast<M2_RRR>(f);
+}
+
+M2_CCCorNull IM2_RingElement_to_BigComplex(const RingElement *a)
+{
+  if (!a->get_ring()->is_CCC())
+    {
+      ERROR("expected an element of CCC");
+      return 0;
+    }
+  void *f = a->get_value().poly_val;
+  return static_cast<M2_CCC>(f);
 }
 
 double IM2_RingElement_to_double(const RingElement *a)

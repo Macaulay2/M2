@@ -166,6 +166,7 @@ bool Lapack::eigenvalues(const LMatrixRR *A, LMatrixCC *eigvals)
     return false;
   }
 
+  bool ret = true;
   char dont = 'N';
   int wsize = 3*size;
   double *workspace = newarray_atomic(double, wsize);
@@ -183,28 +184,30 @@ bool Lapack::eigenvalues(const LMatrixRR *A, LMatrixCC *eigvals)
 	 static_cast<double *>(0), &size,  /* right eigenvectors */
 	 workspace, &wsize, &info);
 
-  deletearray(copyA);
-
   if (info < 0)       
     {
       ERROR("argument passed to dgeev had an illegal value");
-      return false;
+      ret = false;
     }
   else if (info > 0) 
     {
       ERROR("the QR algorithm in dgeev failed to compute all eigvals");
-      return false;
+      ret = false;
+    }
+  else
+    {
+      eigvals->resize(size, 1);
+      M2_CCC_struct *elems = eigvals->get_array();
+      for (int i = 0; i < size; i++) {
+	mpfr_set_d(elems[i].re, real[i], GMP_RNDN);
+	mpfr_set_d(elems[i].im, imag[i], GMP_RNDN);
+      }
     }
 
-  eigvals->resize(size, 1);
-  M2_CCC_struct *elems = eigvals->get_array();
-  for (int i = 0; i < size; i++) {
-    mpfr_set_d(elems[i].re, real[i], GMP_RNDN);
-    mpfr_set_d(elems[i].im, imag[i], GMP_RNDN);
-  }
+  deletearray(copyA);
   deletearray(real);
   deletearray(imag);
-  return true;
+  return ret;
 #endif
 }
 
@@ -222,58 +225,71 @@ bool Lapack::eigenvectors(const LMatrixRR *A,
     return false;
   }
 
+  bool ret = true;
   char dont = 'N';
   char doit = 'V';
   int wsize = 4*size;
   double *workspace = newarray_atomic(double, wsize);
   int info;
 
+  double *copyA = A->make_lapack_array();
+  double *real = newarray(double,size);  // real components of eigvals
+  double *imag = newarray(double,size); // imaginary components
+  double *eigen = newarray(double,size*size); // eigvecs
+
   LMatrixRR *copyA = A->copy();
-  LMatrixRR * real = new LMatrixRR(globalRR,size,1); // real components of eigvals
-  LMatrixRR * imag = new LMatrixRR(globalRR,size,1); // imaginary components
-  LMatrixRR * eigen = new LMatrixRR(globalRR,size,size); // eigvecs
+  LMatrixRR * real = new LMatrixRR(globalRR,size,1); 
+  LMatrixRR * imag = new LMatrixRR(globalRR,size,1); 
+  LMatrixRR * eigen = new LMatrixRR(globalRR,size,size); 
 
   dgeev_(&dont, &doit, 
-	 &size, copyA->get_array(), &size,
-	 real->get_array(), 
-	 imag->get_array(),
+	 &size, copyA, &size,
+	 real, 
+	 imag,
 	 static_cast<double *>(0), &size,  /* left eigvecs */
-	 eigen->get_array(), &size,  /* right eigvecs */
+	 eigen, &size,  /* right eigvecs */
 	 workspace, &wsize, &info);
 
   if (info < 0)       
     {
       ERROR("argument passed to dgeev had an illegal value");
-      return false;
+      ret = false;
     }
   else if (info > 0) 
     {
       ERROR("the QR algorithm in dgeev failed to compute all eigvals");
-      return false;
+      ret = false;
+    }
+  else 
+    {
+      // Make the complex arrays of eigvals and eigvecs
+      eigvals->resize(size, 1);
+      eigvecs->resize(size, size);
+      M2_CCC_struct *elems = eigvecs->get_array();
+      for (int j = 0; j < size; j++) {
+	eigvals->get_array()[j].re = real[j];
+	eigvals->get_array()[j].im = imag[j];
+	int loc = j*size;
+	if (imag[j] == 0) {
+	  for (int i = 0; i < size; i++)
+	    mpfr_set_d(elems[loc+i].re, eigen[loc+i], GMP_RNDN);
+	} else if (imag[j] > 0) {
+	  for (int i = 0; i < size; i++) {
+	    mpfr_set_d(elems[loc+i].re, eigen[loc+i], GMP_RNDN);
+	    mpfr_set_d(elems[loc+i].im, eigen[loc+size+i], GMP_RNDN);
+	    mpfr_set_d(elems[loc+size+i].re, eigen[loc+i], GMP_RNDN);
+	    mpfr_set_d(elems[loc+size+i].im, -eigen[loc+size+i], GMP_RNDN);
+	  }
+	} 
+      }
     }
 
-  // Make the complex arrays of eigvals and eigvecs
-  eigvals->resize(size, 1);
-  eigvecs->resize(size, size);
-  M2_CC_struct *elems = eigvecs->get_array();
-  for (int j = 0; j < size; j++) {
-    eigvals->get_array()[j].re = real->get_array()[j];
-    eigvals->get_array()[j].im = imag->get_array()[j];
-    int loc = j*size;
-    if (imag->get_array()[j] == 0) {
-      for (int i = 0; i < size; i++)
-	elems[loc+i].re = eigen->get_array()[loc+i];
-    } else if (imag->get_array()[j] > 0) {
-      for (int i = 0; i < size; i++) {
-	elems[loc+i].re = eigen->get_array()[loc+i];
-	elems[loc+i].im = eigen->get_array()[loc+size+i];
-	elems[loc+size+i].re = eigen->get_array()[loc+i];
-	elems[loc+size+i].im = -eigen->get_array()[loc+size+i];
-      }
-    } 
-  }
-
-  return true;
+  deletearray(copyA);
+  deletearray(workspace);
+  deletearray(real);
+  deletearray(imag);
+  deletearray(eigen);
+  return ret;
 #endif
 }
 

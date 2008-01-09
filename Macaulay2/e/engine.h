@@ -109,6 +109,7 @@ typedef struct Matrix_array {
 typedef M2_Integer M2_IntegerOrNull;
 typedef M2_Rational M2_RationalOrNull;
 typedef M2_RRR M2_RRRorNull;
+typedef M2_CCC M2_CCCorNull;
 typedef M2_CC M2_CCOrNull;
 typedef Monomial MonomialOrNull;
 typedef Monoid MonoidOrNull;
@@ -452,11 +453,15 @@ extern "C" {
 
   const RingElementOrNull *IM2_RingElement_from_BigReal(const Ring *R, 
 							M2_RRR d); /* drg: waiting, rawFromNumber*/
-    /* TODO */
+
+  const RingElementOrNull *IM2_RingElement_from_BigComplex(const Ring *R, 
+							M2_CCC d); /* drg: waiting, rawFromNumber*/
 
   M2_RRRorNull IM2_RingElement_to_BigReal(const RingElement *a); /* drg: implemented, connected to rawToRR */
     /* If the ring of a is RR, this returns the underlying representation of 'a'.
        Otherwise NULL is returned. */
+
+  M2_CCCorNull IM2_RingElement_to_BigComplex(const RingElement *a); /* drg: implemented, connected to rawToRR */
 
 
   const RingElementOrNull *IM2_RingElement_make_var(const Ring *R, int v); /* drg: connected rawRingVar*/
