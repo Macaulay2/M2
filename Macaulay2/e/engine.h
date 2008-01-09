@@ -454,7 +454,7 @@ extern "C" {
 							M2_RRR d); /* drg: waiting, rawFromNumber*/
     /* TODO */
 
-  M2_RRRorNull IM2_RingElement_to_BigReal(const RingElement *a); /* drg: implemented, connected to rawToRRR*/
+  M2_RRRorNull IM2_RingElement_to_BigReal(const RingElement *a); /* drg: implemented, connected to rawToRR */
     /* If the ring of a is RR, this returns the underlying representation of 'a'.
        Otherwise NULL is returned. */
 

@@ -819,6 +819,15 @@ export rawToRR(e:Expr):Expr := (
      else WrongArg("a raw ring element"));
 setupfun("rawToRR",rawToRR);
 
+export rawToCC(e:Expr):Expr := (
+     when e
+     is x:RawRingElement do (
+	  NotYet("getting CC from engine")
+	  -- toExpr(Ccode(CCRorNull, "(engine_CCRorNull)IM2_RingElement_to_BigComplex((RingElement*)",x, ")" ))
+	  )
+     else WrongArg("a raw ring element"));
+setupfun("rawToCC",rawToCC);
+
 export rawLeadCoefficient(e:Expr):Expr := (
      when e
      is args:Sequence do

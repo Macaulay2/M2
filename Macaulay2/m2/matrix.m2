@@ -80,16 +80,16 @@ Matrix + Matrix := Matrix => (
      ) @@ sameRing
 Matrix + RingElement := (f,r) -> if r == 0 then f else f + r*id_(target f)
 RingElement + Matrix := (r,f) -> if r == 0 then f else r*id_(target f) + f
-ZZ + Matrix := (i,f) -> if i === 0 then f else i*id_(target f) + f
-Matrix + ZZ := (f,i) -> if i === 0 then f else f + i*id_(target f)
+Number + Matrix := (i,f) -> if i === 0 then f else i*id_(target f) + f
+Matrix + Number := (f,i) -> if i === 0 then f else f + i*id_(target f)
 
 Matrix - Matrix := Matrix => (
      (f,g) -> map(target f, source f, f.RawMatrix - g.RawMatrix)
      ) @@ sameRing
 Matrix - RingElement := (f,r) -> if r == 0 then f else f - r*id_(target f)
 RingElement - Matrix := (r,f) -> if r == 0 then -f else r*id_(target f) - f
-ZZ - Matrix := (i,f) -> if i === 0 then -f else i*id_(target f) - f
-Matrix - ZZ := (f,i) -> if i === 0 then f else f - i*id_(target f)
+Number - Matrix := (i,f) -> if i === 0 then -f else i*id_(target f) - f
+Matrix - Number := (f,i) -> if i === 0 then f else f - i*id_(target f)
 
 - Matrix := Matrix => f -> new Matrix from {
      symbol ring => ring f,
