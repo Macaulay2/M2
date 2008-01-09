@@ -23,6 +23,7 @@ bool CCC::initialize_CCC(int prec)
   oneV = from_int(1);
   minus_oneV = from_int(-1);
 
+  coeffR = new CoefficientRingCCC(this);
   return true;
 }
 
