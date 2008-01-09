@@ -233,9 +233,9 @@ bool Lapack::eigenvectors(const LMatrixRR *A,
   int info;
 
   double *copyA = A->make_lapack_array();
-  double *real = newarray(double,size);  // real components of eigvals
-  double *imag = newarray(double,size); // imaginary components
-  double *eigen = newarray(double,size*size); // eigvecs
+  double *real = newarray_atomic(double,size);  // real components of eigvals
+  double *imag = newarray_atomic(double,size); // imaginary components
+  double *eigen = newarray_atomic(double,size*size); // eigvecs
 
   dgeev_(&dont, &doit, 
 	 &size, copyA, &size,
@@ -309,11 +309,11 @@ bool Lapack::eigenvalues_symmetric(const LMatrixRR *A, LMatrixRR *eigvals)
   double *workspace = newarray_atomic(double, wsize);
 
   double *copyA = A->make_lapack_array();
-  double *eigv = newarray(double,size);
+  double *evals = newarray_atomic(double,size);
 
   dsyev_(&dont, &triangle, 
 	 &size, copyA,
-	 &size, eigv,
+	 &size, evals,
 	 workspace, &wsize, &info);
 
   if (info < 0)
@@ -330,15 +330,12 @@ bool Lapack::eigenvalues_symmetric(const LMatrixRR *A, LMatrixRR *eigvals)
     {
       // Copy eigenvalues back to eigvals
       eigvals->resize(size,1);
-      __mpfr_struct *vals = eigvals->get_array();
-      double *p = eigv;
-      for (int i=0; i<size; i++)
-	mpfr_set_si(vals++, *p++, GMP_RNDN);
+      eigvals->fill_from_lapack_array(evals);
     }
 
   deletearray(workspace);
   deletearray(copyA);
-  deletearray(eigv);
+  deletearray(evals);
 
   return ret;
 #endif
@@ -348,7 +345,7 @@ bool Lapack::eigenvectors_symmetric(const LMatrixRR *A,
 				    LMatrixRR *eigvals, 
 				    LMatrixRR *eigvecs)
 {
-#if LAPACK
+#if !LAPACK
   ERROR("lapack not present");
   return false;
 #else
@@ -358,6 +355,7 @@ bool Lapack::eigenvectors_symmetric(const LMatrixRR *A,
     return false;
   }
 
+  bool ret = true;
   char doit = 'V';
   char triangle = 'U';  /* Upper triangular part makes symmetric matrix */
 
@@ -365,35 +363,48 @@ bool Lapack::eigenvectors_symmetric(const LMatrixRR *A,
   double *workspace = newarray_atomic(double, wsize);
   int info;
 
-  eigvecs->set_matrix(A);
-  eigvals->resize(size,1);
+  double *evecs = A->make_lapack_array();
+  double *evals = newarray_atomic(double, size);
 
   dsyev_(&doit, &triangle, 
-	 &size, eigvecs->get_array(), 
-	 &size, eigvals->get_array(),
+	 &size, evecs, 
+	 &size, evals,
 	 workspace, &wsize, &info);
 
   if (info < 0)
     {
       ERROR("argument passed to dsyev had an illegal value");
-      return false;
+      ret = false;
     }
   else if (info > 0) 
     {
       ERROR("dsyev did not converge");
-      return false;
+      ret = false;
+    }
+  else
+    {
+      // Copy results to eigvals, eigvecs
+      eigvecs->resize(size,size);
+      eigvecs->fill_from_lapack_array(evecs);
+      eigvals->resize(size,1);
+      eigvals->fill_from_lapack_array(evals);
     }
 
-  return true;
+  deletearray(workspace);
+  deletearray(evecs);
+  deletearray(evals);
+
+  return ret;
 #endif
 }
 
 bool Lapack::SVD(const LMatrixRR *A, LMatrixRR *Sigma, LMatrixRR *U, LMatrixRR *VT)
 {
-#if LAPACK
+#if !LAPACK
   ERROR("lapack not present");
   return false;
 #else
+  bool ret = true;
   char doit = 'A';  // other options are 'S' and 'O' for singular vectors only
   int rows = A->n_rows();
   int cols = A->n_cols();
@@ -403,40 +414,57 @@ bool Lapack::SVD(const LMatrixRR *A, LMatrixRR *Sigma, LMatrixRR *U, LMatrixRR *
   int wsize = (3*min+max >= 5*min) ? 3*min+max : 5*min;
   double *workspace = newarray_atomic(double, wsize);
 
-  LMatrixRR * copyA = A->copy();
-  U->resize(rows,rows);
-  VT->resize(cols,cols);
-  Sigma->resize(min,1);
+  double *copyA = A->make_lapack_array();
+  double *u = newarray_atomic(double, rows*rows);
+  double *vt = newarray_atomic(double, cols*cols);
+  double *sigma = newarray_atomic(double, min);
+
   
   dgesvd_(&doit, &doit, &rows, &cols, 
-	  copyA->get_array(), &rows,
-	  Sigma->get_array(), 
-	  U->get_array(), &rows,
-	  VT->get_array(), &cols,
+	  copyA, &rows,
+	  sigma, 
+	  u, &rows,
+	  vt, &cols,
 	  workspace, &wsize, 
 	  &info);
 
   if (info < 0)
     {
       ERROR("argument passed to dgesvd had an illegal value");
-      return false;
+      ret = false;
     }
   else if (info > 0) 
     {
       ERROR("dgesvd did not converge");
-      return false;
+      ret = false;
     }
-  
-  return true;
+  else
+    {
+      U->resize(rows,rows);
+      VT->resize(cols,cols);
+      Sigma->resize(min,1);
+      U->fill_from_lapack_array(u);
+      VT->fill_from_lapack_array(vt);
+      Sigma->fill_from_lapack_array(sigma);
+    }
+
+  deletearray(workspace);
+  deletearray(copyA);
+  deletearray(u);
+  deletearray(vt);
+  deletearray(sigma);
+
+  return ret;
 #endif
 }
 
 bool Lapack::SVD_divide_conquer(const LMatrixRR *A, LMatrixRR *Sigma, LMatrixRR *U, LMatrixRR *VT)
 {
-#if LAPACK
+#if !LAPACK
   ERROR("lapack not present");
   return false;
 #else
+  bool ret = true;
   char doit = 'A';  // other options are 'S' and 'O' for singular vectors only
   int rows = A->n_rows();
   int cols = A->n_cols();
@@ -447,29 +475,45 @@ bool Lapack::SVD_divide_conquer(const LMatrixRR *A, LMatrixRR *Sigma, LMatrixRR 
   double *workspace = newarray_atomic(double,wsize);
   int *iworkspace = newarray_atomic(int, 8*min);
 
-  LMatrixRR * copyA = A->copy();
-  U->resize(rows,rows);
-  VT->resize(cols,cols);
-  Sigma->resize(min,1);
+  double *copyA = A->make_lapack_array();
+  double *u = newarray_atomic(double, rows*rows);
+  double *vt = newarray_atomic(double, cols*cols);
+  double *sigma = newarray_atomic(double, min);
 
   dgesdd_(&doit, &rows, &cols, 
-	  copyA->get_array(), &rows,
-	  Sigma->get_array(), 
-	  U->get_array(), &rows,
-	  VT->get_array(), &cols,
+	  copyA, &rows,
+	  sigma, 
+	  u, &rows,
+	  vt, &cols,
 	  workspace, &wsize, 
 	  iworkspace, &info);
 
   if (info < 0)
     {
       ERROR("argument passed to dgesdd had an illegal value");
-      return false;
+      ret = false;
     }
   else if (info > 0) 
     {
       ERROR("dgesdd did not converge");
-      return false;
+      ret = false;
     }
+  else 
+    {
+      U->resize(rows,rows);
+      VT->resize(cols,cols);
+      Sigma->resize(min,1);
+      U->fill_from_lapack_array(u);
+      VT->fill_from_lapack_array(vt);
+      Sigma->fill_from_lapack_array(sigma);
+    }
+
+  deletearray(workspace);
+  deletearray(iworkspace);
+  deletearray(copyA);
+  deletearray(u);
+  deletearray(vt);
+  deletearray(sigma);
 
   return true;
 #endif
