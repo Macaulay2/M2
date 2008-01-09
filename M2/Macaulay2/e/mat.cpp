@@ -199,19 +199,6 @@ template <> Mat_ZZp *MutableMat<CoefficientRingZZp,Mat<CoefficientRingZZp> >
 }
 
 template<typename CoeffRing, typename MatType>
-Mat_RR *MutableMat<CoeffRing,MatType>::get_mat_RR()
-{
-  return 0;
-}
-
-template <> Mat_RR *MutableMat<CoefficientRingRR,Mat<CoefficientRingRR> >
-  ::get_mat_RR()
-{
-  return &mat;
-}
-
-
-template<typename CoeffRing, typename MatType>
 DMatRR * MutableMat<CoeffRing,MatType>::get_DMatRR()
 {
   return 0;

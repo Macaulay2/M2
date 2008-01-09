@@ -9,8 +9,6 @@
 
 RingZZ *globalZZ;
 QQ *globalQQ;
-RingRR *globalRR;
-CC *globalCC;
 
 RingElement * RingElement::make_raw(const Ring *R, ring_elem f)
 {

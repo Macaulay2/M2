@@ -571,8 +571,8 @@ void DMatLU<CoeffRing>::nullspaceU(const DMat<CoeffRing> *U,
 
 
 #include "coeffrings.hpp"
-template class DMatLU<CoefficientRingRR>;
-template class DMatLU<CoefficientRingCC>;
+template class DMatLU<CoefficientRingRRR>;
+template class DMatLU<CoefficientRingCCC>;
 template class DMatLU<CoefficientRingZZp>;
 
 // Local Variables:

@@ -326,10 +326,6 @@ extern "C" {
        However, currently, not all of this is checked...
     */
 
-  const RingOrNull *IM2_Ring_RR(); /* drg: connected rawRR */
-
-  const RingOrNull *IM2_Ring_CC(); /* drg: connected rawCC */
-
   const RingOrNull *IM2_Ring_RRR(int prec); /* drg: connected rawRRR */
 
   const RingOrNull *IM2_Ring_CCC(int prec); /* drg: connected rawCCC */
@@ -429,12 +425,6 @@ extern "C" {
   const RingElementOrNull *IM2_RingElement_from_rational(const Ring *R, 
 							 M2_Rational r); /* rawFromNumber*/
 
-  //  const RingElement *IM2_RingElement_from_double(const Ring *R, 
-  //						 double d); /* drg: connected rawFromNumber*/
-
-  // const RingElement *IM2_RingElement_from_complex(const Ring *R, 
-  //						  M2_CC z); /* drg: connected rawFromNumber*/
-
   M2_IntegerOrNull IM2_RingElement_to_Integer(const RingElement *a); /* drg: connected rawToInteger*/
     /* If the ring of a is ZZ, or ZZ/p, this returns the underlying representation.
        Otherwise, NULL is returned, and an error is given */
@@ -442,14 +432,6 @@ extern "C" {
   M2_Rational IM2_RingElement_to_rational(const RingElement *a); /* connected: rawToRational */
     /* If the ring of a is ZZ, or ZZ/p, this returns the underlying representation.
        Otherwise, NULL is returned, and an error is given */
-
-  //  double IM2_RingElement_to_double(const RingElement *a); /* rawToReal */
-    /* If the ring of a is RR, this returns the underlying representation of 'a'.
-       Otherwise 0.0 is returned. */
-
-  //  M2_CC IM2_RingElement_to_complex(const RingElement *a); /* rawToComplex */
-    /* If the ring of a is RR, this returns the underlying representation of 'a'.
-       Otherwise 0.0 is returned. */
 
   const RingElementOrNull *IM2_RingElement_from_BigReal(const Ring *R, 
 							M2_RRR d); /* drg: waiting, rawFromNumber*/

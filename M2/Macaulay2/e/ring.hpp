@@ -404,8 +404,6 @@ public:
 #include "ZZ.hpp"
 extern RingZZ *globalZZ;
 extern QQ *globalQQ;
-extern RingRR *globalRR;
-extern CC *globalCC;
 #endif
 
 // Local Variables:
