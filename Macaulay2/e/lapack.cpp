@@ -290,43 +290,57 @@ bool Lapack::eigenvectors(const LMatrixRR *A,
 
 bool Lapack::eigenvalues_symmetric(const LMatrixRR *A, LMatrixRR *eigvals)
 {
-#if LAPACK
+#if !LAPACK
   ERROR("lapack not present");
   return false;
 #else
   int size = A->n_rows();
   if (size != A->n_cols()) {
     ERROR("expected a square matrix");
-    return 0;
+    return false;
   }
-
+  
+  bool ret = true;
   char dont = 'N';
   char triangle = 'U';  /* Upper triangular part makes symmetric matrix. */
+  int info;
 
   int wsize = 3*size-1;
   double *workspace = newarray_atomic(double, wsize);
-  int info;
 
-  LMatrixRR * copyA = A->copy();
-  eigvals->resize(size,1);
+  double *copyA = A->make_lapack_array();
+  double *eigv = newarray(double,size);
 
   dsyev_(&dont, &triangle, 
-	 &size, copyA->get_array(),
-	 &size, eigvals->get_array(),
+	 &size, copyA,
+	 &size, eigv,
 	 workspace, &wsize, &info);
 
   if (info < 0)
     {
       ERROR("argument passed to dsyev had an illegal value");
-      return false;
+      ret = false;
     }
   else if (info > 0) 
     {
       ERROR("dsyev did not converge");
-      return false;
+      ret = false;
+    }
+  else
+    {
+      // Copy eigenvalues back to eigvals
+      eigvals->resize(size,1);
+      __mpfr_struct *vals = eigvals->get_array();
+      double *p = eigv;
+      for (int i=0; i<size; i++)
+	mpfr_set_si(vals++, *p++, GMP_RNDN);
     }
 
-  return true;
+  deletearray(workspace);
+  deletearray(copyA);
+  deletearray(eigv);
+
+  return ret;
 #endif
 }
 
