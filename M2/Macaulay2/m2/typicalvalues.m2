@@ -166,7 +166,9 @@ frames(Pseudocode) := frames
 powermod(ZZ,ZZ,ZZ) := ZZ => powermod
 
 typval = method()
+typval(Function,Type,Type) := (f,X,Z) -> f(X) := Z => f
 typval(Function,Type,Type,Type) := (f,X,Y,Z) -> f(X,Y) := Z => f
+typval(Keyword,Type,Type) := (f,X,Z) -> installMethod(f, X, Z => dummy)
 typval(Keyword,Type,Type,Type) := (f,X,Y,Z) -> installMethod(f, X, Y, Z => dummy)
 
 load "tvalues.m2"

@@ -34,21 +34,21 @@ export (lhs:Expr) + (rhs:Expr) : Expr := (
 	  when rhs
 	  is y:ZZ do Expr(x + y)			    -- # typical value: symbol +, ZZ, ZZ, ZZ
      	  is y:QQ do Expr(x + y)			    -- # typical value: symbol +, ZZ, QQ, QQ
-     	  is y:RR do Expr(y + x)
-     	  is y:CC do Expr(toCC(x,y.re.prec) + y)
+     	  is y:RR do Expr(y + x)			    -- # typical value: symbol +, ZZ, RR, RR
+     	  is y:CC do Expr(toCC(x,y.re.prec) + y)	    -- # typical value: symbol +, ZZ, CC, CC
 	  is Error do rhs
 	  else binarymethod(lhs,rhs,PlusS))
      is x:QQ do (
 	  when rhs
-	  is y:ZZ do Expr(x + y)
-     	  is y:QQ do Expr(x + y)
-     	  is y:RR do Expr(y + x)
-     	  is y:CC do Expr(toCC(x,y.re.prec) + y)
+	  is y:ZZ do Expr(x + y)			    -- # typical value: symbol +, QQ, ZZ, QQ
+     	  is y:QQ do Expr(x + y)			    -- # typical value: symbol +, QQ, QQ, QQ
+     	  is y:RR do Expr(y + x)			    -- # typical value: symbol +, QQ, RR, RR
+     	  is y:CC do Expr(toCC(x,y.re.prec) + y)	    -- # typical value: symbol +, QQ, CC, CC
 	  is Error do rhs
 	  else binarymethod(lhs,rhs,PlusS))
      is x:RawRingElement do (
 	  when rhs
-	  is y:RawRingElement do (
+	  is y:RawRingElement do (			    -- # typical value: symbol +, RawRingElement, RawRingElement, RawRingElement
 	       when x+y
 	       is t:RawRingElement do Expr(t)
 	       is null do buildErrorPacket(EngineError("polynomial addition failed"))
@@ -57,23 +57,23 @@ export (lhs:Expr) + (rhs:Expr) : Expr := (
 	  else binarymethod(lhs,rhs,PlusS))
      is x:RR do (
 	  when rhs
-	  is y:ZZ do Expr(x + y)
-     	  is y:QQ do Expr(x + y)
-     	  is y:RR do Expr(x + y)
-     	  is y:CC do Expr(x + y)
+	  is y:ZZ do Expr(x + y)			    -- # typical value: symbol +, RR, ZZ, RR
+     	  is y:QQ do Expr(x + y)			    -- # typical value: symbol +, RR, QQ, RR
+     	  is y:RR do Expr(x + y)			    -- # typical value: symbol +, RR, RR, RR
+     	  is y:CC do Expr(x + y)			    -- # typical value: symbol +, RR, CC, CC
 	  is Error do rhs
 	  else binarymethod(lhs,rhs,PlusS))
      is x:CC do (
 	  when rhs
-	  is y:ZZ do Expr(x + toCC(y,x.re.prec))
-     	  is y:QQ do Expr(x + toCC(y,x.re.prec))
-     	  is y:RR do Expr(x + y)
-     	  is y:CC do Expr(x + y)
+	  is y:ZZ do Expr(x + toCC(y,x.re.prec))	    -- # typical value: symbol +, CC, ZZ, CC
+     	  is y:QQ do Expr(x + toCC(y,x.re.prec))	    -- # typical value: symbol +, CC, QQ, CC
+     	  is y:RR do Expr(x + y)			    -- # typical value: symbol +, CC, RR, CC
+     	  is y:CC do Expr(x + y)			    -- # typical value: symbol +, CC, CC, CC
 	  is Error do rhs
 	  else binarymethod(lhs,rhs,PlusS))
      is x:RawMatrix do (
 	  when rhs
-	  is y:RawMatrix do (
+	  is y:RawMatrix do (				    -- # typical value: symbol +, RawMatrix, RawMatrix, RawMatrix
 	       when x+y
 	       is t:RawMatrix do Expr(t)
 	       is null do buildErrorPacket(EngineError("matrix addition failed"))
@@ -82,7 +82,7 @@ export (lhs:Expr) + (rhs:Expr) : Expr := (
 	  else binarymethod(lhs,rhs,PlusS))
      is x:RawMutableMatrix do (
 	  when rhs
-	  is y:RawMutableMatrix do (
+	  is y:RawMutableMatrix do (			    -- # typical value: symbol +, RawMutableMatrix, RawMutableMatrix, RawMutableMatrix
 	       when x+y
 	       is t:RawMutableMatrix do Expr(t)
 	       is null do buildErrorPacket(EngineError("mutable matrix addition failed"))
@@ -91,7 +91,7 @@ export (lhs:Expr) + (rhs:Expr) : Expr := (
 	  else binarymethod(lhs,rhs,PlusS))
      is x:RawMonomialIdeal do (
 	  when rhs
-	  is y:RawMonomialIdeal do (
+	  is y:RawMonomialIdeal do (			    -- # typical value: symbol +, RawMonomialIdeal, RawMonomialIdeal, RawMonomialIdeal
 	       when x+y
 	       is t:RawMonomialIdeal do Expr(t)
 	       is null do buildErrorPacket(EngineError("monomial ideal addition failed"))
@@ -107,13 +107,13 @@ plusfun1(rhs:Code):Expr := (
      r := eval(rhs);
      when r
      is Error do r
-     is ZZ do r
-     is RR do r
-     is CC do r
-     is QQ do r
-     is RawRingElement do r
-     is RawMatrix do r
-     is RawMutableMatrix do r
+     is ZZ do r						    -- # typical value: symbol +, ZZ, ZZ
+     is RR do r						    -- # typical value: symbol +, RR, RR
+     is CC do r						    -- # typical value: symbol +, CC, CC
+     is QQ do r						    -- # typical value: symbol +, QQ, QQ
+     is RawRingElement do r				    -- # typical value: symbol +, RawRingElement, RawRingElement
+     is RawMatrix do r					    -- # typical value: symbol +, RawMatrix, RawMatrix
+     is RawMutableMatrix do r				    -- # typical value: symbol +, RawMutableMatrix, RawMutableMatrix
      else unarymethod(rhs,PlusS));
 plusfun(lhs:Code,rhs:Code):Expr := (
      l := eval(lhs);
@@ -125,15 +125,15 @@ plusfun(lhs:Code,rhs:Code):Expr := (
 setup(PlusS,plusfun1,plusfun);
 export - (rhs:Expr) : Expr := (
      when rhs
-     is x:ZZ do Expr(-x)
-     is x:RR do Expr(-x)
-     is x:CC do Expr(-x)
-     is x:QQ do Expr(-x)
-     is x:RawRingElement do Expr(-x)
-     is x:RawMatrix do (
+     is x:ZZ do Expr(-x)				    -- # typical value: symbol -, ZZ, ZZ                            
+     is x:RR do Expr(-x)				    -- # typical value: symbol -, RR, RR                            
+     is x:CC do Expr(-x)				    -- # typical value: symbol -, CC, CC                            
+     is x:QQ do Expr(-x)				    -- # typical value: symbol -, QQ, QQ                            
+     is x:RawRingElement do Expr(-x)			    -- # typical value: symbol -, RawRingElement, RawRingElement    
+     is x:RawMatrix do (				    -- # typical value: symbol -, RawMatrix, RawMatrix              
 	  when -x is y:RawMatrix do Expr(y) else buildErrorPacket(EngineError("polynomial minus failed"))
 	  )
-     is x:RawMutableMatrix do Expr(-x)
+     is x:RawMutableMatrix do Expr(-x)                      -- # typical value: symbol -, RawMutableMatrix, RawMutableMatrix
      is Error do rhs
      else (
 	  method := lookup(Class(rhs),MinusS);
@@ -146,23 +146,23 @@ export (lhs:Expr) - (rhs:Expr) : Expr := (
      when lhs
      is x:ZZ do (
 	  when rhs
-	  is y:ZZ do Expr(x - y)
-     	  is y:QQ do Expr(x - y)
-	  is y:RR do Expr(toRR(x,y.prec) - y)
-	  is y:CC do Expr(toCC(x,y.re.prec) - y)
+	  is y:ZZ do Expr(x - y)			    -- # typical value: symbol -, ZZ, ZZ, ZZ
+     	  is y:QQ do Expr(x - y)			    -- # typical value: symbol -, ZZ, QQ, QQ
+	  is y:RR do Expr(toRR(x,y.prec) - y)		    -- # typical value: symbol -, ZZ, RR, RR
+	  is y:CC do Expr(toCC(x,y.re.prec) - y)	    -- # typical value: symbol -, ZZ, CC, CC
 	  is Error do rhs
 	  else binarymethod(lhs,rhs,MinusS))
      is x:QQ do (
 	  when rhs
-	  is y:ZZ do Expr(x - y)
-     	  is y:QQ do Expr(x - y)
-	  is y:RR do Expr(toRR(x,y.prec) - y)
-	  is y:CC do Expr(toCC(x,y.re.prec) - y)
+	  is y:ZZ do Expr(x - y)			    -- # typical value: symbol -, QQ, ZZ, QQ
+     	  is y:QQ do Expr(x - y)			    -- # typical value: symbol -, QQ, QQ, QQ
+	  is y:RR do Expr(toRR(x,y.prec) - y)		    -- # typical value: symbol -, QQ, RR, RR
+	  is y:CC do Expr(toCC(x,y.re.prec) - y)	    -- # typical value: symbol -, QQ, CC, CC
 	  is Error do rhs
 	  else binarymethod(lhs,rhs,MinusS))
      is x:RawRingElement do (
 	  when rhs
-	  is y:RawRingElement do (
+	  is y:RawRingElement do (			    -- # typical value: symbol -, RawRingElement, RawRingElement, RawRingElement
 	       when x-y
 	       is t:RawRingElement do Expr(t)
 	       is null do buildErrorPacket(EngineError("polynomial subtraction failed"))
@@ -171,30 +171,30 @@ export (lhs:Expr) - (rhs:Expr) : Expr := (
 	  else binarymethod(lhs,rhs,MinusS))
      is x:RR do (
 	  when rhs
-	  is y:ZZ do Expr(x - y)
-     	  is y:QQ do Expr(x - y)
-	  is y:RR do Expr(x - y)
-	  is y:CC do Expr(x - y)
+	  is y:ZZ do Expr(x - y)			    -- # typical value: symbol -, RR, ZZ, RR
+     	  is y:QQ do Expr(x - y)			    -- # typical value: symbol -, RR, QQ, RR
+	  is y:RR do Expr(x - y)			    -- # typical value: symbol -, RR, RR, RR
+	  is y:CC do Expr(x - y)			    -- # typical value: symbol -, RR, CC, CC
 	  is Error do rhs
 	  else binarymethod(lhs,rhs,MinusS))
      is x:CC do (
 	  when rhs
-	  is y:ZZ do Expr(x - toCC(y,x.re.prec))
-     	  is y:QQ do Expr(x - toCC(y,x.re.prec))
-	  is y:RR do Expr(x - y)
-	  is y:CC do Expr(x - y)
+	  is y:ZZ do Expr(x - toCC(y,x.re.prec))	    -- # typical value: symbol -, CC, ZZ, CC
+     	  is y:QQ do Expr(x - toCC(y,x.re.prec))	    -- # typical value: symbol -, CC, QQ, CC
+	  is y:RR do Expr(x - y)			    -- # typical value: symbol -, CC, RR, CC
+	  is y:CC do Expr(x - y)			    -- # typical value: symbol -, CC, CC, CC
 	  is Error do rhs
 	  else binarymethod(lhs,rhs,MinusS))
      is x:RawMatrix do (
 	  when rhs
-	  is y:RawMatrix do (
+	  is y:RawMatrix do (				    -- # typical value: symbol -, RawMatrix, RawMatrix, RawMatrix
 	       when x-y
 	       is t:RawMatrix do Expr(t)
 	       is null do buildErrorPacket(EngineError("matrix subtraction failed"))
 	       )
 	  is Error do rhs
 	  else binarymethod(lhs,rhs,MinusS))
-     is x:RawMutableMatrix do (
+     is x:RawMutableMatrix do (				    -- # typical value: symbol -, RawMutableMatrix, RawMutableMatrix, RawMutableMatrix
 	  when rhs
 	  is y:RawMutableMatrix do (
 	       when x-y
@@ -203,7 +203,7 @@ export (lhs:Expr) - (rhs:Expr) : Expr := (
 	       )
 	  is Error do rhs
 	  else binarymethod(lhs,rhs,MinusS))
-     is x:RawMonomialIdeal do (
+     is x:RawMonomialIdeal do (				    -- # typical value: symbol -, RawMonomialIdeal, RawMonomialIdeal, RawMonomialIdeal
 	  when rhs
 	  is y:RawMonomialIdeal do (
 	       when x-y
@@ -243,33 +243,33 @@ export (lhs:Expr) * (rhs:Expr) : Expr := (
      when lhs
      is x:ZZ do (
 	  when rhs
-	  is y:ZZ do Expr(x * y)
-     	  is y:QQ do Expr(x * y)
-     	  is y:RR do Expr(toRR(x,y.prec) * y)
-     	  is y:CC do Expr(toCC(x,y.re.prec) * y)
+	  is y:ZZ do Expr(x * y)			    -- # typical value: symbol *, ZZ, ZZ, ZZ
+     	  is y:QQ do Expr(x * y)			    -- # typical value: symbol *, ZZ, QQ, QQ
+     	  is y:RR do Expr(toRR(x,y.prec) * y)		    -- # typical value: symbol *, ZZ, RR, RR
+     	  is y:CC do Expr(toCC(x,y.re.prec) * y)	    -- # typical value: symbol *, ZZ, CC, CC
 	  is Error do rhs
 	  else binarymethod(lhs,rhs,StarS))
      is x:QQ do (
 	  when rhs
-	  is y:ZZ do Expr(x * y)
-     	  is y:QQ do Expr(x * y)
-     	  is y:RR do Expr(y * x)
-     	  is y:CC do Expr(y * toRR(x,y.re.prec))
+	  is y:ZZ do Expr(x * y)			    -- # typical value: symbol *, QQ, ZZ, QQ
+     	  is y:QQ do Expr(x * y)			    -- # typical value: symbol *, QQ, QQ, QQ
+     	  is y:RR do Expr(y * x)			    -- # typical value: symbol *, QQ, RR, RR
+     	  is y:CC do Expr(y * toRR(x,y.re.prec))	    -- # typical value: symbol *, QQ, CC, CC
 	  is Error do rhs
 	  else binarymethod(lhs,rhs,StarS))
      is x:RawRingElement do (
 	  when rhs
-	  is y:RawRingElement do (
+	  is y:RawRingElement do (			    -- # typical value: symbol *, RawRingElement, RawRingElement, RawRingElement
 	       when x*y
 	       is t:RawRingElement do Expr(t)
 	       is null do buildErrorPacket(EngineError("polynomial multiplication failed"))
 	       )
-	  is y:RawMatrix do (
+	  is y:RawMatrix do (				    -- # typical value: symbol *, RawRingElement, RawMatrix, RawMatrix
 	       when x*y
 	       is t:RawMatrix do Expr(t)
 	       is null do buildErrorPacket(EngineError("matrix scalar multiplication failed"))
 	       )
-	  is y:RawMutableMatrix do (
+	  is y:RawMutableMatrix do (			    -- # typical value: symbol *, RawRingElement, RawMatrix, RawMatrix
 	       when x*y
 	       is t:RawMutableMatrix do Expr(t)
 	       is null do buildErrorPacket(EngineError("matrix scalar multiplication failed"))
@@ -278,29 +278,29 @@ export (lhs:Expr) * (rhs:Expr) : Expr := (
 	  else binarymethod(lhs,rhs,StarS))
      is x:RR do (
 	  when rhs
-	  is y:ZZ do Expr(x * y)
-     	  is y:QQ do Expr(x * y)
-     	  is y:RR do Expr(x * y)
-     	  is y:CC do Expr(x * y)
+	  is y:ZZ do Expr(x * y)			    -- # typical value: symbol *, RR, ZZ, RR
+     	  is y:QQ do Expr(x * y)			    -- # typical value: symbol *, RR, QQ, RR
+     	  is y:RR do Expr(x * y)			    -- # typical value: symbol *, RR, RR, RR
+     	  is y:CC do Expr(x * y)			    -- # typical value: symbol *, RR, CC, CC
 	  is Error do rhs
 	  else binarymethod(lhs,rhs,StarS))
      is x:CC do (
 	  when rhs
-	  is y:ZZ do Expr(x * toRR(y,x.re.prec))
-     	  is y:QQ do Expr(x * toRR(y,x.re.prec))
-     	  is y:RR do Expr(y * x)
-     	  is y:CC do Expr(y * x)
+	  is y:ZZ do Expr(x * toRR(y,x.re.prec))	    -- # typical value: symbol *, CC, ZZ, CC
+     	  is y:QQ do Expr(x * toRR(y,x.re.prec))	    -- # typical value: symbol *, CC, QQ, CC
+     	  is y:RR do Expr(y * x)			    -- # typical value: symbol *, CC, RR, CC
+     	  is y:CC do Expr(y * x)			    -- # typical value: symbol *, CC, CC, CC
 	  is Error do rhs
 	  else binarymethod(lhs,rhs,StarS))
      is x:RawMonomial do (
 	  when rhs
-	  is y:RawMonomial do (
+	  is y:RawMonomial do (				    -- # typical value: symbol *, RawMonomialIdeal, RawMonomial, RawMonomial
 	       when x*y
 	       is z:RawMonomial do Expr(z)
 	       is null do buildErrorPacket(EngineError("monomial multiplication overflow"))
 	       )
 	  else binarymethod(lhs,rhs,StarS))
-     is x:RawMonomialIdeal do (
+     is x:RawMonomialIdeal do (				    -- # typical value: symbol *, RawMonomialIdeal, RawMonomialIdeal, RawMonomialIdeal
 	  when rhs
 	  is y:RawMonomialIdeal do (
 	       when x*y
@@ -308,14 +308,14 @@ export (lhs:Expr) * (rhs:Expr) : Expr := (
 	       is null do buildErrorPacket(EngineError("monomial ideal multiplication failed"))
 	       )
 	  else binarymethod(lhs,rhs,StarS))
-     is x:RawMatrix do (
+     is x:RawMatrix do (				    -- # typical value: symbol *, RawMatrix, RawRingElement, RawRingElement
 	  when rhs
 	  is y:RawRingElement do (
 	       when x*y
 	       is t:RawMatrix do Expr(t)
 	       is null do buildErrorPacket(EngineError("matrix scalar multiplication failed"))
 	       )
-	  is y:RawMatrix do (
+	  is y:RawMatrix do (				    -- # typical value: symbol *, RawMatrix, RawMatrix, RawMatrix
 	       when x*y
 	       is t:RawMatrix do Expr(t)
 	       is null do buildErrorPacket(EngineError("matrix multiplication failed"))
@@ -324,12 +324,12 @@ export (lhs:Expr) * (rhs:Expr) : Expr := (
 	  else binarymethod(lhs,rhs,StarS))
      is x:RawMutableMatrix do (
 	  when rhs
-	  is y:RawRingElement do (
+	  is y:RawRingElement do (			    -- # typical value: symbol *, RawMutableMatrix, RawRingElement, RawMutableMatrix
 	       when x*y
 	       is t:RawMutableMatrix do Expr(t)
 	       is null do buildErrorPacket(EngineError("matrix scalar multiplication failed"))
 	       )
-	  is y:RawMutableMatrix do (
+	  is y:RawMutableMatrix do (			    -- # typical value: symbol *, RawMutableMatrix, RawMutableMatrix, RawMutableMatrix
 	       when x*y
 	       is t:RawMutableMatrix do Expr(t)
 	       is null do buildErrorPacket(EngineError("matrix multiplication failed"))
@@ -347,19 +347,19 @@ export (lhs:Expr) / (rhs:Expr) : Expr := (
      when lhs
      is x:ZZ do (
 	  when rhs
-	  is y:ZZ do (
+	  is y:ZZ do (					    -- # typical value: symbol /, ZZ, ZZ, ZZ
 	       if y === 0
 	       then buildErrorPacket("division by zero")
 	       else Expr(x / y))
-     	  is y:QQ do (
+     	  is y:QQ do (					    -- # typical value: symbol /, ZZ, QQ, QQ
 	       if y === 0
 	       then buildErrorPacket("division by zero")
 	       else Expr(x / y))
-     	  is y:RR do (
+     	  is y:RR do (					    -- # typical value: symbol /, ZZ, RR, RR
 	       if y === 0
 	       then buildErrorPacket("division by zero")
 	       else Expr(toRR(x,y.prec) / y))
-     	  is y:CC do (
+     	  is y:CC do (					    -- # typical value: symbol /, ZZ, CC, CC
 	       if y === 0
 	       then buildErrorPacket("division by zero")
 	       else Expr(toRR(x,y.re.prec) / y)
@@ -368,19 +368,19 @@ export (lhs:Expr) / (rhs:Expr) : Expr := (
 	  else binarymethod(lhs,rhs,DivideS))
      is x:QQ do (
 	  when rhs
-	  is y:ZZ do (
+	  is y:ZZ do (					    -- # typical value: symbol /, QQ, ZZ, QQ
 	       if y === 0
 	       then buildErrorPacket("division by zero")
 	       else Expr(x / y))
-     	  is y:QQ do (
+     	  is y:QQ do (					    -- # typical value: symbol /, QQ, QQ, QQ
 	       if y === 0
 	       then buildErrorPacket("division by zero")
 	       else Expr(x / y))
-     	  is y:RR do (
+     	  is y:RR do (					    -- # typical value: symbol /, QQ, RR, RR
 	       if y === 0
 	       then buildErrorPacket("division by zero")
 	       else Expr(toRR(x,y.prec) / y))
-     	  is y:CC do (
+     	  is y:CC do (					    -- # typical value: symbol /, QQ, CC, CC
 	       if y === 0
 	       then buildErrorPacket("division by zero")
 	       else Expr(toRR(x,y.re.prec) / y)
@@ -389,19 +389,19 @@ export (lhs:Expr) / (rhs:Expr) : Expr := (
 	  else binarymethod(lhs,rhs,DivideS))
      is x:RR do (
 	  when rhs
-	  is y:ZZ do (
+	  is y:ZZ do (					    -- # typical value: symbol /, RR, ZZ, RR
 	       if y === 0
 	       then buildErrorPacket("division by zero")
 	       else Expr(x / y))
-     	  is y:QQ do (
+     	  is y:QQ do (					    -- # typical value: symbol /, RR, QQ, RR
 	       if y === 0
 	       then buildErrorPacket("division by zero")
 	       else Expr(x / y))
-     	  is y:RR do (
+     	  is y:RR do (					    -- # typical value: symbol /, RR, RR, RR
 	       if y === 0
 	       then buildErrorPacket("division by zero")
 	       else Expr(x / y))
-     	  is y:CC do (
+     	  is y:CC do (					    -- # typical value: symbol /, RR, CC, CC
 	       if y === 0
 	       then buildErrorPacket("division by zero")
 	       else Expr(x / y)
@@ -410,22 +410,22 @@ export (lhs:Expr) / (rhs:Expr) : Expr := (
 	  else binarymethod(lhs,rhs,DivideS))
      is x:CC do (
 	  when rhs
-	  is y:ZZ do (
+	  is y:ZZ do (					    -- # typical value: symbol /, CC, ZZ, CC
 	       if y === 0
 	       then buildErrorPacket("division by zero")
 	       else Expr(x / toRR(y,x.re.prec))
 	       )
-     	  is y:QQ do (
+     	  is y:QQ do (					    -- # typical value: symbol /, CC, QQ, CC
 	       if y === 0
 	       then buildErrorPacket("division by zero")
 	       else Expr(x / toRR(y,x.re.prec))
 	       )
-     	  is y:RR do (
+     	  is y:RR do (					    -- # typical value: symbol /, CC, RR, CC
 	       if y === 0
 	       then buildErrorPacket("division by zero")
 	       else Expr(x / y)
 	       )
-     	  is y:CC do (
+     	  is y:CC do (					    -- # typical value: symbol /, CC, CC, CC
 	       if y === 0
 	       then buildErrorPacket("division by zero")
 	       else Expr(x / y)
@@ -434,7 +434,7 @@ export (lhs:Expr) / (rhs:Expr) : Expr := (
 	  else binarymethod(lhs,rhs,DivideS))
      is x:RawMonomial do (
 	  when rhs
-	  is y:RawMonomial do (
+	  is y:RawMonomial do (				    -- # typical value: symbol /, RawMonomial, RawMonomial, RawMonomial
 	       when x/y
 	       is z:RawMonomial do Expr(z)
 	       is null do buildErrorPacket(EngineError("monomial division overflow"))
@@ -454,7 +454,7 @@ export (lhs:Expr) // (rhs:Expr) : Expr := (
      when lhs
      is x:ZZ do (
 	  when rhs
-	  is y:ZZ do (
+	  is y:ZZ do (					    -- # typical value: symbol //, ZZ, ZZ, ZZ
 	       if y === 0
 	       then Expr(toInteger(0))
 	       else Expr(x//y)
@@ -463,7 +463,7 @@ export (lhs:Expr) // (rhs:Expr) : Expr := (
 	  else binarymethod(lhs,rhs,SlashSlashS))
      is x:RawRingElement do (
 	  when rhs
-	  is y:RawRingElement do (
+	  is y:RawRingElement do (			    -- # typical value: symbol //, RawRingElement, RawRingElement, RawRingElement
 	       when x//y
 	       is t:RawRingElement do Expr(t)
 	       is null do buildErrorPacket(EngineError("polynomial division failed"))
