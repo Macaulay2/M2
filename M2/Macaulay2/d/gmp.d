@@ -50,7 +50,7 @@ getstr(str:Cstring, base:int, x:ZZ):Cstring ::= Ccode(Cstring,
 
 init(x:ZZ):void ::= Ccode( void, "mpz_init(", "(__mpz_struct *)", x, ")" );
 
-newInteger():ZZ := (
+export newZZ():ZZ := (
      x := ZZ(0,0,null());
      init(x);
      x);
@@ -252,7 +252,7 @@ pow(x:ZZ, y:ZZ, n:int):void ::= Ccode( void,
 
 export (x:ZZ) ^ (n:int) : ZZ := (
      if n < 0 then return toInteger(0);
-     y := newInteger();
+     y := newZZ();
      pow(y,x,n);
      y);
 
@@ -264,7 +264,7 @@ export (x:ZZ) ^ (n:ZZ) : ZZ := (
 
 export powermod(x:ZZ, y:ZZ, n:ZZ) : ZZ := (
      -- z = x^y mod n
-     z := newInteger();
+     z := newZZ();
      Ccode( void, "mpz_powm(", "(__mpz_struct *)", z, ",", "(__mpz_struct *)", x, ",", "(__mpz_struct *)", y, ",", "(__mpz_struct *)", n, ")" );
      z);
 
@@ -538,7 +538,7 @@ export QQ := {
      };
 
 export numerator(x:QQ):ZZ := (
-     z := newInteger();
+     z := newZZ();
      Ccode( void,
 	  "mpq_get_num(",
 	      "(__mpz_struct *)", z, ",", 
@@ -548,7 +548,7 @@ export numerator(x:QQ):ZZ := (
      z);
 
 export denominator(x:QQ):ZZ := (
-     z := newInteger();
+     z := newZZ();
      Ccode( void,
 	  "mpq_get_den(",
 	      "(__mpz_struct *)", z, ",", 
@@ -1168,17 +1168,17 @@ export (x:RR) ^ (y:RR) : RR := (
      z);
 
 export floor(x:RR) : ZZ := (
-     y := newInteger();
+     y := newZZ();
      Ccode( void, "mpfr_get_z((__mpz_struct *)", y, ",(__mpfr_struct *)", x, ", GMP_RNDD)" );
      y);
 
 export ceil(x:RR) : ZZ := (
-     y := newInteger();
+     y := newZZ();
      Ccode( void, "mpfr_get_z((__mpz_struct *)", y, ",(__mpfr_struct *)", x, ", GMP_RNDU)" );
      y);
 
 export round(x:RR) : ZZ := (
-     y := newInteger();
+     y := newZZ();
      Ccode( void, "mpfr_get_z((__mpz_struct *)", y, ",(__mpfr_struct *)", x, ", GMP_RNDN)" );
      y);
 
@@ -1261,6 +1261,34 @@ export cosh(x:RR):RR := (
 export tanh(x:RR):RR := (
      z := newRRR(precision0(x));
      Ccode( void, "mpfr_tanh((__mpfr_struct *)", z, ",(__mpfr_struct *)", x, ", GMP_RNDN)" );
+     z);
+export sec(x:RR):RR := (
+     z := newRRR(precision0(x));
+     Ccode( void, "mpfr_sec((__mpfr_struct *)", z, ",(__mpfr_struct *)", x, ", GMP_RNDN)" );
+     z);
+export csc(x:RR):RR := (
+     z := newRRR(precision0(x));
+     Ccode( void, "mpfr_csc((__mpfr_struct *)", z, ",(__mpfr_struct *)", x, ", GMP_RNDN)" );
+     z);
+export cot(x:RR):RR := (
+     z := newRRR(precision0(x));
+     Ccode( void, "mpfr_cot((__mpfr_struct *)", z, ",(__mpfr_struct *)", x, ", GMP_RNDN)" );
+     z);
+export sech(x:RR):RR := (
+     z := newRRR(precision0(x));
+     Ccode( void, "mpfr_sech((__mpfr_struct *)", z, ",(__mpfr_struct *)", x, ", GMP_RNDN)" );
+     z);
+export csch(x:RR):RR := (
+     z := newRRR(precision0(x));
+     Ccode( void, "mpfr_csch((__mpfr_struct *)", z, ",(__mpfr_struct *)", x, ", GMP_RNDN)" );
+     z);
+export coth(x:RR):RR := (
+     z := newRRR(precision0(x));
+     Ccode( void, "mpfr_coth((__mpfr_struct *)", z, ",(__mpfr_struct *)", x, ", GMP_RNDN)" );
+     z);
+export factorial(x:ulong):ZZ := (
+     z := newZZ();
+     Ccode( void, "mpz_fac_ui((__mpz_struct *)", z, ",", x, ")" );
      z);
 
 -- printing

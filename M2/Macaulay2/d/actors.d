@@ -696,17 +696,10 @@ factorial(rhs:Code):Expr := (
      when eval(rhs)
      is x:Error do Expr(x)
      is x:ZZ do (
-	  if !isInt(x) then return printErrorMessageE(rhs,"argument too large");
-	  n := toInt(x);
-	  if n==0 || n==1 then return Expr(toInteger(1));
-	  if n<0 then return  
-	       printErrorMessageE(rhs,"expected a positive number");
-	  y := x;
-	  while true do (
-	       n = n-1;
-	       if n==1 then break;
-	       y = y * n);
-	  Expr(y))
+	  if !isULong(x) then return printErrorMessageE(rhs,"expected small non-negative integer");
+	  n := toULong(x);
+	  if n<2 then return Expr(toInteger(1));
+	  Expr(factorial(n)))
      else printErrorMessageE(rhs,"expected a number"));
 setuppostfix(ExclamationS,factorial);
 EqualEqualEqualfun(lhs:Code,rhs:Code):Expr := (

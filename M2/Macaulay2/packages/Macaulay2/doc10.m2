@@ -777,14 +777,14 @@ document { Key => BigNumber,
 	  }
      }
 
-document { Key => Pi,
+document { Key => pi,
      PARA {
-	  TEX "This constant represents the mathematical constant $\\pi$."
+	  TEX "This constant represents the mathematical constant $\\pi$, symbolically."
 	  },
      EXAMPLE lines ///
-     	  Pi
-     	  toRR_100 Pi
-	  2. * Pi
+     	  pi
+     	  toRR_100 pi
+	  2. * pi
      ///
      }
 
@@ -795,9 +795,9 @@ document { Key => Constant,
 	  everywhere a real or complex number can be used."
 	  },
      EXAMPLE lines ///
-     	  Pi
-     	  toRR_100 Pi
-	  2. * Pi
+     	  pi
+     	  toRR_100 pi
+	  2. * pi
      ///
      }
 
@@ -806,7 +806,7 @@ document { Key => BigNumberRing,
 	  "A big number ring is one whose elements are real or complex numbers."
 	  },
      EXAMPLE lines ///
-     	  toRR_100 Pi
+     	  toRR_100 pi
 	  ring oo
 	  class oo
 	  parent oo
