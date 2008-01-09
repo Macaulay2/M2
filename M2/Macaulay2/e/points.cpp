@@ -90,8 +90,8 @@ Matrix *PointsComputation<CoeffRing>::points(const PolynomialRing *R,
 template class PointsComputation<CoefficientRingZZp>;
 
 //#include "coeffrings.hpp"
-//template class PointsComputation<CoefficientRingRR>;
-//template class PointsComputation<CoefficientRingCC>;
+//template class PointsComputation<CoefficientRingRRR>;
+//template class PointsComputation<CoefficientRingCCC>;
 //template class PointsComputation<CoefficientRingZZp>;
 
 // Local Variables:

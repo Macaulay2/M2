@@ -11,8 +11,6 @@
 
 class RingZZ;
 class QQ;
-class RingRR;
-class CC;
 class RRR;
 class CCC;
 class Z_mod;
@@ -134,10 +132,6 @@ public:
   virtual       RingZZ * cast_to_RingZZ()               { return 0; }
   virtual const QQ * cast_to_QQ() const         { return 0; }
   virtual       QQ * cast_to_QQ()               { return 0; }
-  virtual const RingRR * cast_to_RingRR() const         { return 0; }
-  virtual       RingRR * cast_to_RingRR()               { return 0; }
-  virtual const CC * cast_to_CC() const         { return 0; }
-  virtual       CC * cast_to_CC()               { return 0; }
   virtual const Z_mod * cast_to_Z_mod() const         { return 0; }
   virtual       Z_mod * cast_to_Z_mod()               { return 0; }
   virtual const GF * cast_to_GF() const         { return 0; }
