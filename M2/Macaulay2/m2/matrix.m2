@@ -34,19 +34,10 @@ reduce = (tar,f) -> (
      else f % raw gb presentation tar)
 protect symbol reduce					    -- we won't export this
 
--- QQ * Matrix := (r,m) -> (r * 1_(ring m)) * m		    -- this is wrong when the ring of m is QQ!
-
-
-Matrix * QQ := Matrix * ZZ := (m,i) -> i * m
-
-ZZ * Matrix :=
-QQ * Matrix          := (r,m) -> map(target m, source m, reduce(target m, raw r_(ring m) * raw m))
+Matrix * Number := Matrix * ZZ := (m,i) -> i * m
+Number * Matrix := (r,m) -> map(target m, source m, reduce(target m, raw r_(ring m) * raw m))
 RingElement * Matrix := (r,m) -> map(target m, source m, reduce(target m, raw r * raw m))
-
-Matrix * RingElement := (m,r) -> (
-     R := ring r;
-     -- if R =!= ring m then error "scalar not in ring of matrix";
-     map(target m, source m, reduce(target m, raw m * raw r)))
+Matrix * RingElement := (m,r) -> map(target m, source m, reduce(target m, raw m * raw r))
 
 sameRing := (m,n) -> (
      if ring m =!= ring n then (
