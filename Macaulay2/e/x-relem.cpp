@@ -385,12 +385,6 @@ M2_string IM2_RingElement_to_string(const RingElement *f)
   return o.to_string();
 }
 
-#if 0
-// const RingElement *IM2_RingElement_from_int(const Ring *R, int d)
-// {
-//   return new RingElement(R, R->from_int(d));
-// }
-#endif
 const RingElement *IM2_RingElement_from_Integer(const Ring *R, M2_Integer d)
 {
   return RingElement::make_raw(R, R->from_int(d));
@@ -400,21 +394,6 @@ const RingElement *IM2_RingElement_from_rational(const Ring *R, M2_Rational r)
 {
   return RingElement::make_raw(R, R->from_rational(r));
 }
-
-  //  double IM2_RingElement_to_double(const RingElement *a); /* rawToReal */
-    /* If the ring of a is RR, this returns the underlying representation of 'a'.
-       Otherwise 0.0 is returned. */
-
-  //  M2_CC IM2_RingElement_to_complex(const RingElement *a); /* rawToComplex */
-    /* If the ring of a is RR, this returns the underlying representation of 'a'.
-       Otherwise 0.0 is returned. */
-
-  //  const RingElement *IM2_RingElement_from_double(const Ring *R, 
-  //						 double d); /* drg: connected rawFromNumber*/
-
-  // const RingElement *IM2_RingElement_from_complex(const Ring *R, 
-  //						  M2_CC z); /* drg: connected rawFromNumber*/
-
 
 const RingElement *IM2_RingElement_from_BigComplex(const Ring *R, M2_CCC z)
 {

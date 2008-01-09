@@ -118,36 +118,10 @@ ring_elem CCC::from_int(mpz_ptr n) const
   return BIGCC_RINGELEM(result);
 }
 
-ring_elem CCC::from_double(double r) const
-{
-  M2_CCC result = new_elem();
-  mpfr_set_d(result->re, r, GMP_RNDN);
-
-  return BIGCC_RINGELEM(result);
-}
-
-ring_elem CCC::from_doubles(double r, double s) const
-{
-  M2_CCC result = new_elem();
-  mpfr_set_d(result->re, r, GMP_RNDN);
-  mpfr_set_d(result->im, s, GMP_RNDN);
-
-  return BIGCC_RINGELEM(result);
-}
-
 ring_elem CCC::from_rational(mpq_ptr r) const
 {
   M2_CCC result = new_elem();
   mpfr_set_q(result->re, r, GMP_RNDN);
-
-  return BIGCC_RINGELEM(result);
-}
-
-ring_elem CCC::from_complex(M2_CC z) const
-{
-  M2_CCC result = new_elem();
-  mpfr_set_d(result->re, z->re, GMP_RNDN);
-  mpfr_set_d(result->im, z->im, GMP_RNDN);
 
   return BIGCC_RINGELEM(result);
 }

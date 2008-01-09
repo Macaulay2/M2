@@ -115,14 +115,6 @@ ring_elem RRR::from_int(mpz_ptr n) const
   return MPF_RINGELEM(result);
 }
 
-ring_elem RRR::from_double(double r) const
-{
-  mpfr_ptr result = new_elem();
-  mpfr_set_d(result, r, GMP_RNDN);
-
-  return MPF_RINGELEM(result);
-}
-
 ring_elem RRR::from_rational(mpq_ptr r) const
 {
   mpfr_ptr result = new_elem();
