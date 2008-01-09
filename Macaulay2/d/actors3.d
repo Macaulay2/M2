@@ -706,11 +706,13 @@ exp(e:Expr):Expr := (
 setupfun("exp",exp);
 log(e:Expr):Expr := (
      when e
-     is x:RR do Expr(log(x))
-     is x:ZZ do Expr(log(toRR(x)))
-     is x:QQ do Expr(log(toRR(x)))
+     is s:Sequence do if length(s) != 2 then WrongNumArgs(1,2) 
+     else Expr(log(s.1)/log(s.0))			    -- # typical value: log, Number, Number, RR
+     is x:RR do Expr(log(x))				    -- # typical value: log, RR, RR
+     is x:ZZ do Expr(log(toRR(x)))			    -- # typical value: log, ZZ, RR
+     is x:QQ do Expr(log(toRR(x)))			    -- # typical value: log, QQ, RR
      is x:Error do Expr(x)
-     else buildErrorPacket("expected a number")
+     else buildErrorPacket("expected a number or a pair of numbers")
      );
 setupfun("log",log);
 abs(x:double):double := if x < 0. then -x else x;

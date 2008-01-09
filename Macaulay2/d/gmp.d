@@ -1285,7 +1285,7 @@ export tostring5(
      e:string			     -- separator between mantissa and exponent
      ) : string := (
      o := newvarstring(25);
-     if isinf(x) then return "infinity";
+     if isinf(x) then return if x < 0 then "-infinity" else "infinity";
      if isnan(x) then return "NotANumber";
      if x === 0 then return "0.";
      if x < 0 then (o << '-'; x=-x);
@@ -1327,6 +1327,8 @@ getstr(str:Cstring, e:long, base:int, digits:int, x:RR):string ::= tostring(
 	  "GMP_RNDN)"));
      
 export toExternalString(x:RR):string := (
+     if isinf(x) then return if x < 0 then "-infinity" else "infinity";
+     if isnan(x) then return "NotANumber";
      ng := x < 0;
      if ng then x = -x;
      e := long(0);
