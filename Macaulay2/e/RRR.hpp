@@ -30,6 +30,7 @@ public:
   const RRR * cast_to_RRR() const { return this; }
 
   CoefficientRingRRR *get_CoeffRing() const { return coeffR; }
+  int get_precision() const { return precision; }
 
   bool is_greater(const ring_elem a, const ring_elem b) const;
   bool is_less(const ring_elem a, const ring_elem b) const;

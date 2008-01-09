@@ -34,18 +34,18 @@ M2_arrayint_OrNull Lapack::LU(const LMatrixRR *A,
 	  &rows, perm, &info);
 
   /* set the lower triangular matrix L */
-  mpfr_ptr *vals = L->get_array();
+  __mpfr_struct *vals = L->get_array();
   int loc = 0;
   for (int j=0; j<min; j++) {
     for (int i=0; i<rows; i++) {
       assert(vals < L->get_array() + L->n_rows() * L->n_cols());
       if (i > j) {
-	mpfr_set_d(*vals++,copyA[loc++], GMP_RNDN);
+	mpfr_set_d(vals++,copyA[loc++], GMP_RNDN);
       } else if (i == j) {
-	mpfr_set_si(*vals++, 1, GMP_RNDN);
+	mpfr_set_si(vals++, 1, GMP_RNDN);
 	loc++;
       } else {
-	mpfr_set_si(*vals++, 0, GMP_RNDN);
+	mpfr_set_si(vals++, 0, GMP_RNDN);
 	loc++;
       }
     }
@@ -58,9 +58,9 @@ M2_arrayint_OrNull Lapack::LU(const LMatrixRR *A,
     for (int i=0; i<min; i++) {
       assert(vals < U->get_array() + U->n_rows() * U->n_cols());
       if (i <= j) {
-	mpfr_set_d(*vals++, copyA[loc++], GMP_RNDN);
+	mpfr_set_d(vals++, copyA[loc++], GMP_RNDN);
       } else {
-	mpfr_set_si(*vals++, 0, GMP_RNDN);
+	mpfr_set_si(vals++, 0, GMP_RNDN);
 	loc ++;
       }
     }
@@ -133,11 +133,11 @@ bool Lapack::solve(const LMatrixRR *A, /* read only */
 
   // Now set x
   x->resize(size, bsize);
-  mpfr_ptr *vals = x->get_array();
+  __mpfr_struct *vals = x->get_array();
   long len = size*bsize;
   double *p = copyb;
   for (long i=0; i<len; i++)
-    mpfr_set_d(*vals++, *p++, GMP_RNDN);
+    mpfr_set_d(vals++, *p++, GMP_RNDN);
 
   if (info > 0)       
     {
@@ -156,7 +156,7 @@ bool Lapack::solve(const LMatrixRR *A, /* read only */
 
 bool Lapack::eigenvalues(const LMatrixRR *A, LMatrixCC *eigvals)
 {
-#if LAPACK
+#if !LAPACK
   ERROR("lapack not present");
   return false;
 #else
@@ -197,10 +197,10 @@ bool Lapack::eigenvalues(const LMatrixRR *A, LMatrixCC *eigvals)
     }
 
   eigvals->resize(size, 1);
-  M2_CCC *elems = eigvals->get_array();
+  M2_CCC_struct *elems = eigvals->get_array();
   for (int i = 0; i < size; i++) {
-    mpfr_set_d(elems[i]->re, real[i], GMP_RNDN);
-    mpfr_set_d(elems[i]->im, imag[i], GMP_RNDN);
+    mpfr_set_d(elems[i].re, real[i], GMP_RNDN);
+    mpfr_set_d(elems[i].im, imag[i], GMP_RNDN);
   }
   deletearray(real);
   deletearray(imag);

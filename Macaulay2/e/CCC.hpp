@@ -31,6 +31,7 @@ public:
   const CCC * cast_to_CCC() const { return this; }
 
   CoefficientRingCCC *get_CoeffRing() const { return coeffR; }
+  int get_precision() const { return precision; }
 
   // should there be a complex conjugation function?
 
