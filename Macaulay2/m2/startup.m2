@@ -151,6 +151,7 @@ if firstTime then (
 	  | "--Singular-Libfac " | version#"libfac version" | ", by M. Messollen" | newline
 	  | "--NTL " | version#"ntl version" | ", by V. Shoup" | newline
      	  | "--GNU MP " | version#"gmp version" | ", by T. Granlund et al." | newline
+     	  | "--MPFR " | version#"mpfr version" | ", by Free Software Foundation" | newline
 	  | "--BLAS and LAPACK 3.0" | ", by J. Dongarra et al."
 	  );
 
