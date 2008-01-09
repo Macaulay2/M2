@@ -171,17 +171,19 @@ bool Lapack::eigenvalues(const LMatrixRR *A, LMatrixCC *eigvals)
   double *workspace = newarray_atomic(double, wsize);
   int info;
 
-  LMatrixRR * copyA = A->copy();
-  LMatrixRR * real = new LMatrixRR(globalRR,size,1); // real components of eigvals
-  LMatrixRR * imag = new LMatrixRR(globalRR,size,1); // imaginary components
+  double *copyA = A->make_lapack_array();
+  double *real = newarray_atomic(double,size); // real components of eigvals
+  double *imag = newarray_atomic(double,size); // imaginary components
 
   dgeev_(&dont, &dont, 
-	 &size, copyA->get_lapack_array(), &size,
-	 real->get_lapack_array(), 
-	 imag->get_lapack_array(),
+	 &size, copyA, &size,
+	 real, 
+	 imag,
 	 static_cast<double *>(0), &size,  /* left eigenvectors */
 	 static_cast<double *>(0), &size,  /* right eigenvectors */
 	 workspace, &wsize, &info);
+
+  deletearray(copyA);
 
   if (info < 0)       
     {
@@ -195,13 +197,14 @@ bool Lapack::eigenvalues(const LMatrixRR *A, LMatrixCC *eigvals)
     }
 
   eigvals->resize(size, 1);
-  M2_CC_struct *elems = eigvals->get_array();
+  M2_CCC *elems = eigvals->get_array();
   for (int i = 0; i < size; i++) {
-    elems[i].re = real->get_array()[i];
-    elems[i].im = imag->get_array()[i];
+    mpfr_set_d(elems[i]->re, real[i], GMP_RNDN);
+    mpfr_set_d(elems[i]->im, imag[i], GMP_RNDN);
   }
-
-  return eigvals;
+  deletearray(real);
+  deletearray(imag);
+  return true;
 #endif
 }
 

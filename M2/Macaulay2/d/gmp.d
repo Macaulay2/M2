@@ -781,13 +781,14 @@ export precision(x:CC):int := precision(x.re);
 
 defaultPrecision := 53; -- should 53 be computed?
 
-minprec := Ccode(int,"MPFR_PREC_MIN");
-maxprec := Ccode(int,"MPFR_PREC_MAX");
+minprec := Ccode(ulong,"MPFR_PREC_MIN");
+maxprec := Ccode(ulong,"MPFR_PREC_MAX");
 
 export newRRR(prec:int):RR := (
-     if prec < minprec then prec = minprec else if prec > maxprec then prec = maxprec;
+     prc := ulong(prec);
+     if prc < minprec then prc = minprec else if prc > maxprec then prc = maxprec;
      x := RR(0,0,0,null());
-     Ccode( void, "mpfr_init2(", "(__mpfr_struct *)", x, ",",prec,")" );
+     Ccode( void, "mpfr_init2(", "(__mpfr_struct *)", x, ",(mpfr_prec_t)",prc,")" );
      x);
 
 export toRR(x:RR,prec:int):RR := (

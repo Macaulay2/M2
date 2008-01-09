@@ -12,6 +12,7 @@ cat <<EOF >compat.h
 #include <gc/gc.h>
 #include <string.h>
 #include <gmp.h>
+#include <mpfr.h>
 #define  DCODE 1
 
 #define NO_CONST
