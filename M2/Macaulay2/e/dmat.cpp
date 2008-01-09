@@ -697,7 +697,7 @@ template <> double *DMat<CoefficientRingRRR>::make_lapack_array() const
   elem *a = array_;
   double *p = result;
   for (long i=0; i<len; i++)
-    *p++ = mpfr_get_d(*a++, GMP_RNDN);
+    *p++ = mpfr_get_d(a++, GMP_RNDN);
   return result;
 }
 
@@ -708,7 +708,7 @@ template <> void DMat<CoefficientRingRRR>::fill_from_lapack_array(double *lapack
   elem *a = array_;
   double *p = lapack_array;
   for (long i=0; i<len; i++)
-    mpfr_set_d(*a++, *p++, GMP_RNDN);
+    mpfr_set_d(a++, *p++, GMP_RNDN);
 }
 
 template <> double *DMat<CoefficientRingCCC>::make_lapack_array() const
