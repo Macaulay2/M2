@@ -650,10 +650,11 @@ IS_DECLARED(char **,h_errlist, [
       ])
 
 AC_SUBST(DUMPDATAFILE,Macaulay2-$ARCH-data)
+AC_SUBST(M2_CPPFLAGS)
 
 if test "$DEBUG" = yes
-then CPPFLAGS="$CPPFLAGS -DDEBUG"
-else CPPFLAGS="$CPPFLAGS -DNDEBUG"
+then M2_CPPFLAGS="$M2_CPPFLAGS -DDEBUG"
+else M2_CPPFLAGS="$M2_CPPFLAGS -DNDEBUG"
 fi
 
 if test "$OPTIMIZE" = yes
@@ -663,8 +664,8 @@ else CFLAGS="$CFLAGS -O0"
      CXXFLAGS="$CXXFLAGS -O0"
 fi
 
-test "$MEMDEBUG" = yes && CPPFLAGS="$CPPFLAGS -DMEMDEBUG"
-test "$DEBUG" = yes && CPPFLAGS="$CPPFLAGS -DGC_DEBUG"
+test "$MEMDEBUG" = yes && M2_CPPFLAGS="$M2_CPPFLAGS -DMEMDEBUG"
+test "$DEBUG" = yes && M2_CPPFLAGS="$M2_CPPFLAGS -DGC_DEBUG"
 
 if test "$OS" = MacOS 
 then 

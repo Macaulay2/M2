@@ -7,6 +7,9 @@ oo_(0,0)
 M = matrix{{1,2},{3,4}}
 M = M ** RR
 M = mutableMatrix M
-eigenvalues M
-eigenvectors M
+E = matrix eigenvalues M
+(E,V) = eigenvectors M
+E = matrix E
+V = matrix V
 A = ring M
+E_(0,0)
