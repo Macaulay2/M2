@@ -61,6 +61,7 @@ public:
   virtual ring_elem from_int(int n) const;
   virtual ring_elem from_int(mpz_ptr n) const;
   virtual ring_elem from_rational(mpq_ptr q) const;
+  virtual bool from_BigComplex(M2_CCC z, ring_elem &result) const;
 
   virtual ring_elem var(int v) const;
 
