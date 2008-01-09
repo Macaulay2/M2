@@ -683,8 +683,8 @@ M2_bool IM2_HermiteNormalForm(MutableMatrix *M)
   /* Each of the following routines accepts honest MutableMatrix arguments,
      and returns false if there is an error.  The return values are placed into
      some of the (already existing) parameters of the routine */
-//typedef DMat<CoefficientRingRR> LMatrixRR;
-//typedef DMat<CoefficientRingCC> LMatrixCC;
+//typedef DMat<CoefficientRingRRR> LMatrixRR;
+//typedef DMat<CoefficientRingCCC> LMatrixCC;
 
 M2_arrayint_OrNull rawLU(const MutableMatrix *A,
 			 MutableMatrix *L,
