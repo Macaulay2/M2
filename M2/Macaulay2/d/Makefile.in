@@ -191,11 +191,7 @@ M2INCLUDES += -I../e
 M2INCLUDES += -I@srcdir@/../regex
 
 # it's important that *our* directories get searched first:
-CPPFLAGS := $(M2INCLUDES) $(CPPFLAGS)
-
-CFLAGS += $(DEBUGFLAGS)
-CXXFLAGS += $(DEBUGFLAGS)
-
+CPPFLAGS := $(M2INCLUDES) $(CPPFLAGS) @M2_CPPFLAGS@
 CFLAGS += -Wno-unused-label
 
 ifeq (gcc,@CC@)

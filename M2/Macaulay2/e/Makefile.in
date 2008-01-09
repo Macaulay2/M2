@@ -19,11 +19,9 @@ M2CPPFLAGS += -I@srcdir@/../../include
 M2CPPFLAGS += -I../util
 endif
 M2CPPFLAGS += -I.
+M2CPPFLAGS += @M2_CPPFLAGS@
 
 CPPFLAGS := $(M2CPPFLAGS) $(CPPFLAGS)
-
-CXXFLAGS += $(DEBUGFLAGS)
-CFLAGS   += $(DEBUGFLAGS)
 
 ifeq "$(SHARED)" "yes"
 CXXFLAGS += -fPIC
