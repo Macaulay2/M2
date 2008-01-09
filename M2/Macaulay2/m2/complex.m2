@@ -43,10 +43,9 @@ CC ^ ZZ := BinaryPowerMethod
 CC.InverseMethod = y -> conjugate y / y^2
 expression CC := z -> realPart z + imaginaryPart z * hold symbol ii
 toExternalString CC := toExternalString0
-net CC := z -> net expression z
+net CC := z -> simpleToString z
 isConstant CC := i -> true
 new CC from RawRingElement := (CC,x) -> rawToCC x
-
 
 -- Local Variables:
 -- compile-command: "make -C $M2BUILDDIR/Macaulay2/m2 "
