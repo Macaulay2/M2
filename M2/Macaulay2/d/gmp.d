@@ -1331,7 +1331,7 @@ export toExternalString(x:RR):string := (
      if ng then x = -x;
      e := long(0);
      s := getstr(Cstring(null()), e, base, 0, x);	    -- do this first, so e gets set
-     r := "." + s + "e" + tostring(int(e));
+     r := "." + s + "p" + tostring(x.prec) + "e" + tostring(int(e));
      if ng then r = "-" + r;
      r);
 
