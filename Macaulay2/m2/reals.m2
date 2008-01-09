@@ -46,9 +46,20 @@ isField BigNumberType := R -> true
 frac BigNumberType := R -> R
 
 BigNumber.synonym = "big number"
-
 BigNumberRing = new Type of Ring
 BigNumberRing.synonym = "big number ring"
+generators BigNumberRing := opts -> R -> {}
+raw BigNumberRing := R -> R.RawRing
+isField BigNumberRing := R -> true
+degreeLength BigNumberRing := R -> 0
+liftable(ZZ,BigNumberRing) := 
+liftable(RR,BigNumberRing) := 
+liftable(QQ,BigNumberRing) := R -> true
+frac BigNumberRing := identity
+numgens BigNumberRing := R -> 0
+dim BigNumberRing := R -> 0
+char BigNumberRing := R -> 0
+net BigNumberRing := R -> net expression R
 
 RealNumberRing = new Type of {* ImmutableType *} BigNumberRing
 RealNumberRing.synonym = "real number ring"
@@ -60,12 +71,6 @@ new RealNumberRing of RR from ZZ := memoize (
 	       symbol baseRings => {},
 	       symbol RawRing => rawRR prec
 	       }))
-raw RealNumberRing := R -> R.RawRing
-isField RealNumberRing := R -> true
-degreeLength RealNumberRing := R -> 0
-liftable(ZZ,RealNumberRing) := 
-liftable(RR,RealNumberRing) := 
-liftable(QQ,RealNumberRing) := R -> true
 ZZ _ RealNumberRing :=
 QQ _ RealNumberRing :=
 RR _ RealNumberRing :=
@@ -75,19 +80,12 @@ lift(QQ,RealNumberRing) :=
 promote(ZZ,RealNumberRing) := 
 promote(RR,RealNumberRing) := 
 promote(QQ,RealNumberRing) := (x,R) -> toRR(R.precision,x)
-frac RealNumberRing := identity
-numgens RealNumberRing := R -> 0
-dim RealNumberRing := R -> 0
-char RealNumberRing := R -> 0
-generators RealNumberRing := R -> {}
 expression RealNumberRing := R -> new Subscript from {symbol RR, R.precision}
 RR.BigNumberRing = RealNumberRing
-net RealNumberRing := R -> net expression R
 toString RealNumberRing := R -> concatenate("RR_",toString R.precision)
 ring RR := x -> new RealNumberRing of RR from precision x
 
 new RR from RawRingElement := (RR,x) -> rawToRR x
-new CC from RawRingElement := (CC,x) -> rawToCC x
 
 promote(RR,RR) := (i,RR) -> i
 lift(RR,ZZ) := (r,ZZ) -> if r == floor r then floor r else error("can't lift ",toString r, " to ZZ")

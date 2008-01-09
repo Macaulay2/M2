@@ -827,10 +827,7 @@ setupfun("rawToRR",rawToRR);
 
 export rawToCC(e:Expr):Expr := (
      when e
-     is x:RawRingElement do (
-	  NotYet("getting CC from engine")
-	  -- toExpr(Ccode(CCRorNull, "(engine_CCRorNull)IM2_RingElement_to_BigComplex((RingElement*)",x, ")" ))
-	  )
+     is x:RawRingElement do toExpr(Ccode(CCRorNull, "(engine_CCRorNull)IM2_RingElement_to_BigComplex((RingElement*)",x, ")" ))
      else WrongArg("a raw ring element"));
 setupfun("rawToCC",rawToCC);
 
