@@ -597,7 +597,7 @@ export filbuf(o:file):int := (
 	       )));
 
 putdigit(o:file,x:int):void := o << (x + if x<10 then '0' else 'a'-10) ;
-putdigit(o:varstring,x:int):void := o << (x + if x<10 then '0' else 'a'-10) ;
+export putdigit(o:varstring,x:int):void := o << (x + if x<10 then '0' else 'a'-10) ;
 putneg(o:file,x:int):void := (
      if x<0 then (
 	  q := x/10;
@@ -643,7 +643,7 @@ export finite(x:double):bool := x==x && x-x == x-x;
 export isinf(x:double):bool := x==x && x-x != x-x;
 export isnan(x:double):bool := x!=x;
 export tostring(x:bool):string := if x then "true" else "false";
-export tostring5(					    -- we need to rewrite this for RR
+export tostring5(
      x:double,						-- the number to format
      s:int,					-- number of significant digits
      l:int,					   -- max number leading zeroes
@@ -684,7 +684,7 @@ export tostring5(					    -- we need to rewrite this for RR
 export printingPrecision := 6;
 export printingLeadLimit := 5;
 export printingTrailLimit := 5;
-export printingSeparator := "*10^";
+export printingSeparator := "e";			    -- was "*10^"
 export tostringRR(x:double) : string := tostring5(x,printingPrecision,printingLeadLimit,printingTrailLimit,printingSeparator);
 export (o:file) << (x:double) : file := o << tostringRR(x);
 

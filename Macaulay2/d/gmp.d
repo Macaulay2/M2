@@ -6,6 +6,7 @@ use err;
 use system;
 use stdio;
 use strings;
+use varstrin;
 
 export min(x:int,y:int):int := if x<y then x else y;
 export max(x:int,y:int):int := if x<y then y else x;
@@ -847,28 +848,6 @@ export toCC(x:double,y:double,prec:int):CC := CC(toRR(x,prec),toRR(y,prec));
 
 export toDouble(x:RR):double := Ccode( double, "mpfr_get_d(", "(__mpfr_struct *)", x, ", GMP_RNDN)" );
 
-getstr(str:Cstring, exp:long, base:int, digits:int, x:RR):Cstring ::= Ccode(Cstring,
-     "(Cstring) mpfr_get_str(",
-	 "(char *)", str, ",",				    -- target string
-	 "&", exp, ",",					   -- target exponent
-	 base, ",",					    -- base
-	 "(size_t)", digits, ",",	      -- number of digits to generate
-	 "(__mpfr_struct *)", x,
-     ", GMP_RNDN)"
-     );
-
-export tostring(x:RR):string := (
-     e := long(0);
-     s := getstr(Cstring(null()), e, base, 0, x);
-     "."+tostring(s) + "*10^" + tostring(int(e)));
-
-export tostring(z:CC):string := tostring(realPart(z)) + " + " + tostring(imaginaryPart(z)) + " * ii";
-
-export tostring(x:RR,digits:int):string := (
-     e := long(0);
-     s := getstr(Cstring(null()), e, base, digits, x);
-     "."+tostring(s) + "*10^" + tostring(int(e)));
-
 flagged0():bool ::= 0 != Ccode( int, "mpfr_erangeflag_p()" );
 export flagged():bool := flagged0();
 equal(x:RR, y:RR):bool ::= (
@@ -1053,7 +1032,29 @@ export (x:RR) * (y:ZZ) : RR := (
      );
      z);
 
+export (y:ZZ) * (x:RR) : RR := (
+     z := newRRR(x.prec);
+     Ccode( void,
+          "mpfr_mul_z(",
+	      "(__mpfr_struct *)", z, ",", 
+	      "(__mpfr_struct *)", x, ",", 
+	      "(__mpz_struct *)", y,
+	  ", GMP_RNDN)" 
+     );
+     z);
+
 export (x:RR) * (y:int) : RR := (
+     z := newRRR(x.prec);
+     Ccode( void,
+          "mpfr_mul_si(",
+	      "(__mpfr_struct *)", z, ",", 
+	      "(__mpfr_struct *)", x, ",", 
+	      y,
+	  ", GMP_RNDN)" 
+     );
+     z);
+
+export (y:int) * (x:RR) : RR := (
      z := newRRR(x.prec);
      Ccode( void,
           "mpfr_mul_si(",
@@ -1156,21 +1157,23 @@ export (x:RR) ^ (y:RR) : RR := (
      z);
 
 export floor(x:RR) : ZZ := (
--- - Function: void mpz_set_f (mpz_t ROP, mpfr_t OP)
---     Set the value of ROP from OP.
-
---  - Function: void mpfr_ceil (mpfr_t ROP, mpfr_t OP)
---  - Function: void mpfr_floor (mpfr_t ROP, mpfr_t OP)
---  - Function: void mpfr_trunc (mpfr_t ROP, mpfr_t OP)
---      Set ROP to OP rounded to an integer.  `mpfr_ceil' rounds to the
---      next higher integer, `mpfr_floor' to the next lower, and `mpfr_trunc'
---      to the integer towards zero.
-
-     z := newRRR(x.prec);
-     Ccode( void, "mpfr_floor((__mpfr_struct *)", z, ",(__mpfr_struct *)", x, ")" );
      y := newInteger();
-     Ccode( void, "mpfr_get_z((__mpz_struct *)", y, ",(__mpfr_struct *)", z, ", GMP_RNDN)" );
+     Ccode( void, "mpfr_get_z((__mpz_struct *)", y, ",(__mpfr_struct *)", x, ", GMP_RNDD)" );
      y);
+
+export ceil(x:RR) : ZZ := (
+     y := newInteger();
+     Ccode( void, "mpfr_get_z((__mpz_struct *)", y, ",(__mpfr_struct *)", x, ", GMP_RNDU)" );
+     y);
+
+export round(x:RR) : ZZ := (
+     y := newInteger();
+     Ccode( void, "mpfr_get_z((__mpz_struct *)", y, ",(__mpfr_struct *)", x, ", GMP_RNDN)" );
+     y);
+
+export ifloor(x:RR) : long := Ccode( long, "mpfr_get_si((__mpfr_struct *)", x, ", GMP_RNDD)" );
+export iceil (x:RR) : long := Ccode( long, "mpfr_get_si((__mpfr_struct *)", x, ", GMP_RNDU)" );
+export iround(x:RR) : long := Ccode( long, "mpfr_get_si((__mpfr_struct *)", x, ", GMP_RNDN)" );
 
 -- complex arithmetic
 
@@ -1248,6 +1251,91 @@ export tanh(x:RR):RR := (
      z := newRRR(x.prec);
      Ccode( void, "mpfr_tanh((__mpfr_struct *)", z, ",(__mpfr_struct *)", x, ", GMP_RNDN)" );
      z);
+
+-- printing
+
+-- getstr(str:Cstring, exp:long, base:int, digits:int, x:RR):Cstring ::= Ccode(Cstring,
+--      "(Cstring) mpfr_get_str(",
+-- 	 "(char *)", str, ",",				    -- target string
+-- 	 "&", exp, ",",					   -- target exponent
+-- 	 base, ",",					    -- base
+-- 	 "(size_t)", digits, ",",	      -- number of digits to generate
+-- 	 "(__mpfr_struct *)", x,
+--      ", GMP_RNDN)"
+--      );
+
+-- export tostring(x:RR):string := (
+--      e := long(0);
+--      s := getstr(Cstring(null()), e, base, 0, x);
+--      "."+tostring(s) + "*10^" + tostring(int(e)));
+
+-- export tostring(x:RR,digits:int):string := (
+--      e := long(0);
+--      s := getstr(Cstring(null()), e, base, digits, x);
+--      "."+tostring(s) + "*10^" + tostring(int(e)));
+
+digits(o:varstring,x:RR,a:int,b:int):void := (
+     prec := x.prec;
+     x = x + pow10(1-a-b,prec) / 2;
+     if x >= 10 then (x = x/10; a = a+1; b = if b==0 then 0 else b-1);
+     while a > 0 do (
+	  d := int(ifloor(x));
+	  putdigit(o,d);
+	  x = 10 * (x - d);
+	  a = a-1;
+	  );
+     o << '.';
+     lim := pow10(-b+1,prec);
+     while b > 0 do (
+	  if x < lim then break;
+	  d := int(ifloor(x));
+	  putdigit(o,d);
+	  x = 10 * (x - d);
+	  lim = lim * 10;
+	  b = b-1;
+	  ));
+finite(x:RR):bool ::=Ccode(bool,"mpfr_number_p((__mpfr_struct *)",x,")");
+isinf (x:RR):bool ::= Ccode(bool,"mpfr_inf_p((__mpfr_struct *)",x,")");
+isnan (x:RR):bool ::= Ccode(bool,"mpfr_nan_p((__mpfr_struct *)",x,")");
+export tostring5(
+     x:RR,						-- the number to format
+     s:int,					-- number of significant digits
+     l:int,					   -- max number leading zeroes
+     t:int,				    -- max number extra trailing digits
+     e:string			     -- separator between mantissa and exponent
+     ) : string := (
+     o := newvarstring(25);
+     if isinf(x) then return "infinity";
+     if isnan(x) then return "NotANumber";
+     if x === 0 then return "0.";
+     if x < 0 then (o << '-'; x=-x);
+     oldx := x;
+     i := 0;
+     if x >= 1. then (					    -- use mpfr_get_z_exp here!
+     	  until x < 1000000000. do ( x = x/1000000000; i = i + 10 );
+     	  until x < 100000. do ( x = x/100000; i = i + 5 );
+     	  until x < 100. do ( x = x/100; i = i + 2 );
+     	  until x < 10. do ( x = x/10; i = i + 1 );
+	  )
+     else (
+     	  until x >= 1./1000000000. do ( x = x*1000000000; i = i - 10 );
+     	  until x >= 1./100000. do ( x = x*100000; i = i - 5 );
+     	  until x >= 1./100. do ( x = x*100; i = i - 2 );
+     	  until x >= 1. do ( x = x*10; i = i - 1 );
+	  );
+     -- should rewrite this so the format it chooses is the one that takes the least space, preferring not to use the exponent when it's a tie
+     if i<0 then (
+	  if -i <= l 
+	  then digits(o,oldx,1,s-i-1)
+	  else (digits(o,x,1,s-1); o << e << tostring(i);))
+     else if i+1 > s then (
+	  if i+1-s <= t
+	  then digits(o,x,i+1,0)
+	  else (digits(o,x,1,s-1); o << e << tostring(i);))
+     else digits(o,x,i+1,s-i-1);
+     tostring(o));
+export tostring(x:RR):string := tostring5(x,printingPrecision,printingLeadLimit,printingTrailLimit,printingSeparator);
+export tostring(z:CC):string := tostring(realPart(z)) + " + " + tostring(imaginaryPart(z)) + " * ii";
 
 -- Local Variables:
 -- compile-command: "make -C $M2BUILDDIR/Macaulay2/d "
