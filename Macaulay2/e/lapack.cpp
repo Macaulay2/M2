@@ -521,68 +521,78 @@ bool Lapack::SVD_divide_conquer(const LMatrixRR *A, LMatrixRR *Sigma, LMatrixRR 
 
 bool Lapack::least_squares(const LMatrixRR *A, const LMatrixRR *b, LMatrixRR *x)
 {
-#if LAPACK
+#if !LAPACK
   ERROR("lapack not present");
   return false;
 #else
-  LMatrixRR *copyA = A->copy();
-  LMatrixRR *copyb = b->copy();
+  bool ret = true;
   char job = 'N';
+  int info;
   int rows = A->n_rows();
   int cols = A->n_cols();
   int brows = b->n_rows();
   int bcols = b->n_cols();
-  int info;
+
+  if (brows != rows) {
+    ERROR("expected compatible right hand side");
+    return false;
+  }
+
+  double *copyA = A->make_lapack_array();
+  double *copyb = b->make_lapack_array();
   int min = (rows <= cols) ? rows : cols;
   int max = (rows >= cols) ? rows : cols;
   int wsize = min + ((bcols >=  max) ? bcols : max);
   double *workspace = newarray_atomic(double, wsize);
 
-  if (brows != rows) {
-    ERROR("expected compatible right hand side");
-    return 0;
-  }
-
   if (rows < cols) {
-    copyb->resize(cols, bcols);
-    // for (int i = 0; i < brows*bcols; i++) copyb->_array[i] = b->_array[i];
+    // Make 'b' (copyb) into a cols x bcols matrix, by adding a zero block at the bottom
+    double *copyb2 = newarray_atomic_clear(double, cols*bcols);
     int bloc = 0;
     int copyloc = 0;
     for (int j = 0; j < bcols; j++) {
       copyloc = j*cols;
       for (int i = 0; i < brows; i++) {
-	copyb->get_array()[copyloc++] = b->get_array()[bloc++];
+	copyb2[copyloc++] = copyb[bloc++];
       }
     }
+    deletearray(copyb);
+    copyb = copyb2;
   }
   
   dgels_(&job, &rows, &cols, &bcols,
-	 copyA->get_array(), &rows,
-	 copyb->get_array(), &max,
+	 copyA, &rows,
+	 copyb, &max,
 	 workspace, &wsize, 
 	 &info);
 
   if (info != 0)
     {
       ERROR("argument passed to dgels had an illegal value");
-      return false;
+      ret = false;
     }
-
-  if (rows > cols) {
-    x->resize(cols,bcols);
-    int copyloc = 0;
-    int xloc = 0;
-    for (int j = 0; j < bcols; j++) {
-      copyloc = j*rows;
-      for (int i = 0; i < cols; i++) {
-	x->get_array()[xloc++] = copyb->get_array()[copyloc++];
+  else
+    {
+      if (rows > cols) {
+	x->resize(cols,bcols);
+	int copyloc = 0;
+	int xloc = 0;
+	for (int j = 0; j < bcols; j++) {
+	  copyloc = j*rows;
+	  for (int i = 0; i < cols; i++) {
+	    mpfr_set_d(&(x->get_array()[xloc++]), copyb[copyloc++], GMP_RNDN);
+	  }
+	}
+      } else {
+	x->fill_from_lapack_array(copyb);
       }
     }
-  } else {
-    x->set_matrix(copyb);
-  }
 
-  return true;
+  deletearray(copyA);
+  deletearray(copyb);
+  deletearray(workspace);
+
+  return ret;
 #endif
 }
 

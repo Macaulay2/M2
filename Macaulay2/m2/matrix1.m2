@@ -680,7 +680,7 @@ Matrix ^ Array := Matrix => (f,v) -> (target f)^v * f
 entries Matrix := (m) -> (
      R := ring m;
      m = m.RawMatrix;
-     applyTable ( entries m, r -> new R from r )
+     applyTable ( entries m, r -> promote(r,R) )
      )
 
 getshift := (f) -> rawMultiDegree f.RawMatrix
