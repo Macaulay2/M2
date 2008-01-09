@@ -15,7 +15,11 @@ scan((RR,CC), F -> (
 CC // RR := (x,y) -> x // y_CC;
 CC % RR := (x,y) -> x % y_CC;
 
-round = x -> floor(x + 0.5)
+round = method()
+round RR := x -> floor(x + 0.5)
+round(ZZ,RR) := (n,x) -> (
+     p := 10^n;
+     toRR(precision x,round(x*p)/p))
 
 RR#0 = 0.
 RR#1 = 1.
@@ -104,6 +108,25 @@ approx := (r,limit) -> (
 
 lift(RR,QQ) := (r,QQ) -> approx(r,abs r / 2^(precision r - 16))
 lift(RR,ZZ) := (r,ZZ) -> (i := floor r; if r == i then i else error "can't lift to ZZ")
+
+logten2 := log 10. / log 2.
+
+RR#{Standard,Print} = x ->  (
+     << newline << concatenate(interpreterDepth:"o") << lineNumber << " = ";
+     save := printingPrecision;
+     try (
+     	  printingPrecision = max(printingPrecision, floor (precision x / logten2));
+     	  << x;
+	  );
+     printingPrecision = save;
+     << newline << flush;
+     );
+
+RR#{Standard,AfterPrint} = x -> (
+     << endl;                             -- double space
+     << concatenate(interpreterDepth:"o") << lineNumber << " : " << ring x;
+     << endl;
+     )
 
 -- Local Variables:
 -- compile-command: "make -C $M2BUILDDIR/Macaulay2/m2 "
