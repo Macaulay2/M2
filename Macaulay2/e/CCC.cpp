@@ -67,9 +67,12 @@ void CCC::elem_text_out(buffer &o, const ring_elem ap) const
   // easier to call RRR::elem_text_out here ???
 
   // size_t size = 1000;
-  char *s = newarray_atomic(char,1000);
-  char *str;
+  //  char *s = newarray_atomic(char,1000);
+  //  char *str;
 
+  o << gmp_tostringCC(BIGCC_VAL(ap));
+  return;
+#if 0
   bool is_neg = (mpfr_cmp_si(a, 0) == -1);
   bool is_one = (mpfr_cmp_si(a, 1) == 0 || mpfr_cmp_si(a, -1) == 0);
 
@@ -96,6 +99,7 @@ void CCC::elem_text_out(buffer &o, const ring_elem ap) const
   o << "+ (." << str << "*10^" << expptr << ") ii";
 
   // if (size > 1000) deletearray(allocstr);
+#endif
 }
 
 ring_elem CCC::from_int(int n) const

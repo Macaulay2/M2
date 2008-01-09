@@ -87,8 +87,9 @@ void RRR::elem_text_out(buffer &o, const ring_elem ap) const
     }
   else
     {
-      str = mpfr_get_str(s, &expptr, 10, 0, a, GMP_RNDN);
-      o << "." << str << "*10^" << expptr;
+      o << gmp_tostringRR(a);
+      //str = mpfr_get_str(s, &expptr, 10, 0, a, GMP_RNDN);
+      //o << "." << str << "*10^" << expptr;
     }
   // if (size > 1000) deletearray(allocstr);
 }
