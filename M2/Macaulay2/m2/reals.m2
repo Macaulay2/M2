@@ -83,6 +83,7 @@ toString RealNumberRing := R -> concatenate("RR_",toString R.precision)
 ring RR := x -> new RealNumberRing of RR from precision x
 
 new RR from RawRingElement := (RR,x) -> rawToRR x
+new CC from RawRingElement := (CC,x) -> rawToCC x
 
 promote(RR,RR) := (i,RR) -> i
 lift(RR,ZZ) := (r,ZZ) -> if r == floor r then floor r else error("can't lift ",toString r, " to ZZ")

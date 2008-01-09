@@ -1315,7 +1315,13 @@ export tostring5(
      else digits(o,x,i+1,s-i-1);
      tostring(o));
 export tostringRR(x:RR):string := tostring5(x,printingPrecision,printingLeadLimit,printingTrailLimit,printingSeparator);
-export tostringCC(z:CC):string := tostringRR(realPart(z)) + "+" + tostringRR(imaginaryPart(z)) + "*ii";
+export tostringCC(z:CC):string := (
+     x := realPart(z);
+     y := imaginaryPart(z);
+     if y === 0 
+     then tostringRR(x)
+     else tostringRR(x) + "+" + tostringRR(y) + "*ii"
+     );
 
 getstr(str:Cstring, e:long, base:int, digits:int, x:RR):string ::= tostring(
      Ccode(Cstring,
