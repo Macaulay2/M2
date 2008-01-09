@@ -35,7 +35,6 @@ public:
 
   // should there be a complex conjugation function?
 
-  ring_elem from_doubles(double r, double s) const;
   ring_elem from_BigReals(mpfr_ptr a, mpfr_ptr b) const;
 
   virtual mpfr_ptr to_BigReal(ring_elem f) const;
@@ -50,9 +49,7 @@ public:
 
   virtual ring_elem from_int(int n) const;
   virtual ring_elem from_int(mpz_ptr n) const;
-  virtual ring_elem from_double(double r) const;
   virtual ring_elem from_rational(mpq_ptr r) const;
-  virtual ring_elem from_complex(M2_CC z) const;
   virtual bool from_BigComplex(M2_CCC z, ring_elem &result) const;
   virtual bool from_BigReal(M2_RRR r, ring_elem &result) const;
 

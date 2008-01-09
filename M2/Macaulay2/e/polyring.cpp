@@ -191,18 +191,6 @@ ring_elem PolyRing::from_int(mpz_t n) const
   M_->one(result->monom);
   return result;
 }
-ring_elem PolyRing::from_double(double n) const
-{
-  ring_elem a = K_->from_double(n);
-  if (K_->is_zero(a)) 
-    {
-      return ZERO_RINGELEM;
-    }
-  Nterm *result = new_term();
-  result->coeff = a;
-  M_->one(result->monom);
-  return result;
-}
 
 ring_elem PolyRing::from_rational(mpq_ptr q) const
 {

@@ -30,11 +30,6 @@ public:
   // Arithmetic //////////
   ////////////////////////
 
-  virtual ring_elem from_double(double n) const { 
-    ring_elem result = numerR_->from_double(n); 
-    normal_form(result);
-    return result;
-  }
   virtual ring_elem from_int(int n) const { 
     ring_elem result = numerR_->from_int(n); 
     normal_form(result);

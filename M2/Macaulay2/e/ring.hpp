@@ -181,11 +181,8 @@ public:
 
   virtual ring_elem from_int(int n) const = 0;
   virtual ring_elem from_int(mpz_ptr n) const = 0;
-  virtual ring_elem from_double(double a) const;  // The default version converts to a mpz_ptr,
-				// then uses from_int.
+
   virtual ring_elem from_rational(mpq_ptr q) const = 0;  
-  // The default version calls from_int(0). Change it?
-  virtual ring_elem from_complex(M2_CC z) const;
   // The default version calls from_int(0). Change it?
   virtual bool from_BigReal(M2_RRR a, ring_elem &result) const;  
   // The default version calls from_int(0) and returns false.

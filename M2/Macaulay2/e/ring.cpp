@@ -228,33 +228,6 @@ int Ring::coerce_to_int(ring_elem) const
   return 0;
 }
 
-ring_elem Ring::from_double(double a) const
-{
-  mpz_t f;
-  mpz_init(f);
-  mpz_set_d(f,a);
-  ring_elem result = from_int(f);
-  mpz_clear(f);
-  return result;
-}
-
-//ring_elem Ring::number_conversion(Ring *S, ring_elem fS)
-//{
-//  //     ZZ  QQ RR CC RRR CCC
-//  // ZZ  id
-//  // QQ  x
-//  // RR  x   x
-//  // CC  x   x  x  id  x
-//  // RRR x   x  x  x   id
-//  // CCC x   x  x  x   x   id
-//}
-
-//ring_elem Ring::from_rational(mpq_ptr q) const
-//{
-//#warning "not implemented yet"
-//  return from_int(0);
-//}
-
 bool Ring::from_BigComplex(M2_CCC z, ring_elem &result) const
 {
   result = from_int(0);
@@ -265,15 +238,6 @@ bool Ring::from_BigReal(M2_RRR z, ring_elem &result) const
 {
   result = from_int(0);
   return false;
-}
-
-
-ring_elem Ring::from_complex(M2_CC z) const
-{
-#ifdef DEVELOPMENT
-#warning "not implemented yet"
-#endif
-  return from_int(0);
 }
 
 ring_elem Ring::random() const
