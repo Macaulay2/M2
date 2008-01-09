@@ -1130,16 +1130,16 @@ export (x:RR) ^ (n:int) : RR := (
      Ccode( void, "mpfr_pow_si(", "(__mpfr_struct *)", z, ",", "(__mpfr_struct *)", x, ",", n, ", GMP_RNDN)" );
      z);
 
-export pow10(n:int,prec:int):RR := (
-     ng := false;
-     if n < 0 then (
-	  ng = true;
-	  n = -n;
-	  );
+export pow10(n:ulong,prec:int):RR := (
      z := newRRR(prec);
-     Ccode( void, "mpfr_ui_pow_ui(", "(__mpfr_struct *)", z, ",", 10, ",", uint(n), ", GMP_RNDN)" );
-     if ng then z = z ^ -1;
+     Ccode( void, "mpfr_ui_pow_ui(", "(__mpfr_struct *)", z, ",", ulong(10), ",", n, ", GMP_RNDN)" );
      z);
+export pow10(n:long,prec:int):RR := (
+     ng := false;
+     if n < long(0)
+     then (pow10(ulong(-n),prec))^-1
+     else pow10(ulong(n),prec));
+export pow10(n:int,prec:int):RR := pow10(long(n),prec);
 
 export (n:uint) ^ (x:RR) : RR := (
      z := newRRR(x.prec);
@@ -1277,6 +1277,7 @@ digits(o:varstring,x:RR,a:int,b:int):void := (
 finite(x:RR):bool ::=Ccode(bool,"mpfr_number_p((__mpfr_struct *)",x,")");
 isinf (x:RR):bool ::= Ccode(bool,"mpfr_inf_p((__mpfr_struct *)",x,")");
 isnan (x:RR):bool ::= Ccode(bool,"mpfr_nan_p((__mpfr_struct *)",x,")");
+logten := log(10.);
 export tostring5(
      x:RR,						-- the number to format
      s:int,					-- number of significant digits
@@ -1290,29 +1291,20 @@ export tostring5(
      if x === 0 then return "0.";
      if x < 0 then (o << '-'; x=-x);
      oldx := x;
-     i := 0;
-     if x >= 1. then (					    -- use mpfr_get_z_exp here!
-     	  until x < 1000000000. do ( x = x/1000000000; i = i + 9 );
-     	  until x < 100000. do ( x = x/100000; i = i + 5 );
-     	  until x < 100. do ( x = x/100; i = i + 2 );
-     	  until x < 10. do ( x = x/10; i = i + 1 );
-	  )
-     else (
-     	  until x >= 1./1000000000. do ( x = x*1000000000; i = i - 9 );
-     	  until x >= 1./100000. do ( x = x*100000; i = i - 5 );
-     	  until x >= 1./100. do ( x = x*100; i = i - 2 );
-     	  until x >= 1. do ( x = x*10; i = i - 1 );
-	  );
+     i := long(floor(log(toDouble(x))/logten));		    -- overflow??
+     x = x / pow10(i,precision(x));
+     until x < 10. do ( x = x/10; i = i + 1 );
+     until x >= 1. do ( x = x*10; i = i - 1 );
      -- should rewrite this so the format it chooses is the one that takes the least space, preferring not to use the exponent when it's a tie
      if i<0 then (
 	  if -i <= l 
-	  then digits(o,oldx,1,s-i-1)
+	  then digits(o,oldx,1,s-int(i)-1)
 	  else (digits(o,x,1,s-1); o << e << tostring(i);))
      else if i+1 > s then (
 	  if i+1-s <= t
-	  then digits(o,x,i+1,0)
+	  then digits(o,x,int(i)+1,0)
 	  else (digits(o,x,1,s-1); o << e << tostring(i);))
-     else digits(o,x,i+1,s-i-1);
+     else digits(o,x,int(i)+1,s-int(i)-1);
      tostring(o));
 export tostringRR(x:RR):string := tostring5(x,printingPrecision,printingLeadLimit,printingTrailLimit,printingSeparator);
 

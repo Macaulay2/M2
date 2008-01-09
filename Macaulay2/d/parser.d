@@ -27,7 +27,7 @@ export parseRR(s:string):RR := (			    -- 4.33234234234p345e-9
      extra := 16;
      prec := 53;
      exsign := false;
-     expon := 0;
+     expon := long(0);
      foreach c in s do (
 	  if c == 'e' || c == 'E' then (
 		    inPrec = false;
