@@ -15,7 +15,7 @@ conjugate CC := z -> toCC(precision z, realPart z, - imaginaryPart z)
 ComplexNumberRing = new Type of {* ImmutableType *} BigNumberRing
 ComplexNumberRing.synonym = "real number ring"
 new ComplexNumberRing of CC from ZZ := memoize(
-     (ComplexNumberRing, CC, prec) -> newClass(ComplexNumberRing,CC,
+     (ComplexNumberRing,CC,prec) -> newClass(ComplexNumberRing,CC,
 	  hashTable {
 	       symbol precision => prec,
 	       symbol Engine => true,
@@ -46,7 +46,9 @@ expression CC := z -> realPart z + imaginaryPart z * hold symbol ii
 toExternalString CC := toExternalString0
 net CC := z -> simpleToString z
 isConstant CC := i -> true
-new CC from RawRingElement := (CC,x) -> rawToCC x
+new CC from RawRingElement := (CCC,x) -> (
+     assert( CCC === CC );				    -- the danger is that maybe CCC === CC_53, for example
+     rawToCC x)
 
 -- Local Variables:
 -- compile-command: "make -C $M2BUILDDIR/Macaulay2/m2 "
