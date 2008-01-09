@@ -1135,6 +1135,8 @@ export (x:CC) === (y:RR) : bool := x.re === y && x.im === 0;
 export (x:RR) === (y:CC) : bool := x === y.re && y.im === 0;
 export (x:CC) === (y:ZZ) : bool := x.re === y && x.im === 0;
 export (x:ZZ) === (y:CC) : bool := x === y.re && y.im === 0;
+export (x:CC) === (y:QQ) : bool := x.re === y && x.im === 0;
+export (x:QQ) === (y:CC) : bool := x === y.re && y.im === 0;
 
 -- real transcendental functions
 

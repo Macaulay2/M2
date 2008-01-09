@@ -125,31 +125,41 @@ EqualEqualfun(x:Expr,y:Expr):Expr := (
      when x
      is xx:ZZ do (
 	  when y 
-	  is yy:ZZ do toExpr(yy === xx)
-	  is yy:RR do toExpr(yy === xx)
-	  is yy:CC do toExpr(yy === xx)
+	  is yy:ZZ do toExpr(yy === xx)			    -- # typical value: symbol ==, ZZ, ZZ, Boolean
+	  is yy:QQ do toExpr(yy === xx)			    -- # typical value: symbol ==, ZZ, QQ, Boolean
+	  is yy:RR do toExpr(yy === xx)			    -- # typical value: symbol ==, ZZ, RR, Boolean
+	  is yy:CC do toExpr(yy === xx)			    -- # typical value: symbol ==, ZZ, CC, Boolean
 	  else equalmethod(x,y)
 	  )
-     is SymbolClosure do when y is SymbolClosure do equal(x,y) else equalmethod(x,y)
-     is QQ do when y is QQ do equal(x,y) else equalmethod(x,y)
+     is SymbolClosure do when y is SymbolClosure do equal(x,y) else equalmethod(x,y) -- # typical value: symbol ==, Symbol, Symbol, Boolean
+     is xx:QQ do (
+	  when y
+	  is yy:ZZ do toExpr(xx === yy)			    -- # typical value: symbol ==, QQ, ZZ, Boolean
+	  is yy:QQ do toExpr(xx === yy)			    -- # typical value: symbol ==, QQ, QQ, Boolean
+	  is yy:RR do toExpr(xx === yy)			    -- # typical value: symbol ==, QQ, RR, Boolean
+	  is yy:CC do toExpr(xx === yy)			    -- # typical value: symbol ==, QQ, CC, Boolean
+	  else equalmethod(x,y)
+	  )
      is xx:RR do (
 	  when y
-	  is yy:RR do toExpr(xx === yy)
-	  is yy:CC do toExpr(xx === yy)
-	  is yy:ZZ do toExpr(xx === yy)
+	  is yy:ZZ do toExpr(xx === yy)			    -- # typical value: symbol ==, RR, ZZ, Boolean
+	  is yy:QQ do toExpr(xx === yy)			    -- # typical value: symbol ==, RR, QQ, Boolean
+	  is yy:RR do toExpr(xx === yy)			    -- # typical value: symbol ==, RR, RR, Boolean
+	  is yy:CC do toExpr(xx === yy)			    -- # typical value: symbol ==, RR, CC, Boolean
 	  else equalmethod(x,y)
 	  )
      is xx:CC do (
 	  when y
-	  is yy:RR do toExpr(xx === yy)
-	  is yy:CC do toExpr(xx === yy)
-	  is yy:ZZ do toExpr(xx === yy)
+	  is yy:ZZ do toExpr(xx === yy)			    -- # typical value: symbol ==, CC, ZZ, Boolean
+	  is yy:QQ do toExpr(xx === yy)			    -- # typical value: symbol ==, CC, QQ, Boolean
+	  is yy:RR do toExpr(xx === yy)			    -- # typical value: symbol ==, CC, RR, Boolean
+	  is yy:CC do toExpr(xx === yy)			    -- # typical value: symbol ==, CC, CC, Boolean
 	  else equalmethod(x,y)
 	  )
-     is Boolean do when y is Boolean do equal(x,y) else equalmethod(x,y)
-     is Net do when y is Net do equal(x,y) else equalmethod(x,y)
-     is string do when y is string do equal(x,y) else equalmethod(x,y)
-     is s:Sequence do when y is t:Sequence do (
+     is Boolean do when y is Boolean do equal(x,y) else equalmethod(x,y) -- # typical value: symbol ==, Boolean, Boolean, Boolean
+     is Net do when y is Net do equal(x,y) else equalmethod(x,y)	 -- # typical value: symbol ==, Net, Net, Boolean
+     is string do when y is string do equal(x,y) else equalmethod(x,y)	 -- # typical value: symbol ==, String, String, Boolean
+     is s:Sequence do when y is t:Sequence do (				 -- # typical value: symbol ==, Sequence, Sequence, Boolean
 	  if length(s) != length(t) then return False;
 	  for i from 0 to length(s)-1 do (
 	       ret := EqualEqualfun(s.i,t.i);
