@@ -1254,26 +1254,6 @@ export tanh(x:RR):RR := (
 
 -- printing
 
--- getstr(str:Cstring, exp:long, base:int, digits:int, x:RR):Cstring ::= Ccode(Cstring,
---      "(Cstring) mpfr_get_str(",
--- 	 "(char *)", str, ",",				    -- target string
--- 	 "&", exp, ",",					   -- target exponent
--- 	 base, ",",					    -- base
--- 	 "(size_t)", digits, ",",	      -- number of digits to generate
--- 	 "(__mpfr_struct *)", x,
---      ", GMP_RNDN)"
---      );
-
--- export tostring(x:RR):string := (
---      e := long(0);
---      s := getstr(Cstring(null()), e, base, 0, x);
---      "."+tostring(s) + "*10^" + tostring(int(e)));
-
--- export tostring(x:RR,digits:int):string := (
---      e := long(0);
---      s := getstr(Cstring(null()), e, base, digits, x);
---      "."+tostring(s) + "*10^" + tostring(int(e)));
-
 digits(o:varstring,x:RR,a:int,b:int):void := (
      prec := x.prec;
      x = x + pow10(1-a-b,prec) / 2;
@@ -1334,8 +1314,27 @@ export tostring5(
 	  else (digits(o,x,1,s-1); o << e << tostring(i);))
      else digits(o,x,i+1,s-i-1);
      tostring(o));
-export tostring(x:RR):string := tostring5(x,printingPrecision,printingLeadLimit,printingTrailLimit,printingSeparator);
-export tostring(z:CC):string := tostring(realPart(z)) + " + " + tostring(imaginaryPart(z)) + " * ii";
+export tostringRR(x:RR):string := tostring5(x,printingPrecision,printingLeadLimit,printingTrailLimit,printingSeparator);
+export tostringCC(z:CC):string := tostringRR(realPart(z)) + "+" + tostringRR(imaginaryPart(z)) + "*ii";
+
+getstr(str:Cstring, e:long, base:int, digits:int, x:RR):string ::= tostring(
+     Ccode(Cstring,
+	  "(Cstring) mpfr_get_str(",
+	  "(char *)", str, ",",
+	  "&", e, ",",				    -- e gets set
+	  base, ",",
+	  "(size_t)", digits, ",",
+	  "(__mpfr_struct *)", x, ",",
+	  "GMP_RNDN)"));
+     
+export toExternalString(x:RR):string := (
+     ng := x < 0;
+     if ng then x = -x;
+     e := long(0);
+     s := getstr(Cstring(null()), e, base, 0, x);	    -- do this first, so e gets set
+     r := "." + s + "e" + tostring(int(e));
+     if ng then r = "-" + r;
+     r);
 
 -- Local Variables:
 -- compile-command: "make -C $M2BUILDDIR/Macaulay2/d "

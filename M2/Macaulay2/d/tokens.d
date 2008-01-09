@@ -174,7 +174,7 @@ export parallelAssignmentCode := {
      position:Position};
 
 export nullCode := {};
-export RRRCode := {x:RR,position:Position};
+export realCode := {x:RR,position:Position};
 export integerCode := {x:ZZ,position:Position};
 export stringCode := {x:string};
 export unaryCode := {f:unop,rhs:Code,position:Position};
@@ -223,7 +223,7 @@ export functionCode := {
      hash:int
      };
 export Code := (
-     nullCode or RRRCode or stringCode or integerCode or globalMemoryReferenceCode or localMemoryReferenceCode or globalAssignmentCode
+     nullCode or realCode or stringCode or integerCode or globalMemoryReferenceCode or localMemoryReferenceCode or globalAssignmentCode
      or localAssignmentCode or parallelAssignmentCode or globalSymbolClosureCode or localSymbolClosureCode
      or unaryCode or binaryCode or ternaryCode or multaryCode or forCode
      or sequenceCode or listCode or arrayCode or semiCode
