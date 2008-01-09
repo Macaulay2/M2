@@ -649,18 +649,18 @@ atan(e:Expr):Expr := (
      is y:RR do (
 	  when a.0
 	  is x:RR do Expr(atan2(y,x))
-	  is x:ZZ do Expr(atan2(y,toRR(x,y.prec)))
-	  is x:QQ do Expr(atan2(y,toRR(x,y.prec)))
+	  is x:ZZ do Expr(atan2(y,toRR(x,precision(y))))
+	  is x:QQ do Expr(atan2(y,toRR(x,precision(y))))
 	  else WrongArg(1,"a number"))
      is y:ZZ do (
 	  when a.0
-	  is x:RR do Expr(atan2(toRR(y,x.prec),x))
+	  is x:RR do Expr(atan2(toRR(y,precision(x)),x))
 	  is x:ZZ do Expr(atan2(toRR(y),toRR(x)))
 	  is x:QQ do Expr(atan2(toRR(y),toRR(x)))
 	  else WrongArg(1,"a number"))
      is y:QQ do (
 	  when a.0
-	  is x:RR do Expr(atan2(toRR(y,x.prec),x))
+	  is x:RR do Expr(atan2(toRR(y,precision(x)),x))
 	  is x:ZZ do Expr(atan2(toRR(y),toRR(x)))
 	  is x:QQ do Expr(atan2(toRR(y),toRR(x)))
      	  else WrongArg(1,"a number"))
