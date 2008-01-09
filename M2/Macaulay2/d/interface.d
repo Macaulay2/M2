@@ -821,13 +821,13 @@ setupfun("rawToRational",rawToRational);
 
 export rawToRR(e:Expr):Expr := (
      when e
-     is x:RawRingElement do toExpr(Ccode(RRRorNull, "(engine_RRRorNull)IM2_RingElement_to_BigReal((RingElement*)",x, ")" ))
+     is x:RawRingElement do toExpr(Ccode(RRorNull, "(engine_RRorNull)IM2_RingElement_to_BigReal((RingElement*)",x, ")" ))
      else WrongArg("a raw ring element"));
 setupfun("rawToRR",rawToRR);
 
 export rawToCC(e:Expr):Expr := (
      when e
-     is x:RawRingElement do toExpr(Ccode(CCRorNull, "(engine_CCRorNull)IM2_RingElement_to_BigComplex((RingElement*)",x, ")" ))
+     is x:RawRingElement do toExpr(Ccode(CCorNull, "(engine_CCorNull)IM2_RingElement_to_BigComplex((RingElement*)",x, ")" ))
      else WrongArg("a raw ring element"));
 setupfun("rawToCC",rawToCC);
 
