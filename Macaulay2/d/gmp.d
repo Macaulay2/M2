@@ -788,7 +788,7 @@ isZero    (x:RR):bool ::=  0 == Ccode(int, "mpfr_sgn((__mpfr_struct *)", x, ")")
 isNegative(x:RR):bool ::= -1 == Ccode(int, "mpfr_sgn((__mpfr_struct *)", x, ")");
 
 
-defaultPrecision := ulong(53); -- should 53 be computed?
+export defaultPrecision := ulong(53); -- should 53 be computed?
 
 minprec := Ccode(ulong,"MPFR_PREC_MIN");
 maxprec := Ccode(ulong,"MPFR_PREC_MAX");
@@ -1289,6 +1289,38 @@ export coth(x:RR):RR := (
 export factorial(x:ulong):ZZ := (
      z := newZZ();
      Ccode( void, "mpz_fac_ui((__mpz_struct *)", z, ",", x, ")" );
+     z);
+export log1p(x:RR):RR := (
+     z := newRRR(precision0(x));
+     Ccode( void, "mpfr_log1p((__mpfr_struct *)", z, ",(__mpfr_struct *)", x, ", GMP_RNDN)" );
+     z);
+export expm1(x:RR):RR := (
+     z := newRRR(precision0(x));
+     Ccode( void, "mpfr_expm1((__mpfr_struct *)", z, ",(__mpfr_struct *)", x, ", GMP_RNDN)" );
+     z);
+export Gamma(x:RR):RR := (
+     z := newRRR(precision0(x));
+     Ccode( void, "mpfr_gamma((__mpfr_struct *)", z, ",(__mpfr_struct *)", x, ", GMP_RNDN)" );
+     z);
+export eint(x:RR):RR := (
+     z := newRRR(precision0(x));
+     Ccode( void, "mpfr_eint((__mpfr_struct *)", z, ",(__mpfr_struct *)", x, ", GMP_RNDN)" );
+     z);
+export lngamma(x:RR):RR := (
+     z := newRRR(precision0(x));
+     Ccode( void, "mpfr_lngamma((__mpfr_struct *)", z, ",(__mpfr_struct *)", x, ", GMP_RNDN)" );
+     z);
+export zeta(x:RR):RR := (
+     z := newRRR(precision0(x));
+     Ccode( void, "mpfr_zeta((__mpfr_struct *)", z, ",(__mpfr_struct *)", x, ", GMP_RNDN)" );
+     z);
+export zeta(x:ulong,prec:ulong):RR := (
+     z := newRRR(prec);
+     Ccode( void, "mpfr_zeta_ui((__mpfr_struct *)", z, ",", x, ", GMP_RNDN)" );
+     z);
+export erf(x:RR):RR := (
+     z := newRRR(precision0(x));
+     Ccode( void, "mpfr_erf((__mpfr_struct *)", z, ",(__mpfr_struct *)", x, ", GMP_RNDN)" );
      z);
 
 -- printing

@@ -690,6 +690,87 @@ asin(e:Expr):Expr := (
      else buildErrorPacket("expected a number")
      );
 setupfun("asin",asin);
+log1p(e:Expr):Expr := (
+     when e
+     is x:RR do Expr(log1p(x))
+     is x:ZZ do Expr(log1p(toRR(x)))
+     is x:QQ do Expr(log1p(toRR(x)))
+     is x:Error do Expr(x)
+     else buildErrorPacket("expected a number")
+     );
+setupfun("log1p",log1p);
+expm1(e:Expr):Expr := (
+     when e
+     is x:RR do Expr(expm1(x))
+     is x:ZZ do Expr(expm1(toRR(x)))
+     is x:QQ do Expr(expm1(toRR(x)))
+     is x:Error do Expr(x)
+     else buildErrorPacket("expected a number")
+     );
+setupfun("expm1",expm1);
+eint(e:Expr):Expr := (
+     when e
+     is x:RR do Expr(eint(x))
+     is x:ZZ do Expr(eint(toRR(x)))
+     is x:QQ do Expr(eint(toRR(x)))
+     is x:Error do Expr(x)
+     else buildErrorPacket("expected a number")
+     );
+setupfun("eint",eint);
+Gamma(e:Expr):Expr := (
+     when e
+     is x:RR do Expr(Gamma(x))
+     is x:ZZ do Expr(Gamma(toRR(x)))
+     is x:QQ do Expr(Gamma(toRR(x)))
+     is x:Error do Expr(x)
+     else buildErrorPacket("expected a number")
+     );
+setupfun("Gamma",Gamma);
+lngamma(e:Expr):Expr := (
+     when e
+     is x:RR do Expr(lngamma(x))
+     is x:ZZ do Expr(lngamma(toRR(x)))
+     is x:QQ do Expr(lngamma(toRR(x)))
+     is x:Error do Expr(x)
+     else buildErrorPacket("expected a number")
+     );
+setupfun("lngamma",lngamma);
+export lgamma(x:RR):Expr := (
+     z := newRRR(precision(x));
+     i := 0;
+     Ccode( void, "mpfr_lgamma((__mpfr_struct *)", z, ",&",i,",(__mpfr_struct *)", x, ", GMP_RNDN)" );
+     Expr(Sequence(z,toInteger(i))));
+lgamma(e:Expr):Expr := (
+     when e
+     is x:RR do Expr(lgamma(x))
+     is x:ZZ do Expr(lgamma(toRR(x)))
+     is x:QQ do Expr(lgamma(toRR(x)))
+     is x:Error do Expr(x)
+     else buildErrorPacket("expected a number")
+     );
+setupfun("lgamma",lgamma);
+zeta(e:Expr):Expr := (
+     when e
+     is x:RR do Expr(zeta(x))
+     is x:ZZ do (
+	  if isULong(x)
+	  then Expr(zeta(toULong(x),defaultPrecision))
+	  else Expr(zeta(toRR(x,defaultPrecision)))
+	  )
+     is x:QQ do Expr(zeta(toRR(x)))
+     is x:Error do Expr(x)
+     else buildErrorPacket("expected a number")
+     );
+setupfun("zeta",zeta);
+erf(e:Expr):Expr := (
+     when e
+     is x:RR do Expr(erf(x))
+     is x:ZZ do Expr(erf(toRR(x)))
+     is x:QQ do Expr(erf(toRR(x)))
+     is x:Error do Expr(x)
+     else buildErrorPacket("expected a number")
+     );
+setupfun("erf",erf);
 atan(e:Expr):Expr := (
      when e
      is x:RR do Expr(atan(x))
