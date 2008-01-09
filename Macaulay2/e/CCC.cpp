@@ -106,6 +106,7 @@ ring_elem CCC::from_int(int n) const
 {
   M2_CCC result = new_elem();
   mpfr_set_si(result->re, n, GMP_RNDN);
+  mpfr_set_si(result->im, 0, GMP_RNDN);
 
   return BIGCC_RINGELEM(result);
 }
@@ -114,6 +115,7 @@ ring_elem CCC::from_int(mpz_ptr n) const
 {
   M2_CCC result = new_elem();
   mpfr_set_z(result->re, n, GMP_RNDN);
+  mpfr_set_si(result->im, 0, GMP_RNDN);
 
   return BIGCC_RINGELEM(result);
 }
@@ -122,6 +124,7 @@ ring_elem CCC::from_rational(mpq_ptr r) const
 {
   M2_CCC result = new_elem();
   mpfr_set_q(result->re, r, GMP_RNDN);
+  mpfr_set_si(result->im, 0, GMP_RNDN);
 
   return BIGCC_RINGELEM(result);
 }
@@ -130,6 +133,7 @@ bool CCC::from_BigReal(M2_RRR r, ring_elem &result1) const
 {
   M2_CCC result = new_elem();
   mpfr_set(result->re, r, GMP_RNDN);
+  mpfr_set_si(result->im, 0, GMP_RNDN);
 
   result1 = BIGCC_RINGELEM(result);
   return true;
