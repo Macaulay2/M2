@@ -48,9 +48,6 @@ typedef __mpq_struct *M2_Rational;
 typedef __mpfr_struct *M2_RRR; /* must agree with RR in gmp.d */
 typedef struct M2_CCC_struct { __mpfr_struct *re, *im; } *M2_CCC; /* must agree with CC in gmp.d */
 
-  extern M2_string gmp_tostringRR(M2_RRR);
-  extern M2_string gmp_tostringCC(M2_CCC);
-
 #ifndef DCODE
   /* The C code produced from the D language has its own declarations for these things */
   extern M2_string system_newline;
@@ -69,6 +66,10 @@ typedef struct M2_CCC_struct { __mpfr_struct *re, *im; } *M2_CCC; /* must agree 
   extern char **tocharstarstar(M2_stringarray);
   extern char **tocharstarstar_malloc(M2_stringarray);
   extern M2_stringarray tostrings(int,char **);
+
+  extern M2_string gmp_tostringRR(M2_RRR);
+  extern M2_string gmp_tostringCC(M2_CCC);
+
 #endif
 
 #define sizeofarray(s,len) (sizeof(*s) - sizeof(s->array) + (len)*sizeof(s->array[0]))
