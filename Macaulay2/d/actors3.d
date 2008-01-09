@@ -738,7 +738,7 @@ sqrt(a:Expr):Expr := (
      when a
      is x:RR do Expr(sqrt(x))
      is Error do a
-     else WrongArg("a double or big real"));
+     else WrongArg("a real number"));
 setupfun("sqrt",sqrt);
 map(a1:Sequence,a2:Sequence,f:Expr):Expr := (
      newlen := length(a1);

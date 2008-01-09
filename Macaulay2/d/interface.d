@@ -720,12 +720,12 @@ export rawFromNumber(e:Expr):Expr := (
 	  when Ccode(RawRingElementOrNull, "(engine_RawRingElementOrNull)IM2_RingElement_from_BigReal((Ring*)",R,",(M2_RRR)",x,")")
 	  is r:RawRingElement do Expr(r)
 	  is null do
-	  buildErrorPacket(EngineError("can't promote big real number to ring element")))
+	  buildErrorPacket(EngineError("can't promote real number to ring element")))
      is x:CC do (
 	  when Ccode(RawRingElementOrNull, "(engine_RawRingElementOrNull)IM2_RingElement_from_BigComplex((Ring*)",R,",(M2_CCC)",x,")")
 	  is r:RawRingElement do Expr(r)
 	  is null do
-	  buildErrorPacket(EngineError("can't promote big complex number to ring element"))
+	  buildErrorPacket(EngineError("can't promote complex number to ring element"))
 	  )
      else WrongArg(2,"an integer, real number, or complex number")
      else WrongArg(1,"a raw ring")

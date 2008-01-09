@@ -1254,78 +1254,73 @@ export tanh(x:RR):RR := (
 
 -- printing
 
-digits(o:varstring,x:RR,a:int,b:int):void := (
-     prec := x.prec;
-     x = x + pow10(1-a-b,prec) / 2;
-     if x >= 10 then (x = x/10; a = a+1; b = if b==0 then 0 else b-1);
-     while a > 0 do (
-	  d := int(ifloor(x));
-	  putdigit(o,d);
-	  x = 10 * (x - d);
-	  a = a-1;
-	  );
-     o << '.';
-     lim := pow10(-b+1,prec);
-     while b > 0 do (
-	  if x < lim then break;
-	  d := int(ifloor(x));
-	  putdigit(o,d);
-	  x = 10 * (x - d);
-	  lim = lim * 10;
-	  b = b-1;
-	  ));
+getstr(returnexponent:long, base:int, sigdigs:int, x:RR):string ::= tostring(
+     Ccode(Cstring, "(Cstring) mpfr_get_str((char *)0,&", returnexponent, ",",
+	  base, ",(size_t)", sigdigs, ",(__mpfr_struct *)", x, ",GMP_RNDN)"));
 finite(x:RR):bool ::=Ccode(bool,"mpfr_number_p((__mpfr_struct *)",x,")");
 isinf (x:RR):bool ::= Ccode(bool,"mpfr_inf_p((__mpfr_struct *)",x,")");
 isnan (x:RR):bool ::= Ccode(bool,"mpfr_nan_p((__mpfr_struct *)",x,")");
-logten := log(10.);
 export tostring5(
      x:RR,						-- the number to format
      s:int,					-- number of significant digits
      l:int,					   -- max number leading zeroes
      t:int,				    -- max number extra trailing digits
-     e:string			     -- separator between mantissa and exponent
+     sep:string			     -- separator between mantissa and exponent
      ) : string := (
-     o := newvarstring(25);
      if isinf(x) then return if x < 0 then "-infinity" else "infinity";
      if isnan(x) then return "NotANumber";
-     if x === 0 then return "0.";
-     if x < 0 then (o << '-'; x=-x);
-     oldx := x;
-     i := long(floor(log(toDouble(x))/logten));		    -- overflow??
-     x = x / pow10(i,precision(x));
-     until x < 10. do ( x = x/10; i = i + 1 );
-     until x >= 1. do ( x = x*10; i = i - 1 );
-     -- should rewrite this so the format it chooses is the one that takes the least space, preferring not to use the exponent when it's a tie
-     if i<0 then (
-	  if -i <= l 
-	  then digits(o,oldx,1,s-int(i)-1)
-	  else (digits(o,x,1,s-1); o << e << tostring(i);))
-     else if i+1 > s then (
-	  if i+1-s <= t
-	  then digits(o,x,int(i)+1,0)
-	  else (digits(o,x,1,s-1); o << e << tostring(i);))
-     else digits(o,x,int(i)+1,s-int(i)-1);
-     tostring(o));
+     if x === 0 then return "0";
+     sgn := "";
+     if x < 0 then (
+	  sgn = "-";
+	  x = -x;
+	  );
+     ex := long(0);
+     mantissa := getstr(ex, base, 0, x);
+     nt := 0;
+     for i from length(mantissa)-1 to 0 by -1 do (
+	  if mantissa.i != '0' then break;
+	  nt = nt + 1;
+	  );
+     s = length(mantissa) - nt;
+     mantissa = substr(mantissa,0,s);
+     pt := 0;
+     if ex < 0 then (
+	  t = 0;
+	  if -ex <= l then (
+	       l = int(-ex);
+	       ex = long(0);
+	       )
+	  else l = 0)
+     else (
+	  l = 0;
+	  if ex <= s then (
+	       pt = int(ex);
+	       ex = long(0);
+	       t = 0;
+	       )
+	  else if ex <= s+t then (
+	       t = int(ex)-s;
+	       ex = long(0);
+	       )
+	  else t = 0);
+     (sgn + (if pt == 0 then "." else "") + (new string len l do provide '0'))
+     + (
+	  if pt > 0 && pt < s
+	  then substr(mantissa,0,pt) + "." + substr(mantissa,pt)
+	  else mantissa
+     ) +
+     ((new string len t do provide '0') + (if ex != long(0) then sep + tostring(ex) else "")));
 export tostringRR(x:RR):string := tostring5(x,printingPrecision,printingLeadLimit,printingTrailLimit,printingSeparator);
-
-getstr(str:Cstring, e:long, base:int, digits:int, x:RR):string ::= tostring(
-     Ccode(Cstring,
-	  "(Cstring) mpfr_get_str(",
-	  "(char *)", str, ",",
-	  "&", e, ",",				    -- e gets set
-	  base, ",",
-	  "(size_t)", digits, ",",
-	  "(__mpfr_struct *)", x, ",",
-	  "GMP_RNDN)"));
      
 export toExternalString(x:RR):string := (
      if isinf(x) then return if x < 0 then "-infinity" else "infinity";
      if isnan(x) then return "NotANumber";
      ng := x < 0;
      if ng then x = -x;
-     e := long(0);
-     s := getstr(Cstring(null()), e, base, 0, x);	    -- do this first, so e gets set
-     r := "." + s + "p" + tostring(x.prec) + "e" + tostring(int(e));
+     ex := long(0);
+     s := getstr(ex, base, 0, x);
+     r := "." + s + "p" + tostring(x.prec) + "e" + tostring(ex);
      if ng then r = "-" + r;
      r);
 
@@ -1334,6 +1329,8 @@ export tostringCC(z:CC):string := (
      y := imaginaryPart(z);
      if y === 0 
      then tostringRR(x)
+     else if y === -1 then tostringRR(x) + "-ii"
+     else if y ===  1 then tostringRR(x) + "+ii"
      else if y < 0
      then tostringRR(x) + "-" + tostringRR(-y) + "*ii"
      else tostringRR(x) + "+" + tostringRR( y) + "*ii"

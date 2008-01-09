@@ -1168,7 +1168,7 @@ precision(e:Expr):Expr := (
      when e 
      is x:RR do Expr(toInteger(precision(x)))
      is x:CC do Expr(toInteger(precision(x)))
-     else WrongArg("a big real number")
+     else WrongArg("a real number")
      );
 setupfun("precision",precision);
 
