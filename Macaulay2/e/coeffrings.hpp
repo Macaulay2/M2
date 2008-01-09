@@ -473,7 +473,7 @@ public:
 
   void to_ring_elem(ring_elem &result, elem a) const
   {
-    result = R->from_BigComplex(&a);
+    R->from_BigComplex(&a, result);
   }
 
   void from_ring_elem(elem &result, const ring_elem &a) const

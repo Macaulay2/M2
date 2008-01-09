@@ -430,7 +430,10 @@ const RingElement *IM2_RingElement_from_BigReal(const Ring *R, M2_RRR z)
 
 const RingElement *IM2_RingElement_from_BigComplex(const Ring *R, M2_CCC z)
 {
-  return RingElement::make_raw(R, R->from_BigComplex(z));
+  ring_elem f;
+  if (R->from_BigComplex(z,f))
+    return RingElement::make_raw(R, f);
+  return 0;
 }
 
 M2_IntegerOrNull IM2_RingElement_to_Integer(const RingElement *a)

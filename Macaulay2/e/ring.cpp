@@ -263,12 +263,10 @@ ring_elem Ring::from_BigReal(mpfr_ptr a) const
   return from_int(0);
 }
 
-ring_elem Ring::from_BigComplex(M2_CCC z) const
+bool Ring::from_BigComplex(M2_CCC z, ring_elem &result) const
 {
-#ifdef DEVELOPMENT
-#warning "not implemented yet"
-#endif
-  return from_int(0);
+  result = from_int(0);
+  return false;
 }
 
 ring_elem Ring::from_complex(M2_CC z) const

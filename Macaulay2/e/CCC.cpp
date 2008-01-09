@@ -169,13 +169,14 @@ ring_elem CCC::from_BigReals(mpfr_ptr a, mpfr_ptr b) const
   return BIGCC_RINGELEM(result);
 }
 
-ring_elem CCC::from_BigComplex(M2_CCC z) const
+bool CCC::from_BigComplex(M2_CCC z, ring_elem &result1) const
 {
   M2_CCC result = new_elem();
   mpfr_set(result->re, z->re, GMP_RNDN);
   mpfr_set(result->im, z->im, GMP_RNDN);
 
-  return BIGCC_RINGELEM(result);
+  result1 = BIGCC_RINGELEM(result);
+  return true;
 }
 
 mpfr_ptr CCC::to_BigReal(ring_elem f) const
@@ -419,7 +420,9 @@ void CCC::syzygy(const ring_elem a, const ring_elem b,
 
 ring_elem CCC::eval(const RingMap *map, const ring_elem f, int) const
 {
-  return map->get_ring()->from_BigComplex(BIGCC_VAL(f));
+  ring_elem result;
+  map->get_ring()->from_BigComplex(BIGCC_VAL(f), result);
+  return result;
 }
 
 
