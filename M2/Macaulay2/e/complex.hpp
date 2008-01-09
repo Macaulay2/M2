@@ -273,7 +273,6 @@ public:
 
   static void divide(elem &result, elem u, elem v)
   {
-#warning "commented out 'divide'"
 #if 0
     mpfr_t tmp1, tmp2;
     if (mpfr_cmpabs(v.re,v.im) >= 0)
@@ -309,7 +308,6 @@ public:
     mpfr_neg(result.im, a.im, GMP_RNDN);
   }
 
-#warning "commented out JUST FOR NOW these complex arithmetic routines"
 #if 0
   static void abs(double &result, elem c)
   {

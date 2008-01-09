@@ -273,11 +273,8 @@ void cblas_zgemm(const int Order,   // how matrices are stored, by column or row
 
 class Lapack {
  public:
-  typedef DMat<CoefficientRingRR> LMatrixRR;
-  typedef DMat<CoefficientRingCC> LMatrixCC;
-
-  typedef DMat<CoefficientRingRRR> LMatrixRRR;
-  typedef DMat<CoefficientRingCCC> LMatrixCCC;
+  typedef DMat<CoefficientRingRRR> LMatrixRR;
+  typedef DMat<CoefficientRingCCC> LMatrixCC;
 
   ///////////////////////////////////////////
   // Translation to/from RR/CC and RRR/CCC //

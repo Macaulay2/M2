@@ -994,8 +994,8 @@ M2_arrayint columnEchelonForm(SMat<CoeffRing> *A)
 
 template class SMat<CoefficientRingZZ_NTL>;
 template class SMat<CoefficientRingZZp>;
-template class SMat<CoefficientRingRR>;
-template class SMat<CoefficientRingCC>;
+template class SMat<CoefficientRingRRR>;
+template class SMat<CoefficientRingCCC>;
 template class SMat<CoefficientRingR>;
 
 // Local Variables:
