@@ -1292,13 +1292,13 @@ export tostring5(
      oldx := x;
      i := 0;
      if x >= 1. then (					    -- use mpfr_get_z_exp here!
-     	  until x < 1000000000. do ( x = x/1000000000; i = i + 10 );
+     	  until x < 1000000000. do ( x = x/1000000000; i = i + 9 );
      	  until x < 100000. do ( x = x/100000; i = i + 5 );
      	  until x < 100. do ( x = x/100; i = i + 2 );
      	  until x < 10. do ( x = x/10; i = i + 1 );
 	  )
      else (
-     	  until x >= 1./1000000000. do ( x = x*1000000000; i = i - 10 );
+     	  until x >= 1./1000000000. do ( x = x*1000000000; i = i - 9 );
      	  until x >= 1./100000. do ( x = x*100000; i = i - 5 );
      	  until x >= 1./100. do ( x = x*100; i = i - 2 );
      	  until x >= 1. do ( x = x*10; i = i - 1 );
