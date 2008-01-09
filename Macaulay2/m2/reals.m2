@@ -109,6 +109,8 @@ approx := (r,limit) -> (
 lift(RR,QQ) := (r,QQ) -> approx(r,abs r / 2^(precision r - 16))
 lift(RR,ZZ) := (r,ZZ) -> (i := floor r; if r == i then i else error "can't lift to ZZ")
 
+toExternalString RR := toExternalString0
+
 logten2 := log 10. / log 2.
 
 RR#{Standard,Print} = x ->  (
