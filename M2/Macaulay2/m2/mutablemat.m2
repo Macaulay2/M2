@@ -151,8 +151,8 @@ eigenvalues(Matrix) := o -> (A) -> (
 
 eigenvectors = method(Options => {Hermitian => false})
 eigenvectors(MutableMatrix) := o -> (A) -> (
-     if ring A =!= RR and ring A =!= CC then
-       error "eigenvalues requires matrices over RR or CC";
+     k := ring A;
+     if not instance(k,BigNumberRing) then error "eigenvalues requires matrices over RR or CC";
      e := if o.Hermitian 
           then mutableZero(RR,0,0, Dense=>true)
           else mutableZero(CC,0,0, Dense=>true);
@@ -167,14 +167,16 @@ eigenvectors(Matrix) := o -> (A) -> (
 
 SVD = method(Options=>{DivideConquer=>false})
 SVD MutableMatrix := o -> A -> (
-     if ring A =!= RR and ring A =!= CC then
-       error "eigenvalues requires matrices over RR or CC";
+     k := ring A;
+     if not instance(k,BigNumberRing) then error "eigenvalues requires matrices over RR or CC";
      Sigma := mutableZero(RR,0,0);
      U := if ring A === RR then mutableZero(RR,0,0) else mutableZero(CC,0,0);
      VT := if ring A === RR then mutableZero(RR,0,0) else mutableZero(CC,0,0);
      rawSVD(raw A, raw Sigma, raw U, raw VT, o.DivideConquer);
      (Sigma,U,VT))
 SVD Matrix := o -> A -> (
+     k := ring A;
+     if not instance(k,BigNumberRing) then error "eigenvalues requires matrices over RR or CC";
      A = mutableMatrix(A,Dense=>true);
      (Sigma,U,VT) := SVD(A,o);
      (matrix Sigma,matrix U,matrix VT))
