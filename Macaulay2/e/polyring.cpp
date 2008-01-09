@@ -233,6 +233,8 @@ bool PolyRing::from_BigComplex(M2_CCC z, ring_elem &result) const
   result1->coeff = a;
   M_->one(result1->monom);
   result = result1;
+
+  return true;
 }
 
 bool PolyRing::from_BigReal(M2_RRR z, ring_elem &result) const
@@ -251,6 +253,8 @@ bool PolyRing::from_BigReal(M2_RRR z, ring_elem &result) const
   result1->coeff = a;
   M_->one(result1->monom);
   result = result1;
+
+  return true;
 }
 
 ring_elem PolyRing::var(int v) const

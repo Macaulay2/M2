@@ -8,8 +8,6 @@
 #include "ZZp.hpp"
 #include "ZZ.hpp"
 #include "QQ.hpp"
-#include "RR.hpp"
-#include "CC.hpp"
 #include "RRR.hpp"
 #include "CCC.hpp"
 #include "GF.hpp"
@@ -91,16 +89,6 @@ const RingOrNull *rawGaloisField(const RingElement *f)
 	  ERROR(e.what());
 	  return NULL;
      }
-}
-
-const RingOrNull *IM2_Ring_RR()
-{
-  return globalRR;
-}
-
-const RingOrNull *IM2_Ring_CC()
-{
-  return globalCC;
 }
 
 const RingOrNull *IM2_Ring_RRR(int prec)
@@ -408,20 +396,25 @@ const RingElement *IM2_RingElement_from_Integer(const Ring *R, M2_Integer d)
   return RingElement::make_raw(R, R->from_int(d));
 }
 
-const RingElement *IM2_RingElement_from_double(const Ring *R, double d)
-{
-  return RingElement::make_raw(R, R->from_double(d));
-}
-
 const RingElement *IM2_RingElement_from_rational(const Ring *R, M2_Rational r)
 {
   return RingElement::make_raw(R, R->from_rational(r));
 }
 
-const RingElement *IM2_RingElement_from_complex(const Ring *R, M2_CC z)
-{
-  return RingElement::make_raw(R, R->from_complex(z));
-}
+  //  double IM2_RingElement_to_double(const RingElement *a); /* rawToReal */
+    /* If the ring of a is RR, this returns the underlying representation of 'a'.
+       Otherwise 0.0 is returned. */
+
+  //  M2_CC IM2_RingElement_to_complex(const RingElement *a); /* rawToComplex */
+    /* If the ring of a is RR, this returns the underlying representation of 'a'.
+       Otherwise 0.0 is returned. */
+
+  //  const RingElement *IM2_RingElement_from_double(const Ring *R, 
+  //						 double d); /* drg: connected rawFromNumber*/
+
+  // const RingElement *IM2_RingElement_from_complex(const Ring *R, 
+  //						  M2_CC z); /* drg: connected rawFromNumber*/
+
 
 const RingElement *IM2_RingElement_from_BigComplex(const Ring *R, M2_CCC z)
 {
@@ -491,32 +484,6 @@ M2_CCCorNull IM2_RingElement_to_BigComplex(const RingElement *a)
     }
   void *f = a->get_value().poly_val;
   return static_cast<M2_CCC>(f);
-}
-
-double IM2_RingElement_to_double(const RingElement *a)
-/* If the ring of a is RR, this returns the underlying representation of 'a'.
-   Otherwise 0.0 is returned. */
-{
-  if (!a->get_ring()->cast_to_RingRR())
-    {
-      ERROR("expected an element of RR");
-      return 0;
-    }
-  return globalRR->to_double(a->get_value());
-    
-}
-
-M2_CCOrNull IM2_RingElement_to_complex(const RingElement *a)
-/* If the ring of a is RR, this returns the underlying representation of 'a'.
-   Otherwise 0.0 is returned. */
-{
-  if (!a->get_ring()->cast_to_CC())
-    {
-      ERROR("expected an element of CC");
-      return 0;
-    }
-  void *f = a->get_value().poly_val;
-  return static_cast<M2_CC>(f);
 }
 
 const RingElementOrNull *IM2_RingElement_make_var(const Ring *R, int v)
@@ -1045,20 +1012,6 @@ const RingElementOrNull *IM2_RingElement_fraction(const Ring *R,
 	  ERROR(e.what());
 	  return NULL;
      }
-}
-
-extern "C" M2_CC rawCCSqrt(const M2_CC a)
-{
-  M2_CC_struct result;
-  CCArithmetic::sqrt(result,*a);
-  return make_M2_Complex(result.re, result.im);
-}
-
-extern "C" double rawCCAbs(const M2_CC a)
-{
-  double result;
-  CCArithmetic::abs(result,*a);
-  return result;
 }
 
 M2_IntegerOrNull rawSchurDimension(const RingElement *f)

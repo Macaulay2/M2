@@ -212,7 +212,6 @@ public:
 };
 
 typedef Mat<CoefficientRingZZp> Mat_ZZp;
-typedef Mat<CoefficientRingRR> Mat_RR;
 
 typedef DMat<CoefficientRingZZp> DMatZZp;
 typedef DMat<CoefficientRingRRR> DMatRR;
@@ -280,7 +279,6 @@ public:
   //////////////////////////////
 
   virtual Mat_ZZp *get_mat_ZZp() { return 0; }
-  virtual Mat_RR *get_mat_RR() { return 0; }
 
   virtual DMatRR * get_DMatRR() = 0;
   virtual DMatCC * get_DMatCC() = 0;
@@ -501,7 +499,6 @@ public:
   virtual const SMatR * get_SMatR() const;
 
   virtual Mat_ZZp *get_mat_ZZp();
-  virtual Mat_RR *get_mat_RR();
 
   Mat * get_Mat() { return &mat; }
   const Mat * get_Mat() const { return &mat; }

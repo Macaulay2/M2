@@ -684,11 +684,6 @@ DMat<CoeffRing> * DMat<CoeffRing>::negate() const
   return result;
 }
 
-template <> double *DMat<CoefficientRingRR>::get_lapack_array() const
-{
-  return array_;
-}
-
 template <> double *DMat<CoefficientRingRRR>::make_lapack_array() const
 {
   long len = n_rows() * n_cols();
@@ -741,15 +736,8 @@ template <> void DMat<CoefficientRingCCC>::fill_from_lapack_array(double *lapack
     }
 }
 
-template <> double *DMat<CoefficientRingCC>::get_lapack_array() const
-{
-  return reinterpret_cast<double *>(array_);
-}
-
 template class DMat<CoefficientRingZZ_NTL>;
 template class DMat<CoefficientRingZZp>;
-template class DMat<CoefficientRingRR>;
-template class DMat<CoefficientRingCC>;
 template class DMat<CoefficientRingRRR>;
 template class DMat<CoefficientRingCCC>;
 template class DMat<CoefficientRingR>;

@@ -154,11 +154,6 @@ bool RRR::promote(const Ring *Rf, const ring_elem f, ring_elem &result) const
       result = MPF_RINGELEM(g);
       return true;
     }
-  if (Rf == globalRR)
-    {
-      result = from_double(RR_VAL(f));
-      return true;
-    }
   return false;
 }
 
