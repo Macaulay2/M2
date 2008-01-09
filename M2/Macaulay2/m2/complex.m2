@@ -49,6 +49,7 @@ isConstant CC := i -> true
 new CC from RawRingElement := (CCC,x) -> (
      assert( CCC === CC );				    -- the danger is that maybe CCC === CC_53, for example
      rawToCC x)
+promote(RawRingElement,CC) := (x,R) -> new CC from x
 
 -- Local Variables:
 -- compile-command: "make -C $M2BUILDDIR/Macaulay2/m2 "
