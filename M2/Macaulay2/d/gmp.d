@@ -800,7 +800,7 @@ export newRR(prec:ulong):RR := (
      x);
 export newCC(prec:ulong):CC := CC(newRR(prec),newRR(prec));
 
-precision0(x:RR):ulong ::= Ccode(ulong,"(ulong)mpfr_get_prec((__mpfr_struct *)", x, ")");
+precision0(x:RR):ulong ::= Ccode(ulong,"(unsigned long)mpfr_get_prec((__mpfr_struct *)", x, ")");
 export precision(x:RR):ulong := precision0(x);
 export precision(x:CC):ulong := precision0(x.re);
 
