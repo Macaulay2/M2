@@ -29,6 +29,7 @@ bool RRR::initialize_RRR(int prec)
   oneV = from_int(1);
   minus_oneV = from_int(-1);
 
+  coeffR = new CoefficientRingRRR(this);
   return true;
 }
 

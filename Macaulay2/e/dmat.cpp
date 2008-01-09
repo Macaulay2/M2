@@ -688,6 +688,59 @@ template <> double *DMat<CoefficientRingRR>::get_lapack_array() const
 {
   return array_;
 }
+
+template <> double *DMat<CoefficientRingRRR>::make_lapack_array() const
+{
+  long len = n_rows() * n_cols();
+  double *result = newarray_atomic(double, len);
+
+  elem *a = array_;
+  double *p = result;
+  for (long i=0; i<len; i++)
+    *p++ = mpfr_get_d(*a++, GMP_RNDN);
+  return result;
+}
+
+template <> void DMat<CoefficientRingRRR>::fill_from_lapack_array(double *lapack_array)
+{
+  long len = n_rows() * n_cols();
+
+  elem *a = array_;
+  double *p = lapack_array;
+  for (long i=0; i<len; i++)
+    mpfr_set_d(*a++, *p++, GMP_RNDN);
+}
+
+template <> double *DMat<CoefficientRingCCC>::make_lapack_array() const
+{
+  long len = 2 * n_rows() * n_cols();
+  double *result = newarray_atomic(double, len);
+
+  elem *a = array_;
+  double *p = result;
+  for (long i=0; i<len; i++)
+    {
+      *p++ = mpfr_get_d(a->re, GMP_RNDN);
+      *p++ = mpfr_get_d(a->im, GMP_RNDN);
+      a++;
+    }
+  return result;
+}
+
+template <> void DMat<CoefficientRingCCC>::fill_from_lapack_array(double *lapack_array)
+{
+  long len = n_rows() * n_cols();
+
+  elem *a = array_;
+  double *p = lapack_array;
+  for (long i=0; i<len; i++)
+    {
+      mpfr_set_d(a->re, *p++, GMP_RNDN);
+      mpfr_set_d(a->im, *p++, GMP_RNDN);
+      a++;
+    }
+}
+
 template <> double *DMat<CoefficientRingCC>::get_lapack_array() const
 {
   return reinterpret_cast<double *>(array_);
@@ -697,6 +750,8 @@ template class DMat<CoefficientRingZZ_NTL>;
 template class DMat<CoefficientRingZZp>;
 template class DMat<CoefficientRingRR>;
 template class DMat<CoefficientRingCC>;
+template class DMat<CoefficientRingRRR>;
+template class DMat<CoefficientRingCCC>;
 template class DMat<CoefficientRingR>;
 
 

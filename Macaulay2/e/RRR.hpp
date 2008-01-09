@@ -7,11 +7,14 @@
 
 #include "ZZ.hpp"
 
+class CoefficientRingRRR;
 class RRR : public Ring
 {
   int precision;
   int _elem_size;
   mpfr_ptr _zero_elem;
+
+  CoefficientRingRRR *coeffR;
 
   mpfr_ptr new_elem() const;
   void remove_elem(mpfr_ptr f) const;
@@ -25,6 +28,8 @@ public:
 
   RRR * cast_to_RRR() { return this; }
   const RRR * cast_to_RRR() const { return this; }
+
+  CoefficientRingRRR *get_CoeffRing() const { return coeffR; }
 
   bool is_greater(const ring_elem a, const ring_elem b) const;
   bool is_less(const ring_elem a, const ring_elem b) const;

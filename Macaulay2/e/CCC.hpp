@@ -7,12 +7,15 @@
 
 #include "ring.hpp"
 
+class CoefficientRingCCC;
 class CCC : public Ring
 {
   int precision;
   int _elem_size;
 
   M2_CCC _zero_elem;
+
+  CoefficientRingCCC *coeffR;
 
   M2_CCC new_elem() const;
   void remove_elem(M2_CCC f) const;
@@ -26,6 +29,8 @@ public:
 
   CCC * cast_to_CCC() { return this; }
   const CCC * cast_to_CCC() const { return this; }
+
+  CoefficientRingCCC *get_CoeffRing() const { return coeffR; }
 
   // should there be a complex conjugation function?
 

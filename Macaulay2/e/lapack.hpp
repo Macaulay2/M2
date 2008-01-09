@@ -276,6 +276,17 @@ class Lapack {
   typedef DMat<CoefficientRingRR> LMatrixRR;
   typedef DMat<CoefficientRingCC> LMatrixCC;
 
+  typedef DMat<CoefficientRingRRR> LMatrixRRR;
+  typedef DMat<CoefficientRingCCC> LMatrixCCC;
+
+  ///////////////////////////////////////////
+  // Translation to/from RR/CC and RRR/CCC //
+  ///////////////////////////////////////////
+
+  ////////////////////////////////
+  // Input matrices are real /////
+  ////////////////////////////////
+
   static M2_arrayint_OrNull LU(const LMatrixRR *A,
 			       LMatrixRR *L,
 			       LMatrixRR *U);
