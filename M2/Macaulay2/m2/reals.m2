@@ -69,6 +69,7 @@ new RealNumberRing of RR from ZZ := memoize (
 	       symbol precision => prec,
 	       symbol Engine => true,
 	       symbol baseRings => {},
+	       symbol isBasic => true,
 	       symbol RawRing => rawRR prec
 	       }))
 ZZ _ RealNumberRing :=

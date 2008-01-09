@@ -19,6 +19,7 @@ new ComplexNumberRing of CC from ZZ := memoize(
 	  hashTable {
 	       symbol precision => prec,
 	       symbol Engine => true,
+	       symbol isBasic => true,
 	       symbol baseRings => {},
 	       symbol RawRing => rawCC prec
 	       }))
