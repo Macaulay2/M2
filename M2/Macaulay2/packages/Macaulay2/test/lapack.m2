@@ -5,12 +5,14 @@ diag(ZZ,ZZ,List) := (a,b,L) -> (
      scan(#L, i -> M_(i,i) = L#i);
      matrix M)
 
-nearby = method()
-nearby Matrix := (M) -> max flatten entries M
+L1norm = method()
+L1norm Matrix := (M) -> max apply(flatten entries M, e -> abs e)
+
 clean = method()
 clean(Matrix,RR) := (M,epsilon) -> (
      zero := 0_(ring M);
-     matrix applyTable(entries M, e -> if abs(e) < epsilon then zero else e))
+     meps := -epsilon;
+     matrix applyTable(entries M, e -> if e < epsilon and e > meps then zero else e))
 
 checkSVD = method()
 checkSVD(Matrix) := (M) -> (
@@ -23,8 +25,27 @@ checkSVD(Matrix) := (M) -> (
      max(nm1,nm2,nm3)
      )
 
--- test SVD
-M = matrix{{1.,2.,3.4},{.5,9.87,3.},{-3.,-5.5,-7.}}
+checkSolve = method()
+checkSolve(Matrix,Matrix) := (M,b) -> (
+     x := solve(M,b);
+     L1norm (M*x-b))
+
+checkEigenvectors = method()
+checkEigenvectors Matrix := (M) -> (
+     -- compute eigenvectors, and eigenvalues
+     E2 := eigenvalues M;
+     (E,V) := eigenvectors M;
+     )
+
+-- Simple test for solve
+M1 = matrix{{1.,2.,3.4},{.5,9.87,3.},{-3.,-5.5,-7.}}
+b1 = transpose matrix{{1.,2.,3.}}
+
+assert (checkSolve(M1,b1) < 1e-15)
+assert (checkSolve(M1^4,b1) < 1e-10)
+assert (checkSolve(M1^3,b1) < 1e-10)
+
+
 checkSVD(M)
 
 M = matrix{{1.,2.,3.4},{.5,9.87,3.},{-3.,-5.5,-7.},{.00000001,1e13,1e-13}}
@@ -32,7 +53,7 @@ checkSVD(M)
 SVD M
 
 M = map(RR_53^10, RR_53^10, (i,j) -> 1.0/(i+j+1))
-M = map(RR_200^10, RR_200^10, (i,j) -> 1.0/(i+j+1))
+M = map(RR_200^10, RR_200^10, (i,j) -> 1.0P200/(i+j+1))
 SVD M
 checkSVD M
 det M

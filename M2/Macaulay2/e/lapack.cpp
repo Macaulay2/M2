@@ -691,60 +691,64 @@ M2_arrayint_OrNull Lapack::LU(const LMatrixCC *A,
   zgetrf_(&rows, &cols, copyA->get_lapack_array(), 
 	  &rows, perm, &info);
 
-  // set the lower triangular matrix L
-  double *vals = L->get_lapack_array();
-  int loc = 0;
-  for (int j=0; j<cols; j++) {
-    for (int i=0; i<rows; i++) {
-      if (i > j) {
-	vals[2*loc] = copyA->get_lapack_array()[2*loc];
-	vals[2*loc+1] = copyA->get_lapack_array()[2*loc+1];
-      } else if (i == j) {
-	vals[2*loc] = 1;
-	vals[2*loc+1] = 0;
-      } else {
-	vals[2*loc] = 0;
-	vals[2*loc+1] = 0;
-      }
-      loc++;
-    }
-  }
-
-  // set the upper triangular matrix U
-  vals = U->get_lapack_array();
-  loc = 0;
-  for (int j=0; j<cols; j++) {
-    for (int i=0; i<rows; i++) {
-      if (i <= j) {
-	vals[2*loc] = copyA->get_lapack_array()[2*loc];
-	vals[2*loc+1] = copyA->get_lapack_array()[2*loc+1];
-      } else {
-	vals[2*loc] = 0;
-	vals[2*loc+1] = 0;
-      }
-      loc++;
-    }
-  }
-
-  /* set the permutation array */
-  for (int row=1; row<=min; row++) {
-    int targ = row;
-    for (int i=1; i<=min; i++) {
-      if (i == targ)
-	targ = perm[i-1];
-      else if (perm[i-1] == targ)
-	targ = i;
-    }
-    result->array[row-1] = targ-1;
-  }
-  for (int i=min; i<rows; i++)
-    result->array[i] = i;
-
   if (info < 0)       
     {
       ERROR("argument passed to zgetrf had an illegal value");
-      return 0;
+      deletearray(result);
+      result = NULL;
     }
+  else
+    {
+      // set the lower triangular matrix L
+      double *vals = L->get_lapack_array();
+      int loc = 0;
+      for (int j=0; j<cols; j++) {
+	for (int i=0; i<rows; i++) {
+	  if (i > j) {
+	    vals[2*loc] = copyA->get_lapack_array()[2*loc];
+	    vals[2*loc+1] = copyA->get_lapack_array()[2*loc+1];
+	  } else if (i == j) {
+	    vals[2*loc] = 1;
+	    vals[2*loc+1] = 0;
+	  } else {
+	    vals[2*loc] = 0;
+	    vals[2*loc+1] = 0;
+	  }
+	  loc++;
+	}
+      }
+      
+      // set the upper triangular matrix U
+      vals = U->get_lapack_array();
+      loc = 0;
+      for (int j=0; j<cols; j++) {
+	for (int i=0; i<rows; i++) {
+	  if (i <= j) {
+	    vals[2*loc] = copyA->get_lapack_array()[2*loc];
+	    vals[2*loc+1] = copyA->get_lapack_array()[2*loc+1];
+	  } else {
+	    vals[2*loc] = 0;
+	    vals[2*loc+1] = 0;
+	  }
+	  loc++;
+	}
+      }
+      
+      /* set the permutation array */
+      for (int row=1; row<=min; row++) {
+	int targ = row;
+	for (int i=1; i<=min; i++) {
+	  if (i == targ)
+	    targ = perm[i-1];
+	  else if (perm[i-1] == targ)
+	    targ = i;
+	}
+	result->array[row-1] = targ-1;
+      }
+      for (int i=min; i<rows; i++)
+	result->array[i] = i;
+    }
+
   return result;
 #endif
 }
