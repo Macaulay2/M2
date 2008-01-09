@@ -423,11 +423,6 @@ const RingElement *IM2_RingElement_from_complex(const Ring *R, M2_CC z)
   return RingElement::make_raw(R, R->from_complex(z));
 }
 
-const RingElement *IM2_RingElement_from_BigReal(const Ring *R, M2_RRR z)
-{
-  return RingElement::make_raw(R, R->from_BigReal(z));
-}
-
 const RingElement *IM2_RingElement_from_BigComplex(const Ring *R, M2_CCC z)
 {
   ring_elem f;
@@ -435,6 +430,15 @@ const RingElement *IM2_RingElement_from_BigComplex(const Ring *R, M2_CCC z)
     return RingElement::make_raw(R, f);
   return 0;
 }
+
+const RingElement *IM2_RingElement_from_BigReal(const Ring *R, M2_RRR z)
+{
+  ring_elem f;
+  if (R->from_BigReal(z,f))
+    return RingElement::make_raw(R, f);
+  return 0;
+}
+
 
 M2_IntegerOrNull IM2_RingElement_to_Integer(const RingElement *a)
   /* If the ring of a is ZZ, or ZZ/p, this returns the underlying representation.

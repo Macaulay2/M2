@@ -364,7 +364,9 @@ public:
 
   void divide(elem &result, elem a, elem b) const { mpfr_div(&result, &a, &b, GMP_RNDN); }
 
-  void to_ring_elem(ring_elem &result, const elem a) const  { result = R->from_BigReal(const_cast<elem *>(&a)); }
+  void to_ring_elem(ring_elem &result, const elem a) const  { 
+    R->from_BigReal(const_cast<elem *>(&a), result); 
+  }
 
   void from_ring_elem(elem &result, const ring_elem &a) const
   {

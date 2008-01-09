@@ -49,7 +49,7 @@ public:
   virtual ring_elem from_int(mpz_ptr n) const;
   virtual ring_elem from_double(double r) const;
   virtual ring_elem from_rational(mpq_ptr r) const;
-  virtual ring_elem from_BigReal(mpfr_ptr a) const;
+  virtual bool from_BigReal(M2_RRR a, ring_elem &result) const;
   virtual bool promote(const Ring *R, const ring_elem f, ring_elem &result) const;
   virtual bool lift(const Ring *R, const ring_elem f, ring_elem &result) const;
 

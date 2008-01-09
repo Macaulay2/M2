@@ -77,12 +77,13 @@ ring_elem CC::from_rational(mpq_ptr r) const
   return CC_RINGELEM(result);
 }
 
-ring_elem CC::from_BigReal(mpfr_ptr a) const
+bool CC::from_BigReal(M2_RRR a, ring_elem &result1) const
 {
   M2_CC result = reinterpret_cast<M2_CC>(getmem(sizeof(M2_CC_struct)));
   result->re = mpfr_get_d(a, GMP_RNDN);
   result->im = 0.0;
-  return CC_RINGELEM(result);
+  result1 = CC_RINGELEM(result);
+  return true;
 }
 
 ring_elem CC::from_complex(M2_CC z) const
