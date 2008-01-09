@@ -68,7 +68,7 @@ new RealNumberRing of RR from ZZ := memoize (
 	  hashTable { 
 	       symbol precision => prec,
 	       symbol Engine => true,
-	       symbol baseRings => {},
+	       symbol baseRings => {ZZ,QQ},
 	       symbol isBasic => true,
 	       symbol RawRing => rawRR prec
 	       }))
