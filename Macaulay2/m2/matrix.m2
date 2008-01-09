@@ -49,7 +49,7 @@ sameRing := (m,n) -> (
 
 Matrix _ Sequence := RingElement => (m,ind) -> (
      if # ind === 2
-     then new ring m from rawMatrixEntry(m.RawMatrix, ind#0, ind#1)
+     then promote(rawMatrixEntry(m.RawMatrix, ind#0, ind#1), ring m)
      else error "expected a sequence of length two"
      )
 

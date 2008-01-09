@@ -89,6 +89,9 @@ ring RR := x -> new RealNumberRing of RR from precision x
 new RR from RawRingElement := (RRR,x) -> (
      assert( RRR === RR );				    -- the danger is that maybe RRR === RR_53, for example
      rawToRR x)
+promote(RawRingElement,RR) := (x,R) -> new RR from x
+promote(RawRingElement,Number) := (x,R) -> new R from x
+promote(RawRingElement,RingElement) := (x,R) -> new R from x
 
 promote(RR,RR) := (i,RR) -> i
 lift(RR,ZZ) := (r,ZZ) -> if r == floor r then floor r else error("can't lift ",toString r, " to ZZ")
