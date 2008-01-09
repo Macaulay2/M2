@@ -164,6 +164,12 @@ public:
   virtual       SolvableAlgebra * cast_to_SolvableAlgebra()             { return 0; }
   virtual const WeylAlgebra *cast_to_WeylAlgebra() const { return 0; }
 
+  virtual RRR * cast_to_RRR() { return 0; }
+  virtual const RRR * cast_to_RRR() const { return 0; }
+  virtual CCC * cast_to_CCC() { return 0; }
+  virtual const CCC * cast_to_CCC() const { return 0; }
+
+
   virtual FreeModule *make_FreeModule() const;
   virtual FreeModule *make_Schreyer_FreeModule() const;
   virtual FreeModule *make_FreeModule(int n) const;

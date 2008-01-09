@@ -215,14 +215,14 @@ typedef Mat<CoefficientRingZZp> Mat_ZZp;
 typedef Mat<CoefficientRingRR> Mat_RR;
 
 typedef DMat<CoefficientRingZZp> DMatZZp;
-typedef DMat<CoefficientRingRR> DMatRR;
-typedef DMat<CoefficientRingCC> DMatCC;
+typedef DMat<CoefficientRingRRR> DMatRR;
+typedef DMat<CoefficientRingCCC> DMatCC;
 typedef DMat<CoefficientRingZZ_NTL> DMatZZ;
 typedef DMat<CoefficientRingR> DMatR;
 
 typedef SMat<CoefficientRingZZp> SMatZZp;
-typedef SMat<CoefficientRingRR> SMatRR;
-typedef SMat<CoefficientRingCC> SMatCC;
+typedef SMat<CoefficientRingRRR> SMatRR;
+typedef SMat<CoefficientRingCCC> SMatCC;
 typedef SMat<CoefficientRingZZ_NTL> SMatZZ;
 typedef SMat<CoefficientRingR> SMatR;
 
