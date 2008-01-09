@@ -152,12 +152,13 @@ ring_elem CCC::from_complex(M2_CC z) const
   return BIGCC_RINGELEM(result);
 }
 
-ring_elem CCC::from_BigReal(mpfr_ptr r) const
+bool CCC::from_BigReal(M2_RRR r, ring_elem &result1) const
 {
   M2_CCC result = new_elem();
   mpfr_set(result->re, r, GMP_RNDN);
 
-  return BIGCC_RINGELEM(result);
+  result1 = BIGCC_RINGELEM(result);
+  return true;
 }
 
 ring_elem CCC::from_BigReals(mpfr_ptr a, mpfr_ptr b) const

@@ -131,12 +131,13 @@ ring_elem RRR::from_rational(mpq_ptr r) const
   return MPF_RINGELEM(result);
 }
 
-ring_elem RRR::from_BigReal(mpfr_ptr r) const
+bool RRR::from_BigReal(M2_RRR r, ring_elem &result1) const
 {
   mpfr_ptr result = new_elem();
   mpfr_set(result, r, GMP_RNDN);
 
-  return MPF_RINGELEM(result);
+  result1 = MPF_RINGELEM(result);
+  return true;
 }
 
 bool RRR::promote(const Ring *Rf, const ring_elem f, ring_elem &result) const
@@ -353,7 +354,9 @@ void RRR::syzygy(const ring_elem a, const ring_elem b,
 
 ring_elem RRR::eval(const RingMap *map, const ring_elem f, int) const
 {
-  return map->get_ring()->from_BigReal(MPF_VAL(f));
+  ring_elem result;
+  map->get_ring()->from_BigReal(MPF_VAL(f), result);
+  return result;
 }
 
 
