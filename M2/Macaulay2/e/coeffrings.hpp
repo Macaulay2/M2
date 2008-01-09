@@ -332,6 +332,50 @@ public:
   }
 };
 
+#include "RRR.hpp"
+class CoefficientRingRRR : public our_new_delete
+{
+public:
+  typedef RRR ring_type;
+  typedef mpfr_ptr elem;
+  const RRR *R;
+
+  CoefficientRingRRR(const RRR *R0) : R(R0) {}
+
+  void init_set(elem &result, elem a) const { mpfr_init_set(result, a, GMP_RNDN); }
+
+  void set_zero(elem &result) const { mpfr_set_si(result, 0, GMP_RNDN); }
+
+  bool is_zero(elem result) const { return mpfr_cmp_si(result, 0) == 0; }
+
+  void invert(elem &result, elem a) const { mpfr_si_div(result, 1, a, GMP_RNDN); }
+
+  void subtract_multiple(elem &result, elem a, elem b) const;
+    // result -= a*b
+
+  void add(elem &result, elem a, elem b) const { mpfr_add(result, a, b, GMP_RNDN); }
+
+  void subtract(elem &result, elem a, elem b) const { mpfr_sub(result, a, b, GMP_RNDN); }
+
+  void mult(elem &result, elem a, elem b) const { mpfr_mul(result, a, b, GMP_RNDN); }
+
+  void divide(elem &result, elem a, elem b) const { mpfr_div(result, a, b, GMP_RNDN); }
+
+  void to_ring_elem(ring_elem &result, const elem a) const  { result = R->from_BigReal(a); }
+
+  void from_ring_elem(elem &result, const ring_elem &a) const
+  {
+    result = reinterpret_cast<mpfr_ptr>(a.poly_val);
+  }
+
+  void swap(elem &a, elem &b) const
+  {
+    elem tmp = a;
+    a = b;
+    b = tmp;
+  }
+};
+
 #include "CC.hpp"
 #include "complex.hpp"
 class CoefficientRingCC : public our_new_delete
@@ -372,6 +416,58 @@ public:
   void from_ring_elem(elem &result, const ring_elem &a) const
   {
     M2_CC b = reinterpret_cast<M2_CC>(a.poly_val);
+    result = *b;
+  }
+
+  void swap(elem &a, elem &b) const
+  {
+    elem tmp = a;
+    a = b;
+    b = tmp;
+  }  
+};
+
+#include "CCC.hpp"
+class CoefficientRingCCC : public our_new_delete
+{
+public:
+  typedef CCC ring_type;
+  typedef M2_CCC_struct elem; // components are re, im
+  typedef CoefficientRingRRR::elem real_elem;
+
+  CCC *R;
+
+  CoefficientRingCCC(CCC *R0) : R(R0) {}
+
+  void init_set(elem &result, elem a) const { CCCArithmetic::init_set(result,a); }
+
+  void set_zero(elem &result) const { CCCArithmetic::set_zero(result); }
+
+  bool is_zero(elem result) const { return CCCArithmetic::is_zero(result); }
+
+  void invert(elem &result, elem a) const { CCCArithmetic::invert(result, a); }
+
+  void subtract_multiple(elem &result, elem a, elem b) const { 
+    // result -= a*b
+    CCCArithmetic::subtract_multiple(result,a,b);
+  }
+
+  void add(elem &result, elem a, elem b) const { CCCArithmetic::add(result,a,b); }
+
+  void subtract(elem &result, elem a, elem b) const { CCCArithmetic::subtract(result,a,b); }
+
+  void mult(elem &result, elem a, elem b) const { CCCArithmetic::mult(result,a,b); }
+
+  void divide(elem &result, elem a, elem b) const { CCCArithmetic::divide(result,a,b); }
+
+  void to_ring_elem(ring_elem &result, elem a) const
+  {
+    result = R->from_BigComplex(&a);
+  }
+
+  void from_ring_elem(elem &result, const ring_elem &a) const
+  {
+    M2_CCC b = reinterpret_cast<M2_CCC>(a.poly_val);
     result = *b;
   }
 

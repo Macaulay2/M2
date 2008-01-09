@@ -45,7 +45,11 @@ public:
   void initialize(long nrows, long ncols, elem *array);
   void resize(long nrows, long ncols);
   elem * get_array() const { return array_; } // Used for lapack type routines
+
   double *get_lapack_array() const; // redefined by RR,CC
+
+  double *make_lapack_array() const; // creates an array of doubles (or 0, if not applicable)
+  void fill_from_lapack_array(double *lapack_array);  // The size of the array should match the size of this.
 
   class iterator : public our_new_delete
   {
