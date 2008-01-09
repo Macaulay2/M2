@@ -736,7 +736,7 @@ lngamma(e:Expr):Expr := (
      );
 setupfun("lngamma",lngamma);
 export lgamma(x:RR):Expr := (
-     z := newRRR(precision(x));
+     z := newRR(precision(x));
      i := 0;
      Ccode( void, "mpfr_lgamma((__mpfr_struct *)", z, ",&",i,",(__mpfr_struct *)", x, ", GMP_RNDN)" );
      Expr(Sequence(z,toInteger(i))));
@@ -771,6 +771,30 @@ erf(e:Expr):Expr := (
      else buildErrorPacket("expected a number")
      );
 setupfun("erf",erf);
+erfc(e:Expr):Expr := (
+     when e
+     is x:RR do Expr(erfc(x))
+     is x:ZZ do Expr(erfc(toRR(x)))
+     is x:QQ do Expr(erfc(toRR(x)))
+     is x:Error do Expr(x)
+     else buildErrorPacket("expected a number")
+     );
+setupfun("erfc",erfc);
+BesselJ(n:long,x:RR):RR := (
+     if n == long(0) then j0(x)
+     else if n == long(1) then j1(x)
+     else jn(n,x));
+BesselJ(e:Expr):Expr := (
+     when e is s:Sequence do (
+	  when s.0 is n:ZZ do if !isLong(n) then WrongArg(1,"a small integer") else (
+	       when s.1 
+	       is x:RR do Expr(BesselJ(toLong(n),x))
+	       is x:ZZ do Expr(BesselJ(toLong(n),toRR(x)))
+	       is x:QQ do Expr(BesselJ(toLong(n),toRR(x)))
+	       else WrongArg(2,"a number"))
+	  else WrongArgInteger(1))
+     else WrongNumArgs(2));
+setupfun("BesselJ",BesselJ);
 atan(e:Expr):Expr := (
      when e
      is x:RR do Expr(atan(x))
@@ -871,7 +895,8 @@ setupfun("run",run);
 
 sqrt(a:Expr):Expr := (
      when a
-     is x:RR do Expr(sqrt(x))
+     is x:RR do Expr(sqrt(x))				    -- # typical value: sqrt, RR, RR
+     is x:CC do Expr(sqrt(x))				    -- # typical value: sqrt, CC, CC
      is Error do a
      else WrongArg("a real number"));
 setupfun("sqrt",sqrt);

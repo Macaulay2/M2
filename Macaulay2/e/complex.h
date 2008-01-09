@@ -28,7 +28,7 @@ extern "C" {
   /* result -= a*b */
 
   void mpfc_div(M2_CCC result, M2_CCC a, M2_CCC b);
-  void mpfc_abs(M2_CCC result, M2_CCC a);
+  void mpfc_abs(M2_RRR result, M2_CCC a);
   void mpfc_sqrt(M2_CCC result, M2_CCC a);
   void mpfc_conj(M2_CCC result, M2_CCC a);
   
