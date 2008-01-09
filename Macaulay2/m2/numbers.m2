@@ -13,8 +13,6 @@ numeric Number := x -> x + 0.
 numeric CC := identity
 numeric RR := identity
 
-pi=3.1415926535897932384626433832795028841971693993
-
 Constant = new Type of HashTable
 net Constant := c -> net c.Symbol
 expression Constant := c -> expression c.Symbol
@@ -31,8 +29,8 @@ RR * Constant := (x,c) -> x * toRR(precision x,c)
 Constant / RR := (c,x) -> toRR(precision x,c) / x
 RR / Constant := (x,c) -> x / toRR(precision x,c)
 
-Pi = new Constant from {
-     symbol Symbol => symbol Pi,
+pi = new Constant from {
+     symbol Symbol => symbol pi,
      symbol toRR => mpfrConstantPi
      }
 

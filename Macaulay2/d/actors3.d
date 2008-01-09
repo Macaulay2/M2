@@ -627,6 +627,60 @@ acos(e:Expr):Expr := (
      else buildErrorPacket("expected a number")
      );
 setupfun("acos",acos);
+sec(e:Expr):Expr := (
+     when e
+     is x:RR do Expr(sec(x))
+     is x:ZZ do Expr(sec(toRR(x)))
+     is x:QQ do Expr(sec(toRR(x)))
+     is x:Error do Expr(x)
+     else buildErrorPacket("expected a number")
+     );
+setupfun("sec",sec);
+csc(e:Expr):Expr := (
+     when e
+     is x:RR do Expr(csc(x))
+     is x:ZZ do Expr(csc(toRR(x)))
+     is x:QQ do Expr(csc(toRR(x)))
+     is x:Error do Expr(x)
+     else buildErrorPacket("expected a number")
+     );
+setupfun("csc",csc);
+cot(e:Expr):Expr := (
+     when e
+     is x:RR do Expr(cot(x))
+     is x:ZZ do Expr(cot(toRR(x)))
+     is x:QQ do Expr(cot(toRR(x)))
+     is x:Error do Expr(x)
+     else buildErrorPacket("expected a number")
+     );
+setupfun("cot",cot);
+sech(e:Expr):Expr := (
+     when e
+     is x:RR do Expr(sech(x))
+     is x:ZZ do Expr(sech(toRR(x)))
+     is x:QQ do Expr(sech(toRR(x)))
+     is x:Error do Expr(x)
+     else buildErrorPacket("expected a number")
+     );
+setupfun("sech",sech);
+csch(e:Expr):Expr := (
+     when e
+     is x:RR do Expr(csch(x))
+     is x:ZZ do Expr(csch(toRR(x)))
+     is x:QQ do Expr(csch(toRR(x)))
+     is x:Error do Expr(x)
+     else buildErrorPacket("expected a number")
+     );
+setupfun("csch",csch);
+coth(e:Expr):Expr := (
+     when e
+     is x:RR do Expr(coth(x))
+     is x:ZZ do Expr(coth(toRR(x)))
+     is x:QQ do Expr(coth(toRR(x)))
+     is x:Error do Expr(x)
+     else buildErrorPacket("expected a number")
+     );
+setupfun("coth",coth);
 asin(e:Expr):Expr := (
      when e
      is x:RR do Expr(asin(x))
