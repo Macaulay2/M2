@@ -1,8 +1,141 @@
 // Copyright 2007  Michael E. Stillman
 
-#ifndef _complex_hpp_
-#define _complex_hpp_
+// get declarations of outofmem and getmem
+#include "../d/M2mem.h"
+
+#include <gc/gc.h>
+#include "../d/debug.h"
+
 #include "../d/M2types.h"
+#include "complex.h"
+
+void mpfc_init_set(M2_CCC result, M2_CCC a)
+{ 
+  mpfr_init_set(result->re, a->re, GMP_RNDN);
+  mpfr_init_set(result->im, a->im, GMP_RNDN);
+}
+
+void mpfc_init(M2_CCC result, long precision)
+{ 
+  result->re = (__mpfr_struct *) getmem(sizeof(__mpfr_struct));
+  result->im = (__mpfr_struct *) getmem(sizeof(__mpfr_struct));
+  mpfr_init2(result->re, precision);
+  mpfr_init2(result->im, precision);
+}
+void mpfc_clear(M2_CCC result)
+{
+  mpfr_clear(result->re);
+  mpfr_clear(result->im);
+  GC_FREE(result->re);
+  GC_FREE(result->im);
+}
+void mpfc_set_si(M2_CCC result, long re)
+{ 
+  mpfr_set_si(result->re, re, GMP_RNDN);
+  mpfr_set_si(result->im, 0, GMP_RNDN);
+}
+int mpfc_is_zero(M2_CCC a)
+{ 
+  return mpfr_cmp_si(a->re, 0) == 0 && mpfr_cmp_si(a->im, 0) == 0;
+}
+void mpfc_add(M2_CCC result, M2_CCC a, M2_CCC b)
+{
+  mpfr_add(result->re, a->re, b->re, GMP_RNDN);
+  mpfr_add(result->im, a->im, b->im, GMP_RNDN);
+}
+void mpfc_sub(M2_CCC result, M2_CCC a, M2_CCC b)
+{
+  mpfr_sub(result->re, a->re, b->re, GMP_RNDN);
+  mpfr_sub(result->im, a->im, b->im, GMP_RNDN);
+}
+void mpfc_mul(M2_CCC result, M2_CCC a, M2_CCC b)
+{
+  mpfr_t tmp;
+  mpfr_init2(tmp, mpfr_get_prec(a->re));
+  
+  // result->re = a->re*b->re - a->im*b->im;
+  mpfr_mul(tmp,a->re,b->re,GMP_RNDN);
+  mpfr_add(result->re,result->re,tmp,GMP_RNDN);
+  mpfr_mul(tmp,a->im,b->im,GMP_RNDN);
+  mpfr_sub(result->re,result->re,tmp,GMP_RNDN);
+  
+  // result->im = a->re*b->im + a->im*b->re;
+  mpfr_mul(tmp,a->re,b->im,GMP_RNDN);
+  mpfr_add(result->im,result->im,tmp,GMP_RNDN);
+  mpfr_mul(tmp,a->im,b->re,GMP_RNDN);
+  mpfr_add(result->im,result->im,tmp,GMP_RNDN);
+  
+  mpfr_clear(tmp);
+}
+void mpfc_invert(M2_CCC result, M2_CCC v)
+{
+  mpfr_t p, denom;
+  mpfr_init2(p, mpfr_get_prec(v->re));
+  mpfr_init2(denom, mpfr_get_prec(v->re));
+  
+  if (mpfr_cmpabs(v->re,v->im) >= 0)
+    {
+      // double p = v->im/v->re;
+      // double denom = v->re + p * v->im;
+      // result->re = 1.0/denom;
+      // result->im = - p/denom;
+      
+      mpfr_div(p,v->im,v->re,GMP_RNDN);
+      mpfr_mul(denom,p,v->im,GMP_RNDN);
+      mpfr_add(denom,denom,v->re,GMP_RNDN);
+      mpfr_si_div(result->re,1,denom,GMP_RNDN);
+      mpfr_div(result->im,p,denom,GMP_RNDN);
+      mpfr_neg(result->im,result->im,GMP_RNDN);
+    }
+  else
+    {
+      // double p = v->re/v->im;
+      // double denom = v->im + p * v->re;
+      // result->re = p/denom;
+      // result->im = -1.0/denom;
+      
+      mpfr_div(p,v->re,v->im,GMP_RNDN);
+      mpfr_mul(denom,p,v->re,GMP_RNDN);
+      mpfr_add(denom,denom,v->im,GMP_RNDN);
+      mpfr_si_div(result->im,1,denom,GMP_RNDN);
+      mpfr_neg(result->im,result->im,GMP_RNDN);
+      mpfr_div(result->re,p,denom,GMP_RNDN);
+    }
+  
+  mpfr_clear(p);
+  mpfr_clear(denom);
+}
+void mpfc_div(M2_CCC result, M2_CCC a, M2_CCC b)
+{
+  /* To be written !! */
+}
+void mpfc_sub_mult(M2_CCC result, M2_CCC a, M2_CCC b)
+  {
+    // result->re -= a->re*b->re - a->im*b->im;
+    // result->im -= a->re*b->im + a->im*b->re;
+
+    mpfr_t tmp;
+    mpfr_init2(tmp, mpfr_get_prec(a->re));
+
+    mpfr_mul(tmp,a->re,b->re,GMP_RNDN);
+    mpfr_add(result->re,result->re,tmp,GMP_RNDN);
+    mpfr_mul(tmp,a->im,b->im,GMP_RNDN);
+    mpfr_sub(result->re,result->re,tmp,GMP_RNDN);
+
+    mpfr_mul(tmp,a->re,b->im,GMP_RNDN);
+    mpfr_add(result->im,result->im,tmp,GMP_RNDN);
+    mpfr_mul(tmp,a->im,b->re,GMP_RNDN);
+    mpfr_add(result->im,result->im,tmp,GMP_RNDN);
+
+    mpfr_clear(tmp);
+  }
+
+#if 0
+
+
+
+
+
 
 class CCArithmetic
 {

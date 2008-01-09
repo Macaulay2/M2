@@ -321,9 +321,9 @@ public:
   }
 };
 
-#include "complex.hpp"
-
+#include "complex.h"
 #include "CCC.hpp"
+
 class CoefficientRingCCC : public our_new_delete
 {
 public:
@@ -336,34 +336,33 @@ public:
   CoefficientRingCCC(CCC *R0) : R(R0) {}
 
   void init_set(elem &result, elem a) const { 
-    CCCArithmetic::init_set(result,a); 
+    mpfc_init_set(&result,&a); 
   }
 
   void set_zero(elem &result) const { 
-    result.re = newitem(__mpfr_struct);
-    result.im = newitem(__mpfr_struct);
-    mpfr_init2(result.re, R->get_precision());
-    mpfr_init2(result.im, R->get_precision());
-    CCCArithmetic::set_zero(result); 
+    mpfc_init(&result, R->get_precision());
+    mpfc_set_si(&result, 0);
   }
 
-  bool is_zero(elem result) const { return CCCArithmetic::is_zero(result); }
+  bool is_zero(elem result) const { return mpfc_is_zero(&result); }
 
-  void invert(elem &result, elem a) const { CCCArithmetic::invert(result, a); }
+  void add(elem &result, elem a, elem b) const { mpfc_add(&result,&a,&b); }
 
+  void subtract(elem &result, elem a, elem b) const { mpfc_sub(&result,&a,&b); }
+
+  void mult(elem &result, elem a, elem b) const { mpfc_mul(&result,&a,&b); }
+
+  void invert(elem &result, elem a) const { mpfc_invert(&result, &a); }
+
+  void divide(elem &result, elem a, elem b) const { mpfc_div(&result,&a,&b); }
+#if 0
   void subtract_multiple(elem &result, elem a, elem b) const { 
     // result -= a*b
-    CCCArithmetic::subtract_multiple(result,a,b);
+    mpfc_subtract_multiple(result,a,b);
   }
 
-  void add(elem &result, elem a, elem b) const { CCCArithmetic::add(result,a,b); }
 
-  void subtract(elem &result, elem a, elem b) const { CCCArithmetic::subtract(result,a,b); }
-
-  void mult(elem &result, elem a, elem b) const { CCCArithmetic::mult(result,a,b); }
-
-  void divide(elem &result, elem a, elem b) const { CCCArithmetic::divide(result,a,b); }
-
+#endif
   void to_ring_elem(ring_elem &result, elem a) const
   {
     R->from_BigComplex(&a, result);
