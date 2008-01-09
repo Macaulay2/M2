@@ -17,6 +17,7 @@ cat <<EOF >compat.h
 
 #define NO_CONST
 #include "../e/engine.h"
+#include "../e/complex.h"
 
 #include "gmp_aux.h"
 #include "memdebug.h"

@@ -154,7 +154,7 @@ void mpfc_conj(M2_CCC result, M2_CCC a)
     mpfr_set(result->re, a->re, GMP_RNDN);
     mpfr_neg(result->im, a->im, GMP_RNDN);
   }
-void mpfc_abs(M2_CCC result, M2_CCC a)
+void mpfc_abs(M2_RRR result, M2_CCC a)
 {
 #if 0
   static void abs(double &result, elem c)

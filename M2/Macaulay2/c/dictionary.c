@@ -102,7 +102,7 @@ char *Csymbols[] = {
      "auto", "break", "case", "const", "continue", "default",
      "register", "signed", "sizeof", "static","struct","switch","typedef",
      "do", "double", "else", "enum", "extern", "float", "for", "goto", "if",
-     "union", "unsigned", "volatile", "wait", "remove", "expm1", "log1p"
+     "union", "unsigned", "volatile", "wait", "remove", "expm1", "log1p", "erfc", "erf"
      };
 
 char *uniquify(char *s){

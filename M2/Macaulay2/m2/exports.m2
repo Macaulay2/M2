@@ -23,6 +23,8 @@ export {
 	symbol lgamma,
 	symbol zeta,
 	symbol erf,
+	symbol erfc,
+	symbol BesselJ,
 	symbol sec,
 	symbol csc,
 	symbol cot,
