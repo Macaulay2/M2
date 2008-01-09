@@ -54,7 +54,8 @@ ring CC := x -> new ComplexNumberRing of CC from precision x
 CC ^ ZZ := BinaryPowerMethod
 CC.InverseMethod = y -> conjugate y / y^2
 expression CC := z -> realPart z + imaginaryPart z * hold symbol ii
-toExternalString CC := toString CC := z -> toString expression z
+toExternalString CC := toExternalString0
+toString CC := z -> toString expression z
 net CC := z -> net expression z
 isConstant CC := i -> true
 

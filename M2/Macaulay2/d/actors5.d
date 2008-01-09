@@ -1976,6 +1976,14 @@ setupfun("functionBody",functionBody);
 dumpNodes(e:Expr):Expr := (dumpNodes(); nullE);
 setupfun("dumpNodes",dumpNodes);
 
+toExternalString(e:Expr):Expr := (
+     when e
+     is x:RR do Expr(toExternalString(x))
+     is x:CC do Expr(toExternalString(x))
+     else WrongArg("a real or complex number")
+     );
+setupfun("toExternalString0",toExternalString);
+
 -- Local Variables:
 -- compile-command: "make -C $M2BUILDDIR/Macaulay2/d "
 -- End:
