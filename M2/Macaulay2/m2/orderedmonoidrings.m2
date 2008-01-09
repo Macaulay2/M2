@@ -245,7 +245,7 @@ Ring OrderedMonoid := PolynomialRing => (			  -- no memoize
 	       (coeffs,monoms) -> (
 		    if #coeffs === 0
 		    then expression 0
-		    else sum(coeffs,monoms, (a,m) -> expression (if a == 1 then 1 else new R from a) * expression (if m == 1 then 1 else new M from m))
+		    else sum(coeffs,monoms, (a,m) -> expression (if a == 1 then 1 else promote(a,R)) * expression (if m == 1 then 1 else new M from m))
 		    )
 	       ) rawPairs(raw R, raw f);
 	  toString RM := toExternalString RM := x -> toString expression x;

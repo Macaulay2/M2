@@ -305,6 +305,10 @@ xor(x:uint, y:uint):uint ::= Ccode(uint,\"(\",x,\" ^ \",y,\")\");","\n\
 (x:ulong) <= (y:ulong):bool ::= Ccode(bool,\"(\",x,\" <= \",y,\")\");","\n\
 (x:ulong) >  (y:ulong):bool ::= Ccode(bool,\"(\",x,\" > \" ,y,\")\");","\n\
 (x:ulong) >= (y:ulong):bool ::= Ccode(bool,\"(\",x,\" >= \",y,\")\");","\n\
+(x:long) <  (y:long):bool ::= Ccode(bool,\"(\",x,\" < \" ,y,\")\");","\n\
+(x:long) <= (y:long):bool ::= Ccode(bool,\"(\",x,\" <= \",y,\")\");","\n\
+(x:long) >  (y:long):bool ::= Ccode(bool,\"(\",x,\" > \" ,y,\")\");","\n\
+(x:long) >= (y:long):bool ::= Ccode(bool,\"(\",x,\" >= \",y,\")\");","\n\
 (x:double) <  (y:double):bool ::= Ccode(bool,\"(\",x,\" <  \" ,y,\")\");","\n\
 (x:double) <= (y:double):bool ::= Ccode(bool,\"(\",x,\" <= \",y,\")\");","\n\
 (x:double) >  (y:double):bool ::= Ccode(bool,\"(\",x,\" >  \" ,y,\")\");","\n\
@@ -334,6 +338,20 @@ xor(x:uint, y:uint):uint ::= Ccode(uint,\"(\",x,\" ^ \",y,\")\");","\n\
 (x:float) / (y:float):float ::= Ccode(float,\"(\",x,\" / \",y,\")\");","\n\
 (x:char) + (y:int ):char ::= Ccode(char,\"(\",x,\" + \",y,\")\");","\n\
 (x:short) + (y:int ):short ::= Ccode(short,\"(\",x,\" + \",y,\")\");","\n\
+(x:long) + (y:int ):long ::= Ccode(long,\"(\",x,\" + \",y,\")\");","\n \
+(x:long) - (y:int ):long ::= Ccode(long,\"(\",x,\" - \",y,\")\");","\n \
+(x:long) % (y:int ):long ::= Ccode(long,\"(\",x,\" % \",y,\")\");","\n \
+(x:long) * (y:int ):long ::= Ccode(long,\"(\",x,\" * \",y,\")\");","\n \
+(x:long) / (y:int ):long ::= Ccode(long,\"(\",x,\" / \",y,\")\");","\n \
+(x:int) + (y:long ):long ::= Ccode(long,\"(\",x,\" + \",y,\")\");","\n \
+(x:int) - (y:long ):long ::= Ccode(long,\"(\",x,\" - \",y,\")\");","\n \
+(x:int) % (y:long ):long ::= Ccode(long,\"(\",x,\" % \",y,\")\");","\n \
+(x:int) * (y:long ):long ::= Ccode(long,\"(\",x,\" * \",y,\")\");","\n \
+(x:int) / (y:long ):long ::= Ccode(long,\"(\",x,\" / \",y,\")\");","\n \
+(x:long) < (y:int ):bool ::= Ccode(bool,\"(\",x,\" < \",y,\")\");","\n \
+(x:long) <= (y:int ):bool ::= Ccode(bool,\"(\",x,\" <= \",y,\")\");","\n \
+(x:long) > (y:int ):bool ::= Ccode(bool,\"(\",x,\" > \",y,\")\");","\n \
+(x:long) >= (y:int ):bool ::= Ccode(bool,\"(\",x,\" >= \",y,\")\");","\n \
 (x:char) - (y:int ):char ::= Ccode(char,\"(\",x,\" - \",y,\")\");","\n\
 (x:int) + (y:char):char ::= Ccode(char,\"(\",x,\" + \",y,\")\");","\n\
 (x:int) + (y:short):short ::= Ccode(short,\"(\",x,\" + \",y,\")\");","\n\

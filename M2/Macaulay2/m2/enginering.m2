@@ -101,7 +101,7 @@ commonEngineRingInitializations = (F) -> (
      lifters  := apply(baserings, R -> if R.?liftDegree then R.liftDegree else identity);
      scan(n, i -> (
 	       A := baserings#i;
-	       Aclass := class 0_A;
+	       Aclass := class 0_A;			    -- A might be RR_200 and Aclass would then be RR
 	       if i == n-1 then (
 		    promoter := promoters#n;
 		    lifter := lifters#n;
