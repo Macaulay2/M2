@@ -101,10 +101,11 @@ commonEngineRingInitializations = (F) -> (
      lifters  := apply(baserings, R -> if R.?liftDegree then R.liftDegree else identity);
      scan(n, i -> (
 	       A := baserings#i;
+	       Aclass := class 0_A;
 	       if i == n-1 then (
 		    promoter := promoters#n;
 		    lifter := lifters#n;
-	       	    promote(A,F) := (
+	       	    promote(Aclass,F) := (
 			 if ancestor(Number, A) 
 		    	 then (n,R) -> new R from rawFromNumber(raw R,n)
 	       	    	 else basicPromote);
@@ -121,7 +122,7 @@ commonEngineRingInitializations = (F) -> (
 		    liftDegreesChain    := reverse take(lifters, {i+1,n});
 		    promoteMatrixChain := apply(promoteChain, promoteDegreesChain, identity);
 		    liftMatrixChain    := apply(liftChain   , liftDegreesChain   , identity);
-	       	    promote(A,F) := (
+	       	    promote(Aclass,F) := (
 			 if ancestor(Number, A)
 		    	 then (n,R) -> new R from rawFromNumber(raw R,n)
 	       	    	 else (a,F) -> multipleBasicPromote(a, promoteChain));
@@ -292,10 +293,9 @@ degree RingElement := f -> if f == 0 then -infinity else rawMultiDegree raw f
 
 leadTerm RingElement := RingElement => (f) -> someTerms(f,0,1)
 
-RingElement % RingElement := RingElement => 
-QQ % RingElement := RingElement % QQ :=
-ZZ % RingElement := RingElement % ZZ :=
-(f,g) -> (
+Number % RingElement := (f,g) -> (try promote(f,class g) else error "can't promote number to ring") % g
+RingElement % Number := (f,g) -> f % (try promote(g,class f) else error "can't promote number to ring")
+RingElement % RingElement := RingElement => (f,g) -> (
      R := class f;
      S := class g;
      R % S := (
@@ -313,11 +313,9 @@ ZZ % RingElement := RingElement % ZZ :=
      f % g
      )
 
-RingElement // RingElement := RingElement => 
-RR // RingElement := RingElement // RR :=
-QQ // RingElement := RingElement // QQ :=
-ZZ // RingElement := RingElement // ZZ := 
-(f,g) -> (
+Number // RingElement := (f,g) -> (try promote(f,class g) else error "can't promote number to ring") // g
+RingElement // Number := (f,g) -> f // (try promote(g,class f) else error "can't promote number to ring")
+RingElement // RingElement := RingElement => (f,g) -> (
      R := class f;
      S := class g;
      R // S := (
@@ -335,24 +333,9 @@ ZZ // RingElement := RingElement // ZZ :=
      f // g
      )
 
-QQ - RingElement := (f,g) -> (
-     R := class g;
-     QQ - R := (
-	  (r,f) -> promote(r,R) - f
-	  );
-     f - g)
-
-RingElement - QQ := (f,g) -> (
-     R := class f;
-     R - QQ := (
-	  (f,r) -> f - promote(r,R)
-	  );
-     f - g)
-
-RingElement - RingElement := RingElement =>
-RR - RingElement := RingElement - RR := 
-ZZ - RingElement := RingElement - ZZ := 
-(f,g) -> (
+Number - RingElement := (f,g) -> (try promote(f,class g) else error "can't promote number to ring") - g
+RingElement - Number := (f,g) -> f - (try promote(g,class f) else error "can't promote number to ring")
+RingElement - RingElement := RingElement => (f,g) -> (
      R := class f;
      S := class g;
      R - S := (
@@ -370,24 +353,9 @@ ZZ - RingElement := RingElement - ZZ :=
      f - g
      )
 
-QQ * RingElement := (f,g) -> (
-     R := class g;
-     QQ * R := (
-	  (r,f) -> promote(r,R) * f
-	  );
-     f * g)
-
-RingElement * QQ := (f,g) -> (
-     R := class f;
-     R * QQ := (
-	  (f,r) -> f * promote(r,R)
-	  );
-     f * g)
-
-RingElement * RingElement := RingElement =>
-RR * RingElement := RingElement * RR :=
-ZZ * RingElement := RingElement * ZZ :=
-(f,g) -> (
+Number * RingElement := (f,g) -> (try promote(f,class g) else error "can't promote number to ring") * g
+RingElement * Number := (f,g) -> f * (try promote(g,class f) else error "can't promote number to ring")
+RingElement * RingElement := RingElement => (f,g) -> (
      R := class f;
      S := class g;
      R * S := (
@@ -405,24 +373,9 @@ ZZ * RingElement := RingElement * ZZ :=
      f * g
      )
 
-QQ + RingElement := (f,g) -> (
-     R := class g;
-     QQ + R := (
-	  (r,f) -> promote(r,R) + f
-	  );
-     f + g)
-
-RingElement + QQ := (f,g) -> (
-     R := class f;
-     R + QQ := (
-	  (f,r) -> f + promote(r,R)
-	  );
-     f + g)
-
-RingElement + RingElement := RingElement =>
-RR + RingElement := RingElement + RR := 
-ZZ + RingElement := RingElement + ZZ := 
-(f,g) -> (
+Number + RingElement := (f,g) -> (try promote(f,class g) else error "can't promote number to ring") + g
+RingElement + Number := (f,g) -> f + (try promote(g,class f) else error "can't promote number to ring")
+RingElement + RingElement := RingElement => (f,g) -> (
      R := class f;
      S := class g;
      R + S := (
@@ -442,6 +395,9 @@ ZZ + RingElement := RingElement + ZZ :=
 
 ZZ == RingElement := (i,x) -> i == raw x
 RingElement == ZZ := (x,i) -> raw x == i
+
+Number == RingElement := (f,g) -> (try promote(f,class g) else error "can't promote number to ring") == g
+RingElement == Number := (f,g) -> f == (try promote(g,class f) else error "can't promote number to ring")
 RingElement == RingElement := (f,g) -> (
      R := class f;
      S := class g;
@@ -460,22 +416,6 @@ RingElement == RingElement := (f,g) -> (
      f == g
      )
 
-QQ == RingElement := (r,x) -> promote(r,ring x) == x
-RingElement == QQ := (x,r) -> promote(r,ring x) == x
-
-QQ / RingElement := (f,g) -> (
-     R := class g;
-     QQ / R := (
-	  (r,f) -> promote(r,R) / f
-	  );
-     f / g)
-
-RingElement / QQ := (f,g) -> (
-     R := class f;
-     R / QQ := (
-	  (f,r) -> f / promote(r,R)
-	  );
-     f / g)
 
 fraction(RingElement,RingElement) := (r,s) -> (
      R := ring r;
@@ -486,10 +426,9 @@ fraction(RingElement,RingElement) := (r,s) -> (
      else error "numerator and denominator not in the same ring"
      )
 
-RingElement / RingElement := RingElement =>
-RR / RingElement := RingElement / RR :=
-ZZ / RingElement := RingElement / ZZ :=
-(f,g) -> (
+Number / RingElement := (f,g) -> (try promote(f,class g) else error "can't promote number to ring") / g
+RingElement / Number := (f,g) -> f / (try promote(g,class f) else error "can't promote number to ring")
+RingElement / RingElement := RingElement => (f,g) -> (
      R := class f;
      S := class g;
      R / S := (
