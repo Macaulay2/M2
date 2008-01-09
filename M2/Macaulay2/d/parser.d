@@ -25,7 +25,7 @@ export parseRR(s:string):RR := (			    -- 4.33234234234p345e-9
      inPrec := false;
      inExpon := false;
      extra := 16;
-     prec := 53;
+     prec := ulong(53);
      exsign := false;
      expon := long(0);
      foreach c in s do (
@@ -35,7 +35,7 @@ export parseRR(s:string):RR := (			    -- 4.33234234234p345e-9
 		    )
 	  else if c == 'p' || c == 'P' then (
 	       inPrec = true;
-	       prec = 0;
+	       prec = ulong(0);
 	       )
 	  else if inPrec then (
 	       if isdigit(c) then prec = 10 * prec + (c - '0')

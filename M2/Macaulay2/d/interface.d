@@ -3238,8 +3238,8 @@ export rawLeastSquares(e:Expr):Expr := (
 setupfun("rawLeastSquares", rawLeastSquares);
 
 mpfrConstantPi(e:Expr):Expr := (
-     when e is prec:ZZ do if !isInt(prec) then WrongArgSmallInteger(1) else (
-	  z := newRRR(toInt(prec));
+     when e is prec:ZZ do if !isULong(prec) then WrongArgSmallInteger(1) else (
+	  z := newRRR(toULong(prec));
 	  Ccode( void, "mpfr_const_pi(", "(__mpfr_struct *)", z, ", GMP_RNDN)" );
 	  Expr(z))
      else WrongArgInteger(1));

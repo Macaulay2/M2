@@ -1103,12 +1103,12 @@ toRR(e:Expr):Expr := (
      is s:Sequence do (
 	  if length(s) != 2 then WrongNumArgs(2) else
 	  when s.0 is prec:ZZ do (
-	       if !isInt(prec) then WrongArgSmallInteger(1)
+	       if !isULong(prec) then WrongArgSmallInteger(1)
 	       else (
 	       	    when s.1 
-	       	    is x:QQ do Expr(toRR(x,toInt(prec)))
-     	       	    is x:ZZ do Expr(toRR(x,toInt(prec)))
-     	       	    is x:RR do Expr(toRR(x,toInt(prec)))
+	       	    is x:QQ do Expr(toRR(x,toULong(prec)))
+     	       	    is x:ZZ do Expr(toRR(x,toULong(prec)))
+     	       	    is x:RR do Expr(toRR(x,toULong(prec)))
 		    else binarymethod(s.0,s.1,getGlobalVariable(toRRS),toRRS.word.name)
 		    )
 	       )
@@ -1122,13 +1122,13 @@ toCC(e:Expr):Expr := (
      is s:Sequence do (
 	  if length(s) == 2 then (
 	       when s.0 is prec:ZZ do (
-		    if !isInt(prec) then WrongArgSmallInteger(1)
+		    if !isULong(prec) then WrongArgSmallInteger(1)
 		    else (
 			 when s.1 
-			 is x:QQ do Expr(toCC(x,toInt(prec)))
-			 is x:ZZ do Expr(toCC(x,toInt(prec)))
-			 is x:RR do Expr(toCC(x,toInt(prec)))
-			 is x:CC do Expr(toCC(x,toInt(prec)))
+			 is x:QQ do Expr(toCC(x,toULong(prec)))
+			 is x:ZZ do Expr(toCC(x,toULong(prec)))
+			 is x:RR do Expr(toCC(x,toULong(prec)))
+			 is x:CC do Expr(toCC(x,toULong(prec)))
 			 else WrongArg("a rational number, real number, or an integer")
 			 )
 		    )
@@ -1140,24 +1140,24 @@ toCC(e:Expr):Expr := (
 	       )
 	  else if length(s) == 3 then (
 	       when s.0 is prec:ZZ do (
-		    if !isInt(prec) then WrongArgSmallInteger(1)
+		    if !isULong(prec) then WrongArgSmallInteger(1)
 		    else Expr(CC(
 			      when s.1 
-			      is x:QQ do toRR(x,toInt(prec))
-			      is x:ZZ do toRR(x,toInt(prec))
-			      is x:RR do toRR(x,toInt(prec))
+			      is x:QQ do toRR(x,toULong(prec))
+			      is x:ZZ do toRR(x,toULong(prec))
+			      is x:RR do toRR(x,toULong(prec))
 			      else (
 				   return WrongArg("a rational number, real number, or an integer");
-				   toRR(0,toInt(prec)) -- dummy
+				   toRR(0,toULong(prec)) -- dummy
 				   )
 			      ,
 			      when s.2
-			      is x:QQ do toRR(x,toInt(prec))
-			      is x:ZZ do toRR(x,toInt(prec))
-			      is x:RR do toRR(x,toInt(prec))
+			      is x:QQ do toRR(x,toULong(prec))
+			      is x:ZZ do toRR(x,toULong(prec))
+			      is x:RR do toRR(x,toULong(prec))
 			      else (
 				   return WrongArg("a rational number, real number, or an integer");
-				   toRR(0,toInt(prec)) -- dummy
+				   toRR(0,toULong(prec)) -- dummy
 				   ))))
 	       else WrongArgInteger(1))
 	  else WrongNumArgs(2,3))

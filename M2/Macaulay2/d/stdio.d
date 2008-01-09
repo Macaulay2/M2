@@ -110,6 +110,14 @@ export tostring(i:long):string := (
 	  );
      if sign then s << '-';
      toreversestring(s));
+export tostring(i:ulong):string := (
+     if i == ulong(0) then return "0";
+     s := newvarstring(25);
+     while i>0 do (
+	  s << "0123456789".(i%10);
+	  i = i/10;
+	  );
+     toreversestring(s));
 
 export interpreterDepth := 0;
 export lineNumber := 0;

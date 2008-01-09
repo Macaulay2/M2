@@ -10,6 +10,12 @@ use varstrin;
 
 export min(x:int,y:int):int := if x<y then x else y;
 export max(x:int,y:int):int := if x<y then y else x;
+export min(x:uint,y:uint):uint := if x<y then x else y;
+export max(x:uint,y:uint):uint := if x<y then y else x;
+export min(x:long,y:long):long := if x<y then x else y;
+export max(x:long,y:long):long := if x<y then y else x;
+export min(x:ulong,y:ulong):ulong := if x<y then x else y;
+export max(x:ulong,y:ulong):ulong := if x<y then y else x;
 
 export (o:file) << (s:Cstring) : file := o << if s == null() then "(null)" else tostring(s);
 
@@ -21,7 +27,11 @@ isZero    (x:ZZ):bool ::=  0 == Ccode(int, "mpz_sgn((__mpz_struct *)", x, ")");
 isNegative(x:ZZ):bool ::= -1 == Ccode(int, "mpz_sgn((__mpz_struct *)", x, ")");
 
 export isInt(x:ZZ):bool := 0 != Ccode(int, "mpz_fits_sint_p((__mpz_struct *)", x, ")");
-export toInt(x:ZZ):int  := Ccode(int, "mpz_get_si((__mpz_struct *)", x, ")");
+export toInt(x:ZZ):int  := int(Ccode(long, "mpz_get_si((__mpz_struct *)", x, ")"));
+export isLong(x:ZZ):bool := 0 != Ccode(int, "mpz_fits_slong_p((__mpz_struct *)", x, ")");
+export toLong(x:ZZ):long  := Ccode(long, "mpz_get_si((__mpz_struct *)", x, ")");
+export isULong(x:ZZ):bool := 0 != Ccode(int, "mpz_fits_ulong_p((__mpz_struct *)", x, ")");
+export toULong(x:ZZ):ulong  := Ccode(ulong, "mpz_get_ui((__mpz_struct *)", x, ")");
 
 export hash(x:ZZ):int := (
      if isInt(x) then 0x7fffffff & toInt(x)
@@ -767,7 +777,7 @@ export (x:QQ) >= (y:double) : bool := numeratorRef(x) >= y * denominatorRef(x);
 -- big reals
 -----------------------------------------------------------------------------
 
-export RR := { prec:int, sign:int, exp:int, limbs:limbPointer }; -- must agree with __mpfr_struct in mpfr.h, and with M2_RR in M2types.h
+export RR := { prec:ulong, sign:int, exp:long, limbs:limbPointer }; -- must agree with __mpfr_struct in mpfr.h, and with M2_RR in M2types.h
 export CC := { re:RR, im:RR };			    -- must agree with M2_CC in M2types.h
 
 export realPart(z:CC):RR := z.re;
@@ -780,71 +790,71 @@ isNegative(x:RR):bool ::= -1 == Ccode(int, "mpfr_sgn((__mpfr_struct *)", x, ")")
 export precision(x:RR):int := int(Ccode(ulong, "mpfr_get_prec((__mpfr_struct*)",x,")"));
 export precision(x:CC):int := precision(x.re);
 
-defaultPrecision := 53; -- should 53 be computed?
+defaultPrecision := ulong(53); -- should 53 be computed?
 
 minprec := Ccode(ulong,"MPFR_PREC_MIN");
 maxprec := Ccode(ulong,"MPFR_PREC_MAX");
 
-export newRRR(prec:int):RR := (
+export newRRR(prec:ulong):RR := (
      prc := ulong(prec);
      if prc < minprec then prc = minprec else if prc > maxprec then prc = maxprec;
-     x := RR(0,0,0,null());
+     x := RR(ulong(0),0,long(0),null());
      Ccode( void, "mpfr_init2(", "(__mpfr_struct *)", x, ",(mpfr_prec_t)",prc,")" );
      x);
 
-export toRR(x:RR,prec:int):RR := (
+export toRR(x:RR,prec:ulong):RR := (
      if x.prec == prec then return x;
      z := newRRR(prec);
      Ccode( void, "mpfr_set(", "(__mpfr_struct *)", z, ",", "(__mpfr_struct *)", x, ", GMP_RNDN)" );
      z);
 
-export toRR(x:QQ,prec:int):RR := (
+export toRR(x:QQ,prec:ulong):RR := (
      z := newRRR(prec);
      Ccode( void, "mpfr_set_q(", "(__mpfr_struct *)", z, ",", "(__mpq_struct *)", x, ", GMP_RNDN)" );
      z);
 
 export toRR(x:QQ):RR := toRR(x,defaultPrecision);
 
-export toRR(x:ZZ,prec:int):RR := (
+export toRR(x:ZZ,prec:ulong):RR := (
      z := newRRR(prec);
      Ccode( void, "mpfr_set_z(", "(__mpfr_struct *)", z, ",", "(__mpz_struct *)", x, ", GMP_RNDN)" );
      z);
 
 export toRR(x:ZZ):RR := toRR(x,defaultPrecision);
 
-export toRR(n:int,prec:int):RR := (
+export toRR(n:int,prec:ulong):RR := (
      x := newRRR(prec);
      Ccode( void, "mpfr_set_si(", "(__mpfr_struct *)", x, ",(long)", n, ", GMP_RNDN)" );
      x);
 
-export toRR(n:ulong,prec:int):RR := (
+export toRR(n:ulong,prec:ulong):RR := (
      x := newRRR(prec);
      Ccode( void, "mpfr_set_ui(", "(__mpfr_struct *)", x, ",(unsigned long)", n, ", GMP_RNDN)" );
      x);
 
-export toRR(n:double,prec:int):RR := (
+export toRR(n:double,prec:ulong):RR := (
      x := newRRR(prec);
      Ccode( void, "mpfr_set_d(", "(__mpfr_struct *)", x, ",", n, ", GMP_RNDN)" );
      x);
 
 export toRR(n:double):RR := toRR(n,defaultPrecision);	   
 
-export toCC(x:RR,prec:int):CC := CC(toRR(x,prec),toRR(0,prec));
-export toCC(x:CC,prec:int):CC := (
+export toCC(x:RR,prec:ulong):CC := CC(toRR(x,prec),toRR(0,prec));
+export toCC(x:CC,prec:ulong):CC := (
      if x.re.prec == prec then x
      else CC(toRR(x.re,prec),toRR(x.im,prec)));
-export toCC(x:RR,y:RR,prec:int):CC := CC(toRR(x,prec),toRR(y,prec));
+export toCC(x:RR,y:RR,prec:ulong):CC := CC(toRR(x,prec),toRR(y,prec));
 export toCC(x:RR,y:RR):CC := (
      if x.prec == y.prec then CC(x,y)
      else if x.prec < y.prec then CC(x,toRR(y,x.prec))
      else CC(toRR(x,y.prec),y)
      );
-export toCC(x:QQ,prec:int):CC := CC(toRR(x,prec),toRR(0,prec));
-export toCC(x:ZZ,prec:int):CC := CC(toRR(x,prec),toRR(0,prec));
-export toCC(x:int,prec:int):CC := CC(toRR(x,prec),toRR(0,prec));
-export toCC(x:ulong,prec:int):CC := CC(toRR(x,prec),toRR(0,prec));
-export toCC(x:double,prec:int):CC := CC(toRR(x,prec),toRR(0,prec));
-export toCC(x:double,y:double,prec:int):CC := CC(toRR(x,prec),toRR(y,prec));
+export toCC(x:QQ,prec:ulong):CC := CC(toRR(x,prec),toRR(0,prec));
+export toCC(x:ZZ,prec:ulong):CC := CC(toRR(x,prec),toRR(0,prec));
+export toCC(x:int,prec:ulong):CC := CC(toRR(x,prec),toRR(0,prec));
+export toCC(x:ulong,prec:ulong):CC := CC(toRR(x,prec),toRR(0,prec));
+export toCC(x:double,prec:ulong):CC := CC(toRR(x,prec),toRR(0,prec));
+export toCC(x:double,y:double,prec:ulong):CC := CC(toRR(x,prec),toRR(y,prec));
 
 export toDouble(x:RR):double := Ccode( double, "mpfr_get_d(", "(__mpfr_struct *)", x, ", GMP_RNDN)" );
 
@@ -1130,16 +1140,16 @@ export (x:RR) ^ (n:int) : RR := (
      Ccode( void, "mpfr_pow_si(", "(__mpfr_struct *)", z, ",", "(__mpfr_struct *)", x, ",", n, ", GMP_RNDN)" );
      z);
 
-export pow10(n:ulong,prec:int):RR := (
+export pow10(n:ulong,prec:ulong):RR := (
      z := newRRR(prec);
      Ccode( void, "mpfr_ui_pow_ui(", "(__mpfr_struct *)", z, ",", ulong(10), ",", n, ", GMP_RNDN)" );
      z);
-export pow10(n:long,prec:int):RR := (
+export pow10(n:long,prec:ulong):RR := (
      ng := false;
      if n < long(0)
      then (pow10(ulong(-n),prec))^-1
      else pow10(ulong(n),prec));
-export pow10(n:int,prec:int):RR := pow10(long(n),prec);
+export pow10(n:int,prec:ulong):RR := pow10(long(n),prec);
 
 export (n:uint) ^ (x:RR) : RR := (
      z := newRRR(x.prec);

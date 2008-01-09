@@ -348,10 +348,24 @@ xor(x:uint, y:uint):uint ::= Ccode(uint,\"(\",x,\" ^ \",y,\")\");","\n\
 (x:int) % (y:long ):long ::= Ccode(long,\"(\",x,\" % \",y,\")\");","\n \
 (x:int) * (y:long ):long ::= Ccode(long,\"(\",x,\" * \",y,\")\");","\n \
 (x:int) / (y:long ):long ::= Ccode(long,\"(\",x,\" / \",y,\")\");","\n \
+(x:ulong) + (y:int ):ulong ::= Ccode(ulong,\"(\",x,\" + \",y,\")\");","\n \
+(x:ulong) - (y:int ):ulong ::= Ccode(ulong,\"(\",x,\" - \",y,\")\");","\n \
+(x:ulong) % (y:int ):ulong ::= Ccode(ulong,\"(\",x,\" % \",y,\")\");","\n \
+(x:ulong) * (y:int ):ulong ::= Ccode(ulong,\"(\",x,\" * \",y,\")\");","\n \
+(x:ulong) / (y:int ):ulong ::= Ccode(ulong,\"(\",x,\" / \",y,\")\");","\n \
+(x:int) + (y:ulong ):ulong ::= Ccode(ulong,\"(\",x,\" + \",y,\")\");","\n \
+(x:int) - (y:ulong ):ulong ::= Ccode(ulong,\"(\",x,\" - \",y,\")\");","\n \
+(x:int) % (y:ulong ):ulong ::= Ccode(ulong,\"(\",x,\" % \",y,\")\");","\n \
+(x:int) * (y:ulong ):ulong ::= Ccode(ulong,\"(\",x,\" * \",y,\")\");","\n \
+(x:int) / (y:ulong ):ulong ::= Ccode(ulong,\"(\",x,\" / \",y,\")\");","\n \
 (x:long) < (y:int ):bool ::= Ccode(bool,\"(\",x,\" < \",y,\")\");","\n \
 (x:long) <= (y:int ):bool ::= Ccode(bool,\"(\",x,\" <= \",y,\")\");","\n \
 (x:long) > (y:int ):bool ::= Ccode(bool,\"(\",x,\" > \",y,\")\");","\n \
 (x:long) >= (y:int ):bool ::= Ccode(bool,\"(\",x,\" >= \",y,\")\");","\n \
+(x:ulong) < (y:int ):bool ::= Ccode(bool,\"(\",x,\" < \",y,\")\");","\n \
+(x:ulong) <= (y:int ):bool ::= Ccode(bool,\"(\",x,\" <= \",y,\")\");","\n \
+(x:ulong) > (y:int ):bool ::= Ccode(bool,\"(\",x,\" > \",y,\")\");","\n \
+(x:ulong) >= (y:int ):bool ::= Ccode(bool,\"(\",x,\" >= \",y,\")\");","\n \
 (x:char) - (y:int ):char ::= Ccode(char,\"(\",x,\" - \",y,\")\");","\n\
 (x:int) + (y:char):char ::= Ccode(char,\"(\",x,\" + \",y,\")\");","\n\
 (x:int) + (y:short):short ::= Ccode(short,\"(\",x,\" + \",y,\")\");","\n\
