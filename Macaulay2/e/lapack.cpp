@@ -215,7 +215,7 @@ bool Lapack::eigenvectors(const LMatrixRR *A,
 			  LMatrixCC *eigvals,
 			  LMatrixCC *eigvecs)
 {
-#if LAPACK
+#if !LAPACK
   ERROR("lapack not present");
   return false;
 #else
@@ -236,11 +236,6 @@ bool Lapack::eigenvectors(const LMatrixRR *A,
   double *real = newarray(double,size);  // real components of eigvals
   double *imag = newarray(double,size); // imaginary components
   double *eigen = newarray(double,size*size); // eigvecs
-
-  LMatrixRR *copyA = A->copy();
-  LMatrixRR * real = new LMatrixRR(globalRR,size,1); 
-  LMatrixRR * imag = new LMatrixRR(globalRR,size,1); 
-  LMatrixRR * eigen = new LMatrixRR(globalRR,size,size); 
 
   dgeev_(&dont, &doit, 
 	 &size, copyA, &size,
@@ -267,8 +262,8 @@ bool Lapack::eigenvectors(const LMatrixRR *A,
       eigvecs->resize(size, size);
       M2_CCC_struct *elems = eigvecs->get_array();
       for (int j = 0; j < size; j++) {
-	eigvals->get_array()[j].re = real[j];
-	eigvals->get_array()[j].im = imag[j];
+	mpfr_set_d(eigvals->get_array()[j].re, real[j], GMP_RNDN);
+	mpfr_set_d(eigvals->get_array()[j].im, imag[j], GMP_RNDN);
 	int loc = j*size;
 	if (imag[j] == 0) {
 	  for (int i = 0; i < size; i++)
