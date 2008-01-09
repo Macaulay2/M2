@@ -145,7 +145,7 @@ if firstTime then (
 
      copyright = (
 	  "Macaulay 2, version " | version#"VERSION" | newline
-	  | "--Copyright 1993-2007, D. R. Grayson and M. E. Stillman" | newline
+	  | "--Copyright 1993-2008, D. R. Grayson and M. E. Stillman" | newline
 	  | "--GC " | version#"gc version" | ", by H. Boehm and Alan J. Demers" | newline
 	  | "--Singular-Factory " | version#"factory version" | ", by G.-M. Greuel et al." | newline
 	  | "--Singular-Libfac " | version#"libfac version" | ", by M. Messollen" | newline
