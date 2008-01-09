@@ -154,11 +154,11 @@ eigenvectors(MutableMatrix) := o -> (A) -> (
      k := ring A;
      if not instance(k,BigNumberRing) then error "eigenvalues requires matrices over RR or CC";
      e := if o.Hermitian 
-          then mutableZero(RR,0,0, Dense=>true)
-          else mutableZero(CC,0,0, Dense=>true);
-     v := if ring A === RR and o.Hermitian
-          then mutableZero(RR,0,0, Dense=>true)
-	  else mutableZero(CC,0,0, Dense=>true);
+          then mutableZero(RR_(k.precision),0,0, Dense=>true)
+          else mutableZero(CC_(k.precision),0,0, Dense=>true);
+     v := if instance(k,RealNumberRing) and o.Hermitian
+          then mutableZero(RR_(k.precision),0,0, Dense=>true)
+	  else mutableZero(CC_(k.precision),0,0, Dense=>true);
      rawEigenvectors(raw A,raw e,raw v,o.Hermitian);
      (e,v))
 eigenvectors(Matrix) := o -> (A) -> (
@@ -169,9 +169,9 @@ SVD = method(Options=>{DivideConquer=>false})
 SVD MutableMatrix := o -> A -> (
      k := ring A;
      if not instance(k,BigNumberRing) then error "eigenvalues requires matrices over RR or CC";
-     Sigma := mutableZero(RR,0,0);
-     U := if ring A === RR then mutableZero(RR,0,0) else mutableZero(CC,0,0);
-     VT := if ring A === RR then mutableZero(RR,0,0) else mutableZero(CC,0,0);
+     Sigma := mutableZero(RR_(k.precision),0,0,Dense=>true);
+     U := if instance(k,RealNumberRing) then mutableZero(RR_(k.precision),0,0) else mutableZero(CC_(k.precision),0,0,Dense=>true);
+     VT := if instance(k,RealNumberRing) then mutableZero(RR_(k.precision),0,0) else mutableZero(CC_(k.precision),0,0,Dense=>true);
      rawSVD(raw A, raw Sigma, raw U, raw VT, o.DivideConquer);
      (Sigma,U,VT))
 SVD Matrix := o -> A -> (
