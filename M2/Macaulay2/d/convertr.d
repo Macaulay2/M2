@@ -182,8 +182,8 @@ export convert(e:ParseTree):Code := (
      is token:Token do (
 	  var := token.entry;
 	  wrd := token.word;
-	  if wrd.typecode == TCRRR
-	  then Code(RRRCode(toRR(parseDouble(wrd.name)),position(token)))
+	  if wrd.typecode == TCRR
+	  then Code(RRRCode(parseRR(wrd.name),position(token)))
 	  else if wrd.typecode == TCint
 	  then Code(integerCode(parseInt(wrd.name),position(token)))
  	  else if wrd.typecode == TCstring

@@ -28,11 +28,11 @@ export parseinfo := {
 export TCnone := 0;			-- for artificial words: dummyWord, wordEOF, wordEOC
 export TCid := 1;			-- identifiers and operators
 export TCint := 2;
-export TCRRR := 3;
+export TCRR := 3;
 export TCstring := 4;
 export Word := {		-- a word, one for each name made by makeUniqueWord()
      name:string,		--   the string representing it in this language
-     typecode:int,		--   TCid, TCint, TCRRR, or TCstring
+     typecode:int,		--   TCid, TCint, TCRR, or TCstring
      hash:int,	    		--   the hash value
      parse:parseinfo		--   parsing information
      };

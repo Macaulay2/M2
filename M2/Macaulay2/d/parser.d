@@ -10,6 +10,8 @@ use stdiop;
 use gmp;
 use nets;
 use tokens;
+use ctype;
+use gmp;
 
 export parseInt(s:string):ZZ := (
      i := toInteger(0);
@@ -19,23 +21,45 @@ export parseInt(s:string):ZZ := (
 	  else i = 10 * i + (c - '0')
 	  );
      i);
-export parseDouble(s:string):double := (
-     point := false;
-     x := 0.0;
-     y := 1.0;
+export parseRR(s:string):RR := (			    -- 4.33234234234p345e-9
+     inPrec := false;
+     inExpon := false;
+     extra := 16;
+     prec := 53;
+     exsign := false;
+     expon := 0;
      foreach c in s do (
-	  if c == '\"'
-	  then nothing
-	  else if c == '.'
-	  then point = true
-	  else if point
-	  then (
-	       x = x + (y * (c - '0'))/10;
-	       y = y / 10;
+	  if c == 'e' || c == 'E' then (
+		    inPrec = false;
+		    inExpon = true;
+		    )
+	  else if c == 'p' || c == 'P' then (
+	       inPrec = true;
+	       prec = 0;
 	       )
-	  else x = 10 * x + (c - '0')
-	  );
-     x);
+	  else if inPrec then (
+	       if isdigit(c) then prec = 10 * prec + (c - '0')
+	       )
+	  else if inExpon then (
+	       if isdigit(c) then expon = 10 * expon + (c - '0')
+	       else if c == '-' then exsign = true;
+	       ));
+     if exsign then expon = -expon;
+     pointSeen := false;
+     x := toRR(0,prec+extra);
+     y := toRR(1,prec+extra);
+     foreach c in s do (
+	  if c == '\"' then nothing
+	  else if c == '.' then pointSeen = true
+	  else if isdigit(c) then (
+	       if pointSeen then (
+	       	    x = x + (y * (c - '0'))/10;
+	       	    y = y / 10;
+	       	    )
+	       else x = x * 10 + (c - '0'))
+	  else break;);
+     x = x * pow10(expon,prec+extra);
+     toRR(x,prec));
 parseError := false;
 parseMessage := "";
 utf8(w:varstring,i:int):varstring := (

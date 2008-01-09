@@ -781,7 +781,11 @@ export precision(x:CC):int := precision(x.re);
 
 defaultPrecision := 53; -- should 53 be computed?
 
+minprec := Ccode(int,"MPFR_PREC_MIN");
+maxprec := Ccode(int,"MPFR_PREC_MAX");
+
 export newRRR(prec:int):RR := (
+     if prec < minprec then prec = minprec else if prec > maxprec then prec = maxprec;
      x := RR(0,0,0,null());
      Ccode( void, "mpfr_init2(", "(__mpfr_struct *)", x, ",",prec,")" );
      x);
@@ -937,6 +941,17 @@ export (x:RR) + (y:RR) : RR := (
 	      ", GMP_RNDN)" 
      );
      z);
+
+export (x:RR) + (y:int) : RR := (
+     z := newRRR(x.prec);
+     Ccode( void,
+          "mpfr_add_si(",
+	      "(__mpfr_struct *)", z, ",", 
+	      "(__mpfr_struct *)", x, ",", 
+	      y,
+	  ", GMP_RNDN)" 
+     );
+     z);
      
 export (x:RR) + (y:ZZ) : RR := (
      z := newRRR(x.prec);
@@ -967,6 +982,17 @@ export (x:RR) - (y:RR) : RR := (
 	      "(__mpfr_struct *)", z, ",", 
 	      "(__mpfr_struct *)", x, ",", 
 	      "(__mpfr_struct *)", y,
+	  ", GMP_RNDN)" 
+     );
+     z);
+
+export (x:RR) - (y:int) : RR := (
+     z := newRRR(x.prec);
+     Ccode( void,
+          "mpfr_sub_si(",
+	      "(__mpfr_struct *)", z, ",", 
+	      "(__mpfr_struct *)", x, ",", 
+	      y,
 	  ", GMP_RNDN)" 
      );
      z);
@@ -1025,6 +1051,17 @@ export (x:RR) * (y:ZZ) : RR := (
 	  ", GMP_RNDN)" 
      );
      z);
+
+export (x:RR) * (y:int) : RR := (
+     z := newRRR(x.prec);
+     Ccode( void,
+          "mpfr_mul_si(",
+	      "(__mpfr_struct *)", z, ",", 
+	      "(__mpfr_struct *)", x, ",", 
+	      y,
+	  ", GMP_RNDN)" 
+     );
+     z);
      
 export (x:RR) * (y:QQ) : RR := (
      z := newRRR(x.prec);
@@ -1044,6 +1081,17 @@ export (x:RR) / (y:RR) : RR := (
 	      "(__mpfr_struct *)", z, ",", 
 	      "(__mpfr_struct *)", x, ",", 
 	      "(__mpfr_struct *)", y,
+	  ", GMP_RNDN)" 
+     );
+     z);
+
+export (x:RR) / (y:int) : RR := (
+     z := newRRR(x.prec);
+     Ccode( void,
+          "mpfr_div_si(",
+	      "(__mpfr_struct *)", z, ",", 
+	      "(__mpfr_struct *)", x, ",", 
+	      y,
 	  ", GMP_RNDN)" 
      );
      z);
@@ -1078,6 +1126,17 @@ export sqrt(x:RR):RR := (
 export (x:RR) ^ (n:int) : RR := (
      z := newRRR(x.prec);
      Ccode( void, "mpfr_pow_si(", "(__mpfr_struct *)", z, ",", "(__mpfr_struct *)", x, ",", n, ", GMP_RNDN)" );
+     z);
+
+export pow10(n:int,prec:int):RR := (
+     ng := false;
+     if n < 0 then (
+	  ng = true;
+	  n = -n;
+	  );
+     z := newRRR(prec);
+     Ccode( void, "mpfr_ui_pow_ui(", "(__mpfr_struct *)", z, ",", 10, ",", uint(n), ", GMP_RNDN)" );
+     if ng then z = z ^ -1;
      z);
 
 export (n:uint) ^ (x:RR) : RR := (
