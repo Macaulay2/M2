@@ -277,16 +277,35 @@ gettoken1(file:PosFile,sawNewline:bool):Token := (
 	       while isdigit(peek(file)) do (
 		    tokenbuf << char(getc(file))
 		    );
-	       if peek(file)==int('.') && peek(file,1)!=int('.') then (
-		    typecode = TCRRR;
-		    tokenbuf << char(getc(file));
-		    while isdigit(peek(file)) do (
-			 tokenbuf << char(getc(file))
+	       c := peek(file);
+	       if c == int('.') && peek(file,1) != int('.') 
+	       || c == int('p') || c == int('P')
+	       || c == int('e') || c == int('E')
+	       then (
+		    typecode = TCRR;
+		    if c == int('.') then (
+		    	 tokenbuf << char(getc(file));
+     	       	    	 while isdigit(peek(file)) do tokenbuf << char(getc(file));
 			 );
-		    if peek(file)==int('.') then (
+	       	    c = peek(file);
+		    if (c == int('p') || c == int('P')) 
+		    && isdigit(char(peek(file,1))) 	    -- EOF on peek is rare and doesn't get converted to a digit, anyway
+		    then (
+		    	 tokenbuf << char(getc(file));
+		    	 tokenbuf << char(getc(file));
+			 while isdigit(peek(file)) do tokenbuf << char(getc(file)));
+	       	    c = peek(file);
+		    if c == int('e') || c == int('E') && ( peek(file,1) == int('-') && isdigit(peek(file,2)) || isdigit(peek(file,1)) )
+		    then (
+		    	 tokenbuf << char(getc(file));
+		    	 tokenbuf << char(getc(file));
+     	       	    	 while isdigit(peek(file)) do tokenbuf << char(getc(file));
+			 );
+		    if peek(file) == int('.') then (
 			 printErrorMessage(file.pos,"'.' follows floating point constant");
-			 while peek(file)==int('.') || isdigit(peek(file)) 
-			 do getc(file);
+			 while peek(file)==int('.') || isdigit(peek(file)) do getc(file);
+		    	 empty(tokenbuf);
+		    	 return errorToken
 			 );
 		    );
 	       s := takestring(tokenbuf);
