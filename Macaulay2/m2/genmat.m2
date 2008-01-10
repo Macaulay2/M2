@@ -41,8 +41,10 @@ genericSymmetricMatrix(Ring,RingElement,ZZ) := (R,first,n) -> (
 		    nextvar = nextvar+1)));
      matrix table(n,n, (i,j) -> if i>j then vars#(j,i) else vars#(i,j)))
 
-randommat := (R,r,c) -> (
-     map(R, rawMatrixRandom(R.RawRing, r, c, 1.0, 0, 0)))
+randommat := opts -> (R,r,c) -> map(R, rawRandomConstantMatrix(R.RawRing, r, c, 
+	  opts.Density, 
+	  if opts.UpperTriangular then 1 else 0,
+	  0))
 
 random(List,Ring) := RingElement => opts -> (deg,R) -> (
      if #deg =!= degreeLength R then error ("expected length of degree vector to be ", degreeLength R);
@@ -108,13 +110,13 @@ random(Module, Module) := Matrix => opts -> (F,G) -> (
      else if #degreesTally === 1 then (
 	  deg := first keys degreesTally;
 	  if all(deg,i->i===0) 
-	  then (randmat := randommat(R,numgens F, numgens G);
+	  then (randmat := (randommat opts)(R,numgens F, numgens G);
 	        map(F,G,randmat))
 	  else (
 	       m := basis(deg,R);
 	       s := degreesTally#deg;
 	       reshape(F,G, 
-		    m * randommat(R, numgens source m, s))))
+		    m * (randommat opts)(R, numgens source m, s))))
      else (
 	  randomElement := memoize(
 	       deg -> (

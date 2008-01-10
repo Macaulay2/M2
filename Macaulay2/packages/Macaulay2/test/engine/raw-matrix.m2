@@ -259,20 +259,20 @@ for i from 0 to rawNumberOfRows m - 1 do
     assert(rawMatrixEntry(rawDual m,i,j) == rawMatrixEntry(m,j,i))
 
 ---------------------
--- rawMatrixRandom --
+-- rawRandomConstantMatrix --
 ---------------------
 needs "raw-util.m2"
-mr = rawMatrixRandom(rawZZ(),2,3,.5,0,0)
-mr = rawMatrixRandom(rawZZ(),20,30,.5,0,0)
-mr = rawMatrixRandom(rawZZ(),20,30,.98,0,0)
-mr = rawMatrixRandom(rawZZ(),30,30,.5,1,0)
-mr = rawMatrixRandom(rawZZ(),30,30,1.0,1,0)
+mr = rawRandomConstantMatrix(rawZZ(),2,3,.5,0,0)
+mr = rawRandomConstantMatrix(rawZZ(),20,30,.5,0,0)
+mr = rawRandomConstantMatrix(rawZZ(),20,30,.98,0,0)
+mr = rawRandomConstantMatrix(rawZZ(),30,30,.5,1,0)
+mr = rawRandomConstantMatrix(rawZZ(),30,30,1.0,1,0)
 
-mr = rawMatrixRandom(rawZZ(),10,15,.5,0,0)
+mr = rawRandomConstantMatrix(rawZZ(),10,15,.5,0,0)
 R = polyring(rawZZp(32003), (symbol x, symbol y))
-mr = rawMatrixRandom(R,10,15,.5,0,0)
-mr = rawMatrixRandom(R,10,15,.5,1,0)
-mr = rawMatrixRandom(R,10,10,.5,1,0)
+mr = rawRandomConstantMatrix(R,10,15,.5,0,0)
+mr = rawRandomConstantMatrix(R,10,15,.5,1,0)
+mr = rawRandomConstantMatrix(R,10,10,.5,1,0)
 
 
 -------------------

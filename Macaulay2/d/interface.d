@@ -1512,7 +1512,7 @@ export rawSparseMatrix1(e:Expr):Expr := (
      else WrongNumArgs(6));
 setupfun("rawSparseMatrix1",rawSparseMatrix1);
 
-export rawMatrixRandom(e:Expr):Expr := (
+export rawRandomConstantMatrix(e:Expr):Expr := (
      when e is s:Sequence do if length(s) != 6 then WrongNumArgs(6) else
      when s.0 is R:RawRing do 
      when s.1 is r:ZZ do if !isInt(r) then WrongArgSmallInteger(2) else
@@ -1525,8 +1525,8 @@ export rawMatrixRandom(e:Expr):Expr := (
      	       "(Ring *)", R, ",",
 	       toInt(r), ",",
 	       toInt(c), ",",
-	       toDouble(fractionNonZero), ",",
-     	       toInt(specialType), ",",
+	       toDouble(fractionNonZero), ",",		    -- density
+     	       toInt(specialType), ",",			    -- 0 : general, 1 : upper triangular
 	       toInt(preference),
 	       ")"))
      else WrongArgInteger(6)
@@ -1536,7 +1536,7 @@ export rawMatrixRandom(e:Expr):Expr := (
      else WrongArgInteger(2)
      else WrongArg(1,"a raw ring")
      else WrongNumArgs(6));
-setupfun("rawMatrixRandom",rawMatrixRandom);
+setupfun("rawRandomConstantMatrix",rawRandomConstantMatrix);
 
 export rawSparseMatrix2(e:Expr):Expr := (
      when e is s:Sequence do 
