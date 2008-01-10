@@ -29,11 +29,11 @@ export parseRR(s:string):RR := (			    -- 4.33234234234p345e-9
      exsign := false;
      expon := long(0);
      foreach c in s do (
-	  if c == 'e' || c == 'E' then (
+	  if c == 'e' then (
 		    inPrec = false;
 		    inExpon = true;
 		    )
-	  else if c == 'p' || c == 'P' then (
+	  else if c == 'p' then (
 	       inPrec = true;
 	       prec = ulong(0);
 	       )

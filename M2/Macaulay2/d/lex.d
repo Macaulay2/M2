@@ -279,8 +279,8 @@ gettoken1(file:PosFile,sawNewline:bool):Token := (
 		    );
 	       c := peek(file);
 	       if c == int('.') && peek(file,1) != int('.') 
-	       || (c == int('p') || c == int('P')) && isdigit(peek(file,1))
-	       || (c == int('e') || c == int('E')) && (isdigit(peek(file,1)) || peek(file,1) == int('-') && isdigit(peek(file,2)))
+	       || c == int('p') && isdigit(peek(file,1))
+	       || c == int('e') && (isdigit(peek(file,1)) || peek(file,1) == int('-') && isdigit(peek(file,2)))
 	       then (
 		    typecode = TCRR;
 		    if c == int('.') then (
@@ -288,14 +288,14 @@ gettoken1(file:PosFile,sawNewline:bool):Token := (
      	       	    	 while isdigit(peek(file)) do tokenbuf << char(getc(file));
 			 );
 	       	    c = peek(file);
-		    if (c == int('p') || c == int('P')) 
+		    if c == int('p') 
 		    && isdigit(char(peek(file,1))) 	    -- EOF on peek is rare and doesn't get converted to a digit, anyway
 		    then (
 		    	 tokenbuf << char(getc(file));
 		    	 tokenbuf << char(getc(file));
 			 while isdigit(peek(file)) do tokenbuf << char(getc(file)));
 	       	    c = peek(file);
-		    if c == int('e') || c == int('E') && ( peek(file,1) == int('-') && isdigit(peek(file,2)) || isdigit(peek(file,1)) )
+		    if c == int('e') && ( peek(file,1) == int('-') && isdigit(peek(file,2)) || isdigit(peek(file,1)) )
 		    then (
 		    	 tokenbuf << char(getc(file));
 		    	 tokenbuf << char(getc(file));
