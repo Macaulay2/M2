@@ -1112,7 +1112,7 @@ new URL from String := (URL,str) -> new URL from {str}
 show URL := x -> (
      url := x#0;
      browser := getenv "WWWBROWSER";
-     if version#"operating system" === "Darwin" and runnable "open" then browser = "open"; -- should ignore WWWBROWSER, according to Mike
+     if version#"operating system" === "MacOS" and runnable "open" then browser = "open"; -- should ignore WWWBROWSER, according to Mike
      if browser === "" then (
 	  if runnable "firefox" then browser = "firefox"
 	  else if runnable "netscape" then browser = "netscape"
