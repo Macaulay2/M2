@@ -855,6 +855,7 @@ export toCC(x:RR,y:RR):CC := (
 export toCC(x:QQ,prec:ulong):CC := CC(toRR(x,prec),toRR(0,prec));
 export toCC(x:ZZ,prec:ulong):CC := CC(toRR(x,prec),toRR(0,prec));
 export toCC(x:int,prec:ulong):CC := CC(toRR(x,prec),toRR(0,prec));
+export toCC(x:int,y:int,prec:ulong):CC := CC(toRR(x,prec),toRR(y,prec));
 export toCC(x:ulong,prec:ulong):CC := CC(toRR(x,prec),toRR(0,prec));
 export toCC(x:double,prec:ulong):CC := CC(toRR(x,prec),toRR(0,prec));
 export toCC(x:double,y:double,prec:ulong):CC := CC(toRR(x,prec),toRR(y,prec));

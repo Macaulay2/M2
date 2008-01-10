@@ -3265,6 +3265,14 @@ mpfrConstantPi(e:Expr):Expr := (
      else WrongArgInteger(1));
 setupfun("mpfrConstantPi",mpfrConstantPi);
 
+ConstantII(e:Expr):Expr := (
+     when e is prec:ZZ do
+     if !isULong(prec)
+     then WrongArgSmallUInteger(1)
+     else Expr(toCC(0,1,toULong(prec)))
+     else WrongArgInteger(1));
+setupfun("ConstantII",ConstantII);
+
 -- Local Variables:
 -- compile-command: "make -C $M2BUILDDIR/Macaulay2/d "
 -- End:

@@ -1,9 +1,5 @@
 --		Copyright 1993-1999,2004 by Daniel R. Grayson
 
--- CC#0 = toCC(defaultPrecision, 0, 0)			    -- oops, do we really need this??
--- CC#1 = toCC(defaultPrecision, 1, 0)
-ii = toCC(defaultPrecision, 0, 1)				    -- to be changed
-
 lift(CC,RR):= (z,RR) -> if imaginaryPart z == 0 then realPart z
 lift(CC,QQ) := lift(CC,ZZ) := (z,R) -> if imaginaryPart z == 0 then lift(realPart z, R)
 
