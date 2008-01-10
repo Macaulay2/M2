@@ -1674,7 +1674,7 @@ document {
 	Inputs => {"x" => {}},
 	Outputs => {RR=> {"a random real number in the range ", TT "0 .. x"}},
      "Here is a basic example:",
-	EXAMPLE "random pi",
+	EXAMPLE "random 3.14",
      SeeAlso => {"setRandomSeed"}
      }
 
