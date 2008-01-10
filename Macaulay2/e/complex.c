@@ -154,8 +154,43 @@ void mpfc_conj(M2_CCC result, M2_CCC a)
     mpfr_set(result->re, a->re, GMP_RNDN);
     mpfr_neg(result->im, a->im, GMP_RNDN);
   }
-void mpfc_abs(M2_RRR result, M2_CCC a)
+void mpfc_abs(M2_RRR result, M2_CCC c)
 {
+  mpfr_t a,b;
+
+  mpfr_init2(a, mpfr_get_prec(c->re));
+  mpfr_init2(b, mpfr_get_prec(c->re));
+  mpfr_abs(a,c->re,GMP_RNDN);
+  mpfr_abs(b,c->im,GMP_RNDN);
+  if (mpfr_zero_p(a)) 
+    mpfr_set(result,a,GMP_RNDN);
+  else if (mpfr_zero_p(b))
+    mpfr_set(result,b,GMP_RNDN);
+  else if (mpfr_greater_p(a,b))
+    {
+      // double d = b/a;
+      // result = a * ::sqrt(1.0 + d*d);
+      // But use b for d, as it is not needed later.
+      mpfr_div(b,b,a, GMP_RNDN);
+      mpfr_sqr(b,b, GMP_RNDN);
+      mpfr_add_si(b,b,1, GMP_RNDN);
+      mpfr_sqrt(b,b, GMP_RNDN);
+      mpfr_mul(result,a,b, GMP_RNDN);
+    }
+  else
+    {
+      // double d = a/b;
+      // result = b * ::sqrt(1.0 + d*d);
+      // But use a for d, as it is not needed later.
+      mpfr_div(a,a,b,GMP_RNDN);
+      mpfr_sqr(a,a,GMP_RNDN);
+      mpfr_add_si(a,a,1,GMP_RNDN);
+      mpfr_sqrt(a,a,GMP_RNDN);
+      mpfr_mul(result,b,a,GMP_RNDN);
+    }
+  mpfr_clear(a);
+  mpfr_clear(b);
+	     
 #if 0
   static void abs(double &result, elem c)
   {
