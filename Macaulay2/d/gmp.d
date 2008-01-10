@@ -1187,6 +1187,12 @@ export ifloor(x:RR) : long := Ccode( long, "mpfr_get_si((__mpfr_struct *)", x, "
 export iceil (x:RR) : long := Ccode( long, "mpfr_get_si((__mpfr_struct *)", x, ", GMP_RNDU)" );
 export iround(x:RR) : long := Ccode( long, "mpfr_get_si((__mpfr_struct *)", x, ", GMP_RNDN)" );
 
+export (x:RR) << (n:long) : RR := (
+     z := newRR(precision0(x));
+     Ccode( void, "mpfr_mul_2si((__mpfr_struct *)", z, ",(__mpfr_struct *)", x, ",", n, ",GMP_RNDN)" );
+     z);
+export (x:RR) >> (n:long) : RR := x << -n;
+
 -- complex arithmetic
 
 export (x:CC) + (y:CC) : CC := CC(x.re+y.re, x.im+y.im);
@@ -1204,6 +1210,9 @@ export conj(x:CC):CC := CC(x.re,-x.im);
 export norm2(x:CC):RR := x.re*x.re + x.im*x.im;
 export (x:CC) / (y:CC) : CC := x * conj(y) / norm2(y);
 export (x:RR) / (y:CC) : CC := x * conj(y) / norm2(y);
+
+export (x:CC) << (n:long) : CC := CC(x.re<<n,x.im<<n);
+export (x:CC) >> (n:long) : CC := CC(x.re<<n,x.im<<n);
 
 export (x:CC) === (y:CC) : bool := x.re === y.re && x.im === y.im;
 export (x:CC) === (y:RR) : bool := x.re === y && x.im === 0;
