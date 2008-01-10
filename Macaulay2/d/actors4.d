@@ -1165,18 +1165,6 @@ toCC(e:Expr):Expr := (
      else WrongNumArgs(2,3));
 setupfun("toCC",toCC);
 
-setPrecision(e:Expr):Expr := (
-     when e is s:Sequence do if length(s) != 2 then WrongNumArgs(2) else (
-	  when s.0 is prec:ZZ do
-	  if !isULong(prec) then return WrongArgSmallUInteger(1) else 
-	  when s.1
-	  is x:RR do Expr(toRR(x,toULong(prec))) -- # typical value: setPrecision, ZZ, RR, RR
-	  is x:CC do Expr(toCC(x,toULong(prec))) -- # typical value: setPrecision, ZZ, CC, CC
-	  else WrongArg("a real or complex number")
-	  else WrongArgSmallUInteger(1))
-     else WrongNumArgs(2));
-setupfun("setPrecision", setPrecision);
-
 precision(e:Expr):Expr := (
      when e 
      is x:RR do Expr(toInteger(precision(x)))

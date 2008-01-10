@@ -93,6 +93,9 @@ promote(RawRingElement,RR) := (x,R) -> new RR from x
 promote(RawRingElement,Number) := (x,R) -> new R from x
 promote(RawRingElement,RingElement) := (x,R) -> new R from x
 
+setPrecision(ZZ,RR) := toRR
+setPrecision(ZZ,CC) := toCC
+
 promote(RR,RR) := promote(CC,CC) := (i,K) -> setPrecision(K.precision,i)
 
 lift(RR,ZZ) := (r,ZZ) -> if r == floor r then floor r else error("can't lift ",toString r, " to ZZ")

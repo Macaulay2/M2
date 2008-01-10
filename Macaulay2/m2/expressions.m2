@@ -1066,6 +1066,28 @@ FilePosition = new Type of BasicList
 FilePosition.synonym = "file position"
 toString FilePosition := net FilePosition := i -> concatenate(i#0,":",toString i#1,":",toString i#2)
 
+-- symbolic/numeric constant expressions
+
+Constant = new Type of Expression
+pi = new Constant from { symbol pi, mpfrConstantPi }
+
+net Constant := c -> net c#0
+expression Constant := c -> expression c#0
+toString Constant := c -> toString c#0
+toExternalString Constant := c -> toString c#0
+setPrecision(ZZ,Constant) := (prec,c) -> c#1 prec
+
+Constant + BigNumber := (c,x) -> setPrecision(precision x,c) + x
+BigNumber + Constant := (x,c) -> x + setPrecision(precision x,c)
+Constant - BigNumber := (c,x) -> setPrecision(precision x,c) - x
+BigNumber - Constant := (x,c) -> x - setPrecision(precision x,c)
+Constant * BigNumber := (c,x) -> setPrecision(precision x,c) * x
+BigNumber * Constant := (x,c) -> x * setPrecision(precision x,c)
+Constant / BigNumber := (c,x) -> setPrecision(precision x,c) / x
+BigNumber / Constant := (x,c) -> x / setPrecision(precision x,c)
+
+
+
 -- Local Variables:
 -- compile-command: "make -C $M2BUILDDIR/Macaulay2/m2 "
 -- End:

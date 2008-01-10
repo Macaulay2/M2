@@ -13,27 +13,6 @@ numeric Number := x -> x + 0.
 numeric CC := identity
 numeric RR := identity
 
-Constant = new Type of HashTable
-net Constant := c -> net c.Symbol
-expression Constant := c -> expression c.Symbol
-toString Constant := c -> toString c.Symbol
-toExternalString Constant := c -> toString c.Symbol
-toRR(ZZ,Constant) := (prec,c) -> c.toRR prec
-toCC(ZZ,Constant) := (prec,c) -> c.toCC prec
-Constant + RR := (c,x) -> toRR(precision x,c) + x
-RR + Constant := (x,c) -> x + toRR(precision x,c)
-Constant - RR := (c,x) -> toRR(precision x,c) - x
-RR - Constant := (x,c) -> x - toRR(precision x,c)
-Constant * RR := (c,x) -> toRR(precision x,c) * x
-RR * Constant := (x,c) -> x * toRR(precision x,c)
-Constant / RR := (c,x) -> toRR(precision x,c) / x
-RR / Constant := (x,c) -> x / toRR(precision x,c)
-
-pi = new Constant from {
-     symbol Symbol => symbol pi,
-     symbol toRR => mpfrConstantPi
-     }
-
 -- Local Variables:
 -- compile-command: "make -C $M2BUILDDIR/Macaulay2/m2 "
 -- End:
