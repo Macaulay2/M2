@@ -17,6 +17,8 @@ restart = Command (
 setRandomSeed = method()
 setRandomSeed ZZ := seed -> rawSetRandomSeed seed
 setRandomSeed String := seed -> setRandomSeed fold((i,j) -> 101*i + j, 0, ascii seed)
+setRandomSeed 0
+rawSetRandomMax 10
 
 -- Local Variables:
 -- compile-command: "make -C $M2BUILDDIR/Macaulay2/m2 "

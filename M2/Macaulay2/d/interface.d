@@ -37,17 +37,19 @@ setupfun("rawGetErrorMessage",rawGetErrorMessage);
 -----------------------------------------------------------------------------
 -- random numbers
 
+lastSeed := toInteger(0);
 export rawSetRandomSeed(e:Expr):Expr := (
-     when e is n:ZZ do Expr(toInteger(Ccode(int, "rawSetRandomSeed(", "(M2_Integer)", n, ")")))
+     when e is n:ZZ do (
+	  Ccode(void, "rawSetRandomSeed(", "(M2_Integer)", n, ")");
+	  l := lastSeed;
+	  lastSeed = n;
+	  Expr(l))
      else WrongArgInteger());
 setupfun("rawSetRandomSeed",rawSetRandomSeed);
 
 export rawSetRandomMax(e:Expr):Expr := (
      when e is n:ZZ do (
-	  Ccode(void,
-	       "rawSetRandomMax(", 
-	       "(M2_Integer)", n,
-	       ")");
+	  Ccode(void, "rawSetRandomMax((M2_Integer)", n, ")");
 	  nullE)
      else WrongArgInteger());
 setupfun("rawSetRandomMax",rawSetRandomMax);
