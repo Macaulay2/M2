@@ -5,9 +5,12 @@
 document { 
      Key => {comodule,
 	  (comodule, Ideal),
-	  (comodule, Module)},
+	  (comodule, Module),
+	  (quotient, Ideal),
+	  (quotient, Module)
+	  },
      Headline => "submodule to quotient module",
-     Usage => "comodule M",
+     Usage => "comodule M\nquotient M",
      Inputs => {
 	  "M" => Module => {"or an ", TO2(Ideal,"ideal")}
 	  },
