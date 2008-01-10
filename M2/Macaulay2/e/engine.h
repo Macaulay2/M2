@@ -1155,6 +1155,11 @@ extern "C" {
 
   int IM2_MutableMatrix_n_cols(const MutableMatrix *M);	/* drg: connected rawNumberOfColumns, OK */
 
+  void rawMutableMatrixFillRandomDensity(MutableMatrix *M, double density, int special_type);
+  /* special_type: 0 is general, 1 is (strictly) upper triangular. */
+
+  void rawMutableMatrixFillRandom(MutableMatrix *M, long nelems);
+
   const RingElementOrNull * IM2_MutableMatrix_get_entry(const MutableMatrix *M, 
 							int r, int c); /* drg: connected rawMatrixEntry, OK*/
 

@@ -61,6 +61,72 @@ int IM2_MutableMatrix_n_cols(const MutableMatrix *M)
   return M->n_cols();
 }
 
+void rawMutableMatrixFillRandom(MutableMatrix *M, long nelems)
+{
+  int nrows = M->n_rows();
+  int ncols = M->n_cols();
+  const Ring *R = M->get_ring();
+  for (long i=0; i<nelems; i++)
+    {
+      int r = rawRandomInt(nrows);
+      int c = rawRandomInt(ncols);
+      ring_elem a = R->random();
+      if (!R->is_zero(a))
+	M->set_entry(r,c,R->random());
+    }
+}
+
+void rawMutableMatrixFillRandomDensity(MutableMatrix *M, double density, int special_type)
+/* special_type: 0 is general, 1 is (strictly) upper triangular. */
+{
+  bool doing_fraction = false;
+  int threshold = 0;
+
+  int nrows = M->n_rows();
+  int ncols = M->n_cols();
+  const Ring *R = M->get_ring();
+
+  if (density != 1.0)
+    {
+      doing_fraction = true;
+      threshold = static_cast<int>(density * 10000);
+    }
+
+  if (special_type == 0)
+    {
+      for (int i=0; i<ncols; i++)
+	for (int j=0; j<nrows; j++)
+	  {
+	    if (doing_fraction)
+	      {
+		int32_t u = rawRandomInt((int32_t)10000);
+		if (u > threshold) continue;
+	      }
+	    ring_elem a = R->random();
+	    if (!R->is_zero(a))
+	      M->set_entry(j,i,a);
+	  }
+    }
+  else if (special_type == 1)
+    {
+      for (int i=0; i<ncols; i++)
+	{
+	  int top = (i>=nrows ? nrows : i);
+	  for (int j=0; j<top; j++)
+	    {
+	      if (doing_fraction)
+		{
+		  int32_t u = rawRandomInt((int32_t)10000);
+		  if (u > threshold) continue;
+		}
+	      ring_elem a = R->random();
+	      if (!R->is_zero(a))
+		M->set_entry(j,i,a);
+	    }
+	}
+    }
+}
+
 const RingElementOrNull * IM2_MutableMatrix_get_entry(const MutableMatrix *M, int r, int c)
 {
   if (r < 0 || r >= M->n_rows())

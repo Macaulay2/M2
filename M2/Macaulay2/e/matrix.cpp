@@ -673,22 +673,9 @@ Matrix *Matrix::module_tensor(const Matrix *m) const
   return mat.to_matrix();
 }
 
-#if 0
-// // REMOVE THIS ONE??
-// Matrix *Matrix::random(const Ring *R, int r, int c)
-// {
-//   FreeModule *F = R->make_FreeModule(r);
-//   FreeModule *G = R->make_FreeModule(c);
-//   Matrix *result = new Matrix(F,G);
-//   for (int i=0; i<c; i++)
-//     (*result)[i] = F->random();
-//   return result;
-// }
-#endif
-
 Matrix *Matrix::random(const Ring *R, 
 		       int r, int c, 
-		       double fraction_non_zero, 
+		       double density, 
 		       int special_type) // 0: general, 1:upper triangular, others?
 {
   bool doing_fraction = false;
@@ -701,16 +688,10 @@ Matrix *Matrix::random(const Ring *R,
   // Loop through all selected elements, flip a 'fraction_non_zero' coin, and if non-zero
   // set that element.
 
-#ifdef DEVELOPMENT
-#warning "fraction_non_zero not yet used"  
-#endif
-
-  if (fraction_non_zero != 1.0)
+  if (density != 1.0)
     {
       doing_fraction = true;
-      int f = static_cast<int>(fraction_non_zero * 10000);
-      threshold = 10000 - f;
-      // printf("threshold is %d\n", threshold);
+      threshold = static_cast<int>(density * 10000);
     }
 
 
@@ -745,7 +726,6 @@ Matrix *Matrix::random(const Ring *R,
     }
   return mat.to_matrix();
 }
-
 
 Matrix *Matrix::tensor(const Matrix *m) const
 {
