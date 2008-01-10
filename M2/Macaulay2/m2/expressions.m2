@@ -1070,6 +1070,7 @@ toString FilePosition := net FilePosition := i -> concatenate(i#0,":",toString i
 
 Constant = new Type of BasicList
 pi = new Constant from { symbol pi, mpfrConstantPi }
+ii = new Constant from { symbol ii, ConstantII }
 
 net Constant := c -> net c#0
 expression Constant := c -> expression c#0
