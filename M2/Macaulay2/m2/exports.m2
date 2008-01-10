@@ -123,6 +123,7 @@ export {
 	symbol ChainComplexMap,
 	symbol ChangeMatrix,
 	symbol CheckDocumentation,
+	symbol ClosestFit,
 	symbol CodimensionLimit,
 	symbol CoefficientRing,
 	symbol Cofactor,

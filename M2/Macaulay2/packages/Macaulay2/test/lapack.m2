@@ -8,6 +8,9 @@ diag(ZZ,ZZ,List) := (a,b,L) -> (
 L1norm = method()
 L1norm Matrix := (M) -> max apply(flatten entries M, e -> abs e)
 
+v = solve(matrix {{1.0, 2.01}, {3., 4.}, {5., 8.}},matrix {{13.01}, {29.01}, {55.01}},ClosestFit=>true,MaximalRank=>true)
+assert (L1norm(v - matrix {{3.}, {5.}}) < .1)
+
 clean = method()
 clean(Matrix,RR) := (M,epsilon) -> (
      zero := 0_(ring M);
