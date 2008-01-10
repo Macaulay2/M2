@@ -158,7 +158,7 @@ setupMethods((), {
 	  coefficients, monomials, size, sum, product, exponents, nullhomotopy, module, raw,
 	  hilbertFunction, content, leadTerm, leadCoefficient, leadMonomial, components,
 	  leadComponent, degreesRing, degrees, assign, numgens, conjugate,
-	  autoload, relations, cone, standardForm, inverse, numeric, default, round,
+	  autoload, relations, cone, standardForm, inverse, numeric, round,
 	  determinant, presentation, dismiss, degreesMonoid,
 	  fraction, part, coefficient, preimage, minimalPrimes
 	  })
@@ -168,11 +168,23 @@ use Thing := identity
 
 degree = method ( )
 
+default = method()
+default Type := (X) -> (
+     m := lookup(X,symbol default);
+     if m === null then error "no method found";
+     m ())
+
 random = method(Options => {
 	  MaximalRank => false,
 	  Density => 1.,
-	  UpperTriangular => false
+	  UpperTriangular => false,
+	  Norm => 1.,
+	  Height => 10
 	  })
+random Type := opts -> (X) -> (
+     m := lookup(X,symbol random);
+     if m === null then error "no method found";
+     m opts)
 
 generators = method(
      Options => {

@@ -20,11 +20,20 @@ round(ZZ,RR) := (n,x) -> (
      p := 10^n;
      toRR(precision x,round(x*p)/p))
 
-RR#0 = 0.
-RR#1 = 1.
+-- RR#0 = 0.
+-- RR#1 = 1.
+
 RR.isBasic = true
 RR.InverseMethod = x -> 1/x
 isConstant RR := i -> true
+
+ d := 2^31 - 1
+ df := d + 0.
+random RR := RR => opts -> x -> (
+     if x <= 0. then (
+	  error "expected a positive number"
+	  );
+     x * (rawRandomInteger d / df))
 
 -----------------------------------------------------------------------------
 -- ImmutableType

@@ -1679,14 +1679,14 @@ document {
      }
 
 document {
-     Key => (random, Ring),
-     Headline => "random element of a ring",
-     Usage => "random R",
+     Key => (random, Type),
+     Headline => "random element of a type",
+     Usage => "random T",
      Inputs => {
-	  "R"
+	  "T"
 	  },
      Outputs => {
-	  { "a random element of the ring ", TT "R" }
+	  { "a random instance of the type ", TT "T" }
 	  },
 	TT "random ZZ", " outputs a random integer from the closed interval bounded by  ", TT "-10", " and ", TT "10", ".",
 	EXAMPLE "random ZZ",
@@ -1701,13 +1701,13 @@ document {
 document {
      Key => (random, QuotientRing),
      Headline => "random element of a quotient ring",
-	"See: ", TO (random, Ring), "."
+	"See: ", TO (random, Type), "."
 	}
 
 document {
      Key => (random, GaloisField),
      Headline => "random element of a Galois field",
-	"See: ", TO (random, Ring), "."
+	"See: ", TO (random, Type), "."
 	}
 
 
