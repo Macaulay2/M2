@@ -61,6 +61,18 @@ assert (checkSolve(M1,b1) < 1e-15)
 assert (checkSolve(M1^4,b1) < 1e-10)
 assert (checkSolve(M1^3,b1) < 1e-10)
 
+A = CC_200
+M = random(A^4,A^4,Density=>.1)
+b = random(A^4,A^3)
+checkSolve(M,b)
+
+A = CC_200
+time M = random(A^1000,A^1000,Density=>.1);
+b = random(A^1000,A^3);
+time solve(M,b);
+time M*oo-b;
+checkSolve(M,b)
+
 checkEigenvectors M1
 oo_0-oo_1
 checkSVD(M1)

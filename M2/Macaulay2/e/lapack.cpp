@@ -532,6 +532,9 @@ bool Lapack::least_squares(const LMatrixRR *A, const LMatrixRR *b, LMatrixRR *x)
   int cols = A->n_cols();
   int brows = b->n_rows();
   int bcols = b->n_cols();
+  int min = (rows <= cols) ? rows : cols;
+  int max = (rows >= cols) ? rows : cols;
+  int wsize = min + ((bcols >=  max) ? bcols : max);
 
   if (brows != rows) {
     ERROR("expected compatible right hand side");
@@ -540,9 +543,6 @@ bool Lapack::least_squares(const LMatrixRR *A, const LMatrixRR *b, LMatrixRR *x)
 
   double *copyA = A->make_lapack_array();
   double *copyb = b->make_lapack_array();
-  int min = (rows <= cols) ? rows : cols;
-  int max = (rows >= cols) ? rows : cols;
-  int wsize = min + ((bcols >=  max) ? bcols : max);
   double *workspace = newarray_atomic(double, wsize);
 
   if (rows < cols) {
@@ -672,7 +672,7 @@ M2_arrayint_OrNull Lapack::LU(const LMatrixCC *A,
 			      LMatrixCC *L,
 			      LMatrixCC *U)
 {
-#if LAPACK
+#if !LAPACK
   ERROR("lapack not present");
   return NULL;
 #else
@@ -683,12 +683,12 @@ M2_arrayint_OrNull Lapack::LU(const LMatrixCC *A,
   M2_arrayint result = makearrayint(rows);
   int *perm = newarray_atomic(int, min);
 
-  LMatrixCC *copyA = A->copy();
+  double *copyA = A->make_lapack_array();
 
   L->resize(rows, rows);
   U->resize(rows, cols);
 
-  zgetrf_(&rows, &cols, copyA->get_lapack_array(), 
+  zgetrf_(&rows, &cols, copyA, 
 	  &rows, perm, &info);
 
   if (info < 0)       
@@ -699,36 +699,27 @@ M2_arrayint_OrNull Lapack::LU(const LMatrixCC *A,
     }
   else
     {
-      // set the lower triangular matrix L
-      double *vals = L->get_lapack_array();
+      // set the lower and upper triangular matrices L, U.
+      M2_CCC_struct *elemsL = L->get_array();
+      M2_CCC_struct *elemsU = U->get_array();
       int loc = 0;
       for (int j=0; j<cols; j++) {
 	for (int i=0; i<rows; i++) {
 	  if (i > j) {
-	    vals[2*loc] = copyA->get_lapack_array()[2*loc];
-	    vals[2*loc+1] = copyA->get_lapack_array()[2*loc+1];
+	    mpfr_set_d(elemsL[loc].re, copyA[2*loc], GMP_RNDN);
+	    mpfr_set_d(elemsL[loc].im, copyA[2*loc+1], GMP_RNDN);
+	    mpfr_set_si(elemsU[loc].re, 0, GMP_RNDN);
+	    mpfr_set_si(elemsU[loc].im, 0, GMP_RNDN);
 	  } else if (i == j) {
-	    vals[2*loc] = 1;
-	    vals[2*loc+1] = 0;
+	    mpfr_set_si(elemsL[loc].re, 1, GMP_RNDN);
+	    mpfr_set_si(elemsL[loc].im, 0, GMP_RNDN);
+	    mpfr_set_d(elemsU[loc].re, copyA[2*loc], GMP_RNDN);
+	    mpfr_set_d(elemsU[loc].im, copyA[2*loc+1], GMP_RNDN);
 	  } else {
-	    vals[2*loc] = 0;
-	    vals[2*loc+1] = 0;
-	  }
-	  loc++;
-	}
-      }
-      
-      // set the upper triangular matrix U
-      vals = U->get_lapack_array();
-      loc = 0;
-      for (int j=0; j<cols; j++) {
-	for (int i=0; i<rows; i++) {
-	  if (i <= j) {
-	    vals[2*loc] = copyA->get_lapack_array()[2*loc];
-	    vals[2*loc+1] = copyA->get_lapack_array()[2*loc+1];
-	  } else {
-	    vals[2*loc] = 0;
-	    vals[2*loc+1] = 0;
+	    mpfr_set_si(elemsL[loc].re, 0, GMP_RNDN);
+	    mpfr_set_si(elemsL[loc].im, 0, GMP_RNDN);
+	    mpfr_set_d(elemsU[loc].re, copyA[2*loc], GMP_RNDN);
+	    mpfr_set_d(elemsU[loc].im, copyA[2*loc+1], GMP_RNDN);
 	  }
 	  loc++;
 	}
@@ -749,21 +740,23 @@ M2_arrayint_OrNull Lapack::LU(const LMatrixCC *A,
 	result->array[i] = i;
     }
 
+  deletearray(perm);
+  deletearray(copyA);
+
   return result;
 #endif
 }
 
 bool Lapack::solve(const LMatrixCC *A, const LMatrixCC *b, LMatrixCC *x)
 {
-#if LAPACK
+#if !LAPACK
   ERROR("lapack not present");
   return false;
 #else
-  LMatrixCC *copyA = A->copy();
 
+  bool ret = true;
   int size = A->n_rows();
   int bsize, info;
-  int *permutation = newarray_atomic(int, size);
 
   /* make sure matrix is square */
   if (size != A->n_cols())
@@ -779,33 +772,45 @@ bool Lapack::solve(const LMatrixCC *A, const LMatrixCC *b, LMatrixCC *x)
       return false;
     }
 
+  int *permutation = newarray_atomic(int, size);
+  double *copyA = A->make_lapack_array();
+  double *copyb = b->make_lapack_array();
+
   bsize = b->n_cols();
-  x->set_matrix(b);
 
   zgesv_(&size, &bsize,
-	 copyA->get_lapack_array(),
+	 copyA,
 	 &size, permutation, 
-	 x->get_lapack_array(),
+	 copyb,
 	 &size, &info);
 
   if (info > 0)       
     {
       ERROR("according to zgesv, matrix is singular");
-      return false;
+      ret = false;
     }
   else if (info < 0)
     {
       ERROR("argument passed to zgesv had an illegal value");
-      return false;
+      ret = false;
+    }
+  else
+    {
+      x->resize(size,bsize);
+      x->fill_from_lapack_array(copyb);
     }
 
-  return true;
+  deletearray(permutation);
+  deletearray(copyA);
+  deletearray(copyb);
+
+  return ret;
 #endif
 }
 
 bool Lapack::eigenvalues(const LMatrixCC *A, LMatrixCC *eigvals)
 {
-#if LAPACK
+#if !LAPACK
   ERROR("lapack not present");
   return false;
 #else
@@ -815,21 +820,20 @@ bool Lapack::eigenvalues(const LMatrixCC *A, LMatrixCC *eigvals)
     return false;
   }
 
-  LMatrixCC *copyA = A->copy();
-
+  bool ret = true;
   char dont = 'N';
+  int info;
   int wsize = 4*size;
   int rsize = 2*size;
   double *workspace = newarray_atomic(double, wsize);
   double *rwork = newarray_atomic(double, rsize);
 
-  int info;
-
-  eigvals->resize(size,1);
+  double *copyA = A->make_lapack_array();
+  double *evals = newarray_atomic(double,2*size);
 
   zgeev_(&dont, &dont, 
-	 &size, copyA->get_lapack_array(),
-	 &size, eigvals->get_lapack_array(),
+	 &size, copyA,
+	 &size, evals,
 	 static_cast<double *>(0), &size,  /* left eigenvectors */
 	 static_cast<double *>(0), &size,  /* right eigenvectors */
 	 workspace, &wsize, rwork,
@@ -838,20 +842,31 @@ bool Lapack::eigenvalues(const LMatrixCC *A, LMatrixCC *eigvals)
   if (info < 0)       
     {
       ERROR("argument passed to zgeev had an illegal value");
-      return false;
+      ret = false;
     }
   else if (info > 0) 
     {
       ERROR("the QR algorithm in zgeev failed to compute all eigvals");
-      return false;
+      ret = false;
     }
-  return true;
+  else
+    {
+      eigvals->resize(size,1);
+      eigvals->fill_from_lapack_array(evals);
+    }
+
+  deletearray(copyA);
+  deletearray(evals);
+  deletearray(workspace);
+  deletearray(rwork);
+
+  return ret;
 #endif
 }
 
 bool Lapack::eigenvectors(const LMatrixCC *A, LMatrixCC *eigvals, LMatrixCC *eigvecs)
 {
-#if LAPACK
+#if !LAPACK
   ERROR("lapack not present");
   return false;
 #else
@@ -861,8 +876,7 @@ bool Lapack::eigenvectors(const LMatrixCC *A, LMatrixCC *eigvals, LMatrixCC *eig
     return false;
   }
 
-  LMatrixCC *copyA = A->copy();
-
+  bool ret = true;
   char dont = 'N';
   char doit = 'V';
   int wsize = 4*size;
@@ -871,35 +885,49 @@ bool Lapack::eigenvectors(const LMatrixCC *A, LMatrixCC *eigvals, LMatrixCC *eig
   double *rwork = newarray_atomic(double,rsize);
   int info;
 
-  eigvals->resize(size,1);
-  eigvecs->resize(size,size);
+  double *copyA = A->make_lapack_array();
+  double *evals = newarray_atomic(double,2*size);
+  double *evecs = newarray_atomic(double,2*size*size);
 
   zgeev_(&dont, &doit, 
-	 &size, copyA->get_lapack_array(),
-	 &size, eigvals->get_lapack_array(),
+	 &size, copyA,
+	 &size, evals,
 	 static_cast<double *>(0), &size,  /* left eigvecs */
-	 eigvecs->get_lapack_array(), &size,  /* right eigvecs */
+	 evecs, &size,  /* right eigvecs */
 	 workspace, &wsize, rwork,
 	 &info);
 
   if (info < 0)       
     {
       ERROR("argument passed to zgeev had an illegal value");
-      return false;
+      ret = false;
     }
   else if (info > 0) 
     {
       ERROR("the QR algorithm in zgeev failed to compute all eigvals");
-      return false;
+      ret = false;
+    }
+  else
+    {
+      eigvals->resize(size,1);
+      eigvals->fill_from_lapack_array(evals);
+      eigvecs->resize(size,size);
+      eigvecs->fill_from_lapack_array(evecs);
     }
 
-  return true;
+  deletearray(copyA);
+  deletearray(evals);
+  deletearray(evecs);
+  deletearray(workspace);
+  deletearray(rwork);
+
+  return ret;
 #endif
 }
 
 bool Lapack::eigenvalues_hermitian(const LMatrixCC *A, LMatrixRR *eigvals)
 {
-#if LAPACK
+#if !LAPACK
   ERROR("lapack not present");
   return false;
 #else
@@ -909,6 +937,7 @@ bool Lapack::eigenvalues_hermitian(const LMatrixCC *A, LMatrixRR *eigvals)
     return false;
   }
 
+  bool ret = true;
   char dont = 'N';
   char triangle = 'U';  /* Upper triangular part makes symmetric matrix. */
 
@@ -917,32 +946,42 @@ bool Lapack::eigenvalues_hermitian(const LMatrixCC *A, LMatrixRR *eigvals)
   double *rwork = newarray_atomic(double,3*size-2);
   int info;
 
-  LMatrixCC *copyA = A->copy();
-  eigvals->resize(size,1);
+  double *copyA = A->make_lapack_array();
+  double *evals = newarray_atomic(double,size);
 
   zheev_(&dont, &triangle, 
-	 &size, copyA->get_lapack_array(),
-	 &size, eigvals->get_array(),
+	 &size, copyA,
+	 &size, evals,
 	 workspace, &wsize, rwork, &info);
 
   if (info < 0)
     {
       ERROR("argument passed to zheev had an illegal value");
-      return false;
+      ret = false;
     }
   else if (info > 0) 
     {
       ERROR("zheev did not converge");
-      return false;
+      ret = false;
+    }
+  else
+    {
+      eigvals->resize(size,1);
+      eigvals->fill_from_lapack_array(evals);
     }
 
-  return true;
+  deletearray(copyA);
+  deletearray(evals);
+  deletearray(workspace);
+  deletearray(rwork);
+
+  return ret;
 #endif
 }
 
 bool Lapack::eigenvectors_hermitian(const LMatrixCC *A, LMatrixRR *eigvals, LMatrixCC *eigvecs)
 {
-#if LAPACK
+#if !LAPACK
   ERROR("lapack not present");
   return false;
 #else
@@ -952,6 +991,7 @@ bool Lapack::eigenvectors_hermitian(const LMatrixCC *A, LMatrixRR *eigvals, LMat
     return false;
   }
 
+  bool ret = true;
   char doit = 'V';
   char triangle = 'U';  /* Upper triangular part makes symmetric matrix */
 
@@ -960,35 +1000,49 @@ bool Lapack::eigenvectors_hermitian(const LMatrixCC *A, LMatrixRR *eigvals, LMat
   double *rwork = newarray_atomic(double,3*size-2);
   int info;
 
-  eigvecs->set_matrix(A);
-  eigvals->resize(size,1);
+  double *evecs = A->make_lapack_array();
+  double *evals = newarray_atomic(double,size);
+
 
   zheev_(&doit, &triangle, 
-	 &size, eigvecs->get_lapack_array(),
-	 &size, eigvals->get_array(),
+	 &size, evecs,
+	 &size, evals,
 	 workspace, &wsize, rwork, &info);
 
   if (info < 0)
     {
       ERROR("argument passed to zheev had an illegal value");
-      return false;
+      ret = false;
     }
   else if (info > 0) 
     {
       ERROR("zheev did not converge");
-      return false;
+      ret = false;
+    }
+  else
+    {
+      eigvals->resize(size,1);
+      eigvals->fill_from_lapack_array(evals);
+      eigvecs->resize(size,size);
+      eigvecs->fill_from_lapack_array(evecs);
     }
 
-  return true;
+  deletearray(evals);
+  deletearray(evecs);
+  deletearray(workspace);
+  deletearray(rwork);
+
+  return ret;
 #endif
 }
 
 bool Lapack::SVD(const LMatrixCC *A, LMatrixRR *Sigma, LMatrixCC *U, LMatrixCC *VT)
 {
-#if LAPACK
+#if !LAPACK
   ERROR("lapack not present");
   return false;
 #else
+  bool ret = true;
   char doit = 'A';  // other options are 'S' and 'O' for singular vectors only
   int rows = A->n_rows();
   int cols = A->n_cols();
@@ -999,40 +1053,57 @@ bool Lapack::SVD(const LMatrixCC *A, LMatrixRR *Sigma, LMatrixCC *U, LMatrixCC *
   double *workspace = newarray_atomic(double,wsize);
   double *rwork = newarray_atomic(double,5*min);
 
-  LMatrixCC *copyA = A->copy();
-  U->resize(rows,rows);
-  VT->resize(cols,cols);
-  Sigma->resize(min,1);
+  double *copyA = A->make_lapack_array();
+  double *u = newarray_atomic(double,2*rows*rows);
+  double *vt = newarray_atomic(double,2*cols*cols);
+  double *sigma = newarray_atomic(double,2*min);
   
   zgesvd_(&doit, &doit, &rows, &cols, 
-	  copyA->get_lapack_array(), &rows,
-	  Sigma->get_array(), 
-	  U->get_lapack_array(), &rows,
-	  VT->get_lapack_array(), &cols,
+	  copyA, &rows,
+	  sigma, 
+	  u, &rows,
+	  vt, &cols,
 	  workspace, &wsize, 
 	  rwork, &info);
 
   if (info < 0)
     {
       ERROR("argument passed to zgesvd had an illegal value");
-      return false;
+      ret = false;
     }
   else if (info > 0) 
     {
       ERROR("zgesvd did not converge");
-      return false;
+      ret = false;
     }
-  
-  return true;
+  else
+    {
+      U->resize(rows,rows);
+      U->fill_from_lapack_array(u);
+      VT->resize(cols,cols);
+      VT->fill_from_lapack_array(vt);
+      Sigma->resize(min,1);
+      Sigma->fill_from_lapack_array(sigma);
+    }
+
+  deletearray(workspace);
+  deletearray(rwork);
+  deletearray(copyA);
+  deletearray(u);
+  deletearray(vt);
+  deletearray(sigma);
+
+  return ret;
 #endif
 }
 
 bool Lapack::SVD_divide_conquer(const LMatrixCC *A, LMatrixRR *Sigma, LMatrixCC *U, LMatrixCC *VT)
 {
-#if LAPACK
+#if !LAPACK
   ERROR("lapack not present");
   return false;
 #else
+  bool ret = true;
   char doit = 'A';  // other options are 'S' and 'O' for singular vectors only
   int rows = A->n_rows();
   int cols = A->n_cols();
@@ -1045,103 +1116,134 @@ bool Lapack::SVD_divide_conquer(const LMatrixCC *A, LMatrixRR *Sigma, LMatrixCC 
   int *iworkspace = newarray_atomic(int,8*min);
   double *rwork = newarray_atomic(double,5*min*min + 7*min);
 
-  LMatrixCC *copyA = A->copy();
-  U->resize(rows,rows);
-  VT->resize(cols,cols);
-  Sigma->resize(min,1);
-
+  double *copyA = A->make_lapack_array();
+  double *u = newarray_atomic(double,2*rows*rows);
+  double *vt = newarray_atomic(double,2*cols*cols);
+  double *sigma = newarray_atomic(double,2*min);
+  
   zgesdd_(&doit, &rows, &cols, 
-	  copyA->get_lapack_array(), &rows,
-	  Sigma->get_array(), 
-	  U->get_lapack_array(), &rows,
-	  VT->get_lapack_array(), &cols,
+	  copyA, &rows,
+	  sigma, 
+	  u, &rows,
+	  vt, &cols,
 	  workspace, &wsize, rwork, 
 	  iworkspace, &info);
 
   if (info < 0)
     {
       ERROR("argument passed to zgesdd had an illegal value");
-      return false;
+      ret = false;
     }
   else if (info > 0) 
     {
       ERROR("zgesdd did not converge");
-      return false;
+      ret = false;
+    }
+  else
+    {
+      U->resize(rows,rows);
+      U->fill_from_lapack_array(u);
+      VT->resize(cols,cols);
+      VT->fill_from_lapack_array(vt);
+      Sigma->resize(min,1);
+      Sigma->fill_from_lapack_array(sigma);
     }
 
-  return true;
+  deletearray(workspace);
+  deletearray(iworkspace);
+  deletearray(rwork);
+  deletearray(copyA);
+  deletearray(u);
+  deletearray(vt);
+  deletearray(sigma);
+
+  return ret;
 #endif
 }
 
 bool Lapack::least_squares(const LMatrixCC *A, const LMatrixCC *b, LMatrixCC *x)
 {
-#if LAPACK
+#if !LAPACK
   ERROR("lapack not present");
   return false;
 #else
-  LMatrixCC *copyA = A->copy();
-  LMatrixCC *copyb = b->copy();
+  bool ret = true;
   char job = 'N';
+  int info;
   int rows = A->n_rows();
   int cols = A->n_cols();
   int brows = b->n_rows();
   int bcols = b->n_cols();
-  int info;
   int min = (rows <= cols) ? rows : cols;
   int max = (rows >= cols) ? rows : cols;
   int wsize = min + ((bcols >=  max) ? bcols : max);
-  double *workspace = newarray_atomic(double, 2*wsize);
 
   if (brows != rows) {
     ERROR("expected compatible right hand side");
     return false;
   }
 
+  double *copyA = A->make_lapack_array();
+  double *copyb = b->make_lapack_array();
+  double *workspace = newarray_atomic(double, 2*wsize);
+
+#warning "the copy logic might be wrong"
   if (rows < cols) {
-    copyb->resize(cols, bcols);
-    // for (int i = 0; i < brows*bcols; i++) copyb->_array[i] = b->_array[i];
+    // Make 'b' (copyb) into a cols x bcols matrix, by adding a zero block at the bottom
+    double *copyb2 = newarray_atomic_clear(double, 2*cols*bcols);
     int bloc = 0;
     int copyloc = 0;
     for (int j = 0; j < bcols; j++) {
       copyloc = j*cols;
-      for (int i = 0; i < brows; i++) {
-	copyb->get_array()[copyloc++] = b->get_array()[bloc++];
+      for (int i = 0; i < 2*brows; i++) {
+	copyb2[copyloc++] = copyb[bloc++];
       }
     }
+    deletearray(copyb);
+    copyb = copyb2;
   }
-  
+
   zgels_(&job, &rows, &cols, &bcols,
-	 copyA->get_lapack_array(), &rows,
-	 copyb->get_lapack_array(), &max,
+	 copyA, &rows,
+	 copyb, &max,
 	 workspace, &wsize, 
 	 &info);
 
   if (info != 0)
     {
       ERROR("argument passed to zgels had an illegal value");
-      return false;
+      ret = false;
     }
-
-  if (rows > cols) {
-    x->resize(cols,bcols);
-    int copyloc = 0;
-    int xloc = 0;
-    for (int j = 0; j < bcols; j++) {
-      copyloc = j*rows;
-      for (int i = 0; i < cols; i++) {
-	x->get_array()[xloc++] = copyb->get_array()[copyloc++];
+  else
+    {
+#warning "the copy logic might be wrong"
+      if (rows > cols) {
+	x->resize(cols,bcols);
+	int copyloc = 0;
+	int xloc = 0;
+	for (int j = 0; j < bcols; j++) {
+	  copyloc = j*rows;
+	  for (int i = 0; i < cols; i++) {
+	    mpfr_set_d((x->get_array()[xloc]).re, copyb[copyloc++], GMP_RNDN);
+	    mpfr_set_d((x->get_array()[xloc++]).im, copyb[copyloc++], GMP_RNDN);
+	  }
+	}
+      } else {
+	x->fill_from_lapack_array(copyb);
+	/*
+	  x->resize(cols,bcols);
+	  for (int j = 0; j < bcols*cols; j++) {
+	  x->_array[j] = copyb->_array[j];
+	  }
+	*/
       }
     }
-  } else {
-    x->set_matrix(copyb);
-    /*
-    x->resize(cols,bcols);
-    for (int j = 0; j < bcols*cols; j++) {
-      x->_array[j] = copyb->_array[j];
-    }
-    */
-  }
-  return true;
+
+  deletearray(copyA);
+  deletearray(copyb);
+  deletearray(workspace);
+
+  return ret;
 #endif
 }
 
