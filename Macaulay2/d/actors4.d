@@ -1104,7 +1104,7 @@ toRR(e:Expr):Expr := (
      is s:Sequence do (
 	  if length(s) != 2 then WrongNumArgs(2) else
 	  when s.0 is prec:ZZ do (
-	       if !isULong(prec) then WrongArgSmallInteger(1)
+	       if !isULong(prec) then WrongArgSmallUInteger(1)
 	       else (
 	       	    when s.1 
 	       	    is x:QQ do Expr(toRR(x,toULong(prec)))
@@ -1123,7 +1123,7 @@ toCC(e:Expr):Expr := (
      is s:Sequence do (
 	  if length(s) == 2 then (
 	       when s.0 is prec:ZZ do (
-		    if !isULong(prec) then WrongArgSmallInteger(1)
+		    if !isULong(prec) then WrongArgSmallUInteger(1)
 		    else (
 			 when s.1 
 			 is x:QQ do Expr(toCC(x,toULong(prec)))
@@ -1141,7 +1141,7 @@ toCC(e:Expr):Expr := (
 	       )
 	  else if length(s) == 3 then (
 	       when s.0 is prec:ZZ do (
-		    if !isULong(prec) then WrongArgSmallInteger(1)
+		    if !isULong(prec) then WrongArgSmallUInteger(1)
 		    else Expr(CC(
 			      when s.1 
 			      is x:QQ do toRR(x,toULong(prec))
@@ -1164,6 +1164,18 @@ toCC(e:Expr):Expr := (
 	  else WrongNumArgs(2,3))
      else WrongNumArgs(2,3));
 setupfun("toCC",toCC);
+
+setPrecision(e:Expr):Expr := (
+     when e is s:Sequence do if length(s) != 2 then WrongNumArgs(2) else (
+	  when s.0 is prec:ZZ do
+	  if !isULong(prec) then return WrongArgSmallUInteger(1) else 
+	  when s.1
+	  is x:RR do Expr(toRR(x,toULong(prec))) -- # typical value: setPrecision, ZZ, RR, RR
+	  is x:CC do Expr(toCC(x,toULong(prec))) -- # typical value: setPrecision, ZZ, CC, CC
+	  else WrongArg("a real or complex number")
+	  else WrongArgSmallUInteger(1))
+     else WrongNumArgs(2));
+setupfun("setPrecision", setPrecision);
 
 precision(e:Expr):Expr := (
      when e 
