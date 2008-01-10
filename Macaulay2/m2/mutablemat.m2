@@ -34,10 +34,12 @@ matrix MutableMatrix := o -> m -> map(ring m, rawMatrix raw m)
 mutableZero = method(Options => {Dense => true}, TypicalValue=>MutableMatrix)
 mutableZero(Ring,ZZ,ZZ) := o -> (R,nrows,ncols) -> 
   map(R,rawMutableMatrix(raw R,nrows,ncols,o.Dense))
+mutableZero(RingFamily,ZZ,ZZ) := o -> (R,nrows,ncols) -> mutableZero(default R,nrows,ncols,o)
 
 mutableIdentity = method(Options => {Dense => true}, TypicalValue=>MutableMatrix)
 mutableIdentity(Ring,ZZ) := o -> (R,nrows) -> 
   map(R,rawMutableIdentity(raw R,nrows,o.Dense))
+mutableIdentity(RingFamily,ZZ) := o -> (R,nrows) -> mutableIdentity(R,nrows,o)
 
 MutableMatrix _ Sequence := (m,rc) -> (
      n := (raw m)_rc;

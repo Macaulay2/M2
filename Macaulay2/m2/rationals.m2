@@ -20,6 +20,8 @@ QQ.isField = true
 QQ.baseRings = {ZZ}
 QQ.frac = QQ
 
+round QQ := x -> floor(x + 1/2)
+
 smallrats := {-10/1, -5/1, -10/3, -5/2, -2/1, -5/3, -10/7, -5/4, -10/9, -9/1, -9/2, -3/1, -9/4, -9/5, -3/2,
       -9/7, -9/8, -1/1, -8/1, -4/1, -8/3, -8/5, -4/3, -8/7, -8/9, -7/1, -7/2, -7/3, -7/4, -7/5,
       -7/6, -7/8, -7/9, -6/1, -6/5, -6/7, -3/4, -2/3, -5/6, -5/7, -5/8, -5/9, -4/5, -4/7, -1/2,
@@ -30,7 +32,7 @@ smallrats := {-10/1, -5/1, -10/3, -5/2, -2/1, -5/3, -10/7, -5/4, -10/9, -9/1, -9
       10/7, 10/9}
 
 QQ.random = () -> smallrats#(random (#smallrats))
-promote(QQ,QQ) := identity
+promote(QQ,QQ) := (x,QQ) -> x
 expression QQ := r -> (
      n := numerator r;
      d := denominator r;

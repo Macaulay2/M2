@@ -893,9 +893,17 @@ floor(e:Expr):Expr := (
      is x:QQ do Expr(floor(x))
      is ZZ do e
      is x:Error do Expr(x)
-     else buildErrorPacket("expected a real number")
+     else buildErrorPacket("expected an integral, rational, or real number")
      );
 setupfun("floor",floor);
+
+round0(e:Expr):Expr := (
+     when e
+     is x:RR do Expr(round(x))
+     is x:Error do Expr(x)
+     else buildErrorPacket("expected a real number")
+     );
+setupfun("round0",round0);
 
 run(e:Expr):Expr := (
      when e
