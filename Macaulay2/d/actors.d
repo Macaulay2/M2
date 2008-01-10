@@ -533,7 +533,7 @@ BinaryPowerMethod(x:Expr,y:Expr):Expr := (
 	       when w is Error do return w else nothing;
 	       );
 	  z)
-     else WrongArgInteger(2));
+     else WrongArgZZ(2));
 BinaryPowerMethodFun(e:Expr):Expr := (
      when e is a:Sequence do
      if length(a)==2 then
@@ -563,7 +563,7 @@ SimplePowerMethod(x:Expr,y:Expr):Expr := (
 	       n = n-1;
 	       );
 	  z)
-     else WrongArgInteger(2));
+     else WrongArgZZ(2));
 SimplePowerMethodFun(e:Expr):Expr := (
      when e is a:Sequence do
      if length(a)==2 then

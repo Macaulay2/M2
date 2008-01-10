@@ -661,6 +661,7 @@ export {
 	symbol fileLength,
 	symbol fileMode,
 	symbol fileTime,
+        symbol fillMatrix,
 	symbol findFiles,
 	symbol findSynonyms,
 	symbol first,

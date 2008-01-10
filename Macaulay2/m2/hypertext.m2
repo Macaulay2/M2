@@ -325,12 +325,11 @@ infoTagConvert = method()
 tagConvert := n -> infoLit if n#0 === " " or n#-1 === " " then concatenate("\"",n,"\"") else n
 infoTagConvert String := tagConvert
 infoTagConvert DocumentTag := tag -> (
-     pkg := DocumentTag.Package tag;
+     pkgname := DocumentTag.Title tag;
      fkey := DocumentTag.FormattedKey tag;
-     if currentPackage === pkg 
+     if currentPackage#"title" === pkgname
      then tagConvert fkey
      else (
-	  pkgname := pkgTitle pkg;
 	  concatenate("(",pkgname,")",tagConvert if pkgname === fkey then "Top" else fkey)))
 info TO  := x -> concatenate(format DocumentTag.FormattedKey x#0, if x#?1 then x#1, "  (*note ", infoTagConvert x#0, "::)")
 info TO2 := x -> concatenate(x#1, "  (*note ", x#1, ":", infoTagConvert x#0, ".)")

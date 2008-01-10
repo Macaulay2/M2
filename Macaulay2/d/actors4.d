@@ -40,7 +40,7 @@ sleepfun(e:Expr):Expr := (
 	  if isInt(i)
 	  then Expr(toInteger(sleep(toInt(i))))
 	  else WrongArgSmallInteger(1))
-     else WrongArgInteger(1));
+     else WrongArgZZ(1));
 setupfun("sleep",sleepfun);
 
 forkfun(e:Expr):Expr := (
@@ -173,7 +173,7 @@ select(n:Expr,e:Expr,f:Expr):Expr := (
 	  )
      else WrongArg(1+1,"a list")
      else WrongArg(0+1,"an integer or string")
-     else WrongArgInteger(0+1));
+     else WrongArgZZ(0+1));
 select(e:Expr):Expr := (
      when e is a:Sequence do (
 	  if length(a) == 2
@@ -579,7 +579,7 @@ packfun(e:Expr):Expr := (
 			      then packlist(x,nn)
 			      else WrongArg(2,"a positive integer"))
 			 else WrongArgSmallInteger(2))
-		    else WrongArgInteger(2))
+		    else WrongArgZZ(2))
 	       is x:List do (
 		    when a.1
 		    is n:ZZ do (
@@ -590,7 +590,7 @@ packfun(e:Expr):Expr := (
 			      then packlist(x.v,nn)
 			      else WrongArg(2,"a positive integer"))
 			 else WrongArgSmallInteger(2))
-		    else WrongArgInteger(2))
+		    else WrongArgZZ(2))
 	       else WrongArg(1,"a list or sequence"))
 	  else WrongNumArgs(2))
      else WrongNumArgs(2));	  
@@ -758,7 +758,7 @@ readfun(e:Expr):Expr := (
 			      )
 			 else WrongArgSmallInteger(2)
 			 )
-		    else WrongArgInteger(2)
+		    else WrongArgZZ(2)
 		    )
 	       else WrongArg(1,"a file")
 	       )
@@ -779,19 +779,19 @@ substrfun(e:Expr):Expr := (
 	  when args.1 is j:ZZ do if !isInt(j) then WrongArgSmallInteger(2) else
 	  when args.2 is s:string do Expr(substr(s,toInt(i),toInt(j)))
 	  else WrongArgString(3)
-	  else WrongArgInteger(2))
+	  else WrongArgZZ(2))
      is s:string do (
 	  when args.1 is i:ZZ do if !isInt(i) then WrongArgSmallInteger(2) else
 	  when args.2 is j:ZZ do if !isInt(j) then WrongArgSmallInteger(3) else Expr(substr(s,toInt(i),toInt(j)))
-	  else WrongArgInteger(3)
-	  else WrongArgInteger(2))
+	  else WrongArgZZ(3)
+	  else WrongArgZZ(2))
      else WrongArg(1,"a string or an integer")
      else if length(args) == 2 then
      when args.0
      is s:string do (
 	  when args.1 
 	  is i:ZZ do if !isInt(i) then WrongArgSmallInteger(2) else Expr(substr(s,toInt(i)))
-	  else WrongArgInteger(2))
+	  else WrongArgZZ(2))
      is i:ZZ do if !isInt(i) then WrongArgSmallInteger(1) else (
 	  when args.1
 	  is s:string do Expr(substr(s,toInt(i)))
@@ -936,10 +936,10 @@ format(e:Expr):Expr := (
      when a.2 is l:ZZ do if !isInt(l) then WrongArgSmallInteger(3) else
      when a.3 is t:ZZ do if !isInt(t) then WrongArgSmallInteger(4) else
      when a.4 is e:string do Expr(tostring5(x,toInt(s),toInt(l),toInt(t),e))
-     else WrongArg(1,"a real number")
-     else WrongArgInteger(2)
-     else WrongArgInteger(3)
-     else WrongArgInteger(4)
+     else WrongArgRR(1)
+     else WrongArgZZ(2)
+     else WrongArgZZ(3)
+     else WrongArgZZ(4)
      else WrongArgString(5)
      else WrongArg("string, or real number, integer, integer, integer, string"));
 setupfun("format",format);
@@ -1116,7 +1116,7 @@ toRR(e:Expr):Expr := (
 		    else binarymethod(s.0,s.1,getGlobalVariable(toRRS),toRRS.word.name)
 		    )
 	       )
-	  else WrongArgInteger(1)
+	  else WrongArgZZ(1)
 	  )
      else WrongArg("a real number or a pair"));
 toRRS = setupfun("toRR",toRR);
@@ -1142,9 +1142,9 @@ toCC(e:Expr):Expr := (
 		    )
 	       is x:RR do (
 		    when s.1 is y:RR do Expr(toCC(x,y))
-		    else WrongArg("a real number")
+		    else WrongArgRR()
 		    )
-	       else WrongArgInteger(1)
+	       else WrongArgZZ(1)
 	       )
 	  else if length(s) == 3 then (
 	       when s.0 is prec:ZZ do (
@@ -1167,7 +1167,7 @@ toCC(e:Expr):Expr := (
 				   return WrongArg("a rational number, real number, or an integer");
 				   toRR(0,toULong(prec)) -- dummy
 				   ))))
-	       else WrongArgInteger(1))
+	       else WrongArgZZ(1))
 	  else WrongNumArgs(1,3))
      else WrongArg("a real or complex number, or 2 or 3 arguments"));
 setupfun("toCC",toCC);
@@ -1176,7 +1176,7 @@ precision(e:Expr):Expr := (
      when e 
      is x:RR do Expr(toInteger(precision(x)))
      is x:CC do Expr(toInteger(precision(x)))
-     else WrongArg("a real number")
+     else WrongArgRR()
      );
 setupfun("precision",precision);
 
@@ -1350,9 +1350,9 @@ powermod(e:Expr):Expr := (
      when s.1 is exp:ZZ do
      when s.2 is mod:ZZ do
      Expr(powermod(base,exp,mod))
-     else WrongArgInteger(3)
-     else WrongArgInteger(2)
-     else WrongArgInteger(1)
+     else WrongArgZZ(3)
+     else WrongArgZZ(2)
+     else WrongArgZZ(1)
      else WrongNumArgs(3)
      else WrongNumArgs(3)
      );

@@ -197,7 +197,7 @@ exitfun(e:Expr):Expr := (
 	       exit(toInt(e));
 	       nullE)
 	  else WrongArgSmallInteger(1))
-     else WrongArgInteger(1));
+     else WrongArgZZ(1));
 setupfun("exit",exitfun).protected = false;
 
 applythem(obj:HashTable,fn:FunctionClosure):void := applyFCE(fn,Expr(obj));
@@ -260,8 +260,8 @@ integermod(e:Expr):Expr := (
      when a.1 is y:ZZ do 
      if y === 0 then a.0
      else Expr(x % y)
-     else WrongArgInteger(2)
-     else WrongArgInteger(1)
+     else WrongArgZZ(2)
+     else WrongArgZZ(1)
      else WrongNumArgs(2)
      else WrongNumArgs(2));
 installMethod(PercentS,ZZClass,ZZClass,integermod);
@@ -425,7 +425,7 @@ raisef(e:Expr):Expr := (
 	  when s.1 is i:ZZ do
 	  if isInt(i) then Expr(RaiseNet(n,toInt(i)))
 	  else WrongArgSmallInteger()
-	  else WrongArgInteger()
+	  else WrongArgZZ()
 	  else WrongArg("a net")
 	  else WrongNumArgs(2))
      else WrongNumArgs(2));
@@ -442,7 +442,7 @@ replicate(e:Expr):Expr := (
 			 if m<0 then m=0;
 			 Expr(new Sequence len m do provide x))
 		    else WrongArgSmallInteger(1))
-	       else WrongArgInteger(1))
+	       else WrongArgZZ(1))
 	  else WrongNumArgs(2))
      else WrongNumArgs(2));
 installMethod(ColonS,ZZClass,thingClass,replicate);
@@ -452,9 +452,9 @@ bitorfun(e:Expr):Expr := (
      	  if length(a) == 2 then (
      	       when a.0 is x:ZZ do (
      		    when a.1 is y:ZZ do Expr(x | y) 
-     		    else WrongArgInteger(2)
+     		    else WrongArgZZ(2)
 		    )
-	       else WrongArgInteger(1))
+	       else WrongArgZZ(1))
 	  else WrongNumArgs(2))
      else WrongNumArgs(2));
 installMethod(BarS,ZZClass,ZZClass,bitorfun);
@@ -464,8 +464,8 @@ bitandfun(e:Expr):Expr := (
      	  if length(a) == 2 then (
 	       when a.0 is x:ZZ do (
 		    when a.1 is y:ZZ do Expr(x & y)
-		    else WrongArgInteger(2))
-	       else WrongArgInteger(1))
+		    else WrongArgZZ(2))
+	       else WrongArgZZ(1))
  	  else WrongNumArgs(2))
      else WrongNumArgs(2));
 installMethod(AmpersandS,ZZClass,ZZClass,bitandfun);
@@ -638,7 +638,7 @@ alarm(e:Expr):Expr := (
      if isInt(i)
      then Expr(toInteger(alarm(toInt(i))))
      else WrongArgSmallInteger()
-     else WrongArgInteger()
+     else WrongArgZZ()
      );
 setupfun("alarm",alarm);
 
@@ -735,11 +735,11 @@ removefun(e:Expr):Expr := (
 	       is x:List do (
 		    when args.1 is i:ZZ do
 		     if isInt(i) then Expr(remove(x,toInt(i))) else WrongArgSmallInteger(2)
-		    else WrongArgInteger(2))
+		    else WrongArgZZ(2))
 	       is x:Sequence do (
 		    when args.1 is i:ZZ do
 		    if isInt(i) then Expr(remove(x,toInt(i))) else WrongArgSmallInteger(2)
-		    else WrongArgInteger(2))
+		    else WrongArgZZ(2))
 	       is f:Database do (
 		    when args.1 is key:string do (
 	       		 if !f.isopen then return buildErrorPacket("database closed");
@@ -1447,7 +1447,7 @@ fileTime(e:Expr):Expr := (
 		    )
 	       else WrongArgString(1)
 	       )
-	  else WrongArgInteger(2)
+	  else WrongArgZZ(2)
 	  )
      else WrongArg("string, or integer and string"));
 setupfun("fileTime",fileTime);
@@ -1634,7 +1634,7 @@ regexmatch(e:Expr):Expr := (
 	  then nullE
 	  else buildErrorPacket("regex: "+regexmatchErrorMessage))
      else WrongArgString(3)
-     else WrongArgInteger(2)
+     else WrongArgZZ(2)
      else WrongArgString(1)
      else WrongNumArgs(2,3)
      else WrongNumArgs(2,3));
@@ -1917,7 +1917,7 @@ fileMode(e:Expr):Expr := (
 	       		      if r == -1
 			      then buildErrorPacket(syscallErrorMessage("fchmod")) 
 			      else nullE))
-	  	    else WrongArgInteger(1))
+	  	    else WrongArgZZ(1))
 	       is filename:string do (
 		    when s.0 
 		    is mode:ZZ do (
@@ -1928,7 +1928,7 @@ fileMode(e:Expr):Expr := (
 			      if r == -1
 			      then buildErrorPacket(syscallErrorMessage("chmod"))
 			      else nullE))
-		    else WrongArgInteger(1))
+		    else WrongArgZZ(1))
 	       else WrongArg(2,"a file")))
      is f:file do (
 	  fd := -1;

@@ -582,8 +582,8 @@ bitxorfun(e:Expr):Expr := (
      when a.1
      is err:Error do Expr(err)
      is y:ZZ do Expr(x ^^ y)
-     else WrongArgInteger(2)
-     else WrongArgInteger(1)
+     else WrongArgZZ(2)
+     else WrongArgZZ(1)
      else WrongNumArgs(2)
      else WrongNumArgs(2));
 setupfun("xor",bitxorfun);
@@ -802,7 +802,7 @@ BesselJ(e:Expr):Expr := (
 	       is x:ZZ do Expr(BesselJ(toLong(n),toRR(x)))
 	       is x:QQ do Expr(BesselJ(toLong(n),toRR(x)))
 	       else WrongArg(2,"a number"))
-	  else WrongArgInteger(1))
+	  else WrongArgZZ(1))
      else WrongNumArgs(2));
 setupfun("BesselJ",BesselJ);
 atan(e:Expr):Expr := (
@@ -918,7 +918,7 @@ sqrt(a:Expr):Expr := (
      is x:RR do Expr(sqrt(x))				    -- # typical value: sqrt, RR, RR
      is x:CC do Expr(sqrt(x))				    -- # typical value: sqrt, CC, CC
      is Error do a
-     else WrongArg("a real number"));
+     else WrongArgRR());
 setupfun("sqrt",sqrt);
 map(a1:Sequence,a2:Sequence,f:Expr):Expr := (
      newlen := length(a1);

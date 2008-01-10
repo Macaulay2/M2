@@ -1,5 +1,8 @@
 --		Copyright 1997-2002 by Daniel R. Grayson
 
+undocumented mutableZero
+mutableZero = X -> error "mutableZero' has been replaced by mutableMatrix"
+
 undocumented unlist
 unlist = X -> error "'unlist' has been replaced by toSequence"
 

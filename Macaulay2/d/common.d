@@ -212,8 +212,10 @@ export NotYet(desc:string):Expr := buildErrorPacket(desc + " not implemented yet
 export WrongArg(desc:string):Expr := buildErrorPacket("expected " + desc);
 export WrongArg(n:int,desc:string):Expr := (
      buildErrorPacket("expected argument " + tostring(n) + " to be " + desc));
-export WrongArgInteger():Expr := WrongArg("an integer");
-export WrongArgInteger(n:int):Expr := WrongArg(n,"an integer");
+export WrongArgZZ():Expr := WrongArg("an integer");
+export WrongArgZZ(n:int):Expr := WrongArg(n,"an integer");
+export WrongArgRR():Expr := WrongArg("a real number");
+export WrongArgRR(n:int):Expr := WrongArg(n,"a real number");
 export WrongArgSmallInteger():Expr := WrongArg("a small integer");
 export WrongArgSmallInteger(n:int):Expr := WrongArg(n,"a small integer");
 export WrongArgSmallUInteger():Expr := WrongArg("a small non-negative integer");
