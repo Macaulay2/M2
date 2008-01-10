@@ -12,9 +12,8 @@ document {
      PARA{},
      "See also ", TO "odd", "."}
 
-undocumented {(numeric, CC),(numeric, Number),(numeric, RR),(numeric, Thing),(numeric, VisibleList)}
 document {
-     Key => numeric,
+     Key => prepend_numeric methods numeric,
      Headline => "convert to floating point",
      TT "numeric x", " -- yields the expression obtained from x by converting the 
      integers and rational numbers within to double precision floating 
