@@ -24,14 +24,6 @@ document {
      PARA{},
      "See also ", TO "RR", "."}
 document {
-     Key => "pi",
-     Headline => "the number 'pi'",
-     TT "pi", " the numerical value of the arithmetic quantity pi.",
-	EXAMPLE {
-		"pi"
-		}
-	}
-document {
      Key => Engine,
      Headline => "specify whether a ring is handled by the engine",
      TT "Engine", " -- a key for rings which yields the value ", TT "true", " if this
