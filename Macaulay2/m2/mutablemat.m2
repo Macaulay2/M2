@@ -1,4 +1,4 @@
---		Copyright 2005 by Daniel R. Grayson
+--		Copyright 2005, 2008 by Daniel R. Grayson and Michael E. Stillman
 
 MutableMatrix = new Type of HashTable
 MutableMatrix.synonym = "mutable matrix"
@@ -128,14 +128,17 @@ LU MutableMatrix := (A) -> (
      p := rawLU(raw A, raw L, raw U);
      (p, L, U))
 
-solve = method()
-solve(MutableMatrix,MutableMatrix) := (A,b) -> (
+solve = method(Options => { ClosestFit => false, MaximalRank => false })
+solve(MutableMatrix,MutableMatrix) := opts -> (A,b) -> (
      x := mutableZero(ring A,0,0,Dense=>true);
-     rawSolve(raw A,raw b,raw x);
+     if opts.ClosestFit
+     then rawLeastSquares(raw A,raw b,raw x,opts.MaximalRank)
+     else rawSolve(raw A,raw b,raw x);
      x)
-solve(Matrix,Matrix) := (A,b) -> (
+solve(Matrix,Matrix) := opts -> (A,b) -> (
      matrix solve(mutableMatrix(A,Dense=>true),
-                  mutableMatrix(b,Dense=>true)))
+                  mutableMatrix(b,Dense=>true),
+		  opts))
 
 eigenvalues = method(Options => {Hermitian => false})
 eigenvalues(MutableMatrix) := o -> (A) -> (
