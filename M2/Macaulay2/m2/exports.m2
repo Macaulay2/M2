@@ -1017,6 +1017,7 @@ export {
 	symbol sequence,
 	symbol set,
 	symbol setEcho,
+	symbol setPrecision,
 	symbol setRandomSeed,
 	symbol setup,
 	symbol setupEmacs,

@@ -48,7 +48,6 @@ scan((
 	  (CC,{  })
 	  ), 
      (K,Ls) -> (
-	  promote(K,K) := (f,K) -> f;
 	  promote(Matrix,K,K) := (m,K,L) -> m;
 	  promote(List,K,K) := (m,K,L) -> m;
 	  lift(K,K) := (f,K) -> f;

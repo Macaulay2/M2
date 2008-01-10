@@ -187,18 +187,12 @@ matrixTable := options -> (f) -> (
 		    map(R^#f,, f, options))
 	       else (
 		    prec := min apply(flatten f, precision);
-		    f = applyTable(f, 
-			 if type === RR 			    -- improve this code by implementing "setPrecision(prec,x)"
-			 then ( x -> toRR(prec,x) )
-			 else if type === CC
-			 then ( x -> toCC(prec,x) )
-			 else notImplemented()
-			 );
+		    f = applyTable(f, x -> setPrecision(prec,x));
 		    R = ring f#0#0;
 		    map(R^#f,, f, options)))
 	  else if type.?matrix then (type.matrix options)(f)
 	  else error "no method for forming a matrix from elements of this type")
-     else if all(types, T -> instance(T,Ring)) then (
+     else if all(types, T -> instance(T,Ring) or instance(T,BigNumberType)) then (
 	  R = ring (
 	       try sum apply(types, R -> R#0)
 	       else error "couldn't put matrix elements into the same ring"
@@ -276,7 +270,7 @@ matrixTable := options -> (f) -> (
 	  then mm
 	  else fixDegree(mm,options.Degree)
 	  )
-     else error "expected ring elements or matrices")
+     else (error "expected ring elements or matrices";))
 
 matrix(Matrix) := Matrix => options -> (m) -> (
      if isFreeModule target m and isFreeModule source m
