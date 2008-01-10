@@ -18,7 +18,10 @@ checkLoadDocumentation = () -> (
 	  notify = oldnotify;
 	  ))
 
-getpkg := memoize( title -> needsPackage(title,LoadDocumentation=>true) )
+getpkg := memoize(
+     title -> (
+	  if PackageDictionary#?title then value PackageDictionary#title
+	  else dismiss needsPackage(title,LoadDocumentation=>true)))
 
 -----------------------------------------------------------------------------
 -- normalizing document keys

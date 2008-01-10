@@ -37,8 +37,8 @@ document {
      the lapack routines.",
      EXAMPLE lines ///
      	  kk = CC
-	  A = mutableZero(kk,1000,1000, Dense=>true)
-	  b = mutableZero(kk,1000,2, Dense=>true)
+	  A = mutableMatrix(kk,1000,1000, Dense=>true)
+	  b = mutableMatrix(kk,1000,2, Dense=>true)
 	  for i from 1 to 10000 do A_(random 1000, random 1000) = random 1.0 + ii * random 1.0;
 	  for i from 0 to 999 do b_(i,0) = random 1.0 + ii * random 1.0;
 	  for i from 0 to 999 do b_(i,1) = random 1.0 + ii * random 1.0;	  

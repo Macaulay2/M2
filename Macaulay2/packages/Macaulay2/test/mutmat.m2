@@ -1,5 +1,5 @@
 R = QQ
-M = mutableZero(QQ,3,5)
+M = mutableMatrix(QQ,3,5)
 M_(0,0) = 1_QQ
 M_(2,4) = 3/4
 M
@@ -40,7 +40,7 @@ columnPermute
 
 -- what else?
 mutableIdentity
-mutableZero
+mutableMatrix
 randomMutableMatrix
 
 -- linear algebra

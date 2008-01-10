@@ -43,7 +43,7 @@ document {
      "Some other methods for creating mutable matrices.",
      EXAMPLE {
 	  "mutableIdentity(RR_100,5)",
-	  "mutableZero(QQ,3,5)",
+	  "mutableMatrix(QQ,3,5)",
 	  "randomMutableMatrix(4,4,.5,100)"
 	  }
      }
@@ -65,8 +65,6 @@ document {
      only encodes the non-zero elements), or in a dense manner (all elements
      are stored -- even zeros).  The distinction is an option to several of
      the routines which create mutable matrices (", TO mutableMatrix, 
-	  ", ", 
-	  TO mutableZero,
 	  ", ", 
 	  TO mutableIdentity,
      ").  

@@ -2,7 +2,7 @@
 -- Test of LU decomposition --
 ------------------------------
 permutationMatrix = (p) -> (
-     M := mutableZero(ZZ, #p, #p, Dense=>false);
+     M := mutableMatrix(ZZ, #p, #p, Dense=>false);
      for i from 0 to #p-1 do
        M_(i,p#i) = 1;
      matrix M)

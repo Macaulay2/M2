@@ -1,12 +1,12 @@
 diag = method()
 diag(ZZ,ZZ,List) := (a,b,L) -> (
      R := ring L#0;
-     M := mutableZero(R,a,b);
+     M := mutableMatrix(R,a,b);
      scan(#L, i -> M_(i,i) = L#i);
      matrix M)
 diag(List) := (L) -> (
      R := ring L#0;
-     M := mutableZero(R,#L,#L);
+     M := mutableMatrix(R,#L,#L);
      scan(#L, i -> M_(i,i) = L#i);
      matrix M)
 
@@ -26,7 +26,7 @@ checkLU = method()
 checkLU Matrix := (M) -> (
      R := ring M;
      (P,L,U) = LU M;
-     Q = mutableZero(R, numrows M, numrows M);
+     Q = mutableMatrix(R, numrows M, numrows M);
      for i from 0 to numrows A - 1 do Q_(i,P_i) = 1_R;
      Q = matrix Q;
      (Q*L*U, M)

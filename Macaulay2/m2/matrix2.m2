@@ -514,7 +514,7 @@ diagonalMatrix Matrix := (m) -> (
        error "expected at least one row";
      if nrows > 1 then m = flatten m;
      a := numgens source m;
-     m1 := mutableZero(R,a,a);
+     m1 := mutableMatrix(R,a,a);
      for i from 0 to a-1 do m1_(i,i) = m_(0,i);
      matrix m1)
 

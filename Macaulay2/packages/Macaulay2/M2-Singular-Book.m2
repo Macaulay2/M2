@@ -774,7 +774,7 @@ document {
      EXAMPLE {
 "contraHom = (M, s) -> (
     (n,m) := (numgens target M, numgens source M);
-    R := mutableZero(ring M, s*n, s*m);
+    R := mutableMatrix(ring M, s*n, s*m);
     for b from 0 to m-1 do
       for a from 0 to s-1 do
         for c from 0 to n-1 do

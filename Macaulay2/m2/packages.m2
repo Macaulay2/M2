@@ -26,8 +26,7 @@ dismiss Package := pkg -> (
      loadedPackages = delete(pkg,loadedPackages);
      dictionaryPath = delete(pkg.Dictionary,dictionaryPath);
      dictionaryPath = delete(pkg#"private dictionary",dictionaryPath);
-     -- stderr << "--previous definitions removed for package " << pkg << endl;
-     )
+     pkg)
 dismiss String := title -> if PackageDictionary#?title and class value PackageDictionary#title === Package then dismiss value PackageDictionary#title
 
 loadPackage = method(

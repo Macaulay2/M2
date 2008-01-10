@@ -277,7 +277,7 @@ rowMult(N,3,-1_R)
 columnMult(N,2,-1_R)
 
 -- random skew symmetric matrix
-N = mutableZero(R,4,4)
+N = mutableMatrix(R,4,4)
 N_(0,1) = (first first entries random(R^1, R^{-2}))
 N_(1,0) = -N_(0,1)
 N
