@@ -72,6 +72,7 @@ export evalAllButTail(c:Code):Code := while true do c = (
 	  dummyCode));
 ----------------------------------------------------------------------------------------
 export RecursionLimit():Expr := buildErrorPacket("recursion limit of " + tostring(recursionLimit) + " exceeded");
+export InternalRecursionLimit():Expr := buildErrorPacket("internal recursion limit of " + tostring(recursionLimit) + " exceeded");
 
 export storeInHashTable(x:HashTable,i:Code,rhs:Code):Expr := (
      ival := eval(i);

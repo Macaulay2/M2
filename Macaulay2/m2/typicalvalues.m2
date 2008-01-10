@@ -12,34 +12,34 @@ typicalValues#(symbol global) = Symbol
 typicalValues#(symbol symbol) = Symbol
 typicalValues#(symbol ?) = Boolean
 
-dummy := method(Dispatch => Thing)	    -- a compiled function closure is pretty anonymous
-installMethod(symbol !, ZZ, ZZ => dummy)
--- installMethod(symbol ##, Function, Sequence, Thing => dummy)
-installMethod(symbol #?, HashTable, Thing, Boolean => dummy)
-installMethod(symbol #?, Set, Thing, Boolean => dummy)
-installMethod(symbol #?, Database, String, Boolean => dummy)
-installMethod(symbol #?, BasicList, ZZ, Boolean => dummy)
-installMethod(symbol #?, String, ZZ, Boolean => dummy)
-installMethod(symbol #, HashTable, Thing, Thing => dummy)
-installMethod(symbol #, Database, String, String => dummy)
-installMethod(symbol #, String, ZZ, Thing => dummy)
-installMethod(symbol #, BasicList, ZZ, Thing => dummy)
+dummy := x -> error("dummy method function called")
+installMethod(symbol !, ZZ, ZZ => x -> (dummy x;))
+-- installMethod(symbol ##, Function, Sequence, Thing => x -> (dummy x;))
+installMethod(symbol #?, HashTable, Thing, Boolean => x -> (dummy x;))
+installMethod(symbol #?, Set, Thing, Boolean => x -> (dummy x;))
+installMethod(symbol #?, Database, String, Boolean => x -> (dummy x;))
+installMethod(symbol #?, BasicList, ZZ, Boolean => x -> (dummy x;))
+installMethod(symbol #?, String, ZZ, Boolean => x -> (dummy x;))
+installMethod(symbol #, HashTable, Thing, Thing => x -> (dummy x;))
+installMethod(symbol #, Database, String, String => x -> (dummy x;))
+installMethod(symbol #, String, ZZ, Thing => x -> (dummy x;))
+installMethod(symbol #, BasicList, ZZ, Thing => x -> (dummy x;))
 
--- installMethod(symbol #, File, ZZ => dummy)
-installMethod(symbol #, Set, ZZ => dummy)
-installMethod(symbol #, HashTable, ZZ => dummy)
-installMethod(symbol #, BasicList, ZZ => dummy)
-installMethod(symbol #, String, ZZ => dummy)
+-- installMethod(symbol #, File, ZZ => x -> (dummy x;))
+installMethod(symbol #, Set, ZZ => x -> (dummy x;))
+installMethod(symbol #, HashTable, ZZ => x -> (dummy x;))
+installMethod(symbol #, BasicList, ZZ => x -> (dummy x;))
+installMethod(symbol #, String, ZZ => x -> (dummy x;))
 
-installMethod(symbol <, Thing, Thing, Boolean => dummy)
-installMethod(symbol <=, Thing, Thing, Boolean => dummy)
-installMethod(symbol =!=, Thing, Thing, Boolean => dummy)
-installMethod(symbol ===, Thing, Thing, Boolean => dummy)
-installMethod(symbol =>, Thing, Thing, Option => dummy)
-installMethod(symbol >, Thing, Thing, Boolean => dummy)
-installMethod(symbol >=, Thing, Thing, Boolean => dummy)
+installMethod(symbol <, Thing, Thing, Boolean => x -> (dummy x;))
+installMethod(symbol <=, Thing, Thing, Boolean => x -> (dummy x;))
+installMethod(symbol =!=, Thing, Thing, Boolean => x -> (dummy x;))
+installMethod(symbol ===, Thing, Thing, Boolean => x -> (dummy x;))
+installMethod(symbol =>, Thing, Thing, Option => x -> (dummy x;))
+installMethod(symbol >, Thing, Thing, Boolean => x -> (dummy x;))
+installMethod(symbol >=, Thing, Thing, Boolean => x -> (dummy x;))
 
-installMethod(symbol .., ZZ, ZZ, Sequence => dummy)
+installMethod(symbol .., ZZ, ZZ, Sequence => x -> (dummy x;))
 
 acos RR := acos ZZ := RR => acos
 asin RR := asin ZZ := RR => asin
@@ -50,9 +50,6 @@ tan RR := tan ZZ := RR => tan
 cosh RR := cosh ZZ := RR => cosh
 sinh RR := sinh ZZ := RR => sinh
 tanh RR := tanh ZZ := RR => tanh
-exp RR := exp ZZ := RR => exp
-log RR := log ZZ := RR => log
-sqrt RR := sqrt ZZ := RR => sqrt
 ancestor(Type,Type) := Boolean => ancestor
 any(BasicList,Function) := any(BasicList,BasicList,Function) := any(HashTable,Function) := Boolean => any
 append(BasicList,Thing) := BasicList => append
@@ -144,7 +141,7 @@ read File := String => read
 read (File,ZZ) := String => read
 read Sequence := String => read
 read String := String => read
-Function Thing := Thing => dummy
+Function Thing := Thing => x -> (dummy x;)
 scan(BasicList,Function) := Nothing => scan
 scan(ZZ,Function) := Nothing => scan
 scanPairs(HashTable,Function) := Nothing => scanPairs
@@ -165,12 +162,28 @@ frames(Function) := frames
 frames(Pseudocode) := frames
 powermod(ZZ,ZZ,ZZ) := ZZ => powermod
 
+chk := (type,key) -> if type#?key then (
+     stderr << "-- method already installed:" << endl
+     << "   " << code type#key << endl;
+     error("method already installed: ",toString type," # ",toString key))
 typval = method()
-typval(Function,Type,Type) := (f,X,Z) -> f(X) := Z => f
-typval(Function,Type,Type,Type) := (f,X,Y,Z) -> f(X,Y) := Z => f
-typval(Keyword,Type,Type) := (f,X,Z) -> installMethod(f, X, Z => dummy)
-typval(Keyword,Type,Type,Type) := (f,X,Y,Z) -> installMethod(f, X, Y, Z => dummy)
-
+typval(Function,Type,Type) := (f,X,Z) -> (
+     msg := toString f | "(" | toString X | ") => " | toString Z;
+     chk(X, f);
+     f(X) := Z => x -> (error("dummy method called: ", msg);)
+     )
+typval(Function,Type,Type,Type) := (f,X,Y,Z) -> (
+     chk(youngest (X,Y), (f,X,Y));
+     f(X,Y) := Z => x -> (dummy x;)
+     )
+typval(Keyword,Type,Type) := (f,X,Z) -> (
+     chk(X, (f,X));
+     installMethod(f, X, Z => x -> (dummy x;))
+     )
+typval(Keyword,Type,Type,Type) := (f,X,Y,Z) -> (
+     chk(youngest(X,Y), (f,X,Y));
+     installMethod(f, X, Y, Z => x -> (dummy x;))
+     )
 load "tvalues.m2"
 
 -- Local Variables:

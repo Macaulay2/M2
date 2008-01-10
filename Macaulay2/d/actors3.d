@@ -131,7 +131,10 @@ EqualEqualfun(x:Expr,y:Expr):Expr := (
 	  is yy:CC do toExpr(yy === xx)			    -- # typical value: symbol ==, ZZ, CC, Boolean
 	  else equalmethod(x,y)
 	  )
-     is SymbolClosure do when y is SymbolClosure do equal(x,y) else equalmethod(x,y) -- # typical value: symbol ==, Symbol, Symbol, Boolean
+     is SymbolClosure do (
+	  when y is SymbolClosure do equal(x,y)             -- # typical value: symbol ==, Symbol, Symbol, Boolean
+	  else equalmethod(x,y)
+     	  )
      is xx:QQ do (
 	  when y
 	  is yy:ZZ do toExpr(xx === yy)			    -- # typical value: symbol ==, QQ, ZZ, Boolean
@@ -156,9 +159,18 @@ EqualEqualfun(x:Expr,y:Expr):Expr := (
 	  is yy:CC do toExpr(xx === yy)			    -- # typical value: symbol ==, CC, CC, Boolean
 	  else equalmethod(x,y)
 	  )
-     is Boolean do when y is Boolean do equal(x,y) else equalmethod(x,y) -- # typical value: symbol ==, Boolean, Boolean, Boolean
-     is Net do when y is Net do equal(x,y) else equalmethod(x,y)	 -- # typical value: symbol ==, Net, Net, Boolean
-     is string do when y is string do equal(x,y) else equalmethod(x,y)	 -- # typical value: symbol ==, String, String, Boolean
+     is xx:Boolean do (
+	  when y is yy:Boolean do if xx == yy then True else False -- # typical value: symbol ==, Boolean, Boolean, Boolean
+	  else equalmethod(x,y)
+     	  )
+     is xx:Net do (
+	  when y is yy:Net do toExpr(xx === yy)	-- # typical value: symbol ==, Net, Net, Boolean
+	  else equalmethod(x,y)
+     	  )
+     is xx:string do (
+	  when y 
+	  is yy:string do toExpr(xx === yy)	 -- # typical value: symbol ==, String, String, Boolean
+	  else equalmethod(x,y))
      is s:Sequence do when y is t:Sequence do (				 -- # typical value: symbol ==, Sequence, Sequence, Boolean
 	  if length(s) != length(t) then return False;
 	  for i from 0 to length(s)-1 do (
@@ -856,9 +868,9 @@ tanh(e:Expr):Expr := (
 setupfun("tanh",tanh);
 exp(e:Expr):Expr := (
      when e
-     is x:RR do Expr(exp(x))
-     is x:ZZ do Expr(exp(toRR(x)))
-     is x:QQ do Expr(exp(toRR(x)))
+     is x:RR do Expr(exp(x))			-- # typical value: exp, RR, RR
+     is x:ZZ do Expr(exp(toRR(x)))			    -- # typical value: exp, ZZ, RR
+     is x:QQ do Expr(exp(toRR(x)))			    -- # typical value: exp, QQ, RR
      is x:Error do Expr(x)
      else buildErrorPacket("expected a number")
      );
@@ -895,6 +907,8 @@ setupfun("run",run);
 
 sqrt(a:Expr):Expr := (
      when a
+     is x:ZZ do Expr(sqrt(toRR(x)))	       -- # typical value: sqrt, ZZ, RR
+     is x:QQ do Expr(sqrt(toRR(x)))	       -- # typical value: sqrt, QQ, RR
      is x:RR do Expr(sqrt(x))				    -- # typical value: sqrt, RR, RR
      is x:CC do Expr(sqrt(x))				    -- # typical value: sqrt, CC, CC
      is Error do a

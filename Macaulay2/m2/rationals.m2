@@ -17,7 +17,6 @@ QQ#1 = 1/1
 QQ#0 = 0/1
 QQ.char = 0
 QQ.isField = true
-toString QQ := x -> toString numerator x | "/" | toString denominator x
 QQ.baseRings = {ZZ}
 QQ.frac = QQ
 
@@ -31,6 +30,7 @@ smallrats := {-10/1, -5/1, -10/3, -5/2, -2/1, -5/3, -10/7, -5/4, -10/9, -9/1, -9
       10/7, 10/9}
 
 QQ.random = () -> smallrats#(random (#smallrats))
+promote(QQ,QQ) := identity
 expression QQ := r -> (
      n := numerator r;
      d := denominator r;
@@ -41,9 +41,6 @@ expression QQ := r -> (
 net QQ := r -> net expression r
 QQ.InverseMethod = x -> 1/x
 QQ.dim = 0
-QQ == ZZ := (r,i) -> r == i/1
-ZZ == QQ := (i,r) -> r == i/1
-
 QQ.Engine = true
 assert (hash ZZ < hash QQ)
 
