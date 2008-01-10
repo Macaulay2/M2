@@ -51,6 +51,11 @@ new CC from RawRingElement := (CCC,x) -> (
      rawToCC x)
 promote(RawRingElement,CC) := (x,R) -> new CC from x
 
+CC.random = opts -> C -> (
+     prec := C.precision;
+     R := RR_prec;
+     toCC(random R, random R))
+
 -- Local Variables:
 -- compile-command: "make -C $M2BUILDDIR/Macaulay2/m2 "
 -- End:

@@ -24,7 +24,7 @@ ZZ.frac = QQ
 promote(ZZ,ZZ) := lift(ZZ,ZZ) := (i,ZZ) -> i
 liftable'(ZZ,ZZ) := x -> true
 
-ZZ.random = opts -> (
+ZZ.random = opts -> ZZ -> (
      h := opts.Height;
      random (2 * h + 1) - h)
 
