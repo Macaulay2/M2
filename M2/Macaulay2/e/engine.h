@@ -155,19 +155,19 @@ extern "C" {
   /**** Random numbers ******************************/
   /**************************************************/
 
-  int32_t rawSetRandomSeed(M2_Integer seed);
+  int32_t rawSetRandomSeed(M2_Integer seed); /* drg: connected */
 
-  void rawSetRandomMax(M2_Integer maxN);
+  void rawSetRandomMax(M2_Integer maxN);/* drg: connected */
 
-  M2_Integer rawRandomInteger(M2_Integer maxN);
+  M2_Integer rawRandomInteger(M2_Integer maxN);/* drg: connected */
 
-  M2_Rational rawRandomQQ(M2_Integer height);
+  M2_Rational rawRandomQQ(M2_Integer height);/* drg: connected */
   /* returns random a/b, where 1 <= b <= height, 1 <= a <= height */
 
-  M2_RRR rawRandomRR(long precision);
+  M2_RRR rawRandomRR(unsigned long precision);/* drg: connected */
   /* returns a uniformly distributed random real with the given precision, in range [0.0,1.0] */
 
-  M2_CCC rawRandomCC(long precision);
+  M2_CCC rawRandomCC(unsigned long precision);/* drg: connected */
   /* returns a uniformly distributed random complex in the box [0.0,0.0], [1.0,1.0] */
 
 

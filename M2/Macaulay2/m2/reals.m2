@@ -27,10 +27,11 @@ RR.isBasic = true
 RR.InverseMethod = x -> 1/x
 isConstant RR := i -> true
 
-random RR := RR => opts -> x -> (
-     prec := precision x;
-     x * rawRandomInteger 2^prec >> prec)
-RR.random = opts -> R -> random 1_R
+-- random RR := RR => opts -> x -> (
+--      prec := precision x;
+--      x * rawRandomInteger 2^prec >> prec)
+random RR := RR => opts -> x -> x * rawRandomRR precision x
+RR.random = opts -> R -> rawRandomRR precision 1_R
 
 random RingFamily := opts -> R -> random(default R,opts)
 
