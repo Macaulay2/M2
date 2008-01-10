@@ -105,6 +105,11 @@ M2_Integer Random::get_random_integer_0(M2_Integer mxN)	// this one is used for 
   return result;
 }
 
+void Random::random_RRR(M2_RRR a)
+{
+  mpfr_urandomb(a, state);
+}
+
 void Random::random_integer(M2_Integer result)
   // this is a destructive version of get_random_integer
   // a should be an mpz_t which has been initialized

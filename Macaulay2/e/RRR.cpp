@@ -59,7 +59,9 @@ void RRR::remove_elem(mpfr_ptr f) const
 
 ring_elem RRR::random() const
 {
-  return from_int(0);
+  mpfr_ptr result = new_elem();
+  Random::random_RRR(result);
+  return MPF_RINGELEM(result);
 }
 
 void RRR::elem_text_out(buffer &o, const ring_elem ap) const

@@ -55,7 +55,10 @@ void CCC::remove_elem(M2_CCC f) const
 
 ring_elem CCC::random() const
 {
-  return from_int(0);
+  M2_CCC result = new_elem();
+  Random::random_RRR(result->re);
+  Random::random_RRR(result->im);
+  return BIGCC_RINGELEM(result);
 }
 
 void CCC::elem_text_out(buffer &o, const ring_elem ap) const
