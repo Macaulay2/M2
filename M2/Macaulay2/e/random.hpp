@@ -42,12 +42,15 @@ public:
 
   static void random_integer(M2_Integer a); // a should be an mpz_t which has been initialized
 
-  static void random_RRR(M2_RRR a); // a should have already been initialized
-
   static int32_t set_seed(M2_Integer s); // returns previous seed value
   static void set_max_int(M2_Integer N); // values will be in the range 0..N-1
   static M2_Integer get_random_integer_0(M2_Integer maxN);
   static M2_Integer get_random_integer(M2_Integer maxN);
+
+
+  static void random_RRR(M2_RRR a); // a should have already been initialized
+  static void random_ZZ(M2_Integer a, M2_Integer height);
+  static void random_QQ(M2_Rational a, M2_Integer height);
 };
 
 // Local Variables:

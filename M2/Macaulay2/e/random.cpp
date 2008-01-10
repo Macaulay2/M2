@@ -105,6 +105,23 @@ M2_Integer Random::get_random_integer_0(M2_Integer mxN)	// this one is used for 
   return result;
 }
 
+void Random::random_ZZ(M2_Integer a, M2_Integer height)
+{
+  /* sets a to be in the range 0..height-1 */
+  mpz_urandomm(a, state, height);
+}
+
+void Random::random_QQ(M2_Rational a, M2_Integer height)
+{
+  /* sets numerator and denominator of a to be in the range 1..height-1 */
+  /* sets a to be in the range 0..height-1 */
+  mpz_urandomm(mpq_numref(a), state, height);
+  mpz_urandomm(mpq_denref(a), state, height);
+  mpz_add_ui(mpq_numref(a), mpq_numref(a), 1);
+  mpz_add_ui(mpq_denref(a), mpq_numref(a), 1);
+  mpq_canonicalize(a);
+}
+
 void Random::random_RRR(M2_RRR a)
 {
   mpfr_urandomb(a, state);
