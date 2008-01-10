@@ -637,19 +637,19 @@ document {
 		},
      }
 document {
-     Key => {exp,(exp,RR),(exp,ZZ)},
+     Key => {exp,(exp,RR),(exp,ZZ),(exp,QQ)},
      Headline => "exponential function",
      Usage => "exp x",
      Inputs => { "x" => RR },
      Outputs => { { "the exponential of ", TT "x" } } }
 document {
-     Key => {log,(log, RR),(log, ZZ)},
+     Key => {log,(log, RR),(log, QQ),(log, ZZ)},
      Headline => "logarithm function",
      Usage => "log x",
      Inputs => { "x" => RR },
      Outputs => { { "the logarithm of ", TT "x"} } }
 document {
-     Key => {sqrt,(sqrt, ZZ),(sqrt, RR)},
+     Key => {sqrt,(sqrt, CC),(sqrt, QQ),(sqrt, ZZ),(sqrt, RR)},
      Headline => "square root function",
      Usage => "sqrt x",
      Inputs => { "x" => RR },
