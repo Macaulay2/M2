@@ -58,7 +58,6 @@ export string := array(char);
 export Cstring := {Cstring:void} or null ;
 import tostring(s:Cstring):string;
 import gbTrace:int;
-import RandomSeed:int;
 export notify:bool := false;
 
 -- Local Variables:

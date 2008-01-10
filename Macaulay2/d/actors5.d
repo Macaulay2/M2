@@ -1467,19 +1467,6 @@ mkdir(e:Expr):Expr := (
      else WrongArgString());
 setupfun("mkdir",mkdir);
 
---import setFactorySeed(s:int):void;
---setFactorySeed(e:Expr):Expr := (
---     when e is s:ZZ do (
---	  if isInt(s) then (
---	       setFactorySeed(toInt(s));
---	       nullE
---	       )
---	  else WrongArgSmallInteger(0+1)
---	  )
---     else WrongArgInteger(0+1)
---     );
---setupfun("setFactorySeed",setFactorySeed);
-
 export printWidth := 0;
 
 wrap(e:Expr):Expr := (

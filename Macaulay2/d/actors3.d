@@ -398,7 +398,6 @@ basicsort(s:Sequence,ww:SymbolClosure):Expr := (
      sortlist = savesortlist;
      ret);
 basicsort2(e:Expr,ww:SymbolClosure):Expr := (
-     save := RandomSeed;				    -- for backward compatibility with 0.9.2
      answer :=
      when e is s:Sequence do (
 	  if length(s) <= 1 then e else basicsort(s,ww))
@@ -409,7 +408,6 @@ basicsort2(e:Expr,ww:SymbolClosure):Expr := (
 		     when r is b:Sequence do list(b) else r))
       	   else WrongArg("a list or sequence"))
      else WrongArg("a list or sequence");
-     RandomSeed = save;
      answer);
 sortfun(e:Expr):Expr := basicsort2(e,GreaterS);
 rsortfun(e:Expr):Expr := basicsort2(e,LessS);
