@@ -24,48 +24,6 @@
 #include "random.hpp"
 #include "exceptions.hpp"
 
-int32_t rawSetRandomSeed(M2_Integer seed)
-{
-  return Random::set_seed(seed);
-}
-
-void rawSetRandomMax(M2_Integer maxN)
-{
-  Random::set_max_int(maxN);
-}
-
-M2_Integer rawRandomInteger(M2_Integer maxN)
-{
-  return Random::get_random_integer_0(maxN);
-}
-
-M2_Rational rawRandomQQ(M2_Integer height)
-  /* returns random a/b, where 1 <= b <= height, 1 <= a <= height */
-{
-  M2_Rational result = reinterpret_cast<M2_Rational>(getmem(sizeof(__mpq_struct)));
-  mpq_init(result);
-  Random::random_QQ(result, height);
-  return result;
-}
-
-M2_RRR rawRandomRR(unsigned long precision)
- /* returns a uniformly distributed random real with the given precision, in range [0.0,1.0] */
-{
-  M2_RRR result = reinterpret_cast<M2_RRR>(getmem(sizeof(__mpfr_struct)));
-  mpfr_init2(result,precision);
-  Random::random_RRR(result);
-  return result;
-}
-
-M2_CCC rawRandomCC(unsigned long precision)
-  /* returns a uniformly distributed random complex in the box [0.0,0.0], [1.0,1.0] */
-{
-  M2_CCC result = reinterpret_cast<M2_CCC>(getmem(sizeof(M2_CCC_struct)));
-  result->re = rawRandomRR(precision);
-  result->im = rawRandomRR(precision);
-  return result;
-}
-
 unsigned long IM2_Ring_hash(const Ring *R)
 {
   return R->get_hash_value();

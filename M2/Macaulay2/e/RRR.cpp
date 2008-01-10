@@ -1,5 +1,6 @@
 // Copyright 1995 Michael E. Stillman
 
+#include "rand.h"
 #include "ZZ.hpp"
 #include "QQ.hpp"
 #include "RRR.hpp"
@@ -59,8 +60,7 @@ void RRR::remove_elem(mpfr_ptr f) const
 
 ring_elem RRR::random() const
 {
-  mpfr_ptr result = new_elem();
-  Random::random_RRR(result);
+  M2_RRR result = rawRandomRR(precision);
   return MPF_RINGELEM(result);
 }
 

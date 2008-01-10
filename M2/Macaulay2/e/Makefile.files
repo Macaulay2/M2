@@ -118,7 +118,7 @@ NAMES_H = ringelem \
 	index \
 	res-a0-pair
 
-C_FILES = error table exptable monordering complex
+C_FILES = error table exptable monordering complex rand
 
 ##############################
 ## end of source code files ##

@@ -76,9 +76,7 @@ int RingZZ::coerce_to_int(ring_elem a) const
 
 ring_elem RingZZ::random() const
 {
-  M2_Integer result = RingZZ::new_elem();
-  Random::random_integer(result);
-  return ring_elem(result);
+  return rawRandomInteger(0);
 }
 
 void RingZZ::elem_text_out(buffer &o, const ring_elem ap) const
