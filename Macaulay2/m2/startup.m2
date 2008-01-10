@@ -191,7 +191,7 @@ if firstTime then (
 			 if instance(x, Function) or instance(x, Type) then ReverseDictionary#x = sym))));
 
      applicationDirectorySuffix = () -> (
-	  if version#"operating system" === "Darwin" then "Library/Application Support/Macaulay2/" else ".Macaulay2/"
+	  if version#"operating system" === "MacOS" then "Library/Application Support/Macaulay2/" else ".Macaulay2/"
 	  );
      applicationDirectory = () -> (
 	  if instance(applicationDirectorySuffix, Function)
