@@ -70,7 +70,7 @@ M2_Rational rawRandomQQ(M2_Integer height)
   mpz_urandomm(mpq_numref(result), state, height);
   mpz_urandomm(mpq_denref(result), state, height);
   mpz_add_ui(mpq_numref(result), mpq_numref(result), 1);
-  mpz_add_ui(mpq_denref(result), mpq_numref(result), 1);
+  mpz_add_ui(mpq_denref(result), mpq_denref(result), 1);
   mpq_canonicalize(result);
   return result;
 }

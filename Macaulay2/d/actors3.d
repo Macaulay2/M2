@@ -1887,7 +1887,7 @@ gcd(x:Expr,y:Expr):Expr := (
 	  else buildErrorPacket("expected an integer"))
      else buildErrorPacket("expected an integer"));
 gcdfun(e:Expr):Expr := accumulate(plus0,plus1,gcd,e);
-setupfun("gcd",gcdfun);
+setupfun("gcd0",gcdfun);
 
 toSequence(e:Expr):Expr := (
      when e

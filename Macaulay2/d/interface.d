@@ -37,30 +37,15 @@ setupfun("rawGetErrorMessage",rawGetErrorMessage);
 -----------------------------------------------------------------------------
 -- random numbers
 
-lastSeed := toInteger(0);
-export rawSetRandomSeed(e:Expr):Expr := (
-     when e is n:ZZ do (
-	  Ccode(void, "rawSetRandomSeed(", "(M2_Integer)", n, ")");
-	  l := lastSeed;
-	  lastSeed = n;
-	  Expr(l))
-     else WrongArgInteger());
-setupfun("rawSetRandomSeed",rawSetRandomSeed);
-
-export rawSetRandomMax(e:Expr):Expr := (
-     when e is n:ZZ do (
-	  Ccode(void, "rawSetRandomMax((M2_Integer)", n, ")");
-	  nullE)
-     else WrongArgInteger());
-setupfun("rawSetRandomMax",rawSetRandomMax);
-
-export rawRandomInteger(e:Expr):Expr := (
+export rawRandomZZ(e:Expr):Expr := (
      when e
+     is Nothing do Expr(Ccode(ZZ, "(gmp_ZZ)rawRandomInteger(", "(M2_Integer)0)"))
      is maxN:ZZ do Expr(Ccode(ZZ, "(gmp_ZZ)rawRandomInteger(", "(M2_Integer)", maxN, ")"))
      else WrongArgInteger());
-setupfun("rawRandomInteger",rawRandomInteger);
+setupfun("rawRandomZZ",rawRandomZZ);
 export rawRandomQQ(e:Expr):Expr := (
      when e
+     is Nothing do Expr(Ccode(QQ, "(gmp_QQ)rawRandomQQ(", "(M2_Integer)0)"))
      is ht:ZZ do Expr(Ccode(QQ, "(gmp_QQ)rawRandomQQ(", "(M2_Integer)", ht, ")"))
      else WrongArgInteger());
 setupfun("rawRandomQQ",rawRandomQQ);

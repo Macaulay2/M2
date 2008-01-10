@@ -46,7 +46,6 @@ new CC from RawRingElement := (CCC,x) -> (
      assert( CCC === CC );				    -- the danger is that maybe CCC === CC_53, for example
      rawToCC x)
 promote(RawRingElement,CC) := (x,R) -> new CC from x
-
 CC.random = opts -> C -> rawRandomCC C.precision
 
 -- Local Variables:

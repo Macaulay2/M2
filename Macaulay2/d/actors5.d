@@ -1776,6 +1776,8 @@ gbTraceS := dummySymbol;
 debuggerHookS := dummySymbol;
 lineNumberS := dummySymbol;
 loadDepthS := dummySymbol;
+randomSeedS := dummySymbol;
+randomHeightS := dummySymbol;
 printingPrecisionS := dummySymbol;
 printingLeadLimitS := dummySymbol;
 printingTrailLimitS := dummySymbol;
@@ -1792,6 +1794,9 @@ export StandardE := Expr(StandardS);
 export topLevelMode := Expr(StandardS);
 topLevelModeS := dummySymbol;
 
+initialRandomSeed := toInteger(0);
+initialRandomHeight := toInteger(10);
+
 syms := SymbolSequence(
      (  backtraceS = setupvar("backtrace",toExpr(backtrace));  backtraceS  ),
      (  debugLevelS = setupvar("debugLevel",toExpr(debugLevel));  debugLevelS  ),
@@ -1807,6 +1812,8 @@ syms := SymbolSequence(
      (  printingLeadLimitS = setupvar("printingLeadLimit",toExpr(printingPrecision));  printingLeadLimitS ),
      (  printingTrailLimitS = setupvar("printingTrailLimit",toExpr(printingPrecision));  printingTrailLimitS  ),
      (  printingSeparatorS = setupvar("printingSeparator",toExpr(printingPrecision));  printingSeparatorS  ),
+     (  randomSeedS = setupvar("randomSeed",Expr(initialRandomSeed));  randomSeedS  ),
+     (  randomHeightS = setupvar("randomHeight",Expr(initialRandomHeight));  randomHeightS  ),
      (  recursionLimitS = setupvar("recursionLimit",toExpr(recursionLimit));  recursionLimitS  ),
      (  stopIfErrorS = setupvar("stopIfError",toExpr(stopIfError));  stopIfErrorS  ),
      (  printWidthS = setupvar("printWidth",toExpr(printWidth));  printWidthS  ),
@@ -1858,7 +1865,9 @@ store(e:Expr):Expr := (			    -- called with (symbol,newvalue)
 	       if sym === printingSeparatorS then (printingSeparator = s; e)
 	       else buildErrorPacket(msg))
 	  is i:ZZ do (
-	       if isInt(i) then (
+	       if sym === randomSeedS then ( Ccode(void, "rawSetRandomSeed(", "(M2_Integer)", i, ")"); e )
+	       else if sym === randomHeightS then ( Ccode(void, "rawSetRandomMax((M2_Integer)", i, ")"); e )
+	       else if isInt(i) then (
 		    n := toInt(i);
 		    if sym === loadDepthS then (loadDepth = n; e)
 		    else if sym === errorDepthS then (errorDepth = n; e)

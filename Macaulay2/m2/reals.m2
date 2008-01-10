@@ -26,12 +26,8 @@ round(ZZ,RR) := (n,x) -> (
 RR.isBasic = true
 RR.InverseMethod = x -> 1/x
 isConstant RR := i -> true
-
--- random RR := RR => opts -> x -> (
---      prec := precision x;
---      x * rawRandomInteger 2^prec >> prec)
 random RR := RR => opts -> x -> x * rawRandomRR precision x
-RR.random = opts -> R -> rawRandomRR precision 1_R
+RR.random = opts -> R -> rawRandomRR R.precision
 
 random RingFamily := opts -> R -> random(default R,opts)
 

@@ -179,7 +179,7 @@ random = method(Options => {
 	  Density => 1.,
 	  UpperTriangular => false,
 	  Norm => 1.,
-	  Height => 10
+	  Height => null				    -- will refer to the value set with rawSetRandomMax
 	  })
 random Type := opts -> (X) -> (
      m := lookup(symbol random,X);
