@@ -118,7 +118,7 @@ void Random::random_QQ(M2_Rational a, M2_Integer height)
   mpz_urandomm(mpq_numref(a), state, height);
   mpz_urandomm(mpq_denref(a), state, height);
   mpz_add_ui(mpq_numref(a), mpq_numref(a), 1);
-  mpz_add_ui(mpq_denref(a), mpq_numref(a), 1);
+  mpz_add_ui(mpq_denref(a), mpq_denref(a), 1);
   mpq_canonicalize(a);
 }
 

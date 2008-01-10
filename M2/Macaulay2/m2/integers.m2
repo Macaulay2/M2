@@ -20,20 +20,12 @@ ZZ.Engine = true
 ZZ.baseRings = {}
 ZZ.degreeLength = 0
 ZZ.frac = QQ
-
 promote(ZZ,ZZ) := lift(ZZ,ZZ) := (i,ZZ) -> i
 liftable'(ZZ,ZZ) := x -> true
-
-ZZ.random = opts -> ZZ -> (
-     h := opts.Height;
-     random (2 * h + 1) - h)
-
-oldgcd := gcd
-erase symbol gcd
-
+ZZ.random = opts -> ZZ -> rawRandomZZ opts.Height
 gcd = method(Binary => true)
 gcd List := x -> gcd toSequence x
-gcd(ZZ,ZZ) := ZZ => (x,y) -> oldgcd(x,y)
+gcd(ZZ,ZZ) := ZZ => gcd0
 gcd(ZZ,QQ) := QQ => (x,y) -> gcd(x * denominator y, numerator y) / denominator y
 gcd(QQ,ZZ) := QQ => (y,x) -> gcd(x * denominator y, numerator y) / denominator y
 gcd(QQ,QQ) := QQ => (x,y) -> (
@@ -71,15 +63,9 @@ isPrime ZZ := Boolean => n -> (
      else isPrime1 n and (n == 2 or isPrime2 n)
      )
 
-random ZZ := ZZ => opts -> x -> (
-     if x <= 0 then error "expected a positive number";
-     rawRandomInteger x)
-
-random(ZZ,ZZ) := ZZ => opts -> (min,max) -> min + rawRandomInteger(max-min+1)
-
-
+random ZZ := ZZ => opts -> rawRandomZZ
+random(ZZ,ZZ) := ZZ => opts -> (min,max) -> min + rawRandomZZ(max-min+1)
 ceiling = x -> - floor(-x)
-
 isUnit ZZ := x -> x == 1 or x == -1
 
 ZZ & ZZ := ZZ => lookup(symbol &, ZZ, ZZ)
