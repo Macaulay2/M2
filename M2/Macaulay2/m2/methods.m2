@@ -184,7 +184,7 @@ random = method(Options => {
 random Type := opts -> (X) -> (
      m := lookup(symbol random,X);
      if m === null then error "no method found";
-     m opts)
+     (m opts) X)
 
 generators = method(
      Options => {

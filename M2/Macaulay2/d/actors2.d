@@ -591,6 +591,9 @@ installMethod(Expr(LessLessS),ZZClass,ZZClass,
 installMethod(Expr(LessLessS),RRClass,ZZClass,
      Expr(CompiledFunction(leftshiftfun,nextHash()))
      );
+installMethod(Expr(LessLessS),CCClass,ZZClass,
+     Expr(CompiledFunction(leftshiftfun,nextHash()))
+     );
 
 rightshiftfun(e:Expr):Expr := (
      when e
@@ -619,6 +622,12 @@ rightshiftfun(e:Expr):Expr := (
 	  else WrongNumArgs(2))
      else WrongNumArgs(2));
 installMethod(Expr(GreaterGreaterS),ZZClass,ZZClass,
+     Expr(CompiledFunction(rightshiftfun,nextHash()))
+     );
+installMethod(Expr(GreaterGreaterS),RRClass,ZZClass,
+     Expr(CompiledFunction(rightshiftfun,nextHash()))
+     );
+installMethod(Expr(GreaterGreaterS),CCClass,ZZClass,
      Expr(CompiledFunction(rightshiftfun,nextHash()))
      );
 

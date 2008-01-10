@@ -30,6 +30,9 @@ isConstant RR := i -> true
 random RR := RR => opts -> x -> (
      prec := precision x;
      x * rawRandomInteger 2^prec >> prec)
+RR.random = opts -> R -> random 1_R
+
+random RingFamily := opts -> R -> random(default R,opts)
 
 -----------------------------------------------------------------------------
 -- ImmutableType

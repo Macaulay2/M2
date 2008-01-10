@@ -31,7 +31,7 @@ smallrats := {-10/1, -5/1, -10/3, -5/2, -2/1, -5/3, -10/7, -5/4, -10/9, -9/1, -9
       7/4, 7/5, 7/6, 7/8, 7/9, 8/1, 8/3, 8/5, 8/7, 8/9, 9/1, 9/2, 9/4, 9/5, 9/7, 9/8, 10/1, 10/3,
       10/7, 10/9}
 
-QQ.random = () -> smallrats#(random (#smallrats))
+QQ.random = opts -> QQ -> smallrats#(random (#smallrats))
 promote(QQ,QQ) := (x,QQ) -> x
 expression QQ := r -> (
      n := numerator r;
