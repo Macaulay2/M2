@@ -131,8 +131,8 @@ EqualEqualfun(x:Expr,y:Expr):Expr := (
 	  is yy:CC do toExpr(yy === xx)			    -- # typical value: symbol ==, ZZ, CC, Boolean
 	  else equalmethod(x,y)
 	  )
-     is SymbolClosure do (
-	  when y is SymbolClosure do equal(x,y)             -- # typical value: symbol ==, Symbol, Symbol, Boolean
+     is xx:SymbolClosure do (
+	  when y is yy:SymbolClosure do toExpr(xx === yy)             -- # typical value: symbol ==, Symbol, Symbol, Boolean
 	  else equalmethod(x,y)
      	  )
      is xx:QQ do (

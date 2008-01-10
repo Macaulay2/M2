@@ -602,7 +602,6 @@ export rawMutableMatrixClass := newtypeof(rawObjectClass);	    -- RawMutableMatr
 export rawComputationClass := newtypeof(rawObjectClass);	    -- RawComputation
 
 export nothingClass := newbasictype();
-
 export (x:SymbolClosure) === (y:SymbolClosure) : bool := (
      x == y || x.symbol == y.symbol && x.frame == y.frame
      );

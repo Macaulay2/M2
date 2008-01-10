@@ -238,7 +238,7 @@ export equal(lhs:Expr,rhs:Expr):Expr := (
      is x:SymbolClosure do (
 	  when rhs 
 	  is y:SymbolClosure do (
-       	       if x.symbol == y.symbol && x.frame == y.frame
+       	       if x === y
 	       then True else False
 	       )
 	  else False
