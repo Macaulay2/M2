@@ -123,8 +123,7 @@ File << Thing  := File => (o,s) -> o << toString s		    -- provisional
 -----------------------------------------------------------------------------
 net Option := z -> net z#0 | " => " | net z#1
 
-Net == Net := (x,y) -> x === y
-Net == String := (n,s) -> (
+Net == String := (n,s) -> (				    -- should install in engine
      height n === 1 and depth n === 0 and width n === length s and n#0 === s
      )
 String == Net := (s,n) -> n == s
