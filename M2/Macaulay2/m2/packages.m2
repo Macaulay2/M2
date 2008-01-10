@@ -222,8 +222,12 @@ newPackage(String) := opts -> (title) -> (
 	       if fileExists dbname then (
 		    db := newpkg#"raw documentation database" = openDatabase dbname;
 		    addEndFunction(() -> if isOpen db then close db))));
-     pkgsym := getGlobalSymbol(PackageDictionary,title);
-     PackageDictionary#("Package$" | title) = pkgsym;
+     pkgsym := (
+	  if PackageDictionary#?title
+	  then PackageDictionary#("Package$" | title) = getGlobalSymbol(PackageDictionary,title)
+	  else getGlobalSymbol(PackageDictionary,title)
+	  );
+
      global currentPackage <- newpkg;
      ReverseDictionary#newpkg = pkgsym;
      pkgsym <- newpkg;
