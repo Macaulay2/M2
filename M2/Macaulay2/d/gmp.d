@@ -841,6 +841,7 @@ export toRR(n:double,prec:ulong):RR := (
 
 export toRR(n:double):RR := toRR(n,defaultPrecision);	   
 
+export toCC(x:RR):CC := CC(x,toRR(0,precision0(x)));
 export toCC(x:RR,prec:ulong):CC := CC(toRR(x,prec),toRR(0,prec));
 export toCC(x:CC,prec:ulong):CC := (
      if precision0(x.re) == prec then x
