@@ -708,8 +708,8 @@ template <> void DMat<CoefficientRingRRR>::fill_from_lapack_array(double *lapack
 
 template <> double *DMat<CoefficientRingCCC>::make_lapack_array() const
 {
-  long len = 2 * n_rows() * n_cols();
-  double *result = newarray_atomic(double, len);
+  long len = n_rows() * n_cols();
+  double *result = newarray_atomic(double, 2*len);
 
   elem *a = array_;
   double *p = result;
