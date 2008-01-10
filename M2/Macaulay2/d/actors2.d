@@ -569,19 +569,19 @@ leftshiftfun(e:Expr):Expr := (
 			 if isInt(y) 
 			 then Expr(x << toInt(y))
 			 else WrongArgSmallInteger(2))
-		    else WrongArgInteger(2))
+		    else WrongArgZZ(2))
 	       is x:RR do (
 		    when a.1 is y:ZZ do (
 			 if isLong(y) 
 			 then Expr(x << toLong(y))
 			 else WrongArgSmallInteger(2))
-		    else WrongArgInteger(2))
+		    else WrongArgZZ(2))
 	       is x:CC do (
 		    when a.1 is y:ZZ do (
 			 if isLong(y) 
 			 then Expr(x << toLong(y))
 			 else WrongArgSmallInteger(2))
-		    else WrongArgInteger(2))
+		    else WrongArgZZ(2))
 	       else WrongArg(1,"an integral, real, or complex number"))
 	  else WrongNumArgs(2))
      else WrongNumArgs(2));
@@ -605,20 +605,20 @@ rightshiftfun(e:Expr):Expr := (
 			 if isInt(y) 
 			 then Expr(x >> toInt(y))
 			 else WrongArgSmallInteger(2))
-		    else WrongArgInteger(2))
+		    else WrongArgZZ(2))
 	       is x:RR do (
 		    when a.1 is y:ZZ do (
 			 if isLong(y) 
 			 then Expr(x >> toLong(y))
 			 else WrongArgSmallInteger(2))
-		    else WrongArgInteger(2))
+		    else WrongArgZZ(2))
 	       is x:CC do (
 		    when a.1 is y:ZZ do (
 			 if isLong(y) 
 			 then Expr(x >> toLong(y))
 			 else WrongArgSmallInteger(2))
-		    else WrongArgInteger(2))
-	       else  WrongArgInteger(1))
+		    else WrongArgZZ(2))
+	       else  WrongArgZZ(1))
 	  else WrongNumArgs(2))
      else WrongNumArgs(2));
 installMethod(Expr(GreaterGreaterS),ZZClass,ZZClass,

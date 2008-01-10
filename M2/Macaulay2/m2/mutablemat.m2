@@ -28,13 +28,11 @@ mutableMatrix = method(Options => {Dense => true}, TypicalValue=>MutableMatrix)
 mutableMatrix Matrix := o -> m -> map(ring m, rawMutableMatrix(raw m, o.Dense))
 mutableMatrix List := o -> m -> (m1 := matrix m; map(ring m1, rawMutableMatrix(raw m1, o.Dense)))
 mutableMatrix MutableMatrix := o -> (m) -> map(ring m, rawMutableMatrix(raw m, o.Dense))
+mutableMatrix(Ring,ZZ,ZZ) := o -> (R,nrows,ncols) -> map(R,rawMutableMatrix(raw R,nrows,ncols,o.Dense))
+mutableMatrix(RingFamily,ZZ,ZZ) := o -> (R,nrows,ncols) -> mutableMatrix(default R,nrows,ncols,o)
 
 matrix MutableMatrix := o -> m -> map(ring m, rawMatrix raw m)
 
-mutableZero = method(Options => {Dense => true}, TypicalValue=>MutableMatrix)
-mutableZero(Ring,ZZ,ZZ) := o -> (R,nrows,ncols) -> 
-  map(R,rawMutableMatrix(raw R,nrows,ncols,o.Dense))
-mutableZero(RingFamily,ZZ,ZZ) := o -> (R,nrows,ncols) -> mutableZero(default R,nrows,ncols,o)
 
 mutableIdentity = method(Options => {Dense => true}, TypicalValue=>MutableMatrix)
 mutableIdentity(Ring,ZZ) := o -> (R,nrows) -> 
@@ -109,10 +107,14 @@ columnAdd(MutableMatrix,ZZ,QQ,ZZ) := (A,r,f,i) -> (rawMatrixColumnChange(raw A,r
 columnAdd(MutableMatrix,ZZ,RR,ZZ) := (A,r,f,i) -> (rawMatrixColumnChange(raw A,r,raw f,i,false);A)
 columnAdd(MutableMatrix,ZZ,CC,ZZ) := (A,r,f,i) -> (rawMatrixColumnChange(raw A,r,raw f,i,false);A)
 
+fillMatrix = method( Options => { UpperTriangular => false, Density => 1.0 } )
+fillMatrix(MutableMatrix) := opts -> M -> (rawMutableMatrixFillRandomDensity(raw M,opts.Density,if opts.UpperTriangular then 1 else 0); M)
+fillMatrix(MutableMatrix,ZZ) := opts -> (M,n) -> (rawMutableMatrixFillRandom(raw M,n); M)
+
 randomMutableMatrix = method(Options=>{Dense=>false}, TypicalValue=>MutableMatrix)
 
 randomMutableMatrix(ZZ,ZZ,RR,ZZ) := options -> (n,m,percentagezero,maxentry) -> (
-    M := mutableZero(ZZ,n,m,options);
+    M := mutableMatrix(ZZ,n,m,options);
     randomentry := () -> (
         x := random 1.0;
         if x < percentagezero then 0
@@ -122,29 +124,11 @@ randomMutableMatrix(ZZ,ZZ,RR,ZZ) := options -> (n,m,percentagezero,maxentry) -> 
 	if a != 0 then M_(r,c) = a)));
     M)
 
-fillRandom = method()
-fillRandom(MutableMatrix, ZZ) := (M,nelems) -> (
-    R := ring M;
-    nrows := numRows M;
-    ncols := numColumns M;
-    for i from 0 to nelems-1 do
-        M_(random nrows, random ncols) = random R;
-    )
-fillRandom(MutableMatrix, RR) := (M,density) -> (
-    R := ring M;
-    nrows := numRows M;
-    ncols := numColumns M;
-    for i from 0 to nrows-1 do
-      for j from 0 to ncols-1 do
-        if random 1.0 < density then
-          M_(i,j) = random R
-    )
-
 LU = method()
 LU MutableMatrix := (A) -> (
      nrows := rawNumberOfRows raw A;
-     L := mutableZero(ring A,0,0,Dense=>true);
-     U := mutableZero(ring A,0,0,Dense=>true);
+     L := mutableMatrix(ring A,0,0,Dense=>true);
+     U := mutableMatrix(ring A,0,0,Dense=>true);
      p := rawLU(raw A, raw L, raw U);
      (p, L, U))
 LU Matrix := (A) -> (
@@ -153,7 +137,7 @@ LU Matrix := (A) -> (
 
 solve = method(Options => { ClosestFit => false, MaximalRank => false })
 solve(MutableMatrix,MutableMatrix) := opts -> (A,b) -> (
-     x := mutableZero(ring A,0,0,Dense=>true);
+     x := mutableMatrix(ring A,0,0,Dense=>true);
      if opts.ClosestFit
      then rawLeastSquares(raw A,raw b,raw x,opts.MaximalRank)
      else rawSolve(raw A,raw b,raw x);
@@ -168,8 +152,8 @@ eigenvalues(MutableMatrix) := o -> (A) -> (
      k := ring A;
      if not instance(k,BigNumberRing) then error "eigenvalues requires matrices over RR or CC";
      e := if o.Hermitian 
-          then mutableZero(RR_(k.precision),0,0)
-          else mutableZero(CC_(k.precision),0,0);
+          then mutableMatrix(RR_(k.precision),0,0)
+          else mutableMatrix(CC_(k.precision),0,0);
      rawEigenvalues(raw A,raw e,o.Hermitian);
      e)
 eigenvalues(Matrix) := o -> (A) -> (
@@ -180,11 +164,11 @@ eigenvectors(MutableMatrix) := o -> (A) -> (
      k := ring A;
      if not instance(k,BigNumberRing) then error "eigenvalues requires matrices over RR or CC";
      e := if o.Hermitian 
-          then mutableZero(RR_(k.precision),0,0, Dense=>true)
-          else mutableZero(CC_(k.precision),0,0, Dense=>true);
+          then mutableMatrix(RR_(k.precision),0,0, Dense=>true)
+          else mutableMatrix(CC_(k.precision),0,0, Dense=>true);
      v := if instance(k,RealNumberRing) and o.Hermitian
-          then mutableZero(RR_(k.precision),0,0, Dense=>true)
-	  else mutableZero(CC_(k.precision),0,0, Dense=>true);
+          then mutableMatrix(RR_(k.precision),0,0, Dense=>true)
+	  else mutableMatrix(CC_(k.precision),0,0, Dense=>true);
      rawEigenvectors(raw A,raw e,raw v,o.Hermitian);
      (e,v))
 eigenvectors(Matrix) := o -> (A) -> (
@@ -195,9 +179,9 @@ SVD = method(Options=>{DivideConquer=>false})
 SVD MutableMatrix := o -> A -> (
      k := ring A;
      if not instance(k,BigNumberRing) then error "eigenvalues requires matrices over RR or CC";
-     Sigma := mutableZero(RR_(k.precision),0,0,Dense=>true);
-     U := if instance(k,RealNumberRing) then mutableZero(RR_(k.precision),0,0) else mutableZero(CC_(k.precision),0,0,Dense=>true);
-     VT := if instance(k,RealNumberRing) then mutableZero(RR_(k.precision),0,0) else mutableZero(CC_(k.precision),0,0,Dense=>true);
+     Sigma := mutableMatrix(RR_(k.precision),0,0,Dense=>true);
+     U := if instance(k,RealNumberRing) then mutableMatrix(RR_(k.precision),0,0) else mutableMatrix(CC_(k.precision),0,0,Dense=>true);
+     VT := if instance(k,RealNumberRing) then mutableMatrix(RR_(k.precision),0,0) else mutableMatrix(CC_(k.precision),0,0,Dense=>true);
      rawSVD(raw A, raw Sigma, raw U, raw VT, o.DivideConquer);
      (Sigma,U,VT))
 SVD Matrix := o -> A -> (

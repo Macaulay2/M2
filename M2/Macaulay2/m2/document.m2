@@ -18,6 +18,8 @@ checkLoadDocumentation = () -> (
 	  notify = oldnotify;
 	  ))
 
+getpkg := memoize( title -> needsPackage(title,LoadDocumentation=>true) )
+
 -----------------------------------------------------------------------------
 -- normalizing document keys
 -----------------------------------------------------------------------------
@@ -120,7 +122,7 @@ mdt := makeDocumentTag Thing := opts -> key -> (
 	  else if opts#Package =!= null then opts#Package 
 	  else packageKey fkey
 	  );
-     new DocumentTag from {nkey,fkey,pkg,pkgTitle pkg})
+     new DocumentTag from {nkey,fkey, {* pkg *} ,pkgTitle pkg})
 makeDocumentTag String := opts -> key -> (
      m := regex("[[:space:]]*::[[:space:]]*",key);
      if m === null then (mdt opts) key
@@ -141,7 +143,7 @@ DocumentTag.FormattedKey = method(Dispatch => Thing)
 DocumentTag.FormattedKey DocumentTag := x -> x#1
 DocumentTag.FormattedKey Thing := err
 DocumentTag.Package = method(Dispatch => Thing)
-DocumentTag.Package DocumentTag := x -> x#2
+DocumentTag.Package DocumentTag := x -> {* x#2 *} error "internal error: old code still using package in DocumentTag?"
 DocumentTag.Package Thing := err
 protect Title
 DocumentTag.Title = method(Dispatch => Thing)
@@ -154,7 +156,7 @@ toString DocumentTag := net DocumentTag := x -> concatenate ( DocumentTag.Title 
 package DocumentTag := DocumentTag.Package
 hasDocumentation = key -> (
      tag := makeDocumentTag key;
-     pkg := DocumentTag.Package tag;
+     pkg := getpkg DocumentTag.Title tag;
      fkey := DocumentTag.FormattedKey tag;
      null =!= fetchRawDocumentation(pkg,fkey))
 -----------------------------------------------------------------------------
@@ -189,14 +191,6 @@ fixup := method(Dispatch => Thing)
 rawKey := "raw documentation"
 rawKeyDB := "raw documentation database"
 fetchRawDocumentation = method()
-fetchRawDocumentation(Symbol,String) := (pkg,fkey) -> (
-     if toString pkg === "Macaulay2" then (
-	  erase pkg;
-	  checkLoadDocumentation();
-	  pkg = value getGlobalSymbol "Macaulay2";
-	  assert(class pkg === Package);
-	  fetchRawDocumentation(pkg,fkey))
-     else error("package ", toString pkg, " not loaded, and its documentation is not available"))
 fetchRawDocumentation(Package,String) := (pkg,fkey) -> (		    -- returns null if none
      d := pkg#rawKey;
      if d#?fkey then d#fkey
@@ -204,16 +198,9 @@ fetchRawDocumentation(Package,String) := (pkg,fkey) -> (		    -- returns null if
 	  if pkg#?rawKeyDB then (
 	       d = pkg#rawKeyDB;
 	       if isOpen d and d#?fkey then value d#fkey)))
-fetchRawDocumentation(String,String) := (pkgtitle,fkey) -> (
-     -- we should get a package's documentation from its database!!!
-     P := needsPackage pkgtitle;				    -- maybe later we should dismiss this package if it wasn't already open!
-     ret := (
-	  if PackageDictionary#?pkgtitle and instance(pkg := value PackageDictionary#pkgtitle, Package) then fetchRawDocumentation(pkg,fkey)
-     	  else (stderr << "--warning: no package named " << pkgtitle << endl;));
-     dismiss P;
-     ret)
+fetchRawDocumentation(String,String) := (pkgtitle,fkey) -> fetchRawDocumentation(getpkg pkgtitle, fkey)
 fetchRawDocumentation DocumentTag := tag -> (
-     fetchRawDocumentation(DocumentTag.Package tag, DocumentTag.FormattedKey tag)
+     fetchRawDocumentation(getpkg DocumentTag.Title tag, DocumentTag.FormattedKey tag)
      )
 fetchRawDocumentation FinalDocumentTag := tag -> (
      fetchRawDocumentation(FinalDocumentTag.Title tag, FinalDocumentTag.FormattedKey tag)
@@ -270,10 +257,7 @@ record      := f -> x -> (
 -- That way we can compute the package during the loading of a package, while just some of the documentation has been installed.
 -- Missing documentation can be detected when the package is closed, or later.
 packageKey = method(Dispatch => Thing)	    -- assume the input key has been normalized
---packageKey DocumentTag := DocumentTag.Package
---packageKey   Symbol := key -> package key
 packageKey   String := fkey -> (
-     -- checkLoadDocumentation();
      r := scan(loadedPackages, pkg -> if fetchRawDocumentation(pkg,fkey) =!= null then break pkg);
      if r === null then (
 	  -- if debugLevel > 0 then error "debug me";
@@ -281,10 +265,6 @@ packageKey   String := fkey -> (
 	  currentPackage
 	  )
      else r)
---packageKey  Package := identity
---packageKey    Array := key -> package key#0
---packageKey Sequence := key -> youngest splice apply(key, i -> if class i === Sequence then apply(i,package) else package i)
---packageKey    Thing := key -> ( p := package key; if p === null then currentPackage else p)
 -----------------------------------------------------------------------------
 -- formatting document tags
 -----------------------------------------------------------------------------
@@ -675,7 +655,7 @@ headline FinalDocumentTag := headline DocumentTag := tag -> (
 	  d = fetchAnyRawDocumentation formattedKey tag;    -- this is a kludge!  Our heuristics for determining the package of a tag are bad.
 	  if d === null then (
 	       if signalDocError tag
-	       and DocumentTag.Package tag === currentPackage
+	       and DocumentTag.Title tag === currentPackage#"title"
 	       then stderr << "--warning: tag has no documentation: " << tag << ", key " << toExternalString DocumentTag.Key tag << endl;
 	       return null;
 	       ));
@@ -919,7 +899,6 @@ document List := opts -> args -> (
 	  );
      currentNodeName = DocumentTag.FormattedKey tag;
      if reservedNodeNames#?(toLower currentNodeName) then error("'document' encountered a reserved node name '",currentNodeName,"'");
-     pkg := DocumentTag.Package tag;
      o.Description = toList args;
      exampleOutputFilename = makeExampleOutputFileName(currentNodeName,currentPackage);
      scan(keys o, key -> o#key = fixupTable#key o#key);
