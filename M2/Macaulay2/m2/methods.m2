@@ -182,7 +182,7 @@ random = method(Options => {
 	  Height => 10
 	  })
 random Type := opts -> (X) -> (
-     m := lookup(X,symbol random);
+     m := lookup(symbol random,X);
      if m === null then error "no method found";
      m opts)
 

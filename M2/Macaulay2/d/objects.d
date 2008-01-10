@@ -452,8 +452,8 @@ export Class(e:Expr):HashTable := (
      is CompiledFunction do compiledFunctionClass
      is CompiledFunctionClosure do compiledFunctionClosureClass
      is s:SymbolClosure do if s.symbol.word.parse == parseWORD then symbolClass else keywordClass
-     is RR do bigRealClass
-     is CC do bigComplexClass
+     is RR do RRClass
+     is CC do CCClass
      is RawComputation do rawComputationClass
      is Nothing do nothingClass
      is Database do dbClass
@@ -499,8 +499,8 @@ setupconst("ZZ",Expr(ZZClass));
 setupconst("QQ",Expr(QQClass));
 setupconst("RingFamily",Expr(ringFamilyClass));
 setupconst("BigNumberType",Expr(bigNumberTypeClass));
-setupconst("RR",Expr(bigRealClass));
-setupconst("CC",Expr(bigComplexClass));
+setupconst("RR",Expr(RRClass));
+setupconst("CC",Expr(CCClass));
 setupconst("Number",Expr(numberClass));
 setupconst("BigNumber",Expr(bigNumberClass));
 setupconst("RawObject",Expr(rawObjectClass));

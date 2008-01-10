@@ -27,13 +27,9 @@ RR.isBasic = true
 RR.InverseMethod = x -> 1/x
 isConstant RR := i -> true
 
- d := 2^31 - 1
- df := d + 0.
 random RR := RR => opts -> x -> (
-     if x <= 0. then (
-	  error "expected a positive number"
-	  );
-     x * (rawRandomInteger d / df))
+     prec := precision x;
+     x * rawRandomInteger 2^prec >> prec)
 
 -----------------------------------------------------------------------------
 -- ImmutableType

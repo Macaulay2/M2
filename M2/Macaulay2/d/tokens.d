@@ -586,8 +586,8 @@ export QQClass := newnumbertype();
 export ringFamilyClass := newtypeof(typeClass);
 export bigNumberTypeClass := newtypeof(ringFamilyClass);
        newbignumbertype():HashTable := newHashTable(bigNumberTypeClass,bigNumberClass);
-export bigRealClass := newbignumbertype();
-export bigComplexClass := newbignumbertype();
+export RRClass := newbignumbertype();
+export CCClass := newbignumbertype();
 
 export rawObjectClass := newbasictype();		    -- RawObject
 export rawMonomialClass := newtypeof(rawObjectClass);	    -- RawMonomial
