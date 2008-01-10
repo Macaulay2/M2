@@ -1,4 +1,0 @@
-one of these is backwards!
-
-     	  fileTime(tar,fileTime src);
-     	  fileMode(fileMode src,tar);

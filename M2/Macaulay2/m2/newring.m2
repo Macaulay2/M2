@@ -150,7 +150,7 @@ triv := R -> (
      (R,idR))
 
 flattenRing Ring := opts -> R -> (
-     if R.?isBasic or isField R or R === opts.CoefficientRing then triv R
+     if opts.CoefficientRing === null and (R.?isBasic or isField R) then triv R
      else unable())
 
 flattenRing GaloisField := opts -> F -> (
