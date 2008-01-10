@@ -24,7 +24,9 @@ ZZ.frac = QQ
 promote(ZZ,ZZ) := lift(ZZ,ZZ) := (i,ZZ) -> i
 liftable'(ZZ,ZZ) := x -> true
 
-ZZ.random = () -> random 21 - 10
+ZZ.random = opts -> (
+     h := opts.Height;
+     random (2 * h + 1) - h)
 
 oldgcd := gcd
 erase symbol gcd
@@ -75,14 +77,6 @@ random ZZ := ZZ => opts -> x -> (
 
 random(ZZ,ZZ) := ZZ => opts -> (min,max) -> min + rawRandomInteger(max-min+1)
 
-d := 2^31 - 1
-df := d + 0.
-
-random RR := RR => opts -> x -> (
-     if x <= 0. then (
-	  error "expected a positive number"
-	  );
-     x * (rawRandomInteger d / df))
 
 ceiling = x -> - floor(-x)
 

@@ -454,8 +454,6 @@ isUnit(RingElement) := (f) -> 1 % ideal f == 0
 Ring _ String := RingElement => (x,s) -> x.indexStrings#s
 Ring _ Symbol := RingElement => (x,s) -> x.indexSymbols#s
 
-random Ring := opts -> (R) -> if R.?random then R.random() else error "no method found"
-
 ZZ _ BigNumberType := 
 ZZ _ Ring := RingElement => (i,R) -> (
      if i === 1 then R#1
