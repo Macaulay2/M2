@@ -1,4 +1,3 @@
-flattenRing fails to give an error message when the desired coefficient ring is not found in the chain
 also, what should it do if the requested coefficient ring k appears in the chain this way: (k/I)[a]?
 
 --
