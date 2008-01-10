@@ -8,8 +8,8 @@ document {
 	  Options => List => { "a list of options ", TT "J => v", ", where ", TT "J", " is the name of an optional argument 
 	       for ", TT "f", ", and ", TT "v", " is its default value.
 	       The list of options could be also replaced by the corresponding ", TO "OptionTable", ".
-	       Specifying ", TT "true", " here indicates that option handling is done by the individual method
-	       functions, which may have various sets of acceptable option names." },
+	       Specifying ", TT "true", " here indicates that option handling is done by the individual methods,
+	       which may have various sets of acceptable option names.  See ", TO "making new functions with optional arguments", "." },
 	  Binary => Boolean => { "whether the method is to be binary: for three arguments or more the result will be computed by calling binary methods installed for
 	       ", TT "f", " with two arguments at a time." },
 	  Dispatch => { "the method for getting a list of types from the parameters; the value of this option should be ", TO "Thing", " or ", TO "Type", "
@@ -101,6 +101,19 @@ document {
      EXAMPLE lines ///
 	  options r
 	  methodOptions r
+     ///,
+     PARA {
+	  "In this example we defined a method function that leaves option processing to the individual methods."
+	  },
+     EXAMPLE lines ///
+     	  s = method(Options => true)
+	  s ZZ := { Slope => 17 } >> o -> x -> o.Slope * x
+	  s RR := { Intercept => 11 } >> o -> x -> x + o.Intercept
+	  s 100
+	  s 1000.
+	  options s
+	  options(s,ZZ)
+	  options(s,RR)
      ///,
      SeeAlso => {"methods", "specifying typical values" }
      }

@@ -447,7 +447,12 @@ document {
 	  "gens oo",
 	  },
      SUBSECTION "Programming hint",
-     "The value returned by ", TO2{ (options,Function), "options" }, " is a type of hash table that can be used to obtain default values.",
+     PARA {
+     	  "The value returned by ", TO2{ (options,Function), "options" }, " is a type of hash table that can be used to obtain default values."
+	  },
+     PARA {
+	  "See also ", TO "making new functions with optional arguments", "."
+	  },
      EXAMPLE {
 	  "(options gb).Syzygies"
 	  }
