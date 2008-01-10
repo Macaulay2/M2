@@ -32,8 +32,6 @@ if class RawMutableMatrix =!= Type then error "where is RawMutableMatrix?"
 OutputDictionary = new Dictionary
 dictionaryPath = append(dictionaryPath,OutputDictionary)
 
---
-
 -- references to the symbol 'User' occur before the corresponding package has been created...
 getGlobalSymbol(PackageDictionary,"User")
 
