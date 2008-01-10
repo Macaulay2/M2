@@ -412,18 +412,13 @@ Matrix ** Matrix := Matrix => (f,g) -> (
 	  map(R, f.RawMatrix ** g.RawMatrix),
 	  Degree => degree f + degree g))
 
-Matrix ** ZZ := 
-Matrix ** QQ := (f,r) -> r * f
-ZZ ** Matrix := 
-QQ ** Matrix := (r,f) -> r * f
-
+Matrix ** Number := (f,r) -> r * f
+Number ** Matrix := (r,f) -> r * f
 Matrix ** RingElement := (f,r) -> f ** matrix {{r}}
 RingElement ** Matrix := (r,f) -> matrix {{r}} ** f
 
-QQ ** RingElement := 
-ZZ ** RingElement := 
-RingElement ** QQ := 
-RingElement ** ZZ := 
+Number ** RingElement := 
+RingElement ** Number := 
 RingElement ** RingElement := (r,s) -> matrix {{r}} ** matrix {{s}}
 
 Matrix#{Standard,AfterPrint} = 
