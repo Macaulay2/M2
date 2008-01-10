@@ -487,8 +487,10 @@ degreeLength Ideal := I -> degreeLength ring I
 promote(Ideal,Number) := 
 promote(Ideal,RingElement) := (I,R) -> ideal promote(generators I, R)
 
-quotient Module := comodule Module := Module => M -> cokernel super map(M,M,1)
-quotient Ideal := comodule Ideal := Module => I -> cokernel generators I
+comodule Module := Module => M -> cokernel super map(M,M,1)
+quotient Module := Module => opts -> M -> comodule M
+comodule Ideal := Module => I -> cokernel generators I
+quotient Ideal := Module => opts -> I -> (ring I) / I
 
 genera Ideal := (I) -> genera ((ring I)^1/I)
 genus Ideal := (I) -> genus ((ring I)^1/I)
