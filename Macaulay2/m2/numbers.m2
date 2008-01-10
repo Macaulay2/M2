@@ -11,7 +11,7 @@ numeric(ZZ,VisibleList) := (prec,x) -> apply(x, t -> numeric(prec,t))
 numeric Number := x -> numeric(defaultPrecision, x)
 numeric CC := identity
 numeric RR := identity
-numeric(ZZ,RR) := toRR
+numeric(ZZ,Number) := toRR
 numeric(ZZ,CC) := toCC
 
 -- Local Variables:
