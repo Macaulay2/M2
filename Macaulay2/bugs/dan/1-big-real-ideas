@@ -2,6 +2,8 @@ pi, ii, etc, should be a new type of Number called "Constant"
 
 operations like this should be provided:
 
+	   toRR 2.3
+	   toCC 2.3
 	   2.3 * pi
 	   toRRR_200 pi
 

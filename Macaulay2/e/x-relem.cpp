@@ -48,7 +48,7 @@ M2_Rational rawRandomQQ(M2_Integer height)
   return result;
 }
 
-M2_RRR rawRandomRR(long precision)
+M2_RRR rawRandomRR(unsigned long precision)
  /* returns a uniformly distributed random real with the given precision, in range [0.0,1.0] */
 {
   M2_RRR result = reinterpret_cast<M2_RRR>(getmem(sizeof(__mpfr_struct)));
@@ -57,7 +57,7 @@ M2_RRR rawRandomRR(long precision)
   return result;
 }
 
-M2_CCC rawRandomCC(long precision)
+M2_CCC rawRandomCC(unsigned long precision)
   /* returns a uniformly distributed random complex in the box [0.0,0.0], [1.0,1.0] */
 {
   M2_CCC result = reinterpret_cast<M2_CCC>(getmem(sizeof(M2_CCC_struct)));

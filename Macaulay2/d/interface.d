@@ -53,9 +53,27 @@ export rawSetRandomMax(e:Expr):Expr := (
 setupfun("rawSetRandomMax",rawSetRandomMax);
 
 export rawRandomInteger(e:Expr):Expr := (
-     when e is n:ZZ do Expr(Ccode(ZZ, "(gmp_ZZ)rawRandomInteger(", "(M2_Integer)", n, ")"))
+     when e
+     is maxN:ZZ do Expr(Ccode(ZZ, "(gmp_ZZ)rawRandomInteger(", "(M2_Integer)", maxN, ")"))
      else WrongArgInteger());
 setupfun("rawRandomInteger",rawRandomInteger);
+export rawRandomQQ(e:Expr):Expr := (
+     when e
+     is ht:ZZ do Expr(Ccode(QQ, "(gmp_QQ)rawRandomQQ(", "(M2_Integer)", ht, ")"))
+     else WrongArgInteger());
+setupfun("rawRandomQQ",rawRandomQQ);
+export rawRandomRR(e:Expr):Expr := (
+     when e
+     is prec:ZZ do if !isULong(prec) then WrongArgSmallInteger() 
+     else Expr(Ccode(RR, "(gmp_RR)rawRandomRR(", toULong(prec), ")"))
+     else WrongArgInteger());
+setupfun("rawRandomRR",rawRandomRR);
+export rawRandomCC(e:Expr):Expr := (
+     when e
+     is prec:ZZ do if !isULong(prec) then WrongArgSmallInteger() 
+     else Expr(Ccode(CC, "(gmp_CC)rawRandomCC(", toULong(prec), ")"))
+     else WrongArgInteger());
+setupfun("rawRandomCC",rawRandomCC);
 
 -----------------------------------------------------------------------------
 -- monomials

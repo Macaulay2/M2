@@ -1077,6 +1077,10 @@ toString Constant := c -> toString c#0
 toExternalString Constant := c -> toString c#0
 numeric Constant := c -> c#1 defaultPrecision
 numeric(ZZ,Constant) := (prec,c) -> c#1 prec
+toRR Constant := c -> toRR numeric c
+toCC Constant := c -> toCC numeric c
+toRR(ZZ,Constant) := (prec,c) -> toRR numeric(prec,c)
+toCC(ZZ,Constant) := (prec,c) -> toCC numeric(prec,c)
 
 Constant + BigNumber := (c,x) -> numeric(precision x,c) + x
 BigNumber + Constant := (x,c) -> x + numeric(precision x,c)

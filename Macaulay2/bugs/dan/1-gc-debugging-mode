@@ -1,0 +1,1 @@
+fix debugging compilation for gc, now that -DDEBUG is in M2CPPFLAGS
