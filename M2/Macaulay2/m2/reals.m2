@@ -15,8 +15,7 @@ scan((RR,CC), F -> (
 CC // RR := (x,y) -> x // y_CC;
 CC % RR := (x,y) -> x % y_CC;
 
-round = method()
-round RR := x -> floor(x + 0.5)
+round RR := round0
 round(ZZ,RR) := (n,x) -> (
      p := 10^n;
      toRR(precision x,round(x*p)/p))

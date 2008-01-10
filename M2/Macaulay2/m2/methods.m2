@@ -158,7 +158,7 @@ setupMethods((), {
 	  coefficients, monomials, size, sum, product, exponents, nullhomotopy, module, raw,
 	  hilbertFunction, content, leadTerm, leadCoefficient, leadMonomial, components,
 	  leadComponent, degreesRing, degrees, assign, numgens, conjugate,
-	  autoload, relations, cone, standardForm, inverse, numeric, default,
+	  autoload, relations, cone, standardForm, inverse, numeric, default, round,
 	  determinant, presentation, dismiss, degreesMonoid,
 	  fraction, part, coefficient, preimage, minimalPrimes
 	  })

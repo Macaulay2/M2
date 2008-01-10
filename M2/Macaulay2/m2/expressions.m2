@@ -1068,7 +1068,7 @@ toString FilePosition := net FilePosition := i -> concatenate(i#0,":",toString i
 
 -- symbolic/numeric constant expressions
 
-Constant = new Type of Expression
+Constant = new Type of BasicList
 pi = new Constant from { symbol pi, mpfrConstantPi }
 
 net Constant := c -> net c#0
@@ -1080,6 +1080,7 @@ numeric(ZZ,Constant) := (prec,c) -> c#1 prec
 
 Constant + BigNumber := (c,x) -> numeric(precision x,c) + x
 BigNumber + Constant := (x,c) -> x + numeric(precision x,c)
+- Constant := c -> - numeric c
 Constant - BigNumber := (c,x) -> numeric(precision x,c) - x
 BigNumber - Constant := (x,c) -> x - numeric(precision x,c)
 Constant * BigNumber := (c,x) -> numeric(precision x,c) * x
@@ -1087,7 +1088,15 @@ BigNumber * Constant := (x,c) -> x * numeric(precision x,c)
 Constant / BigNumber := (c,x) -> numeric(precision x,c) / x
 BigNumber / Constant := (x,c) -> x / numeric(precision x,c)
 
-
+Constant + Number := (c,x) -> numeric c + x
+Number + Constant := (x,c) -> x + numeric c
+- Constant := c -> - numeric c
+Constant - Number := (c,x) -> numeric c - x
+Number - Constant := (x,c) -> x - numeric c
+Constant * Number := (c,x) -> numeric c * x
+Number * Constant := (x,c) -> x * numeric c
+Constant / Number := (c,x) -> numeric c / x
+Number / Constant := (x,c) -> x / numeric c
 
 -- Local Variables:
 -- compile-command: "make -C $M2BUILDDIR/Macaulay2/m2 "

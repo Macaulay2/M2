@@ -270,7 +270,15 @@ substitute(Matrix,Ring) := Matrix => (m,S) -> (map(S,ring m)) m
 substitute(Module,Ring) := Module => (M,S) -> (map(S,ring M)) M
 substitute(Ideal,Ring) := Ideal => (I,S) -> (map(S,ring I)) I
 substitute(Vector,Ring) := Vector => (v,S) -> (map(S,ring v)) v
-substitute(Number,Ring) := substitute(RingElement,Ring) := RingElement => (r,S) -> (map(S,ring r)) r
+substitute(Number,Ring) := 
+substitute(RingElement,Ring) := RingElement => (r,S) -> (map(S,ring r)) r
+
+substitute(Matrix,RingFamily) := Matrix => (m,S) -> substitute(m, default S)
+substitute(Module,RingFamily) := Module => (M,S) -> substitute(M, default S)
+substitute(Ideal,RingFamily) := Ideal => (I,S) -> substitute(I, default S)
+substitute(Vector,RingFamily) := Vector => (v,S) -> substitute(v, default S)
+substitute(Number,RingFamily) := 
+substitute(RingElement,RingFamily) := RingElement => (r,S) -> substitute(r, default S)
 
 substitute(Matrix,ZZ) := Matrix => (m,i) -> (
      R := ring m;
