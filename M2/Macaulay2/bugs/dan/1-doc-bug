@@ -1,34 +1,46 @@
-+ /capybara/bin/M2 --no-readline --print-width 189
-Macaulay 2, version 0.9.96
++ /usr/local/bin/M2 --no-readline --print-width 156
+Macaulay 2, version 1.1
 with packages: Classic, Core, Elimination, IntegralClosure, LLLBases, Parsing, PrimaryDecomposition, SchurRings, TangentCone
---loading /home/dan/.Macaulay2/init.m2
 
-i1 : peek Macaulay2
+i1 : Macaulay2
 
 o1 = Macaulay2
 
-i2 :  Macaulay2
+o1 : Symbol
 
-o2 = Macaulay2
-
-o2 : Symbol
-
-i3 : help sin
+i2 : help sin
 --warning: symbol 'Macaulay2' in PackageDictionary is shadowed by a symbol in User#"private dictionary"
 --   new synonym provided for 'Macaulay2': Macaulay2$0
 
---error or time limit reached in conversion of output to net: type 'debugError()' to run it again; will try conversion to string
+o2 = sin -- compute the sine
+     ***********************
 
-o3 = DIV{HEADER1{sin,  -- , compute the sine}, DIV1{HEADER2{Synopsis}, UL{LI{DIV{class => list, DL{class => element, DT{class => heading, Usage: }, DD{class => value, DIV{TT{sin x}}}}}},
+     Synopsis
+     ========
 
-     o1 = 1.
+       * Usage: sin x
+       * Inputs:
+           * x, a real number
+       * Outputs:
+           * a real number, the sine of x
 
-     o1 : RR}}}}}}, DIV{class => waystouse, HEADER2{Ways to use , TT{sin},  :}, UL{LI{sin(RR)}, LI{SPAN{sin(ZZ), , see , TOH{Macaulay2 :: sin}}}}}}
-     ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
-     LI{DIV1{Inputs:, UL{LI{SPAN{TT{x}, , , SPAN{a , TO2{Macaulay2 :: RR, real number}}}}}}}, LI{DIV1{Outputs:, UL{LI{SPAN{SPAN{a , TO2{Macaulay2 :: RR, real number}}, , , the sine of ,
-     ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
-     TT{x}, }}}}}}}, DIV1{COMMENT{file://, /home/dan/src/M2/Macaulay2/packages/Macaulay2/././functions/sin-doc.m2, :, 20}, HEADER2{Description}, DIV{TABLE{class => examples, TR{TD{PRE{i1 :
-     ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
-     sin (pi/2)
 
-o3 : DIV
+     Description
+     ===========
+
+     +---------------+
+     |i1 : sin (pi/2)|
+     |               |
+     |o1 = 1         |
+     |               |
+     |o1 : RR        |
+     |       53      |
+     +---------------+
+
+     Ways to use sin :
+     =================
+
+       * sin(RR)
+       * sin(ZZ)
+
+o2 : DIV

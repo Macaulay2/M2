@@ -5,3 +5,6 @@ two = promote(2,A)
 dim (A/ideal(two))
 dim (A/ideal(2,x))
 dim (A/ideal(two,x))
+
+-- at least now, an error is given.
+-- can we compute the right answer?
