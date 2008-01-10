@@ -161,6 +161,16 @@ extern "C" {
 
   M2_Integer rawRandomInteger(M2_Integer maxN);
 
+  M2_Rational rawRandomQQ(M2_Integer height);
+  /* returns random a/b, where 1 <= b <= height, 1 <= a <= height */
+
+  M2_RRR rawRandomRR(long precision);
+  /* returns a uniformly distributed random real with the given precision, in range [0.0,1.0] */
+
+  M2_CCC rawRandomCC(long precision);
+  /* returns a uniformly distributed random complex in the box [0.0,0.0], [1.0,1.0] */
+
+
   /* Other random number routines of interest:
      ringelement
      matrix of scalars

@@ -122,6 +122,24 @@ randomMutableMatrix(ZZ,ZZ,RR,ZZ) := options -> (n,m,percentagezero,maxentry) -> 
 	if a != 0 then M_(r,c) = a)));
     M)
 
+fillRandom = method()
+fillRandom(MutableMatrix, ZZ) := (M,nelems) -> (
+    R := ring M;
+    nrows := numRows M;
+    ncols := numColumns M;
+    for i from 0 to nelems-1 do
+        M_(random nrows, random ncols) = random R;
+    )
+fillRandom(MutableMatrix, RR) := (M,density) -> (
+    R := ring M;
+    nrows := numRows M;
+    ncols := numColumns M;
+    for i from 0 to nrows-1 do
+      for j from 0 to ncols-1 do
+        if random 1.0 < density then
+          M_(i,j) = random R
+    )
+
 LU = method()
 LU MutableMatrix := (A) -> (
      nrows := rawNumberOfRows raw A;
@@ -129,6 +147,9 @@ LU MutableMatrix := (A) -> (
      U := mutableZero(ring A,0,0,Dense=>true);
      p := rawLU(raw A, raw L, raw U);
      (p, L, U))
+LU Matrix := (A) -> (
+     (p,L,U) := LU mutableMatrix A;
+     (p, matrix L,matrix U))
 
 solve = method(Options => { ClosestFit => false, MaximalRank => false })
 solve(MutableMatrix,MutableMatrix) := opts -> (A,b) -> (
