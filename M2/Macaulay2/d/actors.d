@@ -269,7 +269,7 @@ export (lhs:Expr) * (rhs:Expr) : Expr := (
 	       is t:RawMatrix do Expr(t)
 	       is null do buildErrorPacket(EngineError("matrix scalar multiplication failed"))
 	       )
-	  is y:RawMutableMatrix do (			    -- # typical value: symbol *, RawRingElement, RawMatrix, RawMatrix
+	  is y:RawMutableMatrix do (			    -- # typical value: symbol *, RawRingElement, RawMutableMatrix, RawMatrix
 	       when x*y
 	       is t:RawMutableMatrix do Expr(t)
 	       is null do buildErrorPacket(EngineError("matrix scalar multiplication failed"))
