@@ -151,14 +151,14 @@ document {
      for immutable matrices, but mutable matrices are sometimes easier
      to construct.",
      EXAMPLE {
-	  "m = mutableZero(ZZ,3,5)",
+	  "m = mutableMatrix(ZZ,3,5)",
 	  "m_(1,2) = 3",
 	  "m_(2,4) = 54",
 	  "m_(0,0) = -12",
 	  "m",
 	  "matrix m"
 	  },
-     SeeAlso => {mutableZero, mutableIdentity, MutableMatrix}
+     SeeAlso => {mutableMatrix, mutableIdentity, MutableMatrix}
      }
 document { 
      Key => [matrix, Degree],

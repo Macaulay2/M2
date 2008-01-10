@@ -51,7 +51,7 @@ document {
 diag = method()
 diag(ZZ,ZZ,List) := (a,b,L) -> (
      R := ring L#0;
-     M := mutableZero(R,a,b);
+     M := mutableMatrix(R,a,b);
      scan(#L, i -> M_(i,i) = L#i);
      matrix M)
 

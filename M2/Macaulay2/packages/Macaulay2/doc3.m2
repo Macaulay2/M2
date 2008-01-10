@@ -546,12 +546,9 @@ document { Key => {(randomMutableMatrix, ZZ, ZZ, RR, ZZ),
           randomMutableMatrix(10,15,.9,100)
      ///
      }
-document { Key => {(mutableZero, Ring, ZZ, ZZ),
-	  [mutableZero,Dense],
-	  mutableZero
-	  },
+document { Key => {(mutableMatrix, Ring, ZZ, ZZ) },
      Headline => "make a mutable matrix filled with zeroes",
-     Usage => "mutableZero(R,nrows,ncols)",
+     Usage => "mutableMatrix(R,nrows,ncols)",
      Inputs => { "R",
 	          "nrows",
 		  "ncols",
@@ -559,7 +556,7 @@ document { Key => {(mutableZero, Ring, ZZ, ZZ),
 		  },
      Outputs => {{"an ", TT "nrows", " by ", TT "ncols", " mutable matrix filled with zeroes from the ring ", TT "R" }},
      EXAMPLE lines ///
-         m = mutableZero(QQ,10,20)
+         m = mutableMatrix(QQ,10,20)
 	 m_(5,5) = 11/13
 	 m
      ///,
@@ -581,7 +578,7 @@ document { Key => {(mutableIdentity, Ring, ZZ),
 	 m_(5,5) = 11/13
 	 m
      ///,
-     SeeAlso => {mutableZero, mutableMatrix}
+     SeeAlso => {mutableMatrix}
      }
 
 undocumented (pretty, Thing)
