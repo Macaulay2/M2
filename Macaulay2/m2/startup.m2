@@ -27,7 +27,7 @@ if firstTime then (
      PackageDictionary = new Dictionary;
      dictionaryPath = append(dictionaryPath,PackageDictionary);
      assert( not isGlobalSymbol "Core" );
-     PackageDictionary#"Package$Core" = getGlobalSymbol(PackageDictionary,"Core");
+     getGlobalSymbol(PackageDictionary,"Core");
      )
 
 -- we need access to the private symbols -- (we remove the Core private dictionary later.)

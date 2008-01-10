@@ -731,15 +731,16 @@ document {
      }
 
 
-document { Key => extend,
+document { Key => {extend},
      Headline => "extend a module map to a chain map, if possible" }
 document {
-     Key => (extend,ChainComplex,ChainComplex,Matrix),
+     Key => {(extend,ChainComplex,ChainComplex,Matrix),[extend,Verify]},
      Usage => "extend(D,C,f0)",
      Inputs => {
 	  "D",
 	  "C",
 	  "f0" => { "a map from ", TT "C_0", " to ", TT "D_0" },
+	  Verify => Boolean => {"whether to check that the map extends"}
 	  },
      Outputs => { { "a chain complex map ", TT "f: D <--- C", " of degree 0 extending ", TT "f0", " in the sense that ", TT "f_0==f0" } },
      EXAMPLE {

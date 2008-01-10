@@ -329,9 +329,9 @@ ChainComplexMap * ChainComplexMap := ChainComplexMap => (g,f) -> (
 	  i -> h#i = g_(i+f.degree) * f_i);
      h)
 
-extend = method()
+extend = method(Options => {Verify => true})
 
-extend(ChainComplex,ChainComplex,Matrix) := ChainComplexMap => (D,C,fi)-> (
+extend(ChainComplex,ChainComplex,Matrix) := ChainComplexMap => opts -> (D,C,fi)-> (
      i := 0;
      j := 0;
      f := new ChainComplexMap;
@@ -343,7 +343,10 @@ extend(ChainComplex,ChainComplex,Matrix) := ChainComplexMap => (D,C,fi)-> (
      f#i = fi;
      n := i+1;
      while C#?n do (
-	  f#n = (f_(n-1) * C.dd_n) // D.dd_(n+s);
+	  p := f_(n-1) * C.dd_n;
+	  q := D.dd_(n+s);
+	  if opts.Verify and p % q != 0 then error "map cannot be extended";
+	  f#n = p // q;
 	  n = n+1;
 	  );
      f)
