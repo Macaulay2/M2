@@ -605,7 +605,7 @@ document { Key => {isCM,(isCM,Ideal)},
 
 document { Key => {lexIdeal,(lexIdeal,PolynomialRing,List),(lexIdeal,QuotientRing,List)},
      Headline => "produce an Artinian lexicographic ideal",
-     Usage => "lexIdeal(R,hilb) \n lexIdeal(Q,hilb)",
+     Usage => "lexIdeal(R,hilb)\nlexIdeal(Q,hilb)",
      Inputs => {
 	  "R" => PolynomialRing,
 	  "Q" => QuotientRing => {"a polynomial ring modulo a monomial ideal"},
