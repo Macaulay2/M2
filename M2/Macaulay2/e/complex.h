@@ -1,7 +1,7 @@
-// Copyright 2007  Michael E. Stillman
+// Copyright 2008  Michael E. Stillman
 
-#ifndef _complex_hpp_
-#define _complex_hpp_
+#ifndef _complex_h_
+#define _complex_h_
 #include "../d/M2types.h"
 
 /* The interface is similar to mpfr:

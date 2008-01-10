@@ -50,7 +50,6 @@ public:
   static M2_Integer get_random_integer(M2_Integer maxN);
 };
 
-
 // Local Variables:
 // compile-command: "make -C $M2BUILDDIR/Macaulay2/e "
 // End:
