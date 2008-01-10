@@ -279,8 +279,8 @@ gettoken1(file:PosFile,sawNewline:bool):Token := (
 		    );
 	       c := peek(file);
 	       if c == int('.') && peek(file,1) != int('.') 
-	       || c == int('p') || c == int('P')
-	       || c == int('e') || c == int('E')
+	       || (c == int('p') || c == int('P')) && isdigit(peek(file,1))
+	       || (c == int('e') || c == int('E')) && (isdigit(peek(file,1)) || peek(file,1) == int('-') && isdigit(peek(file,2)))
 	       then (
 		    typecode = TCRR;
 		    if c == int('.') then (
