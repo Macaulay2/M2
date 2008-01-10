@@ -187,7 +187,7 @@ matrixTable := options -> (f) -> (
 		    map(R^#f,, f, options))
 	       else (
 		    prec := min apply(flatten f, precision);
-		    f = applyTable(f, x -> setPrecision(prec,x));
+		    f = applyTable(f, numeric_prec);
 		    R = ring f#0#0;
 		    map(R^#f,, f, options)))
 	  else if type.?matrix then (type.matrix options)(f)

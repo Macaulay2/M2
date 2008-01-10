@@ -47,6 +47,7 @@ shrink(object:HashTable):void := (
 hashfun(e:Expr):Expr := Expr(toInteger(int(hash(e))));
 setupfun("hash",hashfun);
 export toExpr(h:int):Expr := Expr(toInteger(h));
+export toExpr(h:ulong):Expr := Expr(toInteger(h));
 mutablefun(e:Expr):Expr := Expr(toExpr(
      	  when e is o:HashTable do o.mutable
      	  is x:List do x.mutable
@@ -496,7 +497,8 @@ setupconst("List",Expr(listClass));
 setupconst("MutableList",Expr(mutableListClass));
 setupconst("ZZ",Expr(ZZClass));
 setupconst("QQ",Expr(QQClass));
-setupconst("BigNumberType",Expr(bigNumberRingClass));
+setupconst("RingFamily",Expr(ringFamilyClass));
+setupconst("BigNumberType",Expr(bigNumberTypeClass));
 setupconst("RR",Expr(bigRealClass));
 setupconst("CC",Expr(bigComplexClass));
 setupconst("Number",Expr(numberClass));

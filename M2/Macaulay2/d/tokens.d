@@ -583,8 +583,9 @@ export bigNumberClass := newtypeof(numberClass);
 export ZZClass := newnumbertype();
 export QQClass := newnumbertype();
 
-export bigNumberRingClass := newtypeof(typeClass);
-       newbignumbertype():HashTable := newHashTable(bigNumberRingClass,bigNumberClass);
+export ringFamilyClass := newtypeof(typeClass);
+export bigNumberTypeClass := newtypeof(ringFamilyClass);
+       newbignumbertype():HashTable := newHashTable(bigNumberTypeClass,bigNumberClass);
 export bigRealClass := newbignumbertype();
 export bigComplexClass := newbignumbertype();
 

@@ -1075,16 +1075,17 @@ net Constant := c -> net c#0
 expression Constant := c -> expression c#0
 toString Constant := c -> toString c#0
 toExternalString Constant := c -> toString c#0
-setPrecision(ZZ,Constant) := (prec,c) -> c#1 prec
+numeric Constant := c -> c#1 defaultPrecision
+numeric(ZZ,Constant) := (prec,c) -> c#1 prec
 
-Constant + BigNumber := (c,x) -> setPrecision(precision x,c) + x
-BigNumber + Constant := (x,c) -> x + setPrecision(precision x,c)
-Constant - BigNumber := (c,x) -> setPrecision(precision x,c) - x
-BigNumber - Constant := (x,c) -> x - setPrecision(precision x,c)
-Constant * BigNumber := (c,x) -> setPrecision(precision x,c) * x
-BigNumber * Constant := (x,c) -> x * setPrecision(precision x,c)
-Constant / BigNumber := (c,x) -> setPrecision(precision x,c) / x
-BigNumber / Constant := (x,c) -> x / setPrecision(precision x,c)
+Constant + BigNumber := (c,x) -> numeric(precision x,c) + x
+BigNumber + Constant := (x,c) -> x + numeric(precision x,c)
+Constant - BigNumber := (c,x) -> numeric(precision x,c) - x
+BigNumber - Constant := (x,c) -> x - numeric(precision x,c)
+Constant * BigNumber := (c,x) -> numeric(precision x,c) * x
+BigNumber * Constant := (x,c) -> x * numeric(precision x,c)
+Constant / BigNumber := (c,x) -> numeric(precision x,c) / x
+BigNumber / Constant := (x,c) -> x / numeric(precision x,c)
 
 
 

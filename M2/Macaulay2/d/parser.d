@@ -25,7 +25,7 @@ export parseRR(s:string):RR := (			    -- 4.33234234234p345e-9
      inPrec := false;
      inExpon := false;
      extra := 16;
-     prec := ulong(53);
+     prec := defaultPrecision;
      exsign := false;
      expon := long(0);
      foreach c in s do (
