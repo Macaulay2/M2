@@ -1372,7 +1372,7 @@ export tostring5(
 	  x = -x;
 	  );
      ex := long(0);
-     mantissa := getstr(ex, base, 0, x);
+     mantissa := getstr(ex, base, s, x);
      nt := 0;
      for i from length(mantissa)-1 to 0 by -1 do (
 	  if mantissa.i != '0' then break;

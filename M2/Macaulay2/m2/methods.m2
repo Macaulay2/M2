@@ -169,7 +169,9 @@ use Thing := identity
 degree = method ( )
 
 random = method(Options => {
-	  MaximalRank => false
+	  MaximalRank => false,
+	  Density => 1.,
+	  UpperTriangular => false
 	  })
 
 generators = method(

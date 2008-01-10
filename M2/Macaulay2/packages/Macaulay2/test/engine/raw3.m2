@@ -360,12 +360,12 @@ assert(mh == mat{{-e^4+a^2, -c^3-b*e^2+a*b, -d^100+a*b*c*e^96}})
 -- random matrices --
 ---------------------
 needs "raw-util.m2"
-mr = rawMatrixRandom(rawZZ(),2,3,.5,0,0)
-mr = rawMatrixRandom(rawZZ(),10,15,.5,0,0)
+mr = rawRandomConstantMatrix(rawZZ(),2,3,.5,0,0)
+mr = rawRandomConstantMatrix(rawZZ(),10,15,.5,0,0)
 R = polyring(rawZZp(32003), (symbol x, symbol y))
-mr = rawMatrixRandom(R,10,15,.5,0,0)
-mr = rawMatrixRandom(R,10,15,.5,1,0)
-mr = rawMatrixRandom(R,10,10,.5,1,0)
+mr = rawRandomConstantMatrix(R,10,15,.5,0,0)
+mr = rawRandomConstantMatrix(R,10,15,.5,1,0)
+mr = rawRandomConstantMatrix(R,10,10,.5,1,0)
 
 ------------------
 -- rawGCD --------
