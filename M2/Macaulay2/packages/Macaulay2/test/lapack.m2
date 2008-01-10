@@ -4,9 +4,14 @@ diag(ZZ,ZZ,List) := (a,b,L) -> (
      M := mutableZero(R,a,b);
      scan(#L, i -> M_(i,i) = L#i);
      matrix M)
+diag(List) := (L) -> (
+     R := ring L#0;
+     M := mutableZero(R,#L,#L);
+     scan(#L, i -> M_(i,i) = L#i);
+     matrix M)
 
 L1norm = method()
-L1norm Matrix := (M) -> max apply(flatten entries M, e -> abs e)
+L1norm Matrix := (M) -> max apply(flatten entries M, e -> sqrt((realPart e)^2 + (imaginaryPart e)^2))
 
 v = solve(matrix {{1.0, 2.01}, {3., 4.}, {5., 8.}},matrix {{13.01}, {29.01}, {55.01}},ClosestFit=>true,MaximalRank=>true)
 assert (L1norm(v - matrix {{3.}, {5.}}) < .1)
