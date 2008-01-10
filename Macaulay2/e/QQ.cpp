@@ -1,6 +1,7 @@
 
 // Copyright 1995 Michael E. Stillman
 
+#include "rand.h"
 #include "QQ.hpp"
 #include "text-io.hpp"
 #include "monoid.hpp"
@@ -56,12 +57,7 @@ int QQ::coerce_to_int(ring_elem a) const
 
 ring_elem QQ::random() const
 {
-  M2_Rational result = QQ::new_elem();
-  Random::random_integer(mpq_numref(result));
-  do {
-    Random::random_integer(mpq_denref(result));
-  } while (!mpz_cmp_si(mpq_denref(result),0));
-  mpq_canonicalize(result);
+  M2_Rational result = rawRandomQQ(0);
   return MPQ_RINGELEM(result);
 }
 

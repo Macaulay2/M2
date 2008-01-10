@@ -50,7 +50,7 @@ void IM2_initialize()
 
   globalQQ = QQ::create();
 
-  Random::i_random();
+  rawRandomInitialize();
   factory_setup_1();
 }
 

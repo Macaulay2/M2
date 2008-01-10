@@ -18,6 +18,8 @@
 #error integer type definitions not available
 #endif
 
+#include "rand.h" // This now contains the engine interface with random numbers
+
 typedef int32_t deg_t;  // this is the integer type to use for degrees and weights
 
 #if defined(__cplusplus)
@@ -135,47 +137,6 @@ extern "C" {
 #endif
   void IM2_initialize(void); /* drg: connected */
   M2_string IM2_last_error_message(void); /* drg: connected */
-
-  /* Other routine groups still to add:
-     computations
-       LLL
-       Hermite
-       Smith?
-       GB (several versions)
-       res (several versions)
-       gb kernel 
-       determinants
-       pfaffians
-       Hilbert functions?
-
-     rings
-       QQ, ...
-  */
-  /**************************************************/
-  /**** Random numbers ******************************/
-  /**************************************************/
-
-  int32_t rawSetRandomSeed(M2_Integer seed); /* drg: connected */
-
-  void rawSetRandomMax(M2_Integer maxN);/* drg: connected */
-
-  M2_Integer rawRandomInteger(M2_Integer maxN);/* drg: connected */
-
-  M2_Rational rawRandomQQ(M2_Integer height);/* drg: connected */
-  /* returns random a/b, where 1 <= b <= height, 1 <= a <= height */
-
-  M2_RRR rawRandomRR(unsigned long precision);/* drg: connected */
-  /* returns a uniformly distributed random real with the given precision, in range [0.0,1.0] */
-
-  M2_CCC rawRandomCC(unsigned long precision);/* drg: connected */
-  /* returns a uniformly distributed random complex in the box [0.0,0.0], [1.0,1.0] */
-
-
-  /* Other random number routines of interest:
-     ringelement
-     matrix of scalars
-     combinations of a given matrix
-     large integer random numbers */
 
   /**************************************************/
   /**** Monomial routines ***************************/

@@ -1,5 +1,6 @@
 // Copyright 1995 Michael E. Stillman
 
+#include "rand.h"
 #include "ZZ.hpp"
 #include "RRR.hpp"
 #include "CCC.hpp"
@@ -55,9 +56,7 @@ void CCC::remove_elem(M2_CCC f) const
 
 ring_elem CCC::random() const
 {
-  M2_CCC result = new_elem();
-  Random::random_RRR(result->re);
-  Random::random_RRR(result->im);
+  M2_CCC result = rawRandomCC(precision);
   return BIGCC_RINGELEM(result);
 }
 
