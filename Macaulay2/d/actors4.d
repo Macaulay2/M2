@@ -1101,25 +1101,32 @@ setupfun("youngest", youngest);
 toRRS := dummySymbol;
 toRR(e:Expr):Expr := (
      when e
+     is x:ZZ do Expr(toRR(x,defaultPrecision))
+     is x:QQ do Expr(toRR(x,defaultPrecision))
+     is RR do e
      is s:Sequence do (
-	  if length(s) != 2 then WrongNumArgs(2) else
+	  if length(s) != 2 then WrongNumArgs(1,2) else
 	  when s.0 is prec:ZZ do (
 	       if !isULong(prec) then WrongArgSmallUInteger(1)
 	       else (
 	       	    when s.1 
-	       	    is x:QQ do Expr(toRR(x,toULong(prec)))
      	       	    is x:ZZ do Expr(toRR(x,toULong(prec)))
+	       	    is x:QQ do Expr(toRR(x,toULong(prec)))
      	       	    is x:RR do Expr(toRR(x,toULong(prec)))
 		    else binarymethod(s.0,s.1,getGlobalVariable(toRRS),toRRS.word.name)
 		    )
 	       )
 	  else WrongArgInteger(1)
 	  )
-     else WrongNumArgs(2));
+     else WrongArg("a real number or a pair"));
 toRRS = setupfun("toRR",toRR);
 
 toCC(e:Expr):Expr := (
      when e
+     is x:ZZ do Expr(toRR(x,defaultPrecision))
+     is x:QQ do Expr(toRR(x,defaultPrecision))
+     is x:RR do Expr(toCC(x))
+     is CC do e
      is s:Sequence do (
 	  if length(s) == 2 then (
 	       when s.0 is prec:ZZ do (
@@ -1161,8 +1168,8 @@ toCC(e:Expr):Expr := (
 				   toRR(0,toULong(prec)) -- dummy
 				   ))))
 	       else WrongArgInteger(1))
-	  else WrongNumArgs(2,3))
-     else WrongNumArgs(2,3));
+	  else WrongNumArgs(1,3))
+     else WrongArg("a real or complex number, or 2 or 3 arguments"));
 setupfun("toCC",toCC);
 
 precision(e:Expr):Expr := (
