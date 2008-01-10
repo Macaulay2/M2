@@ -38,7 +38,8 @@ globalAssignment ImmutableType
 
 BigNumberType.synonym = "big number ring"
 BigNumberType _ ZZ := (T,prec) -> new T.BigNumberRing of T from prec
-Thing ** BigNumberType := (X,T) -> X ** T_53		    -- default precision (??)
+default BigNumberType := R -> R_defaultPrecision
+Thing ** BigNumberType := (X,T) -> X ** default T
 dim BigNumberType := R -> 0
 char BigNumberType := R -> 0
 degreeLength BigNumberType := R -> 0
@@ -86,9 +87,7 @@ RR.BigNumberRing = RealNumberRing
 toString RealNumberRing := R -> concatenate("RR_",toString R.precision)
 ring RR := x -> new RealNumberRing of RR from precision x
 
-new RR from RawRingElement := (RRR,x) -> (
-     assert( RRR === RR );				    -- the danger is that maybe RRR === RR_53, for example
-     rawToRR x)
+new RR from RawRingElement := (RRR,x) -> ( assert( RRR === RR ); rawToRR x )
 promote(RawRingElement,RR) := (x,R) -> new RR from x
 promote(RawRingElement,Number) := (x,R) -> new R from x
 promote(RawRingElement,RingElement) := (x,R) -> new R from x

@@ -335,7 +335,7 @@ Ring ^ ZZ := Module => (R,n) -> (
      else notImplemented()
      )
 
-BigNumberType ^ ZZ := Module => (T,n) -> T_53^n		    -- 53!!
+BigNumberType ^ ZZ := Module => (T,n) -> (default T)^n
 
 schreyerOrder = method()
 schreyerOrder Module := Matrix => (F) -> (
