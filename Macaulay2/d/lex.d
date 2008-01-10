@@ -278,9 +278,7 @@ gettoken1(file:PosFile,sawNewline:bool):Token := (
 		    tokenbuf << char(getc(file))
 		    );
 	       c := peek(file);
-	       if c == int('.') && peek(file,1) != int('.') 
-	       || c == int('p') && isdigit(peek(file,1))
-	       || c == int('e') && (isdigit(peek(file,1)) || peek(file,1) == int('-') && isdigit(peek(file,2)))
+	       if c == int('.') && peek(file,1) != int('.') || c == int('p') || c == int('e')
 	       then (
 		    typecode = TCRR;
 		    if c == int('.') then (
@@ -288,24 +286,38 @@ gettoken1(file:PosFile,sawNewline:bool):Token := (
      	       	    	 while isdigit(peek(file)) do tokenbuf << char(getc(file));
 			 );
 	       	    c = peek(file);
-		    if c == int('p') 
-		    && isdigit(char(peek(file,1))) 	    -- EOF on peek is rare and doesn't get converted to a digit, anyway
-		    then (
-		    	 tokenbuf << char(getc(file));
-		    	 tokenbuf << char(getc(file));
-			 while isdigit(peek(file)) do tokenbuf << char(getc(file)));
-	       	    c = peek(file);
-		    if c == int('e') && ( peek(file,1) == int('-') && isdigit(peek(file,2)) || isdigit(peek(file,1)) )
-		    then (
-		    	 tokenbuf << char(getc(file));
-		    	 tokenbuf << char(getc(file));
-     	       	    	 while isdigit(peek(file)) do tokenbuf << char(getc(file));
+		    if c == int('p') then (
+			 tokenbuf << char(getc(file));
+			 if isdigit(char(peek(file))) 	    -- EOF on peek is rare and doesn't get converted to a digit, anyway
+			 then (
+			      tokenbuf << char(getc(file));
+			      while isdigit(peek(file)) do tokenbuf << char(getc(file)))
+			 else (
+			      printErrorMessage(file.pos,"precision missing in floating point constant");
+			      empty(tokenbuf);
+			      return errorToken;
+			      )
 			 );
-		    if peek(file) == int('.') then (
-			 printErrorMessage(file.pos,"'.' follows floating point constant");
-			 while peek(file)==int('.') || isdigit(peek(file)) do getc(file);
+	       	    c = peek(file);
+		    if c == int('e') then (
+			 tokenbuf << char(getc(file));
+			 if ( peek(file) == int('-') && isdigit(peek(file,1)) || isdigit(peek(file)) )
+			 then (
+			      tokenbuf << char(getc(file));
+			      while isdigit(peek(file)) do tokenbuf << char(getc(file));
+			      )
+			 else (
+			      printErrorMessage(file.pos,"exponent missing in floating point constant");
+			      empty(tokenbuf);
+			      return errorToken;
+			      )
+			 );
+		    c = peek(file);
+		    if c == int('.') || c == int('p') || c == int('e') then (
+			 getc(file);
+			 printErrorMessage(file.pos,"'"+char(c)+"' follows floating point constant");
 		    	 empty(tokenbuf);
-		    	 return errorToken
+		    	 return errorToken;
 			 );
 		    );
 	       s := takestring(tokenbuf);
