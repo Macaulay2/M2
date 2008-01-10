@@ -848,8 +848,11 @@ method1(e:Expr,env:Sequence):Expr := (
      -- env.0 : the primary method function, used as key for lookup
      -- env.1 : the function to call if no method found
      f := lookup(Class(e),env.0);
-     applyEE(if f == nullE then env.1 else f,e)
-     );
+     if recursionDepth > recursionLimit then return InternalRecursionLimit();
+     recursionDepth = recursionDepth + 1;
+     r := applyEE(if f == nullE then env.1 else f,e);
+     recursionDepth = recursionDepth - 1;
+     r);
 method1c(e:Expr,env:Sequence):Expr := (
      -- env.0 : the primary method function, used as key for lookup
      -- env.1 : the function to call if no method found
