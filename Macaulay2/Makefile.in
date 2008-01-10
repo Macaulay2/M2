@@ -12,12 +12,10 @@ VPATH = @srcdir@
 install install-others install-Macaulay2 :: @encapdir@/@docpackagesdirtail@ @encapdir@/@docpackagesdirtail@ \
 	   @encapdir@/@docpackagesdirtail@/COPYING \
 	   @encapdir@/@docpackagesdirtail@/README \
-	   @encapdir@/@docpackagesdirtail@/CHANGES \
 	   @encapdir@/@docpackagesdirtail@/LAYOUT
 
 @encapdir@/@docpackagesdirtail@:; @MKDIR_P@ "$@"
 @encapdir@/@docpackagesdirtail@/COPYING : COPYING ; @INSTALL_DATA@ $< "$@"
-@encapdir@/@docpackagesdirtail@/CHANGES : CHANGES ; @INSTALL_DATA@ $< "$@"
 @encapdir@/@docpackagesdirtail@/LAYOUT  : LAYOUT  ; @INSTALL_DATA@ $< "$@"
 @encapdir@/@docpackagesdirtail@/README  : README  ; @INSTALL_DATA@ $< "$@"
 

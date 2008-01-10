@@ -1793,6 +1793,7 @@ printingPrecisionS := dummySymbol;
 printingLeadLimitS := dummySymbol;
 printingTrailLimitS := dummySymbol;
 printingSeparatorS := dummySymbol;
+defaultPrecisionS := dummySymbol;
 recursionLimitS := dummySymbol;
 nLimitS := dummySymbol;
 stopIfErrorS := dummySymbol;
@@ -1809,6 +1810,7 @@ syms := SymbolSequence(
      (  debugLevelS = setupvar("debugLevel",toExpr(debugLevel));  debugLevelS  ),
      (  engineDebugLevelS = setupvar("engineDebugLevel",toExpr(engineDebugLevel));  engineDebugLevelS  ),
      (  debuggingModeS = setupvar("debuggingMode",toExpr(debuggingMode));  debuggingModeS  ),
+     (  defaultPrecisionS = setupvar("defaultPrecision",toExpr(defaultPrecision));  defaultPrecisionS  ),
      (  errorDepthS = setupvar("errorDepth",toExpr(errorDepth));  errorDepthS  ),
      (  gbTraceS = setupvar("gbTrace",toExpr(gbTrace));  gbTraceS  ),
      (  debuggerHookS = setupvar("debuggerHook",debuggerHook);  debuggerHookS  ),
@@ -1868,20 +1870,25 @@ store(e:Expr):Expr := (			    -- called with (symbol,newvalue)
 	  is s:string do (
 	       if sym === printingSeparatorS then (printingSeparator = s; e)
 	       else buildErrorPacket(msg))
-	  is i:ZZ do if !isInt(i) then buildErrorPacket(msg)
-	  else (
-	       n := toInt(i);
-	       if sym === loadDepthS then (loadDepth = n; e)
-	       else if sym === errorDepthS then (errorDepth = n; e)
-	       else if sym === debugLevelS then (debugLevel = n; e)
-	       else if sym === engineDebugLevelS then (engineDebugLevel = n; e)
-	       else if sym === recursionLimitS then (recursionLimit = n; e)
-	       else if sym === lineNumberS then (lineNumber = n; e)
-	       else if sym === printingPrecisionS then (printingPrecision = n; e)
-	       else if sym === printingLeadLimitS then (printingLeadLimit = n; e)
-	       else if sym === printingTrailLimitS then (printingTrailLimit = n; e)
-	       else if sym === gbTraceS then (gbTrace = n; e)
-	       else if sym === printWidthS then (printWidth = n; e)
+	  is i:ZZ do (
+	       if isInt(i) then (
+		    n := toInt(i);
+		    if sym === loadDepthS then (loadDepth = n; e)
+		    else if sym === errorDepthS then (errorDepth = n; e)
+		    else if sym === debugLevelS then (debugLevel = n; e)
+		    else if sym === engineDebugLevelS then (engineDebugLevel = n; e)
+		    else if sym === recursionLimitS then (recursionLimit = n; e)
+		    else if sym === lineNumberS then (lineNumber = n; e)
+		    else if sym === printingPrecisionS then (printingPrecision = n; e)
+		    else if sym === printingLeadLimitS then (printingLeadLimit = n; e)
+		    else if sym === printingTrailLimitS then (printingTrailLimit = n; e)
+		    else if sym === gbTraceS then (gbTrace = n; e)
+		    else if sym === printWidthS then (printWidth = n; e)
+	       	    else if sym === defaultPrecisionS then (
+			 if n < 0 then return buildErrorPacket(msg);
+			 defaultPrecision = ulong(n);
+			 e)
+		    else buildErrorPacket(msg))
 	       else buildErrorPacket(msg))
 	  else buildErrorPacket(msg))
      else WrongNumArgs(2));

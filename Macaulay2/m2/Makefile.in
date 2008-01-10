@@ -102,8 +102,7 @@ clean::; rm -f TAGS @srcdir@/TAGS @srcdir@/TAGS.doc
 		../packages/Makefile.in \
 		../../Makefile ../../GNUmakefile.in \
 		@srcdir@/../packages/*/Makefile.in \
-		@srcdir@/README.DOC \
-		../CHANGES
+		@srcdir@/README.DOC
 	@echo making $@
 	@ set -e ; \
 	  cd @srcdir@ && \

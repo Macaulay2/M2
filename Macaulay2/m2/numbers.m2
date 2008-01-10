@@ -6,12 +6,13 @@ even = x -> 0 === x%2
 
 zero = x -> x == 0					    -- we use == so this can apply to all types of things
 
-numeric = method(Dispatch => Thing)
-numeric Thing := identity
 numeric VisibleList := x -> apply(x,numeric)
-numeric Number := x -> x + 0.
+numeric(ZZ,VisibleList) := (prec,x) -> apply(x, t -> numeric(prec,t))
+numeric Number := x -> numeric(defaultPrecision, x)
 numeric CC := identity
 numeric RR := identity
+numeric(ZZ,RR) := toRR
+numeric(ZZ,CC) := toCC
 
 -- Local Variables:
 -- compile-command: "make -C $M2BUILDDIR/Macaulay2/m2 "
