@@ -223,6 +223,7 @@ newPackage(String) := opts -> (title) -> (
 		    db := newpkg#"raw documentation database" = openDatabase dbname;
 		    addEndFunction(() -> if isOpen db then close db))));
      pkgsym := getGlobalSymbol(PackageDictionary,title);
+     PackageDictionary#("Package$" | title) = pkgsym;
      global currentPackage <- newpkg;
      ReverseDictionary#newpkg = pkgsym;
      pkgsym <- newpkg;
