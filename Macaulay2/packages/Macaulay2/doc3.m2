@@ -472,13 +472,6 @@ document {
      "We intend to add parsing precedences to this table and eliminate ", TO "seeParsing", "."
      }
 
-undocumented liftable'
-undocumented {(liftable', ZZ, ZZ), 
-     (liftable', RR, ZZ), 
-     --(liftable', QQ, QQ), 
-     (liftable', Matrix, Number), 
-     (liftable', Matrix, RingElement)}
-
 document { Key => MethodFunction,
      Headline => "a type of method function", "Functions of this type are created by ", TO "method", "." }
 document { Key => MethodFunctionWithOptions,

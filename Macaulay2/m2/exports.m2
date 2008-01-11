@@ -809,7 +809,6 @@ export {
 	symbol leadMonomial,
 	symbol leadTerm,
 	symbol length,
-	symbol liftable',    -- temporary new undocumented version
 	symbol lift,
 	symbol liftable,
 	symbol lines,

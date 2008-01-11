@@ -20,8 +20,8 @@ ZZ.Engine = true
 ZZ.baseRings = {}
 ZZ.degreeLength = 0
 ZZ.frac = QQ
-lift(ZZ,ZZ) := opts -> promote(ZZ,ZZ) := (i,ZZ) -> i
-liftable'(ZZ,ZZ) := x -> true
+lift(ZZ,ZZ) := opts -> (i,ZZ) -> i
+promote(ZZ,ZZ) := (i,ZZ) -> i
 ZZ.random = opts -> ZZ -> rawRandomZZ opts.Height
 gcd = method(Binary => true)
 gcd List := x -> gcd toSequence x
