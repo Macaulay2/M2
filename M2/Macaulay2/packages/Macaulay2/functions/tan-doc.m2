@@ -3,7 +3,7 @@
 --- notes: 
 
 document { 
-     Key => {tan,(tan,RR), (tan,ZZ)},
+     Key => {tan,(tan,RR), (tan,ZZ),(tan, QQ)},
      Headline => "compute the tangent",
      Usage => "tan x",
      Inputs => { 

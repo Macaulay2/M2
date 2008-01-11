@@ -13,15 +13,21 @@ document {
      "See also ", TO "odd", "."}
 
 document {
-     Key => prepend_numeric methods numeric,
+     Key => {numeric,
+	  (numeric, ZZ, CC), (numeric, RR), (numeric, CC), (numeric, ZZ, VisibleList), 
+	  (numeric, VisibleList), (numeric, ZZ, Constant), (numeric, Constant),
+     	  (numeric, ZZ, Number), (numeric, Number)},
      Headline => "convert to floating point",
-     TT "numeric x", " -- yields the expression obtained from x by converting the 
-     integers and rational numbers within to double precision floating 
-     point numbers.",
-     PARA{},
-     EXAMPLE "numeric {1,2,3}",
-     PARA{},
-     "See also ", TO "RR", "."}
+     Usage => "numeric x\nnumeric(prec,x)\nnumeric_prec x",
+     Inputs => { 
+	  "x",
+	  "prec" => ZZ => {"the number of bits of precision to use in the computation"}
+	  },
+     Outputs => {{ "the expression obtained from ", TT "x", " by converting the 
+     	       integers, rational numbers, and symbolic constants within it
+	       to double floating point numbers."}},
+     EXAMPLE {"x = {1,2/3,pi}","numeric oo","numeric_200 pi","numeric_100 oo"},
+     SeeAlso => { RR, CC, Constant }}
 document {
      Key => Engine,
      Headline => "specify whether a ring is handled by the engine",

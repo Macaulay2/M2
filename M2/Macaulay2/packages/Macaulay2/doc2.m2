@@ -330,13 +330,21 @@ document {
      Headline => "a binary operator (file output, ...)",
      }
 document {
-     Key => (symbol <<, ZZ, ZZ),
-     Headline => "shift bits leftward",
-     Usage => "i << j",
-     Inputs => { "i", "j" },
-     Outputs => {{ "the integer obtained from ", TT "i", " by shifting its binary representation leftward ", TT "j", " places" }},
-     EXAMPLE "256 << 5",
-     SeeAlso => {(symbol >>,ZZ, ZZ)}
+     Key => {"left shift", (symbol <<, ZZ, ZZ), (symbol <<, RR, ZZ), (symbol <<, CC, ZZ)},
+     Usage => "x << j",
+     Inputs => { "x", "j" },
+     Outputs => {{ "the number obtained from ", TT "x", " by shifting its binary representation leftward ", TT "j", " places" }},
+     EXAMPLE {"256 << 5","256. << 555"},
+     SeeAlso => {"right shift"}
+     }
+
+document {
+     Key => {"right shift", (symbol >>, ZZ, ZZ), (symbol >>, RR, ZZ), (symbol >>, CC, ZZ)},
+     Usage => "x >> j",
+     Inputs => { "x", "j" },
+     Outputs => {{ "the integer obtained from ", TT "x", " by shifting its binary representation rightward ", TT "j", " places" }},
+     EXAMPLE {"256 >> 5","256. >> 555"},
+     SeeAlso => {"right shift"}
      }
 
 undocumented {(symbol <<, File, Symbol),(symbol <<, File, Net),(symbol <<, File, String)}
@@ -384,16 +392,6 @@ document {
 document {
      Key => symbol >>, 
      Headline => "a binary operator, uses include bit shifting, or attaching optional inputs to functions" 
-     }
-
-document {
-     Key => (symbol >>, ZZ, ZZ),
-     Headline => "shift bits rightward",
-     Usage => "i >> j",
-     Inputs => { "i", "j" },
-     Outputs => {{ "the integer obtained from ", TT "i", " by shifting its binary representation rightward ", TT "j", " places" }},
-     EXAMPLE "256 >> 5",
-     SeeAlso => {(symbol <<,ZZ, ZZ)}
      }
 
 document {
@@ -622,7 +620,7 @@ document {
      }
 
 document {
-     Key => abs,
+     Key => {abs,(abs, RR),(abs, CC),(abs, ZZ),(abs, QQ)},
      Headline => "absolute value function", 
 	Usage => "abs x",
 	Inputs => {
@@ -645,9 +643,15 @@ document {
 document {
      Key => {log,(log, RR),(log, QQ),(log, ZZ)},
      Headline => "logarithm function",
-     Usage => "log x",
-     Inputs => { "x" => RR },
-     Outputs => { { "the logarithm of ", TT "x"} } }
+     Usage => "log x\nlog(b,x)\nlog_b x",
+     Inputs => { "x" => RR, "b" => RR => {"the base for the logarithm"} },
+     Outputs => { { "the logarithm of ", TT "x"} },
+     EXAMPLE lines ///
+     	  log 10
+	  log_2 10
+	  log_10 2p100
+     ///
+     }
 document {
      Key => {sqrt,(sqrt, CC),(sqrt, QQ),(sqrt, ZZ),(sqrt, RR)},
      Headline => "square root function",

@@ -577,10 +577,8 @@ bitxorfun(e:Expr):Expr := (
      when e is a:Sequence do
      if length(a) == 2 then
      when a.0
-     is err:Error do Expr(err)
      is x:ZZ do
      when a.1
-     is err:Error do Expr(err)
      is y:ZZ do Expr(x ^^ y)
      else WrongArgZZ(2)
      else WrongArgZZ(1)
@@ -606,7 +604,6 @@ sin(e:Expr):Expr := (
      is x:RR do Expr(sin(x))				    -- # typical value: sin, RR, RR
      is x:ZZ do Expr(sin(toRR(x)))			    -- # typical value: sin, ZZ, RR
      is x:QQ do Expr(sin(toRR(x)))			    -- # typical value: sin, QQ, RR
-     is x:Error do Expr(x)
      else buildErrorPacket("expected a number")
      );
 setupfun("sin",sin);
@@ -615,7 +612,6 @@ cos(e:Expr):Expr := (
      is x:RR do Expr(cos(x))				    -- # typical value: cos, RR, RR
      is x:ZZ do Expr(cos(toRR(x)))			    -- # typical value: cos, ZZ, RR
      is x:QQ do Expr(cos(toRR(x)))			    -- # typical value: cos, QQ, RR
-     is x:Error do Expr(x)
      else buildErrorPacket("expected a number")
      );
 setupfun("cos",cos);
@@ -624,7 +620,6 @@ tan(e:Expr):Expr := (
      is x:RR do Expr(tan(x))				    -- # typical value: tan, RR, RR
      is x:ZZ do Expr(tan(toRR(x)))			    -- # typical value: tan, ZZ, RR
      is x:QQ do Expr(tan(toRR(x)))			    -- # typical value: tan, QQ, RR
-     is x:Error do Expr(x)
      else buildErrorPacket("expected a number")
      );
 setupfun("tan",tan);
@@ -633,7 +628,6 @@ acos(e:Expr):Expr := (
      is x:RR do Expr(acos(x))				    -- # typical value: acos, RR, RR
      is x:ZZ do Expr(acos(toRR(x)))			    -- # typical value: acos, ZZ, RR
      is x:QQ do Expr(acos(toRR(x)))			    -- # typical value: acos, QQ, RR
-     is x:Error do Expr(x)
      else buildErrorPacket("expected a number")
      );
 setupfun("acos",acos);
@@ -642,7 +636,6 @@ sec(e:Expr):Expr := (
      is x:RR do Expr(sec(x))				    -- # typical value: sec, RR, RR
      is x:ZZ do Expr(sec(toRR(x)))			    -- # typical value: sec, ZZ, RR
      is x:QQ do Expr(sec(toRR(x)))			    -- # typical value: sec, QQ, RR
-     is x:Error do Expr(x)
      else buildErrorPacket("expected a number")
      );
 setupfun("sec",sec);
@@ -651,7 +644,6 @@ csc(e:Expr):Expr := (
      is x:RR do Expr(csc(x))				    -- # typical value: csc, RR, RR
      is x:ZZ do Expr(csc(toRR(x)))			    -- # typical value: csc, ZZ, RR
      is x:QQ do Expr(csc(toRR(x)))			    -- # typical value: csc, QQ, RR
-     is x:Error do Expr(x)
      else buildErrorPacket("expected a number")
      );
 setupfun("csc",csc);
@@ -660,7 +652,6 @@ cot(e:Expr):Expr := (
      is x:RR do Expr(cot(x))				    -- # typical value: cot, RR, RR
      is x:ZZ do Expr(cot(toRR(x)))			    -- # typical value: cot, ZZ, RR
      is x:QQ do Expr(cot(toRR(x)))			    -- # typical value: cot, QQ, RR
-     is x:Error do Expr(x)
      else buildErrorPacket("expected a number")
      );
 setupfun("cot",cot);
@@ -669,7 +660,6 @@ sech(e:Expr):Expr := (
      is x:RR do Expr(sech(x))				    -- # typical value: sech, RR, RR
      is x:ZZ do Expr(sech(toRR(x)))			    -- # typical value: sech, ZZ, RR
      is x:QQ do Expr(sech(toRR(x)))			    -- # typical value: sech, QQ, RR
-     is x:Error do Expr(x)
      else buildErrorPacket("expected a number")
      );
 setupfun("sech",sech);
@@ -678,7 +668,6 @@ csch(e:Expr):Expr := (
      is x:RR do Expr(csch(x))				    -- # typical value: csch, RR, RR
      is x:ZZ do Expr(csch(toRR(x)))			    -- # typical value: csch, ZZ, RR
      is x:QQ do Expr(csch(toRR(x)))			    -- # typical value: csch, QQ, RR
-     is x:Error do Expr(x)
      else buildErrorPacket("expected a number")
      );
 setupfun("csch",csch);
@@ -687,7 +676,6 @@ coth(e:Expr):Expr := (
      is x:RR do Expr(coth(x))				    -- # typical value: coth, RR, RR
      is x:ZZ do Expr(coth(toRR(x)))			    -- # typical value: coth, ZZ, RR
      is x:QQ do Expr(coth(toRR(x)))			    -- # typical value: coth, QQ, RR
-     is x:Error do Expr(x)
      else buildErrorPacket("expected a number")
      );
 setupfun("coth",coth);
@@ -696,7 +684,6 @@ asin(e:Expr):Expr := (
      is x:RR do Expr(asin(x))				    -- # typical value: asin, RR, RR
      is x:ZZ do Expr(asin(toRR(x)))			    -- # typical value: asin, ZZ, RR
      is x:QQ do Expr(asin(toRR(x)))			    -- # typical value: asin, QQ, RR
-     is x:Error do Expr(x)
      else buildErrorPacket("expected a number")
      );
 setupfun("asin",asin);
@@ -705,7 +692,6 @@ log1p(e:Expr):Expr := (
      is x:RR do Expr(log1p(x))				    -- # typical value: log1p, RR, RR
      is x:ZZ do Expr(log1p(toRR(x)))			    -- # typical value: log1p, ZZ, RR
      is x:QQ do Expr(log1p(toRR(x)))			    -- # typical value: log1p, QQ, RR
-     is x:Error do Expr(x)
      else buildErrorPacket("expected a number")
      );
 setupfun("log1p",log1p);
@@ -714,7 +700,6 @@ expm1(e:Expr):Expr := (
      is x:RR do Expr(expm1(x))				    -- # typical value: expm1, RR, RR
      is x:ZZ do Expr(expm1(toRR(x)))			    -- # typical value: expm1, ZZ, RR
      is x:QQ do Expr(expm1(toRR(x)))			    -- # typical value: expm1, QQ, RR
-     is x:Error do Expr(x)
      else buildErrorPacket("expected a number")
      );
 setupfun("expm1",expm1);
@@ -723,7 +708,6 @@ eint(e:Expr):Expr := (
      is x:RR do Expr(eint(x))				    -- # typical value: eint, RR, RR
      is x:ZZ do Expr(eint(toRR(x)))			    -- # typical value: eint, ZZ, RR
      is x:QQ do Expr(eint(toRR(x)))			    -- # typical value: eint, QQ, RR
-     is x:Error do Expr(x)
      else buildErrorPacket("expected a number")
      );
 setupfun("eint",eint);
@@ -732,7 +716,6 @@ Gamma(e:Expr):Expr := (
      is x:RR do Expr(Gamma(x))				    -- # typical value: Gamma, RR, RR
      is x:ZZ do Expr(Gamma(toRR(x)))			    -- # typical value: Gamma, ZZ, RR
      is x:QQ do Expr(Gamma(toRR(x)))			    -- # typical value: Gamma, QQ, RR
-     is x:Error do Expr(x)
      else buildErrorPacket("expected a number")
      );
 setupfun("Gamma",Gamma);
@@ -741,7 +724,6 @@ lngamma(e:Expr):Expr := (
      is x:RR do Expr(lngamma(x))			    -- # typical value: lngamma, RR, RR
      is x:ZZ do Expr(lngamma(toRR(x)))			    -- # typical value: lngamma, ZZ, RR
      is x:QQ do Expr(lngamma(toRR(x)))			    -- # typical value: lngamma, QQ, RR
-     is x:Error do Expr(x)
      else buildErrorPacket("expected a number")
      );
 setupfun("lngamma",lngamma);
@@ -755,7 +737,6 @@ lgamma(e:Expr):Expr := (
      is x:RR do Expr(lgamma(x))				    -- # typical value: lgamma, RR, RR
      is x:ZZ do Expr(lgamma(toRR(x)))			    -- # typical value: lgamma, ZZ, RR
      is x:QQ do Expr(lgamma(toRR(x)))			    -- # typical value: lgamma, QQ, RR
-     is x:Error do Expr(x)
      else buildErrorPacket("expected a number")
      );
 setupfun("lgamma",lgamma);
@@ -768,7 +749,6 @@ zeta(e:Expr):Expr := (
 	  else Expr(zeta(toRR(x,defaultPrecision)))
 	  )
      is x:QQ do Expr(zeta(toRR(x)))			    -- # typical value: zeta, QQ, RR
-     is x:Error do Expr(x)
      else buildErrorPacket("expected a number")
      );
 setupfun("zeta",zeta);
@@ -777,7 +757,6 @@ erf(e:Expr):Expr := (
      is x:RR do Expr(erf(x))				    -- # typical value: erf, RR, RR
      is x:ZZ do Expr(erf(toRR(x)))			    -- # typical value: erf, ZZ, RR
      is x:QQ do Expr(erf(toRR(x)))			    -- # typical value: erf, QQ, RR
-     is x:Error do Expr(x)
      else buildErrorPacket("expected a number")
      );
 setupfun("erf",erf);
@@ -786,7 +765,6 @@ erfc(e:Expr):Expr := (
      is x:RR do Expr(erfc(x))				    -- # typical value: erfc, RR, RR
      is x:ZZ do Expr(erfc(toRR(x)))			    -- # typical value: erfc, ZZ, RR
      is x:QQ do Expr(erfc(toRR(x)))			    -- # typical value: erfc, QQ, RR
-     is x:Error do Expr(x)
      else buildErrorPacket("expected a number")
      );
 setupfun("erfc",erfc);
@@ -810,7 +788,6 @@ atan(e:Expr):Expr := (
      is x:RR do Expr(atan(x))				    -- # typical value: atan, RR, RR
      is x:ZZ do Expr(atan(toRR(x)))			    -- # typical value: atan, ZZ, RR
      is x:QQ do Expr(atan(toRR(x)))	       -- # typical value: atan, QQ, RR
-     is x:Error do Expr(x)
      is a:Sequence do if length(a) != 2
      then WrongNumArgs(1,2)
      else
@@ -842,7 +819,6 @@ cosh(e:Expr):Expr := (
      is x:RR do Expr(cosh(x))				    -- # typical value: cosh, RR, RR
      is x:ZZ do Expr(cosh(toRR(x)))			    -- # typical value: cosh, ZZ, RR
      is x:QQ do Expr(cosh(toRR(x)))			    -- # typical value: cosh, QQ, RR
-     is x:Error do Expr(x)
      else buildErrorPacket("expected a number")
      );
 setupfun("cosh",cosh);
@@ -851,7 +827,6 @@ sinh(e:Expr):Expr := (
      is x:RR do Expr(sinh(x))				    -- # typical value: sinh, RR, RR
      is x:ZZ do Expr(sinh(toRR(x)))			    -- # typical value: sinh, ZZ, RR
      is x:QQ do Expr(sinh(toRR(x)))			    -- # typical value: sinh, QQ, RR
-     is x:Error do Expr(x)
      else buildErrorPacket("expected a number")
      );
 setupfun("sinh",sinh);
@@ -860,7 +835,6 @@ tanh(e:Expr):Expr := (
      is x:RR do Expr(tanh(x))				    -- # typical value: tanh, RR, RR
      is x:ZZ do Expr(tanh(toRR(x)))			    -- # typical value: tanh, ZZ, RR
      is x:QQ do Expr(tanh(toRR(x)))			    -- # typical value: tanh, QQ, RR
-     is x:Error do Expr(x)
      else buildErrorPacket("expected a number")
      );
 setupfun("tanh",tanh);
@@ -869,19 +843,37 @@ exp(e:Expr):Expr := (
      is x:RR do Expr(exp(x))			-- # typical value: exp, RR, RR
      is x:ZZ do Expr(exp(toRR(x)))			    -- # typical value: exp, ZZ, RR
      is x:QQ do Expr(exp(toRR(x)))			    -- # typical value: exp, QQ, RR
-     is x:Error do Expr(x)
      else buildErrorPacket("expected a number")
      );
 setupfun("exp",exp);
 log(e:Expr):Expr := (
      when e
-     is s:Sequence do if length(s) != 2 then WrongNumArgs(1,2) 
-     else Expr(log(s.1)/log(s.0))			    -- # typical value: log, RR, RR, RR
+     is a:Sequence do if length(a) != 2 then WrongNumArgs(1,2) 
+     else (
+	  when a.0
+	  is b:RR do (
+	       when a.1
+	       is x:RR do Expr(log(b,x))			            -- # typical value: log, RR, RR, RR
+	       is x:ZZ do Expr(log(b,toRR(x,precision(b))))	    -- # typical value: log, RR, ZZ, RR
+	       is x:QQ do Expr(log(b,toRR(x,precision(b))))	    -- # typical value: log, RR, QQ, RR
+	       else WrongArg(1,"a number"))
+	  is b:ZZ do (
+	       when a.1
+	       is x:RR do Expr(log(toRR(b,precision(x)),x))    -- -- # typical value: log, ZZ, RR, RR
+	       is x:ZZ do Expr(log(toRR(b),toRR(x)))	       -- # typical value: log, ZZ, ZZ, RR
+	       is x:QQ do Expr(log(toRR(b),toRR(x)))	       -- # typical value: log, ZZ, QQ, RR
+	       else WrongArg(1,"a number"))
+	  is b:QQ do (
+	       when a.1
+	       is x:RR do Expr(log(toRR(b,precision(x)),x))    -- # typical value: log, QQ, RR, RR
+	       is x:ZZ do Expr(log(toRR(b),toRR(x)))	    -- # typical value: log, QQ, ZZ, RR
+	       is x:QQ do Expr(log(toRR(b),toRR(x)))	    -- # typical value: log, QQ, QQ, RR
+	       else WrongArg(1,"a number"))
+	  else WrongArg(2,"a number"))
      -- and more ...
      is x:RR do Expr(log(x))				    -- # typical value: log, RR, RR
      is x:ZZ do Expr(log(toRR(x)))			    -- # typical value: log, ZZ, RR
      is x:QQ do Expr(log(toRR(x)))			    -- # typical value: log, QQ, RR
-     is x:Error do Expr(x)
      else buildErrorPacket("expected a number or a pair of numbers")
      );
 setupfun("log",log);
@@ -891,7 +883,6 @@ floor(e:Expr):Expr := (
      is x:RR do Expr(floor(x))				    -- # typical value: floor, RR, ZZ
      is x:QQ do Expr(floor(x))				    -- # typical value: floor, QQ, ZZ
      is ZZ do e				    -- # typical value: floor, ZZ, ZZ
-     is x:Error do Expr(x)
      else buildErrorPacket("expected an integral, rational, or real number")
      );
 setupfun("floor",floor);
@@ -899,7 +890,6 @@ setupfun("floor",floor);
 round0(e:Expr):Expr := (
      when e
      is x:RR do Expr(round(x))
-     is x:Error do Expr(x)
      else buildErrorPacket("expected a real number")
      );
 setupfun("round0",round0);
@@ -907,7 +897,6 @@ setupfun("round0",round0);
 run(e:Expr):Expr := (
      when e
      is x:string do Expr(toInteger(run(x)))
-     is x:Error do Expr(x)
      else buildErrorPacket("expected a string")
      );
 setupfun("run",run);

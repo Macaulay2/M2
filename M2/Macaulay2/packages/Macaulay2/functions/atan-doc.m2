@@ -8,7 +8,11 @@ document {
      Usage => "atan x"
      }
 document { 
-     Key => (atan,RR,RR),
+     Key => {(atan,RR,RR),
+	  (atan, ZZ, ZZ),(atan, QQ, ZZ),(atan, ZZ, QQ),
+	  (atan, QQ, QQ),(atan, RR, ZZ),(atan, ZZ, RR),(atan, QQ, RR),
+	  (atan, RR, QQ)
+	  },
      Headline => "compute an angle of a certain triangle",
      Usage => "atan(x,y)",
      Inputs => { "x" => RR, "y" => RR },
@@ -23,7 +27,7 @@ epsilon = 10.^-15;",
 	  }
      }
 document { 
-     Key => {(atan,RR),(atan,ZZ)},
+     Key => {(atan,RR),(atan,ZZ),(atan, QQ)},
      Headline => "compute the arctangent of a number ",
      Usage => "atan x",
      Inputs => { "x" => RR },

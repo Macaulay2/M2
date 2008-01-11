@@ -1249,6 +1249,10 @@ export log(x:RR):RR := (
      z := newRR(precision0(x));
      Ccode( void, "mpfr_log((__mpfr_struct *)", z, ",(__mpfr_struct *)", x, ", GMP_RNDN)" );
      z);
+export log(b:RR,x:RR):RR := (
+     if precision0(b) < precision0(x) then x = toRR(x,precision0(b))
+     else if precision0(b) > precision0(x) then b = toRR(b,precision0(x));
+     log(x)/log(b));
 export sin(x:RR):RR := (
      z := newRR(precision0(x));
      Ccode( void, "mpfr_sin((__mpfr_struct *)", z, ",(__mpfr_struct *)", x, ", GMP_RNDN)" );
