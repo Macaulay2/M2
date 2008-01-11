@@ -38,6 +38,24 @@ assert( precision ii_(CC_44) == 44 )
 assert( ii_CC == ii )
 assert( precision ii_CC == defaultPrecision )
 
+assert( promote(1.,RR_222) === 1p222 )
+
+assert( promote(1,RR) === 1. )
+assert( promote(1,RR_222) === 1p222 )
+assert( promote(1/1,RR) === 1. )
+assert( promote(1/1,RR_222) === 1p222 )
+
+assert( promote(1,CC) == 1 )
+assert( promote(1,CC) == 1. )
+assert( promote(1,CC) === 1.+0*ii )
+assert( promote(1,CC) === toCC 1 )
+assert( promote(1,CC_222) === 1p222+0*ii )
+assert( promote(1/1,CC) == 1 )
+assert( promote(1/1,CC) == 1. )
+assert( promote(1/1,CC) === 1.+0*ii )
+assert( promote(1/1,CC_222) === 1p222+0*ii )
+assert( not liftable(1*ii,RR) )
+
 -- Local Variables:
 -- compile-command: "make -C $M2BUILDDIR/Macaulay2/packages/Macaulay2/test numbers.out"
 -- End:

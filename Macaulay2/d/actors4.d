@@ -1123,8 +1123,8 @@ toRRS = setupfun("toRR",toRR);
 
 toCC(e:Expr):Expr := (
      when e
-     is x:ZZ do Expr(toRR(x,defaultPrecision))
-     is x:QQ do Expr(toRR(x,defaultPrecision))
+     is x:ZZ do Expr(toCC(x,defaultPrecision))
+     is x:QQ do Expr(toCC(x,defaultPrecision))
      is x:RR do Expr(toCC(x))
      is CC do e
      is s:Sequence do (

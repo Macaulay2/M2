@@ -57,8 +57,16 @@ promote(RawRingElement,CCParent) := (x,R) -> new CC from x
 promote(RawRingElement,Number) := (x,R) -> new R from x
 promote(RawRingElement,RingElement) := (x,R) -> new R from x
 promote(Number,BigNumber) := (x,RR) -> promote(x,default RR)
+promote(ZZ,RRParent) := 
+promote(QQ,RRParent) := 
 promote(RR,RRParent) := (i,K) -> toRR(K.precision,i)
+promote(ZZ,CCParent) := 
+promote(QQ,CCParent) := 
+promote(RR,CCParent) := 
 promote(CC,CCParent) := (i,K) -> toCC(K.precision,i)
+lift(Number,BigNumber) := (x,RR) -> lift(x,default RR)
+liftable(Number,BigNumber) := (x,RR) -> liftable(x,default RR)
+liftable(CC,RRParent):= (z,RR) -> imaginaryPart z == 0
 lift(CC,RRParent):= opts -> (z,RR) -> (
      if imaginaryPart z == 0 then realPart z
      else if opts.Verify then error "can't lift given complex number to real number"
