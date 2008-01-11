@@ -27,7 +27,7 @@ promote(QQ,RingElement) := (r,S) -> (
 liftable(RingElement,RingElement) := 
 liftable(Number,RingElement) := 
 liftable(RingElement,Number) := 
-liftable(Number,Number) := (f,R) -> null =!= lift(f,R)
+liftable(Number,Number) := (f,R) -> null =!= lift(f,R,Verify=>false)
 
 --- new lift and promote, version 3
 basicLift = opts -> (r,B) -> (
