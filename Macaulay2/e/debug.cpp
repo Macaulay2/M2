@@ -113,6 +113,13 @@ void dstash()
   stash::stats(o);
   emit(o.str());
 }
+
+void dRRR(M2_RRR a)
+{
+  buffer o;
+  o << tocharstar(gmp_tostringRR(a)) << newline;
+  emit(o.str());
+}
 // Local Variables:
 // compile-command: "make -C $M2BUILDDIR/Macaulay2/e "
 // End:
