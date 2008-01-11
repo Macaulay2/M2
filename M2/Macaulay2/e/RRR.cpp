@@ -8,7 +8,6 @@
 #include "monoid.hpp"
 #include "relem.hpp"
 #include "ringmap.hpp"
-#include "random.hpp"
 #include "gbring.hpp"
 #include "../d/M2mem.h"
 
@@ -48,14 +47,9 @@ void RRR::text_out(buffer &o) const
 
 mpfr_ptr RRR::new_elem() const
 {
-  mpfr_ptr result = reinterpret_cast<mpfr_ptr>(getmem(_elem_size));
+  mpfr_ptr result = reinterpret_cast<mpfr_ptr>(getmem(sizeof(mpfr_t)));
   mpfr_init2(result,precision);
   return result;
-}
-
-void RRR::remove_elem(mpfr_ptr f) const
-{
-  // mpfr_clear(f);
 }
 
 ring_elem RRR::random() const
@@ -221,11 +215,7 @@ ring_elem RRR::copy(const ring_elem f) const
 
 void RRR::remove(ring_elem &f) const
 {
-#if 0
-//   mpfr_ptr a = MPF_VAL(f);
-//   remove_elem(a);  // does nothing... remove this code?
-//   f = MPF_RINGELEM(NULL);
-#endif
+  // Intentionally empty
 }
 
 ring_elem RRR::preferred_associate(ring_elem f) const
@@ -234,23 +224,6 @@ ring_elem RRR::preferred_associate(ring_elem f) const
   if (mpfr_sgn(a) >= 0)
     return from_int(1);
   return from_int(-1);
-}
-
-void RRR::internal_negate_to(ring_elem &f) const
-{
-  mpfr_neg(MPF_VAL(f), MPF_VAL(f), GMP_RNDN);
-}
-
-void RRR::internal_add_to(ring_elem &f, ring_elem &g) const
-{
-  mpfr_add(MPF_VAL(f), MPF_VAL(f), MPF_VAL(g), GMP_RNDN);
-  // remove(g); should this be removed?
-}
-
-void RRR::internal_subtract_to(ring_elem &f, ring_elem &g) const
-{
-  mpfr_sub(MPF_VAL(f), MPF_VAL(f), MPF_VAL(g), GMP_RNDN);
-  // remove(g); should g be removed?
 }
 
 ring_elem RRR::negate(const ring_elem f) const
@@ -311,10 +284,7 @@ ring_elem RRR::invert(const ring_elem f) const
     return from_int(0);
   else {
     mpfr_ptr result = new_elem();
-    mpfr_ptr unit_elem = new_elem();
-    mpfr_set_si(unit_elem, 1, GMP_RNDN);
-    mpfr_div(result, unit_elem, MPF_VAL(f), GMP_RNDN);
-    remove_elem(unit_elem);
+    mpfr_ui_div(result, 1, MPF_VAL(f), GMP_RNDN);
     return MPF_RINGELEM(result);
   }
 }

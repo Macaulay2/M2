@@ -5,7 +5,6 @@
 #include "monoid.hpp"
 #include "ringmap.hpp"
 #include "ZZ.hpp"
-#include "random.hpp"
 #include "gbring.hpp"
 
 extern RingZZ *globalZZ;

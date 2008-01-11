@@ -21,7 +21,6 @@
 
 #include "matrix.hpp"
 #include "../d/M2mem.h"
-#include "random.hpp"
 #include "exceptions.hpp"
 
 unsigned long IM2_Ring_hash(const Ring *R)

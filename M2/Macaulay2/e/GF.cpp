@@ -6,7 +6,6 @@
 #include "monoid.hpp"
 #include "ringmap.hpp"
 #include "polyring.hpp"
-#include "random.hpp"
 #include "gbring.hpp"
 
 bool GF::initialize_GF(const RingElement *prim)
@@ -16,7 +15,6 @@ bool GF::initialize_GF(const RingElement *prim)
   _originalR = prim->get_ring()->cast_to_PolynomialRing();
   initialize_ring(_originalR->charac(),
 		  PolyRing::get_trivial_poly_ring());
-
 
   declare_field();
 
@@ -148,7 +146,7 @@ static inline int modulus_sub(int a, int b, int p)
 
 ring_elem GF::random() const
 {
-  int exp = Random::random0((int32_t)Q_);
+  int exp = rawRandomInt((int32_t)Q_);
   return ring_elem(exp);
 }
 

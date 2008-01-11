@@ -17,7 +17,6 @@ class RRR : public Ring
   CoefficientRingRRR *coeffR;
 
   mpfr_ptr new_elem() const;
-  void remove_elem(mpfr_ptr f) const;
 
 protected:
   RRR() {}
@@ -62,10 +61,6 @@ public:
 
   virtual ring_elem copy(const ring_elem f) const;
   virtual void remove(ring_elem &f) const;
-
-  void internal_negate_to(ring_elem &f) const;
-  void internal_add_to(ring_elem &f, ring_elem &g) const;
-  void internal_subtract_to(ring_elem &f, ring_elem &g) const;
 
   virtual ring_elem negate(const ring_elem f) const;
   virtual ring_elem add(const ring_elem f, const ring_elem g) const;
