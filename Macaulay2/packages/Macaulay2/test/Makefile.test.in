@@ -44,8 +44,8 @@ status :: $(TESTFILES)
 		   time $(DOTS)/bin/M2@EXE@ $(ARGS) >>$*.errors 2>&1 ; \
 		then mv $*.errors $@ ; \
 		else a=$$?; \
-		     echo "$*.errors:0: error output left here; some errors follow" >&2 ; \
 		     <$*.errors $(FILTER) ; \
+		     echo "$*.errors:0: error output left here for the errors above:" >&2 ; \
 		     exit $$a ; \
 		fi
 %.out : %.m2-input
