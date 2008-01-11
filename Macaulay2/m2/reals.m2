@@ -1,4 +1,106 @@
---		Copyright 1993-2002 by Daniel R. Grayson
+--		Copyright 1993-2008 by Daniel R. Grayson
+
+RR.isBasic = CC.isBasic = true
+RR.InverseMethod = x -> 1/x
+CC.InverseMethod = y -> conjugate y / y^2
+CC ^ ZZ := BinaryPowerMethod
+conjugate CC := z -> toCC(precision z, realPart z, - imaginaryPart z)
+isConstant Number := i -> true
+
+-- ImmutableType
+
+ImmutableType = new Type of HashTable
+ImmutableType.synonym = "immutable type"
+globalAssignment ImmutableType
+
+-- these types are pre-defined
+
+RR.synonym = "real number"
+CC.synonym = "complex number"
+RR.texMath = ///{\mathbb R}///
+CC.texMath = ///{\mathbb C}///
+Number.synonym = "number"
+BigNumberType.synonym = "big number ring"
+BigNumber.synonym = "big number"
+
+-- new types
+
+BigNumberRing = new Type of Ring
+BigNumberRing.synonym = "big number ring"
+raw BigNumberRing := R -> R.RawRing
+
+RR.BigNumberRing = RealNumberRing    = new Type of BigNumberRing   ; RealNumberRing.synonym = "real number ring"
+CC.BigNumberRing = ComplexNumberRing = new Type of BigNumberRing; ComplexNumberRing.synonym = "complex number ring"
+NumberParent  = new Type of Nothing
+RR.NumberParent = RRParent = new Type of NumberParent
+CC.NumberParent = CCParent = new Type of NumberParent
+new RealNumberRing of NumberParent from ZZ := memoize (
+     (RealNumberRing,NumberParent,prec) -> newClass(RealNumberRing,NumberParent,
+	  hashTable { 
+	       symbol precision => prec,
+	       symbol Engine => true,
+	       symbol baseRings => {ZZ,QQ},
+	       symbol isBasic => true,
+	       symbol RawRing => rawRR prec
+	       }))
+new ComplexNumberRing of CC from ZZ := memoize(
+     (ComplexNumberRing,CC,prec) -> newClass(ComplexNumberRing,CC,
+	  hashTable {
+	       symbol precision => prec,
+	       symbol Engine => true,
+	       symbol isBasic => true,
+	       symbol baseRings => {ZZ,QQ},
+	       symbol RawRing => rawCC prec
+	       }))
+BigNumberType _ ZZ := (T,prec) -> new T.BigNumberRing of T.NumberParent from prec
+default BigNumberType := R -> R_defaultPrecision
+
+-- lift and promote between real or complex rings
+
+Number _ BigNumberType := (x,RR) -> x_(default RR)
+
+promote(RawRingElement,RRParent) := (x,R) -> new RR from x
+promote(RawRingElement,CCParent) := (x,R) -> new CC from x
+promote(RawRingElement,Number) := (x,R) -> new R from x
+promote(RawRingElement,RingElement) := (x,R) -> new R from x
+promote(Number,BigNumber) := (x,RR) -> promote(x,default RR)
+promote(RR,RRParent) := (i,K) -> toRR(K.precision,i)
+promote(CC,CCParent) := (i,K) -> toCC(K.precision,i)
+lift(CC,RRParent):= opts -> (z,RR) -> if imaginaryPart z == 0 then realPart z else if opts.Verify then error "can't lift given complex number to real number"
+
+-- lift and promote to and from other rings
+
+ZZ _ RealNumberRing :=
+QQ _ RealNumberRing :=
+RR _ RealNumberRing := (x,R) -> toRR(R.precision,x)
+ZZ _ ComplexNumberRing :=
+QQ _ ComplexNumberRing :=
+RR _ ComplexNumberRing :=
+CC _ ComplexNumberRing := (x,R) -> toCC(R.precision,x)
+
+approx := (r,limit) -> (
+     if r == 0 then return 0/1;
+     r' := r;
+     m := mutableIdentity(ZZ,2);
+     while true do (
+	  a := floor r';
+	  columnSwap(m,0,1);
+	  columnAdd(m,0,a,1);
+	  r' = r' - a;
+	  if r' == 0 or abs(r - m_(0,0) / m_(1,0)) < limit then return m_(0,0) / m_(1,0);
+	  r' = 1/r' ;
+	  ))
+lift(RR,QQ) := opts -> (r,QQ) -> approx(r,abs r / 2^(precision r - 16))
+lift(RR,ZZ) := opts -> (r,ZZ) -> (i := floor r; if r == i then i else error "can't lift to ZZ")
+lift(CC,QQ) := lift(CC,ZZ) := opts -> (z,R) -> if imaginaryPart z == 0 then lift(realPart z, R) else if opts.Verify then error "can't lift given complex number to real number"
+
+ring RR := x -> new RealNumberRing of RRParent from precision x
+ring CC := x -> new ComplexNumberRing of CCParent from precision x
+
+new RR from RawRingElement := (RRR,x) -> ( assert( RRR === RR ); rawToRR x )
+new CC from RawRingElement := (CCC,x) -> ( assert( CCC === CC ); rawToCC x)
+
+-- arithmetic operations
 
 scan((QQ,RR,CC), F -> (
 	  F // F := (x,y) -> if y == 0 then 0_F else x/y;
@@ -15,107 +117,51 @@ scan((RR,CC), F -> (
 CC // RR := (x,y) -> x // y_CC;
 CC % RR := (x,y) -> x % y_CC;
 
+-- functions
+
 round RR := round0
 round(ZZ,RR) := (n,x) -> (
      p := 10^n;
      toRR(precision x,round(x*p)/p))
 
--- RR#0 = 0.
--- RR#1 = 1.
-
-RR.isBasic = true
-RR.InverseMethod = x -> 1/x
-isConstant RR := i -> true
 random RR := RR => opts -> x -> x * rawRandomRR precision x
-RR.random = opts -> R -> rawRandomRR R.precision
-
+RRParent.random = opts -> R -> rawRandomRR R.precision
+CCParent.random = opts -> C -> rawRandomCC C.precision
 random RingFamily := opts -> R -> random(default R,opts)
 
------------------------------------------------------------------------------
--- ImmutableType
+-- algebraic operations and functions
 
-ImmutableType = new Type of HashTable
-ImmutableType.synonym = "immutable type"
-globalAssignment ImmutableType
-
------------------------------------------------------------------------------
-
-BigNumberType.synonym = "big number ring"
-BigNumberType _ ZZ := (T,prec) -> new T.BigNumberRing of T from prec
-default BigNumberType := R -> R_defaultPrecision
 Thing ** BigNumberType := (X,T) -> X ** default T
+
 dim BigNumberType := R -> 0
 char BigNumberType := R -> 0
 degreeLength BigNumberType := R -> 0
 isField BigNumberType := R -> true
 frac BigNumberType := R -> R
 
-BigNumber.synonym = "big number"
-BigNumberRing = new Type of Ring
-BigNumberRing.synonym = "big number ring"
 generators BigNumberRing := opts -> R -> {}
-raw BigNumberRing := R -> R.RawRing
 isField BigNumberRing := R -> true
 degreeLength BigNumberRing := R -> 0
 frac BigNumberRing := identity
 numgens BigNumberRing := R -> 0
 dim BigNumberRing := R -> 0
 char BigNumberRing := R -> 0
-net BigNumberRing := R -> net expression R
-Number _ BigNumberType := (x,RR) -> x _ (default RR)
 
-RealNumberRing = new Type of {* ImmutableType *} BigNumberRing
-RealNumberRing.synonym = "real number ring"
-new RealNumberRing of RR from ZZ := memoize (
-     (RealNumberRing,RR,prec) -> newClass(RealNumberRing,RR,
-	  hashTable { 
-	       symbol precision => prec,
-	       symbol Engine => true,
-	       symbol baseRings => {ZZ,QQ},
-	       symbol isBasic => true,
-	       symbol RawRing => rawRR prec
-	       }))
-lift(ZZ,RealNumberRing) := 
-lift(RR,RealNumberRing) := 
-lift(QQ,RealNumberRing) := opts -> (x,R) -> toRR(R.precision,x)
-ZZ _ RealNumberRing :=
-QQ _ RealNumberRing :=
-RR _ RealNumberRing :=
-promote(ZZ,RealNumberRing) := 
-promote(RR,RealNumberRing) := 
-promote(QQ,RealNumberRing) := (x,R) -> toRR(R.precision,x)
-expression RealNumberRing := R -> new Subscript from {symbol RR, R.precision}
-RR.BigNumberRing = RealNumberRing
+-- printing
+
 toString RealNumberRing := R -> concatenate("RR_",toString R.precision)
-ring RR := x -> new RealNumberRing of RR from precision x
-new RR from RawRingElement := (RRR,x) -> ( assert( RRR === RR ); rawToRR x )
-promote(RawRingElement,RR) := (x,R) -> new RR from x
-promote(RawRingElement,Number) := (x,R) -> new R from x
-promote(RawRingElement,RingElement) := (x,R) -> new R from x
-promote(RR,RR) := (i,K) -> toRR(K.precision,i)
-promote(CC,CC) := (i,K) -> toCC(K.precision,i)
-lift(RR,ZZ) := opts -> (r,ZZ) -> if r == floor r then floor r else error("can't lift ",toString r, " to ZZ")
+toString ComplexNumberRing := R -> concatenate("CC_",toString R.precision)
 
-approx := (r,limit) -> (
-     if r == 0 then return 0/1;
-     r' := r;
-     m := mutableIdentity(ZZ,2);
-     while true do (
-	  a := floor r';
-	  columnSwap(m,0,1);
-	  columnAdd(m,0,a,1);
-	  r' = r' - a;
-	  if r' == 0 or abs(r - m_(0,0) / m_(1,0)) < limit then return m_(0,0) / m_(1,0);
-	  r' = 1/r' ;
-	  ))
+expression RealNumberRing := R -> new Subscript from {symbol RR, R.precision}
+expression ComplexNumberRing := R -> new Subscript from {symbol CC, R.precision}
+expression RR := x -> if x < 0 then new Minus from {-x} else new Holder from {x}
+expression CC := z -> expression realPart z + expression imaginaryPart z * hold symbol ii
 
-lift(RR,QQ) := opts -> (r,QQ) -> approx(r,abs r / 2^(precision r - 16))
-lift(RR,ZZ) := opts -> (r,ZZ) -> (i := floor r; if r == i then i else error "can't lift to ZZ")
-
+net BigNumberRing := R -> net expression R
+net CC := z -> simpleToString z
 toExternalString RR := toExternalString0
-
+toExternalString CC := toExternalString0
 logten2 := log 10. / log 2.
-
 BigNumber#{Standard,Print} = x ->  (
      << newline << concatenate(interpreterDepth:"o") << lineNumber << " = ";
      save := printingPrecision;

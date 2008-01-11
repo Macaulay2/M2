@@ -136,6 +136,7 @@ methods Thing := F -> (
      if F === HH then return join(methods homology, methods cohomology);
      seen := new MutableHashTable;
      found := new MutableHashTable;
+     if nullaryMethods#?(1:F) then found#(1:F) = true;
      scan(flatten(pairs \ dictionaryPath),
 	  (Name,sym) -> (
 	       x := value sym;

@@ -5,8 +5,6 @@ document {
      PARA {
 	  "Macaulay2 is available from our web page ", 
 	  HREF "http://www.math.uiuc.edu/Macaulay2/",
-	  " or from our sourceforge web site ",
-	  HREF "http://sourceforge.net/projects/macaulay2",
 	  ".  There you will find online documentation, 
 	  the source code, and precompiled versions
 	  for MacOSX, Linux, Microsoft Windows, and for 
@@ -41,8 +39,8 @@ document {
      Key => "teaching M2 how to find its shared libraries",
      "Perhaps you know that your M2 executable is located at ", TT "/foo/bar/bin/M2", ", say, but when you run
      it, you get something like this:",
-     PRE ////foo/bar/bin/M2
-M2: error while loading shared libraries: liblapack.so: cannot open shared object file: No such file or directory///,
+     PRE ///    /foo/bar/bin/M2
+    M2: error while loading shared libraries: liblapack.so: cannot open shared object file: No such file or directory///,
      "What that means is that M2 hasn't been told where its shared libraries are.  Actually, it's the operating
      system that has to be told, since otherwise M2 can't even start up.  Hopefully, the missing shared libraries
      are located in ", TT "/foo/bar/lib", ", and all we have to do is to tell the operating system by
@@ -52,11 +50,11 @@ M2: error while loading shared libraries: liblapack.so: cannot open shared objec
      After setting ", TT "LD_LIBRARY_PATH", " temporarily you may use ", TO "setup", " to record the correct value in your 
      system start up files.",
      PARA {"Alternatively, you may be getting something like this:"},
-     PRE ///$ /foo/bar/bin/M2
-dyld: Library not loaded: /capybara/lib/libgmp.3.dylib
-  Referenced from: /foo/bar/bin/M2
-  Reason: image not found
-Trace/BPT trap///,
+     PRE ///    $ /foo/bar/bin/M2
+    dyld: Library not loaded: /capybara/lib/libgmp.3.dylib
+      Referenced from: /foo/bar/bin/M2
+      Reason: image not found
+    Trace/BPT trap///,
      "That would mean that you are running under Mac OS, and the suggestion above would not apply.  On such systems,
      Macaulay 2 must be installed in the system application folder, or Macaulay 2 will not be able to find its libraries."
      }
@@ -113,7 +111,7 @@ document { Key => "finding the Macaulay 2 files",
      its files are.  In that case, there are a couple of ways to locate the
      files.",
      PARA {},
-     "One way is to use the following shell command.",
+     "One way, under Unix, is to use the following shell command.",
      PRE ///     type M2///,
      "The response will be of the following form.",
      PRE ///     M2 is /foo/bar/bin/M2///,
@@ -143,40 +141,41 @@ document { Key => "finding your files under cygwin",
      ", EM "path", " along which to search for programs (such as a browser) is no longer useful in Windows.",
      PARA{},
      "On my computer the browser program ", TT "firefox.exe", " is in the following directory.",
-     PRE ///    c:/Program Files/Mozilla Firefox///,
+     PRE ///    C:/Program Files/Mozilla Firefox///,
      "But M2 is a Cygwin program, and it lives in a different world, where paths to
-     files don't ever start out with something like ", TT "c:", ".  In that world, that
+     files don't ever start out with something like ", TT "C:", ".  In that world, firefox's
      directory is known instead as:",
      PRE ///     /cygdrive/c/Program Files/Mozilla Firefox///,
-     "Conversely, the root directory known in the Cygwin world as ", TT "/", " could be located
+     "Conversely, the root directory, known in the Cygwin world as ", TT "/", ", could be located
      anywhere in the Windows world.  On my machine it is at",
-     PRE ///     s:/cygwin///,
+     PRE ///     C:/cygwin///,
      "Use the ", TT "df", " command in a cygwin command shell window to determine
      that path: it is the file system on which ", TT "/", " is mounted.",
      PARA {},
      "At least we can get back and forth between the two worlds.",
      PARA {},
-     "Assuming you use a Bourne shell such as bash, you can edit your ", TT ".profile", " and add that 
+     "Assuming that, under cygwin, you use a Bourne shell such as ", EM "bash", ", you can edit 
+     your ", TT ".profile", " and add that 
      directory to your PATH with a command like this:",
      PRE ///    export PATH="/cygdrive/c/Program Files/Mozilla Firefox":$PATH///,
      "Then M2 will be able to start firefox, but it will have trouble telling it
      where any files are.  It may tell firefox to look at ",
      PRE ///      /usr/share/doc/Macaulay2/Macaulay2/html/index.html///,
      "but firefox lives in the windows world and wants to be told to look at",
-     PRE ///      s:/cygwin/usr/share/doc/Macaulay2/Macaulay2/html/index.html///,
+     PRE ///      C:/cygwin/usr/share/doc/Macaulay2/Macaulay2/html/index.html///,
      "instead.  The same problem holds for the ", TT "index.html", " file in your directory
      ", TT "$HOME/.Macaulay2", ", because the absolute links there look like that, too.",
      PARA{},
      "For now the solution is to find your Cygwin files, start up firefox the
      usual way (from a menu), navigate to the appropriate version of",
-     PRE ///    s:/cygwin/usr/share/doc/Macaulay2/Macaulay2/html/index.html///,
+     PRE ///    C:/cygwin/usr/share/doc/Macaulay2/Macaulay2/html/index.html///,
      "somehow and make a bookmark there.",
      PARA{},
      "It would be nice if there were a cygwin version of firefox, for then it and its
-     file names would live in the cygwin world, and those absolute links would work.
+     file names would live in the Cygwin world, and those absolute links would work.
      Perhaps there will be one soon, and I won't have to think about adjusting those
      links.  We should probably just make the links relative, so that once you
-     navigate to s:/cygwin/$HOME/.Macaulay2/index.html from the windows world and
+     navigate to ", TT "C:/cygwin/$HOME/.Macaulay2/index.html", " from the Windows world and
      bookmark it, the links will work."
      }
 
@@ -362,8 +361,8 @@ PRE///    printWidth = 60
     R = QQ[a..d]
     (a+b+c+d)^4///,
      PARA {"
-	  To exit Macaulay2, type one of: exit, end, quit, or your end of file character.
-	  "},
+	  To exit Macaulay2, type one of: ", TO "exit", ", ", TO "end", ", ", TO "quit", ", or your 
+	  end of file character (which, under Unix, is often CONTROL-D)."},
 	  PRE///    exit///,
      PARA {"Macaulay2 can be run in this way from the command line, but it is
 	  generally much more convenient to run Macaulay2 from inside the emacs

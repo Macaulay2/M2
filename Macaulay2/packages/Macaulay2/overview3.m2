@@ -16,17 +16,56 @@ document {
 
 document {
      Key => "Copyright and license",
-     "Macaulay 2, its object code and source code, and its documentation,
-     are copyright by Daniel R. Grayson and Michael E. Stillman.  We permit 
-     you to use it under the terms of the GNU General Public License, version
-     2, as published by the Free Software Foundation, and as contained in the file ", TT "COPYING", " accompanying the program.",
+     PARA {
+	  "Macaulay 2, its object code and source code, and its documentation,
+	  are copyright by Daniel R. Grayson and Michael E. Stillman.  We permit 
+	  you to use it under the terms of the GNU General Public License, version
+	  2, as published by the Free Software Foundation, and as contained in the file ", TO "COPYING", " accompanying the program."
+	  },
+     PARA {
+      	  "The following free libraries have been compiled into (or linked with) Macaulay 2."
+	  },
      Subnodes => {
-     	  TOH "COPYING",
-      	  "The following free libraries have been compiled into Macaulay 2.",
 	  TO "Singular-Factory",
 	  TO "Singular-Libfac",
 	  TO "GNU MP",
-	  TO "GC garbage collector"
+	  TO "MPFR",
+	  TO "GC garbage collector",
+	  TO "LAPACK",
+	  TO "BLAS",
+	  TO "NTL"
+	  }
+     }
+
+document {
+     Key => "LAPACK",
+     PARA {
+	  "The ", TT "LAPACK", " library is used by Macaulay 2 for its linear algebra routines.  It is
+	  available at ", HREF "http://www.netlib.org/lapack/", "."
+	  }
+     }
+
+document {
+     Key => "BLAS",
+     PARA {
+	  "The ", TT "BLAS", " library is used by Macaulay 2 for its linear algebra routines.  It is
+	  available at ", HREF "http://www.netlib.org/blas/", "."
+	  }
+     }
+
+document {
+     Key => "NTL",
+     PARA {
+	  "The ", TT "NTL", " library is used by Macaulay 2, through the ", TO "Singular-Factory", ",
+	  for its algebraic routines.  It is available at ", HREF "http://www.netlib.org/lapack/", "."
+	  }
+     }
+
+document {
+     Key => "MPFR",
+     PARA {
+	  "The ", TT "MPFR", " library is used by Macaulay 2 for its arbitrary precision real number arithmetic
+	  and associated transcendental functions.  It is available at ", HREF "http://www.mpfr.org/", "."
 	  }
      }
 
@@ -319,10 +358,9 @@ document {
 
 document {
      Key => "Other sources of information about Macaulay 2",
-     SUBSECTION "Web sites",
+     SUBSECTION "Web site",
      UL {
 	  (HREF "http://www.math.uiuc.edu/Macaulay2/", " -- the main Macaulay 2 web site: citations, binary distributions"),
-	  (HREF "http://sf.net/projects/macaulay2/", " -- the Sourceforge Macaulay 2 web site: source code, bug reporting")
 	  },
      SUBSECTION "Books",
      UL {

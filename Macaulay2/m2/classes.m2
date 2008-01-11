@@ -33,13 +33,9 @@ ZZ.tex = ///$\mathbb Z$///
 ZZ.texMath = ///{\mathbb Z}///
 QQ.synonym = "rational number"
 QQ.texMath = ///{\mathbb Q}///
-RR.synonym = "real number"
-RR.texMath = ///{\mathbb R}///
 Ring.synonym = "ring"
-Number.synonym = "number"
 
 uniform = (x) -> same apply(x,class)
-
 
 -- Now some extra stuff:
 

@@ -66,8 +66,6 @@ scan((
 	       promote(List,K,L) := (m,K,L) -> m;
 	       if lookup(lift,Matrix,L,K) === null then
 	       lift(Matrix,L,K) := opts -> (m,L,K) -> (basicLiftMatrix opts)(m,K,p);
-	       if lookup(promote,K,L) === null then stderr << "--warning: no method installed for promote(" << K << ", type of " << L << ")" << endl;
-	       if lookup(lift,L,K) === null then stderr << "--warning: no method installed for lift(" << L << ", type of " << K << ")" << endl;
 	       ))))	  
 
 -----------------------------------------------------------------------------
