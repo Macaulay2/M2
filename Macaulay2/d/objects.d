@@ -679,6 +679,9 @@ export installMethod(meth:Expr,lhs:HashTable,rhs:HashTable,value:Expr):Expr := (
 	  Expr(Sequence(meth,Expr(lhs),Expr(rhs))),
 	  value));
 
+export installMethod(s:SymbolClosure,X:HashTable,f:fun):Expr := (
+     installMethod(Expr(s),X,Expr(CompiledFunction(f,nextHash())))
+     );
 export installMethod(s:SymbolClosure,X:HashTable,Y:HashTable,f:fun):Expr := (
      installMethod(Expr(s),X,Y,Expr(CompiledFunction(f,nextHash())))
      );

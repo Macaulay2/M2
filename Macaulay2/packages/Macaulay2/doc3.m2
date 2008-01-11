@@ -1397,13 +1397,15 @@ document { Key => "printingPrecision",
 	  "n" => ZZ
 	  },
      Consequences => {
-	  {"Real numbers are printed with ", TT "n", " digits of precision."}
+	  {"Real numbers are printed with ", TT "n", " digits of precision,
+	       except when appearing alone on an output line."}
 	  },
-     EXAMPLE ///
+     EXAMPLE lines ///
      	  1/3.
+     	  {1/3.}
 	  printingPrecision
 	  printingPrecision = 16
-     	  1/3.
+     	  {1/3.}
      ///,
      SeeAlso => {"printingLeadLimit", "printingTrailLimit", "printingSeparator", format}
      }
@@ -1416,7 +1418,7 @@ document { Key => "printingLeadLimit",
      Consequences => {
 	  {"Real numbers are printed with at most ", TT "n", " leading zeroes."}
 	  },
-     EXAMPLE ///
+     EXAMPLE lines ///
      	  1/30000000000.
 	  printingLeadLimit
 	  printingLeadLimit = 20
@@ -1433,7 +1435,7 @@ document { Key => "printingTrailLimit",
      Consequences => {
 	  {"Real numbers are printed with at most ", TT "n", " additional trailing digist, in addition to those specified by ", TT "printingPrecision", "."}
 	  },
-     EXAMPLE ///
+     EXAMPLE lines ///
      	  3000000000000.
 	  printingTrailLimit
 	  printingTrailLimit = 20
@@ -1450,7 +1452,7 @@ document { Key => "printingSeparator",
      Consequences => {
 	  {"The string ", TT "s", " will be used to separate mantissa and exponent when printing real numbers."}
 	  },
-     EXAMPLE ///
+     EXAMPLE lines ///
      	  3000000000000.
 	  printingSeparator
 	  printingSeparator = "e"

@@ -23,7 +23,7 @@ document {
           "isPrime(t^2+1)"
 	  },
      "This function can be used to determine whether an ideal in a polynomial ring is prime.",
-     EXAMPLE ///
+     EXAMPLE lines ///
           R = QQ[a..d];
 	  I = monomialCurveIdeal(R,{1,5,8})
 	  isPrime I

@@ -1329,6 +1329,7 @@ export Gamma(x:RR):RR := (
      z := newRR(precision0(x));
      Ccode( void, "mpfr_gamma((__mpfr_struct *)", z, ",(__mpfr_struct *)", x, ", GMP_RNDN)" );
      z);
+export factorial(x:RR):RR := Gamma(x+1);
 export eint(x:RR):RR := (
      z := newRR(precision0(x));
      Ccode( void, "mpfr_eint((__mpfr_struct *)", z, ",(__mpfr_struct *)", x, ", GMP_RNDN)" );

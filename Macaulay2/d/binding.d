@@ -473,7 +473,7 @@ export opsWithBinaryMethod := array(SymbolClosure)(
      ColonS, BarS, HatHatS, AmpersandS, DotDotS, MinusS, PlusS, PlusPlusS, StarStarS, StarS, BackslashBackslashS, DivideS, LeftDivideS, PercentS, SlashSlashS, AtS, 
      AdjacentS, AtAtS, PowerS, UnderscoreS, PowerStarStarS, orS, andS);
 export opsWithUnaryMethod := array(SymbolClosure)( StarS, MinusS, PlusS, LessLessS, notS, DeductionS, QuestionS,LessS,GreaterS,LessEqualS,GreaterEqualS);
-export opsWithPostfixMethod := array(SymbolClosure)( TildeS, ParenStarParenS, UnderscoreStarS, PowerStarS );
+export opsWithPostfixMethod := array(SymbolClosure)( TildeS, ParenStarParenS, UnderscoreStarS, PowerStarS ,ExclamationS );
 
 -- ":=" "=" "<-" "->"  "=>" "===" "=!=" "!=" "#" "#?" "." ".?" ";" "," "<" ">" "<=" ">="
 export fixedBinaryOperators := array(SymbolClosure)(ColonEqualS,EqualS,LeftArrowS,RightArrowS,DoubleArrowS,EqualEqualEqualS,NotEqualEqualEqualS,NotEqualS,SharpS,SharpQuestionS,
@@ -482,8 +482,8 @@ export fixedBinaryOperators := array(SymbolClosure)(ColonEqualS,EqualS,LeftArrow
 -- "#" "," "<" ">" "<=" ">="
 export fixedPrefixOperators := array(SymbolClosure)(commaS,SharpS);
 
--- "!" ";" ","
-export fixedPostfixOperators := array(SymbolClosure)(SemicolonS,commaS,ExclamationS);
+-- ";" ","
+export fixedPostfixOperators := array(SymbolClosure)(SemicolonS,commaS);
 
 opHasBinaryMethod(o:Symbol):bool := (
      foreach s in opsWithBinaryMethod do if s.symbol == o then return true;

@@ -13,8 +13,6 @@ typicalValues#(symbol symbol) = Symbol
 typicalValues#(symbol ?) = Boolean
 
 dummy := x -> error("dummy method function called")
-installMethod(symbol !, ZZ, ZZ => x -> (dummy x;))
--- installMethod(symbol ##, Function, Sequence, Thing => x -> (dummy x;))
 installMethod(symbol #?, HashTable, Thing, Boolean => x -> (dummy x;))
 installMethod(symbol #?, Set, Thing, Boolean => x -> (dummy x;))
 installMethod(symbol #?, Database, String, Boolean => x -> (dummy x;))

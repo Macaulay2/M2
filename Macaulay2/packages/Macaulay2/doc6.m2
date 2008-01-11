@@ -114,9 +114,48 @@ TEST ///
 document {
      Key => RR,
      Headline => "the class of all real numbers",
-     "A real number is entered as a sequence of decimal digits with a point.  It is stored internally as a double precision floating point number.",
+     "A real number is entered as a sequence of decimal digits with a point.  It is stored internally 
+     as an arbitrary precision floating point number, using the ", TO "MPFR", " library.",
      EXAMPLE "3.14159",
-     SeeAlso => {format, "printingPrecision", "printingLeadLimit", "printingTrailLimit", "printingSeparator"}
+     "The precision is measured in bits, is visible in the ring displayed on
+     the second output line, and can be recovered using ", TO "precision", ".",
+     EXAMPLE "precision 3.14159",
+     "The class and the ring of numbers are not the same, so that numbers of various precisions
+     can be used without the overhead of ring creation.",
+     EXAMPLE {"class 3.1", "ring 3.1"},
+     "The precision can be specified on input by appending the letter ", TT "p", " and a positive number.",
+     EXAMPLE "3p300",
+     "An optional exponent (for the power of ten to multiply by) can be specified on input 
+     by appending the letter ", TT "e", " and a number.",
+     EXAMPLE {"3e3", "-3e-3", "-3p111e-3"},
+     "Numbers that appear alone on an output line are displayed with all their meaningful digits.
+     (Specifying 100 bits of precision yields about 30 decimal digits of precision.)",
+     EXAMPLE {"1/3.","1/3p100", "100 * log(10,2)"},
+     "Numbers displayed inside more complicated objects are printed with the number of digits
+     specified by ", TO "printingPrecision", ".",
+     EXAMPLE {"printingPrecision","{1/3.,1/3p100}"},
+     "The notion of equality tested by ", TO "===", " amounts to equality of the internal binary digits.",
+     EXAMPLE {".5p100 == .5p30", ".2p100 == .2p30"},
+     "The notion of (strict) equality tested by ", TO "==", " also takes the precision into account.",
+     EXAMPLE {".5p100 === .5p30", ".2p100 === .2p30"},
+     "Use ", TO "toExternalString", " to produce something that, when encountered as input, will reproduce
+     exactly what you had before.",
+     EXAMPLE lines ///
+     	  x = {1/3.,1/3p100}
+          x == {.333333, .333333}
+     	  toExternalString x
+	  x == {.33333333333333331p53e0, .33333333333333333333333333333346p100e0}
+	  x === {.33333333333333331p53e0, .33333333333333333333333333333346p100e0}
+     ///,
+     assert( ({1/3.,1/3p100}) === {.33333333333333331p53e0, .33333333333333333333333333333346p100e0} ),
+     assert( (toExternalString {1/3.,1/3p100}) === "{.33333333333333331p53e0, .33333333333333333333333333333346p100e0}" ),
+     "Transcendental constants and functions are available to high precision, with ", TO "numeric", ".",
+     EXAMPLE lines ///
+	  numeric pi
+	  numeric_200 pi
+	  Gamma oo
+	  ///,
+     SeeAlso => {toRR, numeric, precision, format, "printingPrecision", "printingLeadLimit", "printingTrailLimit", "printingSeparator"}
      }
 
 document {
@@ -124,13 +163,12 @@ document {
      Headline => "the class of all complex numbers",
      "In Macaulay 2, complex numbers are represented as floating point numbers, and so are 
      only approximate.  The symbol ", TO "ii", " represents the square root of -1.",
-     PARA{}, 
      EXAMPLE {
 	  "z = 3-4*ii",
       	  "z^5",
       	  "1/z",
 	  },
-     "Arithmetic involving ZZ, QQ, RR, and CC works as one might expect.",
+     "Arithmetic involving ", TO "ZZ", ", ", TO "QQ", ", ", TO "RR", ", and ", TO "CC", " works as one might expect.",
      EXAMPLE {
 	  "3 + ii",
 	  "4/5 + 12*ii",
@@ -138,9 +176,7 @@ document {
 	  "(2-ii)^5",
 	  "(1+ii)/3"
 	  },
-     Caveat => {"Strictly speaking, ", TT "CC", " is not a ring, since floating point approximations
-     are used.  Consequently, functions which rely on Groebner bases are notoriously unreliable with
-     rings such as ", TT "RR", " or ", TT "CC", "."}
+     SeeAlso => {toCC, numeric, precision, format, "printingPrecision", "printingLeadLimit", "printingTrailLimit", "printingSeparator"}
      }
      
 document {

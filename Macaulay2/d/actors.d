@@ -692,16 +692,6 @@ export notFun(rhs:Code):Expr := (
      else if a == False then True
      else unarymethod(a,notS));
 setup(notS,notFun);
-factorial(rhs:Code):Expr := (
-     when eval(rhs)
-     is x:Error do Expr(x)
-     is x:ZZ do (
-	  if !isULong(x) then return printErrorMessageE(rhs,"expected small non-negative integer");
-	  n := toULong(x);
-	  if n<2 then return Expr(toInteger(1));
-	  Expr(factorial(n)))
-     else printErrorMessageE(rhs,"expected a number"));
-setuppostfix(ExclamationS,factorial);
 EqualEqualEqualfun(lhs:Code,rhs:Code):Expr := (
      x := eval(lhs);
      when x is Error do x

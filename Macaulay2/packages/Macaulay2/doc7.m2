@@ -1594,13 +1594,13 @@ document {
      PARA{},
      "After ", TO2((minimalPresentation,Module),"pruning"), " a Hom module, one cannot use 
      homomorphism directly.  Instead, first apply the pruning map:",
-     EXAMPLE ///
+     EXAMPLE lines ///
           H1 = prune H
 	  homomorphism(H1.cache.pruningMap * H1_{1})
           ///,
      PARA{},
      "Sometime, one wants a random homomorphism of a given degree.  Here is one method:",
-     EXAMPLE ///
+     EXAMPLE lines ///
           f = basis(3,H)
 	  rand = random(R^(numgens source f), R^1)
 	  h = homomorphism(f * rand)
