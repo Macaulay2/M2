@@ -142,6 +142,13 @@ bool RRR::promote(const Ring *Rf, const ring_elem f, ring_elem &result) const
       result = MPF_RINGELEM(g);
       return true;
     }
+  if (Rf->is_RRR())
+    {
+      M2_RRR g = new_elem();
+      mpfr_set(g, MPF_VAL(f), GMP_RNDN);
+      result = MPF_RINGELEM(g);
+      return true;
+    }
   return false;
 }
 
