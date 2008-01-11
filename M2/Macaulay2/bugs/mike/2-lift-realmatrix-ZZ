@@ -1,0 +1,4 @@
+get this to work, perhaps with an epsilon option:
+
+M = matrix{{1.0,2.0}}
+lift(M,RR,ZZ)

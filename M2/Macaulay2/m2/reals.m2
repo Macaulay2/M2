@@ -1,12 +1,5 @@
 --		Copyright 1993-2008 by Daniel R. Grayson
 
-RR.isBasic = CC.isBasic = true
-RR.InverseMethod = x -> 1/x
-CC.InverseMethod = y -> conjugate y / y^2
-CC ^ ZZ := BinaryPowerMethod
-conjugate CC := z -> toCC(precision z, realPart z, - imaginaryPart z)
-isConstant Number := i -> true
-
 -- ImmutableType
 
 ImmutableType = new Type of HashTable
@@ -43,8 +36,8 @@ new RealNumberRing of NumberParent from ZZ := memoize (
 	       symbol isBasic => true,
 	       symbol RawRing => rawRR prec
 	       }))
-new ComplexNumberRing of CC from ZZ := memoize(
-     (ComplexNumberRing,CC,prec) -> newClass(ComplexNumberRing,CC,
+new ComplexNumberRing of NumberParent from ZZ := memoize(
+     (ComplexNumberRing,NumberParent,prec) -> newClass(ComplexNumberRing,NumberParent,
 	  hashTable {
 	       symbol precision => prec,
 	       symbol Engine => true,
@@ -66,9 +59,20 @@ promote(RawRingElement,RingElement) := (x,R) -> new R from x
 promote(Number,BigNumber) := (x,RR) -> promote(x,default RR)
 promote(RR,RRParent) := (i,K) -> toRR(K.precision,i)
 promote(CC,CCParent) := (i,K) -> toCC(K.precision,i)
-lift(CC,RRParent):= opts -> (z,RR) -> if imaginaryPart z == 0 then realPart z else if opts.Verify then error "can't lift given complex number to real number"
+lift(CC,RRParent):= opts -> (z,RR) -> (
+     if imaginaryPart z == 0 then realPart z
+     else if opts.Verify then error "can't lift given complex number to real number"
+     )
 
 -- lift and promote to and from other rings
+
+numeric VisibleList := x -> apply(x,numeric)
+numeric(ZZ,VisibleList) := (prec,x) -> apply(x, t -> numeric(prec,t))
+numeric Number := x -> numeric(defaultPrecision, x)
+numeric CC := identity
+numeric RR := identity
+numeric(ZZ,Number) := toRR
+numeric(ZZ,CC) := toCC
 
 ZZ _ RealNumberRing :=
 QQ _ RealNumberRing :=
@@ -91,7 +95,10 @@ approx := (r,limit) -> (
 	  r' = 1/r' ;
 	  ))
 lift(RR,QQ) := opts -> (r,QQ) -> approx(r,abs r / 2^(precision r - 16))
-lift(RR,ZZ) := opts -> (r,ZZ) -> (i := floor r; if r == i then i else error "can't lift to ZZ")
+lift(RR,ZZ) := opts -> (r,ZZ) -> (
+     i := floor r; 
+     if r == i then i 
+     else if opts.Verify then error "can't lift to ZZ")
 lift(CC,QQ) := lift(CC,ZZ) := opts -> (z,R) -> if imaginaryPart z == 0 then lift(realPart z, R) else if opts.Verify then error "can't lift given complex number to real number"
 
 ring RR := x -> new RealNumberRing of RRParent from precision x
@@ -101,6 +108,10 @@ new RR from RawRingElement := (RRR,x) -> ( assert( RRR === RR ); rawToRR x )
 new CC from RawRingElement := (CCC,x) -> ( assert( CCC === CC ); rawToCC x)
 
 -- arithmetic operations
+
+RR.InverseMethod = x -> 1/x
+CC.InverseMethod = y -> conjugate y / y^2
+CC ^ ZZ := BinaryPowerMethod
 
 scan((QQ,RR,CC), F -> (
 	  F // F := (x,y) -> if y == 0 then 0_F else x/y;
@@ -119,6 +130,9 @@ CC % RR := (x,y) -> x % y_CC;
 
 -- functions
 
+conjugate CC := z -> toCC(precision z, realPart z, - imaginaryPart z)
+isConstant Number := i -> true
+
 round RR := round0
 round(ZZ,RR) := (n,x) -> (
      p := 10^n;
@@ -131,6 +145,9 @@ random RingFamily := opts -> R -> random(default R,opts)
 
 -- algebraic operations and functions
 
+RR.isBasic = CC.isBasic = true
+
+BigNumberType Array := (T,X) -> (default T) X
 Thing ** BigNumberType := (X,T) -> X ** default T
 
 dim BigNumberType := R -> 0

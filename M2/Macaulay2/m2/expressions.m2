@@ -1094,6 +1094,13 @@ Constant / Constant := (c,d) -> numeric d / numeric d
 Constant / BigNumber := (c,x) -> numeric(precision x,c) / x
 BigNumber / Constant := (x,c) -> x / numeric(precision x,c)
 
+Constant == Constant := (c,d) -> numeric d == numeric d
+Constant == BigNumber := (c,x) -> numeric(precision x,c) == x
+BigNumber == Constant := (x,c) -> x == numeric(precision x,c)
+
+Constant _ Ring := (c,R) -> (numeric c)_R
+Constant _ BigNumberType := (x,RR) -> x_(default RR)
+
 Constant + Number := (c,x) -> numeric c + x
 Number + Constant := (x,c) -> x + numeric c
 - Constant := c -> - numeric c
