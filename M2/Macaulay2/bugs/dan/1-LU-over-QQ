@@ -1,31 +1,3 @@
-From dan@mail1.math.uiuc.edu  Sun Oct 29 15:29:08 2006
-Date: Sun, 29 Oct 2006 15:29:07 -0600 (CST)
-From: Dan Grayson <dan@math.uiuc.edu>
-To: mike@math.cornell.edu
-CC: dan@math.uiuc.edu
-Subject: [parrilo@MIT.EDU: LU]
-Reply-to: dan@math.uiuc.edu
-
-
-
-Mike, is there anything that would prevent us from easily implementing LU over
-QQ by writing a wrapper like this oen?
-
-    template <> M2_arrayint_OrNull MutableMat<CoefficientRingZZp,DMatZZp>::LU(MutableMatrix *L,
-								  MutableMatrix *U) const
-    {
-      const DMatZZp *A2 = get_DMatZZp();
-      DMatZZp *L2 = L->get_DMatZZp();
-      DMatZZp *U2 = U->get_DMatZZp();
-      if (A2 == 0 || L2 == 0 || U2 == 0)
-	{
-	  ERROR("requires dense mutable matrices over ZZ/p");
-	  return false;
-	}
-      return DMatLU<CoefficientRingZZp>::LU(A2,L2,U2);
-    }
-
-------- Start of forwarded message -------
 Reply-To: <parrilo@MIT.EDU>
 From: "Pablo A. Parrilo" <parrilo@MIT.EDU>
 To: "Dan Grayson" <dan@math.uiuc.edu>, "Mike Stillman" <mike@math.cornell.edu>
@@ -47,5 +19,5 @@ adapt...
 Thanks in advance,
 
 - -p
-------- End of forwarded message -------
+
 

@@ -541,11 +541,11 @@ newCoordinateSystem(PolynomialRing, Matrix) := (S,x) -> (
   ( map(S,R,vars S * substitute(n, S)), map(R,S,vars R * n^(-1)) )
   )
 
-lift(Ideal,RingElement) := Ideal => (I,S) -> (
+lift(Ideal,RingElement) := Ideal => opts -> (I,S) -> (
      -- provisional, just for quotient rings
      T := ring I;
      if T === S then I
-     else ideal lift(I.generators,S) + ideal presentation(S,T));
+     else ideal lift(I.generators,S,opts) + ideal presentation(S,T));
 
 -- computes the ideal of p x p permanents of the matrix M
 permanents = method()

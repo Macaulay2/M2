@@ -706,7 +706,7 @@ betti ChainComplex := opts -> C -> (
 
 -----------------------------------------------------------------------------
 -- some extra betti tally routines by David Eisenbud and Mike :
-lift(BettiTally, ZZ) := (B,R) -> applyValues(B, v -> lift(v,ZZ))
+lift(BettiTally, ZZ) := opts -> (B,R) -> applyValues(B, v -> lift(v,ZZ))
 QQ * BettiTally := (d,B) -> applyValues(B, v -> d*v)
 ZZ * BettiTally := (d,B) -> applyValues(B, v -> d*v)
 pdim BettiTally := (B) -> max apply ((keys B), i->i_0)

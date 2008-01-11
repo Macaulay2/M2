@@ -719,7 +719,7 @@ const MatrixOrNull *IM2_Matrix_promote(const FreeModule *newTarget,
      }
 }
 
-const MatrixOrNull *IM2_Matrix_lift(const FreeModule *newTarget, 
+const MatrixOrNull *IM2_Matrix_lift(int *success_return, const FreeModule *newTarget, 
 			      const Matrix *f)
 {
      try {
@@ -734,10 +734,11 @@ const MatrixOrNull *IM2_Matrix_lift(const FreeModule *newTarget,
 		mat.set_entry(i.row(), c, a);
 	      else
 		{
-		  ERROR("cannot lift given matrix");
+		  // ERROR("cannot lift given matrix");
 		  return 0;
 		}
 	  mat.compute_column_degrees();
+	  *success_return = 1;
 	  return mat.to_matrix();
      }
      catch (exc::engine_error e) {

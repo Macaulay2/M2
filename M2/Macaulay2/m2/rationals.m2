@@ -35,9 +35,9 @@ QQ.dim = 0
 QQ.Engine = true
 assert (hash ZZ < hash QQ)
 
-lift(QQ,ZZ) := (r,o) -> if denominator r === 1 then numerator r else error "rational number is not an integer"
+-- lift(QQ,ZZ) := opts -> (r,o) -> if denominator r === 1 then numerator r else error "rational number is not an integer"
 liftable(QQ,ZZ) := (r,o) -> denominator r === 1
-lift(QQ,QQ) := (r,QQ) -> r
+-- lift(QQ,QQ) := opts -> (r,QQ) -> r
 liftable(QQ,QQ) := (QQ,QQ) -> true
 
 QQ.degreeLength = 0

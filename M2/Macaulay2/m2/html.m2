@@ -583,7 +583,7 @@ installPackage Package := opts -> pkg -> (
 	       then error ("package ",toString pkg," has auxiliary files in \"",dn,"\", but newPackage wasn't given AuxiliaryFiles=>true");
 	       stderr << "--copying auxiliary source files from " << dn << endl;
 	       makeDirectory (buildDirectory|srcDirectory);
-	       buildDirectory|srcDirectory|".linkdir" << close;
+	       -- buildDirectory|srcDirectory|".linkdir" << close;
 	       copyDirectory(dn, buildDirectory|srcDirectory, UpdateOnly => true, Verbose => debugLevel > 0, excludes);
 	       )
 	  else (
@@ -606,7 +606,7 @@ installPackage Package := opts -> pkg -> (
 	  outfn := fkey -> exampleOutputDir|toFilename fkey|".out";
 	  tmpfn := fkey -> exampleOutputDir|toFilename fkey|".errors";
 	  makeDirectory exampleOutputDir;
-	  exampleOutputDir|".linkdir" << close;
+	  -- exampleOutputDir|".linkdir" << close;
 
 	  -- check for obsolete example output files and remove them
 	  if opts.CheckDocumentation then (
@@ -626,7 +626,7 @@ installPackage Package := opts -> pkg -> (
 	  rawdbnametmp := rawdbname | ".tmp";
 	  stderr << "--storing raw documentation in " << rawdbname << endl;
 	  makeDirectory docDir;
-	  docDir|".linkdir" << close;
+	  -- docDir|".linkdir" << close;
 	  if fileExists rawdbnametmp then removeFile rawdbnametmp;
 	  if fileExists rawdbname then (
 	       tmp := openDatabase rawdbname;   -- just to make sure the database file isn't open for writing
@@ -837,7 +837,7 @@ installPackage Package := opts -> pkg -> (
 	  htmlDirectory = LAYOUT#"packagehtml" pkg#"title";
 	  setupButtons();
 	  makeDirectory (buildDirectory|htmlDirectory);
-	  buildDirectory|htmlDirectory|".linkdir" << close;
+	  -- buildDirectory|htmlDirectory|".linkdir" << close;
 	  stderr << "--making html pages in " << buildDirectory|htmlDirectory << endl;
 	  scan(nodes, tag -> if not isUndocumented tag then (
 	       -- key := DocumentTag.Key tag;

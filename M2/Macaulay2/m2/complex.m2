@@ -1,7 +1,7 @@
 --		Copyright 1993-1999,2004 by Daniel R. Grayson
 
-lift(CC,RR):= (z,RR) -> if imaginaryPart z == 0 then realPart z
-lift(CC,QQ) := lift(CC,ZZ) := (z,R) -> if imaginaryPart z == 0 then lift(realPart z, R)
+lift(CC,RR):= opts -> (z,RR) -> if imaginaryPart z == 0 then realPart z else if opts.Verify then error "can't lift given complex number to real number"
+lift(CC,QQ) := lift(CC,ZZ) := opts -> (z,R) -> if imaginaryPart z == 0 then lift(realPart z, R) else if opts.Verify then error "can't lift given complex number to real number"
 
 CC.isBasic = true
 CC.synonym = "complex number"
@@ -20,14 +20,14 @@ new ComplexNumberRing of CC from ZZ := memoize(
 	       symbol RawRing => rawCC prec
 	       }))
 liftable(CC,ComplexNumberRing) := R -> true
+lift(ZZ,ComplexNumberRing) := 
+lift(RR,ComplexNumberRing) := 
+lift(CC,ComplexNumberRing) := 
+lift(QQ,ComplexNumberRing) := opts ->
 ZZ _ ComplexNumberRing :=
 QQ _ ComplexNumberRing :=
 RR _ ComplexNumberRing :=
 CC _ ComplexNumberRing :=
-lift(ZZ,ComplexNumberRing) := 
-lift(RR,ComplexNumberRing) := 
-lift(CC,ComplexNumberRing) := 
-lift(QQ,ComplexNumberRing) := 
 promote(ZZ,ComplexNumberRing) := 
 promote(RR,ComplexNumberRing) := 
 promote(CC,ComplexNumberRing) := 
