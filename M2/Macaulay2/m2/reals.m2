@@ -196,6 +196,7 @@ toCC(ZZ,Constant) := (prec,c) -> toCC numeric(prec,c)
 Constant + Constant := (c,d) -> numeric c + numeric d
 Constant + BigNumber := (c,x) -> numeric(precision x,c) + x
 BigNumber + Constant := (x,c) -> x + numeric(precision x,c)
++ Constant := c -> numeric c
 - Constant := c -> - numeric c
 Constant - Constant := (c,d) -> numeric c - numeric d
 Constant - BigNumber := (c,x) -> numeric(precision x,c) - x
@@ -228,6 +229,8 @@ Constant / Number := (c,x) -> numeric c / x
 Number / Constant := (x,c) -> x / numeric c
 Constant ^ Number := (c,x) -> (numeric c) ^ x
 Number ^ Constant := (x,c) -> x ^ (numeric c)
+
+Constant ! := c -> (numeric c)!
 
 -- printing
 

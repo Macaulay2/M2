@@ -312,6 +312,23 @@ setuppostfix(UnderscoreStarS,UnderscoreStarfun);
 PowerStarfun(rhs:Code):Expr := unarymethod(rhs,PowerStarS);
 setuppostfix(PowerStarS,PowerStarfun);
 
+Exclamationfun(rhs:Code):Expr := unarymethod(rhs,ExclamationS);
+setuppostfix(ExclamationS,Exclamationfun);
+
+factorial(x:Expr):Expr := (
+     when x
+     is x:RR do Expr(factorial(x))
+     is x:ZZ do (
+	  if !isULong(x) then return WrongArgSmallInteger();
+	  n := toULong(x);
+	  if n<2 then return Expr(toInteger(1));
+	  Expr(factorial(n)))
+     else WrongArg("integral or real number"));
+setupfun("factorial",factorial);
+
+installMethod(ExclamationS,RRClass,factorial);
+installMethod(ExclamationS,ZZClass,factorial);
+
 underscorefun(lhs:Code,rhs:Code):Expr := binarymethod(lhs,rhs,UnderscoreS);
 setup(UnderscoreS,underscorefun);
 

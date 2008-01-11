@@ -348,7 +348,15 @@ document {
      TT "format(x,s,l,t,e)", " -- convert a real number ", TT "x", " to a string.  Here ", TT "s", " is the maximum number
      of significant digits to print, ", TT "l", " is the maximum number of leading zeroes to print, ", TT "t", " is the maximum number 
      of extra trailing digits to print, and ", TT "e", ", a string, is the separator between the mantissa and the exponent, if needed.",
-     SeeAlso => {"printingPrecision", "printingLeadLimit", "printingTrailLimit", "printingSeparator"}
+     EXAMPLE lines ///
+     	  1/3.
+	  format(1/3.,5,2,2,"e")
+	  format(1/300.,5,2,2,"e")
+	  format(1/3000.,5,2,2,"e")
+	  format(3000.,5,2,3,"e")
+	  format(30000.,5,2,3,"e")
+     ///,
+     SeeAlso => {"printingPrecision", "printingLeadLimit", "printingTrailLimit", "printingSeparator", toExternalString}
      }
 
 -- Local Variables:

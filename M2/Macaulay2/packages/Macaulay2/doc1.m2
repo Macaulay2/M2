@@ -905,12 +905,10 @@ document {
  	  PARA {
 	       "This operation turns out to be needed infrequently, because there is no ", TT "from", "-clause to provide data for initializing the instance of ", TT "A", "."
  	       },
- 	  EXAMPLE ///
-	       new Type of BasicList := (type,array) -> (
+ 	  EXAMPLE ///new Type of BasicList := (type,array) -> (
 		    stderr << "--new " << type << " of " 
 		           << array << " being made" << endl;
-		    new MutableHashTable)
- 	  ///
+		    new MutableHashTable)///
 	  ),
      SYNOPSIS (
 	  Heading => "new-of",
