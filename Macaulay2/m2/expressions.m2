@@ -1083,13 +1083,17 @@ toCC Constant := c -> toCC numeric c
 toRR(ZZ,Constant) := (prec,c) -> toRR numeric(prec,c)
 toCC(ZZ,Constant) := (prec,c) -> toCC numeric(prec,c)
 
+Constant + Constant := (c,d) -> numeric c + numeric d
 Constant + BigNumber := (c,x) -> numeric(precision x,c) + x
 BigNumber + Constant := (x,c) -> x + numeric(precision x,c)
 - Constant := c -> - numeric c
+Constant - Constant := (c,d) -> numeric c - numeric d
 Constant - BigNumber := (c,x) -> numeric(precision x,c) - x
 BigNumber - Constant := (x,c) -> x - numeric(precision x,c)
+Constant * Constant := (c,d) -> numeric c * numeric d
 Constant * BigNumber := (c,x) -> numeric(precision x,c) * x
 BigNumber * Constant := (x,c) -> x * numeric(precision x,c)
+Constant / Constant := (c,d) -> numeric d / numeric d
 Constant / BigNumber := (c,x) -> numeric(precision x,c) / x
 BigNumber / Constant := (x,c) -> x / numeric(precision x,c)
 
