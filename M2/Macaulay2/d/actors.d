@@ -805,10 +805,7 @@ installFun2(a:Expr,args:CodeSequence):Expr := (
 			 when bcd.0
 			 is bb:HashTable do
 			 when bcd.1
-			 is cc:HashTable do
-			 if cc.parent != nothingClass
-			 then installMethod(a,bb,cc,eval(args.3))
-			 else buildErrorPacket("expected second parameter to be a type")
+			 is cc:HashTable do installMethod(a,bb,cc,eval(args.3))
 			 else buildErrorPacket("expected second parameter to be a hash table")
 			 else buildErrorPacket("expected first parameter to be a hash table")
 			 )
