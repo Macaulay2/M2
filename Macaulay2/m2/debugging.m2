@@ -179,8 +179,8 @@ generateAssertions List := y -> stack apply(y,
      lin -> ( 
 	  t := try value lin else local oops;
 	  concatenate if t === local oops
-	  then ("assert( (try ", lin, " else oops) === ", toString t, " )")
-	  else ("assert( ("    , lin,            ") === ", toString t, " )")
+	  then ("assert( (try ", lin, " else oops) === ", toExternalString t, " )")
+	  else ("assert( ("    , lin,            ") === ", toExternalString t, " )")
 	  ))
 
 -- Local Variables:
