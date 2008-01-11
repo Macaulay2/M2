@@ -75,12 +75,12 @@ const RingOrNull *rawGaloisField(const RingElement *f)
      }
 }
 
-const RingOrNull *IM2_Ring_RRR(int prec)
+const RingOrNull *IM2_Ring_RRR(unsigned long prec)
 {
   return RRR::create(prec);
 }
 
-const RingOrNull *IM2_Ring_CCC(int prec)
+const RingOrNull *IM2_Ring_CCC(unsigned long prec)
 {
   return CCC::create(prec);
 }

@@ -17,7 +17,7 @@
 // #define MPF_RINGELEM(a) ((ring_elem) ((Nterm *) (a)))
 #endif
 
-bool RRR::initialize_RRR(int prec) 
+bool RRR::initialize_RRR(unsigned long prec) 
 {
   initialize_ring(0);
   declare_field();
@@ -33,7 +33,7 @@ bool RRR::initialize_RRR(int prec)
   return true;
 }
 
-RRR *RRR::create(int prec)
+RRR *RRR::create(unsigned long prec)
 {
   RRR *result = new RRR;
   result->initialize_RRR(prec);

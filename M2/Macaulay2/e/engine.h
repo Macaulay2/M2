@@ -297,9 +297,9 @@ extern "C" {
        However, currently, not all of this is checked...
     */
 
-  const RingOrNull *IM2_Ring_RRR(int prec); /* drg: connected rawRRR */
+  const RingOrNull *IM2_Ring_RRR(unsigned long prec); /* drg: connected rawRRR */
 
-  const RingOrNull *IM2_Ring_CCC(int prec); /* drg: connected rawCCC */
+  const RingOrNull *IM2_Ring_CCC(unsigned long prec); /* drg: connected rawCCC */
 
   const RingOrNull *IM2_Ring_polyring(const Ring *K, 
 				      const Monoid *M); /* drg: connected rawPolynomialRing(,) */

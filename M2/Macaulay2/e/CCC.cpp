@@ -11,7 +11,7 @@
 #include "gbring.hpp"
 #include "../d/M2mem.h"
 
-bool CCC::initialize_CCC(int prec) 
+bool CCC::initialize_CCC(unsigned long prec) 
 {
   initialize_ring(0);
   declare_field();
@@ -27,7 +27,7 @@ bool CCC::initialize_CCC(int prec)
   return true;
 }
 
-CCC *CCC::create(int prec)
+CCC *CCC::create(unsigned long prec)
 {
   CCC *result = new CCC;
   result->initialize_CCC(prec);

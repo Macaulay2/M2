@@ -288,6 +288,19 @@ public:
   virtual void degree_weights(const ring_elem f, M2_arrayint wts, int &lo, int &hi) const;
 
   //////////////////////////////////////////
+  // Cleaning real and complex numbers /////
+  //////////////////////////////////////////
+  virtual unsigned long get_precision() const;  // if the ring is not over RRR or CCC, returns 0.
+  virtual bool is_tiny(M2_RRR epsilon, const ring_elem f) const; // default is false
+  // returns true is the element is essentially zero (either f, or every real number in 
+  // f is < epsilon in absolute value).
+  virtual ring_elem zeroize_tiny(M2_RRR epsilon, const ring_elem f) const;
+  // Default is to return f itself.
+  virtual void increase_maxnorm(M2_RRR norm, const ring_elem f);
+  // If any real number appearing in f has larger absolute value than norm, replace norm.
+  // Default for rings not over RRR or CCC is to do nothing.
+
+  //////////////////////////////////////////
   /// vector operations ////////////////////
   //////////////////////////////////////////
   // These routines all act on linked lists

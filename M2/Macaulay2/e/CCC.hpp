@@ -10,7 +10,7 @@
 class CoefficientRingCCC;
 class CCC : public Ring
 {
-  int precision;
+  unsigned long precision;
   int _elem_size;
 
   M2_CCC _zero_elem;
@@ -23,15 +23,15 @@ class CCC : public Ring
 protected:
   CCC() {}
   virtual ~CCC() {}
-  bool initialize_CCC(int prec);
+  bool initialize_CCC(unsigned long prec);
 public:
-  static CCC * create(int prec);
+  static CCC * create(unsigned long prec);
 
   CCC * cast_to_CCC() { return this; }
   const CCC * cast_to_CCC() const { return this; }
 
   CoefficientRingCCC *get_CoeffRing() const { return coeffR; }
-  int get_precision() const { return precision; }
+  unsigned long get_precision() const { return precision; }
 
   // should there be a complex conjugation function?
 

@@ -94,6 +94,10 @@ public:
 
   // to/from monideals
   MonomialIdeal * make_monideal(int n) const;
+  
+  // matrices over RRR, CCC
+  MatrixOrNull *clean(M2_RRR epsilon) const;
+  M2_RRRorNull norm(M2_RRR p) const;
 
   // Matrix operations
   MatrixOrNull *sub_matrix(M2_arrayint r, M2_arrayint c) const;
