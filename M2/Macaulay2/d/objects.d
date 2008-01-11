@@ -641,6 +641,10 @@ export lookup(e:Expr):Expr := (
      r := lookup1(NullaryMethods,Expr(Sequence(e)));
      if r == notfoundE then r = nullE;
      r);
+export lookup0(e:Expr):Expr := (			    -- should be a length 1 sequence
+     r := lookup1(NullaryMethods,e);
+     if r == notfoundE then r = nullE;
+     r);
 export installMethod(meth:Expr,value:Expr):Expr := (
      when value is Error do value
      is fc:FunctionClosure do (
@@ -902,7 +906,7 @@ setupfun("installMethod",installfun);
 export lookupfun(e:Expr):Expr := (
      when e 
      is a:Sequence do
-     if length(a) == 1 then lookup(e)
+     if length(a) == 1 then lookup0(e)
      else if length(a) == 2 then
      when a.1
      is s:HashTable do lookup(s,a.0)

@@ -356,14 +356,14 @@ fSeqInitialize := (toString,toString) -> new HashTable from {
 fSeq := fSeqInitialize(toString,toString)
 formatDocumentTag Sequence := record(
      s -> concatenate (
-	  if #s == 0                                            then toString
-	  else if             fSeq#?(#s,s#0)                    then fSeq#(#s,s#0)
-	  else if #s >= 1 and fSeq#?(#s,s#0,s#1)                then fSeq#(#s,s#0,s#1)
-	  else if #s >= 1 and fSeq#?(#s, class, class s#0, s#1) then fSeq#(#s, class, class s#0, s#1)
-	  else if             fSeq#?(#s, class, class s#0)      then fSeq#(#s, class, class s#0)
-	  else if             fSeq#?(class s#-1,#s)             then fSeq#(class s#-1,#s)
-	  else if             fSeq#?#s                          then fSeq#(#s)
-								else toString) s)
+	  if #s == 0                                           then toString
+	  else if            fSeq#?(#s,s#0)                    then fSeq#(#s,s#0)
+	  else if #s > 1 and fSeq#?(#s,s#0,s#1)                then fSeq#(#s,s#0,s#1)
+	  else if #s > 1 and fSeq#?(#s, class, class s#0, s#1) then fSeq#(#s, class, class s#0, s#1)
+	  else if            fSeq#?(#s, class, class s#0)      then fSeq#(#s, class, class s#0)
+	  else if            fSeq#?(class s#-1,#s)             then fSeq#(class s#-1,#s)
+	  else if            fSeq#?#s                          then fSeq#(#s)
+							       else toString) s)
 formatDocumentTag Array := s -> (
      if class s#0 === Sequence and # s#0 > 0
      then concatenate( toString s#0#0, "(",between(",",apply(drop(s#0,1),toString)),", ", toString s#1, " => ...)" )

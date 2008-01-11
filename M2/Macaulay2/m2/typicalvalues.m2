@@ -38,16 +38,6 @@ installMethod(symbol >, Thing, Thing, Boolean => x -> (dummy x;))
 installMethod(symbol >=, Thing, Thing, Boolean => x -> (dummy x;))
 
 installMethod(symbol .., ZZ, ZZ, Sequence => x -> (dummy x;))
-
-acos RR := acos ZZ := RR => acos
-asin RR := asin ZZ := RR => asin
-atan(RR,RR) := atan RR := atan ZZ := RR => atan
-cos RR := cos ZZ := RR => cos
-sin RR := sin ZZ := RR => sin
-tan RR := tan ZZ := RR => tan
-cosh RR := cosh ZZ := RR => cosh
-sinh RR := sinh ZZ := RR => sinh
-tanh RR := tanh ZZ := RR => tanh
 ancestor(Type,Type) := Boolean => ancestor
 any(BasicList,Function) := any(BasicList,BasicList,Function) := any(HashTable,Function) := Boolean => any
 append(BasicList,Thing) := BasicList => append
@@ -74,7 +64,6 @@ concatenate Nothing := concatenate String := concatenate Symbol := concatenate Z
 deepSplice BasicList := BasicList => deepSplice
 drop(BasicList,ZZ) := drop(BasicList,List) := BasicList => drop
 take(BasicList,ZZ) := take(BasicList,List) := BasicList => take
-floor RR := ZZ => floor
 get File := get String := String => get
 getc File := String => getc
 getenv String := String => getenv
