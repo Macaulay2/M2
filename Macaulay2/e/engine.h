@@ -1110,7 +1110,8 @@ extern "C" {
 
   const RingElement *IM2_RingElement_promote(const Ring *S, const RingElement *f); /* drg: connected rawPromote*/
 
-  const RingElement *IM2_RingElement_lift(const Ring *S, const RingElement *f); /* drg: connected rawLift*/
+  const RingElementOrNull *IM2_RingElement_lift(int *success_return, const Ring *S, const RingElement *f); /* drg: connected rawLift*/
+  // returns null if lifting not possible
 
     /* Is this documentation correct for promote and lift?
        We have several ways of moving from one ring to the next:
@@ -1127,7 +1128,8 @@ extern "C" {
 
   const MatrixOrNull *IM2_Matrix_promote(const FreeModule *newTarget, const Matrix *f); /* connected to rawPromote*/
 
-  const MatrixOrNull *IM2_Matrix_lift(const FreeModule *newTarget, const Matrix *f); /* connected to rawLift */
+  const MatrixOrNull *IM2_Matrix_lift(int *success_return, const FreeModule *newTarget, const Matrix *f); /* connected to rawLift */
+  // returns null if lifting not possible
 
   /**************************************************/
   /**** MutableMatrix routines **********************/

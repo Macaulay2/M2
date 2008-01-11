@@ -23,9 +23,9 @@ ring Matrix := f -> (
 source Matrix := f -> f.source
 target Matrix := f -> f.target
 
-lift(Matrix,RingElement) := lift(Matrix,Number) := Matrix => (f,S) -> (
+lift(Matrix,RingElement) := lift(Matrix,Number) := Matrix => opts -> (f,S) -> (
      if not isFreeModule target f or not isFreeModule source f then error "lift: expected source and target to be free modules";
-     lift(f, ring f, S))     
+     lift(f, ring f, S, opts))     
 liftable'(Matrix,RingElement) := liftable'(Matrix,Number) := Boolean => (f,S) -> (
      if not isFreeModule target f or not isFreeModule source f then error "lift: expected source and target to be free modules";
      liftable'(f, ring f, S))
@@ -38,7 +38,7 @@ scan({
 	  }, 
      (K,Ls) -> scan(Ls, L -> (
 	       promote(Matrix,K,L) := (m,K,L) -> map(L^(numgens target m),L^(numgens source m),applyTable(entries m, x -> promote(x,L)));
-	       lift(Matrix,L,K) := (m,L,K) -> map(K^(numgens target m),K^(numgens source m),applyTable(entries m, x -> lift(x,K)));
+	       lift(Matrix,L,K) := opts -> (m,L,K) -> map(K^(numgens target m),K^(numgens source m),applyTable(entries m, x -> lift(x,K,opts)));
 	       )))
 
 scan((
@@ -50,8 +50,8 @@ scan((
      (K,Ls) -> (
 	  promote(Matrix,K,K) := (m,K,L) -> m;
 	  promote(List,K,K) := (m,K,L) -> m;
-	  lift(K,K) := (f,K) -> f;
-	  lift(Matrix,K,K) := (m,K,L) -> m;
+	  lift(K,K) := opts -> (f,K) -> f;
+	  lift(Matrix,K,K) := opts -> (m,K,L) -> m;
 	  scan(Ls, L -> (
 	       p := makepromoter 0;
 	       if lookup(promote,K,L) === null then
@@ -60,7 +60,7 @@ scan((
 	       promote(Matrix,K,L) := (m,K,L) -> basicPromoteMatrix(m,L,p);
 	       promote(List,K,L) := (m,K,L) -> m;
 	       if lookup(lift,Matrix,L,K) === null then
-	       lift(Matrix,L,K) := (m,L,K) -> basicLiftMatrix(m,K,p);
+	       lift(Matrix,L,K) := opts -> (m,L,K) -> (basicLiftMatrix opts)(m,K,p);
 	       if lookup(promote,K,L) === null then stderr << "--warning: no method installed for promote(" << K << ", type of " << L << ")" << endl;
 	       if lookup(lift,L,K) === null then stderr << "--warning: no method installed for lift(" << L << ", type of " << K << ")" << endl;
 	       ))))	  

@@ -977,21 +977,26 @@ export rawPromote(e:Expr):Expr := (
 setupfun("rawPromote", rawPromote);
 
 export rawLift(e:Expr):Expr := (
+     success := 0;
      when e is a:Sequence do 
      if length(a) == 2 then 
      when a.0 is R:RawRing do (
-     	  when a.1 is x:RawRingElement do toExpr( 
-	       Ccode(RawRingElementOrNull, 
+     	  when a.1 is x:RawRingElement do (
+	       r := Ccode(RawRingElementOrNull, 
 		    "(engine_RawRingElementOrNull)IM2_RingElement_lift(",
+		    "&", success, ",",
 		    "(Ring *)", R,
-		    ",(RingElement *)", x, ")" ))
+		    ",(RingElement *)", x, ")" );
+	       if success == 0 then nullE else toExpr(r))
 	  else WrongArg(2,"a raw ring element"))
      is M:RawFreeModule do (				    -- M is the new target free module
-	  when a.1 is f:RawMatrix do toExpr(
-	       Ccode(RawMatrixOrNull, 
+	  when a.1 is f:RawMatrix do (
+	       m := Ccode(RawMatrixOrNull, 
 		    "(engine_RawMatrixOrNull)IM2_Matrix_lift(",
+		    "&", success, ",",
 		    "(FreeModule *)", M,
-		    ",(Matrix *)", f, ")" ))
+		    ",(Matrix *)", f, ")" );
+	       if success == 0 then nullE else toExpr(m))
 	  else WrongArg("a raw matrix"))
      else WrongArg(1,"a raw ring or a raw free module")
      else WrongNumArgs(2)

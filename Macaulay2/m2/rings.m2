@@ -62,7 +62,7 @@ isHomogeneous Ring := R -> (
      )
 
 promote = method(Dispatch=>{Thing,Type,Type})
-lift = method(Dispatch=>{Thing,Type,Type})
+lift = method(Dispatch=>{Thing,Type,Type}, Options => {Verify => true})
 
 liftable' = method(Dispatch=>{Thing,Type,Type}, TypicalValue => Boolean)
 

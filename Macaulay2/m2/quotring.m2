@@ -76,7 +76,7 @@ ZZquotient := (R,I) -> (
 	  fraction(S,S) := S / S := (x,y) -> x//y;
 	  S.frac = S;		  -- ZZ/n with n PRIME!
 	  savedQuotients#n = S;
-	  lift(S,QQ) := liftZZmodQQ;
+	  lift(S,QQ) := opts -> liftZZmodQQ;
 	  S))
 
 Ring / Ideal := QuotientRing => (R,I) -> I.cache.QuotientRing = (

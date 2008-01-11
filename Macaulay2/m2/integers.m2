@@ -20,7 +20,7 @@ ZZ.Engine = true
 ZZ.baseRings = {}
 ZZ.degreeLength = 0
 ZZ.frac = QQ
-promote(ZZ,ZZ) := lift(ZZ,ZZ) := (i,ZZ) -> i
+lift(ZZ,ZZ) := opts -> promote(ZZ,ZZ) := (i,ZZ) -> i
 liftable'(ZZ,ZZ) := x -> true
 ZZ.random = opts -> ZZ -> rawRandomZZ opts.Height
 gcd = method(Binary => true)

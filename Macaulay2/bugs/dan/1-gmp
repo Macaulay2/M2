@@ -1,4 +1,0 @@
-check whether gmp allocates memory for pointers and tell the creator,
-T. Granlund, if it does.  Otherwise, delete our patch in capybara and start
-using atomic malloc for gmp always.
-

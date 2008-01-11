@@ -641,14 +641,16 @@ const RingElement *IM2_RingElement_promote(const Ring *S,
      }
 }
 
-const RingElement *IM2_RingElement_lift(const Ring *S, 
+const RingElementOrNull *IM2_RingElement_lift(int *success_return, const Ring *S, 
 					const RingElement *f)
 {
      try {
 	  const RingElement *result;
-	  if (f->lift(S,result))
+	  if (f->lift(S,result)) {
+	    *success_return = 1;
 	    return result;
-	  ERROR("cannot lift given ring element");
+	  }
+	  // ERROR("cannot lift given ring element");
 	  return 0;
      }
      catch (exc::engine_error e) {

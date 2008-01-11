@@ -77,15 +77,15 @@ new RealNumberRing of RR from ZZ := memoize (
 	       symbol isBasic => true,
 	       symbol RawRing => rawRR prec
 	       }))
-ZZ _ RealNumberRing :=
-QQ _ RealNumberRing :=
-RR _ RealNumberRing :=
 lift(ZZ,RealNumberRing) := 
 lift(RR,RealNumberRing) := 
-lift(QQ,RealNumberRing) := 
-promote(ZZ,RealNumberRing) := 
-promote(RR,RealNumberRing) := 
-promote(QQ,RealNumberRing) := (x,R) -> toRR(R.precision,x)
+lift(QQ,RealNumberRing) := opts ->  
+  ZZ _ RealNumberRing :=
+  QQ _ RealNumberRing :=
+  RR _ RealNumberRing :=
+    promote(ZZ,RealNumberRing) := 
+    promote(RR,RealNumberRing) := 
+    promote(QQ,RealNumberRing) := (x,R) -> toRR(R.precision,x)
 expression RealNumberRing := R -> new Subscript from {symbol RR, R.precision}
 RR.BigNumberRing = RealNumberRing
 toString RealNumberRing := R -> concatenate("RR_",toString R.precision)
@@ -99,7 +99,7 @@ promote(RawRingElement,RingElement) := (x,R) -> new R from x
 promote(RR,RR) := (i,K) -> toRR(K.precision,i)
 promote(CC,CC) := (i,K) -> toCC(K.precision,i)
 
-lift(RR,ZZ) := (r,ZZ) -> if r == floor r then floor r else error("can't lift ",toString r, " to ZZ")
+lift(RR,ZZ) := opts -> (r,ZZ) -> if r == floor r then floor r else error("can't lift ",toString r, " to ZZ")
 liftable'(RR,ZZ) := (r,ZZ) -> r == floor r
 
 approx := (r,limit) -> (
@@ -115,8 +115,8 @@ approx := (r,limit) -> (
 	  r' = 1/r' ;
 	  ))
 
-lift(RR,QQ) := (r,QQ) -> approx(r,abs r / 2^(precision r - 16))
-lift(RR,ZZ) := (r,ZZ) -> (i := floor r; if r == i then i else error "can't lift to ZZ")
+lift(RR,QQ) := opts -> (r,QQ) -> approx(r,abs r / 2^(precision r - 16))
+lift(RR,ZZ) := opts -> (r,ZZ) -> (i := floor r; if r == i then i else error "can't lift to ZZ")
 
 toExternalString RR := toExternalString0
 
