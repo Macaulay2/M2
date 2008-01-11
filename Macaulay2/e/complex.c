@@ -105,9 +105,59 @@ void mpfc_invert(M2_CCC result, M2_CCC v)
   mpfr_clear(p);
   mpfr_clear(denom);
 }
-void mpfc_div(M2_CCC result, M2_CCC a, M2_CCC b)
+void mpfc_div(M2_CCC result, M2_CCC u, M2_CCC v)
 {
-  /* To be written !! */
+  mpfr_t p, denom;
+  mpfr_init2(p, mpfr_get_prec(u->re));
+  mpfr_init2(denom, mpfr_get_prec(u->re));
+
+  if (mpfr_cmpabs(v->re, v->im) >= 0)
+    {
+      // for v = c + d*i,
+      // p = d/c
+      // c+di = c(1+p*i), so denom is c(1+p^2)
+      // which is c + d*p
+
+      // double p = v.im/v.re;
+      // double denom = v.re + p * v.im;
+      // result.re = (u.re + p*u.im)/denom;
+      // result.im = (u.im - p*u.re)/denom;
+
+      mpfr_div(p, v->im, v->re, GMP_RNDN);
+      mpfr_mul(denom,p,v->im,GMP_RNDN);
+      mpfr_add(denom,denom,v->re,GMP_RNDN);
+
+      mpfr_mul(result->re,p,u->im,GMP_RNDN);
+      mpfr_add(result->re,result->re,u->re,GMP_RNDN);
+      mpfr_div(result->re,result->re,denom,GMP_RNDN);
+
+      mpfr_mul(result->re,p,u->re,GMP_RNDN);
+      mpfr_neg(result->re,result->re,GMP_RNDN);
+      mpfr_add(result->re,result->re,u->im,GMP_RNDN);
+      mpfr_div(result->re,result->re,denom,GMP_RNDN);
+    }
+  else
+    {
+      // double p = v.re/v.im;
+      // double denom = v.im + p * v.re;
+      // result.re = (u.re * p + u.im)/denom;
+      // result.im = (-u.re + p * u.im)/denom;
+
+      mpfr_div(p, v->re, v->im, GMP_RNDN);
+      mpfr_mul(denom,p,v->re,GMP_RNDN);
+      mpfr_add(denom,denom,v->im,GMP_RNDN);
+
+      mpfr_mul(result->re,p,u->re,GMP_RNDN);
+      mpfr_add(result->re,result->re,u->im,GMP_RNDN);
+      mpfr_div(result->re,result->re,denom,GMP_RNDN);
+
+      mpfr_mul(result->re,p,u->im,GMP_RNDN);
+      mpfr_sub(result->re,result->re,u->re,GMP_RNDN);
+      mpfr_div(result->re,result->re,denom,GMP_RNDN);
+    }
+
+  mpfr_clear(p);
+  mpfr_clear(denom);
 #if 0
     if (fabs(v.re) >= fabs(v.im))
       {
