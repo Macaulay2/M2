@@ -45,12 +45,16 @@ scan( {ZZ,QQ}, K -> (
 	  lift(Matrix,K,K) := opts -> (m,K,L) -> m;
 	  ))
 
-promote(Matrix,RR,RR) := promote(Matrix,CC,CC) := (m,K1,K2) -> basicPromoteMatrix(m,K2,identity)
+scan( {RR, CC}, K -> (
+	  promote(Matrix,K,K) := (m,K1,K2) -> basicPromoteMatrix(m,K2,identity);
+	  promote(List,K,K) := (m,K1,K2) -> m;
+	  ))
 
 scan((
 	  (ZZ, { QQ, RR, CC }),
 	  (QQ, { RR, CC }),
-	  (RR,{ CC })
+	  (RR,{ CC }),
+	  (CC, { })
 	  ), 
      (K,Ls) -> (
 	  scan(Ls, L -> (
