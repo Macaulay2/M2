@@ -1439,6 +1439,13 @@ export toExternalString(x:RR):string := (
      if ng then x = -x;
      ex := long(0);
      s := getstr(ex, base, 0, x);
+     nt := 0;
+     for i from length(s)-1 to 0 by -1 do (
+	  if s.i != '0' then break;
+	  nt = nt + 1;
+	  );
+     newlen := length(s) - nt;
+     s = substr(s,0,newlen);
      r := "." + s + "p" + tostring(precision0(x)) + "e" + tostring(ex);
      if ng then r = "-" + r;
      r);
