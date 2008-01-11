@@ -117,7 +117,6 @@ new CC from RawRingElement := (CCC,x) -> ( assert( CCC === CC ); rawToCC x)
 
 -- arithmetic operations
 
-RR.InverseMethod = x -> 1/x
 CC.InverseMethod = y -> conjugate y / y^2
 CC ^ ZZ := BinaryPowerMethod
 
@@ -171,6 +170,59 @@ frac BigNumberRing := identity
 numgens BigNumberRing := R -> 0
 dim BigNumberRing := R -> 0
 char BigNumberRing := R -> 0
+
+-- symbolic/numeric constant expressions
+
+Constant = new Type of BasicList
+pi = new Constant from { symbol pi, mpfrConstantPi }
+ii = new Constant from { symbol ii, ConstantII }
+
+net Constant := c -> net c#0
+expression Constant := c -> expression c#0
+toString Constant := c -> toString c#0
+toExternalString Constant := c -> toString c#0
+numeric Constant := c -> c#1 defaultPrecision
+numeric(ZZ,Constant) := (prec,c) -> c#1 prec
+toRR Constant := c -> toRR numeric c
+toCC Constant := c -> toCC numeric c
+toRR(ZZ,Constant) := (prec,c) -> toRR numeric(prec,c)
+toCC(ZZ,Constant) := (prec,c) -> toCC numeric(prec,c)
+
+Constant + Constant := (c,d) -> numeric c + numeric d
+Constant + BigNumber := (c,x) -> numeric(precision x,c) + x
+BigNumber + Constant := (x,c) -> x + numeric(precision x,c)
+- Constant := c -> - numeric c
+Constant - Constant := (c,d) -> numeric c - numeric d
+Constant - BigNumber := (c,x) -> numeric(precision x,c) - x
+BigNumber - Constant := (x,c) -> x - numeric(precision x,c)
+Constant * Constant := (c,d) -> numeric c * numeric d
+Constant * BigNumber := (c,x) -> numeric(precision x,c) * x
+BigNumber * Constant := (x,c) -> x * numeric(precision x,c)
+Constant / Constant := (c,d) -> numeric d / numeric d
+Constant / BigNumber := (c,x) -> numeric(precision x,c) / x
+BigNumber / Constant := (x,c) -> x / numeric(precision x,c)
+Constant ^ Constant := (c,d) -> (numeric c) ^ (numeric d)
+Constant ^ BigNumber := (c,x) -> (numeric(precision x,c)) ^ x
+BigNumber ^ Constant := (x,c) -> x ^ (numeric(precision x,c))
+
+Constant == Constant := (c,d) -> numeric d == numeric d
+Constant == BigNumber := (c,x) -> numeric(precision x,c) == x
+BigNumber == Constant := (x,c) -> x == numeric(precision x,c)
+
+Constant _ Ring := (c,R) -> (numeric c)_R
+Constant _ BigNumberType := (x,RR) -> x_(default RR)
+
+Constant + Number := (c,x) -> numeric c + x
+Number + Constant := (x,c) -> x + numeric c
+- Constant := c -> - numeric c
+Constant - Number := (c,x) -> numeric c - x
+Number - Constant := (x,c) -> x - numeric c
+Constant * Number := (c,x) -> numeric c * x
+Number * Constant := (x,c) -> x * numeric c
+Constant / Number := (c,x) -> numeric c / x
+Number / Constant := (x,c) -> x / numeric c
+Constant ^ Number := (c,x) -> (numeric c) ^ x
+Number ^ Constant := (x,c) -> x ^ (numeric c)
 
 -- printing
 

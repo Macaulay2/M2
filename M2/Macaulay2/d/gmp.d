@@ -919,7 +919,7 @@ export (y:QQ) === (x:RR) : bool :=  compare0(x,y) == 0 && !flagged0();
 export (x:RR)  <  (y:QQ) : bool :=  compare0(x,y) <  0 && !flagged0();
 export (x:RR)  <= (y:QQ) : bool :=  compare0(x,y) <= 0 && !flagged0();
 
-export hash(x:RR):int := Ccode(int, 
+export hash(x:RR):int := int(precision0(x)) + Ccode(int, 
      "mpfr_hash(",					    -- see gmp_aux.c for this function
          "(__mpfr_struct *)", x, 
      ")"
