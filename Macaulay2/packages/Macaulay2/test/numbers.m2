@@ -139,6 +139,8 @@ assert( promote(matrix {{1/1}}, CC_33) === matrix {{toCC 1p33}})
 assert( promote(matrix {{1/1}}, CC) === matrix {{toCC 1.}})
 assert( promote(matrix {{1/1}}, RR_33) === matrix {{1p33}})
 assert( promote(matrix {{1/1}}, RR) === matrix {{1.}})
+assert( promote(matrix {{toCC 1.}}, CC) === matrix {{toCC 1.}})
+assert( promote(matrix {{toCC 1}}, CC_33) === matrix {{toCC 1p33}})
 
 -- Local Variables:
 -- compile-command: "make -C $M2BUILDDIR/Macaulay2/packages/Macaulay2/test numbers.out"

@@ -28,11 +28,11 @@ raw BigNumberRing := R -> R.RawRing
 
 RR.BigNumberRing = RealNumberRing    = new Type of BigNumberRing   ; RealNumberRing.synonym = "real number ring"
 CC.BigNumberRing = ComplexNumberRing = new Type of BigNumberRing; ComplexNumberRing.synonym = "complex number ring"
-NumberParent  = new Type of Number		   -- it will have no instances
-RR.NumberParent = RRParent = new Type of NumberParent
-CC.NumberParent = CCParent = new Type of NumberParent
-new RealNumberRing of NumberParent from ZZ := memoize (
-     (RealNumberRing,NumberParent,prec) -> newClass(RealNumberRing,NumberParent,
+BigNumber'  = new Type of Number		   -- it will have no instances
+RR.BigNumber' = RR' = new Type of BigNumber'
+CC.BigNumber' = CC' = new Type of BigNumber'
+new RealNumberRing of BigNumber' from ZZ := memoize (
+     (RealNumberRing,BigNumber',prec) -> newClass(RealNumberRing,BigNumber',
 	  hashTable { 
 	       symbol precision => prec,
 	       symbol Engine => true,
@@ -40,8 +40,8 @@ new RealNumberRing of NumberParent from ZZ := memoize (
 	       symbol isBasic => true,
 	       symbol RawRing => rawRR prec
 	       }))
-new ComplexNumberRing of NumberParent from ZZ := memoize(
-     (ComplexNumberRing,NumberParent,prec) -> newClass(ComplexNumberRing,NumberParent,
+new ComplexNumberRing of BigNumber' from ZZ := memoize(
+     (ComplexNumberRing,BigNumber',prec) -> newClass(ComplexNumberRing,BigNumber',
 	  hashTable {
 	       symbol precision => prec,
 	       symbol Engine => true,
@@ -50,29 +50,29 @@ new ComplexNumberRing of NumberParent from ZZ := memoize(
 	       symbol RawRing => rawCC prec
 	       }))
 precision BigNumberRing := R -> R.precision
-BigNumberType _ ZZ := (T,prec) -> new T.BigNumberRing of T.NumberParent from prec
+BigNumberType _ ZZ := (T,prec) -> new T.BigNumberRing of T.BigNumber' from prec
 default BigNumberType := R -> R_defaultPrecision
 
 -- lift and promote between real or complex rings
 
 Number _ BigNumberType := (x,RR) -> x_(default RR)
 
-promote(RawRingElement,RRParent) := (x,R) -> new RR from x
-promote(RawRingElement,CCParent) := (x,R) -> new CC from x
+promote(RawRingElement,RR') := (x,R) -> new RR from x
+promote(RawRingElement,CC') := (x,R) -> new CC from x
 promote(RawRingElement,Number) := (x,R) -> new R from x
 promote(RawRingElement,RingElement) := (x,R) -> new R from x
 promote(Number,BigNumber) := (x,RR) -> promote(x,default RR)
-promote(ZZ,RRParent) := 
-promote(QQ,RRParent) := 
-promote(RR,RRParent) := (i,K) -> toRR(K.precision,i)
-promote(ZZ,CCParent) := 
-promote(QQ,CCParent) := 
-promote(RR,CCParent) := 
-promote(CC,CCParent) := (i,K) -> toCC(K.precision,i)
+promote(ZZ,RR') := 
+promote(QQ,RR') := 
+promote(RR,RR') := (i,K) -> toRR(K.precision,i)
+promote(ZZ,CC') := 
+promote(QQ,CC') := 
+promote(RR,CC') := 
+promote(CC,CC') := (i,K) -> toCC(K.precision,i)
 lift(Number,BigNumber) := (x,RR) -> lift(x,default RR)
 liftable(Number,BigNumber) := (x,RR) -> liftable(x,default RR)
-liftable(CC,RRParent):= (z,RR) -> imaginaryPart z == 0
-lift(CC,RRParent):= opts -> (z,RR) -> (
+liftable(CC,RR'):= (z,RR) -> imaginaryPart z == 0
+lift(CC,RR'):= opts -> (z,RR) -> (
      if imaginaryPart z == 0 then realPart z
      else if opts.Verify then error "can't lift given complex number to real number"
      )
@@ -114,8 +114,8 @@ lift(RR,ZZ) := opts -> (r,ZZ) -> (
      else if opts.Verify then error "can't lift to ZZ")
 lift(CC,QQ) := lift(CC,ZZ) := opts -> (z,R) -> if imaginaryPart z == 0 then lift(realPart z, R) else if opts.Verify then error "can't lift given complex number to real number"
 
-ring RR := x -> new RealNumberRing of RRParent from precision x
-ring CC := x -> new ComplexNumberRing of CCParent from precision x
+ring RR := x -> new RealNumberRing of RR' from precision x
+ring CC := x -> new ComplexNumberRing of CC' from precision x
 
 new RR from RawRingElement := (RRR,x) -> ( assert( RRR === RR ); rawToRR x )
 new CC from RawRingElement := (CCC,x) -> ( assert( CCC === CC ); rawToCC x)
@@ -151,8 +151,8 @@ round(ZZ,RR) := (n,x) -> (
      toRR(precision x,round(x*p)/p))
 
 random RR := RR => opts -> x -> x * rawRandomRR precision x
-RRParent.random = opts -> R -> rawRandomRR R.precision
-CCParent.random = opts -> C -> rawRandomCC C.precision
+RR'.random = opts -> R -> rawRandomRR R.precision
+CC'.random = opts -> C -> rawRandomCC C.precision
 random RingFamily := opts -> R -> random(default R,opts)
 
 -- algebraic operations and functions
