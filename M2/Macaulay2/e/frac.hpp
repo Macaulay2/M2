@@ -34,8 +34,6 @@ public:
   FractionField * cast_to_FractionField() { return this; }
   const FractionField * cast_to_FractionField() const { return this; }
 
-  unsigned long get_precision() const { return R_->get_precision(); }
-
   const Ring *get_ring() const { return R_; }
 
   ring_elem numerator(ring_elem f) const;
@@ -107,6 +105,7 @@ public:
   virtual ring_elem lead_coeff(const ring_elem f) const;
   virtual ring_elem get_coeff(const ring_elem f, const int *m) const;
   virtual ring_elem get_terms(int nvars0, const ring_elem f, int lo, int hi) const;
+
 };
 
 #endif

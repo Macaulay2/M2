@@ -357,7 +357,7 @@ ring_elem Ring::zeroize_tiny(M2_RRR epsilon, const ring_elem f) const
 {
   return f;
 }
-void Ring::increase_maxnorm(M2_RRR norm, const ring_elem f)
+void Ring::increase_maxnorm(M2_RRR norm, const ring_elem f) const
   // If any real number appearing in f has larger absolute value than norm, replace norm.
 {
   // Default for rings not over RRR or CCC is to do nothing.

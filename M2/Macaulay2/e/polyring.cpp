@@ -1209,6 +1209,28 @@ ring_elem PolyRing::eval(const RingMap *map, const ring_elem f, int first_var) c
     }
 }
 
+ring_elem PolyRing::zeroize_tiny(M2_RRR epsilon, const ring_elem f) const
+{
+  Nterm head;
+  Nterm *result = &head;
+  for (Nterm *a = f; a != NULL; a = a->next)
+    {
+      if (is_tiny(epsilon,a->coeff))
+	continue;
+      result->next = copy_term(a);
+      result = result->next;
+    }
+  result->next = NULL;
+  return head.next;
+  
+}
+void PolyRing::increase_maxnorm(M2_RRR norm, const ring_elem f) const
+{
+  for (Nterm *a = f; a != NULL; a = a->next)
+    K_->increase_maxnorm(norm, a->coeff);
+}
+
+
 /////////////////////////////////////////
 // Useful division algorithm routines ///
 /////////////////////////////////////////

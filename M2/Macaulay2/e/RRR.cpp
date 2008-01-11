@@ -338,7 +338,7 @@ ring_elem RRR::zeroize_tiny(M2_RRR epsilon, const ring_elem f) const
     return zero();
   return f;
 }
-void RRR::increase_maxnorm(M2_RRR norm, const ring_elem f)
+void RRR::increase_maxnorm(M2_RRR norm, const ring_elem f) const
   // If any real number appearing in f has larger absolute value than norm, replace norm.
 {
   mpfr_ptr f1 = MPF_VAL(f);

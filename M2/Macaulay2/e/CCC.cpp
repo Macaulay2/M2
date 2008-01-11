@@ -413,6 +413,33 @@ ring_elem CCC::eval(const RingMap *map, const ring_elem f, int) const
   return result;
 }
 
+bool CCC::is_tiny(M2_RRR epsilon, const ring_elem f) const
+  // returns true is the element is essentially zero (either f, or every real number in 
+  // f is < epsilon in absolute value).
+{
+  mpfr_t f1;
+  mpfr_init2(f1,precision);
+  mpfc_abs(f1, BIGCC_VAL(f));
+  bool result = (mpfr_cmpabs(f1,epsilon) < 0);
+  mpfr_clear(f1);
+  return result;
+}
+ring_elem CCC::zeroize_tiny(M2_RRR epsilon, const ring_elem f) const
+{
+  if (CCC::is_tiny(epsilon,f))
+    return zero();
+  return f;
+}
+void CCC::increase_maxnorm(M2_RRR norm, const ring_elem f) const
+  // If any real number appearing in f has larger absolute value than norm, replace norm.
+{
+  mpfr_t f1;
+  mpfr_init2(f1,precision);
+  mpfc_abs(f1, BIGCC_VAL(f));
+  if (mpfr_cmpabs(norm,f1) < 0)
+    mpfr_set(norm,f1,GMP_RNDN);
+  mpfr_clear(f1);
+}
 
 
 

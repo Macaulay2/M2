@@ -202,6 +202,11 @@ const RingOrNull *IM2_Ring_frac(const Ring *R)
 	      ERROR("expected polynomial ring");
 	      return 0;
 	    }
+	  if (R->get_precision() > 0)
+	    {
+	      ERROR("cannot make fraction field over approximate field base");
+	      return 0;
+	    }
 	  return FractionField::create(P);
      }
      catch (exc::engine_error e) {

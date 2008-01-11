@@ -169,6 +169,13 @@ public:
 
   virtual ring_elem lead_term(int nparts, const ring_elem f) const;
 
+  /////////////////////////
+  // RRR and CCC support //
+  /////////////////////////
+  virtual ring_elem zeroize_tiny(M2_RRR epsilon, const ring_elem f) const;
+  virtual void increase_maxnorm(M2_RRR norm, const ring_elem f) const;
+  // If any real number appearing in f has larger absolute value than norm, replace norm.
+
 public:
   virtual vec vec_lead_term(int nparts, const FreeModule *F, vec v) const;
 

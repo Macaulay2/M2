@@ -26,7 +26,7 @@ EngineComputationOrNull *rawGB(const Matrix *m,
   // Choose the correct computation here.
   try {
     clear_emit_size();
-    EngineGBComputation::create(
+    return EngineGBComputation::create(
 	GBBComputation::choose_gb(
 		 m,
 		 collect_syz,

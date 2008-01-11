@@ -1559,9 +1559,9 @@ int gbA::find_good_divisor(exponents e,
     ////
     while (true) {
 	 int mingap = gap;
-	 int maxminlevel = minlevel;
-	 int mindeg = deg;
-	 int minsize  = size;
+	 //int maxminlevel = minlevel;
+	 //int mindeg = deg;
+	 //int minsize  = size;
 	 int best = j;
 	 do {
 	      if (++i == n) {
