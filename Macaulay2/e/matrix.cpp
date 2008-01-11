@@ -1750,7 +1750,13 @@ int Matrix::dimension() const
     }
 }
 
+MatrixOrNull *Matrix::clean(M2_RRR epsilon) const
+{
+}
 
+M2_RRRorNull Matrix::norm(M2_RRR p) const
+{
+}
 
 
 // Local Variables:

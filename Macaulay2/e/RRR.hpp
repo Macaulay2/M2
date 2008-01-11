@@ -10,7 +10,7 @@
 class CoefficientRingRRR;
 class RRR : public Ring
 {
-  int precision;
+  unsigned long precision;
   int _elem_size;
   mpfr_ptr _zero_elem;
 
@@ -21,15 +21,15 @@ class RRR : public Ring
 protected:
   RRR() {}
   virtual ~RRR() {}
-  bool initialize_RRR(int prec);
+  bool initialize_RRR(unsigned long prec);
 public:
-  static RRR * create(int prec);
+  static RRR * create(unsigned long prec);
 
   RRR * cast_to_RRR() { return this; }
   const RRR * cast_to_RRR() const { return this; }
 
   CoefficientRingRRR *get_CoeffRing() const { return coeffR; }
-  int get_precision() const { return precision; }
+  unsigned long get_precision() const { return precision; }
 
   bool is_greater(const ring_elem a, const ring_elem b) const;
   bool is_less(const ring_elem a, const ring_elem b) const;

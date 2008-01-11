@@ -340,6 +340,28 @@ M2_arrayint Ring::support(const ring_elem a) const
   return result;
 }
 
+// These next three routines are only overridden by RRR,CCC,polynomial rings,
+// and quotient rings
+unsigned long Ring::get_precision() const
+{
+  return 0;
+}
+bool Ring::is_tiny(M2_RRR epsilon, const ring_elem f) const // default is false
+  // returns true is the element is essentially zero (either f, or every real number in 
+  // f is < epsilon in absolute value).
+{
+  return false;
+}
+ring_elem Ring::zeroize_tiny(M2_RRR epsilon, const ring_elem f) const
+  // Default is to return f itself.
+{
+  return f;
+}
+void Ring::increase_maxnorm(M2_RRR norm, const ring_elem f)
+  // If any real number appearing in f has larger absolute value than norm, replace norm.
+{
+  // Default for rings not over RRR or CCC is to do nothing.
+}
 
 ////////////////////////////////////////////
 // Translation gbvector <--> ringelem/vec //
