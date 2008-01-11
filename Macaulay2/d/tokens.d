@@ -577,15 +577,15 @@ export missingMethodClass := newtypeof(errorMessageClass);
 
 export ringClass := newtypeof(typeClass);
 export numberClass := newtypeof(thingClass);
-export bigNumberClass := newtypeof(numberClass);
+export inexactNumberClass := newtypeof(numberClass);
 
        newnumbertype():HashTable := newHashTable(ringClass,numberClass);
 export ZZClass := newnumbertype();
 export QQClass := newnumbertype();
 
 export ringFamilyClass := newtypeof(typeClass);
-export bigNumberTypeClass := newtypeof(ringFamilyClass);
-       newbignumbertype():HashTable := newHashTable(bigNumberTypeClass,bigNumberClass);
+export inexactNumberTypeClass := newtypeof(ringFamilyClass);
+       newbignumbertype():HashTable := newHashTable(inexactNumberTypeClass,inexactNumberClass);
 export RRClass := newbignumbertype();
 export CCClass := newbignumbertype();
 

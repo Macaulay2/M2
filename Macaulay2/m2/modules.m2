@@ -25,15 +25,15 @@ target Matrix := f -> f.target
 
 precision Matrix := precision @@ ring
 
-lift(Matrix,BigNumber) := opts -> (M,RR) -> lift(M,default RR,opts)
-lift(Matrix,BigNumber') := 
+lift(Matrix,InexactNumber) := opts -> (M,RR) -> lift(M,default RR,opts)
+lift(Matrix,Nothing') := 
 lift(Matrix,RingElement) := 
 lift(Matrix,Number) := Matrix => opts -> (f,S) -> (
      if not isFreeModule target f or not isFreeModule source f then error "lift: expected source and target to be free modules";
      lift(f, ring f, S, opts))     
 
-promote(Matrix,BigNumber) := (M,RR) -> promote(M,default RR)
-promote(Matrix,BigNumber') := 
+promote(Matrix,InexactNumber) := (M,RR) -> promote(M,default RR)
+promote(Matrix,Nothing') := 
 promote(Matrix,RingElement) := 
 promote(Matrix,Number) := Matrix => (f,S) -> (
      if not isFreeModule target f or not isFreeModule source f then error "lift: expected source and target to be free modules";
@@ -330,7 +330,7 @@ Ring ^ ZZ := Module => (R,n) -> (
      else notImplemented()
      )
 
-BigNumberType ^ ZZ := Module => (T,n) -> (default T)^n
+InexactNumberType ^ ZZ := Module => (T,n) -> (default T)^n
 
 schreyerOrder = method()
 schreyerOrder Module := Matrix => (F) -> (

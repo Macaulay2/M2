@@ -770,10 +770,10 @@ document { Key => toCC,
 	  precision oo
      ///}
 
-document { Key => BigNumber,
+document { Key => InexactNumber,
      PARA {
 	  "This type of number is intended to serve as a parent class for those types of numbers
-	  that have settable precision."
+	  that are inexactly represented in the computer."
 	  }
      }
 
@@ -813,7 +813,7 @@ document { Key => BigNumberRing,
      ///
      }
 
-document { Key => BigNumberType,
+document { Key => InexactNumberType,
      PARA {
 	  "This type of ring is intended to serve as a parent class for those types of rings of numbers
 	  that have settable precision."

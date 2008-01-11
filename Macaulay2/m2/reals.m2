@@ -13,12 +13,12 @@ CC.synonym = "complex number"
 RR.texMath = ///{\mathbb R}///
 CC.texMath = ///{\mathbb C}///
 Number.synonym = "number"
-BigNumberType.synonym = "big number ring"
-BigNumber.synonym = "big number"
+InexactNumberType.synonym = "inexact number type"
+InexactNumber.synonym = "inexact number"
 
 -- built-in functions 
 
-precision BigNumber := precision0
+precision InexactNumber := precision0
 
 -- new types
 
@@ -28,11 +28,11 @@ raw BigNumberRing := R -> R.RawRing
 
 RR.BigNumberRing = RealNumberRing    = new Type of BigNumberRing   ; RealNumberRing.synonym = "real number ring"
 CC.BigNumberRing = ComplexNumberRing = new Type of BigNumberRing; ComplexNumberRing.synonym = "complex number ring"
-BigNumber'  = new Type of Number		   -- it will have no instances
-RR.BigNumber' = RR' = new Type of BigNumber'
-CC.BigNumber' = CC' = new Type of BigNumber'
-new RealNumberRing of BigNumber' from ZZ := memoize (
-     (RealNumberRing,BigNumber',prec) -> newClass(RealNumberRing,BigNumber',
+Nothing' = Nothing					    -- maybe we'll want to rename it later...
+RR.Nothing' = RR' = new Type of Nothing'
+CC.Nothing' = CC' = new Type of Nothing'
+new RealNumberRing of Nothing' from ZZ := memoize (
+     (RealNumberRing,Nothing',prec) -> newClass(RealNumberRing,Nothing',
 	  hashTable { 
 	       symbol precision => prec,
 	       symbol Engine => true,
@@ -40,8 +40,8 @@ new RealNumberRing of BigNumber' from ZZ := memoize (
 	       symbol isBasic => true,
 	       symbol RawRing => rawRR prec
 	       }))
-new ComplexNumberRing of BigNumber' from ZZ := memoize(
-     (ComplexNumberRing,BigNumber',prec) -> newClass(ComplexNumberRing,BigNumber',
+new ComplexNumberRing of Nothing' from ZZ := memoize(
+     (ComplexNumberRing,Nothing',prec) -> newClass(ComplexNumberRing,Nothing',
 	  hashTable {
 	       symbol precision => prec,
 	       symbol Engine => true,
@@ -50,18 +50,18 @@ new ComplexNumberRing of BigNumber' from ZZ := memoize(
 	       symbol RawRing => rawCC prec
 	       }))
 precision BigNumberRing := R -> R.precision
-BigNumberType _ ZZ := (T,prec) -> new T.BigNumberRing of T.BigNumber' from prec
-default BigNumberType := R -> R_defaultPrecision
+InexactNumberType _ ZZ := (T,prec) -> new T.BigNumberRing of T.Nothing' from prec -- oops...
+default InexactNumberType := R -> R_defaultPrecision
 
 -- lift and promote between real or complex rings
 
-Number _ BigNumberType := (x,RR) -> x_(default RR)
+Number _ InexactNumberType := (x,RR) -> x_(default RR)
 
 promote(RawRingElement,RR') := (x,R) -> new RR from x
 promote(RawRingElement,CC') := (x,R) -> new CC from x
 promote(RawRingElement,Number) := (x,R) -> new R from x
 promote(RawRingElement,RingElement) := (x,R) -> new R from x
-promote(Number,BigNumber) := (x,RR) -> promote(x,default RR)
+promote(Number,InexactNumber) := (x,RR) -> promote(x,default RR)
 promote(ZZ,RR') := 
 promote(QQ,RR') := 
 promote(RR,RR') := (i,K) -> toRR(K.precision,i)
@@ -69,8 +69,8 @@ promote(ZZ,CC') :=
 promote(QQ,CC') := 
 promote(RR,CC') := 
 promote(CC,CC') := (i,K) -> toCC(K.precision,i)
-lift(Number,BigNumber) := (x,RR) -> lift(x,default RR)
-liftable(Number,BigNumber) := (x,RR) -> liftable(x,default RR)
+lift(Number,InexactNumber) := (x,RR) -> lift(x,default RR)
+liftable(Number,InexactNumber) := (x,RR) -> liftable(x,default RR)
 liftable(CC,RR'):= (z,RR) -> imaginaryPart z == 0
 lift(CC,RR'):= opts -> (z,RR) -> (
      if imaginaryPart z == 0 then realPart z
@@ -159,8 +159,8 @@ random RingFamily := opts -> R -> random(default R,opts)
 
 RR.isBasic = CC.isBasic = true
 
-BigNumberType Array := (T,X) -> (default T) X
-Thing ** BigNumberType := (X,T) -> X ** default T
+InexactNumberType Array := (T,X) -> (default T) X
+Thing ** InexactNumberType := (X,T) -> X ** default T
 
 generators BigNumberRing := opts -> R -> {}
 isField BigNumberRing := R -> true
@@ -188,29 +188,29 @@ toRR(ZZ,Constant) := (prec,c) -> toRR numeric(prec,c)
 toCC(ZZ,Constant) := (prec,c) -> toCC numeric(prec,c)
 
 Constant + Constant := (c,d) -> numeric c + numeric d
-Constant + BigNumber := (c,x) -> numeric(precision x,c) + x
-BigNumber + Constant := (x,c) -> x + numeric(precision x,c)
+Constant + InexactNumber := (c,x) -> numeric(precision x,c) + x
+InexactNumber + Constant := (x,c) -> x + numeric(precision x,c)
 + Constant := c -> numeric c
 - Constant := c -> - numeric c
 Constant - Constant := (c,d) -> numeric c - numeric d
-Constant - BigNumber := (c,x) -> numeric(precision x,c) - x
-BigNumber - Constant := (x,c) -> x - numeric(precision x,c)
+Constant - InexactNumber := (c,x) -> numeric(precision x,c) - x
+InexactNumber - Constant := (x,c) -> x - numeric(precision x,c)
 Constant * Constant := (c,d) -> numeric c * numeric d
-Constant * BigNumber := (c,x) -> numeric(precision x,c) * x
-BigNumber * Constant := (x,c) -> x * numeric(precision x,c)
+Constant * InexactNumber := (c,x) -> numeric(precision x,c) * x
+InexactNumber * Constant := (x,c) -> x * numeric(precision x,c)
 Constant / Constant := (c,d) -> numeric d / numeric d
-Constant / BigNumber := (c,x) -> numeric(precision x,c) / x
-BigNumber / Constant := (x,c) -> x / numeric(precision x,c)
+Constant / InexactNumber := (c,x) -> numeric(precision x,c) / x
+InexactNumber / Constant := (x,c) -> x / numeric(precision x,c)
 Constant ^ Constant := (c,d) -> (numeric c) ^ (numeric d)
-Constant ^ BigNumber := (c,x) -> (numeric(precision x,c)) ^ x
-BigNumber ^ Constant := (x,c) -> x ^ (numeric(precision x,c))
+Constant ^ InexactNumber := (c,x) -> (numeric(precision x,c)) ^ x
+InexactNumber ^ Constant := (x,c) -> x ^ (numeric(precision x,c))
 
 Constant == Constant := (c,d) -> numeric d == numeric d
-Constant == BigNumber := (c,x) -> numeric(precision x,c) == x
-BigNumber == Constant := (x,c) -> x == numeric(precision x,c)
+Constant == InexactNumber := (c,x) -> numeric(precision x,c) == x
+InexactNumber == Constant := (x,c) -> x == numeric(precision x,c)
 
 Constant _ Ring := (c,R) -> (numeric c)_R
-Constant _ BigNumberType := (x,RR) -> x_(default RR)
+Constant _ InexactNumberType := (x,RR) -> x_(default RR)
 
 Constant + Number := (c,x) -> numeric c + x
 Number + Constant := (x,c) -> x + numeric c
@@ -241,7 +241,7 @@ net CC := z -> simpleToString z
 toExternalString RR := toExternalString0
 toExternalString CC := toExternalString0
 logten2 := log 10. / log 2.
-BigNumber#{Standard,Print} = x ->  (
+InexactNumber#{Standard,Print} = x ->  (
      << newline << concatenate(interpreterDepth:"o") << lineNumber << " = ";
      save := printingPrecision;
      try printingPrecision = max(printingPrecision, floor (precision x / logten2));
@@ -252,7 +252,7 @@ BigNumber#{Standard,Print} = x ->  (
      << newline << flush;
      );
 
-BigNumber#{Standard,AfterPrint} = x -> (
+InexactNumber#{Standard,AfterPrint} = x -> (
      << endl;                             -- double space
      << concatenate(interpreterDepth:"o") << lineNumber << " : " << ring x;
      << endl;

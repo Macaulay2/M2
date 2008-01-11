@@ -344,7 +344,7 @@ document {
      Inputs => { "x", "j" },
      Outputs => {{ "the integer obtained from ", TT "x", " by shifting its binary representation rightward ", TT "j", " places" }},
      EXAMPLE {"256 >> 5","256. >> 555"},
-     SeeAlso => {"right shift"}
+     SeeAlso => {"left shift"}
      }
 
 undocumented {(symbol <<, File, Symbol),(symbol <<, File, Net),(symbol <<, File, String)}
