@@ -325,6 +325,26 @@ ring_elem RRR::eval(const RingMap *map, const ring_elem f, int) const
   return result;
 }
 
+bool RRR::is_tiny(M2_RRR epsilon, const ring_elem f) const
+  // returns true is the element is essentially zero (either f, or every real number in 
+  // f is < epsilon in absolute value).
+{
+  mpfr_ptr f1 = MPF_VAL(f);
+  return (mpfr_cmpabs(f1,epsilon) < 0);
+}
+ring_elem RRR::zeroize_tiny(M2_RRR epsilon, const ring_elem f) const
+{
+  if (RRR::is_tiny(epsilon,f))
+    return zero();
+  return f;
+}
+void RRR::increase_maxnorm(M2_RRR norm, const ring_elem f)
+  // If any real number appearing in f has larger absolute value than norm, replace norm.
+{
+  mpfr_ptr f1 = MPF_VAL(f);
+  if (mpfr_cmpabs(norm,f1) < 0)
+    mpfr_set(norm,f1,GMP_RNDN);
+}
 
 
 

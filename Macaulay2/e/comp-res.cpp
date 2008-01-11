@@ -37,7 +37,7 @@ void EngineResolutionComputation::destroy()
 void EngineResolutionComputation::start_computation()
 {
   if (C == 0) return;
-  long deg;
+  //  long deg;
   //  ComputationStatusCode ret = C->compute(stop_,deg);
   //  set_status(ret);
 }

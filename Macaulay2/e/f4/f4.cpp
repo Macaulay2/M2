@@ -728,7 +728,7 @@ void F4GB::do_spairs()
     fprintf(stderr, " # GB elements   = %d\n", ngb);
     if (gbTrace >= 5) show_gb_array(gb);
     if (using_syz) 
-      fprintf(stderr, " # syzygies      = %d\n", syz_basis.size());
+      fprintf(stderr, " # syzygies      = %ld\n", static_cast<long>(syz_basis.size()));
     if (gbTrace >= 5) show_syz_basis();
   }
 

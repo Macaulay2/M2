@@ -56,17 +56,17 @@ Matrix *PointsComputation<CoeffRing>::points(const PolynomialRing *R,
 					     Matrix * & result_std_monoms)
 {
   // Declare and initialize our variables
-  int nvars = R->n_vars();
-  int npoints = Pts->n_cols();
+  // int nvars = R->n_vars();
+  //   int npoints = Pts->n_cols();
 
-  MatrixConstructor gbG(R->make_FreeModule(1), 0);
-  DMat<CoeffRing> *P = new DMat<CoeffRing>(K, npoints, npoints+1);
-  DMat<CoeffRing> *PLU = new DMat<CoeffRing>(K, npoints, npoints+1);
-  MonomialIdeal *inG = new MonomialIdeal(R);
-  VECTOR(monomial) stdG;
-  monom_int_list monoms_todo(R);
+  //   MatrixConstructor gbG(R->make_FreeModule(1), 0);
+  //  DMat<CoeffRing> *P = new DMat<CoeffRing>(K, npoints, npoints+1);
+  //  DMat<CoeffRing> *PLU = new DMat<CoeffRing>(K, npoints, npoints+1);
+  //  MonomialIdeal *inG = new MonomialIdeal(R);
+  //  VECTOR(monomial) stdG;
+  //  monom_int_list monoms_todo(R);
   
-  int next_col = 0;
+  //  int next_col = 0;
   // MES Place the monomials [0,0,vp], ..., [0,nvars-1,vp] onto monom list
   // MES Make the first column of P, PLU all ones.
 

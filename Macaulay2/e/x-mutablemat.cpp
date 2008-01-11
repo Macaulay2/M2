@@ -845,6 +845,42 @@ M2_bool rawLeastSquares(MutableMatrix *A,
   return A->least_squares(b,x,assume_full_rank);
 }
 
+const MatrixOrNull *rawMatrixClean(M2_RRR epsilon, const Matrix *M)
+{
+  ERROR("not implemented yet");
+  return 0;
+}
+
+const RingElementOrNull *rawRingElementClean(M2_RRR epsilon, const RingElement *f)
+{
+  ERROR("not implemented yet");
+  return 0;
+}
+MutableMatrixOrNull *rawMutableMatrixClean(M2_RRR epsilon, MutableMatrix *M)
+{
+/* modifies M in place */
+  ERROR("not implemented yet");
+  return 0;
+} 
+
+M2_RRRorNull rawMatrixNorm(M2_RRR p, const Matrix *M)
+{
+  ERROR("not implemented yet");
+  return 0;
+}
+
+M2_RRRorNull rawRingElementNorm(M2_RRR p, const RingElement *f)
+{
+  ERROR("not implemented yet");
+  return 0;
+}
+
+M2_RRRorNull rawMutableMatrixNorm(M2_RRR p, const MutableMatrix *M)
+{
+  ERROR("not implemented yet");
+  return 0;
+}
+
 // Local Variables:
 // compile-command: "make -C $M2BUILDDIR/Macaulay2/e "
 // End:

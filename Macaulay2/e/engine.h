@@ -1774,6 +1774,29 @@ enum gbTraceValues
   /* making CC elements */
   M2_CC make_M2_Complex(double re, double im);
 
+  /**************************************************/
+  /**** Special routines for objects over RRR,CCC ***/
+  /**************************************************/
+
+  /* The code for these is in x-mutablemat.cpp */
+  
+  /* These routines set any real or complex numbers whose absolute value is less than 
+     epsilon.  If the ring is not over RRR or CCC, then an error message is given, and NULL
+     is returned. */
+
+  const MatrixOrNull *rawMatrixClean(M2_RRR epsilon, const Matrix *M);
+  const RingElementOrNull *rawRingElementClean(M2_RRR epsilon, const RingElement *f);
+  MutableMatrixOrNull *rawMutableMatrixClean(M2_RRR epsilon, MutableMatrix *M); /* modifies M in place */
+
+  /* p is currently limited to infinity (with a given precision), and this routine
+     returns the maximum norm of any RRR or CCC coefficient in the object.
+     If the ring is not over RRR or CCC, then an error message is given, and NULL
+     is returned */
+
+  M2_RRRorNull rawMatrixNorm(M2_RRR p, const Matrix *M);
+  M2_RRRorNull rawRingElementNorm(M2_RRR p, const RingElement *f);
+  M2_RRRorNull rawMutableMatrixNorm(M2_RRR p, const MutableMatrix *M);
+
 #if defined(__cplusplus)
 }
 #endif

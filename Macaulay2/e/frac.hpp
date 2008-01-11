@@ -34,6 +34,8 @@ public:
   FractionField * cast_to_FractionField() { return this; }
   const FractionField * cast_to_FractionField() const { return this; }
 
+  unsigned long get_precision() const { return R_->get_precision(); }
+
   const Ring *get_ring() const { return R_; }
 
   ring_elem numerator(ring_elem f) const;
