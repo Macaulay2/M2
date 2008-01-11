@@ -34,6 +34,7 @@ net QuotientRing := S -> if ReverseDictionary#?S then toString ReverseDictionary
 ambient PolynomialRing := R -> R
 ambient QuotientRing := Ring => (cacheValue ambient) (R -> last R.baseRings)
 degrees QuotientRing := R -> degrees ambient R
+precision QuotientRing := precision @@ ambient
 isHomogeneous QuotientRing := (cacheValue isHomogeneous) (R -> isHomogeneous ambient R and isHomogeneous R.relations)
 isSkewCommutative QuotientRing := R -> isSkewCommutative ambient R
 

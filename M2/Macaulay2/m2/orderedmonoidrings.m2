@@ -93,6 +93,7 @@ generators PolynomialRing := opts -> R -> (
      else if opts.CoefficientRing === R then {}
      else join(R.generators, generators(coefficientRing R, opts) / (r -> promote(r,R))))
 coefficientRing PolynomialRing := Ring => R -> last R.baseRings
+precision PolynomialRing := precision @@ coefficientRing
 isHomogeneous PolynomialRing := R -> (
      k := coefficientRing R;
      isField k or isHomogeneous k)

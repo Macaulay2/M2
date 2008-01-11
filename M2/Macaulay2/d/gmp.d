@@ -1444,7 +1444,7 @@ export toExternalString(x:RR):string := (
 	  if s.i != '0' then break;
 	  nt = nt + 1;
 	  );
-     newlen := length(s) - nt;
+     newlen := max(1,length(s) - nt);
      s = substr(s,0,newlen);
      r := "." + s + "p" + tostring(precision0(x)) + "e" + tostring(ex);
      if ng then r = "-" + r;
@@ -1453,8 +1453,10 @@ export toExternalString(x:RR):string := (
 export tostringCC(z:CC):string := (
      x := realPart(z);
      y := imaginaryPart(z);
-     if y === 0 
+     if y === 0
      then tostringRR(x)
+     else if x === 0
+     then tostringRR(y) + "*ii"
      else if y === -1 then tostringRR(x) + "-ii"
      else if y ===  1 then tostringRR(x) + "+ii"
      else if y < 0
