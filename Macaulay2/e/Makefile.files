@@ -48,6 +48,7 @@ INTERFACE = \
 	GF \
 	ZZ \
 	QQ \
+	RR \
 	RRR \
 	CCC \
 	assprime \

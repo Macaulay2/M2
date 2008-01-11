@@ -321,6 +321,122 @@ public:
   }
 };
 
+#include "RR.hpp"
+class CoefficientRingRR : public our_new_delete
+{
+public:
+  typedef RingRR ring_type;
+  typedef double elem;
+
+  CoefficientRingRR() {}
+
+  void init_set(elem &result, elem a) const { result = a; }
+
+  void set_zero(elem &result) const { result = 0.0; }
+
+  bool is_zero(elem result) const { return result == 0.0; }
+
+  void invert(elem &result, elem a) const
+  {
+    result = 1/a;
+  }
+
+  void subtract_multiple(elem &result, elem a, elem b) const;
+    // result -= a*b
+
+  void add(elem &result, elem a, elem b) const
+  {
+    result = a + b;
+  }
+
+  void subtract(elem &result, elem a, elem b) const
+  {
+    result = a - b;
+  }
+
+  void mult(elem &result, elem a, elem b) const
+  {
+    result = a*b;
+  }
+
+  void divide(elem &result, elem a, elem b) const
+  {
+    result = a/b;
+  }
+
+#if 0
+  void to_ring_elem(ring_elem &result, const elem a) const
+  {
+    result = RingRR::from_double(a);
+  }
+#endif
+
+  void from_ring_elem(elem &result, const ring_elem &a) const
+  {
+    result = (reinterpret_cast<RingRR::RRelem>(a.poly_val))->val;
+  }
+
+  void swap(elem &a, elem &b) const
+  {
+    elem tmp = a;
+    a = b;
+    b = tmp;
+  }
+};
+
+#if 0
+#include "CC.hpp"
+#include "complex.hpp"
+class CoefficientRingCC : public our_new_delete
+{
+public:
+  typedef CC ring_type;
+  typedef M2_CC_struct elem; // components are re, im
+  typedef CoefficientRingRR::elem real_elem;
+
+  CoefficientRingCC() {}
+
+  void init_set(elem &result, elem a) const { result = a; }
+
+  void set_zero(elem &result) const { result.re = 0.0; result.im = 0.0; }
+
+  bool is_zero(elem result) const { return result.re == 0.0 && result.im == 0.0; }
+
+  void invert(elem &result, elem a) const { CCArithmetic::invert(result, a); }
+
+  void subtract_multiple(elem &result, elem a, elem b) const { 
+    // result -= a*b
+    CCArithmetic::subtract_multiple(result,a,b);
+  }
+
+  void add(elem &result, elem a, elem b) const { CCArithmetic::add(result,a,b); }
+
+  void subtract(elem &result, elem a, elem b) const { CCArithmetic::subtract(result,a,b); }
+
+  void mult(elem &result, elem a, elem b) const { CCArithmetic::mult(result,a,b); }
+
+  void divide(elem &result, elem a, elem b) const { CCArithmetic::divide(result,a,b); }
+
+  void to_ring_elem(ring_elem &result, elem a) const
+  {
+    result = globalCC->from_complex(&a);
+  }
+
+  void from_ring_elem(elem &result, const ring_elem &a) const
+  {
+    M2_CC b = reinterpret_cast<M2_CC>(a.poly_val);
+    result = *b;
+  }
+
+  void swap(elem &a, elem &b) const
+  {
+    elem tmp = a;
+    a = b;
+    b = tmp;
+  }  
+};
+#endif
+
 #include "complex.h"
 #include "CCC.hpp"
 
