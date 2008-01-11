@@ -345,8 +345,14 @@ extend(ChainComplex,ChainComplex,Matrix) := ChainComplexMap => opts -> (D,C,fi)-
      while C#?n do (
 	  p := f_(n-1) * C.dd_n;
 	  q := D.dd_(n+s);
-	  if opts.Verify and p % q != 0 then error "map cannot be extended";
-	  f#n = p // q;
+	  if opts.Verify then (
+	       (quot,rem) := quotientRemainder(p,q);
+	       if rem != 0 then error "map cannot be extended";
+	       f#n = quot;
+	       )
+	  else (
+	       f#n = p // q;
+	       );
 	  n = n+1;
 	  );
      f)
