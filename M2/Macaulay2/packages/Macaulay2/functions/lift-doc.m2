@@ -38,7 +38,8 @@ document {
 	  "f" => {"a ", TO2(RingElement,"ring element"), ", ",
 	       TO2(Ideal, "ideal"), ", or ", 
 	       TO2(Matrix, "matrix")},
-	  "R" => Ring
+	  "R" => Ring,
+	  Verify => Boolean => {"whether to give an error message if lifting is not possible, or, alternatively, to return ", TO "null"}
 	  },
      Outputs => {
 	  {"a ", TO2(RingElement,"ring element"), ", ",

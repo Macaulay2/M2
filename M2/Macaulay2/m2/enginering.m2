@@ -27,7 +27,7 @@ promote(QQ,RingElement) := (r,S) -> (
 liftable(RingElement,RingElement) := 
 liftable(Number,RingElement) := 
 liftable(RingElement,Number) := 
-liftable(Number,Number) := (f,R) -> try (lift(f,R);true) else false -- we'll do better than this eventually, see liftable'
+liftable(Number,Number) := (f,R) -> null =!= lift(f,R)
 
 --- new lift and promote, version 3
 basicLift = opts -> (r,B) -> (
@@ -98,13 +98,12 @@ multipleBasicLiftDegrees = multipleBasicPromoteDegrees = (dF,v) -> ( scan(v, p -
 promote(ZZ,RingElement) := (n,R) -> new R from rawFromNumber(R,n)
 
 commonRingInitializations = (F) -> (
-     lift(F,F) := opts -> promote(F,F) := (f,F) -> f;
-     liftable'(F,F) := (f,F) -> true;
+     lift(F,F) := opts -> (f,F) -> f;
+     promote(F,F) := (f,F) -> f;
      promote(List,F,F) := (m,F,G) -> m;
      promote(Matrix,F,F) := (m,F,G) -> m;
      lift(List,F,F) := opts -> (m,F,G) -> m;
      lift(Matrix,F,F) := opts -> (m,F,G) -> m;
-     liftable'(Matrix,F,F) := (f,F,G) -> true;
      )
 
 commonEngineRingInitializations = (F) -> (

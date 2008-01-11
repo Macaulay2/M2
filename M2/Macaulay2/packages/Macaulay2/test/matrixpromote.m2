@@ -36,11 +36,6 @@ assert( degrees promote(vars S, V) === {{{0}}, {{0}, {0}, {0}}} )
 
 end
 
-liftable'(matrix{{2/1}}, ZZ)
-  assert oo
-liftable'(matrix{{2/3}}, ZZ)
-  assert not oo
-
 
 -- M2-send-to-buffer: "*gud*"
 

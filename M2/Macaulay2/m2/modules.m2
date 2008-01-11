@@ -26,9 +26,6 @@ target Matrix := f -> f.target
 lift(Matrix,RingElement) := lift(Matrix,Number) := Matrix => opts -> (f,S) -> (
      if not isFreeModule target f or not isFreeModule source f then error "lift: expected source and target to be free modules";
      lift(f, ring f, S, opts))     
-liftable'(Matrix,RingElement) := liftable'(Matrix,Number) := Boolean => (f,S) -> (
-     if not isFreeModule target f or not isFreeModule source f then error "lift: expected source and target to be free modules";
-     liftable'(f, ring f, S))
 promote(Matrix,RingElement) := promote(Matrix,Number) := Matrix => (f,S) -> (
      if not isFreeModule target f or not isFreeModule source f then error "lift: expected source and target to be free modules";
      promote(f, ring f, S))

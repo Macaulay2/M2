@@ -79,7 +79,7 @@ new RealNumberRing of RR from ZZ := memoize (
 	       }))
 lift(ZZ,RealNumberRing) := 
 lift(RR,RealNumberRing) := 
-lift(QQ,RealNumberRing) := opts ->  
+lift(QQ,RealNumberRing) := opts -> (x,R) -> toRR(R.precision,x)
   ZZ _ RealNumberRing :=
   QQ _ RealNumberRing :=
   RR _ RealNumberRing :=
@@ -90,17 +90,13 @@ expression RealNumberRing := R -> new Subscript from {symbol RR, R.precision}
 RR.BigNumberRing = RealNumberRing
 toString RealNumberRing := R -> concatenate("RR_",toString R.precision)
 ring RR := x -> new RealNumberRing of RR from precision x
-
 new RR from RawRingElement := (RRR,x) -> ( assert( RRR === RR ); rawToRR x )
 promote(RawRingElement,RR) := (x,R) -> new RR from x
 promote(RawRingElement,Number) := (x,R) -> new R from x
 promote(RawRingElement,RingElement) := (x,R) -> new R from x
-
 promote(RR,RR) := (i,K) -> toRR(K.precision,i)
 promote(CC,CC) := (i,K) -> toCC(K.precision,i)
-
 lift(RR,ZZ) := opts -> (r,ZZ) -> if r == floor r then floor r else error("can't lift ",toString r, " to ZZ")
-liftable'(RR,ZZ) := (r,ZZ) -> r == floor r
 
 approx := (r,limit) -> (
      if r == 0 then return 0/1;
