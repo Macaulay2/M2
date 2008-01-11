@@ -19,7 +19,6 @@ new ComplexNumberRing of CC from ZZ := memoize(
 	       symbol baseRings => {ZZ,QQ},
 	       symbol RawRing => rawCC prec
 	       }))
-liftable(CC,ComplexNumberRing) := R -> true
 lift(ZZ,ComplexNumberRing) := 
 lift(RR,ComplexNumberRing) := 
 lift(CC,ComplexNumberRing) := 
