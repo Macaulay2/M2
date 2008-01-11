@@ -182,6 +182,14 @@ bool CCC::promote(const Ring *Rf, const ring_elem f, ring_elem &result) const
       result = BIGCC_RINGELEM(g);
       return true;
     }
+  if (Rf->is_CCC())
+    {
+      M2_CCC g = new_elem();
+      mpfr_set(g->re, BIGCC_RE(f), GMP_RNDN);
+      mpfr_set(g->im, BIGCC_IM(f), GMP_RNDN);
+      result = BIGCC_RINGELEM(g);
+      return true;
+    }
   return false;
 }
 
