@@ -3,13 +3,11 @@
 --- notes: BUG to fix
 
 undocumented {
-     (lift, CC, CC),
      (lift, CC, QQ),
      (lift, CC, RR),
      (lift, CC, ZZ),
      (lift, Ideal, QQ),
      (lift, Ideal, ZZ),
-     (lift,Matrix,CC,CC),
      (lift,Matrix,CC,QQ),
      (lift,Matrix,CC,RR),
      (lift,Matrix,CC,ZZ),
@@ -17,13 +15,11 @@ undocumented {
      (lift,Matrix,QQ,QQ),
      (lift,Matrix,QQ,ZZ),
      (lift,Matrix,RR,QQ),
-     (lift,Matrix,RR,RR),
      (lift,Matrix,RR,ZZ),
      (lift,Matrix,ZZ,ZZ),
      (lift, QQ, QQ),
      (lift, QQ, ZZ),
      (lift, RR, QQ),
-     (lift, RR, RR),
      (lift, RR, ZZ),
      (lift, ZZ, ZZ)
      }
