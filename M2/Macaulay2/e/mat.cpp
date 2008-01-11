@@ -49,6 +49,19 @@ MutableMatrix *MutableMatrix::zero_matrix(const Ring *R,
     }
   if (R->is_RRR())
     {
+      if (R->cast_to_RRR()->get_precision() <= 53)
+	{
+	  if (dense)
+	    {
+	      return MutableMat<CoefficientRingRRR, DMatRR>
+		::zero_matrix(R->cast_to_RRR(),nrows,ncols);
+	    }
+	  else
+	    return MutableMat<CoefficientRingRRR, SMatRR>
+	      ::zero_matrix(R->cast_to_RRR(),nrows,ncols);
+	  
+	}
+      // large precision after this
       if (dense)
 	{
 	  return MutableMat<CoefficientRingRRR, DMatRR>
@@ -60,6 +73,18 @@ MutableMatrix *MutableMatrix::zero_matrix(const Ring *R,
     }
   if (R->is_CCC())
     {
+      if (R->cast_to_CCC()->get_precision() <= 53)
+	{
+	  if (dense)
+	    {
+	      return MutableMat<CoefficientRingCCC, DMatCC>
+		::zero_matrix(R->cast_to_CCC(),nrows,ncols);
+	    }
+	  else
+	    return MutableMat<CoefficientRingCCC, SMatCC>
+	      ::zero_matrix(R->cast_to_CCC(),nrows,ncols);
+	}
+      // large precision after this
       if (dense)
 	{
 	  return MutableMat<CoefficientRingCCC, DMatCC>

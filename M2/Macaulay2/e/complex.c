@@ -377,6 +377,7 @@ void mpfc_sqrt(M2_CCC result, M2_CCC a)
 	    result.re = a.re/(2.0*result.im);
 	  }
       }
+  }
 #endif
   }
 
