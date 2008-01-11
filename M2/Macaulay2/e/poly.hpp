@@ -102,6 +102,7 @@ public:
   Matrix * getPresentation() const;
 
 
+  unsigned long get_precision() const { return K_->get_precision(); }
 
 
   bool is_basic_ring() const { return false; } // The default is to be a basic ring.
