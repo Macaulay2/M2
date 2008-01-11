@@ -868,6 +868,7 @@ equal(x:RR, y:RR):bool ::= (
      Ccode( void, "mpfr_clear_flags()" );		    -- do we need this?
      0 != Ccode( int, "mpfr_equal_p(", "(__mpfr_struct *)", x, ",", "(__mpfr_struct *)", y, ")" ) && ! flagged0());
 export (x:RR) === (y:RR) : bool := equal(x,y);
+export strictequality(x:RR,y:RR):bool := x === y && precision0(x) == precision0(y);
 
 compare0(x:RR, y:RR):int ::= (
      Ccode( void, "mpfr_clear_flags()" );		    -- do we need this?
@@ -1216,6 +1217,12 @@ export (x:RR) / (y:CC) : CC := x * conj(y) / norm2(y);
 export (x:CC) << (n:long) : CC := CC(x.re<<n,x.im<<n);
 export (x:CC) >> (n:long) : CC := CC(x.re<<n,x.im<<n);
 
+export strictequality(x:CC,y:CC):bool := (
+     x.re === y.re && precision0(x.re) == precision0(y.re)
+     &&
+     x.im === y.im && precision0(x.im) == precision0(y.im)
+     );
+     
 export (x:CC) === (y:CC) : bool := x.re === y.re && x.im === y.im;
 export (x:CC) === (y:RR) : bool := x.re === y && x.im === 0;
 export (x:RR) === (y:CC) : bool := x === y.re && y.im === 0;

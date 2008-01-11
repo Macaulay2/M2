@@ -227,13 +227,13 @@ export equal(lhs:Expr,rhs:Expr):Expr := (
      is x:RR do (
 	  when rhs
 	  is y:RR do (
-	       if x === y then True else False
+	       if strictequality(x,y) then True else False
 	       )
 	  else False)
      is x:CC do (
 	  when rhs
 	  is y:CC do (
-	       if x === y then True else False
+	       if strictequality(x,y) then True else False
 	       )
 	  else False)
      is x:SymbolClosure do (
