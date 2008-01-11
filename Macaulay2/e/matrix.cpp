@@ -17,7 +17,6 @@
 #include <vector>
 
 #include "matrix-con.hpp"
-#include "random.hpp"
 
 Matrix::Matrix(const FreeModule *rows0, 
 	       const FreeModule *cols0,
