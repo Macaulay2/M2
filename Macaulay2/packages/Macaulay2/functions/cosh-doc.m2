@@ -3,7 +3,7 @@
 --- notes: include example?
 
 document { 
-     Key => {cosh, (cosh,ZZ),(cosh,RR)},
+     Key => {cosh, (cosh,ZZ),(cosh,RR),(cosh, QQ)},
      Headline => "compute the hyperbolic cosine",
      Usage => "cosh x",
      Inputs => { "x" => RR },

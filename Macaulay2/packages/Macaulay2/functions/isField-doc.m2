@@ -2,6 +2,8 @@
 --- author(s): Gregory G. Smith
 --- notes: 
 
+undocumented{(isField, BigNumberRing)}
+
 document { 
      Key => {isField, (isField, EngineRing), (isField, Ring)},
      Headline => "whether something is a field",

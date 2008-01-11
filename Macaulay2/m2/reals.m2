@@ -162,12 +162,6 @@ RR.isBasic = CC.isBasic = true
 BigNumberType Array := (T,X) -> (default T) X
 Thing ** BigNumberType := (X,T) -> X ** default T
 
-dim BigNumberType := R -> 0
-char BigNumberType := R -> 0
-degreeLength BigNumberType := R -> 0
-isField BigNumberType := R -> true
-frac BigNumberType := R -> R
-
 generators BigNumberRing := opts -> R -> {}
 isField BigNumberRing := R -> true
 degreeLength BigNumberRing := R -> 0

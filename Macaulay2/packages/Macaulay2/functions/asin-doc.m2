@@ -3,7 +3,7 @@
 --- notes: 
 
 document { 
-     Key => {asin,(asin,ZZ),(asin,RR)},
+     Key => {asin,(asin,ZZ),(asin,RR),(asin, QQ)},
      Headline => "compute the arcsine",
      Usage => "asin x",
      Inputs => {

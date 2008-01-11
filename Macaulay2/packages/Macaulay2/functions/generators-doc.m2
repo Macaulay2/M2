@@ -7,7 +7,8 @@ undocumented {
 	  (generators, FractionField),
 	  (generators, GaloisField),
 	  (generators, PolynomialRing),
-	  (generators, QuotientRing)}
+	  (generators, QuotientRing),
+	  (generators, BigNumberRing)}
 
 document {
      Key => generators,

@@ -93,10 +93,10 @@ html TO   := x -> (
      if match("^ +$",r) then r = #r : "&nbsp;&nbsp;";
      if d#?"undocumented" and d#"undocumented" === true then (
 	  if signalDocError tag then stderr << "--warning: tag cited also declared as undocumented: " << tag << endl;
-	  concatenate( "<em>", r, "</em>", if x#?1 then x#1, " (missing documentation <!-- tag: ",toString DocumentTag.Key tag," -->)")
+	  concatenate( "<tt>", r, "</tt>", if x#?1 then x#1, " (missing documentation <!-- tag: ",toString DocumentTag.Key tag," -->)")
 	  )
      else if d === null					    -- isMissingDoc
-     then concatenate( "<em>", r, "</em>", if x#?1 then x#1, " (missing documentation <!-- tag: ",toString DocumentTag.Key tag," -->)")
+     then concatenate( "<tt>", r, "</tt>", if x#?1 then x#1, " (missing documentation <!-- tag: ",toString DocumentTag.Key tag," -->)")
      else concatenate( "<a href=\"", rel htmlFilename getPrimary x#0, "\" title=\"", headline x#0, "\">", r, "</a>", if x#?1 then x#1))
 html TO2  := x -> (
      tag := x#0;
@@ -104,10 +104,10 @@ html TO2  := x -> (
      d := fetchPrimaryRawDocumentation tag;
      if d#?"undocumented" and d#"undocumented" === true then (
 	  if signalDocError tag then stderr << "--warning: tag cited also declared as undocumented: " << tag << endl;
-	  concatenate("<em>", htmlLiteral x#1, "</em> (missing documentation <!-- tag: ",DocumentTag.FormattedKey tag," -->)")
+	  concatenate("<tt>", htmlLiteral x#1, "</tt> (missing documentation <!-- tag: ",DocumentTag.FormattedKey tag," -->)")
 	  )
      else if d === null					    -- isMissingDoc
-     then concatenate("<em>", htmlLiteral x#1, "</em> (missing documentation <!-- tag: ",DocumentTag.FormattedKey tag," -->)")
+     then concatenate("<tt>", htmlLiteral x#1, "</tt> (missing documentation <!-- tag: ",DocumentTag.FormattedKey tag," -->)")
      else concatenate("<a href=\"", rel htmlFilename getPrimary x#0, "\">", htmlLiteral x#1, "</a>"))
 
 next := tag -> ( if NEXT#?tag then HREF { htmlFilename NEXT#tag, nextButton } else nextButton, " | ")

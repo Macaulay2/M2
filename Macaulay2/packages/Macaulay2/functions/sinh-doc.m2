@@ -3,7 +3,7 @@
 --- notes: include example?
 
 document { 
-     Key => {sinh,(sinh,ZZ),(sinh,RR)},
+     Key => {sinh,(sinh,ZZ),(sinh,RR),(sinh, QQ)},
      Headline => "compute the hyperbolic sine",
      Usage => "sinh x",
      Inputs => {

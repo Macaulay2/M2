@@ -3,7 +3,7 @@
 --- notes: 
 
 document { 
-     Key => {cos, (cos,ZZ), (cos,RR)},
+     Key => {cos, (cos,ZZ), (cos,RR),(cos, QQ)},
      Headline => "compute the cosine",
      Usage => "cos x",
      Inputs => { "x" => RR },

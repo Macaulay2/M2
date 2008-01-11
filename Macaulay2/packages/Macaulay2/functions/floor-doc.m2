@@ -2,8 +2,10 @@
 --- author(s): MES
 --- notes: just added example
 
+undocumented{(floor, ZZ)}
+
 document { 
-     Key => {floor,(floor,RR)},
+     Key => {floor,(floor,RR),(floor, QQ)},
      Headline => "floor function",
      Usage => "floor x",
      Inputs => { "x" => RR },
