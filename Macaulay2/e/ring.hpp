@@ -296,7 +296,12 @@ public:
   // f is < epsilon in absolute value).
   virtual ring_elem zeroize_tiny(M2_RRR epsilon, const ring_elem f) const;
   // Default is to return f itself.
-  virtual void increase_maxnorm(M2_RRR norm, const ring_elem f);
+  virtual void increase_maxnorm(M2_RRR norm, const ring_elem f) const;
+  // If any real number appearing in f has larger absolute value than norm, replace norm.
+  // Default for rings not over RRR or CCC is to do nothing.
+  vec vec_zeroize_tiny(M2_RRR epsilon, const vec f) const;
+  // Default is to return f itself.
+  void vec_increase_maxnorm(M2_RRR norm, const vec f) const;
   // If any real number appearing in f has larger absolute value than norm, replace norm.
   // Default for rings not over RRR or CCC is to do nothing.
 

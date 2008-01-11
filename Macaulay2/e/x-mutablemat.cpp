@@ -12,6 +12,8 @@
 #include "dmat-LU.hpp"
 #include "exceptions.hpp"
 
+#include "matrix.hpp"
+
 typedef MutableMatrix MutableMatrixOrNull;
 
 MutableMatrix * IM2_MutableMatrix_identity(const Ring *R,
@@ -845,40 +847,81 @@ M2_bool rawLeastSquares(MutableMatrix *A,
   return A->least_squares(b,x,assume_full_rank);
 }
 
+////////////////////////////////////////
+// Support for RRR and CCC operations //
+////////////////////////////////////////
+
 const MatrixOrNull *rawMatrixClean(M2_RRR epsilon, const Matrix *M)
 {
-  ERROR("not implemented yet");
-  return 0;
+  if (M->get_ring()->get_precision() == 0)
+    {
+      ERROR("expected ring over an RR or CC");
+      return 0;
+    }
+  return M->clean(epsilon);
 }
-
 const RingElementOrNull *rawRingElementClean(M2_RRR epsilon, const RingElement *f)
 {
-  ERROR("not implemented yet");
-  return 0;
+  const Ring *R = f->get_ring();
+  if (R->get_precision() == 0)
+    {
+      ERROR("expected ring over an RR or CC");
+      return 0;
+    }
+  return RingElement::make_raw(R, R->zeroize_tiny(epsilon,f->get_value()));
 }
 MutableMatrixOrNull *rawMutableMatrixClean(M2_RRR epsilon, MutableMatrix *M)
 {
 /* modifies M in place */
-  ERROR("not implemented yet");
-  return 0;
+  if (M->get_ring()->get_precision() == 0)
+    {
+      ERROR("expected ring over an RR or CC");
+      return 0;
+    }
+  //return M->clean(epsilon);
 } 
+
+static M2_RRRorNull get_norm_start(M2_RRR p, const Ring *R)
+{
+  if (R->get_precision() == 0)
+    {
+      ERROR("expected ring over an RR or CC");
+      return 0;
+    }
+  M2_RRR norm = reinterpret_cast<M2_RRR>(getmem(sizeof(__mpfr_struct)));
+  mpfr_init2(norm, R->get_precision());
+  mpfr_ui_div(norm,1,p,GMP_RNDN);
+  if (!mpfr_zero_p(norm))
+    {
+      ERROR("Lp norm only implemented for p = infinity");
+      mpfr_clear(norm);
+      return 0;
+    }
+  return norm;
+}
 
 M2_RRRorNull rawMatrixNorm(M2_RRR p, const Matrix *M)
 {
-  ERROR("not implemented yet");
-  return 0;
+  M2_RRR norm = get_norm_start(p, M->get_ring());
+  if (!norm) return 0; // error already given.
+  //M->increase_maxnorm(norm);
+  return norm;
 }
 
 M2_RRRorNull rawRingElementNorm(M2_RRR p, const RingElement *f)
 {
-  ERROR("not implemented yet");
-  return 0;
+  M2_RRR norm = get_norm_start(p, f->get_ring());
+  if (!norm) return 0; // error already given.
+  f->get_ring()->increase_maxnorm(norm, f->get_value());
+  return norm;
 }
 
 M2_RRRorNull rawMutableMatrixNorm(M2_RRR p, const MutableMatrix *M)
 {
-  ERROR("not implemented yet");
-  return 0;
+  M2_RRR norm = get_norm_start(p, M->get_ring());
+  if (!norm) return 0; // error already given.
+  //M->increase_maxnorm(norm);
+  return norm;
 }
 
 // Local Variables:

@@ -848,8 +848,6 @@ void GBRing::gbvector_text_out(buffer &o,
       return;
     }
 
-#warning "rank1 is always set to false"
-  bool rank1 = false && (F->rank() == 1);
   int old_one = p_one;
   int old_parens = p_parens;
   int old_plus = p_plus;
@@ -863,7 +861,7 @@ void GBRing::gbvector_text_out(buffer &o,
       K->elem_text_out(o,t->coeff);
       if (!isone)
 	M->elem_text_out(o, t->monom);
-      if (!rank1)
+      if (t->comp >= 1)
 	o << "<" << t->comp << ">";
       p_plus = 1;
     }
