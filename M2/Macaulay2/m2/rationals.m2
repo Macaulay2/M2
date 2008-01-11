@@ -21,6 +21,7 @@ QQ.baseRings = {ZZ}
 QQ.frac = QQ
 round QQ := x -> floor(x + 1/2)
 QQ.random = opts -> QQ -> rawRandomQQ opts.Height
+promote(ZZ,QQ) := (x,QQ) -> x/1
 promote(QQ,QQ) := (x,QQ) -> x
 expression QQ := r -> (
      n := numerator r;

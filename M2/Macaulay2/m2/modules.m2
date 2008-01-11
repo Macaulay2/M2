@@ -26,14 +26,14 @@ target Matrix := f -> f.target
 precision Matrix := precision @@ ring
 
 lift(Matrix,BigNumber) := opts -> (M,RR) -> lift(M,default RR,opts)
-lift(Matrix,NumberParent) := 
+lift(Matrix,BigNumber') := 
 lift(Matrix,RingElement) := 
 lift(Matrix,Number) := Matrix => opts -> (f,S) -> (
      if not isFreeModule target f or not isFreeModule source f then error "lift: expected source and target to be free modules";
      lift(f, ring f, S, opts))     
 
 promote(Matrix,BigNumber) := (M,RR) -> promote(M,default RR)
-promote(Matrix,NumberParent) := 
+promote(Matrix,BigNumber') := 
 promote(Matrix,RingElement) := 
 promote(Matrix,Number) := Matrix => (f,S) -> (
      if not isFreeModule target f or not isFreeModule source f then error "lift: expected source and target to be free modules";
@@ -46,10 +46,10 @@ scan( {ZZ,QQ}, K -> (
 	  ))
 
 scan((
-	  (ZZ, { QQ, RRParent, CCParent }),
-	  (QQ, { RRParent, CCParent }),
-	  (RRParent,{ RRParent, CCParent }),
-	  (CCParent, { CCParent })
+	  (ZZ, { QQ, RR', CC' }),
+	  (QQ, { RR', CC' }),
+	  (RR',{ RR', CC' }),
+	  (CC', { CC' })
 	  ), 
      (K,Ls) -> scan(Ls, L -> (
 	       p := makepromoter 0;
@@ -58,7 +58,7 @@ scan((
 	       lift(Matrix,L,K) := opts -> (m,L,K) -> (basicLiftMatrix opts)(m,K,p);
 	       )))	  
 
-promote(Matrix,QQ,CCParent) := (m,K,L) -> promote( promote(m,RR_(precision L)), L) -- Mike could/should do this in the engine!
+promote(Matrix,QQ,CC') := (m,K,L) -> promote( promote(m,RR_(precision L)), L) -- Mike could/should do this in the engine!
 
 -----------------------------------------------------------------------------
 -- Vector
