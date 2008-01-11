@@ -311,16 +311,6 @@ M2_stringarray system_args;
 M2_string actors5_configargs;
 int system_loadDepth;
 
-int system_randomint(void) {
-#if 0
-     extern long random();
-     return random();
-#else
-     extern long random00();
-     return random00();
-#endif
-     }
-
 #if !defined(CLOCKS_PER_SEC) || CLOCKS_PER_SEC > 10000
 static struct itimerval it;
 #define INITVAL 1000000		/* a million seconds is very long */
@@ -731,6 +721,22 @@ int actors5_WindowHeight(int fd) {
      return x.ws_row;
 #endif
      }
+
+
+#include "../e/rand.h"
+
+int system_randomint(void) {
+#if 0
+     extern long random();
+     return random();
+#elif 0
+     extern long random00();
+     return random00();
+#else
+     return rawRandomInt(2<<31-1);
+#endif
+     }
+
 
 /*
 // Local Variables:
