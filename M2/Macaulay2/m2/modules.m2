@@ -38,17 +38,21 @@ scan({
 	       lift(Matrix,L,K) := opts -> (m,L,K) -> map(K^(numgens target m),K^(numgens source m),applyTable(entries m, x -> lift(x,K,opts)));
 	       )))
 
+scan( {ZZ,QQ}, K -> (
+	  promote(List,K,K) := (m,K,L) -> m;
+	  promote(Matrix,K,K) := (m,K,L) -> m;
+	  lift(K,K) := opts -> (f,K) -> f;
+	  lift(Matrix,K,K) := opts -> (m,K,L) -> m;
+	  ))
+
+promote(Matrix,RR,RR) := promote(Matrix,CC,CC) := (m,K1,K2) -> basicPromoteMatrix(m,K2,identity)
+
 scan((
 	  (ZZ, { QQ, RR, CC }),
 	  (QQ, { RR, CC }),
-	  (RR,{ CC }),
-	  (CC,{  })
+	  (RR,{ CC })
 	  ), 
      (K,Ls) -> (
-	  promote(Matrix,K,K) := (m,K,L) -> m;
-	  promote(List,K,K) := (m,K,L) -> m;
-	  lift(K,K) := opts -> (f,K) -> f;
-	  lift(Matrix,K,K) := opts -> (m,K,L) -> m;
 	  scan(Ls, L -> (
 	       p := makepromoter 0;
 	       if lookup(promote,K,L) === null then
