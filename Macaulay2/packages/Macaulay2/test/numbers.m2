@@ -125,6 +125,34 @@ assert( toString CC_3 == "CC_3" )
 assert( toString RR == "RR" )
 assert( toString CC == "CC" )
 
+f = promote(matrix {{1.}}, CC_33)
+assert ( precision f === 33 )
+assert( f_(0,0) === toCC 1p33)
+f = promote(matrix {{1.}}, CC)
+assert( f_(0,0) === toCC 1.)
+f = promote(matrix {{1.}}, RR_33)
+assert( f_(0,0) === toRR 1p33)
+f = promote(matrix {{1.}}, RR)
+assert( f_(0,0) === toRR 1.)
+
+f = promote(matrix {{1}}, CC_33)
+assert( f_(0,0) === toCC 1p33)
+f = promote(matrix {{1}}, CC)
+assert( f_(0,0) === toCC 1.)
+f = promote(matrix {{1}}, RR_33)
+assert( f_(0,0) === toRR 1p33)
+f = promote(matrix {{1}}, RR)
+assert( f_(0,0) === toRR 1.)
+
+f = promote(matrix {{1/1}}, CC_33)
+assert( f_(0,0) === toCC 1p33)
+f = promote(matrix {{1/1}}, CC)
+assert( f_(0,0) === toCC 1.)
+f = promote(matrix {{1/1}}, RR_33)
+assert( f_(0,0) === toRR 1p33)
+f = promote(matrix {{1/1}}, RR)
+assert( f_(0,0) === toRR 1.)
+
 -- Local Variables:
 -- compile-command: "make -C $M2BUILDDIR/Macaulay2/packages/Macaulay2/test numbers.out"
 -- End:

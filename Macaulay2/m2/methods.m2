@@ -159,7 +159,7 @@ setupMethods((), {
 	  hilbertFunction, content, leadTerm, leadCoefficient, leadMonomial, components,
 	  leadComponent, degreesRing, degrees, assign, numgens, conjugate,
 	  autoload, relations, cone, standardForm, inverse, numeric, round,
-	  determinant, presentation, dismiss, degreesMonoid,
+	  determinant, presentation, dismiss, degreesMonoid, precision,
 	  fraction, part, coefficient, preimage, minimalPrimes
 	  })
 

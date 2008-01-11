@@ -16,6 +16,10 @@ Number.synonym = "number"
 BigNumberType.synonym = "big number ring"
 BigNumber.synonym = "big number"
 
+-- built-in functions 
+
+precision BigNumber := precision0
+
 -- new types
 
 BigNumberRing = new Type of Ring
@@ -24,7 +28,7 @@ raw BigNumberRing := R -> R.RawRing
 
 RR.BigNumberRing = RealNumberRing    = new Type of BigNumberRing   ; RealNumberRing.synonym = "real number ring"
 CC.BigNumberRing = ComplexNumberRing = new Type of BigNumberRing; ComplexNumberRing.synonym = "complex number ring"
-NumberParent  = new Type of Nothing
+NumberParent  = new Type of Number		   -- it will have no instances
 RR.NumberParent = RRParent = new Type of NumberParent
 CC.NumberParent = CCParent = new Type of NumberParent
 new RealNumberRing of NumberParent from ZZ := memoize (
@@ -45,6 +49,7 @@ new ComplexNumberRing of NumberParent from ZZ := memoize(
 	       symbol baseRings => {ZZ,QQ},
 	       symbol RawRing => rawCC prec
 	       }))
+precision BigNumberRing := R -> R.precision
 BigNumberType _ ZZ := (T,prec) -> new T.BigNumberRing of T.NumberParent from prec
 default BigNumberType := R -> R_defaultPrecision
 

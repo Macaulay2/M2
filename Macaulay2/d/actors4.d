@@ -1178,7 +1178,7 @@ precision(e:Expr):Expr := (
      is x:CC do Expr(toInteger(precision(x)))
      else WrongArgRR()
      );
-setupfun("precision",precision);
+setupfun("precision0",precision);
 
 -- locate:
 

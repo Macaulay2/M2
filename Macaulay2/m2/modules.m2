@@ -23,20 +23,21 @@ ring Matrix := f -> (
 source Matrix := f -> f.source
 target Matrix := f -> f.target
 
-lift(Matrix,RingElement) := lift(Matrix,Number) := Matrix => opts -> (f,S) -> (
+precision Matrix := precision @@ ring
+
+lift(Matrix,BigNumber) := opts -> (M,RR) -> lift(M,default RR,opts)
+lift(Matrix,NumberParent) := 
+lift(Matrix,RingElement) := 
+lift(Matrix,Number) := Matrix => opts -> (f,S) -> (
      if not isFreeModule target f or not isFreeModule source f then error "lift: expected source and target to be free modules";
      lift(f, ring f, S, opts))     
-promote(Matrix,RingElement) := promote(Matrix,Number) := Matrix => (f,S) -> (
+
+promote(Matrix,BigNumber) := (M,RR) -> promote(M,default RR)
+promote(Matrix,NumberParent) := 
+promote(Matrix,RingElement) := 
+promote(Matrix,Number) := Matrix => (f,S) -> (
      if not isFreeModule target f or not isFreeModule source f then error "lift: expected source and target to be free modules";
      promote(f, ring f, S))
-
-scan({
-	  (QQ, { RR })
-	  }, 
-     (K,Ls) -> scan(Ls, L -> (
-	       promote(Matrix,K,L) := (m,K,L) -> map(L^(numgens target m),L^(numgens source m),applyTable(entries m, x -> promote(x,L)));
-	       lift(Matrix,L,K) := opts -> (m,L,K) -> map(K^(numgens target m),K^(numgens source m),applyTable(entries m, x -> lift(x,K,opts)));
-	       )))
 
 scan( {ZZ,QQ}, K -> (
 	  promote(List,K,K) := (m,K,L) -> m;
@@ -44,28 +45,20 @@ scan( {ZZ,QQ}, K -> (
 	  lift(Matrix,K,K) := opts -> (m,K,L) -> m;
 	  ))
 
-scan( {RR, CC}, K -> (
-	  promote(Matrix,K,K) := (m,K1,K2) -> basicPromoteMatrix(m,K2,identity);
-	  promote(List,K,K) := (m,K1,K2) -> m;
-	  ))
-
 scan((
-	  (ZZ, { QQ, RR, CC }),
-	  (QQ, { RR, CC }),
-	  (RR,{ CC }),
-	  (CC, { })
+	  (ZZ, { QQ, RRParent, CCParent }),
+	  (QQ, { RRParent, CCParent }),
+	  (RRParent,{ RRParent, CCParent }),
+	  (CCParent, { CCParent })
 	  ), 
-     (K,Ls) -> (
-	  scan(Ls, L -> (
+     (K,Ls) -> scan(Ls, L -> (
 	       p := makepromoter 0;
-	       if lookup(promote,K,L) === null then
-	       promote(K,L) := (a,L) -> a_L;
-	       if lookup(promote,Matrix,K,L) === null then
 	       promote(Matrix,K,L) := (m,K,L) -> basicPromoteMatrix(m,L,p);
 	       promote(List,K,L) := (m,K,L) -> m;
-	       if lookup(lift,Matrix,L,K) === null then
 	       lift(Matrix,L,K) := opts -> (m,L,K) -> (basicLiftMatrix opts)(m,K,p);
-	       ))))	  
+	       )))	  
+
+promote(Matrix,QQ,CCParent) := (m,K,L) -> promote( promote(m,RR_(precision L)), L) -- Mike could/should do this in the engine!
 
 -----------------------------------------------------------------------------
 -- Vector
