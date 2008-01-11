@@ -41,7 +41,6 @@ scan({
 scan( {ZZ,QQ}, K -> (
 	  promote(List,K,K) := (m,K,L) -> m;
 	  promote(Matrix,K,K) := (m,K,L) -> m;
-	  lift(K,K) := opts -> (f,K) -> f;
 	  lift(Matrix,K,K) := opts -> (m,K,L) -> m;
 	  ))
 
