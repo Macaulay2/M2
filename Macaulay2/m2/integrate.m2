@@ -7,13 +7,13 @@ simpson := (f,a,b,k) -> (
      f = x -> (
 	  count = count + 1;
 	  oldf x);
-     h := (b-a)/(2k);
-     ff := i -> f(a + i h);
+     h := (b-a)/(2*k);
+     ff := i -> f(a + i*h);
      int := h/3 (
 	  ff 0 
-	  + 4 sum(k  , j -> ff(2j+1)) 
-	  + 2 sum(k-1, j -> ff(2j+2))
-	  + ff 2k
+	  + 4 sum(k  , j -> ff(2*j+1)) 
+	  + 2 sum(k-1, j -> ff(2*j+2))
+	  + ff(2*k)
 	  );
      << count << " function evaluations\n";
      int
@@ -101,8 +101,6 @@ gauss := (f,a,b,k,n) -> (
      int
      )
 
-
-
 integrate = (f,a,b) -> (
      if not instance(f, Function) then error (
 	  "'integrate' expected argument 1 to be a function");
@@ -110,8 +108,7 @@ integrate = (f,a,b) -> (
 	  "'integrate' expected argument 2 to be a number");
      try b = b + 0. else error (
 	  "'integrate' expected argument 3 to be a number");
-     gauss(f,a,b,4,6)
-     )
+     gauss(f,a,b,4,6))
 
 -- Local Variables:
 -- compile-command: "make -C $M2BUILDDIR/Macaulay2/m2 "
