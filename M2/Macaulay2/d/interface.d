@@ -3319,6 +3319,14 @@ mpfrConstantPi(e:Expr):Expr := (
      else WrongArgZZ(1));
 setupfun("mpfrConstantPi",mpfrConstantPi);
 
+mpfrConstantEuler(e:Expr):Expr := (
+     when e is prec:ZZ do if !isULong(prec) then WrongArgSmallUInteger(1) else (
+	  z := newRR(toULong(prec));
+	  Ccode( void, "mpfr_const_euler(", "(__mpfr_struct *)", z, ", GMP_RNDN)" );
+	  Expr(z))
+     else WrongArgZZ(1));
+setupfun("mpfrConstantEuler",mpfrConstantEuler);
+
 ConstantII(e:Expr):Expr := (
      when e is prec:ZZ do
      if !isULong(prec)

@@ -826,6 +826,21 @@ BesselJ(e:Expr):Expr := (
 	  else WrongArgZZ(1))
      else WrongNumArgs(2));
 setupfun("BesselJ",BesselJ);
+BesselY(n:long,x:RR):RR := (
+     if n == long(0) then y0(x)
+     else if n == long(1) then y1(x)
+     else yn(n,x));
+BesselY(e:Expr):Expr := (
+     when e is s:Sequence do (
+	  when s.0 is n:ZZ do if !isLong(n) then WrongArg(1,"a small integer") else (
+	       when s.1 
+	       is x:RR do Expr(BesselY(toLong(n),x))	    -- # typical value: BesselY, ZZ, RR, RR
+	       is x:ZZ do Expr(BesselY(toLong(n),toRR(x)))  -- # typical value: BesselY, ZZ, ZZ, RR
+	       is x:QQ do Expr(BesselY(toLong(n),toRR(x)))  -- # typical value: BesselY, ZZ, QQ, RR
+	       else WrongArg(2,"a number"))
+	  else WrongArgZZ(1))
+     else WrongNumArgs(2));
+setupfun("BesselY",BesselY);
 atan(e:Expr):Expr := (
      when e
      is x:RR do Expr(atan(x))				    -- # typical value: atan, RR, RR
@@ -913,13 +928,39 @@ log(e:Expr):Expr := (
 	       is x:QQ do Expr(log(toRR(b),toRR(x)))	    -- # typical value: log, QQ, QQ, RR
 	       else WrongArg(1,"a number"))
 	  else WrongArg(2,"a number"))
-     -- and more ...
      is x:RR do Expr(log(x))				    -- # typical value: log, RR, RR
      is x:ZZ do Expr(log(toRR(x)))			    -- # typical value: log, ZZ, RR
      is x:QQ do Expr(log(toRR(x)))			    -- # typical value: log, QQ, RR
      else buildErrorPacket("expected a number or a pair of numbers")
      );
 setupfun("log",log);
+agm(e:Expr):Expr := (
+     when e
+     is a:Sequence do if length(a) != 2 then WrongNumArgs(2) 
+     else (
+	  when a.0
+	  is x:RR do (
+	       when a.1
+	       is y:RR do Expr(agm(x,y))			            -- # typical value: agm, RR, RR, RR
+	       is y:ZZ do Expr(agm(x,toRR(y,precision(x))))	    -- # typical value: agm, RR, ZZ, RR
+	       is y:QQ do Expr(agm(x,toRR(y,precision(x))))	    -- # typical value: agm, RR, QQ, RR
+	       else WrongArg(1,"a number"))
+	  is x:ZZ do (
+	       when a.1
+	       is y:RR do Expr(agm(toRR(x,precision(y)),y))    -- -- # typical value: agm, ZZ, RR, RR
+	       is y:ZZ do Expr(agm(toRR(x),toRR(y)))	       -- # typical value: agm, ZZ, ZZ, RR
+	       is y:QQ do Expr(agm(toRR(x),toRR(y)))	       -- # typical value: agm, ZZ, QQ, RR
+	       else WrongArg(1,"a number"))
+	  is x:QQ do (
+	       when a.1
+	       is y:RR do Expr(agm(toRR(x,precision(y)),y))    -- # typical value: agm, QQ, RR, RR
+	       is y:ZZ do Expr(agm(toRR(x),toRR(y)))	    -- # typical value: agm, QQ, ZZ, RR
+	       is y:QQ do Expr(agm(toRR(x),toRR(y)))	    -- # typical value: agm, QQ, QQ, RR
+	       else WrongArg(1,"a number"))
+	  else WrongArg(2,"a number"))
+     else WrongNumArgs(2)
+     );
+setupfun("agm",agm);
 abs(x:double):double := if x < 0. then -x else x;
 floor(e:Expr):Expr := (
      when e
