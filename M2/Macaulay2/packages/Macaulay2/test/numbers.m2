@@ -210,6 +210,7 @@ assert( (abs z) === .12559904458235341210425337079217p100e1 )
 assert( (abs(-3.2)) === 3.2 )
 assert( (abs(3.2)) === 3.2 )
 
+x = symbol x
 R = RR[x]
 assert( value toString(x+1/3) =!= x+1/3 )
 assert( value toExternalString(x+1/3) === x+1/3 )

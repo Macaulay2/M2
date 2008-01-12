@@ -318,6 +318,7 @@ setuppostfix(ExclamationS,Exclamationfun);
 factorial(x:Expr):Expr := (
      when x
      is x:RR do Expr(factorial(x))
+     is x:QQ do Expr(factorial(toRR(x)))
      is x:ZZ do (
 	  if !isULong(x) then return WrongArgSmallInteger();
 	  n := toULong(x);
@@ -328,6 +329,7 @@ setupfun("factorial",factorial);
 
 installMethod(ExclamationS,RRClass,factorial);
 installMethod(ExclamationS,ZZClass,factorial);
+installMethod(ExclamationS,QQClass,factorial);
 
 underscorefun(lhs:Code,rhs:Code):Expr := binarymethod(lhs,rhs,UnderscoreS);
 setup(UnderscoreS,underscorefun);

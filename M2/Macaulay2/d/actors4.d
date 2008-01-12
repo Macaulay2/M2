@@ -1170,7 +1170,7 @@ toCC(e:Expr):Expr := (
 	       else WrongArgZZ(1))
 	  else WrongNumArgs(1,3))
      else WrongArg("a real or complex number, or 2 or 3 arguments"));
-setupfun("toCC",toCC);
+setupfun("toCC0",toCC);
 
 precision(e:Expr):Expr := (
      when e 

@@ -1186,13 +1186,16 @@ document {
      }
 
 document {
-     Key => {symbol !,
-	  (symbol !, ZZ)},
+     Key => {symbol !, (symbol !, ZZ), (symbol !, QQ), (symbol !, RR),(symbol !,Constant)},
      Headline => "factorial",
      Usage => "n!",
      Inputs => {"n"=>ZZ},
      Outputs => { ZZ => "n factorial, 1*2*3*...*n."},
-     EXAMPLE "30!"
+     EXAMPLE lines ///
+     	  30!
+     	  30.!
+	  30.01!
+     ///
      }
 
 document {
@@ -1393,7 +1396,6 @@ undocumented {
          (symbol==, Equation, Expression),
          (symbol==, ZZ, Ring),
          (symbol==, ZZ, QQ),
-         (symbol==, ZZ, Matrix),
          (symbol==, Matrix, ZZ),
          (symbol==, ZZ, ChainComplex),
          (symbol==, ChainComplex, ZZ),

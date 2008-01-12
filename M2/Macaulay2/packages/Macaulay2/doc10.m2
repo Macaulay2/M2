@@ -777,28 +777,20 @@ document { Key => InexactNumber,
 	  }
      }
 
-document { Key => pi,
-     PARA {
-	  TEX "This constant represents the mathematical constant $\\pi$, symbolically."
-	  },
-     EXAMPLE lines ///
-     	  pi
-     	  toRR_100 pi
-	  2. * pi
-     ///
-     }
-
 document { Key => Constant,
      PARA {
 	  "A constant is a symbolic entity that can be approximated by a real or complex
-	  number to any desired accuracy.  They are intended (eventually) to be usable
-	  everywhere a real or complex number can be used."
+	  number to any desired accuracy.  It is converted to a numeric value of the 
+	  correct precision, when necessary."
 	  },
      EXAMPLE lines ///
      	  pi
      	  toRR_100 pi
+     	  numeric_100 pi
 	  2. * pi
-     ///
+	  2p100 * pi
+     ///,
+     SeeAlso => { toRR, toCC, numeric }
      }
 
 document { Key => InexactField,
