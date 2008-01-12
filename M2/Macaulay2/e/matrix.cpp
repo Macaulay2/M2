@@ -1752,10 +1752,34 @@ int Matrix::dimension() const
 
 MatrixOrNull *Matrix::clean(M2_RRR epsilon) const
 {
+  MatrixConstructor mat(rows(),cols(),degree_shift());
+  for (int i=0; i<n_cols(); i++)
+    mat.set_column(i,get_ring()->vec_zeroize_tiny(epsilon,elem(i)));
+  return mat.to_matrix();
 }
 
 M2_RRRorNull Matrix::norm(M2_RRR p) const
 {
+  const Ring *R = get_ring();
+  if (R->get_precision() == 0)
+    {
+      ERROR("expected ring over an RR or CC");
+      return 0;
+    }
+  M2_RRR norm = reinterpret_cast<M2_RRR>(getmem(sizeof(__mpfr_struct)));
+  mpfr_init2(norm, R->get_precision());
+  mpfr_ui_div(norm,1,p,GMP_RNDN);
+  if (!mpfr_zero_p(norm))
+    {
+      ERROR("Lp norm only implemented for p = infinity");
+      mpfr_clear(norm);
+      return 0;
+    }
+
+  for (int i=0; i<n_cols(); i++)
+    R->vec_increase_maxnorm(norm, elem(i));
+  
+  return norm;
 }
 
 

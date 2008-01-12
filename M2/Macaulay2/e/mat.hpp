@@ -423,7 +423,6 @@ public:
   ///////////////////////////////
   // Linear algebra /////////////
   ///////////////////////////////
-  
   virtual bool solve(const MutableMatrix *b, MutableMatrix *x) const = 0;
   // resets x, find a solution for Ax=b.  Returns false if no such solution exists
 
