@@ -99,13 +99,14 @@ show1(Sequence,Function) := show1(List,Function) := (types,pfun) -> (
 	       then world
 	       else install pfun v);
 	  if hasAttribute(v,ReverseDictionary) then v = getAttribute(v,ReverseDictionary);
+	  v = value v;
 	  if w#?v then w#v else w#v = new Descent
 	  );
      scan(types, install);
      world)
 show1(Thing,Function) := (X,pfun) -> show1({X},pfun)
 showUserStructure = Command(() -> show1(justTypes userSymbols(), parent))
-allValues = () -> unique join(flatten(values \ dictionaryPath))
+allValues = () -> unique join(flatten(values \ dictionaryPath), getAttributes ReverseDictionary)
 showStructure = Command(types -> show1(if types === () then justTypes allValues() else types, parent))
 showClassStructure = Command(types -> show1(if types === () then allThingsWithNames allValues() else types, class))
 
