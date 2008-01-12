@@ -53,18 +53,13 @@ Matrix _ Sequence := RingElement => (m,ind) -> (
      else error "expected a sequence of length two"
      )
 
+Number == Matrix :=
+RingElement == Matrix := (r,m) -> m == r
+
 Matrix == Matrix := (m,n) -> target m == target n and source m == source n and raw m === raw n
-Matrix == RingElement := (m,f) -> m - f == 0
-RingElement == Matrix := (f,m) -> m - f == 0
-Matrix == ZZ := (m,i) -> (
-     if i === 0
-     then rawIsZero m.RawMatrix
-     else (
-	  R := ring m;
-	  m == i_R
-	  )
-     )
-ZZ == Matrix := (i,m) -> m == i
+Matrix == Number :=
+Matrix == RingElement := (m,f) -> m - f == 0		    -- slow!
+Matrix == ZZ := (m,i) -> if i === 0 then rawIsZero m.RawMatrix else m - i == 0
 
 Matrix + Matrix := Matrix => (
      (f,g) -> map(target f, source f, f.RawMatrix + g.RawMatrix)
