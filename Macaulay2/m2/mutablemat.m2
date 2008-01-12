@@ -150,7 +150,7 @@ solve(Matrix,Matrix) := opts -> (A,b) -> (
 eigenvalues = method(Options => {Hermitian => false})
 eigenvalues(MutableMatrix) := o -> (A) -> (
      k := ring A;
-     if not instance(k,BigNumberRing) then error "eigenvalues requires matrices over RR or CC";
+     if not instance(k,InexactField) then error "eigenvalues requires matrices over RR or CC";
      e := if o.Hermitian 
           then mutableMatrix(RR_(k.precision),0,0)
           else mutableMatrix(CC_(k.precision),0,0);
@@ -162,11 +162,11 @@ eigenvalues(Matrix) := o -> (A) -> (
 eigenvectors = method(Options => {Hermitian => false})
 eigenvectors(MutableMatrix) := o -> (A) -> (
      k := ring A;
-     if not instance(k,BigNumberRing) then error "eigenvalues requires matrices over RR or CC";
+     if not instance(k,InexactField) then error "eigenvalues requires matrices over RR or CC";
      e := if o.Hermitian 
           then mutableMatrix(RR_(k.precision),0,0, Dense=>true)
           else mutableMatrix(CC_(k.precision),0,0, Dense=>true);
-     v := if instance(k,RealNumberRing) and o.Hermitian
+     v := if instance(k,RealField) and o.Hermitian
           then mutableMatrix(RR_(k.precision),0,0, Dense=>true)
 	  else mutableMatrix(CC_(k.precision),0,0, Dense=>true);
      rawEigenvectors(raw A,raw e,raw v,o.Hermitian);
@@ -178,15 +178,15 @@ eigenvectors(Matrix) := o -> (A) -> (
 SVD = method(Options=>{DivideConquer=>false})
 SVD MutableMatrix := o -> A -> (
      k := ring A;
-     if not instance(k,BigNumberRing) then error "eigenvalues requires matrices over RR or CC";
+     if not instance(k,InexactField) then error "eigenvalues requires matrices over RR or CC";
      Sigma := mutableMatrix(RR_(k.precision),0,0,Dense=>true);
-     U := if instance(k,RealNumberRing) then mutableMatrix(RR_(k.precision),0,0) else mutableMatrix(CC_(k.precision),0,0,Dense=>true);
-     VT := if instance(k,RealNumberRing) then mutableMatrix(RR_(k.precision),0,0) else mutableMatrix(CC_(k.precision),0,0,Dense=>true);
+     U := if instance(k,RealField) then mutableMatrix(RR_(k.precision),0,0) else mutableMatrix(CC_(k.precision),0,0,Dense=>true);
+     VT := if instance(k,RealField) then mutableMatrix(RR_(k.precision),0,0) else mutableMatrix(CC_(k.precision),0,0,Dense=>true);
      rawSVD(raw A, raw Sigma, raw U, raw VT, o.DivideConquer);
      (Sigma,U,VT))
 SVD Matrix := o -> A -> (
      k := ring A;
-     if not instance(k,BigNumberRing) then error "eigenvalues requires matrices over RR or CC";
+     if not instance(k,InexactField) then error "eigenvalues requires matrices over RR or CC";
      A = mutableMatrix(A,Dense=>true);
      (Sigma,U,VT) := SVD(A,o);
      (matrix Sigma,matrix U,matrix VT))

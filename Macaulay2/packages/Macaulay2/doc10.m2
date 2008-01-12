@@ -801,9 +801,9 @@ document { Key => Constant,
      ///
      }
 
-document { Key => BigNumberRing,
+document { Key => InexactField,
      PARA {
-	  "A big number ring is one whose elements are real or complex numbers."
+	  "An inexact field is one whose elements are real or complex numbers."
 	  },
      EXAMPLE lines ///
      	  toRR_100 pi
@@ -813,20 +813,20 @@ document { Key => BigNumberRing,
      ///
      }
 
-document { Key => InexactNumberType,
+document { Key => InexactFieldFamily,
      PARA {
-	  "This type of ring is intended to serve as a parent class for those types of rings of numbers
+	  "This type is intended to serve as a parent class for those types of rings of numbers
 	  that have settable precision."
 	  }
      }
 
-document { Key => RealNumberRing,
+document { Key => RealField,
      PARA {
 	  "A real number ring is a ring whose elements are real numbers of variable precision."
 	  }
      }
 
-document { Key => ComplexNumberRing,
+document { Key => ComplexField,
      PARA {
 	  "A complex number ring is a ring whose elements are complex numbers of variable precision."
 	  }

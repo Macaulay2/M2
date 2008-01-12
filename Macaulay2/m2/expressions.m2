@@ -1032,7 +1032,13 @@ symbol briefDocumentation <- identity			    -- temporary assignment
 
 Thing#{Standard,AfterPrint} = x -> (
      << endl;				  -- double space
-     << o() << lineNumber << " : " << class x;
+     << o() << lineNumber;
+     y := class x;
+     << " : " << y;
+     while parent y =!= Thing do (
+	  y = parent y;
+	  << " < " << y;
+	  );
      << endl;
      )
 

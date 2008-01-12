@@ -8,7 +8,7 @@ undocumented {
 	  (generators, GaloisField),
 	  (generators, PolynomialRing),
 	  (generators, QuotientRing),
-	  (generators, BigNumberRing)}
+	  (generators, InexactField)}
 
 document {
      Key => generators,
