@@ -103,6 +103,7 @@ export {
 	symbol BeforePrint,
 	symbol BettiTally,
 	symbol InexactNumber,
+	symbol InexactNumber',
 	symbol InexactField,
 	symbol InexactFieldFamily,
 	symbol Binary,

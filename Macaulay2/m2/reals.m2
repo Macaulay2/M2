@@ -30,10 +30,16 @@ RR.InexactField = RealField    = new Type of InexactField   ; RealField.synonym 
 CC.InexactField = ComplexField = new Type of InexactField; ComplexField.synonym = "complex field"
 
 Nothing' = Nothing					    -- maybe we'll want to rename it later...
+InexactNumber' = new Type of Nothing'
 RingFamily_* := RR -> RR.Nothing'
 RingFamily_* = (RR,e) -> RR.Nothing' = e
-RR_* = RR' = new Type of Nothing'
-CC_* = CC' = new Type of Nothing'
+RR_* = RR' = new Type of InexactNumber'
+CC_* = CC' = new Type of InexactNumber'
+ReverseDictionary#RR' = new Subscript from { "RR", "*" }
+ReverseDictionary#CC' = new Subscript from { "CC", "*" }
+protect back
+RR'.back = RR
+CC'.back = CC
 new RealField of Nothing' from ZZ := memoize (
      (RealField,Nothing',prec) -> newClass(RealField,Nothing',
 	  hashTable { 
@@ -89,6 +95,9 @@ numeric CC := identity
 numeric RR := identity
 numeric(ZZ,Number) := toRR
 numeric(ZZ,CC) := toCC
+inf := prec -> - log toRR(prec,0)
+numeric InfiniteNumber := infinity -> infinity#0 * inf defaultPrecision
+numeric(ZZ, InfiniteNumber) := (prec,infinity) -> infinity#0 * inf prec
 
 ZZ _ RealField :=
 QQ _ RealField :=

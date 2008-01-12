@@ -34,7 +34,8 @@ mutableMatrix(RingFamily,ZZ,ZZ) := o -> (R,nrows,ncols) -> mutableMatrix(default
 matrix MutableMatrix := o -> m -> map(ring m, rawMatrix raw m)
 
 clean(RR,MutableMatrix) := (epsilon,M) -> map(ring M, clean(epsilon,raw M))
-norm(RR,MutableMatrix) := (epsilon,M) -> map(ring M, clean(epsilon,raw M))
+norm(RR,MutableMatrix) := (p,M) -> map(ring M, norm(p,raw M))
+norm(MutableMatrix) := (M) -> map(ring M, norm(numeric(precision M,infinity),raw M))
 
 mutableIdentity = method(Options => {Dense => true}, TypicalValue=>MutableMatrix)
 mutableIdentity(Ring,ZZ) := o -> (R,nrows) -> 
