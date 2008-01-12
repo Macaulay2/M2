@@ -32,6 +32,7 @@ export isLong(x:ZZ):bool := 0 != Ccode(int, "mpz_fits_slong_p((__mpz_struct *)",
 export toLong(x:ZZ):long  := Ccode(long, "mpz_get_si((__mpz_struct *)", x, ")");
 export isULong(x:ZZ):bool := 0 != Ccode(int, "mpz_fits_ulong_p((__mpz_struct *)", x, ")");
 export toULong(x:ZZ):ulong  := Ccode(ulong, "mpz_get_ui((__mpz_struct *)", x, ")");
+export size2(x:ZZ):ulong := ulong(Ccode(ulong,"(long)mpz_sizeinbase((__mpz_struct *)", x, ",2)"));
 
 export hash(x:ZZ):int := (
      if isInt(x) then 0x7fffffff & toInt(x)
