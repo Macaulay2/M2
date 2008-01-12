@@ -240,7 +240,11 @@ quotient'(Matrix,Matrix) := Matrix => (f,g) -> (
      or not isFreeModule source g or not isFreeModule source g then error "expected maps between free modules";
      dual quotient(dual f, dual g))
 quotient(Matrix,Matrix) := Matrix => opts -> (f,g) -> (
-     -- if ring g =!= ring f then error "expected maps over the same ring";
+     if instance(ring f, InexactField) and instance(ring g, InexactField)
+     and numRows g === numColumns g
+     and isFreeModule source g and isFreeModule source f
+     then return solve(g,f);
+     -- if ring g =!= R then error "expected maps over the same ring";
      M := target f;
      if M != target g then error "expected maps with the same target";
      L := source f;
