@@ -28,9 +28,12 @@ raw InexactField := R -> R.RawRing
 
 RR.InexactField = RealField    = new Type of InexactField   ; RealField.synonym = "real field"
 CC.InexactField = ComplexField = new Type of InexactField; ComplexField.synonym = "complex field"
+
 Nothing' = Nothing					    -- maybe we'll want to rename it later...
-RR.Nothing' = RR' = new Type of Nothing'
-CC.Nothing' = CC' = new Type of Nothing'
+RingFamily_* := RR -> RR.Nothing'
+RingFamily_* = (RR,e) -> RR.Nothing' = e
+RR_* = RR' = new Type of Nothing'
+CC_* = CC' = new Type of Nothing'
 new RealField of Nothing' from ZZ := memoize (
      (RealField,Nothing',prec) -> newClass(RealField,Nothing',
 	  hashTable { 
@@ -163,6 +166,7 @@ InexactFieldFamily Array := (T,X) -> (default T) X
 Thing ** InexactFieldFamily := (X,T) -> X ** default T
 
 generators InexactField := opts -> R -> {}
+isField RingFamily := R -> isField default R
 isField InexactField := R -> true
 degreeLength InexactField := R -> 0
 frac InexactField := identity
