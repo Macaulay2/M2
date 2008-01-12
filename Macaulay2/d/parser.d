@@ -53,15 +53,13 @@ export parseRR(s:string):RR := (			    -- 4.33234234234p345e-9
 	       x = x * 10 + (c - '0');
 	       if pointSeen then expon = expon - 1;
 	       )
-	  else break;);
-     eprec := prec+10;					    -- extra bits for this computation are needed
+	  else break);
+     eprec := max(prec, size2(x) + 4);
      y := toRR(x,eprec);
-     toRR(
-     	  if expon > 0 then y * pow10(expon,eprec)
-	  else if expon < 0 then y / pow10(-expon,eprec)
-	  else y,
-	  prec
-	  ));
+     if expon > 0 then y = y * pow10(expon,eprec)
+     else if expon < 0 then y = y / pow10(-expon,eprec);
+     if eprec != prec then y = toRR(y,prec);
+     y);
 parseError := false;
 parseMessage := "";
 utf8(w:varstring,i:int):varstring := (
