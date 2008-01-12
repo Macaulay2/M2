@@ -20,6 +20,11 @@ InexactNumber.synonym = "inexact number"
 
 precision InexactNumber := precision0
 
+toCC = method()
+toCC(Number) := toCC0
+toCC(ZZ,Number) := toCC0
+toCC(ZZ,Number,Number) := toCC0
+
 -- new types
 
 InexactField = new Type of EngineRing
@@ -30,11 +35,8 @@ RR.InexactField = RealField    = new Type of InexactField   ; RealField.synonym 
 CC.InexactField = ComplexField = new Type of InexactField; ComplexField.synonym = "complex field"
 
 Nothing' = Nothing					    -- maybe we'll want to rename it later...
--- make this more general and replace Nothing' by symbol _*
-RingFamily_* := RR -> RR.Nothing'
-RingFamily_* = (RR,e) -> RR.Nothing' = e
--- this doesn't work because InexactNumber is just a Type:
--- InexactNumber_* = InexactNumber' = new Type of Nothing'
+RingFamily_* := RR -> RR#(symbol _*)
+RingFamily_* = (RR,e) -> RR#(symbol _*) = e
 InexactNumber' = new Type of Nothing'
 RR_* = RR' = new Type of InexactNumber'
 CC_* = CC' = new Type of InexactNumber'
@@ -67,7 +69,7 @@ new ComplexField of Nothing' from ZZ := memoize(
 	       symbol RawRing => rawCC prec
 	       }))
 precision InexactField := R -> R.precision
-InexactFieldFamily _ ZZ := (T,prec) -> new T.InexactField of T.Nothing' from prec -- oops...
+InexactFieldFamily _ ZZ := (T,prec) -> new T.InexactField of T#(symbol _*) from prec -- oops...
 default InexactFieldFamily := R -> R_defaultPrecision
 
 -- lift and promote between real or complex rings
