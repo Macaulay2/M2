@@ -24,7 +24,7 @@ makeMonic := f -> ( if coefficientRing ring f === QQ
 makeQQ := f -> (
      local R;
      s := symbol s;
-     if ring f === QQ or f === 0then (
+     if ring f === QQ or f === 0 then (
 	  R = QQ[s];
 	  if not member(QQ, R.baseRings) then
 	  error "QQ is not a base ring of R";
