@@ -113,6 +113,7 @@ readeval4(file:TokenFile,printout:bool,dictionary:Dictionary,returnLastvalue:boo
 			 f := convert(parsed); -- convert to runnable code
 			 lastvalue = evalexcept(f);	  -- run it
 			 if lastvalue == endInput then return nullE;
+			 when f is globalAssignmentCode do lastvalue = nullE else nothing;
 			 when lastvalue is err:Error do (
 			      if err.message == returnMessage || err.message == continueMessage || err.message == continueMessageWithArg 
 			      || err.message == breakMessage || err.message == throwMessage then (

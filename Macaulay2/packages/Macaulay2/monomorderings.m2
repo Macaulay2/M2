@@ -29,10 +29,10 @@ document {
       	  "apply(numgens R, i -> R_i^i)",
       	  "sum(numgens R, i -> R_i^i)"
 	  },
-     "(for more information, see ", TO "apply", " and ", TO "sum", ". ",
+     "(See ", TO "apply", " and ", TO "sum", ".)  ",
      "Use ", TO "generators", " to obtain a list of the variables of the ring.",
      EXAMPLE "gens R",
-     "A (one row) matrix containing the variables of the ring can be obtained
+     "A matrix (with one row) containing the variables of the ring can be obtained
      using ", TO (vars,Ring), ".",
      EXAMPLE "vars R",
      "The ", TO "index", " of a variable:",
