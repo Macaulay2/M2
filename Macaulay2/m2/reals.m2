@@ -30,13 +30,18 @@ RR.InexactField = RealField    = new Type of InexactField   ; RealField.synonym 
 CC.InexactField = ComplexField = new Type of InexactField; ComplexField.synonym = "complex field"
 
 Nothing' = Nothing					    -- maybe we'll want to rename it later...
-InexactNumber' = new Type of Nothing'
+-- make this more general and replace Nothing' by symbol _*
 RingFamily_* := RR -> RR.Nothing'
 RingFamily_* = (RR,e) -> RR.Nothing' = e
+-- this doesn't work because InexactNumber is just a Type:
+-- InexactNumber_* = InexactNumber' = new Type of Nothing'
+InexactNumber' = new Type of Nothing'
 RR_* = RR' = new Type of InexactNumber'
 CC_* = CC' = new Type of InexactNumber'
 ReverseDictionary#RR' = new Subscript from { symbol RR, "*" }
 ReverseDictionary#CC' = new Subscript from { symbol CC, "*" }
+ReverseDictionary#InexactNumber' = new Subscript from { symbol InexactNumber, "*" }
+
 protect back
 RR'.back = RR
 CC'.back = CC

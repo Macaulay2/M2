@@ -142,6 +142,27 @@ assert( promote(matrix {{1/1}}, RR) === matrix {{1.}})
 assert( promote(matrix {{toCC 1.}}, CC) === matrix {{toCC 1.}})
 assert( promote(matrix {{toCC 1}}, CC_33) === matrix {{toCC 1p33}})
 
+assert( 1.*ii < 2.*ii )
+assert( (1.*ii ? 2.*ii) == symbol < )
+assert( 3+1.*ii < 3+2.*ii )
+assert( (3+1.*ii ? 3+2.*ii) == symbol < )
+assert( 3+1.*ii < 4+2.*ii )
+assert( (3+1.*ii ? 4+2.*ii) == symbol < )
+
+assert( 1.*ii > 0.*ii )
+assert( (1.*ii ? 0.*ii) == symbol > )
+assert( 3+1.*ii > 3+0.*ii )
+assert( (3+1.*ii ? 3+0.*ii) == symbol > )
+assert( 5+1.*ii > 4+0.*ii )
+assert( (5+1.*ii ? 4+0.*ii) == symbol > )
+
+assert(3 < 3+ii)
+assert(3 > 3-ii)
+assert(3. < 3+ii)
+assert(3. > 3-ii)
+assert(3/1 < 3+ii)
+assert(3/1 > 3-ii)
+
 -- Local Variables:
 -- compile-command: "make -C $M2BUILDDIR/Macaulay2/packages/Macaulay2/test numbers.out"
 -- End:

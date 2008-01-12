@@ -880,6 +880,7 @@ export (x:RR)  >= (y:RR) : bool := compare0(x,y) >= 0 && !flagged0();
 export (x:RR)  <= (y:RR) : bool := compare0(x,y) <= 0 && !flagged0();
 
 compare0(x:RR, y:long):int ::= Ccode( int, "mpfr_cmp_si(", "(__mpfr_struct *)", x, ",", y, ")" );
+compare0(x:RR, y:int):int ::= Ccode( int, "mpfr_cmp_si(", "(__mpfr_struct *)", x, ",(long)", y, ")" );
 export compare(x:RR, y:long):int := Ccode( int, "mpfr_cmp_si(", "(__mpfr_struct *)", x, ",", y, ")" );
 export compare(y:long, x:RR):int := Ccode( int, "-mpfr_cmp_si(", "(__mpfr_struct *)", x, ",", y, ")" );
 export (x:RR)  >  (y:int) : bool :=  compare0(x,long(y)) >  0 && !flagged0();
@@ -1230,6 +1231,36 @@ export (x:CC) === (y:ZZ) : bool := x.re === y && x.im === 0;
 export (x:ZZ) === (y:CC) : bool := x === y.re && y.im === 0;
 export (x:CC) === (y:QQ) : bool := x.re === y && x.im === 0;
 export (x:QQ) === (y:CC) : bool := x === y.re && y.im === 0;
+
+export compare(x:CC,y:CC):int := (
+     r := compare(x.re,y.re);
+     if flagged() || r != 0 then r
+     else compare(x.im,y.im));
+export compare(x:CC,y:RR):int := (
+     r := compare(x.re,y);
+     if flagged() || r != 0 then r
+     else compare0(x.im,0));
+export compare(x:RR,y:CC):int := (
+     r := compare(x,y.re);
+     if flagged() || r != 0 then r
+     else -compare0(y.im,0));
+export compare(x:CC,y:ZZ):int := (
+     r := compare(x.re,y);
+     if flagged() || r != 0 then r
+     else compare0(x.im,0));
+export compare(x:ZZ,y:CC):int := (
+     r := compare(x,y.re);
+     if flagged() || r != 0 then r
+     else -compare0(y.im,0));
+export compare(x:CC,y:QQ):int := (
+     r := compare(x.re,y);
+     if flagged() || r != 0 then r
+     else compare0(x.im,0));
+export compare(x:QQ,y:CC):int := (
+     r := compare(x,y.re);
+     if flagged() || r != 0 then r
+     else -compare0(y.im,0));
+
 export abs(x:CC):RR := (
      z := newRR(precision(x));
      Ccode( void, "mpfc_abs((__mpfr_struct *)", z, ",", "(M2_CCC)", x, ")" );

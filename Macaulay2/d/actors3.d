@@ -235,6 +235,12 @@ compare(left:Expr,right:Expr):Expr := (
 	  if x < y then LessE else if x > y then GreaterE else EqualEqualE
 	  is y:RR do (
 	       r := compare(x,y);
+	       if flagged() then incomparableE else
+	       if r < 0 then LessE else if r > 0 then GreaterE else EqualEqualE
+	       )
+	  is y:CC do (
+	       r := compare(x,y);
+	       if flagged() then incomparableE else
 	       if r < 0 then LessE else if r > 0 then GreaterE else EqualEqualE
 	       )
      	  is Error do right
@@ -280,6 +286,12 @@ compare(left:Expr,right:Expr):Expr := (
 	  if x < y then LessE else if x > y then GreaterE else EqualEqualE
 	  is y:RR do (
 	       r := compare(x,y);
+	       if flagged() then incomparableE else
+	       if r < 0 then LessE else if r > 0 then GreaterE else EqualEqualE
+	       )
+	  is y:CC do (
+	       r := compare(x,y);
+	       if flagged() then incomparableE else
 	       if r < 0 then LessE else if r > 0 then GreaterE else EqualEqualE
 	       )
      	  is Error do right
@@ -288,13 +300,44 @@ compare(left:Expr,right:Expr):Expr := (
 	  when right
 	  is y:ZZ do (
 	       r := compare(x,y);
+	       if flagged() then incomparableE else
 	       if r < 0 then LessE else if r > 0 then GreaterE else EqualEqualE
 	       )
 	  is y:QQ do (
 	       r := compare(x,y);
+	       if flagged() then incomparableE else
 	       if r < 0 then LessE else if r > 0 then GreaterE else EqualEqualE
 	       )
 	  is y:RR do (
+	       r := compare(x,y);
+	       if flagged() then incomparableE else
+	       if r < 0 then LessE else if r > 0 then GreaterE else EqualEqualE
+	       )
+	  is y:CC do (
+	       r := compare(x,y);
+	       if flagged() then incomparableE else
+	       if r < 0 then LessE else if r > 0 then GreaterE else EqualEqualE
+	       )
+     	  is Error do right
+	  else binarymethod(left,right,QuestionS))
+     is x:CC do (
+	  when right
+	  is y:ZZ do (
+	       r := compare(x,y);
+	       if flagged() then incomparableE else
+	       if r < 0 then LessE else if r > 0 then GreaterE else EqualEqualE
+	       )
+	  is y:QQ do (
+	       r := compare(x,y);
+	       if flagged() then incomparableE else
+	       if r < 0 then LessE else if r > 0 then GreaterE else EqualEqualE
+	       )
+	  is y:RR do (
+	       r := compare(x,y);
+	       if flagged() then incomparableE else
+	       if r < 0 then LessE else if r > 0 then GreaterE else EqualEqualE
+	       )
+	  is y:CC do (
 	       r := compare(x,y);
 	       if flagged() then incomparableE else
 	       if r < 0 then LessE else if r > 0 then GreaterE else EqualEqualE
