@@ -24,19 +24,17 @@ document {
      restriction is not present if ", TT "A", " is ", ofClass Matrix, ".",
      PARA{},
      EXAMPLE lines ///
-     	  kk = ZZ/101;
-     	  A = matrix"1,2,3,4;1,3,6,10;19,7,11,13" ** kk
+     	  A = matrix"1,2,3,4;1,3,6,10;19,7,11,13" ** ZZ/101
 	  A = mutableMatrix A
 	  (P,L,U) = LU A
 	  matrix L * matrix U == matrix A
      ///,
      "Over ", TT "RR", " or ", TT "CC", ", the matrix ", TT "A", " must be densely encoded (which is the default).",
      EXAMPLE lines ///
-     	  kk = RR
-     	  A = matrix"1,2,3,4,5,6;1,3,6,12,13,16;19,7,11,47,48,21" ** kk
+     	  A = matrix"1,2,3,4,5,6;1,3,6,12,13,16;19,7,11,47,48,21" ** RR
 	  A = mutableMatrix(A, Dense=>true)
 	  (P,L,U) = LU A
-	  Q = mutableMatrix(kk, numrows A, numrows A)
+	  Q = mutableMatrix(RR, numrows A, numrows A)
 	  for i from 0 to numrows A - 1 do Q_(P_i,i) = 1.0
 	  matrix Q * matrix L * matrix U == matrix A
      ///,
@@ -48,7 +46,7 @@ document {
 	  setRandomSeed 0
 	  fillMatrix A
 	  (P,L,U) = LU A;
-	  Q = mutableMatrix(kk, numrows A, numrows A)
+	  Q = mutableMatrix(CC, numrows A, numrows A)
 	  for i from 0 to numrows A - 1 do Q_(P_i,i) = 1.0
 	  clean(1e-15,matrix Q * matrix L * matrix U - matrix A)
      ///,
