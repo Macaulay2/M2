@@ -64,9 +64,20 @@ M2_arrayint_OrNull Lapack::LU(const LMatrixRR *A,
 	loc ++;
       }
     }
+    loc += (rows-min);;
   }
 
-  
+  for (int i=0; i<rows; i++) result->array[i] = i;
+  for (int i=0; i<min; i++)
+    {
+      int thisloc = perm[i]-1;
+      int tmp = result->array[thisloc];
+      result->array[thisloc] = result->array[i];
+      result->array[i] = tmp;
+    }
+
+#if 0
+  /* MES: I think that this commented out code is FLAWED */
   /* set the permutation array */
   for (int row=1; row<=min; row++) {
     int targ = row;
@@ -80,6 +91,7 @@ M2_arrayint_OrNull Lapack::LU(const LMatrixRR *A,
   }
   for (int i=min; i<rows; i++)
     result->array[i] = i;
+#endif
 
   deletearray(copyA);
   deletearray(perm);
@@ -685,8 +697,8 @@ M2_arrayint_OrNull Lapack::LU(const LMatrixCC *A,
 
   double *copyA = A->make_lapack_array();
 
-  L->resize(rows, rows);
-  U->resize(rows, cols);
+  L->resize(rows, min);
+  U->resize(min, cols);
 
   zgetrf_(&rows, &cols, copyA, 
 	  &rows, perm, &info);
@@ -699,32 +711,54 @@ M2_arrayint_OrNull Lapack::LU(const LMatrixCC *A,
     }
   else
     {
-      // set the lower and upper triangular matrices L, U.
+      // set L
       M2_CCC_struct *elemsL = L->get_array();
-      M2_CCC_struct *elemsU = U->get_array();
       int loc = 0;
-      for (int j=0; j<cols; j++) {
+      for (int j=0; j<min; j++) {
 	for (int i=0; i<rows; i++) {
+	  M2_CCC_struct *val = elemsL++;
 	  if (i > j) {
-	    mpfr_set_d(elemsL[loc].re, copyA[2*loc], GMP_RNDN);
-	    mpfr_set_d(elemsL[loc].im, copyA[2*loc+1], GMP_RNDN);
-	    mpfr_set_si(elemsU[loc].re, 0, GMP_RNDN);
-	    mpfr_set_si(elemsU[loc].im, 0, GMP_RNDN);
+	    mpfr_set_d(val->re, copyA[loc], GMP_RNDN);
+	    mpfr_set_d(val->im, copyA[loc+1], GMP_RNDN);
 	  } else if (i == j) {
-	    mpfr_set_si(elemsL[loc].re, 1, GMP_RNDN);
-	    mpfr_set_si(elemsL[loc].im, 0, GMP_RNDN);
-	    mpfr_set_d(elemsU[loc].re, copyA[2*loc], GMP_RNDN);
-	    mpfr_set_d(elemsU[loc].im, copyA[2*loc+1], GMP_RNDN);
+	    mpfr_set_si(val->re, 1, GMP_RNDN);
+	    mpfr_set_si(val->im, 0, GMP_RNDN);
 	  } else {
-	    mpfr_set_si(elemsL[loc].re, 0, GMP_RNDN);
-	    mpfr_set_si(elemsL[loc].im, 0, GMP_RNDN);
-	    mpfr_set_d(elemsU[loc].re, copyA[2*loc], GMP_RNDN);
-	    mpfr_set_d(elemsU[loc].im, copyA[2*loc+1], GMP_RNDN);
+	    mpfr_set_si(val->re, 0, GMP_RNDN);
+	    mpfr_set_si(val->im, 0, GMP_RNDN);
 	  }
-	  loc++;
+	  loc += 2;
 	}
       }
-      
+
+      // set U
+      M2_CCC_struct *elemsU = U->get_array();
+      loc = 0;
+      for (int j=0; j<cols; j++) {
+	for (int i=0; i<min; i++) {
+	  M2_CCC_struct *val = elemsU++;
+	  if (i > j) {
+	    mpfr_set_si(val->re, 0, GMP_RNDN);
+	    mpfr_set_si(val->im, 0, GMP_RNDN);
+	  } else {
+	    mpfr_set_d(val->re, copyA[loc], GMP_RNDN);
+	    mpfr_set_d(val->im, copyA[loc+1], GMP_RNDN);
+	  }
+	  loc += 2;
+	}
+	loc += 2*(rows-min);
+      }
+
+      for (int i=0; i<rows; i++) result->array[i] = i;
+      for (int i=0; i<min; i++)
+	{
+	  int thisloc = perm[i]-1;
+	  int tmp = result->array[thisloc];
+	  result->array[thisloc] = result->array[i];
+	  result->array[i] = tmp;
+	}
+
+#if 0      
       /* set the permutation array */
       for (int row=1; row<=min; row++) {
 	int targ = row;
@@ -738,6 +772,7 @@ M2_arrayint_OrNull Lapack::LU(const LMatrixCC *A,
       }
       for (int i=min; i<rows; i++)
 	result->array[i] = i;
+#endif
     }
 
   deletearray(perm);

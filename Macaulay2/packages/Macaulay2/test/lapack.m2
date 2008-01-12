@@ -10,18 +10,30 @@ diag(List) := (L) -> (
      scan(#L, i -> M_(i,i) = L#i);
      matrix M)
 
+perm = method()
+perm(Ring,List) := (R,L) -> (
+     Q = mutableZero(R, #L, #L);
+     for i from 0 to #L-1 do Q_(i,P_i) = 1_R;
+     matrix Q
+     )
+perm(Ring,List) := (R,L) -> (
+     Q = mutableMatrix(R, #L, #L);
+     for i from 0 to #L-1 do Q_(i,P_i) = 1_R;
+     matrix Q
+     )
+
 v = solve(matrix {{1.0, 2.01}, {3., 4.}, {5., 8.}},matrix {{13.01}, {29.01}, {55.01}},ClosestFit=>true,MaximalRank=>true)
 assert (norm(v - matrix {{3.}, {5.}}) < .1)
 
 checkLU = method()
-checkLU Matrix := (M) -> (
-     R := ring M;
-     (P,L,U) = LU M;
-     Q = mutableMatrix(R, numrows M, numrows M);
-     for i from 0 to numrows M - 1 do Q_(i,P_i) = 1_R;
-     Q = matrix Q;
-     norm(Q*L*U-M)
-     )
+checkLU(List,Matrix,Matrix) := (P,L,U) -> (
+     R := ring L;
+     Q = perm P;
+     --Q = mutableMatrix(R, numrows L, numrows L);
+     --for i from 0 to numrows L - 1 do Q_(i,P_i) = 1_R;
+     --Q = matrix Q;
+     Q*L*U)
+checkLU Matrix := (M) -> norm (checkLU LU M - M)
 
 checkSVD = method()
 checkSVD(Matrix) := (M) -> (
@@ -62,9 +74,36 @@ checkEigenvectors Matrix := (M) -> (
 ----------------
 -- Test LU -----
 ----------------
-A = RR_53
-M = random(A^4,A^2)
-checkLU M
+A = RR
+M = mutableMatrix random(A^4,A^2)
+
+M = matrix{{1.5,2.0},{1.3,1.7},{1.6,.5}}
+M = transpose M
+M = matrix{{1.5,2.0},{1.3,1.7}}
+(P,L,U) = LU mutableMatrix M
+(matrix L)*(matrix U)
+M
+(P,L,U) = LU M
+L*U
+M
+(P,L,U) = LU M
+Q = perm(A,P)
+L = matrix L
+U = matrix U
+Q * (matrix L) * (matrix U)
+M
+checkLU(P,L,U)
+
+M
+A = mutableMatrix(CC,5,4, Dense=>true)
+fillMatrix(A,8);
+A
+time (P,L,U) = LU A;
+
+A = mutableMatrix(CC,1000,900, Dense=>true)
+fillMatrix(A,10000);
+time (P,L,U) = LU A;
+
 ----------------
 -- Test solve --
 ----------------
