@@ -24,3 +24,6 @@ assert(2_S^-1 == -50)
 
 assert(1//x == 0)
 assert try x^-1 else true
+
+f = matrix {{1.,2,3},{4,6,9},{2,4,8}}
+f * f^-1 == 1.

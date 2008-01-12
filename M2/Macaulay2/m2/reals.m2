@@ -195,7 +195,7 @@ char InexactField := R -> 0
 
 Constant = new Type of BasicList
 pi = new Constant from { symbol pi, mpfrConstantPi }
-eulerConstant = new Constant from { symbol eulerConstant, mpfrConstantEuler }
+EulerConstant = new Constant from { symbol EulerConstant, mpfrConstantEuler }
 ii = new Constant from { symbol ii, ConstantII }
 
 net Constant := c -> net c#0
@@ -280,10 +280,12 @@ InexactNumber#{Standard,AfterPrint} = x -> (
      y := class x;
      << " : " << y;
      << " (of precision " << precision x << ")";
+     {*
      while parent y =!= Thing do (
 	  y = parent y;
 	  << " < " << y;
 	  );
+     *}
      << endl;
      )
 
