@@ -312,14 +312,11 @@ gettoken1(file:PosFile,sawNewline:bool):Token := (
 			      return errorToken;
 			      )
 			 );
-		    c = peek(file);
-		    if c == int('.') || c == int('p') || c == int('e') then (
-			 getc(file);
-			 printErrorMessage(file.pos,"'"+char(c)+"' follows floating point constant");
-		    	 empty(tokenbuf);
-		    	 return errorToken;
-			 );
+	       	    c = peek(file);
+	       	    if int('.') == c then printErrorMessage(file.pos,"warning: character '"+char(c)+"' immediately following floating point number");
 		    );
+	       c = peek(file);
+	       if isalpha(c) then printErrorMessage(file.pos,"warning: character '"+char(c)+"' immediately following number");
 	       s := takestring(tokenbuf);
 	       return Token(Word(s,typecode,0, parseWORD),file.pos.filename, line, column, file.pos.loadDepth,globalDictionary,dummySymbol,sawNewline)) 
 	  else if ch == int('/') && peek(file,1) == int('/') && peek(file,2) == int('/') then (
