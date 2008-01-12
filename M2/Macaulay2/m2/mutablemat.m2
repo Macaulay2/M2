@@ -10,6 +10,7 @@ entries MutableMatrix := m -> (
      R := ring m;
      applyTable(entries raw m, r -> new R from r))
 toString MutableMatrix := m -> "mutableMatrix " | toString entries m
+precision MutableMatrix := precision @@ ring
 net MutableMatrix := m -> (
      m = raw m;
      if m == 0 then return "0";
