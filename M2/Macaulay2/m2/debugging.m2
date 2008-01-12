@@ -107,7 +107,7 @@ show1(Sequence,Function) := show1(List,Function) := (types,pfun) -> (
      world)
 show1(Thing,Function) := (X,pfun) -> show1({X},pfun)
 showUserStructure = Command(() -> show1(justTypes userSymbols(), parent))
-allValues = () -> unique join(flatten(values \ dictionaryPath), getAttributes ReverseDictionary)
+allValues = () -> unique join(flatten(values \ dictionaryPath), select(getAttributes ReverseDictionary,s -> isGlobalSymbol toString s))
 showStructure = Command(types -> show1(if types === () then justTypes allValues() else types, parent))
 showClassStructure = Command(types -> show1(if types === () then allThingsWithNames allValues() else types, class))
 
