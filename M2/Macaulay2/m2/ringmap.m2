@@ -18,6 +18,9 @@ expression RingMap := f -> new FunctionApplication from {
 
 degmap0 := n -> ( d := toList ( n : 0 ); e -> d )
 
+map(RingFamily,Thing,Thing) := RingMap => opts -> (R,S,m) -> map(default R,S,m,opts)
+map(Thing,RingFamily,Thing) := RingMap => opts -> (R,S,m) -> map(R,default S,m,opts)
+
 map(Ring,Ring,Matrix) := RingMap => opts -> (R,S,m) -> (
      if not isFreeModule target m or not isFreeModule source m
      then error "expected a homomorphism between free modules";
