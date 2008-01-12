@@ -245,6 +245,7 @@ frac EngineRing := R -> if isField R then R else if R.?frac then R.frac else (
 
 clean(RR,RingElement) := (epsilon,f) -> new ring f from clean(epsilon,raw f)
 norm(RR,RingElement) := (p,f) -> new RR from norm(p,raw f)
+norm(InfiniteNumber,RingElement) := (p,f) -> norm(numeric(precision f, p), f)
 norm(RingElement) := (f) -> norm(numeric(precision f,infinity), f)
 
 degreeLength Ring := R -> R.degreeLength
