@@ -327,8 +327,6 @@ export {
 	symbol Norm,
 	symbol Nothing,
 	symbol Number,
-	symbol RR',
-	symbol CC',
 	symbol Numeric,
 	symbol OO,
 	symbol OneExpression,
