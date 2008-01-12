@@ -502,6 +502,7 @@ RingElement * Ideal := Ideal => (r,I) -> ideal (r ** generators I)
 ZZ * Ideal := (r,I) -> ideal (r * generators I)
 
 generators Ideal := Matrix => opts -> (I) -> I.generators
+Ideal_* := I -> first entries generators I
 Ideal / Function := List => (I,f) -> apply(flatten entries generators I, f)
 Function \ Ideal := List => (f,I) -> apply(flatten entries generators I, f)
 
