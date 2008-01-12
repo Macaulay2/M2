@@ -58,13 +58,9 @@ document {
 	EXAMPLE {
 	     "17_R^-1"
 	     },
-	"To view this element as an element of ", TT "ZZ", "use the ", TO "lift", " command",
+	"To view this element as an element of ", TT "ZZ", " use the ", TO "lift", " command.",
 	EXAMPLE {
 	     "lift (17_R^-1, ZZ)"
-	     },
-	"One way to view ", TT "R", " as a ", TT "ZZ", "-module is as follows.",
-	EXAMPLE {
-	     "ZZ^1 / ideal(101)"
 	     } 
 	}
 
