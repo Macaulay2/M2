@@ -393,7 +393,7 @@ leadTerm(Matrix) := Matrix => m -> (
 borel Matrix := Matrix => m -> generators borel monomialIdeal m
 
 clean(RR,Matrix) := (epsilon,M) -> map(target M, source M, clean(epsilon,raw M))
-norm(RR,Matrix) := (p,M) -> map(target M, source M, norm(p,raw M))
+norm(RR,Matrix) := (p,M) -> new RR from norm(p,raw M)
 norm(Matrix) := (M) -> norm(numeric(precision M,infinity), M)
 
 --------------------------------------------------------------------------
