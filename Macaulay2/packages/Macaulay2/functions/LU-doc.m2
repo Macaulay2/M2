@@ -39,10 +39,11 @@ document {
      "For matrices over ", TT "RR", " or ", TT "CC", ", this function calls 
      the lapack routines.",
      EXAMPLE lines ///
-     	  kk = CC
-	  A = mutableMatrix(kk,1000,900, Dense=>true)
-	  for i from 1 to 10000 do A_(random 1000, random 900) = random 1.0 + ii * random 1.0;
-	  time (P,L,U) = LU A;
+	  A = mutableMatrix(CC,5,10, Dense=>true)
+	  printingPrecision = 2
+	  setRandomSeed 0
+	  fillMatrix A
+	  (P,L,U) = LU A;
      ///,
      Caveat => {"This function is limited in scope, but is sometimes useful for very large 
 	  matrices"},

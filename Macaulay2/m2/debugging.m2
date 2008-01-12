@@ -181,7 +181,8 @@ generateAssertions String := s -> generateAssertions select(lines s, x -> not ma
 generateAssertions List := y -> stack apply(y, 
      lin -> ( 
 	  t := try value lin else local oops;
-	  concatenate if t === local oops
+	  concatenate if t === null then lin
+	  else if t === local oops
 	  then ("assert( (try ", lin, " else oops) === ", toExternalString t, " )")
 	  else ("assert( ("    , lin,            ") === ", toExternalString t, " )")
 	  ))

@@ -694,7 +694,8 @@ document {
      Outputs => {
 	  { "the dictionary to which the symbol ", TT "x", " belongs"}
 	  },
-     "If ", TT "x", " is the value of a symbol recorded in ", TO "ReverseDictionary", ", then that symbol is used."
+     "If ", TT "x", " is the value of a symbol recorded in the internal table used to recover
+     global symbol from the values assigned to them, then that symbol is used."
      }
 
 document {

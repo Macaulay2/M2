@@ -1263,7 +1263,7 @@ export compare(x:QQ,y:CC):int := (
 
 export abs(x:CC):RR := (
      z := newRR(precision(x));
-     Ccode( void, "mpfc_abs((__mpfr_struct *)", z, ",", "(M2_CCC)", x, ")" );
+     Ccode( void, "mpfr_hypot((__mpfr_struct *)", z, ",(__mpfr_struct *)", x.re, ",(__mpfr_struct *)", x.im, ",GMP_RNDN)" );
      z);
 export sqrt(x:CC):CC := (
      z := newCC(precision(x));

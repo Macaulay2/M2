@@ -24,7 +24,6 @@ export parseInt(s:string):ZZ := (
 export parseRR(s:string):RR := (			    -- 4.33234234234p345e-9
      inPrec := false;
      inExpon := false;
-     extra := 16;
      prec := defaultPrecision;
      exsign := false;
      expon := long(0);
@@ -46,20 +45,23 @@ export parseRR(s:string):RR := (			    -- 4.33234234234p345e-9
 	       ));
      if exsign then expon = -expon;
      pointSeen := false;
-     x := toRR(0,prec+extra);
-     y := toRR(1,prec+extra);
+     x := toInteger(0);
      foreach c in s do (
 	  if c == '\"' then nothing
 	  else if c == '.' then pointSeen = true
 	  else if isdigit(c) then (
-	       if pointSeen then (
-	       	    x = x + (y * (c - '0'))/10;
-	       	    y = y / 10;
-	       	    )
-	       else x = x * 10 + (c - '0'))
+	       x = x * 10 + (c - '0');
+	       if pointSeen then expon = expon - 1;
+	       )
 	  else break;);
-     x = x * pow10(expon,prec+extra);
-     toRR(x,prec));
+     eprec := prec+10;					    -- extra bits for this computation are needed
+     y := toRR(x,eprec);
+     toRR(
+     	  if expon > 0 then y * pow10(expon,eprec)
+	  else if expon < 0 then y / pow10(-expon,eprec)
+	  else y,
+	  prec
+	  ));
 parseError := false;
 parseMessage := "";
 utf8(w:varstring,i:int):varstring := (
