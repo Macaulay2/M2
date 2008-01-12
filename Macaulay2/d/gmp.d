@@ -243,7 +243,7 @@ mul(x:ZZ, y:ZZ, z:ulong):void ::= Ccode( void,
      ")" 
      );
 
-pow(x:ZZ, y:ZZ, n:int):void ::= Ccode( void,
+pow(x:ZZ, y:ZZ, n:ulong):void ::= Ccode( void,
      "mpz_pow_ui(",
 	 "(__mpz_struct *)", x, ",", 
 	 "(__mpz_struct *)", y, ",", 
@@ -251,17 +251,16 @@ pow(x:ZZ, y:ZZ, n:int):void ::= Ccode( void,
      ")" 
      );
 
-export (x:ZZ) ^ (n:int) : ZZ := (
-     if n < 0 then return toInteger(0);
+export (x:ZZ) ^ (n:ulong) : ZZ := (
+     if isZero(x) then return x;
      y := newZZ();
      pow(y,x,n);
      y);
 
 export (x:ZZ) ^ (n:ZZ) : ZZ := (
-     if isNegative(n) then fatal("negative exponent for integer power"); -- what else can we do???
-     if isZero(x) then return x;
-     if !isInt(n) then fatal("integer exponent too large");
-     x^toInt(n));
+     if isNegative(n) then fatal("internal error: negative exponent for integer power"); -- what else can we do???
+     if !isULong(n) then fatal("integer exponent too large");
+     x^toULong(n));
 
 export powermod(x:ZZ, y:ZZ, n:ZZ) : ZZ := (
      -- z = x^y mod n
@@ -460,7 +459,7 @@ export (x:ZZ) * (y:int) : ZZ := x * toInteger(y);
 export (x:ulong) * (y:ZZ) : ZZ := toInteger(x) * y;
 export (x:ZZ) * (y:ulong) : ZZ := x * toInteger(y);
 
-export (x:int) ^ (y:int) : ZZ := toInteger(x) ^ y;
+export (x:int) ^ (y:ulong) : ZZ := toInteger(x) ^ y;
 
 export (o:file) << (x:ZZ) : file := o << tostring(x);
 
@@ -705,13 +704,13 @@ export (x:ZZ ) / (y:QQ) : QQ := toRational(x) / y;
 export (x:int     ) / (y:QQ) : QQ := toRational(x) / y;
 
 export (x:QQ) ^ (nn:ZZ) : QQ := (
-     if !isInt(nn) then fatal("integer exponent too large");
-     n := toInt(nn);
-     if n == 0 then return toRational(1);
+     if !isLong(nn) then fatal("integer exponent too large");
+     n := toLong(nn);
+     if n == long(0) then return toRational(1);
      if n < 0 then (
 	  x = inv(x);
 	  n = -n);
-     newRationalCanonical(numeratorRef(x)^n, denominatorRef(x)^n)
+     newRationalCanonical(numeratorRef(x)^ulong(n), denominatorRef(x)^ulong(n))
      );
 
 export tostring(x:QQ):string := tostring(numeratorRef(x)) + '/' + tostring(denominatorRef(x));
