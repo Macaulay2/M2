@@ -407,7 +407,7 @@ factor Module := opts -> (M) -> (
 	  n := numgens source p;
 	  t := tally apply(pivots p, (i,j) -> if R === ZZ then abs p_(i,j) else p_(i,j));
 	  if m > n then t = t + new Tally from { 0 => m-n };
-	  eR := if ReverseDictionary#?R then ReverseDictionary#R else expression R;
+	  eR := if hasAttribute(R,ReverseDictionary) then getAttribute(R,ReverseDictionary) else expression R;
 	  Sum apply(sort pairs t, (d,e) -> Power { if d === 0 then hold eR else Divide{ eR, factor d}, e }))
      else error "expected module over ZZ, k[x], or a field"
      )

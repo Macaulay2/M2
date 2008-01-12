@@ -21,7 +21,7 @@ ambient     AffineVariety := X -> Spec ambient ring X
 ideal Variety := X -> ideal ring X
 Spec = method()
 
-net Variety := (X) -> if ReverseDictionary#?X then toString ReverseDictionary#X else net expression X
+net Variety := (X) -> if hasAttribute(X,ReverseDictionary) then toString getAttribute(X,ReverseDictionary) else net expression X
 
 expression AffineVariety := (X) -> new FunctionApplication from { Spec, X.ring }
 Spec Ring := AffineVariety => (R) -> if R.?Spec then R.Spec else R.Spec = (

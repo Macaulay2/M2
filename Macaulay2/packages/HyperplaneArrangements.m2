@@ -28,7 +28,7 @@ Arrangement#{Standard,AfterPrint} = A -> (
      << concatenate(interpreterDepth:"o") << lineNumber << " : Hyperplane Arrangement "
      << endl;
      )
-net Arrangement := A -> if ReverseDictionary#?A then toString ReverseDictionary#A else net expression A
+net Arrangement := A -> if hasAttribute(A,ReverseDictionary) then toString getAttribute(A,ReverseDictionary) else net expression A
 expression Arrangement := A -> new RowExpression from { A.hyperplanes }
 describe Arrangement := A -> net A.hyperplanes
 

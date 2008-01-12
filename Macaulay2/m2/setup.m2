@@ -47,7 +47,7 @@ addStartFunction(
      () -> (
 	  Function.GlobalReleaseHook = (X,x) -> (
 	       stderr << "--warning: " << toString X << " redefined" << endl;
-     	       remove(ReverseDictionary,x);
+     	       removeAttribute(x,ReverseDictionary);
 	       );
 	  )
      )

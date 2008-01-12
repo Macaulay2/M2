@@ -28,7 +28,7 @@ AbstractVariety = new Type of MutableHashTable
 AbstractVariety.synonym = "abstract variety"
 globalAssignment AbstractVariety
 net AbstractVariety := X -> (
-     if ReverseDictionary#?X then toString ReverseDictionary#X
+     if hasAttribute(X,ReverseDictionary) then toString getAttribute(X,ReverseDictionary)
      else "a variety")
 AbstractVariety#{Standard,AfterPrint} = X -> (
      << endl;				  -- double space
@@ -43,7 +43,7 @@ FlagBundle = new Type of AbstractVariety
 FlagBundle.synonym = "abstract flag bundle"
 globalAssignment FlagBundle
 net FlagBundle := X -> (
-     if ReverseDictionary#?X then toString ReverseDictionary#X
+     if hasAttribute(X,ReverseDictionary) then toString getAttribute(X,ReverseDictionary)
      else "a flag bundle")
 FlagBundle#{Standard,AfterPrint} = X -> (
      << endl;				  -- double space
@@ -64,7 +64,7 @@ source AbstractVarietyMap := f -> f.source
 target AbstractVarietyMap := f -> f.target
 dim AbstractVarietyMap := f -> dim source f - dim target f
 net AbstractVarietyMap := X -> (
-     if ReverseDictionary#?X then toString ReverseDictionary#X
+     if hasAttribute(X,ReverseDictionary) then toString getAttribute(X,ReverseDictionary)
      else "a variety map")
 AbstractVarietyMap#{Standard,AfterPrint} = f -> (
      << endl;				  -- double space
@@ -79,7 +79,7 @@ AbstractSheaf = new Type of MutableHashTable
 AbstractSheaf.synonym = "abstract sheaf"
 globalAssignment AbstractSheaf
 net AbstractSheaf := X -> (
-     if ReverseDictionary#?X then toString ReverseDictionary#X
+     if hasAttribute(X,ReverseDictionary) then toString getAttribute(X,ReverseDictionary)
      else "a sheaf")
 AbstractSheaf#{Standard,AfterPrint} = E -> (
      << endl;				  -- double space
@@ -264,7 +264,7 @@ flagBundle(List,AbstractSheaf) := opts -> (bundleRanks,E) -> (
      	  else if instance(bundleNames,List) then (
 	       if #bundleRanks =!= #bundleNames then error "name list and rank list should have same length";
 	       apply(bundleNames, n -> (
-			 if n =!= null and ReverseDictionary#?n then ReverseDictionary#n else n
+			 if n =!= null and hasAttribute(n,ReverseDictionary) then getAttribute(n,ReverseDictionary) else n
 			 )))
 	  else error "flagBundle BundleNames option: expected a name or list of names");
      verror := () -> error "flagBundle VariableNames option: expected a good name or list of names";
@@ -347,7 +347,7 @@ symbol o <- method()
 o(RingElement) := h -> OO_(variety ring h) (h)
 
 ---- an attempt at total compatibility with Schubert classic, not ready yet!
-fixup := h -> if ReverseDictionary#?h then ReverseDictionary#h else try baseName h else error "expected something usable as a name"
+fixup := h -> if hasAttribute(h,ReverseDictionary) then getAttribute(h,ReverseDictionary) else try baseName h else error "expected something usable as a name"
 -- proj
 proj = method()
 proj(ZZ,Thing) := (n,h) -> proj(n,fixup h)

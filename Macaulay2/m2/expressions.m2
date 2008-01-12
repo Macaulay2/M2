@@ -1054,7 +1054,7 @@ Expression#{Standard,AfterPrint} = x -> (
 -----------------------------------------------------------------------------
 
 expression VisibleList := v -> new Holder from {apply(v,expression)}
-expression Thing := x -> new Holder from { if ReverseDictionary#?x then ReverseDictionary#x else x }
+expression Thing := x -> new Holder from { if hasAttribute(x,ReverseDictionary) then getAttribute(x,ReverseDictionary) else x }
 expression Symbol := x -> new Holder from { x }
 
 -----------------------------------------------------------------------------

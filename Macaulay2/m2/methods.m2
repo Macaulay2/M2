@@ -5,7 +5,7 @@ assert( class between === Symbol )
 between = (m,v) -> mingle(v,#v-1:m)
 assert( class toString === Symbol )
 toString = x -> (
-     if ReverseDictionary#?x then simpleToString ReverseDictionary#?x
+     if hasAttribute(x,ReverseDictionary) then simpleToString getAttribute(x,ReverseDictionary)
      else if class x === Net then concatenate between("\n",unstack x)
      else simpleToString x
      )
@@ -256,7 +256,7 @@ toExternalString Boolean := simpleToString
 toExternalString Nothing := simpleToString
 
 toExternalString Thing := x -> (
-     if ReverseDictionary#?x then return toString ReverseDictionary#x;
+     if hasAttribute(x,ReverseDictionary) then return toString getAttribute(x,ReverseDictionary);
      error("can't convert anonymous object of class ",toString class x," to external string"))
 
 options = method(Dispatch => Thing, TypicalValue => OptionTable)
@@ -304,7 +304,7 @@ dictionary Keyword := s -> Core.Dictionary
 dictionary Symbol := s -> (				    -- eventually every symbol will know what dictionary it's in, perhaps
      n := toString s;
      scan(dictionaryPath, d -> if d#?n and d#n === s then break d))
-dictionary Thing := x -> if ReverseDictionary#?x then dictionary ReverseDictionary#x
+dictionary Thing := x -> if hasAttribute(x,ReverseDictionary) then dictionary getAttribute(x,ReverseDictionary)
 
 -----------------------------------------------------------------------------
 oldvalue := value

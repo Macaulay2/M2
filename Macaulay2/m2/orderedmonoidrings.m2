@@ -29,32 +29,32 @@ degrees PolynomialRing := R -> degrees monoid R
 exponents RingElement := (f) -> listForm f / ( (monom,coeff) -> monom )
 
 expression PolynomialRing := R -> (
-     if ReverseDictionary#?R then return expression ReverseDictionary#R;
+     if hasAttribute(R,ReverseDictionary) then return expression getAttribute(R,ReverseDictionary);
      k := last R.baseRings;
      T := if (options R).Local === true then List else Array;
-     (expression if ReverseDictionary#?k then ReverseDictionary#k else k) (new T from (monoid R).generatorExpressions)
+     (expression if hasAttribute(k,ReverseDictionary) then getAttribute(k,ReverseDictionary) else k) (new T from (monoid R).generatorExpressions)
      )
 
 describe PolynomialRing := R -> (
      k := last R.baseRings;
-     net ((expression if ReverseDictionary#?k then ReverseDictionary#k else k) (expression monoid R)))
+     net ((expression if hasAttribute(k,ReverseDictionary) then getAttribute(k,ReverseDictionary) else k) (expression monoid R)))
 toExternalString PolynomialRing := R -> (
      k := last R.baseRings;
-     toString ((expression if ReverseDictionary#?k then ReverseDictionary#k else k) (expression monoid R)))
+     toString ((expression if hasAttribute(k,ReverseDictionary) then getAttribute(k,ReverseDictionary) else k) (expression monoid R)))
 
 tex PolynomialRing := R -> "$" | texMath R | "$"	    -- silly!
 
 texMath PolynomialRing := R -> (
      if R.?tex then R.tex
-     else if ReverseDictionary#?R then "\\text{" | toString ReverseDictionary#R  | "}"
+     else if hasAttribute(R,ReverseDictionary) then "\\text{" | toString getAttribute(R,ReverseDictionary)  | "}"
      else (texMath last R.baseRings)|(texMath expression monoid R)
      )
 
 net PolynomialRing := R -> (
-     if ReverseDictionary#?R then toString ReverseDictionary#R
+     if hasAttribute(R,ReverseDictionary) then toString getAttribute(R,ReverseDictionary)
      else net expression R)
 toString PolynomialRing := R -> (
-     if ReverseDictionary#?R then toString ReverseDictionary#R
+     if hasAttribute(R,ReverseDictionary) then toString getAttribute(R,ReverseDictionary)
      else toString expression R)
 
 degreeLength PolynomialRing := (RM) -> degreeLength monoid RM

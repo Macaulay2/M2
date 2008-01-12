@@ -28,12 +28,12 @@ toExternalString SchurRing := R -> toString expression R
 undocumented (toExternalString, SchurRing),
 
 toString SchurRing := R -> (
-     if ReverseDictionary#?R then toString ReverseDictionary#R
+     if hasAttribute(R,ReverseDictionary) then toString getAttribute(R,ReverseDictionary)
      else toString expression R)
 undocumented (toString, SchurRing)
 
 net SchurRing := R -> (
-     if ReverseDictionary#?R then toString ReverseDictionary#R
+     if hasAttribute(R,ReverseDictionary) then toString getAttribute(R,ReverseDictionary)
      else net expression R)
 undocumented (net, SchurRing)
 

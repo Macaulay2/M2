@@ -26,8 +26,10 @@ Net#{Standard,AfterPrint} = identity
 toString MutableHashTable := s -> (
      concatenate ( toString class s, if parent s =!= Nothing then (" of ", toString parent s), "{...", toString(#s), "...}"))
 toString Type := X -> (
-     if PrintNames#?X then PrintNames#X
-     else if ReverseDictionary#?X then return toString ReverseDictionary#X;
+     if hasAnAttribute X then (
+	  if hasAttribute(X,PrintNames) then return getAttribute(X,PrintNames);
+	  if hasAttribute(X,ReverseDictionary) then return toString getAttribute(X,ReverseDictionary);
+	  );
      concatenate(toString class X, " of ", toString parent X, "{...", toString(#X), "...}"))
 toString HashTable := s -> (
      concatenate (
@@ -49,28 +51,28 @@ toString Sequence := s -> (
      else concatenate("(",between(",",toString \ s),")")
      )
 net Command := toString Command := toExternalString Command := f -> (
-     if ReverseDictionary#?f then return toString ReverseDictionary#f else "{*Command*}"
+     if hasAttribute(f,ReverseDictionary) then return toString getAttribute(f,ReverseDictionary) else "{*Command*}"
      )
 
 toExternalString Function := f -> (
-     if ReverseDictionary#?f then return toString ReverseDictionary#f;
+     if hasAttribute(f,ReverseDictionary) then return toString getAttribute(f,ReverseDictionary);
      t := locate f;
      if t === null then error "can't convert anonymous function to external string"
      else error("can't convert anonymous function (",t#0, ":", toString t#1| ":", toString t#2, "-", toString t#3| ":", toString t#4,") to external string")
      )
 
 net Function := toString Function := f -> (
-     if ReverseDictionary#?f then return toString ReverseDictionary#f;
+     if hasAttribute(f,ReverseDictionary) then return toString getAttribute(f,ReverseDictionary);
      t := locate f;
      if t === null then "{*Function*}" 
      else concatenate("{*Function[", t#0, ":", toString t#1| ":", toString t#2, "-", toString t#3| ":", toString t#4, "]*}")
      )
 
 toExternalString Manipulator := f -> (
-     if ReverseDictionary#?f then return toString ReverseDictionary#f else concatenate("new Manipulator from ",toExternalString toList f)
+     if hasAttribute(f,ReverseDictionary) then return toString getAttribute(f,ReverseDictionary) else concatenate("new Manipulator from ",toExternalString toList f)
      )
 toString Manipulator := f -> (
-     if ReverseDictionary#?f then return toString ReverseDictionary#f else concatenate("new Manipulator from ",toString toList f)
+     if hasAttribute(f,ReverseDictionary) then return toString getAttribute(f,ReverseDictionary) else concatenate("new Manipulator from ",toString toList f)
      )
 -----------------------------------------------------------------------------
 toExternalString String := format
@@ -79,11 +81,11 @@ toString Net := x -> demark("\n",unstack x)
 toExternalString Net := x -> concatenate(format toString x, "^", toString(height x - 1))
 
 toExternalString MutableHashTable := s -> (
-     if ReverseDictionary#?s then return toString ReverseDictionary#s;
+     if hasAttribute(s,ReverseDictionary) then return toString getAttribute(s,ReverseDictionary);
      error "anonymous mutable hash table cannot be converted to external string";
      )
 toExternalString Type := s -> (
-     if ReverseDictionary#?s then return toString ReverseDictionary#s;
+     if hasAttribute(s,ReverseDictionary) then return toString getAttribute(s,ReverseDictionary);
      error "anonymous type cannot be converted to external string";
      )
 toExternalString HashTable := s -> (
@@ -187,12 +189,19 @@ net HashTable := x -> (
      	  ))
 
 net MutableHashTable := x -> (
-     if PrintNames#?x then PrintNames#x
-     else horizontalJoin ( net class x, if #x > 0 then ("{...", toString(#x), "...}") else "{}" ))
+     if hasAnAttribute x then (
+	  if hasAttribute(x,PrintNet) then return getAttribute(x,PrintNet);
+	  if hasAttribute(x,PrintNames) then return net getAttribute(x,PrintNames);
+	  if hasAttribute(x,ReverseDictionary) then return toString getAttribute(x,ReverseDictionary);
+	  );
+     horizontalJoin ( net class x, if #x > 0 then ("{...", toString(#x), "...}") else "{}" ))
 net Type := X -> (
-     if PrintNames#?X then PrintNames#X
-     else if ReverseDictionary#?X then return net ReverseDictionary#X
-     else horizontalJoin ( net class X, if #X > 0 then ("{...", toString(#X), "...}") else "{}" ))
+     if hasAnAttribute X then (
+	  if hasAttribute(X,PrintNet) then return getAttribute(X,PrintNet);
+	  if hasAttribute(X,PrintNames) then return net getAttribute(X,PrintNames);
+	  if hasAttribute(X,ReverseDictionary) then return toString getAttribute(X,ReverseDictionary);
+	  );
+     horizontalJoin ( net class X, if #X > 0 then ("{...", toString(#X), "...}") else "{}" ))
 
 texMath Net := n -> concatenate (
      ///{\arraycolsep=0pt

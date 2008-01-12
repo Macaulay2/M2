@@ -5,10 +5,10 @@ GaloisField.synonym = "Galois field"
 
 toExternalString GaloisField := k -> toString expression k
 toString GaloisField := k -> (
-     if ReverseDictionary#?k then toString ReverseDictionary#k
+     if hasAttribute(k,ReverseDictionary) then toString getAttribute(k,ReverseDictionary)
      else toExternalString k)
 net GaloisField := k -> (
-     if ReverseDictionary#?k then toString ReverseDictionary#k
+     if hasAttribute(k,ReverseDictionary) then toString getAttribute(k,ReverseDictionary)
      else net expression k)
 describe GaloisField := F -> net expression F
 

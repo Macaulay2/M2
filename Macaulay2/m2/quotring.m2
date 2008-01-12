@@ -30,7 +30,7 @@ expression QuotientRing := S -> new Divide from { expression ambient S, expressi
 tex QuotientRing := S -> "$" | texMath S | "$"
 texMath QuotientRing := S -> texMath new Divide from { last S.baseRings, pretty S.relations }
 describe QuotientRing := R -> net expression R
-net QuotientRing := S -> if ReverseDictionary#?S then toString ReverseDictionary#S else net expression S
+net QuotientRing := S -> if hasAttribute(S,ReverseDictionary) then toString getAttribute(S,ReverseDictionary) else net expression S
 ambient PolynomialRing := R -> R
 ambient QuotientRing := Ring => (cacheValue ambient) (R -> last R.baseRings)
 degrees QuotientRing := R -> degrees ambient R

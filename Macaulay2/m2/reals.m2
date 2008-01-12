@@ -38,9 +38,12 @@ RingFamily_* = (RR,e) -> RR.Nothing' = e
 InexactNumber' = new Type of Nothing'
 RR_* = RR' = new Type of InexactNumber'
 CC_* = CC' = new Type of InexactNumber'
-ReverseDictionary#RR' = new Subscript from { symbol RR, "*" }
-ReverseDictionary#CC' = new Subscript from { symbol CC, "*" }
-ReverseDictionary#InexactNumber' = new Subscript from { symbol InexactNumber, "*" }
+
+setAttribute(CC',PrintNet,"CC" | "*"^-1)
+setAttribute(RR',PrintNet,"RR" | "*"^-1)
+setAttribute(CC',PrintNames,"CC_*")
+setAttribute(RR',PrintNames,"RR_*")
+setAttribute(InexactNumber',PrintNet,"InexactNumber" | "*"^-1)
 
 protect back
 RR'.back = RR

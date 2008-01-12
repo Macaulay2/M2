@@ -14,12 +14,14 @@ loadedPackages = {}
 options Package := p -> p.Options
 
 toString Dictionary := d -> (
-     if ReverseDictionary#?d then return toString ReverseDictionary#d;
-     if PrintNames#?d then return PrintNames#d;
+     if hasAnAttribute d then (
+	  if hasAttribute(d,PrintNames) then return getAttribute(d,PrintNames);
+	  if hasAttribute(d,ReverseDictionary) then return toString getAttribute(d,ReverseDictionary);
+	  );
      toString class d | if length d == 0 then "{}" else "{..." | toString length d | "...}"
      )
 
-Package.GlobalAssignHook = (X,x) -> if not ReverseDictionary#?x then ReverseDictionary#x = X;     -- not 'use x';
+Package.GlobalAssignHook = (X,x) -> if not hasAttribute(x,ReverseDictionary) then setAttribute(x,ReverseDictionary,X);     -- not 'use x';
 Package.GlobalReleaseHook = globalReleaseFunction
 
 dismiss Package := pkg -> (
@@ -229,7 +231,7 @@ newPackage(String) := opts -> (title) -> (
 	  );
 
      global currentPackage <- newpkg;
-     ReverseDictionary#newpkg = pkgsym;
+     setAttribute(newpkg,ReverseDictionary,pkgsym);
      pkgsym <- newpkg;
      loadedPackages = {Core};
      dictionaryPath = join( {newpkg#"private dictionary"}, {Core.Dictionary, OutputDictionary, PackageDictionary});
@@ -239,8 +241,8 @@ newPackage(String) := opts -> (title) -> (
 	       )
 	  else scan(reverse Core#"base packages", needsPackage)
 	  );
-     PrintNames#(newpkg.Dictionary) = title | ".Dictionary";
-     PrintNames#(newpkg#"private dictionary") = title | "#\"private dictionary\"";
+     setAttribute(newpkg.Dictionary,PrintNames,title | ".Dictionary");
+     setAttribute(newpkg#"private dictionary",PrintNames,title | "#\"private dictionary\"");
      debuggingMode = opts.DebuggingMode;		    -- last step before turning control back to code of package
      newpkg)
 
@@ -330,7 +332,7 @@ endPackage String := title -> (
      exportDict := pkg.Dictionary;
      scan(sortByHash values exportDict, s -> if not ws#?s then (
 	       protect s;
-	       if value s =!= s and not ReverseDictionary#?(value s) then ReverseDictionary#(value s) = s));
+	       if value s =!= s and not hasAttribute(value s,ReverseDictionary) then setAttribute((value s),ReverseDictionary,s)));
      if true or pkg =!= Core then (			    -- protect it later
 	  protect pkg#"private dictionary";
 	  protect exportDict;
@@ -369,7 +371,7 @@ package Symbol := s -> (
      scan(dictionaryPath, d -> if d#?n and d#n === s then (
 	       if d === PackageDictionary and class value s === Package then break value s
 	       else if package d =!= null then break package d)));
-package HashTable := package Function := x -> if ReverseDictionary#?x then package ReverseDictionary#x
+package HashTable := package Function := x -> if hasAttribute(x,ReverseDictionary) then package getAttribute(x,ReverseDictionary)
 
 use Package := pkg -> (
      a := member(pkg,loadedPackages);

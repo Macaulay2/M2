@@ -53,10 +53,10 @@ expression GeneralOrderedMonoid := M -> (
      new T from apply(monoidParts M,expression))
 toExternalString GeneralOrderedMonoid := M -> toString expression M
 toString GeneralOrderedMonoid := M -> (
-     if ReverseDictionary#?M then return toString ReverseDictionary#M;
+     if hasAttribute(M,ReverseDictionary) then return toString getAttribute(M,ReverseDictionary);
      toExternalString M)
 net GeneralOrderedMonoid := M -> (
-     if ReverseDictionary#?M then return toString ReverseDictionary#M;
+     if hasAttribute(M,ReverseDictionary) then return toString getAttribute(M,ReverseDictionary);
      net expression M)
 describe GeneralOrderedMonoid := M -> net expression M
 
