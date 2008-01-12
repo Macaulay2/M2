@@ -902,10 +902,7 @@ static M2_RRRorNull get_norm_start(M2_RRR p, const Ring *R)
 
 M2_RRRorNull rawMatrixNorm(M2_RRR p, const Matrix *M)
 {
-  M2_RRR norm = get_norm_start(p, M->get_ring());
-  if (!norm) return 0; // error already given.
-  //M->increase_maxnorm(norm);
-  return norm;
+  return M->norm(p);
 }
 
 M2_RRRorNull rawRingElementNorm(M2_RRR p, const RingElement *f)
@@ -918,10 +915,21 @@ M2_RRRorNull rawRingElementNorm(M2_RRR p, const RingElement *f)
 
 M2_RRRorNull rawMutableMatrixNorm(M2_RRR p, const MutableMatrix *M)
 {
-  M2_RRR norm = get_norm_start(p, M->get_ring());
-  if (!norm) return 0; // error already given.
-  //M->increase_maxnorm(norm);
-  return norm;
+#if 0
+  M2_RRR nm = get_norm_start(p, M->get_ring());
+  iterator *i = M->begin();
+  for (int c=0; c<n_cols(); c++)
+    {
+      for (i->set(c); i->valid(); i->next())
+	{
+	  ring_elem a;
+	  i->copy_ring_elem(a);
+	  R->increase_maxnorm(nm, a);
+	}
+    }
+  delete i;
+  return nm;
+#endif
 }
 
 // Local Variables:
