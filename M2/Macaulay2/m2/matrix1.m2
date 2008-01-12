@@ -194,7 +194,7 @@ matrixTable := options -> (f) -> (
 	  else error "no method for forming a matrix from elements of this type")
      else if all(types, T -> instance(T,Ring) or instance(T,InexactFieldFamily)) then (
 	  R = ring (
-	       try sum apply(types, R -> R#0)
+	       try sum apply(types, R -> 0_R)
 	       else error "couldn't put matrix elements into the same ring"
 	       );
 	  map(R^#f,,f,options))
