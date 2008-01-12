@@ -1312,6 +1312,10 @@ export atan2(y:RR,x:RR):RR := (
      z := newRR(min(precision0(x),precision0(y)));
      Ccode( void, "mpfr_atan2((__mpfr_struct *)", z, ",(__mpfr_struct *)", y, ",(__mpfr_struct *)", x, ", GMP_RNDN)" );
      z);
+export agm(x:RR,y:RR):RR := (
+     z := newRR(min(precision0(x),precision0(y)));
+     Ccode( void, "mpfr_agm((__mpfr_struct *)", z, ",(__mpfr_struct *)", x, ",(__mpfr_struct *)", y, ", GMP_RNDN)" );
+     z);
 export sinh(x:RR):RR := (
      z := newRR(precision0(x));
      Ccode( void, "mpfr_sinh((__mpfr_struct *)", z, ",(__mpfr_struct *)", x, ", GMP_RNDN)" );
@@ -1400,6 +1404,18 @@ export j1(x:RR):RR := (
 export jn(n:long,x:RR):RR := (
      z := newRR(precision0(x));
      Ccode( void, "mpfr_jn((__mpfr_struct *)", z, ",",n,",(__mpfr_struct *)", x, ", GMP_RNDN)" );
+     z);
+export y0(x:RR):RR := (
+     z := newRR(precision0(x));
+     Ccode( void, "mpfr_y0((__mpfr_struct *)", z, ",(__mpfr_struct *)", x, ", GMP_RNDN)" );
+     z);
+export y1(x:RR):RR := (
+     z := newRR(precision0(x));
+     Ccode( void, "mpfr_y1((__mpfr_struct *)", z, ",(__mpfr_struct *)", x, ", GMP_RNDN)" );
+     z);
+export yn(n:long,x:RR):RR := (
+     z := newRR(precision0(x));
+     Ccode( void, "mpfr_yn((__mpfr_struct *)", z, ",",n,",(__mpfr_struct *)", x, ", GMP_RNDN)" );
      z);
 
 -- printing

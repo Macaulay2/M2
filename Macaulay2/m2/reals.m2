@@ -195,6 +195,7 @@ char InexactField := R -> 0
 
 Constant = new Type of BasicList
 pi = new Constant from { symbol pi, mpfrConstantPi }
+eulerConstant = new Constant from { symbol eulerConstant, mpfrConstantEuler }
 ii = new Constant from { symbol ii, ConstantII }
 
 net Constant := c -> net c#0
