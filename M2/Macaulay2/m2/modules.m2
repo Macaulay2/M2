@@ -330,7 +330,7 @@ Ring ^ ZZ := Module => (R,n) -> (
      else notImplemented()
      )
 
-InexactNumberType ^ ZZ := Module => (T,n) -> (default T)^n
+InexactFieldFamily ^ ZZ := Module => (T,n) -> (default T)^n
 
 schreyerOrder = method()
 schreyerOrder Module := Matrix => (F) -> (

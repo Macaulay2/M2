@@ -180,7 +180,7 @@ matrixTable := options -> (f) -> (
 	  if instance(type,Ring) then (
 	       R := type;
 	       map(R^#f,, f, options))
-	  else if instance(type,InexactNumberType) then (
+	  else if instance(type,InexactFieldFamily) then (
 	       rings := unique apply(flatten f, ring);
 	       if # rings === 1 then (
 		    R = rings#0;
@@ -192,7 +192,7 @@ matrixTable := options -> (f) -> (
 		    map(R^#f,, f, options)))
 	  else if type.?matrix then (type.matrix options)(f)
 	  else error "no method for forming a matrix from elements of this type")
-     else if all(types, T -> instance(T,Ring) or instance(T,InexactNumberType)) then (
+     else if all(types, T -> instance(T,Ring) or instance(T,InexactFieldFamily)) then (
 	  R = ring (
 	       try sum apply(types, R -> R#0)
 	       else error "couldn't put matrix elements into the same ring"

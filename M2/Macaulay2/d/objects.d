@@ -498,7 +498,7 @@ setupconst("MutableList",Expr(mutableListClass));
 setupconst("ZZ",Expr(ZZClass));
 setupconst("QQ",Expr(QQClass));
 setupconst("RingFamily",Expr(ringFamilyClass));
-setupconst("InexactNumberType",Expr(inexactNumberTypeClass));
+setupconst("InexactFieldFamily",Expr(inexactNumberTypeClass));
 setupconst("RR",Expr(RRClass));
 setupconst("CC",Expr(CCClass));
 setupconst("Number",Expr(numberClass));

@@ -2,7 +2,7 @@
 --- author(s): M2Fest 2005 -- Irena
 --- notes: 
 
-undocumented{(frac, BigNumberRing)}
+undocumented{(frac, InexactField)}
 document { 
      Key => {frac, (frac,Ring), (frac,FractionField), (frac,EngineRing)},
      Headline => "construct a fraction field",

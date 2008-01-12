@@ -13,7 +13,7 @@ CC.synonym = "complex number"
 RR.texMath = ///{\mathbb R}///
 CC.texMath = ///{\mathbb C}///
 Number.synonym = "number"
-InexactNumberType.synonym = "inexact number type"
+InexactFieldFamily.synonym = "inexact field family"
 InexactNumber.synonym = "inexact number"
 
 -- built-in functions 
@@ -22,17 +22,17 @@ precision InexactNumber := precision0
 
 -- new types
 
-BigNumberRing = new Type of Ring
-BigNumberRing.synonym = "big number ring"
-raw BigNumberRing := R -> R.RawRing
+InexactField = new Type of EngineRing
+InexactField.synonym = "inexact field"
+raw InexactField := R -> R.RawRing
 
-RR.BigNumberRing = RealNumberRing    = new Type of BigNumberRing   ; RealNumberRing.synonym = "real number ring"
-CC.BigNumberRing = ComplexNumberRing = new Type of BigNumberRing; ComplexNumberRing.synonym = "complex number ring"
+RR.InexactField = RealField    = new Type of InexactField   ; RealField.synonym = "real field"
+CC.InexactField = ComplexField = new Type of InexactField; ComplexField.synonym = "complex field"
 Nothing' = Nothing					    -- maybe we'll want to rename it later...
 RR.Nothing' = RR' = new Type of Nothing'
 CC.Nothing' = CC' = new Type of Nothing'
-new RealNumberRing of Nothing' from ZZ := memoize (
-     (RealNumberRing,Nothing',prec) -> newClass(RealNumberRing,Nothing',
+new RealField of Nothing' from ZZ := memoize (
+     (RealField,Nothing',prec) -> newClass(RealField,Nothing',
 	  hashTable { 
 	       symbol precision => prec,
 	       symbol Engine => true,
@@ -40,8 +40,8 @@ new RealNumberRing of Nothing' from ZZ := memoize (
 	       symbol isBasic => true,
 	       symbol RawRing => rawRR prec
 	       }))
-new ComplexNumberRing of Nothing' from ZZ := memoize(
-     (ComplexNumberRing,Nothing',prec) -> newClass(ComplexNumberRing,Nothing',
+new ComplexField of Nothing' from ZZ := memoize(
+     (ComplexField,Nothing',prec) -> newClass(ComplexField,Nothing',
 	  hashTable {
 	       symbol precision => prec,
 	       symbol Engine => true,
@@ -49,13 +49,13 @@ new ComplexNumberRing of Nothing' from ZZ := memoize(
 	       symbol baseRings => {ZZ,QQ},
 	       symbol RawRing => rawCC prec
 	       }))
-precision BigNumberRing := R -> R.precision
-InexactNumberType _ ZZ := (T,prec) -> new T.BigNumberRing of T.Nothing' from prec -- oops...
-default InexactNumberType := R -> R_defaultPrecision
+precision InexactField := R -> R.precision
+InexactFieldFamily _ ZZ := (T,prec) -> new T.InexactField of T.Nothing' from prec -- oops...
+default InexactFieldFamily := R -> R_defaultPrecision
 
 -- lift and promote between real or complex rings
 
-Number _ InexactNumberType := (x,RR) -> x_(default RR)
+Number _ InexactFieldFamily := (x,RR) -> x_(default RR)
 
 promote(RawRingElement,RR') := (x,R) -> new RR from x
 promote(RawRingElement,CC') := (x,R) -> new CC from x
@@ -87,13 +87,13 @@ numeric RR := identity
 numeric(ZZ,Number) := toRR
 numeric(ZZ,CC) := toCC
 
-ZZ _ RealNumberRing :=
-QQ _ RealNumberRing :=
-RR _ RealNumberRing := (x,R) -> toRR(R.precision,x)
-ZZ _ ComplexNumberRing :=
-QQ _ ComplexNumberRing :=
-RR _ ComplexNumberRing :=
-CC _ ComplexNumberRing := (x,R) -> toCC(R.precision,x)
+ZZ _ RealField :=
+QQ _ RealField :=
+RR _ RealField := (x,R) -> toRR(R.precision,x)
+ZZ _ ComplexField :=
+QQ _ ComplexField :=
+RR _ ComplexField :=
+CC _ ComplexField := (x,R) -> toCC(R.precision,x)
 
 approx := (r,limit) -> (
      if r == 0 then return 0/1;
@@ -114,8 +114,8 @@ lift(RR,ZZ) := opts -> (r,ZZ) -> (
      else if opts.Verify then error "can't lift to ZZ")
 lift(CC,QQ) := lift(CC,ZZ) := opts -> (z,R) -> if imaginaryPart z == 0 then lift(realPart z, R) else if opts.Verify then error "can't lift given complex number to real number"
 
-ring RR := x -> new RealNumberRing of RR' from precision x
-ring CC := x -> new ComplexNumberRing of CC' from precision x
+ring RR := x -> new RealField of RR' from precision x
+ring CC := x -> new ComplexField of CC' from precision x
 
 new RR from RawRingElement := (RRR,x) -> ( assert( RRR === RR ); rawToRR x )
 new CC from RawRingElement := (CCC,x) -> ( assert( CCC === CC ); rawToCC x)
@@ -159,16 +159,16 @@ random RingFamily := opts -> R -> random(default R,opts)
 
 RR.isBasic = CC.isBasic = true
 
-InexactNumberType Array := (T,X) -> (default T) X
-Thing ** InexactNumberType := (X,T) -> X ** default T
+InexactFieldFamily Array := (T,X) -> (default T) X
+Thing ** InexactFieldFamily := (X,T) -> X ** default T
 
-generators BigNumberRing := opts -> R -> {}
-isField BigNumberRing := R -> true
-degreeLength BigNumberRing := R -> 0
-frac BigNumberRing := identity
-numgens BigNumberRing := R -> 0
-dim BigNumberRing := R -> 0
-char BigNumberRing := R -> 0
+generators InexactField := opts -> R -> {}
+isField InexactField := R -> true
+degreeLength InexactField := R -> 0
+frac InexactField := identity
+numgens InexactField := R -> 0
+dim InexactField := R -> 0
+char InexactField := R -> 0
 
 -- symbolic/numeric constant expressions
 
@@ -210,7 +210,7 @@ Constant == InexactNumber := (c,x) -> numeric(precision x,c) == x
 InexactNumber == Constant := (x,c) -> x == numeric(precision x,c)
 
 Constant _ Ring := (c,R) -> (numeric c)_R
-Constant _ InexactNumberType := (x,RR) -> x_(default RR)
+Constant _ InexactFieldFamily := (x,RR) -> x_(default RR)
 
 Constant + Number := (c,x) -> numeric c + x
 Number + Constant := (x,c) -> x + numeric c
@@ -228,15 +228,15 @@ Constant ! := c -> (numeric c)!
 
 -- printing
 
-toString RealNumberRing := R -> concatenate("RR_",toString R.precision)
-toString ComplexNumberRing := R -> concatenate("CC_",toString R.precision)
+toString RealField := R -> concatenate("RR_",toString R.precision)
+toString ComplexField := R -> concatenate("CC_",toString R.precision)
 
-expression RealNumberRing := R -> new Subscript from {symbol RR, R.precision}
-expression ComplexNumberRing := R -> new Subscript from {symbol CC, R.precision}
+expression RealField := R -> new Subscript from {symbol RR, R.precision}
+expression ComplexField := R -> new Subscript from {symbol CC, R.precision}
 expression RR := x -> if x < 0 then new Minus from {-x} else new Holder from {x}
 expression CC := z -> expression realPart z + expression imaginaryPart z * hold symbol ii
 
-net BigNumberRing := R -> net expression R
+net InexactField := R -> net expression R
 net CC := z -> simpleToString z
 toExternalString RR := toExternalString0
 toExternalString CC := toExternalString0
@@ -254,7 +254,14 @@ InexactNumber#{Standard,Print} = x ->  (
 
 InexactNumber#{Standard,AfterPrint} = x -> (
      << endl;                             -- double space
-     << concatenate(interpreterDepth:"o") << lineNumber << " : " << ring x;
+     << concatenate(interpreterDepth:"o") << lineNumber;
+     y := class x;
+     << " : " << y;
+     << " (of precision " << precision x << ")";
+     while parent y =!= Thing do (
+	  y = parent y;
+	  << " < " << y;
+	  );
      << endl;
      )
 
