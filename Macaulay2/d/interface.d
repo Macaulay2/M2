@@ -1219,6 +1219,42 @@ export rawCompare(e:Expr):Expr := (
      else WrongNumArgs(2));
 setupfun("rawCompare",rawCompare);
 
+export rawClean(e:Expr):Expr := (
+     when e is s:Sequence do if length(s) != 2 then WrongNumArgs(2) else
+     when s.0 is epsilon:RR do (
+	  when s.1 is M:RawMatrix do (
+	       toExpr(Ccode(RawMatrixOrNull, "(engine_RawMatrixOrNull)rawMatrixClean((M2_RRR)", epsilon,", (Matrix *)", M, ")"))
+	       )
+	  is f:RawRingElement do (
+	       toExpr(Ccode(RawRingElementOrNull, "(engine_RawRingElementOrNull)rawRingElementClean((M2_RRR)", epsilon,", (RingElement *)", f, ")"))
+	       )
+	  is M:RawMutableMatrix do (
+	       toExpr(Ccode(RawMutableMatrixOrNull, "(engine_RawMutableMatrixOrNull)rawMutableMatrixClean((M2_RRR)", epsilon,", (MutableMatrix *)", M, ")"))
+	       )
+	  else WrongArg(2,"a raw matrix, raw ring element, or raw mutable matrix")
+	  )
+     else WrongArgRR(1)
+     else WrongNumArgs(2));
+setupfun("rawClean", rawClean);
+
+export rawNorm(e:Expr):Expr := (
+     when e is s:Sequence do if length(s) != 2 then WrongNumArgs(2) else
+     when s.0 is p:RR do (
+	  when s.1 is M:RawMatrix do (
+	       toExpr(Ccode(RRorNull, "(engine_RRorNull)rawMatrixNorm((M2_RRR)", p,", (Matrix *)", M, ")"))
+	       )
+	  is f:RawRingElement do (
+	       toExpr(Ccode(RRorNull, "(engine_RRorNull)rawRingElementNorm((M2_RRR)", p,", (RingElement *)", f, ")"))
+	       )
+	  is M:RawMutableMatrix do (
+	       toExpr(Ccode(RRorNull, "(engine_RRorNull)rawMutableMatrixNorm((M2_RRR)", p,", (MutableMatrix *)", M, ")"))
+	       )
+	  else WrongArg(2,"a raw matrix, raw ring element, or raw mutable matrix")
+	  )
+     else WrongArgRR(1)
+     else WrongNumArgs(2));
+setupfun("rawNorm", rawNorm);
+
 -----------------------------------------------------------------------------
 -- free modules
 

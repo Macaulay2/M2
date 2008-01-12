@@ -392,6 +392,9 @@ leadTerm(Matrix) := Matrix => m -> (
 
 borel Matrix := Matrix => m -> generators borel monomialIdeal m
 
+clean(RR,Matrix) := (epsilon,M) -> map(target M, source M, clean(epsilon,raw M))
+norm(RR,Matrix) := (epsilon,M) -> map(target M, source M, clean(epsilon,raw M))
+
 --------------------------------------------------------------------------
 ------------------------ matrix and map for modules ----------------------
 --------------------------------------------------------------------------

@@ -242,6 +242,9 @@ frac EngineRing := R -> if isField R then R else if R.?frac then R.frac else (
 
 -- methods for all ring elements
 
+clean(RR,RingElement) := (epsilon,f) -> new ring f from clean(epsilon,raw f)
+norm(RR,RingElement) := (epsilon,f) -> new ring f from clean(epsilon,raw f)
+
 degreeLength Ring := R -> R.degreeLength
 
 use Ring := R -> (
