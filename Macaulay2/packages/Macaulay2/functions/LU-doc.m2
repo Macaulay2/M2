@@ -21,7 +21,7 @@ document {
      "There are several restrictions.  The first is that there are only a limited number of rings
      for which this function is implemented. Second, if ", TT "A", " is a mutable matrix ",
      " defined over ", TT "RR", " or ", TT "CC", ", then ", TT "A", " must be densely encoded.  This
-     restriction is not present if ", TT "A" " is ", ofClass "Matrix", ".",
+     restriction is not present if ", TT "A", " is ", ofClass Matrix, ".",
      PARA{},
      EXAMPLE lines ///
      	  kk = ZZ/101;
@@ -49,7 +49,7 @@ document {
 	  fillMatrix A
 	  (P,L,U) = LU A;
 	  Q = mutableMatrix(kk, numrows A, numrows A)
-	  for i from 0 to numrows A - 1 do Q_(P_i,i) = 1.0+0.0*ii
+	  for i from 0 to numrows A - 1 do Q_(P_i,i) = 1.0
 	  clean(1e-15,matrix Q * matrix L * matrix U - matrix A)
      ///,
      Caveat => {"This function is limited in scope, but is sometimes useful for very large 
@@ -89,7 +89,6 @@ Q = mutableMatrix(kk, #P, #P)
 for i from 0 to #P-1 do Q_(P_i,i) = 1.0+0.0*ii
 Q = matrix Q
 norm(Q*L*U - A)
-
 
 -- For version 1.0
 kk = RR
