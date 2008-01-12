@@ -35,8 +35,8 @@ RingFamily_* := RR -> RR.Nothing'
 RingFamily_* = (RR,e) -> RR.Nothing' = e
 RR_* = RR' = new Type of InexactNumber'
 CC_* = CC' = new Type of InexactNumber'
-ReverseDictionary#RR' = new Subscript from { "RR", "*" }
-ReverseDictionary#CC' = new Subscript from { "CC", "*" }
+ReverseDictionary#RR' = new Subscript from { symbol RR, "*" }
+ReverseDictionary#CC' = new Subscript from { symbol CC, "*" }
 protect back
 RR'.back = RR
 CC'.back = CC

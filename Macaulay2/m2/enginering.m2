@@ -7,6 +7,7 @@ RingElement == RawRingElement := (x,y) -> raw x === y
 RawRingElement == RingElement := (x,y) -> x === raw y
 ring RingElement := r -> class r
 factor RingElement := r -> error "factor: unimplemented for this ring"
+precision RingElement := precision @@ ring
 
 -- RingElement.directSum = v -> directSum apply(v, a -> matrix{{a}})
 
