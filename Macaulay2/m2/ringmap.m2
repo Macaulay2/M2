@@ -115,7 +115,7 @@ RingMap RingElement := RingElement => fff := (p,m) -> (
      if R =!= ring m then (
 	  m = promote(m,R);
 	  );
-     new S from rawRingMapEval(raw p, raw m))
+     promote(rawRingMapEval(raw p, raw m),S))
 
 RingMap Number := (p,m) -> fff(p, promote(m,source p))
 
