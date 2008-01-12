@@ -1059,7 +1059,7 @@ expression Symbol := x -> new Holder from { x }
 
 -----------------------------------------------------------------------------
 
-? Function := x -> briefDocumentation x
+? Function := x -> (briefDocumentation x;)
 
 Nothing#{Standard,AfterPrint} = identity
 ZZ#{Standard,AfterPrint} = identity

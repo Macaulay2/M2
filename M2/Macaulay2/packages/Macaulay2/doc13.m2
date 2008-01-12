@@ -570,30 +570,6 @@ document { Key => (value, Pseudocode),
      Outputs => {{ "the value returned by evaluation of ", TT "p" }},
      SeeAlso => { "errorCode", pseudocode }
      }
-document { Key => PrintNames,
-     Headline => "table of printed forms of objects",
-     "This table is intended mainly for internal use.  Whether the table gets consulted upon conversion to a net or string depends
-     on the type of thing being converted, and is a little haphazard.  Nevertheless, it is a useful mechanism for arranging for
-     things to print in an understandable form.  We may eliminate it in a future version.",
-     EXAMPLE "hashTable apply(pairs PrintNames, (k,v) -> (v,class k))",
-     SeeAlso => { ReverseDictionary }
-     }
-document { Key => ReverseDictionary,
-     SeeAlso => { PrintNames, globalAssignment },
-     Headline => "table of symbols where various types of objects are stored",
-     "If a type of object has been registered with ", TO "globalAssignment", ", and then an object of that type is assigned to a global
-     symbol, then the symbol is stored in the hash table ReverseDictionary using the object as the key.  This allows the object to print
-     out with the same name as the symbol.",
-     EXAMPLE lines ///
-     	  ZZ[x..y]
-	  o1
-	  R = o1
-	  o1
-	  o1^6
-	  getAttribute(o1,ReverseDictionary)
-     ///,
-     SourceCode => { (GlobalAssignHook,PolynomialRing), (net, PolynomialRing) }
-     }
 document { Key => SheafOfRings,
      SeeAlso => { Variety, OO },
      Headline => "the class of sheaves of rings",

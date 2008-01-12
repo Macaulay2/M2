@@ -15,10 +15,7 @@ export {browse}
 menu = method()
 
 RUNME = new SelfInitializingType of BasicList
-PrintNames#RUNME = "RUNME"
-
 METHODS = new SelfInitializingType of BasicList
-PrintNames#METHODS = "METHODS"
 
 showit = (ITEMS,SAME,DEFAULT) -> (
      wid := if # ITEMS < 10 then 1 else if # ITEMS < 100 then 2 else 3;
