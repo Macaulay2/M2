@@ -113,7 +113,7 @@ clean::; rm -f TAGS @srcdir@/TAGS @srcdir@/TAGS.doc
 	@echo making $@ : $^
 	@ set -e ; \
 	  cd @srcdir@ && \
-	  find ../packages/Macaulay2 -name '*.m2' | while read i ; do echo  ; echo $$i,0 ; done >TAGS.doc
+	  find ../packages/Macaulay2 -name '*.m2' -o -name examples -prune | grep -v Macaulay2/examples | while read i ; do echo  ; echo $$i,0 ; done >TAGS.doc
 clean::; rm -f TAGS.doc
 prep :: $(DUMPEDM2FILES)
 

@@ -105,8 +105,9 @@ show1(Sequence,Function) := show1(List,Function) := (types,pfun) -> (
      world)
 show1(Thing,Function) := (X,pfun) -> show1({X},pfun)
 showUserStructure = Command(() -> show1(justTypes userSymbols(), parent))
-showStructure = Command(types -> show1(if types === () then justTypes flatten(values \ dictionaryPath) else types, parent))
-showClassStructure = Command(types -> show1(if types === () then allThingsWithNames flatten(values \ dictionaryPath) else types, class))
+allValues = () -> flatten(values \ dictionaryPath)
+showStructure = Command(types -> show1(if types === () then justTypes allValues() else types, parent))
+showClassStructure = Command(types -> show1(if types === () then allThingsWithNames allValues() else types, class))
 
 -----------------------------------------------------------------------------
 
