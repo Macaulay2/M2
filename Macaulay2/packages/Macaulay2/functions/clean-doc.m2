@@ -13,10 +13,10 @@ document {
      Outputs => {
 	  {ofClass Matrix, ", ", ofClass RingElement, ", or ", TO "null", ", respectively"}
 	  },
-     PARA{"If the input is ", ofClass Matrix, " or " ofClass RingElement, ", then the result has the same type,
+     PARA{"If the input is ", ofClass Matrix, " or ", ofClass RingElement, ", then the result has the same type,
      where each real or complex number coefficient which is less than ", TT "epsilon", " in absolute value
      is replaced with zero."},
-     PARA("If the input is ", ofClass MutableMatrix, ", then ", TO "null", " is returned, and the elements of
+     PARA{"If the input is ", ofClass MutableMatrix, ", then ", TO "null", " is returned, and the elements of
 	  the matrix are modified in place."},
      EXAMPLE lines ///
      	  M = random(RR^4,RR^5)
@@ -38,7 +38,7 @@ document {
      EXAMPLE lines ///
      	  M = mutableMatrix(RR,4,5)
      	  fillMatrix(M,3)
-	  clean(.1,M)
+	  --clean(.1,M)
 	  --norm M
      	  ///,
      SeeAlso => {norm, RR, CC, fillMatrix}
