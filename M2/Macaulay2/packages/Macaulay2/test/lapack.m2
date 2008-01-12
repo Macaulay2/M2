@@ -10,26 +10,17 @@ diag(List) := (L) -> (
      scan(#L, i -> M_(i,i) = L#i);
      matrix M)
 
-L1infnorm = method()
-L1infnorm Matrix := (M) -> max apply(flatten entries M, e -> sqrt((realPart e)^2 + (imaginaryPart e)^2))
-
 v = solve(matrix {{1.0, 2.01}, {3., 4.}, {5., 8.}},matrix {{13.01}, {29.01}, {55.01}},ClosestFit=>true,MaximalRank=>true)
-assert (L1infnorm(v - matrix {{3.}, {5.}}) < .1)
-
-clean = method()
-clean(Matrix,RR) := (M,epsilon) -> (
-     zero := 0_(ring M);
-     meps := -epsilon;
-     matrix applyTable(entries M, e -> if e < epsilon and e > meps then zero else e))
+assert (norm(v - matrix {{3.}, {5.}}) < .1)
 
 checkLU = method()
 checkLU Matrix := (M) -> (
      R := ring M;
      (P,L,U) = LU M;
      Q = mutableMatrix(R, numrows M, numrows M);
-     for i from 0 to numrows A - 1 do Q_(i,P_i) = 1_R;
+     for i from 0 to numrows M - 1 do Q_(i,P_i) = 1_R;
      Q = matrix Q;
-     (Q*L*U, M)
+     norm(Q*L*U-M)
      )
 
 checkSVD = method()
@@ -38,31 +29,31 @@ checkSVD(Matrix) := (M) -> (
      -- return (S,U,Vt)
      (S,U,Vt) := SVD M;
      (S1,U1,Vt1) := SVD(M, DivideConquer=>true);
-     nm1 := L1infnorm(M - U * diag(numgens target M, numgens source M, flatten entries S) * Vt);
-     nm2 := L1infnorm(transpose U - U^-1);
-     nm3 := L1infnorm(transpose Vt - Vt^-1);
-     nm4 := L1infnorm(S-S1);
-     nm5 := L1infnorm(U-U1);
-     nm6 := L1infnorm(Vt-Vt1);
+     nm1 := norm(M - U * diag(numgens target M, numgens source M, flatten entries S) * Vt);
+     nm2 := norm(transpose U - U^-1);
+     nm3 := norm(transpose Vt - Vt^-1);
+     nm4 := norm(S-S1);
+     nm5 := norm(U-U1);
+     nm6 := norm(Vt-Vt1);
      (max(nm1,nm2,nm3), max(nm4,nm5,nm6))
      )
 
 checkSolve = method()
 checkSolve(Matrix,Matrix) := (M,b) -> (
      x := solve(M,b);
-     L1infnorm (M*x-b))
+     norm (M*x-b))
 
 checkClosestFit = method()
 checkClosestFit(Matrix,Matrix) := (M,b) -> (
      x := solve(M,b,ClosestFit=>true,MaximalRank=>true);
-     L1infnorm (M*x-b))
+     norm (M*x-b))
 
 checkEigenvectors = method()
 checkEigenvectors Matrix := (M) -> (
      -- compute eigenvectors, and eigenvalues
      E2 := eigenvalues M;
      (E,V) := eigenvectors M;
-     n1 := L1infnorm(E-E2); -- make sure these are the same
+     n1 := norm(E-E2); -- make sure these are the same
      -- for each eigenvalue and eigenvector, compute Mv-ev
      (E,V,n1);
      M*V - diag flatten entries E -- should be small...
@@ -130,7 +121,7 @@ checkSVD(M1)
 E2 = eigenvalues M1
 (E,V) = eigenvectors M1
 E-E2
-L1infnorm oo
+norm oo
 entries oo
 
 --------------
