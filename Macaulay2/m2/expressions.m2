@@ -75,13 +75,22 @@ lookupi := x -> (
      if r === null then error "encountered null or missing value";
      r)
 
-toString Expression := v -> (
+toString' := method()
+toString'(Function,Thing) := (toString,x) -> toString x
+toString Expression := v -> toString'(toString,v)
+
+toExternalFormat = method()
+toExternalFormat Thing := toExternalString
+toExternalFormat Expression := v -> toString'(toExternalFormat,v)
+toExternalFormat Symbol := toString
+
+toString'(Function, Expression) := (fmt,v) -> (
      op := class v;
      p := precedence v;
      names := apply(toList v,term -> (
 	       if precedence term <= p
-	       then "(" | toString term | ")"
-	       else toString term
+	       then "(" | fmt term | ")"
+	       else fmt term
 	       )
 	  );
      if # v === 0 then op#EmptyName
@@ -91,7 +100,7 @@ toString Expression := v -> (
 texMath Holder := v -> "{" | texMath v#0 | "}"
 html Holder := v -> html v#0
 net Holder := v -> net v#0
-toString Holder := v -> toString v#0
+toString'(Function, Holder) := (fmt,v) -> fmt v#0
 
 remove(Sequence,expression)
 
@@ -100,11 +109,11 @@ Minus.synonym = "minus expression"
 
 Minus#operator = "-"
 value' Minus := v -> minus apply(toSequence v,value')
-toString Minus := v -> (
+toString'(Function, Minus) := (fmt,v) -> (
      term := v#0;
      if precedence term > precedence v or class term === Product
-     then "-" | toString term
-     else "-(" | toString term | ")"
+     then "-" | fmt term
+     else "-(" | fmt term | ")"
      )
 
 Equation = new HeaderType of AssociativeExpression
@@ -130,14 +139,14 @@ net Equation := v -> (
 	  p := precedence v;
 	  horizontalJoin toList between(" == ", 
 	       apply(toList v, e -> if precedence e <= p then bigParenthesize net e else net e))))
-toString Equation := v -> (
+toString'(Function, Equation) := (fmt,v) -> (
      n := # v;
      if n === 0 then "Equation{}"
-     else if n === 1 then "Equation{" | toString v#0 | "}"
+     else if n === 1 then "Equation{" | fmt v#0 | "}"
      else (
 	  p := precedence v;
 	  demark(" == ", 
-	       apply(toList v, e -> if precedence e <= p then ("(", toString e, ")") else toString e))))
+	       apply(toList v, e -> if precedence e <= p then ("(", fmt e, ")") else fmt e))))
 -----------------------------------------------------------------------------
 ZeroExpression = new Type of Holder
 ZeroExpression.synonym = "zero expression"
@@ -150,7 +159,7 @@ ONE = new OneExpression from {1}
 Parenthesize = new WrapperType of Expression
 Parenthesize.synonym = "possibly parenthesized expression"
 net Parenthesize := net @@ first
-toString Parenthesize := toString @@ first
+toString'(Function, Parenthesize) := (fmt,v) -> fmt v#0
 value' Parenthesize := first
 -----------------------------------------------------------------------------
 Sum = new WrapperType of AssociativeExpression
@@ -161,7 +170,7 @@ Sum#EmptyName = "0"
 Sum#operator = "+"
 value' Sum := v -> plus apply(toSequence v,value')
 
-toString Sum := v -> (
+toString'(Function, Sum) := (fmt,v) -> (
      n := # v;
      if n === 0 then "0"
      else (
@@ -174,8 +183,8 @@ toString Sum := v -> (
 		    else v#i ));
 	  names := apply(n, i -> (
 		    if precedence v#i <= p 
-		    then "(" | toString v#i | ")"
-		    else toString v#i ));
+		    then "(" | fmt v#i | ")"
+		    else fmt v#i ));
 	  concatenate mingle ( seps, names )))
 
 Product = new WrapperType of AssociativeExpression
@@ -186,7 +195,7 @@ Product#EmptyName = "1"
 Product#operator = "*"
 value' Product := v -> times apply(toSequence v,value')
 
-toString Product := v -> (
+toString'(Function, Product) := (fmt,v) -> (
      n := # v;
      if n === 0 then "1"
      else (
@@ -196,22 +205,8 @@ toString Product := v -> (
      	  names := apply(#v,
 	       i -> (
 		    term := v#i;
-	       	    if precedence term <= p then (
---			 seps#i = seps#(i+1) = "";
-			 "(" | toString term | ")"
-			 )
-	       	    else toString term
-	       	    )
-	       );
---	  scan(# v - 1,
---	       i -> (
---		    if seps#(i+1)!=""
---		    and names#(i+1)#?0
---		    and letters#?(names#(i+1)#0)
---		    and not endsWithIdentifier names#i 
---		    then seps#(i+1)=""
---		    )
---	       );
+	       	    if precedence term <= p then "(" | fmt term | ")"
+	       	    else fmt term));
 	  concatenate mingle ( seps, names )
 	  )
      )
@@ -224,7 +219,7 @@ NonAssociativeProduct#EmptyName = "1"
 NonAssociativeProduct#operator = "**"
 value' NonAssociativeProduct := v -> times apply(toSequence v,value')
 
-toString NonAssociativeProduct := v -> (
+toString'(Function, NonAssociativeProduct) := (fmt,v) -> (
      n := # v;
      if n === 0 then "1"
      else (
@@ -234,8 +229,8 @@ toString NonAssociativeProduct := v -> (
      	  names := apply(#v,
 	       i -> (
 		    term := v#i;
-	       	    if precedence term <= p then "(" | toString term | ")"
-	       	    else toString term
+	       	    if precedence term <= p then "(" | fmt term | ")"
+	       	    else fmt term
 	       	    )
 	       );
 	  scan(# v - 1,
@@ -273,21 +268,21 @@ Superscript.synonym = "superscript expression"
 Superscript#operator = "^"
 value' Superscript := (x) -> (value' x#0)^(value' x#1)
 
-toString Subscript := toString Superscript := v -> (
-     x := toString v#0;
-     y := toString v#1;
+toString'(Function, Subscript) := toString'(Function, Superscript) := (fmt,v) -> (
+     x := fmt v#0;
+     y := fmt v#1;
      prec := precedence v;
      if precedence v#0 <  prec then x = "(" | x | ")";
      if precedence v#1 <= prec then y = "(" | y | ")";
      concatenate(x,(class v)#operator,y))
 
-toString Power := v -> (
+toString'(Function, Power) := (fmt,v) -> (
      x := v#0;
      y := v#1;
-     if y === 1 then toString x 
+     if y === 1 then fmt x 
      else (
-	  x = toString x;
-	  y = toString y;
+	  x = fmt x;
+	  y = fmt y;
 	  if precedence v#0 <  PowerPrecedence then x = "(" | x | ")";
 	  if precedence v#1 <= PowerPrecedence then y = "(" | y | ")";
 	  concatenate(x,(class v)#operator,y)))
@@ -298,7 +293,7 @@ RowExpression.synonym = "row expression"
 net RowExpression := w -> horizontalJoin apply(toList w,net)
 html RowExpression := w -> concatenate apply(w,html)
 texMath RowExpression := w -> concatenate apply(w,texMath)
-toString RowExpression := w -> concatenate apply(w,toString)
+toString'(Function, RowExpression) := (fmt,w) -> concatenate apply(w,fmt)
 -----------------------------------------------------------------------------
 Adjacent = new HeaderType of Expression
 Adjacent.synonym = "adjacent expression"
@@ -424,10 +419,10 @@ value' ZeroExpression := v -> 0
 SparseVectorExpression = new HeaderType of Expression
 SparseVectorExpression.synonym = "sparse vector expression"
 value' SparseVectorExpression := x -> notImplemented()
-toString SparseVectorExpression := v -> (
+toString'(Function, SparseVectorExpression) := (fmt,v) -> (
      n := v#0;
      w := newClass(MutableList, apply(n,i->"0"));
-     scan(v#1,(i,x)->w#i=toString x);
+     scan(v#1,(i,x)->w#i=fmt x);
      w = toList w;
      concatenate("{",between(",",w),"}")
      )
@@ -436,27 +431,27 @@ SparseMonomialVectorExpression = new HeaderType of Expression
 SparseMonomialVectorExpression.synonym = "sparse monomial vector expression"
 -- in these, the basis vectors are treated as variables for printing purposes
 value' SparseMonomialVectorExpression := x -> notImplemented()
-toString SparseMonomialVectorExpression := v -> toString (
+toString'(Function, SparseMonomialVectorExpression) := (fmt,v) -> toString (
      sum(v#1,(i,m,a) -> 
 	  expression a * 
 	  expression m * 
-	  hold concatenate("<",toString i,">"))
+	  hold concatenate("<",fmt i,">"))
      )
 -----------------------------------------------------------------------------
 MatrixExpression = new HeaderType of Expression
 MatrixExpression.synonym = "matrix expression"
 value' MatrixExpression := x -> matrix applyTable(toList x,value')
-toString MatrixExpression := m -> concatenate(
+toString'(Function,MatrixExpression) := (fmt,m) -> concatenate(
      "MatrixExpression {",		  -- ????
-     between(",",apply(toList m,row->("{", between(",",apply(row,toString)), "}"))),
+     between(",",apply(toList m,row->("{", between(",",apply(row,fmt)), "}"))),
      "}" )
 -----------------------------------------------------------------------------
 Table = new HeaderType of Expression
 Table.synonym = "table expression"
 value' Table := x -> applyTable(toList x,value')
-toString Table := m -> concatenate(
+toString'(Function, Table) := (fmt,m) -> concatenate(
      "Table {",
-     between(",",apply(toList m,row->("{", between(",",apply(row,toString)), "}"))),
+     between(",",apply(toList m,row->("{", between(",",apply(row,fmt)), "}"))),
      "}" )
 -----------------------------------------------------------------------------
 
@@ -499,28 +494,26 @@ net BinaryOperation := m -> (
      -- must put precedences here eventually
      horizontalJoin( net m#1, toString m#0, net m#2 )
      )
-toString BinaryOperation := m -> (
-     horizontalJoin( "(", toString m#1, toString m#0, toString m#2, ")" )
-     )
+toString'(Function, BinaryOperation) := (fmt,m) -> horizontalJoin( "(", fmt m#1, toString m#0, fmt m#2, ")" )
 -----------------------------------------------------------------------------
 FunctionApplication = new HeaderType of Expression -- {fun,args}
 FunctionApplication.synonym = "function application expression"
 value' FunctionApplication := (m) -> (value' m#0) (value' m#1)
-toString Adjacent := toString FunctionApplication := m -> (
+toString'(Function, Adjacent) := toString'(Function, FunctionApplication) := (fmt,m) -> (
      p := precedence m;
      fun := m#0;
      args := m#1;
      if class args === Sequence
      then if #args === 1
-     then concatenate(toString fun, " ", toString args)  -- f singleton x
-     else concatenate(toString fun, toString args)       -- f(x,y) or f(), ...
+     then concatenate(fmt fun, " ", fmt args)  -- f singleton x
+     else concatenate(fmt fun, fmt args)       -- f(x,y) or f(), ...
      else if precedence args >= p
      then if precedence fun > p
-     then concatenate(toString fun, " ", toString args)
-     else concatenate("(", toString fun, ")", toString args)
+     then concatenate(fmt fun, " ", fmt args)
+     else concatenate("(", fmt fun, ")", fmt args)
      else if precedence fun > p
-     then concatenate(toString fun, "(", toString args, ")")
-     else concatenate("(", toString fun, ")(", toString args, ")")
+     then concatenate(fmt fun, "(", fmt args, ")")
+     else concatenate("(", fmt fun, ")(", fmt args, ")")
      )
 net Adjacent := net FunctionApplication := m -> (
      p := precedence m;
@@ -1035,10 +1028,12 @@ Thing#{Standard,AfterPrint} = x -> (
      << o() << lineNumber;
      y := class x;
      << " : " << y;
+     {*
      while parent y =!= Thing do (
 	  y = parent y;
 	  << " < " << y;
 	  );
+     *}
      << endl;
      )
 
@@ -1067,7 +1062,8 @@ Boolean#{Standard,AfterPrint} = identity
 
 FilePosition = new Type of BasicList
 FilePosition.synonym = "file position"
-toString FilePosition := net FilePosition := i -> concatenate(i#0,":",toString i#1,":",toString i#2)
+toString'(Function, FilePosition) := (fmt,i) -> concatenate(i#0,":",toString i#1,":",toString i#2)
+net FilePosition := i -> concatenate(i#0,":",toString i#1,":",toString i#2)
 
 -- Local Variables:
 -- compile-command: "make -C $M2BUILDDIR/Macaulay2/m2 "

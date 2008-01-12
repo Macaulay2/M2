@@ -249,7 +249,8 @@ Ring OrderedMonoid := PolynomialRing => (			  -- no memoize
 		    else sum(coeffs,monoms, (a,m) -> expression (if a == 1 then 1 else promote(a,R)) * expression (if m == 1 then 1 else new M from m))
 		    )
 	       ) rawPairs(raw R, raw f);
-	  toString RM := toExternalString RM := x -> toString expression x;
+	  toString RM := x -> toString expression x;
+	  toExternalString RM := x -> toExternalFormat expression x;
 	  factor RM := opts -> f -> (
 	       c := 1;
 	       (facs,exps) := rawFactor raw f;	-- example value: ((11, x+1, x-1, 2x+3), (1, 1, 1, 1)); constant term is first, if there is one

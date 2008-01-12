@@ -3,7 +3,7 @@ scan((
 	  Algorithm,DebuggingMode,Dense,DivideConquer,First,Format,GBDegrees,Hermitian,CoefficientRing,Undo,SourceCode,Description,Variables,
 	  Boxes,BaseRow,HorizontalSpace,VerticalSpace,Alignment,Minimize,FileName,Unmixed,Decompose, AbsoluteLinks,
 	  CheckDocumentation, IgnoreExampleErrors, MakeDocumentation, MakeInfo, MakeLinks, RemakeAllDocumentation, RerunExamples, UserMode, Generic,
-	  KeepZeroes,Heading
+	  KeepZeroes,Heading, ClosestFit, Density, Height, Norm
 	  ),
      s -> if s =!= null then document {
 	  Key => s,
