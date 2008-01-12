@@ -10,30 +10,18 @@ diag(List) := (L) -> (
      scan(#L, i -> M_(i,i) = L#i);
      matrix M)
 
-perm = method()
-perm(Ring,List) := (R,L) -> (
-     Q = mutableZero(R, #L, #L);
-     for i from 0 to #L-1 do Q_(i,P_i) = 1_R;
-     matrix Q
-     )
-perm(Ring,List) := (R,L) -> (
-     Q = mutableMatrix(R, #L, #L);
-     for i from 0 to #L-1 do Q_(i,P_i) = 1_R;
-     matrix Q
-     )
-
 v = solve(matrix {{1.0, 2.01}, {3., 4.}, {5., 8.}},matrix {{13.01}, {29.01}, {55.01}},ClosestFit=>true,MaximalRank=>true)
 assert (norm(v - matrix {{3.}, {5.}}) < .1)
 
 checkLU = method()
 checkLU(List,Matrix,Matrix) := (P,L,U) -> (
      R := ring L;
-     Q = perm P;
+     Q = id_(R^#P) _ P;
      --Q = mutableMatrix(R, numrows L, numrows L);
      --for i from 0 to numrows L - 1 do Q_(i,P_i) = 1_R;
      --Q = matrix Q;
      Q*L*U)
-checkLU Matrix := (M) -> norm (checkLU LU M - M)
+checkLU Matrix := (M) -> norm (checkLU time LU M - M)
 
 checkSVD = method()
 checkSVD(Matrix) := (M) -> (
@@ -68,7 +56,7 @@ checkEigenvectors Matrix := (M) -> (
      n1 := norm(E-E2); -- make sure these are the same
      -- for each eigenvalue and eigenvector, compute Mv-ev
      (E,V,n1);
-     M*V - diag flatten entries E -- should be small...
+     M*V - diagonalMatrix first entries E -- should be small...
      )
 
 ----------------
@@ -78,39 +66,49 @@ A = RR
 M = mutableMatrix random(A^4,A^2)
 
 M = matrix{{1.5,2.0},{1.3,1.7},{1.6,.5}}
+assert(checkLU M == 0)
 M = transpose M
+assert(checkLU M)
 M = matrix{{1.5,2.0},{1.3,1.7}}
-(P,L,U) = LU mutableMatrix M
-(matrix L)*(matrix U)
-M
-(P,L,U) = LU M
-L*U
-M
-(P,L,U) = LU M
-Q = perm(A,P)
-L = matrix L
-U = matrix U
-Q * (matrix L) * (matrix U)
-M
-checkLU(P,L,U)
+assert(checkLU M)
 
-M
 A = mutableMatrix(CC,5,4, Dense=>true)
 fillMatrix(A,8);
 A
-time (P,L,U) = LU A;
+checkLU matrix A
 
 A = mutableMatrix(CC,1000,900, Dense=>true)
 fillMatrix(A,10000);
-time (P,L,U) = LU A;
+time checkLU matrix A
 
+A = mutableMatrix(CC,40,100, Dense=>true)
+fillMatrix(A,300);
+time checkLU matrix A
+
+A = mutableMatrix(CC,100,40, Dense=>true)
+fillMatrix(A,300);
+time checkLU matrix A
+
+A = mutableMatrix(CC,40,100, Dense=>true)
+fillMatrix(A,300);
+time checkLU matrix A
+
+kk = RR
+A = random(kk^100,kk^100);
+det A
+
+
+kk = ZZ/101
+A = random(kk^1000,kk^1000);
+time LU A;
+time det A
+rank A
 ----------------
 -- Test solve --
 ----------------
 -- Simple test for solve
 checkSolve(matrix{{3.4}},matrix{{1.2}})
 checkSolve(matrix{{3.4}},matrix{{1.2, 71.457348957438573}})
-checkSolve(matrix{{3.4,1.2}},matrix{{1.2}})
 
 M1 = matrix{{1.,2.,3.4},{.5,9.87,3.},{-3.,-5.5,-7.}}
 b1 = transpose matrix{{1.,2.,3.}}
@@ -120,7 +118,7 @@ assert (checkSolve(M1^4,b1) < 1e-10)
 assert (checkSolve(M1^3,b1) < 1e-10)
 
 A = CC_200
-M = random(A^4,A^4,Density=>.1)
+M = random(A^4,A^4,Density=>.8)
 b = random(A^4,A^3)
 checkSolve(M,b) < 1e-15
 
@@ -129,6 +127,7 @@ time M = random(A^1000,A^1000,Density=>.1);
 b = random(A^1000,A^3);
 time solve(M,b);
 time M*oo-b;
+norm(oo)
 checkSolve(M,b)
 
 --------------------------
