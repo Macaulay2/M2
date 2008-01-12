@@ -1,0 +1,19 @@
+	  toString RM := toExternalString RM := x -> toString expression x;
+
+oops!
+
+
+i1 : RR[x]
+
+o1 = RR  [x]
+       53
+
+o1 : PolynomialRing < EngineRing < Ring < Type < MutableHashTable < HashTable
+
+i2 : toExternalString (1/3.p100)
+
+o2 = .33333333333333333333333333333346p100e0
+
+i3 : toExternalString (1/3.p100 + x)
+
+o3 = x+.333333
