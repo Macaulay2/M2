@@ -343,7 +343,7 @@ void RRR::increase_maxnorm(M2_RRR norm, const ring_elem f) const
 {
   mpfr_ptr f1 = MPF_VAL(f);
   if (mpfr_cmpabs(norm,f1) < 0)
-    mpfr_set(norm,f1,GMP_RNDN);
+    mpfr_abs(norm,f1,GMP_RNDN);
 }
 
 

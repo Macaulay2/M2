@@ -585,8 +585,9 @@ bool Lapack::least_squares(const LMatrixRR *A, const LMatrixRR *b, LMatrixRR *x)
     }
   else
     {
+      x->resize(cols,bcols);
       if (rows > cols) {
-	x->resize(cols,bcols);
+	// We conly need the first 'cols' rows of copyb
 	int copyloc = 0;
 	int xloc = 0;
 	for (int j = 0; j < bcols; j++) {
@@ -610,12 +611,11 @@ bool Lapack::least_squares(const LMatrixRR *A, const LMatrixRR *b, LMatrixRR *x)
 
 bool Lapack::least_squares_deficient(const LMatrixRR *A, const LMatrixRR *b, LMatrixRR *x)
 {
-#if LAPACK
+#if !LAPACK
   ERROR("lapack not present");
   return false;
 #else
-  LMatrixRR *copyA = A->copy();
-  LMatrixRR *copyb = b->copy();
+  bool ret = true;
   int rows = A->n_rows();
   int cols = A->n_cols();
   int brows = b->n_rows();
@@ -626,31 +626,35 @@ bool Lapack::least_squares_deficient(const LMatrixRR *A, const LMatrixRR *b, LMa
   int max = (rows > cols) ? rows : cols;
   int tempmax = ((2*min >  max) ? 2*min : max);
   int wsize = 3*min + ((tempmax >  bcols) ? tempmax : bcols);
-  double *workspace = newarray_atomic(double,wsize);
-  double *sing = newarray_atomic(double,min);
 
   if (brows != rows) {
     ERROR("expected compatible right hand side");
     return false;
   }
 
+  double *copyA = A->make_lapack_array();
+  double *copyb = b->make_lapack_array();
+  double *workspace = newarray_atomic(double,wsize);
+  double *sing = newarray_atomic(double,min);
+
   if (rows < cols) {
-    copyb->resize(cols, bcols);
-    for (int i = 0; i < brows*bcols; i++)
-      copyb->get_array()[i] = b->get_array()[i];
+    // Make 'b' (copyb) into a cols x bcols matrix, by adding a zero block at the bottom
+    double *copyb2 = newarray_atomic_clear(double, cols*bcols);
     int bloc = 0;
     int copyloc = 0;
     for (int j = 0; j < bcols; j++) {
       copyloc = j*cols;
       for (int i = 0; i < brows; i++) {
-	copyb->get_array()[copyloc++] = b->get_array()[bloc++];
+	copyb2[copyloc++] = copyb[bloc++];
       }
     }
+    deletearray(copyb);
+    copyb = copyb2;
   }
 
   dgelss_(&rows, &cols, &bcols,
-	  copyA->get_array(), &rows,
-	  copyb->get_array(), &max,
+	  copyA, &rows,
+	  copyb, &max,
 	  sing, &rcond, &rank,
 	  workspace, &wsize, 
 	  &info);
@@ -658,24 +662,31 @@ bool Lapack::least_squares_deficient(const LMatrixRR *A, const LMatrixRR *b, LMa
   if (info != 0)
     {
       ERROR("argument passed to dgelss had an illegal value");
-      return false;
+      ret = false;
     }
-
-  if (rows > cols) {
-    x->resize(cols,bcols);
-    int copyloc = 0;
-    int xloc = 0;
-    for (int j = 0; j < bcols; j++) {
-      copyloc = j*rows;
-      for (int i = 0; i < cols; i++) {
-	x->get_array()[xloc++] = copyb->get_array()[copyloc++];
+  else
+    {
+      x->resize(cols,bcols);
+      if (rows > cols) {
+	int copyloc = 0;
+	int xloc = 0;
+	for (int j = 0; j < bcols; j++) {
+	  copyloc = j*rows;
+	  for (int i = 0; i < cols; i++) {
+	    mpfr_set_d(&(x->get_array()[xloc++]), copyb[copyloc++], GMP_RNDN);
+	  }
+	}
+      } else {
+	x->fill_from_lapack_array(copyb);
       }
     }
-  } else {
-    x->set_matrix(copyb);
-  }
 
-  return true;
+  deletearray(copyA);
+  deletearray(copyb);
+  deletearray(workspace);
+  deletearray(sing);
+
+  return ret;
 #endif
 }
 
@@ -1085,8 +1096,8 @@ bool Lapack::SVD(const LMatrixCC *A, LMatrixRR *Sigma, LMatrixCC *U, LMatrixCC *
   int min = (rows <= cols) ? rows : cols;
   int max = (rows >= cols) ? rows : cols;
   int wsize = 4*min+2*max;
-  double *workspace = newarray_atomic(double,wsize);
-  double *rwork = newarray_atomic(double,5*min);
+  double *workspace = newarray_atomic(double,2*wsize);
+  double *rwork = newarray_atomic(double,5*max);
 
   double *copyA = A->make_lapack_array();
   double *u = newarray_atomic(double,2*rows*rows);
@@ -1222,14 +1233,13 @@ bool Lapack::least_squares(const LMatrixCC *A, const LMatrixCC *b, LMatrixCC *x)
   double *copyb = b->make_lapack_array();
   double *workspace = newarray_atomic(double, 2*wsize);
 
-#warning "the copy logic might be wrong"
   if (rows < cols) {
     // Make 'b' (copyb) into a cols x bcols matrix, by adding a zero block at the bottom
     double *copyb2 = newarray_atomic_clear(double, 2*cols*bcols);
     int bloc = 0;
     int copyloc = 0;
     for (int j = 0; j < bcols; j++) {
-      copyloc = j*cols;
+      copyloc = 2*j*cols;
       for (int i = 0; i < 2*brows; i++) {
 	copyb2[copyloc++] = copyb[bloc++];
       }
@@ -1251,13 +1261,12 @@ bool Lapack::least_squares(const LMatrixCC *A, const LMatrixCC *b, LMatrixCC *x)
     }
   else
     {
-#warning "the copy logic might be wrong"
+      x->resize(cols,bcols);
       if (rows > cols) {
-	x->resize(cols,bcols);
 	int copyloc = 0;
 	int xloc = 0;
 	for (int j = 0; j < bcols; j++) {
-	  copyloc = j*rows;
+	  copyloc = 2*j*rows;
 	  for (int i = 0; i < cols; i++) {
 	    mpfr_set_d((x->get_array()[xloc]).re, copyb[copyloc++], GMP_RNDN);
 	    mpfr_set_d((x->get_array()[xloc++]).im, copyb[copyloc++], GMP_RNDN);
@@ -1265,12 +1274,6 @@ bool Lapack::least_squares(const LMatrixCC *A, const LMatrixCC *b, LMatrixCC *x)
 	}
       } else {
 	x->fill_from_lapack_array(copyb);
-	/*
-	  x->resize(cols,bcols);
-	  for (int j = 0; j < bcols*cols; j++) {
-	  x->_array[j] = copyb->_array[j];
-	  }
-	*/
       }
     }
 
@@ -1284,12 +1287,11 @@ bool Lapack::least_squares(const LMatrixCC *A, const LMatrixCC *b, LMatrixCC *x)
 
 bool Lapack::least_squares_deficient(const LMatrixCC *A, const LMatrixCC *b, LMatrixCC *x)
 {
-#if LAPACK
+#if !LAPACK
   ERROR("lapack not present");
   return false;
 #else
-  LMatrixCC *copyA = A->copy();
-  LMatrixCC *copyb = b->copy();
+  bool ret = true;
   int rows = A->n_rows();
   int cols = A->n_cols();
   int brows = b->n_rows();
@@ -1300,30 +1302,35 @@ bool Lapack::least_squares_deficient(const LMatrixCC *A, const LMatrixCC *b, LMa
   int max = (rows > cols) ? rows : cols;
   int wsize = 2*min + ((bcols >  max) ? bcols : max);
 
-  double *workspace = newarray_atomic(double, 2*wsize);
-  double *sing = newarray_atomic(double, min);
-  double *rwork = newarray_atomic(double, 5*min);
-
   if (brows != rows) {
     ERROR("expected compatible right hand side");
     return false;
   }
 
+  double *copyA = A->make_lapack_array();
+  double *copyb = b->make_lapack_array();
+  double *workspace = newarray_atomic(double, 2*wsize);
+  double *sing = newarray_atomic(double, min);
+  double *rwork = newarray_atomic(double, 5*min);
+
   if (rows < cols) {
-    copyb->resize(cols, bcols);
+    // Make 'b' (copyb) into a cols x bcols matrix, by adding a zero block at the bottom
+    double *copyb2 = newarray_atomic_clear(double, 2*cols*bcols);
     int bloc = 0;
     int copyloc = 0;
     for (int j = 0; j < bcols; j++) {
-      copyloc = j*cols;
-      for (int i = 0; i < brows; i++) {
-	copyb->get_array()[copyloc++] = b->get_array()[bloc++];
+      copyloc = 2*j*cols;
+      for (int i = 0; i < 2*brows; i++) {
+	copyb2[copyloc++] = copyb[bloc++];
       }
     }
+    deletearray(copyb);
+    copyb = copyb2;
   }
   
   zgelss_(&rows, &cols, &bcols,
-	  copyA->get_lapack_array(), &rows,
-	  copyb->get_lapack_array(), &max,
+	  copyA, &rows,
+	  copyb, &max,
 	  sing, &rcond, &rank,
 	  workspace, &wsize, 
 	  rwork, &info);
@@ -1331,29 +1338,33 @@ bool Lapack::least_squares_deficient(const LMatrixCC *A, const LMatrixCC *b, LMa
   if (info != 0)
     {
       ERROR("argument passed to zgelss had an illegal value");
-      return false;
+      ret = false;
     }
-
-  if (rows > cols) {
-    x->resize(cols,bcols);
-    int copyloc = 0;
-    int xloc = 0;
-    for (int j = 0; j < bcols; j++) {
-      copyloc = j*rows;
-      for (int i = 0; i < cols; i++) {
-	x->get_array()[xloc++] = copyb->get_array()[copyloc++];
+  else
+    {
+      x->resize(cols,bcols);
+      if (rows > cols) {
+	int copyloc = 0;
+	int xloc = 0;
+	for (int j = 0; j < bcols; j++) {
+	  copyloc = 2*j*rows;
+	  for (int i = 0; i < cols; i++) {
+	    mpfr_set_d((x->get_array()[xloc]).re, copyb[copyloc++], GMP_RNDN);
+	    mpfr_set_d((x->get_array()[xloc++]).im, copyb[copyloc++], GMP_RNDN);
+	  }
+	}
+      } else {
+	x->fill_from_lapack_array(copyb);
       }
     }
-  } else {
-    x->set_matrix(copyb);
-    /*
-    x->resize(cols,bcols);
-    for (int j = 0; j < bcols*cols; j++) {
-      x->_array[j] = copyb->_array[j];
-    }
-    */
-  }
-  return true;
+
+  deletearray(copyA);
+  deletearray(copyb);
+  deletearray(workspace);
+  deletearray(sing);
+  deletearray(rwork);
+
+  return ret;
 #endif
 }
 
