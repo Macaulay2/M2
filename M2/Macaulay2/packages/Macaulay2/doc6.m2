@@ -126,8 +126,9 @@ document {
      "The precision is measured in bits, is visible in the ring displayed on
      the second output line, and can be recovered using ", TO "precision", ".",
      EXAMPLE "precision 3.14159",
-     "The class and the ring of numbers are not the same, so that numbers of various precisions
-     can be used without the overhead of ring creation.",
+     "For real numbers, the functions ", TO "class", " and ", TO "ring", " yield different
+     results.  That allows numbers of various precisions
+     to be used without creating a new ring for each precision.",
      EXAMPLE {"class 3.1", "ring 3.1"},
      "The precision can be specified on input by appending the letter ", TT "p", " and a positive number.",
      EXAMPLE "3p300",

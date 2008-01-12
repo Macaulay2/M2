@@ -590,7 +590,7 @@ document { Key => ReverseDictionary,
 	  R = o1
 	  o1
 	  o1^6
-	  ReverseDictionary#o1
+	  getAttribute(o1,ReverseDictionary)
      ///,
      SourceCode => { (GlobalAssignHook,PolynomialRing), (net, PolynomialRing) }
      }

@@ -2,14 +2,14 @@
 
 -- basic type
 
-ReverseDictionary#RawObject = symbol RawObject
+setAttribute(RawObject,ReverseDictionary,symbol RawObject)
 RawObject.synonym = "raw object"
 raw RawObject := x -> error "'raw' received a raw object"
 net RawObject := o -> net toString o
 
 -- monomials
 
-ReverseDictionary#RawMonomial = symbol RawMonomial
+setAttribute(RawMonomial,ReverseDictionary,symbol RawMonomial)
 RawMonomial.synonym = "raw monomial"
 
 RawMonomial == RawMonomial := (x,y) -> x === y
@@ -32,7 +32,7 @@ gcd(RawMonomial,RawMonomial) := (x,y) -> rawGCD(x,y)
 
 -- monomial orderings
 
-ReverseDictionary#RawMonomialOrdering = symbol RawMonomialOrdering
+setAttribute(RawMonomialOrdering,ReverseDictionary,symbol RawMonomialOrdering)
 RawMonomialOrdering.synonym = "raw monomial ordering"
 
 Eliminate = new SelfInitializingType of BasicList
@@ -181,18 +181,18 @@ RawMonomialOrdering ** RawMonomialOrdering := RawMonomialOrdering => rawProductM
 
 -- monoids
 
-ReverseDictionary#RawMonoid = symbol RawMonoid
+setAttribute(RawMonoid,ReverseDictionary,symbol RawMonoid)
 RawMonoid.synonym = "raw monoid"
 
 -- rings
 
-ReverseDictionary#RawRing = symbol RawRing
+setAttribute(RawRing,ReverseDictionary,symbol RawRing)
 RawRing.synonym = "raw ring"
 ZZ.RawRing = rawZZ()
 
 -- ring elements (polynomials)
 
-ReverseDictionary#RawRingElement = symbol RawRingElement
+setAttribute(RawRingElement,ReverseDictionary,symbol RawRingElement)
 RawRingElement.synonym = "raw ring element"
 RawRingElement == RawRingElement := (x,y) -> x === y
 
@@ -229,12 +229,12 @@ RawRingElement ? RawRingElement := (f,g) -> comparison rawCompare(f,g)
 
 -- monomial ideals
 
-ReverseDictionary#RawMonomialIdeal = symbol RawMonomialIdeal
+setAttribute(RawMonomialIdeal,ReverseDictionary,symbol RawMonomialIdeal)
 RawMonomialIdeal.synonym = "raw monomial ideal"
 
 -- free modules
 
-ReverseDictionary#RawFreeModule = symbol RawFreeModule
+setAttribute(RawFreeModule,ReverseDictionary,symbol RawFreeModule)
 RawFreeModule.synonym = "raw ring"
 
 RawFreeModule ++ RawFreeModule := rawDirectSum
@@ -260,10 +260,10 @@ RawFreeModule ** RawFreeModule := rawTensor
 
 -- matrices
 
-ReverseDictionary#RawMatrix = symbol RawMatrix
+setAttribute(ReverseDictionary,RawMatrix,symbol RawMatrix)
 RawMatrix.synonym = "raw matrix"
 
-ReverseDictionary#RawMutableMatrix = symbol RawMutableMatrix
+setAttribute(RawMutableMatrix,ReverseDictionary,symbol RawMutableMatrix)
 RawMutableMatrix.synonym = "raw mutable matrix"
 
 rawExtract = method()
@@ -326,7 +326,7 @@ norm(RR,RawMutableMatrix) := rawNorm
 
 -- computations
 
-ReverseDictionary#RawComputation = symbol RawComputation
+setAttribute(RawComputation,ReverseDictionary,symbol RawComputation)
 RawComputation.synonym = "raw computation"
 status RawComputation := opts -> c -> rawStatus1 c
 RawComputation_ZZ := (C,i) -> rawResolutionGetMatrix(C,i)
@@ -339,7 +339,7 @@ show RawComputation := C -> rawShowComputation C
 
 -- ring maps
 
-ReverseDictionary#RawRingMap = symbol RawRingMap
+setAttribute(RawRingMap,ReverseDictionary,symbol RawRingMap)
 RawRingMap.synonym = "raw ring map"
 RawRingMap == RawRingMap := (v,w) -> v === w
 

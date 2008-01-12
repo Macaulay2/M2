@@ -219,7 +219,7 @@ net Module := M -> (
      else if numgens M === 0 then "0"
      else (
 	  R := ring M;
-	  net new Superscript from { if ReverseDictionary#?R then ReverseDictionary#R else expression R, numgens M}
+	  net new Superscript from { if hasAttribute(R,ReverseDictionary) then getAttribute(R,ReverseDictionary) else expression R, numgens M}
 	  )
      )
 

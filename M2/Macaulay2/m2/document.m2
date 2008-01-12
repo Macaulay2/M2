@@ -42,7 +42,7 @@ normalizeDocumentKey   Symbol := identity
 normalizeDocumentKey Sequence := identity
 normalizeDocumentKey  Nothing := key -> symbol null
 normalizeDocumentKey    Thing := key -> (
-     if ReverseDictionary#?key then return ReverseDictionary#key;
+     if hasAttribute(key,ReverseDictionary) then return getAttribute(key,ReverseDictionary);
      error("encountered unidentifiable document tag: ",key);
      )
 
@@ -61,9 +61,9 @@ isDocumentableMethod Sequence := key -> (
 isDocumentableMethod    Thing := key -> false
 isDocumentableMethod   Symbol := key -> isGlobalSymbol toString key and getGlobalSymbol toString key === key
 isDocumentableMethod     Type := 
-isDocumentableThing     Thing := key -> ReverseDictionary#?key and isDocumentableMethod ReverseDictionary#key
-isDocumentableMethod Function := fn -> ReverseDictionary#?fn and dictionary ReverseDictionary#fn =!= null
-isDocumentableMethod ScriptedFunctor := fn -> ReverseDictionary#?fn
+isDocumentableThing     Thing := key -> hasAttribute(key,ReverseDictionary) and isDocumentableMethod getAttribute(key,ReverseDictionary)
+isDocumentableMethod Function := fn -> hasAttribute(fn,ReverseDictionary) and dictionary getAttribute(fn,ReverseDictionary) =!= null
+isDocumentableMethod ScriptedFunctor := fn -> hasAttribute(fn,ReverseDictionary)
 
 -----------------------------------------------------------------------------
 -- verifying the tags
@@ -1225,7 +1225,7 @@ help Sequence := key -> (						    -- method key
 
 help List := v -> DIV between(hr,help \ v)
 
-help Thing := x -> if ReverseDictionary#?x then return help ReverseDictionary#x else error "no documentation found"
+help Thing := x -> if hasAttribute(x,ReverseDictionary) then return help getAttribute(x,ReverseDictionary) else error "no documentation found"
 
 help = Command help
 

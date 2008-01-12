@@ -139,7 +139,7 @@ mathML ImmutableType := R -> mathML expression R
 mathML Tally := 
 mathML HashTable := s -> concatenate( "<mrow>",mathML class s,leftbrace, mtable sort apply(pairs s, (k,v) -> {mathML k, doublerightarrow, mathML v}), rightbrace,"</mrow>", newline )
 mathML MutableHashTable := x -> (
-     if ReverseDictionary#?x then mathML ReverseDictionary#x
+     if hasAttribute(x,ReverseDictionary) then mathML getAttribute(x,ReverseDictionary)
      else mrow ( mathML class x, nest("mtext",if #x > 0 then ("{...", toString(#x), "...}") else "{}" )))
 mathML BettiTally := v -> mtableML rawBettiTally v
 mathML CacheFunction := f -> mathML "{*a cache function*}"
@@ -167,7 +167,7 @@ mathML Variety :=
 mathML Thing := x -> (
      -- maybe "expression" should not just put unknown things in a holder ...
      -- anyway, we have to break the loop somehow here
-     if ReverseDictionary#?x then mathML return mathML ReverseDictionary#x;
+     if hasAttribute(x,ReverseDictionary) then mathML return mathML getAttribute(x,ReverseDictionary);
      y := expression x;
      if instance(y,Holder) and y#0 === x then mathML toString x else mathML y)
 

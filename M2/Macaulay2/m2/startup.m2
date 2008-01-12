@@ -161,8 +161,23 @@ if firstTime then (
 
      use = identity;				  -- temporary, until methods.m2
 
-     ReverseDictionary = new MutableHashTable;		    -- values are symbols
-     PrintNames = new MutableHashTable;			    -- values are strings
+     Attributes = new MutableHashTable;
+     -- values are hash tables with keys Symbol, String, Net (as symbols); replaces ReverseDictionary and PrintNames
+     setAttribute = (val,attr,x) -> (
+	  if Attributes#?val then Attributes#val else Attributes#val = new MutableHashTable
+	  )#attr = x;
+     hasAnAttribute = (val) -> Attributes#?val;
+     hasAttribute = (val,attr) -> Attributes#?val and Attributes#val#?attr;
+     getAttribute = (val,attr) -> Attributes#val#attr;
+     getAttributes = (attr0) -> (
+	  r := new MutableHashTable;
+	  scan(values Attributes, tab -> scan(pairs tab, (attr,x) -> if attr === attr0 then r#x = true));
+	  keys r);
+     removeAttribute = (val,attr) -> remove(Attributes#val,attr);
+     protect PrintNet;
+     protect PrintNames;
+     protect ReverseDictionary;
+
      globalAssign = (s,v) -> if v =!= value s then (
 	  X := class value s;
 	  m := lookup(GlobalReleaseHook,X);
@@ -172,10 +187,14 @@ if firstTime then (
 	  if n =!= null then n(s,v);
 	  s <- v);
      globalAssignFunction = (X,x) -> (
-	  if not ReverseDictionary#?x then ReverseDictionary#x = X;
+	  if not hasAttribute(x,ReverseDictionary) then setAttribute(x,ReverseDictionary,X);
 	  use x;
 	  );
-     globalReleaseFunction = (X,x) -> if ReverseDictionary#?x and ReverseDictionary#x === X then remove(ReverseDictionary,x);
+     globalReleaseFunction = (X,x) -> (
+	  if hasAttribute(x,ReverseDictionary)
+	  and getAttribute(x,ReverseDictionary) === X
+	  then removeAttribute(x,ReverseDictionary)
+	  );
      globalAssignment = X -> (
 	  if instance(X, VisibleList) then apply(X,globalAssignment)
 	  else if instance(X,Type) then (
@@ -188,7 +207,7 @@ if firstTime then (
      scan(dictionaryPath, dict -> (
 	       scan(pairs dict, (nm,sym) -> (
 			 x := value sym;
-			 if instance(x, Function) or instance(x, Type) then ReverseDictionary#x = sym))));
+			 if instance(x, Function) or instance(x, Type) then setAttribute(x,ReverseDictionary,sym)))));
 
      applicationDirectorySuffix = () -> (
 	  if version#"operating system" === "MacOS" then "Library/Application Support/Macaulay2/" else ".Macaulay2/"

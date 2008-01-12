@@ -70,8 +70,8 @@ htmlMarkUpTypeWithOptions := opts -> s -> (
 
 MarkUpType.GlobalAssignHook = (X,x) -> (
      if not x.?qname then x.qname = toLower toString X;
-     if not ReverseDictionary#?x then (
-	  ReverseDictionary#x = X;
+     if not hasAttribute(x,ReverseDictionary) then (
+	  setAttribute(x,ReverseDictionary,X);
      	  html x := htmlMarkUpType x.qname;
 	  );
      )
@@ -80,8 +80,8 @@ IntermediateMarkUpType.GlobalAssignHook = globalAssignFunction -- no qname, no d
 
 MarkUpTypeWithOptions.GlobalAssignHook = (X,x) -> (
      if not x.?qname then x.qname = toLower toString X;
-     if not ReverseDictionary#?x then (
-	  ReverseDictionary#x = X;
+     if not hasAttribute(x,ReverseDictionary) then (
+	  setAttribute(x,ReverseDictionary,X);
      	  html x := (htmlMarkUpTypeWithOptions options x) x.qname;
 	  );
      )
