@@ -397,6 +397,9 @@ norm(RR,Matrix) := (p,M) -> new RR from norm(p,raw M)
 norm(InfiniteNumber,Matrix) := (p,M) -> norm(numeric(precision M, p), M)
 norm(Matrix) := (M) -> norm(numeric(precision M,infinity), M)
 
+numRows Matrix := M -> numgens cover target M
+numColumns Matrix := M -> numgens cover source M
+
 --------------------------------------------------------------------------
 ------------------------ matrix and map for modules ----------------------
 --------------------------------------------------------------------------

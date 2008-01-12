@@ -492,11 +492,11 @@ document { Key => {(methodOptions, Function),(methodOptions, ScriptedFunctor),me
 
 document { Key => ExampleItem,
      Headline => "a type of hypertext for holding example inputs awaiting outputs" }
-document { Key => {(numRows, MutableMatrix),numRows},
-     Headline => "number of rows in a mutable matrix",
+document { Key => {(numRows, Matrix),(numRows, MutableMatrix),numRows},
+     Headline => "number of rows in a matrix or mutable matrix",
      Usage => "numRows m", Inputs => { "m" }, Outputs => {{ "the number of rows in ", TT "m" }}}
-document { Key => {(numColumns, MutableMatrix),numColumns},
-     Headline => "number of columns in a mutable matrix",
+document { Key => {(numColumns, Matrix),(numColumns, MutableMatrix),numColumns},
+     Headline => "number of columns in a matrix or mutable matrix",
      Usage => "numColumns m", Inputs => { "m" }, Outputs => {{ "the number of columns in ", TT "m" }}}
 document { Key => {mutableMatrix,
 	  (mutableMatrix, MutableMatrix),

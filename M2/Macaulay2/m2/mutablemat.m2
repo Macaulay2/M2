@@ -60,11 +60,9 @@ RingElement * MutableMatrix := (f,n) -> map(ring f, raw f * raw n)
 
 MutableMatrix _ Sequence = (M,ij,val) -> ((raw M)_ij = raw val; val)
 
-numRows = method()
 numRows(RawMutableMatrix) := (m) -> rawNumberOfRows m
 numRows(MutableMatrix) := (m) -> rawNumberOfRows raw m
 
-numColumns = method()
 numColumns(RawMutableMatrix) := (m) -> rawNumberOfColumns m
 numColumns(MutableMatrix) := (m) -> rawNumberOfColumns raw m
 
