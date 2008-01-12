@@ -70,81 +70,99 @@ assert(b == 1)
 a = 1+ii
 b = sqrt(a)
 assert(abs(b^2-a) < 1e-14)
+assert(b >= 0)
 
 a = -1+ii
 b = sqrt(a)
 assert(abs(b^2-a) < 1e-14)
+assert(b >= 0)
 
 a = 1-ii
 b = sqrt(a)
 assert(abs(b^2-a) < 1e-14)
+assert(b >= 0)
 
 a = -1-ii
 b = sqrt(a)
 assert(abs(b^2-a) < 1e-14)
+assert(b >= 0)
 
 a = 1+5*ii
 b = sqrt(a)
 assert(abs(b^2-a) < 1e-14)
+assert(b >= 0)
 
 a = -1+5*ii
 b = sqrt(a)
 assert(abs(b^2-a) < 1e-14)
+assert(b >= 0)
 
 a = 1-5*ii
 b = sqrt(a)
 assert(abs(b^2-a) < 1e-14)
+assert(b >= 0)
 
 a = -1-5*ii
 b = sqrt(a)
 assert(abs(b^2-a) < 1e-14)
+assert(b >= 0)
 
 a = 5+ii
 b = sqrt(a)
 assert(abs(b^2-a) < 1e-14)
+assert(b >= 0)
 
 a = 5-ii
 b = sqrt(a)
 assert(abs(b^2-a) < 1e-14)
+assert(b >= 0)
 
 a = -5+ii
 b = sqrt(a)
 assert(abs(b^2-a) < 1e-14)
+assert(b >= 0)
 
 a = -5-ii
 b = sqrt(a)
 assert(abs(b^2-a) < 1e-14)
-
-
+assert(b >= 0)
 
 a = 5*ii
 b = sqrt(a)
 assert(abs(b^2-a) < 1e-14)
+assert(b >= 0)
 
 a = -5*ii
 b = sqrt(a)
 assert(abs(b^2-a) < 1e-14)
+assert(b >= 0)
 
 a = 1.0+0.0*ii
 b = sqrt(a)
 assert(abs(b^2-a) < 1e-14)
+assert(b >= 0)
 
 a = -1+0.0*ii
 b = sqrt(a)
 assert(abs(b^2-a) < 1e-14)
+assert(b >= 0)
 
 a = 1.0*ii
 b = sqrt(a)
 assert(abs(b^2-a) < 1e-14)
+assert(b >= 0)
 
 a = 5-ii
 b = sqrt(a)
 assert(abs(b^2-a) < 1e-14)
+assert(b >= 0)
 
 a = -5+ii
 b = sqrt(a)
 assert(abs(b^2-a) < 1e-14)
+assert(b >= 0)
 
 a = -5-ii
 b = sqrt(a)
 assert(abs(b^2-a) < 1e-14)
+assert(b >= 0)
