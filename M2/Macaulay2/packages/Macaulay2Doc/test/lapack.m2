@@ -257,3 +257,124 @@ M1 = random(RR^3,RR^6)
 M2 = random(RR^6,RR^3)
 SVD(M2*M1)
 2.^-53
+
+-------------------------------------------------
+-- Trivial cases (i.e. a matrix has size zero) --
+-------------------------------------------------
+kk = RR
+a1 = map(kk^0,kk^5,0)
+a2 = map(kk^5,kk^0,0)
+a0 = map(kk^0,kk^0,0)
+(P,L,U) = LU a1
+assert(#P == 0 and numrows L == 0 and numcols L == 0 and numrows U == 0 and numcols U == 5)
+(P,L,U) = LU a2
+assert(#P == 5 and numrows L == 5 and numcols L == 0 and numrows U == 0 and numcols U == 0)
+(P,L,U) = LU a0
+assert(#P == 0 and numrows L == 0 and numcols L == 0 and numrows U == 0 and numcols U == 0)
+
+kk = CC
+a1 = map(kk^0,kk^5,0)
+a2 = map(kk^5,kk^0,0)
+a0 = map(kk^0,kk^0,0)
+(P,L,U) = LU a1
+assert(#P == 0 and numrows L == 0 and numcols L == 0 and numrows U == 0 and numcols U == 5)
+(P,L,U) = LU a2
+assert(#P == 5 and numrows L == 5 and numcols L == 0 and numrows U == 0 and numcols U == 0)
+(P,L,U) = LU a0
+assert(#P == 0 and numrows L == 0 and numcols L == 0 and numrows U == 0 and numcols U == 0)
+
+kk = ZZ/101
+a1 = map(kk^0,kk^5,0)
+a2 = map(kk^5,kk^0,0)
+a0 = map(kk^0,kk^0,0)
+(P,L,U) = LU a1
+assert(#P == 0 and numrows L == 0 and numcols L == 0 and numrows U == 0 and numcols U == 5)
+(P,L,U) = LU a2
+assert(#P == 5 and numrows L == 5 and numcols L == 0 and numrows U == 0 and numcols U == 0) -- failed
+(P,L,U) = LU a0
+assert(#P == 0 and numrows L == 0 and numcols L == 0 and numrows U == 0 and numcols U == 0)
+
+kk = RR
+a0 = map(kk^0,kk^0,0)
+assert try SVD map(RR^0,RR^0,0) else true
+assert try SVD map(CC^0,CC^0,0) else true
+
+assert(eigenvalues map(RR^0,RR^0,0) == map(CC^0,CC^1,0))
+assert(eigenvalues(map(RR^0,RR^0,0), Hermitian=>true) == map(RR^0,RR^1,0))
+assert(eigenvalues map(CC^0,CC^0,0) == map(CC^0,CC^1,0))
+assert(eigenvalues(map(CC^0,CC^0,0), Hermitian=>true) == map(RR^0,RR^1,0))
+
+(E,V) = eigenvectors map(RR^0,RR^0,0); assert(V == map(CC^0,CC^0,0))
+(E,V) = eigenvectors(map(RR^0,RR^0,0), Hermitian=>true); assert(V == map(RR^0,RR^0,0))
+(E,V) = eigenvectors map(CC^0,CC^0,0); assert(V == map(CC^0,CC^0,0))
+(E,V) = eigenvectors(map(CC^0,CC^0,0), Hermitian=>true); assert(V == map(CC^0,CC^0,0))
+
+A = map(RR^0,RR^1,0)
+B = map(RR^0,RR^0,0)
+assert try M = solve(A,B) else true
+assert(solve(A,B,ClosestFit=>true) == map(RR^1,RR^0,0))
+assert(solve(A,B,ClosestFit=>true,MaximalRank=>true) == map(RR^1,RR^0,0))
+
+A = map(RR^0,RR^0,0)
+B = map(RR^0,RR^1,0)
+M = solve(A,B)
+assert(numrows M == numcols A and numcols M == numcols B)
+M = solve(A,B,ClosestFit=>true)
+assert(numrows M == numcols A and numcols M == numcols B)
+M = solve(A,B,ClosestFit=>true,MaximalRank=>true)
+assert(numrows M == numcols A and numcols M == numcols B)
+
+A = map(RR^0,RR^0,0)
+B = map(RR^0,RR^0,0)
+M = solve(A,B)
+assert(numrows M == numcols A and numcols M == numcols B)
+M = solve(A,B,ClosestFit=>true)
+assert(numrows M == numcols A and numcols M == numcols B)
+M = solve(A,B,ClosestFit=>true,MaximalRank=>true)
+assert(numrows M == numcols A and numcols M == numcols B)
+
+-- CC
+A = map(CC^0,CC^1,0)
+B = map(CC^0,CC^0,0)
+assert try (M = solve(A,B)) else true
+M = solve(A,B,ClosestFit=>true)
+assert(numrows M == numcols A and numcols M == numcols B)
+M = solve(A,B,ClosestFit=>true,MaximalRank=>true)
+assert(numrows M == numcols A and numcols M == numcols B)
+
+A = map(CC^0,CC^0,0)
+B = map(CC^0,CC^1,0)
+M = solve(A,B)
+assert(numrows M == numcols A and numcols M == numcols B)
+M = solve(A,B,ClosestFit=>true)
+assert(numrows M == numcols A and numcols M == numcols B)
+M = solve(A,B,ClosestFit=>true,MaximalRank=>true)
+assert(numrows M == numcols A and numcols M == numcols B)
+
+A = map(CC^0,CC^0,0)
+B = map(CC^0,CC^0,0)
+M = solve(A,B)
+assert(numrows M == numcols A and numcols M == numcols B)
+M = solve(A,B,ClosestFit=>true)
+assert(numrows M == numcols A and numcols M == numcols B)
+M = solve(A,B,ClosestFit=>true,MaximalRank=>true)
+assert(numrows M == numcols A and numcols M == numcols B)
+
+-- ZZ/101
+kk = ZZ/101
+A = map(kk^0,kk^1,0)
+B = map(kk^0,kk^0,0)
+M = solve(A,B)
+assert(numrows M == numcols A and numcols M == numcols B)
+
+A = map(kk^0,kk^0,0)
+B = map(kk^0,kk^1,0)
+M = solve(A,B)
+assert(numrows M == numcols A and numcols M == numcols B)
+
+A = map(kk^0,kk^0,0)
+B = map(kk^0,kk^0,0)
+M = solve(A,B)
+assert(numrows M == numcols A and numcols M == numcols B)
+
+
