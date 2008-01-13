@@ -1279,6 +1279,9 @@ tutorial = x -> (
 	  identity);
      x )
 
+Wikipedia = method(TypicalValue => Hypertext)
+Wikipedia String := s -> PARA { "See ", HREF{ "http://en.wikipedia.org/wiki/" | s }, "."}
+
 -- Local Variables:
 -- compile-command: "make -C $M2BUILDDIR/Macaulay2/m2 "
 -- End:

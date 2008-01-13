@@ -476,6 +476,7 @@ export {
 	symbol VirtualTally,
 	symbol VisibleList,
 	symbol Weights,
+	symbol Wikipedia,
 	symbol WeylAlgebra,
 	symbol Wrap,
 	symbol WrapperType,

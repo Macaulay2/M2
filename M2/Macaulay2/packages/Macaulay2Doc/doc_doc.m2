@@ -64,7 +64,7 @@ document {
 	  -- Mike wanted this: TOH "hypertext format",
 	  TOH EXAMPLE,
 	  },
-     SeeAlso => {"writing documentation", "conventions for documentation", hypertext}
+     SeeAlso => {"writing documentation", "conventions for documentation", hypertext, Wikipedia}
      }
 
 document {

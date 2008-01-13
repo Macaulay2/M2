@@ -39,7 +39,7 @@ topDocumentTag := null
 topFileName := "index.html"				    -- top node's file name, constant
 indexFileName := "master.html"  			    -- file name for master index of topics in a package
 tocFileName := "toc.html"       			    -- file name for the table of contents of a package
-buildDirectory := "/tmp/"				    -- the root of the relative paths:
+buildDirectory := null	   				    -- the root of the relative paths:
 htmlDirectory := ""					    -- relative path to the html directory, depends on the package
 installDirectory := ""					    -- absolute path to the install directory
 
@@ -483,13 +483,12 @@ check String := pkg -> check needsPackage (pkg, LoadDocumentation => true)
 
 setupNames := (opts,pkg) -> (
      buildPackage = pkg#"title";
-     buildDirectory = 
-     if opts.Encapsulate then (
+     buildDirectory = minimizeFilename(runfun opts.PackagePrefix | "/");
+     buildDirectory = buildDirectory | if opts.Encapsulate then (
 	  if opts.EncapsulateDirectory === null
-	  then buildDirectory|buildPackage|"-"|pkg.Options.Version|"/"
+	  then buildPackage|"-"|pkg.Options.Version|"/"
 	  else opts.EncapsulateDirectory
-	  )
-     else minimizeFilename(runfun opts.PackagePrefix | "/");
+	  );
      )
 
 installPackage = method(Options => { 
