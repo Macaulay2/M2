@@ -1098,7 +1098,6 @@ youngest(e:Expr):Expr := (
      else nullE);
 setupfun("youngest", youngest);
 
-toRRS := dummySymbol;
 toRR(e:Expr):Expr := (
      when e
      is x:ZZ do Expr(toRR(x,defaultPrecision))
@@ -1113,13 +1112,13 @@ toRR(e:Expr):Expr := (
      	       	    is x:ZZ do Expr(toRR(x,toULong(prec)))
 	       	    is x:QQ do Expr(toRR(x,toULong(prec)))
      	       	    is x:RR do Expr(toRR(x,toULong(prec)))
-		    else binarymethod(s.0,s.1,getGlobalVariable(toRRS),toRRS.word.name)
+		    else WrongArg(1,"an integral, rational, or real number")
 		    )
 	       )
 	  else WrongArgZZ(1)
 	  )
-     else WrongArg("a real number or a pair"));
-toRRS = setupfun("toRR",toRR);
+     else WrongArg("an integral, rational, or real number, or a pair"));
+setupfun("toRR0",toRR);
 
 toCC(e:Expr):Expr := (
      when e
