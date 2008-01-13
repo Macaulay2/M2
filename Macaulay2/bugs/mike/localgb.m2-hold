@@ -1,12 +1,13 @@
 -- Test 1
 R = ZZ/101[a..d,MonomialOrder=>Weights=>{-1,-1,-1,-1}]
+R = (ZZ/101){a..d}     
 I = ideal(a-b*a^2-a^3, b-a*b-c^3, a*b-b*d^4-c^5)
 gbTrace=10
 gens gb I
 syz gens I -- never finishes
 matrix{{b-c^3}} // gens I -- crashes
 
-R = ZZ/101[a..d,MonomialOrder=>{Position=>Up,Weights=>{-1,-1,-1,-1}}]
+R = ZZ/101[a..d,MonomialOrder=>{Position=>Up,Weights=>{-1,-1,-1,-1}},Global=>false]
 I = ideal(a-b*a^2-a^3, b-a*b-c^3, a*b-b*d^4-c^5)
 J = id_(source gens I) || gens I
 gbTrace=3
@@ -23,6 +24,7 @@ gens gb homogenize(I,t)
 
 -- Test 2
 R = ZZ/101[a..d,MonomialOrder=>Weights=>{-1,-1,-1,-1}]
+R = (ZZ/101){a..d}
 I = ideal(a-a^2,a^3)
 gbTrace=3
 gens gb I
@@ -30,6 +32,7 @@ a^3 % I
 
 -- This fails
 A = ZZ/101[a,b,c,d,Weights=>{4:-1}]
+A = (ZZ/101){a..d}
 I = ideal(a*b-c^3-d^3, c*d-a^3-b^3)
 (a*b*c*d)^2 % I -- non-zero (correctly non-zero)
 (a*b*c*d)^2 % I -- now this is 0!!

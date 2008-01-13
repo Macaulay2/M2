@@ -241,9 +241,12 @@ quotient'(Matrix,Matrix) := Matrix => (f,g) -> (
      dual quotient(dual f, dual g))
 quotient(Matrix,Matrix) := Matrix => opts -> (f,g) -> (
      if instance(ring f, InexactField) and instance(ring g, InexactField)
-     and numRows g === numColumns g
-     and isFreeModule source g and isFreeModule source f
-     then return solve(g,f);
+       and numRows g === numColumns g
+       and isFreeModule source g and isFreeModule source f
+       then return solve(g,f);
+     if isQuotientOf(ZZ,ring f)
+       and isFreeModule source g and isFreeModule source f
+       then return solve(g,f);
      -- if ring g =!= R then error "expected maps over the same ring";
      M := target f;
      if M != target g then error "expected maps with the same target";
