@@ -162,7 +162,7 @@ net List := x -> horizontalJoin deepSplice (
      "}")
 
 VerticalList = new SelfInitializingType of VisibleList
-net VerticalList := x -> "{" | stack toSequence apply(x,net) | "}"
+net VerticalList := x -> stack apply(unstack netList (toList x, Boxes => false, HorizontalSpace => 1 ), s -> "{ " | s | " }")
 
 net Array := x -> horizontalJoin deepSplice (
      "[",
@@ -231,7 +231,7 @@ alignmentFunctions := new HashTable from {
      Center => centerString
      }
 
-netList List := o -> (x) -> (
+netList VisibleList := o -> (x) -> (
      x = apply(x, row -> if instance(row,List) then row else {row});
      (br,hs,vs,bx,algn) := (o.BaseRow,o.HorizontalSpace,o.VerticalSpace,o.Boxes,splice o.Alignment);
      if #x == 0 then return if bx then stack(2 : "++") else stack();
