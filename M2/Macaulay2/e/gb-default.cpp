@@ -1310,6 +1310,14 @@ bool gbA::reduce(spair *p)
 		// Before continuing, do remainder of g->g
 		tail_remainder_ZZ(g->g, this_degree);
 		lookupZZ->change_coefficient(t, g->g.f->coeff.get_mpz());
+
+		// If the element p is a generator, then we must assume that now the
+		// swapped g is a minimal generator.
+		if (p->type == SPAIR_GEN)
+		  g->minlevel = ELEM_POSSIBLE_MINGEN;
+		else if (g->minlevel = ELEM_POSSIBLE_MINGEN)
+		  p->type = SPAIR_GEN;
+
 		auto_reduce_by(t->_val);
 		if (gbTrace >= 10)
 		  {
@@ -2550,5 +2558,5 @@ void gbA::show_mem_usage()
 }
 
 // Local Variables:
-// compile-command: "make -C $M2BUILDDIR/Macaulay2/e gb-default.o"
+// compile-command: "make -C $M2BUILDDIR/Macaulay2/e"
 // End:
