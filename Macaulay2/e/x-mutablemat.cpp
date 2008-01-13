@@ -889,7 +889,7 @@ static M2_RRRorNull get_norm_start(M2_RRR p, const Ring *R)
       return 0;
     }
   M2_RRR norm = reinterpret_cast<M2_RRR>(getmem(sizeof(__mpfr_struct)));
-  mpfr_init2(norm, R->get_precision());
+  mpfr_init2(norm, mpfr_get_prec(p));
   mpfr_ui_div(norm,1,p,GMP_RNDN);
   if (!mpfr_zero_p(norm))
     {
