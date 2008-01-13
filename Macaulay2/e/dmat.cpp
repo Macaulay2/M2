@@ -46,7 +46,7 @@ template<typename CoeffRing>
 void DMat<CoeffRing>::resize(long new_nrows, long new_ncols)
 {
   long new_len = new_nrows * new_ncols;
-  if (new_len != nrows_ * ncols_)
+  if (new_len == 0 || new_len != nrows_ * ncols_)
     initialize(new_nrows, new_ncols, 0);
   else
     for (long i=0; i<new_len; i++)

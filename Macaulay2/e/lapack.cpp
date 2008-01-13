@@ -23,12 +23,21 @@ M2_arrayint_OrNull Lapack::LU(const LMatrixRR *A,
   int info;
   int min = (rows <= cols) ? rows : cols;
   M2_arrayint result = makearrayint(rows);
-  int *perm = newarray_atomic(int, min);
-
-  LapackDoubles copyA = A->make_lapack_array();
 
   L->resize(rows, min);
   U->resize(min, cols);
+
+  if (min == 0)
+    {
+      if (rows > 0)
+	for (int i=0; i<rows; i++)
+	  result->array[i] = i;
+      return result;
+    }
+
+  int *perm = newarray_atomic(int, min);
+
+  LapackDoubles copyA = A->make_lapack_array();
 
   dgetrf_(&rows, &cols, copyA,
 	  &rows, perm, &info);
@@ -177,8 +186,8 @@ bool Lapack::solve(const LMatrixRR *A, /* read only */
   return false;
 #else
   int size = A->n_rows();
-  int bsize, info;
-  int *permutation = newarray_atomic(int, size);
+  int bsize = b->n_cols();
+  int info;
 
   /* make sure matrix is square */
   if (A->n_rows() != A->n_cols())
@@ -194,10 +203,17 @@ bool Lapack::solve(const LMatrixRR *A, /* read only */
       return false;;
     }
 
+  if (size == 0)
+    {
+      x->resize(size, bsize);
+      return true;
+    }
+
+  int *permutation = newarray_atomic(int, size);
   LapackDoubles copyA = A->make_lapack_array();
   LapackDoubles copyb = b->make_lapack_array();
 
-  bsize = b->n_cols();
+
 
   dgesv_(&size, &bsize,
 	 copyA, 
@@ -239,6 +255,12 @@ bool Lapack::eigenvalues(const LMatrixRR *A, LMatrixCC *eigvals)
     ERROR("expected a square matrix");
     return false;
   }
+
+  if (size == 0)
+    {
+      eigvals->resize(0,1);
+      return true;
+    }
 
   bool ret = true;
   char dont = 'N';
@@ -298,6 +320,13 @@ bool Lapack::eigenvectors(const LMatrixRR *A,
     ERROR("expected a square matrix");
     return false;
   }
+
+  if (size == 0)
+    {
+      eigvals->resize(0,1);
+      eigvecs->resize(0,0);
+      return true;
+    }
 
   bool ret = true;
   char dont = 'N';
@@ -373,6 +402,12 @@ bool Lapack::eigenvalues_symmetric(const LMatrixRR *A, LMatrixRR *eigvals)
     ERROR("expected a square matrix");
     return false;
   }
+
+  if (size == 0)
+    {
+      eigvals->resize(0,1);
+      return true;
+    }
   
   bool ret = true;
   char dont = 'N';
@@ -429,6 +464,13 @@ bool Lapack::eigenvectors_symmetric(const LMatrixRR *A,
     return false;
   }
 
+  if (size == 0)
+    {
+      eigvals->resize(0,1);
+      eigvecs->resize(0,0);
+      return true;
+    }
+
   bool ret = true;
   char doit = 'V';
   char triangle = 'U';  /* Upper triangular part makes symmetric matrix */
@@ -484,6 +526,13 @@ bool Lapack::SVD(const LMatrixRR *A, LMatrixRR *Sigma, LMatrixRR *U, LMatrixRR *
   int cols = A->n_cols();
   int info;
   int min = (rows <= cols) ? rows : cols;
+
+  if (min == 0)
+    {
+      ERROR("expected a matrix with positive dimensions");
+      return false;
+    }
+
   int max = (rows >= cols) ? rows : cols;
   int wsize = (3*min+max >= 5*min) ? 3*min+max : 5*min;
   double *workspace = newarray_atomic(double, wsize);
@@ -544,6 +593,13 @@ bool Lapack::SVD_divide_conquer(const LMatrixRR *A, LMatrixRR *Sigma, LMatrixRR 
   int cols = A->n_cols();
   int info;
   int min = (rows <= cols) ? rows : cols;
+
+  if (min == 0)
+    {
+      ERROR("expected a matrix with positive dimensions");
+      return false;
+    }
+
   int max = (rows >= cols) ? rows : cols;
   int wsize = 4*min*min + max + 9*min;
   double *workspace = newarray_atomic(double,wsize);
@@ -614,6 +670,12 @@ bool Lapack::least_squares(const LMatrixRR *A, const LMatrixRR *b, LMatrixRR *x)
     ERROR("expected compatible right hand side");
     return false;
   }
+
+  if (min == 0 || bcols == 0)
+    {
+      x->resize(cols,bcols);
+      return true;
+    }
 
   double *copyA = A->make_lapack_array();
   double *copyb = b->make_lapack_array();
@@ -694,6 +756,12 @@ bool Lapack::least_squares_deficient(const LMatrixRR *A, const LMatrixRR *b, LMa
     return false;
   }
 
+  if (min == 0 || bcols == 0)
+    {
+      x->resize(cols,bcols);
+      return true;
+    }
+
   double *copyA = A->make_lapack_array();
   double *copyb = b->make_lapack_array();
   double *workspace = newarray_atomic(double,wsize);
@@ -766,12 +834,22 @@ M2_arrayint_OrNull Lapack::LU(const LMatrixCC *A,
   int info;
   int min = (rows <= cols) ? rows : cols;
   M2_arrayint result = makearrayint(rows);
-  int *perm = newarray_atomic(int, min);
-
-  double *copyA = A->make_lapack_array();
 
   L->resize(rows, min);
   U->resize(min, cols);
+
+  if (min == 0)
+    {
+      if (rows > 0)
+	for (int i=0; i<rows; i++)
+	  result->array[i] = i;
+      return result;
+    }
+
+
+  int *perm = newarray_atomic(int, min);
+
+  double *copyA = A->make_lapack_array();
 
   zgetrf_(&rows, &cols, copyA, 
 	  &rows, perm, &info);
@@ -864,7 +942,8 @@ bool Lapack::solve(const LMatrixCC *A, const LMatrixCC *b, LMatrixCC *x)
 
   bool ret = true;
   int size = A->n_rows();
-  int bsize, info;
+  int bsize = b->n_cols();
+  int info;
 
   /* make sure matrix is square */
   if (size != A->n_cols())
@@ -880,11 +959,16 @@ bool Lapack::solve(const LMatrixCC *A, const LMatrixCC *b, LMatrixCC *x)
       return false;
     }
 
+  if (size == 0)
+    {
+      x->resize(size, bsize);
+      return true;
+    }
+
   int *permutation = newarray_atomic(int, size);
   double *copyA = A->make_lapack_array();
   double *copyb = b->make_lapack_array();
 
-  bsize = b->n_cols();
 
   zgesv_(&size, &bsize,
 	 copyA,
@@ -927,6 +1011,12 @@ bool Lapack::eigenvalues(const LMatrixCC *A, LMatrixCC *eigvals)
     ERROR("expected a square matrix");
     return false;
   }
+
+  if (size == 0)
+    {
+      eigvals->resize(0,1);
+      return true;
+    }
 
   bool ret = true;
   char dont = 'N';
@@ -983,6 +1073,13 @@ bool Lapack::eigenvectors(const LMatrixCC *A, LMatrixCC *eigvals, LMatrixCC *eig
     ERROR("expected a square matrix");
     return false;
   }
+
+  if (size == 0)
+    {
+      eigvals->resize(0,1);
+      eigvecs->resize(0,0);
+      return true;
+    }
 
   bool ret = true;
   char dont = 'N';
@@ -1045,6 +1142,12 @@ bool Lapack::eigenvalues_hermitian(const LMatrixCC *A, LMatrixRR *eigvals)
     return false;
   }
 
+  if (size == 0)
+    {
+      eigvals->resize(0,1);
+      return true;
+    }
+
   bool ret = true;
   char dont = 'N';
   char triangle = 'U';  /* Upper triangular part makes symmetric matrix. */
@@ -1098,6 +1201,13 @@ bool Lapack::eigenvectors_hermitian(const LMatrixCC *A, LMatrixRR *eigvals, LMat
     ERROR("expected a square matrix");
     return false;
   }
+
+  if (size == 0)
+    {
+      eigvals->resize(0,1);
+      eigvecs->resize(0,0);
+      return true;
+    }
 
   bool ret = true;
   char doit = 'V';
@@ -1156,6 +1266,13 @@ bool Lapack::SVD(const LMatrixCC *A, LMatrixRR *Sigma, LMatrixCC *U, LMatrixCC *
   int cols = A->n_cols();
   int info;
   int min = (rows <= cols) ? rows : cols;
+
+  if (min == 0)
+    {
+      ERROR("expected a matrix with positive dimensions");
+      return false;
+    }
+
   int max = (rows >= cols) ? rows : cols;
   int wsize = 4*min+2*max;
   double *workspace = newarray_atomic(double,2*wsize);
@@ -1217,6 +1334,13 @@ bool Lapack::SVD_divide_conquer(const LMatrixCC *A, LMatrixRR *Sigma, LMatrixCC 
   int cols = A->n_cols();
   int info;
   int min = (rows <= cols) ? rows : cols;
+
+  if (min == 0)
+    {
+      ERROR("expected a matrix with positive dimensions");
+      return false;
+    }
+
   int max = (rows >= cols) ? rows : cols;
   int wsize = 2*min*min + 4*min + 2*max;
 
@@ -1290,6 +1414,12 @@ bool Lapack::least_squares(const LMatrixCC *A, const LMatrixCC *b, LMatrixCC *x)
     ERROR("expected compatible right hand side");
     return false;
   }
+
+  if (min == 0 || bcols == 0)
+    {
+      x->resize(cols,bcols);
+      return true;
+    }
 
   double *copyA = A->make_lapack_array();
   double *copyb = b->make_lapack_array();
@@ -1368,6 +1498,12 @@ bool Lapack::least_squares_deficient(const LMatrixCC *A, const LMatrixCC *b, LMa
     ERROR("expected compatible right hand side");
     return false;
   }
+
+  if (min == 0 || bcols == 0)
+    {
+      x->resize(cols,bcols);
+      return true;
+    }
 
   double *copyA = A->make_lapack_array();
   double *copyb = b->make_lapack_array();
