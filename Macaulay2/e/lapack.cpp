@@ -76,22 +76,83 @@ M2_arrayint_OrNull Lapack::LU(const LMatrixRR *A,
       result->array[i] = tmp;
     }
 
-#if 0
-  /* MES: I think that this commented out code is FLAWED */
-  /* set the permutation array */
-  for (int row=1; row<=min; row++) {
-    int targ = row;
-    for (int i=1; i<=min; i++) {
-      if (i == targ)
-	targ = perm[i-1];
-      else if (perm[i-1] == targ)
-	targ = i;
+  deletearray(copyA);
+  deletearray(perm);
+
+  if (info < 0)       
+    {
+      ERROR("argument passed to dgetrf had an illegal value");
+      return 0;
     }
-    result->array[row-1] = targ-1;
-  }
-  for (int i=min; i<rows; i++)
-    result->array[i] = i;
+
+  return result;
 #endif
+}
+
+#if 0
+M2_RRR Lapack::det(const LMatrixRR *A)
+{
+#if !LAPACK
+  ERROR("lapack not present");
+  return NULL;
+#else
+  int rows = A->n_rows();
+  int cols = A->n_cols();
+  int info;
+  int min = (rows <= cols) ? rows : cols;
+  M2_arrayint result = makearrayint(rows);
+  int *perm = newarray_atomic(int, min);
+
+  LapackDoubles copyA = A->make_lapack_array();
+
+  L->resize(rows, min);
+  U->resize(min, cols);
+
+  dgetrf_(&rows, &cols, copyA,
+	  &rows, perm, &info);
+
+  /* set the lower triangular matrix L */
+  __mpfr_struct *vals = L->get_array();
+  int loc = 0;
+  for (int j=0; j<min; j++) {
+    for (int i=0; i<rows; i++) {
+      assert(vals < L->get_array() + L->n_rows() * L->n_cols());
+      if (i > j) {
+	mpfr_set_d(vals++,copyA[loc++], GMP_RNDN);
+      } else if (i == j) {
+	mpfr_set_si(vals++, 1, GMP_RNDN);
+	loc++;
+      } else {
+	mpfr_set_si(vals++, 0, GMP_RNDN);
+	loc++;
+      }
+    }
+  }
+
+  /* set the upper triangular matrix U */
+  vals = U->get_array();
+  loc = 0;
+  for (int j=0; j<cols; j++) {
+    for (int i=0; i<min; i++) {
+      assert(vals < U->get_array() + U->n_rows() * U->n_cols());
+      if (i <= j) {
+	mpfr_set_d(vals++, copyA[loc++], GMP_RNDN);
+      } else {
+	mpfr_set_si(vals++, 0, GMP_RNDN);
+	loc ++;
+      }
+    }
+    loc += (rows-min);;
+  }
+
+  for (int i=0; i<rows; i++) result->array[i] = i;
+  for (int i=0; i<min; i++)
+    {
+      int thisloc = perm[i]-1;
+      int tmp = result->array[thisloc];
+      result->array[thisloc] = result->array[i];
+      result->array[i] = tmp;
+    }
 
   deletearray(copyA);
   deletearray(perm);
@@ -105,6 +166,7 @@ M2_arrayint_OrNull Lapack::LU(const LMatrixRR *A,
   return result;
 #endif
 }
+#endif
 
 bool Lapack::solve(const LMatrixRR *A, /* read only */
 		   const LMatrixRR *b, /* read only */
