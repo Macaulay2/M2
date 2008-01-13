@@ -958,7 +958,7 @@ document { Key => {(betti,BettiTally)},
      ///
      }
 
-document { Key => {(netList, List),
+document { Key => {(netList, VisibleList),
 	  netList,
 	  [netList, Boxes],
 	  [netList, BaseRow],

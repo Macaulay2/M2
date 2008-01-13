@@ -762,14 +762,14 @@ Gamma(e:Expr):Expr := (
      else buildErrorPacket("expected a number")
      );
 setupfun("Gamma",Gamma);
-lngamma(e:Expr):Expr := (
-     when e
-     is x:RR do Expr(lngamma(x))			    -- # typical value: lngamma, RR, RR
-     is x:ZZ do Expr(lngamma(toRR(x)))			    -- # typical value: lngamma, ZZ, RR
-     is x:QQ do Expr(lngamma(toRR(x)))			    -- # typical value: lngamma, QQ, RR
-     else buildErrorPacket("expected a number")
-     );
-setupfun("lngamma",lngamma);
+--lngamma(e:Expr):Expr := (
+--     when e
+--     is x:RR do Expr(lngamma(x))			    -- typical value: lngamma, RR, RR
+--     is x:ZZ do Expr(lngamma(toRR(x)))			    -- typical value: lngamma, ZZ, RR
+--     is x:QQ do Expr(lngamma(toRR(x)))			    -- typical value: lngamma, QQ, RR
+--     else buildErrorPacket("expected a number")
+--     );
+--setupfun("lngamma",lngamma);
 export lgamma(x:RR):Expr := (
      z := newRR(precision(x));
      i := 0;

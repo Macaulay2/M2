@@ -25,6 +25,12 @@ toCC(Number) := toCC0
 toCC(ZZ,Number) := toCC0
 toCC(ZZ,Number,Number) := toCC0
 
+lngamma = method()
+lngamma ZZ := lngamma QQ := lngamma RR := x -> (
+     (y,s) := lgamma x;
+     if s == -1 then y + ii * numeric_(precision y) pi else y
+     )
+
 -- new types
 
 InexactField = new Type of EngineRing

@@ -40,11 +40,11 @@ InfiniteNumber ? Thing := (x,y) -> if x === infinity then symbol > else symbol <
 
 texMath InfiniteNumber := i -> if i === infinity then "\\infty" else "{-\\infty}"
 
-max Sequence := max List := x -> (
+max VisibleList := x -> (
      m := neginfinity;
      scan(x, n -> if n > m then m = n);
      m)
-min Sequence := min List := x -> (
+min VisibleList := x -> (
      m := infinity;
      scan(x, n -> if m > n then m = n);
      m)

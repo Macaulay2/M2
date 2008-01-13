@@ -1373,10 +1373,10 @@ export eint(x:RR):RR := (
      z := newRR(precision0(x));
      Ccode( void, "mpfr_eint((__mpfr_struct *)", z, ",(__mpfr_struct *)", x, ", GMP_RNDN)" );
      z);
-export lngamma(x:RR):RR := (
-     z := newRR(precision0(x));
-     Ccode( void, "mpfr_lngamma((__mpfr_struct *)", z, ",(__mpfr_struct *)", x, ", GMP_RNDN)" );
-     z);
+--export lngamma(x:RR):RR := (
+--     z := newRR(precision0(x));
+--     Ccode( void, "mpfr_lngamma((__mpfr_struct *)", z, ",(__mpfr_struct *)", x, ", GMP_RNDN)" );
+--     z);
 export zeta(x:RR):RR := (
      z := newRR(precision0(x));
      Ccode( void, "mpfr_zeta((__mpfr_struct *)", z, ",(__mpfr_struct *)", x, ", GMP_RNDN)" );
