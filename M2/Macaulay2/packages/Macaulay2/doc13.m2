@@ -424,14 +424,20 @@ document { Key => VerticalList,
      Headline => "a type of visible self-initializing list that prints vertically",
      Usage => "VerticalList x",
      Inputs => { "x" => List },
-     "Almost all operations on lists apply to vertical lists, since it is a ", TO VisibleList, ".  The
+     Outputs => { VerticalList },
+     "Many operations on lists apply to vertical lists, since it is a ", TO VisibleList, ".  The
      main difference is the way that it is displayed.",
      EXAMPLE lines ///
      	 a .. e
 	 v = VerticalList oo
      	 v_1
-	 length v	 
-	 ///
+	 length v
+	 ///,
+     "It is easy to get a normal list back for those operations 
+     which do not apply to vertical lists:",
+     EXAMPLE lines ///
+     	 toList v
+         ///
     }
 
 document { Key => ForestNode,
