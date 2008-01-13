@@ -42,6 +42,7 @@ document { Key => {lngamma,(lngamma, QQ),(lngamma, ZZ),(lngamma, RR)},
      	  lngamma 2.1
 	  lngamma(-1.1)
 	  lngamma(-2.1)
+	  lngamma (-2.000000000000000000000000000000001p120)
      ///
      }
 document { Key => {zeta,(zeta, QQ),(zeta, ZZ),(zeta, RR)},
@@ -125,12 +126,13 @@ document {
      Outputs => { CC => { "the square root of -1, converted to a numeric value of the correct precision, when necessary." }},
      EXAMPLE lines ///
      	  ii
-     	  +ii
      	  ii+1p100
 	  toCC ii
 	  numeric ii
 	  numeric_100 ii
      ///,
+     "Here is the simplest way to convert ii to a numeric value:",
+     EXAMPLE "+ii",
      SeeAlso => {numeric}
      }
 

@@ -124,7 +124,7 @@ document {
      as an arbitrary precision floating point number, using the ", TO "MPFR", " library.",
      EXAMPLE "3.14159",
      "The precision is measured in bits, is visible in the ring displayed on
-     the second output line, and can be recovered using ", TO "precision", ".",
+     the second of each pair of output lines, and can be recovered using ", TO "precision", ".",
      EXAMPLE "precision 3.14159",
      "For real numbers, the functions ", TO "class", " and ", TO "ring", " yield different
      results.  That allows numbers of various precisions
@@ -169,21 +169,43 @@ document {
      Key => CC,
      Headline => "the class of all complex numbers",
      "In Macaulay 2, complex numbers are represented as floating point numbers, and so are 
-     only approximate.  The symbol ", TO "ii", " represents the square root of -1.",
+     only approximate.  The symbol ", TO "ii", " represents the square root of -1 in many numeric
+     contexts.  A complex number is obtained by using the symbolic constant ", TO "ii", " or the conversion
+     functions ", TO "toCC", " and ", TO "numeric", ", in combination with real numbers (see ", TO "RR", ").
+     It is stored internally as a pair of arbitrary precision floating point real numbers, using 
+     the ", TO "MPFR", " library.",
      EXAMPLE {
 	  "z = 3-4*ii",
       	  "z^5",
       	  "1/z",
+	  "+ii",
+	  "numeric_200 ii",
 	  },
-     "Arithmetic involving ", TO "ZZ", ", ", TO "QQ", ", ", TO "RR", ", and ", TO "CC", " works as one might expect.",
+     "Complex numbers are ordered lexicographically, mingled with real numbers.",
      EXAMPLE {
-	  "3 + ii",
-	  "4/5 + 12*ii",
-	  "3 == 3 + 0*ii",
-	  "(2-ii)^5",
-	  "(1+ii)/3"
+	  "sort {1+ii,2+ii,1-ii,2-ii,1/2,2.1,7/5}"
 	  },
-     SeeAlso => {toCC, numeric, precision, format, "printingPrecision", "printingLeadLimit", "printingTrailLimit", "printingSeparator"}
+     "The precision is measured in bits, is visible in the ring displayed on
+     the second of each pair of output lines, and can be recovered using ", TO "precision", ".",
+     EXAMPLE "precision z",
+     "For complex numbers, the functions ", TO "class", " and ", TO "ring", " yield different
+     results.  That allows numbers of various precisions
+     to be used without creating a new ring for each precision.",
+     EXAMPLE {"class z", "ring z"},
+     "A computation involving numbers of different precisions has a result with the minimal precision occurring.
+     Numbers that appear alone on an output line are displayed with all their meaningful digits.
+     (Specifying 100 bits of precision yields about 30 decimal digits of precision.)",
+     EXAMPLE "3p100+2p90e3*ii",
+     "Numbers displayed inside more complicated objects are printed with the number of digits
+     specified by ", TO "printingPrecision", ".",
+     EXAMPLE {"printingPrecision","{1/3.*ii,1/3p100*ii}"},
+     "Use ", TO "toExternalString", " to produce something that, when encountered as input, will reproduce
+     exactly what you had before.",
+     EXAMPLE lines ///
+     	  toExternalString {1/3.*ii,1/3p100*ii}
+     ///,
+     Caveat => { "Currently, most transcendental functions are not implemented for complex arguments." },
+     SeeAlso => {"ii", toCC, toRR, numeric, precision, format, "printingPrecision", "printingLeadLimit", "printingTrailLimit", "printingSeparator"}
      }
 
 document {
