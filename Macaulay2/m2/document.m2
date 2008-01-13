@@ -849,7 +849,8 @@ processInputOutputItems := (key,fn) -> x -> (
 	       )
 	  ) x;
      default := if optsymb =!= null and text =!= null and #text > 0 then (
-	  if fn === null or fn === () then error ("default value for option ",toString optsymb, " not accessible, function not specified");
+	  if fn === null or fn === ()
+	  then error ("default value for option ",toString optsymb, " not accessible, base function not specified (with BaseFundtion => ...)");
 	  t := toString (options fn)#optsymb;
 	  if not match("^\\{\\*Function",t) then SPAN{"default value " ,t});
      r := SPAN splice between_", " nonnull nonempty { 

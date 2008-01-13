@@ -284,11 +284,12 @@ document {
      Key => {fillMatrix,(fillMatrix, MutableMatrix),(fillMatrix, MutableMatrix, ZZ),[fillMatrix,Density],[fillMatrix,UpperTriangular]},
      SYNOPSIS (
      	  Usage => "fillMatrix M",
+     	  BaseFunction => fillMatrix,
 	  Inputs => {
 	       "M"=>MutableMatrix,
 	       Density => RR => {"the fraction of entries of ", TT "M", " to be replaced"},
 	       UpperTriangular => Boolean => "whether to fill entries only above the diagonal"
-	       }
+	       },
 	  Outputs => {"M"},
 	  Consequences => {{ "some entries of M are replaced with randomly generated numbers" }},
 	  EXAMPLE lines ///
@@ -302,9 +303,9 @@ document {
 	  ),
      SYNOPSIS (
      	  Usage => "fillMatrix(M,n)",
-	  Inputs => { "M"=>MutableMatrix, "n" => ZZ }
+	  Inputs => { "M"=>MutableMatrix, "n" => ZZ },
 	  Outputs => {"M"},
-	  Consequences => {{ "a random entry of M is replaced with a randomly generated numbers, ", TT "n", " times" }},
+	  Consequences => {{ "a random entry of M is replaced with a randomly generated number, ", TT "n", " times" }},
 	  EXAMPLE lines ///
 	       printingPrecision = 2
 	       fillMatrix(mutableMatrix(ZZ,5,10),25)
@@ -323,7 +324,7 @@ document {
      Inputs => {
 	  "M"=>{ofClass{MutableMatrix,Matrix,RingElement,Number}},
 	  "p"=>{ofClass{RR,InfiniteNumber}, ", specifying which norm to compute.  Currently, only ", TT "p=infinity", " is accepted."}
-	  }
+	  },
      Outputs => {TEX{"the $L^p$-norm of ", TT "M", " computed to the minimum of the precisions of ", TT "M", " and of ", TT "p",
 	       "."}},
      EXAMPLE lines ///

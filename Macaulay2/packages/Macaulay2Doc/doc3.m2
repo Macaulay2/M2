@@ -1379,11 +1379,11 @@ document { Key => {precision,
 	  (precision, QuotientRing), (precision, Ring),
 	  (precision, MutableMatrix),(precision, RingElement),(precision, PolynomialRing),
 	  (precision, InexactNumber),(precision, InexactField),(precision, Matrix)
-	  }
+	  },
      Usage => "precision x",
      Inputs => { "x" => {ofClass{Ring,Matrix,RingElement,Number}}},
      Outputs => { ZZ => {"the precision to which ", TT "x", " or its instances are stored"}},
-     EXAMPLE linex ///
+     EXAMPLE lines ///
      	  precision 3p111
 	  precision (RR[x])
 	  precision 3
