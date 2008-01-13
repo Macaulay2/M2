@@ -1644,26 +1644,24 @@ document {
      Usage => "random n",
      Inputs => {"n"=> {}},
      Outputs => {ZZ => {"a random integer in the range ", TT "0 .. n-1"}},
-     "Here is a basic example:",
-	EXAMPLE "random 57",
-	"Here is an example using the ", TO "tally", " command.",
-     EXAMPLE "tally apply(100, i -> random 10)",
-     SeeAlso => {"setRandomSeed"}
+     EXAMPLE lines ///
+     random 57
+     random 10^50
+     tally apply(100, i -> random 7)
+     ///,
+     SeeAlso => {setRandomSeed, tally}
      }
 
 document {
      Key => (random, ZZ,ZZ), 
      Headline => "random integer in a range",
-	Usage => "random(min,max)",
-	Inputs => {"min","max"},
-	Outputs => {ZZ => {"a random integer in the range ", TT "min .. max"}},
-     Caveat => "doesn't correctly handle the case when the length of the range is larger
-     than 2^31-1.",
-	EXAMPLE lines ///
-	    tally apply (10, i -> random(5,2^34+5))
-	    ///,
-	"Here is an example using the ", TO "tally", " command.",
-     EXAMPLE "tally apply(100, i -> random(10,15))",
+     Usage => "random(min,max)",
+     Inputs => {"min","max"},
+     Outputs => {ZZ => {"a random integer in the range ", TT "min .. max"}},
+     EXAMPLE lines ///
+     for i to 10 list random(100,200)
+     tally apply(100, i -> random(10,15))
+     ///,
      SeeAlso => {"setRandomSeed"}
      }
 
@@ -1707,7 +1705,7 @@ document {
      SYNOPSIS (
 	  Usage => "random(d,R)",
 	  Inputs => { 
-	       "d" => {ofClass(ZZ,List), ", the degree or multi-degree to use"},
+	       "d" => {ofClass{ZZ,List}, ", the degree or multi-degree to use"},
 	       "R" => Ring
 	       },
 	  Outputs => { { "a random homogeneous element of the ring ", TT "R", " of degree ", TT "d" } },
