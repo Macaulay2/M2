@@ -10,9 +10,6 @@ diag(List) := (L) -> (
      scan(#L, i -> M_(i,i) = L#i);
      matrix M)
 
-v = solve(matrix {{1.0, 2.01}, {3., 4.}, {5., 8.}},matrix {{13.01}, {29.01}, {55.01}},ClosestFit=>true,MaximalRank=>true)
-assert (norm(v - matrix {{3.}, {5.}}) < .1)
-
 checkLU = method()
 checkLU(List,Matrix,Matrix) := (P,L,U) -> (
      R := ring L;
@@ -55,8 +52,17 @@ checkClosestFit(Matrix,Matrix,Symbol) := (M,b,deficient) -> (
 checkEigenvectors = method()
 checkEigenvectors Matrix := (M) -> (
      -- compute eigenvectors, and eigenvalues
-     E2 := eigenvalues M;
-     (E,V) := eigenvectors M;
+     E2 = eigenvalues(M);
+     (E,V) = eigenvectors M;
+     n1 := norm(E-E2); -- make sure these are the same
+     -- for each eigenvalue and eigenvector, compute Mv-ev
+     (E,V,n1);
+     norm(M*V - V * diagonalMatrix flatten entries E)
+     )
+checkEigenvectors(Matrix,Symbol) := (M,Hermit) -> (
+     -- compute eigenvectors, and eigenvalues
+     E2 = eigenvalues(M,Hermitian=>true);
+     (E,V) = eigenvectors(M,Hermitian=>true);
      n1 := norm(E-E2); -- make sure these are the same
      -- for each eigenvalue and eigenvector, compute Mv-ev
      (E,V,n1);
@@ -143,6 +149,22 @@ assert(checkEigenvectors M < 1e-14)
 M = random(CC^100,CC^100);
 eigenvalues M
 
+--------------------------------------
+-- Eigenvalues and eigenvectrs of   --
+-- Symmetric and Hermitian matrices --
+--------------------------------------
+M1 = random(RR^3,RR^3)
+M = M1 + transpose M1
+checkEigenvectors(M, Her)
+E
+V
+E2
+
+M1 = random(CC^3,CC^3)
+M2 = matrix apply(entries transpose M1, v -> apply(v, conjugate))
+M = M1 + M2
+checkEigenvectors(M, Her)
+
 --------------
 -- Test SVD --
 --------------
@@ -222,3 +244,16 @@ A = matrix"1,2,3,4,5;1,4,8,10,13" ** CC
 b = matrix{{-ii},{1+ii}}
 x = solve(A,b,ClosestFit=>true,MaximalRank=>true)
 checkClosestFit(A,b)
+
+v = solve(matrix {{1.0, 2.01}, {3., 4.}, {5., 8.}},
+     matrix {{13.01}, {29.01}, {55.01}},
+     ClosestFit=>true,MaximalRank=>true)
+assert (norm(v - matrix {{3.}, {5.}}) < .1)
+
+---------------------------------
+-- SVD smaller rank -------------
+---------------------------------
+M1 = random(RR^3,RR^6)
+M2 = random(RR^6,RR^3)
+SVD(M2*M1)
+2.^-53
