@@ -1766,20 +1766,20 @@ M2_RRRorNull Matrix::norm(M2_RRR p) const
       ERROR("expected ring over an RR or CC");
       return 0;
     }
-  M2_RRR norm = reinterpret_cast<M2_RRR>(getmem(sizeof(__mpfr_struct)));
-  mpfr_init2(norm, mpfr_get_prec(p));
-  mpfr_ui_div(norm,1,p,GMP_RNDN);
-  if (!mpfr_zero_p(norm))
+  M2_RRR nm = reinterpret_cast<M2_RRR>(getmem(sizeof(__mpfr_struct)));
+  mpfr_init2(nm, mpfr_get_prec(p));
+  mpfr_ui_div(nm,1,p,GMP_RNDN);
+  if (!mpfr_zero_p(nm))
     {
       ERROR("Lp norm only implemented for p = infinity");
-      mpfr_clear(norm);
+      mpfr_clear(nm);
       return 0;
     }
 
   for (int i=0; i<n_cols(); i++)
-    R->vec_increase_maxnorm(norm, elem(i));
+    R->vec_increase_maxnorm(nm, elem(i));
   
-  return norm;
+  return nm;
 }
 
 
