@@ -1,3 +1,5 @@
+-- Seems fixed: 12 Jan 2008.
+
 restart
 R = ZZ/32003[x,y,z]
 time scan(1..100000, i -> R^1000);
