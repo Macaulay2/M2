@@ -1,4 +1,4 @@
-newPackage ("Macaulay2",
+newPackage ("Macaulay2Doc",
      InfoDirSection => "Macaulay 2 and its packages", 
      AuxiliaryFiles => true,
      Headline => "Macaulay 2 documentation", 
@@ -9,15 +9,15 @@ newPackage ("Macaulay2",
      HomePage => "http://www.math.uiuc.edu/Macaulay2/",
      Version => version#"VERSION")
 
-Core#"base packages" = prepend("Macaulay2",Core#"base packages")
+Core#"base packages" = prepend("Macaulay2Doc",Core#"base packages")
 
 beginDocumentation()
 
 load replace("\\.m2$","/loads.m2",toAbsolutePath currentFileName)
 
-if keys Macaulay2#"private dictionary" =!= {} 
+if keys Macaulay2Doc#"private dictionary" =!= {} 
 then error splice("Macaulay2 documentation: global symbols inadvertently defined: ", 
-     toSequence between_", " apply(values Macaulay2#"private dictionary", s -> (
+     toSequence between_", " apply(values Macaulay2Doc#"private dictionary", s -> (
 	       p := locate s;
 	       toString s | " [" | p#0 | ":" | toString p#1 | "]"
 	       )))

@@ -237,7 +237,7 @@ newPackage(String) := opts -> (title) -> (
      dictionaryPath = join( {newpkg#"private dictionary"}, {Core.Dictionary, OutputDictionary, PackageDictionary});
      if Core#?"base packages" then (
 	  if member(title,Core#"base packages") then (
-	       if title =!= "Macaulay2" and member("Macaulay2",Core#"base packages") then needsPackage "Macaulay2";
+	       if title =!= "Macaulay2" and member("Macaulay2",Core#"base packages") then needsPackage "Macaulay2Doc";
 	       )
 	  else scan(reverse Core#"base packages", needsPackage)
 	  );

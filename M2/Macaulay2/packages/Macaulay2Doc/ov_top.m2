@@ -1,4 +1,9 @@
 document {
+     Key => Macaulay2Doc,
+     "This package holds the documentation of the core part of Macaulay2."
+     }
+
+document {
      Key => "Macaulay2",
      PARA IMG ("src" => LAYOUT#"packagesrc" "Style" | "9planets.gif", "alt" => "image of nine planets"),
      "Macaulay 2 is a software system devoted to supporting research in 

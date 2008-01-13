@@ -2,19 +2,19 @@
 
 checkLoadDocumentation = () -> (
      if (
-	  not isGlobalSymbol "Macaulay2"
+	  not isGlobalSymbol "Macaulay2Doc"
 	  or
-	  class value getGlobalSymbol "Macaulay2" =!= Package
+	  class value getGlobalSymbol "Macaulay2Doc" =!= Package
 	  or
-	  not member(value getGlobalSymbol "Macaulay2", loadedPackages)
+	  not member(value getGlobalSymbol "Macaulay2Doc", loadedPackages)
 	  or
-	  not member((value getGlobalSymbol "Macaulay2").Dictionary, dictionaryPath)
+	  not member((value getGlobalSymbol "Macaulay2Doc").Dictionary, dictionaryPath)
 	  )
      then (
-	  -- the documentation for things in the package Core is in the package Macaulay2 !
+	  -- the documentation for things in the package Core is in the package Macaulay2Doc !
 	  oldnotify := notify;
 	  notify = false;
-	  needsPackage "Macaulay2";
+	  needsPackage "Macaulay2Doc";
 	  notify = oldnotify;
 	  ))
 
@@ -655,7 +655,7 @@ apropos String := (pattern) -> (
 headline = method(Dispatch => Thing)
 headline Thing := key -> getOption(key,Headline)	    -- old method
 headline FinalDocumentTag := headline DocumentTag := tag -> (
-     if debugLevel > 0 and class DocumentTag.Key tag === Array and first DocumentTag.Key tag === SYNOPSIS then error "debug me";
+
      d := fetchPrimaryRawDocumentation tag;
      if d === null then (
 	  -- if debugLevel > 0 and formattedKey tag == "Ring ^ ZZ" then error "debug me";
@@ -1150,7 +1150,7 @@ documentationValue(Symbol,Package) := (s,pkg) -> if pkg =!= Core then (
 		    )
 	       },
 	  DIV1 { SUBSECTION "Version", "This documentation describes version ", pkg.Options.Version, " of ", pkg#"title", "." },
-	  if pkg#"title" =!= "Macaulay2" then DIV1 {SUBSECTION "Source code", "The source code is in the file ", HREF { LAYOUT#"packages" | fn, fn }, "."},
+	  if pkg#"title" =!= "Macaulay2Doc" then DIV1 {SUBSECTION "Source code", "The source code is in the file ", HREF { LAYOUT#"packages" | fn, fn }, "."},
 	  if #e > 0 then DIV1 {
 	       SUBSECTION "Exports",
 	       fixup UL {

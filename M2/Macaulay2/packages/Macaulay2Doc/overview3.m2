@@ -179,7 +179,7 @@ document {
 	  the main Macaulay 2 system.  The remaining entries are functions.  These provide paths to various
 	  types of files associated with packages, and accept a string containing the name of the package
 	  as argument.  Finally, for convenience, many Macaulay 2 files are regarded as being associated
-	  with a special package called ", TO2{"Macaulay2::Core", "Core"}, ", and the corresponding documentation files
+	  with a special package called ", TO2{"Macaulay2Doc::Core", "Core"}, ", and the corresponding documentation files
 	  are part of the package ", TT "Macaulay2", "."
      	  },
      EXAMPLE "LAYOUT",

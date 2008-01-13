@@ -1,6 +1,6 @@
 -- startup.m2
 
--- this file gets incorporated into the executable file bin/Macaulay2 as the string 'startupString2'
+-- this file gets incorporated into the executable file bin/M2 as the string 'startupString2'
 
 --		Copyright 1993-2003 by Daniel R. Grayson
 
