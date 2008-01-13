@@ -195,7 +195,7 @@ SVD Matrix := o -> A -> (
      if not instance(k,InexactField) then error "eigenvalues requires matrices over RR or CC";
      A = mutableMatrix(A,Dense=>true);
      (Sigma,U,VT) := SVD(A,o);
-     (matrix Sigma,matrix U,matrix VT))
+     (VerticalList flatten entries matrix Sigma,matrix U,matrix VT))
      
 -- Local Variables:
 -- compile-command: "make -C $M2BUILDDIR/Macaulay2/m2 "
