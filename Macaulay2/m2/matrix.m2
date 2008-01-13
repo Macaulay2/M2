@@ -400,6 +400,7 @@ numColumns Matrix := M -> numgens cover source M
 --------------------------------------------------------------------------
 map(Module) := Matrix => options -> (M) -> map(M,M,1)
 
+map(Module,Module,Number) := 
 map(Module,Module,RingElement) := Matrix => options -> (M,N,r) -> (
      R := ring M;
      if r == 0 then new Matrix from {

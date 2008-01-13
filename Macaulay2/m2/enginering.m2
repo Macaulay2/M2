@@ -1,5 +1,5 @@
 --		Copyright 1995-2002 by Daniel R. Grayson
-RingElement = new Type of BasicList
+
 RingElement.synonym = "ring element"
 value RingElement := identity
 raw RingElement := f -> f#0

@@ -26,18 +26,20 @@ target Matrix := f -> f.target
 precision Matrix := precision @@ ring
 
 lift(Matrix,InexactNumber) := opts -> (M,RR) -> lift(M,default RR,opts)
-lift(Matrix,Nothing') := 
 lift(Matrix,RingElement) := 
 lift(Matrix,Number) := Matrix => opts -> (f,S) -> (
+     R := ring f;
+     if R === S then return f;
      if not isFreeModule target f or not isFreeModule source f then error "lift: expected source and target to be free modules";
-     lift(f, ring f, S, opts))     
+     lift(f, R, S, opts))     
 
 promote(Matrix,InexactNumber) := (M,RR) -> promote(M,default RR)
-promote(Matrix,Nothing') := 
 promote(Matrix,RingElement) := 
 promote(Matrix,Number) := Matrix => (f,S) -> (
-     if not isFreeModule target f or not isFreeModule source f then error "lift: expected source and target to be free modules";
-     promote(f, ring f, S))
+     R := ring f;
+     if R === S then return f;
+     if not isFreeModule target f or not isFreeModule source f then error "promote: expected source and target to be free modules";
+     promote(f, R, S))
 
 scan( {ZZ,QQ}, K -> (
 	  promote(List,K,K) := (m,K,L) -> m;

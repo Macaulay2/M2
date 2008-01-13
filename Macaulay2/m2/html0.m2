@@ -110,8 +110,15 @@ PARA       = withQname_"p" new MarkUpType of HypertextParagraph	    -- double sp
 
 ExampleItem = withQname_"code" new MarkUpType of Hypertext
 EXAMPLE = method(Dispatch => Thing)
-EXAMPLE VisibleList := x -> TABLE splice { "class" => "examples", apply(nonempty trimfront requirestrings nonnull toSequence x, item -> TR TD ExampleItem item) }
-EXAMPLE String := x -> EXAMPLE {x}
+EXAMPLE VisibleList := x -> (
+     TABLE splice {
+     	  "class" => "examples", apply(nonempty trimfront requirestrings nonnull toSequence x, item -> TR TD ExampleItem item) }
+     )
+EXAMPLE String := x -> (
+     if #x == 0 then error "empty example string";
+     if x#0 == newline then error "empty first line in example";
+     EXAMPLE {x}
+     )
 
 PRE        = new MarkUpType of HypertextParagraph
 TITLE      = new MarkUpType of HypertextParagraph

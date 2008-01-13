@@ -501,6 +501,7 @@ setupconst("RingFamily",Expr(ringFamilyClass));
 setupconst("InexactFieldFamily",Expr(inexactNumberTypeClass));
 setupconst("RR",Expr(RRClass));
 setupconst("CC",Expr(CCClass));
+setupconst("RingElement",Expr(ringElementClass));
 setupconst("Number",Expr(numberClass));
 setupconst("InexactNumber",Expr(inexactNumberClass));
 setupconst("RawObject",Expr(rawObjectClass));

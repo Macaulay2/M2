@@ -173,104 +173,94 @@ concatBlocks = mats -> (
 
 Matrix.matrix = options -> (f) -> concatBlocks f
 
+commonRing = method()
+trythese := rings -> ring try sum apply(rings, R -> 0_R) else error "common ring not found"
+commonRing List := f -> (
+     f = flatten f;
+     if #f == 0 then return ZZ;
+     types := unique apply(f, class);
+     if # types === 1 and instance(types#0,Ring) then return types#0;
+     rings := if all(types, T -> instance(T,Ring)) then types else unique apply(f,ring);
+     ring try sum apply(rings, R -> 0_R) else error "common ring not found")
+
 matrixTable := options -> (f) -> (
+     R := commonRing f;
+     havemat := false;
+     f = applyTable(f, x -> (
+	       if instance(x,Matrix) then havemat = true
+	       else if not ( instance(x,RingElement) or instance(x,Number) )
+	       then error "expected numbers, ring elements, and matrices";
+	       promote(x,R)));
+     if not havemat then return map(R^#f,, f, options);
      types := unique apply(flatten f, class);
-     if # types === 1 then (
-	  type := types#0;
-	  if instance(type,Ring) then (
-	       R := type;
-	       map(R^#f,, f, options))
-	  else if instance(type,InexactFieldFamily) then (
-	       rings := unique apply(flatten f, ring);
-	       if # rings === 1 then (
-		    R = rings#0;
-		    map(R^#f,, f, options))
-	       else (
-		    prec := min apply(flatten f, precision);
-		    f = applyTable(f, numeric_prec);
-		    R = ring f#0#0;
-		    map(R^#f,, f, options)))
-	  else if type.?matrix then (type.matrix options)(f)
-	  else error "no method for forming a matrix from elements of this type")
-     else if all(types, T -> instance(T,Ring) or instance(T,InexactFieldFamily)) then (
-	  R = ring (
-	       try sum apply(types, R -> 0_R)
-	       else error "couldn't put matrix elements into the same ring"
-	       );
-	  map(R^#f,,f,options))
-     else if all(types, T -> instance(T,Ring) or T === Matrix) then (
-	  rings = unique apply(select(flatten f,m -> class m === Matrix), ring);
-	  if #rings > 1 then error "matrices over different rings";
-	  R = rings#0;
-	  f = apply(f, row -> new MutableList from row);
-	  m := #f;
-	  n := #f#0;
-	  tars := new MutableHashTable;
-	  srcs := new MutableHashTable;
-	  scan(m, row -> scan(n, col-> (
-			 r := f#row#col;
-			 if instance(r, Matrix) then (
-			      if tars#?row then (
-				   if tars#row != target r then error "expected matrices in the same row to have equal targets";
-				   )
-			      else tars#row = target r;
-			      if srcs#?col then (
-				   if srcs#col != source r then error "expected matrices in the same column to have equal sources";
-				   )
-			      else srcs#col = source r;
-			      ))));
-	  scan(m, i->scan(n, j-> (
-			 r := f#i#j;
-			 if instance(class r,Ring) and r != 0 then (
-			      r = R#0 + r;
-			      d := degree r;
-			      if tars#?i then (
-				   M := tars#i;
-				   if srcs#?j then (
-					N := srcs#j;
-					if apply(degrees M, e -> e + d) =!= degrees N 
-					then error ("matrices not compatible");
-					f#i#j = map(M,N,r))
-				   else (
-					srcs#j = N = M ** R^{-d};
-					f#i#j = map(M,N,r)))
+     if # types === 1 and types#0 .?matrix then return ( types#0 .matrix options)(f);
+     f = apply(f, row -> new MutableList from row);
+     m := #f;
+     n := #f#0;
+     tars := new MutableHashTable;
+     srcs := new MutableHashTable;
+     scan(m, row -> scan(n, col-> (
+		    r := f#row#col;
+		    if instance(r, Matrix) then (
+			 if tars#?row then (
+			      if tars#row != target r then error "expected matrices in the same row to have equal targets";
+			      )
+			 else tars#row = target r;
+			 if srcs#?col then (
+			      if srcs#col != source r then error "expected matrices in the same column to have equal sources";
+			      )
+			 else srcs#col = source r;
+			 ))));
+     scan(m, i->scan(n, j-> (
+		    r := f#i#j;
+		    if not instance(r,Matrix) and r != 0 then (
+			 d := degree r;
+			 if tars#?i then (
+			      M := tars#i;
+			      if srcs#?j then (
+				   N := srcs#j;
+				   if apply(degrees M, e -> e + d) =!= degrees N 
+				   then error ("matrices not compatible");
+				   f#i#j = map(M,N,r))
 			      else (
-				   if srcs#?j then (
-					N = srcs#j;
-					tars#i = M = N ** R^{d};
-					f#i#j = map(M,N,r))
-				   else (
-					tars#i = M = R^1;
-					srcs#j = N = R^{-d};
-					f#i#j = map(M,N,r)))))));
-	  scan(m, i->scan(n, j-> (
-			 r := f#i#j;
-			 if r == 0 then (
-			      if tars#?i then (
-				   M := tars#i;
-				   if srcs#?j then (
-					N := srcs#j;
-					f#i#j = map(M,N,0);)
-				   else (
-					srcs#j = M;
-					f#i#j = map(M,M,0); ) )
+				   srcs#j = N = M ** R^{-d};
+				   f#i#j = map(M,N,r)))
+			 else (
+			      if srcs#?j then (
+				   N = srcs#j;
+				   tars#i = M = N ** R^{d};
+				   f#i#j = map(M,N,r))
 			      else (
-				   if srcs#?j then (
-					N = srcs#j;
-					tars#i = N;
-					f#i#j = map(N,N,0);
-					)
-				   else (
-					M = tars#i = srcs#j = R^1;
-					f#i#j = map(M,M,0);
-					))))));
-	  f = toList \ f;
-	  mm := concatBlocks f;
-	  if options.Degree === null
-	  then mm
-	  else fixDegree(mm,options.Degree)
-	  )
-     else (error "expected ring elements or matrices";))
+				   tars#i = M = R^1;
+				   srcs#j = N = R^{-d};
+				   f#i#j = map(M,N,r)))))));
+     scan(m, i->scan(n, j-> (
+		    r := f#i#j;
+		    if r == 0 then (
+			 if tars#?i then (
+			      M := tars#i;
+			      if srcs#?j then (
+				   N := srcs#j;
+				   f#i#j = map(M,N,0);)
+			      else (
+				   srcs#j = M;
+				   f#i#j = map(M,M,0); ) )
+			 else (
+			      if srcs#?j then (
+				   N = srcs#j;
+				   tars#i = N;
+				   f#i#j = map(N,N,0);
+				   )
+			      else (
+				   M = tars#i = srcs#j = R^1;
+				   f#i#j = map(M,M,0);
+				   ))))));
+     f = toList \ f;
+     mm := concatBlocks f;
+     if options.Degree === null
+     then mm
+     else fixDegree(mm,options.Degree)
+     )
 
 matrix(Matrix) := Matrix => options -> (m) -> (
      if isFreeModule target m and isFreeModule source m

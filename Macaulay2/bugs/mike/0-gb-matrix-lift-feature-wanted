@@ -1,0 +1,3 @@
+It would be really nice if rawGBMatrixLift would always return (into an int* of
+mine) whether the remainder turned out to be nonzero.  Then for functions like
+"extend" the checking could happen as quickly as possible.
