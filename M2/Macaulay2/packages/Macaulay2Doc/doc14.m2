@@ -282,35 +282,25 @@ document {
 document {
      Headline => "fill a mutable matrix with random numbers",
      Key => {fillMatrix,(fillMatrix, MutableMatrix),(fillMatrix, MutableMatrix, ZZ),[fillMatrix,Density],[fillMatrix,UpperTriangular]},
-     SYNOPSIS (
-     	  Usage => "fillMatrix M",
-     	  BaseFunction => fillMatrix,
-	  Inputs => {
-	       "M"=>MutableMatrix,
-	       Density => RR => {"the fraction of entries of ", TT "M", " to be replaced"},
-	       UpperTriangular => Boolean => "whether to fill entries only above the diagonal"
-	       },
-	  Outputs => {"M"},
-	  Consequences => {{ "some entries of M are replaced with randomly generated numbers" }},
-	  EXAMPLE lines ///
-	       printingPrecision = 2
-	       fillMatrix(mutableMatrix(RR,5,10))
-	       fillMatrix(mutableMatrix(ZZ,5,10),UpperTriangular=>true)
-	       fillMatrix(mutableMatrix(QQ,5,10),Density=>.2)
-	       randomHeight = 1000
-	       fillMatrix(mutableMatrix(QQ,5,10),Density=>.2)
-	       ///
-	  ),
-     SYNOPSIS (
-     	  Usage => "fillMatrix(M,n)",
-	  Inputs => { "M"=>MutableMatrix, "n" => ZZ },
-	  Outputs => {"M"},
-	  Consequences => {{ "a random entry of M is replaced with a randomly generated number, ", TT "n", " times" }},
-	  EXAMPLE lines ///
-	       printingPrecision = 2
-	       fillMatrix(mutableMatrix(ZZ,5,10),25)
-	       ///
-	  ),
+     Usage => "fillMatrix M\nfillMatrix(M,n)",
+     BaseFunction => fillMatrix,
+     Inputs => {
+	  "M"=>MutableMatrix,
+	  "n" => ZZ => {"if specified, the maximum number of entries to replace"},
+	  Density => RR => {"the fraction of entries of ", TT "M", " to be replaced, if ", TT "n", " is
+	       not specified"},
+	  UpperTriangular => Boolean => "whether to fill entries only above the diagonal"
+	  },
+     Outputs => {"M"},
+     Consequences => {{ "some entries of M are replaced with randomly generated numbers" }},
+     EXAMPLE lines ///
+	  printingPrecision = 2
+	  fillMatrix(mutableMatrix(RR,5,10))
+	  fillMatrix(mutableMatrix(ZZ,5,10),UpperTriangular=>true)
+	  randomHeight = 1000
+	  fillMatrix(mutableMatrix(QQ,5,10),Density=>.2)
+	  fillMatrix(mutableMatrix(ZZ,5,10),25)
+	  ///,
      SeeAlso => { "randomHeight" }     
      }
 
@@ -320,7 +310,7 @@ document {
 	  (norm, RingElement),(norm, InexactField, MutableMatrix),(norm, RR, MutableMatrix),(norm, RR, RingElement),
 	  (norm,Number),(norm,RR,Number),(norm,InfiniteNumber,Number)
 	  },
-     Usage => "fillMatrix M\nfillMatrix(p,M)",
+     Usage => "norm M\nnorm(p,M)",
      Inputs => {
 	  "M"=>{ofClass{MutableMatrix,Matrix,RingElement,Number}},
 	  "p"=>{ofClass{RR,InfiniteNumber}, ", specifying which norm to compute.  Currently, only ", TT "p=infinity", " is accepted."}
@@ -329,8 +319,10 @@ document {
 	       "."}},
      EXAMPLE lines ///
 	  printingPrecision = 2
-	  M = 10*random(RR^3,RR^10)
+	  R = RR_100
+	  M = 10*random(R^3,R^10)
 	  norm M
+	  norm_(numeric_20 infinity) M
 	  ///,
      "The norm of a polynomial is the norm of the vector of its coefficients.",
      EXAMPLE lines ///
@@ -340,46 +332,250 @@ document {
 	  ///
      }
 
+document { Key => "defaultPrecision",
+     Headline => "default precision of numbers",
+     Usage => "defaultPrecision = n",
+     Inputs => { "n" => ZZ },
+     Consequences => {{"henceforth, when a real or complex number is to be created,
+	       and no precision is otherwise specified, the precision will be ", TT "n"}},
+     EXAMPLE lines ///
+     defaultPrecision
+     1/3.
+     defaultPrecision=100     
+     1/3.	       
+     RR[x]
+     numeric pi
+     ///
+     }
+
 end
 
 
+[cotangentSheaf, Minimize],
 
+[gb, MaxReductionCount],
+(help,Array),
+(help,DocumentTag),
+(help,List),
+(help,Sequence),
+(help,String),
+(help,Symbol),
+(help,Thing),
+[hermite, Strategy],
+(lift,Matrix,InexactNumber'),
+[lift, Verify],
+(map,Module,Module,Number),
+[markedGB, ChangeMatrix],
+[markedGB, MinimalMatrix],
+[markedGB, SyzygyMatrix],
+[mingens, Strategy],
+[minimalPresentation, Strategy],
+(NewOfFromMethod,ComplexField,Nothing,ZZ),
+(NewOfFromMethod,RealField,Nothing,ZZ),
+(precision,Number),
+(promote,Matrix,InexactNumber'),
+[pushForward1, BasisElementLimit],
+[pushForward, BasisElementLimit],
+[pushForward, DegreeLimit],
+[pushForward, MonomialOrder],
+[pushForward, PairLimit],
+[pushForward, UseHilbertFunction],
+[quotient, BasisElementLimit],
+[quotient, DegreeLimit],
+[quotient, PairLimit],
+[random, Density],
+[random, Height],
+randomHeight,
+(random,List,Ring),
+[random, Norm],
+[random, UpperTriangular],
+(ring,CC),
+(ring,RR),
+(round,QQ),
+(round,RR),
+(round,ZZ,RR),
+[saturate, BasisElementLimit],
+[saturate, PairLimit],
+[solve, ClosestFit],
+[solve, MaximalRank],
+(substitute,Ideal,RingFamily),
+(substitute,Matrix,RingFamily),
+(substitute,Module,RingFamily),
+(substitute,Number,RingFamily),
+(substitute,RingElement,RingFamily),
+(substitute,Vector,RingFamily),
+(symbol ==,Boolean,Boolean),
+(symbol -,CC),
+(symbol +,CC),
+(symbol ==,CC,CC),
+(symbol -,CC,CC),
+(symbol /,CC,CC),
+(symbol *,CC,CC),
+(symbol +,CC,CC),
+(symbol _,CC,ComplexField),
+(symbol ==,CC,QQ),
+(symbol -,CC,QQ),
+(symbol /,CC,QQ),
+(symbol *,CC,QQ),
+(symbol +,CC,QQ),
+(symbol ==,CC,RR),
+(symbol -,CC,RR),
+(symbol /,CC,RR),
+(symbol *,CC,RR),
+(symbol +,CC,RR),
+(symbol ^,CC,ZZ),
+(symbol ==,CC,ZZ),
+(symbol -,CC,ZZ),
+(symbol /,CC,ZZ),
+(symbol *,CC,ZZ),
+(symbol +,CC,ZZ),
+(symbol -,Constant),
+(symbol +,Constant),
+(symbol ^,Constant,Constant),
+(symbol ==,Constant,Constant),
+(symbol -,Constant,Constant),
+(symbol /,Constant,Constant),
+(symbol *,Constant,Constant),
+(symbol +,Constant,Constant),
+(symbol _,Constant,InexactFieldFamily),
+(symbol ^,Constant,InexactNumber),
+(symbol ==,Constant,InexactNumber),
+(symbol -,Constant,InexactNumber),
+(symbol /,Constant,InexactNumber),
+(symbol *,Constant,InexactNumber),
+(symbol +,Constant,InexactNumber),
+(symbol ^,Constant,Number),
+(symbol -,Constant,Number),
+(symbol /,Constant,Number),
+(symbol *,Constant,Number),
+(symbol +,Constant,Number),
+(symbol _,Constant,Ring),
+(symbol _*,Ideal),
+(symbol ^,InexactFieldFamily,ZZ),
+(symbol _,InexactFieldFamily,ZZ),
+(symbol ^,InexactNumber,Constant),
+(symbol ==,InexactNumber,Constant),
+(symbol -,InexactNumber,Constant),
+(symbol /,InexactNumber,Constant),
+(symbol *,InexactNumber,Constant),
+(symbol +,InexactNumber,Constant),
+(symbol ==,Matrix,Number),
+(symbol *,Matrix,Number),
+(symbol *,Matrix,ZZ),
+(symbol ^,Number,Constant),
+(symbol -,Number,Constant),
+(symbol /,Number,Constant),
+(symbol *,Number,Constant),
+(symbol +,Number,Constant),
+(symbol _,Number,InexactFieldFamily),
+(symbol ==,Number,Matrix),
+(symbol *,Number,Matrix),
+(symbol **,Number,RingElement),
+(symbol -,QQ),
+(symbol +,QQ),
+(symbol ==,QQ,CC),
+(symbol -,QQ,CC),
+(symbol /,QQ,CC),
+(symbol *,QQ,CC),
+(symbol +,QQ,CC),
+(symbol _,QQ,ComplexField),
+(symbol ==,QQ,QQ),
+(symbol -,QQ,QQ),
+(symbol /,QQ,QQ),
+(symbol *,QQ,QQ),
+(symbol +,QQ,QQ),
+(symbol _,QQ,RealField),
+(symbol ==,QQ,RR),
+(symbol -,QQ,RR),
+(symbol /,QQ,RR),
+(symbol *,QQ,RR),
+(symbol +,QQ,RR),
+(symbol -,QQ,ZZ),
+(symbol /,QQ,ZZ),
+(symbol *,QQ,ZZ),
+(symbol +,QQ,ZZ),
+(symbol ==,RingElement,ZZ),
+(symbol _*,RingFamily),
+(symbol -,RR),
+(symbol +,RR),
+(symbol ==,RR,CC),
+(symbol -,RR,CC),
+(symbol /,RR,CC),
+(symbol *,RR,CC),
+(symbol +,RR,CC),
+(symbol _,RR,ComplexField),
+(symbol ==,RR,QQ),
+(symbol -,RR,QQ),
+(symbol /,RR,QQ),
+(symbol *,RR,QQ),
+(symbol +,RR,QQ),
+(symbol _,RR,RealField),
+(symbol ==,RR,RR),
+(symbol -,RR,RR),
+(symbol /,RR,RR),
+(symbol *,RR,RR),
+(symbol +,RR,RR),
+(symbol ==,RR,ZZ),
+(symbol -,RR,ZZ),
+(symbol /,RR,ZZ),
+(symbol *,RR,ZZ),
+(symbol +,RR,ZZ),
+(symbol ==,Sequence,Sequence),
+(symbol SPACE,InexactFieldFamily,Array),
+(symbol ==,String,String),
+((symbol _*,symbol =),RingFamily),
+(symbol ==,Symbol,Symbol),
+(symbol **,Thing,InexactFieldFamily),
+(symbol -,ZZ),
+(symbol +,ZZ),
+(symbol ==,ZZ,CC),
+(symbol -,ZZ,CC),
+(symbol /,ZZ,CC),
+(symbol *,ZZ,CC),
+(symbol +,ZZ,CC),
+(symbol _,ZZ,ComplexField),
+(symbol -,ZZ,QQ),
+(symbol /,ZZ,QQ),
+(symbol *,ZZ,QQ),
+(symbol +,ZZ,QQ),
+(symbol _,ZZ,RealField),
+(symbol ==,ZZ,RingElement),
+(symbol ==,ZZ,RR),
+(symbol -,ZZ,RR),
+(symbol /,ZZ,RR),
+(symbol *,ZZ,RR),
+(symbol +,ZZ,RR),
+(symbol ==,ZZ,ZZ),
+(symbol -,ZZ,ZZ),
+(symbol /,ZZ,ZZ),
+(symbol //,ZZ,ZZ),
+(symbol *,ZZ,ZZ),
+(symbol +,ZZ,ZZ),
+[syz, MaxReductionCount],
+[tangentSheaf, Minimize],
+(toCC,Constant),
+(toCC,Number),
+(toCC,ZZ,Constant),
+(toCC,ZZ,Number),
+(toCC,ZZ,Number,Number),
+(toExternalString,Constant),
+(toExternalString,RR),
+(toRR,Constant),
+(toRR,InfiniteNumber),
+(toRR,QQ),
+(toRR,RR),
+(toRR,ZZ),
+(toRR,ZZ,Constant),
+(toRR,ZZ,InfiniteNumber),
+(toRR,ZZ,QQ),
+(toRR,ZZ,RR),
+(toRR,ZZ,ZZ),
+(toString,ComplexField),
+(toString,Constant),
+(toString,Expression),
+(toString,IndexedVariableTable),
+(toString,RealField),
 
-(ring, RR),(ring, CC)
-(round, QQ),(round, ZZ, RR),(round, RR)
-(substitute, Ideal, RingFamily),(substitute, Vector, RingFamily),(substitute, Module, RingFamily),(substitute, RingElement, RingFamily),(substitute, Matrix, RingFamily),(substitute, Number, RingFamily)
-(toCC, Constant),(toCC, ZZ, Constant)
-(toExternalString, RR),(toExternalString, Constant)
-(toRR, ZZ, Constant),(toRR, Constant)
-(toString, RealField),(toString, ComplexField),(toString, Constant)
-defaultPrecision
-randomHeight
-[pushForward, MonomialOrder]
-(symbol ==,String,String),(symbol ==,Sequence,Sequence)
-(symbol SPACE,InexactFieldFamily,Array)
-((symbol _*,symbol =),RingFamily)
-(symbol ==,Boolean,Boolean),(symbol ==,CC,CC),(symbol ==,CC,QQ),(symbol ==,CC,RR),(symbol ==,CC,ZZ),(symbol ==,Constant,Constant),(symbol ==,Constant,InexactNumber),(symbol ==,InexactNumber,Constant),(symbol ==,QQ,CC),(symbol ==,QQ,QQ),(symbol ==,QQ,RR),(symbol ==,RingElement,ZZ),(symbol ==,RR,CC),(symbol ==,RR,QQ),(symbol ==,RR,RR),(symbol ==,RR,ZZ),(symbol ==,Symbol,Symbol),(symbol ==,ZZ,CC),(symbol ==,ZZ,RingElement),(symbol ==,ZZ,RR),(symbol ==,ZZ,ZZ)
-(symbol _,CC,ComplexField),(symbol _,Constant,InexactFieldFamily),(symbol _,Constant,Ring),(symbol _,InexactFieldFamily,ZZ),(symbol _,Number,InexactFieldFamily),(symbol _,QQ,ComplexField),(symbol _,QQ,RealField),(symbol _,RR,ComplexField),(symbol _,RR,RealField),(symbol _,ZZ,ComplexField),(symbol _,ZZ,RealField)
-(symbol +,CC),(symbol +,Constant),(symbol +,QQ),(symbol +,RR),(symbol +,ZZ),(symbol +,CC,CC),(symbol +,CC,QQ),(symbol +,CC,RR),(symbol +,CC,ZZ),(symbol +,Constant,Constant),(symbol +,Constant,InexactNumber),(symbol +,Constant,Number),(symbol +,InexactNumber,Constant),(symbol +,Number,Constant),(symbol +,QQ,CC),(symbol +,QQ,QQ),(symbol +,QQ,RR),(symbol +,QQ,ZZ),(symbol +,RR,CC),(symbol +,RR,QQ),(symbol +,RR,RR),(symbol +,RR,ZZ),(symbol +,ZZ,CC),(symbol +,ZZ,QQ),(symbol +,ZZ,RR),(symbol +,ZZ,ZZ)
-(symbol -,CC),(symbol -,Constant),(symbol -,QQ),(symbol -,RR),(symbol -,ZZ),(symbol -,CC,CC),(symbol -,CC,QQ),(symbol -,CC,RR),(symbol -,CC,ZZ),(symbol -,Constant,Constant),(symbol -,Constant,InexactNumber),(symbol -,Constant,Number),(symbol -,InexactNumber,Constant),(symbol -,Number,Constant),(symbol -,QQ,CC),(symbol -,QQ,QQ),(symbol -,QQ,RR),(symbol -,QQ,ZZ),(symbol -,RR,CC),(symbol -,RR,QQ),(symbol -,RR,RR),(symbol -,RR,ZZ),(symbol -,ZZ,CC),(symbol -,ZZ,QQ),(symbol -,ZZ,RR),(symbol -,ZZ,ZZ)
-(symbol *,CC,CC),(symbol *,CC,QQ),(symbol *,CC,RR),(symbol *,CC,ZZ),(symbol *,Constant,Constant),(symbol *,Constant,InexactNumber),(symbol *,Constant,Number),(symbol *,InexactNumber,Constant),(symbol *,Matrix,Number),(symbol *,Matrix,ZZ),(symbol *,Number,Constant),(symbol *,Number,Matrix),(symbol *,QQ,CC),(symbol *,QQ,QQ),(symbol *,QQ,RR),(symbol *,QQ,ZZ),(symbol *,RR,CC),(symbol *,RR,QQ),(symbol *,RR,RR),(symbol *,RR,ZZ),(symbol *,ZZ,CC),(symbol *,ZZ,QQ),(symbol *,ZZ,RR),(symbol *,ZZ,ZZ)
-(symbol /,CC,CC),(symbol /,CC,QQ),(symbol /,CC,RR),(symbol /,CC,ZZ),(symbol /,Constant,Constant),(symbol /,Constant,InexactNumber),(symbol /,Constant,Number),(symbol /,InexactNumber,Constant),(symbol /,Number,Constant),(symbol /,QQ,CC),(symbol /,QQ,QQ),(symbol /,QQ,RR),(symbol /,QQ,ZZ),(symbol /,RR,CC),(symbol /,RR,QQ),(symbol /,RR,RR),(symbol /,RR,ZZ),(symbol /,ZZ,CC),(symbol /,ZZ,QQ),(symbol /,ZZ,RR)
-(symbol /,ZZ,ZZ)
-(symbol //,ZZ,ZZ)
-(symbol ^,CC,ZZ),(symbol ^,Constant,Constant),(symbol ^,Constant,InexactNumber),(symbol ^,Constant,Number),(symbol ^,InexactFieldFamily,ZZ),(symbol ^,InexactNumber,Constant),(symbol ^,Number,Constant)
-(symbol **,Number,RingElement),(symbol **,Thing,InexactFieldFamily)
-(symbol _*,RingFamily)
-[cotangentSheaf, Minimize]
-[gb, MaxReductionCount]
-[hermite, Strategy]
-[lift, Verify]
-[markedGB, ChangeMatrix],[markedGB, MinimalMatrix],[markedGB, SyzygyMatrix]
-[mingens, Strategy]
-[minimalPresentation, Strategy]
-(NewOfFromMethod,ComplexField,Nothing,ZZ),(NewOfFromMethod,RealField,Nothing,ZZ)
-[pushForward1, BasisElementLimit],[pushForward, BasisElementLimit],[pushForward, DegreeLimit],[pushForward, PairLimit],[pushForward, UseHilbertFunction]
-[quotient, BasisElementLimit],[quotient, DegreeLimit],[quotient, PairLimit]
-[saturate, BasisElementLimit],[saturate, PairLimit]
-[solve, MaximalRank]
-[syz, MaxReductionCount]
-[tangentSheaf, Minimize]
+-- Local Variables:
+-- compile-command: "make -C $M2BUILDDIR/Macaulay2/m2 "
+-- End:

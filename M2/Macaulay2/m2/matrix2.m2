@@ -513,13 +513,16 @@ compress = method()
 compress Matrix := Matrix => (m) -> map(target m,, rawMatrixCompress m.RawMatrix)
 
 diagonalMatrix = method(TypicalValue => Matrix)
-
-diagonalMatrix(Ring, List) := (R,v) -> diagonalMatrix matrix(R,{v})
-
-diagonalMatrix List := v -> (
-     if #v === 0 then return id_(ZZ^0);
-     diagonalMatrix matrix {v})
-
+diagonalMatrix(RingFamily,ZZ,ZZ,List) := (R,m,n,vals) -> diagonalMatrix(default R,m,n,vals)
+diagonalMatrix(Ring,ZZ,ZZ,List) := (R,m,n,vals) -> (
+     if #vals > m or #vals > n then error "too many values for specified matrix size";
+     f := mutableMatrix(R,m,n);
+     for i from 0 to min(m,n,#vals)-1 do f_(i,i) = vals#i;
+     matrix f)
+diagonalMatrix(ZZ,ZZ,List) := (m,n,vals) -> diagonalMatrix(commonRing vals,m,n,vals)
+diagonalMatrix(RingFamily, List) := (R,v) -> diagonalMatrix(default R, v)
+diagonalMatrix(Ring, List) := (R,v) -> diagonalMatrix(R,#v,#v,v)
+diagonalMatrix List := v -> diagonalMatrix(#v,#v,v)
 diagonalMatrix Matrix := (m) -> (			    -- this one is silly
      R := ring m;
      nrows := numgens target m;

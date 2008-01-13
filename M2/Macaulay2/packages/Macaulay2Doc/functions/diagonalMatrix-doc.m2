@@ -31,20 +31,25 @@ document {
      }
 
 document { 
-     Key => {(diagonalMatrix,Ring,List),(diagonalMatrix,List)},
+     Key => {(diagonalMatrix, Ring, ZZ, ZZ, List),(diagonalMatrix,Ring,List),(diagonalMatrix,List),
+	  (diagonalMatrix, RingFamily, List),(diagonalMatrix, RingFamily, ZZ, ZZ, List),
+	  (diagonalMatrix, ZZ, ZZ, List)
+	  },
      Headline => "make a diagonal matrix from a list",
-     Usage => "diagonalMatrix(R,L)\ndiagonalMatrix L",
+     Usage => "diagonalMatrix(R,L)\ndiagonalMatrix L\ndiagonalMatrix(m,n,L)\ndiagonalMatrix(R,m,n,L)",
      Inputs => {
-	  "R" => Ring,
-	  "L" => List => {"of elements in the ring ", TT "R"}
+	  "R" => Ring => "the ring of the matrix, if specified",
+	  "m" => ZZ => "the number of rows, if specified",
+	  "n" => ZZ => "the number of columns, if specified",
+	  "L" => List => {" of elements in the ring ", TT "R", " not longer than ", TT "m", " or ", TT "n"}
 	  },
      Outputs => {
 	  Matrix => {"a diagonal matrix whose diagonal entries are the elements of ",  TT "L"}
 	  },
-     "If the elements of L all have the same ring, the ring may be omitted.",
      EXAMPLE lines ///
 	  R = QQ[a..d];
 	  diagonalMatrix{a,b,c,3/4}
+	  diagonalMatrix(3,5,{a,b,3/4})
 	  diagonalMatrix(R,{1,2,3})
 	  ///,
      SeeAlso => {"matrices"}

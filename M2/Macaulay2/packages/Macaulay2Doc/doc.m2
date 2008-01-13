@@ -1679,7 +1679,8 @@ document {
      }
 
 document {
-     Key => {(random, Type),(random, RingFamily),(random, QuotientRing),(random, GaloisField),(random, ZZ, Ring)},
+     Key => {(random, Type),(random, RingFamily),(random, QuotientRing),(random, GaloisField),
+	  (random, ZZ, Ring),(random, List, Ring)},
      Headline => "random element of a type",
      SYNOPSIS (
 	  Usage => "random T",
