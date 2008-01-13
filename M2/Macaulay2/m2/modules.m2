@@ -26,6 +26,7 @@ target Matrix := f -> f.target
 precision Matrix := precision @@ ring
 
 lift(Matrix,InexactNumber) := opts -> (M,RR) -> lift(M,default RR,opts)
+lift(Matrix,InexactNumber') :=
 lift(Matrix,RingElement) := 
 lift(Matrix,Number) := Matrix => opts -> (f,S) -> (
      R := ring f;
@@ -34,6 +35,7 @@ lift(Matrix,Number) := Matrix => opts -> (f,S) -> (
      lift(f, R, S, opts))     
 
 promote(Matrix,InexactNumber) := (M,RR) -> promote(M,default RR)
+promote(Matrix,InexactNumber') :=
 promote(Matrix,RingElement) := 
 promote(Matrix,Number) := Matrix => (f,S) -> (
      R := ring f;
