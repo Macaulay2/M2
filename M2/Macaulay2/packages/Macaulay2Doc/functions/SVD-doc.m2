@@ -25,13 +25,15 @@ document {
      "If ", TT "M", " is over ", TO "CC", ", then ", TT "U", " and ", TT "Vt", " are unitary matrices over ", TO "CC", ".
      If ", TT "M", " is over ", TO "RR", ", ", TT "U", " and ", TT "Vt", " are orthogonal over ", TT "RR", ".",
      EXAMPLE lines ///
+     	  printingPrecision=2;
 	  M = map(RR^3, RR^5, (i,j) -> (i+1)^j * 1.0)
 	  (S,U,V) = SVD(M)
 	  M' = (transpose U) * M * (transpose V)
-	  clean_1e-10 M'
-	  U^-1 == transpose U
-	  (S1,U1,V1) = SVD(M, DivideConquer => true)
-	  S1 == S, U1==U, V1==V
+	  e = 1e-10;
+	  clean_e M'
+	  clean_e norm (U^-1 - transpose U)
+	  (S', U', V') = SVD(M, DivideConquer => true)
+	  clean_e \ norm \ ({S', U', V'}-{S, U, V})
 	  ///,
      "The SVD routine calls on the SVD algorithms in the lapack library.",
      SeeAlso => {eigenvalues, eigenvectors}
