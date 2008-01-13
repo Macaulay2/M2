@@ -3,7 +3,7 @@
 --- notes: 
 
 document { 
-     Key => {clean, (clean,RR,Matrix), (clean,RR,MutableMatrix), (clean,RR,RingElement)},
+     Key => {clean, (clean,RR,Matrix), (clean,RR,MutableMatrix),(clean,RR,Number), (clean,RR,RingElement)},
      Headline => "Set to zero elements which are approximately zero",
      Usage => "clean(epsilon,M)",
      Inputs => {
