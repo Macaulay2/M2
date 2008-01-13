@@ -2363,6 +2363,9 @@ void gbA::minimalize_gb()
 {
   if (minimal_gb_valid) return;
 
+  delete minimal_gb;
+  minimal_gb = ReducedGB::create(originalR,_F,_Fsyz);
+  
   VECTOR(POLY) polys;
   for (int i=first_gb_element; i<gb.size(); i++)
     {
