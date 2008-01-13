@@ -46,7 +46,7 @@ mutableIdentity(RingFamily,ZZ) := o -> (R,nrows) -> mutableIdentity(R,nrows,o)
 
 MutableMatrix _ Sequence := (m,rc) -> (
      n := (raw m)_rc;
-     if class n === RawRingElement then new ring m from n
+     if class n === RawRingElement then promote(n,ring m)
      else if class n === RawMutableMatrix then map(ring m, n)
      else error "internal error"
      )
