@@ -254,6 +254,7 @@ frac EngineRing := R -> if isField R then R else if R.?frac then R.frac else (
 clean(RR,Number) := (epsilon,f) -> if abs f < epsilon then f-f else f
 clean(RR,RingElement) := (epsilon,f) -> new ring f from clean(epsilon,raw f)
 
+norm(List) := z -> max(abs\z)
 norm(RR,Number) := (p,z) -> p-p+abs z
 norm(RR,RingElement) := (p,f) -> new RR from norm(p,raw f)
 norm(InfiniteNumber,Number) := 
