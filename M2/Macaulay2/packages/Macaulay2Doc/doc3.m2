@@ -539,7 +539,7 @@ document { Key => {(randomMutableMatrix, ZZ, ZZ, RR, ZZ),
           randomMutableMatrix(10,15,.9,100)
      ///
      }
-document { Key => {(mutableMatrix, Ring, ZZ, ZZ) },
+document { Key => {(mutableMatrix, Ring, ZZ, ZZ),(mutableMatrix, RingFamily, ZZ, ZZ) },
      Headline => "make a mutable matrix filled with zeroes",
      Usage => "mutableMatrix(R,nrows,ncols)",
      Inputs => { "R",
@@ -555,7 +555,7 @@ document { Key => {(mutableMatrix, Ring, ZZ, ZZ) },
      ///,
      SeeAlso => {mutableIdentity, mutableMatrix}
      }
-document { Key => {(mutableIdentity, Ring, ZZ),
+document { Key => {(mutableIdentity, Ring, ZZ),(mutableIdentity, RingFamily, ZZ),
 	  [mutableIdentity,Dense],
 	  mutableIdentity},
      Headline => "make a mutable identity matrix",
@@ -1375,10 +1375,20 @@ document { Key => pager,
 	       else through the program ", TT "more", "."
 	       }}}
 
-document { Key => precision,
+document { Key => {precision,
+	  (precision, QuotientRing), (precision, Ring),
+	  (precision, MutableMatrix),(precision, RingElement),(precision, PolynomialRing),
+	  (precision, InexactNumber),(precision, InexactField),(precision, Matrix)
+	  }
      Usage => "precision x",
-     Inputs => { "x" => RR },
-     Outputs => { ZZ => {"the precision of x"}}}
+     Inputs => { "x" => {ofClass{Ring,Matrix,RingElement,Number}}},
+     Outputs => { ZZ => {"the precision to which ", TT "x", " or its instances are stored"}},
+     EXAMPLE linex ///
+     	  precision 3p111
+	  precision (RR[x])
+	  precision 3
+     ///
+     }
 
 document { Key => "printingTimeLimit",
      "This variable specifies the number of seconds to allow for printing an output line"

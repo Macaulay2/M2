@@ -2,7 +2,7 @@
 --- author(s): Gregory G. Smith
 --- notes: 
 
-undocumented{(isField, InexactField)}
+undocumented{(isField, InexactField),(isField, RingFamily)}
 
 document { 
      Key => {isField, (isField, EngineRing), (isField, Ring)},

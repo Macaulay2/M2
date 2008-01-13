@@ -19,6 +19,8 @@ InexactNumber.synonym = "inexact number"
 -- built-in functions 
 
 precision InexactNumber := precision0
+precision Number := x -> infinity
+precision Ring := R -> precision 0_R
 
 toCC = method()
 toCC(Number) := toCC0

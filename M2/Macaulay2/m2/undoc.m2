@@ -1,6 +1,9 @@
 undocumented {
     (net, LITERAL),
     (net, LATER),
+    (expression, Constant),
+    (expression, RealField),
+    (expression, ComplexField),
     (expression, PolynomialRing),
     (expression, ProjectiveHilbertPolynomial),
     (expression, Module),

@@ -8,7 +8,7 @@
 --              (map,Ideal,Ideal)
 --              (map,Ideal),
 
-undocumented {(map,Module,Module,ZZ)}
+undocumented {(map,Module,Module,ZZ),(map, RingFamily, Thing, Thing),(map, Thing, RingFamily, Thing)}
 
 document {
      Key => map,

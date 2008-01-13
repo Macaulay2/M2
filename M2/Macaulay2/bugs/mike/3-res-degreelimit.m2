@@ -1,4 +1,4 @@
--- line 273 in /Users/mike/local/src/macaulay2/M2/Macaulay2/packages/Macaulay2/doc10.m2
+-- line 273 in /Users/mike/local/src/macaulay2/M2/Macaulay2/packages/Macaulay2Doc/doc10.m2
 
 S = ZZ/101[t_1 .. t_9,u_1 .. u_9]
 m = matrix pack (3,toList (t_1 .. t_9))			  -- 3 by 3

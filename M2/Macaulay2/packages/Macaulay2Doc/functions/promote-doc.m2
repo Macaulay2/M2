@@ -2,8 +2,8 @@
 --- author(s): MES
 --- notes: 
 
-undocumented {
-     (promote,CC,CC_*),
+undocumented {(promote,CC,CC_*),
+     (promote, Matrix, InexactNumber),(promote, Number, InexactNumber),
      (promote, Ideal, Number),
      (promote, Ideal, RingElement),
      (promote, List, QQ, CC_*),

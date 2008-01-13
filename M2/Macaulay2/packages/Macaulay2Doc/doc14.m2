@@ -256,42 +256,94 @@ document { Key => {BesselY,(BesselY, ZZ, ZZ),(BesselY, ZZ, RR),(BesselY, ZZ, QQ)
 document { Key => {agm,(agm, ZZ, ZZ),(agm, QQ, ZZ),(agm, ZZ, QQ),(agm, QQ, QQ),(agm, ZZ, RR),(agm, RR, ZZ),(agm, QQ, RR),(agm, RR, QQ),(agm, RR, RR)},
      Usage => "agm(x,y)",
      Inputs => { "x" => "a number", "y" => "a number" },
-     Outputs => { {"the arithmetic geometric mean of ", TT "x", " and ", TT "y"}},
-     Headline => "arithmetic geometric mean",
+     Outputs => { {"the arithmetic-geometric mean of ", TT "x", " and ", TT "y"}},
+     Headline => "arithmetic-geometric mean",
      EXAMPLE lines ///
      	  agm(1,2p200)
-     ///
+     ///,
+     Wikipedia "Arithmetic-geometric_mean"
      }
+
+document {
+     Key => {default,(default, InexactFieldFamily)},
+     Headline => "default member of a family",
+     Usage => "default T",
+     Inputs => { "T" },
+     Outputs => {{ "the default member of the family shadowed by ", TT "T" }},
+     EXAMPLE lines ///
+     	  default RR
+	  defaultPrecision = 100
+	  default CC
+     ///,
+     "This function is used internally, and its implementation may change.",
+     SeeAlso => { "defaultPrecision" }
+     }
+
+document {
+     Headline => "fill a mutable matrix with random numbers",
+     Key => {fillMatrix,(fillMatrix, MutableMatrix),(fillMatrix, MutableMatrix, ZZ),[fillMatrix,Density],[fillMatrix,UpperTriangular]},
+     SYNOPSIS (
+     	  Usage => "fillMatrix M",
+	  Inputs => {
+	       "M"=>MutableMatrix,
+	       Density => RR => {"the fraction of entries of ", TT "M", " to be replaced"},
+	       UpperTriangular => Boolean => "whether to fill entries only above the diagonal"
+	       }
+	  Outputs => {"M"},
+	  Consequences => {{ "some entries of M are replaced with randomly generated numbers" }},
+	  EXAMPLE lines ///
+	       printingPrecision = 2
+	       fillMatrix(mutableMatrix(RR,5,10))
+	       fillMatrix(mutableMatrix(ZZ,5,10),UpperTriangular=>true)
+	       fillMatrix(mutableMatrix(QQ,5,10),Density=>.2)
+	       randomHeight = 1000
+	       fillMatrix(mutableMatrix(QQ,5,10),Density=>.2)
+	       ///
+	  ),
+     SYNOPSIS (
+     	  Usage => "fillMatrix(M,n)",
+	  Inputs => { "M"=>MutableMatrix, "n" => ZZ }
+	  Outputs => {"M"},
+	  Consequences => {{ "a random entry of M is replaced with a randomly generated numbers, ", TT "n", " times" }},
+	  EXAMPLE lines ///
+	       printingPrecision = 2
+	       fillMatrix(mutableMatrix(ZZ,5,10),25)
+	       ///
+	  ),
+     SeeAlso => { "randomHeight" }     
+     }
+
+document { 
+     Key => {norm,
+	  (norm, InfiniteNumber, Matrix),(norm, Matrix),(norm, RR, Matrix),(norm, InfiniteNumber, RingElement),(norm, MutableMatrix),
+	  (norm, RingElement),(norm, InexactField, MutableMatrix),(norm, RR, MutableMatrix),(norm, RR, RingElement),
+	  (norm,Number),(norm,RR,Number),(norm,InfiniteNumber,Number)
+	  },
+     Usage => "fillMatrix M\nfillMatrix(p,M)",
+     Inputs => {
+	  "M"=>{ofClass{MutableMatrix,Matrix,RingElement,Number}},
+	  "p"=>{ofClass{RR,InfiniteNumber}, ", specifying which norm to compute.  Currently, only ", TT "p=infinity", " is accepted."}
+	  }
+     Outputs => {TEX{"the $L^p$-norm of ", TT "M", " computed to the minimum of the precisions of ", TT "M", " and of ", TT "p",
+	       "."}},
+     EXAMPLE lines ///
+	  printingPrecision = 2
+	  M = 10*random(RR^3,RR^10)
+	  norm M
+	  ///,
+     "The norm of a polynomial is the norm of the vector of its coefficients.",
+     EXAMPLE lines ///
+	  RR[x]
+	  (1+x)^5
+	  norm oo
+	  ///
+     }
+
 end
 
-(char, InexactField)
-clean,(clean, RR, MutableMatrix),(clean, RR, RingElement),(clean, RR, Matrix)
-default,(default, Type),(default, InexactFieldFamily)
-(degreeLength, InexactField)
-(dim, InexactField)
-(expression, Constant)
-(expression, RealField)
-(expression, ComplexField)
-fillMatrix,(fillMatrix, MutableMatrix),(fillMatrix, MutableMatrix, ZZ)
-(isField, RingFamily)
-(lift, Matrix, Nothing)
-(lift, Matrix, InexactNumber)
-(lift, Number, InexactNumber)
-(liftable, Number, InexactNumber)
-(log, ZZ, ZZ),(log, QQ, ZZ),(log, ZZ, QQ),(log, QQ, QQ),(log, RR, ZZ),(log, ZZ, RR),(log, QQ, RR),(log, RR, QQ),(log, RR, RR)
-(map, RingFamily, Thing, Thing)
-(map, Thing, RingFamily, Thing)
-(mutableIdentity, RingFamily, ZZ)
-(mutableMatrix, RingFamily, ZZ, ZZ)
-(net, InexactField)
-(net, Constant)
-norm,(norm, InfiniteNumber, Matrix),(norm, Matrix),(norm, RR, Matrix),(norm, InfiniteNumber, RingElement),(norm, MutableMatrix),(norm, RingElement),(norm, InexactField, MutableMatrix),(norm, RR, MutableMatrix),(norm, RR, RingElement)
-(numeric, ZZ, InfiniteNumber)
-(numeric, InfiniteNumber)
-(numgens, InexactField)
-(precision, QuotientRing),(precision, MutableMatrix),(precision, RingElement),(precision, PolynomialRing),(precision, InexactNumber),(precision, InexactField),(precision, Matrix)
-(promote, Matrix, InexactNumber),(promote, Number, InexactNumber),(promote, Matrix, Nothing)
-(random, RingFamily)
+
+
+
 (ring, RR),(ring, CC)
 (round, QQ),(round, ZZ, RR),(round, RR)
 (substitute, Ideal, RingFamily),(substitute, Vector, RingFamily),(substitute, Module, RingFamily),(substitute, RingElement, RingFamily),(substitute, Matrix, RingFamily),(substitute, Number, RingFamily)

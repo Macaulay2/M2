@@ -276,7 +276,7 @@ matrix(List) := Matrix => options -> (m) -> (
      if #types === 1 then (
 	  type := types#0;
 	  if instance(type,Module) then matrix { apply(m, v -> new Matrix from v) }
-	  else if type === List then (
+	  else if ancestor(List, type) then (
 	       if isTable m then (matrixTable options)(m)
 	       else error "expected rows all to be the same length"
 	       )

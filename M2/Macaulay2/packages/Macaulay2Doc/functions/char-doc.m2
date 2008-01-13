@@ -8,7 +8,7 @@ undocumented {
 	     (char,PolynomialRing)}
 
 document { 
-     Key => {char, (char,Ring), (char,AffineVariety), (char,ProjectiveVariety)},
+     Key => {char, (char,Ring), (char,AffineVariety), (char, InexactField), (char,ProjectiveVariety)},
      Headline => "computes the characteristic of the ring or field",
      Usage => "char F",
      Inputs => {

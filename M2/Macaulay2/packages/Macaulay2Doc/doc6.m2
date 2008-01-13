@@ -16,7 +16,8 @@ document {
      Key => {numeric,
 	  (numeric, ZZ, CC), (numeric, RR), (numeric, CC), (numeric, ZZ, VisibleList), 
 	  (numeric, VisibleList), (numeric, ZZ, Constant), (numeric, Constant),
-     	  (numeric, ZZ, Number), (numeric, Number)},
+     	  (numeric, ZZ, Number), (numeric, Number),
+	  (numeric, ZZ, InfiniteNumber),(numeric, InfiniteNumber)},
      Headline => "convert to floating point",
      Usage => "numeric x\nnumeric(prec,x)\nnumeric_prec x",
      Inputs => { 

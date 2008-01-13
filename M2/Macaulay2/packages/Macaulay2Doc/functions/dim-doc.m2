@@ -14,7 +14,7 @@ document {
      SeeAlso => {codim}
      }
 
-undocumented {(dim,FractionField),(dim,GaloisField),(dim,PolynomialRing),(dim,QuotientRing)}
+undocumented {(dim,FractionField),(dim,GaloisField),(dim,PolynomialRing),(dim,QuotientRing),(dim, InexactField)}
 
 document { 
      Key => (dim,Ring),
