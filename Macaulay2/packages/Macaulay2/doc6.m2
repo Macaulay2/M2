@@ -185,11 +185,6 @@ document {
 	  },
      SeeAlso => {toCC, numeric, precision, format, "printingPrecision", "printingLeadLimit", "printingTrailLimit", "printingSeparator"}
      }
-     
-document {
-     Key => ii,
-     Headline => "square root of -1"
-     }
 
 document {
      Key => realPart,

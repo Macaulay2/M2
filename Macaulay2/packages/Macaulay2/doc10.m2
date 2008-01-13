@@ -759,15 +759,17 @@ document { Key => toRR,
 
 document { Key => toCC,
      Headline => "convert to high-precision complex number",
-     Usage => "toCC(prec,x)",
+     Usage => "toCC(prec,x)\ntoCC_prec x",
      Inputs => { 
 	  "prec" => ZZ => {"the number of bits of precision desired"},
-	  "x" => {ofClass{RR,ZZ,QQ,CC,RR}}
+	  "x" => {ofClass{ZZ,QQ,RR,CC}}
 	  },
      Outputs => {CC => {"the result of converting ", TT "x", " to a high-precision complex number"}},
      EXAMPLE lines ///
 	  toCC(200,1/7)
 	  precision oo
+	  toCC_200 pi
+	  toCC ii
      ///}
 
 document { Key => InexactNumber,

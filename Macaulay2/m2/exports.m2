@@ -20,7 +20,7 @@ export {
 	symbol eint,
 	symbol Gamma,
 	symbol lngamma,
-	symbol lgamma,
+	-- symbol lgamma,
 	symbol zeta,
 	symbol erf,
 	symbol erfc,
