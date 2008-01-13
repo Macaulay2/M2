@@ -4,7 +4,7 @@ include include/config.Makefile
 DIRS := @encapdir@/@bindirtail@ @encapdir@/@mandirtail@/man1 @encapdir@/@emacsdirtail@ @encapdir@/@corem2srcdirtail@ @encapdir@/@docpackagesdirtail@
 VPATH = @srcdir@
 .PRECIOUS: @srcdir@/configure config.status
-.PHONY: install all clean distclean reconfigure reconfigure-libs reconfigure-all configure-help install-others install-Macaulay2 everything
+.PHONY: install all clean distclean reconfigure reconfigure-libs reconfigure-all configure-help install-others install-Macaulay2Doc everything
 # make sure we're ready to go
 GNUmakefile : GNUmakefile.in; ./config.status GNUmakefile
 include/config.Makefile: include/config.Makefile.in ; ./config.status include/config.Makefile
@@ -39,15 +39,15 @@ status : @srcdir@/configure
 	@echo '#'
 	@echo '-----------------------------------------------------------------------------'
 # announce we're starting
-install all clean distclean install-others install-Macaulay2 ::; @echo '-------- making '$@', @PACKAGE_VERSION@ for ARCH=@ARCH@ OS=@OS@ REL=@REL@ --------'
+install all clean distclean install-others install-Macaulay2Doc ::; @echo '-------- making '$@', @PACKAGE_VERSION@ for ARCH=@ARCH@ OS=@OS@ REL=@REL@ --------'
 # the first install target, the only place in the tree where 'all' is a prerequisite of 'install', hopefully.
-install install-others install-Macaulay2 :: all
-install install-others install-Macaulay2 :: $(DIRS)
+install install-others install-Macaulay2Doc :: all
+install install-others install-Macaulay2Doc :: $(DIRS)
 # the first distclean target:
 distclean:: clean
 $(DIRS) :; $(INSTALL) -d $@
 install clean distclean all check ::; $(MAKE) -C libraries $@
-all distclean check clean install install-others install-Macaulay2 ::; $(MAKE) -C Macaulay2 $@
+all distclean check clean install install-others install-Macaulay2Doc ::; $(MAKE) -C Macaulay2 $@
 subst : config.status ; ./config.status
 show : config.status ; egrep '^s,' $< | sed -e 's/^s,@\(.*\)@,\(.*\),g/\1=\2/' -e 's/^s,.*]\*\(.*\)\\).*\\2 \(.*\) ,/#define \1 \2/' -e 's/.#_!!_#.//g'
 reconfigure:: $(CONFIG_FILES)
@@ -70,7 +70,7 @@ help :
 	@ echo "  help                        show this help"
 	@ echo "  relink                      remove Macaulay2/bin/M2@EXE@ and rebuild it"
 	@ echo "  install                     generate the documentation, install all files"
-	@ echo "    install-Macaulay2         install just the Macaulay2 package"
+	@ echo "    install-Macaulay2Doc         install just the Macaulay2 package"
 	@ echo "    install-others            install just the other packages"
 	@ echo "  check                       run the tests"
 	@ echo "  distributions:"
@@ -102,7 +102,7 @@ help :
 	@ echo ""
 	@ echo "      --recheck                       re-run configure with same options"
 	@ echo ""
-install install-others install-Macaulay2 all clean distclean::; @echo "-------- done making '$@' --------"
+install install-others install-Macaulay2Doc all clean distclean::; @echo "-------- done making '$@' --------"
 install all::
 	@echo "************************************************"
 	@echo "*                                              *"

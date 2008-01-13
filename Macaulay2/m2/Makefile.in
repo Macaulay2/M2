@@ -15,10 +15,10 @@ export LD_LIBRARY_PATH
 # there is a parallel list of tutorials in overview3.m2
 DUMPEDM2FILES := setup.m2 startup.m2
 DUMPEDM2DOCFILES := \
-		@srcdir@/../packages/Macaulay2/*.m2 \
-		@srcdir@/../packages/Macaulay2/functions/*.m2 \
-		@srcdir@/../packages/Macaulay2/variables/*.m2 \
-		../packages/Macaulay2.m2
+		@srcdir@/../packages/Macaulay2Doc/*.m2 \
+		@srcdir@/../packages/Macaulay2Doc/functions/*.m2 \
+		@srcdir@/../packages/Macaulay2Doc/variables/*.m2 \
+		../packages/Macaulay2Doc.m2
 NONDOCM2FILES := startup.m2 setup.m2
 OTHERM2FILES := sagbi.m2
 ############################## statuscodes.m2
@@ -76,29 +76,29 @@ clean::; rm -f TAGS @srcdir@/TAGS @srcdir@/TAGS.doc
 		$(NONDOCM2FILES) \
 		installedpackages \
 		$(OTHERM2FILES) \
-		$(shell find @srcdir@/../packages -name "*.m2" -o -name examples -prune | grep -v Macaulay2/examples | sort) \
+		$(shell find @srcdir@/../packages -name "*.m2" -o -name examples -prune | grep -v Macaulay2Doc/examples | sort) \
 		../e/statuscodes \
 		../emacs/makehlp.m2 \
 		../emacs/makem2.m2 \
 		../emacs/makesyms.m2 \
 		loads.awk \
 		@srcdir@/../*/COPYRIGHT \
-		@srcdir@/../packages/Macaulay2/basictests/*.m2 \
+		@srcdir@/../packages/Macaulay2Doc/basictests/*.m2 \
 		@srcdir@/../book/*.m2 \
 		@srcdir@/../packages/*.m2 \
 		@srcdir@/../packages/*/*.m2 \
-		@srcdir@/../packages/Macaulay2/test/*.m2 \
-		@srcdir@/../packages/Macaulay2/test/engine/*.m2 \
+		@srcdir@/../packages/Macaulay2Doc/test/*.m2 \
+		@srcdir@/../packages/Macaulay2Doc/test/engine/*.m2 \
 		@srcdir@/../bugs/*/*.m2 \
 		loadsequence \
 		Makefile.in \
 		Makefile.tests \
 		../emacs/Makefile.in \
-		../packages/Macaulay2/basictests/Makefile.in \
-		../packages/Macaulay2/test/Makefile.in \
-		../packages/Macaulay2/test/Makefile.test.in \
-		../packages/Macaulay2/test/slow/Makefile.in \
-		../packages/Macaulay2/test/engine/Makefile.in \
+		../packages/Macaulay2Doc/basictests/Makefile.in \
+		../packages/Macaulay2Doc/test/Makefile.in \
+		../packages/Macaulay2Doc/test/Makefile.test.in \
+		../packages/Macaulay2Doc/test/slow/Makefile.in \
+		../packages/Macaulay2Doc/test/engine/Makefile.in \
 		../packages/Makefile.in \
 		../../Makefile ../../GNUmakefile.in \
 		@srcdir@/../packages/*/Makefile.in \
@@ -109,11 +109,11 @@ clean::; rm -f TAGS @srcdir@/TAGS @srcdir@/TAGS.doc
 	  for i in $(patsubst @srcdir@/%, "%", $^) ; \
 	  do [ -f $$i ] || (echo "file not found: $$i" >&2; exit 1) ; echo  ; echo $$i,0 ; done >TAGS
 
-@srcdir@/TAGS.doc: Makefile.in $(shell find @srcdir@/../packages/Macaulay2 -not \( -name .svn -prune \) -type d)
+@srcdir@/TAGS.doc: Makefile.in $(shell find @srcdir@/../packages/Macaulay2Doc -not \( -name .svn -prune \) -type d)
 	@echo making $@ : $^
 	@ set -e ; \
 	  cd @srcdir@ && \
-	  find ../packages/Macaulay2 -name '*.m2' -o -name examples -prune | grep -v Macaulay2/examples | while read i ; do echo  ; echo $$i,0 ; done >TAGS.doc
+	  find ../packages/Macaulay2Doc -name '*.m2' -o -name examples -prune | grep -v Macaulay2Doc/examples | while read i ; do echo  ; echo $$i,0 ; done >TAGS.doc
 clean::; rm -f TAGS.doc
 prep :: $(DUMPEDM2FILES)
 

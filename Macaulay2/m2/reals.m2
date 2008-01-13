@@ -145,7 +145,7 @@ lift(CC,QQ) := lift(CC,ZZ) := opts -> (z,R) -> if imaginaryPart z == 0 then lift
 ring RR := x -> new RealField of RR' from precision x
 ring CC := x -> new ComplexField of CC' from precision x
 
-new RR from RawRingElement := (RRR,x) -> ( assert( RRR === RR ); rawToRR x )
+new RR from RawRingElement := (RRR,x) -> ( assert( RRR === RR ); rawToRR x)
 new CC from RawRingElement := (CCC,x) -> ( assert( CCC === CC ); rawToCC x)
 
 -- arithmetic operations

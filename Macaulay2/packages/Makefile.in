@@ -29,7 +29,7 @@ else
 Encapsulate = false
 endif
 
-ARGS1 := $(ARGS), PackagePrefix => \"$(prefix)/\", Encapsulate => $(Encapsulate)
+ARGS1 := $(ARGS), PackagePrefix => \"$(prefix)/\", Encapsulate => $(Encapsulate), EncapsulateDirectory => \"@encapdir@/\"
 ARGS2 := $(ARGS), PackagePrefix => \"@encapdir@/\", Encapsulate => false
 
 check ::
@@ -41,12 +41,12 @@ check ::
 	     ) ; \
 	  done
 
-install :: install-Macaulay2 install-others
-install-Macaulay2 ::
+install :: install-Macaulay2Doc install-others
+install-Macaulay2Doc ::
 	@ set -x ;  ../bin/M2@EXE@ -q --stop \
 		    -e errorDepth=0 \
 		    -e debugLevel=$(debugLevel) \
-		    -e "installPackage(\"Macaulay2\" $(ARGS1))" \
+		    -e "installPackage(\"Macaulay2Doc\" $(ARGS1))" \
 		    -e "exit 0"
 
 install-one ::
@@ -55,7 +55,7 @@ install-one ::
 install-others ::
 	@ for i in $(PACKAGES) ; \
 	  do ( \
-	      if [ "$$i" != Macaulay2 ] ; \
+	      if [ "$$i" != Macaulay2Doc ] ; \
 	      then \
 		  set -x ; \
 		  ../bin/M2@EXE@ -q --stop \

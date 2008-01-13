@@ -276,7 +276,7 @@ test "$DEBUG" = "yes" && STRIP=no
 test "$PROFILING" = "yes" && CFLAGS="$CFLAGS -pg" CXXFLAGS="$CXXFLAGS -pg" LDFLAGS="$LDFLAGS -pg" STRIP=no
 
 AC_SUBST(PACKAGES,"
-  Macaulay2
+  Macaulay2Doc
   Style
   Classic
   PrimaryDecomposition

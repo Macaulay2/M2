@@ -29,7 +29,7 @@ if class LAYOUT === Symbol then LAYOUT = hashTable {
       "share"=>"@coredatadirtail@/", -- change to coredatadirtail
       "m2"=>"@corem2srcdirtail@/", -- change to corem2srcdirtail
       "docm2rel"=>"@docpackagesdirtail@/Core/", -- eliminate or change to coredoc
-      "emacsdoc"=>"@docpackagesdirtail@/Core/emacs/", -- move to Macaulay2 package, eventually
-      "images"=>"@docpackagesdirtail@/Core/images/", -- move to Macaulay2 package, eventually
-      "style"=>"@docpackagesdirtail@/Core/style/" -- move to Macaulay2 package, eventually
+      "emacsdoc"=>"@docpackagesdirtail@/Core/emacs/", -- move to Macaulay2Doc package, eventually
+      "images"=>"@docpackagesdirtail@/Core/images/", -- move to Macaulay2Doc package, eventually
+      "style"=>"@docpackagesdirtail@/Core/style/" -- move to Macaulay2Doc package, eventually
     }

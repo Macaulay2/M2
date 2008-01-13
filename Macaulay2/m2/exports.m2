@@ -175,6 +175,7 @@ export {
 	symbol EliminationOrder,
 	symbol Email,
 	symbol Encapsulate,
+	symbol EncapsulateDirectory,
 	symbol End,
 	symbol Engine,
 	symbol EngineRing,

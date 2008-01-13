@@ -410,7 +410,7 @@ runFile := (inf,inputhash,outf,tmpf,desc,pkg,announcechange,rundir,usermode) -> 
      stderr << "--making " << desc << " in file " << outf << endl;
      if fileExists outf then removeFile outf;
      pkgname := toString pkg;
-     ldpkg := if pkgname != "Macaulay2" then concatenate("-e 'loadPackage(\"",pkgname,"\", FileName => \"",pkg#"source file","\")'") else "";
+     ldpkg := if pkgname != "Macaulay2Doc" then concatenate("-e 'loadPackage(\"",pkgname,"\", FileName => \"",pkg#"source file","\")'") else "";
      args := "--silent --print-width 77 --stop --int" | (if usermode then "" else " -q") | " " | ldpkg;
      cmdname := commandLine#0;
      if ulimit === null then (
@@ -483,8 +483,13 @@ check String := pkg -> check needsPackage (pkg, LoadDocumentation => true)
 
 setupNames := (opts,pkg) -> (
      buildPackage = pkg#"title";
-     buildDirectory = minimizeFilename(runfun opts.PackagePrefix | "/");
-     if opts.Encapsulate then buildDirectory = buildDirectory|buildPackage|"-"|pkg.Options.Version|"/";
+     buildDirectory = 
+     if opts.Encapsulate then (
+	  if opts.EncapsulateDirectory === null
+	  then buildDirectory|buildPackage|"-"|pkg.Options.Version|"/"
+	  else opts.EncapsulateDirectory
+	  )
+     else minimizeFilename(runfun opts.PackagePrefix | "/");
      )
 
 installPackage = method(Options => { 
@@ -492,6 +497,7 @@ installPackage = method(Options => {
           InstallPrefix => () -> applicationDirectory() | "local/",
 	  UserMode => false,
 	  Encapsulate => true,
+	  EncapsulateDirectory => null,
 	  IgnoreExampleErrors => false,
 	  FileName => null,
 	  CheckDocumentation => true,
@@ -525,10 +531,10 @@ uninstallPackage String := opts -> pkg -> (
      )
 
 installPackage String := opts -> pkg -> (
-     if pkg =!= "Macaulay2" then needsPackage "Macaulay2";  -- load the core documentation
+     if pkg =!= "Macaulay2Doc" then needsPackage "Macaulay2Doc";  -- load the core documentation
      -- we load the package even if it's already been loaded, because even if it was loaded with
      -- its documentation the first time, it might have been loaded at a time when the core documentation
-     -- in the "Macaulay2" package was not yet loaded
+     -- in the "Macaulay2Doc" package was not yet loaded
      pkg = loadPackage(pkg, DebuggingMode => opts.DebuggingMode, LoadDocumentation => opts.MakeDocumentation, FileName => opts.FileName);
      installPackage(pkg, opts);
      )
@@ -767,7 +773,7 @@ installPackage Package := opts -> pkg -> (
 	       seenit = new MutableHashTable;
 	       hadDocumentationWarning = false;
 	       numDocumentationWarnings = 0;
-	       scan((if pkg#"title" == "Macaulay2" then Core else pkg)#"exported symbols", s -> (
+	       scan((if pkg#"title" == "Macaulay2Doc" then Core else pkg)#"exported symbols", s -> (
 			 tag := makeDocumentTag s;
 			 if not isUndocumented tag and not hasDocumentation s and signalDocError tag then stderr << "--warning: symbol has no documentation: " << tag << endl;
 			 f := value s;
@@ -884,7 +890,7 @@ installPackage Package := opts -> pkg -> (
 	  << ///for i in *.info/// << endl
 	  << fix ///do (set -x ; install-info --info-dir="$ENCAP_TARGET/info/" "$i")/// << endl
 	  << ///done/// << endl;
-	  if version#"dumpdata" and pkg#"title" == "Macaulay2" then (
+	  if version#"dumpdata" and pkg#"title" == "Macaulay2Doc" then (
 	       f << endl << fix "(set -x ; \"$ENCAP_TARGET\"/bin/" << version#"M2 name" << " --stop --dumpdata)" << endl;
 	       );
 	  fileMode(octal "755",f);
@@ -908,7 +914,7 @@ installPackage Package := opts -> pkg -> (
 	  fileMode(octal "644",f);
 	  f << close;
 	  -- INSTALL
-	  if pkg#"title" == "Macaulay2" then (
+	  if pkg#"title" == "Macaulay2Doc" then (
 	       assert( class installFile === String );
 	       f = buildDirectory | "INSTALL"
 	       << installFile;
@@ -1076,15 +1082,13 @@ makePackageIndex List := path -> (
 		    },
 	       HEADER3 "Documentation",
 	       UL splice {
-               	    if prefixDirectory =!= null then HREF { prefixDirectory | LAYOUT#"packagehtml" "Macaulay2" | "index.html", "Macaulay 2" },
+               	    if prefixDirectory =!= null then HREF { prefixDirectory | LAYOUT#"packagehtml" "Macaulay2Doc" | "index.html", "Macaulay 2" },
 		    apply(toSequence unique path, pkgdir -> (
 			      prefixDirectory := minimizeFilename(pkgdir | relativizeFilename(LAYOUT#"packages",""));
 			      p := prefixDirectory | LAYOUT#"docm2";
 			      if isDirectory p then (
 				   r := readDirectory p;
-				   r = select(r, fn -> fn != "." and fn != ".."
-					-- and fn != "Macaulay2"
-					);
+				   r = select(r, fn -> fn != "." and fn != ".." );
 				   r = select(r, pkg -> fileExists (prefixDirectory | LAYOUT#"packagehtml" pkg | "index.html"));
 				   r = sort r;
 				   DIV {

@@ -1,0 +1,6 @@
+to run examples quickly, start up and initialize, and for each example,
+fork, redirect i/o, and run the example.  Thus we would need
+
+      close ZZ
+      open String
+      dup2(ZZ,ZZ)
