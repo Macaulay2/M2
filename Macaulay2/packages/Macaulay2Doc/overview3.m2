@@ -33,7 +33,7 @@ document {
 	  TO "GC garbage collector",
 	  TO "LAPACK",
 	  TO "BLAS",
-	  TO "NTL"
+	  TO "NTL library"
 	  }
      }
 
@@ -54,7 +54,7 @@ document {
      }
 
 document {
-     Key => "NTL",
+     Key => "NTL library",
      PARA {
 	  "The ", TT "NTL", " library is used by Macaulay 2, through the ", TO "Singular-Factory", ",
 	  for its algebraic routines.  It is available at ", HREF "http://www.netlib.org/lapack/", "."

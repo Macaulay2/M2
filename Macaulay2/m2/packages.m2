@@ -226,8 +226,8 @@ newPackage(String) := opts -> (title) -> (
 		    addEndFunction(() -> if isOpen db then close db))));
      pkgsym := (
 	  if PackageDictionary#?title
-	  then PackageDictionary#("Package$" | title) = getGlobalSymbol(PackageDictionary,title)
-	  else getGlobalSymbol(PackageDictionary,title)
+	  then getGlobalSymbol(PackageDictionary,title)
+	  else PackageDictionary#("Package$" | title) = getGlobalSymbol(PackageDictionary,title)
 	  );
 
      global currentPackage <- newpkg;

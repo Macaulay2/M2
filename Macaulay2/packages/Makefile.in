@@ -29,7 +29,7 @@ else
 Encapsulate = false
 endif
 
-ARGS1 := $(ARGS), PackagePrefix => \"$(prefix)/\", Encapsulate => $(Encapsulate), EncapsulateDirectory => \"@encapdir@/\"
+ARGS1 := $(ARGS), PackagePrefix => \"$(prefix)/\", Encapsulate => $(Encapsulate), EncapsulateDirectory => \"@package@/\"
 ARGS2 := $(ARGS), PackagePrefix => \"@encapdir@/\", Encapsulate => false
 
 check ::

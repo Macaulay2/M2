@@ -1,7 +1,21 @@
 --		Copyright 2008 by Daniel R. Grayson
 
+document { Key => {(Wikipedia,String),Wikipedia},
+     Headline => "link to a Wikipedia entry",
+     Usage => "Wikipedia s",
+     Inputs => { "s" },
+     Outputs => { {"a paragraph with a link to the Wikipedia entry with title ", TT "s",
+	       ", usable inside a documentation node"} },
+     EXAMPLE ///
+          Wikipedia "Bessel_function"
+	  html oo
+	  ///,
+     SeeAlso => { document }
+     }
+
 document { Key => {log1p,(log1p, QQ),(log1p, ZZ),(log1p, RR)},
      Usage => "log1p x",
+     Headline => "logarithm of 1+x",
      Inputs => { "x" },
      Outputs => { RR => { "the logarithm of ", TT "1+x" }},
      EXAMPLE lines ///
@@ -11,6 +25,7 @@ log(1 + 1p100e-10)
      }
 document { Key => {expm1,(expm1, ZZ),(expm1, RR),(expm1, QQ)},
      Usage => "expm1 x",
+     Headline => "exponential minus 1",
      Inputs => { "x" },
      Outputs => { RR => { "the quantity ", TT "exp(x)-1" }},
      EXAMPLE lines ///
@@ -20,6 +35,7 @@ document { Key => {expm1,(expm1, ZZ),(expm1, RR),(expm1, QQ)},
      }
 document { Key => {eint,(eint, QQ),(eint, ZZ),(eint, RR)},
      Usage => "eint x",
+     Headline => "exponential integral",
      Inputs => { "x" },
      Outputs => { RR => { "the exponential integral of ", TT "x" }},
      EXAMPLE lines ///
@@ -28,6 +44,7 @@ document { Key => {eint,(eint, QQ),(eint, ZZ),(eint, RR)},
      }
 document { Key => {Gamma,(Gamma, ZZ),(Gamma, RR),(Gamma, QQ)},
      Usage => "Gamma x",
+     Headline => "Gamma function",
      Inputs => { "x" },
      Outputs => { RR => { "the gamma function of ", TT "x" }},
      EXAMPLE lines ///
@@ -36,6 +53,7 @@ document { Key => {Gamma,(Gamma, ZZ),(Gamma, RR),(Gamma, QQ)},
      }
 document { Key => {lngamma,(lngamma, QQ),(lngamma, ZZ),(lngamma, RR)},
      Usage => "lngamma x",
+     Headline => "logarithm of the Gamma function",
      Inputs => { "x" },
      Outputs => {{ "the logarithm of the gamma function of ", TT "x", " as a real or imaginary number" }},
      EXAMPLE lines ///
@@ -47,6 +65,7 @@ document { Key => {lngamma,(lngamma, QQ),(lngamma, ZZ),(lngamma, RR)},
      }
 document { Key => {zeta,(zeta, QQ),(zeta, ZZ),(zeta, RR)},
      Usage => "zeta x",
+     Headline => "zeta function",
      Inputs => { "x" },
      Outputs => { RR => { "the zeta function of ", TT "x" }},
      EXAMPLE lines ///
@@ -55,6 +74,7 @@ document { Key => {zeta,(zeta, QQ),(zeta, ZZ),(zeta, RR)},
      }
 document { Key => {erf,(erf, ZZ),(erf, RR),(erf, QQ)},
      Usage => "erf x",
+     Headline => "error function",
      Inputs => { "x" },
      Outputs => { RR => { "the error function of ", TT "x" }},
      EXAMPLE lines ///
@@ -63,6 +83,7 @@ document { Key => {erf,(erf, ZZ),(erf, RR),(erf, QQ)},
      }
 document { Key => {erfc,(erfc, QQ),(erfc, ZZ),(erfc, RR)},
      Usage => "erfc x",
+     Headline => "complementary error function",
      Inputs => { "x" },
      Outputs => { RR => { "the complementary error function of ", TT "x" }},
      EXAMPLE lines ///
@@ -71,6 +92,7 @@ document { Key => {erfc,(erfc, QQ),(erfc, ZZ),(erfc, RR)},
      }
 document { Key => {sec,(sec, ZZ),(sec, RR),(sec, QQ)},
      Usage => "sec x",
+     Headline => "secant",
      Inputs => { "x" },
      Outputs => { RR => { "the secant of ", TT "x" }},
      EXAMPLE lines ///
@@ -79,6 +101,7 @@ document { Key => {sec,(sec, ZZ),(sec, RR),(sec, QQ)},
      }
 document { Key => {csc,(csc, QQ),(csc, ZZ),(csc, RR)},
      Usage => "csc x",
+     Headline => "cosecant",
      Inputs => { "x" },
      Outputs => { RR => { "the cosecant of ", TT "x" }},
      EXAMPLE lines ///
@@ -87,6 +110,7 @@ document { Key => {csc,(csc, QQ),(csc, ZZ),(csc, RR)},
      }
 document { Key => {cot,(cot, ZZ),(cot, RR),(cot, QQ)},
      Usage => "cot x",
+     Headline => "cotangent",
      Inputs => { "x" },
      Outputs => { RR => { "the cotangent of ", TT "x" }},
      EXAMPLE lines ///
@@ -95,6 +119,7 @@ document { Key => {cot,(cot, ZZ),(cot, RR),(cot, QQ)},
      }
 document { Key => {sech,(sech, QQ),(sech, ZZ),(sech, RR)},
      Usage => "sech x",
+     Headline => "hyperbolic secant",
      Inputs => { "x" },
      Outputs => { RR => { "the hyperbolic secant of ", TT "x" }},
      EXAMPLE lines ///
@@ -103,6 +128,7 @@ document { Key => {sech,(sech, QQ),(sech, ZZ),(sech, RR)},
      }
 document { Key => {csch,(csch, ZZ),(csch, RR),(csch, QQ)},
      Usage => "csch x",
+     Headline => "hyperbolic cosecant",
      Inputs => { "x" },
      Outputs => { RR => { "the hyperbolic cosecant of ", TT "x" }},
      EXAMPLE lines ///
@@ -111,6 +137,7 @@ document { Key => {csch,(csch, ZZ),(csch, RR),(csch, QQ)},
      }
 document { Key => {coth,(coth, QQ),(coth, ZZ),(coth, RR)},
      Usage => "coth x",
+     Headline => "hyperbolic cotangent",
      Inputs => { "x" },
      Outputs => { RR => { "the hyperbolic cotangent of ", TT "x" }},
      EXAMPLE lines ///
@@ -149,13 +176,15 @@ document { Key => pi,
 
 document { Key => {EulerConstant},
      Usage => "EulerConstant",
+     Headline => "the Euler-Mascheroni constant",
      Inputs => { },
-     Outputs => { RR => { "the Euler constant, converted to a numeric value of the correct precision, when necessary." }},
+     Outputs => { RR => { "the Euler-Mascheroni constant, converted to a numeric value of the correct precision, when necessary." }},
      EXAMPLE lines ///
      	  EulerConstant
      	  +EulerConstant
      	  EulerConstant+100p100
-     ///
+     ///,
+     Wikipedia "Euler-Mascheroni_constant",
      }
 document { Key => {InexactNumber'},
      "This class is the common parent of the classes of complex fields and real fields."
@@ -163,19 +192,50 @@ document { Key => {InexactNumber'},
 document { Key => {RingFamily},
      "This family is used to contain classes that correspond to a family of similar rings with a default member."
      }
-end
 document { Key => {BesselJ,(BesselJ, ZZ, QQ),(BesselJ, ZZ, ZZ),(BesselJ, ZZ, RR)},
+     Usage => "BesselJ(n,x)\nBesselJ_n x",
+     Headline => "Bessel function of the first kind",
+     Inputs => {
+	  "n" => ZZ => { "the order" },
+	  "x" => { ofClass{ZZ,QQ,RR} }
+	  },
+     Outputs => {
+	  {"the Bessel function of the first kind of order ", TT "n", " at ", TT "x"}
+	  },
      EXAMPLE lines ///
-     ///
+          BesselJ_0 .5
+     	  BesselJ_2 3p200
+     ///,
+     Wikipedia "Bessel_function",
+     SeeAlso => { BesselY }
      }
 document { Key => {BesselY,(BesselY, ZZ, ZZ),(BesselY, ZZ, RR),(BesselY, ZZ, QQ)},
+     Usage => "BesselY(n,x)\nBesselY_n x",
+     Headline => "Bessel function of the second kind",
+     Inputs => {
+	  "n" => ZZ => { "the order" },
+	  "x" => { ofClass{ZZ,QQ,RR} }
+	  },
+     Outputs => {
+	  {"the Bessel function of the second kind of order ", TT "n", " at ", TT "x"}
+	  },
      EXAMPLE lines ///
-     ///
+          BesselY_0 .5
+     	  BesselY_2 3p200
+     ///,
+     Wikipedia "Bessel_function",
+     SeeAlso => { BesselJ }
      }
 document { Key => {agm,(agm, ZZ, ZZ),(agm, QQ, ZZ),(agm, ZZ, QQ),(agm, QQ, QQ),(agm, ZZ, RR),(agm, RR, ZZ),(agm, QQ, RR),(agm, RR, QQ),(agm, RR, RR)},
+     Usage => "agm(x,y)",
+     Inputs => { "x" => "a number", "y" => "a number" },
+     Outputs => { {"the arithmetic geometric mean of ", TT "x", " and ", TT "y"}},
+     Headline => "arithmetic geometric mean",
      EXAMPLE lines ///
+     	  agm(1,2p200)
      ///
      }
+end
 
 (char, InexactField)
 clean,(clean, RR, MutableMatrix),(clean, RR, RingElement),(clean, RR, Matrix)

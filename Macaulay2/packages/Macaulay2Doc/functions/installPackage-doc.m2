@@ -1,3 +1,9 @@
+document { Key => "epkg",
+     "The program ", TT "epkg", " is used to ", EM "encapsulate", " the files of a package
+     in a subdirectory for easy later removal.  Symbolic links make it look like they have
+     been installed in the right place.  See ", HREF "http://www.encap.org/epkg/", "."
+     }
+
 document {
      Key => {installPackage,
 	  (installPackage,String),
@@ -6,6 +12,7 @@ document {
 	  [installPackage,CheckDocumentation],
 	  [installPackage,DebuggingMode],
 	  [installPackage,Encapsulate],
+	  [installPackage,EncapsulateDirectory],
 	  [installPackage,FileName],
 	  [installPackage,IgnoreExampleErrors],
 	  [installPackage,InstallPrefix],
@@ -34,12 +41,19 @@ document {
 	  MakeInfo => Boolean => { "whether to make the info pages.  This is a form of the documentation that can be viewed using the
 	       Unix command ", TT "info", " or using ", TT "emacs", "." 
 	       },
-	  Encapsulate => Boolean => { "whether to encapsulate all the installed files in a subdirectory whose name has the form
-	       ", TT "PACKAGENAME-VERSION", ", where ", TT "VERSION", " is the version number specified by the package as value of the Version option
-	       provided to ", TO "newPackage", ".  Encapsulation makes it easy to delete all the files associated with a package,
-	       and symbolic links can make it look like the files have been installed in the right place." },
 	  PackagePrefix => { "the path to the directory where the files of the package should be installed.  The default value is the subdirectory
 	       named ", TT "encap", " of the user's ", TO "application directory", "." },
+	  Encapsulate => Boolean => { "whether to encapsulate all the installed files in a subdirectory 
+	       of the directory specified by the ", TT "PackagePrefix", " option.  Unless overridden by
+	       the ", TT "EncapsulateDirectory", " option, its name has the form
+	       ", TT "PACKAGENAME-VERSION", ", where ", TT "VERSION", " is the version number specified 
+	       by the package as value of the ", TO "Version", " option
+	       provided to ", TO "newPackage", ".  Encapsulation makes it easy to delete all the files associated with a package
+	       (see ", TO "epkg", ")." 
+	       },
+	  EncapsulateDirectory => String => { "the name of the encapsulation subdirectory, terminated with a ", TT "/", ", in the case where
+	        the value of the ", TT "Encapsulate", " option is ", TT "true", "."
+	       },
 	  InstallPrefix => { "the path to the directory where the links should be created, in case encapsulation is enabled.  The value of this option can
 	       be a string or a function of 0 arguments returning a string.  The default value is the subdirectory named ", TT "local", " of
 	       the user's ", TO "application directory", "." },
@@ -67,7 +81,7 @@ document {
 	  {"create symbolic links in the location specified by the ", TT "InstallPrefix", " option"},
 	  {"place a link to this html documentation in the file ", TT "index.html", " in the user's ", TT "application directory", "; see ", TO "makePackageIndex"}
 	  },
-     SeeAlso => {"packages"}
+     SeeAlso => {"packages", "epkg"}
      }
 
 -- Local Variables:
