@@ -1421,7 +1421,17 @@ label(E,L)
 betti chainComplex E
 ///
 
+TEST ///
+-- This had been a bug around 0.9.95...
+S = QQ[x_1..x_5];
 
+Delta = simplicialComplex {x_1*x_2*x_3, x_2*x_4, x_3*x_4, x_5};
+
+C = chainComplex Delta
+C.dd
+assert(C.dd_0 * C.dd_1 == 0)
+assert(C.dd_1 * C.dd_2 == 0)
+///
 
 
 -- Local Variables:
