@@ -1,12 +1,26 @@
 --		Copyright 2008 by Daniel R. Grayson
 
+document { Key => {commonRing, (commonRing,List)},
+     Usage => "commonRing v",
+     Headline => "find smallest containing ring",
+     Inputs => { "v" => "a list of numbers, ring elements, matrices, or things with rings, see ", TO "ring" },
+     Outputs => { Ring => "the smallest ring to which all members of the list can be promoted" },
+     EXAMPLE lines ///
+     	  commonRing {1,2/3}
+     	  commonRing {1,2.}
+     	  commonRing {1,2p100,matrix{{3p200}}}
+	  R = RR[x];
+     	  commonRing {1,2p100,matrix{{3p200}},0_R}
+     	  ///
+     }
+
 document { Key => {(Wikipedia,String),Wikipedia},
      Headline => "link to a Wikipedia entry",
      Usage => "Wikipedia s",
      Inputs => { "s" },
      Outputs => { {"a paragraph with a link to the Wikipedia entry with title ", TT "s",
 	       ", usable inside a documentation node"} },
-     EXAMPLE ///
+     EXAMPLE lines ///
           Wikipedia "Bessel_function"
 	  html oo
 	  ///,
@@ -40,7 +54,8 @@ document { Key => {eint,(eint, QQ),(eint, ZZ),(eint, RR)},
      Outputs => { RR => { "the exponential integral of ", TT "x" }},
      EXAMPLE lines ///
      	  eint 2
-     ///
+     ///,
+     Wikipedia "Exponential_integral"
      }
 document { Key => {Gamma,(Gamma, ZZ),(Gamma, RR),(Gamma, QQ)},
      Usage => "Gamma x",
@@ -49,7 +64,8 @@ document { Key => {Gamma,(Gamma, ZZ),(Gamma, RR),(Gamma, QQ)},
      Outputs => { RR => { "the gamma function of ", TT "x" }},
      EXAMPLE lines ///
      	  Gamma 6
-     ///
+     ///,
+     Wikipedia "Gamma_function"
      }
 document { Key => {lngamma,(lngamma, QQ),(lngamma, ZZ),(lngamma, RR)},
      Usage => "lngamma x",
@@ -65,12 +81,13 @@ document { Key => {lngamma,(lngamma, QQ),(lngamma, ZZ),(lngamma, RR)},
      }
 document { Key => {zeta,(zeta, QQ),(zeta, ZZ),(zeta, RR)},
      Usage => "zeta x",
-     Headline => "zeta function",
+     Headline => "Riemann zeta function",
      Inputs => { "x" },
      Outputs => { RR => { "the zeta function of ", TT "x" }},
      EXAMPLE lines ///
      	  zeta 2
-     ///
+     ///,
+     Wikipedia "Riemann_zeta_function"
      }
 document { Key => {erf,(erf, ZZ),(erf, RR),(erf, QQ)},
      Usage => "erf x",
@@ -79,7 +96,8 @@ document { Key => {erf,(erf, ZZ),(erf, RR),(erf, QQ)},
      Outputs => { RR => { "the error function of ", TT "x" }},
      EXAMPLE lines ///
      	  erf 2
-     ///
+     ///,
+     Wikipedia "Error_function"
      }
 document { Key => {erfc,(erfc, QQ),(erfc, ZZ),(erfc, RR)},
      Usage => "erfc x",
@@ -88,7 +106,8 @@ document { Key => {erfc,(erfc, QQ),(erfc, ZZ),(erfc, RR)},
      Outputs => { RR => { "the complementary error function of ", TT "x" }},
      EXAMPLE lines ///
      	  erfc 2
-     ///
+     ///,
+     Wikipedia "Error_function"
      }
 document { Key => {sec,(sec, ZZ),(sec, RR),(sec, QQ)},
      Usage => "sec x",
@@ -97,7 +116,8 @@ document { Key => {sec,(sec, ZZ),(sec, RR),(sec, QQ)},
      Outputs => { RR => { "the secant of ", TT "x" }},
      EXAMPLE lines ///
      	  sec(pi/3)
-     ///
+     ///,
+     Wikipedia "Trigonometric_function"
      }
 document { Key => {csc,(csc, QQ),(csc, ZZ),(csc, RR)},
      Usage => "csc x",
@@ -106,7 +126,9 @@ document { Key => {csc,(csc, QQ),(csc, ZZ),(csc, RR)},
      Outputs => { RR => { "the cosecant of ", TT "x" }},
      EXAMPLE lines ///
      	  csc(pi/3)
-     ///
+     ///,
+     Wikipedia "Trigonometric_function"
+
      }
 document { Key => {cot,(cot, ZZ),(cot, RR),(cot, QQ)},
      Usage => "cot x",
@@ -115,7 +137,9 @@ document { Key => {cot,(cot, ZZ),(cot, RR),(cot, QQ)},
      Outputs => { RR => { "the cotangent of ", TT "x" }},
      EXAMPLE lines ///
      	  cot(pi/3)
-     ///
+     ///,
+     Wikipedia "Trigonometric_function"
+
      }
 document { Key => {sech,(sech, QQ),(sech, ZZ),(sech, RR)},
      Usage => "sech x",
@@ -124,7 +148,8 @@ document { Key => {sech,(sech, QQ),(sech, ZZ),(sech, RR)},
      Outputs => { RR => { "the hyperbolic secant of ", TT "x" }},
      EXAMPLE lines ///
      	  sech(pi/3)
-     ///
+     ///,
+     Wikipedia "Hyperbolic_function"
      }
 document { Key => {csch,(csch, ZZ),(csch, RR),(csch, QQ)},
      Usage => "csch x",
@@ -133,7 +158,8 @@ document { Key => {csch,(csch, ZZ),(csch, RR),(csch, QQ)},
      Outputs => { RR => { "the hyperbolic cosecant of ", TT "x" }},
      EXAMPLE lines ///
      	  csch(pi/3)
-     ///
+     ///,
+     Wikipedia "Hyperbolic_function"
      }
 document { Key => {coth,(coth, QQ),(coth, ZZ),(coth, RR)},
      Usage => "coth x",
@@ -142,7 +168,8 @@ document { Key => {coth,(coth, QQ),(coth, ZZ),(coth, RR)},
      Outputs => { RR => { "the hyperbolic cotangent of ", TT "x" }},
      EXAMPLE lines ///
      	  coth(pi/3)
-     ///
+     ///,
+     Wikipedia "Hyperbolic_function"
      }
      
 document {

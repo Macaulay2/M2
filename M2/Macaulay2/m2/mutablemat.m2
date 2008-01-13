@@ -147,9 +147,9 @@ solve(MutableMatrix,MutableMatrix) := opts -> (A,b) -> (
      if opts.ClosestFit
      then rawLeastSquares(raw A,raw b,raw x,opts.MaximalRank)
      else rawSolve(raw A,raw b,raw x);
-     x)
+     matrix x)
 solve(Matrix,Matrix) := opts -> (A,b) -> (
-     matrix solve(mutableMatrix(A,Dense=>true),
+     solve(mutableMatrix(A,Dense=>true),
                   mutableMatrix(b,Dense=>true),
 		  opts))
 

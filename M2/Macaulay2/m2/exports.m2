@@ -569,6 +569,7 @@ export {
 	symbol commandInterpreter,
 	symbol commandLine,
         symbol commonest,
+	symbol commonRing,
 	symbol comodule,
 	symbol complement,
 	symbol complete,

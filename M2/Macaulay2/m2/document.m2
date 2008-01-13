@@ -1227,7 +1227,9 @@ help List := v -> DIV between(hr,help \ v)
 
 help Thing := x -> if hasAttribute(x,ReverseDictionary) then return help getAttribute(x,ReverseDictionary) else error "no documentation found"
 
+tmp := help
 help = Command help
+setAttribute(tmp,ReverseDictionary,symbol help)		    -- kludge
 
 pager = x -> (
      if height stdio > 0

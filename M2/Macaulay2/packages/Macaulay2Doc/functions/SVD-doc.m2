@@ -4,34 +4,35 @@
 
 document { 
      Key => {SVD, (SVD,Matrix), (SVD,MutableMatrix)},
-     Headline => "singular value decomposition of a rectangular matrix over RR or CC",
+     Headline => "singular value decomposition of a matrix",
      Usage => "(S,U,Vt) = SVD M",
      Inputs => {
-	  "M" => Matrix => {" over ", TO RR, " or ", TO CC, ", of size m by n"}
+	  "M" => Matrix => {" over ", TO RR, " or ", TO CC, ", of size ", TT "m", " by ", TT "n"}
 	  },
      Outputs => {
-	  "S" => Matrix => "over RR, the singular values, of size t by 1, where t = min(m,n)",
-	  "U" => Matrix => "an orthogonal (unitary) matrix of size m by m",
-	  "Vt" => Matrix => "an orthogonal (unitary) matrix of size n by n"
+	  "S" => VerticalList => "the list of singular values",
+	  "U" => Matrix => {"an orthogonal (unitary) matrix of size ", TT "m", " by ", TT "m"},
+	  "Vt" => Matrix => {"an orthogonal (unitary) matrix of size ", TT "n", " by ", TT "n"},
 	  },
-     "If Sigma is the m by n matrix whose (i,i) entry is the i th entry of S, and zero
-     elsewhere, then M = U Sigma Vt.  This is the singular value decomposition 
-     of M.  Note that the entries of S are (up to roundoff error) the eigenvalues
-     of the Hermitian matrix M * (conjugate transpose M)",
+     "If ", TT "Sigma", " is the diagonal ", TT "m", " by ", TT "n", " matrix whose ", TT "(i,i)", " entry is the 
+     ", TT "i", "-th element of ", TT "S", ", then ", TT "M = U Sigma Vt", ".  This is the singular value decomposition 
+     of ", TT "M", ".  The entries of ", TT "S", " are (up to roundoff error) the eigenvalues
+     of the Hermitian matrix ", TT "M * (conjugate transpose M)",
      PARA{},
      "M may also be a ", TO MutableMatrix, " in which case the returned values
-     S, U, Vt are also ", TO2(MutableMatrix, "mutable matrices"), ".",
+     ", TT "U", " and ", TT "Vt", " are also ", TO2(MutableMatrix, "mutable matrices"), ".",
      PARA{},
-     "If M is over CC, then U and Vt are unitary matrices over CC.  If M is over RR, 
-     U and Vt are orthogonal over RR.",
-     EXAMPLE {
-	  "M = map(RR^3, RR^5, (i,j) -> (i+1)^j * 1.0)",
-	  "(S,U,V) = SVD(M)",
-	  "(transpose U) * M * (transpose V)",
-	  "U^-1 == transpose U",
-	  "(S1,U1,V1) = SVD(M, DivideConquer => true)",
-	  "S1 == S, U1==U, V1==V",
-	  },
+     "If ", TT "M", " is over ", TO "CC", ", then ", TT "U", " and ", TT "Vt", " are unitary matrices over ", TO "CC", ".
+     If ", TT "M", " is over ", TO "RR", ", ", TT "U", " and ", TT "Vt", " are orthogonal over ", TT "RR", ".",
+     EXAMPLE lines ///
+	  M = map(RR^3, RR^5, (i,j) -> (i+1)^j * 1.0)
+	  (S,U,V) = SVD(M)
+	  M' = (transpose U) * M * (transpose V)
+	  clean_1e-10 M'
+	  U^-1 == transpose U
+	  (S1,U1,V1) = SVD(M, DivideConquer => true)
+	  S1 == S, U1==U, V1==V
+	  ///,
      "The SVD routine calls on the SVD algorithms in the lapack library.",
      SeeAlso => {eigenvalues, eigenvectors}
      }

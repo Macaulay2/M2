@@ -89,7 +89,7 @@ editMethod Sequence := args -> (
 edit = Command editMethod
 
 -----------------------------------------------------------------------------
-methods = method(Dispatch => Thing)
+methods = method(Dispatch => Thing, TypicalValue => VerticalList)
 methods Command := c -> methods c#0
 methods Type := F -> (
      seen := new MutableHashTable;
@@ -114,7 +114,7 @@ methods Type := F -> (
 			      else if class key === Sequence and member(F,key)
 			      then found#key = true)))));
      -- sort -- too slow
-     keys found)
+     new VerticalList from keys found)
 
 methods Sequence := F -> (
      seen := new MutableHashTable;
@@ -130,7 +130,7 @@ methods Sequence := F -> (
 			      and class key === Sequence and tallyF <= tally key
 			      then found#key = true)))));
      -- sort -- too slow
-     keys found)
+     new VerticalList from keys found)
 
 methods Thing := F -> (
      if F === HH then return join(methods homology, methods cohomology);
@@ -153,7 +153,7 @@ methods Thing := F -> (
 				   )
 			      then found#key = true)))));
      -- sort -- too slow
-     keys found)
+     new VerticalList from keys found)
 
 usage := () -> (
      << endl

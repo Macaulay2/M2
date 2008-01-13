@@ -917,26 +917,49 @@ document {
 document {
      Key => {methods,(methods, Command),(methods, Sequence),(methods, Thing),(methods, Type)},
      Headline => "list methods",
-     TT "methods F", " -- produces a list of those methods associated with the
-     function or type F.",
-     BR{},
-     TT "methods symbol **", " -- produces a list of the methods 
-     usable with the operator ", TT "**", ".",
-     BR{},
-     TT "methods (symbol **, X)", " -- produces a list of the 
-     methods usable with the operator ", TT "**", " and a thing of
-     class ", TT "X", ".",
-     BR{},
-     TT "methods (X, Y)", " -- produces a list of the 
-     methods usable with a thing of class ", TT "X", " and a thing of class
-     ", TT "Y", ".",
-     PARA{},
-     "This function operates by examining those types which are values of
+     SYNOPSIS (
+	  Usage => "methods x",
+	  Inputs => {
+	       "x" => { ofClass{Function,Type,Keyword} }
+	       },
+	  Outputs => {{
+		    ofClass VerticalList, " of those methods associated with ", TT "x"
+		    }},
+	  EXAMPLE lines ///
+	       methods BettiTally
+	       methods resolution
+	       methods symbol @@
+	  ///
+	  ),
+     SYNOPSIS (
+	  Usage => "methods(s,X)",
+	  Inputs => {
+	       "s" => Symbol, "X" => Type
+	       },
+	  Outputs => {{
+		    ofClass VerticalList, " of those methods associated with the operator ", TT "s",
+		    " and the type ", TT "X"
+		    }},
+	  EXAMPLE lines ///
+	       methods( symbol ++, Module)
+	  ///
+	  ),
+     SYNOPSIS (
+	  Usage => "methods(X,Y)",
+	  Inputs => {
+	       "X" => Type, "Y" => Type
+	       },
+	  Outputs => {{
+		    ofClass VerticalList, " of those methods associated with "
+		    }},
+	  EXAMPLE lines ///
+	       methods( Matrix, Matrix )
+	  ///
+	  ),
+     "This function operates by examining those types that are values of
      global symbols for keys which appear to be storing references to
      methods.  Types which don't appear as values of global variables will
-     not be examined, so perhaps not all methods will be found.",
-     PARA{},
-     EXAMPLE "methods drop"
+     not be examined, so perhaps not all methods will be found."
      }
 
 document {

@@ -576,6 +576,7 @@ export errorMessageClass := newtypeof(basicListClass);
 export missingMethodClass := newtypeof(errorMessageClass);
 
 export ringClass := newtypeof(typeClass);
+export ringElementClass := newtypeof(basicListClass);
 export numberClass := newtypeof(thingClass);
 export inexactNumberClass := newtypeof(numberClass);
 
