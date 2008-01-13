@@ -1,3 +1,8 @@
+debug Core
+QQ[x]
+rawPairs(raw ZZ, raw x)
+
+
 Macaulay 2, version 0.9.96
 with packages: Classic, Core, Elimination, IntegralClosure, LLLBases, Parsing, PrimaryDecomposition, SchurRings, TangentCone
 --loading /home/dan/.Macaulay2/init.m2

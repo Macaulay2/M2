@@ -1,3 +1,7 @@
+-- No longer crashes: 13 Jan 2008
+
+(matrix {{2.}}) ^ 1000
+
 crash:
 
     i1 : (matrix {{2.}}) ^ 1000

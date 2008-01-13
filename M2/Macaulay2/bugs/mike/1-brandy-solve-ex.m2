@@ -20,4 +20,8 @@ A = matrix {{1.,2,3},{4,5,6},{1,1,1}};
 I = inverse A; -- should give an error, but happily computes some bogus answer
 A*I
 
+A = matrix {{1.,2,3},{4,5,6},{1,1,1}};
+I = inverse A; -- should give an error, but happily computes some bogus answer
+A*I
+
 --how do I use "LU"?
