@@ -278,14 +278,11 @@ net InexactField := R -> net expression R
 net CC := z -> simpleToString z
 toExternalString RR := toExternalString0
 toExternalString CC := toExternalString0
-logten2 := log 10. / log 2.
 InexactNumber#{Standard,Print} = x ->  (
      << newline << concatenate(interpreterDepth:"o") << lineNumber << " = ";
      save := printingPrecision;
-     try printingPrecision = max(printingPrecision, floor (precision x / logten2));
-     try << x
-     else try << toString x
-     else << "<<a number that fails to print>>";
+     printingPrecision = 0;
+     << toString x;
      printingPrecision = save;
      << newline << flush;
      );
@@ -295,7 +292,8 @@ InexactNumber#{Standard,AfterPrint} = x -> (
      << concatenate(interpreterDepth:"o") << lineNumber;
      y := class x;
      << " : " << y;
-     << " (of precision " << precision x << ")";
+     prec := precision x;
+     if prec =!= defaultPrecision then << " (of precision " << prec << ")";
      {*
      while parent y =!= Thing do (
 	  y = parent y;
