@@ -1482,7 +1482,14 @@ export tostring5(
 	  else mantissa
      ) +
      ((new string len t do provide '0') + (if ex != long(0) then sep + tostring(ex) else "")));
-export tostringRR(x:RR):string := tostring5(x,printingPrecision,printingLeadLimit,printingTrailLimit,printingSeparator);
+
+log2ten := log(10.) / log(2.);
+export tostringRR(x:RR):string := (
+     prec := printingPrecision;				    -- interpret printingPrecision==0 as infinity
+     meaningful := int(floor(precision0(x) / log2ten));
+     if prec == 0 || prec > meaningful then prec = meaningful; -- print at most the "meaningful" digits
+     tostring5(x,prec,printingLeadLimit,printingTrailLimit,printingSeparator)
+     );
      
 export toExternalString(x:RR):string := (
      if isinf(x) then return if x < 0 then "-infinity" else "infinity";
@@ -1520,6 +1527,8 @@ export toExternalString(z:CC):string := (
      y := imaginaryPart(z);
      if y === 0 
      then toExternalString(x)
+     else if x === 0 
+     then toExternalString(y) + "*ii"
      else if y < 0
      then toExternalString(x) + "-" + toExternalString(-y) + "*ii"
      else toExternalString(x) + "+" + toExternalString( y) + "*ii"

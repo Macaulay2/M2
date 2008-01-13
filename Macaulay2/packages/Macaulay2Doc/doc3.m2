@@ -1397,15 +1397,21 @@ document { Key => "printingPrecision",
 	  "n" => ZZ
 	  },
      Consequences => {
-	  {"Real numbers are printed with ", TT "n", " digits of precision,
-	       except when appearing alone on an output line."}
+	  {"Henceforth, inexact numbers are printed with at most ", TT "n", " digits of precision.
+	       Meaningless digits will not be displayed.
+	       The special case where ", TT "n=0", " is
+	       interpreted as meaning ", TT "n=infinity", ", and this case is
+	       used when a number appears alone on an output line to display
+	       all the meaningful digits."}
 	  },
      EXAMPLE lines ///
-     	  1/3.
-     	  {1/3.}
+     	  1/3p100
+     	  {1/3p100}
 	  printingPrecision
 	  printingPrecision = 16
-     	  {1/3.}
+     	  {1/3p100}
+	  printingPrecision = 0
+     	  {1/3p100}
      ///,
      SeeAlso => {"printingLeadLimit", "printingTrailLimit", "printingSeparator", format}
      }

@@ -393,6 +393,7 @@ xor(x:uint, y:uint):uint ::= Ccode(uint,\"(\",x,\" ^ \",y,\")\");","\n\
 (x:long) * (y:double):double ::= Ccode(double,\"(\",x,\" * \",y,\")\");","\n\
 (x:double) * (y:long):double ::= Ccode(double,\"(\",x,\" * \",y,\")\");","\n\
 (x:int) / (y:double):double ::= Ccode(double,\"(\",x,\" / \",y,\")\");","\n\
+(x:ulong) / (y:double):double ::= Ccode(double,\"(\",x,\" / \",y,\")\");","\n\
 (x:double) / (y:int):double ::= Ccode(double,\"(\",x,\" / \",y,\")\");"
 	  };
 
