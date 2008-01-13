@@ -2,6 +2,8 @@
 --- author(s): MES
 --- notes: 
 
+undocumented{(numgens, InexactField)}
+
 document { 
      Key => numgens,
      Headline => "the number of generators",

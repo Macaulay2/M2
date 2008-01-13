@@ -1641,12 +1641,10 @@ document {
 document {
      Key => (random, ZZ), 
      Headline => "random integer",
-	Usage => "random n",
-	Inputs => {"n"=> {}},
-	Outputs => {ZZ => {"a random integer in the range ", TT "0 .. n-1"}},
-     Caveat => "doesn't correctly handle the case when n an integer is larger
-     than 2^31-1.",
-	"Here is a basic example:",
+     Usage => "random n",
+     Inputs => {"n"=> {}},
+     Outputs => {ZZ => {"a random integer in the range ", TT "0 .. n-1"}},
+     "Here is a basic example:",
 	EXAMPLE "random 57",
 	"Here is an example using the ", TO "tally", " command.",
      EXAMPLE "tally apply(100, i -> random 10)",
@@ -1672,72 +1670,56 @@ document {
 document {
      Key => (random, RR), 
      Headline => "random real number",
-	Usage => "random x",
-	Inputs => {"x" => {}},
-	Outputs => {RR=> {"a random real number in the range ", TT "0 .. x"}},
-     "Here is a basic example:",
-	EXAMPLE "random 3.14",
+     Usage => "random x",
+     Inputs => {"x"},
+     Outputs => { RR=> {"a random positive real number less than ", TT "x", ", of the same precision"}},
+     EXAMPLE lines ///
+     random 3.14
+     random 3p200
+     ///,
      SeeAlso => {"setRandomSeed"}
      }
 
 document {
-     Key => (random, Type),
+     Key => {(random, Type),(random, RingFamily),(random, QuotientRing),(random, GaloisField),(random, ZZ, Ring)},
      Headline => "random element of a type",
-     Usage => "random T",
-     Inputs => {
-	  "T"
-	  },
-     Outputs => {
-	  { "a random instance of the type ", TT "T" }
-	  },
-	TT "random ZZ", " outputs a random integer from the closed interval bounded by  ", TT "-10", " and ", TT "10", ".",
-	EXAMPLE "random ZZ",
-	TT "random QQ", " outputs a rational number whose numerator is a random integer from the closed interval 
-	bounded by ", TT "-10", " and ", TT "10", " and whose denominator is a random integer from the closed interval bounded
-	by ", TT "0", " and ", TT "10", ".",
-	EXAMPLE "random QQ",
-     "Note: not implemented yet for ", TO "RR", ", ", TO "CC", ", and polynomial rings.",
-     SeeAlso => {"setRandomSeed"}
-     }
-
-document {
-     Key => (random, QuotientRing),
-     Headline => "random element of a quotient ring",
-	"See: ", TO (random, Type), "."
-	}
-
-document {
-     Key => (random, GaloisField),
-     Headline => "random element of a Galois field",
-	"See: ", TO (random, Type), "."
-	}
-
-
-document {
-     Key => (random, ZZ, Ring),
-     Headline => "a random ring element of a given degree",
-     Usage => "r = random(n,R)",
-     Inputs => { "n", "R" },
-     Outputs => {
-	  {"a random homogeneous element in the ring ", TT "R", " of degree ", TT "n"}
-	  },
-     EXAMPLE {
-	  "R = GF(9,Variable=>a)[x,y];",
-	  "random(3,R)"
-	  },
-     SeeAlso => {"setRandomSeed"}
-     }
-
-document {
-     Key => (random, List, Ring),
-     Headline => "a random ring element of a given degree",
-     Usage => "r = random(n,R)",
-     Inputs => { "n" => "a list of integers", "R" },
-     Outputs => {
-	  {"a random homogeneous element in the ring ", TT "R", " of multi-degree ", TT "n"}
-	  },
-     "The length of ", TT "n", " should be the same as ", TT "degreeLength R", ".",
-     SeeAlso => {"setRandomSeed"}
+     SYNOPSIS (
+	  Usage => "random T",
+	  Inputs => { "T" => {ofClass Type}},
+	  Outputs => { { "a random instance of the type ", TT "T" } },
+	  EXAMPLE lines ///
+	  random RR
+	  random CC_80
+	  random (ZZ/101)
+	  k = GF 2048
+	  VerticalList for i to 5 list random k
+	  ///,
+	  PARA { "The current value of ", TO "randomHeight", " is the upper bound on the absolute values of
+	       random integers, and on the absolute values of numerators and denominators of
+	       random rational numbers." },
+	  EXAMPLE lines ///
+	  randomHeight
+	  for i to 10 list random ZZ
+	  randomHeight = 1000
+	  for i to 10 list random QQ
+	  ///
+	  ),
+     SYNOPSIS (
+	  Usage => "random(d,R)",
+	  Inputs => { 
+	       "d" => {ofClass(ZZ,List), ", the degree or multi-degree to use"},
+	       "R" => Ring
+	       },
+	  Outputs => { { "a random homogeneous element of the ring ", TT "R", " of degree ", TT "d" } },
+	  EXAMPLE lines ///
+	  R = ZZ[x,y];
+	  random(5,R)
+	  R = GF(25,Variable=>a)[x,y];
+	  VerticalList for i to 6 list random(3,R)
+	  ///,
+     	  "The length of ", TT "d", ", if it's a list, should be the same as ", TT "degreeLength R", ".",
+	  ),
+     SeeAlso => {setRandomSeed,"randomHeight"}
      }
 
 document {

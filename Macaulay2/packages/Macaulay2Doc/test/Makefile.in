@@ -25,8 +25,8 @@ distclean ::
 
 docStructure.out : docStructure.m2
 
-Makefile : Makefile.in; cd $(DOTS)/..; ./config.status Macaulay2/packages/Macaulay2/test/Makefile
-Makefile.test : Makefile.test.in; cd $(DOTS)/..; ./config.status Macaulay2/packages/Macaulay2/test/Makefile.test
+Makefile : Makefile.in; cd $(DOTS)/..; ./config.status Macaulay2/packages/Macaulay2Doc/test/Makefile
+Makefile.test : Makefile.test.in; cd $(DOTS)/..; ./config.status Macaulay2/packages/Macaulay2Doc/test/Makefile.test
 
 status ::
 	$(MAKE) -C engine $@
@@ -39,5 +39,5 @@ MIKE_RESULTS := $(patsubst @srcdir@/%.m2, %.out, $(MIKE_TESTS))
 mike-tests:: $(MIKE_RESULTS) ; grep sys $^ 
 
 # Local Variables:
-# compile-command: "make -k -C $M2BUILDDIR/Macaulay2/packages/Macaulay2/test "
+# compile-command: "make -k -C $M2BUILDDIR/Macaulay2/packages/Macaulay2Doc/test "
 # End:

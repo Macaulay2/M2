@@ -2,7 +2,7 @@
 --- author(s): 
 --- notes: 
 
-undocumented {(net, Function),
+undocumented {(net, Function),(net, InexactField),(net, Constant),
 	  (net, Adjacent),
 	  (net, Array),
 	  (net, Bag),

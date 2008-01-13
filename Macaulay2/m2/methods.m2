@@ -169,10 +169,10 @@ use Thing := identity
 degree = method ( )
 
 default = method()
-default Type := (X) -> (
-     m := lookup(X,symbol default);
-     if m === null then error "no method found";
-     m ())
+--default Type := (X) -> (
+--     m := lookup(X,symbol default);
+--     if m === null then error "no method found";
+--     m ())
 
 random = method(Options => {
 	  MaximalRank => false,

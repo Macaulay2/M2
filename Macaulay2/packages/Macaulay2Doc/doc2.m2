@@ -641,7 +641,9 @@ document {
      Inputs => { "x" => RR },
      Outputs => { { "the exponential of ", TT "x" } } }
 document {
-     Key => {log,(log, RR),(log, QQ),(log, ZZ)},
+     Key => {log,(log, RR),(log, QQ),(log, ZZ),
+	  (log, ZZ, ZZ),(log, QQ, ZZ),(log, ZZ, QQ),(log, QQ, QQ),(log, RR, ZZ),
+	  (log, ZZ, RR),(log, QQ, RR),(log, RR, QQ),(log, RR, RR)},
      Headline => "logarithm function",
      Usage => "log x\nlog(b,x)\nlog_b x",
      Inputs => { "x" => RR, "b" => RR => {"the base for the logarithm"} },

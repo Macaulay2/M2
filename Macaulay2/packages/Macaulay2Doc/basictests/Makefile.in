@@ -31,11 +31,11 @@ clean::	; rm -f *.okay
 LOADLIBES += -lgc
 all:: testgc; ./testgc
 clean:: ; rm -f testgc
-Makefile : Makefile.in ; cd $(DOTS)/.. && ./config.status Macaulay2/packages/Macaulay2/basictests/Makefile
+Makefile : Makefile.in ; cd $(DOTS)/.. && ./config.status Macaulay2/packages/Macaulay2Doc/basictests/Makefile
 distclean ::; rm -f Makefile
 check :: check-return-code
 check-return-code :; if echo 'error "foo"' | $(DOTS)/bin/M2@EXE@ $(ARGS) ; then false ; else true ; fi
 
 # Local Variables:
-# compile-command: "make -C $M2BUILDDIR/Macaulay2/packages/Macaulay2/basictests "
+# compile-command: "make -C $M2BUILDDIR/Macaulay2/packages/Macaulay2Doc/basictests "
 # End:

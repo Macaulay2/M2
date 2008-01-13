@@ -9,5 +9,5 @@ gens gb ideal g
 assert( oo === ooo )
 
 -- Local Variables:
--- compile-command: "make -C $M2BUILDDIR/Macaulay2/packages/Macaulay2/test gblimits.out"
+-- compile-command: "make -C $M2BUILDDIR/Macaulay2/packages/Macaulay2Doc/test gblimits.out"
 -- End:

@@ -3,6 +3,7 @@
 --- notes: 
 
 undocumented {
+     (degreeLength, InexactField),
      (degreeLength,PolynomialRing), 
      (degreeLength,QuotientRing),
      (degreeLength,FractionField)
