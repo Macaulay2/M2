@@ -484,7 +484,7 @@ check String := pkg -> check needsPackage (pkg, LoadDocumentation => true)
 setupNames := (opts,pkg) -> (
      buildPackage = pkg#"title";
      buildDirectory = minimizeFilename(runfun opts.PackagePrefix | "/");
-     buildDirectory = buildDirectory | if opts.Encapsulate then (
+     if opts.Encapsulate then buildDirectory = buildDirectory | (
 	  if opts.EncapsulateDirectory === null
 	  then buildPackage|"-"|pkg.Options.Version|"/"
 	  else opts.EncapsulateDirectory
@@ -780,7 +780,7 @@ installPackage Package := opts -> pkg -> (
 			      scan(methods f, m -> if isDocumentableMethod m then (
 					tag := makeDocumentTag m;
 					if not isUndocumented tag and not dispatcherMethod m and not hasDocumentation m and signalDocError tag
-					then stderr << "--warning: method has no documentation: " << tag << ", key: " << DocumentTag.Key tag << endl;
+					then stderr << "--warning: method has no documentation: " << tag << ", key: " << toString DocumentTag.Key tag << endl;
 					));
 			      ))));
 
