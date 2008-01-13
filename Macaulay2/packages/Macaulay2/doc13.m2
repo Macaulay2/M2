@@ -424,9 +424,13 @@ document { Key => VerticalList,
      Headline => "a type of visible self-initializing list that prints vertically",
      Usage => "VerticalList x",
      Inputs => { "x" => List },
+     "Almost all operations on lists apply to vertical lists, since it is a ", TO VisibleList, ".  The
+     main difference is the way that it is displayed.",
      EXAMPLE lines ///
      	 a .. e
-	 VerticalList oo
+	 v = VerticalList oo
+     	 v_1
+	 length v	 
 	 ///
     }
 
