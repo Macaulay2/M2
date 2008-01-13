@@ -1,3 +1,6 @@
+F = frac(QQ[symbol x])
+basis(F^6)
+
 Date: Thu, 4 Oct 2007 12:36:09 -0500
 From: "Daniel R. Grayson" <dan@math.uiuc.edu>
 To: mike@math.cornell.edu
