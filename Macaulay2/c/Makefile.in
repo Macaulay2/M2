@@ -12,7 +12,7 @@ VPATH = @srcdir@
 ############################################################
 .PHONY : clean all install tags
 YFLAGS := -vdlt
-LOADLIBES += -lgc -lm
+LOADLIBES += @LIBS@ -lm
 CNAMES := scc1.c readfile.c error.c dictionary.c list.c cprint.c type.c chk.c compat.c
 HFILES := $(CNAMES:.c=.h) scc.h grammar.h
 OFILES := $(CNAMES:.c=.o) grammar.o

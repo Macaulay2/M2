@@ -350,17 +350,8 @@ document { Key => "defaultPrecision",
 
 end
 
-
 [cotangentSheaf, Minimize],
-
 [gb, MaxReductionCount],
-(help,Array),
-(help,DocumentTag),
-(help,List),
-(help,Sequence),
-(help,String),
-(help,Symbol),
-(help,Thing),
 [hermite, Strategy],
 (lift,Matrix,InexactNumber'),
 [lift, Verify],

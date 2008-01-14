@@ -20,7 +20,7 @@ SRC :=  $(YSRC) $(CSRC) $(LSRC) $(HSRC)
 CFILES := $(CSRC) $(LSRC:.l=.c) $(YSRC:.y=.fixed.c)
 YFLAGS += -d
 YFLAGS += --verbose
-LOADLIBES += -lgc -ldl
+LOADLIBES += -lgc -ldl @LIBS@
 ifeq (@DEBUG@,yes)
 CPPFLAGS += -DYYDEBUG
 endif
