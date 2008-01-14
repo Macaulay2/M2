@@ -898,6 +898,7 @@ tanh(e:Expr):Expr := (
 setupfun("tanh",tanh);
 exp(e:Expr):Expr := (
      when e
+     is x:CC do Expr(exp(x))			-- # typical value: exp, CC, CC
      is x:RR do Expr(exp(x))			-- # typical value: exp, RR, RR
      is x:ZZ do Expr(exp(toRR(x)))			    -- # typical value: exp, ZZ, RR
      is x:QQ do Expr(exp(toRR(x)))			    -- # typical value: exp, QQ, RR
@@ -911,23 +912,27 @@ log(e:Expr):Expr := (
 	  when a.0
 	  is b:RR do (
 	       when a.1
+	       is x:CC do Expr(log(b,x))			            -- # typical value: log, RR, CC, CC
 	       is x:RR do Expr(log(b,x))			            -- # typical value: log, RR, RR, RR
 	       is x:ZZ do Expr(log(b,toRR(x,precision(b))))	    -- # typical value: log, RR, ZZ, RR
 	       is x:QQ do Expr(log(b,toRR(x,precision(b))))	    -- # typical value: log, RR, QQ, RR
 	       else WrongArg(1,"a number"))
 	  is b:ZZ do (
 	       when a.1
+	       is x:CC do Expr(log(toRR(b,precision(x)),x))    -- -- # typical value: log, ZZ, CC, CC
 	       is x:RR do Expr(log(toRR(b,precision(x)),x))    -- -- # typical value: log, ZZ, RR, RR
 	       is x:ZZ do Expr(log(toRR(b),toRR(x)))	       -- # typical value: log, ZZ, ZZ, RR
 	       is x:QQ do Expr(log(toRR(b),toRR(x)))	       -- # typical value: log, ZZ, QQ, RR
 	       else WrongArg(1,"a number"))
 	  is b:QQ do (
 	       when a.1
+	       is x:CC do Expr(log(toRR(b,precision(x)),x))    -- # typical value: log, QQ, CC, CC
 	       is x:RR do Expr(log(toRR(b,precision(x)),x))    -- # typical value: log, QQ, RR, RR
 	       is x:ZZ do Expr(log(toRR(b),toRR(x)))	    -- # typical value: log, QQ, ZZ, RR
 	       is x:QQ do Expr(log(toRR(b),toRR(x)))	    -- # typical value: log, QQ, QQ, RR
 	       else WrongArg(1,"a number"))
 	  else WrongArg(2,"a number"))
+     is x:CC do Expr(log(x))				    -- # typical value: log, CC, CC
      is x:RR do Expr(log(x))				    -- # typical value: log, RR, RR
      is x:ZZ do Expr(log(toRR(x)))			    -- # typical value: log, ZZ, RR
      is x:QQ do Expr(log(toRR(x)))			    -- # typical value: log, QQ, RR
