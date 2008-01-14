@@ -255,7 +255,8 @@ uninstallPackage "NoetherNormalization"
 installPackage "NoetherNormalization"
 A = QQ[x_1..x_4]
 I = ideal(x_1^2 + x_1*x_4+1,x_1*x_2*x_3*x_4+1)
-assert( 
+-- this test seems not to have been completely written. [dan]
+-- assert( 
 (f,J,X) = noetherNormalization(I) 
 help noetherNormalization
 X_1
