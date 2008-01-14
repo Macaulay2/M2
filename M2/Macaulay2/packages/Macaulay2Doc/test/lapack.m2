@@ -106,10 +106,6 @@ kk = CC
 A = random(kk^100,kk^100);
 time A^-1;
 
-kk = ZZ/101
-A = random(kk^1000,kk^1000);
-time LU A;
-
 ----------------
 -- Test solve --
 ----------------
