@@ -66,14 +66,11 @@ ifeq "@GCC@" "yes"
 
 ifneq ($(RELAX),yes)
 # but sometimes that's bad, e.g., during configure scripts with loosely written test programs
-CFLAGS   += -pipe -Wall              -Wshadow -Winline -Wcast-qual -Wno-parentheses -Wno-sign-compare -Werror-implicit-function-declaration
-CXXFLAGS += -pipe -Wall -Wconversion -Wshadow -Winline -Wcast-qual -Wno-parentheses -Wno-sign-compare -Woverloaded-virtual -Wsign-promo
+M2_CPPFLAGS += -pipe -Wall              -Wshadow -Winline -Wcast-qual -Wno-parentheses -Wno-sign-compare -Werror-implicit-function-declaration
+M2_CXXFLAGS += -Wconversion
 # -Werror-implicit-function-declaration is important, because if we include the wrong include file and a function that
 # returns a 64-bit pointer is not declared as such, then only 32 bits of the return value will be used.
 
-ifeq "@HAVE_NO_STRICT_ALIASING@" "yes"
-CFLAGS += -Wno-strict-aliasing
-endif
 endif
 endif
 

@@ -626,19 +626,21 @@ SAVE=$CFLAGS
 CFLAGS="$TESTFLAG $CFLAGS"
 AC_LANG(C)
 AC_COMPILE_IFELSE([int main() {}], HAVE_NO_STRICT_ALIASING=yes, HAVE_NO_STRICT_ALIASING=no)
+M2_CPPFLAGS="$M2_CPPFLAGS $TESTFLAG"
 CFLAGS=$SAVE
 AC_MSG_RESULT($HAVE_NO_STRICT_ALIASING)
+
+AC_SUBST(M2_CPPFLAGS)
 
 AC_MSG_CHECKING(whether $CC accepts -Wfatal-errors)
 AC_LANG(C)
 SAVE=$CFLAGS
 CFLAGS="$CFLAGS -Wfatal-errors"
 AC_COMPILE_IFELSE([int main() {}], 
-    CPPFLAGS="$CPPFLAGS -Wfatal-errors"
-    CXXFLAGS="$CXXFLAGS -Wfatal-errors"
+    M2_CPPFLAGS="$M2_CPPFLAGS -Wfatal-errors"
     AC_MSG_RESULT(yes, adding -Wfatal-errors to flags),
-    CFLAGS=$SAVE
     AC_MSG_RESULT(no))
+CFLAGS=$SAVE
 
 IS_DECLARED(char **,sys_errlist, [
       #include <stdio.h>
@@ -650,7 +652,6 @@ IS_DECLARED(char **,h_errlist, [
       ])
 
 AC_SUBST(DUMPDATAFILE,Macaulay2-$ARCH-data)
-AC_SUBST(M2_CPPFLAGS)
 
 if test "$DEBUG" = yes
 then M2_CPPFLAGS="$M2_CPPFLAGS -DDEBUG"
