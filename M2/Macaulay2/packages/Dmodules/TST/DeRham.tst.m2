@@ -5,7 +5,7 @@ needsPackage "Dmodules";
 --Boundary cases
 x = symbol x; y = symbol y;
 R = QQ[x,y]
-default = hashTable {0=>QQ^1, 1=>QQ^0, 2=>QQ^0};
+default := hashTable {0=>QQ^1, 1=>QQ^0, 2=>QQ^0};
 F1 = deRham(0_R); -- empty set
 F2 = deRham(1_R); -- affine space
 assert all (keys default, i -> (F1#i == default#i));
