@@ -104,7 +104,7 @@ promote(ZZ,CC') :=
 promote(QQ,CC') := 
 promote(RR,CC') := 
 promote(CC,CC') := (i,K) -> toCC(K.precision,i)
-lift(Number,InexactNumber) := (x,RR) -> lift(x,default RR)
+lift(Number,InexactNumber) := opts -> (x,RR) -> lift(x,default RR)
 liftable(Number,InexactNumber) := (x,RR) -> liftable(x,default RR)
 liftable(CC,RR'):= (z,RR) -> imaginaryPart z == 0
 lift(CC,RR'):= opts -> (z,RR) -> (
