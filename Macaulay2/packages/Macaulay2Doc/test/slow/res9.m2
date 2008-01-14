@@ -30,7 +30,7 @@ assert(F3 == F3b)
 -- Koszul complex on 4 elements --
 -- Algorithm 3                  --
 ----------------------------------
-needs "Macaulay2/test/engine/raw-util.m2"
+needs "Macaulay2Doc/test/engine/raw-util.m2"
 R = polyring(rawZZp(101), (symbol a, symbol b, symbol c, symbol d))
 m = mat{{a,b,c^2,d^2}}
 --gbTrace=10
@@ -60,7 +60,7 @@ assert(F3 == F3b)
 -- Algorithm 3                  --
 ----------------------------------
 -- WARNING: algorithm 0 requires a GB!!
-needs "Macaulay2/test/engine/raw-util.m2"
+needs "Macaulay2Doc/test/engine/raw-util.m2"
 R = QQ[symbol a .. symbol f]
 I = ideal(a*b*c,a*b*f,a*c*e,a*d*e,a*d*f, b*c*d,b*d*e,b*e*f,c*d*f,c*e*f)
 M = module I
@@ -79,7 +79,7 @@ assert(m3 == 0)
 -- 3 by 3 commuting matrices    --
 -- Algorithm 3                  --
 ----------------------------------
-needs "Macaulay2/test/engine/raw-util.m2"
+needs "Macaulay2Doc/test/engine/raw-util.m2"
 R = ZZ/32003[vars(0..17)]
 m1 = genericMatrix(R,a,3,3)
 m2 = genericMatrix(R,j,3,3)
@@ -115,7 +115,7 @@ assert(m1 == m)
 --------------------------------
 -- non raw versions
 --------------------------------
-needs "Macaulay2/test/engine/raw-util.m2"
+needs "Macaulay2Doc/test/engine/raw-util.m2"
 
 bettiMatrix = (C) -> rawbettimat(raw C.Resolution, 0)
 
