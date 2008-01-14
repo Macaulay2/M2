@@ -1,9 +1,16 @@
 URL = http://www.hpl.hp.com/personal/Hans_Boehm/gc/gc_source
 VERSION = 7.0
-CONFIGOPTIONS  = --enable-threads=posix
+
+ifeq (@PTHREADS@,yes)
+CONFIGOPTIONS += --enable-threads=posix
+else 
+CONFIGOPTIONS += --disable-threads
+endif
+
 ifeq (@SHARED@,no)
 CONFIGOPTIONS += --disable-shared
 endif
+
 CONFIGOPTIONS += --enable-large-config
 PATCHFILE = @srcdir@/patch-7.0
 INSTALLTARGET = install-strip
