@@ -1,0 +1,1 @@
+fix Classic to parse floating point numbers 1.23p123e345, but replace e by @ and p by ???
