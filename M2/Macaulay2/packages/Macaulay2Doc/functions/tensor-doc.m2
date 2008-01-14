@@ -149,9 +149,9 @@ A = kk[a,b]
 B = kk[c,d,e]
 
 describe (C = tensor(A,B,MonomialOrder=>Eliminate numgens A))
-basis(2,C) -- bug
+-- basis(2,C) -- bug
 describe (C = tensor(A,B,MonomialOrder=>GRevLex)) 
-basis(2,C) -- bug
+-- basis(2,C) -- bug
 
 describe tensor(A,B,Degrees=>{5:1}) -- BUG
 describe tensor(A,B,WeylAlgebra=>{a=>c}) -- ignores it	  	  
