@@ -70,7 +70,8 @@ assert(depth(m,A) == 2)
 depth(ideal(y),A)
 A = ZZ[x,y]
 m = ideal vars A
-depth(m,A)
+-- we don't compute dimensions over ZZ, for now.  [dan]
+-- depth(m,A)
 ///
 
 
