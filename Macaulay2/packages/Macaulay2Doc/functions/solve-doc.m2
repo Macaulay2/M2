@@ -16,7 +16,7 @@ document {
      for which this function is implemented.  Second, over ", TO "RR", " or ", TO "CC", 
      ", the matrix ", TT "A", " must be a square
      non-singular matrix.  Third, if ", TT "A", " and ", TT "b", 
-     " are mutable matrices over ", TT "RR", " or ", TT "CC", ", they must be dense matrices.",
+     " are mutable matrices over ", TO "RR", " or ", TO "CC", ", they must be dense matrices.",
      PARA{},
      EXAMPLE lines ///
      	  kk = ZZ/101;
@@ -25,46 +25,40 @@ document {
 	  x = solve(A,b)
 	  A*x-b
      ///,
-     "Over ", TT "RR", " or ", TT "CC", ", the matrix ", TT "A", " must be a non-singular square matrix.",
+     "Over ", TO "RR", " or ", TO "CC", ", the matrix ", TT "A", " must be a non-singular square matrix.",
      EXAMPLE lines ///
-     	  kk = RR
-     	  A = matrix"1,2,3;1,3,6;19,7,11" ** kk
-	  b = matrix"1;1;1" ** kk
+     	  printingPrecision = 2;
+     	  A = matrix "1,2,3;1,3,6;19,7,11" ** RR
+	  b = matrix "1;1;1" ** RR
 	  x = solve(A,b)
 	  A*x-b
+	  norm oo
      ///,
-     "For large dense matrices over ", TT "RR", " or ", TT "CC", ", this function calls 
+     "For large dense matrices over ", TO "RR", " or ", TO "CC", ", this function calls 
      the lapack routines.",
      EXAMPLE lines ///
-     	  kk = CC
-	  A = mutableMatrix(kk,1000,1000, Dense=>true)
-	  b = mutableMatrix(kk,1000,2, Dense=>true)
-	  for i from 1 to 10000 do A_(random 1000, random 1000) = random 1.0 + ii * random 1.0;
-	  for i from 0 to 999 do b_(i,0) = random 1.0 + ii * random 1.0;
-	  for i from 0 to 999 do b_(i,1) = random 1.0 + ii * random 1.0;	  
-	  time x = solve(A,b);
-	  C = (matrix A)*(matrix x)-matrix b;
-	  C_(123,0)
-	  C_(567,1)
+     	  n = 10;
+	  A = random(CC^n,CC^n)
+	  b = random(CC^n,CC^2)
+	  x = solve(A,b)
+	  norm ( matrix A * matrix x - matrix b )
      ///,
-     "This may be used to invert a matrix over ", TT "ZZ/p", ", ", TT "RR", " or ", TT "QQ", ".",
+     "This may be used to invert a matrix over ", TT "ZZ/p", ", ", TO "RR", " or ", TT "QQ", ".",
      EXAMPLE lines ///
-          kk = RR
-          A = random(kk^5, kk^5)
+          A = random(RR^5, RR^5)
 	  I = id_(target A)
-	  x = solve(A,I)
-	  A*x - I
-	  x*A - I
+	  A' = solve(A,I)
+	  norm(A*A' - I)
+	  norm(A'*A - I)
      	  ///,
-     "Another method, which isn't generally as fast, and isn't as stable over ", TT "RR", " or ", TT "CC", ", 
+     "Another method, which isn't generally as fast, and isn't as stable over ", TO "RR", " or ", TO "CC", ", 
      is to lift the matrix ", TT "b", "
      along the matrix ", TT "A", " (see ", TO (symbol//,Matrix,Matrix), ").",
      EXAMPLE lines ///
-          invA = I // A
-	  x == invA
-	  x - invA
+          A'' = I // A
+	  norm(A' - A'')
           ///,
      Caveat => {"This function is limited in scope, but is sometimes useful for very large 
 	  matrices"},
-     SeeAlso => {LU, SVD, MutableMatrix}
+     SeeAlso => {LU, SVD, MutableMatrix, norm, random}
      }
