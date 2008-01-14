@@ -4,7 +4,7 @@
 -- Koszul complex on 3 elements --
 -- Algorithm 3                  --
 ----------------------------------
-needs "Macaulay2/test/engine/raw-util.m2"
+needs "Macaulay2Doc/test/engine/raw-util.m2"
 R = polyring(rawZZp(101), (symbol a, symbol b, symbol c))
 m = mat{{a,b,c}}
 --gbTrace=10
