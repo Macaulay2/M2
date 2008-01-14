@@ -1532,7 +1532,24 @@ export toExternalString(z:CC):string := (
      else if y < 0
      then toExternalString(x) + "-" + toExternalString(-y) + "*ii"
      else toExternalString(x) + "+" + toExternalString( y) + "*ii"
-     )
+     );
+
+-- complex transcendental functions
+
+export exp(z:CC):CC := exp(z.re) * toCC(cos(z.im),sin(z.im));
+export log(z:CC):CC := toCC(log(abs(z)),atan2(z.im,z.re));
+export log(b:CC,x:CC):CC := (
+     if precision(b) < precision(x) then x = toCC(x,precision(b))
+     else if precision(b) > precision(x) then b = toCC(b,precision(x));
+     log(x)/log(b));
+export log(b:RR,x:CC):CC := (
+     if precision(b) < precision(x) then x = toCC(x,precision0(b))
+     else if precision(b) > precision(x) then b = toRR(b,precision(x));
+     log(x)/log(b));
+export log(b:CC,x:RR):CC := (
+     if precision(b) < precision(x) then x = toRR(x,precision(b))
+     else if precision(b) > precision(x) then b = toCC(b,precision(x));
+     log(x)/log(b));
 
 -- Local Variables:
 -- compile-command: "make -C $M2BUILDDIR/Macaulay2/d "
