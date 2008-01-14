@@ -3311,13 +3311,12 @@ export rawLeastSquares(e:Expr):Expr := (
      else WrongNumArgs(4));
 setupfun("rawLeastSquares", rawLeastSquares);
 
-mpfrConstantPi(e:Expr):Expr := (
-     when e is prec:ZZ do if !isULong(prec) then WrongArgSmallUInteger(1) else (
-	  z := newRR(toULong(prec));
-	  Ccode( void, "mpfr_const_pi(", "(__mpfr_struct *)", z, ", GMP_RNDN)" );
-	  Expr(z))
+pi0(e:Expr):Expr := (
+     when e is prec:ZZ do
+     if !isULong(prec) then WrongArgSmallUInteger(1)
+     else Expr(pi(toULong(prec)))
      else WrongArgZZ(1));
-setupfun("mpfrConstantPi",mpfrConstantPi);
+setupfun("pi0",pi0);
 
 mpfrConstantEuler(e:Expr):Expr := (
      when e is prec:ZZ do if !isULong(prec) then WrongArgSmallUInteger(1) else (

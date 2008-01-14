@@ -212,7 +212,7 @@ char InexactField := R -> 0
 -- symbolic/numeric constant expressions
 
 Constant = new Type of BasicList
-pi = new Constant from { symbol pi, mpfrConstantPi }
+pi = new Constant from { symbol pi, pi0 }
 EulerConstant = new Constant from { symbol EulerConstant, mpfrConstantEuler }
 ii = new Constant from { symbol ii, ConstantII }
 
@@ -305,6 +305,10 @@ InexactNumber#{Standard,AfterPrint} = x -> (
      *}
      << endl;
      )
+
+isReal = method()
+isReal RR := isReal QQ := isReal ZZ := x -> true
+isReal CC := z -> imaginaryPart z == 0
 
 -- Local Variables:
 -- compile-command: "make -C $M2BUILDDIR/Macaulay2/m2 "

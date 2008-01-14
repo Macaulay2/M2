@@ -913,30 +913,54 @@ log(e:Expr):Expr := (
 	  is b:RR do (
 	       when a.1
 	       is x:CC do Expr(log(b,x))			            -- # typical value: log, RR, CC, CC
-	       is x:RR do Expr(log(b,x))			            -- # typical value: log, RR, RR, RR
-	       is x:ZZ do Expr(log(b,toRR(x,precision(b))))	    -- # typical value: log, RR, ZZ, RR
-	       is x:QQ do Expr(log(b,toRR(x,precision(b))))	    -- # typical value: log, RR, QQ, RR
+	       is x:RR do (			            -- # typical value: log, RR, RR, CC
+     	       	    if b>0 && x>0 then Expr(log(b,x)) else Expr(logc(b,x))
+		    )
+	       is x:ZZ do (	    -- # typical value: log, RR, ZZ, RR
+		    y := toRR(x,precision(b));
+		    if b < 0 || y < 0 then Expr(logc(b,y)) else Expr(log(b,y)))
+	       is x:QQ do (	    -- # typical value: log, RR, QQ, RR
+		    y := toRR(x,precision(b));
+		    if b < 0 || y < 0 then Expr(logc(b,y)) else Expr(log(b,y)))
 	       else WrongArg(1,"a number"))
 	  is b:ZZ do (
 	       when a.1
-	       is x:CC do Expr(log(toRR(b,precision(x)),x))    -- -- # typical value: log, ZZ, CC, CC
-	       is x:RR do Expr(log(toRR(b,precision(x)),x))    -- -- # typical value: log, ZZ, RR, RR
-	       is x:ZZ do Expr(log(toRR(b),toRR(x)))	       -- # typical value: log, ZZ, ZZ, RR
-	       is x:QQ do Expr(log(toRR(b),toRR(x)))	       -- # typical value: log, ZZ, QQ, RR
+	       is x:CC do ( -- # typical value: log, ZZ, CC, CC
+		    Expr(log(toRR(b,precision(x)),x))
+		    )
+	       is x:RR do (    -- -- # typical value: log, ZZ, RR, RR
+		    c := toRR(b,precision(x));
+		    if c>0 && x>0 then Expr(log(c,x)) else Expr(logc(c,x))		    
+		    )
+	       is x:ZZ do (	       -- # typical value: log, ZZ, ZZ, RR
+		    if b>0 && x>0 then Expr(log(toRR(b),toRR(x))) else Expr(logc(toRR(b),toRR(x)))
+		    )
+	       is x:QQ do (	       -- # typical value: log, ZZ, QQ, RR
+		    if b>0 && x>0 then Expr(log(toRR(b),toRR(x))) else Expr(logc(toRR(b),toRR(x)))
+		    )
 	       else WrongArg(1,"a number"))
 	  is b:QQ do (
 	       when a.1
-	       is x:CC do Expr(log(toRR(b,precision(x)),x))    -- # typical value: log, QQ, CC, CC
-	       is x:RR do Expr(log(toRR(b,precision(x)),x))    -- # typical value: log, QQ, RR, RR
-	       is x:ZZ do Expr(log(toRR(b),toRR(x)))	    -- # typical value: log, QQ, ZZ, RR
-	       is x:QQ do Expr(log(toRR(b),toRR(x)))	    -- # typical value: log, QQ, QQ, RR
+	       is x:CC do ( -- # typical value: log, QQ, CC, CC
+		    Expr(log(toRR(b,precision(x)),x))
+		    )
+	       is x:RR do (    -- -- # typical value: log, QQ, RR, RR
+		    c := toRR(b,precision(x));
+		    if c>0 && x>0 then Expr(log(c,x)) else Expr(logc(c,x))		    
+		    )
+	       is x:ZZ do (	       -- # typical value: log, QQ, ZZ, RR
+		    if b>0 && x>0 then Expr(log(toRR(b),toRR(x))) else Expr(logc(toRR(b),toRR(x)))
+		    )
+	       is x:QQ do (	       -- # typical value: log, QQ, QQ, RR
+		    if b>0 && x>0 then Expr(log(toRR(b),toRR(x))) else Expr(logc(toRR(b),toRR(x)))
+		    )
 	       else WrongArg(1,"a number"))
 	  else WrongArg(2,"a number"))
      is x:CC do Expr(log(x))				    -- # typical value: log, CC, CC
-     is x:RR do Expr(log(x))				    -- # typical value: log, RR, RR
-     is x:ZZ do Expr(log(toRR(x)))			    -- # typical value: log, ZZ, RR
-     is x:QQ do Expr(log(toRR(x)))			    -- # typical value: log, QQ, RR
-     else buildErrorPacket("expected a number or a pair of numbers")
+     is x:RR do if x<0 then Expr(logc(x)) else Expr(log(x))				    -- # typical value: log, RR, RR
+     is x:ZZ do if x<0 then Expr(logc(toRR(x))) else Expr(log(toRR(x)))			    -- # typical value: log, ZZ, RR
+     is x:QQ do if x<0 then Expr(logc(toRR(x))) else Expr(log(toRR(x)))			    -- # typical value: log, QQ, RR
+     else WrongArg("a number or a pair of numbers")
      );
 setupfun("log",log);
 agm(e:Expr):Expr := (
