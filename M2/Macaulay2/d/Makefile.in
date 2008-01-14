@@ -192,7 +192,7 @@ M2INCLUDES += -I@srcdir@/../regex
 
 # it's important that *our* directories get searched first:
 CPPFLAGS := $(M2INCLUDES) $(CPPFLAGS) @M2_CPPFLAGS@
-CFLAGS += -Wno-unused-label
+CFLAGS += -Wno-unused-label @M2_CFLAGS@
 
 ifeq (gcc,@CC@)
 ifeq ($(MAPFILE),yes)
