@@ -21,9 +21,10 @@ endif
 M2CPPFLAGS += -I.
 CPPFLAGS += $(M2CPPFLAGS)
 
-CPPFLAGS += @M2_CPPFLAGS@
-CFLAGS   += @M2_CFLAGS@
-CXXFLAGS += @M2_CXXFLAGS@
+# these are from include/config.Makefile
+CPPFLAGS += $(M2_CPPFLAGS)
+CFLAGS   += $(M2_CFLAGS)
+CXXFLAGS += $(M2_CXXFLAGS)
 
 ifeq "$(SHARED)" "yes"
 CXXFLAGS += -fPIC

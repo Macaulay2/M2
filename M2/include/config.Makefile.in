@@ -64,6 +64,8 @@ endif
 ifeq "@GCC@" "yes"
 # if it's gcc, we can get stricter warning and error messages
 
+M2_CPPFLAGS += @M2_CPPFLAGS@
+
 ifneq ($(RELAX),yes)
 # but sometimes that's bad, e.g., during configure scripts with loosely written test programs
 M2_CFLAGS   += -Werror-implicit-function-declaration
