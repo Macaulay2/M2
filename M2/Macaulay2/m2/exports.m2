@@ -801,6 +801,7 @@ export {
 	symbol isQuotientOf,
 	symbol isQuotientRing,
 	symbol isReady,
+	symbol isReal,
 	symbol isRegularFile,
 	symbol isRing,
 	symbol isSkewCommutative,

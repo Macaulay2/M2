@@ -1272,15 +1272,19 @@ export sqrt(x:CC):CC := (
 
 -- real transcendental functions
 
+export pi(prec:ulong):RR := (
+     z := newRR(prec);
+     Ccode( void, "mpfr_const_pi(", "(__mpfr_struct *)", z, ", GMP_RNDN)" );
+     z);
 export exp(x:RR):RR := (
      z := newRR(precision0(x));
      Ccode( void, "mpfr_exp((__mpfr_struct *)", z, ",(__mpfr_struct *)", x, ", GMP_RNDN)" );
      z);
-export log(x:RR):RR := (
+export log(x:RR):RR := (				    -- works only if x>0
      z := newRR(precision0(x));
      Ccode( void, "mpfr_log((__mpfr_struct *)", z, ",(__mpfr_struct *)", x, ", GMP_RNDN)" );
      z);
-export log(b:RR,x:RR):RR := (
+export log(b:RR,x:RR):RR := (				    -- works only if x>0 and b>0
      if precision0(b) < precision0(x) then x = toRR(x,precision0(b))
      else if precision0(b) > precision0(x) then b = toRR(b,precision0(x));
      log(x)/log(b));
@@ -1538,6 +1542,15 @@ export toExternalString(z:CC):string := (
 
 export exp(z:CC):CC := exp(z.re) * toCC(cos(z.im),sin(z.im));
 export log(z:CC):CC := toCC(log(abs(z)),atan2(z.im,z.re));
+export logc(x:RR):CC := (				    -- works also for x<0
+     if x<0 then toCC(log(-x),pi(precision0(x))) else toCC(log(x)));
+export logc(b:RR,x:RR):CC := (				    -- works also for x<0 or b<0
+     if precision0(b) < precision0(x) then x = toRR(x,precision0(b))
+     else if precision0(b) > precision0(x) then b = toRR(b,precision0(x));
+     if b<0 then (
+     	  if x<0 then logc(x)/logc(b) else log(x)/logc(b)
+	  )
+     else if x<0 then logc(x)/log(b) else toCC(log(x)/log(b)));
 export log(b:CC,x:CC):CC := (
      if precision(b) < precision(x) then x = toCC(x,precision(b))
      else if precision(b) > precision(x) then b = toCC(b,precision(x));
@@ -1545,11 +1558,11 @@ export log(b:CC,x:CC):CC := (
 export log(b:RR,x:CC):CC := (
      if precision(b) < precision(x) then x = toCC(x,precision0(b))
      else if precision(b) > precision(x) then b = toRR(b,precision(x));
-     log(x)/log(b));
+     if b<0 then log(x)/logc(b) else log(x)/log(b));
 export log(b:CC,x:RR):CC := (
      if precision(b) < precision(x) then x = toRR(x,precision(b))
      else if precision(b) > precision(x) then b = toCC(b,precision(x));
-     log(x)/log(b));
+     if x<0 then logc(x)/log(b) else log(x)/log(b));
 
 -- Local Variables:
 -- compile-command: "make -C $M2BUILDDIR/Macaulay2/d "

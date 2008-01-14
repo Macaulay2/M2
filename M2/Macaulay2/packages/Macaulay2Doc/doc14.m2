@@ -1,5 +1,15 @@
 --		Copyright 2008 by Daniel R. Grayson
 
+document { Key => isReal,
+     Usage => "isReal x",
+     Headline => "whether a number is real",
+     Inputs => { "x" },
+     Outputs => { Boolean => {"whether ", TT "x", " is real"} },
+     EXAMPLE lines ///
+     isReal 2.
+     isReal sqrt(-1)
+     ///
+
 document { Key => {commonRing, (commonRing,List)},
      Usage => "commonRing v",
      Headline => "find smallest containing ring",

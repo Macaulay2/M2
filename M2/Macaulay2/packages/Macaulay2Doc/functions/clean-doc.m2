@@ -5,7 +5,7 @@
 document { 
      Key => {clean, (clean,RR,Matrix), (clean,RR,MutableMatrix),(clean,RR,Number), (clean,RR,RingElement)},
      Headline => "Set to zero elements which are approximately zero",
-     Usage => "clean(epsilon,M)",
+     Usage => "clean(epsilon,M)\nclean_epsilon M",
      Inputs => {
 	  "epsilon" => RR,
 	  "M" => Matrix => {"or a ", ofClass RingElement}
@@ -17,20 +17,16 @@ document {
      where each real or complex number coefficient which is less than ", TT "epsilon", " in absolute value
      is replaced with zero."},
      EXAMPLE lines ///
+     	  e = 1e-11;
      	  M = random(RR^4,RR^5)
-	  clean(.2,M)
-     	  M = random(CC_100^3,CC_100^3)
-	  clean(.6,M)
-          norm M
+	  M * M^-1
+	  clean_e oo
 	  ///,
-     "Cleaning a polynomial is a way to get rid of very small terms.",
+     "Cleaning a polynomial is a way to get rid of small terms.",
      EXAMPLE lines ///
-     	  R = RR[x,y]
-	  f = (1.3+1000000*y^2+.0000000001*x)^3
-	  clean(.000001,f)
-	  clean(2.1970000000000000000001p100,-f)  
-	  norm(infinity,f)
-	  norm f
+     	  CC[x];
+	  f = product(5,j -> x - exp(2*pi*j*ii/5))
+	  clean_e f  
 	  ///,
      SeeAlso => {norm, RR, CC, fillMatrix}
      }

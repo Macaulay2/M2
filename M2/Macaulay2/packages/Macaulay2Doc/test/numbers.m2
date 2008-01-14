@@ -218,6 +218,71 @@ assert( value toExternalString(x+1/3) === x+1/3 )
 assert( toRR infinity === - log 0 )
 assert( toRR (-infinity) === log 0 )
 
+assert( isReal 1 )
+assert( isReal 1. )
+assert( isReal(1. + 0 * ii ) )
+assert( not isReal (1.- ii) )
+assert( isReal (1/1) )
+
+assert( instance(log(3.), RR) )
+assert( instance(log(3/1), RR) )
+assert( instance(log(3), RR) )
+assert( instance(log(-3.), CC) )
+assert( instance(log(-3/1), CC) )
+assert( instance(log(-3), CC) )
+
+assert( instance(log(3.,2), RR) )
+assert( instance(log(3/1,2), RR) )
+assert( instance(log(3,2), RR) )
+assert( instance(log(-3.,2), CC) )
+assert( instance(log(-3/1,2), CC) )
+assert( instance(log(-3,2), CC) )
+
+assert( instance(log(3.,-2), CC) )
+assert( instance(log(3/1,-2), CC) )
+assert( instance(log(3,-2), CC) )
+assert( instance(log(-3.,-2), CC) )
+assert( instance(log(-3/1,-2), CC) )
+assert( instance(log(-3,-2), CC) )
+
+assert( instance(log(3.,2.), RR) )
+assert( instance(log(3/1,2.), RR) )
+assert( instance(log(3,2.), RR) )
+assert( instance(log(-3.,2.), CC) )
+assert( instance(log(-3/1,2.), CC) )
+assert( instance(log(-3,2.), CC) )
+
+assert( instance(log(3.,-2.), CC) )
+assert( instance(log(3/1,-2.), CC) )
+assert( instance(log(3,-2.), CC) )
+assert( instance(log(-3.,-2.), CC) )
+assert( instance(log(-3/1,-2.), CC) )
+assert( instance(log(-3,-2.), CC) )
+
+assert( instance(log(3.,2/1), RR) )
+assert( instance(log(3/1,2/1), RR) )
+assert( instance(log(3,2/1), RR) )
+assert( instance(log(-3.,2/1), CC) )
+assert( instance(log(-3/1,2/1), CC) )
+assert( instance(log(-3,2/1), CC) )
+
+assert( instance(log(3.,-2/1), CC) )
+assert( instance(log(3/1,-2/1), CC) )
+assert( instance(log(3,-2/1), CC) )
+assert( instance(log(-3.,-2/1), CC) )
+assert( instance(log(-3/1,-2/1), CC) )
+assert( instance(log(-3,-2/1), CC) )
+
+scan(((3.), (3/1), (3), (-3.), (-3/1), (-3)), x -> assert( abs(exp(log(x)) - x) < 1e-10) )
+scan((
+(3.,2), (3/1,2), (3,2), (-3.,2),
+(-3/1,2), (-3,2), (3.,-2), (3/1,-2), (3,-2), (-3.,-2), (-3/1,-2), (-3,-2),
+(3.,2.), (3/1,2.), (3,2.), (-3.,2.), (-3/1,2.), (-3,2.), (3.,-2.), (3/1,-2.),
+(3,-2.), (-3.,-2.), (-3/1,-2.), (-3,-2.), (3.,2/1), (3/1,2/1), (3,2/1),
+(-3.,2/1), (-3/1,2/1), (-3,2/1), (3.,-2/1), (3/1,-2/1), (3,-2/1), (-3.,-2/1),
+(-3/1,-2/1), (-3,-2/1)
+), (b,x) -> assert(abs(log(b,x)-log x/log b)<1e-10))
+
 -- Local Variables:
 -- compile-command: "make -C $M2BUILDDIR/Macaulay2/packages/Macaulay2Doc/test numbers.out"
 -- End:
