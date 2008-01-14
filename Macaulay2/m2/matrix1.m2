@@ -2,24 +2,26 @@
 
 module Ring := Module => (stashValue symbol module) (R -> R^1)
 
-matrix(Ring,List) := Matrix => options -> (R,m) -> (
+matrix(RingFamily,List) := Matrix => opts -> (R,m) -> matrix(default R, m, opts)
+
+matrix(Ring,List) := Matrix => opts -> (R,m) -> (
      m = apply(splice m,splice);
      if not isTable m then error "expected a table";
-     map(R^#m,,m,options))
+     map(R^#m,,m,opts))
 
-map(Module,Module,Function) := Matrix => options -> (M,N,f) -> (
+map(Module,Module,Function) := Matrix => opts -> (M,N,f) -> (
      map(M,N,table(numgens M, numgens N, f))
      )
 
-map(Matrix) := Matrix => options -> (f) -> (
-     if options.Degree === null then f
+map(Matrix) := Matrix => opts -> (f) -> (
+     if opts.Degree === null then f
      else (
      	  R := ring source f;
-	  d := options.Degree;
+	  d := opts.Degree;
 	  if class d === ZZ then d = {d};
-     	  map(target f, source f ** R^{d - degree f}, f, options)))
+     	  map(target f, source f ** R^{d - degree f}, f, opts)))
 
-map(Module,ZZ,Function) := Matrix => options -> (M,n,f) -> map(M,n,table(numgens M,n,f),options)
+map(Module,ZZ,Function) := Matrix => opts -> (M,n,f) -> map(M,n,table(numgens M,n,f),opts)
 
 makeRawTable := (R,p) -> (					    -- this is messy
      if R === ZZ then (
