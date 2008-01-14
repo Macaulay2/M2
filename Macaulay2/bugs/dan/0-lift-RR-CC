@@ -1,0 +1,13 @@
+Both of these should return precision 53!
+
+i3 : lift(1p100+0p100*ii, default RR)
+
+o3 = 1
+
+o3 : RR (of precision 100)
+
+i5 : lift(1p100+0p100*ii, RR)
+
+o5 = 1
+
+o5 : RR (of precision 100)
