@@ -148,8 +148,6 @@ document {
      }
 TEST ///
 numgens ZZ
-numgens RR
-numgens CC
 numgens GF(9)
 A = ZZ[a,b,c]
 numgens A
