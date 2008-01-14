@@ -228,7 +228,6 @@ AC_HEADER_TIME() dnl # time.h sys/time.h
 AC_CHECK_HEADERS(sys/ioctl.h termios.h sys/mman.h sys/socket.h netdb.h netinet/in.h arpa/inet.h sys/time.h sys/wait.h sys/resource.h io.h linux/personality.h)
 AC_CHECK_HEADERS(stddef.h stdint.h inttypes.h bits/wordsize.h endian.h elf.h execinfo.h)
 AC_CHECK_HEADERS(sys/types.h factoryconf.h)
-AC_SEARCH_LIBS(pthread_mutex_trylock,pthread)
 AC_SEARCH_LIBS(socket,socket)
 AC_SEARCH_LIBS(hstrerror,resolv)
 AC_CHECK_FUNCS([somesillyfunction sys_errlist herror error socket gnu_get_libc_version __environ _environ environ _setmode getaddrinfo hstrerror])
@@ -244,6 +243,7 @@ AC_LANG(C)
 AC_SUBST(HAVE_PERSONALITY,"")
 AC_CHECK_FUNC(personality, HAVE_PERSONALITY=1, HAVE_PERSONALITY=0)
 
+AC_SUBST(PTHREADS,no)  AC_ARG_ENABLE(pthreads, AS_HELP_STRING(--enable-pthreads,enable pthreads in gc), PTHREADS=$enableval)
 AC_SUBST(STRIP,yes)    AC_ARG_ENABLE(strip, AS_HELP_STRING(--disable-strip,do not strip the symbol table from the Macaulay 2 binary), STRIP=$enableval)
 AC_SUBST(STATIC,no)    AC_ARG_ENABLE(static, AS_HELP_STRING(--enable-static,enable static linking), STATIC=$enableval)
 AC_SUBST(MEMDEBUG,no)  AC_ARG_ENABLE(memdebug, AS_HELP_STRING(--enable-memdebug,enable memory allocation debugging), MEMDEBUG=$enableval)
@@ -257,6 +257,10 @@ AC_ARG_ENABLE(altivec, AS_HELP_STRING(--enable-altivec,compile with "-faltivec" 
     CFLAGS="CFLAGS -faltivec"
     CXXFLAGS="$CXXFLAGS -faltivec"
 )
+
+if test "$PTHREADS" = yes
+then AC_SEARCH_LIBS(pthread_mutex_trylock,pthread)
+fi
 
 AC_SUBST(PROFILING,no)
 AC_ARG_ENABLE(profile, AS_HELP_STRING(--enable-profile,enable profiling (and disable stripping)), PROFILING=$enableval)
