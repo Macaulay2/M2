@@ -82,9 +82,6 @@ public:
 
   virtual ring_elem eval(const RingMap *map, const ring_elem f, int first_var) const;
 
-  virtual bool is_tiny(M2_RRR epsilon, const ring_elem f) const;
-  // returns true is the element is essentially zero (either f, or every real number in 
-  // f is < epsilon in absolute value).
   virtual ring_elem zeroize_tiny(M2_RRR epsilon, const ring_elem f) const;
   virtual void increase_maxnorm(M2_RRR norm, const ring_elem f) const;
   // If any real number appearing in f has larger absolute value than norm, replace norm.

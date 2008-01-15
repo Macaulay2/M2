@@ -341,13 +341,15 @@ vec Ring::vec_zeroize_tiny(M2_RRR epsilon, const vec v) const
   vec result = &head;
   for (const vecterm *p = v; p != 0; p=p->next)
     {
-      if (is_tiny(epsilon,p->coeff))
-	continue;
-      vec w = new_vec();
-      result->next = w;
-      result = w;
-      w->comp = p->comp;
-      w->coeff = zeroize_tiny(epsilon,p->coeff);
+      ring_elem a = zeroize_tiny(epsilon,p->coeff);
+      if (!is_zero(a))
+	{
+	  vec w = new_vec();
+	  result->next = w;
+	  result = w;
+	  w->comp = p->comp;
+	  w->coeff = a;
+	}
     }
   result->next = 0;
   return head.next;
