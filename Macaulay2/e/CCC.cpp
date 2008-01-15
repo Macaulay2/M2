@@ -413,22 +413,29 @@ ring_elem CCC::eval(const RingMap *map, const ring_elem f, int) const
   return result;
 }
 
-bool CCC::is_tiny(M2_RRR epsilon, const ring_elem f) const
-  // returns true is the element is essentially zero (either f, or every real number in 
-  // f is < epsilon in absolute value).
-{
-  mpfr_t f1;
-  mpfr_init2(f1,precision);
-  mpfc_abs(f1, BIGCC_VAL(f));
-  bool result = (mpfr_cmpabs(f1,epsilon) < 0);
-  mpfr_clear(f1);
-  return result;
-}
 ring_elem CCC::zeroize_tiny(M2_RRR epsilon, const ring_elem f) const
 {
-  if (CCC::is_tiny(epsilon,f))
-    return zero();
-  return f;
+  // This is the one that needs to be rewritten: 14 Jan 2008 
+  mpfr_ptr f1 = BIGCC_RE(f);
+  bool re_is_zero = (mpfr_cmpabs(f1,epsilon) < 0);
+  mpfr_ptr f2 = BIGCC_IM(f);
+  bool im_is_zero = (mpfr_cmpabs(f2,epsilon) < 0);
+
+  if (!re_is_zero && !im_is_zero)
+    return f;
+
+  M2_CCC result = new_elem();
+  if (re_is_zero)
+    mpfr_set_si(result->re, 0, GMP_RNDN);
+  else
+    mpfr_set(result->re,f1,GMP_RNDN);
+
+  if (im_is_zero)
+    mpfr_set_si(result->im, 0, GMP_RNDN);
+  else
+    mpfr_set(result->im,f2,GMP_RNDN);
+
+  return BIGCC_RINGELEM(result);
 }
 void CCC::increase_maxnorm(M2_RRR norm, const ring_elem f) const
   // If any real number appearing in f has larger absolute value than norm, replace norm.

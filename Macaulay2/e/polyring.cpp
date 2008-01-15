@@ -1209,28 +1209,23 @@ ring_elem PolyRing::eval(const RingMap *map, const ring_elem f, int first_var) c
     }
 }
 
-bool PolyRing::is_tiny(M2_RRR epsilon, const ring_elem f) const
-{
-  for (Nterm *a = f; a != NULL; a = a->next)
-    if (!K_->is_tiny(epsilon,a->coeff))
-      return false;
-  return true;
-}
-
 ring_elem PolyRing::zeroize_tiny(M2_RRR epsilon, const ring_elem f) const
 {
   Nterm head;
   Nterm *result = &head;
   for (Nterm *a = f; a != NULL; a = a->next)
     {
-      if (K_->is_tiny(epsilon,a->coeff))
-	continue;
-      result->next = copy_term(a);
-      result = result->next;
+      ring_elem c = K_->zeroize_tiny(epsilon,a->coeff);
+      if (!K_->is_zero(c))
+	{
+	  result->next = new_term();
+	  result = result->next;
+	  result->coeff = c;
+	  M_->copy(a->monom, result->monom);
+	}
     }
   result->next = NULL;
   return head.next;
-  
 }
 void PolyRing::increase_maxnorm(M2_RRR norm, const ring_elem f) const
 {

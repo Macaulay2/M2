@@ -325,16 +325,10 @@ ring_elem RRR::eval(const RingMap *map, const ring_elem f, int) const
   return result;
 }
 
-bool RRR::is_tiny(M2_RRR epsilon, const ring_elem f) const
-  // returns true is the element is essentially zero (either f, or every real number in 
-  // f is < epsilon in absolute value).
-{
-  mpfr_ptr f1 = MPF_VAL(f);
-  return (mpfr_cmpabs(f1,epsilon) < 0);
-}
 ring_elem RRR::zeroize_tiny(M2_RRR epsilon, const ring_elem f) const
 {
-  if (RRR::is_tiny(epsilon,f))
+  mpfr_ptr f1 = MPF_VAL(f);
+  if (mpfr_cmpabs(f1,epsilon) < 0)
     return zero();
   return f;
 }

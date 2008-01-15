@@ -346,12 +346,6 @@ unsigned long Ring::get_precision() const
 {
   return 0;
 }
-bool Ring::is_tiny(M2_RRR epsilon, const ring_elem f) const // default is false
-  // returns true is the element is essentially zero (either f, or every real number in 
-  // f is < epsilon in absolute value).
-{
-  return false;
-}
 ring_elem Ring::zeroize_tiny(M2_RRR epsilon, const ring_elem f) const
   // Default is to return f itself.
 {
