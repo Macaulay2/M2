@@ -2,7 +2,7 @@
 --- author(s): Gregory G. Smith
 --- notes: 
 
-undocumented{(isField, InexactField),(isField, RingFamily)}
+--undocumented{(isField, InexactField),(isField, RingFamily)}
 
 document { 
      Key => {isField, (isField, EngineRing), (isField, Ring)},
@@ -20,7 +20,7 @@ document {
      " and ", TO2("FractionField","fraction fields"), ".",
      EXAMPLE {
 	  "isField QQ",
-	  "isField CC",
+	  "isField CC_53",
 	  "isField GF(2,3)",
 	  "isField(frac(QQ[x,y]))"
 	  },
