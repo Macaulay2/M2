@@ -75,7 +75,10 @@ bool DMatLU<CoeffRing>::LU1(const DMat<CoeffRing> *A, // col-th column is modifi
   // Step 3. If no pivot: return
   //         If a pivot: Choose the next pivot, set U[p,q], 
   //           modify perm, pivotcols,n_pivot_rows
-  if (new_pivot_row < 0) return false; // Nothing else is needed: don't need to change arguments
+  if (new_pivot_row < 0) 
+    {
+      return false; // Nothing else is needed: don't need to change arguments
+    }
   if (new_pivot_row > n_pivot_rows)
     {
       // swap rows: new_pivot_row, p in L
@@ -242,10 +245,12 @@ bool DMatLU<CoeffRing>::solve(const DMat<CoeffRing> *A,
   M2_arrayint pivotcols;
   int n_pivots;
 
+  int nrowsA = A->n_rows();
+
   set_pivot_info(U,U->n_cols(),pivotcols,n_pivots);
 
   x->resize(A->n_cols(), b->n_cols());
-  elem *y = newarray(elem, A->n_rows());
+  elem *y = newarray(elem, nrowsA);
   for (int i=0; i<A->n_rows(); i++)
     K->set_zero(y[i]);
   elem *bcol = b->get_array();
@@ -253,6 +258,16 @@ bool DMatLU<CoeffRing>::solve(const DMat<CoeffRing> *A,
   for (int i=0; i<b->n_cols(); i++)
     {
       solveF(L,P,bcol,y);
+      bool is_sol = true;
+      for (int j=n_pivots; is_sol && j<nrowsA; j++)
+	if (!K->is_zero(y[j]))
+	  is_sol=false;
+      if (!is_sol)
+	{
+	  ERROR("matrix is singular and no solution exists");
+	  deletearray(y);
+	  return false;
+	}
       solveB(U,pivotcols,n_pivots,y,xcol);
       xcol += x->n_rows();
       bcol += b->n_rows();
