@@ -929,18 +929,25 @@ setupfun("connectionCount", connectionCount);
 format(e:Expr):Expr := (
      when e
      is s:string do Expr("\"" + present(s) + "\"")
-     is a:Sequence do 
-     if length(a) != 5 then WrongNumArgs(5) else
-     when a.0 is x:RR do 
-     when a.1 is s:ZZ do if !isInt(s) then WrongArgSmallInteger(2) else
-     when a.2 is l:ZZ do if !isInt(l) then WrongArgSmallInteger(3) else
-     when a.3 is t:ZZ do if !isInt(t) then WrongArgSmallInteger(4) else
-     when a.4 is e:string do Expr(tostring5(x,toInt(s),toInt(l),toInt(t),e))
-     else WrongArgRR(1)
-     else WrongArgZZ(2)
-     else WrongArgZZ(3)
-     else WrongArgZZ(4)
-     else WrongArgString(5)
+     is RR do format(Expr(Sequence(e)))
+     is args:Sequence do (
+	  s := printingPrecision;
+	  ac := printingAccuracy;
+	  l := printingLeadLimit;
+	  t := printingTrailLimit;
+	  sep := printingSeparator;
+	  n := length(args);
+	  if n == 0 || n > 6 then return WrongNumArgs(1,6);
+	  if n > 1 then when args.0 is p:ZZ do if !isInt(p) then return WrongArgSmallInteger(2) else s = toInt(p)
+	  is Nothing do nothing else return WrongArgZZ(1);
+	  if n > 2 then when args.1 is p:ZZ do if !isInt(p) then return WrongArgSmallInteger(2) else ac = toInt(p)
+	  is Nothing do nothing else return WrongArgZZ(2);
+	  if n > 3 then when args.2 is p:ZZ do if !isInt(p) then return WrongArgSmallInteger(2) else l = toInt(p)
+	  is Nothing do nothing else return WrongArgZZ(3);
+	  if n > 4 then when args.3 is p:ZZ do if !isInt(p) then return WrongArgSmallInteger(2) else t = toInt(p)
+	  is Nothing do nothing else return WrongArgZZ(4);
+	  if n > 5 then when args.4 is p:string do sep = p else return WrongArgString(5);
+	  when args.(n-1) is x:RR do Expr(format(s,ac,l,t,sep,x)) else WrongArgRR(n))
      else WrongArg("string, or real number, integer, integer, integer, string"));
 setupfun("format",format);
 

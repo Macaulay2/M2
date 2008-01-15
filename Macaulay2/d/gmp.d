@@ -1430,12 +1430,13 @@ getstr(returnexponent:long, base:int, sigdigs:int, x:RR):string ::= tostring(
 finite(x:RR):bool ::=Ccode(bool,"mpfr_number_p((__mpfr_struct *)",x,")");
 isinf (x:RR):bool ::= Ccode(bool,"mpfr_inf_p((__mpfr_struct *)",x,")");
 isnan (x:RR):bool ::= Ccode(bool,"mpfr_nan_p((__mpfr_struct *)",x,")");
-export tostring5(
-     x:RR,						-- the number to format
-     s:int,					-- number of significant digits
+export format(
+     s:int,			  -- number of significant digits (0 means all)
+     ac:int,	    -- accuracy, how far to right of point to go (-1 means all)
      l:int,					   -- max number leading zeroes
      t:int,				    -- max number extra trailing digits
-     sep:string			     -- separator between mantissa and exponent
+     sep:string,		     -- separator between mantissa and exponent
+     x:RR						-- the number to format
      ) : string := (
      if isinf(x) then return if x < 0 then "-infinity" else "infinity";
      if isnan(x) then return "NotANumber";
@@ -1479,20 +1480,53 @@ export tostring5(
 	  pt = 1;
 	  ex = ex - 1;
 	  );
-     (sgn + (if pt == 0 then "." else "") + (new string len l do provide '0'))
-     + (
-	  if pt > 0 && pt < s
-	  then substr(mantissa,0,pt) + "." + substr(mantissa,pt)
-	  else mantissa
-     ) +
-     ((new string len t do provide '0') + (if ex != long(0) then sep + tostring(ex) else "")));
+     manlen := length(mantissa);
+     maxmanlen := ac-l+pt+ex;
+     if ac != -1 && long(manlen) > maxmanlen then (
+	  if maxmanlen < 0 then return "0";
+	  manlen = int(ac-l+pt+ex);
+	  if mantissa.manlen >= '5' then (		    -- round, at least in base 10
+	       while manlen > 0 do (
+		    if mantissa.(manlen-1) == '9'
+		    then manlen = manlen - 1 
+		    else (
+		    	 mantissa.(manlen-1) = mantissa.(manlen-1) + 1;
+		    	 break;
+			 ));
+	       if manlen == 0 then (
+		    mantissa = "1";
+		    manlen = 1;
+		    if l > 0 then l = l-1 else ex = ex + 1 ) )
+	  else (
+	       if manlen == 0 then return "0";
+	       )
+	  );
+     lead := (
+	  sgn + (if pt == 0 then "." else "") + (if l == 0 then "" else new string len l do provide '0')
+	  );
+     mid  := (
+	  if pt > 0 && pt < manlen
+	  then substr(mantissa,0,pt) + "." + substr(mantissa,pt,manlen-pt)
+	  else substr(mantissa,0,manlen)
+	  );
+     trail := (
+	  (new string len t do provide '0') + (if ex != long(0) then sep + tostring(ex) else "")
+	  );
+     lead + mid + trail
+     );
+
+export printingPrecision := 6;				    -- 0 indicates all
+export printingAccuracy := -1;				    -- -1 indicates all
+export printingLeadLimit := 5;
+export printingTrailLimit := 5;
+export printingSeparator := "e";			    -- was "*10^"
 
 log2ten := log(10.) / log(2.);
 export tostringRR(x:RR):string := (
      prec := printingPrecision;				    -- interpret printingPrecision==0 as infinity
      meaningful := int(floor(precision0(x) / log2ten));
      if prec == 0 || prec > meaningful then prec = meaningful; -- print at most the "meaningful" digits
-     tostring5(x,prec,printingLeadLimit,printingTrailLimit,printingSeparator)
+     format(prec,printingAccuracy,printingLeadLimit,printingTrailLimit,printingSeparator,x)
      );
      
 export toExternalString(x:RR):string := (
@@ -1514,28 +1548,24 @@ export toExternalString(x:RR):string := (
      r);
 
 export tostringCC(z:CC):string := (
-     x := realPart(z);
-     y := imaginaryPart(z);
-     if y === 0
-     then tostringRR(x)
-     else if x === 0
-     then tostringRR(y) + "*ii"
-     else if y === -1 then tostringRR(x) + "-ii"
-     else if y ===  1 then tostringRR(x) + "+ii"
-     else if y < 0
-     then tostringRR(x) + "-" + tostringRR(-y) + "*ii"
-     else tostringRR(x) + "+" + tostringRR( y) + "*ii"
+     x := tostringRR(realPart(z));
+     y := tostringRR(imaginaryPart(z));
+     if y === "0" then return x;
+     if x === "0" then return y + "*ii";
+     if y === "-1" then return x + "-ii";
+     if y ===  "1" then return x + "+ii";
+     if y.0 == '-' then return x + y + "*ii";
+     x + "+" + y + "*ii"
      );
 export toExternalString(z:CC):string := (
-     x := realPart(z);
-     y := imaginaryPart(z);
-     if y === 0 
-     then toExternalString(x)
-     else if x === 0 
-     then toExternalString(y) + "*ii"
-     else if y < 0
-     then toExternalString(x) + "-" + toExternalString(-y) + "*ii"
-     else toExternalString(x) + "+" + toExternalString( y) + "*ii"
+     x := toExternalString(realPart(z));
+     y := toExternalString(imaginaryPart(z));
+     if y === "0" then return x;
+     if x === "0" then return y + "*ii";
+     if y === "-1" then return x + "-ii";
+     if y ===  "1" then return x + "+ii";
+     if y.0 == '-' then return x + y + "*ii";
+     x + "+" + y + "*ii"
      );
 
 -- complex transcendental functions

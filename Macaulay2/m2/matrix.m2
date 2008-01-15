@@ -35,7 +35,10 @@ reduce = (tar,f) -> (
 protect symbol reduce					    -- we won't export this
 
 Matrix * Number := Matrix * ZZ := (m,i) -> i * m
-Number * Matrix := (r,m) -> map(target m, source m, reduce(target m, raw r_(ring m) * raw m))
+Number * Matrix := (r,m) -> (
+     S := ring m;
+     try r = promote(r,S) else error "can't promote scalar to ring of matrix";
+     map(target m, source m, reduce(target m, raw r * raw m)))
 RingElement * Matrix := (r,m) -> map(target m, source m, reduce(target m, raw r * raw m))
 Matrix * RingElement := (m,r) -> map(target m, source m, reduce(target m, raw m * raw r))
 
