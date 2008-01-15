@@ -1423,7 +1423,7 @@ document { Key => "printingPrecision",
 	  printingPrecision = 0
      	  {1/3p100}
      ///,
-     SeeAlso => {"printingLeadLimit", "printingTrailLimit", "printingSeparator", format}
+     SeeAlso => {"printingAccuracy", "printingLeadLimit", "printingTrailLimit", "printingSeparator", format}
      }
 document { Key => "printingLeadLimit",
      Headline => "maximum number of leading zeroes to use when printing real numbers",
@@ -1440,7 +1440,7 @@ document { Key => "printingLeadLimit",
 	  printingLeadLimit = 20
      	  1/30000000000.
      ///,
-     SeeAlso => {"printingPrecision", "printingTrailLimit", "printingSeparator", format}
+     SeeAlso => {"printingPrecision", "printingAccuracy", "printingTrailLimit", "printingSeparator", format}
      }
 document { Key => "printingTrailLimit",
      Headline => "maximum number of additional trailing digits to use when printing real numbers",
@@ -1457,7 +1457,7 @@ document { Key => "printingTrailLimit",
 	  printingTrailLimit = 20
      	  3000000000000.
      ///,
-     SeeAlso => {"printingPrecision", "printingLeadLimit", "printingSeparator", format}
+     SeeAlso => {"printingPrecision", "printingAccuracy", "printingLeadLimit", "printingSeparator", format}
      }
 document { Key => "printingSeparator",
      Headline => "string used to separate mantissa from exponent when printing real numbers",
@@ -1474,7 +1474,7 @@ document { Key => "printingSeparator",
 	  printingSeparator = "e"
      	  3000000000000.
      ///,
-     SeeAlso => {"printingPrecision", "printingLeadLimit", "printingTrailLimit", format}
+     SeeAlso => {"printingPrecision", "printingAccuracy", "printingLeadLimit", "printingTrailLimit", format}
      }
 
 document { Key => "notify",

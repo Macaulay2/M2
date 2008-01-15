@@ -700,11 +700,7 @@ export tostring5(
      else digits(o,x,i+1,s-i-1);
      tostring(o));
 
-export printingPrecision := 6;
-export printingLeadLimit := 5;
-export printingTrailLimit := 5;
-export printingSeparator := "e";			    -- was "*10^"
-export tostringRR(x:double) : string := tostring5(x,printingPrecision,printingLeadLimit,printingTrailLimit,printingSeparator);
+export tostringRR(x:double) : string := tostring5(x,6,5,5,"e");
 export (o:file) << (x:double) : file := o << tostringRR(x);
 
 nl := if length(newline) > 0 then newline.(length(newline)-1) else '\n';

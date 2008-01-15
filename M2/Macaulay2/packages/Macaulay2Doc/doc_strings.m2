@@ -342,21 +342,45 @@ document {
 document {
      Key => format,
      Headline => "format a string or a real number",
-     TT "format s", " -- prepare a string ", TT "s", " for output by converting nonprintable
-     characters to printable ones, or to escape sequences.",
-     PARA{},
-     TT "format(x,s,l,t,e)", " -- convert a real number ", TT "x", " to a string.  Here ", TT "s", " is the maximum number
-     of significant digits to print, ", TT "l", " is the maximum number of leading zeroes to print, ", TT "t", " is the maximum number 
-     of extra trailing digits to print, and ", TT "e", ", a string, is the separator between the mantissa and the exponent, if needed.",
-     EXAMPLE lines ///
-     	  1/3.
-	  format(1/3.,5,2,2,"e")
-	  format(1/300.,5,2,2,"e")
-	  format(1/3000.,5,2,2,"e")
-	  format(3000.,5,2,3,"e")
-	  format(30000.,5,2,3,"e")
-     ///,
-     SeeAlso => {"printingPrecision", "printingLeadLimit", "printingTrailLimit", "printingSeparator", toExternalString}
+     SYNOPSIS (
+     	  Usage => "format(s)",
+	  Inputs => {"s"},
+	  Outputs => {{"a string obtained from ", TT "s", " by inserting 
+		    escape sequences, thereby preparing it for printing in a form suitable
+		    for reading in again"}},
+	  EXAMPLE lines ///
+	  s = "a\"b\"c"
+	  t = format s
+	  u = value t
+	  u == s
+	  ///
+	  ),
+     SYNOPSIS (
+     	  Usage => "format(s,k,l,t,e,x)",
+	  Inputs => {
+	       "s" => ZZ => {"the maximum number of significant decimal digits (default: ", TO "printingPrecision", ").
+		    The special value ", TT "0", " imposes no limit." },
+	       "k" => ZZ => {"how far to the right of the decimal point to go, at most (default: ", TO "printingAccuracy", ").
+		    The special value ", TT "-1", " imposes no limit."},
+	       "l" => ZZ => {"maximum number of leading zeroes (default: ", TO "printingLeadLimit", ")"},
+	       "t" => ZZ => {"maximum number of trailing zeroes (default: ", TO "printingTrailLimit", ")"},
+	       "e" => String => {"the separator between the mantissa and the exponent (default: ", TO "printingSeparator", ")"},
+	       "x" => RR => "the number to be converted to a string"
+	       },
+	  Outputs => {
+	       String => {"the decimal representation of the number ", TT "x", ", prepared according to the parameters above"}
+	       },
+	  EXAMPLE lines ///
+	      format(10,1/3000.)
+	      format(10,6,1/3000.)
+	      format(10,6,2,1/3000.)
+	      format(10,300000.)
+	      format(10,-1,10,5,300000.)
+	      format(10,-1,10,4,300000.)
+	      format(10,-1,10,4,"E",300000.)
+	  ///
+	  ),
+     SeeAlso => {toExternalString}
      }
 
 -- Local Variables:

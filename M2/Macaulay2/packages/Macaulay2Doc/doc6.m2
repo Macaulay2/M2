@@ -163,7 +163,7 @@ document {
 	  numeric_200 pi
 	  Gamma oo
 	  ///,
-     SeeAlso => {toRR, numeric, precision, format, "printingPrecision", "printingLeadLimit", "printingTrailLimit", "printingSeparator"}
+     SeeAlso => {toRR, numeric, precision, format, "printingPrecision", "printingAccuracy", "printingLeadLimit", "printingTrailLimit", "printingSeparator"}
      }
 
 document {
@@ -206,7 +206,7 @@ document {
      	  toExternalString {1/3.*ii,1/3p100*ii}
      ///,
      Caveat => { "Currently, most transcendental functions are not implemented for complex arguments." },
-     SeeAlso => {"ii", toCC, toRR, numeric, precision, format, "printingPrecision", "printingLeadLimit", "printingTrailLimit", "printingSeparator"}
+     SeeAlso => {"ii", toCC, toRR, numeric, precision, format, "printingPrecision", "printingAccuracy", "printingLeadLimit", "printingTrailLimit", "printingSeparator"}
      }
 
 document {
