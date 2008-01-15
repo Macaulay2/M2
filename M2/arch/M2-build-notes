@@ -222,10 +222,15 @@ make install
 ## apt-get install, get the following packages:
 sudo apt-get install subversion
 sudo apt-get install autoconf
-sudo apt-get libncurses5-dev
+sudo apt-get install libncurses5-dev
 sudo apt-get install g++
 sudo apt-get install g77
 sudo apt-get install bison
+sudo apt-get install flex
+
+others to get:
+sudo apt-get install emacs
+
 ## get M2 source code
 svn co svn://macaulay2.math.uiuc.edu/Macaulay2/trunk/M2 M2
 ## prepare the configure script
