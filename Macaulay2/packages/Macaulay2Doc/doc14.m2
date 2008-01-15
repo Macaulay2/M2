@@ -9,6 +9,7 @@ document { Key => isReal,
      isReal 2.
      isReal sqrt(-1)
      ///
+     }
 
 document { Key => {commonRing, (commonRing,List)},
      Usage => "commonRing v",
