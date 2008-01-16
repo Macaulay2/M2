@@ -8,7 +8,7 @@ MutableMatrix == ZZ := (m,i) -> raw m == i
 ZZ == MutableMatrix := (i,m) -> raw m == i
 entries MutableMatrix := m -> (
      R := ring m;
-     applyTable(entries raw m, r -> new R from r))
+     applyTable(entries raw m, r -> promote(r,R)))
 toString MutableMatrix := m -> "mutableMatrix " | toString entries m
 precision MutableMatrix := precision @@ ring
 net MutableMatrix := m -> (
