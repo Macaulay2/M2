@@ -448,7 +448,7 @@ basicsort2(e:Expr,ww:SymbolClosure):Expr := (
 	   if ancestor(t.class, listClass) then (
 		if length(t.v) <= 1 then e else (
 		     r := basicsort(t.v,ww);
-		     when r is b:Sequence do list(b) else r))
+		     when r is b:Sequence do list(t.class,b) else r))
       	   else WrongArg("a list or sequence"))
      else WrongArg("a list or sequence");
      answer);
