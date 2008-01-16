@@ -4,37 +4,31 @@
 
 document { 
      Key => {eigenvalues, (eigenvalues,Matrix), (eigenvalues,MutableMatrix)},
-     Headline => "find eigenvalues of a matrix over RR or CC",
+     Headline => "find eigenvalues of a matrix",
      Usage => "eigenvalues M",
      Inputs => {
-	  "M" => Matrix => {"or a ", TO MutableMatrix, " over ", TO RR, " or ", TO CC, ", which is
+	  "M" => Matrix => {" or a ", TO MutableMatrix, " over ", TO RR, " or ", TO CC, ", which is
 	       a square n by n matrix"}
 	  },
-     Outputs => {
-	  {"An n by 1 ", TO Matrix, " or ", TO MutableMatrix, " (the same type as ", TT "M", ")"}
-	  },
-     "The resulting matrix is over CC, and contains the eigenvalues of ", TT "M", ".  The lapack
-     library is used to compute eigenvectors of real and complex matrices.",
-     EXAMPLE {
-	  "M = matrix{{1.0, 2.0}, {5.0, 7.0}}",
-	  "eigenvalues M"
-	  },
-     "If the matrix is symmetric (over RR) or Hermitian (over CC),
-     this information should be provided as an optional argument ",
-     TT "Hermitian=>true", ".  In this case,
-     the resulting matrix of eigenvalues is defined over ", TT "RR", ", not ", TT "CC", ".",
-     EXAMPLE {
-	  "M = matrix{{1.0, 2.0}, {2.0, 1.0}}",
-	  "eigenvalues(M, Hermitian=>true)"
-	  },
-     "If the matrix you wish to use is defined over ", TT "ZZ", " or ", TT "QQ", ", then first move it to ", TT "RR", ".",
-     EXAMPLE {
-	  "M = matrix(QQ,{{1,2/17},{2,1}})",
-	  "M = substitute(M,RR)",
-	  "eigenvalues M"
-	  },
+     Outputs => { VerticalList => {" a list of the eigenvalues of ", TT "M"} },
+     "In this example we compute the eigenvalues of a matrix and display their classes.",
+     EXAMPLE lines ///
+     M = matrix {{1,2}, {5,7}}
+     eigenvalues M
+     class \ oo
+     ///,
+     "If the matrix is symmetric (over ", TO "RR", ") or Hermitian (over ", TO "CC", "),
+     this information may be provided as an optional argument ",
+     TT "Hermitian=>true", ", so
+     the resulting eigenvalues will be in ", TO "RR", ", not ", TO "CC", ".",
+     EXAMPLE lines ///
+     M = matrix {{1,2}, {2,1}}
+     eigenvalues(M, Hermitian=>true)
+     class \ oo
+     ///,
+     "The lapack library is used to compute eigenvectors of real and complex matrices.",
      Caveat => {"The eigenvalues are approximate."},
-     SeeAlso => {eigenvectors, SVD, substitute}
+     SeeAlso => {eigenvectors, SVD}
      }
 document { 
      Key => [eigenvalues, Hermitian],

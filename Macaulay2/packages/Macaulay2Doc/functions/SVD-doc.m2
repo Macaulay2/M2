@@ -25,18 +25,30 @@ document {
      "If ", TT "M", " is over ", TO "CC", ", then ", TT "U", " and ", TT "Vt", " are unitary matrices over ", TO "CC", ".
      If ", TT "M", " is over ", TO "RR", ", ", TT "U", " and ", TT "Vt", " are orthogonal over ", TT "RR", ".",
      EXAMPLE lines ///
-     	  printingPrecision=2;
-	  M = map(RR^3, RR^5, (i,j) -> (i+1)^j * 1.0)
-	  (S,U,V) = SVD(M)
-	  M' = (transpose U) * M * (transpose V)
-	  e = 1e-10;
-	  clean_e M'
-	  clean_e norm (U^-1 - transpose U)
-	  (S', U', V') = SVD(M, DivideConquer => true)
-	  clean_e \ norm \ ({S', U', V'}-{S, U, V})
-	  ///,
+     printingPrecision=2;
+     M = map(RR^3, RR^5, (i,j) -> (i+1)^j * 1.0)
+     (S,U,V) = SVD(M)
+     M' = (transpose U) * M * (transpose V)
+     ///,
+     "We can clean the small entries from the result above with ", TO "clean", ".",
+     EXAMPLE lines ///
+     e = 1e-10;
+     clean_e M'
+     clean_e norm (U^-1 - transpose U)
+     ///,
+     "Alternatively, if the only issue is display of the matrix, we may set the printing
+     accuracy.",
+     EXAMPLE lines ///
+     printingAccuracy = 2
+     M'
+     ///,
+     "Now let's try the divide and conquer algorithm and compare answers.",
+     EXAMPLE lines ///
+     (S', U', V') = SVD(M, DivideConquer => true)
+     norm \ ({S', U', V'}-{S, U, V})
+     ///,
      "The SVD routine calls on the SVD algorithms in the lapack library.",
-     SeeAlso => {eigenvalues, eigenvectors}
+     SeeAlso => {eigenvalues, eigenvectors, norm, clean, "printingAccuracy", "printingPrecision" }
      }
 document { 
      Key => [SVD, DivideConquer],

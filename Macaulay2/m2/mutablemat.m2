@@ -161,9 +161,8 @@ eigenvalues(MutableMatrix) := o -> (A) -> (
           then mutableMatrix(RR_(k.precision),0,0)
           else mutableMatrix(CC_(k.precision),0,0);
      rawEigenvalues(raw A,raw e,o.Hermitian);
-     e)
-eigenvalues(Matrix) := o -> (A) -> (
-     matrix eigenvalues(mutableMatrix(A,Dense=>true),o))
+     new VerticalList from flatten entries e)
+eigenvalues(Matrix) := o -> (A) -> eigenvalues(mutableMatrix(numeric A,Dense=>true),o)
 
 eigenvectors = method(Options => {Hermitian => false})
 eigenvectors(MutableMatrix) := o -> (A) -> (
@@ -176,10 +175,10 @@ eigenvectors(MutableMatrix) := o -> (A) -> (
           then mutableMatrix(RR_(k.precision),0,0, Dense=>true)
 	  else mutableMatrix(CC_(k.precision),0,0, Dense=>true);
      rawEigenvectors(raw A,raw e,raw v,o.Hermitian);
-     (e,v))
+     (new VerticalList from flatten entries e,v))
 eigenvectors(Matrix) := o -> (A) -> (
-     (e,v) := eigenvectors(mutableMatrix(A,Dense=>true),o);
-     (matrix e, matrix v))
+     (e,v) := eigenvectors(mutableMatrix(numeric A,Dense=>true),o);
+     (e, matrix v))
 
 SVD = method(Options=>{DivideConquer=>false})
 SVD MutableMatrix := o -> A -> (
