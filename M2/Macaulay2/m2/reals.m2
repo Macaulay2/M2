@@ -22,20 +22,6 @@ precision InexactNumber := precision0
 precision Number := x -> infinity
 precision Ring := R -> precision 0_R
 
-toCC = method()
-toCC(Number) := toCC0
-toCC(Number,Number) := toCC0
-toCC(ZZ,Number) := toCC0
-toCC(ZZ,Number,Number) := toCC0
-
-toRR = method()
-toRR(RR) := toRR0
-toRR(ZZ) := toRR0
-toRR(QQ) := toRR0
-toRR(ZZ,RR) := toRR0
-toRR(ZZ,QQ) := toRR0
-toRR(ZZ,ZZ) := toRR0
-
 lngamma = method()
 lngamma ZZ := lngamma QQ := lngamma RR := x -> (
      (y,s) := lgamma x;
@@ -123,9 +109,9 @@ numeric CC := identity
 numeric RR := identity
 numeric(ZZ,Number) := toRR
 numeric(ZZ,CC) := toCC
-infty := prec -> - log toRR(prec,0)
+infty := prec -> 1/toRR(prec,0)
 numeric InfiniteNumber := infinity -> infinity#0 * infty defaultPrecision
-toRR(ZZ, InfiniteNumber) := numeric(ZZ, InfiniteNumber) := (prec,infinity) -> infinity#0 * infty prec
+numeric(ZZ, InfiniteNumber) := (prec,infinity) -> infinity#0 * infty prec
 
 ZZ _ RealField :=
 QQ _ RealField :=
@@ -222,11 +208,6 @@ toString Constant := net Constant := c -> toString c#0
 toExternalString Constant := c -> toString c#0
 numeric Constant := c -> c#1 defaultPrecision
 numeric(ZZ,Constant) := (prec,c) -> c#1 prec
-toRR InfiniteNumber := x -> - x#0 * log toRR(defaultPrecision, 0)
-toRR Constant := c -> toRR numeric c
-toCC Constant := c -> toCC numeric c
-toRR(ZZ,Constant) := (prec,c) -> toRR numeric(prec,c)
-toCC(ZZ,Constant) := (prec,c) -> toCC numeric(prec,c)
 
 Constant + Constant := (c,d) -> numeric c + numeric d
 Constant + InexactNumber := (c,x) -> numeric(precision x,c) + x
@@ -275,8 +256,14 @@ toString ComplexField := R -> concatenate("CC_",toString R.precision)
 expression RealField := R -> new Subscript from {symbol RR, R.precision}
 expression ComplexField := R -> new Subscript from {symbol CC, R.precision}
 expression RR := x -> if x < 0 then new Minus from {-x} else new Holder from {x}
-expression CC := z -> expression realPart z + expression imaginaryPart z * hold symbol ii
-
+expression CC := z -> (
+     x := realPart z;
+     y := imaginaryPart z;
+     if y == 0 then return expression x;
+     if x == 0 then return expression y * ii;
+     if y == -1 then return expression x - ii;
+     if y == 1 then return expression x + ii;
+     expression x + expression y * hold symbol ii)
 net InexactField := R -> net expression R
 net CC := z -> simpleToString z
 toExternalString RR := toExternalString0

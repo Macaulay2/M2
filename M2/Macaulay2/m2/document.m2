@@ -1,5 +1,10 @@
 --		Copyright 1994-2006 by Daniel R. Grayson
 
+binary := set flexibleBinaryOperators
+prefix := set flexiblePrefixOperators
+postfix := set flexiblePostfixOperators
+operator := binary+prefix+postfix
+
 checkLoadDocumentation = () -> (
      if (
 	  not isGlobalSymbol "Macaulay2Doc"
@@ -299,9 +304,17 @@ fSeqInitialize := (toString,toString) -> new HashTable from {
      (2,NewMethod      ) => s -> ("new ", toString s#1),
      (3,class,Keyword  ) => s -> (toString s#1, " ", toString s#0, " ", toString s#2),-- infix operator
      (3,class,Symbol   ) => s -> (toString s#1, " ", toString s#0, " ", toString s#2),-- infix operator
-     (3,class,Sequence ) => s -> (toString s#1, " ", toString s#0#0, " ", toString s#2, " ", toString s#0#1, " Thing"),-- infix assignment operator (really a ternary operator!)
+     (3,class,Sequence ) => s -> (
+	  -- infix assignment operator (really a ternary operator!)
+	  (toString s#1, " ", toString s#0#0, " ", toString s#2, " ", toString s#0#1, " Thing")
+	  ),
      (2,class,Keyword  ) => s -> (toString s#0, " ", toString s#1),-- prefix operator
-     (2,class,Sequence ) => s -> (toString s#0#0, " ", toString s#1, " ", toString s#0#1, " Thing"),-- prefix assignment operator (need to handle the postfix assignment operators still!)
+     (2,class,Sequence ) => s -> (
+	  op := s#0#0;
+	  if prefix#?op
+	  then (toString op, " ", toString s#1, " ", toString s#0#1, " Thing")
+	  else (toString s#1, " ", toString op, " ", toString s#0#1, " Thing")
+	  ),
      (2,symbol (*)     ) => s -> (toString s#1, " ", toString s#0), -- postfix operator
      (2,symbol ^*      ) => s -> (toString s#1, " ", toString s#0), -- postfix operator
      (2,symbol _*      ) => s -> (toString s#1, " ", toString s#0), -- postfix operator
@@ -747,11 +760,6 @@ topheader := s -> (
      h := headline s;
      HEADER1 { formatDocumentTag s, if h =!= null then " -- ", h })
 
-binary := set flexibleBinaryOperators
-prefix := set flexiblePrefixOperators
-postfix := set flexiblePostfixOperators
-operator := binary+prefix+postfix
-
 op := s -> if operator#?s then (
      ss := toString s;
      if match("^[[:alpha:]]*$",ss) then ss = " "|ss|" ";
@@ -870,8 +878,6 @@ processInputOutputItems := (key,fn) -> x -> (
 		    ))
 	  else SPAN (TT ( toString optsymb, " => " ), r));
      r)
-
-sortByName := v -> last \ sort \\ (i -> (toString i, i)) \ v
 
 document = method(Options => documentOptions)
 document List := opts -> args -> (
