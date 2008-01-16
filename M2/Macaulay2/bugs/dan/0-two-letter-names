@@ -2,3 +2,5 @@ get rid of unused two letter names!
 
     BR CC DD dd DL do DT EM F4 gb GF HH hh HR id if ii in LI LU of on OO oo or
     pi QQ RR SY TD TO to TR TT UL Up ZZ
+
+Also, hide all the html symbols in a separate package???

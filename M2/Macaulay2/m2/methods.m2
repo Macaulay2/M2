@@ -523,13 +523,23 @@ tex = method(Dispatch => Thing, TypicalValue => String)
 texMath = method(Dispatch => Thing, TypicalValue => String)
 info = method(Dispatch => Thing, TypicalValue => String)
 
------------------------------------------------------------------------------
 -- method options
 
 methodOptions = method(TypicalValue => OptionTable)
 methodOptions Function := methodOptions Symbol := f -> null
 methodOptions MethodFunctionWithOptions := MultipleArgsWithOptionsGetMethodOptions
 methodOptions MethodFunction := MultipleArgsNoOptionsGetMethodOptions
+
+-- values of functions by lookup
+lookupfuns = new MutableHashTable
+storefuns = new MutableHashTable
+lookupfuns#toString = x -> f -> if hasAttribute(x,PrintNames) then getAttribute(x,PrintNames) else f x
+storefuns #toString = (x,e) -> (
+     if not instance(e,String) then error "expected a string";
+     setAttribute(x,PrintNames,e))
+Function Thing = (f,x,e) -> (
+     if not storefuns#?f then error("no method for storing values of function ", toString f);
+     storefuns#f (x,e))
 
 -- Local Variables:
 -- compile-command: "make -C $M2BUILDDIR/Macaulay2/m2 "

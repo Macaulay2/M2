@@ -1,0 +1,2 @@
+can we get rid of the infinite number class and make infinity yield an infinite
+real of the current defaultPrecision?

@@ -1125,35 +1125,44 @@ toRR(e:Expr):Expr := (
 	  else WrongArgZZ(1)
 	  )
      else WrongArg("an integral, rational, or real number, or a pair"));
-setupfun("toRR0",toRR);
+setupfun("toRR",toRR);
 
 toCC(e:Expr):Expr := (
      when e
-     is x:ZZ do Expr(toCC(x,defaultPrecision))
-     is x:QQ do Expr(toCC(x,defaultPrecision))
-     is x:RR do Expr(toCC(x))
-     is CC do e
+     is x:ZZ do Expr(toCC(x,defaultPrecision)) -- # typical value: toCC, ZZ, CC
+     is x:QQ do Expr(toCC(x,defaultPrecision)) -- # typical value: toCC, QQ, CC
+     is x:RR do Expr(toCC(x)) -- # typical value: toCC, RR, CC
+     is CC do e -- # typical value: toCC, CC, CC
      is s:Sequence do (
 	  if length(s) == 2 then (
 	       when s.0 is prec:ZZ do (
 		    if !isULong(prec) then WrongArgSmallUInteger(1)
 		    else (
 			 when s.1 
-			 is x:QQ do Expr(toCC(x,toULong(prec)))
-			 is x:ZZ do Expr(toCC(x,toULong(prec)))
-			 is x:RR do Expr(toCC(x,toULong(prec)))
-			 is x:CC do Expr(toCC(x,toULong(prec)))
+			 is x:ZZ do Expr(toCC(x,toULong(prec))) -- # typical value: toCC, ZZ, ZZ, CC
+			 is x:QQ do Expr(toCC(x,toULong(prec))) -- # typical value: toCC, ZZ, QQ, CC
+			 is x:RR do Expr(toCC(x,toULong(prec))) -- # typical value: toCC, ZZ, RR, CC
+			 is x:CC do Expr(toCC(x,toULong(prec))) -- # typical value: toCC, ZZ, CC, CC
 			 else WrongArg("a rational number, real number, or an integer")
 			 )
 		    )
 	       is x:RR do (
-		    when s.1 is y:RR do Expr(toCC(x,y))
+		    when s.1 is y:RR do Expr(toCC(x,y))	    -- # typical value: toCC, RR, RR, CC
 		    else WrongArgRR()
 		    )
 	       else WrongArgZZ(1)
 	       )
 	  else if length(s) == 3 then (
 	       when s.0 is prec:ZZ do (
+		    -- # typical value: toCC, ZZ, ZZ, ZZ, CC
+		    -- # typical value: toCC, ZZ, ZZ, QQ, CC
+		    -- # typical value: toCC, ZZ, ZZ, RR, CC
+		    -- # typical value: toCC, ZZ, QQ, ZZ, CC
+		    -- # typical value: toCC, ZZ, QQ, QQ, CC
+		    -- # typical value: toCC, ZZ, QQ, RR, CC
+		    -- # typical value: toCC, ZZ, RR, ZZ, CC
+		    -- # typical value: toCC, ZZ, RR, QQ, CC
+		    -- # typical value: toCC, ZZ, RR, RR, CC
 		    if !isULong(prec) then WrongArgSmallUInteger(1)
 		    else Expr(CC(
 			      when s.1 
@@ -1176,7 +1185,7 @@ toCC(e:Expr):Expr := (
 	       else WrongArgZZ(1))
 	  else WrongNumArgs(1,3))
      else WrongArg("a real or complex number, or 2 or 3 arguments"));
-setupfun("toCC0",toCC);
+setupfun("toCC",toCC);
 
 precision(e:Expr):Expr := (
      when e 
