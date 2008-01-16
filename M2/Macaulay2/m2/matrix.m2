@@ -29,6 +29,14 @@ map(Ring,RawMatrix) := opts -> (R,f) -> (
 	  symbol cache => new CacheTable
 	  })
 
+numeric(ZZ, Matrix) := (prec,f) -> (
+     F := ring f;
+     if instance(F, InexactField) then return f;
+     if F === ZZ or F === QQ then return promote(f,RR_prec);
+     error "expected matrix of numbers"
+     )
+numeric Matrix := f -> numeric(defaultPrecision,f)
+
 reduce = (tar,f) -> (
      if isFreeModule tar then f
      else f % raw gb presentation tar)

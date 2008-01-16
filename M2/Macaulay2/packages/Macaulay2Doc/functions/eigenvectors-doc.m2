@@ -11,38 +11,32 @@ document {
 	       a square n by n matrix"}
 	  },
      Outputs => {
-	  "eigvals" => Matrix => {" or a ", TO MutableMatrix, "(of the same find as ", TT "M", "),
-	       a n by 1 matrix of the eigenvalues of M"},
-	  "eigvecs" => Matrix => {" or a ", TO MutableMatrix, "(of the same find as ", TT "M", "),
-	       whose columns are a basis of the corresponding eigenvectors of M"}
+	  "eigvals" => VerticalList => {{" a list of the eigenvalues of ", TT "M"}},
+	  "eigvecs" => Matrix => {" or ", ofClass MutableMatrix, ", if ", TT "M", " is one),
+	       whose columns are the corresponding eigenvectors of ", TT "M"}
 	  },
-     "The resulting matrix is over CC, and contains the eigenvectors of ", TT "M", ".  The lapack
+     "The resulting matrix is over ", TO "CC", ", and contains the eigenvectors of ", TT "M", ".  The lapack
      library is used to compute eigenvectors of real and complex matrices.",
      PARA{},
-     "Recall that if ", TT "v", " is a non-zero vector such that ",, TT "Mv = av", 
-     ", for a scalar a, then
+     "Recall that if ", TT "v", " is a non-zero vector such that ", TT "Mv = av", ", for a scalar a, then
      ", TT "v", " is called an eigenvector corresponding to the eigenvalue ", TT "a", ".",
      EXAMPLE {
-	  "M = matrix{{1.0, 2.0}, {5.0, 7.0}}",
+	  "M = matrix{{1, 2}, {5, 7}}",
 	  "eigenvectors M"
 	  },
-     "If the matrix is symmetric (over RR) or Hermitian (over CC),
+     "If the matrix is symmetric (over ", TO "RR", ") or Hermitian (over ", TO "CC", "),
      this information should be provided as an optional argument ",
      TT "Hermitian=>true", ".  In this case,
-     the resulting matrix of eigenvalues (and eigenvectors, if ", TT "M", " is over ", 
-     TT "RR", ") is defined over ", TT "RR", ", not ", TT "CC", ".",
-     EXAMPLE {
-	  "M = matrix{{1.0, 2.0}, {2.0, 1.0}}",
-	  "eigenvectors(M, Hermitian=>true)"
-	  },
-     "If the matrix you wish to use is defined over ", TT "ZZ", " or ", TT "QQ", ", then first move it to ", TT "RR", ".",
-     EXAMPLE {
-	  "M = matrix(QQ,{{1,2/17},{2,1}})",
-	  "M = substitute(M,RR)",
-	  "eigenvectors M"
-	  },
+     the resulting eigenvalues will be returned as real numbers, and if ", TT "M", " is real,
+     the matrix of of eigenvectors will be real.",
+     EXAMPLE lines ///
+     M = matrix {{1, 2}, {2, 1}}
+     (e,v) = eigenvectors(M, Hermitian=>true)
+     class \ e
+     v
+     ///,
      Caveat => {"The eigenvectors are approximate."},
-     SeeAlso => {eigenvalues, SVD, substitute}
+     SeeAlso => {eigenvalues, SVD}
      }
 document { 
      Key => [eigenvectors, Hermitian],
