@@ -862,6 +862,7 @@ export {
 	symbol methodOptions,
 	symbol methods,
 	symbol min,
+	symbol minExponent, symbol maxExponent,
 	symbol minPosition,
 	symbol mingens,
 	symbol mingle,

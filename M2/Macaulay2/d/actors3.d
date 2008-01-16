@@ -968,20 +968,30 @@ agm(e:Expr):Expr := (
      is a:Sequence do if length(a) != 2 then WrongNumArgs(2) 
      else (
 	  when a.0
+	  is x:CC do (
+	       when a.1
+	       is y:CC do Expr(agm(x,y)) -- # typical value: agm, CC, CC, CC
+	       is y:RR do Expr(agm(x,toCC(y)))			            -- # typical value: agm, CC, RR, CC
+	       is y:ZZ do Expr(agm(x,toCC(y,precision(x))))	    -- # typical value: agm, CC, ZZ, CC
+	       is y:QQ do Expr(agm(x,toCC(y,precision(x))))	    -- # typical value: agm, CC, QQ, CC
+	       else WrongArg(1,"a number"))
 	  is x:RR do (
 	       when a.1
+	       is y:CC do Expr(agm(toCC(x),y)) -- # typical value: agm, RR, CC, CC
 	       is y:RR do Expr(agm(x,y))			            -- # typical value: agm, RR, RR, RR
 	       is y:ZZ do Expr(agm(x,toRR(y,precision(x))))	    -- # typical value: agm, RR, ZZ, RR
 	       is y:QQ do Expr(agm(x,toRR(y,precision(x))))	    -- # typical value: agm, RR, QQ, RR
 	       else WrongArg(1,"a number"))
 	  is x:ZZ do (
 	       when a.1
+	       is y:CC do Expr(agm(toCC(x,precision(y)),y))    -- -- # typical value: agm, ZZ, CC, CC
 	       is y:RR do Expr(agm(toRR(x,precision(y)),y))    -- -- # typical value: agm, ZZ, RR, RR
 	       is y:ZZ do Expr(agm(toRR(x),toRR(y)))	       -- # typical value: agm, ZZ, ZZ, RR
 	       is y:QQ do Expr(agm(toRR(x),toRR(y)))	       -- # typical value: agm, ZZ, QQ, RR
 	       else WrongArg(1,"a number"))
 	  is x:QQ do (
 	       when a.1
+	       is y:CC do Expr(agm(toCC(x,precision(y)),y))    -- # typical value: agm, QQ, CC, CC
 	       is y:RR do Expr(agm(toRR(x,precision(y)),y))    -- # typical value: agm, QQ, RR, RR
 	       is y:ZZ do Expr(agm(toRR(x),toRR(y)))	    -- # typical value: agm, QQ, ZZ, RR
 	       is y:QQ do Expr(agm(toRR(x),toRR(y)))	    -- # typical value: agm, QQ, QQ, RR
@@ -993,7 +1003,11 @@ setupfun("agm",agm);
 abs(x:double):double := if x < 0. then -x else x;
 floor(e:Expr):Expr := (
      when e
-     is x:RR do Expr(floor(x))				    -- # typical value: floor, RR, ZZ
+     is x:RR do (
+	  if isnan(x) then buildErrorPacket("encountered NotANumber in conversion to integer") else
+	  if isinf(x) then buildErrorPacket("encountered infinite real number in conversion to integer") else
+	  Expr(floor(x))				    -- # typical value: floor, RR, ZZ
+	  )
      is x:QQ do Expr(floor(x))				    -- # typical value: floor, QQ, ZZ
      is ZZ do e				    -- # typical value: floor, ZZ, ZZ
      else buildErrorPacket("expected an integral, rational, or real number")
@@ -1002,7 +1016,10 @@ setupfun("floor",floor);
 
 round0(e:Expr):Expr := (
      when e
-     is x:RR do Expr(round(x))
+     is x:RR do (
+	  if isnan(x) then buildErrorPacket("encountered NotANumber in conversion to integer") else
+	  if isinf(x) then buildErrorPacket("encountered infinite real number in conversion to integer") else
+	  Expr(round(x)))
      else buildErrorPacket("expected a real number")
      );
 setupfun("round0",round0);

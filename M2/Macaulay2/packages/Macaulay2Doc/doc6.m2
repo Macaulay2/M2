@@ -172,7 +172,22 @@ document {
 	  numeric_200 pi
 	  Gamma oo
 	  ///,
-     SeeAlso => {toRR, numeric, precision, format, "printingPrecision", "printingAccuracy", "printingLeadLimit", "printingTrailLimit", "printingSeparator"}
+     SeeAlso => {toRR, numeric, precision, format, "printingPrecision", "printingAccuracy", 
+	  "printingLeadLimit", "printingTrailLimit", "printingSeparator",
+	  "maxExponent", "minExponent"
+	  }
+     }
+
+document {
+     Key => "minExponent",
+     "This constant is the smallest exponent (of 2) that can be stored internally in the binary representation of
+     an inexact real (or complex) number.  It cannot be changed."
+     }
+
+document {
+     Key => "maxExponent",
+     "This constant is the largest exponent (of 2) that can be stored internally in the binary representation of
+     an inexact real (or complex) number.  It cannot be changed."
      }
 
 document {
