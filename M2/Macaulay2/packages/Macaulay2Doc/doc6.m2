@@ -146,17 +146,26 @@ document {
      EXAMPLE {".5p100 == .5p30", ".2p100 == .2p30"},
      "The notion of (strict) equality tested by ", TO "==", " also takes the precision into account.",
      EXAMPLE {".5p100 === .5p30", ".2p100 === .2p30"},
+     "Perhaps surprisingly, the IEEE floating point standard also specifies that every number, including 0,
+     has a sign bit, and strict equality testing takes it into account, as it must do, because some arithmetic
+     and transcendental functions take it into account.",
+     EXAMPLE lines ///
+     0.
+     -0.
+     1/0.
+     1/-0.
+     log 0
+     csc (0.)
+     csc (-0.)
+     ///,
      "Use ", TO "toExternalString", " to produce something that, when encountered as input, will reproduce
      exactly what you had before.",
      EXAMPLE lines ///
      	  x = {1/3.,1/3p100}
           x == {.333333, .333333}
-     	  toExternalString x
-	  x == {.33333333333333331p53e0, .33333333333333333333333333333346p100e0}
-	  x === {.33333333333333331p53e0, .33333333333333333333333333333346p100e0}
+     	  y = toExternalString x
+	  x === value y
      ///,
-     assert( ({1/3.,1/3p100}) === {.33333333333333331p53e0, .33333333333333333333333333333346p100e0} ),
-     assert( (toExternalString {1/3.,1/3p100}) === "{.33333333333333331p53e0, .33333333333333333333333333333346p100e0}" ),
      "Transcendental constants and functions are available to high precision, with ", TO "numeric", ".",
      EXAMPLE lines ///
 	  numeric pi
@@ -199,11 +208,12 @@ document {
      EXAMPLE "3p100+2p90e3*ii",
      "Numbers displayed inside more complicated objects are printed with the number of digits
      specified by ", TO "printingPrecision", ".",
-     EXAMPLE {"printingPrecision","{1/3.*ii,1/3p100*ii}"},
+     EXAMPLE {"printingPrecision","x = {1/3.*ii,1/3p100*ii}"},
      "Use ", TO "toExternalString", " to produce something that, when encountered as input, will reproduce
      exactly what you had before.",
      EXAMPLE lines ///
-     	  toExternalString {1/3.*ii,1/3p100*ii}
+     	  y = toExternalString x
+	  value y === x
      ///,
      Caveat => { "Currently, most transcendental functions are not implemented for complex arguments." },
      SeeAlso => {"ii", toCC, toRR, numeric, precision, format, "printingPrecision", "printingAccuracy", "printingLeadLimit", "printingTrailLimit", "printingSeparator"}

@@ -24,6 +24,7 @@ precision Ring := R -> precision 0_R
 
 toCC = method()
 toCC(Number) := toCC0
+toCC(Number,Number) := toCC0
 toCC(ZZ,Number) := toCC0
 toCC(ZZ,Number,Number) := toCC0
 
@@ -282,10 +283,13 @@ toExternalString RR := toExternalString0
 toExternalString CC := toExternalString0
 InexactNumber#{Standard,Print} = x ->  (
      << newline << concatenate(interpreterDepth:"o") << lineNumber << " = ";
-     save := printingPrecision;
+     prec := printingPrecision;
+     acc := printingAccuracy;
      printingPrecision = 0;
+     printingAccuracy = -1;
      << toString x;
-     printingPrecision = save;
+     printingPrecision = prec;
+     printingAccuracy = acc;				    -- sigh, what if an interrupt or an error occurred?
      << newline << flush;
      );
 

@@ -1,5 +1,8 @@
 -- rings considered here: ZZ, QQ, RR_nn, CC_nn
 
+assert( -0. =!= 0. )
+assert( -0. == 0. )
+
 assert( toRR 1 === 1. )
 assert( toRR (1/10) === .1 )
 
@@ -34,6 +37,12 @@ assert isint 234134542.34234523487687e14
 assert isint 2341345423.4234523487687e13
 
 ch = x -> value toExternalString x === x
+assert ch 0.
+assert ch (-0.)
+assert ch toCC(53,-0.,0.)
+assert ch toCC(53,0.,0.)
+assert ch toCC(53,-0.,-0.)
+assert ch toCC(53,0.,-0.)
 assert ch .5873893305409771
 assert ch 587.3893305409771
 assert ch 587389.3305409771
@@ -43,6 +52,20 @@ assert ch .58738933054097710728398429265722p100e0
 assert ch .73249827349273948274398273498273p100e0
 assert ch( .32847293749287439287439237498274p100e0+ii*.73249827349273948274398273498273p100e0)
 assert ch( .27349827349287439827439827349827p100e0+ii*.92837938475938759387539847539847p100e0)
+assert ch( .32847293749287439287439237498274p100e0-ii*.73249827349273948274398273498273p100e0)
+assert ch( .27349827349287439827439827349827p100e0-ii*.92837938475938759387539847539847p100e0)
+assert ch( -.32847293749287439287439237498274p100e0+ii*.73249827349273948274398273498273p100e0)
+assert ch( -.27349827349287439827439827349827p100e0+ii*.92837938475938759387539847539847p100e0)
+assert ch( -.32847293749287439287439237498274p100e0-ii*.73249827349273948274398273498273p100e0)
+assert ch( -.27349827349287439827439827349827p100e0-ii*.92837938475938759387539847539847p100e0)
+assert ch( .32847293749287439287439237498274p100e0+ii*0)
+assert ch( .27349827349287439827439827349827p100e0+ii*0)
+assert ch( -.32847293749287439287439237498274p100e0+ii*0)
+assert ch( -.27349827349287439827439827349827p100e0+ii*0)
+assert ch( +ii*.73249827349273948274398273498273p100e0)
+assert ch( +ii*.92837938475938759387539847539847p100e0)
+assert ch( -ii*.73249827349273948274398273498273p100e0)
+assert ch( -ii*.92837938475938759387539847539847p100e0)
 
 assert( 1. === 1. )
 assert( 1. =!= .1 )
@@ -210,6 +233,11 @@ assert( (abs z) === .12559904458235341210425337079217p100e1 )
 assert( (abs(-3.2)) === 3.2 )
 assert( (abs(3.2)) === 3.2 )
 
+assert( abs(0.) === 0. )
+assert( abs(0.) =!= -0. )
+assert( abs(-0.) === 0. )
+assert( abs(-0.) =!= -0. )
+
 x = symbol x
 R = RR[x]
 assert( value toString(x+1/3) =!= x+1/3 )
@@ -300,8 +328,13 @@ assert( format_(10,6) .00044448888 === ".000444" )
 assert( format_(10,5) .00044448888 === ".00044" )
 assert( format_(10,4) .00044448888 === ".0004" )
 assert( format_(10,3) .00044448888 === "0" )
+assert( format_(10,0) .00044448888 === "0" )
+
 assert( format_(10,4) .00088888888 === ".0009" )
+assert( format_(10,0) .00088888888 === "0" )
+
 assert( format_(10,4) .00098765432 === ".001" )
+assert( format_(10,0) .00098765432 === "0" )
 
 assert( format_(10,) 44.448888 === "44.448888" )
 assert( format_(10,-1) 44.448888 === "44.448888" )
@@ -342,7 +375,26 @@ assert( format_(10,49) 7.7778888e-50 === "1e-49" )
 assert( format_(10,48) 7.7778888e-50 === "0" )
 assert( format_(10,47) 7.7778888e-50 === "0" )
 
+assert ( 4 == # set (toString \ { toCC(53,-0.,0.), toCC(53,0.,0.), toCC(53,-0.,-0.), toCC(53,0.,-0.) } ) )
+assert ( 4 == # set (toExternalString \ { toCC(53,-0.,0.), toCC(53,0.,0.), toCC(53,-0.,-0.), toCC(53,0.,-0.) } ) )
+
+
+assert( toRR(100,-0.) === -0.p100 )
+assert( toRR(100,0.) === 0.p100 )
+
+distinct = x -> scan(#x,i->scan(#x,j-> assert( (x#i === x#j) === (i===j) )))
+distinct { toCC(-0.,0.), toCC(0.,0.), toCC(-0.,-0.), toCC(0.,-0.) }
+distinct { toCC(53,-0.,0.), toCC(53,0.,0.), toCC(53,-0.,-0.), toCC(53,0.,-0.) }
+distinct (hash \ { toCC(53,-0.,0.), toCC(53,0.,0.), toCC(53,-0.,-0.), toCC(53,0.,-0.) })
+
+assert ( 4 == # set { toCC(-0.,0.), toCC(0.,0.), toCC(-0.,-0.), toCC(0.,-0.) } )
+assert ( 4 == # set { toCC(53,-0.,0.), toCC(53,0.,0.), toCC(53,-0.,-0.), toCC(53,0.,-0.) } )
+assert ( 4 == # set (hash \ { toCC(53,-0.,0.), toCC(53,0.,0.), toCC(53,-0.,-0.), toCC(53,0.,-0.) } ) )
+
+toExternalString (0 *(1-ii))
+toExternalString (0.*(1-ii))
+assert( 0*(1-ii) === 0.*(1-ii) )
 
 -- Local Variables:
--- compile-command: "make -C $M2BUILDDIR/Macaulay2/packages/Macaulay2Doc/test numbers.out"
+-- compile-command: "33333.33333"
 -- End:

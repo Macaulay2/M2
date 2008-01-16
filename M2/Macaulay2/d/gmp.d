@@ -495,38 +495,38 @@ bigint := 2147483647.; -- 2^31-1
 (x:double) << (n:int) : double ::= ldexp(x, n);
 (x:double) >> (n:int) : double ::= ldexp(x,-n);
 
-export Floor(x:double):ZZ := (
-     x = floor(x);
-     if x < bigint && x > -bigint
-     then toInteger(int(x))
-     else (
-	  wasneg := x < 0.;
-	  if wasneg then x = -x;
-	  n := 0;
-	  x = Ccode(double, "frexp(", x, ", &", n, ")");
-	  r := toInteger(0);
-	  while (
-	       i := int(floor(x));
-	       x = x - i;
-	       r = r + i;
-	       n > 0
-	       )
-	  do if n > 16 then (
-	       n = n - 16;
-	       x = x << 16;
-	       r = r << 16;
-	       )
-	  else (
-	       x = x << n;
-	       r = r << n;
-	       n = 0;
-	       );
-	  if wasneg then (
-	       r = -r;
-	       if x > 0. then r = r-1;
-	       );
-	  r));
-export Round(x:double):ZZ := Floor(x + 0.5);
+-- export Floor(x:double):ZZ := (
+--      x = floor(x);
+--      if x < bigint && x > -bigint
+--      then toInteger(int(x))
+--      else (
+-- 	  wasneg := x < 0.;
+-- 	  if wasneg then x = -x;
+-- 	  n := 0;
+-- 	  x = Ccode(double, "frexp(", x, ", &", n, ")");
+-- 	  r := toInteger(0);
+-- 	  while (
+-- 	       i := int(floor(x));
+-- 	       x = x - i;
+-- 	       r = r + i;
+-- 	       n > 0
+-- 	       )
+-- 	  do if n > 16 then (
+-- 	       n = n - 16;
+-- 	       x = x << 16;
+-- 	       r = r << 16;
+-- 	       )
+-- 	  else (
+-- 	       x = x << n;
+-- 	       r = r << n;
+-- 	       n = 0;
+-- 	       );
+-- 	  if wasneg then (
+-- 	       r = -r;
+-- 	       if x > 0. then r = r-1;
+-- 	       );
+-- 	  r));
+-- export Round(x:double):ZZ := Floor(x + 0.5);
 
 -----------------------------------------------------------------------------
 -- rationals
@@ -864,11 +864,21 @@ export toDouble(x:RR):double := Ccode( double, "mpfr_get_d(", "(__mpfr_struct *)
 
 flagged0():bool ::= 0 != Ccode( int, "mpfr_erangeflag_p()" );
 export flagged():bool := flagged0();
-equal(x:RR, y:RR):bool ::= (
+sign0(x:RR):bool ::= 0 != Ccode(int,"mpfr_signbit((__mpfr_struct *)",x,")");
+
+export (x:RR) === (y:RR):bool := (			    -- weak equality
      Ccode( void, "mpfr_clear_flags()" );		    -- do we need this?
-     0 != Ccode( int, "mpfr_equal_p(", "(__mpfr_struct *)", x, ",", "(__mpfr_struct *)", y, ")" ) && ! flagged0());
-export (x:RR) === (y:RR) : bool := equal(x,y);
-export strictequality(x:RR,y:RR):bool := x === y && precision0(x) == precision0(y);
+     0 != Ccode( int, "mpfr_equal_p(", "(__mpfr_struct *)", x, ",", "(__mpfr_struct *)", y, ")" )
+     && !flagged0()
+     );
+
+export strictequality(x:RR,y:RR):bool := (
+     Ccode( void, "mpfr_clear_flags()" );		    -- do we need this?
+     0 != Ccode( int, "mpfr_equal_p(", "(__mpfr_struct *)", x, ",", "(__mpfr_struct *)", y, ")" )
+     && !flagged0()
+     && sign0(x) == sign0(y)
+     && precision0(x) == precision0(y)
+     );
 
 compare0(x:RR, y:RR):int ::= (
      Ccode( void, "mpfr_clear_flags()" );		    -- do we need this?
@@ -1216,13 +1226,9 @@ export (x:CC) / (y:CC) : CC := x * conj(y) / norm2(y);
 export (x:RR) / (y:CC) : CC := x * conj(y) / norm2(y);
 
 export (x:CC) << (n:long) : CC := CC(x.re<<n,x.im<<n);
-export (x:CC) >> (n:long) : CC := CC(x.re<<n,x.im<<n);
+export (x:CC) >> (n:long) : CC := CC(x.re>>n,x.im>>n);
 
-export strictequality(x:CC,y:CC):bool := (
-     x.re === y.re && precision0(x.re) == precision0(y.re)
-     &&
-     x.im === y.im && precision0(x.im) == precision0(y.im)
-     );
+export strictequality(x:CC,y:CC):bool := strictequality(x.re,y.re) && strictequality(x.im,y.im);
      
 export (x:CC) === (y:CC) : bool := x.re === y.re && x.im === y.im;
 export (x:CC) === (y:RR) : bool := x.re === y && x.im === 0;
@@ -1430,6 +1436,7 @@ getstr(returnexponent:long, base:int, sigdigs:int, x:RR):string ::= tostring(
 finite(x:RR):bool ::=Ccode(bool,"mpfr_number_p((__mpfr_struct *)",x,")");
 isinf (x:RR):bool ::= Ccode(bool,"mpfr_inf_p((__mpfr_struct *)",x,")");
 isnan (x:RR):bool ::= Ccode(bool,"mpfr_nan_p((__mpfr_struct *)",x,")");
+export sign(x:RR):bool := 0 != Ccode(int,"mpfr_signbit((__mpfr_struct *)",x,")");
 export format(
      s:int,			  -- number of significant digits (0 means all)
      ac:int,	    -- accuracy, how far to right of point to go (-1 means all)
@@ -1438,14 +1445,15 @@ export format(
      sep:string,		     -- separator between mantissa and exponent
      x:RR						-- the number to format
      ) : string := (
-     if isinf(x) then return if x < 0 then "-infinity" else "infinity";
-     if isnan(x) then return "NotANumber";
-     if x === 0 then return "0";
+     ng := sign0(x);
+     if isinf(x) then return if ng then "-infinity" else "infinity";
+     if isnan(x) then return if ng then "-NotANumber" else "NotANumber";
      sgn := "";
-     if x < 0 then (
+     if ng then (
 	  sgn = "-";
 	  x = -x;
 	  );
+     if x === 0 then return if ng then "-0" else "0";
      ex := long(0);
      mantissa := getstr(ex, base, s, x);
      nt := 0;
@@ -1528,11 +1536,11 @@ export tostringRR(x:RR):string := (
      if prec == 0 || prec > meaningful then prec = meaningful; -- print at most the "meaningful" digits
      format(prec,printingAccuracy,printingLeadLimit,printingTrailLimit,printingSeparator,x)
      );
-     
+
 export toExternalString(x:RR):string := (
      if isinf(x) then return if x < 0 then "-infinity" else "infinity";
-     if isnan(x) then return "NotANumber";
-     ng := x < 0;
+     if isnan(x) then return if sign0(x) then "-NotANumber" else "NotANumber";
+     ng := sign0(x);
      if ng then x = -x;
      ex := long(0);
      s := getstr(ex, base, 0, x);
@@ -1543,7 +1551,7 @@ export toExternalString(x:RR):string := (
 	  );
      newlen := max(1,length(s) - nt);
      s = substr(s,0,newlen);
-     r := "." + s + "p" + tostring(precision0(x)) + "e" + tostring(ex);
+     r := "." + s + "p" + tostring(precision0(x)) + if ex != long(0) then "e" + tostring(ex) else "";
      if ng then r = "-" + r;
      r);
 
@@ -1557,16 +1565,7 @@ export tostringCC(z:CC):string := (
      if y.0 == '-' then return x + y + "*ii";
      x + "+" + y + "*ii"
      );
-export toExternalString(z:CC):string := (
-     x := toExternalString(realPart(z));
-     y := toExternalString(imaginaryPart(z));
-     if y === "0" then return x;
-     if x === "0" then return y + "*ii";
-     if y === "-1" then return x + "-ii";
-     if y ===  "1" then return x + "+ii";
-     if y.0 == '-' then return x + y + "*ii";
-     x + "+" + y + "*ii"
-     );
+export toExternalString(z:CC):string := "toCC(" + toExternalString(realPart(z)) + "," + toExternalString(imaginaryPart(z)) + ")";
 
 -- complex transcendental functions
 

@@ -1401,7 +1401,7 @@ document { Key => "interpreterDepth",
      Headline => "nesting depth of the interpreter",
      SeeAlso => {commandInterpreter}}
 document { Key => "printingPrecision",
-     Headline => "current precision for printing real numbers",
+     Headline => "current precision for printing numbers",
      Usage => "printingPrecision = n",
      Inputs => {
 	  "n" => ZZ
@@ -1422,6 +1422,30 @@ document { Key => "printingPrecision",
      	  {1/3p100}
 	  printingPrecision = 0
      	  {1/3p100}
+     ///,
+     SeeAlso => {"printingAccuracy", "printingLeadLimit", "printingTrailLimit", "printingSeparator", format}
+     }
+document { Key => "printingAccuracy",
+     Headline => "current accuracy for printing numbers",
+     Usage => "printingAccuracy = n",
+     Inputs => {
+	  "n" => ZZ
+	  },
+     Consequences => {
+	  {"Henceforth, inexact numbers are printed with at most ", TT "n", " digits to the right of
+	       the decimal point displayed.
+	       The special case where ", TT "n=-1", " is
+	       interpreted as meaning ", TT "n=infinity", ", and this case is
+	       used when a number appears alone on an output line."}
+	  },
+     EXAMPLE lines ///
+	  printingPrecision,printingAccuracy
+     	  1p100e-5/3
+     	  x = {1p100e-5/3,1p100e-4/3,1p100e-3/3,1p100e-2/3}
+	  printingAccuracy = 8
+     	  x
+	  printingAccuracy = 4
+     	  x
      ///,
      SeeAlso => {"printingAccuracy", "printingLeadLimit", "printingTrailLimit", "printingSeparator", format}
      }
