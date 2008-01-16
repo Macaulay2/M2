@@ -35,7 +35,7 @@ export (lhs:Expr) + (rhs:Expr) : Expr := (
 	  is y:ZZ do Expr(x + y)			    -- # typical value: symbol +, ZZ, ZZ, ZZ
      	  is y:QQ do Expr(x + y)			    -- # typical value: symbol +, ZZ, QQ, QQ
      	  is y:RR do Expr(y + x)			    -- # typical value: symbol +, ZZ, RR, RR
-     	  is y:CC do Expr(toCC(x,precision(y.re)) + y)	    -- # typical value: symbol +, ZZ, CC, CC
+     	  is y:CC do Expr(toRR(x,precision(y.re)) + y)	    -- # typical value: symbol +, ZZ, CC, CC
 	  is Error do rhs
 	  else binarymethod(lhs,rhs,PlusS))
      is x:QQ do (
@@ -43,7 +43,7 @@ export (lhs:Expr) + (rhs:Expr) : Expr := (
 	  is y:ZZ do Expr(x + y)			    -- # typical value: symbol +, QQ, ZZ, QQ
      	  is y:QQ do Expr(x + y)			    -- # typical value: symbol +, QQ, QQ, QQ
      	  is y:RR do Expr(y + x)			    -- # typical value: symbol +, QQ, RR, RR
-     	  is y:CC do Expr(toCC(x,precision(y.re)) + y)	    -- # typical value: symbol +, QQ, CC, CC
+     	  is y:CC do Expr(toRR(x,precision(y.re)) + y)	    -- # typical value: symbol +, QQ, CC, CC
 	  is Error do rhs
 	  else binarymethod(lhs,rhs,PlusS))
      is x:RawRingElement do (
@@ -65,8 +65,8 @@ export (lhs:Expr) + (rhs:Expr) : Expr := (
 	  else binarymethod(lhs,rhs,PlusS))
      is x:CC do (
 	  when rhs
-	  is y:ZZ do Expr(x + toCC(y,precision(x.re)))	    -- # typical value: symbol +, CC, ZZ, CC
-     	  is y:QQ do Expr(x + toCC(y,precision(x.re)))	    -- # typical value: symbol +, CC, QQ, CC
+	  is y:ZZ do Expr(x + toRR(y,precision(x.re)))	    -- # typical value: symbol +, CC, ZZ, CC
+     	  is y:QQ do Expr(x + toRR(y,precision(x.re)))	    -- # typical value: symbol +, CC, QQ, CC
      	  is y:RR do Expr(x + y)			    -- # typical value: symbol +, CC, RR, CC
      	  is y:CC do Expr(x + y)			    -- # typical value: symbol +, CC, CC, CC
 	  is Error do rhs
@@ -149,7 +149,7 @@ export (lhs:Expr) - (rhs:Expr) : Expr := (
 	  is y:ZZ do Expr(x - y)			    -- # typical value: symbol -, ZZ, ZZ, ZZ
      	  is y:QQ do Expr(x - y)			    -- # typical value: symbol -, ZZ, QQ, QQ
 	  is y:RR do Expr(toRR(x,precision(y)) - y)		    -- # typical value: symbol -, ZZ, RR, RR
-	  is y:CC do Expr(toCC(x,precision(y.re)) - y)	    -- # typical value: symbol -, ZZ, CC, CC
+	  is y:CC do Expr(toRR(x,precision(y.re)) - y)	    -- # typical value: symbol -, ZZ, CC, CC
 	  is Error do rhs
 	  else binarymethod(lhs,rhs,MinusS))
      is x:QQ do (
@@ -157,7 +157,7 @@ export (lhs:Expr) - (rhs:Expr) : Expr := (
 	  is y:ZZ do Expr(x - y)			    -- # typical value: symbol -, QQ, ZZ, QQ
      	  is y:QQ do Expr(x - y)			    -- # typical value: symbol -, QQ, QQ, QQ
 	  is y:RR do Expr(toRR(x,precision(y)) - y)		    -- # typical value: symbol -, QQ, RR, RR
-	  is y:CC do Expr(toCC(x,precision(y.re)) - y)	    -- # typical value: symbol -, QQ, CC, CC
+	  is y:CC do Expr(toRR(x,precision(y.re)) - y)	    -- # typical value: symbol -, QQ, CC, CC
 	  is Error do rhs
 	  else binarymethod(lhs,rhs,MinusS))
      is x:RawRingElement do (
@@ -179,8 +179,8 @@ export (lhs:Expr) - (rhs:Expr) : Expr := (
 	  else binarymethod(lhs,rhs,MinusS))
      is x:CC do (
 	  when rhs
-	  is y:ZZ do Expr(x - toCC(y,precision(x.re)))	    -- # typical value: symbol -, CC, ZZ, CC
-     	  is y:QQ do Expr(x - toCC(y,precision(x.re)))	    -- # typical value: symbol -, CC, QQ, CC
+	  is y:ZZ do Expr(x - toRR(y,precision(x.re)))	    -- # typical value: symbol -, CC, ZZ, CC
+     	  is y:QQ do Expr(x - toRR(y,precision(x.re)))	    -- # typical value: symbol -, CC, QQ, CC
 	  is y:RR do Expr(x - y)			    -- # typical value: symbol -, CC, RR, CC
 	  is y:CC do Expr(x - y)			    -- # typical value: symbol -, CC, CC, CC
 	  is Error do rhs
@@ -246,7 +246,7 @@ export (lhs:Expr) * (rhs:Expr) : Expr := (
 	  is y:ZZ do Expr(x * y)			    -- # typical value: symbol *, ZZ, ZZ, ZZ
      	  is y:QQ do Expr(x * y)			    -- # typical value: symbol *, ZZ, QQ, QQ
      	  is y:RR do Expr(toRR(x,precision(y)) * y)		    -- # typical value: symbol *, ZZ, RR, RR
-     	  is y:CC do Expr(toCC(x,precision(y.re)) * y)	    -- # typical value: symbol *, ZZ, CC, CC
+     	  is y:CC do Expr(toRR(x,precision(y.re)) * y)	    -- # typical value: symbol *, ZZ, CC, CC
 	  is Error do rhs
 	  else binarymethod(lhs,rhs,StarS))
      is x:QQ do (
@@ -356,14 +356,11 @@ export (lhs:Expr) / (rhs:Expr) : Expr := (
 	       then buildErrorPacket("division by zero")
 	       else Expr(x / y))
      	  is y:RR do (					    -- # typical value: symbol /, ZZ, RR, RR
-	       if y === 0
-	       then buildErrorPacket("division by zero")
-	       else Expr(toRR(x,precision(y)) / y))
+	       --if y === 0 then buildErrorPacket("division by zero") else
+	       Expr(toRR(x,precision(y)) / y))
      	  is y:CC do (					    -- # typical value: symbol /, ZZ, CC, CC
-	       if y === 0
-	       then buildErrorPacket("division by zero")
-	       else Expr(toRR(x,precision(y.re)) / y)
-	       )
+	       -- if y === 0 then buildErrorPacket("division by zero") else
+	       Expr(toRR(x,precision(y.re)) / y))
 	  is Error do rhs
 	  else binarymethod(lhs,rhs,DivideS))
      is x:QQ do (
@@ -377,14 +374,11 @@ export (lhs:Expr) / (rhs:Expr) : Expr := (
 	       then buildErrorPacket("division by zero")
 	       else Expr(x / y))
      	  is y:RR do (					    -- # typical value: symbol /, QQ, RR, RR
-	       if y === 0
-	       then buildErrorPacket("division by zero")
-	       else Expr(toRR(x,precision(y)) / y))
+	       -- if y === 0 then buildErrorPacket("division by zero") else
+	       Expr(toRR(x,precision(y)) / y))
      	  is y:CC do (					    -- # typical value: symbol /, QQ, CC, CC
-	       if y === 0
-	       then buildErrorPacket("division by zero")
-	       else Expr(toRR(x,precision(y.re)) / y)
-	       )
+	       if y === 0 then buildErrorPacket("division by zero") else
+	       Expr(toRR(x,precision(y.re)) / y))
 	  is Error do rhs
 	  else binarymethod(lhs,rhs,DivideS))
      is x:RR do (
@@ -398,14 +392,11 @@ export (lhs:Expr) / (rhs:Expr) : Expr := (
 	       then buildErrorPacket("division by zero")
 	       else Expr(x / y))
      	  is y:RR do (					    -- # typical value: symbol /, RR, RR, RR
-	       if y === 0
-	       then buildErrorPacket("division by zero")
-	       else Expr(x / y))
+	       -- if y === 0 then buildErrorPacket("division by zero") else
+	       Expr(x / y))
      	  is y:CC do (					    -- # typical value: symbol /, RR, CC, CC
-	       if y === 0
-	       then buildErrorPacket("division by zero")
-	       else Expr(x / y)
-	       )
+	       -- if y === 0 then buildErrorPacket("division by zero") else
+	       Expr(x / y))
 	  is Error do rhs
 	  else binarymethod(lhs,rhs,DivideS))
      is x:CC do (
@@ -421,15 +412,11 @@ export (lhs:Expr) / (rhs:Expr) : Expr := (
 	       else Expr(x / toRR(y,precision(x.re)))
 	       )
      	  is y:RR do (					    -- # typical value: symbol /, CC, RR, CC
-	       if y === 0
-	       then buildErrorPacket("division by zero")
-	       else Expr(x / y)
-	       )
+	       -- if y === 0 then buildErrorPacket("division by zero") else
+	       Expr(x / y))
      	  is y:CC do (					    -- # typical value: symbol /, CC, CC, CC
-	       if y === 0
-	       then buildErrorPacket("division by zero")
-	       else Expr(x / y)
-	       )
+	       -- if y === 0 then buildErrorPacket("division by zero") else
+	       Expr(x / y))
 	  is Error do rhs
 	  else binarymethod(lhs,rhs,DivideS))
      is x:RawMonomial do (

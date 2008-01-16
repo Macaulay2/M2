@@ -66,7 +66,7 @@ setupfun("processID",getpidfun);
 absfun(e:Expr):Expr := (
      when e
      is i:ZZ do Expr(abs(i))				    -- # typical value: abs, ZZ, ZZ
-     is x:RR do Expr(if x < 0 then -x else x)		    -- # typical value: abs, RR, RR
+     is x:RR do Expr(if sign(x) then -x else x)		    -- # typical value: abs, RR, RR
      is x:CC do Expr(abs(x))				    -- # typical value: abs, CC, RR
      is r:QQ do Expr(abs(r))				    -- # typical value: abs, QQ, RR
      else WrongArg("a number, real or complex"));
