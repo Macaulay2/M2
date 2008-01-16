@@ -239,7 +239,11 @@ splitcolumn(i:int, t:Net):bool := (			    -- whether we can split between column
 	  a := isalnum(x);           b := isalnum(y);
 	  a && b
 	  ||
-	  (!a && x != ' ') && (!b && y != ' ')
+	  (!a && x != ' ') && (!b && y != ' ')		    -- not between two punctuation characters
+	  ||
+	  (x == '.' && isdigit(y))     			    -- not between . and digit
+	  ||
+	  (y == '.' && isdigit(x))			    -- not between . and digit
 	  ) then return false;
      true);
 

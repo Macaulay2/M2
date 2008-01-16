@@ -1675,7 +1675,20 @@ document {
      random 3.14
      random 3p200
      ///,
-     SeeAlso => {"setRandomSeed"}
+     SeeAlso => {"setRandomSeed", (random,RR,RR)}
+     }
+
+document {
+     Key => (random, RR,RR), 
+     Headline => "random real number",
+     Usage => "random(x,y)",
+     Inputs => {"x","r"},
+     Outputs => { RR=> {"a random real number between ", TT "x", " and ", TT "y"}},
+     EXAMPLE lines ///
+     random(10.,20.)
+     random(10p100,20p100)
+     ///,
+     SeeAlso => {"setRandomSeed", (random,RR)}
      }
 
 document {

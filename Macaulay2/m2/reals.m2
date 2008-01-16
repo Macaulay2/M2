@@ -177,6 +177,7 @@ round(ZZ,RR) := (n,x) -> (
      toRR(precision x,round(x*p)/p))
 
 random RR := RR => opts -> x -> x * rawRandomRR precision x
+random(RR,RR) := opts -> (x,y) -> x + random(y-x)
 RR'.random = opts -> R -> rawRandomRR R.precision
 CC'.random = opts -> C -> rawRandomCC C.precision
 random RingFamily := opts -> R -> random(default R,opts)
@@ -269,15 +270,13 @@ net CC := z -> simpleToString z
 toExternalString RR := toExternalString0
 toExternalString CC := toExternalString0
 InexactNumber#{Standard,Print} = x ->  (
-     << newline << concatenate(interpreterDepth:"o") << lineNumber << " = ";
      prec := printingPrecision;
      acc := printingAccuracy;
      printingPrecision = 0;
      printingAccuracy = -1;
-     << toString x;
+     Thing#{Standard,Print} x;
      printingPrecision = prec;
      printingAccuracy = acc;				    -- sigh, what if an interrupt or an error occurred?
-     << newline << flush;
      );
 
 InexactNumber#{Standard,AfterPrint} = x -> (

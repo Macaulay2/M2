@@ -71,12 +71,9 @@ export copy(i:ZZ):ZZ := (
      set(x,i);
      x);
 
-set(x:ZZ, n:int):void ::= Ccode( void,
-     "mpz_set_si(",
-	 "(__mpz_struct *)", x, ",",
-	 "(unsigned long)", n,
-     ")" 
-     );
+set(x:ZZ, n:int):void ::= Ccode( void, "mpz_set_si(", "(__mpz_struct *)", x, ",", "(long)", n, ")" );
+set(x:ZZ, n:ulong):void ::= Ccode( void, "mpz_set_ui(", "(__mpz_struct *)", x, ",", n, ")" );
+set(x:ZZ, n:long):void ::= Ccode( void, "mpz_set_si(", "(__mpz_struct *)", x, ",", n, ")" );
 
 negsmall := -100;
 possmall := 300;
@@ -99,15 +96,17 @@ export toInteger(i:int):ZZ := (
 	  set(x,i);
 	  x));
 
-set(x:ZZ, n:ulong):void ::= Ccode( void,
-     "mpz_set_ui(",
-	 "(__mpz_struct *)", x, ",",
-	 n,
-     ")" 
-     );
-
 export toInteger(i:ulong):ZZ := (
      if i <= ulong(possmall)
+     then smallints.(int(i)-negsmall)
+     else (
+	  x := ZZ(0,0,null());
+	  init(x);
+	  set(x,i);
+	  x));
+
+export toInteger(i:long):ZZ := (
+     if i >= long(negsmall) && i <= long(possmall)
      then smallints.(int(i)-negsmall)
      else (
 	  x := ZZ(0,0,null());
@@ -790,8 +789,11 @@ isNegative(x:RR):bool ::= -1 == Ccode(int, "mpfr_sgn((__mpfr_struct *)", x, ")")
 
 export defaultPrecision := ulong(53); -- should 53 be computed?
 
-minprec := Ccode(ulong,"MPFR_PREC_MIN");
-maxprec := Ccode(ulong,"MPFR_PREC_MAX");
+export minprec := Ccode(ulong,"MPFR_PREC_MIN");
+export maxprec := Ccode(ulong,"MPFR_PREC_MAX");
+
+export minExponent := Ccode(long,"(long)mpfr_get_emin()");
+export maxExponent := Ccode(long,"(long)mpfr_get_emax()");
 
 export newRR(prec:ulong):RR := (
      if prec < minprec then prec = minprec else if prec > maxprec then prec = maxprec;
@@ -864,7 +866,15 @@ export toDouble(x:RR):double := Ccode( double, "mpfr_get_d(", "(__mpfr_struct *)
 
 flagged0():bool ::= 0 != Ccode( int, "mpfr_erangeflag_p()" );
 export flagged():bool := flagged0();
+isfinite0(x:RR):bool ::=Ccode(bool,"mpfr_number_p((__mpfr_struct *)",x,")");
+isinf0 (x:RR):bool ::= Ccode(bool,"mpfr_inf_p((__mpfr_struct *)",x,")");
+isnan0 (x:RR):bool ::= Ccode(bool,"mpfr_nan_p((__mpfr_struct *)",x,")");
 sign0(x:RR):bool ::= 0 != Ccode(int,"mpfr_signbit((__mpfr_struct *)",x,")");
+expon0(x:RR):int ::= Ccode(int,"mpfr_get_exp((__mpfr_struct *)",x,")");
+
+export isfinite(x:RR):bool := isfinite0(x);
+export isinf(x:RR):bool := isinf0(x);
+export isnan(x:RR):bool := isnan0(x);
 
 export (x:RR) === (y:RR):bool := (			    -- weak equality
      Ccode( void, "mpfr_clear_flags()" );		    -- do we need this?
@@ -1113,7 +1123,7 @@ export (x:RR) / (y:RR) : RR := (
      );
      z);
 
-export (x:RR) / (y:int) : RR := (
+export (x:RR) / (y:long) : RR := (
      z := newRR(precision0(x));
      Ccode( void,
           "mpfr_div_si(",
@@ -1123,6 +1133,8 @@ export (x:RR) / (y:int) : RR := (
 	  ", GMP_RNDN)" 
      );
      z);
+
+export (x:RR) / (y:int) : RR := x / long(y);
      
 export (x:RR) / (y:ZZ) : RR := (
      z := newRR(precision0(x));
@@ -1183,29 +1195,30 @@ export (x:RR) ^ (y:RR) : RR := (
      z);
 
 export floor(x:RR) : ZZ := (
+     if !isfinite0(x) then return toInteger(0);			    -- nothing else to do!
      y := newZZ();
      Ccode( void, "mpfr_get_z((__mpz_struct *)", y, ",(__mpfr_struct *)", x, ", GMP_RNDD)" );
      y);
 
 export ceil(x:RR) : ZZ := (
+     if !isfinite0(x) then return toInteger(0);			    -- nothing else to do!
      y := newZZ();
      Ccode( void, "mpfr_get_z((__mpz_struct *)", y, ",(__mpfr_struct *)", x, ", GMP_RNDU)" );
      y);
 
 export round(x:RR) : ZZ := (
+     if !isfinite0(x) then return toInteger(0);			    -- nothing else to do!
      y := newZZ();
      Ccode( void, "mpfr_get_z((__mpz_struct *)", y, ",(__mpfr_struct *)", x, ", GMP_RNDN)" );
      y);
-
-export ifloor(x:RR) : long := Ccode( long, "mpfr_get_si((__mpfr_struct *)", x, ", GMP_RNDD)" );
-export iceil (x:RR) : long := Ccode( long, "mpfr_get_si((__mpfr_struct *)", x, ", GMP_RNDU)" );
-export iround(x:RR) : long := Ccode( long, "mpfr_get_si((__mpfr_struct *)", x, ", GMP_RNDN)" );
 
 export (x:RR) << (n:long) : RR := (
      z := newRR(precision0(x));
      Ccode( void, "mpfr_mul_2si((__mpfr_struct *)", z, ",(__mpfr_struct *)", x, ",", n, ",GMP_RNDN)" );
      z);
 export (x:RR) >> (n:long) : RR := x << -n;
+export (x:RR) << (n:int) : RR := x << long(n);
+export (x:RR) >> (n:int) : RR := x << long(-n);
 
 -- complex arithmetic
 
@@ -1219,6 +1232,7 @@ export -(y:CC) : CC := CC(-y.re,-y.im);
 export (x:CC) * (y:RR) : CC := CC(x.re*y, x.im*y);
 export (y:RR) * (x:CC) : CC := CC(x.re*y, x.im*y);
 export (x:CC) * (y:CC) : CC := CC(x.re*y.re-x.im*y.im, x.im*y.re+x.re*y.im);
+export (x:CC) / (y:int) : CC := CC(x.re/y, x.im/y);
 export (x:CC) / (y:RR) : CC := CC(x.re/y, x.im/y);
 export conj(x:CC):CC := CC(x.re,-x.im);
 export norm2(x:CC):RR := x.re*x.re + x.im*x.im;
@@ -1227,6 +1241,8 @@ export (x:RR) / (y:CC) : CC := x * conj(y) / norm2(y);
 
 export (x:CC) << (n:long) : CC := CC(x.re<<n,x.im<<n);
 export (x:CC) >> (n:long) : CC := CC(x.re>>n,x.im>>n);
+export (x:CC) << (n:int) : CC := CC(x.re<<n,x.im<<n);
+export (x:CC) >> (n:int) : CC := CC(x.re>>n,x.im>>n);
 
 export strictequality(x:CC,y:CC):bool := strictequality(x.re,y.re) && strictequality(x.im,y.im);
      
@@ -1433,9 +1449,6 @@ export yn(n:long,x:RR):RR := (
 getstr(returnexponent:long, base:int, sigdigs:int, x:RR):string ::= tostring(
      Ccode(Cstring, "(Cstring) mpfr_get_str((char *)0,&", returnexponent, ",",
 	  base, ",(size_t)", sigdigs, ",(__mpfr_struct *)", x, ",GMP_RNDN)"));
-finite(x:RR):bool ::=Ccode(bool,"mpfr_number_p((__mpfr_struct *)",x,")");
-isinf (x:RR):bool ::= Ccode(bool,"mpfr_inf_p((__mpfr_struct *)",x,")");
-isnan (x:RR):bool ::= Ccode(bool,"mpfr_nan_p((__mpfr_struct *)",x,")");
 export sign(x:RR):bool := 0 != Ccode(int,"mpfr_signbit((__mpfr_struct *)",x,")");
 export format(
      s:int,			  -- number of significant digits (0 means all)
@@ -1446,8 +1459,8 @@ export format(
      x:RR						-- the number to format
      ) : string := (
      ng := sign0(x);
-     if isinf(x) then return if ng then "-infinity" else "infinity";
-     if isnan(x) then return if ng then "-NotANumber" else "NotANumber";
+     if isinf0(x) then return if ng then "-infinity" else "infinity";
+     if isnan0(x) then return if ng then "-NotANumber" else "NotANumber";
      sgn := "";
      if ng then (
 	  sgn = "-";
@@ -1538,8 +1551,8 @@ export tostringRR(x:RR):string := (
      );
 
 export toExternalString(x:RR):string := (
-     if isinf(x) then return if x < 0 then "-infinity" else "infinity";
-     if isnan(x) then return if sign0(x) then "-NotANumber" else "NotANumber";
+     if isinf0(x) then return if x < 0 then "-infinity" else "infinity";
+     if isnan0(x) then return if sign0(x) then "-NotANumber" else "NotANumber";
      ng := sign0(x);
      if ng then x = -x;
      ex := long(0);
@@ -1592,6 +1605,23 @@ export log(b:CC,x:RR):CC := (
      if precision(b) < precision(x) then x = toRR(x,precision(b))
      else if precision(b) > precision(x) then b = toCC(b,precision(x));
      if x<0 then logc(x)/log(b) else log(x)/log(b));
+expon(x:CC):int := max(expon0(x.re),expon0(x.im));
+export agm(x:CC,y:CC):CC := (
+     if precision(y) < precision(x) then x = toCC(x,precision(y))
+     else if precision(y) > precision(x) then y = toCC(y,precision(x));
+     while true do (
+     	  if !isfinite0(x.re) || !isfinite0(x.im) then return x;
+     	  if !isfinite0(y.re) || !isfinite0(y.im) then return y;
+     	  if x === 0 then return x;
+     	  if y === 0 then return y;
+	  t := (x+y)/2;
+	  diff := x-y;
+	  prec := long(precision(x));			    -- in practice, max prec is 2^31 - 1, so fits in an int, too.
+	  if expon(diff) + 3*(prec/4) < expon(x) then return t;
+	  u := sqrt(x*y);
+	  x = t;
+	  y = u;
+	  ));
 
 -- Local Variables:
 -- compile-command: "make -C $M2BUILDDIR/Macaulay2/d "

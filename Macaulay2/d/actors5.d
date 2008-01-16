@@ -1809,6 +1809,9 @@ stopIfErrorS := dummySymbol;
 printWidthS := dummySymbol;
 notifyS := dummySymbol;
 
+setupconst("minExponent",Expr(toInteger(minExponent)-1));
+setupconst("maxExponent",Expr(toInteger(maxExponent)));
+
 StandardS := makeProtectedSymbolClosure("Standard");
 export StandardE := Expr(StandardS);
 export topLevelMode := Expr(StandardS);
@@ -1888,6 +1891,13 @@ store(e:Expr):Expr := (			    -- called with (symbol,newvalue)
 	  is i:ZZ do (
 	       if sym === randomSeedS then ( Ccode(void, "rawSetRandomSeed(", "(M2_Integer)", i, ")"); e )
 	       else if sym === randomHeightS then ( Ccode(void, "rawSetRandomMax((M2_Integer)", i, ")"); e )
+	       else if sym === defaultPrecisionS then (
+		    if !isULong(i) then return buildErrorPacket(msg);
+		    prec := toULong(i);
+		    if prec < minprec || prec > maxprec
+		    then return buildErrorPacket("value for defaultPrecision out of range");
+		    defaultPrecision = prec;
+		    e)
 	       else if isInt(i) then (
 		    n := toInt(i);
 		    if sym === loadDepthS then (loadDepth = n; e)
@@ -1902,10 +1912,6 @@ store(e:Expr):Expr := (			    -- called with (symbol,newvalue)
 		    else if sym === printingTrailLimitS then (printingTrailLimit = n; e)
 		    else if sym === gbTraceS then (gbTrace = n; e)
 		    else if sym === printWidthS then (printWidth = n; e)
-	       	    else if sym === defaultPrecisionS then (
-			 if n < 0 then return buildErrorPacket(msg);
-			 defaultPrecision = ulong(n);
-			 e)
 		    else buildErrorPacket(msg))
 	       else buildErrorPacket(msg))
 	  else buildErrorPacket(msg))
