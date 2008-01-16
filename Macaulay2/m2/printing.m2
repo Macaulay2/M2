@@ -43,8 +43,6 @@ truncateOutput ZZ := maxwidth -> (
 truncateOutput InfiniteNumber := maxwidth -> Thing#{Standard,BeforePrint} = identity
 
 -- not printing:
-Bag = new SelfInitializingType of MutableList
-Bag.synonym = "bag"
 unbag = method()
 unbag Bag := x -> unsequence toSequence x
 net Bag := toString Bag := x -> (

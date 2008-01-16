@@ -163,7 +163,7 @@ net List := x -> horizontalJoin deepSplice (
 
 VerticalList = new SelfInitializingType of List
 VerticalList.synonym = "vertical list"
-net VerticalList := x -> (
+net VerticalList := x -> if #x === 0 then "{}" else (
      n := stack apply(x,net);
      h := height n;
      d := depth n;

@@ -322,8 +322,6 @@ checkShadow = () -> (
 			 stderr << "--   new synonym provided for '" << nam << "': " << newsyn << endl;
 			 break)))))
 
-sortByHash := v -> last \ sort \\ (i -> (hash i, i)) \ v
-
 endPackage = method()
 endPackage String := title -> (
      if currentPackage === null or title =!= currentPackage#"title" then error ("package not current: ",title);

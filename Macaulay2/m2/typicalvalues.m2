@@ -153,23 +153,42 @@ chk := (type,key) -> if type#?key then (
      stderr << "-- method already installed:" << endl
      << "   " << code type#key << endl;
      error("method already installed: ",toString type," # ",toString key))
-typval = method()
-typval(Function,Type,Type) := (f,X,Z) -> (
+
+
+typval3f{*(Function,Type,Type)*} := (f,X,Z) -> (
      msg := toString f | "(" | toString X | ") => " | toString Z;
      chk(X, f);
      f(X) := Z => x -> (error("dummy method called: ", msg);)
      )
-typval(Function,Type,Type,Type) := (f,X,Y,Z) -> (
+typval4f{*(Function,Type,Type,Type)*} := (f,X,Y,Z) -> (
      chk(youngest (X,Y), (f,X,Y));
      f(X,Y) := Z => x -> (dummy x;)
      )
-typval(Keyword,Type,Type) := (f,X,Z) -> (
+typval5f{*(Function,Type,Type,Type,Type)*} := (f,X,Y,Z,W) -> (
+     chk(youngest (X,Y,Z), (f,X,Y,Z));
+     f(X,Y,Z) := W => x -> (dummy x;)
+     )
+typval3k{*(Keyword,Type,Type)*} := (f,X,Z) -> (
      chk(X, (f,X));
      installMethod(f, X, Z => x -> (dummy x;))
      )
-typval(Keyword,Type,Type,Type) := (f,X,Y,Z) -> (
+typval4k{*(Keyword,Type,Type,Type)*} := (f,X,Y,Z) -> (
      chk(youngest(X,Y), (f,X,Y));
      installMethod(f, X, Y, Z => x -> (dummy x;))
+     )
+typval = x -> (
+     if #x == 3 then (
+	  if instance(x#0,Function) then typval3f x
+	  else if instance(x#0,Keyword) then typval3k x
+	  else error "typval: expected keyword or function"
+	  )
+     else if #x == 4 then (
+	  if instance(x#0,Function) then typval4f x
+	  else if instance(x#0,Keyword) then typval4k x
+	  else error "typval: expected keyword or function"
+	  )
+     else if #x == 5 then typval5f x
+     else error "typval: expected 3, 4, or 5 arguments"
      )
 load "tvalues.m2"
 

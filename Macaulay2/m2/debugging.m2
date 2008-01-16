@@ -120,8 +120,6 @@ symbolLocation = s -> (
      if t =!= null then t#0 | ":" | toString t#1| ":" | toString t#2 | "-" | toString t#3| ":" | toString t#4
      else "")
 
-sortByHash = v -> last \ sort \\ (i -> (hash i, i)) \ v
-
 select2 := (type,syms) -> apply(
      sort apply(
 	  select(syms, sym -> mutable sym and instance(value sym,type)),

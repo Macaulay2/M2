@@ -5,6 +5,23 @@ nonempty = x -> select(x, i -> i =!= "")
 dashes  = n -> concatenate (n:"-")
 spaces  = n -> concatenate n
 
+SelfInitializingType = new Type of Type
+SelfInitializingType.synonym = "self initializing type"
+SelfInitializingType Thing := (T,z) -> new T from z
+
+SelfInitializingType\VisibleList := (T,z) -> (i -> T i) \ z
+List/SelfInitializingType := VisibleList/SelfInitializingType := (z,T) -> z / (i -> T i)
+SelfInitializingType \\ Thing := (T,z) -> T z
+Thing // SelfInitializingType := (z,T) -> T z
+
+Bag = new SelfInitializingType of MutableList
+Bag.synonym = "bag"
+Bag ? Bag := (x,y) -> incomparable			    -- so we can sort with them
+
+sortBy = f -> v -> last @@ last \ sort \\ (i -> (f i, new Bag from {i})) \ v
+sortByName = x -> (sortBy toString) x
+sortByHash = sortBy hash
+
 -- let's get these reserved variables defined all in the same spot
 flagLookup a; flagLookup b; flagLookup c; flagLookup d; flagLookup e;
 flagLookup f; flagLookup g; flagLookup h; flagLookup i; flagLookup j;
