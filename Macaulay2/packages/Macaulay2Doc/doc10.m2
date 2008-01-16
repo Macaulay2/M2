@@ -757,20 +757,44 @@ document { Key => toRR,
 	  precision oo
      ///}
 
-document { Key => toCC,
-     Headline => "convert to high-precision complex number",
-     Usage => "toCC(prec,x)\ntoCC_prec x",
-     Inputs => { 
-	  "prec" => ZZ => {"the number of bits of precision desired"},
-	  "x" => {ofClass{ZZ,QQ,RR,CC}}
+document {
+     Key => {toCC,
+ 	  (toCC, ZZ, ZZ), (toCC, ZZ, QQ), (toCC, ZZ, RR), (toCC, ZZ, CC),
+ 	  (toCC, RR, RR), (toCC, ZZ, ZZ, ZZ), (toCC, ZZ, ZZ, QQ), 
+	  (toCC, ZZ, QQ, ZZ), (toCC, ZZ), (toCC, ZZ, QQ, QQ), (toCC, QQ), 
+	  (toCC, ZZ, RR, ZZ), (toCC, ZZ, ZZ, RR), (toCC, ZZ, RR, QQ), 
+	  (toCC, ZZ, QQ, RR), (toCC, RR), (toCC, CC), (toCC, ZZ, RR, RR)
 	  },
-     Outputs => {CC => {"the result of converting ", TT "x", " to a high-precision complex number"}},
-     EXAMPLE lines ///
-	  toCC(200,1/7)
-	  precision oo
-	  toCC_200 pi
-	  toCC ii
-     ///}
+     Headline => "convert to high-precision complex number",
+     SYNOPSIS (
+	  Usage => "toCC(prec,x,y)\ntoCC(prec,x)",
+	  Inputs => { 
+	       "prec" => ZZ => {"the number of bits of precision desired"},
+	       "x" => {ofClass{ZZ,QQ,RR}},
+	       "y" => {ofClass{ZZ,QQ,RR}}
+	       },
+	  Outputs => {CC => {"the complex number with real part ", TT "x", " and complex part ", TT "y", ".  If
+		    ", TT "y", " is omitted, the imaginary part is zero."}},
+	  EXAMPLE lines ///
+	  toCC(200,7)
+	  toCC(100,7,3.)
+	  ///
+	  ),
+     SYNOPSIS (
+	  Usage => "toCC(x,y)\ntoCC x",
+	  Inputs => { 
+	       "x" => RR,
+	       "y" => RR
+	       },
+	  Outputs => {CC => {"the complex number with real part ", TT "x", " and complex part ", TT "y", ".  If
+		    ", TT "y", " is omitted, the imaginary part is zero.  The precision of the result is
+		    the minimum precision of the arguments."}},
+	  EXAMPLE lines ///
+	  toCC(3.,4.)
+	  toCC(3.p100,4.p200)
+	  ///
+	  )
+     }
 
 document { Key => InexactNumber,
      PARA {
@@ -787,7 +811,6 @@ document { Key => Constant,
 	  },
      EXAMPLE lines ///
      	  pi
-     	  toRR_100 pi
      	  numeric_100 pi
 	  2. * pi
 	  2p100 * pi
@@ -800,10 +823,10 @@ document { Key => InexactField,
 	  "An inexact field is one whose elements are real or complex numbers."
 	  },
      EXAMPLE lines ///
-     	  toRR_100 pi
-	  ring oo
-	  class oo
-	  parent oo
+     numeric_100 pi
+     ring oo
+     class oo
+     parent oo
      ///
      }
 

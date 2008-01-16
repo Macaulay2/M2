@@ -1,0 +1,113 @@
+This list would be more useful if "no method" error messages didn't have to be
+installed as methods:
+
+
+i3 : debug Core
+
+i4 : formatDocumentTag \ methods symbol =
+
+o4 = { ! Thing = Thing                      }
+     { ! Type = Thing                       }
+     { Thing % Thing = Thing                }
+     { Type % Type = Thing                  }
+     { Thing & Thing = Thing                }
+     { Type & Type = Thing                  }
+     { (*) Thing = Thing                    }
+     { (*) Type = Thing                     }
+     { Thing ** Thing = Thing               }
+     { Type ** Type = Thing                 }
+     { * Thing = Thing                      }
+     { Thing * Thing = Thing                }
+     { * Type = Thing                       }
+     { Type * Type = Thing                  }
+     { Thing ++ Thing = Thing               }
+     { Type ++ Type = Thing                 }
+     { + Thing = Thing                      }
+     { Thing + Thing = Thing                }
+     { + Type = Thing                       }
+     { Type + Type = Thing                  }
+     { - Thing = Thing                      }
+     { Thing - Thing = Thing                }
+     { - Type = Thing                       }
+     { Type - Type = Thing                  }
+     { Thing .. Thing = Thing               }
+     { Type .. Type = Thing                 }
+     { Thing / Thing = Thing                }
+     { Type / Type = Thing                  }
+     { Thing // Thing = Thing               }
+     { Type // Type = Thing                 }
+     { Thing : Thing = Thing                }
+     { Type : Type = Thing                  }
+     { < Thing = Thing                      }
+     { < Type = Thing                       }
+     { << Thing = Thing                     }
+     { Thing << Thing = Thing               }
+     { << Type = Thing                      }
+     { Type << Type = Thing                 }
+     { <= Thing = Thing                     }
+     { <= Type = Thing                      }
+     { Thing <==> Thing = Thing             }
+     { Type <==> Type = Thing               }
+     { Thing == Thing = Thing               }
+     { Type == Type = Thing                 }
+     { Thing ===> Thing = Thing             }
+     { Type ===> Type = Thing               }
+     { Thing ==> Thing = Thing              }
+     { Type ==> Type = Thing                }
+     { > Thing = Thing                      }
+     { > Type = Thing                       }
+     { >= Thing = Thing                     }
+     { >= Type = Thing                      }
+     { Thing >> Thing = Thing               }
+     { Type >> Type = Thing                 }
+     { ? Thing = Thing                      }
+     { Thing ? Thing = Thing                }
+     { ? Type = Thing                       }
+     { Type ? Type = Thing                  }
+     { Thing @ Thing = Thing                }
+     { Type @ Type = Thing                  }
+     { Thing @@ Thing = Thing               }
+     { Type @@ Type = Thing                 }
+     { Thing \ Thing = Thing                }
+     { Type \ Type = Thing                  }
+     { Thing \\ Thing = Thing               }
+     { Type \\ Type = Thing                 }
+     { Thing ^** Thing = Thing              }
+     { Type ^** Type = Thing                }
+     { ^* Thing = Thing                     }
+     { ^* Type = Thing                      }
+     { Thing ^ Thing = Thing                }
+     { Type ^ Type = Thing                  }
+     { Thing ^^ Thing = Thing               }
+     { Type ^^ Type = Thing                 }
+     { _* RingFamily = Thing                }
+     { _* Thing = Thing                     }
+     { _* Type = Thing                      }
+     { ChainComplex _ ZZ = Thing            }
+     { ChainComplexMap _ ZZ = Thing         }
+     { IndexedVariableTable _ Thing = Thing }
+     { MutableMatrix _ Sequence = Thing     }
+     { RawMutableMatrix _ Sequence = Thing  }
+     { Symbol _ Thing = Thing               }
+     { Thing _ Thing = Thing                }
+     { Type _ Type = Thing                  }
+     { Thing | Thing = Thing                }
+     { Type | Type = Thing                  }
+     { |- Thing = Thing                     }
+     { Thing |- Thing = Thing               }
+     { |- Type = Thing                      }
+     { Type |- Type = Thing                 }
+     { Thing || Thing = Thing               }
+     { Type || Type = Thing                 }
+     { ~ Thing = Thing                      }
+     { ~ Type = Thing                       }
+     { Thing and Thing = Thing              }
+     { Type and Type = Thing                }
+     { not Thing = Thing                    }
+     { not Type = Thing                     }
+     { Thing or Thing = Thing               }
+     { Type or Type = Thing                 }
+     { Thing SPACE Thing = Thing            }
+     { Type SPACE Type = Thing              }
+
+o4 : VerticalList

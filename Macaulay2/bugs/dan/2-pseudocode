@@ -1,0 +1,6 @@
+make pseudocode visible at top level
+
+This would permit customization of the interpreter: for example, to not print
+the result after a global assignment.
+
+It might also permit top level assembly of pseudocode

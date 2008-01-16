@@ -192,7 +192,6 @@ document {
      EXAMPLE lines ///
      	  ii
      	  ii+1p100
-	  toCC ii
 	  numeric ii
 	  numeric_100 ii
      ///,
@@ -207,7 +206,8 @@ document { Key => pi,
 	  },
      EXAMPLE lines ///
      	  pi
-     	  toRR_100 pi
+     	  +pi
+     	  numeric_100 pi
 	  2. * pi
      ///
      }
