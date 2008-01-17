@@ -1,4 +1,5 @@
 GNUmakefile
+check-configure/Makefile
 include/config.Makefile
 distributions/Makefile
 distributions/Makefile.filenames
