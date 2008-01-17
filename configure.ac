@@ -591,16 +591,38 @@ SAVELIBS=$LIBS
 AC_SUBST(SINGULARLIBS,"-lfac -lcf")
 if test $BUILD_factory = no -o $BUILD_libfac = no
 then AC_LANG(C++)
-     AC_MSG_CHECKING([whether (recent) libfac and factory libraries are installed (-lfac -lcf)])
-     LIBS="$SINGULARLIBS $LIBS"
-     AC_LINK_IFELSE( [[
-	     #include <factoryconf.h>
+     AC_CHECK_HEADER(factory.h,,BUILD_factory=yes BUILD_libfac=yes)
+     AC_CHECK_HEADER(factor.h,,BUILD_factory=yes BUILD_libfac=yes)
+     LIBS="$SINGULARLIBS $LIBS -lcfmem"
+     AC_SEARCH_LIBS(factoryVersion,,,BUILD_factory=yes BUILD_libfac=yes)
+     AC_SEARCH_LIBS(libfac_version,,,BUILD_factory=yes BUILD_libfac=yes)
+     AC_MSG_CHECKING([whether (recent) libfac and factory libraries are installed (-lfac -lcf -lcfmem)])
+     AC_RUN_IFELSE( [[ /* this is line 1 */
+	     #include <stdio.h>
+	     #include <string.h>
+	     #include <factory.h>
+	     #include <factor.h>
+             #include <templates/ftmpl_inst.cc>
 	     extern const char * libfac_version;
-	     int main () { 
-                  extern const char factoryVersion[];
-		  return SW_USE_NTL;
-                  return *factoryVersion; 
-                  return *libfac_version; }
+	     int foo () { return SW_USE_NTL; }
+	     int main () {
+		  FILE *msg = fdopen(]]AS_MESSAGE_FD[[,"w");
+		  static int factoryV[3], fV[3] = {3,0,3}, fOK;
+		  static int  libfacV[3], lV[3] = {3,0,1}, lOK;
+		  sscanf(FACTORYVERSION,"%d.%d.%d", &factoryV[0], &factoryV[1], &factoryV[2]);
+		  sscanf(libfac_version,"%d.%d.%d", &libfacV[0], &libfacV[1], &libfacV[2]);
+		  fOK = factoryV[0] > fV[0] ||
+		        factoryV[0] == fV[0] && factoryV[1] > fV[1] ||
+		        factoryV[0] == fV[0] && factoryV[1] == fV[1] && factoryV[2] >= fV[2];
+		  lOK = libfacV[0] > lV[0] ||
+		        libfacV[0] == lV[0] && libfacV[1] > lV[1] ||
+		        libfacV[0] == lV[0] && libfacV[1] == lV[1] && libfacV[2] >= lV[2];
+		  fprintf(msg,"(factory-%s %s %d.%d.%d, libfac-%s %s %d.%d.%d) ",
+		      FACTORYVERSION, fOK ? ">=" : "<", fV[0], fV[1], fV[2],
+		      libfac_version, lOK ? ">=" : "<", lV[0], lV[1], lV[2]
+		      );
+		  return !( lOK && fOK );
+	          }
 	     ]],
 	  AC_MSG_RESULT(yes),
 	  AC_MSG_RESULT(no); BUILD_factory=yes BUILD_libfac=yes)
@@ -736,6 +758,12 @@ AC_MSG_NOTICE([using LIBRARIES    = $LIBRARIES (libraries to be built from downl
 AC_MSG_NOTICE([using BUILTLIBS    = $BUILTLIBS (linker options for most of them)])
 AC_MSG_NOTICE([using SINGULARLIBS = $SINGULARLIBS (linker options for some of them)])
 AC_MSG_NOTICE([using LIBS         = $LIBS (M2 linker options)])
+
+BUILDING=yes
+AC_ARG_ENABLE(building, AS_HELP_STRING(--disable-building,disable automatic building of libraries), BUILDING=$enableval)
+if test "$BUILDING" = no -a "$LIBRARIES"
+then AC_MSG_ERROR([automatic building of libraries disabled, but some must be built])
+fi
 
 # Here we insert autoconf's default values so we can compute the relative locations in the directory tree
 test "$prefix" || prefix=/usr/local
