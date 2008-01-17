@@ -1524,19 +1524,17 @@ export format(
 	       if manlen == 0 then return "0";
 	       )
 	  );
-     lead := (
-	  sgn + (if pt == 0 then "." else "") + (if l == 0 then "" else new string len l do provide '0')
-	  );
-     mid  := (
-	  if pt > 0 && pt < manlen
-	  then substr(mantissa,0,pt) + "." + substr(mantissa,pt,manlen-pt)
-	  else substr(mantissa,0,manlen)
-	  );
-     trail := (
-	  (new string len t do provide '0') + (if ex != long(0) then sep + tostring(ex) else "")
-	  );
-     lead + mid + trail
-     );
+     concatenate(array(string)(
+	       sgn,
+	       if pt == 0 then "." else "",
+	       if l == 0 then "" else new string len l do provide '0',
+	       substr(mantissa,0,pt),
+	       if pt > 0 && pt < manlen then "." else "",
+	       substr(mantissa,pt,manlen-pt),
+	       new string len t do provide '0',
+	       if ex != long(0) then sep else "",
+	       if ex != long(0) then tostring(ex) else ""
+	       )));
 
 export printingPrecision := 6;				    -- 0 indicates all
 export printingAccuracy := -1;				    -- -1 indicates all
@@ -1565,10 +1563,15 @@ export toExternalString(x:RR):string := (
 	  nt = nt + 1;
 	  );
      newlen := max(1,length(s) - nt);
-     s = substr(s,0,newlen);
-     r := "." + s + "p" + tostring(precision0(x)) + if ex != long(0) then "e" + tostring(ex) else "";
-     if ng then r = "-" + r;
-     r);
+     concatenate(array(string)(
+	       if ng then "-" else "",
+	       ".",
+	       substr(s,0,newlen),
+	       "p",
+	       tostring(precision0(x)),
+	       if ex != long(0) then "e" else "",
+	       if ex != long(0) then tostring(ex) else ""
+	       )));
 
 export tostringCC(z:CC):string := (
      x := tostringRR(realPart(z));
@@ -1577,10 +1580,15 @@ export tostringCC(z:CC):string := (
      if x === "0" then return y + "*ii";
      if y === "-1" then return x + "-ii";
      if y ===  "1" then return x + "+ii";
-     if y.0 == '-' then return x + y + "*ii";
-     x + "+" + y + "*ii"
-     );
-export toExternalString(z:CC):string := "toCC(" + toExternalString(realPart(z)) + "," + toExternalString(imaginaryPart(z)) + ")";
+     if y.0 == '-' then return concatenate(array(string)(x,y,"*ii"));
+     concatenate(array(string)(x,"+",y,"*ii")));
+export toExternalString(z:CC):string := concatenate(array(string)(
+     	  "toCC(",
+	  toExternalString(realPart(z)),
+	  ",",
+	  toExternalString(imaginaryPart(z)),
+	  ")"
+	  ));
 
 -- complex transcendental functions
 
