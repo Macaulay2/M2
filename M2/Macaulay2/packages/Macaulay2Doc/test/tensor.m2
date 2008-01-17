@@ -11,17 +11,21 @@ prune P1
 f = modulo ( gens P, gens xP)
 assert( gens P * f % xP == 0 )
 assert( image (gens P * f) == xP )
+stderr << "rank source f = " << rank source f << endl
 assert( rank source f == 21 )				    -- that's just what it happens to be...
 
---   It's too hard to keep track:
--- 
--- g = matrix {{1, -1, 0, 0, 0, -x, -y, -u, 0, 0, -v, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0}, {0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, x, -x, x, -x, x, -y, y, u, 0, v}, {0, 0, 1, -1, 0, 0, 0, 0, -x, -y, -u, -u, 0, 0, 0, 0, 0, 0, 0, -v, 1}, {0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0}}
--- 
--- g = matrix {{1, 0, 0, 0, 0, -v, 0, -u, -y, y, -x, x, -x, x, x, -x, 0, 0, 0, 0, 0}, {1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0}, {0, -1, 1, 0, 0, 1, -v, 0, 0, 0, -u, 0, 0, 0, 0, 0, -y, -x, 0, 0, 0}, {0, 0, 0, -1, 1, 0, 0, 1, 0, 0, 0, -v, 0, 0, 0, 0, 0, 0, -u, -y, -x}}
--- 
--- g' = matrix {{1, -1, 0, 0, 0, -x, -y, -u, 0, 0, -v, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0}, {0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, x, -x, x, -x, x, -y, y, u, 0, v}, {0, 0, 1, -1, 0, 0, 0, 0, -x, -y, -u, -u, 0, 0, 0, 0, 0, 0, 0, -v, 1}, {0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0}}
--- 
--- assert(f-g==0 or f-g'==0)
+{*
+
+    u123$ ./Macaulay2-0.9.96/bin/M2 --no-loaddata -q ~/src/M2/Macaulay2/packages/Macaulay2Doc/test/tensor.m2 -e 'exit 0'
+    Macaulay 2, version 0.9.96
+    with packages: Classic, Core, Elimination, IntegralClosure, LLLBases, Parsing, PrimaryDecomposition, SchurRings, TangentCone
+    rank source f = 21
+
+    u123$ ./Macaulay2-0.9.97/bin/M2 --no-loaddata -q ~/src/M2/Macaulay2/packages/Macaulay2Doc/test/tensor.m2 -e 'exit 0'
+    Macaulay 2, version 0.9.97
+    with packages: Classic, Core, Elimination, IntegralClosure, LLLBases, Parsing, PrimaryDecomposition, SchurRings, TangentCone
+    rank source f = 13
+*}
 
 end
 -- Local Variables:
