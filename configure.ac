@@ -467,6 +467,8 @@ test $BUILD_gmp = yes && BUILTLIBS="-lgmp $BUILTLIBS"
 AC_LANG(C)
 if test $BUILD_mpfr = no
 then AC_SEARCH_LIBS(mpfr_init,mpfr,,BUILD_mpfr=yes)
+     # check for lgamma -- it's in 2.3.0 but not in 2.2.1
+     AC_SEARCH_LIBS(mpfr_lgamma,mpfr,,BUILD_mpfr=yes)
      AC_CHECK_HEADER(mpfr.h,,BUILD_mpfr=yes)
 fi
 test $BUILD_mpfr = yes && BUILTLIBS="-lmpfr $BUILTLIBS"
