@@ -1,13 +1,13 @@
 #-*-Makefile-*-
 
 # binary package file names
-PKG_TGZ = @package@-@ARCH@-@OS@.tar.gz
-PKG_TBZ = @package@-@ARCH@-@OS@.tar.bz2
-PKG_TZ = @package@-@ARCH@-@OS@.tar.@COMPRESS@
-PKG_COM_TGZ = @package@-common.tar.gz
-PKG_COM_TBZ = @package@-common.tar.bz2
-PKG_COM_TZ = @package@-common.tar.@COMPRESS@
+PKG_TGZ = @PACKAGE_TARNAME@-@PACKAGE_VERSION@-@ARCH@-@OS@.tar.gz
+PKG_TBZ = @PACKAGE_TARNAME@-@PACKAGE_VERSION@-@ARCH@-@OS@.tar.bz2
+PKG_TZ = @PACKAGE_TARNAME@-@PACKAGE_VERSION@-@ARCH@-@OS@.tar.@COMPRESS@
+PKG_COM_TGZ = @PACKAGE_TARNAME@-@PACKAGE_VERSION@-common.tar.gz
+PKG_COM_TBZ = @PACKAGE_TARNAME@-@PACKAGE_VERSION@-common.tar.bz2
+PKG_COM_TZ = @PACKAGE_TARNAME@-@PACKAGE_VERSION@-common.tar.@COMPRESS@
 # source package file names
-SRC_TGZ = @package@.tar.gz
-SRC_TBZ = @package@.tar.bz2
-SRC_TZ = @package@.tar.@COMPRESS@
+SRC_TGZ = @PACKAGE_TARNAME@-@PACKAGE_VERSION@.tar.gz
+SRC_TBZ = @PACKAGE_TARNAME@-@PACKAGE_VERSION@.tar.bz2
+SRC_TZ = @PACKAGE_TARNAME@-@PACKAGE_VERSION@.tar.@COMPRESS@
