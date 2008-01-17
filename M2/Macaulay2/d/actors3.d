@@ -644,6 +644,7 @@ setup(StarS,starfun,timesfun);
 
 sin(e:Expr):Expr := (
      when e
+     is x:CC do Expr(sin(x))				    -- # typical value: sin, CC, CC
      is x:RR do Expr(sin(x))				    -- # typical value: sin, RR, RR
      is x:ZZ do Expr(sin(toRR(x)))			    -- # typical value: sin, ZZ, RR
      is x:QQ do Expr(sin(toRR(x)))			    -- # typical value: sin, QQ, RR
@@ -652,6 +653,7 @@ sin(e:Expr):Expr := (
 setupfun("sin",sin);
 cos(e:Expr):Expr := (
      when e
+     is x:CC do Expr(cos(x))				    -- # typical value: cos, CC, CC
      is x:RR do Expr(cos(x))				    -- # typical value: cos, RR, RR
      is x:ZZ do Expr(cos(toRR(x)))			    -- # typical value: cos, ZZ, RR
      is x:QQ do Expr(cos(toRR(x)))			    -- # typical value: cos, QQ, RR
@@ -660,6 +662,7 @@ cos(e:Expr):Expr := (
 setupfun("cos",cos);
 tan(e:Expr):Expr := (
      when e
+     is x:CC do Expr(tan(x))				    -- # typical value: tan, CC, CC
      is x:RR do Expr(tan(x))				    -- # typical value: tan, RR, RR
      is x:ZZ do Expr(tan(toRR(x)))			    -- # typical value: tan, ZZ, RR
      is x:QQ do Expr(tan(toRR(x)))			    -- # typical value: tan, QQ, RR
@@ -676,6 +679,7 @@ acos(e:Expr):Expr := (
 setupfun("acos",acos);
 sec(e:Expr):Expr := (
      when e
+     is x:CC do Expr(sec(x))				    -- # typical value: sec, CC, CC
      is x:RR do Expr(sec(x))				    -- # typical value: sec, RR, RR
      is x:ZZ do Expr(sec(toRR(x)))			    -- # typical value: sec, ZZ, RR
      is x:QQ do Expr(sec(toRR(x)))			    -- # typical value: sec, QQ, RR
@@ -684,6 +688,7 @@ sec(e:Expr):Expr := (
 setupfun("sec",sec);
 csc(e:Expr):Expr := (
      when e
+     is x:CC do Expr(csc(x))				    -- # typical value: csc, CC, CC
      is x:RR do Expr(csc(x))				    -- # typical value: csc, RR, RR
      is x:ZZ do Expr(csc(toRR(x)))			    -- # typical value: csc, ZZ, RR
      is x:QQ do Expr(csc(toRR(x)))			    -- # typical value: csc, QQ, RR
@@ -692,6 +697,7 @@ csc(e:Expr):Expr := (
 setupfun("csc",csc);
 cot(e:Expr):Expr := (
      when e
+     is x:CC do Expr(cot(x))				    -- # typical value: cot, CC, CC
      is x:RR do Expr(cot(x))				    -- # typical value: cot, RR, RR
      is x:ZZ do Expr(cot(toRR(x)))			    -- # typical value: cot, ZZ, RR
      is x:QQ do Expr(cot(toRR(x)))			    -- # typical value: cot, QQ, RR
@@ -700,6 +706,7 @@ cot(e:Expr):Expr := (
 setupfun("cot",cot);
 sech(e:Expr):Expr := (
      when e
+     is x:CC do Expr(sech(x))				    -- # typical value: sech, CC, CC
      is x:RR do Expr(sech(x))				    -- # typical value: sech, RR, RR
      is x:ZZ do Expr(sech(toRR(x)))			    -- # typical value: sech, ZZ, RR
      is x:QQ do Expr(sech(toRR(x)))			    -- # typical value: sech, QQ, RR
@@ -708,6 +715,7 @@ sech(e:Expr):Expr := (
 setupfun("sech",sech);
 csch(e:Expr):Expr := (
      when e
+     is x:CC do Expr(csch(x))				    -- # typical value: csch, CC, CC
      is x:RR do Expr(csch(x))				    -- # typical value: csch, RR, RR
      is x:ZZ do Expr(csch(toRR(x)))			    -- # typical value: csch, ZZ, RR
      is x:QQ do Expr(csch(toRR(x)))			    -- # typical value: csch, QQ, RR
@@ -716,6 +724,7 @@ csch(e:Expr):Expr := (
 setupfun("csch",csch);
 coth(e:Expr):Expr := (
      when e
+     is x:CC do Expr(coth(x))				    -- # typical value: coth, CC, CC
      is x:RR do Expr(coth(x))				    -- # typical value: coth, RR, RR
      is x:ZZ do Expr(coth(toRR(x)))			    -- # typical value: coth, ZZ, RR
      is x:QQ do Expr(coth(toRR(x)))			    -- # typical value: coth, QQ, RR
@@ -874,6 +883,7 @@ atan(e:Expr):Expr := (
 setupfun("atan",atan);
 cosh(e:Expr):Expr := (
      when e
+     is x:CC do Expr(cosh(x))				    -- # typical value: cosh, CC, CC
      is x:RR do Expr(cosh(x))				    -- # typical value: cosh, RR, RR
      is x:ZZ do Expr(cosh(toRR(x)))			    -- # typical value: cosh, ZZ, RR
      is x:QQ do Expr(cosh(toRR(x)))			    -- # typical value: cosh, QQ, RR
@@ -882,6 +892,7 @@ cosh(e:Expr):Expr := (
 setupfun("cosh",cosh);
 sinh(e:Expr):Expr := (
      when e
+     is x:CC do Expr(sinh(x))				    -- # typical value: sinh, CC, CC
      is x:RR do Expr(sinh(x))				    -- # typical value: sinh, RR, RR
      is x:ZZ do Expr(sinh(toRR(x)))			    -- # typical value: sinh, ZZ, RR
      is x:QQ do Expr(sinh(toRR(x)))			    -- # typical value: sinh, QQ, RR
@@ -890,6 +901,7 @@ sinh(e:Expr):Expr := (
 setupfun("sinh",sinh);
 tanh(e:Expr):Expr := (
      when e
+     is x:CC do Expr(tanh(x))				    -- # typical value: tanh, CC, CC
      is x:RR do Expr(tanh(x))				    -- # typical value: tanh, RR, RR
      is x:ZZ do Expr(tanh(toRR(x)))			    -- # typical value: tanh, ZZ, RR
      is x:QQ do Expr(tanh(toRR(x)))			    -- # typical value: tanh, QQ, RR

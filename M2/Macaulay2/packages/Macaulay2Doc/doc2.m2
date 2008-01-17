@@ -631,15 +631,22 @@ document {
 		},
      TT "abs x", " computes the absolute value of ", TT "x", ".",
 	EXAMPLE {
-		"abs(-pi)"
+		"abs(-pi)",
+		"abs(1+ii)"
 		},
      }
 document {
-     Key => {exp,(exp,RR),(exp,ZZ),(exp,QQ)},
+     Key => {exp,(exp,RR),(exp,CC),(exp,ZZ),(exp,QQ)},
      Headline => "exponential function",
      Usage => "exp x",
      Inputs => { "x" => RR },
-     Outputs => { { "the exponential of ", TT "x" } } }
+     Outputs => { { "the exponential of ", TT "x" } } ,
+     EXAMPLE lines ///
+     exp 1p300
+     exp(pi*ii)
+     ///
+     }
+
 document {
      Key => {log,(log, RR),(log, QQ),(log, ZZ),
 	  (log, ZZ, ZZ),(log, QQ, ZZ),(log, ZZ, QQ),(log, QQ, QQ),(log, RR, ZZ),
@@ -659,7 +666,12 @@ document {
      Headline => "square root function",
      Usage => "sqrt x",
      Inputs => { "x" => RR },
-     Outputs => { { "the square root of ", TT "x"} } }
+     Outputs => { { "the square root of ", TT "x"} },
+     EXAMPLE lines ///
+     sqrt 2p200
+     sqrt (+ii)
+     ///
+     }
 document {
      Key => run,
      Headline => "run an external command", 
