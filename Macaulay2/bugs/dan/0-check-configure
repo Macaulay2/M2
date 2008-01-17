@@ -1,0 +1,11 @@
+It's been a while since I've run the configure script in an environment
+where all the libraries are already installed.  To test the configure script in
+such an environment, I should run it after all the libraries are built with
+
+      M2/BUILD/u123/normal/libraries/final/usr/lib/Macaulay2/Core/lib/
+
+      M2/BUILD/u123/normal/libraries/final/usr/lib/Macaulay2/Core/include/
+
+visible!
+
+I'll add that test as part of "make check".

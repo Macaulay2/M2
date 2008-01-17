@@ -1,0 +1,10 @@
+Try these options, which apparently once worked for us:
+                                                                                                                                                               
+CFLAGS="-DALL_INTERIOR_POINTERS -DLARGE_CONFIG" %configure2_5x \
+    --enable-threads=pthreads \
+    --enable-cplusplus \
+    --enable-static \
+    --enable-shared \
+    --enable-redirect-malloc \
+    --enable-thread-local-alloc \
+    --enable-parallel-mark
