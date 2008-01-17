@@ -76,7 +76,7 @@ clean::; rm -f TAGS @srcdir@/TAGS @srcdir@/TAGS.doc
 		$(NONDOCM2FILES) \
 		installedpackages \
 		$(OTHERM2FILES) \
-		$(shell find @srcdir@/../packages -name "*.m2" -a -not -name ".#*" -o -name examples -prune | grep -v Macaulay2Doc/examples | sort) \
+		$(shell find @srcdir@/../packages -name "*.m2" -a -not -name .\#\* -o -name examples -prune | grep -v Macaulay2Doc/examples | sort) \
 		../e/statuscodes \
 		../emacs/makehlp.m2 \
 		../emacs/makem2.m2 \
