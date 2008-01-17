@@ -1,6 +1,9 @@
-VERSION = 3.0.2
-PATCHFILE = @srcdir@/patch-$(VERSION)
-TARDIR = factory
+VERSION = 3.0.3
+
+# VERSION = 3.0.2
+# PATCHFILE = @srcdir@/patch-$(VERSION)
+# TARDIR = factory
+
 TARFILE := factory-$(shell echo $(VERSION) | sed 's/\./-/g').tar.gz
 URL = ftp://www.mathematik.uni-kl.de/pub/Math/Singular/Factory
 PRECONFIGURE = autoconf
