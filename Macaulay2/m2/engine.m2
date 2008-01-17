@@ -199,6 +199,7 @@ RawRingElement == RawRingElement := (x,y) -> x === y
 RawRing _ ZZ := (R,n) -> rawRingVar(R,n)
 raw Number := x -> x_((class x).RawRing)
 raw InexactNumber := x -> x_((ring x).RawRing)
+--status: no one maintains this old test file, so it's broken, since it tests the raw interface
 Number _ RawRing := (n,R) -> rawFromNumber(R,n)
 RawRingElement _ RawRing := (x,R) -> rawPromote(R,x)
 

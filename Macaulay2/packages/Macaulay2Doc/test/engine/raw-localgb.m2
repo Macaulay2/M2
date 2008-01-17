@@ -10,6 +10,7 @@ rawRing a
 F = a-b*a^2-a^3
 G = b-a*b-c^3
 M = mat{{F,G}}
+--status: no one maintains this old test file, so it's broken, since it tests the raw interface
 gbM = rawGB(M,false,0,{1,1,1,1},false,0,0,0)
 gbTrace = 10
 rawStartComputation gbM

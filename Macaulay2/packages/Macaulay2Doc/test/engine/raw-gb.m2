@@ -11,6 +11,7 @@ algorithm = 0
 R1 = polyring(rawZZp(101), (symbol x, symbol y, symbol z))
 
 G = mat {{x,y,z}}
+--status: no one maintains this old test file, so it's broken, since it tests the raw interface
 Gcomp = rawGB(G,false,0,{},false,0,algorithm,0)
 rawStartComputation Gcomp
 m = rawGBGetMatrix Gcomp -- Groebner basis

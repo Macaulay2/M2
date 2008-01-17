@@ -1,3 +1,4 @@
+printingAccuracy=1
 diag = method()
 diag(ZZ,ZZ,List) := (a,b,L) -> (
      R := ring L#0;
@@ -26,8 +27,8 @@ checkSVD(Matrix) := (M) -> (
      -- return (S,U,Vt)
      (S,U,Vt) = SVD M;
      (S1,U1,Vt1) = SVD(M, DivideConquer=>true);
-     nm1 := norm(M - U * diag(numgens target M, numgens source M, flatten entries S) * Vt);
-     nm2 := norm(M - U1 * diag(numgens target M, numgens source M, flatten entries S1) * Vt1);     
+     nm1 := norm(M - U * diag(numgens target M, numgens source M, S) * Vt);
+     nm2 := norm(M - U1 * diag(numgens target M, numgens source M, S1) * Vt1);     
      nm3 := norm(transpose U - U^-1);
      nm4 := norm(transpose Vt - Vt^-1);
      nm5 := norm(transpose U1 - U1^-1);
@@ -57,7 +58,7 @@ checkEigenvectors Matrix := (M) -> (
      n1 := norm(E-E2); -- make sure these are the same
      -- for each eigenvalue and eigenvector, compute Mv-ev
      (E,V,n1);
-     norm(M*V - V * diagonalMatrix flatten entries E)
+     norm(M*V - V * diagonalMatrix E)
      )
 checkEigenvectors(Matrix,Symbol) := (M,Hermit) -> (
      -- compute eigenvectors, and eigenvalues
@@ -66,7 +67,7 @@ checkEigenvectors(Matrix,Symbol) := (M,Hermit) -> (
      n1 := norm(E-E2); -- make sure these are the same
      -- for each eigenvalue and eigenvector, compute Mv-ev
      (E,V,n1);
-     norm(M*V - V * diagonalMatrix flatten entries E)
+     norm(M*V - V * diagonalMatrix E)
      )
 
 ----------------
@@ -126,8 +127,8 @@ b = random(A^4,A^3)
 assert(checkSolve(M,b) < 1e-14)
 
 A = CC_53
-time M = random(A^1000,A^1000,Density=>.1);
-b = random(A^1000,A^3);
+time M = random(A^100,A^100,Density=>.1);
+b = random(A^100,A^3);
 assert(checkSolve(M,b) < 1e-10)
 
 ---------------------------------------
@@ -286,6 +287,8 @@ a0 = map(kk^0,kk^0,0)
 (P,L,U) = LU a1
 assert(#P == 0 and numrows L == 0 and numcols L == 0 and numrows U == 0 and numcols U == 5)
 (P,L,U) = LU a2
+--status: Mike said he will fix this in the engine
+--status: it's the extreme case where LU gets an empty matrix
 assert(#P == 5 and numrows L == 5 and numcols L == 0 and numrows U == 0 and numcols U == 0) -- failed
 (P,L,U) = LU a0
 assert(#P == 0 and numrows L == 0 and numcols L == 0 and numrows U == 0 and numcols U == 0)
