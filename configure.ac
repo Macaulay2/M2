@@ -86,7 +86,7 @@ AC_DEFINE_UNQUOTED(NODENAME,"$NODENAME",hostname used for compilation)
 
 if test -f /etc/issue
 then ISSUE_FLAVOR=[`</etc/issue head -1 | sed 's/ .*//'`]
-     ISSUE_RELEASE=[`</etc/issue head -1 | sed 's/.*\([0-9][0-9.]*\).*/\1/'`]
+     ISSUE_RELEASE=[`</etc/issue head -1 | sed 's/.* \([0-9][0-9.]*\).*/\1/'`]
      case $ISSUE_FLAVOR in
 	 Fedora)
 	     if grep 'Fedora Core' /etc/issue >/dev/null
