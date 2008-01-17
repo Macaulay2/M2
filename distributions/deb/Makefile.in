@@ -5,17 +5,15 @@ TIDY = yes
 CHOWN = chown
 prefixtail=$(shell echo @FINALPREFIX@ | sed 's=^/==')
 include ../Makefile.filenames
-PKG_DEB = @package@-@UBUNTUARCH@-@OS@.deb
-PKG_COM_DEB = @package@-all.deb
 TAROPTIONS = --owner=0 --group=0 --mode=a+rX,og-ws
 .PHONY : prepare
 ############################## main targets
 all install :: tidy_before
-all install :: ../../$(PKG_DEB) ../../$(PKG_COM_DEB)
+all install :: ../../@PKG_DEB@ ../../@PKG_COM_DEB@
 	@ echo "============================================================================="
 	@ echo "ubuntu package files prepared: "
-	@ echo "        $(PKG_DEB)"
-	@ echo "        $(PKG_COM_DEB)"
+	@ echo "        @PKG_DEB@"
+	@ echo "        @PKG_COM_DEB@"
 	@ echo "============================================================================="
 ifeq ($(TIDY),yes)
 all install :: tidy_after
@@ -34,12 +32,12 @@ ifneq (@ENCAP@,yes)
 $(error expected --enable-encap, in order to make a ubuntu package)
 endif
 
-../../$(PKG_DEB) : @srcdir@/macaulay2/debian-binary macaulay2/control.tar.gz macaulay2/data.tar.gz
+../../@PKG_DEB@ : @srcdir@/macaulay2/debian-binary macaulay2/control.tar.gz macaulay2/data.tar.gz
 	rm -f $@
 	ar rc $@.tmp $^
 	sed -e 's=\(debian-binary\|control.tar.gz\|data.tar.gz\)/\( *[0-9]* *\)[0-9 ]\{12\}=\1 \20     0     =g' < $@.tmp > $@
 	rm $@.tmp
-../../$(PKG_COM_DEB) : @srcdir@/macaulay2-common/debian-binary macaulay2-common/control.tar.gz macaulay2-common/data.tar.gz
+../../@PKG_COM_DEB@ : @srcdir@/macaulay2-common/debian-binary macaulay2-common/control.tar.gz macaulay2-common/data.tar.gz
 	rm -f $@
 	ar rc $@.tmp $^
 	sed -e 's=\(debian-binary\|control.tar.gz\|data.tar.gz\)/\( *[0-9]* *\)[0-9 ]\{12\}=\1 \20     0     =g' < $@.tmp > $@
@@ -83,8 +81,8 @@ macaulay2/md5sums            : prepare; (cd tmp        && find * -type f | xargs
 macaulay2-common/md5sums     : prepare;	(cd tmp-common && find * -type f | xargs md5sum) >$@
 ifneq (@LINTIAN@,)
 check :
-	- @LINTIAN@ -I ../../$(PKG_DEB)
-	- @LINTIAN@ -I ../../$(PKG_COM_DEB)
+	- @LINTIAN@ -I ../../@PKG_DEB@
+	- @LINTIAN@ -I ../../@PKG_COM_DEB@
 endif
 tidy_before :
 	rm -rf @package@ tmp tmp-common
@@ -96,8 +94,8 @@ tidy tidy_after :
 	rm -rf macaulay2-common/control.tar.gz macaulay2-common/data.tar.gz macaulay2-common/md5sums
 clean :: tidy
 	rm -rf @package@
-	rm -rf ../../$(PKG_DEB)
-	rm -rf ../../$(PKG_COM_DEB)
+	rm -rf ../../@PKG_DEB@
+	rm -rf ../../@PKG_COM_DEB@
 distclean : clean; rm -f Makefile control
 always :
 libraries-used : .prepared always

@@ -9,7 +9,7 @@ Group: Mathematics
 Buildroot: @abs_builddir@/files-common
 Prefix: @FINALPREFIX@
 %define _rpmdir ../../
-%define _rpmfilename %%{NAME}-%%{VERSION}-common.rpm
+%define _rpmfilename @PKG_COM_RPM@
 %define _unpackaged_files_terminate_build 1
 %post
 #!/bin/sh -e

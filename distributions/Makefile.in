@@ -3,6 +3,7 @@ include ../include/config.Makefile
 VPATH = @srcdir@
 .PHONY : always
 always :
+dist : install
 
 include Makefile.filenames
 
@@ -43,12 +44,12 @@ install :: tarballs
 endif
 clean ::; rm -f ../$(PKG_TGZ) ../$(PKG_TBZ) ../$(PKG_COM_TGZ) ../$(PKG_COM_TBZ)
 
-ifeq "@UBUNTU@" "yes"
-install :: ubuntu
-check :: ; $(MAKE) -C ubuntu $@
+ifeq "@DEB@" "yes"
+install :: deb
+check :: ; $(MAKE) -C deb $@
 endif
-ubuntu : ../$(PKG_TZ) ../$(PKG_COM_TZ) ; $(MAKE) -C ubuntu install
-clean distclean :: ; $(MAKE) -C ubuntu $@
+deb : ../$(PKG_TZ) ../$(PKG_COM_TZ) ; $(MAKE) -C deb install
+clean distclean :: ; $(MAKE) -C deb $@
 
 ifeq "@RPM@" "yes"
 install :: rpm

@@ -10,7 +10,7 @@ Requires: Macaulay2-common = @PACKAGE_VERSION@
 Buildroot: @abs_builddir@/files
 Prefix: @FINALPREFIX@
 %define _rpmdir ../../
-%define _rpmfilename %%{NAME}-%%{VERSION}-%%{ARCH}-@OS@.rpm
+%define _rpmfilename @PKG_RPM@
 %define _unpackaged_files_terminate_build 1
 %post
 #!/bin/sh -e
