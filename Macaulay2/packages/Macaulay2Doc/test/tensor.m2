@@ -13,12 +13,29 @@ assert( gens P * f % xP == 0 )
 
 -- these two things check the definition of modulo
 assert( image (gens P * f) == xP )
-assert( isInjective inducedMap(quotient xP,quotient image f,gens P) )
+assert( isInjective inducedMap(ambient xP / xP,coker f,gens P) )
 
-r = rank source f
-assert( r == 21 or r == 13 ) 
--- that's just what it happens to be, and it seems to have changed to 13 with version 0.9.97
--- but we are checking the definition of "modulo" above, so it must be okay
+f0096 = map(target f,, {
+	  {1, 0, 0, 0, 0, y, -y, x, x, -x, -x, v, 0, x, 0, 0, u, -x, 0, 0, 0}, 
+	  {1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0},
+	  {0, 1, -1, 0, 0, 0, 0, 0, 0, 0, 0, 1, -v, -u, -y, -x, 0, 0, 0, 0, 0},
+	  {0, 0, 0, 1, -1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, -v, -u, -y, -x}})
+f0097 = map(target f,, {
+	  {1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0},
+	  {1, 0, 0, -v, -u, y, -y, x, x, x, -x, -x, -x},
+	  {0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0},
+	  {0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0}})
+ftrimmed = map(target f,,  {
+	  {1, 0, 0, v, u, y, x}, 
+	  {1, 0, 0, 0, 0, 0, 0}, 
+	  {0, 1, 0, 0, 0, 0, 0}, 
+	  {0, 0, 1, 0, 0, 0, 0}})
+
+assert( image f0097 == image f )
+assert( image f0096 == image f )
+assert( image ftrimmed == image f )
+
+end
 
 {*
     u123$ ./Macaulay2-0.9.96/bin/M2 --no-loaddata -q ~/src/M2/Macaulay2/packages/Macaulay2Doc/test/tensor.m2 -e 'exit 0'
@@ -32,7 +49,6 @@ assert( r == 21 or r == 13 )
     rank source f = 13
 *}
 
-end
 -- Local Variables:
 -- compile-command: "make -C $M2BUILDDIR/Macaulay2/packages/Macaulay2Doc/test tensor.out"
 -- End:
