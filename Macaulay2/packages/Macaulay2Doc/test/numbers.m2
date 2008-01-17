@@ -395,6 +395,8 @@ toExternalString (0 *(1-ii))
 toExternalString (0.*(1-ii))
 assert( 0*(1-ii) === 0.*(1-ii) )
 
+scan( {exp,log,sin,cos,sinh,cosh,tanh,coth}, f -> assert( abs(f(2.1 + 0.e-12*ii) - f 2.1) < 1e-8 ))
+
 -- Local Variables:
 -- compile-command: "33333.33333"
 -- End:

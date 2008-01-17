@@ -1231,6 +1231,7 @@ export (x:RR) + (y:CC) : CC := CC(x+y.re,y.im);
 export -(y:CC) : CC := CC(-y.re,-y.im);
 export (x:CC) * (y:RR) : CC := CC(x.re*y, x.im*y);
 export (y:RR) * (x:CC) : CC := CC(x.re*y, x.im*y);
+export (y:int) * (x:CC) : CC := CC(y*x.re, y*x.im);
 export (x:CC) * (y:CC) : CC := CC(x.re*y.re-x.im*y.im, x.im*y.re+x.re*y.im);
 export (x:CC) / (y:int) : CC := CC(x.re/y, x.im/y);
 export (x:CC) / (y:RR) : CC := CC(x.re/y, x.im/y);
@@ -1238,6 +1239,7 @@ export conj(x:CC):CC := CC(x.re,-x.im);
 export norm2(x:CC):RR := x.re*x.re + x.im*x.im;
 export (x:CC) / (y:CC) : CC := x * conj(y) / norm2(y);
 export (x:RR) / (y:CC) : CC := x * conj(y) / norm2(y);
+export (x:int) / (y:CC) : CC := x * conj(y) / norm2(y);
 
 export (x:CC) << (n:long) : CC := CC(x.re<<n,x.im<<n);
 export (x:CC) >> (n:long) : CC := CC(x.re>>n,x.im>>n);
@@ -1622,6 +1624,25 @@ export agm(x:CC,y:CC):CC := (
 	  x = t;
 	  y = u;
 	  ));
+
+itimes(z:CC):CC := toCC(-z.im, z.re);
+mitimes(z:CC):CC := toCC(z.im, -z.re);
+idiv(z:CC):CC := toCC(z.im, -z.re);
+eitimes(z:CC):CC := exp(itimes(z));
+emitimes(z:CC):CC := exp(mitimes(z));
+export cos(z:CC):CC := (eitimes(z) + emitimes(z))/2;
+export sin(z:CC):CC := idiv(eitimes(z) - emitimes(z))/2;
+export cot(z:CC):CC := cos(z)/sin(z);
+export tan(z:CC):CC := sin(z)/cos(z);
+export csc(z:CC):CC := 1/sin(z);
+export sec(z:CC):CC := 1/cos(z);
+
+export cosh(z:CC):CC := (exp(z) + exp(-z))/2;
+export sinh(z:CC):CC := (exp(z) - exp(-z))/2;
+export tanh(z:CC):CC := (exp(z) - exp(-z))/(exp(z) + exp(-z));
+export coth(z:CC):CC := (exp(z) + exp(-z))/(exp(z) - exp(-z));
+export sech(z:CC):CC := 1/cosh(z);
+export csch(z:CC):CC := 1/sinh(z);
 
 -- Local Variables:
 -- compile-command: "make -C $M2BUILDDIR/Macaulay2/d "
