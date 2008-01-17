@@ -58,6 +58,7 @@ rawMutableIdentity(raw R, 10, true)
 -- Test of mutable dense matrices over RR --
 --------------------------------------------
 needs "raw-util.m2"
+--status: no one maintains this old test file, so it's broken, since it tests the raw interface
 p = rawMutableIdentity(raw RR, 10, true)
 rawSetMatrixEntry(p,3,5,rawFromNumber(raw RR, 3.5))
 p

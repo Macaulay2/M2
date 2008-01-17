@@ -69,7 +69,7 @@ b = rawRingVar(R,1)
 c = rawRingVar(R,2)
 d = rawRingVar(R,3)
 e = rawRingVar(R,4)
---status: Dan will fix this
+--status: no one maintains this old test file, so it's broken, since it tests the raw interface
 a*a
 a+b
 a*b^3

@@ -23,9 +23,8 @@ b fatalarrayindex
 # can only do this after the program starts:
 # b __gmp_set_memory_functions
 # b main
-# b ERROR
+b ERROR
 b outofmem
-b rawGCDRingElement
 b abort
 source .gdb-run-it
 # Local Variables:

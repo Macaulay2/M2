@@ -127,6 +127,7 @@ rem(g,1-x)
 checkremquot(f,1-x^-1)
 
 --status: the engine goes into an infinite loop on this and fills memory
+--status: should be fixed, because the engine should know whether an algorithm terminates before running it
 checkremquot(f,1-x^-1-y^-1) -- HANGS
 
 f % (1-x^-1)
