@@ -470,6 +470,23 @@ then AC_SEARCH_LIBS(mpfr_init,mpfr,,BUILD_mpfr=yes)
      # check for lgamma -- it's in 2.3.0 but not in 2.2.1
      AC_SEARCH_LIBS(mpfr_lgamma,mpfr,,BUILD_mpfr=yes)
      AC_CHECK_HEADER(mpfr.h,,BUILD_mpfr=yes)
+     if test $BUILD_mpfr = no
+     then AC_MSG_CHECKING([whether mpfr library is recent enough, using mpfr.h])
+	  AC_RUN_IFELSE([ 
+		  #include <stdio.h>
+		  #include <mpfr.h>
+		  main () {
+		      FILE *msg = fdopen(AS_MESSAGE_FD,"w");
+		      unsigned major, minor, patch_level;
+		      major = MPFR_VERSION_MAJOR;
+		      minor = MPFR_VERSION_MINOR;
+		      patch_level = MPFR_VERSION_PATCHLEVEL;
+		      fprintf(msg,"(version %d.%d.%d found) ", major, minor, patch_level);
+		      return !( major >= 2 && minor >= 3 ); }],
+	     [ AC_MSG_RESULT(yes) ],
+	     [ AC_MSG_RESULT([no, version at least 2.3.0 is required (mpfr will be built from downloaded sources)]); BUILD_mpfr=yes ],
+	     [ AC_MSG_RESULT([cross-compiling, test not possible]) ])
+     fi
 fi
 test $BUILD_mpfr = yes && BUILTLIBS="-lmpfr $BUILTLIBS"
 
