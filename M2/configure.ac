@@ -86,12 +86,18 @@ AC_DEFINE_UNQUOTED(NODENAME,"$NODENAME",hostname used for compilation)
 
 if test -f /etc/issue
 then ISSUE_FLAVOR=[`</etc/issue head -1 | sed 's/ .*//'`]
-     ISSUE_RELEASE=[`</etc/issue head -1 | sed 's/.*\([0-9][0-9]*\.[0-9][0-9.]*\).*/\1/'`]
+     ISSUE_RELEASE=[`</etc/issue head -1 | sed 's/.*\([0-9][0-9.]*\).*/\1/'`]
+     case $ISSUE_FLAVOR in
+	 Fedora)
+	     if grep 'Fedora Core' /etc/issue >/dev/null
+	     then ISSUE_FLAVOR=FedoraCore
+	     fi ;;
+     esac
      case "$ISSUE_FLAVOR" in
-       *" "*) AC_MSG_ERROR([internal error: ISSUE_FLAVOR contains spaces: $ISSUE_FLAVOR])
+       *" "*) AC_MSG_ERROR([internal error: ISSUE_FLAVOR contains spaces: $ISSUE_FLAVOR]) ;;
      esac
      case "$ISSUE_RELEASE" in
-       *" "*) AC_MSG_ERROR([internal error: ISSUE_RELEASE contains spaces: $ISSUE_RELEASE])
+       *" "*) AC_MSG_ERROR([internal error: ISSUE_RELEASE contains spaces: $ISSUE_RELEASE]) ;;
      esac
      AC_SUBST(ISSUE_FLAVOR)
      AC_SUBST(ISSUE_RELEASE)
