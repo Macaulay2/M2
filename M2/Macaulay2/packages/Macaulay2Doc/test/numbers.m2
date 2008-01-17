@@ -243,8 +243,8 @@ R = RR[x]
 assert( value toString(x+1/3) =!= x+1/3 )
 assert( value toExternalString(x+1/3) === x+1/3 )
 
-assert( toRR infinity === - log 0 )
-assert( toRR (-infinity) === log 0 )
+assert( numeric infinity === - log 0 )
+assert( numeric (-infinity) === log 0 )
 
 assert( isReal 1 )
 assert( isReal 1. )
