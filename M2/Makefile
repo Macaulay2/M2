@@ -106,6 +106,17 @@ count count-source-code-lines:
 	egrep ' total$$' /tmp/$@-$$$$ | awk '{sum += $$1}; END { print sum, "grand total" }' && \
 	rm /tmp/$@-$$$$
 
+
+SEARCH=
+ifeq ($(SEARCH),)
+grep :
+	@echo 'usage: make grep SEARCH="regexp"' >&2
+	@false
+else
+grep :
+	find . \( -name .svn -o -name BUILD -o -name autom4te.cache \) -prune -false -o -type f | xargs grep -nH -e $(SEARCH)
+endif
+
 # Local Variables:
 # mode: Makefile
 # compile-command: "make -f Makefile "

@@ -84,6 +84,21 @@ fi
 AC_SUBST(NODENAME,"`uname -n`")
 AC_DEFINE_UNQUOTED(NODENAME,"$NODENAME",hostname used for compilation)
 
+if test -f /etc/issue
+then ISSUE_FLAVOR=[`</etc/issue head -1 | sed 's/ .*//'`]
+     ISSUE_RELEASE=[`</etc/issue head -1 | sed 's/.*\([0-9][0-9]*\.[0-9][0-9.]*\).*/\1/'`]
+     case "$ISSUE_FLAVOR" in
+       *" "*) AC_MSG_ERROR([internal error: ISSUE_FLAVOR contains spaces: $ISSUE_FLAVOR])
+     esac
+     case "$ISSUE_RELEASE" in
+       *" "*) AC_MSG_ERROR([internal error: ISSUE_RELEASE contains spaces: $ISSUE_RELEASE])
+     esac
+     AC_SUBST(ISSUE_FLAVOR)
+     AC_SUBST(ISSUE_RELEASE)
+     AC_SUBST(ISSUE,$ISSUE_FLAVOR-$ISSUE_RELEASE)
+     AC_MSG_NOTICE([issue found: $ISSUE])
+fi
+
 AC_SUBST(OS,"`  uname -s | sed s=/=-=g  `")
 AC_SUBST(REL,"`  uname -r | sed -e s=/=-=g -e 's= =+=' -e 's=[()]==g'  `")
 
@@ -107,11 +122,16 @@ AC_CANONICAL_HOST()
 AC_SUBST(ARCH,$build_cpu)
 AC_DEFINE_UNQUOTED(ARCH,"$ARCH",[machine hardware type])
 
-AC_SUBST(UBUNTUARCH,"")
+AC_SUBST(DEBARCH,"")
 case $ARCH in
-  x86_64) UBUNTUARCH=amd64 ;;
-  *) UBUNTUARCH=$ARCH ;;
+  x86_64) DEBARCH=amd64 ;;
+  *) DEBARCH=$ARCH ;;
 esac
+
+AC_SUBST(PKG_RPM,$PACKAGE_TARNAME-$PACKAGE_VERSION-$ARCH-$OS-$ISSUE.rpm)
+AC_SUBST(PKG_COM_RPM,$PACKAGE_TARNAME-common-$PACKAGE_VERSION.rpm)
+AC_SUBST(PKG_DEB,$PACKAGE_TARNAME-$PACKAGE_VERSION-$DEBARCH-$OS-$ISSUE.deb)
+AC_SUBST(PKG_COM_DEB,$PACKAGE_TARNAME-common-$PACKAGE_VERSION.deb)
 
 AC_VALIDATE_CACHED_SYSTEM_TUPLE()
 dnl AC_ARG_VAR(CC,C compiler to use)
@@ -384,16 +404,16 @@ then ENCAP=yes STRIP=yes M2TARFILE=yes
      fi
 fi
 
-AC_SUBST(UBUNTU,no)
-AC_ARG_ENABLE(ubuntu,  AS_HELP_STRING(--enable-ubuntu,prepare a binary package for ubuntu (enables encap)), UBUNTU=$enableval)
-test "$UBUNTU" = yes && ENCAP=yes M2TARFILE=yes
+AC_SUBST(DEB,no)
+AC_ARG_ENABLE(deb,  AS_HELP_STRING(--enable-deb,prepare a *.deb package (for debian, ubuntu, ...) (enables encap)), DEB=$enableval)
+test "$DEB" = yes && ENCAP=yes M2TARFILE=yes
 
 AC_SUBST(RPM,no)
-AC_ARG_ENABLE(rpm,  AS_HELP_STRING(--enable-rpm,prepare a binary rpm package (enables encap)), RPM=$enableval)
+AC_ARG_ENABLE(rpm,  AS_HELP_STRING(--enable-rpm,prepare a *.rpm package (for red hat based systems) (enables encap)), RPM=$enableval)
 test "$RPM" = yes && ENCAP=yes M2TARFILE=yes
 
 AC_SUBST(DMG,no)
-AC_ARG_ENABLE(dmg,  AS_HELP_STRING(--enable-dmg,prepare a binary dmg package for Mac OS (enables encap)), DMG=$enableval)
+AC_ARG_ENABLE(dmg,  AS_HELP_STRING(--enable-dmg,prepare a *.dmg package (for Mac OS) (enables encap)), DMG=$enableval)
 test "$DMG" = yes && ENCAP=yes M2TARFILE=yes
 
 AC_SUBST(M2SUFFIX,"")
@@ -631,7 +651,7 @@ fi
 
 AC_SUBST(FINALPREFIX,/usr)
 AC_ARG_WITH(final-prefix,
-    AS_HELP_STRING(--with-final-prefix=...,final installation prefix (/usr) (used by libtool and ubuntu installation scripts)),
+    AS_HELP_STRING(--with-final-prefix=...,final installation prefix (/usr) (used by libtool and our installation scripts)),
     FINALPREFIX=$withval)
 case $FINALPREFIX in
     /*) ;;
@@ -740,8 +760,8 @@ AC_SUBST(DESC,$PACKAGE_VERSION-$host_cpu-$OS-$REL)
 # by the 'configure' script, will be simply "alpha".
 
 if ! test "$FAKEROOT"
-then if test "$UBUNTU" = yes -o "$RPM" = yes
-     then AC_MSG_ERROR([program "fakeroot" not installed, required for creating ubuntu or rpm distributions])
+then if test "$DEB" = yes -o "$RPM" = yes
+     then AC_MSG_ERROR([program "fakeroot" not installed, required for creating *.deb or *.rpm distributions])
      elif test "$M2TARFILE" = yes
      then AC_MSG_NOTICE([warning: program "fakeroot" not installed, tar file will appear to contain files not owned by root])
      fi

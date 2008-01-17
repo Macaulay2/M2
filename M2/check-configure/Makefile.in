@@ -2,7 +2,8 @@ VPATH = @srcdir@
 LDFLAGS = -L$(BUILTLIBPATH)/lib
 CPPFLAGS =  -I$(BUILTLIBPATH)/include
 include ../include/config.Makefile
-all check ::; @srcdir@/../configure -n LDFLAGS="$(LDFLAGS)" CPPFLAGS="$(CPPFLAGS)" --disable-building
+all ::
+check ::; @srcdir@/../configure -n LDFLAGS="$(LDFLAGS)" CPPFLAGS="$(CPPFLAGS)" --disable-building
 install ::
 clean :: ; rm -rf 
 distclean :: ; rm -f Makefile
