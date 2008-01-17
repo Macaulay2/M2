@@ -74,7 +74,7 @@ endif
 
 .fetched-$(VERSION) : ; $(FETCHER) $(URL)/$(TARFILE) $(FETCHOPTS) && touch $@
 
-clean ::; rm -rf .patched-$(VERSION) $(TARDIR) .fetched-$(VERSION) .untarred-$(VERSION) $(TARFILE) .compiled-$(VERSION) .configured-$(VERSION) .installed-$(VERSION) .untarred2-$(VERSION) diffs tmp
+clean ::; rm -rf .patched* .fetched* .untarred* $(LIBNAME)-* .compiled* .configured* .installed* .untarred2* diffs tmp
 distclean :: clean ; rm -rf Makefile
 check ::
 
