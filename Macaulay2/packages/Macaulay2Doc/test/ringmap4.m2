@@ -155,11 +155,40 @@ assert try ( map(S,R) ; false ) else true		    -- collision detection should giv
 -- isWellDefined RingMap
 
 k = GF (ZZ/3[a]/(a^2-2))
+r = map(k,k,{a+1})					    -- this map is not well defined
+
+pe = k.PrimitiveElement
+pe == a+1
+r pe == (a+1)+1				  -- it works for the primitive element
+a == (a+1)^6						    -- and for others, when expressed as powers of the primitive one
+r a == ((a+1)+1)^6
+
+U = ZZ[x]; netList apply(13,i -> (hold k.PrimitiveElement)^(toString i) == (hold k.PrimitiveElement^i) => factor (map(U,k,{x})) k.PrimitiveElement^i)
+
+a^2+1 == 0
+(r a)^2+1 == 0						    -- the map looks well defined on "a", which is not a primitive element
+
+pe+pe^2-1 == 0
+(r pe)+(r pe)^2-1 == 0					    -- the map looks ill defined on "pe", the primitive element
+
+assert( not isWellDefined r )
+--status: priority: low
+--status: The problem here is that to check that a map on Galois fields is well defined
+--status: we need to check an equation of a primitive element, rather than of the generator.
+--status: Thus "isWellDefined" doesn't work for Galois fields.
+--status: We haven't pre-computed such an equation.
+
 R = k[x,y]/x^2
 S = k[t,u]/t^3
+assert( x === R_0 )
+assert( y === R_1 )
+assert( t === S_0 )
+assert( u === S_1 )
+
 assert isWellDefined map(R,S,{x,y})
 assert not isWellDefined map(S,R,{t,u})
 assert isWellDefined map(R,S,{x,y,a})
 assert isWellDefined map(R,S,{x,y,-a})
-assert not isWellDefined map(R,S,{x,y,a+1})
+q = map(R,S,{x,y,a+1})
+assert not isWellDefined q
 
