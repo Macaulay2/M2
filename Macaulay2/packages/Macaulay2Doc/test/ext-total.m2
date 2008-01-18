@@ -14,6 +14,19 @@ u = new Tally from {{-3, -7} => 7, {-3, -6} => 7, {0, 1} => 3, {0, 2} => 4, {-4,
         {-2, -4} => 8}
 assert ( t === u )
 
+{*
+
+the answer changed between these two versions:
+
+u123$ ls -l ~/local.Linux/encap/Macaulay2-0.9.95/bin/M2
+-rwxr-xr-x 1 dan academic 5036156 2006-11-06 11:50 /home/25/dan/local.Linux/encap/Macaulay2-0.9.95/bin/M2
+
+u123$ ls -l ~/local.Linux/encap/Macaulay2-0.9.94/bin/M2
+-rwxr-xr-x 1 dan academic 5028988 2006-10-24 10:33 /home/25/dan/local.Linux/encap/Macaulay2-0.9.94/bin/M2
+
+*}
+
+
 end
 
 -- errorDepth = 0
