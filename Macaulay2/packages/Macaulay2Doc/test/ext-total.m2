@@ -47,6 +47,8 @@ comp (degs,heft,degs1,degs2,degDB)
 t = tally degrees target presentation E
 assert ( t === u )
 
+end
+
 {*
 
 the answer changed between these two versions:
