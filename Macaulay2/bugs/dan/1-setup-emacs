@@ -1,0 +1,1 @@
+setup() should modify exec-path in .emacs to put M2 on the path there, too.
