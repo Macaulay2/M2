@@ -1,3 +1,7 @@
+-- with 1.1 we no longer try to keep the random number generator from changing
+
+end
+
 K = ZZ/103; 
 A = K[x,y,z];
 J = ideal(x^3,y^4,z^5)

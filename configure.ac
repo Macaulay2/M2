@@ -733,8 +733,8 @@ fi
 if test "$OPTIMIZE" = yes
 then CFLAGS="$CFLAGS -O3"
      CXXFLAGS="$CXXFLAGS -O3"
-else CFLAGS="$CFLAGS -O0"
-     CXXFLAGS="$CXXFLAGS -O0"
+else CFLAGS="$CFLAGS -O0 -fno-inline"
+     CXXFLAGS="$CXXFLAGS -O0 -fno-inline"
 fi
 
 test "$MEMDEBUG" = yes && M2_CPPFLAGS="$M2_CPPFLAGS -DMEMDEBUG"
