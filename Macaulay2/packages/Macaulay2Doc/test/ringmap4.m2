@@ -157,19 +157,22 @@ assert try ( map(S,R) ; false ) else true		    -- collision detection should giv
 k = GF (ZZ/3[a]/(a^2-2))
 r = map(k,k,{a+1})					    -- this map is not well defined
 
-pe = k.PrimitiveElement
+pe = promote(k.PrimitiveElement,k)
 pe == a+1
 r pe == (a+1)+1				  -- it works for the primitive element
 a == (a+1)^6						    -- and for others, when expressed as powers of the primitive one
 r a == ((a+1)+1)^6
 
-U = ZZ[x]; netList apply(13,i -> (hold k.PrimitiveElement)^(toString i) == (hold k.PrimitiveElement^i) => factor (map(U,k,{x})) k.PrimitiveElement^i)
+U = ZZ[x]; netList apply(13,i -> (hold pe)^(toString i) == (hold k.PrimitiveElement^i) => factor (map(U,k,{x})) k.PrimitiveElement^i)
 
 a^2+1 == 0
 (r a)^2+1 == 0						    -- the map looks well defined on "a", which is not a primitive element
 
 pe+pe^2-1 == 0
 (r pe)+(r pe)^2-1 == 0					    -- the map looks ill defined on "pe", the primitive element
+
+pe^2 + a == 0
+(r pe)^2 + a == 0
 
 assert( not isWellDefined r )
 --status: priority: low
