@@ -709,22 +709,30 @@ TEST ///
 -- document these routines DO THIS
 -- schreyerMatrix F -- DO THIS
 
+{*
 leadTerm(ZZ,RingElement) := (n,f) -> (leadTerm(n,matrix{{f}}))_(0,0)
   -- leadTerm should call a ggleadterm routine?  DO THIS
+*}
      
+{*
 installHilbertFunction = method()
 installHilbertFunction(Module,RingElement) := (M,hf) -> (
      -- we need to place hf into the degree ring of M.
      hf = substitute(hf,degreesRing M);
      M.cache.poincare = hf;
      )
+*}
 
+{*
 installGroebner = method()
 -- DO THIS
+*}
 
+{*
 gbRemove = method()
 gbRemove Module := (M) -> remove((generators M).cache, {false,0})
 gbRemove Ideal := (I) -> remove((generators I).cache, {false,0})
+*}
   -- PROBLEM: what about the other GB
   
 R = QQ[a..d,Weights=>{-1,0,0,0},Global=>false]
@@ -737,10 +745,10 @@ M = image vars R
 gbSnapshot(M)
 gb(M,PairLimit=>2)
 m1 = gbSnapshot(M)
---gb(M,PairLimit=>4)
---m1  -- This has changed!  We probably don't want that
-    -- BUG: segmentation fault!!
-
+m1s = toString m1
+gb(M,PairLimit=>4)
+m1  -- This has changed!  We probably don't want that
+assert( toString m1 == m1s )				    -- it seems okay, now [dan]
 
 ///
 
