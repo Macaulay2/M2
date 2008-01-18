@@ -6,6 +6,7 @@ f = matrix {{27*x^2-19*z^2, 38*x^2*y+47*z^3},
       {x^2-x*y, z^3}};
 M = cokernel f;
 N = B^1/(x^2 + z^2,y^3 - 2*z^3);
+gbTrace = 3
 time E = Ext(M,N);
      -- used 3.32 seconds in version 0.9.92
 t = tally degrees target presentation E
