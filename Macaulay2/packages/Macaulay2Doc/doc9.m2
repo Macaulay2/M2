@@ -856,12 +856,12 @@ TEST ///
      assert( 1 + z == 3 - 3*ii )
      assert( 2*w == 8 + 10*ii )
      assert( z + w == 6 + 2*ii )
-     assert( toString w == "4.+5.*ii" )
+     assert( toString w == "4+5*ii" )
      assert( conjugate z == 2 + 3*ii )
      assert( x == 2 )
      assert( x == 2. )
      assert( x == 2/1 )
-     assert( net ( 2 - 3 * ii ) === "2. - 3.ii"^0 )
+     assert( net ( 2 - 3 * ii ) === "2-3*ii" )
      ///
 
 
