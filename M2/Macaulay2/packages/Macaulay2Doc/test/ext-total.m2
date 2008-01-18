@@ -9,8 +9,8 @@ N = B^1/(x^2 + z^2,y^3 - 2*z^3);
 time E = Ext(M,N);
      -- used 3.32 seconds in version 0.9.92
 t = tally degrees target presentation E
-u = new Tally from { {-3, -7} => 6, {-3, -6} => 6, {0, 1} => 2, {0, 2} => 7, 
-     {-4, -9} => 6, {-4, -8} => 2, {-1, -2} => 4, {-2, -4} => 16 }
+u = new Tally from {{-3, -7} => 7, {-3, -6} => 7, {0, 1} => 3, {0, 2} => 4, {-4, -9} => 5, {-4, -8} => 2, {-4, -7} => 1, {-1, -2} => 4, {-2, -5} => 2,
+        {-2, -4} => 11}
 assert ( t === u )
 -- Local Variables:
 -- compile-command: "make -C $M2BUILDDIR/Macaulay2/packages/Macaulay2Doc/test ext-total.out"
