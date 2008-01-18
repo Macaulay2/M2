@@ -11,8 +11,8 @@ gbTrace = 3
 time E = Ext(M,N);
      -- used 3.32 seconds in version 0.9.92
 t = tally degrees target presentation E
-u = new Tally from {{-3, -7} => 7, {-3, -6} => 7, {0, 1} => 3, {0, 2} => 4, {-4, -9} => 5, {-4, -8} => 2, {-4, -7} => 1, {-1, -2} => 4, {-2, -5} => 2,
-        {-2, -4} => 11}
+u = new Tally from {{-3, -7} => 7, {-3, -6} => 7, {0, 1} => 3, {0, 2} => 4, {-4, -9} => 4, {-4, -8} => 1, {-4, -7} => 1, {-1, -2} => 4, {-2, -5} => 3,
+        {-2, -4} => 8}
 assert ( t === u )
 -- Local Variables:
 -- compile-command: "make -C $M2BUILDDIR/Macaulay2/packages/Macaulay2Doc/test ext-total.out"
