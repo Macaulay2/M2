@@ -472,7 +472,7 @@ document {
 	  "Z = new Type of X",
 	  "showUserStructure",
 	  },
-     SeeAlso => { "showStructure", "parent"}
+     SeeAlso => { showStructure, parent, ancestors}
      }
 
 
@@ -491,7 +491,7 @@ document {
      EXAMPLE {
 	  "showStructure",
 	  },
-     SeeAlso => { "showClassStructure", "showUserStructure" }
+     SeeAlso => { "showClassStructure", "showUserStructure", ancestors }
      }
 
 document {

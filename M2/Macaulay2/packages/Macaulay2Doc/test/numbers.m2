@@ -395,8 +395,36 @@ toExternalString (0 *(1-ii))
 toExternalString (0.*(1-ii))
 assert( 0*(1-ii) === 0.*(1-ii) )
 
-scan( {exp,log,sin,cos,sinh,cosh,tanh,coth}, f -> assert( abs(f(2.1 + 0.e-12*ii) - f 2.1) < 1e-8 ))
+epsilon = 10 * 2.^-defaultPrecision
+small = z -> abs z < epsilon
+see = z -> (<< "see: " << z << endl; z)
+scan( {exp,log,sin,cos,sinh,cosh,tanh,coth,asin,acos,asinh,acosh}, 
+     f -> (
+	  << f << endl;
+	  assert small see ( f(.21 + 0.e-12*ii) - f .21);
+	  assert small see ( f(2.1 + 0.e-12*ii) - f 2.1);
+	  )
+     )
+
+scan({.2, 1.2, .2 + .3*ii,  1.2 - .13*ii}, z -> (
+     	  assert small(z - acosh cosh z);
+	  assert small(z - acos cos z);
+	  assert small(z - asinh sinh z);
+	  assert small(z - asin sin z);
+	  assert small(z - log exp z);
+	  ))
+
+assert( class asin .3 === RR )
+assert( class asin 1.3 === CC )
+assert( class acos .3 === RR )
+assert( class acos 1.3 === CC )
+
+assert( class asinh .3 === RR )
+assert( class asinh 1.3 === RR )
+assert( class acosh .3 === CC )
+assert( class acosh 1.3 === RR )
 
 -- Local Variables:
--- compile-command: "33333.33333"
+-- compile-command: "make -C $M2BUILDDIR/Macaulay2/packages/Macaulay2Doc/test numbers.out"
 -- End:
+

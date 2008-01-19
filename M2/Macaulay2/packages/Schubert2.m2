@@ -20,6 +20,8 @@ export { AbstractSheaf, abstractSheaf, AbstractVariety, abstractVariety, schuber
      schur, SectionClass, sectionClass, segre, StructureMap, Symm, protect TangentBundle, tangentBundle, todd, protect ToddClass, bundle, proj,
      BundleNames, VariableNames, symm, wedge, grass, totalspace, SubBundles, QuotientBundles}
 
+debug Core						    -- needed only for flatmonoid, sigh; also for getAttribute
+
 symm = symmetricPower
 wedge = exteriorPower
 totalspace = source
@@ -121,7 +123,6 @@ sheaf(ZZ,Array) := (rk,classes) -> (
      if #classes === 0 then error "no Chern classes given";
      sheaf(rk,classes,variety ring first classes))
 
-debug Core						    -- needed only for flatmonoid, sigh
 netbydegree := f -> (
      if f == 0 then return "0";
      (i,j) := weightRange(first \ degrees (ring f).flatmonoid, f);

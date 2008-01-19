@@ -100,6 +100,5 @@ lift(f,ZZ)
 lift(lift(f,QQ),ZZ)
 
 lift(0.0 * ii + 3.0, RR)
-a = lift(1.34242,RR)
 b = promote(a,RR)
 ///

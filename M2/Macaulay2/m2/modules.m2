@@ -72,6 +72,7 @@ Vector.synonym = "vector"
 Vector _ ZZ := (v,i) -> (ambient v#0)_(i,0)
 net Vector := v -> net super first v
 entries Vector := v -> entries ambient v#0 / first
+norm Vector := v -> norm v#0
 toExternalString Vector := 				    -- not quite right
 toString Vector := v -> concatenate ( "vector ", toString entries super v )
 ring Vector := v -> ring class v

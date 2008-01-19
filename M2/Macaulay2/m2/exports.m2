@@ -1,4 +1,4 @@
---		Copyright 2004 by Daniel R. Grayson
+--		Copyright 2004,2005,2006,2007,2008 by Daniel R. Grayson
 
 export {
 --	symbol setAttribute,				    -- experimental
@@ -502,6 +502,7 @@ export {
 	symbol abs,
 	symbol accumulate,
 	symbol acos,
+	symbol acosh,
 	symbol addEndFunction,
 	symbol addHook,
 	symbol addStartFunction,
@@ -511,6 +512,7 @@ export {
 	symbol all,
 	symbol ambient,
 	symbol ancestor,
+	symbol ancestors,
 	symbol and,
 	symbol annihilator,
 	symbol any,
@@ -525,6 +527,7 @@ export {
 	symbol argument,
 	symbol ascii,
 	symbol asin,
+	symbol asinh,
 	symbol assert,
 	symbol assign,
 	symbol associatedPrimes,

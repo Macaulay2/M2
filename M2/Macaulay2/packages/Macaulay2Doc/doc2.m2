@@ -1016,7 +1016,30 @@ document {
 	  },
      PARA {
 	  "If ", TT "x", " is an ancestor of ", TT "y", ", then we also say that ", TT "y", " is a ", EM "specialization", " of ", TT "x", "."
-	  }
+	  },
+     EXAMPLE lines ///
+     parent String
+     parent parent String
+     parent parent parent String
+     ///,
+     SeeAlso => {ancestors}
+     }
+
+document {
+     Key => ancestors,
+     Headline => "the ancestors of something",
+     Usage => "ancestors x",
+     Inputs => {"x"},
+     Outputs => {{"the list of ancestors of ", TT "x"}},
+     EXAMPLE lines ///
+     ancestors String
+     ancestors class 3
+     ancestors class 3.
+     ancestors ring 3.
+     ancestors class ring 3.
+     ancestors 3
+     ///,
+     SeeAlso => {ancestor, showStructure}
      }
 
 document {

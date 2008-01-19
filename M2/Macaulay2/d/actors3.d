@@ -671,9 +671,22 @@ tan(e:Expr):Expr := (
 setupfun("tan",tan);
 acos(e:Expr):Expr := (
      when e
-     is x:RR do Expr(acos(x))				    -- # typical value: acos, RR, RR
-     is x:ZZ do Expr(acos(toRR(x)))			    -- # typical value: acos, ZZ, RR
-     is x:QQ do Expr(acos(toRR(x)))			    -- # typical value: acos, QQ, RR
+     is x:CC do Expr(acos(x))				    -- # typical value: acos, CC, CC
+     is x:RR do (
+	  if x > 1 || x < -1
+	  then Expr(acos(toCC(x)))
+	  else Expr(acos(x))				    -- # typical value: acos, RR, RR
+	  )
+     is x:QQ do (
+	  if x > 1 || x < -1
+	  then Expr(acos(toCC(x)))
+	  else Expr(acos(toRR(x))) -- # typical value: acos, QQ, RR
+	  )
+     is x:ZZ do (
+	  if x > 1 || x < -1
+	  then Expr(acos(toCC(x)))
+	  else Expr(acos(toRR(x)))				    -- # typical value: acos, ZZ, RR
+	  )
      else buildErrorPacket("expected a number")
      );
 setupfun("acos",acos);
@@ -733,9 +746,22 @@ coth(e:Expr):Expr := (
 setupfun("coth",coth);
 asin(e:Expr):Expr := (
      when e
-     is x:RR do Expr(asin(x))				    -- # typical value: asin, RR, RR
-     is x:ZZ do Expr(asin(toRR(x)))			    -- # typical value: asin, ZZ, RR
-     is x:QQ do Expr(asin(toRR(x)))			    -- # typical value: asin, QQ, RR
+     is x:CC do Expr(asin(x))				    -- # typical value: asin, CC, CC
+     is x:RR do (
+	  if x > 1 || x < -1
+	  then Expr(asin(toCC(x)))
+	  else Expr(asin(x))				    -- # typical value: asin, RR, RR
+	  )
+     is x:QQ do (
+	  if x > 1 || x < -1
+	  then Expr(asin(toCC(x)))
+	  else Expr(asin(toRR(x)))				    -- # typical value: asin, QQ, RR
+	  )
+     is x:ZZ do (
+	  if x > 1 || x < -1
+	  then Expr(asin(toCC(x)))
+	  else Expr(asin(toRR(x)))			    -- # typical value: asin, ZZ, RR
+	  )
      else buildErrorPacket("expected a number")
      );
 setupfun("asin",asin);
@@ -798,7 +824,7 @@ zeta(e:Expr):Expr := (
      is x:ZZ do (					    -- # typical value: zeta, ZZ, RR
 	  if isULong(x)
 	  then Expr(zeta(toULong(x),defaultPrecision))
-	  else Expr(zeta(toRR(x,defaultPrecision)))
+	  else Expr(zeta(toRR(x)))
 	  )
      is x:QQ do Expr(zeta(toRR(x)))			    -- # typical value: zeta, QQ, RR
      else buildErrorPacket("expected a number")
@@ -1045,9 +1071,21 @@ setupfun("run",run);
 
 sqrt(a:Expr):Expr := (
      when a
-     is x:ZZ do Expr(sqrt(toRR(x)))	       -- # typical value: sqrt, ZZ, RR
-     is x:QQ do Expr(sqrt(toRR(x)))	       -- # typical value: sqrt, QQ, RR
-     is x:RR do Expr(sqrt(x))				    -- # typical value: sqrt, RR, RR
+     is x:ZZ do (
+	  if x < 0
+	  then Expr(toCC(0,sqrt(-toRR(x))))
+	  else Expr(sqrt(toRR(x)))			       -- # typical value: sqrt, ZZ, CC
+	  )
+     is x:QQ do (
+	  if x < 0
+	  then Expr(toCC(0,sqrt(-toRR(x))))
+	  else Expr(sqrt(toRR(x)))			       -- # typical value: sqrt, QQ, CC
+	  )
+     is x:RR do (
+	  if x < 0
+	  then Expr(toCC(0,sqrt(-x)))
+	  else Expr(sqrt(x))			       -- # typical value: sqrt, RR, CC
+	  )
      is x:CC do Expr(sqrt(x))				    -- # typical value: sqrt, CC, CC
      is Error do a
      else WrongArgRR());
