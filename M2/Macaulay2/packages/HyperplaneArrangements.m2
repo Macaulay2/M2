@@ -836,7 +836,7 @@ document {
      Key => {(euler,Flat),(euler,Arrangement)},
      Usage => "euler x",
      Inputs => {
-	  "x" => {ofClass{Flat,Arrangement}}
+	  "x" => {" or ",ofClass{Arrangement}}
 	  },
      Outputs => {
 	  "k" => ZZ => {"the beta invariant of ", TT "x"},

@@ -731,7 +731,8 @@ justClass := X -> fixup SPAN {"an instance of class ", TO X}
 
 ofClass = method()
 ofClass List := x -> (
-     if #x === 2 then (ofClass x#0, " or ", ofClass x#1)
+     if #x === 1 then ofClass x#0
+     else if #x === 2 then (ofClass x#0, " or ", ofClass x#1)
      else mingle (ofClass \ x, splice( #x - 2 : ", ", ", or " )))
 ofClass ImmutableType := ofClass Type := X -> fixup (
      if parent X === Nothing then error "expected a class";
@@ -1161,7 +1162,9 @@ documentationValue(Symbol,Package) := (s,pkg) -> if pkg =!= Core then (
 			 )
 		    )
 	       },
-	  DIV1 { SUBSECTION "Version", "This documentation describes version ", pkg.Options.Version, " of ", pkg#"title", "." },
+	  DIV1 { SUBSECTION "Version", "This documentation describes version ", pkg.Options.Version, " of ",
+	       if pkg#"title" === "Macaulay2Doc" then "Macaulay2" else pkg#"title",
+	       "." },
 	  if pkg#"title" =!= "Macaulay2Doc" then DIV1 {SUBSECTION "Source code", "The source code is in the file ", HREF { LAYOUT#"packages" | fn, fn }, "."},
 	  if #e > 0 then DIV1 {
 	       SUBSECTION "Exports",
