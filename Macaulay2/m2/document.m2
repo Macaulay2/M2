@@ -112,7 +112,7 @@ new DocumentTag from List := (DocumentTag,x) -> (
 -- toExternalString DocumentTag := x -> error "can't convert DocumentTag to external string"
 
 pkgTitle = method()
-pkgTitle Package := pkg -> pkg#"title"
+pkgTitle Package := pkg -> if pkg === Core then "Macaulay2Doc" else pkg#"title"
 pkgTitle Symbol  := toString
 pkgTitle String  := identity
 pkgTitle Nothing := x -> ""
@@ -126,7 +126,7 @@ mdt := makeDocumentTag Thing := opts -> key -> (
      verifyKey nkey;
      fkey := formatDocumentTag nkey;
      pkg := (
-	  if class nkey === Symbol and package nkey =!= Core then package nkey
+	  if class nkey === Symbol {* and package nkey =!= Core *} then package nkey
 	  else if opts#Package =!= null then opts#Package 
 	  else packageKey fkey
 	  );
@@ -898,9 +898,14 @@ document List := opts -> args -> (
 	  rest = drop(key,1);
 	  o.Key = key = first key;
 	  );
-     o.DocumentTag = tag := makeDocumentTag(key, Package => currentPackage);
+     o.DocumentTag = tag := makeDocumentTag key;
+     verfy := (key,tag) -> (
+     	  if DocumentTag.Title tag =!= currentPackage#"title" 
+	  then error("item to be documented comes from another package: ", DocumentTag.Title tag, " :: ", toString key));
+     verfy(key,tag);
      scan(rest, secondary -> (
 	       tag2 := makeDocumentTag secondary;
+	       verfy(secondary,tag2);
 	       storeRawDocumentation(tag2, new HashTable from { 
 			 PrimaryTag => tag,
 			 symbol DocumentTag => tag2,

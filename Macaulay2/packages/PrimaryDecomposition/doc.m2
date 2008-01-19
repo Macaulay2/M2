@@ -1,5 +1,5 @@
 document {
-     Key => {associatedPrimes,(associatedPrimes, Ideal),(associatedPrimes, MonomialIdeal)},
+     Key => {(associatedPrimes, Ideal),(associatedPrimes, MonomialIdeal)},
      Headline => "find the associated primes of an ideal",
      Usage => "associatedPrimes I\nass I",
      Inputs => {
@@ -186,7 +186,7 @@ document {
      }
 
 document {
-     Key => {[primaryDecomposition,Strategy],Monomial,Binomial,EHV,SY,Hybrid,GTZ},
+     Key => {[primaryDecomposition,Strategy],EHV,SY,Hybrid,GTZ},
      "The strategy option value should be one of the following.",
      UL {
           ("Monomial", " -- uses Alexander duality of a monomial ideal"),

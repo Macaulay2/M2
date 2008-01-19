@@ -217,7 +217,7 @@ graphic (List) := Arrangement => G -> (
 -- intersection lattice and flats:
 
 Flat = new Type of HashTable
-Flat.synonym = "intersection of hyperplane(s)"
+Flat.synonym = "flat (intersection of hyperplanes)"
 Flat#{Standard,AfterPrint} = F -> (
      << endl;
      <<  concatenate(interpreterDepth:"o") << lineNumber << " : Flat of " << F.arrangement
@@ -833,15 +833,13 @@ document {
      }
 
 document {
-     Key => {euler,(euler,Flat),(euler,Arrangement)},
-     Usage => "euler(F) or euler(A)",
+     Key => {(euler,Flat),(euler,Arrangement)},
+     Usage => "euler x",
      Inputs => {
-	  "F" => Flat => "a flat",
-	  "A" => Arrangement => "an arrangement"
+	  "x" => {ofClass{Flat,Arrangement}}
 	  },
      Outputs => {
-	  "k" => ZZ => {"the beta invariant of the flat ", TT "F", " or
-	       arrangement ", TT "A"},
+	  "k" => ZZ => {"the beta invariant of ", TT "x"},
 	       },
      "The beta invariant of an arrangement ", TT "A", " is, by definition, 
      the Euler characteristic of complement of ", TT "A", " in complex 

@@ -1999,14 +1999,6 @@ document {
      Key => [AppellF1,Vars] }
 document {
      Key => Vars }
-document {
-     Key => Local,
-     Headline => "a choice for option Vars" 
-     }
-document {
-     Key => Global,
-     Headline => "a choice for option Vars" 
-     }
 
 document {
      Key => {gkz, --(gkz, Matrix), 

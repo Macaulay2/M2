@@ -25,6 +25,12 @@ unmark : ; rm -f .configured-$(VERSION) .compiled-$(VERSION)
 package-clean : unmark ; $(MAKE) -C $(BUILDDIR) clean
 package-distclean : unmark ; $(MAKE) -C $(BUILDDIR) distclean
 
+fetch : .fetched-$(VERSION)
+patch : .patched-$(VERSION)
+untar : .untarred-$(VERSION)
+compile : .compiled-$(VERSION)
+configure : .configured-$(VERSION)
+
 PRECONFIGURE  ?= :
 
 CONFIGOPTIONS += --build=@build@ --host=@host@ --cache-file=/dev/null
