@@ -985,6 +985,7 @@ document { Key => {(netList, VisibleList),
 	  netList(f,Boxes=>true,HorizontalSpace=>1,VerticalSpace=>1)
 	  netList(f,Boxes=>true,Alignment=>Center)
 	  netList(f,Boxes=>true,BaseRow=>1)
+	  netList apply(5,i->apply(i+1,j->(i,j)))
      ///}
 
 document { Key => cache,

@@ -41,8 +41,6 @@ document {
      "This package provides a single function that computes the tangent cone at a point."
      }
 
-document { Key => Local, "A symbol used as the value of an optional argument, for some function(s)." }
-
 document {
      Key => {(tangentCone, Ideal), tangentCone, [tangentCone, Strategy]},
      Usage => "tangentCone I",
