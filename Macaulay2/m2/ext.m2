@@ -161,6 +161,10 @@ Ext(Module,Module) := Module => (M,N) -> (
     DeltaBar := Delta ** (toS ** N');
     assert isHomogeneous DeltaBar;
     assert(DeltaBar * DeltaBar == 0);
+    if debugLevel > 10 then (
+	 stderr << describe ring DeltaBar <<endl;
+	 stderr << toExternalString DeltaBar << endl;
+	 );
     -- now compute the total Ext as a single homology module
     minimalPresentation homology(DeltaBar,DeltaBar)))
 

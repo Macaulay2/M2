@@ -158,7 +158,8 @@ numgens C  -- 2
 use A
 D = C/(x-y^2, y-b*c)
 numgens D
-minPres D -- error
+--status: somebody should fix this! [dan]
+minPres D -- error, perhaps it wants to use R.flatmonoid instead of R.monoid here???
 K = frac A
 numgens K
 ///

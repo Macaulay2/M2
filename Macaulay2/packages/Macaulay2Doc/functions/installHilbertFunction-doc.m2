@@ -86,5 +86,8 @@ J = substitute(I,S)
 installHilbertFunction(J, hf)
 gbTrace=3
 time gens gb J
+--status: this is a strange one
+--status: it's a gb computation that seems to run out of memory far too soon
+--status: Mike?
 selectInSubring(1,gens gb J)
 ///

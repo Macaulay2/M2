@@ -120,6 +120,66 @@ document { Key => {erfc,(erfc, QQ),(erfc, ZZ),(erfc, RR)},
      ///,
      Wikipedia "Error_function"
      }
+document { 
+     --- author(s): L. Gold, Dan Grayson
+     Key => {acos,(acos,ZZ), (acos,RR), (acos,CC),(acos, QQ)},
+     Headline => "arccosine", 
+     Usage => "acos x",
+     Inputs => { "x" },
+     Outputs => { Number => { "the arccosine (in radians) of ", TT "x"} },
+     EXAMPLE lines ///
+     acos 0.5
+     ///,
+     Wikipedia "Trigonometric_function"
+     }     
+document { 
+     --- author(s): L. Gold, Dan Grayson
+     Key => {asin,(asin,ZZ),(asin,RR),(asin,CC),(asin, QQ)},
+     Headline => "arcsine",
+     Usage => "asin x",
+     Inputs => { "x" },
+     Outputs => {
+	  Number => {"the arcsine (in radians) of ", TT "x"}
+	  },
+     EXAMPLE {
+	  "asin 1"
+	  },
+     Wikipedia "Trigonometric_function"
+     }
+document { 
+     --- author(s): L. Gold
+     Key => {cosh, (cosh,ZZ),(cosh,RR),(cosh, QQ),(cosh,CC)},
+     Headline => "compute the hyperbolic cosine",
+     Usage => "cosh x",
+     Inputs => { "x" },
+     Outputs => { Number => { "the hyperbolic cosine of ", TT "x" } },
+     EXAMPLE lines ///
+     cosh .2
+     ///,
+     }
+document { 
+     Key => {acosh,(acosh,Number)},
+     Headline => "inverse hyperbolic cosine", 
+     Usage => "acosh x",
+     Inputs => { "x" },
+     Outputs => { Number => { "the inverse hyperbolic cosine of ", TT "x"} },
+     EXAMPLE lines ///
+     acosh .2
+     cosh oo
+     ///,
+     Wikipedia "Hyperbolic_function"
+     }     
+document { 
+     Key => {asinh,(asinh,Number)},
+     Headline => "inverse hyperbolic sine",
+     Usage => "asinh x",
+     Inputs => { "x" },
+     Outputs => { Number => {"the inverse hyperbolic sine of ", TT "x"} },
+     EXAMPLE lines ///
+     asinh .2
+     ///,
+     Wikipedia "Hyperbolic_function"
+     }
 document { Key => {sec,(sec, ZZ),(sec, RR),(sec, QQ)},
      Usage => "sec x",
      Headline => "secant",

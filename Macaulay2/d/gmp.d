@@ -844,6 +844,7 @@ export toRR(n:double,prec:ulong):RR := (
 export toRR(n:double):RR := toRR(n,defaultPrecision);	   
 
 export toCC(x:RR):CC := CC(x,toRR(0,precision0(x)));
+export toCC(x:int,y:RR):CC := CC(toRR(x,precision0(y)),y);
 export toCC(x:RR,prec:ulong):CC := CC(toRR(x,prec),toRR(0,prec));
 export toCC(x:CC,prec:ulong):CC := (
      if precision0(x.re) == prec then x
@@ -856,6 +857,8 @@ export toCC(x:RR,y:RR):CC := (
      );
 export toCC(x:QQ,prec:ulong):CC := CC(toRR(x,prec),toRR(0,prec));
 export toCC(x:ZZ,prec:ulong):CC := CC(toRR(x,prec),toRR(0,prec));
+export toCC(x:QQ):CC := toCC(x,defaultPrecision);
+export toCC(x:ZZ):CC := toCC(x,defaultPrecision);
 export toCC(x:int,prec:ulong):CC := CC(toRR(x,prec),toRR(0,prec));
 export toCC(x:int,y:int,prec:ulong):CC := CC(toRR(x,prec),toRR(y,prec));
 export toCC(x:ulong,prec:ulong):CC := CC(toRR(x,prec),toRR(0,prec));
@@ -991,6 +994,16 @@ export (x:RR) + (y:QQ) : RR := (
      );
      z);
 
+export - (y:RR) : RR := (
+     z := newRR(precision0(y));
+     Ccode( void,
+	  "mpfr_neg(",
+	      "(__mpfr_struct *)", z, ",", 
+	      "(__mpfr_struct *)", y,
+	  ", GMP_RNDN)" 
+     );
+     z);
+
 export (x:RR) - (y:RR) : RR := (
      z := newRR(min(precision0(x),precision0(y)));
      Ccode( void,
@@ -1012,6 +1025,8 @@ export (x:RR) - (y:int) : RR := (
 	  ", GMP_RNDN)" 
      );
      z);
+
+export (y:int) - (x:RR) : RR := -(x-y);
      
 export (x:RR) - (y:ZZ) : RR := (
      z := newRR(precision0(x));
@@ -1031,16 +1046,6 @@ export (x:RR) - (y:QQ) : RR := (
 	      "(__mpfr_struct *)", z, ",", 
 	      "(__mpfr_struct *)", x, ",", 
 	      "(__mpq_struct *)", y,
-	  ", GMP_RNDN)" 
-     );
-     z);
-
-export - (y:RR) : RR := (
-     z := newRR(precision0(y));
-     Ccode( void,
-	  "mpfr_neg(",
-	      "(__mpfr_struct *)", z, ",", 
-	      "(__mpfr_struct *)", y,
 	  ", GMP_RNDN)" 
      );
      z);
@@ -1225,6 +1230,7 @@ export (x:RR) >> (n:int) : RR := x << long(-n);
 export (x:CC) + (y:CC) : CC := CC(x.re+y.re, x.im+y.im);
 export (x:CC) - (y:CC) : CC := CC(x.re-y.re, x.im-y.im);
 export (x:RR) - (y:CC) : CC := CC(x-y.re,-y.im);
+export (x:int) - (y:CC) : CC := CC(x-y.re,-y.im);
 export (x:CC) - (y:RR) : CC := CC(x.re-y,x.im);
 export (x:CC) + (y:RR) : CC := CC(x.re+y,x.im);
 export (x:RR) + (y:CC) : CC := CC(x+y.re,y.im);
@@ -1651,6 +1657,10 @@ export tanh(z:CC):CC := (exp(z) - exp(-z))/(exp(z) + exp(-z));
 export coth(z:CC):CC := (exp(z) + exp(-z))/(exp(z) - exp(-z));
 export sech(z:CC):CC := 1/cosh(z);
 export csch(z:CC):CC := 1/sinh(z);
+
+square(z:CC):CC := toCC(z.re^2-z.im^2,2*z.re*z.im);
+export acos(z:CC):CC := idiv(log(z+itimes(sqrt(1-square(z)))));
+export asin(z:CC):CC := idiv(log(sqrt(1-square(z))+itimes(z)));
 
 -- Local Variables:
 -- compile-command: "make -C $M2BUILDDIR/Macaulay2/d "

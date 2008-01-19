@@ -300,6 +300,11 @@ isReal = method()
 isReal RR := isReal QQ := isReal ZZ := x -> true
 isReal CC := z -> imaginaryPart z == 0
 
+acosh = method()
+acosh Number := z -> log(z+sqrt(z^2-1))
+asinh = method()
+asinh Number := z -> log(z+sqrt(z^2+1))
+
 -- Local Variables:
 -- compile-command: "make -C $M2BUILDDIR/Macaulay2/m2 "
 -- End:

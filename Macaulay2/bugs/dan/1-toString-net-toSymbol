@@ -1,0 +1,21 @@
+expose the functionality of getAttribute somehow:
+
+a beginning:
+
+i149 : X = new Type
+
+o149 = X
+
+o149 : Type
+
+i150 : toString X = "foo"
+
+o150 = foo
+
+i151 : X
+
+o151 = foo
+
+o151 : Type
+
+We also want something for "net" and something for "toSymbol"
