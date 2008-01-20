@@ -1,5 +1,7 @@
 --		Copyright 2008 by Daniel R. Grayson
 
+
+
 document { Key => isReal,
      Usage => "isReal x",
      Headline => "whether a number is real",
@@ -8,6 +10,23 @@ document { Key => isReal,
      EXAMPLE lines ///
      isReal 2.
      isReal sqrt(-1)
+     ///
+     }
+
+
+document { Key => isFinite,
+     Usage => "isFinite x",
+     Headline => "whether a number is finite",
+     Inputs => { "x" },
+     Outputs => { Boolean => {"whether ", TT "x", " is finite, i.e., is not an infinite real number, nor
+	       ", EM "not a number", "."} },
+     EXAMPLE lines ///
+     sqrt 2.
+     isFinite oo
+     i = 1/0.
+     isFinite oo
+     i-i
+     isFinite oo
      ///
      }
 

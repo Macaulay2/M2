@@ -785,6 +785,7 @@ export {
 	symbol isDirectSum,
 	symbol isDirectory,
 	symbol isField,
+	symbol isFinite,
 	symbol isFreeModule,
 	symbol isGlobalSymbol,
 	symbol isHomogeneous,
