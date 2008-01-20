@@ -29,6 +29,7 @@ class Monoid : public mutable_object
   int nvars_;
   M2_stringarray varnames_;
   M2_arrayint degvals_;
+  M2_arrayint heftvals_;
   array<const_monomial> degree_of_var_;	// [0]..[nvars-1] are the multi-degrees of the 
 				// variables, and [nvars] = zero element in the 
 				// degree monoid.
@@ -71,7 +72,8 @@ class Monoid : public mutable_object
   Monoid(MonomialOrdering *mo,
 	 M2_stringarray names,
 	 const PolynomialRing *DR, /* degree ring */
-	 M2_arrayint degs);
+	 M2_arrayint degs,
+	 M2_arrayint hefts);
   
   void decode(const_monomial m, exponents result) const;
   void encode(const_exponents exp, monomial esult) const;
@@ -80,9 +82,11 @@ public:
   static Monoid *create(MonomialOrdering *mo,
 			M2_stringarray names,
 			const PolynomialRing *DR, /* degree ring */
-			M2_arrayint degs);
+			M2_arrayint degs,
+			M2_arrayint hefts);
 
-  static Monoid *tensor_product(const Monoid *M1, const Monoid *M2);
+  // dan : commenting this out because it seems to be unused
+  // static Monoid *tensor_product(const Monoid *M1, const Monoid *M2);
 
   ~Monoid();
 

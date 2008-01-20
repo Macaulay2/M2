@@ -10,9 +10,10 @@ Monoid *IM2_Monoid_trivial()
 }
 
 MonoidOrNull *IM2_Monoid_make(MonomialOrdering *mo,
-			M2_stringarray names,
-			Ring *deg_ring,
-			M2_arrayint degs)
+			      M2_stringarray names,
+			      Ring *deg_ring,
+			      M2_arrayint degs,
+			      M2_arrayint hefts)
 {
   const PolynomialRing *P = deg_ring->cast_to_PolynomialRing();
   if (P == 0)
@@ -20,7 +21,7 @@ MonoidOrNull *IM2_Monoid_make(MonomialOrdering *mo,
       ERROR("expected polynomial ring");
       return 0;
     }
-  return Monoid::create(mo,names,P,degs);
+  return Monoid::create(mo,names,P,degs,hefts);
 }
 
 unsigned long IM2_Monoid_hash(Monoid *M)

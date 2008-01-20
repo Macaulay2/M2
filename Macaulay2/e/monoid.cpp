@@ -25,6 +25,7 @@ Monoid::Monoid()
   :  nvars_(0),
      varnames_(0),
      degvals_(0),
+     heftvals_(0),
      degree_ring_(0), // will be set later
      degree_monoid_(0), // will be set later
      mo_(0),
@@ -63,7 +64,8 @@ Monoid *Monoid::get_trivial_monoid()
 Monoid *Monoid::create(MonomialOrdering *mo,
 		       M2_stringarray names,
 		       const PolynomialRing *deg_ring,
-		       M2_arrayint degs)
+		       M2_arrayint degs,
+		       M2_arrayint hefts)
 {
   unsigned int nvars = rawNumberOfVariables(mo);;
   unsigned int eachdeg = deg_ring->n_vars();
@@ -78,18 +80,18 @@ Monoid *Monoid::create(MonomialOrdering *mo,
       return 0;
     }
 
-
-
-  return new Monoid(mo,names,deg_ring,degs);
+  return new Monoid(mo,names,deg_ring,degs,hefts);
 }
 
 Monoid::Monoid(MonomialOrdering *mo,
 	       M2_stringarray names,
 	       const PolynomialRing *deg_ring,
-	       M2_arrayint degs)
+	       M2_arrayint degs,
+	       M2_arrayint hefts)
   :  nvars_(rawNumberOfVariables(mo)),
      varnames_(names),
      degvals_(degs),
+     heftvals_(hefts),
      degree_ring_(deg_ring),
      degree_monoid_(deg_ring->getMonoid()),
      mo_(mo)
@@ -216,6 +218,10 @@ void Monoid::set_overflow_flags()
   assert(k == monomial_size_);
 }
 
+#if 0
+
+// dan : commenting this out because it seems to be unused
+
 Monoid *Monoid::tensor_product(const Monoid *M1, const Monoid *M2)
 {
   int i,v;
@@ -252,8 +258,11 @@ Monoid *Monoid::tensor_product(const Monoid *M1, const Monoid *M2)
     for (i=0; i<ndegs; i++)
       degs->array[next++] = 0;
 
-  return Monoid::create(M,names,DR,degs);
+  return Monoid::create(M,names,DR,degs, /* some hefts have to go here but what could they be??? */);
 }
+
+#endif
+
 
 void Monoid::text_out(buffer &o) const
 {
@@ -283,6 +292,14 @@ void Monoid::text_out(buffer &o) const
 	}
       o << "}";
     }
+
+  o << "," << newline << "  Heft => {";
+  for (i=0; i<heftvals_->len; i++)
+    {
+      if (i != 0) o << ", ";
+      o << heftvals_->array[i];
+    }
+  o << "}";
 
   if (mo_ != 0)
     {

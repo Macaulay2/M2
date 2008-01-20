@@ -447,13 +447,14 @@ setupfun("rawNumberOfInvertibleVariables",rawNumberOfInvertibleVariables);
 -----------------------------------------------------------------------------
 -- monoids
 
-export rawMonoid(mo:RawMonomialOrdering,names:array(string),degreesRing:RawRing,degs:array(int)):Expr := (
+export rawMonoid(mo:RawMonomialOrdering,names:array(string),degreesRing:RawRing,degs:array(int),hefts:array(int)):Expr := (
      when Ccode(RawMonoidOrNull, 
 	  "(engine_RawMonoidOrNull)IM2_Monoid_make(",
 	      "(MonomialOrdering *)", mo, ",",
 	      "(M2_stringarray)", names, ",",
 	      "(Ring *)", degreesRing, ",",
-	      "(M2_arrayint)", degs,
+	      "(M2_arrayint)", degs, ",",
+	      "(M2_arrayint)", hefts,
 	  ")")
      is m:RawMonoid do Expr(m)
      is null do buildErrorPacket(EngineError("internal error: unexplained failure to make raw monoid"))
@@ -461,14 +462,24 @@ export rawMonoid(mo:RawMonomialOrdering,names:array(string),degreesRing:RawRing,
 export rawMonoid(e:Expr):Expr := (
      when e is s:Sequence do
      if length(s) == 0 then Expr(Ccode(RawMonoid,"(engine_RawMonoid)IM2_Monoid_trivial()"))
-     else if length(s) == 4 then 
+     else if length(s) == 5 then 
      when s.0 is mo:RawMonomialOrdering do
      if isSequenceOfStrings(s.1) then (
 	  names := getSequenceOfStrings(s.1);
 	  when s.2 is degreesRing:RawRing do
-	  if isSequenceOfSmallIntegers(s.3) then (
+	  if isSequenceOfSmallIntegers(s.3) then 
+	  if isSequenceOfSmallIntegers(s.4) then (
 	       degs := getSequenceOfSmallIntegers(s.3);
-	       rawMonoid(mo,names,degreesRing,degs))
+	       hefts := getSequenceOfSmallIntegers(s.4);
+	       if length(names) != 0 then (
+	       	    if length(degs) % length(names) != 0 then return buildErrorPacket("expected same number of degrees for each variable");
+	       	    if length(hefts) > length(degs)/length(names) then return buildErrorPacket("more heft values than degree length");
+		    )
+	       else (
+		    if length(degs) > 0 then return buildErrorPacket("degrees but no variables");
+		    );
+	       rawMonoid(mo,names,degreesRing,degs,hefts))
+	  else WrongArg(5,"a sequence of small integers (hefts)")
 	  else WrongArg(4,"a sequence of small integers (flattened degrees)")
 	  else WrongArg(3,"the degrees ring"))
      else WrongArg(2,"a sequence of strings to be used as names")

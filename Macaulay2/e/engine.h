@@ -262,7 +262,8 @@ extern "C" {
   MonoidOrNull *IM2_Monoid_make(MonomialOrdering *mo,
 				M2_stringarray names,
 				Ring *DegreeRing,
-				M2_arrayint degs); /* drg: connected rawMonoid*/
+				M2_arrayint degs,
+				M2_arrayint hefts); /* drg: connected rawMonoid*/
     /* This function will return NULL if the monomial order cannot be handled
        currently, if the first components for each degree are not all
        positive, or under various other "internal" error conditions */

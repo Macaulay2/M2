@@ -213,7 +213,8 @@ makeit1 := (opts) -> (
 	       M.RawMonomialOrdering,
 	       toSequence M.generators / toString,
 	       raw degreesRing degrk,
-	       flatten vardegs));
+	       flatten vardegs,
+	       flatten opts.Heft));
      raw M := x -> x.RawMonomial;
      net M := x -> net expression x;
      M ? M := (x,y) -> rawCompareMonomial(raw M, raw x, raw y);
@@ -336,24 +337,20 @@ makeMonoid := (opts) -> (
      heft := opts.Heft;
      if heft === null then (
 	  -- ... how to choose it in this case? ...
-	  heft = {1};
+	  heft = if degrk > 0 then {1} else {};
 	  )
      else (
 	  if not instance(heft,List) or not all(heft,i -> instance(i,ZZ)) then error "expected Heft option to be a list of integers";
 	  -- if #heft != degrk then error("expected Heft option to be of length ", degrk, " to match the degree rank");
 	  );
-     warned := false;
---  these warning message are boring:
---      scan(degs, d -> if not sum(min(#heft,#d),i->heft#i * d#i) > 0 then (
--- 	       if opts.Heft === null
--- 	       then (
--- 		    if warned then return;
--- 		    warned = true;
--- 		    stderr << "-- warning: some variables have non-positive resulting heft" << endl;
--- 		    stderr << "--          use Heft option to specify a positive form" << endl;
--- 		    )
--- 	       else error "Heft option doesn't yield a positive value for each variable"
--- 	       ));
+-- We can't check the hefts are positive here, because in a ring like QQ[b][x] the variable b has degree 0.
+-- And we like that.
+--     if degrk > 0 then
+--     scan(degs, d -> if not sum apply(take(d,#heft), take(heft,#d), times) > 0 then (
+--	       error if opts.Heft === null
+--	       then "first component of each degree should be positive, or Heft option should be used"
+--	       else ("Heft option ",toString toList heft," should yield a positive value for each variable")
+--	       ));
      opts.Heft = heft;
      opts = new OptionTable from opts;
      makeit1 opts)
@@ -400,7 +397,11 @@ tensor(Monoid, Monoid) := Monoid => options -> (M,N) -> (
      if opts.MonomialOrder === null 
      then opts.MonomialOrder = trimMO join(Mopts.MonomialOrder,Nopts.MonomialOrder); -- product order
      processDegrees(opts.Degrees, null, length opts.Variables);	-- just for the error messages
-     if opts.Heft === null and opts.Degrees === null then opts.Heft = join(Mopts.Heft,Nopts.Heft);
+     if opts.Heft === null and opts.Degrees === null then (
+	  mh := Mopts.Heft;
+	  mh = apply(Mopts.DegreeRank, i -> if mh#?i then mh#i else 0);
+	  opts.Heft = join(mh,Nopts.Heft);
+	  );
      if opts.Degrees === null and opts.DegreeRank === null then (
 	  M0 := apply(Mopts.DegreeRank, i -> 0);
 	  N0 := apply(Nopts.DegreeRank, i -> 0);
