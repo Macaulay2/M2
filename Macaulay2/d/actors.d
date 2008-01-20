@@ -565,40 +565,85 @@ export (lhs:Expr) ^ (rhs:Expr) : Expr := (
      is x:ZZ do (
 	  when rhs
 	  is y:ZZ do (
-	       if y >= 0 then Expr(x^y) 
+	       if !isNegative(y) then Expr(x^y) 
 	       else if x === 1 then Expr(x)
 	       else if x === -1 then (
 		    if int(y%ushort(2)) == 0
 		    then Expr(toInteger(1))
 		    else Expr(toInteger(-1)))
 	       else Expr(newRationalCanonical(toInteger(1),x^-y)))
-	  is y:RR do (
-	       if isInt(x) then (
-		    n := toInt(x);
-		    if n<0 then WrongArg(1,"a nonnegative integer")
-		    else Expr(uint(n) ^ y)
+	  is y:QQ do (
+	       d := denominator(y);
+	       if d === 1 then Expr(x^numerator(y))
+	       else if isNegative(x)
+	       then if isOdd(d) then (
+		    if isOdd(numerator(y))
+		    then Expr(-toRR(-x)^toRR(y))
+		    else Expr( toRR(-x)^toRR(y))
 		    )
-	       else Expr(toRR(x,precision(y)) ^ y)
+	       else Expr(toCC(x)^toRR(y))
+	       else Expr(toRR(x)^toRR(y))
 	       )
+	  is y:RR do (
+	       if isULong(x) then Expr(toULong(x) ^ y)
+	       else if isNegative(x)
+	       then Expr(toCC(x,precision(y))^y)
+	       else Expr(toRR(x,precision(y))^y)
+	       )
+	  is y:CC do Expr(toRR(x,precision(y))^y)
      	  is Error do rhs
 	  else binarymethod(lhs,rhs,PowerS))
      is x:QQ do (
 	  when rhs
 	  is y:ZZ do Expr(x^y)
-	  is y:RR do Expr(toRR(x,precision(y)) ^ y)
+	  is y:QQ do (
+	       d := denominator(y);
+	       if d === 1 then Expr(x^numerator(y))
+	       else if isNegative(x)
+	       then if isOdd(d) then (
+		    if isOdd(numerator(y))
+		    then Expr(-toRR(-x)^toRR(y))
+		    else Expr( toRR(-x)^toRR(y))
+		    )
+	       else Expr(toCC(x)^toRR(y))
+	       else Expr(toRR(x)^toRR(y))
+	       )
+	  is y:RR do (
+	       if isNegative(x)
+	       then Expr(toCC(x,precision(y))^y)
+	       else Expr(toRR(x,precision(y))^y))
+	  is y:CC do Expr(toRR(x,precision(y))^y)
      	  is Error do rhs
 	  else binarymethod(lhs,rhs,PowerS))
      is x:RR do (
 	  when rhs
 	  is y:ZZ do Expr(x^y)
-	  is y:QQ do Expr(x ^ toRR(y,precision(x)))
-	  is y:RR do Expr(x^y)
+	  is y:QQ do (
+	       d := denominator(y);
+	       if d === 1 then Expr(x^numerator(y))
+	       else if isNegative(x)
+	       then if isOdd(d) then (
+		    if isOdd(numerator(y))
+		    then Expr(-(-x)^toRR(y,precision(x)))
+		    else Expr( (-x)^toRR(y,precision(x)))
+		    )
+	       else Expr(toCC(x)^toRR(y,precision(x)))
+	       else Expr(x^toRR(y,precision(x)))
+	       )
+	  is y:RR do (
+	       if isNegative(x)
+	       then Expr(toCC(x)^y)
+	       else Expr(     x ^y)
+	       )
+	  is y:CC do Expr(x^y)
      	  is Error do rhs
 	  else binarymethod(lhs,rhs,PowerS))
      is x:CC do (
 	  when rhs
-	  -- DO THESE
-	  -- is y:ZZ do Expr(x^y)
+	  is y:ZZ do Expr(x^toRR(y,precision(x)))
+	  is y:QQ do Expr(x^toRR(y,precision(x)))
+	  is y:RR do Expr(x^y)
+	  is y:CC do Expr(x^y)
      	  is Error do rhs
 	  else binarymethod(lhs,rhs,PowerS))
      is x:RawRingElement do (
@@ -996,6 +1041,16 @@ subvalueQ(lhs:Code,rhs:Code):Expr := (
       	  when right is Error do right
       	  else subvalueQ(left,right)));
 setup(SharpQuestionS,subvalueQ);
+
+isFinite(e:Expr):Expr := (
+     when e
+     is x:ZZ do True
+     is x:QQ do True
+     is x:RR do toExpr(isfinite(x))
+     is x:CC do toExpr(isfinite(x))
+     else WrongArg("a number")
+     );
+setupfun("isFinite",isFinite);
 
 -- Local Variables:
 -- compile-command: "make -C $M2BUILDDIR/Macaulay2/d "

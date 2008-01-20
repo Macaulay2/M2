@@ -22,9 +22,15 @@ export (o:file) << (s:Cstring) : file := o << if s == null() then "(null)" else 
 export limbPointer := {limbPointer:void} or null;
 export ZZ := { alloc:int, size:int, limbs:limbPointer};
 
-isPositive(x:ZZ):bool ::=  1 == Ccode(int, "mpz_sgn((__mpz_struct *)", x, ")");
-isZero    (x:ZZ):bool ::=  0 == Ccode(int, "mpz_sgn((__mpz_struct *)", x, ")");
-isNegative(x:ZZ):bool ::= -1 == Ccode(int, "mpz_sgn((__mpz_struct *)", x, ")");
+isPositive0(x:ZZ):bool ::=  1 == Ccode(int, "mpz_sgn((__mpz_struct *)", x, ")");
+isZero0    (x:ZZ):bool ::=  0 == Ccode(int, "mpz_sgn((__mpz_struct *)", x, ")");
+isNegative0(x:ZZ):bool ::= -1 == Ccode(int, "mpz_sgn((__mpz_struct *)", x, ")");
+
+export isPositive(x:ZZ):bool := isPositive0(x);
+export isZero    (x:ZZ):bool := isZero0(x);
+export isNegative(x:ZZ):bool := isNegative0(x);
+export isEven    (x:ZZ):bool := Ccode(bool, "mpz_even_p((__mpz_struct *)", x, ")");
+export isOdd     (x:ZZ):bool := Ccode(bool, "mpz_odd_p((__mpz_struct *)", x, ")");
 
 export isInt(x:ZZ):bool := 0 != Ccode(int, "mpz_fits_sint_p((__mpz_struct *)", x, ")");
 export toInt(x:ZZ):int  := int(Ccode(long, "mpz_get_si((__mpz_struct *)", x, ")"));
@@ -135,7 +141,7 @@ abs(x:ZZ, y:ZZ):void ::= Ccode( void,
      );
 
 export abs(x:ZZ) : ZZ := (
-     if isNegative(x) then (
+     if isNegative0(x) then (
 	  y := ZZ(0,0,null());
 	  init(y);
 	  abs(y,x);
@@ -251,13 +257,13 @@ pow(x:ZZ, y:ZZ, n:ulong):void ::= Ccode( void,
      );
 
 export (x:ZZ) ^ (n:ulong) : ZZ := (
-     if isZero(x) then return x;
+     if isZero0(x) then return x;
      y := newZZ();
      pow(y,x,n);
      y);
 
 export (x:ZZ) ^ (n:ZZ) : ZZ := (
-     if isNegative(n) then fatal("internal error: negative exponent for integer power"); -- what else can we do???
+     if isNegative0(n) then fatal("internal error: negative exponent for integer power"); -- what else can we do???
      if !isULong(n) then fatal("integer exponent too large");
      x^toULong(n));
 
@@ -286,7 +292,7 @@ fdiv(x:ZZ, y:ZZ, z:ZZ):void ::= Ccode( void,
 export (x:ZZ) // (y:ZZ) : ZZ := (
      z := ZZ(0,0,null());
      init(z);
-     if isPositive(y) then fdiv(z,x,y) else cdiv(z,x,y);
+     if isPositive0(y) then fdiv(z,x,y) else cdiv(z,x,y);
      z);
 
 divexact(x:ZZ, y:ZZ):ZZ := (
@@ -321,7 +327,7 @@ cmod(x:ZZ, y:ZZ, z:ZZ):void ::= Ccode( void,
 export (x:ZZ) % (y:ZZ) : ZZ := (
      z := ZZ(0,0,null());
      init(z);
-     if isPositive(y) then fmod(z,x,y) else cmod(z,x,y);
+     if isPositive0(y) then fmod(z,x,y) else cmod(z,x,y);
      z);
 
 fdiv(x:ZZ, y:ZZ, z:ulong):void ::= Ccode( void,
@@ -565,7 +571,8 @@ denominatorRef(x:QQ):ZZ ::= Ccode( ZZ,
 
 export hash(x:QQ):int := hash(numeratorRef(x))+1299841*hash(denominatorRef(x));
 
-isNegative(x:QQ):bool := -1 == Ccode(int, "mpq_sgn((__mpq_struct*)",x,")");
+isNegative0(x:QQ):bool := -1 == Ccode(int, "mpq_sgn((__mpq_struct*)",x,")");
+export isNegative(x:QQ):bool := isNegative0(x);
 
 init(x:QQ):void ::= Ccode( void, "mpq_init(", "(__mpq_struct *)", x, ")" );
 
@@ -629,7 +636,7 @@ export - (y:QQ) : QQ := (
      );
      z);
 
-export abs(x:QQ) : QQ := if isNegative(x) then -x else x;
+export abs(x:QQ) : QQ := if isNegative0(x) then -x else x;
 
 export inv(y:QQ) : QQ := (			    -- reciprocal
      z := newRational();
@@ -782,10 +789,13 @@ export CC := { re:RR, im:RR };			    -- must agree with M2_CC in M2types.h
 export realPart(z:CC):RR := z.re;
 export imaginaryPart(z:CC):RR := z.im;
 
-isPositive(x:RR):bool ::=  1 == Ccode(int, "mpfr_sgn((__mpfr_struct *)", x, ")");
-isZero    (x:RR):bool ::=  0 == Ccode(int, "mpfr_sgn((__mpfr_struct *)", x, ")");
-isNegative(x:RR):bool ::= -1 == Ccode(int, "mpfr_sgn((__mpfr_struct *)", x, ")");
+isPositive0(x:RR):bool ::=  1 == Ccode(int, "mpfr_sgn((__mpfr_struct *)", x, ")");
+isZero0    (x:RR):bool ::=  0 == Ccode(int, "mpfr_sgn((__mpfr_struct *)", x, ")");
+isNegative0(x:RR):bool ::= -1 == Ccode(int, "mpfr_sgn((__mpfr_struct *)", x, ")");
 
+export isPositive(x:RR):bool := isPositive0(x);
+export isZero    (x:RR):bool := isZero0(x);
+export isNegative(x:RR):bool := isNegative0(x);
 
 export defaultPrecision := ulong(53); -- should 53 be computed?
 
@@ -1050,7 +1060,7 @@ export (x:RR) - (y:QQ) : RR := (
      );
      z);
 
-export abs(x:RR) : RR := if isNegative(x) then -x else x;
+export abs(x:RR) : RR := if isNegative0(x) then -x else x;
 export (x:RR) * (y:RR) : RR := (
      z := newRR(min(precision0(x),precision0(y)));
      Ccode( void,
@@ -1184,7 +1194,7 @@ export pow10(n:long,prec:ulong):RR := (
      else pow10(ulong(n),prec));
 export pow10(n:int,prec:ulong):RR := pow10(long(n),prec);
 
-export (n:uint) ^ (x:RR) : RR := (
+export (n:ulong) ^ (x:RR) : RR := (
      z := newRR(precision0(x));
      Ccode( void, "mpfr_ui_pow(", "(__mpfr_struct *)", z, ",", n, ",", "(__mpfr_struct *)", x, ", GMP_RNDN)" );
      z);
@@ -1661,6 +1671,14 @@ export csch(z:CC):CC := 1/sinh(z);
 square(z:CC):CC := toCC(z.re^2-z.im^2,2*z.re*z.im);
 export acos(z:CC):CC := idiv(log(z+itimes(sqrt(1-square(z)))));
 export asin(z:CC):CC := idiv(log(sqrt(1-square(z))+itimes(z)));
+
+export (x:CC) ^ (y:CC):CC := exp(log(x)*y);
+export (x:CC) ^ (y:RR):CC := exp(log(x)*y);
+export (x:RR) ^ (y:CC):CC := if isNegative(x) then exp(log(toCC(x))*y) else exp(log(x)*y);
+
+export isfinite(x:CC):bool := isfinite0(x.re) && isfinite0(x.im);
+export isinf(x:CC):bool := isinf0(x.re) || isinf0(x.im);
+export isnan(x:CC):bool := isnan0(x.re) || isnan0(x.im);
 
 -- Local Variables:
 -- compile-command: "make -C $M2BUILDDIR/Macaulay2/d "
