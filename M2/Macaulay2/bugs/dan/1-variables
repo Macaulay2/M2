@@ -1,0 +1,26 @@
+-- -*- M2 -*-
+
+make these work:
+
+QQ["x"]
+QQ["x,y"]
+i=3
+QQ["x,y_i"]
+QQ["x_1 .. x_4"]
+
+for that, in addition to
+
+  replace(String, String, String)
+
+it would be useful first to have
+
+  replace(String, ZZ, String, String)		-- replace n-th parenthesized subexpression with a string
+
+  replace(String, ZZ, Function,String)	   	-- replace n-th parenthesized subexpression with result of a function application
+
+Then we could do this:
+
+     value replace("(^|,|\\.\\.)[[:space:]]*([[:alnum:]$]+)", 2, s -> "symbol " | s, arg)
+
+to process the string.
+
