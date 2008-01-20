@@ -473,11 +473,12 @@ export rawMonoid(e:Expr):Expr := (
 	       hefts := getSequenceOfSmallIntegers(s.4);
 	       if length(names) != 0 then (
 	       	    if length(degs) % length(names) != 0 then return buildErrorPacket("expected same number of degrees for each variable");
+	       	    if length(hefts) > length(degs)/length(names) then return buildErrorPacket("more heft values than degree length");
 		    )
 	       else (
 		    if length(degs) > 0 then return buildErrorPacket("degrees but no variables");
+		    if length(hefts) > 0 then return buildErrorPacket("hefts but no variables");
 		    );
-	       if length(hefts) != length(names) then return buildErrorPacket("number of heft values and number variables should be the same");
 	       rawMonoid(mo,names,degreesRing,degs,hefts))
 	  else WrongArg(5,"a sequence of small integers (hefts)")
 	  else WrongArg(4,"a sequence of small integers (flattened degrees)")
