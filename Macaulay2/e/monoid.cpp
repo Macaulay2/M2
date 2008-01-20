@@ -293,7 +293,7 @@ void Monoid::text_out(buffer &o) const
       o << "}";
     }
 
-  o << "," << newline << "  HeftValues => {";
+  o << "," << newline << "  Heft => {";
   for (i=0; i<heftvals_->len; i++)
     {
       if (i != 0) o << ", ";
