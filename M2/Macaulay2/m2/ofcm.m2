@@ -42,7 +42,8 @@ monoidParts := (M) -> (
      join(
 	  if M.?generatorExpressions then M.generatorExpressions else {},
 	  if any(o.Degrees, i -> i =!= {1}) then {Degrees => o.Degrees} else {},
-	  if any(o.Heft, i -> i =!= 1) then {Heft => o.Heft} else {},
+	  {Heft => o.Heft},				    -- too boring?
+	  -- if any(o.Heft, i -> i =!= 1) then {Heft => o.Heft} else {}, -- ??
 	  select(
 	       { MonomialOrder, MonomialSize, WeylAlgebra, SkewCommutative, Inverses }
 	       / (key -> if o#key =!= O#key then key => o#key),
@@ -162,6 +163,9 @@ RingElement _ Ring := RingElement => (x,R) -> (
      else error "failed to interpret ring element in ring"
      )
 
+dot := (h,d) -> sum apply(take(h,#d), take(d,#h), times)	    -- dot product, as much as there is...
+dots := (h,v) -> apply(v,d -> dot(h,d))
+
 madeTrivialMonoid := false
 
 makeit1 := (opts) -> (
@@ -214,7 +218,7 @@ makeit1 := (opts) -> (
 	       toSequence M.generators / toString,
 	       raw degreesRing degrk,
 	       flatten vardegs,
-	       flatten opts.Heft));
+	       dots(opts.Heft,vardegs)));
      raw M := x -> x.RawMonomial;
      net M := x -> net expression x;
      M ? M := (x,y) -> rawCompareMonomial(raw M, raw x, raw y);
@@ -336,13 +340,14 @@ makeMonoid := (opts) -> (
 
      heft := opts.Heft;
      if heft === null then (
-	  -- ... how to choose it in this case? ...
-	  heft = if degrk > 0 then {1} else {};
-	  )
-     else (
-	  if not instance(heft,List) or not all(heft,i -> instance(i,ZZ)) then error "expected Heft option to be a list of integers";
-	  -- if #heft != degrk then error("expected Heft option to be of length ", degrk, " to match the degree rank");
+	  -- ... how to choose it in this case???
+	  heft = if degrk > 0 then splice {1, degrk-1 : 0} else {};
 	  );
+     if not instance(heft,List) or not all(heft,i -> instance(i,ZZ)) then error "expected Heft option to be a list of integers";
+
+     if #heft > degrk then error("expected Heft option to be of length at most the degree rank (", degrk, ")");
+     --- if #heft != degrk then error("expected Heft option to be of length ", degrk, " to match the degree rank");
+
 -- We can't check the hefts are positive here, because in a ring like QQ[b][x] the variable b has degree 0.
 -- And we like that.
 --     if degrk > 0 then
