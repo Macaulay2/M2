@@ -12,7 +12,7 @@ dim K, degree K
 R = ZZ/7[y, x, MonomialOrder=>Lex];
 I = ideal (y^3*x^2 + 2*y^2*x + 3*x*y,  3*y^2 + x*y - 3*y);
 J = saturate(I, ideal(y))
-factor(J_0)
+factor(J_1)
 load "realroots.m2"
 code eliminant
 code regularRep
