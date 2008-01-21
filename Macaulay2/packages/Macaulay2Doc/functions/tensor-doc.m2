@@ -147,16 +147,12 @@ TEST /// --Errors in the above code
 kk = ZZ/101
 A = kk[a,b]
 B = kk[c,d,e]
-
+-- this test doesn't test much.  Why?
 describe (C = tensor(A,B,MonomialOrder=>Eliminate numgens A))
--- basis(2,C) -- bug
 describe (C = tensor(A,B,MonomialOrder=>GRevLex)) 
--- basis(2,C) -- bug
-
 describe tensor(A,B,Degrees=>{5:1}) -- BUG
 describe tensor(A,B,WeylAlgebra=>{a=>c}) -- ignores it	  	  
 describe tensor(A,B,DegreeRank=>3) -- weird behavior BUG
-describe tensor(A,B,Heft=>{1,1,1}) -- incorrect BUG: should be forced to be the length DegreeRank
 describe(C = tensor(A,B,Inverses=>true,MonomialOrder=>RevLex)) -- allowed, but not appropriate here
      
 describe tensor(A,B,Weights=>{1,2,3,4,5}) -- ignored?

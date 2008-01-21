@@ -1,3 +1,6 @@
+--status: this old test depends on internal things and probably should be deleted
+
+
 -- Test of the routines for mutable matrices
 
 -- Test: 

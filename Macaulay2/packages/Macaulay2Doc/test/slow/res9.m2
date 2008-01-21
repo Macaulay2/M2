@@ -1,3 +1,5 @@
+--status: this old test depends on internal things and probably should be deleted
+
 -- this test takes 40 seconds and 220MB with my debug version
 
 ----------------------------------

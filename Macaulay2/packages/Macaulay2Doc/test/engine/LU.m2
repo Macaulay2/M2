@@ -1,3 +1,5 @@
+--status: memory is getting trashed and M2 can crash here, should be fixed
+
 ------------------------------
 -- Test of LU decomposition --
 ------------------------------

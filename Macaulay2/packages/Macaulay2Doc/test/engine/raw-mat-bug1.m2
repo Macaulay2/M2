@@ -1,3 +1,6 @@
+--status: this old test depends on internal things and probably should be deleted
+
+
 needs "raw-util.m2"
 -- This used to cause problems
 R = polyring(rawZZ(), (vars 0 .. vars 15))

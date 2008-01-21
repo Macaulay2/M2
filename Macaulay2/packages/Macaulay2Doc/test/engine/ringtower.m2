@@ -1,3 +1,6 @@
+--status: this old test depends on internal things and probably should be deleted
+
+
 -- test towers of rings at top level
 
 load "raw-util.m2"
