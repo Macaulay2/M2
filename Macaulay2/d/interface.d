@@ -477,7 +477,8 @@ export rawMonoid(e:Expr):Expr := (
 		    )
 	       else (
 		    if length(degs) > 0 then return buildErrorPacket("degrees but no variables");
-		    if length(hefts) > 0 then return buildErrorPacket("hefts but no variables");
+		    -- omit this test so ZZ[] will work:
+		    -- if length(hefts) > 0 then return buildErrorPacket("hefts but no variables");
 		    );
 	       rawMonoid(mo,names,degreesRing,degs,hefts))
 	  else WrongArg(5,"a sequence of small integers (hefts)")
