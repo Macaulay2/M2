@@ -124,7 +124,7 @@
 (defvar M2-command (concat M2-exe " --no-readline --print-width " (number-to-string (- (window-width) 1)) " ") "*The default Macaulay2 command line.")
 (defvar M2-history (list M2-command) "The history of recent Macaulay2 command lines.")
 (defvar M2-send-to-buffer "*M2*" "*The default buffer that \\[M2-send-to-program] sends input to.")
-(defvar M2-el-version "$Revision$ $HeadURL$")
+(defvar M2-el-version "$Revision$ $URL$")
 (make-variable-buffer-local 'M2-send-to-buffer)
 
 (defun M2-add-width-option (command)
