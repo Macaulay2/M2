@@ -29,6 +29,9 @@
   (M2-common)
   )
 
+;; give up trying to fix this:
+;; (defcustom ansi-color-for-comint-mode nil "...")
+
 (define-derived-mode M2-comint-mode comint-mode "Macaulay 2 Interaction"
   "Major mode for interacting with a Macaulay 2 process.
 
@@ -37,7 +40,8 @@
   (setq comint-prompt-regexp M2-comint-prompt-regexp)
   (setq comint-use-prompt-regexp-instead-of-fields t)
   (set (make-local-variable 'comint-dynamic-complete-functions) '( M2-dynamic-complete-symbol comint-dynamic-complete-filename))
-  (set (make-local-variable 'ansi-color-for-comint-mode-on) nil)
+  ;; give up trying to fix this:
+  ;; (set (make-local-variable 'ansi-color-for-comint-mode-on) nil)
   )
 
 (defun M2-common()
