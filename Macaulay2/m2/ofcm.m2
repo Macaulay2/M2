@@ -171,7 +171,8 @@ makeit1 := (opts) -> (
      varlist := baseName \ opts.Variables;
      numvars := # varlist;
      vardegs := M.degrees = opts.Degrees;
-     degrk := M.degreeLength = if vardegs#?0 then # vardegs#0 else 0;
+     degrk := M.degreeLength = opts.DegreeRank;
+     assert( degrk =!= null );
      order := transpose vardegs;
      variableOrder := toList (0 .. numvars-1);
      M.generatorSymbols = varlist;
@@ -312,10 +313,7 @@ makeMonoid := (opts) -> (
 			 error (msg,newline,toString (preX | silentRobustNetWithClass(pw - width  preX, 5, 3, v#i)))))));
      -- if length unique opts.Variables < length opts.Variables then error "at least one variable listed twice";
 
-     (degs,degrk) := processDegrees(
-	  opts.Degrees,
-	  if opts.Degrees === null then opts.DegreeRank else null, -- let the Degrees option override the DegreeRank option
-	  length opts.Variables);
+     (degs,degrk) := processDegrees( opts.Degrees, opts.DegreeRank, length opts.Variables );
      opts.Degrees = degs;
      opts.DegreeRank = degrk;
 
@@ -398,18 +396,19 @@ tensor(Monoid, Monoid) := Monoid => options -> (M,N) -> (
      if opts.MonomialOrder === null 
      then opts.MonomialOrder = trimMO join(Mopts.MonomialOrder,Nopts.MonomialOrder); -- product order
      processDegrees(opts.Degrees, null, length opts.Variables);	-- just for the error messages
-     if opts.Heft === null and opts.Degrees === null then (
-	  mh := Mopts.Heft;
-	  mh = apply(Mopts.DegreeRank, i -> if mh#?i then mh#i else 0);
-	  opts.Heft = join(mh,Nopts.Heft);
-	  );
      if opts.Degrees === null and opts.DegreeRank === null then (
 	  M0 := apply(Mopts.DegreeRank, i -> 0);
 	  N0 := apply(Nopts.DegreeRank, i -> 0);
           opts.Degrees = join(
 	       apply(Mopts.Degrees, d -> join(d,N0)),
 	       apply(Nopts.Degrees, e -> join(M0,e))
-	       ));
+	       );
+	  if opts.Heft === null then (
+	       assert( # Mopts.Heft == Mopts.DegreeRank );
+	       assert( # Nopts.Heft == Nopts.DegreeRank );
+	       opts.Heft = join(Mopts.Heft,Nopts.Heft);
+	       );
+	  );
      opts.Inverses = if opts.Inverses === null then Mopts.Inverses or Nopts.Inverses else opts.Inverses;
      wfix := (M,w,bump) -> (
 	  if class w === Option then w = {w};

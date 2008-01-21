@@ -412,6 +412,9 @@ utest := opt -> (
      )
 ulimit := null
 
+M2statusRegexp := "^--status:"
+statusLines := file -> stack select(lines file, s -> match(M2statusRegexp,s))
+
 M2errorRegexp := "^[^:\n]+:[0-9]+:[0-9]+:\\([0-9]+\\): "
 aftermatch := (pat,str) -> (
      m := regex(pat,str);
@@ -443,8 +446,9 @@ runFile := (inf,inputhash,outf,tmpf,desc,pkg,announcechange,rundir,usermode) -> 
 	       exit r;
 	       );
 	  stderr << tmpf << ":0: (output file) error return code: (" << r//256 << "," << r%256 << ")" << endl;
-	  stderr << inf  << ":0: (input file)" << endl;
 	  stderr << aftermatch(M2errorRegexp,get tmpf);
+	  stderr << inf  << ":0: (input file)" << endl;
+	  stderr << statusLines get inf;
 	  if r == 131 then (
 	       stderr << "subprocess terminated abnormally, exiting" << endl;
 	       exit r;

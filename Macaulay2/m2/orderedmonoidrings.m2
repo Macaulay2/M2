@@ -151,6 +151,8 @@ Ring OrderedMonoid := PolynomialRing => (			  -- no memoize
 	       then ( 
 		    R.basering, 
 		    tensor(M, R.flatmonoid,
+			 DegreeRank => M.Options.DegreeRank,
+			 Heft => M.Options.Heft,
 			 Degrees => (
 			      degrees M
 			      |
@@ -160,8 +162,7 @@ Ring OrderedMonoid := PolynomialRing => (			  -- no memoize
 				   if degreeLength R.flatmonoid =!= degreeLength M then error "expected coefficient ring to have the same degree length";
 				   degrees R.flatmonoid
 				   )
-			      ),
-			 Heft => M.Options.Heft
+			      )
 			 ),
 		    num + R.numallvars)
 	       else if instance(R,FractionField) then (R,M,num)
