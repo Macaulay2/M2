@@ -1,0 +1,5 @@
+random(Module, Module) is still going element by element
+
+now that fillMatrix can fill a mutable matrix so quickly with constants,
+we can speed up random(Module, Module)
+
