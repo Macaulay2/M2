@@ -36,7 +36,8 @@
   (M2-common)
   (setq comint-prompt-regexp M2-comint-prompt-regexp)
   (setq comint-use-prompt-regexp-instead-of-fields t)
-  (setq comint-dynamic-complete-functions '( M2-dynamic-complete-symbol comint-dynamic-complete-filename))
+  (set (make-local-variable 'comint-dynamic-complete-functions) '( M2-dynamic-complete-symbol comint-dynamic-complete-filename))
+  (set (make-local-variable 'ansi-color-for-comint-mode-on) nil)
   )
 
 (defun M2-common()
@@ -123,6 +124,7 @@
 (defvar M2-command (concat M2-exe " --no-readline --print-width " (number-to-string (- (window-width) 1)) " ") "*The default Macaulay2 command line.")
 (defvar M2-history (list M2-command) "The history of recent Macaulay2 command lines.")
 (defvar M2-send-to-buffer "*M2*" "*The default buffer that \\[M2-send-to-program] sends input to.")
+(defvar M2-el-version "$Revision$ $HeadURL$")
 (make-variable-buffer-local 'M2-send-to-buffer)
 
 (defun M2-add-width-option (command)
