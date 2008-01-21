@@ -1671,7 +1671,11 @@ export csch(z:CC):CC := 1/sinh(z);
 square(z:CC):CC := toCC(z.re^2-z.im^2,2*z.re*z.im);
 export acos(z:CC):CC := idiv(log(z+itimes(sqrt(1-square(z)))));
 export asin(z:CC):CC := idiv(log(sqrt(1-square(z))+itimes(z)));
-
+export abs2(z:CC):RR := z.re^2 + z.im^2;
+export atan(x:CC):CC := (
+     ss := abs2(x);
+     y2 := x.im << 1;
+     toCC( atan2(x.re<<1,1-ss)>>1, log((ss+1+y2)/(ss+1-y2))>>2 ));
 export (x:CC) ^ (y:CC):CC := exp(log(x)*y);
 export (x:CC) ^ (y:RR):CC := exp(log(x)*y);
 export (x:RR) ^ (y:CC):CC := if isNegative(x) then exp(log(toCC(x))*y) else exp(log(x)*y);
@@ -1679,6 +1683,7 @@ export (x:RR) ^ (y:CC):CC := if isNegative(x) then exp(log(toCC(x))*y) else exp(
 export isfinite(x:CC):bool := isfinite0(x.re) && isfinite0(x.im);
 export isinf(x:CC):bool := isinf0(x.re) || isinf0(x.im);
 export isnan(x:CC):bool := isnan0(x.re) || isnan0(x.im);
+
 
 -- Local Variables:
 -- compile-command: "make -C $M2BUILDDIR/Macaulay2/d "
