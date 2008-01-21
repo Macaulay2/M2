@@ -1,3 +1,6 @@
+--status: this old test depends on internal things and probably should be deleted
+
+
 --		Copyright 1996-2004 by Daniel R. Grayson
 
 -- test engine.d, interface.d, and engine.m2

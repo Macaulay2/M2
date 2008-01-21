@@ -1,3 +1,6 @@
+--status: this old test depends on internal things and probably should be deleted
+
+
 -- Test of the raw resolution routines
 
 needs "raw-util.m2"

@@ -1,3 +1,6 @@
+--status: this old test depends on internal things and probably should be deleted
+
+
 -- Continuation of raw test routines for the engine
 
 -----------------------------------------

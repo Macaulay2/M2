@@ -12,8 +12,12 @@ include Makefile.test
 all check clean ::
 	$(MAKE) -k -C slow $@
 
-all check clean ::
+clean ::
 	$(MAKE) -k -C engine $@
+
+# the raw engine tests are obsolete!
+all check ::
+ 	: skipping: $(MAKE) -k -C engine $@
 
 ifneq "@DUMPDATA@" "no"
 RESULTS += dumpdata.out
@@ -29,10 +33,10 @@ Makefile : Makefile.in; cd $(DOTS)/..; ./config.status Macaulay2/packages/Macaul
 Makefile.test : Makefile.test.in; cd $(DOTS)/..; ./config.status Macaulay2/packages/Macaulay2Doc/test/Makefile.test
 
 status ::
-	$(MAKE) -C engine $@
+	: skipping: $(MAKE) -C engine $@
 	$(MAKE) -C slow $@
-	: $(MAKE) -C goals $@
-	: $(MAKE) -C gigantic $@
+	: skipping: $(MAKE) -C goals $@
+	: skipping: $(MAKE) -C gigantic $@
 
 MIKE_TESTS := $(wildcard @srcdir@/mt-*.m2 @srcdir@/gigantic/mt-*.m2)
 MIKE_RESULTS := $(patsubst @srcdir@/%.m2, %.out, $(MIKE_TESTS))

@@ -1,3 +1,7 @@
+--status: this old test depends on internal things and probably should be deleted
+
+
+
 -- gbTrace = 1
 oops := () -> stderr << "warning: segmentation fault commented out" << endl
 chk  := () -> stderr << "warning: error commented out" << endl

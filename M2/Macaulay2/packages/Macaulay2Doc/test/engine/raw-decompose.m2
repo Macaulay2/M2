@@ -1,3 +1,6 @@
+--status: this old test depends on internal things and probably should be deleted
+
+
 -- test of routines from libfac and factory
 -- and the resulting routines in factor.m2 (e.g. decompose)
 

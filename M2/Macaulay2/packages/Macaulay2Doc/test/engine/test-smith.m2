@@ -1,3 +1,6 @@
+--status: this old test depends on internal things and probably should be deleted
+
+
 needs "raw-util.m2"
 -- need getRing for mutable matrices
 reduceRowsCols = (p,i,j) -> (

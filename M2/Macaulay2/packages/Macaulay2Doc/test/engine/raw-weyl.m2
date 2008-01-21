@@ -1,3 +1,6 @@
+--status: this old test depends on internal things and probably should be deleted
+
+
 load "raw-util.m2"
 WP = rawPolynomialRing(rawQQ(), singlemonoid{x,y,Dx,Dy})
 W = rawWeylAlgebra(WP, {0,1}, {2,3}, -1)
