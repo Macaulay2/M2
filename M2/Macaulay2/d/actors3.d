@@ -878,6 +878,7 @@ BesselY(e:Expr):Expr := (
 setupfun("BesselY",BesselY);
 atan(e:Expr):Expr := (
      when e
+     is x:CC do Expr(atan(x))				    -- # typical value: atan, CC, CC
      is x:RR do Expr(atan(x))				    -- # typical value: atan, RR, RR
      is x:ZZ do Expr(atan(toRR(x)))			    -- # typical value: atan, ZZ, RR
      is x:QQ do Expr(atan(toRR(x)))	       -- # typical value: atan, QQ, RR

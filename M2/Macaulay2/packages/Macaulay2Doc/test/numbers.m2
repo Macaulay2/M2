@@ -398,7 +398,7 @@ assert( 0*(1-ii) === 0.*(1-ii) )
 epsilon = 10 * 2.^-defaultPrecision
 small = z -> abs z < epsilon
 see = z -> (<< "see: " << z << endl; z)
-scan( {exp,log,sin,cos,sinh,cosh,tanh,coth,asin,acos,asinh,acosh}, 
+scan( {exp,log,sin,cos,sinh,cosh,tanh,coth,asin,acos,asinh,acosh,atan}, 
      f -> (
 	  << f << endl;
 	  assert small see ( f(.21 + 0.e-12*ii) - f .21);
@@ -411,6 +411,7 @@ scan({.2, 1.2, .2 + .3*ii,  1.2 - .13*ii}, z -> (
 	  assert small(z - acos cos z);
 	  assert small(z - asinh sinh z);
 	  assert small(z - asin sin z);
+	  assert small(z - atan tan z);
 	  assert small(z - log exp z);
 	  ))
 
@@ -569,6 +570,6 @@ assert isFinite ((-2.) ^ (3.+ii))
 assert isFinite ((2.+ii) ^ (3.+ii))
 
 -- Local Variables:
--- compile-command: "make -C $M2BUILDDIR/Macaulay2/packages/Macaulay2Doc/test numbers.p123out"
+-- compile-command: "make -C $M2BUILDDIR/Macaulay2/packages/Macaulay2Doc/test numbers.out"
 -- End:
 
