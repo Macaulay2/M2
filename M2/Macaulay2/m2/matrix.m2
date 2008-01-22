@@ -1,6 +1,7 @@
 --		Copyright 1995-2002 by Daniel R. Grayson and Michael Stillman
 -- methods of "map" with a RawMatrix replace "getMatrix", which was a private function
 map(Module,Module,RawMatrix) := opts -> (tar,src,f) -> (
+     if opts.Degree =!= null then error "internal error: Degree option set but raw matrix provided";
      R := ring tar;
      if raw cover src =!= source f or raw cover tar =!= target f then f = rawMatrixRemake2(raw cover tar, raw cover src, rawMultiDegree f, f, 0);
      new Matrix from {
@@ -11,6 +12,7 @@ map(Module,Module,RawMatrix) := opts -> (tar,src,f) -> (
 	  symbol cache => new CacheTable
 	  })
 map(Module,Nothing,RawMatrix) := opts -> (tar,nothing,f) -> (
+     if opts.Degree =!= null then error "internal error: Degree option set but raw matrix provided";
      R := ring tar;
      if raw cover tar =!= target f then f = rawMatrixRemake2(raw cover tar, rawSource f, rawMultiDegree f, f, 0);
      new Matrix from {
@@ -21,6 +23,7 @@ map(Module,Nothing,RawMatrix) := opts -> (tar,nothing,f) -> (
 	  symbol cache => new CacheTable
 	  })
 map(Ring,RawMatrix) := opts -> (R,f) -> (
+     if opts.Degree =!= null then error "internal error: Degree option set but raw matrix provided";
      new Matrix from {
 	  symbol ring => R,
 	  symbol target => new Module from (R,rawTarget f),
@@ -432,8 +435,9 @@ rawSetDegree = (M,N,m,d) -> rawMatrixRemake2(M, N, d, m, 0)
 map(Module) := Matrix => opts -> (M) -> map(M,M,1,opts)
 
 map(Module,Module,ZZ) := Matrix => opts -> (M,N,i) -> (
+     local R;
      if i === 0 then (
-	  R := ring M;
+	  R = ring M;
 	  (M',N') := (raw cover M, raw cover N);
 	  r := rawZero(M', N',0);
 	  deg := opts.Degree;
@@ -445,7 +449,19 @@ map(Module,Module,ZZ) := Matrix => opts -> (M,N,i) -> (
 	       symbol ring => R,
 	       symbol cache => new CacheTable
 	       })
-     else if i === 1 and M === N then map(M, M, reduce(M, rawIdentity(raw cover M,0)), opts)
+     else if i === 1 and M === N then (
+	  R = ring M;
+	  M' = raw cover M;
+	  r = reduce(M, rawIdentity(M',0));
+	  deg = opts.Degree;
+	  if deg =!= null then r = rawSetDegree(M', M', r, degreeCheck(deg,R));
+	  new Matrix from {
+	       symbol RawMatrix => r,
+	       symbol source => M,
+	       symbol target => M,
+	       symbol ring => R,
+	       symbol cache => new CacheTable
+	       })
      else if numgens cover M == numgens cover N then map(M,N,i * id_(cover M),opts) 
      else error "expected 0, or source and target with same number of generators")
 
