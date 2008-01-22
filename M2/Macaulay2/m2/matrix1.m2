@@ -54,30 +54,13 @@ map(Module,Nothing,Matrix) := Matrix => o -> (M,nothing,p) -> (
 	  )
      )
 
-degreeCheck := (d,R) -> (
-     if class d === ZZ then d = {d};
-     if class d === List or class d === Sequence
-     and all(d,i -> class i === ZZ) 
-     and #d === degreeLength R
-     then (
-	  )
-     else (
-	  if degreeLength R === 1
-	  then error "expected degree to be an integer or list of integers of length 1"
-	  else error (
-	       "expected degree to be a list of integers of length ",
-	       toString degreeLength R
-	       )
-	  );
-     toSequence d)
-
 map(Module,Module,Matrix) := Matrix => o -> (M,N,f) -> (
      if M === f.target and N === f.source
      and (o.Degree === null or o.Degree === degree f)
      then f
      else (
 	  R := ring M;
-	  N' := cover N ** R;
+	  N' := cover N;
 	  deg := if o.Degree === null then (degreeLength R : 0) else o.Degree;
 	  deg = degreeCheck(deg,R);
 	  map(M,N,reduce(M,rawMatrixRemake2(raw cover M, raw N', deg, raw f,0)))))

@@ -94,9 +94,7 @@ time P = Ext(M,B^1/(x,y,z));
 S = ring P;
 transpose vars S
 R = K[X_1..X_3,Degrees => {{-2,-3},{-2,-4},{-2,-5}},
-        Heft => (options S).Heft
-        -- Adjust => S.Adjust, Repair => S.Repair
-	];
+        Heft => (options S).Heft {* Adjust => S.Adjust, Repair => S.Repair *} ];
 phi = map(R,S,{X_1,X_2,X_3,0,0,0})
 P = prune (phi ** P);
 transpose vars ring P
@@ -107,7 +105,7 @@ changeRing = H -> (
    K := coefficientRing S;
    degs := select(degrees source vars S,
         d -> 0 != first d);
-   R := K[X_1 .. X_#degs, Degrees => degs];
+   R := K[X_1 .. X_#degs, Degrees => degs {* , Repair => S.Repair, Adjust => S.Adjust *} ];
    phi := map(R,S,join(gens R,(numgens S - numgens R):0));
    prune (phi ** H)
    );

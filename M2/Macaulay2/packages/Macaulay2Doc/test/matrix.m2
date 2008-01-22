@@ -293,6 +293,26 @@ randomMatrix2 = (F,G) -> (
         randomElement2 kb_deg)))
 
 
+R = QQ[x]
+assert ( 0 == map(R^1,R^1,0) )
+assert ( 0 == map(R^1,R^1,0,Degree => 5) )
+assert ( {0} == degree map(R^1,R^1,0) )
+assert ( {5} == degree map(R^1,R^1,0,Degree => 5) )
+assert isHomogeneous (map(R^{5},R^1,{{1}},Degree => {-5}))
+assert isHomogeneous (map(R^{5},R^1,1,Degree => {-5}))
+f = map(R^1, R^1, {{x^2}}, Degree => 2)
+g = map(R^1, R^1, {{x^1}}, Degree => 1)
+assert isHomogeneous f
+assert isHomogeneous g
+isHomogeneous(f|g)
+isHomogeneous(g|f)
+degree(f|g)
+degree(g|f)
+h = modulo(f,g)
+assert isHomogeneous h
+h = modulo(g,f)
+assert isHomogeneous h
+
 -- testMatrix()
 
 

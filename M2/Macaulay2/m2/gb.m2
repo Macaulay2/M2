@@ -2,6 +2,8 @@
 
 load "statuscodes.m2"
 
+flagInhomogeneity = false -- for debugging homogeneous problems, to make sure homogeneity is not lost
+
 GroebnerBasis = new Type of MutableHashTable
 GroebnerBasis.synonym = "Groebner basis"
 target GroebnerBasis := g -> g.target
@@ -150,6 +152,7 @@ elseSomething(Thing  ,Function) := (x,f) -> x
 elseSomething(Nothing,Function) := (x,f) -> f()
 
 newGB := (f,type,opts) -> (
+     if flagInhomogeneity and not isHomogeneous f then error "gb: inhomogeneous matrix";
      G := new GroebnerBasis;
      if debugLevel > 5 then (
 	  registerFinalizer(G,"gb (newGB)");

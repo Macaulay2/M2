@@ -5,13 +5,13 @@
 DOTS ?= ../../..
 ifeq "@DEBUG@" "no"
 TLIMIT ?= 40
-MLIMIT ?= 90000
-VLIMIT ?= 90000
+MLIMIT ?= 150000
+VLIMIT ?= 150000
 else
 # give the debug version more time and space
 TLIMIT ?= 60
-MLIMIT ?= 140000
-VLIMIT ?= 140000
+MLIMIT ?= 300000
+VLIMIT ?= 300000
 endif
 
 LIMIT  = ulimit -t $(TLIMIT) && ulimit -m $(MLIMIT) && ulimit -v $(VLIMIT)
