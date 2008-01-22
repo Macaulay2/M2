@@ -5,6 +5,18 @@ nonempty = x -> select(x, i -> i =!= "")
 dashes  = n -> concatenate (n:"-")
 spaces  = n -> concatenate n
 
+varstack = new MutableHashTable
+pushvar = (sym,newval) -> (
+     varstack#sym = if varstack#?sym then (value sym,varstack#sym) else (value sym, null);
+     sym <- newval;
+     )
+popvar = (sym) -> if varstack#?sym then (
+     c := varstack#sym;
+     if c === null then error "internal error: empty stack";
+     sym <- c#0;
+     varstack#sym = c#1;
+     )
+
 SelfInitializingType = new Type of Type
 SelfInitializingType.synonym = "self initializing type"
 SelfInitializingType Thing := (T,z) -> new T from z

@@ -151,7 +151,7 @@ toExternalString Matrix := m -> concatenate (
      toExternalString target m, ", ", 
      toExternalString source m, ", ", 
      toString entries m,
-     if not all(degree m, i -> i === 0) then (", Degree => ", toString degree m),
+     if not all(degree m, zero) then (", Degree => ", toString degree m),
      ")"
      )
 
@@ -409,34 +409,54 @@ numColumns Matrix := M -> numgens cover source M
 --------------------------------------------------------------------------
 ------------------------ matrix and map for modules ----------------------
 --------------------------------------------------------------------------
-map(Module) := Matrix => options -> (M) -> map(M,M,1)
+
+degreeCheck = (d,R) -> (				    -- assume d =!= null
+     if class d === ZZ then d = {d};
+     if class d === List or class d === Sequence
+     and all(d,i -> class i === ZZ) 
+     and #d === degreeLength R
+     then (
+	  )
+     else (
+	  if degreeLength R === 1
+	  then error "expected degree to be an integer or list of integers of length 1"
+	  else error (
+	       "expected degree to be a list of integers of length ",
+	       toString degreeLength R
+	       )
+	  );
+     toSequence d)
+
+rawSetDegree = (M,N,m,d) -> rawMatrixRemake2(M, N, d, m, 0)
+
+map(Module) := Matrix => opts -> (M) -> map(M,M,1,opts)
+
+map(Module,Module,ZZ) := Matrix => opts -> (M,N,i) -> (
+     if i === 0 then (
+	  R := ring M;
+	  (M',N') := (raw cover M, raw cover N);
+	  r := rawZero(M', N',0);
+	  deg := opts.Degree;
+	  if deg =!= null then r = rawSetDegree(M', N', r, degreeCheck(deg,R));
+	  new Matrix from {
+	       symbol RawMatrix => r,
+	       symbol source => N,
+	       symbol target => M,
+	       symbol ring => R,
+	       symbol cache => new CacheTable
+	       })
+     else if i === 1 and M === N then map(M, M, reduce(M, rawIdentity(raw cover M,0)), opts)
+     else if numgens cover M == numgens cover N then map(M,N,i * id_(cover M),opts) 
+     else error "expected 0, or source and target with same number of generators")
 
 map(Module,Module,Number) := 
-map(Module,Module,RingElement) := Matrix => options -> (M,N,r) -> (
-     R := ring M;
-     if r == 0 then new Matrix from {
-     	  symbol RawMatrix => rawZero(raw cover M, raw cover N,0),
-	  symbol source => N,
-	  symbol target => M,
-	  symbol ring => ring M,
-	  symbol cache => new CacheTable
-	  }
-     else if numgens cover M == numgens cover N then map(M,N,r * id_(cover M)) 
+map(Module,Module,RingElement) := Matrix => opts -> (M,N,r) -> (
+     if r == 0 then map(M,N,0,opts)
+     else if numgens cover M == numgens cover N then map(M,N,r * id_(cover M),opts) 
      else error "expected 0, or source and target with same number of generators")
 
-map(Module,Module,ZZ) := Matrix => options -> (M,N,i) -> (
-     if i === 0 then new Matrix from {
-     	  symbol RawMatrix => rawZero(raw cover M, raw cover N, 0),
-	  symbol source => N,
-	  symbol target => M,
-	  symbol ring => ring M,
-	  symbol cache => new CacheTable
-	  }
-     else if M === N then map(M, M, reduce(M, rawIdentity(raw cover M,0)))
-     else if numgens cover M == numgens cover N then map(M,N,i * id_(cover M)) 
-     else error "expected 0, or source and target with same number of generators")
-
-map(Module,Nothing,Matrix) := Matrix => options -> (M,f) -> (
+map(Module,Nothing,Matrix) := Matrix => opts -> (M,f) -> (
+     if opts.Degree =!= null then error "expected no Degree option";
      R := ring M;
      if R =!= ring f then error "expected the same ring";
      if # degrees M =!= # degrees target f then (

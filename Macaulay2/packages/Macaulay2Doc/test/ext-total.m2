@@ -1,3 +1,7 @@
+debug Core
+flagInhomogeneity = true
+errorDepth = 0
+
 degs = {{-2, -3}, {-2, -4}, {-2, -5}, {0, 1}, {0, 1}, {0, 1}}
 degmat = transpose matrix degs
 adjmat = matrix {{-3,1}, {1,0}}
@@ -47,8 +51,6 @@ comp (degs,heft,degs1,degs2,degDB)
 t = tally degrees target presentation E
 assert ( t === u )
 
-end
-
 {*
 
 the answer changed between these two versions:
@@ -61,8 +63,6 @@ u123$ ls -l ~/local.Linux/encap/Macaulay2-0.9.94/bin/M2
 
 *}
 
-
-end
 
 -- errorDepth = 0
 A = ZZ/103[x,y,z];

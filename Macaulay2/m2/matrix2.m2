@@ -197,13 +197,20 @@ modulo = method(
 modulo(Matrix,Nothing) := Matrix => options -> (m,null) -> syz(m,options)
 modulo(Nothing,Matrix) := Matrix => options -> (null,n) -> n
 modulo(Matrix,Matrix)  := Matrix => options -> (m,n) -> (
-     P := target m;
-     Q := target n;
-     L := source m;
-     if P != Q then error "expected maps with the same target";
+     (P,L) := (target m, source m);
+     if P != target n then error "expected maps with the same target";
      if not isFreeModule P or not isFreeModule L or not isFreeModule source n
      then error "expected maps between free modules";
-     f := syz(m|n, options, SyzygyRows => numgens L);
+     dm := degree m;
+     if not all(dm,zero) then (
+	  R := ring P;
+	  H := R^{ dm };
+	  m = map(target m ** H, source m, m, Degree => apply(dm,i->0) );
+	  n = n ** H;
+	  );
+     h := m|n;
+     if debugLevel == 11 and isHomogeneous m and isHomogeneous n and not isHomogeneous h then error "modulo: homogeneity lost";
+     f := syz(h, options, SyzygyRows => numgens L);
      if target f =!= L 
      then map(L,source f,f)			    -- it can happen that L has a Schreier order, and we want to preserve that exactly
      else f)
