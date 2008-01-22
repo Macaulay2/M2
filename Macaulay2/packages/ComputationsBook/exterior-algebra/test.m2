@@ -137,7 +137,9 @@ FHM = prune homology(alphad,alpha);
 betti res FHM
 regularity FHM
 betti sheafCohomology(presentation FHM,E,-6,6)
-sect =  map(S^1,S^15,0) | random(S^1, S^4);
+-- presentation FHM has the basis elements in the reverse order now
+-- sect =  map(S^1,S^15,0) | random(S^1, S^4);
+sect =  random(S^1, S^4) | map(S^1,S^15,0)
 mapcone = sect || transpose presentation FHM;
 fmapcone = res coker mapcone;
 IX =  trim ideal fmapcone.dd_2;
