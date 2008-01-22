@@ -1,9 +1,29 @@
 --		Copyright 1995-2002 by Daniel R. Grayson and Michael Stillman
 -- methods of "map" with a RawMatrix replace "getMatrix", which was a private function
+
+degreeCheck = (d,R) -> (				    -- assume d =!= null
+     if class d === ZZ then d = {d};
+     if class d === List or class d === Sequence
+     and all(d,i -> class i === ZZ) 
+     and #d === degreeLength R
+     then (
+	  )
+     else (
+	  if degreeLength R === 1
+	  then error "expected degree to be an integer or list of integers of length 1"
+	  else error (
+	       "expected degree to be a list of integers of length ",
+	       toString degreeLength R
+	       )
+	  );
+     toSequence d)
+
 map(Module,Module,RawMatrix) := opts -> (tar,src,f) -> (
-     if opts.Degree =!= null then error "internal error: Degree option set but raw matrix provided";
      R := ring tar;
-     if raw cover src =!= source f or raw cover tar =!= target f then f = rawMatrixRemake2(raw cover tar, raw cover src, rawMultiDegree f, f, 0);
+     if raw cover src =!= source f
+     or raw cover tar =!= target f
+     or opts.Degree =!= null and rawMultiDegree f =!= (deg := degreeCheck(opts.Degree,R))
+     then f = rawMatrixRemake2(raw cover tar, raw cover src, if deg =!= null then deg else rawMultiDegree f, f, 0);
      new Matrix from {
 	  symbol ring => R,
 	  symbol target => tar,
@@ -14,7 +34,9 @@ map(Module,Module,RawMatrix) := opts -> (tar,src,f) -> (
 map(Module,Nothing,RawMatrix) := opts -> (tar,nothing,f) -> (
      if opts.Degree =!= null then error "internal error: Degree option set but raw matrix provided";
      R := ring tar;
-     if raw cover tar =!= target f then f = rawMatrixRemake2(raw cover tar, rawSource f, rawMultiDegree f, f, 0);
+     if raw cover tar =!= target f
+     or opts.Degree =!= null and rawMultiDegree f =!= (deg := degreeCheck(opts.Degree,R))
+     then f = rawMatrixRemake2(raw cover tar, rawSource f, if deg =!= null then deg else rawMultiDegree f, f, 0);
      new Matrix from {
 	  symbol ring => R,
 	  symbol target => tar,
@@ -23,7 +45,8 @@ map(Module,Nothing,RawMatrix) := opts -> (tar,nothing,f) -> (
 	  symbol cache => new CacheTable
 	  })
 map(Ring,RawMatrix) := opts -> (R,f) -> (
-     if opts.Degree =!= null then error "internal error: Degree option set but raw matrix provided";
+     if opts.Degree =!= null and rawMultiDegree f =!= (deg := degreeCheck(opts.Degree,R))
+     then f = rawMatrixRemake2(rawTarget f, rawSource f, deg, f, 0);
      new Matrix from {
 	  symbol ring => R,
 	  symbol target => new Module from (R,rawTarget f),
@@ -412,23 +435,6 @@ numColumns Matrix := M -> numgens cover source M
 --------------------------------------------------------------------------
 ------------------------ matrix and map for modules ----------------------
 --------------------------------------------------------------------------
-
-degreeCheck = (d,R) -> (				    -- assume d =!= null
-     if class d === ZZ then d = {d};
-     if class d === List or class d === Sequence
-     and all(d,i -> class i === ZZ) 
-     and #d === degreeLength R
-     then (
-	  )
-     else (
-	  if degreeLength R === 1
-	  then error "expected degree to be an integer or list of integers of length 1"
-	  else error (
-	       "expected degree to be a list of integers of length ",
-	       toString degreeLength R
-	       )
-	  );
-     toSequence d)
 
 rawSetDegree = (M,N,m,d) -> rawMatrixRemake2(M, N, d, m, 0)
 
