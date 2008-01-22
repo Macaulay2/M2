@@ -299,7 +299,10 @@ if prefixDirectory =!= null and fileExists (prefixDirectory | "encapinfo") then 
      fn := pathsearch commandLine#0;
      local s;
      while ( s = readlink fn; s =!= null ) do (prev = fn; fn = if isAbsolutePath s then s else minimizeFilename(fn|"/../"|s););
-     if prev =!= null then setPrefixFromBindir dir prev)
+     if prev =!= null 
+     and fileExists(dir prev | LAYOUT#"m2" | "setup.m2") -- make sure some of the other links have been made
+     and fileExists(dir prev | LAYOUT#"m2" | "exports.m2") -- make sure some of the other links have been made
+     then setPrefixFromBindir dir prev)
 
 phase := 1
 
