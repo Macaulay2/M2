@@ -1,0 +1,6 @@
+fix this by having describe return an expression instead of a net
+
+ii43 : toString describe ring x
+
+oo43 = QQ [w , w , x, y, z, Degrees => {{3}, {3}, {1}, {1}, {1}}, MonomialOrder => GRevLex => 5]
+            1   2
