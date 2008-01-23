@@ -471,13 +471,17 @@ addHook = method()
 removeHook = method()
 runHooks = method()
 
-addHook   (MutableHashTable,Thing,Function) := (obj,key,hook) -> if obj#?key then obj#key = prepend(hook,obj#key) else obj#key = {hook}
+addHook   (MutableHashTable,Thing,Function) := (obj,key,hook) -> obj#key = if obj#?key then prepend(hook,obj#key) else {hook}
 removeHook(MutableHashTable,Thing,Function) := (obj,key,hook) -> if obj#?key then obj#key = delete(obj#key,hook)
 runHooks  (MutableHashTable,Thing,Thing   ) := (obj,key,arg ) -> if obj#?key then scan(obj#key, hook -> hook arg)
 
-addHook   (HashTable,Thing,Function) := (obj,key,hook) -> (c := obj.cache; if c#?key then c#key = prepend(hook,c#key) else c#key = {hook})
+addHook   (HashTable,Thing,Function) := (obj,key,hook) -> (c := obj.cache; c#key = if c#?key then prepend(hook,c#key) else {hook})
 removeHook(HashTable,Thing,Function) := (obj,key,hook) -> (c := obj.cache; if c#?key then c#key = delete(c#key,hook))
 runHooks  (HashTable,Thing,Thing   ) := (obj,key,arg ) -> (c := obj.cache; if c#?key then scan(c#key, hook -> hook arg))
+
+addHook   (Symbol,Function) := (sym,hook) -> sym <- if value sym =!= sym then prepend(hook,value sym) else {hook}
+removeHook(Symbol,Function) := (sym,hook) -> if value sym =!= sym then sym <- delete(value sym,hook)
+runHooks  (Symbol,Thing   ) := (sym,arg ) -> if value sym =!= sym then scan(value sym, hook -> hook arg)
 
 -- and keys
 protect QuotientRingHook

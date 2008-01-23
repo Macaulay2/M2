@@ -103,7 +103,11 @@ minimalPrimes Ideal := (cacheValue symbol minimalPrimes) (
 	  else A = R;
 	  if not isPolynomialRing A then error "expected ideal in a polynomial ring or a quotient of one";
 	  if I == 0 then return {if A === R then I else ideal 0_R};
+	  if debugLevel > 0 then homog := isHomogeneous I;
 	  ics := irreducibleCharacteristicSeries I;
+	  if debugLevel > 0 and homog then (
+	       if not all(ics#0, isHomogeneous) then error "minimalPrimes: irreducibleCharacteristicSeries destroyed homogeneity";
+	       );
 	  -- remove any elements which have numgens > numgens I (Krull's Hauptidealsatz)
 	  ngens := numgens I;
 	  ics0 := select(ics#0, CS -> numgens source CS <= ngens);

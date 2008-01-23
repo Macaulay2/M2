@@ -505,7 +505,7 @@ toString'(Function, Adjacent) := toString'(Function, FunctionApplication) := (fm
      args := m#1;
      if class args === Sequence
      then if #args === 1
-     then concatenate(fmt fun, " ", fmt args)  -- f singleton x
+     then concatenate(fmt fun, "(", fmt args#0, ")")  -- f (1:x)
      else concatenate(fmt fun, fmt args)       -- f(x,y) or f(), ...
      else if precedence args >= p
      then if precedence fun > p

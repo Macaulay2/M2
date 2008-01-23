@@ -95,8 +95,9 @@ generators PolynomialRing := opts -> R -> (
 coefficientRing PolynomialRing := Ring => R -> last R.baseRings
 precision PolynomialRing := precision @@ coefficientRing
 isHomogeneous PolynomialRing := R -> (
+     opts := options R;
      k := coefficientRing R;
-     isField k or isHomogeneous k)
+     (isField k or isHomogeneous k) and #opts.WeylAlgebra === 0)
 
 standardForm RingElement := (f) -> (
      R := ring f;

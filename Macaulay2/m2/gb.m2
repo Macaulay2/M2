@@ -2,7 +2,13 @@
 
 load "statuscodes.m2"
 
+Nothing#BeforeEval = x -> (
+     -- for internal use only, for general clean up
+     runHooks(symbol BeforeEvalHooks,());
+     )
+
 flagInhomogeneity = false -- for debugging homogeneous problems, to make sure homogeneity is not lost
+addHook(symbol BeforeEvalHooks,() -> flagInhomogeneity = false)
 
 GroebnerBasis = new Type of MutableHashTable
 GroebnerBasis.synonym = "Groebner basis"
@@ -152,7 +158,10 @@ elseSomething(Thing  ,Function) := (x,f) -> x
 elseSomething(Nothing,Function) := (x,f) -> f()
 
 newGB := (f,type,opts) -> (
-     if flagInhomogeneity and not isHomogeneous f then error "gb: inhomogeneous matrix";
+     if flagInhomogeneity then (
+	  if not isHomogeneous f then error "internal error: gb: inhomogeneous matrix flagged";
+	  if debugLevel > 0 then stderr << "gb: matrix is homogeneous, good" << endl;
+	  );
      G := new GroebnerBasis;
      if debugLevel > 5 then (
 	  registerFinalizer(G,"gb (newGB)");

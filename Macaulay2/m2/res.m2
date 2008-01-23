@@ -8,11 +8,11 @@ defaultResolutionLength := (R) -> (
      numgens R + 1 + if ZZ === ultimate(coefficientRing, R) then 1 else 0
      )
 
-resolutionLength := (R,options) -> (
-     if options.LengthLimit == infinity then defaultResolutionLength R else options.LengthLimit
+resolutionLength := (R,opts) -> (
+     if opts.LengthLimit == infinity then defaultResolutionLength R else opts.LengthLimit
      )
 
-resolutionByHomogenization := options -> (M) -> (
+resolutionByHomogenization := opts -> (M) -> (
      if gbTrace >= 1 then << "using resolution by homogenization" << endl;
      R    := ring M;
      f    := presentation M;
@@ -34,14 +34,14 @@ resolutionByHomogenization := options -> (M) -> (
      fH   := homogenize(toRH generators gb f',RH_n); 	  forceGB fH;
      MH   := cokernel fH;
      assert isHomogeneous MH;
-     C    := resolution(MH, options, LengthLimit => resolutionLength(R,options));
+     C    := resolution(MH, opts, LengthLimit => resolutionLength(R,opts));
      toR  := map(R, RH, vars R | 1);
      toR C)
 
-resolutionBySyzygies := options -> (M) -> (
+resolutionBySyzygies := opts -> (M) -> (
      if gbTrace >= 1 then << "using resolution by syzygyies" << endl;     
      R := ring M;
-     maxlength := resolutionLength(R,options);
+     maxlength := resolutionLength(R,opts);
      if M.cache.?resolution 
      then C := M.cache.resolution
      else (
@@ -77,6 +77,10 @@ resolutionInEngine := opts -> (M) -> (
      if not M.cache.?resolution 
      or M.cache.resolution.Resolution.length < maxlevel
      then M.cache.resolution = (
+     	  if flagInhomogeneity then (
+	       if not isHomogeneous M then error "internal error: res: inhomogeneous matrix flagged";
+	       if debugLevel > 0 then stderr << "--res: matrix is homogeneous, good" << endl;
+	       );
 	  g := presentation M;
 	  if opts.Strategy === 0 then
 	      g = generators gb g;  -- this is needed since the (current)

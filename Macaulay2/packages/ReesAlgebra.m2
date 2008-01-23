@@ -782,6 +782,8 @@ TEST ///
 R=QQ[a,b,c,d,e,f]
 M=matrix{{a,c,e},{b,d,f}}
 analyticSpread image M
+--status: analyticSpread dies because it asks for the ring of a polynomial ring
+--status: David, Amelia, and Sorin should fix it
 ///
 
 
