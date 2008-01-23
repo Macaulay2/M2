@@ -689,10 +689,14 @@ assert ( isInfinite realPart (1/z) )
 assert ( isInfinite imaginaryPart (1/z) )
 assert ( isInfinite realPart (z^-1) )
 assert ( isInfinite imaginaryPart (z^-1) )
-assert ( isInfinite realPart (z^-1.) )
-assert ( isInfinite imaginaryPart (z^-1.) )
-assert ( isInfinite realPart (log z) )
-assert ( isInfinite imaginaryPart (log z) )
+assert ( isInfinite realPart (z^-2) )
+assert ( isInfinite imaginaryPart (z^-2) )
+assert ( isInfinite realPart (z^-3) )
+assert ( isInfinite imaginaryPart (z^-3) )
+
+assert ( zero (z^1) )
+assert ( zero (z^2) )
+assert ( zero (z^3) )
 
 -- Local Variables:
 -- compile-command: "make -C $M2BUILDDIR/Macaulay2/packages/Macaulay2Doc/test numbers.out"

@@ -1393,6 +1393,7 @@ export atan(x:RR):RR := (
      Ccode( void, "mpfr_atan((__mpfr_struct *)", z, ",(__mpfr_struct *)", x, ", GMP_RNDN)" );
      z);
 export atan2(y:RR,x:RR):RR := (
+     if isZero0(x) && isZero0(y) then return nanRR(min(precision0(x),precision0(y)));
      z := newRR(min(precision0(x),precision0(y)));
      Ccode( void, "mpfr_atan2((__mpfr_struct *)", z, ",(__mpfr_struct *)", y, ",(__mpfr_struct *)", x, ", GMP_RNDN)" );
      z);
@@ -1720,6 +1721,7 @@ export atan(x:CC):CC := (
 export (x:CC) ^ (y:CC):CC := exp(log(x)*y);
 export (x:CC) ^ (y:RR):CC := exp(log(x)*y);
 export (x:CC) ^ (y:ZZ):CC := (
+     if isZero0(x.re) && isZero0(x.im) then return if isNegative0(y) then infinityCC(precision0(x.re)) else x;
      if isLong(y) then (
 	  n := toLong(y);
      	  if n == long(0) then return toCC(1,precision(x));
