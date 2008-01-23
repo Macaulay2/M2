@@ -42,6 +42,7 @@ update(err:Error,prefix:string,f:Code):Expr := (
      );
 previousLineNumber := -1;
 
+BeforeEval := makeProtectedSymbolClosure("BeforeEval");
 AfterEval := makeProtectedSymbolClosure("AfterEval");
 BeforePrint := makeProtectedSymbolClosure("BeforePrint");
 Print := makeProtectedSymbolClosure("Print");
@@ -110,7 +111,11 @@ readeval4(file:TokenFile,printout:bool,dictionary:Dictionary,returnLastvalue:boo
 	       else (
 		    if localBind(parsed,dictionary) -- assign scopes to tokens, look up symbols
 		    then (		  
+			 -- result of BeforeEval is ignored unless error:
+			 -- BeforeEval method is independent of mode
 			 f := convert(parsed); -- convert to runnable code
+			 be := runmethod(BeforeEval,nullE);
+			 when be is err:Error do ( be = update(err,"before eval",f); if stopIfError || returnIfError then return be; ) else nothing;
 			 lastvalue = evalexcept(f);	  -- run it
 			 if lastvalue == endInput then return nullE;
 			 -- when f is globalAssignmentCode do lastvalue = nullE else nothing;

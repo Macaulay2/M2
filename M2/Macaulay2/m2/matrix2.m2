@@ -142,13 +142,13 @@ mingens Module := Matrix => opts -> (cacheValue symbol mingens) ((M) -> (
 		    else mingens mingb (id_F % mingb(M.relations)))
 	       else id_F)))
 
-trim Ring := Ring => options -> (R) -> R
-trim QuotientRing := options -> (R) -> (
+trim Ring := Ring => opts -> (R) -> R
+trim QuotientRing := opts -> (R) -> (
      f := presentation R;
      A := ring f;
-     A/(trim(ideal f,options)))
+     A/(trim(ideal f,opts)))
 
-trim Module := Module => options -> (cacheValue symbol trim) ((M) -> (
+trim Module := Module => opts -> (cacheValue symbol trim) ((M) -> (
 	  -- we preserve the ambient free module of which M is subquotient and try to minimize the generators and relations
 	  --   without computing an entire gb
 	  -- does using "complement" as in "mingens Module" above offer a benefit?

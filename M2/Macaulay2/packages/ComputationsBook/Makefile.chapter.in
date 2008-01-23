@@ -4,9 +4,9 @@ VPATH = $(chapter_srcdir)
 include ../../../../include/config.Makefile
 all:: check
 check: test.out.expected.trim test.out.trim
-	diff -u -b test.out.expected.trim test.out.trim
+	diff -u test.out.expected.trim test.out.trim
 diff:
-	diff -u -b test.out.expected.trim test.out.trim
+	diff -u test.out.expected.trim test.out.trim
 
 ULIMIT := ulimit -v 800000; ulimit -t 3000
 PATHJOIN := 'path = join({"./","$(chapter_srcdir)/"},path)'

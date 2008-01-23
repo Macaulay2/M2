@@ -445,7 +445,7 @@ Ideal.synonym = "ideal"
 
 ideal = method(Dispatch => Thing, TypicalValue => Ideal)
 
-expression Ideal := (I) -> new FunctionApplication from { ideal, expression unsequence toSequence first entries generators I }
+expression Ideal := (I) -> new FunctionApplication from { ideal, unsequence apply(toSequence first entries generators I, expression) }
 
 net Ideal := (I) -> (
      if numgens I === 0 then "0"

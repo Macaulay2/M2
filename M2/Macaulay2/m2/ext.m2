@@ -87,8 +87,8 @@ Ext(Module,Module) := Module => (M,N) -> (
   then error "'Ext' received modules over an inhomogeneous ring";
   if not isHomogeneous N or not isHomogeneous M
   then error "'Ext' received an inhomogeneous module";
-  pushvar(symbol flagInhomogeneity,true);
   if N == 0 or M == 0 then return B^0;
+  pushvar(symbol flagInhomogeneity,true);
   p := presentation B;
   A := ring p;
   I := ideal mingens ideal p;
