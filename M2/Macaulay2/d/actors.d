@@ -246,7 +246,7 @@ export (lhs:Expr) * (rhs:Expr) : Expr := (
 	  is y:ZZ do Expr(x * y)			    -- # typical value: symbol *, ZZ, ZZ, ZZ
      	  is y:QQ do Expr(x * y)			    -- # typical value: symbol *, ZZ, QQ, QQ
      	  is y:RR do Expr(toRR(x,precision(y)) * y)		    -- # typical value: symbol *, ZZ, RR, RR
-     	  is y:CC do Expr(toRR(x,precision(y.re)) * y)	    -- # typical value: symbol *, ZZ, CC, CC
+     	  is y:CC do Expr(x * y)	    -- # typical value: symbol *, ZZ, CC, CC
 	  is Error do rhs
 	  else binarymethod(lhs,rhs,StarS))
      is x:QQ do (
@@ -286,7 +286,7 @@ export (lhs:Expr) * (rhs:Expr) : Expr := (
 	  else binarymethod(lhs,rhs,StarS))
      is x:CC do (
 	  when rhs
-	  is y:ZZ do Expr(x * toRR(y,precision(x.re)))	    -- # typical value: symbol *, CC, ZZ, CC
+	  is y:ZZ do Expr(x * y)	    -- # typical value: symbol *, CC, ZZ, CC
      	  is y:QQ do Expr(x * toRR(y,precision(x.re)))	    -- # typical value: symbol *, CC, QQ, CC
      	  is y:RR do Expr(y * x)			    -- # typical value: symbol *, CC, RR, CC
      	  is y:CC do Expr(y * x)			    -- # typical value: symbol *, CC, CC, CC
@@ -356,11 +356,9 @@ export (lhs:Expr) / (rhs:Expr) : Expr := (
 	       then buildErrorPacket("division by zero")
 	       else Expr(x / y))
      	  is y:RR do (					    -- # typical value: symbol /, ZZ, RR, RR
-	       --if y === 0 then buildErrorPacket("division by zero") else
 	       Expr(toRR(x,precision(y)) / y))
      	  is y:CC do (					    -- # typical value: symbol /, ZZ, CC, CC
-	       -- if y === 0 then buildErrorPacket("division by zero") else
-	       Expr(toRR(x,precision(y.re)) / y))
+	       Expr(x / y))
 	  is Error do rhs
 	  else binarymethod(lhs,rhs,DivideS))
      is x:QQ do (
@@ -499,9 +497,9 @@ BinaryPowerMethod(x:Expr,y:Expr):Expr := (
 	       );
 	  if i < 0 then (
 	       i = -i;
-	       inverse := lookup(Class(x),InverseS);
-	       if inverse == nullE then return MissingMethod("^","InverseMethod");
-	       x = applyEE(inverse,x);
+	       inver := lookup(Class(x),InverseS);
+	       if inver == nullE then return MissingMethod("^","InverseMethod");
+	       x = applyEE(inver,x);
 	       );
 	  if !isInt(i) then return buildErrorPacket("'^' expects a small integer exponent");
 	  n := toInt(i);
@@ -538,9 +536,9 @@ SimplePowerMethod(x:Expr,y:Expr):Expr := (
 	       );
 	  if i <= 0 then (
 	       i = -i;
-	       inverse := lookup(Class(x),InverseS);
-	       if inverse == nullE then return MissingMethod("^","InverseMethod");
-	       x = applyEE(inverse,x);
+	       inver := lookup(Class(x),InverseS);
+	       if inver == nullE then return MissingMethod("^","InverseMethod");
+	       x = applyEE(inver,x);
 	       );
 	  if !isInt(i) then return buildErrorPacket("'^' expects a small integer exponent");
 	  n := toInt(i);
@@ -640,8 +638,11 @@ export (lhs:Expr) ^ (rhs:Expr) : Expr := (
 	  else binarymethod(lhs,rhs,PowerS))
      is x:CC do (
 	  when rhs
-	  is y:ZZ do Expr(x^toRR(y,precision(x)))
-	  is y:QQ do Expr(x^toRR(y,precision(x)))
+	  is y:ZZ do Expr(x^y)
+	  is y:QQ do (
+	       if denominator(y) === 1 then Expr(x^numerator(y))
+	       else if denominator(y) === 2 then Expr(sqrt(x)^numerator(y))
+	       else Expr(x^toRR(y,precision(x))))
 	  is y:RR do Expr(x^y)
 	  is y:CC do Expr(x^y)
      	  is Error do rhs

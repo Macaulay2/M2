@@ -597,6 +597,18 @@ assert not isFinite (1/0.-1/0.)
 assert not isInfinite (1/0.-1/0.)
 assert not isANumber (1/0.-1/0.)
 
+assert not isFinite (1/0.+1/0.)
+assert isInfinite (1/0.+1/0.)
+assert isANumber (1/0.+1/0.)
+
+assert not isFinite ((1/0.)*(1/0.))
+assert isInfinite ((1/0.)*(1/0.))
+assert isANumber ((1/0.)*(1/0.))
+
+assert not isFinite ((1/0.)/(1/0.))
+assert not isInfinite ((1/0.)/(1/0.))
+assert not isANumber ((1/0.)/(1/0.))
+
 assert isFinite toCC(3.,1.)
 assert not isInfinite toCC(3.,1.)
 assert isANumber toCC(3.,1.)
@@ -669,23 +681,18 @@ assert not isFinite toCC(2/0.-2/0.,1/0.-1/0.)
 assert not isInfinite toCC(2/0.-2/0.,1/0.-1/0.)
 assert not isANumber toCC(2/0.-2/0.,1/0.-1/0.)
 
+inf = toCC(1/0.,1/0.)
+assert ( isInfinite (inf*inf) )
+
 z = 0.+0.*ii
-assert ( not isFinite realPart (1/z) )
-assert ( isANumber realPart (1/z) )
-assert ( not isFinite imaginaryPart (1/z) )
-assert ( isANumber imaginaryPart (1/z) )
-assert ( not isFinite realPart (z^-1) )
-assert ( isANumber realPart (z^-1) )
-assert ( not isFinite imaginaryPart (z^-1) )
-assert ( isANumber imaginaryPart (z^-1) )
-assert ( not isFinite realPart (z^-1.) )
-assert ( isANumber realPart (z^-1.) )
-assert ( not isFinite imaginaryPart (z^-1.) )
-assert ( isANumber imaginaryPart (z^-1.) )
-assert ( not isFinite realPart (log z) )
-assert ( isANumber realPart (log z) )
-assert ( not isFinite imaginaryPart (log z) )
-assert ( isANumber imaginaryPart (log z) )
+assert ( isInfinite realPart (1/z) )
+assert ( isInfinite imaginaryPart (1/z) )
+assert ( isInfinite realPart (z^-1) )
+assert ( isInfinite imaginaryPart (z^-1) )
+assert ( isInfinite realPart (z^-1.) )
+assert ( isInfinite imaginaryPart (z^-1.) )
+assert ( isInfinite realPart (log z) )
+assert ( isInfinite imaginaryPart (log z) )
 
 -- Local Variables:
 -- compile-command: "make -C $M2BUILDDIR/Macaulay2/packages/Macaulay2Doc/test numbers.out"
