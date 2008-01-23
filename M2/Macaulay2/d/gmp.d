@@ -1678,9 +1678,8 @@ export (x:CC) ^ (y:RR):CC := exp(log(x)*y);
 export (x:RR) ^ (y:CC):CC := if isNegative(x) then exp(log(toCC(x))*y) else exp(log(x)*y);
 
 export isfinite(x:CC):bool := isfinite0(x.re) && isfinite0(x.im);
-export isinf(x:CC):bool := isinf0(x.re) || isinf0(x.im);
+export isinf(x:CC):bool := isinf0(x.re) && !isnan0(x.im) || isinf0(x.im) && !isnan0(x.re);
 export isnan(x:CC):bool := isnan0(x.re) || isnan0(x.im);
-
 
 -- Local Variables:
 -- compile-command: "make -C $M2BUILDDIR/Macaulay2/d "

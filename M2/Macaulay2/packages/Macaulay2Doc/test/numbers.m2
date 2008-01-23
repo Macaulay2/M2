@@ -423,6 +423,11 @@ assert( class asin 1.3 === CC )
 assert( class acos .3 === RR )
 assert( class acos 1.3 === CC )
 
+assert( class acot .3 === RR )
+assert( class acot 1.3 === RR )
+assert( class acot (-.3) === RR )
+assert( class acot (-1.3) === RR )
+
 assert( class asinh .3 === RR )
 assert( class asinh 1.3 === RR )
 assert( class acosh .3 === CC )
@@ -571,6 +576,116 @@ assert isFinite ((-2.) ^ (-3.))
 assert isFinite ((2.) ^ (3.+ii))
 assert isFinite ((-2.) ^ (3.+ii))
 assert isFinite ((2.+ii) ^ (3.+ii))
+
+assert isFinite (3)
+assert not isInfinite (3)
+assert isANumber (3)
+
+assert isFinite (3/2)
+assert not isInfinite (3/2)
+assert isANumber (3/2)
+
+assert isFinite (3.)
+assert not isInfinite (3.)
+assert isANumber (3.)
+
+assert not isFinite (1/0.)
+assert isInfinite (1/0.)
+assert isANumber (1/0.)
+
+assert not isFinite (1/0.-1/0.)
+assert not isInfinite (1/0.-1/0.)
+assert not isANumber (1/0.-1/0.)
+
+assert isFinite toCC(3.,1.)
+assert not isInfinite toCC(3.,1.)
+assert isANumber toCC(3.,1.)
+
+assert not isFinite toCC(1/0.,1.)
+assert isInfinite toCC(1/0.,1.)
+assert isANumber toCC(1/0.,1.)
+
+assert not isFinite toCC(1/0.-1/0.,1.)
+assert not isInfinite toCC(1/0.-1/0.,1.)
+assert not isANumber toCC(1/0.-1/0.,1.)
+
+assert isFinite toCC(1.,3.)
+assert not isInfinite toCC(1.,3.)
+assert isANumber toCC(1.,3.)
+
+assert not isFinite toCC(1.,1/0.)
+assert isInfinite toCC(1.,1/0.)
+assert isANumber toCC(1.,1/0.)
+
+assert not isFinite toCC(1.,1/0.-1/0.)
+assert not isInfinite toCC(1.,1/0.-1/0.)
+assert not isANumber toCC(1.,1/0.-1/0.)
+
+assert not isFinite toCC(3.,2/0.)
+assert isInfinite toCC(3.,2/0.)
+assert isANumber toCC(3.,2/0.)
+
+assert not isFinite toCC(1/0.,2/0.)
+assert isInfinite toCC(1/0.,2/0.)
+assert isANumber toCC(1/0.,2/0.)
+
+assert not isFinite toCC(1/0.-1/0.,2/0.)
+assert not isInfinite toCC(1/0.-1/0.,2/0.)
+assert not isANumber toCC(1/0.-1/0.,2/0.)
+
+assert not isFinite toCC(2/0.,3.)
+assert isInfinite toCC(2/0.,3.)
+assert isANumber toCC(2/0.,3.)
+
+assert not isFinite toCC(2/0.,1/0.)
+assert isInfinite toCC(2/0.,1/0.)
+assert isANumber toCC(2/0.,1/0.)
+
+assert not isFinite toCC(2/0.,1/0.-1/0.)
+assert not isInfinite toCC(2/0.,1/0.-1/0.)
+assert not isANumber toCC(2/0.,1/0.-1/0.)
+
+assert not isFinite toCC(3.,2/0.-2/0.)
+assert not isInfinite toCC(3.,2/0.-2/0.)
+assert not isANumber toCC(3.,2/0.-2/0.)
+
+assert not isFinite toCC(1/0.,2/0.-2/0.)
+assert not isInfinite toCC(1/0.,2/0.-2/0.)
+assert not isANumber toCC(1/0.,2/0.-2/0.)
+
+assert not isFinite toCC(1/0.-1/0.,2/0.-2/0.)
+assert not isInfinite toCC(1/0.-1/0.,2/0.-2/0.)
+assert not isANumber toCC(1/0.-1/0.,2/0.-2/0.)
+
+assert not isFinite toCC(2/0.-2/0.,3.)
+assert not isInfinite toCC(2/0.-2/0.,3.)
+assert not isANumber toCC(2/0.-2/0.,3.)
+
+assert not isFinite toCC(2/0.-2/0.,1/0.)
+assert not isInfinite toCC(2/0.-2/0.,1/0.)
+assert not isANumber toCC(2/0.-2/0.,1/0.)
+
+assert not isFinite toCC(2/0.-2/0.,1/0.-1/0.)
+assert not isInfinite toCC(2/0.-2/0.,1/0.-1/0.)
+assert not isANumber toCC(2/0.-2/0.,1/0.-1/0.)
+
+z = 0.+0.*ii
+assert ( not isFinite realPart (1/z) )
+assert ( isANumber realPart (1/z) )
+assert ( not isFinite imaginaryPart (1/z) )
+assert ( isANumber imaginaryPart (1/z) )
+assert ( not isFinite realPart (z^-1) )
+assert ( isANumber realPart (z^-1) )
+assert ( not isFinite imaginaryPart (z^-1) )
+assert ( isANumber imaginaryPart (z^-1) )
+assert ( not isFinite realPart (z^-1.) )
+assert ( isANumber realPart (z^-1.) )
+assert ( not isFinite imaginaryPart (z^-1.) )
+assert ( isANumber imaginaryPart (z^-1.) )
+assert ( not isFinite realPart (log z) )
+assert ( isANumber realPart (log z) )
+assert ( not isFinite imaginaryPart (log z) )
+assert ( isANumber imaginaryPart (log z) )
 
 -- Local Variables:
 -- compile-command: "make -C $M2BUILDDIR/Macaulay2/packages/Macaulay2Doc/test numbers.out"
