@@ -1052,6 +1052,26 @@ isFinite(e:Expr):Expr := (
      );
 setupfun("isFinite",isFinite);
 
+isANumber(e:Expr):Expr := (
+     when e
+     is x:ZZ do True
+     is x:QQ do True
+     is x:RR do toExpr(!isnan(x))
+     is x:CC do toExpr(!isnan(x))
+     else WrongArg("a number")
+     );
+setupfun("isANumber",isANumber);
+
+isInfinite(e:Expr):Expr := (
+     when e
+     is x:ZZ do False
+     is x:QQ do False
+     is x:RR do toExpr(isinf(x))
+     is x:CC do toExpr(isinf(x))
+     else WrongArg("a number")
+     );
+setupfun("isInfinite",isInfinite);
+
 -- Local Variables:
 -- compile-command: "make -C $M2BUILDDIR/Macaulay2/d "
 -- End:

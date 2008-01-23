@@ -787,6 +787,8 @@ export {
 	symbol isDirectory,
 	symbol isField,
 	symbol isFinite,
+	symbol isInfinite,
+	symbol isANumber,
 	symbol isFreeModule,
 	symbol isGlobalSymbol,
 	symbol isHomogeneous,
