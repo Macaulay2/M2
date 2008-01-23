@@ -5,6 +5,8 @@ assert( -0. == 0. )
 
 assert( toRR 1 === 1. )
 assert( toRR (1/10) === .1 )
+assert( 0. + (1/10) === .1 )
+assert( 1. * (1/10) === .1 )
 
 assert ( (1p111 + 2^-110) =!= 1p111 )
 assert ( (1p111 + 2^-111) === 1p111 )
@@ -398,7 +400,7 @@ assert( 0*(1-ii) === 0.*(1-ii) )
 epsilon = 10 * 2.^-defaultPrecision
 small = z -> abs z < epsilon
 see = z -> (<< "see: " << z << endl; z)
-scan( {exp,log,sin,cos,sinh,cosh,tanh,coth,asin,acos,asinh,acosh,atan}, 
+scan( {exp,log,sin,cos,sinh,cosh,tanh,coth,asin,acos,asinh,acosh,atan,acot,cot,tan,csc,sec}, 
      f -> (
 	  << f << endl;
 	  assert small see ( f(.21 + 0.e-12*ii) - f .21);
@@ -412,6 +414,7 @@ scan({.2, 1.2, .2 + .3*ii,  1.2 - .13*ii}, z -> (
 	  assert small(z - asinh sinh z);
 	  assert small(z - asin sin z);
 	  assert small(z - atan tan z);
+	  assert small(z - acot cot z);
 	  assert small(z - log exp z);
 	  ))
 

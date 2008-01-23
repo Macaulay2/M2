@@ -304,6 +304,8 @@ acosh = method()
 acosh Number := z -> log(z+sqrt(z^2-1))
 asinh = method()
 asinh Number := z -> log(z+sqrt(z^2+1))
+acot = method()
+acot Number := z -> atan(1/z)
 
 -- Local Variables:
 -- compile-command: "make -C $M2BUILDDIR/Macaulay2/m2 "

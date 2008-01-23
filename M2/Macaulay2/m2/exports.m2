@@ -502,6 +502,7 @@ export {
 	symbol abs,
 	symbol accumulate,
 	symbol acos,
+	symbol acot,
 	symbol acosh,
 	symbol addEndFunction,
 	symbol addHook,
