@@ -1535,11 +1535,8 @@ export format(
 	       if manlen == 0 then (
 		    mantissa = "1";
 		    manlen = 1;
-		    if l > 0 then l = l-1 else ex = ex + 1 ) )
-	  else (
-	       if manlen == 0 then return "0";
-	       )
-	  );
+		    if l > 0 then l = l-1 else ex = ex + 1 ) ) );
+     if manlen == 0 then return "0";
      concatenate(array(string)(
 	       sgn,
 	       if pt == 0 then "." else "",
