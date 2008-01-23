@@ -853,6 +853,25 @@ export toRR(n:double,prec:ulong):RR := (
 
 export toRR(n:double):RR := toRR(n,defaultPrecision);	   
 
+export infinityRR(prec:ulong,sign:int):RR := (
+     x := newRR(prec);
+     Ccode(void, "mpfr_set_inf(",x,",",sign,")");
+     x);
+export infinityRR(prec:ulong):RR := infinityRR(prec,1);
+export nanRR(prec:ulong):RR := (
+     x := newRR(prec);
+     Ccode(void, "mpfr_set_nan(",x,")");
+     x);
+
+export toCC(x:RR,y:RR):CC := (
+     if precision0(x) == precision0(y) then CC(x,y)
+     else if precision0(x) < precision0(y) then CC(x,toRR(y,precision0(x)))
+     else CC(toRR(x,precision0(y)),y)
+     );
+
+export infinityCC(prec:ulong):CC := (x := infinityRR(prec,1); toCC(x,x));
+export nanCC(prec:ulong):CC := (x := nanRR(prec); toCC(x,x));
+
 export toCC(x:RR):CC := CC(x,toRR(0,precision0(x)));
 export toCC(x:int,y:RR):CC := CC(toRR(x,precision0(y)),y);
 export toCC(x:RR,prec:ulong):CC := CC(toRR(x,prec),toRR(0,prec));
@@ -860,11 +879,6 @@ export toCC(x:CC,prec:ulong):CC := (
      if precision0(x.re) == prec then x
      else CC(toRR(x.re,prec),toRR(x.im,prec)));
 export toCC(x:RR,y:RR,prec:ulong):CC := CC(toRR(x,prec),toRR(y,prec));
-export toCC(x:RR,y:RR):CC := (
-     if precision0(x) == precision0(y) then CC(x,y)
-     else if precision0(x) < precision0(y) then CC(x,toRR(y,precision0(x)))
-     else CC(toRR(x,precision0(y)),y)
-     );
 export toCC(x:QQ,prec:ulong):CC := CC(toRR(x,prec),toRR(0,prec));
 export toCC(x:ZZ,prec:ulong):CC := CC(toRR(x,prec),toRR(0,prec));
 export toCC(x:QQ):CC := toCC(x,defaultPrecision);
@@ -888,6 +902,9 @@ expon0(x:RR):int ::= Ccode(int,"mpfr_get_exp((__mpfr_struct *)",x,")");
 export isfinite(x:RR):bool := isfinite0(x);
 export isinf(x:RR):bool := isinf0(x);
 export isnan(x:RR):bool := isnan0(x);
+export isfinite(x:CC):bool := isfinite0(x.re) && isfinite0(x.im);
+export isinf(x:CC):bool := isinf0(x.re) && !isnan0(x.im) || isinf0(x.im) && !isnan0(x.re);
+export isnan(x:CC):bool := isnan0(x.re) || isnan0(x.im);
 
 export (x:RR) === (y:RR):bool := (			    -- weak equality
      Ccode( void, "mpfr_clear_flags()" );		    -- do we need this?
@@ -1178,9 +1195,14 @@ export sqrt(x:RR):RR := (
      Ccode( void, "mpfr_sqrt(", "(__mpfr_struct *)", z, ",", "(__mpfr_struct *)", x, ", GMP_RNDN)" );
      z);
 
-export (x:RR) ^ (n:int) : RR := (
+export (x:RR) ^ (n:long) : RR := (
      z := newRR(precision0(x));
      Ccode( void, "mpfr_pow_si(", "(__mpfr_struct *)", z, ",", "(__mpfr_struct *)", x, ",", n, ", GMP_RNDN)" );
+     z);
+
+export (x:RR) ^ (n:ulong) : RR := (
+     z := newRR(precision0(x));
+     Ccode( void, "mpfr_pow_ui(", "(__mpfr_struct *)", z, ",", "(__mpfr_struct *)", x, ",", n, ", GMP_RNDN)" );
      z);
 
 export pow10(n:ulong,prec:ulong):RR := (
@@ -1190,7 +1212,7 @@ export pow10(n:ulong,prec:ulong):RR := (
 export pow10(n:long,prec:ulong):RR := (
      ng := false;
      if n < long(0)
-     then (pow10(ulong(-n),prec))^-1
+     then (pow10(ulong(-n),prec))^long(-1)
      else pow10(ulong(n),prec));
 export pow10(n:int,prec:ulong):RR := pow10(long(n),prec);
 
@@ -1245,17 +1267,35 @@ export (x:CC) - (y:RR) : CC := CC(x.re-y,x.im);
 export (x:CC) + (y:RR) : CC := CC(x.re+y,x.im);
 export (x:RR) + (y:CC) : CC := CC(x+y.re,y.im);
 export -(y:CC) : CC := CC(-y.re,-y.im);
+
 export (x:CC) * (y:RR) : CC := CC(x.re*y, x.im*y);
 export (y:RR) * (x:CC) : CC := CC(x.re*y, x.im*y);
 export (y:int) * (x:CC) : CC := CC(y*x.re, y*x.im);
-export (x:CC) * (y:CC) : CC := CC(x.re*y.re-x.im*y.im, x.im*y.re+x.re*y.im);
+export (x:CC) * (y:ZZ) : CC := CC(x.re*y, x.im*y);
+export (y:ZZ) * (x:CC) : CC := CC(x.re*y, x.im*y);
+
+export (x:CC) * (y:CC) : CC := (
+     if isfinite0(x.re) && isfinite0(y.re) && isfinite0(x.im) && isfinite(y.im)
+     then CC(x.re*y.re-x.im*y.im, x.im*y.re+x.re*y.im)
+     else 
+     if isnan(x) || isnan(y) then nanCC(min(precision(x),precision(y)))
+     else infinityCC(min(precision(x),precision(y))));
 export (x:CC) / (y:int) : CC := CC(x.re/y, x.im/y);
 export (x:CC) / (y:RR) : CC := CC(x.re/y, x.im/y);
 export conj(x:CC):CC := CC(x.re,-x.im);
 export norm2(x:CC):RR := x.re*x.re + x.im*x.im;
-export (x:CC) / (y:CC) : CC := x * conj(y) / norm2(y);
-export (x:RR) / (y:CC) : CC := x * conj(y) / norm2(y);
-export (x:int) / (y:CC) : CC := x * conj(y) / norm2(y);
+
+export inverse(z:CC):CC := (
+     n2 := norm2(z);
+     if isZero0(n2) then (
+	  -- we could be more careful here: an underflow might have made n2==0, and normalizing, we could avoid that
+	  infinityCC(precision(z))
+	  )
+     else toCC(z.re/n2, -z.im/n2));
+export (x:CC) / (y:CC) : CC := x * inverse(y);
+export (x:RR) / (y:CC) : CC := x * inverse(y);
+export (x:ZZ) / (y:CC) : CC := x * inverse(y);
+export (x:int) / (y:CC) : CC := x * inverse(y);
 
 export (x:CC) << (n:long) : CC := CC(x.re<<n,x.im<<n);
 export (x:CC) >> (n:long) : CC := CC(x.re>>n,x.im>>n);
@@ -1665,21 +1705,32 @@ export coth(z:CC):CC := (exp(z) + exp(-z))/(exp(z) - exp(-z));
 export sech(z:CC):CC := 1/cosh(z);
 export csch(z:CC):CC := 1/sinh(z);
 
-square(z:CC):CC := toCC(z.re^2-z.im^2,2*z.re*z.im);
+square(z:CC):CC := (
+     if isfinite0(z.re) && isfinite0(z.im) then toCC(z.re^long(2)-z.im^long(2),2*z.re*z.im)
+     else if isnan0(z.re) || isnan0(z.im) then nanCC(precision0(z.re))
+     else infinityCC(precision0(z.re))
+     );
 export acos(z:CC):CC := idiv(log(z+itimes(sqrt(1-square(z)))));
 export asin(z:CC):CC := idiv(log(sqrt(1-square(z))+itimes(z)));
-export abs2(z:CC):RR := z.re^2 + z.im^2;
+export abs2(z:CC):RR := z.re^long(2) + z.im^long(2);
 export atan(x:CC):CC := (
      ss := abs2(x);
      y2 := x.im << 1;
      toCC( atan2(x.re<<1,1-ss)>>1, log((ss+1+y2)/(ss+1-y2))>>2 ));
 export (x:CC) ^ (y:CC):CC := exp(log(x)*y);
 export (x:CC) ^ (y:RR):CC := exp(log(x)*y);
+export (x:CC) ^ (y:ZZ):CC := (
+     if isLong(y) then (
+	  n := toLong(y);
+     	  if n == long(0) then return toCC(1,precision(x));
+	  if n == long(1) then return x;
+	  if n == long(-1) then return inverse(x);
+	  if n == long(2) then return square(x);
+	  if n == long(-2) then return inverse(square(x));
+	  -- we could do a few more of these optimizations here...
+	  );
+     exp(log(x)*y));
 export (x:RR) ^ (y:CC):CC := if isNegative(x) then exp(log(toCC(x))*y) else exp(log(x)*y);
-
-export isfinite(x:CC):bool := isfinite0(x.re) && isfinite0(x.im);
-export isinf(x:CC):bool := isinf0(x.re) && !isnan0(x.im) || isinf0(x.im) && !isnan0(x.re);
-export isnan(x:CC):bool := isnan0(x.re) || isnan0(x.im);
 
 -- Local Variables:
 -- compile-command: "make -C $M2BUILDDIR/Macaulay2/d "
