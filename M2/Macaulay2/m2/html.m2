@@ -413,7 +413,7 @@ utest := opt -> (
 ulimit := null
 
 M2statusRegexp := "^--status:"
-statusLines := file -> stack select(lines file, s -> match(M2statusRegexp,s))
+statusLines := file -> select(lines file, s -> match(M2statusRegexp,s))
 
 M2errorRegexp := "^[^:\n]+:[0-9]+:[0-9]+:\\([0-9]+\\): "
 aftermatch := (pat,str) -> (
@@ -448,7 +448,7 @@ runFile := (inf,inputhash,outf,tmpf,desc,pkg,announcechange,rundir,usermode) -> 
 	  stderr << tmpf << ":0: (output file) error return code: (" << r//256 << "," << r%256 << ")" << endl;
 	  stderr << aftermatch(M2errorRegexp,get tmpf);
 	  stderr << inf  << ":0: (input file)" << endl;
-	  stderr << statusLines get inf;
+	  scan(statusLines get inf, x -> stderr << x << endl);
 	  if r == 131 then (
 	       stderr << "subprocess terminated abnormally, exiting" << endl;
 	       exit r;
@@ -927,7 +927,7 @@ installPackage Package := opts -> pkg -> (
 	  << ///encap 2.0/// << endl
 	  << ///contact dan@math.uiuc.edu/// << endl;
 	  removeLastSlash := s -> if s#?0 and s#-1 === "/" then substring(s,0,#s-1) else s;
-	  scan(("libm2","packagedoc","packageexampleoutput","packagehtml","packageimages","packagesrc","packagetests","libraries"),
+	  scan(("libm2","packagecache","packagedoc","packagesrc","libraries"),
 	       k -> f << "linkdir" << " " << (if instance(LAYOUT#k, Function) then removeLastSlash LAYOUT#k "*" else removeLastSlash LAYOUT#k) << endl);
 	  fileMode(octal "644",f);
 	  f << close;
