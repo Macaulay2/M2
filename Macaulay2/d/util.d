@@ -193,7 +193,7 @@ export getSequenceOfMatrices(e:Expr) : RawMatrixArray := (
 export engineErrorMessage():Expr := buildErrorPacket(EngineError("unknown engine error"));
 export possibleEngineError(ret:bool):Expr := if ret then nullE else engineErrorMessage();
 
-export toExpr(x:double):Expr := Expr(toRR(x));
+export toExpr(x:double):Expr := Expr(toRR(x,ulong(27)));
 export toExpr(x:RawRingOrNull):Expr := when x is r:RawRing do Expr(r) is null do engineErrorMessage();
 export toExpr(x:RawMonomialPairOrNull):Expr := when x is r:RawMonomialPair do Expr(Sequence(Expr(r.a), Expr(r.b))) else engineErrorMessage();
 export toExprOrNull(x:RawRingOrNull):Expr := when x is r:RawRing do Expr(r) is null do nullE;
