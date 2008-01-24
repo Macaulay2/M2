@@ -1,0 +1,17 @@
+Date: Thu, 17 Jan 2008 16:25:39 -0600
+From: "Daniel R. Grayson" <dan@math.uiuc.edu>
+To: mike@math.cornell.edu
+CC: dan@math.uiuc.edu
+Subject: modulo -- preimage
+Reply-to: dan@math.uiuc.edu
+
+
+If "modulo" is for low level use only, why don't we have a function
+
+   preimage(f,M)
+
+that works to find the preimage of a submodule M of the target of f, even when
+the modules involved are all non-free?
+
+Should we?
+
