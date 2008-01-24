@@ -5,10 +5,13 @@ document { Key => exponent,
      Headline => "binary exponent of a floating point number",
      Inputs => {"x" => Number},
      Outputs => {{"the smallest number ", TT "n", " such that ", TT "2^n", " is strictly greater than the absolute value of ", TT "x"}},
+     "This function is not implemented for rational numbers.",
      EXAMPLE lines ///
      exponent 4.
      exponent 3.99999999
      exponent 0.
+     exponent (1/0.)
+     exponent (1/0.-1/0.)
      ///}
 
 document { Key => isReal,
