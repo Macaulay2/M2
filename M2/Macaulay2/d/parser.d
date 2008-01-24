@@ -54,7 +54,7 @@ export parseRR(s:string):RR := (			    -- 4.33234234234p345e-9
 	       if pointSeen then expon = expon - 1;
 	       )
 	  else break);
-     eprec := max(prec, size2(x) + 4);
+     eprec := max(prec, exponent(x) + 4);
      y := toRR(x,eprec);
      if expon > 0 then y = y * pow10(expon,eprec)
      else if expon < 0 then y = y / pow10(-expon,eprec);

@@ -38,7 +38,6 @@ export isLong(x:ZZ):bool := 0 != Ccode(int, "mpz_fits_slong_p((__mpz_struct *)",
 export toLong(x:ZZ):long  := Ccode(long, "mpz_get_si((__mpz_struct *)", x, ")");
 export isULong(x:ZZ):bool := 0 != Ccode(int, "mpz_fits_ulong_p((__mpz_struct *)", x, ")");
 export toULong(x:ZZ):ulong  := Ccode(ulong, "mpz_get_ui((__mpz_struct *)", x, ")");
-export size2(x:ZZ):ulong := ulong(Ccode(ulong,"(long)mpz_sizeinbase((__mpz_struct *)", x, ",2)"));
 
 export hash(x:ZZ):int := (
      if isInt(x) then 0x7fffffff & toInt(x)
@@ -61,8 +60,6 @@ export newZZ():ZZ := (
      x := ZZ(0,0,null());
      init(x);
      x);
-
-sizeinbase(x:ZZ,b:int):int ::= Ccode( int, "mpz_sizeinbase(", "(__mpz_struct *)", x, ",", b, ")" );
 
 set(x:ZZ, y:ZZ):void ::= Ccode( void,
      "mpz_set(",
@@ -800,6 +797,7 @@ isinf0 (x:RR):bool ::= Ccode(bool,"mpfr_inf_p((__mpfr_struct *)",x,")");
 isnan0 (x:RR):bool ::= Ccode(bool,"mpfr_nan_p((__mpfr_struct *)",x,")");
 sign0(x:RR):bool ::= 0 != Ccode(int,"mpfr_signbit((__mpfr_struct *)",x,")");
 exponent0(x:RR):long ::= Ccode(long,"(long)mpfr_get_exp((__mpfr_struct *)",x,")"); -- sometimes int, sometimes long, see gmp.h for type mp_exp_t
+sizeinbase0(x:ZZ,b:int):int ::= Ccode( int, "mpz_sizeinbase(", "(__mpz_struct *)", x, ",", b, ")" );
 
 -- warning: these routines just check the sign bit, and don't verify finiteness!
 export isPositive(x:RR):bool := isPositive0(x);
@@ -814,6 +812,10 @@ export maxprec := Ccode(ulong,"MPFR_PREC_MAX");
 
 export minExponent := Ccode(long,"(long)mpfr_get_emin()-1");
 export maxExponent := Ccode(long,"(long)mpfr_get_emax()");
+
+export exponent(x:ZZ):ulong := ulong(sizeinbase0(x,2));
+export exponent(x:RR):long := if isZero0(x) && isfinite0(x) then minExponent else if isfinite0(x) then exponent0(x) else maxExponent;
+export exponent(x:CC):long := max(exponent(x.re),exponent(x.im));
 
 export newRR(prec:ulong):RR := (
      if prec < minprec then prec = minprec else if prec > maxprec then prec = maxprec;
@@ -1671,8 +1673,6 @@ export log(b:CC,x:RR):CC := (
      if precision(b) < precision(x) then x = toRR(x,precision(b))
      else if precision(b) > precision(x) then b = toCC(b,precision(x));
      if x<0 then logc(x)/log(b) else log(x)/log(b));
-export exponent(x:RR):long := if isZero0(x) && isfinite0(x) then minExponent else if isfinite0(x) then exponent0(x) else maxExponent;
-export exponent(x:CC):long := max(exponent(x.re),exponent(x.im));
 export agm(x:CC,y:CC):CC := (
      if precision(y) < precision(x) then x = toCC(x,precision(y))
      else if precision(y) > precision(x) then y = toCC(y,precision(x));

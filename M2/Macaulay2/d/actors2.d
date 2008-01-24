@@ -682,8 +682,8 @@ setupop(timeS,showtimefun);
 
 exponent(e:Expr):Expr := (
      when e
-     -- is ZZ do 
-     -- is QQ do 
+     is x:ZZ do toExpr(exponent(x))
+     -- is x:QQ do toExpr(exponent(x))
      is x:RR do toExpr(exponent(x))
      is z:CC do toExpr(exponent(z))
      else WrongArg("a number"));
