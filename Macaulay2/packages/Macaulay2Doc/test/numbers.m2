@@ -698,6 +698,15 @@ assert ( zero (z^1) )
 assert ( zero (z^2) )
 assert ( zero (z^3) )
 
+assert ( exponent 4. == 3 )
+assert ( exponent 3.999999 == 2 )
+assert ( exponent (-4.) == 3 )
+assert ( exponent (-3.999999) == 2 )
+assert ( exponent 0. < -2000 )
+assert ( exponent (1/0.) > 2000 )
+assert ( exponent (1/0.-1/0.) > 2000 )
+
+
 -- Local Variables:
 -- compile-command: "make -C $M2BUILDDIR/Macaulay2/packages/Macaulay2Doc/test numbers.out"
 -- End:

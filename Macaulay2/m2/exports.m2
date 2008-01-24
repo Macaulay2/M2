@@ -667,6 +667,7 @@ export {
 	symbol exec,
 	symbol exit,
 	symbol exp,
+	symbol exponent,
 	symbol exponents,
 	symbol export,
 	symbol exportMutable,

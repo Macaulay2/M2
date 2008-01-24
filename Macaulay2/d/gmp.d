@@ -789,20 +789,30 @@ export CC := { re:RR, im:RR };			    -- must agree with M2_CC in M2types.h
 export realPart(z:CC):RR := z.re;
 export imaginaryPart(z:CC):RR := z.im;
 
+-- warning: these routines just check the sign bit, and don't verify finiteness!
 isPositive0(x:RR):bool ::=  1 == Ccode(int, "mpfr_sgn((__mpfr_struct *)", x, ")");
-isZero0    (x:RR):bool ::=  0 == Ccode(int, "mpfr_sgn((__mpfr_struct *)", x, ")");
 isNegative0(x:RR):bool ::= -1 == Ccode(int, "mpfr_sgn((__mpfr_struct *)", x, ")");
+isZero0    (x:RR):bool ::=  0 == Ccode(int, "mpfr_sgn((__mpfr_struct *)", x, ")");
 
+flagged0():bool ::= 0 != Ccode( int, "mpfr_erangeflag_p()" );
+isfinite0(x:RR):bool ::=Ccode(bool,"mpfr_number_p((__mpfr_struct *)",x,")");
+isinf0 (x:RR):bool ::= Ccode(bool,"mpfr_inf_p((__mpfr_struct *)",x,")");
+isnan0 (x:RR):bool ::= Ccode(bool,"mpfr_nan_p((__mpfr_struct *)",x,")");
+sign0(x:RR):bool ::= 0 != Ccode(int,"mpfr_signbit((__mpfr_struct *)",x,")");
+exponent0(x:RR):long ::= Ccode(long,"(long)mpfr_get_exp((__mpfr_struct *)",x,")"); -- sometimes int, sometimes long, see gmp.h for type mp_exp_t
+
+-- warning: these routines just check the sign bit, and don't verify finiteness!
 export isPositive(x:RR):bool := isPositive0(x);
-export isZero    (x:RR):bool := isZero0(x);
 export isNegative(x:RR):bool := isNegative0(x);
+
+export isZero    (x:RR):bool := isZero0(x) && isfinite0(x);
 
 export defaultPrecision := ulong(53); -- should 53 be computed?
 
 export minprec := Ccode(ulong,"MPFR_PREC_MIN");
 export maxprec := Ccode(ulong,"MPFR_PREC_MAX");
 
-export minExponent := Ccode(long,"(long)mpfr_get_emin()");
+export minExponent := Ccode(long,"(long)mpfr_get_emin()-1");
 export maxExponent := Ccode(long,"(long)mpfr_get_emax()");
 
 export newRR(prec:ulong):RR := (
@@ -855,12 +865,12 @@ export toRR(n:double):RR := toRR(n,defaultPrecision);
 
 export infinityRR(prec:ulong,sign:int):RR := (
      x := newRR(prec);
-     Ccode(void, "mpfr_set_inf(",x,",",sign,")");
+     Ccode(void, "mpfr_set_inf((__mpfr_struct *)",x,",",sign,")");
      x);
 export infinityRR(prec:ulong):RR := infinityRR(prec,1);
 export nanRR(prec:ulong):RR := (
      x := newRR(prec);
-     Ccode(void, "mpfr_set_nan(",x,")");
+     Ccode(void, "mpfr_set_nan((__mpfr_struct *)",x,")");
      x);
 
 export toCC(x:RR,y:RR):CC := (
@@ -890,15 +900,7 @@ export toCC(x:double,prec:ulong):CC := CC(toRR(x,prec),toRR(0,prec));
 export toCC(x:double,y:double,prec:ulong):CC := CC(toRR(x,prec),toRR(y,prec));
 
 export toDouble(x:RR):double := Ccode( double, "mpfr_get_d(", "(__mpfr_struct *)", x, ", GMP_RNDN)" );
-
-flagged0():bool ::= 0 != Ccode( int, "mpfr_erangeflag_p()" );
 export flagged():bool := flagged0();
-isfinite0(x:RR):bool ::=Ccode(bool,"mpfr_number_p((__mpfr_struct *)",x,")");
-isinf0 (x:RR):bool ::= Ccode(bool,"mpfr_inf_p((__mpfr_struct *)",x,")");
-isnan0 (x:RR):bool ::= Ccode(bool,"mpfr_nan_p((__mpfr_struct *)",x,")");
-sign0(x:RR):bool ::= 0 != Ccode(int,"mpfr_signbit((__mpfr_struct *)",x,")");
-expon0(x:RR):int ::= Ccode(int,"mpfr_get_exp((__mpfr_struct *)",x,")");
-
 export isfinite(x:RR):bool := isfinite0(x);
 export isinf(x:RR):bool := isinf0(x);
 export isnan(x:RR):bool := isnan0(x);
@@ -1287,7 +1289,7 @@ export norm2(x:CC):RR := x.re*x.re + x.im*x.im;
 
 export inverse(z:CC):CC := (
      n2 := norm2(z);
-     if isZero0(n2) then (
+     if isfinite0(n2) && isZero0(n2) then (
 	  -- we could be more careful here: an underflow might have made n2==0, and normalizing, we could avoid that
 	  infinityCC(precision(z))
 	  )
@@ -1393,7 +1395,7 @@ export atan(x:RR):RR := (
      Ccode( void, "mpfr_atan((__mpfr_struct *)", z, ",(__mpfr_struct *)", x, ", GMP_RNDN)" );
      z);
 export atan2(y:RR,x:RR):RR := (
-     if isZero0(x) && isZero0(y) then return nanRR(min(precision0(x),precision0(y)));
+     if isZero0(x) && isZero0(y) && isfinite0(x) && isfinite0(y) then return nanRR(min(precision0(x),precision0(y)));
      z := newRR(min(precision0(x),precision0(y)));
      Ccode( void, "mpfr_atan2((__mpfr_struct *)", z, ",(__mpfr_struct *)", y, ",(__mpfr_struct *)", x, ", GMP_RNDN)" );
      z);
@@ -1669,7 +1671,8 @@ export log(b:CC,x:RR):CC := (
      if precision(b) < precision(x) then x = toRR(x,precision(b))
      else if precision(b) > precision(x) then b = toCC(b,precision(x));
      if x<0 then logc(x)/log(b) else log(x)/log(b));
-expon(x:CC):int := max(expon0(x.re),expon0(x.im));
+export exponent(x:RR):long := if isZero0(x) && isfinite0(x) then minExponent else if isfinite0(x) then exponent0(x) else maxExponent;
+export exponent(x:CC):long := max(exponent(x.re),exponent(x.im));
 export agm(x:CC,y:CC):CC := (
      if precision(y) < precision(x) then x = toCC(x,precision(y))
      else if precision(y) > precision(x) then y = toCC(y,precision(x));
@@ -1681,7 +1684,7 @@ export agm(x:CC,y:CC):CC := (
 	  t := (x+y)/2;
 	  diff := x-y;
 	  prec := long(precision(x));			    -- in practice, max prec is 2^31 - 1, so fits in an int, too.
-	  if expon(diff) + 3*(prec/4) < expon(x) then return t;
+	  if exponent(diff) + 3*(prec/4) < exponent(x) then return t;
 	  u := sqrt(x*y);
 	  x = t;
 	  y = u;
@@ -1721,7 +1724,7 @@ export atan(x:CC):CC := (
 export (x:CC) ^ (y:CC):CC := exp(log(x)*y);
 export (x:CC) ^ (y:RR):CC := exp(log(x)*y);
 export (x:CC) ^ (y:ZZ):CC := (
-     if isZero0(x.re) && isZero0(x.im) then return if isNegative0(y) then infinityCC(precision0(x.re)) else x;
+     if isZero0(x.re) && isZero0(x.im) && isfinite0(x.re) && isfinite0(x.im) then return if isNegative0(y) then infinityCC(precision0(x.re)) else x;
      if isLong(y) then (
 	  n := toLong(y);
      	  if n == long(0) then return toCC(1,precision(x));

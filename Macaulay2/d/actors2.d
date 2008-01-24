@@ -680,6 +680,15 @@ showtimefun(a:Code):Expr := (
      ret);
 setupop(timeS,showtimefun);
 
+exponent(e:Expr):Expr := (
+     when e
+     -- is ZZ do 
+     -- is QQ do 
+     is x:RR do toExpr(exponent(x))
+     is z:CC do toExpr(exponent(z))
+     else WrongArg("a number"));
+setupfun("exponent",exponent);
+
 realPart(e:Expr):Expr := (
      when e
      is ZZ do e
