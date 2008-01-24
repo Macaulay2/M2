@@ -687,7 +687,7 @@ exponent(e:Expr):Expr := (
      is x:RR do toExpr(exponent(x))
      is z:CC do toExpr(exponent(z))
      else WrongArg("a number"));
-setupfun("exponent",exponent);
+setupfun("size2",exponent);
 
 realPart(e:Expr):Expr := (
      when e
