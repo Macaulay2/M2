@@ -813,7 +813,7 @@ export maxprec := Ccode(ulong,"MPFR_PREC_MAX");
 export minExponent := Ccode(long,"(long)mpfr_get_emin()-1");
 export maxExponent := Ccode(long,"(long)mpfr_get_emax()");
 
-export exponent(x:ZZ):ulong := ulong(sizeinbase0(x,2));
+export exponent(x:ZZ):long := if isZero0(x) then minExponent else long(sizeinbase0(x,2));
 export exponent(x:RR):long := if isZero0(x) && isfinite0(x) then minExponent else if isfinite0(x) then exponent0(x) else maxExponent;
 export exponent(x:CC):long := max(exponent(x.re),exponent(x.im));
 

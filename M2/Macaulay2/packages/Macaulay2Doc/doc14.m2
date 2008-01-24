@@ -1,17 +1,20 @@
 --		Copyright 2008 by Daniel R. Grayson
 
-document { Key => exponent,
-     Usage => "exponent x",
-     Headline => "binary exponent of a floating point number",
+document { Key => size2,
+     Usage => "size2 x",
+     Headline => "number of binary digits to the left of the point",
      Inputs => {"x" => Number},
      Outputs => {{"the smallest number ", TT "n", " such that ", TT "2^n", " is strictly greater than the absolute value of ", TT "x"}},
      "This function is not implemented for rational numbers.",
      EXAMPLE lines ///
-     exponent 4.
-     exponent 3.99999999
-     exponent 0.
-     exponent (1/0.)
-     exponent (1/0.-1/0.)
+     size2 4
+     size2 3
+     size2 4.
+     size2 3.99999999
+     size2 0
+     size2 0.
+     size2 (1/0.)
+     size2 (1/0.-1/0.)
      ///}
 
 document { Key => isReal,
