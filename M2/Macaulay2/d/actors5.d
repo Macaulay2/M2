@@ -1809,7 +1809,7 @@ stopIfErrorS := dummySymbol;
 printWidthS := dummySymbol;
 notifyS := dummySymbol;
 
-setupconst("minExponent",Expr(toInteger(minExponent)-1));
+setupconst("minExponent",Expr(toInteger(minExponent)));
 setupconst("maxExponent",Expr(toInteger(maxExponent)));
 
 StandardS := makeProtectedSymbolClosure("Standard");

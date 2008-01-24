@@ -1,11 +1,20 @@
 --		Copyright 2008 by Daniel R. Grayson
 
-
+document { Key => exponent,
+     Usage => "exponent x",
+     Headline => "binary exponent of a floating point number",
+     Inputs => {"x" => Number},
+     Outputs => {{"the smallest number ", TT "n", " such that ", TT "2^n", " is strictly greater than the absolute value of ", TT "x"}},
+     EXAMPLE lines ///
+     exponent 4.
+     exponent 3.99999999
+     exponent 0.
+     ///}
 
 document { Key => isReal,
      Usage => "isReal x",
      Headline => "whether a number is real",
-     Inputs => { "x" },
+     Inputs => { "x" => Number },
      Outputs => { Boolean => {"whether ", TT "x", " is real"} },
      EXAMPLE lines ///
      isReal 2.
