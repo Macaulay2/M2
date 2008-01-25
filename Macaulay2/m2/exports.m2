@@ -534,6 +534,7 @@ export {
 	symbol associatedPrimes,
 	symbol atEndOfFile,
 	symbol atan,
+	symbol atan2,
 	symbol autoload,
 	symbol baseFilename,
 	symbol baseName,

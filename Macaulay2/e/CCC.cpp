@@ -71,7 +71,7 @@ void CCC::elem_text_out(buffer &o, const ring_elem ap) const
   //  char *s = newarray_atomic(char,1000);
   //  char *str;
 
-  o << gmp_tostringCC(BIGCC_VAL(ap));
+  o << gmp_tonetCC(BIGCC_VAL(ap));
   return;
 #if 0
   bool is_neg = (mpfr_cmp_si(a, 0) == -1);
