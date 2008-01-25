@@ -876,6 +876,28 @@ BesselY(e:Expr):Expr := (
 	  else WrongArgZZ(1))
      else WrongNumArgs(2));
 setupfun("BesselY",BesselY);
+atan(xx:Expr,yy:Expr):Expr := (
+     when yy
+     is y:RR do (
+	  when xx
+	  is x:RR do Expr(atan2(y,x))			            -- # typical value: atan, RR, RR, RR
+	  is x:ZZ do Expr(atan2(y,toRR(x,precision(y))))	    -- # typical value: atan, ZZ, RR, RR
+	  is x:QQ do Expr(atan2(y,toRR(x,precision(y))))	    -- # typical value: atan, QQ, RR, RR
+	  else WrongArg(1,"a number"))
+     is y:ZZ do (
+	  when xx
+	  is x:RR do Expr(atan2(toRR(y,precision(x)),x))    -- -- # typical value: atan, RR, ZZ, RR
+	  is x:ZZ do Expr(atan2(toRR(y),toRR(x)))	       -- # typical value: atan, ZZ, ZZ, RR
+	  is x:QQ do Expr(atan2(toRR(y),toRR(x)))	       -- # typical value: atan, QQ, ZZ, RR
+	  else WrongArg(1,"a number"))
+     is y:QQ do (
+	  when xx
+	  is x:RR do Expr(atan2(toRR(y,precision(x)),x))    -- # typical value: atan, RR, QQ, RR
+	  is x:ZZ do Expr(atan2(toRR(y),toRR(x)))	    -- # typical value: atan, ZZ, QQ, RR
+	  is x:QQ do Expr(atan2(toRR(y),toRR(x)))	    -- # typical value: atan, QQ, QQ, RR
+     	  else WrongArg(1,"a number"))
+     else WrongArg(2,"a number")
+     );
 atan(e:Expr):Expr := (
      when e
      is x:CC do Expr(atan(x))				    -- # typical value: atan, CC, CC
@@ -884,30 +906,15 @@ atan(e:Expr):Expr := (
      is x:QQ do Expr(atan(toRR(x)))	       -- # typical value: atan, QQ, RR
      is a:Sequence do if length(a) != 2
      then WrongNumArgs(1,2)
-     else
-     when a.1
-     is y:RR do (
-	  when a.0
-	  is x:RR do Expr(atan2(y,x))			            -- # typical value: atan, RR, RR, RR
-	  is x:ZZ do Expr(atan2(y,toRR(x,precision(y))))	    -- # typical value: atan, ZZ, RR, RR
-	  is x:QQ do Expr(atan2(y,toRR(x,precision(y))))	    -- # typical value: atan, QQ, RR, RR
-	  else WrongArg(1,"a number"))
-     is y:ZZ do (
-	  when a.0
-	  is x:RR do Expr(atan2(toRR(y,precision(x)),x))    -- -- # typical value: atan, RR, ZZ, RR
-	  is x:ZZ do Expr(atan2(toRR(y),toRR(x)))	       -- # typical value: atan, ZZ, ZZ, RR
-	  is x:QQ do Expr(atan2(toRR(y),toRR(x)))	       -- # typical value: atan, QQ, ZZ, RR
-	  else WrongArg(1,"a number"))
-     is y:QQ do (
-	  when a.0
-	  is x:RR do Expr(atan2(toRR(y,precision(x)),x))    -- # typical value: atan, RR, QQ, RR
-	  is x:ZZ do Expr(atan2(toRR(y),toRR(x)))	    -- # typical value: atan, ZZ, QQ, RR
-	  is x:QQ do Expr(atan2(toRR(y),toRR(x)))	    -- # typical value: atan, QQ, QQ, RR
-     	  else WrongArg(1,"a number"))
-     else WrongArg(2,"a number")
+     else atan(a.0,a.1)
      else buildErrorPacket("expected a number or a pair of numbers")
      );
 setupfun("atan",atan);
+atan2(e:Expr):Expr := (
+     when e is s:Sequence do if length(s) == 2 then atan(s.1,s.0)
+     else WrongNumArgs(2)
+     else WrongNumArgs(2));
+setupfun("atan2",atan2);
 cosh(e:Expr):Expr := (
      when e
      is x:CC do Expr(cosh(x))				    -- # typical value: cosh, CC, CC
@@ -996,7 +1003,7 @@ log(e:Expr):Expr := (
 	       else WrongArg(1,"a number"))
 	  else WrongArg(2,"a number"))
      is x:CC do Expr(log(x))				    -- # typical value: log, CC, CC
-     is x:RR do if x<0 then Expr(logc(x)) else Expr(log(x))				    -- # typical value: log, RR, RR
+     is x:RR do if isNegative(x) then Expr(logc(x)) else Expr(log(x))				    -- # typical value: log, RR, RR
      is x:ZZ do if x<0 then Expr(logc(toRR(x))) else Expr(log(toRR(x)))			    -- # typical value: log, ZZ, RR
      is x:QQ do if x<0 then Expr(logc(toRR(x))) else Expr(log(toRR(x)))			    -- # typical value: log, QQ, RR
      else WrongArg("a number or a pair of numbers")

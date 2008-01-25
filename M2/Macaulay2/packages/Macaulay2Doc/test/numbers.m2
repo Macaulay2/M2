@@ -698,13 +698,30 @@ assert ( zero (z^1) )
 assert ( zero (z^2) )
 assert ( zero (z^3) )
 
-assert ( exponent 4. == 3 )
-assert ( exponent 3.999999 == 2 )
-assert ( exponent (-4.) == 3 )
-assert ( exponent (-3.999999) == 2 )
-assert ( exponent 0. < -2000 )
-assert ( exponent (1/0.) > 2000 )
-assert ( exponent (1/0.-1/0.) > 2000 )
+assert ( zero (z^-1^-1) )
+assert ( zero (z^-2^-2) )
+assert ( zero (z^-3^-3) )
+
+assert ( zero ((1/z)^-1) )
+assert ( zero ((1/z)^-2) )
+assert ( zero ((1/z)^-3) )
+
+assert ( zero (1/(1/z)) )
+assert ( zero (1./(1./z)) )
+assert ( zero (1/(1./z)) )
+assert ( zero (1./(1/z)) )
+
+assert ( zero ((1.+ii)/(1/z)) )
+assert ( zero (1/((1.+ii)/z)) )
+assert ( zero ((1.+ii)/((1.+ii)/z)) )
+
+assert ( size2 4. == 3 )
+assert ( size2 3.999999 == 2 )
+assert ( size2 (-4.) == 3 )
+assert ( size2 (-3.999999) == 2 )
+assert ( size2 0. < -2000 )
+assert ( size2 (1/0.) > 2000 )
+assert ( size2 (1/0.-1/0.) > 2000 )
 
 
 -- Local Variables:

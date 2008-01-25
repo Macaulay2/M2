@@ -397,10 +397,10 @@ rightshift(x:ZZ,n:ulong):ZZ := (
      z);
 
 export (x:ZZ) << (n:int) : ZZ := (
-     if n >= 0 then leftshift(x,ulong(n)) else rightshift(x,ulong(-n))
+     if n == 0 then x else if n > 0 then leftshift(x,ulong(n)) else rightshift(x,ulong(-n))
      );
 export (x:ZZ) >> (n:int) : ZZ := (
-     if n >= 0 then rightshift(x,ulong(n)) else leftshift(x,ulong(-n))
+     if n == 0 then x else if n > 0 then rightshift(x,ulong(n)) else leftshift(x,ulong(-n))
      );     
 
 and(x:ZZ, y:ZZ, z:ZZ):void ::= Ccode( void,
@@ -1254,6 +1254,7 @@ export round(x:RR) : ZZ := (
      y);
 
 export (x:RR) << (n:long) : RR := (
+     if n == long(0) then return x;
      z := newRR(precision0(x));
      Ccode( void, "mpfr_mul_2si((__mpfr_struct *)", z, ",(__mpfr_struct *)", x, ",", n, ",GMP_RNDN)" );
      z);
@@ -1289,22 +1290,26 @@ export (x:CC) / (y:RR) : CC := CC(x.re/y, x.im/y);
 export conj(x:CC):CC := CC(x.re,-x.im);
 export norm2(x:CC):RR := x.re*x.re + x.im*x.im;
 
+export (x:CC) << (n:long) : CC := if n == long(0) then x else CC(x.re<<n,x.im<<n);
+export (x:CC) >> (n:long) : CC := if n == long(0) then x else CC(x.re>>n,x.im>>n);
+export (x:CC) << (n:int) : CC := if n == 0 then x else CC(x.re<<n,x.im<<n);
+export (x:CC) >> (n:int) : CC := if n == 0 then x else CC(x.re>>n,x.im>>n);
+
 export inverse(z:CC):CC := (
-     n2 := norm2(z);
-     if isfinite0(n2) && isZero0(n2) then (
-	  -- we could be more careful here: an underflow might have made n2==0, and normalizing, we could avoid that
-	  infinityCC(precision(z))
-	  )
-     else toCC(z.re/n2, -z.im/n2));
+     if isfinite(z) then 
+     if isZero0(z.re) && isZero0(z.im) then infinityCC(precision0(z.re)) 
+     else (
+     	  expon := exponent(z);
+     	  if expon > 10000 || expon < -10000 then z = z >> expon else expon = long(0);
+     	  n2 := norm2(z);
+     	  toCC((z.re/n2) >> expon, -(z.im/n2) >> expon))
+     else if isinf(z) then toCC(0,0,precision(z))
+     else nanCC(precision(z)));
+
 export (x:CC) / (y:CC) : CC := x * inverse(y);
 export (x:RR) / (y:CC) : CC := x * inverse(y);
 export (x:ZZ) / (y:CC) : CC := x * inverse(y);
 export (x:int) / (y:CC) : CC := x * inverse(y);
-
-export (x:CC) << (n:long) : CC := CC(x.re<<n,x.im<<n);
-export (x:CC) >> (n:long) : CC := CC(x.re>>n,x.im>>n);
-export (x:CC) << (n:int) : CC := CC(x.re<<n,x.im<<n);
-export (x:CC) >> (n:int) : CC := CC(x.re>>n,x.im>>n);
 
 export strictequality(x:CC,y:CC):bool := strictequality(x.re,y.re) && strictequality(x.im,y.im);
      
@@ -1397,7 +1402,7 @@ export atan(x:RR):RR := (
      Ccode( void, "mpfr_atan((__mpfr_struct *)", z, ",(__mpfr_struct *)", x, ", GMP_RNDN)" );
      z);
 export atan2(y:RR,x:RR):RR := (
-     if isZero0(x) && isZero0(y) && isfinite0(x) && isfinite0(y) then return nanRR(min(precision0(x),precision0(y)));
+     -- if isZero0(x) && isZero0(y) && isfinite0(x) && isfinite0(y) then return nanRR(min(precision0(x),precision0(y)));
      z := newRR(min(precision0(x),precision0(y)));
      Ccode( void, "mpfr_atan2((__mpfr_struct *)", z, ",(__mpfr_struct *)", y, ",(__mpfr_struct *)", x, ", GMP_RNDN)" );
      z);
@@ -1640,6 +1645,15 @@ export tostringCC(z:CC):string := (
      if y ===  "1" then return x + "+ii";
      if y.0 == '-' then return concatenate(array(string)(x,y,"*ii"));
      concatenate(array(string)(x,"+",y,"*ii")));
+export tonetCC(z:CC):string := (
+     x := tostringRR(realPart(z));
+     y := tostringRR(imaginaryPart(z));
+     if y === "0" then return x;
+     if x === "0" then return y + "i";
+     if y === "-1" then return x + "-i";
+     if y ===  "1" then return x + "+i";
+     if y.0 == '-' then return concatenate(array(string)(x,y,"i"));
+     concatenate(array(string)(x,"+",y,"i")));
 export toExternalString(z:CC):string := concatenate(array(string)(
      	  "toCC(",
 	  toExternalString(realPart(z)),

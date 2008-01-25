@@ -69,6 +69,7 @@ typedef struct M2_CCC_struct { __mpfr_struct *re, *im; } *M2_CCC; /* must agree 
 
   extern M2_string gmp_tostringRR(M2_RRR);
   extern M2_string gmp_tostringCC(M2_CCC);
+  extern M2_string gmp_tonetCC(M2_CCC);
 
 #endif
 

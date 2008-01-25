@@ -820,6 +820,9 @@ export endLine(o:file):void := (
      -- we might put a needless one out in the case where o.outfd == stdout.outfd, oh well.
      );
 
+export (o:file) << (x:long) : file :=  o << tostring(x);
+export (o:file) << (x:ulong) : file :=  o << tostring(x);
+
 -- Local Variables:
 -- compile-command: "make -C $M2BUILDDIR/Macaulay2/d "
 -- End:
