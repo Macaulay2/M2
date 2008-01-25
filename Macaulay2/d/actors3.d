@@ -876,7 +876,7 @@ BesselY(e:Expr):Expr := (
 	  else WrongArgZZ(1))
      else WrongNumArgs(2));
 setupfun("BesselY",BesselY);
-atan(xx:Expr,yy:Expr):Expr := (
+atan2(yy:Expr,xx:Expr):Expr := (
      when yy
      is y:RR do (
 	  when xx
@@ -904,14 +904,13 @@ atan(e:Expr):Expr := (
      is x:RR do Expr(atan(x))				    -- # typical value: atan, RR, RR
      is x:ZZ do Expr(atan(toRR(x)))			    -- # typical value: atan, ZZ, RR
      is x:QQ do Expr(atan(toRR(x)))	       -- # typical value: atan, QQ, RR
-     is a:Sequence do if length(a) != 2
-     then WrongNumArgs(1,2)
-     else atan(a.0,a.1)
+     is a:Sequence do if length(a) == 2 then buildErrorPacket("atan(x,y) has been replaced by atan2(y,x)")
+     else WrongNumArgs(1)
      else buildErrorPacket("expected a number or a pair of numbers")
      );
 setupfun("atan",atan);
 atan2(e:Expr):Expr := (
-     when e is s:Sequence do if length(s) == 2 then atan(s.1,s.0)
+     when e is s:Sequence do if length(s) == 2 then atan2(s.0,s.1)
      else WrongNumArgs(2)
      else WrongNumArgs(2));
 setupfun("atan2",atan2);
