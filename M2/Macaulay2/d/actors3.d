@@ -880,21 +880,21 @@ atan2(yy:Expr,xx:Expr):Expr := (
      when yy
      is y:RR do (
 	  when xx
-	  is x:RR do Expr(atan2(y,x))			            -- # typical value: atan, RR, RR, RR
-	  is x:ZZ do Expr(atan2(y,toRR(x,precision(y))))	    -- # typical value: atan, ZZ, RR, RR
-	  is x:QQ do Expr(atan2(y,toRR(x,precision(y))))	    -- # typical value: atan, QQ, RR, RR
+	  is x:RR do Expr(atan2(y,x))			            -- # typical value: atan2, RR, RR, RR
+	  is x:ZZ do Expr(atan2(y,toRR(x,precision(y))))	    -- # typical value: atan2, RR, ZZ, RR
+	  is x:QQ do Expr(atan2(y,toRR(x,precision(y))))	    -- # typical value: atan2, RR, QQ, RR
 	  else WrongArg(1,"a number"))
      is y:ZZ do (
 	  when xx
-	  is x:RR do Expr(atan2(toRR(y,precision(x)),x))    -- -- # typical value: atan, RR, ZZ, RR
-	  is x:ZZ do Expr(atan2(toRR(y),toRR(x)))	       -- # typical value: atan, ZZ, ZZ, RR
-	  is x:QQ do Expr(atan2(toRR(y),toRR(x)))	       -- # typical value: atan, QQ, ZZ, RR
+	  is x:RR do Expr(atan2(toRR(y,precision(x)),x))    -- -- # typical value: atan2, ZZ, RR, RR
+	  is x:ZZ do Expr(atan2(toRR(y),toRR(x)))	       -- # typical value: atan2, ZZ, ZZ, RR
+	  is x:QQ do Expr(atan2(toRR(y),toRR(x)))	       -- # typical value: atan2, ZZ, QQ, RR
 	  else WrongArg(1,"a number"))
      is y:QQ do (
 	  when xx
-	  is x:RR do Expr(atan2(toRR(y,precision(x)),x))    -- # typical value: atan, RR, QQ, RR
-	  is x:ZZ do Expr(atan2(toRR(y),toRR(x)))	    -- # typical value: atan, ZZ, QQ, RR
-	  is x:QQ do Expr(atan2(toRR(y),toRR(x)))	    -- # typical value: atan, QQ, QQ, RR
+	  is x:RR do Expr(atan2(toRR(y,precision(x)),x))    -- # typical value: atan2, QQ, RR, RR
+	  is x:ZZ do Expr(atan2(toRR(y),toRR(x)))	    -- # typical value: atan2, QQ, ZZ, RR
+	  is x:QQ do Expr(atan2(toRR(y),toRR(x)))	    -- # typical value: atan2, QQ, QQ, RR
      	  else WrongArg(1,"a number"))
      else WrongArg(2,"a number")
      );
