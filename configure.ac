@@ -21,7 +21,7 @@ AC_DEFUN(IS_DECLARED,[
 ])
 
 echo "relevant environment variable values, if any:"
-for x in CC FC CXX CPPFLAGS CFLAGS FCFLAGS CXXFLAGS LDFLAGS LIBS
+for x in CC FC CXX CPPFLAGS CFLAGS FCFLAGS CXXFLAGS LDFLAGS LIBS SINGULARLIBS
 do eval v=\$$x
    test "$v" && echo "   $x=$v"
 done
@@ -614,7 +614,10 @@ fi
 SAVELIBS=$LIBS
 
 # we need to control the position of -lfac -lcf in the link line, so we don't add them to $LIBS nor to $BUILTLIBS, putting them in $SINGULARLIBS instead
-AC_SUBST(SINGULARLIBS,"-lfac -lcf")
+if ! test "$SINGULARLIBS"
+then SINGULARLIBS="-lfac -lcf"
+fi
+AC_SUBST(SINGULARLIBS)
 if test $BUILD_factory = no -o $BUILD_libfac = no
 then AC_LANG(C++)
      AC_CHECK_HEADER(factory.h,,BUILD_factory=yes BUILD_libfac=yes)
