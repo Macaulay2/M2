@@ -35,20 +35,29 @@ comp = (degs,heft,degs1,degs2,degDB) -> (
 	      Degree => degDB);
     assert isHomogeneous DB;
     assert(DB * DB == 0);
-    E = minimalPresentation homology(DB,DB);
+    << "computing E = minimalPresentation homology(DB,DB)" << endl;
+    time E = minimalPresentation homology(DB,DB);
+    << "computing hilbertSeries E" << endl;
+    time hE = hilbertSeries E;
+    << "size numerator hilbertSeries E is : " << size numerator hE << endl;
+    print hE;
+    << "computing res E" << endl;
+    time BE = betti res E;
+    print BE;
     )
 
 u = new Tally from {{-3, -7} => 7, {-3, -6} => 7, {0, 1} => 3, {0, 2} => 4, {-4, -9} => 4, {-4, -8} => 1, {-4, -7} => 1, {-1, -2} => 4, {-2, -5} => 3,
         {-2, -4} => 8}
 
--- first we do the computation with adjusted degrees
+<< "first we do the computation with adjusted degrees" << endl
 comp (degs',heft',degs1',degs2',degDB')
 t' = tally apply( degrees target presentation E, repair )
 assert ( t' === u )
 
--- then with unadjusted degrees
+<< "then we do the computation with unadjusted degrees" << endl
 comp (degs,heft,degs1,degs2,degDB)
 t = tally degrees target presentation E
+
 assert ( t === u )
 
 {*
