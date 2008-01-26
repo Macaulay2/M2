@@ -135,7 +135,10 @@ files called: INSTALL (this file), encapinfo, postinstall, and preremove.
         lib/Macaulay2/Core/cache/Macaulay2-*-data
    
    in the directory tree where you have installed it.  It contains the result
-   of interpreting the source code written in the Macaulay 2 language.
+   of interpreting the source code written in the Macaulay 2 language.  The next
+   time you start M2 it will try to load the file.  On some systems such loading
+   is rarely successful.  In that case, just delete the saved data file to
+   eliminate the warning messages about failing to load it.
 
 -------------------------------------------------
 -- For Users, after installation ----------------

@@ -1,0 +1,17 @@
+random QQ ignore Height option:
+
+i23 : random(QQ,Height=>100)
+
+      91
+o23 = --
+      86
+
+o23 : QQ
+
+i25 : random(QQ^2,QQ^10,Height=>100)
+
+o25 = | 7/3 1    3/4 1/5  1/2 1    3/4  1/2 1/2 1/2 |
+      | 9/8 3/10 2   7/10 2/5 10/7 9/10 3/4 8/9 1/3 |
+
+               2        10
+o25 : Matrix QQ  <--- QQ

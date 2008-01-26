@@ -69,6 +69,17 @@ document {
 	  "Backup files are made carefully, and if a mangled initialization file is detected, it will not be modified.
 	  The lines added are bracketed by comment lines containing the phrases ", TT "Macaulay 2 start", " and ", TT "Macaulay 2 end", "."
 	  },
+     PARA {
+	  "The initialization files will contain added commands that add the appropriate directory to the front of the
+	  environment variable ", TT "PATH", " so the program ", TT "M2", " can be found, unless that directory already occurs
+	  in the path, in which case it does not check whether that directory is the first one on the path containing a program
+	  whose name is ", TT "M2", ", for fear of escalating a competition with another init file."
+	  },
+     PARA {
+	  "This function is intended to be run only by users, not by system administrators, nor on behalf of users by system
+	  administors, because system administrators can easily install Macaulay 2 in such a way that the files can all be
+	  found."
+	  },
      SeeAlso => {
 	  setupEmacs
 	  }
