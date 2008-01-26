@@ -7,25 +7,27 @@ document {
      Headline => "compute the arctangent",
      Usage => "atan x"
      }
+
 document { 
-     Key => {(atan,RR,RR),
-	  (atan, ZZ, ZZ),(atan, QQ, ZZ),(atan, ZZ, QQ),
-	  (atan, QQ, QQ),(atan, RR, ZZ),(atan, ZZ, RR),(atan, QQ, RR),
-	  (atan, RR, QQ)
+     Key => {(atan2,RR,RR),
+	  (atan2, ZZ, ZZ),(atan2, QQ, ZZ),(atan2, ZZ, QQ),
+	  (atan2, QQ, QQ),(atan2, RR, ZZ),(atan2, ZZ, RR),(atan2, QQ, RR),
+	  (atan2, RR, QQ)
 	  },
      Headline => "compute an angle of a certain triangle",
-     Usage => "atan(x,y)",
-     Inputs => { "x" => RR, "y" => RR },
+     Usage => "atan2(y,x)",
+     Inputs => { "y" => RR, "x" => RR },
      Outputs => { 
-	 RR => { "the angle (in radians) formed with the x-axis by the ray from the origin to the point ", TT "(x,y)" } 
+	  RR => { "the angle (in radians) formed with the x-axis by the ray from the origin to the point ", TT "(x,y)" } 
 	  },
      EXAMPLE {
-	  "atan(sqrt(3.0)/2,1/2)",
-	  "-- Notice this is not quite pi/6, but it is within a reasonable epsilon.
-epsilon = 10.^-15;",	  
-	  "abs(atan(sqrt(3.0)/2,1.0/2) - pi/6) < epsilon"
-	  }
+	  "atan2(1,0)",
+	  "atan2(0,1)",
+	  "atan2(-1,-1)"
+	  },
+     SeeAlso => { atan }
      }
+
 document { 
      Key => {(atan,RR),(atan,ZZ),(atan, QQ)},
      Headline => "compute the arctangent of a number ",
@@ -37,5 +39,6 @@ document {
      EXAMPLE {
      	  "atan 1",
 	  "abs atan 1 == pi/4"
-	  }
+	  },
+     SeeAlso => { atan2 }
      }
