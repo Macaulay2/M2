@@ -37,6 +37,11 @@ class Ring : public mutable_object
 protected:
   int P;
   const PolynomialRing *degree_ring;
+  M2_arrayint heft_vector;
+  // This vector, if NULL, and if there are any variables in the ring imply that
+  // the heft vector should be taken as the default: the first degree should be used
+  // If non-NULL, this should dot to a positive value for every variable in the ring.
+  // Question: does this include coefficient variables in the ring?
 
   ring_elem _non_unit;
   int _isfield;		// 1: means yes, or declared yes.
@@ -50,8 +55,9 @@ protected:
   ring_elem minus_oneV;
 
   void initialize_ring(int charac, 
-		       const PolynomialRing *DR = 0);
-  Ring() {}
+		       const PolynomialRing *DR = 0,
+		       const M2_arrayint heft_vec = 0);
+  Ring() : heft_vector(0) {}
 public:
   virtual ~Ring();
 
@@ -63,6 +69,7 @@ public:
 
   const Monoid * degree_monoid() const;
   const PolynomialRing *get_degree_ring() const { return degree_ring; }
+  const M2_arrayint get_heft_vector() const { return heft_vector; } // This CAN BE NULL
 
   virtual bool is_basic_ring() const { return true; } // The default is to be a basic ring.
   virtual bool is_ZZ() const { return false; }

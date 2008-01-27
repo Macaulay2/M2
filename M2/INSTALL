@@ -281,7 +281,7 @@ There are several methods for installing Macaulay2 under Mac OS X.
 	  cd BUILD/debug64
 	  ../../configure --prefix=$PWD/installed \
 	        --enable-debug --disable-optimize \
-                --enable-build-libraries="gc gdbm gmp readline ntl factory libfac" \
+                --enable-build-libraries="gc gdbm gmp mpfr readline ntl factory libfac" \
 		--build=x86_64-apple-darwin \
 		CC="gcc -m64" \
 		CXX="g++ -m64"
@@ -294,11 +294,11 @@ There are several methods for installing Macaulay2 under Mac OS X.
 	  svn co svn://Macaulay2.math.uiuc.edu/Macaulay2/trunk/M2 M2
 	  cd M2
 	  make
-	  mkdir BUILD/opt64
-	  cd BUILD/opt64
+	  mkdir BUILD/profile64
+	  cd BUILD/profile64
 	  ../../configure --prefix=$PWD/installed \
 	        --enable-profile \
-                --enable-build-libraries="gc gdbm gmp readline ntl factory libfac" \
+                --enable-build-libraries="gc gdbm gmp mpfr readline ntl factory libfac" \
 		--build=x86_64-apple-darwin \
 		CC="gcc -m64" \
 		CXX="g++ -m64"

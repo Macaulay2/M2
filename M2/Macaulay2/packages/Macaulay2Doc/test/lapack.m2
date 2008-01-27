@@ -298,6 +298,7 @@ a0 = map(kk^0,kk^0,0)
 assert try SVD map(RR^0,RR^0,0) else true
 assert try SVD map(CC^0,CC^0,0) else true
 
+--status: now that eigenvalues returns a VerticalList, we need to rewrite these 4 tests.
 assert(eigenvalues map(RR^0,RR^0,0) == map(CC^0,CC^1,0))
 assert(eigenvalues(map(RR^0,RR^0,0), Hermitian=>true) == map(RR^0,RR^1,0))
 assert(eigenvalues map(CC^0,CC^0,0) == map(CC^0,CC^1,0))
