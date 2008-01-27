@@ -147,21 +147,21 @@ void Monoid::set_degrees()
   int degvars = degree_monoid_->n_vars();
   int *t = degvals_->array;
 
-  primary_degree_of_var_ = makearrayint(nvars_);
-
+  heft_degree_of_var_ = makearrayint(nvars_);
+  assert(heftvals_->len == degvars);
   if (degvars > 0)
     for (int i=0; i<nvars_; i++)
       {
 	monomial m = degree_monoid_->make_one();
 	degree_monoid_->from_expvector(t, m);
 	degree_of_var_.append(m);
-	primary_degree_of_var_->array[i] = t[0];
+	heft_degree_of_var_->array[i] = ntuple::weight(degvars,t,heftvals_);
 	t += degvars;
       }
   else
     {
       for (int i=0; i<nvars_; i++)
-	primary_degree_of_var_->array[i] = 1;
+	heft_degree_of_var_->array[i] = 1;
     }
   degree_of_var_.append(degree_monoid_->make_one());
 }
@@ -219,48 +219,48 @@ void Monoid::set_overflow_flags()
 }
 
 #if 0
-
+//
 // dan : commenting this out because it seems to be unused
-
-Monoid *Monoid::tensor_product(const Monoid *M1, const Monoid *M2)
-{
-  int i,v;
-  MonomialOrdering_array M12 = GETMEM(MonomialOrdering_array, sizeofarray(M12,2));
-  M12->len = 2;
-  M12->array[0] = M1->mo_;
-  M12->array[1] = M2->mo_;
-  MonomialOrdering *M = rawProductMonomialOrdering(M12);
-
-  int n1 = M1->n_vars();
-  int n2 = M2->n_vars();
-  int n = n1+n2;
-  M2_stringarray names = GETMEM(M2_stringarray, sizeofarray(names, n));
-  names->len = n;
-  for (i=0; i<n1; i++)
-    names->array[i] = M1->varnames_->array[i];
-
-  for (i=0; i<n2; i++)
-    names->array[n1+i] = M2->varnames_->array[i];
-
-  const PolynomialRing *DR = M1->get_degree_ring();
-  int ndegs = DR->n_vars();
-
-  M2_arrayint degs = makearrayint(ndegs*n);
-
-  int next = 0;
-  for (v=0; v<n1; v++)
-    for (i=0; i<ndegs; i++) {
-      degs->array[next] = M1->degvals_->array[next];
-      next++;
-    }
-
-  for (v=0; v<n2; v++)
-    for (i=0; i<ndegs; i++)
-      degs->array[next++] = 0;
-
-  return Monoid::create(M,names,DR,degs, /* some hefts have to go here but what could they be??? */);
-}
-
+//
+//Monoid *Monoid::tensor_product(const Monoid *M1, const Monoid *M2)
+//{
+//  int i,v;
+//  MonomialOrdering_array M12 = GETMEM(MonomialOrdering_array, sizeofarray(M12,2));
+//  M12->len = 2;
+//  M12->array[0] = M1->mo_;
+//  M12->array[1] = M2->mo_;
+//  MonomialOrdering *M = rawProductMonomialOrdering(M12);
+//
+//  int n1 = M1->n_vars();
+//  int n2 = M2->n_vars();
+//  int n = n1+n2;
+//  M2_stringarray names = GETMEM(M2_stringarray, sizeofarray(names, n));
+//  names->len = n;
+//  for (i=0; i<n1; i++)
+//    names->array[i] = M1->varnames_->array[i];
+//
+//  for (i=0; i<n2; i++)
+//    names->array[n1+i] = M2->varnames_->array[i];
+//
+//  const PolynomialRing *DR = M1->get_degree_ring();
+//  int ndegs = DR->n_vars();
+//
+//  M2_arrayint degs = makearrayint(ndegs*n);
+//
+//  int next = 0;
+//  for (v=0; v<n1; v++)
+//    for (i=0; i<ndegs; i++) {
+//      degs->array[next] = M1->degvals_->array[next];
+//      next++;
+//    }
+//
+//  for (v=0; v<n2; v++)
+//    for (i=0; i<ndegs; i++)
+//      degs->array[next++] = 0;
+//
+//  return Monoid::create(M,names,DR,degs, /* some hefts have to go here but what could they be??? */);
+//}
+//
 #endif
 
 
@@ -564,15 +564,6 @@ void Monoid::degree_of_varpower(const_varpower vp, monomial result) const
 	degree_monoid()->mult(result, mon1, result);
       }
   degree_monoid()->remove(mon1);
-}
-
-int Monoid::primary_value(const_monomial m) const
-{
-  // MES: rewrite!!
-  if (nvars_ == 0) return 0;
-  to_expvector(m, EXP1_);
-  int result = EXP1_[0];
-  return result;
 }
 
 int Monoid::primary_degree(const_monomial m) const

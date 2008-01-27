@@ -33,7 +33,7 @@ class Monoid : public mutable_object
   array<const_monomial> degree_of_var_;	// [0]..[nvars-1] are the multi-degrees of the 
 				// variables, and [nvars] = zero element in the 
 				// degree monoid.
-  M2_arrayint primary_degree_of_var_;
+  M2_arrayint heft_degree_of_var_;
 
   const PolynomialRing *degree_ring_;
   const Monoid *degree_monoid_;
@@ -100,8 +100,9 @@ public:
   const PolynomialRing *get_degree_ring() const { return degree_ring_; }
   const Monoid *degree_monoid() const { return degree_monoid_; }
   const_monomial degree_of_var(int v) const { return degree_of_var_[v]; }
-  int primary_degree_of_var(int v) const { return primary_degree_of_var_->array[v]; }
-  M2_arrayint primary_degree_of_vars() const { return primary_degree_of_var_; }
+  int primary_degree_of_var(int v) const { return heft_degree_of_var_->array[v]; }
+  M2_arrayint primary_degree_of_vars() const { return heft_degree_of_var_; }
+  const M2_arrayint get_heft_vector() const { return heftvals_; }
 
   bool is_group() const { return n_invertible_vars_ == nvars_; }
 
@@ -174,8 +175,6 @@ public:
 	      monomial result_sn) const;
 
   void elem_text_out(buffer &o, const_monomial m) const;
-
-  int primary_value(const_monomial m) const;
 
   void multi_degree(const_monomial m, monomial result) const;
   int primary_degree(const_monomial m) const;

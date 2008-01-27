@@ -70,7 +70,8 @@ void PolyRing::initialize_poly_ring(const Ring *K, const Monoid *M,
 // and make_trivial_ZZ_poly_ring.
 {
   initialize_ring(K->charac(),
-		  deg_ring);
+		  deg_ring,
+		  M->get_heft_vector());
 
   initialize_PolynomialRing(K, M,
 			    this,

@@ -368,7 +368,7 @@ FreeModule *FreeModule::symm(int n) const
 
 int FreeModule::primary_degree(int i) const
 {
-  int result = degree_monoid()->primary_value(degree(i));
+  int result = degree_monoid()->degree_weights(degree(i),get_ring()->get_heft_vector());
   return result;
 }
 
@@ -378,8 +378,9 @@ int FreeModule::lowest_primary_degree() const
   int result = primary_degree(0);
   for (int i=1; i<rank(); i++)
     {
-      if (primary_degree(i) < result)
-	result = primary_degree(i);
+      int a = primary_degree(i);
+      if (a < result)
+	result = a;
     }
   return result;
 }
@@ -390,8 +391,9 @@ int FreeModule::highest_primary_degree() const
   int result = primary_degree(0);
   for (int i=1; i<rank(); i++)
     {
-      if (primary_degree(i) > result)
-	result = primary_degree(i);
+      int a = primary_degree(i);
+      if (a > result)
+	result = a;
     }
   return result;
 }

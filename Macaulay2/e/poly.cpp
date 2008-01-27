@@ -113,7 +113,8 @@ PolynomialRing *PolynomialRing::create_quotient(const PolynomialRing *R,
   }
 
   result->initialize_ring(R->charac(),
-			  R->get_degree_ring());
+			  R->get_degree_ring(),
+			  R->get_heft_vector());
 
   result->initialize_PolynomialRing(R->getCoefficients(),
 				    R->getMonoid(),

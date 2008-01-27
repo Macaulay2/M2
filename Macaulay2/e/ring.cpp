@@ -11,7 +11,8 @@
 const Monoid * Ring::degree_monoid() const { return degree_ring->Nmonoms(); }
 
 void Ring::initialize_ring(int P0,
-			   const PolynomialRing *DR)
+			   const PolynomialRing *DR,
+			   const M2_arrayint heft_vec)
 {
   // Remember: if this is a poly ring, the ring is K[M].
   // If this is a basic routine, K = this, M = trivial monoid.
@@ -21,6 +22,7 @@ void Ring::initialize_ring(int P0,
     degree_ring = PolyRing::get_trivial_poly_ring();
   else
     degree_ring = DR;
+  heft_vector = heft_vec;
 
   _non_unit = ZERO_RINGELEM;
   _isfield = 0;
