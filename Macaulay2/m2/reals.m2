@@ -173,8 +173,9 @@ isConstant Number := i -> true
 
 round RR := round0
 round(ZZ,RR) := (n,x) -> (
-     p := 10^n;
-     toRR(precision x,round(x*p)/p))
+     prec := precision x;
+     p := (toRR(prec,10))^n;
+     toRR(prec,round(x*p)/p))
 
 random RR := RR => opts -> x -> x * rawRandomRR precision x
 random(RR,RR) := opts -> (x,y) -> x + random(y-x)

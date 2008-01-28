@@ -352,6 +352,8 @@ options Function := OptionTable => f -> (
      if oftab#?fb then oftab#fb f
      )
 
+options Command := OptionTable => f -> options f#0
+
 computeAndCache := (M,options,Name,goodEnough,computeIt) -> (
      if not M#?Name or not goodEnough(M#Name#0,options) 
      then (
@@ -533,6 +535,7 @@ methodOptions = method(TypicalValue => OptionTable)
 methodOptions Function := methodOptions Symbol := f -> null
 methodOptions MethodFunctionWithOptions := MultipleArgsWithOptionsGetMethodOptions
 methodOptions MethodFunction := MultipleArgsNoOptionsGetMethodOptions
+methodOptions Command := f -> methodOptions f#0
 
 -- values of functions by lookup
 lookupfuns = new MutableHashTable

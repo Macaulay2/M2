@@ -1480,7 +1480,7 @@ document {
      }
 
 document {
-     Key => (symbol **, ChainComplex, ChainComplex),
+     Key => {(symbol **, ChainComplex, ChainComplex), (symbol**, ChainComplex, Module),(symbol**, Module, ChainComplex)},
      Headline => "tensor product",
      TT "C**D", " -- the tensor product of two chain complexes.",
      PARA{},
@@ -1508,7 +1508,7 @@ document {
      }
 
 document {
-     Key => (symbol **, ChainComplexMap, ChainComplex),
+     Key => {(symbol **, ChainComplexMap, ChainComplex),(symbol**, ChainComplexMap, Module)},
      Headline => "tensor product",
      TT "f ** C", " -- tensor product of a map of chain complexes with a chain complex.",
      PARA{},
@@ -1516,7 +1516,7 @@ document {
      }
 
 document {
-     Key => (symbol **, ChainComplex, ChainComplexMap),
+     Key => {(symbol **, ChainComplex, ChainComplexMap),(symbol**, Module, ChainComplexMap)},
      Headline => "tensor product",
      TT "C ** f", " -- tensor product of a chain complex with a map of chain complexes.",
      PARA{},

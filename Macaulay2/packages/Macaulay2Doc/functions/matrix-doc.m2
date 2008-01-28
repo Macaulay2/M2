@@ -18,7 +18,7 @@ document {
      }
 
 document {
-     Key => (matrix,Ring,List),
+     Key => {(matrix,Ring,List),(matrix,RingFamily,List)},
      Headline => "create a matrix from a doubly nested list of ring elements or matrices",
      Usage => "matrix(R, v)",
      Inputs => { "R", "v" => "a list of vectors; or a doubly nested list of ring elements and/or matrices",

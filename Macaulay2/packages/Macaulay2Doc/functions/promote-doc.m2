@@ -39,6 +39,7 @@ undocumented {(promote,CC,CC_*),
      (promote,ZZ,QQ),
      (promote,ZZ,RingElement),
      (promote,ZZ,RR_*),
+     (promote,Matrix,InexactNumber'),
      (promote,ZZ,ZZ)
      }
 

@@ -803,7 +803,22 @@ document { Key => InexactNumber,
 	  }
      }
 
-document { Key => Constant,
+document { 
+     Key => { Constant,
+	  (symbol /,Constant,Constant),
+	  (symbol /,Constant,InexactNumber),
+	  (symbol /,Constant,Number),
+	  (symbol /,InexactNumber,Constant),
+	  (symbol /,Number,Constant),
+	  (symbol ==,Constant,Constant),
+	  (symbol ==,Constant,InexactNumber),
+	  (symbol ==,InexactNumber,Constant),
+	  (symbol ^,Constant,Constant),
+	  (symbol ^,Constant,InexactNumber),
+	  (symbol ^,Constant,Number),
+	  (symbol ^,InexactNumber,Constant),
+	  (symbol ^,Number,Constant)
+	  },
      PARA {
 	  "A constant is a symbolic entity that can be approximated by a real or complex
 	  number to any desired accuracy.  It is converted to a numeric value of the 
@@ -811,11 +826,13 @@ document { Key => Constant,
 	  },
      EXAMPLE lines ///
      	  pi
+     	  +pi
      	  numeric_100 pi
 	  2. * pi
 	  2p100 * pi
+	  exp(2*pi*ii/17)
      ///,
-     SeeAlso => { toRR, toCC, numeric }
+     SeeAlso => { numeric, "defaultPrecision" }
      }
 
 document { Key => InexactField,

@@ -9,7 +9,7 @@ document {
      }
 
 document { 
-     Key => {(atan2,RR,RR),
+     Key => {(atan2,RR,RR),atan2,
 	  (atan2, ZZ, ZZ),(atan2, QQ, ZZ),(atan2, ZZ, QQ),
 	  (atan2, QQ, QQ),(atan2, RR, ZZ),(atan2, ZZ, RR),(atan2, QQ, RR),
 	  (atan2, RR, QQ)
@@ -29,7 +29,7 @@ document {
      }
 
 document { 
-     Key => {(atan,RR),(atan,ZZ),(atan, QQ)},
+     Key => {(atan,RR),(atan,ZZ),(atan,CC),(atan, QQ)},
      Headline => "compute the arctangent of a number ",
      Usage => "atan x",
      Inputs => { "x" => RR },
@@ -41,4 +41,17 @@ document {
 	  "abs atan 1 == pi/4"
 	  },
      SeeAlso => { atan2 }
+     }
+
+document { 
+     Key => {acot,(acot,Number)},
+     Headline => "compute the inverse cotangent",
+     Usage => "acot x",
+     Inputs => { "x" => RR },
+     Outputs => {
+	  RR => {"the arccotangent (in radians) of ", TT "x"} 
+	  },
+     EXAMPLE {
+     	  "acot 2",
+	  }
      }

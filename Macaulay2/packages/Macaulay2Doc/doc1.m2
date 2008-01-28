@@ -3,7 +3,7 @@ scan((
 	  Algorithm,DebuggingMode,Dense,DivideConquer,First,Format,GBDegrees,Hermitian,CoefficientRing,Undo,SourceCode,Description,Variables,
 	  Boxes,BaseRow,HorizontalSpace,VerticalSpace,Alignment,Minimize,FileName,Unmixed,Decompose, AbsoluteLinks,
 	  CheckDocumentation, IgnoreExampleErrors, MakeDocumentation, MakeInfo, MakeLinks, RemakeAllDocumentation, RerunExamples, UserMode, Generic,
-	  KeepZeroes,Heading, ClosestFit, Density, Height, Norm, UpperTriangular,EncapsulateDirectory
+	  KeepZeroes,Heading, ClosestFit, Density, Height, Norm, UpperTriangular,EncapsulateDirectory, Local, Binomial, Monomial
 	  ),
      s -> if s =!= null then document {
 	  Key => s,
@@ -48,7 +48,7 @@ document {
      above."
      }
 document {
-     Key => help,
+     Key => {help,(help,Array),(help,DocumentTag),(help,List),(help,Sequence),(help,String),(help,Symbol),(help,Thing)},
      Headline => "help command",
      "Various ways to get help:",
      UL {
@@ -558,7 +558,7 @@ document {
 document { Key => drop,
      Headline => "drop some elements from a list or sequence", SeeAlso => "take" }
 document {
-     Key => {(options, Function),(options, Sequence)},
+     Key => {(options, Function),(options, Command),(options, Sequence)},
      Headline => "get optional arguments and default values for a function which accepts them",
      Usage => "options f",
      Inputs => { "f" },
