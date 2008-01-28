@@ -9,12 +9,13 @@ mtable := x -> concatenate(
      apply(x, row -> ( "<mtr>", apply(row, e -> ("<mtd>",e,"</mtd>",newline)), "</mtr>", newline ) ),
      "</mtable>", newline )
 mtableML := x -> mtable applyTable(x,mathML)
+mtableMLcol := x -> mtableML apply(x, row -> {row})
 tab := new HashTable from {
      symbol ZZ => "<mi>\u2124</mi>",
      symbol QQ => "<mi>\u211a</mi>",
      symbol CC => "<mi>\u2102</mi>"
      }
-mathML Net := x -> mtableML apply(unstack x, row -> {row})
+mathML Net := x -> mtableMLcol unstack x
 mathML String := x -> (
      if match("\n",x) 
      then mathML net x
@@ -27,6 +28,7 @@ mathML Array := s -> concatenate ( "<mrow><mo>[</mo><mrow>", between("<mo>,</mo>
 mathML Set := x -> mrow (mathML "set", mathML keys x)
 mathML Sequence := s -> concatenate ( "<mrow><mo>(</mo><mrow>", between("<mo>,</mo>",mathML \ toList s), "</mrow><mo>)</mo></mrow>" )
 mathML List := s -> concatenate ( "<mrow><mo>{</mo><mrow>", between("<mo>,</mo>",mathML \ toList s), "</mrow><mo>}</mo></mrow>" )
+mathML VerticalList := s -> concatenate( "<mrow><mo>{</mo>", mtableMLcol s, "<mo>}</mo></mrow>", newline )
 mathML Holder := v -> mathML v#0
 mathML Adjacent := x -> concatenate("<mrow>",mathML x#0,  mathML x#1, "</mrow>")
 mathML Adjacent :=
