@@ -1,0 +1,40 @@
+
+    i16 : R = QQ[x]
+
+    o16 = R
+
+    o16 : PolynomialRing
+
+    i17 : frac R
+
+    o17 = frac(R)
+
+    o17 : FractionField
+
+    i18 : (frac R)^6
+
+		  6
+    o18 = (frac R)
+
+    o18 : frac(R)-module, free
+
+    i19 : R = QQ[x]/(x^2+1)
+
+    o19 = R
+
+    o19 : QuotientRing
+
+    i20 : frac R
+
+    o20 = frac(R)
+
+    o20 : FractionField
+
+    i21 : (frac R)^6
+
+	  /     QQ [x]\6
+    o21 = |frac ------|				***********
+	  |      2    |
+	  \     x  + 1/
+
+    o21 : frac(R)-module, free
