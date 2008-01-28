@@ -270,16 +270,16 @@ net InexactField := R -> net expression R
 net CC := z -> simpleToString z
 toExternalString RR := toExternalString0
 toExternalString CC := toExternalString0
-InexactNumber#{Standard,Print} = x ->  (
+withFullPrecision = f -> (
      prec := printingPrecision;
      acc := printingAccuracy;
      printingPrecision = 0;
      printingAccuracy = -1;
-     Thing#{Standard,Print} x;
+     f();
      printingPrecision = prec;
      printingAccuracy = acc;				    -- sigh, what if an interrupt or an error occurred?
-     );
-
+     )
+InexactNumber#{Standard,Print} = x ->  withFullPrecision ( () -> Thing#{Standard,Print} x )
 InexactNumber#{Standard,AfterPrint} = x -> (
      << endl;                             -- double space
      << concatenate(interpreterDepth:"o") << lineNumber;
