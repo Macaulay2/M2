@@ -7,7 +7,7 @@ document {
      "This is the text of the license agreement under which Macaulay 2 is distributed.",
      PARA{},
      if sourceHomeDirectory =!= null then PRE separate("\f",get(sourceHomeDirectory | "COPYING"))
-     else if prefixDirectory =!= null then PRE separate("\f",get(prefixDirectory | LAYOUT#"docm2rel" | "COPYING"))
+     else if prefixDirectory =!= null then PRE separate("\f",get(prefixDirectory | LAYOUT#"docpackages" | "COPYING"))
      else (
 	  stderr << "warning: can't locate file \"COPYING\"" << endl;
 	  SPAN {"See the GNU GENERAL PUBLIC LICENSE, Version 2, June 1991, available at ", HREF "http://www.gnu.org/licenses/gpl.txt", "."}
