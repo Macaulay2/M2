@@ -348,7 +348,7 @@ AC_DEFINE_UNQUOTED(hostsystemtype,"$host",the type of system on which the packag
 case $host in
    i486-*|i586-*|i686-*)
 	newhost=`echo $host | sed s/i.86-/i386-/`
-	AC_MSG_NOTICE([warning: building for host $host might be compatible enough, consider using option "--build=$newhost"]) ;;
+	AC_MSG_NOTICE([warning: building for host $host might not be compatible enough, consider using option "--build=$newhost"]) ;;
 esac
 
 AC_SUBST(AUTOINST,no)
@@ -508,7 +508,7 @@ then AC_SEARCH_LIBS(mpfr_init,mpfr,,BUILD_mpfr=yes)
 		      minor = MPFR_VERSION_MINOR;
 		      patch_level = MPFR_VERSION_PATCHLEVEL;
 		      fprintf(msg,"(version %d.%d.%d found) ", major, minor, patch_level);
-		      return !( major >= 2 && minor >= 3 ); }],
+		      return !( major > 2 || major == 2 && minor >= 3 ); }],
 	     [ AC_MSG_RESULT(yes) ],
 	     [ AC_MSG_RESULT([no, version at least 2.3.0 is required (mpfr will be built from downloaded sources)]); BUILD_mpfr=yes ],
 	     [ AC_MSG_RESULT([cross-compiling, test not possible]) ])
@@ -549,7 +549,10 @@ fi
 test $BUILD_gdbm = yes && BUILTLIBS="-lgdbm $BUILTLIBS"
 
 if test $BUILD_ntl = no
-then AC_LANG(C++)
+then
+    AC_LANG(C++)
+    AC_CHECK_HEADER(NTL/version.h,,BUILD_ntl=yes)
+
     SAVELIBS=$LIBS
     AC_MSG_CHECKING(for ntl library)
     FOUND=
@@ -567,8 +570,26 @@ then AC_LANG(C++)
 	else AC_MSG_RESULT(found $lib)
 	fi
     else AC_MSG_RESULT(none found)
-	LIBS=$SAVELIBS BUILD_ntl=yes
+	LIBS=$SAVELIBS
+	BUILD_ntl=yes
     fi 
+
+    if test $BUILD_ntl = no
+    then AC_MSG_CHECKING([whether ntl library is recent enough, using NTL/version.h])
+	 AC_RUN_IFELSE([[
+		 #include <stdio.h>
+		 #include <NTL/version.h>
+		 main () {
+		     FILE *msg = fdopen(]]AS_MESSAGE_FD[[,"w");
+		     unsigned major, minor, revision;
+		     major = NTL_MAJOR_VERSION;
+		     minor = NTL_MINOR_VERSION;
+		     revision = NTL_REVISION;
+		     fprintf(msg,"(version %d.%d.%d found) ", major, minor, revision);
+		     return !( major > 5 || major == 5 && minor > 4 || major == 5 && minor == 4 && revision >= 1 ); }]],
+	    [ AC_MSG_RESULT(yes) ],
+	    [ AC_MSG_RESULT([no, version at least 5.4.1 is required (ntl will be built from downloaded sources)]); BUILD_ntl=yes ])
+    fi
 fi
 test $BUILD_ntl = yes && BUILTLIBS="-lntl $BUILTLIBS"
 

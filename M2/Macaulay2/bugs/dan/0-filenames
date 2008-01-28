@@ -1,0 +1,15 @@
+some names need changing:
+
+All files in site-lisp should start with M2-
+
+      /usr/local/encap/Macaulay2-1.1/share/emacs/site-lisp:
+      total used in directory 124 available 4540276
+      drwxr-xr-x 2 dan dan  4096 2008-01-25 23:02 .
+      drwxr-xr-x 3 dan dan  4096 2008-01-08 14:43 ..
+      -rw-r--r-- 1 dan dan  7857 2008-01-25 23:02 emacs-hlp.txt
+      -rw-r--r-- 1 dan dan  2172 2008-01-25 23:02 emacs.m2
+      -rw-r--r-- 1 dan dan 17132 2008-01-25 23:02 M2.el
+      -rw-r--r-- 1 dan dan   595 2008-01-25 23:02 M2-init.el
+      -rw-r--r-- 1 dan dan    95 2008-01-25 23:02 M2-mode.el
+      -rw-r--r-- 1 dan dan 69153 2008-01-25 23:02 M2-symbols.el
+      -rw-r--r-- 1 dan dan   360 2008-01-25 23:02 README
