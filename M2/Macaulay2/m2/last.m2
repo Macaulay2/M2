@@ -21,9 +21,12 @@ addStartFunction(
      	       dismiss "User";
 	       newPackage("User", DebuggingMode => true);
 	       );
-	  hd := "with packages: ";
-	  if not nobanner
-	  then stderr << hd << wrap(printWidth-#hd, concatenate between_", " sort apply(loadedPackages,toString)) << endl;
+	  if not nobanner then (
+	       if topLevelMode === TeXmacs then stderr << TeXmacsBegin << "verbatim:";
+	       hd := "with packages: ";
+	       stderr << hd << wrap(printWidth-#hd, concatenate between_", " sort apply(loadedPackages,toString)) << endl;
+	       if topLevelMode === TeXmacs then stderr << TeXmacsEnd << flush;
+	       )
 	  )
      )
 
