@@ -15,7 +15,7 @@ f = a^65536
 f = f^65536 -- this one gives overflow
 
 R = ZZ/101[a..d,MonomialSize=>16,Degrees=>{256,256,256,256}]
-f = a^256 -- should overflow
+f = a^256 -- should overflow (why??? MES: 27 Jan 2008)
 
 R = ZZ/101[a..d,Degrees=>{4:65536}]
 f = a^65536 -- should not be negative!

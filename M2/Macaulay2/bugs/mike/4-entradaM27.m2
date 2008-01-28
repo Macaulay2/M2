@@ -2190,7 +2190,7 @@ I = ideal(p0,p7c0,p7c7,p6c0,p6c6,p67c0,p67c7,p67c6,p67c67,p5c0,p5c5,p57c0,p57c7,
 
 end
 time load "4-entradaM27.m2"
-time load "/Users/mike/M2/Macaulay2/bugs/mike/4-entradaM27.m2"
+time load "/Users/mike/src/M2/Macaulay2/bugs/mike/4-entradaM27.m2"
 betti I
 time gens gb I;
 J = monomialIdeal gens I;
