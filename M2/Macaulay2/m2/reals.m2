@@ -171,7 +171,7 @@ CC % RR := (x,y) -> x % y_CC;
 conjugate CC := z -> toCC(precision z, realPart z, - imaginaryPart z)
 isConstant Number := i -> true
 
-round RR := round0
+round RR := round CC := round0
 round(ZZ,RR) := (n,x) -> (
      prec := precision x;
      p := (toRR(prec,10))^n;
