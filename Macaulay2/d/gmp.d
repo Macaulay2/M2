@@ -804,6 +804,7 @@ export isPositive(x:RR):bool := isPositive0(x);
 export isNegative(x:RR):bool := isNegative0(x);
 
 export isZero    (x:RR):bool := isZero0(x) && isfinite0(x);
+export isZero    (x:CC):bool := isZero0(x.re) && isfinite0(x.re) && isZero0(x.im) && isfinite0(x.im);
 
 export defaultPrecision := ulong(53); -- should 53 be computed?
 
@@ -1273,20 +1274,40 @@ export (x:CC) + (y:RR) : CC := CC(x.re+y,x.im);
 export (x:RR) + (y:CC) : CC := CC(x+y.re,y.im);
 export -(y:CC) : CC := CC(-y.re,-y.im);
 
-export (x:CC) * (y:RR) : CC := CC(x.re*y, x.im*y);
-export (y:RR) * (x:CC) : CC := CC(x.re*y, x.im*y);
-export (y:int) * (x:CC) : CC := CC(y*x.re, y*x.im);
-export (x:CC) * (y:ZZ) : CC := CC(x.re*y, x.im*y);
-export (y:ZZ) * (x:CC) : CC := CC(x.re*y, x.im*y);
-
-export (x:CC) * (y:CC) : CC := (
-     if isfinite0(x.re) && isfinite0(y.re) && isfinite0(x.im) && isfinite(y.im)
-     then CC(x.re*y.re-x.im*y.im, x.im*y.re+x.re*y.im)
-     else 
-     if isnan(x) || isnan(y) then nanCC(min(precision(x),precision(y)))
+export (x:CC) * (y:RR) : CC := (
+     if isfinite0(x.re) && isfinite0(x.im) && isfinite0(y)
+     then CC(x.re*y, x.im*y)
+     else if isnan(x) || isnan(y) then nanCC(min(precision(x),precision(y)))
      else infinityCC(min(precision(x),precision(y))));
-export (x:CC) / (y:int) : CC := CC(x.re/y, x.im/y);
-export (x:CC) / (y:RR) : CC := CC(x.re/y, x.im/y);
+export (y:RR) * (x:CC) : CC := (
+     if isfinite0(x.re) && isfinite0(x.im) && isfinite(y)
+     then CC(x.re*y, x.im*y)
+     else if isnan(x) || isnan(y) then nanCC(min(precision(x),precision(y)))
+     else infinityCC(min(precision(x),precision(y))));
+export (y:int) * (x:CC) : CC := (
+     if isinf(x) && y != 0
+     then infinityCC(precision(x))
+     else CC(x.re*y, x.im*y));
+export (x:CC) * (y:ZZ) : CC := (
+     if isinf(x) && !isZero(y)
+     then infinityCC(precision(x))
+     else CC(x.re*y, x.im*y));
+export (y:ZZ) * (x:CC) : CC := (
+     if isinf(x) && !isZero(y)
+     then infinityCC(precision(x))
+     else CC(x.re*y, x.im*y));
+export (x:CC) * (y:CC) : CC := (
+     if isinf(x) && !isZero(y) && !isnan(y) || isinf(y) && !isZero(x) && !isnan(x)
+     then infinityCC(min(precision(x),precision(y)))
+     else CC(x.re*y.re-x.im*y.im, x.im*y.re+x.re*y.im));
+export (x:CC) / (y:RR) : CC := (
+     if isZero(y) && !isnan(x) && !isZero(x)
+     then infinityCC(min(precision(x),precision(y)))
+     else CC(x.re/y, x.im/y));
+export (x:CC) / (y:int) : CC := (
+     if y == 0 && !isnan(x) && !isZero(x)
+     then infinityCC(precision(x))
+     else CC(x.re/y, x.im/y));
 export conj(x:CC):CC := CC(x.re,-x.im);
 export norm2(x:CC):RR := x.re*x.re + x.im*x.im;
 
@@ -1738,7 +1759,9 @@ export atan(x:CC):CC := (
 export (x:CC) ^ (y:CC):CC := exp(log(x)*y);
 export (x:CC) ^ (y:RR):CC := exp(log(x)*y);
 export (x:CC) ^ (y:ZZ):CC := (
+     if isZero0(y) then return toCC(1,0,precision0(x.re));
      if isZero0(x.re) && isZero0(x.im) && isfinite0(x.re) && isfinite0(x.im) then return if isNegative0(y) then infinityCC(precision0(x.re)) else x;
+     if isinf(x) then return if isNegative0(y) then toCC(0,precision0(x.re)) else x;
      if isLong(y) then (
 	  n := toLong(y);
      	  if n == long(0) then return toCC(1,precision(x));

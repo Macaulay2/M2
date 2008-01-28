@@ -723,6 +723,9 @@ assert ( size2 0. < -2000 )
 assert ( size2 (1/0.) > 2000 )
 assert ( size2 (1/0.-1/0.) > 2000 )
 
+assert ( isInfinite ( ii / 0. ) )
+assert ( isInfinite ( ii * (1/0.) ) )
+assert ( isInfinite ( ii * (1/(0.+0.*ii)) ) )
 
 -- Local Variables:
 -- compile-command: "make -C $M2BUILDDIR/Macaulay2/packages/Macaulay2Doc/test numbers.out"
