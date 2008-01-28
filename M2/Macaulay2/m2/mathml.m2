@@ -11,7 +11,10 @@ mtable := x -> concatenate(
 mtableML := x -> mtable applyTable(x,mathML)
 mtableMLcol := x -> mtableML apply(x, row -> {row})
 tab := new HashTable from {
+     -- symbol NN => "<mi>\u2115</mi>",
+     -- symbol PP => "<mi>\u2119</mi>",
      symbol ZZ => "<mi>\u2124</mi>",
+     symbol RR => "<mi>\u211d</mi>",
      symbol QQ => "<mi>\u211a</mi>",
      symbol CC => "<mi>\u2102</mi>"
      }
