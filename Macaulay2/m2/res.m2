@@ -172,16 +172,15 @@ engineReady := M -> (
      R := ring M;
      -- Needed to compute resolutions, (algorithms 0,1,2,3):
      --    Ring is poly ring over a field (or skew commutative, or quotient ring of such, or both)
-     --    Ring is graded, first degree of every variable is positive
-     --    Ring is homogeneous in this grading (actually, only need graded with respect to the first degree)
-     --    Matrix is homogeneous in this grading (same note as previous line)
+     --    Ring is graded
+     --    Ring is homogeneous in this grading
+     --    Matrix is homogeneous in this grading
      -- Additional requirements for resolution algorithm 3 (which uses hilbert function):
      --    Ring is singly graded
      isHomogeneous M
      and (instance(R,PolynomialRing) or isQuotientOf(PolynomialRing, R))
      and isField coefficientRing R
      and (isCommutative R or isSkewCommutative R)
-     and all(degree \ generators(R, CoefficientRing=>ZZ), deg -> deg#0 > 0)
      )
 
 resolution Module := ChainComplex => o -> (M) -> (
