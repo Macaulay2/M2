@@ -159,7 +159,7 @@ document {
      }
 
 document {
-     Key => (map,Module,Module,RingElement),
+     Key => {(map,Module,Module,RingElement),(map,Module,Module,Number)},
      Headline => "construct the map induced by multiplication by a ring element on the
         generators",
      Usage => "map(M,N,r)",

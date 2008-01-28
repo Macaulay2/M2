@@ -1053,6 +1053,11 @@ floor(e:Expr):Expr := (
 	  if isinf(x) then buildErrorPacket("encountered infinite real number in conversion to integer") else
 	  Expr(floor(x))				    -- # typical value: floor, RR, ZZ
 	  )
+     is x:CC do (
+	  if isnan(x) then buildErrorPacket("encountered NotANumber in conversion to integer") else
+	  if isinf(x) then buildErrorPacket("encountered infinite real number in conversion to integer") else
+	  Expr(floor(x.re))				    -- # typical value: floor, CC, ZZ
+	  )
      is x:QQ do Expr(floor(x))				    -- # typical value: floor, QQ, ZZ
      is ZZ do e				    -- # typical value: floor, ZZ, ZZ
      else buildErrorPacket("expected an integral, rational, or real number")
@@ -1065,6 +1070,10 @@ round0(e:Expr):Expr := (
 	  if isnan(x) then buildErrorPacket("encountered NotANumber in conversion to integer") else
 	  if isinf(x) then buildErrorPacket("encountered infinite real number in conversion to integer") else
 	  Expr(round(x)))
+     is x:CC do (
+	  if isnan(x) then buildErrorPacket("encountered NotANumber in conversion to integer") else
+	  if isinf(x) then buildErrorPacket("encountered infinite real number in conversion to integer") else
+	  Expr(round(x.re)))
      else buildErrorPacket("expected a real number")
      );
 setupfun("round0",round0);

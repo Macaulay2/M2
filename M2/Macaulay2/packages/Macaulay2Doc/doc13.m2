@@ -63,32 +63,62 @@ document {
 
 undocumented {(addHook,MutableHashTable,Thing,Function)}
 document {
-     Key => { (addHook,HashTable,Thing,Function), addHook },
-     Headline => "add a hook function to an object for later processing",
+     Key => addHook,
+     Headline => "add a hook function to an object for later processing"
+     }
+document {
+     Key => { (addHook,HashTable,Thing,Function) },
      Usage => "addHook(obj,key,hook)",
      Inputs => { "obj", "key", "hook" },
      Consequences => {
-	  { "the function ", TT "hook", " is added to the beginning of the list (possibly absent) of hooks stored in ", TT "obj#key", " or ", TT "obj.cache#key" }
+	  { "the function ", TT "hook", " is added to the beginning of the list (possibly absent) of hooks
+	       stored in ", TT "obj#key", " if ", TT "obj", " is mutable, or in ", TT "obj.cache#key", " if not" }
 	  },
      SourceCode => {(addHook,HashTable,Thing,Function), (addHook,MutableHashTable,Thing,Function)},
-     SeeAlso => { runHooks, removeHook }
+     SeeAlso => { (runHooks,HashTable,Thing,Thing), (removeHook,HashTable,Thing,Function) }
+     }
+document {
+     Key => { (addHook,Symbol,Function) },
+     Usage => "addHook(sym,hook)",
+     Inputs => { "sym", "hook" },
+     Consequences => {
+	  { "the function ", TT "hook", " is added to the beginning of the list (possibly absent) of hooks
+	       stored as the value of ", TT "sym" }
+	  },
+     SourceCode => {(addHook,HashTable,Thing,Function), (addHook,MutableHashTable,Thing,Function)},
+     SeeAlso => { (runHooks,Symbol,Thing), (removeHook,Symbol,Function) }
      }
 undocumented {(removeHook,MutableHashTable,Thing,Function)}
 document {
-     Key => { (removeHook,HashTable,Thing,Function), removeHook },
-     Headline => "remove a hook function from an object",
+     Key => removeHook,
+     Headline => "remove a hook function from an object"
+     }
+document {
+     Key => { (removeHook,HashTable,Thing,Function)},
      Usage => "removeHook(obj,key,hook)",
      Inputs => { "obj", "key", "hook" },
      Consequences => {
 	  { "the function ", TT "hook", " is removed from the list of hooks stored in ", TT "obj#key", " or ", TT "obj.cache#key" }
 	  },
      SourceCode => {(removeHook,HashTable,Thing,Function), (removeHook,MutableHashTable,Thing,Function)},
-     SeeAlso => { runHooks, removeHook }
+     SeeAlso => { (runHooks,HashTable,Thing,Thing), (removeHook,HashTable,Thing,Function) }
+     }
+document {
+     Key => { (removeHook,Symbol,Function)},
+     Usage => "removeHook(sym,hook)",
+     Inputs => { "sym", "hook" },
+     Consequences => {
+	  { "the function ", TT "hook", " is removed from the list of hooks stored in the value of ", TT "sym" }
+	  },
+     SeeAlso => { (runHooks,Symbol,Thing), (addHook,Symbol,Function) }
      }
 undocumented {(runHooks,MutableHashTable,Thing,Thing)}
 document {
-     Key => { (runHooks,HashTable,Thing,Thing), runHooks },
-     Headline => "run the hook functions stored in an object",
+     Key => runHooks,
+     Headline => "run the hook functions stored in an object"
+     }
+document {
+     Key => { (runHooks,HashTable,Thing,Thing) },
      Usage => "runHooks(obj,key,arg)",
      Inputs => { "obj", "key", "arg" },
      Outputs => {{
@@ -96,10 +126,23 @@ document {
 	       }},
      Consequences => {
 	  { "each function ", TT "hook", " in list of hooks stored in ", TT "obj#key", " or ", TT "obj.cache#key", " is
-	       called with ", TT "arg", " as its argument or sequence of arguments.  " }
+	       called with ", TT "arg", " as its argument or sequence of arguments." }
 	  },
      SourceCode => { (runHooks,HashTable,Thing,Thing), (runHooks,MutableHashTable,Thing,Thing) },
      SeeAlso => { addHook, removeHook }
+     }
+document {
+     Key => { (runHooks,Symbol,Thing) },
+     Usage => "runHooks(sym,arg)",
+     Inputs => { "sym", "arg" },
+     Outputs => {{
+	       "If one of the functions uses ", TO "break", " to return a value, that value will be returned.  Otherwise ", TO "null", " will be returned."
+	       }},
+     Consequences => {
+	  { "each function ", TT "hook", " in list of hooks stored in value of ", TT "sym", " is
+	       called with ", TT "arg", " as its argument or sequence of arguments." }
+	  },
+     SeeAlso => { (addHook,Symbol,Function), (removeHook,Symbol,Function) }
      }
 undocumented {(generateAssertions, List)}
 document { Key => {generateAssertions,(generateAssertions, String)},
@@ -203,16 +246,26 @@ document { Key => {applicationDirectory, "application directory"},
      PARA { "The function ", TO "applicationDirectorySuffix", " determines the value of ", TT "applicationDirectory", ", and can be modified by the user." },
      EXAMPLE "applicationDirectory()",
      SeeAlso => applicationDirectorySuffix}
-document { Key => round,
-     Headline => "round a number to the nearest integer",
-     Usage => "round x",
-     Inputs => { "x" => "a number" },
-     Outputs => {{ "the integer nearest to ", TT "x" }},
-     SourceCode => round,
-     EXAMPLE lines ///
-     	  round(-2.3)
+document { Key => {round,(round,QQ),(round,RR),(round,ZZ,RR),(round,ZZ)},
+     Headline => "round a number",
+     SYNOPSIS (
+	  Usage => "round x",
+	  Inputs => { "x" => "a number" },
+	  Outputs => {{ "the integer nearest to ", TT "x" }},
+	  EXAMPLE lines ///
+	  round(-2.3)
 	  round(2/3)
-	  ///,
+	  ///
+	  ),
+     SYNOPSIS (
+	  Usage => "round(n,x)",
+	  Inputs => { "n" => ZZ, "x" => RR },
+	  Outputs => {{ "the real number with just n decimal digits to the right of the decimal point nearest to ", TT "x" }},
+	  EXAMPLE lines ///
+	  round(2,1234.5678)
+	  round(-2,1234.5678)
+	  ///
+	  ),
      SeeAlso => { floor, ceiling }
      }
 document { Key => symbol currentLineNumber,
@@ -677,10 +730,11 @@ document { Key => getGlobalSymbol,
 	  peek d
      ///
      }     
-document { Key => Bag,
+document { Key => {Bag,(symbol ?,Bag,Bag)},
      Headline => "the class of all bags",
      PARA "A bag can be used for enclosing something in a container to prevent it from being printed, in normal circumstances.
-     Any mutable list can be used for this purpose, but bags are designed for this purpose.",
+     Any mutable list can be used for this purpose, but bags are designed for this purpose.  In comparison and sorting, they
+     are declared to be incomparable.",
      SeeAlso => {unbag}
      }
 document { Key => {(unbag, Bag), unbag},

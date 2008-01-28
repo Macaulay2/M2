@@ -36,7 +36,7 @@ document {
      }
 
 document {
-     Key => "null",
+     Key => null,
      Headline => "the unique member of the empty class",
      "When it is the value of an expression entered into the interpreter, the
      output line doesn't appear.  Empty spots in a list are represented by
@@ -402,8 +402,7 @@ document {
 undocumented {
      (symbol .., InfiniteNumber, InfiniteNumber),
      (symbol .., ZZ, InfiniteNumber),
-     (symbol .., InfiniteNumber, ZZ),
-     (symbol .., Thing, Thing)
+     (symbol .., InfiniteNumber, ZZ)
      }
 
 document {
@@ -531,13 +530,11 @@ undocumented {
      (symbol ?, DocumentTag, String),
      (symbol ?, TOH, TO),
      (symbol ?, TO, TOH),
-     (symbol ?, Thing),
      (symbol ?, InfiniteNumber, InfiniteNumber),
      (symbol ?, DocumentTag, DocumentTag),
      (symbol ?, Thing, InfiniteNumber),
      (symbol ?, TOH, TOH),
      (symbol ?, InfiniteNumber, Thing),
-     (symbol ?, Thing, Thing),
      (symbol ?, Function),
      (symbol ?, ZZ, MonoidElement),
      (symbol ?, MonoidElement, ZZ),
@@ -648,7 +645,7 @@ document {
      }
 
 document {
-     Key => {log,(log, RR),(log, QQ),(log, ZZ),
+     Key => {log,(log, RR),(log, QQ),(log, ZZ),(log,CC),(log,QQ,CC),(log,RR,CC),(log,ZZ,CC),
 	  (log, ZZ, ZZ),(log, QQ, ZZ),(log, ZZ, QQ),(log, QQ, QQ),(log, RR, ZZ),
 	  (log, ZZ, RR),(log, QQ, RR),(log, RR, QQ),(log, RR, RR)},
      Headline => "logarithm function",

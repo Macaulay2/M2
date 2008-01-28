@@ -78,14 +78,16 @@ verifyKey = method(Dispatch => Thing)
 verifyKey Thing    := s -> null
 
 verifyKey Sequence := s -> (				    -- e.g., (res,Module) or (symbol **, Module, Module)
-     if not (
+     if (
 	  if #s > 2 then (
 	       t := youngest drop(s,1);	                    -- this will all get screwed up with immutable types present
 	       t#?s and instance(t#s, Function) )
 	  else if #s == 2 then ( instance(s#1,HashTable) and s#1#?(s#0) and instance(s#1#(s#0), Function) )
 	  else false
 	  )
-     then error("documentation key for '", formatDocumentTag s, "' encountered, but no method installed"))
+     then null
+     else if #s > 1 and instance(s#0,Command) then verifyKey prepend(s#0#0,drop(s,1))
+     else error("documentation key for '", formatDocumentTag s, "' encountered, but no method installed"))
 
 verifyKey Array   := s -> (				    -- e.g., [res, Strategy]
      fn := s#0;

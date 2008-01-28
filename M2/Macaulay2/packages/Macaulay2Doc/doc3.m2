@@ -479,7 +479,7 @@ document { Key => MethodFunctionWithOptions,
 undocumented (methodOptions, MethodFunctionWithOptions)
 undocumented (methodOptions, MethodFunction)
 undocumented (methodOptions, Symbol)
-document { Key => {(methodOptions, Function),(methodOptions, ScriptedFunctor),methodOptions},
+document { Key => {(methodOptions, Function),(methodOptions, Command),(methodOptions, ScriptedFunctor),methodOptions},
      Headline => "recover the options used when a method function was created",
      Usage => "methodOptions f",
      Inputs => { "f" },
@@ -1377,7 +1377,7 @@ document { Key => pager,
 	       }}}
 
 document { Key => {precision,
-	  (precision, QuotientRing), (precision, Ring),
+	  (precision, QuotientRing), (precision, Ring),(precision,Number),
 	  (precision, MutableMatrix),(precision, RingElement),(precision, PolynomialRing),
 	  (precision, InexactNumber),(precision, InexactField),(precision, Matrix)
 	  },

@@ -713,6 +713,30 @@ document {
     (symbol*,  MutableMatrix, MutableMatrix),
     (symbol*,  Ideal, Module),
     (symbol*,  Ring, RingElement),
+    (symbol *,Constant,Constant),
+    (symbol *,Constant,InexactNumber),
+    (symbol *,Constant,Number),
+    (symbol *,InexactNumber,Constant),
+    (symbol *,Matrix,Number),
+    (symbol *,Matrix,ZZ),
+    (symbol *,Number,Constant),
+    (symbol *,Number,Matrix),
+    (symbol *,QQ,CC),
+    (symbol *,QQ,QQ),
+    (symbol *,QQ,RR),
+    (symbol *,QQ,ZZ),
+    (symbol *,RR,CC),
+    (symbol *,RR,QQ),
+    (symbol *,RR,RR),
+    (symbol *,RR,ZZ),
+    (symbol *,ZZ,CC),
+    (symbol *,ZZ,QQ),
+    (symbol *,ZZ,RR),
+    (symbol *,ZZ,ZZ),
+    (symbol *,CC,CC),
+    (symbol *,CC,QQ),
+    (symbol *,CC,RR),
+    (symbol *,CC,ZZ),
     (symbol*,  GradedModuleMap, GradedModuleMap),
     (symbol*,  RingElement, Matrix),
     (symbol*,  Ideal, CoherentSheaf),
@@ -801,8 +825,7 @@ document {
 
 undocumented {
 	  (symbol +, Number, RingElement),
-	  (symbol +, RingElement, Number),
-	  (symbol +, Thing)
+	  (symbol +, RingElement, Number)
 	  }
 document {
      Key => {symbol +,
@@ -810,6 +833,32 @@ document {
 	  (symbol +, ZZ, InfiniteNumber),
 	  (symbol +, ProjectiveHilbertPolynomial, ProjectiveHilbertPolynomial),
 	  (symbol +, MonomialIdeal, MonomialIdeal),
+	  (symbol +,CC),
+	  (symbol +,CC,CC),
+	  (symbol +,CC,QQ),
+	  (symbol +,CC,RR),
+	  (symbol +,CC,ZZ),
+	  (symbol +,Constant),
+	  (symbol +,Constant,Constant),
+	  (symbol +,Constant,InexactNumber),
+	  (symbol +,Constant,Number),
+	  (symbol +,InexactNumber,Constant),
+	  (symbol +,Number,Constant),
+	  (symbol +,QQ),
+	  (symbol +,QQ,CC),
+	  (symbol +,QQ,QQ),
+	  (symbol +,QQ,RR),
+	  (symbol +,QQ,ZZ),
+	  (symbol +,RR),
+	  (symbol +,RR,CC),
+	  (symbol +,RR,QQ),
+	  (symbol +,RR,RR),
+	  (symbol +,RR,ZZ),
+	  (symbol +,ZZ),
+	  (symbol +,ZZ,CC),
+	  (symbol +,ZZ,QQ),
+	  (symbol +,ZZ,RR),
+	  (symbol +,ZZ,ZZ),
 	  (symbol +, RingElement, GradedModuleMap),
 	  (symbol +, Matrix, Number),
 	  (symbol +, ZZ, ChainComplexMap),
@@ -873,6 +922,32 @@ document {
 	  (symbol -, GradedModuleMap, RingElement),
 	  (symbol -, Number, Matrix),
 	  (symbol -, MutableMatrix),
+	  (symbol -,CC),
+	  (symbol -,CC,CC),
+	  (symbol -,CC,QQ),
+	  (symbol -,CC,RR),
+	  (symbol -,CC,ZZ),
+	  (symbol -,Constant),
+	  (symbol -,Constant,Constant),
+	  (symbol -,Constant,InexactNumber),
+	  (symbol -,Constant,Number),
+	  (symbol -,InexactNumber,Constant),
+	  (symbol -,Number,Constant),
+	  (symbol -,QQ),
+	  (symbol -,QQ,CC),
+	  (symbol -,QQ,QQ),
+	  (symbol -,QQ,RR),
+	  (symbol -,QQ,ZZ),
+	  (symbol -,RR),
+	  (symbol -,RR,CC),
+	  (symbol -,RR,QQ),
+	  (symbol -,RR,RR),
+	  (symbol -,RR,ZZ),
+	  (symbol -,ZZ),
+	  (symbol -,ZZ,CC),
+	  (symbol -,ZZ,QQ),
+	  (symbol -,ZZ,RR),
+	  (symbol -,ZZ,ZZ),
 	  (symbol -, Matrix, RingElement),
 	  (symbol -, Matrix),
 	  (symbol -, RingElement, Matrix),
@@ -903,15 +978,30 @@ undocumented {
      (symbol /, InfiniteNumber, ZZ),
      (symbol /, EngineRing, Ideal),
      (symbol /, Expression, Holder),
-     (symbol /, Holder, OneExpression),
      (symbol /, Expression, OneExpression),
-     (symbol /, Holder, Expression),
      (symbol /, Holder, Holder),
      (symbol /, List, SelfInitializingType)
      }
 
 document {
-     Key => symbol /,
+     Key => {symbol /,
+	  (symbol /,CC,CC),
+	  (symbol /,CC,QQ),
+	  (symbol /,CC,RR),
+	  (symbol /,CC,ZZ),
+	  (symbol /,QQ,CC),
+	  (symbol /,QQ,QQ),
+	  (symbol /,QQ,RR),
+	  (symbol /,QQ,ZZ),
+	  (symbol /,RR,CC),
+	  (symbol /,RR,QQ),
+	  (symbol /,RR,RR),
+	  (symbol /,RR,ZZ),
+	  (symbol /,ZZ,CC),
+	  (symbol /,ZZ,QQ),
+	  (symbol /,ZZ,RR),
+	  (symbol /,ZZ,ZZ)
+	  },
      Headline => "a binary operator, usually used for division",
      Usage => "x / y",
      "This operator is currently used in several ways in Macaulay2.",
@@ -921,10 +1011,19 @@ document {
 	  "quotient rings, modules and sheaves",
 	  "applying a function or ring map to every element of a list or set"
 	  },
+     EXAMPLE lines ///
+     2/3
+     2./3
+     ///,
      SeeAlso => { "//"}
      }
 
 undocumented {
+     	  }
+
+
+document {
+     Key => {symbol %,
 	  (symbol %, CC, CC),
 	  (symbol %, CC, QQ),
 	  (symbol %, CC, RR),
@@ -939,11 +1038,6 @@ undocumented {
 	  (symbol %, ZZ, GroebnerBasis),
 	  (symbol %, ZZ, Ideal),
 	  (symbol %, ZZ, MonomialIdeal),
-     	  }
-
-
-document {
-     Key => {symbol %,
 	  (symbol %, ZZ, ZZ)
 	  },	  
      Headline => "a binary operator, usually used for remainder and reduction",
@@ -953,7 +1047,7 @@ document {
      PARA{},
      "For integers, the remainder is non-negative.",
      EXAMPLE lines ///
-       1232132141242345 % 3457834
+       1232132141242345 % 1000000
        (-4)%5
        ///,
      PARA{},
@@ -969,29 +1063,26 @@ document {
      TO "methods for normal forms and remainder", ".",
      SeeAlso => { remainder, remainder', pseudoRemainder, "//"}
      }
-
-undocumented {
-     (symbol //, CC, CC),
-     (symbol //, CC, QQ),
-     (symbol //, CC, RR),
-     (symbol //, CC, ZZ),
-     (symbol //, InfiniteNumber, ZZ),
-     (symbol //, Matrix, ZZ),
-     (symbol //, QQ, QQ),
-     (symbol //, Number, RingElement),
-     (symbol //, QQ, ZZ),
-     (symbol //, RingElement, Number),
-     (symbol //, RR, QQ),
-     (symbol //, RR, RR),
-     (symbol //, RR, ZZ),
-     (symbol //, ZZ, InfiniteNumber),
-     (symbol //, ZZ, Matrix),
-     (symbol //, ZZ, MonomialIdeal),
-     }
-
      
 document {
-     Key => symbol //,
+     Key => {symbol //,(symbol //,ZZ,ZZ),
+	  (symbol //, CC, CC),
+	  (symbol //, CC, QQ),
+	  (symbol //, CC, RR),
+	  (symbol //, CC, ZZ),
+	  (symbol //, InfiniteNumber, ZZ),
+	  (symbol //, Matrix, ZZ),
+	  (symbol //, QQ, QQ),
+	  (symbol //, Number, RingElement),
+	  (symbol //, QQ, ZZ),
+	  (symbol //, RingElement, Number),
+	  (symbol //, RR, QQ),
+	  (symbol //, RR, RR),
+	  (symbol //, RR, ZZ),
+	  (symbol //, ZZ, InfiniteNumber),
+	  (symbol //, ZZ, Matrix),
+	  (symbol //, ZZ, MonomialIdeal)
+	  },
      Headline => "a binary operator, usually used for quotient",
      Usage => "x // y",
      "For ring elements in the integers, polynomial rings, and other rings,
@@ -1038,33 +1129,11 @@ undocumented {
      (symbol ^, ZeroExpression, ZeroExpression),
      }
 
-(symbol ^, Matrix, ZZ),
-(symbol ^, ChainComplexMap, ZZ),
-(symbol ^, GradedModuleMap, ZZ),
-
-(symbol ^, ChainComplex, ZZ),
-
-(symbol ^, ChainComplexMap, Array),
-(symbol ^, Module, List),
-
-
-(symbol ^, Module, Array),
-(symbol ^, Matrix, Array),
-(symbol ^, ChainComplex, Array),
-(symbol ^, GradedModuleMap, Array),
-(symbol ^, Matrix, List),
-
-
-(symbol ^, ScriptedFunctor, Thing),
-
-(symbol ^, String, Sequence), -- make a net
-
-(symbol ^, Net, ZZ), -- raise a net
-(symbol ^, String, ZZ), -- make a net
-
-
 document {
-     Key => symbol ^,
+     Key => {symbol ^,
+	  (symbol ^,CC,ZZ),
+	  (symbol ^,InexactFieldFamily,ZZ)
+	  },
      Headline => "a binary operator, usually used for powers",
      Usage => "x ^ y",
      PARA{},
@@ -1452,6 +1521,28 @@ document {
          (symbol==, GradedModuleMap, GradedModuleMap),
          (symbol==, Ideal, Ideal),
          (symbol==, MutableMatrix, MutableMatrix),
+	 (symbol ==,Boolean,Boolean),
+	 (symbol ==,CC,CC),
+	 (symbol ==,CC,QQ),
+	 (symbol ==,CC,RR),
+	 (symbol ==,CC,ZZ),
+	 (symbol ==,Matrix,Number),
+	 (symbol ==,Number,Matrix),
+	 (symbol ==,QQ,CC),
+	 (symbol ==,QQ,QQ),
+	 (symbol ==,QQ,RR),
+	 (symbol ==,RR,CC),
+	 (symbol ==,RR,QQ),
+	 (symbol ==,RR,RR),
+	 (symbol ==,RR,ZZ),
+	 (symbol ==,RingElement,ZZ),
+	 (symbol ==,Sequence,Sequence),
+	 (symbol ==,String,String),
+	 (symbol ==,Symbol,Symbol),
+	 (symbol ==,ZZ,CC),
+	 (symbol ==,ZZ,RR),
+	 (symbol ==,ZZ,RingElement),
+	 (symbol ==,ZZ,ZZ),
          (symbol==, Module, Module),
 	 (symbol==, Vector, Vector),
 	 (symbol==, RingMap, RingMap),
@@ -1561,40 +1652,7 @@ undocumented {
      }
 
 document {
-     Key => {symbol**,
-    --(symbol**, ChainComplex, GradedModule),
-    --(symbol**, GradedModule, ChainComplex),
-    (symbol**, ProjectiveVariety, Ring),
-    (symbol**, RingElement, Number),
-    (symbol**, RingElement, Matrix),
-    (symbol**, GradedModule, GradedModule),
-    --(symbol**, RingMap, Module),
-    --(symbol**, Module, Module),
-    --(symbol**, Matrix, Ring),
-    (symbol**, ChainComplex, Module),
-    --(symbol**, Matrix, Matrix),
-    (symbol**, ChainComplexMap, Module),
-    (symbol**, Module, ChainComplexMap),
-    --(symbol**, ChainComplex, ChainComplexMap),
-    --(symbol**, CoherentSheaf, CoherentSheaf),
-    (symbol**, GradedModule, Module),
-    (symbol**, RingElement, RingElement),
-    --(symbol**, Monoid, Monoid),
-    --(symbol**, ChainComplexMap, ChainComplexMap),
-    (symbol**, AffineVariety, Ring),
-    --(symbol**, Tally, Tally),
-    --(symbol**, Set, Set),
-    (symbol**, Matrix, RingElement),
-    --(symbol**, Ring, Ring),
-    --(symbol**, Module, Ring),
-    (symbol**, ChainComplex, Ring),
-    --(symbol**, Matrix, Module),
-    --(symbol**, Module, Matrix),
-    (symbol**, Module, ChainComplex),
-    --(symbol**, ChainComplex, ChainComplex),
-    --(symbol**, ChainComplexMap, ChainComplex),
-    (symbol**, Module, GradedModule)
-	  },
+     Key => {symbol** },
      Headline => "a binary operator, usually used for tensor product or Cartesian product",
      SeeAlso => {symbol ^**}
      }
@@ -1693,7 +1751,7 @@ document {
 
 document {
      Key => {(random, Type),(random, RingFamily),(random, QuotientRing),(random, GaloisField),
-	  (random, ZZ, Ring),(random, List, Ring)},
+	  (random, ZZ, Ring),(random, List, Ring),"randomHeight"},
      Headline => "random element of a type",
      SYNOPSIS (
 	  Usage => "random T",
@@ -1706,7 +1764,8 @@ document {
 	  k = GF 2048
 	  VerticalList for i to 5 list random k
 	  ///,
-	  PARA { "The current value of ", TO "randomHeight", " is the upper bound on the absolute values of
+	  PARA { "The current value of the variable ", TO "randomHeight", ", which can
+	       be set by the user, is the upper bound on the absolute values of
 	       random integers, and on the absolute values of numerators and denominators of
 	       random rational numbers." },
 	  EXAMPLE lines ///
@@ -1731,23 +1790,27 @@ document {
 	  ///,
      	  "The length of ", TT "d", ", if it's a list, should be the same as ", TT "degreeLength R", ".",
 	  ),
-     SeeAlso => {setRandomSeed,"randomHeight"}
+     SeeAlso => {setRandomSeed}
      }
 
 document {
-     Key => {(random, Module, Module),[random, MaximalRank]},
+     Key => {(random, Module, Module),[random, MaximalRank],[random, Density],[random, UpperTriangular]},
      Headline => "make a random module map",
      Usage => "f = random(F,G)",
      Inputs => {
 	  "F" => {"a free module"},
 	  "G" => {"a free module"},
-	  MaximalRank => {"whether to ensure that the resulting map has maximal rank"}
+	  MaximalRank => {"whether to ensure that the resulting map has maximal rank"},
+	  Density => RR => {"the proportion of entries to set"},
+	  UpperTriangular => Boolean => {"whether to set just entries strictly above the diagonal"}
 	  },
      Outputs => {"f" => {"a random, graded, degree ", TT "0", " map, from ", TT "G", " to ", TT "F"}},
      EXAMPLE lines ///
 	  R = ZZ/101[x,y];
       	  random(R^{1,2,3},R^{1,2,3})
 	  random(ZZ^3,ZZ^6,MaximalRank=>true)
+	  random(ZZ^3,ZZ^10,Density=>.3)
+	  random(ZZ^6,ZZ^6,UpperTriangular=>true)
 	  ///,
      Caveat => {
 	  "Over a polynomial ring, specifying ", TT "MaximalRank=>true", " will yield a non-homogeneous matrix."

@@ -588,7 +588,7 @@ undocumented {
      (symbol -,Expression,Thing), (symbol -,Thing,Expression),
      (symbol /,Expression,Thing), (symbol /,Thing,Expression),
      (symbol ==,Expression,Thing), (symbol ==,Thing,Expression),
-     (symbol ^,Expression,Thing), (symbol ^,Thing,Expression),
+     (symbol ^,Thing,Expression),
      (symbol _,Expression,Thing), (symbol _,Thing,Expression)
      }
 

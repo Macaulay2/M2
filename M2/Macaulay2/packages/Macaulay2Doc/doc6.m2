@@ -13,7 +13,7 @@ document {
      "See also ", TO "odd", "."}
 
 document {
-     Key => {numeric,
+     Key => {numeric,(numeric,Matrix),(numeric,ZZ,Matrix),
 	  (numeric, ZZ, CC), (numeric, RR), (numeric, CC), (numeric, ZZ, VisibleList), 
 	  (numeric, VisibleList), (numeric, ZZ, Constant), (numeric, Constant),
      	  (numeric, ZZ, Number), (numeric, Number),
@@ -365,22 +365,7 @@ f = symmetricPower(2,vars R)
 assert( f == value toExternalString f )
 assert( f == value toString f )
 "
-document {
-     Key => assign,
-     Headline => "assign a value",
-     TT "assign(x,v)", " -- assigns v as the value of x.",
-     PARA{},
-     "If the value of x is a symbol or indexed variable, then it
-     can be assigned the value v with ",
-     PRE "          assign(x,v)",
-     "When the value of x is an indexed variable y_i then what happens
-     is that the i-th element of the list y is replaced by v.",
-     PARA{},
-     "Differs from x=v in that here x is evaluated.",
-     PARA{},
-     "Note: it would be better if we could arrange for ",
-     PRE "          x <- v",
-     "to work with indexed variables.  See ", TO "<-", "."}
+
 document {
      Key => IndexedVariable,
      Headline => "the class of all indexed variables",
@@ -435,7 +420,7 @@ document {
      degrees of elements of ", TT "n", "."
      }
 document {
-     Key => (symbol SPACE, Ring, Array),
+     Key => {(symbol SPACE, Ring, Array),(symbol SPACE,InexactFieldFamily,Array)},
      Headline => "the standard way to make a polynomial ring",
      TT "R[...]", " -- produces the monoid ring from a ring ", TT "R", " and the
      ordered monoid specified by ", TT "[...]", ".",
