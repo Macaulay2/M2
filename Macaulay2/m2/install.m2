@@ -218,11 +218,7 @@ choose 'Macaulay2', and then 'getting started', for a first Macaulay2
 session, as well as how to use the Macaulay2 emacs interface.
 
 If you have any questions, or problems, please contact one of us, or
-post a message at our sourceforge web site:
+post a message at our google groups web site:
 
-	http://sourceforge.net/projects/macaulay2
-
-You may need to create a sourceforge user id in order to post
-messages, but this is easy: choose the 'create user account' found
-near the top of the page.
+	http://groups.google.com/group/macaulay2
 ///
