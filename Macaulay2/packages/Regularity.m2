@@ -212,8 +212,12 @@ mRegularity (Ideal):= opts -> I -> (
 beginDocumentation()	 
 
 document {
-     Key =>" Regularity", 
-     {TT "Regularity", " is a package for computing the Castelnuovo-Mumford regularity of homogeneous ideals in a polynomial ring without having to compute a minimal free resolution of the homogeneous ideal"}  
+     Key => Regularity, 
+     PARA {
+	  TT "Regularity", " is a package for computing the Castelnuovo-Mumford regularity
+	  of homogeneous ideals in a polynomial ring without having to compute a minimal 
+	  free resolution of the homogeneous ideal"
+	  }  
 }
 
 document {
