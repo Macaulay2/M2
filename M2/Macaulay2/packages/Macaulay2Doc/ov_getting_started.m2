@@ -622,14 +622,12 @@ document {
 
 document {
      Key => "getting help or reporting bugs",
-     PARA {"An easy way to get help or to report a bug is to go to ", HREF "http://sourceforge.net/projects/macaulay2",
-	  " and choose the appropriate section in the 'Public areas' part of that webpage.  In order to
-	  submit a feature request, support request, bug report, etc, you might need to create a 
-	  sourceforge user id for yourself.  This is free and easy (Choose 'create account' near the top of
-     	  the top of the page).
-	  "},
-     PARA "These requests are automatically emailed to Dan Grayson and Mike Stillman, and they 
-     try to handle these requests quickly."
+     PARA {
+	  "An easy way to get help or to report a bug is to use
+	  our google group web page at ", HREF "http://groups.google.com/group/macaulay2", ".
+	  These requests are automatically emailed to Dan Grayson and Mike Stillman, and they 
+     	  try to handle these requests quickly."
+	  }
      }
 
 {*
