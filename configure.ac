@@ -590,6 +590,23 @@ then
 	    [ AC_MSG_RESULT(yes) ],
 	    [ AC_MSG_RESULT([no, version at least 5.4.1 is required (ntl will be built from downloaded sources)]); BUILD_ntl=yes ])
     fi
+
+    if test $BUILD_ntl = no
+    then AC_MSG_CHECKING([whether ntl library is compiled with gmp, using NTL/config.h])
+	 AC_RUN_IFELSE([[
+		 #include <NTL/config.h>
+		 main () {
+		     return !( 
+			 #ifdef NTL_GMP_LIP
+			 1
+			 #else
+			 0
+			 #endif
+			 ); }]],
+	    [ AC_MSG_RESULT(yes) ],
+	    [ AC_MSG_RESULT([no, ntl compiled with gmp is required (ntl will be built from downloaded sources)]); BUILD_ntl=yes ])
+    fi
+
 fi
 test $BUILD_ntl = yes && BUILTLIBS="-lntl $BUILTLIBS"
 
