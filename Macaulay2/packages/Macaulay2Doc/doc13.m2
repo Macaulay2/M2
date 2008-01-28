@@ -246,7 +246,7 @@ document { Key => {applicationDirectory, "application directory"},
      PARA { "The function ", TO "applicationDirectorySuffix", " determines the value of ", TT "applicationDirectory", ", and can be modified by the user." },
      EXAMPLE "applicationDirectory()",
      SeeAlso => applicationDirectorySuffix}
-document { Key => {round,(round,QQ),(round,RR),(round,ZZ,RR),(round,ZZ)},
+document { Key => {round,(round,QQ),(round,RR),(round,ZZ,RR),(round,ZZ),(round,CC)},
      Headline => "round a number",
      SYNOPSIS (
 	  Usage => "round x",
@@ -254,6 +254,7 @@ document { Key => {round,(round,QQ),(round,RR),(round,ZZ,RR),(round,ZZ)},
 	  Outputs => {{ "the integer nearest to ", TT "x" }},
 	  EXAMPLE lines ///
 	  round(-2.3)
+	  round(-2.3+5*ii)
 	  round(2/3)
 	  ///
 	  ),
