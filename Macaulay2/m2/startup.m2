@@ -428,9 +428,11 @@ action := hashTable {
      "--restarted" => arg -> restarted = true,
      "--texmacs" => arg -> (
 	  if phase == 1 then (
-	       if not restarted then << TeXmacsBegin << "verbatim:";
+	       topLevelMode = TeXmacs;
+	       printWidth = 80;
 	       )
 	  else if phase == 2 then (
+	       topLevelMode = TeXmacs;
 	       printWidth = 80;
 	       )
 	  else if phase == 3 then (
@@ -503,7 +505,11 @@ processCommandLineOptions := phase0 -> (			    -- 3 passes
 
 if firstTime then processCommandLineOptions 1
 
-if firstTime and not nobanner then stderr << (if fullCopyright then copyright else first separate copyright) << newline << flush
+if firstTime and not nobanner then (
+     if topLevelMode === TeXmacs then stderr << TeXmacsBegin << "verbatim:";
+     stderr << (if fullCopyright then copyright else first separate copyright) << newline << flush;
+     if topLevelMode === TeXmacs then stderr << TeXmacsEnd << flush;
+     )
 
 if firstTime and not noloaddata and version#"dumpdata" then (
      -- try to load dumped data
