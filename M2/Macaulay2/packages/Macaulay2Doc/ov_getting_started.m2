@@ -24,14 +24,36 @@ document {
 	  TO "teaching M2 how to find its shared libraries",
 	  TO "teaching your shell how to find M2",
 	  TO "moving or copying the Macaulay 2 files",
-	  TO "setting up the Macaulay2 emacs interface",
-	  TO "teaching emacs how to find M2-init.el",
-	  TO "teaching emacs how to find M2",
 	  TO "using Macaulay2 with emacs",
+	  TO "using Macaulay2 with TeXmacs",
 	  TO "a first Macaulay 2 session",
 	  TO "reading the documentation",
 	  TO "getting help or reporting bugs",
 	  -- Mike wanted this: TO "what to read next??"
+	  }
+     }
+
+document {
+     Key => "using Macaulay2 with TeXmacs",
+     PARA {
+	  "Texmacs is a free visual text editor for mathematics that can be used to produce TeX output.  It also supports
+	  interactive use with various symbolic algebra programs, such as Macaulay 2.  Texmacs is available
+	  from ", HREF "http://www.texmacs.org/", "."
+	  },
+     PARA {
+	  "Be sure to get TeXmacs version 1.0.6.12 or later.  There is bug in 1.0.6.10, the effect of
+	  which is that no output from Macaulay 2 will be displayed."
+	  },
+     PARA {
+	  "Using TeXmacs as an interface to Macaulay 2 is described in the TeXmacs online
+	  manual: ", HREF "http://www.texmacs.org/tmweb/manual/webman-interface.en.html", ".
+	  The basic procedure is to pull down the ", TT "Insert", " menu, select ", TT "Session", " from it,
+	  and then to select ", TT "Macaulay 2", " from the resulting submenu."
+	  },
+     PARA {
+	  "The interface is implemented by a special top level mode in Macaulay2 that causes
+	  the output to be converted to mathML, see ", TO "TeXmacs", ".  MathML conversion methods have
+	  not been implemented yet for all data types."
 	  }
      }
 
@@ -426,6 +448,22 @@ PRE///    ;; .emacs file in your home directory
 
 document {
      Key => "using Macaulay2 with emacs",
+     PARA {
+	  "Emacs is a free text editor written by Richard Stallman, which can be used as an ascii-oriented interface to Macaulay 2.
+	  The best way to edit Macaulay 2 code or to run Macaulay 2 is with emacs.
+	  Emacs is available as part of many operating systems, as well as from ", HREF "http://www.gnu.org/software/emacs/", "."
+	  },
+     Subnodes => {
+	  TO "setting up the Macaulay2 emacs interface",
+	  TO "teaching emacs how to find M2-init.el",
+	  TO "teaching emacs how to find M2",
+	  TO "using Macaulay2 with emacs after it has been set up",
+	  TO "editing Macaulay 2 code with emacs"
+	  }
+     }
+
+document {
+     Key => "using Macaulay2 with emacs after it has been set up",
      PARA {"In this section, we show by example how to use the Macaulay2 emacs interface.
 	  We assume that you have already set up this interface, as described in 
 	  ", TO "setting up the Macaulay2 emacs interface", ".  After creating or changing
@@ -525,8 +563,7 @@ move to the beginning of the line and then the ", TT "f2", " function key
 (or ", TT "C-c .", ") to bring the left margin back into view.",
 PARA{},
 "You may use the ", TT "f5", " function key or (or ", TT "C-c ?", ") to 
-toggle whether long lines are truncated or wrapped; initially they are truncated.",
-     SeeAlso => { "editing Macaulay 2 code with emacs" }
+toggle whether long lines are truncated or wrapped; initially they are truncated."
      }
 
 document {
@@ -628,7 +665,7 @@ document {
      "Because some answers can be very long, it is a good idea to run the
      program in a window which does not wrap output lines, and allows the
      user to scroll left horizontally to see the rest of the output.  (See
-	  ", TO "emacs", ".)",
+	  ", TO "using Macaulay2 with emacs", ".)",
      EXAMPLE "100!",
      "Multiple expressions may be separated by semicolons.",
      EXAMPLE "1;2;3*4",
@@ -789,70 +826,52 @@ document {
 
 document {
      Key => "editing Macaulay 2 code with emacs",
--- don't indent
-"In this section we learn how to use emacs to edit Macaulay 2 code.  Assuming you
-have set up your emacs init file as described in ", TO "setting up the Macaulay2 emacs interface", "
- when you visit a file whose name ends with ", TT ".m2", " 
-you will see on the mode line the name Macaulay 2 in
-parentheses, indicating that the file is being edited in Macaulay 2 mode.  (Make
-sure that the file ", TT "emacs/M2.el", " is on your ", TT "load-path", ".)",
-PARA{},
-"To see how electric parentheses, electric semicolons, and indentation work,
-move to a blank line of this file and type the following text.",
-PARA{},
+     PARA {
+	  "In this section we learn how to use emacs to edit Macaulay 2 code.
+	  Assuming you have set up your emacs init file as described in 
+	  ", TO "setting up the Macaulay2 emacs interface", " when you visit a file
+	  whose name ends with ", TT ".m2", " you will see on the mode line the
+	  name Macaulay 2 in parentheses, indicating that the file is being
+	  edited in Macaulay 2 mode."
+	  },
+     PARA{
+	  "To see how electric parentheses, electric semicolons, and indentation work,
+	  move to a blank line of this file and type the following text.",
+	  },
 PRE ///f = () -> (
      a := 4;
      b := {6,7};
      a+b)///,
-PARA{},
-"Observe carefully how matching left parentheses are indicated briefly when a
-right parenthesis is typed.",
-PARA{},
-"Now position your cursor in between the 6 and 7.  Notice how
-pressing ", TT "M-C-u", " moves you up out of the list to its left.  Do it 
-again.  Experiment with ", TT "M-C-f", " and ", TT "M-C-b", " to move forward
-and back over complete parenthesized
-expressions.  (In the emacs manual a complete parenthesized expression is
-referred to as an sexp, which is an abbreviation for S-expression.)  Try out
- ", TT "C-u 2 M-C-@", " as a way of marking the next two complete parenthesized
-expression, and see how to use ", TT "C-w", " to kill them and ", TT "C-y", " to yank 
-them back.  Experiment with ", TT "M-C-k", " to kill the next complete parenthesized 
-expression.",
-PARA{},
-"Position your cursor on the 4 and observe how ", TT "M-;", " will start a comment 
-for you with two hyphens, and position the cursor at the point where commentary
-may be entered.",
-PARA{},
-"Type ", TT "res", " somewhere and then press ", TT "C-c TAB", " to bring up the
-possible completions of the word to documented Macaulay 2 symbols.",
-PARA{},
-"Notice how ", TT "C-h m", " will display the keystrokes peculiar to 
-the mode in a help window.",
-PARA{},
-"Assuming you have installed the ", TO "w3", " emacs web browser,
-you may explore the documentation by positioning the cursor near a documented
-word such as ", TT "List", " and pressing ", TT "C-c d", ".  Alternatively,
-when the prompt appears, you can type the key whose documentation should be
-found."
-}
-
-document {
-     Key => "emacs",
-     "The best way to edit Macaulay 2 code or to run Macaulay 2 is
-     with ", HREF { "http://www.gnu.org/software/emacs/emacs.html", "GNU emacs"}, ", a versatile text 
-     editor written by Richard Stallman.",
-     PARA{},
-     "There is a version of emacs for Windows NT and Windows 95 called ", TT "NTemacs", ".
-     See ", HREF "http://www.cs.washington.edu/homes/voelker/ntemacs.html", " for
-     details about how to get it, as well as information about how to swap your
-     caps lock and control keys.",
-     PARA{},
-     Subnodes => {
-	  TO "running Macaulay 2 in emacs",
-	  TO "editing Macaulay 2 code with emacs",
+     PARA{
+	  "Observe carefully how matching left parentheses are indicated briefly when a
+	  right parenthesis is typed."
 	  },
-     }
-
+     PARA{
+	  "Now position your cursor in between the 6 and 7.  Notice how
+	  pressing ", TT "M-C-u", " moves you up out of the list to its left.  Do it 
+	  again.  Experiment with ", TT "M-C-f", " and ", TT "M-C-b", " to move forward
+	  and back over complete parenthesized
+	  expressions.  (In the emacs manual a complete parenthesized expression is
+	  referred to as an sexp, which is an abbreviation for S-expression.)  Try out
+	   ", TT "C-u 2 M-C-@", " as a way of marking the next two complete parenthesized
+	  expression, and see how to use ", TT "C-w", " to kill them and ", TT "C-y", " to yank 
+	  them back.  Experiment with ", TT "M-C-k", " to kill the next complete parenthesized 
+	  expression."
+	  },
+     PARA{
+	  "Position your cursor on the 4 and observe how ", TT "M-;", " will start a comment 
+	  for you with two hyphens, and position the cursor at the point where commentary
+	  may be entered."
+	  },
+     PARA{
+	  "Type ", TT "res", " somewhere and then press ", TT "C-c TAB", " to bring up the
+	  possible completions of the word to documented Macaulay 2 symbols."
+	  },
+     PARA{
+	  "Notice how ", TT "C-h m", " or ", TT "F1 m", " will display the keystrokes peculiar to 
+	  the mode in a help window.",
+	  }
+}
 
 document {
      Key => "Invoking the program",
@@ -878,7 +897,7 @@ document {
      "Because some answers can be very wide, it is a good idea to run Macaulay 2
      in a window which does not wrap output lines and allows the
      user to scroll horizontally to see the rest of the output.  We
-     provide a package for ", TO "emacs", " that implements this.
+     provide a package for ", TO2{"using Macaulay2 with emacs","emacs"}, " that implements this.
      It also provides for dynamic completion of symbols in the language.",
      PARA{},
      "There is an ASCII version of this section of the documentation distributed

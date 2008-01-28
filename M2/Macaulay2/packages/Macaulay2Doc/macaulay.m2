@@ -79,7 +79,7 @@ document {
 		    LI ("mc -- ", TO "not documented yet"),
 		    LI ("min -- ", TO "min"),
 		    LI ("modulo -- ", TO "modulo"),
-		    LI ("monitor -- ", TO "emacs"),
+		    LI ("monitor -- ", TO "using Macaulay2 with emacs"),
 		    LI ("monitoring -- ", TO "not documented yet"),
 		    LI ("monoms -- ", TO "not documented yet"),
 		    LI ("monprimes -- ", TO "not documented yet"),
