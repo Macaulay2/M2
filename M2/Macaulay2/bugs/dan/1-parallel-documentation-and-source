@@ -1,0 +1,23 @@
+From: Michael Stillman <mike@math.cornell.edu>
+To: Dan Grayson <dan@math.uiuc.edu>
+Subject: Ben's bug: try this
+Date: Fri, 25 Jan 2008 16:32:29 -0500
+
+I looked at Ben's machine, and saw his bug.  It turns out I have the
+same bug on my system.
+
+Here is how to reproduce it:
+
+(This assumes, perhaps, that you have run M2 on an older version, pre
+1.0 (maybe even a bit older?).
+
+Open M2
+viewHelp
+click on "FirstPackage" in your local copy of the documentation
+(under .Macaulay2)
+now click on the source code link: FirstPackage.m2
+   It is not found!
+
+For Ben, I moved the 'local' directory under .Macaulay2 out of the
+way, and restarted M2.  This worked fine then, as then there was no
+local copy of the documentation.
