@@ -11,6 +11,7 @@ mtable := x -> concatenate(
 mtableML := x -> mtable applyTable(x,mathML)
 mtableMLcol := x -> mtableML apply(x, row -> {row})
 tab := new HashTable from {
+     -- see texmacs-1.0.6.12/share/Macaulay2/Core/m2/texhtml.m2
      -- symbol NN => "<mi>\u2115</mi>",
      -- symbol PP => "<mi>\u2119</mi>",
      symbol ZZ => "<mi>\u2124</mi>",
