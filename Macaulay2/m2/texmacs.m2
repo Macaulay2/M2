@@ -16,6 +16,7 @@ Thing#{TeXmacs,Print} = send := v -> (
      po := red concatenate("<mi>o",toString lineNumber,"</mi>");
      << tmhtml fixn mathMode mtable {{po,red "<mo>=</mo>",fmt v},{},{po,red "<mo>:</mo>",fmt class v}})
 Nothing#{TeXmacs,Print} = identity
+InexactNumber#{TeXmacs,Print} = v -> withFullPrecision ( () -> send v )
 
 -- Local Variables:
 -- compile-command: "make -C $M2BUILDDIR/Macaulay2/m2 "
