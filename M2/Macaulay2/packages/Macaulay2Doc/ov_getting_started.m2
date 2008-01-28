@@ -882,8 +882,7 @@ document {
      It also provides for dynamic completion of symbols in the language.",
      PARA{},
      "There is an ASCII version of this section of the documentation distributed
-     in the file ", TT (LAYOUT#"packagedoc" "Core" | "emacs/" |
-     "emacs-hlp.txt"), ". It might be useful for you to visit
+     in the file ", TT (LAYOUT#"emacs" | "M2-emacs-hlp.txt"), ". It might be useful for you to visit
      that file with emacs now, thereby avoiding having to cut and paste bits of
      text into emacs buffers for the deomonstrations below.",
      PARA{},

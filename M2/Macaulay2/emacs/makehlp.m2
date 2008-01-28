@@ -1,7 +1,7 @@
 (
 printWidth = 79;
 -- load "Macaulay2-doc.m2";
-"emacs-hlp.txt"
+"M2-emacs-hlp.txt"
 << "                 Running Macaulay 2 in Emacs" << endl
 << endl
 << "       -- this file has been automatically generated -- " << endl
