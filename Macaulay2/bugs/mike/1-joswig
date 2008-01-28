@@ -57,6 +57,7 @@ gb(I, DegreeLimit=>38);
 R = QQ[x4,x3,x2,x1,s,t,MonomialOrder=>Eliminate 4]
 
 R = ZZ/32003[x4,x3,x2,x1,s,t]
+R = ZZ/32003[x4,x3,x2,x1,s,t, MonomialOrder=>Eliminate 4]
 
 R = ZZ[s,x1,x2,x3,x4]
 I = ideal (
