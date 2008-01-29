@@ -29,8 +29,8 @@ document {
      Usage => "gb I",
      Inputs => {
 	  "I" => "an ideal, module, or matrix",
-	  Algorithm => Symbol => {"possible values: ", TO "Homogeneous", ", ", TO "Inhomogeneous", ", ", TO "LinearAlgebra", ", and ", TO "Sugarless", ".
-	       Experimental options include ", TO "Homogeneous2", ", and ", TO "Toric", "."},
+	  Algorithm => Symbol => {"possible values: ", TO "Homogeneous", ", ", TO "Inhomogeneous", ", ", TO "Homogeneous2", ", and ", TO "Sugarless", ".
+	       Experimental options include ", TO "LinearAlgebra", " and ", TO "Toric", "."},
      	  BasisElementLimit => ZZ => "stop when this number of (nonminimal) Groebner basis elements has been found",
 	  ChangeMatrix => Boolean => { 
 	       "whether to compute the change of basis matrix from Groebner basis elements to original generators.  Use ", TO "getChangeMatrix", " to recover it."},

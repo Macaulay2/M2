@@ -97,6 +97,9 @@ undocumented' Faugere
 undocumented' F4
 
 -- These must match the values in e/comp_gb.cpp
+
+warnexp := () -> stderr << "--warning: gb algorithm requested is experimental" << endl
+
 processAlgorithm := (a,f) -> (
      if (a === Homogeneous or a === Homogeneous2) and not isHomogeneous f then error "gb: homogeneous algorithm specified with inhomogeneous matrrix";
      if a === Homogeneous then 1
@@ -105,8 +108,8 @@ processAlgorithm := (a,f) -> (
      else if a === Faugere then error "the Faugere algorithms has been replaced by LinearAlgebra"
      else if a === Sugarless then 4
      else if a === Homogeneous2 then 5
-     else if a === LinearAlgebra then 6
-     else if a === Toric then 7
+     else if a === LinearAlgebra then (warnexp(); 6)
+     else if a === Toric then (warnexp(); 7)
      else error ("unknown algorithm encountered"))
 
 gb Ideal := GroebnerBasis => options -> (I) -> gb ( module I, options )
