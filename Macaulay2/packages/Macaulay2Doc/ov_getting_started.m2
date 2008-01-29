@@ -24,6 +24,7 @@ document {
 	  TO "teaching M2 how to find its shared libraries",
 	  TO "teaching your shell how to find M2",
 	  TO "moving or copying the Macaulay 2 files",
+	  TO "running Macaulay 2 in a terminal window",
 	  TO "using Macaulay2 with emacs",
 	  TO "using Macaulay2 with TeXmacs",
 	  TO "a first Macaulay 2 session",
@@ -457,6 +458,7 @@ document {
 	  TO "setting up the Macaulay2 emacs interface",
 	  TO "teaching emacs how to find M2-init.el",
 	  TO "teaching emacs how to find M2",
+	  TO "running Macaulay 2 in emacs",
 	  TO "using Macaulay2 with emacs after it has been set up",
 	  TO "editing Macaulay 2 code with emacs"
 	  }
@@ -889,6 +891,28 @@ document {
      ", TO "end", ", or the end of file character."
      }
 
+document {
+     Key => "running Macaulay 2 in a terminal window",
+     PARA {
+     	  "Some answers in Macaulay 2 can be very wide, but many of them will be wrapped
+	  appropriately to fit in the width of a terminal window.  Macaulay 2 can successfully be
+	  used in a terminal window if care is taken not to display very wide objects, but
+	  most users will prefer to use the interface provided with emacs or with texmacs."
+	  },
+     PARA {
+	  "Macaulay 2 uses the readline library and the history library to handle user input
+	  in a terminal window.  The readline user interface documentation is available
+	  at ", HREF "http://tiswww.case.edu/php/chet/readline/rluserman.html", ".  It can also
+	  be read with the command ", TT "info readline", ".  The history user interface
+	  documentation is available at ", HREF "http://tiswww.case.edu/php/chet/readline/history.html#SEC1", ".  
+	  It can also be read with the command ", TT "info history", "."
+	  },
+     PARA {
+	  "Name completion is implemented.  Press the ", TT "TAB", " key to automatically complete
+	  names of identifiers that have been only partially typed, if possible.  Press ", TT "TAB", " a second
+	  time to get a list of the possible completions when multiple choices exist."
+	  }
+     }
 
 document {
      Key => "running Macaulay 2 in emacs",
