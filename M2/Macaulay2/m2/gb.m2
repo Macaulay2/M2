@@ -164,6 +164,8 @@ elseSomething := method()
 elseSomething(Thing  ,Function) := (x,f) -> x
 elseSomething(Nothing,Function) := (x,f) -> f()
 
+dotprod = (c,d) -> sum( min(#c, #d), i -> c#i * d#i )
+
 newGB := (f,type,opts) -> (
      if flagInhomogeneity then (
 	  if not isHomogeneous f then error "internal error: gb: inhomogeneous matrix flagged";
@@ -174,13 +176,21 @@ newGB := (f,type,opts) -> (
 	  registerFinalizer(G,"gb (newGB)");
 	  );
      G.matrix = Bag{f};
-     G.ring = ring f;
+     R := G.ring = ring f;
      G.target = target f;
      G.RawComputation = rawGB(
 	  raw f,
 	  type.Syzygies,
 	  toEngineNat type.SyzygyRows,
-	  checkListOfIntegers(if opts.GBDegrees === null then {} else opts.GBDegrees),
+	  checkListOfIntegers(
+	       if opts.GBDegrees === null 
+	       then if opts.Algorithm === LinearAlgebra
+	       then (
+		    heft := (options R).Heft;
+		    apply(degrees R, d -> dotprod(d, heft)))
+	       else {} 
+	       else opts.GBDegrees
+	       ),
 	  opts.HardDegreeLimit =!= computationOptionDefaults.HardDegreeLimit,
 	  if opts.HardDegreeLimit =!= computationOptionDefaults.HardDegreeLimit then opts.HardDegreeLimit else 0,
 	  processAlgorithm(opts.Algorithm,f),
