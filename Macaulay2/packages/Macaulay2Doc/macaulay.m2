@@ -519,19 +519,28 @@ document {
      " form a Groebner basis, use ", TT "forceGB m", ".  See ", TO "forceGB",
      ".",
      
+     {*
+     -- Mike wanted this: 
      HEADER3 "hilb <standard basis>",
      "WRITE THIS",
+     *}
      
+     {*
+     -- Mike wanted this: 
      HEADER3 "hilb_numer <standard basis> <ideal> <result>",
      "WRITE THIS",
+     *}
      
      HEADER3 "homog <matrix> <homog variable> <new matrix>",
      "To homogenize a matrix ", TT "m", " with respect to a variable ",
      TT "x", ", use ", TT "homogenize(m,x)", ". One may also homogenize
      with respect to a given weight vector.  See ", TO "homogenize", ".",
      
+     {*
+     -- Mike wanted this: 
      HEADER3 "hulb <standard basis> <deg>",
      "WRITE THIS",
+     *}
      
      HEADER3 "ideal <resulting matrix>",
      "To enter a one row matrix, use we may use the following method.",
@@ -554,16 +563,25 @@ document {
      
      HEADER3 "if <integer> <label1> [<label2>]",
      "For conditional execution, use the if-then or if-then-else statement",
-     "WRITE MORE",
+     -- Mike wanted this: "WRITE MORE",
      
+     {*
+     -- Mike wanted this: 
      HEADER3 "imap <new ring map> <R> <S> [ones, default=zeros]",
      "WRITE THIS",
+     *}
      
+     {*
+     -- Mike wanted this: 
      HEADER3 "in <standard basis> [optional result matrix] [n]",
      "WRITE THIS",
+     *}
      
+     {*
+     -- Mike wanted this: 
      HEADER3 "inpart <standard basis> <result matrix> [variable list]",
      "WRITE THIS",
+     *}
      
      HEADER3 "int <name> <new value>",
      "To assign a value to a variable in Macaulay2, use ", TO "=", 
@@ -607,29 +625,53 @@ document {
      "Macaulay2 has no go to statements.  Instead, you should use the
      control structures.", "WRITE MORE",
      
+     {*
+     -- Mike wanted this: 
      HEADER3 "k_basis <matrix> <result matrix> [variable list]",
      "WRITE THIS",
+     *}
      
+     {*
+     -- Mike wanted this: 
      HEADER3 "keep <standard basis> <result matrix> [n]",
      "WRITE THIS",
+     *}
      
+     {*
+     -- Mike wanted this: 
      HEADER3 "kill <var1> ... <var n>",
      "WRITE THIS",
+     *}
      
+     {*
+     -- Mike wanted this: 
      HEADER3 "koszul <int n, or matrix> <p> <result matrix>",
      "WRITE THIS",
+     *}
      
+     {*
+     -- Mike wanted this: 
      HEADER3 "lift <standard basis> <matrix to lift> <result>",
      "WRITE THIS",
+     *}
      
+     {*
+     -- Mike wanted this: 
      HEADER3 "lift_std <matrix> <computation>",
      "WRITE THIS",
+     *}
      
+     {*
+     -- Mike wanted this: 
      HEADER3 "listvars",
      "WRITE THIS",
+     *}
      
+     {*
+     -- Mike wanted this: 
      HEADER3 "mat <result matrix> [optional: file name]",
      "WRITE THIS",
+     *}
      
      }
 
