@@ -23,15 +23,14 @@ document {
 	  [gb,Syzygies],
 	  [gb,SyzygyLimit],
 	  [gb,SyzygyRows],
-	  F4, Faugere, Homogeneous2, Sugarless, LinearAlgebra, Toric,
-	  UseSyzygies
+	  LinearAlgebra, Homogeneous2, Sugarless, Toric, UseSyzygies
 	  },
      Headline => "compute a Groebner basis",
      Usage => "gb I",
      Inputs => {
 	  "I" => "an ideal, module, or matrix",
-	  Algorithm => Symbol => {"possible values: ", TT "Homogeneous", ", ", TT "Inhomogeneous", ", ", TT "Sugarless", ".  Experimental options
-	   include ", TT "Homogeneous2", ", ", TT "F4", ", ", TT "Faugere", ", ", TT "Toric", ", and ", TO "LinearAlgebra"},
+	  Algorithm => Symbol => {"possible values: ", TO "Homogeneous", ", ", TO "Inhomogeneous", ", ", TO "LinearAlgebra", ", and ", TO "Sugarless", ".
+	       Experimental options include ", TO "Homogeneous2", ", and ", TO "Toric", "."},
      	  BasisElementLimit => ZZ => "stop when this number of (nonminimal) Groebner basis elements has been found",
 	  ChangeMatrix => Boolean => { 
 	       "whether to compute the change of basis matrix from Groebner basis elements to original generators.  Use ", TO "getChangeMatrix", " to recover it."},

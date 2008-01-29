@@ -4,11 +4,11 @@ newPackage(
      Headline => "functions for primary decomposition (pre-loaded)"
      )
 export {
-     EHV,					    -- cryptic
+     EisenbudHunekeVasconcelos,					    -- cryptic
      Hybrid,
      Increment,
      GTZ,
-     SY,
+     ShimoyamaYokoyama,
 --     binomialCD,
 --     extract,
 --     findNonMember,
@@ -38,7 +38,7 @@ Hybrid = new SelfInitializingType of BasicList
 ///
 primaryDecomposition Ideal := List => o -> (I) -> (
      -- Determine the strategy to use.
-     opt := SY;
+     opt := ShimoyamaYokoyama;
      if o.Strategy =!= null then (
 	  opt = o.Strategy;
 	  if opt === Monomial and not isMonomialIdeal I
@@ -56,8 +56,8 @@ primaryDecomposition Ideal := List => o -> (I) -> (
 	  C/ideal
 	  )
      else if opt === Binomial then binomialCD I
-     else if opt === EHV then EHVprimaryDecomposition I
-     else if opt === SY then SYprimaryDecomposition I
+     else if opt === EisenbudHunekeVasconcelos then EHVprimaryDecomposition I
+     else if opt === ShimoyamaYokoyama then SYprimaryDecomposition I
      else if class opt === Hybrid then (
 	  if #opt =!= 2 then error "the Hybrid strategy requires 2 arguments";
 	  assStrategy := opt#0;
@@ -68,7 +68,7 @@ primaryDecomposition Ideal := List => o -> (I) -> (
 ///
 primedecomp = (I,strategy) -> (
      -- Determine the strategy to use.
-     opt := SY;
+     opt := ShimoyamaYokoyama;
      if strategy =!= null then (
 	  opt = strategy;
 	  if opt === Monomial and not isMonomialIdeal I
@@ -86,8 +86,8 @@ primedecomp = (I,strategy) -> (
 	  C/ideal
 	  )
      else if opt === Binomial then binomialCD I
-     else if opt === EHV then EHVprimaryDecomposition I
-     else if opt === SY then SYprimaryDecomposition I
+     else if opt === EisenbudHunekeVasconcelos then EHVprimaryDecomposition I
+     else if opt === ShimoyamaYokoyama then SYprimaryDecomposition I
      else if class opt === Hybrid then (
 	  if #opt =!= 2 then error "the Hybrid strategy requires 2 arguments";
 	  assStrategy := opt#0;

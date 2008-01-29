@@ -70,7 +70,7 @@ document {
      ").  
      Certain operations over RR or CC are performed using the lapack library
      and require dense encoding of matrices: ",
-     TO "LU", ", ", TO "SVD", ", ", TO "solve", ", ", TO "eigenvalues", ", ", TO "eigenvectors", ".",
+     TO "LUdecomposition", ", ", TO "SVD", ", ", TO "solve", ", ", TO "eigenvalues", ", ", TO "eigenvectors", ".",
      
      HEADER3 "row and column operations",
      UL {

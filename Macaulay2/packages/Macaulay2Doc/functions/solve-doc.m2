@@ -60,5 +60,5 @@ document {
           ///,
      Caveat => {"This function is limited in scope, but is sometimes useful for very large 
 	  matrices"},
-     SeeAlso => {LU, SVD, MutableMatrix, norm, random}
+     SeeAlso => {LUdecomposition, SVD, MutableMatrix, norm, random}
      }

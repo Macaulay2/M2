@@ -54,11 +54,11 @@ I1 = ideal(x_1, x_2, x_3)
 I2 = ideal(x_1, x_2, x_4)
 I3 = ideal(x_1, x_5)
 P = I1*I2*I3
-C = primaryDecomposition(P, Strategy=>SY)
+C = primaryDecomposition(P, Strategy=>ShimoyamaYokoyama)
 
 J2 = topComponents P
 L2 = P : J2
-primaryDecomposition(L2,Strategy=>SY)
+primaryDecomposition(L2,Strategy=>ShimoyamaYokoyama)
 C2 = apply(C, p -> p : J2)
 intersect C2 == L2
 C2/toString/print

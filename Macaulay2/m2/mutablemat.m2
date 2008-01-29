@@ -130,15 +130,15 @@ randomMutableMatrix(ZZ,ZZ,RR,ZZ) := options -> (n,m,percentagezero,maxentry) -> 
 	if a != 0 then M_(r,c) = a)));
     M)
 
-LU = method()
-LU MutableMatrix := (A) -> (
+LUdecomposition = method()
+LUdecomposition MutableMatrix := (A) -> (
      nrows := rawNumberOfRows raw A;
      L := mutableMatrix(ring A,0,0,Dense=>true);
      U := mutableMatrix(ring A,0,0,Dense=>true);
      p := rawLU(raw A, raw L, raw U);
      (p, L, U))
-LU Matrix := (A) -> (
-     (p,L,U) := LU mutableMatrix A;
+LUdecomposition Matrix := (A) -> (
+     (p,L,U) := LUdecomposition mutableMatrix A;
      (p, matrix L,matrix U))
 
 solve = method(Options => { ClosestFit => false, MaximalRank => false })

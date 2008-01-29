@@ -26,7 +26,7 @@ GBComputation *createF4GB(const Matrix *m,
   Gausser *KK = Gausser::newGausser(K);
   if (KK == 0)
     {
-      ERROR("cannot use Strategy=>F4 with this type of coefficient ring");
+      ERROR("cannot use Algorithm => LinearAlgebra with this type of coefficient ring");
       return NULL;
     }
   

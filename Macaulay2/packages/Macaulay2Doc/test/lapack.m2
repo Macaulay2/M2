@@ -19,7 +19,7 @@ checkLU(List,Matrix,Matrix) := (P,L,U) -> (
      --for i from 0 to numrows L - 1 do Q_(i,P_i) = 1_R;
      --Q = matrix Q;
      Q*L*U)
-checkLU Matrix := (M) -> norm (checkLU time LU M - M)
+checkLU Matrix := (M) -> norm (checkLU time LUdecomposition M - M)
 
 checkSVD = method()
 checkSVD(Matrix) := (M) -> (
@@ -71,7 +71,7 @@ checkEigenvectors(Matrix,Symbol) := (M,Hermit) -> (
      )
 
 ----------------
--- Test LU -----
+-- Test LUdecomposition -----
 ----------------
 A = RR
 M = mutableMatrix random(A^4,A^2)
@@ -262,35 +262,35 @@ kk = RR
 a1 = map(kk^0,kk^5,0)
 a2 = map(kk^5,kk^0,0)
 a0 = map(kk^0,kk^0,0)
-(P,L,U) = LU a1
+(P,L,U) = LUdecomposition a1
 assert(#P == 0 and numrows L == 0 and numcols L == 0 and numrows U == 0 and numcols U == 5)
-(P,L,U) = LU a2
+(P,L,U) = LUdecomposition a2
 assert(#P == 5 and numrows L == 5 and numcols L == 0 and numrows U == 0 and numcols U == 0)
-(P,L,U) = LU a0
+(P,L,U) = LUdecomposition a0
 assert(#P == 0 and numrows L == 0 and numcols L == 0 and numrows U == 0 and numcols U == 0)
 
 kk = CC
 a1 = map(kk^0,kk^5,0)
 a2 = map(kk^5,kk^0,0)
 a0 = map(kk^0,kk^0,0)
-(P,L,U) = LU a1
+(P,L,U) = LUdecomposition a1
 assert(#P == 0 and numrows L == 0 and numcols L == 0 and numrows U == 0 and numcols U == 5)
-(P,L,U) = LU a2
+(P,L,U) = LUdecomposition a2
 assert(#P == 5 and numrows L == 5 and numcols L == 0 and numrows U == 0 and numcols U == 0)
-(P,L,U) = LU a0
+(P,L,U) = LUdecomposition a0
 assert(#P == 0 and numrows L == 0 and numcols L == 0 and numrows U == 0 and numcols U == 0)
 
 kk = ZZ/101
 a1 = map(kk^0,kk^5,0)
 a2 = map(kk^5,kk^0,0)
 a0 = map(kk^0,kk^0,0)
-(P,L,U) = LU a1
+(P,L,U) = LUdecomposition a1
 assert(#P == 0 and numrows L == 0 and numcols L == 0 and numrows U == 0 and numcols U == 5)
-(P,L,U) = LU a2
+(P,L,U) = LUdecomposition a2
 --status: Mike said he will fix this in the engine
---status: it's the extreme case where LU gets an empty matrix
+--status: it's the extreme case where LUdecomposition gets an empty matrix
 assert(#P == 5 and numrows L == 5 and numcols L == 0 and numrows U == 0 and numcols U == 0) -- failed
-(P,L,U) = LU a0
+(P,L,U) = LUdecomposition a0
 assert(#P == 0 and numrows L == 0 and numcols L == 0 and numrows U == 0 and numcols U == 0)
 
 kk = RR
