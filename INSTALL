@@ -248,7 +248,7 @@ There are several methods for installing Macaulay2 under Mac OS X.
 	  cd BUILD/opt64
 	  ../../configure --prefix=$PWD/installed \
                 --enable-dmg \
-                --enable-build-libraries="gc gdbm gmp readline ntl factory libfac" \
+                --enable-build-libraries="gc gdbm gmp mpfr readline ntl factory libfac" \
 		--build=x86_64-apple-darwin \
 		CC="gcc -m64" \
 		CXX="g++ -m64"

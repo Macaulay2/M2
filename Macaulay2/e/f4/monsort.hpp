@@ -15,13 +15,15 @@ class QuickSorter
   Sorter *M;
   value *elems;
   long len;
+  long maxdepth;
 
   long sort_partition(long lo, long hi);
   void sort(long lo, long hi);
   void sort2(long lo, long hi);
+  void sort2depth(long lo, long hi,long depth);
 
   QuickSorter(Sorter *M0, value *elems0, long len0)
-    : M(M0), elems(elems0), len(len0) {}
+    : M(M0), elems(elems0), len(len0), maxdepth(0) {}
   ~QuickSorter() {}
 public:
   static void sort(Sorter *M0, value *elems0, long len0);
@@ -92,15 +94,57 @@ void QuickSorter<Sorter>::sort2(long begin, long end) {
    }
 }
 
+template<typename Sorter>
+void QuickSorter<Sorter>::sort2depth(long begin, long end, long depth) {
+   /*** Use of static here will reduce memory footprint, but will make it thread-unsafe ***/
+   static value pivot;
+   static value t;     /* temporary variable for swap */
+   if (depth > maxdepth) 
+     maxdepth = depth;
+   if (end > begin) {
+      long l = begin + 1;
+      long r = end;
+      swap(elems[begin], elems[pivot_index()], t); /*** choose arbitrary pivot ***/
+      pivot = elems[begin];
+      while(l < r) {
+         if (M->compare(elems[l],pivot) <= 0) {
+            l++;
+         } else {
+            while(l < --r && M->compare(elems[r], pivot) >= 0)/*** skip superfluous swaps ***/
+               ;
+            swap(elems[l], elems[r], t); 
+         }
+      }
+      l--;
+      swap(elems[begin], elems[l], t);
+      sort2depth(begin, l, depth+1);
+      sort2depth(r, end, depth+1);
+   }
+}
+
 #undef swap
 #undef pivot_index
 
+#include <ctime>
+extern "C" int gbTrace;
 
 template<typename Sorter>
 void QuickSorter<Sorter>::sort(Sorter *M0, value *elems0, long len0)
 {
   QuickSorter S(M0,elems0,len0);
-  S.sort2(0,len0);
+  if (gbTrace == 0)
+    S.sort2(0,len0);
+  else
+    {
+      clock_t begin_time = clock();
+      S.sort2depth(0,len0,1);
+      clock_t end_time = clock();
+      double nsecs = end_time - begin_time;
+      nsecs /= CLOCKS_PER_SEC;
+      
+      if (gbTrace >= 1)
+	fprintf(stderr,"quicksort: len %ld depth %ld time %f\n", len0, S.maxdepth, nsecs);
+    }
 }
 #endif
 
