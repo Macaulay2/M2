@@ -623,7 +623,7 @@ document {
      
      HEADER3 "jump <label>",
      "Macaulay2 has no go to statements.  Instead, you should use the
-     control structures.", "WRITE MORE",
+     control structures.", -- Mike wanted this: "WRITE MORE",
      
      {*
      -- Mike wanted this: 
