@@ -109,33 +109,33 @@ document {
 
 	  "homomorphisms (maps) between modules",
 	  TO "module homomorphisms",
-	  TO "canonical maps between modules",
+	  -- Mike wanted this: TO "canonical maps between modules",
 	  TO "right modules or left modules?",
 
-	  "operations on modules",
-	  TO "direct sums of modules",
-	  TO "tensor products of modules",
-	  TO "Hom modules and homomorphisms",
-	  TO "annihilators and submodule quotients",
+	  -- Mike wanted this: "operations on modules",
+	  -- Mike wanted this: TO "direct sums of modules",
+	  -- Mike wanted this: TO "tensor products of modules",
+	  -- Mike wanted this: TO "Hom modules and homomorphisms",
+	  -- Mike wanted this: TO "annihilators and submodule quotients",
 
 	  "graded modules",
 	  TO "Hilbert functions and free resolutions",
-	  TO "degrees of elements and free modules",
-	  TO "degree and multiplicity of a module",
+	  -- Mike wanted this: TO "degrees of elements and free modules",
+	  -- Mike wanted this: TO "degree and multiplicity of a module",
 	  TO "basis",
-	  TO "Hilbert functions and polynomials",
-	  TO "homogenization",
-	  TO "truncation and homogeneous components of a graded module",
+	  -- Mike wanted this: TO "Hilbert functions and polynomials",
+	  -- Mike wanted this: TO "homogenization",
+	  -- Mike wanted this: TO "truncation and homogeneous components of a graded module",
 	  
 	  "multilinear algebra",
 	  TO "exterior power of a module",
-	  TO "Fitting ideals",
-	  TO "adjoints of maps",
+	  -- Mike wanted this: TO "Fitting ideals",
+	  -- Mike wanted this: TO "adjoints of maps",
 	  
-	  "homological algebra",
-	  TO "Ext and Tor",
-	  TO "local cohomology",
-	  TO "is a module Cohen-Macaulay?"
+	  -- Mike wanted this: "homological algebra",
+	  -- Mike wanted this: TO "Ext and Tor",
+	  -- Mike wanted this: TO "local cohomology",
+	  -- Mike wanted this: TO "is a module Cohen-Macaulay?"
 	  }
      }
 
@@ -480,9 +480,13 @@ document {
      "To obtain the map ", TT "M --> M", ", we use ", 
      TO (symbol//,Matrix,Matrix), ".
      In order to do this, we need the inclusion map of ", TT "M", 
-     " into ", TT "R^1", ".  We explain these canonical maps
+     " into ", TT "R^1", ".",
+     {*
+     -- Mike wanted this: 
+     "  We explain these canonical maps
      more thoroughly in ", TO "canonical maps between modules", ", 
      but for now we just write down the inclusion map.",
+     *}
      EXAMPLE {
 	  "inc = inducedMap(R^1, M)"
 	  },
@@ -502,7 +506,7 @@ document {
 	  "kernel G == 0"
 	  },
      SeeAlso => {
-	  "canonical maps between modules",
+	  -- Mike wanted this: "canonical maps between modules",
 	  (isWellDefined,Matrix),
 	  (isIsomorphism,Matrix),
 	  (isInjective,Matrix),
@@ -513,10 +517,13 @@ document {
 	  }
      }
 
+{*
+-- Mike wanted this: 
 document {
      Key => "canonical maps between modules",
      Headline => "empty"
      }
+*}
 
 document {
      -- old??
@@ -546,18 +553,26 @@ document {
 --	  }
      }
 
+{*
+-- Mike wanted this: 
 document {
      Key => "direct sums of modules",
      Headline => "empty",
      "
      "
      }
+*}
 
+{*
+-- Mike wanted this: 
 document {
      Key => "tensor products of modules",
      Headline => "empty",
      }
+*}
 
+{*
+-- Mike wanted this: 
 document {
      Key => "Hom modules and homomorphisms",
      Headline => "empty",
@@ -575,12 +590,16 @@ target f
      syz transpose matrix f
      ///
 }
+*}
 
 
+{*
+-- Mike wanted this: 
 document {
      Key => "annihilators and submodule quotients",
      Headline => "empty",
      }
+*}
 
 document {
      Key => "Hilbert functions and free resolutions",
@@ -663,30 +682,45 @@ document {
 	  
      }
 
+{*
+-- Mike wanted this: 
 document {
      Key => "degrees of elements and free modules",
      Headline => "empty",
      }
+*}
 
+{*
+-- Mike wanted this: 
 document {
      Key => "degree and multiplicity of a module",
      Headline => "empty",
      }
+*}
 
+{*
+-- Mike wanted this: 
 document {
      Key => "Hilbert functions and polynomials",
      Headline => "empty",
      }
+*}
 
+{*
+-- Mike wanted this: 
 document {
      Key => "homogenization",
      Headline => "empty",
      }
+*}
 
+{*
+-- Mike wanted this: 
 document {
      Key => "truncation and homogeneous components of a graded module",
      Headline => "empty",
      }
+*}
 
 document {
      Key => "exterior power of a module",
@@ -712,30 +746,45 @@ document {
 	SeeAlso => "exterior power of a matrix"
      }
 
+{*
+-- Mike wanted this: 
 document {
      Key => "Fitting ideals",
      Headline => "empty",
      }
+*}
 
+{*
+-- Mike wanted this: 
 document {
      Key => "adjoints of maps",
      Headline => "empty",
      }
+*}
 
+{*
+-- Mike wanted this: 
 document {
      Key => "Ext and Tor",
      Headline => "empty",
      }
+*}
 
+{*
+-- Mike wanted this: 
 document {
      Key => "local cohomology",
      Headline => "empty",
      }
+*}
 
+{*
+-- Mike wanted this: 
 document {
      Key => "is a module Cohen-Macaulay?",
      Headline => "empty",
      }
+*}
 
 -- one link (in this file) to this node
 document {
