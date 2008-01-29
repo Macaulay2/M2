@@ -21,7 +21,7 @@ ass1 := (I) -> (
      local currentext;
      C := resolution(cokernel generators I, LengthLimit => d+1);
      --here we look at the associated primes of the i-th
-     --ext and pick out the height i components ala EHV
+     --ext and pick out the height i components ala EisenbudHunekeVasconcelos
      while i <= d do ( 
 	  if debugLevel >= 2 then (<< "  associatedPrimes loop " << i << endl);
 	  currentext = Ext^i(polyRing^1/I1,polyRing);
@@ -314,7 +314,7 @@ associatedPrimes(I,Strategy=>1)
 associatedPrimes(I,Strategy=>2)
 S=R/I;
 J=ideal(0_S);
-primaryDecomposition(J,Strategy=>EHV)
+primaryDecomposition(J,Strategy=>EisenbudHunekeVasconcelos)
 associatedPrimes J
 P=ideal(x);
 
@@ -324,7 +324,7 @@ P2=ideal(y,z);
 associatedPrimes(J)
 localize (J,P2)
 primaryComponent(J,P2)
-primaryDecomposition(J,Strategy=>EHV)
+primaryDecomposition(J,Strategy=>EisenbudHunekeVasconcelos)
 
 R = ZZ/101[a..d]
 S = R/(a*b-c^2)

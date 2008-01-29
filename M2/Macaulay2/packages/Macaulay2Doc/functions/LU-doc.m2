@@ -1,7 +1,7 @@
 document { 
-     Key => {LU,(LU,MutableMatrix),(LU,Matrix)},
+     Key => {LUdecomposition,(LUdecomposition,MutableMatrix),(LUdecomposition,Matrix)},
      Headline => "LU decomposition",
-     Usage => "(P,L,U) = LU A",
+     Usage => "(P,L,U) = LUdecomposition A",
      Inputs => {
 	  "A" => MutableMatrix => {"or ", ofClass Matrix, ",of size ", TT "m", " by ", TT "n", ", over a 
 	  a finite field ", TT "ZZ/p", ", ", TO "RR", " or ", TO "CC", ""}
@@ -26,7 +26,7 @@ document {
      EXAMPLE lines ///
           kk = ZZ/101
      	  A = matrix"1,2,3,4;1,3,6,10;19,7,11,13" ** kk
-	  (P,L,U) = LU A
+	  (P,L,U) = LUdecomposition A
 	  Q = id_(kk^3) _ P
 	  Q * L * U == matrix A
      ///,
@@ -34,7 +34,7 @@ document {
      the lapack routines, which are restricted to 53 bits of precision.",
      EXAMPLE lines ///
      	  A = matrix"1,2,3,4,5,6;1,3,6,12,13,16;19,7,11,47,48,21" ** RR
-	  (P,L,U) = LU A
+	  (P,L,U) = LUdecomposition A
 	  Q = id_ (RR^3) _ P
 	  Q * L * U - A
 	  clean(1e-15,oo)
@@ -47,7 +47,7 @@ document {
 	  printingPrecision = 2
 	  setRandomSeed 0
 	  fillMatrix A
-	  (P,L,U) = LU A;
+	  (P,L,U) = LUdecomposition A;
 	  Q = id_(CC^5) _ P
 	  matrix Q * matrix L * matrix U - matrix A
 	  clean(1e-15,oo)
@@ -60,7 +60,7 @@ document {
 TEST ///
 kk = RR
 A = matrix"1,2,3;4,7,8" ** kk
-(P,L,U) = LU A
+(P,L,U) = LUdecomposition A
 Q = mutableMatrix(kk, #P, #P)
 for i from 0 to #P-1 do Q_(P_i,i) = 1.0
 Q = matrix Q
@@ -68,7 +68,7 @@ norm(Q*L*U - A)
 
 kk = RR
 A = matrix"1,2;3,4;7,8" ** kk
-(P,L,U) = LU A
+(P,L,U) = LUdecomposition A
 Q = mutableMatrix(kk, #P, #P)
 for i from 0 to #P-1 do Q_(P_i,i) = 1.0
 Q = matrix Q
@@ -76,7 +76,7 @@ norm(Q*L*U - A)
 
 kk = CC
 A = matrix"1,2,3;4,7,8" ** kk
-(P,L,U) = LU A
+(P,L,U) = LUdecomposition A
 Q = mutableMatrix(kk, #P, #P)
 for i from 0 to #P-1 do Q_(P_i,i) = 1.0+0.0*ii
 Q = matrix Q
@@ -84,7 +84,7 @@ norm(Q*L*U - A)
 
 kk = CC
 A = matrix"1,2;3,4;7,8" ** kk
-(P,L,U) = LU A
+(P,L,U) = LUdecomposition A
 Q = mutableMatrix(kk, #P, #P)
 for i from 0 to #P-1 do Q_(P_i,i) = 1.0+0.0*ii
 Q = matrix Q
@@ -93,7 +93,7 @@ norm(Q*L*U - A)
 kk = ZZ/32003
 A = mutableMatrix(kk,5,10, Dense=>true)
 fillMatrix(A, Density=>.5)
-(P,L,U) = LU A
+(P,L,U) = LUdecomposition A
 Q = id_(kk^#P) _ P
 Q * (matrix L) * (matrix U) - matrix A
 -- warning: lapack support had many bugs in Macaulay2 versions <= 1.0

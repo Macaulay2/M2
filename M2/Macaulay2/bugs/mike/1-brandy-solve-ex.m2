@@ -25,20 +25,20 @@ assert try(inverse A; false) else true
 
 --Example: number of columns is smaller than the number of rows
 A = matrix(R,{{1,2},{4,5},{1,2}})
-LU A
---how do I use "LU"?
+LUdecomposition A
+--how do I use "LUdecomposition"?
 
 A = matrix(R,{{1,2,3,0},{4,5,6,0},{1,2,3,0},{1,1,1,1}})
 A1 = matrix(RR_53,{{1,2,3,0},{4,5,6,0},{1,2,3,0},{1,1,1,1}})
-LU A1
-LU A
+LUdecomposition A1
+LUdecomposition A
 oo_1 * oo_2
 
 A = matrix(R,{{1,0,0},{2,0,0}})
-LU A
+LUdecomposition A
 
 A = matrix(R,{{1,0,0},{2,1,0}})
-LU A
+LUdecomposition A
 
 A = matrix(R,{{1,0,0},{2,0,0},{1,0,0}})
-LU oo
+LUdecomposition oo

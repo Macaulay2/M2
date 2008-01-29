@@ -134,7 +134,7 @@ I = ideal(
     -d^2-f^2-g^2+2*d*x+2*f*y+2*g*z)
 
 time minimalPrimes I -- 7.06 sec, or 5.53 sec
-time primaryDecomposition(I, Strategy=>SY)
+time primaryDecomposition(I, Strategy=>ShimoyamaYokoyama)
 debug PrimaryDecomposition
 time GTZ1 I;
 
@@ -144,8 +144,8 @@ J1
 J2 = trim(J + ideal g)
 J2 = trim substitute(J, x=>0)
 intersect(J1,J2) == J
-C1 = time primaryDecomposition(J1, Strategy=>SY);
-C2 = time primaryDecomposition(J2, Strategy=>SY);
+C1 = time primaryDecomposition(J1, Strategy=>ShimoyamaYokoyama);
+C2 = time primaryDecomposition(J2, Strategy=>ShimoyamaYokoyama);
 
 
 time minimalPrimes J -- this is much worse than 'minimalPrimes I'

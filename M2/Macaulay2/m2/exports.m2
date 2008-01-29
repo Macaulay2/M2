@@ -285,7 +285,7 @@ export {
 	symbol LI,
 	symbol LINK,
 	symbol LITERAL,
-	symbol LU,
+	symbol LUdecomposition,
 	symbol Left,
 	symbol LengthLimit,
 	symbol Lex,

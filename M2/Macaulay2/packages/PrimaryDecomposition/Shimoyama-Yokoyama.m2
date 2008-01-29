@@ -1,6 +1,6 @@
 -----------------------------------
 -- Primary decomposition code -----
--- SY algorithm
+-- ShimoyamaYokoyama algorithm
 -- 
 -- authors: W. Decker, G. Smith, M. Stillman, C. Yackel
 --

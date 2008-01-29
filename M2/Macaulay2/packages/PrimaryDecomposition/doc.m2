@@ -186,29 +186,29 @@ document {
      }
 
 document {
-     Key => {[primaryDecomposition,Strategy],EHV,SY,Hybrid,GTZ},
+     Key => {[primaryDecomposition,Strategy],EisenbudHunekeVasconcelos,ShimoyamaYokoyama,Hybrid,GTZ},
      "The strategy option value should be one of the following.",
      UL {
           ("Monomial", " -- uses Alexander duality of a monomial ideal"),
 	  ("Binomial", " -- finds a cellular resolution of a 
 	                     binomial ideal"),
-	  ("EHV", " -- uses the algorithm of Eisenbud-Huneke-Vasconcelos"),
-	  ("SY", " -- uses the algorithm of Shimoyama-Yokoyama"),
+	  ("EisenbudHunekeVasconcelos", " -- uses the algorithm of Eisenbud-Huneke-Vasconcelos"),
+	  ("ShimoyamaYokoyama", " -- uses the algorithm of Shimoyama-Yokoyama"),
 	  ("Hybrid"," -- uses parts of the above two algorithms"),
 	  ("GTZ", " -- uses the algorithm of Gianni-Trager-Zacharias.  
 	           NOT IMPLEMENTED YET.")
           },
      "The default strategy depends on the ideal.  If the ideal is generated
      by monomials, then ", TT "Strategy => Monomial", " is implied.  
-     In all other cases, the default is ", TT "Strategy => SY", ".",
+     In all other cases, the default is ", TT "Strategy => ShimoyamaYokoyama", ".",
      HEADER3 "Strategy => Monomial",
      "Description, reference if possible, and then an example.  Also warn
      that ideal must be monomial.",
      HEADER3 "Strategy => Binomial",
      "Description: get cellular resolution.  Give reference, example.",
-     HEADER3 "Strategy => EHV",
+     HEADER3 "Strategy => EisenbudHunekeVasconcelos",
      "Description, example, reference",
-     HEADER3 "Strategy => SY", 
+     HEADER3 "Strategy => ShimoyamaYokoyama", 
      "Description, example, reference",
      HEADER3 "Strategy => Hybrid",
      "Description, example, reference", TO (localize,Ideal,Ideal)

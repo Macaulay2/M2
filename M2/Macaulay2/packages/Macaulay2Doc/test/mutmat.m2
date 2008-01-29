@@ -44,4 +44,4 @@ mutableMatrix
 randomMutableMatrix
 
 -- linear algebra
--- LU, solve, eigenvalues, eigenvectors, SVD, leastSquares, LLL
+-- LUdecomposition, solve, eigenvalues, eigenvectors, SVD, leastSquares, LLL

@@ -1,35 +1,13 @@
-
----------------------------------------------------------------------------
--- PURPOSE : Compute the integral closure of a ring via the algorithm 
---           in Theo De Jong's paper, An Algorithm for 
---           Computing the Integral Closure, J. Symbolic Computation, 
---           (1998) 26, 273-277. 
--- PROGRAMS : integralClosure
---            isNormal
---            ICFractions
---            ICMap
--- The fractions that generate the integral closure over R/I are obtained 
--- by the command ICfractions(R/I).  
--- Included is a command conductor that computes the conductor of S into R
--- where S is the image of a ring map from R to S where S is finite over
--- R.  ICmap constructs this map (the natural map R/I->R_j/I_j) for R 
--- into its integral closure and applying conductor to this map 
--- yeilds the conductor of the integral closure into R.
-
--- PROGRAMMERs : This implementation was written by and is maintained by
---               Amelia Taylor.  
--- UPDATE HISTORY : 25 October 2006
----------------------------------------------------------------------------
 newPackage(
 	"IntegralClosure",
     	Version => "0.5", 
     	Date => "October 31, 2006",
     	Authors => {
 	     {Name => "Amelia Taylor",
-	     HomePage => "http://faculty1.coloradocollege.edu/~ataylor",
+	     HomePage => "http://faculty1.coloradocollege.edu/~ataylor/",
    	     Email => "amelia.taylor@coloradocollege.edu"}},
     	Headline => "Rees algebras",
-    	DebuggingMode => true
+    	DebuggingMode => false
     	)
 
 export{isNormal, integralClosure, ICmap, ICfractions, conductor}
@@ -421,6 +399,38 @@ conductor(RingMap) := Ideal => (F) -> (
 
 --------------------------------------------------------------------
 beginDocumentation()
+
+document {
+     Key => IntegralClosure,
+     ---------------------------------------------------------------------------
+     -- PURPOSE : Compute the integral closure of a ring via the algorithm 
+     --           in Theo De Jong's paper, An Algorithm for 
+     --           Computing the Integral Closure, J. Symbolic Computation, 
+     --           (1998) 26, 273-277. 
+     -- PROGRAMS : integralClosure
+     --            isNormal
+     --            ICFractions
+     --            ICMap
+     -- The fractions that generate the integral closure over R/I are obtained 
+     -- by the command ICfractions(R/I).  
+     -- Included is a command conductor that computes the conductor of S into R
+     -- where S is the image of a ring map from R to S where S is finite over
+     -- R.  ICmap constructs this map (the natural map R/I->R_j/I_j) for R 
+     -- into its integral closure and applying conductor to this map 
+     -- yeilds the conductor of the integral closure into R.
+
+     -- PROGRAMMERs : This implementation was written by and is maintained by
+     --               Amelia Taylor.  
+     -- UPDATE HISTORY : 25 October 2006
+     ---------------------------------------------------------------------------
+     PARA {
+	  "This package computes the integral closure of a ring via the algorithm 
+	  in Theo De Jong's paper, ", EM "An Algorithm for 
+	  Computing the Integral Closure", ", J. Symbolic Computation, (1998) 26, 273-277.
+	  The fractions that generate the integral closure over R are obtained 
+     	  with the command ", TT "ICfractions R", "."
+	  }
+     }
 
 document {
      Key => {isNormal, (isNormal, Ring)},

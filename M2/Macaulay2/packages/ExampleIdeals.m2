@@ -368,15 +368,15 @@ loadPackage "ExampleIdeals"
 I = cyclicRootsHomogeneous(7,ZZ/23)
 gbTrace=3
 time gens gb I;
-time gens gb(I, Algorithm=>F4, GBDegrees=>{1,1,1,1,1,1,1,1});
+time gens gb(I, Algorithm=>LinearAlgebra, GBDegrees=>{1,1,1,1,1,1,1,1});
 
 loadPackage "ExampleIdeals"
 I = cyclicRootsHomogeneous(8,ZZ/23)
-time gens gb(I, Algorithm=>F4, GBDegrees=>{1,1,1,1,1,1,1,1,1});
+time gens gb(I, Algorithm=>LinearAlgebra, GBDegrees=>{1,1,1,1,1,1,1,1,1});
 
 loadPackage "ExampleIdeals"
 I = cyclicRootsHomogeneous(9,ZZ/23)
-time gens gb(I, Algorithm=>F4, GBDegrees=>{1,1,1,1,1,1,1,1,1,1});
+time gens gb(I, Algorithm=>LinearAlgebra, GBDegrees=>{1,1,1,1,1,1,1,1,1,1});
 
 restart
 cyclicRootsHomogeneous = (n,kk) -> (
@@ -385,7 +385,7 @@ cyclicRootsHomogeneous = (n,kk) -> (
 R_((i+k)%n))))
        + ideal(product(n, i -> R_i) - R_n^n))
 I = cyclicRootsHomogeneous(7,ZZ/23)
-time gens gb(I, Algorithm=>F4, GBDegrees=>toList(numgens ring I:1));
+time gens gb(I, Algorithm=>LinearAlgebra, GBDegrees=>toList(numgens ring I:1));
 
 I = Fabrice24(ZZ/101)
 gbTrace=3

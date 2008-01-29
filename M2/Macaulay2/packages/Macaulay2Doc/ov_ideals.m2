@@ -510,9 +510,9 @@ document {
        ,
      SUBSECTION "strategies",
        "The algorithms available for computing primary decompositions are 
-       Shimoyama-Yokoyama, ", TO "SY", ",  
-       Eisenbud-Huneke-Vasconcelos, ", TO "EHV", ", a 
-       hybrid of these two algorithms (SY and EHV), ", TT "Hybrid", ", 
+       Shimoyama-Yokoyama, ", TO "ShimoyamaYokoyama", ",  
+       Eisenbud-Huneke-Vasconcelos, ", TO "EisenbudHunekeVasconcelos", ", a 
+       hybrid of these two algorithms (ShimoyamaYokoyama and EisenbudHunekeVasconcelos), ", TT "Hybrid", ", 
        and Gianni-Trager-Zacharias, ", TT "GTZ", ".  The 
        default algorithm in Macaulay 2 is Shimoyama-Yokoyama.  Two 
        other arguments for the strategy option are available.  These 
@@ -522,7 +522,7 @@ document {
        of a binomial ideal.  For more information on the strategy 
        options see ", TO "primaryDecomposition(..., Strategy => ...)", ".",
        EXAMPLE {
-	    "primaryDecomposition(I, Strategy => EHV)",
+	    "primaryDecomposition(I, Strategy => EisenbudHunekeVasconcelos)",
 	    },
        ,
 --     	  "An example of a monomial ideal using both monomial and binomial.",

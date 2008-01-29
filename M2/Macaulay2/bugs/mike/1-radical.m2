@@ -14,7 +14,7 @@
 -- source code now is fixed.
 -- 
 -- However, there is another example later (number 236 on your list):
--- for which the default algorithm (EHV) for radical doesn't finish  
+-- for which the default algorithm (EisenbudHunekeVasconcelos) for radical doesn't finish  
 -- reasonably:
 -- 
 
