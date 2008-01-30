@@ -34,11 +34,14 @@ ifneq (@ETAGS@,)
 all :: TAGS
 endif
 all:: html-check-links
-%.dep : %.c; @CC@ -MM $(CPPFLAGS) $< >$@
+
+getmem.o: html-check-links.h  getmem.h
+grammar.fixed.o:  html-check-links.h  buffer.h  getmem.h grammar.h
+html-check-links.o: html-check-links.h  grammar.h  getmem.h
+lex.o: getmem.h grammar.h grammar.tab.h
+
 html-check-links : $(CFILES:.c=.o)
-ifneq ($(DEPENDS),no)
-include $(CFILES:.c=.dep)
-endif
+
 TAGS: $(SRC); @ETAGS@ $^
 lex.o : grammar.fixed.c
 
