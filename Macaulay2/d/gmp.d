@@ -1753,6 +1753,8 @@ export acos(z:CC):CC := idiv(log(z+itimes(sqrt(1-square(z)))));
 export asin(z:CC):CC := idiv(log(sqrt(1-square(z))+itimes(z)));
 export abs2(z:CC):RR := z.re^long(2) + z.im^long(2);
 export atan(x:CC):CC := (
+     if isnan(x) then return x;
+     if isinf(x) then return toCC(atan(infinityRR(precision(x))));
      ss := abs2(x);
      y2 := x.im << 1;
      toCC( atan2(x.re<<1,1-ss)>>1, log((ss+1+y2)/(ss+1-y2))>>2 ));
