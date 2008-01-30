@@ -68,6 +68,19 @@ Notes:
 -- monomialIdeals --
 --------------------
 
-Output:
+Output: is OK, although we need to make one additional change, as in note (3).
 
 Notes:
+1. Many of the algorithms mentioned here are now implemented directly in Macaulay2.
+2. The 'dual' and primaryDecomposition functions displayed on lines o26 and o27 
+   have been rewritten.
+3. primaryDecomposition now returns an irredundant primary decomposition.  
+   Use irreducibleDecomposition instead of primaryDecomposition:
+   -- line i32:
+   apply(2..6, i -> #irreducibleDecomposition treeIdeal i)
+4. erase symbol x
+   instead, use:
+   x = symbol x
+5. For the discussion between i108, i109: the first entry of a degree vector does not
+   need to be positive.  However, a Heft vector is required in the ring in that case.   
+   
