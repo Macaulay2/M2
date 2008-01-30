@@ -1,0 +1,15 @@
+implement tab completion in texmacs
+
+Date: Wed, 30 Jan 2008 11:39:17 +0100
+From: Joris van der Hoeven <vdhoeven@texmacs.org>
+To: "Daniel R. Grayson" <dan@math.uiuc.edu>
+Subject: Re: texmacs
+In-Reply-To: <200801290257.m0T2vlFH024732@u123.math.uiuc.edu>
+
+On Mon, Jan 28, 2008 at 08:57:47PM -0600, Daniel R. Grayson wrote:
+> Does texmacs offer identifier name completion in computer algebra sessions?
+
+Yes, if you propose the completions:
+
+        Help -> Interfacing -> Tab-completion
+

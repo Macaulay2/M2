@@ -1,4 +1,4 @@
-AC_INIT(Macaulay 2, 1.1, Macaulay2@math.uiuc.edu, Macaulay2) dnl -*- autoconf -*-
+AC_INIT(Macaulay 2, 1.1.1, Macaulay2@math.uiuc.edu, Macaulay2) dnl -*- autoconf -*-
 AC_SUBST(CYGWIN_RELEASE,2)
 AC_CONFIG_HEADERS(include/config.h)
 AC_CONFIG_FILES(m4_include(config/files))
