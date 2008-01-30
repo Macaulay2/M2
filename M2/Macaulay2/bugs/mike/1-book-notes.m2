@@ -114,9 +114,28 @@ Notes:
             substitute(G.matrix,CX))
   J1 = F J
   substitute(ideal(z_5^2),CX) + J1
+     NOTE TO us: perhaps changing minPres.m2 would be preferable, if that is possible?
 
 5. The output on line o63 is different, as the output of Groebner bases (and
       consequently the output from leadTerm) is now sorted by lead term.
 6. The output on line o66 is different as in note 4 above.  The primary decomposition of the
      ideal on line o66 can be found by:
   primaryDecomposition value o66
+
+--------------------------
+-- d-modules -------------
+--------------------------
+
+Output:
+o30: the Boperator is DIFFERENT.  Is this a problem?  The other parts of the hash table on o30 and o31 seem
+to be fine.
+o88: The output is different.  Is this OK?
+
+Notes:
+1. On line o14:
+  Note that some variables are given as '$s' in the book, but as 's' in the
+  current M2. If one does 'use ring o14', then s can be used as a variable.
+2. gb no longer displays its output.  After line o25, do
+  gens oo
+  to see the Groebner basis from the previous line.
+3. The Groebner basis on line o45 is not reduced, where in the current version it is.
