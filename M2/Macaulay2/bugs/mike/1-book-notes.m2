@@ -84,3 +84,12 @@ Notes:
 5. For the discussion between i108, i109: the first entry of a degree vector does not
    need to be positive.  However, a Heft vector is required in the ring in that case.   
    
+----------------------------------------------------
+-- from enumerative geometry to solving equations --
+----------------------------------------------------
+
+Output: is fine, except the random test as in note 1. gives a different answer.
+
+Notes: 
+1. line i65, the test fails.  Rerunning it often makes it succeed.  The reason the test fails
+   is that Macaulay 2's random number generator has changed since the book was written.
