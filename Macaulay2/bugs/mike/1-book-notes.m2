@@ -93,3 +93,30 @@ Output: is fine, except the random test as in note 1. gives a different answer.
 Notes: 
 1. line i65, the test fails.  Rerunning it often makes it succeed.  The reason the test fails
    is that Macaulay 2's random number generator has changed since the book was written.
+
+
+--------------------------------
+-- toric Hilbert schemes -------
+--------------------------------
+
+Output:
+
+Notes:
+1. One does not need to load the file LLL.m2 (in fact, there is no such file!?)
+2. polarCone.m2 is now a real package: FourierMotzkin.m2, but the name of the function is fourierMotzkin,
+     not polarCone.
+3. The computation on line i53 returns a different value.  This is because the choice of variables 
+     to remove has changed, probably due to a difference in sorting order of polynomials.
+4. The input for lines i55,i56,i57,i58 should now read:
+  CX = QQ[a..e, z_1,z_5,z_6,z_11, Weights =>
+      {9,3,5,0,0,0,0,0,0}];
+  F = map(CX, ring J, matrix{{a,b,c,d,e}} | 
+            substitute(G.matrix,CX))
+  J1 = F J
+  substitute(ideal(z_5^2),CX) + J1
+
+5. The output on line o63 is different, as the output of Groebner bases (and
+      consequently the output from leadTerm) is now sorted by lead term.
+6. The output on line o66 is different as in note 4 above.  The primary decomposition of the
+     ideal on line o66 can be found by:
+  primaryDecomposition value o66
