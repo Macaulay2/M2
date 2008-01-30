@@ -1660,8 +1660,14 @@ export toExternalString(x:RR):string := (
 export tostringCC(z:CC):string := (
      x := tostringRR(realPart(z));
      y := tostringRR(imaginaryPart(z));
+     if y === "-0" then y = "0";
+     if x === "-0" then x = "0";
      if y === "0" then return x;
-     if x === "0" then return y + "*ii";
+     if x === "0" then (
+	  if y === "1" then return "+ii"
+	  else if y === "-1" then return "-ii"
+	  else return y + "*ii"
+	  );
      if y === "-1" then return x + "-ii";
      if y ===  "1" then return x + "+ii";
      if y.0 == '-' then return concatenate(array(string)(x,y,"*ii"));
