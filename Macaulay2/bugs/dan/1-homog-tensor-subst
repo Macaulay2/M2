@@ -1,0 +1,26 @@
+Homogeneity of matrices is destroyed by substitute in this simple situation,
+where one might expect it to be preserved, if only "substitute" would pay
+attention to how C was constructed from A:
+
+    i1 : A = QQ[a];
+
+    i2 : B = QQ[b];
+
+    i3 : C = A**B;
+
+    i4 : f = substitute(vars A, C)
+
+    o4 = | a |
+
+                 1       1
+    o4 : Matrix C  <--- C
+
+    i5 : isHomogeneous f
+
+    o5 = false
+
+    i6 : degrees f
+
+    o6 = {{{0, 0}}, {{0, 0}}}
+
+    o6 : List

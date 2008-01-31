@@ -1,9 +1,5 @@
 ideas:
 
-introduce a new Type called Constant with instances pi, e, etc.
-
-Granlund says gmp doesn't put pointers in memory it allocates, so we could use gc_static for it always
-
 n-th root code in gmp is slow.  Perhaps Brent's method would be faster?
 
 mpsolve is a package that finds roots of univariate polynomials quickly, use it?
@@ -21,10 +17,6 @@ put a link on each html doc page to ~/.Macaulay2/index.html
 singular uses slibgb (Brickenstein).
 
 official refereeing of packages (recognition for contributors)
-
-use the processed doc db better
-
-TeXmacs -- get hooked up again.  It has a new graphics engine we can use
 
 produce doc in TeXmacs format!  Use it to make the book, instead of tex.
 
