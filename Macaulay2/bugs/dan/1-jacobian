@@ -1,0 +1,4 @@
+Why not redesign jacobian(Ideal) so it returns the submodule of the
+differentials of the ring that actually depends just on the ideal?  That would
+more mathematically interesting than what it does now, and the former behavior
+could be retrieved by replacing jacobian I with jacobian gens I.
