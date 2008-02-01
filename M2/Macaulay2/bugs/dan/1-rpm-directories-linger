@@ -1,0 +1,17 @@
+> Date: Fri, 01 Feb 2008 16:14:55 +0000
+> From: Mike Willis <Mike.Willis@warwick.ac.uk>
+> To: dan@math.uiuc.edu
+> Subject: Re: --dumpdata has no effect on load times
+
+  ...
+
+> 
+> The rpms on your site for RedHat install OK (though they leave a lot of 
+> empty directory trees behind when they are removed)
+
+I'm not listing directory names in the *.spec file.  Could that explain why the
+directories aren't removed later?
+
+That would be easy to fix.
+
+
