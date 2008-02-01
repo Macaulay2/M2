@@ -1,0 +1,2 @@
+basis should check finite dimensionality before proceeding, because the engine
+can crash
