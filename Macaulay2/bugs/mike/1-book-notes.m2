@@ -7,6 +7,8 @@
 
 OK.  The output seems good.
 
+Output placed in test.out.expected
+
 ---------------
 -- varieties --
 ---------------
@@ -19,12 +21,17 @@ Notes:
 
 2. MonomialSize=>16.  The default is currently 16 or 32.
 
+Output placed in test.out.expected
+
 --------------
 -- geometry --
 --------------
 
 Output: problem, although it looks correct.
 FIX THIS or UNDERSTAND IT!!
+The problem is on lines o82-o85 (or even up to o90).  It is probably correct, but
+  it would be nicer if Hom would produce nicer generating sets? (As it seems to have done
+  in 0.9.2)
 
 Notes:
 1. 'top' has been replaced with 'topComponents'
@@ -46,11 +53,14 @@ Notes:
 5. Another format for strings: /// ... ///
 6. Other newer language features?
 
+Output placed in test.out.expected
+
 -------------
 -- schemes --
 -------------
 
-Output: The det computation on line i28 takes quite a long time
+Output: The det computation on line i28 takes quite a long time 
+(fixed by using Strategy=>Cofactor).
 Otherwise the output seems good.
 
 Notes:
@@ -62,7 +72,10 @@ Notes:
    The output on line o70 in the book contains a non-minimal generator (the last one).
    The check for non-singularity in line i71 in the book is not correct.  One needs to
    take the 2 x 2 minors of the Jacobian (since codim J == 2):
-   radical(J + minors(2,jacobian J)) == ideal gens ring J
+   saturate(J + minors(2,jacobian J)) == 1
+   (this test placed into the test.m2 file).
+
+Output placed in test.out.expected
 
 --------------------
 -- monomialIdeals --
@@ -83,17 +96,41 @@ Notes:
    x = symbol x
 5. For the discussion between i108, i109: the first entry of a degree vector does not
    need to be positive.  However, a Heft vector is required in the ring in that case.   
+
+Output placed in test.out.expected
    
 ----------------------------------------------------
 -- from enumerative geometry to solving equations --
 ----------------------------------------------------
 
 Output: is fine, except the random test as in note 1. gives a different answer.
+Fixed by adding in a 'random 10', before the call that fails...
 
 Notes: 
 1. line i65, the test fails.  Rerunning it often makes it succeed.  The reason the test fails
    is that Macaulay 2's random number generator has changed since the book was written.
 
+Output placed in test.out.expected
+
+--------------------------------
+-- complete intersections ------
+--------------------------------
+
+Output: o32: gives FALSE, not TRUE...
+The rest of the output seems ok.
+
+Notes:
+o48: degrees are correct, they are no longer displayed.
+i67: the code has changed slightly, mostly involving Adjust and Repair (having been changed
+     to use Heft).
+i136: the time seems to be slower now... (well, faster, but only twice as fast)
+i146: used 7.6 sec, book: .13 sec
+i148: used 3.4 sec, book: .15 sec
+i149: used 3.4 sec, book: .18 sec
+i152: used 7.6 sec, book: .39 sec
+i153: used 3.5 sec, book: .12 sec
+i155: used 7.8 sec, book: .97 sec
+i156: used 3.1 sec, book: 1.73 sec
 
 --------------------------------
 -- toric Hilbert schemes -------
@@ -122,6 +159,31 @@ Notes:
      ideal on line o66 can be found by:
   primaryDecomposition value o66
 
+Output placed in test.out.expected
+
+--------------------------
+-- sheaf algorithms ------
+--------------------------
+
+Output: it is now OK.
+
+Notes:
+1. Dan fixed the one problem in here (line i73 is changed, as the presentation
+of FHM comes out in a different order...
+
+Output placed in test.out.expected
+
+---------------------------
+-- constructions ----------
+---------------------------
+
+Output: Now is fine, after changing the DegreeRank of the tensor products...
+
+Notes:
+1. I need to check the other routines, since they aren't actually checked here.
+
+Output placed in test.out.expected
+
 --------------------------
 -- d-modules -------------
 --------------------------
@@ -129,6 +191,8 @@ Notes:
 Output:
 o30: the Boperator is DIFFERENT.  Is this a problem?  The other parts of the hash table on o30 and o31 seem
 to be fine.
+o41: LocModule is different.
+o45: output differs, but is probably fine.  In fact, the new one seems better...
 o88: The output is different.  Is this OK?
 
 Notes:
@@ -139,3 +203,7 @@ Notes:
   gens oo
   to see the Groebner basis from the previous line.
 3. The Groebner basis on line o45 is not reduced, where in the current version it is.
+
+Emailed Anton about this.
+
+Output placed in test.out.expected.  This file contains these suspect differences)
