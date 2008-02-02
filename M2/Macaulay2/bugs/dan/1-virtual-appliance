@@ -1,0 +1,12 @@
+sage is distributed on windows as a vmware virtual appliance:
+
+From: Michael Stillman <mike@math.cornell.edu>
+To: Dan Grayson <dan@math.uiuc.edu>
+Subject: 
+Date: Fri, 1 Feb 2008 19:47:40 -0500
+
+It appears that sage is not using cygwin or colinux:
+
+http://modular.math.washington.edu/sage/SAGEbin/microsoft_windows/
+
+
