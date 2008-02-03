@@ -10,11 +10,15 @@ newPackage(
     	)
 
 export { 
-     symbol EllipticCurve, symbol Period, 
+     symbol EllipticCurve, 
+     symbol Period, 
      symbol Period', 
      symbol periodCoordinates, 
      symbol checkEquation,
-     symbol distance
+     symbol distance,
+     symbol PointClass,
+     symbol EllipticCurvePoint,
+     symbol test					    -- remove later
      }
 
 EllipticCurve = new Type of ProjectiveVariety
@@ -22,8 +26,16 @@ EllipticCurve.MethodFunction = new MutableHashTable
 Function _ EllipticCurve := (f,E) -> EllipticCurve.MethodFunction#f E
 EllipticCurve.MethodFunction#log = E -> z -> E.log z
 EllipticCurve.MethodFunction#exp = E -> z -> E.exp z
+toString EllipticCurve := toString @@ expression
+net EllipticCurve := net @@ expression
 new EllipticCurve from List := (EllipticCurve,v) -> ellset toSequence v
 precision EllipticCurve := E -> precision ring E
+
+EllipticCurvePoint = new Type of List
+net EllipticCurvePoint := x -> net new Array from x
+toString EllipticCurvePoint := x -> toString new Array from x
+
+EllipticCurve List := (E,xyz) -> new E.PointClass from xyz
 
 nmr3 = (x,y,z) -> (
      -- normalize a point in the projective plane, so norm is 1 and one of the coordinates is 1
@@ -57,7 +69,7 @@ realizeform = f -> (
      )
 realizeforms = (f,g) -> (realizeform f, realizeform g)
 
-distance = (P,Q) -> norm exteriorPower_2 matrix{P,Q} / (norm P * norm Q)     
+distance = (P,Q) -> norm exteriorPower_2 matrix{toList P,toList Q} / (norm P * norm Q)     
 
 quadnorm = (a,b,c) -> (
      -- a measure of how far apart the roots of ax^2+bxy+cy^2 are, invariant under scaling
@@ -112,7 +124,12 @@ ellset = (b,c) -> (
      (x,y,z) := (R_0,R_1,R_2);
      S := R / (y^2 * z - x^3 + b * x^2 * z + c * x * z^2);
      E := Proj S;
+     E = newClass(EllipticCurve, E);
+     Epointclass := new Type of EllipticCurvePoint;
+     Epointclass.EllipticCurve = E;
+     toString Epointclass = "Point on the elliptic curve " | toString expression E;
      prs := {
+	  global PointClass => Epointclass,
 	  global modPeriods => normalize,
 	  global Equation => (() -> (
 		    x := hold global x;
@@ -143,8 +160,11 @@ ellset = (b,c) -> (
 			 (x,y,z) = nmb3 (x,y,z);
 			 ));
 	       if x==0 and z==0 then return numeric_prec' {0,1,0};
-	       numeric_prec' toList nm3(x,y,z)),
+	       (x,y,z) = nm3(x,y,z);
+	       (x,y,z) = (numeric_prec' x,numeric_prec' y,numeric_prec' z);
+	       new Epointclass from [x,y,z]),
 	  global log => P -> (
+	       if not instance(P, Epointclass) then error "expected a point on the curve";
 	       (x,y,z) := toSequence P;
 	       if z == 0 then return z;
 	       prec' = min(precision x,precision y,precision z,prec);
@@ -227,7 +247,7 @@ eqns = () -> (
      eqns0 (v,u);
      )     
 
-TEST ///
+test = () -> (
      errorDepth = 0;
      defaultPrecision = 200;
      -- this is a random example
@@ -241,7 +261,7 @@ TEST ///
      P' = {24.320324016829770815650582361314829753363183699359305678508046741p200,
 	  -125.06341511246553122013771748084347529459024606604009244488993779p200,
 	  .1p200e1};
-     assert ( P === P' );
+     assert ( toList P === P' );
      w' = E.log P;
      assert( toRR w === w' );
      scan(10, i -> (
@@ -263,7 +283,7 @@ TEST ///
      scan(20, i -> (
 	       x := random CC * 20 - (10+10*ii);
 	       y := sqrt ( x^3 + E.b*x^2 + E.c*x );
-	       P := {x,y,1};
+	       P := E {x,y,1};
 	       assert( E.checkEquation P < 1p20e-40 );
 	       assert( distance(E.exp E.log P, P) < 1p20e-40 );
 	       P = (random CC - (1+ii)/2) * P;
@@ -285,16 +305,19 @@ TEST ///
      -- this is the example from the paper
      defaultPrecision = 200;
      D = new EllipticCurve from {49/4,16};
-     assert( D.log {4,-18,1} === .369919481948619552895243135959626649608662476782124725192805177111472521060507737885616486p200 );
+     assert( D.log D {4,-18,1} === .369919481948619552895243135959626649608662476782124725192805177111472521060507737885616486p200 );
      defaultPrecision = 2000;
      D = new EllipticCurve from {49/4,16};
-     assert( D.log {4,-18,1} === .36991948194861955289524313595962664960866247678212472519280517711147252106050773788561648590076490501530693046833342157958394618521919564010528994124220080346432218452209356596402438592542481509288551083454520862983924665767390255283306531273974266369599782089674379930950117992432630475867532094677817541346775132258749997575180276140635560096880489359110132094907125889960474705999991693520051782426376858122502435487789180572161826981069764302437583354714571023989856728723371278912399769093858699957284325209191376923558703760523643472581244850282004300109746297354134800300510513509935534967578260651640863571044289561307686736012242633887411501593767514380509940928590948236051405877736p2000 );
+     assert( D.log D {4,-18,1} === .36991948194861955289524313595962664960866247678212472519280517711147252106050773788561648590076490501530693046833342157958394618521919564010528994124220080346432218452209356596402438592542481509288551083454520862983924665767390255283306531273974266369599782089674379930950117992432630475867532094677817541346775132258749997575180276140635560096880489359110132094907125889960474705999991693520051782426376858122502435487789180572161826981069764302437583354714571023989856728723371278912399769093858699957284325209191376923558703760523643472581244850282004300109746297354134800300510513509935534967578260651640863571044289561307686736012242633887411501593767514380509940928590948236051405877736p2000 );
      scan(-4 .. 4, i -> scan(-4 .. 4, j -> (
      		    assert( distance(D.exp ( .2p2000 ), D.exp ( .2p2000 + i * D.Period' + j * D.Period )) < 1p20e-500 );
 		    )));
      v = D.Period / 4;
      L = D.exp v;
      assert( norm (L - {4,-18,1})/18 < 2p20^(-defaultPrecision+1) );
-     assert( D.log {4,-18,1} === v );
+     assert( D.log D {4,-18,1} === v );
      defaultPrecision = 200;
-///
+     )
+
+TEST "test()"
+
