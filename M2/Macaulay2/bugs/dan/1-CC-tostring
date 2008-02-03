@@ -1,0 +1,18 @@
+In printing complex numbers, we should go the distance to the right of the
+point in both parts:
+
+    i1 : 1e-30 + ii
+
+    o1 = 1e-30+ii
+
+    o1 : CC (of precision 53)
+
+    i2 : printingPrecision
+
+    o2 = 2
+
+That part is done.
+
+The same would apply to vectors, matrices, and the coordinates of points.
+
+Do it for matrices before 1.1.
