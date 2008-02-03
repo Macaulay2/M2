@@ -377,9 +377,8 @@ assert( format_(10,49) 7.7778888e-50 === "1e-49" )
 assert( format_(10,48) 7.7778888e-50 === "0" )
 assert( format_(10,47) 7.7778888e-50 === "0" )
 
-assert ( 4 == # set (toString \ { toCC(53,-0.,0.), toCC(53,0.,0.), toCC(53,-0.,-0.), toCC(53,0.,-0.) } ) )
+assert ( 1 == # set (toString \ { toCC(53,-0.,0.), toCC(53,0.,0.), toCC(53,-0.,-0.), toCC(53,0.,-0.) } ) )
 assert ( 4 == # set (toExternalString \ { toCC(53,-0.,0.), toCC(53,0.,0.), toCC(53,-0.,-0.), toCC(53,0.,-0.) } ) )
-
 
 assert( toRR(100,-0.) === -0.p100 )
 assert( toRR(100,0.) === 0.p100 )
@@ -730,6 +729,22 @@ assert ( isInfinite ( ii * (1/(0.+0.*ii)) ) )
 assert ( atan (1/0.) === pi/2 )
 assert ( atan (1/(0.*ii)) == pi/2 )
 assert ( instance(atan (1/(0.*ii)) , CC) )
+
+assert ( 1/11 == toRR(1/11) )
+assert ( 1/11 == 1p200/11 )
+
+R = CC[x]
+assert( size (2.1 + x) == 2 )
+assert( size (2.1 - x) == 2 )
+assert( size (2.1 * x) == 1 )
+assert( size (pi + x) == 2 )
+assert( size (pi * x) == 1 )
+assert( size (ii + x) == 2 )
+assert( size (ii - x) == 2 )
+assert( size (ii * x) == 1 )
+assert( size (1 + x) == 2 )
+assert( size (1 - x) == 2 )
+assert( size (1 * x) == 1 )
 
 -- Local Variables:
 -- compile-command: "make -C $M2BUILDDIR/Macaulay2/packages/Macaulay2Doc/test numbers.out"
