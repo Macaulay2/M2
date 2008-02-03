@@ -1,0 +1,6 @@
+installPackage should use absolute paths for hyperlinks to packages 
+installed with a different prefix.
+
+Then we could stop making all those symbolic links in ~/.Macaulay2/local to the
+installed packages.
+
