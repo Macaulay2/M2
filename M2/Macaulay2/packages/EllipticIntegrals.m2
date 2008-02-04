@@ -21,6 +21,8 @@ export {
      symbol test					    -- remove later
      }
 
+see := (label,x) -> (stderr << "--" << label << " = " << x << endl; x)
+
 EllipticCurve = new Type of ProjectiveVariety
 EllipticCurve.MethodFunction = new MutableHashTable
 Function _ EllipticCurve := (f,E) -> EllipticCurve.MethodFunction#f E
@@ -29,11 +31,42 @@ EllipticCurve.MethodFunction#exp = E -> z -> E.exp z
 toString EllipticCurve := toString @@ expression
 net EllipticCurve := net @@ expression
 new EllipticCurve from List := (EllipticCurve,v) -> ellset toSequence v
-precision EllipticCurve := E -> precision ring E
+precision EllipticCurve := E -> precision E.Period
+isReal EllipticCurve := E -> isReal E.b and isReal E.c
+
+log2ten = log_2 10p20
 
 EllipticCurvePoint = new Type of List
-net EllipticCurvePoint := x -> net new Array from x
-toString EllipticCurvePoint := x -> toString new Array from x
+net EllipticCurvePoint := 
+toString EllipticCurvePoint := P -> (
+     s := printingPrecision;
+     ac := printingAccuracy;
+     if s != 0 and ac == -1 then ac = s - floor (max (size2 \ P) / log2ten);
+     concatenate("{",format(s,ac,P#0),",",format(s,ac,P#1),",",format(s,ac,P#2),"}")     
+     )
+
+conjugate EllipticCurvePoint := P -> (
+     if not isReal E then error "expected a real elliptic curve";
+     apply(P,conjugate))
+
+isReal EllipticCurvePoint := P -> isReal E and distance(P,conjugate P) < 2p20^(-precision E + 4)
+
+EllipticCurvePoint + EllipticCurvePoint := (P,Q) -> (
+     if class P =!= class Q then error "expected points on the same elliptic curve";
+     E := (class P).EllipticCurve;
+     E.exp (E.log P + E.log Q)
+     )
+
+EllipticCurvePoint - EllipticCurvePoint := (P,Q) -> (
+     if class P =!= class Q then error "expected points on the same elliptic curve";
+     E := (class P).EllipticCurve;
+     E.exp (E.log P - E.log Q)
+     )
+
+- EllipticCurvePoint := (P) -> (
+     E := (class P).EllipticCurve;
+     E.exp (- E.log P)
+     )
 
 EllipticCurve List := (E,xyz) -> new E.PointClass from xyz
 
@@ -139,7 +172,10 @@ ellset = (b,c) -> (
 	  global c => c,
 	  global Period => numeric_prec period,
 	  global Period' => numeric_prec period',
-	  global periodCoordinates => z -> numeric_prec { fm1 z, fm2 z },
+	  global periodCoordinates => z -> (
+	       if not instance(z,Number) then error "expected a number";
+	       numeric_prec { fm1 z, fm2 z }
+	       ),
 	  global checkEquation => P -> (
 	       (x,y,z) := toSequence P;
 	       norm ( y^2 * z - x * (x^2 + b*x*z + c*z^2) ) / (norm P)^3
@@ -164,6 +200,7 @@ ellset = (b,c) -> (
 	       (x,y,z) = (numeric_prec' x,numeric_prec' y,numeric_prec' z);
 	       new Epointclass from [x,y,z]),
 	  global log => P -> (
+	       << endl << "log" << endl;
 	       if not instance(P, Epointclass) then error "expected a point on the curve";
 	       (x,y,z) := toSequence P;
 	       if z == 0 then return z;
@@ -172,22 +209,25 @@ ellset = (b,c) -> (
 	       (x,y,z) = (numeric_prec'' x,numeric_prec'' y,numeric_prec'' z);
 	       scan(chain, (R,S) -> (
 			 local u; local u'; local v;  local v'; local w;
+			 local den1; local den2; local den3;
+			 local num1; local num2; local num3;
 			 eqn := (z, -x+S*z, -x*R);	    -- u2-ux+uS-xR
 			 eqn':= (z, -y, x*R*(S-R));	    -- v2-vy-xR2+xRS
 			 w = numeric_prec'' 1;
 			 if quadnorm eqn' > quadnorm eqn then (
+			      see("eqn'",eqn');
 			      (v,v') = quadsolve eqn';
 			      {*
 			      -- ux2+2uxR-uxS-vy+x2R+xRS
-			      num1 := (v) -> - (-v*y*z+w*(x^2*R+x*z*R*S));
-			      den1 := (v) -> x^2+x*z*(2*R-S);
+			      num1 = (v) -> - (-v*y*z+w*(x^2*R+x*z*R*S));
+			      den1 = (v) -> x^2+x*z*(2*R-S);
 			      -- uyx+2uyR-uyS-vx2-4vxR+2vxS-vS2+yxR+yRS
-			      num2 := (v) -> - (-v*x^2-4*v*x*R*z+2*v*x*S*z-v*S^2*z^2+w*(y*x*R+y*R*S*z)); -- this one can become tiny if we use it alone
-			      den2 := (v) -> y*x+2*y*R*z-y*S*z;
+			      num2 = (v) -> - (-v*x^2-4*v*x*R*z+2*v*x*S*z-v*S^2*z^2+w*(y*x*R+y*R*S*z)); -- this one can become tiny if we use it alone
+			      den2 = (v) -> y*x+2*y*R*z-y*S*z;
 			      *}
 			      -- uv+uyd-uy+vxd-vx+vSd+yRd-yR (d==1/2)
-			      num3 := (v) -> - (-v*x/2+v*S/2*z-w*y*R/2)*w;
-			      den3 := (v) -> v*z-w*y/2;
+			      num3 = (v) -> - (-v*x/2+v*S/2*z-w*y*R/2)*w;
+			      den3 = (v) -> v*z-w*y/2;
 			      u = num3 v/den3 v;
 			      u' = num3 v'/den3 v';
 			      if u' > u then (u,v) = (u',v');
@@ -199,25 +239,24 @@ ellset = (b,c) -> (
 			      )
 			 else (
 			      (u,u') = quadsolve eqn;
+			      see("eqn",eqn);
 			      if u' > u then u = u';
-			      {*
 			      -- vy-ux2-2uxR+uxS-x2R-xRS
 			      num1 = - (-u*x^2-2*u*x*z*R+u*x*z*S-w*(x^2*R+x*z*R*S));
 			      den1 = () -> y*z;
 			      -- vu+vxd-vx+vSd+uyd-uy+yRd-yR (d==1/2)
 			      num2 = - ((-u-w*R)*y/2*w);
 			      den2 = () -> u*z+w*(-x+S*z)/2;
-			      *}
 			      -- vx2+4vxR-2vxS+vS2-uyx-2uyR+uyS-yxR-yRS
 			      num3 = - (-u*y*x-2*u*y*R*z+u*y*S*z-w*y*x*R-w*y*R*S*z);
 			      den3 = () -> x^2+4*x*R*z-2*x*S*z+S^2*z^2;
-			      -- (s1,s2,s3) = (size2 num1,size2 num2,size2 num3);
-			      v = num3/den3();
-			      {*
+			      (s1,s2,s3) = (size2 num1,size2 num2,size2 num3);
+			      see("(s1,s2,s3)",(s1,s2,s3));
+			      v = 
 			      if s1 > s2 then 
 			      if s1 > s3 then num1/den1() else num3/den3() else
 			      if s2 > s3 then num2/den2() else num3/den3();
-			      *}
+			      see_"v" v;
 			      );
 			 (x,y,z) = nmb3(u,v,w);
 			 ));
@@ -247,77 +286,97 @@ eqns = () -> (
      eqns0 (v,u);
      )     
 
-test = () -> (
-     errorDepth = 0;
-     defaultPrecision = 200;
-     -- this is a random example
-     E = new EllipticCurve from {2,3};
-     assert( instance(E.Period, RR) );
-     assert( abs E.Period === 2.5308285053958684099070110720312058949823892791088718843952886434735986368365005418805928p200 );
-     assert( abs imaginaryPart E.Period' === 1.6961196938565959693448565420423855844180032262285705787422735897241846836628622683126757p200 );
-     assert( abs realPart E.Period' === E.Period / 2 );
-     w = 2/10;
-     P = E.exp w;
-     P' = {24.320324016829770815650582361314829753363183699359305678508046741p200,
-	  -125.06341511246553122013771748084347529459024606604009244488993779p200,
-	  .1p200e1};
-     assert ( toList P === P' );
-     w' = E.log P;
-     assert( toRR w === w' );
-     scan(10, i -> (
-	       f := random RR - 1/2;
-	       w := f * E.Period;
-     	       w' := E.log E.exp w;
-	       assert( instance(w', RR) );
-     	       assert( abs((w - w')/w) < 2p20^(-defaultPrecision+1) );
-	       ));
-     assert( {.2p200, .3p200} === E.periodCoordinates (.2p200 * E.Period + .3p200 * E.Period') );
-     scan(-4 .. 4, i -> scan(-4 .. 4, j -> (
-     		    assert( distance(E.exp ( .2p200 ), E.exp ( .2p200 + i * E.Period' + j * E.Period )) < 1e-50 );
-     		    assert( distance(E.exp ( .2p200+.3p200*ii ), E.exp ( .2p200+.3p200*ii + i * E.Period' + j * E.Period )) < 1e-50 );
-		    )));
-     scan(20, i -> (
-	       z := random CC * 20 - (10+10*ii);
-	       assert( E.checkEquation E.exp z  < 1p20e-40 );
-	       ));
-     scan(20, i -> (
-	       x := random CC * 20 - (10+10*ii);
-	       y := sqrt ( x^3 + E.b*x^2 + E.c*x );
-	       P := E {x,y,1};
-	       assert( E.checkEquation P < 1p20e-40 );
-	       assert( distance(E.exp E.log P, P) < 1p20e-40 );
-	       P = (random CC - (1+ii)/2) * P;
-	       assert( E.checkEquation P < 1p20e-40 );
-	       assert( distance(E.exp E.log P, P) < 1p20e-40 );
-	       ));
-     scan(20, i -> (
-	       w := (random RR - 1/2) * E.Period + (random RR - 1/2) * E.Period';
-	       assert( 1p20e-40 > max \\ abs \ E.periodCoordinates ( E.log E.exp w - w ) );
-	       ));
-     assert( 1e-55 > norm (E.periodCoordinates E.log E.exp ( -3.49p200 * E.Period + -4.49p200 * E.Period' ) - { -.49p200,-.49p200 } ));
-     assert( 1e-55 > norm (E.periodCoordinates E.log E.exp ( 3.49p200 * E.Period + 4.49p200 * E.Period' ) - { .49p200,.49p200 } ));
-     assert( 1e-55 > norm (abs \ E.periodCoordinates E.log E.exp ( 3.5p200 * E.Period + 4.5p200 * E.Period' ) - { .5p200,.5p200 } ));
-     assert( E.exp 0 === {0p200,1p200,0p200} );
-     assert( norm(E.exp E.Period - {0p200,1p200,0p200}) < 1e-55 );
-     assert( distance(E.exp E.Period', {0p200,1p200,0p200}) < 1e-55 );
-     assert( distance(E.exp( E.Period + E.Period' ), {0p200,1p200,0p200}) < 1e-55 );
-     assert( distance(E.exp (.2p200 + 100*E.Period'), E.exp (.2p200)) < 1e-55 );
-     -- this is the example from the paper
-     defaultPrecision = 200;
-     D = new EllipticCurve from {49/4,16};
-     assert( D.log D {4,-18,1} === .369919481948619552895243135959626649608662476782124725192805177111472521060507737885616486p200 );
-     defaultPrecision = 2000;
-     D = new EllipticCurve from {49/4,16};
-     assert( D.log D {4,-18,1} === .36991948194861955289524313595962664960866247678212472519280517711147252106050773788561648590076490501530693046833342157958394618521919564010528994124220080346432218452209356596402438592542481509288551083454520862983924665767390255283306531273974266369599782089674379930950117992432630475867532094677817541346775132258749997575180276140635560096880489359110132094907125889960474705999991693520051782426376858122502435487789180572161826981069764302437583354714571023989856728723371278912399769093858699957284325209191376923558703760523643472581244850282004300109746297354134800300510513509935534967578260651640863571044289561307686736012242633887411501593767514380509940928590948236051405877736p2000 );
-     scan(-4 .. 4, i -> scan(-4 .. 4, j -> (
-     		    assert( distance(D.exp ( .2p2000 ), D.exp ( .2p2000 + i * D.Period' + j * D.Period )) < 1p20e-500 );
-		    )));
-     v = D.Period / 4;
-     L = D.exp v;
-     assert( norm (L - {4,-18,1})/18 < 2p20^(-defaultPrecision+1) );
-     assert( D.log D {4,-18,1} === v );
-     defaultPrecision = 200;
-     )
+TEST ///
+defaultPrecision = 200;
+-- this is a random example
+E = new EllipticCurve from {2,3};
+assert( instance(E.Period, RR) );
+assert( abs E.Period === 2.5308285053958684099070110720312058949823892791088718843952886434735986368365005418805928p200 );
+assert( abs imaginaryPart E.Period' === 1.6961196938565959693448565420423855844180032262285705787422735897241846836628622683126757p200 );
+assert( abs realPart E.Period' === E.Period / 2 );
+w = 2/10;
+P = E.exp w;
+P' = {24.320324016829770815650582361314829753363183699359305678508046741p200,
+     -125.06341511246553122013771748084347529459024606604009244488993779p200,
+     .1p200e1};
+assert ( toList P === P' );
+w' = E.log P;
+assert( toRR w === w' );
+scan(10, i -> (
+	  f := random RR - 1/2;
+	  w := f * E.Period;
+	  w' := E.log E.exp w;
+	  assert( instance(w', RR) );
+	  assert( abs((w - w')/w) < 2p20^(-defaultPrecision+1) );
+	  ));
+assert( {.2p200, .3p200} === E.periodCoordinates (.2p200 * E.Period + .3p200 * E.Period') );
+scan(-4 .. 4, i -> scan(-4 .. 4, j -> (
+	       assert( distance(E.exp ( .2p200 ), E.exp ( .2p200 + i * E.Period' + j * E.Period )) < 1e-50 );
+	       assert( distance(E.exp ( .2p200+.3p200*ii ), E.exp ( .2p200+.3p200*ii + i * E.Period' + j * E.Period )) < 1e-50 );
+	       )));
+scan(20, i -> (
+	  z := random CC * 20 - (10+10*ii);
+	  assert( E.checkEquation E.exp z  < 1p20e-40 );
+	  ));
+scan(20, i -> (
+	  x := random CC * 20 - (10+10*ii);
+	  y := sqrt ( x^3 + E.b*x^2 + E.c*x );
+	  P := E {x,y,1};
+	  assert( E.checkEquation P < 1p20e-40 );
+	  assert( distance(E.exp E.log P, P) < 1p20e-40 );
+	  P = (random CC - (1+ii)/2) * P;
+	  assert( E.checkEquation P < 1p20e-40 );
+	  assert( distance(E.exp E.log P, P) < 1p20e-40 );
+	  ));
+scan(20, i -> (
+	  w := (random RR - 1/2) * E.Period + (random RR - 1/2) * E.Period';
+	  assert( 1p20e-40 > max \\ abs \ E.periodCoordinates ( E.log E.exp w - w ) );
+	  ));
+assert( 1e-55 > norm (E.periodCoordinates E.log E.exp ( -3.49p200 * E.Period + -4.49p200 * E.Period' ) - { -.49p200,-.49p200 } ));
+assert( 1e-55 > norm (E.periodCoordinates E.log E.exp ( 3.49p200 * E.Period + 4.49p200 * E.Period' ) - { .49p200,.49p200 } ));
+assert( 1e-55 > norm (abs \ E.periodCoordinates E.log E.exp ( 3.5p200 * E.Period + 4.5p200 * E.Period' ) - { .5p200,.5p200 } ));
+assert( E.exp 0 === {0p200,1p200,0p200} );
+assert( norm(E.exp E.Period - {0p200,1p200,0p200}) < 1e-55 );
+assert( distance(E.exp E.Period', {0p200,1p200,0p200}) < 1e-55 );
+assert( distance(E.exp( E.Period + E.Period' ), {0p200,1p200,0p200}) < 1e-55 );
+assert( distance(E.exp (.2p200 + 100*E.Period'), E.exp (.2p200)) < 1e-55 );
+///
 
-TEST "test()"
+TEST ///
+-- this is the example from the paper
+defaultPrecision = 200;
+D = new EllipticCurve from {49/4,16};
+assert( D.log D {4,-18,1} === .369919481948619552895243135959626649608662476782124725192805177111472521060507737885616486p200 );
+///
 
+TEST ///
+defaultPrecision = 2000;
+D = new EllipticCurve from {49/4,16};
+assert( D.log D {4,-18,1} === .36991948194861955289524313595962664960866247678212472519280517711147252106050773788561648590076490501530693046833342157958394618521919564010528994124220080346432218452209356596402438592542481509288551083454520862983924665767390255283306531273974266369599782089674379930950117992432630475867532094677817541346775132258749997575180276140635560096880489359110132094907125889960474705999991693520051782426376858122502435487789180572161826981069764302437583354714571023989856728723371278912399769093858699957284325209191376923558703760523643472581244850282004300109746297354134800300510513509935534967578260651640863571044289561307686736012242633887411501593767514380509940928590948236051405877736p2000 );
+scan(-4 .. 4, i -> scan(-4 .. 4, j -> (
+	       assert( distance(D.exp ( .2p2000 ), D.exp ( .2p2000 + i * D.Period' + j * D.Period )) < 1p20e-500 );
+	       )));
+v = D.Period / 4;
+L = D.exp v;
+assert( norm (L - {4,-18,1})/18 < 2p20^(-defaultPrecision+1) );
+assert( D.log D {4,-18,1} === v );
+stderr << "--test passed" << endl;
+///
+
+
+TEST ///
+defaultPrecision = 200
+E = new EllipticCurve from {5,6}
+w = .02 + .02001314410965065 * ii
+E.log E.exp w
+assert( abs ( E.log E.exp w - w ) < 1e-30 )
+w = .02 + .0200131441096506 * ii
+E.log E.exp w
+assert( abs ( E.log E.exp w - w ) < 1e-30 )
+w = .02 + .03*ii
+E.log E.exp w
+assert( abs ( E.log E.exp w - w ) < 1e-30 )
+w = .02 + .04*ii
+E.log E.exp w
+assert( abs ( E.log E.exp w - w ) < 1e-30 )
+///
