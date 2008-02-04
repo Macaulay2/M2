@@ -46,10 +46,14 @@ toString EllipticCurvePoint := P -> (
      )
 
 conjugate EllipticCurvePoint := P -> (
+     E := (class P).EllipticCurve;
      if not isReal E then error "expected a real elliptic curve";
      apply(P,conjugate))
 
-isReal EllipticCurvePoint := P -> isReal E and distance(P,conjugate P) < 2p20^(-precision E + 4)
+isReal EllipticCurvePoint := P -> (
+     E := (class P).EllipticCurve;
+     isReal E and distance(P,conjugate P) < 2p20^(-precision E + 4)
+     )
 
 EllipticCurvePoint + EllipticCurvePoint := (P,Q) -> (
      if class P =!= class Q then error "expected points on the same elliptic curve";
@@ -102,7 +106,14 @@ realizeform = f -> (
      )
 realizeforms = (f,g) -> (realizeform f, realizeform g)
 
-distance = (P,Q) -> norm exteriorPower_2 matrix{toList P,toList Q} / (norm P * norm Q)     
+distance = (P,Q) -> (
+     P = toList P;
+     Q = toList Q;
+     e := exteriorPower_2 matrix{P,Q};
+     if precision e === infinity 
+     then (max \\ abs \ flatten entries e) / ((max \\ abs \ P) * (max \\ abs \ Q))
+     else norm e / (norm P * norm Q)
+     )
 
 quadnorm = (a,b,c) -> (
      -- a measure of how far apart the roots of ax^2+bxy+cy^2 are, invariant under scaling
@@ -200,13 +211,13 @@ ellset = (b,c) -> (
 	       (x,y,z) = (numeric_prec' x,numeric_prec' y,numeric_prec' z);
 	       new Epointclass from [x,y,z]),
 	  global log => P -> (
-	       << endl << "log" << endl;
 	       if not instance(P, Epointclass) then error "expected a point on the curve";
 	       (x,y,z) := toSequence P;
 	       if z == 0 then return z;
 	       prec' = min(precision x,precision y,precision z,prec);
 	       prec'' = prec' + extra;
 	       (x,y,z) = (numeric_prec'' x,numeric_prec'' y,numeric_prec'' z);
+	       realP := isReal P;
 	       scan(chain, (R,S) -> (
 			 local u; local u'; local v;  local v'; local w;
 			 local den1; local den2; local den3;
@@ -215,7 +226,6 @@ ellset = (b,c) -> (
 			 eqn':= (z, -y, x*R*(S-R));	    -- v2-vy-xR2+xRS
 			 w = numeric_prec'' 1;
 			 if quadnorm eqn' > quadnorm eqn then (
-			      see("eqn'",eqn');
 			      (v,v') = quadsolve eqn';
 			      {*
 			      -- ux2+2uxR-uxS-vy+x2R+xRS
@@ -230,33 +240,33 @@ ellset = (b,c) -> (
 			      den3 = (v) -> v*z-w*y/2;
 			      u = num3 v/den3 v;
 			      u' = num3 v'/den3 v';
-			      if u' > u then (u,v) = (u',v');
-			      {*
-			      if s1 > s2 then 
-			      if s1 > s3 then num1/den1 v else num3/den3 v else
-			      if s2 > s3 then num2/den2 v else num3/den3 v;
-			      *}
+			      if realP and isReal u and isReal u' then ( -- this might be backwards if the two other roots are positive
+			      	   if u' > u then (u,v) = (u',v');
+				   )
+			      else (
+			      	   if abs u' > abs u then (u,v) = (u',v');
+				   );
 			      )
 			 else (
 			      (u,u') = quadsolve eqn;
-			      see("eqn",eqn);
-			      if u' > u then u = u';
+			      if realP and isReal u and isReal u' then (
+			      	   if u' > u then (u,v) = (u',v');
+				   )
+			      else (
+			      	   if abs u' > abs u then (u,v) = (u',v');
+				   );
+			      {*
 			      -- vy-ux2-2uxR+uxS-x2R-xRS
 			      num1 = - (-u*x^2-2*u*x*z*R+u*x*z*S-w*(x^2*R+x*z*R*S));
 			      den1 = () -> y*z;
 			      -- vu+vxd-vx+vSd+uyd-uy+yRd-yR (d==1/2)
 			      num2 = - ((-u-w*R)*y/2*w);
 			      den2 = () -> u*z+w*(-x+S*z)/2;
+			      *}
 			      -- vx2+4vxR-2vxS+vS2-uyx-2uyR+uyS-yxR-yRS
 			      num3 = - (-u*y*x-2*u*y*R*z+u*y*S*z-w*y*x*R-w*y*R*S*z);
 			      den3 = () -> x^2+4*x*R*z-2*x*S*z+S^2*z^2;
-			      (s1,s2,s3) = (size2 num1,size2 num2,size2 num3);
-			      see("(s1,s2,s3)",(s1,s2,s3));
-			      v = 
-			      if s1 > s2 then 
-			      if s1 > s3 then num1/den1() else num3/den3() else
-			      if s2 > s3 then num2/den2() else num3/den3();
-			      see_"v" v;
+			      v = num3/den3();
 			      );
 			 (x,y,z) = nmb3(u,v,w);
 			 ));
@@ -367,16 +377,60 @@ stderr << "--test passed" << endl;
 TEST ///
 defaultPrecision = 200
 E = new EllipticCurve from {5,6}
+
 w = .02 + .02001314410965065 * ii
-E.log E.exp w
-assert( abs ( E.log E.exp w - w ) < 1e-30 )
+P = E.exp w
+E.checkEquation P
+E.log P
+assert( abs ( E.log P - w ) < 1e-30 )
+
 w = .02 + .0200131441096506 * ii
-E.log E.exp w
-assert( abs ( E.log E.exp w - w ) < 1e-30 )
+P' = E.exp w
+E.checkEquation P'
+E.log P'
+assert( abs ( E.log P' - w ) < 1e-30 )
+
 w = .02 + .03*ii
-E.log E.exp w
-assert( abs ( E.log E.exp w - w ) < 1e-30 )
+P = E.exp w
+E.checkEquation P
+E.log P
+assert( abs ( E.log P - w ) < 1e-30 )
+
 w = .02 + .04*ii
-E.log E.exp w
-assert( abs ( E.log E.exp w - w ) < 1e-30 )
+P = E.exp w
+E.checkEquation P
+E.log P
+assert( abs ( E.log P - w ) < 1e-30 )
+
+///
+
+
+TEST ///
+defaultPrecision = 200
+E = new EllipticCurve from {-5,6}
+
+w = .02 + .02001314410965065 * ii
+P = E.exp w
+E.checkEquation P
+E.log P
+assert( abs ( E.log P - w ) < 1e-30 )
+
+w = .02 + .0200131441096506 * ii
+P' = E.exp w
+E.checkEquation P'
+E.log P'
+assert( abs ( E.log P' - w ) < 1e-30 )
+
+w = .02 + .03*ii
+P = E.exp w
+E.checkEquation P
+E.log P
+assert( abs ( E.log P - w ) < 1e-30 )
+
+w = .02 + .04*ii
+P = E.exp w
+E.checkEquation P
+E.log P
+assert( abs ( E.log P - w ) < 1e-30 )
+
 ///
