@@ -33,6 +33,8 @@ The problem is on lines o82-o85 (or even up to o90).  It is probably correct, bu
   it would be nicer if Hom would produce nicer generating sets? (As it seems to have done
   in 0.9.2)
 
+BUG: trim and mingens are not working for subquotients. 
+
 Notes:
 1. 'top' has been replaced with 'topComponents'
 2. decompose works over QQ
