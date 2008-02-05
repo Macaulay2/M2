@@ -49,10 +49,8 @@ assert( subquotient ( d , relations M ) == M )
 assert( d == mingens M )
 
 -- strategy 2
--- betti (mingens mingb(M.generators|M.relations) % mingb(M.relations))
 g = (mingens mingb(M.generators|M.relations) % M.relations);
 betti g
---              0  1
 -- o14 = total: 3 14
 --           0: 2  .
 --           1: 1  .
@@ -63,18 +61,14 @@ assert( subquotient ( g , relations M ) == M )
 assert ( num == rank source g )
 
 -- strategy 3
--- betti mingens mingb (mingens mingb(M.generators|M.relations) % mingb(M.relations))
 h = mingens mingb (mingens mingb(M.generators|M.relations) % M.relations);
 betti h
-
---              0  1
 -- o17 = total: 3 12
 --           0: 2  .
 --           1: 1  .
 --           2: .  3
 --           3: .  7
 --           4: .  2
-
 assert( subquotient ( h , relations M ) == M )
 assert ( num == rank source h )
 
