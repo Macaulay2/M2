@@ -633,3 +633,19 @@ make
 
 
 svn co svn://macaulay2.math.uiuc.edu/Macaulay2/trunk/M2 M2
+
+
+#############################################################################
+# here is the way someone compiled it for fedora 8 at redhat.com:
+
+    compile node name => xenbuilder4.fedora.phx.redhat.com
+    compile time => Aug 22 2007, 09:48:33
+    compiler => gcc 4.1.2
+    configure arguments =>  '--build=i386-redhat-linux-gnu' '--host=i386-redhat-linux-gnu' '--target=i386-redhat-linux-gnu' '--program-prefix=' '--prefix=/usr' '--exec-prefix=/usr' '--bindir=/usr/bin' '--sbindir=/usr/sbin' '--sysconfdir=/etc' '--datadir=/usr/share' '--includedir=/usr/include' '--libdir=/usr/lib' '--libexecdir=/usr/libexec' '--localstatedir=/var' '--sharedstatedir=/usr/com' '--mandir=/usr/share/man' '--infodir=/usr/share/info' '--disable-encap' '--disable-dumpdata' '--disable-optimize' '--disable-static' '--disable-strip' '--with-lapacklibs=-llapack' 'build_alias=i386-redhat-linux-gnu' 'host_alias=i386-redhat-linux-gnu' 'target_alias=i386-redhat-linux-gnu' 'CFLAGS=-O2 -g -pipe -Wall -Wp,-D_FORTIFY_SOURCE=2 -fexceptions -fstack-protector --param=ssp-buffer-size=4 -m32 -march=i386 -mtune=generic -fasynchronous-unwind-tables' 'CPPFLAGS=-I/usr/include/gc' 'CXXFLAGS=-O2 -g -pipe -Wall -Wp,-D_FORTIFY_SOURCE=2 -fexceptions -fstack-protector --param=ssp-buffer-size=4 -m32 -march=i386 -mtune=generic -fasynchronous-unwind-tables'
+    factory version => 3.0.2
+    gc version => 7.0
+    gmp version => 4.2.2
+    libfac version => 3.0.1
+    ntl version => 5.4
+    operating system release => 2.6.20-1.2962.fc6xen
+    readline version => 5.2
