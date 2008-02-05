@@ -78,7 +78,8 @@ time   scan(4 .. length C + 1,
        );
   -- now compute the total Ext as a single homology module
   DDelta = DeltaBar;
-time   tot := minimalPresentation time homology(DeltaBar,DeltaBar);
+  time tot := homology(DeltaBar,DeltaBar);
+  time tot = minimalPresentation tot;
   tot)
 
 end
