@@ -1,5 +1,73 @@
 Exto = method() -- from 0.9.2
 Exty = method() -- from current
+pruney = method()
+homology1 = method()
+modulo1 = method()
+
+      modulo1(Matrix,Matrix)  := Matrix => (m,n) -> (
+           (P,L) := (target m, source m);
+           if P != target n then error "expected maps with the same target";
+           if not isFreeModule P or not isFreeModule L or not isFreeModule source n
+           then error "expected maps between free modules";
+           dm := degree m;
+           time if not all(dm,zero) then (
+                R := ring P;
+                H := R^{ dm };
+                m = map(target m ** H, source m, m, Degree => apply(dm,i->0) );
+                n = n ** H;
+                );
+           time h := m|n;
+           time f := syz(h, SyzygyRows => numgens L);
+           if target f =!= L 
+           then map(L,source f,f)                         -- it can happen that L has a Schreier order, and we want to preserve that exactly
+           else f)
+
+      homology1(Matrix,Matrix) := Module => (g,f) -> (
+           if g == 0 then cokernel f
+           else if f == 0 then kernel g
+           else (
+                R := ring f;
+                M := source f;
+                N := target f;
+                P := target g;
+                if source g != N then error "expected maps to be composable";
+                f = matrix f;
+                time if not all(degree f, i -> i === 0) then f = map(target f, source f ** R^{-degree f}, f);
+                g = matrix g;
+                time if P.?generators then g = P.generators * g;
+		glg = g;
+	        glp = if P.?relations then P.relations;
+                time h := modulo1(g, if P.?relations then P.relations);
+                time if N.?generators then (
+                     f = N.generators * f;
+                     h = N.generators * h;
+                     );
+                subquotient(h, if N.?relations then f | N.relations else f)))
+
+      pruney(Module) := Module => opts -> M -> (
+	   -- from version 0.9.2
+           if M.?pruningMap then M
+           else if M.?prune then M.prune else M.prune = (
+                R := ring M;
+                oR := options R;
+                if isFreeModule M then (
+                     M.pruningMap = id_M;
+                     M)
+                else if (isAffineRing R and isHomogeneous M)
+                       or (oR.?SkewCommutative and oR.SkewCommutative and isHomogeneous M) then (
+                     f := presentation M;
+                     g := complement f;
+                     N := cokernel modulo(g, f);
+                     N.pruningMap = map(M,N,g);
+                     N)
+                else (
+                     f = gens gb presentation M;
+                     -- MES: can't it do more here?
+                     N = cokernel f;
+                     N.pruningMap = map(M,N,id_(cover M));
+                     N)
+                )
+           )
 
 Exto(Module,Module) := Module => (M,N) -> (
   B := ring M;
@@ -79,8 +147,8 @@ time     scan(4 .. length C + 1,
     assert isHomogeneous DeltaBar;
     time assert(DeltaBar * DeltaBar == 0);
     -- now compute the total Ext as a single homology module
-    gbTrace 3;
     DBar = DeltaBar;
+    << "starting homology" << endl;
     tot = time homology(DeltaBar,DeltaBar);
     << "starting prune" << endl;
     time prune tot
@@ -166,7 +234,7 @@ time   scan(4 .. length C + 1,
        );
   -- now compute the total Ext as a single homology module
   DBar = DeltaBar;
-  gbTrace=3;
+  << "starting homology" << endl;
   time tot = homology(DeltaBar,DeltaBar);
     << "starting prune" << endl;
   time minimalPresentation tot
@@ -178,7 +246,7 @@ end
 -- 1.0.9test: 15.01 sec
 restart
 debug Core
-load "/Users/mike/src/M2/Macaulay2/bugs/mike/1-ext-slow.m2"
+--load "/Users/mike/src/M2/Macaulay2/bugs/mike/1-ext-slow.m2"
 load "/home/mike/M2-builds/M2/Macaulay2/bugs/mike/1-ext-slow.m2"
 K = ZZ/103; 
 A = K[x,y,z];
@@ -194,10 +262,30 @@ f = map(B^{{0}, {0}, {0}}, B^{{-2}, {-3}},
 	       -36*x^2*y+28*x*y^2-21*y^3-x^2*z-8*x*y*z+6*y^2*z+37*x*z^2+27*y*z^2+43*z^3}})     
 M = cokernel f;
 N = B^1/(x^2 + z^2,y^3);
-time Ext(M,N)
+
+
+
+
+
+
+
+--time Ext(M,N)
+gbTrace=3
+time homology1(DBar,DBar);
+
 
 time Exty(M,N);
+time homology1(DBar,DBar);
+C = ring glg;
+glg;
+toExternalString glg
 time Exto(M,N);
-time homology(DBar,DBar);
+time homology1(DBar,DBar);
+
 betti gens oo
 betti relations ooo
+
+M = DBar;
+f = presentation M;
+g = complement f;
+N = cokernel modulo(g, f);
