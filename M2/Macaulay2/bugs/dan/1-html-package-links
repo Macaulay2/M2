@@ -4,3 +4,50 @@ installed with a different prefix.
 Then we could stop making all those symbolic links in ~/.Macaulay2/local to the
 installed packages.
 
+-----------------------------------------------------------------------------
+
+From dan@math.uiuc.edu Sun Feb 04 09:24:36 2008
+Date: Mon, 4 Feb 2008 09:24:36 -0600
+From: "Daniel R. Grayson" <dan@math.uiuc.edu>
+To: Michael Stillman <mike@math.cornell.edu>
+CC: dan@math.uiuc.edu
+In-reply-to: <200801291608.m0TG8OmV020387@u123.math.uiuc.edu>
+	(dan@math.uiuc.edu)
+Subject: Re: doc in .Macaulay2/local
+Reply-to: dan@math.uiuc.edu
+
+
+An even better idea would be to abandon those symbolic links completely, and
+when generating html while installing a package, to use absolute links for
+everything that's outside the target tree.  That'll make the html non-portable,
+but installing a package from source is easier than sending the whole thing
+along with the html, anyway.
+
+This'll have to wait until 1.1.1.
+
+
+> Date: Tue, 29 Jan 2008 10:08:24 -0600
+> From: "Daniel R. Grayson" <dan@math.uiuc.edu>
+> To: Michael Stillman <mike@math.cornell.edu>
+> CC: dan@math.uiuc.edu
+> Subject: Re: doc in .Macaulay2/local
+> Reply-to: dan@math.uiuc.edu
+> 
+> 
+> Perhaps a better idea would be to move those files in the Style package from
+> share/Macaulay2/Style to share/doc/Macaulay2/Style.  Then those symbolic links
+> already in place would provide access to the files.
+> 
+> > From: Michael Stillman <mike@math.cornell.edu>
+> > To: Dan Grayson <dan@math.uiuc.edu>
+> > Subject: doc in .Macaulay2/local
+> > Date: Tue, 29 Jan 2008 10:52:41 -0500
+> > 
+> > One problem with the documentation in .Macaulay2/local is that the  
+> > Style package is not installed by default, and it is hard for the user  
+> > to know that they should do so...  Any suggestions?  Should we install  
+> > it by default, or place the info prominently in the readme, or ....?
+> > 
+> 
+
+
