@@ -1,0 +1,59 @@
+-*- M2 -*-
+
+Title: convex hulls
+
+Description:  
+
+Write a new package, to be called ConvexHulls, that uses the package
+FourierMotzkin to implement general purpose routines for computing with convex
+polytopes.
+
+The package should not simply duplicate the functionality of "polymake", but
+instead should explore the links between polyhedral geometry and algebra,
+playing to the existing strengths of Macaulay 2.  For example, many aspects of
+Gelfand-Kapranov-Zelevinsky's or Sturmfels' work would naturally fit in this
+context.
+
+The package could include functions that:
+
+   - compute the convex hull of a set of points in R^n, returning
+     a polytope.  Maybe that should be a new type of object
+     (behind the scenes the points span rays in R^(n+1) but we keep
+      that always hidden (hidden how?, that could be an interesting design
+      decision))
+
+   - provide the vertices of a polytope.  Maybe that should be a new
+     type of object.
+
+   - provide the degree of a vertex
+
+   - provide the bounding hyperplanes of a convex polytope.
+
+   - provide the facets of a polytope as polytopes.  For 2-dimensional faces,
+     alternatively provide the facets as polygons, i.e., as correctly ordered
+     cyclic lists of vertices, suitable for input into a graphics program
+
+   - provide interfaces to 5 or so graphics programs that could be used
+     to display polytopes
+
+   - provide the incidence relation between the vertices and the facets
+
+   - for any k, provide the complete list of faces of codimension k
+
+   - given a point and a polytope, determine the smallest facecontaining
+     the point, if any
+
+   - compute the Newton polytope of a polynomial in several variables
+     (a one liner that starts with "exponents f" where f is the polynomial)
+
+=============================================================================
+
+Proposed by: Dan Grayson
+Potential Advisor: 
+Project assigned to: 
+Current status:
+
+=============================================================================
+
+Progress log:
+
