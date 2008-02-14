@@ -1,0 +1,34 @@
+-*- M2 -*-
+
+Title: Connecting Homomorphisms
+
+Description: Write a package that compute connecting homomorphisms in the
+homology of a short exact sequence 0 -> A -> B -> C -> 0 of chain complexes.
+
+We already have mapping cones, so the problem is really to compose the map HH C
+-> HH cone (B -> C) with the inverse of the isomorphism HH cone (A -> 0) --> 
+HH cone (B -> C).
+
+In terms of that, implement the Bockstein operation for a chain complex C over
+ZZ.  It is the connecting homomorphism associated to the exact sequence 0 ->
+C/n -> C/n^2 -> C/n -> 0, if C is free.  If C is not free, replace C/n by
+cone(n:C-->C), and similarly for n^2.
+
+In terms of the code, one must make our functions "HH" and "cone" into
+functors.
+
+Maybe implement the derived category, too, so the connecting homomorphism is
+obtainable by applying HH to a single object representing a map in the derived
+category.
+
+=============================================================================
+
+Proposed by: Uli Walther <walther@math.purdue.edu>, dan
+Potential Advisor: 
+Project assigned to: 
+Current status:
+
+=============================================================================
+
+Progress log:
+
