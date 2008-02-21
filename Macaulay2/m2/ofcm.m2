@@ -164,6 +164,8 @@ RingElement _ Ring := RingElement => (x,R) -> (
 
 madeTrivialMonoid := false
 
+dotprod = (c,d) -> sum( min(#c, #d), i -> c#i * d#i )
+
 makeit1 := (opts) -> (
      M := new GeneralOrderedMonoid of MonoidElement;
      M#"original options" = opts;
@@ -196,7 +198,13 @@ makeit1 := (opts) -> (
      	  opts.MonomialSize,
 	  opts.Inverses,
      	  #varlist,
-	  if degreeLength M > 0 then vardegs/first else {},
+	  if degreeLength M > 0 then (
+	       apply(vardegs,d -> (
+			 w := dotprod(d,opts.Heft);
+			 if w > 0 then w else 1
+			 )) 
+	       )
+	  else {},
 	  opts.Weights,
 	  opts.MonomialOrder
 	  );

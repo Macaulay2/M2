@@ -35,7 +35,7 @@ A = contract(matrix{{x^2,x*y,y^2,x*z,y*z,z^2}},
 hess = det submatrix(jacobian ideal partials, {0..2}, {0..2});
 B = contract(matrix{{x^2,x*y,y^2,x*z,y*z,z^2}},
         diff(transpose matrix{{x,y,z}},hess))
-detDiscr = ideal det (A || B);
+detDiscr = ideal det (A || B, Strategy=>Cofactor);
 detDiscr == elimDiscr
 detDiscr_0
 numgens detDiscr
@@ -92,7 +92,7 @@ blowUpIdeal = (I) -> (
 S = QQ[x, y];
 I = ideal(x^3, x*y, y^2);
 J = blowUpIdeal(I)
-J + ideal jacobian J == ideal gens ring J
+saturate(J + minors(2, jacobian J)) == 1
 clearAll
 PP4 = QQ[a..e];
 S = QQ[r..t, A..E, MonomialOrder => Eliminate 3];

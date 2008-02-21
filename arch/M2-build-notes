@@ -1,218 +1,126 @@
-## Building a disk image for Macaulay2 on MacOSX from source code
-## On 10.4, make sure that you have installed subversion (svn)
-## On 10.5, subversion comes standard with leopard.
+----------------------
+Linux notes
+----------------------
 
-cd
-mkdir M2-builds
-mkdir M2-builds/Macaulay2-1.0
-cd M2-builds/Macaulay2-1.0
-svn co  svn://macaulay2.math.uiuc.edu/Macaulay2/release-branches/1.0 M2-1.0
-cd M2-1.0
-make
-cd ..
-mkdir installed
-mkdir build
-cd build
-### now make it
-../M2-1.0/configure --prefix=/Users/mike/M2-build/Macaulay2-1.0/installed \
-  --enable-experimental-code LIBS=-lgcc_s.10.5 \
-  --enable-build-libraries="gc gdbm gmp readline ntl factory libfac"
-make
-make install
-cd ../installed
-#VERSION=`grep AC_INIT ../M2/configure.ac | awk -F, '{print $2}'`
-VERSION=1.0
-cp ../M2-1.0/arch/MacOSX/ReadMe-MacOSX.rtf .
-cp ../M2-1.0/arch/MacOSX/ReadMe-MacOSX.rtf Macaulay2-$VERSION/
-rm Macaulay2-$VERSION/encapinfo
-rm Macaulay2-$VERSION/postinstall
-rm Macaulay2-$VERSION/preremove
-cd .. # to original directory
-hdiutil create -srcfolder installed -volname Macaulay2-$VERSION-`uname -m` Macaulay2-$VERSION-macosx-`uname -m`.dmg
-hdiutil create -srcfolder installed -volname Macaulay2-$VERSION-ppc Macaulay2-$VERSION-macosx-ppc.dmg
-scp Macaulay2-$VERSION-macosx-`uname -m`.dmg ssh.math.uiuc.edu:~
-scp Macaulay2-$VERSION-macosx-ppc.dmg ssh.math.uiuc.edu:~
+See below for specific instructions for ubuntu and debian.  To make a
+distribution tar file from the source code svn 1.1 branch, here is one way:
+
+      svn checkout svn://macaulay2.math.uiuc.edu/Macaulay2/release-branches/1.1 M2-1.1
+      cd M2-1.1
+      make
+      mkdir BUILD/opt
+      cd BUILD/opt
+      ../../configure --prefix=$PWD/installed \
+          --enable-tarfile \
+	  --enable-rpm \
+          --enable-build-libraries="gc gdbm gmp mpfr readline ntl factory libfac lapack"
 
 
-../../configure --prefix=/Users/mike/M2-builds/Macaulay2-1.0/installed \
-  --enable-experimental-code --enable-static \
-  --enable-build-libraries="gc gdbm gmp readline ntl factory libfac blas lapack"
+----------------------
+MacOS X notes
+----------------------
+    The following are the steps we take to build a binary disk image for
+    Macaulay2.  First, you must have installed the developer tools from apple:
+    use either the packages that are on your system install DVD, or download
+    from http://connect.apple.com.
 
+    The script below downloads gc, gdbm, gmp, readline, ntl, factory and
+    libfac, builds them, and then builds Macaulay2.  The libraries are
+    statically linked in, to make installation simpler for most people.
+    To make a 64 bit (intel) distribution disk image:
 
-svn co svn://macaulay2.math.uiuc.edu/Macaulay2/trunk/M2 M2
-cd M2
-make
+          svn checkout svn://macaulay2.math.uiuc.edu/Macaulay2/release-branches/1.1 M2-1.1
+	  #  or for the main branch:
+	  #svn co svn://Macaulay2.math.uiuc.edu/Macaulay2/trunk/M2 M2
+	  cd M2-1.1
+	  make
+	  mkdir BUILD/opt64
+	  cd BUILD/opt64
+	  ../../configure --prefix=$PWD/installed \
+                --enable-dmg \
+                --enable-build-libraries="gc gdbm gmp mpfr readline ntl factory libfac" \
+		--build=x86_64-apple-darwin \
+		CC="gcc -m64" \
+		CXX="g++ -m64"
+          make
+	  make install
+	  # now there is a dmg file in BUILD/opt64
+	  make check # optional, but recommended
 
+   To make a 32 bit version (intel or ppc), use this instead:
 
-## Building Macaulay2
+	  svn co svn://Macaulay2.math.uiuc.edu/Macaulay2/trunk/M2 M2
+	  cd M2
+	  make
+	  mkdir BUILD/opt32
+	  cd BUILD/opt32
+	  ../../configure --prefix=$PWD/installed \
+                --enable-dmg \
+                --enable-build-libraries="gc gdbm gmp mpfr readline ntl factory libfac"
+          make
+	  make install
+	  # now there is a dmg file in BUILD/opt32
+	  make check # optional, but recommended
 
-svn co svn://macaulay2.math.uiuc.edu/Macaulay2/trunk/M2 M2
-cd M2
-make
+    To make a 64 bit (intel) debug version:
 
-############################################
-## Macintosh source code install, leopard ##
-############################################
-# subversion is installed by leopard.
-svn co svn://macaulay2.math.uiuc.edu/Macaulay2/trunk/M2 M2
-cd M2
-make
+	  svn co svn://Macaulay2.math.uiuc.edu/Macaulay2/trunk/M2 M2
+	  cd M2
+	  make
+	  mkdir BUILD/debug64
+	  cd BUILD/debug64
+	  ../../configure --prefix=$PWD/installed \
+	        --enable-debug --disable-optimize \
+                --enable-build-libraries="gc gdbm gmp mpfr readline ntl factory libfac" \
+		--build=x86_64-apple-darwin \
+		CC="gcc -m64" \
+		CXX="g++ -m64"
+          make
+	  make install
+	  make check # optional, but recommended
 
-# 32 bit debug version
-# (currently: 31 Dec 2007, need to put in libgmp* from the tiger build)
-mkdir BUILD/debug32
-cd BUILD/debug32
-../../configure \
-      --prefix=/Users/mike/local/M2-builds/M2/BUILD/debug32-installed \
-      --enable-debug \
-      --disable-optimize \
-      --enable-experimental-code \
-      --enable-build-libraries="gc gdbm gmp readline ntl factory libfac" \
-      LIBS="-lgcc_s.10.5"
-make
-make install
+    To make a 64 bit (intel) profile version (for use with gprof, and other tools):
 
-# 32 bit optimized version
-# (currently: 31 Dec 2007, need to put in libgmp* from the tiger build)
-mkdir BUILD/opt32
-cd BUILD/opt32
-../../configure \
-      --prefix=/Users/mike/local/M2-builds/M2/BUILD/opt32-installed \
-      --enable-experimental-code \
-      --enable-build-libraries="gc gdbm gmp readline ntl factory libfac" \
-      LIBS="-lgcc_s.10.5"
-make
-make install
+	  svn co svn://Macaulay2.math.uiuc.edu/Macaulay2/trunk/M2 M2
+	  cd M2
+	  make
+	  mkdir BUILD/profile64
+	  cd BUILD/profile64
+	  ../../configure --prefix=$PWD/installed \
+	        --enable-profile \
+                --enable-build-libraries="gc gdbm gmp mpfr readline ntl factory libfac" \
+		--build=x86_64-apple-darwin \
+		CC="gcc -m64" \
+		CXX="g++ -m64"
+          make
+	  make install
 
-# 64 bit optimized version
-# (currently: 31 Dec 2007, need to put in libgmp* from the tiger build)
-mkdir BUILD/opt64
-cd BUILD/opt64
-../../configure \
-      --prefix=/Users/mike/local/M2-builds/M2/BUILD/opt64-installed \
-      --enable-experimental-code \
-      --enable-build-libraries="gc gdbm gmp readline ntl factory libfac" \
-      LIBS="-lgcc_s.10.5" \
-      --build=x86_64-apple-darwin \
-      CC="gcc -m64" \
-      CXX="g++ -m64"
-make
-make install
-
-# 64 bit debug version
-# (currently: 31 Dec 2007, need to put in libgmp* from the tiger build)
-mkdir BUILD/debug64
-cd BUILD/debug64
-../../configure \
-      --prefix=/Users/mike/local/M2-builds/M2/BUILD/debug64-installed \
-      --enable-debug \
-      --disable-optimize \
-      --enable-experimental-code \
-      --enable-build-libraries="gc gdbm gmp readline ntl factory libfac" \
-      LIBS="-lgcc_s.10.5" \
-      --build=x86_64-apple-darwin \
-      CC="gcc -m64" \
-      CXX="g++ -m64"
-make
-make install
-
-# 64 bit profile version
-# (currently: 31 Dec 2007, need to put in libgmp* from the tiger build)
-mkdir BUILD/profile64
-cd BUILD/profile64
-../../configure \
-      --prefix=/Users/mike/local/M2-builds/M2/BUILD/profile64-installed \
-      --enable-profile \
-      --enable-experimental-code \
-      --enable-build-libraries="gc gdbm gmp readline ntl factory libfac" \
-      LIBS="-lgcc_s.10.5" \
-      --build=x86_64-apple-darwin \
-      CC="gcc -m64" \
-      CXX="g++ -m64"
-make
-
-###################################
-## Macintosh source code install ##
-###################################
-## Macintosh install notes:
-## In order to obtain the M2 source code using subversion, you must install
-## svn using fink or macports.
-## NO other extra installed items are needed: the 'make' below will download the
-## libraries and programs that are needed.
-
-## MacOSX 10.4, 64 bit debug version
-mkdir BUILD/debug64
-cd BUILD/debug64
-../../configure \
-      --prefix=/Users/mike/src/M2/BUILD/debug64-installed \
-      --enable-debug \
-      --disable-optimize \
-      --enable-experimental-code \
-      LIBS="-lgcc_s.10.5" \
-      --build=x86_64-apple-darwin \
-      CC="gcc -m64" \
-      CXX="g++ -m64"
-make
-make install
-
-## MacOSX 10.4, 64 bit optimized version, installed into /capybara/
-## (change that to /usr/local if you wish)
-mkdir BUILD/opt64
-cd BUILD/opt64
-../../configure \
-      --prefix=/capybara/encap \
-      --enable-experimental-code \
-      LIBS="-lgcc_s.10.5" \
-      --build=x86_64-apple-darwin \
-      CC="gcc -m64" \
-      CXX="g++ -m64"
-
-# or 
-../../configure \
-      --prefix=/Users/mike/src/M2/BUILD/opt64-installed \
-      --enable-experimental-code \
-      LIBS="-lgcc_s.10.5" \
-      --build=x86_64-apple-darwin \
-      CC="gcc -m64" \
-      CXX="g++ -m64"
-
-make
-make install
-
-## MacOSX 10.4, 64 bit profiled version
-mkdir BUILD/profile64
-cd BUILD/profile64
- ../configure \
-      --prefix=/Users/mike/src/M2/BUILD/profile64-installed \
-      --enable-profile \
-      --enable-experimental-code \
-      LIBS="-lgcc_s.10.5" \
-      --build=x86_64-apple-darwin \
-      CC="gcc -m64" \
-      CXX="g++ -m64"
-
-## MacOSX 10.4, 32 bit debug version
-mkdir BUILD/debug32
-cd BUILD/debug32
-../../configure \
-      --prefix=/Users/mike/src/M2/BUILD/debug32-installed \
-      --enable-debug \
-      --disable-optimize \
-      --enable-experimental-code \
-      LIBS="-lgcc_s.10.5"
-make
-make install
-
-## MacOSX 10.4, 32 bit optimized version, installed into /capybara/
-## (change that to /usr/local if you wish)
-mkdir BUILD/opt32
-cd BUILD/opt32
-../../configure \
-      --prefix=/Users/mike/src/M2/BUILD/opt32-installed \
-      --enable-experimental-code \
-      LIBS="-lgcc_s.10.5"
-make
-make install
+#######################################
+## cygwin notes #######################
+#######################################
+Installed cygwin from cygwin.org, by clicking on setup.exe
+  Choosing the defaults for everything
+  Choosing a mirror
+  Installing all the default packages
+Rerun setup.exe again from the web, although perhaps there is a way to do it locally)
+  Installed (under editors): emacs, emacs-X11 (this gets an older version 21.1.2, but it seems fine)
+Rerun setup.exe again from the web
+  Added the URL:
+    http://www.math.uiuc.edu/Macaulay2/Repositories/cygwin
+  clicked on it
+  chose (under Math), Macaulay2 (version 1.1-2)
+  installed it
+Back on windows XP desktop
+Double-click on Cygwin icon -- should not need to do this!!
+  M2
+  setup() -- inside M2
+  exit
+At the prompt:
+  startX
+In the window that pops up:
+  M2
+Now f12 starts M2 fine.  The key f11 works as it should too.
+Download firefox, make it the default browser
 
 #######################################################
 ## Ubuntu source code install #########################
@@ -231,92 +139,15 @@ sudo apt-get install flex
 others to get:
 sudo apt-get install emacs
 
-## get M2 source code
-svn co svn://macaulay2.math.uiuc.edu/Macaulay2/trunk/M2 M2
-## prepare the configure script
-cd M2
-make
 
-## normal (optimized) version
-mkdir BUILD/normal
-cd BUILD/normal
-../../configure --prefix=/usr/local
-make
-make install
-
-## I do this:
-../../configure --prefix=/home/mike/src/M2/BUILD/normal-installed --enable-experimental-code --enable-static
-## sometimes (depending on configuration), I need to add
-../../configure --prefix=/home/mike/src/M2/BUILD/normal-installed \
-  --enable-experimental-code --enable-static \
-  --enable-build-libraries="gc gdbm gmp readline ntl factory libfac blas lapack"
-
-
-## This file consists of my (MES) notes for quickly getting the Macaulay2
-## development environment setup on a computer.
-## These steps change over time.  If you wish to use this to get a source
-## distribution set up so that you can help develop Macaulay2, please
-## email us! (macaulay2@math.uiuc.edu)
+#------------------------------------------------------
+#- Below this line are older notes that have not ------
+#- been considered lately!! ---------------------------
+#------------------------------------------------------
 
 svn co svn://macaulay2.math.uiuc.edu/mike/home-dir
 svn co svn://macaulay2.math.uiuc.edu/capybara/trunk/capybara capybara
 svn co svn://macaulay2.math.uiuc.edu/Macaulay2/trunk/M2 M2
-
-#######################################################
-# MacOSX ##############################################
-# make sure the following have been installed:
-# svn, latest autoconf
-#######################################################
-# inside ~/src
-svn co svn://macaulay2.math.uiuc.edu/Macaulay2/trunk/M2
-cd M2
-autoconf
-make
-mkdir tmp
-cd tmp
- ../configure \
-      --prefix=/Users/mike2/src/M2/tmp-install \
-      --enable-debug \
-      --disable-optimize \
-      --enable-experimental-code \
-      LIBS="-lgcc_s.10.5"
-make      
-
-mkdir tmp64
-cd tmp64
- ../configure \
-      --prefix=/Users/mike/src/M2/tmp64-install \
-      --enable-debug \
-      --disable-optimize \
-      --enable-experimental-code \
-      LOADLIBES="-lgcc_s.10.5 -lncurses" \
-      --build=x86_64-apple-darwin \
-      CC="gcc -m64" \
-      CXX="g++ -m64"
-make
-
-mkdir tmp64-opt
-cd tmp64-opt
- ../configure \
-      --prefix=/capybara/encap \
-      --enable-experimental-code \
-      LIBS="-lgcc_s.10.5" \
-      --build=x86_64-apple-darwin \
-      CC="gcc -m64" \
-      CXX="g++ -m64"
-make
-
-mkdir tmp64-profile
-cd tmp64-profile
- ../configure \
-      --prefix=~/src/M2/tmp64-profile-install \
-      --enable-profile \
-      --enable-experimental-code \
-      LIBS="-lgcc_s.10.5" \
-      --build=x86_64-apple-darwin \
-      CC="gcc -m64" \
-      CXX="g++ -m64"
-make
 
 
 #######################################################

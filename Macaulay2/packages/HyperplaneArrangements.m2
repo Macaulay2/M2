@@ -1,10 +1,11 @@
--- Feb 11 2007: beginnings of hyperplane arrangements package
--- with Greg Smith
+-- Feb 3 2008: rudimentary hyperplane arrangements package;
+-- Graham Denham and Greg Smith, with
+-- thanks to Sorin Popescu for the Orlik-Solomon code
 
 newPackage(
      "HyperplaneArrangements",
-     Version => "0.2",
-     Date => "24 May 2007",
+     Version => "0.4",
+     Date => "3 February 2008",
      Authors => {
 	  {Name => "Graham Denham", HomePage => "http://www.math.uwo.ca/~gdenham/"},
 	  {Name => "Gregory G. Smith", Email => "ggsmith@mast.queensu.ca", HomePage => "http://www.mast.queensu.ca/~ggsmith"}
@@ -16,8 +17,9 @@ newPackage(
 export {Arrangement, arrangement, -- compress, trim, coefficients,
 --     euler, poincare, cone, rank, ring, matrix,
      deletion, orlikSolomon, HypAtInfinity, typeA, typeB, typeD, graphic, 
-     Flat, flat, flats, tolist, closure, meet, vee, subArrangement, 
-     restriction, arrangementSum, EPY, der, crit, omega, HS}
+     Flat, flat, flats, tolist, closure, meet, vee, subArrangement, changeRing,
+     restriction, arrangementSum, EPY, der, crit, omega, HS, dlogPhi,
+     freeDlogPhi}
 
 Arrangement = new Type of HashTable
 Arrangement.synonym = "hyperplane arrangement"
@@ -28,7 +30,12 @@ Arrangement#{Standard,AfterPrint} = A -> (
      << concatenate(interpreterDepth:"o") << lineNumber << " : Hyperplane Arrangement "
      << endl;
      )
+
+debug Core
+-- we'll have a better way to do this later
 net Arrangement := A -> if hasAttribute(A,ReverseDictionary) then toString getAttribute(A,ReverseDictionary) else net expression A
+dictionaryPath = delete(Core#"private dictionary", dictionaryPath)
+
 expression Arrangement := A -> new RowExpression from { A.hyperplanes }
 describe Arrangement := A -> net A.hyperplanes
 
@@ -51,19 +58,22 @@ ring Arrangement := Ring => A -> A.ring
 tolist = method(TypicalValue=>List);  -- prefer to overload toList; see join
 tolist Arrangement := List => A -> A.hyperplanes
 
-matrix Arrangement := Matrix => options -> A -> matrix {A.hyperplanes}
+matrix Arrangement := Matrix => options -> A -> matrix {tolist A}
 
 coefficients Arrangement := Matrix => options -> A -> (
-     if (A.hyperplanes == {}) then 0 else jacobian matrix A)
+     if (tolist A == {}) then 0 else jacobian matrix A)
 
 rank Arrangement := A -> 
-     if (A.hyperplanes == {}) then 0 else rank coefficients A
+     if (tolist A == {}) then 0 else rank coefficients A
+
+normal := h -> (
+     h/leadCoefficient h);  -- representative of functional, mod scalars
 
 trim Arrangement := Arrangement => options -> A -> 
-     if (A.hyperplanes == {}) then A else (
+     if (tolist A == {}) then A else (
      	  seen := new MutableHashTable;
-     	  L := select(A.hyperplanes, h -> if seen#?ih or h == 0 
-	       then false else seen#h = true);
+     	  L := select(tolist A, h -> if seen#?(normal h) or h == 0 
+	       then false else seen#(normal h) = true);
 	  arrangement(L, ring A))
 
 compress Arrangement := Arrangement => A -> 
@@ -74,14 +84,15 @@ compress Arrangement := Arrangement => A ->
 -- equality testing
 
 Arrangement == Arrangement := (A,B) -> (
-     (A.hyperplanes == B.hyperplanes) and (A.ring == B.ring))
+     if (A.ring == B.ring) then ((tolist A) == (tolist B))
+     	  else false)
 
 -- deletion; restriction is a special case of res. to a flat, so comes 
 -- later
 
 deletion = method(TypicalValue => Arrangement)
 deletion (Arrangement,RingElement) := Arrangement => (A,h) -> (
-     select(A.hyperplanes,i->(i != h)));
+     arrangement select(A.hyperplanes,i->(i != h)));
 
 cone (Arrangement,RingElement) := Arrangement => (A,h) -> (
      arrangement ((apply(A.hyperplanes,i->homogenize(i,h))) | {h}));
@@ -189,7 +200,7 @@ typeD (ZZ) := Arrangement => n -> typeD(n,QQ);
 
 typeB = method(TypicalValue => Arrangement)
 typeB (ZZ,PolynomialRing) := Arrangement => (n,R) -> (
-     arrangement ( (tolist(typeD(n,R))) |apply(n,i->R_i)));
+     arrangement ( apply(n,i->R_i) | (tolist(typeD(n,R)))));
 
 typeB (ZZ,Ring) := Arrangement => (n,k) -> (
      x := symbol x;
@@ -217,7 +228,7 @@ graphic (List) := Arrangement => G -> (
 -- intersection lattice and flats:
 
 Flat = new Type of HashTable
-Flat.synonym = "flat (intersection of hyperplanes)"
+Flat.synonym = "intersection of hyperplane(s)"
 Flat#{Standard,AfterPrint} = F -> (
      << endl;
      <<  concatenate(interpreterDepth:"o") << lineNumber << " : Flat of " << F.arrangement
@@ -308,10 +319,10 @@ Arrangement ^ Flat := Arrangement => restriction
 -- needs some error checking?
 
 restriction (Arrangement,RingElement) := Arrangement => (A,h) -> (
-     arrangement(A,(ring A)/(ideal h)));
+     compress arrangement(A,(ring A)/(ideal h)));
 
 restriction (Arrangement,Ideal) := Arrangement => (A,I) -> (
-     arrangement(A,(ring A)/I));
+     compress arrangement(A,(ring A)/I));
 
 rank (Flat) := ZZ => F -> (rank subArrangement F);
 
@@ -332,10 +343,17 @@ arrangementSum (Arrangement, Arrangement) := Arrangement => (A,B) -> (
      R := ring A; S := ring B;
      RS := tensor(R,S,Degrees => toList ((numgens(R)+numgens(S)):1));
      f := map(RS,R); g := map(RS,S);
-     (A.hyperplanes/f)|(B.hyperplanes/g));
+     arrangement ((tolist A)/f|(tolist B)/g));
 
--- should have change of rings here too, but e.g. ZZ[t]**QQ not implemented
+-- change of rings shares an abbreviation:
 
+changeRing = method(TypicalValue => Arrangement)
+changeRing (Arrangement, Ring) := Arrangement => (A, k) -> (
+     R := ring A;
+     f := map(R**k,R);
+     arrangement ((tolist A)/f));
+
+Arrangement ** Ring := Arrangement => changeRing
 Arrangement ** Arrangement := Arrangement => arrangementSum
 
 symExt= (m,R) ->(
@@ -370,33 +388,56 @@ EPY (Arrangement,Ring) := Module => (A,R) -> EPY(orlikSolomon A, R);
 -- add exceptionals, complex refl groups?
 
 -- module of derivations;  needs adjustment if ring of A is not polynomial.
--- returns matrix whose image is module of derivations
+-- returns module of derivations
 
-der = method(TypicalValue => Matrix);
-der (Arrangement) := Matrix => A -> (
+der = method(TypicalValue => Matrix, Options => {Strategy => null});
+der (Arrangement) := Matrix => o -> A -> (
+     if o.Strategy === Classic then der1(A) else (
+	  count := new MutableHashTable;
+	  (tolist trim A)/(h -> count#(normal h) = 0);
+	  (tolist A)/(h -> count#(normal h) = count#(normal h)+1);
+	  der2(A,apply(tolist A, h->count#(normal h)))));
+
+der (Arrangement,List) := Matrix => o -> (A,m) -> (
+     der2(A,m));   -- it's a multiarrangement if multiplicities supplied
+
+-- Caveat: this strategy requires A be defined over a polynomial ring.
+-- No removal of degree 0 part.
+     
+der1 = A -> (
+     Q := product tolist A;   -- defining polynomial
+     J := jacobian ideal Q;
+     m := gens ker map(transpose J | -Q, Degree => -1);
+     submatrix'(m,{numrows m - 1},));
+
+-- simple arrangement with a vector of multiplicities
+
+der2 = (A,m) -> (
+     hyps := tolist A;
      R := ring A;
-     n := numgens R;
-     I := ideal product A.hyperplanes;  -- defining polynomial
-     J := map(R^1,R^n, transpose jacobian I);
-     P := map(R^1/module (intersect(ideal image J,I)),R^1,1);
-     mingens ker(P*J));
+     n := #hyps;
+     l := numgens R;
+     P := transpose coefficients A;
+     D := diagonalMatrix apply(n, i-> hyps_i^(m_i));
+     proj := map(R^-m,R^(n+l),map(R^n,R^l,0) | map(R^n,R^n,1));
+     proj*gens ker(map(P, Degree=>-1) | D));
 
 -- critical set ideal: internal use only.
 
 crit = method(TypicalValue => Ideal);
 crit (Arrangement) := Ideal => A -> (
-     R := ring A; Q := product A.hyperplanes;
-     m := #(A.hyperplanes);
+     R := ring A; Q := product tolist A;
+     m := #(tolist A);
      a := symbol a;
      S := R[a_1..a_m];
-     v := transpose(matrix{apply(m,i->S_i*Q//A.hyperplanes_i)});
+     v := transpose(matrix{apply(m,i->S_i*Q//(tolist A)_i)});
      I := ideal flatten entries ((coefficients A)*v);
      f := map(S,R);
      I:(f Q));
 
 omega = method(TypicalValue => Matrix);  -- basis for dual to free Der
 omega (Arrangement) := Matrix => A -> (
-     P := der A;
+     P := image der A;
      R := ring P;
      F := frac R;
      transpose inverse(map(F,R))(P));
@@ -405,13 +446,13 @@ dlogPhi = method(TypicalValue => Matrix);
 dlogPhi (Arrangement,List) := Matrix => (A,a) -> (
      R := ring A;
      F := frac R;
-     n := #(A.hyperplanes);
-     v := transpose matrix {apply(n,i->a_i/(A.hyperplanes)_i)};
+     n := #(tolist A);
+     v := transpose matrix {apply(n,i->a_i/(tolist A)_i)};
      (coefficients A)*v);
 
 freeDlogPhi = method(TypicalValue => Matrix);
 freeDlogPhi (Arrangement,List) := Matrix => (A,a) -> (
-     M := (transpose der A)*dlogPhi(A,a);
+     M := (mingens image der A)*dlogPhi(A,a);
      R := ring numerator M_(0,0);
      (map(R,ring M))(M));
 
@@ -419,7 +460,7 @@ HS = i-> reduceHilbert hilbertSeries i;
 
 beginDocumentation()
 
-undocumented {HS,omega,crit}
+undocumented {HS,omega,crit,dlogPhi,freeDlogPhi}
 
 document { 
      Key => HyperplaneArrangements,
@@ -699,14 +740,17 @@ document {
 	  },
      "The Orlik-Solomon algebra is the cohomology ring of the complement of 
       the hyperplanes, either in complex projective or affine space.  The
-      optional Boolean argument ", TT "Projective", " specifies which.",
+      optional Boolean argument ", TT "Projective", " specifies which.  The
+      code for this method was written by Sorin Popescu.",
      EXAMPLE lines ///
      	  A = typeA(3)
      	  I = orlikSolomon(A,e)
 	  reduceHilbert hilbertSeries I
 	  I' = orlikSolomon(A,Projective=>true,HypAtInfinity=>2)
 	  reduceHilbert hilbertSeries I'
-     ///
+     ///,
+     PARA {}, "The code for ", TT "orlikSolomon", " was 
+     contributed by Sorin Popescu."
      }
  
 document {
@@ -738,7 +782,7 @@ document {
      }
 
 document {
-     Key => flat,
+     Key => {flat,(flat,Arrangement,List)},
      Headline => "make a flat from a list of indices",
      Usage => "flat(A,L)",
      Inputs => {
@@ -795,7 +839,7 @@ document {
      Outputs => {
 	  "H" => Flat => {"the flat of greatest codimension that is
 	  contained in both ", TT "F", " and ", TT "G", ".  If one identifies
-	  flats with subspaces, this is the Minkowski sum of subspaces", 
+	  flats with subspaces, this is the Minkowski sum of subspaces ", 
 	  TT "F", " and ", TT "G", "."}
 	  },
      "The operator ", TO (symbol ^, Flat, Flat), " can be used as a synonym."
@@ -834,12 +878,13 @@ document {
 
 document {
      Key => {(euler,Flat),(euler,Arrangement)},
-     Usage => "euler x",
+     Usage => "euler(F) or euler(A)",
      Inputs => {
-	  "x" => {" or ",ofClass{Arrangement}}
+	  "F" => Flat => "a flat"
 	  },
      Outputs => {
-	  "k" => ZZ => {"the beta invariant of ", TT "x"},
+	  "k" => ZZ => {"the beta invariant of the flat ", TT "F", " or
+	       arrangement ", TT "A"},
 	       },
      "The beta invariant of an arrangement ", TT "A", " is, by definition, 
      the Euler characteristic of complement of ", TT "A", " in complex 
@@ -853,6 +898,20 @@ document {
      }
 	  
 document {
+     Key => {deletion,(deletion,Arrangement,RingElement)},
+     Headline => "subarrangement given by deleting a hyperplane",
+     Usage => "deletion(A,x)",
+     Inputs => {
+	  "A" => Arrangement => "a hyperplane arrangement",
+	  "x" => RingElement => "equation of hyperplane to delete"
+	    },
+     Outputs => {
+	  Arrangement => {"the subarrangement ", TT "A", " minus ", TT "x"}
+	  },
+     SeeAlso =>  (symbol ^,Arrangement,Flat),
+     }
+	  	  
+document {
      Key => {restriction,(restriction,Arrangement,Flat),
 	  (restriction,Flat),
   	  (restriction,Arrangement,RingElement),
@@ -863,7 +922,7 @@ document {
 	  "A" => Arrangement => "a hyperplane arrangement (optional)",
 	  "F" => Flat => "flat to which you restrict",
 	  "x" => RingElement => "equation of hyperplane to which you restrict",
-	  "I" => Ideal => "ideal defining subspace to which you restrict"
+	  "I" => Ideal => "an ideal defining a subspace to which you restrict"
 	    },
      Outputs => {
 	  Arrangement => {"the restriction of ", TT "A"}
@@ -876,10 +935,13 @@ document {
      EXAMPLE lines ///
      	  A = typeA(3)
      	  flats(2,A)
-	  restriction first oo
-	  x = (ring A)_0
+	  A' = restriction first oo
+	  x = (ring A)_0  -- the subspace need not be in the arrangement
 	  restriction(A,x)
      ///,
+     "The restriction is, in general, a multiarrangement.  Use ", TO(trim),
+     " to eliminate repeated hyperplanes.  For example,",
+     EXAMPLE "trim A'",
      SeeAlso =>  (symbol ^,Arrangement,Flat),
      }
 
@@ -888,14 +950,58 @@ document {
      Headline => "restriction of arrangement to flat",
      Usage => "A^F",
      Inputs => {
-	  "A" => Arrangement => "a hyperplane arrangement",
-	  "F" => Flat => "flat to which you restrict"
+	  "A" => Arrangement,
+	  "F" => Flat => "the flat to which you restrict"
 	  },
      Outputs => {
 	  Arrangement => {"the restriction of ", TT "A", " to ", 
 	  TT "F"}
      },
      "A synonym for ", TO(restriction), "."
+     }
+
+document {
+     Key => {subArrangement,(subArrangement,Arrangement,Flat),
+	  (subArrangement,Flat)},
+     Headline => "Subarrangement containing a fixed flat",
+     Usage => "subArrangement(A,F) or subArrangement(F)",
+     Inputs => {
+	  "A" => Arrangement,
+	  "F" => Flat
+	  },
+     Outputs => {
+	  Arrangement => {"the subarrangement of ", TT "A", " contained in ",
+	       TT "F"}
+	  },
+     "If ", TT "X", " is the linear subspace indexed by the flat ", TT "F",
+     ", then the subarrangement ", TT "A_F", " consists of those hyperplanes 
+     in ", TT "A", " that contain ", TT "X", ".",
+     EXAMPLE lines ///
+     	  A := typeA(3)
+     	  flats(2,A)
+	  B := subArrangement first oo
+     ///,
+     "Note that the ambient vector space of ", TT "A_F", " is the same as 
+     that of ", TT "A", "; subarrangements are essential in general.",
+     EXAMPLE lines ///
+     	  ring B
+     ///,     
+     SeeAlso =>  (symbol _,Arrangement,Flat),
+     }
+
+document {
+     Key => (symbol _, Arrangement, Flat),
+     Headline => "Subarrangement containing a fixed flat",
+     Usage => "A_F",
+     Inputs => {
+	  "A" => Arrangement,
+	  "F" => Flat
+	  },
+     Outputs => {
+	  Arrangement => {"the subarrangement of ", TT "A", " containing ", 
+	  TT "F"}
+     },
+     "A synonym for ", TO(subArrangement), "."
      }
 
 document {
@@ -929,11 +1035,61 @@ document {
 	  ///
 	  }
      
+document {
+     Key => {der, (der,Arrangement), (der,Arrangement,List)},
+     Headline => "Module of logarithmic derivations",
+     Usage => "der(A) or der(A,m)",
+     Inputs => {
+	  "A" => Arrangement => "an arrangement, possibly with repeated hyperplanes",
+	  "m" => List => "optional list of multiplicities, one for each hyperplane"
+     },
+     Outputs => {
+	  Matrix => {"A matrix whose image is the module of logarithmic derivations corresponding
+	              to the (multi)arrangement ", TT "A", "; see below."}
+		      },
+     "The module of logarithmic derivations of an arrangement defined
+     over a ring ", TT "S", " is, by definition, the submodule of ", TT "S", 
+     "-derivations with the property that ", TT "D(f_i)", " is contained
+     in the ideal generated by ", TT "f_i", " for each linear form ", 
+     TT "f_i", " in the arrangement.", PARA {},
+     "More generally, if the linear form ", TT "f_i", " is given a 
+     positive integer multiplicity ", TT "m_i", ", then the logarithmic
+     derivations are those ", TT "D", " with the property that ", 
+     TT "D(f_i)", " is in ", TT "ideal(f_i^(m_i))", 
+     " for each linear form ", TT "f_i", ".",
+     PARA {},
+     "This method is implemented in such a way that any derivations of 
+     degree 0 are ignored.  Equivalently, the arrangement ", TT "A", " is
+     forced to be essential: that is, the intersection of all the hyperplanes
+     is the origin.",
+     EXAMPLE lines ///
+     	  prune image der typeA(3)
+	  prune image der typeB(4) -- A is said to be free if der(A) is a free module
+	  ///,
+     "not all arrangements are free:",
+     EXAMPLE lines ///
+	  R = QQ[x,y,z];
+	  A = arrangement {x,y,z,x+y+z}
+	  betti res prune image der A
+	  ///,
+     "If a list of multiplicities is not provided, the occurrences of 
+     each hyperplane are counted:",
+     EXAMPLE lines ///
+     	  R = QQ[x,y]
+	  prune image der arrangement {x,y,x-y,y-x,y,2*x}   -- rank 2 => free
+	  prune image der(arrangement {x,y,x-y}, {2,2,2})  -- same thing
+	  ///
+     }	  
 
-     
-
-	  
-     
+document {
+     Key => [der,Strategy],
+     "If an arrangement has (squarefree) defining polynomial ", TT "Q", ", 
+     then the logarithmic derivations are those ", TT "f", " for which ",
+     TT "f(Q)", " is in the ideal ", TT "(Q)", ".  The Classic strategy
+     assumes that the arrangement is simple and implements this definition.
+     By contrast, the default strategy treats all arrangements as
+     multiarrangements."
+     }     
 
 TEST ///
 R = ZZ[x,y,z];
@@ -942,17 +1098,22 @@ assert(rank trivial == 0)
 assert(ring trivial == R)
 assert(0 == matrix trivial)
 assert(0 == coefficients trivial)
-///
-end
---trim trivial
---
+
+A = typeA(3)
+assert((prune image der A) == (ring A)^{-1,-2,-3})  -- free module of derivations?
+assert((prune image der(A, {2,2,2,2,2,2})) == (ring A)^{-4,-4,-4})
+trim trivial
+
 A3 = arrangement({x,y,z,x-y,x-z,y-z},R)
 describe A3
-product A3
+assert(rank A3 == 3)
+assert(pdim EPY A3 == 3)
+///
+end
+
 
 A3' = arrangement {x,y,z,x-y,x-z,y-z}
 A3' == A3
---assert(rank A3 == 3)
 --product A3
 --A3.hyperplanes
 --X3 = arrangement {x,y,z,y-z,x-z,2*x+y}
@@ -1000,3 +1161,5 @@ end
 
 path = append(path, homeDirectory | "exp/hyppack/")
 installPackage("HyperplaneArrangements",RemakeAllDocumentation=>true,DebuggingMode => true)
+loadPackage "HyperplaneArrangements"
+

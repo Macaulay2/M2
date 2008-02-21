@@ -666,26 +666,24 @@ timefun(a:Code):Expr := (
      v := etime();
      ret := eval(a);
      x := etime();
-     y := etime();
      when ret
      is Error do ret
-     else list(timeClass,Sequence(toExpr((x-v)-(y-x)),ret)));
+     else list(timeClass,Sequence(toExpr(x-v),ret)));
 setupop(timingS,timefun);
 showtimefun(a:Code):Expr := (
      v := etime();
      ret := eval(a);
      x := etime();
-     y := etime();
-     stdout << "     -- used " << (x-v)-(y-x) << " seconds" << endl;
+     stdout << "     -- used " << x-v << " seconds" << endl;
      ret);
 setupop(timeS,showtimefun);
 
 exponent(e:Expr):Expr := (
      when e
-     is x:ZZ do toExpr(exponent(x))
+     is x:ZZ do toExpr(exponent(x))	      -- # typical value: size2, ZZ, ZZ
      -- is x:QQ do toExpr(exponent(x))
-     is x:RR do toExpr(exponent(x))
-     is z:CC do toExpr(exponent(z))
+     is x:RR do toExpr(exponent(x))	      -- # typical value: size2, RR, ZZ
+     is z:CC do toExpr(exponent(z))	      -- # typical value: size2, CC, ZZ
      else WrongArg("a number"));
 setupfun("size2",exponent);
 

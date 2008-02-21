@@ -93,7 +93,7 @@ public:
   const int *degree_shift() const { return _degree_shift; }
 
   // to/from monideals
-  MonomialIdeal * make_monideal(int n) const;
+  MonomialIdeal * make_monideal(int n, bool use_only_monomials_with_unit_coeffs=false) const;
   
   // matrices over RRR, CCC
   MatrixOrNull *clean(M2_RRR epsilon) const;

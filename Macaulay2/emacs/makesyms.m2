@@ -1,16 +1,17 @@
-symbols := join apply(
-     toSequence pairs PackageDictionary,
-     (pkgnam,pkgsym) -> prepend(
-	  (pkgnam,pkgsym), 
+symbols := join toSequence apply(
+     join(Core#"pre-installed packages", {"Core"}),
+     pkgnam -> (
+	  pkgsym := PackageDictionary#pkgnam;
 	  select(pairs (value pkgsym).Dictionary,(nam,sym) -> not match("\\$",nam) and #nam > 1)))
 
-symbols = prepend( ("Macaulay2", symbol Macaulay2), symbols )
-symbols = rsort symbols
+symbols = join( apply(join(separate(" ",version#"packages"),{"Core"}), pkgnam -> (pkgnam,symbol Core)), symbols )
+symbols = sort symbols
 
 alphabet := set characters "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ"
 isKeyword := s -> not mutable s and s =!= symbol null and value s === null
 isAlpha := s -> alphabet#?((toString s)#0)
 is := X -> s -> instance(value s, X)
+
 Function and Function := (f,g) -> s -> f s and g s
 
 f := openOut "M2-symbols.el"

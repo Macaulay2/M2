@@ -52,16 +52,17 @@ initInstallDirectory := o -> installDirectory = minimizeFilename(runfun o.Instal
 
 absoluteLinks := false
 
-isAbsolute := url -> match( "^(#|/|mailto:|[a-z]+://)", url )
+isAbsoluteURL := url -> match( "^(#|mailto:|[a-z]+://)", url )
 
 rel := url -> (
-     if isAbsolute url 
-     then url
+     if isAbsolutePath url then concatenate("file://", externalPath, url)
+     else if isAbsoluteURL url then url
      else (
 	  -- stderr << "rel : url = " << url << endl
 	  -- << "    (prefixDirectory | url) = " << (prefixDirectory | url) << endl
 	  -- << "     fileExists (prefixDirectory | url) = " << fileExists (prefixDirectory | url) << endl;
-	  if absoluteLinks and class prefixDirectory === String and fileExists (prefixDirectory | url) then (prefixDirectory | url)
+	  if absoluteLinks and class prefixDirectory === String and fileExists (prefixDirectory | url) 
+	  then concatenate("file://", externalPath, prefixDirectory | url)
      	  else relativizeFilename(htmlDirectory, url)))
 
 htmlFilename = method(Dispatch => Thing)
@@ -161,7 +162,7 @@ links := tag -> (
 	  LINK { "href" => rel LAYOUT#"packagesrc" "Style" | "doc-no-buttons.css", "rel" => "alternate stylesheet", "title" => "no buttons", "type" => "text/css" },
 	  if SRC#?tag then (
      	       LINK { 
-		    "href" => concatenate("file://", toAbsolutePath SRC#tag#0), 
+		    "href" => concatenate("file://",externalPath, toAbsolutePath SRC#tag#0), 
 		    "rel" => concatenate("Source (see text above line ", toString SRC#tag#1, ")"),
 		    "type" => "text/plain" } ) ) )
 
@@ -520,7 +521,7 @@ installPackage = method(Options => {
 	  MakeInfo => true,
 	  RemakeAllDocumentation => true,		    -- until we get better dependency graphs between documentation nodes, "false" here will confuse users
 	  RerunExamples => false,
-	  AbsoluteLinks => false,
+	  AbsoluteLinks => true,
 	  MakeLinks => true,
 	  DebuggingMode => false
 	  })
@@ -557,6 +558,10 @@ installPackage String := opts -> pkg -> (
 dispatcherMethod := m -> m#-1 === Sequence and (
      f := lookup m;
      any(dispatcherFunctions, g -> functionBody f === functionBody g))
+
+
+-- get installFile
+load "install.m2"
 
 installPackage Package := opts -> pkg -> (
      use pkg;
@@ -1101,7 +1106,7 @@ makePackageIndex List := path -> (
 	       HEADER3 "Documentation",
 	       UL splice {
                	    if prefixDirectory =!= null then HREF { prefixDirectory | LAYOUT#"packagehtml" "Macaulay2Doc" | "index.html", "Macaulay 2" },
-		    apply(toSequence unique reverse path, pkgdir -> (
+		    apply(toSequence unique path, pkgdir -> (
 			      prefixDirectory := minimizeFilename(pkgdir | relativizeFilename(LAYOUT#"packages",""));
 			      p := prefixDirectory | LAYOUT#"docm2";
 			      if isDirectory p then (
@@ -1111,7 +1116,7 @@ makePackageIndex List := path -> (
 				   r = sort r;
 				   DIV {
 					HEADER3 {"Packages in ", toAbsolutePath prefixDirectory},
-					if #r > 0 then UL apply(r, pkg -> HREF { prefixDirectory | LAYOUT#"packagehtml" pkg | "index.html", pkg }) 
+					if #r > 0 then UL apply(r, pkg -> HREF { realpath ( prefixDirectory | LAYOUT#"packagehtml" pkg | "index.html" ), pkg }) 
 					}
 				   )
 			      )
@@ -1122,12 +1127,23 @@ makePackageIndex List := path -> (
      << close;
      )
 
-runnable := fn -> 0 < # select(1,apply(separate(":", getenv "PATH"),p -> p|"/"|fn),fileExists)
-chk := ret -> if ret != 0 then error "external command failed"
+runnable := fn -> (
+     if isAbsolutePath fn then (
+	  fileExists fn
+	  )
+     else (
+     	  0 < # select(1,apply(separate(":", getenv "PATH"),p -> p|"/"|fn),fileExists)
+	  )
+     )
+chk := ret -> if ret != 0 then (
+     if version#"operating system" === "MicrosoftWindows" and ret == 256 then return;     
+     error "external command failed"
+     )
 browserMethods := hashTable {
      "firefox" => "firefox \"%s\"&",
      "open" => "open \"%s\"",
-     "netscape" => "netscape -remote \"openURL(%s)\""
+     "netscape" => "netscape -remote \"openURL(%s)\"",
+     "windows firefox" => "/cygdrive/c/Program\\ Files/Mozilla\\ Firefox/firefox -remote \"openURL(%s)\" & "
      }
 URL = new SelfInitializingType of BasicList
 new URL from String := (URL,str) -> new URL from {str}
@@ -1135,6 +1151,7 @@ show URL := x -> (
      url := x#0;
      browser := getenv "WWWBROWSER";
      if version#"operating system" === "MacOS" and runnable "open" then browser = "open"; -- should ignore WWWBROWSER, according to Mike
+     if version#"operating system" === "MicrosoftWindows" then browser = "windows firefox";
      if browser === "" then (
 	  if runnable "firefox" then browser = "firefox"
 	  else if runnable "netscape" then browser = "netscape"
@@ -1144,7 +1161,7 @@ show URL := x -> (
      chk run if match("%s",browser) then replace("%s",url,browser) else browser | " " | url
      )
 
-fix := fn -> "file://" | replace(" ","%20",fn) 		    -- might want to replace more characters
+fix := fn -> "file://" | externalPath | replace(" ","%20",fn) 		    -- might want to replace more characters
 showHtml = show Hypertext := x -> (
      fn := temporaryFileName() | ".html";
      fn << html HTML {
@@ -1173,7 +1190,7 @@ viewHelp = key -> (
 	       };
 	  fn := htmlFilename DocumentTag.FormattedKey getPrimary makeDocumentTag key;
 	  p := null;
-	  scan(prefixes, dir -> if fileExists (dir|fn) then p = dir|fn);
+	  scan(prefixes, dir -> if fileExists (dir|fn) then (p = dir|fn;break));
 	  if p === null then error("html file not found: ",fn)
 	  else show new URL from { fix p }
 	  );

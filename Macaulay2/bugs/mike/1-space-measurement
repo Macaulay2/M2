@@ -1,0 +1,3 @@
+it would be good if the engine (and front end) could be asked for the space
+occupied by an object, and the computation would take into account multiple
+pointers that happen to point to the same space.

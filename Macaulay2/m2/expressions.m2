@@ -568,6 +568,10 @@ texMath Adjacent := texMath FunctionApplication := m -> (
 	      precedence Function := x -> 70
 		  precedence List := x -> 70
 		 precedence Array := x -> 70
+
+Constant = new Type of BasicList
+
+	      precedence Constant := x -> 70
 		precedence Symbol := x -> 70
 		   precedence Net := x -> 70
 		precedence String := x -> 70

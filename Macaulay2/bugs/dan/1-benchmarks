@@ -1,0 +1,25 @@
+Index: Macaulay2/packages/Benchmark.m2
+===================================================================
+--- Macaulay2/packages/Benchmark.m2	(revision 6647)
++++ Macaulay2/packages/Benchmark.m2	(working copy)
+@@ -132,6 +132,20 @@
+ 
+ -- Results:
+ 
++-- beginning computation Mon Jan 14 22:31:18 EST 2008
++-- Darwin indigo.local 9.1.0 Darwin Kernel Version 9.1.0: Wed Oct 31 17:46:22 PDT 2007; root:xnu-1228.0.2~1/RELEASE_I386 i386
++-- Macaulay2 1.1, compiled with gcc 4.0.1
++-- res39: res of a generic 3 by 9 matrix over ZZ/101: .217955 seconds
++-- resG25: res of the coordinate ring of Grassmannian(2,5): 2.47374 seconds
++-- gbB148: gb of Bayesian graph ideal #148: 21.5194 seconds
++
++-- beginning computation Mon Jan 14 22:29:31 EST 2008
++-- Linux cornell-desktop 2.6.22-14-generic #1 SMP Sun Oct 14 21:45:15 GMT 2007 x86_64 GNU/Linux
++-- Macaulay2 1.1, compiled with gcc 4.1.3
++-- res39: res of a generic 3 by 9 matrix over ZZ/101: .32402 seconds
++-- resG25: res of the coordinate ring of Grassmannian(2,5): 3.86424 seconds
++-- gbB148: gb of Bayesian graph ideal #148: 24.1015 seconds
++
+ ---- a MacBook Pro (core 2 duo 2.4 GHZ, 4 GB ram):
+   --- Mac OS X side:
+ -- beginning computation Mon Sep 17 21:52:30 EDT 2007

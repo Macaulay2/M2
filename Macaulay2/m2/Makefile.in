@@ -4,8 +4,10 @@ quick-install : justM2 install
 include ../../include/config.Makefile
 VPATH = @srcdir@
 srcdir = $(shell cd @srcdir@; /bin/pwd)
+all:: VERSION
 all:: initialize
 Makefile : Makefile.in ; cd ../.. && ./config.status Macaulay2/m2/Makefile
+VERSION : VERSION.in ../../config.status  ; cd ../.. && ./config.status Macaulay2/m2/VERSION
 emacs html: all; $(MAKE) -C ../$@
 LD_LIBRARY_PATH := @TOPDIR@/libraries/final@FINALPREFIX@/@librariesdirtail@/lib:$(LD_LIBRARY_PATH)
 export LD_LIBRARY_PATH
@@ -48,6 +50,9 @@ loads.m2 : loads.awk loadsequence
 	@echo making $@
 	@awk -f $^ >$@
 
+############################## install.m2
+MADEM2FILES += install.m2
+install.m : install.m2.in ; cd ../.. && ./config.status Macaulay2/m2/install.m2
 ############################## tvalues.m2
 MADEM2FILES += tvalues.m2
 TVFILES := $(shell cd @srcdir@/../d && egrep -l -e "-- . typical value: " *.d)
@@ -185,7 +190,7 @@ install:: @encapdir@/@packagesdirtail@
 @encapdir@/@packagesdirtail@ :
 	@INSTALL@ -d @encapdir@/@packagesdirtail@
 
-install:: $(DUMPEDM2FILES) demo1.m2
+install:: $(DUMPEDM2FILES) demo1.m2 VERSION
 	@INSTALL@ -d "@encapdir@/@corem2srcdirtail@"
 	@INSTALL_DATA@ $^ "@encapdir@/@corem2srcdirtail@"
 

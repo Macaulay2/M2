@@ -3,9 +3,10 @@ Name: Macaulay2-common
 URL: http://www.math.uiuc.edu/Macaulay2/
 Version: @PACKAGE_VERSION@
 Release: 1
-Summary: Macaulay 2 is a software system for algebraic geometry research.
-License: GNU General Public License, version 2
-Group: Mathematics
+BuildArch: noarch
+Summary: Macaulay 2 is a software system for algebraic geometry research
+License: GPLv2
+Group: Applications/Engineering
 Buildroot: @abs_builddir@/files-common
 Prefix: @FINALPREFIX@
 %define _rpmdir ../../
@@ -21,7 +22,6 @@ done
 %preun
 #! /bin/sh -e
 prefix=@FINALPREFIX@
-rm -f $prefix/@corecachedirtail@/*
 cd $prefix/@infodirtail@
 for p in @PACKAGES@
 do install-info --remove --quiet --info-dir=. $p.info

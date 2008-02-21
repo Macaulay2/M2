@@ -183,34 +183,8 @@ document { Key => "finding your files under cygwin",
      "Conversely, the root directory, known in the Cygwin world as ", TT "/", ", could be located
      anywhere in the Windows world.  On my machine it is at",
      PRE ///     C:/cygwin///,
-     "Use the ", TT "df", " command in a cygwin command shell window to determine
-     that path: it is the file system on which ", TT "/", " is mounted.",
-     PARA {},
-     "At least we can get back and forth between the two worlds.",
-     PARA {},
-     "Assuming that, under cygwin, you use a Bourne shell such as ", EM "bash", ", you can edit 
-     your ", TT ".profile", " and add that 
-     directory to your PATH with a command like this:",
-     PRE ///    export PATH="/cygdrive/c/Program Files/Mozilla Firefox":$PATH///,
-     "Then M2 will be able to start firefox, but it will have trouble telling it
-     where any files are.  It may tell firefox to look at ",
-     PRE ///      /usr/share/doc/Macaulay2/Macaulay2/html/index.html///,
-     "but firefox lives in the windows world and wants to be told to look at",
-     PRE ///      C:/cygwin/usr/share/doc/Macaulay2/Macaulay2/html/index.html///,
-     "instead.  The same problem holds for the ", TT "index.html", " file in your directory
-     ", TT "$HOME/.Macaulay2", ", because the absolute links there look like that, too.",
-     PARA{},
-     "For now the solution is to find your Cygwin files, start up firefox the
-     usual way (from a menu), navigate to the appropriate version of",
-     PRE ///    C:/cygwin/usr/share/doc/Macaulay2/Macaulay2/html/index.html///,
-     "somehow and make a bookmark there.",
-     PARA{},
-     "It would be nice if there were a cygwin version of firefox, for then it and its
-     file names would live in the Cygwin world, and those absolute links would work.
-     Perhaps there will be one soon, and I won't have to think about adjusting those
-     links.  We should probably just make the links relative, so that once you
-     navigate to ", TT "C:/cygwin/$HOME/.Macaulay2/index.html", " from the Windows world and
-     bookmark it, the links will work."
+     "Use the ", TT "df", " command or the ", TT "mount", " command in a cygwin command shell window to determine
+     that path: it is the file system on which ", TT "/", " is mounted."
      }
 
 document { Key => "teaching your shell how to find M2",

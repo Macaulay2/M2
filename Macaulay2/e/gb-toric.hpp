@@ -125,7 +125,7 @@ public:
   void elem_text_out(buffer &o, const binomial &f) const;
 };
 
-class binomial_s_pair_set
+class binomial_s_pair_set : public our_new_delete
 {
   struct s_pair_lcm_list;
   struct s_pair_elem;
@@ -181,7 +181,7 @@ public:
   void stats() const;
 };
 
-class binomialGB
+class binomialGB : public our_new_delete
 {
   struct gbmin_elem  : public our_new_delete{
     gbmin_elem *next;

@@ -1424,6 +1424,18 @@ document { Key => "printingPrecision",
 	  printingPrecision = 0
      	  {1/3p100}
      ///,
+     PARA {
+	  "For complex numbers, if ", TO "printingAccuracy", " is set to its default value of ", TT "-1", ",
+	  the two parts of the number are treated together (although a digit further further to the right of
+	  the point may sometimes be displayed in the smaller part)."
+	  },
+     EXAMPLE lines ///
+     printingAccuracy
+     printingPrecision = 16
+     {1p100e12/3+1p100/3*ii}
+     printingAccuracy = 10
+     {1p100e12/3+1p100/3*ii}
+     ///,
      SeeAlso => {"printingAccuracy", "printingLeadLimit", "printingTrailLimit", "printingSeparator", format}
      }
 document { Key => "printingAccuracy",

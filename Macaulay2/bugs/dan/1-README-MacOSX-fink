@@ -1,0 +1,13 @@
+Date: Mon, 11 Feb 2008 11:06:30 -0600
+From: "Daniel R. Grayson" <dan@math.uiuc.edu>
+To: mike@math.cornell.edu
+CC: dan@math.uiuc.edu
+Subject: README-MacOSX-fink
+Reply-to: dan@math.uiuc.edu
+
+
+The file Macaulay2/Downloads/MacOSX/README-MacOSX-fink on the web site is very
+similar to the file INSTALL in the top of our tar file, which in turn is
+manufactured from m2/install.m2.in during the build.  Shall we automate its
+production, too?
+

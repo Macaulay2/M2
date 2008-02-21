@@ -116,6 +116,34 @@ time for i from 0 to 1000 do (I := ideal flatten entries gens loopJ; gens gb I;)
 time for i from 0 to 500 do (I := ideal flatten entries gens loopJ; gens gb I;) -- VM immediately jumps to 142.73 MB
 time for i from 0 to 1000 do (I := ideal flatten entries gens loopJ; poincare I) -- HF links
 time for i from 0 to 100 do (I := ideal flatten entries gens loopJ; poincare I) -- HF links
+-- 6 Feb 2008
+time for i from 0 to 199 do (stderr << "." << flush; I := ideal flatten entries gens loopJ; (dim I, degree I)) -- no more leaks
+time for i from 0 to 199 do (stderr << "." << flush; I := ideal flatten entries gens loopJ; gb I) -- no more leaks
+inJ = (I := ideal flatten entries gens loopJ; leadTerm gens gb I); collectGarbage();
+time for i from 0 to 999 do (J := ideal flatten entries inJ; poincare J) -- no leak anymore
+inJ = (I := ideal flatten entries gens loopJ; leadTerm gb I); collectGarbage();
+debug Core
+time for i from 0 to 4000 do (J := ideal flatten entries inJ; rawHilbert raw inJ) -- no leaks here
+time for i from 0 to 4000 do (J := ideal flatten entries inJ; leadTerm gb presentation cokernel inJ) -- no more leak
+time for i from 0 to 4000 do (J := ideal flatten entries inJ; leadTerm gb inJ) -- mo more leak
+time for i from 0 to 4000 do (J := ideal flatten entries inJ; gb J) -- no leak here
+gJ = gb loopJ
+time for i from 0 to 4000 do (leadTerm gJ) -- 
+
+
+
+
+
+for i from 0 to 1000 do (I := ideal flatten entries gens loopJ; dim I) -- leaks lots of monideals, minode stashes
+time for i from 0 to 1000 do (I := ideal flatten entries gens loopJ; degree I) -- HF links
+time for i from 0 to 100 do (I := ideal flatten entries gens loopJ; degree I) -- no leak...
+time for i from 0 to 100 do (I := ideal flatten entries gens loopJ; codim I) -- leaks one monideal per loop
+time for i from 0 to 1000 do (I := ideal flatten entries gens loopJ; gens gb I;) -- VM 142.73 MB
+time for i from 0 to 500 do (I := ideal flatten entries gens loopJ; gens gb I;) -- VM immediately jumps to 142.73 MB
+time for i from 0 to 1000 do (I := ideal flatten entries gens loopJ; poincare I) -- HF links
+time for i from 0 to 100 do (I := ideal flatten entries gens loopJ; poincare I) -- HF links
+
+
 ----------------------------
 -- 'poincare' is leaking 2 monideals per loop in the above loop.
 -- the following also leaks 2 monomial ideals:

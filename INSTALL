@@ -99,7 +99,7 @@ that contains the source code corresponding to a major release.
 
 To get the very latest source code (which may not always work):
 
-	svn export svn://u123.math.uiuc.edu/macaulay2/trunk/M2
+	svn export svn://macaulay2.math.uiuc.edu/Macaulay2/trunk/M2
 	cd M2
 	make
 
@@ -230,80 +230,7 @@ There are several methods for installing Macaulay2 under Mac OS X.
 
 (3) Build from source yourself.  
     
-    The following are the steps we take to build a binary disk image for
-    Macaulay2.  First, you must have installed the developer tools from apple:
-    use either the packages that are on your system install DVD, or download
-    from http://connect.apple.com.
-
-    The script below downloads gc, gdbm, gmp, readline, ntl, factory and
-    libfac, builds them, and then builds Macaulay2.  The libraries are
-    statically linked in, to make installation simpler for most people.
-
-    To make a 64 bit (intel) distribution disk image:
-
-	  svn co svn://Macaulay2.math.uiuc.edu/Macaulay2/trunk/M2 M2
-	  cd M2
-	  make
-	  mkdir BUILD/opt64
-	  cd BUILD/opt64
-	  ../../configure --prefix=$PWD/installed \
-                --enable-dmg \
-                --enable-build-libraries="gc gdbm gmp mpfr readline ntl factory libfac" \
-		--build=x86_64-apple-darwin \
-		CC="gcc -m64" \
-		CXX="g++ -m64"
-          make
-	  make install
-	  # now there is a dmg file in BUILD/opt64
-	  make check # optional, but recommended
-
-   To make a 32 bit version (intel or ppc), use this instead:
-
-	  svn co svn://Macaulay2.math.uiuc.edu/Macaulay2/trunk/M2 M2
-	  cd M2
-	  make
-	  mkdir BUILD/opt32
-	  cd BUILD/opt32
-	  ../../configure --prefix=$PWD/installed \
-                --enable-dmg \
-                --enable-build-libraries="gc gdbm gmp mpfr readline ntl factory libfac"
-          make
-	  make install
-	  # now there is a dmg file in BUILD/opt32
-	  make check # optional, but recommended
-
-    To make a 64 bit (intel) debug version:
-
-	  svn co svn://Macaulay2.math.uiuc.edu/Macaulay2/trunk/M2 M2
-	  cd M2
-	  make
-	  mkdir BUILD/debug64
-	  cd BUILD/debug64
-	  ../../configure --prefix=$PWD/installed \
-	        --enable-debug --disable-optimize \
-                --enable-build-libraries="gc gdbm gmp mpfr readline ntl factory libfac" \
-		--build=x86_64-apple-darwin \
-		CC="gcc -m64" \
-		CXX="g++ -m64"
-          make
-	  make install
-	  make check # optional, but recommended
-
-    To make a 64 bit (intel) profile version (for use with gprof, and other tools):
-
-	  svn co svn://Macaulay2.math.uiuc.edu/Macaulay2/trunk/M2 M2
-	  cd M2
-	  make
-	  mkdir BUILD/profile64
-	  cd BUILD/profile64
-	  ../../configure --prefix=$PWD/installed \
-	        --enable-profile \
-                --enable-build-libraries="gc gdbm gmp mpfr readline ntl factory libfac" \
-		--build=x86_64-apple-darwin \
-		CC="gcc -m64" \
-		CXX="g++ -m64"
-          make
-	  make install
+    For specific scripts that we use to build the disk images, see the file arch/M2-build-notes.
 
 -------------------------------
 -- Ubuntu linux, from source --

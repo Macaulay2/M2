@@ -2,9 +2,8 @@
 prefix=@FINALPREFIX@
 case "$1" in
     abort-upgrade|configure)
-	for p in $prefix/share/Macaulay2/*.m2
-	do f="$prefix/share/info/`basename $p .m2`.info"
-	   if [ -f $f ] ; then install-info --quiet --info-dir="$prefix/share/info" "$f" ; fi
+	for p in @PACKAGES@
+	do install-info --quiet --info-dir="$prefix/share/info" "$prefix/share/info/$p.info"
 	done ;;
     abort-remove|abort-deconfigure) ;;
     *) echo "postinst called with unknown argument \`$1'" >&2

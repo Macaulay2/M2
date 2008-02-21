@@ -36,7 +36,7 @@ looper = (rep,loopJ) -> (
 end
 
 restart
-load "/Users/mike/M2/Macaulay2/bugs/mike/1-eisenbud-memleak.m2"
+load "/Users/mike/src/M2/Macaulay2/bugs/mike/1-eisenbud-memleak.m2"
 kk=ZZ/5
 S=kk[a,b,c,d]
 B = flatten entries gens(ideal basis(2,S) * ideal"a3,b3,c3,d3")
@@ -45,6 +45,7 @@ collectGarbage()
 time looper(10000,loopJ)
 collectGarbage()
 
+time looper(1000000,loopJ)
 
 -- is this where the leak is? answer: NO
 restart

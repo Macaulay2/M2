@@ -10,6 +10,7 @@ export RawMonomialOrNull := RawMonomial or null;
 export RawArrayInt := array(int);
 export RawArrayIntOrNull := RawArrayInt or null;
 export RawMonomialOrdering := {MonomialOrdering:void};
+export RawMonomialOrderingOrNull := RawMonomialOrdering or null;
 export RawMonoid := {Monoid:void};
 export RawMonoidOrNull := RawMonoid or null;
 export RawRing := {Ring:void};

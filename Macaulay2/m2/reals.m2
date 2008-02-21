@@ -68,7 +68,7 @@ new ComplexField of Nothing' from ZZ := memoize(
 	       symbol precision => prec,
 	       symbol Engine => true,
 	       symbol isBasic => true,
-	       symbol baseRings => {ZZ,QQ},
+	       symbol baseRings => {ZZ,QQ,RR},
 	       symbol RawRing => rawCC prec
 	       }))
 precision InexactField := R -> R.precision
@@ -200,7 +200,6 @@ char InexactField := R -> 0
 
 -- symbolic/numeric constant expressions
 
-Constant = new Type of BasicList
 pi = new Constant from { symbol pi, pi0 }
 EulerConstant = new Constant from { symbol EulerConstant, mpfrConstantEuler }
 ii = new Constant from { symbol ii, ConstantII }
@@ -212,25 +211,35 @@ numeric Constant := c -> c#1 defaultPrecision
 numeric(ZZ,Constant) := (prec,c) -> c#1 prec
 
 Constant + Constant := (c,d) -> numeric c + numeric d
+Constant + RingElement := 
 Constant + InexactNumber := (c,x) -> numeric(precision x,c) + x
+RingElement + Constant :=
 InexactNumber + Constant := (x,c) -> x + numeric(precision x,c)
 + Constant := c -> numeric c
 - Constant := c -> - numeric c
 Constant - Constant := (c,d) -> numeric c - numeric d
+Constant - RingElement :=
 Constant - InexactNumber := (c,x) -> numeric(precision x,c) - x
+RingElement - Constant :=
 InexactNumber - Constant := (x,c) -> x - numeric(precision x,c)
 Constant * Constant := (c,d) -> numeric c * numeric d
+Constant * RingElement :=
 Constant * InexactNumber := (c,x) -> numeric(precision x,c) * x
+RingElement * Constant :=
 InexactNumber * Constant := (x,c) -> x * numeric(precision x,c)
 Constant / Constant := (c,d) -> numeric d / numeric d
+Constant / RingElement :=
 Constant / InexactNumber := (c,x) -> numeric(precision x,c) / x
+RingElement / Constant := (x,c) -> (1/numeric(precision x,c)) * x
 InexactNumber / Constant := (x,c) -> x / numeric(precision x,c)
 Constant ^ Constant := (c,d) -> (numeric c) ^ (numeric d)
 Constant ^ InexactNumber := (c,x) -> (numeric(precision x,c)) ^ x
 InexactNumber ^ Constant := (x,c) -> x ^ (numeric(precision x,c))
 
 Constant == Constant := (c,d) -> numeric d == numeric d
+Constant == RingElement :=
 Constant == InexactNumber := (c,x) -> numeric(precision x,c) == x
+RingElement == Constant :=
 InexactNumber == Constant := (x,c) -> x == numeric(precision x,c)
 
 Constant _ Ring := (c,R) -> (numeric c)_R
@@ -257,15 +266,29 @@ toString ComplexField := R -> concatenate("CC_",toString R.precision)
 
 expression RealField := R -> new Subscript from {symbol RR, R.precision}
 expression ComplexField := R -> new Subscript from {symbol CC, R.precision}
-expression RR := x -> if x < 0 then new Minus from {-x} else new Holder from {x}
+expression RR := x -> (
+     if x < 0 
+     then (
+	  if x == -1 
+	  then - expression 1
+	  else new Minus from { -x }
+	  )
+     else (
+	  if x == 1 then expression 1 
+	  else new Holder from {x}
+	  )
+     )
 expression CC := z -> (
      x := realPart z;
      y := imaginaryPart z;
-     if y == 0 then return expression x;
-     if x == 0 then return expression y * ii;
-     if y == -1 then return expression x - ii;
-     if y == 1 then return expression x + ii;
-     expression x + expression y * hold symbol ii)
+     if y == 0 then expression x
+     else if x == 0 
+     then if y == 1 then hold ii
+     else if y == -1 then - hold ii
+     else y * hold ii
+     else if y == -1 then x - hold ii
+     else if y == 1 then x + hold ii
+     else x + y * hold ii)
 net InexactField := R -> net expression R
 net CC := z -> simpleToString z
 toExternalString RR := toExternalString0

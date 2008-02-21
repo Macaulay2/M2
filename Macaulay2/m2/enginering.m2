@@ -466,7 +466,7 @@ fraction(RingElement,RingElement) := (r,s) -> (
      )
 
 Number / RingElement := (f,g) -> (try promote(f,class g) else error "can't promote number to ring") / g
-RingElement / Number := (f,g) -> f / (try promote(g,class f) else error "can't promote number to ring")
+RingElement / Number := (f,g) -> (1/g) * f
 RingElement / RingElement := RingElement => (f,g) -> (
      R := class f;
      S := class g;

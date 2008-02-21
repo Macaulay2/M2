@@ -270,10 +270,11 @@ cohomology = method( Options => {
 homology = method( Options => { } )
 
 trim    = method ( Options => {
+	  Strategy => Complement				    -- or null
 	  -- DegreeLimit => {}
 	  } )
 mingens = method ( Options => { 
-	  Strategy => null				    -- or complement
+	  Strategy => Complement				    -- or null
 	  -- DegreeLimit => {}
 	  } )
 

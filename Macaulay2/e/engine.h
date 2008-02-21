@@ -124,6 +124,7 @@ typedef MonomialIdeal MonomialIdealOrNull;
 typedef RingMap RingMapOrNull;
 typedef Computation ComputationOrNull;
 typedef EngineComputation EngineComputationOrNull;
+typedef MonomialOrdering MonomialOrderingOrNull;
 
 typedef Matrix_pair Matrix_pair_OrNull;
 typedef Matrix_int_pair Matrix_int_pair_OrNull;
@@ -210,7 +211,7 @@ extern "C" {
   MonomialOrdering *rawLexMonomialOrdering(int nvars, int packing); /* drg: connected rawMonomialOrdering*/
     /* Lex, LexSmall, LexTiny */
 
-  MonomialOrdering *rawGRevLexMonomialOrdering(M2_arrayint degs, int packing); /* drg: connected rawMonomialOrdering*/
+  MonomialOrderingOrNull *rawGRevLexMonomialOrdering(M2_arrayint degs, int packing); /* drg: connected rawMonomialOrdering*/
     /* GRevLex, GrevLexSmall, GRevLexTiny */
 
   MonomialOrdering *rawRevLexMonomialOrdering(int nvars); /* drg: connected rawMonomialOrdering*/

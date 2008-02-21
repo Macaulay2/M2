@@ -1105,7 +1105,7 @@ export subvalue(left:Expr,right:Expr):Expr := (
 	       is x:Symbol do Expr(SymbolClosure(f,x))
 	       else buildErrorPacket("key not found in dictionary")
 	       )
-	  else buildErrorPacket("expected subscript to be a string")
+	  else buildErrorPacket("expected key for dictionary to be a string")
 	  )
      is x:string do (
 	  when right is r:ZZ do (
@@ -1143,7 +1143,7 @@ export subvalueQ(left:Expr,right:Expr):Expr := (
      is dc:DictionaryClosure do (
 	  d := dc.dictionary;
 	  when right is s:string do when lookup(s,d.symboltable) is Symbol do True else False
-	  else buildErrorPacket("expected subscript to be a string")
+	  else buildErrorPacket("expected key for dictionary to be a string")
 	  )
      is x:Database do (
 	  when right

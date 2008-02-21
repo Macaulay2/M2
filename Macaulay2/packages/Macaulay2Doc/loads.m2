@@ -48,7 +48,6 @@ load "./doc_lists.m2"
 load "./doc_strings.m2"
 load "./functions.m2"
 load "./variables.m2"
-load "./classes.m2"
 
 load "./M2-Singular-Book.m2"
 

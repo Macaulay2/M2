@@ -1535,6 +1535,7 @@ export yn(n:long,x:RR):RR := (
 
 -- printing
 
+log2ten := log(10.) / log(2.);
 getstr(returnexponent:long, base:int, sigdigs:int, x:RR):string ::= tostring(
      Ccode(Cstring, "(Cstring) mpfr_get_str((char *)0,&", returnexponent, ",",
 	  base, ",(size_t)", sigdigs, ",(__mpfr_struct *)", x, ",GMP_RNDN)"));
@@ -1550,6 +1551,8 @@ export format(
      ng := sign0(x);
      if isinf0(x) then return if ng then "-infinity" else "infinity";
      if isnan0(x) then return if ng then "-NotANumber" else "NotANumber";
+     meaningful := int(floor(precision0(x) / log2ten));
+     if s == 0 || s > meaningful then s = meaningful; -- print at most the "meaningful" digits
      sgn := "";
      if ng then (
 	  sgn = "-";
@@ -1626,13 +1629,12 @@ export printingLeadLimit := 5;
 export printingTrailLimit := 5;
 export printingSeparator := "e";			    -- was "*10^"
 
-log2ten := log(10.) / log(2.);
-export tostringRR(x:RR):string := (
-     prec := printingPrecision;				    -- interpret printingPrecision==0 as infinity
-     meaningful := int(floor(precision0(x) / log2ten));
-     if prec == 0 || prec > meaningful then prec = meaningful; -- print at most the "meaningful" digits
-     format(prec,printingAccuracy,printingLeadLimit,printingTrailLimit,printingSeparator,x)
+export tostringRR2(x:RR,printingAccuracy:int):string := (
+     -- this can be used by the engine for printing matrices to a uniform precision
+     format(printingPrecision,printingAccuracy,printingLeadLimit,printingTrailLimit,printingSeparator,x)
      );
+
+export tostringRR(x:RR):string := tostringRR2(x,printingAccuracy);
 
 export toExternalString(x:RR):string := (
      if isinf0(x) then return if x < 0 then "-infinity" else "infinity";
@@ -1657,30 +1659,40 @@ export toExternalString(x:RR):string := (
 	       if ex != long(0) then tostring(ex) else ""
 	       )));
 
-export tostringCC(z:CC):string := (
-     x := tostringRR(realPart(z));
-     y := tostringRR(imaginaryPart(z));
+export format(
+     s:int,			  -- number of significant digits (0 means all)
+     ac:int,	    -- accuracy, how far to right of point to go (-1 means all)
+     l:int,					   -- max number leading zeroes
+     t:int,				    -- max number extra trailing digits
+     sep:string,		     -- separator between mantissa and exponent
+     net:bool,				  -- whether to abbreviate "*ii" to "i"
+     z:CC						-- the number to format
+     ) : string := (
+     if isnan0(z.re) || isnan0(z.im) then return "NotANumber";
+     if isinf0(z.re) || isinf0(z.im) then return "infinity";
+     if s != 0 && ac == -1 && !isZero0(z.re) && !isZero0(z.im) then ac = s - int(floor(double(exponent(z))/log2ten));
+     x := format(s,ac,l,t,sep,z.re);
+     y := format(s,ac,l,t,sep,z.im);
      if y === "-0" then y = "0";
      if x === "-0" then x = "0";
      if y === "0" then return x;
      if x === "0" then (
-	  if y === "1" then return "+ii"
-	  else if y === "-1" then return "-ii"
-	  else return y + "*ii"
+	  if y === "1" then return if net then "i" else "ii";
+	  if y === "-1" then return if net then "-i" else "-ii";
+	  return y + if net then "i" else "*ii";
 	  );
-     if y === "-1" then return x + "-ii";
-     if y ===  "1" then return x + "+ii";
-     if y.0 == '-' then return concatenate(array(string)(x,y,"*ii"));
-     concatenate(array(string)(x,"+",y,"*ii")));
+     if y === "-1" then return x + if net then "-i" else "-ii";
+     if y ===  "1" then return x + if net then "+i" else "+ii";
+     if y.0 == '-' then return concatenate(array(string)(x,y,if net then "i" else "*ii"));
+     concatenate(array(string)(x,"+",y,if net then "i" else "*ii")));
+
+export tostringCC(z:CC):string := (
+     format(printingPrecision,printingAccuracy,printingLeadLimit,printingTrailLimit,printingSeparator,false,z)
+     );
 export tonetCC(z:CC):string := (
-     x := tostringRR(realPart(z));
-     y := tostringRR(imaginaryPart(z));
-     if y === "0" then return x;
-     if x === "0" then return y + "i";
-     if y === "-1" then return x + "-i";
-     if y ===  "1" then return x + "+i";
-     if y.0 == '-' then return concatenate(array(string)(x,y,"i"));
-     concatenate(array(string)(x,"+",y,"i")));
+     format(printingPrecision,printingAccuracy,printingLeadLimit,printingTrailLimit,printingSeparator,true,z)
+     );
+
 export toExternalString(z:CC):string := concatenate(array(string)(
      	  "toCC(",
 	  toExternalString(realPart(z)),

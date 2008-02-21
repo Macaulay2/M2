@@ -9,7 +9,7 @@ distributions/rpm/Macaulay2-body.spec
 distributions/rpm/Macaulay2-common-body.spec
 distributions/cygwin/Makefile
 distributions/cygwin/Macaulay2.README
-distributions/cygwin/setup.hint
+distributions/cygwin/setup.hint-base
 distributions/cygwin/server/Makefile
 distributions/cygwin/postinstall.sh
 distributions/cygwin/preremove.sh
@@ -56,6 +56,8 @@ Macaulay2/emacs/Makefile
 Macaulay2/html-check-links/Makefile
 Macaulay2/packages/Style/Makefile
 Macaulay2/m2/Makefile
+Macaulay2/m2/VERSION
+Macaulay2/m2/install.m2
 Macaulay2/man/M2-help.1
 Macaulay2/man/M2.1
 Macaulay2/man/Makefile

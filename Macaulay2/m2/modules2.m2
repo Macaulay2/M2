@@ -375,7 +375,7 @@ addHook(Module, symbol minimalPresentation, (opts,M) -> (
 
 addHook(Module, symbol minimalPresentation, (opts,M) -> (
      	  R := ring M;
-	  if instance(R,PolynomialRing) and numgens R === 1 and isField coefficientRing R then (
+	  if instance(R,PolynomialRing) and numgens R === 1 and isField coefficientRing R and not isHomogeneous M then (
 	       f := presentation M;
 	       k := coefficientRing R;
 	       x := local x;

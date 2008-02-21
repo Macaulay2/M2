@@ -10,7 +10,7 @@ document {
 
 document { 
      Key => {[(codim,Ideal), Generic],[(codim,Module), Generic],
-	  [(codim,CoherentSheaf), Generic],[(codim,MonomialIdeal), Generic],
+	  [(codim,CoherentSheaf), Generic],
 	  [(codim,PolynomialRing), Generic],[(codim,ProjectiveVariety), Generic],
 	  [(codim,QuotientRing), Generic]},
      Usage => "codim(...,Generic=>true)",
@@ -81,26 +81,37 @@ document {
 	  " is an integral domain or, more generally, equidimensional."},
      SeeAlso => {(dim,Module)}
      }
+
 document { 
-     Key => {(codim,Ideal),(codim,MonomialIdeal)},
+     Key => {(codim,MonomialIdeal)},
      Usage => "codim I",
-     Inputs => {"I"
+     Inputs => {"I"},
+     Outputs => {ZZ},
+     "Computes the codimension of the monomial ideal ", TT "I", ".",
+     EXAMPLE {
+	  "R = ZZ/101[a..e];",
+	  "codim monomialIdeal (b,c,d)",
+	  "codim monomialIdeal (b^3,c^2)",
 	  },
-     Outputs => {ZZ
-	  },
-     "Computes the codimension of the ideal ", TT "I", ".",
+     SeeAlso => {(dim,Ideal),(dim,MonomialIdeal),(codim,Ideal)}
+     }
+
+document { 
+     Key => {(codim,Ideal)},
+     Usage => "codim I",
+     Inputs => {"I"},
+     Outputs => {ZZ},
+     "Computes the codimension of the monomial ideal ", TT "I", ".",
      EXAMPLE {
 	  "R = ZZ/101[a..e];",
 	  "I = monomialCurveIdeal(R,{2,3,5,7})",
 	  "J = ideal presentation singularLocus(R/I);",
 	  "codim J",
-	  "radical J"	  
+	  "radical J"
 	  },
-     Caveat => {"We don't really compute the codimension of ", TT "I",
-	  " when the basering ", TT "R", " of ", TT "I", " is not equidimensional! 
-	  What codim actually computes is ", TT "dim(R)-dim(R/I)."},
-     SeeAlso => {(dim,Ideal),(dim,MonomialIdeal)}
+     SeeAlso => {(dim,Ideal),(dim,MonomialIdeal),(codim,MonomialIdeal)}
      }
+
 document { 
      Key => (codim,ProjectiveVariety),
      Headline => "codimension of the projective variety",

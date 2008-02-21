@@ -99,7 +99,7 @@ intOption := (key,n) -> (
      key => n)
 grevOption := (key,v) -> (
      key = fix fix1 key;
-     if class v === ZZ then v = toList (v:1);
+     if class v === ZZ then v = getdegs ( varcount, varcount + v - 1 );
      if not isListOfIntegers(v) then error "expected an integer or a list of integers";
      -- scan(v, i -> if i <= 0 then error "GRevLex expected positive weights"); -- why check this?
      bump(#v);

@@ -1,0 +1,28 @@
+under cygwin a database can remain open and present in the directory, even though "removed":
+
+    i5 : installPackage ("NoetherNormalization", AbsoluteLinks => false )
+    --installing package NoetherNormalization in ../../.Macaulay2/encap/NoetherNormalization-0.9/
+    --using package sources found in /home/dan/.Macaulay2/local/share/Macaulay2/
+    --storing raw documentation in ../../.Macaulay2/encap/NoetherNormalization-0.9/lib/Macaulay2/NoetherNormalization/cache/rawdocumentation-dcba-4.db
+    --running tests that are functions
+    --making example result files in ../../.Macaulay2/encap/NoetherNormalization-0.9/share/doc/Macaulay2/NoetherNormalization/example-output/
+    --processing documentation nodes...
+    stdio:5:1:(1):[0]: failed to link file ../../.Macaulay2/encap/NoetherNormalization-0.9/lib/Macaulay2/NoetherNormalization/cache/rawdocumentation-dcba-4.db.tmp to ../../.Macaulay2/encap/NoetherNormalization-0.9/lib/Macaulay2/NoetherNormalization/cache/rawdocumentation-dcba-4.db : File exists
+
+The file looks strange:
+
+    ii17 : run "ls -l ../../.Macaulay2/encap/NoetherNormalization-0.9/lib/Macaulay2/NoetherNormalization/cache/"
+    ls: cannot access ../../.Macaulay2/encap/NoetherNormalization-0.9/lib/Macaulay2/NoetherNormalization/cache/rawdocumentation-dcba-4.db: No such file or directory
+    total 200
+    ?????????? ? ?   ?         ?            ? rawdocumentation-dcba-4.db
+    -rw-r--r-- 1 dan None 203704 Feb 12 02:23 rawdocumentation-dcba-4.db.tmp
+
+    oo17 = 256
+
+After M2 is closed, the file is finally really gone:
+
+    gallium$ ls -la ~/.Macaulay2/encap/NoetherNormalization-0.9/lib/Macaulay2/NoetherNormalization/cache/
+    total 200
+    drwxr-xr-x+ 2 dan None      0 Feb 12 02:29 .
+    drwxr-xr-x+ 3 dan None      0 Feb 12 02:00 ..
+    -rw-r--r--  1 dan None 203704 Feb 12 02:23 rawdocumentation-dcba-4.db.tmp

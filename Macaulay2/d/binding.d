@@ -299,10 +299,10 @@ special(s:string,f:function(Token,TokenFile,int,bool):ParseTree,prec:int):Symbol
      export timingS := special("timing",unaryop,wide);
      export shieldS := special("shield",unaryop,wide);
 
-     export throwS := special("throw",nunaryop,narrow);
-     export returnS := special("return",nunaryop,narrow);
-     export breakS := special("break",nunaryop,narrow);
-     export continueS := special("continue",nunaryop,narrow);
+     export throwS := special("throw",nunaryop,wide);
+     export returnS := special("return",nunaryop,wide);
+     export breakS := special("break",nunaryop,wide);
+     export continueS := special("continue",nunaryop,wide);
 
      -- export codePositionS := special("codePosition",unaryop,narrow);
 

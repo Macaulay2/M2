@@ -930,6 +930,7 @@ format(e:Expr):Expr := (
      when e
      is s:string do Expr("\"" + present(s) + "\"")
      is RR do format(Expr(Sequence(e)))
+     is CC do format(Expr(Sequence(e)))
      is args:Sequence do (
 	  s := printingPrecision;
 	  ac := printingAccuracy;
@@ -947,7 +948,11 @@ format(e:Expr):Expr := (
 	  if n > 4 then when args.3 is p:ZZ do if !isInt(p) then return WrongArgSmallInteger(2) else t = toInt(p)
 	  is Nothing do nothing else return WrongArgZZ(4);
 	  if n > 5 then when args.4 is p:string do sep = p else return WrongArgString(5);
-	  when args.(n-1) is x:RR do Expr(format(s,ac,l,t,sep,x)) else WrongArgRR(n))
+	  when args.(n-1)
+	  is x:RR do Expr(format(s,ac,l,t,sep,x)) 
+	  is z:CC do Expr(format(s,ac,l,t,sep,false,z)) 
+	  else WrongArgRR(n)
+	  )
      else WrongArg("string, or real number, integer, integer, integer, string"));
 setupfun("format",format);
 

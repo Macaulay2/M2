@@ -5,14 +5,21 @@ TARFILE = lapack.tgz
 VERSION = 3.1.1
 TARDIR = lapack-$(VERSION)
 CONFIGURECMD = cp make.inc.example make.inc
-# note: our package "blas" creates the library libblas.a
-BUILDOPTIONS = PLAT= FORTRAN="@FC@" OPTS="-O2 -g" NOOPT= LOADER="@FC@" RANLIB=@RANLIB@ BLASLIB=-lblas LOADOPTS="$(LDFLAGS)"
-BUILDTARGET = blaslib all
+# see lapack-3.1.1/make.inc for the build option combinations:
+BUILDOPTIONS = PLAT= FORTRAN="@FC@" OPTS="-O2 -g" NOOPT= LOADER="@FC@" RANLIB=@RANLIB@ LOADOPTS="$(LDFLAGS)"
+ifeq (@FC@,gfortran)
+BUILDOPTIONS += TIMER=INT_ETIME 
+endif
+BUILDTARGET = blaslib lapack_install lib
 ifeq (@SHARED@,yes)
 BUILDTARGET += ../liblapack.so
 endif
-INSTALLCMD = install -d $(LIBRARIESDIR)/lib && install lapack.a $(LIBRARIESDIR)/lib/liblapack.a
+INSTALLCMD = \
+	   install -d $(LIBRARIESDIR)/lib \
+	&& install lapack.a $(LIBRARIESDIR)/lib/liblapack.a \
+	&& install blas.a $(LIBRARIESDIR)/lib/libblas.a
 include ../Makefile.library
+check ::; $(MAKE) -C $(BUILDDIR) $(BUILDOPTIONS) lapack_testing blas_testing
 Makefile : @srcdir@/Makefile.in ; cd ../.. && ./config.status libraries/lapack/Makefile
 # Local Variables:
 # compile-command: "make -C $M2BUILDDIR/libraries/lapack "

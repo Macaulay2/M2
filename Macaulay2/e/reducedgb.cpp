@@ -99,6 +99,7 @@ const MatrixOrNull *ReducedGB::get_initial(int nparts)
     {
       gbvector *f = R->gbvector_lead_term(nparts, F, (*i).f);
       mat.append(originalR->translate_gbvector_to_vec(F, f));
+      R->gbvector_remove(f);
     }
   return mat.to_matrix();
 }
@@ -110,6 +111,7 @@ const MatrixOrNull *ReducedGB::get_parallel_lead_terms(M2_arrayint w)
     {
       gbvector *f = R->gbvector_parallel_lead_terms(w, F, polys[i].f, polys[i].f);
       mat.append(originalR->translate_gbvector_to_vec(F,f));
+      R->gbvector_remove(f);
     }
   return mat.to_matrix();
 }
@@ -141,6 +143,7 @@ const MatrixOrNull *ReducedGB::matrix_remainder(const Matrix *m)
 
       vec fv = originalR->translate_gbvector_to_vec_denom(F, g, denom);
       red.set_column(i, fv);
+      R->gbvector_remove(g);
     }
   return red.to_matrix();
 
@@ -185,6 +188,9 @@ void ReducedGB::matrix_lift(const Matrix *m,
       vec fsyzv = originalR->translate_gbvector_to_vec_denom(Fsyz,g.fsyz, denom);
       mat_remainder.set_column(i, fv);
       mat_quotient.set_column(i, fsyzv);
+
+      R->gbvector_remove(g.f);
+      R->gbvector_remove(g.fsyz);
     }
   *result_remainder = mat_remainder.to_matrix();
   *result_quotient = mat_quotient.to_matrix();

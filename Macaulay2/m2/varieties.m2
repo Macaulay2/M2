@@ -151,14 +151,14 @@ super   CoherentSheaf := CoherentSheaf => (F) -> sheaf super   module F
 ambient CoherentSheaf := CoherentSheaf => (F) -> sheaf ambient module F
 cover   CoherentSheaf := CoherentSheaf => (F) -> sheaf cover   module F
 
-degreeList := (M) -> (
+degreeList = (M) -> (
      if dim M > 0 then error "expected module of finite length";
      H := poincare M;
      T := (ring H)_0;
      H = H // (1-T)^(numgens ring M);
      exponents H / first)
 
-globalSectionsModule := (G,bound) -> (
+globalSectionsModule = (G,bound) -> (
      -- compute global sections
      if degreeLength ring G =!= 1 then error "expected degree length 1";
      M := module G;

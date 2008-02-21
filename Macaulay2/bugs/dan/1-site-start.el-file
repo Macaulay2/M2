@@ -1,0 +1,2 @@
+The cygwin postinstall and preremove scripts will make up to 100 backups of then
+site-start.el file, so we should fix that in the next version.

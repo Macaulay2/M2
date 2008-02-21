@@ -3,7 +3,6 @@ classes.m2
 option.m2
 methods.m2
 profile.m2
-underscore.m2
 autoload.m2
 convert.m2
 system.m2
@@ -25,7 +24,6 @@ expressions.m2
 peek.m2
 printing.m2
 gateway.m2
-numbers.m2
 rings.m2
 integers.m2
 engine.m2
@@ -76,7 +74,6 @@ packages.m2
 document.m2
 hypertext.m2
 texhtml.m2
-install.m2
 html.m2
 varieties.m2
 mathml.m2

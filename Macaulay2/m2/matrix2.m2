@@ -121,13 +121,14 @@ complement Matrix := Matrix => (f) -> (
      else error "complement: expected matrix over affine ring or finitely generated ZZ-algebra")
 
 mingens Module := Matrix => opts -> (cacheValue symbol mingens) ((M) -> (
+	  if not member(opts.Strategy, {Complement, null}) then error "mingens: unrecognized Strategy option";
  	  mingb := m -> gb (m, StopWithMinimalGenerators=>true, Syzygies=>false, ChangeMatrix=>false);
 	  zr := f -> if f === null or f == 0 then null else f;
 	  F := ambient M;
 	  epi := g -> -1 === rawGBContains(g, rawIdentity(raw F,0));
 	  if M.?generators then (
 	       if M.?relations then (
-		    if opts.Strategy === complement and isHomogeneous M and isAffineRing ring M then (
+		    if opts.Strategy === Complement and isHomogeneous M and isAffineRing ring M then (
 			 c := mingens mingb (M.generators|M.relations);
 			 c * complement(M.relations // c))
 		    else (
@@ -137,7 +138,7 @@ mingens Module := Matrix => opts -> (cacheValue symbol mingens) ((M) -> (
 	       else mingens mingb M.generators)
 	  else (
 	       if M.?relations then (
-		    if opts.Strategy === complement and isHomogeneous M.relations then (
+		    if opts.Strategy === Complement and isHomogeneous M.relations then (
 			 complement M.relations)
 		    else mingens mingb (id_F % mingb(M.relations)))
 	       else id_F)))
@@ -158,19 +159,38 @@ trim Module := Module => opts -> (cacheValue symbol trim) ((M) -> (
 	  epi := g -> -1 === rawGBContains(g, rawIdentity(raw F,0));
 	  N := if M.?generators then (
 	       if M.?relations then (
-	  	    tot := mingb(M.generators|M.relations);
-		    rel := mingb(M.relations);
-		    subquotient(F, if not epi raw tot then mingens mingb (mingens tot % rel), zr mingens rel )
-		    )
+		    if opts.Strategy === Complement then (
+			 gns := mingens(M,opts);
+			 rlns := mingens(image M.relations,opts);
+			 gns' := mingb gns;
+			 gns = if not epi raw gns' then mingens gns';
+			 if gns === M.generators and rlns === M.relations then M
+			 else subquotient(F, gns, zr rlns))
+		    else if opts.Strategy === null then (
+	  	    	 tot := mingb(M.generators|M.relations);
+		    	 rel := mingb(M.relations);
+			 if tot === M.generators and rel === M.relations 
+			 then M
+			 else subquotient(F, if not epi raw tot then mingens mingb (mingens tot % rel), zr mingens rel ))
+		    else error "trim: unrecognized Strategy option")
 	       else (
-	  	    tot = mingb M.generators;
-		    subquotient(F, if not epi raw tot then mingens tot, )
-		    )
-	       )
+		    if opts.Strategy === Complement then (
+			 g := mingens(M,opts);
+			 if g === M.generators then M else image g)
+		    else if opts.Strategy === null then (
+	  	    	 tot = mingb M.generators;
+		    	 subquotient(F, if not epi raw tot then mingens tot, ))
+		    else error "trim: unrecognized Strategy option"))
 	  else (
 	       if M.?relations then (
-		    subquotient(F, , zr mingens mingb M.relations )
-		    )
+		    if opts.Strategy === Complement then (
+			 rel = mingens(image M.relations,opts);
+			 if rel === M.relations then M 
+			 else if rel == 0 then F
+			 else cokernel rel)
+		    else if opts.Strategy === null then (
+		    	 subquotient(F, , zr mingens mingb M.relations ))
+		    else error "trim: unrecognized Strategy option")
 	       else F
 	       );
 	  if ring M === ZZ then (
@@ -406,7 +426,7 @@ coefficient(RingElement,RingElement) := (m,f) -> (
      if size m != 1 or leadCoefficient m != 1 then error "expected a monomial";
      RM := ring f;
      R := coefficientRing RM;
-     new R from rawCoefficient(raw R, raw f, rawLeadMonomialR m))
+     promote(rawCoefficient(raw R, raw f, rawLeadMonomialR m), R))
 RingElement _ MonoidElement := RingElement => (f,m) -> coefficient(m,f)
 RingElement _ RingElement := RingElement => (f,m) -> coefficient(m,f)
 

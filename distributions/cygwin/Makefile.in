@@ -1,6 +1,8 @@
 # @configure_input@
-
 # see http://cygwin.com/setup.html for info on making cygwin packages
+
+# override this on the make command line, as needed!
+DISTRIBUTION = @DISTRIBUTION@
 
 ifneq (@FINALPREFIX@,/usr)
 $(error expected --with-final-prefix=/usr, to comply with cygwin package standards)
@@ -26,26 +28,40 @@ include ../../include/config.Makefile
 include ../Makefile.filenames
 VPATH = @srcdir@
 
-finalprefix=@FINALPREFIX@
-prefixtail=$(shell basename $(finalprefix))
-prefixdir=$(shell dirname $(finalprefix))
+finalprefix := @FINALPREFIX@
+prefixtail  := $(shell basename $(finalprefix))
+prefixdir   := $(shell dirname $(finalprefix))
+ifeq ($(prefixdir),/)
+prefixdir = /.
+endif
 
-all install :: \
-	server/Macaulay2 \
-	server/Macaulay2/@package@-@CYGWIN_RELEASE@.tar.bz2 \
-	server/Macaulay2/@package@-@CYGWIN_RELEASE@-src.tar.bz2 \
-	server/Macaulay2/setup.hint \
-	server/setup.ini
+DISTFILES := server/Macaulay2/@package@-$(DISTRIBUTION).tar.bz2 \
+	     server/Macaulay2/@package@-$(DISTRIBUTION)-src.tar.bz2 \
+	     server/Macaulay2/setup.hint
+
+all install :: server/Macaulay2 $(DISTFILES) server/setup.ini tidy
 	@ echo "============================================================================="
 	@ echo "the cygwin package files have been prepared in cygwin/server"
 	@ echo "============================================================================="
-server/setup.ini : ; PATH=`cd @srcdir@; pwd`:$(PATH) $(MAKE) -C server setup.ini
+server/setup.ini : $(DISTFILES)
+	PATH=`cd @srcdir@; pwd`:$(PATH) $(MAKE) -C server setup.ini
 server/Macaulay2 : ; @MKDIR_P@ $@
-server/Macaulay2/@package@-@CYGWIN_RELEASE@.tar.bz2 : Makefile server/Macaulay2 postinstall.sh preremove.sh
+
+TIDY = yes
+ifeq ($(TIDY),yes)
+tidy :
 	rm -rf files
+else
+tidy :
+endif
+
+.prepared : server/Macaulay2 postinstall.sh preremove.sh \
+	    ../../$(PKG_TGZ) ../../$(PKG_COM_TGZ)
+	set -x ; if [ -d files ] ; then mv files junk ; rm -rf junk & fi
 	mkdir files
 	@MKDIR_P@ files$(prefixdir)
 	@FAKEROOT@ tar xzf ../../$(PKG_TGZ) -C files$(prefixdir)
+	@FAKEROOT@ tar xzf ../../$(PKG_COM_TGZ) -C files$(prefixdir)
 	mv files$(prefixdir)/@package@ files$(prefixdir)/$(prefixtail)
 	cd files$(finalprefix) && rm -f INSTALL encapinfo postinstall preremove
 	@MKDIR_P@ files/etc/postinstall files@FINALPREFIX@
@@ -55,35 +71,74 @@ server/Macaulay2/@package@-@CYGWIN_RELEASE@.tar.bz2 : Makefile server/Macaulay2 
 ifneq (@FAKEROOT@,)
 	@FAKEROOT@ chown -R root.root files
 endif
+
+server/Macaulay2/@package@-$(DISTRIBUTION).tar.bz2 : .prepared
 	(cd files && @FAKEROOT@ tar cjf - *) >$@
-	rm -rf files
+
+libraries-used : .prepared
+	cygcheck files@FINALPREFIX@/@bindirtail@/M2@EXE@ \
+	| sed -e 's/^  *//' \
+	| dd conv=lcase \
+	| sed 's=\\=/=g' \
+	| egrep "(/lib/|/bin/).*\.dll$$" \
+	| sed -e 's=.*/lib/=/lib/=' -e 's=.*/bin/=/bin/=' \
+	| sort | uniq \
+	| tee $@
+
+packages-used : libraries-used
+	cat libraries-used \
+	| while read x ; do cygcheck -f $$x ; done \
+	| sort | uniq \
+	| sed 's/\([a-zA-Z0-9]*\)-\([0-9.]*\)-.*/\1 \2/' \
+	| tee $@
+
+setup.hint : setup.hint-base packages-used
+	( set -e ; \
+	  cat setup.hint-base ; \
+	  echo -n "requires:" ; \
+	  cat packages-used |while read pkg rel ; do echo -n " $$pkg" ; done ; \
+	  echo ) | tee $@
+
 server/Macaulay2/setup.hint : setup.hint server/Macaulay2 ; cp $< $@
 
 ifeq (@SRCTARFILE@,)
-@package@-@CYGWIN_RELEASE@ : always ; rm -f $@ && ln -sf @srcdir@/../.. $@
-src-files : always ; svn ls -R @srcdir@/../.. | egrep -v '/$$' | sed 's=^=@package@-@CYGWIN_RELEASE@/=' >$@
-mkrt : src-files @package@-@CYGWIN_RELEASE@
+@package@-$(DISTRIBUTION) : always
+	rm -f $@
+	ln -sf @srcdir@/../.. $@
+src-files : always
+	svn ls -R @srcdir@/../.. | egrep -v '/$$' | sed 's=^=@package@-$(DISTRIBUTION)/=' >$@
+mkrt : src-files @package@-$(DISTRIBUTION)
 ifneq (@FAKEROOT@,)
 	cat src-files | @FAKEROOT@ xargs chown root.root
 endif
-server/Macaulay2/@package@-@CYGWIN_RELEASE@-src.tar.bz2 : server/Macaulay2 mkrt src-files ; @FAKEROOT@ tar cfj $@ --files-from=src-files
+server/Macaulay2/@package@-$(DISTRIBUTION)-src.tar.bz2 : server/Macaulay2 mkrt src-files
+	@FAKEROOT@ tar cfj $@ --files-from=src-files
 else
-src-tree : @SRCTARFILE@ ; rm -rf $@ && @MKDIR_P@ $@ && tar xzf $< -C $@ && rm -f @package@-@CYGWIN_RELEASE@ && ln -s srctree/* @package@-@CYGWIN_RELEASE@
+src-tree : @SRCTARFILE@
+	rm -rf $@
+	@MKDIR_P@ $@
+	tar xzf $< -C $@
+	rm -f @package@-$(DISTRIBUTION)
+	ln -s srctree/* @package@-$(DISTRIBUTION)
 mkrt : src-tree
 ifneq (@FAKEROOT@,)
 	@FAKEROOT@ chown -R root.root src-tree
 endif
-server/Macaulay2/@package@-@CYGWIN_RELEASE@-src.tar.bz2 : server/Macaulay2 mkrt ; @FAKEROOT@ tar cfj $@ @package@-@CYGWIN_RELEASE@/.
+server/Macaulay2/@package@-$(DISTRIBUTION)-src.tar.bz2 : server/Macaulay2 mkrt
+	@FAKEROOT@ tar cfj $@ @package@-$(DISTRIBUTION)/.
 endif
 
 install :: Macaulay2.README
-	@INSTALL@ -d @encapdir@@FINALPREFIX@/share/doc/Cygwin
-	@INSTALL@ Macaulay2.README @encapdir@@FINALPREFIX@/share/doc/Cygwin
+	@INSTALL@ -d @encapdir@/share/doc/Cygwin
+	@INSTALL@ Macaulay2.README @encapdir@/share/doc/Cygwin
 
+upload :; rsync --verbose --compress --archive --rsh='ssh -x -a' server/. u00:to/Macaulay2/Repositories/cygwin-test
 clean ::; rm -rf server files src-files
 distclean : clean; rm -f Makefile Macaulay2.README setup.hint
 Makefile : Makefile.in; cd ../..; ./config.status distributions/cygwin/Makefile
-setup.hint : setup.hint.in; cd ../..; ./config.status distributions/cygwin/setup.hint
+postinstall.sh : postinstall.sh.in; cd ../..; ./config.status distributions/cygwin/postinstall.sh
+preremove.sh : preremove.sh.in; cd ../..; ./config.status distributions/cygwin/preremove.sh
+setup.hint-base : setup.hint-base.in; cd ../..; ./config.status distributions/cygwin/setup.hint-base
 Macaulay2.README : Macaulay2.README.in; cd ../..; ./config.status distributions/cygwin/Macaulay2.README
 
 # Local Variables:

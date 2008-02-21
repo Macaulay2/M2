@@ -89,5 +89,5 @@ scan( { (4,4), (6,6), (4,6), (6,4), (2,6), (6,2), (-2,3), (3,-2), (0,0) },
                 ))))))))
 
 -- Local Variables:
--- compile-command: "make -C $M2BUILDDIR/Macaulay2/test/slow global.out"
+-- compile-command: "make -C $M2BUILDDIR/Macaulay2/packages/Macaulay2Doc/test/slow global.out"
 -- End:

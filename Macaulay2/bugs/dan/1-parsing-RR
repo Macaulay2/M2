@@ -1,0 +1,11 @@
+this code in parse.d is responsibel for computing the real number after parsing:
+
+     eprec := max(prec, ulong(exponent(x)) + 4);
+     y := toRR(x,eprec);
+     if expon > 0 then y = y * pow10(expon,eprec)
+     else if expon < 0 then y = y / pow10(-expon,eprec);
+     if eprec != prec then y = toRR(y,prec);
+
+Since it uses two floating point operations, it may not be computing the
+correctly rounded result.  Ensure that it is.
+

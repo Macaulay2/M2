@@ -30,27 +30,33 @@ addStartFunction(
 	  )
      )
 
-addStartFunction( () -> if not noinitfile and prefixDirectory =!= null then makePackageIndex() )
+isprefix = (s,t) -> s === substring(0,#s,t)
+
+addStartFunction( () -> if not noinitfile and prefixDirectory =!= null then (
+	  GLOBAL := prefixDirectory;			    -- installed doc
+	  LOCAL := applicationDirectory() | "local/";	    -- user's "local" application directory doc
+	  makeDirectory(LOCAL|LAYOUT#"docpackages");
+	  scan(join(
+		    {"Macaulay2"},			    -- this is a hold-over : M2 versions before 1.1 had a package called "Macaulay2" !
+		    readDirectory (GLOBAL|LAYOUT#"docpackages")
+		    ),
+	       fn -> if fn =!= "." and fn =!= ".." then (
+		    tardir := LOCAL|LAYOUT#"docpackages";
+		    tar := tardir|fn;
+		    src := GLOBAL|LAYOUT#"docpackages"|fn;
+		    if readlink tar =!= null and not isprefix(tardir,realpath readlink tar) then removeFile tar;
+		    ))))
 
 addStartFunction( () -> if not noinitfile then (
 	  -- remove empty directories and dead symbolic links from the local application directory
 	  dir := applicationDirectory() | "local/";
-	  apply(findFiles dir,
+	  apply(reverse findFiles dir,
 	       fn -> if fn =!= dir then (
 		    if isDirectory fn and # readDirectory fn == 2 then removeDirectory fn else
 		    if readlink fn =!= null and not fileExists fn then removeFile fn
 		    ))))
 
-addStartFunction( () -> if not noinitfile and prefixDirectory =!= null then (
-	  ins := prefixDirectory;			    -- installed doc
-	  loc := applicationDirectory() | "local/";	    -- user's "local" application directory doc
-	  makeDirectory(loc|LAYOUT#"docpackages");
-	  scan(readDirectory (ins|LAYOUT#"docpackages"), fn -> if fn =!= "." and fn =!= ".." then (
-		    tar := loc|LAYOUT#"docpackages"|fn;
-		    src := ins|LAYOUT#"docpackages"|fn;
-		    if isDirectory realpath src and readlink tar =!= src then (
-			 if readlink tar =!= null then removeFile tar;
-			 if not fileExists tar then symlinkFile(src,tar))))))
+addStartFunction( () -> if not noinitfile and prefixDirectory =!= null then makePackageIndex() )
 
 addStartFunction( () -> if dumpdataFile =!= null and fileExists dumpdataFile then (
 	  dumptime := fileTime dumpdataFile;

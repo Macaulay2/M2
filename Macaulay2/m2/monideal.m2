@@ -19,13 +19,12 @@ newMonomialIdeal = (R,rawI) -> new MonomialIdeal from {
 
 monomialIdealOfRow := (i,m) -> newMonomialIdeal(ring m,rawMonomialIdeal(raw m, i))
 
-codim MonomialIdeal := { Generic => false } >> opts -> m -> (
-     if not opts.Generic and not isAffineRing ring m then error "codim MonomialIdeal: expected an affine ring";
-     rawCodimension raw m)
-codim Module := options (codim,MonomialIdeal) >> opts -> (cacheValue (symbol codim,opts)) (M -> runHooks(Module, symbol codim, (opts,M)))
-codim Ideal := options (codim,Module) >> opts -> I -> codim( cokernel generators I, opts)
-codim PolynomialRing := options (codim,Module) >> opts -> R -> 0
-codim QuotientRing := options (codim,Module) >> opts -> (R) -> codim( cokernel presentation R, opts)
+codimopts := { Generic => false }
+codim MonomialIdeal := {  } >> opts -> m -> rawCodimension raw m
+codim Module := codimopts >> opts -> (cacheValue (symbol codim,opts)) (M -> runHooks(Module, symbol codim, (opts,M)))
+codim Ideal := codimopts >> opts -> I -> codim( cokernel generators I, opts)
+codim PolynomialRing := codimopts >> opts -> R -> 0
+codim QuotientRing := codimopts >> opts -> (R) -> codim( cokernel presentation R, opts)
 
 addHook(Module, symbol codim, (opts,M) -> break (
      R := ring M;
@@ -33,10 +32,12 @@ addHook(Module, symbol codim, (opts,M) -> break (
      else if isField R then 0
      else if R === ZZ then if M ** QQ == 0 then 1 else 0
      else (
-	  p := generators gb presentation M;
+	  if not opts.Generic and not isAffineRing ring M
+	  then error "codim: expected an affine ring (consider Generic=>true to work over QQ)";
+	  p := leadTerm gb presentation M;
 	  n := rank target p;
 	  c := infinity;
-	  for i from 0 to n-1 when c > 0 do c = min(c,codim(monomialIdealOfRow(i,p),opts));
+	  for i from 0 to n-1 when c > 0 do c = min(c,codim(monomialIdealOfRow(i,p)));
 	  c - codim(R,opts))))
 
 MonomialIdeal ^ ZZ := MonomialIdeal => (I,n) -> SimplePowerMethod(I,n)

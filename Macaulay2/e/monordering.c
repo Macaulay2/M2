@@ -137,7 +137,7 @@ MonomialOrdering *rawLexMonomialOrdering(int nvars, int packing)
   return result;
 }
 
-MonomialOrdering *rawGRevLexMonomialOrdering(M2_arrayint degs, int packing)
+MonomialOrderingOrNull *rawGRevLexMonomialOrdering(M2_arrayint degs, int packing)
 {
   MonomialOrdering *result;
   mon_part p;
@@ -146,8 +146,10 @@ MonomialOrdering *rawGRevLexMonomialOrdering(M2_arrayint degs, int packing)
   int all_one = 1;
   unsigned int i;
   for (i=0; i<degs->len; i++)
-    if (degs->array[i] <= 0)
-      INTERNAL_ERROR("grevlex: expected all degrees to be positive");
+    if (degs->array[i] <= 0) {
+      ERROR("grevlex: expected all degrees to be positive");
+      return NULL;
+    }
     else if (degs->array[i] > 1)
       all_one = 0;
 

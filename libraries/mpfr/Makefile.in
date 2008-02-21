@@ -1,6 +1,6 @@
-VERSION = 2.3.0
+VERSION = 2.3.1
 RELAX = yes
-URL = http://www.mpfr.org/mpfr-current
+URL = http://www.mpfr.org/mpfr-$(VERSION)
 # PATCHFILE = @srcdir@/patch-$(VERSION)
 CONFIGOPTIONS += 
 ifeq (@SHARED@,no)

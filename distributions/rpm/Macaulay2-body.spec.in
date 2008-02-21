@@ -3,9 +3,9 @@ Name: Macaulay2
 URL: http://www.math.uiuc.edu/Macaulay2/
 Version: @PACKAGE_VERSION@
 Release: 1
-Summary: Macaulay 2 is a software system for algebraic geometry research.
-License: GNU General Public License, version 2
-Group: Mathematics
+Summary: Macaulay 2 is a software system for algebraic geometry research
+License: GPLv2
+Group: Applications/Engineering
 Requires: Macaulay2-common = @PACKAGE_VERSION@
 Buildroot: @abs_builddir@/files
 Prefix: @FINALPREFIX@
@@ -15,12 +15,13 @@ Prefix: @FINALPREFIX@
 %post
 #!/bin/sh -e
 prefix=@FINALPREFIX@
-mkdir $prefix/@corecachedirtail@
+[ @DUMPDATA@ = yes -a -d $prefix/@corecachedirtail@ ] || mkdir $prefix/@corecachedirtail@
 [ @DUMPDATA@ = yes ] && $prefix/bin/M2 --dumpdata
 %preun
 #! /bin/sh -e
 prefix=@FINALPREFIX@
-rm -f $prefix/@corecachedirtail@/*
+rm -f $prefix/@corecachedirtail@/*-data
+rm -f $prefix/@corecachedirtail@/*-data.maps
 %description
 Macaulay 2 is a software system for algebraic geometry research, written by
 Daniel R. Grayson and Michael E. Stillman.  Based on Groebner bases, it

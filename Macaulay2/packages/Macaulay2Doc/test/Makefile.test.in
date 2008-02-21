@@ -14,7 +14,16 @@ MLIMIT ?= 300000
 VLIMIT ?= 300000
 endif
 
-LIMIT  = ulimit -t $(TLIMIT) && ulimit -m $(MLIMIT) && ulimit -v $(VLIMIT)
+LIMIT :=
+ifeq (@ULIMIT_T@,yes)
+LIMIT += ulimit -t $(TLIMIT) ;
+endif
+ifeq (@ULIMIT_M@,yes)
+LIMIT += ulimit -m $(MLIMIT) ;
+endif
+ifeq (@ULIMIT_V@,yes)
+LIMIT += ulimit -v $(VLIMIT) ;
+endif
 
 TESTFILES := $(wildcard $(SRCDIR)/*.m2)
 
@@ -38,7 +47,7 @@ status :: $(TESTFILES)
 %.out : %.m2
 	@ echo testing: $<
 	@ egrep -n '^--status:' $< /dev/null || true
-	@ $(LIMIT) && \
+	@ $(LIMIT) \
 		echo "--*- compilation -*-" >$*.errors; \
 		if (echo 'input "$<"'; echo 'collectGarbage()'; echo exit 0) | \
 		   time $(DOTS)/bin/M2@EXE@ $(ARGS) >>$*.errors 2>&1 ; \
@@ -51,7 +60,7 @@ status :: $(TESTFILES)
 %.out : %.m2-input
 	@ echo testing: $<
 	@ egrep -n '^--status:' $< /dev/null || true
-	@ $(LIMIT) && \
+	@ $(LIMIT) \
 		echo "--*- compilation -*-" >$*.errors; \
 		if time $(DOTS)/bin/M2@EXE@ $(ARGS) <$< >>$*.errors 2>&1 ; \
 		then mv $*.errors $@ ; \

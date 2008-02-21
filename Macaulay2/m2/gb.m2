@@ -164,8 +164,6 @@ elseSomething := method()
 elseSomething(Thing  ,Function) := (x,f) -> x
 elseSomething(Nothing,Function) := (x,f) -> f()
 
-dotprod = (c,d) -> sum( min(#c, #d), i -> c#i * d#i )
-
 newGB := (f,type,opts) -> (
      if flagInhomogeneity then (
 	  if not isHomogeneous f then error "internal error: gb: inhomogeneous matrix flagged";
