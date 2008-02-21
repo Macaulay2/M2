@@ -176,7 +176,7 @@ skewSymMorphismsForDeg17CY = (b) -> (
      K:=coefficientRing ring b;
      u:=symbol u;U:=K[u_0..u_(binomial(16,2)-1)];
      --now we compute the equations for the u_i's:
-     UU:=U**ring b;
+     UU:=tensor(U,ring b,DegreeRank => 1);     
      equationsInUU:=flatten (substitute(b,UU)*
           substitute(genericSkewMatrix(U,u_0,16),UU));
      uu:=substitute(vars U,UU);
@@ -207,7 +207,8 @@ checkMorphismsForDeg17CY = (b,skewSymMorphisms) -> (
      --we parametrize the morphisms:
      R:=ring b;K:=coefficientRing R;
      w:=symbol w;W:=K[w_0..w_(k-1)];
-     WW:=R**W;ww:=substitute(vars W,WW);
+     WW:=tensor(R,W,DegreeRank=>1);
+     ww:=substitute(vars W,WW);
      genericMorphism:=getMorphismForDeg17CY(
           substitute(skewSymMorphisms,WW)*transpose ww);
      --we compute the scheme of the 3x3 morphisms:

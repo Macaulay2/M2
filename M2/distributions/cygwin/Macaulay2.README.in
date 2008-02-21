@@ -1,11 +1,14 @@
-Macaulay 2 can be compiled from sources this way, assuming the version number
-is x.x.x:
 
-	 cd Macaulay2-x.x.x
-	 make
-	 mkdir BUILD
-	 cd BUILD
-	 ../configure @CONFIG_ARGS@
-	 make all install
+			   Macaulay 2
+	    by Daniel R. Grayson <dan@math.uiuc.edu>
+	 and Michael E. Stillman <mike@math.cornell.edu>
 
-You may adjust the --prefix argument to build the package where you wish.
+	available from http://www.math.uiuc.edu/Macaulay2/
+
+We thank the United States National Science Foundation for generous funding
+to develop Macaulay 2.
+
+Macaulay 2 is copyright 1993-2008 by Daniel R. Grayson and Michael
+E. Stillman.  We permit you to use it under the terms of the GNU General
+Public License, version 2, as published by the Free Software Foundation; see
+the file Macaulay2/COPYING.

@@ -308,9 +308,9 @@ NCLexMO(n:int):RawMonomialOrdering := Ccode(RawMonomialOrdering, "(engine_RawMon
 GRevLexS := makeProtectedSymbolClosure("GRevLex");
 GRevLexSmallS := makeProtectedSymbolClosure("GRevLexSmall");
 GRevLexTinyS := makeProtectedSymbolClosure("GRevLexTiny");
-GRevLexMO(n:array(int)):RawMonomialOrdering := Ccode(RawMonomialOrdering, "(engine_RawMonomialOrdering)rawGRevLexMonomialOrdering((M2_arrayint)",n,",1)");
-GRevLexSmallMO(n:array(int)):RawMonomialOrdering := Ccode(RawMonomialOrdering, "(engine_RawMonomialOrdering)rawGRevLexMonomialOrdering((M2_arrayint)",n,",2)");
-GRevLexTinySMO(n:array(int)):RawMonomialOrdering := Ccode(RawMonomialOrdering, "(engine_RawMonomialOrdering)rawGRevLexMonomialOrdering((M2_arrayint)",n,",4)");
+GRevLexMO(n:array(int)):RawMonomialOrderingOrNull := Ccode(RawMonomialOrderingOrNull, "(engine_RawMonomialOrderingOrNull)rawGRevLexMonomialOrdering((M2_arrayint)",n,",1)");
+GRevLexSmallMO(n:array(int)):RawMonomialOrderingOrNull := Ccode(RawMonomialOrderingOrNull, "(engine_RawMonomialOrderingOrNull)rawGRevLexMonomialOrdering((M2_arrayint)",n,",2)");
+GRevLexTinySMO(n:array(int)):RawMonomialOrderingOrNull := Ccode(RawMonomialOrderingOrNull, "(engine_RawMonomialOrderingOrNull)rawGRevLexMonomialOrdering((M2_arrayint)",n,",4)");
 
 WeightsS := makeProtectedSymbolClosure("Weights");
 WeightsMO(n:array(int)):RawMonomialOrdering := Ccode(RawMonomialOrdering, "(engine_RawMonomialOrdering)rawWeightsMonomialOrdering((M2_arrayint)",n,")");
@@ -318,12 +318,13 @@ WeightsMO(n:array(int)):RawMonomialOrdering := Ccode(RawMonomialOrdering, "(engi
 joinMO(s:RawMonomialOrderingArray):RawMonomialOrdering := ( Ccode(RawMonomialOrdering, "(engine_RawMonomialOrdering)rawJoinMonomialOrdering((MonomialOrdering_array)",s,")") );
 
 arrayint := array(int);
-funtype := fun1 or fun2 or fun3 or fun4;
-funtypeornull := fun1 or fun2 or fun3 or fun4 or null;
+funtype := fun1 or fun2 or fun3 or fun4 or fun5;
+funtypeornull := fun1 or fun2 or fun3 or fun4 or fun5 or null;
 fun1 := function():RawMonomialOrdering;
 fun2 := function(int):RawMonomialOrdering;
-fun3 := function(arrayint):RawMonomialOrdering;;
-fun4 := function(bool):RawMonomialOrdering;;
+fun3 := function(arrayint):RawMonomialOrdering;
+fun4 := function(bool):RawMonomialOrdering;
+fun5 := function(arrayint):RawMonomialOrderingOrNull;
 
 Maker := { sym:SymbolClosure, fun:funtype };
 
@@ -349,6 +350,7 @@ getmaker(sym:SymbolClosure):funtypeornull := (
 	  is f:fun2 do return f
 	  is f:fun3 do return f
      	  is f:fun4 do return f
+     	  is f:fun5 do return f
 	  );
      null());
 
@@ -384,6 +386,10 @@ export rawMonomialOrdering(e:Expr):Expr := (
 			 if !isSequenceOfSmallIntegers(sp.v.1)
 			 then return buildErrorPacket("expected option value to be a sequence of small integers");
 			 )
+		    is g:fun5 do (
+			 if !isSequenceOfSmallIntegers(sp.v.1)
+			 then return buildErrorPacket("expected option value to be a sequence of small integers");
+			 )
 		    is g:fun4 do (
 			 if g == PositionMO then (
 			      if !(sp.v.1 == UpS || sp.v.1 == DownS)
@@ -399,21 +405,30 @@ export rawMonomialOrdering(e:Expr):Expr := (
 	       else return WrongArg("a list of options")
 	       else return WrongArg("a list of options"));
 	  -- then accumulate it
-     	  Expr(joinMO(new RawMonomialOrderingArray len length(s.v) do (
-	       foreach spec in s.v do
-	       when spec is sp:List do
-	       when sp.v.0 is sym:SymbolClosure do (
-		    when getmaker(sym)
-		    is g:fun1 do provide g()
-		    is g:fun2 do provide g(getSmallInt(sp.v.1))
-		    is g:fun3 do provide g(getSequenceOfSmallIntegers(sp.v.1))
-		    is g:fun4 do provide g(if g == PositionMO then sp.v.1 == UpS else sp.v.1 == True)
-		    is null do nothing
-		    )
-	       else nothing
-	       else nothing;
-	       provide PositionMO(true);		    -- just in case, to prevent a loop
-	       ))))
+	  errorReturn := nullE;
+     	  ret := Expr(joinMO(new RawMonomialOrderingArray len length(s.v) do (
+			 foreach spec in s.v do
+			 when spec is sp:List do
+			 when sp.v.0 is sym:SymbolClosure do (
+			      when getmaker(sym)
+			      is g:fun1 do provide g()
+			      is g:fun2 do provide g(getSmallInt(sp.v.1))
+			      is g:fun3 do provide g(getSequenceOfSmallIntegers(sp.v.1))
+			      is g:fun4 do provide g(if g == PositionMO then sp.v.1 == UpS else sp.v.1 == True)
+			      is g:fun5 do (
+				   when g(getSequenceOfSmallIntegers(sp.v.1))
+				   is m:RawMonomialOrdering do provide m
+				   is null do (
+					errorReturn = engineErrorMessage();
+					)
+				   )
+			      is null do nothing
+			      )
+			 else nothing
+			 else nothing;
+			 provide PositionMO(true);		    -- just in case, to prevent a loop
+			 )));
+	  if errorReturn == nullE then ret else errorReturn)
      else WrongArg("a list of options"));
 setupfun("rawMonomialOrdering",rawMonomialOrdering);
 
@@ -661,8 +676,8 @@ export rawGaloisField(e:Expr):Expr := (
 setupfun("rawGaloisField", rawGaloisField);
 
 export rawFractionRing(e:Expr):Expr := (
-     when e is R:RawRing do Expr(
-	  Ccode(RawRing,"(engine_RawRing)IM2_Ring_frac(",
+     when e is R:RawRing do toExpr(
+	  Ccode(RawRingOrNull,"(engine_RawRingOrNull)IM2_Ring_frac(",
 	       "(Ring *)", R,
 	       ")"))
      else WrongArg("a raw ring")

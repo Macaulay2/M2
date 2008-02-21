@@ -270,22 +270,19 @@ M2_LIBRARIES += -L. -lfactory_init2 @SINGULARLIBS@ -lfactory_init1
 endif
 M2_LIBDEPS    += libfactory_init1.a libfactory_init2.a
 
-M2_LIBRARIES +=  @BUILTLIBS@ @LIBS@
-
+M2_LIBRARIES +=  @BUILTLIBS@
+M2_LIBRARIES +=  @LIBS_STATIC@
+# I'm not sure whether compiling statically with libstdc++ is a good idea
 M2_LIBRARIES += -lstdc++
-
-ifeq (@USE_FLIBS@,yes)
-M2_LIBRARIES += @FLIBS_FLAGS@
-M2_LIBRARIES += @FLIBS_STATIC@
-endif
+M2_LIBRARIES += @FCLIBS_FLAGS@
+M2_LIBRARIES += @FCLIBS_STATIC@
 
 ifeq "@STATIC@" "yes"
 M2_LIBRARIES += $(UNSTATIC)
 endif
 
-ifeq (@USE_FLIBS@,yes)
-M2_LIBRARIES += @FLIBS_DYNAMIC@
-endif
+M2_LIBRARIES +=  @LIBS_DYNAMIC@
+M2_LIBRARIES += @FCLIBS_DYNAMIC@
 
 LINK_OUTPUT_OPTION = $(OUTPUT_OPTION)
 

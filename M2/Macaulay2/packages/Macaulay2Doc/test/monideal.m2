@@ -40,12 +40,10 @@ I3 = monomialIdeal matrix{{a,b}}
 I4 = monomialIdeal matrix{{a^3,b^3,c^3,d^3}}
 I = intersect(intersect(I1,I2),intersect(I3,I4))
 
--- codim over ZZ
-
-
---codim monomialIdeal over ZZ will return the wrong answer, so we have disabled it:
+--status: probably Mike should change rawMonomialIdeal so when it converts a 2 to a zero, as in
+--status: the example here, it gives an error
 R = ZZ[x]
-assert try ( codim monomialIdeal matrix {{2,x}} ; false ) else true
+assert try ( matrix {{2,x}} ; false ) else true
 
 end
 -- Local Variables:

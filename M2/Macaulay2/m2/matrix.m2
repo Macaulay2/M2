@@ -426,8 +426,24 @@ borel Matrix := Matrix => m -> generators borel monomialIdeal m
 
 clean(RR,Matrix) := (epsilon,M) -> map(target M, source M, clean(epsilon,raw M))
 norm(RR,Matrix) := (p,M) -> new RR from norm(p,raw M)
-norm(InfiniteNumber,Matrix) := (p,M) -> norm(numeric(precision M, p), M)
-norm(Matrix) := (M) -> norm(numeric(precision M,infinity), M)
+norm(InfiniteNumber,Matrix) := (p,M) -> (
+     prec := precision M;
+     if prec === infinity then (
+	  error "expected a matrix over RR or CC";
+	  )
+     else (
+     	  norm(numeric(prec,p), M)
+	  )
+     )
+norm(Matrix) := (M) -> (
+     prec := precision M;
+     if prec === infinity then (
+	  error "expected a matrix over RR or CC";
+	  )
+     else (
+     	  norm(numeric(prec,infinity), M)
+	  )
+     )
 
 numRows Matrix := M -> numgens cover target M
 numColumns Matrix := M -> numgens cover source M

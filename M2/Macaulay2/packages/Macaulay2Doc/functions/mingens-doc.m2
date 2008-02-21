@@ -25,7 +25,6 @@ document {
      potentially has a different ambient free module. In this situation, the
      isomorphism is stored in M.cache.PruningMap",
      PARA{},
-     "
      EXAMPLE {
 	  kk = frac(QQ[a])
 	  A = kk[x,y,z]
@@ -54,6 +53,13 @@ document {
      whose columns generate the given ideal or module.",
      SeeAlso => {trim, minimalPresentation}
      }
+
+document {
+     Key => {Complement, [mingens, Strategy], [trim, Strategy]},
+     "The standard (default) strategy for ", TO "mingens", " or ", TO "trim", " is ", TO "Complement", ", at least in the case where the module (or
+     ideal) is homogeneous, and the ring is (quotient ring of) a polynomial ring over a field.  The other strategy, ", TO "null", ", is experimental."
+     }
+
 document { 
      Key => {(mingens,Module),(mingens,Ideal)},
      Usage => "mingens I",

@@ -78,6 +78,9 @@ Ext(ZZ, Ideal, Module) := (i,I,N) -> Ext^i(module I,N)
 -- total ext over complete intersections
 
 Ext(Module,Module) := Module => (M,N) -> (
+  cacheModule := M; -- we have no way to tell whether N is younger than M, sigh
+  cacheKey := (Ext,M,N);
+  if cacheModule.cache#?cacheKey then return cacheModule.cache#cacheKey;
   B := ring M;
   if B =!= ring N
   then error "expected modules over the same ring";
@@ -87,7 +90,7 @@ Ext(Module,Module) := Module => (M,N) -> (
   then error "'Ext' received modules over an inhomogeneous ring";
   if not isHomogeneous N or not isHomogeneous M
   then error "'Ext' received an inhomogeneous module";
-  if N == 0 or M == 0 then return B^0;
+  if N == 0 or M == 0 then return cacheModule.cache#cacheKey = B^0;
   pushvar(symbol flagInhomogeneity,true);
   p := presentation B;
   A := ring p;
@@ -166,6 +169,7 @@ Ext(Module,Module) := Module => (M,N) -> (
        );
   -- now compute the total Ext as a single homology module
   tot := minimalPresentation homology(DeltaBar,DeltaBar);
+  cacheModule.cache#cacheKey = tot;
   popvar symbol flagInhomogeneity;
   tot)
 

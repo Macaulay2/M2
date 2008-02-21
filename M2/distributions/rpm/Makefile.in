@@ -16,6 +16,12 @@ include ../Makefile.filenames
 #	Release: 2
 #    rpm -e -v --noscripts Macaulay2-0.9.95-2
 
+# command for find what package a file is in:
+#   $ rpm --query -f /usr/lib/libmpfr.so
+#   mpfr-devel-2.3.0-1.fc8
+#   $ rpm --query -f /usr/lib/libmpfr.so.1.1.0 
+#   mpfr-2.3.0-1.fc8
+
 ############################## main targets
 all install :: warning
 all install :: ../../@PKG_RPM@ ../../@PKG_COM_RPM@
@@ -31,28 +37,63 @@ ifeq (@FAKEROOT@,)
 	@echo "============================================================================="
 endif
 SEDOPTS = -e 's=^\.="=' -e 's=$$="='
-../../@PKG_RPM@ : Macaulay2-body.spec ../../$(PKG_TZ) Makefile
+
+.prepared :
 	rm -rf files
 	umask 022 ; @MKDIR_P@ files@FINALPREFIX@
 	umask 022 ; @FAKEROOT@ tar xfp ../../$(PKG_TZ)     @TAR_COMPRESS_OPTION@ -C files@FINALPREFIX@
 	mv files@FINALPREFIX@/@package@/* files@FINALPREFIX@
 	rmdir files@FINALPREFIX@/@package@
 	cd files@FINALPREFIX@ && rm -f INSTALL encapinfo postinstall preremove
-	cat Macaulay2-body.spec >Macaulay2.spec
-	(cd files && find . -type f -o -type l) | sed $(SEDOPTS) >>Macaulay2.spec
-	@FAKEROOT@ rpmbuild -bb Macaulay2.spec
-../../@PKG_COM_RPM@ : Macaulay2-common-body.spec ../../$(PKG_COM_TZ) Makefile
+	find files@FINALPREFIX@/@man1dirtail@ -name \*.1 | xargs gzip
+
+.prepared-common :
 	rm -rf files-common
 	umask 022 ; @MKDIR_P@ files-common@FINALPREFIX@
 	umask 022 ; @FAKEROOT@ tar xfp ../../$(PKG_COM_TZ) @TAR_COMPRESS_OPTION@ -C files-common@FINALPREFIX@
 	mv files-common@FINALPREFIX@/@package@/* files-common@FINALPREFIX@
 	rmdir files-common@FINALPREFIX@/@package@
 	cd files-common@FINALPREFIX@ && rm -f INSTALL encapinfo postinstall preremove
+	find files-common@FINALPREFIX@ -name \*.info | xargs gzip
+	find files-common@FINALPREFIX@/@packagesdirtail@/Macaulay2Doc -name \*.c -o -name \*.h | xargs rm
+
+../../@PKG_RPM@ : Macaulay2-body.spec ../../$(PKG_TZ) Makefile .prepared packages-used
+	sed '/Requires/,$$d' Macaulay2-body.spec >Macaulay2.spec
+	( echo -n "Requires: Macaulay2-common = @PACKAGE_VERSION@" && \
+	  cat packages-used | while read pkg rel ; do echo -n ", $$pkg >= $$rel" ; done && \
+	  echo ) >>Macaulay2.spec
+	sed '1,/Requires/d' Macaulay2-body.spec >>Macaulay2.spec
+	(cd files && find . -type d -a -name Macaulay2 -prune -o -type f) | sed $(SEDOPTS) >>Macaulay2.spec
+	@FAKEROOT@ rpmbuild -bb Macaulay2.spec
+
+../../@PKG_COM_RPM@ : Macaulay2-common-body.spec ../../$(PKG_COM_TZ) Makefile .prepared-common
 	cat Macaulay2-common-body.spec >Macaulay2-common.spec
-	(cd files-common && find . -type f -o -type l) | sed $(SEDOPTS) >>Macaulay2-common.spec
+	(cd files-common && find -type d -a -name Macaulay2 -prune -o -type f) | sed $(SEDOPTS) >>Macaulay2-common.spec
 	@FAKEROOT@ rpmbuild -bb Macaulay2-common.spec
+
+libraries-used : .prepared always
+	ldd files@FINALPREFIX@/@bindirtail@/M2@EXE@ > $@.tmp
+	cat $@.tmp | sed -e 's/.* => //' -e 's/^	//' -e 's/ .*//' | egrep '^/' >$@ || true
+	rm $@.tmp
+
+STRIP_VERSION_CMD := sed 's/-[0-9][0-9.]*[0-9]\(-\|$$\).*//'
+
+packages-used : libraries-used Makefile
+	cat libraries-used \
+	| while read x ; \
+	do rpm --query -f "$$x" | sed 's/\([^.]*\)-\([0-9][0-9.]*[0-9]\)\(-.*$$\|$$\)/\1 \2/' ; \
+	done | sort | uniq | sed -e 's=.*/==' -e 's=\.list$$==' >$@
+
+test-install :
+	sudo rpm -i -v ../../@PKG_COM_RPM@
+	sudo rpm -i -v ../../@PKG_RPM@
+test-remove  :
+	sudo rpm -e -v Macaulay2-@PACKAGE_VERSION@
+	sudo rpm -e -v Macaulay2-common-@PACKAGE_VERSION@
+
+check : ; rpmlint -i ../../@PKG_RPM@ ../../@PKG_COM_RPM@
 tidy : ; rm -rf files files-common Macaulay2.spec Macaulay2-common.spec
-clean :: tidy; rm -f ../../@PKG_RPM@ ../../@PKG_COM_RPM@
+clean :: tidy; rm -f ../../@PKG_RPM@ ../../@PKG_COM_RPM@ libraries-used libraries-used.tmp packages-used
 distclean : clean; rm -f Makefile Macaulay2-body.spec Macaulay2-common-body.spec
 Makefile : Makefile.in; cd ../..; ./config.status distributions/rpm/Makefile
 Macaulay2-body.spec : Macaulay2-body.spec.in; cd ../..; ./config.status distributions/rpm/Macaulay2-body.spec

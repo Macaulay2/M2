@@ -193,12 +193,12 @@ JM = localCoherentEquations(IA)
 load "minPres.m2";
 G = removeRedundantVariables JM
 ideal gens gb(G JM)
-CX = QQ[a..e, z_5,z_10,z_11,z_13, Weights =>
+CX = QQ[a..e, z_1,z_5,z_6,z_11, Weights =>
       {9,3,5,0,0,0,0,0,0}];
 F = map(CX, ring J, matrix{{a,b,c,d,e}} | 
             substitute(G.matrix,CX))
 J1 = F J
-substitute(ideal(z_11^2),CX) + J1
+substitute(ideal(z_5^2),CX) + J1
 A = {{1,1,1,1,1,1,1},{0,6,7,5,8,4,3},{3,7,2,0,7,6,1},
    {6,5,2,6,5,0,0}};
 IA = toricIdeal A

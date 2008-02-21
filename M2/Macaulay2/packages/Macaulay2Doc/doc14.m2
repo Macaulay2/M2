@@ -1,6 +1,6 @@
 --		Copyright 2008 by Daniel R. Grayson
 
-document { Key => size2,
+document { Key => {size2, (size2,CC), (size2,RR), (size2,ZZ)},
      Usage => "size2 x",
      Headline => "number of binary digits to the left of the point",
      Inputs => {"x" => Number},

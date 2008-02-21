@@ -2,17 +2,17 @@
 
 # The book explains that the answer on o32 is an accident with no explanation, and now, due to 
 # changes in the core algorithms, we no longer get the same answer.
-s/\(^o3[012] = \)\(true\|false\)$/\1 $$$/
+# s/\(^o3[012] = \)\(true\|false\)$/\1 $$$/
 
 # When computing syzygies, minor changes to the algorithm give different columns, unless we
 # compute a Groebner basis of the result.  Then when computing second syzygies, we can get different
 # rows as well as columns.  So the precise presentations appearing in homology computations can vary.
 # We ignore all results that print out matrices.
-s/\(}  *| \).* |$/\1$$$ |/
-s/\( =  *| \).* |$/\1$$$ |/
-s/^\(   *| \).* |$/\1$$$ |/
+# s/\(}  *| \).* |$/\1$$$ |/
+# s/\( =  *| \).* |$/\1$$$ |/
+# s/^\(   *| \).* |$/\1$$$ |/
 
-# The source code has changed:
+# The source code has changed and can change again:
 /^Ext(Module,Module)/,/homology(DeltaBar,DeltaBar)))\|tot)$/d
 
 # Local Variables:

@@ -1,4 +1,5 @@
-i1 : randomPlanePoints = (delta,R) -> (
+
+i1 : randomPlanePoints = (delta,R) -> (
           k:=ceiling((-3+sqrt(9.0+8*delta))/2);
           eps:=delta-binomial(k+1,2);
           if k-2*eps>=0 
@@ -6,11 +7,14 @@
                random(R^(k+1-eps),R^{k-2*eps:-1,eps:-2}))
           else minors(eps,
                random(R^{k+1-eps:0,2*eps-k:-1},R^{eps:-2})));
-i2 : distinctPoints = (J) -> (
+
+i2 : distinctPoints = (J) -> (
           singJ:=minors(2,jacobian J)+J;
           codim singJ == 3);
-i3 : randomNodalCurve = method();
-i4 : randomNodalCurve (ZZ,ZZ,Ring) := (d,g,R) -> (
+
+i3 : randomNodalCurve = method();
+
+i4 : randomNodalCurve (ZZ,ZZ,Ring) := (d,g,R) -> (
           delta:=binomial(d-1,2)-g;
           K:=coefficientRing R;
           if (delta==0) 
@@ -21,11 +25,13 @@
                --choose the curve
                Ip2:=saturate Ip^2;
                ideal (gens Ip2 * random(source gens Ip2, R^{-d}))));
-i5 : isNodalCurve = (I) -> (
+
+i5 : isNodalCurve = (I) -> (
           singI:=ideal jacobian I +I;delta:=degree singI;
           d:=degree I;g:=binomial(d-1,2)-delta;
           {distinctPoints(singI),delta,g});
-i6 : randomGenus11Curve = (R) -> (
+
+i6 : randomGenus11Curve = (R) -> (
           correctCodimAndDegree:=false;
           while not correctCodimAndDegree do (
                Mt=coker random(R^{3:8},R^{6:7,2:6});
@@ -34,25 +40,36 @@
                I:=ideal syz (Gt*random(source Gt,R^{6:5}));
                correctCodimAndDegree=(codim I==2 and degree I==12););
           I);
-i7 : isSmoothSpaceCurve = (I) -> (
+
+i7 : isSmoothSpaceCurve = (I) -> (
           --I generates the ideal sheaf of a pure codim 2 scheme in P3
           singI:=I+minors(2,jacobian I);
           codim singI==4);
-i8 : K=ZZ/101;
-i9 : R=K[x_0..x_3];
-i10 : C=randomGenus11Curve(R);
+
+i8 : K=ZZ/101;
+
+i9 : R=K[x_0..x_3];
+
+i10 : C=randomGenus11Curve(R);
 
 o10 : Ideal of R
-i11 : isSmoothSpaceCurve(C)
+
+i11 : isSmoothSpaceCurve(C)
 
 o11 = true
-i12 : Omega=prune Ext^2(coker gens C,R^{-4});
-i13 : betti Omega
 
-o13 = relations : total: 5 10
-                     -1: 2  .
-                      0: 3 10
-i14 : randomGenus12Curve = (R) -> (
+i12 : Omega=prune Ext^2(coker gens C,R^{-4});
+
+i13 : betti Omega
+
+             0  1
+o13 = total: 5 10
+         -1: 2  .
+          0: 3 10
+
+o13 : BettiTally
+
+i14 : randomGenus12Curve = (R) -> (
            correctCodimAndDegree:=false;
            while not correctCodimAndDegree do (
                 M:=coker random(R^{3:-2},R^{7:-3});
@@ -60,7 +77,8 @@ o13 = relations : total: 5 10
                 I:=ideal syz (Gt*random(source Gt,R^{7:5}));
                 correctCodimAndDegree=(codim I==2 and degree I==12););
            I);
-i15 : randomGenus13Curve = (R) -> (
+
+i15 : randomGenus13Curve = (R) -> (
            kappa:=koszul(3,vars R);
            correctCodimAndDegree:=false;
            while not correctCodimAndDegree do (
@@ -75,7 +93,8 @@ o13 = relations : total: 5 10
                 I:=ideal syz(Gt_{1..12}*phi);
                 correctCodimAndDegree=(codim I==2 and degree I==13););
            I);
-i16 : testModulesForGenus14Curves = (N,p) ->(
+
+i16 : testModulesForGenus14Curves = (N,p) ->(
            x := local x;
            R := ZZ/p[x_0..x_3];
            i:=0;j:=0;
@@ -94,12 +113,14 @@ o13 = relations : total: 5 10
                 i=i+1;if test==true then (j=j+1;););
            timeForNModules:=utime#0; numberOfGoodModules:=j;
            {timeForNModules,numberOfGoodModules});
-i17 : testModulesForGenus14Curves(1000,5)
 
-o17 = {41.02, 10}
+i17 : testModulesForGenus14Curves(1000,5)
+
+o17 = {3.72726, 8}
 
 o17 : List
-i18 : randomGenus14Curve = (R) -> (
+
+i18 : randomGenus14Curve = (R) -> (
            kappa:=koszul(3,vars R);
            kappakappa:=kappa++kappa;
            correctCodimAndDegree:=false;
@@ -121,7 +142,8 @@ o17 : List
            <<"     -- "<<t#0<<" seconds used for ";
            <<count<<" modules"<<endl;
            I);
-i19 : testModulesForDeg17CY = (N,k,p) -> (
+
+i19 : testModulesForDeg17CY = (N,k,p) -> (
            x:=symbol x;R:=(ZZ/p)[x_0..x_6];
            numberOfGoodModules:=0;i:=0;
            usedTime:=timing while (i<N) do (
@@ -138,7 +160,8 @@ o17 : List
            collectGarbage();
            timeForNModules:=usedTime#0;
            {timeForNModules,numberOfGoodModules});
-i20 : randomModuleForDeg17CY = (k,R) -> (
+
+i20 : randomModuleForDeg17CY = (k,R) -> (
            isGoodModule:=false;i:=0;
            while not isGoodModule do (
                 b:=random(R^3,R^{16:-1});
@@ -152,7 +175,8 @@ o17 : List
                 i=i+1;);
            <<"     -- Trial n. " << i <<", k="<< rank fb_3 <<endl;
            b);
-i21 : getDeltaForDeg17CY = (b,f1) -> (
+
+i21 : getDeltaForDeg17CY = (b,f1) -> (
            fb:=res(coker b, LengthLimit =>3);
            k:=numgens target fb.dd_3-28; --# of linear syzygies
            b1:=fb.dd_1;b2:=fb.dd_2_{0..27};b2':=fb.dd_2_{28..28+k-1};
@@ -163,7 +187,8 @@ o17 : List
            --the equation for A=(f3||Delta) is -f2*b3 = (b2|b2') * A
            A:=(-f2*b3)//(b2l|b2');
            Delta:=A^{28..28+k-1});
-i22 : codimInfDefModuleForDeg17CY = (b) -> (
+
+i22 : codimInfDefModuleForDeg17CY = (b) -> (
            --we create a parameter ring for the matrices f1's
            R:=ring b;K:=coefficientRing R;
            u:=symbol u;U:=K[u_0..u_(3*16*7-1)];
@@ -183,23 +208,26 @@ o17 : List
                      j=j+1;);
                 i=i+1;);
            codim ideal equations);
-i23 : skewSymMorphismsForDeg17CY = (b) -> (
+
+i23 : skewSymMorphismsForDeg17CY = (b) -> (
            --we create a parameter ring for the morphisms: 
            K:=coefficientRing ring b;
            u:=symbol u;U:=K[u_0..u_(binomial(16,2)-1)];
            --now we compute the equations for the u_i's:
-           UU:=U**ring b;
+           UU:=tensor(U,ring b,DegreeRank => 1);     
            equationsInUU:=flatten (substitute(b,UU)*
                 substitute(genericSkewMatrix(U,u_0,16),UU));
            uu:=substitute(vars U,UU);
            equations:=substitute(
                 diff(uu,transpose equationsInUU),ring b);
            syz(equations,DegreeLimit =>0));
-i24 : getMorphismForDeg17CY = (SkewSymMorphism) -> (
+
+i24 : getMorphismForDeg17CY = (SkewSymMorphism) -> (
            u:=symbol u;U:=K[u_0..u_(binomial(16,2)-1)];
            f=map(ring SkewSymMorphism,U,transpose SkewSymMorphism);
            f genericSkewMatrix(U,u_0,16));
-i25 : checkBasePtsForDeg17CY = b -> (
+
+i25 : checkBasePtsForDeg17CY = b -> (
            --firstly the number of linear syzygies
            fb:=res(coker b, DegreeLimit=>0, LengthLimit =>4);
            k:=#select(degrees source fb.dd_3,i->i=={3});
@@ -210,7 +238,8 @@ o17 : List
            basePts=ideal mingens minors(5,mult);
            codim basePts==2 and degree basePts==k and distinctPoints(
                 basePts));
-i26 : checkMorphismsForDeg17CY = (b,skewSymMorphisms) -> (
+
+i26 : checkMorphismsForDeg17CY = (b,skewSymMorphisms) -> (
            --first the number of linear syzygies
            fb:=res(coker b, DegreeLimit=>0, LengthLimit =>4);
            k:=#select(degrees source fb.dd_3,i->i=={3});
@@ -219,7 +248,8 @@ o17 : List
            --we parametrize the morphisms:
            R:=ring b;K:=coefficientRing R;
            w:=symbol w;W:=K[w_0..w_(k-1)];
-           WW:=R**W;ww:=substitute(vars W,WW);
+           WW:=tensor(R,W,DegreeRank=>1);
+           ww:=substitute(vars W,WW);
            genericMorphism:=getMorphismForDeg17CY(
                 substitute(skewSymMorphisms,WW)*transpose ww);
            --we compute the scheme of the 3x3 morphisms:
@@ -247,9 +277,11 @@ o17 : List
                 f=map(R,WW,vars R|substitute(evRandomMorphism,R));
                 randomMorphism:=f(genericMorphism);
                 {isOK,randomMorphism}) else {isOK});
-i27 : isGorenstein = (I) -> (
+
+i27 : isGorenstein = (I) -> (
            codim I==length res I and rank (res I)_(length res I)==1);
-i28 : randomModule2ForDeg17CY = (k,R) -> (
+
+i28 : randomModule2ForDeg17CY = (k,R) -> (
            isGoodModule:=false;i:=0;
            while not isGoodModule do (
                 b:=(random(R^1,R^{3:-1})++
@@ -268,63 +300,92 @@ o17 : List
                 i=i+1;);
            <<"     -- Trial n. " << i <<", k="<< rank fb_3 <<endl;
            b);
-i29 : K=ZZ/13;
-i30 : R=K[x_0..x_6];
-i31 : time b=randomModule2ForDeg17CY(8,R);
-     -- Trial n. 1757, k=8
-     -- used 764.06 seconds
+
+i29 : K=ZZ/13;
+
+i30 : R=K[x_0..x_6];
+
+i31 : time b=randomModule2ForDeg17CY(8,R);
+     -- Trial n. 188, k=8
+     -- used 8.32967 seconds
 
               3       16
 o31 : Matrix R  <--- R
-i32 : betti res coker b
 
+i32 : betti res coker b
+
+             0  1  2  3   4  5  6 7
 o32 = total: 3 16 36 78 112 84 32 5
           0: 3 16 28  8   .  .  . .
           1: .  .  8 70 112 84 32 5
-i33 : betti (skewSymMorphisms=skewSymMorphismsForDeg17CY b)
 
+o32 : BettiTally
+
+i33 : betti (skewSymMorphisms=skewSymMorphismsForDeg17CY b)
+
+               0 1
 o33 = total: 120 8
          -1: 120 8
-i34 : checkBasePtsForDeg17CY b
+
+o33 : BettiTally
+
+i34 : checkBasePtsForDeg17CY b
 
 o34 = true
-i35 : finalTest=checkMorphismsForDeg17CY(b,skewSymMorphisms);
-i36 : finalTest#0
+
+i35 : finalTest=checkMorphismsForDeg17CY(b,skewSymMorphisms);
+
+i36 : finalTest#0
 
 o36 = true
-i37 : n=finalTest#1;
+
+i37 : n=finalTest#1;
 
               16       16
 o37 : Matrix R   <--- R
-i38 : betti (nn=syz n)
 
+i38 : betti (nn=syz n)
+
+              0 1
 o38 = total: 16 4
           1: 16 3
           2:  . .
           3:  . 1
-i39 : n2t=transpose submatrix(nn,{0..15},{3});
+
+o38 : BettiTally
+
+i39 : n2t=transpose submatrix(nn,{0..15},{3});
 
               1       16
 o39 : Matrix R  <--- R
-i40 : b2:=syz b;
+
+i40 : b2:=syz b;
 
               16       36
 o40 : Matrix R   <--- R
-i41 : j:=ideal mingens ideal flatten(n2t*b2);
+
+i41 : j:=ideal mingens ideal flatten(n2t*b2);
 
 o41 : Ideal of R
-i42 : degree j
+
+i42 : degree j
 
 o42 = 17
-i43 : codim j
+
+i43 : codim j
 
 o43 = 3
-i44 : betti res j
 
+i44 : betti res j
+
+             0  1  2   3  4  5 6
 o44 = total: 1 20 75 113 84 32 5
           0: 1  .  .   .  .  . .
           1: .  .  .   .  .  . .
           2: .  .  .   .  .  . .
           3: . 12  5   .  .  . .
           4: .  8 70 113 84 32 5
-i45 : 
+
+o44 : BettiTally
+
+i45 : 

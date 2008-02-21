@@ -82,6 +82,7 @@ resolutionInEngine := opts -> (M) -> (
 	       if debugLevel > 0 then stderr << "--res: matrix is homogeneous, good" << endl;
 	       );
 	  g := presentation M;
+	  if not instance(opts.Strategy, ZZ) then error "resolution in engine: expected Strategy option to be an integer";
 	  if opts.Strategy === 0 then
 	      g = generators gb g;  -- this is needed since the (current)
 			      -- default algorithm, 0, needs a GB 

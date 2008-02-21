@@ -1,5 +1,6 @@
 newPackage( "Style",
-     AuxiliaryFiles => true
+     AuxiliaryFiles => true,
+     Version => "1.0"
      )
 
 document { Key => "Style",

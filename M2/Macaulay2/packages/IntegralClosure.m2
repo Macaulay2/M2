@@ -130,8 +130,6 @@ idealizer0 = (C,w) -> (
      I := C#"pending"#0;
      J := C#"pending"#1;
      Jc := ideal compress (generators J % generators I);
- --    << "--checking Jc " << Jc << endl;
- --    error "debug me";
      -- Find an element of J, a nzd in S/I.  Need to make sure we donot 
      -- choose an element in I, so first we reduce J mod I.
      J1 := I:Jc_0;
@@ -221,10 +219,7 @@ idealizer0 = (C,w) -> (
 	       C#"blocks" = {numgens R2};
 	       C#"vars" = toSequence R2.gens;
 	       -- See the note in "normal0" about the if char R = 0 statement.
---	       << "--new J " << newJ << endl;
 	       newJ = radical0 newJ;
---	       << "--new I " << newI << endl;
---	       << "--after radical0 new J " << newJ << endl;
 	       C#"todo" = append(C#"todo", {newI,newJ});
 	       C#"pending" = null;
 	       C#"rings" = R2;
@@ -341,36 +336,25 @@ ICfractions(Ring) := Matrix => o-> R -> (
 	  M2 := apply(R#IIICCC#"fraclong", i->matrix{{i}});
 	  M2' := apply(M2, i->substitute(i,KF));
 	  M3 := flatten apply(M2', j-> first entries j);
+	  numnew := # generators K - # (options R).Variables;
 	  if o.Strategy === null then (
 	       L1 := apply(R#IIICCC#"fractions", i->matrix{{i}});
 	       L2 := matrix{flatten apply(apply(L1, i->substitute(i,KF)), j-> first entries j)};
-	       done := false;
-	       while (
-		    G := map(KF,KF,matrix{join(M3,M1)});
-	       	    L2 = G(L2);
-	       	    not isSubset(ideal apply(first entries L2,i->numerator i), ideal take(generators K , {#(generators K)-#((options R).Variables),#(generators K)}))
-	       	    )	  
-	       do ();
-	       K2 := frac R;
-	       substitute(L2,K2)
-	       )
-	       else (
-		    G2 := matrix{join(M3,M1)};
-     	  	    Map := map(KF,KF,G2);
-     	  	    done = false;
-	  	    while (
-	       		 G2 = Map(G2);
-	       		 not isSubset(ideal apply(first entries G2,i->numerator i), ideal take(generators K , {#(generators K)-#((options R).Variables),#(generators K)}))
-	       		 )
-		    do ();
-	  	    K2 = frac R;
-	  	    substitute(G2,K2)
-		    )
-	       )
-     else (
-	  I := ideal(R);
-	  vars R)
-	  )
+	       G := map(KF,KF,matrix{join(M3,M1)});
+	       while not all(flatten entries L2, 
+		    f -> all({numerator f, denominator f}, 
+			 r -> all(support r, x -> index x >= numnew)))
+	       do L2 = G L2;
+	       substitute(L2,frac R))
+	  else (
+	       G2 := matrix{join(M3,M1)};
+	       Map := map(KF,KF,G2);
+	       while not all(flatten entries G2, 
+		    f -> all({numerator f, denominator f}, 
+			 r -> all(support r, x -> index x >= numnew)))
+	       do G2 = Map G2;
+	       substitute(G2,frac R)))
+     else vars R)
      
 -- Needed because we have problems with multigraded over char 0  in 
 -- using the pushForward function and 
@@ -639,58 +623,70 @@ document {
      }
 
 -- integrally closed test
-TEST " 
+TEST ///
 R = QQ[u,v]/ideal(u+2)
 time J = integralClosure (R,Variable => symbol a) 
 use ring ideal J
-assert(ideal J == ideal(u+2))"
+assert(ideal J == ideal(u+2))
+///
 
 -- degrees greater than 1 test
 TEST ///
 R = ZZ/101[symbol x..symbol z,Degrees=>{2,5,6}]/(z*y^2-x^5*z-x^8)
 time J = integralClosure (R,Variable => symbol b) 
 use ring ideal J
-assert(ideal J == ideal(b_1*x^2-y*z, x^6-b_1*y+x^3*z, -b_1^2+x^4*z+x*z^2))
-assert(ICfractions R == substitute(matrix {{y*z/x^2, x, y, z}},frac R))
+-- the engine has changed
+oldIdeal = ideal(b_1*x^2-y*z, x^6-b_1*y+x^3*z, -b_1^2+x^4*z+x*z^2)
+-- assert(ideal J == oldIdeal)
+newIdeal = substitute(oldIdeal, b_1 => b_1/42 )
+assert(ideal J == newIdeal)
+-- assert(ICfractions R == substitute(matrix {{y*z/x^2, x, y, z}},frac R))
+assert(ICfractions R == substitute(matrix {{42 * y*z/x^2, x, y, z}},frac R))
 ///
 
 -- multigraded test
-TEST
-"R = ZZ/101[symbol x..symbol z,Degrees=>{{1,2},{1,5},{1,6}}]/(z*y^2-x^5*z-x^8)
+TEST ///
+R = ZZ/101[symbol x..symbol z,Degrees=>{{1,2},{1,5},{1,6}}]/(z*y^2-x^5*z-x^8)
 time J = integralClosure (R,Variable=>symbol a) 
 use ring ideal J
-assert(ideal J 
-     == ideal(x^6+a_7*y+x^3*z-11*x*y^2,a_7*x^2-11*x^3*y+y*z,a_7^2-22*a_7*x*y-x^4*z+20*x^2*y^2-x*z^2))"
+assert(ideal J == ideal(x^6+a_7*y+x^3*z-11*x*y^2,a_7*x^2-11*x^3*y+y*z,a_7^2-22*a_7*x*y-x^4*z+20*x^2*y^2-x*z^2))
+///
 
 -- Reduced not a domain test
-TEST"S=ZZ/101[symbol a,symbol b,symbol c, symbol d]
+TEST ///
+S=ZZ/101[symbol a,symbol b,symbol c, symbol d]
 I=ideal(a*(b-c),c*(b-d),b*(c-d))
 R=S/I                              
 time V = integralClosure R
-assert(#V == 3)"
+assert(#V == 3)
+///
 --is it possible to do a second assert to test the pieces?  
 
 --Craig's example as a test
-TEST "S=ZZ/101[symbol x,symbol y,symbol z,MonomialOrder => Lex]
+TEST ///
+S=ZZ/101[symbol x,symbol y,symbol z,MonomialOrder => Lex]
 I=ideal(x^6-z^6-y^2*z^4)
 Q=S/I
 time J = integralClosure (Q, Variable => symbol a)
 use ring ideal J
 assert(ideal J == ideal (x^2-a_6*z, a_6*x-a_7*z, a_6^2-a_7*x, a_7^2-y^2-z^2))
 use Q
-assert(conductor(ICmap Q) == ideal(z^3,x*z^2,x^3*z,x^4))"
-
+assert(conductor(ICmap Q) == ideal(z^3,x*z^2,x^3*z,x^4))
+///
 
 --Mike's inhomogenous test
-TEST "R = QQ[symbol a..symbol d]
+TEST ///
+R = QQ[symbol a..symbol d]
 I = ideal(a^5*b*c-d^2)
 Q = R/I
 L = time integralClosure(Q,Variable => symbol x)
 use ring ideal L
-assert(ideal L == ideal(x_1^2-a*b*c))"
+assert(ideal L == ideal(x_1^2-a*b*c))
+///
 
 --Ex from Wolmer's book - tests longer example and published result.
-TEST "R = QQ[symbol a..symbol e]
+TEST ///
+R = QQ[symbol a..symbol e]
 I = ideal(a^2*b*c^2+b^2*c*d^2+a^2*d^2*e+a*b^2*e^2+c^2*d*e^2,a*b^3*c+b*c^3*d+a^3*b*e+c*d^3*e+a*d*e^3,a^5+b^5+c^5+d^5-5*a*b*c*d*e+e^5,a^3*b^2*c*d-b*c^2*d^4+a*b^2*c^3*e-b^5*d*e-d^6*e+3*a*b*c*d^2*e^2-a^2*b*e^4-d*e^6,a*b*c^5-b^4*c^2*d-2*a^2*b^2*c*d*e+a*c^3*d^2*e-a^4*d*e^2+b*c*d^2*e^3+a*b*e^5,a*b^2*c^4-b^5*c*d-a^2*b^3*d*e+2*a*b*c^2*d^2*e+a*d^4*e^2-a^2*b*c*e^3-c*d*e^5,b^6*c+b*c^6+a^2*b^4*e-3*a*b^2*c^2*d*e+c^4*d^2*e-a^3*c*d*e^2-a*b*d^3*e^2+b*c*e^5,a^4*b^2*c-a*b*c^2*d^3-a*b^5*e-b^3*c^2*d*e-a*d^5*e+2*a^2*b*c*d*e^2+c*d^2*e^4)
 S = R/I
 time V = integralClosure (S, Variable => X)
@@ -715,24 +711,30 @@ assert(
 	   X_0^2+b*c^3*d^6+2*b^5*c*d^3*e+c*d^8*e-b^4*c^4*e^2+a^3*c^3*d^2*e^2+
 	     2*a^2*b^3*d^3*e^2-5*a*b*c^2*d^4*e^2+4*b^3*c^2*d^2*e^3-3*a*d^6*e^3+
 	     5*a^2*b*c*d^2*e^4-b^2*d^4*e^4-2*b*c^3*d*e^5-a^3*b*e^6+3*c*d^3*e^6-a*d*e^8)
-	)"
+	)
+///
 
 -- Test of ICfractions
-TEST "S = QQ [(symbol Y)_1, (symbol Y)_2, (symbol Y)_3, (symbol Y)_4, symbol x, symbol y, Degrees => {{7, 1}, {5, 1}, {6, 1}, {6, 1}, {1, 0}, {1, 0}}, MonomialOrder => ProductOrder {4, 2}]
+TEST ///
+S = QQ [(symbol Y)_1, (symbol Y)_2, (symbol Y)_3, (symbol Y)_4, symbol x, symbol y, Degrees => {{7, 1}, {5, 1}, {6, 1}, {6, 1}, {1, 0}, {1, 0}}, MonomialOrder => ProductOrder {4, 2}]
 J = ideal(Y_3*y-Y_2*x^2,Y_3*x-Y_4*y,Y_1*x^3-Y_2*y^5,Y_3^2-Y_2*Y_4*x,Y_1*Y_4-Y_2^2*y^3)
 T = S/J       
-assert(ICfractions T == substitute(matrix {{(Y_2*y^2)/x, (Y_1*x)/y, Y_1, Y_2, Y_3, Y_4, x, y}},
-     frac T))"
+assert(ICfractions T == substitute(matrix {{(Y_2*y^2)/x, (Y_1*x)/y, Y_1, Y_2, Y_3, Y_4, x, y}}, frac T))
+///
 
 -- Test of isNormal
-TEST "S = ZZ/101[x,y,z]/ideal(x^2-y, x*y-z^2)
+TEST ///
+S = ZZ/101[x,y,z]/ideal(x^2-y, x*y-z^2)
 assert(isNormal(S) == false)
-assert(isNormal(integralClosure(S)) == true)"
+assert(isNormal(integralClosure(S)) == true)
+///
 
 -- Test of ICmap and conductor
-TEST "R = QQ[x,y,z]/ideal(x^6-z^6-y^2*z^4)
+TEST ///
+R = QQ[x,y,z]/ideal(x^6-z^6-y^2*z^4)
 F = ICmap R
-assert(conductor F == ideal((R_2)^3, (R_0)*(R_2)^2, (R_0)^3*(R_2), (R_0)^4))"
+assert(conductor F == ideal((R_2)^3, (R_0)*(R_2)^2, (R_0)^3*(R_2), (R_0)^4))
+///
 
 end
 installPackage "IntegralClosure"

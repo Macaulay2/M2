@@ -1,0 +1,5 @@
+every time a package is installed or uninstalled in .Macaulay2/local we should
+run install-info in ~/.Macaulay2/local/share/info/
+
+setup() should ensure that INFOPATH contains /home/dan/.Macaulay2/local/share/info at the front
+

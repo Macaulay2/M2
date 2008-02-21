@@ -1,0 +1,5 @@
+copyFile will fail if the target exists and is not writable.
+The GNU "cp" command has options to deal with this.
+
+This is an issue for installPackage, if it installs from a readonly directory
+the first time, and then tries to re-install.

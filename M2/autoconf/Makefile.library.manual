@@ -9,7 +9,7 @@ TARFILE ?= $(LIBNAME)-$(VERSION).tar.gz
 LIBRARIESDIR = $(PREFIX)
 FINALLIBRARIESDIR = $(PREFIX)
 
-export CC CXX CPPFLAGS CFLAGS CXXFLAGS LDFLAGS LOADLIBES FFLAGS
+export CC CXX CPPFLAGS CFLAGS CXXFLAGS LDFLAGS LOADLIBES FCFLAGS
 
 all install :: .installed
 unconfigure : ; rm -f .configured .compiled .installed

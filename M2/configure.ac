@@ -1,5 +1,5 @@
 AC_INIT(Macaulay 2, 1.1.1, Macaulay2@math.uiuc.edu, Macaulay2) dnl -*- autoconf -*-
-AC_SUBST(CYGWIN_RELEASE,2)
+AC_SUBST(DISTRIBUTION,1) dnl use this starting number to sequentially number the downstream distributions
 AC_CONFIG_HEADERS(include/config.h)
 AC_CONFIG_FILES(m4_include(config/files))
 AC_SUBST(CONFIGURED_FILES,"$ac_config_files")
@@ -21,7 +21,7 @@ AC_DEFUN(IS_DECLARED,[
 ])
 
 echo "relevant environment variable values, if any:"
-for x in CC FC CXX CPPFLAGS CFLAGS FCFLAGS CXXFLAGS LDFLAGS LIBS SINGULARLIBS
+for x in CC FC CXX CPPFLAGS CFLAGS FCFLAGS CXXFLAGS LDFLAGS LIBS SINGULARLIBS ISSUE
 do eval v=\$$x
    test "$v" && echo "   $x=$v"
 done
@@ -58,7 +58,7 @@ AC_CHECK_PROGS(MAKE,gmake make)
 AC_CHECK_PROGS(WGET,wget)
 AC_CHECK_PROGS(CURL,curl)
 AC_CHECK_PROGS(OBJDUMP,objdump)
-AC_CHECK_PROGS(ETAGS,etags)
+AC_CHECK_PROGS(ETAGS,etags :)
 AC_CHECK_PROGS(LINTIAN,lintian)
 AC_CHECK_PROGS(LDD,ldd)
 AC_CHECK_PROGS(FAKEROOT,fakeroot)
@@ -84,39 +84,51 @@ fi
 AC_SUBST(NODENAME,"`uname -n`")
 AC_DEFINE_UNQUOTED(NODENAME,"$NODENAME",hostname used for compilation)
 
-if test -f /etc/issue
-then ISSUE_FLAVOR=[`</etc/issue head -1 | sed 's/ .*//'`]
-     ISSUE_RELEASE=[`</etc/issue head -1 | sed 's/.* \([0-9][0-9.]*\).*/\1/'`]
+AC_SUBST(ISSUE) dnl no initial value
+AC_ARG_WITH(issue, AS_HELP_STRING([--with-issue=...,specify the OS issue (e.g., Ubuntu-7.10)]),ISSUE=$withval)
+if test -f /etc/issue -a ! "$ISSUE"
+then ISSUE_FLAVOR=[`</etc/issue head -1 | sed 's/^\([A-Za-z ]*\).*/\1/' | sed 's/ //g' `]
+     ISSUE_RELEASE=[`</etc/issue head -1 | sed 's/[^0-9]*\([0-9.]*\).*/\1/'`]
      case $ISSUE_FLAVOR in
-	 Fedora)
-	     if grep 'Fedora Core' /etc/issue >/dev/null
-	     then ISSUE_FLAVOR=FedoraCore
-	     fi ;;
+	 "FedoraCore"*) ISSUE_FLAVOR=FedoraCore ;;
+	 "Fedora"*) ISSUE_FLAVOR=Fedora ;;
+	 "RedHatEnterprise"*) ISSUE_FLAVOR=RedHatEnterprise ;;
+	 "RedHat"*) ISSUE_FLAVOR=RedHat ;;
+	 "Debian"*) ISSUE_FLAVOR=Debian ;;  dnl Debian GNU/Linux 4.0 \n \l
+	 "") ISSUE_FLAVOR=unknown ;;
      esac
-     case "$ISSUE_FLAVOR" in
-       *" "*) AC_MSG_ERROR([internal error: ISSUE_FLAVOR contains spaces: $ISSUE_FLAVOR]) ;;
+     case $ISSUE_RELEASE in
+	 "") ISSUE_RELEASE=unknown ;;
      esac
-     case "$ISSUE_RELEASE" in
-       *" "*) AC_MSG_ERROR([internal error: ISSUE_RELEASE contains spaces: $ISSUE_RELEASE]) ;;
-     esac
-     AC_SUBST(ISSUE_FLAVOR)
-     AC_SUBST(ISSUE_RELEASE)
-     AC_SUBST(ISSUE,$ISSUE_FLAVOR-$ISSUE_RELEASE)
-     AC_MSG_NOTICE([issue found: $ISSUE])
+     ISSUE=$ISSUE_FLAVOR-$ISSUE_RELEASE
 fi
+AC_MSG_NOTICE([issue to be used in distribution file names: $ISSUE])
 
 AC_SUBST(OS,"`  uname -s | sed s=/=-=g  `")
 AC_SUBST(REL,"`  uname -r | sed -e s=/=-=g -e 's= =+=' -e 's=[()]==g'  `")
-
-case $OS in
-  Darwin) LIBS="$LIBS -lgcc_s.10.5" ;; # what kind of crock is this??
-esac
 
 case $OS-$REL in
   Darwin-7.*) REL=10.3 ; OS=MacOS ;;
   Darwin-8.*) REL=10.4 ; OS=MacOS ;;
   Darwin-9.*) REL=10.5 ; OS=MacOS ;;
   Darwin-*) echo "Darwin release number translation needed in configure.ac" >&2 ; exit 1
+esac
+
+case $OS in
+  dnl Here we normalize the name of the OS for windows for startup.m2, which
+  dnl needs to know that C:/FOO/BAR is an absolute path.
+  CYGWIN*) OS=MicrosoftWindows ; ISSUE=Cygwin ;;
+esac
+
+case $OS in
+  MacOS) 
+	AC_MSG_NOTICE([[*** This is MacOS, but we are not adding -lgcc_s.10.5 to LIBS for you, 
+because there might be a better way.  See the discussion in emacs info about -static-libgcc
+and -shared-libgcc, try both of those in LDFLAGS, and also try -lgcc and -lgcc_eh in LIBS.
+If all else fails, add "LIBS=-lgcc_s.10.5" to the configure command line.  Check whether the 
+binary ends up requiring a sharable library with a similar name. ***]])
+	dnl # LIBS="$LIBS -lgcc_s.10.5" # what kind of crock is this??
+	;;
 esac
 
 AC_DEFINE_UNQUOTED(OS,"$OS",[operating system name, obtained with uname -s, perhaps modified])
@@ -128,7 +140,7 @@ AC_CANONICAL_HOST()
 AC_SUBST(ARCH,$build_cpu)
 AC_DEFINE_UNQUOTED(ARCH,"$ARCH",[machine hardware type])
 
-AC_SUBST(DEBARCH,"")
+AC_SUBST(DEBARCH,)
 case $ARCH in
   x86_64) DEBARCH=amd64 ;;
   *) DEBARCH=$ARCH ;;
@@ -146,30 +158,13 @@ AC_PROG_RANLIB()
 AC_PROG_INSTALL()
 AC_PROG_AWK()
 AC_PROG_CC()
-AC_SUBST(GCC)
-
-AC_PROG_FC()
-AC_SUBST(FLIBS_DYNAMIC,"")
-AC_SUBST(FLIBS_STATIC,"")
-AC_SUBST(FLIBS_FLAGS,"")
-if test "$FC"
-then AC_F77_DUMMY_MAIN()
-     AC_F77_WRAPPERS()
-     AC_F77_LIBRARY_LDFLAGS()
-     for i in $FLIBS
-     do case $i in
-	     -L*) FLIBS_FLAGS="$FLIBS_FLAGS $i" ;;
-	     -lgcc_s|-lm) FLIBS_DYNAMIC="$FLIBS_DYNAMIC $i" ;;
-	     *) FLIBS_STATIC="$FLIBS_STATIC $i" ;;
-	esac
-     done
-fi
+AC_SUBST(GCC) dnl gets set to yes or no somehow
 
 AC_PROG_CXX()
 AC_PROG_YACC()
 AC_PROG_MKDIR_P()
 
-AC_MSG_CHECKING([whether linking C++ programs with gcc works])
+AC_MSG_CHECKING([whether linking C++ programs with C compiler $CC works])
 cat >unwindtest-main.cpp <<EOF
 #include "unwindtest-monomials.hpp"
 int main(int argc, char **argv) { Monomials *M = new Monomials(); return 1; }
@@ -182,9 +177,10 @@ cat >unwindtest-monomials.cpp <<EOF
 Monomials::Monomials() {}
 EOF
 if   (  set -x
-	$CXX $CPPFLAGS $CXXFLAGS -O3 -c -o unwindtest-main.o unwindtest-main.cpp &&
-	$CXX $CPPFLAGS $CXXFLAGS -O3 -c -o unwindtest-monomials.o unwindtest-monomials.cpp &&
-	$CC $LDFLAGS unwindtest-main.o unwindtest-monomials.o $LIBS -lstdc++ -o unwindtest-main
+	$CXX $CPPFLAGS $CXXFLAGS -O3 -c -o unwindtest-main.$OBJEXT unwindtest-main.cpp &&
+	$CXX $CPPFLAGS $CXXFLAGS -O3 -c -o unwindtest-monomials.$OBJEXT unwindtest-monomials.cpp &&
+	$CC $LDFLAGS unwindtest-main.$OBJEXT unwindtest-monomials.$OBJEXT $LIBS -lstdc++ -o unwindtest-main &&
+	test -f unwindtest-main$EXEEXT
      ) >&AS_MESSAGE_LOG_FD 2>&1
 then AC_MSG_RESULT(yes); rm -f unwindtest-*
 else AC_MSG_RESULT(no);  AC_MSG_ERROR([failure: linking C++ program with $CC, see file config.log])
@@ -223,17 +219,22 @@ EOF
     static struct s4 { s4() { fputs("a4",stdout); } } x;
     void a4(){}
 EOF
-    AC_SUBST(CONSTRUCTOR_ORDER)
-    AC_SUBST(CONSTRUCTOR_ORDER_OBJ)
-    AC_SUBST(CONSTRUCTOR_ORDER_LIB)
+    AC_SUBST(CONSTRUCTOR_ORDER,)
+    AC_SUBST(CONSTRUCTOR_ORDER_OBJ,)
+    AC_SUBST(CONSTRUCTOR_ORDER_LIB,)
     if (set -xe
-	$CXX -c conf_test1.cc -o conf_testo1.o
-	$CXX -c conf_test2.cc -o conf_testa2.o
-	ar ru libconf_testa2.a conf_testa2.o
-	$CXX -c conf_test3.cc -o conf_testo3.o
-	$CXX -c conf_test4.cc -o conf_testa4.o
-	ar ru libconf_testa4.a conf_testa4.o
-	$CXX conf_main.cc -L. conf_testo1.o -lconf_testa2 conf_testo3.o -lconf_testa4 -o conf_main
+	$CXX -c conf_test1.cc
+	$CXX -c conf_test2.cc
+	$CXX -c conf_test3.cc
+	$CXX -c conf_test4.cc
+	if test $CXX = cl
+	then lib conf_test2.$OBJEXT
+	     lib conf_test4.$OBJEXT
+	     $CXX conf_main.cc conf_test1.$OBJEXT conf_test2.lib conf_test3.$OBJEXT conf_test4.lib -o conf_main
+	else ar ru libconf_test2.a conf_test2.$OBJEXT
+	     ar ru libconf_test4.a conf_test4.$OBJEXT
+	     $CXX conf_main.cc -L. conf_test1.$OBJEXT -lconf_test2 conf_test3.$OBJEXT -lconf_test4 -o conf_main
+	fi
 	./conf_main
 	) 2>&AS_MESSAGE_LOG_FD 1>&AS_MESSAGE_LOG_FD
     then CONSTRUCTOR_ORDER=`./conf_main`
@@ -245,7 +246,7 @@ EOF
 	     *a2*a4*) CONSTRUCTOR_ORDER_LIB=LR ;;
 	     *a4*a2*) CONSTRUCTOR_ORDER_LIB=RL ;;
 	 esac
-	 rm -f libconf_test*.a conf_test*.cc conf_test*.o conf_main*.cc conf_main
+	 rm -f libconf_test*.a conf_test*.cc conf_test*.$OBJEXT conf_main*.cc conf_main
 	 AC_MSG_RESULT([link order o1a2o3a4, construction order $CONSTRUCTOR_ORDER, obj order $CONSTRUCTOR_ORDER_OBJ, lib order $CONSTRUCTOR_ORDER_LIB])
     else AC_MSG_ERROR([test failed, see config.log])
     fi
@@ -266,7 +267,7 @@ AC_LANG(C++)
 AC_CHECK_HEADERS(NTL/tools.h)
 AC_LANG(C)
 
-AC_SUBST(HAVE_PERSONALITY,"")
+AC_SUBST(HAVE_PERSONALITY,)
 AC_CHECK_FUNC(personality, HAVE_PERSONALITY=1, HAVE_PERSONALITY=0)
 
 AC_SUBST(PTHREADS,no)  AC_ARG_ENABLE(pthreads, AS_HELP_STRING(--enable-pthreads,enable pthreads in gc), PTHREADS=$enableval)
@@ -283,6 +284,26 @@ AC_ARG_ENABLE(altivec, AS_HELP_STRING(--enable-altivec,compile with "-faltivec" 
     CFLAGS="CFLAGS -faltivec"
     CXXFLAGS="$CXXFLAGS -faltivec"
 )
+
+
+AC_PROG_FC()
+AC_SUBST(FCLIBS_DYNAMIC,)
+AC_SUBST(FCLIBS_STATIC,)
+AC_SUBST(FCLIBS_FLAGS,)
+if test "$FC"
+then AC_FC_DUMMY_MAIN()
+     AC_FC_WRAPPERS()
+     AC_FC_LIBRARY_LDFLAGS()
+     for i in $FCLIBS
+     do case $i in
+	     -L*) FCLIBS_FLAGS="$FCLIBS_FLAGS $i" ;;
+	     -lgcc_s) FCLIBS_DYNAMIC="$FCLIBS_DYNAMIC $i" ;; dnl # see discussion in emacs info about -static-libgcc and -shared-libgcc
+	     -lm) FCLIBS_DYNAMIC="$FCLIBS_DYNAMIC $i" ;;
+	     *) FCLIBS_STATIC="$FCLIBS_STATIC $i" ;;
+	esac
+     done
+fi
+
 
 if test "$PTHREADS" = yes
 then AC_SEARCH_LIBS(pthread_mutex_trylock,pthread)
@@ -335,6 +356,7 @@ AC_SUBST(PACKAGES,"
   Benchmark
   Schubert2
   Browse
+  InvolutiveBases
 ")
 
 # convert the newlines in the list above to spaces
@@ -371,10 +393,10 @@ if test "$DEVELOPMENT" = yes
 then AC_DEFINE_UNQUOTED(DEVELOPMENT,1,whether to build a development version)
 fi
 
-AC_SUBST(DEVELOPER,"")
+AC_SUBST(DEVELOPER,)
 AC_ARG_WITH(developer, AS_HELP_STRING(--with-developer=...,specify the name of the developer ($USER)),DEVELOPER=$withval)
 
-AC_SUBST(DUMPDATA,"")
+AC_SUBST(DUMPDATA,)
 AC_ARG_ENABLE(dumpdata, AS_HELP_STRING(--disable-dumpdata,do not cache data with dumpdata), DUMPDATA=$enableval)
 if ! test "$DUMPDATA"
 then case $OS in
@@ -389,14 +411,14 @@ else case $DUMPDATA in
 fi
 test "$DUMPDATA" = no;   val=$?; AC_DEFINE_UNQUOTED(DUMPDATA,  $val,whether to use dumpdata)
 
-AC_SUBST(TAR_COMPRESS_OPTION,"")
+AC_SUBST(TAR_COMPRESS_OPTION,)
 case $COMPRESS in
    gz) TAR_COMPRESS_OPTION=--gzip ;;
   bz2) TAR_COMPRESS_OPTION=--bzip ;;
     *) AC_MSG_ERROR(unrecognized option for enable-compress) ;;
 esac
 
-AC_SUBST(SRCTARFILE,"")
+AC_SUBST(SRCTARFILE,)
 AC_ARG_WITH(srctarfile, AS_HELP_STRING(--with-srctarfile=...,source tar file to use for inclusion with distributions (cygwin)),
     dirname=`dirname  "$withval"`
     SRCTARFILE=`cd "$dirname" && pwd`/`basename "$withval"`)
@@ -422,7 +444,7 @@ AC_SUBST(DMG,no)
 AC_ARG_ENABLE(dmg,  AS_HELP_STRING(--enable-dmg,prepare a *.dmg package (for Mac OS) (enables encap)), DMG=$enableval)
 test "$DMG" = yes && ENCAP=yes M2TARFILE=yes
 
-AC_SUBST(M2SUFFIX,"")
+AC_SUBST(M2SUFFIX,)
 test "$program_suffix" != NONE && M2SUFFIX=$program_suffix
 AC_ARG_ENABLE(dummy, AS_HELP_STRING(--program-suffix=...,suffix to append to executable name M2))
 
@@ -450,20 +472,20 @@ AC_LANG(C++)
 AC_COMPILE_IFELSE([# 1 "foo" 1 3 4
 	template <class T> struct A { };],AC_MSG_RESULT(no);ISYSTEM=yes,AC_MSG_RESULT(yes))
 
-AC_SUBST(BUILTLIBS,"")
+AC_SUBST(BUILTLIBS,)
 
 # this list reflects dependencies
 #  factory needs ntl and gmp, libfac needs factory
-#  lapack needs blas
+#  lapack includes blas, makes both libblas and liblapack
 #  mpfr needs gmp
-AC_SUBST(LIBLIST, "gc    gdbm    gmp    mpfr    readline    ntl    factory        libfac blas    lapack")
+AC_SUBST(LIBLIST, "gc    gdbm    gmp    mpfr    readline    ntl    factory        libfac lapack")
 AC_SUBST(LIBFILES,"libgc libgdbm libgmp libmpfr libreadline libntl libcf libcfmem libfac libblas liblapack")
 for i in $LIBLIST
 do eval BUILD_$i=no
 done
 
 LIBLIST=" $LIBLIST "
-AC_ARG_ENABLE(build-libraries, AS_HELP_STRING(--enable-build-libraries=...,list of libraries to build from downloaded source code (e.g., gc gdbm gmp mpfr readline ntl factory libfac blas lapack)),
+AC_ARG_ENABLE(build-libraries, AS_HELP_STRING(--enable-build-libraries=...,list of libraries to build from downloaded source code (e.g., gc gdbm gmp mpfr readline ntl factory libfac lapack)),
     [for i in $enableval
     do case $LIBLIST in
 	    *" $i "*) eval BUILD_$i=yes ;;
@@ -489,6 +511,13 @@ then AC_SEARCH_LIBS(__gmpz_init,gmp,,BUILD_gmp=yes)
      AC_CHECK_HEADER(gmp.h,,BUILD_gmp=yes)
 fi
 test $BUILD_gmp = yes && BUILTLIBS="-lgmp $BUILTLIBS"
+
+AC_SUBST(ULIMIT_T,yes)
+AC_SUBST(ULIMIT_M,yes)
+AC_SUBST(ULIMIT_V,yes)
+( ulimit -t 2000 2>/dev/null) || ULIMIT_T=no
+( ulimit -m 2000 2>/dev/null) || ULIMIT_M=no
+( ulimit -v 2000 2>/dev/null) || ULIMIT_V=no
 
 AC_LANG(C)
 if test $BUILD_mpfr = no
@@ -553,24 +582,24 @@ then
     AC_LANG(C++)
     AC_CHECK_HEADER(NTL/version.h,,BUILD_ntl=yes)
 
-    SAVELIBS=$LIBS
     AC_MSG_CHECKING(for ntl library)
     FOUND=
+    SAVELIBS=$LIBS
     for lib in "" "-lntl"
     do  test "$lib" && LIBS="$lib $LIBS"
 	AC_LINK_IFELSE( [
 	        #include <NTL/tools.h>
 		int main () { _ntl_GetTime(); }
 		],
-	    FOUND=yes; break;)
+	    FOUND=yes; break;,
+	    LIBS=$SAVELIBS)
     done
     if test "$FOUND"
     then if test "$lib"
-	then AC_MSG_RESULT(none needed)
-	else AC_MSG_RESULT(found $lib)
+	then AC_MSG_RESULT([$lib])
+	else AC_MSG_RESULT([none needed])
 	fi
     else AC_MSG_RESULT(none found)
-	LIBS=$SAVELIBS
 	BUILD_ntl=yes
     fi 
 
@@ -617,7 +646,6 @@ AC_ARG_WITH(lapack, AS_HELP_STRING(--without-lapack,[compile and link without la
 test "$LAPACK" = no; val=$?
 AC_DEFINE_UNQUOTED(LAPACK,$val,whether to link with lapack)
 
-AC_SUBST(USE_FLIBS,no)
 if test "$LAPACK" = yes
 then AC_MSG_CHECKING([whether the vecLib framework is available])
      SAVELIBS=$LIBS
@@ -631,22 +659,14 @@ then AC_MSG_CHECKING([whether the vecLib framework is available])
 	 [
 	     AC_MSG_RESULT(no)
 	     LIBS=$SAVELIBS
-	     if test $BUILD_blas = no
-	     then AC_LANG(Fortran 77)
-		  AC_SEARCH_LIBS(sgemv,blas f77blas,,BUILD_blas=yes)
-	     fi
 	     if test $BUILD_lapack = no
-	     then AC_LANG(Fortran 77)
+	     then AC_LANG(Fortran)
+		  AC_SEARCH_LIBS(sgemv,blas f77blas,,BUILD_lapack=yes)
 		  AC_SEARCH_LIBS(dgetrf,lapack,,BUILD_lapack=yes)
 	     fi
 	 ])
 fi
-test $BUILD_blas = yes && BUILTLIBS="-lblas $BUILTLIBS"
-test $BUILD_lapack = yes && BUILTLIBS="-llapack $BUILTLIBS"
-
-if test $BUILD_blas = yes -o $BUILD_lapack = yes
-then USE_FLIBS=yes
-fi
+test $BUILD_lapack = yes && BUILTLIBS="-llapack -lblas $BUILTLIBS"
 
 # after this point we add no more libraries to $LIBS, e.g., with AC_SEARCH_LIBS()
 SAVELIBS=$LIBS
@@ -655,46 +675,62 @@ SAVELIBS=$LIBS
 if ! test "$SINGULARLIBS"
 then SINGULARLIBS="-lfac -lcf"
 fi
-AC_SUBST(SINGULARLIBS)
-if test $BUILD_factory = no -o $BUILD_libfac = no
-then AC_LANG(C++)
-     AC_CHECK_HEADER(factory.h,,BUILD_factory=yes BUILD_libfac=yes)
-     AC_CHECK_HEADER(factor.h,,BUILD_factory=yes BUILD_libfac=yes)
-     LIBS="$SINGULARLIBS $LIBS -lcfmem"
-     AC_SEARCH_LIBS(factoryVersion,,,BUILD_factory=yes BUILD_libfac=yes)
-     AC_SEARCH_LIBS(libfac_version,,,BUILD_factory=yes BUILD_libfac=yes)
-     AC_MSG_CHECKING([whether (recent) libfac and factory libraries are installed (-lfac -lcf -lcfmem)])
-     AC_RUN_IFELSE( [[ /* this is line 1 */
-	     #include <stdio.h>
-	     #include <string.h>
-	     #include <factory.h>
-	     #include <factor.h>
-             #include <templates/ftmpl_inst.cc>
-	     extern const char * libfac_version;
-	     int foo () { return SW_USE_NTL; }
-	     int main () {
-		  FILE *msg = fdopen(]]AS_MESSAGE_FD[[,"w");
-		  static int factoryV[3], fV[3] = {3,0,3}, fOK;
-		  static int  libfacV[3], lV[3] = {3,0,1}, lOK;
-		  sscanf(FACTORYVERSION,"%d.%d.%d", &factoryV[0], &factoryV[1], &factoryV[2]);
-		  sscanf(libfac_version,"%d.%d.%d", &libfacV[0], &libfacV[1], &libfacV[2]);
-		  fOK = factoryV[0] > fV[0] ||
-		        factoryV[0] == fV[0] && factoryV[1] > fV[1] ||
-		        factoryV[0] == fV[0] && factoryV[1] == fV[1] && factoryV[2] >= fV[2];
-		  lOK = libfacV[0] > lV[0] ||
-		        libfacV[0] == lV[0] && libfacV[1] > lV[1] ||
-		        libfacV[0] == lV[0] && libfacV[1] == lV[1] && libfacV[2] >= lV[2];
-		  fprintf(msg,"(factory-%s %s %d.%d.%d, libfac-%s %s %d.%d.%d) ",
-		      FACTORYVERSION, fOK ? ">=" : "<", fV[0], fV[1], fV[2],
-		      libfac_version, lOK ? ">=" : "<", lV[0], lV[1], lV[2]
-		      );
-		  return !( lOK && fOK );
-	          }
-	     ]],
-	  AC_MSG_RESULT(yes),
-	  AC_MSG_RESULT(no); BUILD_factory=yes BUILD_libfac=yes)
-     LIBS=$SAVELIBS
-fi
+AC_SUBST(SINGULARLIBS) dnl no initial value
+while test $BUILD_factory = no -o $BUILD_libfac = no
+do AC_LANG(C++)
+   AC_CHECK_HEADER(factory.h,,BUILD_factory=yes BUILD_libfac=yes ; break)
+   AC_CHECK_HEADER(factor.h,,BUILD_factory=yes BUILD_libfac=yes ; break)
+   SLIBS="$SINGULARLIBS -lcfmem"
+   LIBS="$SLIBS $SAVELIBS"
+   AC_MSG_CHECKING([whether factory library is installed ($SLIBS)])
+   AC_LINK_IFELSE( [[ #include <factory.h>
+		      #include <templates/ftmpl_inst.cc>
+		      int main () { return 0 ; }
+	       ]],
+       AC_MSG_RESULT(yes),
+       AC_MSG_RESULT(no)
+       SLIBS="$SLIBS -lntl"
+       LIBS="$SLIBS $SAVELIBS"
+       AC_MSG_CHECKING([whether factory library is installed ($SLIBS)])
+       AC_LINK_IFELSE( [[ #include <factory.h>
+			  #include <templates/ftmpl_inst.cc>
+			  int main () { return 0 ; }
+		   ]],
+	   AC_MSG_RESULT(yes),
+	   AC_MSG_RESULT(no); BUILD_factory=yes BUILD_libfac=yes; break
+	   ))
+   AC_MSG_CHECKING([whether (recent) libfac and factory libraries are installed ($LIBS)])
+   AC_RUN_IFELSE( [[ /* this is line 1 */
+	   #include <stdio.h>
+	   #include <string.h>
+	   #include <factory.h>
+	   #include <factor.h>
+	   #include <templates/ftmpl_inst.cc>
+	   extern const char * libfac_version;
+	   int main () {
+		FILE *msg = fdopen(]]AS_MESSAGE_FD[[,"w");
+		static int factoryV[3], fV[3] = {3,0,3}, fOK;
+		static int  libfacV[3], lV[3] = {3,0,1}, lOK;
+		sscanf(FACTORYVERSION,"%d.%d.%d", &factoryV[0], &factoryV[1], &factoryV[2]);
+		sscanf(libfac_version,"%d.%d.%d", &libfacV[0], &libfacV[1], &libfacV[2]);
+		fOK = factoryV[0] > fV[0] ||
+		      factoryV[0] == fV[0] && factoryV[1] > fV[1] ||
+		      factoryV[0] == fV[0] && factoryV[1] == fV[1] && factoryV[2] >= fV[2];
+		lOK = libfacV[0] > lV[0] ||
+		      libfacV[0] == lV[0] && libfacV[1] > lV[1] ||
+		      libfacV[0] == lV[0] && libfacV[1] == lV[1] && libfacV[2] >= lV[2];
+		fprintf(msg,"(factory-%s %s %d.%d.%d, libfac-%s %s %d.%d.%d) ",
+		    FACTORYVERSION, fOK ? ">=" : "<", fV[0], fV[1], fV[2],
+		    libfac_version, lOK ? ">=" : "<", lV[0], lV[1], lV[2]
+		    );
+		return !( lOK && fOK );
+		}
+	   ]],
+	AC_MSG_RESULT(yes),
+	AC_MSG_RESULT(no); BUILD_factory=yes BUILD_libfac=yes)
+   break
+done
+LIBS=$SAVELIBS
 
 AC_SUBST(FINALPREFIX,/usr)
 AC_ARG_WITH(final-prefix,
@@ -705,7 +741,7 @@ case $FINALPREFIX in
     *) AC_MSG_ERROR(final prefix should begin with /) ;;
 esac
 
-AC_SUBST(NM_DEMANGLES,"")
+AC_SUBST(NM_DEMANGLES,)
 AC_MSG_CHECKING(whether nm accepts the demangle option)
 if nm --help 2>&1 | grep demangle >/dev/null
    then NM_DEMANGLES=yes; AC_MSG_RESULT(yes)
@@ -726,7 +762,7 @@ AC_RUN_IFELSE([
     AC_MSG_RESULT([yes (cross-compiling, not tested)]))
 AC_DEFINE_UNQUOTED(GETADDRINFO_WORKS,$GETADDRINFO_WORKS,[whether getaddrinfo can handle numeric service (port) numbers])
 
-AC_SUBST(LIBRARIES,"")
+AC_SUBST(LIBRARIES,)
 for i in $LIBLIST
 do eval t=\$BUILD_$i
    test "$t" = yes && LIBRARIES="$LIBRARIES $i"
@@ -734,7 +770,7 @@ done
 
 TESTFLAG=-Wno-strict-aliasing
 AC_MSG_CHECKING(whether $CC accepts $TESTFLAG)
-AC_SUBST(HAVE_NO_STRICT_ALIASING,"")
+AC_SUBST(HAVE_NO_STRICT_ALIASING,)
 SAVE=$CFLAGS
 CFLAGS="$TESTFLAG $CFLAGS"
 AC_LANG(C)
@@ -743,7 +779,7 @@ M2_CPPFLAGS="$M2_CPPFLAGS $TESTFLAG"
 CFLAGS=$SAVE
 AC_MSG_RESULT($HAVE_NO_STRICT_ALIASING)
 
-AC_SUBST(M2_CPPFLAGS)
+AC_SUBST(M2_CPPFLAGS,)
 
 AC_MSG_CHECKING(whether $CC accepts -Wfatal-errors)
 AC_LANG(C)
@@ -792,7 +828,7 @@ then
 fi
 
 AC_SUBST(package,Macaulay2-$PACKAGE_VERSION)
-AC_SUBST(encapdir,"")
+AC_SUBST(encapdir,)
 if test "$ENCAP" = yes
 then encapdir="\${prefix}/$package"
 else encapdir="\${prefix}"
@@ -814,17 +850,35 @@ then if test "$DEB" = yes -o "$RPM" = yes
      fi
 fi
 
+# Here we split up LIBS into two parts, LIBS_STATIC and LIBS_DYNAMIC.
+# M2 will get linked against LIBS_STATIC and then against LIBS_DYNAMIC.
+# Under --enable-static the libraries in LIBS_STATIC will be linked statically.
+AC_SUBST(LIBS_STATIC,)
+AC_SUBST(LIBS_DYNAMIC,)
+for i in $LIBS
+do case $i in 
+	# we must link dynamically with some libraries
+	-lncurses | dnl ncurses has a database which we aren't providing and whose location we don't know
+	-lsocket  | dnl dynamic loading of libraries is used to determine the current way to look up an IP number
+	-lgcc_s*  ) dnl libgcc_s comes only in dynamic form
+	   LIBS_DYNAMIC="$LIBS_DYNAMIC $i" ;;
+	*) 
+	   LIBS_STATIC="$LIBS_STATIC $i" ;;
+   esac
+done
+
 # Here we compute the relative positions of various subdirectories with respect to ${prefix}, so we can record the layout
 # of the directory tree, and check that the subdirectories specified are within the tree.
-AC_SUBST(bindirtail) AC_SUBST(datadirtail) AC_SUBST(datarootdirtail) AC_SUBST(docdirtail) AC_SUBST(dvidirtail)
-AC_SUBST(htmldirtail) AC_SUBST(includedirtail) AC_SUBST(infodirtail) AC_SUBST(libdirtail) AC_SUBST(libexecdirtail)
-AC_SUBST(localedirtail) AC_SUBST(localstatedirtail) AC_SUBST(mandirtail) AC_SUBST(pdfdirtail)
-AC_SUBST(psdirtail) AC_SUBST(sbindirtail) AC_SUBST(sharedstatedirtail) AC_SUBST(sysconfdirtail)
+AC_SUBST(bindirtail,) AC_SUBST(datadirtail,) AC_SUBST(datarootdirtail,) AC_SUBST(docdirtail,) AC_SUBST(dvidirtail,)
+AC_SUBST(htmldirtail,) AC_SUBST(includedirtail,) AC_SUBST(infodirtail,) AC_SUBST(libdirtail,) AC_SUBST(libexecdirtail,)
+AC_SUBST(localedirtail,) AC_SUBST(localstatedirtail,) AC_SUBST(mandirtail,) AC_SUBST(pdfdirtail,)
+AC_SUBST(psdirtail,) AC_SUBST(sbindirtail,) AC_SUBST(sharedstatedirtail,) AC_SUBST(sysconfdirtail,)
 
 AC_MSG_NOTICE([using LIBRARIES    = $LIBRARIES (libraries to be built from downloaded sources)])
-AC_MSG_NOTICE([using BUILTLIBS    = $BUILTLIBS (linker options for most of them)])
-AC_MSG_NOTICE([using SINGULARLIBS = $SINGULARLIBS (linker options for some of them)])
-AC_MSG_NOTICE([using LIBS         = $LIBS (M2 linker options)])
+AC_MSG_NOTICE([using BUILTLIBS    = $BUILTLIBS])
+AC_MSG_NOTICE([using SINGULARLIBS = $SINGULARLIBS])
+AC_MSG_NOTICE([using LIBS_STATIC  = $LIBS_STATIC])
+AC_MSG_NOTICE([using LIBS_DYNAMIC = $LIBS_DYNAMIC])
 
 BUILDING=yes
 AC_ARG_ENABLE(building, AS_HELP_STRING(--disable-building,disable automatic building of libraries), BUILDING=$enableval)

@@ -1,0 +1,7 @@
+Write a version of
+
+      IM2_RingElement_indices
+
+that works for a matrix.
+
+Then we can simplify two lines in IntegralClosure.m2

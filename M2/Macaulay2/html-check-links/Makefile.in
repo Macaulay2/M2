@@ -46,7 +46,7 @@ TAGS: $(SRC); @ETAGS@ $^
 lex.o : grammar.fixed.c
 
 DIR = $(shell pwd)
-NEW = @encapdir@/@htmldirtail@/Macaulay2/html
+NEW = @encapdir@/@htmldirtail@/Macaulay2Doc/html
 check : html-check-links
 	@echo "make: Entering directory \`$(NEW)'"
 	(cd $(NEW) && find . -name \*.html | xargs "$(DIR)"/html-check-links) || true

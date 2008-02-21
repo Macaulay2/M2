@@ -1,4 +1,4 @@
-installFile = replace_("@VERSION@", version#"VERSION") ///
+installFile = ///
 			   Macaulay 2
 	    by Daniel R. Grayson <dan@math.uiuc.edu>
 	 and Michael E. Stillman <mike@math.cornell.edu>
@@ -9,7 +9,7 @@ Welcome to Macaulay2!
 
 This file tells how to install Macaulay 2 from a binary distribution on unix
 systems such as linux, or under Microsoft Windows.  If you have any difficulty
-with these instructions (which are not complete yet), please email us.
+with these instructions, please email us.
 
 ---------------------------------------
 -- Strengthen your operating system ---
@@ -29,25 +29,44 @@ In your browser, visit the web page at
 
      http://www.math.uiuc.edu/Macaulay2/Downloads/
 
-and download the appropriate file for your architecture and operating system.
-Details about the file naming conventions are visible there.  Typical names
-include these.
+and download the appropriate pair of files for your architecture and operating
+system.  (Actually, if you are reading this file, you have already done this
+step.)  Details about the file naming conventions are visible there.  Typical
+names include these:
   
-     Macaulay2-@VERSION@-i686-Linux.tgz
-     Macaulay2-@VERSION@-i686-CYGWIN_NT-5.0.tgz
+     @PACKAGE_TARNAME@-@PACKAGE_VERSION@-common.tar.gz
+     @PACKAGE_TARNAME@-@PACKAGE_VERSION@-@ARCH@-@OS@-@ISSUE@.tar.gz
 
-If there is a later version than @VERSION@, use that instead. Unpack this
-gzipped tar file as usual, in whatever directory is convenient, say in
-/foo/bar, as follows.
+If there is a later version than @PACKAGE_VERSION@, use that instead. 
+
+The files with "common" in the name contain the Macaulay 2 files that are
+independent of the architecture of your computer.  The files with a string such
+as "@ARCH@-@OS@-@ISSUE@" in the name contain the architecture-dependent files,
+including the executable file "M2@EXE@".  The component "@ARCH@" is the
+architecture of the machine, the component "@OS@" is the operating system, and
+the component "@ISSUE@" is the issue of the operating system.  
+
+Possible issues of GNU/Linux include Ubuntu, Debian, Fedora, and Generic; the
+Generic issue is linked with as few dynamic libraries as possible, and might
+be appropriate if you aren't able to install additional libraries on your
+computer, for lack of root access.
+
+Unpack the gzipped tar files as usual, in whatever directory is convenient, say
+in /foo/bar, as follows.
 
      cd /foo/bar
-     tar zxfp Macaulay2-@VERSION@-Linux.tar.gz
+     tar zxfp @PACKAGE_TARNAME@-@PACKAGE_VERSION@-common.tar.gz
+     tar zxfp @PACKAGE_TARNAME@-@PACKAGE_VERSION@-@ARCH@-@OS@-@ISSUE@.tar.gz
 
-You will see that a directory tree rooted at /foo/bar/Macaulay2-@VERSION@ has
-been created.  The subdirectories and files are organized in a way that mimics
-the usual unix tree of subdirectories rooted at /usr.  For example, there are
-subdirectories called bin, info, lib, and share.  There are also some extra
-files called: INSTALL (this file), encapinfo, postinstall, and preremove.
+(If you downloaded files ending with bz2 instead of gz, then change the z in the
+first parameter to j.)
+
+After unpacking the tar files, you will see that a directory tree rooted at
+/foo/bar/Macaulay2-@PACKAGE_VERSION@ has been created.  The subdirectories and files
+are organized in a way that mimics the usual unix tree of subdirectories rooted
+at /usr.  For example, there are subdirectories called bin, info, lib, and
+share.  There are also some extra files called: INSTALL (this file), encapinfo,
+postinstall, and preremove.
 
 -------------------------------------------------
 -- Install method for Users ---------------------
@@ -56,27 +75,49 @@ files called: INSTALL (this file), encapinfo, postinstall, and preremove.
    Arrange for Macaulay 2 to set up your .emacs files and your command shell
    init files so that M2 will be on the path.
 
-        cd /foo/bar/Macaulay2-@VERSION@
+        cd /foo/bar/Macaulay2-@PACKAGE_VERSION@
 	cd bin
 	./M2 -e 'setup();exit 0' 
 
    After you log in again, your PATH will have Macaulay2's bin directory on it.
 
-   The difference between M2-load-libs and M2 is that the former is a shell
-   script that arranges for shared libraries that may be needed to be found.
+   The most common cause for a failure at this point is for some dynamic
+   libraries not to be found on your system.  In this case, under linux, the
+   utility "ldd" may be used to display the libraries required, together with
+   an indication of whether any are not found:
+   
+      $ ldd Macaulay2/bin/M2
+	linux-gate.so.1 =>  (0xffffe000)
+	libstdc++.so.6 => /usr/lib/libstdc++.so.6 (0x4001e000)
+	libgfortran.so.2 => /usr/lib/libgfortran.so.2 (0x40111000)
+	libgdbm.so.3 => /usr/lib/libgdbm.so.3 (0x401a8000)
+	libmpfr.so.1 => /usr/lib/libmpfr.so.1 (0x401af000)
+	libgmp.so.3 => /usr/lib/libgmp.so.3 (0x401ed000)
+	libreadline.so.5 => /lib/libreadline.so.5 (0x40232000)
+	libhistory.so.5 => /lib/libhistory.so.5 (0x40263000)
+	libncurses.so.5 => /usr/lib/libncurses.so.5 (0x4026b000)
+	libm.so.6 => /lib/tls/i686/cmov/libm.so.6 (0x402af000)
+	libgcc_s.so.1 => /lib/libgcc_s.so.1 (0x402d5000)
+	libc.so.6 => /lib/tls/i686/cmov/libc.so.6 (0x402e0000)
+	/lib/ld-linux.so.2 (0x40000000)
+	libdl.so.2 => /lib/tls/i686/cmov/libdl.so.2 (0x4042a000)
+
+   Alternatively, under Cygwin, the utility "cygcheck" may be used to determine
+   which library files are needed, as well as to determine which packages are
+   needed to provide them.   
 
 -------------------------------------------------
 -- Install method for System administrators -----
 -------------------------------------------------
 
-   The easiest and best way to install Macaulay2 is with "epkg", available from
+   The easiest and way to install Macaulay2 is with "epkg", available from
 
-   	http://encap.cso.uiuc.edu/epkg/
+   	http://www.encap.org/epkg/
 
    The files encapinfo, preremove, and postinstall in the top level directory
    or init files for that program, whose purpose is to put appropriate
    symbolic links from locations under /usr or /usr/local to the files in 
-   /foo/bar/Macaulay2-@VERSION@.  If you do this, then Macaulay2's files can
+   /foo/bar/Macaulay2-@PACKAGE_VERSION@.  If you do this, then Macaulay2's files can
    be found without modifying any paths.  Otherwise, each user will have to
    run our "setup()" command, as described above, to set the paths correctly.
    The paths we have in mind are the environment variables "LD_LIBRARY_PATH",
@@ -85,7 +126,7 @@ files called: INSTALL (this file), encapinfo, postinstall, and preremove.
    reliably removed.  If you manually remove the files without asking
    "epkg" to remove the symbolic links, the only thing left behind will be
    symbolic links pointing nowhwere, which take up little space on the disk and
-   could be easily found and removed manually.
+   can be easily found and removed manually.
    
    Another thing "epkg" does is to run the "postinstall" script we provide,
    which runs "dumpdata" (if implemented on your system) and puts directory
@@ -98,11 +139,11 @@ files called: INSTALL (this file), encapinfo, postinstall, and preremove.
    may wipe out the previous version of Macaulay 2, and because there is
    no reliable way to remove all the files you've installed.
 
-   Copy the contents of the subdirectories of /foo/bar/Macaulay2-@VERSION@ into
+   Copy the contents of the subdirectories of /foo/bar/Macaulay2-@PACKAGE_VERSION@ into
    /usr or /usr/local/.  If you have gnu "cp", the following command will do
    it:
 
-      cd /foo/bar/Macaulay2-@VERSION@
+      cd /foo/bar/Macaulay2-@PACKAGE_VERSION@
       cp -ai bin info lib share /usr/local
 
    The "i" option to "cp" will prompt you before clobbering a file in the
@@ -112,11 +153,12 @@ files called: INSTALL (this file), encapinfo, postinstall, and preremove.
 
    is to avoid copying the extra files, including this one.
 
-   On some systems Macaulay2 comes with shared libraries, in the "lib"
-   subdirectory, so if you want to change /usr/local to something nonstandard,
-   M2 may not be able to find its shared libraries unless you add
-   /foo/bar/Macaulay2-@VERSION@/lib to the search path.  Under linux, that
-   would involve editing /etc/ld.so.conf.
+   On some systems Macaulay2 comes with dynamic libraries, in the
+   "lib/Macaulay2/Core/lib" subdirectory, so if you want to change /usr/local
+   to something nonstandard, M2 may not be able to find its dynamic libraries
+   unless you add /foo/bar/Macaulay2-@PACKAGE_VERSION@/lib to the search path.  Under
+   linux, that would involve editing /etc/ld.so.conf or setting the environment
+   variable LD_LIBRARY_PATH.
 
 -------------------------------------------------
 -- Dumping data ---------------------------------
@@ -137,8 +179,9 @@ files called: INSTALL (this file), encapinfo, postinstall, and preremove.
    in the directory tree where you have installed it.  It contains the result
    of interpreting the source code written in the Macaulay 2 language.  The next
    time you start M2 it will try to load the file.  On some systems such loading
-   is rarely successful.  In that case, just delete the saved data file to
-   eliminate the warning messages about failing to load it.
+   is rarely successful.  In that case, just delete the saved data file.
+   
+   In any case, loading Macaulay 2 should take less than a second.
 
 -------------------------------------------------
 -- For Users, after installation ----------------
@@ -149,11 +192,15 @@ Macaulay2 has been installed properly, then you should see a prompt
 such as this:
 
 	% M2
-	Macaulay 2, version @VERSION@
+	Macaulay 2, version @PACKAGE_VERSION@
+	with packages: Classic, Core, Elimination, IntegralClosure, 
+	               LLLBases, Parsing, PrimaryDecomposition, 
+		       SchurRings, TangentCone
 
 	i1 : 
 
-At this point you should try something simple in Macaulay2, such as
+At this point you should try entering some simple Macaulay2 commands, such as
+these:
 
    	100!
 	R = QQ[a..d]
@@ -172,6 +219,10 @@ to get the html help on a topic, such as "ideals", use
 
 	viewHelp "ideals"
 
+To get help on an object, such as a function or type, use a command such 
+as
+        viewHelp res
+
 To exit Macaulay2, type one of: exit, end, quit, or the end of file character,
 which is usually set to CTRL-D.
 
@@ -179,11 +230,10 @@ which is usually set to CTRL-D.
 -- The Macaulay2 application directory ----------
 -------------------------------------------------
 
-If this is the first time that you have run a recent version of
-Macaulay2 from your user account, Macaulay2 creates an "application
-directory" for Macaulay2 in your home directory.  Under unix, that
-directory is named ".Macaulay2", and under Mac OS X, it is
-called "Library/Application Support/Macaulay2".
+If this is the first time that you have run Macaulay2 from your account,
+Macaulay2 creates an "application directory" for Macaulay2 in your home
+directory.  Under unix, that directory is named ".Macaulay2", and under Mac OS
+X, it is called "Library/Application Support/Macaulay2".
 
 The application directory contains several useful files and
 directories:

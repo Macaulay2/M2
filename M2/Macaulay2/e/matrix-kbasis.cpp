@@ -249,7 +249,8 @@ void KBasis::compute()
 
       // Make the monomial ideal: this should contain only
       // monomials involving 'vars'.
-      kb_monideal = bottom_matrix->make_monideal(i);
+      kb_monideal = bottom_matrix->make_monideal(i, true); 
+        // the true means: over ZZ, don't consider monomials with non-unit lead coeffs
 
       const int *component_degree = bottom_matrix->rows()->degree(i);
       kb_exp_weight = weight_of_monomial(component_degree);

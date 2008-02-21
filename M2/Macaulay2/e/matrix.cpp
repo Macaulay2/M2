@@ -1654,7 +1654,7 @@ MatrixOrNull *Matrix::coeffs(M2_arrayint vars, const Matrix *monoms) const
   return mat.to_matrix();
 }
 
-MonomialIdeal *Matrix::make_monideal(int n) const
+MonomialIdeal *Matrix::make_monideal(int n, bool use_only_monomials_with_unit_coeffs) const
 {
   const PolynomialRing *P = get_ring()->cast_to_PolynomialRing();
   if (P == 0)
@@ -1662,7 +1662,7 @@ MonomialIdeal *Matrix::make_monideal(int n) const
       ERROR("expected polynomial ring");
       return 0;
     }
-  bool coeffsZZ = (P->coefficient_type() == Ring::COEFF_ZZ);
+  bool coeffsZZ = (P->coefficient_type() == Ring::COEFF_ZZ && use_only_monomials_with_unit_coeffs);
   const Monoid *M = P->getMonoid();
   queue <Bag *> new_elems;
   for (int i=0; i<n_cols(); i++)

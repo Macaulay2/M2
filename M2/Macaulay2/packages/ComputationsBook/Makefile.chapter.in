@@ -28,6 +28,11 @@ test.out : test.m2 always
 	  $(ULIMIT); $(M2CMD) $(INPUT) $(EXIT) >test.out.tmp; \
 	  mv test.out.tmp test.out
 
+test-mike.out : test.m2 always
+	@ set -xe ; \
+	  $(M2CMD) $(INPUT) $(EXIT) >test.out.tmp; \
+	  mv test.out.tmp test-mike.out
+
 always:
 
 distclean::clean

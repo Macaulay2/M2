@@ -145,6 +145,7 @@ export {
 	symbol CompiledFunction,
 	symbol CompiledFunctionBody,
 	symbol CompiledFunctionClosure,
+	symbol Complement,
 	symbol CompleteIntersection,
 	symbol ComplexField,
 	symbol Configuration,

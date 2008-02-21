@@ -23,8 +23,8 @@ use D
 R = (D^1/ideal(Dx,Dy,Dz,Dw))
 ann2 = relations Dlocalize(R,f)
 F = matrix{{f}}
-ann1 = gb modulo(F,ann2)
-gb((ideal ann2) + (ideal F))
+ann1 = gens gb modulo(F,ann2)
+gens gb((ideal ann2) + (ideal F))
 D = QQ[x,y,z,Dx,Dy,Dz, WeylAlgebra => {x=>Dx, y=>Dy, z=>Dz}];
 Delta = ideal(Dx,Dy,Dz);
 f=x^3+y^3+z^3;
@@ -44,7 +44,7 @@ Rfgh=DlocalizeAll(Rfg.LocModule,h, Strategy => Oaku)
 Rf.GeneratorPower
 Jfgh=ideal relations Rfgh.LocModule;
 JH3=Jfgh+ideal(f^2,g,h);
-JH3gb=gb JH3
+JH3gb=gens gb JH3
 testmTorsion = method();
 testmTorsion Ideal := (L) -> (
      LL = ideal generators gb L;
@@ -69,7 +69,7 @@ Rfg=DlocalizeAll(Rf.LocModule,g, Strategy => Oaku);
 Rfgh=DlocalizeAll(Rfg.LocModule,h, Strategy => Oaku);
 Ifgh=ideal relations Rfgh.LocModule;
 IH3=Ifgh+ideal(f,g,h);
-IH3gb=gb IH3
+IH3gb=gens gb IH3
 findSocle = method();
 findSocle(Ideal, RingElement):= (L,P) -> (
      createDpairs(ring(L));
