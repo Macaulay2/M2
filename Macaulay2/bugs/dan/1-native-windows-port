@@ -1,0 +1,2 @@
+we should be able to create a native windows port by compiling under
+cygwin and passing -mno-cygwin to gcc!
