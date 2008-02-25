@@ -129,7 +129,7 @@ document {
 	 J
 	 netList first entries gens F
 	 ///,
-     "Notice that J is zero.  This means that the base is an affine space (in the case affine 8-space.
+     "Notice that J is zero.  This means that the base is an affine space (in this case affine 8-space).
      Now let's find a random fiber over the base:",
      EXAMPLE lines ///
          B = ring J
