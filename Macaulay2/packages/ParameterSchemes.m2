@@ -189,11 +189,12 @@ loadPackage "ParameterSchemes"
 installPackage ParameterSchemes
 
 -- Hi Amelia, here is a good example:
+-- Amelia Amelia Amelia Amelia Amelia Amelia Amelia Amelia
 R = ZZ/101[a..f]
 I = ideal"ab,bc,cd,de,ea,ac"
 (J,F) = groebnerScheme(I, Minimize=>false);
 time minimalPresentation J
-
+-- Amelia Amelia Amelia Amelia Amelia Amelia Amelia Amelia
 
 R = ZZ/101[a..e,MonomialOrder=>Lex]
 R = ZZ/101[a..f]
