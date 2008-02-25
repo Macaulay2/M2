@@ -9,7 +9,13 @@ newPackage(
     	DebuggingMode => true
     	)
 
-export { smallerMonomials, standardMonomials, parameterFamily, parameterIdeal, pruneParameterScheme, prunedParameterScheme }
+export { smallerMonomials, 
+     standardMonomials, 
+     parameterFamily, 
+     parameterIdeal, 
+     pruneParameterScheme, 
+     groebnerScheme
+     }
 
 smallerMonomials = method()
 smallerMonomials(Ideal,RingElement) := (M,f) -> (
@@ -62,7 +68,7 @@ parameterFamily(Ideal,List,Symbol) := (M,L,t) -> (
      R := ring M;
      kk := coefficientRing R;
      nv := sum apply(L, s -> #s);
-     R1 := kk[t_1..t_nv];
+     R1 := kk[t_1..t_nv, MonomialSize=>8];
      U := R1 (monoid R);
      --U := tensor(R,R1,DegreeRank=>1);  
      lastv := -1;
@@ -101,13 +107,14 @@ pruneParameterScheme(Ideal,Ideal) := (J,F) -> (
      (J1, phi' F)
      )
 
-prunedParameterScheme = method()
-prunedParameterScheme(Ideal) := (I) -> (
+groebnerScheme = method(Options=>{Minimize=>true})
+groebnerScheme Ideal := opts -> (I) -> (
      L1 := smallerMonomials I;
      F0 := parameterFamily(I,L1,symbol t);
      J0 := parameterIdeal(I,F0);
-     (J,F) := pruneParameterScheme(J0,F0);
-     (J,F)
+     if opts.Minimize then
+       (J0,F0) = pruneParameterScheme(J0,F0);
+     (J0,F0)
      )
 
 beginDocumentation()
@@ -180,6 +187,14 @@ end
 restart
 loadPackage "ParameterSchemes"
 installPackage ParameterSchemes
+
+-- Hi Amelia, here is a good example:
+R = ZZ/101[a..f]
+I = ideal"ab,bc,cd,de,ea,ac"
+(J,F) = groebnerScheme(I, Minimize=>false);
+time minimalPresentation J
+
+
 R = ZZ/101[a..e,MonomialOrder=>Lex]
 R = ZZ/101[a..f]
 I = ideal"ab,bc,cd,de,ea,ac"
