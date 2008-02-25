@@ -25,7 +25,7 @@ public:
   struct gbelem {
     POLY g;
     int deg;
-    int gap; // the homogenizing degree, called "alpha", or the "écart".  It is deg g - deg lead term of g.
+    int gap; // the homogenizing degree, called "alpha", or the "ecart".  It is deg g - deg lead term of g.
     int size; // number of monomials, when the element is first inserted.  After 
               // auto reduction, the number can change.  It is not yet clear if we should change this value...
     exponents lead; // -1..nvars-1, the -1 part is the component

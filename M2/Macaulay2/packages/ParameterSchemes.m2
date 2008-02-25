@@ -10,13 +10,6 @@ newPackage(
     	)
 
 export { smallerMonomials, standardMonomials, parameterFamily, parameterIdeal, pruneParameterScheme }
--- This will be based on the code which occurs here and there on my disk, including "localhilb.m2"
--- Perhaps there are more recent places??  This is one reason I am writing this package, to put it
--- in one place!
-
--- WARNING: this package is not yet written!!  We should first (perhaps) make sure that minimalPresentation
--- of a ring is rock solid, although this package can easily be used to produce interesting test cases 
--- for that.
 
 smallerMonomials = method()
 smallerMonomials(Ideal,RingElement) := (M,f) -> (
@@ -99,7 +92,7 @@ pruneParameterScheme(Ideal,Ideal) := (J,F) -> (
      R := ring F;
      A := coefficientRing R;
      if ring J =!= A then error "expected(ideal in coeffring A, family in A[x])";
-     J1 := minimalPresentation J;
+     time J1 := minimalPresentation J;
      B := ring J1;
      phi := J.cache.minimalPresentationMap; -- map: A --> B
      -- want the induced map from A[x] -> B[x]
@@ -110,11 +103,51 @@ pruneParameterScheme(Ideal,Ideal) := (J,F) -> (
 
 beginDocumentation()
 document { 
-	Key => ParameterSchemes,
-	Headline => "a Macaulay 2 package for local equations of Hilbert and other parameter schemes",
-	EM "ParameterSchemes", " is a package containing tools to create parameter schemes, 
-	  especially about a monomial ideal."
-	}
+     Key => ParameterSchemes,
+     Headline => "a Macaulay 2 package for local equations of Hilbert and other parameter schemes",
+     EM "ParameterSchemes", " is a package containing tools to create parameter schemes, 
+     especially about a monomial ideal.",
+     PARA{},
+     "An example of using the functions in this package:",
+     EXAMPLE lines ///
+         R = ZZ/101[a..e,MonomialOrder=>Lex];
+         I = ideal"ab,bc,cd,ad";
+         L1 = smallerMonomials I;
+	 ///,
+     PARA{"We will construct the family of all ideals having I as its lexicographic initial ideal."},
+     EXAMPLE lines ///
+         F0 = parameterFamily(I,L1,symbol t);
+	 netList first entries gens F0
+	 J0 = parameterIdeal(I,F0);
+         ///,
+     "At this point F0 is the universal family, and J0 is a (very non-minimally generated) ideal that
+     the parameters must satisfy in order for the family to be flat.",
+     PARA{},
+     "We can minimalize the family, and the ideal.",
+     EXAMPLE lines ///
+         (J,F) = pruneParameterScheme(J0,F0);
+	 J
+	 netList first entries gens F
+	 ///,
+     "Notice that J is zero.  This means that the base is an affine space (in the case affine 8-space.
+     Now let's find a random fiber over the base:",
+     EXAMPLE lines ///
+         B = ring J
+	 S = ring F
+	 rand = map(R,S,(vars R) | random(R^1, R^(numgens B)))
+	 L = rand F
+         ///,
+     "In some sense, L is the 'generic' ideal having I as its lexicographic initial ideal.  
+     Let's investigate
+     L further:",
+     EXAMPLE lines ///
+	 leadTerm L
+         betti res L
+     	 primaryDecomposition L	 
+     ///,
+     "Note that this strongly indicates that every ideal with I as its 
+     lexicographic initial ideal is not prime.
+     }
 
 {* document {
 	Key => {(firstFunction,ZZ),firstFunction},
@@ -137,6 +170,7 @@ TEST ///
 end
 restart
 loadPackage "ParameterSchemes"
+installPackage ParameterSchemes
 R = ZZ/101[a..e,MonomialOrder=>Lex]
 R = ZZ/101[a..f]
 I = ideal"ab,bc,cd,de,ea,ac"
@@ -169,6 +203,20 @@ primaryDecomposition I
 
 R = ZZ/101[a..f]
 I = ideal"ab,bc,cd,de,ea,ad"
+L1 = smallerMonomials I
+F0 = parameterFamily(I,L1,symbol t)
+J0 = parameterIdeal(I,F0);
+time (J,F) = pruneParameterScheme(J0,F0);
+B = ring J
+rand = map(R,ring F,(vars R) | random(R^1, R^(numgens B)))
+L = rand F
+decompose J
+intersect oo == J -- yes
+primaryDecomposition L
+primaryDecomposition I
+
+R = ZZ/101[a..f]
+I = ideal"ab,bc,cd,ade"
 L1 = smallerMonomials I
 F0 = parameterFamily(I,L1,symbol t)
 J0 = parameterIdeal(I,F0);
@@ -232,64 +280,7 @@ smallerMonomials I
 smallerMonomials flatten entries gens I
 standardMonomials I
 
--- For local equations
--- Compute the parameter equations
-
-getStandardMonomials = (M,d) -> (
-     -- input: monomial ideal M
-     --        integer d
-     -- outut: list of standard monomials of M of degree d, in order
-     R := ring M;
-     m := sum flatten entries basis(d,coker gens M);
-     apply(listForm m, t -> R_(first t)))
-
-getStds = (M) -> (
-     Mlist := flatten entries gens M;
-     apply(Mlist, m -> getStandardMonomials(M,degree m)))
-
-familyIdeal = (M,stds,t) -> (
-     R := ring M;
-     nv := sum apply(stds, s -> #s);
-     R1 := (coefficientRing R)[t_1..t_nv,
-	                       MonomialOrder=>{Weights=>nv:-1,GRevLex=>nv}, Global=>false];
-     U := R1 ** R;  
-     lastv := -1;
-     elems := apply(numgens M, i -> (
-	       m := M_i;
-	       substitute(m,U) + sum apply(stds#i, p -> (
-			 lastv = lastv + 1;
-			 U_lastv * substitute(p, U)))));
-     ideal elems
-     )
-
-parameterIdeal = (M,family) -> (
-     -- M is a monomial ideal in a polynomial ring
-     -- family is the result of 'familyIdeal'
-     R := ring M;
-     time G := forceGB gens family;
-     time syzM := substitute(syz gens M, ring family);
-     time eq := compress((gens family * syzM) % G);
-     --time (mons,eqns) := toSequence coefficients(toList(0..(numgens R)-1), eq);
-     time (mons,eqns) := coefficients(eq, Variables=>apply(gens R, x -> substitute(x,ring eq)));
-     ideal eqns)
-
-localEquations = method()
-localEquations(Ideal,Symbol) := (I,x) -> (
-     -- Assume: I is a monomial ideal
-     -- put all of the above together
-     family := familyIdeal(I, getStds I, t);
-     U := ring family;
-     oldvars := toList(numgens U - numgens ring I .. numgens U - 1);
-     print oldvars;
-     G := forceGB gens family;
-     syzI = substitute(syz gens I, U);
-     eqs = (gens family) * syzI;
-     eqs1 = eqs % G;
-     eqs2 = compress eqs1;
-     (ms,cs) = coefficients(eqs2, Variables=>apply(oldvars, i -> (ring eqs2)_i));
-     (ideal compress matrix {flatten entries cs}, family)
-     )
-
+-- AFTER THIS: TESTS FOR ROUTINES THAT HAVE BEEN RENAMED...
 end
 restart
 path = prepend("/Users/mike/Macaulay2/code/",path)
