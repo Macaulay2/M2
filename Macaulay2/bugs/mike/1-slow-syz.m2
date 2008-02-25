@@ -1,6 +1,6 @@
-restart
+--restart
 K = ZZ/103
-C1 = K [X_1, X_2, X_3, x, y, z, Degrees => {3,2,1,1,1,1}]
+C1 = K [X_1, X_2, X_3, x, y, z, Degrees => {3,2,1,1,1,1}, MonomialSize=>8]
 F = C1^(-{0, 0, 0, 1, 0, 0, 0, 0, -1, -1, -1, -2, -2, -2, 1, 0, 0, -1, -1, -1, -1, -1, -1, -1, -1, -1, -2,
       -2, -2, 0, 0, 0, 0, 0, 0, 0})
 glg = map(F,,
@@ -13,5 +13,7 @@ m = glg|glp;
 isHomogeneous m
 collectGarbage()
 --time syz(m, SyzygyRows=>numgens source glg);
+--gbTrace=3
 time syz gb(m, SyzygyRows=>numgens source glg, Syzygies=>true);
 time mingens image oo;
+exit

@@ -142,7 +142,7 @@ void QuickSorter<Sorter>::sort(Sorter *M0, value *elems0, long len0)
       double nsecs = end_time - begin_time;
       nsecs /= CLOCKS_PER_SEC;
       
-      if (gbTrace >= 1)
+      if (gbTrace >= 4)
 	fprintf(stderr,"quicksort: len %ld depth %ld time %f\n", len0, S.maxdepth, nsecs);
     }
 }
