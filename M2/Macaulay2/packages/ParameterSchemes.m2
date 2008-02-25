@@ -9,7 +9,7 @@ newPackage(
     	DebuggingMode => true
     	)
 
-export { smallerMonomials, standardMonomials, parameterFamily, parameterIdeal, pruneParameterScheme }
+export { smallerMonomials, standardMonomials, parameterFamily, parameterIdeal, pruneParameterScheme, prunedParameterScheme }
 
 smallerMonomials = method()
 smallerMonomials(Ideal,RingElement) := (M,f) -> (
@@ -101,6 +101,15 @@ pruneParameterScheme(Ideal,Ideal) := (J,F) -> (
      (J1, phi' F)
      )
 
+prunedParameterScheme = method()
+prunedParameterScheme(Ideal) := (I) -> (
+     L1 := smallerMonomials I;
+     F0 := parameterFamily(I,L1,symbol t);
+     J0 := parameterIdeal(I,F0);
+     (J,F) := pruneParameterScheme(J0,F0);
+     (J,F)
+     )
+
 beginDocumentation()
 document { 
      Key => ParameterSchemes,
@@ -146,7 +155,7 @@ document {
      	 primaryDecomposition L	 
      ///,
      "Note that this strongly indicates that every ideal with I as its 
-     lexicographic initial ideal is not prime.
+     lexicographic initial ideal is not prime."
      }
 
 {* document {
