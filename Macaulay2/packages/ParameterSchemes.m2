@@ -15,7 +15,8 @@ export { smallerMonomials,
      parameterIdeal, 
      pruneParameterScheme, 
      groebnerScheme,
-     reduceLinears
+     reduceLinears,
+     minPressy
      }
 
 isReductor = (f) -> (
@@ -28,16 +29,7 @@ findReductor = (L) -> (
      L2 := sort apply(L1, f -> (size f,f));
      if #L2 > 0 then L2#0#1)
 
-reduceIdeal = (L) -> (
-     L1 := select(L, isReductor);
-     L2 := sort apply(L1, f -> (size f,f));
-     if #L2 > 0 then (
-	  g := L2#0#1;
-	  << "reducing with " << g << endl << endl;
-	  L = apply(L, f -> f % g))
-     else (
-	  print "cannot reduce ideal further";
-	  L))
+
 
 reduceLinears = method(Options => {Limit=>infinity})
 reduceLinears Ideal := o -> (I) -> (
@@ -60,7 +52,68 @@ reduceLinears Ideal := o -> (I) -> (
        L = apply(L, f -> f % g);
        (substitute(leadTerm g, R), substitute(-g+leadTerm g,R))
        );
+     (substitute(ideal compress gens L,R), M)
+     )
+
+backSubstitute = method()
+backSubstitute List := (M) -> (
+     xs := set apply(M, leadMonomial);
+     H := new MutableHashTable from apply(M, g -> leadTerm g => (g-leadTerm g));
+     scan(reverse M, g -> (
+	       v := leadTerm g;
+	       restg := H#v;
+	       badset := xs * set support restg;
+	       scan(toList badset, x -> (
+			 << "back reducing " << v << " by " << x << " restg = " << restg << endl;
+			 restg = restg % (x-H#x)));
+	       H#v = restg;
+	       ));
+     pairs H
+     )
+
+reduceLinears Ideal := o -> (I) -> (
+     -- returns (J,L), where J is an ideal,
+     -- and L is a list of: (variable x, poly x+g)
+     -- where x+g is in I, and x doesn't appear in J.
+     -- also x doesn't appear in any poly later in the L list
+     R := ring I;
+     -- make sure that R is a polynomial ring, no quotients
+     S := (coefficientRing R)[gens R, Weights=>{numgens R:-1}, Global=>false];
+     IS := substitute(I,S);
+     L := flatten entries gens IS;
+     count := o.Limit;
+     M := while count > 0 list (
+       count = count - 1;
+       g := findReductor L;
+       if g === null then break;
+       g = 1/(leadCoefficient g) * g;
+       << "reducing using " << g << endl << endl;
+       L = apply(L, f -> f % g);
+       g
+       );
+     -- Now loop through and improve M
+     M = backSubstitute M;
+     M = apply(M, (x,g) -> (substitute(x,R),substitute(g,R)));
      (substitute(ideal L,R), M)
+     )
+
+minPressy = method()
+minPressy Ideal := (I) -> (
+     -- if the ring I is a tower, flatten it here...
+     R := ring I;
+     (J,G) := reduceLinears I;
+     xs := set apply(G, first);
+     varskeep := rsort toList(set gens R - xs);
+     S := (coefficientRing R)[varskeep, MonomialSize=>8];
+     if not isSubset(set support J, set varskeep) -- this should not happen
+     then error "internal error in minPressy: not all vars were reduced in ideal";
+     FRS := map(R,S,varskeep);
+     -- Now we need to make the other map...
+     X := new MutableList from gens R;
+     scan(G, (v,g) -> X#(index v) = g);
+     maptoS := apply(toList X, f -> substitute(f,S));
+     FSR := map(S,R,maptoS);
+     (substitute(ideal compress gens J,S), FRS, FSR)
      )
 
 smallerMonomials = method()
@@ -144,9 +197,9 @@ pruneParameterScheme(Ideal,Ideal) := (J,F) -> (
      R := ring F;
      A := coefficientRing R;
      if ring J =!= A then error "expected(ideal in coeffring A, family in A[x])";
-     time J1 := minimalPresentation J;
+     time (J1,map1,map2) := minPressy J;
      B := ring J1;
-     phi := J.cache.minimalPresentationMap; -- map: A --> B
+     phi := map2; -- map: A --> B
      -- want the induced map from A[x] -> B[x]
      S := B (monoid R);
      phi' := map(S,R,vars S | substitute(phi.matrix,S));
@@ -270,6 +323,7 @@ I = ideal"ab,bc,ca"
 (J,F) = groebnerScheme(I, Minimize=>false);
 time minimalPresentation J
 time (L,G) = reduceLinears J;
+minPressy J
 
 P = new MutableList from apply(numgens ring J, x -> random kk)
 P#(index t_40) = 0_kk
@@ -289,10 +343,10 @@ oo J
 kk = ZZ/101
 R = kk[a..f]
 I = ideal"ab,bc,cd,de,ea,ac"
-(J,F) = groebnerScheme(gin I, Minimize=>false);
+(J,F) = groebnerScheme(I, Minimize=>false);
 time minimalPresentation J
 time (L,G) = reduceLinears J;
-
+minPressy J
 P = new MutableList from apply(numgens ring J, x -> random kk)
 P#(index t_40) = 0_kk
 scan(reverse G, (v,g) -> (
@@ -388,12 +442,14 @@ I = ideal"ab,bc,cd,ade"
 L1 = smallerMonomials I
 F0 = parameterFamily(I,L1,symbol t)
 J0 = parameterIdeal(I,F0);
+time minPressy J0;
 time (J,F) = pruneParameterScheme(J0,F0);
+time (J,F) = groebnerScheme I;
 B = ring J
 rand = map(R,ring F,(vars R) | random(R^1, R^(numgens B)))
 L = rand F
-decompose J
-intersect oo == J -- yes
+decompose L
+intersect oo == L -- 
 primaryDecomposition L
 primaryDecomposition I
 
