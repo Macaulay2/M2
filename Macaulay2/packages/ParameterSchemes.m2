@@ -47,12 +47,16 @@ reduceLinears Ideal := o -> (I) -> (
        count = count - 1;
        g := findReductor L;
        if g === null then break;
-       ing := leadTerm g;
-       << "reducing using " << g << endl << endl;
+       g = 1/(leadCoefficient g) * g;
+       << "reducing using " << leadTerm g << endl << endl;
        L = apply(L, f -> f % g);
-       (substitute(leadTerm g, R), substitute(-g+leadTerm g,R))
+       g
        );
-     (substitute(ideal compress gens L,R), M)
+     -- Now loop through and improve M
+     MMM = M;
+     M = backSubstitute M;
+     M = apply(M, (x,g) -> (substitute(x,R),substitute(g,R)));
+     (substitute(ideal L,R), M)
      )
 
 backSubstitute = method()
@@ -69,33 +73,6 @@ backSubstitute List := (M) -> (
 	       H#v = restg;
 	       ));
      pairs H
-     )
-
-reduceLinears Ideal := o -> (I) -> (
-     -- returns (J,L), where J is an ideal,
-     -- and L is a list of: (variable x, poly x+g)
-     -- where x+g is in I, and x doesn't appear in J.
-     -- also x doesn't appear in any poly later in the L list
-     R := ring I;
-     -- make sure that R is a polynomial ring, no quotients
-     S := (coefficientRing R)[gens R, Weights=>{numgens R:-1}, Global=>false];
-     IS := substitute(I,S);
-     L := flatten entries gens IS;
-     count := o.Limit;
-     M := while count > 0 list (
-       count = count - 1;
-       g := findReductor L;
-       if g === null then break;
-       g = 1/(leadCoefficient g) * g;
-       << "reducing using " << leadTerm g << endl << endl;
-       L = apply(L, f -> f % g);
-       g
-       );
-     -- Now loop through and improve M
-     MMM = M;
-     M = backSubstitute M;
-     M = apply(M, (x,g) -> (substitute(x,R),substitute(g,R)));
-     (substitute(ideal L,R), M)
      )
 
 minPressy = method()
