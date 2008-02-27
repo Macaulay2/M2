@@ -344,13 +344,9 @@ gens gb Jlocal;
 -- Amelia Amelia Amelia Amelia Amelia Amelia Amelia Amelia
 
 R = ZZ/101[a..e,MonomialOrder=>Lex]
-R = ZZ/101[a..f]
-I = ideal"ab,bc,cd,de,ea,ac"
-R = ZZ/101[a..g]
-I = ideal"ab,bc,cd,de,ea,ac"
-
-R = ZZ/101[a..e,MonomialOrder=>Lex]
 I = ideal"ab,bc,cd,ad"
+time (J,F) = groebnerScheme I
+
 L1 = smallerMonomials I
 F0 = parameterFamily(I,L1,symbol t)
 J0 = parameterIdeal(I,F0)
@@ -361,7 +357,7 @@ L = rand F
 primaryDecomposition L
 primaryDecomposition I
 
-R = ZZ/101[a..e]
+R = ZZ/101[a..f]
 I = ideal"ab,bc,cd,ad"
 L1 = smallerMonomials I
 F0 = parameterFamily(I,L1,symbol t)
@@ -375,6 +371,12 @@ primaryDecomposition I
 
 R = ZZ/101[a..f]
 I = ideal"ab,bc,cd,de,ea,ad"
+(J,F) = groebnerScheme I
+Alocal = kk{gens ring J, MonomialSize=>8}
+Jlocal = sub(J,Alocal)
+gbTrace=3
+time gens gb Jlocal;
+
 L1 = smallerMonomials I
 F0 = parameterFamily(I,L1,symbol t)
 J0 = parameterIdeal(I,F0);
