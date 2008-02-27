@@ -10,8 +10,6 @@ newPackage(
     	DebuggingMode => false
     	)
    
-   -- making a small change
-
 export{isNormal, integralClosure, ICmap, ICfractions, conductor}
 
 -- PURPOSE: check if an affine domain is normal.  
