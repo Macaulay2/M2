@@ -14,8 +14,54 @@ export { smallerMonomials,
      parameterFamily, 
      parameterIdeal, 
      pruneParameterScheme, 
-     groebnerScheme
+     groebnerScheme,
+     reduceLinears
      }
+
+isReductor = (f) -> (
+     inf := leadTerm f;
+     part(1,f) != 0 and
+     (set support(inf) * set support(f - inf)) === set{})
+
+findReductor = (L) -> (
+     L1 := select(L, isReductor);
+     L2 := sort apply(L1, f -> (size f,f));
+     if #L2 > 0 then L2#0#1)
+
+reduceIdeal = (L) -> (
+     L1 := select(L, isReductor);
+     L2 := sort apply(L1, f -> (size f,f));
+     if #L2 > 0 then (
+	  g := L2#0#1;
+	  << "reducing with " << g << endl << endl;
+	  L = apply(L, f -> f % g))
+     else (
+	  print "cannot reduce ideal further";
+	  L))
+
+reduceLinears = method(Options => {Limit=>infinity})
+reduceLinears Ideal := o -> (I) -> (
+     -- returns (J,L), where J is an ideal,
+     -- and L is a list of: (variable x, poly x+g)
+     -- where x+g is in I, and x doesn't appear in J.
+     -- also x doesn't appear in any poly later in the L list
+     R := ring I;
+     -- make sure that R is a polynomial ring, no quotients
+     S := (coefficientRing R)[gens R, Weights=>{numgens R:-1}, Global=>false];
+     IS := substitute(I,S);
+     L := flatten entries gens IS;
+     count := o.Limit;
+     M := while count > 0 list (
+       count = count - 1;
+       g := findReductor L;
+       if g === null then break;
+       ing := leadTerm g;
+       << "reducing using " << g << endl << endl;
+       L = apply(L, f -> f % g);
+       (substitute(leadTerm g, R), substitute(-g+leadTerm g,R))
+       );
+     (substitute(ideal L,R), M)
+     )
 
 smallerMonomials = method()
 smallerMonomials(Ideal,RingElement) := (M,f) -> (
@@ -165,7 +211,36 @@ document {
      lexicographic initial ideal is not prime."
      }
 
-{* document {
+document {
+     Key => {(groebnerScheme,Ideal),groebnerScheme},
+     Headline => "find the family of all ideals having a given monomial ideal as initial ideal",
+     Usage => "(J,F) = groebnerScheme I\n(J,F) = groebnerScheme(I, Minimize=>false)",
+     Inputs => { "I" => "a monomial ideal in a polynomial ring R",
+	  Minimize => "set to false if minimalization of the ideal and family is 
+	  not desired, or is too compute intensive" },
+     Outputs => {
+	  "J" => Ideal => "the ideal defining the base space",
+	  "F" => Ideal => "the family"
+	  },
+     "The ideal J is in a ring A = kk[t_1, t_2, ....].  The scheme defined by J
+     is the Groebner scheme of (I,>), where > is the monomial order in the ring of I.
+     The ideal F is the ideal of the family, in the ring: A[gens R] (more precisely: A (monoid R)",
+     PARA{},
+     "As an example, we compute the groebner scheme of the following ideal.  The resulting parameter space
+     is affine 8-space, and so is smooth, rational and irreducible.",	  
+     EXAMPLE lines ///
+         R = ZZ/101[a..e];
+	 I = ideal"ab,bc,cd,ad";
+	 (J,F) = groebnerScheme I;
+	 J
+	 netList first entries gens F
+	 ///,
+     SourceCode => {(groebnerScheme,Ideal)},
+     SeeAlso => {parameterIdeal, parameterFamily, pruneParameterScheme, smallerMonomials}
+     }
+
+{* 
+document {
 	Key => {(firstFunction,ZZ),firstFunction},
 	Headline => "a silly first function",
 	Usage => "firstFunction n",
@@ -187,14 +262,82 @@ end
 restart
 loadPackage "ParameterSchemes"
 installPackage ParameterSchemes
+viewHelp ParameterSchemes
+
+kk = ZZ/101
+R = kk[a..d]
+I = ideal"ab,bc,ca"
+(J,F) = groebnerScheme(I, Minimize=>false);
+time minimalPresentation J
+time (L,G) = reduceLinears J;
+
+P = new MutableList from apply(numgens ring J, x -> random kk)
+P#(index t_40) = 0_kk
+scan(reverse G, (v,g) -> (
+	  if leadCoefficient v != 1 then (
+	    c := 1/(leadCoefficient v);
+	    v = c * v;
+	    g = c * g);
+          P#(index v) = substitute(g,matrix {toList P});
+	  ))
+map(kk,ring J,toList P)
+oo J
+
 
 -- Hi Amelia, here is a good example:
 -- Amelia Amelia Amelia Amelia Amelia Amelia Amelia Amelia
-R = ZZ/101[a..f]
+kk = ZZ/101
+R = kk[a..f]
 I = ideal"ab,bc,cd,de,ea,ac"
-(J,F) = groebnerScheme(I, Minimize=>false);
+(J,F) = groebnerScheme(gin I, Minimize=>false);
 time minimalPresentation J
+time (L,G) = reduceLinears J;
+
+P = new MutableList from apply(numgens ring J, x -> random kk)
+P#(index t_40) = 0_kk
+scan(reverse G, (v,g) -> (
+	  if leadCoefficient v != 1 then (
+	    c := 1/leadCoefficient v;
+	    v = c * v;
+	    g = c * g);
+          P#(index v) = substitute(g,matrix {toList P});
+	  << "set P#" << index v << " to " << P#(index v) << endl;
+	  ))
+map(kk,ring J,toList P)
+oo J
+map(R,ring F,join(gens R,toList P))
+M = oo F
+positions(flatten entries gens oo, f -> f != 0)
+G1 = apply(G, (v,g) -> (leadMonomial v, support g))
+for i from 0 to #G1-2 list (
+     v := G1_i_0;
+     member(v,unique join apply(1..#G1-1, i -> G1_i_1))
+     )
+A = (ZZ/101){support L, MonomialSize=>8}
+L = substitute(L,A)
+L = ideal compress gens L;
+gbTrace=3
+L = ideal gens gb L;
+support L_0
+support L_1
+L1 = ideal apply(flatten entries gens L, f -> f // t_40)
+reduceLinears L1
 -- Amelia Amelia Amelia Amelia Amelia Amelia Amelia Amelia
+
+Alocal = (coefficientRing ring J){gens ring J,MonomialSize=>8}
+Jlocal = substitute(J,Alocal);
+J1 = select(flatten entries gens Jlocal, f -> f != 0 and first degree leadTerm f == 1);
+J0 = trim ideal select(J1, f -> first degree f == 1)
+J1 = apply(J1, f -> f % J0)
+J0 = trim(J0 + ideal select(J1, f -> first degree f == 1))
+J1 = apply(J1, f -> f % J0)
+J0 = trim(J0 + ideal select(J1, f -> first degree f == 1))
+numgens J0
+J1 = apply(J1, f -> f % J0)
+J0 = trim(J0 + ideal select(J1, f -> first degree f == 1))
+numgens J0
+J1 = apply(J1, f -> f % J0)
+
 
 R = ZZ/101[a..e,MonomialOrder=>Lex]
 R = ZZ/101[a..f]
