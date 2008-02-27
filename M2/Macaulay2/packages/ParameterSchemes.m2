@@ -160,24 +160,36 @@ standardMonomials(List) := (L) -> (
      apply(L, f -> standardMonomials(degree f, I))
      )
 
-parameterFamily = method()
-parameterFamily(Ideal,List,Symbol) := (M,L,t) -> (
+parameterFamily = method(Options=>{Local=>false})
+parameterFamily(Ideal,List,Symbol) := opts -> (M,L,t) -> (
      -- M is a monomial ideal
      -- L is a list of lists of monomials, #L is the
      --  number of generators of M.
+     local R1;
+     local U;
+     local phi;
      R := ring M;
      kk := coefficientRing R;
      nv := sum apply(L, s -> #s);
-     R1 := kk[t_1..t_nv, MonomialSize=>8];
-     U := R1 (monoid R);
-     --U := tensor(R,R1,DegreeRank=>1);  
+     if opts.Local then (
+         R1 = kk{t_1..t_nv, MonomialSize=>8};
+	 U = kk[gens R,t_1..t_nv,MonomialOrder=>{
+		   Weights=>splice{numgens R:0,nv:-1},numgens R,nv},
+	           Global=>false];
+	 phi = map(U,R1,toList(U_(numgens R) .. U_(nv - 1 + numgens R)));
+         )
+     else (
+	 R1 = kk[t_1..t_nv, MonomialSize=>8];
+     	 U = R1 (monoid R);
+	 phi = map(U,R1);
+     );
      lastv := -1;
      Mlist := flatten entries gens M;
      elems := apply(#Mlist, i -> (
 	       m := Mlist_i;
 	       substitute(m,U) + sum apply(L#i, p -> (
 			 lastv = lastv + 1;
-			 R1_lastv * substitute(p,U)))));
+			 phi(R1_lastv) * substitute(p,U)))));
      ideal elems
      )
 
@@ -318,6 +330,7 @@ loadPackage "ParameterSchemes"
 installPackage ParameterSchemes
 viewHelp ParameterSchemes
 
+-- Example: triangle, giving twisted cubic --
 kk = ZZ/101
 R = kk[a..d]
 I = ideal"ab,bc,ca"
@@ -327,6 +340,7 @@ A = ring J; B = ring F
 phi = map(R,B,(vars R)|random(R^1, R^(numgens A)))
 L = phi F
 leadTerm L
+decompose L
 
 -- Hi Amelia, here is a good example:
 -- Amelia Amelia Amelia Amelia Amelia Amelia Amelia Amelia
@@ -336,12 +350,50 @@ I = ideal"ab,bc,cd,de,ea,ac"
 time (J,F) = groebnerScheme(I);
 time (J,F) = groebnerScheme(I, Minimize=>false);
 time minimalPresentation J
-Alocal = kk{gens ring J, MonomialSize=>8}
-Jlocal = sub(J,Alocal)
+A = ring J
+B = ring F
+Alocal = kk{gens A, MonomialSize=>8}
+Jlocal = sub(J,Alocal);
 gbTrace=3
-gens gb Jlocal;
+Jlocal = ideal gens gb Jlocal
+J1 = trim(ideal(t_40) + Jlocal)
+J2 = Jlocal : t_40
+(P,phi1,phi2) = minPressy J2;
+-- Now: I want a point on V(J), on this component...
+-- This should be a function?
+A1 = ring P
+phi2
+psi = map(kk,A1,random(kk^1, kk^(numgens A1)))
+g = psi * phi2
+g Jlocal
+g = map(kk,A,g.matrix)
+g J
+g' = map(R,B,(vars R) | sub(g.matrix,R))
+L = g' F
+leadTerm L
+res L
 
+use ring J
+J' = ideal apply(flatten entries gens J, f -> f // t_40);
+minPressy J'
+-- There are two smooth components through the ideal I.
 -- Amelia Amelia Amelia Amelia Amelia Amelia Amelia Amelia
+
+-- Example: in the local case --
+kk = ZZ/101
+R = kk[a,b,c]
+I = ideal"ab,ac,bc"
+Istd = standardMonomials I
+F = parameterFamily(I,Istd,symbol t,Local=>true)
+parameterIdeal(I,F)
+f = F_0
+g = F_1
+h = F_2
+c*f-b*g + t_4*a*f -a*g*t_1 - b*t_2*h
+(b*c^2) % G
+b*c^2 - c*h + a*t_7*g
+--------------------------------
+
 
 R = ZZ/101[a..e,MonomialOrder=>Lex]
 I = ideal"ab,bc,cd,ad"
