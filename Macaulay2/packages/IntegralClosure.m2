@@ -9,6 +9,8 @@ newPackage(
     	Headline => "Rees algebras",
     	DebuggingMode => false
     	)
+   
+   -- making a small change
 
 export{isNormal, integralClosure, ICmap, ICfractions, conductor}
 
