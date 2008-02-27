@@ -58,13 +58,13 @@ reduceLinears Ideal := o -> (I) -> (
 backSubstitute = method()
 backSubstitute List := (M) -> (
      xs := set apply(M, leadMonomial);
-     H := new MutableHashTable from apply(M, g -> leadTerm g => (g-leadTerm g));
+     H := new MutableHashTable from apply(M, g -> leadTerm g => (-g+leadTerm g));
      scan(reverse M, g -> (
 	       v := leadTerm g;
 	       restg := H#v;
 	       badset := xs * set support restg;
 	       scan(toList badset, x -> (
-			 << "back reducing " << v << " by " << x << " restg = " << restg << endl;
+			 << "back reducing " << v << " by " << x << endl; --<< " restg = " << restg << endl;
 			 restg = restg % (x-H#x)));
 	       H#v = restg;
 	       ));
@@ -87,11 +87,12 @@ reduceLinears Ideal := o -> (I) -> (
        g := findReductor L;
        if g === null then break;
        g = 1/(leadCoefficient g) * g;
-       << "reducing using " << g << endl << endl;
+       << "reducing using " << leadTerm g << endl << endl;
        L = apply(L, f -> f % g);
        g
        );
      -- Now loop through and improve M
+     MMM = M;
      M = backSubstitute M;
      M = apply(M, (x,g) -> (substitute(x,R),substitute(g,R)));
      (substitute(ideal L,R), M)
@@ -320,78 +321,27 @@ viewHelp ParameterSchemes
 kk = ZZ/101
 R = kk[a..d]
 I = ideal"ab,bc,ca"
-(J,F) = groebnerScheme(I, Minimize=>false);
-time minimalPresentation J
-time (L,G) = reduceLinears J;
-minPressy J
-
-P = new MutableList from apply(numgens ring J, x -> random kk)
-P#(index t_40) = 0_kk
-scan(reverse G, (v,g) -> (
-	  if leadCoefficient v != 1 then (
-	    c := 1/(leadCoefficient v);
-	    v = c * v;
-	    g = c * g);
-          P#(index v) = substitute(g,matrix {toList P});
-	  ))
-map(kk,ring J,toList P)
-oo J
-
+time (J,F) = groebnerScheme(I);
+A = ring J; B = ring F
+-- Since J is 0, let's see what a random such fiber looks like
+phi = map(R,B,(vars R)|random(R^1, R^(numgens A)))
+L = phi F
+leadTerm L
 
 -- Hi Amelia, here is a good example:
 -- Amelia Amelia Amelia Amelia Amelia Amelia Amelia Amelia
 kk = ZZ/101
 R = kk[a..f]
 I = ideal"ab,bc,cd,de,ea,ac"
-(J,F) = groebnerScheme(I, Minimize=>false);
+time (J,F) = groebnerScheme(I);
+time (J,F) = groebnerScheme(I, Minimize=>false);
 time minimalPresentation J
-time (L,G) = reduceLinears J;
-minPressy J
-P = new MutableList from apply(numgens ring J, x -> random kk)
-P#(index t_40) = 0_kk
-scan(reverse G, (v,g) -> (
-	  if leadCoefficient v != 1 then (
-	    c := 1/leadCoefficient v;
-	    v = c * v;
-	    g = c * g);
-          P#(index v) = substitute(g,matrix {toList P});
-	  << "set P#" << index v << " to " << P#(index v) << endl;
-	  ))
-map(kk,ring J,toList P)
-oo J
-map(R,ring F,join(gens R,toList P))
-M = oo F
-positions(flatten entries gens oo, f -> f != 0)
-G1 = apply(G, (v,g) -> (leadMonomial v, support g))
-for i from 0 to #G1-2 list (
-     v := G1_i_0;
-     member(v,unique join apply(1..#G1-1, i -> G1_i_1))
-     )
-A = (ZZ/101){support L, MonomialSize=>8}
-L = substitute(L,A)
-L = ideal compress gens L;
+Alocal = kk{gens ring J, MonomialSize=>8}
+Jlocal = sub(J,Alocal)
 gbTrace=3
-L = ideal gens gb L;
-support L_0
-support L_1
-L1 = ideal apply(flatten entries gens L, f -> f // t_40)
-reduceLinears L1
+gens gb Jlocal;
+
 -- Amelia Amelia Amelia Amelia Amelia Amelia Amelia Amelia
-
-Alocal = (coefficientRing ring J){gens ring J,MonomialSize=>8}
-Jlocal = substitute(J,Alocal);
-J1 = select(flatten entries gens Jlocal, f -> f != 0 and first degree leadTerm f == 1);
-J0 = trim ideal select(J1, f -> first degree f == 1)
-J1 = apply(J1, f -> f % J0)
-J0 = trim(J0 + ideal select(J1, f -> first degree f == 1))
-J1 = apply(J1, f -> f % J0)
-J0 = trim(J0 + ideal select(J1, f -> first degree f == 1))
-numgens J0
-J1 = apply(J1, f -> f % J0)
-J0 = trim(J0 + ideal select(J1, f -> first degree f == 1))
-numgens J0
-J1 = apply(J1, f -> f % J0)
-
 
 R = ZZ/101[a..e,MonomialOrder=>Lex]
 R = ZZ/101[a..f]
@@ -437,14 +387,10 @@ intersect oo == J -- yes
 primaryDecomposition L
 primaryDecomposition I
 
-R = ZZ/101[a..f]
+R = ZZ/101[a..e]
 I = ideal"ab,bc,cd,ade"
-L1 = smallerMonomials I
-F0 = parameterFamily(I,L1,symbol t)
-J0 = parameterIdeal(I,F0);
-time minPressy J0;
-time (J,F) = pruneParameterScheme(J0,F0);
-time (J,F) = groebnerScheme I;
+time (J,F) = groebnerScheme(I, Minimize=>false);
+time (J,F) = groebnerScheme(I);
 B = ring J
 rand = map(R,ring F,(vars R) | random(R^1, R^(numgens B)))
 L = rand F
@@ -452,6 +398,14 @@ decompose L
 intersect oo == L -- 
 primaryDecomposition L
 primaryDecomposition I
+
+
+L1 = smallerMonomials I
+F0 = parameterFamily(I,L1,symbol t)
+J0 = parameterIdeal(I,F0);
+time minPressy J0;
+time (J,F) = pruneParameterScheme(J0,F0);
+
 
 R = ZZ/101[a..f,MonomialOrder=>Lex]
 I = ideal"ab,bc,cd,ad,de"
