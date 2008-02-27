@@ -1,0 +1,5 @@
+add links to our M2 icon in the documentation
+
+Put it in the Style directory
+
+Move the relevant style files all under share/doc/Macaulay2.
