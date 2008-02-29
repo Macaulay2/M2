@@ -48,22 +48,20 @@ inducedMonomialOrder (List,List) := (Ord, l) -> (
      while done > 1 do (
 	  if oldOrd#0#0 == GRevLex then (
 	       w = #oldOrd#0#1;
-	       lw = select(newlis, i -> i <= n+count);
+	       lw = select(newlis, i -> i <= w+count);
 	       ww = apply(lw, i -> oldOrd#0#1#(i-1));
 	       newOrd = append(newOrd, oldOrd#0#0 => ww);
 	       count = count + #oldOrd#0#1;
 	       newlis = select(newlis, i -> i > count); 
-	       oldOrd = drop(oldOrd,1);
-	       done = done - 1;
 	       )
 	 else( -- count up the correct number for all other orders. 
 	       u = #(select(newlis, i -> i <= count + oldOrd#0#1));
-	       newlis = drop(newlis, u);
 	       newOrd = append(newOrd, oldOrd#0#0 => u);
+	       newlis = drop(newlis, u);
 	       count = count + oldOrd#0#1;
-	       oldOrd = drop(oldOrd,1);
-	       done = done - 1;
-	  	);
+	       );
+	   oldOrd = drop(oldOrd,1);
+	   done = done - 1;
 	   );
       -- finally we need to append Position and Monomial Order as
       -- needed. 
