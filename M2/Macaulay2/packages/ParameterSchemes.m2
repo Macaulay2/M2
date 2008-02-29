@@ -16,8 +16,62 @@ export { smallerMonomials,
      pruneParameterScheme, 
      groebnerScheme,
      reduceLinears,
-     minPressy
+     minPressy,
+     inducedMonomialOrder
      }
+
+
+inducedMonomialOrder = method()
+inducedMonomialOrder (List,List) := (Ord, l) -> (
+     -- 2 arguments: a monomial order, given as a list, and a list of
+     -- the positions of the variables to be used in the new ring.
+     -- return:  a new monomial order corresponding to the subset of 
+     --          of variables in l.
+     n := #Ord;
+     m := #l;
+     done := n;     -- keeps track in the loops.
+     newOrd := {};  -- what we will return.
+     oldOrd := Ord; -- used to take apart the monomial order list. 
+     newlis := l;   -- used to take apart the list of variable numbers.
+     count := 0;    -- helpful for the loops. 
+     if Ord#0#0 == Weights then (
+	  w := #Ord#0#1;  -- the old list of weights
+	  lw := select(l, i -> i <= w); 
+	  ww := apply(lw, i -> Ord#0#1#(i-1));
+	  newOrd = append(newOrd, Weights => ww); 
+	  oldOrd = drop(oldOrd, 1);
+	  done = done - 1;
+	  );
+     -- This loop finds all GRevLex, Lex, RevLex, GroupRevLex, and
+     -- GroupLex pieces. Uses that Position is always an element in a
+     -- monomial order. 
+     while done > 1 do (
+	  if oldOrd#0#0 == GRevLex then (
+	       w = #oldOrd#0#1;
+	       lw = select(newlis, i -> i <= n+count);
+	       ww = apply(lw, i -> oldOrd#0#1#(i-1));
+	       newOrd = append(newOrd, oldOrd#0#0 => ww);
+	       count = count + #oldOrd#0#1;
+	       newlis = select(newlis, i -> i > count); 
+	       oldOrd = drop(oldOrd,1);
+	       done = done - 1;
+	       )
+	 else( -- count up the correct number for all other orders. 
+	       u = #(select(newlis, i -> i <= count + oldOrd#0#1));
+	       newlis = drop(newlis, u);
+	       newOrd = append(newOrd, oldOrd#0#0 => u);
+	       count = count + oldOrd#0#1;
+	       oldOrd = drop(oldOrd,1);
+	       done = done - 1;
+	  	);
+	   );
+      -- finally we need to append Position and Monomial Order as
+      -- needed. 
+      if #newOrd == n-1 then append(newOrd, last(Ord)) else(
+	   append(newOrd, Ord#(n-2), Ord#(n-1))  
+      	   )
+      )
+	    
 
 isReductor = (f) -> (
      inf := leadTerm f;
@@ -281,6 +335,9 @@ document {
      SourceCode => {(groebnerScheme,Ideal)},
      SeeAlso => {parameterIdeal, parameterFamily, pruneParameterScheme, smallerMonomials}
      }
+
+--document {
+--     Key => {inducedMonomialOrder}
 
 {* 
 document {
