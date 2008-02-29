@@ -20,7 +20,11 @@ SRC :=  $(YSRC) $(CSRC) $(LSRC) $(HSRC)
 CFILES := $(CSRC) $(LSRC:.l=.c) $(YSRC:.y=.fixed.c)
 YFLAGS += -d
 YFLAGS += --verbose
-LOADLIBES += -lgc -ldl @LIBS@
+
+# we don't include @LIBS@ here because including -llapack would make it also
+# necessary to link with the fortran support libraries:
+LOADLIBES += -lgc -ldl
+
 ifeq (@DEBUG@,yes)
 CPPFLAGS += -DYYDEBUG
 endif

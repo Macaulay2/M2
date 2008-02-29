@@ -2,7 +2,7 @@
 Name: Macaulay2
 URL: http://www.math.uiuc.edu/Macaulay2/
 Version: @PACKAGE_VERSION@
-Release: 1
+Release: @DISTRIBUTION@
 Summary: Macaulay 2 is a software system for algebraic geometry research
 License: GPLv2
 Group: Applications/Engineering

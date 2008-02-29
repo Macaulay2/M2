@@ -1,4 +1,8 @@
 # @configure_input@
+
+# override this on the make command line, as needed!
+DISTRIBUTION = @DISTRIBUTION@
+
 include ../../include/config.Makefile
 CHOWN = chown
 TIDY = yes
@@ -58,7 +62,7 @@ SEDOPTS = -e 's=^\.="=' -e 's=$$="='
 	find files-common@FINALPREFIX@/@packagesdirtail@/Macaulay2Doc -name \*.c -o -name \*.h | xargs rm
 
 ../../@PKG_RPM@ : Macaulay2-body.spec ../../$(PKG_TZ) Makefile .prepared packages-used
-	sed '/Requires/,$$d' Macaulay2-body.spec >Macaulay2.spec
+	sed -e '/Requires/,$$d' -e 's/^Release: .*/Release: $(DISTRIBUTION)/' Macaulay2-body.spec >Macaulay2.spec
 	( echo -n "Requires: Macaulay2-common = @PACKAGE_VERSION@" && \
 	  cat packages-used | while read pkg rel ; do echo -n ", $$pkg >= $$rel" ; done && \
 	  echo ) >>Macaulay2.spec
@@ -67,7 +71,7 @@ SEDOPTS = -e 's=^\.="=' -e 's=$$="='
 	@FAKEROOT@ rpmbuild -bb Macaulay2.spec
 
 ../../@PKG_COM_RPM@ : Macaulay2-common-body.spec ../../$(PKG_COM_TZ) Makefile .prepared-common
-	cat Macaulay2-common-body.spec >Macaulay2-common.spec
+	sed -e 's/^Release: .*/Release: $(DISTRIBUTION)/' Macaulay2-common-body.spec >Macaulay2-common.spec
 	(cd files-common && find -type d -a -name Macaulay2 -prune -o -type f) | sed $(SEDOPTS) >>Macaulay2-common.spec
 	@FAKEROOT@ rpmbuild -bb Macaulay2-common.spec
 
@@ -78,11 +82,11 @@ libraries-used : .prepared always
 
 STRIP_VERSION_CMD := sed 's/-[0-9][0-9.]*[0-9]\(-\|$$\).*//'
 
-packages-used : libraries-used Makefile
+packages-used : libraries-used
 	cat libraries-used \
 	| while read x ; \
 	do rpm --query -f "$$x" | sed 's/\([^.]*\)-\([0-9][0-9.]*[0-9]\)\(-.*$$\|$$\)/\1 \2/' ; \
-	done | sort | uniq | sed -e 's=.*/==' -e 's=\.list$$==' >$@
+	done | fgrep -v 'is not owned by any package' | sort | uniq | sed -e 's=.*/==' -e 's=\.list$$==' >$@
 
 test-install :
 	sudo rpm -i -v ../../@PKG_COM_RPM@

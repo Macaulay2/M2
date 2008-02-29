@@ -49,7 +49,8 @@ document {
 	  "Using TeXmacs as an interface to Macaulay 2 is described in the TeXmacs online
 	  manual: ", HREF "http://www.texmacs.org/tmweb/manual/webman-interface.en.html", ".
 	  The basic procedure is to pull down the ", TT "Insert", " menu, select ", TT "Session", " from it,
-	  and then to select ", TT "Macaulay 2", " from the resulting submenu."
+	  and then to select ", TT "Macaulay 2", " from the resulting submenu.  Alternatively, you 
+	  can click on the icon that looks like a computer terminal and select ", TT "Macaulay 2", " from the resulting submenu."
 	  },
      PARA {
 	  "The interface is implemented by a special top level mode in Macaulay2 that causes

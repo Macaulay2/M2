@@ -67,15 +67,23 @@ UNTARCMD ?= tar xzf $(TARFILE)
 .untarred-$(VERSION) : .fetched-$(VERSION) ; $(UNTARCMD) && touch $@
 .untarred2-$(VERSION) : .fetched-$(VERSION) ; mkdir tmp ; $(UNTARCMD) -C tmp && touch $@
 
+ifeq ($(FETCHER),)
 ifneq (@CURL@,)
 FETCHER = @CURL@
-FETCHOPTS = -o "$(TARFILE)"
 else
 ifneq (@WGET@,)
 FETCHER = @WGET@
-FETCHOPTS = 
 else
 $(error either curl or wget is needed for downloading library source code, please install one of them and reconfigure)
+endif
+endif
+endif
+
+ifeq ($(FETCHER),curl)
+FETCHOPTS = -o "$(TARFILE)"
+else
+ifneq ($(FETCHER),wget)
+FETCHOPTS = 
 endif
 endif
 

@@ -1,5 +1,4 @@
 AC_INIT(Macaulay 2, 1.1.1, Macaulay2@math.uiuc.edu, Macaulay2) dnl -*- autoconf -*-
-AC_SUBST(DISTRIBUTION,1) dnl use this starting number to sequentially number the downstream distributions
 AC_CONFIG_HEADERS(include/config.h)
 AC_CONFIG_FILES(m4_include(config/files))
 AC_SUBST(CONFIGURED_FILES,"$ac_config_files")
@@ -21,10 +20,13 @@ AC_DEFUN(IS_DECLARED,[
 ])
 
 echo "relevant environment variable values, if any:"
-for x in CC FC CXX CPPFLAGS CFLAGS FCFLAGS CXXFLAGS LDFLAGS LIBS SINGULARLIBS ISSUE
+for x in CC FC CXX CPPFLAGS CFLAGS FCFLAGS CXXFLAGS LDFLAGS LIBS SINGULARLIBS ISSUE DISTRIBUTION
 do eval v=\$$x
    test "$v" && echo "   $x=$v"
 done
+
+AC_SUBST(DISTRIBUTION) dnl use this starting number to sequentially number the downstream distributions
+test "$DISTRIBUTION" || DISTRIBUTION=1
 
 for i in $CFLAGS
 do case $i in
@@ -146,8 +148,8 @@ case $ARCH in
   *) DEBARCH=$ARCH ;;
 esac
 
-AC_SUBST(PKG_RPM,$PACKAGE_TARNAME-$PACKAGE_VERSION-$ARCH-$OS-$ISSUE.rpm)
-AC_SUBST(PKG_COM_RPM,$PACKAGE_TARNAME-$PACKAGE_VERSION-common.rpm)
+AC_SUBST(PKG_RPM,$PACKAGE_TARNAME-$PACKAGE_VERSION-$DISTRIBUTION.$ARCH-$OS-$ISSUE.rpm)
+AC_SUBST(PKG_COM_RPM,$PACKAGE_TARNAME-$PACKAGE_VERSION-$DISTRIBUTION.common.rpm)
 AC_SUBST(PKG_DEB,$PACKAGE_TARNAME-$PACKAGE_VERSION-$DEBARCH-$OS-$ISSUE.deb)
 AC_SUBST(PKG_COM_DEB,$PACKAGE_TARNAME-$PACKAGE_VERSION-common.deb)
 
