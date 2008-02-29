@@ -12,7 +12,11 @@ VPATH = @srcdir@
 ############################################################
 .PHONY : clean all install tags
 YFLAGS := -vdlt
-LOADLIBES += @LIBS@ -lm
+
+# we don't include @LIBS@ here because including -llapack would make it also
+# necessary to link with the fortran support libraries:
+LOADLIBES += -lm
+
 CNAMES := scc1.c readfile.c error.c dictionary.c list.c cprint.c type.c chk.c compat.c
 HFILES := $(CNAMES:.c=.h) scc.h grammar.h
 OFILES := $(CNAMES:.c=.o) grammar.o

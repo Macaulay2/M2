@@ -1,0 +1,16 @@
+Consider adding a line like 
+
+Requires: info >= 4.11
+
+to rpm/Macaulay2-common-body.spec
+
+
+galois$ rpm --query -f /sbin/install-info
+info-4.11-2.fc7
+
+galois$ uname -a
+Linux galois.math.uiuc.edu 2.6.23.15-80.fc7 #1 SMP Sun Feb 10 17:29:10 EST 2008 i686 GNU/Linux
+
+galois$ cat /etc/issue
+Fedora release 7 (Moonshine)
+Kernel \r on an \m
