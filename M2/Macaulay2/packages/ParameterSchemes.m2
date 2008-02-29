@@ -49,7 +49,7 @@ inducedMonomialOrder (List,List) := (Ord, l) -> (
 	  if oldOrd#0#0 == GRevLex then (
 	       w = #oldOrd#0#1;
 	       lw = select(newlis, i -> i <= w+count);
-	       ww = apply(lw, i -> oldOrd#0#1#(i-1));
+	       ww = apply(lw, i -> oldOrd#0#1#(i-1-count));
 	       newOrd = append(newOrd, oldOrd#0#0 => ww);
 	       count = count + #oldOrd#0#1;
 	       newlis = select(newlis, i -> i > count); 
