@@ -46,7 +46,7 @@ inducedMonomialOrder (List,List) := (Ord, l) -> (
      -- GroupLex pieces. Uses that Position is always an element in a
      -- monomial order. 
      while done > 1 do (
-	  if oldOrd#0#0 == GRevLex then (
+	  if (oldOrd#0#0 == GRevLex or oldOrd#0#0 == GRevLexTiny) then (
 	       w = #oldOrd#0#1;
 	       lw = select(newlis, i -> i <= w+count);
 	       ww = apply(lw, i -> oldOrd#0#1#(i-1-count));
@@ -133,8 +133,10 @@ minPressy Ideal := (I) -> (
      R := ring I;
      (J,G) := reduceLinears I;
      xs := set apply(G, first);
+     l := sort apply(apply(G, first), i -> index i);
      varskeep := rsort toList(set gens R - xs);
-     S := (coefficientRing R)[varskeep, MonomialSize=>8];
+     MO := inducedMonomialOrder((monoid R).Options.MonomialOrder, l);
+     S := (coefficientRing R)[varskeep, MonomialOrder => MO];
      if not isSubset(set support J, set varskeep) -- this should not happen
      then error "internal error in minPressy: not all vars were reduced in ideal";
      FRS := map(R,S,varskeep);
