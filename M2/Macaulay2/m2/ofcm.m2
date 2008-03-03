@@ -211,7 +211,7 @@ makeit1 := (opts) -> (
      M.RawMonomialOrdering = rawMO;
      M#"raw creation log" = new Bag from {logMO};
      opts = new MutableHashTable from opts;
-     opts#"raw monomial ordering" = MOopts;			    -- these are exactly the arguments given to rawMonomialOrdering
+     M#"options" = MOopts;			    -- these are exactly the arguments given to rawMonomialOrdering
      M.Options = new OptionTable from opts;
      toString M := toExternalString M := x -> toString expression x;
      M.RawMonoid = (
