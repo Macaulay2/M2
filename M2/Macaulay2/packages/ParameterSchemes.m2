@@ -40,12 +40,12 @@ inducedMonOrderHelper = (Ord, l, count, newOrd) -> (
 	       w := #Ord#0#1;  -- the old list of weights
 	       lw := select(l, i -> i <= w); 
 	       ww := apply(lw, i -> Ord#0#1#(i-1));
-	       inducedMonOrderHelper(drop(Ord,1),l, n, append(newOrd, Ord#0#0 => ww)) 	   	     
+	       return inducedMonOrderHelper(drop(Ord,1),l, n, append(newOrd, Ord#0#0 => ww)) 	   	     
 	       );
      	  if Ord#0#0 == GRevLex then (
 	       w = #oldOrd#0#1;
 	       lw = select(l, i -> i <= #Ord#0#1+count);
-	       inducedMonOrderHelper(drop(Ord,1), 
+	       return inducedMonOrderHelper(drop(Ord,1), 
 		    select(l, i -> i > count), 
 		    count + #Ord#0#1, 
 		    append(newOrd, Ord#0#0 => apply(lw, i -> Ord#0#1#(i-1-count)))); 
@@ -59,13 +59,13 @@ inducedMonOrderHelper = (Ord, l, count, newOrd) -> (
 	       << "new order list " << drop(Ord, 1)<< endl << endl;
 	       << "new count " << count + Ord#0#1 << endl << endl;
 	       << "new order " << newOrd << endl << endl;
-	       inducedMonOrderHelper(drop(Ord, 1), 
+	       return inducedMonOrderHelper(drop(Ord, 1), 
 		    drop(l, u), 
 		    count + Ord#0#1, 
 		    append(newOrd, Ord#0#0 => u));
 	       );
      	  if (Ord#0#0 == Position or Ord#0#0 == MonomialSize) then (
-	       inducedMonOrderHelper(drop(Ord, 1), l, count, 
+	       return inducedMonOrderHelper(drop(Ord, 1), l, count, 
 		    append(newOrd, Ord#0#0 => Ord#0#1));
 	       );
 	  )
@@ -366,6 +366,12 @@ loadPackage "ParameterSchemes"
 installPackage ParameterSchemes
 viewHelp ParameterSchemes
 
+R = ZZ/101[x_1..x_4, MonomialOrder =>{Lex => 2, GroupLex => 2}, Global => false]
+M = (monoid R).Options.MonomialOrder
+w = {2, 4}
+inducedMonomialOrder(M,w)
+
+
 -- Example: triangle, giving twisted cubic --
 kk = ZZ/101
 R = kk[a..d]
@@ -419,6 +425,30 @@ minPressy J'
 kk = ZZ/101
 R = kk[a,b,c]
 I = ideal"ab,ac,bc"
+Z = syz gens I
+A = apply(degrees source gens I, d -> matrix basis(d,comodule I))
+B = apply(degrees source Z, d -> matrix basis(d, coker Z))
+ngens = sum apply(A, a -> numgens source a)
+nsyz = sum apply(B, b -> numgens source b)
+S = kk[gens R, s_1..s_nsyz, t_1..t_ngens, MonomialSize=>8]
+firstvar = numgens R+nsyz-1;
+G' = matrix {apply(numgens I, i -> (
+	  substitute(I_i,S) + sum apply(first entries A_i, m -> (
+		    firstvar=firstvar+1;substitute(m,S) * S_firstvar))
+	  ))}
+firstvar = numgens R - 1;
+Z' = matrix{apply(numgens source Z, i -> (
+	  substitute(Z_{i},S) + sum apply(numgens source B_i, j -> (
+		    firstvar=firstvar+1;S_firstvar ** substitute((B_i)_{j}, S)))
+	  ))}
+coefficients(G' * Z', Variables => {S_0 .. S_(numgens R-1)})
+J = ideal flatten entries oo_1
+J0 = (minPressy J)_0
+S = kk{gens S, MonomialSize=>8}
+J0 = substitute(J0,S)
+gbTrace=3
+gens gb J0
+
 Istd = standardMonomials I
 F = parameterFamily(I,Istd,symbol t,Local=>true)
 parameterIdeal(I,F)
