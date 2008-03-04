@@ -20,55 +20,57 @@ export { smallerMonomials,
      inducedMonomialOrder
      }
 
-
 inducedMonomialOrder = method()
 inducedMonomialOrder (List,List) := (Ord, l) -> (
+     -- 3 arguments: a monomial order, given as a list, a list of the
+-- positions of the variables to be used in the new ring, 
+     inducedMonOrderHelper(Ord,l, 0, {})
+     )
+
+inducedMonOrderHelper = (Ord, l, count, newOrd) -> (
      -- 2 arguments: a monomial order, given as a list, and a list of
      -- the positions of the variables to be used in the new ring.
      -- return:  a new monomial order corresponding to the subset of 
      --          of variables in l.
-     n := #Ord;
-     m := #l;
-     done := n;     -- keeps track in the loops.
-     newOrd := {};  -- what we will return.
-     oldOrd := Ord; -- used to take apart the monomial order list. 
-     newlis := l;   -- used to take apart the list of variable numbers.
-     count := 0;    -- helpful for the loops. 
-     if Ord#0#0 == Weights then (
-	  w := #Ord#0#1;  -- the old list of weights
-	  lw := select(l, i -> i <= w); 
-	  ww := apply(lw, i -> Ord#0#1#(i-1));
-	  newOrd = append(newOrd, Weights => ww); 
-	  oldOrd = drop(oldOrd, 1);
-	  done = done - 1;
-	  );
-     -- This loop finds all GRevLex, Lex, RevLex, GroupRevLex, and
-     -- GroupLex pieces. Uses that Position is always an element in a
-     -- monomial order. 
-     while done > 1 do (
-	  if (oldOrd#0#0 == GRevLex or oldOrd#0#0 == GRevLexTiny) then (
-	       w = #oldOrd#0#1;
-	       lw = select(newlis, i -> i <= w+count);
-	       ww = apply(lw, i -> oldOrd#0#1#(i-1-count));
-	       newOrd = append(newOrd, oldOrd#0#0 => ww);
-	       count = count + #oldOrd#0#1;
-	       newlis = select(newlis, i -> i > count); 
-	       )
-	 else( -- count up the correct number for all other orders. 
-	       u = #(select(newlis, i -> i <= count + oldOrd#0#1));
-	       newOrd = append(newOrd, oldOrd#0#0 => u);
-	       newlis = drop(newlis, u);
-	       count = count + oldOrd#0#1;
+     if #Ord == 0 then (
+	  << "new order " << newOrd << endl << endl;
+	  newOrd)
+	  else(
+     	  if Ord#0#0 == Weights then (
+	       w := #Ord#0#1;  -- the old list of weights
+	       lw := select(l, i -> i <= w); 
+	       ww := apply(lw, i -> Ord#0#1#(i-1));
+	       inducedMonOrderHelper(drop(Ord,1),l, n, append(newOrd, Ord#0#0 => ww)) 	   	     
 	       );
-	   oldOrd = drop(oldOrd,1);
-	   done = done - 1;
-	   );
-      -- finally we need to append Position and Monomial Order as
-      -- needed. 
-      if #newOrd == n-1 then append(newOrd, last(Ord)) else(
-	   append(newOrd, Ord#(n-2), Ord#(n-1))  
-      	   )
-      )
+     	  if Ord#0#0 == GRevLex then (
+	       w = #oldOrd#0#1;
+	       lw = select(l, i -> i <= #Ord#0#1+count);
+	       inducedMonOrderHelper(drop(Ord,1), 
+		    select(l, i -> i > count), 
+		    count + #Ord#0#1, 
+		    append(newOrd, Ord#0#0 => apply(lw, i -> Ord#0#1#(i-1-count)))); 
+	       );    
+     	  if (Ord#0#0 == Lex or Ord#0#0 == RevLex or 
+	       Ord#0#0 == GroupLex or 
+	       Ord#0#0 ==  GroupRevLex) 
+     	  then ( 
+	       u = #(select(l, i -> i <= count + Ord#0#1));
+	       << "new variable list " << drop(l,u) << endl << endl;
+	       << "new order list " << drop(Ord, 1)<< endl << endl;
+	       << "new count " << count + Ord#0#1 << endl << endl;
+	       << "new order " << newOrd << endl << endl;
+	       inducedMonOrderHelper(drop(Ord, 1), 
+		    drop(l, u), 
+		    count + Ord#0#1, 
+		    append(newOrd, Ord#0#0 => u));
+	       );
+     	  if (Ord#0#0 == Position or Ord#0#0 == MonomialSize) then (
+	       inducedMonOrderHelper(drop(Ord, 1), l, count, 
+		    append(newOrd, Ord#0#0 => Ord#0#1));
+	       );
+	  )
+     )
+
 	    
 
 isReductor = (f) -> (
