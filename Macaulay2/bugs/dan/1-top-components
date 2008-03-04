@@ -1,0 +1,60 @@
+Cc: Michael Stillman <mike@math.cornell.edu>
+From: David Eisenbud <de@msri.org>
+To: dan@math.uiuc.edu
+In-Reply-To: <200803031929.m23JTqoE012197@u123.math.uiuc.edu>
+Subject: Re: Request
+Date: Mon, 3 Mar 2008 22:27:13 -0800
+
+I think "topComponents" probably works
+now only in Gorenstein rings. But it wouldn't be hard to make it work
+in general. Let's do this when we meet...
+
+David
+
+
+--
+David Eisenbud
+Professor of Mathematics,
+University of California, Berkeley
+www.msri.org/~de
+
+
+On Mar 3, 2008, at 11:29 AM, Daniel R. Grayson wrote:
+
+>
+> Yes, we should probably add that, provided it also works in quotient  
+> rings,
+> which I assume it does.  David, does it?
+>
+>> Cc: "Ms. Mousumi Mandal" <mousumi@math.iitb.ac.in>,
+>>        David Eisenbud <de@msri.org>
+>> From: Michael Stillman <mike@math.cornell.edu>
+>> To: Dan Grayson <dan@math.uiuc.edu>
+>> Subject: Re: Request
+>> Date: Sun, 2 Mar 2008 19:09:54 -0500
+>>
+>> Should we add such a function to M2?
+>>
+>> symbolicPower(ZZ,Ideal) := (n,J) -> topComponents(J^n)
+>>
+>> or at least mention it in the documentation somewhere?
+>>
+>> -- Mike
+>>
+>> On Mar 2, 2008, at 3:49 PM, David Eisenbud wrote:
+>>
+>>> Dear Ms Mandal,
+>>>
+>>> The script is by now built into M2 (get the newest
+>>> version, 1.1).
+>>>
+>>> If I is an ideal in a polynomial ring, the
+>>> topComponents(I)
+>>> returns the intersection of the primary components of
+>>> highest dimension of I. Therefore, if P is prime,
+>>>
+>>> topComponents(P^n)
+>>>
+>>> is the n-th symbolic power.
+>>>
+>>> David Eisenbud
