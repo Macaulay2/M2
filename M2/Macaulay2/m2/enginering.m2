@@ -307,6 +307,7 @@ ZZ ? RingElement := (m,y) -> m_(class y) ? y
 RingElement ^ ZZ := RingElement => (x,i) -> new ring x from (raw x)^i
 
 toString RingElement := x -> toString expression x
+toExternalString RingElement := x -> toExternalFormat expression x
 
 net RingElement := x -> net expression x
 
