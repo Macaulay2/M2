@@ -246,3 +246,4 @@ document {
 end
 restart
 loadPackage "SchurFunctors"
+installPackage SchurFunctors
