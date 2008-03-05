@@ -33,20 +33,21 @@ inducedMonOrderHelper = (Ord, l, count, newOrd) -> (
      -- return:  a new monomial order corresponding to the subset of 
      --          of variables in l.
      if #Ord == 0 then (
-	  << "new order " << newOrd << endl << endl;
-	  newOrd)
+	  newOrd = select(newOrd, i -> (i#1 =!= {} and i#1 =!= 0));
+	  return newOrd)
 	  else(
      	  if Ord#0#0 == Weights then (
+	       --<< "Ord " << Ord << " l " << l << " count " << count <<" newOrd "<< newOrd <<  endl;
 	       w := #Ord#0#1;  -- the old list of weights
-	       lw := select(l, i -> i <= w); 
-	       ww := apply(lw, i -> Ord#0#1#(i-1));
-	       return inducedMonOrderHelper(drop(Ord,1),l, n, append(newOrd, Ord#0#0 => ww)) 	   	     
+	       lw := select(l, i -> i <= w+count-1); 
+	       ww := apply(lw, i -> Ord#0#1#(i-count));
+	       return inducedMonOrderHelper(drop(Ord,1),l, count, append(newOrd, Ord#0#0 => ww)) 	   	     
 	       );
      	  if Ord#0#0 == GRevLex then (
-	       w = #oldOrd#0#1;
-	       lw = select(l, i -> i <= #Ord#0#1+count);
+	       w = #Ord#0#1;
+	       lw = select(l, i -> i <= #Ord#0#1+count-1);
 	       return inducedMonOrderHelper(drop(Ord,1), 
-		    select(l, i -> i > count), 
+		    drop(l, #lw), 
 		    count + #Ord#0#1, 
 		    append(newOrd, Ord#0#0 => apply(lw, i -> Ord#0#1#(i-1-count)))); 
 	       );    
@@ -54,11 +55,7 @@ inducedMonOrderHelper = (Ord, l, count, newOrd) -> (
 	       Ord#0#0 == GroupLex or 
 	       Ord#0#0 ==  GroupRevLex) 
      	  then ( 
-	       u = #(select(l, i -> i <= count + Ord#0#1));
-	       << "new variable list " << drop(l,u) << endl << endl;
-	       << "new order list " << drop(Ord, 1)<< endl << endl;
-	       << "new count " << count + Ord#0#1 << endl << endl;
-	       << "new order " << newOrd << endl << endl;
+	       u = #(select(l, i -> i <= count + Ord#0#1 - 1));
 	       return inducedMonOrderHelper(drop(Ord, 1), 
 		    drop(l, u), 
 		    count + Ord#0#1, 
@@ -135,9 +132,8 @@ minPressy Ideal := (I) -> (
      R := ring I;
      (J,G) := reduceLinears I;
      xs := set apply(G, first);
-     l := sort apply(apply(G, first), i -> index i);
      varskeep := rsort toList(set gens R - xs);
-     MO := inducedMonomialOrder((monoid R).Options.MonomialOrder, l);
+     MO := inducedMonomialOrder((monoid R).Options.MonomialOrder, apply(varskeep, i -> index i));
      S := (coefficientRing R)[varskeep, MonomialOrder => MO];
      if not isSubset(set support J, set varskeep) -- this should not happen
      then error "internal error in minPressy: not all vars were reduced in ideal";
@@ -205,14 +201,14 @@ parameterFamily(Ideal,List,Symbol) := opts -> (M,L,t) -> (
      kk := coefficientRing R;
      nv := sum apply(L, s -> #s);
      if opts.Local then (
-         R1 = kk{t_1..t_nv, MonomialSize=>8};
+         R1 = kk{t_1..t_nv}; -- removed MonomialSize=>8
 	 U = kk[gens R,t_1..t_nv,MonomialOrder=>{
 		   Weights=>splice{numgens R:0,nv:-1},numgens R,nv},
 	           Global=>false];
 	 phi = map(U,R1,toList(U_(numgens R) .. U_(nv - 1 + numgens R)));
          )
      else (
-	 R1 = kk[t_1..t_nv, MonomialSize=>8];
+	 R1 = kk[t_1..t_nv]; -- removed MonomialSize=>8
      	 U = R1 (monoid R);
 	 phi = map(U,R1);
      );
@@ -394,7 +390,7 @@ time (J,F) = groebnerScheme(I, Minimize=>false);
 time minimalPresentation J
 A = ring J
 B = ring F
-Alocal = kk{gens A, MonomialSize=>8}
+Alocal = kk{gens A, MonomialSize => 8} 
 Jlocal = sub(J,Alocal);
 gbTrace=3
 Jlocal = ideal gens gb Jlocal
@@ -646,3 +642,30 @@ R = ZZ/32003[a..f]
 I = ideal"ab,bc,cd,de,ea"
 (J,fam) = localEquations(I,symbol t)
 transpose gens gb J
+
+--- Starting a possible test list for inducedMonomialOrder
+
+restart
+loadPackage"ParameterSchemes"
+
+kk = ZZ/32003
+R1 = kk[x_1..x_5, MonomialOrder => {GRevLex => 3, Weights => {2,2}, Lex => 2}]
+R2 = kk[x_1..x_5, MonomialOrder => {GroupLex => 2, GroupRevLex => 1, Weights => {2,2}, Lex => 2}, Global => false]
+R3 = kk[x_1..x_5, MonomialOrder => {Weights => {1,2,3}, Lex => 3, Weights => {2,2}, Lex => 2}]
+M1 = (monoid R1).Options.MonomialOrder
+M2 = (monoid R2).Options.MonomialOrder
+M3 = (monoid R3).Options.MonomialOrder
+l1 = {0, 1, 4}
+l2 = {1, 2, 3}
+l3 = {1, 4}
+inducedMonomialOrder(M1,l1)
+inducedMonomialOrder(M1,l2)
+inducedMonomialOrder(M1,l3)
+inducedMonomialOrder(M2,l1)
+inducedMonomialOrder(M2,l2)
+inducedMonomialOrder(M2,l3)
+inducedMonomialOrder(M3,l1)
+inducedMonomialOrder(M3,l2)
+inducedMonomialOrder(M3,l3)
+inducedMonomialOrder(M3,{0,2,3})
+inducedMonomialOrder(M3,{1,3,4})
