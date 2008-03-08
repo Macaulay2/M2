@@ -522,11 +522,11 @@ AC_SUBST(ULIMIT_V,yes)
 ( ulimit -v 2000 2>/dev/null) || ULIMIT_V=no
 
 AC_LANG(C)
-if test $BUILD_mpfr = no
+if test $BUILD_mpfr = no -a $BUILD_gmp = yes
 then AC_SEARCH_LIBS(mpfr_init,mpfr,,BUILD_mpfr=yes)
      # check for lgamma -- it's in 2.3.0 but not in 2.2.1
      AC_SEARCH_LIBS(mpfr_lgamma,mpfr,,BUILD_mpfr=yes)
-     AC_CHECK_HEADER(mpfr.h,,BUILD_mpfr=yes)
+     AC_CHECK_HEADER(mpfr.h,,BUILD_mpfr=yes,[#include <gmp.h>])
      if test $BUILD_mpfr = no
      then AC_MSG_CHECKING([whether mpfr library is recent enough, using mpfr.h])
 	  AC_RUN_IFELSE([ 
@@ -715,8 +715,7 @@ LIBS=$SAVELIBS
 # needlessly causes the library to be linked against.)
 if test "$LAPACK" = yes
 then AC_MSG_CHECKING([whether the vecLib framework is available])
-     SAVELIBS=$LIBS
-     LIBS="-framework vecLib $LIBS"
+     SAVELIBS=$LIBS LIBS="-framework vecLib $LIBS"
      AC_LANG(C)
      AC_LINK_IFELSE(
 	 AC_LANG_PROGRAM(,[sgemv_();dgetrf_();]),
@@ -732,6 +731,7 @@ then AC_MSG_CHECKING([whether the vecLib framework is available])
 		  AC_SEARCH_LIBS(dgetrf,lapack,,BUILD_lapack=yes)
 	     fi
 	 ])
+     LIBS=$SAVELIBS
 fi
 test $BUILD_lapack = yes && BUILTLIBS="-llapack -lblas $BUILTLIBS"
 
@@ -754,7 +754,6 @@ if nm --help 2>&1 | grep demangle >/dev/null
    else NM_DEMANGLES=no ; AC_MSG_RESULT(no)
 fi
 
-LIBS=$SAVELIBS
 AC_LANG(C)
 AC_MSG_CHECKING([whether getaddrinfo can handle numeric service (port) numbers])
 AC_RUN_IFELSE([
