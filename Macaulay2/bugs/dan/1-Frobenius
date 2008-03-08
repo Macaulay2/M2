@@ -1,0 +1,16 @@
+Date: Fri, 7 Mar 2008 15:55:25 -0500 (EST)
+From: Uli Walther <walther@math.purdue.edu>
+To: Dan Grayson <dan@math.uiuc.edu>, Mike Stillman <mike@math.cornell.edu>
+Subject: Frobenius
+
+I was thinking of another procedure that would be nice to have in M2,
+namely the Frobenius functor over rings of polynomials of characteristic
+p. Maybe that's a;ready in, but I am not aware of that.
+
+What I mean is: R=ZZ/p[vars], M=R-module, S=R with usual left R-action and
+Frobenius right R-action. Then F(M)=S\otimes M. I.e., r^p\otimes m =
+1\otimes rm.
+
+It would be nice to be able to evaluate F(M). If M=R/I, it would be nice
+to have a procedure that returns the map F(R/I) -> R/I. (I don't know if
+M2 has "Map" as a class.)
