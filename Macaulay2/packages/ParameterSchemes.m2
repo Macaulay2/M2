@@ -20,19 +20,20 @@ export { smallerMonomials,
      inducedMonomialOrder
      }
 
-inducedMonomialOrder = method()
-inducedMonomialOrder (List,List) := (Ord, l) -> (
+subMonomialOrder = method()
+subMonomialOrder (List,List) := (Ord, l) -> (
      -- 3 arguments: a monomial order, given as a list, a list of the
 -- positions of the variables to be used in the new ring, 
-     inducedMonOrderHelper(Ord,l, 0, {})
+     subMonOrderHelper(Ord,l, 0, {})
      )
 
-inducedMonOrderHelper = (Ord, l, count, newOrd) -> (
+subMonOrderHelper = (Ord, l, count, newOrd) -> (
      -- 2 arguments: a monomial order, given as a list, and a list of
      -- the positions of the variables to be used in the new ring.
      -- return:  a new monomial order corresponding to the subset of 
      --          of variables in l.
      if #Ord == 0 then (
+	  -- Put count check here as well as other errors.  
 	  newOrd = select(newOrd, i -> (i#1 =!= {} and i#1 =!= 0));
 	  return newOrd)
 	  else(
@@ -41,12 +42,12 @@ inducedMonOrderHelper = (Ord, l, count, newOrd) -> (
 	       w := #Ord#0#1;  -- the old list of weights
 	       lw := select(l, i -> i <= w+count-1); 
 	       ww := apply(lw, i -> Ord#0#1#(i-count));
-	       return inducedMonOrderHelper(drop(Ord,1),l, count, append(newOrd, Ord#0#0 => ww)) 	   	     
+	       return supMonOrderHelper(drop(Ord,1),l, count, append(newOrd, Ord#0#0 => ww)) 	   	     
 	       );
      	  if Ord#0#0 == GRevLex then (
 	       w = #Ord#0#1;
 	       lw = select(l, i -> i <= #Ord#0#1+count-1);
-	       return inducedMonOrderHelper(drop(Ord,1), 
+	       return subMonOrderHelper(drop(Ord,1), 
 		    drop(l, #lw), 
 		    count + #Ord#0#1, 
 		    append(newOrd, Ord#0#0 => apply(lw, i -> Ord#0#1#(i-1-count)))); 
@@ -56,20 +57,18 @@ inducedMonOrderHelper = (Ord, l, count, newOrd) -> (
 	       Ord#0#0 ==  GroupRevLex) 
      	  then ( 
 	       u = #(select(l, i -> i <= count + Ord#0#1 - 1));
-	       return inducedMonOrderHelper(drop(Ord, 1), 
+	       return subMonOrderHelper(drop(Ord, 1), 
 		    drop(l, u), 
 		    count + Ord#0#1, 
 		    append(newOrd, Ord#0#0 => u));
 	       );
      	  if (Ord#0#0 == Position or Ord#0#0 == MonomialSize) then (
-	       return inducedMonOrderHelper(drop(Ord, 1), l, count, 
+	       return subMonOrderHelper(drop(Ord, 1), l, count, 
 		    append(newOrd, Ord#0#0 => Ord#0#1));
 	       );
 	  )
      )
-
 	    
-
 isReductor = (f) -> (
      inf := leadTerm f;
      part(1,f) != 0 and
@@ -79,8 +78,6 @@ findReductor = (L) -> (
      L1 := select(L, isReductor);
      L2 := sort apply(L1, f -> (size f,f));
      if #L2 > 0 then L2#0#1)
-
-
 
 reduceLinears = method(Options => {Limit=>infinity})
 reduceLinears Ideal := o -> (I) -> (
@@ -126,24 +123,28 @@ backSubstitute List := (M) -> (
      pairs H
      )
 
+     
+
 minPressy = method()
 minPressy Ideal := (I) -> (
      -- if the ring I is a tower, flatten it here...
      R := ring I;
-     (J,G) := reduceLinears I;
+     flatR := (flattenRing R)_0;
+     flatRMap:= (flattenRing R)_1; 
+     (J,G) := reduceLinears (substitute(I,flatR));
      xs := set apply(G, first);
-     varskeep := rsort toList(set gens R - xs);
-     MO := inducedMonomialOrder((monoid R).Options.MonomialOrder, apply(varskeep, i -> index i));
-     S := (coefficientRing R)[varskeep, MonomialOrder => MO];
+     varskeep := rsort toList(set gens flatR - xs);
+     MO := subMonomialOrder((monoid flatR).Options.MonomialOrder, apply(varskeep, i -> index i));
+     S := (coefficientRing flatR)[varskeep, MonomialOrder => MO];
      if not isSubset(set support J, set varskeep) -- this should not happen
      then error "internal error in minPressy: not all vars were reduced in ideal";
-     FRS := map(R,S,varskeep);
+     I.cache.minimalPresentationMap = map(flatR,S,varskeep);
      -- Now we need to make the other map...
-     X := new MutableList from gens R;
+     X := new MutableList from gens flatR;
      scan(G, (v,g) -> X#(index v) = g);
      maptoS := apply(toList X, f -> substitute(f,S));
-     FSR := map(S,R,maptoS);
-     (substitute(ideal compress gens J,S), FRS, FSR)
+     I.cache.minimalPresentationMapInv = map(S,flatR,maptoS);
+     substitute(ideal compress gens J,S)
      )
 
 smallerMonomials = method()
@@ -335,7 +336,7 @@ document {
      }
 
 --document {
---     Key => {inducedMonomialOrder}
+--     Key => {subMonomialOrder}
 
 {* 
 document {
