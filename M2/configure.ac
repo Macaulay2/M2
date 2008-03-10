@@ -649,6 +649,7 @@ test "$LAPACK" = no; val=$?
 AC_DEFINE_UNQUOTED(LAPACK,$val,whether to link with lapack)
 
 # we need to control the position of -lfac -lcf in the link line, so we don't add them to $LIBS nor to $BUILTLIBS, putting them in $SINGULARLIBS instead
+SAVELIBS=$LIBS
 if ! test "$SINGULARLIBS"
 then SINGULARLIBS="-lfac -lcf"
 fi
@@ -658,7 +659,7 @@ do AC_LANG(C++)
    AC_CHECK_HEADER(factory.h,,BUILD_factory=yes BUILD_libfac=yes ; break)
    AC_CHECK_HEADER(factor.h,,BUILD_factory=yes BUILD_libfac=yes ; break)
    SLIBS="$SINGULARLIBS -lcfmem"
-   LIBS="$SLIBS $SAVELIBS"
+   LIBS="$SLIBS $LIBS"
    AC_MSG_CHECKING([whether factory library is installed ($SLIBS)])
    AC_LINK_IFELSE( [[ #include <factory.h>
 		      #include <templates/ftmpl_inst.cc>
@@ -731,7 +732,6 @@ then AC_MSG_CHECKING([whether the vecLib framework is available])
 		  AC_SEARCH_LIBS(dgetrf,lapack,,BUILD_lapack=yes)
 	     fi
 	 ])
-     LIBS=$SAVELIBS
 fi
 test $BUILD_lapack = yes && BUILTLIBS="-llapack -lblas $BUILTLIBS"
 
