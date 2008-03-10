@@ -1,0 +1,3 @@
+ensure that we can compile gc with pthreads enabled and link and run
+
+implement primitive support for threads
