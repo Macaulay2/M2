@@ -179,13 +179,13 @@ idealizer0 = (C,w) -> (
      	       C#"blocks" = select(C#"blocks", d -> d =!= 0);
      	       A := (if any(C#"degrees", d -> d#0 <= 0) then (
        			 (C#"basefield")(monoid [C#"vars", 
-	  		      MonomialOrder=>ProductOrder (C#"blocks"),
-	  		      MonomialSize=>16]))
+	  		      MonomialOrder=>ProductOrder (C#"blocks"), 
+			      MonomialSize => 16])) 
      		    else (
        			 (C#"basefield")(monoid [C#"vars",
 	  		      Degrees => C#"degrees", 
-	  		      MonomialOrder=>ProductOrder (C#"blocks"),
-	  		      MonomialSize=>16]))
+	  		      MonomialOrder=>ProductOrder (C#"blocks"), 
+			      MonomialSize => 16]))
      		    );
 	       newvars := (vars A)_{0..n-1};
 	       C#"newvars" = join(entries newvars,C#"newvars");
@@ -737,4 +737,33 @@ assert(conductor F == ideal((R_2)^3, (R_0)*(R_2)^2, (R_0)^3*(R_2), (R_0)^4))
 ///
 
 end
+
+---- Some examples Mike and I made
+R = ZZ/101[x,y]
+I1 = ideal(x,y-1)
+I2 = ideal(x-3, y-5)
+I3 = ideal(x,y)
+I4 = ideal(x-5,y-2)
+
+I = intersect(I1^3, I2^3, I3^3, I4^3)
+f = I_0
+S = R/f
+V = integralClosure(S)
+ring(presentation V)
+
+---- Homogeneous Ex
+loadPackage"IntegralClosure"
+loadPackage"ParameterSchemes"
+R = ZZ/101[x,y, z]
+I1 = ideal(x,y-z)
+I2 = ideal(x-3*z, y-5*z)
+I3 = ideal(x,y)
+I4 = ideal(x-5*z,y-2*z)
+
+I = intersect(I1^3, I2^3, I3^3, I4^3)
+f = I_0 + I_1 + I_2+ I_3
+S = R/f
+V = integralClosure(S)
+ring(presentation V)
+
 installPackage "IntegralClosure"
