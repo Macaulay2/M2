@@ -17,26 +17,28 @@ export { smallerMonomials,
      groebnerScheme,
      reduceLinears,
      minPressy,
-     inducedMonomialOrder
+     subMonomialOrder
      }
 
 subMonomialOrder = method()
 subMonomialOrder (List,List) := (Ord, l) -> (
-     -- 3 arguments: a monomial order, given as a list, a list of the
--- positions of the variables to be used in the new ring, 
-     subMonOrderHelper(Ord,l, 0, {})
-     )
-
-subMonOrderHelper = (Ord, l, count, newOrd) -> (
      -- 2 arguments: a monomial order, given as a list, and a list of
      -- the positions of the variables to be used in the new ring.
      -- return:  a new monomial order corresponding to the subset of 
      --          of variables in l.
+     localListCheck = l_(#l-1);
+     subMonOrderHelper(Ord,l, 0, {})
+     )
+
+subMonOrderHelper = (Ord, l, count, newOrd) -> (
+     -- 4 arguments: a monomial order, given as a list, a list of the
+     -- positions of the variables to be used in the new ring, 
      if #Ord == 0 then (
-	  -- Put count check here as well as other errors.  
-	  newOrd = select(newOrd, i -> (i#1 =!= {} and i#1 =!= 0));
-	  return newOrd)
-	  else(
+	  if  localListCheck > count-1 then error("expected variable indices in range 0.." | count-1)
+	  else (
+	       newOrd = select(newOrd, i -> (i#1 =!= {} and i#1 =!= 0));
+	       return newOrd))
+     else(
      	  if Ord#0#0 == Weights then (
 	       --<< "Ord " << Ord << " l " << l << " count " << count <<" newOrd "<< newOrd <<  endl;
 	       w := #Ord#0#1;  -- the old list of weights
@@ -79,6 +81,9 @@ findReductor = (L) -> (
      L2 := sort apply(L1, f -> (size f,f));
      if #L2 > 0 then L2#0#1)
 
+--- needs work for operation over ZZ
+--- Only works well if no constant terms, needs to be fixed to work when
+--- there are contstant terms.  
 reduceLinears = method(Options => {Limit=>infinity})
 reduceLinears Ideal := o -> (I) -> (
      -- returns (J,L), where J is an ideal,
@@ -146,6 +151,12 @@ minPressy Ideal := (I) -> (
      I.cache.minimalPresentationMapInv = map(S,flatR,maptoS);
      substitute(ideal compress gens J,S)
      )
+
+minimalPresentation Ideal := opts -> (I) -> (
+     << "entering minPressy"<< endl;
+     error "debug me";
+     result := minPressy(I);
+     result)
 
 smallerMonomials = method()
 smallerMonomials(Ideal,RingElement) := (M,f) -> (
@@ -240,7 +251,9 @@ pruneParameterScheme(Ideal,Ideal) := (J,F) -> (
      R := ring F;
      A := coefficientRing R;
      if ring J =!= A then error "expected(ideal in coeffring A, family in A[x])";
-     time (J1,map1,map2) := minPressy J;
+     time J1 := minPressy J;
+     map1 := J.cache.minimalPresentationMap;
+     map2 := J.cache.minimalPresentationMapInv;
      B := ring J1;
      phi := map2; -- map: A --> B
      -- want the induced map from A[x] -> B[x]
