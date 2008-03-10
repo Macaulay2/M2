@@ -522,7 +522,9 @@ AC_SUBST(ULIMIT_V,yes)
 ( ulimit -v 2000 2>/dev/null) || ULIMIT_V=no
 
 AC_LANG(C)
-if test $BUILD_mpfr = no -a $BUILD_gmp = yes
+if test $BUILD_gmp = yes
+then BUILD_mpfr=yes
+elif test $BUILD_mpfr = no
 then AC_SEARCH_LIBS(mpfr_init,mpfr,,BUILD_mpfr=yes)
      # check for lgamma -- it's in 2.3.0 but not in 2.2.1
      AC_SEARCH_LIBS(mpfr_lgamma,mpfr,,BUILD_mpfr=yes)
