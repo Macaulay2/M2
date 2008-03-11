@@ -1,10 +1,10 @@
 newPackage(
 	"LexIdeals", 
-	Version => "1.0",
-	Date => "10 September 2006",
+	Version => "1.1",
+	Date => "15 February 2008",
 	Authors => {
-		{Name => "Chris Francisco", Email => "chrisf@math.missouri.edu", 
-		     HomePage => "http://www.math.missouri.edu/~chrisf"}
+		{Name => "Chris Francisco", Email => "chris@math.okstate.edu", 
+		     HomePage => "http://www.math.okstate.edu/~chris"}
 	},
 	Headline => "A Macaulay 2 package for manipulating lexicographic-type monomial ideals",
 	DebuggingMode => true
@@ -150,8 +150,8 @@ lexIdeal(PolynomialRing,List) := (R,hilb) -> (
 --given a quotient ring R, a polynomial ring modulo a monomial ideal, and 
 --an Artinian Hilbert function hilb, returns the lex ideal R corresponding
 --to hilb if one exists
+--will implement for quotients by arbitrary homogeneous ideals at some point
 lexIdeal(QuotientRing,List) := (R,hilb) -> (
-     m:=ideal vars R;
      hilbertLength:=#hilb;
      deg:=1;
      iterIdeal:=ideal(0_R);
@@ -177,18 +177,38 @@ lexIdeal(QuotientRing,List) := (R,hilb) -> (
      if (hilbertFunct I) == hilb then I else null
      )
 
+--create the lex ideal with the same HF as I
+--works for Artinian and non-Artinian
+lexIdeal(Ideal) := (I) -> (
+    R:=ring I;
+    if I == ideal(0_R) then return I;
+    if dim I == 0 then return lexIdeal(R,hilbertFunct I) else (
+         highGen:=max flatten degrees module ideal leadTerm I;
+         deg:=highGen;
+         done:=false;
+         while done == false do (
+            hilb:=hilbertFunct(I,Degree=>deg+2);
+            artinian:=lexIdeal(R,drop(hilb,{deg+2,deg+2}));
+	    if not isIdeal artinian then return null;
+            hfArtinian:=hilbertFunct(artinian,Degree=>deg+1);
+            lex:=ideal select(flatten entries gens artinian,i->first degree i <= deg);
+            if (hilbertFunct(lex,Degree=>deg+1))#(deg+1) == hfArtinian#(deg+1) then done=true;
+            deg=deg+10;
+            );
+         return lex;
+         );
+    )
+
 --checks whether an ideal in a polynomial ring or quotient of a
---polynomial ring by a monomial ideal is a lex ideal
---fixed bug 7/21/2004: needed to check that I is a monomial ideal,
---and in quotient rings, need to lift to the ambient polynomial ring
---before checking that
+--polynomial ring by a graded ideal is a lex ideal IN THAT RING.
+--that is, the ideal may be a lex ideal in the quotient but not 
+--in the polynomial ring itself
 isLexIdeal = method(TypicalValue=>Boolean)
 isLexIdeal(Ideal) := (I) -> (
      R:=ring I;
      maxDeg:=max flatten apply(flatten entries gens I,i->degree i);
      deg:=0;
      result:=true;
-     if not isMonomialIdeal lift(I,ambient ring I) then result=false;
      while deg <= maxDeg and result==true do (
 	  basisI:=flatten entries basis(deg, coker gens I);
 	  basisLex:=take(flatten entries basis(deg,R),-#basisI);
@@ -562,7 +582,8 @@ document { Key => {hilbertFunct,(hilbertFunct,Ideal)},
      Headline => "return the Hilbert function of a quotient by a homogeneous ideal as a list",
      Usage => "hilbertFunct I",
      Inputs => {
-	  "I" => Ideal => {"a homogeneous ideal in a polynomial ring or a quotient of a polynomial ring (where the ring has the standard grading)"}
+	  "I" => Ideal => {"a homogeneous ideal in a polynomial ring or a quotient of a polynomial ring (where the ring has the standard grading)"},
+	  Degree => "the degree in which to truncate the Hilbert function"
 	  },
      Outputs => {List => {"returns the Hilbert function of ", TT "(ring I)/I", " as a list"}
 	  },
@@ -603,27 +624,32 @@ document { Key => {isCM,(isCM,Ideal)},
 	  }
      }
 
-document { Key => {lexIdeal,(lexIdeal,PolynomialRing,List),(lexIdeal,QuotientRing,List)},
-     Headline => "produce an Artinian lexicographic ideal",
-     Usage => "lexIdeal(R,hilb)\nlexIdeal(Q,hilb)",
+document { Key => {lexIdeal,(lexIdeal,PolynomialRing,List),(lexIdeal,QuotientRing,List),(lexIdeal,Ideal)},
+     Headline => "produce a lexicographic ideal",
+     Usage => "lexIdeal(R,hilb)\nlexIdeal(Q,hilb)\nlexIdeal(I)",
      Inputs => {
 	  "R" => PolynomialRing,
 	  "Q" => QuotientRing => {"a polynomial ring modulo a monomial ideal"},
-	  "hilb" => List => {"a finite length list of positive integers"}
+	  "hilb" => List => {"a finite length list of positive integers"},
+	  "I" => Ideal => {"an ideal"}
 	  },
-     Outputs => {Ideal => {"the Artinian lexicographic ideal ", TT "L", " in ", TT "R", " (resp. ", TT "Q", ") such that ", TT "R/L", " (resp. ", TT "Q/L", ") has Hilbert function ", TT "hilb", "."}
+     Outputs => {Ideal => {"the Artinian lexicographic ideal ", TT "L", " in ", TT "R", " (resp. ", TT "Q", ") such that ", TT "R/L", " (resp. ", TT "Q/L", ") has Hilbert function ", TT "hilb", " OR \nthe lexicographic ideal (possibly not Artinian) ", TT "L", " in ", TT "R", " or ", TT "Q", " with the same Hilbert function as ", TT "I", "."}
 	  },
      "When ", TT "R", " is a polynomial ring, if ", TT "hilb", " is an O-sequence (that is, it satisfies Macaulay's Theorem), such an ", TT "L", " always exists. When ", TT "Q", " is a quotient of a polynomial ring, there may be no lexicographic ideal with a particular Hilbert function even if it is an O-sequence. ", TT "lexIdeal", " returns ", TT "null", " if no lexicographic ideal ", TT "L", " corresponding to the Hilbert function ", TT "hilb", " exists in ", TT "R", " or ", TT "Q", ".",
      PARA {},
-     "We hope eventually to implement a version of ", TT "lexIdeal", " for nonArtinian ideals, taking a Hilbert series as the input.",
+     "When ", TT "lexIdeal", " has an ideal as its input, it returns the lexicographic ideal with the same Hilbert function as its output. If no such ideal exists, which may happen since Macaulay's Theorem fails in some quotient rings, then ", TT "lexIdeal", " returns ", TT "null", ".",
+     PARA {},
+     "We will soon implement a version of ", TT "lexIdeal", " for rings that are quotients by arbitrary homogeneous ideals. We thank David Eisenbud and Jeff Mermin for contributing their ideas.",
      EXAMPLE {
 	  "R=ZZ/32003[a..c];",
 	  "lexIdeal(R,{1,3,4,3,1})",
+	  "lexIdeal ideal(a*b,b*c)",
 	  "lexIdeal(R,{1,3,7}) --not an O-sequence, so no lex ideal exists",
 	  "Q=R/ideal(a^3,b^3,a*c^2);",
 	  "lexIdeal(Q,{1,3,6,4,2})",
 	  "lexIdeal(Q,{1,3,6,4,4}) --value of 4 in degree 4 is too high in this ring"
 	  },
+     Caveat => {"Note that we use the Gotzmann Persistence Theorem as a stopping criterion, so one should make sure this holds in the ring in which one is computing."},
      SeeAlso => {"macaulayRep","macaulayBound","isHF","isLexIdeal"}
      }
 
@@ -635,12 +661,13 @@ document { Key => {isLexIdeal,(isLexIdeal,Ideal)},
 	  },
      Outputs => {Boolean => {"returns ", TT "true", " if ", TT "I", " is a lexicographic ideal in ", TT "ring I", " and ", TT "false", " otherwise."}
 	  },
-     "Given an ideal ", TT "I", " in a ring ", TT "R", " that is either a polynomial ring or a quotient of a polynomial ring by a monomial ideal, ", TT "isLexIdeal", " first checks to see that ", TT "I", " is a monomial ideal. If not, it returns ", TT "false", ". If so, ", TT "isLexIdeal", " computes bases of ", TT "R/I", " in each degree up through the maximum degree of a minimal generator of ", TT "I", " to determine whether ", TT "I", " is a lexicographic ideal in ", TT "R", ".",
+     "Given an ideal ", TT "I", " in a ring ", TT "R", " that is either a polynomial ring or a quotient of a polynomial ring by a monomial ideal, ", TT "isLexIdeal", " computes bases of ", TT "R/I", " in each degree up through the maximum degree of a minimal generator of ", TT "I", " to determine whether ", TT "I", " is a lexicographic ideal in ", TT "R", ".",
      EXAMPLE {
 	  "R=ZZ/32003[a..c];",
 	  "isLexIdeal lexIdeal(R,{1,3,4,3,1})",
 	  "isLexIdeal ideal(a^3-a^2*b)",
 	  "isLexIdeal ideal(a^3,a^2*b)",
+	  "isLexIdeal ideal(a^3,a^2*b,a^3-a^2*b) --not given as a monomial ideal but still a lex ideal",
 	  "Q=R/ideal(a^3,b^3,a*c^2);",
 	  "isLexIdeal ideal(a^2*b,a^2*c)",
 	  "isLexIdeal ideal(a^2*b,a*b^2)"
@@ -703,7 +730,8 @@ document { Key => {generateLPPs,(generateLPPs,PolynomialRing,List)},
      Usage => "generateLPPs(R,hilb)",
      Inputs => {
 	  "R" => PolynomialRing,
-	  "hilb" => List => {"a Hilbert function as a list"}
+	  "hilb" => List => {"a Hilbert function as a list"},
+	  Print => "display the LPP ideals nicely on the screen"
 	  },
      Outputs => {List => {"returns a list of the form {{powers, LPP ideal}, {powers, LPP ideal}, ...}"}
 	  },
