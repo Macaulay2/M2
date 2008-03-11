@@ -1,0 +1,1 @@
+check whether configure is compiling too many libraries, e.g., lapack, which is available on gallium
