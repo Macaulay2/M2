@@ -28,6 +28,10 @@ ifeq (@OS@,Linux)
 LDFLAGS += -Wl,-rpath,$(shell /bin/pwd)/../../libraries/final@FINALPREFIX@/@librariesdirtail@/lib
 endif
 LOADLIBES += -lgc
+ifeq "@PTHREADS@" "yes"
+LOADLIBES += -lpthread
+endif
+
 ############################## compiling
 scc1 : $(OFILES)
 $(OFILES) : $(HFILES)
