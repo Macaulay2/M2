@@ -24,6 +24,9 @@ YFLAGS += --verbose
 # we don't include @LIBS@ here because including -llapack would make it also
 # necessary to link with the fortran support libraries:
 LOADLIBES += -lgc -ldl
+ifeq "@PTHREADS@" "yes"
+LOADLIBES += -lpthread
+endif
 
 ifeq (@DEBUG@,yes)
 CPPFLAGS += -DYYDEBUG
