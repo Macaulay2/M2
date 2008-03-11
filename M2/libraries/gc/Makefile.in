@@ -13,8 +13,14 @@ ifeq (@SHARED@,no)
 CONFIGOPTIONS += --disable-shared
 endif
 
-CONFIGOPTIONS += --enable-large-config
+ifeq (@DEBUG@,yes)
+CONFIGOPTIONS += --enable-gc-debug --enable-gc-assertions
+endif
+
+CONFIGOPTIONS += --enable-large-config --disable-gcj-support --disable-java-finalization
+
 # PATCHFILE = @srcdir@/patch-7.0
+
 INSTALLTARGET = install-strip
 include ../Makefile.library
 Makefile : @srcdir@/Makefile.in ; cd ../.. && ./config.status libraries/gc/Makefile
