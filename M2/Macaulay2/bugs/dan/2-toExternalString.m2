@@ -1,3 +1,11 @@
+fix this to output (,,) instead:
+
+    i3 : toExternalString (,,)
+
+    o3 = (null,null,null)
+
+=============================================================================
+
 A = ZZ[a,b]
 
 E = frac A

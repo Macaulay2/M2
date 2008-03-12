@@ -1,0 +1,3 @@
+implement a new low level class for numbers mod n, where n is an integer
+
+this should parallel real numbers, so we don't create the ring ZZ/n unless it's asked for
