@@ -1,0 +1,37 @@
+allow wraparound indices for matrices as we do for lists
+
+
+    i11 : {1,2,3,4}_-1
+
+    o11 = 4
+
+    i12 : {1,2,3,4}#-1
+
+    o12 = 4
+
+
+    i6 : R = QQ[a..d]
+
+    o6 = R
+
+    o6 : PolynomialRing
+
+    i7 : f = vars R
+
+    o7 = | a b c d |
+
+		 1       4
+    o7 : Matrix R  <--- R
+
+    i8 : f_2
+
+    o8 = | c |
+
+	  1
+    o8 : R
+
+    i9 : f_-2
+    stdio:9:2:(2):[3]: subfreemodule: index out of bounds
+
+    i10 : f_{-1,0,1}
+    stdio:10:2:(2):[3]: subfreemodule: index out of bounds

@@ -1,0 +1,3 @@
+implement inverse of permutation (where the permutation is represented as a list)
+
+do we need a new type for lists that are to be viewed as permutations?
