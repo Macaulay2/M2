@@ -171,8 +171,7 @@ idealizer0 = (C,w) -> (
 	       n := numgens source H;
 	       newdegs := degrees source H - toList(n:degree fR);
 	       C#"degrees" = join(newdegs, C#"degrees");
-	       C#"deglong" = join(newdegs, C#"deglong");
-     	       C#"blocks" = prepend(n, C#"blocks");
+	       C#"blocks" = prepend(n, C#"blocks");
 	       C#"numgens" = C#"numgens" + n;   	    	      	   	     
       	       varsA := w_(C#"numgens" - n) .. w_(C#"numgens" -1);  
        	       C#"vars" = splice(varsA, C#"vars");       
@@ -219,7 +218,7 @@ idealizer0 = (C,w) -> (
 	       C#"blocks" = {numgens R2};
 	       C#"vars" = toSequence R2.gens;
 	       -- See the note in "normal0" about the if char R = 0 statement.
-	       newJ = radical0 newJ;
+	       newJ = radical0 newJ;  
 	       C#"todo" = append(C#"todo", {newI,newJ});
 	       C#"pending" = null;
 	       C#"rings" = R2;
@@ -243,7 +242,7 @@ normal0 = (C) -> (
 	  if cs === dim ring I or SIdets == 1
 	  -- i.e. the sing locus is empty.
 	  then (J = ideal vars ring I;)
-	  else (J = radical0(lift(ideal SIdets_0,ring I)));
+	  else (J = radical0(lift(ideal SIdets_0,ring I))); 
 	  )           	       
      else (
 	  n := 1;
@@ -254,7 +253,7 @@ normal0 = (C) -> (
 	     if det1 == 1
 	     -- i.e. the sing locus is empty.
 	     then (J = ideal vars ring I;)
-	     else (J = radical0(lift(ideal det1_0,ring I)))
+	     else (J = radical0(lift(ideal det1_0,ring I))) 
 	     );	  
      C#"todo" = append(C#"todo", {I,J});
      C#"pending" = null;
@@ -736,20 +735,7 @@ F = ICmap R
 assert(conductor F == ideal((R_2)^3, (R_0)*(R_2)^2, (R_0)^3*(R_2), (R_0)^4))
 ///
 
-end
-
----- Some examples Mike and I made
-R = ZZ/101[x,y]
-I1 = ideal(x,y-1)
-I2 = ideal(x-3, y-5)
-I3 = ideal(x,y)
-I4 = ideal(x-5,y-2)
-
-I = intersect(I1^3, I2^3, I3^3, I4^3)
-f = I_0
-S = R/f
-V = integralClosure(S)
-ring(presentation V)
+end 
 
 ---- Homogeneous Ex
 loadPackage"IntegralClosure"
