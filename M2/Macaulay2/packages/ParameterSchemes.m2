@@ -41,7 +41,6 @@ subMonOrderHelper = (Ord, l, count, newOrd) -> (
 	       return newOrd))
      else(
      	  if Ord#0#0 == Weights then (
-	       --<< "Ord " << Ord << " l " << l << " count " << count <<" newOrd "<< newOrd <<  endl;
 	       w := #Ord#0#1;  -- the old list of weights
 	       lw := select(l, i -> i <= w+count-1); 
 	       ww := apply(lw, i -> Ord#0#1#(i-count));
@@ -71,7 +70,8 @@ subMonOrderHelper = (Ord, l, count, newOrd) -> (
 	       );
 	  )
      )
-	    	    
+
+--- needs work for operation over ZZ	    	    
 isReductor = (f) -> (
      inf := leadTerm part(1,f);
      inf != 0 and
@@ -83,17 +83,18 @@ findReductor = (L) -> (
      if #L2 > 0 then (
 	  p := part(1,L2#0#1);
 	  coef := (terms p)/leadCoefficient;
-	  if any(coef, i -> (i == 1) or (i == -1)) then (
-     	       t := (terms p)_(position(coef, i -> (i == 1) or (i == -1)));	   
-	       ((leadCoefficient t)*t, (leadCoefficient t)*t - (leadCoefficient t)*L2#0#1)
+	  pos := position(coef, i -> (i == 1) or (i == -1));
+	  if pos =!= null then (
+     	       t := (terms p)_pos;
+	       lct := leadCoefficient t;
+	       (lct*t, lct*t - lct*L2#0#1)
 	       )
 	  else(t = leadTerm p;
-	       (1/(leadCoefficient t)*t, 1/(leadCoefficient t)*t - 1/(leadCoefficient t)*L2#0#1))
+	       lct = 1/(leadCoefficient t);
+	       (lct*t, lct*t - lct*L2#0#1))
      	  )
      )
---- needs work for operation over ZZ
---- Only works well if no constant terms, needs to be fixed to work when
---- there are contstant terms.  
+
 reduceLinears = method(Options => {Limit=>infinity})
 reduceLinears Ideal := o -> (I) -> (
      -- returns (J,L), where J is an ideal,
@@ -101,7 +102,6 @@ reduceLinears Ideal := o -> (I) -> (
      -- where x+g is in I, and x doesn't appear in J.
      -- also x doesn't appear in any poly later in the L list
      R := ring I;
-     -- make sure that R is a polynomial ring, no quotients
      L := flatten entries gens I;
      count := o.Limit;
      M := while count > 0 list (
@@ -109,32 +109,70 @@ reduceLinears Ideal := o -> (I) -> (
        g := findReductor L;
        if g === null then break;
        << "reducing using " << g#0 << endl << endl;
-       F = map(R,R,apply(numgens R, i -> if i === index g#0 then g#1 else R_i));
+       F = map(R,R,{g#0 => g#1});
        L = apply(L, i -> F(i));
        g
        );
      -- Now loop through and improve M
      M = backSubstitute M;  -- rewrite as M will now be a list of pairs....
-     M = apply(M, (x,g) -> (substitute(x,R),substitute(g,R)));
---     error "what have we now?";
-     (substitute(ideal L,R), M)
+     (ideal L, M)
      )
 
 backSubstitute = method()
 backSubstitute List := (M) -> (
      xs := set apply(M, i -> i#0);
+     R := ring M#0#0;
+     F := map(R,R, apply(M, g -> g#0 => g#1));
      H := new MutableHashTable from apply(M, g -> g#0 =>  g#1);
      scan(reverse M, g -> (
 	       v := g#0;
 	       restg := H#v;
 	       badset := xs * set support restg;
-	       scan(toList badset, x -> (
-			 << "back reducing " << v << " by " << x << endl; --<< " restg = " << restg << endl;
-			 restg = restg % (x-H#x)));
-	       H#v = restg;
+	       if badset =!= set{} then (
+		    H#v = F(restg))
 	       ));
      pairs H
      ) 
+
+minPressy = method()
+minPressy Ideal := (I) -> (
+     -- if the ring I is a tower, flatten it here...
+     R := ring I;
+     flatList := flattenRing R;
+     flatROld := flatList_0;
+     flatR := (coefficientRing flatROld)(monoid[gens flatROld,
+		    MonomialOrder => (monoid flatROld).Options.MonomialOrder,
+		    Global => (monoid flatROld).Options.Global]);
+     flatI :=  (map(flatR, flatROld)*flatList_1) I;
+     if class flatROld === QuotientRing then (
+	  defI := ideal presentation flatR;
+	  flatI = substitute(ideal presentation flatROld, vars flatR) + flatI;
+  	  );
+     (J,G) := reduceLinears(flatI);
+     xs := set apply(G, first);
+     F := map(flatROld, flatR);
+     varskeep := rsort (toList(set gens flatR - xs))/F;
+     MO := subMonomialOrder((monoid flatROld).Options.MonomialOrder, varskeep/index);
+     S := (coefficientRing flatROld)(monoid[varskeep, 
+	       MonomialOrder => MO,
+	       Global => (monoid flatROld).Options.Global]);
+     if not isSubset(set support J, set varskeep) -- this should not happen
+     then error "internal error in minPressy: not all vars were reduced in ideal";
+     I.cache.minimalPresentationMap = map(R,flatROld)*map(flatROld, S, varskeep);
+     -- Now we need to make the other map...
+     X := new MutableList from gens flatROld;
+     scan(G, (v,g) -> X#(index v) = g);
+     maptoS := apply(toList X, f -> substitute(f,S));
+     I.cache.minimalPresentationMapInv = map(S,flatROld,maptoS)*flatRMap;
+     substitute(ideal compress gens J,S)
+     )
+
+minimalPresentation Ideal := opts -> (I) -> (
+     << "entering minPressy"<< endl;
+--     error "debug me";
+     result := minPressy(I);
+     result)
+
 
 findReductorOld = (L) -> ( 
      L1 := select(L, isReductor);
@@ -184,44 +222,6 @@ backSubstituteOld List := (M) -> (
 	       ));
      pairs H
      ) 
-
-minPressy = method()
-minPressy Ideal := (I) -> (
-     -- if the ring I is a tower, flatten it here...
-     R := ring I;
-     flatR := (flattenRing R)_0;
-     flatRMap:= (flattenRing R)_1; 
-     Iflat := substitute(I, flatR);
-     if class flatR === QuotientRing then (
-	  Iflat = ideal presentation(flatR/Iflat);
-	  S := ring Iflat;
-	  flatR = (coefficientRing S)(monoid[gens S,
-		    MonomialOrder => (monoid S).Options.MonomialOrder,
-		    Global => (monoid S).Options.Global, 
-		    Weights => (monoid S).Options.Weights]);
-	  Iflat = substitute(Iflat, flatR);
-  	  );
-     (J,G) := reduceLinears(Iflat);
-     xs := set apply(G, first);
-     varskeep := rsort toList(set gens flatR - xs);
-     MO := subMonomialOrder((monoid flatR).Options.MonomialOrder, apply(varskeep, i -> index i));
-     S = (coefficientRing flatR)(monoid[varskeep, MonomialOrder => MO]);
-     if not isSubset(set support J, set varskeep) -- this should not happen
-     then error "internal error in minPressy: not all vars were reduced in ideal";
-     I.cache.minimalPresentationMap = map(flatR,S,varskeep);
-     -- Now we need to make the other map...
-     X := new MutableList from gens flatR;
-     scan(G, (v,g) -> X#(index v) = g);
-     maptoS := apply(toList X, f -> substitute(f,S));
-     I.cache.minimalPresentationMapInv = map(S,flatR,maptoS);
-     substitute(ideal compress gens J,S)
-     )
-
-minimalPresentation Ideal := opts -> (I) -> (
-     << "entering minPressy"<< endl;
---     error "debug me";
-     result := minPressy(I);
-     result)
 
 smallerMonomials = method()
 smallerMonomials(Ideal,RingElement) := (M,f) -> (
