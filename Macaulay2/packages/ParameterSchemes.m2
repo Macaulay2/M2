@@ -17,7 +17,8 @@ export { smallerMonomials,
      groebnerScheme,
      reduceLinears,
      minPressy,
-     subMonomialOrder
+     subMonomialOrder,
+     isReductor
      }
 
 subMonomialOrder = method()
@@ -70,22 +71,78 @@ subMonOrderHelper = (Ord, l, count, newOrd) -> (
 	       );
 	  )
      )
-	    
+	    	    
 isReductor = (f) -> (
-     inf := leadTerm f;
-     part(1,f) != 0 and
+     inf := leadTerm part(1,f);
+     inf != 0 and
      (set support(inf) * set support(f - inf)) === set{})
 
-findReductor = (L) -> (
-     L1 := select(L, isReductor);
-     L2 := sort apply(L1, f -> (size f,f));
-     if #L2 > 0 then L2#0#1)
-
+findReductor = (L) -> (  
+     L1 := sort apply(L, f -> (size f,f));
+     L2 := select(1, L1, p -> isReductor(p#1));
+     if #L2 > 0 then (
+	  p := part(1,L2#0#1);
+	  coef := (terms p)/leadCoefficient;
+	  if any(coef, i -> (i == 1) or (i == -1)) then (
+     	       t := (terms p)_(position(coef, i -> (i == 1) or (i == -1)));	   
+	       ((leadCoefficient t)*t, (leadCoefficient t)*t - (leadCoefficient t)*L2#0#1)
+	       )
+	  else(t = leadTerm p;
+	       (1/(leadCoefficient t)*t, 1/(leadCoefficient t)*t - 1/(leadCoefficient t)*L2#0#1))
+     	  )
+     )
 --- needs work for operation over ZZ
 --- Only works well if no constant terms, needs to be fixed to work when
 --- there are contstant terms.  
 reduceLinears = method(Options => {Limit=>infinity})
 reduceLinears Ideal := o -> (I) -> (
+     -- returns (J,L), where J is an ideal,
+     -- and L is a list of: (variable x, poly x+g)
+     -- where x+g is in I, and x doesn't appear in J.
+     -- also x doesn't appear in any poly later in the L list
+     R := ring I;
+     -- make sure that R is a polynomial ring, no quotients
+     L := flatten entries gens I;
+     count := o.Limit;
+     M := while count > 0 list (
+       count = count - 1;
+       g := findReductor L;
+       if g === null then break;
+       << "reducing using " << g#0 << endl << endl;
+       F = map(R,R,apply(numgens R, i -> if i === index g#0 then g#1 else R_i));
+       L = apply(L, i -> F(i));
+       g
+       );
+     -- Now loop through and improve M
+     M = backSubstitute M;  -- rewrite as M will now be a list of pairs....
+     M = apply(M, (x,g) -> (substitute(x,R),substitute(g,R)));
+--     error "what have we now?";
+     (substitute(ideal L,R), M)
+     )
+
+backSubstitute = method()
+backSubstitute List := (M) -> (
+     xs := set apply(M, i -> i#0);
+     H := new MutableHashTable from apply(M, g -> g#0 =>  g#1);
+     scan(reverse M, g -> (
+	       v := g#0;
+	       restg := H#v;
+	       badset := xs * set support restg;
+	       scan(toList badset, x -> (
+			 << "back reducing " << v << " by " << x << endl; --<< " restg = " << restg << endl;
+			 restg = restg % (x-H#x)));
+	       H#v = restg;
+	       ));
+     pairs H
+     ) 
+
+findReductorOld = (L) -> ( 
+     L1 := select(L, isReductor);
+     L2 := sort apply(L1, f -> (size f,f));
+     if #L2 > 0 then L2#0#1)
+
+reduceLinearsOld = method(Options => {Limit=>infinity})
+reduceLinearsOld Ideal := o -> (I) -> (
      -- returns (J,L), where J is an ideal,
      -- and L is a list of: (variable x, poly x+g)
      -- where x+g is in I, and x doesn't appear in J.
@@ -105,15 +162,15 @@ reduceLinears Ideal := o -> (I) -> (
        L = apply(L, f -> f % g);
        g
        );
-     -- Now loop through and improve M
-     MMM = M;
-     M = backSubstitute M;
+     -- Now loop through and improve M -- list of pairs of var and
+     -- what it goes to...substitute vs. reduction.
+     M = backSubstituteOld M;
      M = apply(M, (x,g) -> (substitute(x,R),substitute(g,R)));
      (substitute(ideal L,R), M)
      )
 
-backSubstitute = method()
-backSubstitute List := (M) -> (
+backSubstituteOld = method()
+backSubstituteOld List := (M) -> (
      xs := set apply(M, leadMonomial);
      H := new MutableHashTable from apply(M, g -> leadTerm g => (-g+leadTerm g));
      scan(reverse M, g -> (
@@ -126,9 +183,7 @@ backSubstitute List := (M) -> (
 	       H#v = restg;
 	       ));
      pairs H
-     )
-
-     
+     ) 
 
 minPressy = method()
 minPressy Ideal := (I) -> (
@@ -136,11 +191,21 @@ minPressy Ideal := (I) -> (
      R := ring I;
      flatR := (flattenRing R)_0;
      flatRMap:= (flattenRing R)_1; 
-     (J,G) := reduceLinears (substitute(I,flatR));
+     Iflat := substitute(I, flatR);
+     if class flatR === QuotientRing then (
+	  Iflat = ideal presentation(flatR/Iflat);
+	  S := ring Iflat;
+	  flatR = (coefficientRing S)(monoid[gens S,
+		    MonomialOrder => (monoid S).Options.MonomialOrder,
+		    Global => (monoid S).Options.Global, 
+		    Weights => (monoid S).Options.Weights]);
+	  Iflat = substitute(Iflat, flatR);
+  	  );
+     (J,G) := reduceLinears(Iflat);
      xs := set apply(G, first);
      varskeep := rsort toList(set gens flatR - xs);
      MO := subMonomialOrder((monoid flatR).Options.MonomialOrder, apply(varskeep, i -> index i));
-     S := (coefficientRing flatR)[varskeep, MonomialOrder => MO];
+     S = (coefficientRing flatR)(monoid[varskeep, MonomialOrder => MO]);
      if not isSubset(set support J, set varskeep) -- this should not happen
      then error "internal error in minPressy: not all vars were reduced in ideal";
      I.cache.minimalPresentationMap = map(flatR,S,varskeep);
@@ -154,7 +219,7 @@ minPressy Ideal := (I) -> (
 
 minimalPresentation Ideal := opts -> (I) -> (
      << "entering minPressy"<< endl;
-     error "debug me";
+--     error "debug me";
      result := minPressy(I);
      result)
 
@@ -658,6 +723,7 @@ I = ideal"ab,bc,cd,de,ea"
 transpose gens gb J
 
 --- Starting a possible test list for inducedMonomialOrder
+
 
 restart
 loadPackage"ParameterSchemes"
