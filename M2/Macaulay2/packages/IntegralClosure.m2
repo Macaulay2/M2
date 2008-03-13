@@ -49,7 +49,7 @@ isNormal(Ring) := Boolean => (R) -> (
 -- generators, radical computes it in about 4 or 5 sec and 
 -- radical0 does not finish.
 radical0 = (I) -> (
-     << "about to compute radical0 on " << toString I << endl;
+--     << "about to compute radical0 on " << toString I << endl;
      I = ideal mingens ideal generators gb I;
      comps := minimalPrimes I;
      result := if #comps === 1 then comps#0
