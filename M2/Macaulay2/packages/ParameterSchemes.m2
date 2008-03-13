@@ -139,32 +139,37 @@ minPressy Ideal := (I) -> (
      -- if the ring I is a tower, flatten it here...
      R := ring I;
      flatList := flattenRing R;
-     flatROld := flatList_0;
-     flatR := (coefficientRing flatROld)(monoid[gens flatROld,
-		    MonomialOrder => (monoid flatROld).Options.MonomialOrder,
-		    Global => (monoid flatROld).Options.Global]);
-     flatI :=  (map(flatR, flatROld)*flatList_1) I;
-     if class flatROld === QuotientRing then (
-	  defI := ideal presentation flatR;
-	  flatI = substitute(ideal presentation flatROld, vars flatR) + flatI;
+     flatR := flatList_0;
+     if any((monoid flatR).Options.Degrees, i -> i =!= {1}) then (
+	  S := (coefficientRing flatR)(monoid[gens flatR,
+		    MonomialOrder => (monoid flatR).Options.MonomialOrder,
+		    Global => (monoid flatR).Options.Global]);
+	  IS := substitute(ideal presentation flatR, S);
+	  S = S/IS;
+	  )
+     else  S = R; 
+     IS = substitute(I, vars S);
+     if class S === QuotientRing then (
+	  defI := ideal presentation S; 
+	  S = ring defI;
+	  IS = defI + substitute(IS, S)
   	  );
-     (J,G) := reduceLinears(flatI);
+     (J,G) := reduceLinears(IS);
      xs := set apply(G, first);
-     F := map(flatROld, flatR);
-     varskeep := rsort (toList(set gens flatR - xs))/F;
-     MO := subMonomialOrder((monoid flatROld).Options.MonomialOrder, varskeep/index);
-     S := (coefficientRing flatROld)(monoid[varskeep, 
+     varskeep := rsort (toList(set gens S - xs));
+     MO := subMonomialOrder((monoid S).Options.MonomialOrder, varskeep/index);
+     newS := (coefficientRing S)(monoid[varskeep, 
 	       MonomialOrder => MO,
-	       Global => (monoid flatROld).Options.Global]);
+	       Global => (monoid S).Options.Global]);
      if not isSubset(set support J, set varskeep) -- this should not happen
      then error "internal error in minPressy: not all vars were reduced in ideal";
-     I.cache.minimalPresentationMap = map(R,flatROld)*map(flatROld, S, varskeep);
+     I.cache.minimalPresentationMap = map(R,S)*map(S, newS, varskeep);
      -- Now we need to make the other map...
-     X := new MutableList from gens flatROld;
+     X := new MutableList from gens S;
      scan(G, (v,g) -> X#(index v) = g);
-     maptoS := apply(toList X, f -> substitute(f,S));
-     I.cache.minimalPresentationMapInv = map(S,flatROld,maptoS)*flatRMap;
-     substitute(ideal compress gens J,S)
+     maptoS := apply(toList X, f -> substitute(f,newS));
+     I.cache.minimalPresentationMapInv = map(newS,S,maptoS)*map(S, flatR)*flatList_1;
+     substitute(ideal compress gens J,newS)
      )
 
 minimalPresentation Ideal := opts -> (I) -> (
