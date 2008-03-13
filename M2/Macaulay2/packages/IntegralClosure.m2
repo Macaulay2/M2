@@ -12,6 +12,8 @@ newPackage(
    
 export{isNormal, integralClosure, ICmap, ICfractions, conductor}
 
+needsPackage "Elimination"
+
 -- PURPOSE: check if an affine domain is normal.  
 -- INPUT: any quotient ring.  
 -- OUTPUT:  true if the ring is normal and false otherwise. 
@@ -47,6 +49,7 @@ isNormal(Ring) := Boolean => (R) -> (
 -- generators, radical computes it in about 4 or 5 sec and 
 -- radical0 does not finish.
 radical0 = (I) -> (
+     << "about to compute radical0 on " << toString I << endl;
      I = ideal mingens ideal generators gb I;
      comps := minimalPrimes I;
      result := if #comps === 1 then comps#0
@@ -120,6 +123,13 @@ next := (C) -> (
 	  C#"todo" = drop(C#"todo",1);
 	  true)
      else false)
+
+zerodimRadical = (I) -> (
+     -- assumption: dim I is 0
+     if dim I != 0 then error "expected zero dimensional ideal";
+     X := gens ring I;
+     trim ideal gens gb(I + sum apply(#X, i -> eliminate(drop(X,{i,i}), I)))
+     )
 
 idealizer0 = (C,w) -> (
      -- Takes {I,J} off the pending list of C,
@@ -218,6 +228,8 @@ idealizer0 = (C,w) -> (
 	       C#"blocks" = {numgens R2};
 	       C#"vars" = toSequence R2.gens;
 	       -- See the note in "normal0" about the if char R = 0 statement.
+--MES	       newJ = if dim newJ == 0 then zerodimRadical newJ else radical newJ;
+--MES	       --newJ = trim radical0 newJ; -- MES: added 'trim'
 	       newJ = radical0 newJ;  
 	       C#"todo" = append(C#"todo", {newI,newJ});
 	       C#"pending" = null;

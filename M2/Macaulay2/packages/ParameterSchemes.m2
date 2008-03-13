@@ -120,19 +120,22 @@ reduceLinears Ideal := o -> (I) -> (
 
 backSubstitute = method()
 backSubstitute List := (M) -> (
-     xs := set apply(M, i -> i#0);
-     R := ring M#0#0;
-     F := map(R,R, apply(M, g -> g#0 => g#1));
-     H := new MutableHashTable from apply(M, g -> g#0 =>  g#1);
-     scan(reverse M, g -> (
+     -- If M has length <= 1, then nothing needs to be done
+     if #M <= 1 then M
+     else (
+     	  xs := set apply(M, i -> i#0);
+     	  R := ring M#0#0;
+     	  F := map(R,R, apply(M, g -> g#0 => g#1));
+     	  H := new MutableHashTable from apply(M, g -> g#0 =>  g#1);
+     	  scan(reverse M, g -> (
 	       v := g#0;
 	       restg := H#v;
 	       badset := xs * set support restg;
 	       if badset =!= set{} then (
 		    H#v = F(restg))
 	       ));
-     pairs H
-     ) 
+         pairs H)
+     )
 
 minPressy = method()
 minPressy Ideal := (I) -> (
@@ -754,3 +757,90 @@ inducedMonomialOrder(M3,l2)
 inducedMonomialOrder(M3,l3)
 inducedMonomialOrder(M3,{0,2,3})
 inducedMonomialOrder(M3,{1,3,4})
+
+-- Tests of new minimal presentation (of ring) code:
+restart
+loadPackage "ParameterSchemes"
+R = ZZ/101[x,y]
+I = ideal(y-x^3-x^5-x^7)
+J = minimalPresentation I
+F = I.cache.minimalPresentationMap
+G = I.cache.minimalPresentationMapInv
+assert(numgens ring J == 1)
+assert(J == 0)
+assert(target F === ring I)
+assert(source F === ring J)
+assert(target G === ring J)
+assert(source G === ring I)
+
+R = QQ[x,y]
+I = ideal(2*y-x^3-x^5-x^7)
+J = minimalPresentation I
+F = I.cache.minimalPresentationMap
+G = I.cache.minimalPresentationMapInv
+assert(numgens ring J == 1)
+assert(J == 0)
+assert(target F === ring I)
+assert(source F === ring J)
+assert(target G === ring J)
+assert(source G === ring I)
+
+R = ZZ[x,y,z]
+I = ideal(2*y+z-x^3-x^5-x^7, z^2)
+J = minimalPresentation I
+assert(numgens ring J == 2)
+use ring J
+assert(J == ideal"x14+2x12+3x10+2x8-4x7y+x6-4x5y-4x3y+4y2")
+F = I.cache.minimalPresentationMap
+G = I.cache.minimalPresentationMapInv
+assert(numgens ring J == 2)
+assert(target F === ring I)
+assert(source F === ring J)
+assert(target G === ring J)
+assert(source G === ring I)
+
+A = QQ[a,b,c]/(a^2-3*b,a*c-c^4*b)
+I = ideal 0_A
+J = minimalPresentation I
+F = I.cache.minimalPresentationMap
+G = I.cache.minimalPresentationMapInv
+assert(numgens ring J == 2)
+assert(target F === ring I)
+assert(source F === ring J)
+assert(target G === ring J)
+assert(source G === ring I)
+
+A = QQ[a,b,c]/(a^2-3*b^2,a^3-c^4*b)
+I = ideal 0_A
+J = minimalPresentation I
+F = I.cache.minimalPresentationMap
+G = I.cache.minimalPresentationMapInv
+assert(target F === ring I)
+assert(source F === ring J)
+assert(target G === ring J)
+assert(source G === ring I)
+
+A = ZZ/101[a,b]/(a^2+b^2)
+B = A[c,d]/(a*c+b*d-1)
+C = B[e,f]/(e^2-b-1)
+I = ideal 0_C
+J = minimalPresentation I
+F = I.cache.minimalPresentationMap
+G = I.cache.minimalPresentationMapInv
+assert(target F === ring I)
+assert(source F === ring J)
+assert(target G === ring J)
+assert(source G === ring I)
+
+I = ideal presentation (flattenRing C)#0
+J = minimalPresentation I
+F = I.cache.minimalPresentationMap
+G = I.cache.minimalPresentationMapInv
+assert(target F === ring I)
+assert(source F === ring J)
+assert(target G === ring J)
+assert(source G === ring I)
+
+R = ZZ/101[x,y]/(y-x^3-x^5-x^7)
+I = ideal presentation R
+minimalPresentation I

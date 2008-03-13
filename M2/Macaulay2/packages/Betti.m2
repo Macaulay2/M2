@@ -74,9 +74,9 @@ decomposeBetti = method()
 decomposeBetti BettiTally := (B) -> (
      C := B;
      Bs := while min values C >= 0 and max values C > 0 list (
-	  (Bi,ri,Cnew) := decompose1 scale C;
+	  (Bi,ri,Cnew) := decompose1 C;
 	  C = Cnew;
-	  Bi);
+	  (Bi,ri));
      if any(values C, v -> v < 0)
      then (
 	  print "BOIJ-SODERBERG FAILS for this diagram";
@@ -93,7 +93,7 @@ randR = (d,b1,b2,R) -> (
      d := min lowestDegrees B;
      applyKeys(B, 
 	  k -> (k#0, 
-	       k#1 + {-d}, 				    -- warning: asssumption here that the degreeLength is 1 (the multi-degree here is k#1)
+	       k#1 + {-d},   -- warning: asssumption here that the degreeLength is 1 (the multi-degree here is k#1)
 	       k#2 - d)))
 
 doPure = (d) -> (
