@@ -18,8 +18,38 @@ export { smallerMonomials,
      reduceLinears,
      minPressy,
      subMonomialOrder,
+     subMonoid,
      isReductor
      }
+
+subMonoid = method()
+subMonoid (Monoid, List) := (M, l) -> (
+     -- 2 arguments: a monoid and a list that is a list of the
+     -- variables, or positions of the variables to be used in 
+     -- the new monoid.
+     -- return: A new monoid corresponding to the subset of the
+     -- variables in l.
+     newM := new MutableHashTable from M.Options;
+     numVars := #newM#Variables;
+     count := 0;
+     if class l_0 === ZZ then newM#Variables = apply(l, i -> newM#Variables#i)
+     else (newM#Variables = l;
+	  l = l/index);
+     newM#MonomialOrder := subMonomialOrder(newM#MonomialOrder, l);
+     skewC := newM#SkewCommutative;
+     skewN := #newM#SkewCommutative;
+     if  skewN =!= 0 then (
+	  if skewN =!= numVars then (
+	       if class skewC#0 === IndexedVariable then skewC = skewC/index;
+	       L := (set l) * (set skewC);
+	       newM#SkewCommutative := toList L;
+	       );
+	  );
+     newM#Degrees := apply(l, i -> newM#Degrees#i);
+     newM
+     )
+	  
+
 
 subMonomialOrder = method()
 subMonomialOrder (List,List) := (Ord, l) -> (
@@ -44,7 +74,7 @@ subMonOrderHelper = (Ord, l, count, newOrd) -> (
 	       w := #Ord#0#1;  -- the old list of weights
 	       lw := select(l, i -> i <= w+count-1); 
 	       ww := apply(lw, i -> Ord#0#1#(i-count));
-	       return supMonOrderHelper(drop(Ord,1),l, count, append(newOrd, Ord#0#0 => ww)) 	   	     
+	       return subMonOrderHelper(drop(Ord,1),l, count, append(newOrd, Ord#0#0 => ww)) 	   	     
 	       );
      	  if Ord#0#0 == GRevLex then (
 	       w = #Ord#0#1;
@@ -147,11 +177,11 @@ minPressy Ideal := (I) -> (
 	  S := (coefficientRing flatR)(monoid[gens flatR,
 		    MonomialOrder => (monoid flatR).Options.MonomialOrder,
 		    Global => (monoid flatR).Options.Global]);
-	  IS := substitute(ideal presentation flatR, S);
-	  S = S/IS;
+	  presR := substitute(ideal presentation flatR, S);
+	  S = S/resR;
 	  )
-     else  S = R; 
-     IS = substitute(I, vars S);
+     else  S = flatR; 
+     IS := substitute(I, vars S);
      if class S === QuotientRing then (
 	  defI := ideal presentation S; 
 	  S = ring defI;
