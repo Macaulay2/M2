@@ -35,18 +35,18 @@ subMonoid (Monoid, List) := (M, l) -> (
      if class l_0 === ZZ then newM#Variables = apply(l, i -> newM#Variables#i)
      else (newM#Variables = l;
 	  l = l/index);
-     newM#MonomialOrder := subMonomialOrder(newM#MonomialOrder, l);
+     newM#MonomialOrder = subMonomialOrder(newM#MonomialOrder, l);
      skewC := newM#SkewCommutative;
      skewN := #newM#SkewCommutative;
      if  skewN =!= 0 then (
 	  if skewN =!= numVars then (
 	       if class skewC#0 === IndexedVariable then skewC = skewC/index;
 	       L := (set l) * (set skewC);
-	       newM#SkewCommutative := toList L;
+	       newM#SkewCommutative = toList L;
 	       );
 	  );
-     newM#Degrees := apply(l, i -> newM#Degrees#i);
-     newM
+     newM#Degrees = apply(l, i -> newM#Degrees#i);
+     new OptionTable from newM
      )
 	  
 
@@ -190,10 +190,11 @@ minPressy Ideal := (I) -> (
      (J,G) := reduceLinears(IS);
      xs := set apply(G, first);
      varskeep := rsort (toList(set gens S - xs));
-     MO := subMonomialOrder((monoid S).Options.MonomialOrder, varskeep/index);
-     newS := (coefficientRing S)(monoid[varskeep, 
-	       MonomialOrder => MO,
-	       Global => (monoid S).Options.Global]);
+     newS := (coefficientRing S)(monoid[subMonoid(monoid S,varskeep)]);
+--     MO := subMonomialOrder((monoid S).Options.MonomialOrder, varskeep/index);
+--     --newS := (coefficientRing S)(monoid[varskeep, 
+--	       MonomialOrder => MO,
+--	       Global => (monoid S).Options.Global]);
      if not isSubset(set support J, set varskeep) -- this should not happen
      then error "internal error in minPressy: not all vars were reduced in ideal";
      I.cache.minimalPresentationMap = map(R,S)*map(S, newS, varskeep);
