@@ -178,7 +178,7 @@ minPressy Ideal := (I) -> (
 		    MonomialOrder => (monoid flatR).Options.MonomialOrder,
 		    Global => (monoid flatR).Options.Global]);
 	  presR := substitute(ideal presentation flatR, S);
-	  S = S/resR;
+	  S = S/presR;
 	  )
      else  S = flatR; 
      IS := substitute(I, vars S);

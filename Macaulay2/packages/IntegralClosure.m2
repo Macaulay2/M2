@@ -10,9 +10,91 @@ newPackage(
     	DebuggingMode => false
     	)
    
-export{isNormal, integralClosure, ICmap, ICfractions, conductor}
+export{isNormal, integralClosure, ICmap, ICfractions, conductor,
+idealizerReal, nonNormalLocus}
 
 needsPackage "Elimination"
+
+
+idealizerReal = method()
+idealizerReal (Ideal, RingElement, Symbol) := (J, f, w) -> (
+     -- 3 arguments: An ideal J in the non normal locus of a ring R/I,
+     -- f a non-zero divisor in R/I, and w is the new variable in use. 
+     -- return: a sequence consisting of a ring map from the ring of J to
+     -- B/I, where B/I is isomorphic to Hom(J,J) = 1/f(f*J:J), and
+     -- list of the fractions that are added to the ring of J to form B/I.   
+     R := ring J;
+     idJ := mingens(f*J : J);
+     if ideal(idJ) == ideal(f) then (
+	  (map(R,R), {})) -- in this case R is ismorphic to Hom(J,J).
+     else(
+     	  H := compress (idJ % f);
+     	  fractions := apply(first entries H,i->i/f);
+     	  Hf := H | matrix{{f}};
+     	  -- Make the new polynomial ring.
+     	  n := numgens source H;
+     	  newdegs := degrees source H - toList(n:degree f);
+     	  degs = join(newdegs, (monoid R).Options.Degrees);
+     	  MO := prepend(GRevLex => n, (monoid R).Options.MonomialOrder);
+	  if class w === IndexedVariableTable then indexW := #values w- 1 else indexW = 0;
+	  kk := coefficientRing R;
+     	  A := (if any(degs, d -> d#0 <= 0) then (
+	       	    kk(monoid [w_(indexW)..w_(indexW+n-1), gens R,
+			      MonomialOrder=>MO])) -- removed MonomialSize => 16
+	       else(
+	       	    kk(monoid [w_(indexW)..w_(indexW+n-1), gens R,
+			      MonomialOrder=>MO, Degrees => degs]))-- removed MonomialSize => 16
+	       );	 
+     	  IA := ideal ((map(A,ring I,(vars A)_{n..numgens R + n-1})) (generators I));
+     	  B := A/IA;
+     	  varsB := (vars B)_{0..n-1};
+     	  RtoB := map(B, R, (vars B)_{n..numgens R + n - 1});
+     	  XX := varsB | matrix{{1_B}};
+     	  -- Linear relations in the new variables
+     	  lins := XX * RtoB syz Hf; 
+     	  -- linear equations(in new variables) in the ideal
+     	  -- Quadratic relations in the new variables
+     	  tails := (symmetricPower(2,H) // f) // Hf;
+     	  tails = RtoB tails;
+     	  quads := matrix(B, entries (symmetricPower(2,varsB) - XX * tails));
+     	  B2 := (flattenRing(B/(trim (ideal lins + ideal quads))))_0;
+     	  F := map(B2, R, (vars B2)_{n..numgens R + n - 1});
+	  (F, fractions)
+	  )
+     )
+
+
+nonNormalLocus = method()
+nonNormalLocus Ring := (R) -> (
+     -- This handles the first node: finding an ideal that contains the NNL 
+     -- locus.  
+     local J;
+     I := ideal presentation R;
+     SI := jacobian I;
+     SIR := substitute(SI,R);
+     if isHomogeneous I and #(first entries generators I)+#(generators ring I) <= 20 then (
+	  SIdets := minors(codim I, SIR);
+	   -- the codimension of the singular locus.
+	  cs := codim SIdets + codim R;  -- codim of SIdets in poly ring. 
+	  if cs === dim ring I or SIdets == 1
+	  -- i.e. the sing locus is empty.
+	  then (J = ideal vars ring I;)
+	  else (J = radical(lift(ideal SIdets_0,ring I)));
+	  )           	       
+     else (
+	  n := 1;
+	  det1 := ideal (0_R);
+	  while det1 == ideal (0_R) do (
+	       det1 = minors(codim I, SIR, Limit=>n);
+	       n = n+1);
+	     if det1 == 1
+	     -- i.e. the sing locus is empty.
+	     then (J = ideal vars ring I;)
+	     else (J = radical(lift(ideal det1_0,ring I)))
+	     );	  
+     ideal(generators J ** R)
+     )
+
 
 -- PURPOSE: check if an affine domain is normal.  
 -- INPUT: any quotient ring.  
