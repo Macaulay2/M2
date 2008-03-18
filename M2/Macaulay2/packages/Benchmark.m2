@@ -174,6 +174,14 @@ Here is another possible benchmark, but it doesn't work for us yet:
     -- res39: res of a generic 3 by 9 matrix over ZZ/101: 0.252016 seconds
     -- resG25: res of the coordinate ring of Grassmannian(2,5): 3.66823 seconds
     -- gbB148: gb of Bayesian graph ideal #148: 32.8221 seconds
+  -- CYGWIN_NT-6.0 gallium 1.5.25(0.156/4/2) 2007-12-14 19:21 i686 Cygwin 
+       -- this one is TOO SLOW
+    -- beginning computation Tue Mar 18 15:14:38 GMTST 2008
+    -- CYGWIN_NT-6.0 gallium 1.5.25(0.156/4/2) 2007-12-14 19:21 i686 Cygwin
+    -- Macaulay2 1.1, compiled with gcc 3.4.4
+    -- res39: res of a generic 3 by 9 matrix over ZZ/101: .811 seconds
+    -- resG25: res of the coordinate ring of Grassmannian(2,5): 12.496 seconds
+    -- gbB148: gb of Bayesian graph ideal #148: 47.565 seconds
 
 -- Lenovo Thinkpad X61, new
   -- Linux
