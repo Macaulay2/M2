@@ -1,0 +1,23 @@
+do this
+
+  getPackage "Kronecker"
+  uninstallPackage "Kronecker"
+
+and you get this
+
+    --  skipping: unexpected file ../../../.Macaulay2/local/lib/Macaulay2/Kronecker/cache/rawdocumentation-dcba-4.db
+    --  skipping: unexpected file ../../../.Macaulay2/local/share/doc/Macaulay2/Kronecker/example-output/_kronecker__Indices_lp__Matrix_cm__Ring__Element_cm__Ring__Element_rp.out
+    --  skipping: unexpected file ../../../.Macaulay2/local/share/doc/Macaulay2/Kronecker/example-output/_kronecker__Normal__Form_lp__Matrix_cm__Ring__Element_cm__Ring__Element_rp.out
+    --  skipping: unexpected file ../../../.Macaulay2/local/share/doc/Macaulay2/Kronecker/example-output/_rational__Normal__Form_lp__Matrix_rp.out
+    --  skipping: unexpected file ../../../.Macaulay2/local/share/doc/Macaulay2/Kronecker/html/index.html
+    --  skipping: unexpected file ../../../.Macaulay2/local/share/doc/Macaulay2/Kronecker/html/master.html
+    --  skipping: unexpected file ../../../.Macaulay2/local/share/doc/Macaulay2/Kronecker/html/toc.html
+    --  skipping: unexpected file ../../../.Macaulay2/local/share/doc/Macaulay2/Kronecker/html/_kronecker__Indices_lp__Matrix_cm__Ring__Element_cm__Ring__Element_rp.html
+    --  skipping: unexpected file ../../../.Macaulay2/local/share/doc/Macaulay2/Kronecker/html/_kronecker__Normal__Form_lp__Matrix_cm__Ring__Element_cm__Ring__Element_rp.html
+    --  skipping: unexpected file ../../../.Macaulay2/local/share/doc/Macaulay2/Kronecker/html/_rational__Normal__Form_lp__Matrix_rp.html
+    --  skipping: unexpected file ../../../.Macaulay2/local/share/info/Kronecker.info
+    --  skipping: unexpected file ../../../.Macaulay2/local/share/Macaulay2/Kronecker.m2
+    stdio:80:1:(1):[0]: removing a directory failed: Directory not empty
+
+because the databases are still open in M2, at least under Windows.
+
