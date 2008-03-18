@@ -49,7 +49,8 @@ isListOfIntegers := x -> class x === List and all(x,i -> class i === ZZ)
 isListOfListsOfIntegers := x -> class x === List and all(x,isListOfIntegers)
 checkCount := i -> if not isCount i then error "expected a small positive integer"
 
-fixup := method(Dispatch => Thing)
+fixup1 := method(Dispatch => Thing)			    -- stage 1, everything except Tiny and Small
+fixup2 := method(Dispatch => Thing)			    -- stage 2, Tiny and Small
 err := o -> error ("unrecognized ordering option " | toString o)
 
 deglist := {}						    -- filled in below each time
@@ -76,7 +77,7 @@ optionSizes := hashTable {
      (GRevLex,8) => GRevLexTiny,
      (GRevLex,16) => GRevLexSmall
      }
-fix := key -> if optionSizes#?(key,MonSize) then optionSizes#(key,MonSize) else key
+fixSize := key -> if optionSizes#?(key,MonSize) then optionSizes#(key,MonSize) else key
 optionInverses := hashTable {
      Lex => key -> GroupLex,
      RevLex => key -> GroupRevLex,
@@ -93,12 +94,12 @@ fix1 := key -> (
 	  optionInverses#key key)
      else key)
 intOption := (key,n) -> (
-     key = fix fix1 key;
+     key = fix1 key;
      checkCount n;
      bump n;
      key => n)
 grevOption := (key,v) -> (
-     key = fix fix1 key;
+     key = fix1 key;
      if class v === ZZ then v = getdegs ( varcount, varcount + v - 1 );
      if not isListOfIntegers(v) then error "expected an integer or a list of integers";
      -- scan(v, i -> if i <= 0 then error "GRevLex expected positive weights"); -- why check this?
@@ -107,45 +108,54 @@ grevOption := (key,v) -> (
 optionFixes := hashTable {
      Weights => (key,val) -> key => val,
      Position => (key,val) -> key => val,
-     MonomialSize => (key,val) -> (processMonSize val; null),
+     MonomialSize => (key,val) -> (processMonSize val; key => val),
      Lex => intOption,
-     LexSmall => intOption,
-     LexTiny => intOption,
      RevLex => intOption,
      GroupLex => intOption,
      GroupRevLex => intOption,
      NCLex => intOption,
-     GRevLex => grevOption,
-     GRevLexSmall => grevOption,
-     GRevLexTiny => grevOption
+     GRevLex => grevOption
      }
      
-ordOption := o -> if numvars > varcount then fixup ( o => numvars - varcount )
+ordOption := o -> if numvars > varcount then fixup1 ( o => numvars - varcount )
 symbolFixes := hashTable {
      -- Component has no other occurence in our code, so this must be something we never implemented:
      -- Position => o -> Component => null,
-     GLex => o -> (Weights => numvars:1, fixup Lex),
+     GLex => o -> (Weights => numvars:1, fixup1 Lex),
      RevLex => ordOption,
      GRevLex => ordOption,
-     Lex => ordOption,
-     GRevLexSmall => ordOption,
-     LexSmall => ordOption,
-     GRevLexTiny => ordOption,
-     LexTiny => ordOption
+     Lex => ordOption
      }
 
-fixup Thing := err
-fixup List := v -> toSequence v / fixup
-fixup Sequence := v -> v / fixup
-fixup Eliminate := e -> Weights => toList (e#0 : 1)
-fixup ProductOrder := o -> fixup(toSequence o / (i -> GRevLex => i))
-fixup Symbol := o -> if symbolFixes#?o then symbolFixes#o o else err o
-fixup ZZ := n -> fixup( GRevLex => n )
-fixup Option := o -> (
+fixup1 Thing := err
+fixup1 List := v -> toSequence v / fixup1
+fixup1 Sequence := v -> v / fixup1
+fixup1 Eliminate := e -> Weights => toList (e#0 : 1)
+fixup1 ProductOrder := o -> fixup1(toSequence o / (i -> GRevLex => i))
+fixup1 Symbol := o -> if symbolFixes#?o then symbolFixes#o o else err o
+fixup1 ZZ := n -> fixup1( GRevLex => n )
+fixup1 Option := o -> (
      key := o#0;
      val := o#1;
      if optionFixes#?key then optionFixes#key (key,val)
      else error ("unrecognized ordering option keyword : " | toString key)
+     )
+
+intOption2 := (key,n) -> fixSize key => n
+grevOption2 := (key,v) -> fixSize key => v
+optionFixes2 := hashTable {
+     MonomialSize => (key,val) -> (processMonSize val; null),
+     Lex => intOption2,
+     GRevLex => grevOption2
+     }
+
+fixup2 Thing := identity
+fixup2 List := v -> toSequence v / fixup2
+fixup2 Sequence := v -> v / fixup2
+fixup2 Option := o -> (
+     key := o#0;
+     val := o#1;
+     if optionFixes2#?key then optionFixes2#key (key,val) else o
      )
 
 makeMonomialOrdering = (monsize,inverses,nvars,degs,weights,ordering) -> (
@@ -158,7 +168,7 @@ makeMonomialOrdering = (monsize,inverses,nvars,degs,weights,ordering) -> (
      --    the *separate* Weights option.  Could be an empty list.
      -- 'ordering' is a list of ordering options, e.g., { Lex => 4, GRevLex => 4 }
      --    If it's not a list, we'll make a list of one element from it.
-     processMonSize monsize;
+     ordering = {MonomialSize => monsize, ordering};
      invert = inverses;
      if not isListOfIntegers degs then error "expected a list of integers";
      deglist = degs;
@@ -171,11 +181,12 @@ makeMonomialOrdering = (monsize,inverses,nvars,degs,weights,ordering) -> (
      scan(weights, wt -> if # wt != nvars then error("Weights: expected weight vector of length ",toString nvars," but got ",toString (#wt)));
      if class ordering =!= List then ordering = {ordering};
      ordering = join(weights / (i -> Weights => i), ordering);
-     t := toList splice nonnull fixup ordering;
-     if varcount < nvars then t = append(t,fixup(GRevLex => nvars - varcount));
-     if not any(t, x -> class x === Option and x#0 === Position) then t = append(t, Position => Up);
+     t':= toList splice nonnull fixup1 ordering;
+     if varcount < nvars then t' = append(t',fixup1(GRevLex => nvars - varcount));
+     if not any(t', x -> class x === Option and x#0 === Position) then t' = append(t', Position => Up);
+     t := toList nonnull fixup2 t';
      logmo := new FunctionApplication from {rawMonomialOrdering,t};
-     (t,value logmo, logmo))
+     (t,t',value logmo, logmo))
 
 RawMonomialOrdering ** RawMonomialOrdering := RawMonomialOrdering => rawProductMonomialOrdering
 

@@ -194,7 +194,7 @@ makeit1 := (opts) -> (
      M.indexSymbols = hashTable apply(M.generatorSymbols,M.generators,(v,x) -> v => x);
      M.index = new MutableHashTable;
      scan(#varlist, i -> M.index#(varlist#i) = i);
-     (MOopts,rawMO,logMO) := makeMonomialOrdering (
+     (MOopts,MOoptsint,rawMO,logMO) := makeMonomialOrdering (
      	  opts.MonomialSize,
 	  opts.Inverses,
      	  #varlist,
@@ -211,7 +211,9 @@ makeit1 := (opts) -> (
      M.RawMonomialOrdering = rawMO;
      M#"raw creation log" = new Bag from {logMO};
      opts = new MutableHashTable from opts;
-     M#"options" = MOopts;			    -- these are exactly the arguments given to rawMonomialOrdering
+     opts.MonomialOrder = MOoptsint; -- these are the options given to rawMonomialOrdering, except Tiny and Small aren't there yet...
+     M#"options" = MOopts; -- these are exactly the arguments given to rawMonomialOrdering
+     remove(opts, MonomialSize);
      M.Options = new OptionTable from opts;
      toString M := toExternalString M := x -> toString expression x;
      M.RawMonoid = (
