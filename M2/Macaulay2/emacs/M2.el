@@ -368,10 +368,10 @@ M2-send-to-prorgram can obtain lines from this buffer."
   (let* ((f (prog1
 	      (select-frame 
 	       (new-frame
-		'((height . 24)
-		  (width . 65)
+		'((height . 30)
+		  (width . 80)
 		  (menu-bar-lines . 0)
-		  (visiblity . t)
+		  (visibility . t)
 		  ; (minibuffer . nil)
 		  ;; (reverse . t)
 		  (modeline . nil);; doesn't work
@@ -384,7 +384,7 @@ M2-send-to-prorgram can obtain lines from this buffer."
 	 (width (frame-pixel-width))
 	 (height (frame-pixel-height))
 	 )
-    (modify-frame-parameters f '((left + 0) (top + 0)))
+    (modify-frame-parameters f '((left + 20) (top + 30)))
     ; (M2)
     (make-variable-buffer-local 'comint-scroll-show-maximum-output)
     (save-excursion 
