@@ -1,0 +1,18 @@
+-*- M2 -*-
+
+
+i37 : (QQ[symbol x_2]/x_2^5)^6
+
+      /QQ [x ]\
+      |     2 |6		**************** put this exponent higher
+o37 = |-------|
+      |    5  |
+      |   x   |
+      \    2  /
+
+      QQ [x ]
+           2
+o37 : --------module, free
+          5
+         x
+          2
