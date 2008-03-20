@@ -32,6 +32,8 @@ addStartFunction(
 
 isprefix = (s,t) -> s === substring(0,#s,t)
 
+addStartFunction( () -> if not noinitfile and prefixDirectory =!= null then makePackageIndex() )
+
 addStartFunction( () -> if not noinitfile and prefixDirectory =!= null then (
 	  GLOBAL := prefixDirectory;			    -- installed doc
 	  LOCAL := applicationDirectory() | "local/";	    -- user's "local" application directory doc
@@ -55,8 +57,6 @@ addStartFunction( () -> if not noinitfile then (
 		    if isDirectory fn and # readDirectory fn == 2 then removeDirectory fn else
 		    if readlink fn =!= null and not fileExists fn then removeFile fn
 		    ))))
-
-addStartFunction( () -> if not noinitfile and prefixDirectory =!= null then makePackageIndex() )
 
 addStartFunction( () -> if dumpdataFile =!= null and fileExists dumpdataFile then (
 	  dumptime := fileTime dumpdataFile;

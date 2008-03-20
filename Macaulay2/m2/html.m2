@@ -961,7 +961,7 @@ installPackage Package := opts -> pkg -> (
 
 userMacaulay2Directory := () -> (
      dir := applicationDirectory();
-     if not isDirectory dir then (
+     if not isDirectory dir or not isDirectory (dir|"encap/") then (
 	  stderr << "--initializing user Macaulay 2 directory \"" << dir << "\"" << endl;
 	  makeDirectory(dir);
 	  makeDirectory(dir|"encap/");
