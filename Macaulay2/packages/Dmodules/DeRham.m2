@@ -145,10 +145,10 @@ deRhamAll RingElement := options -> f -> (
 
 iAllt = method( Options => {Strategy => Schreyer})
 iAllt Module:= options -> I -> (
-     print("iAllt (integrationAllWithTransfer) in trans.m2");
+     pInfo(2, "iAllt (integrationAllWithTransfer) in trans.m2");
      WA := ring gens I;
      Mf := I;
-     print(Mf);
+     pInfo(2,Mf);
      n := numgens(WA) // 2;  -- do not use numgens(WA)/2 
      w := toList(n:1);
 
@@ -182,13 +182,13 @@ iAllt Module:= options -> I -> (
           Omega := Dres ideal WA.dpairVars#1;
           pInfo(1, "Transferring cohomology classes to deRham complex... ");
           dbl := Omega**(intTable#VResolution);
-          print(dbl); -- print double complex
+          pInfo(2,dbl); -- print double complex
           transfers := {};
           i := 0;
           while i <= n do (
            pull := intTable#PreCycles#i;
            j := 0;
-           print({i,j,pull});
+           pInfo(2,{i,j,pull});
            pInfo(2, "\t Degree " | i | "...");
            tInfo = toString first timing (
                 while j < n-i do (
@@ -201,7 +201,7 @@ iAllt Module:= options -> I -> (
                      then error "syzygy should be produced but wasn't!";
                      pull = (Dtransposition push) // (Dtransposition horMap);
                      pull = Dtransposition pull;
-                     print({i,j,push,pull}); 
+                     pInfo(2,{i,j,push,pull}); 
                      j = j+1;
                      );
                 );
@@ -239,16 +239,14 @@ derLogF RingElement := f -> (
                                  --  note: msyz^{i}_{j} get (i,j)-element
                                  --  note: entries 
                                  --  note: #List,  length
-  print(msyz);
+  pInfo(2,msyz);
   -- see annFs.m2, oxclient.m2
   W := makeWeylAlgebra R;   --note: g=map(R,W,matrix{{x,y,0,0}}); g(x) does not work  
   vw := generators(W);
   i:=0; j:=0; ell:=0; t:=0;
   op:={};
   while i<m do (  
-    -- print(ell);
     t = entries(msyz_{i}^{0});
-    -- print(t);
     j = 1; ell=-value(toString(t#0#0));
     while j<=n do (
       t = entries(msyz_{i}^{j});
@@ -263,10 +261,8 @@ derLogF RingElement := f -> (
 
 logCohomology=method();
 logCohomology RingElement := f -> (
-  print(f);
-  ii := derLogF f;
-  print(ii);
-  iAllt(cokernel(matrix(ii)))
+     ii := derLogF f;
+     iAllt(cokernel(matrix(ii)))
 )
 
 -- use S; logCohomology(x^3-y)   
@@ -362,8 +358,8 @@ makeTauInput (List,HashTable,ZZ) := (fmysyz,cohom,k) -> (
   apply(op,ell-> (if ((ell % ggg) != 0) then (print(ell,ggg); ell2=ell; error "syzygy error by ggg")));
   apply(ggg2,ell-> (if ((ell % gggell) != 0) then (print(ell,gggell); ell2=ell; error "syzygy error by gggell")));
 
-  print( (mysyz#0#1)*(mysyz#1#2)-(mysyz#0#2)*(mysyz#1#1));
-  print( f );
+  pInfo(2, (mysyz#0#1)*(mysyz#1#2)-(mysyz#0#2)*(mysyz#1#1));
+  pInfo(2, f);
 
   abcd:={{mysyz#1#2,-mysyz#1#1},{-mysyz#0#2,mysyz#0#1}};  -- {{a,b},{c,d}}  in logc2.tex
   {abcd,op,tkreduced}

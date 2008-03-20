@@ -81,7 +81,8 @@ document {
 	  TO {"RatSols", " -- rational solutions of finite rank systems"},
 	  TO {"diffOps", " -- differential operators on affine varieties"},
 	  {TO "populateCechComplexCC", ", ", TO "pruneCechComplexCC", 
-	       " -- characteristic cycles of local cohomology"}
+	       " -- characteristic cycles of local cohomology"},
+	  TO {"logCohomology", "-- logarithmic cohomology groups"}
 	  },
      HEADER3 "Programming aids:",
      UL{TO {"createDpairs", " -- tags coordinate and derivation variables"},
@@ -2526,6 +2527,28 @@ scan(keys B, k->print (k=>B#k)) -- CCs of Cech complex BEFORE pruning
 	  while the holomicity can be checked by ", 
 	  TO "isHolonomic", " there is no algorithm to check the regularity."},
      SeeAlso => {BMM,pruneCechComplexCC}
+     }
+
+document {     
+     Key => {(logCohomology,RingElement),logCohomology},
+     Headline => "logarithmic cohomology groups in two variables",
+     Usage => "logCohomology f",
+     Inputs => {
+	  "f" => {"polynomial in two variables"}
+	  },
+     Outputs => {
+	  HashTable => {"with entries 
+	       {VResolution, Input, TransferCycles, CohomologyGroups, PreCycles, OmegaRes, LocalizeMap, BFunction}
+	       "} 
+	  },
+     "For a polynomial ", TEX "f", " in two variables executes the algorithm described in
+     Castro-Jimenez and Takayama \"The Computation of the Logarithmic Cohomology for Plane Curves\" (arXiv:0712.0001).",
+     EXAMPLE lines ///
+S=QQ[x,y];
+f=x*y*(x-y);
+logCohomology(f)
+///,
+     SeeAlso => {deRham}
      }
 
 document { -- local?
