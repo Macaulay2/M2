@@ -1252,7 +1252,7 @@ help Sequence := key -> (						    -- method key
      currentHelpTag = null;
      ret)
 
-help List := v -> DIV between(hr,help \ v)
+help List := v -> DIV between(hr,help \ v) 
 
 help Thing := x -> if hasAttribute(x,ReverseDictionary) then return help getAttribute(x,ReverseDictionary) else error "no documentation found"
 
