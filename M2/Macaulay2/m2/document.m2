@@ -224,7 +224,8 @@ getPrimary = tag -> (
      do tag = d#PrimaryTag;
      tag)
 
-fetchPrimaryRawDocumentation = tag -> (
+fetchPrimaryRawDocumentation = method()
+fetchPrimaryRawDocumentation DocumentTag := tag -> (
      while (
      	  d := fetchRawDocumentation tag;
      	  d =!= null and d#?PrimaryTag
@@ -755,19 +756,19 @@ externalPath = (() -> (
 
 makeDocBody := method(Dispatch => Thing)
 makeDocBody Thing := key -> (
-     fkey := formatDocumentTag key;
-     pkg := packageKey fkey;
-     if pkg =!= null then (
-	  rec := fetchRawDocumentation(pkg,fkey);
-	  if rec =!= null then (
-	       comment := COMMENT{"file://",externalPath,toAbsolutePath rec#"filename",":",toString rec#"linenum"}; 
-	       docBody := extractBody rec;
-	       if docBody =!= null and #docBody > 0 then (
-		    docBody = processExamples(pkg, fkey, docBody);
-		    if class key === String 
-		    then DIV { comment, docBody}
-		    else DIV1 { comment, SUBSECTION "Description", DIV {docBody} })
-	       else DIV { comment })))
+     tag := makeDocumentTag key;
+     pkg := getpkg DocumentTag.Title tag;
+     rec := fetchPrimaryRawDocumentation tag;
+     fkey := DocumentTag.FormattedKey tag;
+     if rec =!= null then (
+	  comment := COMMENT{"file://",externalPath,toAbsolutePath rec#"filename",":",toString rec#"linenum"}; 
+	  docBody := extractBody rec;
+	  if docBody =!= null and #docBody > 0 then (
+	       docBody = processExamples(pkg, fkey, docBody);
+	       if class key === String 
+	       then DIV { comment, docBody}
+	       else DIV1 { comment, SUBSECTION "Description", DIV {docBody} })
+	  else DIV { comment }))
 
 topheader := s -> (
      h := headline s;
@@ -1203,6 +1204,7 @@ theAugmentedMenu := S -> (
      )
 
 help Symbol := S -> (
+     checkLoadDocumentation();
      -- s := value S;
      if package S === Core then checkLoadDocumentation();
      currentHelpTag = makeDocumentTag S;
