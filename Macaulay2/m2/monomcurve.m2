@@ -10,10 +10,9 @@ monomialCurveIdeal = (S, a) -> (
     a = prepend(0,a);
     s := symbol s;
     t := symbol t;
-    monsize := (options S).MonomialSize;
     k := coefficientRing S;
-    M1 := monoid [s,t,MonomialSize=>monsize];
-    M2 := monoid [Variables=>n+1,MonomialSize=>monsize];
+    M1 := monoid [s,t];
+    M2 := monoid [Variables=>n+1];
     R1 := k M1;
     R2 := k M2;
     s = R1_0;
