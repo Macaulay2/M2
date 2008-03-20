@@ -67,7 +67,6 @@ tensor(QuotientRing, QuotientRing) := optns -> (R,S) -> (
      f := presentation R; A := ring f; M := monoid A; m := numgens M;
      g := presentation S; B := ring g; N := monoid B; n := numgens N;
      AB := k tensor(M, N, 
-	  MonomialSize => max((options M).MonomialSize, (options N).MonomialSize),
 	  optns);
      fg := substitute(f,(vars AB)_{0 .. m-1}) | substitute(g,(vars AB)_{m .. m+n-1});
      -- forceGB fg;  -- if the monomial order chosen doesn't restrict, then this
