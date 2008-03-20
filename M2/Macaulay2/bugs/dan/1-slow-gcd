@@ -1,0 +1,25 @@
+gcd is too slow:
+
+i1 : QQ[a,b]
+
+o1 = QQ [a, b]
+
+o1 : PolynomialRing
+
+i2 : benchmark "a*b"
+
+o2 = .0000096720096
+
+o2 : RR (of precision 27)
+
+i3 : benchmark "gcd(a,b)"
+
+o3 = .0001136
+
+o3 : RR (of precision 27)
+
+i4 : o3/o2
+
+o4 = 11.745232
+
+o4 : RR (of precision 27)
