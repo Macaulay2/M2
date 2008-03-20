@@ -107,7 +107,7 @@ html TO   := x -> (
      else concatenate( "<a href=\"", rel htmlFilename getPrimary x#0, "\" title=\"", headline x#0, "\">", r, "</a>", if x#?1 then x#1))
 html TO2  := x -> (
      tag := x#0;
-     headline tag;		   -- this is a kludge, just to generate error messages about missing links
+     headline tag;		   -- this is a kludge, just to generate error messages about missing links 
      d := fetchPrimaryRawDocumentation tag;
      if d#?"undocumented" and d#"undocumented" === true then (
 	  if signalDocError tag then (
