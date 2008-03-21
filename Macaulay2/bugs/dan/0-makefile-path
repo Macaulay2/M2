@@ -1,0 +1,2 @@
+add the dir containing the new autoconf to the front of the path so the
+configure scripts for the libraries get made with it
