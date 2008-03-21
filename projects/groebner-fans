@@ -1,4 +1,4 @@
--*- M2 -*-
+-*- mode: M2; coding: utf-8 -*-
 
 Title: Groebner fans
 
@@ -26,17 +26,21 @@ M2/Macaulay2/packages/gfanInterface.m2.
 Dan should be involved in planning for making interfaces to other programs
 consistent.
 
+Janko Boehm (Saarbruecken) as a PostDoc might be possible choice of
+implementer.  [suggested by Frank]
+
 =============================================================================
 
 Proposed by: Wolfram Decker <decker@math.uni-sb.de>,
 	     Frank Schreyer <schreyer@math.uni-sb.de>
 Potential Advisor: Mike Stillman <mike@math.cornell.edu>
 Project assigned to: 
-       	    Janko Boehm (Saarbruecken) as a PostDoc might be possible choice.
-	    [suggested by Frank]      
 Current status:
 
 =============================================================================
 
 Progress log:
+
+March, 2008: Michael Stillman, Josephine Yu, and Anders Jensen worked a bit on
+this.  Gwyn Whieldon might also be interested in working on this.
 
