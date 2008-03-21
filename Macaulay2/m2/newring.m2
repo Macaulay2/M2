@@ -27,7 +27,7 @@ newRing Ring := Ring => opts -> (R) -> (
      f := presentation R;
      A := ring f;
      k := coefficientRing A;
-     S := k[opts];
+     S := k(monoid [opts]);
      f = substitute(f,vars S);
      S/image f
      )
