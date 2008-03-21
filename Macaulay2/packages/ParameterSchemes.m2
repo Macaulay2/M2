@@ -872,6 +872,24 @@ assert(source F === ring J)
 assert(target G === ring J)
 assert(source G === ring I)
 
+-- Examples from parameter schemes
+kk = ZZ/101
+R = kk[a..f]
+I = ideal"ab,bc,cd,de,ea,ac"
+time (J,F) = groebnerScheme(I);
+
+time (J,F) = groebnerScheme(I, Minimize=>false);
+time J = minimalPresentation J;
+
+kk = ZZ/101
+R = kk[a..d]
+I = ideal borel monomialIdeal"b2c"
+time (J,F) = groebnerScheme(I, Minimize=>false);
+time J = minimalPresentation J;
+betti J
+J = trim J
+see J
 R = ZZ/101[x,y]/(y-x^3-x^5-x^7)
 I = ideal presentation R
 minimalPresentation I
+
