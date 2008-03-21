@@ -2,7 +2,7 @@
 
 newPackage(
      "NoetherNormalization",
-     Version => "0.9", 
+     Version => "0.9.1", 
      Date => "Jan 18, 2007",
      Authors => {
 	  {Name => "Bart Snapp", Email => "snapp@coastal.edu", HomePage => "http://ww2.coastal.edu/snapp/"},
@@ -28,7 +28,7 @@ newPackage(
 
 --=========================================================================--
      
-export{noetherNormalization,LimitSequence,RandomRange} 
+export{noetherNormalization,LimitList,RandomRange} 
         
 --=========================================================================--
 
@@ -137,9 +137,9 @@ inversePermutation = f -> (
 
 randomSum = (U,V,k,rr) -> (
      for j to #V - 1 do (
-	  if rr == {0} then 
+	  if rr == 0 then 
 	  U = apply(U, i -> i + random(k)*V_j) else 
-	  U = apply(U, i -> i + random(rr_0,rr_1)*V_j);
+	  U = apply(U, i -> i + random(-rr,rr)*V_j);
 	  );
      return U;
      );
@@ -159,7 +159,7 @@ randomSum = (U,V,k,rr) -> (
 -- start the process again. While doing all this we keep track of the
 -- maps and the inverses of the maps that we use.
 
-noetherNormalization = method(Options => {Verbose => false, LimitSequence => {5,20,40,60,80,infinity}, RandomRange => {0}})
+noetherNormalization = method(Options => {Verbose => false, LimitList => {5,20,40,60,80,infinity}, RandomRange => 0})
 noetherNormalization(Ideal) := opts -> I -> (
      A := ring I;
      (flatA,fAtoFlatA) := flattenRing A;
@@ -177,7 +177,7 @@ noetherNormalization(Ideal) := opts -> I -> (
      X := sort gens R;
      (U,V) := varPrep(X,I);
      counter := 1; --counts the number of times lastCheck is called
-     limitsequence := opts.LimitSequence; -- {5,20,40,60,80,infinity}; -- this is for the basiselementlimit setting for computing gb and is based on experience (and nothing else)
+     limitsequence := opts.LimitList; -- {5,20,40,60,80,infinity}; -- this is for the basiselementlimit setting for computing gb and is based on experience (and nothing else)
      done := false;
      indep := U;
      f := map(R,R,inverseSequence(U|V,X));
@@ -293,11 +293,22 @@ document {
 
 -----------------------------------------------------------------------------
 document {
-     Key => {noetherNormalization, (noetherNormalization,Ideal), (noetherNormalization,QuotientRing), (noetherNormalization,PolynomialRing)},
+     Key => {noetherNormalization, 
+	  (noetherNormalization,Ideal), 
+	  (noetherNormalization,QuotientRing), 
+	  (noetherNormalization,PolynomialRing),
+	  LimitList,
+	  RandomRange,
+	  [noetherNormalization,LimitList],
+	  [noetherNormalization,RandomRange],
+	  [noetherNormalization,Verbose]
+	  },
      Headline => "data for Noether normalization",
      Usage => "(f,J,X) = noetherNormalization C",
      Inputs => {
-	  "C" => null => {"which is either ", ofClass Ideal, " ", TT "I", ", or ", ofClass QuotientRing, " ", TT "R/I", " where ", TT "R", " is ", ofClass PolynomialRing }
+	  "C" => null => {"which is either ", ofClass Ideal, " ", TT "I", ", or ", ofClass QuotientRing, " ", TT "R/I", " where ", TT "R", " is ", ofClass PolynomialRing },
+	  LimitList => List => "gives the value which ", TO "BasisElementLimit", "will take",
+	  RandomRange => ZZ => "if not 0, gives a integer bound for the random coefficients. If 0, then chooses random elements from the coefficient field."
 	  },
      Outputs => {
 	  "f" => RingMap => {"an automorphism of ", TT "R"},
@@ -306,31 +317,31 @@ document {
 	  },
      "The computations performed in the routine ", TT "noetherNormalization", " use a random linear change of coordinates,
      hence one should expect the output to change each time the routine is executed.",
-     EXAMPLE {
-	  "R = QQ[x_1..x_4];",
-	  "I = ideal(x_2^2+x_1*x_2+1, x_1*x_2*x_3*x_4+1);",
-	  "(f,J,X) = noetherNormalization I",
-	  },
+     EXAMPLE lines ///
+     R = QQ[x_1..x_4];
+     I = ideal(x_2^2+x_1*x_2+1, x_1*x_2*x_3*x_4+1);
+     (f,J,X) = noetherNormalization I
+     ///,
      "The next example shows how when we use the lexicographical ordering, we can see the integrality of ", 
      TT "R/ f I", " over the polynomial ring in ", TT "dim(R/I)", " variables:",
-     EXAMPLE {
-	  "R = QQ[x_1..x_5, MonomialOrder => Lex];",
-	  "I = ideal(x_2*x_1-x_5^3, x_5*x_1^3);",
-          "(f,J,X) = noetherNormalization I",
-          "transpose gens gb J",
-	  },
+     EXAMPLE lines ///
+     R = QQ[x_1..x_5, MonomialOrder => Lex];
+     I = ideal(x_2*x_1-x_5^3, x_5*x_1^3);
+     (f,J,X) = noetherNormalization I
+     transpose gens gb J
+     ///,
      "If ", TT "noetherNormalization", " is unable to place the ideal into the desired position after a few tries, the following warning is given:",
-     EXAMPLE {
-	  "R = ZZ/2[a,b];",
-	  "I = ideal(a^2*b+a*b^2+1);",
-	  "(f,J,X) = noetherNormalization I"
-	  },
+     EXAMPLE lines ///
+     R = ZZ/2[a,b];
+     I = ideal(a^2*b+a*b^2+1);
+     (f,J,X) = noetherNormalization I
+     ///,
      "Here is an example with the option ", TT "Verbose => true", ":",
-     EXAMPLE {
-	  "R = QQ[x_1..x_4];",
-	  "I = ideal(x_2^2+x_1*x_2+1, x_1*x_2*x_3*x_4+1);",
-	  "(f,J,X) = noetherNormalization(I,Verbose => true)"
-	  },
+     EXAMPLE lines /// 
+     R = QQ[x_1..x_4];
+     I = ideal(x_2^2+x_1*x_2+1, x_1*x_2*x_3*x_4+1);
+     (f,J,X) = noetherNormalization(I,Verbose => true)
+     ///,
      "The first number in the output above gives the number of
      linear transformations performed by the routine while attempting to
      place ", TT "I", " into the desired position.
@@ -339,20 +350,20 @@ document {
      Groebner basis. It does this by sequentially computing a Groebner
      basis with the option ", TO "BasisElementLimit", " set to
      predetermined values. The default values come from the following list:", TT "{5,20,40,60,80,infinity}", 
-     ". To set the values manually, use the option ", TT "LimitSequence", ":",
-     EXAMPLE {
-	  "R = QQ[x_1..x_4];",
-	  "I = ideal(x_2^2+x_1*x_2+1, x_1*x_2*x_3*x_4+1);",
-	  "(f,J,X) = noetherNormalization(I,Verbose => true,LimitSequence => {5,10})"
-	  },
+     ". To set the values manually, use the option ", TT "LimitList", ":",
+     EXAMPLE lines ///
+     R = QQ[x_1..x_4]; 
+     I = ideal(x_2^2+x_1*x_2+1, x_1*x_2*x_3*x_4+1);
+     (f,J,X) = noetherNormalization(I,Verbose => true,LimitList => {5,10})
+     ///,
      "To limit the randomness of the coefficients, use the option ", TT "RandomRange", 
      ". Here is an example where the coefficients of the linear transformation are 
-     random integers from ", TT "-1", " to ", TT "2", ":", 
-     EXAMPLE {
-	  "R = QQ[x_1..x_4];",
-	  "I = ideal(x_2^2+x_1*x_2+1, x_1*x_2*x_3*x_4+1);",
-	  "(f,J,X) = noetherNormalization(I,Verbose => true,RandomRange => {-1,2})"
-	  },
+     random integers from ", TT "-2", " to ", TT "2", ":", 
+     EXAMPLE lines ///
+     R = QQ[x_1..x_4];
+     I = ideal(x_2^2+x_1*x_2+1, x_1*x_2*x_3*x_4+1);
+     (f,J,X) = noetherNormalization(I,Verbose => true,RandomRange => 2)
+     ///,
      PARA {
      "This symbol is provided by the package ", TO NoetherNormalization, "."
      }
