@@ -700,10 +700,16 @@ document {
 
 document {
      Key => removeFile,
-     Headline => "unlink a file",
+     Headline => "remove a file",
      Usage => "removeFile f",
      Inputs => { "f" => String },
-     Consequences => {{ "the file reachable by the path f is unlinked from its directory" }}}
+     Consequences => {{ "the file reachable by the path ", TT "f", " is removed" }},
+     PARA {
+	  "Under a unix system such as GNU/Linux, what really happens is that the link to the file 
+	  specified by ", TT "f", " is removed.  The file itself disappears after all the links to 
+	  it are removed.  See ", TO "linkFile", "."
+	  }
+     }
 
 document {
      Key => wrap,
