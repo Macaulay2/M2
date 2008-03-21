@@ -147,8 +147,9 @@ regularSequence(Ideal,Ring) := Matrix => opts -> (I,A) -> (
      )
 
 TEST /// 
--- you need to add some tests here... 
--- see the examples etc
+A = ZZ/5051[x, y, z];
+I = ideal (x, x*y, y*z);
+assert(regularSequence(I,A,Attempts=>1,Bound=>100,Sparseness=>.9) - matrix{{82*x, 95*y*z}}==0)
 ///
 	       
 --=========================================================================--
@@ -174,7 +175,8 @@ document {
      Key => Depth,
      Headline => "computations involving regular sequences",
      EM "Depth", " is a package which will hopefully help users 
-     make computations involving regular sequences and depth."
+     make computations involving regular sequences and depth. In particular, we add the functions ", TO (depth,Ideal, Ring), 
+     " and ", TO (regularSequence,Ideal,Ring), "."
      }
 
 -----------------------------------------------------------------------------
