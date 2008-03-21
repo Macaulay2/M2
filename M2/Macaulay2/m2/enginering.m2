@@ -494,12 +494,6 @@ isUnit(RingElement) := (f) -> 1 % ideal f == 0
 Ring _ String := RingElement => (x,s) -> x.indexStrings#s
 Ring _ Symbol := RingElement => (x,s) -> x.indexSymbols#s
 
-ZZ _ Ring := RingElement => (i,R) -> (
-     if i === 1 then R#1
-     else if i === 0 then R#0
-     else i * R#1
-     )
-
 isConstant RingElement := r -> liftable(r, coefficientRing ring r)
 
 -- Local Variables:
