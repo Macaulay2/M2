@@ -88,13 +88,13 @@ randL = (d,b1,b2,R) -> (
      betti res coker random(R^b1, R^{b2:-d})
      )
 
-randR = (d,b1,b2,R) -> (
-     B := (betti dual res coker random(R^b1, R^{b2:-d}))[-numgens R];
-     d := min lowestDegrees B;
-     applyKeys(B, 
-	  k -> (k#0, 
-	       k#1 + {-d},   -- warning: asssumption here that the degreeLength is 1 (the multi-degree here is k#1)
-	       k#2 - d)))
+--randR = (d,b1,b2,R) -> (
+--     B := (betti dual res coker random(R^b1, R^{b2:-d}))[-numgens R];
+--     d0 := min lowestDegrees B;
+--     applyKeys(B, 
+--	  k -> (k#0, 
+--	       k#1 + {-d0},   -- warning: asssumption here that the degreeLength is 1 (the multi-degree here is k#1)
+--	       k#2 - d0)))
 
 doPure = (d) -> (
      b := pureBetti d;

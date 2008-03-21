@@ -65,6 +65,10 @@ inw(List,Ideal) := (w,I) -> (
 writeGfanIdeal = method()
 writeGfanIdeal(String,Ideal,List) := (filename,I,symms) -> (
      F := openOut filename;
+     R := ring I;
+     p := char R;
+     F << if p === 0 then "Q" else "Z/"|p|"Z";
+     F << toExternalString(new Array from gens R) << endl;
      -- Now make the list of the gens of I
      F << "{";
      n := numgens I - 1;
@@ -86,6 +90,7 @@ readGfanIdeals String := (f) -> (
      -- Reads using the current ring
      s := get f;
      G := separate("\n,",s);
+     G = drop(G,1); -- remove the first line, which contains the ring
      H := apply(G, t -> replace(///[\{\}]*///,"",t));
      apply(H, s -> value("{"|s|"}")))
 
@@ -99,7 +104,7 @@ gfan Ideal := opts -> (I) -> (
      -- Create the input file
      f := temporaryFileName();
      << "using temporary file " << f << endl;
-     ex := if p > 0 then "--mod "|p else "";
+     ex := "";
      if opts.Symmetries =!= {}
      then (
 	  if not instance(opts.Symmetries, VisibleList)
@@ -267,7 +272,8 @@ R = ZZ/3[a..d]
 I = ideal(a^3-a,b^3-b,a+2*b+c+d-1,a^2*b+b^2*a,c^3-c)
 time (M,L) = gfan I;
 time apply(#M, i -> (
-  weightVector(ideal(L_i), ideal(M_i))))
+  weightVector(L_i, M_i)))
+
 wtvecs = apply(oo, x -> x#0)
 Mset1 = apply(wtvecs, w -> set flatten entries inw(w,I))
 Mset = M/set
@@ -294,7 +300,7 @@ unique L3
 R = ZZ/32003[symbol a..symbol d,symbol e]
 I = ideal"a+b+c+d,ab+bc+cd+da,abc+bcd+cda+dab,abcd-e4"
 (M1,L1) = gfan I;
-(M2,L2) = gfan(I, Symmetries=>{(1,2,3,0,4)});
+(M2,L2) = gfan(I, Symmetries=>{(b,c,d,a,e)});
 
 -- veronese in general coordinates
 R = ZZ/32003[symbol a..symbol f]
@@ -311,31 +317,17 @@ gfan I
 
 
 gfan  # implement the symmetry
-gfan_facets
-gfan_fvector # works for homogeneous ideals, fvector of state polytope
-gfan_groebnercone
-  #gfan_homogeneityspace # output will probably change
-  #gfan_homogenize		
-gfan_initialforms # ??
-  #gfan_interactive	
-  #gfan_ismarkedgroebnerbasis
-gfan_leadingterms  # maybe use this to get lead term ideals
-  #gfan_markpolynomialset		
-  #gfan_polynomialsetunion		
-
+gfan_groebnercone # can replace Fourier-Motzkin
+gfan_topolyhedralfan
 gfan_render  # for 3 vars
 gfan_renderstaircase # for 3 vars
-
-  #gfan_stats			
-  #gfan_substitute			
-  #gfan_tolatex			
 
 gfan_tropicalbasis		
 gfan_tropicalintersection	
 gfan_tropicalstartingcone	
   #gfan_tropicaltraverse		
 
-gfan_weightvector 
+
 
 F = get "/tmp/M2-2675-1.out"
 G = separate("\n,",F);
