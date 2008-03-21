@@ -152,14 +152,11 @@ IndexedVariable _ Ring := RingElement => (x,M) -> (
      else error "indexed variable not found in ring"
      )
 
-QQ _ Ring :=
-RingElement _ Ring := RingElement => (x,R) -> (
-     if ring x === R then x
-     else try x * 1_R
+Number _ Ring := promote
+
+RingElement _ Ring := (x,R) -> (
+     try promote(x,R)
      else try (baseName x)_R
-     ---- we might enable the line below if map(R,S) would insist on finding every variable
-     -- else try (map(R,ring x)) x
-     else error "failed to interpret ring element in ring"
      )
 
 madeTrivialMonoid := false
