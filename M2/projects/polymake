@@ -1,0 +1,18 @@
+-*- M2 -*-
+
+Title: Polymake
+
+Description: Write an interface to "polymake", which is a program that computes
+many things about polytopes.
+
+=============================================================================
+
+Proposed by: Michael Stillman
+Potential Advisor: Michael Stillman
+Project assigned to: Josephine Yu and Anders Jensen, March, 2008
+Current status:
+
+=============================================================================
+
+Progress log:
+
