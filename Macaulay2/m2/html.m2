@@ -12,7 +12,7 @@ Macaulay2HomePage := () -> "http://www.math.uiuc.edu/Macaulay2/index-" | version
 -- we've turned off checking for existence of files...
 
 local prefix; local topNodeButton
-local nullButton; local masterIndexButton; local tocButton; local homeButton
+local nullButton; local masterIndexButton; local tocButton; local homeButton; local myHomeButton;
 local NEXT; local PREV; local UP; local tableOfContents; local linkTable; local SRC
 local nextButton; local prevButton; local upButton; local backwardButton; local forwardButton
 local masterIndex
@@ -194,7 +194,8 @@ buttonBar := (tag) -> ButtonTABLE {{
      	       (if tag =!= topDocumentTag then topNodeButton else topNodeButton#-1, " | "),
      	       masterIndexButton, " | ",
      	       tocButton, " | ",
-     	       homeButton
+     	       homeButton, " | ",
+     	       myHomeButton
 	       }}}
 
 upAncestors := tag -> reverse (
@@ -344,7 +345,8 @@ assembleTree := (pkg,nodes) -> (
 setupButtons := () -> (
      topNodeButton = HREF {htmlDirectory|topFileName, "top" };
      tocButton = HREF {htmlDirectory|tocFileName, "toc"};
-     homeButton = HREF {Macaulay2HomePage (), "home"};
+     homeButton = HREF {Macaulay2HomePage (), "M2 home"};
+     myHomeButton = HREF { "file://" | externalPath | applicationDirectory() | "index.html", "my home"};
      nullButton = "";
      masterIndexButton = HREF {htmlDirectory|indexFileName,"index"};
      forwardButton = "next";
@@ -377,7 +379,7 @@ makeMasterIndex := keylist -> (
      r := HTML {
 	  HEAD splice { TITLE title, links() },
 	  BODY {
-	       DIV { topNodeButton, " | ", tocButton, " | ", homeButton },
+	       DIV { topNodeButton, " | ", tocButton, " | ", homeButton, " | ", myHomeButton },
 	       HR{},
 	       HEADER1 title,
 	       DIV between(LITERAL "&nbsp;&nbsp;&nbsp;",apply(alpha, c -> HREF {"#"|c, c})), 
@@ -399,7 +401,7 @@ maketableOfContents := () -> (
      << html HTML {
 	  HEAD splice { TITLE title, links() },
 	  BODY {
-	       DIV { topNodeButton, " | ", masterIndexButton, " | ", homeButton },
+	       DIV { topNodeButton, " | ", masterIndexButton, " | ", homeButton, " | ", myHomeButton },
 	       HR{},
 	       HEADER1 title,
 	       toDoc tableOfContents
@@ -977,6 +979,7 @@ userMacaulay2Directory := () -> (
 
 -- Uncomment and edit the following lines to add your favorite directories containing Macaulay 2
 -- source code files to the load path.  Terminate each directory name with a "/".
+-- (To see your current load path, display the value of the variable "path".)
 -- path = join( { homeDirectory | "src/singularities/", "/usr/local/src/M2/" }, path )
 
 -- Uncomment the following line if you prefer Macaulay2's larger 2-dimensional display form for matrices.
