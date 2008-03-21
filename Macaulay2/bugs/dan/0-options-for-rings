@@ -1,0 +1,9 @@
+
+i21 : QQ[x,y]
+
+o21 = QQ [x, y]
+
+o21 : PolynomialRing
+
+i22 : newRing(o21, SkewCommutative => true )
+stdio:22:1:(1):[0]: expected an integer as MonomialSize option
