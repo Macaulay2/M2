@@ -7,7 +7,6 @@ undocumented {
      (symbol _, Symbol, GeneralOrderedMonoid),
      (symbol _, IndexedVariable, GeneralOrderedMonoid),
      (symbol _, Vector, ZZ),
-     (symbol _, QQ, Ring),
      (symbol _, Monoid, List),
      (symbol _, QuotientRing, String),
      (symbol _, MonoidElement, GeneralOrderedMonoid),
@@ -457,23 +456,14 @@ document {
      }
 
 document { 
-     Key => {(symbol _, ZZ, Ring),(symbol _, ZZ, Module)},
+     Key => {(symbol _, ZZ, Module)},
      Headline => "integers or zero element",
-     Usage => "n_R\n0_M",
-     TT "n_R", " promotes the integer ", TT "n", " to the ring ", TT "R", ".",
-     BR{},
-     TT "1_R", " provides the unit element of the ring ", TT "R", ".",
-     BR{},
-     TT "0_R", " provides the zero element of the ring ", TT "R", ".",
-     BR{},
+     Usage => "0_M",
      TT "0_M", " provides the zero element of the module ", TT "M", ".",
      PARA{
 	  "The return value is either ", ofClass RingElement, ", or ", ofClass Vector, "."
 	  },
      EXAMPLE lines ///
-     	  R = QQ[a..d];
-     	  1_R
-     	  100_(ZZ/101)
 	  0_(ZZ^3)
 	  ///
      }

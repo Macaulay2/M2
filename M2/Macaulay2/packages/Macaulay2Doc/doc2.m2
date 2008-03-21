@@ -814,7 +814,12 @@ document {
      Usage => "gcd(x,y,...)",
      Inputs => { "x" => ZZ },
      Outputs => { ZZ => { "the greatest commond divisor of the arguments" } },
-     EXAMPLE "gcd(2,4,8)",
+     EXAMPLE lines ///
+     gcd(12,8,48)
+     R = QQ[x,y,z];
+     gcd(x^2*y,x*y^3^6)
+     gcd(x^36-1,x^24-1)
+     ///,
      SeeAlso => gcdCoefficients
      }
 
@@ -1071,8 +1076,7 @@ document {
 	  TO (use, Ring),
 	  TO (generators, Ring),
 	  TO (numgens, Ring),
-	  TO (symbol _, Ring, ZZ),
-	  TO (symbol _, ZZ, Ring)
+	  TO (symbol _, Ring, ZZ)
 	  },
      "Common ways to get information about a ring:",
      UL {
