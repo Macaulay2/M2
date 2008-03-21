@@ -105,7 +105,7 @@ ZmodP2Q := c -> (
 -- (applies ZmodP2Q to coeffs of polynomial)
 ZmodP2Qpoly := f -> (
      if f == 0 then f else(
-     	  A := QQ[options ring f];   
+     	  A := QQ(monoid [options ring f]);   
      	  sum(listForm f / (u -> (
 			 ZmodP2Q(substitute(u#1, ZZ))
 			 * A_(u#0))))
@@ -163,7 +163,7 @@ calculateAss := (I) -> (
 	  local l;
 	  if QQflag then (
 	       --for QQ
-	       Z := ZZ[(entries vars R)#0];
+	       Z := ZZ(monoid [(entries vars R)#0]);
 	       
 	       I' := toL(gens I) / (u->QtoZ(u,Z));
 	       I' = ideal I';
@@ -239,7 +239,7 @@ loadVTree(String) := filename -> (
      f = apply(f, deleteDollars);
      K := value f#0;
      opts := value f#1;
-     A := K[opts];
+     A := K(monoid [opts]);
      new HashTable from {
 	  coeff => K,
 	  ringOpts => opts,
@@ -485,7 +485,6 @@ factorBFunctionZmodP RingElement := Product => f -> (
 	       pInfo(666, {"coeff = ", coeff});
      	       Power(QR_0 + (if #coeff> 1 then ZmodP2Q(coeff#1//coeff#0) else 0), u#1)
 	       ));
-     use R;
      result
      );-- end factorBFunctionZmodP
 
@@ -598,7 +597,7 @@ ZZtoQQ := u -> (
      );
 
 ZZmakeQQ := f -> (
-     Q := QQ[first entries vars ring f];
+     Q := QQ(monoid [first entries vars ring f]);
      try sum(listForm f / (u-> ZZtoQQ(u#1) * Q_(u#0)))
      else f
      );
@@ -659,32 +658,31 @@ bFunctionParam := (I, w) -> (
 	  -- want: eliminate all u_i, v_i as well as x_i, dx_i of weight 0
 	  u := symbol u;
 	  v := symbol v;	  
-	  UV := (coefficientRing W)[ (dpI'#0) / (i -> u_i), 
+	  UV := (coefficientRing W)(monoid [ (dpI'#0) / (i -> u_i), 
 	       (dpI'#1) / (i -> v_i), 
 	       (dpI''#0) / (i -> W_i), (dpI''#1) / (i -> W_i),
 	       (dpI'#0) / (i -> W_i), (dpI'#1) / (i -> W_i),
 	       WeylAlgebra => W.monoid.Options.WeylAlgebra,
 	       MonomialSize => 16,
-	       MonomialOrder => Eliminate (2 * #dpI#0) ];
+	       MonomialOrder => Eliminate (2 * #dpI#0) ]);
 	  WtoUV := map(UV, W, matrix { apply(numgens W, i -> (
 			      if member(i, dpI'#0) then 
-			      (u_i * substitute(W_i, UV))
+			      (UV_(u_i) * substitute(W_i, UV))
 			      else if member(i, dpI'#1) 
-			      then (substitute(W_i, UV) * v_i)
+			      then (substitute(W_i, UV) * UV_(v_i))
 			      else substitute(W_i, UV)
 			      )) 
 		    });
 	  
 	  GB :=  paramGB ((WtoUV inI) 
 	       	    + ideal apply(#dpI'#0, 
-			 i -> (u_(dpI'#0#i) * v_(dpI'#1#i) - 1)
+			 i -> (UV_(u_(dpI'#0#i)) * UV_(v_(dpI'#1#i)) - 1)
 		    	 ));
 	  inv = inv | getInv(GB);
 	  intGB := gensGB GB;
 	  intIdeal := ideal substitute(selectInSubring(1, intGB), W);
 	  );
      	  -- compute J = intIdeal \cap K[\theta]
-     	  use T;
      	  genJ := (flatten entries gens intIdeal) / W.WtoT;
 	  elimIdeal := (T.RtoIR ideal genJ)
      	  + ideal(TI_(numgens TI - 1) - T.RtoIR W.WtoT eulerOp);
@@ -719,9 +717,11 @@ globalBFunctionParam = f -> (
      
      t := symbol t;
      dt := symbol dt;     
-     WT := (coefficientRing W)[ t, dt, (entries vars W)#0,
+     WT := (coefficientRing W)(monoid [ t, dt, (entries vars W)#0,
 	       MonomialSize => 16,
-	       WeylAlgebra => W.monoid.Options.WeylAlgebra | {t => dt}];
+	       WeylAlgebra => W.monoid.Options.WeylAlgebra | {t => dt}]);
+     t = WT_t;
+     dt= WT_dt;
      w := {1} | toList (((numgens W) // 2):0);
      f' := substitute(f,WT);
      If := ideal ({t - f'} 
@@ -757,14 +757,14 @@ AnnFsParam := f -> (
      t := symbol t;
      dt := symbol dt;
      WAopts := W.monoid.Options.WeylAlgebra | {t => dt};
-     WT := (coefficientRing W)[ t, dt, (entries vars W)#0, 
+     WT := (coefficientRing W)(monoid [ t, dt, (entries vars W)#0, 
 	  WeylAlgebra => WAopts,
-	  MonomialOrder => Eliminate 2 ];
+	  MonomialOrder => Eliminate 2 ]);
      u := symbol u;
      v := symbol v;
-     WTUV := (coefficientRing W)[ u, v, t, dt, (entries vars W)#0,
+     WTUV := (coefficientRing W)(monoid [ u, v, t, dt, (entries vars W)#0,
 	  WeylAlgebra => WAopts,
-	  MonomialOrder => Eliminate 2 ];
+	  MonomialOrder => Eliminate 2 ]);
      WtoWTUV := map(WTUV, W, (vars WTUV)_{4..n+3});
      -- twist generators of I into generators of KI
      f' := substitute(f,WTUV);
@@ -780,10 +780,9 @@ AnnFsParam := f -> (
      inv := getInv GB;
      preGens := flatten entries substitute(
 	  selectInSubring(1, gensGB GB), WT);
-     use WT;
      s := symbol s;
-     WS := (coefficientRing W)[(entries vars W)#0, s,
-	  WeylAlgebra => W.monoid.Options.WeylAlgebra];
+     WS := (coefficientRing W)(monoid [(entries vars W)#0, s,
+	  WeylAlgebra => W.monoid.Options.WeylAlgebra]);
      WTtoWS := g -> (
 	  e := first exponents leadMonomial g;
 	  if e#0 > e#1 then g = dt^(e#0-e#1) * g
@@ -796,7 +795,6 @@ AnnFsParam := f -> (
 	       ); 
 	  g' + substitute(g, WS)
 	  );
-     use W;
      pInfo(666, {"AnnFSparam = ", (preGens / WTtoWS)});
      (ideal (preGens / WTtoWS), inv) 
      )
@@ -812,9 +810,9 @@ globalBFunctionParam2 = f -> (
      ns := numgens Ws;
      
      
-     elimWs := (coefficientRing Ws)[(entries vars Ws)#0,
+     elimWs := (coefficientRing Ws)(monoid [(entries vars Ws)#0,
 	  WeylAlgebra => Ws.monoid.Options.WeylAlgebra,
-	  MonomialOrder => Eliminate (ns-1)];
+	  MonomialOrder => Eliminate (ns-1)]);
      ff := substitute(f,elimWs);
      elimAnnI := substitute(AnnI, elimWs);
      H := (gens elimAnnI) | matrix{{ff}};
@@ -828,9 +826,8 @@ globalBFunctionParam2 = f -> (
      realized as such.  Need better implementation";
      bpoly := bpolys_(0,0);
      
-     Ks := (coefficientRing W)[Ws_(ns-1)];
+     Ks := (coefficientRing W)(monoid [Ws_(ns-1)]);
      bpoly = substitute(bpoly, Ks);
-     use W;
      (bpoly, inv)
      )
 
@@ -842,7 +839,7 @@ takeCareOf(HashTable, ZZ) := (V, num) -> (
      pInfo(1, "computing node #" | toString num | "...");
      node := V#tempN#num;
      K := frac(V#coeff / node#tempI);
-     A := K[ V#ringOpts ]; 
+     A := K(monoid [ V#ringOpts ]); 
      n := numgens A;
      f := sum(listForm V#poly / (u->promote(u#1,K) * A_(u#0)));
      
@@ -850,14 +847,13 @@ takeCareOf(HashTable, ZZ) := (V, num) -> (
      inv := bf#1;
      bf = bf#0;
           
-     use V#coeff;
      assocPrimes := select(
      	  if inv != {} 
      	  then calculateAss liftIdeal(lcm(inv), V#coeff) 
      	  else {},
 	  I ->  (
 	       TK := frac(V#coeff / I);
-     	       TA := TK[ V#ringOpts ]; 
+     	       TA := TK(monoid [ V#ringOpts ]); 
 	       sum(listForm V#poly / (u->promote(u#1,TK) * TA_(u#0))) !=0
 	       )
      	  );
@@ -883,8 +879,8 @@ paramBpoly(RingElement, String) := List => o -> (f, fname) -> (
      if coefficientRing K =!= QQ then 
      error "base ring = QQ expected";
 	  
-     Z := (ZZ/DBIGPRIME)[(entries vars K)#0][
-	  (entries vars R)#0, WeylAlgebra => R.monoid.Options.WeylAlgebra];
+     Z := ((ZZ/DBIGPRIME)(monoid [(entries vars K)#0]))(monoid [
+	  (entries vars R)#0, WeylAlgebra => R.monoid.Options.WeylAlgebra]);
      f = QtoZmodP(f,Z);  
      V := createVTree(f);
      V = add2VTree(V, ideal 0_(coefficientRing Z), -1);     
@@ -900,7 +896,6 @@ paramBpoly(RingElement, String) := List => o -> (f, fname) -> (
      -- (fname | ".tex")  << toString V#poly << endl; 
      bs := VTree2bSet2 V;
      -- BSet2tex(bs, (fname | ".tex"));
-     use ring f;
      ret := apply(bs, u->(
 	       s := symbol s;
 	       RZ := (ZZ/DBIGPRIME)[s];
@@ -913,7 +908,6 @@ paramBpoly(RingElement, String) := List => o -> (f, fname) -> (
 			     else substitute(v#1,ZZ)) 
 			* RZ_(v#0))) 
 	       ));
-     use R;
      ret
      );
 

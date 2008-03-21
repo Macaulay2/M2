@@ -281,7 +281,6 @@ Dintegration(Module, List) := options -> (M,w) -> (
      if nrW == 0 then Mout := restrictOut
      else Mout = hashTable apply(toList(0..d), i -> 
 	  (i => FourierInverse restrictOut#i) );     
-     use W;
      Mout
      )     
 
@@ -304,7 +303,6 @@ Dintegration(ZZ, Module, List) := options -> (k,M,w)  -> (
      if nrW == 0 then Mout := restrictOut
      else Mout = FourierInverse restrictOut; 
      
-     use W;
      Mout
      )     
 
@@ -606,7 +604,7 @@ computeRestriction = (M,wt,n0,n1,output,options) -> (
 	       resPairsList = append(resPairsList, otherVars#i=>deriv#0);
 	       i = i+1;
 	       );
-     	  resW = (coefficientRing W)[otherVars, WeylAlgebra=>resPairsList];
+     	  resW = (coefficientRing W)(monoid [otherVars, WeylAlgebra=>resPairsList]);
      	  -- make the inclusion ring map "WtoresW" mapping W --> resW
      	  counter := 0;
      	  tempList := {};
@@ -658,7 +656,6 @@ computeRestriction = (M,wt,n0,n1,output,options) -> (
 	  );
      
      if b == 0 then (
-	  use W;
      	  error "Module not specializable. Restriction cannot be computed.";
 	  );
 
@@ -989,6 +986,5 @@ bFunctionM(Module, List, List) := (M, w, m) -> (
 	  bf = lift(bf * bf' / gcd(bf, bf'), S);
 	  i = i + 1;
 	  );
-     use R;
      bf 
      );-- end bFunctionM 

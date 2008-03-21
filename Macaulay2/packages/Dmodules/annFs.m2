@@ -30,14 +30,15 @@ AnnIFs(Ideal, RingElement) := Ideal => (I, f) -> (
      t := symbol t;
      dt := symbol dt;
      WAopts := W.monoid.Options.WeylAlgebra | {t => dt};
-     WT := (coefficientRing W)[ t, dt, (entries vars W)#0, 
+     WT := (coefficientRing W)(monoid [ t, dt, (entries vars W)#0, 
 	  WeylAlgebra => WAopts,
-	  MonomialOrder => Eliminate 2 ];
+	  MonomialOrder => Eliminate 2 ]);
      u := symbol u;
      v := symbol v;
-     WTUV := (coefficientRing W)[ u, v, t, dt, (entries vars W)#0,
+     WTUV := (coefficientRing W)(monoid [ u, v, t, dt, (entries vars W)#0,
 	  WeylAlgebra => WAopts,
-	  MonomialOrder => Eliminate 2 ];
+	  MonomialOrder => Eliminate 2 ]);
+     (u,v,t,dt) = (WTUV_u,WTUV_v,WTUV_t,WTUV_dt);
      WTUVtoWT := map(WT,WTUV,{0,0} | flatten entries vars WT);     
      createDpairs WTUV;
      WtoWTUV := map(WTUV, W, (vars WTUV)_{4..n+3});
@@ -58,10 +59,12 @@ AnnIFs(Ideal, RingElement) := Ideal => (I, f) -> (
      else {};
      preGens := apply(flatten entries selectInSubring(1, gens gb ideal g), 
 	  a->WTUVtoWT a) ;
-     use WT;
      s := symbol s;
-     WS := (coefficientRing W)[(entries vars W)#0, s,
-	  WeylAlgebra => W.monoid.Options.WeylAlgebra];
+     WS := (coefficientRing W)(monoid [(entries vars W)#0, s,
+	  WeylAlgebra => W.monoid.Options.WeylAlgebra]);
+     s = WS_s;
+     t = WT_symbol t;
+     dt = WT_symbol dt;
      WTtoWS := g -> (
 	  e := first exponents leadMonomial g;
 	  if e#0 > e#1 then g = dt^(e#0-e#1) * g
@@ -74,7 +77,6 @@ AnnIFs(Ideal, RingElement) := Ideal => (I, f) -> (
 	       ); 
 	  g' + substitute(g, WS)
 	  );
-     use W;
      ideal (preGens / WTtoWS) 
      )
 

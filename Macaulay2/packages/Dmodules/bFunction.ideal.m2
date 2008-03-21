@@ -154,20 +154,20 @@ bfGenericOrNonGeneric(Ideal, List) := o -> (I, w) -> (
 	  -- want: eliminate all u_i, v_i as well as x_i, dx_i of weight 0
 	  u := symbol u;
 	  v := symbol v;	  
-	  UV := (coefficientRing W)[ (dpI'#0) / (i -> u_i), (dpI'#1) / (i -> v_i), 
+	  UV := (coefficientRing W)(monoid [ (dpI'#0) / (i -> u_i), (dpI'#1) / (i -> v_i), 
 	       (dpI''#0) / (i -> W_i), (dpI''#1) / (i -> W_i),
 	       (dpI'#0) / (i -> W_i), (dpI'#1) / (i -> W_i),
 	       WeylAlgebra => W.monoid.Options.WeylAlgebra,
-	       MonomialOrder => Eliminate (2 * #dpI#0) ];
+	       MonomialOrder => Eliminate (2 * #dpI#0) ]);
 	  WtoUV := map(UV, W, matrix { apply(numgens W, i -> (
 			      if member(i, dpI'#0) then 
-			      (u_i * substitute(W_i, UV))
-			      else if member(i, dpI'#1) then (substitute(W_i, UV) * v_i)
+			      (UV_(u_i) * substitute(W_i, UV))
+			      else if member(i, dpI'#1) then (substitute(W_i, UV) * UV_(v_i))
 			      else substitute(W_i, UV)
 			      )) 
 		    });
 	  intGB := gens gb ((WtoUV inI) 
-	       + ideal apply(#dpI'#0, i -> (u_(dpI'#0#i) * v_(dpI'#1#i) - 1)
+	       + ideal apply(#dpI'#0, i -> (UV_(u_(dpI'#0#i)) * UV_(v_(dpI'#1#i)) - 1)
 		    )); 
 	  intIdeal = ideal substitute(selectInSubring(1, intGB), W);
 	  );
@@ -177,7 +177,6 @@ bfGenericOrNonGeneric(Ideal, List) := o -> (I, w) -> (
      
      -- compute J = intIdeal \cap K[\theta]
      pInfo(2, "computing elimIdealGB... ");  
-     use T;
      intIdealGens := first entries gens intIdeal;
      tInfo = toString first timing(
 	  elimIdeal := (T.RtoIR  (if #intIdealGens==0 then ideal T 
@@ -203,7 +202,6 @@ bFunction(Ideal, List) := RingElement => o -> (I, w) -> (
      	  then bfGenericOrNonGeneric(I, w, o)
      	  else error "wrong Strategy option"
 	  );
-     use ring I;
      result
      );
 
@@ -222,7 +220,7 @@ factorBFunction(RingElement) := Product => f -> (
      l := listForm f;
      d := product(l, u -> denominator(u#1));
      l = l / (u -> (u#0, lift(u#1*d, ZZ)));
-     R' := ZZ[R_0];
+     R' := ZZ(monoid [R_0]);
      f = sum (l, u -> u#1*R'_(u#0));
      f = factor f;
      pInfo(666, {"f =" , f});
@@ -234,7 +232,6 @@ factorBFunction(RingElement) := Product => f -> (
 	       coeff := listForm u#0 / (v->v#1);
 	       Power(R_0 + (if #coeff> 1 then (coeff#1/coeff#0) else 0), u#1)
 	       ));
-     use R;
      result
      );-- end factorBFunction
 

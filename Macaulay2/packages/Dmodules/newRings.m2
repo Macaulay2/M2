@@ -5,13 +5,12 @@
 createHomWeylAlgebra = method()
 createHomWeylAlgebra(PolynomialRing) := (W) -> (
      h := symbol h;
-     W.HomWeylAlgebra = (coefficientRing W)[h, (entries vars W)#0,
+     W.HomWeylAlgebra = (coefficientRing W)(monoid [h, (entries vars W)#0,
 	  WeylAlgebra => W.monoid.Options.WeylAlgebra,
-	  MonomialOrder => Eliminate 1];
+	  MonomialOrder => Eliminate 1]);
      HW := W.HomWeylAlgebra;
      W.WAtoHWA = map(HW, W, (vars HW)_{1..numgens W});
      W.HWAtoWA = map(W, HW, matrix{{1_W}} | (vars W));
-     use W;
      );
 
 -- this function associates to a polynomial ring R
@@ -19,13 +18,12 @@ createHomWeylAlgebra(PolynomialRing) := (W) -> (
 createIntRing = method()
 createIntRing(PolynomialRing) := (R) -> (
      s := symbol s;
-     R.IntRing = (coefficientRing R)[(entries vars R)#0, s,
+     R.IntRing = (coefficientRing R)(monoid [(entries vars R)#0, s,
 	  WeylAlgebra => R.monoid.Options.WeylAlgebra,
-	  MonomialOrder => Eliminate numgens R];
+	  MonomialOrder => Eliminate numgens R]);
      IR := R.IntRing;
      R.RtoIR = map(IR, R, (vars IR)_{0..numgens R - 1});
      R.IRtoR = map(R, IR, (vars R) | matrix{{0_R}});  
-     use R;
      );
 
 -- this function associates to a Weyl algebra W
@@ -43,7 +41,7 @@ createAssCommRing(PolynomialRing) := (W) -> (
      ksi := symbol ksi;
      c := symbol c;
      
-     W.CommRing = (coefficientRing W)[dpI#0 / (i -> x_i), dpI#1 / (i -> ksi_i), dpI#2 / (i -> c_i)];
+     W.CommRing = (coefficientRing W)(monoid [dpI#0 / (i -> x_i), dpI#1 / (i -> ksi_i), dpI#2 / (i -> c_i)]);
      CR := W.CommRing;
      << "CR = " << CR << endl;
      W.WAtoCR = map(CR, W, (vars CR)_(apply(numgens W, i->(
@@ -55,7 +53,6 @@ createAssCommRing(PolynomialRing) := (W) -> (
 			 else position(dpI#2, j -> j==i) + #dpI#0 + #dpI#1   
 	       		 ))));
      W.CRtoWA = map(W, CR, (vars W)_( dpI#0 | dpI#1 | dpI#2));
-     use W;
      );
 
 -- This function for Weyl Algebra W creates W.ThetaRing 
@@ -75,10 +72,9 @@ createThetaRing(PolynomialRing) := W -> (
      dpI := W.dpairInds;
      
      theta := symbol theta;
-     W.ThetaRing = (coefficientRing W)[ ( theta_0..theta_(#(dpV#0)-1) ) ];
+     W.ThetaRing = (coefficientRing W)[ theta_0..theta_(#(dpV#0)-1) ];
      
      W.isGeneric = g -> (
-	  use W.ThetaRing;
 	  t := 0_(W.ThetaRing);
 	  e := listForm g;
 	  a := apply(dpI#0, i->e#0#0#i); -- exponent for x
@@ -91,7 +87,6 @@ createThetaRing(PolynomialRing) := W -> (
 	  );
      
      W.WtoT = g -> (
-	  use W.ThetaRing;
 	  t := 0_(W.ThetaRing);
 	  e := listForm g;
 	  a := apply(dpI#0, i->e#0#0#i); -- exponent for x
@@ -119,6 +114,5 @@ createThetaRing(PolynomialRing) := W -> (
 	       ); 
 	  t
 	  );
-     use W;
      );
 

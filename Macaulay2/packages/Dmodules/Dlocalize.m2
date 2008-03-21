@@ -90,9 +90,9 @@ computeLocalization = (M, f, output, options) -> (
      	Ws := ring AnnI;
      	ns := numgens Ws;
 	
-	elimWs := (coefficientRing Ws)[(entries vars Ws)#0,
+	elimWs := (coefficientRing Ws)(monoid [(entries vars Ws)#0,
 	     WeylAlgebra => Ws.monoid.Options.WeylAlgebra,
-	     MonomialOrder => Eliminate (ns-1)];
+	     MonomialOrder => Eliminate (ns-1)]);
      	ff := substitute(f,elimWs);
      	elimAnnI := substitute(AnnI, elimWs);
      	H := gens elimAnnI | matrix{{ff}};
@@ -122,7 +122,7 @@ computeLocalization = (M, f, output, options) -> (
 	     if bpoly == 0 then error "module not specializable";
 	     );
 
-     	bpoly = substitute(bpoly, (coefficientRing W)[Ws_(ns-1)]);
+     	bpoly = substitute(bpoly, (coefficientRing W)(monoid [Ws_(ns-1)]));
      	bestPower := min (getIntRoots (bpoly));
         if bestPower == infinity then bestPower = 0;
      	locIdeal := substitute(substitute(AnnI, {Ws_(ns-1) => bestPower}), W);
@@ -155,8 +155,10 @@ computeLocalization = (M, f, output, options) -> (
        	-- create the auxilary ring D_n<a,Da> 
        	a := symbol a;
        	Da := symbol Da;
-       	LW := (coefficientRing W)[(entries vars W)#0, a, Da,
-	     WeylAlgebra => append(W.monoid.Options.WeylAlgebra, a=>Da)];
+       	LW := (coefficientRing W)(monoid [(entries vars W)#0, a, Da,
+	     WeylAlgebra => append(W.monoid.Options.WeylAlgebra, a=>Da)]);
+   	a = LW_a;
+   	Da = LW_Da;
        	nLW := numgens LW;
        	WtoLW := map(LW, W, (vars LW)_{0..nW-1});
        	LWtoW := map(W, LW, (vars W) | matrix{{0_W,0_W}});
@@ -176,7 +178,6 @@ computeLocalization = (M, f, output, options) -> (
 	     );
 	pInfo(2, "\t\t\t time = " | tInfo | " seconds");
        	if bpoly == 0 then (
-	     use W;
        	     error "Module not specializable. Localization cannot be computed.";
 	     );
        	bpoly = substitute(bpoly, {(ring bpoly)_0 => (ring bpoly)_0 + 1});
@@ -227,9 +228,9 @@ computeLocalization = (M, f, output, options) -> (
 	     -- eliminate the first "maxRoot" components to get annihilating ideal
 	     -- of "a^(maxRoot)"
 	     homVar := symbol homVar;
-	     HW := (coefficientRing W)[homVar, (entries vars W)#0,
+	     HW := (coefficientRing W)(monoid [homVar, (entries vars W)#0,
 	       	  WeylAlgebra => W.monoid.Options.WeylAlgebra,
-	       	  MonomialOrder => Eliminate 1];
+	       	  MonomialOrder => Eliminate 1]);
 	     HWtoW := map(W, HW, matrix{{1_W}} | (vars W) );
 	     WtoHW := map(HW, W, (vars HW)_{1..numgens W});
 	     I1 := LWtoW presMat;
@@ -264,7 +265,6 @@ computeLocalization = (M, f, output, options) -> (
 	)
    else error "Only recognizes strategies Saturated and OTW (default)";
 
-   use W;
    if member(LocModule, output) then outputList = append(outputList, 
 	LocModule => locModule);
    if member(LocMap, output) then outputList = append(outputList,
@@ -296,14 +296,18 @@ AnnIFs2(Ideal, RingElement) := (I, f) -> (
      t := symbol t;
      dt := symbol dt;
      WAopts := W.monoid.Options.WeylAlgebra | {t => dt};
-     WT := (coefficientRing W)[ t, dt, (entries vars W)#0, 
+     WT := (coefficientRing W)(monoid [ t, dt, (entries vars W)#0, 
 	  WeylAlgebra => WAopts,
-	  MonomialOrder => Eliminate 2 ];
+	  MonomialOrder => Eliminate 2 ]);
      u := symbol u;
      v := symbol v;
-     WTUV := (coefficientRing W)[ u, v, t, dt, (entries vars W)#0,
+     WTUV := (coefficientRing W)(monoid [ u, v, t, dt, (entries vars W)#0,
 	  WeylAlgebra => WAopts,
-	  MonomialOrder => Eliminate 2 ];
+	  MonomialOrder => Eliminate 2 ]);
+     u = WTUV_symbol u;
+     v = WTUV_symbol v;
+     t = WTUV_symbol t;
+     dt = WTUV_symbol dt;
      WtoWTUV := map(WTUV, W, (vars WTUV)_{4..n+3});
      -- twist generators of I into generators of KI
      f' := substitute(f,WTUV);
@@ -317,10 +321,12 @@ AnnIFs2(Ideal, RingElement) := (I, f) -> (
      g := (entries gens KI)#0 | { u * v - 1 };
      preGens := flatten entries substitute(
 	  selectInSubring(1, gens gb ideal g), WT);
-     use WT;
      s := symbol s;
-     WS := (coefficientRing W)[(entries vars W)#0, s,
-	  WeylAlgebra => W.monoid.Options.WeylAlgebra];
+     WS := (coefficientRing W)(monoid [(entries vars W)#0, s,
+	  WeylAlgebra => W.monoid.Options.WeylAlgebra]);
+     s = WS_symbol s;
+     t = WT_symbol t;
+     dt = WT_symbol dt;
      WTtoWS := g -> (
 	  e := first exponents leadMonomial g;
 	  if e#0 > e#1 then g = dt^(e#0-e#1) * g
@@ -333,6 +339,5 @@ AnnIFs2(Ideal, RingElement) := (I, f) -> (
 	       ); 
 	  g' + substitute(g, WS)
 	  );
-     use W;
      ideal (preGens / WTtoWS) 
      )
