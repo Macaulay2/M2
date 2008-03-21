@@ -791,7 +791,7 @@ document {
 	  [newRing, MonomialSize], [newRing, Inverses], [newRing, WeylAlgebra], [newRing, SkewCommutative], [newRing, Global]
 	  },
      Headline => "make a copy of a ring, with some features changed",
-     TT "newRing(R,options)", " -- yields a ring similar to R, with 
+     TT "newRing(R,options)", " -- yields a ring similar to ", TT "R", ", with 
      certain features changed.",
      PARA{},
      "Bug: doesn't work yet."

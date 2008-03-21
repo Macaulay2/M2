@@ -69,7 +69,7 @@ document {
      PARA {
 	  "For promotion of ring elements, there is the following shorter notation, see ", TO "(symbol _, RingElement, Ring)", "."
 	  },
-     EXAMPLE ///13_R///
+     EXAMPLE ///13_R///,
      PARA{},
      "If you wish to promote a module to another ring, either
      promote the corresponding matrices,
