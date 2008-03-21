@@ -38,7 +38,6 @@ bFunction(Module, List, List) := RingElement => o -> (M, w, m) -> (
 	  bf = lift(bf * bf' / gcd(bf, bf'), S);
 	  i = i + 1;
 	  );
-     use R;
      bf 
      );-- end bFunction(Module)
 
@@ -75,9 +74,9 @@ bFunction2(Module, List, List) := o -> (M, w, m) -> (
      --N = substitute(N, R');
      row := symbol row;
      h := symbol h;
-     R' := (coefficientRing R)[h, (row_0..row_(n-1)), (entries vars R)#0, 
+     R' := (coefficientRing R)(monoid [h, (row_0..row_(n-1)), (entries vars R)#0, 
 	  WeylAlgebra => R.monoid.Options.WeylAlgebra,
-	  MonomialOrder => ProductOrder{1,n,numgens R}];
+	  MonomialOrder => ProductOrder{1,n,numgens R}]);
      RtoR' := map(R', R, (vars R')_{1..numgens R});
      R'toR := map(R, R', matrix{toList(n+1:1_W)} | (vars W));
       

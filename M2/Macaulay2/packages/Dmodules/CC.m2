@@ -79,10 +79,8 @@ project Ideal := I -> (
      R := ring I; -- assume R = QQ[x_1,...,x_n,a_1...,a_n]
      n := numgens R // 2;
      v := flatten entries vars R;
-     PW :=  QQ[drop(v,n),take(v,n), MonomialOrder=>Eliminate n];
-     out := sub(ideal selectInSubring(1, gens gb sub(I,PW)), R);
-     use R;
-     out
+     PW :=  QQ(monoid [drop(v,n),take(v,n), MonomialOrder=>Eliminate n]);
+     sub(ideal selectInSubring(1, gens gb sub(I,PW)), R)
      )
 
 ----------------------------------------------------------------------

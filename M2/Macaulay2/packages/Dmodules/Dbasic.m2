@@ -7,17 +7,14 @@ local GBprune
 -- this function makes a Weyl algebra associated to a polynomial
 -- ring.
 ----------------------------------------------------------------
-makeWA = method()
-makeWA PolynomialRing := R -> (
-     makeWeylAlgebra R)
-
-makeWeylAlgebra = method()
-makeWeylAlgebra PolynomialRing := R -> (
-     coordVars := (entries vars R)#0;
-     diffVars := apply(coordVars, i -> (value("d" | toString(i))) );
+makeWeylAlgebra = method(Options => {SetVariables => true})
+makeWeylAlgebra PolynomialRing := opts -> R -> (
+     coordVars := gens R;
+     diffVars := apply(coordVars, i -> value("symbol d" | toString(i)) );
      allVars := join(coordVars, diffVars);
-     W := (coefficientRing R)[allVars, WeylAlgebra =>
-	  apply(toList(0..#coordVars-1), i -> (coordVars_i => diffVars_i) )];
+     W := (coefficientRing R)(monoid [allVars, WeylAlgebra =>
+	  apply(coordVars, diffVars, (x,dx) -> x => dx)]);
+     if opts.SetVariables then use W;
      W)
 
 -- this function associates to a Weyl algebra W
@@ -67,16 +64,33 @@ createDpairs PolynomialRing := W -> (
      	  );
      );
 
+-- this new version of Dan's breaks something else:
+--- createDpairs PolynomialRing := W -> (
+---      if not W.?dpairVars then (
+--- 	  xv := (options W).WeylAlgebra /first/baseName/(x -> W_x);
+--- 	  dv := (options W).WeylAlgebra / last/baseName/(x -> W_x);
+--- 	  cv := gens W - (set xv + set dv);
+--- --	  xv = gens W - (set gens W - set xv);
+--- --	  dv = gens W - (set gens W - set dv);
+--- 	  W.dpairVars = {xv,dv,cv};
+--- 	  W.dpairInds = applyTable(W.dpairVars, x -> position(gens W, y -> x == y));
+--- 	  if debugLevel > 0 then (
+--- 	       stderr << "-- gens W = " << gens W << endl;
+--- 	       stderr << "-- W.dpairVars = " << W.dpairVars << endl;
+--- 	       );
+--- 	  );
+---      )
+--- 
+
 -- This routine attaches to a Weyl algebra W the key "CommAlgebra"
 -- which holds a commutative ring with the same variables
 createCommAlgebra = method()
 createCommAlgebra PolynomialRing := W -> (
      if W.monoid.Options.WeylAlgebra === {} then
      error "Expected a Weyl algebra" ;     
-     W.CommAlgebra = (coefficientRing W)[(entries vars W)#0];
+     W.CommAlgebra = (coefficientRing W)(monoid [(entries vars W)#0]);
      W.WAtoCA = map(W.CommAlgebra, W, vars W.CommAlgebra);
      W.CAtoWA = map(W, W.CommAlgebra, vars W);
-     use W;
      );
 
 -- This routine takes a list {k_0 .. k_n} representing the permutation
@@ -317,13 +331,13 @@ holonomicRank Module := M -> (
      weightList := { apply ( toList(0..m-1), i -> if member(i, W.dpairInds#1) 
 	  then 1 else 0 ) };
      -- ring equipped with the new order
-     tempW := (coefficientRing W)[(entries vars W)#0,
+     tempW := (coefficientRing W)(monoid [(entries vars W)#0,
 	  WeylAlgebra => W.monoid.Options.WeylAlgebra,
-	  Weights => weightList];
+	  Weights => weightList]);
      WtotempW := map (tempW, W, vars tempW);
      -- commutative ring of derivative variables
      Rvars := symbol Rvars;
-     R := (coefficientRing W)[apply(toList(0..n-1), i -> Rvars_i)];
+     R := (coefficientRing W)(monoid [apply(toList(0..n-1), i -> Rvars_i)]);
      newInds := invPermute join(W.dpairInds#1, W.dpairInds#0);
      matList := apply( toList(0..m-1), i -> if newInds#i < n
 	  then R_(newInds#i) else 1_R );
@@ -377,15 +391,14 @@ singLocus Module := M -> (
      -- do the saturation
      SatI := saturate(I1, I2);
      -- set up an auxilary ring to perform intersection
-     tempCA := (coefficientRing W)[W.dpairVars#1, W.dpairVars#0, 
-          MonomialOrder => Eliminate (#W.dpairInds#1)];
+     tempCA := (coefficientRing W)(monoid [W.dpairVars#1, W.dpairVars#0, 
+          MonomialOrder => Eliminate (#W.dpairInds#1)]);
      newInds := invPermute join(W.dpairInds#1, W.dpairInds#0);
      CAtotempCA := map(tempCA, W.CommAlgebra, 
 	  matrix {apply(newInds, i -> tempCA_i)});
      tempCAtoCA := map(W.CommAlgebra, tempCA, matrix{ join (
 		    apply(W.dpairVars#1, i -> W.WAtoCA i),
 	            apply(W.dpairVars#0, i -> W.WAtoCA i) ) } );
-     use W;
      -- do the intersection
      gbSatI := gb CAtotempCA SatI;
      I3 := ideal compress tempCAtoCA selectInSubring(1, gens gbSatI);

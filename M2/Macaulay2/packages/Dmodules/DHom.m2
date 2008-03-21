@@ -114,9 +114,9 @@ PolySols(Module, List) := options -> (M, w) -> (
 		    possExps := findExps(w, -1, degBound);
 		    nUnknowns := #possExps;
 		    a := symbol a;
-		    S := (coefficientRing W)[a_1..a_nUnknowns];
-	       	    SW := S[(entries vars W)#0, WeylAlgebra =>
-	    	    	 W.monoid.Options.WeylAlgebra];
+		    S := (coefficientRing W)(monoid [a_1..a_nUnknowns]);
+	       	    SW := S(monoid [(entries vars W)#0, WeylAlgebra =>
+	    	    	 W.monoid.Options.WeylAlgebra]);
 	       	    WtoSW := map(SW, W, vars SW);
 	       	    SWtoS := map(S, SW, toList(numgens SW: 1_S));
 	       	    matI := WtoSW gens I;
@@ -209,8 +209,7 @@ PolySols(Module, List) := options -> (M, w) -> (
 
      else error "expected Alg 'GD' or 'Duality'";
      
-     R := (coefficientRing W)[W.dpairVars#0];
-     use W;
+     R := (coefficientRing W)(monoid [W.dpairVars#0]);
      apply(answer, i -> substitute(i,R))
      )
 
@@ -293,12 +292,11 @@ RatSols(Ideal, RingElement, List) := (I, f, w) -> (
      if k > 0 then (
 	  twistI := TwistOperator(I, f, k);
      	  numerators := PolySols (twistI, w);
-     	  R := (coefficientRing W)[W.dpairVars#0];
+     	  R := (coefficientRing W)(monoid [W.dpairVars#0]);
      	  F := substitute(f^k, R);
      	  solsList := apply (numerators, i -> ( substitute(i,R)/F ) );
 	  )
      else solsList = PolySols(I, w);
-     use W;
      solsList
      )
 
@@ -313,12 +311,11 @@ RatSols(Ideal, List, List) := (I, f, w) -> (
 	  newf := f_nonzero;
      	  twistI := TwistOperator(I, newf, newk);
      	  numerators := PolySols (twistI, w);
-     	  R := (coefficientRing W)[W.dpairVars#0];
+     	  R := (coefficientRing W)(monoid [W.dpairVars#0]);
      	  F := substitute(newf^newk, R);
      	  solsList := apply (numerators, i -> (substitute(i,R) / F) );
 	  )
      else solsList = PolySols(I, w);
-     use W;
      solsList
      )
 
@@ -707,14 +704,14 @@ ExternalProduct(Module, Module) := options -> (M, N) -> (
      Ca := symbol Ca;
      Cb := symbol Cb;
      if #W1.dpairVars#2 == 0 then
-     WW := (coefficientRing W1)[a_1..a_n1, Da_1..Da_n1, b_1..b_n2, Db_1..Db_n2,
+     WW := (coefficientRing W1)(monoid [a_1..a_n1, Da_1..Da_n1, b_1..b_n2, Db_1..Db_n2,
           WeylAlgebra => join( apply(toList(1..n1), i -> a_i => Da_i),
-	       apply(toList(1..n2), i -> b_i => Db_i))]
+	       apply(toList(1..n2), i -> b_i => Db_i))])
      else
-     WW = (coefficientRing W1)[a_1..a_n1, Da_1..Da_n1, Ca_1..Ca_m1, 
+     WW = (coefficientRing W1)(monoid [a_1..a_n1, Da_1..Da_n1, Ca_1..Ca_m1, 
 	  b_1..b_n2, Db_1..Db_n2, Cb_1..Cb_m2,
           WeylAlgebra => join( apply(toList(1..n1), i -> a_i => Da_i),
-	       apply(toList(1..n2), i -> b_i => Db_i))];
+	       apply(toList(1..n2), i -> b_i => Db_i))]);
      ordList1 := join( W1.dpairInds#0, W1.dpairInds#1, W1.dpairInds#2 );
      ordList2 := join( W2.dpairInds#0, W2.dpairInds#1, W2.dpairInds#2 );
      invList1 := invPermute ordList1;
@@ -785,14 +782,14 @@ ExternalProduct(ChainComplex, ChainComplex) := options -> (F, G) -> (
      Ca := symbol Ca;
      Cb := symbol Cb;
      if #W1.dpairVars#2 == 0 then
-     WW := (coefficientRing W1)[a_1..a_n1, Da_1..Da_n1, b_1..b_n2, Db_1..Db_n2,
+     WW := (coefficientRing W1)(monoid [a_1..a_n1, Da_1..Da_n1, b_1..b_n2, Db_1..Db_n2,
           WeylAlgebra => join( apply(toList(1..n1), i -> a_i => Da_i),
-	       apply(toList(1..n2), i -> b_i => Db_i))]
+	       apply(toList(1..n2), i -> b_i => Db_i))])
      else
-     WW = (coefficientRing W1)[a_1..a_n1, Da_1..Da_n1, Ca_1..Ca_m1, 
+     WW = (coefficientRing W1)(monoid [a_1..a_n1, Da_1..Da_n1, Ca_1..Ca_m1, 
 	  b_1..b_n2, Db_1..Db_n2, Cb_1..Cb_m2,
           WeylAlgebra => join( apply(toList(1..n1), i -> a_i => Da_i),
-	       apply(toList(1..n2), i -> b_i => Db_i))];
+	       apply(toList(1..n2), i -> b_i => Db_i))]);
      ordList1 := join( W1.dpairInds#0, W1.dpairInds#1, W1.dpairInds#2 );
      ordList2 := join( W2.dpairInds#0, W2.dpairInds#1, W2.dpairInds#2 );
      invList1 := invPermute ordList1;

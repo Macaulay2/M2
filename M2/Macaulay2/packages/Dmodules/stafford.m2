@@ -321,7 +321,6 @@ mainStep = (a,b,c) -> (
 	  h1 = (p1-p2*s)*h1; 
 	  h2 = (p1-p2*s)*h2+p2*t;   
 	  );     
-     use R;
      {a',b'}
      )
 
@@ -347,20 +346,20 @@ makeRk (Ring,ZZ) := (R,k)->( -- R = k[x_1,...,x_n,D_1,...,D_n]
      n := numgens R;
      v := first entries vars R;
      w := toList(k:0)|toList((n-k):1);
-     (coefficientRing R)[v, 
+     (coefficientRing R)(monoid [v, 
 	  WeylAlgebra=>R.monoid.Options.WeylAlgebra,
 	  Weights=>w
-	  ] 
+	  ]) 
      )
 makeSk = method();
 makeSk (Ring,ZZ) := (R,k)->( -- R = k[x_1,...,x_n,D_1,...,D_n]  
      n := numgens R;
      v := first entries vars R;
      w := toList(k:0)|{1}|toList((n-k-1):0);
-     (coefficientRing R)[v, 
+     (coefficientRing R)(monoid [v, 
 	  WeylAlgebra=>R.monoid.Options.WeylAlgebra,
 	  Weights=>w
-	  ] 
+	  ]) 
      )
 
 lastVarN = method()

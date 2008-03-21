@@ -1,4 +1,4 @@
-newPackage("Dmodules", Version => "1.0",
+newPackage("Dmodules", Version => "1.1",
      Headline => "functions for computations with D-modules",
      AuxiliaryFiles => true,
      Authors => {

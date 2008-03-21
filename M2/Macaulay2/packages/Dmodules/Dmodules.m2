@@ -4,7 +4,7 @@ export {ExternalProduct,TwistMap,twistMap,twistInvMap,projMap1,projMap2,
 	AnnFs,AnnIFs,Dtrace,getDtrace,setHomSwitch,getHomSwitch,localCohom,Walther,OaTa,LocStrategy,
 	OaTaWa,pruneLocalCohom,paramBpoly,GroundField,makeCyclic,Generator,AnnG,isHolonomic,DHom,DExt,Special,
 	None,Info,PolySols,Alg,GD,Duality,PolyExt,RatSols,RatExt,createDpairs,dpairInds,
-	dpairVars,Fourier,Dtransposition,singLocus,charIdeal,holonomicRank,Drank,Ddim,makeWeylAlgebra,makeWA,Ddual,Dlocalize,
+	dpairVars,Fourier,Dtransposition,singLocus,charIdeal,holonomicRank,Drank,Ddim,"makeWA"=>makeWeylAlgebra,makeWeylAlgebra,Ddual,Dlocalize,
 	Oaku,OTW,Dlocalization,DlocalizationAll,DlocalizeMap,LocModule,GeneratorPower,LocMap,annFS,
 	DlocalizeAll,IntegrateBfunction,Bfunction,DlocalizationMap,Dresolution,Schreyer,Vhomogenize,Dres,
 	Drestriction,Drestrict,DrestrictionClasses,DrestrictClasses,DrestrictIdeal,DrestrictAll,
@@ -16,7 +16,7 @@ export {ExternalProduct,TwistMap,twistMap,twistInvMap,projMap1,projMap2,
 	diffOps,PolyGens,BasisElts,putWeylAlgebra,inw,gbw,
 	Dprune,pInfo,optGB,FourierInverse,Output,stafford,
 	BMM,pruneCechComplexCC,populateCechComplexCC,
-	logCohomology
+	logCohomology,SetVariables
 	}
    
 scan({"Local", "Global"}, nm -> assert (isGlobalSymbol nm and value getGlobalSymbol nm === getGlobalSymbol nm))

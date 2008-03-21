@@ -9,7 +9,7 @@ diffOps (RingElement, ZZ) := (f, k) -> (diffOps(ideal f, k))
 
 diffOps (Ideal, ZZ) := (I, k) -> (
      R := ring I;
-     W := makeWeylAlgebra R;
+     W := makeWeylAlgebra( R, SetVariables=>false);
      createDpairs W;
      
      -- make coeffs of derivations
@@ -37,7 +37,6 @@ diffOps (Ideal, ZZ) := (I, k) -> (
 	  rank target syzy | " syzygies with respect to I...");
      -- syzy = compress (syzy % (directSum toList(rank target syzy:matrix{{F}})));
      syzy = gens gb (syzy % (directSum toList(rank target syzy:matrix{{F}})));
-     use R;
      
      hashTable {PolyGens => syzy, BasisElts => Dbasis}
      )

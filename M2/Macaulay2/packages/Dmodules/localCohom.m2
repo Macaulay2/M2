@@ -105,7 +105,6 @@ localCohomUli = (l, I) -> (
      	  |
      	  (if member(r, l) then {r => cokernel M#(r-1)} else {})
      	  );
-     use W;
      ret
      );
 
@@ -228,7 +227,6 @@ localCohomILOaku(List, Ideal, Module) := (l, I, M) -> (
      	  |
      	  (if member(r, l) then {r => cokernel MM#(r-1)} else {})
      	  );
-     use W;
      ret
      );
 
@@ -305,7 +303,6 @@ localCohomILOTW(List, Ideal, Module) := (l, I, M) -> (
      	  |
      	  (if member(r, l) then {r => cokernel MM#(r-1)} else {})
      	  );
-     use W;
      ret
      );
 
@@ -381,7 +378,6 @@ localCohomRegular(List,Ideal,Module) := (l, I, M) -> (
      	  |
      	  (if member(r, l) then {r => cokernel MM#(r-1)} else {})
      	  );
-     use W;
      ret
      );
 ---------------------------------------------------------------------------------
@@ -449,10 +445,11 @@ computeLocalCohomOT = (I, M, n0, n1) -> (
      -- create the auxilary D_(n+d) ring
      t := symbol t;
      Dt := symbol Dt;
-     LCW := (coefficientRing W)[(entries vars W)#0,
+     LCW := (coefficientRing W)(monoid [(entries vars W)#0,
 	  t_0 .. t_(d-1), Dt_0 .. Dt_(d-1),
 	  WeylAlgebra => join(W.monoid.Options.WeylAlgebra,
-	       apply(toList(0..d-1), i->(t_i=>Dt_i)) )];
+	       apply(toList(0..d-1), i->(t_i=>Dt_i)) )]);
+     scan(d, i -> (t_i = LCW_(t_i); Dt_i = LCW_(Dt_i)));
      nLCW := numgens LCW;
      WtoLCW := map(LCW, W, (vars LCW)_{0..nW-1});
      LCWtoW := map(W, LCW, (vars W) | matrix{toList(2*d:0_W)});
@@ -488,7 +485,6 @@ computeLocalCohomOT = (I, M, n0, n1) -> (
      locOut := hashTable apply(toList(0..d), i -> (-i+d) => 
 	  LCWtoW ** (restrictOut#ResToOrigRing ** restrictOut#HomologyModules#i));
      
-     use W;
      locOut
      )
 

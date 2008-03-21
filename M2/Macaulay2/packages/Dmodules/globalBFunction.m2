@@ -35,8 +35,10 @@ globalBFunctionIdeal RingElement := RingElement => o -> f -> (
      
      t := symbol t;
      dt := symbol dt;     
-     WT := (coefficientRing W)[ t, dt, (entries vars W)#0, 
-	       WeylAlgebra => W.monoid.Options.WeylAlgebra | {t => dt}];
+     WT := (coefficientRing W)(monoid [ t, dt, (entries vars W)#0, 
+	       WeylAlgebra => W.monoid.Options.WeylAlgebra | {t => dt}]);
+     t = WT_t;
+     dt = WT_dt;
      w := {1} | toList (((numgens W) // 2):0);
      f' := substitute(f,WT);
      If := ideal ({t - f'} 
@@ -48,9 +50,7 @@ globalBFunctionIdeal RingElement := RingElement => o -> f -> (
      pInfo(666, toString If);
      bfunc := bFunction(If, w, Strategy => o.Strategy);
      s := (ring bfunc)_0;
-     result := makeMonic substitute(bfunc, { s => -s - 1 });
-     use W;
-     result
+     makeMonic substitute(bfunc, { s => -s - 1 })
      );--end of globalBFunction
 
 ------------------------------------------------------------------
@@ -63,12 +63,11 @@ globalRB (RingElement,Boolean) := RingElement => (f,isRed) -> (
      Ws := ring AnnI;
      ns := numgens Ws;
      createDpairs W;
-     use W;
      df := apply(W.dpairVars#1, dx->dx*f-f*dx);
      
-     elimWs := (coefficientRing Ws)[(entries vars Ws)#0,
+     elimWs := (coefficientRing Ws)(monoid [(entries vars Ws)#0,
 	  WeylAlgebra => Ws.monoid.Options.WeylAlgebra,
-	  MonomialOrder => Eliminate (ns-1)];
+	  MonomialOrder => Eliminate (ns-1)]);
      ff := substitute(matrix{{f}|
 	       if isRed then df else {}
 	       },elimWs);
@@ -83,10 +82,9 @@ globalRB (RingElement,Boolean) := RingElement => (f,isRed) -> (
      realized as such.  Need better implementation";
      bpoly := bpolys_(0,0);
 
-     Ks := (coefficientRing W)[Ws_(ns-1)];
+     Ks := (coefficientRing W)(monoid [Ws_(ns-1)]);
      bpoly = substitute(bpoly, Ks);
      if isRed then bpoly = bpoly*(Ks_0+1);
-     use W;
      bpoly
      )
 
@@ -103,9 +101,9 @@ globalB(Ideal, RingElement) := HashTable => (I, f) -> (
      Ws := ring AnnI;
      ns := numgens Ws;
      
-     elimWs := (coefficientRing Ws)[(entries vars Ws)#0,
+     elimWs := (coefficientRing Ws)(monoid [(entries vars Ws)#0,
 	  WeylAlgebra => Ws.monoid.Options.WeylAlgebra,
-	  MonomialOrder => Eliminate (ns-1)];
+	  MonomialOrder => Eliminate (ns-1)]);
      ff := substitute(f,elimWs);
      elimAnnI := substitute(AnnI, elimWs);
      H := gens elimAnnI | matrix{{ff}};
@@ -122,9 +120,8 @@ globalB(Ideal, RingElement) := HashTable => (I, f) -> (
      C := getChangeMatrix gbH;
      Bop := C_(numgens source H - 1, ind);
      
-     Ks := (coefficientRing W)[Ws_(ns-1)];
+     Ks := (coefficientRing W)(monoid [Ws_(ns-1)]);
      bpoly = substitute(bpoly, Ks);
-     use W;
      hashTable {Bpolynomial => bpoly, Boperator => Bop}
      )
 
@@ -151,7 +148,6 @@ globalBFunction RingElement := RingElement => o -> f -> (
 	  then globalRB (f,false)
 	  else error "wrong Strategy option"
 	  );
-     use ring f;
      result
      )
 

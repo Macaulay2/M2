@@ -241,16 +241,16 @@ derLogF RingElement := f -> (
                                  --  note: #List,  length
   pInfo(2,msyz);
   -- see annFs.m2, oxclient.m2
-  W := makeWeylAlgebra R;   --note: g=map(R,W,matrix{{x,y,0,0}}); g(x) does not work  
+  W := makeWeylAlgebra( R, SetVariables=>false);   --note: g=map(R,W,matrix{{x,y,0,0}}); g(x) does not work  
+  phi := map(W,R);
   vw := generators(W);
   i:=0; j:=0; ell:=0; t:=0;
   op:={};
   while i<m do (  
-    t = entries(msyz_{i}^{0});
-    j = 1; ell=-value(toString(t#0#0));
+    j = 1;
+    ell=-phi msyz_(0,i);
     while j<=n do (
-      t = entries(msyz_{i}^{j});
-      ell = ell + value(toString(t#0#0))*vw_(n+j-1);
+      ell = ell + phi msyz_(j,i) * vw_(n+j-1);
       j = j+1;
     );
     op = join(op,{ell});
@@ -298,9 +298,9 @@ getReducedTransfer (HashTable,ZZ) := (cohom,k) -> (
   weightList := { apply ( toList(0..m-1), i -> if member(i, W.dpairInds#1) 
      then 1 else 0 ) };
   -- ring equipped with the new order
-  tempW := (coefficientRing W)[(entries vars W)#0,
+  tempW := (coefficientRing W)(monoid [(entries vars W)#0,
             WeylAlgebra => W.monoid.Options.WeylAlgebra,
-            Weights => weightList];
+            Weights => weightList]);
   WtotempW := map (tempW, W, vars tempW);
   -- map to the lex ring.
   tktemp := apply(tk,i->apply(i,j->WtotempW(j)));
@@ -336,7 +336,7 @@ makeTauInput (List,HashTable,ZZ) := (fmysyz,cohom,k) -> (
   iii = (((cohom#VResolution).dd)#1 );
   ggg = gb iii;
   ggg2 = entries gens ggg; ggg2 = ggg2#0;
-  W = ring(ggg2#0);  use W;
+  W = ring(ggg2#0);
   vw := generators(W);
   i:=0; j:=0; ell:=0; t:=0;
   op:={};

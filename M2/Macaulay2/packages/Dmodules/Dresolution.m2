@@ -154,15 +154,16 @@ Dresolution (Module, List) := options -> (M, w) -> (
      	  -- Make the V-filtration weight vector in HW
      	  Vwt := append(w,0);
      	  -- Make the homogeneous Weyl algebra
-     	  HW := (coefficientRing W)[(entries vars W)#0, homVar,
+     	  HW := (coefficientRing W)(monoid [(entries vars W)#0, homVar,
 	       WeylAlgebra => append(W.monoid.Options.WeylAlgebra, homVar),
-	       MonomialOrder => {Weights=>Hwt, Weights=>Vwt, GRevLex}];
+	       MonomialOrder => {Weights=>Hwt, Weights=>Vwt, GRevLex}]);
+     	  homVar = HW_homVar;
      	  WtoHW := map(HW, W, (vars HW)_{0..numgens W - 1});
      	  HWtoW := map(W, HW, (vars W)_{0..numgens W - 1} | matrix{{1_W}});
 	  -- Also make the homogenizing Weyl algebra for shifts
-     	  VW := (coefficientRing W)[hvw, (entries vars W)#0,
+     	  VW := (coefficientRing W)(monoid [hvw, (entries vars W)#0,
 	       WeylAlgebra => W.monoid.Options.WeylAlgebra,
-	       MonomialOrder => Eliminate 1];
+	       MonomialOrder => Eliminate 1]);
      	  HWtoVW := map(VW, HW, (vars VW)_{1..numgens W} | matrix{{VW_0}});
      	  VWtoHW := map(HW, VW, matrix{{homVar}} | (vars HW)_{0..numgens HW - 2});
 	  hvwVar := VW_0;
@@ -173,9 +174,10 @@ Dresolution (Module, List) := options -> (M, w) -> (
      	  Hwt = prepend(-1,w);
      	  Vwt = prepend(0,w);
 	  -- make the homogenizing Weyl algebra
-     	  HW = (coefficientRing W)[homVar, (entries vars W)#0,
+     	  HW = (coefficientRing W)(monoid [homVar, (entries vars W)#0,
 	       WeylAlgebra => W.monoid.Options.WeylAlgebra,
-	       MonomialOrder => Eliminate 1];
+	       MonomialOrder => Eliminate 1]);
+     	  homVar = HW_homVar;
      	  WtoHW = map(HW, W, (vars HW)_{1..numgens W});
      	  HWtoW = map(W, HW, matrix{{1_W}} | (vars W));
 	  );
@@ -246,6 +248,5 @@ Dresolution (Module, List) := options -> (M, w) -> (
 	       tInfo | " seconds");
 	  i = i+1;
      	  );
-     use W;
      M.cache.resolution#w
      )

@@ -1331,12 +1331,6 @@ document {
      }
 
 document {
-     Key => {(makeWA,PolynomialRing), makeWA},
-     Headline => "an abreviation for makeWeylalgebra",
-     SeeAlso => "makeWeylAlgebra"
-}
-
-document {
      Key => {Ddual, (Ddual,Module), (Ddual,Ideal)},
      Headline => "holonomic dual of a D-module",
      Usage => "Ddual M, Ddual I",
