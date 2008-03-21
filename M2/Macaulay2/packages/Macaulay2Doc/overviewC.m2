@@ -18,8 +18,8 @@ document {
 	  "1234",
       	  "123/4",
       	  "123.4",
+      	  "1.234e-20",
       	  "123+4*ii",
-	  -- need ways to make big real and big complex and implement arith ops
 	  },
      "The usual arithmetic operations are available.",
      EXAMPLE {
@@ -33,7 +33,24 @@ document {
      EXAMPLE {
 	  "1234//100",
       	  "1234%100"
-	  }
+	  },
+     "Numbers can be promoted to larger rings as follows, see ", TO "(symbol _, RingElement, Ring)", ".",
+     EXAMPLE lines ///
+     1_QQ
+     (2/3)_CC
+     ///,
+     "One way to enter real and complex numbers with more precision is to insert the desired number of bits of precision
+     after the letter p at the end of the number, but before the possible e that indicates the exponent of 10.",
+     EXAMPLE lines ///
+     1p300
+     1p300e-30
+     ///,
+     "Numbers can be lifted to smaller rings as follows, see ", TO "lift", ".",
+     EXAMPLE lines ///
+     x = 2/3*ii/ii
+     lift(x,RR)
+     lift(x,QQ)
+     ///
      }
 
 
