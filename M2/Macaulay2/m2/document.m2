@@ -553,7 +553,7 @@ enlist := x -> if class x === List then x else {x}
 chkIsString := key -> val -> if class val === String then val else error("expected ",toString key," option to be a string")
 chkIsStringFixup := key -> val -> if class val === String then fixup val else error("expected ",toString key," option to be a string")
 fixupTable := new HashTable from {
-     Key => x -> if class x === List then nonnull x else x,
+     Key => identity,					    -- this item was processed earlier!
      symbol DocumentTag => identity,
      Usage => val -> (
 	  if not instance(val,String) then error("expected Usage option to be a string");
@@ -909,6 +909,7 @@ document List := opts -> args -> (
      key := o.Key;
      rest := {};
      if class key === List then (
+	  key = nonnull key;
 	  rest = drop(key,1);
 	  o.Key = key = first key;
 	  );
