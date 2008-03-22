@@ -128,7 +128,7 @@ symbolFixes := hashTable {
      }
 
 fixup1 Thing := err
-fixup1 List := v -> toSequence v / fixup1
+fixup1 List := v -> splice (toSequence v / fixup1)
 fixup1 Sequence := v -> v / fixup1
 fixup1 Eliminate := e -> Weights => toList (e#0 : 1)
 fixup1 ProductOrder := o -> fixup1(toSequence o / (i -> GRevLex => i))
@@ -181,7 +181,7 @@ makeMonomialOrdering = (monsize,inverses,nvars,degs,weights,ordering) -> (
      scan(weights, wt -> if # wt != nvars then error("Weights: expected weight vector of length ",toString nvars," but got ",toString (#wt)));
      if class ordering =!= List then ordering = {ordering};
      ordering = join(weights / (i -> Weights => i), ordering);
-     t':= toList splice nonnull fixup1 ordering;
+     t':= toList nonnull splice fixup1 ordering;
      if varcount < nvars then t' = append(t',fixup1(GRevLex => nvars - varcount));
      if not any(t', x -> class x === Option and x#0 === Position) then t' = append(t', Position => Up);
      t := toList nonnull fixup2 t';
