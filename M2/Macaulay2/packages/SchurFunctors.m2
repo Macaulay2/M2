@@ -1,8 +1,11 @@
 newPackage(
      	  "SchurFunctors",
-     	  Version => "0.2",
-	  Date => "March 22, 2008",
-	  Authors => {{Name => "Steven V Sam", Email => "ssam@berkeley.edu"}},
+     	  Version => "0.2.1",
+	  Date => "March 24, 2008",
+	  Authors => {{
+		    Name => "Steven V Sam",
+		    HomePage => "http://www.ocf.berkeley.edu/~ssam/",
+		    Email => "ssam@berkeley.edu"}},
 	  Headline => "computations of Schur modules and maps between them",
 	  DebuggingMode => false
 	  )
@@ -507,7 +510,10 @@ document {
 	  },
      Outputs => {
 	  List => {"list of all standard tableaux"}
-	  }
+	  },
+     EXAMPLE lines ///
+     	  standardTableaux(3, {2,2}) -- lists all standard tableaux on the square with entries 0,1,2
+	  ///
      }
 
 document {
@@ -515,10 +521,15 @@ document {
      Headline => "computers straightening of a tableau",
      Usage => "straighten(List, MutableHashTable)",
      Inputs => {
-	  "t" => {ofClass List, ", a tableau to straighten"},
+	  "t" => {ofClass List, ", a tableau to straighten; a tableau looks like {{3,4}, {1,2}} for example, where we list the entries from left to right, top to bottom"},
 	  "h" => {ofClass MutableHashTable, ", where the answers should be stored"}
 	  },
-     "Outputs nothing, just modifies h."	  
+     "Outputs nothing, just modifies h. When looking up values, remember that the keys are stored with rows weakly increasing.",
+     EXAMPLE lines ///
+     	  h = new MutableHashTable from {}
+	  straighten({{3,4}, {1,2}}, h)
+	  h#{{3,4}, {1,2}} -- get the coefficients
+	  ///
      }
 
 document {
@@ -526,11 +537,14 @@ document {
      Headline => "Computes a matrix representation of Pieri inclusions",
      Usage => "inducedOlver(List, ZZ, Module)",
      Inputs => {
-	  "mu" => {ofClass List, ", a partition"},
+	  "mu" => {ofClass List, ", a partition where {n_1, ..., n_r} represents the partition n_1 + ... + n_r"},
 	  "K" => {ofClass ZZ, ", specifies the row from which to remove a box of mu"},
 	  "V" => {ofClass Module, ", a free module to which we apply the Schur functor"}
 	  },
-     Outputs => {ofClass Matrix}
+     Outputs => {ofClass Matrix},
+     EXAMPLE lines ///
+     	  inducedOlver({2,1}, 1, QQ^3) -- delete a box from the first row from the shape 2+1
+	  ///
      }
 
 document {
@@ -538,11 +552,14 @@ document {
      Headline => "For Pieri inclusions involving more than one box",
      Usage => "pieri(List, List, Module)",
      Inputs => {
-	  "mu" => {ofClass List, ", a partition"},
+	  "mu" => {ofClass List, ", a partition where {n_1, ..., n_r} represents the partition n_1 + ... + n_r"},
 	  "boxes" => {ofClass List, ", a list of boxes to delete from mu; done in order of the list"},
 	  "V" => {ofClass Module, ", a free module to which we apply the Schur functor"}
 	  },
-     Outputs => {ofClass Matrix}
+     Outputs => {ofClass Matrix},
+     EXAMPLE lines ///
+     	  pieri({3,2}, {1,2}, QQ^3) -- delete box from first row, then from second row from the shape 3+2
+	  ///
      }
 
 end
