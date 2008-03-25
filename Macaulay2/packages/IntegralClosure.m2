@@ -847,3 +847,23 @@ V = integralClosure(S)
 ring(presentation V)
 
 installPackage "IntegralClosure"
+
+-- Tests that Mike has added:
+loadPackage "IntegralClosure"
+S = ZZ/101[a..d]
+I = ideal(b^2-b)
+R = S/I
+integralClosure(R)
+
+R = QQ[x,y,z]
+p1 = ideal"x,y,z"
+p2 = ideal"x,y-1,z-2"
+p3 = ideal"x-2,y,5,z"
+p4 = ideal"x+1,y+1,z+1"
+D = trim intersect(p1^3,p2^3,p3^3,p4^3)
+betti D
+B = basis(5,D)
+F = (super(B * random(source B, R^{-5})))_(0,0)
+factor F
+A = R/F
+nonNormalLocus A  -- crashes M2!
