@@ -11,12 +11,12 @@ newPackage(
     	)
    
 export{isNormal, integralClosure, ICmap, ICfractions, conductor,
-idealizerReal, nonNormalLocus}
+idealizerReal, nonNormalLocus, Index}
 
 needsPackage "Elimination"
 
 
-idealizerReal = method(Options=>{Variable => global w, Strategy => 0})
+idealizerReal = method(Options=>{Variable => global w, Index => 0})
 idealizerReal (Ideal, Thing) := o -> (J, f) -> (
      -- 3 arguments: An ideal J in the non normal locus of a ring R/I,
      -- f a non-zero divisor in R/I, and w is the new variable in use. 
@@ -39,10 +39,10 @@ idealizerReal (Ideal, Thing) := o -> (J, f) -> (
      	  MO := prepend(GRevLex => n, (monoid R).Options.MonomialOrder);
           kk := coefficientRing R;
      	  A := (if any(degs, d -> d#0 <= 0) then (
-	       	    kk(monoid [o.Variable_(o.Strategy)..o.Variable_(o.Strategy+n-1), gens R,
+	       	    kk(monoid [o.Variable_(o.Index)..o.Variable_(o.Index+n-1), gens R,
 			      MonomialOrder=>MO])) 
 	       else(
-	       	    kk(monoid [o.Variable_(o.Strategy)..o.Variable_(o.Strategy+n-1), gens R,
+	       	    kk(monoid [o.Variable_(o.Index)..o.Variable_(o.Index+n-1), gens R,
 			      MonomialOrder=>MO, Degrees => degs]))
 	       );	 
      	  IA := ideal ((map(A,ring I,(vars A)_{n..numgens R + n-1})) (generators I));
