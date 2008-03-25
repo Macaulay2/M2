@@ -16,14 +16,15 @@ idealizerReal, nonNormalLocus}
 needsPackage "Elimination"
 
 
-idealizerReal = method()
-idealizerReal (Ideal, RingElement, Symbol) := (J, f, w) -> (
+idealizerReal = method(Options=>{Variable => global w, Strategy => 0})
+idealizerReal (Ideal, Thing) := o -> (J, f) -> (
      -- 3 arguments: An ideal J in the non normal locus of a ring R/I,
      -- f a non-zero divisor in R/I, and w is the new variable in use. 
      -- return: a sequence consisting of a ring map from the ring of J to
      -- B/I, where B/I is isomorphic to Hom(J,J) = 1/f(f*J:J), and
      -- list of the fractions that are added to the ring of J to form B/I.   
      R := ring J;
+     I := ideal presentation R;
      idJ := mingens(f*J : J);
      if ideal(idJ) == ideal(f) then (
 	  (map(R,R), {})) -- in this case R is ismorphic to Hom(J,J).
@@ -36,14 +37,13 @@ idealizerReal (Ideal, RingElement, Symbol) := (J, f, w) -> (
      	  newdegs := degrees source H - toList(n:degree f);
      	  degs = join(newdegs, (monoid R).Options.Degrees);
      	  MO := prepend(GRevLex => n, (monoid R).Options.MonomialOrder);
-	  if class w === IndexedVariableTable then indexW := #values w- 1 else indexW = 0;
-	  kk := coefficientRing R;
+          kk := coefficientRing R;
      	  A := (if any(degs, d -> d#0 <= 0) then (
-	       	    kk(monoid [w_(indexW)..w_(indexW+n-1), gens R,
-			      MonomialOrder=>MO])) -- removed MonomialSize => 16
+	       	    kk(monoid [o.Variable_(o.Strategy)..o.Variable_(o.Strategy+n-1), gens R,
+			      MonomialOrder=>MO])) 
 	       else(
-	       	    kk(monoid [w_(indexW)..w_(indexW+n-1), gens R,
-			      MonomialOrder=>MO, Degrees => degs]))-- removed MonomialSize => 16
+	       	    kk(monoid [o.Variable_(o.Strategy)..o.Variable_(o.Strategy+n-1), gens R,
+			      MonomialOrder=>MO, Degrees => degs]))
 	       );	 
      	  IA := ideal ((map(A,ring I,(vars A)_{n..numgens R + n-1})) (generators I));
      	  B := A/IA;
@@ -85,16 +85,16 @@ nonNormalLocus Ring := (R) -> (
 	  n := 1;
 	  det1 := ideal (0_R);
 	  while det1 == ideal (0_R) do (
-	       det1 = minors(codim I, SIR, Limit=>n);
+	       det1 = minors(codim I, SIR, Limit=>n); -- this seems
+	       -- very slow - there must be a better way!!  
 	       n = n+1);
 	     if det1 == 1
 	     -- i.e. the sing locus is empty.
 	     then (J = ideal vars ring I;)
 	     else (J = radical(lift(ideal det1_0,ring I)))
-	     );	  
+	     );	 
      ideal(generators J ** R)
      )
-
 
 -- PURPOSE: check if an affine domain is normal.  
 -- INPUT: any quotient ring.  
