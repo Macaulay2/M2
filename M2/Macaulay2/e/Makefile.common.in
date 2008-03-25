@@ -1,5 +1,14 @@
 # -*- Makefile -*-
 
+# these are from include/config.Makefile
+CPPFLAGS += $(M2_CPPFLAGS)
+CFLAGS   += $(M2_CFLAGS)
+CXXFLAGS += $(M2_CXXFLAGS)
+
+ifeq "$(SHARED)" "yes"
+CXXFLAGS += -fPIC
+endif
+
 ifeq (@AUTOINST@,yes)
 COMPILE.cc += -frepo -fno-rtti
 endif
