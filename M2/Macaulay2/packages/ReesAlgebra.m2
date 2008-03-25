@@ -93,7 +93,7 @@ symmetricKernel(Matrix,Ideal) := Ideal => o -> (f, I) -> (
      	  tardeglist :=  degrees source vars R | degrees target (f**R^{-mtar});
 	  Rtar1 := kk(monoid [oldvarlist,Y_1..Y_(ntarf),Degrees=>tardeglist]);
      	  F := map(Rtar1, R);
-     	  Rtar = Rtar1/F(I);
+     	  Rtar := Rtar1/F(I);
      	  oldvars := (vars Rtar)_{0..nR-1};
      	  RtoRtar := map(Rtar, R, oldvars);
      	  -- g builds key elements y_j*f_i to make the map R[y_j*f_i] to R/I
@@ -427,12 +427,13 @@ idealIntegralClosure = method()
 idealIntegralClosure(Ideal) := Ideal => (I) -> (
      R := ring I;
      n1 := numgens R;
-     J1 := reesAlgebra(I);  --defining ideal of Rees algebra
+     Rees := reesAlgebra(I);  --defining ideal of Rees algebra
+     J1 := ideal presentation Rees;
      R2 := ring J1;
      n2 := numgens R2;
      NewVars := take(gens R2,{n1,n2-1});
      S := R2/J1;  -- the rees algebra.
-     Sfrac1 := first entries (ICfractionsLong S);  -- The slow part is this! 
+     Sfrac1 := first entries ICfractions(S,Strategy => {});  -- The slow part is this! 
      Sfrac2 := apply(#Sfrac1-n1, i-> Sfrac1#i);
      toLift := select(Sfrac2, i-> (degree i)#1 == 1);
      VarImage := flatten append (first entries gens I,gens R);
@@ -789,7 +790,7 @@ analyticSpread image M
 
 {*
 restart
-loadPackage "ReesAlgebraNew"
+loadPackage "ReesAlgebra"
 R=QQ[a..e]
 j=monomialCurveIdeal(R, {1,2,3,5})
 IS = symmetricKernel(j)
