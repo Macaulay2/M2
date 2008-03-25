@@ -29,24 +29,28 @@ subMonoid (Monoid, List) := (M, l) -> (
      -- the new monoid.
      -- return: A new monoid corresponding to the subset of the
      -- variables in l.
-     newM := new MutableHashTable from M.Options;
-     numVars := #newM#Variables;
-     count := 0;
-     if class l_0 === ZZ then newM#Variables = apply(l, i -> newM#Variables#i)
-     else (newM#Variables = l;
-	  l = l/index);
-     newM#MonomialOrder = subMonomialOrder(newM#MonomialOrder, l);
-     skewC := newM#SkewCommutative;
-     skewN := #newM#SkewCommutative;
-     if  skewN =!= 0 then (
-	  if skewN =!= numVars then (
-	       if class skewC#0 === IndexedVariable then skewC = skewC/index;
-	       L := (set l) * (set skewC);
-	       newM#SkewCommutative = toList L;
+     --if not isPolynomialRing then error "input must be a polynomial ring.";
+     if #l == 0 then M else (
+     	  newM := new MutableHashTable from M.Options;
+     	  numVars := #newM#Variables;
+     	  count := 0;
+     	  if class l_0 === ZZ then newM#Variables = apply(l, i -> newM#Variables#i)
+     	  else (newM#Variables = l;
+	       l = l/index);
+     	  newM#MonomialOrder = subMonomialOrder(newM#MonomialOrder, l);
+     	  skewC := newM#SkewCommutative;
+     	  skewN := #newM#SkewCommutative;
+     	  if  skewN =!= 0 then (
+	       if skewN =!= numVars then (
+	       	    if class skewC#0 === IndexedVariable then skewC = skewC/index;
+	       	    L := (set l) * (set skewC);
+	       	    newM#SkewCommutative = toList L;
+	       	    );
 	       );
-	  );
-     newM#Degrees = apply(l, i -> newM#Degrees#i);
-     new OptionTable from newM
+     	  newM#Degrees = apply(l, i -> newM#Degrees#i);
+     	  OP := new OptionTable from newM;
+     	  monoid([OP])
+	  )
      )
 	  
 
@@ -70,13 +74,13 @@ subMonOrderHelper = (Ord, l, count, newOrd) -> (
 	       newOrd = select(newOrd, i -> (i#1 =!= {} and i#1 =!= 0));
 	       return newOrd))
      else(
-     	  if Ord#0#0 == Weights then (
+     	  if Ord#0#0 === Weights then (
 	       w := #Ord#0#1;  -- the old list of weights
 	       lw := select(l, i -> i <= w+count-1); 
 	       ww := apply(lw, i -> Ord#0#1#(i-count));
 	       return subMonOrderHelper(drop(Ord,1),l, count, append(newOrd, Ord#0#0 => ww)) 	   	     
 	       );
-     	  if Ord#0#0 == GRevLex then (
+     	  if Ord#0#0 === GRevLex then (
 	       w = #Ord#0#1;
 	       lw = select(l, i -> i <= #Ord#0#1+count-1);
 	       return subMonOrderHelper(drop(Ord,1), 
@@ -84,9 +88,9 @@ subMonOrderHelper = (Ord, l, count, newOrd) -> (
 		    count + #Ord#0#1, 
 		    append(newOrd, Ord#0#0 => apply(lw, i -> Ord#0#1#(i-1-count)))); 
 	       );    
-     	  if (Ord#0#0 == Lex or Ord#0#0 == RevLex or 
-	       Ord#0#0 == GroupLex or 
-	       Ord#0#0 ==  GroupRevLex) 
+     	  if (Ord#0#0 === Lex or Ord#0#0 === RevLex or 
+	       Ord#0#0 === GroupLex or 
+	       Ord#0#0 ===  GroupRevLex) 
      	  then ( 
 	       u = #(select(l, i -> i <= count + Ord#0#1 - 1));
 	       return subMonOrderHelper(drop(Ord, 1), 
@@ -94,7 +98,7 @@ subMonOrderHelper = (Ord, l, count, newOrd) -> (
 		    count + Ord#0#1, 
 		    append(newOrd, Ord#0#0 => u));
 	       );
-     	  if (Ord#0#0 == Position or Ord#0#0 == MonomialSize) then (
+     	  if (Ord#0#0 === Position or Ord#0#0 === MonomialSize) then (
 	       return subMonOrderHelper(drop(Ord, 1), l, count, 
 		    append(newOrd, Ord#0#0 => Ord#0#1));
 	       );
@@ -190,7 +194,7 @@ minPressy Ideal := (I) -> (
      (J,G) := reduceLinears(IS);
      xs := set apply(G, first);
      varskeep := rsort (toList(set gens S - xs));
-     newS := (coefficientRing S)(monoid[subMonoid(monoid S,varskeep)]);
+     newS := (coefficientRing S)(subMonoid(monoid S,varskeep));
 --     MO := subMonomialOrder((monoid S).Options.MonomialOrder, varskeep/index);
 --     --newS := (coefficientRing S)(monoid[varskeep, 
 --	       MonomialOrder => MO,
@@ -505,7 +509,7 @@ R = kk[a..f]
 I = ideal"ab,bc,cd,de,ea,ac"
 time (J,F) = groebnerScheme(I);
 time (J,F) = groebnerScheme(I, Minimize=>false);
-time minimalPresentation J
+time minimalPresentation J;
 A = ring J
 B = ring F
 Alocal = kk{gens A, MonomialSize => 8} 
@@ -514,7 +518,7 @@ gbTrace=3
 Jlocal = ideal gens gb Jlocal
 J1 = trim(ideal(t_40) + Jlocal)
 J2 = Jlocal : t_40
-(P,phi1,phi2) = minPressy J2;
+P = minPressy J2;
 -- Now: I want a point on V(J), on this component...
 -- This should be a function?
 A1 = ring P

@@ -6,7 +6,7 @@ newPackage(
 	     {Name => "Amelia Taylor",
 	     HomePage => "http://faculty1.coloradocollege.edu/~ataylor/",
    	     Email => "amelia.taylor@coloradocollege.edu"}},
-    	Headline => "Rees algebras",
+    	Headline => "Integral Closure",
     	DebuggingMode => false
     	)
    
