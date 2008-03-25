@@ -42,7 +42,9 @@ I = ideal random(R^1, R^{-3,-4,-4,-5});
 J = ideal"a3,b4,c4,d5"
 gbTrace=3
 installHilbertFunction(I, poincare J)
-time I = gens gb(I);
+time I1 = gens gb(I);
+I = ideal flatten entries gens I
+time I1 = gens gb(I, Algorithm=>LinearAlgebra);
 
 gbRemove I
 I = matrix entries I;
