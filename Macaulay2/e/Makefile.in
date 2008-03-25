@@ -21,15 +21,6 @@ endif
 M2CPPFLAGS += -I.
 CPPFLAGS += $(M2CPPFLAGS)
 
-# these are from include/config.Makefile
-CPPFLAGS += $(M2_CPPFLAGS)
-CFLAGS   += $(M2_CFLAGS)
-CXXFLAGS += $(M2_CXXFLAGS)
-
-ifeq "$(SHARED)" "yes"
-CXXFLAGS += -fPIC
-endif
-
 PRE.cc   = $(COMPILE.cc) -E 
 
 include @srcdir@/Makefile.files
