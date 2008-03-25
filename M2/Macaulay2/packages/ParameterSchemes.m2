@@ -792,6 +792,19 @@ inducedMonomialOrder(M3,{1,3,4})
 -- Tests of new minimal presentation (of ring) code:
 restart
 loadPackage "ParameterSchemes"
+
+TEST ///
+A = ZZ/101[x,y]/(y-x^3-x^5-x^7)
+B = minimalPresentation A
+F = A.minimalPresentationMap
+G = A.minimalPresentationMapInv
+assert(G*F == map(A,A,gens A))
+assert(F*G == map(B,B,gens B))
+assert(ideal B == 0)
+assert(numgens B == 1)
+///
+
+TEST ///
 R = ZZ/101[x,y]
 I = ideal(y-x^3-x^5-x^7)
 J = minimalPresentation I
@@ -803,7 +816,32 @@ assert(target F === ring I)
 assert(source F === ring J)
 assert(target G === ring J)
 assert(source G === ring I)
+///
 
+
+TEST ///
+A = QQ[x,y]/(y-x^3-x^5-x^7)
+B = minimalPresentation A
+F = A.minimalPresentationMap
+G = A.minimalPresentationMapInv
+assert(G*F == map(A,A,gens A))
+assert(F*G == map(B,B,gens B))
+assert(ideal B == 0)
+assert(numgens B == 1)
+///
+
+TEST ///
+A = QQ[x,y]/(2*y-x^3-x^5-x^7)
+B = minimalPresentation A
+F = A.minimalPresentationMap
+G = A.minimalPresentationMapInv
+assert(G*F == map(A,A,gens A))
+assert(F*G == map(B,B,gens B))
+assert(ideal B == 0)
+assert(numgens B == 1)
+///
+
+TEST ///
 R = QQ[x,y]
 I = ideal(2*y-x^3-x^5-x^7)
 J = minimalPresentation I
@@ -815,7 +853,19 @@ assert(target F === ring I)
 assert(source F === ring J)
 assert(target G === ring J)
 assert(source G === ring I)
+///
 
+TEST ///  -- FAILS
+A = ZZ[x,y,z]/(2*y+z-x^3-x^5-x^7, z^2)
+B = minimalPresentation A
+F = A.minimalPresentationMap
+G = A.minimalPresentationMapInv
+assert(G*F == map(A,A,gens A))
+assert(F*G == map(B,B,gens B))
+assert(ideal B == 0)
+assert(numgens B == 1)
+
+TEST ///
 R = ZZ[x,y,z]
 I = ideal(2*y+z-x^3-x^5-x^7, z^2)
 J = minimalPresentation I
@@ -829,6 +879,7 @@ assert(target F === ring I)
 assert(source F === ring J)
 assert(target G === ring J)
 assert(source G === ring I)
+///
 
 A = QQ[a,b,c]/(a^2-3*b,a*c-c^4*b)
 I = ideal 0_A

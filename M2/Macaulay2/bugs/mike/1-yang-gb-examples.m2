@@ -154,3 +154,7 @@ time gb(J, Algorithm=>Homogeneous2);
 time gb(J, Algorithm=>Homogeneous2, Strategy=>LongPolynomial);
 time gb(J, Algorithm=>LinearAlgebra);
 print timing gb ideal dterms;
+
+
+
+
