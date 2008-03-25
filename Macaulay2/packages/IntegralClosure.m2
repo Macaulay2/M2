@@ -866,4 +866,5 @@ B = basis(5,D)
 F = (super(B * random(source B, R^{-5})))_(0,0)
 factor F
 A = R/F
+loadPackage "IntegralClosure"
 nonNormalLocus A  -- crashes M2!

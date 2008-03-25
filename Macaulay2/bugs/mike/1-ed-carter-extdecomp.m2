@@ -1,4 +1,4 @@
-load "Kronecker.m2"
+load "/Users/mike/Library/Application Support/Macaulay2/local/share/Macaulay2/Kronecker.m2"
 Q = ZZ/101[x,y]
 
 tallMod = method()
