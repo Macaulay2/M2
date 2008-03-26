@@ -239,15 +239,12 @@ F4SPairSet::create_pre_spair(int j)
   return result;
 }
 
-void insert_pre_spair(VECTOR(VECTOR(pre_spair *) *) &bins, pre_spair *p)
+void insert_pre_spair(VECTOR(VECTOR(pre_spair *) ) &bins, pre_spair *p)
 {
   int d = p->deg1;
   if (d >= bins.size())
-    for (int i=bins.size(); i<=d; i++)
-      bins.push_back(NULL);
-  if (bins[d] == NULL)
-    bins[d] = new VECTOR(pre_spair *);
-  bins[d]->push_back(p);
+    bins.resize(d+1);
+  bins[d].push_back(p);
 }
 
 template class QuickSorter<PreSPairSorter>;
@@ -263,7 +260,7 @@ int F4SPairSet::construct_pairs(bool remove_disjoints)
 
   typedef VECTOR(pre_spair *) spairs;
 
-  VECTOR( VECTOR(pre_spair *) *) bins;
+  VECTOR( VECTOR(pre_spair *) ) bins;
 
   // Loop through each element of gb, and create the pre_spair
   for (int i=0; i<gb.size()-1; i++)
@@ -283,14 +280,14 @@ int F4SPairSet::construct_pairs(bool remove_disjoints)
   int n_new_pairs = 0;
   for (int i=0; i<bins.size(); i++)
     {
-      if (bins[i] == 0) continue;
+      if (bins[i].size() == 0) continue;
       // First sort the monomials of this degree
-      QuickSorter<PreSPairSorter>::sort(&C, &(*bins[i])[0], bins[i]->size());
+      QuickSorter<PreSPairSorter>::sort(&C, &(bins[i])[0], bins[i].size());
 
       // Loop through each degree and potentially insert...
-      spairs::iterator first = bins[i]->begin();
+      spairs::iterator first = bins[i].begin();
       spairs::iterator next = first;
-      spairs::iterator end = bins[i]->end();
+      spairs::iterator end = bins[i].end();
       for ( ; first != end; first = next)
 	{
 	  next = first+1;
