@@ -855,16 +855,77 @@ I = ideal(b^2-b)
 R = S/I
 integralClosure(R)
 
-R = QQ[x,y,z]
+-- M2 crash:
+kk = QQ
+R = kk[x,y,z]
 p1 = ideal"x,y,z"
 p2 = ideal"x,y-1,z-2"
 p3 = ideal"x-2,y,5,z"
 p4 = ideal"x+1,y+1,z+1"
 D = trim intersect(p1^3,p2^3,p3^3,p4^3)
 betti D
-B = basis(5,D)
-F = (super(B * random(source B, R^{-5})))_(0,0)
+B = basis(4,D)
+F = (super(B * random(source B, R^{-4})))_(0,0)
+ideal F + ideal jacobian matrix{{F}}
+decompose oo
+
 factor F
 A = R/F
 loadPackage "IntegralClosure"
 nonNormalLocus A  -- crashes M2!
+
+ideal F + ideal jacobian matrix{{F}}
+decompose oo
+-------------------
+
+kk = ZZ/101
+R = kk[x,y,z]
+p1 = ideal"x,y,z"
+p2 = ideal"x,y-1,z-2"
+p3 = ideal"x-2,y,5,z"
+p4 = ideal"x+1,y+1"
+D = trim intersect(p1^3,p2^3,p3^3,p4^2)
+betti D
+B = basis(5,D)
+F = (super(B * random(source B, R^{-5})))_(0,0)
+factor F
+A = R/F
+JF = trim(ideal F + ideal jacobian matrix{{F}})
+codim JF
+radJF = radical(JF, Strategy=>Unmixed)
+-- OK, radical JF doesn't work right now, so do this instead:
+jf1 = radical trim eliminate({x},JF)
+jf2 = radical trim eliminate({y},JF)
+jf3 = radical trim eliminate({z},JF)
+jf = trim(JF + jf1 + jf2 + jf3)
+NNL = trim radical jf
+radJF == NNL
+NNL = radJF
+NNL = substitute(NNL,A)
+(phi,fracs) = idealizerReal(NNL,NNL_0)
+phi
+#fracs
+
+----------------------
+random(ZZ,Ideal) := opts -> (d,J) -> random({d},J,opts)
+random(List,Ideal) := opts -> (d,J) -> (
+     R := ring J;
+     B := basis(6,J);
+     (super(B * random(source B, R^(-d), opts)))_(0,0)
+     )
+
+kk = ZZ/101
+R = kk[x,y,z]
+p1 = ideal"x,y,z"
+p2 = ideal"x,y-1,z-2"
+p3 = ideal"x-2,y,5,z"
+p4 = ideal"x+1,y+1"
+D = trim intersect(p1^3,p2^3,p3^3,p4^3)
+betti D
+F = random(6,D)
+factor F
+A = R/F
+JF = trim(ideal F + ideal jacobian matrix{{F}})
+codim JF
+radJF = radical(JF, Strategy=>Unmixed)
+decompose radJF
