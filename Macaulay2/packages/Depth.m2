@@ -4,7 +4,7 @@
 
 newPackage(
      "Depth",
-     Version => "0.4", 
+     Version => "0.4.1", 
      Date => "March 21, 2008",
      Authors => {
 	  {Name => "Bart Snapp", Email => "snapp@coastal.edu", HomePage => "http://ww2.coastal.edu/snapp/"}
@@ -134,7 +134,7 @@ regularSequence(Ideal,Ring) := Matrix => opts -> (I,A) -> (
      PHI := 0;
      longestSeq := 0;
      for i from 0 to opts.Attempts do (
-	  phi := promote(matrix randomMutableMatrix(r,c,opts.Sparseness,opts.Bound),A);
+	  phi := matrix randomMutableMatrix(r,c,opts.Sparseness,opts.Bound);
 	  rcs := regularSequenceCheck(compress(f*phi),A);
 	  if rcs == c then return f*phi; 
 	  if not opts.Maximal then if rcs > longestSeq then (
