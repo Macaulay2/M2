@@ -16,6 +16,89 @@ idealizerReal, nonNormalLocus, Index}
 needsPackage "Elimination"
 
 
+-- PURPOSE : Front end for the integralClosure function.  It governs the 
+--           iterative process using the helper function next.
+-- INPUT : any Ring that is a polynomial ring or a quotient of a polynomial
+--         ring that is reduced. 
+-- OUTPUT : a sequence of quotient rings R_1/I_1,..., R_n/I_n such that the integral closure 
+--          of R/I is the direct sum of those rings
+-- HELPER FUNCTIONS: next       - facilitiates the iteration.
+--                   newICnode  - builds a mutable hash table used to track the pieces during the iteration.
+--                   normal0  - computes the non-normal locus
+--                   idealizer0 - DeJong's algorthim to compute the integral closure using the non-normal locus.
+--                   indirectly, radical
+-- COMMENT: The quotient rings are not necessarily domains.  The algorithm can correctly 
+--          proceed without decomposing a reduced ring if it finds a non-zero divisor with 
+--          which to compute 1/f(fJ:J).
+integralClosure = method(Options=>{Variable => global w, Limit => infinity})
+integralClosure Ring := Ring => o -> (R) -> (
+     -- 1 arguments: Quotient ring. 
+     -- 2 options: 
+     -- return: The quotient ring that is the integral closure of R.
+     M := flattenRing R;
+     ICout := integralClosureHelper(nonNormalLocus M_0, gens M_0 ,M_1,o.Limit, o.Variable, 0);
+     if #ICout == 2 then (
+	  R.ICfractions = ICout#1;
+     	  R.ICmap = ICout#0;
+     	  target ICout#0
+	  )
+     else (
+	  n := substitute((#ICout)/2, ZZ);
+	  ICout = apply(n-1, i -> {ICout#(2*i), ICout#(2*i+1)});
+	  R.ICfractions = apply(ICout, i -> i#1);
+	  R.ICmap = apply(ICout, i -> i#0);
+	  apply(R.ICmap, i -> target i)
+	  )
+     )
+
+integralClosureHelper = (J, fractions, phi, counter, newVar, indexVar) -> (
+     -- recursive helper function designed to build the integral
+     -- closure of R = S/I.
+     -- 6 arguments: J is in the non normal locus of the target of
+     -- phi, answer is a set containg the relevent maps, fractions is a
+     -- list of the fractions needed, numNewVars is a counter to keep
+     -- track of the number of new variables being added, counter
+     -- keeps track of the depth of recursion.
+     -- return:  
+     S := target phi;
+     I := ideal presentation target phi;
+     J1 := ideal(0_S):J_0; 
+     -- need to check if J_0 is really the element we-- want - low degree. 
+     if J1 != ideal(0_S) then(
+	  -- If Jc_0 is a ZD then we split the ring.
+	  S1 := flattenRing(S/J1);
+	  S2 := flattenRing(S/(ideal(0_S):J1));
+	  L := join(integralClosureHelper(nonNormalLocus(minPres S1_0), 
+	       	    fractions,
+		    ((S1_0).minimalPresentationMap)*(S1_1)*map(source S1_1, S)*phi, 
+		    counter-1, newVar, indexVar),
+	       integralClosureHelper(nonNormalLocus (minPres S2_0), 
+			 fractions, 
+			 ((S2_0).minimalPresentationMap)*(S2_1)*map(source S2_1, S)*phi, 
+			 counter-1, newVar, indexVar));
+	  return L
+	  )	
+     else(
+	  -- If J_0 is a NZD then we continue setting f = J_0.
+	  -- Compute Hom_R(J,J), with R = S/I.
+	  -- From now on, we work in this quotient:
+	  (newPhi, fracs) := idealizerReal(J, J_0, Variable => newVar, Index => indexVar);  
+	  targ := target newPhi;
+	  if targ == S then (
+	       return {newPhi*phi, join(fracs,fractions)})
+	  else (
+	       newI1 := ideal presentation targ;
+	       newJ1 := newPhi J;
+	       newI := minimalPresentation(newI1);
+	       S = ring newI;
+	       B2 := S/newI;
+	       FF := substitute(((newI1).cache.minimalPresentationMap).matrix, B2);
+	       F := map(B2,target newPhi, FF);
+	       return integralClosureHelper(radical(F newJ1), join(fracs,fractions), F*newPhi*phi, counter-1,newVar,indexVar + # gens targ - # gens source newPhi )  
+     	       );
+     	  );
+     )
+
 idealizerReal = method(Options=>{Variable => global w, Index => 0})
 idealizerReal (Ideal, Thing) := o -> (J, f) -> (
      -- 3 arguments: An ideal J in the non normal locus of a ring R/I,
@@ -40,10 +123,10 @@ idealizerReal (Ideal, Thing) := o -> (J, f) -> (
           kk := coefficientRing R;
      	  A := (if any(degs, d -> d#0 <= 0) then (
 	       	    kk(monoid [o.Variable_(o.Index)..o.Variable_(o.Index+n-1), gens R,
-			      MonomialOrder=>MO])) 
+			      MonomialOrder=>MO])) -- removed MonomialSize => 16
 	       else(
 	       	    kk(monoid [o.Variable_(o.Index)..o.Variable_(o.Index+n-1), gens R,
-			      MonomialOrder=>MO, Degrees => degs]))
+			      MonomialOrder=>MO, Degrees => degs]))-- removed MonomialSize => 16
 	       );	 
      	  IA := ideal ((map(A,ring I,(vars A)_{n..numgens R + n-1})) (generators I));
      	  B := A/IA;
@@ -70,30 +153,30 @@ nonNormalLocus Ring := (R) -> (
      -- locus.  
      local J;
      I := ideal presentation R;
-     SI := jacobian I;
-     SIR := substitute(SI,R);
+     Jac := jacobian R;
+     --error "check R and I";
      if isHomogeneous I and #(first entries generators I)+#(generators ring I) <= 20 then (
-	  SIdets := minors(codim I, SIR);
+	  SIdets := minors(codim I, Jac);
 	   -- the codimension of the singular locus.
 	  cs := codim SIdets + codim R;  -- codim of SIdets in poly ring. 
 	  if cs === dim ring I or SIdets == 1
 	  -- i.e. the sing locus is empty.
-	  then (J = ideal vars ring I;)
-	  else (J = radical(lift(ideal SIdets_0,ring I)));
+	  then (J = ideal vars R;)
+	  else (J = radical ideal SIdets_0);
 	  )           	       
      else (
 	  n := 1;
 	  det1 := ideal (0_R);
 	  while det1 == ideal (0_R) do (
-	       det1 = minors(codim I, SIR, Limit=>n); -- this seems
+	       det1 = minors(codim I, Jac, Limit=>n); -- this seems
 	       -- very slow - there must be a better way!!  
 	       n = n+1);
 	     if det1 == 1
 	     -- i.e. the sing locus is empty.
-	     then (J = ideal vars ring I;)
-	     else (J = radical(lift(ideal det1_0,ring I)))
+	     then (J = ideal vars R;)
+	     else (J = radical det1)
 	     );	 
-     ideal(generators J ** R)
+     J
      )
 
 -- PURPOSE: check if an affine domain is normal.  
@@ -367,18 +450,18 @@ normal0 = (C) -> (
 -- COMMENT: The quotient rings are not necessarily domains.  The algorithm can correctly 
 --          proceed without decomposing a reduced ring if it finds a non-zero divisor with 
 --          which to compute 1/f(fJ:J).
-integralClosure = method(Options=>{Variable => global w})
-integralClosure Ring := Ring => o -> (R) -> (
-     if not R#?IIICCC then newICnode R;
-     C := R#IIICCC;
-     while next C do (
-      	  if C#"pending"#1 === null 
-     	  then normal0 (C) --Compute J defining the NNL.
-     	  else idealizer0(C, o.Variable));
-     A := apply(C#"answer",i-> i_0/ trim i_1);
-     if #A == 1 then A#0
-     else toSequence A
-     )
+--integralClosure = method(Options=>{Variable => global w})
+--integralClosure Ring := Ring => o -> (R) -> (
+--     if not R#?IIICCC then newICnode R;
+--     C := R#IIICCC;
+--     while next C do (
+--      	  if C#"pending"#1 === null 
+--     	  then normal0 (C) --Compute J defining the NNL.
+--     	  else idealizer0(C, o.Variable));
+--     A := apply(C#"answer",i-> i_0/ trim i_1);
+--     if #A == 1 then A#0
+--     else toSequence A
+--     )
 
 
 --------------------------------------------------------------------
