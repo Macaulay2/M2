@@ -29,9 +29,12 @@ export {
      cyclicRootsHomogeneous,
      commuting4by4,
      commuting4by4grevlex,
+     mayr,
      PellikaanJaworski,
      bayes
      }
+
+needs "ExampleIdeals/mayr-meyer.m2"
 
 ExampleTable = new Type of HashTable
 
