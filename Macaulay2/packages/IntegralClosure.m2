@@ -896,7 +896,7 @@ assert(
 --J = ideal(Y_3*y-Y_2*x^2,Y_3*x-Y_4*y,Y_1*x^3-Y_2*y^5,Y_3^2-Y_2*Y_4*x,Y_1*Y_4-Y_2^2*y^3)
 --T = S/J       
 --assert(ICfractions T == substitute(matrix {{(Y_2*y^2)/x, (Y_1*x)/y, Y_1, Y_2, Y_3, Y_4, x, y}}, frac T))
-///
+----///
 
 -- Test of isNormal
 TEST ///
@@ -1012,3 +1012,4 @@ JF = trim(ideal F + ideal jacobian matrix{{F}})
 codim JF
 radJF = radical(JF, Strategy=>Unmixed)
 decompose radJF
+integralClosure A
