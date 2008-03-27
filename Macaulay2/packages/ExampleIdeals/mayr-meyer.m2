@@ -31,42 +31,53 @@ mayr(ZZ,ZZ,Ring) := (n,deg,kk) -> (
      ideal matrix {mats})
 
 end
-mayr(3,2,ZZ/101)
-I = mayr(4,2,ZZ/101)
-time gens gb I;
-
-load "gb-mayr.m2"
+restart
+loadPackage "ExampleIdeals"
+I = mayr(3,2,ZZ/101)
 gbTrace=1
-I = mayr(4,2,ZZ/101);
-betti I
-numgens ring I
-time syz gens I;
+time gens gb I;
+time gens gb(I,Algorithm=>Homogeneous2);
 
-eg1 = () -> (
-     print "benchmark gb-mayr-3-2-char101-nvars41-gb3266";
-     I = mayr(3,2,ZZ/101);
-     time gens gb I;
-     )
+{* -- singular code
+ring r = 101,(S_0, S_1, S_2, S_3, F_0, F_1, F_2, F_3, a_0, a_1, a_2, a_3, b_0, b_1, b_2, b_3, c_0, c_1, c_2, c_3, d_0, d_1, d_2, d_3, e_0, e_1, e_2, e_3, f_0, f_1, f_2, f_3, g_0, g_1, g_2, g_3, h_0, h_1, h_2, h_3, z), dp;
+ideal i =    -F_0*a_0^2*e_0+S_0*e_0*z^2,
+   -F_0*b_0^2*f_0+S_0*f_0*z^2,
+   -F_0*c_0^2*g_0+S_0*g_0*z^2,
+   -F_0*d_0^2*h_0+S_0*h_0*z^2,
+   -S_0*e_0+S_1*z,
+   F_0*e_0-S_0*f_0,
+   F_0*a_0*f_0-F_0*d_0*g_0,
+   S_0*h_0-F_1*z,
+   S_0*g_0-F_0*h_0,
+   -S_0*f_0+S_0*g_0,
+   -F_0*a_1*c_0*e_1*f_0+F_0*a_0*e_1*f_0*z,
+   -F_0*b_1*c_0*f_0*f_1+F_0*a_0*f_0*f_1*z,
+   -F_0*c_0*c_1*f_0*g_1+F_0*a_0*f_0*g_1*z,
+   -F_0*c_0*d_1*f_0*h_1+F_0*a_0*f_0*h_1*z,
+   -S_1*e_1+S_2*z,
+   F_1*e_1-S_1*f_1,
+   F_1*a_1*f_1-F_1*d_1*g_1,
+   S_1*h_1-F_2*z,
+   S_1*g_1-F_1*h_1,
+   -S_1*f_1+S_1*g_1,
+   -F_1*a_2*c_1*e_2*f_1+F_1*a_1*e_2*f_1*z,
+   -F_1*b_2*c_1*f_1*f_2+F_1*a_1*f_1*f_2*z,
+   -F_1*c_1*c_2*f_1*g_2+F_1*a_1*f_1*g_2*z,
+   -F_1*c_1*d_2*f_1*h_2+F_1*a_1*f_1*h_2*z,
+   -S_2*e_2+S_3*z,
+   F_2*e_2-S_2*f_2,
+   F_2*a_2*f_2-F_2*d_2*g_2,
+   S_2*h_2-F_3*z,
+   S_2*g_2-F_2*h_2,
+   -S_2*f_2+S_2*g_2,
+   -F_2*a_3*c_2*e_3*f_2+F_2*a_2*e_3*f_2*z,
+   -F_2*b_3*c_2*f_2*f_3+F_2*a_2*f_2*f_3*z,
+   -F_2*c_2*c_3*f_2*g_3+F_2*a_2*f_2*g_3*z,
+   -F_2*c_2*d_3*f_2*h_3+F_2*a_2*f_2*h_3*z;
+rtimer=1;
+ideal j=groebner(i);
+*}
 
-eg2 = () -> (
-     print "benchmark gb-mayr-4-2-char101-nvars51-gb??";
-     I = mayr(4,2,ZZ/101);
-     time gens gb I;
-     )
-
-----------------------------
-doBench = (which,bens) -> (
-  if instance(which,ZZ) 
-    then (bens#which)()
-    else scan(#bens, i -> 
-       run ("M2 --silent -e which=" 
-	    | i | " " 
-	    | currentFileName 
-	    | /// -e "exit(0)"///)))
-
---gbTrace=1
---doBench(which, {eg1,eg2})
-end
 load "gb-mayr.m2"
 gbTrace=1
 I = mayr(4,2,ZZ/101);
