@@ -910,7 +910,7 @@ assert(isNormal(integralClosure(S)) == true)
 --R = QQ[x,y,z]/ideal(x^6-z^6-y^2*z^4)
 --F = ICmap R
 --assert(conductor F == ideal((R_2)^3, (R_0)*(R_2)^2, (R_0)^3*(R_2), (R_0)^4))
-///
+---///
 
 end 
 
