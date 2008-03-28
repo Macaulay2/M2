@@ -1,7 +1,7 @@
 newPackage(
      	  "SchurFunctors",
-     	  Version => "0.2.1",
-	  Date => "March 24, 2008",
+     	  Version => "0.2.2",
+	  Date => "March 28, 2008",
 	  Authors => {{
 		    Name => "Steven V Sam",
 		    HomePage => "http://www.ocf.berkeley.edu/~ssam/",
@@ -473,7 +473,7 @@ inducedOlver(List, ZZ, Module) := (mu, K, V) -> (
 -- Composes the maps given by inducedOlver by successively deleting boxes
 pieri = method()
 pieri(List, List, Module) := (mu, boxes, V) -> (
-     result = inducedOlver(mu, boxes#0, V);
+     result := inducedOlver(mu, boxes#0, V);
      lambda := subtractOne(mu, boxes#0);
      for i from 1 to #boxes-1 do (
 	  result = (id_V ** inducedOlver(lambda, boxes#i, V)) * result;
