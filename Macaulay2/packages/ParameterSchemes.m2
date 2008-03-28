@@ -145,6 +145,7 @@ reduceLinears Ideal := o -> (I) -> (
        << "reducing using " << g#0 << endl << endl;
        F = map(R,R,{g#0 => g#1});
        L = apply(L, i -> F(i));
+--       error "checking";
        g
        );
      -- Now loop through and improve M
@@ -195,18 +196,14 @@ minPressy Ideal := (I) -> (
      xs := set apply(G, first);
      varskeep := rsort (toList(set gens S - xs));
      newS := (coefficientRing S)(subMonoid(monoid S,varskeep));
---     MO := subMonomialOrder((monoid S).Options.MonomialOrder, varskeep/index);
---     --newS := (coefficientRing S)(monoid[varskeep, 
---	       MonomialOrder => MO,
---	       Global => (monoid S).Options.Global]);
      if not isSubset(set support J, set varskeep) -- this should not happen
      then error "internal error in minPressy: not all vars were reduced in ideal";
-     I.cache.minimalPresentationMap = map(R,S)*map(S, newS, varskeep);
+     I.cache.minimalPresentationMapInv = map(R,S)*map(S, newS, varskeep);
      -- Now we need to make the other map...
      X := new MutableList from gens S;
      scan(G, (v,g) -> X#(index v) = g);
      maptoS := apply(toList X, f -> substitute(f,newS));
-     I.cache.minimalPresentationMapInv = map(newS,S,maptoS)*map(S, flatR)*flatList_1;
+     I.cache.minimalPresentationMap = map(newS,S,maptoS)*map(S, flatR)*flatList_1;
      substitute(ideal compress gens J,newS)
      )
 
@@ -215,6 +212,12 @@ minimalPresentation Ideal := opts -> (I) -> (
 --     error "debug me";
      result := minPressy(I);
      result)
+
+minimalPresentation Ring := opts -> (R) -> (
+     << "entering minPressy"<< endl;
+--     error "debug me";
+     result := minPressy(ideal presentation R);
+     (ring result)/result)
 
 
 findReductorOld = (L) -> ( 
