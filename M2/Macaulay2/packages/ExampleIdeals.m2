@@ -261,11 +261,69 @@ toSingular Ideal := (I) -> (
      g = concatenate between(",\n   ", apply(numgens I, i -> replace(///[\*\^]///,"",toString I_i)));
      "ideal i = " | g | ";\n"
      )
+toSingular Ring := (R) -> (
+     -- note: R is assumed to be a polynomial ring.  Variables alowed: single letters, 
+     -- letters indexed by a single non-negative integer.
+     kk := coefficientRing R;
+     p := char kk;
+     a := "ring R = "|p|",(";
+     b := concatenate between(",", (gens R)/toString);
+     c := "),dp;";
+     a | b | c
+     )
+toSingular Ideal := (I) -> (
+     a := "ideal I = \n";
+     g := concatenate between(",\n   ", apply(numgens I, i -> toString I_i));
+     a | g | ";\n"
+     )
 
+runSingularGB = method()
+runSingularGB Ideal := (I) -> (
+     "foo" << "rtimer=1;\n"
+     << toSingular ring I << toSingular I
+     << "int ti=rtimer;\n"
+     << "ideal J=groebner(I);\n"
+     << "int ti2=rtimer-ti;\n"
+     << "print(\"time used\"); print(ti2);\n"
+     << "print(size(J));\n"
+     << "exit(ti2);\n" << close;
+     run "/sw/bin/Singular <foo"
+     )
+toMagma = method()
+toMagma Ring := (R) -> (
+     -- note: R is assumed to be a polynomial ring.  Variables alowed: single letters, 
+     -- letters indexed by a single non-negative integer.
+     -- For now the base ring needs to be ZZ/p or QQ.
+     kk := coefficientRing R;
+     p := char kk;
+     basering := if p === 0 then "RationalField()" else "GF("|p|")";
+     "R<" | concatenate between(",", (gens R)/toString) | "> := PolynomialRing(" 
+       | basering | "," | toString numgens R | ",\"grevlex\");"
+     )
+toMagma Ideal := (I) -> (
+     a := "I := ideal< R | \n   ";
+     g := concatenate between(",\n   ", apply(numgens I, i -> toString I_i));
+     a | g | ">;\n" | "time J := GroebnerBasis(I);\n"
+     )
+runMagmaGB = method()
+runMagmaGB Ideal := (I) -> (
+     "foo" << toMagma ring I << toMagma I
+     << "#J;\n"
+     << "quit;\n" << close;
+     run "magma <foo"
+     )
 end
 
 restart
 loadPackage "ExampleIdeals"
+debug ExampleIdeals
+R = ZZ/101[a..d]
+I = ideal random(R^1, R^{-2,-2})
+print toSingular R
+print toSingular I
+runMagmaGB I
+runSingularGB I
+print toMagma R; print toMagma I
 
 time H = examplesDGP QQ
 time H = examplesSIN QQ
@@ -403,3 +461,91 @@ degree I
 
 I = Lichtblau(QQ)
 eliminate({t},I)
+
+p = symbol p;
+R = ZZ/32003[reverse(p_(1,1,1,1,1)..p_(2,2,2,2,2)), MonomialSize=>8];
+J = ideal(
+	      -p_(1,1,2,1,1)*p_(2,1,1,1,1)+p_(1,1,1,1,1)*p_(2,1,2,1,1),
+	      -p_(1,1,2,1,2)*p_(2,1,1,1,2)+p_(1,1,1,1,2)*p_(2,1,2,1,2),
+	      -p_(1,1,2,2,1)*p_(2,1,1,2,1)+p_(1,1,1,2,1)*p_(2,1,2,2,1),
+	      -p_(1,1,2,2,2)*p_(2,1,1,2,2)+p_(1,1,1,2,2)*p_(2,1,2,2,2),
+	      -p_(1,2,2,1,1)*p_(2,2,1,1,1)+p_(1,2,1,1,1)*p_(2,2,2,1,1),
+	      -p_(1,2,2,1,2)*p_(2,2,1,1,2)+p_(1,2,1,1,2)*p_(2,2,2,1,2),
+	      -p_(1,2,2,2,1)*p_(2,2,1,2,1)+p_(1,2,1,2,1)*p_(2,2,2,2,1),
+	      -p_(1,2,2,2,2)*p_(2,2,1,2,2)+p_(1,2,1,2,2)*p_(2,2,2,2,2),
+	      -p_(1,1,1,1,2)*p_(1,2,1,1,1)+p_(1,1,1,1,1)*p_(1,2,1,1,2),
+	      -p_(1,1,1,2,1)*p_(1,2,1,1,1)+p_(1,1,1,1,1)*p_(1,2,1,2,1),
+	      -p_(1,1,1,2,1)*p_(1,2,1,1,2)+p_(1,1,1,1,2)*p_(1,2,1,2,1),
+	      -p_(1,1,1,2,2)*p_(1,2,1,1,1)+p_(1,1,1,1,1)*p_(1,2,1,2,2),
+	      -p_(1,1,1,2,2)*p_(1,2,1,1,2)+p_(1,1,1,1,2)*p_(1,2,1,2,2),
+	      -p_(1,1,1,2,2)*p_(1,2,1,2,1)+p_(1,1,1,2,1)*p_(1,2,1,2,2),
+	      -p_(1,1,2,1,2)*p_(1,2,2,1,1)+p_(1,1,2,1,1)*p_(1,2,2,1,2),
+	      -p_(1,1,2,2,1)*p_(1,2,2,1,1)+p_(1,1,2,1,1)*p_(1,2,2,2,1),
+	      -p_(1,1,2,2,1)*p_(1,2,2,1,2)+p_(1,1,2,1,2)*p_(1,2,2,2,1),
+	      -p_(1,1,2,2,2)*p_(1,2,2,1,1)+p_(1,1,2,1,1)*p_(1,2,2,2,2),
+	      -p_(1,1,2,2,2)*p_(1,2,2,1,2)+p_(1,1,2,1,2)*p_(1,2,2,2,2),
+	      -p_(1,1,2,2,2)*p_(1,2,2,2,1)+p_(1,1,2,2,1)*p_(1,2,2,2,2),
+	      -p_(1,1,1,1,2)*p_(1,2,1,1,1)+p_(1,1,1,1,1)*p_(1,2,1,1,2),
+	      -p_(1,1,1,2,2)*p_(1,2,1,2,1)+p_(1,1,1,2,1)*p_(1,2,1,2,2),
+	      -p_(1,1,2,1,2)*p_(1,2,2,1,1)+p_(1,1,2,1,1)*p_(1,2,2,1,2),
+	      -p_(1,1,2,2,2)*p_(1,2,2,2,1)+p_(1,1,2,2,1)*p_(1,2,2,2,2),
+	      -p_(1,1,1,2,1)*p_(1,2,1,1,1)+p_(1,1,1,1,1)*p_(1,2,1,2,1),
+	      -p_(1,1,1,2,2)*p_(1,2,1,1,2)+p_(1,1,1,1,2)*p_(1,2,1,2,2),
+	      -p_(1,1,2,2,1)*p_(1,2,2,1,1)+p_(1,1,2,1,1)*p_(1,2,2,2,1),
+	      -p_(1,1,2,2,2)*p_(1,2,2,1,2)+p_(1,1,2,1,2)*p_(1,2,2,2,2),
+	      -p_(1,1,1,1,2)*p_(1,1,1,2,1)+p_(1,1,1,1,1)*p_(1,1,1,2,2)
+		+p_(1,1,1,2,2)*p_(1,1,2,1,1)-p_(1,1,1,2,1)*p_(1,1,2,1,2)
+		-p_(1,1,1,1,2)*p_(1,1,2,2,1)-p_(1,1,2,1,2)*p_(1,1,2,2,1)
+		+p_(1,1,1,1,1)*p_(1,1,2,2,2)+p_(1,1,2,1,1)*p_(1,1,2,2,2)
+		+p_(1,1,1,2,2)*p_(1,2,1,1,1)+p_(1,1,2,2,2)*p_(1,2,1,1,1)
+		-p_(1,1,1,2,1)*p_(1,2,1,1,2)-p_(1,1,2,2,1)*p_(1,2,1,1,2)
+		-p_(1,1,1,1,2)*p_(1,2,1,2,1)-p_(1,1,2,1,2)*p_(1,2,1,2,1)
+		-p_(1,2,1,1,2)*p_(1,2,1,2,1)+p_(1,1,1,1,1)*p_(1,2,1,2,2)
+		+p_(1,1,2,1,1)*p_(1,2,1,2,2)+p_(1,2,1,1,1)*p_(1,2,1,2,2)
+		+p_(1,1,1,2,2)*p_(1,2,2,1,1)+p_(1,1,2,2,2)*p_(1,2,2,1,1)
+		+p_(1,2,1,2,2)*p_(1,2,2,1,1)-p_(1,1,1,2,1)*p_(1,2,2,1,2)
+		-p_(1,1,2,2,1)*p_(1,2,2,1,2)-p_(1,2,1,2,1)*p_(1,2,2,1,2)
+		-p_(1,1,1,1,2)*p_(1,2,2,2,1)-p_(1,1,2,1,2)*p_(1,2,2,2,1)
+		-p_(1,2,1,1,2)*p_(1,2,2,2,1)-p_(1,2,2,1,2)*p_(1,2,2,2,1)
+		+p_(1,1,1,1,1)*p_(1,2,2,2,2)+p_(1,1,2,1,1)*p_(1,2,2,2,2)
+		+p_(1,2,1,1,1)*p_(1,2,2,2,2)+p_(1,2,2,1,1)*p_(1,2,2,2,2));
+R = (coefficientRing R)[x_1..x_(numgens R), MonomialSize=>8]
+I = sub(J,vars R)
+time gens gb(I, MaxReductionCount=>3000);
+print toMagma R; print toMagma I
+runMagmaGB I
+runSingularGB I
+{* -- magma
+R<x_1,x_2,x_3,x_4,x_5,x_6,x_7,x_8,x_9,x_10,x_11,x_12,x_13,x_14,x_15,x_16,x_17,x_18,x_19,x_20,x_21,x_22,x_23,x_24,x_25,x_26,x_27,x_28,x_29,x_30,x_31,x_32> := PolynomialRing(GF(32003),32,"grevlex");
+I := ideal< R | 
+   -x_16*x_28+x_12*x_32,
+   -x_15*x_27+x_11*x_31,
+   -x_14*x_26+x_10*x_30,
+   -x_13*x_25+x_9*x_29,
+   -x_8*x_20+x_4*x_24,
+   -x_7*x_19+x_3*x_23,
+   -x_6*x_18+x_2*x_22,
+   -x_5*x_17+x_1*x_21,
+   -x_24*x_31+x_23*x_32,
+   -x_24*x_30+x_22*x_32,
+   -x_23*x_30+x_22*x_31,
+   -x_24*x_29+x_21*x_32,
+   -x_23*x_29+x_21*x_31,
+   -x_22*x_29+x_21*x_30,
+   -x_20*x_27+x_19*x_28,
+   -x_20*x_26+x_18*x_28,
+   -x_19*x_26+x_18*x_27,
+   -x_20*x_25+x_17*x_28,
+   -x_19*x_25+x_17*x_27,
+   -x_18*x_25+x_17*x_26,
+   -x_24*x_31+x_23*x_32,
+   -x_22*x_29+x_21*x_30,
+   -x_20*x_27+x_19*x_28,
+   -x_18*x_25+x_17*x_26,
+   -x_24*x_30+x_22*x_32,
+   -x_23*x_29+x_21*x_31,
+   -x_20*x_26+x_18*x_28,
+   -x_19*x_25+x_17*x_27,
+   -x_18*x_19+x_17*x_20+x_20*x_21-x_19*x_22-x_18*x_23-x_22*x_23+x_17*x_24+x_21*x_24+x_20*x_25+x_24*x_25-x_19*x_26-x_23*x_26-x_18*x_27-x_22*x_27-x_26*x_27+x_17*x_28+x_21*x_28+x_25*x_28+x_20*x_29+x_24*x_29+x_28*x_29-x_19*x_30-x_23*x_30-x_27*x_30-x_18*x_31-x_22*x_31-x_26*x_31-x_30*x_31+x_17*x_32+x_21*x_32+x_25*x_32+x_29*x_32>;
+time J := GroebnerBasis(I);
+*}
