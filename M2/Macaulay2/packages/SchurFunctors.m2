@@ -1,6 +1,6 @@
 newPackage(
      	  "SchurFunctors",
-     	  Version => "0.2.4",
+     	  Version => "0.2.5",
 	  Date => "March 30, 2008",
 	  Authors => {{
 		    Name => "Steven V Sam",
@@ -274,9 +274,8 @@ symmetricOlver = (mu, k, V) -> (
      for p from 0 to k when true do (
      	  A := apply(subsets(1..(k-1), p), s -> append(s,k));
 	  for J in A do (
-	       print J;
      	       cJ := 1;
-	       for q from 1 to p-2 when true do
+	       for q from 0 to p-1 when true do
 	       cJ = cJ * (mu_(J_q) - mu_k + k - J_q);
 	       chi = chi + ((-1)^(p+1) / cJ) * tau(S0, J);
 	       );
