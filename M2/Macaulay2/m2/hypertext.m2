@@ -463,6 +463,8 @@ TO2 ? TO2 := (x,y) -> x#1 ? y#1
 TO ? TO2 := TOH ? TO2 := (x,y) -> x#0 ? y#1
 TO2 ? TO := TO2 ? TOH := (x,y) -> x#1 ? y#0
 
+texMath STYLE := tex STYLE := net STYLE := x -> ""
+
 -- Local Variables:
 -- compile-command: "make -C $M2BUILDDIR/Macaulay2/m2 "
 -- End:
