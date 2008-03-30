@@ -84,8 +84,6 @@ struct enter_factory {
   const Z_mod *Zn;
   void *(*save_gmp_allocate_func  )(size_t);
   void *(*save_gmp_reallocate_func)(void *, size_t, size_t);
-  void *(*save_gmp_allocate_atomic_func  )(size_t);
-  void *(*save_gmp_reallocate_atomic_func)(void *, size_t, size_t);
   void  (*save_gmp_free_func      )(void *, size_t);
   void enter();
   void exit();
@@ -109,8 +107,6 @@ void enter_factory::enter() {
       if (debugging) advertise();
       save_gmp_allocate_func = __gmp_allocate_func;
       save_gmp_reallocate_func = __gmp_reallocate_func;
-      save_gmp_allocate_atomic_func = __gmp_allocate_atomic_func;
-      save_gmp_reallocate_atomic_func = __gmp_reallocate_atomic_func;
       save_gmp_free_func = __gmp_free_func;
       enterFactory();
       if (debugging) advertise();
@@ -151,8 +147,6 @@ void enter_factory::exit() {
        if (debugging) advertise();
        __gmp_allocate_func = save_gmp_allocate_func;
        __gmp_reallocate_func = save_gmp_reallocate_func;
-       __gmp_allocate_atomic_func = save_gmp_allocate_atomic_func;
-       __gmp_reallocate_atomic_func = save_gmp_reallocate_atomic_func;
        __gmp_free_func = save_gmp_free_func;
        if (debugging) {
 	    advertise();
@@ -164,8 +158,6 @@ void enter_factory::exit() {
 struct enter_M2 { 
   void *(*save_gmp_allocate_func  )(size_t);
   void *(*save_gmp_reallocate_func)(void *, size_t, size_t);
-  void *(*save_gmp_allocate_atomic_func  )(size_t);
-  void *(*save_gmp_reallocate_atomic_func)(void *, size_t, size_t);
   void  (*save_gmp_free_func      )(void *, size_t);
   void enter();
   void exit();
@@ -177,8 +169,6 @@ void enter_M2::enter() {
     if (debugging) advertise();
     save_gmp_allocate_func = __gmp_allocate_func;
     save_gmp_reallocate_func = __gmp_reallocate_func;
-    save_gmp_allocate_atomic_func = __gmp_allocate_atomic_func;
-    save_gmp_reallocate_atomic_func = __gmp_reallocate_atomic_func;
     save_gmp_free_func = __gmp_free_func;
     enterM2();
     if (debugging) advertise();
@@ -188,8 +178,6 @@ void enter_M2::exit() {
     if (debugging) advertise();
     __gmp_allocate_func = save_gmp_allocate_func;
     __gmp_reallocate_func = save_gmp_reallocate_func;
-    __gmp_allocate_atomic_func = save_gmp_allocate_atomic_func;
-    __gmp_reallocate_atomic_func = save_gmp_reallocate_atomic_func;
     __gmp_free_func = save_gmp_free_func;
     if (debugging) advertise();
   }

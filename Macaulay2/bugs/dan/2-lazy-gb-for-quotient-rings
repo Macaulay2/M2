@@ -1,0 +1,9 @@
+Let's compute gb of the ideal of a quotient ring lazily!  When it's time to
+reduce a ring element to normal form, then compute it.  And if it's
+homogeneous, compute it just up to the required degree.
+
+This will require having ring elements visible at top level that are not yet in
+normal form, but would be reduced automatically internally.  
+
+Note: the hash code of a ring element needs to be computed from the normal
+form.

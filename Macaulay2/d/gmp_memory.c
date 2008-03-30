@@ -21,11 +21,17 @@ void	__gmp_default_free (void *p , unsigned n) {
      abort();
 }
 
-void *	(*__gmp_allocate_func) (unsigned) = __gmp_default_allocate;
-void *	(*__gmp_reallocate_func) (void *, unsigned, unsigned) = __gmp_default_reallocate;
-void *	(*__gmp_allocate_atomic_func) (unsigned) = __gmp_default_allocate;
-void *	(*__gmp_reallocate_atomic_func) (void *, unsigned, unsigned) = __gmp_default_reallocate;
-void	(*__gmp_free_func) (void *, unsigned) = __gmp_default_free;
+extern void *	(*__gmp_allocate_func) (unsigned);
+extern void *	(*__gmp_reallocate_func) (void *, unsigned, unsigned);
+extern void *	(*__gmp_reallocate_atomic_func) (void *, unsigned, unsigned);
+extern void	(*__gmp_free_func) (void *, unsigned);
+
+static void gmp_memory_init_function(void) __attribute__ ((constructor));
+static void gmp_memory_init_function(void) {
+     __gmp_allocate_func = __gmp_default_allocate;
+     __gmp_reallocate_func = __gmp_default_reallocate;
+     __gmp_free_func = __gmp_default_free;
+}
 
 /*
  Local Variables:
