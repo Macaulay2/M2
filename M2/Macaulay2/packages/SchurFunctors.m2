@@ -1,7 +1,7 @@
 newPackage(
      	  "SchurFunctors",
-     	  Version => "0.2.2",
-	  Date => "March 28, 2008",
+     	  Version => "0.2.3",
+	  Date => "March 30, 2008",
 	  Authors => {{
 		    Name => "Steven V Sam",
 		    HomePage => "http://www.ocf.berkeley.edu/~ssam/",
@@ -270,7 +270,7 @@ symmetricOlver = (mu, k, V) -> (
      S0 := symmetricPower(mu, V);
      S1 := symmetricPower(lambda, V);
      chi := map(S1, S0, 0);
-     for p from 1 to k when true do (
+     for p from 0 to k when true do (
      	  A := {};
 	  if k==1 then A = {{1}}
      	  else A = apply(subsets(1..(k-1), p), s -> append(s,k));
@@ -301,10 +301,9 @@ inducedOlver(List, ZZ, Module, List) := (mu, K, V, t) -> (
 	  );
      for j from 0 to #Tsymbasis-1 when true do (
 	  x := ((entries img)#j)#0;
-	  if x>0 then prehash = append(prehash, (Tsymbasis#j, x));
+	  if x != 0 then prehash = append(prehash, (Tsymbasis#j, x));
 	  );
      H := hashTable(prehash);
-     print H;
      memo := new MutableHashTable from {}; -- memoize straightening results
      output := hashTable({});
      for j in keys H do (
@@ -423,7 +422,7 @@ inducedOlver(List, ZZ, Module) := (mu, K, V) -> (
 	       );
      	  for j from 0 to #Tsymbasis-1 when true do (
 	       x := ((entries img)#j)#0;
-	       if x>0 then prehash = append(prehash, (Tsymbasis#j, x));
+	       if x != 0 then prehash = append(prehash, (Tsymbasis#j, x));
 	       );
      	  H := hashTable(prehash);
      	  memo := new MutableHashTable from {}; -- memoize straightening results
