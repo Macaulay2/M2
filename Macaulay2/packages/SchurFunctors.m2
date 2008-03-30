@@ -1,11 +1,12 @@
 newPackage(
      	  "SchurFunctors",
-     	  Version => "0.2.3",
+     	  Version => "0.2.4",
 	  Date => "March 30, 2008",
 	  Authors => {{
 		    Name => "Steven V Sam",
-		    HomePage => "http://www.ocf.berkeley.edu/~ssam/",
-		    Email => "ssam@berkeley.edu"}},
+		    Email => "ssam@berkeley.edu",
+		    HomePage => "http://www.ocf.berkeley.edu/~ssam/"
+		    }},
 	  Headline => "computations of Schur modules and maps between them",
 	  DebuggingMode => false
 	  )
@@ -271,10 +272,9 @@ symmetricOlver = (mu, k, V) -> (
      S1 := symmetricPower(lambda, V);
      chi := map(S1, S0, 0);
      for p from 0 to k when true do (
-     	  A := {};
-	  if k==1 then A = {{1}}
-     	  else A = apply(subsets(1..(k-1), p), s -> append(s,k));
+     	  A := apply(subsets(1..(k-1), p), s -> append(s,k));
 	  for J in A do (
+	       print J;
      	       cJ := 1;
 	       for q from 1 to p-2 when true do
 	       cJ = cJ * (mu_(J_q) - mu_k + k - J_q);
