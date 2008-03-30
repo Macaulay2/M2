@@ -86,9 +86,6 @@ static void *(*save_gmp_allocate_func  )(size_t);
 static void *(*save_gmp_reallocate_func)(void *, size_t, size_t);
 static void  (*save_gmp_free_func      )(void *, size_t);
 
-extern void *(*__gmp_allocate_atomic_func  )(size_t);
-extern void *(*__gmp_reallocate_atomic_func)(void *, size_t, size_t);
-
 void enterFactory() {
   static int done = 0;
   if (!done) {
@@ -98,26 +95,20 @@ void enterFactory() {
       fprintf(stderr, "internal error: gmp initialized before enterFactory called\n");
       exit(1);
     }
-    __gmp_allocate_atomic_func =
     save_gmp_allocate_func   = __gmp_allocate_func;
-    __gmp_reallocate_atomic_func =
     save_gmp_reallocate_func = __gmp_reallocate_func;
     save_gmp_free_func       = __gmp_free_func;
     }
   else {
-    __gmp_allocate_atomic_func =
     __gmp_allocate_func   = save_gmp_allocate_func;
-    __gmp_reallocate_atomic_func =
     __gmp_reallocate_func = save_gmp_reallocate_func;
     __gmp_free_func       = save_gmp_free_func;
   }
 }
 
 void enterM2(void) {
-     mp_set_memory_functions( (void *(*) (size_t)) getmem, GC_realloc_function, GC_free_function);
-     __gmp_allocate_atomic_func = (void *(*) (size_t)) getmem_atomic;
-     __gmp_reallocate_atomic_func = GC_realloc_atomic_function;
-     }
+  mp_set_memory_functions( (void *(*) (size_t)) getmem, GC_realloc_function, GC_free_function);
+}
 
 void M2inits(void) __attribute__ ((constructor));
 void M2inits(void) {

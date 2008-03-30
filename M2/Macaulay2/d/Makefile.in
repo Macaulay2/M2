@@ -63,9 +63,10 @@ M2_OBJECTS += debug.o
 endif
 
 OPTCFILES += M2inits1.cc M2inits2.cc M2inits3.cc factory_init1.cc factory_init2.cc factory_init3.cc
-CFILES += M2types.c M2mem.c scclib.c M2lib.c gmp_aux.c gdbm_interface.c gmp_memory.c
+CFILES += M2types.c M2mem.c scclib.c M2lib.c gmp_aux.c gdbm_interface.c
 CFILES += factory_allocator.c main.c
 SRCFILES += $(OPTCFILES) $(CFILES)
+
 M2_OBJECTS += $(CFILES:.c=.o)
 M2_OBJECTS += version.o
 M2_OBJECTS += M2-factory.o
@@ -301,10 +302,19 @@ else
 M2_OBJECTS := $(M2_OBJECTS) M2inits.o
 endif
 
+M2_OBJECTS_AND_LIBRARIES = $(M2_OBJECTS) $(M2_LIBRARIES)
+
+ifeq (@CONSTRUCTOR_ORDER_OBJ@,LR)
+# gmp_memory.o must have its constructors run first
+M2_OBJECTS_AND_LIBRARIES := gmp_memory.o $(M2_OBJECTS_AND_LIBRARIES)
+else
+M2_OBJECTS_AND_LIBRARIES := $(M2_OBJECTS_AND_LIBRARIES) gmp_memory.o 
+endif
+
 clean::; rm -f ../bin/M2@EXE@
-../bin/M2@EXE@ : $(M2_OBJECTS) $(M2_LIBDEPS)
+../bin/M2@EXE@ : $(M2_OBJECTS) $(M2_LIBDEPS) gmp_memory.o
 	$(COMPILE.c) tmp_init.c -o tmp_init.o
-	time @CC@ $(M2_LDFLAGS) $(M2_OBJECTS) $(M2_LIBRARIES) -lm -o "$@".tmp
+	time @CC@ $(M2_LDFLAGS) $(M2_OBJECTS_AND_LIBRARIES) -lm -o "$@".tmp
 ifeq "$(STRIP)" "yes"
 ifneq "@STRIPCMD@" ""
 ifeq (@STRIP_REMOVE_SECTION@,yes)
