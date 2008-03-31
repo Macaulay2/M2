@@ -62,7 +62,7 @@ document { Key => {basis,
 	  ///
 	  ),
      SYNOPSIS (
-	  Usage => "basis(lo.hi,M)",
+	  Usage => "basis(lo,hi,M)",
 	  Inputs => {
 	       "M" => {ofClass{Module,Ring,Ideal}},
 	       "lo" => {ofClass{ZZ,List,InfiniteNumber}},
