@@ -24,6 +24,7 @@ newRing Ring := Ring => opts -> (R) -> (
      if opts.DegreeRank === nothing and opts.Degrees =!= nothing then opts = first override(opts, DegreeRank => null);
      if opts.DegreeRank =!= nothing or opts.Degrees =!= nothing then opts = first override(opts, Heft => null);
      opts = mergeOptions((monoid R).Options,opts);
+     opts = select(opts, v -> v =!= nothing); -- this applies especially to the MonomialSize option, no longer present in (monoid R).Options
      f := presentation R;
      A := ring f;
      k := coefficientRing A;
