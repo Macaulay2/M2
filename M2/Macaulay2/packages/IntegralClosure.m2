@@ -10,7 +10,7 @@ newPackage(
     	DebuggingMode => true
     	)
    
-export{isNormal, integralClosure, ICmap, ICfractions, conductor,
+export{isNormal, integralClosure, ICmap,ICfractions, conductor,
 idealizerReal, nonNormalLocus, Index}
 
 needsPackage "Elimination"
@@ -38,7 +38,7 @@ integralClosure Ring := Ring => o -> (R) -> (
      M := flattenRing R;
      ICout := integralClosureHelper(nonNormalLocus M_0, gens M_0 ,M_1,o.Limit, o.Variable, 0);
      if #ICout == 2 then (
-	  R.ICfractions = ICout#1;
+	  R.ICfractionsLong = ICout#1;
      	  R.ICmap = ICout#0;
      	  target ICout#0
 	  )
@@ -204,29 +204,6 @@ isNormal(Ring) := Boolean => (R) -> (
      )
 
 --------------------------------------------------------------------
--- PURPOSE : The natural map from a ring to its integral closure.
--- This map is needed for the function conductor to compute the 
--- conductor of the integral closure into R.  This map may be of 
--- other independent interest.
--- R#IIICCC#"map" is needed to find the conductor
-
-ICmap = method()
-ICmap(Ring) := RingMap => (R) -> (
-     -- Input:  a quotient ring.
-     -- Output:  The natural map from R to its integral closure S.
-     -- Note:  This is needed to compute the conductor of R into S.
-     if R#?IIICCC or not isNormal R then (
-	  if not R#?IIICCC then integralClosure(R);
-	  S := (R#IIICCC#"answer"#0)#0/(R#IIICCC#"answer"#0)#1;
-	  U := R#IIICCC#"map";
-     	  if U === null then R#IIICCC#"map" = map(S,S)
-     	  else R#IIICCC#"map" = map(S,R,substitute((U).matrix,S));
-	       R#IIICCC#"map"
-	       )
-     else (map(R,R))
-     )
-
---------------------------------------------------------------------
 
 -- PURPOSE : In the case of a domain we obtain the fractions 
 -- added to a ring in order to obtain its integral closure.  
@@ -287,13 +264,13 @@ conductor(RingMap) := Ideal => (F) -> (
      --NOTE:  If using this in conjunction with the command normalization,
      --then the input is R#IIICCC#"map" where R is the name of the ring used as 
      --input into normalization.  
-     if isSinglyGraded (source F) and isHomogeneous (source F)
+     if isHomogeneous (source F)
      	  then(M := presentation pushForward(F, (target F)^1);
      	       P := target M;
      	       intersect apply((numgens P)-1, i->(
 	       m:=matrix{P_(i+1)};
 	       I:=ideal modulo(m,matrix{P_0}|M))))
-	  else error "conductor: expected a homogeneous ideal in a singly graded ring"
+	  else error "conductor: expected a homogeneous ideal in a graded ring"
      )
 
 --------------------------------------------------------------------
@@ -444,26 +421,26 @@ document {
      the integral closure of a reduced ring."
      }
 
-document {
-     Key => {ICmap, (ICmap,Ring)},
-     Headline => "natural map from an affine domain into its integral closure.",
-     Usage => "ICmap R",
-     Inputs => {
-	  "R" => {ofClass Ring, " that is an affine domain"}
-	  },
-     Outputs => {
-	  {ofClass RingMap, " from ", TT "R", " to its integral closure"}
-	  },
-     "Note that if an integrally closed ring is given as input, the identity map from 
-     the ring to itself is returned.",
-     	  EXAMPLE {
-	  "R = QQ[x,y,z]/ideal(x^6-z^6-y^2*z^4);",
-      	  "ICmap R"},
-     PARA{},
-     "This finite map is needed to compute the ", TO "conductor", " of the integral closure 
-     into the original ring.",
-     SeeAlso => {"conductor"}
-     }
+--document {
+--     Key => {ICmap, (ICmap,Ring)},
+--    Headline => "natural map from an affine domain into its integral closure.",
+--     Usage => "ICmap R",
+--     Inputs => {
+--	  "R" => {ofClass Ring, " that is an affine domain"}
+--	  },
+--     Outputs => {
+--	  {ofClass RingMap, " from ", TT "R", " to its integral closure"}
+--	  },
+--    "Note that if an integrally closed ring is given as input, the identity map from 
+--     the ring to itself is returned.",
+--    	  EXAMPLE {
+--	  "R = QQ[x,y,z]/ideal(x^6-z^6-y^2*z^4);",
+--      	  "ICmap R"},
+--     PARA{},
+--     "This finite map is needed to compute the ", TO "conductor", " of the integral closure 
+--     into the original ring.",
+--     SeeAlso => {"conductor"}
+--     }
     
 
 document {
@@ -523,17 +500,17 @@ document {
      which is also an ideal in ", TT "S", ".",
      EXAMPLE {
 	  "R = QQ[x,y,z]/ideal(x^6-z^6-y^2*z^4);",
-	  "F = ICmap R",
+	  "F = R.ICmap",
 	  "conductor F"
 	  },
      PARA{},
      "The command ", TT "conductor", " calls the 
      command ", TO pushForward, ".  Currently, the 
      command ", TT "pushForward", 
-     " does not work if the source of the map ", TT "F", " is multgraded 
-     or inhomogeneous.  If the source of the map ", TT "F", " is multigraded 
-     or in homogeneous ", TT "conductor", " returns the message -- No conductor
-     for ", TT "F", ".",
+     " does not work if the source of the map ", TT "F", " is
+     inhomogeneous.  If the source of the map ", TT "F", " is not
+     homogeneous ", TT "conductor", " returns the message -- No
+     conductor for ", TT "F", ".",
      SeeAlso =>{"pushForward", "integralClosure"} 
      }
 
@@ -586,7 +563,7 @@ time J = integralClosure (Q, Variable => symbol a)
 use ring ideal J
 assert(ideal J == ideal (x^2-a_6*z, a_6*x-a_7*z, a_6^2-a_7*x, a_7^2-y^2-z^2))
 use Q
---assert(conductor(ICmap Q) == ideal(z^3,x*z^2,x^3*z,x^4))
+assert(conductor(Q.ICmap) == ideal(z^3,x*z^2,x^3*z,x^4))
 ///
 
 --Mike's inhomogenous test
@@ -645,10 +622,11 @@ assert(isNormal(integralClosure(S)) == true)
 ///
 
 -- Test of ICmap and conductor
---TEST ///
---R = QQ[x,y,z]/ideal(x^6-z^6-y^2*z^4)
---F = ICmap R
---assert(conductor F == ideal((R_2)^3, (R_0)*(R_2)^2, (R_0)^3*(R_2), (R_0)^4))
+TEST ///
+R = QQ[x,y,z]/ideal(x^6-z^6-y^2*z^4)
+J = integralClosure(R);
+F = R.ICmap
+assert(conductor F == ideal((R_2)^3, (R_0)*(R_2)^2, (R_0)^3*(R_2), (R_0)^4))
 ---///
 
 end 
