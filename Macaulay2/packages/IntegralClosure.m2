@@ -1,7 +1,7 @@
 newPackage(
 	"IntegralClosure",
-    	Version => "0.5", 
-    	Date => "October 31, 2006",
+    	Version => "1.0", 
+    	Date => "April 4, 2008",
     	Authors => {
 	     {Name => "Amelia Taylor",
 	     HomePage => "http://faculty1.coloradocollege.edu/~ataylor/",
@@ -38,7 +38,7 @@ integralClosure Ring := Ring => o -> (R) -> (
      M := flattenRing R;
      ICout := integralClosureHelper(nonNormalLocus M_0, gens M_0 ,M_1,o.Limit, o.Variable, 0);
      if #ICout == 2 then (
-	  R.ICfractionsLong = ICout#1;
+	  R.ICfractions = ICout#1;
      	  R.ICmap = ICout#0;
      	  target ICout#0
 	  )
@@ -203,51 +203,6 @@ isNormal(Ring) := Boolean => (R) -> (
      else false
      )
 
---------------------------------------------------------------------
-
--- PURPOSE : In the case of a domain we obtain the fractions 
--- added to a ring in order to obtain its integral closure.  
--- They are printed to correspond directly to the new variables 
--- used in the output of the integralClosure function.
--- CAVEAT : R MUST be a domain.  
--- FUTURE: Implement this for rings that are reduced and not a domain.
-
-ICfractions = method(Options => {Strategy => null})
-ICfractions(Ring) := Matrix => o-> R -> (
-     -- Input:  A quotient ring that is a domain.
-     -- Output:  A matrix of the fractions added to R to get the integral closure.
-     -- These correspond directly to the variables in the output of integralClosure 
-     -- and the matrix is in the fraction field of the original ring.
-     if R#?IIICCC or not isNormal R then (
-	  integralClosure R;
-	  K := (R#IIICCC#"basefield")(monoid [join(flatten R#IIICCC#"newvars",
-			 (options R).Variables), Degrees => R#IIICCC#"deglong"]);
-	  -- This constructs the new ring using all of the new variables.
-	  KF := frac(K);
-	  M1 := first entries substitute(vars R,KF);  -- puts the vars of R in KF
-	  M2 := apply(R#IIICCC#"fraclong", i->matrix{{i}});
-	  M2' := apply(M2, i->substitute(i,KF));
-	  M3 := flatten apply(M2', j-> first entries j);
-	  numnew := # generators K - # (options R).Variables;
-	  if o.Strategy === null then (
-	       L1 := apply(R#IIICCC#"fractions", i->matrix{{i}});
-	       L2 := matrix{flatten apply(apply(L1, i->substitute(i,KF)), j-> first entries j)};
-	       G := map(KF,KF,matrix{join(M3,M1)});
-	       while not all(flatten entries L2, 
-		    f -> all({numerator f, denominator f}, 
-			 r -> all(support r, x -> index x >= numnew)))
-	       do L2 = G L2;
-	       substitute(L2,frac R))
-	  else (
-	       G2 := matrix{join(M3,M1)};
-	       Map := map(KF,KF,G2);
-	       while not all(flatten entries G2, 
-		    f -> all({numerator f, denominator f}, 
-			 r -> all(support r, x -> index x >= numnew)))
-	       do G2 = Map G2;
-	       substitute(G2,frac R)))
-     else vars R)
-     
 -- Needed because we have problems with multigraded over char 0  in 
 -- using the pushForward function and 
 -- have to kill the multigrading in this case at the very beginning.
