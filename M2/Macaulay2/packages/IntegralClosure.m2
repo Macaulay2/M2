@@ -7,10 +7,10 @@ newPackage(
 	     HomePage => "http://faculty1.coloradocollege.edu/~ataylor/",
    	     Email => "amelia.taylor@coloradocollege.edu"}},
     	Headline => "Integral Closure",
-    	DebuggingMode => true
+    	DebuggingMode => false
     	)
    
-export{isNormal, integralClosure, conductor,
+export{isNormal, integralClosure, conductor, ICfractions, ICmap
 idealizerReal, nonNormalLocus, Index}
 
 needsPackage "Elimination"
@@ -357,7 +357,7 @@ document {
      the integral closure.  Unfortunately, all of the added features 
      currently only work on affine domains.
      The map and the corresponding fractions are obtained as 
-     a matrix using the function ", TO (ICfractions,Ring), " where R is 
+     a matrix using the function where R is 
      an affine domain.  This function can be run without first 
      using ", TO "integralClosure", ".  The natural map from ", TT "R", " into 
      its integral closure is obtained using the function ", TO "ICmap", " and 
@@ -398,43 +398,43 @@ document {
 --     }
     
 
-document {
-     Key => {ICfractions, (ICfractions,Ring)},
-     Headline => "Compute the fractions integral over a domain.",
-     Usage => "ICfractions R",
-     Inputs => {
-	  "R" => {ofClass Ring, " that is an affine domain"},
-	  },
-     Outputs => {
-	  {ofClass Matrix, " whose entries are fractions that generate the integral 
-	       closure of ", TT "R", " over R."}
-	  },
-     EXAMPLE {
-	  "R = QQ[x,y,z]/ideal(x^6-z^6-y^2*z^4);",
-      	  "ICfractions R",
-	  "integralClosure(R,Variable => a)"
-	  },
-     "Thus the new variables ", TT "w_7", " and ", TT "w_6", " correspond to the 
-     fractions respectively.  The program currently also returns the original 
-     variables as part of the matrix.  In this way the user can see if any are 
-     simplified out of the ring during the process of computing the integral
-     closure.",
-     PARA{},
-     "The fractions returned correspond to the variables returned by the function 
-     integralClosure.  The function integralClosure eliminates redundant fractions 
-     during its iteration.  If the user would like to see all fractions generated 
-     during the computation, use the optional argument ", TT "Strategy => Long", " as 
-     illustrated here.",
-     EXAMPLE {
-	  "ICfractions(R, Strategy => Long)"
-	  },
-     }
+--document {
+ ---    Key => {ICfractions, (ICfractions,Ring)},
+--     Headline => "Compute the fractions integral over a domain.",
+--     Usage => "ICfractions R",
+--     Inputs => {
+--	  "R" => {ofClass Ring, " that is an affine domain"},
+--	  },
+ --    Outputs => {
+--	  {ofClass Matrix, " whose entries are fractions that generate the integral 
+--	       closure of ", TT "R", " over R."}
+--	  },
+ --    EXAMPLE {
+--	  "R = QQ[x,y,z]/ideal(x^6-z^6-y^2*z^4);",
+ --     	  "ICfractions R",
+--	  "integralClosure(R,Variable => a)"
+--	  },
+ --    "Thus the new variables ", TT "w_7", " and ", TT "w_6", " correspond to the 
+  --   fractions respectively.  The program currently also returns the original 
+   --  variables as part of the matrix.  In this way the user can see if any are 
+    -- simplified out of the ring during the process of computing the integral
+    -- closure.",
+    -- PARA{},
+    -- "The fractions returned correspond to the variables returned by the function 
+    -- integralClosure.  The function integralClosure eliminates redundant fractions 
+    -- during its iteration.  If the user would like to see all fractions generated 
+    -- during the computation, use the optional argument ", TT "Strategy => Long", " as 
+    -- illustrated here.",
+    -- EXAMPLE {
+--	  "ICfractions(R, Strategy => Long)"
+--	  },
+--     }
 
-document {
-     Key => [ICfractions,Strategy],
-     Headline=> "Allows the user to obtain all of the fractions considered in the 
-     process of building the integral closure",
-     }
+--document {
+--     Key => [ICfractions,Strategy],
+--     Headline=> "Allows the user to obtain all of the fractions considered in the 
+--     process of building the integral closure",
+--     }
 
 document {
      Key => {conductor,(conductor,RingMap)},
