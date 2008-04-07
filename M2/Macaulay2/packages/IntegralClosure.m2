@@ -10,7 +10,7 @@ newPackage(
     	DebuggingMode => false
     	)
    
-export{isNormal, integralClosure, conductor, ICfractions, ICmap
+export{isNormal, integralClosure, conductor, ICfractions, ICmap,
 idealizerReal, nonNormalLocus, Index}
 
 needsPackage "Elimination"
