@@ -39,6 +39,7 @@ J = fterms1 + ideal (matrix{{y_{1}..y_{22}}} - matrix{dterms}); -- time (ubuntu6
 J = fterms1 + ideal (matrix{{y_{1}..y_{22}}} - matrix{dterms1}); -- gb time (ubuntu64) 10.98 sec, (ubuntu64 0.9.2) 37.31 sec
 gbTrace=3
 time gens gb J;
+time gens gb(J, Algorithm=>Sugarless); -- (1.1.1, ubuntu64)4 cases above: 49.72, 66.17, 28.39 sec, 28.9 sec
 
 netList sort(fterms/(f -> (size f, first degree f, leadTerm f)))
 netList sort(fterms1_*/(f -> (size f, first degree f, leadTerm f)))
