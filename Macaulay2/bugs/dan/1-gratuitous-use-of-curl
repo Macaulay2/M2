@@ -1,0 +1,39 @@
+Date: Tue, 8 Apr 2008 14:58:16 +0200
+From: "Andries E. Brouwer" <Andries.Brouwer@cwi.nl>
+To: "Daniel R. Grayson" <dan@math.uiuc.edu>
+Cc: "Andries E. Brouwer" <Andries.Brouwer@cwi.nl>
+Subject: Re: output format
+In-Reply-To: <200804081220.m38CKmQx001908@u123.math.uiuc.edu>
+
+On Tue, Apr 08, 2008 at 07:20:48AM -0500, Daniel R. Grayson wrote:
+
+> I just don't know of a way to write an autoconf script that puts a warning
+> message on the last screenful of text, because it insists on displaying the
+> names of all the files that it substitutes variables into!  So I always have
+> to scroll up to see the final warnings.  If you have any ideas about that,
+> let me know. 
+
+I maintained util-linux for about ten years, and always avoided autoconf -
+too complicated, too messy, too fragile. So, I don't know autoconf.
+[On the "fragile" part: I once wasted half an afternoon debugging
+autoconf, only to find that I happened to have an environment variable
+that was meaningful to some autoconf script and made it fail. Namespace
+pollution.]
+
+But constructions on top of autoconf must be easy:
+Suppose you have your own mycurl script that tests whether stdin is a tty
+and if so asks: libfoo not found. I need the foo library or foo source tree
+or foo source tar but cannot find it. You have the options:
+(1) abort the compilation now, install libfoo and come back later
+(2) let me fetch foo.tar.gz from wellknown.site.org
+(3) specify a pathname or URL
+possibly
+(4) compile M2 without foo support
+Here (1) should be the default: abort with a message.
+If you happen to have the information then (1) can be made a bit nicer
+by suggesting: on an ubuntu system, say "sudo apt-get install foo-dev".
+
+Best regards,
+Andries
+
+
