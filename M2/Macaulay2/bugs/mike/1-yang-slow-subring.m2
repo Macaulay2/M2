@@ -4,20 +4,21 @@ fterms = {7*X_{6} + 4*X_{6}*(X_{5}*X_{6} - X_{4}*X_{7}) + 3*X_{2}*X_{8} + 3*X_{3
 dterms = {X_{7}*X_{8} - X_{6}*X_{9}, X_{7}*X_{10} - X_{6}*X_{11}, X_{7}*X_{12} - X_{6}*X_{13}, X_{5}*X_{6} - X_{4}*X_{7}, X_{1}*X_{9}*X_{10} - X_{1}*X_{8}*X_{11}, X_{2}*X_{9}*X_{10} - X_{2}*X_{8}*X_{11}, X_{3}*X_{9}*X_{10} - X_{3}*X_{8}*X_{11}, X_{1}*X_{9}*X_{12} - X_{1}*X_{8}*X_{13}, X_{2}*X_{9}*X_{12} - X_{2}*X_{8}*X_{13}, X_{3}*X_{9}*X_{12} - X_{3}*X_{8}*X_{13}, X_{1}*X_{11}*X_{12} - X_{1}*X_{10}*X_{13}, X_{2}*X_{11}*X_{12} - X_{2}*X_{10}*X_{13}, X_{3}*X_{11}*X_{12} - X_{3}*X_{10}*X_{13}, X_{1}*X_{5}*X_{8} - X_{1}*X_{4}*X_{9}, X_{2}*X_{5}*X_{8} - X_{2}*X_{4}*X_{9}, X_{3}*X_{5}*X_{8} - X_{3}*X_{4}*X_{9}, X_{1}*X_{5}*X_{10} - X_{1}*X_{4}*X_{11}, X_{2}*X_{5}*X_{10} - X_{2}*X_{4}*X_{11}, X_{3}*X_{5}*X_{10} - X_{3}*X_{4}*X_{11}, X_{1}*X_{5}*X_{12} - X_{1}*X_{4}*X_{13}, X_{2}*X_{5}*X_{12} - X_{2}*X_{4}*X_{13}, X_{3}*X_{5}*X_{12} - X_{3}*X_{4}*X_{13}};
 A = R/fterms;
 F = map(A,S,dterms);
-degs = apply(flatten entries F.matrix, degree)
-degs = apply(degs, i -> if instance(i,InfiniteNumber) then {1} else i)
 time V = ker F;
 
-F = map(A,S,dterms,DegreeMap=>i->degs_i);
-graphIdeal(F, Degrees=>degs)
+time graphIdeal(F)
 
+-- 0.9.2 code
 gbTrace 3
 time V = image map(A,S,dterms); -- 53.71 sec, 0.9.2 habanero, 4/7/08
 class V
 betti ideal V
-
-
+-------------
+-- Now change degrees of S
 S=ZZ/101[y_{1}..y_{22}, Degrees=>{2,2,2,1,3,3,3,3,3,3,3,3,3,1,1,1,1,1,1,1,1,1}]
+F = map(A,S,dterms);
+time graphIdeal F
+time ker F;
 end
 
 subring1 = (F) -> (
