@@ -1,0 +1,5 @@
+http://arxiv.org/abs/0804.1503
+
+wget http://www.uni-math.gwdg.de/bothmer/rationality/ScorzaOcta.m2
+wget http://www.uni-math.gwdg.de/bothmer/rationality/plausibility.m2
+wget http://www.uni-math.gwdg.de/bothmer/rationality/proof.m2
