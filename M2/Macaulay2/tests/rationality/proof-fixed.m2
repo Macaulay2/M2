@@ -23,7 +23,7 @@ Fprec = ZZ/prec
 RC = ZZ[x_1,x_2,x_3,C,D]/ideal(D^prec,prec^3*D^0)
 
 -- define the covariants & some useful functions
-load"ScorzaOcta.m2"
+load "ScorzaOcta-fixed.m2"
 
 -- a random point
 g = {(1,matrix {{  7*x_1+3*x_2 +9*x_3}}), 
@@ -67,7 +67,7 @@ Fprec = ZZ/prec
 RC = ZZ[x_1,x_2,x_3,C,D]/ideal(D^prec,prec^3*D^0)
 
 -- define the covariants and some useful functions
-load"ScorzaOcta.m2"
+load "ScorzaOcta-fixed.m2"
 
 -- a random point
 --const = 9; g = apply(const,i->(1,matrix{{x_1,x_2,x_3}}*random(ZZ^3,ZZ^1)))
