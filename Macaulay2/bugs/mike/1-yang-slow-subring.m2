@@ -1,11 +1,66 @@
-R=ZZ/101[X_{1}..X_{13}];
-S=ZZ/101[y_{1}..y_{22}];
+subring1 = (F) -> (
+     -- assumptions: F is a ring map
+     --  F : R/J <--- S, R and S are polynomial rings
+     -- 
+     -- returns: ideal in S, with a GB.
+     A := target F;
+     time J := gens gb presentation A; -- should require no new GB
+     R := ring J;
+     S := source F;
+     degs := join(apply(gens R, x -> first degree x),apply(flatten entries F.matrix, x -> (d := degree x; if instance(d,List) then first d else 1)));
+     S1 := (coefficientRing A)[gens R, gens S, Degrees=>degs, MonomialOrder=>Eliminate numgens R, MonomialSize=>16];
+     F1 := substitute(F.matrix,S1);
+     time L = ideal substitute(J, S1) + ideal (F1 - genericMatrix(S1,S1_(numgens R),1,numgens S));
+     time ker1 := selectInSubring(1, gens gb(L, MaxReductionCount => 1000));
+     mapback := map(S,S1,join(toList(numgens A:0_S),gens S));
+     time ans := mapback ker1;
+     time forceGB ans;
+     time trim ideal ans
+     )
+
+subring2 = (F) -> (
+     -- assumptions: F is a ring map
+     --  F : R/J <--- S, R and S are polynomial rings
+     -- 
+     -- returns: ideal in S, with a GB
+     -- method: homogenize J,F,use hf.
+     A := target F;
+     time J := gens gb presentation A; -- should require no new GB
+     R := ring J;
+     S := source F;
+     degs := join(apply(gens R, x -> first degree x),apply(flatten entries F.matrix, x -> (d := degree x; if instance(d,List) then first d else 1)));
+     S1 := (coefficientRing A)[gens R, gens S, symbol h, Degrees=>append(degs,1), MonomialOrder=>Eliminate numgens R, MonomialSize=>16];
+     F1 := substitute(F.matrix,S1);
+     time L = ideal substitute(J, S1) + ideal (F1 - genericMatrix(S1,S1_(numgens R),1,numgens S));
+     time L = gens homogenize(L,S1_"h");
+
+     hf := poincare (target F)^1;
+     T := (ring hf)_0;
+     degsL := degrees source L;
+     hf = hf * product(numgens source L, i -> 1 - T^(degsL#i#0));
+     (cokernel L).cache.poincare = hf;
+
+     time ker1 := selectInSubring(1, gens gb(L, MaxReductionCount => 1000));
+     mapback := map(S,S1,join(toList(numgens A:0_S),gens S,{1_S}));
+     time ans := mapback ker1;
+     time forceGB ans;
+     time trim ideal ans     
+     )
+end
+restart
+load "1-yang-slow-subring.m2"
+
+kk = ZZ/101
+kk = QQ
+R=kk[X_{1}..X_{13}];
+S=kk[y_{1}..y_{22}];
 fterms = {7*X_{6} + 4*X_{6}*(X_{5}*X_{6} - X_{4}*X_{7}) + 3*X_{2}*X_{8} + 3*X_{3}*X_{8} + 5*X_{2}*X_{10} + 5*X_{3}*X_{10} + 4*X_{2}*X_{12} + 3*X_{3}*X_{12} + X_{1}*(10*X_{8} + 3*X_{10} + 7*X_{12}), 7*X_{5} + 2*X_{5}*(X_{5}*X_{6} - X_{4}*X_{7}) - 13*X_{7}*X_{8}*X_{9} + 18*X_{6}*X_{9}^2 - 7*X_{7}*X_{9}*X_{10} - 15*X_{7}*X_{8}*X_{11} + 24*X_{6}*X_{9}*X_{11} - 11*X_{7}*X_{10}*X_{11} + 20*X_{6}*X_{11}^2 - 11*X_{7}*X_{9}*X_{12} - 12*X_{7}*X_{11}*X_{12} - 12*X_{7}*X_{8}*X_{13} + 16*X_{6}*X_{9}*X_{13} - 8*X_{7}*X_{10}*X_{13} + 26*X_{6}*X_{11}*X_{13} - 19*X_{7}*X_{12}*X_{13} + 8*X_{6}*X_{13}^2, X_{5}*(3*X_{8} + 5*X_{10} + 4*X_{12}) - X_{4}*(3*X_{9} + 5*X_{11} + 4*X_{13}), (10*X_{1} + 3*X_{2} + 3*X_{3})*X_{5} + 18*X_{7}^2*X_{8} - 12*X_{6}*X_{7}*X_{9} + 13*X_{7}^2*X_{10} - 15*X_{6}*X_{7}*X_{11} + 13*X_{7}^2*X_{12} - 5*X_{6}*X_{7}*X_{13}, X_{5}*(3*X_{8} + 5*X_{10} + 3*X_{12}) - X_{4}*(3*X_{9} + 5*X_{11} + 3*X_{13}), (3*X_{1} + 5*X_{2} + 5*X_{3})*X_{5} + 9*X_{7}^2*X_{8} - 5*X_{6}*X_{7}*X_{9} + 2*X_{7}^2*X_{10} - 4*X_{6}*X_{7}*X_{11} + 14*X_{7}^2*X_{12} - 17*X_{6}*X_{7}*X_{13}, (7*X_{1} + 4*X_{2} + 3*X_{3})*X_{5} + 8*X_{7}^2*X_{8} - 17*X_{6}*X_{7}*X_{9} + 8*X_{7}^2*X_{10} - 16*X_{6}*X_{7}*X_{11} + 18*X_{7}^2*X_{12} - 13*X_{6}*X_{7}*X_{13}, X_{5}*(10*X_{8} + 3*X_{10} + 7*X_{12}) - X_{4}*(10*X_{9} + 3*X_{11} + 7*X_{13}), -7*X_{7} - 16*X_{7}*(X_{5}*X_{6} - X_{4}*X_{7}) - 3*X_{2}*X_{9} - 3*X_{3}*X_{9} - 5*X_{2}*X_{11} - 5*X_{3}*X_{11} - 4*X_{2}*X_{13} - 3*X_{3}*X_{13} - X_{1}*(10*X_{9} + 3*X_{11} + 7*X_{13}), -7*X_{4} - 6*X_{4}*(X_{5}*X_{6} - X_{4}*X_{7}) + 16*X_{7}*X_{8}^2 - 19*X_{6}*X_{8}*X_{9} + 28*X_{7}*X_{8}*X_{10} - 12*X_{6}*X_{9}*X_{10} + 16*X_{7}*X_{10}^2 - 5*X_{6}*X_{8}*X_{11} - 2*X_{6}*X_{10}*X_{11} + 10*X_{7}*X_{8}*X_{12} - 10*X_{6}*X_{9}*X_{12} + 24*X_{7}*X_{10}*X_{12} - 10*X_{6}*X_{11}*X_{12} + 18*X_{7}*X_{12}^2 - 7*X_{6}*X_{8}*X_{13} - 13*X_{6}*X_{10}*X_{13} - 10*X_{6}*X_{12}*X_{13}, -((10*X_{1} + 3*X_{2} + 3*X_{3})*X_{4}) - 12*X_{6}*X_{7}*X_{8} + 6*X_{6}^2*X_{9} - 10*X_{6}*X_{7}*X_{10} + 8*X_{6}^2*X_{11} - 10*X_{6}*X_{7}*X_{12} + 11*X_{6}^2*X_{13}, -((3*X_{1} + 5*X_{2} + 5*X_{3})*X_{4}) - 13*X_{6}*X_{7}*X_{8} + 11*X_{6}^2*X_{9} - 12*X_{6}*X_{7}*X_{10} + 10*X_{6}^2*X_{11} - 13*X_{6}*X_{7}*X_{12} + 14*X_{6}^2*X_{13}, -((7*X_{1} + 4*X_{2} + 3*X_{3})*X_{4}) - 20*X_{6}*X_{7}*X_{8} + 13*X_{6}^2*X_{9} - 13*X_{6}*X_{7}*X_{10} + 16*X_{6}^2*X_{11} - 3*X_{6}*X_{7}*X_{12} + 16*X_{6}^2*X_{13}};
 dterms = {X_{7}*X_{8} - X_{6}*X_{9}, X_{7}*X_{10} - X_{6}*X_{11}, X_{7}*X_{12} - X_{6}*X_{13}, X_{5}*X_{6} - X_{4}*X_{7}, X_{1}*X_{9}*X_{10} - X_{1}*X_{8}*X_{11}, X_{2}*X_{9}*X_{10} - X_{2}*X_{8}*X_{11}, X_{3}*X_{9}*X_{10} - X_{3}*X_{8}*X_{11}, X_{1}*X_{9}*X_{12} - X_{1}*X_{8}*X_{13}, X_{2}*X_{9}*X_{12} - X_{2}*X_{8}*X_{13}, X_{3}*X_{9}*X_{12} - X_{3}*X_{8}*X_{13}, X_{1}*X_{11}*X_{12} - X_{1}*X_{10}*X_{13}, X_{2}*X_{11}*X_{12} - X_{2}*X_{10}*X_{13}, X_{3}*X_{11}*X_{12} - X_{3}*X_{10}*X_{13}, X_{1}*X_{5}*X_{8} - X_{1}*X_{4}*X_{9}, X_{2}*X_{5}*X_{8} - X_{2}*X_{4}*X_{9}, X_{3}*X_{5}*X_{8} - X_{3}*X_{4}*X_{9}, X_{1}*X_{5}*X_{10} - X_{1}*X_{4}*X_{11}, X_{2}*X_{5}*X_{10} - X_{2}*X_{4}*X_{11}, X_{3}*X_{5}*X_{10} - X_{3}*X_{4}*X_{11}, X_{1}*X_{5}*X_{12} - X_{1}*X_{4}*X_{13}, X_{2}*X_{5}*X_{12} - X_{2}*X_{4}*X_{13}, X_{3}*X_{5}*X_{12} - X_{3}*X_{4}*X_{13}};
 A = R/fterms;
 F = map(A,S,dterms);
 time V = ker F;
-
+time subring1 F;
+time subring2 F;
 time graphIdeal(F)
 
 -- 0.9.2 code
@@ -21,13 +76,6 @@ time graphIdeal F
 time ker F;
 end
 
-subring1 = (F) -> (
-     -- assumptions: F is a ring map
-     --  F : R/J <--- S, R and S are polynomial rings
-     -- 
-     -- returns: ideal in S, with a GB.
-     
-     )
 
 -- Method #1.  Direct GB computation with all variables
 R=ZZ/101[X_{1}..X_{13}, y_{1}..y_{22}, MonomialSize=>8, MonomialOrder=>Eliminate 13];

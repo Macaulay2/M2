@@ -18,4 +18,13 @@ assocModel = (m,n) -> (
      L3 := {sum flatten toList apply(1..m, i -> toList apply(1..n, j -> i*j*y_(i,j)))};
      substitute(transpose jacobian matrix {join(L1,L2,L3)}, ZZ))
 
-LLL syz assocModel(4,4)
+load "toric.m2"
+B = LLL syz assocModel(4,4)
+R = ZZ/101[x_1..x_16]
+gb(oo,Algorithm=>Toric)
+
+load "toric.m2"
+A = assocModel(4,5)
+B = LLL syz A
+S = ZZ/32003[y_(1,1)..y_(4,5)]
+J = toric(B,S)
