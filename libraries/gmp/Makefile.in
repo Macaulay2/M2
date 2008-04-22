@@ -7,6 +7,9 @@ ifeq (@SHARED@,no)
 CONFIGOPTIONS += --disable-shared
 endif
 ifeq (Darwin i386,$(shell uname -sm))
+# on indigo.math.cornell.edu running autoconf 2.60 or 2.61 makes gmp compile a
+# copy of ___gmpz_abs into every *.o file, and the linker gives and error
+# message!
 PRECONFIGURE = autoconf && (cd mpn/x86 && rm -fv *dive_1* */*dive_1* */*/*dive_1* */*mode1o* */*/*mode1o*) || false
 else 
 PRECONFIGURE = autoconf
