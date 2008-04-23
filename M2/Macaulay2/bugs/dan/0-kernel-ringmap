@@ -1,0 +1,20 @@
+fix kernel(RingMap):
+
+From: Michael Stillman <mike@math.cornell.edu>
+To: dan@math.uiuc.edu
+In-Reply-To: <200804101301.m3AD1Iot006150@u123.math.uiuc.edu>
+Subject: Re: another interesting example
+Date: Thu, 10 Apr 2008 09:48:24 -0400
+
+...
+
+The other strategy that might be good is this:  To compute the kernel  
+of a ringmap R/J <--- S, given by f1,...,fr, in the case when J,  
+f1, ..., fr are not homogeneous, do the following:
+  a. homogenize a GB of J, and f1, ..., fr, and create the ideal(Jh,  
+f1h-y1, ..., frh-yr).  Compute the HF of Jh, and then set the HF hint  
+of this new ideal to: (poincare Jh) * product(1..r, i -> (1- 
+t^(deg(fih)))).  After doing the computation, dehomogenize, and do  
+'forceGB' on the answer.
+
+...
