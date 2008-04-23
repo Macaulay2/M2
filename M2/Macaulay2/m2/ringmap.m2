@@ -237,6 +237,8 @@ kernel RingMap := Ideal => opts -> (cacheValue symbol kernel) (
 
 coimage RingMap := QuotientRing => f -> f.source / kernel f
 
+image RingMap := f -> error "image of RingMap not implemented: use coimage instead" 
+
 RingMap * RingMap := RingMap => (g,f) -> (
      if source g =!= target f then error "ring maps not composable";
      m := g matrix f;
