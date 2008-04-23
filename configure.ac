@@ -280,6 +280,7 @@ AC_SUBST(OPTIMIZE,yes) AC_ARG_ENABLE(optimize, AS_HELP_STRING(--disable-optimize
 AC_SUBST(DEBUG,no)     AC_ARG_ENABLE(debug, AS_HELP_STRING(--enable-debug,enable debugging (and disable stripping)), DEBUG=$enableval)
 AC_SUBST(ENCAP,yes)    AC_ARG_ENABLE(encap, AS_HELP_STRING(--disable-encap,do not encapsulate file in a subdirectory), ENCAP=$enableval)
 AC_SUBST(XCODE,no)     AC_ARG_ENABLE(xcode, AS_HELP_STRING(--enable-xcode,create Macaulay2/d/interpret.a for use with xcode), XCODE=$enableval)
+AC_SUBST(FROBBY,no)    AC_ARG_ENABLE(frobby, AS_HELP_STRING(--enable-frobby,[download, compile, and link with frobby library]), FROBBY=$enableval)
 AC_ARG_ENABLE(altivec, AS_HELP_STRING(--enable-altivec,compile with "-faltivec" option), 
     ALTIVEC=$enableval
     LDFLAGS="$LDFLAGS -faltivec"
@@ -480,8 +481,8 @@ AC_SUBST(BUILTLIBS,)
 #  factory needs ntl and gmp, libfac needs factory
 #  lapack includes blas, makes both libblas and liblapack
 #  mpfr needs gmp
-AC_SUBST(LIBLIST, "gc    gdbm    gmp    mpfr    readline    ntl    factory        libfac lapack")
-AC_SUBST(LIBFILES,"libgc libgdbm libgmp libmpfr libreadline libntl libcf libcfmem libfac libblas liblapack")
+AC_SUBST(LIBLIST, "gc    gdbm    gmp    mpfr    readline    ntl    factory        libfac         lapack    frobby")
+AC_SUBST(LIBFILES,"libgc libgdbm libgmp libmpfr libreadline libntl libcf libcfmem libfac libblas liblapack libfrobby")
 for i in $LIBLIST
 do eval BUILD_$i=no
 done
@@ -494,6 +495,9 @@ AC_ARG_ENABLE(build-libraries, AS_HELP_STRING(--enable-build-libraries=...,list 
 	    *) AC_MSG_ERROR(unrecognized library name: $i) ;;
        esac
     done])
+
+BUILD_frobby=$FROBBY
+test $BUILD_frobby = yes && BUILTLIBS="-lfrobby $BUILTLIBS"
 
 AC_LANG(C)
 AC_SEARCH_LIBS(tgoto,ncurses curses)

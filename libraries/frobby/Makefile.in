@@ -1,0 +1,16 @@
+VERSION = 0.7.2
+TARDIR = frobby_v$(VERSION)
+TARFILE := frobby_v$(VERSION).tar.gz
+URL = http://www.math.uiuc.edu/Macaulay2/Extra
+CONFIGURECMD = :
+INSTALLCMD = :
+LIBFILE = $(LIBRARIESDIR)/lib/libfrobby.a
+include ../Makefile.library
+Makefile : @srcdir@/Makefile.in ; cd ../.. && ./config.status libraries/frobby/Makefile
+all ::
+	ar ru $(LIBFILE) $(BUILDDIR)/bin/release/*.o
+	ranlib  $(LIBFILE)
+
+# Local Variables:
+# compile-command: "make -C $M2BUILDDIR/libraries/frobby "
+# End:

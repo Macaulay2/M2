@@ -35,6 +35,7 @@ libraries/ntl/Makefile
 libraries/libtool/Makefile
 libraries/factory/Makefile
 libraries/libfac/Makefile
+libraries/frobby/Makefile
 libraries/lapack/Makefile
 libraries/blas/Makefile
 Macaulay2/Makefile
