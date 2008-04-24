@@ -1,7 +1,10 @@
+VPATH = @srcdir@
 VERSION = 0.7.2
+PATCHFILE = patch-$(VERSION)
 TARDIR = frobby_v$(VERSION)
 TARFILE := frobby_v$(VERSION).tar.gz
 URL = http://www.math.uiuc.edu/Macaulay2/Extra
+BUILDOPTIONS = LDFLAGS="$(LDFLAGS)"
 CONFIGURECMD = :
 INSTALLCMD = :
 LIBFILE = $(LIBRARIESDIR)/lib/libfrobby.a

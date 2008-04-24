@@ -1,0 +1,14 @@
+diff -ur --exclude=configure tmp/frobby_v0.7.2/Makefile frobby_v0.7.2/Makefile
+--- tmp/frobby_v0.7.2/Makefile	2008-03-10 11:06:46.000000000 -0500
++++ frobby_v0.7.2/Makefile	2008-04-24 08:32:46.000000000 -0500
+@@ -25,8 +25,8 @@
+   TermGrader.cpp Fourti2IOHandler.cpp NullIOHandler.cpp Minimizer.cpp	\
+   AlexanderDualAction.cpp
+ 
+-ldflags = -lgmpxx -lgmp
+-cflags = -Wall -ansi -pedantic -Wextra -Wno-uninitialized	\
++ldflags = $(LDFLAGS) -lgmpxx -lgmp
++cflags = $(CFLAGS) -Wall -ansi -pedantic -Wextra -Wno-uninitialized	\
+          -Wno-unused-parameter -Werror 
+ 
+ ifndef MODE
