@@ -86,6 +86,7 @@ I = ideal (-X_0*X_9-X_1*X_12+X_18,
      -X_8*X_11-X_7*X_14-X_8*X_14-X_6*X_17-X_7*X_17-X_8*X_17+X_35)
 gbTrace=3
 hf = poincare ideal(X_18..X_35)
-gb(I, Hilbert=>hf, DegreeLimit=>10);
+time gb(I, Hilbert=>hf, DegreeLimit=>10);
+time gb(I, Hilbert=>hf);
 
 end
