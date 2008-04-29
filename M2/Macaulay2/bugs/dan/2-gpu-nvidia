@@ -1,0 +1,49 @@
+From: Dave Bayer <bayer@cpw.math.columbia.edu>
+Date: April 29, 2008 8:37:24 AM EDT
+To: Mike Stillman <mike@math.cornell.edu>
+Cc: David Eisenbud <de@msri.org>
+Subject: Re: Stream Processing
+
+The mother lode:
+
+       General-Purpose Computation Using Graphics Hardware
+       http://www.gpgpu.org/
+
+On Apr 29, 2008, at 8:28 AM, Dave Bayer wrote:
+
+> Mike,
+>
+> Ever heard of stream processing? Some of the hippest massive  
+> computing projects are going that way. I was at an extreme  
+> computing meeting at MSRI last fall, and asked about using graphics  
+> cards as parallel devices, expecting everyone including the speaker  
+> to look at me like I was from Mars. Instead, the speaker simply  
+> hadn't mentioned it, they were all over this, for some astronomy  
+> computations.
+>
+> Then Dan Bienstock, in our OR department, was very interested in  
+> what I had learned from our "Art of..." book we're reading, the  
+> atomic lock-free instructions were news to him even though he's  
+> been doing pthreads parallel for years.  But he brought up stream  
+> processing as a "back at you!" answer. Cool.
+>
+> The wikipedia page is rather lame, but a start, with links:
+>
+> 	http://en.wikipedia.org/wiki/Stream_processing
+>
+> This link looks promising:
+>
+> 	http://shallows.sourceforge.net/
+>
+> Despite the emphasis on floating point, we should wonder what  
+> computations we do could use this. Anything in M2? To answer this  
+> we need to understand the model, and think creatively about  
+> appropriating floating point for other purposes.
+>
+> What puts this all together for me is a gamer motherboard like
+>
+> 	DFI LanParty P35-T2R
+>
+> that seems to nicely support THREE hard core graphics cards on one  
+> board, and has the best overclocking specs on the market. It's  
+> built to handle the bus traffic.
