@@ -1,6 +1,7 @@
 -- Here are some examples and tests of our own.
 
 compactMatrixForm = false
+path = prepend("../", path)
 needsPackage "Schubert1"
 F = flagBundle ( {4,2}, VariableNames => {,c} )
 AF = intersectionRing F

@@ -1,4 +1,5 @@
 compactMatrixForm = false
+path = prepend("../", path)
 loadPackage "Schubert1"
 
 P3 = flagBundle({3,1},BundleNames => {R,Q})
