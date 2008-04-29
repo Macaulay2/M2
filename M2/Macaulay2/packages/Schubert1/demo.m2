@@ -1,6 +1,8 @@
 -- In this file we translate many examples from Schubert into Schubert1
 -- We include section III (EXAMPLES) from schubertmanual.txt in comments.
 
+path = prepend("../", path)
+
 loadPackage "Schubert1";
 
 ---- III.  EXAMPLES:

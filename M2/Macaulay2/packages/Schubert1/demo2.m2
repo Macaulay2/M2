@@ -1,5 +1,7 @@
 -- Here are some more demos based on examples from classic schubert, not from the Schubert manual, some with Schubert code in comments
 
+path = prepend("../", path)
+
 loadPackage "Schubert1"
 
 -- # of elliptic cubics on a sextic 4 fold, a schubert-classic example from Rahul:
