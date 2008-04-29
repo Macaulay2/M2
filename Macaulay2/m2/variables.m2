@@ -68,6 +68,12 @@ Symbol _ Thing = (x,i,e) -> (
      x'_i = e)
 installMethod(symbol <-, IndexedVariable, (xi,e) -> ((x,i) -> x_i = e) toSequence xi)
 
+installMethod(symbol <-, Sequence, (x,y) -> (
+	  if not instance(y,Sequence) then error "expected a sequence of values";
+	  if #x =!= #y then error ("expected ", toString (#x), " values, but encountered ", toString (#y));
+	  scan(x,y,(i,j) -> i <- j);
+	  y))
+
 IndexedVariable .. IndexedVariable := Sequence => (v,w) -> (
      if v#0 =!= w#0 then error("unmatching base names in ", toString v, " .. ", toString w);
      apply(v#1 .. w#1, s -> v#0_s))	  

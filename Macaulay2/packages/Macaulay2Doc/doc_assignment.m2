@@ -99,6 +99,22 @@ document {
 	       value u
 	  ///,
 	  ),
+     SYNOPSIS (
+	  Heading => "parallel assignment",
+	  Usage => "x <- e",
+	  Inputs => { "x" => Sequence, "e" => Sequence },
+	  Consequences => {
+	       { "assuming the values of ", TT "x", " and of ", TT "e", " are ", ofClass Sequence, ", with the same length,
+		    each member of ", TT "e", " is assigned to the corresponding member of ", TT "x" } },
+	  Outputs => { { "the value of the expression is the value of ", TT "e" } },
+	  PARA { "This assignment method is pre-installed." },
+	  EXAMPLE lines ///
+	       (symbol a, symbol b) <- (3,4)
+	       a
+	       (symbol r_1 .. symbol r_3) <- (5,6,7)
+	       r_2
+	  ///,
+	  ),
      SeeAlso => {"=", ":=", (symbol <-, IndexedVariable)}
      }
 
