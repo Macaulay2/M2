@@ -1,6 +1,6 @@
 -- Here are some more demos based on examples from classic schubert, not from the Schubert manual, some with Schubert code in comments
 
-loadPackage "Schubert2"
+loadPackage "Schubert1"
 
 -- # of elliptic cubics on a sextic 4 fold, a schubert-classic example from Rahul:
 -- grass(3,6,c):

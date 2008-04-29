@@ -1,5 +1,5 @@
 newPackage(
-	"Schubert2",
+	"Schubert1",
 	AuxiliaryFiles => true,
     	Version => "0.1",
     	Date => "May, 2007",
@@ -631,7 +631,7 @@ schubertCycle(FlagBundle,List) := (X,b) -> (
 beginDocumentation()
 
 document {
-     Key => Schubert2,
+     Key => Schubert1,
      "This package is a preliminary (undocumented) package intended to provide the same functionality
      as the package ", EM "Schubert", " written for an old version of Maple."
      }

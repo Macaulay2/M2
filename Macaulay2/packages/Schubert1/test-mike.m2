@@ -1,5 +1,5 @@
 -- Mike's demo
-loadPackage "Schubert2"
+loadPackage "Schubert1"
 R = QQ[c1,c2,c3,c4,Degrees=>{1,2,3,4},MonomialOrder=>GRevLex=>{1,2,3,4}]
 X = abstractVariety(4,R)
 F = abstractSheaf(X, Rank => 4, ChernClass => 1+c1+c2+c3+c4)
@@ -18,7 +18,7 @@ netList toList oo
 det F
 schur({2},F)
 -- restart
--- loadPackage "Schubert2"
+-- loadPackage "Schubert1"
 R = QQ[c3,c2,c1,Degrees=>{3,2,1},MonomialOrder=>RevLex,Global=>false]
 A = R/truncate(4,ideal vars R)
 X = abstractVariety(3, A)
@@ -49,7 +49,7 @@ TEST /// -- segre
 ///
 
 -- restart
--- loadPackage "Schubert2"
+-- loadPackage "Schubert1"
 R = QQ[c4,c3,c2,c1,Degrees=>{4,3,2,1},MonomialOrder=>RevLex,Global=>false]
 A = R/truncate(10,ideal vars R)
 X = abstractVariety(9, A)
@@ -89,7 +89,7 @@ F % I
 
 -- Testing schur functions of bundles
 -- restart
--- loadPackage "Schubert2"
+-- loadPackage "Schubert1"
 R = QQ[c4,c3,c2,c1,Degrees=>{4,3,2,1},MonomialOrder=>RevLex,Global=>false]
 A = R/truncate(5,ideal vars R)
 X = abstractVariety(4, A)
@@ -124,7 +124,7 @@ ch symm(3,F) == ch schur({3},F)
 
 -- let's try Schubert's Symm code:
 restart
-loadPackage "Schubert2"
+loadPackage "Schubert1"
 --  if nargs=0 then RETURN(`usage: Symm(p,A)`) fi;
 --  if not(assigned(SYMM_[A])) then
 --       r:=rank(A):
@@ -194,7 +194,7 @@ Symm(RingElement,AbstractSheaf) := (n,F) -> (
      )
 
 restart
-loadPackage "Schubert2"
+loadPackage "Schubert1"
 R = (QQ[n])[c3,c2,c1,Degrees=>{3,2,1},MonomialOrder=>RevLex,Global=>false]
 A = R/truncate(4,ideal vars R)
 X = abstractVariety(3, A)
@@ -208,7 +208,7 @@ time for d from 1 to 100 do expp substitute(Sn,{n=>d})
 
 -- let's try Schubert's Symm code:
 restart
-loadPackage "Schubert2"
+loadPackage "Schubert1"
 --  if nargs=0 then RETURN(`usage: Symm(p,A)`) fi;
 --  if not(assigned(SYMM_[A])) then
 --       r:=rank(A):
@@ -279,7 +279,7 @@ Symm(RingElement,AbstractSheaf) := (n,F) -> (
 
 
 restart
-loadPackage "Schubert2"
+loadPackage "Schubert1"
 R = (QQ[n])[c3,c2,c1,Degrees=>{3,2,1},MonomialOrder=>RevLex,Global=>false]
 A = R/truncate(4,ideal vars R)
 X = abstractVariety(3, A)
