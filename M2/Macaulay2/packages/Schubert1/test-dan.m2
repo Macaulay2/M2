@@ -1,5 +1,5 @@
 compactMatrixForm = false
-loadPackage "Schubert2"
+loadPackage "Schubert1"
 
 P3 = flagBundle({3,1},BundleNames => {R,Q})
 p = P3.StructureMap

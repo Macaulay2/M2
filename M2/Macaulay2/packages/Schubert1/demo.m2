@@ -1,7 +1,7 @@
--- In this file we translate many examples from Schubert into Schubert2
+-- In this file we translate many examples from Schubert into Schubert1
 -- We include section III (EXAMPLES) from schubertmanual.txt in comments.
 
-loadPackage "Schubert2";
+loadPackage "Schubert1";
 
 ---- III.  EXAMPLES:
 ---- 
