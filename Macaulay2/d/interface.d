@@ -648,7 +648,7 @@ export rawLocalRing(e:Expr):Expr := (			    -- localization at a prime ideal
      else WrongNumArgs(2));
 setupfun("rawLocalRing",rawLocalRing);
 
-export rawQuotientRing(e:Expr):Expr := (			    -- localization at a prime ideal
+export rawQuotientRing(e:Expr):Expr := (
      when e is a:Sequence do 
      if length(a) == 2 then 
      when a.0 is R:RawRing do 

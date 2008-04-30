@@ -835,6 +835,8 @@ enum ComputationStatusCode F4GB::start_computation(StopConditions &stop_)
       fprintf(stderr, "total time for gauss: %f\n", clock_time);
     }
 
+  extern long nsaved_unneeded;
+  fprintf(stderr, "number of spairs removed by criterion = %ld\n", nsaved_unneeded);
   return is_done;
 }
 

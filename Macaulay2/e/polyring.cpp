@@ -22,9 +22,16 @@
 
 PolyRing *PolyRing::trivial_poly_ring = 0; // Will be ZZ[]
 
+void PolyRing::clear() 
+{
+  delete gb_ring_; 
+  gb_ring_ = 0; 
+  PolynomialRing::clear(); 
+}
+
 PolyRing::~PolyRing()
 {
-  // Nothing to do
+  clear();
 }
 
 const PolyRing *PolyRing::get_trivial_poly_ring()

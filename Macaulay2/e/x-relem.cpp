@@ -23,6 +23,26 @@
 #include "../d/M2mem.h"
 #include "exceptions.hpp"
 
+static long polyrings_nfinalized = 0;
+static long polyrings_nremoved = 0;
+
+void remove_polyring(void *p, void *cd)
+{
+  PolynomialRing *G = static_cast<PolynomialRing *>(p);
+  polyrings_nremoved++;
+  if (gbTrace>=3)
+    fprintf(stderr, "\nremoving polynomial ring %ld at %p\n",polyrings_nremoved, G);
+  G->clear();
+}
+
+void intern_polyring(const PolynomialRing *G)
+{
+  GC_REGISTER_FINALIZER(const_cast<PolynomialRing *>(G),remove_polyring,0,0,0);
+  polyrings_nfinalized++;
+  if (gbTrace>=3)
+    fprintf(stderr, "\n   -- registering polynomial ring %ld at %p\n", polyrings_nfinalized, (void *)G);
+}
+
 unsigned long IM2_Ring_hash(const Ring *R)
 {
   return R->get_hash_value();
@@ -100,7 +120,9 @@ const RingOrNull *IM2_Ring_polyring(const Ring *K, const Monoid *M)
 //       return PolyQQ::create(P);
 //     }
 #endif
-	  return PolyRing::create(K,M);
+       const PolyRing *result = PolyRing::create(K,M);
+       intern_polyring(result);
+       return result;
      }
      catch (exc::engine_error e) {
 	  ERROR(e.what());
@@ -128,9 +150,12 @@ const RingOrNull *IM2_Ring_skew_polyring(const Ring *R,
 	      ERROR("expected a polynomial ring");
 	      return 0;
 	    }
-	  return SkewPolynomialRing::create(P->getCoefficients(),
-					    P->getMonoid(),
-					    skewvars);
+	  SkewPolynomialRing *result =  
+             SkewPolynomialRing::create(P->getCoefficients(),
+					P->getMonoid(),
+					skewvars);
+	  intern_polyring(result);
+	  return result;
      }
      catch (exc::engine_error e) {
 	  ERROR(e.what());
@@ -162,11 +187,13 @@ const RingOrNull *IM2_Ring_weyl_algebra(const Ring *R,
 	      ERROR("expected a polynomial ring");
 	      return 0;
 	    }
-	  return WeylAlgebra::create(P->getCoefficients(),
-				     P->getMonoid(),
-				     diff_vars, 
-				     comm_vars, 
-				     homog_var);
+	  WeylAlgebra *result = WeylAlgebra::create(P->getCoefficients(),
+						    P->getMonoid(),
+						    diff_vars, 
+						    comm_vars, 
+						    homog_var);
+	  intern_polyring(result);
+	  return result;
      }
      catch (exc::engine_error e) {
 	  ERROR(e.what());
@@ -184,7 +211,9 @@ const RingOrNull *IM2_Ring_solvable_algebra(const Ring *R,
 	      ERROR("expected a polynomial ring");
 	      return 0;
 	    }
-	  return SolvableAlgebra::create(P, Q);
+	  SolvableAlgebra *result = SolvableAlgebra::create(P, Q);
+	  intern_polyring(result);
+	  return result;
      }
      catch (exc::engine_error e) {
 	  ERROR(e.what());
@@ -258,7 +287,9 @@ const RingOrNull * IM2_Ring_quotient(const Ring *R,
 	      ERROR("expected a polynomial ring");
 	      return 0;
 	    }
-	  return PolynomialRing::create_quotient(P,I);
+	  PolynomialRing *result = PolynomialRing::create_quotient(P,I);
+	  intern_polyring(result);
+	  return result;
      }
      catch (exc::engine_error e) {
 	  ERROR(e.what());
@@ -285,7 +316,9 @@ const RingOrNull * IM2_Ring_quotient1(const Ring *R,
 	      ERROR("encountered quotient polynomial ring");
 	      return 0;
 	    }
-	  return PolyRingQuotient::create_quotient(R1,B1);
+	  PolynomialRing *result = PolyRingQuotient::create_quotient(R1,B1);
+	  intern_polyring(result);
+	  return result;
      }
      catch (exc::engine_error e) {
 	  ERROR(e.what());
@@ -302,7 +335,9 @@ const RingOrNull *IM2_Ring_schur(const Ring *R)
 	      ERROR("Schur ring construction: expected a polynomial ring");
 	      return 0;
 	    }
-	  return SchurRing::create(P);
+	  SchurRing *result = SchurRing::create(P);
+	  intern_polyring(result);
+	  return result;
      }
      catch (exc::engine_error e) {
 	  ERROR(e.what());
