@@ -639,7 +639,15 @@ void varpower::radical(const int *a, intarray &result)
   copy_to(staticVP, pairs - staticVP->pairs, result);
 }
 
-
+bool varpower::is_pure_power(const int *a, int &v, int &e)
+  // if a is a pure power, then set v, e so that v^e is a.
+  // otherwise return false.
+{
+  if (*a != 3) return false;
+  v = a[1];
+  e = a[2];
+  return true;
+}
 
 // Local Variables:
 // compile-command: "make -C $M2BUILDDIR/Macaulay2/e "

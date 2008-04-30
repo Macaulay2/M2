@@ -802,6 +802,27 @@ int MonomialIdeal::is_borel() const
   return 1;
 }
 
+bool MonomialIdeal::is_one() const
+{
+  if (length() != 1) return false;
+  if (mi->var != 0 || mi->exp != 0) return false;
+  return true;
+}
+
+int MonomialIdeal::n_pure_powers() const
+    // Is each variable to some power in the monideal?
+{
+  int npure = 0;
+  int v,e;
+  for (Index<MonomialIdeal> i = first(); i.valid(); i++)
+    {
+      int *m = operator[](i)->monom().raw();
+      if (varpower::is_pure_power(m,v,e))
+	npure++;
+    }
+  return npure;
+}
+
 // Other routines to add:
 //   primary_decomposition(J)
 //   partition(J)
