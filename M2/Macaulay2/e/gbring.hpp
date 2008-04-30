@@ -84,7 +84,6 @@ protected:
   bool is_solvable;
   const SolvableAlgebra *solvable;
 
-  virtual ~GBRing();
 protected:
   ring_elem _one;
 
@@ -158,6 +157,8 @@ public:
   static GBRing * create_SolvableAlgebra(const Ring *K0, 
 					 const Monoid *M0, 
 					 const SolvableAlgebra *R);
+
+  virtual ~GBRing();
   
   const Monoid * get_flattened_monoid() const { return M; }
   const Ring * get_flattened_coefficients() const { return K; }

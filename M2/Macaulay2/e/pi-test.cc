@@ -1,6 +1,7 @@
 #include "pi.h"
 #include <stdlib.h>
 #include <assert.h>
+#include <iostream>
 
 #ifdef DEBUG
 void trap () {}
@@ -22,6 +23,8 @@ template <typename T, typename U, int bits_per_fld, field_type type, int numflds
 	  T dest[numflds+1], dest2[numflds+1], dest3[numflds+1];
 	  U src[numflds+1], src2[numflds+1], src3[numflds+1];
 	  try {
+	    for (int i=0; i<10; i++) cout << A::random_U() << " ";
+	    cout << endl;
 	       for (int i = 0; i <= numflds; i++) src[i] = A::random_U();
 	       src2[numflds] = src[numflds];
 	       A::pack(dest,src,numflds);
@@ -77,23 +80,23 @@ template <typename T, typename U, int bits_per_fld> struct tester3 {
 
 struct tester4 {
      static void run() __attribute__ ((noinline)) {
-	  tester3<uint32_t,int32_t,1>::run();
-	  tester3<uint32_t,int32_t,2>::run();
-	  tester3<uint32_t,int32_t,3>::run();
-	  tester3<uint32_t,int32_t,7>::run();
-	  tester3<uint32_t,int32_t,8>::run();
-	  tester3<uint32_t,int32_t,16>::run();
-	  tester3<uint32_t,int32_t,31>::run();
-	  tester3<uint32_t,int32_t,32>::run();
+       //	  tester3<uint32_t,int32_t,1>::run();
+       //	  tester3<uint32_t,int32_t,2>::run();
+       //	  tester3<uint32_t,int32_t,3>::run();
+       //	  tester3<uint32_t,int32_t,7>::run();
+       //	  tester3<uint32_t,int32_t,8>::run();
+       //	  tester3<uint32_t,int32_t,16>::run();
+       //	  tester3<uint32_t,int32_t,31>::run();
+       //	  tester3<uint32_t,int32_t,32>::run();
 
-	  tester3<uint32_t,uint32_t,1>::run();
-	  tester3<uint32_t,uint32_t,2>::run();
-	  tester3<uint32_t,uint32_t,3>::run();
-	  tester3<uint32_t,uint32_t,7>::run();
-	  tester3<uint32_t,uint32_t,8>::run();
-	  tester3<uint32_t,uint32_t,16>::run();
-	  tester3<uint32_t,uint32_t,31>::run();
-	  tester3<uint32_t,uint32_t,32>::run();
+       //	  tester3<uint32_t,uint32_t,1>::run();
+       //	  tester3<uint32_t,uint32_t,2>::run();
+       //	  tester3<uint32_t,uint32_t,3>::run();
+       //	  tester3<uint32_t,uint32_t,7>::run();
+       //	  tester3<uint32_t,uint32_t,8>::run();
+       //	  tester3<uint32_t,uint32_t,16>::run();
+       //	  tester3<uint32_t,uint32_t,31>::run();
+       //	  tester3<uint32_t,uint32_t,32>::run();
 
 	  tester3<uint64_t,int32_t,1>::run();
 	  tester3<uint64_t,int32_t,2>::run();

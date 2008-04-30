@@ -77,22 +77,8 @@ MonomialTableZZ *MonomialTableZZ::make(int nvars)
 
 MonomialTableZZ::~MonomialTableZZ()
 {
-#if 0
-//   /* Loop through each component, and remove all mon_terms */
-//   for (unsigned int i=1; i<_head.size(); i++)
-//     {
-//       mon_term *t = _head[i];
-//       while (t->_next != t)
-// 	{
-// 	  mon_term *tmp = t->_next;
-// 	  tmp->_prev->_next = tmp->_next;
-// 	  tmp->_next->_prev = t;
-// 	  deleteitem(tmp);
-// 	}
-//       _head[i] = 0;
-//     }
-//   _count = 0;
-#endif
+  // Nothing needs to be freed: garbage collection will clean
+  // it all out.
 }
 
 int MonomialTableZZ::find_term_divisors(int max,

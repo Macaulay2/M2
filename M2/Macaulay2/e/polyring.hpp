@@ -44,6 +44,7 @@ protected:
 
   int *_EXP1, *_EXP2, *_EXP3;
 public:
+  virtual void clear();
 
   static const PolyRing *get_trivial_poly_ring();
 

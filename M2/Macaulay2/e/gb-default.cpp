@@ -504,6 +504,9 @@ void gbA::spair_text_out(buffer &o, spair *p)
  * S-pair heuristics *****
  *************************/
 
+static unsigned long ncalls = 0;
+static unsigned long nloops = 0;
+static unsigned long nsaved_unneeded = 0;
 bool gbA::pair_not_needed(spair *p, gbelem *m)
 {
   /* Check the criterion: in(m) divides lcm(p).
@@ -526,7 +529,8 @@ bool gbA::pair_not_needed(spair *p, gbelem *m)
   p1exp = gb[first]->lead;
   p2exp = gb[second]->lead; /* If a ring pair, this should index into gb array */
 
-  for (i=0; i<_nvars; i++)
+  ncalls++;
+  for (i=0; i<_nvars; i++, nloops++) 
     if (mexp[i] > lcm[i]) return false;
       
   firstok = false;
@@ -559,6 +563,7 @@ void gbA::remove_unneeded_pairs(int id)
   while (p->next != 0)
     if (pair_not_needed(p->next, m))
       {
+	nsaved_unneeded++;
 	spair *tmp = p->next;
 	p->next = tmp->next;
 	tmp->next = 0;
@@ -2378,10 +2383,20 @@ void gbA::do_computation()
 
 void gbA::start_computation()
 {
+  ncalls = 0;
+  nloops = 0;
+  nsaved_unneeded = 0;
   do_computation();
-  if (gbTrace >= 1) show_mem_usage();
-  
-  return;
+  if (gbTrace >= 1) 
+    {
+      show_mem_usage();
+      if (gbTrace >= 3)
+	{
+	  fprintf(stderr, "ncalls = %ld\n", ncalls);
+	  fprintf(stderr, "nloop = %ld\n", nloops);
+	  fprintf(stderr, "nsaved = %ld\n", nsaved_unneeded);
+	}
+    }
 }
 
 

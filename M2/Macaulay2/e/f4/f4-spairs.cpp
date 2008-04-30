@@ -3,6 +3,8 @@
 #include "f4-spairs.hpp"
 #include "monsort.hpp"
 
+long nsaved_unneeded = 0;
+
 F4SPairSet::F4SPairSet(const MonomialInfo *M0, const gb_array &gb0)
   : M(M0),
     gb(gb0),
@@ -176,7 +178,7 @@ spair *F4SPairSet::get_next_pair()
 int F4SPairSet::find_new_pairs(bool remove_disjoints)
   // returns the number of new pairs found
 {
-  remove_unneeded_pairs();
+  nsaved_unneeded += remove_unneeded_pairs();
   int len = construct_pairs(remove_disjoints);
   return len;
 }

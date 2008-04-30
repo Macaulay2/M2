@@ -29,9 +29,10 @@ protected:
   void appendQuotientElement(Nterm *f, gbvector *g);
   QRingInfo(const PolyRing *R);
 
-  virtual ~QRingInfo() {}
 public:
   QRingInfo() : R(0), overZZ_(false), MONOM1_(0), EXP1_(0), EXP2_(0) {}
+
+  virtual ~QRingInfo();
 
   int n_quotients() const { return quotient_ideal.size(); }
   Nterm * quotient_element(int i) const { return quotient_ideal[i]; }

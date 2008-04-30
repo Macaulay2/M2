@@ -48,6 +48,7 @@ void GBRing::exponents_delete(exponents e)
 ////////////////////////////////////////////////////////////////
 GBRing::~GBRing()
 {
+  delete mem; // all other things will be garbage collected
 }
 GBRingPoly::~GBRingPoly()
 {
