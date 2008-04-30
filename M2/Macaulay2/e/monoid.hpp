@@ -104,6 +104,8 @@ public:
   M2_arrayint primary_degree_of_vars() const { return heft_degree_of_var_; }
   const M2_arrayint get_heft_vector() const { return heftvals_; }
 
+  bool primary_degrees_of_vars_positive() const;
+
   bool is_group() const { return n_invertible_vars_ == nvars_; }
 
   void text_out(buffer &o) const;
