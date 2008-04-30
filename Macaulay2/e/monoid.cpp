@@ -218,6 +218,14 @@ void Monoid::set_overflow_flags()
   assert(k == monomial_size_);
 }
 
+bool Monoid::primary_degrees_of_vars_positive() const
+{
+  for (int i=0; i<nvars_; i++)
+    if (primary_degree_of_var(i) <= 0)
+      return false;
+  return true;
+}
+
 #if 0
 //
 // dan : commenting this out because it seems to be unused

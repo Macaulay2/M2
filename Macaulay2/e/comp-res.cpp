@@ -90,6 +90,27 @@ ResolutionComputation *ResolutionComputation::choose_res(const Matrix *m,
   const Ring *R = m->get_ring();
   ResolutionComputation *C = 0;
   int origsyz;
+  // First, we need to check that m is homogeneous, and that 
+  // the heft values of the variables are all positive.
+  // All of these algorithms also assume that R is a polynomial ring.
+
+  const PolynomialRing *P = R->cast_to_PolynomialRing();
+  if (P == 0)
+    {
+      ERROR("engine resolution strategies all require a polynomial base ring");
+      return 0;
+    }
+  if (!P->getMonoid()->primary_degrees_of_vars_positive())
+    {
+      ERROR("engine resolution strategies all require a Heft vector which is positive for all variables");
+      return 0;
+    }
+  if (!m->is_homogeneous())
+    {
+      ERROR("engine resolution strategies require a homogeneous module");
+      return 0;
+    }
+  
   switch (algorithm) {
   case 1 : 
     if (!resolve_cokernel)
