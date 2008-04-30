@@ -37,7 +37,9 @@ endif
 endif
 
 ifeq (@OS@,MacOS)
-M2_LDFLAGS += -Wl,-stack_size,1000000
+## This option should increase the stack size to 16MB, but it makes M2 crash.
+## The number 1000000 is hex.
+## M2_LDFLAGS += -Wl,-stack_size,1000000
 endif
 
 M2_LDFLAGS += $(LDFLAGS)
