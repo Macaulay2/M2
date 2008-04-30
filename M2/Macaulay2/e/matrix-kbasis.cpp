@@ -51,6 +51,8 @@ private:
   
   MonomialIdeal* kb_monideal;
 
+  bool kb_error; // set if ERROR has been called, e.g. if a full basis of a non 0-diml module is asked for
+
   int weight_of_monomial(const int *deg) const; // deg is an encoded degree monomials
   int weight(const int *exp) const; // exp is an exponent vector
   void insert();
@@ -68,7 +70,7 @@ private:
 
   void compute();
 
-  Matrix *value() { return mat.to_matrix(); }
+  Matrix *value() { return(kb_error ? 0 : mat.to_matrix()); }
 public:
   static Matrix *k_basis(const Matrix *bottom, 
 			 M2_arrayint lo_degree,
@@ -92,7 +94,8 @@ KBasis::KBasis(const Matrix *bottom,
     do_truncation(do_truncation0),
     limit(limit0),
     lo_degree(lo_degree0),
-    hi_degree(hi_degree0)
+    hi_degree(hi_degree0),
+    kb_error(false)
 {
   P = bottom->get_ring()->cast_to_PolynomialRing();
   M = P->getMonoid();
@@ -252,6 +255,17 @@ void KBasis::compute()
       kb_monideal = bottom_matrix->make_monideal(i, true); 
         // the true means: over ZZ, don't consider monomials with non-unit lead coeffs
 
+      if (kb_monideal->is_one()) continue;
+      if (hi_degree == 0)
+	{
+	  // check here that kb_monideal is 0-dimensional...!
+	  if (kb_monideal->n_pure_powers() < M->n_vars())
+	    {
+	      kb_error = true;
+	      ERROR("module given is not zero dimensional");
+	      return;
+	    }
+	}
       const int *component_degree = bottom_matrix->rows()->degree(i);
       kb_exp_weight = weight_of_monomial(component_degree);
 

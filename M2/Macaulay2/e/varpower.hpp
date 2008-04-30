@@ -59,6 +59,10 @@ public:
   static void erase(const int *a, const int *b, intarray &result);
     // divide a by b^infinity
   static void radical(const int *a, intarray &result);
+
+  static bool is_pure_power(const int *a, int &v, int &e);
+  // if a is a pure power, then set v, e so that v^e is a.
+  // otherwise return false.
 };
 
 class index_varpower
