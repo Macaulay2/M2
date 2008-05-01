@@ -447,7 +447,7 @@ document {
 restart
 path=prepend("/Users/mike/src/M2/Macaulay2/bugs/mike/",path)
 load "1-sam-crash-SchurFunctors.m2"
-recursionLimit = 2000
+recursionLimit = 2037
 inducedOlver({3,2},1,QQ^3,{{0,1,2},{1,2}})
 towardStandard({{1,2,3},{1,1}})
 h = new MutableHashTable from {}
