@@ -585,7 +585,7 @@ basis = method(
 	  Truncate => false,
 	  Limit => -1,
 	  Variables => null,
-	  CoefficientRing => null
+	  SourceRing => null -- defaults to ring of the module, but accepts the coefficient ring
      	  })
 basis(InfiniteNumber,InfiniteNumber,Module) := 
 basis(List,InfiniteNumber,Module) := 
@@ -615,7 +615,6 @@ basis(List,List,Module) := opts -> (lo,hi,M) -> (
 	  or
 	  ZZ === A
 	  ) then error "'basis' can't handle this type of ring";
-     if hi === infinity and dim M > 0 then error "basis: expected a finite dimensional module";
      k := coefficientRing A;
      pres := generators gb presentation M;
      heft := (
@@ -624,7 +623,9 @@ basis(List,List,Module) := opts -> (lo,hi,M) -> (
 	  );
      heft = if heft === null then 1:1 else toSequence heft;
      M.cache#"rawBasis log" = log := FunctionApplication { rawBasis, (raw pres, lo, hi, heft, var, opts.Truncate, opts.Limit) };
-     map(M,,value log))
+     if opts.SourceRing === null or opts.SourceRing === A then map(M,,value log)
+     else if opts.SourceRing === k then map(M,,map(A,k),value log)
+     else error "expected SourceRing option to be module's ring or coefficient ring")
 
 basis(List,Module) := opts -> (deg,M) -> basis(deg,deg,M,opts)
 basis(ZZ,Module) := opts -> (deg,M) -> basis({deg},M,opts)

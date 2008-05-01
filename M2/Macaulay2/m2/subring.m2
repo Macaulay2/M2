@@ -1,6 +1,5 @@
 -- Copyright 1996 Michael E. Stillman
 
--- SubringComputation = new SelfInitializingType of BasicList
 PushforwardComputation = new SelfInitializingType of BasicList
 PushforwardComputation.synonym = "push-forward computation"
 
@@ -10,8 +9,7 @@ PushforwardComputation.synonym = "push-forward computation"
 
 --subringOptions := mergeOptions(options gb, Strategy => , UseHilbertFunction => true
 
-pushForward1 = method(
-     Options => {
+pshOpts := new OptionTable from {
 	  Strategy => NonLinear,            -- use the best choice
 	  UseHilbertFunction => true,  -- if possible
 	  MonomialOrder => EliminationOrder,
@@ -21,17 +19,16 @@ pushForward1 = method(
 	  DegreeLimit => {},
 	  PairLimit => infinity
 	  }
-     )
 
-pushtest := options -> (f,M) -> (
+pushNonLinear := (f,M) -> (				    -- this returns the presentation matrix of the pushforward module
     comp := PushforwardComputation{M,NonLinear};
     if not f.cache#?comp then (
 	-- create the computation
 	S := source f;
 	n1 := numgens target f;
-        order := if options.MonomialOrder === EliminationOrder then 
+        order := if pshOpts.MonomialOrder === EliminationOrder then 
                      Eliminate n1
-                 else if options.MonomialOrder === ProductOrder then 
+                 else if pshOpts.MonomialOrder === ProductOrder then 
 		     ProductOrder{n1, numgens S}
 		 else
 		     Lex;
@@ -43,7 +40,7 @@ pushtest := options -> (f,M) -> (
 	m1 = presentation ((cokernel m1) ** (cokernel JJ));
 	mapback := map(S, ring JJ, map(S^1, S^n1, 0) | vars S);
 
-	if options.UseHilbertFunction === true 
+	if pshOpts.UseHilbertFunction === true 
            and isHomogeneous m1 and isHomogeneous f and isHomogeneous m then (
 	    hf := poincare cokernel m;
 	    T := (ring hf)_0;
@@ -60,9 +57,9 @@ pushtest := options -> (f,M) -> (
 	f.cache#comp#0
     else (
 	gboptions := new OptionTable from {
-			StopBeforeComputation => options.StopBeforeComputation,
-			DegreeLimit => options.DegreeLimit,
-			PairLimit => options.PairLimit};
+			StopBeforeComputation => pshOpts.StopBeforeComputation,
+			DegreeLimit => pshOpts.DegreeLimit,
+			PairLimit => pshOpts.PairLimit};
 	m1 = f.cache#comp#0;
 	g := gb(m1,gboptions);
 	result := f.cache#comp#1 g;
@@ -74,7 +71,8 @@ pushtest := options -> (f,M) -> (
 	)
     )
 
-pushlinear := opts -> (f,M) -> (
+{*
+pushLinear := opts -> (f,M) -> (
     -- assumptions here:
     -- (a) f is homogeneous linear, and the linear forms are independent
     -- 
@@ -105,27 +103,17 @@ pushlinear := opts -> (f,M) -> (
     mapback := map(S, R1, map(S^1, S^n1, 0) | submatrix(vars S, {0..n-1}));
     mapback g
     )
+*}
 
-pushForward1(RingMap, Module) := Matrix => opts -> (f,M) -> (
-    if opts.Strategy === Linear then
-        (pushlinear opts)(f,M)
-    else if opts.Strategy === NonLinear then
-        (pushtest opts)(f,M)
-    else error "unrecognized Strategy"
-    )
-
-pushForward = method (Options => options pushForward1)
-
-pushForward(RingMap, Module) := Module => opts -> (f,M) -> (
+pushForward = method ()
+pushForward(RingMap, Module) := Module => (f,M) -> (
      if isHomogeneous f and isHomogeneous M then (
 	  -- given f:R-->S, and M an S-module, finite over R, find R-presentation for M
 	  S := target f;
 	  M = cokernel presentation M;
 	  M1 := M ** (S^1/(image f.matrix));
-	  d := dim M1;
-	  if d > 0 then error("module given is not finite over base: dim of M/vars = "|d);
-	  M2 := subquotient(matrix (basis M1), relations M);
-	  cokernel pushForward1(f,M2,opts)
+	  M2 := subquotient(matrix basis M1, relations M);
+	  cokernel pushNonLinear(f,M2)
 	  )
      else error "not implemented yet for inhomogeneous modules or maps"
      )

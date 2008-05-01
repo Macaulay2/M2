@@ -424,6 +424,15 @@ map(Module,Module,RingMap,RawMatrix) := opts -> (M,N,p,f) -> (
 	  symbol RawMatrix => reduce(M,rawMatrixRemake2(raw M',raw N',deg,f,0)),
 	  symbol cache => new CacheTable
 	  })
+map(Module,Nothing,RingMap,RawMatrix) := Matrix => o -> (M,N,p,f) -> (
+     d := degreeLength M;
+     degs := pack(d,degrees f);
+     m := p.DegreeMap;
+     if m =!= identity then (
+	  error "not implemented yet: non-trivial degrees map attached to ring map";
+	  );
+     N = (source p)^-degs;
+     map(M,N,p,f))
 map(Module,Module,RingMap,Matrix) := Matrix => o -> (M,N,p,f) -> map(M,N,p,raw f,o)
 
 
