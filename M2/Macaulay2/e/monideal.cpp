@@ -805,7 +805,8 @@ int MonomialIdeal::is_borel() const
 bool MonomialIdeal::is_one() const
 {
   if (length() != 1) return false;
-  if (mi->var != 0 || mi->exp != 0 || mi->tag != Nmi_node::leaf) return false;
+  Nmi_node *p = mi->left;
+  if (p->var != 0 || p->exp != 0 || p->tag != Nmi_node::leaf) return false;
   return true;
 }
 
