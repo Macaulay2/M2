@@ -4,15 +4,25 @@
 
 -- Tests of the subring and pushForward code
 
+-- pushForward1 has been removed, but we can simulate it:
+
+pushForward1 = method(Options => options pushForward)
+pushForward1(RingMap, Module) := opts -> (f,M) -> (
+     assert( f.DegreeMap === identity );
+     S := source f;
+     g := gens M;
+     N := source g;
+     assert( isFreeModule N );
+     N':= S^(- degrees N);
+     gens kernel map(M,N',f,id_N))
+
 test1 = () -> (
     -- One of the simplest: the rational quartic curve
     R = ZZ/101[s,t];
     S = ZZ/101[a..d];
     f = map(R,S,matrix{{s^4,s^3*t,s*t^3,t^4}});
     time J0 = generators kernel f;
-    -- time J1 = subring1 f;
     time J2 = pushForward1(f,R^1);
-    -- assert(image J0 == image J1);
     assert(image J0 == image J2);
     )
 
@@ -30,9 +40,7 @@ test2 = () -> (
     S = ZZ/101[symbol a..symbol f];
     F = map(R,S,symmetricPower(2,vars R));
     time J0 = generators kernel F;
-    --time J1 = subring1 F;
     time J2 = pushForward1(F,R^1);
-    -- assert(image J0 == image J1);
     assert(image J0 == image J2);
     )
 
@@ -42,10 +50,8 @@ test3 = () -> (
     S = ZZ/101[vars(0..4)];
     f = map(R,S,matrix{{t^4, t^3*s, t^2*s^2, t*s^3-t^3*y, s^4-2*s*t^2*y}});
     time J0 = generators kernel f;
-    --time J1 = subring1 f;
     time J2 = pushForward1(f,R^1);
     assert(image J0 == image J2);
-    --assert(image J1 != image J2);  -- NOTICE!! subring1 fails, since R is not a domain!
     )
 
 test4 = () -> (
@@ -53,7 +59,6 @@ test4 = () -> (
     R = ZZ/101[symbol a, symbol b];
     f = map(R,R,map(R^1, R^{-1,-1}, {{a,0}}));
     time J0 = generators kernel f;
-    -- time J1 = subring1 f;
     time J2 = pushForward1(f,R^1);
     assert(image J0 == image J2);
     -- assert(image J1 == image J2);
@@ -64,10 +69,8 @@ test5 = () -> (
     R = ZZ/101[symbol a, symbol b, symbol c];
     f = map(R,R,matrix{{a,b,a-b}});
     time J0 = generators kernel f;
-    -- time J1 = subring1 f;
     time J2 = pushForward1(f,R^1);
     assert(image J0 == image J2);
-    -- assert(image J1 == image J2);
     )
     
 test6 = () -> (
@@ -77,10 +80,8 @@ test6 = () -> (
     use R;
     f = map(R,S,matrix{{a}});
     time J0 = generators kernel f;
-    --time J1 = subring1 f;
     time J2 = pushForward1(f,R^1);
     assert(image J0 == image J2);
-    --assert(image J1 != image J2);  -- not a domain!
     )
 
 test7 = () -> (
@@ -161,7 +162,7 @@ test7()
 test8()
 testx()
 testx1()
-end
+
 -- Local Variables:
--- compile-command: "make -C $M2BUILDDIR/Macaulay2/test testsubring.out"
+-- compile-command: "make -C $M2BUILDDIR/Macaulay2/packages/Macaulay2Doc/test testsubring.out"
 -- End:
