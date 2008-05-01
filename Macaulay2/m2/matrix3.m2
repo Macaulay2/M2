@@ -107,17 +107,21 @@ pushLinear := opts -> (f,M) -> (
     )
 *}
 
-kernel Matrix := Module => opts -> (cacheValue symbol kernel) ((g) -> (
-	  N := source g;
-	  P := target g;
-	  if ring N =!= ring P then error "expected source and target modules over the same ring";
-	  g = matrix g;
-	  if P.?generators then g = P.generators * g;
-	  h := modulo(g, if P.?relations then P.relations);
-	  if N.?generators then h = N.generators * h;
-	  subquotient( h, if N.?relations then N.relations)))
-kernel RingElement := Module => options -> (g) -> kernel (matrix {{g}},options)
-
+kernel Matrix := Module => opts -> (cacheValue symbol kernel) ((m) -> (
+	  N := source m;
+	  P := target m;
+	  if m.?RingMap then (
+	       f := m.RingMap;
+	       n := map(target m,f source m,raw m);
+	       p := (pushNonLinear pushOptions)(f,image n);
+	       image p)
+	  else (
+	       m = matrix m;
+	       if P.?generators then m = P.generators * m;
+	       h := modulo(m, if P.?relations then P.relations);
+	       if N.?generators then h = N.generators * h;
+	       subquotient( h, if N.?relations then N.relations))))
+kernel RingElement := Module => options -> (m) -> kernel (matrix {{m}},options)
 
 pushForward = method (Options => pushOptions)
 pushForward(RingMap, Module) := Module => opts -> (f,M) -> (

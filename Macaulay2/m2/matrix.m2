@@ -124,13 +124,17 @@ Matrix - Number := (f,i) -> if i === 0 then f else f - i*id_(target f)
 
 Matrix * Matrix := Matrix => (m,n) -> (
      if source m === target n then (
-	  if ring target m =!= ring target n then (
-	       error "expected rings of modules to match";
-	       n = matrix n ** ring target m;
-	       );
 	  M := target m;
 	  N := source n;
-	  map(M,N,reduce(M,m.RawMatrix * n.RawMatrix)))
+	  if m.?RingMap then n = m.RingMap matrix n;
+	  q := reduce(M,m.RawMatrix * n.RawMatrix);
+	  if m.?RingMap or n.?RingMap then (
+	       phi := (
+		    if m.?RingMap then
+		    if n.?RingMap then m.RingMap @@ n.RingMap else m.RingMap
+		    else n.RingMap);
+	       map(M,N,phi,q))
+	  else map(M,N,q))
      else (
      	  R := ring m;
 	  S := ring n;
