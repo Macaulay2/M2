@@ -15,10 +15,10 @@ newPackage(
 export { AbstractSheaf, abstractSheaf, AbstractVariety, abstractVariety, schubertCycle,
      AbstractVarietyMap, adams, Base, BundleRanks, Bundles,
      CanonicalLineBundle, ch, chern, protect ChernCharacter, protect ChernClass, ChernClassSymbol, chi, ctop, expp, FlagBundle,
-     flagBundle, FlagBundleStructureMap, integral, protect IntersectionRing, point,
+     flagBundle, projectiveBundle, projectiveSpace, PP, FlagBundleStructureMap, integral, protect IntersectionRing,
      intersectionRing, logg, PullBack, PushForward, Rank, reciprocal, lowerstar,
      schur, SectionClass, sectionClass, segre, StructureMap, Symm, protect TangentBundle, tangentBundle, todd, protect ToddClass, bundle, proj,
-     VariableNames, symm, wedge, grass, totalspace, SubBundles, QuotientBundles}
+     VariableNames, symm, wedge, grass, totalspace, SubBundles, QuotientBundles, point, basepoint}
 
 debug Core						    -- needed only for flatmonoid, sigh; also for getAttribute
 
@@ -179,9 +179,17 @@ AbstractSheaf RingElement := (F,n) -> (
 
 integral = method()
 
-point = abstractVariety(0,QQ)
-point.TangentBundle = abstractSheaf(point,Rank => 0)
-integral intersectionRing point := identity
+basepoint = method(Dispatch => Thing)
+basepoint Symbol := basepoint IndexedVariable := s -> basepoint (1:s)
+basepoint RingElement := s -> basepoint baseName s
+basepoint Sequence := syms -> (
+     syms = baseName \ syms;
+     if not all(syms,i -> instance(i,Symbol) or instance(i,IndexedVariable)) then error "expected a sequence of symbols or indexed variables";
+     point := abstractVariety(0,QQ[syms,Degrees => {#syms : 0}]);
+     point.TangentBundle = abstractSheaf(point,Rank => 0);
+     integral intersectionRing point := identity;
+     point)
+point = basepoint()
 
 dim AbstractVariety := X -> X.DIM
 part(ZZ,QQ) := (n,r) -> if n === 0 then r else 0_QQ
@@ -207,9 +215,9 @@ value ChernClassSymbol := c -> if chernClassValues#?c then chernClassValues#c el
 expression ChernClassSymbol := c -> new FunctionApplication from {new Subscript from {symbol c,c#0}, c#1}
 net ChernClassSymbol := net @@ expression
 
-OO(AbstractVariety) := X -> (
+installMethod(symbol _,OO,AbstractVariety, (OO,X) -> (
      A := intersectionRing X;
-     abstractSheaf(X, Rank => 1, ChernClass => 1_A, ChernCharacter => 1_A))
+     abstractSheaf(X, Rank => 1, ChernClass => 1_A, ChernCharacter => 1_A)))
 
 AbstractSheaf ^ ZZ := (E,n) -> new AbstractSheaf from {
      global AbstractVariety => E.AbstractVariety,
@@ -248,9 +256,8 @@ offset := 1
 flagBundle = method(Options => { VariableNames => null })
 flagBundle(List) := opts -> (bundleRanks) -> flagBundle(bundleRanks,point,opts)
 flagBundle(List,AbstractVariety) := opts -> (bundleRanks,X) -> flagBundle(bundleRanks,OO_X^(sum bundleRanks),opts)
-flagBundle AbstractSheaf := opts -> E -> flagBundle({rank E - 1, 1},E,opts)
 flagBundle(List,AbstractSheaf) := opts -> (bundleRanks,E) -> (
-     h$ := local h$;
+     h$ := global h;
      varNames := opts.VariableNames;
      if not all(bundleRanks,r -> instance(r,ZZ) and r>=0) then error "expected bundle ranks to be non-negative integers";
      n := #bundleRanks;
@@ -282,22 +289,22 @@ flagBundle(List,AbstractSheaf) := opts -> (bundleRanks,E) -> (
      X := variety E;
      dgs := splice apply(bundleRanks, r -> 1 .. r);
      S := intersectionRing X;
-     T := S[flatten varNames, Degrees => dgs, Global => false, MonomialOrder => apply(bundleRanks, n -> Ord => n), ConstantCoefficients => false];
+     T := S(monoid [flatten varNames, Degrees => dgs, Global => false, MonomialOrder => apply(bundleRanks, n -> Ord => n), ConstantCoefficients => false]);
      -- (A,F) := flattenRing T; G := F^-1 ;
      A := T; F := identity;
-     chclasses := apply(varNames, x -> F (1 + sum(x,value)));
+     chclasses := apply(varNames, x -> F (1 + sum(x,v -> T_v)));
      rlns := product chclasses - F promote(chern E,T);
      rlns = sum @@ last \ sort pairs partition(degree,terms(QQ,rlns));
      B := A/rlns;
      -- (C,H) := flattenRing B; I := H^-1;
      C := B; H := identity;
-     use C;
+     -- use C;
      DIM := dim X + sum(n, i -> sum(i+1 .. n-1, j -> bundleRanks#i * bundleRanks#j));
      FV := C.Variety = abstractVariety(DIM,C,Type => FlagBundle);
      FV.BundleRanks = bundleRanks;
      FV.Rank = rk;
      FV.Base = X;
-     bundles := FV.Bundles = apply(n, i -> (
+     bundles := FV.Bundles = apply(0 .. n-1, i -> (
 	       bdl := abstractSheaf(FV, Rank => bundleRanks#i, ChernClass => H promote(chclasses#i,B));
 	       bdl));
      FV.SubBundles = (() -> ( t := 0; for i from 0 to n-2 list t = t + bundles#i ))();
@@ -326,12 +333,27 @@ flagBundle(List,AbstractSheaf) := opts -> (bundleRanks,E) -> (
      integral C := r -> integral p_* r;
      FV)
 
+use AbstractVariety := X -> (
+     use intersectionRing X;
+     X)
+
 tangentBundle FlagBundleStructureMap := (stashValue TangentBundle) (
      p -> (
 	  bundles := (source p).Bundles;
 	  sum(1 .. #bundles-1, i -> sum(i, j -> Hom(bundles#j,bundles#i)))))
 
-OO(RingElement) := h -> OO_(variety ring h) (h)
+installMethod(symbol SPACE,OO,RingElement, (OO,h) -> OO_(variety ring h) (h))
+
+projectiveBundle = method(Options => { VariableNames => null })
+projectiveBundle ZZ := opts -> n -> flagBundle({n,1},opts)
+projectiveBundle(ZZ,AbstractVariety) := opts -> (n,X) -> flagBundle({n,1},X,opts)
+projectiveBundle AbstractSheaf := opts -> E -> flagBundle({rank E - 1, 1},E,opts)
+
+projectiveSpace = method(Options => { VariableNames => null })
+projectiveSpace ZZ := opts -> n -> flagBundle({n,1},opts)
+projectiveSpace(ZZ,AbstractVariety) := opts -> (n,X) -> flagBundle({n,1},X,opts)
+
+PP = new ScriptedFunctor from { superscript => i -> projectiveSpace i }
 
 reciprocal = method()
 reciprocal RingElement := (A) -> (
