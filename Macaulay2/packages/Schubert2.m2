@@ -18,7 +18,7 @@ export { AbstractSheaf, abstractSheaf, AbstractVariety, abstractVariety, schuber
      flagBundle, projectiveBundle, projectiveSpace, PP, FlagBundleStructureMap, integral, protect IntersectionRing,
      intersectionRing, logg, PullBack, PushForward, Rank, reciprocal, lowerstar,
      schur, SectionClass, sectionClass, segre, StructureMap, Symm, protect TangentBundle, tangentBundle, todd, protect ToddClass,
-     VariableNames, SubBundles, QuotientBundles, point, basepoint}
+     VariableNames, VariableName, SubBundles, QuotientBundles, point, basepoint}
 
 debug Core						    -- needed only for flatmonoid, sigh; also for getAttribute
 
@@ -350,9 +350,9 @@ projectiveBundle ZZ := opts -> n -> flagBundle({n,1},opts)
 projectiveBundle(ZZ,AbstractVariety) := opts -> (n,X) -> flagBundle({n,1},X,opts)
 projectiveBundle AbstractSheaf := opts -> E -> flagBundle({rank E - 1, 1},E,opts)
 
-projectiveSpace = method(Options => { VariableNames => null })
-projectiveSpace ZZ := opts -> n -> flagBundle({n,1},opts)
-projectiveSpace(ZZ,AbstractVariety) := opts -> (n,X) -> flagBundle({n,1},X,opts)
+projectiveSpace = method(Options => { VariableName => global h })
+projectiveSpace ZZ := opts -> n -> flagBundle({n,1},VariableNames => {,{opts.VariableName}})
+projectiveSpace(ZZ,AbstractVariety) := opts -> (n,X) -> flagBundle({n,1},X,VariableNames => {,{opts.VariableName}})
 
 PP = new ScriptedFunctor from { superscript => i -> projectiveSpace i }
 

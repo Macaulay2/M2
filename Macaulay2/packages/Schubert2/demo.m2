@@ -14,7 +14,7 @@ loadPackage "Schubert2";
 ---- 
 
 pt = basepoint n
-Ph = use projectiveSpace_3(pt,VariableNames => {,{h}})
+Ph = use projectiveSpace(3,pt,VariableName=>h)
 APh = intersectionRing Ph
 factor chi OO(n*h)
                 assert( value oo == (n+1)*(n+2)*(n+3)*(1/6) )
@@ -24,7 +24,7 @@ factor chi OO(n*h)
 ----                          1 + 2 h t + 11/6 h  t  + h  t
 
 todd Ph
-                assert( oo == h^3+11/6*h^2+2*h+1 )
+                assert( oo == 1+2*h+11/6*h^2+h^3 )
 
 ---- #-------------------------------------------------------------------------
 ---- # Generation of formulas:
