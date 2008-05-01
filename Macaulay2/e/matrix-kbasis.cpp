@@ -262,7 +262,7 @@ void KBasis::compute()
 	  if (kb_monideal->n_pure_powers() < M->n_vars())
 	    {
 	      kb_error = true;
-	      ERROR("module given is not zero dimensional");
+	      ERROR("module given is not finite over the base");
 	      return;
 	    }
 	}
