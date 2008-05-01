@@ -1,4 +1,4 @@
-load "/Users/mike/Library/Application Support/Macaulay2/local/share/Macaulay2/Kronecker.m2"
+--load "/Users/mike/Library/Application Support/Macaulay2/local/share/Macaulay2/Kronecker.m2"
 Q = ZZ/101[x,y]
 
 tallMod = method()
@@ -150,7 +150,9 @@ flattenList(List) := a -> (
      fold(a, (i,j) -> i | j)
      )
 
+end
 
+load "/Users/mike/src/M2/Macaulay2/bugs/mike/1-ed-carter-extdecomp.m2"
 -- Here we give an engineer's proof that l can take any 
 -- non-negative value other than 1.
 apply(1..8, n -> computeL(tallMod n, x^n, y^n))
