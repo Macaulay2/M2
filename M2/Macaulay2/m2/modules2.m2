@@ -624,8 +624,7 @@ basis(List,List,Module) := opts -> (lo,hi,M) -> (
      heft = if heft === null then 1:1 else toSequence heft;
      M.cache#"rawBasis log" = log := FunctionApplication { rawBasis, (raw pres, lo, hi, heft, var, opts.Truncate, opts.Limit) };
      if opts.SourceRing === null or opts.SourceRing === A then map(M,,value log)
-     else if opts.SourceRing === k then map(M,,map(A,k),value log)
-     else error "expected SourceRing option to be module's ring or coefficient ring")
+     else map(M,,map(A,opts.SourceRing),value log))
 
 basis(List,Module) := opts -> (deg,M) -> basis(deg,deg,M,opts)
 basis(ZZ,Module) := opts -> (deg,M) -> basis({deg},M,opts)
