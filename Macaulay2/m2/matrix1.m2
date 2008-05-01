@@ -589,18 +589,6 @@ ideal List := ideal Sequence := Ideal => v -> ideal matrix {toList v}
 ideal RingElement := ideal Number := Ideal => v -> ideal {v}
 ideal Ring := R -> ideal map(R^1,R^0,0)
 
-kernel = method(Options => { SubringLimit => infinity })
-kernel Matrix := Module => opts -> (cacheValue symbol kernel) ((g) -> (
-	  N := source g;
-	  P := target g;
-	  if ring N =!= ring P then error "expected source and target modules over the same ring";
-	  g = matrix g;
-	  if P.?generators then g = P.generators * g;
-	  h := modulo(g, if P.?relations then P.relations);
-	  if N.?generators then h = N.generators * h;
-	  subquotient( h, if N.?relations then N.relations)))
-kernel RingElement := Module => options -> (g) -> kernel (matrix {{g}},options)
-
 homology(Matrix,Matrix) := Module => opts -> (g,f) -> (
      if g == 0 then cokernel f
      else if f == 0 then kernel g
