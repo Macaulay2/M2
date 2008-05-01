@@ -1,5 +1,6 @@
-loadPackage "Kronecker"
---load "/Users/mike/Library/Application Support/Macaulay2/local/share/Macaulay2/Kronecker.m2"
+load "/Users/mike/Library/Application Support/Macaulay2/local/share/Macaulay2/Kronecker.m2"
+--load "/Users/mike/src/M2/Macaulay2/packages/Kronecker.m2"
+--loadPackage "Kronecker"
 
 loosemult = (f,g) -> (
      -- if source f != target g then error "maps really not composable";
@@ -162,7 +163,7 @@ end
 load "/Users/mike/src/M2/Macaulay2/bugs/mike/1-ed-carter-extdecomp.m2"
 -- Here we give an engineer's proof that l can take any 
 -- non-negative value other than 1.
-apply(1..8, n -> computeL(tallMod n, x^n, y^n))
+time apply(1..8, n -> (computeL(tallMod n, x^n, y^n);))
 
 -- These computations give an engineer's proof for the complete 
 -- picture over the ring k[x,y]/(x^2,y^2).

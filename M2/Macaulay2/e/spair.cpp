@@ -19,6 +19,20 @@ s_pair_heap::s_pair_heap(const Monoid *MM)
     }
 }
 
+s_pair * s_pair_heap::grab_remaining_pairs()
+{
+  s_pair head;
+  s_pair *inresult = &head;
+  for (int i=0; i<NHEAP; i++)
+    if (heap[i])
+	{
+	  inresult->next = heap[i];
+	  while (inresult->next != 0)
+	    inresult = inresult->next;
+	}
+  return head.next;
+}
+
 s_pair_heap::~s_pair_heap()
 {
   // The user of this class must insure that all 's_pair's

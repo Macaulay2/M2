@@ -78,7 +78,7 @@ gb2_comp::gb2_comp(FreeModule *Fsyz0,
 		   int level0,
 		   int strat)
 {
-  setup(Fsyz0,mi_stash,gens0,lodegree,origsyz,level0,strat);
+  setup(Fsyz0,mi_stash0,gens0,lodegree,origsyz,level0,strat);
 }
 void gb2_comp::set_output(gb_node *p) 
 {
@@ -87,8 +87,8 @@ void gb2_comp::set_output(gb_node *p)
 }
 void gb2_comp::remove_pair(s_pair *& p)
 {
-  GR->gbvector_remove(p->f);
-  GR->gbvector_remove(p->fsyz);
+  p->f = 0; // these are not used in res-a2-gb algorithm except for temp space
+  p->fsyz = 0; // ditto
   p->first = NULL;
   p->second = NULL;
   p->next = NULL;
@@ -99,6 +99,14 @@ void gb2_comp::remove_pair(s_pair *& p)
 
 gb2_comp::~gb2_comp()
 {
+  // remove all of the gbvector's in the gb_elems's and spairs.
+  for (int i=0; i<gb.length(); i++)
+    {
+      gb_elem *g = gb[i];
+      GR->gbvector_remove(g->f);
+      GR->gbvector_remove(g->fsyz);
+    }
+  these_pairs = 0;
 }
 
 //////////////////////////////////////////////
@@ -251,7 +259,7 @@ void gb2_comp::find_pairs(gb_elem *p)
 
   queue<Bag *> rejects;
   Bag *b;
-  MonomialIdeal *mi = new MonomialIdeal(originalR, elems, rejects);
+  MonomialIdeal *mi = new MonomialIdeal(originalR, elems, rejects, mi_stash);
   while (rejects.remove(b))
     {
       s_pair *q = reinterpret_cast<s_pair *>(b->basis_ptr());

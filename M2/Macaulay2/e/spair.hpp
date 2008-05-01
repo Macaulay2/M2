@@ -56,6 +56,8 @@ class s_pair_heap : public our_new_delete
   s_pair *merge(s_pair *f, s_pair *g) const;
 public:
   s_pair_heap(const Monoid *M);
+
+  s_pair *grab_remaining_pairs(); // designed so the user can then remove the data associated with them
   ~s_pair_heap();
 
   void insert(s_pair *&p);

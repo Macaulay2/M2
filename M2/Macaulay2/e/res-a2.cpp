@@ -180,15 +180,20 @@ gbres_comp::gbres_comp(const Matrix *m, int length, int origsyz,
   //nodes[0]->set_HF(hf);
 }
 
-gbres_comp::~gbres_comp()
+void gbres_comp::remove_res()
 {
   for (int i=0; i<n_nodes; i++)
     {
       nodes[i]->set_output(NULL);
-      deleteitem(nodes[i]);
+      delete nodes[i];
     }
 
   delete mi_stash;
+}
+
+gbres_comp::~gbres_comp()
+{
+  remove_res();
 }
 
 
