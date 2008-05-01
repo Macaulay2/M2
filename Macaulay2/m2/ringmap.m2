@@ -409,6 +409,24 @@ ZZ == RingMap := (n,f) -> f == n
 RingMap.InverseMethod = (cacheValue symbol inverse) ( f -> notImplemented() )
 RingMap ^ ZZ := BinaryPowerMethod
 
+-- module maps over ring maps:
+
+map(Module,Module,RingMap,RawMatrix) := opts -> (M,N,p,f) -> (
+     (R,S) := (ring M,ring N);
+     (M',N') := (cover M,p cover N);
+     if R =!= target p or S =!= source p then error "expected rings to match";
+     if target f =!= raw M' or source f =!= raw N' then error "expected matrix to match covering modules";
+     deg := if opts.Degree === null then rawMultiDegree f else degreeCheck(opts.Degree,R);
+     new Matrix from {
+	  symbol RingMap => p,
+	  symbol target => M,
+	  symbol source => N,
+	  symbol RawMatrix => reduce(M,rawMatrixRemake2(raw M',raw N',deg,f,0)),
+	  symbol cache => new CacheTable
+	  })
+map(Module,Module,RingMap,Matrix) := Matrix => o -> (M,N,p,f) -> map(M,N,p,raw f,o)
+
+
 -- Local Variables:
 -- compile-command: "make -C $M2BUILDDIR/Macaulay2/m2 "
 -- End:

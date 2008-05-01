@@ -584,7 +584,8 @@ basis = method(
      Options => new OptionTable from {
 	  Truncate => false,
 	  Limit => -1,
-	  Variables => null
+	  Variables => null,
+	  CoefficientRing => null
      	  })
 basis(InfiniteNumber,InfiniteNumber,Module) := 
 basis(List,InfiniteNumber,Module) := 
