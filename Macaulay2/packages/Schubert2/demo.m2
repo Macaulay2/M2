@@ -13,7 +13,7 @@ loadPackage "Schubert2";
 ----                           1/6 (n + 3) (n + 2) (n + 1)
 ---- 
 
-pt = basepoint n
+pt = base n
 Ph = projectiveSpace(3,pt,VariableName=>h) -- this applies "use" to the variety, and to its intersection ring, giving h a value
 factor chi OO(n*h)
                 assert( value oo == (n+1)*(n+2)*(n+3)*(1/6) )
@@ -32,13 +32,14 @@ todd Ph
 ---- > A:=bundle(2,c):        # a bundle with Chern classes c1,c2 and rank 2
 ---- > B:=bundle(3,d):        # a bundle with Chern classes d1,d2,d3 and rank 3
 
-(A,B) = bundle(4,{2,3},{a,b});
+base(4, Bundle => (A,2,c), Bundle => (B,3,d));
 
 ---- > chern(A);
 ----                                                2
 ----                                 1 + c1 t + c2 t
 
 chern A
+assert( oo == 1+c_1+c_2 )
 
 ---- > segre(B);
 ----                              2        2      3                  3
@@ -48,6 +49,7 @@ chern A
 ----                     + (d1  - 3 d2 d1  + 2 d1 d3 + d2 ) t
 
 segre B
+assert( oo == 1+d_1+(d_1^2-d_2)+(d_1^3-2*d_1*d_2+d_3)+(d_1^4-3*d_1^2*d_2+d_2^2+2*d_1*d_3) )
 
 ---- > chern(A&*B);           # The Chern class of the tensor product
 ----                          2                 2                 2
