@@ -9,7 +9,9 @@ PushforwardComputation.synonym = "push-forward computation"
 
 --subringOptions := mergeOptions(options gb, Strategy => , UseHilbertFunction => true
 
-pshOpts := new OptionTable from {
+protect NonLinear					    -- no longer exported
+
+pushOptions := new OptionTable from {
 	  Strategy => NonLinear,            -- use the best choice
 	  UseHilbertFunction => true,  -- if possible
 	  MonomialOrder => EliminationOrder,
@@ -20,15 +22,15 @@ pshOpts := new OptionTable from {
 	  PairLimit => infinity
 	  }
 
-pushNonLinear := (f,M) -> (				    -- this returns the presentation matrix of the pushforward module
+pushNonLinear := opts -> (f,M) -> (				    -- this returns the presentation matrix of the pushforward module
     comp := PushforwardComputation{M,NonLinear};
     if not f.cache#?comp then (
 	-- create the computation
 	S := source f;
 	n1 := numgens target f;
-        order := if pshOpts.MonomialOrder === EliminationOrder then 
+        order := if opts.MonomialOrder === EliminationOrder then 
                      Eliminate n1
-                 else if pshOpts.MonomialOrder === ProductOrder then 
+                 else if opts.MonomialOrder === ProductOrder then 
 		     ProductOrder{n1, numgens S}
 		 else
 		     Lex;
@@ -40,7 +42,7 @@ pushNonLinear := (f,M) -> (				    -- this returns the presentation matrix of th
 	m1 = presentation ((cokernel m1) ** (cokernel JJ));
 	mapback := map(S, ring JJ, map(S^1, S^n1, 0) | vars S);
 
-	if pshOpts.UseHilbertFunction === true 
+	if opts.UseHilbertFunction === true 
            and isHomogeneous m1 and isHomogeneous f and isHomogeneous m then (
 	    hf := poincare cokernel m;
 	    T := (ring hf)_0;
@@ -57,9 +59,9 @@ pushNonLinear := (f,M) -> (				    -- this returns the presentation matrix of th
 	f.cache#comp#0
     else (
 	gboptions := new OptionTable from {
-			StopBeforeComputation => pshOpts.StopBeforeComputation,
-			DegreeLimit => pshOpts.DegreeLimit,
-			PairLimit => pshOpts.PairLimit};
+			StopBeforeComputation => opts.StopBeforeComputation,
+			DegreeLimit => opts.DegreeLimit,
+			PairLimit => opts.PairLimit};
 	m1 = f.cache#comp#0;
 	g := gb(m1,gboptions);
 	result := f.cache#comp#1 g;
@@ -117,15 +119,15 @@ kernel Matrix := Module => opts -> (cacheValue symbol kernel) ((g) -> (
 kernel RingElement := Module => options -> (g) -> kernel (matrix {{g}},options)
 
 
-pushForward = method ()
-pushForward(RingMap, Module) := Module => (f,M) -> (
+pushForward = method (Options => pushOptions)
+pushForward(RingMap, Module) := Module => opts -> (f,M) -> (
      if isHomogeneous f and isHomogeneous M then (
 	  -- given f:R-->S, and M an S-module, finite over R, find R-presentation for M
 	  S := target f;
 	  M = cokernel presentation M;
 	  M1 := M / ideal f.matrix;
 	  M2 := subquotient(matrix basis M1, relations M);
-	  cokernel pushNonLinear(f,M2)
+	  cokernel (pushNonLinear opts)(f,M2)
 	  )
      else error "not implemented yet for inhomogeneous modules or maps"
      )
