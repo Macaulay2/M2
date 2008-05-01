@@ -17,8 +17,6 @@ document {
 	 PARA{},
 	 "This presumes that ", TT "J", " is a single, linear polynomial, and that ", TT "I", " 
 	 is homogeneous.",
-	 PARA{},
-	 "This is also an option value for ", TO "pushForward1", ".",
      SUBSECTION "Bayer",
      	 TT "saturate(I,f,Strategy => Bayer)", " -- indicates that the method of Bayer's 
 	 thesis should be used.",

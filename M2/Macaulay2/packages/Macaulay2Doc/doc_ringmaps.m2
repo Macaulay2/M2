@@ -240,116 +240,115 @@ document {
      SeeAlso => {RingMap, hilbertSeries, value, Expression}
      }
 
-document {
-     Key => NonLinear,
-     Headline => "use the algorithm which doesn't assume that the ring map is linear",
-     TT "Strategy => NonLinear", " -- an option value for the ", TO "Strategy", "
-     option to ", TO "pushForward1", "."
-     }
+-- document {
+--      Key => NonLinear,
+--      Headline => "use the algorithm which doesn't assume that the ring map is linear",
+--      TT "Strategy => NonLinear", " -- an option value for the ", TO "Strategy", "
+--      option to ", TO "pushForward1", "."
+--      }
 
-document {
-     Key => [pushForward1,StopBeforeComputation],
-     Headline => "initialize but do not begin the computation",
-     TT "StopBeforeComputation", " -- keyword for an optional argument used with
-     ", TO "pushForward1", ".",
-     PARA{},
-     "Tells whether to start the computation, with the default value
-     being ", TT "true", "."
-     }
+-- document {
+--      Key => [pushForward1,StopBeforeComputation],
+--      Headline => "initialize but do not begin the computation",
+--      TT "StopBeforeComputation", " -- keyword for an optional argument used with
+--      ", TO "pushForward1", ".",
+--      PARA{},
+--      "Tells whether to start the computation, with the default value
+--      being ", TT "true", "."
+--      }
+-- 
+-- document {
+--      Key => [pushForward1,DegreeLimit],
+--      Headline => "compute only up to this degree",
+--      TT "DegreeLimit => n", " -- keyword for an optional argument used with
+--      ", TO "pushForward1", " which specifies that the computation should halt after dealing 
+--      with degree ", TT "n", ".",
+--      PARA{},
+--      "This option is relevant only for homogeneous matrices.",
+--      PARA{},
+--      "The maximum degree to which to compute is computed in terms of the
+--      degrees of the ring map, ", TT "f", ".  For example, if ", TT "f", "
+--      consists of cubics, then to find a quadratic relation, this option
+--      should be set to at least 6, by specifying, for example, ", 
+--      TT "DegreeLimit => 6", ".  The default is ", TT "infinity", ".",
+--      SeeAlso => {"pushForward1", "DegreeLimit"}
+--      }
+-- 
+-- 
+-- document {
+--      Key => [pushForward1,StopWithMinimalGenerators],
+--      Headline => "stop when minimal generators have been determined",
+--      TT "StopWithMinimalGenerators => true", " -- an option for ", TO "pushForward1", "
+--      that specifies that the computation should stop as soon as a
+--      complete list of minimal generators for the submodule or ideal has been
+--      determined.",
+--      PARA{},
+--      "The value provided is simply passed on to ", TO "gb", ": see 
+--      ", TO [gb,StopWithMinimalGenerators], " for details."
+--      }
+-- 
+-- document {
+--      Key => [pushForward1,PairLimit],
+--      Headline => "stop when this number of pairs is handled",
+--      TT "PairLimit => n", " -- keyword for an optional argument used with
+--      ", TO "pushForward1", ", which specifies that the computation should
+--      be stopped after a certain number of S-pairs have been reduced."
+--      }
+-- 
+-- document {
+--      Key => [pushForward1,MonomialOrder],
+--      Headline => "specify the elimination order to use in pushForward1",
+--      TT "MonomialOrder => x", " -- a keyword for an optional argument to ", TO "pushForward1", "
+--      which tells which monomial order to use for the Groebner basis computation
+--      involved.",
+--      PARA{},
+--      "Possible values:",
+--      UL {
+-- 	  (TT "MonomialOrder => EliminationOrder", " -- use the natural elimination order (the default)"),
+-- 	  (TT "MonomialOrder => ProductOrder", " -- use the product order"),
+-- 	  (TT "MonomialOrder => LexOrder", " -- use lexical order"),
+-- 	  },
+--      SeeAlso => "EliminationOrder"
+--      }
+-- 
+-- document {
+--      Key => [pushForward1,UseHilbertFunction],
+--      Headline => "whether to use knowledge of the Hilbert function",
+--      TT "UseHilbertFunction => true", " -- a keyword for an optional argument to
+--      ", TO "pushForward1", " which specifies whether to use the Hilbert function,
+--      if one has previously been computed.",
+--      PARA{},
+--      "The default is to use it if possible."
+--      }
 
-document {
-     Key => [pushForward1,DegreeLimit],
-     Headline => "compute only up to this degree",
-     TT "DegreeLimit => n", " -- keyword for an optional argument used with
-     ", TO "pushForward1", " which specifies that the computation should halt after dealing 
-     with degree ", TT "n", ".",
-     PARA{},
-     "This option is relevant only for homogeneous matrices.",
-     PARA{},
-     "The maximum degree to which to compute is computed in terms of the
-     degrees of the ring map, ", TT "f", ".  For example, if ", TT "f", "
-     consists of cubics, then to find a quadratic relation, this option
-     should be set to at least 6, by specifying, for example, ", 
-     TT "DegreeLimit => 6", ".  The default is ", TT "infinity", ".",
-     SeeAlso => {"pushForward1", "DegreeLimit"}
-     }
-
-
-document {
-     Key => [pushForward1,StopWithMinimalGenerators],
-     Headline => "stop when minimal generators have been determined",
-     TT "StopWithMinimalGenerators => true", " -- an option for ", TO "pushForward1", "
-     that specifies that the computation should stop as soon as a
-     complete list of minimal generators for the submodule or ideal has been
-     determined.",
-     PARA{},
-     "The value provided is simply passed on to ", TO "gb", ": see 
-     ", TO [gb,StopWithMinimalGenerators], " for details."
-     }
-
-document {
-     Key => [pushForward1,PairLimit],
-     Headline => "stop when this number of pairs is handled",
-     TT "PairLimit => n", " -- keyword for an optional argument used with
-     ", TO "pushForward1", ", which specifies that the computation should
-     be stopped after a certain number of S-pairs have been reduced."
-     }
-
-document {
-     Key => [pushForward1,MonomialOrder],
-     Headline => "specify the elimination order to use in pushForward1",
-     TT "MonomialOrder => x", " -- a keyword for an optional argument to ", TO "pushForward1", "
-     which tells which monomial order to use for the Groebner basis computation
-     involved.",
-     PARA{},
-     "Possible values:",
-     UL {
-	  (TT "MonomialOrder => EliminationOrder", " -- use the natural elimination order (the default)"),
-	  (TT "MonomialOrder => ProductOrder", " -- use the product order"),
-	  (TT "MonomialOrder => LexOrder", " -- use lexical order"),
-	  },
-     SeeAlso => "EliminationOrder"
-     }
-
-document {
-     Key => [pushForward1,UseHilbertFunction],
-     Headline => "whether to use knowledge of the Hilbert function",
-     TT "UseHilbertFunction => true", " -- a keyword for an optional argument to
-     ", TO "pushForward1", " which specifies whether to use the Hilbert function,
-     if one has previously been computed.",
-     PARA{},
-     "The default is to use it if possible."
-     }
-
-document {
-     Key => [pushForward1,Strategy],
-     Headline => "specify which algorithm to use in the computation",
-     TT "pushForward1(f,M,Strategy => v)", " -- an option for ", TO pushForward1, " 
-     which can be used to specify the strategy to be used in the computation.",
-     PARA{},
-     "The strategy option value ", TT "v", " should be one of the following.",
-     UL {
-	  TO "NonLinear",
-     	  TO "Linear"
-	  },
-     PARA{},
-     "The default is for the code to select the best strategy heuristically."
-     }
+-- document {
+--      Key => [pushForward1,Strategy],
+--      Headline => "specify which algorithm to use in the computation",
+--      TT "pushForward1(f,M,Strategy => v)", " -- an option for ", TO pushForward1, " 
+--      which can be used to specify the strategy to be used in the computation.",
+--      PARA{},
+--      "The strategy option value ", TT "v", " should be one of the following.",
+--      UL {
+-- 	  TO "NonLinear",
+--      	  TO "Linear"
+-- 	  },
+--      PARA{},
+--      "The default is for the code to select the best strategy heuristically."
+--      }
 
 document {
      Key => PushforwardComputation,
-     Headline => "a type of list used internally by pushForward1",
-     TT "PushforwardComputation", " -- a type of list used internally by
-     ", TO "pushForward1", "."
+     Headline => "a type of list used internally",
+     TT "PushforwardComputation", " -- a type of list used internally by ", TO "pushForward", " and ", TO "kernel", "."
      }
 
-document {
-     Key => EliminationOrder,
-     Headline => "use the natural elmination order in a pushForward1 computation",
-     TT "EliminationOrder", " -- a value for the ", TO "MonomialOrder", "
-     option to ", TO "pushForward1", " which specifies the natural elimination
-     order be used."
-     }
+-- document {
+--      Key => EliminationOrder,
+--      Headline => "use the natural elmination order in a pushForward1 computation",
+--      TT "EliminationOrder", " -- a value for the ", TO "MonomialOrder", "
+--      option to ", TO "pushForward1", " which specifies the natural elimination
+--      order be used."
+--      }
 
 document {
      Key => [pushForward,StopBeforeComputation],
@@ -371,17 +370,17 @@ document {
      ", TO [gb,StopWithMinimalGenerators], " for details."
      }
 
-document {
-     Key => [pushForward,Strategy],
-     TT "pushForward(f,M,Strategy => v)", " -- an option for ", TO pushForward, " 
-     which can be used to specify the strategy to be used in the computation.",
-     PARA{},
-     "The strategy option value ", TT "v", " should be one of the following.",
-     UL {
-	  TO "NonLinear",
-     	  TO "Linear"
-	  }
-     }
+-- document {
+--      Key => [pushForward,Strategy],
+--      TT "pushForward(f,M,Strategy => v)", " -- an option for ", TO pushForward, " 
+--      which can be used to specify the strategy to be used in the computation.",
+--      PARA{},
+--      "The strategy option value ", TT "v", " should be one of the following.",
+--      UL {
+-- 	  TO "NonLinear",
+--      	  TO "Linear"
+-- 	  }
+--      }
 
 TEST "
     R = ZZ/101[a,b]
@@ -393,5 +392,5 @@ TEST "
 
 document {
      Key => UseHilbertFunction,
-     TT "UseHilbertFunction", " -- an option for ", TO "pushForward1", "."
+     TT "UseHilbertFunction", " -- an option for ", TO "pushForward", "."
      }

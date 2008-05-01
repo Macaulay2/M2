@@ -230,7 +230,7 @@ document {
 		    LI ("<prune -- ", TO "prune"),
 		    LI ("<prune_and_map -- ", TO "not documented yet"),
 		    LI ("<push_forward -- ", TO "pushForward"),
-		    LI ("<push_forward1 -- ", TO "pushForward1"),
+		    LI ("<push_forward1 -- ", TO "coimage (eventually)"),
 		    LI ("<quotient1 -- ", TO "quotient"),
 		    LI ("<radical -- ", TO "radical"),
 		    LI ("<random_element -- ", TO "not documented yet"),

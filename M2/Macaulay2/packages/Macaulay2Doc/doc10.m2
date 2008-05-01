@@ -709,7 +709,7 @@ document {
      }
 
 document {
-     Key => {(OO,Variety), OO},
+     Key => {(symbol _,OO,Variety), OO},
      Headline => "the structure sheaf",
      Usage => "OO_X",
      Inputs => { "X" => "a variety" },

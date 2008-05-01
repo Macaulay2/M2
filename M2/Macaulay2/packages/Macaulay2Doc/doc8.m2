@@ -236,7 +236,7 @@ document {
      Key => BasisElementLimit, 
      Headline => "stop when this number of basis elements is obtained",
      TT "BasisElementLimit", " -- keyword for an optional argument used with
-     ", TO "gb", ", ", TO "pushForward", ", ", TO "pushForward1", ", 
+     ", TO "gb", ", ", TO "pushForward", ",
      and ", TO "syz", ", which can be used to specify that the computation should
      stop after a certain number of Groebner basis elements have been discovered.",
      SeeAlso => "Groebner bases"
@@ -291,7 +291,6 @@ document {
      UL {
 	  TO [gb,StopWithMinimalGenerators],
 	  TO [pushForward,StopWithMinimalGenerators],
-	  TO [pushForward1,StopWithMinimalGenerators]
 	  }
      }
 

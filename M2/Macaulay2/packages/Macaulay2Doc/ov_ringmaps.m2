@@ -74,7 +74,6 @@ document {
      BOLD "Operations involving modules",
      UL {
 	  TO pushForward,
-	  TO pushForward1,
 	  TO (symbol **, RingMap, Module)
 	  },
      }
