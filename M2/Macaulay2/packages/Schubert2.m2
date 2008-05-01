@@ -13,7 +13,7 @@ newPackage(
     	)
 
 export { AbstractSheaf, abstractSheaf, AbstractVariety, abstractVariety, schubertCycle,
-     AbstractVarietyMap, adams, Base, BundleRanks, Bundles,
+     AbstractVarietyMap, adams, Base, BundleRanks, Bundles, VarietyDimension,
      CanonicalLineBundle, ch, chern, protect ChernCharacter, protect ChernClass, ChernClassSymbol, chi, ctop, expp, FlagBundle,
      flagBundle, projectiveBundle, projectiveSpace, PP, FlagBundleStructureMap, integral, protect IntersectionRing,
      intersectionRing, logg, PullBack, PushForward, Rank, reciprocal, lowerstar,
@@ -35,7 +35,7 @@ net AbstractVariety := X -> (
 AbstractVariety#{Standard,AfterPrint} = X -> (
      << endl;				  -- double space
      << concatenate(interpreterDepth:"o") << lineNumber << " : "
-     << "an abstract variety of dimension " << X.DIM << endl;
+     << "an abstract variety of dimension " << X.dim << endl;
      )
 
 intersectionRing = method()
@@ -123,7 +123,7 @@ sheaf(ZZ,Array) := (rk,classes) -> (
      if #classes === 0 then error "no Chern classes given";
      sheaf(rk,classes,variety ring first classes))
 
-netbydegree := f -> (
+bydegree := net -> f -> (
      if f == 0 then return "0";
      (i,j) := weightRange(first \ degrees (ring f).flatmonoid, f);
      tms := toList apply(i .. j, n -> part_n f);
@@ -134,12 +134,13 @@ netbydegree := f -> (
      net new Sum from tms)
 
 abstractVariety = method(Options => { Type => AbstractVariety })
-abstractVariety(ZZ,Ring) := opts -> (dim,A) -> (
-     if A.?DIM then error "ring already in use as an intersection ring";
-     A.DIM = dim;
-     net A := netbydegree;
+abstractVariety(ZZ,Ring) := opts -> (d,A) -> (
+     if A.?VarietyDimension then error "ring already in use as an intersection ring";
+     A.VarietyDimension = d;
+     net A := bydegree net;
+     toString A := bydegree toString;
      X := new opts#Type from {
-	  global DIM => dim,
+	  global dim => d,
      	  IntersectionRing => A
      	  };
      A.Variety = X)
@@ -191,7 +192,7 @@ basepoint Sequence := syms -> (
      point)
 point = basepoint()
 
-dim AbstractVariety := X -> X.DIM
+dim AbstractVariety := X -> X.dim
 part(ZZ,QQ) := (n,r) -> if n === 0 then r else 0_QQ
 
 chern = method()
@@ -299,8 +300,8 @@ flagBundle(List,AbstractSheaf) := opts -> (bundleRanks,E) -> (
      -- (C,H) := flattenRing B; I := H^-1;
      C := B; H := identity;
      -- use C;
-     DIM := dim X + sum(n, i -> sum(i+1 .. n-1, j -> bundleRanks#i * bundleRanks#j));
-     FV := C.Variety = abstractVariety(DIM,C,Type => FlagBundle);
+     d := dim X + sum(n, i -> sum(i+1 .. n-1, j -> bundleRanks#i * bundleRanks#j));
+     FV := C.Variety = abstractVariety(d,C,Type => FlagBundle);
      FV.BundleRanks = bundleRanks;
      FV.Rank = rk;
      FV.Base = X;
@@ -359,7 +360,7 @@ reciprocal = method()
 reciprocal RingElement := (A) -> (
      -- computes 1/A (mod degree >=(d+1))
      -- ASSUMPTION: part(0,A) == 1.
-     d := (ring A).DIM;
+     d := (ring A).VarietyDimension;
      a := for i from 0 to d list part_i(A);
      recip := new MutableList from splice{d+1:0};
      recip#0 = 1_(ring A);
@@ -372,8 +373,8 @@ logg = method()
 logg RingElement := (C) -> (
      -- C is the total chern class in an intersection ring
      -- The chern character of C is returned.
-     if not (ring C).?DIM then error "expected a ring with its dimension set";
-     d := (ring C).DIM;
+     if not (ring C).?VarietyDimension then error "expected a ring with its variety dimension set";
+     d := (ring C).VarietyDimension;
      p := new MutableList from splice{d+1:0}; -- p#i is (-1)^i * (i-th power sum of chern roots)
      e := for i from 0 to d list part(i,C); -- elem symm functions in the chern roots
      for n from 1 to d do
@@ -385,8 +386,8 @@ expp = method()
 expp RingElement := (A) -> (
      -- A is the chern character
      -- the total chern class of A is returned
-     if not (ring A).?DIM then error "expected a ring with its dimension set";
-     d := (ring A).DIM;
+     if not (ring A).?VarietyDimension then error "expected a ring with its variety dimension set";
+     d := (ring A).VarietyDimension;
      p := for i from 0 to d list (-1)^i * i! * part(i,A);
      e := new MutableList from splice{d+1:0};
      e#0 = 1;
@@ -402,8 +403,8 @@ todd AbstractVarietyMap := p -> todd tangentBundle p
 todd RingElement := (A) -> (
      -- A is the chern character
      -- the (total) todd class is returned
-     if not (ring A).?DIM then error "expected a ring with its dimension set";
-     d := (ring A).DIM;
+     if not (ring A).?VarietyDimension then error "expected a ring with its variety dimension set";
+     d := (ring A).VarietyDimension;
      -- step 1: find the first part of the Taylor series for t/(1-exp(-t))
      denom := for i from 0 to d list (-1)^i /(i+1)!;
      invdenom := new MutableList from splice{d+1:0};
@@ -412,7 +413,7 @@ todd RingElement := (A) -> (
        invdenom#n = - sum for i from 1 to n list denom#i * invdenom#(n-i);
      -- step 2.  logg.  This is more complicated than desired.
      R := QQ (monoid[t]);
-     R.DIM = d;
+     R.VarietyDimension = d;
      td := logg sum for i from 0 to d list invdenom#i * R_0^i;
      td = for i from 0 to d list coefficient(R_0^i,td);
      -- step 3.  exp
