@@ -17,8 +17,8 @@ export { AbstractSheaf, abstractSheaf, AbstractVariety, abstractVariety, schuber
      CanonicalLineBundle, ch, chern, protect ChernCharacter, protect ChernClass, ChernClassSymbol, chi, ctop, expp, FlagBundle,
      flagBundle, projectiveBundle, projectiveSpace, PP, FlagBundleStructureMap, integral, protect IntersectionRing,
      intersectionRing, logg, PullBack, PushForward, Rank, reciprocal, lowerstar,
-     schur, SectionClass, sectionClass, segre, StructureMap, Symm, protect TangentBundle, tangentBundle, todd, protect ToddClass, bundle, proj,
-     VariableNames, symm, wedge, grass, totalspace, SubBundles, QuotientBundles, point, basepoint}
+     schur, SectionClass, sectionClass, segre, StructureMap, Symm, protect TangentBundle, tangentBundle, todd, protect ToddClass,
+     VariableNames, SubBundles, QuotientBundles, point, basepoint}
 
 debug Core						    -- needed only for flatmonoid, sigh; also for getAttribute
 
@@ -257,7 +257,7 @@ flagBundle = method(Options => { VariableNames => null })
 flagBundle(List) := opts -> (bundleRanks) -> flagBundle(bundleRanks,point,opts)
 flagBundle(List,AbstractVariety) := opts -> (bundleRanks,X) -> flagBundle(bundleRanks,OO_X^(sum bundleRanks),opts)
 flagBundle(List,AbstractSheaf) := opts -> (bundleRanks,E) -> (
-     h$ := global h;
+     h$ := global H;
      varNames := opts.VariableNames;
      if not all(bundleRanks,r -> instance(r,ZZ) and r>=0) then error "expected bundle ranks to be non-negative integers";
      n := #bundleRanks;
