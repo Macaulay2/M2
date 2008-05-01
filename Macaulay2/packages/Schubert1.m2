@@ -205,7 +205,7 @@ value ChernClassSymbol := c -> if chernClassValues#?c then chernClassValues#c el
 expression ChernClassSymbol := c -> new FunctionApplication from {new Subscript from {symbol c,c#0}, c#1}
 net ChernClassSymbol := net @@ expression
 
-OO(AbstractVariety) := X -> (
+OO _ AbstractVariety := X -> (
      A := intersectionRing X;
      abstractSheaf(X, Rank => 1, ChernClass => 1_A, ChernCharacter => 1_A))
 
