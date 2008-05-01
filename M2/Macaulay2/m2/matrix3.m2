@@ -105,19 +105,30 @@ pushLinear := opts -> (f,M) -> (
     )
 *}
 
+kernel Matrix := Module => opts -> (cacheValue symbol kernel) ((g) -> (
+	  N := source g;
+	  P := target g;
+	  if ring N =!= ring P then error "expected source and target modules over the same ring";
+	  g = matrix g;
+	  if P.?generators then g = P.generators * g;
+	  h := modulo(g, if P.?relations then P.relations);
+	  if N.?generators then h = N.generators * h;
+	  subquotient( h, if N.?relations then N.relations)))
+kernel RingElement := Module => options -> (g) -> kernel (matrix {{g}},options)
+
+
 pushForward = method ()
 pushForward(RingMap, Module) := Module => (f,M) -> (
      if isHomogeneous f and isHomogeneous M then (
 	  -- given f:R-->S, and M an S-module, finite over R, find R-presentation for M
 	  S := target f;
 	  M = cokernel presentation M;
-	  M1 := M ** (S^1/(image f.matrix));
+	  M1 := M / ideal f.matrix;
 	  M2 := subquotient(matrix basis M1, relations M);
 	  cokernel pushNonLinear(f,M2)
 	  )
      else error "not implemented yet for inhomogeneous modules or maps"
      )
-
 
 -- Local Variables:
 -- compile-command: "make -C $M2BUILDDIR/Macaulay2/m2 "

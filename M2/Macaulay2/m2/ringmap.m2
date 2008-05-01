@@ -132,6 +132,7 @@ RingMap Vector := Vector => (p,m) -> (
      f := p new Matrix from m;
      new target f from f)
 
+kernel = method(Options => { SubringLimit => infinity })
 kernel RingMap := Ideal => opts -> (cacheValue symbol kernel) (
      (f) -> (
 	  R := source f;
