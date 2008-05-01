@@ -13,10 +13,10 @@ loadPackage "Schubert2";
 ----                           1/6 (n + 3) (n + 2) (n + 1)
 ---- 
 
-proj(3,h)
-factor chi o(n*h)
-
-assert( chi o(n*h) == (n+1)*(n+2)*(n+3)*(1/6) )
+pt = basepoint n
+X = use projectiveSpace_3(pt,VariableNames => {k,{h}})
+factor chi OO(n*h)
+assert( chi OO_X(n*h) == (n+1)*(n+2)*(n+3)*(1/6) )
 
 ---- > Ph[toddclass_];
 ----                                            2  2    3  3
