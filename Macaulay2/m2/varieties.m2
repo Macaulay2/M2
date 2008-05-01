@@ -222,8 +222,11 @@ applyMethod = (key,x) -> (
      if f === null then error "no method available";	    -- expand this error message later
      f x)
 
-OO = new ScriptedFunctor from { subscript => X -> applyMethod((OO,class X),X) }
-OO(Variety) := (X) -> sheaf_X ring X			    -- really responds only to OO_X, not to OO X
+OO = new ScriptedFunctor from {
+     subscript => X -> applyMethod((symbol _,OO,class X),(OO,X)),
+     argument => X -> applyMethod((symbol SPACE,OO,class X),(OO,X)),
+     }
+installMethod(symbol _,OO,Variety,(OO,X) -> sheaf_X ring X)
 sheaf Variety := X -> sheaf_X ring X
 
 --PP = new ScriptedFunctor from {
