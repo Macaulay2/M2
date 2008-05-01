@@ -13,18 +13,14 @@ newPackage(
     	)
 
 export { AbstractSheaf, abstractSheaf, AbstractVariety, abstractVariety, schubertCycle,
-     AbstractVarietyMap, adams, Base, BundleRanks, Bundles, VarietyDimension,
+     AbstractVarietyMap, adams, Base, BundleRanks, Bundles, VarietyDimension, Bundle,
      CanonicalLineBundle, ch, chern, protect ChernCharacter, protect ChernClass, ChernClassSymbol, chi, ctop, expp, FlagBundle,
      flagBundle, projectiveBundle, projectiveSpace, PP, FlagBundleStructureMap, integral, protect IntersectionRing,
      intersectionRing, logg, PullBack, PushForward, Rank, reciprocal, lowerstar,
      schur, SectionClass, sectionClass, segre, StructureMap, Symm, protect TangentBundle, tangentBundle, todd, protect ToddClass,
-     VariableNames, VariableName, SubBundles, QuotientBundles, point, basepoint}
+     VariableNames, VariableName, SubBundles, QuotientBundles, point, base}
 
 debug Core						    -- needed only for flatmonoid, sigh; also for getAttribute
-
-symm = symmetricPower
-wedge = exteriorPower
-totalspace = source
 
 AbstractVariety = new Type of MutableHashTable
 AbstractVariety.synonym = "abstract variety"
@@ -90,6 +86,7 @@ AbstractSheaf#{Standard,AfterPrint} = E -> (
      )
 
 abstractSheaf = method(Options => {
+	  Name => null,
 	  ChernClass => null,
 	  ChernCharacter => null,
 	  Rank => null
@@ -111,6 +108,7 @@ abstractSheaf(AbstractVariety) := opts -> X -> (
      	  global AbstractVariety => X,
      	  global rank => rk,
 	  ChernCharacter => ch,
+	  if opts.Name =!= null then Name => opts.Name,
 	  global cache => new CacheTable from {
 	       if opts.ChernClass =!= null then ChernClass => opts.ChernClass
 	       }
@@ -180,17 +178,60 @@ AbstractSheaf RingElement := (F,n) -> (
 
 integral = method()
 
-basepoint = method(Dispatch => Thing)
-basepoint Symbol := basepoint IndexedVariable := s -> basepoint (1:s)
-basepoint RingElement := s -> basepoint baseName s
-basepoint Sequence := syms -> (
-     syms = baseName \ syms;
-     if not all(syms,i -> instance(i,Symbol) or instance(i,IndexedVariable)) then error "expected a sequence of symbols or indexed variables";
-     point := abstractVariety(0,QQ[syms,Degrees => {#syms : 0}]);
-     point.TangentBundle = abstractSheaf(point,Rank => 0);
-     integral intersectionRing point := identity;
-     point)
-point = basepoint()
+protect Bundle
+
+base = method(Dispatch => Thing)
+base Thing := s -> base (1:s)
+base Sequence := args -> (
+     -- up to one integer, specifying the dimension of the base
+     -- some symbols or indexed variables, to be used as parameter variables of degree 0
+     -- some options Bundle => (B,n,b), where B is a symbol or an indexed variable, b is a symbol, and n is an integer, 
+     --    specifying that we should provide a bundle named B of rank n whose Chern classes are b_1,...,b_n
+     degs := vrs := ();
+     bdls := {};
+     newvr  := (x,d) -> (vrs = (vrs,x);degs = (degs,d));
+     newbdl := x -> bdls = append(bdls,x);
+     d := null;
+     oops := x -> error ("base: unrecognizable argument ",toString x);
+     goodvar := x -> (
+	  if instance(x,RingElement) then baseName x
+	  else if instance(x,Symbol) or instance(x,IndexedVariable) then x
+	  else error ("base: unusable as variable: ",toString x));
+     goodsym := x -> (
+	  if instance(x,RingElement) then x = baseName x;
+	  if instance(x,Symbol) or instance(x,IndexedVariableTable) then x
+	  else error ("base: unusable as subscripted symbol: ",toString x));
+     scan(args, x -> (
+	       if instance(x,Symbol) or instance(x,IndexedVariable) then newvr(x,0)
+	       else if instance(x,RingElement) then newvr(baseName x,0)
+	       else if instance(x,Option) and #x==2 and x#0 === Bundle and instance(x#1,Sequence) and #x#1== 3 then (
+		    (B,n,b) := x#1;
+		    if not instance(n,ZZ) then oops x;
+		    b = goodsym b;
+		    vrs = (vrs,apply(1..n,i->b_i));
+		    degs = (degs,1..n);
+		    B = goodvar B;
+		    newbdl (B,n,b);
+		    )
+	       else if instance(x,ZZ) then (
+		    if d =!= null then error "base: more than one integer argument encountered (as the dimension)";
+		    d = x)
+	       else oops x));
+     if d === null then d = 0;
+     vrs = deepSplice vrs;
+     degs = toList deepSplice degs;
+     A := QQ[vrs,Degrees => degs];
+     X := abstractVariety(d,A);
+     X.TangentBundle = abstractSheaf(X,Rank => d);  -- trivial tangent bundle, for now, user can replace it
+     integral intersectionRing X := identity;		    -- this will usually be wrong, but it's the "base"
+     X#"bundles" = apply(bdls,(B,n,b) -> (
+	       globalReleaseFunction(B,value B);
+	       B <- abstractSheaf(X, Name => B, Rank => n, ChernClass => 1_A + sum(1 .. n, i -> A_(b_i)));
+	       globalAssignFunction(B,value B);
+	       (B,value B)));
+     X.args = args;
+     X)
+point = base()
 
 dim AbstractVariety := X -> X.dim
 part(ZZ,QQ) := (n,r) -> if n === 0 then r else 0_QQ
@@ -336,6 +377,7 @@ flagBundle(List,AbstractSheaf) := opts -> (bundleRanks,E) -> (
 
 use AbstractVariety := X -> (
      use intersectionRing X;
+     if X#?"bundles" then scan(X#"bundles",(sym,shf) -> sym <- shf);
      X)
 
 tangentBundle FlagBundleStructureMap := (stashValue TangentBundle) (
