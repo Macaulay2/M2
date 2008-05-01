@@ -249,9 +249,8 @@ matrixTable := options -> (f) -> (
 
 matrix(Matrix) := Matrix => options -> (m) -> (
      if isFreeModule target m and isFreeModule source m
-     and ring source m === ring target m
      then m
-     else map(cover target m, cover source m ** ring target m, m, Degree => degree m)
+     else map(cover target m, cover source m, m, Degree => degree m)
      )
 
 matrix(List) := Matrix => options -> (m) -> (
@@ -419,7 +418,7 @@ net Matrix := f -> (
 	       	    )
      	       else net expression f
 	       );
-	  if compactMatrixForm and  degreeLength ring f > 0 -- and isHomogeneous f
+	  if compactMatrixForm and degreeLength ring target f > 0 -- and isHomogeneous f
 	  then (
 	       d := degrees cover target f;
 	       if not all(d, i -> all(i, j -> j == 0)) then m = horizontalJoin(stack( d / toString ), " ", m);
@@ -594,6 +593,7 @@ kernel = method(Options => { SubringLimit => infinity })
 kernel Matrix := Module => opts -> (cacheValue symbol kernel) ((g) -> (
 	  N := source g;
 	  P := target g;
+	  if ring N =!= ring P then error "expected source and target modules over the same ring";
 	  g = matrix g;
 	  if P.?generators then g = P.generators * g;
 	  h := modulo(g, if P.?relations then P.relations);

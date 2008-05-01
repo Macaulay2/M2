@@ -123,8 +123,9 @@ Matrix - Number := (f,i) -> if i === 0 then f else f - i*id_(target f)
      }
 
 Matrix * Matrix := Matrix => (m,n) -> (
-     if source m == target n then (
+     if source m === target n then (
 	  if ring target m =!= ring target n then (
+	       error "expected rings of modules to match";
 	       n = matrix n ** ring target m;
 	       );
 	  M := target m;
@@ -163,8 +164,6 @@ transpose Matrix := Matrix => (cacheValue symbol transpose) (
      	  if not (isFreeModule source m and isFreeModule target m) 
      	  then error "expected a map between free modules";
      	  map(ring m, rawDual m.RawMatrix)))
-
-ring(Matrix) := m -> m.target.ring
 
 Matrix * Vector := Vector => (m,v) -> (
      u := m * v#0;
