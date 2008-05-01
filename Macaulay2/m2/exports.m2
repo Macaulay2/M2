@@ -1076,6 +1076,7 @@ export {
 	symbol sort,
 	symbol sortColumns,
 	symbol source,
+	symbol SourceRing,
 	symbol splice,
 	symbol sqrt,
 	symbol stack,
