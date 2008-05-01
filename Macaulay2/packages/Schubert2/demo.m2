@@ -14,8 +14,7 @@ loadPackage "Schubert2";
 ---- 
 
 pt = basepoint n
-Ph = use projectiveSpace(3,pt,VariableName=>h)
-APh = intersectionRing Ph
+Ph = projectiveSpace(3,pt,VariableName=>h) -- this applies "use" to the variety, and to its intersection ring, giving h a value
 factor chi OO(n*h)
                 assert( value oo == (n+1)*(n+2)*(n+3)*(1/6) )
 
