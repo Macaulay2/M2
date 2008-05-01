@@ -833,9 +833,10 @@ types Sequence := x -> (
      if #x > 1 and instance(x#-1,Symbol) 
      then ({},{})					    -- it's an option ...
      else (
+	  x' := select(drop(toList x,1), T -> not ancestor(Nothing,T)); -- putting something like OO in the key indicates a fake dispatch
 	  if instance(x#0,Sequence) and #x#0 === 2 and x#0#1 === symbol =
-          then ( drop(toList x,1) | { Thing }, { typicalValue x } ) -- it's an assignment method
-	  else ( drop(toList x,1)            , { typicalValue x } )
+          then ( x' | { Thing }, { typicalValue x } ) -- it's an assignment method
+	  else ( x'            , { typicalValue x } )
 	  ))
 
 emptyOptionTable := new OptionTable from {}
