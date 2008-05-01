@@ -24,7 +24,7 @@ document {
      TEX "Given a matrix $m : F --> G$, the Schreyer order on the monomials
      of F is given by: If $a e_i$ and $b e_j$ are monomials of $F$, i.e. $a$ and $b$ are 
      monomials in the ring, and
-     $e_i$ and $e_j$ are unit column vectors of $F$, then $a e_i > b e_j$ iff
+     $e_i$ and $e_j$ are unit column vectors of $F$, then $a e_i > b e_j$ if and only if
      either $leadterm(m)(a e_i) > leadterm(m)(b e_j)$ or they are scalar multiples of
      the same monomial in $G$, and $i > j$.",
      PARA{},

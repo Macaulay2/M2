@@ -9,7 +9,7 @@ document {
      x^A . y^B = y^(B-A), if B-A >= 0 in every component, and x^A . y^B = 0 otherwise.",
      PARA{},
      "If I is an ideal of R, then the submodule I' = Hom_R(R/I,E) of E is called the
-     (Macaulay) inverse system of I.  I is zero-dimensional iff I' is finitely generated.",
+     (Macaulay) inverse system of I.  I is zero-dimensional if and only if I' is finitely generated.",
      PARA{},
      "This is a dual operation, since I can be recovered as ann_R(I').",
      PARA{},

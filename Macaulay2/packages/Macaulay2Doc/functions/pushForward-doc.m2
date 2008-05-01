@@ -17,14 +17,13 @@ document {
      PARA{},
      "This function first checks to see whether M will be a finitely generated
      R-module via F.  If not, an error message describing the codimension of
-     M/(vars of S)M is given (this is equal to the dimension of R iff M is a finitely
+     M/(vars of S)M is given (this is equal to the dimension of R if and only if M is a finitely
      generated R-module.",
      PARA{},
-     "Assuming that it is, the push forward F_*(M) is computed.  This is done
-     by first finding a presentation for M in terms of a set of elements which generate
-     M as an S-module, and then calling the routine pushForward1.",
-     PARA{},
-     "All optional arguments are passed to ", TO pushForward1, ".",
+     "Assuming that it is, the push forward ", TT "F_*(M)", " is computed.  This is done
+     by first finding a presentation for ", TT "M", " in terms of a set of elements which generate
+     ", TT "M", " as an ", TT "S", "-module, and then applying the routine ", TO "coimage", " to a map whose target
+     is ", TT "M", " and whose source is a free module over ", TT "R", ".",
      SUBSECTION "Example: The Auslander-Buchsbaum formula",
      "Let's illustrate the Auslander-Buchsbaum formula.
      First construct
@@ -70,8 +69,7 @@ document {
      "Note: these examples are from the original Macaulay script by David Eisenbud.",
      Caveat => {"The module M must be homogeneous, as must R, S, and f.  If you need this
 	  function in more general situations, please write it and send it to the Macaulay2 authors, 
-	  or ask them to write it!"},
-     SeeAlso => {pushForward1}
+	  or ask them to write it!"}
      }
 
 TEST ///
