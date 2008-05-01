@@ -1,4 +1,11 @@
+loadPackage "Kronecker"
 --load "/Users/mike/Library/Application Support/Macaulay2/local/share/Macaulay2/Kronecker.m2"
+
+loosemult = (f,g) -> (
+     -- if source f != target g then error "maps really not composable";
+     f * map(source f,source g,g)
+     )
+
 Q = ZZ/101[x,y]
 
 tallMod = method()
@@ -67,13 +74,13 @@ decomposeExtOverTor(Module, RingElement, RingElement) := (MM, f1, f2) -> (
      freegens := map(F2, , map(F0, , gens freeimage) // (xi1*xi2)_(-2));
      F1 := target(xi1_(-2));
      ker2 := map(F2, , mingens (ker(xi1*xi2))_(-2)) ** K;
-     im1 := map(F1, , mingens(image(xi1_(-2)*ker2) + image(xi2_(-2)*ker2))) ** K;
-     xi12 := (xi1_(-2)*ker2) // im1;
-     xi22 := (xi2_(-2)*ker2) // im1;
+     im1 := map(F1, , mingens(image(loosemult(xi1_(-2),ker2)) + image(loosemult(xi2_(-2),ker2)))) ** K;
+     xi12 := loosemult(xi1_(-2),ker2) // im1;
+     xi22 := loosemult(xi2_(-2),ker2) // im1;
      source1 := map(F1, , mingens(F1/(image(xi1_(-2)) + image(xi2_(-2))))) ** K;
      target0 := map(F0, , mingens(F0/freeimage)) ** K;
-     xi11 := (xi1_(-1)*source1) // target0;
-     xi21 := (xi2_(-1)*source1) // target0;
+     xi11 := loosemult(xi1_(-1),source1) // target0;
+     xi21 := loosemult(xi2_(-1),source1) // target0;
      
      (p, getPencilIndices(Q, xi12, xi22), 
 	  getPencilIndices(Q, xi11, xi21),
