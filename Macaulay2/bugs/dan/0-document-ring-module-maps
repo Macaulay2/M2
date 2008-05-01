@@ -1,0 +1,3 @@
+document making module maps over ring maps
+document taking kernel and coimage of such things
+deprecate pushForward1 so people use kernel instead
