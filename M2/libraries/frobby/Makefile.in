@@ -5,7 +5,7 @@ TARDIR = frobby_v$(VERSION)
 TARFILE := frobby_v$(VERSION).tar.gz
 URL = http://www.math.uiuc.edu/Macaulay2/Extra
 BUILDTARGET = library
-BUILDOPTIONS = LDFLAGS="$(LDFLAGS)" CFLAGS="$(CFLAGS)" CPPFLAGS="$(CPPFLAGS)"
+BUILDOPTIONS = GMP_INC_DIR=$(LIBRARIESDIR)/include
 CONFIGURECMD = :
 INSTALLCMD = :
 LIBFILE = $(LIBRARIESDIR)/lib/libfrobby.a
