@@ -1,6 +1,7 @@
 -- hilbertFunction is producing incorrect values, and is taking a huge amount
 -- of time too.  HirzOmegaTable is the original.  HirzOmegaTable2 changes hilbertFunction
 -- to numgens source basis, which seems to work here.
+-- from email Hal to Mike, 1 May 2008.
 
 HirzOmegaTable = (a,b)->(
     R=ZZ/31991[x_1..x_4, Degrees=>{{1,0},{-2,1},{1,0},{0,1}}, Heft=>{1,3}];
