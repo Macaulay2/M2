@@ -24,9 +24,9 @@ PolyRing *PolyRing::trivial_poly_ring = 0; // Will be ZZ[]
 
 void PolyRing::clear() 
 {
+  PolynomialRing::clear(); 
   delete gb_ring_; 
   gb_ring_ = 0; 
-  PolynomialRing::clear(); 
 }
 
 PolyRing::~PolyRing()

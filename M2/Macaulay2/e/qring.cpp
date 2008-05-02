@@ -21,21 +21,29 @@ QRingInfo::QRingInfo(const PolyRing *ambientR)
   MONOM1_ = R->getMonoid()->make_one();
 }
 
-QRingInfo::~QRingInfo()
+void QRingInfo::destroy(GBRing *GR)
 {
   // remove the gbvector's as they are stashed in gbrings.
   // WARNING: these need to be deleted only if the gbring is non-NULL.
 
-  GBRing *GR = R->get_gb_ring();
   if (GR == 0) return;
   for (int i=0; i<quotient_gbvectors.size(); i++)
     GR->gbvector_remove(quotient_gbvectors[i]);
 }
 
-QRingInfo_field::~QRingInfo_field()
+QRingInfo::~QRingInfo()
+{
+}
+
+void QRingInfo_field::destroy(GBRing *GR)
 {
   delete Rideal;
   delete ringtable;
+  QRingInfo::destroy(GR);
+}
+
+QRingInfo_field::~QRingInfo_field()
+{
 }
 
 QRingInfo_field::QRingInfo_field(const PolyRing *ambientR,
@@ -261,9 +269,14 @@ void QRingInfo_field_QQ::gbvector_normal_form(const FreeModule *F, gbvector *&f)
   f = head.next;
 }
 
-QRingInfo_ZZ::~QRingInfo_ZZ()
+void QRingInfo_ZZ::destroy(GBRing *GR)
 {
   delete ringtableZZ;
+  QRingInfo::destroy(GR);
+}
+
+QRingInfo_ZZ::~QRingInfo_ZZ()
+{
 }
 
 QRingInfo_ZZ::QRingInfo_ZZ(const PolyRing *ambientR,

@@ -13,6 +13,7 @@ class MonomialIdeal;
 class MonomialTable;
 class MonomialTableZZ;
 class gbvector;
+class GBRing;
 
 class QRingInfo : public our_new_delete
 {
@@ -32,6 +33,7 @@ protected:
 public:
   QRingInfo() : R(0), overZZ_(false), MONOM1_(0), EXP1_(0), EXP2_(0) {}
 
+  virtual void destroy(GBRing *GR);
   virtual ~QRingInfo();
 
   int n_quotients() const { return quotient_ideal.size(); }
@@ -60,6 +62,7 @@ protected:
 public:
   QRingInfo_field(const PolyRing *ambientR,
 		  const VECTOR(Nterm *) &quotients);
+  void destroy(GBRing *GR);
   ~QRingInfo_field();
 
   virtual const MonomialIdeal *  get_quotient_monomials() const { return Rideal; }
@@ -108,6 +111,7 @@ class QRingInfo_ZZ : public QRingInfo
 public:
   QRingInfo_ZZ(const PolyRing *ambientR,
 	       const VECTOR(Nterm *) &quotients);
+  void destroy(GBRing *GR);
   ~QRingInfo_ZZ();
 
   bool is_ZZ_quotient() const { return is_ZZ_quotient_; }
