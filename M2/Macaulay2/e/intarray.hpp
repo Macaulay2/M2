@@ -76,21 +76,6 @@ public:
       return result;
     }
 
-  int start()
-    {
-      int csize = max;
-      append(0);
-      return csize;
-    }
-
-  void end(int startval)
-    {
-      if (startval + 1 == max)
-	max--;
-      else
-	entries[startval] = max - startval;
-    }
-
   int *copy(int lngth, const int *a)
     {
       int *t = alloc(lngth);

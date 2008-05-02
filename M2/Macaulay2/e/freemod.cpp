@@ -104,7 +104,7 @@ Matrix * FreeModule::get_induced_order() const
 FreeModule::~FreeModule()
 {
   if (schreyer)
-    deleteitem(schreyer);
+    delete schreyer;
 }
 
 FreeModule *FreeModule::new_free() const
