@@ -99,7 +99,7 @@ public:
   //   i.e. R = A[x], B = A/I
   // return A[x]/I.
 
-  virtual void clear() { delete qinfo_; }
+  virtual void clear() { qinfo_->destroy(gb_ring_); }
   // Removes all space associated with 'this', at least the part
   // that is stashed: gb_ring_ (if it was created by this ring), qinfo_.
 

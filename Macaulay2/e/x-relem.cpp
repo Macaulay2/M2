@@ -37,7 +37,7 @@ void remove_polyring(void *p, void *cd)
 
 void intern_polyring(const PolynomialRing *G)
 {
-  GC_REGISTER_FINALIZER(const_cast<PolynomialRing *>(G),remove_polyring,0,0,0);
+  GC_REGISTER_FINALIZER_IGNORE_SELF(const_cast<PolynomialRing *>(G),remove_polyring,0,0,0);
   polyrings_nfinalized++;
   if (gbTrace>=3)
     fprintf(stderr, "\n   -- registering polynomial ring %ld at %p\n", polyrings_nfinalized, (void *)G);
