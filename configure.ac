@@ -499,7 +499,7 @@ AC_ARG_ENABLE(build-libraries, AS_HELP_STRING(--enable-build-libraries=...,list 
     done])
 
 BUILD_frobby=$FROBBY
-test $BUILD_frobby = yes && BUILTLIBS="-lfrobby $BUILTLIBS"
+test $BUILD_frobby = yes && BUILTLIBS="-lfrobby -lgmpxx $BUILTLIBS"
 
 AC_LANG(C)
 AC_SEARCH_LIBS(tgoto,ncurses curses)
