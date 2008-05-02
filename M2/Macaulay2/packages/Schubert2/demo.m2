@@ -245,11 +245,11 @@ assert( 92 == oo )
 ---- > 
 ---- > proj(4,h,tang):            # need tangentbundle for chi
 
-use projectiveSpace(4,pt,VariableName => h)
+X = projectiveSpace(4,pt,VariableName => h)
 
 ---- > F:=sheaf(2,[5*h,10*h^2]):  # defines the Horrocks-Mumford bundle
 
-F = sheaf(2,[5*h,10*h^2])
+F = abstractSheaf(X, Rank => 2, ChernClass => 1 + 5*h + 10*h^2)
 
 ---- > chi(F&*o(n*h));            # computes chi of its twists
 ----                           4        3   125  2
