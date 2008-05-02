@@ -838,7 +838,7 @@ vec Ring::vec_contract0(int n_top_variables, vec v, int rankFw, vec w) const
   for ( ; v != NULL; v = v->next)
     for (vecterm *p = w; p != NULL; p = p->next)
       {
-	ring_elem a = diff(v->coeff, p->coeff, false);
+	ring_elem a = contract0(n_top_variables, v->coeff, p->coeff);
 	if (is_zero(a)) 
 	  {
 	    remove(a);
