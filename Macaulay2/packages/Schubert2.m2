@@ -116,11 +116,6 @@ abstractSheaf(AbstractVariety) := opts -> X -> (
      )
 abstractSheaf(AbstractVariety,RingElement) := opts -> (X,f) -> abstractSheaf(X, ChernCharacter => f)
 
-sheaf(ZZ,Array,AbstractVariety) := (rk,classes,X) -> abstractSheaf(X, Rank => rk, ChernClass => 1 + sum toList classes)
-sheaf(ZZ,Array) := (rk,classes) -> (
-     if #classes === 0 then error "no Chern classes given";
-     sheaf(rk,classes,variety ring first classes))
-
 bydegree := net -> f -> (
      if f == 0 then return "0";
      (i,j) := weightRange(first \ degrees (ring f).flatmonoid, f);
