@@ -70,27 +70,28 @@ chern(A**B)
 ----                                      3
 ----                                - 6 c1  - 30 c1 c2
 
-chern(3,symm(3,dual(A)))
+chern(3,symmetricPower(3,dual(A)))
 
 ---- > segre(2,Hom(wedge(2,A),wedge(2,B)));
 ----                               2                 2
 ----                           3 d1  - 8 c1 d1 + 6 c1  - d2
 ---- 
 
-segre(2,Hom(wedge(2,A),wedge(2,B)))
+segre(2,Hom(exteriorPower(2,A),exteriorPower(2,B)))
 
 ---- #-------------------------------------------------------------------------
 ---- ## Grassmannian of lines in P3:
 ---- > 
 ---- > grass(2,4,b,all): 
 
-grass(2,4,b)
+Gb = flagBundle({2,2}, pt, VariableNames => {,b})
+(Sb,Qb) = Gb.Bundles
 
 ---- > chi(Gb,Symm(n,Qb));
 ----                              2            3
 ----                             n  + 1 + 1/6 n  + 11/6 n
 
-chi Symm(n,Qb)
+chi symmetricPower(n,Qb)
 
 ---- > chi(Gb,o(n*b1));
 ----                            4        3    23   2
@@ -116,8 +117,8 @@ assert( (n-2)*(n^3-18*n^2+71*n-6)*(1/12) == chi (det Qb)^**n )
 ----                      1/12 n  + 2/3 n  + ---- n  + 7/3 n + 1
 ----                                          12
 
-proj(5,H)
-chi(o(n*H)-o((n-2)*H))
+use projectiveSpace(5,pt,VariableName=>H)
+chi(OO(n*H)-OO((n-2)*H))
 
 assert( oo == 1/12*n^4+2/3*n^3+23/12*n^2+7/3*n+1 )
 
@@ -128,12 +129,13 @@ assert( oo == 1/12*n^4+2/3*n^3+23/12*n^2+7/3*n+1 )
 ---- > 
 ---- > grass(2,5,c):        # Lines in P^4. 
 
-grass(2,5,c)
+Gc = flagBundle({3,2}, pt, VariableNames => {,c})
+(Sc,Qc) = Gc.Bundles
 
 ---- > B:=symm(5,Qc):       # Qc is the rank 2 quotient bundle, B its 5th 
 ---- >                      # symmetric power.
 
-B = symm(5,Qc)
+B = symmetricPower(5,Qc)
 
 ---- > c6:=chern(rank(B),B):# the 6th Chern class of this rank 6 bundle.
 
@@ -155,20 +157,21 @@ assert( oo == 2875 )
 ---- > 
 ---- > grass(3,5,c):         # 2-planes in P^4.  
 
-grass(3,5,c)
+Gc = flagBundle({2,3}, pt, VariableNames => {,c})
+(Sc,Qc) = Gc.Bundles
 
 ---- > B:=Symm(2,Qc):        # The bundle of conics in the 2-plane. 
 
-B = symm(2,Qc)
+B = symmetricPower(2,Qc)
 
 ---- > Proj(X,dual(B),z):    # X is the projective bundle of all conics. 
 
-proj(X, dual B, z)
+X = projectiveBundle(dual B, VariableNames => {,{z}})
 
 ---- > A:=Symm(5,Qc)-Symm(3,Qc)&*o(-z):  # The rank 11 bundle of quintics 
 ---- >                                   # restricted to the universal conic. 
 
-A = symm_5 Qc - symm_3 Qc ** o(-z)
+A = symmetricPower_5 Qc - symmetricPower_3 Qc ** OO(-z)
 
 ---- > c11:=chern(rank(A),A):# its top Chern class.
 
@@ -176,7 +179,7 @@ c11 = chern(rank A, A)
 
 ---- > lowerstar(X,c11):     # push down to G(3,5).
 
-X_* c11
+X.StructureMap_* c11
 
 ---- > integral(Gc,");       # and integrate there.
 ----                                      609250
@@ -196,16 +199,17 @@ assert( oo == 609250 )
 ---- > 
 ---- > grass(3,4,d,all):
 
-grass(3,4,d)
+Gd = flagBundle({1,3}, pt, VariableNames => {,d})
+(Sd,Qd) = Gd.Bundles
 
 ---- > Proj(f,dual(symm(2,Qd)),e):
 
-proj(f, dual symm_2 Qd, e)
+f = projectiveBundle(dual symmetricPower_2 Qd, VariableNames => {,{e}})
 
 ---- > integral(Gd,lowerstar(f,(2*d1+e)^8));
 ----                                        92
 
-integral f_* (2*d_1 + e)^8
+integral f.StructureMap_* (2*d_1 + e)^8
 assert( 92 == oo )
 
 -- another way:
@@ -241,7 +245,7 @@ assert( 92 == oo )
 ---- > 
 ---- > proj(4,h,tang):            # need tangentbundle for chi
 
-proj(4,h)
+use projectiveSpace(4,pt,VariableName => h)
 
 ---- > F:=sheaf(2,[5*h,10*h^2]):  # defines the Horrocks-Mumford bundle
 
@@ -252,7 +256,7 @@ F = sheaf(2,[5*h,10*h^2])
 ----                     1/12 n  + 5/3 n  + --- n  + 125/6 n + 2
 ----                                         12
 
-chi (F ** o(n*h))
+chi (F ** OO(n*h))
 assert( oo == 1/12*n^4+5/3*n^3+125/12*n^2+125/6*n+2 )
 
 ---- #-------------------------------------------------------------------------

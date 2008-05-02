@@ -17,7 +17,7 @@ export { AbstractSheaf, abstractSheaf, AbstractVariety, abstractVariety, schuber
      CanonicalLineBundle, ch, chern, protect ChernCharacter, protect ChernClass, ChernClassSymbol, chi, ctop, expp, FlagBundle,
      flagBundle, projectiveBundle, projectiveSpace, PP, FlagBundleStructureMap, integral, protect IntersectionRing,
      intersectionRing, logg, PullBack, PushForward, Rank, reciprocal, lowerstar,
-     schur, SectionClass, sectionClass, segre, StructureMap, Symm, protect TangentBundle, tangentBundle, todd, protect ToddClass,
+     schur, SectionClass, sectionClass, segre, StructureMap, protect TangentBundle, tangentBundle, todd, protect ToddClass,
      VariableNames, VariableName, SubBundles, QuotientBundles, point, base}
 
 debug Core						    -- needed only for flatmonoid, sigh; also for getAttribute
@@ -220,7 +220,7 @@ base Sequence := args -> (
      if d === null then d = 0;
      vrs = deepSplice vrs;
      degs = toList deepSplice degs;
-     A := QQ[vrs,Degrees => degs];
+     A := QQ[vrs,Degrees => degs, DegreeRank => 1];
      X := abstractVariety(d,A);
      X.TangentBundle = abstractSheaf(X,Rank => d);  -- trivial tangent bundle, for now, user can replace it
      integral intersectionRing X := identity;		    -- this will usually be wrong, but it's the "base"
@@ -534,9 +534,7 @@ exteriorPower(ZZ, AbstractSheaf) := opts -> (n,E) -> (
      abstractSheaf(variety E, ChernCharacter => wedge#n)
      )
 
-Symm = method()
-Symm(ZZ,AbstractSheaf) :=
-Symm(RingElement,AbstractSheaf) := (n,F) -> (
+symmetricPower(RingElement, AbstractSheaf) := (n,F) -> (
      X := variety F;
      A := intersectionRing X;
      try n = promote(n,A);
@@ -545,14 +543,13 @@ Symm(RingElement,AbstractSheaf) := (n,F) -> (
      -- This uses Grothendieck-Riemann-Roch, together with the fact that
      -- f_!(OO_PF(n)) = f_*(symm(n,F)), since the higher direct images are 0.
      h := local h;
-     PF := flagBundle(F, VariableNames => h);
+     PF := projectiveBundle(F, VariableNames => h);
      f := PF.StructureMap;
      abstractSheaf(X, f_*(ch OO_PF(n) * todd f))
      )
 
 symmetricPower(ZZ, AbstractSheaf) := 
-symmetricPower(QQ, AbstractSheaf) := 
-symmetricPower(RingElement, AbstractSheaf) := (n,E) -> (
+symmetricPower(QQ, AbstractSheaf) := (n,E) -> (
      A := ch E;
      wedge := computeWedges(n,A);
      symms := new MutableList from splice{0..n};
