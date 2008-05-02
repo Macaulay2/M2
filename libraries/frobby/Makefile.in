@@ -1,6 +1,6 @@
 VPATH = @srcdir@
-VERSION = 0.7.2
-PATCHFILE = patch-$(VERSION)
+VERSION = 0.7.4
+# PATCHFILE = patch-$(VERSION)
 TARDIR = frobby_v$(VERSION)
 TARFILE := frobby_v$(VERSION).tar.gz
 URL = http://www.math.uiuc.edu/Macaulay2/Extra
