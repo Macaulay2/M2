@@ -617,7 +617,7 @@ schubertCycle(FlagBundle,List) := (X,b) -> (
 beginDocumentation()
 
 document {
-     Key => Schubert1,
+     Key => Schubert2,
      "This package is a preliminary (undocumented) package intended to provide the same functionality
      as the package ", EM "Schubert", " written for an old version of Maple."
      }
