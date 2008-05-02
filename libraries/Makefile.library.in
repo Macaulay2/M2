@@ -22,8 +22,8 @@ uninstall   : ; rm -f .installed-$(VERSION)
 reinstall   : uninstall .installed-$(VERSION)
 diffs : .untarred-$(VERSION) .untarred2-$(VERSION) ; diff -ur --exclude=configure tmp/$(TARDIR) $(TARDIR) |egrep -v '^Only in ' >$@ || echo diffs: `pwd`/$@
 unmark : ; rm -f .configured-$(VERSION) .compiled-$(VERSION)
-package-clean : unmark ; $(MAKE) -C $(BUILDDIR) clean
-package-distclean : unmark ; $(MAKE) -C $(BUILDDIR) distclean
+package-clean : unmark ; if [ -d $(BUILDDIR) ]; then $(MAKE) -C $(BUILDDIR) clean ; fi
+package-distclean : unmark ; if [ -d $(BUILDDIR) ]; then $(MAKE) -C $(BUILDDIR) distclean ; fi
 
 fetch : .fetched-$(VERSION)
 patch : .patched-$(VERSION)
@@ -89,8 +89,11 @@ endif
 
 .fetched-$(VERSION) : ; $(FETCHER) $(URL)/$(TARFILE) $(FETCHOPTS) && touch $@
 
-clean ::; rm -rf .patched* .fetched* .untarred* $(LIBNAME)-* .compiled* .configured* .installed* .untarred2* diffs tmp
-distclean :: clean ; rm -rf Makefile
+clean :: package-clean
+distclean :: package-distclean
+
+clean ::; rm -rf .patched* .untarred* $(LIBNAME)-* .compiled* .configured* .installed* .untarred2* diffs tmp
+distclean :: clean ; rm -rf Makefile $(TARFILE) .fetched* $(TARDIR) $(TARFILE)
 check ::
 
 help :;
@@ -102,13 +105,13 @@ help :;
 	@ echo "  all                         build/compile all files [the default target]"
 	@ echo "  reconfigure		      remake configuration files for library"
 	@ echo "  diffs			      create diff file for changes to library sources"
-	@ echo "  clean			      remove most created files, except Makefiles"
+	@ echo "  clean			      remove most created files, except Makefiles and dowloaded tarfiles"
 	@ echo "  distclean		      remove all created files"
-	@ echo "  package-clean		      remove most created files in the package, except Makefiles"
-	@ echo "  package-distclean	      remove all created files in the package"
+	@ echo "  package-clean		      remove most created files in the package's directory tree, except Makefiles"
+	@ echo "  package-distclean	      remove all created files in the package's directory tree"
 	@ echo "  check			      check whether library compiled correctly"
 	@ echo ""
 
 # Local Variables:
-# compile-command: "make -C $M2BUILDDIR/libraries "
+# compile-command: "make -C $M2BUILDDIR/libraries Makefile.library"
 # End:
