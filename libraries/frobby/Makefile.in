@@ -12,7 +12,7 @@ LIBFILE = $(LIBRARIESDIR)/lib/libfrobby.a
 include ../Makefile.library
 Makefile : @srcdir@/Makefile.in ; cd ../.. && ./config.status libraries/frobby/Makefile
 all ::
-	cp -a $(BUILDDIR)/bin/release/frobby.a $(LIBFILE) 
+	cp $(BUILDDIR)/bin/release/frobby.a $(LIBFILE) 
 # Local Variables:
 # compile-command: "make -C $M2BUILDDIR/libraries/frobby "
 # End:
