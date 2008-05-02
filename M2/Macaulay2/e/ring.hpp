@@ -382,6 +382,7 @@ public:
   /* Polynomial routines.  These all set an error if the ring is not
      a polynomial ring.  OR, they will be moved to poly.hpp  */
   vec vec_diff(vec v, int rankFw, vec w, int use_coeff) const;
+  vec vec_contract0(int n_top_variables, vec v, int rankFw, vec w) const;
   int vec_in_subring(int n, const vec v) const;
   void vec_degree_of_var(int n, const vec v, int &lo, int &hi) const;
   vec vec_divide_by_var(int n, int d, const vec v) const;

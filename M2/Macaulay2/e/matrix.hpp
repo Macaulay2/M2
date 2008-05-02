@@ -124,6 +124,11 @@ public:
   MatrixOrNull *module_tensor(const Matrix *m) const;
   MatrixOrNull *tensor(const Matrix *m) const;
   MatrixOrNull *diff(const Matrix *m, int use_coef) const;
+
+  MatrixOrNull *contract0(int n_top_variables, const Matrix *N) const;
+  // see doc for IM2_Matrix_contract0 to see what this does, and
+  // what assumptions there are.
+
   MatrixOrNull *symm(int n) const; // in symm.cpp
 
   MatrixOrNull *coeffs(const int *vars, Matrix * &result_monoms) const;
