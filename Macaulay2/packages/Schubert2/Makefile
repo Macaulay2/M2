@@ -1,4 +1,4 @@
-STOP = --stop
+STOP = --stop --no-loaddata
 demo :
 	M2.dev $(STOP) --no-debug -e 'input "demo.m2"; exit 0' </dev/null
 	M2.dev $(STOP) --no-debug -e 'input "demo2.m2"; exit 0' </dev/null
