@@ -280,7 +280,9 @@ AC_SUBST(OPTIMIZE,yes) AC_ARG_ENABLE(optimize, AS_HELP_STRING(--disable-optimize
 AC_SUBST(DEBUG,no)     AC_ARG_ENABLE(debug, AS_HELP_STRING(--enable-debug,enable debugging (and disable stripping)), DEBUG=$enableval)
 AC_SUBST(ENCAP,yes)    AC_ARG_ENABLE(encap, AS_HELP_STRING(--disable-encap,do not encapsulate file in a subdirectory), ENCAP=$enableval)
 AC_SUBST(XCODE,no)     AC_ARG_ENABLE(xcode, AS_HELP_STRING(--enable-xcode,create Macaulay2/d/interpret.a for use with xcode), XCODE=$enableval)
-AC_SUBST(FROBBY,no)    AC_ARG_ENABLE(frobby, AS_HELP_STRING(--enable-frobby,[download, compile, and link with frobby library]), FROBBY=$enableval)
+AC_SUBST(FROBBY,no)    AC_ARG_ENABLE(frobby, AS_HELP_STRING(--enable-frobby,[download, compile, and link with frobby library]), 
+    AC_DEFINE(HAVE_FROBBY,1,[whether we are linking with the frobby library])
+    FROBBY=$enableval)
 AC_ARG_ENABLE(altivec, AS_HELP_STRING(--enable-altivec,compile with "-faltivec" option), 
     ALTIVEC=$enableval
     LDFLAGS="$LDFLAGS -faltivec"
