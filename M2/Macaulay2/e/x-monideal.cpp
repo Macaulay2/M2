@@ -305,8 +305,8 @@ const RingElementOrNull * IM2_MonomialIdeal_Hilbert(const MonomialIdeal *I)
      }
 }
 
-#if 0
-#include "/Users/mike/src/M2/Macaulay2/bugs/mike/monideals/frobby_vmike2/src/frobby.h"
+#if HAVE_FROBBY
+#include "frobby.h"
 
 class MyTermConsumer : public Frobby::TermConsumer {
   MonomialIdeal *J;
@@ -320,8 +320,8 @@ const MonomialIdeal *FrobbyAlexanderDual(MonomialIdeal *I)
 {
   MonomialIdeal *J;
   MyTermConsumer M(J);
-  Frobby::ExternalIdeal F(5);
-  Frobby::alexanderDual(&F, 0, &M);
+  Frobby::Ideal F(5);
+  Frobby::alexanderDual(F, 0, M);
   return M.result();
 }
 #endif
