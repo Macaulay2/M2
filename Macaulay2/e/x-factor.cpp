@@ -391,6 +391,8 @@ const RingElementOrNull *rawExtendedGCDRingElement(const RingElement *f, const R
   const RingElement *ret;
   const PolynomialRing *P = f->get_ring()->cast_to_PolynomialRing();
   const PolynomialRing *P2 = g->get_ring()->cast_to_PolynomialRing();
+  *A = NULL;
+  *B = NULL;
   if (P == 0)
     {
       ERROR("expected polynomial ring");
