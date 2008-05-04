@@ -109,9 +109,6 @@ commonRingInitializations = (F) -> (
 
 commonEngineRingInitializations = (F) -> (
      F.Engine = true;
-     if debugLevel > 5 then (
-	  registerFinalizer(F,"ring");
-	  );
      commonRingInitializations F;
      F ? F := (f,g) -> raw f ? raw g;
      baserings := F.baseRings;
@@ -152,6 +149,15 @@ commonEngineRingInitializations = (F) -> (
 		    promote(List,A,F) := (m,A,F) -> multipleBasicPromoteDegrees(m,promoteDegreesChain);
 		    lift   (List,F,A) := (m,F,A) -> multipleBasicLiftDegrees(m,liftDegreesChain);
 		    )));
+     if debugLevel > 25 then (
+	  registerFinalizer(F,"ring");
+	  );
+     {*
+     if debugLevel > 50 then (
+	  registerFinalizer(F#0,"ring 0");
+	  registerFinalizer(F#1,"ring 1");
+	  );
+     *}
      )
 
 -----------------------------------------------------------------------------

@@ -278,6 +278,11 @@ Ring OrderedMonoid := PolynomialRing => (			  -- no memoize
 	  RM.generatorSymbols = M.generatorSymbols;
 	  RM.generatorExpressions = M.generatorExpressions;
 	  RM.generators = apply(num, i -> RM_i);
+	  {*
+	  if debugLevel > 50 then (
+	       scan(RM.generators, x -> registerFinalizer(x,"ring element"));
+	       );
+	  *}
 	  RM.indexSymbols = new HashTable from join(
 	       if R.?indexSymbols then apply(pairs R.indexSymbols, (nm,x) -> nm => new RM from rawPromote(raw RM,raw x)) else {},
 	       apply(num, i -> M.generatorSymbols#i => RM_i)
