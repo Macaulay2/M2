@@ -156,8 +156,13 @@ ring_elem PolyRingQuotient::invert(const ring_elem f) const
       RingElement *g1 = RingElement::make_raw(getAmbientRing(),g);
       const RingElement *u1;
       const RingElement *v1;
-      rawExtendedGCDRingElement(f1,g1,&u1,&v1); // ignore return value
-      // The gcd should be 1.
+      const RingElement *ret = rawExtendedGCDRingElement(f1,g1,&u1,&v1);
+      if (ret == NULL) {
+	// one reason this might return NULL is if the coefficient ring is not ZZ/n, ZZ, or QQ
+	// now what do we do?
+	// we can't return NULL
+	INTERNAL_ERROR("ring element gcd computation failed");
+      }
       return u1->get_value();
       
     }

@@ -42,7 +42,7 @@ void INTERNAL_ERROR(const char *s,...)
   vsprintf(buf,s,ap);
   va_end(ap);
   fprintf(stderr, "--internal error: %s\n", buf);
-  /* exit(1); */
+  exit(1);			/* we should exit after an internal error, to avoid crashing */
 }
 
 int error()
