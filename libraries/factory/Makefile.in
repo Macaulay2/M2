@@ -10,7 +10,8 @@ PRECONFIGURE = autoconf
 CONFIGOPTIONS += --enable-NTL
 ifeq (@OPTIMIZE@,yes)
 CXXFLAGS += -Wno-deprecated --no-rtti --no-exceptions
-else
+endif
+ifeq (@DEBUG@,yes)
 CONFIGOPTIONS += --enable-assertions
 endif
 include ../Makefile.library
