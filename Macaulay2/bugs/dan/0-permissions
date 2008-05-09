@@ -1,0 +1,3 @@
+umask 077 by a root user will interfere with our installation, so add "-m 644"
+to all INSTALL_DATA commands, and "-m 755" to all INSTALL commands
+
