@@ -170,7 +170,6 @@ Ring OrderedMonoid := PolynomialRing => (			  -- no memoize
 	       else error "internal error: expected coefficient ring to have a base ring and a flat monoid"
 	       );
      	  local RM;
-	  quotfix := rawRM -> if isQuotientOf(PolynomialRing,R) then rawQuotientRing(rawRM, raw R) else rawRM;
 	  Weyl := M.Options.WeylAlgebra =!= {};
 	  skews := monoidIndices(M,M.Options.SkewCommutative);
 	  degRing := if degreeLength M != 0 then degreesRing degreeLength M else ZZ;
@@ -214,7 +213,7 @@ Ring OrderedMonoid := PolynomialRing => (			  -- no memoize
 		    diffs1 = join(diffs1, apply(R.diffs1, i -> i + num));
 		    );
 	       scan(diffs0,diffs1,(x,dx) -> if not x<dx then error "expected differentiation variables to occur to the right of their variables");
-	       RM = new PolynomialRing from quotfix rawWeylAlgebra(rawPolynomialRing(raw basering, raw flatmonoid),diffs0,diffs1,h);
+	       RM = new PolynomialRing from rawWeylAlgebra(rawPolynomialRing(raw basering, raw flatmonoid),diffs0,diffs1,h);
 	       RM.diffs0 = diffs0;
 	       RM.diffs1 = diffs1;
      	       addHook(RM, QuotientRingHook, S -> (S.diffs0 = diffs0; S.diffs1 = diffs1));
@@ -223,13 +222,17 @@ Ring OrderedMonoid := PolynomialRing => (			  -- no memoize
 	  else if skews =!= {} or R.?SkewCommutative then (
 	       if R.?diffs0 then error "coefficient ring is a Weyl algebra";
 	       if R.?SkewCommutative then skews = join(skews, apply(R.SkewCommutative, i -> i + num));
-	       RM = new PolynomialRing from quotfix rawSkewPolynomialRing(rawPolynomialRing(raw basering, raw flatmonoid),skews);
+	       RM = new PolynomialRing from rawSkewPolynomialRing(rawPolynomialRing(raw basering, raw flatmonoid),skews);
 	       RM.SkewCommutative = skews;
 	       )
 	  else (
 	       log := FunctionApplication {rawPolynomialRing, (raw basering, raw flatmonoid)};
-	       RM = new PolynomialRing from quotfix value log;
+	       RM = new PolynomialRing from value log;
 	       RM#"raw creation log" = Bag {log};
+	       );
+	  if R#?"has quotient elements" or isQuotientOf(PolynomialRing,R) then (
+	       RM.RawRing = rawQuotientRing(RM.RawRing, R.RawRing);
+	       RM#"has quotient elements" = true;
 	       );
 	  RM.basering = basering;
 	  RM.flatmonoid = flatmonoid;
