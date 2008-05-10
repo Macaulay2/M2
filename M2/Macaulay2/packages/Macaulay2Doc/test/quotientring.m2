@@ -6,6 +6,14 @@ f-g
 assert( f-g == 0 )
 f==g
 assert( f == g )
+
+R = QQ[a]/a^2[x]
+assert( a_R^2 == 0 )
+R = QQ[a]/a^2[x][y]
+assert( a_R^2 == 0 )
+R = QQ[a]/a^2[x][y]/y^3
+assert( a_R^2 == 0 )
+
 end
 -- Local Variables:
 -- compile-command: "make -C $M2BUILDDIR/Macaulay2/test quotientring.out"
