@@ -797,7 +797,7 @@ const RingElementOrNull *IM2_RingElement_term(const Ring *R,
      }
 }
 
-const RingElement *IM2_RingElement_get_terms(
+const RingElementOrNull *IM2_RingElement_get_terms(
             int nvars, /* n variables in an outermost monoid */
             const RingElement *a,
 	    int lo, int hi)
