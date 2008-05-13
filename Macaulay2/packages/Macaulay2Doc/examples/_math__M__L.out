@@ -1,31 +1,34 @@
--- -*- M2-comint -*-
+-- -*- M2-comint -*- {* hash: 1646559642 *}
 
 i1 : R = ZZ[x,y];
 
 i2 : mathML (x+2*y-1)^2
 
-o2 = <mrow><mrow><msup><mi>x</mi><mn>2</mn></msup><mo>&InvisibleTimes;</mo></mrow>
-     <mo>+</mo><mrow><mn>4</mn><mo>&InvisibleTimes;</mo><mi>x</mi><mo>*</mo><mi>y</mi></mrow>
-     <mo>+</mo><mrow><mn>4</mn><mo>&InvisibleTimes;</mo><msup><mi>y</mi><mn>2</mn></msup><mo>&InvisibleTimes;</mo></mrow>
-     <mo>-</mo><mrow><mn>2</mn><mo>&InvisibleTimes;</mo><mi>x</mi></mrow>
-     <mo>-</mo><mrow><mn>4</mn><mo>&InvisibleTimes;</mo><mi>y</mi></mrow>
+o2 = <mrow><msup><mi>x</mi><mn>2</mn></msup>
+     <mo>+</mo><mrow><mn>4</mn><mo></mo><mi>x</mi><mo>*</mo><mi>y</mi></mrow>
+     <mo>+</mo><mrow><mn>4</mn><mo></mo><msup><mi>y</mi><mn>2</mn></msup></mrow>
+     <mo>-</mo><mrow><mn>2</mn><mo></mo><mi>x</mi></mrow>
+     <mo>-</mo><mrow><mn>4</mn><mo></mo><mi>y</mi></mrow>
      <mo>+</mo><mn>1</mn>
      </mrow>
 
 
 i3 : mathML matrix {{x,y},{x^2+2,0}}
 
-o3 = <mrow><mo>(</mo><mtable>
-     <mtr><mtd><mrow><mi>x</mi></mrow></mtd>
-     <mtd><mrow><mi>y</mi></mrow></mtd>
+o3 = <mrow><mo>(</mo><mtable align="baseline1">
+     <mtr><mtd><mi>x</mi></mtd>
+     <mtd><mi>y</mi></mtd>
      </mtr>
-     <mtr><mtd><mrow><mrow><msup><mi>x</mi><mn>2</mn></msup><mo>&InvisibleTimes;</mo></mrow>
+     <mtr><mtd><mrow><msup><mi>x</mi><mn>2</mn></msup>
      <mo>+</mo><mn>2</mn>
      </mrow>
      </mtd>
      <mtd><mn>0</mn></mtd>
      </mtr>
-     </mtable><mo>)</mo></mrow>
+     </mtable>
+     <mo>)</mo></mrow>
 
 
 i4 : 
+0.80user 0.05system 0:00.87elapsed 98%CPU (0avgtext+0avgdata 0maxresident)k
+0inputs+0outputs (0major+10844minor)pagefaults 0swaps

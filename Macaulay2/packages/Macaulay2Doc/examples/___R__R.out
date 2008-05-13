@@ -1,9 +1,174 @@
--- -*- M2-comint -*-
+-- -*- M2-comint -*- {* hash: -1962672500 *}
 
 i1 : 3.14159
 
 o1 = 3.14159
 
-o1 : RR
+o1 : RR (of precision 53)
 
-i2 : 
+i2 : precision 3.14159
+
+o2 = 53
+
+i3 : class 3.1
+
+o3 = RR
+
+o3 : InexactFieldFamily
+
+i4 : ring 3.1
+
+o4 = RR
+       53
+
+o4 : RealField
+
+i5 : 3p300
+
+o5 = 3
+
+o5 : RR (of precision 300)
+
+i6 : 3e3
+
+o6 = 3000
+
+o6 : RR (of precision 53)
+
+i7 : -3e-3
+
+o7 = -.003
+
+o7 : RR (of precision 53)
+
+i8 : -3p111e-3
+
+o8 = -.003
+
+o8 : RR (of precision 111)
+
+i9 : 1/3.
+
+o9 = .333333333333333
+
+o9 : RR (of precision 53)
+
+i10 : 1/3p100
+
+o10 = .333333333333333333333333333333
+
+o10 : RR (of precision 100)
+
+i11 : 100 * log(10,2)
+
+o11 = 30.1029995663981
+
+o11 : RR (of precision 53)
+
+i12 : printingPrecision
+
+o12 = 6
+
+i13 : {1/3.,1/3p100}
+
+o13 = {.333333, .333333}
+
+o13 : List
+
+i14 : .5p100 == .5p30
+
+o14 = true
+
+i15 : .2p100 == .2p30
+
+o15 = false
+
+i16 : .5p100 === .5p30
+
+o16 = false
+
+i17 : .2p100 === .2p30
+
+o17 = false
+
+i18 : 0.
+
+o18 = 0
+
+o18 : RR (of precision 53)
+
+i19 : -0.
+
+o19 = -0
+
+o19 : RR (of precision 53)
+
+i20 : 1/0.
+
+o20 = infinity
+
+o20 : RR (of precision 53)
+
+i21 : 1/-0.
+
+o21 = -infinity
+
+o21 : RR (of precision 53)
+
+i22 : log 0
+
+o22 = -infinity
+
+o22 : RR (of precision 53)
+
+i23 : csc (0.)
+
+o23 = infinity
+
+o23 : RR (of precision 53)
+
+i24 : csc (-0.)
+
+o24 = -infinity
+
+o24 : RR (of precision 53)
+
+i25 : x = {1/3.,1/3p100}
+
+o25 = {.333333, .333333}
+
+o25 : List
+
+i26 : x == {.333333, .333333}
+
+o26 = false
+
+i27 : y = toExternalString x
+
+o27 = {.33333333333333331p53, .33333333333333333333333333333346p100}
+
+i28 : x === value y
+
+o28 = true
+
+i29 : numeric pi
+
+o29 = 3.14159265358979
+
+o29 : RR (of precision 53)
+
+i30 : numeric_200 pi
+
+o30 = 3.14159265358979323846264338327950288419716939937510582097494
+
+o30 : RR (of precision 200)
+
+i31 : Gamma oo
+
+o31 = 2.28803779534003241795958890906023392288968815335622244119938
+
+o31 : RR (of precision 200)
+
+i32 : 
+0.77user 0.04system 0:00.82elapsed 100%CPU (0avgtext+0avgdata 0maxresident)k
+0inputs+0outputs (0major+10844minor)pagefaults 0swaps

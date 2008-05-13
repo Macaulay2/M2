@@ -1,4 +1,4 @@
--- -*- M2-comint -*-
+-- -*- M2-comint -*- {* hash: 1901890515 *}
 
 i1 : A = QQ[x,y,z]
 
@@ -41,7 +41,7 @@ o4 : Matrix A  <--- A
 
 i5 : contraHom = (M, s) -> (
          (n,m) := (numgens target M, numgens source M);
-         R := mutableZero(ring M, s*n, s*m);
+         R := mutableMatrix(ring M, s*n, s*m);
          for b from 0 to m-1 do
            for a from 0 to s-1 do
              for c from 0 to n-1 do
@@ -66,3 +66,5 @@ o6 = | 1 4 7 0 0 0 |
 o6 : Matrix A  <--- A
 
 i7 : 
+0.77user 0.04system 0:00.82elapsed 100%CPU (0avgtext+0avgdata 0maxresident)k
+0inputs+0outputs (0major+10845minor)pagefaults 0swaps

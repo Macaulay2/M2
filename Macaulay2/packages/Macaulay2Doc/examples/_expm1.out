@@ -1,0 +1,17 @@
+-- -*- M2-comint -*- {* hash: -629015570 *}
+
+i1 : expm1 1p100e-10
+
+o1 = 1.00000000005000000000166666667e-10
+
+o1 : RR (of precision 100)
+
+i2 : exp(1p100e-10)-1
+
+o2 = 1.00000000005000000000937586788e-10
+
+o2 : RR (of precision 100)
+
+i3 : 
+0.76user 0.05system 0:00.81elapsed 99%CPU (0avgtext+0avgdata 0maxresident)k
+0inputs+0outputs (0major+10839minor)pagefaults 0swaps

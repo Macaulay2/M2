@@ -1,4 +1,4 @@
--- -*- M2-comint -*-
+-- -*- M2-comint -*- {* hash: -75446879 *}
 
 i1 : reverse {a,b,c,d}
 
@@ -7,3 +7,5 @@ o1 = {d, c, b, a}
 o1 : List
 
 i2 : 
+0.79user 0.02system 0:00.81elapsed 100%CPU (0avgtext+0avgdata 0maxresident)k
+0inputs+0outputs (0major+10843minor)pagefaults 0swaps

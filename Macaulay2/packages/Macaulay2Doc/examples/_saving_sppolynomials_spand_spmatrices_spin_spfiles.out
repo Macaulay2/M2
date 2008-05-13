@@ -1,4 +1,4 @@
--- -*- M2-comint -*-
+-- -*- M2-comint -*- {* hash: -814205734 *}
 
 i1 : R = QQ[x..z]
 
@@ -29,11 +29,11 @@ o4 : R-module, submodule of R
 
 i5 : f = temporaryFileName()
 
-o5 = /tmp/M2-20551-1
+o5 = /tmp/M2-15784-1
 
 i6 : f << toString (p,m,M) << close
 
-o6 = /tmp/M2-20551-1
+o6 = /tmp/M2-15784-1
 
 o6 : File
 
@@ -66,3 +66,5 @@ o11 = true
 i12 : removeFile f
 
 i13 : 
+0.78user 0.08system 0:00.90elapsed 96%CPU (0avgtext+0avgdata 0maxresident)k
+0inputs+0outputs (0major+10840minor)pagefaults 0swaps

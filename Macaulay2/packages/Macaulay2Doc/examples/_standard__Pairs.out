@@ -1,4 +1,4 @@
--- -*- M2-comint -*-
+-- -*- M2-comint -*- {* hash: -1443338188 *}
 
 i1 : R = QQ[x,y,z];
 
@@ -19,3 +19,5 @@ o3 = {{1, {x, z}}, {y, {x, z}}, {1, {x, y}}, {z, {y}}, {y z, {x}}, {y z ,
 o3 : List
 
 i4 : 
+0.85user 0.05system 0:00.90elapsed 99%CPU (0avgtext+0avgdata 0maxresident)k
+0inputs+0outputs (0major+11491minor)pagefaults 0swaps

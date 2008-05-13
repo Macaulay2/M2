@@ -1,4 +1,4 @@
--- -*- M2-comint -*-
+-- -*- M2-comint -*- {* hash: -1269059421 *}
 
 i1 : R = ZZ/32003[a..d];
 
@@ -64,3 +64,5 @@ o8 = {ideal (- b*c + a*d, - c  + b*d , - a*c  + b d, b  - a c), ideal (- c +
 o8 : List
 
 i9 : 
+0.91user 0.06system 0:00.98elapsed 100%CPU (0avgtext+0avgdata 0maxresident)k
+0inputs+0outputs (0major+11748minor)pagefaults 0swaps

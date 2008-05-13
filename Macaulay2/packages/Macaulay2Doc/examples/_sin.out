@@ -1,9 +1,11 @@
--- -*- M2-comint -*-
+-- -*- M2-comint -*- {* hash: -742953510 *}
 
 i1 : sin (pi/2)
 
-o1 = 1.
+o1 = 1
 
-o1 : RR
+o1 : RR (of precision 53)
 
 i2 : 
+0.82user 0.05system 0:00.87elapsed 99%CPU (0avgtext+0avgdata 0maxresident)k
+0inputs+0outputs (0major+10844minor)pagefaults 0swaps

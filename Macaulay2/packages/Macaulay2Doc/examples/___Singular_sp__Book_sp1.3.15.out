@@ -1,11 +1,11 @@
--- -*- M2-comint -*-
+-- -*- M2-comint -*- {* hash: 510341357 *}
 
 i1 : R = QQ[x,y,z];
 
 i2 : radical ideal(z^4+2*z^2+1)
 
-            2
-o2 = ideal(z  + 1)
+              2
+o2 = ideal(- z  - 1)
 
 o2 : Ideal of R
 
@@ -19,7 +19,7 @@ o3 : Ideal of R
 i4 : radical I
 
                    2
-o4 = ideal (-x, - y  - y)
+o4 = ideal (-x, - y  - y, x*y)
 
 o4 : Ideal of R
 
@@ -32,3 +32,5 @@ i7 : k
 o7 = 4
 
 i8 : 
+0.79user 0.02system 0:00.83elapsed 98%CPU (0avgtext+0avgdata 0maxresident)k
+0inputs+0outputs (0major+10849minor)pagefaults 0swaps

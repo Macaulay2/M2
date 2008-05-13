@@ -1,8 +1,8 @@
--- -*- M2-comint -*-
+-- -*- M2-comint -*- {* hash: -234294570 *}
 
 i1 : dir = temporaryFileName()
 
-o1 = /tmp/M2-19934-1
+o1 = /tmp/M2-14519-1
 
 i2 : makeDirectory dir
 
@@ -15,3 +15,5 @@ o3 : List
 i4 : removeDirectory dir
 
 i5 : 
+0.76user 0.05system 0:00.81elapsed 99%CPU (0avgtext+0avgdata 0maxresident)k
+0inputs+0outputs (0major+10841minor)pagefaults 0swaps

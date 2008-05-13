@@ -1,4 +1,4 @@
--- -*- M2-comint -*-
+-- -*- M2-comint -*- {* hash: -1689965530 *}
 
 i1 : R = QQ[a..d,MonomialOrder=>{Weights => {-1,2,3,4}},Global=>false];
 
@@ -70,3 +70,5 @@ o12 = a  + b*d + b + c
 o12 : R
 
 i13 : 
+0.80user 0.12system 0:00.92elapsed 99%CPU (0avgtext+0avgdata 0maxresident)k
+0inputs+0outputs (0major+10844minor)pagefaults 0swaps

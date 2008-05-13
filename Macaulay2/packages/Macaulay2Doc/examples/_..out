@@ -1,4 +1,4 @@
--- -*- M2-comint -*-
+-- -*- M2-comint -*- {* hash: -844835295 *}
 
 i1 : x = new MutableHashTable;
 
@@ -15,3 +15,5 @@ i4 : peek x
 o4 = MutableHashTable{k => 444}
 
 i5 : 
+0.77user 0.04system 0:00.82elapsed 99%CPU (0avgtext+0avgdata 0maxresident)k
+0inputs+0outputs (0major+10844minor)pagefaults 0swaps

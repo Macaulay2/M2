@@ -1,0 +1,15 @@
+-- -*- M2-comint -*- {* hash: -354544783 *}
+
+i1 : 256 << 5
+
+o1 = 8192
+
+i2 : 256. << 555
+
+o2 = 3.01916993985723e169
+
+o2 : RR (of precision 53)
+
+i3 : 
+0.76user 0.04system 0:00.80elapsed 100%CPU (0avgtext+0avgdata 0maxresident)k
+0inputs+0outputs (0major+10843minor)pagefaults 0swaps

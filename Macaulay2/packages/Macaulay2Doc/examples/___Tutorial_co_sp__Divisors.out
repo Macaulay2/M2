@@ -1,4 +1,4 @@
--- -*- M2-comint -*-
+-- -*- M2-comint -*- {* hash: -1629029328 *}
 
 i1 : KK = ZZ/31991
 
@@ -131,6 +131,7 @@ i23 : Divisor - Divisor := (D,E) -> D + (-E);
 i24 : ZZ Divisor := ZZ * Divisor := (n,D) -> divisor((D#0)^n, (D#1)^n);
 
 i25 : 2P
+stdio:44:2:(1):[0]: warning: character 'P' immediately following number
 
                          2
 o25 = Divisor{ideal (z, x ), ideal 1}
@@ -138,6 +139,7 @@ o25 = Divisor{ideal (z, x ), ideal 1}
 o25 : Divisor
 
 i26 : 3P
+stdio:45:2:(1):[0]: warning: character 'P' immediately following number
 
 o26 = Divisor{ideal(z), ideal 1}
 
@@ -150,6 +152,8 @@ o27 = Divisor{ideal (z, x), ideal (y, x - z)}
 o27 : Divisor
 
 i28 : D2 = 2P - 2R1
+stdio:47:7:(1):[0]: warning: character 'P' immediately following number
+stdio:47:12:(1):[0]: warning: character 'R' immediately following number
 
                          2                  2
 o28 = Divisor{ideal (z, x ), ideal (x - z, y )}
@@ -157,6 +161,7 @@ o28 = Divisor{ideal (z, x ), ideal (x - z, y )}
 o28 : Divisor
 
 i29 : D = 2P
+stdio:48:6:(1):[0]: warning: character 'P' immediately following number
 
                          2
 o29 = Divisor{ideal (z, x ), ideal 1}
@@ -234,6 +239,7 @@ i39 : sectionIdeal = (f,g,D) -> (
           );
 
 i40 : D = 4P
+stdio:75:6:(1):[0]: warning: character 'P' immediately following number
 
                       2
 o40 = Divisor{ideal (z , x*z), ideal 1}
@@ -262,6 +268,7 @@ o43 = ideal (b  + 3a*c - a*d - 2c*d, a  - c*d)
 o43 : Ideal of KK [a, b, c, d]
 
 i44 : D = 4P - R
+stdio:79:6:(1):[0]: warning: character 'P' immediately following number
 
                       2
 o44 = Divisor{ideal (z , x*z), ideal (y, x)}
@@ -326,6 +333,8 @@ i52 : linearlyEquivalent(P,R)
 o52 = false
 
 i53 : linearlyEquivalent(2P,2R)
+stdio:102:21:(1):[0]: warning: character 'P' immediately following number
+stdio:102:24:(1):[0]: warning: character 'R' immediately following number
 
       x
 o53 = -
@@ -341,6 +350,7 @@ i54 : effective = (D) -> (
           else divisor sectionIdeal(L_(0,0), LB#1, D));
 
 i55 : effective(2R-P)
+stdio:109:12:(1):[0]: warning: character 'R' immediately following number
 
 o55 = Divisor{ideal (z, x), ideal 1}
 
@@ -507,3 +517,5 @@ o78 = Divisor{ideal (d, c), ideal 1}
 o78 : Divisor
 
 i79 : 
+3.04user 0.07system 0:03.23elapsed 96%CPU (0avgtext+0avgdata 0maxresident)k
+0inputs+0outputs (0major+15713minor)pagefaults 0swaps

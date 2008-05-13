@@ -1,0 +1,11 @@
+-- -*- M2-comint -*- {* hash: 314368322 *}
+
+i1 : sec(pi/3)
+
+o1 = 2
+
+o1 : RR (of precision 53)
+
+i2 : 
+0.74user 0.05system 0:00.80elapsed 99%CPU (0avgtext+0avgdata 0maxresident)k
+0inputs+0outputs (0major+10842minor)pagefaults 0swaps

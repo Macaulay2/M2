@@ -1,4 +1,4 @@
--- -*- M2-comint -*-
+-- -*- M2-comint -*- {* hash: 1052599605 *}
 
 i1 : A = set {1,2};
 
@@ -87,3 +87,5 @@ o18 = set {ideal (b, a)}
 o18 : Set
 
 i19 : 
+0.75user 0.06system 0:00.82elapsed 99%CPU (0avgtext+0avgdata 0maxresident)k
+0inputs+0outputs (0major+10844minor)pagefaults 0swaps

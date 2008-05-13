@@ -1,4 +1,4 @@
--- -*- M2-comint -*-
+-- -*- M2-comint -*- {* hash: 657443258 *}
 
 i1 : x_a
 
@@ -38,11 +38,12 @@ o6 = d
 
 o6 : Symbol
 
-i7 : debug Core
+i7 : peek x
 
-i8 : peek valueTable x
+o7 = IndexedVariableTable{a => b      }
+                          c => d
+                          symbol$ => x
 
-o8 = MutableHashTable{a => b}
-                      c => d
-
-i9 : 
+i8 : 
+0.80user 0.05system 0:00.98elapsed 87%CPU (0avgtext+0avgdata 0maxresident)k
+0inputs+0outputs (0major+10844minor)pagefaults 0swaps

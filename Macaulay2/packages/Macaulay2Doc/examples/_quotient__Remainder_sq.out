@@ -1,4 +1,4 @@
--- -*- M2-comint -*-
+-- -*- M2-comint -*- {* hash: -783693573 *}
 
 i1 : R = ZZ[x,y]
 
@@ -8,8 +8,8 @@ o1 : PolynomialRing
 
 i2 : f = random(R^{2:1},R^2)
 
-o2 = {-1} | y     -9x-9y |
-     {-1} | 5x+2y 7y     |
+o2 = {-1} | 4x+3y 3x+9y |
+     {-1} | 8x+y  6x+5y |
 
              2       2
 o2 : Matrix R  <--- R
@@ -26,8 +26,8 @@ o3 : Matrix R  <--- R
 
 i4 : (q,r) = quotientRemainder'(f,g)
 
-o4 = ({-1} | 0 1 -9 -9 |, 0)
-      {-1} | 5 2 0  7  |
+o4 = ({-1} | 4 3 3 9 |, 0)
+      {-1} | 8 1 6 5 |
 
 o4 : Sequence
 
@@ -37,16 +37,16 @@ o5 = true
 
 i6 : f = f + map(target f, source f, id_(R^2))
 
-o6 = {-1} | y+1   -9x-9y |
-     {-1} | 5x+2y 7y+1   |
+o6 = {-1} | 4x+3y+1 3x+9y   |
+     {-1} | 8x+y    6x+5y+1 |
 
              2       2
 o6 : Matrix R  <--- R
 
 i7 : (q,r) = quotientRemainder'(f,g)
 
-o7 = ({-1} | 0 1 -9 -9 |, {-1} | 1 0 |)
-      {-1} | 5 2 0  7  |  {-1} | 0 1 |
+o7 = ({-1} | 4 3 3 9 |, {-1} | 1 0 |)
+      {-1} | 8 1 6 5 |  {-1} | 0 1 |
 
 o7 : Sequence
 
@@ -55,3 +55,5 @@ i8 : q*g+r == f
 o8 = true
 
 i9 : 
+0.75user 0.06system 0:00.82elapsed 99%CPU (0avgtext+0avgdata 0maxresident)k
+0inputs+0outputs (0major+10844minor)pagefaults 0swaps

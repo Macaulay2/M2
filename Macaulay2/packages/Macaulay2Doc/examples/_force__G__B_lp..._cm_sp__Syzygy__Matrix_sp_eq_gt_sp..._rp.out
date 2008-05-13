@@ -1,4 +1,4 @@
--- -*- M2-comint -*-
+-- -*- M2-comint -*- {* hash: -1588042541 *}
 
 i1 : gbTrace = 3
 
@@ -33,9 +33,11 @@ o6 : Matrix R  <--- R
 
 i7 : syz f
 
-   -- registering gb 1 at 0xf69730
+   -- registering gb 1 at 0x232d540
 
-   -- {2}(1)m{3}(1)m{4}(1)m{5}(1)z{6}(1)z{7}(1)z
+   -- [gb]{2}(1)m{3}(1)m{4}(1)m{5}(1)z{6}(1)z{7}(1)znumber of (nonminimal) gb elements = 3
+   -- number of monomials                = 9
+   -- 
 o7 = {2} | -y3+1 -z4+2 0     |
      {3} | x2-3  0     -z4+2 |
      {4} | 0     x2-3  y3-1  |
@@ -45,6 +47,9 @@ o7 : Matrix R  <--- R
 
 i8 : kernel f
 
+   -- [gb]number of (nonminimal) gb elements = 3
+   -- number of monomials                = 9
+   -- 
 o8 = image {2} | -y3+1 -z4+2 0     |
            {3} | x2-3  0     -z4+2 |
            {4} | 0     x2-3  y3-1  |
@@ -53,9 +58,5 @@ o8 = image {2} | -y3+1 -z4+2 0     |
 o8 : R-module, submodule of R
 
 i9 : 
-
-number of (nonminimal) gb elements = 3
-number of monomials                = 9
-
-number of (nonminimal) gb elements = 3
-number of monomials                = 9
+0.80user 0.04system 0:00.83elapsed 100%CPU (0avgtext+0avgdata 0maxresident)k
+0inputs+0outputs (0major+10839minor)pagefaults 0swaps

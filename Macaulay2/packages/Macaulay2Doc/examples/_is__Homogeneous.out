@@ -1,4 +1,4 @@
--- -*- M2-comint -*-
+-- -*- M2-comint -*- {* hash: -1846060948 *}
 
 i1 : isHomogeneous(ZZ)
 
@@ -64,8 +64,8 @@ o16 : S-module, free, degrees {-1, -2}
 
 i17 : phi = random(G,F)
 
-o17 = {-1} | -10a2+8ab-5b2 0 |
-      {-2} | -9a3-7ab2-6b3 6 |
+o17 = {-1} | 4a2+3ab+8b2      0 |
+      {-2} | a3+3a2b+9ab2+6b3 5 |
 
               2       2
 o17 : Matrix S  <--- S
@@ -82,8 +82,8 @@ o19 : List
 
 i20 : M = coker phi
 
-o20 = cokernel {-1} | -10a2+8ab-5b2 0 |
-               {-2} | -9a3-7ab2-6b3 6 |
+o20 = cokernel {-1} | 4a2+3ab+8b2      0 |
+               {-2} | a3+3a2b+9ab2+6b3 5 |
 
                              2
 o20 : S-module, quotient of S
@@ -97,3 +97,5 @@ i22 : isHomogeneous((a+1)*M)
 o22 = false
 
 i23 : 
+0.78user 0.04system 0:00.82elapsed 100%CPU (0avgtext+0avgdata 0maxresident)k
+0inputs+0outputs (0major+10845minor)pagefaults 0swaps

@@ -1,56 +1,51 @@
--- -*- M2-comint -*-
+-- -*- M2-comint -*- {* hash: -959733167 *}
 
-i1 : M = matrix{{1.0, 2.0}, {5.0, 7.0}}
+i1 : M = matrix{{1, 2}, {5, 7}}
 
-o1 = | 1        2.000000 |
-     | 5.000000 7.000000 |
+o1 = | 1 2 |
+     | 5 7 |
 
               2        2
-o1 : Matrix RR  <--- RR
+o1 : Matrix ZZ  <--- ZZ
 
 i2 : eigenvectors M
 
-o2 = (| -0.358899 |, | -0.827138 -0.262266 |)
-      | 8.358899  |  | 0.561999  -0.964996 |
+o2 = ({ -.358899 }, | -.827138 -.262266 |)
+      { 8.3589   }  | .561999  -.964996 |
 
 o2 : Sequence
 
-i3 : M = matrix{{1.0, 2.0}, {2.0, 1.0}}
+i3 : M = matrix {{1, 2}, {2, 1}}
 
-o3 = | 1        2.000000 |
-     | 2.000000 1        |
+o3 = | 1 2 |
+     | 2 1 |
 
               2        2
-o3 : Matrix RR  <--- RR
+o3 : Matrix ZZ  <--- ZZ
 
-i4 : eigenvectors(M, Hermitian=>true)
+i4 : (e,v) = eigenvectors(M, Hermitian=>true)
 
-o4 = (| -1       |, | -0.707107 0.707107 |)
-      | 3.000000 |  | 0.707107  0.707107 |
+o4 = ({ -1 }, | -.707107 .707107 |)
+      { 3  }  | .707107  .707107 |
 
 o4 : Sequence
 
-i5 : M = matrix(QQ,{{1,2/17},{2,1}})
+i5 : class \ e
 
-o5 = | 1 2/17 |
-     | 2 1    |
+o5 = { RR }
+     { RR }
 
-              2        2
-o5 : Matrix QQ  <--- QQ
+o5 : VerticalList
 
-i6 : M = substitute(M,RR)
+i6 : v
 
-o6 = | 1        0.117647 |
-     | 2.000000 1        |
+o6 = | -.707107 .707107 |
+     | .707107  .707107 |
 
-              2        2
-o6 : Matrix RR  <--- RR
+                2          2
+o6 : Matrix RR    <--- RR
+              53         53
 
-i7 : eigenvectors M
-
-o7 = (| 1.485071 |, | 0.235702 -0.235702 |)
-      | 0.514929 |  | 0.971825 0.971825  |
-
-o7 : Sequence
-
-i8 : 
+i7 : 
+0.78user 0.06system 0:00.85elapsed 99%CPU (0avgtext+0avgdata 0maxresident)k
+0inputs+0outputs (0major+10846minor)pagefaults 0swaps

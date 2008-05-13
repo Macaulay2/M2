@@ -1,4 +1,4 @@
--- -*- M2-comint -*-
+-- -*- M2-comint -*- {* hash: -670221420 *}
 
 i1 : R = QQ[a..i];
 
@@ -70,3 +70,5 @@ i13 : status G
 o13 = status: DegreeLimit; all S-pairs handled up to degree 7
 
 i14 : 
+0.82user 0.04system 0:00.85elapsed 100%CPU (0avgtext+0avgdata 0maxresident)k
+0inputs+0outputs (0major+12206minor)pagefaults 0swaps

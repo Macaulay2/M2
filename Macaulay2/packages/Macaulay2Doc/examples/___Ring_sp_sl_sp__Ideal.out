@@ -1,4 +1,4 @@
--- -*- M2-comint -*-
+-- -*- M2-comint -*- {* hash: -543452152 *}
 
 i1 : ZZ[x]/367236427846278621
 
@@ -12,9 +12,9 @@ i2 : A = QQ[u,v];
 
 i3 : I = ideal random(A^1, A^{-2,-2,-2})
 
-            5        2    8       2  2    2  2   9  2
-o3 = ideal (-*u*v + v , - -*u*v - -*v , - -*u  - -*v )
-            2             9       5       3      5
+            5  2   9       2  2  7  2   7       6  2  3  2   1       10  2
+o3 = ideal (-*u  + -*u*v + -*v , -*u  + -*u*v + -*v , -*u  + -*u*v + --*v )
+            4      2       5     6      6       5     4      4        3
 
 o3 : Ideal of A
 
@@ -51,3 +51,5 @@ i11 : R/t === R/t
 o11 = false
 
 i12 : 
+0.79user 0.03system 0:00.83elapsed 100%CPU (0avgtext+0avgdata 0maxresident)k
+0inputs+0outputs (0major+10841minor)pagefaults 0swaps

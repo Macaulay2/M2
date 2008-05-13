@@ -1,4 +1,4 @@
--- -*- M2-comint -*-
+-- -*- M2-comint -*- {* hash: -1182335923 *}
 
 i1 : R = ZZ[a]/(a^2-3)[x,y]
 
@@ -29,7 +29,7 @@ o4 : Matrix R  <--- R
 
 i5 : peek J.generators.cache
 
-o5 = CacheTable{GroebnerBasisOptions{HardDegreeLimit => } => GroebnerBasis[status: done; S-pairs encountered up to degree 6]}
+o5 = CacheTable{GroebnerBasisOptions{HardDegreeLimit => } => GroebnerBasis[status: done; S-pairs encountered up to degree 5]}
                                      Syzygies => false
                                      SyzygyRows => 0
                 image => image | -3x2+2xa+2x-a 2y -x3+x2a+x2+y2-xa |
@@ -43,3 +43,5 @@ o7 = CacheTable{image => image | -3x2+2xa+2x-a 2y -x3+x2a+x2+y2-xa |}
                 isHomogeneous => false
 
 i8 : 
+0.78user 0.04system 0:00.82elapsed 100%CPU (0avgtext+0avgdata 0maxresident)k
+0inputs+0outputs (0major+10848minor)pagefaults 0swaps

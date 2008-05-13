@@ -1,4 +1,4 @@
--- -*- M2-comint -*-
+-- -*- M2-comint -*- {* hash: 653624764 *}
 
 i1 : R = ZZ/32003[a..e];
 
@@ -48,3 +48,5 @@ i8 : ideal fromDual g == ideal f
 o8 = true
 
 i9 : 
+0.90user 0.10system 0:01.01elapsed 99%CPU (0avgtext+0avgdata 0maxresident)k
+0inputs+0outputs (0major+12911minor)pagefaults 0swaps

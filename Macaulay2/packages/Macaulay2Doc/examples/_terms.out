@@ -1,4 +1,4 @@
--- -*- M2-comint -*-
+-- -*- M2-comint -*- {* hash: -1419683906 *}
 
 i1 : R = QQ[a..d];
 
@@ -18,4 +18,29 @@ o4 = {c*x , c*x*y, (a + b)x, a + 1}
 
 o4 : List
 
-i5 : 
+i5 : R = QQ[a][d];
+
+i6 : f = (1+a+d)^3
+
+      3            2      2               3     2
+o6 = d  + (3a + 3)d  + (3a  + 6a + 3)d + a  + 3a  + 3a + 1
+
+o6 : R
+
+i7 : terms f
+
+       3           2     2              3     2
+o7 = {d , (3a + 3)d , (3a  + 6a + 3)d, a  + 3a  + 3a + 1}
+
+o7 : List
+
+i8 : terms(QQ,f)
+
+       3      2    2    2              3    2
+o8 = {d , 3a*d , 3d , 3a d, 6a*d, 3d, a , 3a , 3a, 1}
+
+o8 : List
+
+i9 : 
+0.79user 0.02system 0:00.82elapsed 100%CPU (0avgtext+0avgdata 0maxresident)k
+0inputs+0outputs (0major+10850minor)pagefaults 0swaps

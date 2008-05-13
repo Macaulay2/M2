@@ -1,4 +1,4 @@
--- -*- M2-comint -*-
+-- -*- M2-comint -*- {* hash: -1485232751 *}
 
 i1 : f = matrix{{1,3,0,0,3,5,2,0,0},{0,0,0,1,3,6,7,8,0}}
 
@@ -15,3 +15,5 @@ o2 = {(0, 0), (0, 1), (1, 3), (1, 4), (1, 5), (1, 6), (1, 7)}
 o2 : List
 
 i3 : 
+0.76user 0.04system 0:00.85elapsed 95%CPU (0avgtext+0avgdata 0maxresident)k
+0inputs+0outputs (0major+10829minor)pagefaults 0swaps

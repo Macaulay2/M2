@@ -1,8 +1,8 @@
--- -*- M2-comint -*-
+-- -*- M2-comint -*- {* hash: -354260887 *}
 
 i1 : set {1,2} ** set {a,b,c}
 
-o1 = set {(1, a), (2, a), (1, b), (2, b), (1, c), (2, c)}
+o1 = set {(2, c), (1, a), (2, a), (1, b), (2, b), (1, c)}
 
 o1 : Set
 
@@ -37,3 +37,5 @@ o5 = set {(1, 1, 1), (1, 2, 1), (1, 1, 2), (2, 1, 1), (2, 2, 1), (1, 2, 2),
 o5 : Set
 
 i6 : 
+0.78user 0.03system 0:00.81elapsed 100%CPU (0avgtext+0avgdata 0maxresident)k
+0inputs+0outputs (0major+10839minor)pagefaults 0swaps

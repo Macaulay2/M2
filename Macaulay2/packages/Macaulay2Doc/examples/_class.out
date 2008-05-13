@@ -1,4 +1,4 @@
--- -*- M2-comint -*-
+-- -*- M2-comint -*- {* hash: 725242251 *}
 
 i1 : class {1,2,3}
 
@@ -31,3 +31,5 @@ i6 : instance(R,Ring)
 o6 = true
 
 i7 : 
+0.77user 0.04system 0:00.82elapsed 98%CPU (0avgtext+0avgdata 0maxresident)k
+0inputs+0outputs (0major+10844minor)pagefaults 0swaps

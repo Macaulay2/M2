@@ -1,4 +1,4 @@
--- -*- M2-comint -*-
+-- -*- M2-comint -*- {* hash: -683132881 *}
 
 i1 : transpose{{a, b, c},{d, e, f}}
 
@@ -7,3 +7,5 @@ o1 = {{a, d}, {b, e}, {c, f}}
 o1 : List
 
 i2 : 
+0.78user 0.06system 0:00.93elapsed 91%CPU (0avgtext+0avgdata 0maxresident)k
+0inputs+0outputs (0major+10814minor)pagefaults 0swaps

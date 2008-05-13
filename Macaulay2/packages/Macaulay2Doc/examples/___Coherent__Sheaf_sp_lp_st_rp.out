@@ -1,4 +1,4 @@
--- -*- M2-comint -*-
+-- -*- M2-comint -*- {* hash: 1632628577 *}
 
 i1 : R = QQ[x,y,z];
 
@@ -30,3 +30,5 @@ o5 = R
 o5 : R-module, free
 
 i6 : 
+0.80user 0.03system 0:00.83elapsed 100%CPU (0avgtext+0avgdata 0maxresident)k
+0inputs+0outputs (0major+10843minor)pagefaults 0swaps

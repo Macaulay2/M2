@@ -1,4 +1,4 @@
--- -*- M2-comint -*-
+-- -*- M2-comint -*- {* hash: -1940699360 *}
 
 i1 : S = QQ[a..d];
 
@@ -46,3 +46,5 @@ o7 = QQ
 o7 : QQ-module, free
 
 i8 : 
+0.92user 0.06system 0:00.99elapsed 99%CPU (0avgtext+0avgdata 0maxresident)k
+0inputs+0outputs (0major+12959minor)pagefaults 0swaps

@@ -1,4 +1,4 @@
--- -*- M2-comint -*-
+-- -*- M2-comint -*- {* hash: 13497865 *}
 
 i1 : gbTrace = 3
 
@@ -23,3 +23,5 @@ o5 = {2} | y3 |
 o5 : Matrix R  <--- R
 
 i6 : 
+0.80user 0.04system 0:00.85elapsed 99%CPU (0avgtext+0avgdata 0maxresident)k
+0inputs+0outputs (0major+10844minor)pagefaults 0swaps

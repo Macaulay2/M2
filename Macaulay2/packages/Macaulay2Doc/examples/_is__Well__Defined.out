@@ -1,4 +1,4 @@
--- -*- M2-comint -*-
+-- -*- M2-comint -*- {* hash: 431983823 *}
 
 i1 : R = QQ[a..d];
 
@@ -40,3 +40,5 @@ i9 : isWellDefined map(B,A)
 o9 = true
 
 i10 : 
+0.80user 0.07system 0:00.88elapsed 100%CPU (0avgtext+0avgdata 0maxresident)k
+0inputs+0outputs (0major+10843minor)pagefaults 0swaps

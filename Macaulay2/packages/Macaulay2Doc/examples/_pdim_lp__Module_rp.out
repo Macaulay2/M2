@@ -1,4 +1,4 @@
--- -*- M2-comint -*-
+-- -*- M2-comint -*- {* hash: -1380848302 *}
 
 i1 : R = QQ[x,y,z];
 
@@ -40,3 +40,5 @@ i7 : pdim(module I)
 o7 = 1
 
 i8 : 
+0.82user 0.04system 0:00.92elapsed 93%CPU (0avgtext+0avgdata 0maxresident)k
+0inputs+0outputs (0major+10844minor)pagefaults 0swaps

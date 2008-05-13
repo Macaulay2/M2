@@ -1,4 +1,4 @@
--- -*- M2-comint -*-
+-- -*- M2-comint -*- {* hash: 818389025 *}
 
 i1 : R = ZZ/101[x,y,z,w];
 
@@ -25,6 +25,7 @@ o4 = OptionTable{Algorithm => Inhomogeneous        }
                  GBDegrees => 
                  HardDegreeLimit => 
                  Hilbert => 
+                 MaxReductionCount => 10
                  PairLimit => infinity
                  StopBeforeComputation => false
                  StopWithMinimalGenerators => false
@@ -54,3 +55,5 @@ i7 : (options gb).Syzygies
 o7 = false
 
 i8 : 
+0.79user 0.07system 0:00.87elapsed 98%CPU (0avgtext+0avgdata 0maxresident)k
+0inputs+0outputs (0major+10844minor)pagefaults 0swaps

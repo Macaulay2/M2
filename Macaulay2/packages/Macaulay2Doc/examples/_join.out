@@ -1,4 +1,4 @@
--- -*- M2-comint -*-
+-- -*- M2-comint -*- {* hash: 45126432 *}
 
 i1 : join({1,2,3},{a,b,c},{7,8,9})
 
@@ -7,3 +7,5 @@ o1 = {1, 2, 3, a, b, c, 7, 8, 9}
 o1 : List
 
 i2 : 
+0.79user 0.08system 0:00.87elapsed 100%CPU (0avgtext+0avgdata 0maxresident)k
+0inputs+0outputs (0major+10845minor)pagefaults 0swaps

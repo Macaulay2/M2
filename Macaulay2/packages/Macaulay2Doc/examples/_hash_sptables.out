@@ -1,4 +1,4 @@
--- -*- M2-comint -*-
+-- -*- M2-comint -*- {* hash: -1041785306 *}
 
 i1 : book = new HashTable from {
           "Joe" => "344-5567",
@@ -84,3 +84,5 @@ i19 : x#?4
 o19 = false
 
 i20 : 
+0.78user 0.02system 0:00.81elapsed 99%CPU (0avgtext+0avgdata 0maxresident)k
+0inputs+0outputs (0major+10843minor)pagefaults 0swaps

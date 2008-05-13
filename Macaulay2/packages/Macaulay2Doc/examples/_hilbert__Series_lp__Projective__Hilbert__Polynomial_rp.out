@@ -1,4 +1,4 @@
--- -*- M2-comint -*-
+-- -*- M2-comint -*- {* hash: -739964548 *}
 
 i1 : P = projectiveHilbertPolynomial 3
 
@@ -53,3 +53,5 @@ o8 = 1 + 3T + 3T  + T
 o8 : ZZ [T]
 
 i9 : 
+0.76user 0.08system 0:00.86elapsed 98%CPU (0avgtext+0avgdata 0maxresident)k
+0inputs+0outputs (0major+10839minor)pagefaults 0swaps

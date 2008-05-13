@@ -1,4 +1,4 @@
--- -*- M2-comint -*-
+-- -*- M2-comint -*- {* hash: 366593561 *}
 
 i1 : R = ZZ/101[a,b,c, Degrees=>{1,1,2}];
 
@@ -46,3 +46,5 @@ o6 : ZZ [S, T ]
              0
 
 i7 : 
+0.81user 0.05system 0:00.87elapsed 99%CPU (0avgtext+0avgdata 0maxresident)k
+0inputs+0outputs (0major+10844minor)pagefaults 0swaps

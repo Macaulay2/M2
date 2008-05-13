@@ -1,4 +1,4 @@
--- -*- M2-comint -*-
+-- -*- M2-comint -*- {* hash: -1759420727 *}
 
 i1 : loadPackage "Elimination";
 
@@ -35,3 +35,5 @@ o6 = ------------
 o6 : QuotientRing
 
 i7 : 
+0.82user 0.08system 0:00.90elapsed 99%CPU (0avgtext+0avgdata 0maxresident)k
+0inputs+0outputs (0major+10844minor)pagefaults 0swaps

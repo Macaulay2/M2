@@ -1,4 +1,4 @@
--- -*- M2-comint -*-
+-- -*- M2-comint -*- {* hash: 1408285783 *}
 
 i1 : w = {a,b,c,d,e,f,g,h}
 
@@ -31,3 +31,5 @@ o5 = {c, d, e}
 o5 : List
 
 i6 : 
+0.77user 0.06system 0:00.85elapsed 97%CPU (0avgtext+0avgdata 0maxresident)k
+0inputs+0outputs (0major+10840minor)pagefaults 0swaps

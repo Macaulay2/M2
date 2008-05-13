@@ -1,26 +1,19 @@
--- -*- M2-comint -*-
+-- -*- M2-comint -*- {* hash: -1012870482 *}
 
 i1 : options Core
 
-o1 = OptionTable{Authors => {{Name => Daniel R. Grayson, Email => dan@math.
+o1 = OptionTable{Authors => {{Name => Daniel R. Grayson, Email => dan@math.uiuc.edu, HomePage => http://www.math.uiuc.edu/~dan/}, {Name => Michael E. Stillman, Email => mike@math.cornell.edu, HomePage => http://www.math.cornell.edu/People/Faculty/stillman.html}}}
+                 AuxiliaryFiles => false
                  Configuration => {}
                  Date => 
                  DebuggingMode => false
-                 Headline => A computer algebra system designed to support 
+                 Headline => A computer algebra system designed to support algebraic geometry
                  HomePage => http://www.math.uiuc.edu/Macaulay2/
                  InfoDirSection => Macaulay 2 and its packages
-                 Version => 0.9.95
-     ------------------------------------------------------------------------
-     uiuc.edu, HomePage => http://www.math.uiuc.edu/~dan/}, {Name => Michael
-
-
-
-     algebraic geometry
-     ------------------------------------------------------------------------
-     E. Stillman, Email => mike@math.cornell.edu, HomePage =>
-     ------------------------------------------------------------------------
-     http://www.math.cornell.edu/People/Faculty/stillman.html}}}
+                 Version => 1.1
 
 o1 : OptionTable
 
 i2 : 
+0.75user 0.05system 0:00.81elapsed 99%CPU (0avgtext+0avgdata 0maxresident)k
+0inputs+0outputs (0major+10844minor)pagefaults 0swaps

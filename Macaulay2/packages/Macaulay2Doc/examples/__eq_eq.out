@@ -1,4 +1,4 @@
--- -*- M2-comint -*-
+-- -*- M2-comint -*- {* hash: 419399835 *}
 
 i1 : R = QQ[a,b,c];
 
@@ -64,3 +64,5 @@ i15 : image matrix {{2,a},{0,5}} == R^2
 o15 = true
 
 i16 : 
+0.76user 0.04system 0:00.81elapsed 99%CPU (0avgtext+0avgdata 0maxresident)k
+0inputs+0outputs (0major+10839minor)pagefaults 0swaps

@@ -1,4 +1,4 @@
--- -*- M2-comint -*-
+-- -*- M2-comint -*- {* hash: -899214130 *}
 
 i1 : R = QQ[a..d];
 
@@ -33,10 +33,7 @@ i8 : C = QQ[a..d,MonomialSize=>8,MonomialOrder=>GRevLex];
 
 i9 : try a^(2^15-1) else "failed"
 
-      255
-o9 = a
-
-o9 : C
+o9 = failed
 
 i10 : a^(2^7-1)
 
@@ -46,3 +43,5 @@ o10 = a
 o10 : C
 
 i11 : 
+0.76user 0.06system 0:00.82elapsed 100%CPU (0avgtext+0avgdata 0maxresident)k
+0inputs+0outputs (0major+10842minor)pagefaults 0swaps

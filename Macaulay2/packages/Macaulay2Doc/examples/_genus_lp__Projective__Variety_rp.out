@@ -1,4 +1,4 @@
--- -*- M2-comint -*-
+-- -*- M2-comint -*- {* hash: 825189211 *}
 
 i1 : V = Proj(QQ[a,b,c]/ideal(b^2*c-a^2*(a+c)))
 
@@ -28,3 +28,5 @@ i7 : genus V
 o7 = 0
 
 i8 : 
+0.84user 0.03system 0:00.92elapsed 94%CPU (0avgtext+0avgdata 0maxresident)k
+0inputs+0outputs (0major+12459minor)pagefaults 0swaps

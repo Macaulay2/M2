@@ -1,4 +1,4 @@
--- -*- M2-comint -*-
+-- -*- M2-comint -*- {* hash: 1586844281 *}
 
 i1 : R = ZZ/7[w,x,y,z];
 
@@ -31,3 +31,5 @@ o5 = ideal (x  - w*y, y  - x*z, x*y - w*z, x y - z , - y  + x*z, x  - y*z)
 o5 : Ideal of R
 
 i6 : 
+0.81user 0.06system 0:00.88elapsed 99%CPU (0avgtext+0avgdata 0maxresident)k
+0inputs+0outputs (0major+10843minor)pagefaults 0swaps

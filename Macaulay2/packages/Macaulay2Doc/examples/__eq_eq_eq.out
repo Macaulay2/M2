@@ -1,4 +1,4 @@
--- -*- M2-comint -*-
+-- -*- M2-comint -*- {* hash: 2026115904 *}
 
 i1 : {1,2,3} === {1,2,3}
 
@@ -27,3 +27,5 @@ i7 : matrix{{a,b,c}} === transpose matrix{{a},{b},{c}}
 o7 = false
 
 i8 : 
+0.78user 0.07system 0:00.86elapsed 99%CPU (0avgtext+0avgdata 0maxresident)k
+0inputs+0outputs (0major+10831minor)pagefaults 0swaps

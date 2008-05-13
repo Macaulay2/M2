@@ -1,4 +1,4 @@
--- -*- M2-comint -*-
+-- -*- M2-comint -*- {* hash: 865993173 *}
 
 i1 : f = method()
 
@@ -32,7 +32,7 @@ o8 : CompiledFunctionClosure
 
 i9 : p(ZZ,ZZ) := p(List,ZZ) := (i,j) -> {i,j}
 
-o9 = --Function[stdio:9:32-9:38]--
+o9 = {*Function[stdio:9:32-9:38]*}
 
 o9 : FunctionClosure
 
@@ -88,9 +88,9 @@ o22 : QQ
 
 i23 : h(RR,14)
 
-o23 = 14.
+o23 = 14
 
-o23 : RR
+o23 : RR (of precision 53)
 
 i24 : r = method(Options => {Slope => 1, Intercept => 1})
 
@@ -100,21 +100,21 @@ o24 : MethodFunctionWithOptions
 
 i25 : r RR := o -> x -> o.Slope * x + o.Intercept
 
-o25 = --Function[stdio:25:10-25:34]--
+o25 = {*Function[stdio:25:10-25:34]*}
 
 o25 : FunctionClosure
 
 i26 : r(5.)
 
-o26 = 6.
+o26 = 6
 
-o26 : RR
+o26 : RR (of precision 53)
 
 i27 : r(5.,Slope=>100)
 
-o27 = 501.
+o27 = 501
 
-o27 : RR
+o27 : RR (of precision 53)
 
 i28 : options r
 
@@ -132,4 +132,48 @@ o29 = OptionTable{Binary => false                         }
 
 o29 : OptionTable
 
-i30 : 
+i30 : s = method(Options => true)
+
+o30 = s
+
+o30 : MethodFunctionWithOptions
+
+i31 : s ZZ := { Slope => 17 } >> o -> x -> o.Slope * x
+
+o31 = {*Function[../../../../../Macaulay2/m2/option.m2:6:19-8:33]*}
+
+o31 : FunctionClosure
+
+i32 : s RR := { Intercept => 11 } >> o -> x -> x + o.Intercept
+
+o32 = {*Function[../../../../../Macaulay2/m2/option.m2:6:19-8:33]*}
+
+o32 : FunctionClosure
+
+i33 : s 100
+
+o33 = 1700
+
+i34 : s 1000.
+
+o34 = 1011
+
+o34 : RR (of precision 53)
+
+i35 : options s
+
+i36 : options(s,ZZ)
+
+o36 = OptionTable{Slope => 17}
+
+o36 : OptionTable
+
+i37 : options(s,RR)
+
+o37 = OptionTable{Intercept => 11}
+
+o37 : OptionTable
+
+i38 : 
+0.80user 0.05system 0:00.85elapsed 100%CPU (0avgtext+0avgdata 0maxresident)k
+0inputs+0outputs (0major+10840minor)pagefaults 0swaps

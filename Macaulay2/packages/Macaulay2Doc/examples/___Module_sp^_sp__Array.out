@@ -1,4 +1,4 @@
--- -*- M2-comint -*-
+-- -*- M2-comint -*- {* hash: -200353717 *}
 
 i1 : M = ZZ^2 ++ ZZ^3
 
@@ -129,3 +129,5 @@ o14 = 0 : R  <----------- R  : 0
 o14 : ChainComplexMap
 
 i15 : 
+0.80user 0.03system 0:00.83elapsed 100%CPU (0avgtext+0avgdata 0maxresident)k
+0inputs+0outputs (0major+10844minor)pagefaults 0swaps

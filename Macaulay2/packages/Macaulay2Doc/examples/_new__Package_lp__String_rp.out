@@ -1,4 +1,4 @@
--- -*- M2-comint -*-
+-- -*- M2-comint -*- {* hash: 1239568044 *}
 
 i1 : newPackage("Foo", 
           Version => "1.1", 
@@ -19,6 +19,7 @@ o2 : Package
 i3 : options Foo
 
 o3 = OptionTable{Authors => {}                                }
+                 AuxiliaryFiles => false
                  Configuration => {foo => 42, bar => x}
                  Date => 
                  DebuggingMode => false
@@ -35,6 +36,8 @@ o4 = making Foo
 
 i5 : (options Core).Version
 
-o5 = 0.9.95
+o5 = 1.1
 
 i6 : 
+0.78user 0.07system 0:00.86elapsed 99%CPU (0avgtext+0avgdata 0maxresident)k
+0inputs+0outputs (0major+10849minor)pagefaults 0swaps

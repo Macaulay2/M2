@@ -1,4 +1,4 @@
--- -*- M2-comint -*-
+-- -*- M2-comint -*- {* hash: 367625954 *}
 
 i1 : num
 
@@ -27,3 +27,5 @@ o5 = +
 o5 : Keyword
 
 i6 : 
+0.78user 0.07system 0:00.86elapsed 99%CPU (0avgtext+0avgdata 0maxresident)k
+0inputs+0outputs (0major+10845minor)pagefaults 0swaps

@@ -1,4 +1,4 @@
--- -*- M2-comint -*-
+-- -*- M2-comint -*- {* hash: -277690867 *}
 
 i1 : R = ZZ[a..d];
 
@@ -32,9 +32,11 @@ o5 : R-module, subquotient of R
 
 i6 : minimalPresentation N
 
-o6 = cokernel | 3c-5d 3b-18 21b+36 a+10b+18 b2-4b-12 |
+o6 = cokernel | 3c-5d 3b-18 21b+36 a+10b+18 bd-6d b2-4b-12 |
 
                             1
 o6 : R-module, quotient of R
 
 i7 : 
+0.77user 0.05system 0:00.82elapsed 100%CPU (0avgtext+0avgdata 0maxresident)k
+0inputs+0outputs (0major+10845minor)pagefaults 0swaps

@@ -1,4 +1,4 @@
--- -*- M2-comint -*-
+-- -*- M2-comint -*- {* hash: 102290436 *}
 
 i1 : ascii "abcdef"
 
@@ -15,3 +15,5 @@ i3 : first ascii "A"
 o3 = 65
 
 i4 : 
+0.78user 0.03system 0:00.81elapsed 100%CPU (0avgtext+0avgdata 0maxresident)k
+0inputs+0outputs (0major+10842minor)pagefaults 0swaps

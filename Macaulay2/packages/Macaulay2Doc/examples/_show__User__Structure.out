@@ -1,4 +1,4 @@
--- -*- M2-comint -*-
+-- -*- M2-comint -*- {* hash: -1747183245 *}
 
 i1 : X = new Type of List
 
@@ -20,6 +20,11 @@ o3 : Type
 
 i4 : showUserStructure
 
-o4 = 
+o4 = Thing : BasicList : VisibleList : List : X : Y
+                                                  Z
+
+o4 : Descent
 
 i5 : 
+0.78user 0.08system 0:00.87elapsed 99%CPU (0avgtext+0avgdata 0maxresident)k
+0inputs+0outputs (0major+10839minor)pagefaults 0swaps

@@ -1,4 +1,4 @@
--- -*- M2-comint -*-
+-- -*- M2-comint -*- {* hash: 1232850105 *}
 
 i1 : k = ZZ/101; T = k[v..z];
 
@@ -84,3 +84,5 @@ o15 = R  <-- R  <-- R  <-- R  <-- R  <-- R  <-- R
 o15 : ChainComplex
 
 i16 : 
+0.86user 0.07system 0:00.93elapsed 99%CPU (0avgtext+0avgdata 0maxresident)k
+0inputs+0outputs (0major+12044minor)pagefaults 0swaps

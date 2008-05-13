@@ -1,23 +1,21 @@
--- -*- M2-comint -*-
+-- -*- M2-comint -*- {* hash: 146959999 *}
 
-i1 : isAffineRing CC
+i1 : isAffineRing (ZZ[a,b,c,d])
 
-o1 = true
+o1 = false
 
-i2 : isAffineRing (ZZ[a,b,c,d])
+i2 : isAffineRing (ZZ/101[a,b,c,d])
 
-o2 = false
+o2 = true
 
-i3 : isAffineRing (ZZ/101[a,b,c,d])
+i3 : isAffineRing (ZZ/2[x,y,z]/(x^2-y*z))
 
 o3 = true
 
-i4 : isAffineRing (ZZ/2[x,y,z]/(x^2-y*z))
+i4 : isAffineRing (QQ[x,dx, WeylAlgebra => {x => dx}])
 
 o4 = true
 
-i5 : isAffineRing (QQ[x,dx, WeylAlgebra => {x => dx}])
-
-o5 = true
-
-i6 : 
+i5 : 
+0.77user 0.04system 0:00.81elapsed 100%CPU (0avgtext+0avgdata 0maxresident)k
+0inputs+0outputs (0major+10841minor)pagefaults 0swaps

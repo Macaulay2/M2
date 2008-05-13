@@ -1,4 +1,4 @@
--- -*- M2-comint -*-
+-- -*- M2-comint -*- {* hash: -826091846 *}
 
 i1 : compositions(2,5)
 
@@ -7,3 +7,5 @@ o1 = {{5, 0}, {4, 1}, {3, 2}, {2, 3}, {1, 4}, {0, 5}}
 o1 : List
 
 i2 : 
+0.79user 0.01system 0:00.82elapsed 98%CPU (0avgtext+0avgdata 0maxresident)k
+0inputs+0outputs (0major+10848minor)pagefaults 0swaps

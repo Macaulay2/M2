@@ -1,4 +1,4 @@
--- -*- M2-comint -*-
+-- -*- M2-comint -*- {* hash: 1693506634 *}
 
 i1 : R = ZZ/101[a..d]
 
@@ -27,3 +27,5 @@ o5 = map(R,S,{-2a, a - 50c, 34b, b - d})
 o5 : RingMap R <--- S
 
 i6 : 
+0.77user 0.03system 0:00.81elapsed 99%CPU (0avgtext+0avgdata 0maxresident)k
+0inputs+0outputs (0major+10845minor)pagefaults 0swaps

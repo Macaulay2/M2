@@ -1,4 +1,4 @@
--- -*- M2-comint -*-
+-- -*- M2-comint -*- {* hash: 1780660384 *}
 
 i1 : A = set {1,2}
 
@@ -35,3 +35,5 @@ o4 = Tally{(1, 1, 1) => 8}
 o4 : Tally
 
 i5 : 
+0.75user 0.05system 0:00.81elapsed 99%CPU (0avgtext+0avgdata 0maxresident)k
+0inputs+0outputs (0major+10845minor)pagefaults 0swaps

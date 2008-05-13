@@ -1,29 +1,22 @@
--- -*- M2-comint -*-
+-- -*- M2-comint -*- {* hash: 1495266041 *}
 
-i1 : tally apply (10, i -> random(5,2^34+5))
+i1 : for i to 10 list random(100,200)
 
-o1 = Tally{1857685788 => 1 }
-           3866591675 => 1
-           5011443619 => 1
-           6040567245 => 1
-           7507179624 => 1
-           10802729852 => 1
-           13853567097 => 1
-           15075388724 => 1
-           15965351148 => 1
-           17081379733 => 1
+o1 = {175, 147, 167, 172, 197, 159, 199, 109, 111, 179, 154}
 
-o1 : Tally
+o1 : List
 
 i2 : tally apply(100, i -> random(10,15))
 
-o2 = Tally{10 => 17}
-           11 => 22
-           12 => 10
-           13 => 12
-           14 => 26
+o2 = Tally{10 => 22}
+           11 => 9
+           12 => 18
+           13 => 21
+           14 => 17
            15 => 13
 
 o2 : Tally
 
 i3 : 
+0.80user 0.05system 0:00.85elapsed 100%CPU (0avgtext+0avgdata 0maxresident)k
+0inputs+0outputs (0major+10843minor)pagefaults 0swaps

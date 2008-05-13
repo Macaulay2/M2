@@ -1,4 +1,4 @@
--- -*- M2-comint -*-
+-- -*- M2-comint -*- {* hash: 2005821609 *}
 
 i1 : s = new MutableList from {a,b,c};
 
@@ -15,3 +15,5 @@ i4 : peek s
 o4 = MutableList{a, b, 1234}
 
 i5 : 
+0.78user 0.03system 0:00.81elapsed 100%CPU (0avgtext+0avgdata 0maxresident)k
+0inputs+0outputs (0major+10844minor)pagefaults 0swaps

@@ -1,4 +1,4 @@
--- -*- M2-comint -*-
+-- -*- M2-comint -*- {* hash: -1462049481 *}
 
 i1 : ZZ/101[x,y]/(x^2-y^2) ** ZZ/101[a,b]/(a^3+b^3)
 
@@ -19,11 +19,13 @@ o2 : PolynomialRing
 
 i3 : options tensor
 
-o3 = OptionTable{DegreeRank =>        }
+o3 = OptionTable{ConstantCoefficients => true}
+                 DegreeRank => 
                  Degrees => 
                  Global => true
                  Heft => 
                  Inverses => false
+                 Local => false
                  MonomialOrder => 
                  MonomialSize => 32
                  SkewCommutative => {}
@@ -67,3 +69,5 @@ o9 = x + y + x' + y'
 o9 : U
 
 i10 : 
+0.76user 0.06system 0:00.83elapsed 99%CPU (0avgtext+0avgdata 0maxresident)k
+0inputs+0outputs (0major+10844minor)pagefaults 0swaps

@@ -1,17 +1,19 @@
--- -*- M2-comint -*-
+-- -*- M2-comint -*- {* hash: -75222127 *}
 
 i1 : cpuTime()
 
-o1 = 0.039909
+o1 = .795956
 
-o1 : RR
+o1 : RR (of precision 27)
 
 i2 : for i from 0 to 1000000 do 223131321321*324234324324;
 
 i3 : cpuTime()
 
-o3 = 1.5
+o3 = 1.536002
 
-o3 : RR
+o3 : RR (of precision 27)
 
 i4 : 
+1.55user 0.11system 0:01.67elapsed 99%CPU (0avgtext+0avgdata 0maxresident)k
+0inputs+0outputs (0major+12962minor)pagefaults 0swaps

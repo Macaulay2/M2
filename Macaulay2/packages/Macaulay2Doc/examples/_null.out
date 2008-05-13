@@ -1,4 +1,4 @@
--- -*- M2-comint -*-
+-- -*- M2-comint -*- {* hash: 637507978 *}
 
 i1 : x = {2,3,,4}
 
@@ -19,3 +19,5 @@ i4 : peek x
 o4 = {2, 3, null, 4}
 
 i5 : 
+0.80user 0.04system 0:00.85elapsed 99%CPU (0avgtext+0avgdata 0maxresident)k
+0inputs+0outputs (0major+10845minor)pagefaults 0swaps

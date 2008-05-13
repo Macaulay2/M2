@@ -1,1 +1,0 @@
-typicalValues#isRing

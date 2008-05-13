@@ -1,4 +1,4 @@
--- -*- M2-comint -*-
+-- -*- M2-comint -*- {* hash: -159103374 *}
 
 i1 : x = {a,b,c,d,e}
 
@@ -258,7 +258,7 @@ o46 = MutableList{a, b, 1234}
 
 i47 : Bag {100!}
 
-o47 = --a bagged integer--
+o47 = {*a bagged integer*}
 
 o47 : Bag
 
@@ -278,4 +278,8 @@ o49 = Thing : BasicList : Container
                                         List
                                         Sequence
 
+o49 : Descent
+
 i50 : 
+0.80user 0.06system 0:00.86elapsed 99%CPU (0avgtext+0avgdata 0maxresident)k
+0inputs+0outputs (0major+10844minor)pagefaults 0swaps

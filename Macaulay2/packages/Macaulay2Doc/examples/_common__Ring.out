@@ -1,0 +1,33 @@
+-- -*- M2-comint -*- {* hash: -91316544 *}
+
+i1 : commonRing {1,2/3}
+
+o1 = QQ
+
+o1 : Ring
+
+i2 : commonRing {1,2.}
+
+o2 = RR
+       53
+
+o2 : RealField
+
+i3 : commonRing {1,2p100,matrix{{3p200}}}
+
+o3 = RR
+       100
+
+o3 : RealField
+
+i4 : R = RR[x];
+
+i5 : commonRing {1,2p100,matrix{{3p200}},0_R}
+
+o5 = R
+
+o5 : PolynomialRing
+
+i6 : 
+0.76user 0.04system 0:00.81elapsed 99%CPU (0avgtext+0avgdata 0maxresident)k
+0inputs+0outputs (0major+10844minor)pagefaults 0swaps

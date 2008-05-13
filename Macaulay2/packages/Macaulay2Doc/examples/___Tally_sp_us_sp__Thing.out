@@ -1,4 +1,4 @@
--- -*- M2-comint -*-
+-- -*- M2-comint -*- {* hash: -831989889 *}
 
 i1 : t = tally apply(1..10000, i -> # factor i)
 
@@ -20,3 +20,5 @@ i3 : t_6
 o3 = 0
 
 i4 : 
+0.94user 0.06system 0:01.00elapsed 99%CPU (0avgtext+0avgdata 0maxresident)k
+0inputs+0outputs (0major+12997minor)pagefaults 0swaps

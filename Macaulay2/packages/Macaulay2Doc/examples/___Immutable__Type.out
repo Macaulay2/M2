@@ -1,4 +1,4 @@
--- -*- M2-comint -*-
+-- -*- M2-comint -*- {* hash: 1458328687 *}
 
 i1 : F = ZZ^3
 
@@ -23,9 +23,13 @@ i4 : showStructure class F
 
 o4 = Thing : HashTable : ImmutableType : Module
 
+o4 : Descent
+
 i5 : showStructure F
 
 o5 = Thing : BasicList : Vector : F
+
+o5 : Descent
 
 i6 : v = F_0 + 3*F_2
 
@@ -64,3 +68,5 @@ o10 = | 1 |
 o10 : ZZ
 
 i11 : 
+0.75user 0.06system 0:00.81elapsed 100%CPU (0avgtext+0avgdata 0maxresident)k
+0inputs+0outputs (0major+10844minor)pagefaults 0swaps

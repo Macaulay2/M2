@@ -1,4 +1,4 @@
--- -*- M2-comint -*-
+-- -*- M2-comint -*- {* hash: -1024623773 *}
 
 i1 : R = QQ[a..d]
 
@@ -6,12 +6,12 @@ o1 = R
 
 o1 : PolynomialRing
 
-i2 : I = ideal(a^3-b^2*c, b*c^2-c*d^2, c^3),
+i2 : I = ideal(a^3-b^2*c, b*c^2-c*d^2, c^3)
 
-              3    2      2      2   3
-o2 = (ideal (a  - b c, b*c  - c*d , c ), )
+             3    2      2      2   3
+o2 = ideal (a  - b c, b*c  - c*d , c )
 
-o2 : Sequence
+o2 : Ideal of R
 
 i3 : G = gens gb I
 
@@ -21,3 +21,5 @@ o3 = | c3 bc2-cd2 a3-b2c c2d2 cd4 |
 o3 : Matrix R  <--- R
 
 i4 : 
+0.80user 0.09system 0:00.90elapsed 99%CPU (0avgtext+0avgdata 0maxresident)k
+0inputs+0outputs (0major+10840minor)pagefaults 0swaps

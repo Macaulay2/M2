@@ -1,4 +1,4 @@
--- -*- M2-comint -*-
+-- -*- M2-comint -*- {* hash: -1126837602 *}
 
 i1 : R = ZZ/101[x,y,z]
 
@@ -33,3 +33,5 @@ i6 : rank C
 o6 = 0
 
 i7 : 
+0.77user 0.04system 0:00.81elapsed 100%CPU (0avgtext+0avgdata 0maxresident)k
+0inputs+0outputs (0major+10842minor)pagefaults 0swaps

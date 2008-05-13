@@ -1,4 +1,4 @@
--- -*- M2-comint -*-
+-- -*- M2-comint -*- {* hash: 2017100920 *}
 
 i1 : R = QQ[x,y];
 
@@ -50,3 +50,5 @@ i8 : cg^3*f == h + q*g
 o8 = true
 
 i9 : 
+0.81user 0.05system 0:00.88elapsed 97%CPU (0avgtext+0avgdata 0maxresident)k
+0inputs+0outputs (0major+10857minor)pagefaults 0swaps

@@ -1,4 +1,4 @@
--- -*- M2-comint -*-
+-- -*- M2-comint -*- {* hash: 1304056631 *}
 
 i1 : expression 4
 
@@ -129,3 +129,5 @@ o22 = -4 == x  + 5x  + 10x  + 10x  + 5x + 1
 o22 : Expression of class Equation
 
 i23 : 
+0.76user 0.04system 0:00.82elapsed 98%CPU (0avgtext+0avgdata 0maxresident)k
+0inputs+0outputs (0major+10840minor)pagefaults 0swaps

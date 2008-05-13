@@ -1,4 +1,4 @@
--- -*- M2-comint -*-
+-- -*- M2-comint -*- {* hash: -2055868686 *}
 
 i1 : examples partitions
 
@@ -12,3 +12,5 @@ g = matrix{{x^2-w*y, x*y-w*z, x*z-y^2},{y^2-x*z,x^2*y-z^2,x^3-y*z}}
 ideal g
 
 i3 : 
+5.20user 0.07system 0:05.29elapsed 99%CPU (0avgtext+0avgdata 0maxresident)k
+0inputs+0outputs (0major+19628minor)pagefaults 0swaps

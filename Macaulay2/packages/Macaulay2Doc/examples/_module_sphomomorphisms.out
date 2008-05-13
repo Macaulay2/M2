@@ -1,4 +1,4 @@
--- -*- M2-comint -*-
+-- -*- M2-comint -*- {* hash: 1126124369 *}
 
 i1 : R = QQ[x,y]/(y^2-x^3);
 
@@ -82,3 +82,5 @@ i16 : kernel G == 0
 o16 = true
 
 i17 : 
+0.77user 0.05system 0:00.82elapsed 99%CPU (0avgtext+0avgdata 0maxresident)k
+0inputs+0outputs (0major+10843minor)pagefaults 0swaps

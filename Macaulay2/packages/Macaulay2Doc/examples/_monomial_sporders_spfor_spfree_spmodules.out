@@ -1,4 +1,4 @@
--- -*- M2-comint -*-
+-- -*- M2-comint -*- {* hash: 1915233475 *}
 
 i1 : R = ZZ[a..d];
 
@@ -136,3 +136,5 @@ o20 = | c |
 o20 : R
 
 i21 : 
+0.78user 0.06system 0:00.85elapsed 99%CPU (0avgtext+0avgdata 0maxresident)k
+0inputs+0outputs (0major+10842minor)pagefaults 0swaps

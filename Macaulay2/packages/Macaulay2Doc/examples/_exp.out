@@ -1,0 +1,18 @@
+-- -*- M2-comint -*- {* hash: -1856302287 *}
+
+i1 : exp 1p300
+
+o1 = 2.7182818284590452353602874713526624977572470936999595749669676277240766
+     3035354759457138218
+
+o1 : RR (of precision 300)
+
+i2 : exp(pi*ii)
+
+o2 = -1+1.22464679914735e-16*ii
+
+o2 : CC (of precision 53)
+
+i3 : 
+0.77user 0.03system 0:00.80elapsed 100%CPU (0avgtext+0avgdata 0maxresident)k
+0inputs+0outputs (0major+10844minor)pagefaults 0swaps

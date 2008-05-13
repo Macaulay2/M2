@@ -1,4 +1,4 @@
--- -*- M2-comint -*-
+-- -*- M2-comint -*- {* hash: -437255319 *}
 
 i1 : y = (2^15-4)/(2^15-5)
 
@@ -63,17 +63,19 @@ o8 : Expression of class Divide
 i9 : code(factor,F)
 
 o9 = -- code for method: factor(F)
-     -- ../../../../Macaulay2/m2/enginering.m2:202
-               factor F := options -> f -> factor numerator f / factor denominator f;
+     -- ../../../../../Macaulay2/m2/enginering.m2:231
+          factor F := options -> f -> factor numerator f / factor denominator f;
      | symbol   class             value                                                   location of symbol
-     | ------   -----             -----                                                   ------------------                                  
+     | ------   -----             -----                                                   ------------------                                     
      |                             ZZ
-     | R      : PolynomialRing -- --- [t]                                                 ../../../../Macaulay2/m2/enginering.m2:191:45-191:45
+     | R      : PolynomialRing -- --- [t]                                                 ../../../../../Macaulay2/m2/enginering.m2:220:19-220:19
      |                            101                                                    
-     | o      : OptionTable    -- OptionTable{DegreeRank => 1                           . ../../../../Macaulay2/m2/enginering.m2:192:10-192:10
+     | o      : OptionTable    -- OptionTable{ConstantCoefficients => true              . ../../../../../Macaulay2/m2/enginering.m2:221:5-221:5  
+     |                                        DegreeRank => 1                           .
      |                                        Degrees => {{1}}                          .
-     |                                        Global => true                            .
      |                            .......................................................
-     | F      : FractionField  -- F                                                       ../../../../Macaulay2/m2/enginering.m2:196:19-196:19
+     | F      : FractionField  -- F                                                       ../../../../../Macaulay2/m2/enginering.m2:225:14-225:14
 
 i10 : 
+0.75user 0.11system 0:00.89elapsed 97%CPU (0avgtext+0avgdata 0maxresident)k
+0inputs+0outputs (0major+10845minor)pagefaults 0swaps

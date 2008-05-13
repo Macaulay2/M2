@@ -1,4 +1,4 @@
--- -*- M2-comint -*-
+-- -*- M2-comint -*- {* hash: -1086822532 *}
 
 i1 : net "line 1\nline 2\nline 3\n"
 
@@ -53,3 +53,5 @@ o8 = |         |
      +---------+
 
 i9 : 
+0.77user 0.03system 0:00.81elapsed 99%CPU (0avgtext+0avgdata 0maxresident)k
+0inputs+0outputs (0major+10844minor)pagefaults 0swaps

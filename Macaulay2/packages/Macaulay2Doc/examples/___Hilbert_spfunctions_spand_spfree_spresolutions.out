@@ -1,4 +1,4 @@
--- -*- M2-comint -*-
+-- -*- M2-comint -*- {* hash: -4187196 *}
 
 i1 : R = ZZ/32003[vars(0..17)];
 
@@ -114,3 +114,5 @@ o14 = total: 3 6 15 18 6
 o14 : BettiTally
 
 i15 : 
+0.81user 0.01system 0:00.83elapsed 99%CPU (0avgtext+0avgdata 0maxresident)k
+0inputs+0outputs (0major+10907minor)pagefaults 0swaps

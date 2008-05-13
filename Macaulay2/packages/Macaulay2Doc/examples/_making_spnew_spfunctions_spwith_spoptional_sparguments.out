@@ -1,4 +1,4 @@
--- -*- M2-comint -*-
+-- -*- M2-comint -*- {* hash: -1117112958 *}
 
 i1 : opts = {Slope => 1, Intercept => 1}
 
@@ -36,3 +36,5 @@ i8 : f(5,11,a=>10^20)
 o8 = 500000000000000000011
 
 i9 : 
+0.74user 0.05system 0:00.86elapsed 92%CPU (0avgtext+0avgdata 0maxresident)k
+0inputs+0outputs (0major+10844minor)pagefaults 0swaps

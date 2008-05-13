@@ -1,4 +1,4 @@
--- -*- M2-comint -*-
+-- -*- M2-comint -*- {* hash: 435958575 *}
 
 i1 : X = Proj(QQ[x_0..x_3]/ideal(x_0^4+x_1^4+x_2^4+x_3^4))
 
@@ -11,3 +11,5 @@ i2 : hh^(1,1)(X)
 o2 = 20
 
 i3 : 
+0.85user 0.05system 0:00.92elapsed 97%CPU (0avgtext+0avgdata 0maxresident)k
+0inputs+0outputs (0major+10944minor)pagefaults 0swaps

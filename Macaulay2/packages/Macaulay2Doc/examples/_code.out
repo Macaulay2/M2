@@ -1,22 +1,13 @@
--- -*- M2-comint -*-
+-- -*- M2-comint -*- {* hash: 38479123 *}
 
 i1 : code methods use
 
-o1 = -- code for method: use(Ring)
-     -- ../../../../Macaulay2/m2/enginering.m2:227-232
-     use Ring := R -> (
-          if R.?ring then use R.ring;                            -- I'm not sure what this is for.  Which rings have this key?
-          generators R;
-          if R.?generators and R.?generatorSymbols then scan(R.generatorSymbols,R.generators,(sym,val) -> sym <- val);
-          if R.?use then R.use R;
-          R)
-     ---------------------------------
-     -- code for method: use(Monoid)
-     -- ../../../../Macaulay2/m2/orderedmonoidrings.m2:7
+o1 = -- code for method: use(Monoid)
+     -- ../../../../../Macaulay2/m2/orderedmonoidrings.m2:7
      use Monoid := x -> ( if x.?use then x.use x; x)
      ---------------------------------
      -- code for method: use(Package)
-     -- ../../../../Macaulay2/m2/packages.m2:361-370
+     -- ../../../../../Macaulay2/m2/packages.m2:374-383
      use Package := pkg -> (
           a := member(pkg,loadedPackages);
           b := member(pkg.Dictionary,dictionaryPath);
@@ -28,7 +19,18 @@ o1 = -- code for method: use(Ring)
                );
           )
      ---------------------------------
+     -- code for method: use(Ring)
+     -- ../../../../../Macaulay2/m2/enginering.m2:267-272
+     use Ring := R -> (
+          if R.?ring then use R.ring;                            -- I'm not sure what this is for.  Which rings have this key?
+          generators R;
+          if R.?generators and R.?generatorSymbols then scan(R.generatorSymbols,R.generators,(sym,val) -> sym <- val);
+          if R.?use then R.use R;
+          R)
+     ---------------------------------
      -- code for method: use(Thing)
      function 'identity': source code not available
 
 i2 : 
+0.82user 0.06system 0:00.88elapsed 99%CPU (0avgtext+0avgdata 0maxresident)k
+0inputs+0outputs (0major+10850minor)pagefaults 0swaps

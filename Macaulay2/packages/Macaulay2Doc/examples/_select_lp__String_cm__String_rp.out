@@ -1,4 +1,4 @@
--- -*- M2-comint -*-
+-- -*- M2-comint -*- {* hash: 111411183 *}
 
 i1 : sort select("[[:alpha:]]+","Dog, cat, and deer.")
 
@@ -13,3 +13,5 @@ o2 = {asdf, qwer, qewr}
 o2 : List
 
 i3 : 
+0.78user 0.04system 0:00.83elapsed 99%CPU (0avgtext+0avgdata 0maxresident)k
+0inputs+0outputs (0major+10841minor)pagefaults 0swaps

@@ -1,4 +1,4 @@
--- -*- M2-comint -*-
+-- -*- M2-comint -*- {* hash: -90711670 *}
 
 i1 : ascii "\n"
 
@@ -7,3 +7,5 @@ o1 = {10}
 o1 : List
 
 i2 : 
+0.76user 0.02system 0:00.79elapsed 99%CPU (0avgtext+0avgdata 0maxresident)k
+0inputs+0outputs (0major+10814minor)pagefaults 0swaps

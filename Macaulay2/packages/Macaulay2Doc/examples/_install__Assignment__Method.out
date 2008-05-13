@@ -1,4 +1,4 @@
--- -*- M2-comint -*-
+-- -*- M2-comint -*- {* hash: -296699640 *}
 
 i1 : M = new Type of MutableList
 
@@ -8,13 +8,13 @@ o1 : Type
 
 i2 : net M := m -> peek m
 
-o2 = --Function[stdio:2:11-2:19]--
+o2 = {*Function[stdio:2:11-2:19]*}
 
 o2 : FunctionClosure
 
 i3 : M _ ZZ := (x,i) -> x#i
 
-o3 = --Function[stdio:3:16-3:21]--
+o3 = {*Function[stdio:3:16-3:21]*}
 
 o3 : FunctionClosure
 
@@ -22,9 +22,7 @@ i4 : installAssignmentMethod(symbol _, M, ZZ, (x,i,v) -> x#i = v);
 
 i5 : y = new M from (a..z)
 
-o5 = M{a, b, c, d, e, f, g, h, i, j, k, l, m, n, o, p, q, r, s, t, u, v, w,
-     ------------------------------------------------------------------------
-     x, y, z}
+o5 = M{a, b, c, d, e, f, g, h, i, j, k, l, m, n, o, p, q, r, s, t, u, v, w, x, y, z}
 
 o5 : M
 
@@ -42,9 +40,7 @@ o7 : Symbol
 
 i8 : y
 
-o8 = M{a, b, c, d, e, f, g, h, i, j, k, l, foo, n, o, p, q, r, s, t, u, v, w,
-     ------------------------------------------------------------------------
-     x, y, z}
+o8 = M{a, b, c, d, e, f, g, h, i, j, k, l, foo, n, o, p, q, r, s, t, u, v, w, x, y, z}
 
 o8 : M
 
@@ -55,3 +51,5 @@ o9 = foo
 o9 : Symbol
 
 i10 : 
+0.78user 0.04system 0:00.85elapsed 97%CPU (0avgtext+0avgdata 0maxresident)k
+0inputs+0outputs (0major+10844minor)pagefaults 0swaps

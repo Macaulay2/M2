@@ -1,0 +1,43 @@
+-- -*- M2-comint -*- {* hash: -1600167526 *}
+
+i1 : printingPrecision,printingAccuracy
+
+o1 = (6, -1)
+
+o1 : Sequence
+
+i2 : 1p100e-5/3
+
+o2 = .00000333333333333333333333333333333
+
+o2 : RR (of precision 100)
+
+i3 : x = {1p100e-5/3,1p100e-4/3,1p100e-3/3,1p100e-2/3}
+
+o3 = {.00000333333, .0000333333, .000333333, .00333333}
+
+o3 : List
+
+i4 : printingAccuracy = 8
+
+o4 = 8
+
+i5 : x
+
+o5 = {.00000333, .00003333, .00033333, .00333333}
+
+o5 : List
+
+i6 : printingAccuracy = 4
+
+o6 = 4
+
+i7 : x
+
+o7 = {0, 0, .0003, .0033}
+
+o7 : List
+
+i8 : 
+0.76user 0.03system 0:00.80elapsed 100%CPU (0avgtext+0avgdata 0maxresident)k
+0inputs+0outputs (0major+10841minor)pagefaults 0swaps

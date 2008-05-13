@@ -1,4 +1,4 @@
--- -*- M2-comint -*-
+-- -*- M2-comint -*- {* hash: -922229169 *}
 
 i1 : R=ZZ/101[a..d];
 
@@ -25,3 +25,5 @@ o7 = image | 105xyz |
 o7 : R-module, submodule of R
 
 i8 : 
+0.80user 0.06system 0:00.88elapsed 98%CPU (0avgtext+0avgdata 0maxresident)k
+0inputs+0outputs (0major+10832minor)pagefaults 0swaps

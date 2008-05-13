@@ -1,4 +1,4 @@
--- -*- M2-comint -*-
+-- -*- M2-comint -*- {* hash: 1605159497 *}
 
 i1 : S = ZZ/10007[x,y,z];
 
@@ -31,3 +31,5 @@ o5 = {{{-3}, {-3}}, {{0}, {0}}}
 o5 : List
 
 i6 : 
+0.76user 0.04system 0:00.91elapsed 88%CPU (0avgtext+0avgdata 0maxresident)k
+0inputs+0outputs (0major+10847minor)pagefaults 0swaps

@@ -1,4 +1,4 @@
--- -*- M2-comint -*-
+-- -*- M2-comint -*- {* hash: 634468954 *}
 
 i1 : m = matrix{{1,2,3},{4,5,6}}
 
@@ -60,7 +60,7 @@ o11 = ZZ
 
 o11 : Ring
 
-i12 : mutableIdentity(RR,5)
+i12 : mutableIdentity(RR_100,5)
 
 o12 = | 1 . . . . |
       | . 1 . . . |
@@ -70,7 +70,7 @@ o12 = | 1 . . . . |
 
 o12 : MutableMatrix
 
-i13 : mutableZero(QQ,3,5)
+i13 : mutableMatrix(QQ,3,5)
 
 o13 = 0
 
@@ -78,11 +78,13 @@ o13 : MutableMatrix
 
 i14 : randomMutableMatrix(4,4,.5,100)
 
-o14 = | .   .   .  .   |
-      | .   -90 98 .   |
-      | 80  96  88 -95 |
-      | -86 -87 .  .   |
+o14 = | .   .   .  .  |
+      | .   .   82 .  |
+      | -79 44  .  .  |
+      | .   -48 .  27 |
 
 o14 : MutableMatrix
 
 i15 : 
+0.77user 0.07system 0:00.85elapsed 99%CPU (0avgtext+0avgdata 0maxresident)k
+0inputs+0outputs (0major+10844minor)pagefaults 0swaps

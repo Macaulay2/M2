@@ -1,4 +1,4 @@
--- -*- M2-comint -*-
+-- -*- M2-comint -*- {* hash: -215714316 *}
 
 i1 : K3 = Proj(QQ[x_0..x_3]/(x_0^4+x_1^4+x_2^4+x_3^4-11*x_0*x_1*x_2*x_3))
 
@@ -47,3 +47,5 @@ o9 = QQ
 o9 : QQ-module, free
 
 i10 : 
+0.95user 0.06system 0:01.02elapsed 100%CPU (0avgtext+0avgdata 0maxresident)k
+0inputs+0outputs (0major+12957minor)pagefaults 0swaps

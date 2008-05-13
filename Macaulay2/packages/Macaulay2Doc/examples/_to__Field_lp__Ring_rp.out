@@ -1,4 +1,4 @@
--- -*- M2-comint -*-
+-- -*- M2-comint -*- {* hash: 856378704 *}
 
 i1 : A = QQ[i]/(i^2+1);
 
@@ -29,3 +29,5 @@ o5 = | y2+zi-1 x2+yi-1 |
 o5 : Matrix B  <--- B
 
 i6 : 
+0.79user 0.03system 0:00.82elapsed 100%CPU (0avgtext+0avgdata 0maxresident)k
+0inputs+0outputs (0major+10845minor)pagefaults 0swaps

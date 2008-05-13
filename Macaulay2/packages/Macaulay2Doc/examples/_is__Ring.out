@@ -1,4 +1,4 @@
--- -*- M2-comint -*-
+-- -*- M2-comint -*- {* hash: -1511569494 *}
 
 i1 : isRing QQ
 
@@ -19,3 +19,5 @@ i5 : isRing(GF(2,3)[x,dx, WeylAlgebra => {x => dx}])
 o5 = true
 
 i6 : 
+0.77user 0.10system 0:00.89elapsed 99%CPU (0avgtext+0avgdata 0maxresident)k
+0inputs+0outputs (0major+10847minor)pagefaults 0swaps

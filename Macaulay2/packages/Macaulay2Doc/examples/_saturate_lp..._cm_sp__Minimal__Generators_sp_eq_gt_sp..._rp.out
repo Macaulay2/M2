@@ -1,4 +1,4 @@
--- -*- M2-comint -*-
+-- -*- M2-comint -*- {* hash: 225337003 *}
 
 i1 : R = ZZ/101[x_0..x_4]
 
@@ -11,18 +11,18 @@ i2 : I = truncate(8, monomialCurveIdeal(R,{1,4,5,9}));
 o2 : Ideal of R
 
 i3 : time gens gb I;
-     -- used 0.076005 seconds
+     -- used 0.060003 seconds
 
              1       428
 o3 : Matrix R  <--- R
 
 i4 : time J1 = saturate(I);
-     -- used 0.356022 seconds
+     -- used 0.192012 seconds
 
 o4 : Ideal of R
 
 i5 : time J = saturate(I, MinimalGenerators=>false);
-     -- used 0.264017 seconds
+     -- used 0.228014 seconds
 
 o5 : Ideal of R
 
@@ -35,3 +35,5 @@ i7 : numgens J1
 o7 = 7
 
 i8 : 
+1.27user 0.04system 0:01.32elapsed 100%CPU (0avgtext+0avgdata 0maxresident)k
+0inputs+0outputs (0major+12961minor)pagefaults 0swaps

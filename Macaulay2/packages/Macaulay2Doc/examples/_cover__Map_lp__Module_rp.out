@@ -1,4 +1,4 @@
--- -*- M2-comint -*-
+-- -*- M2-comint -*- {* hash: 356714066 *}
 
 i1 : M = image matrix {{2},{0}}
 
@@ -19,3 +19,5 @@ i3 : isSurjective f
 o3 = true
 
 i4 : 
+0.76user 0.05system 0:00.82elapsed 99%CPU (0avgtext+0avgdata 0maxresident)k
+0inputs+0outputs (0major+10843minor)pagefaults 0swaps

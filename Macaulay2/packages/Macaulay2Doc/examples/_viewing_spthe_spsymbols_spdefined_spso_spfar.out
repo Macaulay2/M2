@@ -1,4 +1,4 @@
--- -*- M2-comint -*-
+-- -*- M2-comint -*- {* hash: -122711253 *}
 
 i1 : ff = 20:4; h = true; kk
 
@@ -9,18 +9,20 @@ o3 : Symbol
 i4 : listUserSymbols
 
 o4 = symbol   class       value                                                   location of symbol
-     ------   -----       -----                                                   ------------------
-     ff     : Sequence -- (4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4,. stdio:1:0-1:0     
-     kk     : Symbol   -- kk                                                      stdio:1:21-1:21   
+     ------   -----       -----                                                   ------------------                              
+     h      : Boolean  -- true                                                    ../../../../../Macaulay2/m2/setup.m2:39:39-39:39
+     ff     : Sequence -- (4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4,. stdio:1:0-1:0                                   
+     kk     : Symbol   -- kk                                                      stdio:1:21-1:21                                 
 
 i5 : clearOutput
 
 i6 : listUserSymbols
 
 o6 = symbol   class       value                                                   location of symbol
-     ------   -----       -----                                                   ------------------
-     ff     : Sequence -- (4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4,. stdio:1:0-1:0     
-     kk     : Symbol   -- kk                                                      stdio:1:21-1:21   
+     ------   -----       -----                                                   ------------------                              
+     h      : Boolean  -- true                                                    ../../../../../Macaulay2/m2/setup.m2:39:39-39:39
+     ff     : Sequence -- (4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4,. stdio:1:0-1:0                                   
+     kk     : Symbol   -- kk                                                      stdio:1:21-1:21                                 
 
 i7 : clearAll
 
@@ -30,3 +32,5 @@ o8 = symbol  class  value location of symbol
      ------  -----  ----- ------------------
 
 i9 : 
+0.77user 0.06system 0:00.83elapsed 100%CPU (0avgtext+0avgdata 0maxresident)k
+0inputs+0outputs (0major+10847minor)pagefaults 0swaps

@@ -1,4 +1,4 @@
--- -*- M2-comint -*-
+-- -*- M2-comint -*- {* hash: -749485492 *}
 
 i1 : x = new MutableHashTable from {a => 1, b => 2}
 
@@ -15,3 +15,5 @@ o3 = MutableHashTable{...1...}
 o3 : MutableHashTable
 
 i4 : 
+0.77user 0.04system 0:00.81elapsed 100%CPU (0avgtext+0avgdata 0maxresident)k
+0inputs+0outputs (0major+10843minor)pagefaults 0swaps

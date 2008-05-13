@@ -1,4 +1,4 @@
--- -*- M2-comint -*-
+-- -*- M2-comint -*- {* hash: -2008579183 *}
 
 i1 : R = QQ[a..g]
 
@@ -41,4 +41,14 @@ o7 = (3, 7)
 
 o7 : Sequence
 
-i8 : 
+i8 : R = QQ[x,y];
+
+i9 : weightRange (x^3+y^2)^5
+
+o9 = (10, 15)
+
+o9 : Sequence
+
+i10 : 
+0.78user 0.02system 0:00.81elapsed 99%CPU (0avgtext+0avgdata 0maxresident)k
+0inputs+0outputs (0major+10844minor)pagefaults 0swaps

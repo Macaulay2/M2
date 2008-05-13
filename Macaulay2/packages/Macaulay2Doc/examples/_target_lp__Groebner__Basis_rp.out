@@ -1,4 +1,4 @@
--- -*- M2-comint -*-
+-- -*- M2-comint -*- {* hash: -1747477320 *}
 
 i1 : R = ZZ/10007[x,y,z];
 
@@ -12,3 +12,5 @@ o3 = R
 o3 : R-module, free
 
 i4 : 
+0.79user 0.10system 0:00.93elapsed 95%CPU (0avgtext+0avgdata 0maxresident)k
+0inputs+0outputs (0major+10840minor)pagefaults 0swaps

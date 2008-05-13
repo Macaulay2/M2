@@ -1,4 +1,4 @@
--- -*- M2-comint -*-
+-- -*- M2-comint -*- {* hash: -1354210029 *}
 
 i1 : R = QQ[x,y];
 
@@ -19,3 +19,5 @@ o4 = | t2 t3 |
 o4 : Matrix S  <--- S
 
 i5 : 
+0.78user 0.02system 0:00.80elapsed 100%CPU (0avgtext+0avgdata 0maxresident)k
+0inputs+0outputs (0major+10841minor)pagefaults 0swaps

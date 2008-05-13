@@ -1,8 +1,9 @@
--- -*- M2-comint -*-
+-- -*- M2-comint -*- {* hash: 518410659 *}
 
 i1 : showStructure
 
 o1 = Thing : BasicList : Command
+                         Constant
                          DocumentTag
                          Eliminate
                          Expression : Adjacent
@@ -17,6 +18,7 @@ o1 = Thing : BasicList : Command
                                       MatrixExpression
                                       Minus
                                       NonAssociativeProduct
+                                      Parenthesize
                                       Power
                                       RowExpression
                                       SparseMonomialVectorExpression
@@ -84,7 +86,6 @@ o1 = Thing : BasicList : Command
                          InfiniteNumber
                          LowerBound
                          Manipulator
-                         MinorsComputation
                          MutableList : Bag
                          Option
                          Partition
@@ -97,9 +98,8 @@ o1 = Thing : BasicList : Command
                          URL
                          Vector
                          VisibleList : Array
-                                       List
+                                       List : VerticalList
                                        Sequence
-                                       VerticalList
              Boolean
              CompiledFunctionBody
              Database
@@ -109,6 +109,7 @@ o1 = Thing : BasicList : Command
              Function : CompiledFunction
                         CompiledFunctionClosure : MethodFunction
                         FunctionClosure : Analyzer
+                                          CacheFunction
                                           MethodFunctionWithOptions
                                           Parser
              FunctionBody
@@ -119,9 +120,11 @@ o1 = Thing : BasicList : Command
                          MonoidElement
                          MutableHashTable : CacheTable
                                             ChainComplexMap
+                                            Descent
                                             GradedModule : ChainComplex
                                             GradedModuleMap
                                             GroebnerBasis
+                                            IndexedVariableTable : SchurRingIndexedVariableTable
                                             Package
                                             Resolution
                                             ScriptedFunctor
@@ -129,31 +132,37 @@ o1 = Thing : BasicList : Command
                                                    Monoid : OrderedMonoid : GeneralOrderedMonoid
                                                    Ring : EngineRing : FractionField
                                                                        GaloisField
+                                                                       InexactField : ComplexField
+                                                                                      RealField
                                                                        PolynomialRing
                                                                        QuotientRing
                                                                        SchurRing
+                                                   RingFamily : InexactFieldFamily
                                                    SelfInitializingType : MarkUpType : IntermediateMarkUpType
                                                                                        MarkUpTypeWithOptions
                                                    WrapperType
                                             Variety : AffineVariety
                                                       ProjectiveVariety
                          MutableMatrix
-                         OptionTable
+                         OptionTable : GroebnerBasisOptions
                          ProjectiveHilbertPolynomial
                          RingMap
                          SheafOfRings
-                         Tally : BettiTally
-                                 Set
+                         Tally : Set
+                                 VirtualTally : BettiTally
              Net : String
              NetFile
-             Nothing
-             Number : CC
-                      CCC
+             Nothing : InexactNumber
+                                    *
+             Number : InexactNumber : CC
+                                      RR
                       QQ
-                      RR
-                      RRR
                       ZZ
              Pseudocode
              Symbol : Keyword
 
+o1 : Descent
+
 i2 : 
+0.78user 0.05system 0:00.85elapsed 97%CPU (0avgtext+0avgdata 0maxresident)k
+0inputs+0outputs (0major+10842minor)pagefaults 0swaps

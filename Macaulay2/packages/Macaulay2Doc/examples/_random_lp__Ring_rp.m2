@@ -1,2 +1,0 @@
-random ZZ
-random QQ

@@ -1,4 +1,4 @@
--- -*- M2-comint -*-
+-- -*- M2-comint -*- {* hash: -613709942 *}
 
 i1 : R = ZZ/101[a..d,Degrees=>{2:{1,0},2:{0,1}},Heft=>{1,1}];
 
@@ -94,3 +94,5 @@ o8 = BettiTally{(0, {0, 0}, 0) => 1 }
                 (4, {7, 5}, 12) => 2
 
 i9 : 
+0.75user 0.06system 0:00.81elapsed 99%CPU (0avgtext+0avgdata 0maxresident)k
+0inputs+0outputs (0major+10839minor)pagefaults 0swaps

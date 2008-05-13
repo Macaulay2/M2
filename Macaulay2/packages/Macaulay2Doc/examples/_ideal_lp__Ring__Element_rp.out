@@ -1,4 +1,4 @@
--- -*- M2-comint -*-
+-- -*- M2-comint -*- {* hash: -1096894862 *}
 
 i1 : ideal 7
 
@@ -18,3 +18,5 @@ o4 = ideal(x  + y )
 o4 : Ideal of R
 
 i5 : 
+0.76user 0.04system 0:00.82elapsed 99%CPU (0avgtext+0avgdata 0maxresident)k
+0inputs+0outputs (0major+10844minor)pagefaults 0swaps

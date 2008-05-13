@@ -1,4 +1,4 @@
--- -*- M2-comint -*-
+-- -*- M2-comint -*- {* hash: 1139449819 *}
 
 i1 : R = QQ[a..f]
 
@@ -33,3 +33,5 @@ o4 = R  <-- R  <-- R
 o4 : ChainComplex
 
 i5 : 
+0.79user 0.04system 0:00.83elapsed 100%CPU (0avgtext+0avgdata 0maxresident)k
+0inputs+0outputs (0major+10848minor)pagefaults 0swaps

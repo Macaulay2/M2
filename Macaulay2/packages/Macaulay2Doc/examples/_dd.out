@@ -1,4 +1,4 @@
--- -*- M2-comint -*-
+-- -*- M2-comint -*- {* hash: 155884309 *}
 
 i1 : R = ZZ/101[a,b];
 
@@ -37,3 +37,5 @@ o4 = {1} | -b |
 o4 : Matrix R  <--- R
 
 i5 : 
+0.77user 0.09system 0:00.88elapsed 97%CPU (0avgtext+0avgdata 0maxresident)k
+0inputs+0outputs (0major+10843minor)pagefaults 0swaps

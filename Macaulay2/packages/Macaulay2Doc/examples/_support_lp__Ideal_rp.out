@@ -1,0 +1,23 @@
+-- -*- M2-comint -*- {* hash: -451918989 *}
+
+i1 : R = QQ[a..g]
+
+o1 = R
+
+o1 : PolynomialRing
+
+i2 : I = ideal(b,c,e+f)
+
+o2 = ideal (b, c, e + f)
+
+o2 : Ideal of R
+
+i3 : support I
+
+o3 = {b, c, e, f}
+
+o3 : List
+
+i4 : 
+0.78user 0.02system 0:00.81elapsed 100%CPU (0avgtext+0avgdata 0maxresident)k
+0inputs+0outputs (0major+10845minor)pagefaults 0swaps

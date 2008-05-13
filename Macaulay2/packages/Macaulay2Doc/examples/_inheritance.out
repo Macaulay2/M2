@@ -1,4 +1,4 @@
--- -*- M2-comint -*-
+-- -*- M2-comint -*- {* hash: 1177783144 *}
 
 i1 : X = new Type of BasicList
 
@@ -15,7 +15,7 @@ o2 : Type
 i3 : code(net,BasicList)
 
 o3 = -- code for method: net(BasicList)
-     -- ../../../../Macaulay2/m2/nets.m2:166-169
+     -- ../../../../../Macaulay2/m2/nets.m2:175-178
      net BasicList := x -> horizontalJoin deepSplice (
            net class x, 
            "{",
@@ -72,3 +72,5 @@ o15 = YX
 o15 : Symbol
 
 i16 : 
+0.82user 0.09system 0:00.91elapsed 100%CPU (0avgtext+0avgdata 0maxresident)k
+0inputs+0outputs (0major+10845minor)pagefaults 0swaps

@@ -1,6 +1,0 @@
-sequence()
-sequence(4)
-sequence(4,5)
-identity()
-identity(4)
-identity(4,5)

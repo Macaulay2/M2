@@ -1,4 +1,4 @@
--- -*- M2-comint -*-
+-- -*- M2-comint -*- {* hash: 1474179592 *}
 
 i1 : drop({a,b,c,d,e},2)
 
@@ -13,3 +13,5 @@ o2 = {a, b, c}
 o2 : List
 
 i3 : 
+0.76user 0.04system 0:00.80elapsed 100%CPU (0avgtext+0avgdata 0maxresident)k
+0inputs+0outputs (0major+10841minor)pagefaults 0swaps

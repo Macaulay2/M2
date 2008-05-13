@@ -1,4 +1,4 @@
--- -*- M2-comint -*-
+-- -*- M2-comint -*- {* hash: 395895787 *}
 
 i1 : R = QQ[a..f,MonomialOrder=>Weights=>{1,1,1,1,0,0}]
 
@@ -147,3 +147,5 @@ o22 = | xs xc2 y2 xy x2 |
 o22 : Matrix B  <--- B
 
 i23 : 
+0.81user 0.02system 0:00.87elapsed 96%CPU (0avgtext+0avgdata 0maxresident)k
+0inputs+0outputs (0major+10841minor)pagefaults 0swaps

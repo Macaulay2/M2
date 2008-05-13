@@ -1,4 +1,4 @@
--- -*- M2-comint -*-
+-- -*- M2-comint -*- {* hash: -876037532 *}
 
 i1 : S = ZZ/32003[x,y,z];
 
@@ -27,3 +27,5 @@ i7 : degree X == degree R
 o7 = true
 
 i8 : 
+0.78user 0.03system 0:00.82elapsed 99%CPU (0avgtext+0avgdata 0maxresident)k
+0inputs+0outputs (0major+10908minor)pagefaults 0swaps

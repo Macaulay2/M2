@@ -1,4 +1,4 @@
--- -*- M2-comint -*-
+-- -*- M2-comint -*- {* hash: 1399767972 *}
 
 i1 : toString {1,4,a,f,212312,2.123243242}
 
@@ -12,7 +12,7 @@ o3 = R
 
 i4 : toExternalString R
 
-o4 = QQ [x_1, x_2, x_3, x_4, x_5, Heft => {1}]
+o4 = QQ [x_1, x_2, x_3, x_4, x_5]
 
 i5 : toString(QQ[a])
 
@@ -32,3 +32,5 @@ o8 = map(R^{{0}}, R^{{-1}, {-1}, {-1}, {-1}, {-1}}, {{x_1, x_2, x_3, x_4,
      x_5}})
 
 i9 : 
+0.79user 0.03system 0:00.82elapsed 100%CPU (0avgtext+0avgdata 0maxresident)k
+0inputs+0outputs (0major+10844minor)pagefaults 0swaps

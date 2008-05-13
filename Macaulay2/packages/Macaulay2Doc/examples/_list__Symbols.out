@@ -1,4 +1,4 @@
--- -*- M2-comint -*-
+-- -*- M2-comint -*- {* hash: 860692935 *}
 
 i1 : x:=3; y:="hi there"; z:=2^30; f = x->x;
 
@@ -18,3 +18,5 @@ o6 = symbol   class     value      location of symbol
      z      : ZZ     -- 1073741824 stdio:1:21-1:21   
 
 i7 : 
+0.78user 0.03system 0:00.81elapsed 100%CPU (0avgtext+0avgdata 0maxresident)k
+0inputs+0outputs (0major+10844minor)pagefaults 0swaps

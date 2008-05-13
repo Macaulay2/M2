@@ -1,4 +1,4 @@
--- -*- M2-comint -*-
+-- -*- M2-comint -*- {* hash: 1293132650 *}
 
 i1 : class 33
 
@@ -39,3 +39,5 @@ o8 = Type
 o8 : Type
 
 i9 : 
+0.77user 0.03system 0:00.80elapsed 99%CPU (0avgtext+0avgdata 0maxresident)k
+0inputs+0outputs (0major+10842minor)pagefaults 0swaps

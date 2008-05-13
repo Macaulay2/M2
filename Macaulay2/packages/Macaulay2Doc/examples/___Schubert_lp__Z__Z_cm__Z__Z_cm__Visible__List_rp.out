@@ -1,4 +1,4 @@
--- -*- M2-comint -*-
+-- -*- M2-comint -*- {* hash: 410654790 *}
 
 i1 : I = Schubert(2,4,{1,2,4},CoefficientRing => QQ)
 
@@ -32,3 +32,5 @@ o4 = total: 1 6 14 16 9 2
 o4 : BettiTally
 
 i5 : 
+0.80user 0.03system 0:00.86elapsed 96%CPU (0avgtext+0avgdata 0maxresident)k
+0inputs+0outputs (0major+10848minor)pagefaults 0swaps

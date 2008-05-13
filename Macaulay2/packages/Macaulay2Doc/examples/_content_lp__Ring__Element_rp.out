@@ -1,4 +1,4 @@
--- -*- M2-comint -*-
+-- -*- M2-comint -*- {* hash: -1958901575 *}
 
 i1 : R = ZZ[x]
 
@@ -17,3 +17,5 @@ i3 : generator oo
 o3 = 2
 
 i4 : 
+0.77user 0.03system 0:00.80elapsed 100%CPU (0avgtext+0avgdata 0maxresident)k
+0inputs+0outputs (0major+10848minor)pagefaults 0swaps

@@ -1,4 +1,4 @@
--- -*- M2-comint -*-
+-- -*- M2-comint -*- {* hash: -1013297452 *}
 
 i1 : MatrixExpression {{a,b,c},{a,bb,ccc}}
 
@@ -9,3 +9,5 @@ o1 = | a   b   c  |
 o1 : Expression of class MatrixExpression
 
 i2 : 
+0.81user 0.05system 0:00.88elapsed 98%CPU (0avgtext+0avgdata 0maxresident)k
+0inputs+0outputs (0major+10844minor)pagefaults 0swaps

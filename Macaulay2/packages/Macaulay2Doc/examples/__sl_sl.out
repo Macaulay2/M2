@@ -1,4 +1,4 @@
--- -*- M2-comint -*-
+-- -*- M2-comint -*- {* hash: 1104300576 *}
 
 i1 : 4/2
 
@@ -34,3 +34,5 @@ o6 = ------
 o6 : frac(R)
 
 i7 : 
+0.77user 0.08system 0:00.85elapsed 100%CPU (0avgtext+0avgdata 0maxresident)k
+0inputs+0outputs (0major+10858minor)pagefaults 0swaps

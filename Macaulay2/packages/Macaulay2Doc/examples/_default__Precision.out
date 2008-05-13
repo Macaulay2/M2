@@ -1,0 +1,38 @@
+-- -*- M2-comint -*- {* hash: 152181135 *}
+
+i1 : defaultPrecision
+
+o1 = 53
+
+i2 : 1/3.
+
+o2 = .333333333333333
+
+o2 : RR (of precision 53)
+
+i3 : defaultPrecision=100     
+
+o3 = 100
+
+i4 : 1/3.              
+
+o4 = .333333333333333333333333333333
+
+o4 : RR (of precision 100)
+
+i5 : RR[x]
+
+o5 = RR   [x]
+       100
+
+o5 : PolynomialRing
+
+i6 : numeric pi
+
+o6 = 3.14159265358979323846264338328
+
+o6 : RR (of precision 100)
+
+i7 : 
+0.76user 0.04system 0:00.80elapsed 99%CPU (0avgtext+0avgdata 0maxresident)k
+0inputs+0outputs (0major+10840minor)pagefaults 0swaps

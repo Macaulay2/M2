@@ -1,4 +1,4 @@
--- -*- M2-comint -*-
+-- -*- M2-comint -*- {* hash: -350537819 *}
 
 i1 : QQ[x,y, Weights => {-1,1}, Global => false]
 
@@ -15,3 +15,5 @@ i3 : y<1
 o3 = false
 
 i4 : 
+0.78user 0.10system 0:00.89elapsed 98%CPU (0avgtext+0avgdata 0maxresident)k
+0inputs+0outputs (0major+10842minor)pagefaults 0swaps

@@ -1,4 +1,4 @@
--- -*- M2-comint -*-
+-- -*- M2-comint -*- {* hash: -2129737355 *}
 
 i1 : R = QQ[x,dx,WeylAlgebra=>{x=>dx}]
 
@@ -154,3 +154,5 @@ i23 : x * ( id_M * ( dx * id_M ) ) == (x * id_M) * ( dx * id_M )
 o23 = false
 
 i24 : 
+0.75user 0.05system 0:00.81elapsed 98%CPU (0avgtext+0avgdata 0maxresident)k
+0inputs+0outputs (0major+10843minor)pagefaults 0swaps

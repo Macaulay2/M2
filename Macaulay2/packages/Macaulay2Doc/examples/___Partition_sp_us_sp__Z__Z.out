@@ -1,4 +1,4 @@
--- -*- M2-comint -*-
+-- -*- M2-comint -*- {* hash: 1112681107 *}
 
 i1 : partitions 3
 
@@ -23,3 +23,5 @@ o4 = {2, 1}
 o4 : List
 
 i5 : 
+0.74user 0.12system 0:00.89elapsed 97%CPU (0avgtext+0avgdata 0maxresident)k
+0inputs+0outputs (0major+10841minor)pagefaults 0swaps

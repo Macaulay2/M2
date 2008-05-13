@@ -1,4 +1,4 @@
--- -*- M2-comint -*-
+-- -*- M2-comint -*- {* hash: 1847350674 *}
 
 i1 : R = ZZ/32003[a,b,c,d]
 
@@ -102,11 +102,8 @@ o12 : Matrix S1bar  <--- S1bar
 
 i13 : gr = map (S1bar, GR, M)
 
-o13 = map(S1bar,GR,{- p q  + p q , - p q  + p q , - p q  + p q , - p q  +
-                       1 0    0 1     2 0    0 2     2 1    1 2     3 0  
-      -----------------------------------------------------------------------
-      p q , - p q  + p q , - p q  + p q })
-       0 3     3 1    1 3     3 2    2 3
+o13 = map(S1bar,GR,{- p q  + p q , - p q  + p q , - p q  + p q , - p q  + p q , - p q  + p q , - p q  + p q })
+                       1 0    0 1     2 0    0 2     2 1    1 2     3 0    0 3     3 1    1 3     3 2    2 3
 
 o13 : RingMap S1bar <--- GR
 
@@ -234,7 +231,7 @@ i21 : Fano2(ZZ,Ideal,Ring) := (k,X,GR) -> (
         ker gr
       )
 
-o21 = --Function[stdio:51:33-99:6]--
+o21 = {*Function[stdio:51:33-99:6]*}
 
 o21 : FunctionClosure
 
@@ -248,7 +245,7 @@ i22 : Fano2(ZZ, Ideal) := (k,X) -> (
         Fano2(k,X,GR)
       )
 
-o22 = --Function[stdio:101:26-108:12]--
+o22 = {*Function[stdio:101:26-108:12]*}
 
 o22 : FunctionClosure
 
@@ -265,7 +262,7 @@ i24 : Grassmannian2(ZZ,ZZ,Ring) := (k,r,R) ->(
               Fano2(k,Pr)
            )
 
-o24 = --Function[stdio:111:37-115:16]--
+o24 = {*Function[stdio:111:37-115:16]*}
 
 o24 : FunctionClosure
 
@@ -276,7 +273,7 @@ i25 : Grassmannian2(ZZ,ZZ) := (r,k) -> (
               Grassmannian2(k,r,R)
                            )
 
-o25 = --Function[stdio:117:30-121:26]--
+o25 = {*Function[stdio:117:30-121:26]*}
 
 o25 : FunctionClosure
 
@@ -662,3 +659,5 @@ o53 = - 3*P  + 4*P
 o53 : ProjectiveHilbertPolynomial
 
 i54 : 
+1.76user 0.06system 0:01.82elapsed 100%CPU (0avgtext+0avgdata 0maxresident)k
+0inputs+0outputs (0major+13207minor)pagefaults 0swaps

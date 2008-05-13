@@ -1,4 +1,4 @@
--- -*- M2-comint -*-
+-- -*- M2-comint -*- {* hash: -1846245224 *}
 
 i1 : a => 5
 
@@ -18,3 +18,5 @@ o3 = HashTable{a => 5}
 o3 : HashTable
 
 i4 : 
+0.79user 0.05system 0:00.84elapsed 99%CPU (0avgtext+0avgdata 0maxresident)k
+0inputs+0outputs (0major+10844minor)pagefaults 0swaps

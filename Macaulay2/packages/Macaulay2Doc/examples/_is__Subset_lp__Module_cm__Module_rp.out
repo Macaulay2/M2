@@ -1,4 +1,4 @@
--- -*- M2-comint -*-
+-- -*- M2-comint -*- {* hash: -1964412554 *}
 
 i1 : R = QQ[x,y]
 
@@ -31,3 +31,5 @@ i5 : isSubset(M,N)
 o5 = false
 
 i6 : 
+0.77user 0.04system 0:00.81elapsed 100%CPU (0avgtext+0avgdata 0maxresident)k
+0inputs+0outputs (0major+10841minor)pagefaults 0swaps

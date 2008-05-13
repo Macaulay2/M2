@@ -1,4 +1,4 @@
--- -*- M2-comint -*-
+-- -*- M2-comint -*- {* hash: -932837205 *}
 
 i1 : Z = Proj(QQ[x_0..x_12]/(x_0^3+x_12^3))
 
@@ -14,3 +14,5 @@ o2 = P  - 3*P   + 3*P
 o2 : ProjectiveHilbertPolynomial
 
 i3 : 
+0.78user 0.03system 0:00.81elapsed 100%CPU (0avgtext+0avgdata 0maxresident)k
+0inputs+0outputs (0major+10847minor)pagefaults 0swaps

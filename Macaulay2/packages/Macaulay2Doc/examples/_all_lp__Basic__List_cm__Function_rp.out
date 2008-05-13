@@ -1,4 +1,4 @@
--- -*- M2-comint -*-
+-- -*- M2-comint -*- {* hash: -194956689 *}
 
 i1 : all({1,2,3,4}, even)
 
@@ -9,3 +9,5 @@ i2 : all({2,4,6,8}, even)
 o2 = true
 
 i3 : 
+0.78user 0.03system 0:00.81elapsed 100%CPU (0avgtext+0avgdata 0maxresident)k
+0inputs+0outputs (0major+10842minor)pagefaults 0swaps

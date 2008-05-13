@@ -1,4 +1,4 @@
--- -*- M2-comint -*-
+-- -*- M2-comint -*- {* hash: 2019099207 *}
 
 i1 : R = ZZ[a..d]
 
@@ -39,3 +39,5 @@ o6 = a x*y*z
 o6 : S
 
 i7 : 
+0.80user 0.03system 0:00.84elapsed 98%CPU (0avgtext+0avgdata 0maxresident)k
+0inputs+0outputs (0major+10841minor)pagefaults 0swaps

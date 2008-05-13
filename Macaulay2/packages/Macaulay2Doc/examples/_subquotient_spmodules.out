@@ -1,4 +1,4 @@
--- -*- M2-comint -*-
+-- -*- M2-comint -*- {* hash: 1983074994 *}
 
 i1 : R = QQ[x,y,z];
 
@@ -146,3 +146,5 @@ o23 = cokernel {1} | y x 0 0 z4 0  |
 o23 : R-module, quotient of R
 
 i24 : 
+0.80user 0.04system 0:00.85elapsed 99%CPU (0avgtext+0avgdata 0maxresident)k
+0inputs+0outputs (0major+10843minor)pagefaults 0swaps

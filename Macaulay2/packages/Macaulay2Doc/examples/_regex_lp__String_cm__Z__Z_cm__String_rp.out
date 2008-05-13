@@ -1,4 +1,4 @@
--- -*- M2-comint -*-
+-- -*- M2-comint -*- {* hash: -565585480 *}
 
 i1 : regex("a",0,"a b c a")
 
@@ -13,3 +13,5 @@ o2 = {(6, 1)}
 o2 : List
 
 i3 : 
+0.78user 0.04system 0:00.82elapsed 99%CPU (0avgtext+0avgdata 0maxresident)k
+0inputs+0outputs (0major+10842minor)pagefaults 0swaps

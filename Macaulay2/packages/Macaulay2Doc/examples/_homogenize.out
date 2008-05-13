@@ -1,4 +1,4 @@
--- -*- M2-comint -*-
+-- -*- M2-comint -*- {* hash: -1194106986 *}
 
 i1 : R = ZZ/101[x,y,z,Degrees => {1,2,3}]
 
@@ -28,3 +28,5 @@ o4 = x z  + y + 1
 o4 : R
 
 i5 : 
+0.76user 0.04system 0:00.80elapsed 100%CPU (0avgtext+0avgdata 0maxresident)k
+0inputs+0outputs (0major+10843minor)pagefaults 0swaps

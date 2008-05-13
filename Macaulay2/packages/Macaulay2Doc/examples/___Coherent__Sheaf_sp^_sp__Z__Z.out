@@ -1,4 +1,4 @@
--- -*- M2-comint -*-
+-- -*- M2-comint -*- {* hash: -268498258 *}
 
 i1 : R = QQ[a..d]/(a*d-b*c)
 
@@ -39,3 +39,5 @@ o5 : coherent sheaf on Q, subsheaf of OO
                                         Q
 
 i6 : 
+0.84user 0.04system 0:00.89elapsed 99%CPU (0avgtext+0avgdata 0maxresident)k
+0inputs+0outputs (0major+10832minor)pagefaults 0swaps

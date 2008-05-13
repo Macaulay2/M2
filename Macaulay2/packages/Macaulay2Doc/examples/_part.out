@@ -1,4 +1,4 @@
--- -*- M2-comint -*-
+-- -*- M2-comint -*- {* hash: 2108138822 *}
 
 i1 : R = QQ[a..d]
 
@@ -71,4 +71,20 @@ o11 = 3a*x + 3b*y
 
 o11 : B
 
-i12 : 
+i12 : f = (1+x+y)^3
+
+       3     2        2    3     2            2
+o12 = x  + 3x y + 3x*y  + y  + 3x  + 6x*y + 3y  + 3x + 3y + 1
+
+o12 : B
+
+i13 : part(1..3, f)
+
+                  2            2   3     2        2    3
+o13 = (3x + 3y, 3x  + 6x*y + 3y , x  + 3x y + 3x*y  + y )
+
+o13 : Sequence
+
+i14 : 
+0.78user 0.03system 0:00.82elapsed 100%CPU (0avgtext+0avgdata 0maxresident)k
+0inputs+0outputs (0major+10845minor)pagefaults 0swaps

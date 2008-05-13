@@ -1,4 +1,4 @@
--- -*- M2-comint -*-
+-- -*- M2-comint -*- {* hash: 432607361 *}
 
 i1 : R = QQ[a..d];
 
@@ -7,3 +7,5 @@ i2 : degree(b, a*b^5+b^7-3*a^10-3)
 o2 = 7
 
 i3 : 
+0.85user 0.02system 0:00.90elapsed 97%CPU (0avgtext+0avgdata 0maxresident)k
+0inputs+0outputs (0major+10911minor)pagefaults 0swaps

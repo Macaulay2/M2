@@ -1,4 +1,4 @@
--- -*- M2-comint -*-
+-- -*- M2-comint -*- {* hash: -418554021 *}
 
 i1 : C = resolution cokernel matrix {{4,5}}
 
@@ -19,3 +19,5 @@ o2 = ZZ  <-- ZZ  <-- ZZ  <-- ZZ
 o2 : ChainComplex
 
 i3 : 
+0.77user 0.03system 0:00.81elapsed 100%CPU (0avgtext+0avgdata 0maxresident)k
+0inputs+0outputs (0major+10844minor)pagefaults 0swaps

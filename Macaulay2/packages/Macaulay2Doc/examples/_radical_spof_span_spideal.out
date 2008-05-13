@@ -1,4 +1,4 @@
--- -*- M2-comint -*-
+-- -*- M2-comint -*- {* hash: -1870283453 *}
 
 i1 : S = ZZ/101[x,y,z]
 
@@ -15,8 +15,8 @@ o2 : Ideal of S
 
 i3 : radical I
 
-                       3    2
-o3 = ideal (y*z, x*z, x  - y )
+                         3    2
+o3 = ideal (y*z, x*z, - x  + y )
 
 o3 : Ideal of S
 
@@ -28,3 +28,5 @@ o4 = ideal (y*z, x*z, - x  + y )
 o4 : Ideal of S
 
 i5 : 
+0.83user 0.02system 0:00.99elapsed 86%CPU (0avgtext+0avgdata 0maxresident)k
+0inputs+0outputs (0major+10849minor)pagefaults 0swaps

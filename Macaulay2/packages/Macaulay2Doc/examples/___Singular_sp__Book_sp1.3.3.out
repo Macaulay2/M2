@@ -1,4 +1,4 @@
--- -*- M2-comint -*-
+-- -*- M2-comint -*- {* hash: 664903268 *}
 
 i1 : S = QQ[a,b,c];
 
@@ -40,3 +40,5 @@ o8 = 0
 o8 : Ideal of S
 
 i9 : 
+0.80user 0.03system 0:00.83elapsed 99%CPU (0avgtext+0avgdata 0maxresident)k
+0inputs+0outputs (0major+10839minor)pagefaults 0swaps

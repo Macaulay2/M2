@@ -1,4 +1,4 @@
--- -*- M2-comint -*-
+-- -*- M2-comint -*- {* hash: -1240547285 *}
 
 i1 : A = QQ[x,y];
 
@@ -65,9 +65,9 @@ o11 : Ideal of B
 
 i12 : transpose gens gb I
 
-o12 = {-15} | x13+x14y |
-      {-11} | x9y2+x10 |
-      {-9}  | y8-x2y7  |
+o12 = {-16} | x13-x13y3 |
+      {-11} | x9y2+x10  |
+      {-9}  | y8-x2y7   |
 
               3       1
 o12 : Matrix B  <--- B
@@ -115,3 +115,5 @@ o18 = {-9}  | -x2y7+y8    |
 o18 : Matrix C  <--- C
 
 i19 : 
+0.84user 0.08system 0:00.94elapsed 98%CPU (0avgtext+0avgdata 0maxresident)k
+0inputs+0outputs (0major+10844minor)pagefaults 0swaps

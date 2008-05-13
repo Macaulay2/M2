@@ -1,4 +1,4 @@
--- -*- M2-comint -*-
+-- -*- M2-comint -*- {* hash: 1338126528 *}
 
 i1 : for i from 1 to 4 list (continue 4; print ho) do print hi
 hi
@@ -42,3 +42,5 @@ i4 : i = 0 ; while i < 10 do ( i = i+1; if i == 5 then continue ; print i )
 10
 
 i6 : 
+0.77user 0.06system 0:00.84elapsed 99%CPU (0avgtext+0avgdata 0maxresident)k
+0inputs+0outputs (0major+10844minor)pagefaults 0swaps

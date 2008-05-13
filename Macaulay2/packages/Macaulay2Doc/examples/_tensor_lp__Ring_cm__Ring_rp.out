@@ -1,4 +1,4 @@
--- -*- M2-comint -*-
+-- -*- M2-comint -*- {* hash: -1756471090 *}
 
 i1 : kk = ZZ/101
 
@@ -22,32 +22,32 @@ i4 : describe(A**B)
 
 o4 = kk [a, b, c, d, e, Degrees => {{1, 0}, {1, 0}, {0, 1}, {0, 1}, {0, 1}},
      ------------------------------------------------------------------------
-     MonomialOrder => {GRevLex => {1, 1}, Position => Up, GRevLex => {1, 1,
+     Heft => {1, 1}, MonomialOrder => {GRevLex => {1, 1}, Position => Up,
      ------------------------------------------------------------------------
-     1}}, Heft => {1, 1}]
+     GRevLex => {1, 1, 1}}]
 
 i5 : describe tensor(A,B,VariableBaseName=>p)
 
 o5 = kk [p , p , p , p , p , Degrees => {{1, 0}, {1, 0}, {0, 1}, {0, 1}, {0,
           0   1   2   3   4
      ------------------------------------------------------------------------
-     1}}, MonomialOrder => {GRevLex => {1, 1}, Position => Up, GRevLex => {1,
+     1}}, Heft => {1, 1}, MonomialOrder => {GRevLex => {1, 1}, Position =>
      ------------------------------------------------------------------------
-     1, 1}}, Heft => {1, 1}]
+     Up, GRevLex => {1, 1, 1}}]
 
 i6 : describe tensor(A,B,Variables=>{a1,a2,b1,b2,b3})
 
 o6 = kk [a1, a2, b1, b2, b3, Degrees => {{1, 0}, {1, 0}, {0, 1}, {0, 1}, {0,
      ------------------------------------------------------------------------
-     1}}, MonomialOrder => {GRevLex => {1, 1}, Position => Up, GRevLex => {1,
+     1}}, Heft => {1, 1}, MonomialOrder => {GRevLex => {1, 1}, Position =>
      ------------------------------------------------------------------------
-     1, 1}}, Heft => {1, 1}]
+     Up, GRevLex => {1, 1, 1}}]
 
 i7 : describe (C = tensor(A,B,DegreeRank=>1,Degrees=>{5:1}))
 
 o7 = kk [a, b, c, d, e, MonomialOrder => {GRevLex => {1, 1}, Position => Up,
      ------------------------------------------------------------------------
-     GRevLex => {1, 1, 1}}, Heft => {1}]
+     GRevLex => {1, 1, 1}}]
 
 i8 : degreeLength C
 
@@ -63,21 +63,21 @@ i10 : describe tensor(A,B,MonomialSize=>8)
 
 o10 = kk [a, b, c, d, e, Degrees => {{1, 0}, {1, 0}, {0, 1}, {0, 1}, {0, 1}},
       -----------------------------------------------------------------------
-      MonomialOrder => {GRevLex => {1, 1}, Position => Up, GRevLex => {1, 1,
+      Heft => {1, 1}, MonomialOrder => {GRevLex => {1, 1}, Position => Up,
       -----------------------------------------------------------------------
-      1}}, MonomialSize => 8, Heft => {1, 1}]
+      GRevLex => {1, 1, 1}}, MonomialSize => 8]
 
 i11 : describe (C = tensor(A,B,MonomialOrder=>Eliminate numgens A))
 
 o11 = kk [a, b, c, d, e, Degrees => {{1, 0}, {1, 0}, {0, 1}, {0, 1}, {0, 1}},
       -----------------------------------------------------------------------
-      MonomialOrder => Eliminate{2}, Heft => {1, 1}]
+      Heft => {1, 1}, MonomialOrder => Eliminate{2}]
 
 i12 : describe (C = tensor(A,B,MonomialOrder=>GRevLex)) 
 
 o12 = kk [a, b, c, d, e, Degrees => {{1, 0}, {1, 0}, {0, 1}, {0, 1}, {0, 1}},
       -----------------------------------------------------------------------
-      MonomialOrder => GRevLex, Heft => {1, 1}]
+      Heft => {1, 1}, MonomialOrder => GRevLex]
 
 i13 : As = kk[a,b,SkewCommutative=>true]
 
@@ -101,9 +101,9 @@ i16 : describe E
 
 o16 = kk [a, b, c, d, e, Degrees => {{1, 0}, {1, 0}, {0, 1}, {0, 1}, {0, 1}},
       -----------------------------------------------------------------------
-      MonomialOrder => {GRevLex => {1, 1}, Position => Up, GRevLex => {1, 1,
+      Heft => {1, 1}, MonomialOrder => {GRevLex => {1, 1}, Position => Up,
       -----------------------------------------------------------------------
-      1}}, SkewCommutative => {0, 1, 2, 3, 4}, Heft => {1, 1}]
+      GRevLex => {1, 1, 1}}, SkewCommutative => {0, 1, 2, 3, 4}]
 
 i17 : c*a
 
@@ -125,11 +125,11 @@ o19 : PolynomialRing
 
 i20 : describe oo
 
-o20 = kk [x, Dx, y, Dy, Degrees => {{1, 0}, {1, 0}, {0, 1}, {0, 1}},
+o20 = kk [x, Dx, y, Dy, Degrees => {{1, 0}, {1, 0}, {0, 1}, {0, 1}}, Heft =>
       -----------------------------------------------------------------------
-      MonomialOrder => {GRevLex => {1, 1}, Position => Up, GRevLex => {1,
+      {1, 1}, MonomialOrder => {GRevLex => {1, 1}, Position => Up, GRevLex =>
       -----------------------------------------------------------------------
-      1}}, WeylAlgebra => {0 => 1, 2 => 3}, Heft => {1, 1}]
+      {1, 1}}, WeylAlgebra => {0 => 1, 2 => 3}]
 
 i21 : A = ZZ/101[a,b]
 
@@ -151,10 +151,12 @@ o23 : PolynomialRing
 
 i24 : describe oo
 
-o24 = A [x1, y1, x2, y2, Degrees => {{1, 0}, {1, 0}, {0, 1}, {0, 1}},
+o24 = A [x1, y1, x2, y2, Degrees => {{1, 0}, {1, 0}, {0, 1}, {0, 1}}, Heft =>
       -----------------------------------------------------------------------
-      MonomialOrder => {GRevLex => {1, 1}, Position => Up, GRevLex => {1,
+      {1, 1}, MonomialOrder => {GRevLex => {1, 1}, Position => Up, GRevLex =>
       -----------------------------------------------------------------------
-      1}}, Heft => {1, 1}]
+      {1, 1}}]
 
 i25 : 
+0.80user 0.04system 0:00.84elapsed 100%CPU (0avgtext+0avgdata 0maxresident)k
+0inputs+0outputs (0major+10844minor)pagefaults 0swaps

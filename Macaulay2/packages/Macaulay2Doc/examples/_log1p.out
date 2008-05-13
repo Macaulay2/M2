@@ -1,0 +1,17 @@
+-- -*- M2-comint -*- {* hash: -1763404807 *}
+
+i1 : log1p 1p100e-10
+
+o1 = 9.99999999950000000003333333333e-11
+
+o1 : RR (of precision 100)
+
+i2 : log(1 + 1p100e-10)
+
+o2 = 9.99999999950000000005934045724e-11
+
+o2 : RR (of precision 100)
+
+i3 : 
+0.78user 0.02system 0:00.80elapsed 100%CPU (0avgtext+0avgdata 0maxresident)k
+0inputs+0outputs (0major+10841minor)pagefaults 0swaps

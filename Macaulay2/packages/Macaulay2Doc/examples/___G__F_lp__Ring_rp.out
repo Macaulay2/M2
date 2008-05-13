@@ -1,4 +1,4 @@
--- -*- M2-comint -*-
+-- -*- M2-comint -*- {* hash: 105921838 *}
 
 i1 : A = ZZ/5[a]/(a^3-a-2)
 
@@ -26,9 +26,11 @@ o4 : GaloisField
 
 i5 : map(B,D,{a^2})
 
-                2
-o5 = map(B,D,{2a  + 2a + 2})
+                 2
+o5 = map(B,D,{- a  + a - 2})
 
 o5 : RingMap B <--- D
 
 i6 : 
+0.79user 0.03system 0:00.82elapsed 100%CPU (0avgtext+0avgdata 0maxresident)k
+0inputs+0outputs (0major+10845minor)pagefaults 0swaps

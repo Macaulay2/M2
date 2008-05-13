@@ -1,4 +1,4 @@
--- -*- M2-comint -*-
+-- -*- M2-comint -*- {* hash: -444604608 *}
 
 i1 : R = ZZ/101[a..c];
 
@@ -38,3 +38,5 @@ o4 = total: 8 8
 o4 : BettiTally
 
 i5 : 
+0.77user 0.04system 0:00.81elapsed 100%CPU (0avgtext+0avgdata 0maxresident)k
+0inputs+0outputs (0major+10844minor)pagefaults 0swaps

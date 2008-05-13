@@ -1,4 +1,4 @@
--- -*- M2-comint -*-
+-- -*- M2-comint -*- {* hash: -1247038039 *}
 
 i1 : R = QQ[a,b,c,d]/(a^4+b^4+c^4+d^4);
 
@@ -44,3 +44,5 @@ o6 = cokernel | a b |
 o6 : R-module, quotient of R
 
 i7 : 
+0.82user 0.03system 0:00.85elapsed 100%CPU (0avgtext+0avgdata 0maxresident)k
+0inputs+0outputs (0major+10963minor)pagefaults 0swaps

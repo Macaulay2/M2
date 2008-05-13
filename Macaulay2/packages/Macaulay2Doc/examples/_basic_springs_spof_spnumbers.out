@@ -1,4 +1,4 @@
--- -*- M2-comint -*-
+-- -*- M2-comint -*- {* hash: -1845762963 *}
 
 i1 : 1234
 
@@ -16,13 +16,13 @@ i3 : 123.4
 
 o3 = 123.4
 
-o3 : RR
+o3 : RR (of precision 53)
 
 i4 : 123+4*ii
 
-o4 = 123. + 4.ii
+o4 = 123+4*ii
 
-o4 : CC
+o4 : CC (of precision 53)
 
 i5 : 4/5 + 2/3
 
@@ -42,15 +42,15 @@ o7 = 105
 
 i8 : 3.1^2.1
 
-o8 = 10.7612
+o8 = 10.7611716060997
 
-o8 : RR
+o8 : RR (of precision 53)
 
 i9 : sqrt 3.
 
-o9 = 1.73205
+o9 = 1.73205080756888
 
-o9 : RR
+o9 : RR (of precision 53)
 
 i10 : 1234//100
 
@@ -61,3 +61,5 @@ i11 : 1234%100
 o11 = 34
 
 i12 : 
+0.76user 0.05system 0:00.81elapsed 100%CPU (0avgtext+0avgdata 0maxresident)k
+0inputs+0outputs (0major+10844minor)pagefaults 0swaps

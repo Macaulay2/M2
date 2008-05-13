@@ -1,4 +1,4 @@
--- -*- M2-comint -*-
+-- -*- M2-comint -*- {* hash: 644706869 *}
 
 i1 : R = ZZ/101[x,y,z]
 
@@ -51,3 +51,5 @@ i8 : isHomogeneous f
 o8 = true
 
 i9 : 
+0.79user 0.06system 0:00.86elapsed 99%CPU (0avgtext+0avgdata 0maxresident)k
+0inputs+0outputs (0major+10845minor)pagefaults 0swaps

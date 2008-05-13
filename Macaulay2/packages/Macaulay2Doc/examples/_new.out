@@ -1,4 +1,4 @@
--- -*- M2-comint -*-
+-- -*- M2-comint -*- {* hash: -233164034 *}
 
 i1 : new Type of BasicList from Function := (A,B,f) -> hashTable { net => f };
 
@@ -52,18 +52,16 @@ i10 : peek x
 
 o10 = {1, 3, 11, 12}
 
-i11 : 
-                     new Type of BasicList := (type,array) -> (
+i11 : new Type of BasicList := (type,array) -> (
                           stderr << "--new " << type << " of " 
                                  << array << " being made" << endl;
                           new MutableHashTable)
 
-o11 = --Function[stdio:12:53-15:24]--
+o11 = {*Function[stdio:11:38-14:24]*}
 
 o11 : FunctionClosure
 
-i12 :           
-      M = new Type of BasicList
+i12 : M = new Type of BasicList
 --new Type of BasicList being made
 
 o12 = M
@@ -100,7 +98,7 @@ o17 : M
 
 i18 : new M from ZZ := (M',i) -> 0 .. i
 
-o18 = --Function[stdio:23:24-23:32]--
+o18 = {*Function[stdio:21:24-21:32]*}
 
 o18 : FunctionClosure
 
@@ -118,7 +116,7 @@ o20 : M
 
 i21 : new M := (M') -> {a,b,c}
 
-o21 = --Function[stdio:26:14-26:22]--
+o21 = {*Function[stdio:24:14-24:22]*}
 
 o21 : FunctionClosure
 
@@ -129,3 +127,5 @@ o22 = M{a, b, c}
 o22 : M
 
 i23 : 
+0.77user 0.05system 0:00.84elapsed 97%CPU (0avgtext+0avgdata 0maxresident)k
+0inputs+0outputs (0major+10844minor)pagefaults 0swaps

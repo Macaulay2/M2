@@ -1,8 +1,8 @@
--- -*- M2-comint -*-
+-- -*- M2-comint -*- {* hash: 1244371155 *}
 
-i1 : 1232132141242345 % 3457834
+i1 : 1232132141242345 % 1000000
 
-o1 = 1249597
+o1 = 242345
 
 i2 : (-4)%5
 
@@ -43,3 +43,5 @@ o7 = ---*b  - -*b  - 4
 o7 : B
 
 i8 : 
+0.77user 0.04system 0:00.81elapsed 100%CPU (0avgtext+0avgdata 0maxresident)k
+0inputs+0outputs (0major+10843minor)pagefaults 0swaps

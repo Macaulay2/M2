@@ -1,4 +1,4 @@
--- -*- M2-comint -*-
+-- -*- M2-comint -*- {* hash: -91270580 *}
 
 i1 : R = ZZ/11
 
@@ -33,12 +33,10 @@ o5 : PolynomialRing
 
 i6 : T/(r^3+s^3+t^3)
 
-      ZZ
-     --- [r, s, t]
-     101
-o6 = -------------
-       3    3    3
-      r  + s  + t
+           T
+o6 = ------------
+      3    3    3
+     r  + s  + t
 
 o6 : QuotientRing
 
@@ -75,9 +73,9 @@ o11 : U
 
 i12 : random(2,S)
 
-        10       5              7  2
-o12 = - --*x*y - -*x*z - 3y*z + -*z
-         7       8              5
+      5       2  2   9       7       7  2
+o12 = -*x*y + -*y  + -*x*z + -*y*z + -*z
+      4       5      2       6       6
 
 o12 : S
 
@@ -145,3 +143,5 @@ o24 = --------------
 o24 : QuotientRing
 
 i25 : 
+0.79user 0.06system 0:00.87elapsed 98%CPU (0avgtext+0avgdata 0maxresident)k
+0inputs+0outputs (0major+10844minor)pagefaults 0swaps

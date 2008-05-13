@@ -1,4 +1,4 @@
--- -*- M2-comint -*-
+-- -*- M2-comint -*- {* hash: 1462645388 *}
 
 i1 : 4/2
 
@@ -36,18 +36,12 @@ o6 : QuotientRing
 
 i7 : (a+b)/(a-b)
 
-     a + b
-o7 = -----
-     a - b
+     -b
+o7 = --
+      b
 
 o7 : frac(A)
 
-i8 : f = a/b
-
-     a
-o8 = -
-     b
-
-o8 : frac(A)
-
-i9 : 
+i8 : 
+0.80user 0.02system 0:00.88elapsed 93%CPU (0avgtext+0avgdata 0maxresident)k
+0inputs+0outputs (0major+10861minor)pagefaults 0swaps

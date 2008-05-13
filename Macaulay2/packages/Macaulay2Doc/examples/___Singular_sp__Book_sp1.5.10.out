@@ -1,4 +1,4 @@
--- -*- M2-comint -*-
+-- -*- M2-comint -*- {* hash: 1278223088 *}
 
 i1 : (n,m) = (2,3);
 
@@ -41,3 +41,5 @@ o9 = x x  + x y  + y  + 1 + y
 o9 : A3
 
 i10 : 
+0.77user 0.07system 0:00.86elapsed 98%CPU (0avgtext+0avgdata 0maxresident)k
+0inputs+0outputs (0major+10844minor)pagefaults 0swaps

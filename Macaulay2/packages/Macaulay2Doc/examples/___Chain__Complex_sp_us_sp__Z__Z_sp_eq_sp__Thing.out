@@ -1,0 +1,40 @@
+-- -*- M2-comint -*- {* hash: -1138109052 *}
+
+i1 : R = ZZ[x..z]
+
+o1 = R
+
+o1 : PolynomialRing
+
+i2 : C = chainComplex R
+
+o2 = 0
+
+o2 : ChainComplex
+
+i3 : C_2 = R^11
+
+      11
+o3 = R
+
+o3 : R-module, free
+
+i4 : C_4 = R^13
+
+      13
+o4 = R
+
+o4 : R-module, free
+
+i5 : C
+
+      11            13
+o5 = R   <-- 0 <-- R
+                    
+     2       3     4
+
+o5 : ChainComplex
+
+i6 : 
+0.81user 0.05system 0:00.87elapsed 99%CPU (0avgtext+0avgdata 0maxresident)k
+0inputs+0outputs (0major+10843minor)pagefaults 0swaps

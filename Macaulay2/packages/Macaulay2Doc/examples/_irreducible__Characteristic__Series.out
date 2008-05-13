@@ -1,4 +1,4 @@
--- -*- M2-comint -*-
+-- -*- M2-comint -*- {* hash: 1128429436 *}
 
 i1 : R=QQ[w,x,y,z]
 
@@ -26,3 +26,5 @@ o4 = {| x3-w2z x2-wy |, | x w |}
 o4 : List
 
 i5 : 
+0.82user 0.06system 0:00.90elapsed 98%CPU (0avgtext+0avgdata 0maxresident)k
+0inputs+0outputs (0major+10846minor)pagefaults 0swaps

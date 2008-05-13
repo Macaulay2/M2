@@ -1,4 +1,4 @@
--- -*- M2-comint -*-
+-- -*- M2-comint -*- {* hash: 731381233 *}
 
 i1 : X = new SelfInitializingType of BasicList
 
@@ -19,3 +19,5 @@ o3 = X
 o3 : SelfInitializingType
 
 i4 : 
+0.80user 0.04system 0:00.84elapsed 99%CPU (0avgtext+0avgdata 0maxresident)k
+0inputs+0outputs (0major+10849minor)pagefaults 0swaps

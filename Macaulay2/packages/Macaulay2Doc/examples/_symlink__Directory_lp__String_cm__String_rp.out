@@ -1,12 +1,12 @@
--- -*- M2-comint -*-
+-- -*- M2-comint -*- {* hash: -1356630072 *}
 
 i1 : src = temporaryFileName() | "/"
 
-o1 = /tmp/M2-20349-1/
+o1 = /tmp/M2-15330-1/
 
 i2 : dst = temporaryFileName() | "/"
 
-o2 = /tmp/M2-20349-2/
+o2 = /tmp/M2-15330-2/
 
 i3 : makeDirectory (src|"a/")
 
@@ -16,35 +16,35 @@ i5 : makeDirectory (src|"b/c/")
 
 i6 : src|"a/f" << "hi there" << close
 
-o6 = /tmp/M2-20349-1/a/f
+o6 = /tmp/M2-15330-1/a/f
 
 o6 : File
 
 i7 : src|"a/g" << "hi there" << close
 
-o7 = /tmp/M2-20349-1/a/g
+o7 = /tmp/M2-15330-1/a/g
 
 o7 : File
 
 i8 : src|"b/c/g" << "ho there" << close
 
-o8 = /tmp/M2-20349-1/b/c/g
+o8 = /tmp/M2-15330-1/b/c/g
 
 o8 : File
 
 i9 : symlinkDirectory(src,dst,Verbose=>true)
---symlinking: ../../M2-20349-1/a/f -> /tmp/M2-20349-2/a/f
---symlinking: ../../M2-20349-1/a/g -> /tmp/M2-20349-2/a/g
---symlinking: ../../../M2-20349-1/b/c/g -> /tmp/M2-20349-2/b/c/g
+--symlinking: ../../M2-15330-1/a/f -> /tmp/M2-15330-2/a/f
+--symlinking: ../../M2-15330-1/a/g -> /tmp/M2-15330-2/a/g
+--symlinking: ../../../M2-15330-1/b/c/g -> /tmp/M2-15330-2/b/c/g
 
 i10 : get (dst|"b/c/g")
 
 o10 = ho there
 
 i11 : symlinkDirectory(src,dst,Verbose=>true,Undo=>true)
---unsymlinking: ../../M2-20349-1/a/f -> /tmp/M2-20349-2/a/f
---unsymlinking: ../../M2-20349-1/a/g -> /tmp/M2-20349-2/a/g
---unsymlinking: ../../../M2-20349-1/b/c/g -> /tmp/M2-20349-2/b/c/g
+--unsymlinking: ../../M2-15330-1/a/f -> /tmp/M2-15330-2/a/f
+--unsymlinking: ../../M2-15330-1/a/g -> /tmp/M2-15330-2/a/g
+--unsymlinking: ../../../M2-15330-1/b/c/g -> /tmp/M2-15330-2/b/c/g
 
 i12 : rm = d -> if isDirectory d then removeDirectory d else removeFile d
 
@@ -57,3 +57,5 @@ i13 : scan(reverse findFiles src, rm)
 i14 : scan(reverse findFiles dst, rm)
 
 i15 : 
+0.79user 0.02system 0:00.82elapsed 99%CPU (0avgtext+0avgdata 0maxresident)k
+0inputs+0outputs (0major+10842minor)pagefaults 0swaps

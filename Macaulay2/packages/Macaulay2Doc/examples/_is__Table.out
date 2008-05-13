@@ -1,4 +1,4 @@
--- -*- M2-comint -*-
+-- -*- M2-comint -*- {* hash: 198646249 *}
 
 i1 : isTable {{1,2,3},{4,5}}
 
@@ -9,3 +9,5 @@ i2 : isTable {{1,2,3},{4,5,6}}
 o2 = true
 
 i3 : 
+0.77user 0.03system 0:00.87elapsed 92%CPU (0avgtext+0avgdata 0maxresident)k
+0inputs+0outputs (0major+10847minor)pagefaults 0swaps

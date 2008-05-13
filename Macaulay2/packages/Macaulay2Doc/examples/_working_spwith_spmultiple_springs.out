@@ -1,4 +1,4 @@
--- -*- M2-comint -*-
+-- -*- M2-comint -*- {* hash: 1976609865 *}
 
 i1 : R1 = ZZ/101;
 
@@ -6,7 +6,7 @@ i2 : R2 = ZZ/101[s,t];
 
 i3 : describe R2
 
-o3 = R1 [s, t, Heft => {1}]
+o3 = R1 [s, t]
 
 i4 : I = ideal (s^4+t^2+1);
 
@@ -16,7 +16,7 @@ i5 : R3 = R2/I;
 
 i6 : describe R3
 
-      R1 [s, t]
+          R2
 o6 = -----------
       4    2
      s  + t  + 1
@@ -65,7 +65,7 @@ o13 : R3
 
 i14 : describe R3
 
-       R1 [s, t]
+           R2
 o14 = -----------
        4    2
       s  + t  + 1
@@ -74,7 +74,7 @@ i15 : R4 = frac R3;
 
 i16 : describe R4
 
-            R1 [s, t]
+                R2
 o16 = frac -----------
             4    2
            s  + t  + 1
@@ -118,7 +118,7 @@ i25 : R5 = R4[u,v,w];
 
 i26 : describe R5
 
-o26 = R4 [u, v, w, Heft => {1}]
+o26 = R4 [u, v, w]
 
 i27 : J = ideal(u^3-v^2*w+w^3,v^2+w^2,u*v-v*w+u*w)
 
@@ -131,7 +131,7 @@ i28 : R6 = R5/J;
 
 i29 : describe R6
 
-                     R4 [u, v, w]
+                          R5
 o29 = -----------------------------------------
         3    2     3   2    2
       (u  - v w + w , v  + w , u*v + u*w - v*w)
@@ -205,3 +205,5 @@ i42 : try substitute(f,vars R5) else "found error"
 o42 = found error
 
 i43 : 
+0.77user 0.06system 0:00.85elapsed 98%CPU (0avgtext+0avgdata 0maxresident)k
+0inputs+0outputs (0major+11562minor)pagefaults 0swaps

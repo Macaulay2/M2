@@ -1,4 +1,4 @@
--- -*- M2-comint -*-
+-- -*- M2-comint -*- {* hash: -35475713 *}
 
 i1 : help
 
@@ -105,3 +105,5 @@ o3 = ideal(List) -- make an ideal
 o3 : DIV
 
 i4 : 
+5.19user 0.09system 0:05.29elapsed 99%CPU (0avgtext+0avgdata 0maxresident)k
+0inputs+0outputs (0major+19651minor)pagefaults 0swaps

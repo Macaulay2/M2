@@ -1,4 +1,4 @@
--- -*- M2-comint -*-
+-- -*- M2-comint -*- {* hash: 1305902300 *}
 
 i1 : x = t
 
@@ -68,6 +68,7 @@ i14 : s = 3
 o14 = 3
 
 i15 : u <- 555
+--warning: clearing value of symbol s to allow access to subscripted variables based on it
 
 o15 = 555
 
@@ -75,7 +76,7 @@ i16 : s
 
 o16 = s
 
-o16 : Symbol
+o16 : IndexedVariableTable
 
 i17 : s_4
 
@@ -93,3 +94,5 @@ i19 : value u
 o19 = 555
 
 i20 : 
+0.74user 0.06system 0:00.80elapsed 99%CPU (0avgtext+0avgdata 0maxresident)k
+0inputs+0outputs (0major+10844minor)pagefaults 0swaps

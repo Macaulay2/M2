@@ -1,4 +1,4 @@
--- -*- M2-comint -*-
+-- -*- M2-comint -*- {* hash: -762351613 *}
 
 i1 : R = QQ[x,y];
 
@@ -9,3 +9,5 @@ o2 = Spec(R)
 o2 : AffineVariety
 
 i3 : 
+0.79user 0.02system 0:00.81elapsed 100%CPU (0avgtext+0avgdata 0maxresident)k
+0inputs+0outputs (0major+10841minor)pagefaults 0swaps

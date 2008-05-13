@@ -1,4 +1,4 @@
--- -*- M2-comint -*-
+-- -*- M2-comint -*- {* hash: 1555692830 *}
 
 i1 : pseudocode resolution
 
@@ -8,8 +8,10 @@ o1 : Pseudocode
 
 i2 : disassemble oo
 
-o2 = (function restargs: true numparms: 1 framesize: 1 frameID: 169 (adjacent
-     (fetch 241) (sequence (fetch 1 1) (adjacent (fetch 217) (sequence (fetch
+o2 = (function restargs: true numparms: 1 framesize: 1 frameID: 184 (adjacent
+     (fetch 271) (sequence (fetch 1 1) (adjacent (fetch 228) (sequence (fetch
      0 1) (fetch 0 0))))))
 
 i3 : 
+0.79user 0.04system 0:01.21elapsed 68%CPU (0avgtext+0avgdata 0maxresident)k
+0inputs+0outputs (0major+10845minor)pagefaults 0swaps

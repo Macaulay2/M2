@@ -1,4 +1,4 @@
--- -*- M2-comint -*-
+-- -*- M2-comint -*- {* hash: 543361796 *}
 
 i1 : {a,b,c}
 
@@ -19,3 +19,5 @@ o3 = (a, b, c)
 o3 : Sequence
 
 i4 : 
+0.79user 0.02system 0:00.81elapsed 100%CPU (0avgtext+0avgdata 0maxresident)k
+0inputs+0outputs (0major+10841minor)pagefaults 0swaps

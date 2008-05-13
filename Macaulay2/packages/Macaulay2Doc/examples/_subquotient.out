@@ -1,4 +1,4 @@
--- -*- M2-comint -*-
+-- -*- M2-comint -*- {* hash: 438596905 *}
 
 i1 : R = ZZ/101[a..d]
 
@@ -56,3 +56,5 @@ o6 = (cokernel {2} | 0 0 0 0 c  0  0  d  |, )
 o6 : Sequence
 
 i7 : 
+0.78user 0.03system 0:00.81elapsed 100%CPU (0avgtext+0avgdata 0maxresident)k
+0inputs+0outputs (0major+10842minor)pagefaults 0swaps

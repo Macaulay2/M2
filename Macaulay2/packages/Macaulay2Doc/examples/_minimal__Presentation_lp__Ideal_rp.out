@@ -1,4 +1,4 @@
--- -*- M2-comint -*-
+-- -*- M2-comint -*- {* hash: 1503839499 *}
 
 i1 : C = ZZ/101[x,y,z,u,w];
 
@@ -36,3 +36,5 @@ o5 : RingMap C <--- --- [x, u, w]
                     101
 
 i6 : 
+0.80user 0.08system 0:00.89elapsed 99%CPU (0avgtext+0avgdata 0maxresident)k
+0inputs+0outputs (0major+10845minor)pagefaults 0swaps

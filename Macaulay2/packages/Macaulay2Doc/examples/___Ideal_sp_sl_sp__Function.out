@@ -1,4 +1,4 @@
--- -*- M2-comint -*-
+-- -*- M2-comint -*- {* hash: -694129984 *}
 
 i1 : R = ZZ[a..d];
 
@@ -29,3 +29,5 @@ o5 = set {c, b, a}
 o5 : Set
 
 i6 : 
+0.80user 0.05system 0:00.86elapsed 99%CPU (0avgtext+0avgdata 0maxresident)k
+0inputs+0outputs (0major+10843minor)pagefaults 0swaps

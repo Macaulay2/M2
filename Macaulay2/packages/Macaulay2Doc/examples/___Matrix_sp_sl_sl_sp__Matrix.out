@@ -1,4 +1,4 @@
--- -*- M2-comint -*-
+-- -*- M2-comint -*- {* hash: -611690560 *}
 
 i1 : A = ZZ/101[x,y,z]
 
@@ -45,15 +45,15 @@ o6 : Matrix A  <--- A
 
 i7 : h = f // g
 
-o7 = {4} | 34x3-37x2y+47xy2+38y3-6x2z+45xyz+26x2+41xy-15y2+12xz+
-     {3} | 42x4-16x3y-37x2y2+41xy3-49x3z+14x2yz+44x3+15x2y+4xy2-
-     {3} | -45x3y+46x2y2+18xy3+21y4+2x2yz-15xy2z+25x2y+20xy2+5y3
-     {3} | 28x3z+23x2yz+9xy2z-40y3z+x2z2+43xyz2+x2y+38xy2-21x2z+
+o7 = {4} | 44x2y2+43x3z+42x2yz-30x3-26x2y-11xy2+21x2z-7xyz+30x2+15xy-36y2+42x
+     {3} | -11x3y2-36x4z+40x3yz-43x4-44x3y+9x2y2+20x3z+27x2yz+43x3-29x2y+22xy
+     {3} | 19x2y3-48x3yz-14x2y2z+10x3y-25x2y2-30xy3-7x2yz+36xy2z-10x2y-5xy2+1
+     {3} | -41x2y2z-24x3z2-7x2yz2+25x3y+5x3z+38x2yz+45xy2z+18x2z2+39xyz2+x2y-
      ------------------------------------------------------------------------
-     29yz+45z2-6x+11y-13z+16                                       |
-     41y3-3x2z+18xyz-43xz2-49x2-28xy-y2+28xz-32yz+43z2-4x-20z      |
-     -26x2z-15xyz+24y2z-15yz2-2x2+40xy+30y2+19xz+16yz-45x+3y-32z+8 |
-     42xyz-25y2z+6xz2-16yz2-45z3-2xy-25y2-34xz-6yz+45z2+y-24z-1    |
+     z+37yz-2x+2y+9z+31                                    |
+     2+40x2z+40xyz-50x2+50xy-20y2-28xz-6yz-33x-19y-47z     |
+     2y3-14xyz-46y2z-2x2-33xy+33y2-19xz-3yz+35x-44y+24z-34 |
+     25x2z+35xyz-16y2z+25xz2-3yz2-2xy+8yz-33z2+y+3z-1      |
 
              4       1
 o7 : Matrix A  <--- A
@@ -67,15 +67,15 @@ o8 : Matrix A  <--- A
 
 i9 : 1 // (gens I)
 
-o9 = {4} | 34x3-37x2y+47xy2+38y3-6x2z+45xyz+26x2+41xy-15y2+12xz+
-     {3} | 42x4-16x3y-37x2y2+41xy3-49x3z+14x2yz+44x3+15x2y+4xy2-
-     {3} | -45x3y+46x2y2+18xy3+21y4+2x2yz-15xy2z+25x2y+20xy2+5y3
-     {3} | 28x3z+23x2yz+9xy2z-40y3z+x2z2+43xyz2+x2y+38xy2-21x2z+
+o9 = {4} | 44x2y2+43x3z+42x2yz-30x3-26x2y-11xy2+21x2z-7xyz+30x2+15xy-36y2+42x
+     {3} | -11x3y2-36x4z+40x3yz-43x4-44x3y+9x2y2+20x3z+27x2yz+43x3-29x2y+22xy
+     {3} | 19x2y3-48x3yz-14x2y2z+10x3y-25x2y2-30xy3-7x2yz+36xy2z-10x2y-5xy2+1
+     {3} | -41x2y2z-24x3z2-7x2yz2+25x3y+5x3z+38x2yz+45xy2z+18x2z2+39xyz2+x2y-
      ------------------------------------------------------------------------
-     29yz+45z2-6x+11y-13z+16                                       |
-     41y3-3x2z+18xyz-43xz2-49x2-28xy-y2+28xz-32yz+43z2-4x-20z      |
-     -26x2z-15xyz+24y2z-15yz2-2x2+40xy+30y2+19xz+16yz-45x+3y-32z+8 |
-     42xyz-25y2z+6xz2-16yz2-45z3-2xy-25y2-34xz-6yz+45z2+y-24z-1    |
+     z+37yz-2x+2y+9z+31                                    |
+     2+40x2z+40xyz-50x2+50xy-20y2-28xz-6yz-33x-19y-47z     |
+     2y3-14xyz-46y2z-2x2-33xy+33y2-19xz-3yz+35x-44y+24z-34 |
+     25x2z+35xyz-16y2z+25xz2-3yz2-2xy+8yz-33z2+y+3z-1      |
 
              4       1
 o9 : Matrix A  <--- A
@@ -95,9 +95,8 @@ o11 = | 1 x y |
       | x 0 y |
       | 1 2 3 |
 
-                    ZZ           3             ZZ           3
-o11 : Matrix (frac --- [x, y, z])  <--- (frac --- [x, y, z])
-                   101                        101
+                     3              3
+o11 : Matrix (frac A)  <--- (frac A)
 
 i12 : det M
 
@@ -116,9 +115,8 @@ o13 = {1} | -3y/(46x2-46xy-3y)          (47x+36y)/(47x2-47xy-36y)
       (-15xy+15y)/(45x2-45xy+30y) |
       -3x2/(-9x2+9xy-6y)          |
 
-                    ZZ           3             ZZ           3
-o13 : Matrix (frac --- [x, y, z])  <--- (frac --- [x, y, z])
-                   101                        101
+                     3              3
+o13 : Matrix (frac A)  <--- (frac A)
 
 i14 : M * Minv
 
@@ -126,8 +124,9 @@ o14 = | -31/-31 0     0   |
       | 0       46/46 0   |
       | 0       0     9/9 |
 
-                    ZZ           3             ZZ           3
-o14 : Matrix (frac --- [x, y, z])  <--- (frac --- [x, y, z])
-                   101                        101
+                     3              3
+o14 : Matrix (frac A)  <--- (frac A)
 
 i15 : 
+0.81user 0.04system 0:00.86elapsed 100%CPU (0avgtext+0avgdata 0maxresident)k
+0inputs+0outputs (0major+10841minor)pagefaults 0swaps

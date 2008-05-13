@@ -1,4 +1,4 @@
--- -*- M2-comint -*-
+-- -*- M2-comint -*- {* hash: 1642693640 *}
 
 i1 : R = QQ[t][a..d];
 
@@ -10,3 +10,5 @@ o2 = ideal (a , a*b , (t + 1)a c, (t + 1)b c)
 o2 : Ideal of R
 
 i3 : 
+0.76user 0.04system 0:00.81elapsed 99%CPU (0avgtext+0avgdata 0maxresident)k
+0inputs+0outputs (0major+10844minor)pagefaults 0swaps

@@ -1,0 +1,62 @@
+-- -*- M2-comint -*- {* hash: -2131286997 *}
+
+i1 : printingPrecision = 2
+
+o1 = 2
+
+i2 : R = RR_100
+
+o2 = RR
+       100
+
+o2 : RealField
+
+i3 : M = 10*random(R^3,R^10)
+
+o3 = | 4.6 .97 9.9 9.4 9   7.9 4.3 9.4 .93 7.1 |
+     | 4   6   8.7 1.9 1.1 8   6.3 8.4 7.6 6.6 |
+     | 2.3 7.9 1.4 1.8 6.1 5.7 3.1 3.3 9.3 .37 |
+
+             3       10
+o3 : Matrix R  <--- R
+
+i4 : norm M
+
+o4 = 9.89547753978245342734158229053
+
+o4 : RR (of precision 100)
+
+i5 : norm_(numeric_20 infinity) M
+
+o5 = 9.89548
+
+o5 : RR (of precision 20)
+
+i6 : norm {3/2,4,-5}
+
+o6 = 5
+
+i7 : RR[x]
+
+o7 = RR  [x]
+       53
+
+o7 : PolynomialRing
+
+i8 : (1+x)^5
+
+      5     4      3      2
+o8 = x  + 5x  + 10x  + 10x  + 5x + 1
+
+o8 : RR  [x]
+       53
+
+i9 : norm oo
+
+o9 = 10
+
+o9 : RR (of precision 53)
+
+i10 : 
+0.76user 0.04system 0:00.80elapsed 99%CPU (0avgtext+0avgdata 0maxresident)k
+0inputs+0outputs (0major+10839minor)pagefaults 0swaps

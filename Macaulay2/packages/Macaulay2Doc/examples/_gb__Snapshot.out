@@ -1,4 +1,4 @@
--- -*- M2-comint -*-
+-- -*- M2-comint -*- {* hash: 1036723727 *}
 
 i1 : R = ZZ/101[a..d]
 
@@ -19,66 +19,43 @@ o2 = ideal (b c  - a d , a b*c - b*c  - b d + b*d , a c - a*c  - a*b d +
 
 o2 : Ideal of R
 
-i3 : gbTrace=3
+i3 : gb(I, BasisElementLimit=>5)
 
-o3 = 3
+o3 = GroebnerBasis[status: BasisElementLimit; all S-pairs handled up to degree 3]
 
-i4 : gb(I, BasisElementLimit=>5)
+o3 : GroebnerBasis
 
-   -- registering gb 3 at 0xf37450
+i4 : gbSnapshot I
 
-   -- {4}(8)mmmmm
-o4 = GroebnerBasis[status: BasisElementLimit; all S-pairs handled up to
-     ------------------------------------------------------------------------
-     degree 3]
-
-o4 : GroebnerBasis
-
-i5 : gbSnapshot I
-
-o5 = | b2c2-a2d2 a2bc-bc3-b3d+bd3 b4-b2d2 ab3-abd2 a2b2-a2d2 |
+o4 = | b2c2-a2d2 a2bc-bc3-b3d+bd3 a3c-ac3-ab2d+ad3 b4-b2d2 ab3-abd2 |
 
              1       5
-o5 : Matrix R  <--- R
+o4 : Matrix R  <--- R
 
-i6 : gb(I, BasisElementLimit=>10)
+i5 : gb(I, BasisElementLimit=>10)
 
-number of (nonminimal) gb elements = 5
-number of monomials                = 12
+o5 = GroebnerBasis[status: done; S-pairs encountered up to degree 6]
 
-number of (nonminimal) gb elements = 5
-number of monomials                = 12
+o5 : GroebnerBasis
 
-   -- mmm{5}(8)oooooooo{6}(4)ooom{7}(2)oo
-o6 = GroebnerBasis[status: done; S-pairs encountered up to degree 6]
+i6 : gbSnapshot I
 
-o6 : GroebnerBasis
+o6 = | b2c2-a2d2 a2bc-bc3-b3d+bd3 a3c-ac3-ab2d+ad3 b4-b2d2 ab3-abd2 a2b2-a2d2
+     ------------------------------------------------------------------------
+     a3b-abc2 a4-a2c2 a2c4-c6-2a2cd3+2c3d3+b2d4-d6 |
 
-i7 : gbSnapshot I
+             1       9
+o6 : Matrix R  <--- R
 
-o7 = | b2c2-a2d2 a2bc-bc3-b3d+bd3 b4-b2d2 ab3-abd2 a2b2-a2d2 a3c-ac3-ab2d+ad3
+i7 : gens gb I
+
+o7 = | b2c2-a2d2 a2bc-bc3-b3d+bd3 a3c-ac3-ab2d+ad3 b4-b2d2 ab3-abd2 a2b2-a2d2
      ------------------------------------------------------------------------
      a3b-abc2 a4-a2c2 a2c4-c6-2a2cd3+2c3d3+b2d4-d6 |
 
              1       9
 o7 : Matrix R  <--- R
 
-i8 : gens gb I
-
-o8 = | b2c2-a2d2 a2bc-bc3-b3d+bd3 b4-b2d2 ab3-abd2 a2b2-a2d2 a3c-ac3-ab2d+ad3
-     ------------------------------------------------------------------------
-     a3b-abc2 a4-a2c2 a2c4-c6-2a2cd3+2c3d3+b2d4-d6 |
-
-             1       9
-o8 : Matrix R  <--- R
-
-i9 : 
-
-number of (nonminimal) gb elements = 9
-number of monomials                = 26
-
-number of (nonminimal) gb elements = 9
-number of monomials                = 26
-
-number of (nonminimal) gb elements = 9
-number of monomials                = 26
+i8 : 
+0.78user 0.03system 0:00.82elapsed 100%CPU (0avgtext+0avgdata 0maxresident)k
+0inputs+0outputs (0major+10844minor)pagefaults 0swaps

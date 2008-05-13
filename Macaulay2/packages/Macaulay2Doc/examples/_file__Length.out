@@ -1,8 +1,8 @@
--- -*- M2-comint -*-
+-- -*- M2-comint -*- {* hash: -294963673 *}
 
 i1 : f = temporaryFileName() << "hi there"
 
-o1 = /tmp/M2-21211-1
+o1 = /tmp/M2-17282-1
 
 o1 : File
 
@@ -12,13 +12,13 @@ o2 = 8
 
 i3 : close f
 
-o3 = /tmp/M2-21211-1
+o3 = /tmp/M2-17282-1
 
 o3 : File
 
 i4 : filename = toString f
 
-o4 = /tmp/M2-21211-1
+o4 = /tmp/M2-17282-1
 
 i5 : fileLength filename
 
@@ -35,3 +35,5 @@ o7 = 8
 i8 : removeFile filename
 
 i9 : 
+0.75user 0.05system 0:00.81elapsed 99%CPU (0avgtext+0avgdata 0maxresident)k
+0inputs+0outputs (0major+10845minor)pagefaults 0swaps

@@ -1,4 +1,4 @@
--- -*- M2-comint -*-
+-- -*- M2-comint -*- {* hash: 1564024452 *}
 
 i1 : x
 
@@ -173,11 +173,16 @@ o37 = s
 
 o37 : IndexedVariable
 
-i38 : - String = peek;
+i38 : symbol s_2
 
-i39 : - "foo" = "value"
+o38 = s
+       2
 
-o39 = ("foo", "value")
+o38 : IndexedVariable
+
+i39 : value oo
+
+o39 = 44
 
 i40 : - String = peek;
 
@@ -185,9 +190,9 @@ i41 : - "foo" = "value"
 
 o41 = ("foo", "value")
 
-i42 : String ~ = peek;
+i42 : - String = peek;
 
-i43 : "foo" ~ = "value"
+i43 : - "foo" = "value"
 
 o43 = ("foo", "value")
 
@@ -197,4 +202,12 @@ i45 : "foo" ~ = "value"
 
 o45 = ("foo", "value")
 
-i46 : 
+i46 : String ~ = peek;
+
+i47 : "foo" ~ = "value"
+
+o47 = ("foo", "value")
+
+i48 : 
+0.77user 0.04system 0:00.82elapsed 100%CPU (0avgtext+0avgdata 0maxresident)k
+0inputs+0outputs (0major+10846minor)pagefaults 0swaps

@@ -1,4 +1,4 @@
--- -*- M2-comint -*-
+-- -*- M2-comint -*- {* hash: -1152519753 *}
 
 i1 : newPackage "Foo"
 
@@ -34,13 +34,14 @@ o5 : Package
 
 i6 : peek oo
 
-o6 = Package{configuration file name => null                                      }
+o6 = Package{configuration file name => null                                                         }
              Dictionary => Foo.Dictionary
              example inputs => MutableHashTable{}
              example results => MutableHashTable{}
              exported mutable symbols => {}
              exported symbols => {abc}
              Options => OptionTable{Authors => {}                                }
+                                    AuxiliaryFiles => false
                                     Configuration => {}
                                     Date => 
                                     DebuggingMode => false
@@ -52,7 +53,8 @@ o6 = Package{configuration file name => null                                    
              private dictionary => Foo#"private dictionary"
              processed documentation => MutableHashTable{}
              raw documentation => MutableHashTable{}
-             source directory => ./
+             source directory => /home/dan/src/M2/1.1/BUILD/Linux-x86_64/ubuntu64/Macaulay2/packages/
+             source file => stdio
              test inputs => MutableHashTable{}
              test number => 0
              title => Foo
@@ -77,3 +79,5 @@ i8 : abc
 o8 = 3
 
 i9 : 
+0.79user 0.03system 0:00.82elapsed 99%CPU (0avgtext+0avgdata 0maxresident)k
+0inputs+0outputs (0major+10843minor)pagefaults 0swaps

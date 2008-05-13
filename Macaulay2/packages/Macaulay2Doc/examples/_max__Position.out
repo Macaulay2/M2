@@ -1,4 +1,4 @@
--- -*- M2-comint -*-
+-- -*- M2-comint -*- {* hash: 1473000568 *}
 
 i1 : maxPosition {1,6,4,2}
 
@@ -22,3 +22,5 @@ i5 : maxPosition(z^2, s*z, x*y)
 o5 = 2
 
 i6 : 
+0.77user 0.03system 0:00.84elapsed 96%CPU (0avgtext+0avgdata 0maxresident)k
+0inputs+0outputs (0major+10845minor)pagefaults 0swaps

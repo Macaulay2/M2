@@ -1,4 +1,4 @@
--- -*- M2-comint -*-
+-- -*- M2-comint -*- {* hash: -1153977015 *}
 
 i1 : S = QQ[a..f];
 
@@ -23,3 +23,5 @@ i6 : degree I
 o6 = 3
 
 i7 : 
+2.97user 0.06system 0:03.06elapsed 99%CPU (0avgtext+0avgdata 0maxresident)k
+0inputs+0outputs (0major+15640minor)pagefaults 0swaps

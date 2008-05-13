@@ -1,4 +1,4 @@
--- -*- M2-comint -*-
+-- -*- M2-comint -*- {* hash: 406773302 *}
 
 i1 : R = QQ[x..z];
 
@@ -37,10 +37,7 @@ i6 : (<< "-- computation started: " << endl;
           << "-- continuing the computation" << endl;
           ))
 -- computation started: 
-     -- used 2.98019 seconds
--- computation interrupted
--- continuing the computation
-     -- used 1.50809 seconds
+     -- used 2.36415 seconds
 -- computation complete
  4      11      89      122      40
 R  <-- R   <-- R   <-- R    <-- R   <-- 0
@@ -49,3 +46,5 @@ R  <-- R   <-- R   <-- R    <-- R   <-- 0
 
 
 i7 : 
+3.13user 0.23system 0:03.37elapsed 99%CPU (0avgtext+0avgdata 0maxresident)k
+0inputs+0outputs (0major+12955minor)pagefaults 0swaps

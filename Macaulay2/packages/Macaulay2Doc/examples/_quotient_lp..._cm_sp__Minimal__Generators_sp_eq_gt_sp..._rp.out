@@ -1,4 +1,4 @@
--- -*- M2-comint -*-
+-- -*- M2-comint -*- {* hash: -1948793657 *}
 
 i1 : S=ZZ/101[a,b]
 
@@ -28,3 +28,5 @@ o4 = ideal (a*b, a  - b )
 o4 : Ideal of S
 
 i5 : 
+0.77user 0.06system 0:00.83elapsed 99%CPU (0avgtext+0avgdata 0maxresident)k
+0inputs+0outputs (0major+10843minor)pagefaults 0swaps

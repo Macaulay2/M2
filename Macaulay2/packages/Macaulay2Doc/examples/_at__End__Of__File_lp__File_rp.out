@@ -1,4 +1,4 @@
--- -*- M2-comint -*-
+-- -*- M2-comint -*- {* hash: -744889243 *}
 
 i1 : f = openInOut "!cat"
 
@@ -18,6 +18,8 @@ o4 = "hi there"
 
 i5 : atEndOfFile f
 
-o5 = false
+o5 = true
 
 i6 : 
+0.80user 0.03system 0:00.84elapsed 99%CPU (0avgtext+0avgdata 0maxresident)k
+0inputs+0outputs (0major+10965minor)pagefaults 0swaps

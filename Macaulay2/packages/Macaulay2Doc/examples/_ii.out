@@ -1,0 +1,35 @@
+-- -*- M2-comint -*- {* hash: -260296045 *}
+
+i1 : ii
+
+o1 = ii
+
+o1 : Constant
+
+i2 : ii+1p100
+
+o2 = 1+ii
+
+o2 : CC (of precision 100)
+
+i3 : numeric ii
+
+o3 = ii
+
+o3 : CC (of precision 53)
+
+i4 : numeric_100 ii
+
+o4 = ii
+
+o4 : CC (of precision 100)
+
+i5 : +ii
+
+o5 = ii
+
+o5 : CC (of precision 53)
+
+i6 : 
+0.79user 0.07system 0:00.87elapsed 99%CPU (0avgtext+0avgdata 0maxresident)k
+0inputs+0outputs (0major+10842minor)pagefaults 0swaps

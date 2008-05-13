@@ -1,4 +1,4 @@
--- -*- M2-comint -*-
+-- -*- M2-comint -*- {* hash: 1069880799 *}
 
 i1 : Qu = new Type of List
 
@@ -32,3 +32,5 @@ o5 = {-28, 4, 6, 8}
 o5 : Qu
 
 i6 : 
+0.78user 0.03system 0:00.82elapsed 100%CPU (0avgtext+0avgdata 0maxresident)k
+0inputs+0outputs (0major+10843minor)pagefaults 0swaps

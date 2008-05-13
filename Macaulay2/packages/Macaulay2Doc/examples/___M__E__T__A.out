@@ -1,4 +1,4 @@
--- -*- M2-comint -*-
+-- -*- M2-comint -*- {* hash: -1075808993 *}
 
 i1 : html META { "name" => "description",  "content" => "Dan Grayson's home page." }
 
@@ -6,3 +6,5 @@ o1 = <meta content="Dan Grayson's home page." name="description"/>
 
 
 i2 : 
+0.77user 0.05system 0:00.83elapsed 99%CPU (0avgtext+0avgdata 0maxresident)k
+0inputs+0outputs (0major+10841minor)pagefaults 0swaps

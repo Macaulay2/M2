@@ -1,4 +1,4 @@
--- -*- M2-comint -*-
+-- -*- M2-comint -*- {* hash: 1336180096 *}
 
 i1 : R =ZZ/101[x_0..x_2,Degrees=>{3:{1,1}}];
 
@@ -35,3 +35,5 @@ o8 = | x_0^3 x_0^2x_1 x_0^2x_2 x_0x_1^2 x_0x_1x_2 x_0x_2^2 x_1^3 x_1^2x_2
 o8 : Matrix R  <--- R
 
 i9 : 
+0.77user 0.03system 0:00.81elapsed 99%CPU (0avgtext+0avgdata 0maxresident)k
+0inputs+0outputs (0major+10839minor)pagefaults 0swaps

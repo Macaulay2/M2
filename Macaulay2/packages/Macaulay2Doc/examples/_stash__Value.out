@@ -1,4 +1,4 @@
--- -*- M2-comint -*-
+-- -*- M2-comint -*- {* hash: 2011731883 *}
 
 i1 : x = new MutableHashTable from { val => 1000 }
 
@@ -14,9 +14,9 @@ o2 : FunctionClosure
 
 i3 : h = (stashValue VALUE) f
 
-o3 = h
+o3 = {*a cache function*}
 
-o3 : FunctionClosure
+o3 : CacheFunction
 
 i4 : h x
 hi there
@@ -33,3 +33,5 @@ o6 = MutableHashTable{val => 1000           }
                       VALUE => 1000000000000
 
 i7 : 
+0.81user 0.06system 0:00.90elapsed 97%CPU (0avgtext+0avgdata 0maxresident)k
+0inputs+0outputs (0major+10845minor)pagefaults 0swaps
