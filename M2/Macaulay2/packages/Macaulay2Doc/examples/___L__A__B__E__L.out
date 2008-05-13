@@ -1,4 +1,4 @@
--- -*- M2-comint -*-
+-- -*- M2-comint -*- {* hash: 689259192 *}
 
 i1 : html LABEL { "b" }
 
@@ -11,3 +11,5 @@ o2 = b
 o2 : LABEL
 
 i3 : 
+0.76user 0.05system 0:00.82elapsed 99%CPU (0avgtext+0avgdata 0maxresident)k
+0inputs+0outputs (0major+10842minor)pagefaults 0swaps

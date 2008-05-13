@@ -1,4 +1,4 @@
--- -*- M2-comint -*-
+-- -*- M2-comint -*- {* hash: 1003964637 *}
 
 i1 : class sin
 
@@ -7,3 +7,5 @@ o1 = CompiledFunction
 o1 : Type
 
 i2 : 
+0.77user 0.04system 0:00.83elapsed 98%CPU (0avgtext+0avgdata 0maxresident)k
+0inputs+0outputs (0major+10846minor)pagefaults 0swaps

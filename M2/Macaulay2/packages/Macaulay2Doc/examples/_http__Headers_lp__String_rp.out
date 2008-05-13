@@ -1,0 +1,15 @@
+-- -*- M2-comint -*- {* hash: -875175286 *}
+
+i1 : httpHeaders "hi there"
+
+o1 = HTTP/1.1 200 OK
+     Server: Macaulay 2, version 1.1
+     Connection: close
+     Content-Length: 8
+     Content-type: text/html; charset=utf-8
+
+     hi there
+
+i2 : 
+0.77user 0.07system 0:00.84elapsed 99%CPU (0avgtext+0avgdata 0maxresident)k
+0inputs+0outputs (0major+10844minor)pagefaults 0swaps

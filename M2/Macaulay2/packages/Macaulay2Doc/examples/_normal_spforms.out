@@ -1,4 +1,4 @@
--- -*- M2-comint -*-
+-- -*- M2-comint -*- {* hash: -738733668 *}
 
 i1 : R = QQ[x,y,z,a,b,c,MonomialOrder=>Eliminate 3];
 
@@ -23,3 +23,5 @@ o4 = a  - 3a*b + 3c
 o4 : R
 
 i5 : 
+0.77user 0.04system 0:00.81elapsed 99%CPU (0avgtext+0avgdata 0maxresident)k
+0inputs+0outputs (0major+10844minor)pagefaults 0swaps

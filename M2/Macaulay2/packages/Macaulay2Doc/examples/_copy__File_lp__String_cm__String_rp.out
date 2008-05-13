@@ -1,37 +1,37 @@
--- -*- M2-comint -*-
+-- -*- M2-comint -*- {* hash: -1122012981 *}
 
 i1 : src = temporaryFileName()
 
-o1 = /tmp/M2-20103-1
+o1 = /tmp/M2-14826-1
 
 i2 : dst = temporaryFileName()
 
-o2 = /tmp/M2-20103-2
+o2 = /tmp/M2-14826-2
 
 i3 : src << "hi there" << close
 
-o3 = /tmp/M2-20103-1
+o3 = /tmp/M2-14826-1
 
 o3 : File
 
 i4 : copyFile(src,dst,Verbose=>true)
---copying: /tmp/M2-20103-1 -> /tmp/M2-20103-2
+--copying: /tmp/M2-14826-1 -> /tmp/M2-14826-2
 
 i5 : get dst
 
 o5 = hi there
 
 i6 : copyFile(src,dst,Verbose=>true,UpdateOnly => true)
---skipping: /tmp/M2-20103-1 not newer than /tmp/M2-20103-2
+--skipping: /tmp/M2-14826-1 not newer than /tmp/M2-14826-2
 
 i7 : src << "ho there" << close
 
-o7 = /tmp/M2-20103-1
+o7 = /tmp/M2-14826-1
 
 o7 : File
 
 i8 : copyFile(src,dst,Verbose=>true,UpdateOnly => true)
---skipping: /tmp/M2-20103-1 not newer than /tmp/M2-20103-2
+--skipping: /tmp/M2-14826-1 not newer than /tmp/M2-14826-2
 
 i9 : get dst
 
@@ -42,3 +42,5 @@ i10 : removeFile src
 i11 : removeFile dst
 
 i12 : 
+0.77user 0.04system 0:00.81elapsed 100%CPU (0avgtext+0avgdata 0maxresident)k
+0inputs+0outputs (0major+10841minor)pagefaults 0swaps

@@ -1,4 +1,4 @@
--- -*- M2-comint -*-
+-- -*- M2-comint -*- {* hash: -1352364107 *}
 
 i1 : R = QQ[x,y]/(ideal(x,y) * ideal(x-1))
 
@@ -25,3 +25,5 @@ i5 : codim (R/x)
 o5 = 2
 
 i6 : 
+0.75user 0.10system 0:00.86elapsed 99%CPU (0avgtext+0avgdata 0maxresident)k
+0inputs+0outputs (0major+10844minor)pagefaults 0swaps

@@ -1,4 +1,4 @@
--- -*- M2-comint -*-
+-- -*- M2-comint -*- {* hash: 767571730 *}
 
 i1 : R = QQ[a..d];
 
@@ -102,3 +102,5 @@ o14 = monomialIdeal (a*b , a*c, a b*d, b d, c*d)
 o14 : MonomialIdeal of R
 
 i15 : 
+0.86user 0.08system 0:00.94elapsed 100%CPU (0avgtext+0avgdata 0maxresident)k
+0inputs+0outputs (0major+11744minor)pagefaults 0swaps

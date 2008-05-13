@@ -1,4 +1,4 @@
--- -*- M2-comint -*-
+-- -*- M2-comint -*- {* hash: -697162243 *}
 
 i1 : n = 6
 
@@ -41,12 +41,12 @@ o6 = ideal (a , b , c , d , e , f )
 o6 : Ideal of S
 
 i7 : time quotient(i1^3,j1^2,Strategy=>Iterate);
-     -- used 1.33608 seconds
+     -- used 0.616039 seconds
 
 o7 : Ideal of S
 
 i8 : time quotient(i2^3,j2^2,Strategy=>Quotient);
-     -- used 2.52016 seconds
+     -- used 1.30808 seconds
 
 o8 : Ideal of S
 
@@ -73,13 +73,15 @@ o14 : Ideal of S
 o15 : Ideal of S
 
 i16 : time quotient(i5,i3,Strategy=>Iterate);
-     -- used 0.064004 seconds
+     -- used 0.036002 seconds
 
 o16 : Ideal of S
 
 i17 : time quotient(j5,j3,Strategy=>Quotient);
-     -- used 0.116007 seconds
+     -- used 0.012001 seconds
 
 o17 : Ideal of S
 
 i18 : 
+2.77user 0.04system 0:02.81elapsed 100%CPU (0avgtext+0avgdata 0maxresident)k
+0inputs+0outputs (0major+12961minor)pagefaults 0swaps

@@ -1,4 +1,4 @@
--- -*- M2-comint -*-
+-- -*- M2-comint -*- {* hash: 1699073685 *}
 
 i1 : help "jacobian"
 
@@ -93,3 +93,5 @@ R = ZZ[a,b,c][x,y,z]
 jacobian ideal(a*y*z+b*x*z+c*x*y)
 
 i6 : 
+5.36user 0.28system 0:05.76elapsed 98%CPU (0avgtext+0avgdata 0maxresident)k
+0inputs+0outputs (0major+19684minor)pagefaults 0swaps

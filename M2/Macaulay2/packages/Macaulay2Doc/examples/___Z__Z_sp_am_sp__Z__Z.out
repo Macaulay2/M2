@@ -1,7 +1,9 @@
--- -*- M2-comint -*-
+-- -*- M2-comint -*- {* hash: 480960803 *}
 
 i1 : (2^15 + 2^13 + 2^42) & (2^15 + 2^23 + 2^42) == 2^15 + 2^42
 
 o1 = true
 
 i2 : 
+0.77user 0.08system 0:00.86elapsed 98%CPU (0avgtext+0avgdata 0maxresident)k
+0inputs+0outputs (0major+10843minor)pagefaults 0swaps

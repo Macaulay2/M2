@@ -1,4 +1,4 @@
--- -*- M2-comint -*-
+-- -*- M2-comint -*- {* hash: -902338984 *}
 
 i1 : isCommutative(QQ[x,y])
 
@@ -13,3 +13,5 @@ i3 : isCommutative(QQ[x,dx, WeylAlgebra => {x => dx}])
 o3 = false
 
 i4 : 
+0.79user 0.03system 0:00.83elapsed 99%CPU (0avgtext+0avgdata 0maxresident)k
+0inputs+0outputs (0major+10845minor)pagefaults 0swaps

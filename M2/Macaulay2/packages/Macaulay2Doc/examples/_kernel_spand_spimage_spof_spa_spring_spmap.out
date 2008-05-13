@@ -1,4 +1,4 @@
--- -*- M2-comint -*-
+-- -*- M2-comint -*- {* hash: -1275149003 *}
 
 i1 : R = QQ[x,y,w]; U = QQ[s,t,u]/ideal(s^2);
 
@@ -16,3 +16,5 @@ o4 = ideal(x)
 o4 : Ideal of R
 
 i5 : 
+0.79user 0.07system 0:00.89elapsed 96%CPU (0avgtext+0avgdata 0maxresident)k
+0inputs+0outputs (0major+10845minor)pagefaults 0swaps

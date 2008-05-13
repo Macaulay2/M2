@@ -1,7 +1,9 @@
--- -*- M2-comint -*-
+-- -*- M2-comint -*- {* hash: 206288240 *}
 
 i1 : gcd(2,4,8)
 
 o1 = 2
 
 i2 : 
+0.75user 0.06system 0:00.84elapsed 97%CPU (0avgtext+0avgdata 0maxresident)k
+0inputs+0outputs (0major+10844minor)pagefaults 0swaps

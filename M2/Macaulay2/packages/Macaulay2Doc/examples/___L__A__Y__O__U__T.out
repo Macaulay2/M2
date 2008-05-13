@@ -1,8 +1,8 @@
--- -*- M2-comint -*-
+-- -*- M2-comint -*- {* hash: -1219291986 *}
 
 i1 : LAYOUT
 
-o1 = HashTable{bin => bin/                                           }
+o1 = HashTable{bin => bin/                                                }
                cache => lib/Macaulay2/Core/cache/
                data => share/
                datam2 => share/Macaulay2/
@@ -16,18 +16,19 @@ o1 = HashTable{bin => bin/                                           }
                info => share/info/
                lib => lib/
                libm2 => lib/Macaulay2/Core/
+               libraries => lib/Macaulay2/Core/
                m2 => share/Macaulay2/Core/m2/
                man => share/man/
                man1 => share/man/man1/
                man3 => share/man/man3/
-               packagecache => --Function[layout.m2:28:36-28:73]--
-               packagedoc => --Function[layout.m2:24:34-24:71]--
-               packageexamples => --Function[layout.m2:29:39-29:76]--
-               packagehtml => --Function[layout.m2:27:35-27:72]--
-               packageimages => --Function[layout.m2:25:37-25:74]--
+               packagecache => {*Function[layout.m2:24:36-24:67]*}
+               packagedoc => {*Function[layout.m2:20:34-20:71]*}
+               packageexampleoutput => {*Function[layout.m2:25:44-25:81]*}
+               packagehtml => {*Function[layout.m2:23:35-23:72]*}
+               packageimages => {*Function[layout.m2:21:37-21:74]*}
                packages => share/Macaulay2/
-               packagesrc => --Function[layout.m2:23:34-23:67]--
-               packagetests => --Function[layout.m2:26:36-26:73]--
+               packagesrc => {*Function[layout.m2:19:34-19:67]*}
+               packagetests => {*Function[layout.m2:22:36-22:73]*}
                share => share/Macaulay2/Core/
                style => share/doc/Macaulay2/Core/style/
 
@@ -35,7 +36,7 @@ o1 : HashTable
 
 i2 : applyValues (LAYOUT, f -> if instance(f,Function) then f "FOO" else f)
 
-o2 = HashTable{bin => bin/                                         }
+o2 = HashTable{bin => bin/                                                    }
                cache => lib/Macaulay2/Core/cache/
                data => share/
                datam2 => share/Macaulay2/
@@ -49,13 +50,14 @@ o2 = HashTable{bin => bin/                                         }
                info => share/info/
                lib => lib/
                libm2 => lib/Macaulay2/Core/
+               libraries => lib/Macaulay2/Core/
                m2 => share/Macaulay2/Core/m2/
                man => share/man/
                man1 => share/man/man1/
                man3 => share/man/man3/
-               packagecache => share/doc/Macaulay2/FOO/cache/
+               packagecache => lib/Macaulay2/FOO/cache/
                packagedoc => share/doc/Macaulay2/FOO/
-               packageexamples => share/doc/Macaulay2/FOO/examples/
+               packageexampleoutput => share/doc/Macaulay2/FOO/example-output/
                packagehtml => share/doc/Macaulay2/FOO/html/
                packageimages => share/doc/Macaulay2/FOO/images/
                packages => share/Macaulay2/
@@ -67,3 +69,5 @@ o2 = HashTable{bin => bin/                                         }
 o2 : HashTable
 
 i3 : 
+0.76user 0.04system 0:00.80elapsed 100%CPU (0avgtext+0avgdata 0maxresident)k
+0inputs+0outputs (0major+10842minor)pagefaults 0swaps

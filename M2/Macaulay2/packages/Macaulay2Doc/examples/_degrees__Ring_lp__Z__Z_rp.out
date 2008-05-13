@@ -1,4 +1,4 @@
--- -*- M2-comint -*-
+-- -*- M2-comint -*- {* hash: -683217934 *}
 
 i1 : degreesRing 3
 
@@ -30,3 +30,5 @@ o4 : ZZ [T , T , T ]
           0   1   2
 
 i5 : 
+0.79user 0.06system 0:00.86elapsed 98%CPU (0avgtext+0avgdata 0maxresident)k
+0inputs+0outputs (0major+10851minor)pagefaults 0swaps

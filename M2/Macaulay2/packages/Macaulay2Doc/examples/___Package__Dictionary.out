@@ -1,4 +1,4 @@
--- -*- M2-comint -*-
+-- -*- M2-comint -*- {* hash: 1705018918 *}
 
 i1 : dictionaryPath
 
@@ -16,10 +16,16 @@ o1 : List
 
 i2 : values PackageDictionary
 
-o2 = {Parsing, Classic, Elimination, LLLBases, PrimaryDecomposition,
+o2 = {PrimaryDecomposition, Elimination, PrimaryDecomposition, Elimination,
      ------------------------------------------------------------------------
-     TangentCone, User, SchurRings, IntegralClosure, Core}
+     TangentCone, TangentCone, User, SchurRings, SchurRings, IntegralClosure,
+     ------------------------------------------------------------------------
+     Parsing, IntegralClosure, Parsing, Classic, Classic, LLLBases, LLLBases,
+     ------------------------------------------------------------------------
+     Core, Core}
 
 o2 : List
 
 i3 : 
+0.75user 0.05system 0:00.80elapsed 99%CPU (0avgtext+0avgdata 0maxresident)k
+0inputs+0outputs (0major+10842minor)pagefaults 0swaps

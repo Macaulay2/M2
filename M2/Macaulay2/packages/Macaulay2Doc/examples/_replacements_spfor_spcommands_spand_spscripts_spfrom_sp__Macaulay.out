@@ -1,4 +1,4 @@
--- -*- M2-comint -*-
+-- -*- M2-comint -*- {* hash: 352091299 *}
 
 i1 : R = QQ[a..h]
 
@@ -363,3 +363,5 @@ o52 = ideal (c d - c*d - 2c + 2, a*b*c - a*b - c + 1, - 10664c*d  +
 o52 : Ideal of R
 
 i53 : 
+0.79user 0.09system 0:00.89elapsed 100%CPU (0avgtext+0avgdata 0maxresident)k
+0inputs+0outputs (0major+10914minor)pagefaults 0swaps

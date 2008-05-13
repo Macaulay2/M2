@@ -1,4 +1,4 @@
--- -*- M2-comint -*-
+-- -*- M2-comint -*- {* hash: -1813562820 *}
 
 i1 : R = QQ[a..d];
 
@@ -69,3 +69,5 @@ o11 = -----------------------
 o11 : QuotientRing
 
 i12 : 
+0.80user 0.06system 0:00.86elapsed 100%CPU (0avgtext+0avgdata 0maxresident)k
+0inputs+0outputs (0major+10843minor)pagefaults 0swaps

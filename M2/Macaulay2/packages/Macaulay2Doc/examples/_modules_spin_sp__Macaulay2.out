@@ -1,4 +1,4 @@
--- -*- M2-comint -*-
+-- -*- M2-comint -*- {* hash: -902306544 *}
 
 i1 : R = QQ[a..f];
 
@@ -216,7 +216,7 @@ o26 : BettiTally
 i27 : C.dd
 
            4                                                               6
-o27 = 0 : R  <----------------------------------------------------------- R 
+o27 = 0 : R  <----------------------------------------------------------- R  : 1
                 {1} | 0  0 ce-bf -cd+be+ce-bf e2-df       0           |
                 {1} | 0  a -be   bd-be        0           e2-df       |
                 {1} | -1 0 b2-ac 0            bd-ae-be+af cd-be-ce+bf |
@@ -234,8 +234,6 @@ o27 = 0 : R  <----------------------------------------------------------- R
            2
       2 : R  <----- 0 : 3
                 0
-      -----------------------------------------------------------------------
-      : 1
 
 o27 : ChainComplexMap
 
@@ -313,8 +311,8 @@ o37 : Matrix (QQ [a, b, c, d, e, f])  <--- (QQ [a, b, c, d, e, f])
 
 i38 : trim N
 
-o38 = subquotient (| 0 0 |, | e d b a |)
-                   | b a |  | f e c b |
+o38 = subquotient (| a 0 |, | e d b a |)
+                   | 0 a |  | f e c b |
 
                                                                           2
 o38 : QQ [a, b, c, d, e, f]-module, subquotient of (QQ [a, b, c, d, e, f])
@@ -585,10 +583,10 @@ o80 : A-module, submodule of A
 
 i81 : H = Hom(M,M)
 
-o81 = subquotient ({0}  | 1 0 x |, {0}  | 0  -y 0  x2 |)
-                   {1}  | 0 1 0 |  {1}  | 0  x  0  -y |
-                   {-1} | 0 x y |  {-1} | -y 0  x2 0  |
-                   {0}  | 1 0 0 |  {0}  | x  0  -y 0  |
+o81 = subquotient ({0}  | 1 0 |, {0}  | 0  y  0  x2 |)
+                   {1}  | 0 1 |  {1}  | 0  -x 0  -y |
+                   {-1} | 0 x |  {-1} | y  0  x2 0  |
+                   {0}  | 1 0 |  {0}  | -x 0  -y 0  |
 
                                 4
 o81 : A-module, subquotient of A
@@ -687,10 +685,10 @@ o93 : A-module, quotient of A
 
 i94 : M2 = prune(M ** M)
 
-o94 = cokernel | x y 0  y -y 0 |
-               | y x -y 0 0  y |
-               | 0 0 y  x 0  0 |
-               | 0 0 0  0 y  x |
+o94 = cokernel | 0  -x y x x 0 |
+               | -x 0  x y 0 x |
+               | x  0  0 0 y 0 |
+               | 0  x  0 0 0 y |
 
                              4
 o94 : A-module, quotient of A
@@ -728,3 +726,5 @@ o100 = QQ [a, b, c, d, e, f]
 o100 : PolynomialRing
 
 i101 : 
+0.95user 0.10system 0:01.05elapsed 99%CPU (0avgtext+0avgdata 0maxresident)k
+0inputs+0outputs (0major+12959minor)pagefaults 0swaps

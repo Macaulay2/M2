@@ -1,0 +1,17 @@
+-- -*- M2-comint -*- {* hash: 171265035 *}
+
+i1 : random(10.,20.)
+
+o1 = 13.4696133696137
+
+o1 : RR (of precision 53)
+
+i2 : random(10p100,20p100)
+
+o2 = 10.8095937254988335972448223736
+
+o2 : RR (of precision 100)
+
+i3 : 
+0.79user 0.06system 0:00.86elapsed 100%CPU (0avgtext+0avgdata 0maxresident)k
+0inputs+0outputs (0major+10841minor)pagefaults 0swaps

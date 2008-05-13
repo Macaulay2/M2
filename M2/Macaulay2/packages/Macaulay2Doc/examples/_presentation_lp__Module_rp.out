@@ -1,4 +1,4 @@
--- -*- M2-comint -*-
+-- -*- M2-comint -*- {* hash: 1616055152 *}
 
 i1 : R = QQ[a,b,c];
 
@@ -11,9 +11,7 @@ o2 : Ideal of R
 
 i3 : M = I/(I^2+a*I)
 
-o3 = subquotient (| a2-b2 abc |, | a4-2a2b2+b4 a3bc-ab3c a2b2c2 a3-ab2 a2bc
-     ------------------------------------------------------------------------
-     |)
+o3 = subquotient (| a2-b2 abc |, | a4-2a2b2+b4 a3bc-ab3c a2b2c2 a3-ab2 a2bc |)
 
                                1
 o3 : R-module, subquotient of R
@@ -27,3 +25,5 @@ o4 = {2} | a b2 0 0  |
 o4 : Matrix R  <--- R
 
 i5 : 
+0.78user 0.03system 0:00.82elapsed 99%CPU (0avgtext+0avgdata 0maxresident)k
+0inputs+0outputs (0major+10844minor)pagefaults 0swaps

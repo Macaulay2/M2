@@ -1,4 +1,4 @@
--- -*- M2-comint -*-
+-- -*- M2-comint -*- {* hash: -2041497473 *}
 
 i1 : R = QQ[x_1 .. x_5]
 
@@ -59,3 +59,5 @@ i9 : ambient M == target relations M
 o9 = true
 
 i10 : 
+0.79user 0.07system 0:00.88elapsed 98%CPU (0avgtext+0avgdata 0maxresident)k
+0inputs+0outputs (0major+10847minor)pagefaults 0swaps

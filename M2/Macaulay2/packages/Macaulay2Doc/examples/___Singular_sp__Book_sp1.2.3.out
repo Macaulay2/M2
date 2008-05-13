@@ -1,4 +1,4 @@
--- -*- M2-comint -*-
+-- -*- M2-comint -*- {* hash: -370131795 *}
 
 i1 : A = QQ[x,y,z,MonomialOrder=>Lex];
 
@@ -50,3 +50,5 @@ o8 = 2x y z  + y z  + 5y  + 4z
 o8 : A
 
 i9 : 
+0.76user 0.10system 0:00.86elapsed 99%CPU (0avgtext+0avgdata 0maxresident)k
+0inputs+0outputs (0major+10844minor)pagefaults 0swaps

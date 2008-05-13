@@ -1,4 +1,4 @@
--- -*- M2-comint -*-
+-- -*- M2-comint -*- {* hash: 1459309979 *}
 
 i1 : stderr << "-- hi there --" << endl
 -- hi there --
@@ -16,11 +16,11 @@ o2 : File
 
 i3 : fn = temporaryFileName()
 
-o3 = /tmp/M2-20882-1
+o3 = /tmp/M2-16525-1
 
 i4 : fn << "hi there" << endl << close
 
-o4 = /tmp/M2-20882-1
+o4 = /tmp/M2-16525-1
 
 o4 : File
 
@@ -53,7 +53,7 @@ o8 : File
 
 i9 : fn << f << close
 
-o9 = /tmp/M2-20882-1
+o9 = /tmp/M2-16525-1
 
 o9 : File
 
@@ -65,7 +65,7 @@ o10 =  10      9      8       7       6       5       4       3      2
 
 i11 : fn << toExternalString f << close
 
-o11 = /tmp/M2-20882-1
+o11 = /tmp/M2-16525-1
 
 o11 : File
 
@@ -86,3 +86,5 @@ o13 : R
 i14 : removeFile fn
 
 i15 : 
+0.78user 0.08system 0:00.86elapsed 100%CPU (0avgtext+0avgdata 0maxresident)k
+0inputs+0outputs (0major+10844minor)pagefaults 0swaps

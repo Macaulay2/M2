@@ -1,4 +1,4 @@
--- -*- M2-comint -*-
+-- -*- M2-comint -*- {* hash: 1961195829 *}
 
 i1 : F = GF(25,Variable=>a)
 
@@ -8,13 +8,15 @@ o1 : GaloisField
 
 i2 : ambient F
 
-       ZZ
-       -- [a]
-        5
-o2 = ----------
+        ZZ
+        -- [a]
+         5
+o2 = -----------
       2
-     a  + a + 1
+     a  - 2a - 1
 
 o2 : QuotientRing
 
 i3 : 
+0.77user 0.04system 0:00.82elapsed 98%CPU (0avgtext+0avgdata 0maxresident)k
+0inputs+0outputs (0major+10845minor)pagefaults 0swaps

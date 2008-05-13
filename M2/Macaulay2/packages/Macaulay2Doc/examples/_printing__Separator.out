@@ -1,0 +1,25 @@
+-- -*- M2-comint -*- {* hash: -704761249 *}
+
+i1 : 3000000000000.
+
+o1 = 3e12
+
+o1 : RR (of precision 53)
+
+i2 : printingSeparator
+
+o2 = e
+
+i3 : printingSeparator = "e"
+
+o3 = e
+
+i4 : 3000000000000.
+
+o4 = 3e12
+
+o4 : RR (of precision 53)
+
+i5 : 
+0.78user 0.03system 0:00.81elapsed 100%CPU (0avgtext+0avgdata 0maxresident)k
+0inputs+0outputs (0major+10844minor)pagefaults 0swaps

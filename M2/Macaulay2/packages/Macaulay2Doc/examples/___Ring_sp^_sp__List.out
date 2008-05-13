@@ -1,4 +1,4 @@
--- -*- M2-comint -*-
+-- -*- M2-comint -*- {* hash: -174769585 *}
 
 i1 : R = QQ[a..d]
 
@@ -34,3 +34,5 @@ o5 = R
 o5 : R-module, free, degrees {{-1, -2}}
 
 i6 : 
+0.76user 0.05system 0:00.81elapsed 100%CPU (0avgtext+0avgdata 0maxresident)k
+0inputs+0outputs (0major+10845minor)pagefaults 0swaps

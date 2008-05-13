@@ -1,4 +1,4 @@
--- -*- M2-comint -*-
+-- -*- M2-comint -*- {* hash: 2094850079 *}
 
 i1 : R = QQ[w,x,y,z];
 
@@ -24,3 +24,5 @@ o4 = ideal (x  - w*y, x*y - w*z, - y  + x*z)
 o4 : Ideal of R
 
 i5 : 
+0.78user 0.07system 0:00.89elapsed 96%CPU (0avgtext+0avgdata 0maxresident)k
+0inputs+0outputs (0major+10844minor)pagefaults 0swaps

@@ -1,4 +1,4 @@
--- -*- M2-comint -*-
+-- -*- M2-comint -*- {* hash: 1533394897 *}
 
 i1 : M = monoid [x,y,z];
 
@@ -10,3 +10,5 @@ o2 = x y z
 o2 : M
 
 i3 : 
+0.77user 0.04system 0:00.85elapsed 96%CPU (0avgtext+0avgdata 0maxresident)k
+0inputs+0outputs (0major+10846minor)pagefaults 0swaps

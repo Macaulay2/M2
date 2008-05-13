@@ -1,4 +1,4 @@
--- -*- M2-comint -*-
+-- -*- M2-comint -*- {* hash: -53237816 *}
 
 i1 : "abcdefghij"
 
@@ -21,7 +21,8 @@ o4 = abcAB
 
 i5 : peek u
 
-o5 = "abcAB\n\tstu"
+o5 = "abcAB
+     \tstu"
 
 i6 : ///a \ n = "c"///
 
@@ -132,3 +133,5 @@ o25 = a
       ccc
 
 i26 : 
+0.80user 0.02system 0:00.84elapsed 98%CPU (0avgtext+0avgdata 0maxresident)k
+0inputs+0outputs (0major+10845minor)pagefaults 0swaps

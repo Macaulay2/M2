@@ -1,4 +1,4 @@
--- -*- M2-comint -*-
+-- -*- M2-comint -*- {* hash: -1242126899 *}
 
 i1 : M = monoid [a,b,c,Degrees=>{2,3,4}]
 
@@ -40,12 +40,14 @@ o6 : M
 
 i7 : options M
 
-o7 = OptionTable{DegreeRank => 1                                        }
+o7 = OptionTable{ConstantCoefficients => true                           }
+                 DegreeRank => 1
                  Degrees => {{2}, {3}, {4}}
                  Global => true
                  Heft => {1}
                  Inverses => false
-                 MonomialOrder => {GRevLex => {1, 1, 1}, Position => Up}
+                 Local => false
+                 MonomialOrder => {GRevLex => {2, 3, 4}, Position => Up}
                  MonomialSize => 32
                  SkewCommutative => {}
                  VariableBaseName => p
@@ -133,8 +135,10 @@ o19 : PolynomialRing
 
 i20 : monoid R
 
-o20 = [a, b, c, d, Heft => {1}]
+o20 = [a, b, c, d]
 
 o20 : GeneralOrderedMonoid
 
 i21 : 
+0.79user 0.02system 0:00.81elapsed 100%CPU (0avgtext+0avgdata 0maxresident)k
+0inputs+0outputs (0major+10841minor)pagefaults 0swaps

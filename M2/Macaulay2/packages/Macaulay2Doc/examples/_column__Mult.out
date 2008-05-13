@@ -1,4 +1,4 @@
--- -*- M2-comint -*-
+-- -*- M2-comint -*- {* hash: 422728447 *}
 
 i1 : R = ZZ[a..f]
 
@@ -28,3 +28,5 @@ o4 = | ac c e |
 o4 : MutableMatrix
 
 i5 : 
+0.79user 0.08system 0:00.87elapsed 99%CPU (0avgtext+0avgdata 0maxresident)k
+0inputs+0outputs (0major+10842minor)pagefaults 0swaps

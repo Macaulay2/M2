@@ -1,4 +1,4 @@
--- -*- M2-comint -*-
+-- -*- M2-comint -*- {* hash: -487462971 *}
 
 i1 : (f = Command ( () -> 2^30 );)
 
@@ -9,8 +9,10 @@ o2 = 1073741824
 i3 : (c = Command "date";)
 
 i4 : c
-Sun Nov  5 09:19:29 CST 2006
+Sat Feb  9 18:14:34 CST 2008
 
 o4 = 0
 
 i5 : 
+0.77user 0.03system 0:00.82elapsed 98%CPU (0avgtext+0avgdata 0maxresident)k
+0inputs+0outputs (0major+11307minor)pagefaults 0swaps

@@ -1,4 +1,4 @@
--- -*- M2-comint -*-
+-- -*- M2-comint -*- {* hash: -1569920428 *}
 
 i1 : R = QQ[a..d]
 
@@ -19,12 +19,14 @@ i3 : status(D, TotalPairs => true, PairsRemaining => true, Monomials => true)
 
 o3 = (total pairs,pairs remaining,monomials)
 
-     total: (2,0,0) (4,0,547) (20,0,1156) (8,0,410)
+     total: (2,0,0) (4,0,549) (20,0,1156) (8,0,410)
          0: (2,0,0)     .          .          .    
-         1:    .    (4,0,72)   (2,0,12)       .    
+         1:    .    (4,0,74)   (2,0,12)       .    
          2:    .    (0,0,51)   (2,0,36)       .    
          3:    .    (0,0,79)   (4,0,48)   (2,0,22) 
          4:    .    (0,0,210)  (8,0,405)  (4,0,79) 
          5:    .    (0,0,135)  (4,0,655)  (2,0,309)
 
 i4 : 
+2.06user 0.05system 0:02.12elapsed 99%CPU (0avgtext+0avgdata 0maxresident)k
+0inputs+0outputs (0major+12959minor)pagefaults 0swaps

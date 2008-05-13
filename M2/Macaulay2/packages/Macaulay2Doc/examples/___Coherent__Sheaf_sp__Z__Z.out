@@ -1,4 +1,4 @@
--- -*- M2-comint -*-
+-- -*- M2-comint -*- {* hash: -1960742957 *}
 
 i1 : X = Proj(QQ[x,y,z])
 
@@ -35,3 +35,5 @@ o5 = {{-3}}
 o5 : List
 
 i6 : 
+0.78user 0.07system 0:00.87elapsed 98%CPU (0avgtext+0avgdata 0maxresident)k
+0inputs+0outputs (0major+10848minor)pagefaults 0swaps

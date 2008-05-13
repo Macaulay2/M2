@@ -1,4 +1,4 @@
--- -*- M2-comint -*-
+-- -*- M2-comint -*- {* hash: 880618216 *}
 
 i1 : R = ZZ[vars(0..19)]
 
@@ -36,3 +36,5 @@ o3 = | -be+af -bi+aj -fi+ej -bm+an -fm+en -jm+in -bq+ar -fq+er -jq+ir -nq+mr
 o3 : Matrix R  <--- R
 
 i4 : 
+0.77user 0.09system 0:00.86elapsed 99%CPU (0avgtext+0avgdata 0maxresident)k
+0inputs+0outputs (0major+10845minor)pagefaults 0swaps

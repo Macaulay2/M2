@@ -1,4 +1,4 @@
--- -*- M2-comint -*-
+-- -*- M2-comint -*- {* hash: 1211856041 *}
 
 i1 : A = ZZ[a]/(a^2-3)
 
@@ -12,119 +12,125 @@ o2 = B
 
 o2 : QuotientRing
 
-i3 : (D,F,G) = flattenRing B
+i3 : (D,F) = flattenRing B
 
-o3 = (D, map(D,B,{x, y, z, a}), map(B,D,{x, y, z, a}))
+o3 = (D, map(D,B,{x, y, z, a}))
 
 o3 : Sequence
 
-i4 : describe D      
+i4 : F
+
+o4 = map(D,B,{x, y, z, a})
+
+o4 : RingMap D <--- B
+
+i5 : F^-1
+
+o5 = map(B,D,{x, y, z, a})
+
+o5 : RingMap B <--- D
+
+i6 : describe D      
 
              ZZ [x, y, z, a]
-o4 = -------------------------------
+o6 = -------------------------------
        2     2    2   3   3   2
      (x a - y  - z , y , z , a  - 3)
 
-i5 : K = frac(ZZ[a])
+i7 : K = frac(ZZ[a])
 
-o5 = K
+o7 = K
 
-o5 : FractionField
+o7 : FractionField
 
-i6 : B = K[x,y,z]/(a*x^2-y^2-z^2, y^3, z^3)
+i8 : B = K[x,y,z]/(a*x^2-y^2-z^2, y^3, z^3)
 
-o6 = B
+o8 = B
 
-o6 : QuotientRing
+o8 : QuotientRing
 
-i7 : (D,F,G) = flattenRing B
+i9 : (D,F) = flattenRing B
 
-o7 = (B, map(B,B,{x, y, z, a}), map(B,B,{x, y, z, a}))
+o9 = (B, map(B,B,{x, y, z, a}))
 
-o7 : Sequence
+o9 : Sequence
 
-i8 : describe D      
+i10 : describe D      
 
-            K [x, y, z]
-o8 = ------------------------
-         2    2    2   3   3
-     (a*x  - y  - z , y , z )
-
-i9 : L = toField A
-
-o9 = A
-
-o9 : QuotientRing
-
-i10 : B = L[x,y,z]/(a*x^2-y^2-z^2, y^3, z^3)
-
-o10 = B
-
-o10 : QuotientRing
-
-i11 : (D,F,G) = flattenRing(B[s,t])
-
-o11 = (D, map(D,B [s, t],{s, t, x, y, z, a}), map(B [s, t],D,{s, t, x, y, z,
-      -----------------------------------------------------------------------
-      a}))
-
-o11 : Sequence
-
-i12 : describe D      
-
-          A [s, t, x, y, z]
-o12 = ------------------------
+             K [x, y, z]
+o10 = ------------------------
           2    2    2   3   3
       (a*x  - y  - z , y , z )
 
-i13 : use L
+i11 : L = toField A
 
-o13 = A
+o11 = A
 
-o13 : QuotientRing
+o11 : QuotientRing
 
-i14 : C1 = L[s,t];
+i12 : B = L[x,y,z]/(a*x^2-y^2-z^2, y^3, z^3)
 
-i15 : C2 = C1/(a*s-t^2);
+o12 = B
 
-i16 : C3 = C2[p_0..p_4]/(a*s*p_0)[q]/(q^2-a*p_1);
+o12 : QuotientRing
 
-i17 : (D,F,G) = flattenRing(C3, CoefficientRing=>C2)
+i13 : (D,F) = flattenRing(B[s,t])
 
-o17 = (D, map(D,C3,{q, p , p , p , p , p , s, t, a}), map(C3,D,{q, p , p ,
-                        0   1   2   3   4                           0   1 
-      -----------------------------------------------------------------------
-      p , p , p , s, t, a}))
-       2   3   4
+o13 = (D, map(D,B [s, t],{s, t, x, y, z, a}))
 
-o17 : Sequence
+o13 : Sequence
 
-i18 : describe D
+i14 : describe D      
 
-      C2 [q, p , p , p , p , p ]
-              0   1   2   3   4
-o18 = --------------------------
-            2
-          (q  - a*p , a*s*p )
-                   1       0
+          A [s, t, x, y, z]
+o14 = ------------------------
+          2    2    2   3   3
+      (a*x  - y  - z , y , z )
 
-i19 : (D,F,G) = flattenRing(C3, CoefficientRing=>ZZ)
+i15 : use L
 
-o19 = (D, map(D,C3,{q, p , p , p , p , p , s, t, a}), map(C3,D,{q, p , p ,
-                        0   1   2   3   4                           0   1 
-      -----------------------------------------------------------------------
-      p , p , p , s, t, a}))
-       2   3   4
+o15 = A
+
+o15 : QuotientRing
+
+i16 : C1 = L[s,t];
+
+i17 : C2 = C1/(a*s-t^2);
+
+i18 : C3 = C2[p_0..p_4]/(a*s*p_0)[q]/(q^2-a*p_1);
+
+i19 : (D,F) = flattenRing(C3, CoefficientRing=>C2)
+
+o19 = (D, map(D,C3,{q, p , p , p , p , p , s, t, a}))
+                        0   1   2   3   4
 
 o19 : Sequence
 
 i20 : describe D
 
+      C2 [q, p , p , p , p , p ]
+              0   1   2   3   4
+o20 = --------------------------
+            2
+          (q  - a*p , a*s*p )
+                   1       0
+
+i21 : (D,F) = flattenRing(C3, CoefficientRing=>ZZ)
+
+o21 = (D, map(D,C3,{q, p , p , p , p , p , s, t, a}))
+                        0   1   2   3   4
+
+o21 : Sequence
+
+i22 : describe D
+
        ZZ [q, p , p , p , p , p , s, t, a]
                0   1   2   3   4
-o20 = -------------------------------------
+o22 = -------------------------------------
         2                  2         2
       (q  - p a, p s*a, - t  + s*a, a  - 3)
              1    0
 
-i21 : 
+i23 : 
+0.86user 0.03system 0:00.90elapsed 99%CPU (0avgtext+0avgdata 0maxresident)k
+0inputs+0outputs (0major+11718minor)pagefaults 0swaps

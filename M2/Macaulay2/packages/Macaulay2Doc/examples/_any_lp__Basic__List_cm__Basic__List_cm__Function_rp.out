@@ -1,4 +1,4 @@
--- -*- M2-comint -*-
+-- -*- M2-comint -*- {* hash: -573423490 *}
 
 i1 : any((1,2,3,4),(2,3,4,5), (i,j) -> i>j)
 
@@ -22,3 +22,5 @@ i4 : any((1,2,5,4),(2,3,4,5), x -> (print x; true))
 o4 = true
 
 i5 : 
+0.77user 0.08system 0:00.85elapsed 100%CPU (0avgtext+0avgdata 0maxresident)k
+0inputs+0outputs (0major+10838minor)pagefaults 0swaps

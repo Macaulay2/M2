@@ -1,7 +1,9 @@
--- -*- M2-comint -*-
+-- -*- M2-comint -*- {* hash: 182046282 *}
 
 i1 : sum(1 .. 10, i -> i^2)
 
 o1 = 385
 
 i2 : 
+0.76user 0.10system 0:00.88elapsed 98%CPU (0avgtext+0avgdata 0maxresident)k
+0inputs+0outputs (0major+10848minor)pagefaults 0swaps

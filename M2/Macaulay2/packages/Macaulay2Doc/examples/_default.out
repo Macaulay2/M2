@@ -1,0 +1,23 @@
+-- -*- M2-comint -*- {* hash: 1575714846 *}
+
+i1 : default RR
+
+o1 = RR
+       53
+
+o1 : RealField
+
+i2 : defaultPrecision = 100
+
+o2 = 100
+
+i3 : default CC
+
+o3 = CC
+       100
+
+o3 : ComplexField
+
+i4 : 
+0.78user 0.06system 0:00.84elapsed 99%CPU (0avgtext+0avgdata 0maxresident)k
+0inputs+0outputs (0major+10844minor)pagefaults 0swaps

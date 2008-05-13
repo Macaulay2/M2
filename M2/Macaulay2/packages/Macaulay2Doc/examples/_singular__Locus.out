@@ -1,4 +1,4 @@
--- -*- M2-comint -*-
+-- -*- M2-comint -*- {* hash: 1061748673 *}
 
 i1 : singularLocus(QQ[x,y] / (x^2 - y^3))
 
@@ -11,20 +11,38 @@ o1 : QuotientRing
 
 i2 : singularLocus Spec( QQ[x,y,z] / (x^2 - y^3) )
 
-               QQ [x, y, z]
-o2 = Spec(---------------------)
-              3    2         2
-          (- y  + x , 2x, -3y )
+         /     QQ [x, y, z]    \
+o2 = Spec|---------------------|
+         |    3    2         2 |
+         \(- y  + x , 2x, -3y )/
 
 o2 : AffineVariety
 
 i3 : singularLocus Proj( QQ[x,y,z] / (x^2*z - y^3) )
 
-          QQ [x, y, z]
-o3 = Proj(------------)
-                  2
-             (x, y )
+         /QQ [x, y, z]\
+o3 = Proj|------------|
+         |        2   |
+         \   (x, y )  /
 
 o3 : ProjectiveVariety
 
-i4 : 
+i4 : singularLocus(ZZ[x,y]/(x^2-x-y^3+y^2))
+
+                     ZZ [x, y]
+o4 = ----------------------------------------
+         3    2    2                  2
+     (- y  + x  + y  - x, 2x - 1, - 3y  + 2y)
+
+o4 : QuotientRing
+
+i5 : gens gb ideal oo
+
+o5 = | 11 y+3 x+5 |
+
+                       1                 3
+o5 : Matrix (ZZ [x, y])  <--- (ZZ [x, y])
+
+i6 : 
+0.86user 0.01system 0:00.93elapsed 93%CPU (0avgtext+0avgdata 0maxresident)k
+0inputs+0outputs (0major+10842minor)pagefaults 0swaps

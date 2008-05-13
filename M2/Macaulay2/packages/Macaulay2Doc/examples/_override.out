@@ -1,4 +1,4 @@
--- -*- M2-comint -*-
+-- -*- M2-comint -*- {* hash: 1325576277 *}
 
 i1 : defs = new HashTable from { a => 1, b => 2 };
 
@@ -10,3 +10,5 @@ o2 = (HashTable{a => 1}, (4, 5))
 o2 : Sequence
 
 i3 : 
+0.76user 0.03system 0:00.80elapsed 100%CPU (0avgtext+0avgdata 0maxresident)k
+0inputs+0outputs (0major+10845minor)pagefaults 0swaps

@@ -1,4 +1,4 @@
--- -*- M2-comint -*-
+-- -*- M2-comint -*- {* hash: 2080892921 *}
 
 i1 : f = () -> DIV { "hi there" }
 
@@ -17,3 +17,5 @@ i3 : peek oo
 o3 = LATER{f}
 
 i4 : 
+0.78user 0.03system 0:00.82elapsed 98%CPU (0avgtext+0avgdata 0maxresident)k
+0inputs+0outputs (0major+10844minor)pagefaults 0swaps

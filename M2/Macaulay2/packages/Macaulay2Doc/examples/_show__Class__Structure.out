@@ -1,4 +1,4 @@
--- -*- M2-comint -*-
+-- -*- M2-comint -*- {* hash: 683066853 *}
 
 i1 : showClassStructure
 
@@ -9,12 +9,14 @@ o1 = Type : AffineVariety
             BettiTally
             Boolean : false
                       true
+            CacheFunction
             CacheTable
             ChainComplex
             ChainComplexMap
             CoherentSheaf
             CompiledFunction : abs
                                acos
+                               agm
                                alarm
                                ancestor
                                any
@@ -26,7 +28,10 @@ o1 = Type : AffineVariety
                                ascii
                                asin
                                atan
+                               atan2
                                atEndOfFile
+                               BesselJ
+                               BesselY
                                characters
                                class
                                clearEcho
@@ -38,30 +43,41 @@ o1 = Type : AffineVariety
                                copy
                                cos
                                cosh
+                               cot
+                               coth
+                               cpuTime
+                               csc
+                               csch
                                currentLineNumber
                                currentTime
                                deepSplice
+                               denominator
                                difference
                                disassemble
                                drop
                                dumpdata
                                echoOff
                                echoOn
-                               elapsedTime
+                               eint
                                erase
+                               erf
+                               erfc
                                exec
                                exp
+                               expm1
                                fileExists
                                fileLength
                                fileMode
                                fileTime
                                firstkey
                                flagLookup
+                               flatten
                                floor
                                fork
                                format
                                frames
                                functionBody
+                               Gamma
                                get
                                getc
                                getenv
@@ -74,8 +90,11 @@ o1 = Type : AffineVariety
                                imaginaryPart
                                installMethod
                                instance
+                               isANumber
                                isDirectory
+                               isFinite
                                isGlobalSymbol
+                               isInfinite
                                isInputFile
                                isListener
                                isOpen
@@ -90,6 +109,7 @@ o1 = Type : AffineVariety
                                localDictionaries
                                locate
                                log
+                               log1p
                                lookup
                                lookupCount
                                merge
@@ -102,6 +122,7 @@ o1 = Type : AffineVariety
                                newClass
                                newNetFile
                                nextkey
+                               numerator
                                openDatabase
                                openDatabaseOut
                                openFiles
@@ -109,13 +130,14 @@ o1 = Type : AffineVariety
                                openInOut
                                openListener
                                openOut
+                               openOutAppend
                                override
                                pack
                                pairs
                                parent
                                plus
                                power
-                               precision
+                               powermod
                                prepend
                                printString
                                processID
@@ -139,14 +161,16 @@ o1 = Type : AffineVariety
                                run
                                scan
                                scanPairs
+                               sec
+                               sech
                                select
                                separate
                                sequence
                                set
                                setEcho
-                               setPrecision
                                sin
                                sinh
+                               size2
                                sleep
                                splice
                                sqrt
@@ -158,20 +182,24 @@ o1 = Type : AffineVariety
                                tan
                                tanh
                                times
+                               toCC
                                toList
-                               toRRR
+                               toRR
                                toSequence
                                uncurry
                                unsequence
                                unstack
+                               utf8
                                values
                                wait
                                wrap
                                xor
                                youngest
+                               zeta
             CompiledFunctionBody
             CompiledFunctionClosure : chainComplex
                                       code
+                                      commonest
                                       directSum
                                       EXAMPLE
                                       export
@@ -196,7 +224,6 @@ o1 = Type : AffineVariety
                                       minPosition
                                       monomialIdeal
                                       net
-                                      numeric
                                       options
                                       pretty
                                       tex
@@ -207,7 +234,12 @@ o1 = Type : AffineVariety
                                       undocumented
                                       unique
                                       vars
+            ComplexField
+            Constant : EulerConstant
+                       ii
+                       pi
             Database
+            Descent
             Dictionary
             DocumentTag
             EngineRing
@@ -221,6 +253,7 @@ o1 = Type : AffineVariety
             FunctionBody
             FunctionClosure : addEndFunction
                               addStartFunction
+                              ancestors
                               andP
                               applicationDirectory
                               applicationDirectorySuffix
@@ -230,28 +263,26 @@ o1 = Type : AffineVariety
                               baseFilename
                               beginDocumentation
                               benchmark
-                              binomialCD
-                              bott
                               cacheValue
-                              cauchy
                               ceiling
                               centerString
                               columnate
                               constParser
                               delete
                               demark
+                              elapsedTime
                               End
                               error
                               evaluate
                               even
                               examples
-                              extract
-                              findNonMember
+                              exit
                               first
-                              flattener
                               fromDual
                               futureParser
                               getNonUnit
+                              getSymbol
+                              globalAssign
                               globalAssignFunction
                               globalAssignment
                               globalReleaseFunction
@@ -260,18 +291,18 @@ o1 = Type : AffineVariety
                               integrate
                               isPrimitive
                               isTable
-                              jacobiTrudiE
+                              jacobiTrudi
                               last
                               lines
                               load
                               makeDocumentTag
                               method
                               minprimes
-                              minSat
                               mod
                               monoid
                               monomialCurve
                               monomialCurveIdeal
+                              mutableZero
                               needs
                               netRows
                               notImplemented
@@ -283,16 +314,11 @@ o1 = Type : AffineVariety
                               orP
                               pager
                               peek
-                              plethysmMap
                               print
-                              promptWidth
                               quote
-                              quotMin
-                              radicalContainment
-                              round
                               same
+                              seeParsing
                               seq
-                              setup
                               showHtml
                               stashValue
                               submodule
@@ -306,7 +332,10 @@ o1 = Type : AffineVariety
                               terminalParser
                               toAbsolutePath
                               toDual
+                              toE
                               toLower
+                              toP
+                              toS
                               toUpper
                               tutorial
                               uniform
@@ -322,6 +351,7 @@ o1 = Type : AffineVariety
             GradedModule
             GradedModuleMap
             GroebnerBasis
+            GroebnerBasisOptions
             HashTable : LAYOUT
                         operatorAttributes
                         version
@@ -345,6 +375,13 @@ o1 = Type : AffineVariety
             ImmutableType
             IndeterminateNumber : indeterminate
             IndexedVariable
+            IndexedVariableTable
+            InexactField
+            InexactFieldFamily : CC
+                                 RR
+            InexactNumber
+            InexactNumber
+                         *
             InfiniteNumber : infinity
             IntermediateMarkUpType : HREF
                                      LATER
@@ -354,7 +391,8 @@ o1 = Type : AffineVariety
                                      TO2
                                      TOH
             Keyword
-            List
+            List : commandLine
+                   environment
             LocalDictionary
             Manipulator : close
                           closeIn
@@ -364,7 +402,7 @@ o1 = Type : AffineVariety
             MarkUpType : BLOCKQUOTE
                          BODY
                          BOLD
-                         BR : br
+                         BR
                          CDATA
                          CODE
                          COMMENT
@@ -377,14 +415,13 @@ o1 = Type : AffineVariety
                          HEADER4
                          HEADER5
                          HEADER6
-                         HR : hr
+                         HR
                          HTML
                          ITALIC
                          LI
                          PARA
                          PRE
                          SMALL
-                         SPAN
                          STRONG
                          SUB
                          SUP
@@ -403,17 +440,21 @@ o1 = Type : AffineVariety
                                     LABEL
                                     LINK
                                     META
+                                    SPAN
                                     STYLE
                                     TABLE
                                     TD
             Matrix
             MethodFunction : accumulate
+                             acosh
+                             acot
                              addHook
                              adjoint
                              adjoint1
                              all
                              ambient
                              apropos
+                             asinh
                              autoload
                              baseName
                              between
@@ -422,7 +463,7 @@ o1 = Type : AffineVariety
                              capture
                              char
                              check
-                             codim
+                             clean
                              coefficient
                              coefficientRing
                              coimage
@@ -431,6 +472,7 @@ o1 = Type : AffineVariety
                              columnMult
                              columnPermute
                              columnSwap
+                             commonRing
                              comodule
                              complement
                              complete
@@ -446,6 +488,8 @@ o1 = Type : AffineVariety
                              cover
                              coverMap
                              debug
+                             default
+                             degree
                              degreeLength
                              degrees
                              degreesMonoid
@@ -470,7 +514,6 @@ o1 = Type : AffineVariety
                              euler
                              eulers
                              exponents
-                             extend
                              Fano
                              findSynonyms
                              fittingIdeal
@@ -478,6 +521,8 @@ o1 = Type : AffineVariety
                              fold
                              frac
                              fraction
+                             gbRemove
+                             gbSnapshot
                              gcdCoefficients
                              genera
                              generateAssertions
@@ -494,12 +539,15 @@ o1 = Type : AffineVariety
                              Hom
                              homogenize
                              homomorphism
+                             httpHeaders
                              ICmap
                              image
                              index
                              indices
                              inducesWellDefinedMap
                              installAssignmentMethod
+                             installHilbertFunction
+                             instances
                              inverse
                              irreducibleCharacteristicSeries
                              irreducibleDecomposition
@@ -522,6 +570,7 @@ o1 = Type : AffineVariety
                              isQuotientModule
                              isQuotientOf
                              isQuotientRing
+                             isReal
                              isRing
                              isSkewCommutative
                              isSquareFree
@@ -538,12 +587,11 @@ o1 = Type : AffineVariety
                              leadMonomial
                              leadTerm
                              length
-                             lift
                              liftable
-                             liftable'
                              listForm
                              listSymbols
-                             LU
+                             lngamma
+                             LUdecomposition
                              makeDirectory
                              match
                              member
@@ -553,9 +601,11 @@ o1 = Type : AffineVariety
                              module
                              monomialSubideal
                              newCoordinateSystem
+                             norm
                              nullhomotopy
                              numColumns
                              numerator
+                             numeric
                              numgens
                              numRows
                              ofClass
@@ -564,17 +614,18 @@ o1 = Type : AffineVariety
                              part
                              partition
                              partitions
+                             parts
                              pdim
                              peek'
                              permanents
                              permutations
                              pfaffians
                              pivots
-                             plethysm
                              poincare
                              poincareN
                              poly
                              positions
+                             precision
                              preimage
                              presentation
                              product
@@ -597,12 +648,14 @@ o1 = Type : AffineVariety
                              resultant
                              ring
                              rotate
+                             round
                              rowAdd
                              rowMult
                              rowPermute
                              rowSwap
                              runHooks
                              scanKeys
+                             scanLines
                              scanValues
                              schreyerOrder
                              schurRing
@@ -610,12 +663,13 @@ o1 = Type : AffineVariety
                              selectInSubring
                              separateRegexp
                              setRandomSeed
+                             setup
+                             setupEmacs
                              sheaf
                              sheafHom
                              show
                              singularLocus
                              size
-                             solve
                              someTerms
                              source
                              Spec
@@ -651,22 +705,25 @@ o1 = Type : AffineVariety
                              wedgeProduct
                              weightRange
                              width
+                             Wikipedia
             MethodFunctionWithOptions : annihilator
                                         associatedPrimes
                                         basis
                                         betti
+                                        codim
                                         coefficients
                                         cohomology
                                         copyDirectory
                                         copyFile
                                         cotangentSheaf
-                                        degree
                                         determinant
                                         document
                                         eigenvalues
                                         eigenvectors
+                                        extend
                                         exteriorPower
                                         factor
+                                        fillMatrix
                                         findFiles
                                         flattenRing
                                         forceGB
@@ -690,10 +747,12 @@ o1 = Type : AffineVariety
                                         isLLL
                                         kernel
                                         kernelLLL
+                                        lift
                                         LLL
                                         loadPackage
                                         localize
                                         map
+                                        markedGB
                                         matrix
                                         mingens
                                         minimalPresentation
@@ -703,7 +762,6 @@ o1 = Type : AffineVariety
                                         moveFile
                                         mutableIdentity
                                         mutableMatrix
-                                        mutableZero
                                         needsPackage
                                         netList
                                         newPackage
@@ -724,6 +782,7 @@ o1 = Type : AffineVariety
                                         Schubert
                                         showTex
                                         smithNormalForm
+                                        solve
                                         sort
                                         sortColumns
                                         status
@@ -745,8 +804,6 @@ o1 = Type : AffineVariety
                                globalAssignmentHooks
                                loadedFiles
                                nullaryMethods
-                               PrintNames
-                               ReverseDictionary
                                typicalValues
             MutableList
             MutableMatrix
@@ -774,16 +831,17 @@ o1 = Type : AffineVariety
             ProjectiveVariety
             Pseudocode
             QuotientRing
+            RealField
             Resolution
-            Ring : CC : ii
-                   CCC
-                   QQ
-                   RR : pi
-                   RRR
-                   ZZ : printingTimeLimit
+            Ring : QQ
+                   ZZ : maxExponent
+                        minExponent
+                        printingTimeLimit
             RingElement
+            RingFamily
             RingMap
             SchurRing
+            SchurRingIndexedVariableTable
             ScriptedFunctor : Ext
                               HH
                               hh
@@ -811,7 +869,6 @@ o1 = Type : AffineVariety
                                    Eliminate
                                    Hybrid
                                    LowerBound
-                                   MinorsComputation
                                    Parser : deadParser
                                             letterParser
                                             NNParser
@@ -827,6 +884,7 @@ o1 = Type : AffineVariety
             Set
             SheafOfRings
             String : copyright
+                     currentDirectory
                      newline
             SumOfTwists
             Symbol
@@ -836,12 +894,18 @@ o1 = Type : AffineVariety
             TreeNode
             Variety
             Vector
+            VirtualTally
             VisibleList
             WrapperType : Holder
                           Minus
                           NonAssociativeProduct
+                          Parenthesize
                           Product
                           Sum
             ZeroExpression
 
+o1 : Descent
+
 i2 : 
+0.83user 0.02system 0:00.85elapsed 100%CPU (0avgtext+0avgdata 0maxresident)k
+0inputs+0outputs (0major+10847minor)pagefaults 0swaps

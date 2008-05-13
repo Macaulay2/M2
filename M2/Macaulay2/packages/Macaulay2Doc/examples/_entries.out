@@ -1,4 +1,4 @@
--- -*- M2-comint -*-
+-- -*- M2-comint -*- {* hash: 717831090 *}
 
 i1 : R = ZZ[x,y,z];
 
@@ -32,3 +32,5 @@ o5 = {{x, z, x*y}, {x  + z, y*z, 1}}
 o5 : List
 
 i6 : 
+0.77user 0.07system 0:00.85elapsed 98%CPU (0avgtext+0avgdata 0maxresident)k
+0inputs+0outputs (0major+10841minor)pagefaults 0swaps

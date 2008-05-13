@@ -1,4 +1,4 @@
--- -*- M2-comint -*-
+-- -*- M2-comint -*- {* hash: 312924149 *}
 
 i1 : gradedModule ZZ^2
 
@@ -10,10 +10,10 @@ o1 : GradedModule
 i2 : gradedModule(ZZ^2,ZZ^3,ZZ^400)
 
            2
-o2 = 0 : ZZ
+o2 = 0 : ZZ   
 
            3
-     1 : ZZ
+     1 : ZZ   
 
            400
      2 : ZZ
@@ -46,8 +46,10 @@ o5 = 0 : R
           1
      2 : R
 
-     3 : 0
+     3 : 0 
 
 o5 : GradedModule
 
 i6 : 
+0.78user 0.02system 0:00.80elapsed 99%CPU (0avgtext+0avgdata 0maxresident)k
+0inputs+0outputs (0major+10844minor)pagefaults 0swaps

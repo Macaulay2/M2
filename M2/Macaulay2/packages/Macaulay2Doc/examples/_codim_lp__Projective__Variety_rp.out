@@ -1,4 +1,4 @@
--- -*- M2-comint -*-
+-- -*- M2-comint -*- {* hash: 1048709146 *}
 
 i1 : R = ZZ/101[x_0..x_3];
 
@@ -17,3 +17,5 @@ i4 : codim V
 o4 = 2
 
 i5 : 
+0.77user 0.07system 0:00.84elapsed 100%CPU (0avgtext+0avgdata 0maxresident)k
+0inputs+0outputs (0major+10844minor)pagefaults 0swaps

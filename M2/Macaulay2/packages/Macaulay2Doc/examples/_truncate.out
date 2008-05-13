@@ -1,4 +1,4 @@
--- -*- M2-comint -*-
+-- -*- M2-comint -*- {* hash: -1859424457 *}
 
 i1 : R = ZZ/101[a..c];
 
@@ -68,3 +68,5 @@ o13 = image {0, 0}  | x4y3 |
 o13 : S-module, submodule of S
 
 i14 : 
+0.80user 0.06system 0:00.86elapsed 100%CPU (0avgtext+0avgdata 0maxresident)k
+0inputs+0outputs (0major+10849minor)pagefaults 0swaps

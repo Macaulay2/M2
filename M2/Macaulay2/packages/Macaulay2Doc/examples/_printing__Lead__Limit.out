@@ -1,0 +1,25 @@
+-- -*- M2-comint -*- {* hash: -1274390248 *}
+
+i1 : 1/30000000000.
+
+o1 = 3.33333333333333e-11
+
+o1 : RR (of precision 53)
+
+i2 : printingLeadLimit
+
+o2 = 5
+
+i3 : printingLeadLimit = 20
+
+o3 = 20
+
+i4 : 1/30000000000.
+
+o4 = .0000000000333333333333333
+
+o4 : RR (of precision 53)
+
+i5 : 
+0.75user 0.05system 0:00.80elapsed 100%CPU (0avgtext+0avgdata 0maxresident)k
+0inputs+0outputs (0major+10844minor)pagefaults 0swaps

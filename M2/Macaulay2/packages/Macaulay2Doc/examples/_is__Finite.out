@@ -1,0 +1,35 @@
+-- -*- M2-comint -*- {* hash: 1573412905 *}
+
+i1 : sqrt 2.
+
+o1 = 1.4142135623731
+
+o1 : RR (of precision 53)
+
+i2 : isFinite oo
+
+o2 = true
+
+i3 : i = 1/0.
+
+o3 = infinity
+
+o3 : RR (of precision 53)
+
+i4 : isFinite oo
+
+o4 = false
+
+i5 : i-i
+
+o5 = NotANumber
+
+o5 : RR (of precision 53)
+
+i6 : isFinite oo
+
+o6 = false
+
+i7 : 
+0.78user 0.08system 0:00.88elapsed 98%CPU (0avgtext+0avgdata 0maxresident)k
+0inputs+0outputs (0major+10842minor)pagefaults 0swaps

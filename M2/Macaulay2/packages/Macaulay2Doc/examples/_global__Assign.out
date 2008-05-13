@@ -1,0 +1,25 @@
+-- -*- M2-comint -*- {* hash: -1388057421 *}
+
+i1 : x = y
+
+o1 = y
+
+o1 : Symbol
+
+i2 : globalAssign(x,4)
+
+o2 = 4
+
+i3 : x
+
+o3 = y
+
+o3 : Symbol
+
+i4 : y
+
+o4 = 4
+
+i5 : 
+0.77user 0.03system 0:00.81elapsed 99%CPU (0avgtext+0avgdata 0maxresident)k
+0inputs+0outputs (0major+10843minor)pagefaults 0swaps

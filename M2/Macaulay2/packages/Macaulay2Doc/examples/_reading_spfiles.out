@@ -1,12 +1,12 @@
--- -*- M2-comint -*-
+-- -*- M2-comint -*- {* hash: 165270927 *}
 
 i1 : fn = temporaryFileName()
 
-o1 = /tmp/M2-20282-1
+o1 = /tmp/M2-15176-1
 
 i2 : fn << "z^6+3*x*z^4+6*y*z^4+3*x^2*z^2+12*x*y*z^2+12*y^2*z^2+x^3+6*x^2*y+12*x*y^2+8*y^3" << endl << close
 
-o2 = /tmp/M2-20282-1
+o2 = /tmp/M2-15176-1
 
 o2 : File
 
@@ -42,7 +42,7 @@ i7 : fn << "sample = 2^100
      print sample
      " << close
 
-o7 = /tmp/M2-20282-1
+o7 = /tmp/M2-15176-1
 
 o7 : File
 
@@ -70,7 +70,9 @@ ii14 :
 
 i15 : peek get fn
 
-o15 = "sample = 2^100\nprint sample\n"
+o15 = "sample = 2^100
+      print sample
+      "
 
 i16 : lines get fn
 
@@ -90,3 +92,5 @@ o18 = sample = 2^100
 i19 : removeFile fn
 
 i20 : 
+0.75user 0.04system 0:00.79elapsed 100%CPU (0avgtext+0avgdata 0maxresident)k
+0inputs+0outputs (0major+10814minor)pagefaults 0swaps

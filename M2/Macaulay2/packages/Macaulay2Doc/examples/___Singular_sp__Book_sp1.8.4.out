@@ -1,4 +1,4 @@
--- -*- M2-comint -*-
+-- -*- M2-comint -*- {* hash: 1303948805 *}
 
 i1 : loadPackage "Elimination";
 
@@ -61,3 +61,5 @@ o13 = {-2} | x2-xy-y2-2z2           |
 o13 : Matrix A3  <--- A3
 
 i14 : 
+0.83user 0.04system 0:00.88elapsed 98%CPU (0avgtext+0avgdata 0maxresident)k
+0inputs+0outputs (0major+10845minor)pagefaults 0swaps

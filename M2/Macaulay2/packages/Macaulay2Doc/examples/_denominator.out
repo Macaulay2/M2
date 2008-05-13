@@ -1,4 +1,4 @@
--- -*- M2-comint -*-
+-- -*- M2-comint -*- {* hash: -1491298291 *}
 
 i1 : denominator (4/6)
 
@@ -32,3 +32,5 @@ o6 = (1 - T)
 o6 : Expression of class Product
 
 i7 : 
+0.78user 0.04system 0:00.82elapsed 99%CPU (0avgtext+0avgdata 0maxresident)k
+0inputs+0outputs (0major+10830minor)pagefaults 0swaps

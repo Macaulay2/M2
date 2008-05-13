@@ -1,4 +1,4 @@
--- -*- M2-comint -*-
+-- -*- M2-comint -*- {* hash: -346066120 *}
 
 i1 : x = new HashTable from {a => 1, b => 2, c => 3}
 
@@ -10,8 +10,10 @@ o1 : HashTable
 
 i2 : pairs x
 
-o2 = {(a, 1), (b, 2), (c, 3)}
+o2 = {(b, 2), (c, 3), (a, 1)}
 
 o2 : List
 
 i3 : 
+0.80user 0.02system 0:00.83elapsed 100%CPU (0avgtext+0avgdata 0maxresident)k
+0inputs+0outputs (0major+10844minor)pagefaults 0swaps

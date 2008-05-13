@@ -1,4 +1,4 @@
--- -*- M2-comint -*-
+-- -*- M2-comint -*- {* hash: 836056358 *}
 
 i1 : V = Proj(QQ[x_0..x_5]/(x_0^3+x_5^3))
 
@@ -18,3 +18,5 @@ i3 : dim P
 o3 = 4
 
 i4 : 
+0.78user 0.02system 0:00.81elapsed 99%CPU (0avgtext+0avgdata 0maxresident)k
+0inputs+0outputs (0major+10842minor)pagefaults 0swaps

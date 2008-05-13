@@ -1,4 +1,4 @@
--- -*- M2-comint -*-
+-- -*- M2-comint -*- {* hash: -790234298 *}
 
 i1 : A = QQ[x,y,z];
 
@@ -40,3 +40,5 @@ i8 : k
 o8 = 4
 
 i9 : 
+0.82user 0.04system 0:00.89elapsed 96%CPU (0avgtext+0avgdata 0maxresident)k
+0inputs+0outputs (0major+10853minor)pagefaults 0swaps

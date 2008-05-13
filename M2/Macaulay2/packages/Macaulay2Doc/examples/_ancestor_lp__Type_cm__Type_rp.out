@@ -1,0 +1,23 @@
+-- -*- M2-comint -*- {* hash: 1185519972 *}
+
+i1 : parent String
+
+o1 = Net
+
+o1 : Type
+
+i2 : parent parent String
+
+o2 = Thing
+
+o2 : Type
+
+i3 : parent parent parent String
+
+o3 = Thing
+
+o3 : Type
+
+i4 : 
+0.76user 0.08system 0:00.84elapsed 100%CPU (0avgtext+0avgdata 0maxresident)k
+0inputs+0outputs (0major+10839minor)pagefaults 0swaps

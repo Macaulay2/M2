@@ -1,4 +1,4 @@
--- -*- M2-comint -*-
+-- -*- M2-comint -*- {* hash: -1340423738 *}
 
 i1 : R = QQ[a..d];
 
@@ -22,3 +22,5 @@ i5 : numgens trim I
 o5 = 3
 
 i6 : 
+0.85user 0.04system 0:00.96elapsed 93%CPU (0avgtext+0avgdata 0maxresident)k
+0inputs+0outputs (0major+10844minor)pagefaults 0swaps

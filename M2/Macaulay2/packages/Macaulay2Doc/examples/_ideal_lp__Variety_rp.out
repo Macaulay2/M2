@@ -1,4 +1,4 @@
--- -*- M2-comint -*-
+-- -*- M2-comint -*- {* hash: -317008080 *}
 
 i1 : R = QQ[w,x,y,z];
 
@@ -17,7 +17,7 @@ o3 : Ideal of R
 
 i4 : ring X
 
-             QQ [w, x, y, z]
+                    R
 o4 = ------------------------------
        2         2     2   3
      (y  - x*z, x y - z , x  - y*z)
@@ -38,3 +38,5 @@ o6 = ideal (x  - w*y, x*y - w*z, - y  + x*z)
 o6 : Ideal of R
 
 i7 : 
+0.78user 0.07system 0:00.86elapsed 98%CPU (0avgtext+0avgdata 0maxresident)k
+0inputs+0outputs (0major+10845minor)pagefaults 0swaps

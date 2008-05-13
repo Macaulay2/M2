@@ -1,4 +1,4 @@
--- -*- M2-comint -*-
+-- -*- M2-comint -*- {* hash: 794288264 *}
 
 i1 : dictionaryPath
 
@@ -15,3 +15,5 @@ o1 = {Elimination.Dictionary, LLLBases.Dictionary,
 o1 : List
 
 i2 : 
+0.76user 0.07system 0:00.83elapsed 100%CPU (0avgtext+0avgdata 0maxresident)k
+0inputs+0outputs (0major+10844minor)pagefaults 0swaps

@@ -1,4 +1,4 @@
--- -*- M2-comint -*-
+-- -*- M2-comint -*- {* hash: -8205843 *}
 
 i1 : x = new HashTable from {1 => a, 2 => b, 3 => c}
 
@@ -27,3 +27,5 @@ i4 : y#b
 o4 = 2
 
 i5 : 
+0.74user 0.05system 0:00.80elapsed 100%CPU (0avgtext+0avgdata 0maxresident)k
+0inputs+0outputs (0major+10845minor)pagefaults 0swaps

@@ -1,4 +1,4 @@
--- -*- M2-comint -*-
+-- -*- M2-comint -*- {* hash: -571605425 *}
 
 i1 : R = ZZ/5[t]/(t^2+t+1);
 
@@ -11,3 +11,5 @@ i3 : isPrimitive (t-1)
 o3 = true
 
 i4 : 
+0.78user 0.04system 0:00.83elapsed 98%CPU (0avgtext+0avgdata 0maxresident)k
+0inputs+0outputs (0major+10844minor)pagefaults 0swaps

@@ -1,4 +1,4 @@
--- -*- M2-comint -*-
+-- -*- M2-comint -*- {* hash: 1454985562 *}
 
 i1 : R = QQ[a..d]
 
@@ -61,3 +61,5 @@ o8 = cokernel {1} | -s3t 0    -st3 0   0   -t4 |
 o8 : S-module, quotient of S
 
 i9 : 
+0.77user 0.04system 0:00.82elapsed 98%CPU (0avgtext+0avgdata 0maxresident)k
+0inputs+0outputs (0major+10839minor)pagefaults 0swaps

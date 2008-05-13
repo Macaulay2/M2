@@ -1,0 +1,15 @@
+-- -*- M2-comint -*- {* hash: 149582811 *}
+
+i1 : R = ZZ/101[a..e];
+
+i2 : codim monomialIdeal (b,c,d)
+
+o2 = 3
+
+i3 : codim monomialIdeal (b^3,c^2)
+
+o3 = 2
+
+i4 : 
+0.76user 0.08system 0:00.85elapsed 99%CPU (0avgtext+0avgdata 0maxresident)k
+0inputs+0outputs (0major+10844minor)pagefaults 0swaps

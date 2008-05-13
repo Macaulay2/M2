@@ -1,16 +1,16 @@
--- -*- M2-comint -*-
+-- -*- M2-comint -*- {* hash: -1722210612 *}
 
 i1 : apropos "atrix"
 
-o1 = {ChangeMatrix, compactMatrixForm, diagonalMatrix, genericMatrix,
+o1 = {ChangeMatrix, compactMatrixForm, diagonalMatrix, fillMatrix,
      ------------------------------------------------------------------------
-     genericSkewMatrix, genericSymmetricMatrix, getChangeMatrix, Matrix,
+     genericMatrix, genericSkewMatrix, genericSymmetricMatrix,
      ------------------------------------------------------------------------
-     matrix, MatrixExpression, MinimalMatrix, MutableMatrix, mutableMatrix,
+     getChangeMatrix, Matrix, matrix, MatrixExpression, MinimalMatrix,
      ------------------------------------------------------------------------
-     randomMutableMatrix, submatrix, submatrix', sylvesterMatrix,
+     MutableMatrix, mutableMatrix, randomMutableMatrix, submatrix,
      ------------------------------------------------------------------------
-     SyzygyMatrix}
+     submatrix', sylvesterMatrix, SyzygyMatrix}
 
 o1 : List
 
@@ -21,3 +21,5 @@ o2 = {match, mathML, Matrix, matrix, MatrixExpression}
 o2 : List
 
 i3 : 
+0.80user 0.07system 0:00.92elapsed 95%CPU (0avgtext+0avgdata 0maxresident)k
+0inputs+0outputs (0major+10844minor)pagefaults 0swaps

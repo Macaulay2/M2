@@ -1,4 +1,4 @@
--- -*- M2-comint -*-
+-- -*- M2-comint -*- {* hash: 388751355 *}
 
 i1 : S = ZZ/10007[x,y];
 
@@ -13,3 +13,5 @@ o2 = total: 2 2
 o2 : BettiTally
 
 i3 : 
+0.77user 0.03system 0:00.81elapsed 98%CPU (0avgtext+0avgdata 0maxresident)k
+0inputs+0outputs (0major+10843minor)pagefaults 0swaps

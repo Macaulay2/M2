@@ -1,4 +1,4 @@
--- -*- M2-comint -*-
+-- -*- M2-comint -*- {* hash: -167137826 *}
 
 i1 : R = QQ[x,y,z]/(x^3,y^3,z^3,x*y*z);
 
@@ -29,3 +29,5 @@ o4 = {2} | x  0 -z2 0   0  -xy 0 y2 0 0   0  0  0 xz2 xy2 0   |
 o4 : Matrix R  <--- R
 
 i5 : 
+0.85user 0.06system 0:00.92elapsed 98%CPU (0avgtext+0avgdata 0maxresident)k
+0inputs+0outputs (0major+12854minor)pagefaults 0swaps

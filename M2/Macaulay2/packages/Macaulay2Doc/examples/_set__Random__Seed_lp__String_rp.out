@@ -1,23 +1,25 @@
--- -*- M2-comint -*-
+-- -*- M2-comint -*- {* hash: -1318527241 *}
 
 i1 : setRandomSeed "thrkwjsxz"
 
-o1 = 123459876
+o1 = 1267386136561992923
 
 i2 : for i to 10 list random 100
 
-o2 = {87, 25, 83, 77, 25, 48, 96, 91, 16, 26, 82}
+o2 = {28, 70, 67, 31, 68, 14, 42, 24, 16, 14, 51}
 
 o2 : List
 
 i3 : setRandomSeed "thrkwjsxz"
 
-o3 = 576824482
+o3 = 1267386136561992923
 
 i4 : for i to 10 list random 100
 
-o4 = {87, 25, 83, 77, 25, 48, 96, 91, 16, 26, 82}
+o4 = {28, 70, 67, 31, 68, 14, 42, 24, 16, 14, 51}
 
 o4 : List
 
 i5 : 
+0.78user 0.03system 0:00.82elapsed 100%CPU (0avgtext+0avgdata 0maxresident)k
+0inputs+0outputs (0major+10845minor)pagefaults 0swaps

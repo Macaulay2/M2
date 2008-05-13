@@ -1,4 +1,4 @@
--- -*- M2-comint -*-
+-- -*- M2-comint -*- {* hash: -1057203839 *}
 
 i1 : {1,2,3,4} / 3
 
@@ -9,3 +9,5 @@ o1 = {-, -, 1, -}
 o1 : List
 
 i2 : 
+0.77user 0.05system 0:00.95elapsed 86%CPU (0avgtext+0avgdata 0maxresident)k
+0inputs+0outputs (0major+10844minor)pagefaults 0swaps

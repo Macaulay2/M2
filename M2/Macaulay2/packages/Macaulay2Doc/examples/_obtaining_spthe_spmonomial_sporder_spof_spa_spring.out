@@ -1,15 +1,17 @@
--- -*- M2-comint -*-
+-- -*- M2-comint -*- {* hash: -1765979053 *}
 
 i1 : R = QQ[x_1 .. x_10, MonomialOrder=>{4,6}];
 
 i2 : options R
 
-o2 = OptionTable{DegreeRank => 1                                            
-                 Degrees => {{1}, {1}, {1}, {1}, {1}, {1}, {1}, {1}, {1}, {1
+o2 = OptionTable{ConstantCoefficients => true                                                             }
+                 DegreeRank => 1
+                 Degrees => {{1}, {1}, {1}, {1}, {1}, {1}, {1}, {1}, {1}, {1}}
                  Global => true
                  Heft => {1}
                  Inverses => false
-                 MonomialOrder => {GRevLex => {1, 1, 1, 1}, GRevLex => {1, 1
+                 Local => false
+                 MonomialOrder => {GRevLex => {1, 1, 1, 1}, GRevLex => {1, 1, 1, 1, 1, 1}, Position => Up}
                  MonomialSize => 32
                  SkewCommutative => {}
                  VariableBaseName => p
@@ -17,13 +19,6 @@ o2 = OptionTable{DegreeRank => 1
                                 1   2   3   4   5   6   7   8   9   10
                  Weights => {}
                  WeylAlgebra => {}
-     ------------------------------------------------------------------------
-                                   }
-     }}
-
-
-
-     , 1, 1, 1, 1}, Position => Up}
 
 o2 : OptionTable
 
@@ -42,3 +37,5 @@ o5 = {GRevLex => {1, 1, 1, 1}, Position => Up}
 o5 : List
 
 i6 : 
+0.76user 0.04system 0:00.81elapsed 100%CPU (0avgtext+0avgdata 0maxresident)k
+0inputs+0outputs (0major+10844minor)pagefaults 0swaps

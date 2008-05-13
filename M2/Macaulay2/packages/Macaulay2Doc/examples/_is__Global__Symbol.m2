@@ -1,2 +1,0 @@
-isGlobalSymbol "res"
-isGlobalSymbol "resres"

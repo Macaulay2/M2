@@ -1,4 +1,4 @@
--- -*- M2-comint -*-
+-- -*- M2-comint -*- {* hash: 1715381883 *}
 
 i1 : R = QQ[x_1 .. x_12];
 
@@ -28,3 +28,5 @@ i4 : isHomogeneous g
 o4 = true
 
 i5 : 
+0.80user 0.03system 0:00.85elapsed 99%CPU (0avgtext+0avgdata 0maxresident)k
+0inputs+0outputs (0major+10829minor)pagefaults 0swaps

@@ -1,4 +1,4 @@
--- -*- M2-comint -*-
+-- -*- M2-comint -*- {* hash: -1757293926 *}
 
 i1 : subsets(7,3)
 
@@ -33,3 +33,5 @@ i3 : sort x === x
 o3 = true
 
 i4 : 
+0.80user 0.02system 0:00.83elapsed 98%CPU (0avgtext+0avgdata 0maxresident)k
+0inputs+0outputs (0major+10844minor)pagefaults 0swaps

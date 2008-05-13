@@ -1,4 +1,4 @@
--- -*- M2-comint -*-
+-- -*- M2-comint -*- {* hash: 190593915 *}
 
 i1 : M = matrix{{1,2,3},{1,34,45},{2213,1123,6543},{0,0,0}}
 
@@ -108,12 +108,14 @@ o13 = true
 
 i14 : prune coker M
 
-o14 = cokernel | 0                       0            0        t2+1 |
-               | 0                       0            t4+2t2+1 0    |
+o14 = cokernel | t10+5t8+10t6+10t4+5t2+1 0            0        0    |
                | 0                       t6+3t4+3t2+1 0        0    |
-               | t10+5t8+10t6+10t4+5t2+1 0            0        0    |
+               | 0                       0            t4+2t2+1 0    |
+               | 0                       0            0        t2+1 |
 
                              4
 o14 : S-module, quotient of S
 
 i15 : 
+0.80user 0.03system 0:00.84elapsed 100%CPU (0avgtext+0avgdata 0maxresident)k
+0inputs+0outputs (0major+10850minor)pagefaults 0swaps

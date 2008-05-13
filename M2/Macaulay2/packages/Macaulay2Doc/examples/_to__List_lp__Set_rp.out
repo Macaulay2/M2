@@ -1,15 +1,17 @@
--- -*- M2-comint -*-
+-- -*- M2-comint -*- {* hash: 505895151 *}
 
 i1 : x = set {a,b,c}
 
-o1 = set {a, b, c}
+o1 = set {b, c, a}
 
 o1 : Set
 
 i2 : toList x
 
-o2 = {a, b, c}
+o2 = {b, c, a}
 
 o2 : List
 
 i3 : 
+0.77user 0.06system 0:00.86elapsed 96%CPU (0avgtext+0avgdata 0maxresident)k
+0inputs+0outputs (0major+10844minor)pagefaults 0swaps

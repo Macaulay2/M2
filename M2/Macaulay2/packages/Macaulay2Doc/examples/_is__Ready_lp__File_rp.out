@@ -1,4 +1,4 @@
--- -*- M2-comint -*-
+-- -*- M2-comint -*- {* hash: -779915284 *}
 
 i1 : f = openInOut "!cat"
 
@@ -17,4 +17,5 @@ i4 : isReady f
 o4 = false
 
 i5 : 
-cat: write error: Broken pipe
+0.76user 0.04system 0:00.80elapsed 99%CPU (0avgtext+0avgdata 0maxresident)k
+0inputs+0outputs (0major+10951minor)pagefaults 0swaps

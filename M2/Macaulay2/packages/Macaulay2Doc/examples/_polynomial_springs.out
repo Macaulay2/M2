@@ -1,4 +1,4 @@
--- -*- M2-comint -*-
+-- -*- M2-comint -*- {* hash: 1561350218 *}
 
 i1 : R = QQ[x,y,z];
 
@@ -10,7 +10,7 @@ o2 : PolynomialRing
 
 i3 : describe R
 
-o3 = QQ [x, y, z, Heft => {1}]
+o3 = QQ [x, y, z]
 
 i4 : 0_R
 
@@ -82,9 +82,9 @@ o14 : Ring
 
 i15 : random(2,R)
 
-        10  2   5         2   7       1  2
-o15 = - --*x  - -*x*y - 3y  + -*y*z + -*z
-         7      8             5       3
+      5  2   9       7  2   2       7       6  2
+o15 = -*x  + -*x*y + -*y  + -*x*z + -*y*z + -*z
+      4      2       6      5       6       5
 
 o15 : R
 
@@ -161,3 +161,5 @@ i32 : ZZ[a,b,c] === ZZ[a,b,c]
 o32 = false
 
 i33 : 
+0.81user 0.06system 0:00.88elapsed 98%CPU (0avgtext+0avgdata 0maxresident)k
+0inputs+0outputs (0major+10844minor)pagefaults 0swaps

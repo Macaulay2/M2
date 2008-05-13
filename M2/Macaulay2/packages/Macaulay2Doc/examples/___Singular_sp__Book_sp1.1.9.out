@@ -1,4 +1,4 @@
--- -*- M2-comint -*-
+-- -*- M2-comint -*- {* hash: -840970760 *}
 
 i1 : A = QQ[x,y,z];
 
@@ -44,6 +44,8 @@ o10 : D
 
 i11 : describe D
 
-o11 = ZZ [x, y, z, Heft => {1}]
+o11 = ZZ [x, y, z]
 
 i12 : 
+0.77user 0.04system 0:00.81elapsed 100%CPU (0avgtext+0avgdata 0maxresident)k
+0inputs+0outputs (0major+10912minor)pagefaults 0swaps

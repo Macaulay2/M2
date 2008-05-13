@@ -1,4 +1,4 @@
--- -*- M2-comint -*-
+-- -*- M2-comint -*- {* hash: -1020565634 *}
 
 i1 : isDirectory "."
 
@@ -6,11 +6,11 @@ o1 = true
 
 i2 : fn = temporaryFileName()
 
-o2 = /tmp/M2-19435-1
+o2 = /tmp/M2-13343-1
 
 i3 : fn << "hi there" << close
 
-o3 = /tmp/M2-19435-1
+o3 = /tmp/M2-13343-1
 
 o3 : File
 
@@ -21,3 +21,5 @@ o4 = false
 i5 : removeFile fn
 
 i6 : 
+0.77user 0.05system 0:00.83elapsed 99%CPU (0avgtext+0avgdata 0maxresident)k
+0inputs+0outputs (0major+10842minor)pagefaults 0swaps

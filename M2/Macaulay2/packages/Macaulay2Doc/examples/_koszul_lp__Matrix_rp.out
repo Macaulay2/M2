@@ -1,4 +1,4 @@
--- -*- M2-comint -*-
+-- -*- M2-comint -*- {* hash: -1957550672 *}
 
 i1 : R = QQ[x_1..x_4];
 
@@ -11,31 +11,29 @@ o2 : Matrix R  <--- R
 
 i3 : C = koszul f
 
-            1      4      6      4      1
-o3 = 0 <-- R  <-- R  <-- R  <-- R  <-- R
-                                        
-     0     1      2      3      4      5
+      1      4      6      4      1
+o3 = R  <-- R  <-- R  <-- R  <-- R
+                                  
+     0      1      2      3      4
 
 o3 : ChainComplex
 
 i4 : C.dd^2
 
-                   4
-o4 = 0 : 0 <----- R  : 2
-              0
-
           1         6
-     1 : R  <----- R  : 3
+o4 = 0 : R  <----- R  : 2
                0
 
           4         4
-     2 : R  <----- R  : 4
+     1 : R  <----- R  : 3
                0
 
           6         1
-     3 : R  <----- R  : 5
+     2 : R  <----- R  : 4
                0
 
 o4 : ChainComplexMap
 
 i5 : 
+0.76user 0.04system 0:00.81elapsed 99%CPU (0avgtext+0avgdata 0maxresident)k
+0inputs+0outputs (0major+10841minor)pagefaults 0swaps

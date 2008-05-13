@@ -1,4 +1,4 @@
--- -*- M2-comint -*-
+-- -*- M2-comint -*- {* hash: -1519928363 *}
 
 i1 : isPrime 91
 
@@ -26,19 +26,19 @@ i7 : isPrime(t^2+1)
 
 o7 = false
 
-i8 : 
-               R = QQ[a..d];
+i8 : R = QQ[a..d];
 
-i9 :           I = monomialCurveIdeal(R,{1,5,8})
+i9 : I = monomialCurveIdeal(R,{1,5,8})
 
                2    2      3    2 2   3     3    5        3   5    4
 o9 = ideal (a*c  - b d, b*c  - a d , b c - a d, c  - a*b*d , b  - a c)
 
 o9 : Ideal of R
 
-i10 :           isPrime I
+i10 : isPrime I
 
 o10 = true
 
-i11 :           
-      
+i11 : 
+0.78user 0.04system 0:00.83elapsed 100%CPU (0avgtext+0avgdata 0maxresident)k
+0inputs+0outputs (0major+10839minor)pagefaults 0swaps

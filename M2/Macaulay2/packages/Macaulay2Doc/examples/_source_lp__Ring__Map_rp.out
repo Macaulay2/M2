@@ -1,4 +1,4 @@
--- -*- M2-comint -*-
+-- -*- M2-comint -*- {* hash: 1670754351 *}
 
 i1 : S = ZZ/10007[x, y, z];
 
@@ -18,3 +18,5 @@ o4 = S
 o4 : PolynomialRing
 
 i5 : 
+0.80user 0.02system 0:00.85elapsed 96%CPU (0avgtext+0avgdata 0maxresident)k
+0inputs+0outputs (0major+10845minor)pagefaults 0swaps

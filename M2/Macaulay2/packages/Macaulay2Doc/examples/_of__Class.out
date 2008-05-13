@@ -1,4 +1,4 @@
--- -*- M2-comint -*-
+-- -*- M2-comint -*- {* hash: -8233541 *}
 
 i1 : ofClass class 3
 
@@ -8,7 +8,7 @@ o1 : SPAN
 
 i2 : peek oo
 
-o2 = SPAN{"an ", TO2{User :: ZZ, "integer"}}
+o2 = SPAN{"an ", TO2{Macaulay2Doc :: ZZ, "integer"}}
 
 i3 : ofClass Ring
 
@@ -44,3 +44,5 @@ o6 = foo
 o6 : DIV
 
 i7 : 
+0.80user 0.03system 0:00.85elapsed 97%CPU (0avgtext+0avgdata 0maxresident)k
+0inputs+0outputs (0major+10848minor)pagefaults 0swaps

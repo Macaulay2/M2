@@ -1,4 +1,4 @@
--- -*- M2-comint -*-
+-- -*- M2-comint -*- {* hash: 228792011 *}
 
 i1 : for i from 1 to 5 when i < 15 list i^2 do print i
 1
@@ -79,3 +79,5 @@ o12 = {0, 1, 4, 9}
 o12 : List
 
 i13 : 
+0.77user 0.08system 0:00.86elapsed 99%CPU (0avgtext+0avgdata 0maxresident)k
+0inputs+0outputs (0major+10844minor)pagefaults 0swaps

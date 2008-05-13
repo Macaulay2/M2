@@ -1,7 +1,21 @@
--- -*- M2-comint -*-
+-- -*- M2-comint -*- {* hash: -131257408 *}
 
 i1 : 30!
 
 o1 = 265252859812191058636308480000000
 
-i2 : 
+i2 : 30.!
+
+o2 = 2.65252859812191e32
+
+o2 : RR (of precision 53)
+
+i3 : 30.01!
+
+o3 = 2.74475749473282e32
+
+o3 : RR (of precision 53)
+
+i4 : 
+0.79user 0.02system 0:00.81elapsed 99%CPU (0avgtext+0avgdata 0maxresident)k
+0inputs+0outputs (0major+10843minor)pagefaults 0swaps

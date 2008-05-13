@@ -1,4 +1,4 @@
--- -*- M2-comint -*-
+-- -*- M2-comint -*- {* hash: 721036081 *}
 
 i1 : R = QQ[x,y,dx,dy,t,WeylAlgebra => {x=>dx, y=>dy}]
 
@@ -33,3 +33,5 @@ o5 = | xdx |
 o5 : Matrix R  <--- R
 
 i6 : 
+0.78user 0.06system 0:00.85elapsed 99%CPU (0avgtext+0avgdata 0maxresident)k
+0inputs+0outputs (0major+10843minor)pagefaults 0swaps

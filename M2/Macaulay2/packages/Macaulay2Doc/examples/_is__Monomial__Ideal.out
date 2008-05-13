@@ -1,4 +1,4 @@
--- -*- M2-comint -*-
+-- -*- M2-comint -*- {* hash: -2043788231 *}
 
 i1 : QQ[w,x,y,z];
 
@@ -36,3 +36,5 @@ i7 : isMonomialIdeal K
 o7 = true
 
 i8 : 
+0.80user 0.07system 0:00.87elapsed 99%CPU (0avgtext+0avgdata 0maxresident)k
+0inputs+0outputs (0major+10844minor)pagefaults 0swaps

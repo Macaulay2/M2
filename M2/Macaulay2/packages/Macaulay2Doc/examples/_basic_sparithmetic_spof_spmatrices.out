@@ -1,4 +1,4 @@
--- -*- M2-comint -*-
+-- -*- M2-comint -*- {* hash: -356573924 *}
 
 i1 : ff = matrix{{1,2,3},{4,5,6}}
 
@@ -159,3 +159,5 @@ o22 = | ag ah bg bh cg ch |
 o22 : Matrix R  <--- R
 
 i23 : 
+0.78user 0.03system 0:00.84elapsed 96%CPU (0avgtext+0avgdata 0maxresident)k
+0inputs+0outputs (0major+10848minor)pagefaults 0swaps

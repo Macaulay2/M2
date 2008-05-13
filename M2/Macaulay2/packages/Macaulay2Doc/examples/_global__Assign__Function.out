@@ -1,4 +1,4 @@
--- -*- M2-comint -*-
+-- -*- M2-comint -*- {* hash: 2029953842 *}
 
 i1 : X = new Type of MutableHashTable
 
@@ -26,13 +26,13 @@ o4 : FunctionClosure
 
 i5 : x' = new X
 
-o5 = X{}
+o5 = x'
 
 o5 : X
 
 i6 : t = {x,x'}
 
-o6 = {X{}, X{}}
+o6 = {X{}, x'}
 
 o6 : List
 
@@ -48,10 +48,12 @@ o8 : List
 
 i9 : code globalAssignFunction
 
-o9 = -- startup.m2:179-182
+o9 = -- startup.m2:189-192
           globalAssignFunction = (X,x) -> (
-               if not ReverseDictionary#?x then ReverseDictionary#x = X;
+               if not hasAttribute(x,ReverseDictionary) then setAttribute(x,ReverseDictionary,X);
                use x;
                );
 
 i10 : 
+0.77user 0.05system 0:00.84elapsed 98%CPU (0avgtext+0avgdata 0maxresident)k
+0inputs+0outputs (0major+10841minor)pagefaults 0swaps

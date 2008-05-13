@@ -1,4 +1,4 @@
--- -*- M2-comint -*-
+-- -*- M2-comint -*- {* hash: 1032078046 *}
 
 i1 : L = {a,1,b,2}
 
@@ -19,3 +19,5 @@ o3 = b
 o3 : Symbol
 
 i4 : 
+0.80user 0.04system 0:00.87elapsed 96%CPU (0avgtext+0avgdata 0maxresident)k
+0inputs+0outputs (0major+10842minor)pagefaults 0swaps

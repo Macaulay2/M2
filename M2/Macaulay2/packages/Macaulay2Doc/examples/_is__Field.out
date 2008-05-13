@@ -1,10 +1,10 @@
--- -*- M2-comint -*-
+-- -*- M2-comint -*- {* hash: 275244149 *}
 
 i1 : isField QQ
 
 o1 = true
 
-i2 : isField CC
+i2 : isField CC_53
 
 o2 = true
 
@@ -41,3 +41,5 @@ i9 : isField F
 o9 = true
 
 i10 : 
+0.82user 0.05system 0:00.90elapsed 96%CPU (0avgtext+0avgdata 0maxresident)k
+0inputs+0outputs (0major+10847minor)pagefaults 0swaps

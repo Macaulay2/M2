@@ -1,4 +1,4 @@
--- -*- M2-comint -*-
+-- -*- M2-comint -*- {* hash: -610475016 *}
 
 i1 : R = QQ[x,y,z];
 
@@ -16,3 +16,5 @@ o3 = Proj(R)
 o3 : ProjectiveVariety
 
 i4 : 
+0.76user 0.03system 0:00.81elapsed 98%CPU (0avgtext+0avgdata 0maxresident)k
+0inputs+0outputs (0major+10841minor)pagefaults 0swaps

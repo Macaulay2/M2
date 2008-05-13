@@ -1,4 +1,4 @@
--- -*- M2-comint -*-
+-- -*- M2-comint -*- {* hash: 810880650 *}
 
 i1 : M = monoid[x_1..x_10];
 
@@ -7,3 +7,5 @@ i2 : numgens M
 o2 = 10
 
 i3 : 
+0.77user 0.08system 0:00.85elapsed 99%CPU (0avgtext+0avgdata 0maxresident)k
+0inputs+0outputs (0major+10844minor)pagefaults 0swaps

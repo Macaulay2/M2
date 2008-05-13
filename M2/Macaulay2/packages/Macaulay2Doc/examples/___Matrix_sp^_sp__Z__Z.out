@@ -1,4 +1,4 @@
--- -*- M2-comint -*-
+-- -*- M2-comint -*- {* hash: 1608845647 *}
 
 i1 : R = ZZ/7[x]/(x^6-3*x-4)
 
@@ -100,3 +100,5 @@ o13 = {3} | 1 0 |
 o13 : Matrix R  <--- R
 
 i14 : 
+0.98user 0.03system 0:01.02elapsed 99%CPU (0avgtext+0avgdata 0maxresident)k
+0inputs+0outputs (0major+12960minor)pagefaults 0swaps

@@ -1,0 +1,11 @@
+-- -*- M2-comint -*- {* hash: -323391832 *}
+
+i1 : sech(pi/3)
+
+o1 = .624887966296087
+
+o1 : RR (of precision 53)
+
+i2 : 
+0.79user 0.08system 0:00.87elapsed 100%CPU (0avgtext+0avgdata 0maxresident)k
+0inputs+0outputs (0major+10840minor)pagefaults 0swaps

@@ -1,4 +1,4 @@
--- -*- M2-comint -*-
+-- -*- M2-comint -*- {* hash: -2062625413 *}
 
 i1 : y = x_3
 
@@ -27,3 +27,5 @@ i5 : value y
 o5 = 4
 
 i6 : 
+0.79user 0.06system 0:00.85elapsed 100%CPU (0avgtext+0avgdata 0maxresident)k
+0inputs+0outputs (0major+10842minor)pagefaults 0swaps

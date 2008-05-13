@@ -1,4 +1,4 @@
--- -*- M2-comint -*-
+-- -*- M2-comint -*- {* hash: -323534605 *}
 
 i1 : R = QQ[a,b];
 
@@ -31,9 +31,7 @@ o5 : Ideal of R
 
 i6 : M = R^1/module(I)
 
-o6 = cokernel | -x_2x_3+x_1x_4 x_0x_1x_2-x_0x_2^2+x_1^2x_3
-     ------------------------------------------------------------------------
-     x_3^3+x_0x_3x_4-x_0x_4^2 |
+o6 = cokernel | -x_2x_3+x_1x_4 x_0x_1x_2-x_0x_2^2+x_1^2x_3 x_3^3+x_0x_3x_4-x_0x_4^2 |
 
                             1
 o6 : R-module, quotient of R
@@ -53,3 +51,5 @@ o8 = cokernel | x_4 x_3 x_2 x_1 x_0 |
 o8 : R-module, quotient of R
 
 i9 : 
+0.84user 0.06system 0:00.92elapsed 98%CPU (0avgtext+0avgdata 0maxresident)k
+0inputs+0outputs (0major+11743minor)pagefaults 0swaps

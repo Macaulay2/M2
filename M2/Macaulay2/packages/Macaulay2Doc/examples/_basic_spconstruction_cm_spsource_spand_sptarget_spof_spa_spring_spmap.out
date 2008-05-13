@@ -1,4 +1,4 @@
--- -*- M2-comint -*-
+-- -*- M2-comint -*- {* hash: -623877768 *}
 
 i1 : S = QQ[x,y,z]/ideal(x^3+y^3+z^3);
 
@@ -83,3 +83,5 @@ o16 = U
 o16 : U-module, free
 
 i17 : 
+0.79user 0.02system 0:00.81elapsed 100%CPU (0avgtext+0avgdata 0maxresident)k
+0inputs+0outputs (0major+10850minor)pagefaults 0swaps

@@ -1,4 +1,4 @@
--- -*- M2-comint -*-
+-- -*- M2-comint -*- {* hash: 739658658 *}
 
 i1 : R = ZZ/101[a,b,c];
 
@@ -23,4 +23,18 @@ o4 = monomialIdeal (a , a b, a*b , b , c )
 
 o4 : MonomialIdeal of R
 
-i5 : 
+i5 : R = ZZ[x,y]
+
+o5 = R
+
+o5 : PolynomialRing
+
+i6 : monomialIdeal ideal(2*x,3*y)
+
+o6 = monomialIdeal (x, y)
+
+o6 : MonomialIdeal of R
+
+i7 : 
+0.77user 0.03system 0:00.93elapsed 86%CPU (0avgtext+0avgdata 0maxresident)k
+0inputs+0outputs (0major+9341minor)pagefaults 0swaps

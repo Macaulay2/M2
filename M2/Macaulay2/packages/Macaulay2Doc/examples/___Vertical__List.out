@@ -1,4 +1,4 @@
--- -*- M2-comint -*-
+-- -*- M2-comint -*- {* hash: -316395205 *}
 
 i1 : a .. e
 
@@ -6,14 +6,32 @@ o1 = (a, b, c, d, e)
 
 o1 : Sequence
 
-i2 : VerticalList oo
+i2 : v = VerticalList oo
 
-o2 = {a}
-      b
-      c
-      d
-      e
+o2 = { a }
+     { b }
+     { c }
+     { d }
+     { e }
 
 o2 : VerticalList
 
-i3 : 
+i3 : v_1
+
+o3 = b
+
+o3 : Symbol
+
+i4 : length v
+
+o4 = 5
+
+i5 : toList v
+
+o5 = {a, b, c, d, e}
+
+o5 : List
+
+i6 : 
+0.77user 0.07system 0:00.85elapsed 99%CPU (0avgtext+0avgdata 0maxresident)k
+0inputs+0outputs (0major+10843minor)pagefaults 0swaps

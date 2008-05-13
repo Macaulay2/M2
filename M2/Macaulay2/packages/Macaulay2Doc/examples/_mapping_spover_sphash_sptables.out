@@ -1,4 +1,4 @@
--- -*- M2-comint -*-
+-- -*- M2-comint -*- {* hash: -1807497692 *}
 
 i1 : x = new HashTable from {a=>1, b=>2}
 
@@ -36,16 +36,16 @@ o5 = HashTable{a => 1}
 o5 : HashTable
 
 i6 : scanValues(x, print)
-1
 2
+1
 
 i7 : scanKeys(x, print)
-a
 b
+a
 
 i8 : scanPairs(x, print)
-(a, 1)
 (b, 2)
+(a, 1)
 
 i9 : y = new HashTable from {b=>200, c=>300}
 
@@ -72,3 +72,5 @@ o11 = HashTable{(a, b) => 200}
 o11 : HashTable
 
 i12 : 
+0.78user 0.04system 0:00.90elapsed 91%CPU (0avgtext+0avgdata 0maxresident)k
+0inputs+0outputs (0major+10839minor)pagefaults 0swaps

@@ -1,4 +1,4 @@
--- -*- M2-comint -*-
+-- -*- M2-comint -*- {* hash: 1842686295 *}
 
 i1 : {a,b,c} #? 2
 
@@ -9,3 +9,5 @@ i2 : {a,b,c} #? 22
 o2 = false
 
 i3 : 
+0.77user 0.02system 0:00.80elapsed 100%CPU (0avgtext+0avgdata 0maxresident)k
+0inputs+0outputs (0major+10840minor)pagefaults 0swaps

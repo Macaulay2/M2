@@ -1,4 +1,4 @@
--- -*- M2-comint -*-
+-- -*- M2-comint -*- {* hash: -1267822123 *}
 
 i1 : R = QQ[a..d];
 
@@ -37,3 +37,5 @@ o5 = image {3} | 0    -bc 0     -b2+c2 |
 o5 : R-module, submodule of R
 
 i6 : 
+0.79user 0.03system 0:00.83elapsed 99%CPU (0avgtext+0avgdata 0maxresident)k
+0inputs+0outputs (0major+10844minor)pagefaults 0swaps

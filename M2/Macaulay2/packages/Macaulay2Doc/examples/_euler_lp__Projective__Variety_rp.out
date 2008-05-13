@@ -1,4 +1,4 @@
--- -*- M2-comint -*-
+-- -*- M2-comint -*- {* hash: -2097978511 *}
 
 i1 : Quartic = Proj(QQ[x_0..x_2]/ideal(x_0^4+x_1^4+x_2^4))
 
@@ -21,3 +21,5 @@ i4 : euler(Quintic)
 o4 = -200
 
 i5 : 
+0.94user 0.04system 0:01.01elapsed 98%CPU (0avgtext+0avgdata 0maxresident)k
+0inputs+0outputs (0major+12971minor)pagefaults 0swaps

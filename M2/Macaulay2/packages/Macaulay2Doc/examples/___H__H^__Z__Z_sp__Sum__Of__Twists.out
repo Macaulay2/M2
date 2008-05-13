@@ -1,4 +1,4 @@
--- -*- M2-comint -*-
+-- -*- M2-comint -*- {* hash: 820912587 *}
 
 i1 : X = Proj(QQ[x_0..x_2])
 
@@ -147,17 +147,11 @@ i20 : HorrocksMumford = sheaf(coker D.dd_3);
 
 i21 : T = HH^1(HorrocksMumford(>=-1))
 
-o21 = cokernel {-1} | x_4 x_2  0   0   x_0  0   0    0    x_3 0   0   0   
-               {-1} | 0   -x_3 x_1 0   0    x_4 x_2  0    0   0   0   x_0 
-               {-1} | 0   0    0   x_3 -x_2 x_0 0    x_1  0   0   0   0   
-               {-1} | 0   0    0   0   0    0   -x_4 -x_2 x_1 x_0 x_3 0   
-               {-1} | 0   0    0   0   0    0   0    0    0   0   x_4 -x_3
-      -----------------------------------------------------------------------
-      0   0    x_1 |
-      0   0    0   |
-      0   -x_4 0   |
-      0   0    0   |
-      x_2 x_1  x_0 |
+o21 = cokernel {-1} | x_4 x_2  0   0   x_0  0   0    0    x_3 0   0   0    0   0    x_1 |
+               {-1} | 0   -x_3 x_1 0   0    x_4 x_2  0    0   0   0   x_0  0   0    0   |
+               {-1} | 0   0    0   x_3 -x_2 x_0 0    x_1  0   0   0   0    0   -x_4 0   |
+               {-1} | 0   0    0   0   0    0   -x_4 -x_2 x_1 x_0 x_3 0    0   0    0   |
+               {-1} | 0   0    0   0   0    0   0    0    0   0   x_4 -x_3 x_2 x_1  x_0 |
 
                              5
 o21 : R-module, quotient of R
@@ -169,3 +163,5 @@ o22 = (5, 10, 10, 2)
 o22 : Sequence
 
 i23 : 
+0.91user 0.06system 0:00.97elapsed 100%CPU (0avgtext+0avgdata 0maxresident)k
+0inputs+0outputs (0major+12959minor)pagefaults 0swaps

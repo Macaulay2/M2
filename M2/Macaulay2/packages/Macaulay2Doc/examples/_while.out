@@ -1,4 +1,4 @@
--- -*- M2-comint -*-
+-- -*- M2-comint -*- {* hash: -1843379306 *}
 
 i1 : i = 0 ; while i < 10 list i^2 do i = i+1
 
@@ -41,3 +41,5 @@ o14 = {1, 4, 9, 16}
 o14 : List
 
 i15 : 
+0.78user 0.03system 0:00.81elapsed 100%CPU (0avgtext+0avgdata 0maxresident)k
+0inputs+0outputs (0major+10844minor)pagefaults 0swaps

@@ -1,0 +1,41 @@
+-- -*- M2-comint -*- {* hash: 1365732229 *}
+
+i1 : pi
+
+o1 = pi
+
+o1 : Constant
+
+i2 : +pi
+
+o2 = 3.14159265358979
+
+o2 : RR (of precision 53)
+
+i3 : numeric_100 pi
+
+o3 = 3.14159265358979323846264338328
+
+o3 : RR (of precision 100)
+
+i4 : 2. * pi
+
+o4 = 6.28318530717959
+
+o4 : RR (of precision 53)
+
+i5 : 2p100 * pi
+
+o5 = 6.28318530717958647692528676656
+
+o5 : RR (of precision 100)
+
+i6 : exp(2*pi*ii/17)
+
+o6 = .932472229404356+.361241666187153*ii
+
+o6 : CC (of precision 53)
+
+i7 : 
+0.77user 0.03system 0:00.80elapsed 100%CPU (0avgtext+0avgdata 0maxresident)k
+0inputs+0outputs (0major+10843minor)pagefaults 0swaps

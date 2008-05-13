@@ -1,31 +1,33 @@
--- -*- M2-comint -*-
+-- -*- M2-comint -*- {* hash: 1605364551 *}
 
 i1 : src = temporaryFileName()
 
-o1 = /tmp/M2-19617-1
+o1 = /tmp/M2-13740-1
 
 i2 : dst = temporaryFileName()
 
-o2 = /tmp/M2-19617-2
+o2 = /tmp/M2-13740-2
 
 i3 : src << "hi there" << close
 
-o3 = /tmp/M2-19617-1
+o3 = /tmp/M2-13740-1
 
 o3 : File
 
 i4 : moveFile(src,dst,Verbose=>true)
---moving: /tmp/M2-19617-1 -> /tmp/M2-19617-2
+--moving: /tmp/M2-13740-1 -> /tmp/M2-13740-2
 
 i5 : get dst
 
 o5 = hi there
 
 i6 : bak = moveFile(dst,Verbose=>true)
---backup file created: /tmp/M2-19617-2.bak
+--backup file created: /tmp/M2-13740-2.bak
 
-o6 = /tmp/M2-19617-2.bak
+o6 = /tmp/M2-13740-2.bak
 
 i7 : removeFile bak
 
 i8 : 
+0.75user 0.05system 0:00.81elapsed 100%CPU (0avgtext+0avgdata 0maxresident)k
+0inputs+0outputs (0major+10844minor)pagefaults 0swaps

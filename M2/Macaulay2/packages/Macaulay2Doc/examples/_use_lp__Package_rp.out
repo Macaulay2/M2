@@ -1,4 +1,4 @@
--- -*- M2-comint -*-
+-- -*- M2-comint -*- {* hash: -1649426102 *}
 
 i1 : loadPackage "FirstPackage"
 
@@ -13,6 +13,10 @@ o2 = firstFunction
 o2 : MethodFunction
 
 i3 : dismiss FirstPackage
+
+o3 = FirstPackage
+
+o3 : Package
 
 i4 : firstFunction 
 
@@ -29,3 +33,5 @@ o6 = firstFunction
 o6 : MethodFunction
 
 i7 : 
+0.77user 0.04system 0:00.82elapsed 98%CPU (0avgtext+0avgdata 0maxresident)k
+0inputs+0outputs (0major+10843minor)pagefaults 0swaps

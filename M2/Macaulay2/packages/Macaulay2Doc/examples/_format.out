@@ -1,0 +1,49 @@
+-- -*- M2-comint -*- {* hash: 1133502092 *}
+
+i1 : s = "a\"b\"c"
+
+o1 = a"b"c
+
+i2 : t = format s
+
+o2 = "a\"b\"c"
+
+i3 : u = value t
+
+o3 = a"b"c
+
+i4 : u == s
+
+o4 = true
+
+i5 : format(10,1/3000.)
+
+o5 = .0003333333333
+
+i6 : format(10,6,1/3000.)
+
+o6 = .000333
+
+i7 : format(10,6,2,1/3000.)
+
+o7 = 3.33e-4
+
+i8 : format(10,300000.)
+
+o8 = 300000
+
+i9 : format(10,-1,10,5,300000.)
+
+o9 = 300000
+
+i10 : format(10,-1,10,4,300000.)
+
+o10 = 3e5
+
+i11 : format(10,-1,10,4,"E",300000.)
+
+o11 = 3E5
+
+i12 : 
+0.76user 0.05system 0:00.82elapsed 100%CPU (0avgtext+0avgdata 0maxresident)k
+0inputs+0outputs (0major+10840minor)pagefaults 0swaps

@@ -1,4 +1,4 @@
--- -*- M2-comint -*-
+-- -*- M2-comint -*- {* hash: -1295585885 *}
 
 i1 : frac ZZ
 
@@ -36,7 +36,7 @@ i6 : x/1
 
 o6 = x
 
-o6 : frac(R)
+o6 : R
 
 i7 : use frac R
 
@@ -94,3 +94,5 @@ o15 = - x  - x*y - y
 o15 : R
 
 i16 : 
+0.81user 0.07system 0:00.89elapsed 98%CPU (0avgtext+0avgdata 0maxresident)k
+0inputs+0outputs (0major+10847minor)pagefaults 0swaps

@@ -1,4 +1,4 @@
--- -*- M2-comint -*-
+-- -*- M2-comint -*- {* hash: 1338797755 *}
 
 i1 : g = {a=>1, b=>2} >> opts -> args -> {args, opts}
 
@@ -27,4 +27,18 @@ o4 = {(t, u), OptionTable{a => 44}}
 
 o4 : List
 
-i5 : 
+i5 : h = true >> opts -> args -> {args, opts}
+
+o5 = h
+
+o5 : FunctionClosure
+
+i6 : h(t,u,c=>55)
+
+o6 = {(t, u), OptionTable{c => 55}}
+
+o6 : List
+
+i7 : 
+0.76user 0.04system 0:00.80elapsed 100%CPU (0avgtext+0avgdata 0maxresident)k
+0inputs+0outputs (0major+10843minor)pagefaults 0swaps

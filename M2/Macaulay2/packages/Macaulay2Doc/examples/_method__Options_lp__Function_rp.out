@@ -1,4 +1,4 @@
--- -*- M2-comint -*-
+-- -*- M2-comint -*- {* hash: 1418717296 *}
 
 i1 : methodOptions source
 
@@ -11,19 +11,13 @@ o1 : OptionTable
 
 i2 : methodOptions res
 
-o2 = OptionTable{Binary => false                                           
+o2 = OptionTable{Binary => false                                                                                                                                                                              }
                  Dispatch => {Thing, Thing, Thing, Thing}
-                 Options => {StopBeforeComputation => false, LengthLimit =>
+                 Options => {StopBeforeComputation => false, LengthLimit => infinity, DegreeLimit => , SyzygyLimit => infinity, PairLimit => infinity, HardDegreeLimit => {}, SortStrategy => 0, Strategy => }
                  TypicalValue => Thing
-     ------------------------------------------------------------------------
-                                                                     
-
-     infinity, DegreeLimit => , SyzygyLimit => infinity, PairLimit =>
-     ------------------------------------------------------------------------
-                                                                      }
-
-     infinity, HardDegreeLimit => {}, SortStrategy => 0, Strategy => }
 
 o2 : OptionTable
 
 i3 : 
+0.77user 0.04system 0:00.81elapsed 100%CPU (0avgtext+0avgdata 0maxresident)k
+0inputs+0outputs (0major+10844minor)pagefaults 0swaps

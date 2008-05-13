@@ -1,4 +1,4 @@
--- -*- M2-comint -*-
+-- -*- M2-comint -*- {* hash: -1811599084 *}
 
 i1 : x = "abcde"
 
@@ -71,3 +71,5 @@ i15 : z
 o15 = 555
 
 i16 : 
+0.76user 0.08system 0:00.85elapsed 100%CPU (0avgtext+0avgdata 0maxresident)k
+0inputs+0outputs (0major+10844minor)pagefaults 0swaps

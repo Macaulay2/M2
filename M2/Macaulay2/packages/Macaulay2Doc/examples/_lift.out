@@ -1,4 +1,4 @@
--- -*- M2-comint -*-
+-- -*- M2-comint -*- {* hash: 1727213417 *}
 
 i1 : lift(4/2,ZZ)
 
@@ -82,44 +82,30 @@ i15 : lift(lift(g,QQ),ZZ)
 
 o15 = -4
 
-i16 : substitute(3,RR)
+i16 : lift(3.0,ZZ)
 
-o16 = 3.
+o16 = 3
 
-o16 : RR
-
-i17 : lift(3.0,ZZ)
+i17 : lift(3.0,QQ)
 
 o17 = 3
 
-i18 : lift(3.0,QQ)
+o17 : QQ
 
-o18 = 3
+i18 : 12/127.
 
-o18 : QQ
+o18 = .094488188976378
 
-i19 : 12/127.
+o18 : RR (of precision 53)
 
-o19 = 0.0944882
-
-o19 : RR
-
-i20 : lift(oo,QQ)
+i19 : lift(oo,QQ)
 
        12
-o20 = ---
+o19 = ---
       127
 
-o20 : QQ
+o19 : QQ
 
-i21 : setPrecision 15
-
-o21 = 100
-
-i22 : z = lift(.2341124,RRR)
-
-o22 = .234112399999999998279*10^0
-
-o22 : RRR
-
-i23 : 
+i20 : 
+0.78user 0.03system 0:00.82elapsed 100%CPU (0avgtext+0avgdata 0maxresident)k
+0inputs+0outputs (0major+10842minor)pagefaults 0swaps

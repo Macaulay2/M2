@@ -1,4 +1,4 @@
--- -*- M2-comint -*-
+-- -*- M2-comint -*- {* hash: -727353280 *}
 
 i1 : (hold 2)^5 * (hold 3)^3
 
@@ -8,3 +8,5 @@ o1 = 2 3
 o1 : Expression of class Product
 
 i2 : 
+0.79user 0.06system 0:00.86elapsed 98%CPU (0avgtext+0avgdata 0maxresident)k
+0inputs+0outputs (0major+10842minor)pagefaults 0swaps

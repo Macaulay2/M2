@@ -1,4 +1,4 @@
--- -*- M2-comint -*-
+-- -*- M2-comint -*- {* hash: 342689132 *}
 
 i1 : S = ZZ/101[x,y,z,Degrees => {{2,3},{1,2},{2,0}}];
 
@@ -9,3 +9,5 @@ o2 = {{{0, 0}}, {{2, 3}, {1, 2}, {2, 0}}}
 o2 : List
 
 i3 : 
+0.75user 0.05system 0:00.80elapsed 99%CPU (0avgtext+0avgdata 0maxresident)k
+0inputs+0outputs (0major+10842minor)pagefaults 0swaps

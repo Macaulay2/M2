@@ -1,4 +1,4 @@
--- -*- M2-comint -*-
+-- -*- M2-comint -*- {* hash: -1506941336 *}
 
 i1 : R = GF(8,Variable=>a)
 
@@ -8,20 +8,20 @@ o1 : GaloisField
 
 i2 : f = R_0 ++ R_0^2 ++ R_0^3 ++ R_0^4
 
-o2 = | a 0  0   0    |
-     | 0 a2 0   0    |
-     | 0 0  a+1 0    |
-     | 0 0  0   a2+a |
+o2 = | a 0  0    0      |
+     | 0 a2 0    0      |
+     | 0 0  a2+1 0      |
+     | 0 0  0    a2+a+1 |
 
              4       4
 o2 : Matrix R  <--- R
 
 i3 : generators image f
 
-o3 = | a 0  0   0    |
-     | 0 a2 0   0    |
-     | 0 0  a+1 0    |
-     | 0 0  0   a2+a |
+o3 = | a 0  0    0      |
+     | 0 a2 0    0      |
+     | 0 0  a2+1 0      |
+     | 0 0  0    a2+a+1 |
 
              4       4
 o3 : Matrix R  <--- R
@@ -37,3 +37,5 @@ o4 = | 1 0 0 0 |
 o4 : Matrix R  <--- R
 
 i5 : 
+0.84user 0.01system 0:00.86elapsed 99%CPU (0avgtext+0avgdata 0maxresident)k
+0inputs+0outputs (0major+10848minor)pagefaults 0swaps

@@ -1,4 +1,4 @@
--- -*- M2-comint -*-
+-- -*- M2-comint -*- {* hash: -855402986 *}
 
 i1 : R = ZZ[a..d,x,y];
 
@@ -24,3 +24,5 @@ o4 = | x3 x2y xy2 y3 x2 xy y2 |
 o4 : Matrix R  <--- R
 
 i5 : 
+0.75user 0.06system 0:00.83elapsed 98%CPU (0avgtext+0avgdata 0maxresident)k
+0inputs+0outputs (0major+10906minor)pagefaults 0swaps

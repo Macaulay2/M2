@@ -1,4 +1,4 @@
--- -*- M2-comint -*-
+-- -*- M2-comint -*- {* hash: -1458861627 *}
 
 i1 : m = mutableMatrix matrix{{1,2,3},{4,5,6}}
 
@@ -22,3 +22,5 @@ o3 = | 2 1 3 |
 o3 : MutableMatrix
 
 i4 : 
+0.78user 0.06system 0:00.86elapsed 98%CPU (0avgtext+0avgdata 0maxresident)k
+0inputs+0outputs (0major+10844minor)pagefaults 0swaps

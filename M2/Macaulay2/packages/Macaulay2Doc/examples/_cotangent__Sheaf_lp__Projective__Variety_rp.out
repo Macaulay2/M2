@@ -1,4 +1,4 @@
--- -*- M2-comint -*-
+-- -*- M2-comint -*- {* hash: -835086281 *}
 
 i1 : X=Proj(QQ[x,y,z]/(x^4+y^4+z^4))
 
@@ -23,3 +23,5 @@ i4 : degree omega
 o4 = 4
 
 i5 : 
+0.83user 0.03system 0:00.98elapsed 88%CPU (0avgtext+0avgdata 0maxresident)k
+0inputs+0outputs (0major+11025minor)pagefaults 0swaps

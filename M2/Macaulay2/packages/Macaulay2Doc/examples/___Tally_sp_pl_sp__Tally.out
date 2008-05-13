@@ -1,4 +1,4 @@
--- -*- M2-comint -*-
+-- -*- M2-comint -*- {* hash: -35927802 *}
 
 i1 : x = tally {a,a,a,b,b,c}
 
@@ -26,3 +26,5 @@ o3 = Tally{a => 3}
 o3 : Tally
 
 i4 : 
+0.78user 0.03system 0:00.82elapsed 100%CPU (0avgtext+0avgdata 0maxresident)k
+0inputs+0outputs (0major+10844minor)pagefaults 0swaps

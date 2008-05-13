@@ -1,0 +1,11 @@
+-- -*- M2-comint -*- {* hash: 337007754 *}
+
+i1 : Gamma 6
+
+o1 = 120
+
+o1 : RR (of precision 53)
+
+i2 : 
+0.77user 0.03system 0:00.80elapsed 100%CPU (0avgtext+0avgdata 0maxresident)k
+0inputs+0outputs (0major+10843minor)pagefaults 0swaps

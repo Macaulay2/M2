@@ -1,4 +1,4 @@
--- -*- M2-comint -*-
+-- -*- M2-comint -*- {* hash: -1895171653 *}
 
 i1 : R = QQ[a..d];
 
@@ -19,9 +19,9 @@ i4 : G = substitute(F, R/(det F))
 o4 = | a b |
      | c d |
 
-             QQ [a, b, c, d] 2       QQ [a, b, c, d] 2
-o4 : Matrix (---------------)  <--- (---------------)
-               - b*c + a*d             - b*c + a*d
+                  R      2            R      2
+o4 : Matrix (-----------)  <--- (-----------)
+             - b*c + a*d         - b*c + a*d
 
 i5 : isInjective G
 
@@ -58,3 +58,5 @@ i11 : isInjective phi'
 o11 = true
 
 i12 : 
+0.78user 0.03system 0:00.82elapsed 100%CPU (0avgtext+0avgdata 0maxresident)k
+0inputs+0outputs (0major+10841minor)pagefaults 0swaps

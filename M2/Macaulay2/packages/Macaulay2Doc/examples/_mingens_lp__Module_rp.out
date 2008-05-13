@@ -1,4 +1,4 @@
--- -*- M2-comint -*-
+-- -*- M2-comint -*- {* hash: 925475272 *}
 
 i1 : R = QQ[a..f]
 
@@ -55,13 +55,9 @@ o7 : Matrix R  <--- R
 
 i8 : I = kernel M
 
-o8 = image {4} | -bce+adf-1 0          a3c-d2f   a4c-bcde-d   -a3ce+d2ef  
-           {4} | 0          -bce+adf-1 -a2bc+def -a3bc+bce2+e a3df-de2f-a2
-           {3} | -a2bc+def  -a3c+d2f   0         -a2bcd+a3ce  -a5c+a2d2f  
-     ------------------------------------------------------------------------
-     a4df-bd2ef-a3    -a5df+abd2ef+a4  -a5cf+abcdef+adf |
-     -a3bdf+bde2f+a2b a4bdf-abde2f-a3b a4bcf-abce2f-aef |
-     -a2bd2f+a3def    a3bd2f-a4def     a3bcdf-a4cef     |
+o8 = image {4} | -bce+adf-1 0          a3c-d2f   a4c-bcde-d   -a3ce+d2ef   a4df-bd2ef-a3    -a5df+abd2ef+a4  -a5cf+abcdef+adf |
+           {4} | 0          -bce+adf-1 -a2bc+def -a3bc+bce2+e a3df-de2f-a2 -a3bdf+bde2f+a2b a4bdf-abde2f-a3b a4bcf-abce2f-aef |
+           {3} | -a2bc+def  -a3c+d2f   0         -a2bcd+a3ce  -a5c+a2d2f   -a2bd2f+a3def    a3bd2f-a4def     a3bcdf-a4cef     |
 
                              3
 o8 : R-module, submodule of R
@@ -89,3 +85,5 @@ o11 = image {4} | bce-adf+1 0         a3c-d2f   |
 o11 : R-module, submodule of R
 
 i12 : 
+0.80user 0.06system 0:00.87elapsed 99%CPU (0avgtext+0avgdata 0maxresident)k
+0inputs+0outputs (0major+10839minor)pagefaults 0swaps

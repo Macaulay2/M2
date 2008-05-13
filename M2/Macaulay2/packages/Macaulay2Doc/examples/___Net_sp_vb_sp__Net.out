@@ -1,4 +1,4 @@
--- -*- M2-comint -*-
+-- -*- M2-comint -*- {* hash: 695876921 *}
 
 i1 : "abc" | "def"
 
@@ -19,3 +19,5 @@ i4 : "t = " | 333
 o4 = t = 333
 
 i5 : 
+0.74user 0.04system 0:00.78elapsed 100%CPU (0avgtext+0avgdata 0maxresident)k
+0inputs+0outputs (0major+10814minor)pagefaults 0swaps

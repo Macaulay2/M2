@@ -1,4 +1,4 @@
--- -*- M2-comint -*-
+-- -*- M2-comint -*- {* hash: -1458734837 *}
 
 i1 : accumulate(identity, a, {b,c,d,e})
 
@@ -13,3 +13,5 @@ o2 = (1, 2, 6, 24, 120, 720, 5040, 40320, 362880, 3628800)
 o2 : Sequence
 
 i3 : 
+0.79user 0.05system 0:00.85elapsed 100%CPU (0avgtext+0avgdata 0maxresident)k
+0inputs+0outputs (0major+10843minor)pagefaults 0swaps

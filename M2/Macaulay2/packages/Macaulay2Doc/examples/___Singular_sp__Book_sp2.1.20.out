@@ -1,4 +1,4 @@
--- -*- M2-comint -*-
+-- -*- M2-comint -*- {* hash: -110659461 *}
 
 i1 : A = QQ[x,y,z];
 
@@ -72,3 +72,5 @@ o11 = image | 1 y-z x4 |
 o11 : Q-module, submodule of Q
 
 i12 : 
+0.81user 0.03system 0:00.84elapsed 100%CPU (0avgtext+0avgdata 0maxresident)k
+0inputs+0outputs (0major+10843minor)pagefaults 0swaps

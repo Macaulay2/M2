@@ -1,4 +1,4 @@
--- -*- M2-comint -*-
+-- -*- M2-comint -*- {* hash: -675417675 *}
 
 i1 : R = ZZ[x,y]
 
@@ -8,8 +8,8 @@ o1 : PolynomialRing
 
 i2 : f = random(R^{2:1},R^2)
 
-o2 = {-1} | y     -9x-9y |
-     {-1} | 5x+2y 7y     |
+o2 = {-1} | 4x+3y 3x+9y |
+     {-1} | 8x+y  6x+5y |
 
              2       2
 o2 : Matrix R  <--- R
@@ -26,26 +26,28 @@ o3 : Matrix R  <--- R
 
 i4 : quotient'(f,g)
 
-o4 = {-1} | 0 1 -9 -9 |
-     {-1} | 5 2 0  7  |
+o4 = {-1} | 4 3 3 9 |
+     {-1} | 8 1 6 5 |
 
              2       4
 o4 : Matrix R  <--- R
 
 i5 : f = f + map(target f, source f, id_(R^2))
 
-o5 = {-1} | y+1   -9x-9y |
-     {-1} | 5x+2y 7y+1   |
+o5 = {-1} | 4x+3y+1 3x+9y   |
+     {-1} | 8x+y    6x+5y+1 |
 
              2       2
 o5 : Matrix R  <--- R
 
 i6 : quotient'(f,g)
 
-o6 = {-1} | 0 1 -9 -9 |
-     {-1} | 5 2 0  7  |
+o6 = {-1} | 4 3 3 9 |
+     {-1} | 8 1 6 5 |
 
              2       4
 o6 : Matrix R  <--- R
 
 i7 : 
+0.78user 0.02system 0:00.81elapsed 99%CPU (0avgtext+0avgdata 0maxresident)k
+0inputs+0outputs (0major+10842minor)pagefaults 0swaps

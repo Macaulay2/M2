@@ -1,5 +1,0 @@
-help "jacobian"
-* "jacobian(Ideal)"
-apropos "deal"
-examples "jacobian(Ideal)"
-print examples "jacobian(Ideal)"

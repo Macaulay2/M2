@@ -1,4 +1,4 @@
--- -*- M2-comint -*-
+-- -*- M2-comint -*- {* hash: -1177954776 *}
 
 i1 : scan({a,b,c}, print)
 a
@@ -92,3 +92,5 @@ i17 : fold((i,j) -> i*10+j, {7,3,5,4,2})
 o17 = 73542
 
 i18 : 
+0.77user 0.04system 0:00.81elapsed 100%CPU (0avgtext+0avgdata 0maxresident)k
+0inputs+0outputs (0major+10844minor)pagefaults 0swaps

@@ -1,4 +1,4 @@
--- -*- M2-comint -*-
+-- -*- M2-comint -*- {* hash: -389197512 *}
 
 i1 : X = Proj(QQ[x,y])
 
@@ -13,3 +13,5 @@ o2 = 0
 o2 : coherent sheaf on X
 
 i3 : 
+0.76user 0.04system 0:00.81elapsed 99%CPU (0avgtext+0avgdata 0maxresident)k
+0inputs+0outputs (0major+10839minor)pagefaults 0swaps

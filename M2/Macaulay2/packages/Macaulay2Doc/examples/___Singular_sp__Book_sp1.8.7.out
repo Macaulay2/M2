@@ -1,4 +1,4 @@
--- -*- M2-comint -*-
+-- -*- M2-comint -*- {* hash: -651995965 *}
 
 i1 : A = QQ[x,y,z,MonomialOrder=>Lex];
 
@@ -17,3 +17,5 @@ o3 = {-6} | z6-4z4+4z3-z2 |
 o3 : Matrix A  <--- A
 
 i4 : 
+0.77user 0.08system 0:00.86elapsed 99%CPU (0avgtext+0avgdata 0maxresident)k
+0inputs+0outputs (0major+10845minor)pagefaults 0swaps

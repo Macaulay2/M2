@@ -1,4 +1,4 @@
--- -*- M2-comint -*-
+-- -*- M2-comint -*- {* hash: 382690499 *}
 
 i1 : x = new MutableHashTable
 
@@ -19,3 +19,5 @@ o3 = p
 o3 : Symbol
 
 i4 : 
+0.76user 0.02system 0:00.81elapsed 97%CPU (0avgtext+0avgdata 0maxresident)k
+0inputs+0outputs (0major+10842minor)pagefaults 0swaps

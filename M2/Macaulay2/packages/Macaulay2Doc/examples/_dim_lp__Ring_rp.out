@@ -1,4 +1,4 @@
--- -*- M2-comint -*-
+-- -*- M2-comint -*- {* hash: -795725568 *}
 
 i1 : R = QQ[x,y,z]
 
@@ -39,24 +39,6 @@ i8 : dim R
 
 o8 = 4
 
-i9 : R = ZZ[a,b]/(a*b-1)
-
-o9 = R
-
-o9 : QuotientRing
-
-i10 : dim R
-
-o10 = 2
-
-i11 : S = R[x,y]
-
-o11 = S
-
-o11 : PolynomialRing
-
-i12 : dim S
-
-o12 = 4
-
-i13 : 
+i9 : 
+0.78user 0.03system 0:00.81elapsed 100%CPU (0avgtext+0avgdata 0maxresident)k
+0inputs+0outputs (0major+10844minor)pagefaults 0swaps

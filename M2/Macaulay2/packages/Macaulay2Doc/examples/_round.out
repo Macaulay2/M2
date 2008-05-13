@@ -1,11 +1,29 @@
--- -*- M2-comint -*-
+-- -*- M2-comint -*- {* hash: -458442845 *}
 
 i1 : round(-2.3)
 
 o1 = -2
 
-i2 : round(2/3)
+i2 : round(-2.3+5*ii)
 
-o2 = 1
+o2 = -2
 
-i3 : 
+i3 : round(2/3)
+
+o3 = 1
+
+i4 : round(2,1234.5678)
+
+o4 = 1234.57
+
+o4 : RR (of precision 53)
+
+i5 : round(-2,1234.5678)
+
+o5 = 1200
+
+o5 : RR (of precision 53)
+
+i6 : 
+0.77user 0.06system 0:00.85elapsed 99%CPU (0avgtext+0avgdata 0maxresident)k
+0inputs+0outputs (0major+10844minor)pagefaults 0swaps

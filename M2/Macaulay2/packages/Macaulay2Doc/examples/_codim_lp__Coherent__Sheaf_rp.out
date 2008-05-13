@@ -1,4 +1,4 @@
--- -*- M2-comint -*-
+-- -*- M2-comint -*- {* hash: -1131858112 *}
 
 i1 : R = ZZ/31991[a,b,c,d];
 
@@ -37,3 +37,5 @@ i6 : codim can
 o6 = 2
 
 i7 : 
+0.81user 0.02system 0:00.83elapsed 99%CPU (0avgtext+0avgdata 0maxresident)k
+0inputs+0outputs (0major+10907minor)pagefaults 0swaps

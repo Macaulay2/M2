@@ -1,4 +1,4 @@
--- -*- M2-comint -*-
+-- -*- M2-comint -*- {* hash: 1019469459 *}
 
 i1 : R = QQ[vars(0..8)]
 
@@ -36,3 +36,5 @@ o5 = - c*e*g + b*f*g + c*d*h - a*f*h - b*d*i + a*e*i
 o5 : R
 
 i6 : 
+0.78user 0.03system 0:00.84elapsed 96%CPU (0avgtext+0avgdata 0maxresident)k
+0inputs+0outputs (0major+10844minor)pagefaults 0swaps

@@ -1,0 +1,100 @@
+-- -*- M2-comint -*- {* hash: 1240632498 *}
+
+i1 : random RR
+
+o1 = .346961336961373
+
+o1 : RR (of precision 53)
+
+i2 : random CC_80
+
+o2 = .0809593725498833597244814+.121086033468111758774448*ii
+
+o2 : CC (of precision 80)
+
+i3 : random (ZZ/101)
+
+o3 = 11
+
+      ZZ
+o3 : ---
+     101
+
+i4 : k = GF 2048
+
+o4 = k
+
+o4 : GaloisField
+
+i5 : VerticalList for i to 5 list random k
+
+     {  10    8    7    2          }
+o5 = { a   + a  + a  + a  + 1      }
+     {  10    4                    }
+     { a   + a  + 1                }
+     {  9    6    2                }
+     { a  + a  + a  + 1            }
+     {  9    8    6    4    2      }
+     { a  + a  + a  + a  + a  + a  }
+     {  8    5    4    2           }
+     { a  + a  + a  + a  + a + 1   }
+     {  10    8    7    6    2     }
+     { a   + a  + a  + a  + a  + a }
+
+o5 : VerticalList
+
+i6 : randomHeight
+
+o6 = 10
+
+i7 : for i to 10 list random ZZ
+
+o7 = {4, 5, 0, 8, 3, 8, 8, 8, 7, 2, 2}
+
+o7 : List
+
+i8 : randomHeight = 1000
+
+o8 = 1000
+
+i9 : for i to 10 list random QQ
+
+      242  977  558  451  869  191  53  221  823  477  231
+o9 = {---, ---, ---, ---, ---, ---, --, ---, ---, ---, ---}
+      719  358  115  499  971  629  59   77  945  338   92
+
+o9 : List
+
+i10 : R = ZZ[x,y];
+
+i11 : random(5,R)
+
+          5       4       3 2       2 3         4       5
+o11 = 558x  + 519x y + 25x y  + 858x y  + 608x*y  + 690y
+
+o11 : R
+
+i12 : R = GF(25,Variable=>a)[x,y];
+
+i13 : VerticalList for i to 6 list random(3,R)
+
+      {         3             2       2      3            }
+o13 = { (a + 2)x  + (- a + 2)x y + x*y  - a*y             }
+      {            3             2                2    3  }
+      { (- 2a - 2)x  + (- a + 2)x y + (- a + 2)x*y  + y   }
+      {            3            2               2       3 }
+      { (- 2a + 1)x  + (2a - 1)x y + (2a + 1)x*y  - 2a*y  }
+      {  3       2                2           3           }
+      { x  + 2a*x y + (- a + 2)x*y  + (a + 2)y            }
+      {          3    2                 2            3    }
+      { (2a - 1)x  - x y + (- 2a + 2)x*y  + (2a + 1)y     }
+      {      3            2              2             3  }
+      { - a*x  + (2a - 2)x y + (a + 2)x*y  + (- a + 1)y   }
+      {           3               2              3        }
+      { (- a + 2)x  + (- a + 1)x*y  + (- 2a + 2)y         }
+
+o13 : VerticalList
+
+i14 : 
+0.91user 0.02system 0:00.93elapsed 100%CPU (0avgtext+0avgdata 0maxresident)k
+0inputs+0outputs (0major+11348minor)pagefaults 0swaps

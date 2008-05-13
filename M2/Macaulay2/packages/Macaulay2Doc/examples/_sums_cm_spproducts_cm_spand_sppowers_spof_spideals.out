@@ -1,4 +1,4 @@
--- -*- M2-comint -*-
+-- -*- M2-comint -*- {* hash: 489855344 *}
 
 i1 : R = ZZ/101[a..d]/(b*c-a*d,c^2-b*d,b^2-a*c);
 
@@ -32,3 +32,5 @@ o6 = ideal (a c - 2a d + b*d, a*b*d  - c*d , d )
 o6 : Ideal of R
 
 i7 : 
+0.81user 0.06system 0:00.88elapsed 99%CPU (0avgtext+0avgdata 0maxresident)k
+0inputs+0outputs (0major+10842minor)pagefaults 0swaps

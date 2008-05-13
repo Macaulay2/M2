@@ -1,4 +1,4 @@
--- -*- M2-comint -*-
+-- -*- M2-comint -*- {* hash: -1857216253 *}
 
 i1 : A = QQ[x,y,z];
 
@@ -44,3 +44,5 @@ o10 = ideal (y*z, x*z, y )
 o10 : Ideal of B
 
 i11 : 
+0.81user 0.04system 0:00.89elapsed 96%CPU (0avgtext+0avgdata 0maxresident)k
+0inputs+0outputs (0major+10842minor)pagefaults 0swaps

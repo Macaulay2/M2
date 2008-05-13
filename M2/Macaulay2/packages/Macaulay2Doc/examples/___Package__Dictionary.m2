@@ -1,2 +1,0 @@
-dictionaryPath
-values PackageDictionary

@@ -1,8 +1,8 @@
--- -*- M2-comint -*-
+-- -*- M2-comint -*- {* hash: -194673288 *}
 
 i1 : recursionDepth()
 
-o1 = 2
+o1 = 0
 
 i2 : f = x -> recursionDepth()
 
@@ -12,7 +12,7 @@ o2 : FunctionClosure
 
 i3 : f()
 
-o3 = 3
+o3 = 1
 
 i4 : g = x -> f()
 
@@ -22,7 +22,7 @@ o4 : FunctionClosure
 
 i5 : g()
 
-o5 = 4
+o5 = 2
 
 i6 : r = i -> if i == 100 then recursionDepth() else r(i+1)
 
@@ -32,6 +32,8 @@ o6 : FunctionClosure
 
 i7 : r 0
 
-o7 = 3
+o7 = 1
 
 i8 : 
+0.80user 0.08system 0:00.88elapsed 100%CPU (0avgtext+0avgdata 0maxresident)k
+0inputs+0outputs (0major+10844minor)pagefaults 0swaps

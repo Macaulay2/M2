@@ -1,4 +1,4 @@
--- -*- M2-comint -*-
+-- -*- M2-comint -*- {* hash: 434960947 *}
 
 i1 : R = ZZ/101[a..d];
 
@@ -26,7 +26,7 @@ o5 = map(S,R,{s , s t, s*t , t })
 o5 : RingMap S <--- R
 
 i6 : time pushForward1(F,S^1,MonomialOrder=>ProductOrder)
-     -- used 0.012001 seconds
+     -- used 0.004 seconds
 
 o6 = | bc-ad c3-bd2 ac2-b2d b3-a2c |
 
@@ -55,3 +55,5 @@ o9 = | bc-ad |
 o9 : Matrix R  <--- R
 
 i10 : 
+0.82user 0.06system 0:00.90elapsed 99%CPU (0avgtext+0avgdata 0maxresident)k
+0inputs+0outputs (0major+10838minor)pagefaults 0swaps

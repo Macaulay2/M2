@@ -1,4 +1,4 @@
--- -*- M2-comint -*-
+-- -*- M2-comint -*- {* hash: -310586444 *}
 
 i1 : A = ZZ/101[a]/(a^2-1);
 
@@ -17,3 +17,5 @@ o3 : A
 i4 : getNonUnit A
 
 i5 : 
+0.75user 0.09system 0:00.84elapsed 100%CPU (0avgtext+0avgdata 0maxresident)k
+0inputs+0outputs (0major+10851minor)pagefaults 0swaps

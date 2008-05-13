@@ -1,0 +1,13 @@
+-- -*- M2-comint -*- {* hash: -1463844658 *}
+
+i1 : isReal 2.
+
+o1 = true
+
+i2 : isReal sqrt(-1)
+
+o2 = false
+
+i3 : 
+0.80user 0.06system 0:00.86elapsed 99%CPU (0avgtext+0avgdata 0maxresident)k
+0inputs+0outputs (0major+10844minor)pagefaults 0swaps

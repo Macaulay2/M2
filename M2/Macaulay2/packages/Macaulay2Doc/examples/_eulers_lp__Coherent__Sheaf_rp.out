@@ -1,4 +1,4 @@
--- -*- M2-comint -*-
+-- -*- M2-comint -*- {* hash: 1076621618 *}
 
 i1 : R = QQ[x_0..x_4];
 
@@ -117,3 +117,5 @@ o16 = {2, 12, 12, 7, 2}
 o16 : List
 
 i17 : 
+1.04user 0.04system 0:01.08elapsed 99%CPU (0avgtext+0avgdata 0maxresident)k
+0inputs+0outputs (0major+15014minor)pagefaults 0swaps

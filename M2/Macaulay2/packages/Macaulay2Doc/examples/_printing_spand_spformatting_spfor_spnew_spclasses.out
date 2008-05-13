@@ -1,4 +1,4 @@
--- -*- M2-comint -*-
+-- -*- M2-comint -*- {* hash: 905155550 *}
 
 i1 : Qu = new Type of List
 
@@ -73,3 +73,5 @@ i16 : peek oo
 o16 = {0, 2, 5, 0}
 
 i17 : 
+0.78user 0.08system 0:00.85elapsed 100%CPU (0avgtext+0avgdata 0maxresident)k
+0inputs+0outputs (0major+10844minor)pagefaults 0swaps

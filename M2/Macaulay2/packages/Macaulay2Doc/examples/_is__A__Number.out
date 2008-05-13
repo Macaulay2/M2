@@ -1,0 +1,29 @@
+-- -*- M2-comint -*- {* hash: -572679407 *}
+
+i1 : isANumber 3.
+
+o1 = true
+
+i2 : inf = 1/0.
+
+o2 = infinity
+
+o2 : RR (of precision 53)
+
+i3 : isANumber inf
+
+o3 = true
+
+i4 : nan = inf - inf
+
+o4 = NotANumber
+
+o4 : RR (of precision 53)
+
+i5 : isANumber nan
+
+o5 = false
+
+i6 : 
+0.77user 0.03system 0:00.80elapsed 100%CPU (0avgtext+0avgdata 0maxresident)k
+0inputs+0outputs (0major+10844minor)pagefaults 0swaps

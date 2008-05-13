@@ -1,4 +1,4 @@
--- -*- M2-comint -*-
+-- -*- M2-comint -*- {* hash: 1635886401 *}
 
 i1 : << 2^100
 1267650600228229401496703205376
@@ -60,3 +60,5 @@ i15 : 43!
 o15 = 60415263063373835637355132068513997507264512000000000
 
 i16 : 
+0.76user 0.03system 0:00.81elapsed 98%CPU (0avgtext+0avgdata 0maxresident)k
+0inputs+0outputs (0major+10829minor)pagefaults 0swaps

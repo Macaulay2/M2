@@ -1,22 +1,25 @@
--- -*- M2-comint -*-
+-- -*- M2-comint -*- {* hash: -2008952337 *}
 
 i1 : random 57
 
-o1 = 12
+o1 = 52
 
-i2 : tally apply(100, i -> random 10)
+i2 : random 10^50
 
-o2 = Tally{0 => 10}
-           1 => 13
-           2 => 9
-           3 => 11
-           4 => 11
-           5 => 7
+o2 = 86346918858062209261046491489683266148157315249483
+
+i3 : tally apply(100, i -> random 7)
+
+o3 = Tally{0 => 18}
+           1 => 8
+           2 => 14
+           3 => 22
+           4 => 10
+           5 => 13
            6 => 15
-           7 => 8
-           8 => 8
-           9 => 8
 
-o2 : Tally
+o3 : Tally
 
-i3 : 
+i4 : 
+0.78user 0.05system 0:00.92elapsed 90%CPU (0avgtext+0avgdata 0maxresident)k
+0inputs+0outputs (0major+10843minor)pagefaults 0swaps

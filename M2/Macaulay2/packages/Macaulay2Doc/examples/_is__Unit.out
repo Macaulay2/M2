@@ -1,4 +1,4 @@
--- -*- M2-comint -*-
+-- -*- M2-comint -*- {* hash: -715749634 *}
 
 i1 : R = QQ[z]/(z^2+1);
 
@@ -17,3 +17,5 @@ i5 : isUnit x
 o5 = false
 
 i6 : 
+0.78user 0.06system 0:00.85elapsed 99%CPU (0avgtext+0avgdata 0maxresident)k
+0inputs+0outputs (0major+10845minor)pagefaults 0swaps

@@ -1,4 +1,4 @@
--- -*- M2-comint -*-
+-- -*- M2-comint -*- {* hash: 246911696 *}
 
 i1 : R = ZZ[x]
 
@@ -10,16 +10,14 @@ i2 : liftable ((x-1)*(x+1)-x^2, ZZ)
 
 o2 = true
 
-i3 : liftable(.342,RR)
+i3 : liftable(3/4,ZZ)
 
-o3 = true
+o3 = false
 
-i4 : liftable(3/4,ZZ)
+i4 : liftable((3/4)*4,ZZ)
 
-o4 = false
+o4 = true
 
-i5 : liftable((3/4)*4,ZZ)
-
-o5 = true
-
-i6 : 
+i5 : 
+0.76user 0.04system 0:00.80elapsed 100%CPU (0avgtext+0avgdata 0maxresident)k
+0inputs+0outputs (0major+10844minor)pagefaults 0swaps

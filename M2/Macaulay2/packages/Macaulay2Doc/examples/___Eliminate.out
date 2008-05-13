@@ -1,4 +1,4 @@
--- -*- M2-comint -*-
+-- -*- M2-comint -*- {* hash: 367585721 *}
 
 i1 : R = QQ[a..i, MonomialOrder => Eliminate 3];
 
@@ -44,3 +44,5 @@ i9 : selectInSubring(3, gens gb I);
 o9 : Matrix R  <--- R
 
 i10 : 
+0.79user 0.02system 0:00.81elapsed 100%CPU (0avgtext+0avgdata 0maxresident)k
+0inputs+0outputs (0major+10843minor)pagefaults 0swaps

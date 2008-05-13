@@ -1,4 +1,4 @@
--- -*- M2-comint -*-
+-- -*- M2-comint -*- {* hash: -976139398 *}
 
 i1 : V = Proj(QQ[x,y,z]/ideal(y^2*z-x^2*(x+z)))
 
@@ -11,3 +11,5 @@ i2 : genus OO_V^1
 o2 = 1
 
 i3 : 
+0.76user 0.05system 0:00.82elapsed 99%CPU (0avgtext+0avgdata 0maxresident)k
+0inputs+0outputs (0major+10844minor)pagefaults 0swaps

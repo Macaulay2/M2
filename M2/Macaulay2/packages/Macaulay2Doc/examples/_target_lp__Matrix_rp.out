@@ -1,4 +1,4 @@
--- -*- M2-comint -*-
+-- -*- M2-comint -*- {* hash: -726849352 *}
 
 i1 : R = ZZ[x,y,z];
 
@@ -18,3 +18,5 @@ o5 = cokernel | x2 y2 xyz z2 |
 o5 : R-module, quotient of R
 
 i6 : 
+0.78user 0.02system 0:00.81elapsed 99%CPU (0avgtext+0avgdata 0maxresident)k
+0inputs+0outputs (0major+10844minor)pagefaults 0swaps

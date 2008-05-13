@@ -1,4 +1,4 @@
--- -*- M2-comint -*-
+-- -*- M2-comint -*- {* hash: -133865852 *}
 
 i1 : R = QQ[x,y,z, SkewCommutative => true]
 
@@ -71,3 +71,5 @@ o13 = | -xy |
 o13 : Matrix R  <--- R
 
 i14 : 
+0.78user 0.06system 0:00.85elapsed 99%CPU (0avgtext+0avgdata 0maxresident)k
+0inputs+0outputs (0major+10843minor)pagefaults 0swaps

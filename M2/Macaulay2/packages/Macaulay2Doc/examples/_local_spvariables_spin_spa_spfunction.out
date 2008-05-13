@@ -1,4 +1,4 @@
--- -*- M2-comint -*-
+-- -*- M2-comint -*- {* hash: -273820863 *}
 
 i1 : i = 22;
 
@@ -41,3 +41,5 @@ o8 = (1, 2, 3, 4, 1, 5, 6, 2, 7, 8)
 o8 : Sequence
 
 i9 : 
+0.78user 0.05system 0:00.96elapsed 86%CPU (0avgtext+0avgdata 0maxresident)k
+0inputs+0outputs (0major+10843minor)pagefaults 0swaps

@@ -1,2 +1,0 @@
-temporaryFileName () | ".tex"
-temporaryFileName () | ".html"

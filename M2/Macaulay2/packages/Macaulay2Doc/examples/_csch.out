@@ -1,0 +1,11 @@
+-- -*- M2-comint -*- {* hash: -1008701754 *}
+
+i1 : csch(pi/3)
+
+o1 = .800405292888593
+
+o1 : RR (of precision 53)
+
+i2 : 
+0.78user 0.10system 0:00.89elapsed 98%CPU (0avgtext+0avgdata 0maxresident)k
+0inputs+0outputs (0major+10844minor)pagefaults 0swaps

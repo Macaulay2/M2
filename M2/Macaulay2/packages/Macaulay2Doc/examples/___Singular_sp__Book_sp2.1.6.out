@@ -1,4 +1,4 @@
--- -*- M2-comint -*-
+-- -*- M2-comint -*- {* hash: -625139173 *}
 
 i1 : A = QQ[x,y,z];
 
@@ -166,3 +166,5 @@ o19 = | 1 2 3 |
 o19 : Matrix ZZ  <--- ZZ
 
 i20 : 
+0.78user 0.04system 0:00.85elapsed 96%CPU (0avgtext+0avgdata 0maxresident)k
+0inputs+0outputs (0major+10847minor)pagefaults 0swaps

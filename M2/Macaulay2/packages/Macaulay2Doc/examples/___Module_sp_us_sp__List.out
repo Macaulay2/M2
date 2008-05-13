@@ -1,0 +1,65 @@
+-- -*- M2-comint -*- {* hash: -786099532 *}
+
+i1 : R = QQ[x,y,z]
+
+o1 = R
+
+o1 : PolynomialRing
+
+i2 : I = ideal vars R
+
+o2 = ideal (x, y, z)
+
+o2 : Ideal of R
+
+i3 : f = I_{0,2}
+
+o3 = {1} | 1 0 |
+     {1} | 0 0 |
+     {1} | 0 1 |
+
+o3 : Matrix
+
+i4 : image f
+
+o4 = image | x z |
+
+                             1
+o4 : R-module, submodule of R
+
+i5 : M = image syz vars R
+
+o5 = image {1} | -y 0  -z |
+           {1} | x  -z 0  |
+           {1} | 0  y  x  |
+
+                             3
+o5 : R-module, submodule of R
+
+i6 : g = M_{1}
+
+o6 = {2} | 0 |
+     {2} | 1 |
+     {2} | 0 |
+
+o6 : Matrix
+
+i7 : source g
+
+      1
+o7 = R
+
+o7 : R-module, free, degrees {2}
+
+i8 : target g
+
+o8 = image {1} | -y 0  -z |
+           {1} | x  -z 0  |
+           {1} | 0  y  x  |
+
+                             3
+o8 : R-module, submodule of R
+
+i9 : 
+0.74user 0.06system 0:00.81elapsed 99%CPU (0avgtext+0avgdata 0maxresident)k
+0inputs+0outputs (0major+10844minor)pagefaults 0swaps

@@ -1,0 +1,30 @@
+-- -*- M2-comint -*- {* hash: -308996079 *}
+
+i1 : lngamma 2.1
+
+o1 = .0454377385444852
+
+o1 : RR (of precision 53)
+
+i2 : lngamma(-1.1)
+
+o2 = 2.27365115292446
+
+o2 : RR (of precision 53)
+
+i3 : lngamma(-2.1)
+
+o3 = 1.53171380819509+3.14159265358979*ii
+
+o3 : CC (of precision 53)
+
+i4 : lngamma (-2.000000000000000000000000000000001p120)
+
+o4 = 75.293085156597112659506221744398934+
+     3.14159265358979323846264338327950288*ii
+
+o4 : CC (of precision 120)
+
+i5 : 
+0.77user 0.03system 0:00.80elapsed 100%CPU (0avgtext+0avgdata 0maxresident)k
+0inputs+0outputs (0major+10844minor)pagefaults 0swaps

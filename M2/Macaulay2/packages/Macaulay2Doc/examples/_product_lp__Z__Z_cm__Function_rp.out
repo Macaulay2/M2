@@ -1,7 +1,9 @@
--- -*- M2-comint -*-
+-- -*- M2-comint -*- {* hash: -1050372345 *}
 
 i1 : product(5, i -> 2*i+1)
 
 o1 = 945
 
 i2 : 
+0.76user 0.04system 0:00.81elapsed 99%CPU (0avgtext+0avgdata 0maxresident)k
+0inputs+0outputs (0major+10841minor)pagefaults 0swaps

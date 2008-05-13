@@ -1,4 +1,4 @@
--- -*- M2-comint -*-
+-- -*- M2-comint -*- {* hash: -583467273 *}
 
 i1 : x
 
@@ -39,7 +39,7 @@ o7 : FunctionClosure
 
 i8 : g()
 
-o8 = --Function[stdio:7:25-7:28]--
+o8 = {*Function[stdio:7:25-7:28]*}
 
 o8 : FunctionClosure
 
@@ -122,7 +122,7 @@ o26 = ("left", 3.3)
 
 i27 : ZZ + ZZ := (x,y) -> x+y+100
 
-o27 = --Function[stdio:27:17-27:24]--
+o27 = {*Function[stdio:27:17-27:24]*}
 
 o27 : FunctionClosure
 
@@ -132,15 +132,15 @@ o28 = 7
 
 i29 : CC + CC := (w,z) -> w*z
 
-o29 = --Function[stdio:29:17-29:22]--
+o29 = {*Function[stdio:29:17-29:22]*}
 
 o29 : FunctionClosure
 
 i30 : ii + ii
 
-o30 = - 1. + 0.ii
+o30 = 2*ii
 
-o30 : CC
+o30 : CC (of precision 53)
 
 i31 : - String := peek;
 
@@ -195,3 +195,5 @@ i47 : source("foo","bar")
 o47 = ("foo", "bar")
 
 i48 : 
+0.77user 0.04system 0:00.82elapsed 99%CPU (0avgtext+0avgdata 0maxresident)k
+0inputs+0outputs (0major+10839minor)pagefaults 0swaps

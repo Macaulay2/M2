@@ -1,44 +1,34 @@
--- -*- M2-comint -*-
+-- -*- M2-comint -*- {* hash: -780669051 *}
 
 i1 : version
 
-o1 = HashTable{architecture => i686                              
-               compile node name => rhodium
-               compile time => Nov  4 2006, 13:27:34
-               compiler => gcc 4.1.1
-               configure arguments =>  '--prefix=/capybara/encap'
+o1 = HashTable{architecture => x86_64                                                                                                                                                                                                                                                                                                                                                                     }
+               build => x86_64-unknown-linux-gnu
+               compile node name => gallium
+               compile time => Feb  9 2008, 17:58:28
+               compiler => gcc 4.1.3
+               configure arguments =>  '--prefix=/usr/local/encap' '--enable-deb' '--enable-tarfile' 'CC=gcc'
                dumpdata => true
+               endianness => dcba
                executable extension => 
-               factory version => 3.0.2
-               gc version => 6.7
+               factory version => 3.0.3
+               gc version => 7.0
                gmp version => 4.2.1
+               host => x86_64-unknown-linux-gnu
                libfac version => 3.0.1
                M2 name => M2
                M2 suffix => 
-               ntl version => 5.4
+               mpfr version => 2.3.0
+               ntl version => 5.4.1
                operating system => Linux
-               operating system release => 2.6.18.1
-               readline version => 5.1
-               VERSION => 0.9.95
-     ------------------------------------------------------------------------
-                                                         
-
-
-
-     '--with-lapacklibs=-llapack -lcblas -lf77blas -lg2c'
-     ------------------------------------------------------------------------
-                                                                      
-
-
-
-     'CPPFLAGS=-I/capybara/include' 'LDFLAGS=-L/capybara/lib' 'CC=gcc'
-     ------------------------------------------------------------------------
-                                     }
-
-
-
-     '--with-final-prefix=/usr/local'
+               operating system release => 2.6.22-14-generic
+               packages => Macaulay2Doc Style Classic PrimaryDecomposition FourierMotzkin Dmodules Depth Elimination FirstPackage GenericInitialIdeal IntegralClosure HyperplaneArrangements LexIdeals Markov NoetherNormalization Points PackageTemplate ReesAlgebra Regularity SchurRings SimplicialComplexes LLLBases Parsing TangentCone ChainComplexExtras Benchmark Schubert2 Browse InvolutiveBases
+               pointer size => 8
+               readline version => 5.2
+               VERSION => 1.1
 
 o1 : HashTable
 
 i2 : 
+0.76user 0.10system 0:00.89elapsed 96%CPU (0avgtext+0avgdata 0maxresident)k
+0inputs+0outputs (0major+10843minor)pagefaults 0swaps

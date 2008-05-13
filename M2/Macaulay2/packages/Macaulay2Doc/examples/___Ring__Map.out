@@ -1,4 +1,4 @@
--- -*- M2-comint -*-
+-- -*- M2-comint -*- {* hash: -713755950 *}
 
 i1 : R = QQ[a,b,c]; S = QQ[s,t];
 
@@ -90,3 +90,5 @@ o16 = R
 o16 : PolynomialRing
 
 i17 : 
+0.83user 0.08system 0:00.93elapsed 98%CPU (0avgtext+0avgdata 0maxresident)k
+0inputs+0outputs (0major+10844minor)pagefaults 0swaps

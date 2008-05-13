@@ -1,4 +1,4 @@
--- -*- M2-comint -*-
+-- -*- M2-comint -*- {* hash: -626620401 *}
 
 i1 : R = ZZ/101[x,y]
 
@@ -72,3 +72,5 @@ o10 = QQ
 o10 : QQ-module, free
 
 i11 : 
+0.88user 0.05system 0:00.95elapsed 98%CPU (0avgtext+0avgdata 0maxresident)k
+0inputs+0outputs (0major+11062minor)pagefaults 0swaps

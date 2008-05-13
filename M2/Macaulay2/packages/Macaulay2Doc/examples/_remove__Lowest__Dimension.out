@@ -1,4 +1,4 @@
--- -*- M2-comint -*-
+-- -*- M2-comint -*- {* hash: 766811085 *}
 
 i1 : R=ZZ/32003[a..d];
 
@@ -17,3 +17,5 @@ o3 = ideal (b , a  + a*b)
 o3 : Ideal of R
 
 i4 : 
+0.79user 0.03system 0:00.85elapsed 97%CPU (0avgtext+0avgdata 0maxresident)k
+0inputs+0outputs (0major+10911minor)pagefaults 0swaps

@@ -1,4 +1,4 @@
--- -*- M2-comint -*-
+-- -*- M2-comint -*- {* hash: -566455404 *}
 
 i1 : F = directSum(a=>ZZ^1, b=>ZZ^2, c=>ZZ^3)
 
@@ -45,3 +45,5 @@ o5 = | 0 0 |
 o5 : Matrix ZZ  <--- ZZ
 
 i6 : 
+0.76user 0.05system 0:00.82elapsed 100%CPU (0avgtext+0avgdata 0maxresident)k
+0inputs+0outputs (0major+10841minor)pagefaults 0swaps

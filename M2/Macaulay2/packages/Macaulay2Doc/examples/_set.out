@@ -1,4 +1,4 @@
--- -*- M2-comint -*-
+-- -*- M2-comint -*- {* hash: 1039100596 *}
 
 i1 : v = {1,2,3,2,1}
 
@@ -19,3 +19,5 @@ o3 = set {a, b, c, d}
 o3 : Set
 
 i4 : 
+0.77user 0.04system 0:00.81elapsed 99%CPU (0avgtext+0avgdata 0maxresident)k
+0inputs+0outputs (0major+10839minor)pagefaults 0swaps

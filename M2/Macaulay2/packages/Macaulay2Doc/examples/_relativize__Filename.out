@@ -1,4 +1,4 @@
--- -*- M2-comint -*-
+-- -*- M2-comint -*- {* hash: -1279433518 *}
 
 i1 : relativizeFilename("a/b/","a/b/c/d")
 
@@ -13,3 +13,5 @@ i3 : relativizeFilename("a/b/c/d","a/b/e/f")
 o3 = ../../e/f
 
 i4 : 
+0.78user 0.03system 0:00.82elapsed 100%CPU (0avgtext+0avgdata 0maxresident)k
+0inputs+0outputs (0major+10845minor)pagefaults 0swaps

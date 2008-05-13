@@ -1,4 +1,4 @@
--- -*- M2-comint -*-
+-- -*- M2-comint -*- {* hash: -662101183 *}
 
 i1 : separateRegexp("-", "asdf-qwer-dfadf")
 
@@ -7,3 +7,5 @@ o1 = {asdf, qwer, dfadf}
 o1 : List
 
 i2 : 
+0.76user 0.04system 0:00.81elapsed 100%CPU (0avgtext+0avgdata 0maxresident)k
+0inputs+0outputs (0major+10848minor)pagefaults 0swaps

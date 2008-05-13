@@ -1,4 +1,4 @@
--- -*- M2-comint -*-
+-- -*- M2-comint -*- {* hash: 1745490914 *}
 
 i1 : R = QQ[x,y,a..d,t,MonomialOrder=>{2,4,1}];
 
@@ -70,3 +70,5 @@ o12 = | d2-1 |
 o12 : Matrix S  <--- S
 
 i13 : 
+0.76user 0.08system 0:00.85elapsed 100%CPU (0avgtext+0avgdata 0maxresident)k
+0inputs+0outputs (0major+10844minor)pagefaults 0swaps

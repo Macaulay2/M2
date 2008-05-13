@@ -1,4 +1,4 @@
--- -*- M2-comint -*-
+-- -*- M2-comint -*- {* hash: 761672096 *}
 
 i1 : R = ZZ[x,y,z];
 
@@ -22,3 +22,5 @@ o6 = R  <-- R  <-- R  <-- R  <-- 0
 o6 : ChainComplex
 
 i7 : 
+0.75user 0.11system 0:00.87elapsed 99%CPU (0avgtext+0avgdata 0maxresident)k
+0inputs+0outputs (0major+10842minor)pagefaults 0swaps

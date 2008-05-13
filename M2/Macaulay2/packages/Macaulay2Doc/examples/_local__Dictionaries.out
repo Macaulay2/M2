@@ -1,4 +1,4 @@
--- -*- M2-comint -*-
+-- -*- M2-comint -*- {* hash: 488680150 *}
 
 i1 : f := x -> y -> z -> 11;
 
@@ -31,3 +31,5 @@ o6 = {Dictionary{"d" => d}}
                  "f" => f
 
 i7 : 
+0.80user 0.03system 0:00.86elapsed 96%CPU (0avgtext+0avgdata 0maxresident)k
+0inputs+0outputs (0major+10830minor)pagefaults 0swaps

@@ -1,4 +1,4 @@
--- -*- M2-comint -*-
+-- -*- M2-comint -*- {* hash: -1964617762 *}
 
 i1 : R = ZZ/101[a..f]
 
@@ -38,3 +38,5 @@ o5 = ideal (b*c - a*d, c  - b*d , a*c  - b d, b  - a c)
 o5 : Ideal of R
 
 i6 : 
+0.80user 0.04system 0:00.85elapsed 100%CPU (0avgtext+0avgdata 0maxresident)k
+0inputs+0outputs (0major+10843minor)pagefaults 0swaps

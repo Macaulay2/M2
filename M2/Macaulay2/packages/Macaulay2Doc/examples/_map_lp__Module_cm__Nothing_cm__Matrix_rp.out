@@ -1,4 +1,4 @@
--- -*- M2-comint -*-
+-- -*- M2-comint -*- {* hash: -1837574050 *}
 
 i1 : R = ZZ/101[x,y];
 
@@ -29,3 +29,5 @@ o5 = {{-2}, {-2}}
 o5 : List
 
 i6 : 
+0.80user 0.02system 0:00.82elapsed 100%CPU (0avgtext+0avgdata 0maxresident)k
+0inputs+0outputs (0major+10845minor)pagefaults 0swaps

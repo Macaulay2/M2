@@ -1,9 +1,17 @@
--- -*- M2-comint -*-
+-- -*- M2-comint -*- {* hash: -487731729 *}
 
 i1 : abs(-pi)
 
-o1 = 3.14159
+o1 = 3.14159265358979
 
-o1 : RR
+o1 : RR (of precision 53)
 
-i2 : 
+i2 : abs(1+ii)
+
+o2 = 1.4142135623731
+
+o2 : RR (of precision 53)
+
+i3 : 
+0.77user 0.03system 0:00.85elapsed 94%CPU (0avgtext+0avgdata 0maxresident)k
+0inputs+0outputs (0major+10844minor)pagefaults 0swaps

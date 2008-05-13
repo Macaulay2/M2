@@ -1,4 +1,4 @@
--- -*- M2-comint -*-
+-- -*- M2-comint -*- {* hash: 2147104742 *}
 
 i1 : splice ((a,b),c,(d,(e,f)))
 
@@ -13,3 +13,5 @@ o2 = [a, b, c, d, (e, f)]
 o2 : Array
 
 i3 : 
+0.81user 0.10system 0:01.38elapsed 66%CPU (0avgtext+0avgdata 0maxresident)k
+0inputs+0outputs (0major+10839minor)pagefaults 0swaps

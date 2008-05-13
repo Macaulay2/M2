@@ -1,4 +1,4 @@
--- -*- M2-comint -*-
+-- -*- M2-comint -*- {* hash: -426363406 *}
 
 i1 : matrix{{1,2},{3,4}}
 
@@ -9,3 +9,5 @@ o1 = | 1 2 |
 o1 : Matrix ZZ  <--- ZZ
 
 i2 : 
+0.76user 0.07system 0:00.84elapsed 98%CPU (0avgtext+0avgdata 0maxresident)k
+0inputs+0outputs (0major+10844minor)pagefaults 0swaps

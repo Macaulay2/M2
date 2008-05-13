@@ -1,4 +1,4 @@
--- -*- M2-comint -*-
+-- -*- M2-comint -*- {* hash: -1004468101 *}
 
 i1 : select(4,0..10,even)
 
@@ -7,3 +7,5 @@ o1 = (0, 2, 4, 6)
 o1 : Sequence
 
 i2 : 
+0.76user 0.04system 0:00.80elapsed 99%CPU (0avgtext+0avgdata 0maxresident)k
+0inputs+0outputs (0major+10844minor)pagefaults 0swaps

@@ -1,4 +1,4 @@
--- -*- M2-comint -*-
+-- -*- M2-comint -*- {* hash: -540730337 *}
 
 i1 : R = QQ[a..d];
 
@@ -20,3 +20,5 @@ o4 = -*i  + i  - --*i
 o4 : QQ [i]
 
 i5 : 
+0.80user 0.02system 0:00.83elapsed 99%CPU (0avgtext+0avgdata 0maxresident)k
+0inputs+0outputs (0major+10844minor)pagefaults 0swaps

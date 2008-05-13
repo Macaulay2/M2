@@ -1,4 +1,4 @@
--- -*- M2-comint -*-
+-- -*- M2-comint -*- {* hash: 2000091927 *}
 
 i1 : x = new HashTable from { val => 1000, cache => new CacheTable }
 
@@ -15,9 +15,9 @@ o2 : FunctionClosure
 
 i3 : h = (cacheValue VALUE) f
 
-o3 = h
+o3 = {*a cache function*}
 
-o3 : FunctionClosure
+o3 : CacheFunction
 
 i4 : h x
 hi there
@@ -34,3 +34,5 @@ o6 = HashTable{cache => CacheTable{VALUE => 1000000000000}}
                val => 1000
 
 i7 : 
+0.79user 0.02system 0:00.81elapsed 100%CPU (0avgtext+0avgdata 0maxresident)k
+0inputs+0outputs (0major+10844minor)pagefaults 0swaps

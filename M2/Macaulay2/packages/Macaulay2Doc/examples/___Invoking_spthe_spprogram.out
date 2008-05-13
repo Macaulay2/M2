@@ -1,4 +1,4 @@
--- -*- M2-comint -*-
+-- -*- M2-comint -*- {* hash: -235165195 *}
 
 i1 : run "M2 --help";
 usage:
@@ -20,6 +20,10 @@ options:
     --no-personality   don't set the personality and re-exec M2 (linux only)
     --prefix DIR       set prefixDirectory
     --print-width n    set printWidth=n (the default is the window width)
+    --restarted        used internally to indicate this is a restart
+    --script           as first argument, interpret second argument as name of a script
+                       implies --stop, --no-debug, --silent and -q
+                       see scriptCommandLine
     --silent           no startup banner
     --stop             exit on error
     --texmacs          TeXmacs session mode
@@ -36,3 +40,5 @@ environment:
     LOADDATA_IGNORE_CHECKSUMS	   (for debugging)
 
 i2 : 
+0.77user 0.09system 0:00.87elapsed 100%CPU (0avgtext+0avgdata 0maxresident)k
+0inputs+0outputs (0major+12856minor)pagefaults 0swaps

@@ -1,4 +1,4 @@
--- -*- M2-comint -*-
+-- -*- M2-comint -*- {* hash: -1375044574 *}
 
 i1 : newPackage "PKG"
 
@@ -38,6 +38,10 @@ o6 = 3
 
 i7 : dismiss PKG
 
+o7 = PKG
+
+o7 : Package
+
 i8 : dictionaryPath
 
 o8 = {Elimination.Dictionary, LLLBases.Dictionary,
@@ -60,9 +64,13 @@ o9 : Symbol
 
 i10 : values PackageDictionary
 
-o10 = {Parsing, Classic, Elimination, LLLBases, PrimaryDecomposition,
+o10 = {PrimaryDecomposition, Elimination, PrimaryDecomposition, Elimination,
       -----------------------------------------------------------------------
-      TangentCone, User, PKG, SchurRings, IntegralClosure, Core}
+      TangentCone, TangentCone, User, PKG, SchurRings, PKG, SchurRings,
+      -----------------------------------------------------------------------
+      IntegralClosure, Parsing, IntegralClosure, Parsing, Classic, Classic,
+      -----------------------------------------------------------------------
+      LLLBases, LLLBases, Core, Core}
 
 o10 : List
 
@@ -73,3 +81,5 @@ i12 : x1
 o12 = 3
 
 i13 : 
+0.79user 0.02system 0:00.82elapsed 100%CPU (0avgtext+0avgdata 0maxresident)k
+0inputs+0outputs (0major+10844minor)pagefaults 0swaps

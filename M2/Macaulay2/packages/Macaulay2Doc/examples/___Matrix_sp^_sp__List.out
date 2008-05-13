@@ -1,4 +1,4 @@
--- -*- M2-comint -*-
+-- -*- M2-comint -*- {* hash: 1434288173 *}
 
 i1 : R = QQ[a..f];
 
@@ -26,3 +26,5 @@ o4 = | d e f |
 o4 : Matrix R  <--- R
 
 i5 : 
+0.76user 0.04system 0:00.80elapsed 99%CPU (0avgtext+0avgdata 0maxresident)k
+0inputs+0outputs (0major+10848minor)pagefaults 0swaps

@@ -1,9 +1,87 @@
--- -*- M2-comint -*-
+-- -*- M2-comint -*- {* hash: -531770111 *}
 
-i1 : methods drop
+i1 : methods BettiTally
 
-o1 = {(drop, BasicList, ZZ), (drop, BasicList, List)}
+o1 = { (**, BettiTally, BettiTally)        }
+     { (*, QQ, BettiTally)                 }
+     { (*, ZZ, BettiTally)                 }
+     { (++, BettiTally, BettiTally)        }
+     { (==, BettiTally, BettiTally)        }
+     { (betti, BettiTally)                 }
+     { (codim, BettiTally)                 }
+     { (degree, BettiTally)                }
+     { (dual, BettiTally)                  }
+     { (hilbertPolynomial, ZZ, BettiTally) }
+     { (hilbertSeries, ZZ, BettiTally)     }
+     { (lift, BettiTally, ZZ)              }
+     { (mathML, BettiTally)                }
+     { (net, BettiTally)                   }
+     { (pdim, BettiTally)                  }
+     { (poincare, BettiTally)              }
+     { (regularity, BettiTally)            }
+     { (SPACE, BettiTally, Array)          }
+     { (SPACE, BettiTally, ZZ)             }
 
-o1 : List
+o1 : VerticalList
 
-i2 : 
+i2 : methods resolution
+
+o2 = { (resolution, Ideal)         }
+     { (resolution, Matrix)        }
+     { (resolution, Module)        }
+     { (resolution, MonomialIdeal) }
+
+o2 : VerticalList
+
+i3 : methods symbol @@
+
+o3 = { ((@@, =), Thing, Thing)  }
+     { ((@@, =), Type, Type)    }
+     { (@@, Function, Function) }
+     { (@@, Thing, Thing)       }
+
+o3 : VerticalList
+
+i4 : methods( symbol ++, Module)
+
+o4 = { (++, GradedModule, Module) }
+     { (++, Module, GradedModule) }
+     { (++, Module, Module)       }
+
+o4 : VerticalList
+
+i5 : methods( Matrix, Matrix )
+
+o5 = { (%, Matrix, Matrix)                   }
+     { (**, Matrix, Matrix)                  }
+     { (*, Matrix, Matrix)                   }
+     { (++, Matrix, Matrix)                  }
+     { (+, Matrix, Matrix)                   }
+     { (-, Matrix, Matrix)                   }
+     { (//, Matrix, Matrix)                  }
+     { (==, Matrix, Matrix)                  }
+     { (|, Matrix, Matrix)                   }
+     { (||, Matrix, Matrix)                  }
+     { (contract', Matrix, Matrix)           }
+     { (contract, Matrix, Matrix)            }
+     { (diff', Matrix, Matrix)               }
+     { (diff, Matrix, Matrix)                }
+     { (homology, Matrix, Matrix)            }
+     { (markedGB, Matrix, Matrix)            }
+     { (modulo, Matrix, Matrix)              }
+     { (quotient', Matrix, Matrix)           }
+     { (quotient, Matrix, Matrix)            }
+     { (quotientRemainder', Matrix, Matrix)  }
+     { (quotientRemainder, Matrix, Matrix)   }
+     { (remainder', Matrix, Matrix)          }
+     { (remainder, Matrix, Matrix)           }
+     { (solve, Matrix, Matrix)               }
+     { (subquotient, Matrix, Matrix)         }
+     { (subquotient, Module, Matrix, Matrix) }
+     { (substitute, Matrix, Matrix)          }
+
+o5 : VerticalList
+
+i6 : 
+0.93user 0.03system 0:00.96elapsed 100%CPU (0avgtext+0avgdata 0maxresident)k
+0inputs+0outputs (0major+12958minor)pagefaults 0swaps

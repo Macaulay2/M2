@@ -1,4 +1,4 @@
--- -*- M2-comint -*-
+-- -*- M2-comint -*- {* hash: -99534815 *}
 
 i1 : R = ZZ/101[a,b,c_1,c_2];
 
@@ -11,17 +11,29 @@ o2 : PolynomialRing
 i3 : describe R
 
       ZZ
-o3 = --- [a, b, c , c , Heft => {1}]
+o3 = --- [a, b, c , c ]
      101         1   2
 
 i4 : toString describe R
 
 o4 =  ZZ
-     --- [a, b, c , c , Heft => {1}]
+     --- [a, b, c , c ]
      101         1   2
 
 i5 : toExternalString R
 
-o5 = ZZ/101 [a, b, c_1, c_2, Heft => {1}]
+o5 = ZZ/101 [a, b, c_1, c_2]
 
-i6 : 
+i6 : QQ[x,d,WeylAlgebra=>{x=>d}]
+
+o6 = QQ [x, d]
+
+o6 : PolynomialRing
+
+i7 : describe oo
+
+o7 = QQ [x, d, WeylAlgebra => {x => d}]
+
+i8 : 
+0.79user 0.04system 0:00.84elapsed 99%CPU (0avgtext+0avgdata 0maxresident)k
+0inputs+0outputs (0major+10844minor)pagefaults 0swaps

@@ -1,4 +1,4 @@
--- -*- M2-comint -*-
+-- -*- M2-comint -*- {* hash: -613281647 *}
 
 i1 : R=ZZ/32003[a..d];
 
@@ -42,3 +42,5 @@ i7 : regularity C
 o7 = 6
 
 i8 : 
+0.80user 0.02system 0:00.82elapsed 99%CPU (0avgtext+0avgdata 0maxresident)k
+0inputs+0outputs (0major+10904minor)pagefaults 0swaps

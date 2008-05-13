@@ -1,4 +1,4 @@
--- -*- M2-comint -*-
+-- -*- M2-comint -*- {* hash: -251117038 *}
 
 i1 : 123456789^5
 
@@ -57,18 +57,19 @@ o10 : GaloisField
 
 i11 : ambient A2
 
-        ZZ
-        -- [a]
-         2
-o11 = ----------
-       3
-      a  + a + 1
+         ZZ
+         -- [a]
+          2
+o11 = -----------
+       3    2
+      a  + a  + 1
 
 o11 : QuotientRing
 
 i12 : a^3+a+1
 
-o12 = 0
+       2
+o12 = a  + a
 
 o12 : A2
 
@@ -90,21 +91,21 @@ o15 : A3
 
 i16 : n = 123456789.0
 
-o16 = 123456789.
+o16 = 123456789
 
-o16 : RR
+o16 : RR (of precision 53)
 
-i17 : n = n * 1_RRR
+i17 : n = n * 1_RR
 
-o17 = .123456789*10^9
+o17 = 123456789
 
-o17 : RRR
+o17 : RR (of precision 53)
 
 i18 : n^5
 
-o18 = .2867971860299718107233761438093672048295*10^41
+o18 = 2.86797186029972e40
 
-o18 : RRR
+o18 : RR (of precision 53)
 
 i19 : R3 = frac(ZZ[a,b,c])
 
@@ -140,3 +141,5 @@ o22 = ------------------
 o22 : R3
 
 i23 : 
+0.78user 0.03system 0:00.83elapsed 99%CPU (0avgtext+0avgdata 0maxresident)k
+0inputs+0outputs (0major+10910minor)pagefaults 0swaps

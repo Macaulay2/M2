@@ -1,14 +1,14 @@
--- -*- M2-comint -*-
+-- -*- M2-comint -*- {* hash: 393749588 *}
 
 i1 : toList \\ sin \ ( 1 .. 5 )
 
-o1 = {0.841471, 0.909297, 0.14112, -0.756802, -0.958924}
+o1 = {.841471, .909297, .14112, -.756802, -.958924}
 
 o1 : List
 
 i2 : ( 1 .. 5 ) / sin // toList
 
-o2 = {0.841471, 0.909297, 0.14112, -0.756802, -0.958924}
+o2 = {.841471, .909297, .14112, -.756802, -.958924}
 
 o2 : List
 
@@ -25,3 +25,5 @@ o4 = (a, a, b, b, c, c, d, d)
 o4 : Sequence
 
 i5 : 
+0.76user 0.04system 0:00.81elapsed 100%CPU (0avgtext+0avgdata 0maxresident)k
+0inputs+0outputs (0major+10846minor)pagefaults 0swaps

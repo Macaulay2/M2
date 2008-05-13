@@ -1,4 +1,4 @@
--- -*- M2-comint -*-
+-- -*- M2-comint -*- {* hash: -405354036 *}
 
 i1 : R = ZZ/101
 
@@ -44,11 +44,6 @@ i8 : lift (17_R^-1, ZZ)
 
 o8 = 6
 
-i9 : ZZ^1 / ideal(101)
-
-o9 = cokernel | 101 |
-
-                              1
-o9 : ZZ-module, quotient of ZZ
-
-i10 : 
+i9 : 
+0.76user 0.04system 0:00.80elapsed 100%CPU (0avgtext+0avgdata 0maxresident)k
+0inputs+0outputs (0major+10841minor)pagefaults 0swaps

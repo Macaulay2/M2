@@ -1,0 +1,17 @@
+-- -*- M2-comint -*- {* hash: -1234817205 *}
+
+i1 : BesselY_0 .5
+
+o1 = -.444518733506707
+
+o1 : RR (of precision 53)
+
+i2 : BesselY_2 3p200
+
+o2 = -.160400393484923729675768299537980918104012040174378220981908
+
+o2 : RR (of precision 200)
+
+i3 : 
+0.80user 0.02system 0:00.82elapsed 100%CPU (0avgtext+0avgdata 0maxresident)k
+0inputs+0outputs (0major+10844minor)pagefaults 0swaps

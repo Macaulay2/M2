@@ -1,4 +1,4 @@
--- -*- M2-comint -*-
+-- -*- M2-comint -*- {* hash: -2114702963 *}
 
 i1 : options res
 
@@ -13,4 +13,8 @@ o1 = OptionTable{DegreeLimit =>                }
 
 o1 : OptionTable
 
-i2 : 
+i2 : options codim
+
+i3 : 
+0.75user 0.10system 0:00.86elapsed 99%CPU (0avgtext+0avgdata 0maxresident)k
+0inputs+0outputs (0major+10844minor)pagefaults 0swaps

@@ -1,4 +1,4 @@
--- -*- M2-comint -*-
+-- -*- M2-comint -*- {* hash: -1884988941 *}
 
 i1 : R = ZZ/10007[a,b];
 
@@ -296,3 +296,5 @@ o41 = >
 o41 : Keyword
 
 i42 : 
+0.77user 0.05system 0:00.82elapsed 99%CPU (0avgtext+0avgdata 0maxresident)k
+0inputs+0outputs (0major+10909minor)pagefaults 0swaps

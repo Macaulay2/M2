@@ -1,4 +1,4 @@
--- -*- M2-comint -*-
+-- -*- M2-comint -*- {* hash: -1053668748 *}
 
 i1 : R = QQ[a..d, Degrees=>{4:{1,1}}];
 
@@ -47,3 +47,5 @@ o9 = | b2 bc c2 cd d2 0  0  0  |
 o9 : Matrix
 
 i10 : 
+0.79user 0.06system 0:00.85elapsed 99%CPU (0avgtext+0avgdata 0maxresident)k
+0inputs+0outputs (0major+10831minor)pagefaults 0swaps

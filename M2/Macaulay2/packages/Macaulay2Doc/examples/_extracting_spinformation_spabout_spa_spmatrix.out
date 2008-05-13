@@ -1,4 +1,4 @@
--- -*- M2-comint -*-
+-- -*- M2-comint -*- {* hash: 1659598995 *}
 
 i1 : R = QQ[x,y,z];
 
@@ -53,6 +53,8 @@ o9 : PolynomialRing
 
 i10 : describe ring f
 
-o10 = QQ [x, y, z, Heft => {1}]
+o10 = QQ [x, y, z]
 
 i11 : 
+0.80user 0.02system 0:00.83elapsed 99%CPU (0avgtext+0avgdata 0maxresident)k
+0inputs+0outputs (0major+10848minor)pagefaults 0swaps

@@ -1,4 +1,4 @@
--- -*- M2-comint -*-
+-- -*- M2-comint -*- {* hash: 1086358260 *}
 
 i1 : sin
 
@@ -8,21 +8,21 @@ o1 : CompiledFunction
 
 i2 : sin 1.2
 
-o2 = 0.932039
+o2 = .932039085967226
 
-o2 : RR
+o2 : RR (of precision 53)
 
 i3 : sin(1.2)
 
-o3 = 0.932039
+o3 = .932039085967226
 
-o3 : RR
+o3 : RR (of precision 53)
 
 i4 : sin(1.0+0.2)
 
-o4 = 0.932039
+o4 = .932039085967226
 
-o4 : RR
+o4 : RR (of precision 53)
 
 i5 : print(10 + 1)^2
 121
@@ -60,3 +60,5 @@ o11 = {a, b, c, d}
 o11 : List
 
 i12 : 
+0.76user 0.04system 0:00.80elapsed 99%CPU (0avgtext+0avgdata 0maxresident)k
+0inputs+0outputs (0major+10842minor)pagefaults 0swaps

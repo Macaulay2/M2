@@ -1,4 +1,4 @@
--- -*- M2-comint -*-
+-- -*- M2-comint -*- {* hash: 1229448256 *}
 
 i1 : A = QQ[a..f]; B = QQ[a..d]; C = ZZ/101[x,y];
 
@@ -172,3 +172,5 @@ o28 = - b  + 101c - d + 3
 o28 : B
 
 i29 : 
+0.80user 0.06system 0:00.87elapsed 98%CPU (0avgtext+0avgdata 0maxresident)k
+0inputs+0outputs (0major+10860minor)pagefaults 0swaps

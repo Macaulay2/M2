@@ -1,4 +1,4 @@
--- -*- M2-comint -*-
+-- -*- M2-comint -*- {* hash: -164995479 *}
 
 i1 : R = ZZ[w,x,y,z];
 
@@ -58,6 +58,8 @@ o11 : Ideal of R
 
 i12 : toString I
 
-o12 = ideal (c^2-b*d,b*c-a*d,b^2-a*c)
+o12 = ideal(c^2-b*d,b*c-a*d,b^2-a*c)
 
 i13 : 
+0.81user 0.02system 0:00.84elapsed 99%CPU (0avgtext+0avgdata 0maxresident)k
+0inputs+0outputs (0major+10847minor)pagefaults 0swaps

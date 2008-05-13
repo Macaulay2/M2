@@ -1,4 +1,4 @@
--- -*- M2-comint -*-
+-- -*- M2-comint -*- {* hash: 1236603885 *}
 
 i1 : R = ZZ[a..d];
 
@@ -55,3 +55,5 @@ o9 = (2a  - 2a*b - 2a + 2b)x + a  - 2a + 1
 o9 : S
 
 i10 : 
+0.82user 0.08system 0:00.91elapsed 98%CPU (0avgtext+0avgdata 0maxresident)k
+0inputs+0outputs (0major+10844minor)pagefaults 0swaps

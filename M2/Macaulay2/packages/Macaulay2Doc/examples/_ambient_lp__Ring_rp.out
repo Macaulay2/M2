@@ -1,4 +1,4 @@
--- -*- M2-comint -*-
+-- -*- M2-comint -*- {* hash: -698080599 *}
 
 i1 : A = ZZ[a..d];
 
@@ -8,12 +8,12 @@ i3 : C = B/(a*b-3);
 
 i4 : describe C
 
-     ZZ [a, b, c, d]
-     ---------------
-           2
-         3a  - 1
-o4 = ---------------
-         a*b - 3
+        A
+     -------
+       2
+     3a  - 1
+o4 = -------
+     a*b - 3
 
 i5 : ambient C
 
@@ -22,3 +22,5 @@ o5 = B
 o5 : QuotientRing
 
 i6 : 
+0.79user 0.04system 0:00.84elapsed 99%CPU (0avgtext+0avgdata 0maxresident)k
+0inputs+0outputs (0major+10840minor)pagefaults 0swaps

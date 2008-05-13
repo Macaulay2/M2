@@ -1,4 +1,4 @@
--- -*- M2-comint -*-
+-- -*- M2-comint -*- {* hash: -1702063037 *}
 
 i1 : R = QQ[x..z]
 
@@ -8,9 +8,9 @@ o1 : PolynomialRing
 
 i2 : variety ideal x
 
-          QQ [x, y, z]
-o2 = Proj(------------)
-                x
+          R
+o2 = Proj(-)
+          x
 
 o2 : ProjectiveVariety
 
@@ -19,3 +19,5 @@ i3 : dim oo
 o3 = 1
 
 i4 : 
+0.79user 0.00system 0:00.80elapsed 99%CPU (0avgtext+0avgdata 0maxresident)k
+0inputs+0outputs (0major+10844minor)pagefaults 0swaps

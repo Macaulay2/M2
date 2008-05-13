@@ -1,4 +1,4 @@
--- -*- M2-comint -*-
+-- -*- M2-comint -*- {* hash: 1760826116 *}
 
 i1 : x
 
@@ -39,3 +39,5 @@ o7 = x
 o7 : Symbol
 
 i8 : 
+0.80user 0.06system 0:00.88elapsed 97%CPU (0avgtext+0avgdata 0maxresident)k
+0inputs+0outputs (0major+10844minor)pagefaults 0swaps

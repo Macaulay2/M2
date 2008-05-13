@@ -1,4 +1,4 @@
--- -*- M2-comint -*-
+-- -*- M2-comint -*- {* hash: 1010383525 *}
 
 i1 : unique {3,2,1,3,2,4,a,3,2,3,-2,1,2,4}
 
@@ -8,8 +8,10 @@ o1 : List
 
 i2 : toList set {3,2,1,3,2,4,a,3,2,3,-2,1,2,4}
 
-o2 = {a, 1, 2, 3, 4, -2}
+o2 = {1, 2, a, 3, 4, -2}
 
 o2 : List
 
 i3 : 
+0.77user 0.04system 0:00.81elapsed 100%CPU (0avgtext+0avgdata 0maxresident)k
+0inputs+0outputs (0major+10851minor)pagefaults 0swaps

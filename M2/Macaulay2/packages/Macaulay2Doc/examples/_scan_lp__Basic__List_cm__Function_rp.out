@@ -1,4 +1,4 @@
--- -*- M2-comint -*-
+-- -*- M2-comint -*- {* hash: -17201363 *}
 
 i1 : scan({a,4,"George",2^100}, print)
 a
@@ -7,3 +7,5 @@ George
 1267650600228229401496703205376
 
 i2 : 
+0.80user 0.04system 0:00.86elapsed 98%CPU (0avgtext+0avgdata 0maxresident)k
+0inputs+0outputs (0major+10831minor)pagefaults 0swaps

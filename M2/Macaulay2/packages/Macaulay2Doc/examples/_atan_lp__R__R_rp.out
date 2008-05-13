@@ -1,13 +1,15 @@
--- -*- M2-comint -*-
+-- -*- M2-comint -*- {* hash: 361695883 *}
 
 i1 : atan 1
 
-o1 = 0.785398
+o1 = .785398163397448
 
-o1 : RR
+o1 : RR (of precision 53)
 
 i2 : abs atan 1 == pi/4
 
 o2 = true
 
 i3 : 
+0.79user 0.02system 0:00.81elapsed 99%CPU (0avgtext+0avgdata 0maxresident)k
+0inputs+0outputs (0major+10844minor)pagefaults 0swaps

@@ -1,4 +1,4 @@
--- -*- M2-comint -*-
+-- -*- M2-comint -*- {* hash: -1062917162 *}
 
 i1 : R = ZZ/1277[x,y];
 
@@ -85,17 +85,13 @@ o16 : Ideal of R
 
 i17 : gb(I,BasisElementLimit => 2)
 
-o17 = GroebnerBasis[status: BasisElementLimit; all S-pairs handled up to
-      -----------------------------------------------------------------------
-      degree 1]
+o17 = GroebnerBasis[status: BasisElementLimit; all S-pairs handled up to degree 1]
 
 o17 : GroebnerBasis
 
 i18 : gb(I,BasisElementLimit => 3)
 
-o18 = GroebnerBasis[status: BasisElementLimit; all S-pairs handled up to
-      -----------------------------------------------------------------------
-      degree 2]
+o18 = GroebnerBasis[status: BasisElementLimit; all S-pairs handled up to degree 2]
 
 o18 : GroebnerBasis
 
@@ -129,14 +125,16 @@ i23 : I = ideal(x*y-z^2,y^2-w^2)
 o23 = ideal (x*y - z , y  - w )
 
                 ZZ
-o23 : Ideal of ---- [x, y, z, w]
+o23 : Ideal of ----[x, y, z, w]
                1277
 
 i24 : gb I
 
-   -- registering gb 6 at 0xf69000
+   -- registering gb 6 at 0xb93380
 
-   -- {2}(2)mm{3}(1)m{4}(2)om{5}(1)o
+   -- [gb]{2}(2)mm{3}(1)m{4}(2)om{5}(1)onumber of (nonminimal) gb elements = 4
+   -- number of monomials                = 8
+   -- 
 o24 = GroebnerBasis[status: done; S-pairs encountered up to degree 4]
 
 o24 : GroebnerBasis
@@ -178,7 +176,7 @@ i32 : f = random(R^1,R^{-3,-3,-5,-6});
 o32 : Matrix R  <--- R
 
 i33 : time betti gb f
-     -- used 0.64004 seconds
+     -- used 0.372023 seconds
 
              0  1
 o33 = total: 1 53
@@ -209,7 +207,7 @@ o35 = 1 - 2T  - T  + 2T  + 2T  - T   - 2T   + T
 o35 : ZZ [T]
 
 i36 : time betti gb f
-     -- used 0.020002 seconds
+     -- used 0.008001 seconds
 
              0  1
 o36 = total: 1 53
@@ -231,6 +229,5 @@ o36 = total: 1 53
 o36 : BettiTally
 
 i37 : 
-
-number of (nonminimal) gb elements = 4
-number of monomials                = 8
+1.18user 0.03system 0:01.21elapsed 100%CPU (0avgtext+0avgdata 0maxresident)k
+0inputs+0outputs (0major+11708minor)pagefaults 0swaps
