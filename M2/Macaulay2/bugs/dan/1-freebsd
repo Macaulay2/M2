@@ -1,0 +1,21 @@
+port to freebsd:
+
+Date: Mon, 12 May 2008 09:19:53 -0500
+From: "Daniel R. Grayson" <dan@math.uiuc.edu>
+To: macaulay2@googlegroups.com
+CC: dan@math.uiuc.edu
+In-reply-to: <20080508225028.GO12210@pencil.math.missouri.edu> (message from
+	Rich Winkel on Thu, 8 May 2008 17:50:28 -0500)
+Subject: Re: [Macaulay2] Re: missing configure script
+Reply-to: dan@math.uiuc.edu
+
+
+> /usr/include/c++/3.4/cwchar:249: error: `wcstold' is already declared in this scope
+> /usr/include/c++/3.4/cwchar:258: error: `wcstoll' is already declared in this scope
+> /usr/include/c++/3.4/cwchar:259: error: `wcstoull' is already declared in this scope
+
+I guess I should install freebsd 6.2 or 6.3 and try compiling it myself!  Sorry
+I can't be more helpful now.
+
+Michael Abshoff's feedback might be helpful.
+
