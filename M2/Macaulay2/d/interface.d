@@ -1115,8 +1115,8 @@ export rawGetTerms(e:Expr):Expr := (
      when s.1 is f:RawRingElement do (
 	  when s.2 is lo:ZZ do if !isInt(lo) then WrongArgSmallInteger(3) else
 	  when s.3 is hi:ZZ do if !isInt(hi) then WrongArgSmallInteger(4) else
-	  Expr(Ccode(RawRingElement,
-		    "(engine_RawRingElement)IM2_RingElement_get_terms(",
+	  toExpr(Ccode(RawRingElementOrNull,
+		    "(engine_RawRingElementOrNull)IM2_RingElement_get_terms(",
 		    toInt(nvars), ",", "(RingElement *)", f, ",", toInt(lo), ",", toInt(hi), ")" ))
 	  else WrongArgZZ(4)
 	  else WrongArgZZ(3))
