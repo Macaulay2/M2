@@ -1,14 +1,14 @@
--- -*- M2-comint -*- {* hash: 376214632 *}
+-- -*- M2-comint -*- {* hash: 1063676559 *}
 
-i1 : R = QQ[a..d];
+i1 : R = QQ[a..d,MonomialOrder => RevLex, Global => false];
 
-i2 : a^3 + b^2 + b*c + a*c^2 + b^2*c
+i2 : a^3 + b^2 + b*c + a*c^2 + b^2*c + a + b + c
 
-      3    2       2    2
-o2 = a  + b c + a*c  + b  + b*c
+                    2    2           2    3
+o2 = c + b + b*c + b  + b c + a + a*c  + a
 
 o2 : R
 
 i3 : 
-0.76user 0.10system 0:00.86elapsed 100%CPU (0avgtext+0avgdata 0maxresident)k
-0inputs+0outputs (0major+10844minor)pagefaults 0swaps
+0.75user 0.05system 0:00.80elapsed 99%CPU (0avgtext+0avgdata 0maxresident)k
+0inputs+0outputs (0major+11032minor)pagefaults 0swaps

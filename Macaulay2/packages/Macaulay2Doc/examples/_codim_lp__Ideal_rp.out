@@ -1,4 +1,4 @@
--- -*- M2-comint -*- {* hash: -1529669375 *}
+-- -*- M2-comint -*- {* hash: -567772055 *}
 
 i1 : R = ZZ/101[a..e];
 
@@ -23,6 +23,16 @@ o5 = ideal (d, c, b, a*e)
 
 o5 : Ideal of R
 
-i6 : 
-1.00user 0.04system 0:01.04elapsed 99%CPU (0avgtext+0avgdata 0maxresident)k
-0inputs+0outputs (0major+10972minor)pagefaults 0swaps
+i6 : R = QQ[x,y]/(ideal(x,y) * ideal(x-1))
+
+o6 = R
+
+o6 : QuotientRing
+
+i7 : codim ideal(x,y)
+
+o7 = 1
+
+i8 : 
+1.01user 0.05system 0:01.09elapsed 96%CPU (0avgtext+0avgdata 0maxresident)k
+0inputs+0outputs (0major+11165minor)pagefaults 0swaps
