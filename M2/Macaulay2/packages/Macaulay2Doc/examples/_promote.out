@@ -1,4 +1,4 @@
--- -*- M2-comint -*- {* hash: 97941342 *}
+-- -*- M2-comint -*- {* hash: 1520709395 *}
 
 i1 : R = QQ[a..d]; f = a^2;
 
@@ -36,52 +36,58 @@ o9 = b + 1
 
 o9 : S
 
-i10 : use R;
+i10 : 13_R
 
-i11 : I = ideal(a^2,a^3,a^4)
+o10 = 13
+
+o10 : R
+
+i11 : use R;
+
+i12 : I = ideal(a^2,a^3,a^4)
 
               2   3   4
-o11 = ideal (a , a , a )
+o12 = ideal (a , a , a )
 
-o11 : Ideal of R
+o12 : Ideal of R
 
-i12 : promote(I,S)
+i13 : promote(I,S)
 
                               2
-o12 = ideal (b + 1, a*b + a, b  + 2b + 1)
+o13 = ideal (b + 1, a*b + a, b  + 2b + 1)
 
-o12 : Ideal of S
+o13 : Ideal of S
 
-i13 : m = image matrix{{a^2,a^3,a^4}}
+i14 : m = image matrix{{a^2,a^3,a^4}}
 
-o13 = image | a2 a3 a4 |
+o14 = image | a2 a3 a4 |
 
                               1
-o13 : R-module, submodule of R
+o14 : R-module, submodule of R
 
-i14 : promote(gens m,S)
+i15 : promote(gens m,S)
 
-o14 = | b+1 ab+a b2+2b+1 |
+o15 = | b+1 ab+a b2+2b+1 |
 
               1       3
-o14 : Matrix S  <--- S
+o15 : Matrix S  <--- S
 
-i15 : G m
+i16 : G m
 
-o15 = image | b+1 ab+a b2+2b+1 |
+o16 = image | b+1 ab+a b2+2b+1 |
 
                               1
-o15 : S-module, submodule of S
+o16 : S-module, submodule of S
 
-i16 : m ** S
+i17 : m ** S
 
-o16 = cokernel {2} | a  0  |
+o17 = cokernel {2} | a  0  |
                {3} | -1 a  |
                {4} | 0  -1 |
 
                              3
-o16 : S-module, quotient of S
+o17 : S-module, quotient of S
 
-i17 : 
-0.78user 0.02system 0:00.81elapsed 100%CPU (0avgtext+0avgdata 0maxresident)k
-0inputs+0outputs (0major+10844minor)pagefaults 0swaps
+i18 : 
+0.78user 0.04system 0:00.83elapsed 99%CPU (0avgtext+0avgdata 0maxresident)k
+0inputs+0outputs (0major+11037minor)pagefaults 0swaps
