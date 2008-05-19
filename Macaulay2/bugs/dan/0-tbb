@@ -1,0 +1,11 @@
+Could you add the intel threading building blocks (tbb) to capybara?
+I'm playing around with several ways to parallelize code: pthreads
+(low level), openmp (for arrays, basically), and tbb.  They can all be
+used in the same program too.  pthreads seems to be available on the
+machines we are interested in.  openmp comes in gcc 4.3, but also in
+macosx gcc-4.2, and tbb needs to be built from source.  It appears to
+be GPL ver 2 as well....
+
+Here is one URL:
+
+http://www.threadingbuildingblocks.org/ver.php?fid=104
