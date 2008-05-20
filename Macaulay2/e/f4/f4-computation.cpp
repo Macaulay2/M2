@@ -163,6 +163,16 @@ void F4Computation::text_out(buffer &o) const
 {
 }
 
+void F4Computation::show() const // debug display
+{
+  buffer o;
+  stash::stats(o);
+  emit(o.str());
+
+  F4Mem::show();
+  //f4->show();
+}
+
 // Local Variables:
 // compile-command: "make -C $M2BUILDDIR/Macaulay2/e "
 // End:

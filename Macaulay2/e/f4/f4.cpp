@@ -72,9 +72,27 @@ F4GB::F4GB(const Gausser *KK0,
 
 }
 
+void F4GB::delete_gb_array(gb_array &g)
+{
+  for (int i=0; i<g.size(); i++)
+    {
+      gbelem *g0 = g[i];
+      if (g0->f.coeffs) KK->deallocate_F4CCoefficientArray(g0->f.coeffs, g0->f.len);
+      // Note: monomials will be cleared en-mass and so don't need to be freed.
+      delete g0;
+    }
+}
+
 F4GB::~F4GB()
 {
+  delete S;
+  delete lookup;
+  delete mat;
   delete syzF;
+
+  // Now delete the gens, gb arrays.
+  delete_gb_array(gens);
+  delete_gb_array(gb);
 }
 
 void F4GB::new_generators(int lo, int hi)

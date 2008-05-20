@@ -23,9 +23,9 @@ osbds2 = (M)->(t0=rank source vars R;
 
 osalg = (M)->(t0=min mingle M;
               t1=max mingle M;
-              S1= ZZ/31991[a_(t0)..a_(t1)];
+              S1= ZZ/31991[a_(t0)..a_(t1), MonomialSize=>8];
               S = frac S1;
-              R=S[x_(t0)..x_(t1),SkewCommutative=>true];
+              R=S[x_(t0)..x_(t1),SkewCommutative=>true, MonomialSize=>8];
               J = (osbds M)+(osbds2 M);
               R/J)
 
@@ -67,3 +67,25 @@ load "/Users/mike/src/M2/Macaulay2/bugs/mike/1-schenck-os.m2"
 time EPY hessian; -- 5.3 sec 
 time E2 = Ext^2(FA,S1); -- 12.5 sec
 time annihilator E2; --  (dies.....)
+
+time gens gb presentation E2; -- 13.63 sec on MBP, 2.4 GHz, MonomialSize=>8
+E2a = matrix entries presentation E2;
+time gens gb presentation E2; -- 13.63 sec on MBP, 2.4 GHz, MonomialSize=>8
+ 
+time gens gb E2a; -- 13.63 sec on MBP, 2.4 GHz, MonomialSize=>8
+
+E2a = matrix entries presentation E2;
+time gens gb(E2a, Algorithm=>LinearAlgebra); -- appears to be very incorrect
+ -- I think because the monomial order for modules being used is different
+time gens gb(E2a, Algorithm=>Homogeneous2);
+
+S2 = ZZ/31991[gens S1, MonomialSize=>8, MonomialOrder=>{Position=>Up}]
+E2b = sub(E2a,S2)
+time gens gb E2b; -- very bad....
+S2 = ZZ/31991[gens S1, MonomialSize=>8, MonomialOrder=>{Position=>Down}]
+E2b = sub(E2a,S2)
+time gens gb E2b; -- very good: 4.6 sec
+time gens gb(E2b, Algorithm=>Homogeneous2); -- 3.3 sec
+M = coker E2b;
+gbTrace=3
+time ann M;

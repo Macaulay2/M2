@@ -1030,7 +1030,6 @@ binomialGB_comp * binomialGB_comp::create(const Matrix *m,
     }
   binomialGB_comp *result = new binomialGB_comp(R,0,true,strategy);
   result->add_generators(m);
-  intern_GB(result);
   return result;
 }
 

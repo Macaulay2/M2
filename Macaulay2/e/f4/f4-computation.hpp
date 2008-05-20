@@ -38,7 +38,7 @@ public:
 
   virtual ~F4Computation();
 
-  virtual void remove_gb() {} //MES: write this
+  virtual void remove_gb() { delete f4; }
 
   enum ComputationStatusCode computation_is_complete();
 
@@ -75,6 +75,8 @@ public:
 
   virtual int complete_thru_degree() const;
   // The computation is complete up through this degree.
+
+  virtual void show() const; // debug display
   
 };
 
