@@ -148,6 +148,11 @@ integral c6
 
 assert( oo == 2875 )
 
+-- lines on a cubic surface, in a similar way
+Gc = flagBundle({2,2}, pt, VariableNames => {,c})
+integral chern symmetricPower_3 Gc.Bundles#1
+assert( oo == 27 )
+
 ---- 
 ---- #-------------------------------------------------------------------------
 ---- # Conics on a quintic threefold. This is the top Chern class of the 
