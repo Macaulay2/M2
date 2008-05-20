@@ -12,6 +12,27 @@
 #include "comp-gb-proxy.hpp"
 #include "text-io.hpp"
 
+static int nfinalized = 0;
+static int nremoved = 0;
+
+void remove_gb(void *p, void *cd)
+{
+  GBComputation *G = static_cast<GBComputation *>(p);
+  nremoved++;
+  if (gbTrace>=3)
+    fprintf(stderr, "\nremoving gb %d at %p\n",nremoved, G);
+  G->remove_gb();
+}
+
+void intern_GB(GBComputation *G)
+{
+  //  GC_REGISTER_FINALIZER(G,remove_gb,0,0,0);
+  GC_REGISTER_FINALIZER_IGNORE_SELF(G,remove_gb,0,0,0);
+  nfinalized++;
+  if (gbTrace>=3)
+    fprintf(stderr, "\n   -- registering gb %d at %p\n", nfinalized, (void *)G);
+}
+
 /////////////////////////////////////
 // GBBComputation ///////////////////
 /////////////////////////////////////
@@ -157,6 +178,7 @@ GBComputation *GBComputation::choose_gb(const Matrix *m,
 			 max_reduction_count);
     break;
   }
+  intern_GB(result);
   return result != NULL ? new GBProxy(result) : NULL;
 
 
@@ -233,25 +255,6 @@ const MatrixOrNull *GBComputation::get_parallel_lead_terms(M2_arrayint w)
   return 0;
 }
 
-static int nfinalized = 0;
-static int nremoved = 0;
-
-void remove_gb(void *p, void *cd)
-{
-  GBComputation *G = static_cast<GBComputation *>(p);
-  nremoved++;
-  if (gbTrace>=3)
-    fprintf(stderr, "\nremoving gb %d at %p\n",nremoved, G);
-  G->remove_gb();
-}
-
-void intern_GB(GBComputation *G)
-{
-  GC_REGISTER_FINALIZER(G,remove_gb,0,0,0);
-  nfinalized++;
-  if (gbTrace>=3)
-    fprintf(stderr, "\n   -- registering gb %d at %p\n", nfinalized, (void *)G);
-}
 
 // Local Variables:
 // compile-command: "make -C $M2BUILDDIR/Macaulay2/e "

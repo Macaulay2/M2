@@ -154,6 +154,8 @@ private:
 
   // end (SYZYGY MANIPULATIONS)
   ////////////////////////////////////////////////////////////////////
+  void delete_gb_array(gb_array &g);
+
 
   void gauss_reduce_linbox(); // dumps matrices in linbox format 
 

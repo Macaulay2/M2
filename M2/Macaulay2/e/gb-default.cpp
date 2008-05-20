@@ -40,7 +40,6 @@ gbA * gbA::create(const Matrix *m,
 {
   gbA *result = new gbA;
   result->initialize(m, collect_syz, n_rows_to_keep, gb_weights, strategy, max_reduction_count);
-  intern_GB(result);
   return result;
 }
 

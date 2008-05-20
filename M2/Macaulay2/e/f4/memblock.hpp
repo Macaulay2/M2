@@ -58,7 +58,7 @@ MemoryBlock<T,NSLAB>::~MemoryBlock()
     {
       slab *tmp = first_slab;
       first_slab = first_slab->next;
-      deleteitem(tmp);
+      delete tmp;
     }
 
   current_slab = 0;
