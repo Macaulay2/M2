@@ -1,0 +1,7 @@
+some tests for pushForward1 remain:
+
+    Macaulay2/packages/Macaulay2Doc/functions/pushForward1-doc.m2
+
+and in 
+
+    Macaulay2/packages/Macaulay2Doc/tu_canEmbed.m2
