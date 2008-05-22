@@ -178,7 +178,7 @@ public:
   int compare_grevlex(const_packed_monomial m, const_packed_monomial n) const {
     const_packed_monomial m1 = m+nslots;
     const_packed_monomial n1 = n+nslots;
-    for (int i=nslots-2; i>=0; i--) {
+    for (int i=nslots-2; i>0; i--) {
       int cmp = *--m1 - *--n1;
       if (cmp < 0) return -1;
       if (cmp > 0) return 1;
