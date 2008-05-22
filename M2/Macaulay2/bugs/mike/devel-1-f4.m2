@@ -7,7 +7,7 @@ collectGarbage()
 -----------------------------------
 R = ZZ/101[a..e]
 I = ideal random(R^1, R^{-2,-2,-2})
-time gens gb(I, Algorithm=>LinearAlgebra, GBDegrees=>{1,1,1,1,1})
+time gens gb(I, Algorithm=>LinearAlgebra)
 gbTrace=3
 gbRemove I
 time I = gens gb I
@@ -147,6 +147,14 @@ R = ZZ/101[a..d]
 M = matrix"a,b,c,d;b,c,d,a"
 gbTrace=10
 time gens gb(M, Algorithm=>LinearAlgebra, GBDegrees=>toList(numgens R:1));
+
+R = ZZ/101[a..d, MonomialOrder=>{4,Position=>Up}]
+R = ZZ/101[a..d, MonomialOrder=>{4,Position=>Down}] -- currently this does not work
+M = matrix"a,b,c,d;b,c,d,a"
+M = matrix"a,b,c,d;a,c,d,a"
+gbTrace=10
+time gens gb(M, Algorithm=>LinearAlgebra, GBDegrees=>toList(numgens R:1));
+time gens gb(M, Algorithm=>LinearAlgebra);
 
 -------------------------
 R = ZZ/23[x,y,z,h];

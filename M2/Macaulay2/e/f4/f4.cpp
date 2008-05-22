@@ -30,6 +30,7 @@ F4GB::F4GB(const Gausser *KK0,
     n_subring(0),
     complete_thru_this_degree(-1), // need to reset this in the body
     this_degree(), 
+    is_ideal(F0->rank() == 1),
     gens(), 
     gb(), 
     syz_basis(),
@@ -329,6 +330,15 @@ void F4GB::reorder_columns()
 	  int oldcol = row.comps[i];
 	  int newcol = ord[oldcol];
 	  row.comps[i] = newcol;
+	}
+      for (int i=1; i<row.len; i++)
+	{
+	  if (row.comps[i] <= row.comps[i-1])
+	    {
+	      fprintf(stderr, "Internal error: array out of order\n");
+	      break;
+	    }
+
 	}
     }
 
@@ -657,7 +667,7 @@ void F4GB::insert_gb_element(row_elem &r)
   lookup->insert_minimal_vp(M->get_component(result->f.monoms), vp, which);
   deleteitem(vp);
   // now go forth and find those new pairs
-  S->find_new_pairs(true);
+  S->find_new_pairs(is_ideal);
 }
 
 

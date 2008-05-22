@@ -89,3 +89,9 @@ time gens gb(E2b, Algorithm=>Homogeneous2); -- 3.3 sec
 M = coker E2b;
 gbTrace=3
 time ann M;
+
+S2 = ZZ/31991[gens S1, MonomialSize=>8, MonomialOrder=>{numgens S1, Position=>Up}]
+E2b = sub(E2a,S2);
+time gens gb E2b; -- 11.1 sec (621 GB elems)
+time gens gb(E2b, Algorithm=>LinearAlgebra); -- 0.74 sec
+

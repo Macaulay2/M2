@@ -97,7 +97,7 @@ class F4GB : public our_new_delete
   int n_subring;
   int complete_thru_this_degree;
   int this_degree; // The current degree we are working on
-
+  bool is_ideal; // true if no syzygies are being computed, and rank of F is one.
   // Hilbert function information
   // Maybe this will be an external class
   

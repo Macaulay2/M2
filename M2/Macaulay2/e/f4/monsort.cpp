@@ -1,6 +1,7 @@
 // Copyright 2005  Michael E. Stillman
 
 #include "monsort.hpp"
+#include "moninfo.hpp"
 
 // Here is an example use of QuickSorter.
 

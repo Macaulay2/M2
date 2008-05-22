@@ -7,6 +7,7 @@
 #include "../mat.hpp"
 #include "../newdelete.hpp"
 #include "f4-m2-interface.hpp"
+#include "../gbring.hpp"
 
 void F4toM2Interface::from_M2_vec(const Gausser *KK,
 				  const MonomialInfo *MI,
@@ -16,12 +17,12 @@ void F4toM2Interface::from_M2_vec(const Gausser *KK,
 {
   const PolynomialRing *R = F->get_ring()->cast_to_PolynomialRing();
   const Monoid *M = R->getMonoid();
-  int n = 0;
-  for (vec w = v; w != 0; w = w->next)
-    {
-      for (Nterm *t = w->coeff; t != 0; t = t->next)
-	n++;
-    }
+
+  ring_elem denom;
+  gbvector *f = R->translate_gbvector_from_vec(F,v, denom);
+  GBRing *GR = R->get_gb_ring();
+  int n = GR->gbvector_n_terms(f);
+
   int *exp = newarray_atomic(int, M->n_vars()+1);
   ntuple_word *lexp = newarray_atomic(ntuple_word, M->n_vars()+1);
 
@@ -30,18 +31,15 @@ void F4toM2Interface::from_M2_vec(const Gausser *KK,
   result.monoms = newarray_atomic(monomial_word, n * MI->max_monomial_size());
   n = 0;
   monomial_word *nextmonom = result.monoms;
-  for (vec w = v; w != 0; w = w->next)
+  for (gbvector *t = f; t != 0; t=t->next)
     {
-      for (Nterm *t = w->coeff; t != 0; t = t->next)
-	{
-	  relem_array[n] = t->coeff;
-	  M->to_expvector(t->monom, exp);
-	  for (int a =0; a<M->n_vars(); a++)
-	    lexp[a] = exp[a];
-	  MI->from_exponent_vector(lexp, w->comp, nextmonom);
-	  nextmonom += MI->monomial_size(nextmonom);
-	  n++;
-	}
+      relem_array[n] = t->coeff;
+      M->to_expvector(t->monom, exp);
+      for (int a =0; a<M->n_vars(); a++)
+	lexp[a] = exp[a];
+      MI->from_exponent_vector(lexp, t->comp-1, nextmonom); // gbvector components are shifted up by one
+      nextmonom += MI->monomial_size(nextmonom);
+      n++;
     }
   result.coeffs = KK->from_ringelem_array(n, relem_array);
   deletearray(relem_array);
