@@ -287,20 +287,14 @@ void QuickSorter<Sorter>::sort(Sorter *M0, value *elems0, long len0)
 {
   QuickSorter S(M0,elems0,len0);
   int typ = 1;
+    clock_t begin_time = clock();
 
   switch (typ) {
   case 1: 
     S.sort2(0,len0);
     break;
   case 2:
-    clock_t begin_time = clock();
     S.sort2depth(0,len0,1);
-    clock_t end_time = clock();
-    double nsecs = end_time - begin_time;
-    nsecs /= CLOCKS_PER_SEC;
-    
-    if (gbTrace >= 4)
-      fprintf(stderr,"quicksort: len %ld depth %ld time %f\n", len0, S.maxdepth, nsecs);
     break;
     
   case 3:
@@ -311,6 +305,13 @@ void QuickSorter<Sorter>::sort(Sorter *M0, value *elems0, long len0)
     S.sortD();
     break;
   }
+
+    clock_t end_time = clock();
+    double nsecs = end_time - begin_time;
+    nsecs /= CLOCKS_PER_SEC;
+    
+    if (gbTrace >= 4)
+      fprintf(stderr,"sort: len %ld depth %ld time %f\n", len0, S.maxdepth, nsecs);
 }
 #endif
 
