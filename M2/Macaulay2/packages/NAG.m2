@@ -1,3 +1,4 @@
+
 newPackage(
 	"NAG",
     	Version => "1.0", 
