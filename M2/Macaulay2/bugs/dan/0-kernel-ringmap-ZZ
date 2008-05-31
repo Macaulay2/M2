@@ -1,0 +1,16 @@
+implement kernel of ringmap over ZZ
+
+    i1 : R = ZZ[x]
+
+    o1 = R
+
+    o1 : PolynomialRing
+
+    i2 : f = map(R,R,{0})
+
+    o2 = map(R,R,{0})
+
+    o2 : RingMap R <--- R
+
+    i3 : ker f
+    stdio:3:1:(1):[0]: kernel Ringmap: not implemented yet
