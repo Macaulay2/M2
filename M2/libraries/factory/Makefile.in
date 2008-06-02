@@ -1,4 +1,5 @@
-VERSION = 3.0.3
+VERSION = 3.0.4
+TARDIR = factory
 
 # VERSION = 3.0.2
 # PATCHFILE = @srcdir@/patch-$(VERSION)
