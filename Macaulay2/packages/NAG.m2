@@ -28,7 +28,7 @@ PHCexe = NAG#Options#Configuration#"PHCpack";
 BERTINIexe = NAG#Options#Configuration#"Bertini";
 HOM4PS2exe = NAG#Options#Configuration#"HOM4PS2";
 
-DBG = 10; -- debug level (10=keep temp files)
+DBG = 0; -- debug level (10=keep temp files)
 
 systemToFile = method(TypicalValue => Nothing)
 systemToFile (List,String) := (F,name) -> (
@@ -78,11 +78,12 @@ solveSystem List := List => o -> F -> (
 	  )
      else if o.Software == PHCpack then ( 
 	  -- assume the ideal is 0-dim. 
-	  tarsolfile := --temporaryFileName() | 
+	  -- !!! problem with temporaryFileName: cygwin's /tmp is different from Windows' /tmp 
+	  tarsolfile := -- temporaryFileName() | 
 	                "tasols";
-	  targetfile := --temporaryFileName() | 
+	  targetfile := -- temporaryFileName() | 
 	             "target";
-	  outfile := --temporaryFileName() | 
+	  outfile := -- temporaryFileName() | 
 	             "output";
 	  -- writing data to the corresponding files                                                                                                                                                                           
 	  systemToFile(F,targetfile);
@@ -99,8 +100,10 @@ solveSystem List := List => o -> F -> (
 	       )
 	  )
      else if o.Software == Bertini then (
+	  -- tempdir := temporaryFileName() | "NAG-bertini";
+	  -- mkdir tempdir; 	  
   	  makeBertiniInput(gens R, F);
-  	  run("./bertini");
+  	  run(BERTINIexe);
 	  sols := readSolutionsBertini({"finite_solutions"});
 	  result = {sols, toList(#sols:1)};
 	  -- remove Bertini input/output files
@@ -115,9 +118,9 @@ solveSystem List := List => o -> F -> (
 	  -- newR := coefficientRing R[xx_1..xx_(numgens R)];
 	  (name, p) := makeHom4psInput(R, F);
 	  targetfile = name; --(map(newR, R, gens newR)\F);
-	  tarsolfile = --temporaryFileName() | 
+	  tarsolfile = temporaryFileName() | 
 	                "tasols";
- 	  run("./hom4ps2_in_out \""|targetfile|"\" \""|tarsolfile|"\"");
+ 	  run(HOM4PS2exe|" "|targetfile|" "|tarsolfile);
 	  sols = readSolutionsHom4ps(tarsolfile, p);
 	  result = {sols, toList(#sols:1)};
 	  if DBG<10 then (
@@ -136,7 +139,7 @@ makeHom4psInput (Ring, List) := (R, T) -> (
 -- OUT: (name, perm), where
 --      name = input filename   
 --      perm = hashtable of order of appearences of variables in the input
-  filename := "input"; -- could be anything
+  filename := temporaryFileName() | "input"; 
   s := "{\n";
   scan(T, p -> s = s | toString p | ";\n");
   s = s | "}\n";
@@ -226,19 +229,21 @@ readSolutionsBertini List := ofiles -> (
   s := {};
   for f in ofiles do (
     l := lines get f;
-    nvars := value first separate(" ", l#0);
-    temp := value first separate(" ", l#2); -- # of solution, -1 = EOF
-    l = drop(l, 3); -- move three lines
-    while temp >= 0 do (
+    nsols := value first separate(" ", l#0);
+    l = drop(l,2);
+    while #s < nsols do (
 	 if DBG>=10 then << "sol[<<" << temp << "] --------------------" << endl;
-	 coords := apply(nvars, i->(
-		   a := separate(" ",  cleanupOutput(l#i));
-		   (value a#0)+ii*(value a#1)
-		   ));
+	 coords := {};
+	 while #(first l) > 2 do ( 
+	      coords = coords | {(
+		   	a := separate(" ",  cleanupOutput(first l));	 
+		   	(value a#0)+ii*(value a#1)
+	      	   	)};
+    	      l = drop(l,1);
+	      );
+	 l = drop(l,1);
          if DBG>=10 then << coords << endl;
 	 s = s | {coords};
-	 temp = value first separate(" ", l#nvars); -- # of solution, -1 = EOF
-      	 l = drop(l, nvars+1); -- move nvars+1 lines   
 	 );     
     );
   s
