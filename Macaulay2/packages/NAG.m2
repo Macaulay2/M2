@@ -16,11 +16,9 @@ newPackage(
 -- Any symbols or functions that the user is to have access to
 -- must be placed in one of the following two lists
 export {
-     solveSystem
-     --MyOption
+     solveSystem, track
      }
 exportMutable {
-     PHCexe
      }
 
 -- GLOBAL VARIABLES ----------------------------------
@@ -28,37 +26,147 @@ PHCexe = NAG#Options#Configuration#"PHCpack";
 BERTINIexe = NAG#Options#Configuration#"Bertini";
 HOM4PS2exe = NAG#Options#Configuration#"HOM4PS2";
 
-DBG = 0; -- debug level (10=keep temp files)
+DBG = 2; -- debug level (10=keep temp files)
 
-systemToFile = method(TypicalValue => Nothing)
-systemToFile (List,String) := (F,name) -> (
-     file := openOut name;
-     file << #F << endl;
-     scan(F, f->( 
-	       file << toString f << ";" << endl;
+-- M2 tracker ----------------------------------------
+
+track = method(TypicalValue => List, Options =>{gamma=>1, tStep=>0.1, Predictor=>Secant, Projectivize=>true, RandomSeed=>0})
+track (List,List,List) := List => o -> (S,T,solsS) -> (
+-- tracks solutions from start system to target system
+-- IN:  S = list of polynomials in start system
+--      T = list of polynomials in target system
+--      solsS = list of solutions to S
+-- 	gamma => nonzero complex number
+-- OUT: solsT = list of target solutions corresponding to solsS
+     n := #T; 
+     if n > 0 then R := ring first T else error "expected nonempty target system";
+     if #S != n then 
+     error "expected same number of polynomials in start and target systems";
+     if any(S, f->ring f != R) or any(T, f->ring f != R)
+     then error "expected all polynomials in the same ring";
+     if n != numgens R then error "expected a square system";
+     if o.tStep <= 0 then "expected positive tStep";  
+     if o.Projectivize then (
+	  h := symbol h;
+	  R = CC[gens R | {h}]; 
+	  n = numgens R;
+	  setRandomSeed o.RandomSeed;
+	  randomLinear := -- sum(n, i->(random(-1.,1.)+random(-1.,1.)*ii)*R_i) - 1; 
+	  sum(n, i->exp(random(0.,2*pi)*ii)*R_i) - 1;
+	  if DBG>1 then << "random affine patch: " <<randomLinear<<endl;
+	  T = apply(T, f->homogenize(sub(f,R), h)) | {randomLinear};
+	  S = apply(S, f->homogenize(sub(f,R), h)) | {h-1};
+	  solsS = solsS / (s->append(s,1));
+	  ); 
+     
+     -- create homotopy
+     t := symbol t;
+     Rt := CC[gens R | {t}]; -- how do you cleanly extend the generators list: e.g., what if "n" is a var name?
+     H := matrix {apply(n, i->(1-t)*sub(S#i,Rt)+o.gamma*t*sub(T#i,Rt))};
+     JH := transpose jacobian H; 
+     Hx := JH_(toList(0..n-1));
+     Ht := JH_{n};
+     
+     -- evaluation functions
+     evalH := (x0,t0)-> lift(sub(H, transpose x0 | matrix {{t0}}), CC);
+     evalHx := (x0,t0)-> lift(sub(Hx, transpose x0 | matrix {{t0}}), CC);
+     evalHt := (x0,t0)-> lift(sub(Ht, transpose x0 | matrix {{t0}}), CC);
+     evalMinusInverseHxHt := (x0,t0)-> -(inverse evalHx(x0,t0))*evalHt(x0,t0);
+          
+     -- threshholds and other tuning parameters
+     tStep := o.tStep;
+     epsilon := 0.0000001; -- tolerance (universal at this point)
+     divThresh := 1e4;
+     increaseStepThresh := 1e0;
+     decreaseStepThresh := 1e3;
+     tStepMin := 1e-3;
+     
+     rawSols := apply(solsS, s->(
+	       if DBG > 1 then << "tracking solution " << toString s << endl;
+	       x0 := sub(transpose matrix {toList s}, CC); 
+	       t0 := toCC 0.; 
+     	       history := {t0=>x0};
+	       while x0 =!= infinity and 1-t0 > epsilon do (
+		    if DBG > 2 then 
+		    << "t0=" << t0 << endl;
+
+		    -- predictor step
+		    local dx, dt, t1;
+		    if o.Predictor == Tangent then (
+		    	 Ht0 := evalHt(x0,t0);
+		    	 Hx0 := evalHx(x0,t0);
+		    	 invHx0 := inverse Hx0;
+		    	 invHx0timesHt0 := invHx0*Ht0;
+		    	 -- if norm invHx0timesHt0 > divThresh then (x0 = infinity; break);
+		    	 tStepSafe := 1; -- 1/(norm(Hx0)*norm(invHx0)); -- what is a good heuristic?
+		    	 dt = min(max(min(tStep,tStepSafe),tStepMin), 1-t0);
+		         dx = -dt*invHx0timesHt0;
+			 ) 
+		    else if o.Predictor == Secant then (
+			 dt = min(tStep, 1-t0);
+			 if #history > 1 then ( -- if there is a preceding point
+			      u := x0 - history#(#history-2)#1;
+			      dx = (1/sqrt(sum(flatten entries u,x->x^2)))*dt*u;
+     			      )			      
+			 else ( -- use tangential predictor
+			      dx = dt*evalMinusInverseHxHt(x0,t0);
+			      );
+			 )
+		    else if o.Predictor == RungeKutta4 then (
+			 dt = min(tStep, 1-t0);
+			 k1 := dt*evalMinusInverseHxHt(x0,t0);
+			 k2 := dt*evalMinusInverseHxHt(x0+.5*k1,t0+.5*dt);
+			 k3 := dt*evalMinusInverseHxHt(x0+.5*k2,t0+.5*dt);
+			 k4 := dt*evalMinusInverseHxHt(x0+k3,t0+dt);
+			 dx = (1/6)*(k1+2*k2+2*k3+k4);
+			 )
+		    else error "unknown Predictor";
+		    		    
+    	 	    t1 = t0 + dt;
+		    x1 = x0 + dx;
+		    
+		    -- corrector step
+		    dx = 1; -- dx = + infinity
+		    maxCorrectorSteps := 10;
+		    nCorSteps := 0;
+		    while norm dx > epsilon and nCorSteps < maxCorrectorSteps do ( 
+			 if norm x1 > divThresh then (x1 = infinity; break);
+			 if DBG > 3 then << "x=" << toString x1 << " res=" <<  evalH(x1,t1) << " dx=" << dx << endl;
+			 dx = - (inverse evalHx(x1,t1))*(transpose evalH(x1,t1));
+			 x1 = x1 + dx;
+			 );
+		    
+		    x0 = x1;
+		    t0 = t1;
+		    history = append(history, t0=>x0);
+		    );        	    
+	       x0
 	       ));
-     close file;
-     ) 
-
-parseSolutions = method(TypicalValue => Sequence)
-parseSolutions (String,List) := (s,V) -> (
--- parses solutions in PHCpack format 
--- IN:  s = string of solutions in PHCmaple format 
---      V = list of variable names
--- OUT: {list of solutions, list of multiplicities}
-     L := get s;
-     L = replace("=", "=>", L);
-     L = replace("I", "ii", L);
-     L = replace("E", "e", L);
-     L = replace("time", "\"time\"", L);
-     L = replace("multiplicity", "\"mult\"", L);
-	  
-     sols := apply(value L, x->new HashTable from toList x);
-     mults := apply(sols, x->x#"mult");
-     coords := apply(sols, x->apply(V, v->x#v));
-     {coords, mults}     
+     
+     if o.Projectivize then (
+	  print rawSols;
+	  return select(
+	       apply(select(rawSols,s->s=!=infinity), s->(
+		    	 s = flatten entries s;
+		    	 if norm(last s) < epsilon then infinity 
+		    	 else apply(drop(s,-1),u->(1/last s)*u)
+			 )
+	       	    ),
+	       s->s=!=infinity);
+	  )
+     -- consolidate clusters (perhaps, should not be done)
+     else (
+	  solsT = new MutableHashTable;
+     	  scan(select(rawSols,s->s=!=infinity), 
+	       r->if (p:=position(keys solsT, s->norm(s-r)<epsilon))===null 
+	       then solsT#r = 1  
+	       else ( k:=(keys solsT)#p;  solsT#k = solsT#k + 1 )
+	       );
+          return { (keys solsT)/flatten@@entries, values solsT };
+	  );
      )
-
+     
+-- INTERFACE part ------------------------------------
 solveSystem = method(TypicalValue => List, Options =>{Software=>PHCpack})
 solveSystem List := List => o -> F -> (
 -- solves a system of polynomial equations
@@ -131,6 +239,38 @@ solveSystem List := List => o -> F -> (
      else error "invalid Software option";  		
      result
      )
+
+-- PHC part ------------------------------------------
+systemToFile = method(TypicalValue => Nothing)
+systemToFile (List,String) := (F,name) -> (
+     file := openOut name;
+     file << #F << endl;
+     scan(F, f->( 
+	       file << toString f << ";" << endl;
+	       ));
+     close file;
+     ) 
+
+parseSolutions = method(TypicalValue => Sequence)
+parseSolutions (String,List) := (s,V) -> (
+-- parses solutions in PHCpack format 
+-- IN:  s = string of solutions in PHCmaple format 
+--      V = list of variable names
+-- OUT: {list of solutions, list of multiplicities}
+     L := get s;
+     L = replace("=", "=>", L);
+     L = replace("I", "ii", L);
+     L = replace("E", "e", L);
+     L = replace("time", "\"time\"", L);
+     L = replace("multiplicity", "\"mult\"", L);
+	  
+     sols := apply(value L, x->new HashTable from toList x);
+     mults := apply(sols, x->x#"mult");
+     coords := apply(sols, x->apply(V, v->x#v));
+     {coords, mults}     
+     )
+
+-- HOM4PS2 part -----------------------------------------------------------
 
 makeHom4psInput = method(TypicalValue=>Sequence)
 makeHom4psInput (Ring, List) := (R, T) -> (
