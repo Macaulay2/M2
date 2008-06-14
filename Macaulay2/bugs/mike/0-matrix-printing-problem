@@ -1,0 +1,18 @@
+Macaulay 2, version 1.1
+with packages: Classic, Core, Elimination, IntegralClosure, LLLBases, Parsing, PrimaryDecomposition,
+               SchurRings, TangentCone
+
+i1 : CC[a,b]
+
+o1 = CC  [a, b]
+       53
+
+o1 : PolynomialRing
+
+i2 : matrix {{a+b}}
+
+o2 = | 1a1b |
+
+                        1                  1
+o2 : Matrix (CC  [a, b])  <--- (CC  [a, b])
+               53                 53
