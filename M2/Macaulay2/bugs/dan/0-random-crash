@@ -1,0 +1,4 @@
+
+i1 : random(3,2)
+
+Process M2 exited abnormally with code 136
