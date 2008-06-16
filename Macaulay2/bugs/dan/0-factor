@@ -21,20 +21,31 @@ factory assumes only, that the minimal polynomial of the field extension is
 given as a irreducible polynomial.
 (There is also another representation, which uses the root
 of the multiplicative group, but we do not use it, so its untested.)
-Here an example for gcd in a field extension of Z/p by mipo
-(a polynomial of type CanonicalForm):
-  setCharacteristic(p);
-  Variable a=rootOf(mipo);
-  // build F and G using a to represent a root of mipo
-  return gcd(F,G);
-for extentions of Q:
-  setCharacteristic(0);
-  CFList as(mipo);
-  Variable a=rootOf(mipo);
-  // build F and G using a to represent a root of mipo
-  return  alg_gcd( F, G, as);
-And factorization of G:
-  setCharacteristic(p); // resp. setCharacteristic(0);
-  Variable a=rootOf(mipo);
-  // build G using a to represent a root of mipo
-  CFFList L=Factorize(G, mipo);
+
+GCD:
+
+    This one should now work in char 0 also:
+
+	Here an example for gcd in a field extension of Z/p by mipo
+	(a polynomial of type CanonicalForm):
+	  setCharacteristic(p);
+	  Variable a=rootOf(mipo);
+	  // build F and G using a to represent a root of mipo
+	  return gcd(F,G);
+
+    This one should not be needed any longer:
+
+	for extentions of Q:
+	  setCharacteristic(0);
+	  CFList as(mipo);
+	  Variable a=rootOf(mipo);
+	  // build F and G using a to represent a root of mipo
+	  return  alg_gcd( F, G, as);
+
+Factorization:
+
+    And factorization of G:
+      setCharacteristic(p); // resp. setCharacteristic(0);
+      Variable a=rootOf(mipo);
+      // build G using a to represent a root of mipo
+      CFFList L=Factorize(G, mipo);
