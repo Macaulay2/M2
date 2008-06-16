@@ -291,7 +291,6 @@ usage := arg -> (
      << "    -q                 don't load user's init.m2 file or use packages in home directory" << newline
      << "    -E '...'           evaluate expression '...' before initialization" << newline
      << "    -e '...'           evaluate expression '...' after initialization" << newline
-     << "    -x                 example prompts, don't use readline" << newline
      << "environment:"       << newline
      << "    M2ARCH             a hint to find the dumpdata file as" << newline
      << "                       bin/../cache/Macaulay2-$M2ARCH-data, where bin is the" << newline
