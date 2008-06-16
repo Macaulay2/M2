@@ -24,7 +24,7 @@ TEX = latex
 	 else echo "running M2 on $*.m2"; \
 	   M2 --silent --stop <$*.m2 >$*.out.tmp \
 		&& \
-	   sed -e '/^$$/N' -e 's/^\n*\(i\+[1-9][0-9]* : \)/\1/' <$*.out.tmp >$*.out && \
+	   sed -e '/^$$/N' -e 's/^\n*\(ii*[1-9][0-9]* : \)/\1/' <$*.out.tmp >$*.out && \
 	   cp $*.m2 $*.old ; \
 	 fi
 %.m2 : %.tex
