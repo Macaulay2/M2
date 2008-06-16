@@ -30,7 +30,13 @@ DBG = 2; -- debug level (10=keep temp files)
 
 -- M2 tracker ----------------------------------------
 
-track = method(TypicalValue => List, Options =>{gamma=>1, tStep=>0.1, Predictor=>Secant, Projectivize=>true, RandomSeed=>0})
+track = method(TypicalValue => List, Options =>{
+	  gamma=>1, 
+	  tStep=>0.1, 
+	  Predictor=>Secant, 
+	  Projectivize=>true, 
+	  AffinePatches=>{},
+	  RandomSeed=>0})
 track (List,List,List) := List => o -> (S,T,solsS) -> (
 -- tracks solutions from start system to target system
 -- IN:  S = list of polynomials in start system
@@ -46,22 +52,37 @@ track (List,List,List) := List => o -> (S,T,solsS) -> (
      then error "expected all polynomials in the same ring";
      if n != numgens R then error "expected a square system";
      if o.tStep <= 0 then "expected positive tStep";  
+
+     solsS = solsS / (s->sub(transpose matrix {{s}}, CC)); -- convert to vectors
+     
      if o.Projectivize then (
 	  h := symbol h;
 	  R = CC[gens R | {h}]; 
 	  n = numgens R;
-	  setRandomSeed o.RandomSeed;
-	  randomLinear := -- sum(n, i->(random(-1.,1.)+random(-1.,1.)*ii)*R_i) - 1; 
-	  sum(n, i->exp(random(0.,2*pi)*ii)*R_i) - 1;
-	  if DBG>1 then << "random affine patch: " <<randomLinear<<endl;
-	  T = apply(T, f->homogenize(sub(f,R), h)) | {randomLinear};
-	  S = apply(S, f->homogenize(sub(f,R), h)) | {h-1};
-	  solsS = solsS / (s->append(s,1));
+     	  
+	  patches := { 	    
+	       promote(matrix{{append((n-1):0, 1)}},CC), -- dehomogenizing patch
+	       if #o.AffinePatches > 0 then first o.AffinePatches -- either provided patch...
+	       else ( 
+		    setRandomSeed o.RandomSeed; 
+		    matrix{apply(n, i->exp(random(0.,2*pi)*ii))} ) -- ... or random patch
+	       };
+	  patches = patches | { o.gamma*patches#1 };
+     	            
+	  if DBG>1 then << "affine patch: " << toString patches#1 <<endl;
+     	  
+     	  -- affine patch functions 
+     	  pointToPatch := (x0,p)-> (1/(p*x0)_(0,0))*x0; -- representative for point x0 in patch p
+	  patchEquation := p -> p * transpose vars R - 1;
+	  
+	  T = apply(T, f->homogenize(sub(f,R), h)) | {patchEquation patches#1};
+	  S = apply(S, f->homogenize(sub(f,R), h)) | {patchEquation patches#2};
+	  solsS = solsS / (s->pointToPatch(s||matrix{{toCC 1}}, patches#2));
 	  ); 
      
      -- create homotopy
      t := symbol t;
-     Rt := CC[gens R | {t}]; -- how do you cleanly extend the generators list: e.g., what if "n" is a var name?
+     Rt := CC[gens R, t]; -- how do you cleanly extend the generators list: e.g., what if "n" is a var name?
      H := matrix {apply(n, i->(1-t)*sub(S#i,Rt)+o.gamma*t*sub(T#i,Rt))};
      JH := transpose jacobian H; 
      Hx := JH_(toList(0..n-1));
@@ -73,6 +94,7 @@ track (List,List,List) := List => o -> (S,T,solsS) -> (
      evalHt := (x0,t0)-> lift(sub(Ht, transpose x0 | matrix {{t0}}), CC);
      evalMinusInverseHxHt := (x0,t0)-> -(inverse evalHx(x0,t0))*evalHt(x0,t0);
           
+     
      -- threshholds and other tuning parameters
      tStep := o.tStep;
      epsilon := 0.0000001; -- tolerance (universal at this point)
@@ -83,7 +105,7 @@ track (List,List,List) := List => o -> (S,T,solsS) -> (
      
      rawSols := apply(solsS, s->(
 	       if DBG > 1 then << "tracking solution " << toString s << endl;
-	       x0 := sub(transpose matrix {toList s}, CC); 
+	       x0 := s; 
 	       t0 := toCC 0.; 
      	       history := {t0=>x0};
 	       while x0 =!= infinity and 1-t0 > epsilon do (
@@ -130,7 +152,7 @@ track (List,List,List) := List => o -> (S,T,solsS) -> (
 		    maxCorrectorSteps := 10;
 		    nCorSteps := 0;
 		    while norm dx > epsilon and nCorSteps < maxCorrectorSteps do ( 
-			 if norm x1 > divThresh then (x1 = infinity; break);
+			 --if norm x1 > divThresh then (x1 = infinity; break);
 			 if DBG > 3 then << "x=" << toString x1 << " res=" <<  evalH(x1,t1) << " dx=" << dx << endl;
 			 dx = - (inverse evalHx(x1,t1))*(transpose evalH(x1,t1));
 			 x1 = x1 + dx;
@@ -148,8 +170,9 @@ track (List,List,List) := List => o -> (S,T,solsS) -> (
 	  return select(
 	       apply(select(rawSols,s->s=!=infinity), s->(
 		    	 s = flatten entries s;
-		    	 if norm(last s) < epsilon then infinity 
-		    	 else apply(drop(s,-1),u->(1/last s)*u)
+		    	 --if norm(last s) < epsilon then infinity 
+		    	 --else 
+			 apply(drop(s,-1),u->(1/last s)*u)
 			 )
 	       	    ),
 	       s->s=!=infinity);
