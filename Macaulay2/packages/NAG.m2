@@ -26,14 +26,14 @@ PHCexe = NAG#Options#Configuration#"PHCpack";
 BERTINIexe = NAG#Options#Configuration#"Bertini";
 HOM4PS2exe = NAG#Options#Configuration#"HOM4PS2";
 
-DBG = 2; -- debug level (10=keep temp files)
+DBG = 0; -- debug level (10=keep temp files)
 
 -- M2 tracker ----------------------------------------
 
 track = method(TypicalValue => List, Options =>{
 	  gamma=>1, 
 	  tStep=>0.1, 
-	  Predictor=>Secant, 
+	  Predictor=>RungeKutta4, 
 	  Projectivize=>true, 
 	  AffinePatches=>{},
 	  RandomSeed=>0})
@@ -53,7 +53,7 @@ track (List,List,List) := List => o -> (S,T,solsS) -> (
      if n != numgens R then error "expected a square system";
      if o.tStep <= 0 then "expected positive tStep";  
 
-     solsS = solsS / (s->sub(transpose matrix {{s}}, CC)); -- convert to vectors
+     solsS = solsS / (s->sub(transpose matrix {toList s}, CC)); -- convert to vectors
      
      if o.Projectivize then (
 	  h := symbol h;
@@ -89,54 +89,75 @@ track (List,List,List) := List => o -> (S,T,solsS) -> (
      Ht := JH_{n};
      
      -- evaluation functions
-     evalH := (x0,t0)-> lift(sub(H, transpose x0 | matrix {{t0}}), CC);
+     evalH := (x0,t0)-> lift(sub(transpose H, transpose x0 | matrix {{t0}}), CC);
      evalHx := (x0,t0)-> lift(sub(Hx, transpose x0 | matrix {{t0}}), CC);
      evalHt := (x0,t0)-> lift(sub(Ht, transpose x0 | matrix {{t0}}), CC);
      evalMinusInverseHxHt := (x0,t0)-> -(inverse evalHx(x0,t0))*evalHt(x0,t0);
           
      
      -- threshholds and other tuning parameters
-     tStep := o.tStep;
-     epsilon := 0.0000001; -- tolerance (universal at this point)
-     divThresh := 1e4;
-     increaseStepThresh := 1e0;
-     decreaseStepThresh := 1e3;
-     tStepMin := 1e-3;
-     
+     epsilon := 1e-5; -- tracking tolerance (universal)
+     divThresh := 1e4; 
+     condNumberThresh := 1e3;
+     stepDecreaseFactor := 0.5;
+     stepIncreaseFactor := 2.0;
+     numberSuccessesBeforeIncrease := 4;
+     tStepMin := 1e-2;
+     theSmallestNumber := 1e-12;
+     -- corrector tuning
+     maxCorSteps := 4;
+      
      rawSols := apply(solsS, s->(
 	       if DBG > 1 then << "tracking solution " << toString s << endl;
+     	       tStep := o.tStep;
+	       predictorSuccesses := 0;
 	       x0 := s; 
 	       t0 := toCC 0.; 
      	       history := {t0=>x0};
-	       while x0 =!= infinity and 1-t0 > epsilon do (
-		    if DBG > 2 then 
+	       while x0 =!= infinity and 1-t0 > theSmallestNumber do (
+		    if DBG > 3 then 
 		    << "t0=" << t0 << endl;
-
+		    -- evaluate the jacobian Hx, change patch if the condition number is large
+		    Hx0 := evalHx(x0,t0);
+		    --svd := sort first SVD Hx0;
+		    --if o.Projectivize and first svd / last svd > condNumberThresh then ( 
+     	       	    --	 << "CONDITION NUMBER = " <<  first svd / last svd << endl;			 
+		    --	 );
 		    -- predictor step
 		    local dx, dt, t1;
 		    if o.Predictor == Tangent then (
 		    	 Ht0 := evalHt(x0,t0);
-		    	 Hx0 := evalHx(x0,t0);
-		    	 invHx0 := inverse Hx0;
+	     	    	 invHx0 := inverse Hx0;
 		    	 invHx0timesHt0 := invHx0*Ht0;
 		    	 -- if norm invHx0timesHt0 > divThresh then (x0 = infinity; break);
 		    	 tStepSafe := 1; -- 1/(norm(Hx0)*norm(invHx0)); -- what is a good heuristic?
 		    	 dt = min(max(min(tStep,tStepSafe),tStepMin), 1-t0);
 		         dx = -dt*invHx0timesHt0;
 			 ) 
+		    else if o.Predictor == Euler then (
+			 H0 := evalH(x0,t0);
+			 Ht0 = evalHt(x0,t0);
+	     	    	 invHx0 = inverse Hx0;
+			 dt = min(tStep, 1-t0);
+			 dx = -invHx0*(H0+Ht0*dt);
+			 )
 		    else if o.Predictor == Secant then (
 			 dt = min(tStep, 1-t0);
 			 if #history > 1 then ( -- if there is a preceding point
 			      u := x0 - history#(#history-2)#1;
-			      dx = (1/sqrt(sum(flatten entries u,x->x^2)))*dt*u;
+			      dx = (dt/sqrt(sum(flatten entries u,x->x^2)))*u;
      			      )			      
 			 else ( -- use tangential predictor
-			      dx = dt*evalMinusInverseHxHt(x0,t0);
+			      Ht0 = evalHt(x0,t0);
+	     	    	      invHx0 = inverse Hx0;
+			      dx = -dt*invHx0*Ht0;
 			      );
 			 )
 		    else if o.Predictor == RungeKutta4 then (
 			 dt = min(tStep, 1-t0);
-			 k1 := dt*evalMinusInverseHxHt(x0,t0);
+			 Ht0 = evalHt(x0,t0);
+	     	    	 invHx0 = inverse Hx0;
+			 k1 := -dt*invHx0*Ht0;
 			 k2 := dt*evalMinusInverseHxHt(x0+.5*k1,t0+.5*dt);
 			 k3 := dt*evalMinusInverseHxHt(x0+.5*k2,t0+.5*dt);
 			 k4 := dt*evalMinusInverseHxHt(x0+k3,t0+dt);
@@ -149,18 +170,35 @@ track (List,List,List) := List => o -> (S,T,solsS) -> (
 		    
 		    -- corrector step
 		    dx = 1; -- dx = + infinity
-		    maxCorrectorSteps := 10;
 		    nCorSteps := 0;
-		    while norm dx > epsilon and nCorSteps < maxCorrectorSteps do ( 
-			 --if norm x1 > divThresh then (x1 = infinity; break);
-			 if DBG > 3 then << "x=" << toString x1 << " res=" <<  evalH(x1,t1) << " dx=" << dx << endl;
-			 dx = - (inverse evalHx(x1,t1))*(transpose evalH(x1,t1));
+		    while norm dx > epsilon 
+		          and nCorSteps < (if 1-t1 < theSmallestNumber and dt < tStepMin 
+			                   then 11 -- infinity
+			                   else maxCorSteps) 
+		    do ( 
+			 if norm x1 > divThresh then (x1 = infinity; break);
+			 if DBG > 3 then << "x=" << toString x1 << " res=" <<  toString evalH(x1,t1) << " dx=" << dx << endl;
+			 dx = - (inverse evalHx(x1,t1))*evalH(x1,t1);
 			 x1 = x1 + dx;
+			 nCorSteps = nCorSteps + 1;
 			 );
-		    
-		    x0 = x1;
-		    t0 = t1;
-		    history = append(history, t0=>x0);
+		    if dt > tStepMin and nCorSteps == maxCorSteps then ( 
+			 predictorSuccesses = 0;
+	 	 	 tStep = stepDecreaseFactor*tStep;
+			 if DBG > 2 then << "decreased tStep to "<< tStep << endl;	 
+			 ) 
+		    else (
+			 predictorSuccesses = predictorSuccesses + 1;
+			 if nCorSteps <= maxCorSteps - 1 -- over 2 / minus 2 ???
+              		    and predictorSuccesses >= numberSuccessesBeforeIncrease 
+			 then (			      
+			      tStep = stepIncreaseFactor*tStep;	
+			      if DBG > 2 then << "increased tStep to "<< tStep << endl;
+			      );
+		         x0 = x1;
+		         t0 = t1;
+		         history = append(history, t0=>x0);
+			 );
 		    );        	    
 	       x0
 	       ));
@@ -188,9 +226,61 @@ track (List,List,List) := List => o -> (S,T,solsS) -> (
           return { (keys solsT)/flatten@@entries, values solsT };
 	  );
      )
+
+refine = method(TypicalValue => List, Options =>{epsilon=>1e-8, maxCorSteps=>30})
+refine (List,List) := List => o -> (T,solsT) -> (
+-- tracks solutions from start system to target system
+-- IN:  T = list of polynomials in target system
+--      solsT = list of solutions to T
+-- OUT: solsR = list of refined solutions 
+     n := #T; 
+     if n > 0 then R := ring first T else error "expected nonempty target system";
+     if n != numgens R then error "expected a square system";
+          
+     T = matrix {T};
+     J = transpose jacobian T; 
+     evalT := x0 -> lift(sub(transpose T, transpose x0), CC);
+     evalJ := x0 -> lift(sub(J, transpose x0), CC);
      
+     solsT = solsT / (s->sub(transpose matrix {toList s}, CC)); -- convert to vectors
+     solsR := apply(solsT, s->(
+	       x1 := s; 
+	       -- corrector step
+	       dx = 1; -- dx = + infinity
+	       nCorSteps := 0;
+	       while norm dx > o.epsilon and nCorSteps < o.maxCorSteps do ( 
+		    if DBG > 3 then << "x=" << toString x1 << " res=" <<  toString evalT(x1) << " dx=" << dx << endl;
+		    dx = - (inverse evalJ(x1))*evalT(x1);
+		    x1 = x1 + dx;
+		    nCorSteps = nCorSteps + 1;
+		    );
+	       x1
+	       ));
+     solsR / (s -> flatten entries s)      
+     )     
+
+totalDegreeStartSystem = method(TypicalValue => Sequence)
+totalDegreeStartSystem List := Sequence => T -> (
+-- contructs a total degree start system and its solutions 
+-- for the given target system T
+-- IN:  T = list of polynomials 
+-- OUT: (S,solsS}, where 
+--      S     = list of polynomials, 
+--      solsS = list of sequences
+     R := ring first T;
+     S := apply(numgens R, i->R_i^(first degree T_i)-1);
+     s := apply(numgens R, i->( 
+	  d = first degree T_i; 
+	  set apply(d, j->exp(ii*2*pi*j/d))
+	  ));
+     solsS := first s;
+     scan(drop(s,1), t->solsS=solsS**t);
+     solsS = toList solsS/deepSplice; 
+     (S, solsS)
+     )     
+
 -- INTERFACE part ------------------------------------
-solveSystem = method(TypicalValue => List, Options =>{Software=>PHCpack})
+solveSystem = method(TypicalValue => List, Options =>{Software=>M2})
 solveSystem List := List => o -> F -> (
 -- solves a system of polynomial equations
 -- IN:  F = list of polynomials
@@ -201,11 +291,17 @@ solveSystem List := List => o -> F -> (
      local result;
      R := ring F#0;
      v := flatten entries vars R;
-     if all(F, f -> first degree f <= 1)
-     then ( 
-	  A := matrix apply(F, f->apply(v, x->coefficient(x,f)));
-	  b := matrix apply(F, f->{coefficient(1_R,f)});
-	  solve(A,b)
+     if o.Software == M2 then ( 
+	  if all(F, f -> first degree f <= 1)
+     	  then ( 
+	       A := matrix apply(F, f->apply(v, x->coefficient(x,f)));
+	       b := matrix apply(F, f->{coefficient(1_R,f)});
+	       solve(A,b)
+	       )
+	  else (
+	       (S,solsS) := totalDegreeStartSystem F;
+	       track(S,F,solsS,gamma=>exp(random(0.,2*pi)*ii))
+	       )
 	  )
      else if o.Software == PHCpack then ( 
 	  -- assume the ideal is 0-dim. 
