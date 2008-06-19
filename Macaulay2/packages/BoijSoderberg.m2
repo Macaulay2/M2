@@ -15,8 +15,8 @@ export {
      lowestDegrees,
      highestDegrees,
      isPure,
-     pureBetti,
-     pureBettiDiagram,
+     pureBetti, -- documented
+     pureBettiDiagram, -- documented
 
      pureCharFree,
      pureTwoInvariant,
@@ -26,15 +26,14 @@ export {
      randomSocleModule,
      randomModule,
      
-     pureCohomologyTable,
-     facetEquation,
+     pureCohomologyTable, -- documented
+     facetEquation, -- documented
      dotProduct
      }
 -- Also defined here:
 -- pdim BettiTally
--- decompose BettiTally
+-- decompose BettiTally      -- documented
 -- matrix BettiTally (2 versions)
-
 
 -- FIXES A BUG in pdim in M2
 --projectiveDimension = B -> max apply ((keys B), i->i_0) 
@@ -138,7 +137,6 @@ pureBetti List := (Degs)-> (
      D:=for i from 0 to c-1 list(
          (-1)^i* product(i, j->Degs_j-Degs_i)*product(i+1..c-1, j->Degs_j-Degs_i));
      Bettis=for i from 0 to c-1 list (p/D_i);
-     print Bettis;
      Bettis= apply(Bettis/(gcd Bettis), i->lift(i,ZZ)))
 
 --Now some routines for displaying the answer:
@@ -211,7 +209,6 @@ decompose1= B->(
      L:=lowestDegrees B;
      if not isStrictlyIncreasing L then print "NOT IN THIS SIMPLEX OF PURE BETTI DIAGRAMS";
      C:=pureBettiDiagram L;
-     print C;
      ratio:=min apply(#L, i->(B#(i,{L_i}, L_i))/(C#(i,{L_i},L_i)));
      (C,ratio,merge(B,C, (i,j)->i-ratio*j))
      )
@@ -231,9 +228,8 @@ decompose BettiTally := B-> (
 	  B1=new MutableHashTable from X_2;
 	  --change the type of the values in X_0 to ZZ
 	  Y=new BettiTally from apply(pairs X_0, i->{first i, lift(last i, ZZ)});
-	  print(X_1,Y);
-	  Components = Components | {X_1, Y});
-     Components)
+	  Components = append(Components, hold(X_1) * Y));
+     sum Components)
 
 TEST ///
 matrix "1,0,0,0;
@@ -708,6 +704,55 @@ document {
      SeeAlso => {pureBetti, betti}
      }
 
+document { 
+     Key => (decompose,BettiTally),
+     Headline => "write a Betti diagram as a positive combination of pure integral diagrams",
+     Usage => "decompose B",
+     Inputs => {
+	  "B" => "not necessarily Cohen-Macaulay"
+	  },
+     Outputs => {
+	  Expression => "a positive combination of pure integral Betti diagrams"
+	  },
+     EXAMPLE lines ///
+     	  R = ZZ/103[a,b,c]
+	  I = ideal"a3,abc,b4,c4,b2c2"
+	  B = betti res I
+	  C = decompose B
+	  ///,
+     "Check that this really does sum to B:",
+     EXAMPLE lines ///
+     	  value C
+     	  ///,
+     "Note that the entries are displayed in a peculiar manner.  Let's lift this to the integers.",
+     EXAMPLE lines ///
+     	  lift(value C, ZZ)
+	  B == oo
+     	  ///,
+     "Let's display the list of Betti diagrams in the decomposition, and also the list of multipliers.",
+     EXAMPLE lines ///
+     	  netList pack(3, apply(toList C, x -> x#1))
+	  apply(toList C, first)
+     	  ///,
+     Caveat => {},
+     SeeAlso => {pureBettiDiagram, betti, value, lift, toList, pack}
+     }
+
+
+document { 
+     Key => {(matrix,BettiTally),(matrix,BettiTally,ZZ,ZZ)},
+     Headline => "Betti diagram to matrix",
+     Usage => "matrix B\nmatrix(B,lowDegree,hiDegree)",
+     Inputs => {
+	  },
+     Outputs => {
+	  },
+     EXAMPLE lines ///
+	  ///,
+     Caveat => {},
+     SeeAlso => {}
+     }
+
 document {
 	Key => {(pureCohomologyTable,List,ZZ,ZZ),pureCohomologyTable},
 	Headline => "pure cohomology table given zeros of Hilbert polynomial",
@@ -843,3 +888,32 @@ mat2betti oo
 decomposeAll oo
 
 F=facetEquation({-1,0,2,3},1,-10,10)
+
+document { 
+     Key => {},
+     Headline => "",
+     Usage => "",
+     Inputs => {
+	  },
+     Outputs => {
+	  },
+     EXAMPLE lines ///
+	  ///,
+     Caveat => {},
+     SeeAlso => {}
+     }
+
+document { 
+     Key => {},
+     Headline => "",
+     Usage => "",
+     Inputs => {
+	  },
+     Outputs => {
+	  },
+     EXAMPLE lines ///
+	  ///,
+     Caveat => {},
+     SeeAlso => {}
+     }
+
