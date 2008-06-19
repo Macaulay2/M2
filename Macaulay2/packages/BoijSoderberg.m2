@@ -11,7 +11,7 @@ newPackage(
     	)
 
 export {
-     mat2betti,
+     mat2betti, -- documented
      lowestDegrees,
      highestDegrees,
      isPure,
@@ -44,20 +44,20 @@ pdim BettiTally := (B) -> (
 -- input is a matrix over ZZ or QQ
 -- output is the corresponding BettiTally 
 mat2betti = method()
-mat2betti Matrix := (M) -> (
+mat2betti(Matrix,ZZ) := (M,lowDegree) -> (
      e := entries M;
      a := flatten apply(#e, i -> 
-	  apply(#e#i, j -> (j, {i+j}, i+j) => if e#i#j != 0 then e#i#j else null));
+	  apply(#e#i, j -> (j, {i+j+lowDegree}, i+j+lowDegree) => if e#i#j != 0 then e#i#j else null));
      a = select(a, b -> b#1 =!= null);
      new BettiTally from a
      )
+mat2betti Matrix := (M) -> mat2betti(M,0)
 
 TEST ///
 matrix "1,0,0,0;
         0,4,4,1"
-mat2betti oo	
+mat2betti oo
 ///
-
 
 matrix(BettiTally, ZZ, ZZ) := opts -> (B,lowestDegree, highestDegree) -> (
      c := pdim B + 1;
@@ -76,6 +76,11 @@ matrix BettiTally := opts -> (B) -> (
      matrix(B,lo,hi)
      )
 
+matrix(BettiTally,ZZ) := opts -> (B,lo) -> (
+     hi := max apply(keys B, i -> if B#i == 0 then -infinity else i_2-i_0);
+     matrix(B,lo,hi)
+     )
+
 TEST ///
 R = ZZ/101[a..e]
 I = ideal borel monomialIdeal"abc,ad3,e4"
@@ -85,6 +90,10 @@ matrix B
 B = pureBettiDiagram{0,3,4,7,9}
 C = matrix B
 assert(B == mat2betti C)
+
+B = pureBettiDiagram{-1,0,3,4,7}
+C = matrix B
+assert(B == mat2betti(C,-1))
 ///
 
 lowestDegrees = method()
@@ -738,19 +747,66 @@ document {
      SeeAlso => {pureBettiDiagram, betti, value, lift, toList, pack}
      }
 
-
 document { 
-     Key => {(matrix,BettiTally),(matrix,BettiTally,ZZ,ZZ)},
-     Headline => "Betti diagram to matrix",
-     Usage => "matrix B\nmatrix(B,lowDegree,hiDegree)",
+     Key => {(mat2betti,Matrix,ZZ),(mat2betti,Matrix),mat2betti},
+     Headline => "matrix to Betti diagram",
+     Usage => "mat2betti(M,lowDegree)\nmat2betti M",
      Inputs => {
+	  "M" => "A matrix of Betti numbers: each row corresponds to a slanted degree",
+	  "lowDegree" => ZZ => "default value is 0"
 	  },
      Outputs => {
+	  BettiTally
 	  },
+     "Change from matrix representation to Betti diagram representation.",
      EXAMPLE lines ///
+     	  M = matrix"1,0,0,0;0,3,0,0;0,0,5,3"
+	  mat2betti M
+	  mat2betti(M,3)
 	  ///,
-     Caveat => {},
-     SeeAlso => {}
+     SeeAlso => {(matrix,BettiTally)}
+     }
+
+document { 
+     Key => {(matrix,BettiTally,ZZ,ZZ),(matrix,BettiTally,ZZ),(matrix,BettiTally)},
+     Headline => "Betti diagram to matrix",
+     Usage => "matrix B\nmatrix(B,lowDegree)\nmatrix(B,lowDegree,highDegree)",
+     Inputs => {
+	  "B" => BettiTally,
+	  "lowDegree" => ZZ,
+	  "highDegree" => ZZ
+	  },
+     Outputs => {
+	  Matrix => "The Betti diagram as a matrix"
+	  },
+     "If either lowDegree or highDegree is not given, then they are inferred from the Betti
+     diagram itself.  The result matrix has highDegree-lowDegree+1 rows, 
+     corresponding to these (slanted) degrees. ",
+     EXAMPLE lines ///
+     	  B = pureBettiDiagram {0,1,4,7}
+	  matrix B
+	  matrix(B,-2)
+	  matrix(B,-2,5)
+	  ///,
+     "This function is essentially the inverse of ", TO "mat2betti", ".",
+     EXAMPLE lines ///
+         R = ZZ/101[a..e];
+     	 I = ideal borel monomialIdeal"abc,ad3,e4";
+     	 B = betti res I
+     	 C = matrix B
+     	 B == mat2betti C
+	 ///,
+     "If the lowest degree of the matrix is not 0, then this information must be
+     supplied in order to obtain the inverse operation.",
+     EXAMPLE lines ///
+     	  B = pureBettiDiagram {-2,0,1,2,5}
+	  C = matrix B
+	  mat2betti(C,-2)
+     	  ///,
+     Caveat => {"Currently, the error messages are not that illuminating.  
+	  The [lowDegree, highDegree], if given, must be 
+	  as large as the actual degree range"},
+     SeeAlso => {mat2betti, lowestDegrees, highestDegrees, isPure, pureBettiDiagram}
      }
 
 document {
@@ -864,11 +920,13 @@ end
 restart
 loadPackage "BoijSoderberg"
 installPackage "BoijSoderberg"
+viewHelp BoijSoderberg
 viewHelp pureBetti
 
-matrix "1,0,0,0;
+M = matrix "1,0,0,0;
         0,4,4,1"
-mat2betti oo	
+mat2betti M
+mat2betti(M, -2)
 isPure oo
 decompose oo
 
