@@ -670,25 +670,26 @@ document { Key => BoijSoderberg,
      math.AC/0611081, \"Graded Betti numbers of Cohen-Macaulay modules and 
      the Multiplicity conjecture\", by Mats Boij, Jonas Soderberg.",
      PARA{},
-     "Manipulation of Betti diagrams (see also ", TO "BettiTally", "):",
+     SUBSECTION "Manipulation of Betti diagrams",
      UL {
 	  TO mat2betti,
 	  TO (matrix,BettiTally,ZZ,ZZ),
 	  TO lowestDegrees,
-	  TO highestDegrees
+	  TO highestDegrees,
+	  TO BettiTally
           },
-     "Pure diagrams and cohomology tables",
+     SUBSECTION "Pure diagrams and cohomology tables",
      UL {
 	  TO pureBetti,
 	  TO pureBettiDiagram,
 	  TO isPure,
 	  TO pureCohomologyTable
 	  },
-     "Decomposition into pure diagrams:",
+     SUBSECTION "Decomposition into pure diagrams",
      UL {
 	  TO (decompose,BettiTally)
 	  },
-     "Three constructions for pure resolutions.  These routines provide the
+     SUBSECTION "Three constructions for pure resolutions.  These routines provide the
      zero-th betti number given a degree sequence.  These Betti numbers will
      be positive multiples of the zero-th betti number for the corresponding pure diagram.",
      UL {
@@ -697,12 +698,12 @@ document { Key => BoijSoderberg,
 	  TO pureCharFree,
 	  TO pureAll
 	  },
-     "Constructions often leading to pure resolutions",
+     SUBSECTION "Constructions often leading to pure resolutions",
      UL {
 	  TO randomModule,
 	  TO randomSocleModule
 	  },
-     "Facet equation and the dot product between Betti diagrams and cohomology tables:",
+     SUBSECTION "Facet equation and the dot product between Betti diagrams and cohomology tables",
      UL {
 	  TO facetEquation,
 	  TO dotProduct,
@@ -771,7 +772,7 @@ document {
 
 document { 
      Key => {(pureBetti,List),pureBetti},
-     Headline => "",
+     Headline => "list of smallest integral Betti numbers corresponding to a degree sequence",
      Usage => "pureBetti L",
      Inputs => {
 	  "L" => "of strictly increasing integers"
@@ -794,7 +795,7 @@ document {
 
 document { 
      Key => {(pureBettiDiagram,List),pureBettiDiagram},
-     Headline => "",
+     Headline => "pure Betti diagram given a list of degrees",
      Usage => "pureBettiDiagram L",
      Inputs => {
 	  "L" => "of strictly increasing integers"
@@ -924,6 +925,102 @@ document {
 	  The [lowDegree, highDegree], if given, must be 
 	  as large as the actual degree range"},
      SeeAlso => {mat2betti, lowestDegrees, highestDegrees, isPure, pureBettiDiagram}
+     }
+
+document { 
+     Key => {pureCharFree, pureWeyman, pureTwoInvariant,
+	  (pureCharFree,List),
+	  (pureTwoInvariant,List),
+	  (pureWeyman,List)},
+     Headline => "first betti number of specific exact complex",
+     Usage => "pureCharFree L\n pureTwoInvariant L\npureWeyman L",
+     Inputs => {
+	  List => "a strictly increasing sequence of degrees"
+	  },
+     Outputs => {
+	  ZZ => "The zero-th betti number of the corresponding pure
+	  resolution construction"
+	  },
+     TO "pureAll", " returns all three numbers at one time.",
+     TT "pureTwoInvariant", " corresponds to the construction in ...", 
+     TT "pureCharFree", " corresponds to the construction in ...", 
+     TT "pureWeyman", " corresponds to the construction in ...", 
+     EXAMPLE lines ///
+     	  L = {0,2,3,9}
+	  B = pureBettiDiagram L
+     	  pureCharFree L
+     	  pureTwoInvariant L 
+	  pureWeyman L
+	  pureAll L
+	  gcd pureAll L
+	  ///,
+     "Thus, for large enough multiples m, m*B occurs as the Betti diagram of a module.",
+     PARA{},
+     "However, B itself occurs:",
+     EXAMPLE lines ///
+     	  betti res randomSocleModule(L,1)
+     	  betti res randomModule(L,1)
+     	  betti res randomModule({0,6,7,9},1)
+     	  ///,
+     SeeAlso => {pureAll}
+     }
+
+document { 
+     Key => {(randomModule,List,ZZ),randomModule},
+     Headline => "module with random relations in prescribed degrees",
+     Usage => "randomModule(L,m)",
+     Inputs => {
+	  "L" => "a strictly increasing degree sequence of integers",
+	  "m",
+	  CoefficientRing => "The base field for the resulting module"
+	  },
+     Outputs => {
+	  Module => "randomly generated having m b_0 generators in degree L_0 and m b_1
+	  relations in degree L_1, where b = pureBetti L"
+	  },
+     EXAMPLE lines ///
+          L={0,4,9,10}
+	  B = pureBetti L
+	  betti res randomModule(L,1)
+	  betti res randomModule(L,2)
+	  betti res randomModule(L,2, CoefficientRing=>ZZ/5)
+	  ///,
+     SeeAlso => {randomSocleModule, pureBetti}
+     }
+
+document { 
+     Key => {(randomSocleModule,List,ZZ),randomSocleModule},
+     Headline => "random finite length module with prescribed number of socle elements in single degree",
+     Usage => "randomSocleModule(L,m)",
+     Inputs => {
+	  "L" => "a strictly increasing degree sequence of integers",
+	  "m",
+	  CoefficientRing => "The base field for the resulting module"
+	  },
+     Outputs => {
+	  Module => "randomly generated having m b_c socle generators in degree L_c and m b_0
+	  generators, where b = pureBetti L, and c = length L"
+	  },
+     "There are many cases where these produce pure resolutions of the minimal size.",
+     EXAMPLE lines ///
+          L={0,2,3,7}
+	  B = pureBetti L
+	  betti res randomSocleModule(L,1)
+	  betti res randomModule(L,1)
+	  ///,
+     PARA{},
+     "The method used is roughly the following:
+     Given a strictly increasing degree sequence L and a number of generators m,
+     this routine produces a generic module of finite length with the 
+     m generators and number of socle elements  and regularity corresponding
+     to the pure resolution with degree sequence L. The module is constructed
+     by taking a certain number of generic elements inside an appropriate direct
+     sum of copies of a zero-dimensional complete intersection. We use the fact
+     that in a polynomial ring in c variables, 
+     modulo the r+1 st power of each variable, the part of
+     generated in degree (c-1)r looks like the part of the injective hull
+     of the residue class field generated in degree -r.",
+     SeeAlso => {randomModule, pureBetti}
      }
 
 document {
