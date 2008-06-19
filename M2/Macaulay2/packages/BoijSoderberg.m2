@@ -12,9 +12,9 @@ newPackage(
 
 export {
      mat2betti, -- documented
-     lowestDegrees,
-     highestDegrees,
-     isPure,
+     lowestDegrees, -- documented
+     highestDegrees, -- documented
+     isPure, -- documented
      pureBetti, -- documented
      pureBettiDiagram, -- documented
 
@@ -28,12 +28,13 @@ export {
      
      pureCohomologyTable, -- documented
      facetEquation, -- documented
-     dotProduct
+     dotProduct,
+     supportFunctional
      }
 -- Also defined here:
 -- pdim BettiTally
 -- decompose BettiTally      -- documented
--- matrix BettiTally (2 versions)
+-- matrix BettiTally (2 versions) -- documented
 
 -- FIXES A BUG in pdim in M2
 --projectiveDimension = B -> max apply ((keys B), i->i_0) 
@@ -667,7 +668,105 @@ document { Key => BoijSoderberg,
      EM "BoijSoderberg", " is a package designed to help with the investigation of 
      the Boij-Soderberg conjectures and theorems.  For the definitions and conjectures, see
      math.AC/0611081, \"Graded Betti numbers of Cohen-Macaulay modules and 
-     the Multiplicity conjecture\", by Mats Boij, Jonas Soderberg."
+     the Multiplicity conjecture\", by Mats Boij, Jonas Soderberg.",
+     PARA{},
+     "Manipulation of Betti diagrams (see also ", TO "BettiTally", "):",
+     UL {
+	  TO mat2betti,
+	  TO (matrix,BettiTally,ZZ,ZZ),
+	  TO lowestDegrees,
+	  TO highestDegrees
+          },
+     "Pure diagrams and cohomology tables",
+     UL {
+	  TO pureBetti,
+	  TO pureBettiDiagram,
+	  TO isPure,
+	  TO pureCohomologyTable
+	  },
+     "Decomposition into pure diagrams:",
+     UL {
+	  TO (decompose,BettiTally)
+	  },
+     "Three constructions for pure resolutions.  These routines provide the
+     zero-th betti number given a degree sequence.  These Betti numbers will
+     be positive multiples of the zero-th betti number for the corresponding pure diagram.",
+     UL {
+	  TO pureTwoInvariant,
+	  TO pureWeyman,
+	  TO pureCharFree,
+	  TO pureAll
+	  },
+     "Constructions often leading to pure resolutions",
+     UL {
+	  TO randomModule,
+	  TO randomSocleModule
+	  },
+     "Facet equation and the dot product between Betti diagrams and cohomology tables:",
+     UL {
+	  TO facetEquation,
+	  TO dotProduct,
+	  TO supportFunctional
+	  }
+     }
+
+document { 
+     Key => {(lowestDegrees,BettiTally),lowestDegrees},
+     Headline => "list of lowest degree shifts",
+     Usage => "lowestDegrees B",
+     Inputs => {
+	  "B"
+	  },
+     Outputs => {
+	  List => "of lowest degree shifts occuring in B"
+	  },
+     EXAMPLE lines ///
+     	  R = ZZ/101[a..e];
+	  B = betti res ideal"ab,ac,bd,be,ae,cd,ce,a3,b3,c3,d3,e3"
+	  B1 = lowestDegrees B
+	  pureBettiDiagram B1
+	  ///,
+     SeeAlso => {highestDegrees,isPure}
+     }
+
+document { 
+     Key => {(highestDegrees,BettiTally),highestDegrees},
+     Headline => "list of highest degree shifts",
+     Usage => "highestDegrees B",
+     Inputs => {
+	  "B"
+	  },
+     Outputs => {
+	  List => "of highest degree shifts occuring in B"
+	  },
+     EXAMPLE lines ///
+     	  R = ZZ/101[a..e];
+	  B = betti res ideal"ab,ac,bd,be,ae,cd,ce,a3,b3,c3,d3,e3"
+	  highestDegrees B
+	  lowestDegrees B
+	  ///,
+     SeeAlso => {lowestDegrees,isPure}
+     }
+
+document { 
+     Key => {(isPure,BettiTally),isPure},
+     Headline => "is a pure Betti diagram?",
+     Usage => "isBure B",
+     Inputs => {
+	  "B"
+	  },
+     Outputs => {
+	  Boolean
+	  },
+     "A Betti diagram is pure if in each column there is exactly one entry.",
+     EXAMPLE lines ///
+     	  R = ZZ/101[a..e];
+	  B = betti res ideal"ab,ac,bd,be,ae,cd,ce,a3,b3,c3,d3,e3"
+	  B1 = pureBettiDiagram highestDegrees B
+	  isPure B
+	  isPure B1
+	  ///,
+     SeeAlso => {lowestDegrees, highestDegrees, pureBettiDiagram}
      }
 
 document { 
@@ -723,6 +822,8 @@ document {
      Outputs => {
 	  Expression => "a positive combination of pure integral Betti diagrams"
 	  },
+     "This applies the algorithm implied by the Boij-Soederberg conjecture, and also works 
+     even if the diagram does not corresponds to a Cohen-Macaulay module.",
      EXAMPLE lines ///
      	  R = ZZ/103[a,b,c]
 	  I = ideal"a3,abc,b4,c4,b2c2"
@@ -743,7 +844,23 @@ document {
      	  netList pack(3, apply(toList C, x -> x#1))
 	  apply(toList C, first)
      	  ///,
-     Caveat => {},
+     "Here is an example where the Betti diagram is not Cohen-Macaulay.",
+     EXAMPLE lines ///
+     	  R = ZZ/103[a,b,c]
+	  I = ideal"a3,abc,b4,b2c2"
+	  B = betti res I
+	  C = decompose B
+     	  ///,
+     "The following example cannot be decomposed.  This means that there is no module with
+     this Betti diagram.",
+     EXAMPLE lines ///
+     	  M = matrix"1,0,0,0;0,0,0,0;0,3,0,0;0,0,5,3"	  
+	  B = mat2betti M
+	  codim B
+	  degree B
+     	  try decompose B else "Betti diagram cannot exist"
+	  pureBettiDiagram lowestDegrees B
+     	  ///,
      SeeAlso => {pureBettiDiagram, betti, value, lift, toList, pack}
      }
 
