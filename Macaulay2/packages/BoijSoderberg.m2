@@ -24,13 +24,15 @@ export {
      pureWeyman,
      pureAll,
      
-     randomSocleModule,
-     randomModule,
+     randomSocleModule, -- documented
+     randomModule, -- documented
      
      pureCohomologyTable, -- documented
      facetEquation, -- documented
      dotProduct,
-     supportFunctional
+     supportFunctional,
+     
+     Bott
      }
 -- Also defined here:
 -- pdim BettiTally
@@ -276,14 +278,14 @@ pureCohomologyTable(List, ZZ, ZZ) := (zeros, lo, hi) -> (
 bettiMatrix = (L,lo,hi) -> matrix(pureBettiDiagram L, lo, hi)
 
 rangeOK=method()
---rangeOK(List,ZZ,ZZ):=(d,r,n)->#d==n+1 and 0<= d_0 and 
---   apply(n,i-> d_i<d_(i+1))==toList(n:true) and d_n<=r+n 
-   --tests whether degree seq is non-neg, strictly increasing, of the right length n, and last elt
-   -- is bounded by reg + num vars, and 
-rangeOK(List,ZZ,ZZ,ZZ):=(d,lowestDegree, highestDegree, n)->
-#d==n+1 and lowestDegree<= d_0 and apply(n,i-> d_i<d_(i+1))==toList(n:true) and d_n<=highestDegree+n 
-   --tests whether degree seq is >=lowestDegree, strictly increasing, of the right length n, and last elt
-   -- is bounded by highestDegree + num vars.
+
+rangeOK(List,ZZ,ZZ,ZZ) := (d,lowestDegree, highestDegree, n) -> (
+    --tests whether degree seq is >=lowestDegree, strictly increasing, 
+    -- of the right length n, and last elt
+    -- is bounded by highestDegree + num vars.
+    for i from 0 to n-1 do if d#(i+1) <= d#i then return false;
+    #d == n+1 and lowestDegree <= d_0 and d_n <= highestDegree+n
+    )
 
 nextLower=method()
 nextLower(List, ZZ, ZZ) := (d,lowestDegree, highestDegree) -> (
@@ -345,7 +347,7 @@ rangeMatrices(List,ZZ,ZZ):=(e,lowestDegree,highestDegree)->(
 		    )
 	       )
 
-
+{*
 peskineSzpiro=(r,n)->apply(n+r+1,k->matrix apply(r+1,i->apply(n+1,j->
 --returns (redundant) list of n+r+1 Peskine-Szpiro relations in hilb function form
 --(the Hilb fcn values from *** to ***) Note: the P-S eqns in this sense are
@@ -378,8 +380,7 @@ flipEquation=(A)->(
 upperEquation=(A)->(L:=flipEquation(A);L_(#L-1))
 --the necessary lin comb of the PS equations.
 
-///
-restart
+TEST ///
 load "BoijSoderberg.m2"
 d={0,1,4}
 F=facetEquation(d,0,0,3)
@@ -397,7 +398,7 @@ upperEquation F
 --for the degree sequence d is nonzero. But this fact follows from the vanishing of
 --the lower equation at such sequences.
 ///
-
+*}
 
 middleComplex=(d,e)->(
      n=#d-1;
@@ -410,25 +411,40 @@ nextPure=(d,k)->if d_k+1==d_(k+1) and (k==#d-2 or d_(k+2)>d_(k+1)+1) then
 --in the case of two degree sequences differing by one in two consec places, computes
 --the degree sequence in between.
 
+lowerAndUpper = (de,k) -> (
+     -- returns null if this is not a valid facet
+     -- otherwise returns (d, e), where d < de < e
+     p := new MutableList from de;
+     q := new MutableList from de;
+     p#(k+1) = de#(k+1) - 1;
+     q#k = de#k + 1;
+     -- This is not valid exactly when:
+     (new List from p, new List from q)     
+     )
 
+checkAllowedFacet = (de,i) -> (
+     n := #de - 1;
+     if de#i + 2 != de#(i+1) then error "expected de#(i+1)-de#i == 2";
+     if i < 0 or i >= n then error ("expected i in range 0.."|n);
+     )
 
 facetEquation=method();
 
-facetEquation(List,ZZ,ZZ,ZZ):=(d,i,lowestDegree, highestDegree)->(
-     --i an integer between 0 and #d-2
-     --d a strictly increasing list of integers 
-     --such that d_(i+1)=d_i+1
+facetEquation(List,ZZ,ZZ,ZZ) := (de,i,lowestDegree, highestDegree) -> (
+     --i an integer between 0 and #de-2
+     --de a strictly increasing list of integers 
+     --such that de_(i+1)=de_i+2
      --lowestDegree < highestdegree, integers 
-     --lowest degree should be <=d_0, highestDegree-lowestDegree >=d_n-n, and >=d_n-n+2 when i=n-1,
+     --lowest degree should be <=de_0, highestDegree-lowestDegree >=d_n-n, and >=d_n-n+1 (!!check!!) when i=n-1,
      --where n=#d-1.
---routine produces the "upper" equation of the supporting hyperplane
---of the facet corresponding to d< (...d_i+1, d_(i+1)+1,...)=nextpure(d,k).
---the equation is presented as a 
--- map ZZ^(#d) --> ZZ^(highest-lowest+1).
-     n:=#d-1;
-     rangeOK(d,lowestDegree,highestDegree,n);
-     if d_i+1<d_(i+1) then error("innapropriate value of i");
-     e:=nextPure(d,i);
+     --routine produces the "upper" equation of the supporting hyperplane
+     --of the facet corresponding to d< (...d_i+1, d_(i+1)+1,...)=nextpure(d,k).
+     --the equation is presented as a 
+     -- map ZZ^(#d) --> ZZ^(highest-lowest+1).
+     n := #de-1;
+     rangeOK(de,lowestDegree,highestDegree,n);
+     checkAllowedFacet(de,i); -- will give an error if not
+     (d,e) := lowerAndUpper(de,i);
      A:=matrix apply(lowerRange(d,lowestDegree, highestDegree),
 	  c->join(toSequence entries bettiMatrix(c,lowestDegree,highestDegree)));
      B:=matrix apply(upperRange(e,lowestDegree,highestDegree),
@@ -436,52 +452,18 @@ facetEquation(List,ZZ,ZZ,ZZ):=(d,i,lowestDegree, highestDegree)->(
      C:=matrix apply(rangeMatrices(e,lowestDegree,highestDegree),c->join(toSequence entries c));
      D:=(entries transpose syz(A||B||C))_0;
      F:=matrix apply(highestDegree-lowestDegree+1,i->apply(n+1,j->D_((n+1)*i+j)));
-     de:=middleComplex(d,e);
      B1:=bettiMatrix(de,lowestDegree,highestDegree);
      if dotProduct(F,B1)>0 then F else -F)
-
-
-///
-restart
-load "BoijSoderberg.m2"
-d={0,1,4}
-e=nextPure(d,0)
-facetEquation(d,0,-1,3)
-
-d={0,3,5,6}
-facetEquation(d,2,-3,4) -- OK
-facetEquation(d,2,0,3) -- gives error msg.
-
-d={0,1,3}
-facetEquation(d,0,0,0)
---gives error msg
-
-d={0,1,3}
-facetEquation(d,0,-1,1)
-facetEquation(d,0,0,2)
-d={0,2,3}
-facetEquation(d,1,-2,2)
-
-
-
-d={1,3,4,5,7}
-facetEquation(d,2,1,3)
-bettiH pureBettiDiagram d
-d={5,7,8,11}
-facetEquation(d,1,5,8)
-facetEquation(d,1,0,8)
-d={5,7,9,10}
-///
 
 dotProduct=method()
 
 dotProduct(Matrix, Matrix):=(A,B)->
---dot product of matrices as vectors
+     --dot product of matrices as vectors
      sum(rank target A,i->sum(rank source A,j->A_(i,j)*B_(i,j)))
 
-dotProduct(HashTable, HashTable):=(A,B)-> --Gets in the way of another method
+dotProduct(BettiTally, BettiTally):=(A,B) ->
      --dot product of two hash tables with similar structure
-     sum(keys A, k->(if B#?k then return (B#k) * (A#k) else return 0))
+     sum(keys A, k-> if B#?k then B#k * A#k else 0)
 
 dotProduct(Matrix, ZZ, BettiTally):=(A,lowest, B)->(
      --lowest is an integer specifying what degree the first row of A is supposed to have.
@@ -497,7 +479,13 @@ dotProduct(Matrix, ZZ, BettiTally):=(A,lowest, B)->(
      sum(keys B, k-> (B#k)*(A_(last k-first k-lowest, first k)))
      )
 
+{* -- A newer version, but perhaps with less warnings
+dotProduct(Matrix, ZZ, BettiTally) := (A,lowest, B) -> dotProduct(mat2betti(A,lowest),B)
+*}
 
+dotProduct(Matrix, BettiTally) := (A,B) -> dotProduct(A,0,B)
+
+{* supportFunctional is NOT functional yet *}
 supportFunctional=method()
 
 supportFunctional(ChainComplex, ChainComplex):=(E,F)->(
@@ -506,38 +494,33 @@ supportFunctional(ChainComplex, ChainComplex):=(E,F)->(
      -- the code is meant to execute 
      --\langle E, \beta\rangle = \sum_{j\leq i}(-1)^{i-j}\sum_k\beta_{i,k}h_{-k}(H^j(E)),
      --
-lengthF=length F;
-degreesF=flatten (for i from 0 to lengthF list flatten degrees F_i);
-minF = min degreesF;
-maxF = max degreesF;
-HHE=HH E;
-L=for i from 0 to length E list matrix{{hf(minF..maxF, (HH E)#(-i))}};
-A=transpose L_0;
-for i from 1 to length L -1 do A = A|(transpose L_i);
-AA=map(ZZ^(maxF-minF-lengthF+1), ZZ^(lengthF+1), (p,q)->
-     sum(0..min(q,length E), 
-	  j->if HHE#?(-j) then (-1)^(q-j)*hilbertFunction(-p-q, (HHE)#(-j)) else 0));
-dotProduct(AA, minF, betti F)
+     lengthF := length F;
+     degreesF=flatten (for i from 0 to lengthF list flatten degrees F_i);
+     minF = min degreesF;
+     maxF = max degreesF;
+     HHE=HH E;
+     L=for i from 0 to length E list matrix{{hf(minF..maxF, (HH E)#(-i))}};
+     A=transpose L_0;
+     for i from 1 to length L -1 do A = A|(transpose L_i);
+     AA=map(ZZ^(maxF-minF-lengthF+1), ZZ^(lengthF+1), (p,q)->
+     	  sum(0..min(q,length E), 
+	       j->if HHE#?(-j) then (-1)^(q-j)*hilbertFunction(-p-q, (HHE)#(-j)) else 0));
+     dotProduct(AA, minF, betti F)
      )
 
 supportFunctional(ChainComplex, BettiTally):=(E,B)->(
-     --E should be a chain complex starting in degree 0 and going to negative degrees.
-     --F should be a chain complex starting in a postive degree and going to degree 0
-     -- the code is meant to execute 
-     --\langle E, \beta\rangle = \sum_{j\leq i}(-1)^{i-j}\sum_k\beta_{i,k}h_{-k}(H^j(E)),
-     --
-lengthF=max apply(keys B, K->first K);
-degreesF=apply(keys B, K->last K);
-minF = min degreesF;
-maxF = max degreesF;
-HHE=HH E;
-L=for i from 0 to length E list matrix{{hf(minF..maxF, (HH E)#(-i))}};
-A=transpose L_0;
-for i from 1 to length L -1 do A = A|(transpose L_i);
-AA=map(ZZ^(maxF-minF-lengthF+1), ZZ^(lengthF+1), (p,q)->
-     sum(0..min(q,length E), 
-	  j->if HHE#?(-j) then (-1)^(q-j)*hilbertFunction(-p-q, (HHE)#(-j)) else 0));
-dotProduct(AA, minF, B)
+     lengthF := max apply(keys B, K->first K);
+     degreesF := apply(keys B, K->last K);
+     minF := min degreesF;
+     maxF := max degreesF;
+     HHE := HH E;
+     L := for i from 0 to length E list matrix{{hf(minF..maxF, (HH E)#(-i))}};
+     A := transpose L_0;
+     for i from 1 to length L-1 do A = A|(transpose L_i);
+     AA := map(ZZ^(maxF-minF-lengthF+1), ZZ^(lengthF+1), (p,q)->
+     	  sum(0..min(q,length E), 
+	       j->if HHE#?(-j) then (-1)^(q-j)*hilbertFunction(-p-q, (HHE)#(-j)) else 0));
+     dotProduct(AA, minF, B)
      )
 
 ---------------------------------------------
@@ -660,6 +643,64 @@ betti res randomModule(L,2)
 betti res randomModule(L,3)
 betti res randomModule(L,4)
 betti res randomModule(L,2, CoefficientRing=>ZZ/5)
+///
+
+-------------------------------------------
+-- Bott algorithm -------------------------
+-------------------------------------------
+Bott=method()
+Bott(List, ZZ):=(L,u)->(
+     --given a weakly decreasing list of integers L of length n and an integer u,
+     --uses Bott's algorithm to compute the cohomology of the vector bundle 
+     -- E=O(-u) \tensor S_L(Q), on P^n = PP(V)
+     --where Q is the tautological rank n quotient bundle in the sequence 
+     --   0--> O(-1) --> O^(n+1) --> Q -->0
+     --and S_L(Q) is the Schur functor with the convention S_(d,0..0) = Sym_d, S_(1,1,1) = \wedge^3 etc.
+     --returns either 0, if all cohomology is zero,
+     -- or a list of three elements: A weakly decreasing list of n+1 integers M;
+     -- a number i such that H^i(E)=S_M(V); and 
+     -- the rank of this module.
+     M=new MutableList from join(L,{u});
+     i:=0;
+     j:=#M-1;
+     while j>0 do(
+     	  while M#(j-1)>=M#j and j>0 do j=j-1;
+	  if j==0 then break;
+     	  if M#j==M#(j-1)+1 then return 0 else (
+	       i=i+1;
+	       k:=M#(j-1);
+	       M#(j-1)=(M#j)-1;
+	       M#j=k+1;
+	       j=#M-1);
+	         );
+	    	 M=toList apply(M, t->t-(last M));
+	  {M,i, rkSchur(#M,M)}
+     )
+
+Bott(List,ZZ,ZZ):=(L,low,high)->(
+     --produces the betti diagram of the tate resolution of the sheaf S_L(Q),
+     --between the column whose index is "low" and the column whose index is "high"
+     n:=#L;
+     r:=high-low-n;
+     V:= mutableMatrix map(ZZ^(n+1),ZZ^(r+1), 0);
+     apply(high-low+1, u->(
+	       B:=Bott(L,-(low+u));
+	       if not B===0 then V_(n-B_1,u-(n-B_1))=B_2)
+	  );
+     matrix V
+     )
+     
+TEST ///
+Bott({3,2,1},-10,0)
+Bott({0,0,0},-5,5)
+
+L={0,0,0}
+for u from 0 to 6 do
+print Bott(L,u)
+L={5,2,1,1}
+for u from 0 to 10 do (
+  Bott({0,0},-1);
+  print Bott(L,-u))
 ///
 
 beginDocumentation()
@@ -1051,12 +1092,16 @@ document {
 		  dot product of this matrix with any betti diagram of any finite length module
 		  is >= 0."}},
 	EXAMPLE lines ///
-	   d = {0,2,3,6,7,9}
+	   d  = {0,2,3,6,7,9}
+	   de = {0,2,4,6,7,9}
+	   e  = {0,3,4,6,7,9}
 	   B1 = pureBettiDiagram d
-	   B2 = pureBettiDiagram {0,2,4,6,7,9}
-	   B3 = pureBettiDiagram {0,3,4,6,7,9}
-	   C = facetEquation(d,1,0,6)
-     	   dotProduct(B3,C)
+	   B2 = pureBettiDiagram de
+	   B3 = pureBettiDiagram e
+	   C = facetEquation(de,1,0,6)
+     	   dotProduct(C,0,B3)
+     	   dotProduct(C,0,B2)
+     	   dotProduct(C,0,B1)
      	///,
 	"The following example is from Eisenbud and Schreyer,
 	math.AC/0712.1843v2, example 2.4.  Notice that the notation here
@@ -1069,7 +1114,7 @@ document {
 	   e = {-4,-3,0,3,4,6,7,9}
 	   pureBettiDiagram d
 	   pureBettiDiagram de
-	   C = facetEquation(d,3,-6,3)
+	   C = facetEquation(de,3,-6,3)
 	///,
 	"Let's check that this is zero on the appropriate pure diagrams, and positive on 
 	the one corresponding to de:",
@@ -1082,7 +1127,7 @@ document {
 	}
 
 TEST ///
-d={0,1,4}
+d={0,2,4}
 facetEquation(d,0,-1,3)
 
 d={0,3,5,6}
@@ -1112,23 +1157,46 @@ facetEquation(d,2,0,12)
 ///
 
 TEST ///
-debug BoijSoderberg
 d={1,3,4,5,7}
 e={1,3,5,6,7}
 de = {1,3,4,6,7}
 B = pureBettiDiagram d
 Be = pureBettiDiagram e
 Bde = pureBettiDiagram de
-A=facetEquation(d,2,1,3)
+A=facetEquation(de,2,1,3)
 assert(dotProduct(A,1,B) == 0)
 assert(dotProduct(A,1,Be) == 0)
 assert(dotProduct(A,1,Bde) == 180)
 
-A=facetEquation(d,2,-5,3)
+A=facetEquation(de,2,-5,3)
 assert(dotProduct(A,-5,B) == 0)
 assert(dotProduct(A,-5,Be) == 0)
 assert(dotProduct(A,-5,Bde) == 180)
 ///
+
+document { 
+     Key => dotProduct,
+     Headline => "entry by entry dot product of two Betti diagrams",
+     Usage => "dotProduct(M,lowestDeg,B)\ndotProduct(B,C)",
+     Inputs => {
+	  "M" => Matrix,
+	  "lowestDeg" => ZZ,
+	  "B" => BettiTally,
+	  "C" => BettiTally
+	  },
+     "In the first version , (M, lowestDeg) refers to
+     mat2betti(M, lowestDeg).",
+     Outputs => {
+	  ZZ => "the entry by entry dot product"
+	  },
+     EXAMPLE lines ///
+     	  d = {0,1,3,4}
+     	  M = facetEquation(d,1,-5,5)
+	  B = pureBettiDiagram d
+	  dotProduct(M,-5,B)
+	  ///,
+     SeeAlso => {facetEquation, pureBettiDiagram}
+     }
 
 end
 
@@ -1137,7 +1205,7 @@ loadPackage "BoijSoderberg"
 installPackage "BoijSoderberg"
 viewHelp BoijSoderberg
 viewHelp pureBetti
-
+check BoijSoderberg
 M = matrix "1,0,0,0;
         0,4,4,1"
 mat2betti M
@@ -1162,19 +1230,14 @@ decomposeAll oo
 
 F=facetEquation({-1,0,2,3},1,-10,10)
 
-document { 
-     Key => {},
-     Headline => "",
-     Usage => "",
-     Inputs => {
-	  },
-     Outputs => {
-	  },
-     EXAMPLE lines ///
-	  ///,
-     Caveat => {},
-     SeeAlso => {}
-     }
+d = {0,1,4,5,6}
+e = nextPure(d,3)
+de = middleComplex(d,e)
+
+d = {0,1,4,5,6,7}
+e = nextPure(d,3)
+de = middleComplex(d,e)
+
 
 document { 
      Key => {},
@@ -1190,3 +1253,16 @@ document {
      SeeAlso => {}
      }
 
+document { 
+     Key => {},
+     Headline => "",
+     Usage => "",
+     Inputs => {
+	  },
+     Outputs => {
+	  },
+     EXAMPLE lines ///
+	  ///,
+     Caveat => {},
+     SeeAlso => {}
+     }
