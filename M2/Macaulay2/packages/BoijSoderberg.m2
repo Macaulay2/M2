@@ -32,7 +32,7 @@ export {
      dotProduct,
      supportFunctional,
      
-     Bott
+     bott
      }
 -- Also defined here:
 -- pdim BettiTally
@@ -535,6 +535,7 @@ rkSchur = (n,L) -> (
      det map(ZZ^n, ZZ^n, (i,j)->binomial(M_i+n-1-i+j, n-1)))
 
 TEST ///
+debug BoijSoderberg
 rkSchur(6,{1,1,1,1}) -- exterior power
 rkSchur(6,{2}) -- symmetric power
 rkSchur(3,{3,2,0})
@@ -578,9 +579,10 @@ pureAll = method()
 pureAll List := (L) -> (pureCharFree L, pureTwoInvariant L, pureWeyman L)
 
 TEST ///
-pureAll{0,1,2,3,4}
-pureAll{0,1,3,4}
+assert(pureAll{0,1,2,3,4} == (1,1,1))
+assert(pureAll{0,1,3,4} == (2,2,3))
 W = pureAll{0,4,6,9,11}
+assert(W == (1400, 14700, 175))
 P = pureBetti{0,4,6,9,11}
 for i from 0 to #W-1 list (W_i/P_0)
 ///
@@ -648,8 +650,8 @@ betti res randomModule(L,2, CoefficientRing=>ZZ/5)
 -------------------------------------------
 -- Bott algorithm -------------------------
 -------------------------------------------
-Bott=method()
-Bott(List, ZZ):=(L,u)->(
+bott=method()
+bott(List, ZZ):=(L,u)->(
      --given a weakly decreasing list of integers L of length n and an integer u,
      --uses Bott's algorithm to compute the cohomology of the vector bundle 
      -- E=O(-u) \tensor S_L(Q), on P^n = PP(V)
@@ -677,30 +679,30 @@ Bott(List, ZZ):=(L,u)->(
 	  {M,i, rkSchur(#M,M)}
      )
 
-Bott(List,ZZ,ZZ):=(L,low,high)->(
+bott(List,ZZ,ZZ):=(L,low,high)->(
      --produces the betti diagram of the tate resolution of the sheaf S_L(Q),
      --between the column whose index is "low" and the column whose index is "high"
      n:=#L;
      r:=high-low-n;
      V:= mutableMatrix map(ZZ^(n+1),ZZ^(r+1), 0);
      apply(high-low+1, u->(
-	       B:=Bott(L,-(low+u));
+	       B:=bott(L,-(low+u));
 	       if not B===0 then V_(n-B_1,u-(n-B_1))=B_2)
 	  );
      matrix V
      )
      
 TEST ///
-Bott({3,2,1},-10,0)
-Bott({0,0,0},-5,5)
+bott({3,2,1},-10,0)
+bott({0,0,0},-5,5)
 
 L={0,0,0}
 for u from 0 to 6 do
-print Bott(L,u)
+print bott(L,u)
 L={5,2,1,1}
 for u from 0 to 10 do (
-  Bott({0,0},-1);
-  print Bott(L,-u))
+  bott({0,0},-1);
+  print bott(L,-u))
 ///
 
 beginDocumentation()
@@ -725,7 +727,8 @@ document { Key => BoijSoderberg,
 	  TO pureBetti,
 	  TO pureBettiDiagram,
 	  TO isPure,
-	  TO pureCohomologyTable
+	  TO pureCohomologyTable,
+	  TO bott
 	  },
      SUBSECTION "Decomposition into pure diagrams",
      UL {
@@ -1076,21 +1079,91 @@ document {
 	Outputs => {{"the cohomology table, truncated at the given degrees "}},
 	EXAMPLE lines ///
 	   B = pureCohomologyTable({-3,-2,0},-10,10)
-     	///
+     	///,
+	SeeAlso => {bott}
 	}
+
+document { 
+     Key => bott,
+     Headline => "cohomology of Schur functors of tautological bundle on P^n",
+     }
+
+document { 
+     Key => (bott,List,ZZ),
+     Headline => "cohomology of Schur functor of tautological bundle on P^n",
+     Usage => "bott(L,u)",
+     Inputs => {
+	  "L" => "a non-increasing sequence of integers",
+	  "u"
+	  },
+     Outputs => {
+	  List => "(List, ZZ, ZZ) or the integer 0.  See below for details."
+	  },
+     "Given a weakly decreasing list of integers L of length n and an integer u,
+     uses Bott's algorithm to compute the cohomology of the vector bundle 
+      E=O(-u) \\tensor S_L(Q), on P^n = PP(V)
+     where Q is the tautological rank n quotient bundle in the sequence 
+        0--> O(-1) --> O^(n+1) --> Q -->0
+     and S_L(Q) is the Schur functor with the convention S_(d,0..0) = Sym_d, S_(1,1,1) = \\wedge^3 etc.
+     Returns either 0, if all cohomology is zero,
+     or a list of three elements: A weakly decreasing list of n+1 integers M;
+     a number i such that H^i(E)=S_M(V); and 
+     the rank of this module.",
+     PARA{},
+     "For example, on P^3, E = S_3(Q) has H^0(S_3(Q)) = S_3(kk^4) = kk^20.",
+     EXAMPLE lines ///
+     	  bott({3,0,0},0)
+	  ///,
+     "H^*(E(-1)) = H^*(E(-2)) = 0, and H^2(E(-3)) == S_2(kk^4) == kk^10.",
+     EXAMPLE lines ///
+	  bott({3,0,0},1)
+	  bott({3,0,0},2)
+     	  bott({3,0,0},3)
+	  bott({2,1,0},0)
+     	  ///,	  
+     SeeAlso => {(bott,List,ZZ,ZZ),pureCohomologyTable}
+     }
+
+document { 
+     Key => (bott,List,ZZ,ZZ),
+     Headline => "cohomology table of Schur functor of tautolgical bundle on P^n",
+     Usage => "bott(L,lowDegree,highDegree)",
+     Inputs => {
+	  "L" => "a non-increasing sequence of integers",
+	  "lowDegree",
+	  "highDegree"
+	  },
+     Outputs => {
+	  Matrix
+	  },
+     "Produces the betti diagram of the tate resolution of the vector bundle ", TT "S_L(Q)", ",
+     between the column whose index is ", TT "lowDegree", 
+     " and the column whose index is ", TT "highDegree", ".
+     See ", TO (bott,List,ZZ), " for the definition of ", TT "Q", ".",
+     EXAMPLE lines ///
+     	  mat2betti(bott({3,2,1},-10,10))
+	  i = -9
+	  pureCohomologyTable({i,i+2,i+4},-10,10)
+	  ///,
+     Caveat => {"This routine will eventually return a CohomologyTally, once that is functional.
+	  The indexing of this routine might then change"},
+     SeeAlso => {(bott,List,ZZ),pureCohomologyTable}
+     }
 
 document {
 	Key => {(facetEquation,List,ZZ,ZZ,ZZ),facetEquation},
 	Headline => "The upper facet equation corresponding to (L,i)",
-	Usage => "facetEquation(L,i,lodeg,hideg",
+	Usage => "facetEquation(L,i,lodeg,hideg)",
 	Inputs => { "L" => "the degree sequence, a strictly ascending list of integers",
-	     "i" => "an index in range 0..#L-2, such that L_(i+1) == L_i + 1",
-	     "lo" => "the leftmost degree of the table",
-	     "hi" => "the rightmost degree of the table"
+	     "i" => "an index in range 0..#L-2, such that L_(i+1) == L_i + 2",
+	     "lodeg" => "the leftmost degree of the table",
+	     "hideg" => "the rightmost degree of the table"
 	     },
-	Outputs => {{"A matrix whose rows correspond to slanted degrees lodeg .. hideg, such that the
+	Outputs => {{"A (hideg-lodeg+1) by #L matrix over ZZ whose rows correspond to slanted degrees lodeg .. hideg, such that the
 		  dot product of this matrix with any betti diagram of any finite length module
 		  is >= 0."}},
+	"The (entry by entry) ", TO2(dotProduct, "dot product"), " of this matrix will be >= 0 for every minimal free resolution.
+	Of course, the converse does not hold!",
 	EXAMPLE lines ///
 	   d  = {0,2,3,6,7,9}
 	   de = {0,2,4,6,7,9}
@@ -1099,14 +1172,15 @@ document {
 	   B2 = pureBettiDiagram de
 	   B3 = pureBettiDiagram e
 	   C = facetEquation(de,1,0,6)
-     	   dotProduct(C,0,B3)
-     	   dotProduct(C,0,B2)
-     	   dotProduct(C,0,B1)
+     	   dotProduct(C,B1)
+     	   dotProduct(C,B2)
+     	   dotProduct(C,B3)
      	///,
 	"The following example is from Eisenbud and Schreyer,
 	math.AC/0712.1843v2, example 2.4.  Notice that the notation here
-	differs from their description of the facet equation.  Our d refers to
-	their d-, and the indexing in Macaulay2 is from 0, hence i=3 and not 4,
+	differs slightly from theirs.  In both cases i refers to the index,
+	but in Macaulay2, the first element of a list has index 0.
+	hence in this example, i is 3 and not 4,
 	as in the example in the paper.",
 	EXAMPLE lines ///
 	   d = {-4,-3,0,2,3,6,7,9}
@@ -1120,8 +1194,8 @@ document {
 	the one corresponding to de:",
 	EXAMPLE lines ///
 	   dotProduct(C,-6,pureBettiDiagram d)
-	   dotProduct(C,-6,pureBettiDiagram e)
 	   dotProduct(C,-6,pureBettiDiagram de)
+	   dotProduct(C,-6,pureBettiDiagram e)
 	///,
 	SeeAlso => {dotProduct, pureBettiDiagram}
 	}
@@ -1130,29 +1204,26 @@ TEST ///
 d={0,2,4}
 facetEquation(d,0,-1,3)
 
-d={0,3,5,6}
+d={0,3,5,7}
 facetEquation(d,2,-3,4) -- OK
-facetEquation(d,2,0,3) -- gives error msg.
+assert try facetEquation(d,2,0,3) else true -- gives error msg.
 
-d={0,1,3}
-facetEquation(d,0,0,0)
---gives error msg
+d={0,2,3}
+assert try facetEquation(d,0,0,0) else true --gives error msg
 
-d={0,1,3}
+d={0,2,3}
 facetEquation(d,0,-1,1)
 facetEquation(d,0,0,2)
-d={0,2,3}
+d={0,2,4}
 facetEquation(d,1,-2,2)
 
-
-
-d={1,3,4,5,7}
+d={1,3,4,6,7}
 facetEquation(d,2,1,3)
 pureBettiDiagram d
-d={5,7,8,11}
+d={5,7,9,11}
 facetEquation(d,1,5,8)
 facetEquation(d,1,0,8)
-d={5,7,9,10}
+d={5,7,9,11}
 facetEquation(d,2,0,12)
 ///
 
@@ -1203,6 +1274,7 @@ end
 restart
 loadPackage "BoijSoderberg"
 installPackage "BoijSoderberg"
+installPackage("BoijSoderberg", RerunExamples=>true)
 viewHelp BoijSoderberg
 viewHelp pureBetti
 check BoijSoderberg
