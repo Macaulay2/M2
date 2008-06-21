@@ -30,9 +30,13 @@ export {
      pureCohomologyTable, -- documented
      facetEquation, -- documented
      dotProduct,
-     supportFunctional,
+     supportFunctional, -- not written
      
-     bott
+     bott, -- documented
+     
+     CohomologyTally,
+     mat2cohom,
+     cohomologyTable -- not written
      }
 -- Also defined here:
 -- pdim BettiTally
@@ -45,6 +49,82 @@ export {
 pdim BettiTally := (B) -> (
      max apply(select(keys B,i->B#i != 0), i -> i#0))
 
+-- Used in supportFunctional
+hf = (degrange, M) -> apply(degrange, d -> hilbertFunction(d,M))
+
+----------------------------
+-- CohomologyTally ---------
+----------------------------
+
+-- TO IMPLEMENT:
+--   matrix(CohomologyTally, ...)
+--   cohomologyTable Sheaf (probably need HF for this)
+--   BettiTally * CohomologyTally DONE
+--   supportFunctional
+-- TO DOCUMENT:
+--   CohomologyTally
+--   pureAll
+--   mat2cohom
+--   bott (needs improvement)
+
+-- A CohomologyTally is a hash table C
+-- s.t. C#{i,d} => h^i(E(d)) is the i-th cohomology in degree d of some sheaf E.
+
+CohomologyTally = new Type of VirtualTally
+CohomologyTally.synonym = "Cohomology tally"
+CohomologyTally == CohomologyTally := (C,D) -> C === D
+CohomologyTally ++ CohomologyTally := (C,D) -> merge(C,D,plus)
+--CohomologyTally ** CohomologyTally := (C,D) -> combine(C,D,(j,k)->apply(j,k,plus),times,plus)
+CohomologyTally ZZ := (C,n) -> applyKeys(C, (i,d) -> (i,d-n))
+--dual CohomologyTally := (C) -> applyKeys(C,j -> apply(j,minus))
+--regularity CohomologyTally := opts -> (C) -> (
+--     if opts.Weights =!= null then C = betti(C,opts);
+--     max apply(keys C, (i,d,h) -> h-i))
+--CohomologyTally Array := (C,A) -> (
+--      if # A =!= 1 then error "expected array of length 1";
+--      n := A#0;
+--      applyKeys(C,(i,d,h) -> (i-n,d,h)))
+
+ZZ * CohomologyTally := (d,C) -> applyValues(C, v -> d*v)
+
+rawCohomologyTallyFormat = v -> (
+     -- v is a CohomologyTally
+     v' := new MutableHashTable;
+     scan(pairs v, (key,n) -> (
+	       (i,h) := key;
+	       h = h+i;	-- skew in the usual way
+	       key = (h,i);
+	       if v'#?key then v'#key = v'#key + n else v'#key = n;
+	       ));
+     v = v';
+     k := keys v;
+     fi := first \ k;
+     la := (s -> s#1) \ k;
+     mincol := min la;
+     maxcol := max la;
+     minrow := min fi;
+     maxrow := max fi;
+     v = transpose table(toList (minrow .. maxrow), reverse toList (mincol .. maxcol), (i,j) -> if v#?(i,j) then v#(i,j) else 0);
+     leftside := splice {"", apply(reverse(mincol .. maxcol), i -> toString i | ":")};
+     v = applyTable(v, bt -> if bt === 0 then "." else toString bt);
+     v = prepend(toString \ toList (minrow .. maxrow), v);
+     v = apply(leftside,v,prepend);
+     v)
+
+net CohomologyTally := v -> netList(rawCohomologyTallyFormat v, Alignment => Right, HorizontalSpace => 1, BaseRow => 1, Boxes => false)
+
+cohomologyTable = method()
+cohomologyTable(CoherentSheaf,ZZ,ZZ) := (F, lowDegree, highDegree) -> (
+     error "to be written"
+     )
+
+BettiTally * CohomologyTally := (B,C) -> (
+     sum apply(keys B, (i,md,d) -> sum apply(keys C, (j,k) -> 
+	       if j > i and first md =!= -k then 0 else (-1)^(i-j) * B#(i,md,d) * C#(j,k)))
+     )
+
+CohomologyTally * BettiTally := (C,B) -> B*C
+
 -- input is a matrix over ZZ or QQ
 -- output is the corresponding BettiTally 
 mat2betti = method()
@@ -56,6 +136,17 @@ mat2betti(Matrix,ZZ) := (M,lowDegree) -> (
      new BettiTally from a
      )
 mat2betti Matrix := (M) -> mat2betti(M,0)
+
+mat2cohom = method()
+mat2cohom(Matrix,ZZ) := (M,lowDegree) -> (
+     -- lowDegreeis the degree of the first column
+     e := entries M;
+     n := #e-1; -- row indices are n-1 .. 0
+     a := flatten apply(#e, i -> 
+	  apply(#e#i, j -> (n-i, i+j+lowDegree-n) => if e#i#j != 0 then e#i#j else null));
+     a = select(a, b -> b#1 =!= null);
+     new CohomologyTally from a
+     )
 
 TEST ///
 matrix "1,0,0,0;
@@ -255,8 +346,9 @@ decompose oo
 -- Cohomology Tables ------------------------
 ---------------------------------------------
 
-pureCohomologyTable = method(TypicalValue => BettiTally)
-pureCohomologyTable(List, ZZ, ZZ) := (zeros, lo, hi) -> (
+pureCohomologyTable = method(TypicalValue => CohomologyTally)
+{*
+pureCohomologyTable(List, ZZ, ZZ, Symbol) := (zeros, lo, hi, old) -> (
      R := QQ (monoid [z]);
      hp = product(zeros, a -> (R_0 - a));
      n := #zeros;  -- in PP^n
@@ -268,6 +360,19 @@ pureCohomologyTable(List, ZZ, ZZ) := (zeros, lo, hi) -> (
 	  if v == 0 then (w=w+1; continue;);
 	  d := i+w;
 	  (n+i-w, {i},i) => lift(v,ZZ)
+	  ));
+*}
+pureCohomologyTable(List, ZZ, ZZ) := (zeros, lo, hi) -> (
+     R := QQ (monoid [z]);
+     hp = product(zeros, a -> (R_0 - a));
+     n := #zeros;  -- in PP^n
+     b := gcd apply(n+1, i -> sub(hp, R_0=>i_QQ));
+     hp = hp//b;
+     w := 0;
+     new CohomologyTally from for i from lo-n to hi list (
+	  v := abs sub(hp, R_0=> i_QQ);
+	  if v == 0 then (w=w+1; continue;);
+	  (n-w,i) => lift(v,ZZ)
 	  ));
 
 ---------------------------------------------
@@ -679,7 +784,7 @@ bott(List, ZZ):=(L,u)->(
 	  {M,i, rkSchur(#M,M)}
      )
 
-bott(List,ZZ,ZZ):=(L,low,high)->(
+bott(List,ZZ,ZZ,Symbol):=(L,low,high,old)->(
      --produces the betti diagram of the tate resolution of the sheaf S_L(Q),
      --between the column whose index is "low" and the column whose index is "high"
      n:=#L;
@@ -690,6 +795,17 @@ bott(List,ZZ,ZZ):=(L,low,high)->(
 	       if not B===0 then V_(n-B_1,u-(n-B_1))=B_2)
 	  );
      matrix V
+     )
+
+bott(List,ZZ,ZZ):=(L,low,high)->(
+     --produces the betti diagram of the tate resolution of the sheaf S_L(Q),
+     --between the column whose index is "low" and the column whose index is "high"
+     n:=#L;
+     C := for u from low-n to high list (
+	  B := bott(L,-u);
+	  if B=!=0 then (B_1, u) => B_2 else null
+	  );
+     new CohomologyTally from select(C, k -> k =!= null)
      )
      
 TEST ///
@@ -722,13 +838,18 @@ document { Key => BoijSoderberg,
 	  TO highestDegrees,
 	  TO BettiTally
           },
-     SUBSECTION "Pure diagrams and cohomology tables",
+     SUBSECTION "Pure Betti diagrams",
      UL {
 	  TO pureBetti,
 	  TO pureBettiDiagram,
 	  TO isPure,
+	  },
+     SUBSECTION "Cohomology tables",
+     UL {
+	  TO CohomologyTally,
 	  TO pureCohomologyTable,
-	  TO bott
+	  TO bott,
+	  TO (cohomologyTable,CoherentSheaf,ZZ,ZZ)
 	  },
      SUBSECTION "Decomposition into pure diagrams",
      UL {
@@ -752,8 +873,18 @@ document { Key => BoijSoderberg,
      UL {
 	  TO facetEquation,
 	  TO dotProduct,
-	  TO supportFunctional
+	  TO supportFunctional,
+	  TO (symbol*,BettiTally,CohomologyTally)
 	  }
+     }
+
+document {
+     Key => CohomologyTally,
+     Headline => "cohomology table",
+     "A ", TT "CohomologyTally", " is designed to hold cohomology dimensions 
+     h^i(E(d)), for some sheaf or vector bundle F on P^n.  The initial motivation
+     was to provide a nice visual display of this information.  However, some
+     computations involving CohomologyTally are implemented."
      }
 
 document { 
@@ -1076,9 +1207,9 @@ document {
 	     "lo" => "the leftmost degree of the table",
 	     "hi" => "the rightmost degree of the table"
 	     },
-	Outputs => {{"the cohomology table, truncated at the given degrees "}},
+	Outputs => {"the cohomology table, truncated at the given degrees "},
 	EXAMPLE lines ///
-	   B = pureCohomologyTable({-3,-2,0},-10,10)
+	   B = pureCohomologyTable({-3,-2,0},-5,5)
      	///,
 	SeeAlso => {bott}
 	}
@@ -1134,19 +1265,17 @@ document {
 	  "highDegree"
 	  },
      Outputs => {
-	  Matrix
+	  CohomologyTally
 	  },
-     "Produces the betti diagram of the tate resolution of the vector bundle ", TT "S_L(Q)", ",
+     "Produces a ", TO CohomologyTally, " of the vector bundle ", TT "S_L(Q)", ",
      between the column whose index is ", TT "lowDegree", 
      " and the column whose index is ", TT "highDegree", ".
      See ", TO (bott,List,ZZ), " for the definition of ", TT "Q", ".",
      EXAMPLE lines ///
-     	  mat2betti(bott({3,2,1},-10,10))
-	  i = -9
-	  pureCohomologyTable({i,i+2,i+4},-10,10)
+     	  C1 = bott({3,2,1},-10,10)
+	  C2 = pureCohomologyTable({-2,-4,-6},-10,10) 
+	  C1 == 4 * C2
 	  ///,
-     Caveat => {"This routine will eventually return a CohomologyTally, once that is functional.
-	  The indexing of this routine might then change"},
      SeeAlso => {(bott,List,ZZ),pureCohomologyTable}
      }
 
@@ -1276,40 +1405,34 @@ loadPackage "BoijSoderberg"
 installPackage "BoijSoderberg"
 installPackage("BoijSoderberg", RerunExamples=>true)
 viewHelp BoijSoderberg
-viewHelp pureBetti
 check BoijSoderberg
-M = matrix "1,0,0,0;
-        0,4,4,1"
-mat2betti M
-mat2betti(M, -2)
-isPure oo
-decompose oo
 
+C = new CohomologyTally from {(0,0) => 2, (0,1) => 5, (0,2) => 8, (2, -3) => 1, (2, -4) => 3}
+M = matrix"3,1,0,0,0;0,0,0,0,0;0,0,2,5,8"
+mat2cohom(M,-2)
 debug BoijSoderberg
-d = {0,2,3,6}
-pureBettiDiagram d
-lowerRange(d, 0,3)
-upperRange(d,0,3)
-facetEquation(d,1,0,3)
 
+B = pureBettiDiagram {0,2,3,4}
+C = pureCohomologyTable({1,0,0},-5,-5)
+B * C
+
+pureCohomologyTable({1,2,3},-5,5,old)
+C = pureCohomologyTable({1,2,3},-5,5)
+C(1) + C(-1)
+pureCohomologyTable({-3,-1,0},-7,7,old)
+pureCohomologyTable({-3,-1,0},-7,7)
+pureCohomologyTable({-2,0,2},-7,7)
+bott({2,1,0},-7,7)
+4 * o15
+o15 + o15 + o15 + o15 - oo
+bott({5,3,1},-10,10,old)
+
+
+bott({3,2,1},-7,7,old)
+bott({3,2,1},-7,7)
 restart
 --load "/Users/mike/local/conferences/2008-mrc-june-snowbird/boij-soderberg/boijSoderberg-orig.m2"
 load "/Users/mike/local/conferences/2008-mrc-june-snowbird/boij-soderberg/bs.m2"
-matrix "1,0,0,0;
-        0,4,4,1"
-mat2betti oo	
-decomposeAll oo
-
-F=facetEquation({-1,0,2,3},1,-10,10)
-
-d = {0,1,4,5,6}
-e = nextPure(d,3)
-de = middleComplex(d,e)
-
-d = {0,1,4,5,6,7}
-e = nextPure(d,3)
-de = middleComplex(d,e)
-
 
 document { 
      Key => {},
