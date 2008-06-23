@@ -789,6 +789,7 @@ analyticSpread image M
 
 
 {*
+
 restart
 loadPackage "ReesAlgebra"
 R=QQ[a..e]
