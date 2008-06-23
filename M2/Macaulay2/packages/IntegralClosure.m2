@@ -11,7 +11,8 @@ newPackage(
     	)
    
 export{isNormal, integralClosure, conductor, ICfractions, ICmap,
-idealizerReal, nonNormalLocus, Index, conductorElement, icFracP, conductorElement, reportSteps, intClI}
+idealizerReal, nonNormalLocus, Index, conductorElement, icFracP,
+conductorElement, reportSteps, intClI}
 
 needsPackage "Elimination"
 
@@ -381,17 +382,17 @@ document {
      SeeAlso => {"intClI"}
 }
 
-document {
-     Key => conductorElement,
-     Headline => "Specifies a particular non-zerodivisor in the conductor."
-}
+--document {
+--     Key => conductorElement,
+--     Headline => "Specifies a particular non-zerodivisor in the conductor."
+--}
 
-document {
-     Key => [icFracP,conductorElement],
-     Headline => "Specifies a particular non-zerodivisor in the conductor.",
-     "A good choice can possibly speed up the calculations.  See ",
-     TO icFracP, "."
-}
+--document {
+--     Key => [icFracP,conductorElement],
+--     Headline => "Specifies a particular non-zerodivisor in the conductor.",
+--     "A good choice can possibly speed up the calculations.  See ",
+--     TO icFracP, "."
+--}
 
 
 document {
