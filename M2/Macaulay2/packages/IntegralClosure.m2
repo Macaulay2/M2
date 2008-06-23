@@ -11,8 +11,8 @@ newPackage(
     	)
    
 export{isNormal, integralClosure, conductor, ICfractions, ICmap,
-idealizerReal, nonNormalLocus, Index, conductorElement, icFracP,
-conductorElement, reportSteps, intClI}
+idealizerReal, nonNormalLocus, Index, icFracP, conductorElement,
+reportSteps, intClI} 
 
 needsPackage "Elimination"
 
@@ -282,194 +282,6 @@ intClI (RingElement, RingElement, ZZ) := Ideal => (a, D, N) -> (
      J
      )
 
-document {
-     Key => icFracP,
-     Headline => "compute the integral closure in prime characteristic",
-     "Input is an equidimensional reduced ring in characteristic p
-     that is finitely and separably generated over the base field.
-     The output is a finite set of fractions that generate
-     the integral closure as an ", TT "R", "-module.
-     An intermediate step in the code
-     is the computation of a conductor element ", TT "D",
-     " that is a non-zerodivisor;
-     its existence is guaranteed by the separability assumption.
-     The user may supply ", TT "D",
-     " with the optional ", TT "conductorElement => D", ".
-     (Sometimes, but not always, supplying ", TT "D", " speeds up the computation.)
-     In any case, with the non-zero divisor ", TT "D", ",
-     the algorithm starts by setting the initial approximation of the integral closure
-     to be the finitely generated ", TT "R", "-module
-     ", TT "(1/D)R", ",
-     and in the subsequent loop the code recursively constructs submodules.
-     Eventually two submodules repeat;
-     the repeated module is the integral closure of ", TT "R", ".
-     The user may optionally provide ", TT "Limit => N", " to stop the loop
-     after ", TT "N", " steps,
-     and the optional ", TT "reportSteps => true", " reports the conductor
-     element and the number of steps it took for the loop to stabilize.
-     The algorithm is based on the
-     Leonard--Pellikaan--Singh--Swanson algorithm.",
-     SeeAlso => {"integralClosure", "isNormal"},
-     Caveat => "NOTE: mingens is not reliable, neither is kernel of the zero map!!!"
-     }
-
-
-document {
-     Key => (icFracP, Ring),
-     Headline => "compute the integral closure in prime characteristic",
-     Usage => "icFracP R, icFracP(R, conductorElement => D), icFracP(R, Limit => N), icFracP(R, reportSteps => Boolean)",
-     Inputs => {
-	"R" => {"that is reduced, equidimensional,
-           finitely and separably generated over a field of characteristic p"},
-	conductorElement => {"optionally provide a non-zerodivisor conductor element ",
-               TT "conductorElement => D", ";
-               the output is then the module generators of the integral closure.
-               A good choice of ", TT "D", " may speed up the calculations?"},
-	Limit => {"if value N is given, perform N loop steps only"},
-	reportSteps => {"if value true is given, report the conductor element and number of steps in the loop"},
-	},
-     Outputs => {{"The module generators of the integral closure of ", TT "R",
-               " in its total ring of fractions.  The generators are
-               given as elements in the total ring of fractions."}
-          },
-     "A simple example.",
-     EXAMPLE {
-          "R = ZZ/5[x,y,z]/ideal(x^6-z^6-y^2*z^4);",
-          "icFracP R"
-     },
-     "The user may provide an optional non-zerodivisor conductor element ",
-     TT "D",
-     ".  The output generators need not
-     be expressed in  the form with denominator ", TT "D", ".",
-     EXAMPLE {
-          "R = ZZ/5[x,y,u,v]/ideal(x^2*u-y^2*v);",
-          "icFracP(R)",
-          "icFracP(R, conductorElement => x)",
-     },
-     "In case ", TT "D", " is not in the conductor, the output is ",
-     TT "V_e = (1/D) {r in R | r^(p^i) in (D^(p^i-1)) ", "for ",
-     TT "i = 1, ..., e}",
-     " such that ", TT "V_e = V_(e+1)", " and ", TT "e",
-     " is the smallest such ", TT "e", ".",
-     EXAMPLE {
-	  "R=ZZ/2[u,v,w,x,y,z]/ideal(u^2*x^3+u*v*y^3+v^2*z^3);",
-          "icFracP(R)",
-          "icFracP(R, conductorElement => x^2)"
-     },
-     "The user may also supply an optional limit on the number of steps
-     in the algorithm.  In this case, the output is a finitely generated ",
-     TT "R", "-module contained in ", TT "(1/D)R",
-     " which contains the integral closure (intersected with ", TT "(1/D)R",
-     ".",
-     EXAMPLE {
-          "R=ZZ/2[u,v,w,x,y,z]/ideal(u^2*x^3+u*v*y^3+v^2*z^3);",
-          "icFracP(R, Limit => 1)",
-          "icFracP(R, Limit => 2)",
-          "icFracP(R)"
-     },
-     "With the option above one can for example determine how many
-     intermediate modules the program should compute or did compute
-     in the loop to get the integral closure.  A shortcut for finding
-     the number of steps performed is to supply the ",
-     TT "reportSteps => true", " option.",
-     EXAMPLE {
-          "R=ZZ/3[u,v,w,x,y,z]/ideal(u^2*x^4+u*v*y^4+v^2*z^4);",
-          "icFracP(R, reportSteps => true)"
-     },
-     "With this extra bit of information, the user can now compute
-     integral closures of principal ideals in ", TT "R", " via ",
-     TO intClI, ".",
-     SeeAlso => {"intClI"}
-}
-
---document {
---     Key => conductorElement,
---     Headline => "Specifies a particular non-zerodivisor in the conductor."
---}
-
---document {
---     Key => [icFracP,conductorElement],
---     Headline => "Specifies a particular non-zerodivisor in the conductor.",
---     "A good choice can possibly speed up the calculations.  See ",
---     TO icFracP, "."
---}
-
-
-document {
-     Key => [icFracP,Limit],
-     Headline => "Limits the number of computed intermediate modules.",
-     Caveat => "NOTE: How do I make M2 put icFracP on the list of all functions that use Limit?"
-}
-
-document {
-     Key => reportSteps,
-     Headline => "Optional in icFracP",
-     PARA{},
-     "With this option, ", TT "icFracP",
-     " prints out the conductor element and
-           the number of intermediate modules it computed;
-           in addition to the output being
-           the module generators of the integral closure of the ring.",
-     Caveat => "NOTE: There is probably a better name for this, or a better way of doing this."
-}
-
-document {
-     Key => [icFracP,reportSteps],
-     Headline => "Prints out the conductor element and
-           the number of intermediate modules it computed.",
-     Usage => "icFracP(R, reportSteps => Boolean)",
-     "The main use of the extra information is in computing the
-     integral closure of principal ideals in ", TT "R",
-     ", via ", TO intClI,
-     ".",
-     EXAMPLE {
-          "R=ZZ/3[u,v,x,y]/ideal(u*x^2-v*y^2);",
-          "icFracP(R, reportSteps => true)",
-	  "S = ZZ/3[x,y,u,v];",
-          "R = S/kernel map(S,S,{x-y,x+y^2,x*y,x^2});",
-	  "icFracP(R, reportSteps => true)"
-     },
-}
-
-document {
-     Key => intClI,
-     Headline => "compute the integral closure
-                   of a principal ideal in prime characteristic",
-     SeeAlso => {"icFracP"}
-}
-
-document {
-     Key => (intClI, RingElement, RingElement, ZZ),
-     Headline => "compute the integral closure
-                  in prime characteristic of a principal ideal",
-     Usage => "intClI (a, D, N)",
-     Inputs => {
-	"a" => {"an element in ", TT "R"},
-        "D" => {"a non-zerodivisor of ", TT "R",
-                " that is in the conductor"},
-        "N" => {"the number of steps in ", TO icFracP,
-                " to compute the integral closure of ", TT "R",
-                ", by using the conductor element ", TT "D"}},
-     Outputs => {{"the integral closure of the ideal ", TT "(a)", "."}},
-     "The main input is an element ", TT "a",
-     " which generates a principal ideal whose integral closure we are
-     seeking.  The other two input elements,
-     a non-zerodivisor conductor element ", TT "D",
-     " and the number of steps ", TT "N", 
-     " are the pieces of information obtained from ",
-     TT "icFracP(R, reportSteps => true)",
-     ".  (See the Singh--Swanson paper, An algorithm for computing
-     the integral closure, Remark 1.4.)",
-     EXAMPLE {
-          "R=ZZ/3[u,v,x,y]/ideal(u*x^2-v*y^2);",
-          "icFracP(R, reportSteps => true)",
-          "intClI(x, x^2, 3)"
-     },
-     SeeAlso => {"icFracP"}
-}
-
-
-
 --------------------------------------------------------------------
 beginDocumentation()
 
@@ -713,7 +525,7 @@ document {
      }
 
 document {
-     Key => icCharp,
+     Key => icFracP,
      Headline => "compute the integral closure in prime characteristic",
      "Input is an equidimensional reduced ring in characteristic p
      that is finitely and separably generated over the base field.
@@ -734,16 +546,20 @@ document {
      Eventually two submodules repeat;
      the repeated module is the integral closure of ", TT "R", ".
      The user may optionally provide ", TT "Limit => N", " to stop the loop
-     after ", TT "N", " steps.",
-     PARA{
-     "The algorithm is based on the Leonard-Pellikaan and Singh-Swanson algorithm."},
-     SeeAlso => {"integralClosure", "conductor", "isNormal"}
+     after ", TT "N", " steps,
+     and the optional ", TT "reportSteps => true", " reports the conductor
+     element and the number of steps it took for the loop to stabilize.
+     The algorithm is based on the
+     Leonard--Pellikaan--Singh--Swanson algorithm.",
+     SeeAlso => {"integralClosure", "isNormal"},
+     Caveat => "NOTE: mingens is not reliable, neither is kernel of the zero map!!!"
      }
 
+
 document {
-     Key => (icCharp, Ring),
+     Key => (icFracP, Ring),
      Headline => "compute the integral closure in prime characteristic",
-     Usage => "icCharp R",
+     Usage => "icFracP R, icFracP(R, conductorElement => D), icFracP(R, Limit => N), icFracP(R, reportSteps => Boolean)",
      Inputs => {
 	"R" => {"that is reduced, equidimensional,
            finitely and separably generated over a field of characteristic p"},
@@ -752,6 +568,7 @@ document {
                the output is then the module generators of the integral closure.
                A good choice of ", TT "D", " may speed up the calculations?"},
 	Limit => {"if value N is given, perform N loop steps only"},
+	reportSteps => {"if value true is given, report the conductor element and number of steps in the loop"},
 	},
      Outputs => {{"The module generators of the integral closure of ", TT "R",
                " in its total ring of fractions.  The generators are
@@ -760,17 +577,16 @@ document {
      "A simple example.",
      EXAMPLE {
           "R = ZZ/5[x,y,z]/ideal(x^6-z^6-y^2*z^4);",
-          "icCharp R"
+          "icFracP R"
      },
      "The user may provide an optional non-zerodivisor conductor element ",
      TT "D",
-     ", which makes the output be the module generators of the integral closure.
-     The output generators need not
+     ".  The output generators need not
      be expressed in  the form with denominator ", TT "D", ".",
      EXAMPLE {
           "R = ZZ/5[x,y,u,v]/ideal(x^2*u-y^2*v);",
-          "icCharp(R)",
-          "icCharp(R, conductorElement => x)",
+          "icFracP(R)",
+          "icFracP(R, conductorElement => x)",
      },
      "In case ", TT "D", " is not in the conductor, the output is ",
      TT "V_e = (1/D) {r in R | r^(p^i) in (D^(p^i-1)) ", "for ",
@@ -779,36 +595,121 @@ document {
      " is the smallest such ", TT "e", ".",
      EXAMPLE {
 	  "R=ZZ/2[u,v,w,x,y,z]/ideal(u^2*x^3+u*v*y^3+v^2*z^3);",
-          "icCharp(R)",
-          "icCharp(R, conductorElement => x^2)"
+          "icFracP(R)",
+          "icFracP(R, conductorElement => x^2)"
      },
      "The user may also supply an optional limit on the number of steps
      in the algorithm.  In this case, the output is a finitely generated ",
      TT "R", "-module contained in ", TT "(1/D)R",
      " which contains the integral closure (intersected with ", TT "(1/D)R",
-     ".  This option will probably be used only for diagnostic purposes.",
+     ".",
      EXAMPLE {
           "R=ZZ/2[u,v,w,x,y,z]/ideal(u^2*x^3+u*v*y^3+v^2*z^3);",
-          "icCharp(R, Limit => 1)",
-          "icCharp(R, Limit => 2)",
-          "icCharp(R)"
-     }
+          "icFracP(R, Limit => 1)",
+          "icFracP(R, Limit => 2)",
+          "icFracP(R)"
+     },
+     "With the option above one can for example determine how many
+     intermediate modules the program should compute or did compute
+     in the loop to get the integral closure.  A shortcut for finding
+     the number of steps performed is to supply the ",
+     TT "reportSteps => true", " option.",
+     EXAMPLE {
+          "R=ZZ/3[u,v,w,x,y,z]/ideal(u^2*x^4+u*v*y^4+v^2*z^4);",
+          "icFracP(R, reportSteps => true)"
+     },
+     "With this extra bit of information, the user can now compute
+     integral closures of principal ideals in ", TT "R", " via ",
+     TO intClI, ".",
+     SeeAlso => {"intClI"}
 }
- 
-document {
-     Key => [icCharp,conductorElement],
-     Headline=> "The user hereby optionally provides a non-zerodivisor
-               in the conductor, AMELIA I want this longer but don't know how",
-               TT "conductorElement => D", ";
-               the output is then the module generators of the
-               integral closure.
-               A good choice of ", TT "D", " may speed up the calculations?"
-     }
 
 document {
-     Key => [icCharp,Limit],
-     Headline=> "The user hereby limits the number of computed intermediate modules."
-     }
+     Key => conductorElement,
+     Headline => "Specifies a particular non-zerodivisor in the conductor."
+}
+
+document {
+     Key => [icFracP,conductorElement],
+     Headline => "Specifies a particular non-zerodivisor in the conductor.",
+     "A good choice can possibly speed up the calculations.  See ",
+     TO icFracP, "."
+}
+
+
+document {
+     Key => [icFracP,Limit],
+     Headline => "Limits the number of computed intermediate modules.",
+     Caveat => "NOTE: How do I make M2 put icFracP on the list of all functions that use Limit?"
+}
+
+document {
+     Key => reportSteps,
+     Headline => "Optional in icFracP",
+     PARA{},
+     "With this option, ", TT "icFracP",
+     " prints out the conductor element and
+           the number of intermediate modules it computed;
+           in addition to the output being
+           the module generators of the integral closure of the ring.",
+     Caveat => "NOTE: There is probably a better name for this, or a better way of doing this."
+}
+
+document {
+     Key => [icFracP,reportSteps],
+     Headline => "Prints out the conductor element and
+           the number of intermediate modules it computed.",
+     Usage => "icFracP(R, reportSteps => Boolean)",
+     "The main use of the extra information is in computing the
+     integral closure of principal ideals in ", TT "R",
+     ", via ", TO intClI,
+     ".",
+     EXAMPLE {
+          "R=ZZ/3[u,v,x,y]/ideal(u*x^2-v*y^2);",
+          "icFracP(R, reportSteps => true)",
+	  "S = ZZ/3[x,y,u,v];",
+          "R = S/kernel map(S,S,{x-y,x+y^2,x*y,x^2});",
+	  "icFracP(R, reportSteps => true)"
+     },
+}
+
+document {
+     Key => intClI,
+     Headline => "compute the integral closure
+                   of a principal ideal in prime characteristic",
+     SeeAlso => {"icFracP"}
+}
+
+document {
+     Key => (intClI, RingElement, RingElement, ZZ),
+     Headline => "compute the integral closure
+                  in prime characteristic of a principal ideal",
+     Usage => "intClI (a, D, N)",
+     Inputs => {
+	"a" => {"an element in ", TT "R"},
+        "D" => {"a non-zerodivisor of ", TT "R",
+                " that is in the conductor"},
+        "N" => {"the number of steps in ", TO icFracP,
+                " to compute the integral closure of ", TT "R",
+                ", by using the conductor element ", TT "D"}},
+     Outputs => {{"the integral closure of the ideal ", TT "(a)", "."}},
+     "The main input is an element ", TT "a",
+     " which generates a principal ideal whose integral closure we are
+     seeking.  The other two input elements,
+     a non-zerodivisor conductor element ", TT "D",
+     " and the number of steps ", TT "N", 
+     " are the pieces of information obtained from ",
+     TT "icFracP(R, reportSteps => true)",
+     ".  (See the Singh--Swanson paper, An algorithm for computing
+     the integral closure, Remark 1.4.)",
+     EXAMPLE {
+          "R=ZZ/3[u,v,x,y]/ideal(u*x^2-v*y^2);",
+          "icFracP(R, reportSteps => true)",
+          "intClI(x, x^2, 3)"
+     },
+     SeeAlso => {"icFracP"}
+}
+
 
 
 -- integrally closed test
