@@ -1,0 +1,2 @@
+We should not use symbolic links at all, because under Windows, if our
+cygwin-compiled program makes them, then firefox doesn' t understand them.
