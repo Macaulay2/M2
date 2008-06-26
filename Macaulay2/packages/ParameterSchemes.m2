@@ -207,17 +207,17 @@ minPressy Ideal := (I) -> (
      substitute(ideal compress gens J,newS)
      )
 
-minimalPresentation Ideal := opts -> (I) -> (
-     << "entering minPressy"<< endl;
+--minimalPresentation Ideal := opts -> (I) -> (
+--     << "entering minPressy"<< endl;
 --     error "debug me";
-     result := minPressy(I);
-     result)
+--     result := minPressy(I);
+--     result)
 
-minimalPresentation Ring := opts -> (R) -> (
-     << "entering minPressy"<< endl;
+--minimalPresentation Ring := opts -> (R) -> (
+--     << "entering minPressy"<< endl;
 --     error "debug me";
-     result := minPressy(ideal presentation R);
-     (ring result)/result)
+--     result := minPressy(ideal presentation R);
+--     (ring result)/result)
 
 
 findReductorOld = (L) -> ( 
