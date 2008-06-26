@@ -9,6 +9,12 @@ newPackage(
     	Headline => "Integral Closure",
     	DebuggingMode => false
     	)
+ --
+ -- Needs updating in the comments and the documentation.  Needs Irena
+-- code added in as an option as well as needs ICfractions to be up
+-- and running again.  Also needs updating the tests.  Are there
+-- others where we know the answer in advance?  What about how this
+-- program interacts with minPressy?  
    
 export{isNormal, integralClosure, conductor, ICfractions, ICmap,
 idealizerReal, nonNormalLocus, Index, icFracP, conductorElement,
@@ -739,9 +745,9 @@ TEST ///
 R = ZZ/101[symbol x..symbol z,Degrees=>{{1,2},{1,5},{1,6}}]/(z*y^2-x^5*z-x^8)
 time J = integralClosure (R,Variable=>symbol a) 
 use ring ideal J
-assert(ideal J == ideal(x^6+a_7*y+x^3*z-11*x*y^2,a_7*x^2-11*x^3*y+y*z,a_7^2-22*a_7*x*y-x^4*z+20*x^2*y^2-x*z^2))
+assert(ideal J == ideal(x^6+a_4*y+x^3*z-11*x*y^2,a_4*x^2-11*x^3*y+y*z,a_4^2-22*a_4*x*y-x^4*z+20*x^2*y^2-x*z^2))
 ///
-
+a
 -- Reduced not a domain test
 TEST ///
 S=ZZ/101[symbol a,symbol b,symbol c, symbol d]
@@ -783,7 +789,7 @@ time V = integralClosure (S, Variable => X)
 use ring ideal V
 assert(
      ideal V == 
-      J2 = ideal(a^2*b*c^2+b^2*c*d^2+a^2*d^2*e+a*b^2*e^2+c^2*d*e^2,
+      ideal(a^2*b*c^2+b^2*c*d^2+a^2*d^2*e+a*b^2*e^2+c^2*d*e^2,
 	   a*b^3*c+b*c^3*d+a^3*b*e+c*d^3*e+a*d*e^3,
 	   a^5+b^5+c^5+d^5-5*a*b*c*d*e+e^5,
 	   a*b*c^4-b^4*c*d-X_0*e-a^2*b^2*d*e+a*c^2*d^2*e+b^2*c^2*e^2-b*d^2*e^3,
