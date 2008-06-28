@@ -36,7 +36,7 @@ singleString = (key, text) -> (
        error("expected single indented line after "|toString key);
      key => text#0)
 
-markup = (text, indents) -> (
+markup2 = (text, indents) -> (
      s := concatenate between(" ",text);
      sp := separateRegexp(///(^|[^\])(@)///, 2, s);
      sp = apply(sp, s -> replace(///\\@///,"@",s));
@@ -45,12 +45,22 @@ markup = (text, indents) -> (
 	  if even i then TEX sp#i else value sp#i
      )
 
+markup = (text, indents) -> (
+     << "text = " << stack(format\text) << endl;
+     text = prepend("",text);
+     indents = prepend(infinity,indents);
+     indents = apply(indents, n -> if n === infinity then -1 else n);
+     splits := splitByIndent(text, indents);
+     << "splits: " << splits << endl;
+     apply(splits, (i,j) -> PARA markup2(text_{i+1..j},indents_{i+1..j})))
+     
+     
 items = (text, indents) -> (
      apply(splitByIndent(text, indents), (i,j) -> (
 	       s := text#i;
 	       ps := separateRegexp("[[:space:]]*:[[:space:]]*", s);
 	       if #ps =!= 2 then error("first line should contain a colon: ",s);
-	       result := if i === j then "" else markup(text_{i+1..j}, indents_{i+1..j});
+	       result := if i === j then "" else markup2(text_{i+1..j}, indents_{i+1..j});
 	       if ps#1 != "" then result = value ps#1 => result;
 	       if ps#0 != "" then result = ps#0 => result;
 	       result
@@ -68,7 +78,7 @@ applySplit = (fcns, text, indents) ->
 	       if not fcns#?key then error("unrecognized keyword: ",format key);
 	       fcns#key(text_{i+1..j}, indents_{i+1..j})))
 
-description = (text, indents) -> DIV applySplit(DescriptionFcns, text, indents)
+description = (text, indents) -> toSequence applySplit(DescriptionFcns, text, indents)
 
 KeyFcns = new HashTable from {
      "Key" => (text, indents) -> Key => apply(text,value),
@@ -89,7 +99,7 @@ toDoc = (text) -> (
      t := apply(text, indentationLevel);
      text = apply(t, last);
      indents := apply(t, first);
-     applySplit(KeyFcns, text, indents)
+     splice applySplit(KeyFcns, text, indents)
      )
 
 beginDocumentation()
