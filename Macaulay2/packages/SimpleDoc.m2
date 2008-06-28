@@ -26,12 +26,16 @@ indentationLevel = (s) -> (
      (infinity, "")
      )
 
+singleString = (key, text) -> (
+     if #text =!= 1 then 
+       error("expected single line argument for "|toString key);
+     key => text#0)
+
 KeyFcns = new HashTable from {
      "Key" => (text, indents) -> Key => apply(text,value),
      "SeeAlso" => (text, indents) -> SeeAlso => apply(text,value),
-     "Usage" => (text, indents) -> (
-	  if #text =!= 1 then error "expected single line argument for Usage";
-	  Usage => text#0)
+     "Usage" => (text, indents) -> singleString(Usage, text),
+     "Headline" => (text, indents) -> singleString(Headline, text)
      }
 toDoc = (s) -> (
      -- perform translations to 'document' format
@@ -125,7 +129,6 @@ end
 restart
 loadPackage "SimpleDoc"
 debug SimpleDoc
-indentationLevel "  	 Key"
 flup = method()
 flup ZZ := (n) -> -n
 
@@ -133,6 +136,8 @@ toDoc ///
 Key
   flup
  (flup,ZZ)
+Headline
+  a very important function
 Usage
   flup n
 SeeAlso
@@ -140,4 +145,4 @@ SeeAlso
    "matrices"
 ///
 document oo
-help flup
+net help flup
