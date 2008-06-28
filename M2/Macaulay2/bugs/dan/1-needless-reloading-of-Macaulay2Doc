@@ -1,0 +1,5 @@
+this causes the main doc to be reloaded, needlessly
+
+    notify = true
+    document { Key => foo, SeeAlso => {matrix}}
+    help foo
