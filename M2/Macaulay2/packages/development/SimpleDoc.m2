@@ -36,7 +36,14 @@ singleString = (key, text) -> (
        error("expected single indented line after "|toString key);
      key => text#0)
 
-markup = (text, indents) -> TEX concatenate between(" ",text)
+markup = (text, indents) -> (
+     s := concatenate between(" ",text);
+     sp := separateRegexp(///(^|[^\])(@)///, 2, s);
+     sp = apply(sp, s -> replace(///\\@///,"@",s));
+     if not odd(#sp) then error "unmatched @";
+     for i from 0 to #sp-1 list
+	  if even i then TEX sp#i else value sp#i
+     )
 
 items = (text, indents) -> (
      apply(splitByIndent(text, indents), (i,j) -> (
@@ -92,7 +99,6 @@ document {
 	EM "SimpleDoc", " contains a function to simplify writing documentation for functions "
 	}
 
-end
 doc ///
 
 Key
@@ -146,8 +152,8 @@ Description
   may include markup.
   
   Markups allowed include all tex-like commands as allowed in @TO TEX@.  Also
-  allowed is a pair of \@ characters, enclosing Macaulay2 code, for example
-  \@TO Key\@.
+  allowed is a pair of {\tt \@} characters, enclosing Macaulay2 code, for example
+  {\tt \@TO Key\@}.
 
  Example
    ourfcn = method()
@@ -163,10 +169,11 @@ SeeAlso
 end
 restart
 loadPackage "SimpleDoc"
+installPackage SimpleDoc
+viewHelp doc
 debug SimpleDoc
 flup = method()
 flup ZZ := (n) -> -n
 D = toDoc get "doc.eg"
 document D
 help flup
-
