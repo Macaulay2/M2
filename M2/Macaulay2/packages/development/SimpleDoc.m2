@@ -12,9 +12,7 @@ newPackage(
 export {doc}
 
 doc = method()
-doc String := (s) -> null
-
---document toDoc s
+doc String := (s) -> document toDoc s
 
 splitByIndent = (text, indents) -> (
      m := min indents;
@@ -38,9 +36,7 @@ singleString = (key, text) -> (
        error("expected single indented line after "|toString key);
      key => text#0)
 
-markup = (text, indents) -> (
-     text
-     )
+markup = (text, indents) -> TEX concatenate between(" ",text)
 
 items = (text, indents) -> (
      apply(splitByIndent(text, indents), (i,j) -> (
@@ -54,17 +50,31 @@ items = (text, indents) -> (
 	       ))
      )
 
+DescriptionFcns = new HashTable from {
+     "Example" => (text,indents) -> EXAMPLE text,
+     "Text" => markup
+     }
+
+applySplit = (fcns, text, indents) ->
+     apply(splitByIndent(text,indents), (i,j) -> (
+	       key := text#i;
+	       if not fcns#?key then error("unrecognized keyword: ",format key);
+	       fcns#key(text_{i+1..j}, indents_{i+1..j})))
+
+description = (text, indents) -> DIV applySplit(DescriptionFcns, text, indents)
+
 KeyFcns = new HashTable from {
      "Key" => (text, indents) -> Key => apply(text,value),
      "SeeAlso" => (text, indents) -> SeeAlso => apply(text,value),
      "Usage" => (text, indents) -> singleString(Usage, text),
      "Headline" => (text, indents) -> singleString(Headline, text),
-     "Description" => (text, indents) -> markup(text,indents),
-     "Caveat" => (text, indents) -> Caveat => markup(text,indents),
-     "Consequences" => (text, indents) -> Consequences => markup(text,indents),
+     "Description" => (text, indents) -> description(text,indents),
+     "Caveat" => (text, indents) -> Caveat => {markup(text,indents)},
+     "Consequences" => (text, indents) -> Consequences => {markup(text,indents)},
      "Inputs" => (text, indents) -> Inputs => items(text, indents),
      "Outputs" => (text, indents) -> Outputs => items(text, indents)
      }
+
 toDoc = (text) -> (
      -- perform translations to 'document' format
      -- text is a string
@@ -72,7 +82,7 @@ toDoc = (text) -> (
      t := apply(text, indentationLevel);
      text = apply(t, last);
      indents := apply(t, first);
-     apply(splitByIndent(text,indents), (i,j) -> KeyFcns#(text#i)(text_{i+1..j}, indents_{i+1..j}))
+     applySplit(KeyFcns, text, indents)
      )
 
 beginDocumentation()
@@ -81,6 +91,8 @@ document {
 	Headline => "simpler documentation for functions and methods",
 	EM "SimpleDoc", " contains a function to simplify writing documentation for functions "
 	}
+
+end
 doc ///
 
 Key
@@ -99,6 +111,7 @@ Consequences
   the corresponding documentation is
   available via @TO help@ and @TO viewHelp@
 Description
+ Text
   The sections of the documentation node must include
   Key and Headline, and may include Usage, Inputs, Outputs,
   Consequences, Description, SeeAlso.
@@ -136,10 +149,11 @@ Description
   allowed is a pair of \@ characters, enclosing Macaulay2 code, for example
   \@TO Key\@.
 
-  EXAMPLE
-    ourfcn = method()
-    ourfcn ZZ := (n) -> n+1
-
+ Example
+   ourfcn = method()
+   ourfcn ZZ := (n) -> n+1
+   ourfcn 3
+ Text
   For a complete example and template, see the bottom of the SimpleDoc.m2 file.
 SeeAlso
   document
@@ -152,37 +166,7 @@ loadPackage "SimpleDoc"
 debug SimpleDoc
 flup = method()
 flup ZZ := (n) -> -n
+D = toDoc get "doc.eg"
+document D
+errornet help flup
 
-toDoc ///
-Key
-  flup
- (flup,ZZ)
-Headline
-  a very important function
-Usage
-  flup n
-Inputs
-  n:ZZ
-    should be nonzero
-Outputs
-  :Ring
-    you never know
-Consequences
-  not really much to say here
-Description
-  some important text
-SeeAlso
-  matrix
-  "matrices"
-Caveat
-  This function might accidentally erase your hard drive
-///
-document oo
-net help flup
-
-toDoc ///
-Key
-  flup
- (flup,ZZ)
-///
-document oo

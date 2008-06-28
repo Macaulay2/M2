@@ -1,0 +1,25 @@
+Key
+  flup
+ (flup,ZZ)
+Headline
+  a very important function
+Usage
+  flup n
+Inputs
+  n:ZZ
+    should be nonzero
+Outputs
+  :Ring
+    you never know
+Consequences
+  not really much to say here
+Description
+ Text
+  some important text
+  and some more cool stuff
+SeeAlso
+  matrix
+  "matrices"
+Caveat
+  This function might accidentally erase your hard drive
+
