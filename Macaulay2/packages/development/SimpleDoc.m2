@@ -168,5 +168,5 @@ flup = method()
 flup ZZ := (n) -> -n
 D = toDoc get "doc.eg"
 document D
-errornet help flup
+help flup
 
