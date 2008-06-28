@@ -1,0 +1,73 @@
+  Key
+    (doc,String)
+    doc
+  Headline
+    a simple documentation function
+  Usage
+    doc s
+  Inputs
+    s:String
+      See the example below for the format of {\tt s}
+  Consequences
+    Documentation is created and stored so that after 
+    @TO installPackage@ or @TO getPackage@ is used, 
+    the corresponding documentation is
+    available via @TO help@ and @TO viewHelp@
+  Description
+   Text
+    The string {\tt s} contains text describing the
+    documentation to be produced.
+
+    The text is divided into sections, each of which begins
+    with a keyword alone on a line; the keywords must all
+    be indented to the same level, and everything else must
+    be further indented.
+
+    The valid keywords are: {\tt Key}, {\tt Headline}, {\tt Usage}, {\tt
+    Inputs}, {\tt Outputs}, {\tt Consequences}, {\tt Description}, {\tt
+    SeeAlso}, {\tt Caveat}.
+
+    The only keyword which is always required is {\tt Key}.
+
+    Each line in the {\tt Key} section is evaluated as a Macaulay2 expression
+    to yield a documentation key.  The various types of documentation keys are
+    described in @TO Key@.  (If a string is desired as a key, it must be
+    surrounded by quotation marks.)
+
+    The bodies of the {\tt Headline} and {\tt Usage} sections should have
+    a single line, which will be interpreted as a string.
+
+    The text in an {\tt Inputs} or {\tt Outputs} section is divided into
+    subsections, each of which corresponds to one input or output value.  The
+    first line of each subsection contains the name of the variable
+    corresponding to it, as referred to in the usage line, a colon, and the
+    type of the variable.  For example, the first line might be {\tt s:String}.
+    The variable name and type are both optional.  Subsequent lines of the
+    subsection, indented further, describe the variable.  These lines may
+    include markup.
+
+    Markup allowed includes all tex-like commands, as allowed in @TO TEX@.
+    Also allowed is a pair of {\tt \@} characters, enclosing Macaulay2 code to
+    be executed, yielding appropriate hypertext.  For example, {\tt \@TO Key\@}
+    will insert a link to another node of the documentation.
+
+    The text in the {\tt Consequences} section can be marked up as described
+    above.
+
+    The text in the {\tt Description} section occurs in subsections labeled
+    with the keywords {\tt Text} and {\tt Example}.  The text in a {\tt Text}
+    subsection can be separated into paragraphs with blank lines.  Each
+    paragraph can contain markup as described above.  The text in an {\tt
+    Example} subsection consists of lines of code to be used as examples in the
+    documentation node.
+
+    The following example is not complete yet.  We must first allow the example
+    section to contain multi-line expressions.
+
+   Example
+     ourfcn = method()
+     ourfcn ZZ := (n) -> n+1;
+     ourfcn 3
+
+  SeeAlso
+    document
