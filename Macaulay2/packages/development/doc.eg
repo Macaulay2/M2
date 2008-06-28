@@ -15,8 +15,12 @@ Consequences
   not really much to say here
 Description
  Text
-  some important text
-  and some more cool stuff
+  some important text and {\tt n}
+  and some more cool stuff and 
+  a @TO Matrix@.@toString (3+5)@.
+ Example
+  flup 4
+  flup 5
 SeeAlso
   matrix
   "matrices"
