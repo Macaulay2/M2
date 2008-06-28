@@ -233,19 +233,19 @@ betti MonomialIdeal := I -> betti ideal I
 lcmgens := local lcmgens
 alexanderdual := local alexanderdual
 
-lcmOfGens := (I) -> if I.cache#?lcmgens then I.cache#lcmgens else I.cache#lcmgens = (
-     if I == 0 then toList (numgens ring I : 0)
-     else max \ transpose apply(first entries generators I, i -> first exponents i)
-     )
+-- Old version: MES will remove this soon (5-30-08)
+--lcmOfGens := (I) -> if I.cache#?lcmgens then I.cache#lcmgens else I.cache#lcmgens = (
+--     if I == 0 then toList (numgens ring I : 0)
+--     else max \ transpose apply(first entries generators I, i -> first exponents i)
+--     )
 
- -- We use E. Miller's definition for nonsquare 
- -- free monomial -- ideals.
 
 -- The following is not exported directly (it is a subroutine for minimalPrimes, dual).
+-- OBSOLETE? MES 5-30-08
 squarefreeDual = (J) -> (if J == 0 
   then monomialIdeal 1_(ring J) 
   else intersect (monomialIdeal @@ support \ first entries generators J))
-
+-- Old version, now obsolete?  MES 5-30-08
 dual(MonomialIdeal, List) := (I,a) -> ( -- Alexander dual
      R := ring I;
      X := generators R;
@@ -257,9 +257,7 @@ dual(MonomialIdeal, List) := (I,a) -> ( -- Alexander dual
      P := monomialIdeal apply(#X, i -> X#i^(a#i+1));
      monomialIdeal( (generators (P:I)) % P )
      )
-
-dual(MonomialIdeal,RingElement) := (I,r) -> dual(I,first exponents r)
-
+-- OBSOLETE? MES 5-30-08
 dual MonomialIdeal := (I) -> (
   if I.cache#?alexanderdual
     then I.cache#alexanderdual
@@ -267,6 +265,31 @@ dual MonomialIdeal := (I) -> (
 	 d := lcmOfGens(I);
 	 if max d === 1 then squarefreeDual I
 	 else dual(I, lcmOfGens(I))
+    ))
+
+lcmOfGens = (I) -> (if I.cache#?lcmgens 
+  then I.cache#lcmgens 
+  else I.cache#lcmgens = rawMonomialIdealLCM raw I)
+
+ -- We use E. Miller's definition for nonsquare 
+ -- free monomial -- ideals.
+
+dual(MonomialIdeal, List) := (I,a) -> (
+     aI := lcmOfGens I;
+     if aI =!= a then (
+     	  if #aI =!= #a then error ( "expected list of length ", toString (#aI));
+	  scan(a, aI, (b,c) -> if b<c then error "exponent vector not large enough" );
+	  );
+     newMonomialIdeal(ring I, rawAlexanderDual(raw I, a))
+     )
+
+dual(MonomialIdeal,RingElement) := (I,r) -> dual(I,first exponents r)
+
+dual MonomialIdeal := (I) -> (
+  if I.cache#?alexanderdual
+    then I.cache#alexanderdual
+    else I.cache#alexanderdual = (
+	 dual(I, lcmOfGens I)
     ))
 
 --  ASSOCIATED PRIMES  -------------------------------------

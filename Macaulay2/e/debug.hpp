@@ -34,6 +34,12 @@ extern "C" void dmutablemat(MutableMatrix *m);
 extern "C" void dmonideal(MonomialIdeal *m);
 
 extern "C" void dintarray(M2_arrayint a);
+
+extern "C" void dstash();
+
+extern "C" void dRRR(M2_RRR a);
+
+
 // Local Variables:
 // compile-command: "make -C $M2BUILDDIR/Macaulay2/e "
 // End:

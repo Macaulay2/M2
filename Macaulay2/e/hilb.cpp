@@ -129,10 +129,12 @@ void partition_table::partition(MonomialIdeal * &I, array<MonomialIdeal *> &resu
   delete I;
 }
 
+#define MAX_EXP (1 << (8*sizeof(int)-2))
 static int popular_var(const MonomialIdeal &I, 
 		int &npure, int *pure, 
 		int &nhits,
-                const int *& non_pure_power)
+		       const int *& non_pure_power,
+		       int & exp_of_popular)
      // Return the variable which occurs the most often in non pure monomials,
      // placing the number of monomials in which it occurs into 'nhits'.
      // At the same time, set 'pure' and 'npure'.  If there is a non pure
@@ -144,9 +146,10 @@ static int popular_var(const MonomialIdeal &I,
   for (k=0; k<nvars; k++)
     pure[k] = -1;
 
-  intarray ahits(nvars);
-  int *hits = ahits.alloc(nvars);
+  int *hits = newarray_atomic_clear(int,nvars);
+  int *minnonzero = newarray_atomic(int,nvars);
   for (k = 0; k<nvars; k++) hits[k] = 0;
+  for (k = 0; k<nvars; k++) minnonzero[k] = MAX_EXP;
 
   non_pure_power = NULL;
 
@@ -155,18 +158,24 @@ static int popular_var(const MonomialIdeal &I,
       const int *m = I[i]->monom().raw();
       index_varpower j = m;
       assert(j.valid());	// The monomial cannot be '1'.
-      int v = j.var();
-      int e = j.exponent();
       ++j;
       if (j.valid())
 	{
 	  non_pure_power = m;
-	  hits[v]++;
+	  //hits[v]++;
 	  for ( ; j.valid(); ++j)
-	    hits[j.var()]++;
+	    {
+	      int v = j.var();
+	      int e = j.exponent();
+	      if (minnonzero[v] > e)
+		minnonzero[v] = e;
+	      hits[v]++;
+	    }
 	}
       else
 	{
+	  int v = j.var();
+	  int e = j.exponent();
 	  if (pure[v] == -1)
 	    {
 	      npure++;
@@ -182,6 +191,9 @@ static int popular_var(const MonomialIdeal &I,
     if (hits[k] > hits[popular])
       popular = k;
   nhits = hits[popular];
+  exp_of_popular = minnonzero[popular];
+  deletearray(hits);
+  deletearray(minnonzero);
   return popular;
 }
 
@@ -193,8 +205,9 @@ static int find_pivot(const MonomialIdeal &I, int &npure, int *pure, intarray &m
      // computation.
 {
   int nhits;
+  int exp_of_v;
   const int *vp;
-  int v = popular_var(I, npure, pure, nhits, vp);
+  int v = popular_var(I, npure, pure, nhits, vp, exp_of_v);
   
   // The following will take some tweaking...
   // Some possibilities: take just this variable, take gcd of 2 or 3
@@ -208,7 +221,7 @@ static int find_pivot(const MonomialIdeal &I, int &npure, int *pure, intarray &m
       varpower::copy(vp, m);
       return 0;
     }
-  varpower::var(v,1,m);
+  varpower::var(v,exp_of_v,m);
   return 1;
 }
 

@@ -29,7 +29,8 @@ export {
      sheafCohomology,
      beilinson1,
      beilinson,
-     RegularityBound}
+     RegularityBound,
+     UU}
 
 setupBGG = method()
 setupBGG(RingMap,List) :=
@@ -58,6 +59,7 @@ setupBGG(RingMap,Symbol) := (F,e) -> (
      E.BGGcache = new HashTable from {dualVariables=>xx,variables=>ee,koszulDual=>S,baseRing=>A,twist=>degree(xx_0)};
      S.BGGcache = new HashTable from {variables=>xx,dualVariables=>ee,koszulDual=>E,baseRing=>A,twist=>degree(xx_0)};
      E)
+setupBGG(Ring,Symbol) := (R,e) -> setupBGG(map(R, coefficientRing R), e)
 
 selectComponent=(L,k)->(apply(L,c->c#k))
 
@@ -204,8 +206,8 @@ directImageComplex Module := o -> (M) -> (
      )
 
 sheafCohomology = method()
-sheafCohomology(Matrix,Ring,ZZ,ZZ) := (m,E,loDeg,hiDeg)->(
-     T := tateResolution(m,E,loDeg,hiDeg);
+sheafCohomology(Matrix,ZZ,ZZ) := (m,loDeg,hiDeg)->(
+     T := tateResolution(m,loDeg,hiDeg);
      k := length T;
      d := k-hiDeg+loDeg;
      if d > 0 then 
@@ -218,7 +220,7 @@ sortedBasis = (i,E) -> (
      m_p);
 
 beilinson1 = method()
-beilinson1(Matrix,List,ZZ,Ring) := (e,dege,i,S)->(
+beilinson1(RingElement,ZZ,ZZ,Ring) := (e,dege,i,S)->(
      E := ring e;
      mi := if i < 0 or i >= numgens E then map(E^1, E^0, 0)
            else if i === 0 then id_(E^1)
@@ -234,25 +236,40 @@ beilinson1(Matrix,List,ZZ,Ring) := (e,dege,i,S)->(
           (vars S) * substitute(contract(diff(e,mi),transpose mr),S)
      else substitute(contract(diff(e,mi), transpose mr),S));
 
+UU = method()
+UU(ZZ,Ring) := (i,S) -> (
+     if i < 0 or i >= numgens S then S^0
+     else if i === 0 then S^1
+     else cokernel koszul(i+2,vars S) ** S^{i});
+
 beilinson = method()
 beilinson(Matrix,Ring) := (o,S) -> (
      coldegs := degrees source o;
      rowdegs := degrees target o;
      mats = table(numgens target o, numgens source o,
               (r,c) -> (
-                   rdeg = first rowdegs#r;
-                   cdeg = first coldegs#c;
-                   overS = beilinson1(o_(r,c),cdeg-rdeg,cdeg,S);
+                   rdeg := first rowdegs#r;
+                   cdeg := first coldegs#c;
+                   overS := beilinson1(o_(r,c),cdeg-rdeg,cdeg,S);
                    -- overS = substitute(overE,S);
-                   map(U(rdeg,S),U(cdeg,S),overS)));
+                   map(UU(rdeg,S),UU(cdeg,S),overS)));
      if #mats === 0 then matrix(S,{{}})
      else matrix(mats));
 
-U = method()
-U(ZZ,Ring) := (i,S) -> (
-     if i < 0 or i >= numgens S then S^0
-     else if i === 0 then S^1
-     else cokernel koszul(i+2,vars S) ** S^{i});
+randomMap = (F,G) -> (
+     R := ring F;
+     H := Hom(F,G);
+     Hdeg0 := basis(0,H);
+     randomf := Hdeg0 * random(source Hdeg0, R^1);
+     homomorphism randomf)
+
+randomVanishingIdeal = (F,G) -> (
+     randomf := randomMap(F,G);
+     presentIX := presentation cokernel randomf;
+     sz := syz transpose presentIX;
+     if numgens source sz =!= 1 then
+       << "warning: expected syzygy to be a (twisted) ideal" << endl;
+     trim ideal sz)
 
 beginDocumentation()
 
@@ -304,7 +321,7 @@ document {
      "An exterior algebra is created which replaces the x variables with e_0, e_1, etc, and where the 
      coefficient variables commute with everything.",
      EXAMPLE lines ///
---	  loadPackage "BGG"
+	  loadPackage "BGG"
 	  S = ZZ/101[x,y,z]
 	  A = coefficientRing S
 	  F = map(S,A)
@@ -514,7 +531,7 @@ document {
      SeeAlso => {}
      }
 document { 
-     Key => U,
+     Key => UU,
      Headline => "",
      Usage => "",
      Inputs => {
@@ -529,6 +546,88 @@ document {
      Caveat => {},
      SeeAlso => {}
      }
+
+TEST ///
+restart
+loadPackage "BGG"
+debug BGG
+kk = ZZ/32003
+S = kk[x_0..x_2]
+E = setupBGG(S,e)
+M=coker matrix{{x_0^2, x_1^2}};
+m=presentation truncate(regularity M,M);
+symExt(m,E)
+M=cokernel matrix{{x_0^2, x_1^2, x_2^2}};
+bgg(1,M,E)
+m = matrix{{x_0,x_1}};
+regularity coker m
+T = tateResolution(m,-2,4)
+betti T
+T.dd_1
+S=ZZ/32003[x_0..x_3];
+E = setupBGG(S,symbol e)
+m=koszul(3,vars S);
+regularity coker m
+betti tateResolution(m,-6,2)
+betti sheafCohomology(m,-6,2)
+M=sheaf coker m;
+HH^1(M(>=0))
+S = ZZ/32003[x_0..x_2];
+U1 = coker koszul(3,vars S) ** S^{1};
+k2 = koszul(2,vars S)
+alpha = map(U1 ++ U1, S^{-1}, transpose{{0,-1,0,1,0,0}});
+alphad = map(S^1, U1 ++ U1, matrix{{0,1,0,0,0,1}} * (k2 ++ k2));
+F = prune homology(alphad, alpha);
+betti  F
+S=ZZ/32003[x_0..x_3];
+E=setupBGG(S,symbol e)
+koszul(2,vars S)
+sortedBasis(2,E)
+beilinson1(e_1,1,3,S)
+beilinson1(e_1,1,2,S)
+beilinson1(e_1,1,1,S)
+S=ZZ/32003[x_0..x_2];
+E = ZZ/32003[e_0..e_2,SkewCommutative=>true];
+alphad = map(E^1,E^{-1,-1},{{e_1,e_2}})
+alpha = map(E^{-1,-1},E^{-2},{{e_1},{e_2}})
+alphad=beilinson(alphad,S);
+alpha=beilinson(alpha,S);
+F = prune homology(alphad,alpha);
+betti  F
+S = ZZ/32003[x_0..x_4];
+E = setupBGG(S, symbol e)
+E = ZZ/32003[e_0..e_4,SkewCommutative=>true];
+beta=map(E^1,E^{-2,-1},{{e_0*e_2+e_1*e_3,-e_4}})
+alpha=map(E^{-2,-1},E^{-3},{{e_4},{e_0*e_2+e_1*e_3}})
+beta=beilinson(beta,S);
+alpha=beilinson(alpha,S);
+G = prune homology(beta,alpha);
+betti res G
+foursect = random(S^4, S^10) * presentation G;
+IX = trim minors(4,foursect);
+codim IX
+degree IX
+codim singularLocus IX
+alphad = matrix{{e_4*e_1, e_2*e_3},{e_0*e_2, e_3*e_4},
+                {e_1*e_3, e_4*e_0},{e_2*e_4, e_0*e_1},
+                {e_3*e_0, e_1*e_2}};
+alphad=map(E^5,E^{-2,-2},alphad)
+alpha=syz alphad
+alphad=beilinson(alphad,S);
+alpha=beilinson(alpha,S);
+FHM = prune homology(alphad,alpha);
+betti res FHM
+regularity FHM
+betti sheafCohomology(presentation FHM,-6,6)
+sect =  map(S^1,S^15,0) | random(S^1, S^4);
+mapcone = sect || transpose presentation FHM;
+fmapcone = res coker mapcone;
+IX =  trim ideal fmapcone.dd_2;
+codim IX
+degree IX
+codim singularLocus IX
+numgens ring IX
+///
 end
 
 ----------------------------------------------------
@@ -786,20 +885,6 @@ codim singularLocus IX
 
 end
 
-randomMap = (F,G) -> (
-     R := ring F;
-     H := Hom(F,G);
-     Hdeg0 := basis(0,H);
-     randomf := Hdeg0 * random(source Hdeg0, R^1);
-     homomorphism randomf)
-
-randomVanishingIdeal = (F,G) -> (
-     randomf := randomMap(F,G);
-     presentIX := presentation cokernel randomf;
-     sz := syz transpose presentIX;
-     if numgens source sz =!= 1 then
-       << "warning: expected syzygy to be a (twisted) ideal" << endl;
-     trim ideal sz)
 
 loadPackage "BGG"
 KK=ZZ/32003
@@ -853,13 +938,13 @@ res J
 betti oo
 degree J
 genera comodule J
-J = randomVanishingIdeal((U(3,S))^4 ++ U(4,S), (U(2,S))^3)
+J = randomVanishingIdeal((UU(3,S))^4 ++ UU(4,S), (UU(2,S))^3)
 betti J
 res J
 
 -- k3.d8.g6
 F = S^{-2,-1,-1}
-G = U(1,S)
+G = UU(1,S)
 J = randomVanishingIdeal(F,G);
 res J
 betti res J
@@ -872,7 +957,7 @@ genera J
 --           3: . 8 11 5 1
 
 -- k3.d9.g8
-F = U(4,S) ++ U(3,S)
+F = UU(4,S) ++ UU(3,S)
 G = S^6
 J = randomVanishingIdeal(F,G);
 res J
@@ -886,7 +971,7 @@ genera J
 --           3: . 6 6 1
 
 -- k3.d11.g12
-F = S^{-1} ++ (U(3,S))^3
+F = S^{-1} ++ (UU(3,S))^3
 G = (U(2,S))^2 ++ S^2
 J = randomVanishingIdeal(F,G);
 res J
@@ -922,8 +1007,8 @@ degree J
 genera J
 
 -- ell.d9.g7
-F = S^{-1} ++ (U(2,S))^2
-G = (U(1,S))^3 ++ S^2
+F = S^{-1} ++ (UU(2,S))^2
+G = (UU(1,S))^3 ++ S^2
 J = randomVanishingIdeal(F,G);
 res J
 betti res J
@@ -931,8 +1016,8 @@ degree J
 genera J
 
 -- ell.d10.g10
-F = S^{-1,-1} ++ U(3,S)
-G = U(1,S) ++ S^3
+F = S^{-1,-1} ++ UU(3,S)
+G = UU(1,S) ++ S^3
 J = randomVanishingIdeal(F,G);
 res J
 betti res J
@@ -940,8 +1025,8 @@ degree J
 genera J
 
 -- ell.d11.g12
-F = S^{-1,-1} ++ (U(3,S))^2
-G = U(2,S) ++ U(1,S) ++ S^1
+F = S^{-1,-1} ++ (UU(3,S))^2
+G = UU(2,S) ++ UU(1,S) ++ S^1
 J = randomVanishingIdeal(F,G);
 res J
 betti res J
@@ -951,10 +1036,10 @@ genera J
 -- HP of U
 S = ZZ/32003[a..e]
 P0 = hilbertPolynomial(S^1,Projective=>true)
-P1 = hilbertPolynomial(U(1,S) ** S^{-4},Projective=>true)
-P2 = hilbertPolynomial(U(2,S) ** S^{-4},Projective=>true)
-P3 = hilbertPolynomial(U(3,S) ** S^{-4},Projective=>true)
-P4 = hilbertPolynomial(U(4,S) ** S^{-4},Projective=>true)
+P1 = hilbertPolynomial(UU(1,S) ** S^{-4},Projective=>true)
+P2 = hilbertPolynomial(UU(2,S) ** S^{-4},Projective=>true)
+P3 = hilbertPolynomial(UU(3,S) ** S^{-4},Projective=>true)
+P4 = hilbertPolynomial(UU(4,S) ** S^{-4},Projective=>true)
 
 P0+3*P4-P1
 P0-3*P2+4*P3+P4
@@ -969,8 +1054,8 @@ LLL gens oo
 -2*P1+3*P2-3*P3+2*P4
 
 -- doesn't work (a=b=0, d=11, g=11)
-F = U(1,S) ++ (U(2,S))^2 ++ U(4,S)
-G = (U(3,S))^4
+F = UU(1,S) ++ (UU(2,S))^2 ++ UU(4,S)
+G = (UU(3,S))^4
 J = randomVanishingIdeal(F,G);
 res J
 betti res J
@@ -980,9 +1065,9 @@ genera J
 gg = (a,b) -> 
   {-1,-2,4,-1} + a * {-1, 1, 0, -2} + b * {-2, 3, -3, 2}
 gg(1,1) -- {-4,2,1,-1}
-randomVanishingIdeal((U(2,S))^2 ++ U(3,S), (U(1,S))^4 ++ U(4,S))
+randomVanishingIdeal((UU(2,S))^2 ++ UU(3,S), (UU(1,S))^4 ++ UU(4,S))
 gg(1,2) -- {-6, 5, -2, 1}
-randomVanishingIdeal((U(2,S))^5 ++ U(4,S), (U(1,S))^6 ++ (U(3,S))^2)
+randomVanishingIdeal((UU(2,S))^5 ++ UU(4,S), (UU(1,S))^6 ++ (UU(3,S))^2)
 random(E^{-1,-1,-1,-1,-1,-1,-3},E^{-2,-2,-2,-2,-2,-4})
 beilinson(oo,S)
 

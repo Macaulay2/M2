@@ -41,6 +41,20 @@ class MonomialInfo : public our_new_delete
   // other possible:
   //    [hashvalue, len, component, v1, v2, ..., vr] each vi is potentially packed too.
   //    [hashvalue, component, wt1, ..., wtr, pack1, ..., packr]
+
+  mutable unsigned long ncalls_compare;
+  mutable unsigned long ncalls_mult;
+  mutable unsigned long ncalls_get_component;
+  mutable unsigned long ncalls_from_exponent_vector;
+  mutable unsigned long ncalls_to_exponent_vector;
+  mutable unsigned long ncalls_to_varpower;
+  mutable unsigned long ncalls_from_varpower;
+  mutable unsigned long ncalls_is_equal;
+  mutable unsigned long ncalls_is_equal_true;
+  mutable unsigned long ncalls_divide;
+  mutable unsigned long ncalls_weight;
+  mutable unsigned long ncalls_unneccesary;
+  mutable unsigned long ncalls_quotient_as_vp;
 public:
   typedef packed_monomial monomial;
   typedef const_packed_monomial const_monomial;
@@ -73,10 +87,11 @@ public:
 
   void set_component(long component, packed_monomial m) const { m[1] = component; }
   
-  long get_component(const_packed_monomial m) const { return m[1]; }
+  long get_component(const_packed_monomial m) const { ncalls_get_component++; return m[1]; }
 
   bool from_exponent_vector(const_ntuple_monomial e, long comp, packed_monomial result) const {
     // Pack the vector e[0]..e[nvars-1],comp.  Create the hash value at the same time.
+    ncalls_from_exponent_vector++;
     result[0] = 0;
     result[1] = comp;
     for (int i=0; i<nvars; i++)
@@ -100,6 +115,7 @@ public:
 
   bool to_exponent_vector(const_packed_monomial m, ntuple_monomial result, long &result_comp) const {
     // Unpack the monomial m.
+    ncalls_to_exponent_vector++;
     result_comp = m[1];
     m += 2;
     for (int i=0; i<nvars; i++)
@@ -109,6 +125,7 @@ public:
 
   void to_varpower_monomial(const_packed_monomial m, varpower_monomial result) const {
     // 'result' must have enough space allocated
+    ncalls_to_varpower++;
     varpower_word *t = result+1;
     const_packed_monomial m1 = m + 2 + nvars;
     int len = 0;
@@ -126,6 +143,7 @@ public:
 
   void from_varpower_monomial(const_varpower_monomial m, long comp, packed_monomial result) const {
     // 'result' must have enough space allocated
+    ncalls_from_varpower++;
     result[0] = 0;
     result[1] = comp;
     for (int i=0; i<nvars; i++)
@@ -145,8 +163,10 @@ public:
   }
 
   bool is_equal(const_packed_monomial m, const_packed_monomial n) const {
+    ncalls_is_equal++;
     for (int j=nslots; j>0; --j)
       if (*m++ != *n++) return false;
+    ncalls_is_equal_true++;
     return true;
   }
 
@@ -159,10 +179,12 @@ public:
   }
   
   void unchecked_mult(const_packed_monomial m, const_packed_monomial n, packed_monomial result) const {
+    ncalls_mult++;
     for (int j=nslots; j>0; --j) *result++ = *m++ + *n++;
   }
 
   void unchecked_divide(const_packed_monomial m, const_packed_monomial n, packed_monomial result) const {
+    ncalls_divide++;
     for (int j=nslots; j>0; --j) *result++ = *m++ - *n++;
   }
 
@@ -176,6 +198,7 @@ public:
   void show(const_packed_monomial m) const;
 
   int compare_grevlex(const_packed_monomial m, const_packed_monomial n) const {
+    ncalls_compare++;
     const_packed_monomial m1 = m+nslots;
     const_packed_monomial n1 = n+nslots;
     for (int i=nslots-2; i>0; i--) {
@@ -205,6 +228,7 @@ public:
     //        if (b) holds, then lcm(p1,m) divides lcm, same with lcm(p2,m).
     //        if A and B then return true
   {
+    ncalls_unneccesary++;
     bool A=false;
     bool B=false;
     m += 2;
@@ -228,6 +252,7 @@ public:
 		      bool &are_disjoint) const
   {
     // sets result, deg, are_disjoint
+    ncalls_quotient_as_vp++;
     deg = 0;
     are_disjoint = true;
     a += 2;
