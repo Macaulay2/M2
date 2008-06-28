@@ -695,7 +695,54 @@ MonomialIdeal *MonomialIdeal::quotient(const MonomialIdeal &J) const
   for (Index<MonomialIdeal> i = J.first(); i.valid(); i++)
     {
       MonomialIdeal *result1 = quotient(operator[](i)->monom().raw());
-      result = result->intersect(*result1);
+      MonomialIdeal *next_result = result->intersect(*result1);
+      delete result1;
+      delete result;
+      result = next_result;
+    }
+  return result;
+}
+
+static MonomialIdeal *varpower_monideal(const PolynomialRing *R, const M2_arrayint top, const int *vp)
+{
+  // If m is a varpower monomial, xi1^a1 ... xin^an, create the monomial ideal
+  // (xi1^(top[i1]+1-a1), ..., xin^(top[in]+1-an))
+  MonomialIdeal *result = new MonomialIdeal(R);
+  for (index_varpower i = vp; i.valid(); ++i)
+    {
+      Bag *b = new Bag();
+      varpower::var(i.var(), top->array[i.var()] + 1 - i.exponent(), b->monom());
+      result->insert(b);
+    }
+  return result;
+}
+const M2_arrayint MonomialIdeal::lcm() const
+  // Returns the lcm of all of the generators of this, as an array of ints
+{
+  M2_arrayint result = makearrayint(get_ring()->n_vars());
+  for (int i=0; i<result->len; i++) result->array[i] = 0;
+
+  for (Index<MonomialIdeal> i = first(); i.valid(); i++)
+    for (index_varpower j = operator[](i)->monom().raw(); j.valid(); ++j)
+      if (result->array[j.var()] < j.exponent())
+	result->array[j.var()] = j.exponent();
+  return result;
+}
+
+MonomialIdeal * MonomialIdeal::alexander_dual(const M2_arrayint a) const
+  // a is a vector which is entrywise >= lcm(this).
+{
+  MonomialIdeal *result = new MonomialIdeal(get_ring());
+  Bag *b = new Bag();
+  varpower::one(b->monom());
+  result->insert(b);
+  for (Index<MonomialIdeal> i = first(); i.valid(); i++)
+    {
+      MonomialIdeal *I1 = varpower_monideal(get_ring(), a, operator[](i)->monom().raw());
+      MonomialIdeal *next_result = result->intersect(*I1);
+      delete I1;
+      delete result;
+      result = next_result;
     }
   return result;
 }
@@ -722,7 +769,10 @@ MonomialIdeal *MonomialIdeal::sat(const MonomialIdeal &J) const
   for (Index<MonomialIdeal> i = J.first(); i.valid(); i++)
     {
       MonomialIdeal *result1 = erase(operator[](i)->monom().raw());
-      result = result->intersect(*result1);
+      MonomialIdeal *next_result = result->intersect(*result1);
+      delete result1;
+      delete result;
+      result = next_result;
     }
   return result;
 }

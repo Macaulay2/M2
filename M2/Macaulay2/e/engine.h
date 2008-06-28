@@ -1485,6 +1485,10 @@ extern "C" {
      for coker I.  NULL is returned if the ring is not appropriate for
      computing Hilbert series, or the computation was interrupted. */
 
+  const M2_arrayint rawMonomialIdealLCM(const MonomialIdeal *I); /* connect to: same name? */
+
+  const MonomialIdealOrNull *rawAlexanderDual(const MonomialIdeal *I, const M2_arrayint top); /* connect to: same name? */
+
   /**************************************************/
   /**** Groebner basis and resolution routines ******/
   /**************************************************/

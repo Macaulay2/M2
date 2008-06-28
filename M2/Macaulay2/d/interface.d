@@ -276,6 +276,31 @@ export rawColon(e:Expr):Expr := (
      else WrongNumArgs(2));
 setupfun("rawColon",rawColon);
 
+export rawAlexanderDual(e:Expr):Expr := (
+     when e is s:Sequence do
+     if length(s) != 2 then WrongNumArgs(2) else
+     when s.0 is I:RawMonomialIdeal do
+     if !isSequenceOfSmallIntegers(s.1) then WrongArg(2,"a sequence of small integers")
+     else toExpr(Ccode(RawMonomialIdealOrNull,
+ 	       "(engine_RawMonomialIdealOrNull)rawAlexanderDual(",
+ 	       "(const MonomialIdeal *)", I, ",",
+ 	       "(const M2_arrayint)", getSequenceOfSmallIntegers(s.1),
+ 	       ")"
+ 	       ))
+     else WrongArg(1,"a raw monomial ideal")
+     else WrongArg("a raw monomial ideal and array of ints")
+     );
+setupfun("rawAlexanderDual",rawAlexanderDual);
+
+export rawMonomialIdealLCM(e:Expr):Expr := (
+     when e
+     is x:RawMonomialIdeal do toExpr(
+	  Ccode(RawArrayIntOrNull, "(engine_RawArrayIntOrNull)rawMonomialIdealLCM(",
+	       "(MonomialIdeal*)",x, ")" ) )
+     else WrongArg("a raw monomial ideal")
+     );
+setupfun("rawMonomialIdealLCM",rawMonomialIdealLCM);
+
 -----------------------------------------------------------------------------
 -- monomial orderings
 

@@ -163,6 +163,8 @@ const MonomialIdealOrNull *IM2_MonomialIdeal_intersect(const MonomialIdeal *I,
      }
 }
 
+#include "debug.hpp"
+
 const MonomialIdealOrNull *rawColonMonomialIdeal1(const MonomialIdeal *I, 
 						 const Monomial *a)
 {
@@ -188,6 +190,8 @@ const MonomialIdealOrNull *rawColonMonomialIdeal2(const MonomialIdeal *I,
 	    }
 	  MonomialIdeal *result = I->quotient(*J);
 	  intern_monideal(result);
+	  if (gbTrace >= 1)
+	    dstash();
 	  return result;
 
      }
@@ -303,6 +307,16 @@ const RingElementOrNull * IM2_MonomialIdeal_Hilbert(const MonomialIdeal *I)
 	  ERROR(e.what());
 	  return NULL;
      }
+}
+
+const M2_arrayint rawMonomialIdealLCM(const MonomialIdeal *I)
+{
+  return I->lcm();
+}
+
+const MonomialIdealOrNull *rawAlexanderDual(const MonomialIdeal *I, const M2_arrayint top)
+{
+  return I->alexander_dual(top);
 }
 
 #if HAVE_FROBBY

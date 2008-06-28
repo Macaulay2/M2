@@ -1461,3 +1461,16 @@ document {
      Caveat => {},
      SeeAlso => {}
      }
+
+restart
+loadPackage "BGG"
+R = ZZ/101[x_0..x_4]
+phi = map(R, coefficientRing R)
+E = setupBGG(phi,e)
+
+C = res comodule (ideal vars R)^2
+M = coker(C.dd_2)
+betti res M
+tateResolution(presentation M, -5,5)
+sheafCohomology(presentation M, E, -5,5)
+setupBGG

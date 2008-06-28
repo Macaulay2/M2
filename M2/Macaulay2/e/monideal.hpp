@@ -152,6 +152,12 @@ public:
   MonomialIdeal * erase(const int *m) const; // m is a varpower monomial
   MonomialIdeal * sat(const MonomialIdeal &J) const;
 
+  const M2_arrayint lcm() const;
+  // Returns the lcm of all of the generators of this, as an array of ints
+
+  MonomialIdeal * alexander_dual(const M2_arrayint a) const;
+  // a is a vector which is entrywise >= lcm(this).
+
   MonomialIdeal * radical() const;
 
   MonomialIdeal * borel() const;

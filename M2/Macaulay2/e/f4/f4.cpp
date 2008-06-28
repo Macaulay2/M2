@@ -865,6 +865,7 @@ enum ComputationStatusCode F4GB::start_computation(StopConditions &stop_)
 
   extern long nsaved_unneeded;
   fprintf(stderr, "number of spairs removed by criterion = %ld\n", nsaved_unneeded);
+  M->show();
   return is_done;
 }
 
