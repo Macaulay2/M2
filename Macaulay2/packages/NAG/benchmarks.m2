@@ -100,3 +100,15 @@ ideal { n1^2 + n2^2 + n3^2 - 1,
  + 0.1252544116*h11^2*h23^2 - 0.2505088232*h13*h21*h11*h23 - 0.470242*n1*h21
  - 0.470242*n2*h22 - 0.1948854017 }
 )
+
+randomNFactorialSystem = (n,kk) -> (
+     R = kk[vars(53..n+51)];
+     ideal apply(n-1, d-> sum(n-1, i -> random(-n,n)*R_i^(d+2)) - 1)
+     )
+setRandomSeed 0
+
+cyclic = (n,kk) -> (
+     R = kk[vars(53..n+52)];
+     ideal apply(1..n-1, d-> sum(0..n-1, i -> product(d, k -> R_((i+k)%n)))) 
+       + ideal(product gens R - 1))
+

@@ -14,7 +14,7 @@ t = currentTime(); P = solveSystem I_*; currentTime()-t
 t = currentTime(); B = solveSystem (I_*,Software=>Bertini); currentTime()-t
 t = currentTime(); H = solveSystem (I_*,Software=>hom4ps2); currentTime()-t
 
--- check if ~ same 
+-- check if B and H approx. same 
 apply(sort(B#0/(c->c/realPart)) - sort(H#0/(c->c/realPart)), a->apply(a, abs)) 
 
 --remove temp files
