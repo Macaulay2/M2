@@ -290,8 +290,11 @@ AC_ARG_ENABLE(altivec, AS_HELP_STRING(--enable-altivec,compile with "-faltivec" 
     CXXFLAGS="$CXXFLAGS -faltivec"
 )
 
-
 AC_PROG_FC()
+USE_FCLIBS=yes
+AC_ARG_ENABLE(fc-lib-ldflags,
+    AS_HELP_STRING(--disable-fc-lib-ldflags,specify that no linker flags are required to link with a Fortran library),
+    USE_FCLIBS=$enableval)
 AC_SUBST(FCLIBS_DYNAMIC,)
 AC_SUBST(FCLIBS_STATIC,)
 AC_SUBST(FCLIBS_FLAGS,)
@@ -299,6 +302,7 @@ if test "$FC"
 then AC_FC_DUMMY_MAIN()
      AC_FC_WRAPPERS()
      AC_FC_LIBRARY_LDFLAGS()
+     test "$USE_FCLIBS" = no && FCLIBS=
      for i in $FCLIBS
      do case $i in
 	     -L*) FCLIBS_FLAGS="$FCLIBS_FLAGS $i" ;;
@@ -308,7 +312,6 @@ then AC_FC_DUMMY_MAIN()
 	esac
      done
 fi
-
 
 if test "$PTHREADS" = yes
 then AC_SEARCH_LIBS(pthread_mutex_trylock,pthread)
