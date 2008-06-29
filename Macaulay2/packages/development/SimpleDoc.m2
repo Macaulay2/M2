@@ -3,14 +3,18 @@ newPackage(
     	Version => "0.1", 
     	Date => "June 28, 2008",
 	AuxiliaryFiles=>true,
-    	Authors => {{Name => "Mike Stillman", 
+    	Authors => {
+	     {Name => "Dan Grayson", 
+		  Email => "dan@math.uiuc.edu", 
+		  HomePage => "http://www.math.uiuc.edu/~grayson/"},
+	     {Name => "Mike Stillman", 
 		  Email => "math@math.cornell.edu", 
 		  HomePage => "http://www.math.cornell.edu/~mike/"}},
     	Headline => "a simple documentation function",
     	DebuggingMode => true
     	)
 
-export {doc}
+export {doc, docTemplate, docExample, packageTemplate}
 
 doc = method()
 doc String := (s) -> document toDoc s
@@ -100,6 +104,67 @@ toDoc = (text) -> (
      splice applySplit(KeyFcns, text, indents)
      )
 
+docExample = "
+doc ///
+  Key
+    (frob,ZZ,Matrix)
+  Headline
+    A sample documentation node
+  Usage
+    x = from(n,M)
+  Inputs
+    n:ZZ
+      positive
+    M:Matrix
+      which is square
+  Outputs
+    x:Matrix
+      A block diagonal matrix with {\\tt n}
+      copies of {\\tt M} along the diagonal
+  Consequences
+    This section is used if there are side effects
+    that this function performs
+  Description
+   Text
+     Each paragraph of text begins with \"Text\".  The following 
+     line starts a sequence of Macaulay2 example input lines.
+     However, see @TO (matrix,List)@.
+   Example
+     M = matrix\"1,2;3,4\";
+     frob(3,M)
+  Caveat
+    This is not a particularly useful function
+  SeeAlso
+    \"Introduction\"
+    matrix
+    (directSum,List)
+///
+"
+
+docTemplate = "
+doc ///
+  Key
+  Headline
+
+  Usage
+
+  Inputs
+
+  Outputs
+
+  Consequences
+
+  Description
+   Text
+   Text
+   Example
+   Text
+   Example
+  Caveat
+  SeeAlso
+///
+"
+
 beginDocumentation()
 document { 
 	Key => SimpleDoc,
@@ -108,6 +173,43 @@ document {
 	}
 
 doc get (currentFileDirectory | "SimpleDoc/doc.txt")
+
+doc ///
+  Key
+    "docExample"
+  Headline
+    an example documentation node
+  Usage
+    docExample
+  Description
+   Text
+     docExample is a @TO String@.  The documentation
+     node used to create this documentation page:
+   Example
+     print docExample
+  SeeAlso
+    "docTemplate"
+///
+
+doc ///
+  Key
+    "docTemplate"
+  Headline
+    a template for a documentation node
+  Usage
+    docTemplate
+  Description
+   Text
+     docTemplate is a @TO String@, which can
+     be cut and paste into a text file,
+     to be used as a template for writing
+     documentation for functions and other objects
+     in a package.
+   Example
+     print docTemplate
+  SeeAlso
+    "docExample"
+///
 
 end
 restart
@@ -120,3 +222,44 @@ flup ZZ := (n) -> -n
 D = toDoc get "doc.eg"
 document D
 help flup
+
+print docTemplate
+print docExample
+frob = method()
+frob(ZZ,Matrix) := (n,M) -> M
+value docExample
+
+toDoc ///
+  Key
+    (frob,ZZ,Matrix)
+  Headline
+    A sample documentation node
+  Usage
+    x = from(n,M)
+  Inputs
+    n:ZZ
+      positive
+    M:Matrix
+      which is square
+  Outputs
+    x:Matrix
+      A block diagonal matrix with {\tt n}
+      copies of {\tt M} along the diagonal
+  Consequences
+    This section is used if there are side effects
+    that this function performs
+  Description
+   Text
+     Each paragraph of text begins with the word Text.  The following 
+     line starts a sequence of Macaulay2 example input lines.
+     However, see @TO (matrix,List)@.
+   Example
+     M = matrix{{1,2},{3,4}}
+     frob(3,M)
+  Caveat
+    This is not a particularly useful function
+  SeeAlso
+    "Introduction"
+    matrix
+    (directSum,List)
+///
