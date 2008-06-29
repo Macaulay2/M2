@@ -1,0 +1,13 @@
+Should we make : right associative?
+
+    i68 : (I : intersect(P1,P2,P1+P2)) : P1+P2
+
+    o68 = ideal 1
+
+    o68 : Ideal of R
+
+    i70 : 3 : 2 : x
+
+    o70 = ((x, x), (x, x), (x, x))
+
+    o70 : Sequence
