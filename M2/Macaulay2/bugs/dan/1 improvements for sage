@@ -1,0 +1,13 @@
+Improvements needed for sage:
+
+- the architecture-independent files that are built (such as example outputs
+  and html documentation, should be put into ./BUILD/share, and should not be
+  rebuilt if architecture-dependent files are updated.  However, after an error
+  in building the architecture-dependent files, it should not try to build the
+  architecture-independent files, even if make -k was typed.  This will allow
+  our source code optionally to be shipped with the architecture-dependent
+  files, which should speed upbuilding.  We could even include that on the web
+  site.
+
+- back up to autoconf 2.59, instead of 2.61
+
