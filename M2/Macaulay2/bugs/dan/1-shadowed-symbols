@@ -1,0 +1,22 @@
+annoying shadowed symbols:
+also, the tests didn't run:
+
+    i1 : loadPackage "FourierMotzkin"
+
+    o1 = FourierMotzkin
+
+    o1 : Package
+
+    i2 : check o1
+
+    i3 : loadPackage ("FourierMotzkin", LoadDocumentation => true)
+
+    o3 = FourierMotzkin
+
+    o3 : Package
+
+    i4 : check o1
+    --warning: symbol 'fourierMotzkin' in FourierMotzkin.Dictionary is shadowed by a symbol in FourierMotzkin.Dictionary
+    --   new synonym provided for 'fourierMotzkin': fourierMotzkin$0
+    --warning: symbol 'FourierMotzkin$fourierMotzkin' in FourierMotzkin.Dictionary is shadowed by a symbol in FourierMotzkin.Dictionary
+    --   synonym for FourierMotzkin$fourierMotzkin: fourierMotzkin$0
