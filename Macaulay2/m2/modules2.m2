@@ -303,7 +303,7 @@ degree Module := (
 	       fixZZ(ev hn/ev hd))))()
 
 length Module := M -> (
-     if not isHomogeneous then notImplemented();
+     if not isHomogeneous M then notImplemented();
      if dim M > 0 then return infinity;
      degree M)
 
