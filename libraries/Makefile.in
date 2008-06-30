@@ -6,8 +6,11 @@ distclean :: clean
 distclean clean :: Makefile.library
 	@ set -e ; for p in @LIBLIST@ libtool ; do (set -ex ; $(MAKE) -C $$p $@) || false ; done 
 install :
-	@INSTALL@ -d @encapdir@/@librariesdirtail@/lib
-	tar cf - --exclude="*.a" --exclude="*.old" -C final@FINALPREFIX@/@librariesdirtail@/lib . | tar xf - -C @encapdir@/@librariesdirtail@/lib
+	if [ -d final@FINALPREFIX@/@librariesdirtail@/lib ] ; \
+	then @INSTALL@ -d @encapdir@/@librariesdirtail@/lib ; \
+	     tar cf - --exclude="*.a" --exclude="*.old" -C final@FINALPREFIX@/@librariesdirtail@/lib . \
+	     | tar xf - -C @encapdir@/@librariesdirtail@/lib ; \
+	fi
 Makefile         : Makefile.in         ; cd .. && ./config.status libraries/Makefile
 Makefile.library : Makefile.library.in ; cd .. && ./config.status libraries/Makefile.library
 clean :: ; rm -rf final
