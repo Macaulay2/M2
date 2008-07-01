@@ -1,0 +1,10 @@
+
+i4 : CC[x]
+
+o4 = CC  [x]
+       53
+
+o4 : PolynomialRing
+
+i5 : listForm x
+stdio:5:1:(1):[0]: expected new class to be a specialization of the old one
