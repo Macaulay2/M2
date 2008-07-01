@@ -5,6 +5,8 @@ GradedModule.synonym = "graded module"
 ring GradedModule := (M) -> M.ring
 
 spots := C -> select(keys C, i -> class i === ZZ)
+min GradedModule := C -> min spots C
+max GradedModule := C -> max spots C
 union := (x,y) -> keys(set x + set y)
 GradedModule == GradedModule := (C,D) -> (
      ring C === ring D
@@ -73,7 +75,7 @@ GradedModule#id = GradedModuleMap => (M) -> (
      g.source = f.source;
      g.target = f.target;
      g.degree = f.degree;
-     g.ring = f.ring;
+     g.ring = ring f;
      scan(spots f, i -> g#i = -f_i);
      g)
 RingElement + GradedModuleMap := GradedModuleMap => (r,f) -> (
@@ -102,7 +104,7 @@ GradedModuleMap == RingElement := (f,r) -> (
      else error "expected map to have same source and target and to have degree 0")
 RingElement * GradedModuleMap := GradedModuleMap => (r,f) -> (
      g := new GradedModuleMap;
-     g.ring = f.ring;
+     g.ring = ring f;
      g.source = f.source;
      g.target = f.target;
      g.degree = f.degree;
@@ -110,7 +112,7 @@ RingElement * GradedModuleMap := GradedModuleMap => (r,f) -> (
      g)
 ZZ * GradedModuleMap := GradedModuleMap => (n,f) -> (
      g := new GradedModuleMap;
-     g.ring = f.ring;
+     g.ring = ring f;
      g.source = f.source;
      g.target = f.target;
      g.degree = f.degree;
@@ -119,7 +121,7 @@ ZZ * GradedModuleMap := GradedModuleMap => (n,f) -> (
 GradedModuleMap ^ ZZ := GradedModuleMap => (f,n) -> (
      if n === -1 then (
 	  h := new GradedModuleMap;
-	  h.ring = f.ring;
+	  h.ring = ring f;
 	  h.source = f.target;
 	  h.target = f.source;
 	  d := f.degree;
@@ -133,7 +135,7 @@ GradedModuleMap ^ ZZ := GradedModuleMap => (f,n) -> (
      else (
      	  if source f != target f then error "expected source and target to be the same";
 	  g := new GradedModuleMap;
-	  g.ring = f.ring;
+	  g.ring = ring f;
 	  C := g.source = f.source;
 	  g.target = f.target;
 	  d = g.degree = n * f.degree;
@@ -159,7 +161,7 @@ GradedModuleMap + GradedModuleMap := GradedModuleMap => (f,g) -> (
 	  error "expected maps of the same degree with the same source and target";
 	  );
      h := new GradedModuleMap;
-     h.ring = f.ring;
+     h.ring = ring f;
      h.source = f.source;
      h.target = f.target;
      h.degree = f.degree;
@@ -172,7 +174,7 @@ GradedModuleMap - GradedModuleMap := GradedModuleMap => (f,g) -> (
 	  error "expected maps of the same degree with the same source and target";
 	  );
      h := new GradedModuleMap;
-     h.ring = f.ring;
+     h.ring = ring f;
      h.source = f.source;
      h.target = f.target;
      h.degree = f.degree;
@@ -193,17 +195,31 @@ ZZ == GradedModuleMap := (i,f) -> f == i
 degree GradedModuleMap := G -> G.degree
 
 directSum GradedModule := GradedModule => M -> directSum(1 : M)
-GradedModule.directSum = v -> (
-     E := new GradedModule;
-     rings := apply(v, ring);
-     if not same rings
-     then error "expected graded module maps in matrix to have the same ring";
-     E.ring = rings#0;
-     spts := new MutableHashTable;
-     scan(v, M -> scan(spots M, i -> spts#i = 1));
-     spts = toList spts;
-     scan(spts, i -> E#i = directSum apply(v, M -> M_i));
-     E	       
+-- GradedModule.directSum = v -> (
+--      E := new GradedModule;
+--      rings := apply(v, ring);
+--      if not same rings
+--      then error "expected graded module maps in matrix to have the same ring";
+--      E.ring = rings#0;
+--      spts := new MutableHashTable;
+--      scan(v, M -> scan(spots M, i -> spts#i = 1));
+--      spts = toList spts;  -- errors pop up here
+--      scan(spts, i -> E#i = directSum apply(v, M -> M_i));
+--      E	       
+--      )
+GradedModule.directSum = args -> (
+     R := ring args#0;
+     if not all(args, f -> ring f === R)
+     then error "expected graded modules all over the same ring";
+     N := new GradedModule;
+     N.ring = R;
+     scan(min apply(args, min) .. max apply(args, max), i -> (
+	       N#i = directSum apply(args, M -> M_i)
+	       )
+	  );
+     N.cache = new CacheTable;
+     N.cache.components = toList args;
+     N
      )
 
 GradedModuleMap ++ GradedModuleMap := GradedModuleMap => (f,g) -> (
@@ -211,7 +227,7 @@ GradedModuleMap ++ GradedModuleMap := GradedModuleMap => (f,g) -> (
 	  error "expected maps of the same degree";
 	  );
      h := new GradedModuleMap;
-     h.ring = f.ring;
+     h.ring = ring f;
      h.source = f.source ++ g.source;
      h.target = f.target ++ g.target;
      h.degree = f.degree;
@@ -219,16 +235,43 @@ GradedModuleMap ++ GradedModuleMap := GradedModuleMap => (f,g) -> (
      h.cache.components = {f,g};
      h)
 
+GradedModuleMap.directSum = args -> (
+     R := ring args#0;
+     if not all(args, f -> ring f === R)
+     then error "expected graded module maps all over the same ring";
+     d := degree args#0;
+     if not all(args, f -> degree f == d)
+     then error "expected graded module maps all of the same degree";
+     M := directSum apply(args, source);
+     N := directSum apply(args, target);
+     g := map(directSum apply(args, target), directSum apply(args, source), 
+	  j -> directSum apply(args, f -> f_j), Degree => d);
+     g.cache = new CacheTable;
+     g.cache.components = toList args;
+     g
+     )
 
 isDirectSum GradedModule := (M) -> M.cache.?components
 components GradedModuleMap := f -> if f.cache.?components then f.cache.components else {f}
 GradedModuleMap _ Array := GradedModuleMap => (f,v) -> f * (source f)_v
 GradedModuleMap ^ Array := GradedModuleMap => (f,v) -> (target f)^v * f
 
+GradedModuleMap | GradedModuleMap := (f,g) -> (
+     if target f != target g then (
+	  error "expected maps with the same target";
+	  );
+     if degree f != degree g then (
+	  error "expected maps with the same degree";
+	  );
+     
+     d := degree f;
+     map(target f, source f ++ source g, j -> f_j | g_j, Degree => d)
+     )
+
 GradedModuleMap * GradedModuleMap := GradedModuleMap => (g,f) -> (
      if target f != source g then error "expected composable maps of graded modules";
      h := new GradedModuleMap;
-     h.ring = f.ring;
+     h.ring = ring f;
      h.source = source f;
      h.target = target g;
      h.degree = f.degree + g.degree;
@@ -262,6 +305,7 @@ gradedModule Module := GradedModule => M -> gradedModule (1:M)
 
 GradedModule ++ GradedModule := GradedModule => (C,D) -> (
      E := new GradedModule;
+     E.cache = new CacheTable;
      R := E.ring = C.ring;
      if R =!= D.ring then error "expected graded modules over the same ring";
      scan(union(spots C, spots D), i -> E#i = C_i ++ D_i);
@@ -345,14 +389,14 @@ GradedModuleMap.matrix = options -> (e) -> (
 
 kernel GradedModuleMap := GradedModule => options -> (f) -> (
      E := new GradedModule;
-     E.ring = f.ring;
-     scan(spots f, i -> E#i = kernel f#i);
+     E.ring = ring f;
+     scan(spots source f, i -> E#i = kernel f_i);
      E
      )
 
 image GradedModuleMap := GradedModule => (f) -> (
      E := new GradedModule;
-     E.ring = f.ring;
+     E.ring = ring f;
      d := f.degree;
      scan(spots f, i -> E#(i+d) = image f#i);
      E
@@ -360,14 +404,14 @@ image GradedModuleMap := GradedModule => (f) -> (
 
 coimage GradedModuleMap := GradedModule => (f) -> (
      E := new GradedModule;
-     E.ring = f.ring;
+     E.ring = ring f;
      scan(spots f, i -> E#i = coimage f#i);
      E
      )
 
 cokernel GradedModuleMap := GradedModule => (f) -> (
      E := new GradedModule;
-     E.ring = f.ring;
+     E.ring = ring f;
      d := f.degree;
      scan(spots f, i -> E#(i+d) = cokernel f#i);
      E
