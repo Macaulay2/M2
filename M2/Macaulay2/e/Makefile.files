@@ -5,6 +5,7 @@
 ##################
 
 INTERFACE = \
+	NAG \
 	points \
 	overflow \
 	exceptions \
