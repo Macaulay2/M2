@@ -234,6 +234,7 @@ track (List,List,List) := List => o -> (S,T,solsS) -> (
 			 "t"=>t0,"x"=>x0
 			 } };
 	       while x0 =!= infinity and 1-t0 > theSmallestNumber do (
+		    << "----" << endl;
 		    if DBG > 4 then << "current t = " << t0 << endl;
                     -- monitor numerical stability: perhaps change patches if not stable ???
 		    -- Hx0 := evalHx(x0,t0);
@@ -246,7 +247,7 @@ track (List,List,List) := List => o -> (S,T,solsS) -> (
 		    local dx; local dt;
      	       	    if dPatch =!= null 
 		    then dPatch = -- conjugate of the normalized kernel vector 
-		    matrix{ flatten entries normalize transpose gens ker lift(sub(Hx, transpose x0 | matrix {{t0}}), CC) / conjugate };   
+		    time matrix{ flatten entries normalize transpose gens ker lift(sub(Hx, transpose x0 | matrix {{t0}}), CC) / conjugate };   
 		    --matrix { flatten entries transpose x0 / conjugate };
 		    	 
 		    if o.Predictor == Tangent then (
@@ -277,7 +278,7 @@ track (List,List,List) := List => o -> (S,T,solsS) -> (
 			      dx = dt*evalMinusInverseHxHt(x0,t0);
 			      );
 			 )
-		    else if o.Predictor == RungeKutta4 then (
+		    else if o.Predictor == RungeKutta4 then time (
 			 dt = min(tStep, 1-t0);
 			 k1 := dt*evalMinusInverseHxHt(x0,t0);
 			 k2 := dt*evalMinusInverseHxHt(x0+.5*k1,t0+.5*dt);
@@ -339,14 +340,15 @@ track (List,List,List) := List => o -> (S,T,solsS) -> (
 		    -- corrector step
 		    dx = 1; -- dx = + infinity
 		    nCorSteps := 0;
+		    << "+++++++" << endl;
 		    while norm dx > epsilon 
 		          and nCorSteps < (if 1-t1 < theSmallestNumber and dt < o.tStepMin 
 			                   then o.finalMaxCorSteps -- infinity
 			                   else o.maxCorSteps) 
 		    do ( 
 			 if norm x1 > divThresh then (x1 = infinity; break);
-			 if DBG > 4 then << "x=" << toString x1 << " res=" <<  toString evalH(x1,t1) << " dx=" << dx << endl;
-			 dx = - (inverse evalHx(x1,t1))*evalH(x1,t1);
+			 if DBG > 4 then << "x=" << toString x1 << " res=" <<  toString time evalH(x1,t1) << " dx=" << dx << endl;
+			 time dx = - (inverse evalHx(x1,t1))*evalH(x1,t1);
 			 x1 = x1 + dx;
 			 nCorSteps = nCorSteps + 1;
 			 );

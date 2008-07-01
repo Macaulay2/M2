@@ -165,6 +165,59 @@ doc ///
 ///
 "
 
+
+packagetemplate = "
+newPackage(
+	\"%%NAME%%\",
+    	Version => \"0.1\", 
+    	Date => \"\",
+    	Authors => {{Name => \"\", 
+		  Email => \"\", 
+		  HomePage => \"\"}},
+    	Headline => \"\",
+    	DebuggingMode => true
+    	)
+
+export {}
+
+-- Code here
+
+beginDocumentation()
+
+doc ///
+Key
+  %%NAME%%
+Headline
+Description
+  Text
+  Example
+Caveat
+SeeAlso
+///
+
+doc ///
+Key
+Headline
+Inputs
+Outputs
+Consequences
+Description
+  Text
+  Example
+Caveat
+SeeAlso
+///
+
+TEST ///
+-- test code and assertions here
+-- may have as many TEST sections as needed
+///
+"
+
+packageTemplate = method()
+packageTemplate String := (packagename) -> 
+     replace("%%NAME%%", packagename, packagetemplate)
+
 beginDocumentation()
 document { 
 	Key => SimpleDoc,
@@ -211,10 +264,31 @@ doc ///
     "docExample"
 ///
 
+doc ///
+  Key
+    packageTemplate
+    (packageTemplate,String)
+  Headline
+    a template for a package
+  Usage
+    packageTemplate s
+  Inputs
+    s:String
+      the name of the package
+  Description
+   Text
+     This routine returns a barebones package template
+     that you can use to start writing a package.
+   Example
+     print packageTemplate "WonderfulModules"
+  SeeAlso
+    "docExample"
+///
+
 end
 restart
 loadPackage "SimpleDoc"
-installPackage SimpleDoc
+installPackage(SimpleDoc, UserMode => true)
 viewHelp doc
 debug SimpleDoc
 flup = method()

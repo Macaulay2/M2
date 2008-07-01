@@ -7,6 +7,7 @@
 #include "fractionfreeLU.hpp"
 #include "text-io.hpp"
 #include "exceptions.hpp"
+#include "NAG.hpp"
 
 extern Matrix_int_pair global_Matrix_int_pair;
 
@@ -752,6 +753,16 @@ const MatrixOrNull *IM2_Matrix_lift(int *success_return, const FreeModule *newTa
 	  ERROR(e.what());
 	  return NULL;
      }
+}
+
+const StraightLineProgram_OrNull *rawSLP(Matrix *consts, M2_arrayint program)
+{
+  return StraightLineProgram::make(consts, program);
+}
+
+const MatrixOrNull *rawEvaluateSLP(StraightLineProgram *SLP, const Matrix *vals)
+{
+  return SLP->evaluate(vals);
 }
 
 

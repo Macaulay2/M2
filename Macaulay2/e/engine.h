@@ -34,6 +34,7 @@ class RingElement;
 class RingMap;
 class Computation;
 class EngineComputation;
+class StraightLineProgram;
 
 typedef struct MonomialOrdering MonomialOrdering;
 #else
@@ -56,6 +57,8 @@ typedef struct RingElement_pair RingElement_pair;
 typedef struct Matrix_pair Matrix_pair;
 typedef struct Matrix_int_pair Matrix_int_pair;
 typedef struct M2_Integer_pair M2_Integer_pair;
+
+typedef struct StraightLineProgram StraightLineProgram;
 #endif
 
 #ifdef __cplusplus
@@ -133,6 +136,7 @@ typedef M2_arrayint M2_arrayint_OrNull;
 typedef Matrix_array Matrix_array_OrNull;
 typedef RingElement_array RingElement_array_OrNull;
 
+typedef StraightLineProgram StraightLineProgram_OrNull;
 #if defined(__cplusplus)
 extern "C" {
 #endif
@@ -1814,6 +1818,8 @@ enum gbTraceValues
   M2_RRRorNull rawRingElementNorm(M2_RRR p, const RingElement *f);
   M2_RRRorNull rawMutableMatrixNorm(M2_RRR p, const MutableMatrix *M);
 
+  const StraightLineProgram_OrNull *rawSLP(Matrix *consts, M2_arrayint program);
+  const MatrixOrNull *rawEvaluateSLP(StraightLineProgram *SLP, const Matrix *vals);
 #if defined(__cplusplus)
 }
 #endif
