@@ -195,31 +195,17 @@ ZZ == GradedModuleMap := (i,f) -> f == i
 degree GradedModuleMap := G -> G.degree
 
 directSum GradedModule := GradedModule => M -> directSum(1 : M)
--- GradedModule.directSum = v -> (
---      E := new GradedModule;
---      rings := apply(v, ring);
---      if not same rings
---      then error "expected graded module maps in matrix to have the same ring";
---      E.ring = rings#0;
---      spts := new MutableHashTable;
---      scan(v, M -> scan(spots M, i -> spts#i = 1));
---      spts = toList spts;  -- errors pop up here
---      scan(spts, i -> E#i = directSum apply(v, M -> M_i));
---      E	       
---      )
-GradedModule.directSum = args -> (
-     R := ring args#0;
-     if not all(args, f -> ring f === R)
-     then error "expected graded modules all over the same ring";
-     N := new GradedModule;
-     N.ring = R;
-     scan(min apply(args, min) .. max apply(args, max), i -> (
-	       N#i = directSum apply(args, M -> M_i)
-	       )
-	  );
-     N.cache = new CacheTable;
-     N.cache.components = toList args;
-     N
+GradedModule.directSum = v -> (
+     E := new GradedModule;
+     rings := apply(v, ring);
+     if not same rings
+     then error "expected graded module maps in matrix to have the same ring";
+     E.ring = rings#0;
+     spts := new MutableHashTable;
+     scan(v, M -> scan(spots M, i -> spts#i = 1));
+     spts = keys spts;
+     scan(spts, i -> E#i = directSum apply(v, M -> M_i));
+     E	       
      )
 
 GradedModuleMap ++ GradedModuleMap := GradedModuleMap => (f,g) -> (
