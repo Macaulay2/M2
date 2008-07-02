@@ -3387,6 +3387,40 @@ ConstantII(e:Expr):Expr := (
      else WrongArgZZ(1));
 setupfun("ConstantII",ConstantII);
 
+-- straight line programs
+
+export rawSLP(e:Expr):Expr := (
+     when e is s:Sequence do
+     if length(s) != 2 then WrongNumArgs(2)
+     else when s.0 is M:RawMatrix do (
+	  if !isSequenceOfSmallIntegers(s.1) then WrongArg(2,"a sequence of small integers") else
+	  toExpr(Ccode(RawStraightLineProgramOrNull,
+		    "(engine_RawStraightLineProgramOrNull)rawSLP(",
+		    "(Matrix *)", M, ",",
+		    "(M2_arrayint)", getSequenceOfSmallIntegers(s.1),
+		    ")"
+		    )))
+     else WrongArgMatrix(1)
+     else WrongNumArgs(2));
+setupfun("rawSLP",rawSLP);
+
+export rawEvaluateSLP(e:Expr):Expr := (
+     when e is s:Sequence do
+     if length(s) != 2 then WrongNumArgs(2)
+     else when s.0 is slp:RawStraightLineProgram do (
+	  when s.1 is M:RawMatrix do (
+	       toExpr(Ccode(RawMatrixOrNull,
+		    	 "(engine_RawMatrixOrNull)rawEvaluateSLP(",
+		    	 "(StraightLineProgram *)", slp, ",",
+		    	 "(Matrix *)", M,
+		    	 ")"
+		    	 )))
+	  else WrongArgMatrix(1))
+     else WrongArg(2,"a raw straight line program")
+     else WrongNumArgs(2)
+     );
+setupfun("rawEvaluateSLP",rawEvaluateSLP)
+
 -- Local Variables:
 -- compile-command: "make -C $M2BUILDDIR/Macaulay2/d "
 -- End:
