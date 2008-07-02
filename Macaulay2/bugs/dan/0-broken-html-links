@@ -1,0 +1,4 @@
+hyperlinks from documentation of user-installed packages to other
+user-installed packages do not work because the URL appearing in
+.Macaulay2/index.html has "encap/FOO-0.0/" in it!
+
