@@ -1,6 +1,7 @@
 RELAX = yes
 URL = ftp://ftp.gnu.org/gnu/gmp
-VERSION = 4.2.2
+# 4.2.2 is now LGPL version 3, which we may not want to use, so stick with 4.2.1 for now
+VERSION = 4.2.1
 # PATCHFILE = @srcdir@/patch-$(VERSION)
 CONFIGOPTIONS += --enable-cxx
 ifeq (@SHARED@,no)
