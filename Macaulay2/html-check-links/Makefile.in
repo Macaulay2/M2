@@ -16,7 +16,7 @@ HSRC := buffer.h html-check-links.h getmem.h grammar.h
 CSRC := html-check-links.c getmem.c buffer.c
 LSRC := lex.l
 YSRC := grammar.y
-SRC :=  $(YSRC) $(CSRC) $(LSRC) $(HSRC).l
+SRC :=  $(YSRC) $(CSRC) $(LSRC) $(HSRC)
 CFILES := $(CSRC) $(LSRC:.l=.c) $(YSRC:.y=.fixed.c)
 YFLAGS += -d
 YFLAGS += --verbose
