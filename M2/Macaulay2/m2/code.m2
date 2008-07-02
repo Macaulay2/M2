@@ -1,4 +1,4 @@
---		Copyright 1993-1999 by Daniel R. Grayson
+--		Copyright 1993-1999, 2008 by Daniel R. Grayson
 
 getSourceLines = method(Dispatch => Thing) 
 getSourceLines Nothing := null -> null
@@ -22,6 +22,7 @@ getSourceLines Sequence := x -> ((filename,start,startcol,stop,stopcol) -> if fi
 	       l #? ")" and isSubset(l, wp)
 	       )
 	  ) do stop = stop + 1;
+     if #file < stop then error("line number ",toString stop, " not found in file ", filename);
      while stop >= start and file#(stop-1) === "" do stop = stop-1;
      stack prepend(
 	  concatenate("-- ",filename, ":", toString start, if stop > start then ("-" ,toString stop)),
@@ -37,7 +38,7 @@ codeFunction := (f,depth) -> (
 	  if locate f === null then concatenate("function '", toString f, "': source code not available")
 	  else stack(
 	       syms := flatten \\ sortByHash \ values \ drop(localDictionaries f,-1);
-	       try getSourceLines locate f else concatenate("source code file '",first locate f,"' not available"),
+	       getSourceLines locate f,
 	       if #syms > 0 then indent listSymbols syms,
 	       if codeHelper#?(functionBody f) 
 	       then toSequence apply(
