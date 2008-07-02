@@ -212,6 +212,7 @@ export toExpr(x:RawRingElementOrNull):Expr := when x is r:RawRingElement do Expr
 export toExpr(x:RawFreeModuleOrNull):Expr := when x is r:RawFreeModule do Expr(r) is null do engineErrorMessage();
 export toExpr(x:RawMatrixOrNull):Expr := when x is r:RawMatrix do Expr(r) is null do engineErrorMessage();
 export toExpr(x:RawMutableMatrixOrNull):Expr := when x is r:RawMutableMatrix do Expr(r) is null do engineErrorMessage();
+export toExpr(x:RawStraightLineProgramOrNull):Expr := when x is r:RawStraightLineProgram do Expr(r) is null do engineErrorMessage();
 export toExpr(x:IntegerOrNull):Expr := when x is i:ZZ do Expr(i) is null do engineErrorMessage();
 export toExpr(x:RationalOrNull):Expr := when x is i:QQ do Expr(i) is null do engineErrorMessage();
 export toExpr(x:RRorNull):Expr := when x is i:RR do Expr(i) is null do engineErrorMessage();

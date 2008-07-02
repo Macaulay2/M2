@@ -1820,6 +1820,8 @@ enum gbTraceValues
 
   const StraightLineProgram_OrNull *rawSLP(Matrix *consts, M2_arrayint program);
   const MatrixOrNull *rawEvaluateSLP(StraightLineProgram *SLP, const Matrix *vals);
+  M2_string rawStraightLineProgramToString(const StraightLineProgram *); /* connected */
+  unsigned long rawStraightLineProgramHash(const StraightLineProgram *); /* connected */
 #if defined(__cplusplus)
 }
 #endif

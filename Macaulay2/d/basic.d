@@ -48,6 +48,7 @@ export hash(e:Expr):int := (
      is x:RawMonoid do int(Ccode(ulong, "IM2_Monoid_hash((Monoid*)",x,")" ))
      is x:RawMatrix do int(Ccode(int, "IM2_Matrix_hash((Matrix*)",x,")" ))
      is x:RawMutableMatrix do int(Ccode(int, "IM2_MutableMatrix_hash((MutableMatrix*)",x,")" ))
+     is x:RawStraightLineProgram do int(Ccode(int, "rawStraightLineProgramHash((StraightLineProgram*)",x,")" ))
      is x:RawRing do int(Ccode(ulong, "IM2_Ring_hash((Ring*)",x,")" ))
      is x:RawComputation do int(Ccode(ulong, "IM2_GB_hash((Computation*)",x,")" ))
      is x:RawFreeModule do (

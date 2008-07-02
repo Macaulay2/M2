@@ -20,7 +20,7 @@ class F4Vec
   // Format for the items pointed to:
   //  a[-1] = (top 5 bits: which stash this belongs to)
   //           (rest of the bits: current size of the array)
-  char *name;
+  const char *name;
 
   int nreallocs;
   int nallocs[DOUBLESIZE];
@@ -44,7 +44,7 @@ public:
     for (int i=0; i<DOUBLESIZE; i++) ndeallocs[i] = 0;
   }
 
-  F4Vec(char *name0) : name(name0) { reset(); }
+  F4Vec(const char *name0) : name(name0) { reset(); }
 
   ~F4Vec() { name = 0; }
 

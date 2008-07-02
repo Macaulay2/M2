@@ -287,6 +287,7 @@ export equal(lhs:Expr,rhs:Expr):Expr := (
 	  else False
 	  )
      is x:RawMutableMatrix do False			    -- mutable matrices may not stay equal, so they aren't equal
+     is x:RawStraightLineProgram do False
      is x:RawComputation do (
 	  when rhs
 	  is y:RawComputation do (
@@ -470,6 +471,7 @@ export Class(e:Expr):HashTable := (
      is RawFreeModule do rawFreeModuleClass
      is RawMatrix do rawMatrixClass
      is RawMutableMatrix do rawMutableMatrixClass
+     is RawStraightLineProgram do rawStraightLineProgramClass
      );
 classfun(e:Expr):Expr := Expr(Class(e));
 setupfun("class",classfun);
@@ -513,6 +515,7 @@ setupconst("RawRing",Expr(rawRingClass));
 setupconst("RawFreeModule",Expr(rawFreeModuleClass));
 setupconst("RawMatrix",Expr(rawMatrixClass));
 setupconst("RawMutableMatrix",Expr(rawMutableMatrixClass));
+setupconst("RawStraightLineProgram",Expr(rawStraightLineProgramClass));
 setupconst("RawComputation",Expr(rawComputationClass));
 setupconst("RawRingElement",Expr(rawRingElementClass));
 setupconst("RawRingMap",Expr(rawRingMapClass));

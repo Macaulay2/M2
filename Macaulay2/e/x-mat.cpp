@@ -765,6 +765,15 @@ const MatrixOrNull *rawEvaluateSLP(StraightLineProgram *SLP, const Matrix *vals)
   return SLP->evaluate(vals);
 }
 
+M2_string rawStraightLineProgramToString(const StraightLineProgram *) {
+  buffer o;
+  o << "{*StraightLineProgram*}";
+  return o.to_string();
+}
+
+unsigned long rawStraightLineProgramHash(const StraightLineProgram *slp) {
+  return slp->get_hash_value();
+}
 
 
 // Local Variables:
