@@ -1,0 +1,2 @@
+it seems that installPackage, when run twice under Windows, fails because it
+leaves a database file open, which can then not be rewritten.
