@@ -249,8 +249,9 @@ endif
 ifeq (@OS@,SunOS)
 # We use mmap in loaddata(), but if it's dynamically loaded, it may stop working as our mapped
 # data covers up the jump tables it uses.  I think.
-M2_OBJECTS += mmap.o
-mmap.o : /usr/lib/libc.a; ar x $^ $@
+
+# M2_OBJECTS += mmap.o
+# mmap.o : /usr/lib/libc.a; ar x $^ $@
 endif
 
 M2_OBJECTS += tmp_init.o
