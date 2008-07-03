@@ -164,7 +164,9 @@ AC_SUBST(GCC) dnl gets set to yes or no somehow
 
 AC_PROG_CXX()
 AC_PROG_YACC()
-AC_PROG_MKDIR_P()
+
+dnl this macro is available only in autoconf 2.60, but most systems have 2.59 as the default:
+dnl AC_PROG_MKDIR_P()
 
 AC_MSG_CHECKING([whether linking C++ programs with C compiler $CC works])
 cat >unwindtest-main.cpp <<EOF
@@ -262,7 +264,10 @@ AC_SEARCH_LIBS(hstrerror,resolv)
 AC_CHECK_FUNCS([somesillyfunction sys_errlist herror error socket gnu_get_libc_version __environ _environ environ _setmode getaddrinfo hstrerror])
 AC_CHECK_DECLS([ADDR_NO_RANDOMIZE],,,[#include <linux/personality.h>])
 AC_CHECK_DECLS([sys_errlist,sys_nerr,herror,gnu_get_libc_version])
-AC_TYPE_INT64_T()
+
+dnl this macro is available only in autoconf 2.60, but most systems have 2.59 as the default:
+dnl AC_TYPE_INT64_T()
+
 AC_FUNC_ALLOCA()
 
 AC_LANG(C++)
@@ -905,7 +910,19 @@ fi
 # Here we insert autoconf's default values so we can compute the relative locations in the directory tree
 test "$prefix" || prefix=/usr/local
 test "$exec_prefix" = NONE && exec_prefix='${prefix}'
-for i in bindir datadir datarootdir docdir dvidir htmldir includedir infodir libdir libexecdir localedir localstatedir mandir pdfdir psdir sbindir sharedstatedir sysconfdir
+
+# these are the variables that make their way into autoconf after version 2.59
+test "$datarootdir" || AC_SUBST(datarootdir,'${prefix}/share')
+test "$docdir"      || AC_SUBST(docdir,'${datarootdir}/doc/${PACKAGE_TARNAME}')
+test "$dvidir"      || AC_SUBST(dvidir,'${docdir}')
+test "$htmldir"     || AC_SUBST(htmldir,'${docdir}')
+test "$pdfdir"      || AC_SUBST(pdfdir,'${docdir}')
+test "$psdir"       || AC_SUBST(psdir,'${docdir}')
+test "$localedir"   || AC_SUBST(localedir,'${datarootdir}/locale')
+
+
+for i in bindir datadir includedir infodir libdir libexecdir localstatedir mandir sbindir \
+         sharedstatedir sysconfdir datarootdir psdir pdfdir docdir dvidir htmldir localedir
 do eval w=\$$i ; eval v="$w" ; eval v="$v" ; eval v="$v" ; eval v="$v" ; eval v="$v"
    case $v in
      "$prefix" | "$prefix"/) eval ${i}tail="$prefix" ;;

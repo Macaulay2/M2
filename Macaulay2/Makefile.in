@@ -14,7 +14,7 @@ install install-others install-Macaulay2Doc :: @encapdir@/@docpackagesdirtail@ @
 	   @encapdir@/@docpackagesdirtail@/README \
 	   @encapdir@/@docpackagesdirtail@/LAYOUT
 
-@encapdir@/@docpackagesdirtail@:; @MKDIR_P@ "$@"
+@encapdir@/@docpackagesdirtail@:; $(MKDIR_P) "$@"
 @encapdir@/@docpackagesdirtail@/COPYING : COPYING ; @INSTALL_DATA@ $< "$@"
 @encapdir@/@docpackagesdirtail@/LAYOUT  : LAYOUT  ; @INSTALL_DATA@ $< "$@"
 @encapdir@/@docpackagesdirtail@/README  : README  ; @INSTALL_DATA@ $< "$@"

@@ -83,3 +83,5 @@ LDFLAGS  += -s
 endif
 endif
 
+# MKDIR_P = @ MKDIR_P @
+MKDIR_P = @INSTALL@ -d

@@ -56,8 +56,8 @@ macaulay2-common/control.tar.gz : macaulay2-common/control macaulay2-common/post
 .prepared : ; $(MAKE) prepare && touch $@
 prepare : ../../$(PKG_TZ) ../../$(PKG_COM_TZ)
 	rm -rf tmp@FINALPREFIX@ tmp-common@FINALPREFIX@
-	@MKDIR_P@ tmp@FINALPREFIX@
-	@MKDIR_P@ tmp-common@FINALPREFIX@
+	$(MKDIR_P) tmp@FINALPREFIX@
+	$(MKDIR_P) tmp-common@FINALPREFIX@
 	tar xfp ../../$(PKG_TZ) @TAR_COMPRESS_OPTION@
 	for i in @package@/* ; do if [ -f "$$i" ] ; then rm "$$i" ; fi ; done
 	mv @package@/* tmp@FINALPREFIX@
@@ -65,8 +65,8 @@ prepare : ../../$(PKG_TZ) ../../$(PKG_COM_TZ)
 	for i in @package@/* ; do if [ -f "$$i" ] ; then rm "$$i" ; fi ; done
 	mv @package@/* tmp-common@FINALPREFIX@
 	rmdir @package@
-	@MKDIR_P@ tmp@FINALPREFIX@/share/doc/macaulay2
-	@MKDIR_P@ tmp-common@FINALPREFIX@/share/doc/macaulay2-common
+	$(MKDIR_P) tmp@FINALPREFIX@/share/doc/macaulay2
+	$(MKDIR_P) tmp-common@FINALPREFIX@/share/doc/macaulay2-common
 	cp tmp-common@FINALPREFIX@/@docpackagesdirtail@/README tmp@FINALPREFIX@/share/doc/macaulay2/copyright
 	cp tmp-common@FINALPREFIX@/@docpackagesdirtail@/README tmp-common@FINALPREFIX@/share/doc/macaulay2-common/copyright
 	gzip -9 <@srcdir@/macaulay2/changelog >tmp@FINALPREFIX@/share/doc/macaulay2/changelog.gz
