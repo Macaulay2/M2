@@ -17,7 +17,7 @@ long stash::n_new_slabs = 0;
 
 doubling_stash *doubles = NULL;
 
-stash::stash(char *s, size_t len)
+stash::stash(const char *s, size_t len)
 : next(NULL), name(s), slabs(NULL), free_list(NULL),
   n_allocs(0), n_inuse(0), highwater(0), n_frees(0)
 {

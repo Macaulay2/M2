@@ -309,7 +309,7 @@ const RingElementOrNull * IM2_MonomialIdeal_Hilbert(const MonomialIdeal *I)
      }
 }
 
-const M2_arrayint rawMonomialIdealLCM(const MonomialIdeal *I)
+M2_arrayint rawMonomialIdealLCM(const MonomialIdeal *I)
 {
   return I->lcm();
 }

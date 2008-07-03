@@ -38,7 +38,7 @@ void clear_emit_size()
   emit_line_len = 0;
 }
 
-void emit_wrapped(char *s)
+void emit_wrapped(const char *s)
 {
   // We wish verbose display to wrap at some reasonable length.
   emit_line_len -= strlen(s);
@@ -51,13 +51,13 @@ void emit_wrapped(char *s)
   fflush(stdout);
 }
 
-void emit(char *s)
+void emit(const char *s)
 {
   fprintf(stdout, s);
   fflush(stdout);
 }
 
-void emit_line(char *s)
+void emit_line(const char *s)
 {
   fprintf(stdout, "%s%s%s", s, "\n", wrapping_prefix);
   fflush(stdout);
