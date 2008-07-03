@@ -44,7 +44,7 @@ SEDOPTS = -e 's=^\.="=' -e 's=$$="='
 
 .prepared :
 	rm -rf files
-	umask 022 ; @MKDIR_P@ files@FINALPREFIX@
+	umask 022 ; $(MKDIR_P) files@FINALPREFIX@
 	umask 022 ; @FAKEROOT@ tar xfp ../../$(PKG_TZ)     @TAR_COMPRESS_OPTION@ -C files@FINALPREFIX@
 	mv files@FINALPREFIX@/@package@/* files@FINALPREFIX@
 	rmdir files@FINALPREFIX@/@package@
@@ -53,7 +53,7 @@ SEDOPTS = -e 's=^\.="=' -e 's=$$="='
 
 .prepared-common :
 	rm -rf files-common
-	umask 022 ; @MKDIR_P@ files-common@FINALPREFIX@
+	umask 022 ; $(MKDIR_P) files-common@FINALPREFIX@
 	umask 022 ; @FAKEROOT@ tar xfp ../../$(PKG_COM_TZ) @TAR_COMPRESS_OPTION@ -C files-common@FINALPREFIX@
 	mv files-common@FINALPREFIX@/@package@/* files-common@FINALPREFIX@
 	rmdir files-common@FINALPREFIX@/@package@

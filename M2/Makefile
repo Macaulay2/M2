@@ -20,7 +20,7 @@ all: check-autoconf configure monitor include/config.h.in.stamp
 	@echo '--: '
 
 MAJOR = 2
-MINOR = 60
+MINOR = 59
 # version 2.60 was the first one with the macro AC_PROG_MKDIR_P
 AUTOCONF_VERSION = $(MAJOR).$(MINOR)
 

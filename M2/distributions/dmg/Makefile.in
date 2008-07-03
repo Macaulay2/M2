@@ -15,7 +15,7 @@ endif
 
 ../../$(PKG_DMG) : ../../$(PKG_TZ) Makefile
 	rm -rf files
-	umask 022 ; @MKDIR_P@ files
+	umask 022 ; $(MKDIR_P) files
 	umask 022 ; tar xfp ../../$(PKG_TZ) @TAR_COMPRESS_OPTION@ -C files
 	umask 022 ; tar xfp ../../$(PKG_COM_TZ) @TAR_COMPRESS_OPTION@ -C files
 	cd files/@package@ && rm -f INSTALL encapinfo postinstall preremove
