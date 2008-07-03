@@ -4,6 +4,8 @@
 #include <stdio.h>
 #include "overflow.hpp"
 #include "assert.h"
+#include <stdlib.h>
+#include <string.h>
 
 #if 0
      return 0;

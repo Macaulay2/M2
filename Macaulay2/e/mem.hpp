@@ -4,6 +4,7 @@
 
 #include "style.hpp"
 #include "newdelete.hpp"
+#include <strings.h>
 
 const int NDOUBLES = 25;
 //const int slab_size = 2040;
