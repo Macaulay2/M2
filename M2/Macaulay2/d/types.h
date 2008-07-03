@@ -73,7 +73,9 @@ extern char *libfac_version;
 
 #if HAVE_STRING_H
 #include <string.h>
-#elif HAVE_STRINGS_H
+#endif
+
+#if HAVE_STRINGS_H
 #include <strings.h>
 #endif
 
