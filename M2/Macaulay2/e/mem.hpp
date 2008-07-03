@@ -42,7 +42,7 @@ class slab : public our_new_delete
 class stash : public our_new_delete
 {
 public:
-  stash(char *s, size_t len);
+  stash(const char *s, size_t len);
   ~stash();
 
   void *new_elem();
