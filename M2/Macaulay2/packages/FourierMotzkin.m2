@@ -2,12 +2,12 @@
 -- PURPOSE: compute the polar dual of a rational convex polyhedral cone 
 --          using Fourier-Motzkin elimination
 -- PROGRAMMER : Gregory G. Smith 
--- UPDATE HISTORY : 2 July 2000, 5 March 2006
+-- UPDATE HISTORY : 2 July 2000, 5 March 2006, 1 July 2008
 ---------------------------------------------------------------------------
 newPackage(
 	"FourierMotzkin",
-    	Version => "1.0", 
-    	Date => "January 5, 2006",
+    	Version => "1.1", 
+    	Date => "1 July 2008",
     	Authors => {{
 		  Name => "Gregory G. Smith", 
 		  HomePage => "http://www.mast.queensu.ca/~ggsmith",
@@ -66,7 +66,8 @@ isRedundant := (V, vertices) -> (
 --           'projA'
 fourierMotzkinElimination := (A, V, spot) -> (
      -- initializing local variables
-     numCol := #(A#0);
+     numCol := 0;
+     if A =!= {} then numCol = #(A#0);
      numRow := #A;  -- equal to the length of V
      pos := {};
      neg := {};
@@ -284,7 +285,7 @@ document {
 	PARA{}, "For an introduction to polyhedra and Fourier-Motzkin
 	elimination, we recommend Chapter 2 in ",
 	HREF("http://www.math.tu-berlin.de/~ziegler/", "Gunter
-	M. Zielger's"), " ", EM "Lectures on Polytopes", ", Graduate
+	M. Ziegler's"), " ", EM "Lectures on Polytopes", ", Graduate
 	Texts in Mathematics 152, Springer-Verlag, New York, 1995.
 	For historical comments, see Section 12.2 in ",
 	HREF("http://homepages.cwi.nl/~lex/", "Alexander
@@ -401,7 +402,7 @@ document {
      it is not an initial or a final segment.  For more information,
      see Theorem 0.7 in ",
      HREF("http://www.math.tu-berlin.de/~ziegler/", "Gunter
-     M. Zielger's"), " ", EM "Lectures on Polytopes", ", Graduate
+     M. Ziegler's"), " ", EM "Lectures on Polytopes", ", Graduate
      Texts in Mathematics 152, Springer-Verlag, New York, 1995."
      }
 
@@ -409,7 +410,7 @@ document {
      Key => "Applications to multigraded polynomial rings",
      Headline => "finding Heft",
      
-     "A vector configuration is ", EM "acyclic", " if it is a positive
+     "A vector configuration is ", EM "acyclic", " if it has a positive
      linear functional.  Using ", TT "fourierMotzkin", " we can
      determine if a vector configuration has a positive linear
      functional.",
@@ -476,7 +477,7 @@ document {
      PARA{}, "For more information about vector configurations is
      subsections 6.2 & 6.4 in ",
      HREF("http://www.math.tu-berlin.de/~ziegler/", "Gunter
-     M. Zielger's"), " ", EM "Lectures on Polytopes", ", Graduate
+     M. Ziegler's"), " ", EM "Lectures on Polytopes", ", Graduate
      Texts in Mathematics 152, Springer-Verlag, New York, 1995."
      }
 
@@ -531,7 +532,7 @@ document {
      "We see that each vertex has degree 3.  Moreover, there are 8
      hexagonal facets and 6 quadrilateral facets.  For pictures, see
      pages 17-18 in ", HREF("http://www.math.tu-berlin.de/~ziegler/",
-     "Gunter M. Zielger's"), " ", EM "Lectures on Polytopes", ",
+     "Gunter M. Ziegler's"), " ", EM "Lectures on Polytopes", ",
      Graduate Texts in Mathematics 152, Springer-Verlag, New York,
      1995."  }
      
@@ -571,3 +572,4 @@ installPackage "FourierMotzkin"
 -- Local Variables:
 -- compile-command: "make -C $M2BUILDDIR/Macaulay2/packages NAMEOFPACKAGE=FourierMotzkin install-one"
 -- End:
+
