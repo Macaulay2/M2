@@ -1,0 +1,12 @@
+The problem is in Macaulay2's "get" command, which fails to deliver an
+appropriate error message about the command not being found.  I'll fix that in
+the next version:
+
+    i1 : f = openInOut "!foobar";
+    /bin/sh: line 1: foobar: command not found
+
+    i2 : closeOut f;
+
+    i3 : get f
+
+    o3 = 
