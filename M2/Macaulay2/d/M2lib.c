@@ -18,7 +18,7 @@ extern int libfac_interruptflag; /* extracted from libfac's factor.h */
 #include "debug.h"
 
 /* char *config_args[] = { CONFIG_ARGS 0 }; */
-char *config_args = CONFIG_ARGS ;
+const char *config_args = CONFIG_ARGS ;
 
 void trap(void) {}		/* we don't put it in debug.c, or it will get optimized away! */
 
@@ -366,7 +366,7 @@ extern void init_readline_variables();
 extern char *GC_stackbottom;
 extern void arginits(int, char **);
 
-extern bool gotArg(char *arg, char ** volatile argv);
+extern bool gotArg(const char *arg, char ** volatile argv);
 
 int pid;			/* initialized below */
 int system_getpid(void) {

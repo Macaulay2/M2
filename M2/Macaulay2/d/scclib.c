@@ -9,7 +9,7 @@
 
 void
 #if defined(__STDC__)
-fatal(char *s,...)   {
+fatal(const char *s,...)   {
      va_list ap;
 #else
 fatal( va_alist  ) 
@@ -37,7 +37,7 @@ va_dcl
 void fatalarrayindex(indx, len, file, line, column)
 int indx;
 int len;
-char *file;
+const char *file;
 int line;
 int column;
 {
@@ -161,7 +161,7 @@ M2_string interp_dirname(M2_string s) {
   char *v = u;
   for (; *u; u++) if (*u == '/') v=u+1;	/* on MacOS?? */
   if (v != NULL) *v = '\0';
-  if (*t == '\0') t = "./";	/* on MacOS?? */
+  if (*t == '\0') return tostring("./"); /* on MacOS?? */
   return tostring(t);
 }
 
@@ -452,7 +452,7 @@ static char **M2_completion(const char *text, int start, int end) {
 
 
 void init_readline_variables(void) {
-  extern char *_rl_comment_begin;
+  extern const char *_rl_comment_begin;
   _rl_comment_begin = "-- ";
   rl_readline_name = "M2";
   rl_attempted_completion_function = M2_completion;
@@ -1229,7 +1229,7 @@ M2_stringarray system_regexselect(M2_string pattern, M2_string replacement, M2_s
   }
 }
 
-bool gotArg(char *arg, char **argv) {
+bool gotArg(const char *arg, char **argv) {
   /* used in M2lib.c, but we put them here to prevent it from being optimized away: */
   for (; *argv; argv++) if (0 == strcmp(arg,*argv)) return TRUE;
   return FALSE;

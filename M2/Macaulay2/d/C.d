@@ -57,6 +57,7 @@ import kill(pid:int,sig:int):int;
 export string := array(char);
 export Cstring := {Cstring:void} or null ;
 import tostring(s:Cstring):string;
+import tocharstar(s:string):Cstring;
 import gbTrace:int;
 export notify:bool := false;
 

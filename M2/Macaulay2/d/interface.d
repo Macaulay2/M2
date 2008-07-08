@@ -27,14 +27,6 @@ use evaluate;
 use common;
 
 -----------------------------------------------------------------------------
--- debugging
-
-export rawGetErrorMessage(e:Expr):Expr := (
-     s := Ccode(string, "(string)IM2_last_error_message()");
-     if length(s) == 0 then nullE else Expr(s));
-setupfun("rawGetErrorMessage",rawGetErrorMessage);
-
------------------------------------------------------------------------------
 -- random numbers
 
 export rawRandomZZ(e:Expr):Expr := (

@@ -19,6 +19,8 @@ cat <<EOF >compat.h
 #include "../e/engine.h"
 #include "../e/complex.h"
 
+#include <mysql/mysql.h>
+
 #include "gmp_aux.h"
 #include "memdebug.h"
 EOF
