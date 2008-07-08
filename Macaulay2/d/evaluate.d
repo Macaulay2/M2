@@ -527,7 +527,7 @@ export applyFCS(c:FunctionClosure,v:Sequence):Expr := (
 			 recycleBin.framesize = previousStashedFrame;
 			 f.outerFrame = previousFrame;
 			 f.frameID = desc.frameID;
-			 foreach x at i in v do f.values.i = x;
+			 foreach x at i in v do f.values.i = x; -- f.values can be NULL here!!
 			 );
 		    saveLocalFrame := localFrame;
 		    localFrame = f;

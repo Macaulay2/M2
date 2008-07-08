@@ -153,7 +153,7 @@ void *sbrk();		/* not really ansi standard, sigh */
 extern unsigned GC_version;		/* in libgc.a */
 
 #if defined(__STDC__)
-extern void fatal(char *s,...);
+extern void fatal(const char *s,...);
 #else
 extern void fatal( va_alist  );
 #endif
