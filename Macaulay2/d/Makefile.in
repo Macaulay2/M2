@@ -71,7 +71,6 @@ endif
 OPTCFILES += M2inits1.cc M2inits2.cc M2inits3.cc factory_init1.cc factory_init2.cc factory_init3.cc
 CFILES += M2types.c M2mem.c scclib.c M2lib.c gmp_aux.c gdbm_interface.c
 CFILES += factory_allocator.c main.c
-# CFILES += mysql_wrappers.c
 SRCFILES += $(OPTCFILES) $(CFILES)
 
 M2_OBJECTS += $(CFILES:.c=.o)
@@ -105,8 +104,10 @@ DFILES :=
 DFILES += interp.d
 DFILES += texmacs.d
 DFILES += interface.d
-DFILES += mysql.d
 DFILES += actors5.d actors4.d actors3.d actors2.d actors.d
+ifeq (@MYSQL@,yes)
+DFILES += mysql.d
+endif
 DFILES += evaluate.d libfac.d
 DFILES += objects.d
 DFILES += struct.d
@@ -287,7 +288,9 @@ M2_LIBRARIES += -lstdc++
 M2_LIBRARIES += @FCLIBS_FLAGS@
 M2_LIBRARIES += @FCLIBS_STATIC@
 
+ifeq (@MYSQL@,yes)
 M2_LIBRARIES += -lmysqlclient
+endif
 
 ifeq "@STATIC@" "yes"
 M2_LIBRARIES += $(UNSTATIC)

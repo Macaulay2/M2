@@ -15,14 +15,15 @@ cat <<EOF >compat.h
 #include <mpfr.h>
 #define  DCODE 1
 
-#define NO_CONST
-#include "../e/engine.h"
-#include "../e/complex.h"
-
 #include <mysql/mysql.h>
 
 #include "gmp_aux.h"
 #include "memdebug.h"
+
+#define NO_CONST
+#include "../e/engine.h"
+
+#include "../e/complex.h"
 EOF
 
 exit 0 # experiment with doing without all the junk below, inlcuding compat.c

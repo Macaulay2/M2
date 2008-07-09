@@ -247,8 +247,8 @@ export equal(lhs:Expr,rhs:Expr):Expr := (
 	  )
      is FunctionClosure do False
      is NetFile do False
-     is x:RawMonomialOrdering do False
-     is x:RawMonoid do False
+     is RawMonomialOrdering do False
+     is RawMonoid do False
      is x:RawMonomial do (
 	  when rhs
 	  is y:RawMonomial do (
@@ -257,7 +257,7 @@ export equal(lhs:Expr,rhs:Expr):Expr := (
 	       )
 	  else False
 	  )
-     is x:RawRing do False
+     is RawRing do False
      is x:RawMonomialIdeal do (
 	  when rhs
 	  is y:RawMonomialIdeal do (
@@ -286,8 +286,9 @@ export equal(lhs:Expr,rhs:Expr):Expr := (
 	  is y:RawMatrix do toExpr(Ccode(bool, "IM2_Matrix_is_equal((Matrix *)",x,",(Matrix *)",y,")"))
 	  else False
 	  )
-     is x:RawMutableMatrix do False			    -- mutable matrices may not stay equal, so they aren't equal
-     is x:RawStraightLineProgram do False
+     is MYSQL do False
+     is RawMutableMatrix do False			    -- mutable matrices may not stay equal, so they aren't equal
+     is RawStraightLineProgram do False
      is x:RawComputation do (
 	  when rhs
 	  is y:RawComputation do (
@@ -440,6 +441,7 @@ export Class(e:Expr):HashTable := (
      is x:List do x.class
      is ZZ do ZZClass
      is CodeClosure do codeClass
+     is MYSQL do mysqlClass
      is functionCode do functionBodyClass
      is CompiledFunctionBody do compiledFunctionBodyClass
      is QQ do QQClass
@@ -520,6 +522,7 @@ setupconst("RawComputation",Expr(rawComputationClass));
 setupconst("RawRingElement",Expr(rawRingElementClass));
 setupconst("RawRingMap",Expr(rawRingMapClass));
 setupconst("RawMonomialIdeal",Expr(rawMonomialIdealClass));
+setupconst("MYSQL",Expr(mysqlClass));
 setupconst("File",Expr(fileClass));
 setupconst("String",Expr(stringClass));
 setupconst("Function",Expr(functionClass));

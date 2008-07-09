@@ -29,7 +29,7 @@ M2_bool rawIdealOfPoints(const Ring *R,
   const Z_mod *KZZp = K->cast_to_Z_mod();
   if (KZZp != 0)
     {
-      DMat<CoefficientRingZZp> *Pts1;
+      DMat<CoefficientRingZZp> *Pts1 = 0;
       *result_GB = PointsComputation<CoefficientRingZZp>::points
 	(P,KZZp,Pts1,*result_std_monoms);
       return true;

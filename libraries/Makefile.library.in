@@ -87,7 +87,14 @@ FETCHOPTS =
 endif
 endif
 
-.fetched-$(VERSION) : ; $(FETCHER) $(URL)/$(TARFILE) $(FETCHOPTS) && touch $@
+CHECKFETCHED = case "$(URL)" in \
+	http:*) \
+	    if file $(TARFILE) | grep HTML ; \
+	    then echo tried to fetch file, but HTML file returned instead >&2 ; exit 1 ; \
+	    fi ;; \
+	esac
+
+.fetched-$(VERSION) : ; $(FETCHER) $(URL)/$(TARFILE) $(FETCHOPTS) && $(CHECKFETCHED) && touch $@
 
 clean :: package-clean
 distclean :: package-distclean

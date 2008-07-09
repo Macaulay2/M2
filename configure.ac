@@ -659,6 +659,9 @@ test $BUILD_ntl = yes && BUILTLIBS="-lntl $BUILTLIBS"
 
 AC_ARG_WITH(veclib, AS_HELP_STRING(--with-veclib,[use "-framework vecLib" for lapack]), LIBS="-framework vecLib $LIBS" )
 
+AC_SUBST(MYSQL,yes)
+AC_ARG_WITH(mysql, AS_HELP_STRING(--without-mysql,[compile and link without mysql]), MYSQL=$withval)
+
 AC_SUBST(LAPACK,yes)
 AC_ARG_WITH(lapack, AS_HELP_STRING(--without-lapack,[compile and link without lapack and blas]), LAPACK=$withval)
 test "$LAPACK" = no; val=$?

@@ -144,14 +144,14 @@ private:
 
 extern doubling_stash *doubles;
 
-inline void engine_alloc(unsigned int n)
+static inline void engine_alloc(unsigned int n)
 {
   engine_allocated += n;
   if (engine_allocated > engine_highwater)
     engine_highwater = engine_allocated;
 }
 
-inline void engine_dealloc(unsigned int n)
+static inline void engine_dealloc(unsigned int n)
 {
   engine_allocated -= n;
 }

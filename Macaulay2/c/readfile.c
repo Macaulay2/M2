@@ -160,7 +160,7 @@ node gettoken(){
 	       advance();
 	       }
 	  token = newnode(STRING_CONST,string_const_tag);
-	  token->body.string.contents = strnperm(s,cur.text-s);
+	  token->body.string.contents = strnperm(s,cur.text-s); /* observe that escaped character sequences such as \n are not simplified here */
 	  advance();
 	  return token;
 	  }

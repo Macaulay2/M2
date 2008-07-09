@@ -900,6 +900,7 @@ export {
 	symbol mutableIdentity,
 	symbol mutableMatrix,
 	symbol mutableZero,
+	symbol mysqlRealConnect,
 	symbol needs,
 	symbol needsPackage,
 	symbol net,

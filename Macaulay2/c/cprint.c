@@ -10,6 +10,7 @@ void printstringconst(node p){
      while (*s) {
 	  switch(*s) {
 	       case '\n': put("\\n"); break;
+	       case '"' : put("\"" ); break;
 	       case '\r': put("\\r"); break;
 	       case '\f': put("\\f"); break;
 	       case '\t': put("\\t"); break;
@@ -1064,10 +1065,30 @@ void cprintfuncall(node fun, node args){
      put(")");
      }
 
+void put_unescape(char *s) {
+  while (*s) {
+    if (*s == '\\') {
+      s++;
+      switch (*s) {
+      case 'n': putchar('\n'); break;
+      case '"' : putchar('"'); break;
+      case 'b': putchar('\b'); break;
+      case 't': putchar('\t'); break;
+      case 'f': putchar('\f'); break;
+      case 'r': putchar('\r'); break;
+      case  0 : return       ;	/* shouldn't happen */
+      default : putchar(*s)  ; break;
+      }
+    }
+    else putchar(*s);
+    s++;
+  }
+}
+
 void cprintCcode(node s){
      while (s != NULL) {
 	  node a = CAR(s);
-	  if (a->tag == string_const_tag) put(a->body.string.contents);
+	  if (a->tag == string_const_tag) put_unescape(a->body.string.contents);
 	  else cprint(a);
 	  s = CDR(s);
 	  }

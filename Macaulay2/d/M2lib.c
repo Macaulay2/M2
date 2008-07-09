@@ -287,6 +287,7 @@ M2_string actors5_REL;
 M2_string actors5_timestamp;
 M2_string actors5_GCVERSION;
 M2_string actors5_GMPVERSION;
+M2_string actors5_MYSQLVERSION;
 M2_string actors5_startupString1;
 M2_string actors5_startupString2;
 M2_string actors5_NTLVERSION;
@@ -578,6 +579,7 @@ char **argv;
 	  actors5_GCVERSION = tostring(buf);
 	  }
      actors5_GMPVERSION = tostring(__gmp_version);
+     actors5_MYSQLVERSION = tostring(mysql_get_client_info());
      actors5_NTLVERSION = tostring(NTL_VERSION);
      system_envp = tostrings(envc,saveenvp);
      system_argv = tostrings(argc,saveargv);
