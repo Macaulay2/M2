@@ -879,7 +879,8 @@ setupfun("separate",linesfun);
 tostring(m:MYSQL):string := (
      Ccode(void,"const char *mysql_get_host_info(MYSQL *mysql)");
      Ccode(void, "extern string tostring2(const char *)");
-     "<<MYSQL : " + Ccode(string, "tostring2(mysql_get_host_info((MYSQL*)", m, "))" ) + ">>");
+     Ccode(void, "const char *string2(const char *, const char *)");
+     "<<MYSQL : " + Ccode(string, "tostring2(string2(mysql_get_host_info((MYSQL*)", m, "), \"closed\"))" ) + ">>");
 
 tostringfun(e:Expr):Expr := (
      when e 
