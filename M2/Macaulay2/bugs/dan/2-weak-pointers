@@ -1,0 +1,13 @@
+gc seems to offer support now for weak pointers.  In any case, we could use
+them for:
+
+     1) a list of open files, databases, and mysql connections that should be
+        closed upon exit unless they got closed by finalization (by the
+        collector)
+
+     2) a hash table of rings.  The key is the specification for creating the ring;
+        the value is the ring.  Both pointers to keys and to values are weak
+        pointers.  Finalization of the ring removes the entry from the hash
+        table.  (Sage returns the same ring every time!)
+
+We can implement them ourselves with masking and finalization.
