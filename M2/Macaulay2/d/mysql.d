@@ -17,6 +17,7 @@ mysqlError(mysql:MYSQL):Expr := (
 export toExpr(mysql:MYSQL, x:MYSQLorNULL):Expr := when x is mysql:MYSQL do Expr(mysql) else mysqlError(mysql);
 mysqlRealConnect(e:Expr):Expr := (
      Ccode(void, "extern char *tocharstar(string)");
+     Ccode(void, "const char *nullstringer(const char *)");
      when e is s:Sequence do (
 	  if length(s) != 6 then return WrongNumArgs(6);
 	  when s.0 is host:string do
@@ -29,12 +30,12 @@ mysqlRealConnect(e:Expr):Expr := (
 	       if 0 != Ccode(int,"mysql_options((MYSQL*)",mysql,", MYSQL_SET_CHARSET_NAME, \"utf8\")") then return mysqlError(mysql);
 	       toExpr(mysql,Ccode(MYSQLorNULL, "(mysql_MYSQLorNULL)mysql_real_connect(",
 			 "(MYSQL*)",mysql,",",
-			 "tocharstar(",host,"),",
-			 "tocharstar(",user,"),",
-			 "tocharstar(",passwd,"),",
-			 "tocharstar(",db,"),",
+			 "nullstringer(tocharstar(",host,")),",
+			 "nullstringer(tocharstar(",user,")),",
+			 "nullstringer(tocharstar(",passwd,")),",
+			 "nullstringer(tocharstar(",db,")),",
 			 toInt(port),",",
-			 "tocharstar(",unixSocket,"),",
+			 "nullstringer(tocharstar(",unixSocket,")),",
 			 "(unsigned long)0",				    -- client_flag
 			 ")"
 			 )))

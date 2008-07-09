@@ -17,6 +17,10 @@ char newline[] = NEWLINE;
 static struct M2_string_struct system_newline_contents = { 1, { '\n' } };
 M2_string system_newline = &system_newline_contents;
 
+const char *nullstringer(const char *s) {
+  return *s ? s : NULL;
+}
+
 char *tocharstar(M2_string s)
 {
   char *p = getmem_atomic(s->len + 1);
