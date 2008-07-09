@@ -21,6 +21,10 @@ const char *nullstringer(const char *s) {
   return *s ? s : NULL;
 }
 
+const char *string2(const char *s, const char *t) {
+  return s ? s : t ;
+}
+
 char *tocharstar(M2_string s)
 {
   char *p = getmem_atomic(s->len + 1);
@@ -80,7 +84,7 @@ M2_string strings_substr_1(M2_string x, int start)
 
 M2_string tostring(char const *s)
 {
-  int n = strlen(s);
+  int n = s ? strlen(s) : 0;
   M2_string p = (M2_string)getmem_atomic(sizeofarray(p,n));
   p->len = n;
   memcpy(p->array,s,n);
@@ -89,7 +93,7 @@ M2_string tostring(char const *s)
 
 M2_string tostring2(char const *s) /* identical to tostring! */
 {
-  int n = strlen(s);
+  int n = s ? strlen(s) : 0;
   M2_string p = (M2_string)getmem_atomic(sizeofarray(p,n));
   p->len = n;
   memcpy(p->array,s,n);

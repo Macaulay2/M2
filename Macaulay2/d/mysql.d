@@ -35,7 +35,7 @@ mysqlRealConnect(e:Expr):Expr := (
 	  when s.3 is db:string do
 	  when s.4 is port:ZZ do if !isInt(port) then WrongArgSmallInteger(5) else
      	  when s.5 is unixSocket:string do (
-	       mysql := Ccode(MYSQL, "(tokens_MYSQL)getmem(sizeof(MYSQL))");
+	       mysql := Ccode(MYSQL, "(tokens_MYSQL)mysql_init(0)");
 	       if 0 != Ccode(int,"mysql_options((MYSQL*)",mysql,", MYSQL_SET_CHARSET_NAME, \"utf8\")") then return mysqlError(mysql);
 	       toExpr(mysql,Ccode(MYSQLorNULL, "(mysql_MYSQLorNULL)mysql_real_connect(",
 			 "(MYSQL*)",mysql,",",

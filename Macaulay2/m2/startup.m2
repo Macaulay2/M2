@@ -96,7 +96,7 @@ if firstTime then (
      Manipulator = new Type of BasicList;
      Manipulator.synonym = "manipulator";
      new Manipulator from Function := Manipulator => (Manipulator,f) -> new Manipulator from {f};
-     Manipulator Database := Manipulator File := Manipulator NetFile := (m,o) -> m#0 o;
+     Manipulator MYSQL := Manipulator Database := Manipulator File := Manipulator NetFile := (m,o) -> m#0 o;
 
      Manipulator Nothing := (m,null) -> null;
      File << Manipulator := File => (o,m) -> m#0 o;
