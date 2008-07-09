@@ -1,0 +1,5 @@
+It is not possible to interrupt M2 while it is tying to connect to a mysql
+database at a host where there isn't one.  Why not?  The system call continues
+after our interrupt handler returns.
+
+0x4001c410 in __kernel_vsyscall ()
