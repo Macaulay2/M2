@@ -487,8 +487,11 @@ isListener(e:Expr):Expr := (
 setupfun("isListener",isListener);
 close(g:Expr):Expr := (
      when g
-     is mysql:MYSQL do (
-	  Ccode(void,"mysql_close((MYSQL *)",mysql,")");
+     is m:MYSQLwrapper do (
+	  if m.open then (
+	       Ccode(void,"mysql_close((MYSQL *)",m.mysql,")");
+	       m.open = false;
+	       );
 	  g)
      is f:file do ( 
 	  if !f.input && !f.output && !f.listener then return buildErrorPacket("file already closed");

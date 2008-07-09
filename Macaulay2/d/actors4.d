@@ -876,11 +876,16 @@ linesfun(e:Expr):Expr := (
      else WrongArgString());
 setupfun("separate",linesfun);
 
-tostring(m:MYSQL):string := (
+tostring(m:MYSQLwrapper):string := (
      Ccode(void,"const char *mysql_get_host_info(MYSQL *mysql)");
      Ccode(void, "extern string tostring2(const char *)");
      Ccode(void, "const char *string2(const char *, const char *)");
-     "<<MYSQL : " + Ccode(string, "tostring2(string2(mysql_get_host_info((MYSQL*)", m, "), \"closed\"))" ) + ">>");
+     "<<MYSQL : " + (
+	  if m.open
+	  then Ccode(string, "tostring2(mysql_get_host_info((MYSQL*)", m.mysql, "))" )
+	  else "closed"
+	  )
+     + ">>");
 
 tostringfun(e:Expr):Expr := (
      when e 
@@ -892,7 +897,7 @@ tostringfun(e:Expr):Expr := (
      is b:Boolean do Expr(if b.v then "true" else "false")
      is Nothing do Expr("null")
      is f:Database do Expr(f.filename)
-     is m:MYSQL do Expr(tostring(m))
+     is m:MYSQLwrapper do Expr(tostring(m))
      is Net do Expr("<<net>>")
      is CodeClosure do Expr("<<pseudocode>>")
      is functionCode do Expr("<<a function body>>")

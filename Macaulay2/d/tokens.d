@@ -296,6 +296,7 @@ export Boolean := {v:bool};
 export Nothing := {nothing:void};
 
 export MYSQL := {MYSQL:void};
+export MYSQLwrapper := {mysql:MYSQL, open:bool};
 
 export Expr := (
      CC or
@@ -329,7 +330,7 @@ export Expr := (
      RawRing or
      RawRingElement or
      RawRingMap or
-     MYSQL or
+     MYSQLwrapper or
      Sequence or
      SpecialExpr or
      SymbolClosure or
