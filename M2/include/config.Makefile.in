@@ -60,19 +60,18 @@ ifeq "@OS@ @ARCH@" "Linux alpha"
 AS = gcc -c -x assembler-with-cpp
 endif
 
-ifeq "@GCC@" "yes"
-# if it's gcc, we can get stricter warning and error messages
-
 M2_CPPFLAGS += @M2_CPPFLAGS@
 
+ifeq "@GCC@" "yes"
+# if it's gcc, we can get stricter warning and error messages
 ifneq ($(RELAX),yes)
 # but sometimes that's bad, e.g., during configure scripts with loosely written test programs
-M2_CFLAGS   += -Werror-implicit-function-declaration
-M2_CPPFLAGS += -pipe -Wall              -Wshadow -Winline -Wcast-qual -Wno-parentheses -Wno-sign-compare
-M2_CXXFLAGS += -Wconversion
+# -Winline gives too many warning messages
+M2_BOTH      = -pipe -Wall -Wshadow -Wcast-qual -Wno-parentheses -Wno-sign-compare -Werror=uninitialized
+M2_CFLAGS   += -Werror=implicit-function-declaration -Werror=write-strings $(M2_BOTH)
+M2_CXXFLAGS += -Wconversion $(M2_BOTH)
 # -Werror-implicit-function-declaration is important, because if we include the wrong include file and a function that
 # returns a 64-bit pointer is not declared as such, then only 32 bits of the return value will be used.
-
 endif
 endif
 

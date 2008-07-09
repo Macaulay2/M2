@@ -295,6 +295,8 @@ export SpecialExpr := {					    -- this allows specialization of arbitrary types
 export Boolean := {v:bool};
 export Nothing := {nothing:void};
 
+export MYSQL := {MYSQL:void};
+
 export Expr := (
      CC or
      RR or
@@ -327,6 +329,7 @@ export Expr := (
      RawRing or
      RawRingElement or
      RawRingMap or
+     MYSQL or
      Sequence or
      SpecialExpr or
      SymbolClosure or
@@ -557,6 +560,7 @@ export compiledFunctionClosureClass := newtypeof(functionClass);
 export symbolClass := newbasictype();
 export keywordClass := newtypeof(symbolClass);
 export codeClass := newbasictype();
+export mysqlClass := newbasictype();
 export functionBodyClass := newbasictype();
 export compiledFunctionBodyClass := newbasictype();
 export errorClass := newbasictype();

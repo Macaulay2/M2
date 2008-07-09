@@ -19,7 +19,7 @@ void outofmem(void) {
      else 
 #endif
      {
-	  char *msg = "\n\n *** out of memory, exiting ***\n";
+	  const char *msg = "\n\n *** out of memory, exiting ***\n";
 	  write(STDERR,msg,strlen(msg));
 	  exit(1);
      }

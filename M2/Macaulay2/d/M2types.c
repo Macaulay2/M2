@@ -83,6 +83,15 @@ M2_string tostring(char const *s)
   return p;
 }
 
+M2_string tostring2(char const *s) /* identical to tostring! */
+{
+  int n = strlen(s);
+  M2_string p = (M2_string)getmem_atomic(sizeofarray(p,n));
+  p->len = n;
+  memcpy(p->array,s,n);
+  return p;
+}
+
 M2_string tostringn(char *s,int n)
 {
   M2_string p = (M2_string)getmem_atomic(sizeofarray(p,n));

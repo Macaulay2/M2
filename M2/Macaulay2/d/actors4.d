@@ -876,6 +876,11 @@ linesfun(e:Expr):Expr := (
      else WrongArgString());
 setupfun("separate",linesfun);
 
+tostring(m:MYSQL):string := (
+     Ccode(void,"const char *mysql_get_host_info(MYSQL *mysql)");
+     Ccode(void, "extern string tostring2(const char *)");
+     "<<MYSQL : " + Ccode(string, "tostring2(mysql_get_host_info((MYSQL*)", m, "))" ) + ">>");
+
 tostringfun(e:Expr):Expr := (
      when e 
      is i:ZZ do Expr(tostring(i))
@@ -886,6 +891,7 @@ tostringfun(e:Expr):Expr := (
      is b:Boolean do Expr(if b.v then "true" else "false")
      is Nothing do Expr("null")
      is f:Database do Expr(f.filename)
+     is m:MYSQL do Expr(tostring(m))
      is Net do Expr("<<net>>")
      is CodeClosure do Expr("<<pseudocode>>")
      is functionCode do Expr("<<a function body>>")

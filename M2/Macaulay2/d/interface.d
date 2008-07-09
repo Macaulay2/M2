@@ -275,7 +275,7 @@ export rawAlexanderDual(e:Expr):Expr := (
      if !isSequenceOfSmallIntegers(s.1) then WrongArg(2,"a sequence of small integers")
      else toExpr(Ccode(RawMonomialIdealOrNull,
  	       "(engine_RawMonomialIdealOrNull)rawAlexanderDual(",
- 	       "(const MonomialIdeal *)", I, ",",
+ 	       "(MonomialIdeal *)", I, ",",
  	       "(const M2_arrayint)", getSequenceOfSmallIntegers(s.1),
  	       ")"
  	       ))
