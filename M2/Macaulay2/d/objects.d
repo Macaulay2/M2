@@ -286,7 +286,13 @@ export equal(lhs:Expr,rhs:Expr):Expr := (
 	  is y:RawMatrix do toExpr(Ccode(bool, "IM2_Matrix_is_equal((Matrix *)",x,",(Matrix *)",y,")"))
 	  else False
 	  )
-     is MYSQL do False
+     is x:MYSQLwrapper do (
+	  when rhs
+	  is y:MYSQLwrapper do (
+	       if x.mysql == y.mysql then True else False
+	       )
+	  else False
+	  )
      is RawMutableMatrix do False			    -- mutable matrices may not stay equal, so they aren't equal
      is RawStraightLineProgram do False
      is x:RawComputation do (
@@ -441,7 +447,7 @@ export Class(e:Expr):HashTable := (
      is x:List do x.class
      is ZZ do ZZClass
      is CodeClosure do codeClass
-     is MYSQL do mysqlClass
+     is MYSQLwrapper do mysqlClass
      is functionCode do functionBodyClass
      is CompiledFunctionBody do compiledFunctionBodyClass
      is QQ do QQClass

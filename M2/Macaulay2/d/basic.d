@@ -23,9 +23,9 @@ export hash(e:Expr):int := (
      is Nothing do 333889
      is x:List do x.hash
      is f:functionCode do f.hash
-     is MYSQL do 237489					    -- improve this later!
-     is CodeClosure do 73889				    -- improve this later!
-     is x:DictionaryClosure do x.dictionary.hash	    -- there may be many dictionary closures with the same dictionary and different frames, too bad
+     is MYSQLwrapper do 237489				 -- improve this later!
+     is CodeClosure do 73889				 -- improve this later!
+     is x:DictionaryClosure do x.dictionary.hash -- there may be many dictionary closures with the same dictionary and different frames, too bad
      is x:QQ do hash(x)
      is x:RR do hash(x)
      is x:CC do hash(x)

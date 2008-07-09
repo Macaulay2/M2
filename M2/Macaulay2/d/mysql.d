@@ -15,13 +15,18 @@ mysqlError(mysql:MYSQL):Expr := (
      Ccode(void, "extern string tostring2(const char *)");
      buildErrorPacket(Ccode(string, "tostring2(mysql_error((MYSQL*)",mysql,"))"))
      );
-MYSQLfinalizer(mysql:MYSQL, msg:string):void := Ccode(void,"mysql_close((MYSQL *)",mysql,")");
+MYSQLfinalizer(m:MYSQLwrapper, msg:string):void := (
+     if m.open then (
+	  Ccode(void,"mysql_close((MYSQL *)",m.mysql,")");
+	  m.open = false;
+	  );
+     );
 export toExpr(mysql:MYSQL, x:MYSQLorNULL):Expr := (
      when x is mysql:MYSQL do (
 	  msg := "MYSQL";
-	  Ccode(void, "GC_register_finalizer((void *)",mysql,",(GC_finalization_proc)",MYSQLfinalizer,",",msg,",0,0)");
-	  Expr(mysql) 
-	  )
+	  mw := MYSQLwrapper(mysql,true);
+	  Ccode(void, "GC_register_finalizer((void *)",mw,",(GC_finalization_proc)",MYSQLfinalizer,",",msg,",0,0)");
+	  Expr(mw))
      else mysqlError(mysql)
      );
 mysqlRealConnect(e:Expr):Expr := (

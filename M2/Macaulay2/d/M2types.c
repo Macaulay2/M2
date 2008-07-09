@@ -21,10 +21,6 @@ const char *nullstringer(const char *s) {
   return *s ? s : NULL;
 }
 
-const char *string2(const char *s, const char *t) {
-  return s ? s : t ;
-}
-
 char *tocharstar(M2_string s)
 {
   char *p = getmem_atomic(s->len + 1);
