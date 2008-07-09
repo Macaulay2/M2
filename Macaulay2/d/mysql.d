@@ -5,6 +5,7 @@
 --   /usr/share/doc/mysql-doc-5.0/refman-5.0-en.html-chapter/index.html
 
 use C;
+use stdio;
 use gmp;
 use tokens;
 use common;
@@ -14,7 +15,15 @@ mysqlError(mysql:MYSQL):Expr := (
      Ccode(void, "extern string tostring2(const char *)");
      buildErrorPacket(Ccode(string, "tostring2(mysql_error((MYSQL*)",mysql,"))"))
      );
-export toExpr(mysql:MYSQL, x:MYSQLorNULL):Expr := when x is mysql:MYSQL do Expr(mysql) else mysqlError(mysql);
+MYSQLfinalizer(mysql:MYSQL, msg:string):void := Ccode(void,"mysql_close((MYSQL *)",mysql,")");
+export toExpr(mysql:MYSQL, x:MYSQLorNULL):Expr := (
+     when x is mysql:MYSQL do (
+	  msg := "MYSQL";
+	  Ccode(void, "GC_register_finalizer((void *)",mysql,",(GC_finalization_proc)",MYSQLfinalizer,",",msg,",0,0)");
+	  Expr(mysql) 
+	  )
+     else mysqlError(mysql)
+     );
 mysqlRealConnect(e:Expr):Expr := (
      Ccode(void, "extern char *tocharstar(string)");
      Ccode(void, "const char *nullstringer(const char *)");
