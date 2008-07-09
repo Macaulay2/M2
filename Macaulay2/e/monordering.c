@@ -376,7 +376,7 @@ M2_string IM2_MonomialOrdering_to_string(const MonomialOrdering *mo)
   int i;
   char s[200];
   int p_ones = 0;
-  M2_string result = tostring("MonomialOrdering => {");
+  M2_string result = tostring("MonomialOrder => {");
   for (i=0; i<mo->len; i++)
     {
       mon_part p = mo->array[i];
