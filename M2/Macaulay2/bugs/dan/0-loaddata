@@ -1,0 +1,9 @@
+I could modify the loaddata routine so it ignores the checksum of
+/lib64/ld-2.3.4.so, or more precisely, of */ld-*.so.  That file is just the
+loader, and if it's different, it shouldn't matter at all.  (It's probably not
+really different -- they must be kludging something.)
+
+
+    > --warning: map checksum has changed, file /lib64/ld-2.3.4.so
+
+after fixing this, tell Jerod <Jerod.Sikorskyj@gmail.com> at macaulay2@googlegroups.com
