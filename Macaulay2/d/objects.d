@@ -289,7 +289,7 @@ export equal(lhs:Expr,rhs:Expr):Expr := (
      is x:MYSQLwrapper do (
 	  when rhs
 	  is y:MYSQLwrapper do (
-	       if x.mysql == y.mysql then True else False
+	       if x.mysql == y.mysql && x.open == y.open then True else False
 	       )
 	  else False
 	  )

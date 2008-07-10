@@ -63,6 +63,37 @@ mysqlRealConnect(e:Expr):Expr := (
      else WrongNumArgs(6));	  
 setupfun("mysqlRealConnect",mysqlRealConnect);
 
+mysqlRealQuery(e:Expr):Expr := (
+     when e is s:Sequence do 
+     when s.0 is m:MYSQLwrapper do
+     if !m.open then WrongArg(1,"an open connection to a MYSQL database") else
+     when s.1 is query:string do
+     if 0 == Ccode(int, "mysql_real_query(",
+	  "(MYSQL *)", m.mysql, ",", 
+	  query, "->array_,",
+	  query, "->len_",
+	  ")")
+     then s.0
+     else mysqlError(m.mysql)
+     else WrongArgString(2)
+     else WrongArg(1,"a connection to a MYSQL database")
+     else WrongNumArgs(2));
+setupfun("mysqlRealQuery",mysqlRealQuery);
+setupfun("mysqlQuery",mysqlRealQuery);
+
+mysqlListDbs(e:Expr):Expr := (
+     when e is s:Sequence do
+     if length(s) != 2 then WrongNumArgs(2) else
+     when s.0 is m:MYSQLwrapper do 
+     if !m.open then WrongArg(1,"an open connection to a MYSQL database") else
+     when s.1 is wild:string do (
+	  NotYet("mysqlListDbs")
+	  )
+     else WrongArgString(2)
+     else WrongArg(1,"a connection to a MYSQL database")
+     else WrongNumArgs(2));
+setupfun("mysqlListDbs",mysqlListDbs);
+
 -- Local Variables:
 -- compile-command: "make -C $M2BUILDDIR/Macaulay2/d "
 -- End:

@@ -901,6 +901,8 @@ export {
 	symbol mutableMatrix,
 	symbol mutableZero,
 	symbol mysqlRealConnect,
+	symbol mysqlRealQuery,
+	symbol mysqlQuery,
 	symbol needs,
 	symbol needsPackage,
 	symbol net,
