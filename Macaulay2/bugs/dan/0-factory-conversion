@@ -1,0 +1,53 @@
++ M2 --no-readline --print-width 156
+Macaulay 2, version 1.1
+with packages: Classic, Core, Elimination, IntegralClosure, LLLBases, Parsing, PrimaryDecomposition, SchurRings, TangentCone
+
+i1 : R=ZZ/2[y,x,Weights=>{{12,5},{1,0}}]
+
+o1 = R
+
+o1 : PolynomialRing
+
+i2 : I=ideal(y^5+y^2*(x^4+x)+y*x^2+x^12)
+
+            5    12    2 4    2       2
+o2 = ideal(y  + x   + y x  + y x + y*x )
+
+o2 : Ideal of R
+
+i3 : S=integralClosure(R/I)
+--error message bumped: conversion from factory over unknown type
+--error message bumped: conversion from factory over unknown type
+--error message bumped: conversion from factory over unknown type
+--error message bumped: conversion from factory over unknown type
+--error message bumped: conversion from factory over unknown type
+--error message bumped: conversion from factory over unknown type
+stdio:3:3:(1):[0]: conversion from factory over unknown type
+
+i4 : 
+
+Process M2 finished
+
++ M2.dev --no-readline --print-width 109
+Macaulay 2, version 1.1.1
+with packages: Classic, Core, Elimination, IntegralClosure, LLLBases, Parsing, PrimaryDecomposition,
+               SchurRings, TangentCone
+
+i1 : R=ZZ/2[y,x,Weights=>{{12,5},{1,0}}]
+
+o1 = R
+
+o1 : PolynomialRing
+
+i2 : I=ideal(y^5+y^2*(x^4+x)+y*x^2+x^12)
+
+            5    12    2 4    2       2
+o2 = ideal(y  + x   + y x  + y x + y*x )
+
+o2 : Ideal of R
+
+i3 : S=integralClosure(R/I)
+
+o3 = S
+
+o3 : QuotientRing
