@@ -877,7 +877,7 @@ linesfun(e:Expr):Expr := (
 setupfun("separate",linesfun);
 
 tostring(m:MYSQLwrapper):string := (
-     Ccode(void,"const char *mysql_get_host_info(MYSQL *mysql)");
+     -- Ccode(void,"const char *mysql_get_host_info(MYSQL *mysql)");
      Ccode(void, "extern string tostring2(const char *)");
      Ccode(void, "const char *string2(const char *, const char *)");
      "<<MYSQL : " + (
