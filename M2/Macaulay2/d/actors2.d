@@ -489,7 +489,7 @@ close(g:Expr):Expr := (
      when g
      is m:MYSQLwrapper do (
 	  if m.open then (
-	       Ccode(void,"mysql_close((MYSQL *)",m.mysql,")");
+	       Ccode(void,"\n #if USE_MYSQL \n mysql_close((MYSQL *)",m.mysql,") \n #else \n 0 \n #endif \n ");
 	       m.open = false;
 	       );
 	  g)
