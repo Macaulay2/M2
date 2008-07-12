@@ -876,10 +876,9 @@ linesfun(e:Expr):Expr := (
      else WrongArgString());
 setupfun("separate",linesfun);
 
-tostring(m:MYSQLwrapper):string := (
-     -- Ccode(void,"const char *mysql_get_host_info(MYSQL *mysql)");
+tostring(m:MysqlConnectionWrapper):string := (
      Ccode(void, "extern string tostring2(const char *)");
-     "<<MYSQL : " + (
+     "<<MysqlConnection : " + (
 	  if m.open
 	  then Ccode(string, "tostring2(\n#if USE_MYSQL\n mysql_get_host_info((MYSQL*)", m.mysql, ")\n#else\n \"not present\"\n#endif\n)" )
 	  else "closed"
@@ -887,6 +886,7 @@ tostring(m:MYSQLwrapper):string := (
      + ">>");
 
 tostringfun(e:Expr):Expr := (
+     Ccode(void, "extern string tostring2(const char *)");
      when e 
      is i:ZZ do Expr(tostring(i))
      is x:QQ do Expr(tostring(x))
@@ -896,7 +896,19 @@ tostringfun(e:Expr):Expr := (
      is b:Boolean do Expr(if b.v then "true" else "false")
      is Nothing do Expr("null")
      is f:Database do Expr(f.filename)
-     is m:MYSQLwrapper do Expr(tostring(m))
+     is m:MysqlConnectionWrapper do Expr(tostring(m))
+     is res:MysqlResult do Expr(
+	  "<<MysqlResult : " 
+	  + tostring(Ccode(int, "mysql_num_rows((MYSQL_RES *)", res, ")"))
+	  + " by "
+	  + tostring(Ccode(int, "mysql_num_fields((MYSQL_RES *)", res, ")"))
+	  + ">>")
+     is fld:MysqlField do Expr(
+	  "<<MysqlField : " 
+	  + Ccode(string,"tostring2(((MYSQL_FIELD *)", fld, ")->name)")
+	  + " : "
+	  + tostring(Ccode(int,"((MYSQL_FIELD *)", fld, ")->type"))
+	  + ">>")
      is Net do Expr("<<net>>")
      is CodeClosure do Expr("<<pseudocode>>")
      is functionCode do Expr("<<a function body>>")
