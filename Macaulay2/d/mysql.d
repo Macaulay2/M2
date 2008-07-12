@@ -94,6 +94,15 @@ mysqlListDbs(e:Expr):Expr := (
      else WrongNumArgs(2));
 setupfun("mysqlListDbs",mysqlListDbs);
 
+mysqlGetHostInfo(e:Expr):Expr := (
+     Ccode(void, "extern string tostring2(const char *)");
+     when e is m:MYSQLwrapper do Expr(
+	  if m.open
+	  then Ccode(string, "tostring2(\n#if USE_MYSQL\n mysql_get_host_info((MYSQL*)", m.mysql, ")\n#else\n \"not present\"\n#endif\n)" )
+	  else "closed")
+     else WrongArg("a connection to a MYSQL database"));
+setupfun("mysqlGetHostInfo", mysqlGetHostInfo);
+
 -- Local Variables:
 -- compile-command: "make -C $M2BUILDDIR/Macaulay2/d "
 -- End:
