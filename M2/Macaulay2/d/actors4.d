@@ -879,7 +879,6 @@ setupfun("separate",linesfun);
 tostring(m:MYSQLwrapper):string := (
      -- Ccode(void,"const char *mysql_get_host_info(MYSQL *mysql)");
      Ccode(void, "extern string tostring2(const char *)");
-     Ccode(void, "const char *string2(const char *, const char *)");
      "<<MYSQL : " + (
 	  if m.open
 	  then Ccode(string, "tostring2(\n#if USE_MYSQL\n mysql_get_host_info((MYSQL*)", m.mysql, ")\n#else\n \"not present\"\n#endif\n)" )

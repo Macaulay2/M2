@@ -1,17 +1,11 @@
-newPackage "MYSQL"
-
+newPackage "MYSQL" -- the name of this package conflicts with the name of the type 
 export { tryit }
-
-MYSQL << String := mysqlQuery
-
 tryit = () -> (
      mysqlRealConnect("localhost","dan","foobar","",3306,""),
      mysqlRealConnect("localhost","dan","foobar","",0,"/var/run/mysqld/mysqld.sock"),
      mysqlRealConnect("localhost","dan","foobar","",0,"")
      )
-
 << "-- try tryit()" << endl
-
 end
 
 
