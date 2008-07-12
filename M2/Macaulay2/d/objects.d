@@ -286,13 +286,15 @@ export equal(lhs:Expr,rhs:Expr):Expr := (
 	  is y:RawMatrix do toExpr(Ccode(bool, "IM2_Matrix_is_equal((Matrix *)",x,",(Matrix *)",y,")"))
 	  else False
 	  )
-     is x:MYSQLwrapper do (
+     is x:MysqlConnectionWrapper do (
 	  when rhs
-	  is y:MYSQLwrapper do (
+	  is y:MysqlConnectionWrapper do (
 	       if x.mysql == y.mysql && x.open == y.open then True else False
 	       )
 	  else False
 	  )
+     is MysqlField do False
+     is MysqlResult do False
      is RawMutableMatrix do False			    -- mutable matrices may not stay equal, so they aren't equal
      is RawStraightLineProgram do False
      is x:RawComputation do (
@@ -447,7 +449,9 @@ export Class(e:Expr):HashTable := (
      is x:List do x.class
      is ZZ do ZZClass
      is CodeClosure do codeClass
-     is MYSQLwrapper do mysqlClass
+     is MysqlConnectionWrapper do mysqlConnectionClass
+     is MysqlResult do mysqlResultClass
+     is MysqlField do mysqlFieldClass
      is functionCode do functionBodyClass
      is CompiledFunctionBody do compiledFunctionBodyClass
      is QQ do QQClass
@@ -528,7 +532,9 @@ setupconst("RawComputation",Expr(rawComputationClass));
 setupconst("RawRingElement",Expr(rawRingElementClass));
 setupconst("RawRingMap",Expr(rawRingMapClass));
 setupconst("RawMonomialIdeal",Expr(rawMonomialIdealClass));
-setupconst("MYSQL",Expr(mysqlClass));
+setupconst("MysqlConnection",Expr(mysqlConnectionClass));
+setupconst("MysqlField",Expr(mysqlFieldClass));
+setupconst("MysqlResult",Expr(mysqlResultClass));
 setupconst("File",Expr(fileClass));
 setupconst("String",Expr(stringClass));
 setupconst("Function",Expr(functionClass));

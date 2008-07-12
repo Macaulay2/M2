@@ -7,6 +7,8 @@ err(e:Expr):Expr := buildErrorPacket("mysql library not available");
 setupfun("mysqlRealConnect",err);
 setupfun("mysqlRealQuery",err);
 setupfun("mysqlQuery",err);
+setupfun("mysqlGetHostInfo", err);
+setupfun("mysqlStoreResult", err);
 setupfun("mysqlListDbs",err);
 
 -- Local Variables:

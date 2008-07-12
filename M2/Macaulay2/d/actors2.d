@@ -487,9 +487,9 @@ isListener(e:Expr):Expr := (
 setupfun("isListener",isListener);
 close(g:Expr):Expr := (
      when g
-     is m:MYSQLwrapper do (
+     is m:MysqlConnectionWrapper do (
 	  if m.open then (
-	       Ccode(void,"\n #if USE_MYSQL \n mysql_close((MYSQL *)",m.mysql,") \n #else \n 0 \n #endif \n ");
+	       Ccode(void,"\n #if USE_MYSQL \n mysql_close((MYSQL*)",m.mysql,") \n #else \n 0 \n #endif \n ");
 	       m.open = false;
 	       );
 	  g)

@@ -1,15 +1,12 @@
 newPackage "MYSQL" -- the name of this package conflicts with the name of the type 
-export { tryit }
-tryit = () -> (
-     mysqlRealConnect("localhost","dan","foobar","",3306,""),
-     mysqlRealConnect("localhost","dan","foobar","",0,"/var/run/mysqld/mysqld.sock"),
-     mysqlRealConnect("localhost","dan","foobar","",0,"")
-     )
-<< "-- try tryit()" << endl
 end
 
-
-
+m = mysqlRealConnect ("localhost","dan","foobar","",0,"")
+mysqlListDbs(m,"*")
+n = new MysqlBuffer from m
+n << "use foo" << submit
+n << "select idnum from clients" << submit
+mysqlGetHostInfo m
 
 There are two ways for a client to process result sets. One way is to retrieve
 the entire result set all at once by calling mysql_store_result(). This
