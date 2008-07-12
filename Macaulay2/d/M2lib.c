@@ -579,7 +579,13 @@ char **argv;
 	  actors5_GCVERSION = tostring(buf);
 	  }
      actors5_GMPVERSION = tostring(__gmp_version);
-     actors5_MYSQLVERSION = tostring(mysql_get_client_info());
+     actors5_MYSQLVERSION = tostring(
+#if USE_MYSQL
+         mysql_get_client_info()
+#else
+	 "not present"
+#endif
+         );
      actors5_NTLVERSION = tostring(NTL_VERSION);
      system_envp = tostrings(envc,saveenvp);
      system_argv = tostrings(argc,saveargv);

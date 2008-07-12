@@ -107,6 +107,8 @@ DFILES += interface.d
 DFILES += actors5.d actors4.d actors3.d actors2.d actors.d
 ifeq (@MYSQL@,yes)
 DFILES += mysql.d
+else
+DFILES += mysqldummy.d
 endif
 DFILES += evaluate.d libfac.d
 DFILES += objects.d
@@ -132,6 +134,9 @@ DFILES += system.d
 DFILES += C.d
 
 actors4.oo basic.oo engine.oo interface.oo objects.oo : ../e/engine.h
+
+# these files depend on USE_MYSQL, which is in config.h:
+actors4.oo actors2.oo : ../../include/config.h
 
 M2_OBJECTS += $(DFILES:.d=.oo) 
 SRCFILES += $(DFILES)
@@ -258,9 +263,9 @@ ifeq (@OS@,SunOS)
 endif
 
 M2_OBJECTS += tmp_init.o
-tmp_init.o : tmp_init.c
+tmp_init.o : tmp_init.c 
 clean::; rm -f tmp_init.c
-tmp_init.c : $(DFILES)
+tmp_init.c : $(DFILES) Makefile
 	echo 'char timestamp[] = __DATE__ ", " __TIME__;' >tmp
 	for i in $(DFILES:.d=) ; do echo "void $${i}__prepare();" ; done >>tmp
 	echo 'int main_inits() {' >>tmp
