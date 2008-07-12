@@ -9,6 +9,7 @@ setupfun("mysqlRealQuery",err);
 setupfun("mysqlQuery",err);
 setupfun("mysqlGetHostInfo", err);
 setupfun("mysqlStoreResult", err);
+setupfun("mysqlUseResult",err);
 setupfun("mysqlListDbs",err);
 
 -- Local Variables:

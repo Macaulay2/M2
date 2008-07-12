@@ -897,11 +897,11 @@ tostringfun(e:Expr):Expr := (
      is Nothing do Expr("null")
      is f:Database do Expr(f.filename)
      is m:MysqlConnectionWrapper do Expr(tostring(m))
-     is res:MysqlResult do Expr(
+     is res:MysqlResultWrapper do Expr(
 	  "<<MysqlResult : " 
-	  + tostring(Ccode(int, "mysql_num_rows((MYSQL_RES *)", res, ")"))
+	  + tostring(Ccode(int, "mysql_num_rows((MYSQL_RES *)", res.res, ")"))
 	  + " by "
-	  + tostring(Ccode(int, "mysql_num_fields((MYSQL_RES *)", res, ")"))
+	  + tostring(Ccode(int, "mysql_num_fields((MYSQL_RES *)", res.res, ")"))
 	  + ">>")
      is fld:MysqlField do Expr(
 	  "<<MysqlField : " 

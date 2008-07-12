@@ -908,6 +908,7 @@ export {
 	symbol mysqlRealConnect,
 	symbol mysqlRealQuery,
      	symbol mysqlStoreResult,
+        symbol mysqlUseResult,
 	symbol submit,
 	symbol needs,
 	symbol needsPackage,

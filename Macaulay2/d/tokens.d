@@ -298,6 +298,7 @@ export Nothing := {nothing:void};
 export MysqlConnection := {MysqlConnection:void};
 export MysqlConnectionWrapper := {mysql:MysqlConnection, open:bool};
 export MysqlResult := {MysqlResult:void};
+export MysqlResultWrapper := {res:MysqlResult};
 export MysqlField  := {MysqlField:void};
 
 export Expr := (
@@ -333,8 +334,8 @@ export Expr := (
      RawRingElement or
      RawRingMap or
      MysqlConnectionWrapper or
+     MysqlResultWrapper or
      MysqlField or
-     MysqlResult or
      Sequence or
      SpecialExpr or
      SymbolClosure or
