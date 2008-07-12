@@ -2,11 +2,17 @@ newPackage "MYSQL" -- the name of this package conflicts with the name of the ty
 end
 
 m = mysqlRealConnect ("localhost","dan","foobar","",0,"")
-mysqlListDbs(m,"*")
+mysqlGetHostInfo m
+mysqlListDbs(m,"")
+mysqlListDbs(m,"f_")
+mysqlListDbs(m,"f__")
+mysqlListDbs(m,"f%")
 n = new MysqlBuffer from m
 n << "use foo" << submit
 n << "select idnum from clients" << submit
-mysqlGetHostInfo m
+mysqlStoreResult m
+n << "select idnum from clients" << submit
+mysqlUseResult m
 
 There are two ways for a client to process result sets. One way is to retrieve
 the entire result set all at once by calling mysql_store_result(). This
