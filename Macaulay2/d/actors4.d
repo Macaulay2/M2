@@ -903,11 +903,11 @@ tostringfun(e:Expr):Expr := (
 	  + " by "
 	  + tostring(Ccode(int, "mysql_num_fields((MYSQL_RES *)", res.res, ")"))
 	  + ">>")
-     is fld:MysqlField do Expr(
+     is fld:MysqlFieldWrapper do Expr(
 	  "<<MysqlField : " 
-	  + Ccode(string,"tostring2(((MYSQL_FIELD *)", fld, ")->name)")
+	  + Ccode(string,"tostring2(((MYSQL_FIELD *)", fld.fld, ")->name)")
 	  + " : "
-	  + tostring(Ccode(int,"((MYSQL_FIELD *)", fld, ")->type"))
+	  + tostring(Ccode(int,"((MYSQL_FIELD *)", fld.fld, ")->type"))
 	  + ">>")
      is Net do Expr("<<net>>")
      is CodeClosure do Expr("<<pseudocode>>")

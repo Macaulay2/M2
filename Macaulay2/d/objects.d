@@ -293,7 +293,7 @@ export equal(lhs:Expr,rhs:Expr):Expr := (
 	       )
 	  else False
 	  )
-     is MysqlField do False
+     is MysqlFieldWrapper do False
      is MysqlResultWrapper do False
      is RawMutableMatrix do False			    -- mutable matrices may not stay equal, so they aren't equal
      is RawStraightLineProgram do False
@@ -451,7 +451,7 @@ export Class(e:Expr):HashTable := (
      is CodeClosure do codeClass
      is MysqlConnectionWrapper do mysqlConnectionClass
      is MysqlResultWrapper do mysqlResultClass
-     is MysqlField do mysqlFieldClass
+     is MysqlFieldWrapper do mysqlFieldClass
      is functionCode do functionBodyClass
      is CompiledFunctionBody do compiledFunctionBodyClass
      is QQ do QQClass
