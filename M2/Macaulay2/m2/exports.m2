@@ -905,6 +905,7 @@ export {
 	symbol mysqlFetchRow,
 	symbol mysqlFetchField,
 	symbol mysqlFetchFields,
+	-- symbol mysqlListFields,
 	symbol mysqlFetchRows,
 	symbol mysqlGetHostInfo,
 	symbol mysqlListDbs,

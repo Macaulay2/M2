@@ -15,10 +15,16 @@ mysqlFetchRows mysqlListDbs(m,"f%")
 
 n = new MysqlBuffer from m
 n << "use foo" << submit
-n << "select idnum " << " from clients" << submit
+mysqlFetchRows mysqlListFields(m,"clients","")		    -- ???
+mysqlFetchRows mysqlListFields(m,"clients","i%")	    -- ???
+
+m << "show columns from clients"
+mysqlFetchRows mysqlStoreResult m
+
+n << "select * " << " from clients" << submit
 r = mysqlStoreResult m
 mysqlFetchFields r
 mysqlFetchRows r
 
-n << "select idnum from clients" << submit
+n << "select * from clients" << submit
 mysqlFetchRows mysqlUseResult m
