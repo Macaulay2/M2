@@ -13,6 +13,7 @@ setupfun("mysqlUseResult",err);
 setupfun("mysqlListDbs",err);
 setupfun("mysqlFetchRow",err);
 setupfun("mysqlFetchField",err);
+setupfun("mysqlListFields",err);
 
 -- Local Variables:
 -- compile-command: "make -C $M2BUILDDIR/Macaulay2/d "

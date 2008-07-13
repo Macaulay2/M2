@@ -168,7 +168,10 @@ mysqlFetchRow(e:Expr):Expr := (
 		    list (
 			 new Sequence len nflds do
 			 for i from 0 to nflds-1 do 
-			 provide Expr(Ccode(string,"tostringn((char *)",(rowp + i).ptr, ",(int)", (lens+i).x, ")"))))))
+			 provide (
+			      q := (rowp + i).ptr;
+			      when q is null do nullE
+			      else Expr(Ccode(string,"tostringn((char *)",q, ",(int)", (lens+i).x, ")")))))))
      else WrongArg("a mysql result set"));
 setupfun("mysqlFetchRow",mysqlFetchRow);
 
@@ -180,9 +183,28 @@ mysqlFetchField(e:Expr):Expr := (
      else WrongArg("a mysql result set"));
 setupfun("mysqlFetchField",mysqlFetchField);
 
---  MYSQL_FIELD *mysql_fetch_field(MYSQL_RES *result)
---  MYSQL_FIELD *mysql_fetch_fields(MYSQL_RES *result)
+-- I couldn't get this to work:
+-- mysqlListFields(e:Expr):Expr := (
+--      Ccode(void, "extern char *tocharstar(string)");
+--      Ccode(void, "const char *nullstringer(const char *)");
+--      when e is s:Sequence do
+--      if length(s) != 3 then WrongNumArgs(3) else
+--      when s.0 is conn:MysqlConnectionWrapper do
+--      if !conn.open then WrongArg(1,"an open connection to a mysql database") else
+--      when s.1 is table:string do 
+--      when s.2 is wild:string do
+--      toExpr(conn,Ccode(MysqlResultOrNULL,"(mysql_MysqlResultOrNULL)mysql_list_fields(",
+-- 	       "(MYSQL*)", conn.mysql, ",",
+-- 	       "tocharstar(", table, "),",
+-- 	       "nullstringer(tocharstar(", wild, "))",
+-- 	       ")"))
+--      else WrongArgString(3)
+--      else WrongArgString(2)
+--      else WrongArg(1,"a connection to a mysql database")
+--      else WrongNumArgs(3));
+-- setupfun("mysqlListFields",mysqlListFields);
 -- 
+
 --     typedef char **MYSQL_ROW;		/* return data as array of strings */
 -- 
 --     typedef struct st_mysql_field {
@@ -207,7 +229,7 @@ setupfun("mysqlFetchField",mysqlFetchField);
 --       unsigned int charsetnr;     /* Character set */
 --       enum enum_field_types type; /* Type of field. See mysql_com.h for types */
 --     } MYSQL_FIELD;
--- 
+
 --     enum enum_field_types { MYSQL_TYPE_DECIMAL, MYSQL_TYPE_TINY, MYSQL_TYPE_SHORT, MYSQL_TYPE_LONG, MYSQL_TYPE_FLOAT,
 -- 	 MYSQL_TYPE_DOUBLE, MYSQL_TYPE_NULL, MYSQL_TYPE_TIMESTAMP, MYSQL_TYPE_LONGLONG, MYSQL_TYPE_INT24,
 -- 	 MYSQL_TYPE_DATE, MYSQL_TYPE_TIME, MYSQL_TYPE_DATETIME, MYSQL_TYPE_YEAR, MYSQL_TYPE_NEWDATE, MYSQL_TYPE_VARCHAR,
