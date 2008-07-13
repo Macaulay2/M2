@@ -903,6 +903,7 @@ export {
 	symbol MysqlBuffer,
 	symbol MysqlConnection,
 	symbol mysqlFetchRow,
+	symbol mysqlFetchRows,
 	symbol mysqlGetHostInfo,
 	symbol mysqlListDbs,
 	symbol mysqlQuery,

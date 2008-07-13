@@ -15,6 +15,11 @@ use util;
 mysqlError(mysql:MysqlConnection):Expr := (
      Ccode(void, "extern string tostring2(const char *)");
      buildErrorPacket(Ccode(string, "tostring2(mysql_error((MYSQL*)",mysql,"))")));
+possibleMysqlError(mysql:MysqlConnection):Expr := (
+     Ccode(void, "extern string tostring2(const char *)");
+     if 0 == Ccode(int,"mysql_errno((MYSQL*)",mysql,")")
+     then nullE
+     else buildErrorPacket(Ccode(string, "tostring2(mysql_error((MYSQL*)",mysql,"))")));
 mysqlConnectionFinalizer(m:MysqlConnectionWrapper, msg:string):void := (
      if m.open then (
 	  Ccode(void,"mysql_close((MYSQL*)",m.mysql,")");
@@ -155,7 +160,7 @@ mysqlFetchRow(e:Expr):Expr := (
      when e is rw:MysqlResultWrapper do (
 	  row := Ccode(CharStarStarOrNull, "(CharStarStarOrNull)mysql_fetch_row((MYSQL_RES*)",rw.res,")");
 	  when row
-	  is null do nullE				    -- end of result set
+	  is null do possibleMysqlError(rw.connection.mysql)
 	  is rowp:CharStarStar do (
 	       nflds := Ccode(int, "mysql_num_fields((MYSQL_RES*)",rw.res,")");
 	       lens  := Ccode(ULongStar, "(ULongStar)mysql_fetch_lengths((MYSQL_RES*)",rw.res,")");
@@ -167,20 +172,6 @@ mysqlFetchRow(e:Expr):Expr := (
      else WrongArg("a mysql result set"));
 setupfun("mysqlFetchRow",mysqlFetchRow);
 
--- In both cases, you access rows by calling mysql_fetch_row(). With
--- mysql_store_result(), mysql_fetch_row() accesses rows that have previously been
--- fetched from the server. With mysql_use_result(), mysql_fetch_row() actually
--- retrieves the row from the server. Information about the size of the data in
--- each row is available by calling mysql_fetch_lengths().
--- 
--- After you are done with a result set, call mysql_free_result() to free the
--- memory used for it.
--- 
---  MYSQL_ROW mysql_fetch_row(MYSQL_RES *result)
---  void mysql_free_result(MYSQL_RES *result)
--- 
---  unsigned int mysql_field_count(MYSQL *mysql)
---  unsigned long *mysql_fetch_lengths(MYSQL_RES *result)
 --  MYSQL_FIELD *mysql_fetch_field(MYSQL_RES *result)
 --  MYSQL_FIELD *mysql_fetch_fields(MYSQL_RES *result)
 -- 

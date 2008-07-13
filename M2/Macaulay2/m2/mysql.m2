@@ -23,3 +23,9 @@ submitfun MysqlBuffer := x -> (
      mysqlQuery(x#0,query);
      x)
 submit = new Manipulator from {submitfun}
+
+mysqlFetchRows = method()
+mysqlFetchRows MysqlResult := res -> (
+     rows := new MutableHashTable;
+     while null =!= (row := mysqlFetchRow res) do rows##rows = row;
+     values rows)
