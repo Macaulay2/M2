@@ -1,5 +1,9 @@
 -- Copyright 2008 by Daniel R. Grayson
 
+MysqlConnection.synonym = "mysql connection"
+MysqlResult.synonym = "mysql result set"
+MysqlField.synonym = "mysql field"
+
 Manipulator MysqlConnection := (m,o) -> m#0 o
 MysqlConnection << String := mysqlQuery
 MysqlBuffer = new Type of MutableList

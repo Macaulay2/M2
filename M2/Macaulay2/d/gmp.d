@@ -17,7 +17,7 @@ export max(x:long,y:long):long := if x<y then y else x;
 export min(x:ulong,y:ulong):ulong := if x<y then x else y;
 export max(x:ulong,y:ulong):ulong := if x<y then y else x;
 
-export (o:file) << (s:Cstring) : file := o << if s == null() then "(null)" else tostring(s);
+export (o:file) << (s:CharStarOrNull) : file := o << if s == null() then "(null)" else tostring(s);
 
 export limbPointer := {limbPointer:void} or null;
 export ZZ := { alloc:int, size:int, limbs:limbPointer};
@@ -46,8 +46,8 @@ export hash(x:ZZ):int := (
           "(__mpz_struct *)", x, 
      	  ")"));
 
-getstr(str:Cstring, base:int, x:ZZ):Cstring ::= Ccode(Cstring,
-     "(Cstring) mpz_get_str(",
+getstr(str:CharStarOrNull, base:int, x:ZZ):CharStarOrNull ::= Ccode(CharStarOrNull,
+     "(CharStarOrNull) mpz_get_str(",
 	 "(char *)", str, ",",
 	 base, ",",
 	 "(__mpz_struct *)", x,
@@ -443,7 +443,7 @@ export (x:ZZ) ^^ (y:ZZ) : ZZ := (
      z);
 
 base := 10;
-toCstring(x:ZZ):Cstring ::= getstr(Cstring(null()), base, x);
+toCstring(x:ZZ):CharStarOrNull ::= getstr(CharStarOrNull(null()), base, x);
 export tostring(x:ZZ):string := tostring(toCstring(x));
 
 export (x:int) + (y:ZZ) : ZZ := toInteger(x) + y;
@@ -1537,7 +1537,7 @@ export yn(n:long,x:RR):RR := (
 
 log2ten := log(10.) / log(2.);
 getstr(returnexponent:long, base:int, sigdigs:int, x:RR):string ::= tostring(
-     Ccode(Cstring, "(Cstring) mpfr_get_str((char *)0,&", returnexponent, ",",
+     Ccode(CharStarOrNull, "(CharStarOrNull) mpfr_get_str((char *)0,&", returnexponent, ",",
 	  base, ",(size_t)", sigdigs, ",(__mpfr_struct *)", x, ",GMP_RNDN)"));
 export sign(x:RR):bool := 0 != Ccode(int,"mpfr_signbit((__mpfr_struct *)",x,")");
 export format(

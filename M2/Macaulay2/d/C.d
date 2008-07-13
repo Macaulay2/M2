@@ -55,8 +55,9 @@ import GrAllocColor(r:int,g:int,b:int):int;
 import kbhit():bool;
 import kill(pid:int,sig:int):int;
 export string := array(char);
-export Cstring := {Cstring:void} or null ;
-import tostring(s:Cstring):string;
+export CharStar := {c:char};
+export CharStarOrNull := CharStar or null;
+import tostring(s:CharStarOrNull):string;
 import gbTrace:int;
 export notify:bool := false;
 

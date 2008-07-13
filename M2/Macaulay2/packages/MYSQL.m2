@@ -3,14 +3,34 @@ end
 
 m = mysqlRealConnect ("localhost","dan","foobar","",0,"")
 mysqlGetHostInfo m
-mysqlListDbs(m,"")
-mysqlListDbs(m,"f_")
-mysqlListDbs(m,"f__")
-mysqlListDbs(m,"f%")
+dbs = mysqlListDbs(m,"")
+mysqlFetchRow dbs
+mysqlFetchRow dbs
+mysqlFetchRow dbs
+mysqlFetchRow dbs
+
+r = mysqlListDbs(m,"f_")
+mysqlFetchRow r
+
+r = mysqlListDbs(m,"f__")
+mysqlFetchRow r
+mysqlFetchRow r
+
+r = mysqlListDbs(m,"f%")
+mysqlFetchRow r
+mysqlFetchRow r
+
 n = new MysqlBuffer from m
 n << "use foo" << submit
 n << "select idnum from clients" << submit
-mysqlStoreResult m
+r = mysqlStoreResult m
+mysqlFetchRow r
+mysqlFetchRow r
+mysqlFetchRow r
+
 n << "select idnum from clients" << submit
-mysqlUseResult m
+r = mysqlUseResult m
+mysqlFetchRow r
+mysqlFetchRow r
+mysqlFetchRow r
 

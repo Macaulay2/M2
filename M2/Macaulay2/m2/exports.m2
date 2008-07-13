@@ -902,6 +902,7 @@ export {
 	symbol mutableZero,
 	symbol MysqlBuffer,
 	symbol MysqlConnection,
+	symbol mysqlFetchRow,
 	symbol mysqlGetHostInfo,
 	symbol mysqlListDbs,
 	symbol mysqlQuery,
