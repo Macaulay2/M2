@@ -24,13 +24,16 @@ submitfun MysqlBuffer := x -> (
      x)
 submit = new Manipulator from {submitfun}
 
+MysqlResultList = new Type of List
+net MysqlResultList := netList @@ toList
+
 mysqlFetchRows = method()
 mysqlFetchRows MysqlResult := res -> (
      rows := new MutableHashTable;
      while null =!= (row := mysqlFetchRow res) do rows##rows = row;
-     values rows)
+     netList values rows)
 mysqlFetchFields = method()
 mysqlFetchFields MysqlResult := res -> (
      rows := new MutableHashTable;
      while null =!= (row := mysqlFetchField res) do rows##rows = row;
-     values rows)
+     netList values rows)
