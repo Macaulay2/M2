@@ -172,6 +172,14 @@ mysqlFetchRow(e:Expr):Expr := (
      else WrongArg("a mysql result set"));
 setupfun("mysqlFetchRow",mysqlFetchRow);
 
+mysqlFetchField(e:Expr):Expr := (
+     when e is rw:MysqlResultWrapper do (
+     	  when Ccode(MysqlFieldOrNULL, "(mysql_MysqlFieldOrNULL)mysql_fetch_field((MYSQL_RES*)",rw.res,")")
+	  is fld:MysqlField do Expr(MysqlFieldWrapper(rw,fld))
+	  else nullE)
+     else WrongArg("a mysql result set"));
+setupfun("mysqlFetchField",mysqlFetchField);
+
 --  MYSQL_FIELD *mysql_fetch_field(MYSQL_RES *result)
 --  MYSQL_FIELD *mysql_fetch_fields(MYSQL_RES *result)
 -- 
