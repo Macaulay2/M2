@@ -899,15 +899,15 @@ tostringfun(e:Expr):Expr := (
      is m:MysqlConnectionWrapper do Expr(tostring(m))
      is res:MysqlResultWrapper do Expr(
 	  "<<MysqlResult : " 
-	  + tostring(Ccode(int, "mysql_num_rows((MYSQL_RES *)", res.res, ")"))
+	  + tostring(Ccode(int, "\n # if USE_MYSQL \n mysql_num_rows((MYSQL_RES *)", res.res, ") \n #else \n 0 \n #endif \n"))
 	  + " by "
-	  + tostring(Ccode(int, "mysql_num_fields((MYSQL_RES *)", res.res, ")"))
+	  + tostring(Ccode(int, "\n # if USE_MYSQL \n mysql_num_fields((MYSQL_RES *)", res.res, ") \n #else \n 0 \n #endif \n"))
 	  + ">>")
      is fld:MysqlFieldWrapper do Expr(
 	  "<<MysqlField : " 
-	  + Ccode(string,"tostring2(((MYSQL_FIELD *)", fld.fld, ")->name)")
+	  + Ccode(string,"tostring2(\n #if USE_MYSQL \n ((MYSQL_FIELD *)", fld.fld, ")->name \n #else \n \"\" \n #endif \n )")
 	  + " : "
-	  + tostring(Ccode(int,"((MYSQL_FIELD *)", fld.fld, ")->type"))
+	  + tostring(Ccode(int,"\n # if USE_MYSQL \n ((MYSQL_FIELD *)", fld.fld, ")->type \n #else \n 0 \n #endif \n"))
 	  + ">>")
      is Net do Expr("<<net>>")
      is CodeClosure do Expr("<<pseudocode>>")
