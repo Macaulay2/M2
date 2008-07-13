@@ -9,6 +9,8 @@ use stdio;
 use gmp;
 use tokens;
 use common;
+use basic;
+use util;
 
 mysqlError(mysql:MysqlConnection):Expr := (
      Ccode(void, "extern string tostring2(const char *)");
@@ -138,18 +140,33 @@ mysqlListDbs(e:Expr):Expr := (
      else WrongNumArgs(2));
 setupfun("mysqlListDbs",mysqlListDbs);
 
+CharStarStar := {ptr:CharStarOrNull};
+CharStarStarOrNull := CharStarStar or null;
+ULongStar := {x:ulong};
+ULongStarOrNull := ULongStar or null;
+
+(s:CharStar    ) + (i:int) : CharStar     ::= Ccode(CharStar, "(", s, "+", i, ")" );
+(s:CharStarStar) + (i:int) : CharStarStar ::= Ccode(CharStarStar, "(", s, "+", i, ")" );
+(s:ULongStar   ) + (i:int) : ULongStar    ::= Ccode(ULongStar, "(", s, "+", i, ")" );
+
 mysqlFetchRow(e:Expr):Expr := (
-     nullE
-     );
+     Ccode(void, "extern void *tostrings(int,char **)");
+     Ccode(void, "extern void *tostringn(char *s,int n)");
+     when e is rw:MysqlResultWrapper do (
+	  row := Ccode(CharStarStarOrNull, "(CharStarStarOrNull)mysql_fetch_row((MYSQL_RES*)",rw.res,")");
+	  when row
+	  is null do nullE				    -- end of result set
+	  is rowp:CharStarStar do (
+	       nflds := Ccode(int, "mysql_num_fields((MYSQL_RES*)",rw.res,")");
+	       lens  := Ccode(ULongStar, "(ULongStar)mysql_fetch_lengths((MYSQL_RES*)",rw.res,")");
+	       Expr(
+		    list (
+			 new Sequence len nflds do
+			 for i from 0 to nflds-1 do 
+			 provide Expr(Ccode(string,"tostringn((char *)",(rowp + i).ptr, ",(int)", (lens+i).x, ")"))))))
+     else WrongArg("a mysql result set"));
 setupfun("mysqlFetchRow",mysqlFetchRow);
 
--- There are two ways for a client to process result sets. One way is to retrieve
--- the entire result set all at once by calling mysql_store_result(). This
--- function acquires from the server all the rows returned by the query and stores
--- them in the client. The second way is for the client to initiate a row-by-row
--- result set retrieval by calling mysql_use_result(). This function initializes
--- the retrieval, but does not actually get any rows from the server.
--- 
 -- In both cases, you access rows by calling mysql_fetch_row(). With
 -- mysql_store_result(), mysql_fetch_row() accesses rows that have previously been
 -- fetched from the server. With mysql_use_result(), mysql_fetch_row() actually
