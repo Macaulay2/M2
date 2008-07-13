@@ -29,3 +29,8 @@ mysqlFetchRows MysqlResult := res -> (
      rows := new MutableHashTable;
      while null =!= (row := mysqlFetchRow res) do rows##rows = row;
      values rows)
+mysqlFetchFields = method()
+mysqlFetchFields MysqlResult := res -> (
+     rows := new MutableHashTable;
+     while null =!= (row := mysqlFetchField res) do rows##rows = row;
+     values rows)
