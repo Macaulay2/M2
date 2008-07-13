@@ -15,7 +15,9 @@ cat <<EOF >compat.h
 #include <mpfr.h>
 #define  DCODE 1
 
+#if USE_MYSQL
 #include <mysql/mysql.h>
+#endif
 
 #include "gmp_aux.h"
 #include "memdebug.h"
