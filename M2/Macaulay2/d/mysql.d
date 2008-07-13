@@ -109,10 +109,10 @@ setupfun("mysqlQuery",mysqlRealQuery);
 
 mysqlGetHostInfo(e:Expr):Expr := (
      Ccode(void, "extern string tostring2(const char *)");
-     when e is m:MysqlConnectionWrapper do Expr(
+     when e is m:MysqlConnectionWrapper do (
 	  if m.open
-	  then Ccode(string, "tostring2(mysql_get_host_info((MYSQL*)", m.mysql, "))" )
-	  else "closed")
+	  then Expr(Ccode(string, "tostring2(mysql_get_host_info((MYSQL*)", m.mysql, "))" ))
+	  else WrongArg("an open connection to a mysql database"))
      else WrongArg("a connection to a mysql database"));
 setupfun("mysqlGetHostInfo", mysqlGetHostInfo);
 
@@ -183,77 +183,34 @@ mysqlFetchField(e:Expr):Expr := (
      else WrongArg("a mysql result set"));
 setupfun("mysqlFetchField",mysqlFetchField);
 
--- I couldn't get this to work:
--- mysqlListFields(e:Expr):Expr := (
---      Ccode(void, "extern char *tocharstar(string)");
---      Ccode(void, "const char *nullstringer(const char *)");
---      when e is s:Sequence do
---      if length(s) != 3 then WrongNumArgs(3) else
---      when s.0 is conn:MysqlConnectionWrapper do
---      if !conn.open then WrongArg(1,"an open connection to a mysql database") else
---      when s.1 is table:string do 
---      when s.2 is wild:string do
---      toExpr(conn,Ccode(MysqlResultOrNULL,"(mysql_MysqlResultOrNULL)mysql_list_fields(",
--- 	       "(MYSQL*)", conn.mysql, ",",
--- 	       "tocharstar(", table, "),",
--- 	       "nullstringer(tocharstar(", wild, "))",
--- 	       ")"))
---      else WrongArgString(3)
---      else WrongArgString(2)
---      else WrongArg(1,"a connection to a mysql database")
---      else WrongNumArgs(3));
--- setupfun("mysqlListFields",mysqlListFields);
--- 
+mysqlListFields(e:Expr):Expr := (
+     Ccode(void, "extern char *tocharstar(string)");
+     Ccode(void, "const char *nullstringer(const char *)");
+     when e is s:Sequence do
+     if length(s) != 3 then WrongNumArgs(3) else
+     when s.0 is conn:MysqlConnectionWrapper do
+     if !conn.open then WrongArg(1,"an open connection to a mysql database") else
+     when s.1 is table:string do 
+     when s.2 is wild:string do
+     toExpr(conn,Ccode(MysqlResultOrNULL,"(mysql_MysqlResultOrNULL)mysql_list_fields(",
+	       "(MYSQL*)", conn.mysql, ",",
+	       "tocharstar(", table, "),",
+	       "nullstringer(tocharstar(", wild, "))",
+	       ")"))
+     else WrongArgString(3)
+     else WrongArgString(2)
+     else WrongArg(1,"a connection to a mysql database")
+     else WrongNumArgs(3));
+setupfun("mysqlListFields",mysqlListFields);
 
---     typedef char **MYSQL_ROW;		/* return data as array of strings */
--- 
---     typedef struct st_mysql_field {
---       char *name;                 /* Name of column */
---       char *org_name;             /* Original column name, if an alias */
---       char *table;                /* Table of column if column was a field */
---       char *org_table;            /* Org table name, if table was an alias */
---       char *db;                   /* Database for table */
---       char *catalog;	      /* Catalog for table */
---       char *def;                  /* Default value (set by mysql_list_fields) */
---       unsigned long length;       /* Width of column (create length) */
---       unsigned long max_length;   /* Max width for selected set */
---       unsigned int name_length;
---       unsigned int org_name_length;
---       unsigned int table_length;
---       unsigned int org_table_length;
---       unsigned int db_length;
---       unsigned int catalog_length;
---       unsigned int def_length;
---       unsigned int flags;         /* Div flags */
---       unsigned int decimals;      /* Number of decimals in field */
---       unsigned int charsetnr;     /* Character set */
---       enum enum_field_types type; /* Type of field. See mysql_com.h for types */
---     } MYSQL_FIELD;
-
---     enum enum_field_types { MYSQL_TYPE_DECIMAL, MYSQL_TYPE_TINY, MYSQL_TYPE_SHORT, MYSQL_TYPE_LONG, MYSQL_TYPE_FLOAT,
--- 	 MYSQL_TYPE_DOUBLE, MYSQL_TYPE_NULL, MYSQL_TYPE_TIMESTAMP, MYSQL_TYPE_LONGLONG, MYSQL_TYPE_INT24,
--- 	 MYSQL_TYPE_DATE, MYSQL_TYPE_TIME, MYSQL_TYPE_DATETIME, MYSQL_TYPE_YEAR, MYSQL_TYPE_NEWDATE, MYSQL_TYPE_VARCHAR,
--- 	 MYSQL_TYPE_BIT, MYSQL_TYPE_NEWDECIMAL, MYSQL_TYPE_ENUM, MYSQL_TYPE_SET, MYSQL_TYPE_TINY_BLOB,
--- 	 MYSQL_TYPE_MEDIUM_BLOB, MYSQL_TYPE_LONG_BLOB, MYSQL_TYPE_BLOB, MYSQL_TYPE_VAR_STRING, MYSQL_TYPE_STRING,
--- 	 MYSQL_TYPE_GEOMETRY };
--- 
---     typedef struct st_mysql_res {
---       my_ulonglong row_count;
---       MYSQL_FIELD	*fields;
---       MYSQL_DATA	*data;
---       MYSQL_ROWS	*data_cursor;
---       unsigned long *lengths;		/* column lengths of current row */
---       MYSQL		*handle;		/* for unbuffered reads */
---       MEM_ROOT	field_alloc;
---       unsigned int	field_count, current_field;
---       MYSQL_ROW	row;			/* If unbuffered read */
---       MYSQL_ROW	current_row;		/* buffer to current row */
---       my_bool	eof;			/* Used by mysql_fetch_row */
---       /* mysql_stmt_close() had to cancel this result */
---       my_bool       unbuffered_fetch_cancelled;  
---       const struct st_mysql_methods *methods;
---     } MYSQL_RES;
--- 
+mysqlGetServerInfo(e:Expr):Expr := (
+     Ccode(void, "extern string tostring2(const char *)");
+     when e is m:MysqlConnectionWrapper do (
+	  if m.open
+	  then Expr(Ccode(string, "tostring2(mysql_get_server_info((MYSQL*)", m.mysql, "))" ))
+	  else WrongArg("an open connection to a mysql database"))
+     else WrongArg("a connection to a mysql database"));
+setupfun("mysqlGetServerInfo", mysqlGetServerInfo);
 
 -- Local Variables:
 -- compile-command: "make -C $M2BUILDDIR/Macaulay2/d "

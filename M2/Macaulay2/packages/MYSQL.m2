@@ -1,8 +1,6 @@
-newPackage "MYSQL" -- the name of this package conflicts with the name of the type 
-end
-
 m = mysqlRealConnect ("localhost","dan","foobar","",0,"")
 mysqlGetHostInfo m
+mysqlGetServerInfo m
 d = mysqlListDbs(m,"")
 mysqlFetchRow d
 mysqlFetchRow d
@@ -28,3 +26,37 @@ mysqlFetchRows r
 
 n << "select * from clients" << submit
 mysqlFetchRows mysqlUseResult m
+
+m << "use mysql" << "show tables"
+mysqlFetchRows mysqlStoreResult m
+
+m << "show columns from columns_priv"
+mysqlFetchRows mysqlStoreResult m
+
+m << "select * from columns_priv"
+mysqlFetchRows mysqlStoreResult m
+
+m << "show columns from db"
+mysqlFetchRows mysqlStoreResult m
+
+m << "select * from db"
+mysqlFetchRows mysqlStoreResult m
+
+m << "show columns from func"
+mysqlFetchRows mysqlStoreResult m
+
+m << "select * from func"
+mysqlFetchRows mysqlStoreResult m
+
+m << "show columns from user"
+mysqlFetchRows mysqlStoreResult m
+
+m << "select * from user"
+mysqlFetchRows mysqlStoreResult m
+
+m << "show columns from help_topic"
+mysqlFetchRows mysqlStoreResult m
+
+m << "select * from help_topic"
+mysqlFetchRows mysqlStoreResult m -- warning, output has 8522 lines, 57268 words and 2905660 characters.
+-- we can make a good help facility from this
