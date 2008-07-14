@@ -3,3 +3,5 @@ the default value of UserMode should be true
 fix all uses of installPackage at build time to explicitly set it false.
 
 check should accept this option
+
+getPackage should accept this option
