@@ -191,7 +191,7 @@ endif
 	$(SCC1) $(SCCFLAGS) +gc -J. -noline $<
 %.oo  : %.d
 	$(SCC1) $(SCCFLAGS) +gc -J. $<
-	$(COMPILE.c) -Wno-unused -Wno-uninitialized $*.c $(OUTPUT_OPTION)
+	$(COMPILE.c) -Wno-unused -Wno-uninitialized -Wno-cast-qual $*.c $(OUTPUT_OPTION)
 	rm $*.c
 
 # The following line has been included to remove old style cast warnings while compiling

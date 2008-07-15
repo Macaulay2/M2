@@ -5,7 +5,7 @@ MysqlResult.synonym = "mysql result set"
 MysqlField.synonym = "mysql field"
 
 Manipulator MysqlConnection := (m,o) -> m#0 o
-MysqlConnection << String := mysqlQuery
+MysqlConnection << String := mysqlRealQuery
 MysqlBuffer = new Type of MutableList
 new MysqlBuffer from MysqlConnection := (MysqlBuffer,m) -> {m,new MutableHashTable}
 Manipulator MysqlConnection := MysqlConnection => (m,o) -> m#0 o
@@ -20,7 +20,7 @@ submitfun = method()
 submitfun MysqlBuffer := x -> (
      query := concatenate values x#1;
      x#1 = new MutableHashTable;
-     mysqlQuery(x#0,query);
+     mysqlRealQuery(x#0,query);
      x)
 submit = new Manipulator from {submitfun}
 
@@ -31,9 +31,9 @@ mysqlFetchRows = method()
 mysqlFetchRows MysqlResult := res -> (
      rows := new MutableHashTable;
      while null =!= (row := mysqlFetchRow res) do rows##rows = row;
-     netList values rows)
+     new MysqlResultList from values rows)
 mysqlFetchFields = method()
 mysqlFetchFields MysqlResult := res -> (
      rows := new MutableHashTable;
      while null =!= (row := mysqlFetchField res) do rows##rows = row;
-     netList values rows)
+     new MysqlResultList from values rows)
