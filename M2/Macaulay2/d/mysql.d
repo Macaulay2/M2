@@ -13,12 +13,17 @@ use common;
 use basic;
 use util;
 
+mysqlErrno(mysql:MysqlConnection):int ::= Ccode(int,"mysql_errno((MYSQL*)",mysql,")");
+
 mysqlError(mysql:MysqlConnection):Expr := (
      Ccode(void, "extern string tostring2(const char *)");
-     buildErrorPacket(Ccode(string, "tostring2(mysql_error((MYSQL*)",mysql,"))")));
+     buildErrorPacket(
+	  if 0 == mysqlErrno(mysql)
+	  then "unknown mysql error"
+	  else Ccode(string, "tostring2(mysql_error((MYSQL*)",mysql,"))")));
 possibleMysqlError(mysql:MysqlConnection):Expr := (
      Ccode(void, "extern string tostring2(const char *)");
-     if 0 == Ccode(int,"mysql_errno((MYSQL*)",mysql,")")
+     if 0 == mysqlErrno(mysql)
      then nullE
      else buildErrorPacket(Ccode(string, "tostring2(mysql_error((MYSQL*)",mysql,"))")));
 mysqlConnectionFinalizer(m:MysqlConnectionWrapper, msg:string):void := (
@@ -127,7 +132,14 @@ setupfun("mysqlStoreResult",mysqlStoreResult);
 mysqlUseResult(e:Expr):Expr := (
      when e is m:MysqlConnectionWrapper do (
 	  if m.open
-	  then toExpr(m, Ccode(MysqlResultOrNull, "(mysql_MysqlResultOrNull)mysql_use_result((MYSQL*)", m.mysql, ")" ))
+	  then (
+	       res := Ccode(MysqlResultOrNull, "(mysql_MysqlResultOrNull)mysql_use_result((MYSQL*)", m.mysql, ")" );
+	       when res is null do (
+		    if mysqlErrno(m.mysql) == 0 then return buildErrorPacket("mysqlUseResult: no results available");
+		    )
+	       else nothing;
+	       toExpr(m, res)
+	       )
 	  else WrongArg("an open connection to a mysql database"))
      else WrongArg("a connection to a mysql database"));
 setupfun("mysqlUseResult",mysqlUseResult);
