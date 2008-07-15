@@ -93,7 +93,7 @@ stderr << "--loading configuration for package \"PKG\" from file " << currentFil
 -- different options, but the values will be retained and a backup file
 -- will be made.
 
--- Look at 
+-- Look at the value of
 --         options PKG
 -- to see the values of the configuration options after loading the package.
 
