@@ -16,6 +16,8 @@ cat <<EOF >compat.h
 #define  DCODE 1
 
 #if USE_MYSQL
+/* functions like mysql_info() return "const char *", but the D language
+   produces code without any "const" keywords" */
 #include <mysql/mysql.h>
 #endif
 

@@ -8,6 +8,7 @@ use C;
 use stdio;
 use gmp;
 use tokens;
+use objects;
 use common;
 use basic;
 use util;
@@ -28,15 +29,15 @@ mysqlConnectionFinalizer(m:MysqlConnectionWrapper, msg:string):void := (
      );
 mysqlResultFinalizer(m:MysqlResultWrapper, msg:string):void := Ccode(void,"mysql_free_result((MYSQL_RES*)",m.res,")");
 
-export MysqlFieldOrNULL := MysqlField or null;
-export toExpr(res:MysqlResultWrapper, x:MysqlFieldOrNULL):Expr := (
+export MysqlFieldOrNull := MysqlField or null;
+export toExpr(res:MysqlResultWrapper, x:MysqlFieldOrNull):Expr := (
      when x is fld:MysqlField 
      do Expr(MysqlFieldWrapper(res,fld)) 
      else mysqlError(res.connection.mysql)
      );
 
-export MysqlResultOrNULL := MysqlResult or null;
-export toExpr(conn:MysqlConnectionWrapper, x:MysqlResultOrNULL):Expr := (
+export MysqlResultOrNull := MysqlResult or null;
+export toExpr(conn:MysqlConnectionWrapper, x:MysqlResultOrNull):Expr := (
      when x is res:MysqlResult do (
 	  msg := "MysqlResult";
 	  rw := MysqlResultWrapper(conn,res);
@@ -45,8 +46,8 @@ export toExpr(conn:MysqlConnectionWrapper, x:MysqlResultOrNULL):Expr := (
      else mysqlError(conn.mysql)
      );
 
-export MysqlConnectionOrNULL := MysqlConnection or null; 
-export toExpr(mysql:MysqlConnection, x:MysqlConnectionOrNULL):Expr := (
+export MysqlConnectionOrNull := MysqlConnection or null; 
+export toExpr(mysql:MysqlConnection, x:MysqlConnectionOrNull):Expr := (
      when x is mysql:MysqlConnection do (
 	  msg := "MysqlConnection";
 	  mw := MysqlConnectionWrapper(mysql,true);
@@ -68,7 +69,7 @@ mysqlRealConnect(e:Expr):Expr := (
      	  when s.5 is unixSocket:string do (
 	       mysql := Ccode(MysqlConnection, "(tokens_MysqlConnection)mysql_init(0)");
 	       if 0 != Ccode(int,"mysql_options((MYSQL*)",mysql,", MYSQL_SET_CHARSET_NAME, \"utf8\")") then return mysqlError(mysql);
-	       toExpr(mysql,Ccode(MysqlConnectionOrNULL, "(mysql_MysqlConnectionOrNULL)mysql_real_connect(",
+	       toExpr(mysql,Ccode(MysqlConnectionOrNull, "(mysql_MysqlConnectionOrNull)mysql_real_connect(",
 			 "(MYSQL*)",mysql,",",
 			 "nullstringer(tocharstar(",host,")),",
 			 "nullstringer(tocharstar(",user,")),",
@@ -105,7 +106,6 @@ mysqlRealQuery(e:Expr):Expr := (
      else WrongArg(1,"a connection to a mysql database")
      else WrongNumArgs(2));
 setupfun("mysqlRealQuery",mysqlRealQuery);
-setupfun("mysqlQuery",mysqlRealQuery);
 
 mysqlGetHostInfo(e:Expr):Expr := (
      Ccode(void, "extern string tostring2(const char *)");
@@ -119,7 +119,7 @@ setupfun("mysqlGetHostInfo", mysqlGetHostInfo);
 mysqlStoreResult(e:Expr):Expr := (
      when e is m:MysqlConnectionWrapper do (
 	  if m.open
-	  then toExpr(m, Ccode(MysqlResultOrNULL, "(mysql_MysqlResultOrNULL)mysql_store_result((MYSQL*)", m.mysql, ")" ))
+	  then toExpr(m, Ccode(MysqlResultOrNull, "(mysql_MysqlResultOrNull)mysql_store_result((MYSQL*)", m.mysql, ")" ))
 	  else WrongArg("an open connection to a mysql database"))
      else WrongArg("a connection to a mysql database"));
 setupfun("mysqlStoreResult",mysqlStoreResult);
@@ -127,7 +127,7 @@ setupfun("mysqlStoreResult",mysqlStoreResult);
 mysqlUseResult(e:Expr):Expr := (
      when e is m:MysqlConnectionWrapper do (
 	  if m.open
-	  then toExpr(m, Ccode(MysqlResultOrNULL, "(mysql_MysqlResultOrNULL)mysql_use_result((MYSQL*)", m.mysql, ")" ))
+	  then toExpr(m, Ccode(MysqlResultOrNull, "(mysql_MysqlResultOrNull)mysql_use_result((MYSQL*)", m.mysql, ")" ))
 	  else WrongArg("an open connection to a mysql database"))
      else WrongArg("a connection to a mysql database"));
 setupfun("mysqlUseResult",mysqlUseResult);
@@ -139,7 +139,7 @@ mysqlListDbs(e:Expr):Expr := (
      when s.0 is m:MysqlConnectionWrapper do 
      if !m.open then WrongArg(1,"an open connection to a mysql database") else
      when s.1 is wild:string do
-     toExpr(m, Ccode(MysqlResultOrNULL, "(mysql_MysqlResultOrNULL)mysql_list_dbs((MYSQL*)", m.mysql, ", tocharstar(", wild, "))" ))
+     toExpr(m, Ccode(MysqlResultOrNull, "(mysql_MysqlResultOrNull)mysql_list_dbs((MYSQL*)", m.mysql, ", tocharstar(", wild, "))" ))
      else WrongArgString(2)
      else WrongArg(1,"a connection to a mysql database")
      else WrongNumArgs(2));
@@ -177,7 +177,7 @@ setupfun("mysqlFetchRow",mysqlFetchRow);
 
 mysqlFetchField(e:Expr):Expr := (
      when e is rw:MysqlResultWrapper do (
-     	  when Ccode(MysqlFieldOrNULL, "(mysql_MysqlFieldOrNULL)mysql_fetch_field((MYSQL_RES*)",rw.res,")")
+     	  when Ccode(MysqlFieldOrNull, "(mysql_MysqlFieldOrNull)mysql_fetch_field((MYSQL_RES*)",rw.res,")")
 	  is fld:MysqlField do Expr(MysqlFieldWrapper(rw,fld))
 	  else nullE)
      else WrongArg("a mysql result set"));
@@ -192,7 +192,7 @@ mysqlListFields(e:Expr):Expr := (
      if !conn.open then WrongArg(1,"an open connection to a mysql database") else
      when s.1 is table:string do 
      when s.2 is wild:string do
-     toExpr(conn,Ccode(MysqlResultOrNULL,"(mysql_MysqlResultOrNULL)mysql_list_fields(",
+     toExpr(conn,Ccode(MysqlResultOrNull,"(mysql_MysqlResultOrNull)mysql_list_fields(",
 	       "(MYSQL*)", conn.mysql, ",",
 	       "tocharstar(", table, "),",
 	       "nullstringer(tocharstar(", wild, "))",
@@ -211,6 +211,39 @@ mysqlGetServerInfo(e:Expr):Expr := (
 	  else WrongArg("an open connection to a mysql database"))
      else WrongArg("a connection to a mysql database"));
 setupfun("mysqlGetServerInfo", mysqlGetServerInfo);
+
+mysqlGetServerVersion(e:Expr):Expr := (
+     Ccode(void, "extern string tostring2(const char *)");
+     when e is m:MysqlConnectionWrapper do (
+	  if m.open
+	  then toExpr(Ccode(ulong, "mysql_get_server_version((MYSQL*)", m.mysql, ")" ))
+	  else WrongArg("an open connection to a mysql database"))
+     else WrongArg("a connection to a mysql database"));
+setupfun("mysqlGetServerVersion", mysqlGetServerVersion);
+
+mysqlInfo(e:Expr):Expr := (
+     Ccode(void, "extern string tostring2(const char *)");
+     when e is m:MysqlConnectionWrapper do (
+	  if m.open
+	  then (
+	       ptr := Ccode(CharStarOrNull, "(CharStarOrNull)mysql_info((MYSQL*)", m.mysql, ")");
+	       when ptr is null do nullE
+	       is str:CharStar do Expr(Ccode(string, "tostring2((char *)",str, ")" )))	       
+	  else WrongArg("an open connection to a mysql database"))
+     else WrongArg("a connection to a mysql database"));
+setupfun("mysqlInfo", mysqlInfo);
+
+mysqlPing(e:Expr):Expr := (
+     Ccode(void, "extern string tostring2(const char *)");
+     when e is m:MysqlConnectionWrapper do (
+	  if m.open
+	  then (
+	       if 0 != Ccode(int, "mysql_ping((MYSQL*)", m.mysql, ")")
+	       then mysqlError(m.mysql)
+	       else Expr("alive"))
+	  else WrongArg("an open connection to a mysql database"))
+     else WrongArg("a connection to a mysql database"));
+setupfun("mysqlPing", mysqlPing);
 
 -- Local Variables:
 -- compile-command: "make -C $M2BUILDDIR/Macaulay2/d "
