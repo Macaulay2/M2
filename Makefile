@@ -117,6 +117,12 @@ grep :
 	find . \( -name .svn -o -name BUILD -o -name autom4te.cache \) -prune -false -o -type f | xargs grep -nH -e $(SEARCH)
 endif
 
+announce:
+	@ echo '-*- compilation -*-'
+	@ echo ' -- Macaulay 2 compilation:'
+	@ echo ' --   Paste this output into an emacs buffer and run M-x compilation-mode'
+	@ echo ' --   and then C-C ` (same as M-x next-error) to view the errors.'
+
 # Local Variables:
 # mode: Makefile
 # compile-command: "make -f Makefile "
