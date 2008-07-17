@@ -1,0 +1,4 @@
+For sage and other builders of Macaulay2, it would be very nice if
+./BUILD/share were to contain all the precomputed architecture independent
+files normally built, so that we could include those files in a (bulky) source
+distribution.
