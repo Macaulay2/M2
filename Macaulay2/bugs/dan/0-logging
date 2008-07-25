@@ -1,0 +1,18 @@
+M2 should generate log files of all user input so bug reporting can be more
+accurate.  There should be a command line option to turn it off, and it should
+automatically turn off if stdin is not a tty device.
+
+Older files should be deleted automatically -- keep just 25?  Make that an
+option?
+
+Flush the output buffer after each input expression, in case Macaulay 2 crashes.
+
+Start the file with info about the M2 version.
+
+There could be a File corresponding to the open log file, so debugging code
+can send stuff there.
+
+It could be implemented by means of a new hook: "BeforeEval", which could even
+change the input string from the user.
+
+It could be part of a Logging package, with configuration settings, etc.
