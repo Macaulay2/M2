@@ -1,3 +1,16 @@
+From: David Eisenbud <de@msri.org>
+To: dan@math.uiuc.edu
+In-Reply-To: <200807251400.m6PE0UNT018674@u123.math.uiuc.edu>
+Subject: Re: bugs in minPres and regularity
+Date: Fri, 25 Jul 2008 19:42:43 -0700
+
+true!
+
+I think making M**R2 work would be a natural thing.
+
+
+
+
 Date: Fri, 25 Jul 2008 18:00:08 -0500
 From: "Daniel R. Grayson" <dan@math.uiuc.edu>
 To: David Eisenbud <de@msri.org>
