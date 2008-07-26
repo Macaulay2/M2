@@ -1,0 +1,68 @@
+Date: Fri, 25 Jul 2008 18:00:08 -0500
+From: "Daniel R. Grayson" <dan@math.uiuc.edu>
+To: David Eisenbud <de@msri.org>
+CC: dan@math.uiuc.edu, mike.stillman@mac.com
+In-reply-to: <2BDB8419-B30C-4504-9E24-9A0EBCCB098C@msri.org> (message from
+	David Eisenbud on Fri, 25 Jul 2008 14:27:44 -0700)
+Subject: Re: M2 oddity
+Reply-to: dan@math.uiuc.edu
+
+
+Perhaps the tensor product way with a module should work.  Probably my thinking
+was that R1 is not a precursor of R1, so there might be various ring maps one
+    	       	     	       	  ^^
+				  R2
+could intend.
+
+Meanwhile, try this:
+
+    i10 : map(R2,R1) ** M
+
+    o10 = cokernel | x2 |
+
+				   1
+    o10 : R2-module, quotient of R2
+
+Applying a ring map to a module with relations runs against the grain of
+standard mathematical notation, though, so I think I will leave that.
+
+Perhaps it will be enough to add more info to this error message:
+
+    i9 : substitute(M, R2) -- produces an error suggesting the next line
+    stdio:9:1:(1):[0]: ring map applied to module with relations: use '**' or 'tensor' instead
+
+
+> From: David Eisenbud <de@msri.org>
+> To: Michael Stillman <mike@math.cornell.edu>, Dan Grayson <dan@math.uiuc.edu>
+> Subject: M2 oddity
+> Date: Fri, 25 Jul 2008 14:27:44 -0700
+> 
+> Dear Mike and Dan,
+> 
+> Here's a behavior of M2 that I find suboptimal. I'd like to
+> promote a module (with relations) to a larger ring, where
+> the variable names match, as follows, but I have to form
+> a presentation matrix, promote that, and then take the coker
+> instead. Is there a better way? Why NOT make "substitute" do
+> this, or if not, then **?
+> 
+> Regards,
+> 
+> David
+> 
+> kk = ZZ/101
+> R1=kk[x]
+> M=R1^1/x^2
+> R2=kk[x,y]
+> substitute(M, R2) -- produces an error suggesting the next line
+> R2**M -- also produces an error!
+> 
+> --
+> David Eisenbud
+> Professor of Mathematics,
+> University of California, Berkeley
+> www.msri.org/~de
+> 
+> 
+> 
+
