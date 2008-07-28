@@ -17,7 +17,15 @@ newPackage(
 -- must be placed in one of the following two lists
 export {
      solveSystem, track, refine, totalDegreeStartSystem,
-     areEqual, sortSolutions, multistepPredictor, multistepPredictorLooseEnd
+     areEqual, sortSolutions, multistepPredictor, multistepPredictorLooseEnd,
+     --options
+     Software,PHCpack,Bertini,HOM4PS2,
+     gamma,tDegree,tStep,tStepMin,stepIncreaseFactor,numberSuccessesBeforeIncrease,
+     Predictor,RungeKutta4,Multistep,Tangent,Euler,Secant,MultistepDegree,
+     finalMaxCorSteps, maxCorSteps, 
+     Projectivize,
+     AffinePatches, DynamicPatch,
+     RandomSeed     
      }
 exportMutable {
      }
@@ -136,7 +144,7 @@ track = method(TypicalValue => List, Options =>{
 	  maxCorSteps => 4,
 	  -- projectivization
 	  Projectivize => true, 
-	  AffinePatches => {},
+	  AffinePatches => DynamicPatch,
 	  RandomSeed => 0 } )
 track (List,List,List) := List => o -> (S,T,solsS) -> (
 -- tracks solutions from start system to target system
@@ -234,7 +242,6 @@ track (List,List,List) := List => o -> (S,T,solsS) -> (
 			 "t"=>t0,"x"=>x0
 			 } };
 	       while x0 =!= infinity and 1-t0 > theSmallestNumber do (
-		    << "----" << endl;
 		    if DBG > 4 then << "current t = " << t0 << endl;
                     -- monitor numerical stability: perhaps change patches if not stable ???
 		    -- Hx0 := evalHx(x0,t0);
@@ -247,18 +254,19 @@ track (List,List,List) := List => o -> (S,T,solsS) -> (
 		    local dx; local dt;
      	       	    if dPatch =!= null 
 		    then dPatch = -- conjugate of the normalized kernel vector 
-		    time matrix{ flatten entries normalize transpose gens ker lift(sub(Hx, transpose x0 | matrix {{t0}}), CC) / conjugate };   
+		    matrix{ flatten entries normalize transpose gens ker lift(sub(Hx, transpose x0 | matrix {{t0}}), CC) / conjugate };   
 		    --matrix { flatten entries transpose x0 / conjugate };
 		    	 
 		    if o.Predictor == Tangent then (
 		    	 Hx0 := evalHx(x0,t0);
 			 Ht0 := evalHt(x0,t0);
 	     	    	 invHx0 := inverse Hx0;
-		    	 invHx0timesHt0 := invHx0*Ht0;
+		    	 --invHx0timesHt0 := invHx0*Ht0;
 		    	 -- if norm invHx0timesHt0 > divThresh then (x0 = infinity; break);
 		    	 tStepSafe := 1; -- 1/(norm(Hx0)*norm(invHx0)); -- what is a good heuristic?
 		    	 dt = min(min(tStep,tStepSafe), 1-t0);
-		         dx = -dt*invHx0timesHt0;
+		         --dx = -dt*invHx0timesHt0;
+			 dx = solve(Hx0,-dt*Ht0);
 			 ) 
 		    else if o.Predictor == Euler then (
 			 H0 := evalH(x0,t0);
@@ -278,7 +286,7 @@ track (List,List,List) := List => o -> (S,T,solsS) -> (
 			      dx = dt*evalMinusInverseHxHt(x0,t0);
 			      );
 			 )
-		    else if o.Predictor == RungeKutta4 then time (
+		    else if o.Predictor == RungeKutta4 then (
 			 dt = min(tStep, 1-t0);
 			 k1 := dt*evalMinusInverseHxHt(x0,t0);
 			 k2 := dt*evalMinusInverseHxHt(x0+.5*k1,t0+.5*dt);
@@ -340,15 +348,14 @@ track (List,List,List) := List => o -> (S,T,solsS) -> (
 		    -- corrector step
 		    dx = 1; -- dx = + infinity
 		    nCorSteps := 0;
-		    << "+++++++" << endl;
 		    while norm dx > epsilon 
 		          and nCorSteps < (if 1-t1 < theSmallestNumber and dt < o.tStepMin 
 			                   then o.finalMaxCorSteps -- infinity
 			                   else o.maxCorSteps) 
 		    do ( 
 			 if norm x1 > divThresh then (x1 = infinity; break);
-			 if DBG > 4 then << "x=" << toString x1 << " res=" <<  toString time evalH(x1,t1) << " dx=" << dx << endl;
-			 time dx = - (inverse evalHx(x1,t1))*evalH(x1,t1);
+			 if DBG > 4 then << "x=" << toString x1 << " res=" <<  toString evalH(x1,t1) << " dx=" << dx << endl;
+			 dx = - (inverse evalHx(x1,t1))*evalH(x1,t1);
 			 x1 = x1 + dx;
 			 nCorSteps = nCorSteps + 1;
 			 );
@@ -368,6 +375,7 @@ track (List,List,List) := List => o -> (S,T,solsS) -> (
 			 if nCorSteps <= o.maxCorSteps - 1 -- over 2 / minus 2 ???
               		    and predictorSuccesses >= o.numberSuccessesBeforeIncrease 
 			 then (			      
+			      predictorSuccesses = 0;
 			      stepAdj = 1;
 			      tStep = o.stepIncreaseFactor*tStep;	
 			      if DBG > 2 then << "increased tStep to "<< tStep << endl;
@@ -721,6 +729,148 @@ sortSolutions List := o -> sols -> (
 	  );
      	  sorted
      )
+
+
+------------ SLPs ------------------------------------------------------------------------
+-- SLP = (constants, list of integers)
+-- constants = list of elements in CC
+-- list of integers = number of inputs, number of outputs, node, node, ...
+-- node = binary_operation, a, b
+--     or multi_operation, n, a1, ... , an        
+--     or copy, a                                 -- copies node n    
+-- binary_operation = {sum, product}
+-- multi_operation = {msum, mproduct} 
+--
+-- evaluation of SLP assumes 
+--       first #constants nodes to be constants 
+--       the next (number of inputs) to be inputs
+--       the last (number of output) to be outputs
+
+slpCOPY = 1; -- "COPY"; -- node positions for slpCOPY commands are absolute
+slpMULTIsum = 2; -- "MULTIsum";
+slpPRODUCT = 3; -- "PRODUCT";
+shiftConstsSLP = method(TypicalValue=>List);
+shiftConstsSLP (List,ZZ) := (slp,shift) -> apply(slp, 
+     n->apply(n, b->
+	  if class b === Option and b#0 === "const" 
+     	  then "const"=>shift+b#1 
+     	  else b
+	  )
+     );
+
+poly2slp = method(TypicalValue=>Sequence)
+poly2slp RingElement :=  g -> (
+     prog := {}; -- our SLP
+     R := ring g;
+     const := coefficient(1_R,g);
+     finalMULTIsum := {}; -- list of nodes for final multisum
+     constants := if const == 0 then {} else ( finalMULTIsum = finalMULTIsum | {"const"=>0}; {const} );
+     f := g - const;
+     scan(numgens R, i->(
+	       fnox := f%R_i;
+	       fx := f - fnox;
+	       if fx != 0 then (
+	       	    (constfx, progfx) := poly2slp (fx//R_i);
+	       	    -- shift constant nodes positions
+	       	    prog = prog | shiftConstsSLP(progfx, #constants); 
+	       	    constants = constants | constfx;
+	       	    -- multiply by x=R_i
+	       	    prog = prog | {{slpPRODUCT, "in"=>i, -1}};
+	       	    finalMULTIsum = finalMULTIsum | {#prog-1};
+		    );	       
+	       f = fnox;
+	       )); 
+     curPos := #prog;
+     if #finalMULTIsum === 1 then (
+       	  if finalMULTIsum#0 === curPos-1  -- if trivial 
+       	  then null -- do nothing
+       	  else if class finalMULTIsum#0 === Option and finalMULTIsum#0#0 == "const" then 
+	  prog = prog | {{slpCOPY, finalMULTIsum#0}}
+	  else error "unknown trivial MULTIsum"; 
+	  )   
+     else prog = prog | {{slpMULTIsum, #finalMULTIsum} | apply(finalMULTIsum, 
+	       p->if class p === Option then p 
+	       else p - curPos -- add a relative position
+	       )};    
+     << g << " => " << (constants, prog) << endl;
+     (constants, prog)
+     )
+
+M2slp = method()
+M2slp (List,ZZ,List) := (consts,nIns,slp) -> (
+-- makes rawM2slp from pre-slp   
+     curNode = #consts+nIns;
+     p = {};
+     scan(slp, n->(
+	   k := first n;
+	   if k === slpCOPY then (
+	   	if class n#1 === Option and n#1#0 == "const" then p = p | {slpCOPY} | {n#1#1} 
+		else error "unknown node type" 
+		)  
+	   else if k === slpMULTIsum then (
+		p = p | {slpMULTIsum, n#1} | toList apply(2..1+n#1, 
+		     j->if class n#j === Option and n#j#0 == "const" then n#j#1
+		     else if class n#j === ZZ then curNode+n#j
+		     else error "unknown node type" 
+		     )
+	   	)
+	   else if k === slpPRODUCT then (
+		p = p | {slpPRODUCT} | toList apply(1..2, j->(
+          		       if class n#j === Option and n#j#0 == "in" then #consts + n#j#1
+			       else if class n#j === ZZ then curNode+n#j
+			       else error "unknown node type" 
+			       ))
+		)
+	   else error "unknown SLP node key";   
+	   curNode = curNode + 1;
+	   ));
+     p = {#consts,nIns,1,curNode-1} | p;
+     (map(CC^1,CC^(#consts), {consts}), p)
+     )
+     
+evaluateSLP = method()
+evaluateSLP (List,List,List) := (constants, v, slp) -> (
+     val := {};
+     scan(#slp, i->(
+	   n := slp#i;
+	   k := first n;
+	   if k === slpCOPY then (
+	   	if class n#1 === Option and n#1#0 == "const" then val = val | {constants#(n#1#1)}
+		else error "unknown node type"; 
+		)  
+	   else if k === slpMULTIsum then (
+		val = val | { sum(2..1+n#1, 
+			  j->if class n#j === Option and n#j#0 == "const" then constants#(n#j#1)
+			  else if class n#j === ZZ then val#(i+n#j)
+			  else error "unknown node type" 
+			  )
+		     }
+	   	)
+	   else if k === slpPRODUCT then (
+		val = val | { 
+		     product(1..2, j->(
+          		       if class n#j === Option and n#j#0 == "in" then v#(n#j#1)
+			       else if class n#j === ZZ then val#(i+n#j)
+			       else error "unknown node type" 
+			       ))
+		     }
+		)
+	   else error "unknown SLP node key";   
+	   ));
+ last val
+ )
+///
+restart
+loadPackage "NAG"; debug NAG;
+R = CC[x,y,z]
+g = 3*y^2+2*x
+g = 1 + 2*x^2 + 3*x*y^2 + 4*z^2
+g = random(3,R)
+(constants, slp) = poly2slp g
+eg = evaluateSLP(constants,gens R,slp)
+eg == g
+///
+
 beginDocumentation()
 
 document { 
