@@ -765,9 +765,9 @@ const MatrixOrNull *rawEvaluateSLP(StraightLineProgram *SLP, const Matrix *vals)
   return SLP->evaluate(vals);
 }
 
-M2_string rawStraightLineProgramToString(const StraightLineProgram *) {
+M2_string rawStraightLineProgramToString(const StraightLineProgram *slp) {
   buffer o;
-  o << "{*StraightLineProgram*}";
+  slp->text_out(o);
   return o.to_string();
 }
 
