@@ -1,0 +1,27 @@
+a better method for VisibleList _ List:
+
+    i3 : X = new Type of List;
+
+    i4 : new X from {a,b,c}
+
+    o4 = {a, b, c}
+
+    o4 : X
+
+    i6 : o4_{2,1}
+
+    o6 = {c, b}
+
+    o6 : List
+
+    i9 : VisibleList _ List := VisibleList => (x,y) -> new class x from apply(splice toSequence y, i -> x#i)
+
+    o9 = VisibleList => {*Function[stdio:9:43-9:86]*}
+
+    o9 : Option
+
+    i10 : o4_{2,1}
+
+    o10 = {c, b}
+
+    o10 : X
