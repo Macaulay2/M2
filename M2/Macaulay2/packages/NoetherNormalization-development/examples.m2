@@ -45,7 +45,7 @@ clearAll
 A = QQ[x_1..x_3][x_4]
 A = QQ[x_1..x_4]
 I = ideal(x_1^2 + x_1*x_4+1,x_1*x_2*x_3*x_4+1)
-(f,J,j) = noetherNormalization(I,Verbose=>true,LimitSequence => {5})
+(f,J,j) = noetherNormalization(I,Verbose=>true,LimitList => {5})
 A/f I
 
 A = QQ
