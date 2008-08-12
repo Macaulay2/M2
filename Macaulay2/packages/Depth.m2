@@ -4,7 +4,7 @@
 
 newPackage(
      "Depth",
-     Version => "0.4.1", 
+     Version => "0.4.2", 
      Date => "March 21, 2008",
      Authors => {
 	  {Name => "Bart Snapp", Email => "snapp@coastal.edu", HomePage => "http://ww2.coastal.edu/snapp/"}
@@ -195,19 +195,19 @@ document {
      "The function ", TT "depth(I,A)", ", computes the ", TT "I",
 "-depth of a ring. It does this by computing ", TT "Ext^i(A^1/I,A)", 
 " and noting where it does not vanish.",
-     EXAMPLE {
-	  "A = QQ[x_1..x_3]/ideal(x_1^2, x_1*x_2);",
-	  "m = ideal vars A",
-	  "depth(m,A)"
-	  },
+     EXAMPLE lines ///
+     A = QQ[x_1..x_3]/ideal(x_1^2, x_1*x_2);
+     m = ideal vars A
+     depth(m,A)
+     ///,
      "If ", TT "I", " contains a unit, then ", TT "depth(I,A)", " outputs ", TO "infinity", ".",
-     EXAMPLE {
-	  "depth(ideal(1),ZZ)"
-	  },
+     EXAMPLE lines ///
+     depth(ideal(1),ZZ)
+     ///,
      PARA {
-     "This symbol is provided by the package ", TO Depth, "."
-     }
-     }
+     	  "This symbol is provided by the package ", TO Depth, "."
+     	  }
+     }	   
 
 -----------------------------------------------------------------------------
 
@@ -229,13 +229,13 @@ document {
 	  It does not check to see if ", TT "XA = A", "."},
      	  "Given a list ", TT "X", ", the function ", TT "regularSequenceCheck",
 	  " gives an integer indicating how many initial elements of a ", TT "List", " form a regular sequence.",
-     EXAMPLE {
-	  "A = ZZ[x_1..x_4]/(x_4^2)",
-	  "regularSequenceCheck({x_1..x_4},A)"
-	  },
+     EXAMPLE lines ///
+     A = ZZ[x_1..x_4]/(x_4^2)	  
+     regularSequenceCheck({x_1..x_4},A)	    
+     ///,
      PARA {
-     "This symbol is provided by the package ", TO Depth, "."
-     }
+     	  "This symbol is provided by the package ", TO Depth, "."
+     	  }
      }
 
 -----------------------------------------------------------------------------
@@ -256,19 +256,19 @@ document {
           "Given a list ", TT "X", ", the function ", TT "isRegularSequence", " tells if ", 
 	  TT "X", " forms a regular sequence. It does this by checking the injectivity of the maps defined 
 	  by multiplication by the elements of ", TT "X", " and checks if ", TT "XA = A", ".",
-        EXAMPLE {
-	  "A = ZZ/2[x, y, z];",
-	  "X1 = {x, y*(x-1), z*(x-1)};",
-	  "isRegularSequence(X1, A)",
-	  "X2 = {z*(x-1), y*(x-1), x};",
-	  "isRegularSequence(X2, A)",
-	  "X3 = {1, x, y};",
-	  "isRegularSequence(X3, A)"
-	  },
-      PARA {
-     "This symbol is provided by the package ", TO Depth, "."
-     }
-     }
+          EXAMPLE lines ///
+	A = ZZ/2[x, y, z];
+	X1 = {x, y*(x-1), z*(x-1)};
+	isRegularSequence(X1, A)
+	X2 = {z*(x-1), y*(x-1), x};
+	isRegularSequence(X2, A)
+	X3 = {1, x, y};
+	isRegularSequence(X3, A)
+	///,
+      	PARA {
+     	     "This symbol is provided by the package ", TO Depth, "."
+     	     }
+     	}
 -----------------------------------------------------------------------------
 
 document {
@@ -304,10 +304,10 @@ document {
      ///,
      "Here are examples with optional inputs:",
      EXAMPLE lines ///
-	  A = ZZ/5051[x, y, z];
-	  I = ideal (x, x*y, y*z);
-	  regularSequence(I,A,Attempts=>1,Bound=>100,Sparseness=>.9)
-       	  ///,
+     A = ZZ/5051[x, y, z];
+     I = ideal (x, x*y, y*z);
+     regularSequence(I,A,Attempts=>1,Bound=>100,Sparseness=>.9)
+     ///,
      "Here are examples with the optional input ", TT "Maximal => false", ":",
      EXAMPLE lines ///
      x = symbol x; y = symbol y;
