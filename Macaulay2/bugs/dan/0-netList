@@ -1,0 +1,23 @@
+This should not give an error.  Instead it should produce something reasonable.
+
+    i41 : netList({{"a","b"}},BaseRow => 1)
+    stdio:41:1:(1):[0]: netList: base row out of bounds
+
+Here's what it would do otherwise:
+
+    i42 : netList({{"a","b"},{"a","b"}},BaseRow => 1)
+
+	  +-+-+
+	  |a|b|
+	  +-+-+
+    o42 = |a|b|
+	  +-+-+
+
+So maybe this would be okay:
+
+    i42 : netList({{"a","b"}},BaseRow => 1)
+
+	  +-+-+
+	  |a|b|
+	  +-+-+
+    o42 =
