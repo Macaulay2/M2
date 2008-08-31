@@ -1,0 +1,2 @@
+The directories on the path need slashes at the end, so the user
+should be warned about that.
