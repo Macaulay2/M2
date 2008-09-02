@@ -437,9 +437,12 @@ AC_ARG_WITH(srctarfile, AS_HELP_STRING(--with-srctarfile=...,source tar file to 
     SRCTARFILE=`cd "$dirname" && pwd`/`basename "$withval"`)
 
 AC_SUBST(CYGWIN,no)
-AC_ARG_ENABLE(cygwin,  AS_HELP_STRING(--enable-cygwin,prepare a binary package for cygwin (disables encap and enables strip)), CYGWIN=$enableval)
+AC_ARG_ENABLE(cygwin,  AS_HELP_STRING(--enable-cygwin,prepare a binary package for cygwin (disables encap)), CYGWIN=$enableval)
 if test "$CYGWIN" = yes 
-then ENCAP=yes STRIP=yes M2TARFILE=yes
+then if test "$DEBUG$" = yes
+     then AC_MSG_ERROR([--enable-cygwin and --enable-debug both specified])
+     fi
+     ENCAP=yes M2TARFILE=yes
      if ! test "$SRCTARFILE" -o -d "$srcdir/.svn"
      then AC_MSG_ERROR([source tar file needed for cygwin distribution, specify it with --with-srctarfile=...])
      fi
@@ -682,8 +685,10 @@ do AC_LANG(C++)
    SLIBS="$SINGULARLIBS -lcfmem"
    LIBS="$SLIBS $LIBS"
    AC_MSG_CHECKING([whether factory library is installed ($SLIBS)])
-   AC_LINK_IFELSE( [[ #include <factory.h>
+   AC_LINK_IFELSE( [[ #define NOSTREAMIO
+	              #include <factory.h>
 		      #include <templates/ftmpl_inst.cc>
+	              
 		      int main () { return 0 ; }
 	       ]],
        AC_MSG_RESULT(yes),
@@ -691,8 +696,10 @@ do AC_LANG(C++)
        SLIBS="$SLIBS -lntl"
        LIBS="$SLIBS $SAVELIBS"
        AC_MSG_CHECKING([whether factory library is installed ($SLIBS)])
-       AC_LINK_IFELSE( [[ #include <factory.h>
+       AC_LINK_IFELSE( [[ #define NOSTREAMIO
+		          #include <factory.h>
 			  #include <templates/ftmpl_inst.cc>
+	                  
 			  int main () { return 0 ; }
 		   ]],
 	   AC_MSG_RESULT(yes),
@@ -702,6 +709,7 @@ do AC_LANG(C++)
    AC_RUN_IFELSE( [[ /* this is line 1 */
 	   #include <stdio.h>
 	   #include <string.h>
+           #define NOSTREAMIO
 	   #include <factory.h>
 	   #include <factor.h>
 	   #include <templates/ftmpl_inst.cc>

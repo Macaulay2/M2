@@ -9,6 +9,10 @@
 #include "../d/M2types.h"
 
 #include <config.h>
+#ifndef M2_CONFIG_H
+#error config.h file included was not ours
+#endif
+
 #include <stdio.h>
 #if HAVE_STDINT_H
 #include <stdint.h>

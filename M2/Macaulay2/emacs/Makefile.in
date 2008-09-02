@@ -1,7 +1,7 @@
 # @configure_input@
 include ../../include/config.Makefile
 VPATH = @srcdir@
-LD_LIBRARY_PATH := ../../libraries/final@FINALPREFIX@/@librariesdirtail@/lib:$(LD_LIBRARY_PATH)
+LD_LIBRARY_PATH := $(BUILTLIBPATH)/lib:$(LD_LIBRARY_PATH)
 export LD_LIBRARY_PATH
 ARGS = -q --silent --stop -e errorDepth=0
 .PHONY : all clean distclean install check default

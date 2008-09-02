@@ -40,13 +40,14 @@ int main (int argc, char **argv) {
      int s=s0;
      s0=s;			// use s at least once
      //   use one of these to see if overflows are really detected.  Each one should generate an overflow and a program termination.
-     if (argc == 2) {
-	  if (0 == strcmp(argv[1],"sub")) { printf("test failed, result %x\n",safe::sub(0x80000000,1-x+x)); exit(1); } else
-	  if (0 == strcmp(argv[1],"add")) { printf("test failed, result %x\n",safe::add(0x7fffffff,1-x+x)); exit(1); } else
-	  if (0 == strcmp(argv[1],"mult")) { printf("test failed, result %x\n",safe::mult(0x8000,0x10000-x+x)); exit(1); } else
-	  if (0 == strcmp(argv[1],"div")) { printf("test failed, result %x\n",safe::div(0x80000000,-1-x+x)); exit(1); } else
-	  if (0 == strcmp(argv[1],"minus")) { printf("test failed, result %x\n",safe::minus(0x80000000-x+x)); exit(1); } else
-	  { printf("unknown test: %s\n", argv[1]); exit(1); }
+     if (argc > 1) {
+       if (0 == strcmp(argv[1],"sub")) { printf("test failed, result %x\n",(unsigned int)safe::sub(0x80000000,1-x+x)); exit(1); } 
+       else if (0 == strcmp(argv[1],"add")) { printf("test failed, result %x\n",(unsigned int)safe::add(0x7fffffff,1-x+x)); exit(1); } 
+       else if (0 == strcmp(argv[1],"mult")) { printf("test failed, result %x\n",(unsigned int)safe::mult(0x8000,0x10000-x+x)); exit(1); }
+       else if (0 == strcmp(argv[1],"div")) { printf("test failed, result %x\n",(unsigned int)safe::div(0x80000000,-1-x+x)); exit(1); }
+       else if (0 == strcmp(argv[1],"minus")) { printf("test failed, result %x\n",(unsigned int)safe::minus(0x80000000-x+x)); exit(1); }
+       else if (0 == strcmp(argv[1],"throw")) { safe::ov("throw overflow exception"); printf("test failed\n"); exit(1); }
+       else { printf("unknown test: %s\n", argv[1]); exit(1); }
      }
 #    define roll 100
      printf("%Ld repetitions\n",(long long)inner*outer*roll);

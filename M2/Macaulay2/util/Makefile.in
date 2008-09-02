@@ -2,9 +2,8 @@
 include ../../include/config.Makefile
 VPATH = @srcdir@
 EXES := echoout timestmp restart updat
-CFLAGS += -I. -I../../include -I../../libraries/final@FINALPREFIX@/@librariesdirtail@/include
-LDFLAGS += -L../../libraries/final@FINALPREFIX@/@librariesdirtail@/lib
-LD_LIBRARY_PATH := ../../libraries/final@FINALPREFIX@/@librariesdirtail@/lib:$(LD_LIBRARY_PATH)
+CPPFLAGS :=  -I. -I../../include $(CPPFLAGS)
+LD_LIBRARY_PATH := $(BUILTLIBPATH)/lib:$(LD_LIBRARY_PATH)
 export LD_LIBRARY_PATH
 
 ifeq (@OS@,Linux)

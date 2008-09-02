@@ -125,6 +125,7 @@
 ;;
 
 (defvar M2-exe "M2" "*The default Macaulay2 executable name.")
+(defvar M2-shell-exe "/bin/sh" "*The default shell executable name.")
 (defvar M2-command (concat M2-exe " --no-readline --print-width " (number-to-string (- (window-width) 1)) " ") "*The default Macaulay2 command line.")
 (defvar M2-history (list M2-command) "The history of recent Macaulay2 command lines.")
 (defvar M2-send-to-buffer "*M2*" "*The default buffer that \\[M2-send-to-program] sends input to.")
@@ -158,7 +159,7 @@ added to it."
   (setq foobar current-prefix-arg)
   (switch-to-buffer 
    (make-comint "M2" ; specifying "M2" here means the buffer will be named *M2*
-		"/bin/sh" ; name of program
+		M2-shell-exe ; name of shell program
 		nil			; starting input file
 		"-c" (concat "echo; set -x; " command)		; arguments to the program
 		))

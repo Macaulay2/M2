@@ -21,11 +21,10 @@ CNAMES := scc1.c readfile.c error.c dictionary.c list.c cprint.c type.c chk.c co
 HFILES := $(CNAMES:.c=.h) scc.h grammar.h
 OFILES := $(CNAMES:.c=.o) grammar.o
 SRCFILES := $(HFILES) $(CNAMES) grammar.y
-CPPFLAGS += -I../../include -I/include -I@srcdir@/../../include
-CPPFLAGS += -I@srcdir@
-LDFLAGS += -L../../libraries/final@FINALPREFIX@/@librariesdirtail@/lib
+CPPFLAGS := -I../../include -I/include -I@srcdir@/../../include -I@srcdir@ $(CPPFLAGS)
+
 ifeq (@OS@,Linux)
-LDFLAGS += -Wl,-rpath,$(shell /bin/pwd)/../../libraries/final@FINALPREFIX@/@librariesdirtail@/lib
+LDFLAGS += -Wl,-rpath,$(BUILTLIBPATH)/lib
 endif
 LOADLIBES += -lgc
 ifeq "@PTHREADS@" "yes"

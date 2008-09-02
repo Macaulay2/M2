@@ -9,7 +9,7 @@ all:: initialize
 Makefile : Makefile.in ; cd ../.. && ./config.status Macaulay2/m2/Makefile
 VERSION : VERSION.in ../../config.status  ; cd ../.. && ./config.status Macaulay2/m2/VERSION
 emacs html: all; $(MAKE) -C ../$@
-LD_LIBRARY_PATH := @TOPDIR@/libraries/final@FINALPREFIX@/@librariesdirtail@/lib:$(LD_LIBRARY_PATH)
+LD_LIBRARY_PATH := $(BUILTLIBPATH)/lib:$(LD_LIBRARY_PATH)
 export LD_LIBRARY_PATH
 ##############################
 .SUFFIXES: .m2
