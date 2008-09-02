@@ -1,0 +1,27 @@
+The documentation of randomMutableMatrix says the entries have absolute values
+up to the specified maximum, but this output shows that the positive maximum is
+omitted.
+
+i43 : tally flatten entries randomMutableMatrix(20,40,0.,10)
+
+o43 = Tally{-1 => 34 }
+            -2 => 41
+            -3 => 46
+            -4 => 48
+            -5 => 38
+            -6 => 43
+            -7 => 38
+            -8 => 42
+            -9 => 32
+            -10 => 43
+            0 => 41
+            1 => 49
+            2 => 45
+            3 => 40
+            4 => 37
+            5 => 46
+            6 => 26
+            7 => 38
+            8 => 38
+            9 => 35
+

@@ -8,18 +8,20 @@ ifeq (@CXX@-@ISYSTEM@,g++-yes)
 # We are using the -MM option to create *.dep files, which ignores "system" include files.
 # We want ../../include/config.h to be a "system" include file, so changing it
 # will not force a recompilation of all of our C++ files.
-M2CPPFLAGS  = -isystem ../../include
-M2CPPFLAGS += -isystem ../../libraries/final@FINALPREFIX@/@librariesdirtail@/include
-M2CPPFLAGS += -isystem @srcdir@/../../include
-M2CPPFLAGS += -isystem ../util
+#  M2CPPFLAGS  = -isystem ../../include
+#  M2CPPFLAGS += -isystem @srcdir@/../../include
+#  M2CPPFLAGS += -isystem ../util
+# But we also want it searched before all the directories specified by the builder with -I, sigh.
+M2CPPFLAGS  = -I../../include
+M2CPPFLAGS += -I@srcdir@/../../include
+M2CPPFLAGS += -I../util
 else
 M2CPPFLAGS  = -I../../include
-M2CPPFLAGS += -I../../libraries/final@FINALPREFIX@/@librariesdirtail@/include
 M2CPPFLAGS += -I@srcdir@/../../include
 M2CPPFLAGS += -I../util
 endif
 M2CPPFLAGS += -I.
-CPPFLAGS += $(M2CPPFLAGS)
+CPPFLAGS := $(M2CPPFLAGS) $(CPPFLAGS)
 
 PRE.cc   = $(COMPILE.cc) -E 
 
@@ -49,7 +51,7 @@ all :: run-overflow-test
 run-overflow-test : overflow-test
 	./$^ sub 2>/dev/null || echo test succeeded
 	./$^ minus 2>/dev/null || echo test succeeded
-	./$^ mul 2>/dev/null || echo test succeeded
+	./$^ mult 2>/dev/null || echo test succeeded
 	./$^ div 2>/dev/null || echo test succeeded
 	./$^ add 2>/dev/null || echo test succeeded
 	touch $@

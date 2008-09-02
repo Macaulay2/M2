@@ -2596,6 +2596,7 @@ void gbA::show_mem_usage()
       nmonoms += R->gbvector_n_terms(gb[i]->g.f);
       nmonoms += R->gbvector_n_terms(gb[i]->g.fsyz);
     }
+  emit_line(o.str());
   o << "number of (nonminimal) gb elements = " << gb.size();
   emit_line(o.str());
   o.reset();

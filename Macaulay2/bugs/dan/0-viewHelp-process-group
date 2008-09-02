@@ -1,0 +1,5 @@
+viewHelp should run the browser in a separate process group, so that if emacs
+kills Macaulay 2 and its group, or if Macaulay 2 quits, then the browser
+doesn't die.  This applies when firefox is the browser and is started for the
+first time by Macaulay 2.
+
