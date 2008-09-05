@@ -25,7 +25,7 @@ endif
 	hdiutil create -srcfolder files -volname @package@-@ARCH@-@OS@-@REL@ "$@"
 tidy : ; rm -rf files
 
-clean :: tidy; rm -f ../../$(PKG_DMG)
+clean :: tidy; rm -f "../../$(PKG_DMG)"
 distclean : clean; rm -f Makefile
 Makefile : Makefile.in; cd ../..; ./config.status distributions/dmg/Makefile
 
