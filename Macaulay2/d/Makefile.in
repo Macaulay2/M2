@@ -210,6 +210,17 @@ CPPFLAGS := $(M2INCLUDES) $(CPPFLAGS) $(M2_CPPFLAGS)
 CFLAGS += -Wno-unused-label $(M2_CFLAGS)
 
 ifeq (gcc,@CC@)
+M2_LDFLAGS  += -Wl,--enable-auto-import
+    # we add this linker option to prevent these warning messages:
+    # /usr/lib/gcc/i686-pc-cygwin/3.4.4/../../../../i686-pc-cygwin/bin/ld: warning: auto-importing has been activated without --enable-auto-import specified on the command line.
+    # This should work unless it involves constant data structures referencing symbols from auto-imported DLLs.
+    # Info: resolving _rl_attempted_completion_over by linking to __imp__rl_attempted_completion_over (auto-import)
+    # Info: resolving __rl_comment_begin by linking to __imp___rl_comment_begin (auto-import)
+    # Info: resolving _rl_readline_name by linking to __imp__rl_readline_name (auto-import)
+    # Info: resolving _rl_attempted_completion_function by linking to __imp__rl_attempted_completion_function (auto-import)
+    # Info: resolving _rl_basic_word_break_characters by linking to __imp__rl_basic_word_break_characters (auto-import)
+    # Info: resolving _rl_readline_version by linking to __imp__rl_readline_version (auto-import)
+    # Info: resolving _gdbm_errno by linking to __imp__gdbm_errno (auto-import)
 ifeq ($(MAPFILE),yes)
 ifeq (yes,$(shell if gcc -Wl,-v 2>&1 | grep -q 'GNU ld' ; then echo yes ; else echo no ; fi))
 ## - use this to get a memory map listing from the gnu linker
