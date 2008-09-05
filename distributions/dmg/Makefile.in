@@ -21,8 +21,8 @@ endif
 	cd files/@package@ && rm -f INSTALL encapinfo postinstall preremove
 	cp @srcdir@/ReadMe-MacOSX.rtf files/@package@
 	ln -s @package@/ReadMe-MacOSX.rtf files
-	rm -f $@
-	hdiutil create -srcfolder files -volname @package@-@ARCH@-@OS@-@REL@ $@
+	rm -f "$@"
+	hdiutil create -srcfolder files -volname @package@-@ARCH@-@OS@-@REL@ "$@"
 tidy : ; rm -rf files
 
 clean :: tidy; rm -f ../../$(PKG_DMG)
