@@ -879,6 +879,7 @@ MutableMatrixOrNull *rawMutableMatrixClean(M2_RRR epsilon, MutableMatrix *M)
       return 0;
     }
   //return M->clean(epsilon);
+  return NULL;
 } 
 
 static M2_RRRorNull get_norm_start(M2_RRR p, const Ring *R)
@@ -929,6 +930,8 @@ M2_RRRorNull rawMutableMatrixNorm(M2_RRR p, const MutableMatrix *M)
     }
   delete i;
   return nm;
+#else
+  return NULL;
 #endif
 }
 
