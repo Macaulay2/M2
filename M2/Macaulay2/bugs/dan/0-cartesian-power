@@ -1,0 +1,17 @@
+Date: Sun, 7 Sep 2008 16:40:29 -0600
+From: "Nathaniel Stapleton" <nat.j.stapleton@gmail.com>
+To: dan@math.uiuc.edu
+Subject: bug?
+
+Hi Dan,
+I've found what is just at most a small issue, but it's making my code less
+nice right now.
+
+s = set{a,b,c}
+s^**2 returns a set of sequences {(a,a),(a,b), ...}
+as does s^**n for any n>1
+however s^**1 just returns the set, ie. {a,b,c}
+not a set of sequences like you would expect {(a),(b),(c)}. Is this how it's
+meant to be?
+Thanks,
+Nat
