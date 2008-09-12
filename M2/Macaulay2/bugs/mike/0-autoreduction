@@ -1,0 +1,20 @@
+--*-M2-*-
+
+S = QQ[a,b,c,d,MonomialOrder => {Weights => {0,1,10,-7}},Global => false];
+f = c - a*b;
+g = b - a^2;
+r = f % g
+s = (matrix {{f}} % image matrix {{g}})_(0,0)
+assert (r == s)
+
+end
+
+related to this email:
+
+    Date: Thu, 11 Sep 2008 05:17:21 -0700 (PDT)
+    Subject: [Macaulay2] Re: Groebner Basis
+    From: =?ISO-8859-1?Q?Ren=E9_Birkner?= <rbirkner@mi.fu-berlin.de>
+    To: Macaulay2 <macaulay2@googlegroups.com>
+    Reply-To: macaulay2@googlegroups.com
+
+     ...
