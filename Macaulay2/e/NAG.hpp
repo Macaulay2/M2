@@ -4,7 +4,30 @@
 #define _nag_
 
 #include "matrix.hpp"
-#include "complex.h"
+
+// Simple complex number class                                                                                                                                                                          
+class complex
+{
+private:
+  double real;  // Real Part
+  double imag;      //  Imaginary Part                                                                                                       
+public:
+  complex(double,double);
+  complex(const complex&);
+  complex(M2_CCC);
+  complex operator +(complex);
+  complex operator -(complex);
+  complex operator *(complex);
+  complex operator /(complex);
+  complex getconjugate();
+  complex getreciprocal();
+  double getmodulus();
+  double getreal();
+  double getimaginary();
+  bool operator ==(complex);
+  void operator =(complex);
+  void sprint(char*);
+};
 
 // see ../packages/NAG.m2 for the description of the structure of SLPs
 
@@ -15,9 +38,9 @@
 class StraightLineProgram : public object
 {
   M2_arrayint program;
-  M2_CCC* nodes; // array of CCs
+  complex* nodes; // array of CCs
   int num_consts, num_inputs, num_outputs;
-  M2_CCC* output;
+  complex* output;
   bool evaluated;
   long precision;
 
