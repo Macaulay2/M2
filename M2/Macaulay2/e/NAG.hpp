@@ -4,6 +4,7 @@
 #define _nag_
 
 #include "matrix.hpp"
+#include "CCC.hpp"
 
 // Simple complex number class                                                                                                                                                                          
 class complex

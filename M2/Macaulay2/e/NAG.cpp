@@ -1,6 +1,7 @@
 // Copyright 2008 Anton Leykin and Mike Stillman
 
 #include "NAG.hpp"
+#include "matrix-con.hpp"
 
 //                                        CONSTRUCTOR
 complex::complex(double r=0.0f,double im=0.0f)
@@ -150,7 +151,7 @@ Matrix *StraightLineProgram::evaluate(const Matrix *values)
   if (values->n_cols() != num_inputs) 
     ERROR("different number of constants expected");
   for(i=0; i<num_inputs; i++, cur_node++)
-    nodes[i] = complex(BIGCC_VAL(values->elem(0,i)));
+    nodes[cur_node] = complex(BIGCC_VAL(values->elem(0,i)));
   i=3+num_outputs;
   for(; i<program->len; cur_node++) {
     switch (program->array[i]) {
@@ -176,14 +177,23 @@ Matrix *StraightLineProgram::evaluate(const Matrix *values)
   }
   for(i=0; i<num_outputs; i++)
     output[i] = nodes[program->array[i+3]];
-  //evaluated = true;
-  const Ring* R = values->get_ring();
-  //FreeModule* S = new FreeModule(R, num_outputs, false); //this is private
-  //FreeModule* T = new FreeModule(R, 1, false);
-  //M2_arrayint deg = makearrayint(1);
-  //deg->array[0] = 0;
-  //Matrix* ret = make(T,S,deg)
-  return values->transpose(); //hmm... how to make a matrix from scratch?
+  evaluated = true;
+  CCC* R = CCC::create(53); //values->get_ring();
+  FreeModule* S = R->make_FreeModule(num_outputs); 
+  FreeModule* T = R->make_FreeModule(1);
+  M2_arrayint deg = makearrayint(1);
+  deg->array[0] = 0;
+  MatrixConstructor mat(T,S,0);
+  for(i=0; i<num_outputs; i++) {
+    //ring_elem e = R->from_doubles(output[i].getreal(), output[i].getimaginary());
+    mpfr_t re, im;
+    mpfr_init(re); mpfr_init(im);
+    mpfr_set_d(re, output[i].getreal(), GMP_RNDN);
+    mpfr_set_d(im, output[i].getimaginary(), GMP_RNDN);
+    ring_elem e = R->from_BigReals(re,im);
+    mat.set_entry(0,i,e);
+  }
+  return mat.to_matrix(); //hmm... how to make a matrix from scratch?
 }
 
 void StraightLineProgram::text_out(buffer& o) const
@@ -228,10 +238,19 @@ void StraightLineProgram::text_out(buffer& o) const
     }
     o<<newline;
   }
+  
   if (evaluated) {
+    o<<"NODES\n";
+    for(i=0; i<program->len; i++){
+      char s[100];
+      nodes[i].sprint(s);
+      o<<"node["<< i <<"] = " << s << newline;
+    }
     o<<"OUTPUT\n";
     for(i=0; i<num_outputs; i++){
-      //o<<gmp_tostringCC(output[i])<<newline;
+      char s[100];
+      output[i].sprint(s);
+      o<<"out["<< i <<"] = " << s << newline;
     }
   }
 }
