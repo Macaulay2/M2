@@ -129,6 +129,7 @@ normalize Matrix := v->(
      )
 ------------------------------------------------------
 track = method(TypicalValue => List, Options =>{
+	  Software=>M2,
 	  gamma=>1, 
 	  tDegree=>1,
      	  -- step control
@@ -159,9 +160,100 @@ track (List,List,List) := List => o -> (S,T,solsS) -> (
      error "expected same number of polynomials in start and target systems";
      if any(S, f->ring f != R) or any(T, f->ring f != R)
      then error "expected all polynomials in the same ring";
-     if n != numgens R then error "expected a square system";
      if o.tStep <= 0 then "expected positive tStep";  
 
+     -- PHCpack -------------------------------------------------------
+     if o.Software == PHCpack then ( 
+	  targetfile := -- temporaryFileName() | 
+	             "PHCtarget";
+	  startfile := -- temporaryFileName() | 
+	             "PHCstart";
+	  outfile := -- temporaryFileName() | 
+	             "PHCoutput";
+	  solsSfile := -- temporaryFileName() | 
+	             "PHCstartsols";
+	  solsTfile := -- temporaryFileName() | 
+	             "PHCtargetsols";
+	  batchfile := -- temporaryFileName() | 
+	             "PHCbat";
+	  -- writing data to the corresponding files                                                                                                                                                                           
+     	  if n < numgens R then error "the system is underdetermined";
+	  if n > numgens R then (
+	       nSlacks := n - numgens R;
+	       slackVars := apply(nSlacks, i->getSymbol("S"|toString i));
+	       newR := CC[gens R, slackVars];
+	       rM := random(CC^n,CC^nSlacks);
+	       S = apply(#S, i->sub(S#i,newR)+(rM^{i}*transpose submatrix'(vars newR,toList(0..numgens R - 1)))_(0,0));
+	       rM = random(CC^n,CC^nSlacks);
+	       T = apply(#T, i->sub(T#i,newR)+(rM^{i}*transpose submatrix'(vars newR,toList(0..numgens R - 1)))_(0,0));
+	       solsS = apply(solsS, s->s|toList(nSlacks:0_CC)); 
+	       ) else newR = R;
+	  systemToFile(T,targetfile);
+	  systemToFile(S,startfile);
+     	  solutionsToFile(solsS,newR,solsSfile);	  
+	  -- making batch file
+	  bat := openOut batchfile;
+	    bat << targetfile << endl << outfile << endl <<"n"<< endl 
+	    << startfile << endl << solsSfile << endl;
+	    -- first menu
+	    bat << "k" << endl << o.tDegree << endl; 
+	    bat << "a" << endl << realPart o.gamma << endl << imaginaryPart o.gamma << endl;
+	    bat << "0" << endl;
+	    -- second menu 
+	    bat << "0" << endl; -- exit for now
+   	    -- third menu
+	    bat << "0" << endl; -- exit for now
+   	    -- fourth menu
+	    bat << "0" << endl; -- exit for now
+	  close bat;
+	  run(PHCexe|" -p <"|batchfile|" >null");
+  	  run(PHCexe|" -z "|outfile|" "|solsTfile);
+	  -- parse and output the solutions                                                                                                                                                                                    
+	  result := parseSolutions(solsTfile, newR);
+	  if n > numgens R then (
+	       result = apply(result, s->(
+			 if any(drop(first s, numgens R), x->abs x > 0.01) 
+			 then error "slack value is nonzero";
+			 {take(first s, numgens R)}|drop(s,1)
+			 ));
+     	       totalN := #result;
+	       scan(result, s->(
+			 if s#1#"mult">1 then error "mutiple root encountered";
+			 if s#1#"mult"<0 then error "negative mutiplicity";
+     	       		 ));			 
+	       result = select(result, 
+		    s->--s#1#"mult">0 and 
+		    max(s#0/abs)<10000 -- path failed and/or diverged
+		    );
+	       if DBG>0 and #result < totalN 
+	       then  -- error "discarded!" 
+	          << "track[PHCpack]: discarded "<< 
+	          totalN-#result << " out of " << totalN << " solutions" << endl;
+	       );
+	  -- clean up                                                                                                                                                                                                          
+	  if DBG<10 then {targetfile, startfile, outfile,
+	       solsSfile, solsTfile, batchfile } / removeFile ;
+	  return result;
+	  ) 
+     else if o.Software == Bertini then (
+	  -- tempdir := temporaryFileName() | "NAG-bertini";
+	  -- mkdir tempdir; 	  
+  	  makeBertiniInput(gens R, T, StartSystem=>S, StartSolutions=>solsS, gamma=>o.gamma);
+  	  run(BERTINIexe);
+	  result = readSolutionsBertini("raw_solutions");
+	  -- remove Bertini input/output files
+    	  for f in {"failed_paths", "nonsingular_solutions",
+               "raw_data", "start", "input", "output", "raw_solutions",
+               "main_data", "real_finite_solutions", "finite_solutions",
+               "midpath_data", "singular_solutions", "real_solutions",
+               "singular_solutions", "midpath_data"} do
+          if fileExists f then removeFile f;
+	  return result;
+	  );
+     
+     -- M2 (main code)  --------------------------------------------------------
+     if n != numgens R then error "expected a square system";
+           
      solsS = solsS / (s->sub(transpose matrix {toList s}, CC)); -- convert to vectors
      
      if o.Projectivize then (
@@ -472,7 +564,7 @@ solveSystem List := List => o -> F -> (
      	  then ( 
 	       A := matrix apply(F, f->apply(v, x->coefficient(x,f)));
 	       b := matrix apply(F, f->{coefficient(1_R,f)});
-	       solve(A,b)
+	       {{flatten entries solve(A,b)}}
 	       )
 	  else (
 	       (S,solsS) := totalDegreeStartSystem F;
@@ -494,7 +586,7 @@ solveSystem List := List => o -> F -> (
 	  run(PHCexe|" -b "|targetfile|" "|outfile);
 	  run(PHCexe|" -z "|targetfile|" "|tarsolfile);
 	  -- parse and output the solutions                                                                                                                                                                                    
-	  result = parseSolutions(tarsolfile, gens R);
+	  result = parseSolutions(tarsolfile, R);
 	  -- clean up                                                                                                                                                                                                          
 	  if DBG<10 then (
 	       removeFile targetfile;
@@ -507,8 +599,8 @@ solveSystem List := List => o -> F -> (
 	  -- mkdir tempdir; 	  
   	  makeBertiniInput(gens R, F);
   	  run(BERTINIexe);
-	  sols := readSolutionsBertini({"finite_solutions"});
-	  result = {sols, toList(#sols:1)};
+	  sols := readSolutionsBertini("finite_solutions");
+	  result = sols;
 	  -- remove Bertini input/output files
     	  for f in {"failed_paths", "nonsingular_solutions",
                "raw_data", "start", "input", "output", "raw_solutions",
@@ -525,7 +617,7 @@ solveSystem List := List => o -> F -> (
 	                "tasols";
  	  run(HOM4PS2exe|" "|targetfile|" "|tarsolfile);
 	  sols = readSolutionsHom4ps(tarsolfile, p);
-	  result = {sols, toList(#sols:1)};
+	  result = sols;
 	  if DBG<10 then (
 	       removeFile targetfile;
 	       removeFile tarsolfile; 
@@ -541,16 +633,44 @@ systemToFile (List,String) := (F,name) -> (
      file := openOut name;
      file << #F << endl;
      scan(F, f->( 
-     	       L := toString f;
+     	       L := toExternalString f;
      	       L = replace("ii", "I", L);
      	       L = replace("e", "E", L);
+	       L = replace("p53","",L);
 	       file << L << ";" << endl;
 	       ));
      close file;
      ) 
 
+solutionsToFile = method(TypicalValue => Nothing)
+solutionsToFile (List,Ring,String) := (S,R,name) -> (
+     file := openOut name;
+     file << #S << " " << numgens R << endl << 
+     "===========================================================" << endl;
+     scan(#S, i->( 
+     	       file << "solution " << i << " :" << endl <<
+	       "t :  0.00000000000000E+00   0.00000000000000E+00" << endl <<
+	       "m :  1" << endl <<
+	       "the solution for t :" << endl;
+	       scan(numgens R, v->(
+      	       		 L := " "|toString R_v|" :  "|
+			 format(0,-1,9,9,realPart toCC S#i#v)|"  "|
+			 format(0,-1,9,9,imaginaryPart toCC S#i#v);
+			 file << L << endl; 
+			 ));
+	       file <<  "== err :  0 = rco :  1 = res :  0 ==" << endl;
+	       ));
+     close file;
+     ) 
+///
+restart
+loadPackage "NAG"; debug NAG;
+R = CC[x,y,z]
+solutionsToFile( {(0,0,1),(0,0,-1)}, R, "PHCsols" )
+///
+
 parseSolutions = method(TypicalValue => Sequence)
-parseSolutions (String,List) := (s,V) -> (
+parseSolutions (String,Ring) := (s,R) -> (
 -- parses solutions in PHCpack format 
 -- IN:  s = string of solutions in PHCmaple format 
 --      V = list of variable names
@@ -562,9 +682,10 @@ parseSolutions (String,List) := (s,V) -> (
      L = replace("e\\+","e",L);
      L = replace("time", "\"time\"", L);
      L = replace("multiplicity", "\"mult\"", L);
-	  
+     
+     use R; 	  
      sols := toList apply(value L, x->new HashTable from toList x);
-     sols/(x->{apply(V, v->x#v), x})
+     sols/(x->{apply(gens R, v->x#v), x})
      )
 
 -- HOM4PS2 part -----------------------------------------------------------
@@ -585,7 +706,6 @@ makeHom4psInput (Ring, List) := (R, T) -> (
   close f;
   -- assume names of vars are not substrings of each other
   p := sort apply(numgens R, i->(first first regex(toString R_i, s), i));
-  print p;
   ( filename, new HashTable from apply(#p, i->p#i#1=>i) )
   )
 
@@ -611,20 +731,20 @@ readSolutionsHom4ps (String, HashTable) := (f,p) -> (
   s
   )
   
-makeBertiniInput = method(TypicalValue=>Nothing, Options=>{S=>{}})
+makeBertiniInput = method(TypicalValue=>Nothing, Options=>{StartSystem=>{},StartSolutions=>{},gamma=>1.0+ii})
 makeBertiniInput (List, List) := o -> (v,T) -> (
 -- IN:
 --	v = variables
 --	T = polynomials of target system
---      o.S = start system
+--      o.StartSystem = start system
   f := openOut "input"; -- THE name for Bertini's input file 
   f << "CONFIG" << endl;
   f << "MPTYPE: 2;" << endl; -- multiprecision
-  if #o.S > 0 then
+  if #o.StartSystem > 0 then
     f << "USERHOMOTOPY: 1;" << endl;
   f << endl << "END;" << endl << endl;
   f << "INPUT" << endl << endl;
-  if #o.S > 0 then
+  if #o.StartSystem > 0 then
     f << "variable "
   else f << "variable_group "; -- variable section
   scan(#v, i->
@@ -638,24 +758,34 @@ makeBertiniInput (List, List) := o -> (v,T) -> (
        then f << "f" << i << ", "
        else f << "f" << i << ";" << endl << endl
       );
-  bertiniPolyString := p->( L := toString p; 
+  bertiniNumbers := p->( L := toString p; 
        L = replace("ii", "I", L); 
        L = replace("e", "E", L);
        L
        );
-  if #o.S == 0 
-  then scan(#T, i -> f << "f" << i << " = " << bertiniPolyString T#i << ";" << endl)
+  if #o.StartSystem == 0 
+  then scan(#T, i -> f << "f" << i << " = " << bertiniNumbers T#i << ";" << endl)
   else (
-       if #o.S != #T then error "expected equal number of equations in start and target systems";
+       if #o.StartSystem != #T then error "expected equal number of equations in start and target systems";
        f << "pathvariable t;" << endl 
          << "parameter s;" << endl
          << "s = t;" << endl;
        scan(#T, i -> f << "f" << i 
-	    << " = (" << bertiniPolyString T#i << ")*(1-s)+s*(" << bertiniPolyString o.S#i << ");" << endl 
+	    << " = (" << bertiniNumbers T#i << ")*(1-s)+s*("<< bertiniNumbers o.gamma << ")*(" << bertiniNumbers o.StartSystem#i << ");" << endl 
 	   );
        );
   f << endl << "END" << endl << endl;
   close f;
+  
+  if #o.StartSolutions > 0 then (
+       f = openOut "start"; -- THE name for Bertini's start solutions file 
+       f << #o.StartSolutions << endl << endl;
+       scan(o.StartSolutions, s->(
+		 scan(s, c-> f << realPart c << " " << imaginaryPart c << ";" << endl );
+		 f << endl;
+		 ));
+       close f;
+       );
   )
 
 cleanupOutput = method(TypicalValue=>String)
@@ -667,30 +797,180 @@ cleanupOutput String := s -> (
   )
 
 readSolutionsBertini = method(TypicalValue=>List)
-readSolutionsBertini List := ofiles -> (
+readSolutionsBertini String := f -> (
   s := {};
-  for f in ofiles do (
-    l := lines get f;
-    nsols := value first separate(" ", l#0);
-    l = drop(l,2);
-    while #s < nsols do (
-	 if DBG>=10 then << "sol[<<" << temp << "] --------------------" << endl;
-	 coords := {};
-	 while #(first l) > 2 do ( 
-	      coords = coords | {(
-		   	a := separate(" ",  cleanupOutput(first l));	 
-		   	(value a#0)+ii*(value a#1)
-	      	   	)};
-    	      l = drop(l,1);
-	      );
-	 l = drop(l,1);
-         if DBG>=10 then << coords << endl;
-	 s = s | {coords};
-	 );     
-    );
+  if f == "finite_solutions" then (
+       print "implementation unstable: Bertini output format uncertain";
+       l := lines get f;
+       nsols := value first separate(" ", l#0);
+       l = drop(l,2);
+       while #s < nsols do (	 
+	    coords := {};
+	    while #(first l) > 2 do ( 
+	      	 coords = coords | {(
+		   	   a := separate(" ",  cleanupOutput(first l));	 
+		   	   (value a#0)+ii*(value a#1)
+	      	   	   )};
+    	      	 l = drop(l,1);
+	      	 );	
+	    l = drop(l,1);
+            if DBG>=10 then << coords << endl;
+	    s = s | {{coords}};
+	    );	
+       ) 
+  else if f == "raw_solutions" then (
+       l = lines get f;
+       while #l>0 and #separate(" ", l#0) < 2 do l = drop(l,1);
+       while #l>0 do (
+	    if DBG>=10 then << "------------------------------" << end;
+	    coords = {};
+	    while #l>0 and #separate(" ", l#0) >= 2 do ( 
+	      	 coords = coords | {(
+		   	   a = separate(" ",  cleanupOutput(first l));	 
+		   	   (value a#0)+ii*(value a#1)
+	      	   	   )};
+    	      	 l = drop(l,1);
+	      	 );
+	    while #l>0 and #separate(" ", l#0) < 2 do l = drop(l,1);
+            if DBG>=10 then << coords << endl;
+	    s = s | {{coords}};
+	    );     
+    ) else error "unknow output file";
   s
   )
 
+-----------------------------------------------------------------------
+-- WITNESS SET
+-- {equations, slice, points}
+-- caveat: we assume that #equations = dim(slice)   
+
+sliceEquations = method(TypicalValue=>List) 
+sliceEquations (Matrix, Ring) := (S,R) -> (
+-- make slicing plane equations 
+     apply(numgens target S, i->(sub(S^{i},R) * transpose(vars R | matrix{{1_R}}))_(0,0)) 
+     )
+
+moveSlice = method(TypicalValue=>HashTable, Options =>{Software=>M2})
+moveSlice (HashTable, Matrix) := HashTable => o -> (W,S) -> (
+-- IN:  W = witness set
+--      S = matrix defining a new slicing plane (same dimensions as W#slice)
+-- OUT: new witness set that uses S
+     if numgens target S != numgens target W#slice 
+     or numgens source S != numgens source W#slice 
+     then error "wrong dimension of new slicing plane";
+     R := ring first W#equations;
+     st := W#equations | sliceEquations(W#slice,R);
+     ta := W#equations | sliceEquations(S,R);
+     newpoints := track(st,ta,W#points,Software=>o.Software,gamma=>.6+.8*ii) / first;
+     if #newpoints != #W#points then error "number of points in the witness set changed";
+     new HashTable from {
+	  equations => W#equations, 
+	  slice => S,
+	  points => newpoints
+	  }              	  
+     )
+///
+restart
+loadPackage ("NAG", Configuration => { "PHCpack" => "./phc" }); debug NAG;
+R = CC[x,y,z]
+W1 = new HashTable from {
+     equations=>{x^2+y^2+z^2-1},
+     slice=>sub(matrix "1,0,0,0;0,1,0,0",R),
+     points=>{(0,0,1),(0,0,-1)}
+     } 
+sliceEquations (W1#slice,R)
+W2 = moveSlice(W1, sub(matrix "0,1,0,0;0,0,1,0",R)
+     --, Software=>PHCpack
+     )
+///
+
+splitWitness = method(TypicalValue=>Sequence, Options =>{Software=>M2, epsilon=>1e-6})
+splitWitness (HashTable,RingElement) := Sequence => o -> (w,f) -> (
+-- splits the witness set into two parts: one contained in {f=0}, the other not
+-- IN:  comp = a witness set
+--      f = a polynomial
+-- OUT: (w1,w2) = two witness sets   
+     w1 := {}; w2 := {};
+     for x in w#points do 
+	 if norm evalPoly(f,x) < o.epsilon 
+	 then w1 = w1 | {x}
+	 else w2 = w2 | {x};   
+     ( if #w1===0 then null 
+	  else new HashTable from {equations=>w#equations, slice=>w#slice, points=>w1}, 
+       if #w2===0 then null 
+          else new HashTable from {equations=>w#equations, slice=>w#slice, points=>w2} )
+     )
+
+regeneration = method(TypicalValue=>List, Options =>{Software=>M2})
+regeneration List := HashTable => o -> F -> (
+-- solves a system of polynomial equations by generation     
+-- IN:  F = list of polynomials
+--      Software => {PHCpack, Bertini, hom4ps2}
+-- OUT: {s,m}, where 
+--             s = list of solutions 
+--     	       m = list of corresponding multiplicities	 
+     R := ring F#0;
+     c1 := {}; -- current solution components
+     for f in F do (
+	  d := first degree f;
+	  c2 := {}; -- new components
+	  for comp in c1 do (
+	       print (#comp#points);
+	       (cIn,cOut) := splitWitness(comp,f); 
+	       if cIn =!= null 
+	       then c2 = c2 | { new HashTable from {
+			 equations => cIn#equations | {f}, 
+			 slice => cIn#slice,
+			 points => cIn#points  
+			 } }; 
+     	       if cOut =!= null then (
+		    dWS = apply(d, i->(
+			      s := cOut#slice;
+			      newSlice := random(CC^1, CC^(numgens source s)) || submatrix'(s,{0},{}); 
+			      moveSlice(cOut,newSlice,Software=>o.Software)
+			      ));
+	       	    S := comp#equations 
+	       	    | { product flatten apply( dWS, w->sliceEquations(w#slice^{0},R) ) } -- product of linear factors
+	       	    | sliceEquations( submatrix'(comp#slice,{0},{}), R );
+	       	    T := comp#equations
+	       	    | {f}
+	       	    | sliceEquations( submatrix'(comp#slice,{0},{}), R );
+	       	    targetPoints := track(S,T,flatten apply(dWS,w->w#points), 
+			 gamma=>exp(random(0.,2*pi)*ii), Software=>o.Software);
+		    --if o.Software == M2 then targetPoints = refine(T, targetPoints, epsilon=>1e-10);
+		    if #targetPoints>0 
+		    then c2 = c2 | { new HashTable from {
+			      equations => cOut#equations | {f}, 
+			      slice => submatrix'(comp#slice,{0},{}),
+			      points => targetPoints/first  
+			      } };
+		    ); 
+	       );
+	  c1 = c2;
+	  if #c1 === 0 then ( -- if the first equation is being processed 
+	       rM := random(CC^(numgens R-1), CC^(numgens R + 1));
+     	       c1 = { new HashTable from { 
+	       		 equations => {f},
+	       		 slice => rM,
+	       		 points => solveSystem( {f} | sliceEquations(rM,R), Software=>o.Software ) / first 
+	       		 } }; 
+	       );
+	  );
+     c1	  
+     )
+///
+restart
+loadPackage ("NAG", Configuration => { "PHCpack" => "./phc", "Bertini" => "./bertini" }); debug NAG;
+R = CC[x,y,z]
+regeneration({x^2+y^2+z^2-1,x,y*z} 
+     ,Software=>PHCpack
+     --,Software=>Bertini
+     )
+regeneration({x^2+y^2+z^2-1,x*y,y*z} 
+     --,Software=>PHCpack
+     --,Software=>Bertini
+     )
+///
 -----------------------------------------------------------------------
 -- AUXILIARY FUNCTIONS
 
@@ -730,6 +1010,10 @@ sortSolutions List := o -> sols -> (
      	  sorted
      )
 
+evalPoly = method(TypicalValue=>CC)
+evalPoly (RingElement, List) := (f,x) -> (
+     sub(sub(f, sub(matrix{x},ring f)), coefficientRing ring f)
+     )
 
 ------------ SLPs ------------------------------------------------------------------------
 -- SLP = (constants, list of integers)

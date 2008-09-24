@@ -10,7 +10,7 @@ load "benchmarks.m2";
 --I = stewartGough40real();     -- 883     -- >>0     -- 31      --
 I = example2();
 
-t = currentTime(); P = solveSystem I_*; currentTime()-t
+t = currentTime(); P = solveSystem (I_*,Software=>PHCpack); currentTime()-t
 t = currentTime(); B = solveSystem (I_*,Software=>Bertini); currentTime()-t
 t = currentTime(); H = solveSystem (I_*,Software=>hom4ps2); currentTime()-t
 
