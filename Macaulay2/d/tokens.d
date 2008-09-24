@@ -296,7 +296,7 @@ export Boolean := {v:bool};
 export Nothing := {nothing:void};
 
 export MysqlConnection := {MysqlConnection:void};
-export MysqlConnectionWrapper := {mysql:MysqlConnection, open:bool};
+export MysqlConnectionWrapper := {mysql:MysqlConnection or null};
 export MysqlResult := {MysqlResult:void};
 export MysqlResultWrapper := {connection:MysqlConnectionWrapper, res:MysqlResult};
 export MysqlField  := {MysqlField:void};

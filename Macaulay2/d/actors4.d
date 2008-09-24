@@ -879,9 +879,11 @@ setupfun("separate",linesfun);
 tostring(m:MysqlConnectionWrapper):string := (
      Ccode(void, "extern string tostring2(const char *)");
      "<<MysqlConnection : " + (
-	  if m.open
-	  then Ccode(string, "tostring2(\n#if USE_MYSQL\n mysql_get_host_info((MYSQL*)", m.mysql, ")\n#else\n \"not present\"\n#endif\n)" )
-	  else "closed"
+	  when m.mysql 
+	  is null 
+	  do "closed" 
+	  is n:MysqlConnection 
+	  do Ccode(string, "tostring2(\n#if USE_MYSQL\n mysql_get_host_info((MYSQL*)", n, ")\n#else\n \"not present\"\n#endif\n)" )
 	  )
      + ">>");
 

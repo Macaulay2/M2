@@ -288,9 +288,7 @@ export equal(lhs:Expr,rhs:Expr):Expr := (
 	  )
      is x:MysqlConnectionWrapper do (
 	  when rhs
-	  is y:MysqlConnectionWrapper do (
-	       if x.mysql == y.mysql && x.open == y.open then True else False
-	       )
+	  is y:MysqlConnectionWrapper do if x.mysql == y.mysql then True else False
 	  else False
 	  )
      is MysqlFieldWrapper do False
