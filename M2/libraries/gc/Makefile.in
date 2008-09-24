@@ -1,10 +1,7 @@
 URL = http://www.hpl.hp.com/personal/Hans_Boehm/gc/gc_source
 
-VERSION = 7.1alpha3-080224
-TARDIR = gc-7.1alpha3
-
-# VERSION = 6.7
-# TARDIR = gc6.7
+VERSION = 7.1
+TARDIR = gc-7.1
 
 ifeq (@PTHREADS@,yes)
 CONFIGOPTIONS += --enable-threads=posix
