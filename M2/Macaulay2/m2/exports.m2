@@ -902,6 +902,8 @@ export {
 	symbol mutableZero,
 	symbol MysqlBuffer,
 	symbol MysqlConnection,
+	symbol mysqlDebug,
+	symbol mysqlNextResult,
 	symbol mysqlFetchRow,
 	symbol mysqlFetchField,
 	symbol mysqlFetchFields,
