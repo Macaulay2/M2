@@ -277,7 +277,7 @@ AC_LANG(C)
 AC_SUBST(HAVE_PERSONALITY,)
 AC_CHECK_FUNC(personality, HAVE_PERSONALITY=1, HAVE_PERSONALITY=0)
 
-AC_SUBST(PTHREADS,no)  AC_ARG_ENABLE(pthreads, AS_HELP_STRING(--enable-pthreads,enable pthreads in gc), PTHREADS=$enableval)
+AC_SUBST(PTHREADS,yes) AC_ARG_ENABLE(pthreads, AS_HELP_STRING(--enable-pthreads,enable pthreads in gc), PTHREADS=$enableval)
 AC_SUBST(STRIP,yes)    AC_ARG_ENABLE(strip, AS_HELP_STRING(--disable-strip,do not strip the symbol table from the Macaulay 2 binary), STRIP=$enableval)
 AC_SUBST(STATIC,no)    AC_ARG_ENABLE(static, AS_HELP_STRING(--enable-static,enable static linking), STATIC=$enableval)
 AC_SUBST(MEMDEBUG,no)  AC_ARG_ENABLE(memdebug, AS_HELP_STRING(--enable-memdebug,enable memory allocation debugging), MEMDEBUG=$enableval)

@@ -8,6 +8,7 @@ TARDIR = gc-7.1alpha3
 
 ifeq (@PTHREADS@,yes)
 CONFIGOPTIONS += --enable-threads=posix
+CONFIGOPTIONS += --enable-parallel-mark
 else 
 CONFIGOPTIONS += --disable-threads
 endif
