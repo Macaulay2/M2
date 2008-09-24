@@ -1,0 +1,83 @@
+caching needed:
+
+    i1 : QQ[x]
+
+    o1 = QQ [x]
+
+    o1 : PolynomialRing
+
+    i2 : I = ideal x
+
+    o2 = ideal(x)
+
+    o2 : Ideal of QQ [x]
+
+    i4 : gbTrace = 3
+
+    o4 = 3
+
+    i5 : gb I
+
+       -- [gb]
+       -- number of (nonminimal) gb elements = 1
+       -- number of monomials                = 1
+       -- ncalls = 0
+    nloop = 0
+    nsaved = 0
+
+    o5 = GroebnerBasis[status: done; S-pairs encountered up to degree 0]
+
+    o5 : GroebnerBasis
+
+    i6 : gb I
+
+       -- [gb]
+       -- number of (nonminimal) gb elements = 1
+       -- number of monomials                = 1
+       -- ncalls = 0
+    nloop = 0
+    nsaved = 0
+
+    o6 = GroebnerBasis[status: done; S-pairs encountered up to degree 0]
+
+    o6 : GroebnerBasis
+
+=============================================================================
+
+caching also needed:
+
+    i1 : QQ[x]
+
+    o1 = QQ [x]
+
+    o1 : PolynomialRing
+
+    i2 : f = vars o1
+
+    o2 = | x |
+
+			1              1
+    o2 : Matrix (QQ [x])  <--- (QQ [x])
+
+    i3 : gb f
+
+    o3 = GroebnerBasis[status: done; S-pairs encountered up to degree 0]
+
+    o3 : GroebnerBasis
+
+    i4 : gbTrace = 3
+
+    o4 = 3
+
+    i5 : gb f
+
+       -- [gb]
+       -- number of (nonminimal) gb elements = 1
+       -- number of monomials                = 1
+       -- ncalls = 0
+    nloop = 0
+    nsaved = 0
+
+    o5 = GroebnerBasis[status: done; S-pairs encountered up to degree 0]
+
+    o5 : GroebnerBasis
