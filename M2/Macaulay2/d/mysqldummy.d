@@ -18,6 +18,8 @@ setupfun("mysqlGetServerInfo",err);
 setupfun("mysqlGetServerVersion", err);
 setupfun("mysqlInfo", err);
 setupfun("mysqlPing", err);
+setupfun("mysqlDebug", err);
+setupfun("mysqlNextResult", err);
 
 -- Local Variables:
 -- compile-command: "make -C $M2BUILDDIR/Macaulay2/d "

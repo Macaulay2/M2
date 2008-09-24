@@ -488,9 +488,11 @@ setupfun("isListener",isListener);
 close(g:Expr):Expr := (
      when g
      is m:MysqlConnectionWrapper do (
-	  if m.open then (
-	       Ccode(void,"\n #if USE_MYSQL \n mysql_close((MYSQL*)",m.mysql,") \n #else \n 0 \n #endif \n ");
-	       m.open = false;
+	  when m.mysql
+	  is null do nothing
+	  is n:MysqlConnection do (
+	       Ccode(void,"\n #if USE_MYSQL \n mysql_close((MYSQL*)",n,") \n #else \n 0 \n #endif \n ");
+	       m.mysql = null();
 	       );
 	  g)
      is f:file do ( 
