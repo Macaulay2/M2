@@ -30,6 +30,9 @@ export {
 exportMutable {
      }
 
+-- DEBUG CORE ----------------------------------------
+debug Core; -- to enable SLPs
+
 -- GLOBAL VARIABLES ----------------------------------
 PHCexe = NAG#Options#Configuration#"PHCpack";
 BERTINIexe = NAG#Options#Configuration#"Bertini";
@@ -146,7 +149,10 @@ track = method(TypicalValue => List, Options =>{
 	  -- projectivization
 	  Projectivize => true, 
 	  AffinePatches => DynamicPatch,
-	  RandomSeed => 0 } )
+	  RandomSeed => 0,
+	  -- slp's 
+	  SLP => null -- possible values: SLP=>HornerForm 	  
+	  } )
 track (List,List,List) := List => o -> (S,T,solsS) -> (
 -- tracks solutions from start system to target system
 -- IN:  S = list of polynomials in start system
@@ -251,18 +257,19 @@ track (List,List,List) := List => o -> (S,T,solsS) -> (
 	  return result;
 	  );
      
-     -- M2 (main code)  --------------------------------------------------------
+     -- M2 (main code)  --------------------------------------------------------     
      if n != numgens R then error "expected a square system";
-           
+     
+     K := CC_53; -- THE coefficient ring
      solsS = solsS / (s->sub(transpose matrix {toList s}, CC)); -- convert to vectors
      
      if o.Projectivize then (
 	  h := symbol h;
-	  R = CC[gens R | {h}]; 
+	  R = K[gens R | {h}]; 
 	  n = numgens R;
 	  T = apply(T, f->homogenize(sub(f,R), h)); 
 	  S = apply(S, f->homogenize(sub(f,R), h));
-     	  solsS = solsS / (s->s||matrix{{toCC 1}});
+     	  solsS = solsS / (s->s||matrix{{1_K}});
 
      	  -- affine patch functions 
      	  pointToPatch := (x0,p)-> (1/(p*x0)_(0,0))*x0; -- representative for point x0 in patch p
@@ -275,7 +282,7 @@ track (List,List,List) := List => o -> (S,T,solsS) -> (
 	  else (   
 	       dPatch = null;
 	       patches := { 	    
-	       	    promote(matrix{{append((n-1):0, 1)}},CC), -- dehomogenizing patch
+	       	    promote(matrix{{append((n-1):0, 1)}},K), -- dehomogenizing patch
 	       	    if #o.AffinePatches > 0 then first o.AffinePatches -- either provided patch...
 	       	    else ( 
 		    	 setRandomSeed o.RandomSeed; 
@@ -291,42 +298,60 @@ track (List,List,List) := List => o -> (S,T,solsS) -> (
      
      -- create homotopy
      t := symbol t;
-     Rt := CC[gens R, t]; -- how do you cleanly extend the generators list: e.g., what if "n" is a var name?
+     Rt := K[gens R, t]; -- how do you cleanly extend the generators list: e.g., what if "n" is a var name?
      H := matrix {apply(#S, i->(1-t)^(o.tDegree)*sub(S#i,Rt)+o.gamma*t^(o.tDegree)*sub(T#i,Rt))};
      JH := transpose jacobian H; 
      Hx := JH_(toList(0..n-1));
      Ht := JH_{n};
      
      -- evaluation functions
-     evalH := (x0,t0)-> ( r := lift(sub(transpose H, transpose x0 | matrix {{t0}}), CC);
+     if o.SLP === HornerForm then (
+	  slpMatrix := M -> (
+	       (constMAT, prog) = fromPreSLP( numgens ring M, 
+		    stackPreSLPs apply(entries M, row -> concatPreSLPs apply(row, poly2preSLP)) );
+	       rawSLP(raw constMAT, prog)
+	       );  
+	  slpH := slpMatrix H;
+	  slpHx := slpMatrix Hx;
+	  slpHt := slpMatrix Ht; 	  
+	  fromSlpMatrix := (S,params) -> (
+	       result := rawEvaluateSLP(S, raw params);
+	       lift(map(K, result),K)
+	       );
+	  );
+     evalH := (x0,t0)-> (
+	  if o.SLP === HornerForm then r := fromSlpMatrix(slpH, transpose x0 | matrix {{t0}})
+     	  else if o.SLP === null then  r = lift(sub(transpose H, transpose x0 | matrix {{t0}}), K);
 	  if dPatch === null then r
 	  else r || matrix{{(dPatch*x0)_(0,0)-1}} -- patch equation evaluated  
 	  );
-     evalHx := (x0,t0)-> ( r := lift(sub(Hx, transpose x0 | matrix {{t0}}), CC);
+     evalHx := (x0,t0)-> (
+	  if o.SLP === HornerForm then r := fromSlpMatrix(slpHx, transpose x0 | matrix {{t0}})
+     	  else if o.SLP === null then r = lift(sub(Hx, transpose x0 | matrix {{t0}}), K);
 	  if dPatch === null then r
 	  else r || matrix { flatten entries dPatch }
 	  );  
-     evalHt := (x0,t0)-> ( r:= lift(sub(Ht, transpose x0 | matrix {{t0}}), CC);
+     evalHt := (x0,t0)-> (
+	  if o.SLP === HornerForm then r := fromSlpMatrix(slpHt, transpose x0 | matrix {{t0}})
+     	  else if o.SLP === null then r= lift(sub(Ht, transpose x0 | matrix {{t0}}), K);
 	  if dPatch === null then r
-	  else r || matrix {{0_CC}}
+	  else r || matrix {{0_K}}
 	  );
      evalMinusInverseHxHt := (x0,t0)-> -(inverse evalHx(x0,t0))*evalHt(x0,t0);
           
-     
      -- threshholds and other tuning parameters (should include most of them as options)
      epsilon := 1e-5; -- tracking tolerance (universal)
      divThresh := 1e4; 
      condNumberThresh := 1e3;
      stepDecreaseFactor := 1/o.stepIncreaseFactor;
      theSmallestNumber := 1e-12;
-
       
      rawSols := apply(solsS, s->(
 	       if DBG > 1 then << "tracking solution " << toString s << endl;
      	       tStep := o.tStep;
 	       predictorSuccesses := 0;
 	       x0 := s; 
-	       t0 := toCC 0.; 
+	       t0 := 0_K; 
 	       count := 1; -- number of computed points
 	       stepAdj := 0; -- step adjustment number (wrt previous step): 
 	                     -- newstep = oldstep * stepIncreaseFactor^stepAdj  
@@ -346,7 +371,7 @@ track (List,List,List) := List => o -> (S,T,solsS) -> (
 		    local dx; local dt;
      	       	    if dPatch =!= null 
 		    then dPatch = -- conjugate of the normalized kernel vector 
-		    matrix{ flatten entries normalize transpose gens ker lift(sub(Hx, transpose x0 | matrix {{t0}}), CC) / conjugate };   
+		    lift(matrix{ flatten entries normalize transpose gens ker lift(sub(Hx, transpose x0 | matrix {{t0}}), K) / conjugate }, K);   
 		    --matrix { flatten entries transpose x0 / conjugate };
 		    	 
 		    if o.Predictor == Tangent then (
@@ -421,13 +446,13 @@ track (List,List,List) := List => o -> (S,T,solsS) -> (
 			 if tStep>1-t0 and nPoints > 1 then (
 			      aMScoeffs := multistepPredictorLooseEnd(o.stepIncreaseFactor,drop(stepAdjSequence,-1));
 			      aRing := ring first aMScoeffs;
-			      aMap := map(CC,aRing, matrix{{dt/(history#count#"t"-history#(count-1)#"t")}});
+			      aMap := map(K,aRing, matrix{{dt/(history#count#"t"-history#(count-1)#"t")}});
 			      aMScoeffs/aMap  
 			      )
 			 else multistepPredictor(o.stepIncreaseFactor,stepAdjSequence); 
      	       	    	 
                 	 -- dx = dt*sum_{i=0..nPoints-1} MScoeff_i*rhsODE(t_i)
-			 dx = delta*sum(nPoints, i->toCC(MScoeffs)#i*history#(count-nPoints+1+i)#"rhsODE");
+			 dx = delta*sum(nPoints, i->sub(toCC(MScoeffs),K)#i*history#(count-nPoints+1+i)#"rhsODE");
 			 if DBG > 3 then << "delta = " << delta << "   MScoeffs = " << MScoeffs << endl;
 			 )
 		    else error "unknown Predictor";
@@ -1015,20 +1040,20 @@ evalPoly (RingElement, List) := (f,x) -> (
      sub(sub(f, sub(matrix{x},ring f)), coefficientRing ring f)
      )
 
------------- SLPs ------------------------------------------------------------------------
--- SLP = (constants, list of integers)
--- constants = list of elements in CC
--- list of integers = number of inputs, number of outputs, node, node, ...
--- node = binary_operation, a, b
---     or multi_operation, n, a1, ... , an        
---     or copy, a                                 -- copies node n    
--- binary_operation = {sum, product}
--- multi_operation = {msum, mproduct} 
---
--- evaluation of SLP assumes 
---       first #constants nodes to be constants 
---       the next (number of inputs) to be inputs
---       the last (number of output) to be outputs
+------------ preSLPs ------------------------------------------------------------------------
+-- preSLP = (constants, program, output_description)
+--   constants = list of elements in CC
+--   program = node, node, ...
+--     node = {binary_operation, a, b}
+--         or {multi_operation, n, a1, ... , an}        
+--         or {copy, a}                                 -- copies node n    
+--       a,b,ai are 
+--          negative integers (relative position) 
+--          or const => i (refers to i-th constant)
+-- 	    or in => i (refers to i-th input) 
+--       binary_operation = {sum, product}
+--       multi_operation = {msum, mproduct} 
+--   output_description = Matrix over ZZ
 
 slpCOPY = 1; -- "COPY"; -- node positions for slpCOPY commands are absolute
 slpMULTIsum = 2; -- "MULTIsum";
@@ -1042,8 +1067,8 @@ shiftConstsSLP (List,ZZ) := (slp,shift) -> apply(slp,
 	  )
      );
 
-poly2slp = method(TypicalValue=>Sequence)
-poly2slp RingElement :=  g -> (
+poly2preSLP = method(TypicalValue=>Sequence)
+poly2preSLP RingElement :=  g -> (
      prog := {}; -- our SLP
      R := ring g;
      const := coefficient(1_R,g);
@@ -1054,7 +1079,7 @@ poly2slp RingElement :=  g -> (
 	       fnox := f%R_i;
 	       fx := f - fnox;
 	       if fx != 0 then (
-	       	    (constfx, progfx) := poly2slp (fx//R_i);
+	       	    (constfx, progfx, outfx) := poly2preSLP(fx//R_i);
 	       	    -- shift constant nodes positions
 	       	    prog = prog | shiftConstsSLP(progfx, #constants); 
 	       	    constants = constants | constfx;
@@ -1076,45 +1101,58 @@ poly2slp RingElement :=  g -> (
 	       p->if class p === Option then p 
 	       else p - curPos -- add a relative position
 	       )};    
-     << g << " => " << (constants, prog) << endl;
-     (constants, prog)
+      (constants, prog, matrix{{#prog-1}})
      )
 
-M2slp = method()
-M2slp (List,ZZ,List) := (consts,nIns,slp) -> (
--- makes rawM2slp from pre-slp   
-     curNode = #consts+nIns;
-     p = {};
-     scan(slp, n->(
-	   k := first n;
-	   if k === slpCOPY then (
-	   	if class n#1 === Option and n#1#0 == "const" then p = p | {slpCOPY} | {n#1#1} 
-		else error "unknown node type" 
-		)  
-	   else if k === slpMULTIsum then (
-		p = p | {slpMULTIsum, n#1} | toList apply(2..1+n#1, 
-		     j->if class n#j === Option and n#j#0 == "const" then n#j#1
-		     else if class n#j === ZZ then curNode+n#j
-		     else error "unknown node type" 
-		     )
-	   	)
-	   else if k === slpPRODUCT then (
-		p = p | {slpPRODUCT} | toList apply(1..2, j->(
-          		       if class n#j === Option and n#j#0 == "in" then #consts + n#j#1
-			       else if class n#j === ZZ then curNode+n#j
-			       else error "unknown node type" 
-			       ))
-		)
-	   else error "unknown SLP node key";   
-	   curNode = curNode + 1;
-	   ));
-     p = {#consts,nIns,1,curNode-1} | p;
-     (map(CC^1,CC^(#consts), {consts}), p)
-     )
+
+concatPreSLPs = method() -- concatenate pre-slps 
+-- ( if 2 slp's output matrices A and B, their concatenation returns A|B )
+concatPreSLPs List := S -> (
+     c := {};
+     p := {}; 
+     o := null;
+     scan(S, s->(
+	       if o === null then o = s#2
+	       else -- shift output by the current length of the program 
+	            o = o | (s#2 + map(ZZ^(numgens target s#2), ZZ^(numgens source s#2), (i,j)->#p));  
+	       p = p | apply(s#1, a->
+		    apply(a, b->
+			 if class b === Option and b#0 == "const" 
+			 then b#0=>b#1+#c -- shift the constants
+			 else b
+			 ) 
+		    );
+	       c = c | s#0;
+	       ));     
+     (c,p,o)
+     );
+
+stackPreSLPs = method() -- stacks pre-slps (A||B)
+stackPreSLPs List := S -> (
+     c := {};
+     p := {}; 
+     o := null;
+     scan(S, s->(
+	       if o === null then o = s#2
+	       else -- shift output by the current length of the program 
+	            o = o || (s#2 + map(ZZ^(numgens target s#2), ZZ^(numgens source s#2), (i,j)->#p));  
+	       p = p | apply(s#1, a->
+		    apply(a, b->
+			 if class b === Option and b#0 == "const" 
+			 then b#0=>b#1+#c -- shift the constants
+			 else b
+			 ) 
+		    );
+	       c = c | s#0;
+	       ));     
+     (c,p,o)
+     );
      
-evaluateSLP = method()
-evaluateSLP (List,List,List) := (constants, v, slp) -> (
+evaluatePreSLP = method()
+evaluatePreSLP (Sequence,List) := (S,v)-> (
      val := {};
+     constants := S#0;
+     slp := S#1;
      scan(#slp, i->(
 	   n := slp#i;
 	   k := first n;
@@ -1141,19 +1179,68 @@ evaluateSLP (List,List,List) := (constants, v, slp) -> (
 		)
 	   else error "unknown SLP node key";   
 	   ));
- last val
+ matrix apply(entries S#2, r->apply(r, e->val#e))
  )
 ///
 restart
 loadPackage "NAG"; debug NAG;
 R = CC[x,y,z]
 g = 3*y^2+2*x
-g = 1 + 2*x^2 + 3*x*y^2 + 4*z^2
-g = random(3,R)
-(constants, slp) = poly2slp g
-eg = evaluateSLP(constants,gens R,slp)
-eg == g
+--g = 1 + 2*x^2 + 3*x*y^2 + 4*z^2
+--g = random(3,R)
+pre = poly2preSLP g
+g3 = concatPreSLPs {pre,pre,pre}
+g6 = stackPreSLPs {g3,g3}
+eg = evaluatePreSLP(g6,gens R)
+eg_(1,1) == g
 ///
+
+----------------- SLPs -----------------------------------------------------
+-- SLP = (constants, array of ints)
+-- constants = one-row matrix
+-- array of ints = 
+--   #constants
+--   #inputs 
+--   #rows in output
+--   #columns in output
+--   output matrix entries (numbers of nodes) 
+  
+fromPreSLP = method()
+fromPreSLP (ZZ,Sequence) := (nIns,S) -> (
+-- makes input for rawSLP from pre-slp
+     consts := S#0;
+     slp := S#1;   
+     o := S#2;
+     curNode = #consts+nIns;
+     p = {};
+     scan(slp, n->(
+	   k := first n;
+	   if k === slpCOPY then (
+	   	if class n#1 === Option and n#1#0 == "const" then p = p | {slpCOPY} | {n#1#1} 
+		else error "unknown node type" 
+		)  
+	   else if k === slpMULTIsum then (
+		p = p | {slpMULTIsum, n#1} | toList apply(2..1+n#1, 
+		     j->if class n#j === Option and n#j#0 == "const" then n#j#1
+		     else if class n#j === ZZ then curNode+n#j
+		     else error "unknown node type" 
+		     )
+	   	)
+	   else if k === slpPRODUCT then (
+		p = p | {slpPRODUCT} | toList apply(1..2, j->(
+          		       if class n#j === Option and n#j#0 == "in" then #consts + n#j#1
+			       else if class n#j === ZZ then curNode+n#j
+			       else error "unknown node type" 
+			       ))
+		)
+	   else error "unknown SLP node key";   
+	   curNode = curNode + 1;
+	   ));
+     p = {#consts,nIns,numgens target o, numgens source o} 
+         | apply(flatten entries o, e->e+#consts+nIns) 
+	 | p;
+     (map(CC^1,CC^(#consts), {consts}), p)
+     )
 
 beginDocumentation()
 

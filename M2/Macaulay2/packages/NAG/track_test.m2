@@ -1,8 +1,9 @@
 restart
 loadPackage ("NAG", FileName=>"../NAG.m2", 
      Configuration=>{"PHCpack"=>"./phc", "Bertini"=>"./bertini", "HOM4PS2"=>"./hom4ps2_in_out"})
+--debug Core; 
 debug NAG; DBG = 3; printingPrecision = 20; 
-removeFile "PHCtasols"; removeFile "PHCtarget"; removeFile "PHCoutput"; 
+
 
 -- small example with 2 solutions -------------------------------------------
 R = CC[x,y];
@@ -12,7 +13,8 @@ solsS = {(1,-1),(1,1),(-1,1),(-1,-1)};
 solsT = track(S,T,solsS, gamma=>1+ii,
      --Predictor=>Euler,
      AffinePatches=>DynamicPatch,
-     RandomSeed=>0
+     --SLP=>HornerForm
+     SLP=>null
      )
 solsT/(s->s#1#1)
 sortSolutions solsT/(s->s#0/round)
@@ -28,9 +30,7 @@ all(0..#P-1, i->areEqual(first P#i,first M#i)) -- check if sorted solutions are 
 
 ------------------------------------------------------------------------------
 n = 5; T = (cyclic(n,CC))_*; R = ring first T;
--- make it denser 
-
-T = T/(f->sub(f,apply(n, i->R_i=>R_i + i))); 
+T = T/(f->sub(f,apply(n, i->R_i=>R_i + i))); -- make it denser 
 
 ------------------------------------------------------------------------------
 -- Strange things happen for this one: M2(RungeKutta)  gives 91 sols, PHCpack and Bertini - 90,  
