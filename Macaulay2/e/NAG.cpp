@@ -132,13 +132,13 @@ StraightLineProgram_OrNull *StraightLineProgram::make(Matrix *m_consts, M2_array
     if (m_consts->n_cols() != res->num_consts) 
       ERROR("different number of constants expected");
     res->num_inputs = program->array[1];
-    res->num_outputs = program->array[2];
+    res->rows_out = program->array[2];
+    res->cols_out = program->array[3];
     res->program = program;
     res->nodes = newarray(complex, program->len);
     for (int i=0; i<res->num_consts; i++) { 
       res->nodes[i] = complex(BIGCC_VAL(m_consts->elem(0,i)));
     }
-    res->output = newarray(complex, res->num_outputs);
     res->evaluated = false;
   }
   return res;
@@ -152,7 +152,7 @@ Matrix *StraightLineProgram::evaluate(const Matrix *values)
     ERROR("different number of constants expected");
   for(i=0; i<num_inputs; i++, cur_node++)
     nodes[cur_node] = complex(BIGCC_VAL(values->elem(0,i)));
-  i=3+num_outputs;
+  i=4+rows_out*cols_out;
   for(; i<program->len; cur_node++) {
     switch (program->array[i]) {
     case slpCOPY: 
@@ -175,24 +175,22 @@ Matrix *StraightLineProgram::evaluate(const Matrix *values)
       ERROR("unknown SLP operation");
     }
   }
-  for(i=0; i<num_outputs; i++)
-    output[i] = nodes[program->array[i+3]];
   evaluated = true;
   CCC* R = CCC::create(53); //values->get_ring();
-  FreeModule* S = R->make_FreeModule(num_outputs); 
-  FreeModule* T = R->make_FreeModule(1);
-  M2_arrayint deg = makearrayint(1);
-  deg->array[0] = 0;
-  MatrixConstructor mat(T,S,0);
-  for(i=0; i<num_outputs; i++) {
-    //ring_elem e = R->from_doubles(output[i].getreal(), output[i].getimaginary());
-    mpfr_t re, im;
-    mpfr_init(re); mpfr_init(im);
-    mpfr_set_d(re, output[i].getreal(), GMP_RNDN);
-    mpfr_set_d(im, output[i].getimaginary(), GMP_RNDN);
+  FreeModule* S = R->make_FreeModule(cols_out); 
+  FreeModule* T = R->make_FreeModule(rows_out);
+  MatrixConstructor mat(T,S);
+  mpfr_t re, im;
+  mpfr_init(re); mpfr_init(im);
+  for(i=0; i<rows_out; i++)
+  for(int j=0; j<cols_out; j++) {
+    complex c = nodes[program->array[i*cols_out+j+4]]; 
+    mpfr_set_d(re, c.getreal(), GMP_RNDN);
+    mpfr_set_d(im, c.getimaginary(), GMP_RNDN);
     ring_elem e = R->from_BigReals(re,im);
-    mat.set_entry(0,i,e);
+    mat.set_entry(i,j,e);
   }
+  mpfr_clear(re); mpfr_clear(im);
   return mat.to_matrix(); //hmm... how to make a matrix from scratch?
 }
 
@@ -212,8 +210,8 @@ void StraightLineProgram::text_out(buffer& o) const
   for(i=0; i<num_inputs; i++, cur_node++)
     o << cur_node << " ";
   o<<newline;   
-  o<<"OUTPUT (count = " << num_outputs<<") nodes:\n";
-  for(i=3; i<3+num_outputs; i++)
+  o<<"OUTPUT ("<< rows_out << "x" << cols_out << ") nodes:\n";
+  for(i=4; i<4+cols_out*rows_out; i++)
     o << program->array[i] << " ";
   o<<newline;   
   for(; i<program->len; cur_node++) {
@@ -245,12 +243,6 @@ void StraightLineProgram::text_out(buffer& o) const
       char s[100];
       nodes[i].sprint(s);
       o<<"node["<< i <<"] = " << s << newline;
-    }
-    o<<"OUTPUT\n";
-    for(i=0; i<num_outputs; i++){
-      char s[100];
-      output[i].sprint(s);
-      o<<"out["<< i <<"] = " << s << newline;
     }
   }
 }
