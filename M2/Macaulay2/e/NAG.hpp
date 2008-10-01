@@ -40,8 +40,7 @@ class StraightLineProgram : public object
 {
   M2_arrayint program;
   complex* nodes; // array of CCs
-  int num_consts, num_inputs, num_outputs;
-  complex* output;
+  int num_consts, num_inputs, rows_out, cols_out;
   bool evaluated;
   long precision;
 
