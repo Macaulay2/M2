@@ -1,0 +1,1 @@
+gc threads and dumpdata/loaddata seem to conflict.  I have asked Hans Boehm about it.
