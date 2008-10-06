@@ -1,0 +1,54 @@
+evaluate whether to make the changes at the bottom:
+
+    > S = ZZ/101[x]
+    > i=ideal(x)
+    > --the following are OK:
+    > class i === Ideal
+    > class i == Ideal
+    > class i === Module
+    > --But this next gives an error msg:
+    > class i == Module -- this last one gives an error, where it should give "false"
+
+    The last line fails to work because there is no general method for comparing
+    two types with == .  The fourth line succeeds because class i and Ideal are
+    exactly the same; maybe that should be changed so it fails (!).
+
+    The difference between == and === is that === examines just the internal
+    structure, quickly, whereas == is intended to simulate mathematical equality.
+
+	i1 : QQ[x]
+
+	o1 = QQ [x]
+
+	o1 : PolynomialRing
+
+	i2 : ideal x == ideal(x,x)
+
+	o2 = true
+
+	i3 : ideal x === ideal(x,x)
+
+	o3 = false
+
+    Since various mathematical objects are implemented as types, there is no
+    generic method for checking equality of types.  Perhaps one could argue that we
+    should do for Type what we do for Ring, by introducing this definition:
+
+	    Type == Type := (R,S) -> R === S
+
+    Then it wouldn't matter whether you use == or ===, until the day when someone
+    implements == correctly for the pair of types you happen to be using.
+
+    My strong preference is that X==Y simply give an error message if the notion of
+    mathematical equality checking hasn't yet been implemented.  When you have a
+    work-in-progress such as M2, it's important that the behavior of error free
+    code not change.
+
+    With that in mind, I think I should replace this line of code:
+
+	    Ring == Ring := (R,S) -> R === S
+
+    my the mathematically correct equality checking code, and change the internal
+    code for == so x==x doesn't give true unless there is a method installed for
+    checking equality for things of the same type as x.  Then there would be no
+    anomaly.
