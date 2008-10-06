@@ -73,6 +73,9 @@ undocumented(monomialIdeal,Ring)
 undocumented elapsedTime
 elapsedTime = x -> error "function 'elapsedTime' has been renamed to 'cpuTime'"
 
+undocumented pushForward1
+pushForward1 = x -> error "function 'pushForward1(f,M)' has been replaced by 'relations coimage map(M,f)'"
+
 -- Local Variables:
 -- compile-command: "make -C $M2BUILDDIR/Macaulay2/m2 "
 -- End:

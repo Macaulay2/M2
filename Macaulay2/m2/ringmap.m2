@@ -431,8 +431,11 @@ map(Module,Nothing,RingMap,RawMatrix) := Matrix => o -> (M,N,p,f) -> (
      m := p.DegreeMap;
      if m =!= identity then error "not implemented yet: non-trivial degrees map attached to ring map";
      map(M,(source p)^-degs,p,f))
+
+map(Module,Nothing,RingMap,Matrix) := 
 map(Module,Module,RingMap,Matrix) := Matrix => o -> (M,N,p,f) -> map(M,N,p,raw f,o)
 
+map(Module,RingMap) := Matrix => o -> (M,p) -> map(M,,p,generators M,o)
 
 -- Local Variables:
 -- compile-command: "make -C $M2BUILDDIR/Macaulay2/m2 "
