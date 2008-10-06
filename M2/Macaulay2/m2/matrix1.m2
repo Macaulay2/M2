@@ -633,7 +633,7 @@ Matrix _ Array := Matrix => (f,v) -> f * (source f)_v
 Matrix ^ Array := Matrix => (f,v) -> (target f)^v * f
 
 entries Matrix := (m) -> (
-     R := ring m;
+     R := ring target m;
      m = m.RawMatrix;
      applyTable ( entries m, r -> promote(r,R) )
      )

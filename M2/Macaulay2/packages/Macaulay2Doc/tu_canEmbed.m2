@@ -245,11 +245,11 @@ betti IC1res
 
 -- the structure
 -- sheaf of {\tt C1} as a sheaf on the projective
--- plane, and compute its pushForward under
+-- plane, and compute its push-forward under
 -- the map to ${\bf P}^6$ given by {\tt can1} (the image of
 -- the plane under this map is a Del Pezzo
 -- surface on which the canonical curve lies.)
 -- This is done as follows:
 
 ff1 = map(R,S,can1)
-trim ideal pushForward1(ff1,coker F1)
+trim coimage map(coker F1,ff1)
