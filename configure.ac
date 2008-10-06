@@ -685,7 +685,7 @@ do AC_LANG(C++)
    SLIBS="$SINGULARLIBS -lcfmem"
    LIBS="$SLIBS $LIBS"
    AC_MSG_CHECKING([whether factory library is installed ($SLIBS)])
-   AC_LINK_IFELSE( [[ #define NOSTREAMIO
+   AC_LINK_IFELSE( [[ #undef NOSTREAMIO
 	              #include <factory.h>
 		      #include <templates/ftmpl_inst.cc>
 	              
@@ -696,7 +696,7 @@ do AC_LANG(C++)
        SLIBS="$SLIBS -lntl"
        LIBS="$SLIBS $SAVELIBS"
        AC_MSG_CHECKING([whether factory library is installed ($SLIBS)])
-       AC_LINK_IFELSE( [[ #define NOSTREAMIO
+       AC_LINK_IFELSE( [[ #undef NOSTREAMIO
 		          #include <factory.h>
 			  #include <templates/ftmpl_inst.cc>
 	                  
@@ -709,7 +709,7 @@ do AC_LANG(C++)
    AC_RUN_IFELSE( [[ /* this is line 1 */
 	   #include <stdio.h>
 	   #include <string.h>
-           #define NOSTREAMIO
+           #undef NOSTREAMIO
 	   #include <factory.h>
 	   #include <factor.h>
 	   #include <templates/ftmpl_inst.cc>
