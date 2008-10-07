@@ -34,7 +34,7 @@ document {
      "Type one of these commands to get started reading the documentation:",
      UL {
      	  SPAN (///copyright///, ///                         -- the copyright///),
-     	  SPAN (///help "Macaulay 2"///, ///                 -- top node of the documentation.///),
+     	  SPAN (///help "Macaulay2Doc"///, ///               -- top node of the documentation.///),
      	  SPAN (///help "reading the documentation"///, ///  -- ///),
      	  SPAN (///help "getting started"///, ///            -- ///),
      	  SPAN (///help "a first Macaulay 2 session"///, /// -- ///),
