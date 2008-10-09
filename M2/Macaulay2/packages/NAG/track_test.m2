@@ -3,7 +3,7 @@ loadPackage ("NAG", FileName=>"../NAG.m2",
      Configuration=>{"PHCpack"=>"./phc", "Bertini"=>"./bertini", "HOM4PS2"=>"./hom4ps2_in_out"})
 --debug Core; 
 debug NAG; DBG = 3; printingPrecision = 20; 
-
+load "benchmarks.m2"
 
 -- small example with 2 solutions -------------------------------------------
 R = CC[x,y];
@@ -13,13 +13,12 @@ solsS = {(1,-1),(1,1),(-1,1),(-1,-1)};
 solsT = track(S,T,solsS, gamma=>1+ii,
      --Predictor=>Euler,
      AffinePatches=>DynamicPatch,
-     --SLP=>HornerForm
-     SLP=>null
+     SLP=>HornerForm
+     --SLP=>null
      )
-solsT/(s->s#1#1)
+solsT/(s->s#1#1) -- number of steps
 sortSolutions solsT/(s->s#0/round)
 
-load "benchmarks.m2"
 -- cyclic roots -------------------------------------------------------------
 n = 3;  T = (cyclic(n,CC))_*;
 P = sortSolutions solveSystem(T, Software=>PHCpack);
@@ -39,12 +38,14 @@ T = T/(f->sub(f,apply(n, i->R_i=>R_i + i))); -- make it denser
 --T = T/(f->sub(f,apply(n, i->R_i=>sum(n, j->exp(random(0.,2*pi)*ii)*R_i) + 1) )) 
 
 -- random -------------------------------------------------------------------
+setRandomSeed 0
 T = (randomNFactorialSystem(5,CC))_* -- N = 5
 ------------------------------------------------------------------------------
 
 -- TRACK -- define T before running this 
 (S,solsS) = totalDegreeStartSystem T;
 t = currentTime(); M = track(S,T,solsS, 
+     --Software=>PHCpack,
      --gamma=>1, -- is in exceptional set
      gamma=>0.6+0.8*ii, 
      Predictor=>--Secant,
@@ -56,6 +57,7 @@ t = currentTime(); M = track(S,T,solsS,
      MultistepDegree=>4,
      AffinePatches=>DynamicPatch,
      --AffinePatches=>{ matrix {{-.124234322572514-.992252907828921*ii, -.417519019676412+.908668183776921*ii, -.985089503023424-.172042643065792*ii, .33160728005355+.943417517229507*ii, -.810395490212434-.585883221677622*ii, .583357854599743-.812215250704384*ii}} }, -- RandomSeed=>0		
+     SLP=>HornerForm,
      RandomSeed=>1
      ); currentTime()-t
 
