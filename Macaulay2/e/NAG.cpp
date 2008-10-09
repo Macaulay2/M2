@@ -135,7 +135,7 @@ StraightLineProgram_OrNull *StraightLineProgram::make(Matrix *m_consts, M2_array
     res->rows_out = program->array[2];
     res->cols_out = program->array[3];
     res->program = program;
-    res->nodes = newarray(complex, program->len);
+    res->nodes = newarray(complex, program->len+res->num_consts+res->num_inputs);
     for (int i=0; i<res->num_consts; i++) { 
       res->nodes[i] = complex(BIGCC_VAL(m_consts->elem(0,i)));
     }
@@ -161,7 +161,8 @@ Matrix *StraightLineProgram::evaluate(const Matrix *values)
     case slpMULTIsum: 
       {	
 	int n_summands = program->array[i+1];
-	nodes[cur_node] = nodes[program->array[i+2]]; // create a temp var? 
+	nodes[cur_node] = (n_summands>0) ?  // create a temp var?  
+	  nodes[program->array[i+2]] : complex(); // zero if empty sum
 	for(int j=1; j<n_summands; j++)
 	  nodes[cur_node] = nodes[cur_node]+nodes[program->array[i+j+2]];
 	i += n_summands+2; 
@@ -176,7 +177,8 @@ Matrix *StraightLineProgram::evaluate(const Matrix *values)
     }
   }
   evaluated = true;
-  CCC* R = CCC::create(53); //values->get_ring();
+  const CCC* R = values->get_ring()->cast_to_CCC(); 
+  //CCC* R = CCC::create(53); //values->get_ring();
   FreeModule* S = R->make_FreeModule(cols_out); 
   FreeModule* T = R->make_FreeModule(rows_out);
   MatrixConstructor mat(T,S);

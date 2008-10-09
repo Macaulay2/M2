@@ -320,14 +320,18 @@ track (List,List,List) := List => o -> (S,T,solsS) -> (
 	       );
 	  );
      evalH := (x0,t0)-> (
-	  if o.SLP === HornerForm then r := fromSlpMatrix(slpH, transpose x0 | matrix {{t0}})
+	  if o.SLP === HornerForm then r := transpose fromSlpMatrix(slpH, transpose x0 | matrix {{t0}})
      	  else if o.SLP === null then  r = lift(sub(transpose H, transpose x0 | matrix {{t0}}), K);
 	  if dPatch === null then r
 	  else r || matrix{{(dPatch*x0)_(0,0)-1}} -- patch equation evaluated  
 	  );
+     evalHxNoPatch := (x0,t0)-> (
+	  if o.SLP === HornerForm then fromSlpMatrix(slpHx, transpose x0 | matrix {{t0}})
+     	  else if o.SLP === null then lift(sub(Hx, transpose x0 | matrix {{t0}}), K)
+	  else error "unknown SLP option"
+	  );  
      evalHx := (x0,t0)-> (
-	  if o.SLP === HornerForm then r := fromSlpMatrix(slpHx, transpose x0 | matrix {{t0}})
-     	  else if o.SLP === null then r = lift(sub(Hx, transpose x0 | matrix {{t0}}), K);
+     	  r := evalHxNoPatch(x0,t0);
 	  if dPatch === null then r
 	  else r || matrix { flatten entries dPatch }
 	  );  
@@ -341,7 +345,7 @@ track (List,List,List) := List => o -> (S,T,solsS) -> (
           
      -- threshholds and other tuning parameters (should include most of them as options)
      epsilon := 1e-5; -- tracking tolerance (universal)
-     divThresh := 1e4; 
+     divThresh := 1e7; 
      condNumberThresh := 1e3;
      stepDecreaseFactor := 1/o.stepIncreaseFactor;
      theSmallestNumber := 1e-12;
@@ -369,11 +373,11 @@ track (List,List,List) := List => o -> (S,T,solsS) -> (
 
 		    -- predictor step
 		    local dx; local dt;
-     	       	    if dPatch =!= null 
-		    then dPatch = -- conjugate of the normalized kernel vector 
-		    lift(matrix{ flatten entries normalize transpose gens ker lift(sub(Hx, transpose x0 | matrix {{t0}}), K) / conjugate }, K);   
-		    --matrix { flatten entries transpose x0 / conjugate };
-		    	 
+     	       	    if dPatch =!= null then ( -- generate dynamic patch
+			 HxNoPatch := evalHxNoPatch(x0,t0);
+			 -- patch = conjugate of the normalized kernel vector 
+			 dPatch = matrix{ flatten entries normalize transpose gens ker HxNoPatch / conjugate };
+			 );   
 		    if o.Predictor == Tangent then (
 		    	 Hx0 := evalHx(x0,t0);
 			 Ht0 := evalHt(x0,t0);
@@ -452,7 +456,7 @@ track (List,List,List) := List => o -> (S,T,solsS) -> (
 			 else multistepPredictor(o.stepIncreaseFactor,stepAdjSequence); 
      	       	    	 
                 	 -- dx = dt*sum_{i=0..nPoints-1} MScoeff_i*rhsODE(t_i)
-			 dx = delta*sum(nPoints, i->sub(toCC(MScoeffs),K)#i*history#(count-nPoints+1+i)#"rhsODE");
+			 dx = delta*sum(nPoints, i->MScoeffs#i*history#(count-nPoints+1+i)#"rhsODE");
 			 if DBG > 3 then << "delta = " << delta << "   MScoeffs = " << MScoeffs << endl;
 			 )
 		    else error "unknown Predictor";
@@ -470,7 +474,7 @@ track (List,List,List) := List => o -> (S,T,solsS) -> (
 			                   then o.finalMaxCorSteps -- infinity
 			                   else o.maxCorSteps) 
 		    do ( 
-			 if norm x1 > divThresh then (x1 = infinity; break);
+			 if norm x1 > divThresh then (error "infinity"; x1 = infinity; break);
 			 if DBG > 4 then << "x=" << toString x1 << " res=" <<  toString evalH(x1,t1) << " dx=" << dx << endl;
 			 dx = - (inverse evalHx(x1,t1))*evalH(x1,t1);
 			 x1 = x1 + dx;
