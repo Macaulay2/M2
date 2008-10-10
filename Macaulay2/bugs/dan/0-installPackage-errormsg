@@ -1,0 +1,19 @@
+    newPackage "Foo"
+    export foo
+    foo = method ( Options => {Strategy => Null} )
+    document {
+	 Key => [foo,Strategy]
+	 }
+
+leads to this:
+
+    i1 : installPackage "Foo"
+    --installing package Foo in /home/dan/.Macaulay2/encap/Foo-0.0/
+    --using package sources found in /tmp/
+    --storing raw documentation in /home/dan/.Macaulay2/encap/Foo-0.0/lib/Macaulay2/Foo/cache/rawdocumentation-dcba-4.db
+    --running tests that are functions
+    --making example result files in /home/dan/.Macaulay2/encap/Foo-0.0/share/doc/Macaulay2/Foo/example-output/
+    --processing documentation nodes...
+    stdio:1:1:(1):[0]: file not found on path: ".m2"
+
+which is a confusing error message
