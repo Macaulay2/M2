@@ -6,8 +6,8 @@
 
 -- pushForward1 has been removed, but we can simulate it:
 
-pushForward1 = method(Options => options pushForward)
-pushForward1(RingMap, Module) := opts -> (f,M) -> (
+pushforward1 = method(Options => options pushForward)
+pushforward1(RingMap, Module) := opts -> (f,M) -> (
      assert( f.DegreeMap === identity );
      S := source f;
      g := gens M;
@@ -22,7 +22,7 @@ test1 = () -> (
     S = ZZ/101[a..d];
     f = map(R,S,matrix{{s^4,s^3*t,s*t^3,t^4}});
     time J0 = generators kernel f;
-    time J2 = pushForward1(f,R^1);
+    time J2 = pushforward1(f,R^1);
     assert(image J0 == image J2);
     )
 
@@ -30,7 +30,7 @@ test1a = () -> (
     R = ZZ/101[s,t];
     S = ZZ/101[a..d];
     f = map(R,S,matrix{{s^4,s^3*t,s*t^3,t^4}});
-    J0 = pushForward1(f,R^1,DegreeLimit=>5);
+    J0 = pushforward1(f,R^1,DegreeLimit=>5);
     )
 
 test2 = () -> (
@@ -40,7 +40,7 @@ test2 = () -> (
     S = ZZ/101[symbol a..symbol f];
     F = map(R,S,symmetricPower(2,vars R));
     time J0 = generators kernel F;
-    time J2 = pushForward1(F,R^1);
+    time J2 = pushforward1(F,R^1);
     assert(image J0 == image J2);
     )
 
@@ -50,7 +50,7 @@ test3 = () -> (
     S = ZZ/101[vars(0..4)];
     f = map(R,S,matrix{{t^4, t^3*s, t^2*s^2, t*s^3-t^3*y, s^4-2*s*t^2*y}});
     time J0 = generators kernel f;
-    time J2 = pushForward1(f,R^1);
+    time J2 = pushforward1(f,R^1);
     assert(image J0 == image J2);
     )
 
@@ -59,7 +59,7 @@ test4 = () -> (
     R = ZZ/101[symbol a, symbol b];
     f = map(R,R,map(R^1, R^{-1,-1}, {{a,0}}));
     time J0 = generators kernel f;
-    time J2 = pushForward1(f,R^1);
+    time J2 = pushforward1(f,R^1);
     assert(image J0 == image J2);
     -- assert(image J1 == image J2);
     )
@@ -69,7 +69,7 @@ test5 = () -> (
     R = ZZ/101[symbol a, symbol b, symbol c];
     f = map(R,R,matrix{{a,b,a-b}});
     time J0 = generators kernel f;
-    time J2 = pushForward1(f,R^1);
+    time J2 = pushforward1(f,R^1);
     assert(image J0 == image J2);
     )
     
@@ -80,7 +80,7 @@ test6 = () -> (
     use R;
     f = map(R,S,matrix{{a}});
     time J0 = generators kernel f;
-    time J2 = pushForward1(f,R^1);
+    time J2 = pushforward1(f,R^1);
     assert(image J0 == image J2);
     )
 
@@ -95,9 +95,9 @@ test7 = () -> (
     I = matrix{{x_0,y_0}};   -- a point
     J = matrix{{x_0,x_1}};   -- the empty set
     K = matrix{{x_0*y_0^2 + x_1*y_1^2}};  -- a twisted cubic (i.e. of type (1,2))
-    time J0 = pushForward1(f,cokernel I);
-    time J1 = pushForward1(f,cokernel J);
-    time J2 = pushForward1(f,cokernel K);
+    time J0 = pushforward1(f,cokernel I);
+    time J1 = pushforward1(f,cokernel J);
+    time J2 = pushforward1(f,cokernel K);
     assert(image J0 == image matrix{{z_0,z_1,z_2}});
     assert(image J1 == image matrix{{z_0,z_1,z_2,z_3}});
     assert(image J2 == image matrix{{z_1*z_2-z_0*z_3, z_0*z_2+z_3^2, z_0^2+z_1*z_3}});
@@ -112,7 +112,7 @@ test8 = () -> (
                e^2*a*b^2 + a^2*b*c^2 + b^2*c*d^2 + c^2*d*e^2 + d^2*e*a^2}};
     f = map(R,S,matrix{{a+b,2*a+c,3*a+d,4*a+e}});
     -- gbTrace = 3;
-    time J2 = pushForward1(f, cokernel I,MonomialOrder=>ProductOrder);
+    time J2 = pushforward1(f, cokernel I,MonomialOrder=>ProductOrder);
     )
 
 testx = () -> (
