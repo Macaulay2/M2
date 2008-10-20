@@ -34,13 +34,14 @@ extern "C" {
   extern void factory_setup_2();
 };
 
-enum factoryCoeffMode { modeError = 0, modeQQ, modeZZ, modeZn, modeUnknown };
+enum factoryCoeffMode { modeError = 0, modeQQ, modeZZ, modeZn, modeGF, modeUnknown };
 static enum factoryCoeffMode coeffMode(const PolynomialRing *P) {
      const Ring *F = P->Ncoeffs();
      if (F->cast_to_QQ()) return modeQQ;
      if (F->cast_to_RingZZ()) return modeZZ;
      if (F->cast_to_Z_mod()) return modeZn;
-     ERROR("expected coefficient ring of the form ZZ/n, ZZ, or QQ");
+     if (F->cast_to_GF()) return modeGF;
+     ERROR("expected coefficient ring of the form ZZ/n, ZZ, QQ, or GF");
      return modeError;
 }
 
@@ -75,6 +76,8 @@ static void init_seeds() {
      factoryseed(0);		// factory (which uses NTL, as we've compiled it)
 }
 
+CanonicalForm gfgen;
+
 struct enter_factory { 
   enum factoryCoeffMode mode;
   int oldcharac;
@@ -82,6 +85,8 @@ struct enter_factory {
   int oldRatlState;
   int newRatlState;
   const Z_mod *Zn;
+  const GF *gf;
+  CanonicalForm gfgen;
   void *(*save_gmp_allocate_func  )(size_t);
   void *(*save_gmp_reallocate_func)(void *, size_t, size_t);
   void  (*save_gmp_free_func      )(void *, size_t);
@@ -90,13 +95,15 @@ struct enter_factory {
 
   enter_factory() : 
        mode(modeUnknown),
-       Zn(NULL)
+       Zn(NULL),
+       gf(NULL)
      { enter(); }
 
   enter_factory(const PolynomialRing *P) :
        mode(coeffMode(P)),
-       newcharac(mode == modeZn ? P->charac() : 0),
-       Zn(mode == modeZn ? P->Ncoeffs()->cast_to_Z_mod() : NULL)
+       newcharac(mode == modeZn || mode == modeGF ? P->charac() : 0),
+       Zn(mode == modeZn ? P->Ncoeffs()->cast_to_Z_mod() : NULL),
+       gf(mode == modeGF ? P->Ncoeffs()->cast_to_GF(): NULL)
      { enter(); }
 
   ~enter_factory() { exit(); }
@@ -119,6 +126,7 @@ void enter_factory::enter() {
 	       newcharac =0;
 	       setCharacteristic(0);
 	       break;
+          case modeGF:
 	  case modeZn: 
 	       newRatlState = 0;
 	       Off( SW_RATIONAL );
@@ -241,6 +249,9 @@ static const RingElement * convertToM2(const PolynomialRing *R, CanonicalForm h)
 	  else if (h.inFF()) {
 	       return RingElement::make_raw(R, R->from_int(h.intval()));
 	  }
+	  else if (h.inGF()) {
+#warning not implemented yet
+	  }
 	  else {
 	       ERROR("conversion from factory over unknown type");
 	       return RingElement::make_raw(R,R->one());
@@ -309,6 +320,16 @@ static CanonicalForm convertToFactory(const mpz_ptr p) {
 //#define FRAC_VAL(f) ((frac_elem *) (f).poly_val)
 //#define MPQ_VAL(f) (M2_Rational ((f).poly_val))
 
+static const RingElement minimalPolynomial(const GF *gf) {
+#warning not implemented yet
+  abort();
+}
+
+static CanonicalForm convertToFactory(const ring_elem &g, const CanonicalForm &fieldgen) {
+#warning not implemented yet
+  abort();
+}
+
 static CanonicalForm convertToFactory(const RingElement &g) {
      const Ring *R = g.get_ring();
      const PolynomialRing *P = R->cast_to_PolynomialRing();
@@ -328,10 +349,10 @@ static CanonicalForm convertToFactory(const RingElement &g) {
        M->to_varpower(t->monom,vp);
        CanonicalForm m = (
 			  foo.mode == modeZn ? CanonicalForm(foo.Zn->to_int(t->coeff)) :
+			  foo.mode == modeGF ? convertToFactory(t->coeff,gfgen) :
 			  foo.mode == modeZZ ? convertToFactory(t->coeff.get_mpz()) :
-			  foo.mode == modeQQ ? convertToFactory(mpq_numref(MPQ_VAL(t->coeff))) / convertToFactory(mpq_denref(MPQ_VAL(t->coeff)))
-			  // old way : convertToFactory(FRAC_VAL(t->coeff)->numer.get_mpz()) / convertToFactory(FRAC_VAL(t->coeff)->denom.get_mpz())
-			  : CanonicalForm(0) // shouldn't happen
+			  foo.mode == modeQQ ? convertToFactory(mpq_numref(MPQ_VAL(t->coeff))) / convertToFactory(mpq_denref(MPQ_VAL(t->coeff))) :
+			  CanonicalForm(0) // shouldn't happen
 			  );
        for (index_varpower l = vp.raw(); l.valid(); ++l)
 	 {
@@ -374,6 +395,7 @@ const RingElementOrNull *rawGCDRingElement(const RingElement *f, const RingEleme
   {
     struct enter_factory foo(P);
     if (foo.mode == modeError) return 0;
+    if (foo.mode == modeGF) gfgen = rootOf(convertToFactory(minimalPolynomial(foo.gf)));
     CanonicalForm p = convertToFactory(*f);
     CanonicalForm q = convertToFactory(*g);
     CanonicalForm h = gcd(p,q);
