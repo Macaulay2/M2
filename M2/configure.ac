@@ -509,9 +509,7 @@ AC_ARG_ENABLE(build-libraries, AS_HELP_STRING(--enable-build-libraries=...,list 
        esac
     done])
 
-BUILD_frobby=$FROBBY
-test $BUILD_frobby = yes && BUILTLIBS="-lfrobby -lgmpxx $BUILTLIBS"
-
+# the order of these segments also reflects dependencies
 AC_LANG(C)
 AC_SEARCH_LIBS(tgoto,ncurses curses)
 if test $BUILD_readline = no
@@ -530,6 +528,10 @@ then AC_SEARCH_LIBS(__gmpz_init,gmp,,BUILD_gmp=yes)
      AC_CHECK_HEADER(gmp.h,,BUILD_gmp=yes)
 fi
 test $BUILD_gmp = yes && BUILTLIBS="-lgmp $BUILTLIBS"
+
+# frobby depends on gmp
+BUILD_frobby=$FROBBY
+test $BUILD_frobby = yes && BUILTLIBS="-lfrobby -lgmpxx $BUILTLIBS"
 
 AC_SUBST(ULIMIT_T,yes)
 AC_SUBST(ULIMIT_M,yes)
