@@ -1,0 +1,16 @@
+i18 : setRandomSeed 0
+
+o18 = 0
+
+i19 : GF 729
+
+o19 = GF 729
+
+o19 : GaloisField
+
+i20 : sub(a,a=>a+1)
+
+         5    4    3    2
+o20 = - a  - a  + a  - a  + a - 1		<-- wrong
+
+o20 : GF 729
