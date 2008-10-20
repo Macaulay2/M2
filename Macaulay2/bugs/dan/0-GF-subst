@@ -1,16 +1,12 @@
-i18 : setRandomSeed 0
+i10 : R = GF 729
 
-o18 = 0
+o10 = R
 
-i19 : GF 729
+o10 : GaloisField
 
-o19 = GF 729
+i11 : f = map(R,R,{a^3})
 
-o19 : GaloisField
+                  5    4
+o11 = map(R,R,{- a  - a  - a - 1})		<-- display is wrong
 
-i20 : sub(a,a=>a+1)
-
-         5    4    3    2
-o20 = - a  - a  + a  - a  + a - 1		<-- wrong
-
-o20 : GF 729
+o11 : RingMap R <--- R

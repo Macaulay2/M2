@@ -58,9 +58,14 @@ using std::cout;
 using std::endl;
 
 int main () {
-  factoryseed(1);		// change the seed and watch it crash, or not
-  // crashing seeds: 0
-  // non-crashing seeds: 1
+  factoryseed(13);
+  // change the seed and watch it crash, or not
+  // when compiled with ntl
+  // crashing seeds: 0 1 2 3 4 5 6 7 8 9 10 11 12 13
+  // non-crashing seeds: 
+  // when compiled without ntl
+  // crashing seeds: 0 2 3 4 5 6 7 8 9 10 11 12
+  // non-crashing seeds: 1 13
   Off( SW_RATIONAL );
   setCharacteristic(101);
   Variable x('x');
