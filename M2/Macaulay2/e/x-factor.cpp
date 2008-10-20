@@ -251,6 +251,8 @@ static const RingElement * convertToM2(const PolynomialRing *R, CanonicalForm h)
 	  }
 	  else if (h.inGF()) {
 #warning not implemented yet
+	       ERROR("conversion from factory over Galois fields not implemented yet");
+	       return RingElement::make_raw(R,R->one());
 	  }
 	  else {
 	       ERROR("conversion from factory over unknown type");
@@ -322,11 +324,13 @@ static CanonicalForm convertToFactory(const mpz_ptr p) {
 
 static const RingElement minimalPolynomial(const GF *gf) {
 #warning not implemented yet
+  cerr << "internal error: minimalPolynomial(const GF *gf) not implemented yet" << endl;
   abort();
 }
 
 static CanonicalForm convertToFactory(const ring_elem &g, const CanonicalForm &fieldgen) {
 #warning not implemented yet
+  cerr << "internal error: convertToFactory(const ring_elem &g, const CanonicalForm &fieldgen) not implemented yet" << endl;
   abort();
 }
 
