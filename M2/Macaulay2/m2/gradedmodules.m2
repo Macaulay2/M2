@@ -427,7 +427,11 @@ minimalPresentation GradedModule := GradedModule => opts -> (M) -> (
      scan(spots M, i -> E#i = minimalPresentation M#i);
      E)
 
-minimalPresentation GradedModuleMap := GradedModuleMap => opts -> f -> map(minimalPresentation(f.target), minimalPresentation(f.source), k -> minimalPresentation f_k)
+minimalPresentation GradedModuleMap := GradedModuleMap => opts -> f -> 
+  map(minimalPresentation(f.target), 
+      minimalPresentation(f.source), 
+      k -> minimalPresentation f_k,
+      Degree => f.degree)
 
 complete GradedModule := (M) -> null
 rank GradedModule := (M) -> sum(spots M, i -> (-1)^i * rank M#i)

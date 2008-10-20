@@ -1,3 +1,8 @@
+CC[a,b]
+matrix {{a+b}}
+
+end
+
 Macaulay 2, version 1.1
 with packages: Classic, Core, Elimination, IntegralClosure, LLLBases, Parsing, PrimaryDecomposition,
                SchurRings, TangentCone

@@ -1,3 +1,10 @@
+R = frac ( GF(9)[x] )
+x
+1/x
+
+
+end
+
 i1 : frac ( GF(9)[x] )
 
 o1 = frac((GF 9)[x])
