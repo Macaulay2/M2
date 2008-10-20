@@ -1,51 +1,83 @@
-From: hannes@mathematik.uni-kl.de
-Subject: Re: Singular Factory
-To: dan@math.uiuc.edu
-Date: Tue, 7 Nov 2006 09:36:13 +0100 (CET)
-Cc: hannes@mathematik.uni-kl.de
-In-Reply-To: <200611031821.kA3IL8Jv018521@u123.math.uiuc.edu> from "Dan Grayson" at Nov 03, 2006 12:21:08 PM
+// -*- c++ -*-
 
->
->
-> Hi, Hannes,
->
-> It was good to see you at the IMA.
->
-> How would I hook up M2 to Singular/Factory so it can factor and do gcd's over
-> non-prime finite fields?  Can I specify the irreducible polynomial of the
-> generator of the finite field?  If so, must its root generate the
-> multiplicative group?
->
-Hi Dan,
-factory assumes only, that the minimal polynomial of the field extension is
-given as a irreducible polynomial.
-(There is also another representation, which uses the root
-of the multiplicative group, but we do not use it, so its untested.)
+// From: hannes@mathematik.uni-kl.de
+// Subject: Re: Singular Factory
+// To: dan@math.uiuc.edu
+// Date: Tue, 7 Nov 2006 09:36:13 +0100 (CET)
+// Cc: hannes@mathematik.uni-kl.de
+// In-Reply-To: <200611031821.kA3IL8Jv018521@u123.math.uiuc.edu> from "Dan Grayson" at Nov 03, 2006 12:21:08 PM
+// 
+// >
+// >
+// > Hi, Hannes,
+// >
+// > It was good to see you at the IMA.
+// >
+// > How would I hook up M2 to Singular/Factory so it can factor and do gcd's over
+// > non-prime finite fields?  Can I specify the irreducible polynomial of the
+// > generator of the finite field?  If so, must its root generate the
+// > multiplicative group?
+// >
+// Hi Dan,
+// factory assumes only, that the minimal polynomial of the field extension is
+// given as a irreducible polynomial.
+// (There is also another representation, which uses the root
+// of the multiplicative group, but we do not use it, so its untested.)
+// 
+// GCD:
+// 
+//     This one should now work in char 0 also:
+// 
+// 	Here an example for gcd in a field extension of Z/p by mipo
+// 	(a polynomial of type CanonicalForm):
+// 	  setCharacteristic(p);
+// 	  Variable a=rootOf(mipo);
+// 	  // build F and G using a to represent a root of mipo
+// 	  return gcd(F,G);
+// 
+//     This one should not be needed any longer:
+// 
+// 	for extentions of Q:
+// 	  setCharacteristic(0);
+// 	  CFList as(mipo);
+// 	  Variable a=rootOf(mipo);
+// 	  // build F and G using a to represent a root of mipo
+// 	  return  alg_gcd( F, G, as);
+// 
+// Factorization:
+// 
+//     And factorization of G:
+//       setCharacteristic(p); // resp. setCharacteristic(0);
+//       Variable a=rootOf(mipo);
+//       // build G using a to represent a root of mipo
+//       CFFList L=Factorize(G, mipo);
+// 
 
-GCD:
+#include <factor.h>
+using std::cout;
+using std::endl;
 
-    This one should now work in char 0 also:
+int main () {
+  factoryseed(1);		// change the seed and watch it crash, or not
+  // crashing seeds: 0
+  // non-crashing seeds: 1
+  Off( SW_RATIONAL );
+  setCharacteristic(101);
+  Variable x('x');
+  CanonicalForm mipo = x*x - 2;
+  Variable a = rootOf( mipo, 'a' );
+  cout << "a^2     = " << a*a << endl;
+  CanonicalForm f = (x+a)*(x+a+1)*(x+a+1)*(x+a+34);
+  cout << "f = " << f << endl;
+  cout << "x.level() = " << x.level() << endl ;
+  cout << "a.level() = " << a.level() << endl ;
+  CFFList g = Factorize(f,mipo);
+  cout << "g = " << g << endl;
+  return 0;
+}
 
-	Here an example for gcd in a field extension of Z/p by mipo
-	(a polynomial of type CanonicalForm):
-	  setCharacteristic(p);
-	  Variable a=rootOf(mipo);
-	  // build F and G using a to represent a root of mipo
-	  return gcd(F,G);
+#include <templates/ftmpl_inst.cc>
 
-    This one should not be needed any longer:
-
-	for extentions of Q:
-	  setCharacteristic(0);
-	  CFList as(mipo);
-	  Variable a=rootOf(mipo);
-	  // build F and G using a to represent a root of mipo
-	  return  alg_gcd( F, G, as);
-
-Factorization:
-
-    And factorization of G:
-      setCharacteristic(p); // resp. setCharacteristic(0);
-      Variable a=rootOf(mipo);
-      // build G using a to represent a root of mipo
-      CFFList L=Factorize(G, mipo);
+// Local Variables:
+// compile-command: "g++ -g -I../../../BUILD/Linux-i686/normal/libraries/final/usr/lib/Macaulay2/Core/include -L../../../BUILD/Linux-i686/normal/libraries/final/usr/lib/Macaulay2/Core/lib -x c++ 0-factor -lfac -lcf -lcfmem -lntl -lgmp -o 0-factor.exe && ./0-factor.exe "
+// End:
