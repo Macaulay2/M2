@@ -68,9 +68,13 @@ ifneq ($(RELAX),yes)
 # but sometimes that's bad, e.g., during configure scripts with loosely written test programs
 # -Winline gives too many warning messages
 M2_BOTH      = -pipe -Wall -Wshadow -Wcast-qual -Wno-parentheses -Wno-sign-compare 
+
+ifeq "@OPTIMIZE@" "yes"
 # gcc 3.3.2 doesn't accept this:
 # M2_BOTH += -Werror=uninitialized
 M2_BOTH += -Wuninitialized
+endif
+
 # M2_CFLAGS   += -Werror=implicit-function-declaration -Werror=write-strings $(M2_BOTH)
 M2_CFLAGS   += -Wimplicit-function-declaration -Wwrite-strings $(M2_BOTH)
 
