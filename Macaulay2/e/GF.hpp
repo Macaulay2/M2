@@ -28,6 +28,9 @@ protected:
   virtual ~GF();
   bool initialize_GF(const RingElement *prim);
 public:
+
+  const PolynomialRing *originalR() const { return _originalR; }
+
   static GF * create(const RingElement *prim);
 
   int to_int(int a) const;
