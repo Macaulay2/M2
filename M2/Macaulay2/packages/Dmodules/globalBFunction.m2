@@ -151,7 +151,40 @@ globalBFunction RingElement := RingElement => o -> f -> (
      result
      )
 
-
+--------------------------------------------------------------
+-- global generalized Bernstein-Sato polynomial
+generalB = method(Options => {GuessedRoots => null})
+generalB (List, RingElement) := RingElement => o->(F,g) -> (
+-- Input:   F = {f_1,...,f_r}, a list of polynomials in n variables                                                                                                                                       
+--                             (f_i has to be an element of A_n, the Weyl algebra).                                                                                                                       
+--          g, a polynomial
+-- Output:  a generalized B-S polynomial, an element of QQ[s]
+     r := #F; 
+     AnnI := AnnFs F;
+     DY := ring AnnI;
+     K := coefficientRing DY;
+     n := numgens DY // 2 - r; -- DY = k[x_1,...,x_n,t_1,...,t_r,dx_1,...,dx_n,dt_1,...,dt_r]
+     I0 := if g==1 then AnnI else intersect(AnnI, ideal sub(g, DY));
+     w := toList(n:0) | toList(r:1);
+     I1 := inw(I0, -w|w);
+     s := symbol s; 
+     SDY := K (monoid [s, gens DY, WeylAlgebra => DY.monoid.Options.WeylAlgebra, MonomialOrder=>{Weights=>toList(n+1:0)|toList(n+2*r:1)}]);
+     v := gens SDY; 
+     SX := take(v,{0,n}); notSX := drop(v,{0,n}); 
+     T := take(v,{n+1,n+r}); dT := take(v,{2*n+r+1,2*(n+r)});
+     SXring := K(monoid [SX]);
+     SDYtoSX := map(SXring,SDY, gens SXring | toList(n+2*r:0) );
+     I2' := sub(I1,SDY) + ideal (SDY_0 + sum(r,i->dT#i*T#i)); -- I2 + (s-\sigma)
+     if o.GuessedRoots =!= null and #o.GuessedRoots == 1 then I2' = I2' + ideal(SDY_0 - first o.GuessedRoots);
+     G2' := flatten entries gens gb I2'; 
+     I2 := SDYtoSX ideal select(G2', f->all(listForm f, m->sum drop(first m,n+1)==0));
+     --I2 := SDYtoSX eliminate(notSX,I2'); -- works incorrectly for Weyl algebras
+     g' := SDYtoSX sub(g,SDY);
+     I3 := I2 : g';
+     I4 := eliminate(drop(gens SXring,1), I3);
+     Sring := K(monoid [SXring_0]);
+     sub(I4_0, Sring)
+     )
 
 
 

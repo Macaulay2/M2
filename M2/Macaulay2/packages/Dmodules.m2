@@ -1,11 +1,12 @@
-newPackage("Dmodules", Version => "1.1",
+newPackage("Dmodules", 
+     Version => "1.1",
+     Date => "10/01/2008",
      Headline => "functions for computations with D-modules",
+     HomePage => "http://www.math.uic.edu/~leykin/Dmodules",
      AuxiliaryFiles => true,
      Authors => {
-	  
-	  {Name => "Anton Leykin", Email => "leykin@math.ima.edu"},
+	  {Name => "Anton Leykin", Email => "leykin@math.uic.edu"},
 	  {Name => "Harrison Tsai"}
-	  
 	  }
      )
 

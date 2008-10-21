@@ -235,17 +235,33 @@ factorBFunction(RingElement) := Product => f -> (
      result
      );-- end factorBFunction
 
--- named after what it does
-getIntRoots = method()
-getIntRoots(RingElement) := List => f -> (
+bFunctionRoots = method()
+bFunctionRoots RingElement := List => f -> (
      p := factorBFunction f;
-     roots := apply(toList p, 
-	  u -> -substitute(u#0, {(ring u#0)_0 => 0_(ring u#0)}) ); -- all roots
-     roots = select(roots, u -> denominator leadCoefficient u == 1);
-     apply(roots, u -> numerator leadCoefficient u)    
+     apply(toList p, 
+	  u -> - leadCoefficient substitute(u#0, {(ring u#0)_0 => 0_(ring u#0)}) )
+     );
+getIntRoots = method()
+getIntRoots RingElement := List => f -> (
+     roots := bFunctionRoots f;
+     roots = select(roots, u -> denominator u == 1);
+     apply(roots, u -> numerator u)    
      );-- end getIntRoots
-
-   
+ 
+-- log canonical threshold computation via b-function
+lct = method()
+lct Ideal := RingElement => I -> (
+-- IN:  I,      ideal in QQ[x_1,...,x_n]
+-- OUT: lct(I), an element of QQ
+     W := makeWeylAlgebra ring I;
+     F := (sub(I,W))_*;
+     w := toList (numgens ring I:0) | toList(#F:1); 
+     b := bFunction(AnnFs F, w);
+     S := ring b;
+     r := numgens I;
+     -- lct(I) = min root of b(s-r)
+     min bFunctionRoots sub(b, {S_0=>S_0-r})  
+     )   
 
 
 
