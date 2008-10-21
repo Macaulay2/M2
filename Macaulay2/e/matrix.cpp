@@ -1781,6 +1781,25 @@ int Matrix::dimension() const
     }
 }
 
+const MatrixOrNull *Matrix::content() const
+{
+  ERROR("matrix content not yet implemented");
+  return 0;
+}
+
+const MatrixOrNull *Matrix::remove_content() const
+{
+  ERROR("matrix content not yet implemented");
+  return 0;
+}
+
+const MatrixOrNull *Matrix::split_off_content(MatrixOrNull *&result) const
+{
+  ERROR("matrix content not yet implemented");
+  result = 0;
+  return 0;
+}
+
 MatrixOrNull *Matrix::clean(M2_RRR epsilon) const
 {
   MatrixConstructor mat(rows(),cols(),degree_shift());

@@ -579,6 +579,26 @@ extern "C" {
      an error is flagged, and NULL is returned.
    */
 
+  ////  Content ////////////////////////////////////////
+  // The content of a ring element, polynomial or vector is defined to be an
+  // element of the base (either a finite field, ZZ, QQ, or a fraction)
+  // If base is ZZ: the result is the gcd of all of the terms appearing in the polynomial or vector
+  //   The sign is chosen so that after division by the content the resulting polynomial is monic
+  // If base is QQ or frac(A): the numerator is the gcd of all of the numerators,
+  //                the denominator is the lcm of all of the denominators
+  // If base is kk: the result is the lead coefficient.  For vectors, what should this mean?
+  //////////////////////////////////////////////////////
+
+  const RingElementOrNull *rawRingElementContent(const RingElement *f);
+  // returns the content of f (as a matrix over the base coefficient ring)
+
+  const RingElementOrNull *rawRingElementRemoveContent(const RingElement *f);
+  // returns the polynomial which results after division by the content
+
+  const RingElementOrNull *rawRingElementSplitContent(const RingElement *f, RingElementOrNull **result);
+  // returns the content of f (as a matrix over the base coefficient ring)
+  // result is set to the polynomial which results after division by the content
+
   /**************************************************/
   /**** fraction field ring element routines ********/
   /**************************************************/
@@ -969,6 +989,26 @@ extern "C" {
 
   const Matrix * rawRemoveMonomialFactors(const Matrix *m, M2_bool make_squarefree_only);
   /* connected to rawRemoveMonomialFactors */
+
+  ////  Content ////////////////////////////////////////
+  // The content of a ring element, polynomial or vector is defined to be an
+  // element of the base (either a finite field, ZZ, QQ, or a fraction)
+  // If base is ZZ: the result is the gcd of all of the terms appearing in the polynomial or vector
+  //   The sign is chosen so that after division by the content the resulting polynomial is monic
+  // If base is QQ or frac(A): the numerator is the gcd of all of the numerators,
+  //                the denominator is the lcm of all of the denominators
+  // If base is kk: the result is the lead coefficient.  For vectors, what should this mean?
+  //////////////////////////////////////////////////////
+
+  const MatrixOrNull *rawMatrixContent(const Matrix *M);
+  // returns the matrix of the content of each column of M
+
+  const MatrixOrNull *rawMatrixRemoveContent(const Matrix *M);
+  // returns the matrix with the content (as defined above) removed
+
+  const MatrixOrNull *rawMatrixSplitContent(const Matrix *M, MatrixOrNull **result);
+  // returns the matrix of the content of each column of M,
+  // and result is set to the result of rawMatrixRemoveContent.
 
   const MatrixOrNull * IM2_Matrix_remove_content(const Matrix *M);      /* connected rawRemoveContent*/
 

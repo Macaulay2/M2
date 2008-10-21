@@ -337,6 +337,25 @@ bool RingElement::lift(const Ring *S, const RingElement * &result) const
   return false;
 }
 
+const RingElementOrNull *RingElement::content() const
+{
+  ERROR("content not yet implemented");
+  return 0;
+}
+
+const RingElementOrNull *RingElement::remove_content() const
+{
+  ERROR("content not yet implemented");
+  return 0;
+}
+
+const RingElementOrNull *RingElement::split_off_content(RingElementOrNull *&result) const
+{
+  ERROR("content not yet implemented");
+  result = 0;
+  return 0;
+}
+
 RingElement *RingElement::numerator() const
 {
   if (R == globalQQ)

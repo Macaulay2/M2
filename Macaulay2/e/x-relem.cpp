@@ -982,6 +982,25 @@ const RingElementOrNull * rawAssociateDivisor(const RingElement *f)
      }
 }
 
+const RingElementOrNull *rawRingElementContent(const RingElement *f)
+// returns the content of f (as a matrix over the base coefficient ring)
+{
+  return f->content();
+}
+
+const RingElementOrNull *rawRingElementRemoveContent(const RingElement *f)
+// returns the polynomial which results after division by the content
+{
+  return f->remove_content();
+}
+
+const RingElementOrNull *rawRingElementSplitContent(const RingElement *f, RingElementOrNull **result)
+// returns the content of f (as a matrix over the base coefficient ring)
+// result is set to the polynomial which results after division by the content
+{
+  return f->split_off_content(*result);
+}
+
 const RingElementOrNull *IM2_RingElement_numerator(const RingElement *a)
 {
      try {

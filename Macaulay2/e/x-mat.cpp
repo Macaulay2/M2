@@ -693,6 +693,24 @@ const Matrix * rawRemoveScalarMultiples(const Matrix *m)
   return m->remove_scalar_multiples();
 }
 
+// See engine.h for our definition of 'content'
+
+const MatrixOrNull *rawMatrixContent(const Matrix *M)
+// returns the matrix of the content of each column of M.
+{
+  return M->content();
+}
+
+const MatrixOrNull *rawMatrixRemoveContent(const Matrix *M)
+{
+  return M->remove_content();
+}
+
+const MatrixOrNull *rawMatrixSplitContent(const Matrix *M, MatrixOrNull **result)
+{
+  return M->split_off_content(*result);
+}
+
 const MatrixOrNull *IM2_Matrix_remove_content(const Matrix *M) {
 #ifdef DEVELOPMENT
 #warning "const MatrixOrNull * IM2_Matrix_remove_content(const Matrix *M) -- not implemented yet"

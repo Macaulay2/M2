@@ -192,6 +192,11 @@ public:
 				// presentation ideal of the ring of m.
 				// Over ZZ, this gives the dimension over QQ.
 
+  // See engine.h for the definition of 'content' here
+  const MatrixOrNull *content() const;
+  const MatrixOrNull *remove_content() const;
+  const MatrixOrNull *split_off_content(MatrixOrNull *&result) const;
+
 private:
   void minimal_lead_terms_ZZ(intarray &result) const;
 public:

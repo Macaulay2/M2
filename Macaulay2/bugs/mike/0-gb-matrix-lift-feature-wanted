@@ -1,3 +1,8 @@
 It would be really nice if rawGBMatrixLift would always return (into an int* of
 mine) whether the remainder turned out to be nonzero.  Then for functions like
 "extend" the checking could happen as quickly as possible.
+
+DONE: added return value to rawGBMatrixLift, 20 Oct 2008.
+
+to do: add tests for this function to make sure the zero/non-zero logic is
+correct, do this after Dan changes function in the front end.
