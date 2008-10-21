@@ -23,8 +23,10 @@ B = LLL syz assocModel(4,4)
 R = ZZ/101[x_1..x_16]
 gb(oo,Algorithm=>Toric)
 
+restart
 load "toric.m2"
 A = assocModel(4,5)
 B = LLL syz A
 S = ZZ/32003[y_(1,1)..y_(4,5)]
 J = toric(B,S)
+time gens gb J;

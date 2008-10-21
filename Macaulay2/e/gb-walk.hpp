@@ -76,7 +76,7 @@ public:
 
   virtual const MatrixOrNull *matrix_remainder(const Matrix *m);
 
-  virtual void matrix_lift(const Matrix *m,
+  virtual M2_bool matrix_lift(const Matrix *m,
 			   MatrixOrNull **result_remainder,
 			   MatrixOrNull **result_quotient
 			   );

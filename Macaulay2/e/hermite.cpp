@@ -481,7 +481,7 @@ const MatrixOrNull *HermiteComputation::matrix_remainder(const Matrix *m)
 }
 
 
-void HermiteComputation::matrix_lift(const Matrix *m,
+M2_bool HermiteComputation::matrix_lift(const Matrix *m,
 				     MatrixOrNull **result_remainder,
 				     MatrixOrNull **result_quotient)
 {
@@ -490,27 +490,33 @@ void HermiteComputation::matrix_lift(const Matrix *m,
       ERROR("expected matrix over ZZ");
       *result_remainder = 0;
       *result_quotient = 0;
+      return false;
     }
   if (m->n_rows() != gens->rows()->rank()) 
     {
       ERROR("expected matrices to have same number of rows");
       *result_remainder = 0;
       *result_quotient = 0;
+      return false;
     }
   MatrixConstructor mat_remainder(m->rows(), m->cols(), m->degree_shift());
   MatrixConstructor mat_quotient(Fsyz, m->cols(), 0);
+  bool all_zeroes = true;
   for (int i=0; i<m->n_cols(); i++)
     {
       vec f = globalZZ->copy_vec(m->elem(i));
       vec fsyz = NULL;
 
       gb_reduce(f, fsyz);
+      if (f == 0) all_zeroes = false;
+
       globalZZ->negate_vec_to(fsyz);
       mat_remainder.set_column(i, f);
       mat_quotient.set_column(i, fsyz);
     }
   *result_remainder = mat_remainder.to_matrix();
   *result_quotient = mat_quotient.to_matrix();
+  return all_zeroes;
 }
 
 int HermiteComputation::contains(const Matrix *m)

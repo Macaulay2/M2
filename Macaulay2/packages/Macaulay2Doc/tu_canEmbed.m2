@@ -252,4 +252,5 @@ betti IC1res
 -- This is done as follows:
 
 ff1 = map(R,S,can1)
-trim coimage map(coker F1,ff1)
+G = map(coker F1,ff1)
+trim coimage G

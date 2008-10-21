@@ -232,12 +232,16 @@ const MatrixOrNull *GBWalker::matrix_remainder(const Matrix *m)
   return 0;
 }
 
-void GBWalker::matrix_lift(const Matrix *m,
+M2_bool GBWalker::matrix_lift(const Matrix *m,
 		 MatrixOrNull **result_remainder,
 		 MatrixOrNull **result_quotient
 		 )
 {
-  // MES: TO WRITE
+  // MES: TO WRITE, should this be written?
+  *result_remainder = 0;
+  *result_quotient = 0;
+  ERROR("rawGBMatrixLift not implemented for GB walks");
+  return false;
 }
 
 int GBWalker::contains(const Matrix *m)

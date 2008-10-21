@@ -1,6 +1,10 @@
 CC[a,b]
-matrix {{a+b}}
+M = matrix {{a+b}}
+debug Core
+raw M
 
+RR[c,d]
+M = matrix {{c+d}}
 end
 
 Macaulay 2, version 1.1

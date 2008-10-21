@@ -1628,11 +1628,12 @@ enum gbTraceValues
   const MatrixOrNull *rawGBMatrixRemainder(Computation *G, 
 					   const Matrix *m); /* drg: connected rawGBMatrixRemainder */
 
-  void IM2_GB_matrix_lift(Computation *G,
+  M2_bool IM2_GB_matrix_lift(Computation *G,
 			  const Matrix *m,
 			  MatrixOrNull **result_remainder,
 			  MatrixOrNull **result_quotient
 			  ); /* drg: connected rawGBMatrixLift */
+  /* false is returned if there is an error or if the remainder is NON-zero */
 
   int IM2_GB_contains(Computation *G, 
 		      const Matrix *m); /* drg: connected rawGBContains */
