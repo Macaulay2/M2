@@ -85,6 +85,11 @@ public:
   M2_arrayint multi_degree() const;
   //  intarray  degree() const;
 
+  // See engine.h for the definition of 'content' here
+  const RingElementOrNull *content() const;
+  const RingElementOrNull *remove_content() const;
+  const RingElementOrNull *split_off_content(RingElementOrNull *&result) const;
+
   // functions for fraction fields
 
   RingElement *numerator() const;
