@@ -648,7 +648,7 @@ document {
 
 document {
      Key => {(getPackage,String), getPackage, CurrentVersion, 
-	  [getPackage,CurrentVersion], [getPackage,Version],Repository,[getPackage,Repository],
+	  [getPackage,CurrentVersion], [getPackage,Version], [getPackage,UserMode],Repository,[getPackage,Repository],
 	  [getPackage, DebuggingMode]
 	  },
      Headline => "download a package from the repository",
@@ -660,7 +660,8 @@ document {
 	       Version => String => {"the version to download, instead of the most recent version"},
 	       CurrentVersion => String => {"the version currently installed"},
 	       Repository => String => {"the URL of the repository"},
-	       DebuggingMode => Boolean => {"the debugging mode to be passed to ", TO "installPackage"}
+	       DebuggingMode => Boolean => {"the debugging mode to be passed to ", TO "installPackage"},
+	       UserMode => Boolean => {"the user mode to be passed to ", TO "installPackage"},
 	       },
 	  Outputs => {
 	       },

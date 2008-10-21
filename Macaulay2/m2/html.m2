@@ -473,32 +473,33 @@ runString := (x,pkg,rundir,usermode) -> (
      if ret then (rm inf; rm outf;);
      ret)
 
-check = method()
+check = method(Options => {
+	  UserMode => true	  
+	  })
 prep = pkg -> (
      use pkg;
      if pkg#?"documentation not loaded" then pkg = loadPackage(pkg#"title", LoadDocumentation => true);
      hadExampleError = false;
      numExampleErrors = 0;
      )
-onecheck = (seqno,pkg) -> (
-     usermode := false;					    -- fix this later as an option to "check" or something!
+onecheck = (seqno,pkg,usermode) -> (
      (filename,lineno,s) := pkg#"test inputs"#seqno;
      stderr << "--running test " << seqno << " of package " << pkg << " on line " << lineno << " in file " << filename << endl;
      stderr << "--    rerun with: check_" << seqno << " \"" << pkg << "\"" << endl;
      runString(s,pkg,".",usermode);
      )
-check(ZZ,Package) := (seqno,pkg) -> (
+check(ZZ,Package) := (seqno,pkg) -> opts -> (
      prep pkg;
-     onecheck(seqno,pkg);
+     onecheck(seqno,pkg,opts.UserMode);
      if hadExampleError then error("error occurred running test for package ", toString pkg, ": ", toString seqno);
      )
-check(ZZ,String) := (seqno,pkg) -> check(seqno, needsPackage (pkg, LoadDocumentation => true))
-check Package := pkg -> (
+check(ZZ,String) := (seqno,pkg) -> opts -> check(seqno, needsPackage (pkg, LoadDocumentation => true), opts)
+check Package := pkg -> opts -> (
      prep pkg;
-     scan(keys pkg#"test inputs", seqno -> onecheck(seqno,pkg));
+     scan(keys pkg#"test inputs", seqno -> onecheck(seqno,pkg,opts.UserMode));
      if hadExampleError then error(toString numExampleErrors, " error(s) occurred running tests for package ", toString pkg);
      )
-check String := pkg -> check needsPackage (pkg, LoadDocumentation => true)
+check String := pkg -> opts -> check(needsPackage (pkg, LoadDocumentation => true), opts)
 
 setupNames := (opts,pkg) -> (
      buildPackage = pkg#"title";
@@ -513,7 +514,7 @@ setupNames := (opts,pkg) -> (
 installPackage = method(Options => { 
 	  PackagePrefix => () -> applicationDirectory() | "encap/",
           InstallPrefix => () -> applicationDirectory() | "local/",
-	  UserMode => false,
+	  UserMode => true,
 	  Encapsulate => true,
 	  EncapsulateDirectory => null,
 	  IgnoreExampleErrors => false,

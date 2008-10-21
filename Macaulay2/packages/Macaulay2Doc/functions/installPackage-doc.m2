@@ -31,8 +31,8 @@ document {
 	  FileName => String => "the name of the file containing the source code of the package, from which it should be loaded",
 	  UserMode => Boolean => { "whether the installation will ignore packages installed in the user's 
 	       ", TO2{"applicationDirectory", "application directory"}, " and will ignore the user's ", TO "initialization file", " when running
-	       examples.  Setting this to ", TO "true", " is necessary when installing an optional package that depends on another optional package,
-	       previously installed." 
+	       examples.  Not setting this to ", TO "false", " is necessary when installing an optional package that depends on another optional package,
+	       previously installed by the user." 
 	       },
 	  DebuggingMode => Boolean => { "whether to enter ", TO "the debugger", " if an error occurs during installation" },
 	  RerunExamples => Boolean => "whether to rerun all the examples during installation",

@@ -119,13 +119,16 @@ document {
      }
 
 document {
-     Key => {export, (export,List), (export,Symbol)},
+     Key => {export, (export,List), (export,Symbol), (export,String)},
      Headline => "package item: export functions",
      Usage => "export {symbol1,symbol2,...}",
-     Inputs => { { TT "{symbol1,symbol2,...}", ", a list of symbols" } },
+     Inputs => { { TT "{symbol1,symbol2,...}", ", a list of symbols, strings, or options" } },
      Consequences => {"The symbols in the list, which should refer
 	  to functions or other symbols defined in the package, are made available 
-	  to the user of the package, and are marked non-mutable."},
+	  to the user of the package, and are marked non-mutable.  The strings are converted to symbols
+	  with those names in the dictionary of the package.  An option of the form ", TT "\"nam\" => sym", "
+	  creates a symbol with the name ", TT "\"nam\"", " that is a synonym of the symbol", TT "\"nam\" => sym", "."
+	  },
      "A package can contain the code for many functions, only some 
      of which should be made visible to the user.  The function ", TT "export", " 
      allows one to specify which symbols are to be made visible.
