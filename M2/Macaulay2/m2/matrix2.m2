@@ -246,7 +246,6 @@ quotientRemainder(Matrix,Matrix) := Matrix => (f,g) -> (
      M := target f;
      if M != target g then error "expected maps with the same target";
      L := source f;
-     if not isFreeModule L then error "expected source of map to be lifted to be a free module";
      N := source g;
      f = matrix f;
      g = matrix g;
