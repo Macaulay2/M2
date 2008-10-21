@@ -266,6 +266,29 @@ bool Ring::lower_associate_divisor(ring_elem &f, const ring_elem g) const
   return true;
 }
 
+ring_elem Ring::content(ring_elem f) const
+{
+  return f;
+}
+
+ring_elem Ring::remove_content(ring_elem f) const
+{
+  if (is_zero(f))
+    return f;
+  return from_int(1);
+}
+
+ring_elem Ring::split_off_content(ring_elem f, ring_elem &result) const
+{
+  if (is_zero(f))
+    {
+      result = f;
+      return f;
+    }
+  result = from_int(1);
+  return f;
+}
+
 void Ring::monomial_divisor(const ring_elem a, int *exp) const
 {
   // Do nothing

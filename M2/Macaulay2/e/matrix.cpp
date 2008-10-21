@@ -1783,21 +1783,45 @@ int Matrix::dimension() const
 
 const MatrixOrNull *Matrix::content() const
 {
-  ERROR("matrix content not yet implemented");
-  return 0;
+  const Ring *R = get_ring();
+  const PolynomialRing *P = R->cast_to_PolynomialRing();
+  const Ring *targetR = (P == 0 ? R : P->getCoefficients());
+
+  const FreeModule *F = targetR->make_FreeModule(1);
+  MatrixConstructor mat(F,n_cols());
+  for (int i=0; i<n_cols(); i++)
+    mat.set_entry(0,i,R->vec_content(elem(i)));
+  return mat.to_matrix();
 }
 
 const MatrixOrNull *Matrix::remove_content() const
 {
-  ERROR("matrix content not yet implemented");
-  return 0;
+  const Ring *R = get_ring();
+  MatrixConstructor mat(rows(),cols(),degree_shift());
+  for (int i=0; i<n_cols(); i++)
+    mat.set_column(i,R->vec_remove_content(elem(i)));
+  return mat.to_matrix();
 }
 
 const MatrixOrNull *Matrix::split_off_content(MatrixOrNull *&result) const
 {
-  ERROR("matrix content not yet implemented");
-  result = 0;
-  return 0;
+  const Ring *R = get_ring();
+  const PolynomialRing *P = R->cast_to_PolynomialRing();
+  const Ring *targetR = (P == 0 ? R : P->getCoefficients());
+
+  const FreeModule *F = targetR->make_FreeModule(1);
+  MatrixConstructor mat_content(F,n_cols());
+  MatrixConstructor mat(rows(),cols(),degree_shift());
+
+  for (int i=0; i<n_cols(); i++)
+    {
+      vec g;
+      ring_elem c = R->vec_split_off_content(elem(i), g);
+      mat_content.set_entry(0,i,c);
+      mat.set_column(i,g);
+    }
+  result = mat.to_matrix();
+  return mat_content.to_matrix();
 }
 
 MatrixOrNull *Matrix::clean(M2_RRR epsilon) const

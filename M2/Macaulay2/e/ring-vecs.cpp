@@ -1129,6 +1129,18 @@ vec Ring::vec_remove_monomial_factors(vec f, bool make_squarefree_only) const
   return result;
 }
 
+ring_elem Ring::vec_content(vec f) const
+{
+}
+
+vec Ring::vec_remove_content(vec f) const
+{
+}
+
+ring_elem Ring::vec_split_off_content(vec f, vec &result) const
+{
+}
+
 // Local Variables:
 // compile-command: "make -C $M2BUILDDIR/Macaulay2/e "
 // End:
