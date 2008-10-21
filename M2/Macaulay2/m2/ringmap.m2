@@ -52,6 +52,7 @@ map(Ring,Ring,Matrix) := RingMap => opts -> (R,S,m) -> (
 	  if record#?s then error "map: multiple variables would map to the same variable, by name";
 	  record#s = true;
 	  R.indexSymbols#s);
+     mpres := m;
      while true do (
 	  mdegs = join(mdegs, promote(degrees A,A,S) / degmap);
 	  r := numgens source m;
@@ -61,7 +62,8 @@ map(Ring,Ring,Matrix) := RingMap => opts -> (R,S,m) -> (
 		    p := map(R,ambient A,m_(toList(n .. r-1)));
 		    m' := new MutableMatrix from m;
 		    m'_(0,n) = p A.PrimitiveElement;
-		    m = matrix m';))
+		    m = matrix m';
+		    ))
 	  else if r < n then error ("encountered values for ", toString r, " variables, but expected ", toString n)
 	  else if r == n then (
 	       if numgens A > 0 then (
@@ -90,7 +92,7 @@ map(Ring,Ring,Matrix) := RingMap => opts -> (R,S,m) -> (
      new RingMap from {
 	  symbol source => S,
 	  symbol target => R,
-	  symbol matrix => m,
+	  symbol matrix => mpres,
 	  symbol RawRingMap => rawRingMap m.RawMatrix,
 	  symbol DegreeMap => degmap,
 	  symbol cache => new CacheTable
