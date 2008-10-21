@@ -35,6 +35,14 @@ public:
   GF * cast_to_GF() { return this; }
   const GF * cast_to_GF() const { return this; }
 
+  const RingElement *get_minimal_poly() const;
+  // returns the polynomial f(t) mentioned in the def of _originalR above.
+  // this is the minimal polynomial of the given generator of this ring
+  // (which is not necessarily the primitive element)
+
+  ring_elem get_rep(ring_elem f) const;
+  // takes an element of this ring, and returns an element of _originalR->XXX()
+
 // The following are all the routines required by 'ring'
 
   virtual void text_out(buffer &o) const;
