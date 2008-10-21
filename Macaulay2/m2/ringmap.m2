@@ -52,7 +52,7 @@ map(Ring,Ring,Matrix) := RingMap => opts -> (R,S,m) -> (
 	  if record#?s then error "map: multiple variables would map to the same variable, by name";
 	  record#s = true;
 	  R.indexSymbols#s);
-     mpres := m;
+     mExternal := m;
      while true do (
 	  mdegs = join(mdegs, promote(degrees A,A,S) / degmap);
 	  r := numgens source m;
@@ -67,22 +67,24 @@ map(Ring,Ring,Matrix) := RingMap => opts -> (R,S,m) -> (
 	  else if r < n then error ("encountered values for ", toString r, " variables, but expected ", toString n)
 	  else if r == n then (
 	       if numgens A > 0 then (
-		    m = m |
 		    if member(A, R.baseRings) then (
 			 -- we can promote
+			 mExternal = mExternal | promote(vars A, R);
 			 if instance(A,GaloisField) then (
 		    	      -- the engine wants to know where the primitive element will go
-		    	      promote(A.PrimitiveElement, R)
+		    	      m = m | promote(A.PrimitiveElement, R)
 			      )
-			 else promote(vars A, R)
+			 else m = m | promote(vars A, R);
 			 )
 		    else (
 			 mm := matrix(R, {apply(A.generatorSymbols, s -> if R.?indexSymbols and R.indexSymbols#?s then justonce s else 0_R)});
+			 mExternal = mExternal | mm;
 			 if instance(A,GaloisField) then (
 			      -- the engine wants to know where the primitive element will go
-			      matrix {{(map(R,ambient A,mm)) A.PrimitiveElement}}
+			      m = m | matrix {{(map(R,ambient A,mm)) A.PrimitiveElement}}
 			      )
-			 else mm)));
+			 else m = m | mm;
+			 )));
 	  n = n + numgens A;
 	  try A = coefficientRing A else break
 	  );
@@ -92,7 +94,7 @@ map(Ring,Ring,Matrix) := RingMap => opts -> (R,S,m) -> (
      new RingMap from {
 	  symbol source => S,
 	  symbol target => R,
-	  symbol matrix => mpres,
+	  symbol matrix => mExternal,
 	  symbol RawRingMap => rawRingMap m.RawMatrix,
 	  symbol DegreeMap => degmap,
 	  symbol cache => new CacheTable
