@@ -339,21 +339,26 @@ bool RingElement::lift(const Ring *S, const RingElement * &result) const
 
 const RingElementOrNull *RingElement::content() const
 {
-  ERROR("content not yet implemented");
-  return 0;
+  const PolynomialRing *P = R->cast_to_PolynomialRing();
+  const Ring *targetR = (P == 0 ? R : P->getCoefficients());
+
+  return new RingElement(targetR, R->content(val));
 }
 
 const RingElementOrNull *RingElement::remove_content() const
 {
-  ERROR("content not yet implemented");
-  return 0;
+  return new RingElement(R, R->remove_content(val));
 }
 
 const RingElementOrNull *RingElement::split_off_content(RingElementOrNull *&result) const
 {
-  ERROR("content not yet implemented");
-  result = 0;
-  return 0;
+  const PolynomialRing *P = R->cast_to_PolynomialRing();
+  const Ring *targetR = (P == 0 ? R : P->getCoefficients());
+
+  ring_elem g;
+  ring_elem c = R->split_off_content(val, g);
+  result = new RingElement(R, g);
+  return new RingElement(targetR, c);
 }
 
 RingElement *RingElement::numerator() const
