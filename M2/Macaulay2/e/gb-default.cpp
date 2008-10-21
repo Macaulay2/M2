@@ -2512,7 +2512,7 @@ const MatrixOrNull *gbA::matrix_remainder(const Matrix *m)
   return minimal_gb->matrix_remainder(m);
 }
 
-void gbA::matrix_lift(const Matrix *m,
+M2_bool gbA::matrix_lift(const Matrix *m,
 		 MatrixOrNull **result_remainder,
 		 MatrixOrNull **result_quotient
 		 )

@@ -71,7 +71,7 @@ public:
     return G->matrix_remainder(m);
   }
 
-  virtual void matrix_lift(const Matrix *m,
+  virtual M2_bool matrix_lift(const Matrix *m,
 			   MatrixOrNull **result_remainder,
 			   MatrixOrNull **result_quotient) {
     return G->matrix_lift(m,result_remainder,result_quotient);

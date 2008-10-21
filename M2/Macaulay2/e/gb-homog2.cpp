@@ -1076,7 +1076,7 @@ const MatrixOrNull *GB_comp::matrix_remainder(const Matrix *m)
   return red.to_matrix();
 }
 
-void GB_comp::matrix_lift(const Matrix *m,
+M2_bool GB_comp::matrix_lift(const Matrix *m,
 		 MatrixOrNull **result_remainder,
 		 MatrixOrNull **result_quotient
 		 )
@@ -1086,15 +1086,18 @@ void GB_comp::matrix_lift(const Matrix *m,
       ERROR("expected matrix over the same ring");
       *result_remainder = 0;
       *result_quotient = 0;
+      return false;
     }
   if (m->n_rows() != _F->rank()) {
        ERROR("expected matrices to have same number of rows");
       *result_remainder = 0;
       *result_quotient = 0;
+      return false;
   }
   start_computation();
   MatrixConstructor mat_remainder(m->rows(), m->cols(), m->degree_shift());
   MatrixConstructor mat_quotient(_Fsyz, 0);
+  bool all_zeroes = true;
   for (int i=0; i<m->n_cols(); i++)
     {
       ring_elem denom;
@@ -1102,6 +1105,7 @@ void GB_comp::matrix_lift(const Matrix *m,
       gbvector * fsyz = _GR->gbvector_zero();
 
       gb_reduce(f, fsyz);
+      if (f == 0) all_zeroes = false;
 
       vec fv = originalR->translate_gbvector_to_vec_denom(_F, f, denom);
       _K->negate_to(denom);
@@ -1111,6 +1115,7 @@ void GB_comp::matrix_lift(const Matrix *m,
     }
   *result_remainder = mat_remainder.to_matrix();
   *result_quotient = mat_quotient.to_matrix();
+  return all_zeroes;
 }
 
 int GB_comp::contains(const Matrix *m)

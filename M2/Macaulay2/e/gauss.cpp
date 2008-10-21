@@ -339,7 +339,7 @@ const MatrixOrNull *GaussElimComputation::matrix_remainder(const Matrix *m)
 }
 
 
-void GaussElimComputation::matrix_lift(const Matrix *m,
+M2_bool GaussElimComputation::matrix_lift(const Matrix *m,
 				     MatrixOrNull **result_remainder,
 				     MatrixOrNull **result_quotient)
 {
@@ -348,15 +348,18 @@ void GaussElimComputation::matrix_lift(const Matrix *m,
       ERROR("encountered different rings");
       *result_remainder = 0;
       *result_quotient = 0;
+      return false;
     }
   if (m->n_rows() != gens->rows()->rank()) 
     {
       ERROR("expected matrices to have same number of rows");
       *result_remainder = 0;
       *result_quotient = 0;
+      return false;
     }
   MatrixConstructor mat_remainder(m->rows(), m->cols(), m->degree_shift());
   MatrixConstructor mat_quotient(Fsyz, m->cols(), 0);
+  bool all_zeroes = true;
   for (int i=0; i<m->n_cols(); i++)
     {
       vec f = R->copy_vec(m->elem(i));
@@ -364,11 +367,13 @@ void GaussElimComputation::matrix_lift(const Matrix *m,
 
       reduce(f, fsyz);
       R->negate_vec_to(fsyz);
+      if (f == 0) all_zeroes = false;
       mat_remainder.set_column(i, f);
       mat_quotient.set_column(i, fsyz);
     }
   *result_remainder = mat_remainder.to_matrix();
   *result_quotient = mat_quotient.to_matrix();
+  return all_zeroes;
 }
 
 int GaussElimComputation::contains(const Matrix *m)

@@ -1291,13 +1291,16 @@ const MatrixOrNull *binomialGB_comp::matrix_remainder(const Matrix *m)
 {
   return 0;
 }
-void binomialGB_comp::matrix_lift(const Matrix *m,
+M2_bool binomialGB_comp::matrix_lift(const Matrix *m,
 				  MatrixOrNull **result_remainder,
 				  MatrixOrNull **result_quotient
 				  )
   //not planned to be implemented
 {
-  // intentially left blank
+  *result_remainder = 0;
+  *result_quotient = 0;
+  ERROR("rawGBMatrixLift not implemented for toric GB's");
+  return false;
 }
 
 

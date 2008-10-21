@@ -136,11 +136,15 @@ const MatrixOrNull *F4Computation::matrix_remainder(const Matrix *m)
   return 0;
 }
 
-void F4Computation::matrix_lift(const Matrix *m,
+M2_bool F4Computation::matrix_lift(const Matrix *m,
 		 MatrixOrNull **result_remainder,
 		 MatrixOrNull **result_quotient
 		 )
 {
+  *result_remainder = 0;
+  *result_quotient = 0;
+  ERROR("rawGBMatrixLift not implemented for LinearAlgebra GB's yets");
+  return false;
 }
 
 int F4Computation::contains(const Matrix *m)

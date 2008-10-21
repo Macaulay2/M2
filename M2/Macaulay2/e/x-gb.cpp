@@ -750,7 +750,7 @@ rawGBMatrixRemainder(Computation *C,
      }
 }
 
-void IM2_GB_matrix_lift(Computation *C,
+M2_bool IM2_GB_matrix_lift(Computation *C,
 			const Matrix *m,
 			MatrixOrNull **result_remainder,
 			MatrixOrNull **result_quotient
@@ -760,13 +760,13 @@ void IM2_GB_matrix_lift(Computation *C,
 	  clear_emit_size();
 	  GBComputation *G = C->cast_to_GBComputation();
 	  if (G != 0)
-	    G->matrix_lift(m, result_remainder, result_quotient);
+	    return G->matrix_lift(m, result_remainder, result_quotient);
 	  else ERROR("computation type unknown or not implemented");
      }
      catch (exc::engine_error e) {
 	  ERROR(e.what());
-	  return;
      }
+     return false;
 }
 
 int 
