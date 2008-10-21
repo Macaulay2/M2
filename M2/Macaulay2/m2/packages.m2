@@ -248,6 +248,7 @@ newPackage(String) := opts -> (title) -> (
 
 export = method(Dispatch => Thing)
 export Symbol := x -> export {x}
+export String := x -> export {x}
 export List := v -> (
      if currentPackage === null then error "no current package";
      pd := currentPackage#"private dictionary";
@@ -255,11 +256,15 @@ export List := v -> (
      title := currentPackage#"title";
      scan(v, sym -> (
 	       local nam;
-	       if class sym === Option then (
+	       if instance(sym, Option) then (
 		    nam = sym#0;			    -- synonym
      	       	    if class nam =!= String then error("expected a string: ", nam);
 		    if pd#?nam then error("symbol intended as exported synonym already used internally: ",format nam, "\n", symbolLocation pd#nam, ": it was used here");
 		    sym = sym#1;
+		    )
+	       else if instance(sym, String) then (
+		    nam = sym;
+		    sym = getGlobalSymbol(pd,nam);
 		    )
 	       else (
 		    nam = toString sym;
@@ -267,7 +272,7 @@ export List := v -> (
 	       if not instance(sym,Symbol) then error ("expected a symbol: ", sym);
 	       if not pd#?(toString sym) or pd#(toString sym) =!= sym 
 	       then (
-		    -- error ("symbol ",sym," defined elsewhere, not in current package: ", currentPackage);
+		    error ("symbol ",sym," defined elsewhere, not in current package: ", currentPackage);
 		    sym = getGlobalSymbol(pd,nam);	    -- replace sym by one in the current package's private dictionary
 		    );
 	       syn := title | "$" | nam;
@@ -414,6 +419,7 @@ getPackage = method(Options => {
 	  Repository => "http://www.math.uiuc.edu/Macaulay2/Packages/",
 	  Version => null, 
 	  CurrentVersion => null,
+	  UserMode => true,
 	  DebuggingMode => false
 	  })
 installMethod(getPackage, opts -> () -> lines getwww (opts.Repository | "packages" ))
@@ -457,7 +463,11 @@ getPackage String := opts -> pkgname -> (
 	  stderr << "--file downloaded: " << fn << endl;
 	  filename << m2file << close;
 	  );
-     installPackage(pkgname, IgnoreExampleErrors => true, FileName => filename, DebuggingMode => opts.DebuggingMode);
+     installPackage(pkgname, 
+	  IgnoreExampleErrors => true, 
+	  FileName => filename, 
+	  DebuggingMode => opts.DebuggingMode, 
+	  UserMode => opts.UserMode);
      )
 
 -- Local Variables:

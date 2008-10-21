@@ -63,7 +63,7 @@ else
 .patched-$(VERSION) : .untarred-$(VERSION) ; touch $@
 endif
 
-UNTARCMD ?= tar xzf $(TARFILE)
+UNTARCMD ?= tar xzf tarfiles/$(TARFILE)
 .untarred-$(VERSION) : .fetched-$(VERSION) ; $(UNTARCMD) && touch $@
 .untarred2-$(VERSION) : .fetched-$(VERSION) ; mkdir tmp ; $(UNTARCMD) -C tmp && touch $@
 
@@ -89,18 +89,20 @@ endif
 
 CHECKFETCHED = case "$(URL)" in \
 	http:*) \
-	    if file $(TARFILE) | grep HTML ; \
+	    if file tarfiles/$(TARFILE) | grep HTML ; \
 	    then echo tried to fetch file, but HTML file returned instead >&2 ; exit 1 ; \
 	    fi ;; \
 	esac
 
-.fetched-$(VERSION) : ; $(FETCHER) $(URL)/$(TARFILE) $(FETCHOPTS) && $(CHECKFETCHED) && touch $@
+.fetched-$(VERSION) :
+	$(MKDIR_P) tarfiles
+	(cd tarfiles && $(FETCHER) $(URL)/$(TARFILE) $(FETCHOPTS) && $(CHECKFETCHED)) && touch $@
 
 clean :: package-clean
 distclean :: package-distclean
 
-clean ::; rm -rf .patched* .untarred* $(LIBNAME)-* .compiled* .configured* .installed* .untarred2* diffs tmp
-distclean :: clean ; rm -rf Makefile $(TARFILE) .fetched* $(TARDIR) $(TARFILE)
+clean ::; rm -rf .patched* .untarred* $(LIBNAME)-* .compiled* .configured* .installed* .untarred2* diffs tmp $(TARDIR)
+distclean :: clean ; rm -rf Makefile tarfiles/* .fetched*
 check ::
 
 help :;

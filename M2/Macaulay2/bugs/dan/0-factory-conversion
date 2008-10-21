@@ -1,31 +1,26 @@
-i1 : load "radicalExample.m2"
---error message bumped: conversion from factory over unknown type
---error message bumped: conversion from factory over unknown type
---error message bumped: conversion from factory over unknown type
---error message bumped: conversion from factory over unknown type
---error message bumped: conversion from factory over unknown type
---error message bumped: conversion from factory over unknown type
---error message bumped: conversion from factory over unknown type
---error message bumped: conversion from factory over unknown type
---error message bumped: conversion from factory over unknown type
-radicalExample.m2:350:1:(1):[4]: conversion from factory over unknown type
-radicalExample.m2:350:1:(1):[4]: --entering debugger--
+-- -*- M2 -*-
 
- -- useful debugger commands:
-     break                  -- leave the debugger, returning to top level
-     end                    -- abandon the code, enter debugger one level up
-     listLocalSymbols       -- display local symbols and their values
-     listUserSymbols        -- display user symbols and their values
-     continue               -- execute the code and continue
-     continue n             -- execute the code, stop after n microsteps
-     return                 -- bypass code, return 'null', and continue
-     return x               -- bypass code, return 'x', and continue
-     value errorCode        -- execute the code, returning its value
+-- I sent Schoenemann a bug report about this...
 
- -- code just attempted: -- radicalExample.m2:350
-                         radical J
 
-=============================================================================
+--i1 : load "radicalExample.m2"
+--radicalExample.m2:350:1:(1):[4]: conversion from factory over unknown type
+--radicalExample.m2:350:1:(1):[4]: --entering debugger--
+--
+-- -- useful debugger commands:
+--     break                  -- leave the debugger, returning to top level
+--     end                    -- abandon the code, enter debugger one level up
+--     listLocalSymbols       -- display local symbols and their values
+--     listUserSymbols        -- display user symbols and their values
+--     continue               -- execute the code and continue
+--     continue n             -- execute the code, stop after n microsteps
+--     return                 -- bypass code, return 'null', and continue
+--     return x               -- bypass code, return 'x', and continue
+--     value errorCode        -- execute the code, returning its value
+--
+-- -- code just attempted: -- radicalExample.m2:350
+--                         radical J
+--
 
 R = ZZ/2[w_3, w_4, w_0, y, x, Degrees => {{17}, {17}, {15}, {1},{1}},
 MonomialOrder => {GRevLex => {17, 17, 17}, Weights => {25, 12},

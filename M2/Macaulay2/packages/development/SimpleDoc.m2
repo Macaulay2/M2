@@ -288,7 +288,7 @@ doc ///
 end
 restart
 loadPackage "SimpleDoc"
-installPackage(SimpleDoc, UserMode => true)
+installPackage SimpleDoc
 viewHelp doc
 debug SimpleDoc
 flup = method()

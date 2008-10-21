@@ -262,6 +262,7 @@ static const RingElement * convertToM2(const PolynomialRing *R, CanonicalForm h)
      ring_elem result = R->from_int(0);
      for (int j = 0; j <= h.degree(); j++) {
        const RingElement *r = convertToM2(R, h[j]);
+       if (error()) return RingElement::make_raw(R,R->one());
        ring_elem r1 = r->get_value();
        int var = 
 #                   if REVERSE_VARIABLES
@@ -375,7 +376,7 @@ static CanonicalForm convertToFactory(const RingElement &g) {
      return f;
 }
 
-void displayCF(PolynomialRing *R, const CanonicalForm &h)
+void displayCF(PolynomialRing *R, const CanonicalForm &h) // for debugging
 {
   buffer o;
   const RingElement *g = convertToM2(R,h);
@@ -404,6 +405,7 @@ const RingElementOrNull *rawGCDRingElement(const RingElement *f, const RingEleme
     CanonicalForm q = convertToFactory(*g);
     CanonicalForm h = gcd(p,q);
     ret = convertToM2(P,h);
+    if (error()) return NULL;
   }
   ring_elem a = P->preferred_associate_divisor(ret->get_value()); // an element in the coeff ring
   ring_elem b = P->getCoefficients()->invert(a);
@@ -437,8 +439,11 @@ const RingElementOrNull *rawExtendedGCDRingElement(const RingElement *f, const R
   CanonicalForm a, b;
   CanonicalForm h = extgcd(p,q,a,b);
   ret = convertToM2(P,h);
+  if (error()) return NULL;
   *A = convertToM2(P,a);
+  if (error()) return NULL;
   *B = convertToM2(P,b);
+  if (error()) return NULL;
   return ret;
 }
 
@@ -463,6 +468,7 @@ const RingElementOrNull *rawPseudoRemainder(const RingElement *f, const RingElem
   CanonicalForm q = convertToFactory(*g);
   CanonicalForm h = Prem(p,q);
   const RingElement *r = convertToM2(P,h);
+  if (error()) return NULL;
   return r;
 }
 
@@ -502,6 +508,7 @@ void rawFactor(const RingElement *g,
 	    (*result_factors)->array[next] = convertToM2(P,i.getItem().factor());
 	    (*result_powers)->array[next++] = i.getItem().exp();
 	  }
+	  if (error()) *result_factors = NULL, *result_powers = NULL;
      }
      catch (exc::engine_error e) {
 	  ERROR(e.what());
@@ -593,6 +600,7 @@ Matrix_array_OrNull * rawCharSeries(const Matrix *M)
 		  int next1 = 0;
 		  for (ListIterator<CanonicalForm> j = u; j.hasItem(); j++) {
 		    result1->array[next1++] = convertToM2(P,j.getItem());
+		    if (error()) return NULL;
 		  }
 		  struct enter_M2 b;
 		  result->array[next++] = IM2_Matrix_make1(M->rows(), u.length(), result1, false);

@@ -37,7 +37,7 @@ check ::
 	  do ( \
 	     set -x ; \
 		  ../bin/M2@EXE@ -q --stop \
-		    -e "needsPackage(\"$$i\",LoadDocumentation=>true); check $$i; exit 0" ; \
+		    -e "needsPackage(\"$$i\",LoadDocumentation=>true); check($$i,UserMode=>false); exit 0" ; \
 	     ) ; \
 	  done
 
@@ -78,6 +78,10 @@ distclean::; rm -f Makefile
 install :: @encapdir@/@packagesdirtail@/eliminate.m2 @encapdir@/@packagesdirtail@/D-modules.m2
 @encapdir@/@packagesdirtail@/eliminate.m2 : eliminate.m2 ; cp $^ "$@"
 @encapdir@/@packagesdirtail@/D-modules.m2 : D-modules.m2 ; cp $^ "$@"
+
+# this one we need for compatibility with the book
+install :: @encapdir@/@packagesdirtail@/LLL.m2
+@encapdir@/@packagesdirtail@/LLL.m2 : LLL.m2 ; cp $^ "$@"
 
 # Local Variables:
 # compile-command: "make -C $M2BUILDDIR/Macaulay2/packages "
