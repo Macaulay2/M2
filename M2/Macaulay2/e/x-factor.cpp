@@ -21,6 +21,7 @@ using std::endl;
 #include "polyring.hpp"
 
 #include "relem.hpp"
+#include "GF.hpp"
 #include "../d/M2mem.h"
 
 #include "text-io.hpp"
@@ -76,7 +77,8 @@ static void init_seeds() {
      factoryseed(0);		// factory (which uses NTL, as we've compiled it)
 }
 
-CanonicalForm gfgen;
+CanonicalForm gfgenFac;
+RingElement *gfgenM2;
 
 struct enter_factory { 
   enum factoryCoeffMode mode;
@@ -86,7 +88,6 @@ struct enter_factory {
   int newRatlState;
   const Z_mod *Zn;
   const GF *gf;
-  CanonicalForm gfgen;
   void *(*save_gmp_allocate_func  )(size_t);
   void *(*save_gmp_reallocate_func)(void *, size_t, size_t);
   void  (*save_gmp_free_func      )(void *, size_t);
@@ -246,11 +247,15 @@ static const RingElement * convertToM2(const PolynomialRing *R, CanonicalForm h)
 	       mpq_clear(&z);
 	       return ret;
 	  }
+	  else if (h.inExtension()) {
+	    // probably this means we have the thing rootOf() made before
+	    
+	  }
 	  else if (h.inFF()) {
 	       return RingElement::make_raw(R, R->from_int(h.intval()));
 	  }
 	  else if (h.inGF()) {
-#warning not implemented yet
+#warning not implemented yet, but might not be needed
 	       ERROR("conversion from factory over Galois fields not implemented yet");
 	       return RingElement::make_raw(R,R->one());
 	  }
@@ -260,7 +265,7 @@ static const RingElement * convertToM2(const PolynomialRing *R, CanonicalForm h)
 	  }
      }
      ring_elem result = R->from_int(0);
-     for (int j = 0; j <= h.degree(); j++) {
+     for (int j = h.taildegree(); j <= h.degree(); j++) {
        const RingElement *r = convertToM2(R, h[j]);
        if (error()) return RingElement::make_raw(R,R->one());
        ring_elem r1 = r->get_value();
@@ -320,19 +325,10 @@ static CanonicalForm convertToFactory(const mpz_ptr p) {
      return m;
 }
 
-//#define FRAC_VAL(f) ((frac_elem *) (f).poly_val)
-//#define MPQ_VAL(f) (M2_Rational ((f).poly_val))
+static CanonicalForm convertToFactory(const RingElement &g);
 
-static const RingElement minimalPolynomial(const GF *gf) {
-#warning not implemented yet
-  cerr << "internal error: minimalPolynomial(const GF *gf) not implemented yet" << endl;
-  abort();
-}
-
-static CanonicalForm convertToFactory(const ring_elem &g, const CanonicalForm &fieldgen) {
-#warning not implemented yet
-  cerr << "internal error: convertToFactory(const ring_elem &g, const CanonicalForm &fieldgen) not implemented yet" << endl;
-  abort();
+static CanonicalForm convertToFactory(const ring_elem &g, const GF *gf) { // use gfgenFac for converting this galois field element
+  return convertToFactory(* RingElement::make_raw(gf->originalR(),gf->get_rep(g)));
 }
 
 static CanonicalForm convertToFactory(const RingElement &g) {
@@ -354,7 +350,7 @@ static CanonicalForm convertToFactory(const RingElement &g) {
        M->to_varpower(t->monom,vp);
        CanonicalForm m = (
 			  foo.mode == modeZn ? CanonicalForm(foo.Zn->to_int(t->coeff)) :
-			  foo.mode == modeGF ? convertToFactory(t->coeff,gfgen) :
+			  foo.mode == modeGF ? convertToFactory(t->coeff,foo.gf) :
 			  foo.mode == modeZZ ? convertToFactory(t->coeff.get_mpz()) :
 			  foo.mode == modeQQ ? convertToFactory(mpq_numref(MPQ_VAL(t->coeff))) / convertToFactory(mpq_denref(MPQ_VAL(t->coeff))) :
 			  CanonicalForm(0) // shouldn't happen
@@ -400,7 +396,10 @@ const RingElementOrNull *rawGCDRingElement(const RingElement *f, const RingEleme
   {
     struct enter_factory foo(P);
     if (foo.mode == modeError) return 0;
-    if (foo.mode == modeGF) gfgen = rootOf(convertToFactory(minimalPolynomial(foo.gf)));
+    if (foo.mode == modeGF) {
+      gfgenFac = rootOf(convertToFactory(*foo.gf->get_minimal_poly()));
+      gfgenM2 = RingElement::make_raw(P->Ncoeffs()->cast_to_GF(), foo.gf->var(0));
+    }
     CanonicalForm p = convertToFactory(*f);
     CanonicalForm q = convertToFactory(*g);
     CanonicalForm h = gcd(p,q);

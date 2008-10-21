@@ -68,16 +68,20 @@ int main () {
   // non-crashing seeds: 1 13
   Off( SW_RATIONAL );
   setCharacteristic(101);
-  Variable x('x');
-  CanonicalForm mipo = x*x - 2;
+  Variable x('x'), y('y');
+  CanonicalForm mipo = y*y - 2;
   Variable a = rootOf( mipo, 'a' );
   cout << "a^2     = " << a*a << endl;
   CanonicalForm f = (x+a)*(x+a+1)*(x+a+1)*(x+a+34);
+  CanonicalForm g = (x+a)*(x+a+1)*(x+a+3)*(x+a-34);
+  CanonicalForm k = (x+a)*(x+a+1);
   cout << "f = " << f << endl;
-  cout << "x.level() = " << x.level() << endl ;
-  cout << "a.level() = " << a.level() << endl ;
-  CFFList g = Factorize(f,mipo);
   cout << "g = " << g << endl;
+  CanonicalForm h = gcd(f,g);
+  cout << "gcd(f,g) = " << h << " =? " << k << endl;
+  cout << "f = " << f << endl;
+  CFFList fac2 = Factorize(f,mipo);
+  cout << "Factorize(f,mipo) = " << fac2 << endl;
   return 0;
 }
 

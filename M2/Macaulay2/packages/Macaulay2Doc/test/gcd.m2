@@ -7,6 +7,10 @@ R = (GF 25)[x]
 -- one of the book chapters depends on this feature
 assert(gcd((x^3+x-a)*(x^5+x-1),(x^3+x-a)*(x^6-a*x-1)) == x^3+x-a)
 
+R = (GF 25)[x,y]
+-- one of the book chapters depends on this feature
+assert(gcd((x^3+x-a)*(x^5+x-1),(x^3+x-a)*(x^6-a*x-1)) == x^3+x-a)
+
 R = ZZ[x]
 assert( gcd(6*x, 4*x) == 2*x )
 

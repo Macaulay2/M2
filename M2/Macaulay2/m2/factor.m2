@@ -4,7 +4,7 @@ good := k -> (
      k === QQ or
      k === ZZ or
      instance(k,QuotientRing) and ambient k === ZZ and isPrime char k or
-     instance(k,GaloisField) and char k === k.order
+     instance(k,GaloisField)
      )
 
 monic := t -> (
