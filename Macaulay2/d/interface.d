@@ -3029,14 +3029,14 @@ export rawGBMatrixRemainder(e:Expr):Expr := (
      else WrongNumArgs(2));
 setupfun("rawGBMatrixRemainder", rawGBMatrixRemainder);
 
-toSequence(a:RawMatrixOrNull,b:RawMatrixOrNull):Expr := (
+toSequence(a:RawMatrixOrNull,b:RawMatrixOrNull,c:bool):Expr := (
      when a
      is null do buildErrorPacket(EngineError("unknown raw matrix lift engine error"))
      is A:RawMatrix do
      when b
      is null do buildErrorPacket(EngineError("unknown raw matrix lift engine error"))
      is B:RawMatrix do
-     Expr(Sequence(Expr(A),Expr(B))));
+     Expr(Sequence(Expr(A),Expr(B),toExpr(c))));
 
 export rawGBMatrixLift(e:Expr):Expr := (
      when e is a:Sequence do 
@@ -3045,21 +3045,21 @@ export rawGBMatrixLift(e:Expr):Expr := (
      when a.1 is m:RawMatrix do (
 	  resultRemainder := RawMatrixOrNull(NULL);
 	  resultQuotient := RawMatrixOrNull(NULL);
-	  Ccode(void, "IM2_GB_matrix_lift(",
-	       "(Computation *)", G, ",",
-	       "(Matrix*)", m, ",",
-	       "(Matrix**)&", resultRemainder, ",",
-	       "(Matrix**)&", resultQuotient,
-     	       -- I'm ignoring these messages for now:
-	       --  ../../../Macaulay2/d/interface.d:2391: warning: dereferencing type-punned pointer will break strict-aliasing rules
-	       --  ../../../Macaulay2/d/interface.d:2391: warning: dereferencing type-punned pointer will break strict-aliasing rules
-	       --  similar error messages come from "gcc -c -O3 -Wall" on this:
-	       --  struct A;
-	       --  struct B;
-	       --  extern void h();
-	       --  void f(struct B *p) { h((struct A**)&p); }
-	       ")" );
-	  toSequence(resultRemainder,resultQuotient))
+	  cplt := Ccode(bool, "IM2_GB_matrix_lift(",
+		    "(Computation *)", G, ",",
+		    "(Matrix*)", m, ",",
+		    "(Matrix**)&", resultRemainder, ",",
+		    "(Matrix**)&", resultQuotient,
+		    -- I'm ignoring these messages for now:
+		    --  ../../../Macaulay2/d/interface.d:2391: warning: dereferencing type-punned pointer will break strict-aliasing rules
+		    --  ../../../Macaulay2/d/interface.d:2391: warning: dereferencing type-punned pointer will break strict-aliasing rules
+		    --  similar error messages come from "gcc -c -O3 -Wall" on this:
+		    --  struct A;
+		    --  struct B;
+		    --  extern void h();
+		    --  void f(struct B *p) { h((struct A**)&p); }
+		    ")" );
+	  toSequence(resultRemainder,resultQuotient,cplt))
      else WrongArgMatrix(2)
      else WrongArg(1,"a raw Groebner basis")
      else WrongNumArgs(2)

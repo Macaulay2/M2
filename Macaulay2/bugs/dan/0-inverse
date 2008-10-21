@@ -1,9 +1,0 @@
-this should give an error
-
-i14 : inverse matrix "2"
-
-o14 = 0
-
-               1        1
-o14 : Matrix ZZ  <--- ZZ
-

@@ -627,7 +627,11 @@ dual(Matrix) := Matrix => f -> (
      -- i%m gives an error message if the module is not free, but i//m doesn't, so we can't use this code in inverse Matrix to check invertibility:
      -- if i % m != 0 then error "matrix not invertible";
 Matrix.InverseMethod =
-inverse Matrix := (cacheValue symbol inverse) ( m -> id_(target m) // m )
+inverse Matrix := (cacheValue symbol inverse) (
+     m -> (
+	  (quo,rem) := quotientRemainder(id_(target m), m);
+	  if rem != 0 then error "matrix not invertible";
+	  quo))
 
 Matrix _ Array := Matrix => (f,v) -> f * (source f)_v
 Matrix ^ Array := Matrix => (f,v) -> (target f)^v * f
