@@ -1,0 +1,13 @@
+Ways to speed up Schubert:
+
+1) In case we implement intersection rings via polynomial rings of which the
+intersection ring is a quotient, it will be important, perhaps, to be able to
+implement the integral of a cycle class by means of a table of the integrals
+for each monomial.  Such a table is conveniently represented by a polynomial
+whose coefficients are the integrals, and then to integrate an arbitrary
+polynomial is to take the dot product of the coefficient vectors.  Hence, it
+would be useful to have the dot product of two polynomials as an engine
+operation.
+
+2) It would be much faster to implement logg and expp in the engine.
+
