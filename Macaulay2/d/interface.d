@@ -1750,15 +1750,6 @@ export rawKeepVariables(e:Expr):Expr := (
      );
 setupfun("rawKeepVariables",rawKeepVariables);
 
-rawRemoveContent(e:Expr):Expr := (
-     when e is M:RawMatrix do (
-	  toExpr(Ccode(RawMatrixOrNull, "(engine_RawMatrixOrNull)",
-		    "IM2_Matrix_remove_content(",
-		    "(Matrix *)", M,
-		    ")" ) ) )
-     else WrongArg("a raw matrix"));
-setupfun("rawRemoveContent",rawRemoveContent);
-
 export rawDivideByVariable(e:Expr):Expr := (
      when e is s:Sequence do
      if length(s) != 3 then WrongNumArgs(3) else
@@ -2433,6 +2424,49 @@ export rawMutableMatrixFillRandom(e:Expr):Expr := (
      else WrongArgMutableMatrix(1)
      else WrongNumArgs(2));
 setupfun("rawMutableMatrixFillRandom",rawMutableMatrixFillRandom);
+
+rawContent(e:Expr):Expr := (
+     when e is f:RawRingElement do (
+	  toExpr(Ccode(RawRingElementOrNull, "(engine_RawRingElementOrNull)rawRingElementContent((RingElement *)", f, ")"))
+	  )
+     is f:RawMatrix do (
+	  toExpr(Ccode(RawMatrixOrNull, "(engine_RawMatrixOrNull)rawMatrixContent((Matrix *)", f, ")"))
+	  )
+     else WrongArg("raw ring element or raw matrix")
+     );
+setupfun("rawContent",rawContent);
+
+rawRemoveContent(e:Expr):Expr := (
+     when e is f:RawRingElement do (
+	  toExpr(Ccode(RawRingElementOrNull, "(engine_RawRingElementOrNull)rawRingElementRemoveContent((RingElement *)", f, ")"))
+	  )
+     is f:RawMatrix do (
+	  toExpr(Ccode(RawMatrixOrNull, "(engine_RawMatrixOrNull)rawMatrixRemoveContent((Matrix *)", f, ")"))
+	  )
+     else WrongArg("raw ring element or raw matrix")
+     );
+setupfun("rawRemoveContent",rawRemoveContent);
+
+rawSplitContent(e:Expr):Expr := (
+     when e is f:RawRingElement do (
+	  f2 := RawRingElementOrNull(NULL);
+	  con := Ccode(RawRingElementOrNull, "(engine_RawRingElementOrNull)rawRingElementSplitContent((RingElement *)", f, ",(RingElementOrNull **)&", f2, ")");
+	  when con is null do buildErrorPacket(EngineError("rawSplitContent: unknown engine error"))
+	  is cont:RawRingElement do
+	  when f2 is null do buildErrorPacket(EngineError("rawSplitContent: unknown engine error"))
+	  is f3:RawRingElement do
+	  Expr(Sequence(Expr(cont),Expr(f3))))
+     is f:RawMatrix do (
+	  f2 := RawMatrixOrNull(NULL);
+	  con := Ccode(RawMatrixOrNull, "(engine_RawMatrixOrNull)rawMatrixSplitContent((Matrix *)", f, ",(MatrixOrNull **)&", f2, ")");
+	  when con is null do buildErrorPacket(EngineError("rawSplitContent: unknown engine error"))
+	  is cont:RawMatrix do
+	  when f2 is null do buildErrorPacket(EngineError("rawSplitContent: unknown engine error"))
+	  is f3:RawMatrix do
+	  Expr(Sequence(Expr(cont),Expr(f3))))
+     else WrongArg("raw ring element or raw matrix")
+     );
+setupfun("rawSplitContent",rawSplitContent);
 
 -----------------------------------------------------------------------------
 -- monomial ideals

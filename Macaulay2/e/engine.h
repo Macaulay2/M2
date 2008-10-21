@@ -589,13 +589,13 @@ extern "C" {
   // If base is kk: the result is the lead coefficient.  For vectors, what should this mean?
   //////////////////////////////////////////////////////
 
-  const RingElementOrNull *rawRingElementContent(const RingElement *f);
+  const RingElementOrNull *rawRingElementContent(const RingElement *f); /* connect to rawContent */
   // returns the content of f (as a matrix over the base coefficient ring)
 
-  const RingElementOrNull *rawRingElementRemoveContent(const RingElement *f);
+  const RingElementOrNull *rawRingElementRemoveContent(const RingElement *f); /* connect to rawRemoveContent */
   // returns the polynomial which results after division by the content
 
-  const RingElementOrNull *rawRingElementSplitContent(const RingElement *f, RingElementOrNull **result);
+  const RingElementOrNull *rawRingElementSplitContent(const RingElement *f, RingElementOrNull **result); /* connect to rawSplitContent */
   // returns the content of f (as a matrix over the base coefficient ring)
   // result is set to the polynomial which results after division by the content
 
@@ -1000,13 +1000,13 @@ extern "C" {
   // If base is kk: the result is the lead coefficient.  For vectors, what should this mean?
   //////////////////////////////////////////////////////
 
-  const MatrixOrNull *rawMatrixContent(const Matrix *M);
+  const MatrixOrNull *rawMatrixContent(const Matrix *M); /* connect to rawContent */
   // returns the matrix of the content of each column of M
 
-  const MatrixOrNull *rawMatrixRemoveContent(const Matrix *M);
+  const MatrixOrNull *rawMatrixRemoveContent(const Matrix *M); /* connect to rawRemoveContent */
   // returns the matrix with the content (as defined above) removed
 
-  const MatrixOrNull *rawMatrixSplitContent(const Matrix *M, MatrixOrNull **result);
+  const MatrixOrNull *rawMatrixSplitContent(const Matrix *M, MatrixOrNull **result); /* connect to rawSplitContent */
   // returns the matrix of the content of each column of M,
   // and result is set to the result of rawMatrixRemoveContent.
 
