@@ -255,7 +255,7 @@ quotientRemainder(Matrix,Matrix) := Matrix => (f,g) -> (
 	  then gb(g | presentation M, ChangeMatrix => true, SyzygyRows => rank source g)
 	  else gb(g,                  ChangeMatrix => true)
 	  );
-     (rem,quo) := rawGBMatrixLift(raw G, raw f);
+     (rem,quo,cplt) := rawGBMatrixLift(raw G, raw f);
      (
 	  map(N, L, quo, Degree => degree f - degree g),
 	  map(M, L, rem)
