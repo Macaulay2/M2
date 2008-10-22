@@ -78,7 +78,7 @@ static void init_seeds() {
 }
 
 CanonicalForm gfgenFac;
-RingElement *gfgenM2;
+const RingElement *gfgenM2;
 
 struct enter_factory { 
   enum factoryCoeffMode mode;
@@ -247,34 +247,32 @@ static const RingElement * convertToM2(const PolynomialRing *R, CanonicalForm h)
 	       mpq_clear(&z);
 	       return ret;
 	  }
-	  else if (h.inExtension()) {
-	    // probably this means we have the thing rootOf() made before
-	    
-	  }
-	  else if (h.inFF()) {
-	       return RingElement::make_raw(R, R->from_int(h.intval()));
-	  }
-	  else if (h.inGF()) {
-#warning not implemented yet, but might not be needed
-	       ERROR("conversion from factory over Galois fields not implemented yet");
-	       return RingElement::make_raw(R,R->one());
-	  }
+	  else if (h.inFF()) return RingElement::make_raw(R, R->from_int(h.intval()));
+	  else if (h.inExtension()) return gfgenM2;
 	  else {
 	       ERROR("conversion from factory over unknown type");
 	       return RingElement::make_raw(R,R->one());
 	  }
      }
      ring_elem result = R->from_int(0);
+     int offset = R->Ncoeffs()->cast_to_GF() != NULL ? 1 : 0;
      for (int j = h.taildegree(); j <= h.degree(); j++) {
        const RingElement *r = convertToM2(R, h[j]);
        if (error()) return RingElement::make_raw(R,R->one());
        ring_elem r1 = r->get_value();
-       int var = 
+       ring_elem v;
+       if (offset == 1 && h.level() == 1) {
+	 const Monoid *M = R->Nmonoms();
+	 v = R->make_flat_term(R->Ncoeffs()->cast_to_GF()->var(0),M->make_one());
+       }
+       else {
+	 int var = 
 #                   if REVERSE_VARIABLES
 			    (n-1) - 
 #                   endif
-                            (h.level()-1);
-       ring_elem v = R->var(var);
+                            (h.level()-offset-1);
+	 v = R->var(var);
+       }
        v = R->power(v,j);
        r1 = R->mult(r1,v);
        R->add_to(result,r1);
@@ -327,8 +325,22 @@ static CanonicalForm convertToFactory(const mpz_ptr p) {
 
 static CanonicalForm convertToFactory(const RingElement &g);
 
-static CanonicalForm convertToFactory(const ring_elem &g, const GF *gf) { // use gfgenFac for converting this galois field element
-  return convertToFactory(* RingElement::make_raw(gf->originalR(),gf->get_rep(g)));
+static CanonicalForm convertToFactory(const ring_elem &q, const GF *k) { // use gfgenFac for converting this galois field element
+  const PolynomialRing *A = k->originalR();
+  RingElement *g = RingElement::make_raw(A,k->get_rep(q));
+  intarray vp;
+  const Monoid *M = A->Nmonoms();
+  const Z_mod *Zn = k->originalR()->Ncoeffs()->cast_to_Z_mod();
+  CanonicalForm f = 0;
+  for (Nterm *t = g->get_value(); t != NULL; t = t->next) {
+    vp.shrink(0);
+    M->to_varpower(t->monom,vp);
+    CanonicalForm m = CanonicalForm(Zn->to_int(t->coeff));
+    for (index_varpower l = vp.raw(); l.valid(); ++l)
+      m *= power( gfgenFac, l.exponent() );
+    f += m;
+  }
+  return f;
 }
 
 static CanonicalForm convertToFactory(const RingElement &g) {
@@ -345,6 +357,7 @@ static CanonicalForm convertToFactory(const RingElement &g) {
      struct enter_factory foo(P);
      if (foo.mode == modeError) return 0;
      CanonicalForm f = 0;
+     int offset = foo.mode == modeGF ? 1 : 0;
      for (Nterm *t = g.get_value(); t != NULL; t = t->next) {
        vp.shrink(0);
        M->to_varpower(t->monom,vp);
@@ -358,7 +371,8 @@ static CanonicalForm convertToFactory(const RingElement &g) {
        for (index_varpower l = vp.raw(); l.valid(); ++l)
 	 {
 	   m *= power(
-		      Variable(1 + (
+		      Variable(1 + offset +
+			       (
 #                       if REVERSE_VARIABLES
 				    (n-1) - 
 #                       endif
@@ -397,12 +411,20 @@ const RingElementOrNull *rawGCDRingElement(const RingElement *f, const RingEleme
     struct enter_factory foo(P);
     if (foo.mode == modeError) return 0;
     if (foo.mode == modeGF) {
-      gfgenFac = rootOf(convertToFactory(*foo.gf->get_minimal_poly()));
-      gfgenM2 = RingElement::make_raw(P->Ncoeffs()->cast_to_GF(), foo.gf->var(0));
+      gfgenFac = rootOf(convertToFactory(*foo.gf->get_minimal_poly()),'a');
+      bool success = (RingElement::make_raw(P->Ncoeffs()->cast_to_GF(), foo.gf->var(0)))->promote(P,gfgenM2);
+#ifndef NDEBUG
+      cerr << "gfgenFac = " << gfgenFac << endl;
+#endif
     }
     CanonicalForm p = convertToFactory(*f);
     CanonicalForm q = convertToFactory(*g);
     CanonicalForm h = gcd(p,q);
+#ifndef NDEBUG
+    cerr << "p   = " << p << endl;
+    cerr << "q   = " << q << endl;
+    cerr << "gcd = " << h << endl;
+#endif
     ret = convertToM2(P,h);
     if (error()) return NULL;
   }
