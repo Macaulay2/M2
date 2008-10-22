@@ -231,6 +231,22 @@ bool QQ::lower_associate_divisor(ring_elem &f, const ring_elem g) const
   return true; // the answer could become lower, if a newer g has a larger denom
 }
 
+void QQ::lower_content(ring_elem &c, const ring_elem g) const
+{
+  if (is_zero(c))
+    {
+      c = g;
+      return;
+    }
+  M2_Rational a = MPQ_VAL(c);
+  M2_Rational b = MPQ_VAL(g);
+  M2_Rational result = QQ::new_elem();
+
+  mpz_gcd(mpq_numref(result), mpq_numref(a), mpq_numref(b));
+  mpz_lcm(mpq_denref(result), mpq_denref(a), mpq_denref(b));
+  c = MPQ_RINGELEM(result);
+}
+
 void QQ::internal_negate_to(ring_elem &f) const
 {
   mpq_sub(MPQ_VAL(f), _zero_elem, MPQ_VAL(f));

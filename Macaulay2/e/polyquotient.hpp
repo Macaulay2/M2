@@ -56,6 +56,12 @@ public:
 
   virtual ring_elem preferred_associate(ring_elem f) const { return numerR_->preferred_associate(f); }
 
+  virtual void lower_content(ring_elem &c, ring_elem g) const { numerR_->lower_content(c,g); }
+  virtual ring_elem content(ring_elem f) const { return numerR_->content(f); }
+  virtual ring_elem divide_by_given_content(ring_elem f, ring_elem c) const 
+    { return numerR_->divide_by_given_content(f,c); }
+
+
   virtual bool is_unit(const ring_elem f) const; // TODO
 
   virtual bool is_zero(const ring_elem f) const { 
