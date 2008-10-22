@@ -36,7 +36,7 @@ document {
 	  },
      EXAMPLE {
 	  "L = ZZ/691[x,y,z];",
-	  "B = L[s,t];",
+	  "B = L[s,t,Join=>false];",
 	  "truncate(2,ideal(3*x*s,5*y*t^2,s*t))",
 	  "truncate(2,comodule ideal(3*x,5*y,15))"
 	  },
