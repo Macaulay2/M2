@@ -621,8 +621,7 @@ basis(List,List,Module) := opts -> (lo,hi,M) -> (
      	  optR := options R;
 	  if optR =!= null then optR.Heft
 	  );
-     if heft === null then error "basis computation requires a heft vector positive on degrees of all variables";
-     heft = toSequence heft;
+     if heft === null then heft = () else heft = toSequence heft;
      M.cache#"rawBasis log" = log := FunctionApplication { rawBasis, (raw pres, lo, hi, heft, var, opts.Truncate, opts.Limit) };
      if opts.SourceRing === null or opts.SourceRing === A then map(M,,value log)
      else map(M,,map(A,opts.SourceRing),value log))
