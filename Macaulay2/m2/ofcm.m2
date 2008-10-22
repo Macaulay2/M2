@@ -426,7 +426,7 @@ tensor(Monoid, Monoid) := Monoid => opts -> (M,N) -> (
 	       N0 := apply(Nopts.DegreeRank, i -> 0);
 	       opts.Degrees = join( apply(Mopts.Degrees, d -> join(d,N0)), apply(Nopts.Degrees, e -> join(M0,e)) );
 	       if opts.Heft === null and Nopts.Heft =!= null and Mopts.Heft =!= null then opts.Heft = join(Mopts.Heft,Nopts.Heft);
-	       opts.DegreeMap = d -> join(d,N0); -- for the convenience of flattenRing later
+	       opts.DegreeMap = d -> join(M0,d); -- for the convenience of flattenRing later
 	       )
 	  else (
 	       opts.DegreeRank = Mopts.DegreeRank;
