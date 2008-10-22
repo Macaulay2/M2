@@ -218,7 +218,8 @@ rsort = method sopts
 
 mopts := Options => {
      Degree => null,					    -- for use with matrices
-     DegreeMap => null					    -- for use in ring maps
+     DegreeMap => null,					    -- for use in ring maps
+     DegreeLift => null					    -- for use in ring maps
      }
 
 matrix = method mopts

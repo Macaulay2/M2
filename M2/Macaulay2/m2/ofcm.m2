@@ -106,7 +106,8 @@ monoidDefaults = (
      	  Heft => null {* find one *},
 	  DegreeRank => null,				    -- specifying DegreeRank=>3 and no Degrees means degrees {{1, 0, 0}, {0, 1, 0}, {0, 0, 1}, {0, 0, 1}, ...}
 	  Join => null {* true *},			    -- whether the degrees in the new monoid ring will be obtained by joining the degrees in the coefficient with the degrees in the monoid
-      	  DegreeMap => null {* identity *}		    -- the degree map to use, if Join=>false is specified, for converting degrees in the coefficient ring to degrees in the monoid
+      	  DegreeMap => null {* identity *},		    -- the degree map to use, if Join=>false is specified, for converting degrees in the coefficient ring to degrees in the monoid
+     	  DegreeLift => null				    -- a function for lifting degrees from the monoid ring to the coefficient ring.  Length must be correct.  Gives an error if lifting is not possible.
 	  }
      )
 
@@ -405,6 +406,8 @@ degreePad = (n,x) -> (
      if #x > n then error("expected degree map to return a list of length at most ",toString n);
      join(x,n-#x:0));
 
+degreeNoLift = () -> error "degree not liftable"
+
 tensor(Monoid, Monoid) := Monoid => opts -> (M,N) -> (
      Mopts := M.Options;
      Nopts := N.Options;
@@ -426,17 +429,26 @@ tensor(Monoid, Monoid) := Monoid => opts -> (M,N) -> (
 	       N0 := apply(Nopts.DegreeRank, i -> 0);
 	       opts.Degrees = join( apply(Mopts.Degrees, d -> join(d,N0)), apply(Nopts.Degrees, e -> join(M0,e)) );
 	       if opts.Heft === null and Nopts.Heft =!= null and Mopts.Heft =!= null then opts.Heft = join(Mopts.Heft,Nopts.Heft);
-	       opts.DegreeMap = d -> join(M0,d); -- for the convenience of flattenRing later
+	       opts.DegreeMap = d -> join(M0,d);
+	       opts.DegreeLift = d -> (
+		    for i to #M0-1 do if d#i =!= 0 then degreeNoLift();
+		    drop(d,#M0));
 	       )
 	  else (
 	       opts.DegreeRank = Mopts.DegreeRank;
 	       dm := if opts.DegreeMap =!= null then opts.DegreeMap else if Mopts.DegreeMap =!= null then Mopts.DegreeMap else identity;
-	       opts.DegreeMap = d -> degreePad(Mopts.DegreeRank,dm d); -- this is more like degree promotion, in the end
+	       opts.DegreeMap = d -> degreePad(opts.DegreeRank,dm d);
+	       opts.DegreeLift = if dm === identity then (
+		    d -> (
+			 for i from #N0 to #M0-1 do if d#i =!= 0 then degreeNoLift();
+			 drop(d,#M0-#N0)))
+	       else notImplemented;
 	       opts.Degrees = join(Mopts.Degrees, apply(Nopts.Degrees, opts.DegreeMap));
 	       if opts.Heft === null and Mopts.Heft =!= null then opts.Heft = Mopts.Heft {* a hint *};
 	       ))
      else (
      	  if opts.DegreeMap === null then error "DegreeMap option unspecified";
+	  if opts.DegreeLift === null then opts.DegreeLift = notImplemented;
 	  );
      opts.Heft = processHeft(opts.DegreeRank,opts.Degrees,opts.Heft);
      opts.Inverses = if opts.Inverses === null then Mopts.Inverses or Nopts.Inverses else opts.Inverses;

@@ -163,6 +163,7 @@ export {
 	symbol Decompose,
 	symbol Degree,
 	symbol DegreeLimit,
+	symbol DegreeLift,
 	symbol DegreeMap,
 	symbol DegreeOrder,
 	symbol DegreeRank,
