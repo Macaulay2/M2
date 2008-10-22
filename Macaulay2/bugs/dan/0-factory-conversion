@@ -2,25 +2,13 @@
 
 -- I sent Schoenemann a bug report about this...
 
+-- Factoring in char=0 of a_5^4*v_1^2+a_5^2*v_1^2+a_5*v_1^2+1*v_1^2+a_5^3*v_1+a_5^2*v_1+a_5^4+a_5^2+a_5 = (  )
+-- error: fatal fatal
+-- fac_cantzass.cc:126: In function `CFFList distinctDegreeFactorFFGF(const CanonicalForm&, int)':
+-- failed assertion `g.degree(x) == 0'
+-- Aborted
+-- 
 
---i1 : load "radicalExample.m2"
---radicalExample.m2:350:1:(1):[4]: conversion from factory over unknown type
---radicalExample.m2:350:1:(1):[4]: --entering debugger--
---
--- -- useful debugger commands:
---     break                  -- leave the debugger, returning to top level
---     end                    -- abandon the code, enter debugger one level up
---     listLocalSymbols       -- display local symbols and their values
---     listUserSymbols        -- display user symbols and their values
---     continue               -- execute the code and continue
---     continue n             -- execute the code, stop after n microsteps
---     return                 -- bypass code, return 'null', and continue
---     return x               -- bypass code, return 'x', and continue
---     value errorCode        -- execute the code, returning its value
---
--- -- code just attempted: -- radicalExample.m2:350
---                         radical J
---
 
 R = ZZ/2[w_3, w_4, w_0, y, x, Degrees => {{17}, {17}, {15}, {1},{1}},
 MonomialOrder => {GRevLex => {17, 17, 17}, Weights => {25, 12},
