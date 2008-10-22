@@ -23,3 +23,5 @@ Warning: the monoid of R=A[...] is monoid[...] and not tensor(monoid
 is used in the expression R.FlatMonoid.
 
 This should all be documented.
+
+Also implement the interface for algebraic extensions of QQ.
