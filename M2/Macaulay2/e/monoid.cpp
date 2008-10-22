@@ -148,7 +148,10 @@ void Monoid::set_degrees()
   int *t = degvals_->array;
 
   heft_degree_of_var_ = makearrayint(nvars_);
-  assert(heftvals_->len == degvars);
+  if (heftvals_->len != degvars) {
+    ERROR("internal error: heftvals_->len == %d != degvars == %d", heftvals_->len, degvars);
+    return;
+  }
   if (degvars > 0)
     for (int i=0; i<nvars_; i++)
       {
