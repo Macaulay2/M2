@@ -223,11 +223,21 @@ coefficientRing FractionField := F -> coefficientRing last F.baseRings
 
 isHomogeneous FractionField := (F) -> isHomogeneous last F.baseRings
 
+good := k -> (
+     k === QQ or
+     k === ZZ or
+     instance(k,QuotientRing) and ambient k === ZZ and isPrime char k or
+     instance(k,GaloisField)
+     )
+
+engineHasGCD = R -> instance(R,PolynomialRing) and good coefficientRing R
+
 frac EngineRing := R -> if isField R then R else if R.?frac then R.frac else (
      o := options R;
      if o.Inverses then error "not implemented : fraction fields of rings with inverses";
      if o.WeylAlgebra =!= {} or R.?SkewCommutative
      then error "fraction field of non-commutative ring requested";
+     if not engineHasGCD R then error "not implemented yet: fraction fields of polynomial rings over rings other than ZZ, QQ, or a finite field";
      R.frac = F := new FractionField from rawFractionRing R.RawRing;
      F.frac = F;
      F.baseRings = append(R.baseRings,R);
