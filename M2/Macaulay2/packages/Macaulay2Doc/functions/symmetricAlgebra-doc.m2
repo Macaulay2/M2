@@ -30,7 +30,7 @@ document {
      EXAMPLE lines ///
 	  symmetricAlgebra(M, Variables=>{x,y,z})
 	  symmetricAlgebra(M, VariableBaseName=>G, MonomialSize=>16)
-	  symmetricAlgebra(M, Degrees=> {7:1})
+	  symmetricAlgebra(M, Degrees=> {3:1})
           ///,
      Caveat => {"This function predates the ability to create polynomial rings over polynomial rings,
 	  and perhaps that is what should be returned."},

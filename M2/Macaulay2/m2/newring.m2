@@ -116,9 +116,9 @@ symmetricAlgebraIdeal Module := Ideal => opts -> (M) -> (
      K := coefficientRing ultimate(ambient, R);
      m := presentation M;
      N := if opts.Variables === monoidDefaults.Variables
-          then monoid[Variables => numgens M]
-          else monoid[Variables => opts.Variables];
-     SM := tensor(K N, R, opts, Variables => monoidDefaults.Variables);
+          then monoid[opts, Variables => numgens M]
+          else monoid[opts, Variables => opts.Variables];
+     SM := tensor(K N, R, Variables => monoidDefaults.Variables);
      xvars := submatrix(vars SM, {numgens target m .. numgens SM - 1});
      yvars := submatrix(vars SM, {0 .. numgens target m - 1});
      m = substitute(m,xvars);
