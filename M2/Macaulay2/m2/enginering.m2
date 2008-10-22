@@ -230,7 +230,7 @@ good := k -> (
      instance(k,GaloisField)
      )
 
-engineHasGCD = R -> instance(R,PolynomialRing) and good coefficientRing R
+engineHasGCD = R -> instance(ultimate(ambient,R),PolynomialRing) and good coefficientRing R
 
 frac EngineRing := R -> if isField R then R else if R.?frac then R.frac else (
      o := options R;
