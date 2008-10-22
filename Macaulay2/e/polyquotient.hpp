@@ -245,6 +245,10 @@ public:
     numerR_->PolyRing::mult_coeff_to(a,f);
     normal_form(f);
   }
+  virtual void divide_coeff_to(ring_elem &f, ring_elem a) const {
+    numerR_->PolyRing::divide_coeff_to(f,a);
+    // I dont believe that a normal form is required here (MES)
+  }
 
   virtual void monomial_divisor(const ring_elem a, int *exp) const {
     return numerR_->PolyRing::monomial_divisor(a,exp);

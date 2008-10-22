@@ -414,14 +414,15 @@ public:
 		     M2_arrayint wts) const;
 
   // content of vectors and ring elements, default implementation is for basic fields
+  virtual void lower_content(ring_elem &c, ring_elem g) const; // c is a content elem, g is in ring
   virtual ring_elem content(ring_elem f) const;
-  virtual ring_elem remove_content(ring_elem f) const;
-  virtual ring_elem split_off_content(ring_elem f, ring_elem &result) const;
-  virtual void lower_content(ring_elem &cont, ring_elem new_coeff) const {}
-  // replace cont with content(cont, new_coeff): where content depends on the ring
+  virtual ring_elem divide_by_given_content(ring_elem f, ring_elem c) const;
 
+  ring_elem divide_by_content(ring_elem f) const;
+  ring_elem split_off_content(ring_elem f, ring_elem &result) const;
   ring_elem vec_content(vec f) const;
-  vec vec_remove_content(vec f) const;
+  vec vec_divide_by_given_content(vec f, ring_elem c) const;
+  vec vec_divide_by_content(vec f) const;
   ring_elem vec_split_off_content(vec f, vec &result) const;
 };
 

@@ -288,6 +288,7 @@ public:
   virtual void lead_logical_exponents(int nvars0, const ring_elem f, int * result_exp) const = 0;
 
   virtual void mult_coeff_to(ring_elem a, ring_elem &f) const = 0;
+  virtual void divide_coeff_to(ring_elem &f, ring_elem a) const = 0;
 
   virtual void monomial_divisor(const ring_elem a, int *exp) const = 0;
   virtual ring_elem diff(ring_elem a, ring_elem b, int use_coeff) const = 0;
@@ -298,6 +299,7 @@ public:
   virtual ring_elem divide_by_expvector(const int *exp, const ring_elem a) const = 0;
 
   virtual Nterm * numerator(ring_elem f) const = 0;
+
 protected:
   void sort(Nterm *&f) const;
 public:

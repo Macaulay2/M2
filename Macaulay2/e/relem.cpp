@@ -347,18 +347,16 @@ const RingElementOrNull *RingElement::content() const
 
 const RingElementOrNull *RingElement::remove_content() const
 {
-  return new RingElement(R, R->remove_content(val));
+  ring_elem g = R->divide_by_content(val);
+  return new RingElement(R, g);
 }
 
 const RingElementOrNull *RingElement::split_off_content(RingElementOrNull *&result) const
 {
-  const PolynomialRing *P = R->cast_to_PolynomialRing();
-  const Ring *targetR = (P == 0 ? R : P->getCoefficients());
-
-  ring_elem g;
-  ring_elem c = R->split_off_content(val, g);
+  const RingElement *c = content();
+  ring_elem g = R->divide_by_given_content(val, c->val);
   result = new RingElement(R, g);
-  return new RingElement(targetR, c);
+  return c;
 }
 
 RingElement *RingElement::numerator() const

@@ -719,6 +719,18 @@ void PolyRing::mult_coeff_to(ring_elem a, ring_elem &f) const
       t->coeff = K_->mult(a, tmp);
     }
 }
+void PolyRing::divide_coeff_to(ring_elem &f, ring_elem a) const
+// f is in this, a is in base coefficient ring
+{
+  Nterm *t = f;
+  if (t == NULL) return;
+  for ( ; t != NULL; t = t->next)
+    {
+      ring_elem tmp = t->coeff;
+      t->coeff = K_->divide(tmp,a);
+    }
+}
+
 ring_elem PolyRing::mult(const ring_elem f, const ring_elem g) const
 {
   polyheap H(this);
@@ -1947,6 +1959,44 @@ ring_elem PolyRing::divide_by_expvector(const int *exp, const ring_elem a) const
   sort(result);
   return result;
 }
+
+void PolyRing::lower_content(ring_elem &c, ring_elem g) const
+ // c is a content elem, g is in ring
+{
+  for (Nterm *t = g; t != 0; t=t->next)
+    K_->lower_content(c, t->coeff);
+}
+
+ring_elem PolyRing::content(ring_elem f) const
+{
+  Nterm *t = f;
+  if (t == 0) return K_->zero();
+  ring_elem c = t->coeff;
+  for (t = t->next; t != 0; t=t->next)
+    K_->lower_content(c, t->coeff);
+  return c;
+}
+
+ring_elem PolyRing::divide_by_given_content(ring_elem f, ring_elem c) const
+{
+  Nterm *a = f;
+  if (a == 0) return f;
+
+  Nterm head;
+  Nterm *result = &head;
+  for ( ; a != NULL; a = a->next)
+    {
+      result->next = new_term();
+      result = result->next;
+      result->coeff = K_->divide(a->coeff, c);
+      M_->copy(a->monom, result->monom);
+    }
+  result->next = NULL;
+  return head.next;
+}
+
+
+
 ///////////////////////////////////
 // vec routines for polynomials ///
 ///////////////////////////////////

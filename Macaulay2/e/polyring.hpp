@@ -167,6 +167,7 @@ public:
 			      long hibound) const;
 
   virtual void mult_coeff_to(ring_elem a, ring_elem &f) const;
+  virtual void divide_coeff_to(ring_elem &f, ring_elem a) const;
 
   virtual ring_elem lead_term(int nparts, const ring_elem f) const;
 
@@ -209,6 +210,10 @@ public:
   virtual void degree_of_var(int n, const ring_elem a, int &lo, int &hi) const;
   virtual ring_elem divide_by_var(int n, int d, const ring_elem a) const;
   virtual ring_elem divide_by_expvector(const int *exp, const ring_elem a) const;
+
+  virtual void lower_content(ring_elem &cont, ring_elem new_coeff) const;
+  virtual ring_elem content(ring_elem f) const;
+  virtual ring_elem divide_by_given_content(ring_elem f, ring_elem c) const;
 
   // Routines special to polynomial rings
   // possibly others?
