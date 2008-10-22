@@ -98,6 +98,7 @@ map(Ring,Ring,Matrix) := RingMap => opts -> (R,S,m) -> (
 	  symbol matrix => mE,
 	  symbol RawRingMap => rawRingMap m.RawMatrix,
 	  symbol DegreeMap => degmap,
+	  symbol DegreeLift => if opts.DegreeLift =!= null then opts.DegreeLift else notImplemented,
 	  symbol cache => new CacheTable
 	  }
      )
@@ -254,6 +255,7 @@ RingMap * RingMap := RingMap => (g,f) -> (
 	  symbol matrix => m,
 	  symbol RawRingMap => rawRingMap raw m,
 	  symbol DegreeMap => g.DegreeMap @@ f.DegreeMap,
+	  symbol DegreeLift => f.DegreeLift @@ g.DegreeLift,
 	  symbol cache => new CacheTable
 	  }
      )

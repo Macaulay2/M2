@@ -88,13 +88,6 @@ document {
 	determine the image degrees of elements of a free module."},
      }
 
-document {
-     Key => DegreeMap,
-     "A name for an optional argument used with ", TT "map", " when
-     creating a ring map.",
-     SeeAlso => { [map, DegreeMap] }
-     }
-
 document { 
      Key => {substitute,
 	  (substitute, Vector, Option),
