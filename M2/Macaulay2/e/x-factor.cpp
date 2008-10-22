@@ -416,9 +416,6 @@ const RingElementOrNull *rawGCDRingElement(const RingElement *f, const RingEleme
     if (foo.mode == modeGF) {
       gfgenFac = rootOf(convertToFactory(*foo.gf->get_minimal_poly()),'a');
       (RingElement::make_raw(P->Ncoeffs()->cast_to_GF(), foo.gf->var(0)))->promote(P,gfgenM2);
-#ifndef NDEBUG
-      cerr << "gfgenFac = " << gfgenFac << endl;
-#endif
     }
     CanonicalForm p = convertToFactory(*f);
     CanonicalForm q = convertToFactory(*g);

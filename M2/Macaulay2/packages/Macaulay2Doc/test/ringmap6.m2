@@ -1,3 +1,4 @@
+setRandomSeed 5
 k = GF 729
 p = 3
 assert( promote(k.PrimitiveElement,k) != a )		    -- just happens to be the case currently, making the next lines more interesting

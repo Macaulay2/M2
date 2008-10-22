@@ -1,5 +1,8 @@
 // -*- c++ -*-
 
+// gcd now works over GF, so work on factoring
+
+
 // From: hannes@mathematik.uni-kl.de
 // Subject: Re: Singular Factory
 // To: dan@math.uiuc.edu
@@ -88,5 +91,5 @@ int main () {
 #include <templates/ftmpl_inst.cc>
 
 // Local Variables:
-// compile-command: "g++ -g -I../../../BUILD/Linux-i686/normal/libraries/final/usr/lib/Macaulay2/Core/include -L../../../BUILD/Linux-i686/normal/libraries/final/usr/lib/Macaulay2/Core/lib -x c++ 0-factor -lfac -lcf -lcfmem -lntl -lgmp -o 0-factor.exe && ./0-factor.exe "
+// compile-command: "g++ -g -I../../../BUILD/Linux-i686/debug/libraries/final/usr/lib/Macaulay2/Core/include -L../../../BUILD/Linux-i686/normal/libraries/final/usr/lib/Macaulay2/Core/lib -x c++ 0-factor -lfac -lcf -lcfmem -lntl -lgmp -o 0-factor.exe && ./0-factor.exe "
 // End:
