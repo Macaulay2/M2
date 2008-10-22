@@ -220,10 +220,12 @@ Ring OrderedMonoid := PolynomialRing => (			  -- no memoize
 	  RM.FlatMonoid = flatmonoid;
 	  RM.numallvars = numallvars;
 	  RM.promoteDegree = (
-	       dm := flatmonoid.Options.DegreeMap;
-	       nd := flatmonoid.Options.DegreeRank;
-	       degs -> apply(degs,deg -> degreePad(nd,dm deg))
-	       );			  -- was: makepromoter degreeLength RM;
+	       if flatmonoid.Options.DegreeMap === null
+	       then makepromoter degreeLength RM
+	       else (
+	       	    dm := flatmonoid.Options.DegreeMap;
+	       	    nd := flatmonoid.Options.DegreeRank;
+	       	    degs -> apply(degs,deg -> degreePad(nd,dm deg))));
 	  RM.liftDegree = notImplemented; -- was: makepromoter degreeLength R;
 	  RM.baseRings = append(R.baseRings,R);
 	  commonEngineRingInitializations RM;

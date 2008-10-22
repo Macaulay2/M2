@@ -136,11 +136,14 @@ document {
      EXAMPLE lines ///
 	  A = ZZ/101[a,b]
 	  B = A[x,y]
-	  tensor(B,B,Variables=>{x1,y1,x2,y2})
-	  describe oo
+	  C = tensor(B,B,Variables=>{x1,y1,x2,y2})
+	  describe C
           ///,
+     "The flat monoid with the all variables visible, including those from the base ring, can
+     be obtained as follows.",
+     EXAMPLE "C.FlatMonoid",
      Caveat => {"Not all of the options for monoid are useful here.  Some are silently ignored."},
-     SeeAlso => {describe, degreesRing, degreeLength, symbol**}
+     SeeAlso => {describe, degreesRing, degreeLength, symbol**, FlatMonoid}
      }
 
 TEST /// --Errors in the above code
