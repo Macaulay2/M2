@@ -279,6 +279,13 @@ ring_elem Ring::content(ring_elem f) const
   return f;
 }
 
+ring_elem Ring::content(ring_elem f, ring_elem g) const
+// default implementation
+{
+  lower_content(f,g);
+  return f;
+}
+
 ring_elem Ring::divide_by_given_content(ring_elem f, ring_elem c) const
 // default implementation
 {

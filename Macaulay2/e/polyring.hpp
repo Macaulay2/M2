@@ -213,6 +213,7 @@ public:
 
   virtual void lower_content(ring_elem &cont, ring_elem new_coeff) const;
   virtual ring_elem content(ring_elem f) const;
+  virtual ring_elem content(ring_elem f, ring_elem g) const;
   virtual ring_elem divide_by_given_content(ring_elem f, ring_elem c) const;
 
   // Routines special to polynomial rings

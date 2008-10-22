@@ -1977,6 +1977,18 @@ ring_elem PolyRing::content(ring_elem f) const
   return c;
 }
 
+ring_elem PolyRing::content(ring_elem f, ring_elem g) const
+{
+  Nterm *t = f;
+  if (t == 0) return K_->zero();
+  ring_elem c = t->coeff;
+  for (t = t->next; t != 0; t=t->next)
+    K_->lower_content(c, t->coeff);
+  for (t = g; t != 0; t=t->next)
+    K_->lower_content(c, t->coeff);
+  return c;
+}
+
 ring_elem PolyRing::divide_by_given_content(ring_elem f, ring_elem c) const
 {
   Nterm *a = f;

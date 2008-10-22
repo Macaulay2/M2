@@ -240,10 +240,13 @@ void QQ::lower_content(ring_elem &c, const ring_elem g) const
     }
   M2_Rational a = MPQ_VAL(c);
   M2_Rational b = MPQ_VAL(g);
+  int sa = mpq_sgn(a);
   M2_Rational result = QQ::new_elem();
 
   mpz_gcd(mpq_numref(result), mpq_numref(a), mpq_numref(b));
   mpz_lcm(mpq_denref(result), mpq_denref(a), mpq_denref(b));
+  if (sa != mpq_sgn(result))
+    mpq_neg(result,result);
   c = MPQ_RINGELEM(result);
 }
 
