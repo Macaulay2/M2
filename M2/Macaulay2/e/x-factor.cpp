@@ -248,31 +248,35 @@ static const RingElement * convertToM2(const PolynomialRing *R, CanonicalForm h)
 	       return ret;
 	  }
 	  else if (h.inFF()) return RingElement::make_raw(R, R->from_int(h.intval()));
-	  else if (h.inExtension()) return gfgenM2;
+	  else if (h.inExtension()) {
+	       ring_elem result = R->from_int(0);
+	       for (int j = h.taildegree(); j <= h.degree(); j++) {
+		 const RingElement *r = convertToM2(R, h[j]);
+		 if (error()) return RingElement::make_raw(R,R->one());
+		 ring_elem r1 = r->get_value();
+		 ring_elem v = gfgenM2->get_value();
+		 v = R->power(v,j);
+		 r1 = R->mult(r1,v);
+		 R->add_to(result,r1);
+	       }
+	       return RingElement::make_raw(R,result);
+	  }
 	  else {
 	       ERROR("conversion from factory over unknown type");
 	       return RingElement::make_raw(R,R->one());
 	  }
      }
      ring_elem result = R->from_int(0);
-     int offset = R->Ncoeffs()->cast_to_GF() != NULL ? 1 : 0;
      for (int j = h.taildegree(); j <= h.degree(); j++) {
        const RingElement *r = convertToM2(R, h[j]);
        if (error()) return RingElement::make_raw(R,R->one());
        ring_elem r1 = r->get_value();
-       ring_elem v;
-       if (offset == 1 && h.level() == 1) {
-	 const Monoid *M = R->Nmonoms();
-	 v = R->make_flat_term(R->Ncoeffs()->cast_to_GF()->var(0),M->make_one());
-       }
-       else {
-	 int var = 
+       int var = 
 #                   if REVERSE_VARIABLES
-			    (n-1) - 
+			  (n-1) - 
 #                   endif
-                            (h.level()-offset-1);
-	 v = R->var(var);
-       }
+			  (h.level()-1);
+       ring_elem v = R->var(var);
        v = R->power(v,j);
        r1 = R->mult(r1,v);
        R->add_to(result,r1);
@@ -357,7 +361,6 @@ static CanonicalForm convertToFactory(const RingElement &g) {
      struct enter_factory foo(P);
      if (foo.mode == modeError) return 0;
      CanonicalForm f = 0;
-     int offset = foo.mode == modeGF ? 1 : 0;
      for (Nterm *t = g.get_value(); t != NULL; t = t->next) {
        vp.shrink(0);
        M->to_varpower(t->monom,vp);
@@ -371,7 +374,7 @@ static CanonicalForm convertToFactory(const RingElement &g) {
        for (index_varpower l = vp.raw(); l.valid(); ++l)
 	 {
 	   m *= power(
-		      Variable(1 + offset +
+		      Variable(1 +
 			       (
 #                       if REVERSE_VARIABLES
 				    (n-1) - 
@@ -412,7 +415,7 @@ const RingElementOrNull *rawGCDRingElement(const RingElement *f, const RingEleme
     if (foo.mode == modeError) return 0;
     if (foo.mode == modeGF) {
       gfgenFac = rootOf(convertToFactory(*foo.gf->get_minimal_poly()),'a');
-      bool success = (RingElement::make_raw(P->Ncoeffs()->cast_to_GF(), foo.gf->var(0)))->promote(P,gfgenM2);
+      (RingElement::make_raw(P->Ncoeffs()->cast_to_GF(), foo.gf->var(0)))->promote(P,gfgenM2);
 #ifndef NDEBUG
       cerr << "gfgenFac = " << gfgenFac << endl;
 #endif
