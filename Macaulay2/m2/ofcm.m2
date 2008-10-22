@@ -423,10 +423,10 @@ tensor(Monoid, Monoid) := Monoid => opts -> (M,N) -> (
      then opts.MonomialOrder = trimMO join(Mopts.MonomialOrder,Nopts.MonomialOrder); -- product order
      processDegrees(opts.Degrees, null, length opts.Variables);	-- just for the error messages
      if opts.Degrees === null and opts.DegreeRank === null then (
+	  M0 := apply(Mopts.DegreeRank, i -> 0);
+	  N0 := apply(Nopts.DegreeRank, i -> 0);
 	  if opts.Join =!= false and Mopts.Join =!= false then (
 	       opts.DegreeRank = Mopts.DegreeRank + Nopts.DegreeRank;
-	       M0 := apply(Mopts.DegreeRank, i -> 0);
-	       N0 := apply(Nopts.DegreeRank, i -> 0);
 	       opts.Degrees = join( apply(Mopts.Degrees, d -> join(d,N0)), apply(Nopts.Degrees, e -> join(M0,e)) );
 	       if opts.Heft === null and Nopts.Heft =!= null and Mopts.Heft =!= null then opts.Heft = join(Mopts.Heft,Nopts.Heft);
 	       opts.DegreeMap = d -> join(M0,d);
@@ -438,17 +438,21 @@ tensor(Monoid, Monoid) := Monoid => opts -> (M,N) -> (
 	       opts.DegreeRank = Mopts.DegreeRank;
 	       dm := if opts.DegreeMap =!= null then opts.DegreeMap else if Mopts.DegreeMap =!= null then Mopts.DegreeMap else identity;
 	       opts.DegreeMap = d -> degreePad(opts.DegreeRank,dm d);
-	       opts.DegreeLift = if dm === identity then (
-		    d -> (
-			 for i from #N0 to #M0-1 do if d#i =!= 0 then degreeNoLift();
-			 drop(d,#M0-#N0)))
-	       else notImplemented;
+	       lm := if opts.DegreeLift =!= null then opts.DegreeLift else if Mopts.DegreeLift =!= null then Mopts.DegreeLift;
+	       opts.DegreeLift = (
+		    if lm === null then (
+			 if dm === identity then (
+		    	      d -> (
+			 	   for i from #N0 to #M0-1 do if d#i =!= 0 then degreeNoLift();
+			 	   drop(d,#M0-#N0)))
+	       		 else x -> notImplemented())
+		    else lm);
 	       opts.Degrees = join(Mopts.Degrees, apply(Nopts.Degrees, opts.DegreeMap));
 	       if opts.Heft === null and Mopts.Heft =!= null then opts.Heft = Mopts.Heft {* a hint *};
 	       ))
      else (
-     	  if opts.DegreeMap === null then error "DegreeMap option unspecified";
-	  if opts.DegreeLift === null then opts.DegreeLift = notImplemented;
+	  if opts.DegreeMap === null then opts.DegreeMap = Mopts.DegreeMap;
+	  if opts.DegreeLift === null then opts.DegreeLift = Mopts.DegreeLift;
 	  );
      opts.Heft = processHeft(opts.DegreeRank,opts.Degrees,opts.Heft);
      opts.Inverses = if opts.Inverses === null then Mopts.Inverses or Nopts.Inverses else opts.Inverses;

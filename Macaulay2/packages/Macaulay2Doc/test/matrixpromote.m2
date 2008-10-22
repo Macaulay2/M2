@@ -12,7 +12,7 @@ lift(matrix{{2/1}}, ZZ)
 
 S = QQ[x,y,z]
 T = S/y^6
-U = T[a,b,c]
+U = T[a,b,c,Join=>false,DegreeMap=>x->{0},DegreeLift=>x->{0}]
 V = U/b^7
 
 chain = (ZZ,QQ,S,T,U,V)
