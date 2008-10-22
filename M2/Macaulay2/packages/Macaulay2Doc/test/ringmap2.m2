@@ -2,7 +2,7 @@
 
 R1 = ZZ/101[x_0 .. x_10]
 R2 = ZZ/101[x_0 .. x_10,MonomialOrder=>Lex]
-R3 = ZZ/101[x_0 .. x_8][x_9,x_10]
+R3 = ZZ/101[x_0 .. x_8][x_9,x_10,Join=>false]
 R4 = ZZ[x_0 .. x_10]
 R5 = QQ[x_0 .. x_10]
 
