@@ -177,31 +177,14 @@ flattenRing PolynomialRing := opts -> R -> (
      q := p^-1;
      I := ideal S';
      S := ring I;
-     if instance(S,PolynomialRing) then (
-     	  k := coefficientRing S;
-     	  M1 := monoid S;
-     	  n1 := numgens M1;
-     	  M := tensor(M2,M1, Degrees => (
-		    degrees M2
-		    |
-		    if M2.Options.ConstantCoefficients
-		    then toList ( n1 : zerdeg)
-		    else (
-			 if degreeLength M1 =!= degreeLength M2 then error "expected coefficient ring to have the same degree length";
-			 degrees M1
-			 )
-		    ));
-     	  T := k M;
-	  )
-     else (
-	  n1 = 0;
-	  T = S M2;
-	  );
-     degmap := if M2.Options.ConstantCoefficients then d -> zerdeg else identity;
-     inc := map(T,S,(vars T)_(toList (n2 .. n2 + n1 - 1)), DegreeMap => degmap);
+     (n1,T) := 
+     if instance(S,PolynomialRing)
+     then ( numgens monoid S, (coefficientRing S) tensor(M2,monoid S) )
+     else ( 0, S M2 );
+     inc := map(T,S,(vars T)_(toList (n2 .. n2 + n1 - 1)), DegreeMap => M2.Options.DegreeMap);
      I' := inc I;
      T' := T/I';
-     inc' := map(T',S', promote(matrix inc,T'), DegreeMap => degmap);
+     inc' := map(T',S', promote(matrix inc,T'), DegreeMap => M2.Options.DegreeMap);
      pr := map(T',T);
      p' := map(T',R, (vars T')_(toList (0 .. n2-1)) | inc' matrix p);
      q' := map(R,T', vars R | promote(matrix q,R));

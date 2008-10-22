@@ -60,7 +60,7 @@ toString PolynomialRing := R -> (
 degreeLength PolynomialRing := (RM) -> degreeLength monoid RM
 
 protect basering
-protect flatmonoid
+protect FlatMonoid
 
 degreesRing ZZ := PolynomialRing => memoize(
      (n) -> (
@@ -69,7 +69,7 @@ degreesRing ZZ := PolynomialRing => memoize(
 	  if n == 0 then (
 	       ZZn = new PolynomialRing from rawPolynomialRing();
 	       ZZn.basering = ZZ;
-	       ZZn.flatmonoid = ZZn.monoid = monoid[];
+	       ZZn.FlatMonoid = ZZn.monoid = monoid[];
 	       ZZn.numallvars = 0;
 	       ZZn.baseRings = {ZZ};
 	       ZZn.degreesRing = ZZn;
@@ -146,26 +146,10 @@ Ring OrderedMonoid := PolynomialRing => (			  -- no memoize
 	  if not M.?RawMonoid then error "expected ordered monoid handled by the engine";
 	  if not R.?RawRing then error "expected coefficient ring handled by the engine";
      	  num := numgens M;
-	  (basering,flatmonoid,numallvars) := (
+	  (basering,FlatMonoid,numallvars) := (
 	       if R.?isBasic then (R,M,num)
-	       else if R.?basering and R.?flatmonoid 
-	       then ( 
-		    R.basering, 
-		    tensor(M, R.flatmonoid,
-			 DegreeRank => M.Options.DegreeRank,
-			 Heft => M.Options.Heft,
-			 Degrees => (
-			      degrees M
-			      |
-			      if M.Options.ConstantCoefficients
-			      then toList ( numgens R.flatmonoid : toList (degreeLength M : 0))
-			      else (
-				   if degreeLength R.flatmonoid =!= degreeLength M then error "expected coefficient ring to have the same degree length";
-				   degrees R.flatmonoid
-				   )
-			      )
-			 ),
-		    num + R.numallvars)
+	       else if R.?basering and R.?FlatMonoid 
+	       then ( R.basering, tensor(M, R.FlatMonoid), num + R.numallvars)
 	       else if instance(R,FractionField) then (R,M,num)
 	       else error "internal error: expected coefficient ring to have a base ring and a flat monoid"
 	       );
@@ -213,7 +197,7 @@ Ring OrderedMonoid := PolynomialRing => (			  -- no memoize
 		    diffs1 = join(diffs1, apply(R.diffs1, i -> i + num));
 		    );
 	       scan(diffs0,diffs1,(x,dx) -> if not x<dx then error "expected differentiation variables to occur to the right of their variables");
-	       RM = new PolynomialRing from rawWeylAlgebra(rawPolynomialRing(raw basering, raw flatmonoid),diffs0,diffs1,h);
+	       RM = new PolynomialRing from rawWeylAlgebra(rawPolynomialRing(raw basering, raw FlatMonoid),diffs0,diffs1,h);
 	       RM.diffs0 = diffs0;
 	       RM.diffs1 = diffs1;
      	       addHook(RM, QuotientRingHook, S -> (S.diffs0 = diffs0; S.diffs1 = diffs1));
@@ -222,11 +206,11 @@ Ring OrderedMonoid := PolynomialRing => (			  -- no memoize
 	  else if skews =!= {} or R.?SkewCommutative then (
 	       if R.?diffs0 then error "coefficient ring is a Weyl algebra";
 	       if R.?SkewCommutative then skews = join(skews, apply(R.SkewCommutative, i -> i + num));
-	       RM = new PolynomialRing from rawSkewPolynomialRing(rawPolynomialRing(raw basering, raw flatmonoid),skews);
+	       RM = new PolynomialRing from rawSkewPolynomialRing(rawPolynomialRing(raw basering, raw FlatMonoid),skews);
 	       RM.SkewCommutative = skews;
 	       )
 	  else (
-	       log := FunctionApplication {rawPolynomialRing, (raw basering, raw flatmonoid)};
+	       log := FunctionApplication {rawPolynomialRing, (raw basering, raw FlatMonoid)};
 	       RM = new PolynomialRing from value log;
 	       RM#"raw creation log" = Bag {log};
 	       );
@@ -235,7 +219,7 @@ Ring OrderedMonoid := PolynomialRing => (			  -- no memoize
 	       RM#"has quotient elements" = true;
 	       );
 	  RM.basering = basering;
-	  RM.flatmonoid = flatmonoid;
+	  RM.FlatMonoid = FlatMonoid;
 	  RM.numallvars = numallvars;
 	  RM.promoteDegree = makepromoter degreeLength M;
 	  RM.liftDegree = makepromoter degreeLength R;
@@ -310,7 +294,7 @@ weightRange(List,RingElement) := (w,f) -> rawWeightRange(w,raw f)
 weightRange RingElement := f -> weightRange(first \ degrees ring f, f)
 parts = method()
 parts RingElement := f -> sum(select(apply(
-	       ((i,j) -> i .. j) weightRange(first \ degrees (ring f).flatmonoid, f),
+	       ((i,j) -> i .. j) weightRange(first \ degrees (ring f).FlatMonoid, f),
 	       n -> part_n f), p -> p != 0), p -> new Parenthesize from {p})
 -- Local Variables:
 -- compile-command: "make -C $M2BUILDDIR/Macaulay2/m2 "

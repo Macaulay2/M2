@@ -103,11 +103,10 @@ monoidDefaults = (
 	  SkewCommutative => {},
 	  -- VariableOrder => null,		  -- not implemented yet
 	  WeylAlgebra => {},
-     	  Heft => null,
+     	  Heft => null {* find one *},
 	  DegreeRank => null,				    -- specifying DegreeRank=>3 and no Degrees means degrees {{1, 0, 0}, {0, 1, 0}, {0, 0, 1}, {0, 0, 1}, ...}
-	  Join => true,					    -- whether the degrees in the new monoid ring will be obtained by joining the degrees in the coefficient with the degrees in the monoid
-      	  DegreeMap => identity,			    -- the degree map to use, if Join=>false is specified, for converting degrees in the coefficient ring to degrees in the monoid
-     	  ConstantCoefficients => true			    -- whether to set the coefficient variables to degree 0 in the new polynomial ring
+	  Join => null {* true *},			    -- whether the degrees in the new monoid ring will be obtained by joining the degrees in the coefficient with the degrees in the monoid
+      	  DegreeMap => null {* identity *}		    -- the degree map to use, if Join=>false is specified, for converting degrees in the coefficient ring to degrees in the monoid
 	  }
      )
 
@@ -294,23 +293,34 @@ monoidIndices = (M,varlist) -> (				    -- also used in orderedmonoidrings.m2, b
      apply(varlist, x -> monoidIndex(M,x))
      )
 
+chkHeft = (degs,heft) -> all(degs, d -> sum apply(d,heft,times) > 0)
+
 findHeft = (degrk,degs) -> (
-     -- this function adapted from one written by Greg Smith; it appears in the FourierMotzkin package documentation
-     -- we return the zero vector if no heft vector exists
+     -- this function is adapted from one written by Greg Smith; it appears in the FourierMotzkin package documentation
+     -- we return null if no heft vector exists
      if degrk === 0 then return {};
-     if degrk === 1 then return (
-	  if all(degs,d->d#0 > 0) then {1}
-	  else if all(degs,d->d#0 < 0) then {-1}
-	  else {0}
-	  );
-     if (#degs === 0) then return toList(degrk : 0);
+     if degrk === 1 then return if all(degs,d->d#0 > 0) then {1} else if all(degs,d->d#0 < 0) then {-1} ;
+     if #degs === 0 then return toList(degrk : 1);
      A := transpose matrix degs;
      B := ((value getGlobalSymbol "fourierMotzkin") A)#0;
      r := rank source B;
-     heft := first entries (matrix{toList(r:-1)} * transpose B);
+     f := (matrix{toList(r:-1)} * transpose B);
+     if f == 0 then return;
+     heft := first entries f;
+     if not chkHeft(degs,heft) then return;
      g := gcd heft;
      if g > 1 then heft = apply(heft, h -> h // g);
      heft);
+
+processHeft = (degrk,degs,heft) -> (
+     if heft === null then heft = findHeft(degrk,degs)
+     else (
+	  if not instance(heft,List) or not all(heft,i -> instance(i,ZZ)) then error "expected Heft option to be a list of integers";
+	  if #heft > degrk then error("expected Heft option to be of length at most the degree rank (", degrk, ")");
+	  if #heft < degrk then heft = join(heft, degrk - #heft : 0);
+	  if not chkHeft(degs,heft) then heft = findHeft(degrk,degs);
+	  );
+     heft)
 
 makeMonoid := (opts) -> (
      -- check the options for consistency, and set everything to the correct defaults
@@ -357,21 +367,7 @@ makeMonoid := (opts) -> (
 			 if instance(i,ZZ) or instance(i,Symbol) or instance(i,IndexedVariable) then i
 			 else try baseName i else error("SkewCommutative option: expected base name for: ",toString i)
 			 ))));
-
-     heft := opts.Heft;
-     chkheft := () -> if heft =!= null then scan(degs, d -> if not sum apply(take(d,#heft), take(heft,#d), times) > 0 then (heft = null; break; ));
-     if heft === null then (
-	  heft = findHeft(degrk,degs);
-	  chkheft();					    -- silently accept it: there is no suitable heft vector
-	  )
-     else (
-	  if not instance(heft,List) or not all(heft,i -> instance(i,ZZ)) then error "expected Heft option to be a list of integers";
-	  if #heft > degrk then error("expected Heft option to be of length at most the degree rank (", degrk, ")");
-	  if #heft < degrk then heft = join(heft, degrk - #heft : 0);
-	  chkheft();
-	  error "heft vector not positive on degrees of all the variables";
-	  );
-     opts.Heft = heft;
+     opts.Heft = processHeft(degrk,degs,opts.Heft);
      opts = new OptionTable from opts;
      makeit1 opts)
 
@@ -403,10 +399,10 @@ trimMO := o -> (
      numseen := 0;
      select(o, x -> not instance(x,Option) or x#0 =!= Position or 1 == (numseen = numseen + 1)))
 
-tensor(Monoid, Monoid) := Monoid => options -> (M,N) -> (
+tensor(Monoid, Monoid) := Monoid => opts -> (M,N) -> (
      Mopts := M.Options;
      Nopts := N.Options;
-     opts := new MutableHashTable from options;
+     opts = new MutableHashTable from opts;
      if opts.Variables === null 
      then opts.Variables = join(Mopts.Variables, Nopts.Variables)
      else opts.Variables = splice opts.Variables;
@@ -417,19 +413,27 @@ tensor(Monoid, Monoid) := Monoid => options -> (M,N) -> (
      if opts.MonomialOrder === null 
      then opts.MonomialOrder = trimMO join(Mopts.MonomialOrder,Nopts.MonomialOrder); -- product order
      processDegrees(opts.Degrees, null, length opts.Variables);	-- just for the error messages
+     zpad := (n,x) -> (
+	  if instance(x,ZZ) then x = {x};
+	  if not instance(x,List) or not all(x,i -> instance(i,ZZ)) then error "expected degree map to return a list of integers";
+	  if #x > n then error("expected degree map to return a list of length at most ",toString n);
+	  join(x,n-#x:0));
      if opts.Degrees === null and opts.DegreeRank === null then (
-	  M0 := apply(Mopts.DegreeRank, i -> 0);
-	  N0 := apply(Nopts.DegreeRank, i -> 0);
-          opts.Degrees = join(
-	       apply(Mopts.Degrees, d -> join(d,N0)),
-	       apply(Nopts.Degrees, e -> join(M0,e))
-	       );
-	  if opts.Heft === null then (
-	       assert( # Mopts.Heft == Mopts.DegreeRank );
-	       assert( # Nopts.Heft == Nopts.DegreeRank );
-	       opts.Heft = join(Mopts.Heft,Nopts.Heft);
-	       );
-	  );
+	  if opts.Join =!= false and Mopts.Join =!= false then (
+	       opts.DegreeRank = Mopts.DegreeRank + Nopts.DegreeRank;
+	       M0 := apply(Mopts.DegreeRank, i -> 0);
+	       N0 := apply(Nopts.DegreeRank, i -> 0);
+	       opts.Degrees = join( apply(Mopts.Degrees, d -> join(d,N0)), apply(Nopts.Degrees, e -> join(M0,e)) );
+	       if opts.Heft === null and Nopts.Heft =!= null and Mopts.Heft =!= null then opts.Heft = join(Mopts.Heft,Nopts.Heft);
+	       opts.DegreeMap = d -> join(d,N0); -- for the convenience of flattenRing later
+	       )
+	  else (
+	       opts.DegreeRank = Mopts.DegreeRank;
+	       degmap := if opts.DegreeMap =!= null then opts.DegreeMap else if Mopts.DegreeMap =!= null then Mopts.DegreeMap else identity;
+	       opts.Degrees = join( Mopts.Degrees, apply(Nopts.Degrees, d -> zpad(Mopts.DegreeRank,degmap d)) );
+	       if opts.Heft === null and Mopts.Heft =!= null then opts.Heft = Mopts.Heft {* a hint *};
+	       ));
+     opts.Heft = processHeft(opts.DegreeRank,opts.Degrees,opts.Heft);
      opts.Inverses = if opts.Inverses === null then Mopts.Inverses or Nopts.Inverses else opts.Inverses;
      wfix := (M,w,bump) -> (
 	  if class w === Option then w = {w};

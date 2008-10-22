@@ -20,7 +20,7 @@ export { AbstractSheaf, abstractSheaf, AbstractVariety, abstractVariety, schuber
      schur, SectionClass, sectionClass, segre, StructureMap, protect TangentBundle, tangentBundle, todd, protect ToddClass,
      VariableNames, VariableName, SubBundles, QuotientBundles, point, base}
 
-debug Core						    -- needed only for flatmonoid, sigh; also for getAttribute
+debug Core						    -- needed only for FlatMonoid, sigh; also for getAttribute
 
 AbstractVariety = new Type of MutableHashTable
 AbstractVariety.synonym = "abstract variety"
@@ -118,7 +118,7 @@ abstractSheaf(AbstractVariety,RingElement) := opts -> (X,f) -> abstractSheaf(X, 
 
 bydegree := net -> f -> (
      if f == 0 then return "0";
-     (i,j) := weightRange(first \ degrees (ring f).flatmonoid, f);
+     (i,j) := weightRange(first \ degrees (ring f).FlatMonoid, f);
      tms := toList apply(i .. j, n -> part_n f);
      tms = select(tms, p -> p != 0);
      if #tms == 1 then return net expression first tms;
@@ -326,7 +326,7 @@ flagBundle(List,AbstractSheaf) := opts -> (bundleRanks,E) -> (
      X := variety E;
      dgs := splice apply(bundleRanks, r -> 1 .. r);
      S := intersectionRing X;
-     T := S(monoid [flatten varNames, Degrees => dgs, Global => false, MonomialOrder => apply(bundleRanks, n -> Ord => n), ConstantCoefficients => false]);
+     T := S(monoid [flatten varNames, Degrees => dgs, Global => false, MonomialOrder => apply(bundleRanks, n -> Ord => n), Join => false]);
      -- (A,F) := flattenRing T; G := F^-1 ;
      A := T; F := identity;
      chclasses := apply(varNames, x -> F (1 + sum(x,v -> T_v)));

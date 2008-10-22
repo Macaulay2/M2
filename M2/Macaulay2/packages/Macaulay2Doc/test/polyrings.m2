@@ -60,3 +60,56 @@ assert( (p*1_H)^2 == 0 )
 assert( x^2 == 0 )
 
 
+R = QQ[x][y]
+assert( degree x == {1} )
+assert( degree x_R == {0,1} )
+assert( degree y_R == {1,0} )
+(options R).Heft
+assert( (options R).Heft =!= null )
+
+R = QQ[x][y, Join => false]
+assert( degree x == {1} )
+assert( degree x_R == {1} )
+assert( degree y_R == {1} )
+(options R).Heft
+assert( (options R).Heft =!= null )
+
+R = QQ[x][y, Join => false, DegreeMap => x -> 0]
+assert( degree x == {1} )
+assert( degree x_R == {0} )
+assert( degree y_R == {1} )
+(options R).Heft
+assert( (options R).Heft =!= null )
+
+R = QQ[x,Degrees => {{0,1}}]
+(options R).Heft
+assert( (options R).Heft === {0,1} )			    -- inessential, but it makes the tests below interesting
+R = QQ[x,Degrees => {{1,0}}]
+(options R).Heft
+assert( (options R).Heft === {1,0} )
+
+R = QQ[x][y,z,Degrees => {1,-1}]
+(options R).Heft
+assert( (options R).Heft === null )
+
+M = tensor(monoid [x],monoid [y,z,Degrees => {1,-1}])
+degrees M
+(options M).Heft
+assert( (options M).Heft === null )
+
+M = tensor(monoid [y,z,Degrees => {1,-1}],monoid [x])
+degrees M
+(options M).Heft
+assert( (options M).Heft === null )
+
+R = QQ[y,z,Degrees => {1,-1}][x]
+degree x, degree y_R, degree z_R
+assert( (options R.FlatMonoid).Heft === null )
+
+R = QQ[x,Degrees => {{1,0}}][y,Degrees => {{0,1}}]
+(options R.FlatMonoid).Heft
+assert( (options R.FlatMonoid).Heft === {0, 1, 1, 0} )
+
+R = QQ[x][y]
+(options R.FlatMonoid).Heft
+assert( (options R.FlatMonoid).Heft === {1, 1} )
