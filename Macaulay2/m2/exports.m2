@@ -277,6 +277,7 @@ export {
 	symbol MaximalRank,
 	symbol MaxReductionCount,
 	symbol Iterate,
+	symbol Join,
 	symbol KeepZeroes,
 	symbol Key,
 	symbol Keyword,

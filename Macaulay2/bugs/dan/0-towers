@@ -5,7 +5,7 @@ DegreeMap => x->x	    specifies a function from lists of integers to lists of in
 			    If it returns a value too short, 0's will be silently appended.
 			    If it returns a value too long, it will be an error.
 
-JoinDegrees => true	    specifies whether the new degrees are joined with the old degrees
+Join => true		    specifies whether the new degrees are joined with the old degrees
 
 Heft	       		    if no Heft vector is given one will be computed with Fourier-Motzkin,
 			    which should be pre-loaded.  If none exists, we'll record that fact

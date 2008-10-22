@@ -105,6 +105,8 @@ monoidDefaults = (
 	  WeylAlgebra => {},
      	  Heft => null,
 	  DegreeRank => null,				    -- specifying DegreeRank=>3 and no Degrees means degrees {{1, 0, 0}, {0, 1, 0}, {0, 0, 1}, {0, 0, 1}, ...}
+	  Join => true,					    -- whether the degrees in the new monoid ring will be obtained by joining the degrees in the coefficient with the degrees in the monoid
+      	  DegreeMap => identity,			    -- the degree map to use, if Join=>false is specified, for converting degrees in the coefficient ring to degrees in the monoid
      	  ConstantCoefficients => true			    -- whether to set the coefficient variables to degree 0 in the new polynomial ring
 	  }
      )
@@ -195,13 +197,12 @@ makeit1 := (opts) -> (
      	  opts.MonomialSize,
 	  opts.Inverses,
      	  #varlist,
-	  if degreeLength M > 0 then (
+	  if degreeLength M > 0 and opts.Heft =!= null then (
 	       apply(vardegs,d -> (
 			 w := dotprod(d,opts.Heft);
 			 if w > 0 then w else 1
-			 )) 
-	       )
-	  else {},
+			 )))
+	  else toList (#vardegs:1),
 	  opts.Weights,
 	  opts.MonomialOrder
 	  );
@@ -222,7 +223,7 @@ makeit1 := (opts) -> (
 	       toSequence M.generators / toString,
 	       raw degreesRing degrk,
 	       flatten vardegs,
-	       flatten opts.Heft));
+	       if opts.Heft === null then toList(degrk:0) else flatten opts.Heft));
      raw M := x -> x.RawMonomial;
      net M := x -> net expression x;
      M ? M := (x,y) -> rawCompareMonomial(raw M, raw x, raw y);
@@ -293,6 +294,24 @@ monoidIndices = (M,varlist) -> (				    -- also used in orderedmonoidrings.m2, b
      apply(varlist, x -> monoidIndex(M,x))
      )
 
+findHeft = (degrk,degs) -> (
+     -- this function adapted from one written by Greg Smith; it appears in the FourierMotzkin package documentation
+     -- we return the zero vector if no heft vector exists
+     if degrk === 0 then return {};
+     if degrk === 1 then return (
+	  if all(degs,d->d#0 > 0) then {1}
+	  else if all(degs,d->d#0 < 0) then {-1}
+	  else {0}
+	  );
+     if (#degs === 0) then return toList(degrk : 0);
+     A := transpose matrix degs;
+     B := ((value getGlobalSymbol "fourierMotzkin") A)#0;
+     r := rank source B;
+     heft := first entries (matrix{toList(r:-1)} * transpose B);
+     g := gcd heft;
+     if g > 1 then heft = apply(heft, h -> h // g);
+     heft);
+
 makeMonoid := (opts) -> (
      -- check the options for consistency, and set everything to the correct defaults
      opts = new MutableHashTable from opts;
@@ -341,22 +360,14 @@ makeMonoid := (opts) -> (
 
      heft := opts.Heft;
      if heft === null then (
-	  heft = if degrk > 0 then splice {1, degrk-1 : 0} else {};
+	  heft = findHeft(degrk,degs);
 	  )
      else (
 	  if not instance(heft,List) or not all(heft,i -> instance(i,ZZ)) then error "expected Heft option to be a list of integers";
 	  if #heft > degrk then error("expected Heft option to be of length at most the degree rank (", degrk, ")");
-	  -- if #heft != degrk then error("expected Heft option to be of length ", degrk, " to match the degree rank");
 	  if #heft < degrk then heft = join(heft, degrk - #heft : 0);
 	  );
--- We can't check the hefts are positive here, because in a ring like QQ[b][x] the variable b has degree 0.
--- And we like that.
---     if degrk > 0 then
---     scan(degs, d -> if not sum apply(take(d,#heft), take(heft,#d), times) > 0 then (
---	       error if opts.Heft === null
---	       then "first component of each degree should be positive, or Heft option should be used"
---	       else ("Heft option ",toString toList heft," should yield a positive value for each variable")
---	       ));
+     if heft =!= null then scan(degs, d -> if not sum apply(take(d,#heft), take(heft,#d), times) > 0 then (heft = null; break; ));
      opts.Heft = heft;
      opts = new OptionTable from opts;
      makeit1 opts)
