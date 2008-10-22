@@ -3,13 +3,25 @@ f = (x+y)^3*(x-y^2)
 g = (x+y)^2*(x^3-x*y+y^3)^4
 assert ( gcd(f,g) == (x+y)^2 )
 
-R = (GF 25)[x]
+GF 729[x, y, z]
+assert( gcd((x^5+y^3+a+1)*(y-1),(x^5+y^3+a+1)*(z+1)) == x^5+y^3+a+1 )
+
+GF 25[x, y, z]
+assert( gcd(z-a,z^2-a^2) == z-a )
+assert( gcd((x^5+y^3+a+1)*(y-1),(x^5+y^3+a+1)*(z+1)) == x^5+y^3+a+1 )
+assert( 1 == gcd(x^5+x-3,x^6-a*x-1) )
+assert( gcd((x^3+x-a)*(x^5+x-3),(x^3+x-a)*(x^6-a*x-1)) == x^3+x-a )
+
+R = GF 25[x]
+-- one of the book chapters depends on this feature
+assert(gcd((x^3+x-a)*(x^5+x-1),(x^3+x-a)*(x^6-a*x-1)) == x^3+x-a)
+
+R = GF 25[x,y]
 -- one of the book chapters depends on this feature
 assert(gcd((x^3+x-a)*(x^5+x-1),(x^3+x-a)*(x^6-a*x-1)) == x^3+x-a)
 
 R = (GF 25)[x,y]
--- one of the book chapters depends on this feature
-assert(gcd((x^3+x-a)*(x^5+x-1),(x^3+x-a)*(x^6-a*x-1)) == x^3+x-a)
+assert(gcd((x^3+y-a)*(y^5+x-1),(x^3+y-a)*(x^6-a*x-1)) == x^3+y-a)
 
 R = ZZ[x]
 assert( gcd(6*x, 4*x) == 2*x )
