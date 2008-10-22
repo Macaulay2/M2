@@ -420,7 +420,7 @@ const RingElementOrNull *rawGCDRingElement(const RingElement *f, const RingEleme
     CanonicalForm p = convertToFactory(*f);
     CanonicalForm q = convertToFactory(*g);
     CanonicalForm h = gcd(p,q);
-#ifndef NDEBUG
+#if 0
     cerr << "p   = " << p << endl;
     cerr << "q   = " << q << endl;
     cerr << "gcd = " << h << endl;
