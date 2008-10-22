@@ -52,7 +52,7 @@ map(Ring,Ring,Matrix) := RingMap => opts -> (R,S,m) -> (
 	  if record#?s then error "map: multiple variables would map to the same variable, by name";
 	  record#s = true;
 	  R.indexSymbols#s);
-     mExternal := m;
+     mE := m;
      while true do (
 	  mdegs = join(mdegs, promote(degrees A,A,S) / degmap);
 	  r := numgens source m;
@@ -69,7 +69,7 @@ map(Ring,Ring,Matrix) := RingMap => opts -> (R,S,m) -> (
 	       if numgens A > 0 then (
 		    if member(A, R.baseRings) then (
 			 -- we can promote
-			 mExternal = mExternal | promote(vars A, R);
+			 mE = mE | promote(vars A, R);
 			 if instance(A,GaloisField) then (
 		    	      -- the engine wants to know where the primitive element will go
 		    	      m = m | promote(A.PrimitiveElement, R)
@@ -78,7 +78,7 @@ map(Ring,Ring,Matrix) := RingMap => opts -> (R,S,m) -> (
 			 )
 		    else (
 			 mm := matrix(R, {apply(A.generatorSymbols, s -> if R.?indexSymbols and R.indexSymbols#?s then justonce s else 0_R)});
-			 mExternal = mExternal | mm;
+			 mE = mE | mm;
 			 if instance(A,GaloisField) then (
 			      -- the engine wants to know where the primitive element will go
 			      m = m | matrix {{(map(R,ambient A,mm)) A.PrimitiveElement}}
@@ -90,11 +90,12 @@ map(Ring,Ring,Matrix) := RingMap => opts -> (R,S,m) -> (
 	  );
      if n != numgens source m then error ("encountered values for ", toString numgens source m," variables");
      zdeg  := toList ( degreeLength R : 0 );
-     if degrees target m =!= {zdeg} or degrees source m =!= mdegs or degree m =!= zdeg then m = map(R^{zdeg}, R^-mdegs, m, Degree => zdeg);
+     mE = map(R^{zdeg}, R^-mdegs, mE, Degree => zdeg);
      new RingMap from {
+	  symbol Function => x -> x,
 	  symbol source => S,
 	  symbol target => R,
-	  symbol matrix => mExternal,
+	  symbol matrix => mE,
 	  symbol RawRingMap => rawRingMap m.RawMatrix,
 	  symbol DegreeMap => degmap,
 	  symbol cache => new CacheTable
