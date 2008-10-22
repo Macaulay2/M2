@@ -430,10 +430,14 @@ tensor(Monoid, Monoid) := Monoid => opts -> (M,N) -> (
 	       )
 	  else (
 	       opts.DegreeRank = Mopts.DegreeRank;
-	       degmap := if opts.DegreeMap =!= null then opts.DegreeMap else if Mopts.DegreeMap =!= null then Mopts.DegreeMap else identity;
-	       opts.Degrees = join( Mopts.Degrees, apply(Nopts.Degrees, d -> degreePad(Mopts.DegreeRank,degmap d)) );
+	       dm := if opts.DegreeMap =!= null then opts.DegreeMap else if Mopts.DegreeMap =!= null then Mopts.DegreeMap else identity;
+	       opts.DegreeMap = d -> degreePad(Mopts.DegreeRank,dm d); -- this is more like degree promotion, in the end
+	       opts.Degrees = join(Mopts.Degrees, apply(Nopts.Degrees, opts.DegreeMap));
 	       if opts.Heft === null and Mopts.Heft =!= null then opts.Heft = Mopts.Heft {* a hint *};
-	       ));
+	       ))
+     else (
+     	  if opts.DegreeMap === null then error "DegreeMap option unspecified";
+	  );
      opts.Heft = processHeft(opts.DegreeRank,opts.Degrees,opts.Heft);
      opts.Inverses = if opts.Inverses === null then Mopts.Inverses or Nopts.Inverses else opts.Inverses;
      wfix := (M,w,bump) -> (
