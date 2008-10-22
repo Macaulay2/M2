@@ -1131,14 +1131,45 @@ vec Ring::vec_remove_monomial_factors(vec f, bool make_squarefree_only) const
 
 ring_elem Ring::vec_content(vec f) const
 {
+  if (f == 0) return zero();
+  ring_elem c = content(f->coeff);
+  for (vec t = f->next; t != 0; t=t->next)
+    lower_content(c, t->coeff);
+  return c;
 }
 
-vec Ring::vec_remove_content(vec f) const
+vec Ring::vec_divide_by_given_content(vec f, ring_elem c) const
 {
+  if (f == 0) return 0;
+  vecterm head;
+  vec result = &head;
+  for (const vecterm *p = f; p != 0; p=p->next)
+    {
+      vec w = new_vec();
+      result->next = w;
+      result = w;
+      w->comp = p->comp;
+      w->coeff = divide_by_given_content(p->coeff, c);
+    }
+  result->next = 0;
+  return head.next;
+}
+
+vec Ring::vec_divide_by_content(vec f) const
+{
+  if (f == 0) return 0;
+  ring_elem c = vec_content(f);
+  return vec_divide_by_given_content(f,c);
 }
 
 ring_elem Ring::vec_split_off_content(vec f, vec &result) const
 {
+  ring_elem c = vec_content(f);
+  if (f == 0) 
+    result = 0;
+  else
+    result = vec_divide_by_given_content(f,c);
+  return c;
 }
 
 // Local Variables:

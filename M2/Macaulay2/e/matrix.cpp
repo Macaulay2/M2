@@ -1799,7 +1799,7 @@ const MatrixOrNull *Matrix::remove_content() const
   const Ring *R = get_ring();
   MatrixConstructor mat(rows(),cols(),degree_shift());
   for (int i=0; i<n_cols(); i++)
-    mat.set_column(i,R->vec_remove_content(elem(i)));
+    mat.set_column(i,R->vec_divide_by_content(elem(i)));
   return mat.to_matrix();
 }
 
@@ -1816,7 +1816,7 @@ const MatrixOrNull *Matrix::split_off_content(MatrixOrNull *&result) const
   for (int i=0; i<n_cols(); i++)
     {
       vec g;
-      ring_elem c = R->vec_split_off_content(elem(i), g);
+      ring_elem c = R->vec_split_off_content(elem(i),g);
       mat_content.set_entry(0,i,c);
       mat.set_column(i,g);
     }
