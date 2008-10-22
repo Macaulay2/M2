@@ -8,7 +8,7 @@ document {
 	  [symmetricAlgebra, SkewCommutative],[symmetricAlgebra, MonomialSize],[symmetricAlgebra, Weights],
 	  [symmetricAlgebra, Local],[symmetricAlgebra, Inverses],[symmetricAlgebra, Heft],
 	  [symmetricAlgebra, Global],[symmetricAlgebra, Degrees],[symmetricAlgebra, DegreeRank],
-	  [symmetricAlgebra, ConstantCoefficients], [symmetricAlgebra, MonomialOrder], [symmetricAlgebra, Variables]
+	  [symmetricAlgebra, MonomialOrder], [symmetricAlgebra, Variables]
 	  },
      Headline => "the symmetric algebra of a module",
      Usage => "symmetricAlgebra M",

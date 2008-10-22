@@ -784,7 +784,7 @@ document {
 
 document {
      Key => {newRing,(newRing, Ring),
-	  [newRing, Degrees], [newRing, Variables], [newRing, ConstantCoefficients],
+	  [newRing, Degrees], [newRing, Variables],
 	  [newRing, Heft], [newRing, MonomialOrder], [newRing, VariableBaseName],
      	  [newRing, DegreeRank], [newRing, Local], [newRing, Weights],
 	  [newRing, MonomialSize], [newRing, Inverses], [newRing, WeylAlgebra], [newRing, SkewCommutative], [newRing, Global]
