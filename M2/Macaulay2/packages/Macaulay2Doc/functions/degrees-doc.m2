@@ -3,7 +3,6 @@
 --- notes: 
 
 undocumented {
-     (degrees, PolynomialRing),
      (degrees, QuotientRing)
      }
 document { Key => degrees,
