@@ -67,8 +67,7 @@ tensor(QuotientRing, QuotientRing) := optns -> (R,S) -> (
      then error "expected rings to have the same coefficient ring";
      f := presentation R; A := ring f; M := monoid A; m := numgens M;
      g := presentation S; B := ring g; N := monoid B; n := numgens N;
-     AB := k tensor(M, N, 
-	  optns);
+     AB := k tensor(M, N, optns);
      fg := substitute(f,(vars AB)_{0 .. m-1}) | substitute(g,(vars AB)_{m .. m+n-1});
      -- forceGB fg;  -- if the monomial order chosen doesn't restrict, then this
                      -- is an error!! MES

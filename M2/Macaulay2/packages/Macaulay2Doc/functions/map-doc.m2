@@ -469,7 +469,7 @@ document {
      "For example, consider the following rings.",
      EXAMPLE lines ///
 	  A = QQ[a..e];
-	  B = A[x,y];
+	  B = A[x,y,Join=>false];
 	  C = QQ[a..e,x,y];
 	  ///,
      "The natural inclusion and projection maps between ", TT "A", " and ", TT "B", " are",
