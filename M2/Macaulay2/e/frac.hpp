@@ -58,6 +58,8 @@ public:
   virtual int index_of_var(const ring_elem a) const;
   virtual M2_arrayint support(const ring_elem a) const;
 
+  void lower_content(ring_elem &c, const ring_elem g) const;
+
   virtual bool promote(const Ring *R, const ring_elem f, ring_elem &result) const;
   virtual bool lift(const Ring *R, const ring_elem f, ring_elem &result) const;
 

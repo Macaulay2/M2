@@ -160,6 +160,35 @@ frac_elem *FractionField::make_elem(ring_elem a, ring_elem b) const
   return result;
 }
 
+void FractionField::lower_content(ring_elem &c, const ring_elem g) const
+{
+  if (!use_gcd_simplify) return;
+  if (is_zero(c))
+    {
+      c = g;
+      return;
+    }
+  
+  frac_elem *cf = FRAC_VAL(c);
+  frac_elem *gf = FRAC_VAL(g);
+  const RingElement *c1 = RingElement::make_raw(R_,cf->numer);
+  const RingElement *c2 = RingElement::make_raw(R_,cf->denom);
+  const RingElement *g1 = RingElement::make_raw(R_,gf->numer);
+  const RingElement *g2 = RingElement::make_raw(R_,gf->denom);
+
+  c1 = rawGCDRingElement(c1,g1);
+
+  const RingElement *cc2 = rawGCDRingElement(c2,g2);
+  const RingElement *cc3 = (*c2) * (*g2);
+  const RingElement *cc4 = (*cc3) / (*cc2);
+
+  frac_elem *result = new_frac_elem();
+  result->numer = c1->get_value();
+  result->denom = cc4->get_value();
+  
+  c = FRAC_RINGELEM(result);
+}
+
 ring_elem FractionField::random() const
 {
   ring_elem a = R_->random();

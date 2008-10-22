@@ -214,6 +214,24 @@ bool RingZZ::lower_associate_divisor(ring_elem &f, const ring_elem g) const
   return !RingZZ::is_zero(f);
 }
 
+void RingZZ::lower_content(ring_elem &c, ring_elem g) const
+// c is a content elem, g is in ring
+{
+  // if f is 0, do f=sign(g), else f=sign(f)
+  // return whether f is zero
+  if (is_zero(c))
+    {
+      c = g;
+      return;
+    }
+  M2_Integer result = RingZZ::new_elem();
+  mpz_ptr a = c.get_mpz();
+  mpz_ptr b = g.get_mpz();
+  mpz_gcd(result,a,b);
+  c = ring_elem(result);
+}
+
+
 void RingZZ::internal_negate_to(ring_elem &f) const
 {
   mpz_sub(f.get_mpz(), _zero_elem, f.get_mpz());

@@ -50,6 +50,8 @@ public:
   virtual ring_elem preferred_associate(ring_elem f) const;
   virtual bool lower_associate_divisor(ring_elem &f, ring_elem g) const;
 
+  void lower_content(ring_elem &c, const ring_elem g) const;
+
   int is_positive(const ring_elem a) const;
 
   virtual bool is_unit(const ring_elem f) const;
