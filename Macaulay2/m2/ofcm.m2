@@ -359,15 +359,18 @@ makeMonoid := (opts) -> (
 			 ))));
 
      heft := opts.Heft;
+     chkheft := () -> if heft =!= null then scan(degs, d -> if not sum apply(take(d,#heft), take(heft,#d), times) > 0 then (heft = null; break; ));
      if heft === null then (
 	  heft = findHeft(degrk,degs);
+	  chkheft();					    -- silently accept it: there is no suitable heft vector
 	  )
      else (
 	  if not instance(heft,List) or not all(heft,i -> instance(i,ZZ)) then error "expected Heft option to be a list of integers";
 	  if #heft > degrk then error("expected Heft option to be of length at most the degree rank (", degrk, ")");
 	  if #heft < degrk then heft = join(heft, degrk - #heft : 0);
+	  chkheft();
+	  error "heft vector not positive on degrees of all the variables";
 	  );
-     if heft =!= null then scan(degs, d -> if not sum apply(take(d,#heft), take(heft,#d), times) > 0 then (heft = null; break; ));
      opts.Heft = heft;
      opts = new OptionTable from opts;
      makeit1 opts)
