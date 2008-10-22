@@ -40,7 +40,7 @@ bool FractionField::initialize_frac(const PolyRingFlat *R)
   oneV = from_int(1);
   minus_oneV = from_int(-1);
 
-  if (R->n_quotients() > 0)
+  if (R->n_quotients() > 0 || R->getCoefficients()->cast_to_FractionField())
     use_gcd_simplify = false;
   else
     use_gcd_simplify = true;
@@ -113,24 +113,45 @@ void FractionField::simplify(frac_elem *f) const
       const RingElement *b = RingElement::make_raw(R_,y);
       const RingElement *c = rawGCDRingElement(a,b);
 
-      //      buffer o;
-      //      o << "a = ";
-      //      a->text_out(o);
-      //      o << "  b = ";
-      //      b->text_out(o);
-      //      o << " gcd = ";
-      //      c->text_out(o);
-      //      o << newline << newline;
-      //      emit(o.str());
+#if 0
+      // Debugging code
+            buffer o;
+	    o << newline;
+            o << "a = ";
+            a->text_out(o);
+            o << "  b = ";
+            b->text_out(o);
+            o << " gcd = ";
+            c->text_out(o);
+            o << newline;
+            emit(o.str());
+#endif
+      if (!R_->is_equal(c->get_value(), R_->one()))
+	{
+	  f->numer = R_->divide(f->numer, c->get_value());
+	  f->denom = R_->divide(f->denom, c->get_value());
+	}
+      // Now, let's take the content of the denominator, and divide the numerator
+      // and denominator by this value.
+      ring_elem ct = R_->content(f->denom, f->numer); // result is in R_->getCoefficients()
 
-      if (R_->is_equal(c->get_value(), R_->one())) return;
-      f->numer = R_->divide(f->numer, c->get_value());
-      f->denom = R_->divide(f->denom, c->get_value());
-      // If the coefficient ring is QQ (or another fraction ring, which
-      //   cannot happen currently), then we need to multiply/divide top and bottom
-      //   for the pair to be in normal form.
-      //   if a/b * numer(f) is monic, and c/d*denom(f) is monic, both over ZZ,
-      //   then take...
+#if 0
+            o.reset();
+            o << "f->numer = ";
+	    R_->elem_text_out(o,f->numer);
+            o << "  f->denom = ";
+	    R_->elem_text_out(o,f->denom);
+	    o << " ass= ";
+	    R_->getCoefficients()->elem_text_out(o,ct);
+	    o << newline;
+            emit(o.str());
+#endif
+
+     if (!R_->getCoefficients()->is_equal(ct, R_->getCoefficients()->one()))
+	{
+	  f->numer = R_->divide_by_given_content(f->numer,ct);
+	  f->denom = R_->divide_by_given_content(f->denom,ct);
+	}
     }
   else
     {
