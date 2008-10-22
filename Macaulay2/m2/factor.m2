@@ -1,12 +1,5 @@
 --		Copyright 1995-2002 by Daniel R. Grayson
 
-good := k -> (
-     k === QQ or
-     k === ZZ or
-     instance(k,QuotientRing) and ambient k === ZZ and isPrime char k or
-     instance(k,GaloisField)
-     )
-
 monic := t -> (
      c := leadCoefficient t;
      c' := 1 // c;
@@ -17,10 +10,7 @@ gcd(RingElement,RingElement) := RingElement => (r,s) -> (
      R := ring r;
      if ring s =!= R then error "gcd: expected elements in the same ring";
      if isField R then if r == 0 and s == 0 then 0_R else 1_R
-     else if instance(R,PolynomialRing) and good coefficientRing R then (
-	  -- use factory for this
-     	  new ring r from rawGCD(raw r, raw s)
-	  )
+     else if engineHasGCD R then new ring r from rawGCD(raw r, raw s)
      else if instance(R,PolynomialRing) and numgens R == 1 and isField coefficientRing R then monic (
 	  -- does this depend on the monomial order in R, too?
 	  -- would this code work for more than one variable?
