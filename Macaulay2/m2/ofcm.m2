@@ -399,6 +399,12 @@ trimMO := o -> (
      numseen := 0;
      select(o, x -> not instance(x,Option) or x#0 =!= Position or 1 == (numseen = numseen + 1)))
 
+degreePad = (n,x) -> (
+     if instance(x,ZZ) then x = {x};
+     if not instance(x,List) or not all(x,i -> instance(i,ZZ)) then error "expected degree map to return a list of integers";
+     if #x > n then error("expected degree map to return a list of length at most ",toString n);
+     join(x,n-#x:0));
+
 tensor(Monoid, Monoid) := Monoid => opts -> (M,N) -> (
      Mopts := M.Options;
      Nopts := N.Options;
@@ -413,11 +419,6 @@ tensor(Monoid, Monoid) := Monoid => opts -> (M,N) -> (
      if opts.MonomialOrder === null 
      then opts.MonomialOrder = trimMO join(Mopts.MonomialOrder,Nopts.MonomialOrder); -- product order
      processDegrees(opts.Degrees, null, length opts.Variables);	-- just for the error messages
-     zpad := (n,x) -> (
-	  if instance(x,ZZ) then x = {x};
-	  if not instance(x,List) or not all(x,i -> instance(i,ZZ)) then error "expected degree map to return a list of integers";
-	  if #x > n then error("expected degree map to return a list of length at most ",toString n);
-	  join(x,n-#x:0));
      if opts.Degrees === null and opts.DegreeRank === null then (
 	  if opts.Join =!= false and Mopts.Join =!= false then (
 	       opts.DegreeRank = Mopts.DegreeRank + Nopts.DegreeRank;
@@ -430,7 +431,7 @@ tensor(Monoid, Monoid) := Monoid => opts -> (M,N) -> (
 	  else (
 	       opts.DegreeRank = Mopts.DegreeRank;
 	       degmap := if opts.DegreeMap =!= null then opts.DegreeMap else if Mopts.DegreeMap =!= null then Mopts.DegreeMap else identity;
-	       opts.Degrees = join( Mopts.Degrees, apply(Nopts.Degrees, d -> zpad(Mopts.DegreeRank,degmap d)) );
+	       opts.Degrees = join( Mopts.Degrees, apply(Nopts.Degrees, d -> degreePad(Mopts.DegreeRank,degmap d)) );
 	       if opts.Heft === null and Mopts.Heft =!= null then opts.Heft = Mopts.Heft {* a hint *};
 	       ));
      opts.Heft = processHeft(opts.DegreeRank,opts.Degrees,opts.Heft);

@@ -55,7 +55,11 @@ rk := v -> if instance(v,ZZ) then v else #v
 makepromoter = memoize (
      degreerank -> (
      	       zr := toList ( degreerank : 0 );
-	       v -> toList (rk v : zr)))
+	       deg -> (
+		    assert( instance(deg,List) );
+		    toList (rk deg : zr)			    -- the naive degree map, that sends all degrees to zero
+		    )
+	       ))
 
 basicPromoteMatrix = (m,R,p) -> (
      dF := p minus degrees target m;
@@ -241,8 +245,6 @@ frac EngineRing := R -> if isField R then R else if R.?frac then R.frac else (
      R.frac = F := new FractionField from rawFractionRing R.RawRing;
      F.frac = F;
      F.baseRings = append(R.baseRings,R);
-     -- F.promoteDegree = makepromoter 0;
-     -- F.liftDegree = makepromoter degreeLength R;
      commonEngineRingInitializations F;
      factor F := options -> f -> factor numerator f / factor denominator f;
      toString F := x -> toString expression x;

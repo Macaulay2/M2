@@ -24,8 +24,6 @@ isPolynomialRing = method(TypicalValue => Boolean)
 isPolynomialRing Thing := x -> false
 isPolynomialRing PolynomialRing := (R) -> true
 
-degrees PolynomialRing := R -> degrees monoid R
-
 exponents RingElement := (f) -> listForm f / ( (monom,coeff) -> monom )
 
 expression PolynomialRing := R -> (
@@ -57,7 +55,7 @@ toString PolynomialRing := R -> (
      if hasAttribute(R,ReverseDictionary) then toString getAttribute(R,ReverseDictionary)
      else toString expression R)
 
-degreeLength PolynomialRing := (RM) -> degreeLength monoid RM
+degreeLength PolynomialRing := (RM) -> degreeLength RM.FlatMonoid
 
 protect basering
 protect FlatMonoid
@@ -146,7 +144,7 @@ Ring OrderedMonoid := PolynomialRing => (			  -- no memoize
 	  if not M.?RawMonoid then error "expected ordered monoid handled by the engine";
 	  if not R.?RawRing then error "expected coefficient ring handled by the engine";
      	  num := numgens M;
-	  (basering,FlatMonoid,numallvars) := (
+	  (basering,flatmonoid,numallvars) := (
 	       if R.?isBasic then (R,M,num)
 	       else if R.?basering and R.?FlatMonoid 
 	       then ( R.basering, tensor(M, R.FlatMonoid), num + R.numallvars)
@@ -197,7 +195,7 @@ Ring OrderedMonoid := PolynomialRing => (			  -- no memoize
 		    diffs1 = join(diffs1, apply(R.diffs1, i -> i + num));
 		    );
 	       scan(diffs0,diffs1,(x,dx) -> if not x<dx then error "expected differentiation variables to occur to the right of their variables");
-	       RM = new PolynomialRing from rawWeylAlgebra(rawPolynomialRing(raw basering, raw FlatMonoid),diffs0,diffs1,h);
+	       RM = new PolynomialRing from rawWeylAlgebra(rawPolynomialRing(raw basering, raw flatmonoid),diffs0,diffs1,h);
 	       RM.diffs0 = diffs0;
 	       RM.diffs1 = diffs1;
      	       addHook(RM, QuotientRingHook, S -> (S.diffs0 = diffs0; S.diffs1 = diffs1));
@@ -206,11 +204,11 @@ Ring OrderedMonoid := PolynomialRing => (			  -- no memoize
 	  else if skews =!= {} or R.?SkewCommutative then (
 	       if R.?diffs0 then error "coefficient ring is a Weyl algebra";
 	       if R.?SkewCommutative then skews = join(skews, apply(R.SkewCommutative, i -> i + num));
-	       RM = new PolynomialRing from rawSkewPolynomialRing(rawPolynomialRing(raw basering, raw FlatMonoid),skews);
+	       RM = new PolynomialRing from rawSkewPolynomialRing(rawPolynomialRing(raw basering, raw flatmonoid),skews);
 	       RM.SkewCommutative = skews;
 	       )
 	  else (
-	       log := FunctionApplication {rawPolynomialRing, (raw basering, raw FlatMonoid)};
+	       log := FunctionApplication {rawPolynomialRing, (raw basering, raw flatmonoid)};
 	       RM = new PolynomialRing from value log;
 	       RM#"raw creation log" = Bag {log};
 	       );
@@ -219,10 +217,14 @@ Ring OrderedMonoid := PolynomialRing => (			  -- no memoize
 	       RM#"has quotient elements" = true;
 	       );
 	  RM.basering = basering;
-	  RM.FlatMonoid = FlatMonoid;
+	  RM.FlatMonoid = flatmonoid;
 	  RM.numallvars = numallvars;
-	  RM.promoteDegree = makepromoter degreeLength M;
-	  RM.liftDegree = makepromoter degreeLength R;
+	  RM.promoteDegree = (
+	       dm := flatmonoid.Options.DegreeMap;
+	       nd := flatmonoid.Options.DegreeRank;
+	       degs -> apply(degs,deg -> degreePad(nd,dm deg))
+	       );			  -- was: makepromoter degreeLength RM;
+	  RM.liftDegree = notImplemented; -- was: makepromoter degreeLength R;
 	  RM.baseRings = append(R.baseRings,R);
 	  commonEngineRingInitializations RM;
 	  RM.monoid = M;
