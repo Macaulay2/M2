@@ -421,7 +421,7 @@ tensor(Monoid, Monoid) := Monoid => opts -> (M,N) -> (
 	  );
      if opts.MonomialOrder === null 
      then opts.MonomialOrder = trimMO join(Mopts.MonomialOrder,Nopts.MonomialOrder); -- product order
-     processDegrees(opts.Degrees, null, length opts.Variables);	-- just for the error messages
+     if instance(opts.Degrees,List) then opts.Degrees = splice opts.Degrees;
      if opts.Degrees === null and opts.DegreeRank === null then (
 	  M0 := apply(Mopts.DegreeRank, i -> 0);
 	  N0 := apply(Nopts.DegreeRank, i -> 0);
@@ -451,6 +451,9 @@ tensor(Monoid, Monoid) := Monoid => opts -> (M,N) -> (
 	       if opts.Heft === null and Mopts.Heft =!= null then opts.Heft = Mopts.Heft {* a hint *};
 	       ))
      else (
+     	  (degs,degrk) := processDegrees(opts.Degrees, opts.DegreeRank, length opts.Variables);
+	  opts.Degrees = degs;
+	  opts.DegreeRank = degrk;
 	  if opts.DegreeMap === null then opts.DegreeMap = Mopts.DegreeMap;
 	  if opts.DegreeLift === null then opts.DegreeLift = Mopts.DegreeLift;
 	  );
