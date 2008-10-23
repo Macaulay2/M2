@@ -69,6 +69,24 @@ int main () {
   // when compiled without ntl
   // crashing seeds: 0 2 3 4 5 6 7 8 9 10 11 12
   // non-crashing seeds: 1 13
+
+#if 1
+
+  Off( SW_RATIONAL );
+  setCharacteristic(101);
+  Variable a('a');
+  Variable x('x');
+  CanonicalForm mipo = a*a - 2;
+  cout << "a^2     = " << a*a << endl;
+  CanonicalForm f = (x+a)*(x+a+1)*(x+a+1)*(x+a+34);
+  cout << "f = " << f << endl;
+  cout << "x.level() = " << x.level() << endl ;
+  cout << "a.level() = " << a.level() << endl ;
+  CFFList g = Factorize(f,mipo);
+  cout << "g = " << g << endl;
+
+#else
+
   Off( SW_RATIONAL );
   setCharacteristic(101);
   Variable x('x'), y('y');
@@ -85,6 +103,9 @@ int main () {
   cout << "f = " << f << endl;
   CFFList fac2 = Factorize(f,mipo);
   cout << "Factorize(f,mipo) = " << fac2 << endl;
+
+#endif
+
   return 0;
 }
 

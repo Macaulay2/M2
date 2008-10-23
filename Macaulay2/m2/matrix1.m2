@@ -57,7 +57,10 @@ map(Module,Nothing,Matrix) := Matrix => o -> (M,nothing,p) -> (
 map(Module,Module,Matrix) := Matrix => o -> (M,N,f) -> (
      if M === f.target and N === f.source
      and (o.Degree === null or o.Degree === degree f)
-     then f
+     then (
+	  -- let's redo it quickly, just to capture everything in M.cache and N.cache that === ignores
+	  merge(f,new Matrix from { symbol target => M, symbol source => N }, last)
+	  )
      else (
 	  R := ring M;
 	  N' := cover N;
