@@ -405,7 +405,7 @@ degreePad = (n,x) -> (
      if instance(x,ZZ) then x = {x};
      if not instance(x,List) or not all(x,i -> instance(i,ZZ)) then error "expected degree map to return a list of integers";
      if #x > n then error("expected degree map to return a list of length at most ",toString n);
-     join(x,n-#x:0));
+     join(toList(n-#x:0),x));
 
 degreeNoLift = () -> error "degree not liftable"
 
