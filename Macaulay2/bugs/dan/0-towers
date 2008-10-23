@@ -10,7 +10,7 @@ new options for R = A[...] and tensor(M,monoid[...],...)
 
 DegreeMap => x->x	    provided Join=>false is given, specifies a function from lists of integers to lists of integers or integers that
 	     		    transforms the degrees of the elements of A into their degrees in R.
-			    If it returns a value too short, 0's will be silently appended.
+			    If it returns a value too short, 0's will be silently prepended.
 			    If it returns a value too long, it will be an error.
 
 Join => true		    specifies whether the new degrees are joined with the old degrees, ignoring the degree map.

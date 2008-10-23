@@ -112,17 +112,17 @@ symmetricAlgebraIdeal := method( Options => monoidDefaults )
 symmetricAlgebra = method( Options => monoidDefaults )
 
 symmetricAlgebraIdeal Module := Ideal => opts -> (M) -> (
-     R := ring M;
-     K := coefficientRing ultimate(ambient, R);
-     m := presentation M;
-     N := if opts.Variables === monoidDefaults.Variables
-          then monoid[opts, Variables => numgens M]
-          else monoid[opts, Variables => opts.Variables];
-     SM := tensor(K N, R, Variables => monoidDefaults.Variables);
-     xvars := submatrix(vars SM, {numgens target m .. numgens SM - 1});
-     yvars := submatrix(vars SM, {0 .. numgens target m - 1});
-     m = substitute(m,xvars);
-     I := yvars*m)
+     k := ring M;
+     N := monoid[opts, Join => false,
+	  if opts.Variables === monoidDefaults.Variables
+	  then Variables => numgens M
+          else Variables => opts.Variables,
+	  if opts.Degrees === monoidDefaults.Degrees
+	  then Degrees => apply(degrees M, d -> prepend(1,d))
+	  else Degrees => opts.Degrees
+	  ];
+     S := k N;
+     I := vars S * promote(presentation M,S))
 
 symmetricAlgebra Module := Ring => options -> (M) -> (
      I := symmetricAlgebraIdeal(M,options);
