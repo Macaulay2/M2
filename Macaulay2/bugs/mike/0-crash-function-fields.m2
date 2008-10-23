@@ -1,8 +1,8 @@
+-- Fixed, week of 10/21/08, by Dan, by making gcd work in these rings.
 R = frac ( GF(9)[x] )
 x
 x^(-1)
 1/x
-
 
 end
 
