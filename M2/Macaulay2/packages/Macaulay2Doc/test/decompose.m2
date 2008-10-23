@@ -45,6 +45,9 @@ I = ideal ( a+b+c+d+e, a*b + b*c + c*d + d*e + e*a ,
      a*b*c*d + b*c*d*e + c*d*e*a + d*e*a*b + e*a*b*c,
      a*b*c*d*e - h^5
      )
+--status: This crashes in factory version 3.0.4 but not in 3.0.3
+--status: I've reported it to the Singular people
+--status: We may have to stick with the older version
 time minimalPrimes I
 assert ( 25 == # minimalPrimes I )
 
