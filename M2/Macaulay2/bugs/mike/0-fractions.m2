@@ -12,8 +12,8 @@ R = frac (ZZ/101[a,b,c]/(c)) [x]
 gens gb ideal (a*x^3-13, b*x^2-12) -- ok
 
 end
+-- fiexed 10/22/08 MES
 gives this:
-
 
 oops
 

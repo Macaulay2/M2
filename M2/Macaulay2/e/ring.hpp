@@ -206,8 +206,9 @@ public:
   virtual bool lower_associate_divisor(ring_elem &f, ring_elem g) const;
   // Replaces f with the unit c such that (fx+g)//c is the preferred associate
   //   of fx+g, in the ring A[x], where A is 'this'.
-  // Returns an invertible element c of the same ring such that c*f is the
-  // preferred associate of the element f.
+  // Returns false if f will never be changed after this
+  // (This happens over ZZ if f is non-zero (therefore 1 or -1, over a finite filed if f != 0,
+  // but over QQ will never happen)
   // WARNING: The default implementation is for a field.
 
   virtual bool promote(const Ring *R, const ring_elem f, ring_elem &result) const = 0;
