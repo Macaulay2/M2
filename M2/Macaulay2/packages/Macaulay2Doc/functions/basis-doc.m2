@@ -26,7 +26,10 @@ document { Key => {basis,
 	  },
      PARA {
 	  "The degree ", TT "i", " is a multi-degree, represented as a list of integers.  If the degree rank is 1, then ", TT "i", " may
-	  be provided as an integer.  The algorithm depends on the ", TO "Heft", " option having been set correctly 
+	  be provided as an integer.  The algorithm depends on the degrees of the variables in the ring
+
+
+", TO "Heft", " option having been set correctly 
 	  when the ring was created to provide, internally, a linear form on the space of multi-degrees that yields a positive
 	  number on the multidegree of each variable."
 	  },

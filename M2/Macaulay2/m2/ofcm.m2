@@ -303,6 +303,7 @@ findHeft = (degrk,degs) -> (
      if degrk === 1 then return if all(degs,d->d#0 > 0) then {1} else if all(degs,d->d#0 < 0) then {-1} ;
      if #degs === 0 then return toList(degrk : 1);
      A := transpose matrix degs;
+     needsPackage "FourierMotzkin";
      B := ((value getGlobalSymbol "fourierMotzkin") A)#0;
      r := rank source B;
      f := (matrix{toList(r:-1)} * transpose B);

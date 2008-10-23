@@ -747,7 +747,7 @@ time J = integralClosure (R,Variable=>symbol a)
 use ring ideal J
 assert(ideal J == ideal(x^6+a_4*y+x^3*z-11*x*y^2,a_4*x^2-11*x^3*y+y*z,a_4^2-22*a_4*x*y-x^4*z+20*x^2*y^2-x*z^2))
 ///
-a
+
 -- Reduced not a domain test
 TEST ///
 S=ZZ/101[symbol a,symbol b,symbol c, symbol d]

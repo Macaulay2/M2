@@ -1,0 +1,5 @@
+these synonyms are perhaps not so good:
+
+	"decompose" => symbol minimalPrimes,
+	"prune" => symbol minimalPresentation,
+
