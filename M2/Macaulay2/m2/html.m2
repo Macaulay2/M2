@@ -488,18 +488,18 @@ onecheck = (seqno,pkg,usermode) -> (
      stderr << "--    rerun with: check_" << seqno << " \"" << pkg << "\"" << endl;
      runString(s,pkg,".",usermode);
      )
-check(ZZ,Package) := (seqno,pkg) -> opts -> (
+check(ZZ,Package) := opts -> (seqno,pkg) -> (
      prep pkg;
      onecheck(seqno,pkg,opts.UserMode);
      if hadExampleError then error("error occurred running test for package ", toString pkg, ": ", toString seqno);
      )
-check(ZZ,String) := (seqno,pkg) -> opts -> check(seqno, needsPackage (pkg, LoadDocumentation => true), opts)
-check Package := pkg -> opts -> (
+check(ZZ,String) := opts -> (seqno,pkg) -> check(seqno, needsPackage (pkg, LoadDocumentation => true), opts)
+check Package := opts -> pkg -> (
      prep pkg;
      scan(keys pkg#"test inputs", seqno -> onecheck(seqno,pkg,opts.UserMode));
      if hadExampleError then error(toString numExampleErrors, " error(s) occurred running tests for package ", toString pkg);
      )
-check String := pkg -> opts -> check(needsPackage (pkg, LoadDocumentation => true), opts)
+check String := opts -> pkg -> check(needsPackage (pkg, LoadDocumentation => true), opts)
 
 setupNames := (opts,pkg) -> (
      buildPackage = pkg#"title";
