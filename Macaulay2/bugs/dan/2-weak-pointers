@@ -1,3 +1,5 @@
+-*- text -*-
+
 gc seems to offer support now for weak pointers.  In any case, we could use
 them for:
 
@@ -10,11 +12,17 @@ them for:
         pointers.  Finalization of the ring removes the entry from the hash
         table.  (Sage returns the same ring every time!)
 
-     3) any cached computational results where the reason for caching is preservation
-        of identity rather than saving time.  Preservation of identity is important
-	for a functor F, for example, because if f and g are composable maps, Ff and Fg
-	will be composable only if source Ff === target Fg.
+     3) any cached computational results.  If F is a function, it would be nice
+        if A===B implies that FA===FB.  This would be the case if FA were
+        cached in a global table under the key (F,A), but not if FA is cached
+	in a cachTable inside A.  That desirable feature is preservation of
+	strict equality, and currently symmetricAlgebra doesn't have it.
+	Eliminate cacheTables!
 
      4) making R^1 always give the same answer.
 
 We can implement them ourselves with masking and finalization.
+
+The hash table entries whose keys are weak pointers could be in one big global
+hash table, or there could be many little ones.  Reorganization as growth
+occurs would be less onerous if there were many little ones.
