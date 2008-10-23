@@ -265,7 +265,6 @@ makeit1 := (opts) -> (
      M)
 
 processDegrees := (degs,degrk,nvars) -> (
-     degs = splice degs;
      if degs === null then degs = (
 	  if degrk === null then (
 	       degrk = 1;
@@ -274,7 +273,8 @@ processDegrees := (degs,degrk,nvars) -> (
 	  else apply(nvars, i -> apply(degrk, j -> if j === i or i >= degrk and j === degrk-1  then 1 else 0))
 	  )
      else (
-     	  degs = apply(degs, d -> if class d === ZZ then {d} else d);
+     	  if not instance(degs,List) then error "Degrees: expected a list";
+     	  degs = apply(splice degs, d -> if class d === ZZ then {d} else d);
      	  scan(degs, d -> if not (class d === List and all(d, i -> class i === ZZ)) then error "expected degree to be an integer or list of integers");
      	  if degrk === null then (
 	       if not same(length \ degs) then error "expected degrees all of the same rank";
