@@ -107,26 +107,27 @@ graphRing RingMap := QuotientRing => opts -> (f) -> ( I := graphIdeal(f,opts); (
 -- Symmetric Algebra --
 -----------------------
 
-symmetricAlgebraIdeal := method( Options => monoidDefaults )
-
 symmetricAlgebra = method( Options => monoidDefaults )
+symmetricAlgebra Module := Ring => opts -> (cacheValue symbol symmetricAlgebra)(M -> (
+	  (M,opts) -> (
+	       k := ring M;
+	       N := monoid[opts, Join => false,
+		    if opts.Variables === monoidDefaults.Variables
+		    then Variables => numgens M
+		    else Variables => opts.Variables,
+		    if opts.Degrees === monoidDefaults.Degrees
+		    then Degrees => apply(degrees M, d -> prepend(1,d))
+		    else Degrees => opts.Degrees
+		    ];
+	       S := k N;
+	       S / ideal(vars S * promote(presentation M,S))))
+     )(M,opts)
 
-symmetricAlgebraIdeal Module := Ideal => opts -> (M) -> (
-     k := ring M;
-     N := monoid[opts, Join => false,
-	  if opts.Variables === monoidDefaults.Variables
-	  then Variables => numgens M
-          else Variables => opts.Variables,
-	  if opts.Degrees === monoidDefaults.Degrees
-	  then Degrees => apply(degrees M, d -> prepend(1,d))
-	  else Degrees => opts.Degrees
-	  ];
-     S := k N;
-     I := vars S * promote(presentation M,S))
-
-symmetricAlgebra Module := Ring => options -> (M) -> (
-     I := symmetricAlgebraIdeal(M,options);
-     if I == 0 then ring I else (ring I)/(image I))
+symmetricAlgebra Matrix := RingMap => opts -> f -> (
+     (cacheValue symbol symmetricAlgebra) (
+	  (f,opts) -> (
+	       ))
+     )(f,opts)
 
 -----------------------------------------------------------------------------
 -- flattenRing
