@@ -292,10 +292,10 @@ static struct enter_factory foo1;
     // debugging display routines to be called from gdb
     // needs factory to be configured without option --disable-streamio 
 #if DEBUG
-    void showvar(Variable &t) { cout << t << endl; }
-    void showcf(CanonicalForm &t) { cout << t << endl; }
-    void showcfl(CFList &t) { cout << t << endl; }
-    void showcffl(CFFList &t) { cout << t << endl; }
+void showvar(Variable &t) { cout << t << endl; }
+void showcf(CanonicalForm &t) { cout << t << endl; }
+void showcfl(CFList &t) { cout << t << endl; }
+void showcffl(CFFList &t) { cout << t << endl; }
 #endif
 
 static struct enter_factory foo2;
@@ -327,7 +327,7 @@ static CanonicalForm convertToFactory(const mpz_ptr p) {
      return m;
 }
 
-static CanonicalForm convertToFactory(const RingElement &g);
+static CanonicalForm convertToFactory(const RingElement &g, bool inExtension);
 
 static CanonicalForm convertToFactory(const ring_elem &q, const GF *k) { // use gfgenFac for converting this galois field element
   const PolynomialRing *A = k->originalR();
@@ -347,7 +347,7 @@ static CanonicalForm convertToFactory(const ring_elem &q, const GF *k) { // use 
   return f;
 }
 
-static CanonicalForm convertToFactory(const RingElement &g) {
+static CanonicalForm convertToFactory(const RingElement &g,bool inExtension) {
      const Ring *R = g.get_ring();
      const PolynomialRing *P = R->cast_to_PolynomialRing();
      if (P == 0)
@@ -368,21 +368,22 @@ static CanonicalForm convertToFactory(const RingElement &g) {
 			  foo.mode == modeZn ? CanonicalForm(foo.Zn->to_int(t->coeff)) :
 			  foo.mode == modeGF ? convertToFactory(t->coeff,foo.gf) :
 			  foo.mode == modeZZ ? convertToFactory(t->coeff.get_mpz()) :
-			  foo.mode == modeQQ ? convertToFactory(mpq_numref(MPQ_VAL(t->coeff))) / convertToFactory(mpq_denref(MPQ_VAL(t->coeff))) :
+			  foo.mode == modeQQ ? (
+						convertToFactory(mpq_numref(MPQ_VAL(t->coeff)))
+						/
+						convertToFactory(mpq_denref(MPQ_VAL(t->coeff)))
+						) :
 			  CanonicalForm(0) // shouldn't happen
 			  );
        for (index_varpower l = vp.raw(); l.valid(); ++l)
 	 {
-	   m *= power(
-		      Variable(1 +
-			       (
+	   int index = 1 + 
 #                       if REVERSE_VARIABLES
 				    (n-1) - 
 #                       endif
 				    l.var()
-				    )), 
-		      l.exponent()
-		      );
+	     ;
+	   m *= power( index == 1 && inExtension ? gfgenFac : Variable(index), l.exponent() );
 	 }
        f += m;
      }
@@ -399,9 +400,10 @@ void displayCF(PolynomialRing *R, const CanonicalForm &h) // for debugging
 
 const RingElementOrNull *rawGCDRingElement(const RingElement *f, const RingElement *g)
 {
+  const bool inExtension = false;
   const RingElement *ret = NULL;
-  const PolyRing *P = f->get_ring()->cast_to_PolyRing();
-  const PolyRing *P2 = g->get_ring()->cast_to_PolyRing();
+  const PolynomialRing *P = f->get_ring()->cast_to_PolynomialRing();
+  const PolynomialRing *P2 = g->get_ring()->cast_to_PolynomialRing();
   if (P == 0) {
       ERROR("expected polynomial ring");
       return 0;
@@ -414,11 +416,11 @@ const RingElementOrNull *rawGCDRingElement(const RingElement *f, const RingEleme
     struct enter_factory foo(P);
     if (foo.mode == modeError) return 0;
     if (foo.mode == modeGF) {
-      gfgenFac = rootOf(convertToFactory(*foo.gf->get_minimal_poly()),'a');
+      gfgenFac = rootOf(convertToFactory(*foo.gf->get_minimal_poly(),inExtension),'a');
       (RingElement::make_raw(P->Ncoeffs()->cast_to_GF(), foo.gf->var(0)))->promote(P,gfgenM2);
     }
-    CanonicalForm p = convertToFactory(*f);
-    CanonicalForm q = convertToFactory(*g);
+    CanonicalForm p = convertToFactory(*f,inExtension);
+    CanonicalForm q = convertToFactory(*g,inExtension);
     CanonicalForm h = gcd(p,q);
 #if 0
     cerr << "p   = " << p << endl;
@@ -428,7 +430,46 @@ const RingElementOrNull *rawGCDRingElement(const RingElement *f, const RingEleme
     ret = convertToM2(P,h);
     if (error()) return NULL;
   }
-  ring_elem a = P->preferred_associate_divisor(ret->get_value()); // an element in the coeff ring
+  ring_elem a = P->getNumeratorRing()->preferred_associate_divisor(ret->get_value()); // an element in the coeff ring
+  ring_elem b = P->getCoefficients()->invert(a);
+  ring_elem r = ret->get_value();
+  P->mult_coeff_to(b, r);
+  return RingElement::make_raw(P,r);
+}
+
+const RingElementOrNull *rawGCDRingElementInExtension(const RingElement *f, const RingElement *g, const RingElement *mipo)
+{
+  const bool inExtension = true;
+  const RingElement *ret = NULL;
+  const PolynomialRing *P = f->get_ring()->cast_to_PolynomialRing();
+  const PolynomialRing *P2 = g->get_ring()->cast_to_PolynomialRing();
+  if (P == 0) {
+      ERROR("expected polynomial ring");
+      return 0;
+    }
+  if (P != P2) {
+      ERROR("encountered different rings");
+      return 0;
+    }
+  {
+    struct enter_factory foo(P);
+    if (foo.mode == modeError) return 0;
+    cerr << "gcd..." << endl;
+    CanonicalForm minp = convertToFactory(*mipo,false);
+    cerr << "mipo = " << minp << endl;
+    gfgenFac = rootOf(minp,'a');
+    cerr << "a = " << gfgenFac << endl;
+    cerr << "a.level() = " << gfgenFac.level() << endl;
+    CanonicalForm p = convertToFactory(*f,inExtension);
+    cerr << "p = " << p << endl;
+    CanonicalForm q = convertToFactory(*g,inExtension);
+    cerr << "q = " << q << endl;
+    CanonicalForm h = gcd(p,q);
+    cerr << "gcd = " << h << endl;
+    ret = convertToM2(P,h);
+    if (error()) return NULL;
+  }
+  ring_elem a = P->getNumeratorRing()->preferred_associate_divisor(ret->get_value()); // an element in the coeff ring
   ring_elem b = P->getCoefficients()->invert(a);
   ring_elem r = ret->get_value();
   P->mult_coeff_to(b, r);
@@ -437,6 +478,7 @@ const RingElementOrNull *rawGCDRingElement(const RingElement *f, const RingEleme
 
 const RingElementOrNull *rawExtendedGCDRingElement(const RingElement *f, const RingElement *g, const RingElement **A, const RingElement **B)
 {
+  const bool inExtension = false;
   const RingElement *ret;
   const PolynomialRing *P = f->get_ring()->cast_to_PolynomialRing();
   const PolynomialRing *P2 = g->get_ring()->cast_to_PolynomialRing();
@@ -455,8 +497,8 @@ const RingElementOrNull *rawExtendedGCDRingElement(const RingElement *f, const R
 
   struct enter_factory foo(P);
   if (foo.mode == modeError) return 0;
-  CanonicalForm p = convertToFactory(*f);
-  CanonicalForm q = convertToFactory(*g);
+  CanonicalForm p = convertToFactory(*f,inExtension);
+  CanonicalForm q = convertToFactory(*g,inExtension);
   CanonicalForm a, b;
   CanonicalForm h = extgcd(p,q,a,b);
   ret = convertToM2(P,h);
@@ -470,6 +512,7 @@ const RingElementOrNull *rawExtendedGCDRingElement(const RingElement *f, const R
 
 const RingElementOrNull *rawPseudoRemainder(const RingElement *f, const RingElement *g)
 {
+  const bool inExtension = false;
   const PolynomialRing *P = f->get_ring()->cast_to_PolynomialRing();
   const PolynomialRing *P2 = g->get_ring()->cast_to_PolynomialRing();
   if (P == 0)
@@ -485,8 +528,8 @@ const RingElementOrNull *rawPseudoRemainder(const RingElement *f, const RingElem
 
   struct enter_factory foo(P);
   if (foo.mode == modeError) return 0;  
-  CanonicalForm p = convertToFactory(*f);
-  CanonicalForm q = convertToFactory(*g);
+  CanonicalForm p = convertToFactory(*f,inExtension);
+  CanonicalForm q = convertToFactory(*g,inExtension);
   CanonicalForm h = Prem(p,q);
   const RingElement *r = convertToM2(P,h);
   if (error()) return NULL;
@@ -497,6 +540,7 @@ void rawFactor(const RingElement *g,
 	       RingElement_array_OrNull **result_factors, 
 	       M2_arrayint_OrNull *result_powers)
 {
+  const bool inExtension = false;
      try {
 	  const PolynomialRing *P = g->get_ring()->cast_to_PolynomialRing();
 	  *result_factors = 0;
@@ -507,7 +551,7 @@ void rawFactor(const RingElement *g,
 	  }
 	  struct enter_factory foo(P);
 	  if (foo.mode == modeError) return;
-	  CanonicalForm h = convertToFactory(*g);
+	  CanonicalForm h = convertToFactory(*g,inExtension);
 	  // displayCF(P,h);
 	  CFFList q;
 	  init_seeds();
@@ -539,6 +583,7 @@ void rawFactor(const RingElement *g,
 
 M2_arrayint_OrNull rawIdealReorder(const Matrix *M)
 {
+  const bool inExtension = false;
      try {
 	  init_seeds();
 	  const PolynomialRing *P = M->get_ring()->cast_to_PolynomialRing();
@@ -554,7 +599,7 @@ M2_arrayint_OrNull rawIdealReorder(const Matrix *M)
 	     for (i = 0; i < M->n_rows(); i++) {
 		  for (int j=0; j < M->n_cols(); j++) {
 		    const RingElement *g = RingElement::make_raw(P, M->elem(i,j));
-		    I.append(convertToFactory(*g));
+		    I.append(convertToFactory(*g,inExtension));
 		  }
 	     }
 
@@ -589,6 +634,7 @@ M2_arrayint_OrNull rawIdealReorder(const Matrix *M)
 
 Matrix_array_OrNull * rawCharSeries(const Matrix *M)
 {
+  const bool inExtension = false;
      try {
 	     const PolynomialRing *P = M->get_ring()->cast_to_PolynomialRing();
 	     if (P == 0) {
@@ -600,7 +646,7 @@ Matrix_array_OrNull * rawCharSeries(const Matrix *M)
 	     for (int i = 0; i < M->n_rows(); i++) {
 		  for (int j=0; j < M->n_cols(); j++) {
 		    const RingElement *g = RingElement::make_raw(P, M->elem(i,j));
-		    I.append(convertToFactory(*g));
+		    I.append(convertToFactory(*g,inExtension));
 		  }
 	     }
 

@@ -1,7 +1,0 @@
-Amelia: As far as I know, modifyRing (or newRing as it was once named) as it is
-in the system does not work for us, but the modified version of it that is in
-ReesAlgebra in the snowbird directory does.
-
-newRing needs a DegreeMap option so it can keep matrices homogeneous
-
-newRing should return a ring map to the new ring, optionally

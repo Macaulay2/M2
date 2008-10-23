@@ -173,15 +173,36 @@ setupfun("rawRadical",rawRadical);
 
 export rawGCD(e:Expr):Expr := (
      when e is s:Sequence do
-     if length(s) != 2 then WrongNumArgs(2) else
+     if length(s) == 2 then
      when s.0 is x:RawMonomial do (
-     	  when s.1 is y:RawMonomial do Expr(Ccode(RawMonomial, "(engine_RawMonomial)rawGCD((Monomial*)",x,",","(Monomial*)",y,")"))
+     	  when s.1 is y:RawMonomial
+	  do Expr(Ccode(RawMonomial, "(engine_RawMonomial)rawGCD((Monomial*)",x,",","(Monomial*)",y,")"))
      	  else WrongArg(2,"a raw monomial"))
      is x:RawRingElement do (
-     	  when s.1 is y:RawRingElement do toExpr(Ccode(RawRingElementOrNull, "(engine_RawRingElementOrNull)rawGCDRingElement((RingElement *)",x,",","(RingElement *)",y,")"))
+     	  when s.1 is y:RawRingElement 
+	  do toExpr(Ccode(RawRingElementOrNull,
+		    "(engine_RawRingElementOrNull)rawGCDRingElement(",
+		    "(RingElement *)",x,",",
+		    "(RingElement *)",y,
+		    ")"))
      	  else WrongArg(2,"a raw ring element"))
      else WrongArg(1,"a raw monomial or ring element")
-     else WrongNumArgs(2)
+     else if length(s) == 3 then
+     when s.0 is x:RawRingElement do (
+     	  when s.1 is y:RawRingElement 
+	  do (
+	       when s.2 is mipo:RawRingElement do (
+		    toExpr(Ccode(RawRingElementOrNull, 
+			      "(engine_RawRingElementOrNull)rawGCDRingElementInExtension(",
+			      "(RingElement *)",x,",",
+			      "(RingElement *)",y,",",
+			      "(RingElement *)",mipo,
+			      ")")))
+	       else WrongArg(3,"a raw ring element"))
+     	  else WrongArg(2,"a raw ring element"))
+     else WrongArg(1,"a raw ring element")
+     else WrongNumArgs(2,3)
+     else WrongNumArgs(2,3)
      );
 setupfun("rawGCD",rawGCD);
 

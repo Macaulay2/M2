@@ -21,7 +21,7 @@ monomialIdealOfRow := (i,m) -> newMonomialIdeal(ring m,rawMonomialIdeal(raw m, i
 
 codimopts := { Generic => false }
 codim MonomialIdeal := {  } >> opts -> m -> rawCodimension raw m
-codim Module := codimopts >> opts -> (cacheValue (symbol codim,opts)) (M -> runHooks(Module, symbol codim, (opts,M)))
+codim Module := codimopts >> opts -> (cacheValue (symbol codim => opts)) (M -> runHooks(Module, symbol codim, (opts,M)))
 codim Ideal := codimopts >> opts -> I -> codim( cokernel generators I, opts)
 codim PolynomialRing := codimopts >> opts -> R -> 0
 codim QuotientRing := codimopts >> opts -> (R) -> codim( cokernel presentation R, opts)

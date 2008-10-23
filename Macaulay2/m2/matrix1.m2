@@ -522,7 +522,7 @@ dim Ideal := I -> dim cokernel generators I
 Ideal + Ideal := Ideal => (I,J) -> ideal (generators I | generators J)
 Ideal + RingElement := (I,r) -> I + ideal r
 degree Ideal := I -> degree cokernel generators I
-trim Ideal := Ideal => options -> (cacheValue symbol trim) ((I) -> ideal trim(module I, options))
+trim Ideal := Ideal => opts -> (cacheValue (symbol trim => opts)) ((I) -> ideal trim(module I, opts))
 Ideal _ ZZ := RingElement => (I,n) -> (generators I)_(0,n)
 Matrix % Ideal := Matrix => (f,I) -> f % gb I
 numgens Ideal := (I) -> numgens source generators I
