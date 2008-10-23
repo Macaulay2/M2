@@ -107,9 +107,7 @@ rep := (meth,opts,args) -> prepend_opts nonnull apply(args, arg ->
      else null)
 
 symmetricAlgebra = method( Options => monoidDefaults )
-symmetricAlgebra Module := Ring => opts -> M -> (
-     key := symmetricAlgebra => opts;
-     if M.cache#?key then M.cache#key else M.cache#key = (
+symmetricAlgebra Module := Ring => opts -> (cacheValue (symmetricAlgebra => opts)) (M -> (
 	  k := ring M;
 	  N := monoid rep(symmetricAlgebra, opts, [Join => false, Variables => () -> numgens M, Degrees => () -> degrees M / prepend_1]);
 	  S := k N;

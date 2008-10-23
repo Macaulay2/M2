@@ -317,7 +317,7 @@ presentation(Module) := Matrix => M -> (
 	  else relations M))
 -----------------------------------------------------------------------------  
 
-minimalPresentation(Module) := Module => opts -> (cacheValue symbol minimalPresentation) (M -> (
+minimalPresentation(Module) := Module => opts -> (cacheValue (symbol minimalPresentation => opts)) (M -> (
 	  if isFreeModule M then (
 	       M.cache.pruningMap = id_M;
 	       return M);

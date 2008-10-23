@@ -243,7 +243,7 @@ minimalPresentation CoherentSheaf := opts -> F -> sheaf minimalPresentation HH^0
 cotangentSheaf = method(Options => {Minimize => true})
 tangentSheaf = method(Options => {Minimize => true})
 
-cotangentSheaf ProjectiveVariety := CoherentSheaf => opts -> (cacheValue symbol cotangentSheaf) ((X) -> (
+cotangentSheaf ProjectiveVariety := CoherentSheaf => opts -> (cacheValue (symbol cotangentSheaf => opts)) ((X) -> (
 	  R := ring X;
 	  F := presentation R;
 	  om := sheaf(X, homology(vars ring F ** R,jacobian F ** R));
