@@ -107,27 +107,29 @@ graphRing RingMap := QuotientRing => opts -> (f) -> ( I := graphIdeal(f,opts); (
 -- Symmetric Algebra --
 -----------------------
 
-symmetricAlgebra = method( Options => monoidDefaults )
-symmetricAlgebra Module := Ring => opts -> (cacheValue symbol symmetricAlgebra)(M -> (
-	  (M,opts) -> (
-	       k := ring M;
-	       N := monoid[opts, Join => false,
-		    if opts.Variables === monoidDefaults.Variables
-		    then Variables => numgens M
-		    else Variables => opts.Variables,
-		    if opts.Degrees === monoidDefaults.Degrees
-		    then Degrees => apply(degrees M, d -> prepend(1,d))
-		    else Degrees => opts.Degrees
-		    ];
-	       S := k N;
-	       S / ideal(vars S * promote(presentation M,S))))
-     )(M,opts)
+rep := (meth,opts,args) -> prepend_opts nonnull apply(args, arg -> 
+     if instance(arg,Option) and #arg == 2 and instance(arg#1,Function) and (options meth)#(arg#0) === opts#(arg#0)
+     then arg#0 => arg#1()
+     else null)
 
-symmetricAlgebra Matrix := RingMap => opts -> f -> (
-     (cacheValue symbol symmetricAlgebra) (
-	  (f,opts) -> (
-	       ))
-     )(f,opts)
+symmetricAlgebra = method( Options => monoidDefaults )
+symmetricAlgebra Module := Ring => opts -> M -> (
+     key := symmetricAlgebra => opts;
+     if M.cache#?key then M.cache#key else M.cache#key = (
+	  k := ring M;
+	  N := monoid rep(symmetricAlgebra, opts, [Join => false, Variables => () -> numgens M, Degrees => () -> degrees M / prepend_1]);
+	  S := k N;
+	  S  = S / ideal(vars S * promote(presentation M,S));
+	  S.Module = M;
+	  S))
+symmetricAlgebra(Ring,Ring,Matrix) := RingMap => opts -> (T,S,f) -> (
+     key := (T,S,f) ;
+     if f.cache#?key then f.cache#key else f.cache#key = (
+     	  map(T,S,vars T * promote(f,T))))
+symmetricAlgebra Matrix := RingMap => opts -> f -> symmetricAlgebra(symmetricAlgebra target f,symmetricAlgebra source f,f)
+symmetricAlgebra(Ring,Nothing,Matrix) := RingMap => opts -> (T,S,f) -> symmetricAlgebra(T,symmetricAlgebra source f,f)
+symmetricAlgebra(Nothing,Ring,Matrix) := RingMap => opts -> (T,S,f) -> symmetricAlgebra(symmetricAlgebra target f,S,f)
+symmetricAlgebra(Nothing,Nothing,Matrix) := RingMap => opts -> (T,S,f) -> symmetricAlgebra f
 
 -----------------------------------------------------------------------------
 -- flattenRing

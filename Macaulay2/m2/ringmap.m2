@@ -1,6 +1,7 @@
 --		Copyright 1995-2002 by Daniel R. Grayson
 
 RingMap = new Type of HashTable
+
 RingMap.synonym = "ring map"
 matrix RingMap := opts -> f -> f.matrix
 toString RingMap := f -> concatenate(
@@ -92,7 +93,9 @@ map(Ring,Ring,Matrix) := RingMap => opts -> (R,S,m) -> (
      zdeg  := toList ( degreeLength R : 0 );
      mE = map(R^{zdeg}, R^-mdegs, mE, Degree => zdeg);
      new RingMap from {
-	  symbol Function => x -> x,
+	  -- Ring maps have members that may be closures, and so comparison with === will give unpredictable results.
+	  -- Hence we put a new closure in every time, so f===g always just checks identity, in effect.
+          "unique id" => x -> x,
 	  symbol source => S,
 	  symbol target => R,
 	  symbol matrix => mE,
