@@ -1,0 +1,9 @@
+Does this actually work???
+
+mingens Module := Matrix => opts -> (cacheValue symbol mingens) ((M) -> (...))
+
+This would:
+
+mingens Module := Matrix => opts -> M -> ((cacheValue symbol mingens) ((M,opts) -> (...)))(M,opts)
+
+fix everything!
