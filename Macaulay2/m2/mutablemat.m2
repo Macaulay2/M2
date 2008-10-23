@@ -124,7 +124,7 @@ randomMutableMatrix(ZZ,ZZ,RR,ZZ) := options -> (n,m,percentagezero,maxentry) -> 
     randomentry := () -> (
         x := random 1.0;
         if x < percentagezero then 0
-        else (random (2*maxentry)) - maxentry);
+        else (random (2*maxentry+1)) - maxentry);
     scan(n, r-> scan(m, c-> (
 	a := randomentry();
 	if a != 0 then M_(r,c) = a)));
