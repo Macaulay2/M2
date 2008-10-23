@@ -27,10 +27,14 @@ else
 EXIT = 
 endif
 
+all :: check
+
+check capture changes :: Makefile.chapter
+
 capture check ::
 	set -x ; for d in $(CHAPTERS) ; do $(MAKE) -C $$d -I .. $@ $(EXIT) ; done
 
-changes:
+changes::
 	-for i in $(CHAPTERS); \
 	do diff -u @srcdir@/$$i/chapter.m2 @srcdir@/$$i/test.m2 ;\
 	   diff -u @srcdir@/$$i/chapter.out.expected @srcdir@/$$i/test.out.expected ;\
@@ -40,6 +44,8 @@ clean::
 	rm -f */*.trim */*.out programming/foo */*.tmp
 
 Makefile: Makefile.in; cd ../../..; ./config.status Macaulay2/packages/ComputationsBook/Makefile
+Makefile.chapter: Makefile.chapter.in; cd ../../..; ./config.status Macaulay2/packages/ComputationsBook/Makefile.chapter
+
 distclean::clean
 distclean::; rm -f Makefile
 
