@@ -107,15 +107,11 @@ Ext(Module,Module) := Module => (M,N) -> (
   C := complete resolution M';
   X := getGlobalSymbol "X";
   K := coefficientRing A;
-  -- compute the fudge factor for the adjustment of bidegrees
-  fudge := if #f > 0 then 1 + max(first \ degree \ f) // 2 else 0;
   S := K(monoid [X_1 .. X_c, toSequence A.generatorSymbols,
     Degrees => {
       apply(0 .. c-1, i -> {-2, - first degree f_i}),
       apply(0 .. n-1, j -> { 0,   first degree A_j})
-      },
-    Heft => {-fudge, 1}
-    ]);
+      }]);
   -- make a monoid whose monomials can be used as indices
   Rmon := monoid [X_1 .. X_c,Degrees=>{c:{2}}];
   -- make group ring, so 'basis' can enumerate the monomials
