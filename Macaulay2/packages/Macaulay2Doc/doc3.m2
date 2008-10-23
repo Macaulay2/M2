@@ -943,7 +943,7 @@ document { Key => {(betti,BettiTally)},
 	       non-null, then a new betti tally with new weight values is returned"}
 	       },
      EXAMPLE lines ///
-     	  R = ZZ/101[a..d,Degrees=>{2:{1,0},2:{0,1}},Heft=>{1,1}];
+     	  R = ZZ/101[a..d,Degrees=>{2:{1,0},2:{0,1}}];
 	  I = ideal random(R^1, R^{2:{-2,-2},2:{-3,-3}});
 	  t = betti res I
 	  peek t

@@ -35,8 +35,11 @@ document {
 	       vectors is prepended to the list of orderings provided by the ", TO "MonomialOrder", " option."},
 	  WeylAlgebra => List => {"a list of options of the form ", TT "x=>dx", ", which specifies that ", TT "dx", " plays the role of the derivative
 	       with respect to ", TT "x", " in the resulting Weyl algebra when this monoid is made into a polynomial ring."},
-	  Heft => List => {"a list of integers: its dot product (presumably positive) with the multidegrees of the variables will be used as a computational aid
-	       in certain routines"},
+	  Heft => List => {"a list of integers (called a heft vector): its dot product (presumably positive) with the degrees of the 
+	       variables will be used as a computational aid
+	       in certain routines.  If no value for this option is specified, one will be computed for you, and thus there is no need to
+	       provide one unless the time spent computing one is onerous; if no heft vector exists, certain
+	       computations will not be supported, and others may run more slowly."},
 	  },
      Outputs => {
 	  {"a new monoid"}
