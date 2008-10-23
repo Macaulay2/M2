@@ -783,24 +783,40 @@ document {
      }
 
 document {
-     Key => {newRing,(newRing, Ring),
-	  [newRing, Degrees], [newRing, Variables],
-	  [newRing, Heft], [newRing, MonomialOrder], [newRing, VariableBaseName],
-     	  [newRing, DegreeRank], [newRing, Local], [newRing, Weights],
-	  [newRing, MonomialSize], [newRing, Inverses], [newRing, WeylAlgebra], [newRing, SkewCommutative], [newRing, Global]
-	  },
+     Key => flatten {newRing,(newRing, QuotientRing),(newRing, PolynomialRing),apply(keys monoid,k -> [newRing,k])},
      Headline => "make a copy of a ring, with some features changed",
-     TT "newRing(R,options)", " -- yields a ring similar to ", TT "R", ", with 
-     certain features changed.",
-     PARA{},
-     "Bug: doesn't work yet."
+     Usage => "S = newRing(R,options)",
+     Inputs => {
+	  "R" => {"a polynomial ring or a quotient of a polynomial ring"}
+	  },
+     Outputs => {
+	  "S" => Ring => {
+	       "a new ring, constructed in the same way ", TT "R", " was,
+	       over the same coefficient ring, but with the newly specified options
+	       overriding those used before.  See ", TO "monoid", " for a description of those options.
+	       If ", TT "R", " was a quotient ring, then the number of variables must be the same, and S will
+	       be a quotient ring, too, with defining ideal obtained from the old by substituting the new
+	       variables for the old, preserving their order."
+	       }},
+     PARA {
+	  "If a different number of variables is given with ", TO "Variables", ", then
+	  the list of degrees in ", TT "R", " will be ignored.  If a new degree rank is specified with ", TO "DegreeRank", "
+	  then the list of degrees and the heft vector of ", TT "R", " will be ignored.  If a new nonempty list of degrees is
+	  specified with ", TO "Degrees", ", then the degree rank and and the heft vector of ", TT "R", " will be ignored."
+	  },
+     EXAMPLE lines ///
+     R = QQ[x,y,MonomialOrder => Lex,Degrees=>{3,5}];
+     describe newRing(R,MonomialOrder => GRevLex)
+     describe newRing(R,Variables=>4)
+     describe newRing(R,Heft=>{2})
+     S = R/(x^2+y^3);
+     describe newRing(R,Variables=>2)
+     ///,
+     PARA {
+	  "The default values for the options of ", TT "newRing", " are all set to a non-accessible private symbol
+	  whose name is ", TT "nothing", "."
+	  }
      }
-
-TEST "
-    R = ZZ/101[a..d,Degrees=>{1,2,3,4}]
-    S = newRing(R,Degrees=>{1,1,1,1})
-    S1 = newRing(R,MonomialOrder=>Eliminate 2,Degrees=>{1,1,1,1})
-"
 
 document {
      Key => (symbol **, Ring, Ring),
