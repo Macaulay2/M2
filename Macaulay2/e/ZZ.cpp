@@ -200,6 +200,7 @@ ring_elem RingZZ::preferred_associate(ring_elem f) const
 
 bool RingZZ::lower_associate_divisor(ring_elem &f, const ring_elem g) const
 {
+  // This sets f to either 0, 1 or -1.
   // if f is 0, do f=sign(g), else f=sign(f)
   // return whether f is zero
   M2_Integer result = RingZZ::new_elem();
