@@ -398,9 +398,9 @@ void displayCF(PolynomialRing *R, const CanonicalForm &h) // for debugging
   emit(o.str());
 }
 
-const RingElementOrNull *rawGCDRingElement(const RingElement *f, const RingElement *g)
+const RingElementOrNull *rawGCDRingElement(const RingElement *f, const RingElement *g,
+					   const RingElement *mipo, const M2_bool inExtension)
 {
-  const bool inExtension = false;
   const RingElement *ret = NULL;
   const PolynomialRing *P = f->get_ring()->cast_to_PolynomialRing();
   const PolynomialRing *P2 = g->get_ring()->cast_to_PolynomialRing();
@@ -416,56 +416,24 @@ const RingElementOrNull *rawGCDRingElement(const RingElement *f, const RingEleme
     struct enter_factory foo(P);
     if (foo.mode == modeError) return 0;
     if (foo.mode == modeGF) {
+      assert( ! inExtension );
       gfgenFac = rootOf(convertToFactory(*foo.gf->get_minimal_poly(),inExtension),'a');
       (RingElement::make_raw(P->Ncoeffs()->cast_to_GF(), foo.gf->var(0)))->promote(P,gfgenM2);
     }
-    CanonicalForm p = convertToFactory(*f,inExtension);
-    CanonicalForm q = convertToFactory(*g,inExtension);
-    CanonicalForm h = gcd(p,q);
-#if 0
-    cerr << "p   = " << p << endl;
-    cerr << "q   = " << q << endl;
-    cerr << "gcd = " << h << endl;
-#endif
-    ret = convertToM2(P,h);
-    if (error()) return NULL;
-  }
-  ring_elem a = P->getNumeratorRing()->preferred_associate_divisor(ret->get_value()); // an element in the coeff ring
-  ring_elem b = P->getCoefficients()->invert(a);
-  ring_elem r = ret->get_value();
-  P->mult_coeff_to(b, r);
-  return RingElement::make_raw(P,r);
-}
-
-const RingElementOrNull *rawGCDRingElementInExtension(const RingElement *f, const RingElement *g, const RingElement *mipo)
-{
-  const bool inExtension = true;
-  const RingElement *ret = NULL;
-  const PolynomialRing *P = f->get_ring()->cast_to_PolynomialRing();
-  const PolynomialRing *P2 = g->get_ring()->cast_to_PolynomialRing();
-  if (P == 0) {
-      ERROR("expected polynomial ring");
-      return 0;
+    cerr << "--entering gcd()" << endl;
+    if (inExtension) {
+      CanonicalForm minp = convertToFactory(*mipo,false);
+      cerr << "--mipo = " << minp << endl;
+      gfgenFac = rootOf(minp,'a');
+      cerr << "--a = " << gfgenFac << endl;
+      cerr << "--a.level() = " << gfgenFac.level() << endl;
     }
-  if (P != P2) {
-      ERROR("encountered different rings");
-      return 0;
-    }
-  {
-    struct enter_factory foo(P);
-    if (foo.mode == modeError) return 0;
-    cerr << "gcd..." << endl;
-    CanonicalForm minp = convertToFactory(*mipo,false);
-    cerr << "mipo = " << minp << endl;
-    gfgenFac = rootOf(minp,'a');
-    cerr << "a = " << gfgenFac << endl;
-    cerr << "a.level() = " << gfgenFac.level() << endl;
     CanonicalForm p = convertToFactory(*f,inExtension);
-    cerr << "p = " << p << endl;
+    cerr << "--p = " << p << endl;
     CanonicalForm q = convertToFactory(*g,inExtension);
-    cerr << "q = " << q << endl;
+    cerr << "--q = " << q << endl;
     CanonicalForm h = gcd(p,q);
-    cerr << "gcd = " << h << endl;
+    cerr << "--gcd = " << h << endl;
     ret = convertToM2(P,h);
     if (error()) return NULL;
   }
@@ -679,6 +647,23 @@ Matrix_array_OrNull * rawCharSeries(const Matrix *M)
 	  ERROR(e.what());
 	  return NULL;
      }
+}
+
+void rawDummy(void) {
+  struct enter_factory foo;
+  // we use this routine just for testing bits of stand-alone factory code
+  On( SW_RATIONAL );
+  setCharacteristic(101);
+  Variable a('a');
+  Variable x('x');
+  CanonicalForm mipo = a*a - 2;
+  cout << "a^2     = " << a*a << endl;
+  CanonicalForm f = (x+a)*(x+a+1)*(x+a+1)*(x+a+34);
+  cout << "f = " << f << endl;
+  cout << "x.level() = " << x.level() << endl ;
+  cout << "a.level() = " << a.level() << endl ;
+  CFFList fac = Factorize(f,mipo);
+  cout << "fac = " << fac << endl;
 }
 
 // Local Variables:

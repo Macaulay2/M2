@@ -63,7 +63,7 @@ else
 .patched-$(VERSION) : .untarred-$(VERSION) ; touch $@
 endif
 
-UNTARCMD ?= tar xzf tarfiles/$(TARFILE)
+UNTARCMD ?= rm -rf $(TARDIR) && tar xzf tarfiles/$(TARFILE)
 .untarred-$(VERSION) : .fetched-$(VERSION) ; $(UNTARCMD) && touch $@
 .untarred2-$(VERSION) : .fetched-$(VERSION) ; mkdir tmp ; $(UNTARCMD) -C tmp && touch $@
 
@@ -98,12 +98,13 @@ CHECKFETCHED = case "$(URL)" in \
 	$(MKDIR_P) tarfiles
 	(cd tarfiles && $(FETCHER) $(URL)/$(TARFILE) $(FETCHOPTS) && $(CHECKFETCHED)) && touch $@
 
-clean :: package-clean
 distclean :: package-distclean
 
-clean ::; rm -rf .patched* .untarred* $(LIBNAME)-* .compiled* .configured* .installed* .untarred2* diffs tmp $(TARDIR)
+clean ::; rm -rf .patched* .untarred* $(LIBNAME)* .compiled* .configured* .installed* .untarred2* diffs tmp $(TARDIR)
 distclean :: clean ; rm -rf Makefile tarfiles/* .fetched*
 check ::
+
+ls :; ls -la . tarfiles
 
 help :;
 	@ echo ""

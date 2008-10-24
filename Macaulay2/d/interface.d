@@ -183,7 +183,9 @@ export rawGCD(e:Expr):Expr := (
 	  do toExpr(Ccode(RawRingElementOrNull,
 		    "(engine_RawRingElementOrNull)rawGCDRingElement(",
 		    "(RingElement *)",x,",",
-		    "(RingElement *)",y,
+		    "(RingElement *)",y,",",
+		    "(RingElement *)",0,",",		    -- missing mipo
+		    "0",				    -- inExtension
 		    ")"))
      	  else WrongArg(2,"a raw ring element"))
      else WrongArg(1,"a raw monomial or ring element")
@@ -193,10 +195,11 @@ export rawGCD(e:Expr):Expr := (
 	  do (
 	       when s.2 is mipo:RawRingElement do (
 		    toExpr(Ccode(RawRingElementOrNull, 
-			      "(engine_RawRingElementOrNull)rawGCDRingElementInExtension(",
+			      "(engine_RawRingElementOrNull)rawGCDRingElement(",
 			      "(RingElement *)",x,",",
 			      "(RingElement *)",y,",",
-			      "(RingElement *)",mipo,
+			      "(RingElement *)",mipo,",",
+			      "1",			    -- inExtension
 			      ")")))
 	       else WrongArg(3,"a raw ring element"))
      	  else WrongArg(2,"a raw ring element"))
@@ -3466,7 +3469,12 @@ export rawEvaluateSLP(e:Expr):Expr := (
      else WrongArg(2,"a raw straight line program")
      else WrongNumArgs(2)
      );
-setupfun("rawEvaluateSLP",rawEvaluateSLP)
+setupfun("rawEvaluateSLP",rawEvaluateSLP);
+
+export rawDummy(e:Expr):Expr := (
+     Ccode(void,"rawDummy();");
+     nullE);
+setupfun("rawDummy",rawDummy);
 
 -- Local Variables:
 -- compile-command: "make -C $M2BUILDDIR/Macaulay2/d "
