@@ -228,14 +228,16 @@ coefficientRing FractionField := F -> coefficientRing last F.baseRings
 
 isHomogeneous FractionField := (F) -> isHomogeneous last F.baseRings
 
-good := k -> (
-     k === QQ or
-     k === ZZ or
-     instance(k,QuotientRing) and ambient k === ZZ and isPrime char k or
-     instance(k,GaloisField)
-     )
+factoryGood = R -> (
+     isPolynomialRing R and (
+	  while isPolynomialRing R do R = coefficientRing R;
+	  R === QQ or
+	  R === ZZ or
+	  instance(R,QuotientRing) and ambient R === ZZ and isPrime char R or
+	  instance(R,GaloisField)
+	  ))
 
-engineHasGCD = R -> instance(ultimate(ambient,R),PolynomialRing) and good coefficientRing R
+engineHasGCD = R -> instance(ultimate(ambient,R),PolynomialRing) and factoryGood R
 
 frac EngineRing := R -> if isField R then R else if R.?frac then R.frac else (
      o := options R;
