@@ -1,5 +1,6 @@
 newPackage(
 	"ConwayPolynomials",
+	AuxiliaryFiles => true,
     	Version => "1.0", 
     	Date => "October 23, 2008",
     	Authors => {
