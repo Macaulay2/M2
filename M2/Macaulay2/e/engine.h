@@ -1828,9 +1828,14 @@ enum gbTraceValues
   /**** Factory and libfac routines *****************/
   /**************************************************/
 
-  const RingElementOrNull *rawGCDRingElement(const RingElement *f, const RingElement *g); /* connected to rawGCD */
-  const RingElementOrNull *rawGCDRingElementInExtension(const RingElement *f, const RingElement *g, const RingElement *mipo); /* connect to rawGCD */
-  const RingElementOrNull *rawExtendedGCDRingElement(const RingElement *f, const RingElement *g, const RingElement **A, const RingElement **B); /* connected to rawExtendedGCD */
+  const RingElementOrNull *rawGCDRingElement(
+					     const RingElement *f, const RingElement *g,
+					     const RingElement *mipo, M2_bool inExtension
+					     ); /* connect to rawGCD */
+  const RingElementOrNull *rawExtendedGCDRingElement(
+						     const RingElement *f, const RingElement *g,
+						     const RingElement **A, const RingElement **B
+						     ); /* connected to rawExtendedGCD */
   const RingElementOrNull *rawPseudoRemainder(const RingElement *f, const RingElement *g); /* connected to rawPseudoRemainder */
   void rawFactor(const RingElement *f, 
 		 RingElement_array_OrNull **result_factors, 
@@ -1840,6 +1845,8 @@ enum gbTraceValues
 
   /* making CC elements */
   M2_CC make_M2_Complex(double re, double im);
+
+  void rawDummy(void);		/* connected to rawDummy */
 
   /**************************************************/
   /**** Special routines for objects over RRR,CCC ***/

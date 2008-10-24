@@ -72,7 +72,7 @@ int main () {
 
 #if 1
 
-  Off( SW_RATIONAL );
+  On( SW_RATIONAL );
   setCharacteristic(101);
   Variable a('a');
   Variable x('x');
@@ -101,8 +101,13 @@ int main () {
   CanonicalForm h = gcd(f,g);
   cout << "gcd(f,g) = " << h << " =? " << k << endl;
   cout << "f = " << f << endl;
+#if 1
+  CFFList fac2 = factorize(f,a);
+  cout << "factorize(f,a) = " << fac2 << endl;
+#else
   CFFList fac2 = Factorize(f,mipo);
   cout << "Factorize(f,mipo) = " << fac2 << endl;
+#endif
 
 #endif
 
@@ -112,5 +117,5 @@ int main () {
 #include <templates/ftmpl_inst.cc>
 
 // Local Variables:
-// compile-command: "g++ -g -I../../../BUILD/Linux-i686/debug/libraries/final/usr/lib/Macaulay2/Core/include -L../../../BUILD/Linux-i686/normal/libraries/final/usr/lib/Macaulay2/Core/lib -x c++ 0-factor -lfac -lcf -lcfmem -lntl -lgmp -o 0-factor.exe && ./0-factor.exe "
+// compile-command: "g++ -g -I../../../BUILD/Linux-i686/debug/libraries/final/usr/lib/Macaulay2/Core/include -L../../../BUILD/Linux-i686/debug/libraries/final/usr/lib/Macaulay2/Core/lib -x c++ 0-factor -lfac -lcf -lcfmem -lntl -lgmp -o 0-factor.exe && (nm -o --demangle 0-factor.exe | grep new)
 // End:
