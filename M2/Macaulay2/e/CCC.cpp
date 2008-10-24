@@ -61,6 +61,34 @@ ring_elem CCC::random() const
 
 void CCC::elem_text_out(buffer &o, const ring_elem ap) const
 {
+  M2_string s = gmp_tonetCC(BIGCC_VAL(ap));
+
+  // if: first char is a "-", and p_plus, o << "+"
+  // if: an internal "+" or "-", then put parens around it.
+  //   otherwise: if the string is "1" or "-1", and !p_one
+  //              then leave out the last character.
+
+  bool prepend_plus = p_plus && (s->array[0] != '-');
+  bool parens = false;
+  for (int i=1; i<s->len-1; i++) 
+    if (s->array[i] == '-' || s->array[i] == '+')
+      {
+	parens = true;
+	break;
+      }
+  bool strip_last = !parens && !p_one && (
+			      (s->len == 1 && s->array[0] == '1')
+			      || (s->len == 2 && s->array[1] == '1' && s->array[0] == '-'));
+  
+  if (prepend_plus) o << "+";
+  if (parens && p_parens) o << "(";
+  if (strip_last)
+    o.put(s->array, s->len-1);
+  else
+    o.put(s->array, s->len);
+  if (parens && p_parens) o << ")";
+
+#if 0
   mpfr_ptr a = BIGCC_RE(ap);
   mpfr_ptr b = BIGCC_IM(ap);
   mp_exp_t expptr;
@@ -73,7 +101,7 @@ void CCC::elem_text_out(buffer &o, const ring_elem ap) const
 
   o << gmp_tonetCC(BIGCC_VAL(ap));
   return;
-#if 0
+
   bool is_neg = (mpfr_cmp_si(a, 0) == -1);
   bool is_one = (mpfr_cmp_si(a, 1) == 0 || mpfr_cmp_si(a, -1) == 0);
 
@@ -207,7 +235,7 @@ bool CCC::is_zero(const ring_elem f) const
 {
   mpfr_ptr a = BIGCC_RE(f);
   mpfr_ptr b = BIGCC_IM(f);
-  return (mpfr_sgn(a) == 0 && mpfr_sgn(b) == 0);
+  return (mpfr_zero_p(a) != 0 && mpfr_zero_p(b) != 0);
 }
 
 bool CCC::is_equal(const ring_elem f, const ring_elem g) const

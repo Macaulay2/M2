@@ -1,10 +1,38 @@
-CC[a,b]
-M = matrix {{a+b}}
+printingPrecision=10
+printingAccuracy= 10
+
+matrix{{1+ii,1+0.00002*ii},{3,4+ii}}
+CC[c,d]
+M = matrix {{c+d}}
 debug Core
 raw M
 
+M = matrix {{c+d*ii}}
+M2 = matrix {{-1.00000001*c-d}}
+M3 = matrix {{1.00000001*c-d}}
+M4 = matrix {{1.00000001*c+(2+3*ii)*d}}
+M5 = matrix{{0.00000000000000000000000000001*c^2}}
+M5 = matrix{{0.00000000000000000000000000001*ii*c^2}}
+clean(1e20,M5)
+
+matrix{{1./0.*c^3*ii}}
+matrix{{1./0.*c^3}}-matrix{{1./0.*c^3}}
+matrix{{(1./0.-1./0.)*c^3}}
+(1./0.-1./0.) + c
+
+
 RR[c,d]
 M = matrix {{c+d}}
+M2 = matrix {{-1.00000001*c-d}}
+M3 = matrix {{1.00000001*c-d}}
+M4 = matrix {{1.00000001*c+d}}
+M5 = matrix{{0.00000000000000000000000000001*c^2}}
+clean(1e20,M5)
+
+matrix{{1./0.*c^3}}
+matrix{{1./0.*c^3}}-matrix{{1./0.*c^3}}
+matrix{{(1./0.-1./0.)*c^3}}
+(1./0.-1./0.) + c
 end
 
 Macaulay 2, version 1.1
@@ -25,3 +53,5 @@ o2 = | 1a1b |
                         1                  1
 o2 : Matrix (CC  [a, b])  <--- (CC  [a, b])
                53                 53
+
+

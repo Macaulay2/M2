@@ -61,33 +61,19 @@ ring_elem RRR::random() const
 void RRR::elem_text_out(buffer &o, const ring_elem ap) const
 {
   mpfr_ptr a = MPF_VAL(ap);
-  mp_exp_t expptr;
+  M2_string s = gmp_tostringRR(a);
+  bool prepend_plus = p_plus && (s->array[0] != '-');
+  bool strip_last = !p_one && (
+			      (s->len == 1 && s->array[0] == '1')
+			      || (s->len == 2 && s->array[1] == '1' && s->array[0] == '-'));
 
-  // size_t size = 1000;
-#warning this all looks wrong
-  char *s = newarray_atomic(char,1000);
-  char *str;
-
-  bool is_neg = (mpfr_cmp_si(a, 0) == -1);
-  bool is_one = (mpfr_cmp_si(a, 1) == 0 || mpfr_cmp_si(a, -1) == 0);
-
-  // int size = mpfr_sizeinbase(a, 10) + 2;
-
-  // char *allocstr = (size > 1000 ? newarray(char,size) : s);
-
-  if (!is_neg && p_plus) o << '+';
-  if (is_one) 
-    {  
-      if (is_neg) o << '-';
-      if (p_one) o << '1'; 
-    }
+  if (prepend_plus)
+    o << "+";
+  if (strip_last)
+    o.put(s->array, s->len-1);
   else
-    {
-      o << gmp_tostringRR(a);
-      //str = mpfr_get_str(s, &expptr, 10, 0, a, GMP_RNDN);
-      //o << "." << str << "*10^" << expptr;
-    }
-  // if (size > 1000) deletearray(allocstr);
+    o.put(s->array, s->len);
+
 }
 
 mpfr_ptr RRR::to_BigReal(ring_elem f) const
@@ -165,7 +151,7 @@ bool RRR::is_unit(const ring_elem f) const
 bool RRR::is_zero(const ring_elem f) const
 {
   mpfr_ptr a = MPF_VAL(f);
-  return mpfr_sgn(a) == 0;
+  return mpfr_zero_p(a) != 0;
 }
 
 bool RRR::is_equal(const ring_elem f, const ring_elem g) const
