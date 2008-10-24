@@ -112,7 +112,7 @@ inverseSequence = (U,X) -> (
      return N;
      );
 
-inversePermutation = f -> (
+inversePermutation := f -> (
      N := {};
      X := gens source f;
      U := flatten entries matrix f;

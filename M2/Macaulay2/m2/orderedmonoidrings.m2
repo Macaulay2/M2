@@ -306,6 +306,35 @@ parts = method()
 parts RingElement := f -> sum(select(apply(
 	       ((i,j) -> i .. j) weightRange(first \ degrees (ring f).FlatMonoid, f),
 	       n -> part_n f), p -> p != 0), p -> new Parenthesize from {p})
+
+pg := (off,v,wts) -> (wts = splice wts; #wts, for i in v list if i<off then continue else if i>=off+#wts then break else wts#(i-off) )
+pw := (off,v,wts) -> (wts = splice wts;    0, for i in v list if i<off then continue else if i>=off+#wts then break else wts#(i-off) )
+pn := (off,v,nw) -> (nw, (n:=0; for i in v do if i<off then continue else if i>=off+nw then break else n=n+1; n) )
+selop = new HashTable from {
+     GRevLex => pg, Weights => pw, Lex => pn, RevLex => pn,
+     GroupLex => pn, GroupRevLex => pn, NCLex => pn
+     }
+selmo = (v,mo) -> (
+     off := 0;
+     apply(mo, x -> (
+	       if instance(x,Option) and selop#?(x#0) 
+	       then (
+		    (inc,w) := selop#(x#0)(off,v,x#1);
+		    off = off + inc;
+		    x#0 => w)
+	       else x)))
+selectVariables = method()
+selectVariables(List,PolynomialRing) := (v,R) -> (
+     k := coefficientRing R;
+     o := new MutableHashTable from options R;
+     o.MonomialOrder = selmo(v,o.MonomialOrder);
+     o.Variables = o.Variables_v;
+     o.Degrees = o.Degrees_v;
+     o = new OptionTable from o;
+     S := k(monoid [o]);
+     f := map(R,S,(generators R)_v);
+     (S,f))
+
 -- Local Variables:
 -- compile-command: "make -C $M2BUILDDIR/Macaulay2/m2 "
 -- End:

@@ -19,11 +19,6 @@ getIndices = (R,v) -> unique apply(v, index)
 
 eliminate = method()
 
-inversePermutation := (p) -> (
-     q := new MutableList from toList(0..#p-1);
-     scan(0..#p-1, i -> q#(p#i) = i);
-     toList q)
-
 eliminate (List, Ideal) := (v,I) -> (     
      if #v === 0 then return I;
      R := ring I;
