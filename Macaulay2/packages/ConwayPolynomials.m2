@@ -52,11 +52,14 @@ document { Key => ConwayPolynomials,
 	  },
      PARA {
 	  "After the package is loaded, the function ", TO "GF", " will return Galois
-	  fields presented by Conway polynomials, provided they are in the table."
+	  fields presented by Conway polynomials, provided they are in the table.  Moreover,
+	  ", TO "map", " can be used to produce the canonical maps between Conway Galois fields."
 	  },
      EXAMPLE lines ///
      conwayPolynomial 125
      GF 125
+     map(GF 125^2, GF 125)
+     isWellDefined oo
      ///
      }
 document { 
