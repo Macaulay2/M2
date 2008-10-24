@@ -118,9 +118,10 @@ GF(Ring) := GaloisField => opts -> (S) -> (
      	  F.degreeLength = 0;
 	  )
      else (
+	  S = newRing(S, DegreeRank => 0);
 	  F = new GaloisField from raw S;
-     	  F.degreeLength = degreeLength S;
 	  );
+     F.degreeLength = 0;
      F.PrimitiveElement = primitiveElement;
      F.isBasic = true;
      toString F := h -> toString expression h;
