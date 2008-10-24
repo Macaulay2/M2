@@ -102,9 +102,11 @@ graphRing RingMap := QuotientRing => opts -> (f) -> ( I := graphIdeal(f,opts); (
 -----------------------
 
 rep := (meth,opts,args) -> prepend_opts nonnull apply(args, arg -> 
-     if instance(arg,Option) and #arg == 2 and instance(arg#1,Function) and (options meth)#(arg#0) === opts#(arg#0)
-     then arg#0 => arg#1()
-     else null)
+     if instance(arg,Option) and #arg == 2 and instance(arg#1,Function) then (
+	  if (options meth)#(arg#0) === opts#(arg#0)
+     	  then arg#0 => arg#1()
+	  )
+     else arg)
 
 symmetricAlgebra = method( Options => monoidDefaults )
 symmetricAlgebra Module := Ring => opts -> (cacheValue (symmetricAlgebra => opts)) (M -> (
