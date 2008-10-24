@@ -309,12 +309,8 @@ parts RingElement := f -> sum(select(apply(
 
 off := 0
 pw := (v,wts) -> (
-     wts = splice wts;
      for i in v list if i<off then continue else if i>=off+#wts then break else wts#(i-off))
-pg := (v,wts) -> (
-     wts = splice wts;
-     off = off + #wts;
-     for i in v list if i<off then continue else if i>=off+#wts then break else wts#(i-off))
+pg := (v,wts) -> first(pw(v,wts), off = off + #wts)
 pn := (v,nw) -> (
      off = off + nw;
      n:=0;
