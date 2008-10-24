@@ -783,7 +783,7 @@ document {
      }
 
 document {
-     Key => flatten {newRing,(newRing, QuotientRing),(newRing, PolynomialRing),apply(keys monoid,k -> [newRing,k])},
+     Key => flatten {newRing,(newRing, QuotientRing),(newRing, PolynomialRing),apply(keys options monoid,k -> [newRing,k])},
      Headline => "make a copy of a ring, with some features changed",
      Usage => "S = newRing(R,options)",
      Inputs => {
