@@ -92,9 +92,10 @@ multipleBasicLiftMatrix = opts -> (m,v) -> (
      scan(v, (R,p) -> ( 
 	       S = R; 
 	       dF = p dF; 
+	       m = rawLift((raw R)^dF, m);
+	       if m === null then break;
 	       dG = p dG; 
-	       m = rawLift((raw R)^dF, m); 
-	       if m === null then break));
+	       ));
      if m =!= null then map(S^dF,S^dG,m)
      else if opts.Verify then error "cannot lift given matrix")
 
