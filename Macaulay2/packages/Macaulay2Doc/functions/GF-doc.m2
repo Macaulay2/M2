@@ -12,8 +12,7 @@ document {
      Usage => "GF(p,n)\nGF(q)",
      Inputs => {
 	  "p" => "a prime number", "n",
-	  Variable => Symbol => "the name of the generator of the ring",
-	  PrimitiveElement => "unused option"
+	  Variable => Symbol => "the name of the generator of the ring"
 	  },
      Outputs => {
 	  GaloisField => {"a finite field with ", TT "q = p^n", " elements"},

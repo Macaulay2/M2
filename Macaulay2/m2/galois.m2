@@ -28,7 +28,8 @@ expression GaloisField := F -> new FunctionApplication from { GF, F.order }
 GF = method (
      Options => { 
 	  PrimitiveElement => FindOne,
-	  Variable => null
+	  Variable => null,
+	  LengthLimit => 10000
 	  }
      )
 
@@ -111,8 +112,9 @@ GF(Ring) := GaloisField => opts -> (S) -> (
 	  var = S.generatorSymbols#0;
 	  );
      d := p^n-1;
-     rF := rawGaloisField raw primitiveElement;
-     F := new GaloisField from rF;
+     F := if d < opts.LengthLimit
+     then new GaloisField from rawGaloisField raw primitiveElement
+     else new GaloisField from raw S;
      F.PrimitiveElement = primitiveElement;
      F.isBasic = true;
      toString F := h -> toString expression h;
@@ -121,10 +123,13 @@ GF(Ring) := GaloisField => opts -> (S) -> (
      F.promoteDegree = makepromoter 0;			    -- do this before commonEngineRingInitializations
      F.liftDegree = makepromoter degreeLength S;	    -- do this before commonEngineRingInitializations
      commonEngineRingInitializations F;
+     toField F;
      F.isCommutative = true;
      expression F := t -> expression lift(t, S);
      F.degreeLength = 0;
      F.char = p;
+     F.degree = n;
+     F.order = p^n;
      F.frac = F;
      F.generators = apply(generators S, m -> promote(m,F));
      if S.?generatorSymbols then F.generatorSymbols = S.generatorSymbols;
@@ -135,7 +140,6 @@ GF(Ring) := GaloisField => opts -> (S) -> (
      baseName F := y -> (
 	  if F_0 == y then var else error "expected a generator"
 	  );
-     F.order = p^n;
      F.use = F -> var <- F_0;
      F.use F;
      F / F := (x,y) -> x // y;
