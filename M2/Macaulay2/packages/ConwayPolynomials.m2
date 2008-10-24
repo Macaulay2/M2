@@ -40,7 +40,7 @@ map(GaloisField,GaloisField) := RingMap => o -> (K,F) -> (
      or n % m != 0
      then error "no map of fields exists";
      if not (isConway F and isConway K) then error "not implemented: maps between non-Conway Galois fields";
-     map(K,F,{K_0^((p^n-1)/(p^m-1))}))
+     map(K,F,{K_0^((p^n-1)//(p^m-1))}))
 document { Key => ConwayPolynomials,
      Headline => "database of Conway polynomials for use with GF",
      PARA {
@@ -58,6 +58,7 @@ document { Key => ConwayPolynomials,
      EXAMPLE lines ///
      conwayPolynomial 125
      GF 125
+     ambient oo
      map(GF 125^2, GF 125)
      isWellDefined oo
      ///
