@@ -22,10 +22,11 @@ newRing PolynomialRing := opts -> (R) -> (
      (coefficientRing R)(monoid [merge(options R,new OptionTable from opts,last)]))
 newRing QuotientRing := opts -> R -> (
      p := presentation R;
-     if not instance(R,PolynomialRing) then error "newRing: expected ambient ring of quotient ring to be a polynomial ring";
-     S := newRing(ring p, opts);
+     A := ring p;
+     if not instance(A,PolynomialRing) then error "newRing: expected ambient ring of quotient ring to be a polynomial ring";
+     S := newRing(A, opts);
      if numgens S != numgens R then error "newRing: cannot change the number of variables";
-     S / image substitute(presentation R,vars S))
+     S / image substitute(p,vars S))
 
 -----------------------------
 -- tensor product of rings --

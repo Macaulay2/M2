@@ -1,5 +1,0 @@
-is this a problem?
-
-    i28 : degreeLength GF(5,6)
-
-    o28 = 1
