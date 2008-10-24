@@ -31,6 +31,16 @@ conwayPolynomial ZZ := q -> (
      then error "expected a power of a prime";
      conwayPolynomial(factors#0#0,factors#0#1))
 addHook(GaloisField,FindOne,(p,n,a) -> if (getCP())#?(p,n) then break fix(p,n,(getCP())#(p,n),a))
+isConway := (F) -> (gens ideal ambient F)_(0,0) == sub(conwayPolynomial(F.char,F.degree),ambient ambient F)
+map(GaloisField,GaloisField) := RingMap => o -> (K,F) -> (
+     p := char F;
+     n := K.degree;
+     m := F.degree;
+     if char K =!= p 
+     or n % m != 0
+     then error "no map of fields exists";
+     if not (isConway F and isConway K) then error "not implemented: maps between non-Conway Galois fields";
+     map(K,F,{K_0^((p^n-1)/(p^m-1))}))
 document { Key => ConwayPolynomials,
      Headline => "database of Conway polynomials for use with GF",
      PARA {
