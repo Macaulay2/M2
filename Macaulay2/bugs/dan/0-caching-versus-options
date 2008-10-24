@@ -1,9 +1,0 @@
-Does this actually work???
-
-mingens Module := Matrix => opts -> (cacheValue symbol mingens) ((M) -> (...))
-
-This would:
-
-symmetricAlgebra Module := Ring => opts -> (cacheValue (symmetricAlgebra => opts))(M -> (
-
-fix everything!

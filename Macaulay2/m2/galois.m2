@@ -75,8 +75,13 @@ GF(ZZ,ZZ) := GaloisField => opts -> (p,n) -> (
 	  x = if x === null then getGlobalSymbol "a" else baseName x;
 	  R := (ZZ/p) (monoid [x]);
 	  t := R_0;
-	  while ( f := t^n + sum(n, i-> random p * t^i); not isPrime f) do ();
-	  GF(R/f,opts,Variable => x)))
+	  f := runHooks(GaloisField,FindOne,(p,n,t));
+	  if f =!= null then (
+	       k := R/f;
+	       GF(k,Variable => x, PrimitiveElement => k_0))
+	  else (
+	       while ( f = t^n + sum(n, i-> random p * t^i); not isPrime f) do ();
+	       GF(R/f,Variable => x))))
 
 GF(ZZ) := GaloisField => options -> (q) -> (
      factors := factor q;

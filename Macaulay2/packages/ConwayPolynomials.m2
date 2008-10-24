@@ -13,10 +13,6 @@ newPackage(
 -- or http://www.math.rwth-aachen.de:8001/~Frank.Luebeck/data/ConwayPol/CPimport.txt.gz
 export conwayPolynomial
 fn  := currentFileDirectory | "ConwayPolynomials/ConwayPolynomials.txt"
-fix := (p,n,co) -> (
-     A := (ZZ/p)(monoid [global a]);
-     a := A_0;
-     a^n + sum(#co, i -> co#i * a^i))
 getCP := memoize(
      () -> (
 	  stderr << "--loading file " << fn << endl;
@@ -24,9 +20,13 @@ getCP := memoize(
 	       x -> (
 	       	    x = value x;
 	       	    ((x#0,x#1),drop(x,2))))))
+Ap := memoize(p -> (ZZ/p)(monoid [global a]))
+fix := (p,n,co,a) -> a^n + sum(#co, i -> co#i * a^i)
 conwayPolynomial = method()
-conwayPolynomial(ZZ,ZZ) := (p,n) -> fix(p,n,(getCP())#(p,n))
-
-
-
-
+conwayPolynomial(ZZ,ZZ) := (p,n) -> if (getCP())#?(p,n) then fix(p,n,(getCP())#(p,n),(Ap p)_0)
+conwayPolynomial ZZ := q -> (
+     factors := factor q;
+     if #factors =!= 1 or factors#0#0 === -1
+     then error "expected a power of a prime";
+     conwayPolynomial(factors#0#0,factors#0#1))
+addHook(GaloisField,FindOne,(p,n,a) -> if (getCP())#?(p,n) then break fix(p,n,(getCP())#(p,n),a))
