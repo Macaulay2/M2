@@ -12,7 +12,7 @@ export{
      kernelLLL,
      hermite,
      gcdLLL,
-     gram,
+     gramm,
      Threshold,
      NTL,
      CohenEngine,
@@ -263,8 +263,8 @@ doLLL = (C,count) -> (
 
 ----------------------------------------------------------------
 -- Gram-Schmidt
-gram = method()
-gram Matrix := (m) -> (
+gramm = method()
+gramm Matrix := (m) -> (
      -- returns 2 things: a matrix whose columns are an orthonormal basis,
      -- and a hash table whose (i,j) entry is dot(b_i,bstar_j)/dot(bstar_j,bstar_j).
      b := mutableMatrix substitute(m,QQ);
@@ -299,7 +299,7 @@ isLLL = method(Options => {Threshold => 3/4})
 
 isLLL Matrix := options -> (m) -> (
      LLLalpha := options.Threshold;
-     (B, mu) := gram m;
+     (B, mu) := gramm m;
      n := numgens source m;
      -- first: each element of mu should be <= 1/2.
      result := true;
@@ -784,7 +784,7 @@ document {
 	     TO gcdLLL,
 	     TO hermite,
 	     "support routines that are occasionally useful",
-	     TO gram,
+	     TO gramm,
 	     TO isLLL
 	     }
 	}
@@ -1154,7 +1154,7 @@ document {
      }
 
 document { 
-     Key => {gram,(gram,Matrix)},
+     Key => {gramm,(gramm,Matrix)},
      Headline => "",
      Usage => "",
      Inputs => {
@@ -1606,13 +1606,13 @@ TEST ///
 ///
 
 -------------------
--- gram, isLLL ----
+-- gramm, isLLL ----
 -------------------
 TEST ///
     time m1 = map(ZZ^10, ZZ^10, (j,i) -> (i+1)^3 * (j+1)^2 + i + j + 2)
     time m = syz m1
     time mz = LLL(m)
-    (gm, H) = gram mz 
+    (gm, H) = gramm mz 
     gm = matrix gm
     h = (transpose gm) * gm -- should be diagonal:
     scan(numgens source h, i -> scan(numgens source h, j -> 
