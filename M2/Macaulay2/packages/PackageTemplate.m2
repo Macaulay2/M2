@@ -7,9 +7,8 @@ newPackage(
 	     },
     	HomePage => "http://www.math.uiuc.edu/~doe/",
     	Headline => "an example Macaulay 2 package",
-	-- DebuggingMode should be true while developing a package, 
-	--   but false after it is done
-    	DebuggingMode => true 
+	AuxiliaryFiles => false, -- set to true if package comes with auxiliary files
+    	DebuggingMode => true		 -- set to true only during development
     	)
 
 -- Any symbols or functions that the user is to have access to
