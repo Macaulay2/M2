@@ -307,33 +307,38 @@ parts RingElement := f -> sum(select(apply(
 	       ((i,j) -> i .. j) weightRange(first \ degrees (ring f).FlatMonoid, f),
 	       n -> part_n f), p -> p != 0), p -> new Parenthesize from {p})
 
-pg := (off,v,wts) -> (wts = splice wts; #wts, for i in v list if i<off then continue else if i>=off+#wts then break else wts#(i-off) )
-pw := (off,v,wts) -> (wts = splice wts;    0, for i in v list if i<off then continue else if i>=off+#wts then break else wts#(i-off) )
-pn := (off,v,nw) -> (nw, (n:=0; for i in v do if i<off then continue else if i>=off+nw then break else n=n+1; n) )
-selop = new HashTable from {
-     GRevLex => pg, Weights => pw, Lex => pn, RevLex => pn,
-     GroupLex => pn, GroupRevLex => pn, NCLex => pn
-     }
-selmo = (v,mo) -> (
-     off := 0;
-     apply(mo, x -> (
-	       if instance(x,Option) and selop#?(x#0) 
-	       then (
-		    (inc,w) := selop#(x#0)(off,v,x#1);
-		    off = off + inc;
-		    x#0 => w)
-	       else x)))
+off := 0
+pw := (v,wts) -> (
+     wts = splice wts;
+     for i in v list if i<off then continue else if i>=off+#wts then break else wts#(i-off))
+pg := (v,wts) -> (
+     wts = splice wts;
+     off = off + #wts;
+     for i in v list if i<off then continue else if i>=off+#wts then break else wts#(i-off))
+pn := (v,nw) -> (
+     off = off + nw;
+     n:=0;
+     for i in v do if i<off then continue else if i>=off+nw then break else n=n+1;
+     n)
+selop = new HashTable from { GRevLex => pg, Weights => pw, Lex => pn, RevLex => pn, GroupLex => pn, GroupRevLex => pn, NCLex => pn }
+selmo = (v,mo) -> ( off = 0; apply(mo, x -> if instance(x,Option) and selop#?(x#0) then x#0 => selop#(x#0)(v,x#1) else x))
+ord := (v,nv) -> (
+     n := -1;
+     for i in v do (
+	  if not instance(i,ZZ) or i < 0 or i >= nv then error("selectVariables: expected an increasing list of numbers in the range 0..",toString(nv-1));
+	  if i <= n then error "selectVariables: expected a strictly increasing list";
+	  n = i;
+	  ))     
 selectVariables = method()
 selectVariables(List,PolynomialRing) := (v,R) -> (
-     k := coefficientRing R;
+     v = splice v;
+     ord(v,numgens R);
      o := new MutableHashTable from options R;
      o.MonomialOrder = selmo(v,o.MonomialOrder);
      o.Variables = o.Variables_v;
      o.Degrees = o.Degrees_v;
      o = new OptionTable from o;
-     S := k(monoid [o]);
-     f := map(R,S,(generators R)_v);
-     (S,f))
+     (S := (coefficientRing R)(monoid [o]),map(R,S,(generators R)_v)))
 
 -- Local Variables:
 -- compile-command: "make -C $M2BUILDDIR/Macaulay2/m2 "
