@@ -402,7 +402,6 @@ void displayCF(PolynomialRing *R, const CanonicalForm &h) // for debugging
 const RingElementOrNull *rawGCDRingElement(const RingElement *f, const RingElement *g,
 					   const RingElement *mipo, const M2_bool inExtension)
 {
-  cerr << "--entering gcd()" << endl;
   const RingElement *ret = NULL;
   const PolynomialRing *P = f->get_ring()->cast_to_PolynomialRing();
   const PolynomialRing *P2 = g->get_ring()->cast_to_PolynomialRing();
@@ -427,17 +426,11 @@ const RingElementOrNull *rawGCDRingElement(const RingElement *f, const RingEleme
     }
     if (inExtension) {
       CanonicalForm minp = convertToFactory(*mipo,false);
-      cerr << "--mipo = " << minp << endl;
       algebraicElement_Fac = rootOf(minp,'a');
-      cerr << "--a = " << algebraicElement_Fac << endl;
-      cerr << "--a.level() = " << algebraicElement_Fac.level() << endl;
     }
     CanonicalForm p = convertToFactory(*f,inExtension);
-    cerr << "--p = " << p << endl;
     CanonicalForm q = convertToFactory(*g,inExtension);
-    cerr << "--q = " << q << endl;
     CanonicalForm h = gcd(p,q);
-    cerr << "--gcd = " << h << endl;
     if (inExtension) {
       assert( foo.mode != modeGF );
       struct enter_M2 bar;

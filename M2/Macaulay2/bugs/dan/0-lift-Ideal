@@ -1,0 +1,16 @@
+write code to lift ideals in quotient rings to ambient rings
+
+what do these do?
+
+    i21 : methods (lift, Ideal)
+
+    o21 = { (lift, Ideal, QQ)          }
+	  { (lift, Ideal, RingElement) }
+	  { (lift, Ideal, ZZ)          }
+
+    o21 : VerticalList
+
+
+also promote
+
+maybe an option to specify how "far" to go

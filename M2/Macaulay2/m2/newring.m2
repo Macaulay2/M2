@@ -153,7 +153,7 @@ flattenRing Ring := opts -> R -> (
      if k === R or k === null and (R.?isBasic or isField R) then triv R
      else unable())
 
-flattenRing GaloisField := opts -> F -> (
+flattenRing GaloisField := opts -> (cacheValue (symbol flattenRing => opts)) (F -> (
      A := ambient F;
      (R,p) := flattenRing(A, opts);
      q := p^-1;
@@ -161,9 +161,9 @@ flattenRing GaloisField := opts -> F -> (
      q' := map(F,A) * q;
      p'.cache.inverse = q';
      q'.cache.inverse = p';
-     (R,p'))
+     (R,p')))
 
-flattenRing PolynomialRing := opts -> R -> (
+flattenRing PolynomialRing := opts -> (cacheValue (symbol flattenRing => opts)) (R -> (
      A := coefficientRing R;
      M2 := monoid R;
      zerdeg := toList (degreeLength M2 : 0);
@@ -187,9 +187,9 @@ flattenRing PolynomialRing := opts -> R -> (
      q' := map(R,T', vars R | promote(matrix q,R));
      p'.cache.inverse = q';
      q'.cache.inverse = p';
-     (T',p'))
+     (T',p')))
 
-flattenRing QuotientRing := opts -> R -> (
+flattenRing QuotientRing := opts -> (cacheValue (symbol flattenRing => opts)) (R -> (
      if instance(ambient R, PolynomialRing) and (
 	  k := coefficientRing R;
 	  opts.CoefficientRing === null and (isField k or k.?isBasic)
@@ -208,7 +208,7 @@ flattenRing QuotientRing := opts -> R -> (
      q' := map(R,S, promote( matrix q, R ));
      p'.cache.inverse = q';
      q'.cache.inverse = p';
-     (S,p'))
+     (S,p')))
 
 isWellDefined RingMap := f -> (
      R := source f;

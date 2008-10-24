@@ -28,6 +28,10 @@ Also implement the interface for algebraic extensions of QQ.
 
 --
 
+default betti weight is screwy
+
+fix prune of Ring
+
 fix decompose using flattenRing:
 
     i1 : R = QQ[x][y]
