@@ -589,7 +589,13 @@ ideal Module := Ideal => (M) -> (
      else error "expected a submodule of a free module of rank 1"
      )
 ideal List := ideal Sequence := Ideal => v -> ideal matrix {toList v}
-ideal RingElement := ideal Number := Ideal => v -> ideal {v}
+ideal RingElement := ideal Number := Ideal => v -> (
+     if v == 0 
+     then (
+	  A := ring v;
+	  ideal map(A^1,A^0,0))
+     else ideal {v}
+     )
 ideal Ring := R -> ideal map(R^1,R^0,0)
 
 homology(Matrix,Matrix) := Module => opts -> (g,f) -> (

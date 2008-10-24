@@ -783,6 +783,7 @@ export {
 	symbol integrate,
 	symbol intersect,
 	symbol inverse,
+	symbol inversePermutation,
 	symbol irreducibleCharacteristicSeries,
 	symbol irreducibleDecomposition,
 	symbol isAffineRing,

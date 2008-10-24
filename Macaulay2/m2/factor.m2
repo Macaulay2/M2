@@ -39,9 +39,7 @@ pseudoRemainder(RingElement,RingElement) := RingElement => (f,g) -> (
 reorder := I -> (					    -- rawIdealReorder
      f := generators I;
      R := ring I;
-     v := rawIdealReorder raw f;
-     assert( #v == numgens R );
-     v)
+     rawIdealReorder raw f)
 
 -- lcm2 := (x,y) -> x*y//gcd(x,y)
 -- lcm := args -> (
@@ -50,22 +48,21 @@ reorder := I -> (					    -- rawIdealReorder
 --      n)
 -- commden := (f) -> lcm apply( last \ listForm f, denominator)
 
+inversePermutation = v -> ( w := new MutableList from #v:null; scan(#v, i -> w#(v#i)=i); toList w)
+
 irreducibleCharacteristicSeries = method()
 irreducibleCharacteristicSeries Ideal := I -> (		    -- rawCharSeries
      f := generators I;
      f = compress f;					    -- avoid a bug in Messollen's code for rawCharSeries when a generator is zero
      R := ring I;
-     if not isPolynomialRing R 
-     then error "expected ideal in a polynomial ring";
-     k := coefficientRing R;
-     if not isField k then error "factorization not implemented for coefficient rings that are not fields";
-     -- if k === QQ then f = matrix { first entries f / (r -> r * commden r) };
-     re := reorder I;
-     n := #re;
-     f = substitute(f,apply(n,i -> R_(re#i) => R_i));
+     if not factoryGood R then error "not implemented for this type of ring";
+     -- if coefficientRing R === QQ then f = matrix { first entries f / (r -> r * commden r) };
+     re := reorder I; -- we need to substitute R_(re#i) => R_i beforehand and undo it afterward
+     allgens := matrix {generators(R, CoefficientRing => ultimate(coefficientRing,R))};
+     f = substitute(f,allgens_(inversePermutation re));
      ics := rawCharSeries raw f;
      ics = apply(ics, m -> map(R,m));
-     phi := map(R,R,apply(n,i->R_(re#i)));
+     phi := map(R,R,allgens_re);
      {ics,phi}
      )
 
