@@ -212,6 +212,8 @@ makeit1 := (opts) -> (
      opts.MonomialOrder = MOoptsint; -- these are the options given to rawMonomialOrdering, except Tiny and Small aren't there yet...
      M#"options" = MOopts; -- these are exactly the arguments given to rawMonomialOrdering
      remove(opts, MonomialSize);
+     remove(opts, Weights);
+     remove(opts, VariableBaseName);
      M.Options = new OptionTable from opts;
      toString M := toExternalString M := x -> toString expression x;
      M.RawMonoid = (

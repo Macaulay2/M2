@@ -1071,6 +1071,7 @@ export {
 	symbol seeParsing,
 	symbol select,
 	symbol selectInSubring,
+	symbol selectVariables,
 	symbol separate,
 	symbol separateRegexp,
 	symbol seq,
