@@ -741,6 +741,7 @@ export {
 	symbol graphRing,
 	symbol hash,
 	symbol hashTable,
+	symbol heft,
 	symbol height,
 	symbol help,
 	symbol hh,

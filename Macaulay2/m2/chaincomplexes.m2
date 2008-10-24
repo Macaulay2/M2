@@ -665,6 +665,13 @@ rawBettiTally = v -> (
 
 net BettiTally := v -> netList(rawBettiTally v, Alignment => Right, HorizontalSpace => 1, BaseRow => 1, Boxes => false)
 
+heft = method()
+heft Ring := R -> (
+     o := options R;
+     if o =!= null and o.?Heft then o.Heft
+     else error "this type of ring has no heft vector"
+     )
+
 betti = method(TypicalValue => BettiTally, Options => { Weights => null })
 heftfun := wt -> if wt === null then d -> d#0 else d -> sum( min(#wt, #d), i -> wt#i * d#i )
 betti BettiTally := opts -> t -> (

@@ -1,0 +1,5 @@
+flattenRing can save time by :
+
+	    using the same raw ring when appropriate
+
+then ring map application can save time when the source and target are the same raw ring
