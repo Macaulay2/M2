@@ -1,0 +1,7 @@
+it's unclear which of these to type
+    lookup(lift,ideal x^2, class R)
+    lookup(lift,class ideal x^2, R)
+    lookup(lift,class ideal x^2, class R)
+so we need 
+    dispatch(lift,ideal x^2, R)
+which knows what to do.
