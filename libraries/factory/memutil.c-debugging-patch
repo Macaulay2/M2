@@ -1,0 +1,88 @@
+--- memutil.c	2008-10-24 09:31:38.000000000 -0500
++++ memutil-debug.c	2008-10-24 09:31:58.000000000 -0500
+@@ -18,6 +18,10 @@
+ 
+ static listentry * blocklist[7] = { NULL, NULL, NULL, NULL, NULL, NULL, NULL };
+ 
++#define EXTRA 4
++#define MAGIC 0xbeefbeef
++#define DEAD 0xdeaddead
++
+ #define GETBLOCK( list, size ) { \
+                                   if ( blocklist[list] ) { \
+ 				      listentry* retval = blocklist[list]; \
+@@ -26,32 +30,34 @@
+ 				  } \
+ 				  else { \
+ 				      char* retval = (char*)malloc( size ); \
+-				      *((int*)retval) = size-4; \
+-				      retval += 4; \
++				      *((int*)retval) = size-4-EXTRA; \
++				      *((int*)retval+1) = MAGIC; \
++				      retval += 4+EXTRA; \
+ 				      return (void*)retval; \
+ 				  } \
+                                }
+ 
+ void* getBlock ( size_t size )
+ {
+-    if ( size <= 4 )
++    if ( size <= 4 - EXTRA )
+ 	GETBLOCK( 0, 8 )
+-    else if ( size <= 12 )
++    else if ( size <= 12 - EXTRA )
+ 	GETBLOCK( 1, 16 )
+-    else if ( size <= 28 )
++    else if ( size <= 28 - EXTRA )
+ 	GETBLOCK( 2, 32 )
+-    else if ( size <= 60 )
++    else if ( size <= 60 - EXTRA )
+ 	GETBLOCK( 3, 64 )
+-    else if ( size <= 124 )
++    else if ( size <= 124 - EXTRA )
+ 	GETBLOCK( 4, 128 )
+-    else if ( size <= 252 )
++    else if ( size <= 252 - EXTRA )
+ 	GETBLOCK( 5, 256 )
+-    else if ( size <= 508 )
++    else if ( size <= 508 - EXTRA )
+ 	GETBLOCK( 6, 512 )
+     else {
+-	char* retval = (char*)malloc( size+4 );
++	char* retval = (char*)malloc( size+4+EXTRA );
+ 	*((int*)retval) = size;
+-	retval += 4;
++	*((int*)retval+1) = MAGIC;
++	retval += 4+EXTRA;
+ 	return retval;
+     }
+ }
+@@ -62,12 +68,14 @@
+ 				     blocklist[list] = dummy; \
+ 				 }
+ 
+-void freeBlock ( void* block, size_t size )
++void freeBlock ( void* block, size_t size0 )
+ {
+     char* dummy = (char*)block;
+     if ( block == NULL ) return;
+-    dummy -= 4;
+-    size = *((int*)dummy);
++    dummy -= 4+EXTRA;
++    int magic = *((int*)dummy+1);
++    ASSERT( magic == MAGIC , "freeBlock: wrong magic number" );
++    int size = *((int*)dummy);
+     if ( size == 4 )
+ 	FREEBLOCK( 0, block )
+     else if ( size == 12 )
+@@ -90,7 +98,9 @@
+ {
+   void * dummy;
+ #if 1
+-  char* dum = (char*)block - 4;
++  char* dum = (char*)block - 4 - EXTRA;
++  int magic = *((int*)dum+1);
++  ASSERT( magic == MAGIC , "reallocBlock: wrong magic number" );
+   int size = *((int*)dum);
+   if (newsize <= size) return block;
+ #endif
