@@ -346,30 +346,36 @@ listZ := v -> (
      if not all(v,i -> class i === ZZ) then error "expected list of integers";
      )
 
-homogCheck := (f, v, wts) -> (
-    if ring f =!= ring v then error "homogenization requires variable in the same ring";
-    listZ wts;
-    -- if # wts != numgens ring f then error "homogenization weight vector has incorrect length";
-    i := index v;
-    w := wts#i;
-    if not all(wts, a -> a%w == 0) then error "weight of homogenization variable doesn't divide the others";
-    i)
+homogCheck := (R, f, v, wts) -> (
+     if R =!= ring v then error "homogenization requires variable in the same ring";
+     listZ wts;
+     if degreeLength R =!= 1 then error "homogenization requires degrees of length 1";
+     -- if # wts != numgens ring f then error "homogenization weight vector has incorrect length";
+     i := index v;
+     w := wts#i;
+     if not all(wts, a -> a%w == 0) then error "weight of homogenization variable doesn't divide the others";
+     i)
 
 homogenize(RingElement, RingElement, List) := RingElement => (f,v,wts) -> (
      R := ring f;
-     wts = flatten wts;
-     i := homogCheck(f,v,wts);
+     wts = splice wts;
+     i := homogCheck(R,f,v,wts);
      new R from rawHomogenize(raw f, i, wts))
 
 homogenize(Matrix, RingElement, List) := Matrix => (f,v,wts) -> (
      R := ring f;
-     wts = flatten wts;
-     wts = apply(wts, i -> if instance(i,InfiniteNumber) then 0 else i);
-     i := homogCheck(f,v,wts);
+     wts = splice wts;
+     -- why did we have this?
+     -- wts = apply(wts, i -> if instance(i,InfiniteNumber) then 0 else i);
+     i := homogCheck(R,f,v,wts);
      if debugLevel > 0 then << (new FunctionApplication from {rawHomogenize, (f.RawMatrix, index v, wts)}) << endl;
      map(target f, source f, rawHomogenize(f.RawMatrix, i, wts)))
 
-homogenize(Matrix, RingElement) := Matrix => (f,n) -> homogenize(f,n,apply(generators(ring f, CoefficientRing=>ZZ), degree))
+homogenize(Matrix, RingElement) := Matrix => (f,n) -> (
+     R := ring f;
+     if degreeLength R =!= 1 then error "homogenization requires degrees of length 1";
+     wts := apply(generators(R, CoefficientRing=>ZZ), x -> first degree x);
+     homogenize(f,n,wts))
 
 homogenize(Module,RingElement) := Module => (M,z) -> (
      if isFreeModule M then M

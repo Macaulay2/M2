@@ -77,8 +77,8 @@ static void init_seeds() {
      factoryseed(0);		// factory (which uses NTL, as we've compiled it)
 }
 
-CanonicalForm gfgenFac;
-const RingElement *gfgenM2;
+CanonicalForm algebraicElement_Fac;
+const RingElement *algebraicElement_M2;
 
 struct enter_factory { 
   enum factoryCoeffMode mode;
@@ -249,12 +249,13 @@ static const RingElement * convertToM2(const PolynomialRing *R, CanonicalForm h)
 	  }
 	  else if (h.inFF()) return RingElement::make_raw(R, R->from_int(h.intval()));
 	  else if (h.inExtension()) {
+	       assert( algebraicElement_M2 != NULL );
 	       ring_elem result = R->from_int(0);
 	       for (int j = h.taildegree(); j <= h.degree(); j++) {
 		 const RingElement *r = convertToM2(R, h[j]);
 		 if (error()) return RingElement::make_raw(R,R->one());
 		 ring_elem r1 = r->get_value();
-		 ring_elem v = gfgenM2->get_value();
+		 ring_elem v = algebraicElement_M2->get_value();
 		 v = R->power(v,j);
 		 r1 = R->mult(r1,v);
 		 R->add_to(result,r1);
@@ -329,7 +330,7 @@ static CanonicalForm convertToFactory(const mpz_ptr p) {
 
 static CanonicalForm convertToFactory(const RingElement &g, bool inExtension);
 
-static CanonicalForm convertToFactory(const ring_elem &q, const GF *k) { // use gfgenFac for converting this galois field element
+static CanonicalForm convertToFactory(const ring_elem &q, const GF *k) { // use algebraicElement_Fac for converting this galois field element
   const PolynomialRing *A = k->originalR();
   RingElement *g = RingElement::make_raw(A,k->get_rep(q));
   intarray vp;
@@ -341,7 +342,7 @@ static CanonicalForm convertToFactory(const ring_elem &q, const GF *k) { // use 
     M->to_varpower(t->monom,vp);
     CanonicalForm m = CanonicalForm(Zn->to_int(t->coeff));
     for (index_varpower l = vp.raw(); l.valid(); ++l)
-      m *= power( gfgenFac, l.exponent() );
+      m *= power( algebraicElement_Fac, l.exponent() );
     f += m;
   }
   return f;
@@ -383,7 +384,7 @@ static CanonicalForm convertToFactory(const RingElement &g,bool inExtension) {
 #                       endif
 				    l.var()
 	     ;
-	   m *= power( index == 1 && inExtension ? gfgenFac : Variable(index), l.exponent() );
+	   m *= power( index == 1 && inExtension ? algebraicElement_Fac : Variable(index), l.exponent() );
 	 }
        f += m;
      }
@@ -401,6 +402,7 @@ void displayCF(PolynomialRing *R, const CanonicalForm &h) // for debugging
 const RingElementOrNull *rawGCDRingElement(const RingElement *f, const RingElement *g,
 					   const RingElement *mipo, const M2_bool inExtension)
 {
+  cerr << "--entering gcd()" << endl;
   const RingElement *ret = NULL;
   const PolynomialRing *P = f->get_ring()->cast_to_PolynomialRing();
   const PolynomialRing *P2 = g->get_ring()->cast_to_PolynomialRing();
@@ -414,19 +416,21 @@ const RingElementOrNull *rawGCDRingElement(const RingElement *f, const RingEleme
     }
   {
     struct enter_factory foo(P);
-    if (foo.mode == modeError) return 0;
+    if (foo.mode == modeError) { algebraicElement_M2 = NULL; return 0; }
     if (foo.mode == modeGF) {
       assert( ! inExtension );
-      gfgenFac = rootOf(convertToFactory(*foo.gf->get_minimal_poly(),inExtension),'a');
-      (RingElement::make_raw(P->Ncoeffs()->cast_to_GF(), foo.gf->var(0)))->promote(P,gfgenM2);
+      algebraicElement_Fac = rootOf(convertToFactory(*foo.gf->get_minimal_poly(),inExtension),'a');
+      {
+	struct enter_M2 bar;
+	(RingElement::make_raw(P->Ncoeffs()->cast_to_GF(), foo.gf->var(0)))->promote(P,algebraicElement_M2); // sets algebraicElement_M2
+      }
     }
-    cerr << "--entering gcd()" << endl;
     if (inExtension) {
       CanonicalForm minp = convertToFactory(*mipo,false);
       cerr << "--mipo = " << minp << endl;
-      gfgenFac = rootOf(minp,'a');
-      cerr << "--a = " << gfgenFac << endl;
-      cerr << "--a.level() = " << gfgenFac.level() << endl;
+      algebraicElement_Fac = rootOf(minp,'a');
+      cerr << "--a = " << algebraicElement_Fac << endl;
+      cerr << "--a.level() = " << algebraicElement_Fac.level() << endl;
     }
     CanonicalForm p = convertToFactory(*f,inExtension);
     cerr << "--p = " << p << endl;
@@ -434,13 +438,19 @@ const RingElementOrNull *rawGCDRingElement(const RingElement *f, const RingEleme
     cerr << "--q = " << q << endl;
     CanonicalForm h = gcd(p,q);
     cerr << "--gcd = " << h << endl;
+    if (inExtension) {
+      assert( foo.mode != modeGF );
+      struct enter_M2 bar;
+      algebraicElement_M2 = RingElement::make_raw(P,P->var(P->n_vars()-1)); // the algebraic generator is always the last variable in M2, the first one in factory
+    }
     ret = convertToM2(P,h);
-    if (error()) return NULL;
+    if (error()) { algebraicElement_M2 = NULL ; return NULL; }
   }
   ring_elem a = P->getNumeratorRing()->preferred_associate_divisor(ret->get_value()); // an element in the coeff ring
   ring_elem b = P->getCoefficients()->invert(a);
   ring_elem r = ret->get_value();
   P->mult_coeff_to(b, r);
+  algebraicElement_M2 = NULL ; 
   return RingElement::make_raw(P,r);
 }
 
