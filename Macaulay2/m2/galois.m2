@@ -112,9 +112,15 @@ GF(Ring) := GaloisField => opts -> (S) -> (
 	  var = S.generatorSymbols#0;
 	  );
      d := p^n-1;
-     F := if d < opts.LengthLimit
-     then new GaloisField from rawGaloisField raw primitiveElement
-     else new GaloisField from raw S;
+     if d < opts.LengthLimit
+     then (
+	  F := new GaloisField from rawGaloisField raw primitiveElement;
+     	  F.degreeLength = 0;
+	  )
+     else (
+	  F = new GaloisField from raw S;
+     	  F.degreeLength = degreeLength S;
+	  );
      F.PrimitiveElement = primitiveElement;
      F.isBasic = true;
      toString F := h -> toString expression h;
@@ -126,7 +132,6 @@ GF(Ring) := GaloisField => opts -> (S) -> (
      toField F;
      F.isCommutative = true;
      expression F := t -> expression lift(t, S);
-     F.degreeLength = 0;
      F.char = p;
      F.degree = n;
      F.order = p^n;
