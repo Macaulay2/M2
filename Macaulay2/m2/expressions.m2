@@ -258,6 +258,11 @@ Power.synonym = "power expression"
 Power#operator = "^"
 value' Power := (x) -> (value' x#0) ^ (value' x#1)
 
+Colon = new HeaderType of Expression
+Colon.synonym = "colon expression"
+Colon#operator = ":"
+value' Colon := (x) -> (value' x#0) : (value' x#1)
+
 Subscript = new HeaderType of Expression
 Subscript.synonym = "subscript expression"
 Subscript#operator = "_"
@@ -411,6 +416,13 @@ Expression _ Holder     := (x,y) -> Subscript{x,y#0}
 Holder     _ Holder     := (x,y) -> Subscript{x#0,y#0}
 Expression _ Thing      := (x,y) -> x _ (expression y)
      Thing _ Expression := (x,y) -> (expression x) _ y
+
+Expression : Expression := (x,y) -> Colon{x,y}
+Holder     : Expression := (x,y) -> Colon{x#0,y}
+Expression     : Holder := (x,y) -> Colon{x,y#0}
+Holder         : Holder := (x,y) -> Colon{x#0,y#0}
+Thing      : Expression := (x,y) -> Colon{x,y}
+Expression     :  Thing := (x,y) -> Colon{x,y}
 -----------------------------------------------------------------------------
 value' Holder := x -> x#0
 value' OneExpression := v -> 1
@@ -549,9 +561,10 @@ texMath Adjacent := texMath FunctionApplication := m -> (
 	      precedence Sequence := x -> if #x === 0 then 70 else if #x === 1 then 40 else 70
      	  precedence Parenthesize := x ->  0
 	      precedence Equation := x -> 10
-	     precedence HashTable := x -> 20		    -- some things might print out as symbols though...
-		 precedence Thing := x -> 20
-		   precedence Sum := x -> 20
+	     precedence HashTable := x -> 15		    -- some things might print out as symbols though...
+		 precedence Thing := x -> 15
+		 precedence Colon := x -> 20
+		   precedence Sum := x -> 25
 	       precedence Product := x -> 30
  precedence NonAssociativeProduct := x -> 30
 					  MinusPrecedence := 30
@@ -768,6 +781,9 @@ net MatrixExpression := x -> (
 	  side := "|" ^ (height m, depth m);
 	  horizontalJoin(side," ",m," ",side)))
 html MatrixExpression := x -> html TABLE toList x
+
+net Colon := x -> net x#0 | ":" | net x#1
+toString Colon := x -> toString x#0 | ":" | toString x#1
 
 -----------------------------------------------------------------------------
 -- tex stuff

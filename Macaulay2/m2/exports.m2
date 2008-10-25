@@ -141,6 +141,7 @@ export {
 	symbol CoefficientRing,
 	symbol Cofactor,
 	symbol CoherentSheaf,
+	symbol Colon,
 	symbol Command,
 	symbol CompiledFunction,
 	symbol CompiledFunctionBody,
