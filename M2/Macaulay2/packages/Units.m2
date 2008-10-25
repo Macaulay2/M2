@@ -1,6 +1,16 @@
 k = RR -- change RR to CC later after the bug is fixed
-CGS = k[symbol cm,symbol g,symbol s, Inverses=>true, MonomialOrder => Lex]
-MKS = k[symbol m,symbol kg,symbol s, Inverses=>true, MonomialOrder => Lex]
+common := (
+     symbol s,
+     symbol A,
+     symbol cd,
+     symbol mol,
+     symbol K,
+     symbol bit,
+     symbol wholenote,
+     symbol US$
+     )
+CGS = k[symbol cm,symbol g,common, Inverses=>true, MonomialOrder => Lex]
+MKS = k[symbol m,symbol kg,common, Inverses=>true, MonomialOrder => Lex]
 MKS Number := Number MKS := times
 CGS Number := Number CGS := times
 
@@ -22,8 +32,8 @@ MKS.use = MKS -> (
      units();
      )
 
-use CGS ; toCGS = map(CGS,MKS,{m,kg,s})
-use MKS ; toMKS = map(MKS,CGS,{cm,g,s})
+use CGS ; toCGS = map(CGS,MKS,{m,kg}|drop(gens CGS,2))
+use MKS ; toMKS = map(MKS,CGS,{cm,g}|drop(gens MKS,2))
 
 units = x -> (
      second = s;
