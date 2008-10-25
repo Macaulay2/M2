@@ -382,6 +382,7 @@ export {
 	symbol QQ,
 	symbol Quotient,
 	symbol QuotientRing,
+	symbol RLE,
 	symbol RR,
 	symbol RealField,
 	symbol RemakeAllDocumentation,
