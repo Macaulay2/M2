@@ -36,7 +36,7 @@ degrees GeneralOrderedMonoid := M -> M.Options.Degrees
 raw GeneralOrderedMonoid := M -> M.RawMonoid
 
 rle = method()
-rle List := x -> rle \ RLE x
+rle List := x -> apply(RLE x, y -> if instance(y,Holder) then Holder{rle y#0} else y)
 rle Option := x -> x#0 => rle x#1
 rle Thing := identity
 
