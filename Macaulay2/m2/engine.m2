@@ -122,8 +122,6 @@ optionFixes := hashTable {
      
 ordOption := o -> if numvars > varcount then fixup1 ( o => numvars - varcount )
 symbolFixes := hashTable {
-     -- Component has no other occurence in our code, so this must be something we never implemented:
-     -- Position => o -> Component => null,
      GLex => o -> (Weights => toList (numvars:1), fixup1 Lex),
      RevLex => ordOption,
      GRevLex => ordOption,
