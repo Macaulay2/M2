@@ -35,18 +35,15 @@ options GeneralOrderedMonoid := M -> M.Options
 degrees GeneralOrderedMonoid := M -> M.Options.Degrees
 raw GeneralOrderedMonoid := M -> M.RawMonoid
 
-monoidParts := (M) -> (
+monoidParts = (M) -> (
      O := monoidDefaults;
-     -- o := M.Options;
-     o := M#"original options";
-     join(
-	  if M.?generatorExpressions then M.generatorExpressions else {},
-	  if any(o.Degrees, i -> i =!= {1}) then {Degrees => o.Degrees} else {},
-	  if o.Heft =!= {1} then {Heft => o.Heft} else {},
-	  select(
-	       { MonomialOrder, MonomialSize, WeylAlgebra, SkewCommutative, Inverses }
-	       / (key -> if o#key =!= O#key then key => o#key),
-	       i -> i =!= null)))
+     o := M#"original options";	-- if we used M.Options we'd run into lots of long lists as in GRevLex => {1,1,1,1,1,1,1}
+     o = M.Options;
+     nonnull splice (
+	  if M.?generatorExpressions then toSequence M.generatorExpressions,
+	  if any(o.Degrees, i -> i =!= {1}) then Degrees => o.Degrees,
+	  if o.Heft =!= {1} then Heft => o.Heft,
+	  ( MonomialOrder, MonomialSize, WeylAlgebra, SkewCommutative, Inverses ) / (key -> if o#?key and o#key =!= O#key then key => o#key)))
 
 expression GeneralOrderedMonoid := M -> (
      T := if (options M).Local === true then List else Array;
@@ -209,7 +206,7 @@ makeit1 := (opts) -> (
      M.RawMonomialOrdering = rawMO;
      M#"raw creation log" = new Bag from {logMO};
      opts = new MutableHashTable from opts;
-     opts.MonomialOrder = MOoptsint; -- these are the options given to rawMonomialOrdering, except Tiny and Small aren't there yet...
+     opts.MonomialOrder = new VerticalList from MOoptsint; -- these are the options given to rawMonomialOrdering, except Tiny and Small aren't there yet and GRevLex=>n hasn't been expanded
      M#"options" = MOopts; -- these are exactly the arguments given to rawMonomialOrdering
      remove(opts, MonomialSize);
      remove(opts, Weights);

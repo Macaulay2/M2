@@ -70,7 +70,7 @@ int main () {
   // crashing seeds: 0 2 3 4 5 6 7 8 9 10 11 12
   // non-crashing seeds: 1 13
 
-#if 1
+#if 0
 
   On( SW_RATIONAL );
   setCharacteristic(101);
@@ -92,7 +92,11 @@ int main () {
   Variable x('x'), y('y');
   CanonicalForm mipo = y*y - 2;
   Variable a = rootOf( mipo, 'a' );
+  cout << "a.level() = " << a.level() << endl ;
   cout << "a^2     = " << a*a << endl;
+  Variable b = rootOf( mipo, 'b' );
+  cout << "b.level() = " << b.level() << endl ;
+  cout << "b^2     = " << b*b << endl;
   CanonicalForm f = (x+a)*(x+a+1)*(x+a+1)*(x+a+34);
   CanonicalForm g = (x+a)*(x+a+1)*(x+a+3)*(x+a-34);
   CanonicalForm k = (x+a)*(x+a+1);
@@ -101,13 +105,8 @@ int main () {
   CanonicalForm h = gcd(f,g);
   cout << "gcd(f,g) = " << h << " =? " << k << endl;
   cout << "f = " << f << endl;
-#if 1
-  CFFList fac2 = factorize(f,a);
+  CFFList fac2 = factorize(f);
   cout << "factorize(f,a) = " << fac2 << endl;
-#else
-  CFFList fac2 = Factorize(f,mipo);
-  cout << "Factorize(f,mipo) = " << fac2 << endl;
-#endif
 
 #endif
 
@@ -117,5 +116,5 @@ int main () {
 #include <templates/ftmpl_inst.cc>
 
 // Local Variables:
-// compile-command: "g++ -g -I../../../BUILD/Linux-i686/debug/libraries/final/usr/lib/Macaulay2/Core/include -L../../../BUILD/Linux-i686/debug/libraries/final/usr/lib/Macaulay2/Core/lib -x c++ 0-factor -lfac -lcf -lcfmem -lntl -lgmp -o 0-factor.exe && (nm -o --demangle 0-factor.exe | grep new)
+// compile-command: "g++ -g -I../../../BUILD/Linux-i686/debug/libraries/final/usr/lib/Macaulay2/Core/include -L../../../BUILD/Linux-i686/debug/libraries/final/usr/lib/Macaulay2/Core/lib -x c++ 0-factor -lfac -lcf -lcfmem -lntl -lgmp -o 0-factor.exe && (nm -o --demangle 0-factor.exe | grep new) && ./0-factor.exe"
 // End:
