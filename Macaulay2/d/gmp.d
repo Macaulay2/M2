@@ -1678,13 +1678,21 @@ export format(
      i  := if abb then "i" else "ii";
      x := format(s,ac,l,t,sep,z.re);
      y := format(s,ac,l,t,sep,z.im);
-     if y.1 === "0" then return concatenate(x);
+     if y.1 === "0" then return if x.1 === "0" then "0" else concatenate(x);
      if y.1 === "1" then (y.1 = ""; star = "");
      if x.1 === "0" then return concatenate(array(string)(y.0,y.1,star,i));
      if y.0 === "" then y.0 = "+";
      lp := "";
      rp := "";
-     if paren && x.0 === "-" then ( lp = "-("; rp = ")"; x.0 = ""; if y.0 .0 == '-' then y.0 = "+" else y.0 = "-"; );
+     if paren then (
+	  if x.0 === "-" 
+	  then (
+	       x.0 = "";
+	       lp = "-("; 
+	       if y.0 .0 == '-' then y.0 = "+" else y.0 = "-")
+	  else lp = "(";
+	  rp = ")"; 
+	  );
      concatenate(array(string)(lp,x.0,x.1,y.0,y.1,star,i,rp)));
 
 export tostringCC(z:CC):string := (
