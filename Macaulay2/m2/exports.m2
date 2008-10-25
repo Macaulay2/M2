@@ -179,6 +179,7 @@ export {
 	symbol Divide,
 	symbol DivideConquer,
 	symbol DocumentTag,
+	symbol DotDot,
 	symbol Down,
 	symbol EM,					    -- cryptic
 	symbol EXAMPLE,
