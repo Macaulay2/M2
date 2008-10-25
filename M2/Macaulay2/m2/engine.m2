@@ -60,18 +60,21 @@ getdegs := (m,n) -> (
      )
 numvars := 0						    -- re-initialized below each time
 varcount := 0						    -- re-initialized below each time
-MonSize := 32						    -- re-initialized below each time
+MonSize := 0						    -- re-initialized below each time
 invert := false	    					    -- re-initialized below each time
 bump := n -> varcount = varcount + n
 
 processMonSize := monsize -> (
-     if monsize =!= null then (
+     oldMonSize := MonSize;
+     monsize === null or (
 	  if class monsize =!= ZZ then error "expected an integer as MonomialSize option";
 	  if monsize <= 8 then MonSize = 8
 	  else if monsize <= 16 then MonSize = 16
-	  else MonSize = 32))
+	  else MonSize = 32;
+	  MonSize != oldMonSize ) )
 
 optionSizes := hashTable {
+     -- this table omits the default of 32 on purpose, so that MonSize=0 will work out.
      (Lex,8) => LexTiny,
      (Lex,16) => LexSmall,
      (GRevLex,8) => GRevLexTiny,
@@ -100,15 +103,15 @@ intOption := (key,n) -> (
      key => n)
 grevOption := (key,v) -> (
      key = fix1 key;
-     if class v === ZZ then v = getdegs ( varcount, varcount + v - 1 );
-     if not isListOfIntegers(v) then error "expected an integer or a list of integers";
-     -- scan(v, i -> if i <= 0 then error "GRevLex expected positive weights"); -- why check this?
+     if instance(v,ZZ) 
+     then v = getdegs ( varcount, varcount + v - 1 )
+     else if not isListOfIntegers(v) then error "expected an integer or a list of integers";
      bump(#v);
      key => v)
 optionFixes := hashTable {
      Weights => (key,val) -> key => val,
      Position => (key,val) -> key => val,
-     MonomialSize => (key,val) -> (processMonSize val; key => val),
+     MonomialSize => (key,val) -> if processMonSize val then key => val,
      Lex => intOption,
      RevLex => intOption,
      GroupLex => intOption,
@@ -140,8 +143,10 @@ fixup1 Option := o -> (
      if optionFixes#?key then optionFixes#key (key,val)
      else error ("unrecognized ordering option keyword : " | toString key)
      )
-
-intOption2 := (key,n) -> fixSize key => n
+intOption2 := (key,n) -> (
+     bump n;
+     fixSize key => n
+     )
 grevOption2 := (key,v) -> fixSize key => v
 optionFixes2 := hashTable {
      MonomialSize => (key,val) -> (processMonSize val; null),
@@ -168,22 +173,25 @@ makeMonomialOrdering = (monsize,inverses,nvars,degs,weights,ordering) -> (
      --    the *separate* Weights option.  Could be an empty list.
      -- 'ordering' is a list of ordering options, e.g., { Lex => 4, GRevLex => 4 }
      --    If it's not a list, we'll make a list of one element from it.
+     if monsize === null then monsize = null;
      ordering = {MonomialSize => monsize, ordering};
      invert = inverses;
      if not isListOfIntegers degs then error "expected a list of integers";
      deglist = degs;
      varcount = 0;
+     MonSize = 0;
      numvars = nvars;
      weights = splice \ splice toList weights;
      if isListOfListsOfIntegers weights then null
      else if isListOfIntegers weights then weights = {weights}
      else error "Weights: expected a list of integers or a list of lists of small integers";
      scan(weights, wt -> if # wt != nvars then error("Weights: expected weight vector of length ",toString nvars," but got ",toString (#wt)));
-     if class ordering =!= List then ordering = {ordering};
      ordering = join(weights / (i -> Weights => i), ordering);
      t':= toList nonnull splice fixup1 ordering;
      if varcount < nvars then t' = append(t',fixup1(GRevLex => nvars - varcount));
      if not any(t', x -> class x === Option and x#0 === Position) then t' = append(t', Position => Up);
+     MonSize = 0;
+     varcount = 0;
      t := toList nonnull fixup2 t';
      logmo := new FunctionApplication from {rawMonomialOrdering,t};
      (t,t',value logmo, logmo))

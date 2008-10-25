@@ -1665,7 +1665,8 @@ export format(
      l:int,					   -- max number leading zeroes
      t:int,				    -- max number extra trailing digits
      sep:string,		     -- separator between mantissa and exponent
-     net:bool,				  -- whether to abbreviate "*ii" to "i"
+     abb:bool,				  -- whether to abbreviate "*ii" to "i"
+     paren:bool,    -- whether to parenthesize a sum and prepend a possible '-'
      z:CC						-- the number to format
      ) : string := (
      if isnan0(z.re) || isnan0(z.im) then return "NotANumber";
@@ -1677,20 +1678,27 @@ export format(
      if x === "-0" then x = "0";
      if y === "0" then return x;
      if x === "0" then (
-	  if y === "1" then return if net then "i" else "ii";
-	  if y === "-1" then return if net then "-i" else "-ii";
-	  return y + if net then "i" else "*ii";
+	  if y === "1" then return if abb then "i" else "ii";
+	  if y === "-1" then return if abb then "-i" else "-ii";
+	  return y + if abb then "i" else "*ii";
 	  );
-     if y === "-1" then return x + if net then "-i" else "-ii";
-     if y ===  "1" then return x + if net then "+i" else "+ii";
-     if y.0 == '-' then return concatenate(array(string)(x,y,if net then "i" else "*ii"));
-     concatenate(array(string)(x,"+",y,if net then "i" else "*ii")));
+     sgn := paren && x.0 == '-';
+     if sgn then (
+	  x = substring(x,
+	  );
+     if y === "-1" then return x + if abb then "-i" else "-ii";
+     if y ===  "1" then return x + if abb then "+i" else "+ii";
+     if y.0 == '-' then return concatenate(array(string)(x,y,if abb then "i" else "*ii"));
+     concatenate(array(string)(x,"+",y,if abb then "i" else "*ii")));
 
 export tostringCC(z:CC):string := (
-     format(printingPrecision,printingAccuracy,printingLeadLimit,printingTrailLimit,printingSeparator,false,z)
+     format(printingPrecision,printingAccuracy,printingLeadLimit,printingTrailLimit,printingSeparator,false,false,z)
      );
 export tonetCC(z:CC):string := (
-     format(printingPrecision,printingAccuracy,printingLeadLimit,printingTrailLimit,printingSeparator,true,z)
+     format(printingPrecision,printingAccuracy,printingLeadLimit,printingTrailLimit,printingSeparator,true,false,z)
+     );
+export tonetCCparen(z:CC):string := (
+     format(printingPrecision,printingAccuracy,printingLeadLimit,printingTrailLimit,printingSeparator,true,true,z)
      );
 
 export toExternalString(z:CC):string := concatenate(array(string)(
