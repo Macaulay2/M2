@@ -50,7 +50,7 @@ Expression#operator = ""
 value' = method(Dispatch => Thing)
 value' Sequence := x -> apply(x,value')
 value' Thing := identity
-value' Symbol := value					    -- do we really want this?
+-- value' Symbol := value					    -- do we really want this? try it without
 value Expression := value'
 
 Holder = new WrapperType of Expression
@@ -263,6 +263,11 @@ Colon.synonym = "colon expression"
 Colon#operator = ":"
 value' Colon := (x) -> (value' x#0) : (value' x#1)
 
+DotDot = new HeaderType of Expression
+DotDot.synonym = "dot-dot expression"
+DotDot#operator = ".."
+value' DotDot := (x) -> (value' x#0) .. (value' x#1)
+
 Subscript = new HeaderType of Expression
 Subscript.synonym = "subscript expression"
 Subscript#operator = "_"
@@ -423,6 +428,14 @@ Expression     : Holder := (x,y) -> Colon{x,y#0}
 Holder         : Holder := (x,y) -> Colon{x#0,y#0}
 Thing      : Expression := (x,y) -> Colon{x,y}
 Expression     :  Thing := (x,y) -> Colon{x,y}
+
+Expression .. Expression := (x,y) -> DotDot{x,y}
+Holder     .. Expression := (x,y) -> DotDot{x#0,y}
+Expression     .. Holder := (x,y) -> DotDot{x,y#0}
+Holder         .. Holder := (x,y) -> DotDot{x#0,y#0}
+Thing      .. Expression := (x,y) -> DotDot{x,y}
+Expression     ..  Thing := (x,y) -> DotDot{x,y}
+
 -----------------------------------------------------------------------------
 value' Holder := x -> x#0
 value' OneExpression := v -> 1
@@ -564,6 +577,7 @@ texMath Adjacent := texMath FunctionApplication := m -> (
 	     precedence HashTable := x -> 15		    -- some things might print out as symbols though...
 		 precedence Thing := x -> 15
 		 precedence Colon := x -> 20
+		precedence DotDot := x -> 22
 		   precedence Sum := x -> 25
 	       precedence Product := x -> 30
  precedence NonAssociativeProduct := x -> 30
@@ -784,6 +798,9 @@ html MatrixExpression := x -> html TABLE toList x
 
 net Colon := x -> net x#0 | ":" | net x#1
 toString Colon := x -> toString x#0 | ":" | toString x#1
+
+net DotDot := x -> net x#0 | ".." | net x#1
+toString DotDot := x -> toString x#0 | ".." | toString x#1
 
 -----------------------------------------------------------------------------
 -- tex stuff

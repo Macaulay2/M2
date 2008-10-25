@@ -1,6 +1,6 @@
 --		Copyright 1993-1999 by Daniel R. Grayson
 
-indeterminates :=  new MutableHashTable
+indeterminates =  new MutableHashTable
 
 indices := new MutableHashTable
 
@@ -56,6 +56,34 @@ Thing .. Thing := (a,z) -> (
      then value \ (aa .. zz)
      else aa .. zz
      )
+
+
+succS = new MutableHashTable;
+for i from 0 to 50 do succS#(vars i) = vars(i+1)
+succ = method()
+succ(ZZ,ZZ) := (x,y) -> x+1 === y
+succ(Symbol,Symbol) := (x,y) -> succS#?x and succS#x === y
+succ(IndexedVariable,IndexedVariable) := (x,y) -> x#0 === y#0 and succ(x#1,y#1)
+succ(Thing,Thing) := x -> false
+RLE = method(Dispatch => Thing)
+RLE VisibleList := x -> (
+     if #x === 0 then return x;
+     i0 := null;
+     oi := symbol oi;
+     m := 0;
+     dup := null;
+     for i in append(x,symbol x) list 
+     if i === oi and dup =!= false then (dup = true; m = m+1; continue)
+     else if succ(oi,i) and dup =!= true then (
+	  if dup === null then i0 = oi;
+	  dup = false; 
+	  oi = i;
+	  m = m+1; 
+	  continue)
+     else first(
+	  if oi === symbol oi then (oi = i; m = 1 ; continue) else
+	  if m === 1 then hold oi else if dup === true then Colon{m,oi} else DotDot{i0,oi},
+	  (dup = null; oi = i; m = 1)))
 
 -- Local Variables:
 -- compile-command: "make -C $M2BUILDDIR/Macaulay2/m2 "

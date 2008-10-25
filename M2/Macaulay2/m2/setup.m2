@@ -35,6 +35,7 @@ sortByName = x -> (sortBy toString) x
 sortByHash = sortBy hash
 
 -- let's get these reserved variables defined all in the same spot
+
 flagLookup a; flagLookup b; flagLookup c; flagLookup d; flagLookup e;
 flagLookup f; flagLookup g; flagLookup h; flagLookup i; flagLookup j;
 flagLookup k; flagLookup l; flagLookup m; flagLookup n; flagLookup o;
