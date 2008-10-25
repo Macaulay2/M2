@@ -274,7 +274,7 @@ processDegrees := (degs,degrk,nvars) -> (
      else (
      	  if not instance(degs,List) then error "Degrees: expected a list";
      	  degs = apply(splice degs, d -> if class d === ZZ then {d} else d);
-     	  scan(degs, d -> if not (class d === List and all(d, i -> class i === ZZ)) then error "expected degree to be an integer or list of integers");
+     	  scan(degs, d -> if not (instance(d,List) and all(d, i -> instance(i,ZZ))) then error "expected degree to be an integer or list of integers");
      	  if degrk === null then (
 	       if not same(length \ degs) then error "expected degrees all of the same rank";
  	       degrk = if #degs > 0 then #degs#0 else 0;
@@ -351,7 +351,7 @@ makeMonoid := (opts) -> (
      -- if length unique opts.Variables < length opts.Variables then error "at least one variable listed twice";
 
      (degs,degrk) := processDegrees( opts.Degrees, opts.DegreeRank, length opts.Variables );
-     opts.Degrees = degs;
+     opts.Degrees = apply(degs,d->VerticalList d);
      opts.DegreeRank = degrk;
 
      if opts.Local === true and opts.Weights === {} then opts.Weights = toList ( #opts.Variables : -1 );

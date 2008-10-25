@@ -167,7 +167,7 @@ net VerticalList := x -> if #x === 0 then "{}" else (
      n := stack apply(x,net);
      h := height n;
      d := depth n;
-     horizontalJoin("{ "^(h,d), n, " }"^(h,d)))
+     horizontalJoin("{"^(h,d), n, "}"^(h,d)))
 net Array := x -> horizontalJoin deepSplice (
      "[",
      toSequence between(comma,apply(x,net)),
