@@ -35,15 +35,21 @@ options GeneralOrderedMonoid := M -> M.Options
 degrees GeneralOrderedMonoid := M -> M.Options.Degrees
 raw GeneralOrderedMonoid := M -> M.RawMonoid
 
+rle = method()
+rle List := x -> rle \ RLE x
+rle Option := x -> x#0 => rle x#1
+rle Thing := identity
+
 monoidParts = (M) -> (
      O := monoidDefaults;
      o := M#"original options";	-- if we used M.Options we'd run into lots of long lists as in GRevLex => {1,1,1,1,1,1,1}
      o = M.Options;
      nonnull splice (
-	  if M.?generatorExpressions then toSequence M.generatorExpressions,
-	  if any(o.Degrees, i -> i =!= {1}) then Degrees => o.Degrees,
+	  if M.?generatorExpressions then toSequence RLE M.generatorExpressions,
+	  if any(o.Degrees, i -> i =!= {1}) then Degrees => RLE if o.DegreeRank === 1 then flatten o.Degrees else o.Degrees,
 	  if o.Heft =!= {1} then Heft => o.Heft,
-	  ( MonomialOrder, MonomialSize, WeylAlgebra, SkewCommutative, Inverses ) / (key -> if o#?key and o#key =!= O#key then key => o#key)))
+	  MonomialOrder => rle o.MonomialOrder,
+	  ( MonomialSize, WeylAlgebra, SkewCommutative, Inverses ) / (key -> if o#?key and o#key =!= O#key then key => o#key)))
 
 expression GeneralOrderedMonoid := M -> (
      T := if (options M).Local === true then List else Array;
