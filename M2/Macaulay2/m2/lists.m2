@@ -166,6 +166,15 @@ commonest Tally := t -> (
      t = hashTable(join, apply(pairs t, (k,v) -> (v,{k})));
      if #t === 0 then {} else t#(max keys t))
 
+RLE = method()
+RLE VisibleList := x -> (
+     if #x === 0 then return x;
+     oi := x#0;
+     m := 0;
+     for i in append(x,symbol x) list 
+     if i === oi then (m = m+1; continue)
+     else first(if m === 1 then oi else Colon{m,oi}, (oi = i; m = 1)))
+
 -- Local Variables:
 -- compile-command: "make -C $M2BUILDDIR/Macaulay2/m2 "
 -- End:
