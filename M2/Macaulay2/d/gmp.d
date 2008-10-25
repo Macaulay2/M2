@@ -1547,10 +1547,10 @@ export format(
      t:int,				    -- max number extra trailing digits
      sep:string,		     -- separator between mantissa and exponent
      x:RR						-- the number to format
-     ) : string := (
+     ) : array(string) := (	   -- return: ("-","132.456") or ("","123.456")
      ng := sign0(x);
-     if isinf0(x) then return if ng then "-infinity" else "infinity";
-     if isnan0(x) then return if ng then "-NotANumber" else "NotANumber";
+     if isinf0(x) then return array(string)(if ng then "-" else "","infinity");
+     if isnan0(x) then return array(string)(if ng then "-" else "","NotANumber");
      meaningful := int(floor(precision0(x) / log2ten));
      if s == 0 || s > meaningful then s = meaningful; -- print at most the "meaningful" digits
      sgn := "";
@@ -1558,7 +1558,7 @@ export format(
 	  sgn = "-";
 	  x = -x;
 	  );
-     if x === 0 then return if ng then "-0" else "0";
+     if x === 0 then return array(string)(if ng then "-" else "","0");
      ex := long(0);
      mantissa := getstr(ex, base, s, x);
      nt := 0;
@@ -1596,7 +1596,7 @@ export format(
      manlen := length(mantissa);
      maxmanlen := ac-l+pt+ex;
      if ac != -1 && long(manlen) > maxmanlen then (
-	  if maxmanlen < 0 then return "0";
+	  if maxmanlen < 0 then return array(string)("","0");
 	  manlen = int(ac-l+pt+ex);
 	  if mantissa.manlen >= '5' then (		    -- round, at least in base 10
 	       while manlen > 0 do (
@@ -1610,18 +1610,20 @@ export format(
 		    mantissa = "1";
 		    manlen = 1;
 		    if l > 0 then l = l-1 else ex = ex + 1 ) ) );
-     if manlen == 0 then return "0";
-     concatenate(array(string)(
-	       sgn,
-	       if pt == 0 then "." else "",
-	       if l == 0 then "" else new string len l do provide '0',
-	       substr(mantissa,0,pt),
-	       if pt > 0 && pt < manlen then "." else "",
-	       substr(mantissa,pt,manlen-pt),
-	       new string len t do provide '0',
-	       if ex != long(0) then sep else "",
-	       if ex != long(0) then tostring(ex) else ""
-	       )));
+     if manlen == 0 then return array(string)("","0");
+     array(string)(
+	  sgn,
+	  concatenate(
+	       array(string)(
+		    if pt == 0 then "." else "",
+		    if l == 0 then "" else new string len l do provide '0',
+		    substr(mantissa,0,pt),
+		    if pt > 0 && pt < manlen then "." else "",
+		    substr(mantissa,pt,manlen-pt),
+		    new string len t do provide '0',
+		    if ex != long(0) then sep else "",
+		    if ex != long(0) then tostring(ex) else ""
+		    ))));
 
 export printingPrecision := 6;				    -- 0 indicates all
 export printingAccuracy := -1;				    -- -1 indicates all
@@ -1631,7 +1633,7 @@ export printingSeparator := "e";			    -- was "*10^"
 
 export tostringRR2(x:RR,printingAccuracy:int):string := (
      -- this can be used by the engine for printing matrices to a uniform precision
-     format(printingPrecision,printingAccuracy,printingLeadLimit,printingTrailLimit,printingSeparator,x)
+     concatenate(format(printingPrecision,printingAccuracy,printingLeadLimit,printingTrailLimit,printingSeparator,x))
      );
 
 export tostringRR(x:RR):string := tostringRR2(x,printingAccuracy);
@@ -1672,24 +1674,18 @@ export format(
      if isnan0(z.re) || isnan0(z.im) then return "NotANumber";
      if isinf0(z.re) || isinf0(z.im) then return "infinity";
      if s != 0 && ac == -1 && !isZero0(z.re) && !isZero0(z.im) then ac = s - int(floor(double(exponent(z))/log2ten));
+     star := if abb then ""  else "*" ;
+     i  := if abb then "i" else "ii";
      x := format(s,ac,l,t,sep,z.re);
      y := format(s,ac,l,t,sep,z.im);
-     if y === "-0" then y = "0";
-     if x === "-0" then x = "0";
-     if y === "0" then return x;
-     if x === "0" then (
-	  if y === "1" then return if abb then "i" else "ii";
-	  if y === "-1" then return if abb then "-i" else "-ii";
-	  return y + if abb then "i" else "*ii";
-	  );
-     sgn := paren && x.0 == '-';
-     if sgn then (
-	  x = substring(x,
-	  );
-     if y === "-1" then return x + if abb then "-i" else "-ii";
-     if y ===  "1" then return x + if abb then "+i" else "+ii";
-     if y.0 == '-' then return concatenate(array(string)(x,y,if abb then "i" else "*ii"));
-     concatenate(array(string)(x,"+",y,if abb then "i" else "*ii")));
+     if y.1 === "0" then return concatenate(x);
+     if y.1 === "1" then (y.1 = ""; star = "");
+     if x.1 === "0" then return concatenate(array(string)(y.0,y.1,star,i));
+     if y.0 === "" then y.0 = "+";
+     lp := "";
+     rp := "";
+     if paren && x.0 === "-" then ( lp = "-("; rp = ")"; x.0 = ""; if y.0 .0 == '-' then y.0 = "+" else y.0 = "-"; );
+     concatenate(array(string)(lp,x.0,x.1,y.0,y.1,star,i,rp)));
 
 export tostringCC(z:CC):string := (
      format(printingPrecision,printingAccuracy,printingLeadLimit,printingTrailLimit,printingSeparator,false,false,z)

@@ -975,8 +975,8 @@ format(e:Expr):Expr := (
 	  is Nothing do nothing else return WrongArgZZ(4);
 	  if n > 5 then when args.4 is p:string do sep = p else return WrongArgString(5);
 	  when args.(n-1)
-	  is x:RR do Expr(format(s,ac,l,t,sep,x)) 
-	  is z:CC do Expr(format(s,ac,l,t,sep,false,z)) 
+	  is x:RR do Expr(concatenate(format(s,ac,l,t,sep,x))) 
+	  is z:CC do Expr(format(s,ac,l,t,sep,false,false,z))
 	  else WrongArgRR(n)
 	  )
      else WrongArg("string, or real number, integer, integer, integer, string"));
