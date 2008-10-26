@@ -131,9 +131,16 @@ symmetricAlgebra(Nothing,Nothing,Matrix) := RingMap => opts -> (T,S,f) -> symmet
 -----------------------------------------------------------------------------
 -- Copyright 2006 by Daniel R. Grayson
 
+coerce = method(Dispatch=>{Thing,Type})	-- this might be generally useful to the user, as the mathematical analogue of new...from...
+coerce(Thing,Thing) := first
+coerce(Ideal,Ring) := quotient @@ first
+coerce(Thing,Nothing) := x -> null			    -- avoid using this one, to save time earlier
+coerce(Ring,Ideal) := ideal @@ first			    -- avoid using this one, to save time earlier
+
 -- flattening rings (like (QQ[a,b]/a^3)[x,y]/y^6 --> QQ[a,b,x,y]/(a^3,y^6)
 flattenRing = method(
-     Options => {					    -- return value = (new ring, ring map to it, ring map from it)
+     Options => {
+     	  Result => {Ring,RingMap,RingMap},                 -- return value = (new ring, ring map to it, ring map from it)
 	  CoefficientRing => null			    -- the default is to take the latest (declared) field or basic ring in the list of base rings
 	  })
 
@@ -146,7 +153,7 @@ unable := () -> error "unable to flatten ring over given coefficient ring"
 triv := R -> ( 
      idR := map(R,R);
      idR.cache.inverse = idR;
-     (R,idR))
+     (R,idR,idR))
 
 flattenRing Ring := opts -> R -> (
      k := opts.CoefficientRing;
@@ -161,7 +168,7 @@ flattenRing GaloisField := opts -> (cacheValue (symbol flattenRing => opts)) (F 
      q' := map(F,A) * q;
      p'.cache.inverse = q';
      q'.cache.inverse = p';
-     (R,p')))
+     (R,p',q')))
 
 flattenRing PolynomialRing := opts -> (cacheValue (symbol flattenRing => opts)) (R -> (
      A := coefficientRing R;
@@ -181,13 +188,12 @@ flattenRing PolynomialRing := opts -> (cacheValue (symbol flattenRing => opts)) 
      inc := map(T,S,(vars T)_(toList (n2 .. n2 + n1 - 1)), DegreeMap => M2.Options.DegreeMap);
      I' := inc I;
      T' := T/I';
-     inc' := map(T',S', promote(matrix inc,T'), DegreeMap => M2.Options.DegreeMap);
      pr := map(T',T);
-     p' := map(T',R, (vars T')_(toList (0 .. n2-1)) | inc' matrix p);
+     p' := map(T',R, vars T');				    -- not well defined in some cases
      q' := map(R,T', vars R | promote(matrix q,R));
      p'.cache.inverse = q';
      q'.cache.inverse = p';
-     (T',p')))
+     (T',p',q')))
 
 flattenRing QuotientRing := opts -> (cacheValue (symbol flattenRing => opts)) (R -> (
      if instance(ambient R, PolynomialRing) and (
@@ -208,7 +214,7 @@ flattenRing QuotientRing := opts -> (cacheValue (symbol flattenRing => opts)) (R
      q' := map(R,S, promote( matrix q, R ));
      p'.cache.inverse = q';
      q'.cache.inverse = p';
-     (S,p')))
+     (S,p',q')))
 
 isWellDefined RingMap := f -> (
      R := source f;
