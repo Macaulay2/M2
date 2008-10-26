@@ -1,3 +1,8 @@
+rename them to *.m2-disabled
+add a target for testing them anyway
+
+--
+
 Date: Tue, 8 Apr 2008 00:27:33 +0200
 From: "Andries E. Brouwer" <Andries.Brouwer@cwi.nl>
 To: "Daniel R. Grayson" <dan@math.uiuc.edu>

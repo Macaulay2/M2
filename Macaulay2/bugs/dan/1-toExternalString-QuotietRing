@@ -1,0 +1,16 @@
+
+i11 : ZZ[a,b,SkewCommutative => true]/(a-b)
+
+      ZZ [a, b]
+o11 = ---------
+        a - b
+
+o11 : QuotientRing
+
+i12 : toExternalString oo
+
+o12 = (ZZ [a, b])/(a-b)				<=== would it be good to give more info about the numerator?  or not?
+
+i13 : toExternalString ambient ooo
+
+o13 = ZZ [a..b, Degrees => {2:1}, MonomialOrder => VerticalList{MonomialSize => 32, GRevLex => {2:1}, Position => Up}, SkewCommutative => {0, 1}]

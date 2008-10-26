@@ -1,0 +1,9 @@
+
+i1 : map(ZZ,ZZ)
+
+o1 = map(ZZ,ZZ,{})
+
+o1 : RingMap ZZ <--- ZZ
+
+i2 : toExternalString oo
+stdio:2:1:(1):[0]: anonymous mutable hash table cannot be converted to external string
