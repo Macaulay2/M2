@@ -1,3 +1,5 @@
+(it should the return the directory)
+
 the behavior disagrees with the documentation:
 
     ii5 : searchPath({"./"}, "..")

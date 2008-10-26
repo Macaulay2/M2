@@ -1,6 +1,28 @@
+change to priority 1
+
 get rid of unused two letter names!
 
-    BR CC DD dd DL do DT EM F4 gb GF HH hh HR id if ii in LI LU of on OO oo or
-    pi QQ RR SY TD TO to TR TT UL Up ZZ
+horrible ones:
 
-Also, hide all the html symbols in a separate package???
+    F4 SY 
+
+bad ones:
+
+    BR DD DL DT EM HR LI
+    TD TR
+
+questionable ones:
+
+    hh
+
+good ones: 
+
+    CC pi QQ RR dd OO
+    TO TT UL
+
+Also, hide all the html symbols in a separate package called HTML (rename HTML
+first) and have getPackage() and SimpleDoc open it with needsPackage()
+automatically.
+
+The Symbol SPACE Thing error message could look in the loaded packages to see
+if needsPackage is needed, and suggest it

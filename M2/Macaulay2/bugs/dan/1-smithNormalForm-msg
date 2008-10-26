@@ -1,0 +1,3 @@
+
+i10 : smithNormalForm (matrix {{1}}, ChangeMatrix => {true})
+stdio:10:1:(1):[0]: array index 1 out of bounds 0 .. 0

@@ -1,3 +1,10 @@
+remove 
+       Ring == Ring := (R,S) -> R === S
+and make
+    R == S mention ===
+(?)
+
+
 evaluate whether to make the changes at the bottom:
 
     > S = ZZ/101[x]
