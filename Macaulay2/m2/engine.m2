@@ -105,7 +105,10 @@ grevOption := (key,v) -> (
      key = fix1 key;
      if instance(v,ZZ) 
      then v = getdegs ( varcount, varcount + v - 1 )
-     else if not isListOfIntegers(v) then error "expected an integer or a list of integers";
+     else (
+	  if instance(v,List) then v = deepSplice v;
+	  if not isListOfIntegers(v) then error "expected an integer or a list of integers";
+	  );
      bump(#v);
      key => v)
 optionFixes := hashTable {
@@ -179,7 +182,7 @@ makeMonomialOrdering = (monsize,inverses,nvars,degs,weights,ordering) -> (
      varcount = 0;
      MonSize = 0;
      numvars = nvars;
-     weights = splice \ splice toList weights;
+     weights = deepSplice \ deepSplice toList weights;
      if isListOfListsOfIntegers weights then null
      else if isListOfIntegers weights then weights = {weights}
      else error "Weights: expected a list of integers or a list of lists of small integers";
@@ -265,7 +268,7 @@ ZZ _ RawFreeModule := (i,F) -> (
 
 RawRing ^ ZZ := (R,i) -> rawFreeModule(R,i)
 RawRing ^ List := (R,i) -> (
-     i = splice i;
+     i = deepSplice i;
      v := - flatten i;
      if #v === 0 then rawFreeModule(R, #i ) 
      else rawFreeModule(R,toSequence v ))
@@ -289,7 +292,7 @@ rawExtract(RawMatrix,ZZ,ZZ) :=
 rawExtract(RawMutableMatrix,ZZ,ZZ) := (m,r,c) -> rawMatrixEntry(m,r,c)
 
 rawExtract(RawMatrix,Sequence,Sequence) := 
-rawExtract(RawMutableMatrix,Sequence,Sequence) := (m,r,c) -> rawSubmatrix(m,splice r,splice c)
+rawExtract(RawMutableMatrix,Sequence,Sequence) := (m,r,c) -> rawSubmatrix(m,deepSplice r,deepSplice c)
 
 RawMatrix _ Sequence := 
 RawMutableMatrix _ Sequence := (m,rc) -> ((r,c) -> rawExtract(m,r,c)) rc
