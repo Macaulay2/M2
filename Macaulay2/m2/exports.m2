@@ -390,6 +390,7 @@ export {
 	symbol Repository,
 	symbol RerunExamples,
 	symbol Resolution,
+	symbol Result,
 	symbol RevLex,
 	symbol Reverse,
 	symbol Right,

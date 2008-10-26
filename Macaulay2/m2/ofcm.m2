@@ -46,7 +46,7 @@ monoidParts = (M) -> (
      o = M.Options;
      nonnull splice (
 	  if M.?generatorExpressions then toSequence RLE M.generatorExpressions,
-	  if any(o.Degrees, i -> i =!= {1}) then Degrees => RLE if o.DegreeRank === 1 then flatten o.Degrees else o.Degrees,
+	  Degrees => RLE if o.DegreeRank === 1 then flatten o.Degrees else (x -> VerticalList x) \ o.Degrees,
 	  if o.Heft =!= {1} then Heft => o.Heft,
 	  MonomialOrder => rle o.MonomialOrder,
 	  ( MonomialSize, WeylAlgebra, SkewCommutative, Inverses ) / (key -> if o#?key and o#key =!= O#key then key => o#key)))
@@ -357,7 +357,7 @@ makeMonoid := (opts) -> (
      -- if length unique opts.Variables < length opts.Variables then error "at least one variable listed twice";
 
      (degs,degrk) := processDegrees( opts.Degrees, opts.DegreeRank, length opts.Variables );
-     opts.Degrees = apply(degs,d->VerticalList d);
+     opts.Degrees = degs;
      opts.DegreeRank = degrk;
 
      if opts.Local === true and opts.Weights === {} then opts.Weights = toList ( #opts.Variables : -1 );
