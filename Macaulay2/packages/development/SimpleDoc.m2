@@ -41,6 +41,12 @@ singleString = (key, text) -> (
        error("expected single indented line after "|toString key);
      key => text#0)
 
+multiString = (key, text) -> (
+     if #text === 0 then
+       error("expected at least one indented line after "|toString key);
+     key => concatenate apply(text, t-> t | "\n")
+     )
+
 markup2 = (text, indents) -> (
      s := concatenate between(" ",text);
      sp := separateRegexp(///(^|[^\])(@)///, 2, s);
@@ -89,7 +95,7 @@ description = (text, indents) -> toSequence applySplit(DescriptionFcns, text, in
 KeyFcns = new HashTable from {
      "Key" => (text, indents) -> Key => apply(text,value),
      "SeeAlso" => (text, indents) -> SeeAlso => apply(text,value),
-     "Usage" => (text, indents) -> singleString(Usage, text),
+     "Usage" => (text, indents) -> multiString(Usage, text),
      "Headline" => (text, indents) -> singleString(Headline, text),
      "Description" => (text, indents) -> description(text,indents),
      "Caveat" => (text, indents) -> Caveat => {markup(text,indents)},
