@@ -608,7 +608,7 @@ texMath Adjacent := texMath FunctionApplication := m -> (
 Constant = new Type of BasicList
 
 	      precedence Constant := x -> prec symbol x
-		precedence Symbol := x -> prec symbol x
+		precedence Symbol := x -> strength1 symbol symbol
 		   precedence Net := x -> prec symbol x
 		precedence String := x -> prec symbol x
 	    precedence Expression := x -> prec symbol x
