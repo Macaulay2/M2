@@ -891,6 +891,47 @@ Matrix *Matrix::lead_term(int nparts) const
 // }
 // 
 #endif
+
+M2_arrayint_OrNull Matrix::support() const
+{
+  const PolynomialRing *R = get_ring()->cast_to_PolynomialRing();
+  if (R == 0)
+    {
+      ERROR("expected a polynomial ring");
+      return 0;
+    }
+  int n = R->n_vars();
+  int nsupp = 0;
+  int *exp = newarray_atomic(int,R->n_vars());
+  int *exp2 = newarray_atomic(int,R->n_vars());
+  for (int i=0; i<R->n_vars(); i++) exp[i] = exp2[i] = 0;
+  for (int j=0; j<n_cols(); j++)
+    for (vec v = elem(j); v != 0; v = v->next)
+      {
+	for (const Nterm *f = v->coeff; f != 0; f = f->next)
+	  {
+	    R->Nmonoms()->to_expvector(f->monom, exp2);
+	    for (int k=0; k<n; k++)
+	      if (exp2[k] != 0) {
+		if (exp[k] == 0) nsupp++;
+		exp[k] = 1;
+		if (nsupp == n) {
+		  f = 0; 
+		  v = 0;
+		}
+	      }
+	  }	
+      }
+  M2_arrayint result = makearrayint(nsupp);
+  int next = 0;
+  for (int i=0; i<n; i++)
+    if (exp[i] > 0)
+	result->array[next++] = i;
+  deletearray(exp);
+  deletearray(exp2);
+  return result;
+}
+
 Matrix *Matrix::top_coefficients(Matrix *&monoms) const
 {
   const PolynomialRing *R = get_ring()->cast_to_PolynomialRing();

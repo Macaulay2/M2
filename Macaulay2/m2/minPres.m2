@@ -9,6 +9,7 @@
 -- checkpoly, finishmap, monOrder and coreProgram are called 
 -- in the top-level program minimalPresentation.  
 
+{*
 checkpoly = (f)->(
      -- 1 Argument:  A polynomial.
      -- Return:      A list of the index of the first 
@@ -228,6 +229,186 @@ reduceLinears Ideal := o -> (I) -> (
        (substitute(leadTerm g, R), substitute(-g+leadTerm g,R))
        );
      (substitute(ideal L,R), M)
+     )
+*}
+
+reductorVariable = (f) -> (
+     -- assumes all variables in ring have degree 1.
+     -- 1 argument: a polynomial.
+     -- return: a list of two elements.  The first element is a number
+     -- and the second a monomial, that form a linear term in f such
+     -- that the variable does not occur in any other term of f.  If
+     -- no such term exists in f, it returns {}.
+     inf := part(1,f);
+     restf := set support(f-inf);
+     supInf := set support(inf);
+     varList := toList (supInf-restf);
+     -- either varList = {} and there are no linear terms whose
+     -- variables don't occur elsewhere, otherwise we found such
+     -- linear terms. 
+     if varList === {} then varList
+     else (
+     	  termf := terms f;
+     	  s := select(termf, i -> member(leadMonomial i , varList));
+     	  coef := s/leadCoefficient;
+     	  pos := position(coef, i -> (i == 1) or (i == -1));
+	  -- best to choose linear terms with coefficient 1 or -1 if
+	  -- possible. 
+     	  if pos =!= null then (coef_pos, leadMonomial s_pos)
+     	  else {coef_0, leadMonomial s_0}
+     	  )
+     )
+     
+findReductor = (L) -> (
+     -- 1 argument: A list of polynomials, generally formed from
+     -- generators of an ideal. 
+     -- Returns: a pair consisting of a variable x and x - 1/c f where
+     -- cx is a linear term of f such that x does not occur in any
+     -- other term of f. 
+     --
+     -- Sorts through polynomials in the list to find the smallest one
+     -- to use first to find a variable to use to find a "smaller
+     -- ring" in minimalPresentation. 
+     L1 := sort apply(L, f -> (size f,f));
+     redVar := {};
+     L2 := select(1, L1, p -> (
+	       redVar = reductorVariable(p#1);
+	       redVar =!= {})
+	  );
+     if redVar =!= {} then (redVar#1, redVar#1 - (1/(redVar#0))*L2#0#1)
+     )
+	       
+
+
+reduceLinears = method(Options => {Limit=>infinity})
+reduceLinears Ideal := o -> (I) -> (
+     -- 1 argument: an ideal
+     -- 1 optional argument: a limit on the recursion through the
+     -- generators of the ideal.  
+     -- Return: (J,L), where J is an ideal, and L is a list of:
+     -- (variable x, poly x+g) where x+g is in I, and x doesn't appear
+     -- in J and x does not appear in any polynomial later in the L list.
+     R := ring I;
+     L := flatten entries generators I;
+     count := o.Limit;
+     M := while count > 0 list (
+       count = count - 1;
+       g := findReductor L;
+       if g === null then break;
+       --<< "reducing using " << g#0 << endl << endl;
+       F := map(R,R,{g#0 => g#1});
+       L = apply(L, i -> F(i));
+       g
+       );
+       -- Now loop through and improve M
+     M = backSubstitute M;  
+     (ideal L, M)
+     )
+
+backSubstitute = (M) -> (
+     -- 1 argument: A list of pairs of variable and a polynomial. 
+     -- Return: A list of pairs of the form (variable x, poly x+g)
+     -- where x+g is in I, and x does not appear in any polynomial
+     -- later. 
+     --
+     -- If M has length <= 1, then nothing needs to be done
+     if #M <= 1 then M
+     else (
+     	  xs := set apply(M, i -> i#0);
+     	  R := ring M#0#0;
+     	  F := map(R,R, apply(M, g -> g#0 => g#1));
+     	  H := new MutableHashTable from apply(M, g -> g#0 =>  g#1);
+     	  scan(reverse M, g -> (
+	       v := g#0;
+	       restg := H#v;
+	       badset := xs * set support restg;
+	       if badset =!= set{} then (
+		    H#v = F(restg))
+	       ));
+         pairs H)
+     )
+
+-- This will be folded into flattenRing.
+-- So the call in minPressy below should be:
+--  (flatI, notused) = flattenRing(I, Quotient=>false)
+flattenQuotient = method()
+flattenQuotient Ideal := (I) -> (
+     -- returns triple (J,f,g)
+     -- where if R = ring I, S = ring J, then
+     -- (a) S is a flattened poly ring (not a quotient ring)
+     -- (b) f : R --> S, g : S --> R
+     --     and f, g induce isomorphisms of R/I with T/J.
+     -- (c) T/J cannot be written as a polynomial ring in fewer variables
+     --     (can we really get this?)
+     -- Assumptions: R is not a Weyl algebra, but can be skew commutative
+     --
+     R := ring I;
+     (S1,F) := flattenRing R;
+     I1 := if S1 =!= R then F I else I;
+     S := ambient S1;
+     J := lift(I1,S); -- includes quotient ideal of S1, if any.
+     f := map(R,S,generators(R, CoefficientRing => coefficientRing S));
+     g := map(S,R,vars S);  -- ONLY well-defined R --> S/J !!
+     (J,f,g)
+     )
+
+minPressy = method()
+
+-- Modified version, 10/24/08
+minPressy Ideal := (I) -> (
+     --  Returns: an ideal J in a polynomial ring over ZZ or a base field
+     --  such that (ring I)/I is isomorphic to  (ring J)/J.
+     --  Approach: look at generators of I, find those with linear
+     --  terms that don't use the linear variables in any other
+     --  terms. Then map that variable to remainder. Collect mapping
+     --  information and cache in the ideal (ring in the case of the
+     --  ring call).  
+     --
+     --  if the ring I is a tower, flatten it first, and if the ring has quotient
+     -- elements, add them to flatI
+     R := ring I;
+     (flatI,F,G) := flattenQuotient I;
+     flatR := ring flatI;
+     (S,IS) := (flatR, flatI);
+     if any(degrees flatR, d -> d =!= {1}) then (
+     	  -- reset all the degrees to 1's, to use our reductor algorithm
+	  S = newRing(flatR, Degrees=>{(numgens flatR : 1)});
+	  IS = substitute(IS, vars S);
+	  );
+     (J,H) := reduceLinears IS;
+     StoFlatR := map(flatR,S,vars flatR);
+     J = ideal compress generators StoFlatR J; -- now in flatR
+     H = apply(H, (a,b) -> (StoFlatR a, StoFlatR b)); -- everything in flatR now
+
+     xs := set apply(H, index@@first); -- indices of the variables reduced out
+     varskeep := sort (toList(set (generators S/index) - xs));
+     newS := first selectVariables(varskeep, flatR);
+     I.cache.minimalPresentationMapInv = map(R,newS,apply(varskeep, i -> R_i));
+
+     vs := new HashTable from apply(#varskeep, i -> varskeep#i => i);
+     trivialToNewS := map(newS, flatR, toList apply(numgens flatR, i -> if vs#?i then newS_(vs#i) else 0_newS));
+     X := new MutableList from generators flatR; 
+     scan(pairs vs, (v,i) -> X#v = newS_i);
+     scan(H, (v,g) -> X#(index v) = trivialToNewS g);
+     I.cache.minimalPresentationMap = map(newS, R, toList X);
+     trivialToNewS J)
+
+minimalPresentation Ideal := opts -> (I) -> minPressy I
+
+minimalPresentation Ring := Ring => opts -> (R) -> (
+     -- 1 argument: A ring R (most often a quotient ring).
+     -- Return:  A ring isomorphic to R using minimalPresentation on
+     -- the presentation ideal of R.  For more information see
+     -- minimalPresentation Ideal.
+     I := ideal R;
+     result := minPressy I;
+     finalRing := (ring result)/result;
+     -- put the maps cached on I in the right place for the ring. 
+     f := substitute(matrix I.cache.minimalPresentationMap, finalRing);
+     fInv := substitute(matrix I.cache.minimalPresentationMapInv, R);
+     R.minimalPresentationMap = map(finalRing, R, f);
+     R.minimalPresentationMapInv = map (R, finalRing, fInv);
+     finalRing
      )
 
 

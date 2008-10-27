@@ -331,6 +331,7 @@ degree (RingElement, RingElement) := (x,f) -> (
      )
 
 indices RingElement := (f) -> rawIndices raw f
+indices Matrix := (f) -> rawIndices raw f
 
 support = method()
 support RingElement := (f) -> (

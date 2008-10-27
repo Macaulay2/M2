@@ -15,259 +15,12 @@ export { smallerMonomials,
      parameterIdeal, 
      pruneParameterScheme, 
      groebnerScheme,
-     reduceLinears,
-     minPressy,
-     subMonomialOrder,
-     subMonoid,
-     isReductor
+     minPressy
      }
 
-subMonoid = method()
-subMonoid (Monoid, List) := (M, l) -> (
-     -- 2 arguments: a monoid and a list that is a list of the
-     -- variables, or positions of the variables to be used in 
-     -- the new monoid.
-     -- return: A new monoid corresponding to the subset of the
-     -- variables in l.
-     --if not isPolynomialRing then error "input must be a polynomial ring.";
-     if #l == 0 then M else (
-     	  newM := new MutableHashTable from M.Options;
-     	  numVars := #newM#Variables;
-     	  count := 0;
-     	  if class l_0 === ZZ then newM#Variables = apply(l, i -> newM#Variables#i)
-     	  else (newM#Variables = l;
-	       l = l/index);
-     	  newM#MonomialOrder = subMonomialOrder(newM#MonomialOrder, l);
-     	  skewC := newM#SkewCommutative;
-     	  skewN := #newM#SkewCommutative;
-     	  if  skewN =!= 0 then (
-	       if skewN =!= numVars then (
-	       	    if class skewC#0 === IndexedVariable then skewC = skewC/index;
-	       	    L := (set l) * (set skewC);
-	       	    newM#SkewCommutative = toList L;
-	       	    );
-	       );
-     	  newM#Degrees = apply(l, i -> newM#Degrees#i);
-     	  OP := new OptionTable from newM;
-     	  monoid([OP])
-	  )
-     )
-	  
+load "/Users/mike/src/M2/Macaulay2/bugs/mike/minpressy.m2"
 
-
-subMonomialOrder = method()
-subMonomialOrder (List,List) := (Ord, l) -> (
-     -- 2 arguments: a monomial order, given as a list, and a list of
-     -- the positions of the variables to be used in the new ring.
-     -- return:  a new monomial order corresponding to the subset of 
-     --          of variables in l.
-     localListCheck = l_(#l-1);
-     subMonOrderHelper(Ord,l, 0, {})
-     )
-
-subMonOrderHelper = (Ord, l, count, newOrd) -> (
-     -- 4 arguments: a monomial order, given as a list, a list of the
-     -- positions of the variables to be used in the new ring, 
-     if #Ord == 0 then (
-	  if  localListCheck > count-1 then error("expected variable indices in range 0.." | count-1)
-	  else (
-	       newOrd = select(newOrd, i -> (i#1 =!= {} and i#1 =!= 0));
-	       return newOrd))
-     else(
-     	  if Ord#0#0 === Weights then (
-	       w := #Ord#0#1;  -- the old list of weights
-	       lw := select(l, i -> i <= w+count-1); 
-	       ww := apply(lw, i -> Ord#0#1#(i-count));
-	       return subMonOrderHelper(drop(Ord,1),l, count, append(newOrd, Ord#0#0 => ww)) 	   	     
-	       );
-     	  if Ord#0#0 === GRevLex then (
-	       w = #Ord#0#1;
-	       lw = select(l, i -> i <= #Ord#0#1+count-1);
-	       return subMonOrderHelper(drop(Ord,1), 
-		    drop(l, #lw), 
-		    count + #Ord#0#1, 
-		    append(newOrd, Ord#0#0 => apply(lw, i -> Ord#0#1#(i-1-count)))); 
-	       );    
-     	  if (Ord#0#0 === Lex or Ord#0#0 === RevLex or 
-	       Ord#0#0 === GroupLex or 
-	       Ord#0#0 ===  GroupRevLex) 
-     	  then ( 
-	       u = #(select(l, i -> i <= count + Ord#0#1 - 1));
-	       return subMonOrderHelper(drop(Ord, 1), 
-		    drop(l, u), 
-		    count + Ord#0#1, 
-		    append(newOrd, Ord#0#0 => u));
-	       );
-     	  if (Ord#0#0 === Position or Ord#0#0 === MonomialSize) then (
-	       return subMonOrderHelper(drop(Ord, 1), l, count, 
-		    append(newOrd, Ord#0#0 => Ord#0#1));
-	       );
-	  )
-     )
-
---- needs work for operation over ZZ	    	    
-isReductor = (f) -> (
-     inf := leadTerm part(1,f);
-     inf != 0 and
-     (set support(inf) * set support(f - inf)) === set{})
-
-findReductor = (L) -> (  
-     L1 := sort apply(L, f -> (size f,f));
-     L2 := select(1, L1, p -> isReductor(p#1));
-     if #L2 > 0 then (
-	  p := part(1,L2#0#1);
-	  coef := (terms p)/leadCoefficient;
-	  pos := position(coef, i -> (i == 1) or (i == -1));
-	  if pos =!= null then (
-     	       t := (terms p)_pos;
-	       lct := leadCoefficient t;
-	       (lct*t, lct*t - lct*L2#0#1)
-	       )
-	  else(t = leadTerm p;
-	       lct = 1/(leadCoefficient t);
-	       (lct*t, lct*t - lct*L2#0#1))
-     	  )
-     )
-
-reduceLinears = method(Options => {Limit=>infinity})
-reduceLinears Ideal := o -> (I) -> (
-     -- returns (J,L), where J is an ideal,
-     -- and L is a list of: (variable x, poly x+g)
-     -- where x+g is in I, and x doesn't appear in J.
-     -- also x doesn't appear in any poly later in the L list
-     R := ring I;
-     L := flatten entries gens I;
-     count := o.Limit;
-     M := while count > 0 list (
-       count = count - 1;
-       g := findReductor L;
-       if g === null then break;
-       << "reducing using " << g#0 << endl << endl;
-       F = map(R,R,{g#0 => g#1});
-       L = apply(L, i -> F(i));
---       error "checking";
-       g
-       );
-     -- Now loop through and improve M
-     M = backSubstitute M;  -- rewrite as M will now be a list of pairs....
-     (ideal L, M)
-     )
-
-backSubstitute = method()
-backSubstitute List := (M) -> (
-     -- If M has length <= 1, then nothing needs to be done
-     if #M <= 1 then M
-     else (
-     	  xs := set apply(M, i -> i#0);
-     	  R := ring M#0#0;
-     	  F := map(R,R, apply(M, g -> g#0 => g#1));
-     	  H := new MutableHashTable from apply(M, g -> g#0 =>  g#1);
-     	  scan(reverse M, g -> (
-	       v := g#0;
-	       restg := H#v;
-	       badset := xs * set support restg;
-	       if badset =!= set{} then (
-		    H#v = F(restg))
-	       ));
-         pairs H)
-     )
-
-minPressy = method()
-minPressy Ideal := (I) -> (
-     -- if the ring I is a tower, flatten it here...
-     R := ring I;
-     flatList := flattenRing R;
-     flatR := flatList_0;
-     if any((monoid flatR).Options.Degrees, i -> i =!= {1}) then (
-	  S := (coefficientRing flatR)(monoid[gens flatR,
-		    MonomialOrder => (monoid flatR).Options.MonomialOrder,
-		    Global => (monoid flatR).Options.Global]);
-	  presR := substitute(ideal presentation flatR, S);
-	  S = S/presR;
-	  )
-     else  S = flatR; 
-     IS := substitute(I, vars S);
-     if class S === QuotientRing then (
-	  defI := ideal presentation S; 
-	  S = ring defI;
-	  IS = defI + substitute(IS, S)
-  	  );
-     (J,G) := reduceLinears(IS);
-     xs := set apply(G, first);
-     varskeep := rsort (toList(set gens S - xs));
-     newS := (coefficientRing S)(subMonoid(monoid S,varskeep));
-     if not isSubset(set support J, set varskeep) -- this should not happen
-     then error "internal error in minPressy: not all vars were reduced in ideal";
-     I.cache.minimalPresentationMapInv = map(R,S)*map(S, newS, varskeep);
-     -- Now we need to make the other map...
-     X := new MutableList from gens S;
-     scan(G, (v,g) -> X#(index v) = g);
-     maptoS := apply(toList X, f -> substitute(f,newS));
-     I.cache.minimalPresentationMap = map(newS,S,maptoS)*map(S, flatR)*flatList_1;
-     substitute(ideal compress gens J,newS)
-     )
-
---minimalPresentation Ideal := opts -> (I) -> (
---     << "entering minPressy"<< endl;
---     error "debug me";
---     result := minPressy(I);
---     result)
-
---minimalPresentation Ring := opts -> (R) -> (
---     << "entering minPressy"<< endl;
---     error "debug me";
---     result := minPressy(ideal presentation R);
---     (ring result)/result)
-
-
-findReductorOld = (L) -> ( 
-     L1 := select(L, isReductor);
-     L2 := sort apply(L1, f -> (size f,f));
-     if #L2 > 0 then L2#0#1)
-
-reduceLinearsOld = method(Options => {Limit=>infinity})
-reduceLinearsOld Ideal := o -> (I) -> (
-     -- returns (J,L), where J is an ideal,
-     -- and L is a list of: (variable x, poly x+g)
-     -- where x+g is in I, and x doesn't appear in J.
-     -- also x doesn't appear in any poly later in the L list
-     R := ring I;
-     -- make sure that R is a polynomial ring, no quotients
-     S := (coefficientRing R)[gens R, Weights=>{numgens R:-1}, Global=>false];
-     IS := substitute(I,S);
-     L := flatten entries gens IS;
-     count := o.Limit;
-     M := while count > 0 list (
-       count = count - 1;
-       g := findReductor L;
-       if g === null then break;
-       g = 1/(leadCoefficient g) * g;
-       << "reducing using " << leadTerm g << endl << endl;
-       L = apply(L, f -> f % g);
-       g
-       );
-     -- Now loop through and improve M -- list of pairs of var and
-     -- what it goes to...substitute vs. reduction.
-     M = backSubstituteOld M;
-     M = apply(M, (x,g) -> (substitute(x,R),substitute(g,R)));
-     (substitute(ideal L,R), M)
-     )
-
-backSubstituteOld = method()
-backSubstituteOld List := (M) -> (
-     xs := set apply(M, leadMonomial);
-     H := new MutableHashTable from apply(M, g -> leadTerm g => (-g+leadTerm g));
-     scan(reverse M, g -> (
-	       v := leadTerm g;
-	       restg := H#v;
-	       badset := xs * set support restg;
-	       scan(toList badset, x -> (
-			 << "back reducing " << v << " by " << x << endl; --<< " restg = " << restg << endl;
-			 restg = restg % (x-H#x)));
-	       H#v = restg;
-	       ));
-     pairs H
-     ) 
+<< "class is " << class minPressy << endl;
 
 smallerMonomials = method()
 smallerMonomials(Ideal,RingElement) := (M,f) -> (
@@ -333,6 +86,7 @@ parameterFamily(Ideal,List,Symbol) := opts -> (M,L,t) -> (
      else (
 	 R1 = kk[t_1..t_nv]; -- removed MonomialSize=>8
      	 U = R1 (monoid R);
+	 U = newRing(U, Join=>false);
 	 phi = map(U,R1);
      );
      lastv := -1;
@@ -388,18 +142,18 @@ document {
      Key => ParameterSchemes,
      Headline => "a Macaulay 2 package for local equations of Hilbert and other parameter schemes",
      EM "ParameterSchemes", " is a package containing tools to create parameter schemes, 
-     especially about a monomial ideal.",
+     especially centered about a monomial ideal.",
      PARA{},
      "An example of using the functions in this package:",
      EXAMPLE lines ///
          R = ZZ/101[a..e,MonomialOrder=>Lex];
          I = ideal"ab,bc,cd,ad";
-         L1 = smallerMonomials I;
+         L1 = smallerMonomials I
 	 ///,
      PARA{"We will construct the family of all ideals having I as its lexicographic initial ideal."},
      EXAMPLE lines ///
          F0 = parameterFamily(I,L1,symbol t);
-	 netList first entries gens F0
+	 netList F0_*
 	 J0 = parameterIdeal(I,F0);
          ///,
      "At this point F0 is the universal family, and J0 is a (very non-minimally generated) ideal that
@@ -458,27 +212,6 @@ document {
      SourceCode => {(groebnerScheme,Ideal)},
      SeeAlso => {parameterIdeal, parameterFamily, pruneParameterScheme, smallerMonomials}
      }
-
---document {
---     Key => {subMonomialOrder}
-
-{* 
-document {
-	Key => {(firstFunction,ZZ),firstFunction},
-	Headline => "a silly first function",
-	Usage => "firstFunction n",
-	Inputs => { "n" },
-	Outputs => {{ "a silly string, depending on the value of ", TT "n" }},
-        SourceCode => {(firstFunction,ZZ)},
-	EXAMPLE lines ///
-	   firstFunction 1
-	   firstFunction 0
-     	///
-	}
-*}
-TEST ///
-    assert ( firstFunction 2 == "D'oh!" )
-///
 
 
 end

@@ -137,6 +137,9 @@ public:
 
   MatrixOrNull *monomials(M2_arrayint vars) const;
 
+  M2_arrayint_OrNull support() const;
+  // gives error if not a polynomial ring, other wise the array of indices appearing in this.
+
   Matrix *top_coefficients(Matrix * &monoms) const;
 
   const MatrixOrNull * basis(M2_arrayint lo_degree,

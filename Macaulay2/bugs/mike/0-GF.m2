@@ -6,6 +6,7 @@
 -- (5) module structure of one GF wrt a smaller one
 
 restart
+loadPackage "ConwayPolynomials"
 setRandomSeed 0
 R = GF 729
 a
@@ -29,7 +30,7 @@ factor 729
 
 R = GF(729, Variable=>a)
 S = GF(27, Variable=>b)
-F = map(R,S,{a^2})
+F = map(R,S,{a^28})
 isWellDefined F
 F a
 a^3

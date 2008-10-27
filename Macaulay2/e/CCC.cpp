@@ -61,7 +61,8 @@ ring_elem CCC::random() const
 
 void CCC::elem_text_out(buffer &o, const ring_elem ap) const
 {
-  M2_string s = gmp_tonetCC(BIGCC_VAL(ap));
+  M2_string s = (p_parens ? gmp_tonetCCparen(BIGCC_VAL(ap))
+		 : gmp_tonetCC(BIGCC_VAL(ap)));
 
   // if: first char is a "-", and p_plus, o << "+"
   // if: an internal "+" or "-", then put parens around it.
@@ -69,66 +70,15 @@ void CCC::elem_text_out(buffer &o, const ring_elem ap) const
   //              then leave out the last character.
 
   bool prepend_plus = p_plus && (s->array[0] != '-');
-  bool parens = false;
-  for (int i=1; i<s->len-1; i++) 
-    if (s->array[i] == '-' || s->array[i] == '+')
-      {
-	parens = true;
-	break;
-      }
-  bool strip_last = !parens && !p_one && (
+  bool strip_last = !p_one && (
 			      (s->len == 1 && s->array[0] == '1')
 			      || (s->len == 2 && s->array[1] == '1' && s->array[0] == '-'));
   
   if (prepend_plus) o << "+";
-  if (parens && p_parens) o << "(";
   if (strip_last)
     o.put(s->array, s->len-1);
   else
     o.put(s->array, s->len);
-  if (parens && p_parens) o << ")";
-
-#if 0
-  mpfr_ptr a = BIGCC_RE(ap);
-  mpfr_ptr b = BIGCC_IM(ap);
-  mp_exp_t expptr;
-
-  // easier to call RRR::elem_text_out here ???
-
-  // size_t size = 1000;
-  //  char *s = newarray_atomic(char,1000);
-  //  char *str;
-
-  o << gmp_tonetCC(BIGCC_VAL(ap));
-  return;
-
-  bool is_neg = (mpfr_cmp_si(a, 0) == -1);
-  bool is_one = (mpfr_cmp_si(a, 1) == 0 || mpfr_cmp_si(a, -1) == 0);
-
-  // int size = mpfr_sizeinbase(a, 10) + 2;
-
-  // char *allocstr = (size > 1000 ? newarray(char,size) : s);
-
-  if (!is_neg && p_plus) o << '+';
-  if (is_one) 
-    {  
-      if (is_neg) o << '-';
-      if (p_one) o << '1'; 
-    }
-  else
-    {
-      str = mpfr_get_str(s, &expptr, 10, 0, a, GMP_RNDN);
-      o << "." << str << "*10^" << expptr;
-    }
-
-  is_neg = (mpfr_cmp_si(b, 0) == -1);
-  is_one = (mpfr_cmp_si(b, 1) == 0 || mpfr_cmp_si(b, -1) == 0);
-
-  str = mpfr_get_str(s, &expptr, 10, 0, b, GMP_RNDN);
-  o << "+ (." << str << "*10^" << expptr << ") ii";
-
-  // if (size > 1000) deletearray(allocstr);
-#endif
 }
 
 ring_elem CCC::from_int(int n) const

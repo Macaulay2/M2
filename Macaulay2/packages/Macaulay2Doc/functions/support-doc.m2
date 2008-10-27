@@ -1,18 +1,22 @@
 document { 
-     Key => {support,(support,RingElement)},
-     Headline => "list of variables occuring in a polynomial",
+     Key => {support,(support,RingElement),(support,Matrix)},
+     Headline => "list of variables occuring in a polynomial or matrix",
      Usage => "support f",
      Inputs => {
-	  "f" => RingElement => "in a polynomial ring"
+	  "f" => RingElement => {"or ", ofClass Matrix, "over a polynomial ring"
 	  },
      Outputs => {
-	  List => {"of ", TO2 (RingElement, "ring elements"), ", the variables occuring in the polynomial"}
+	  List => {"of ", TO2 (RingElement, "ring elements"), ", the variables occuring in ", TT "f"}
 	  },
      EXAMPLE {
 	  "R = QQ[a..g]",
 	  "f = a^3+b^2*c+3*f^10*d-1+e-e",
 	  "support f",
 	  },
+     EXAMPLE lines ///
+     	  M = matrix"a+b2,c+g2;c,a-1"
+	  support M
+          ///,
      "If the ring is a polynomial ring over another polynomial ring, then
      the support contains all of the variables, even the ones in the coefficient ring.
      The  ring of each of these is the ring of f.",
@@ -32,7 +36,7 @@ document {
 	  "indices f",
 	  "apply(support f, index)"
 	  },
-     SeeAlso => {index, (indices,RingElement), (symbol_,Ring,ZZ)}
+     SeeAlso => {index, (indices,RingElement), (indices,Matrix), (symbol_,Ring,ZZ)}
      }
 
 document { 

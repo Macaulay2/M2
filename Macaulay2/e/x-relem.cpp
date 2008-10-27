@@ -953,7 +953,7 @@ int IM2_RingElement_index_if_var(const RingElement *f)
   return R->index_of_var(f->get_value());
 }
 
-M2_arrayint IM2_RingElement_indices(const RingElement *f)
+M2_arrayint rawRingElementIndices(const RingElement *f)
   /* The list of indices of variables which occur in f is returned. */
 {
   const Ring *R = f->get_ring();

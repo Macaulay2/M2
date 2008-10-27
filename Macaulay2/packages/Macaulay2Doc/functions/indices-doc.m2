@@ -28,26 +28,32 @@ document {
      SeeAlso => {"directSum", "components", "indexComponents"}
      }
 document { 
-     Key => (indices,RingElement),
+     Key => {(indices,RingElement),(indices,Matrix)},
      Headline => "indices of variables occuring in a polynomial",
      Usage => "indices f",
      Inputs => {
-	  "f" => "in a polynomial ring"
+	  "f" => {"or ",ofClass Matrix, "over a polynomial ring"}
 	  },
      Outputs => {
 	  List => "of integers, the indices of the variables 
-	    occuring in the polynomial"
+	    occuring in the polynomial or matrix"
 	  },
      "The first variable in a polynomial ring has index 0, the second has index 1, etc.
      This function returns a list (in ascending order) of the indices of all
      of the variables which occur in ", TT "f", ".",
-     EXAMPLE {
-	  "R = QQ[a..g]",
-	  "f = a^3+b^2*c+3*f^10*d-1+e-e",
-	  "indices f",
-	  "index a",
-	  "support f"
-	  },
+     EXAMPLE lines ///
+	  R = QQ[a..g]
+	  F = a^3+b^2*c+3*f^10*d-1+e-e
+	  indices F
+	  index a
+	  support F
+	  ///,
+     "The same works for matrices.",
+     EXAMPLE lines ///
+     	  M = matrix"a+b,c+e;2a-e,3b-c4"
+	  indices M
+	  support M
+     	  ///,
      "This use of ", TO indices, " has no relationship with the use for
      specifying parts of a direct sum",
      SeeAlso => {index, support, indices, (symbol_,Ring,ZZ)}

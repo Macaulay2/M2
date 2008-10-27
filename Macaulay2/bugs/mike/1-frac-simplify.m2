@@ -1,3 +1,4 @@
+-- Is now working (10/26/08)
 -- Both of these are wrong...!
 
 R = QQ[x]

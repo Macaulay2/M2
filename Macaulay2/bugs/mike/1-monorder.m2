@@ -7,4 +7,5 @@ R = ZZ/101[x_1..x_4, MonomialOrder =>{GRevLex, Weights => {1,1,1,1}}]
 R = QQ[x_1..x_8,MonomialOrder=>{MonomialSize=>8, GRevLex=>4, MonomialSize=>32, MonomialSize=>16, GRevLex=>4}]
 (options monoid R).MonomialOrder  -- should be {GRevLex=>4, MonomialSize=>16, GRevLex=>4}
 (options monoid R).MonomialSize  -- should be 8?
-
+debug Core
+raw R
