@@ -1,0 +1,4 @@
+worth documenting in more places:
+
+  ? Function := x -> (briefDocumentation x;)
+

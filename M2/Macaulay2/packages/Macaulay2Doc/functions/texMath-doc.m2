@@ -37,7 +37,7 @@ undocumented {
 	(texMath, Product),
 	(texMath, ZZ),
 	(texMath, Adjacent),
-	(texMath, Holder),
+	(texMath, Holder2),
 	(texMath, QuotientRing),
 	(texMath, RR),
 	(texMath, ChainComplex),

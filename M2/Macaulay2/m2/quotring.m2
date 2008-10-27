@@ -115,7 +115,7 @@ EngineRing / Ideal := QuotientRing => (R,I) -> I.cache.QuotientRing = (
      if R.?SkewCommutative then S.SkewCommutative = R.SkewCommutative;
      S.generators = apply(generators S, m -> promote(m,S));
      if R.?generatorSymbols then S.generatorSymbols = R.generatorSymbols;
-     if R.?generatorExpressions then S.generatorExpressions = R.generatorExpressions;
+     if R.?generatorExpressions then S.generatorExpressions = apply(R.generatorExpressions,S.generators,(e,x) -> new Holder2 from {e#0,x});
      if R.?indexStrings then S.indexStrings = applyValues(R.indexStrings, x -> promote(x,S));
      if R.?indexSymbols then S.indexSymbols = applyValues(R.indexSymbols, x -> promote(x,S));
      expression S := lookup(expression,R);

@@ -249,9 +249,7 @@ bump();
      export AtS := makeKeyword(binaryright("@"));
 bump();
      export ParenStarParenS := makeKeyword(postfix("(*)"));
-     export AdjacentS:=makeKeyword(binaryright("SPACE"));   -- used to be " "
-     precSpace = prec;
-     parseWORD.precedence = prec; parseWORD.binaryStrength = prec; parseWORD.unaryStrength = prec;
+     export AdjacentS:=makeKeyword(binaryright("SPACE")); precSpace = prec;
 bump();
      export AtAtS := makeKeyword(binaryleft("@@"));
 bump();
@@ -269,6 +267,10 @@ bump();
      export DotQuestionS := makeKeyword(binaryleft(".?"));
 bump();
      export ExclamationS := makeKeyword(postfix("!"));
+bump();
+     parseWORD.precedence = precSpace;			    -- sigh
+     parseWORD.binaryStrength = precSpace;
+     parseWORD.unaryStrength = precSpace;
 -----------------------------------------------------------------------------
 parens(left:string,right:string,prec:int,binaryStrength:int,unaryStrength:int):Word := (
      l := makeUniqueWord(left,

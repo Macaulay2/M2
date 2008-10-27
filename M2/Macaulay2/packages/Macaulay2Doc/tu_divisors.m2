@@ -237,9 +237,9 @@ ZZ Divisor := ZZ * Divisor := (n,D) -> divisor((D#0)^n, (D#1)^n);
 --$
 -- Some arithmetic of divisors on our elliptic curve
 
-2P
+2 P
 
-3P
+3 P
 
 -- Notice that $3P$ is the hyperplane section $z=0$,
 -- which is the equation of the flex line to the
@@ -247,7 +247,7 @@ ZZ Divisor := ZZ * Divisor := (n,D) -> divisor((D#0)^n, (D#1)^n);
 
 D = P-R1
 
-D2 = 2P - 2R1
+D2 = 2 P - 2 R1
 
 ------------------------
 -- C. Global Sections
@@ -289,7 +289,7 @@ D2 = 2P - 2R1
 --
 --
 -- Consider the divisor $2P$ on our curve $E$:
-D = 2P
+D = 2 P
 -- In this case, $I = (x^2, z)$, and $J = (1)$.
 -- Compute the vector space of sections $L(2P)$:
 
@@ -362,7 +362,7 @@ sectionIdeal = (f,g,D) -> (
 -- sections with the command
 -- map. Its kernel defines the image of $E$.
 
-D = 4P
+D = 4 P
 L = globalSections D
 phi = map(SE, ZZ/31991[a..d], L#0)
 ker phi
@@ -378,7 +378,7 @@ ker phi
 -- fact that it has  three sections. We can check
 -- this as follows:
 
-D = 4P - R
+D = 4 P - R
 L = globalSections D
 II = sectionIdeal(y*z+x*z+x^2, z^2, D)
 degree II
@@ -447,7 +447,7 @@ linearlyEquivalent = (D,E) -> (
 --$
 -- We get the same answers as before:
 linearlyEquivalent(P,R)
-linearlyEquivalent(2P,2R)
+linearlyEquivalent(2 P, 2 R)
 
 -- We now look at the group law on the cubic:
 -- We take the point $P$ to be 0; we can then
@@ -472,7 +472,7 @@ effective = (D) -> (
     then error(toString D + " is not effective")
     else divisor sectionIdeal(L_(0,0), LB#1, D));
 --$
-effective(2R-P)
+effective(2 R - P)
 addition = (R,S) -> effective(R + S - P);
 addition(R1,R2)
 

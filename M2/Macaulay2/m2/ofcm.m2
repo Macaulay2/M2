@@ -36,7 +36,7 @@ degrees GeneralOrderedMonoid := M -> M.Options.Degrees
 raw GeneralOrderedMonoid := M -> M.RawMonoid
 
 rle = method()
-rle List := x -> apply(RLE x, y -> if instance(y,Holder) then Holder{rle y#0} else y)
+rle List := x -> apply(RLE x, y -> if instance(y,Holder) then hold rle y#0 else y)
 rle Option := x -> x#0 => rle x#1
 rle Thing := identity
 
@@ -179,20 +179,18 @@ makeit1 := (opts) -> (
      assert( degrk =!= null );
      order := transpose vardegs;
      variableOrder := toList (0 .. numvars-1);
-     M.generatorSymbols = varlist;
-     M.generatorExpressions = apply(varlist,
-	  x -> if instance(x, Symbol) then x else expression x
-	  );
      scan(varlist, sym -> if not (instance(sym,Symbol) or null =!= lookup(symbol <-, class sym)) then error "expected variable or symbol");
      M.standardForm = somethingElse;
-     expression M := x -> new Product from apply( 
-	  rawSparseListFormMonomial x.RawMonomial,
-	  (k,v) -> if v =!= 1 then Power{M.generatorExpressions#k, v} else M.generatorExpressions#k );
      w := reverse applyTable(order, minus);
      w = if # w === 0 then apply(numvars,i -> {}) else transpose w;
      w = apply(w, x -> apply(makeSparse x, (k,v) -> (k + numvars, v)));
      if #w =!= #varlist then error "expected same number of degrees as variables";
      M.vars = M.generators = apply(# varlist, i -> new M from rawVarMonomial(i,1));
+     M.generatorSymbols = varlist;
+     M.generatorExpressions = apply(varlist,M.generators,(e,x) -> new Holder2 from {expression e,x});
+     processTrm := (k,v) -> if v =!= 1 then Power{M.generatorExpressions#k, v} else M.generatorExpressions#k;
+     processTrms := trms -> if #trms === 1 then processTrm trms#0 else new Product from apply(trms, processTrm);
+     expression M := x -> new Holder2 from { processTrms rawSparseListFormMonomial x.RawMonomial, x };
      M.indexSymbols = hashTable apply(M.generatorSymbols,M.generators,(v,x) -> v => x);
      M.index = new MutableHashTable;
      scan(#varlist, i -> M.index#(varlist#i) = i);

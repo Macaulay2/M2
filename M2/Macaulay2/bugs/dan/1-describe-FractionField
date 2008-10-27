@@ -1,0 +1,17 @@
+
+i7 : frac(QQ[x])
+
+o7 = frac(QQ [x])
+
+o7 : FractionField
+
+i8 : R = oo
+
+o8 = R
+
+o8 : FractionField
+
+i9 : describe R
+
+o9 = frac QQ [x]			parens needed here
+

@@ -1,9 +1,11 @@
 --		Copyright 1993-2002 by Daniel R. Grayson
 
 precedence = method(Dispatch => Thing)
+prec = x -> (getParsing x)#0
+strength2 = x -> (getParsing x)#1
+strength1 = x -> (getParsing x)#2
 
 -- local variables
-local PowerPrecedence
 EmptyName := symbol EmptyName
 unit := symbol unit
 operator := symbol operator
@@ -53,8 +55,17 @@ value' Thing := identity
 -- value' Symbol := value					    -- do we really want this? try it without
 value Expression := value'
 
-Holder = new WrapperType of Expression
+Holder2 = new WrapperType of Expression			    -- Holder{ printable form, value form }
+Holder = new WrapperType of Holder2			    -- Holder{ printable form, value form }, with printable form === value form
+Holder2.synonym = "holder"
 Holder.synonym = "holder"
+
+new Holder2 from VisibleList := (H,x) -> (
+     assert( #x === 2 );
+     if instance(x#0,Holder) then {x#0#0,x#1} else {x#0,x#1})
+new Holder from VisibleList := (H,x) -> (
+     assert( #x === 1 );
+     {x#0,x#0})
 
 hold = method(Dispatch => Thing, TypicalValue => Expression)
 hold Thing := x -> new Holder from {x}
@@ -97,10 +108,10 @@ toString'(Function, Expression) := (fmt,v) -> (
      else demark(op#operator,names)
      )
 
-texMath Holder := v -> "{" | texMath v#0 | "}"
-html Holder := v -> html v#0
-net Holder := v -> net v#0
-toString'(Function, Holder) := (fmt,v) -> fmt v#0
+texMath Holder2 := v -> "{" | texMath v#0 | "}"
+html Holder2 := v -> html v#0
+net Holder2 := v -> net v#0
+toString'(Function, Holder2) := (fmt,v) -> fmt v#0
 
 remove(Sequence,expression)
 
@@ -281,9 +292,9 @@ value' Superscript := (x) -> (value' x#0)^(value' x#1)
 toString'(Function, Subscript) := toString'(Function, Superscript) := (fmt,v) -> (
      x := fmt v#0;
      y := fmt v#1;
-     prec := precedence v;
-     if precedence v#0 <  prec then x = "(" | x | ")";
-     if precedence v#1 <= prec then y = "(" | y | ")";
+     p := precedence v;
+     if precedence v#0 <  p then x = "(" | x | ")";
+     if precedence v#1 <= p then y = "(" | y | ")";
      concatenate(x,(class v)#operator,y))
 
 toString'(Function, Power) := (fmt,v) -> (
@@ -293,8 +304,8 @@ toString'(Function, Power) := (fmt,v) -> (
      else (
 	  x = fmt x;
 	  y = fmt y;
-	  if precedence v#0 <  PowerPrecedence then x = "(" | x | ")";
-	  if precedence v#1 <= PowerPrecedence then y = "(" | y | ")";
+	  if precedence v#0 <  prec symbol ^  then x = "(" | x | ")";
+	  if precedence v#1 <= prec symbol ^  then y = "(" | y | ")";
 	  concatenate(x,(class v)#operator,y)))
 
 -----------------------------------------------------------------------------
@@ -400,7 +411,7 @@ expression ZZ := i -> (
      else if i === 1 then ONE
      else if i === -1 then new Minus from { ONE }
      else if i < 0 then new Minus from { -i }
-     else new Holder from {i}
+     else hold i
      )
 Holder     ^ OneExpression :=
 Expression ^ OneExpression := (x,y) -> x
@@ -437,7 +448,7 @@ Thing      .. Expression := (x,y) -> DotDot{x,y}
 Expression     ..  Thing := (x,y) -> DotDot{x,y}
 
 -----------------------------------------------------------------------------
-value' Holder := x -> x#0
+value' Holder2 := x -> x#1
 value' OneExpression := v -> 1
 value' ZeroExpression := v -> 0
 -----------------------------------------------------------------------------
@@ -481,14 +492,14 @@ toString'(Function, Table) := (fmt,m) -> concatenate(
 -----------------------------------------------------------------------------
 
 binary := new HashTable from {
-     symbol * => ((x,y) -> x*y),		  -- 
-     symbol + => ((x,y) -> x+y),		  -- 
-     symbol - => ((x,y) -> x-y),		  -- 
-     symbol / => ((x,y) -> x/y),		  -- 
-     symbol // => ((x,y) -> x//y),	  -- 
-     symbol ^ => ((x,y) -> x^y),		  -- 
-     symbol == => ((x,y) -> x==y),	  -- 
-     symbol .. => ((x,y) -> x..y),	  -- 
+     symbol * => ((x,y) -> x*y),
+     symbol + => ((x,y) -> x+y),
+     symbol - => ((x,y) -> x-y),
+     symbol / => ((x,y) -> x/y),
+     symbol // => ((x,y) -> x//y),
+     symbol ^ => ((x,y) -> x^y),
+     symbol == => ((x,y) -> x==y),
+     symbol .. => ((x,y) -> x..y),
      symbol % => ((x,y) -> x%y),
      symbol @ => ((x,y) -> x@y),
      symbol ==> => ((x,y) -> x==>y),
@@ -506,7 +517,6 @@ binary := new HashTable from {
      symbol : => ((x,y) -> x:y),
      symbol ++ => ((x,y) -> x++y),
      symbol ** => ((x,y) -> x**y),
-     -- symbol /^ => ((x,y) -> x/^y),
      symbol _ => ((x,y) -> x_y),
      symbol SPACE => ((x,y) -> x y)
      }
@@ -571,39 +581,40 @@ texMath Adjacent := texMath FunctionApplication := m -> (
      else concatenate ("(",texMath fun,")(", texMath args, ")")
      )
 -----------------------------------------------------------------------------
-	      precedence Sequence := x -> if #x === 0 then 70 else if #x === 1 then 40 else 70
-     	  precedence Parenthesize := x ->  0
-	      precedence Equation := x -> 10
-	     precedence HashTable := x -> 15		    -- some things might print out as symbols though...
-		 precedence Thing := x -> 15
-		 precedence Colon := x -> 20
-		precedence DotDot := x -> 22
-		   precedence Sum := x -> 25
-	       precedence Product := x -> 30
- precedence NonAssociativeProduct := x -> 30
-					  MinusPrecedence := 30
-		 precedence Minus := x -> MinusPrecedence
-   precedence FunctionApplication := x -> 40
-              precedence Adjacent := x -> 40
-		precedence Divide := x -> 50
-	     precedence Subscript := x -> 60
-	   precedence Superscript := x -> 60
-					  PowerPrecedence = 60
-		 precedence Power := x -> if x#1 === 1 then precedence x#0 else PowerPrecedence
-		    precedence ZZ := x -> if x>=0 then 70 else MinusPrecedence
-		   precedence RR := x -> 70
-	      precedence Function := x -> 70
-		  precedence List := x -> 70
-		 precedence Array := x -> 70
+
+	      precedence Sequence := x -> if #x === 0 then prec symbol x else if #x === 1 then prec symbol : else prec symbol x
+     	  precedence Parenthesize := x -> 0
+	      precedence Equation := x -> prec symbol ==
+	     precedence HashTable := x -> 0		    -- some things might print out as symbols though...
+		 precedence Thing := x -> 0
+		 precedence Colon := x -> prec symbol :
+		precedence DotDot := x -> prec symbol ..
+		   precedence Sum := x -> prec symbol +
+	       precedence Product := x -> prec symbol *
+ precedence NonAssociativeProduct := x -> prec symbol **
+		 precedence Minus := x -> strength1 symbol -
+   precedence FunctionApplication := x -> prec symbol SPACE
+              precedence Adjacent := x -> prec symbol SPACE
+		precedence Divide := x -> prec symbol /
+	     precedence Subscript := x -> prec symbol _
+	   precedence Superscript := x -> prec symbol ^
+		 precedence Power := x -> if x#1 === 1 then precedence x#0 else prec symbol ^
+		    precedence ZZ := x -> if x>=0 then 70 else strength1 symbol -
+		   precedence RR := x -> prec symbol x
+	      precedence Function := x -> prec symbol x
+		  precedence List := x -> prec symbol x
+		 precedence Array := x -> prec symbol x
 
 Constant = new Type of BasicList
 
-	      precedence Constant := x -> 70
-		precedence Symbol := x -> 70
-		   precedence Net := x -> 70
-		precedence String := x -> 70
-	    precedence Expression := x -> 70    -- the default
-		precedence Holder := x -> 70    -- used to be precedence x#0
+	      precedence Constant := x -> prec symbol x
+		precedence Symbol := x -> prec symbol x
+		   precedence Net := x -> prec symbol x
+		precedence String := x -> prec symbol x
+	    precedence Expression := x -> prec symbol x
+	        precedence Holder := x -> prec symbol x
+	       precedence Holder2 := x -> precedence x#0
+       precedence BinaryOperation := x -> prec x#0
 -----------------------------------------------------------------------------
 -- printing two dimensional ascii output
 
@@ -633,14 +644,14 @@ nopars := x -> if class x === Sequence then nopar x else net x
 
 net Subscript := x -> (
      n := nopars x#1;
-     if precedence x#0 < PowerPrecedence
+     if precedence x#0 < prec symbol ^
      then horizontalJoin( bigParenthesize net x#0, n^-(height n) )
      else net x#0 | n^-(height n)
      )
 
 net Superscript := x -> (
      n := net x#1;
-     if precedence x#0 < PowerPrecedence
+     if precedence x#0 < prec symbol ^
      then horizontalJoin( bigParenthesize net x#0, n^(1+depth n))
      else net x#0 | n^(1+depth n)
      )
@@ -657,14 +668,14 @@ net Power := v -> (
 	  if class x === Subscript then (
 	       t := stack(nety,"",nopars x#1);
 	       horizontalJoin (
-		    if precedence x < PowerPrecedence
+		    if precedence x < prec symbol ^
 		    then ( bigParenthesize expectExponent net x#0, t)
 		    else (                 net x#0, t)
 		    )
 	       )
 	  else (
 	       horizontalJoin (
-		    if precedence x < PowerPrecedence
+		    if precedence x < prec symbol ^
 		    then ( bigParenthesize expectExponent net x, nety)
 		    else (            	   net x, nety)
 		    )
@@ -679,14 +690,14 @@ net Sum := v -> (
 	  seps := newClass(MutableList, apply(n+1, i->" + "));
 	  seps#0 = seps#n = "";
 	  v = apply(n, i -> (
-		    if class v#i === Minus 
+		    if class v#i === Minus
 		    then (
-			 seps#i = if i == 0 then "- " else " - "; 
+			 seps#i = if i == 0 then "- " else " - ";
 			 v#i#0)
 		    else v#i));
-	  horizontalJoin splice mingle(seps, 
-	       apply(n, i -> 
-		    if precedence v#i <= p 
+	  horizontalJoin splice mingle(seps,
+	       apply(n, i ->
+		    if precedence v#i <= p
 		    then bigParenthesize net v#i
 		    else      	   	 net v#i))))
 
@@ -696,15 +707,15 @@ isNumber RR :=
 isNumber QQ :=
 isNumber Divide := -- QQ never appears in an expression, so we take care of it this way
 isNumber ZZ := i -> true
-isNumber Holder := i -> isNumber i#0
+isNumber Holder := i -> isNumber i#1
 
-startsWithVariable = method(TypicalValue => Boolean)
-startsWithVariable Thing := i -> false
-startsWithVariable Symbol := i -> true
-startsWithVariable Product := 
-startsWithVariable Subscript := 
-startsWithVariable Power := 
-startsWithVariable Holder := i -> startsWithVariable i#0
+startsWithSymbol = method(TypicalValue => Boolean)
+startsWithSymbol Thing := i -> false
+startsWithSymbol Symbol := i -> true
+startsWithSymbol Product :=
+startsWithSymbol Subscript :=
+startsWithSymbol Power :=
+startsWithSymbol Holder2 := i -> startsWithSymbol i#0
 
 net Product := v -> (
      n := # v;
@@ -712,7 +723,7 @@ net Product := v -> (
      else (
      	  p := precedence v;
 	  seps := newClass(MutableList, splice {"", n-1 : "*", ""});
-	  if n>1 and isNumber v#0 and startsWithVariable v#1 then seps#1 = "";
+	  if n>1 and isNumber v#0 and startsWithSymbol v#1 then seps#1 = "";
      	  boxes := apply(#v,
 	       i -> (
 		    term := v#i;
@@ -749,7 +760,7 @@ net NonAssociativeProduct := v -> (
      )
 net Minus := x -> (
      term := x#0;
-     horizontalJoin if precedence term < precedence x 
+     horizontalJoin if precedence term < precedence x
      then ("-", bigParenthesize net term)
      else (if class term === Divide then "- " else "-", net term))
 
@@ -770,7 +781,7 @@ net SparseVectorExpression := v -> (
      if # v === 0
      then "0"
      else net sum(v#1,(i,r) -> (
-	       expression r * 
+	       expression r *
 	       hold concatenate("<",toString i,">")
 	       )
 	  )
@@ -779,9 +790,9 @@ net SparseMonomialVectorExpression := v -> (
      if # v === 0
      then "0"
      else (
-	  net sum(v#1,(i,m,a) -> 
-	       expression a * 
-	       expression m * 
+	  net sum(v#1,(i,m,a) ->
+	       expression a *
+	       expression m *
 	       hold concatenate("<",toString i,">"))
 	  )
      )
@@ -831,7 +842,7 @@ html Expression := v -> (
 	       if precedence term <= p
 	       then ("(", html term, ")")
 	       else html term));
-     if # v === 0 
+     if # v === 0
      then (
 	  if op#?EmptyName then op#EmptyName
 	  else error("no method for html ", op)
@@ -887,11 +898,11 @@ texMath Sum := v -> (
 	  seps := newClass(MutableList, apply(n+1, i->"+"));
 	  seps#0 = seps#n = "";
 	  v = apply(n, i -> (
-		    if class v#i === Minus 
+		    if class v#i === Minus
 		    then ( seps#i = "-"; v#i#0 )
 		    else v#i ));
 	  names := apply(n, i -> (
-		    if precedence v#i <= p 
+		    if precedence v#i <= p
 		    then "(" | texMath v#i | ")"
 		    else texMath v#i ));
 	  concatenate mingle ( seps, names )))
@@ -904,11 +915,11 @@ html Sum := v -> (
 	  seps := newClass(MutableList, apply(n+1, i->"+"));
 	  seps#0 = seps#n = "";
 	  v = apply(n, i -> (
-		    if class v#i === Minus 
+		    if class v#i === Minus
 		    then ( seps#i = "-"; v#i#0 )
 		    else v#i ));
 	  names := apply(n, i -> (
-		    if precedence v#i <= p 
+		    if precedence v#i <= p
 		    then "(" | html v#i | ")"
 		    else html v#i ));
 	  concatenate (
@@ -924,7 +935,7 @@ texMath Product := v -> (
 	        apply(#v,
 		    i -> (
 			 term := v#i;
-			 if precedence term <= p 
+			 if precedence term <= p
 			 then "(" | texMath term | ")"
 			 else texMath term
 			 )
@@ -941,7 +952,7 @@ html Product := v -> (
      	  concatenate apply(#v,
 	       i -> (
 		    term := v#i;
-	       	    if precedence term <= p 
+	       	    if precedence term <= p
 		    then "(" | html term | ")"
 	       	    else html term
 	       	    )
@@ -996,9 +1007,9 @@ texMath SparseVectorExpression := v -> (
      )
 
 texMath SparseMonomialVectorExpression := v -> (
-     texMath sum(v#1,(i,m,a) -> 
-	  expression a * 
-	  expression m * 
+     texMath sum(v#1,(i,m,a) ->
+	  expression a *
+	  expression m *
 	  hold concatenate("<",toString i,">"))
      )
 
@@ -1017,23 +1028,23 @@ texMath MatrixExpression := m -> (
 
 ctr := 0
 showTex = method(
-     Options => { 
+     Options => {
 	  Format => "dvi", -- or "pdf", not implemented yet
 	  }
      )
 
 showTex Thing := o -> x -> (
      f := temporaryFileName();
-     f | ".tex" 
+     f | ".tex"
      << ///\documentclass{article}
 \usepackage{amsmath}
 \usepackage{amssymb}
 \begin{document}
-///  
+///
      << tex x <<
 ///
 \end{document}
-///  
+///
      << close;
      if 0 === run("cd /tmp; latex " | f)
      then run("(xdvi "|f|".dvi; rm -f "|f|".tex "|f|".dvi "|f|".log "|f|".aux)&")
