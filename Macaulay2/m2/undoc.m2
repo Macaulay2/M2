@@ -35,7 +35,7 @@ undocumented {
     (html, CDATA),
     (html, TR),
     (html, TD),
-    (html, Holder),
+    (html, Holder2),
     (html, BR),
     (html, Minus),
     (html, Nothing),

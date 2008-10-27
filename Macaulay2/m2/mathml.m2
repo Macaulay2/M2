@@ -90,7 +90,7 @@ mathML Product := v -> (
      else (
      	  p := precedence v;
 	  seps := newClass(MutableList, (n+1) : "<mo>*</mo>");
-	  if n>1 and isNumber v#0 and startsWithVariable v#1 then seps#1 = "<mo></mo>";
+	  if n>1 and isNumber v#0 and startsWithSymbol v#1 then seps#1 = "<mo></mo>";
      	  boxes := apply(#v,
 	       i -> (
 		    term := v#i;

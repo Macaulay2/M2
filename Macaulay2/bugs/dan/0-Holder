@@ -1,0 +1,34 @@
+conflicting desires:
+
+	value hold x === x
+	value expression x === x
+	expression x should be printable at low level
+
+x = y
+QQ[y]
+M = monoid [z]
+S = QQ M
+
+1:  value hold x --> value Holder{symbol y} --> symbol y === x
+2:  value expression y --> value Holder{symbol y} --> symbol y =!= y			oops
+3:  value expression M_0 --> value Holder{symbol z} --> symbol z =!= M_0		oops
+4:  value expression S_0 --> value Holder{symbol z} --> symbol z =!= S_0		oops
+
+perhaps this:
+
+  net Holder{c} -> net c
+  value Holder{c} -> c
+
+  net Holder{a,b} -> net a
+  value Holder{a,b} -> b
+
+and rewrite expression():
+
+1:  value hold x --> value Holder{symbol y} --> symbol y === x
+2:  value expression y --> value Holder2{symbol y,y} --> y
+3:  value expression M_0 --> value Holder2{symbol z,M_0} --> M_0
+4:  value expression S_0 --> value Holder2{symbol z,S_0} --> S_0
+
+using this simplification
+
+   Holder2 { Holder2 {r,s}, t } --> Holder2{r,t}

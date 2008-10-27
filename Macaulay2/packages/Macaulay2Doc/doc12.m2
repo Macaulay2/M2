@@ -556,7 +556,6 @@ document {
 document {
      Key => Holder,
      Headline => "the class of all holder expressions",
-     TT "Holder", " a type of ", TO "Expression", ".",
      PARA{},
      "This type of expresssion is a container for a single, arbitrary, thing which
      is basic enough that the correct method for printing does not depend

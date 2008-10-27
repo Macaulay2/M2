@@ -228,16 +228,15 @@ coefficientRing FractionField := F -> coefficientRing last F.baseRings
 
 isHomogeneous FractionField := (F) -> isHomogeneous last F.baseRings
 
-factoryGood = R -> (
-     isPolynomialRing R and (
-	  while isPolynomialRing R do R = coefficientRing R;
-	  R === QQ or
-	  R === ZZ or
-	  instance(R,QuotientRing) and ambient R === ZZ and isPrime char R or
-	  instance(R,GaloisField)
-	  ))
+factoryGood = R -> ( -- we're ignoring quotient rings here, even though gcd and factoring may not actually work in them
+     R = ultimate(coefficientRing, R);
+     R === QQ or
+     R === ZZ or
+     instance(R,QuotientRing) and ambient R === ZZ and isPrime char R or
+     instance(R,GaloisField)
+     )
 
-engineHasGCD = R -> instance(ultimate(ambient,R),PolynomialRing) and factoryGood R
+engineHasGCD = R -> factoryGood R
 
 frac EngineRing := R -> if isField R then R else if R.?frac then R.frac else (
      o := options R;
@@ -264,8 +263,8 @@ frac EngineRing := R -> if isField R then R else if R.?frac then R.frac else (
      F % F := (x,y) -> if y == 0 then x else 0_F;	    -- not implemented in the engine, for some reason
      F.generators = apply(generators R, m -> promote(m,F));
      if R.?generatorSymbols then F.generatorSymbols = R.generatorSymbols;
-     if R.?generatorExpressions then F.generatorExpressions = R.generatorExpressions;
      if R.?generators then F.generators = apply(R.generators, r -> promote(r,F));
+     if R.?generatorExpressions then F.generatorExpressions = apply(R.generatorExpressions,F.generators,(e,x)->new Holder2 from {e#0,x});
      if R.?indexSymbols then F.indexSymbols = applyValues(R.indexSymbols, r -> promote(r,F));
      if R.?indexStrings then F.indexStrings = applyValues(R.indexStrings, r -> promote(r,F));
      F)

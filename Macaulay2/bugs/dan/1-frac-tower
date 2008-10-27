@@ -1,0 +1,5 @@
+
+i11 : frac(QQ[x]/x^2[y])
+stdio:11:1:(1):[0]: not implemented yet: fraction fields of polynomial rings over rings other than ZZ, QQ, or a finite field
+
+This could be done with the flattened ring.
