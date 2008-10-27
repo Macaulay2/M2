@@ -123,7 +123,7 @@ export makeProtectedSymbolClosure(s:string):SymbolClosure := makeProtectedSymbol
 makeKeyword(s:string):SymbolClosure := makeKeyword(makeUniqueWord(s,parseWORD));
 -----------------------------------------------------------------------------
 prec := 0;
-bump():void := prec = prec + 1;
+bump():void := prec = prec + 2;
 
 -- helper functions for setting up words with various methods for parsing them
 parseWORD.funs                 = parsefuns(defaultunary, defaultbinary);
@@ -144,6 +144,21 @@ binaryright(s:string,binary:function(ParseTree,Token,TokenFile,int,bool):ParseTr
                               := install(s,makeUniqueWord(s, parseinfo(prec,prec-1,nopr,parsefuns(errorunary,binary))));
 binaryrightword(s:string):Word:=           makeUniqueWord(s, parseinfo(prec,prec-1,nopr,parsefuns(errorunary,binaryop)));
 binaryright(s:string)   :Word := binaryright(s,binaryop);
+parens(left:string,right:string,leftprec:int,rightprec:int,unaryStrength:int):Word := (
+     l := makeUniqueWord(left,
+	  parseinfo(leftprec ,nopr,unaryStrength,parsefuns(unaryparen, defaultbinary)));
+     r := makeUniqueWord(right,
+          parseinfo(rightprec,nopr,nopr,         parsefuns(errorunary, errorbinary  )));
+     left = l.name;
+     right = r.name;
+     install(left,l);
+     install(right,r);
+     addmatch(left,right);
+     makeKeyword(l);
+     makeKeyword(r);
+     l);
+special(s:string,f:function(Token,TokenFile,int,bool):ParseTree,lprec:int,rprec:int):SymbolClosure := (
+     makeKeyword(makeUniqueWord(s, parseinfo(lprec, nopr, rprec, parsefuns(f, defaultbinary)))));
 
 -- Now the symbols and operators:
 
@@ -180,12 +195,12 @@ bump();
      export DoubleArrowS := makeKeyword(binaryright("=>"));
      export GreaterGreaterS := makeKeyword(binaryright(">>"));
 bump();
-     narrow := prec;
      whenW = token("when"); makeKeyword(whenW);
      ofW = token("of"); makeKeyword(ofW);
      inW = token("in"); makeKeyword(inW);
      fromW = token("from"); makeKeyword(fromW);
      toW = token("to"); makeKeyword(toW);
+     narrow := prec;
 -- input/output:
 bump();
      export LessLessS := makeKeyword(unaryleft("<<"));	    -- also binary
@@ -237,9 +252,9 @@ bump();
      export StarStarS := makeKeyword(binaryleft("**"));
 bump();
      precBracket := prec;
+     export leftbracket := parens("[","]",precBracket, precRightParen, precRightParen);
 bump();
      export BackslashBackslashS := makeKeyword(binaryright("\\\\"));
-     -- bump(); -- removed so we can intermingle \\ with \ in expressions : see method for 'Function \\ VisibleList'
      export StarS := makeKeyword(unaryleft("*"));	    -- also binary
      export DivideS := makeKeyword(binaryleft("/"));
      export LeftDivideS := makeKeyword(binaryright("\\"));
@@ -248,8 +263,27 @@ bump();
 bump();
      export AtS := makeKeyword(binaryright("@"));
 bump();
+     precSpace = prec;
+     export AdjacentS:=makeKeyword(binaryright("SPACE"));
+     export leftparen   := parens("(",")",precSpace, precRightParen, precRightParen);
+     export leftbrace   := parens("{","}",precSpace, precRightParen, precRightParen);
+     parseWORD.precedence = prec; parseWORD.binaryStrength = nopr; parseWORD.unaryStrength = nopr;
+     export timeS := special("time",unaryop,precSpace,wide);
+     export timingS := special("timing",unaryop,precSpace,wide);
+     export shieldS := special("shield",unaryop,precSpace,wide);
+     export throwS := special("throw",nunaryop,precSpace,wide);
+     export returnS := special("return",nunaryop,precSpace,wide);
+     export breakS := special("break",nunaryop,precSpace,wide);
+     export continueS := special("continue",nunaryop,precSpace,wide);
+     -- export codePositionS := special("codePosition",unaryop,precSpace,narrow);
+     special("new",unarynew,precSpace,narrow);
+     special("for",unaryfor,precSpace,narrow);
+     special("while",unarywhile,precSpace,wide);
+     special("if",unaryif,precSpace,wide);
+     special("try",unarytry,precSpace,wide);
+     special("catch",unarycatch,precSpace,wide);
+bump();
      export ParenStarParenS := makeKeyword(postfix("(*)"));
-     export AdjacentS:=makeKeyword(binaryright("SPACE")); precSpace = prec;
 bump();
      export AtAtS := makeKeyword(binaryleft("@@"));
 bump();
@@ -260,63 +294,16 @@ bump();
      export PowerS := makeKeyword(binaryleft("^"));
      export PowerStarStarS := makeKeyword(binaryleft("^**"));
      export UnderscoreS := makeKeyword(binaryleft("_"));
-     export SharpS := makeKeyword(unaryleft("#"));
-     SharpS.symbol.word.parse.unaryStrength = precSpace-1;
+     export SharpS := makeKeyword(unaryleft("#")); SharpS.symbol.word.parse.unaryStrength = precSpace-1;
      export SharpQuestionS := makeKeyword(binaryleft("#?"));
      export DotS := makeKeyword(binaryleft("."));
      export DotQuestionS := makeKeyword(binaryleft(".?"));
 bump();
      export ExclamationS := makeKeyword(postfix("!"));
 bump();
-     parseWORD.precedence = precSpace;			    -- sigh
-     parseWORD.binaryStrength = precSpace;
-     parseWORD.unaryStrength = precSpace;
------------------------------------------------------------------------------
-parens(left:string,right:string,prec:int,binaryStrength:int,unaryStrength:int):Word := (
-     l := makeUniqueWord(left,
-	  parseinfo(prec          ,nopr,unaryStrength,parsefuns(unaryparen, defaultbinary)));
-     r := makeUniqueWord(right,
-          parseinfo(precRightParen,nopr,nopr,         parsefuns(errorunary, errorbinary  )));
-     left = l.name;
-     right = r.name;
-     install(left,l);
-     install(right,r);
-     addmatch(left,right);
-     makeKeyword(l);
-     makeKeyword(r);
-     l);
-
-     export leftparen   := parens("(",")",precSpace,  precRightParen,precRightParen);
-     export leftbrace   := parens("{","}",precSpace,  precRightParen,precRightParen);
-     export leftbracket := parens("[","]",precBracket,precRightParen,precRightParen);
------------------------------------------------------------------------------
-bump();
-special(s:string,f:function(Token,TokenFile,int,bool):ParseTree,prec:int):SymbolClosure := (
-     makeKeyword(makeUniqueWord(s, parseinfo(precSpace, nopr, prec, parsefuns(f, defaultbinary)))));
-
-     special("new",unarynew,narrow);
-     special("for",unaryfor,narrow);
-
-     export timeS := special("time",unaryop,wide);
-     export timingS := special("timing",unaryop,wide);
-     export shieldS := special("shield",unaryop,wide);
-
-     export throwS := special("throw",nunaryop,wide);
-     export returnS := special("return",nunaryop,wide);
-     export breakS := special("break",nunaryop,wide);
-     export continueS := special("continue",nunaryop,wide);
-
-     -- export codePositionS := special("codePosition",unaryop,narrow);
-
-     special("while",unarywhile,wide);
-     special("if",unaryif,wide);
-
-     special("try",unarytry,wide);
-     special("catch",unarycatch,wide);
-
-     special("symbol",unarysymbol,prec);
-     special("global",unaryglobal,prec);
-     special("local",unarylocal,prec);
+     special("symbol",unarysymbol,precSpace,prec);
+     special("global",unaryglobal,precSpace,prec);
+     special("local",unarylocal,precSpace,prec);
 -----------------------------------------------------------------------------
 export GlobalAssignS := makeProtectedSymbolClosure("GlobalAssignHook");
 export GlobalAssignE := Expr(GlobalAssignS);
