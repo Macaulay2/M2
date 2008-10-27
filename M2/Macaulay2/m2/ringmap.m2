@@ -31,8 +31,9 @@ map(Ring,Ring,Matrix) := RingMap => opts -> (R,S,m) -> (
 	  then error ("expected a matrix with ", toString numgens R, " rows");
 	  m = vars R * (m ** R);   -- handle a change of coordinates
 	  )
-     else if ring m =!= R
-     then error "expected a matrix over the target ring";
+     else (
+	  try m = promote(m,R) else error "map: expected a matrix over the target ring, or promotable to it";
+	  );
      if rank target m != 1
      then error "expected a matrix with 1 row";
      degmap := (
@@ -419,6 +420,8 @@ ZZ == RingMap := (n,f) -> f == n
 
 RingMap.InverseMethod = (cacheValue symbol inverse) ( f -> notImplemented() )
 RingMap ^ ZZ := BinaryPowerMethod
+
+map(Ring,Ring,RingMap) := RingMap => opts -> (R,S,f) -> map(R,S,promote(matrix f, R),opts)
 
 -- module maps over ring maps:
 

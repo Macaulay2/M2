@@ -142,7 +142,8 @@ EngineRing / Ideal := QuotientRing => (R,I) -> I.cache.QuotientRing = (
 Ring / ZZ := (R,f) -> R / ideal f_R
 
 Ring / RingElement := QuotientRing => (R,f) -> (
-     if ring f =!= R then error "expected element of the same ring";
+     try f = promote(f,R);
+     if ring f =!= R then error "expected element of the same ring or promotable to it";
      R / ideal f)
 
 Ring / List := Ring / Sequence := QuotientRing => (R,f) -> R / ideal matrix (R, {toList f})
