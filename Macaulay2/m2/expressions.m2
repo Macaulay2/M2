@@ -1,5 +1,7 @@
 --		Copyright 1993-2002 by Daniel R. Grayson
 
+Constant = new Type of BasicList
+
 precedence = method(Dispatch => Thing)
 prec = x -> (getParsing x)#0
 strength2 = x -> (getParsing x)#1
@@ -599,20 +601,17 @@ texMath Adjacent := texMath FunctionApplication := m -> (
 	     precedence Subscript := x -> prec symbol _
 	   precedence Superscript := x -> prec symbol ^
 		 precedence Power := x -> if x#1 === 1 then precedence x#0 else prec symbol ^
-		    precedence ZZ := x -> if x>=0 then 70 else strength1 symbol -
-		   precedence RR := x -> prec symbol x
-	      precedence Function := x -> prec symbol x
-		  precedence List := x -> prec symbol x
-		 precedence Array := x -> prec symbol x
-
-Constant = new Type of BasicList
-
-	      precedence Constant := x -> prec symbol x
-		precedence Symbol := x -> strength1 symbol symbol
-		   precedence Net := x -> prec symbol x
-		precedence String := x -> prec symbol x
-	    precedence Expression := x -> prec symbol x
-	        precedence Holder := x -> prec symbol x
+		    precedence ZZ := x -> if x>=0 then strength1 symbol symbol else prec symbol -
+		    precedence RR :=
+	      precedence Function :=
+		  precedence List :=
+		 precedence Array :=
+	      precedence Constant :=
+		precedence Symbol :=
+		   precedence Net :=
+		precedence String :=
+	    precedence Expression :=
+	        precedence Holder := x -> strength1 symbol symbol
 	       precedence Holder2 := x -> precedence x#0
        precedence BinaryOperation := x -> prec x#0
 -----------------------------------------------------------------------------
