@@ -41,10 +41,10 @@ singleString = (key, text) -> (
        error("expected single indented line after "|toString key);
      key => text#0)
 
-multiString = (key, text) -> (
+multiString = (key, text) -> (				    -- written by Andrew Hoefel originally
      if #text === 0 then
        error("expected at least one indented line after "|toString key);
-     key => concatenate apply(text, t-> t | "\n")
+     key => concatenate between(newline, text)
      )
 
 markup2 = (text, indents) -> (
