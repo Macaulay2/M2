@@ -47,7 +47,7 @@ markup2 = (text, indents) -> (
      sp = apply(sp, s -> replace(///\\@///,"@",s));
      if not odd(#sp) then error "unmatched @";
      for i from 0 to #sp-1 list
-	  if even i then TEX sp#i else value sp#i
+	  if even i then if sp#i != "" then TEX sp#i else "" else value sp#i
      )
 
 markup = (text, indents) -> (
@@ -55,8 +55,12 @@ markup = (text, indents) -> (
      indents = prepend(infinity,indents);
      indents = apply(indents, n -> if n === infinity then -1 else n);
      splits := splitByIndent(text, indents);
-     apply(splits, (i,j) -> PARA markup2(text_{i+1..j},indents_{i+1..j})))
-     
+     apply(splits, (i,j) -> (
+	       m := markup2(text_{i+1..j},indents_{i+1..j});
+	       print (apply(m,class));
+	       if not (#m == 3 and m#0 === "" and instance(m#1,UL) and m#2 === "") then m = PARA m;
+	       m)))
+    
 items = (text, indents) -> (
      apply(splitByIndent(text, indents), (i,j) -> (
 	       s := text#i;
