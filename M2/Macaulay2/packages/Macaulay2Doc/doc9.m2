@@ -1534,13 +1534,13 @@ document {
 document {
      Key => (max,ChainComplex),
      Headline => "maximum index in a chain complex",
-     TT "max C", " -- the maximum index occuring in a chain complex."
+     TT "max C", " -- the maximum index occurring in a chain complex."
      }
 
 document {
      Key => (min,ChainComplex),
      Headline => "minimum index in a chain complex",
-     TT "min C", " -- the minimum index occuring in a chain complex."
+     TT "min C", " -- the minimum index occurring in a chain complex."
      }
 
 TEST ///

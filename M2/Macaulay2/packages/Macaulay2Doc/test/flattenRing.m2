@@ -207,3 +207,37 @@ assert ( ker map(k,E[t]) == ideal t )
 assert ( ker map(E,k[t]) == ideal t )
 assert ( ker map(k[t],E) == ideal 0_E )
 assert ( ker map(E[t],k) == ideal 0_k )
+
+-- check degrees
+
+assert ( {{2}} === degrees flattenRing(QQ[a][DegreeMap=>x->2*x,Join=>false],Result=>Ring) )
+
+
+-- quotients of quotients
+
+A = QQ[x]
+(S,p) = flattenRing A
+assert( S === A )
+assert( matrix p == matrix {{x}} )
+B = A/x^5
+(S,p) = flattenRing B
+assert( ambient S === A )
+assert( ideal S == ideal A_0^5 )
+C = B/x^3
+(S,p) = flattenRing C
+assert( ambient S === A )
+assert( ideal S == ideal A_0^3 )
+
+-- Result option
+
+A = QQ[x]
+I = ideal x^5
+B = A/I
+assert( B === flattenRing(B,Result=>null) )
+assert( B === flattenRing(B,Result=>Thing) )
+assert( B === flattenRing(B,Result=>Ring) )
+assert( I == flattenRing(B,Result=>Ideal) )
+assert( I === flattenRing(I,Result=>null) )
+assert( I === flattenRing(I,Result=>Thing) )
+assert( B === flattenRing(I,Result=>Ring) )
+assert( I == flattenRing(I,Result=>Ideal) )

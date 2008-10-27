@@ -91,7 +91,7 @@ void varpower_monomials::lcm(const_varpower_monomial m1,
      so: length is 2*npairs+1 (in ints)
   */
 
-  varpower_word v1,v2,e1,e2;
+  varpower_word v1,v2,e1=0,e2=0;
   varpower_word n1 = *m1++;
   varpower_word n2 = *m2++;
 
@@ -144,7 +144,7 @@ void varpower_monomials::mult(const_varpower_monomial m1,
     monomials.
   */
 
-  varpower_word v1,v2,e1,e2;
+  varpower_word v1,v2,e1=0,e2=0;
   int n1 = *m1++;
   int n2 = *m2++;
 
@@ -193,7 +193,7 @@ void varpower_monomials::quotient(const_varpower_monomial m1,
      result is set to m1:m2.  No overflows can occur
   */
 
-  varpower_word v1,v2,e1,e2;
+  varpower_word v1,v2,e1=0,e2=0;
   int n1 = *m1++;
   int n2 = *m2++;
 
@@ -240,7 +240,7 @@ int varpower_monomials::divides(const_varpower_monomial m1,
      0 is returned if m1 does not divide m2.
   */
 
-  varpower_word v1,v2,e1,e2;
+  varpower_word v1,v2,e1=0,e2=0;
   int n1 = *m1++;
   int n2 = *m2++;
 

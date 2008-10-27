@@ -548,7 +548,7 @@ static bool isparallel(M2_arrayint w, int *e, int *f)
 {
   // true if e-f is a positive multiple of w
 
-  int i, j, a, b;
+  int i, j, a=0, b;
   int nvars = w->len;
   for (i=0; i<nvars; i++)
     {

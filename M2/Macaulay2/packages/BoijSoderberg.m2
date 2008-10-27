@@ -895,7 +895,7 @@ document {
 	  "B"
 	  },
      Outputs => {
-	  List => "of lowest degree shifts occuring in B"
+	  List => "of lowest degree shifts occurring in B"
 	  },
      EXAMPLE lines ///
      	  R = ZZ/101[a..e];
@@ -914,7 +914,7 @@ document {
 	  "B"
 	  },
      Outputs => {
-	  List => "of highest degree shifts occuring in B"
+	  List => "of highest degree shifts occurring in B"
 	  },
      EXAMPLE lines ///
      	  R = ZZ/101[a..e];

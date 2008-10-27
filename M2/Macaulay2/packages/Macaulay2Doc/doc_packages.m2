@@ -210,6 +210,11 @@ document {
 	       },
 	  },
      Consequences => {"a package is created"},
+     PARA {
+	  "The dictionaries for the symbols in the packages loaded by the user are moved out of the way to avoid conflicts, so
+	  just the standard pre-loaded packages are visible to the source code of the package.  In addition, the package
+	  ", TO2( "SimpleDoc::SimpleDoc", "SimpleDoc"), " is made available."
+	  },
      EXAMPLE { 
 ///newPackage("Foo", 
      Version => "1.1", 

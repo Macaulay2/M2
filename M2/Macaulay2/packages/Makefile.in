@@ -5,7 +5,7 @@ VPATH = @srcdir@
 LD_LIBRARY_PATH := $(BUILTLIBPATH)/lib:$(LD_LIBRARY_PATH)
 export LD_LIBRARY_PATH
 
-# here is the list of packages to install with Macaulay2, as definend in configure.ac
+# here is the list of packages to install with Macaulay2, as defined in configure.ac
 PACKAGES = @PACKAGES@
 
 RemakeAllDocumentation ?= false

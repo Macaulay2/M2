@@ -244,6 +244,7 @@ newPackage(String) := opts -> (title) -> (
      setAttribute(newpkg.Dictionary,PrintNames,title | ".Dictionary");
      setAttribute(newpkg#"private dictionary",PrintNames,title | "#\"private dictionary\"");
      debuggingMode = opts.DebuggingMode;		    -- last step before turning control back to code of package
+     if title =!= "SimpleDoc" and title =!= "Core" then needsPackage "SimpleDoc";
      newpkg)
 
 export = method(Dispatch => Thing)

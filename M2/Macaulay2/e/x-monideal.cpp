@@ -332,7 +332,7 @@ public:
 
 const MonomialIdeal *FrobbyAlexanderDual(MonomialIdeal *I)
 {
-  MonomialIdeal *J;
+  MonomialIdeal *J = NULL;
   MyTermConsumer M(J);
   Frobby::Ideal F(5);
   Frobby::alexanderDual(F, 0, M);

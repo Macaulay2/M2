@@ -29,14 +29,14 @@ document {
      }
 document { 
      Key => {(indices,RingElement),(indices,Matrix)},
-     Headline => "indices of variables occuring in a polynomial",
+     Headline => "indices of variables occurring in a polynomial",
      Usage => "indices f",
      Inputs => {
 	  "f" => {"or ",ofClass Matrix, "over a polynomial ring"}
 	  },
      Outputs => {
 	  List => "of integers, the indices of the variables 
-	    occuring in the polynomial or matrix"
+	    occurring in the polynomial or matrix"
 	  },
      "The first variable in a polynomial ring has index 0, the second has index 1, etc.
      This function returns a list (in ascending order) of the indices of all

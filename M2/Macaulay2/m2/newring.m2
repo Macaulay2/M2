@@ -137,6 +137,7 @@ coerce(Ideal,Ring) := quotient @@ first
 coerce(Thing,Nothing) := x -> null			    -- avoid using this one, to save time earlier
 coerce(Ring,Ideal) := ideal @@ first			    -- avoid using this one, to save time earlier
 preprocessResultTemplate = (X,r) -> (
+     if instance(r,ZZ) then r = r:null;
      r = apply(sequence r,x -> if x === null then Thing else x);
      if #r == 0 then return r;
      if not all(r, X -> instance(X,Type)) then error "expected Result option to be a type or a sequence of types or nulls";
@@ -237,13 +238,12 @@ flattenRing PolynomialRing := opts -> (cacheValue (symbol flattenRing => opts)) 
 	  );
      T' := if ancestor(Ring,resultTemplate#0) then quotient I' else T;
      (p,q) = (map(T',R, vars T'), map(R,T', vars R | promote(matrix q,R)));
-     if ancestor(Ring,resultTemplate#0) then inverses(p,q)
-     else << "flattenRing: not inverses " << R << resultTemplate#0 << endl;
+     if ancestor(Ring,resultTemplate#0) then inverses(p,q);
      coerceResults(resultTemplate,(I',p,q))))
 
 isWellDefined RingMap := f -> (
      R := source f;
-     (S,p,q) := flattenRing(R,CoefficientRing=>ZZ);
+     (S,p,q) := flattenRing(R,CoefficientRing=>ZZ,Result=>3);
      T := ambient S;
      I := ideal S;
      g := f * q * map(S,T);
