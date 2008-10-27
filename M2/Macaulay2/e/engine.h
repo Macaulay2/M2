@@ -566,7 +566,7 @@ extern "C" {
   /* if f is a variable of its ring, then the index of that variable is returned.
      If f is not a variable, then -1 is returned. */
 
-  M2_arrayint IM2_RingElement_indices(const RingElement *f); /* drg: connected rawIndices */
+  M2_arrayint rawRingElementIndices(const RingElement *f); /* drg: connected rawIndices */
   /* The list of indices of variables which occur in f is returned. */
 
   const RingElementOrNull * rawAssociateDivisor(const RingElement *f);
@@ -1084,6 +1084,8 @@ extern "C" {
      If the ring is not a polynomial ring, an error is given, and Null is returned.
   */
 
+  M2_arrayint_OrNull rawMatrixIndices(const Matrix *f); /* connected to rawIndices */
+  
   M2_arrayint IM2_Matrix_min_leadterms(const Matrix *M, M2_arrayint vars); /* TODO */
 
   const MatrixOrNull * IM2_Matrix_auto_reduce(const Matrix *M); /* TODO */

@@ -613,6 +613,13 @@ const MatrixOrNull * rawBasis(const Matrix *M,
   return M->Matrix::basis(lo_degree,hi_degree,wt,vars,do_truncation,limit);
 }
 
+M2_arrayint_OrNull rawMatrixIndices(const Matrix *f)
+  /* The list of indices of variables which occur in f is returned. */
+  /* currently requires a polynomial ring */
+{
+  return f->support();
+}
+
 const MatrixOrNull * IM2_Matrix_monomials(M2_arrayint vars, 
 					  const Matrix *M)
 {

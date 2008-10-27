@@ -1,3 +1,4 @@
+-- 10/26/08: now get an error message on y/(u^2+v^2)
 pp=5
 K=frac(ZZ/pp[u,v]);
 R=K[x,y,z_0..z_(2*pp-1)];

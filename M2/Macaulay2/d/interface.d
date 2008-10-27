@@ -600,8 +600,9 @@ export rawIndexIfVariable(e:Expr):Expr := (
 setupfun("rawIndexIfVariable",rawIndexIfVariable);
 
 export rawIndices(e:Expr):Expr := (
-     when e is f:RawRingElement do toExpr(Ccode(array(int), "(engine_RawArrayInt)IM2_RingElement_indices(", "(RingElement *)", f, ")" ))
-     else WrongArg("a raw ring element"));
+     when e is f:RawRingElement do toExpr(Ccode(array(int), "(engine_RawArrayInt)rawRingElementIndices(", "(RingElement *)", f, ")" ))
+     else when e is m:RawMatrix do toExpr(Ccode(array(int), "(engine_RawArrayInt)rawMatrixIndices(", "(Matrix *)", m, ")" ))
+     else WrongArg("a raw ring element or raw matrix"));
 setupfun("rawIndices",rawIndices);
 
 export rawPolynomialRing(e:Expr):Expr := (
