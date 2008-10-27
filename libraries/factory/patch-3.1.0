@@ -1,0 +1,21 @@
+diff -ur --exclude=configure tmp/factory/factory.h factory/factory.h
+--- tmp/factory/factory.h	2008-09-11 03:02:22.000000000 -0500
++++ factory/factory.h	2008-10-26 21:02:10.000000000 -0500
+@@ -613,7 +613,7 @@
+     CFArray values;
+ public:
+     Evaluation() : values() {}
+-    Evaluation( int min, int max ) : values( min, max ) {}
++    Evaluation( int min0, int max0 ) : values( min0, max0 ) {}
+     Evaluation( const Evaluation & e ) : values( e.values ) {}
+     virtual ~Evaluation() {}
+     Evaluation& operator= ( const Evaluation & e );
+@@ -952,7 +952,7 @@
+     CFRandom * gen;
+ public:
+     REvaluation() : Evaluation(), gen(0) {}
+-    REvaluation( int min, int max, const CFRandom & sample ) : Evaluation( min, max ), gen( sample.clone() ) {}
++    REvaluation( int min0, int max0, const CFRandom & sample ) : Evaluation( min0, max0 ), gen( sample.clone() ) {}
+     REvaluation( const REvaluation & e );
+     ~REvaluation();
+     REvaluation& operator= ( const REvaluation & e );

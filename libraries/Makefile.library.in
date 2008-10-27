@@ -63,7 +63,7 @@ else
 .patched-$(VERSION) : .untarred-$(VERSION) ; touch $@
 endif
 
-UNTARCMD ?= rm -rf $(TARDIR) && tar xzf tarfiles/$(TARFILE)
+UNTARCMD ?= tar xzf tarfiles/$(TARFILE)
 .untarred-$(VERSION) : .fetched-$(VERSION) ; $(UNTARCMD) && touch $@
 .untarred2-$(VERSION) : .fetched-$(VERSION) ; mkdir tmp ; $(UNTARCMD) -C tmp && touch $@
 
