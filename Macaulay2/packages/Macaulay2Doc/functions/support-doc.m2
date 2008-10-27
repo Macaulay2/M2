@@ -1,12 +1,12 @@
 document { 
      Key => {support,(support,RingElement),(support,Matrix)},
-     Headline => "list of variables occuring in a polynomial or matrix",
+     Headline => "list of variables occurring in a polynomial or matrix",
      Usage => "support f",
      Inputs => {
-	  "f" => RingElement => {"or ", ofClass Matrix, "over a polynomial ring"
+	  "f" => RingElement => {"or ", ofClass Matrix, "over a polynomial ring"}
 	  },
      Outputs => {
-	  List => {"of ", TO2 (RingElement, "ring elements"), ", the variables occuring in ", TT "f"}
+	  List => {"of ", TO2 (RingElement, "ring elements"), ", the variables occurring in ", TT "f"}
 	  },
      EXAMPLE {
 	  "R = QQ[a..g]",
@@ -41,11 +41,11 @@ document {
 
 document { 
      Key => {(support,Ideal)},
-     Headline => "list of variables occuring in the generators of an ideal",
+     Headline => "list of variables occurring in the generators of an ideal",
      Usage => "support I",
      Inputs => { "I" => "an ideal in a polynomial ring" },
      Outputs => {
-	  List => {"of ", TO2 (RingElement, "ring elements"), ", the variables occuring in the generators of the ideal"}
+	  List => {"of ", TO2 (RingElement, "ring elements"), ", the variables occurring in the generators of the ideal"}
 	  },
      EXAMPLE lines ///
 	  R = QQ[a..g]

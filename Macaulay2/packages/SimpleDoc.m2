@@ -1,7 +1,7 @@
 newPackage(
 	"SimpleDoc",
-    	Version => "0.1", 
-    	Date => "June 28, 2008",
+    	Version => "1.0", 
+    	Date => "October 26, 2008",
 	AuxiliaryFiles=>true,
     	Authors => {
 	     {Name => "Dan Grayson", 
@@ -11,7 +11,7 @@ newPackage(
 		  Email => "math@math.cornell.edu", 
 		  HomePage => "http://www.math.cornell.edu/~mike/"}},
     	Headline => "a simple documentation function",
-    	DebuggingMode => true
+    	DebuggingMode => false
     	)
 
 export {doc, docTemplate, docExample, packageTemplate}
@@ -63,7 +63,6 @@ markup = (text, indents) -> (
      splits := splitByIndent(text, indents);
      apply(splits, (i,j) -> (
 	       m := markup2(text_{i+1..j},indents_{i+1..j});
-	       print (apply(m,class));
 	       if not (#m == 3 and m#0 === "" and instance(m#1,UL) and m#2 === "") then m = PARA m;
 	       m)))
     

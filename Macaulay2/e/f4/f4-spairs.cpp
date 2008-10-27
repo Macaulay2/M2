@@ -46,7 +46,7 @@ void F4SPairSet::insert_spair(pre_spair *p, int me)
 {
   int j = p->j;
   int deg = p->deg1 + gb[me]->deg;
-  int me_component = M->get_component(gb[me]->f.monoms);
+  // int me_component = M->get_component(gb[me]->f.monoms);
 
   spair *result = make_spair(F4_SPAIR_SPAIR, deg, me, j);
 

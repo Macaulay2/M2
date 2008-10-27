@@ -516,7 +516,7 @@ processExamplesLoop ExampleItem := x -> (
 	  if exampleResults#?exampleCounter
 	  then PRE exampleResults#exampleCounter
 	  else (
-	       if #exampleResults === exampleCounter then stderr << "--warning: example results terminate prematurely: " << currentExampleKey << endl;
+	       if #exampleResults === exampleCounter then error("example results terminate prematurely: ", toString currentExampleKey);
 	       PRE concatenate("i", toString (exampleCounter+1), " : ",x)
 	       ));
      exampleCounter = exampleCounter + 1;

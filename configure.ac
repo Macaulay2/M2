@@ -371,6 +371,7 @@ AC_SUBST(PACKAGES,"
   Browse
   InvolutiveBases
   ConwayPolynomials
+  SimpleDoc
 ")
 
 # convert the newlines in the list above to spaces

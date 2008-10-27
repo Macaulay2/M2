@@ -576,7 +576,7 @@ document {
 	  "scanPairs(x, print)",
 	  },
      "The function ", TO "merge", " can be used to merge two hash tables.  The
-     result is a hash table whose keys are those occuring in one of the two
+     result is a hash table whose keys are those occurring in one of the two
      incoming hash tables.  We must provide a function of two arguments
      that is used to combine the values when a key occurs in both hash tables.",
      EXAMPLE {

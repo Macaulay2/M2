@@ -728,7 +728,7 @@ document {
 	  },
      "One restriction on degrees of variables is that the entries be small integer values, possibly
      zero or negative.  The notion of small depends on the size of exponents one wants: the degree
-     of each monomial occuring should fit in a 32 bit integer (or 64 bit integer, on 64 bit machines).",
+     of each monomial occurring should fit in a 32 bit integer (or 64 bit integer, on 64 bit machines).",
      PARA{
 	 "Another restriction on degrees, at least if all the computational facilities of Macaulay 2 are
 	 needed, is that a heft vector exists for them.  A heft vector is a list of integers whose length is

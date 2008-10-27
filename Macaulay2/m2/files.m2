@@ -224,7 +224,7 @@ toFilename String := s -> (
      -- at least one special character "_" prefixed, to avoid collisions with
      -- other file names such as "index.html".
      -- Notice that the prefix character _ prevents the "!" character
-     -- from occuring in the first position, where it would have a special
+     -- from occurring in the first position, where it would have a special
      -- meaning to Macaulay 2.
      -- We should check which characters are allowed in URLs.
      s = concatenate("_",apply(characters s, c -> tt#c));

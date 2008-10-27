@@ -280,7 +280,7 @@ document {
 	  "f" => {"in a polynomial ring ", TT "R"}
 	  },
      Outputs => {
-	  ZZ => {"highest power of ", TT "x", " occuring in ", TT "f"}
+	  ZZ => {"highest power of ", TT "x", " occurring in ", TT "f"}
 	  },
      EXAMPLE {
 	  "R = QQ[a..d];",
