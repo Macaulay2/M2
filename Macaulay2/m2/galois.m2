@@ -139,7 +139,10 @@ GF(Ring) := GaloisField => opts -> (S) -> (
      F.frac = F;
      F.generators = apply(generators S, m -> promote(m,F));
      if S.?generatorSymbols then F.generatorSymbols = S.generatorSymbols;
-     if S.?generatorExpressions then F.generatorExpressions = apply(S.generatorExpressions,F.generators,(e,x) -> new Holder2 from {e#0,x});
+     if S.?generatorExpressions then F.generatorExpressions = (
+	  S.generatorExpressions
+	  -- apply(S.generatorExpressions,F.generators,(e,x) -> new Holder2 from {e#0,x})
+	  );
      if S.?generators then F.generators = apply(S.generators, r -> promote(r,F));
      if S.?indexSymbols then F.indexSymbols = applyValues(S.indexSymbols, r -> promote(r,F));
      if S.?indexStrings then F.indexStrings = applyValues(S.indexStrings, r -> promote(r,F));

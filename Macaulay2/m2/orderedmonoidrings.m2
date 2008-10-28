@@ -241,14 +241,23 @@ Ring OrderedMonoid := PolynomialRing => (			  -- no memoize
      	  ONE := RM#1;
 	  if R.?char then RM.char = R.char;
 	  RM _ M := (f,m) -> new R from rawCoefficient(R.RawRing, raw f, raw m);
-	  expression RM := f -> new Holder2 from {(
+	  expression RM := f -> (
+	       (
 		    (coeffs,monoms) -> (
 			 if #coeffs === 0
 			 then expression 0
 			 else sum(coeffs,monoms, (a,m) -> expression (if a == 1 then 1 else promote(a,R)) * expression (if m == 1 then 1 else new M from m))
 			 )
-		    ) rawPairs(raw R, raw f),
-	       f};
+		    ) rawPairs(raw R, raw f)
+--	       new Holder2 from {(
+--		    (coeffs,monoms) -> (
+--			 if #coeffs === 0
+--			 then expression 0
+--			 else sum(coeffs,monoms, (a,m) -> unhold expression (if a == 1 then 1 else promote(a,R)) * unhold expression (if m == 1 then 1 else new M from m))
+--			 )
+--		    ) rawPairs(raw R, raw f),
+--	       f}
+	  );
 	  factor RM := opts -> f -> (
 	       c := 1;
 	       (facs,exps) := rawFactor raw f;	-- example value: ((11, x+1, x-1, 2x+3), (1, 1, 1, 1)); constant term is first, if there is one
@@ -275,7 +284,10 @@ Ring OrderedMonoid := PolynomialRing => (			  -- no memoize
 	       );
 	  RM.generatorSymbols = M.generatorSymbols;
 	  RM.generators = apply(num, i -> RM_i);
-	  RM.generatorExpressions = apply(M.generatorExpressions,RM.generators,(e,x) -> new Holder2 from {e#0,x});
+	  RM.generatorExpressions = (
+	       M.generatorExpressions
+	       -- apply(M.generatorExpressions,RM.generators,(e,x) -> (new Holder2 from {e#0,x}))
+	       );
 	  RM.indexSymbols = new HashTable from join(
 	       if R.?indexSymbols then apply(pairs R.indexSymbols, (nm,x) -> nm => new RM from rawPromote(raw RM,raw x)) else {},
 	       apply(num, i -> M.generatorSymbols#i => RM_i)

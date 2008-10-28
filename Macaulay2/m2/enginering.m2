@@ -264,7 +264,10 @@ frac EngineRing := R -> if isField R then R else if R.?frac then R.frac else (
      F.generators = apply(generators R, m -> promote(m,F));
      if R.?generatorSymbols then F.generatorSymbols = R.generatorSymbols;
      if R.?generators then F.generators = apply(R.generators, r -> promote(r,F));
-     if R.?generatorExpressions then F.generatorExpressions = apply(R.generatorExpressions,F.generators,(e,x)->new Holder2 from {e#0,x});
+     if R.?generatorExpressions then F.generatorExpressions = (
+	  R.generatorExpressions
+	  -- apply(R.generatorExpressions,F.generators,(e,x)->new Holder2 from {e#0,x})
+	  );
      if R.?indexSymbols then F.indexSymbols = applyValues(R.indexSymbols, r -> promote(r,F));
      if R.?indexStrings then F.indexStrings = applyValues(R.indexStrings, r -> promote(r,F));
      F)

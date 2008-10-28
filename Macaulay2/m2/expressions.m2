@@ -72,7 +72,10 @@ new Holder from VisibleList := (H,x) -> (
 hold = method(Dispatch => Thing, TypicalValue => Expression)
 hold Thing := x -> new Holder from {x}
 hold Expression := identity
-typicalValues#hold = Expression
+
+unhold = method()
+unhold Holder2 := first
+unhold Expression := identity
 
 AssociativeExpression = new Type of Expression
 AssociativeExpression.synonym = "associative expression"

@@ -187,10 +187,18 @@ makeit1 := (opts) -> (
      if #w =!= #varlist then error "expected same number of degrees as variables";
      M.vars = M.generators = apply(# varlist, i -> new M from rawVarMonomial(i,1));
      M.generatorSymbols = varlist;
-     M.generatorExpressions = apply(varlist,M.generators,(e,x) -> new Holder2 from {expression e,x});
+     M.generatorExpressions = (
+	  apply(varlist,
+	       x -> if instance(x, Symbol) then x else expression x
+	       )
+	  -- apply(varlist,M.generators,(e,x) -> new Holder2 from {expression e,x})
+	  );
      processTrm := (k,v) -> if v =!= 1 then Power{M.generatorExpressions#k, v} else M.generatorExpressions#k;
      processTrms := trms -> if #trms === 1 then processTrm trms#0 else new Product from apply(trms, processTrm);
-     expression M := x -> new Holder2 from { processTrms rawSparseListFormMonomial x.RawMonomial, x };
+     expression M := x -> (
+	  processTrms rawSparseListFormMonomial x.RawMonomial
+	  -- new Holder2 from { processTrms rawSparseListFormMonomial x.RawMonomial, x }
+	  );
      M.indexSymbols = hashTable apply(M.generatorSymbols,M.generators,(v,x) -> v => x);
      M.index = new MutableHashTable;
      scan(#varlist, i -> M.index#(varlist#i) = i);
