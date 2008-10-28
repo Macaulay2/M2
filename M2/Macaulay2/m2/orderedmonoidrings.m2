@@ -323,7 +323,7 @@ ord := (v,nv) -> (
 	  ))     
 selectVariables = method()
 selectVariables(List,PolynomialRing) := (v,R) -> (
-     v = deepSplice v;
+     v = splice v;
      ord(v,numgens R);
      o := new MutableHashTable from options R;
      o.MonomialOrder = selmo(v,o.MonomialOrder);

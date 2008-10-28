@@ -213,7 +213,7 @@ ggConcatBlocks = (tar,src,mats) -> (			    -- we erase this later
      then f = map(target f, source f, f, Degree => degree mats#0#0);
      f)
 
-samering = mats -> (					    -- we erase this later
+sameringMatrices = mats -> (
      R := ring mats#0;
      if not all ( mats, m -> ring m === R )
      then error "expected matrices over the same ring";
@@ -320,7 +320,7 @@ RingElement || RingElement := Matrix => (r,s) -> matrix {{r}} || matrix {{s}}
 concatCols = mats -> (
      mats = nonnull toList mats;
      if # mats === 1 then return mats#0;
-     samering mats;
+     sameringMatrices mats;
      sources := apply(mats,source);
      -- if not all(sources, F -> isFreeModule F) then error "expected sources to be free modules";
      targets := apply(mats,target);
@@ -330,7 +330,7 @@ concatCols = mats -> (
 concatRows = mats -> (
      mats = nonnull toList mats;
      if # mats === 1 then return mats#0;
-     samering mats;
+     sameringMatrices mats;
      sources := apply(mats,source);
      -- if not same sources then error "expected matrices in the same column to have equal sources";
      targets := apply(mats,target);

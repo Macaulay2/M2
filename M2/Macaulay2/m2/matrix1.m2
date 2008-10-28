@@ -160,7 +160,7 @@ concatBlocks = mats -> (
      else if #(mats#0) === 1
      then concatRows (mats/first)
      else (
-     	  samering flatten mats;
+     	  sameringMatrices flatten mats;
 	  sources := applyTable(mats,source);
 	  targets := transpose applyTable(mats,target);
 	  -- if not same sources then error "expected matrices in the same column to have equal sources";
@@ -525,7 +525,7 @@ Ideal#{Standard,AfterPrint} = Ideal#{Standard,AfterNoPrint} = (I) -> (
 
 Ideal ^ ZZ := Ideal => (I,n) -> ideal symmetricPower(n,generators I)
 Ideal * Ideal := Ideal => ((I,J) -> ideal flatten (generators I ** generators J)) @@ samering
-Ideal * Module := Module => (I,M) -> (subquotient (generators I ** generators M, relations M)) @@ samering
+Ideal * Module := Module => ((I,M) -> subquotient (generators I ** generators M, relations M)) @@ samering
 dim Ideal := I -> dim cokernel generators I
 Ideal + Ideal := Ideal => ((I,J) -> ideal (generators I | generators J)) @@ samering
 Ideal + RingElement := ((I,r) -> I + ideal r) @@ samering
