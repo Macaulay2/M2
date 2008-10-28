@@ -144,6 +144,30 @@ preprocessResultTemplate = (X,r) -> (
      if r#0 === Thing then r = prepend(class X, drop(r,1));
      r)
 coerceResults = (resultTemplate,results) -> unsequence apply(take(results,#resultTemplate),resultTemplate,coerce)
+flatCoerce = (R,resultTemplate,results) -> (
+     (X,p,q) := results;
+     -- assert( instance(X,Ideal) or instance(X,Ring));
+     A := if instance(X,Ideal) then ring X else X;
+     -- assert( instance(p,RingMap) );
+     -- assert( instance(q,RingMap) );
+     -- assert( A === target p and A === source q );
+     -- assert( R === source p and R === target q );
+     if instance(X,Ideal) and ancestor(Ring,resultTemplate#0) then (
+	  X = quotient X;
+	  if X =!= target p then p = map(X,source p,promote(matrix p,X));
+	  if X =!= source q then q = map(target q,X,q);
+	  );
+     if instance(X,Ring) and not ancestor(Ring,resultTemplate#0) then (
+	  X = ideal X;
+	  B := ring X;
+	  if B =!= target p then p = map(B,source p,lift(matrix p,B));
+	  if B =!= source q then q = map(target q,B,q);
+	  );
+     if instance(X,Ring) then (
+     	  p.cache.inverse = q;
+     	  q.cache.inverse = p;
+	  );
+     coerceResults(resultTemplate,(X,p,q)))     
 
 -- flattening rings (like (QQ[a,b]/a^3)[x,y]/y^6 --> QQ[a,b,x,y]/(a^3,y^6)
 flattenRing = method(
@@ -163,15 +187,10 @@ triv := R -> (
      idR.cache.inverse = idR;
      (R,idR,idR))
 
-inverses := (p,q) -> (
-     p.cache.inverse = q;
-     q.cache.inverse = p;
-     (p,q))
-
 flattenRing Ring := opts -> R -> (
      resultTemplate := preprocessResultTemplate(R, opts.Result);
      k := opts.CoefficientRing;
-     if k === R or k === null and (R.?isBasic or isField R) then coerceResults(resultTemplate,triv R)
+     if k === R or k === null and (R.?isBasic or isField R) then flatCoerce(R,resultTemplate,triv R)
      else unable())
 
 flattenRing GaloisField := opts -> (cacheValue (symbol flattenRing => opts)) (F -> (
@@ -179,8 +198,7 @@ flattenRing GaloisField := opts -> (cacheValue (symbol flattenRing => opts)) (F 
      A := ambient F;
      (X,p,q) := flattenRing(A, opts, Result => (resultTemplate#0,,));
      (p,q) = (map(target p, F, p), map(F, source q, q));
-     if ancestor(Ring,resultTemplate#0) then inverses(p,q);
-     coerceResults(resultTemplate,(X,p,q))))
+     flatCoerce(F,resultTemplate,(X,p,q))))
 
 flatQuotient := method()
 flatQuotient(Ring,Ideal) := (R,I) -> R/I
@@ -191,11 +209,7 @@ flattenRing Ideal := opts -> (cacheValue (symbol flattenRing => opts)) (J -> (
 	  R := ring J;
 	  (I,p,q) := flattenRing(R,opts,Result => (Ideal,,));
 	  I = if ring I === R then J else I + p J;
-	  if ancestor(Ring,resultTemplate#0) then (
-	       S := quotient I;
-	       (p,q) = inverses(map(S,R,matrix p),map(R,S,matrix q));
-	       );
-	  coerceResults(resultTemplate,(I,p,q))))
+	  flatCoerce(ring J, resultTemplate,(I,p,q))))
 
 flattenRing QuotientRing := opts -> (cacheValue (symbol flattenRing => opts)) (R -> (
      	  resultTemplate := preprocessResultTemplate(R, opts.Result);
@@ -204,16 +218,14 @@ flattenRing QuotientRing := opts -> (cacheValue (symbol flattenRing => opts)) (R
 	       opts.CoefficientRing === null and (isField k or k.?isBasic)
 	       or opts.CoefficientRing === k
 	       )
-	  then return coerceResults(resultTemplate,triv R);
+	  then return flatCoerce(R, resultTemplate,triv R);
 	  J := ideal presentation R;
 	  A := ring J;
 	  (I,p,q) := flattenRing(A,opts,Result => (Ideal,,));
 	  I = I + p J;
-	  if ancestor(Ring,resultTemplate#0) then (
-	       S := quotient I;
-	       (p,q) = inverses(map(S,R,matrix p),map(R,S,matrix q));
-	       );
-	  coerceResults(resultTemplate,(I,p,q))))
+	  p = map(target p, R, matrix p);
+	  q = map(R, source q, promote(matrix q,R));
+	  r := flatCoerce(R, resultTemplate,(I,p,q))))
 
 flattenRing PolynomialRing := opts -> (cacheValue (symbol flattenRing => opts)) (R -> (
      resultTemplate := preprocessResultTemplate(R, opts.Result);
@@ -224,8 +236,8 @@ flattenRing PolynomialRing := opts -> (cacheValue (symbol flattenRing => opts)) 
      M := monoid R;
      n2 := numgens M;
      if opts.CoefficientRing === A or opts.CoefficientRing === null and (isField A or A.?isBasic)
-     then return coerceResults(resultTemplate,triv R);
-     (I,p,q) := flattenRing(coefficientRing R, opts, Result => (Ideal,Nothing,));
+     then return flatCoerce(R, resultTemplate,triv R);
+     (I,p,q) := flattenRing(coefficientRing R, opts, Result => (Ideal,,));
      S := ring I;
      (n1,T) := (
      	  if instance(S,PolynomialRing)
@@ -236,10 +248,8 @@ flattenRing PolynomialRing := opts -> (cacheValue (symbol flattenRing => opts)) 
 	  + 
 	  (map(T,S,(vars T)_(toList (n2 .. n2 + n1 - 1)), DegreeMap => M.Options.DegreeMap)) I
 	  );
-     T' := if ancestor(Ring,resultTemplate#0) then quotient I' else T;
-     (p,q) = (map(T',R, vars T'), map(R,T', vars R | promote(matrix q,R)));
-     if ancestor(Ring,resultTemplate#0) then inverses(p,q);
-     coerceResults(resultTemplate,(I',p,q))))
+     (p,q) = (map(T,R, vars T), map(R,T, vars R | promote(matrix q,R)));
+     r := flatCoerce(R, resultTemplate,(I',p,q))))
 
 isWellDefined RingMap := f -> (
      R := source f;

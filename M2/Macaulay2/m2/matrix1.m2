@@ -1,5 +1,13 @@
 --		Copyright 1993-2002 by Daniel R. Grayson
 
+plurals := hashTable { "matrix" => "matrices" }
+pluralize := s -> if plurals#?s then plurals#s else s|"s"
+pluralsynonym := T -> try pluralize T.synonym else "objects of class "|toString T;
+notsamering := (X,Y) -> (
+     if X === Y then error("expected ",pluralsynonym X, " for the same ring")
+     else error("expected ",X.synonym," and ",Y.synonym," for the same ring"))
+samering := (M,N) -> if ring M === ring N then (M,N) else notsamering(class M,class N)
+
 module Ring := Module => (stashValue symbol module) (R -> R^1)
 
 matrix(RingFamily,List) := Matrix => opts -> (R,m) -> matrix(default R, m, opts)
@@ -39,8 +47,8 @@ makeRawTable := (R,p) -> (					    -- this is messy
 
 map(Module,Nothing,Matrix) := Matrix => o -> (M,nothing,p) -> (
      if o.Degree =!= null then error "Degree option given with indeterminate source module";
+     samering(M,p);
      R := ring M;
-     if ring p =!= R then error "expected matrix and new target module to have the same ring";
      if M.?generators then (
 	  M' := source M.generators;
 	  if numgens M' != numgens target p then error "expected matrix and new target module to agree";
@@ -381,9 +389,9 @@ subquotient(Module,Matrix,Nothing) := (F,g,r) -> (
 subquotient(Module,Nothing,Nothing) := (F,g,r) -> F
 
 Matrix ** Matrix := Matrix => (f,g) -> (
+     samering(target f,target g);
+     samering(source f,source g);
      R := ring target f;
-     if ring target g =!= R or ring source g =!= ring source f
-     then error "expected matrices over the same ring";
      map(target f ** target g, 
 	  source f ** source g, 
 	  map(R, f.RawMatrix ** g.RawMatrix),
@@ -516,15 +524,15 @@ Ideal#{Standard,AfterPrint} = Ideal#{Standard,AfterNoPrint} = (I) -> (
      )
 
 Ideal ^ ZZ := Ideal => (I,n) -> ideal symmetricPower(n,generators I)
-Ideal * Ideal := Ideal => (I,J) -> ideal flatten (generators I ** generators J)
-Ideal * Module := Module => (I,M) -> subquotient (generators I ** generators M, relations M)
+Ideal * Ideal := Ideal => ((I,J) -> ideal flatten (generators I ** generators J)) @@ samering
+Ideal * Module := Module => (I,M) -> (subquotient (generators I ** generators M, relations M)) @@ samering
 dim Ideal := I -> dim cokernel generators I
-Ideal + Ideal := Ideal => (I,J) -> ideal (generators I | generators J)
-Ideal + RingElement := (I,r) -> I + ideal r
+Ideal + Ideal := Ideal => ((I,J) -> ideal (generators I | generators J)) @@ samering
+Ideal + RingElement := ((I,r) -> I + ideal r) @@ samering
 degree Ideal := I -> degree cokernel generators I
 trim Ideal := Ideal => opts -> (cacheValue (symbol trim => opts)) ((I) -> ideal trim(module I, opts))
 Ideal _ ZZ := RingElement => (I,n) -> (generators I)_(0,n)
-Matrix % Ideal := Matrix => (f,I) -> f % gb I
+Matrix % Ideal := Matrix => ((f,I) -> f % gb I) @@ samering
 numgens Ideal := (I) -> numgens source generators I
 leadTerm Ideal := Matrix => (I) -> leadTerm generators gb I
 leadTerm(ZZ,Ideal) := Matrix => (n,I) -> leadTerm(n,generators gb I)
@@ -551,8 +559,7 @@ Ideal == Ring := (I,R) -> (
 Ring == Ideal := (R,I) -> I == R
 
 Ideal == Ideal := (I,J) -> (
-     if ring I =!= ring J
-     then error "expected ideals in the same ring";
+     samering(I,J);
      ( generators I == generators J or 
 	  -- if isHomogeneous I and isHomogeneous J  -- can be removed later
 	  -- then gb I == gb J 
