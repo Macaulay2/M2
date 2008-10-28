@@ -421,7 +421,7 @@ ZZ == RingMap := (n,f) -> f == n
 RingMap.InverseMethod = (cacheValue symbol inverse) ( f -> notImplemented() )
 RingMap ^ ZZ := BinaryPowerMethod
 
-map(Ring,Ring,RingMap) := RingMap => opts -> (R,S,f) -> map(R,S,promote(matrix f, R),opts)
+map(Ring,Ring,RingMap) := RingMap => opts -> (R,S,f) -> map(R,S,matrix f,opts)
 
 -- module maps over ring maps:
 
