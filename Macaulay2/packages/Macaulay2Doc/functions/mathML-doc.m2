@@ -17,7 +17,7 @@ undocumented {
      (mathML, GradedModuleMap),
      (mathML, GroebnerBasis),
      (mathML, HashTable),
-     (mathML, Holder),
+     (mathML, Holder2),
      (mathML, Hypertext),
      (mathML, Ideal),
      (mathML, ImmutableType),
