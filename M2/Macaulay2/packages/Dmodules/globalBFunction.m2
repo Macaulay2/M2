@@ -153,7 +153,7 @@ globalBFunction RingElement := RingElement => o -> f -> (
 
 --------------------------------------------------------------
 -- global generalized Bernstein-Sato polynomial
-generalB = method(Options => {GuessedRoots => null})
+generalB = method(Options => {GuessedRoots => null, Strategy => ViaLinearAlgebra})
 generalB (List, RingElement) := RingElement => o->(F,g) -> (
 -- Input:   F = {f_1,...,f_r}, a list of polynomials in n variables                                                                                                                                       
 --                             (f_i has to be an element of A_n, the Weyl algebra).                                                                                                                       
@@ -168,6 +168,21 @@ generalB (List, RingElement) := RingElement => o->(F,g) -> (
      w := toList(n:0) | toList(r:1);
      I1 := inw(I0, -w|w);
      s := symbol s; 
+     if o.Strategy === ViaLinearAlgebra then (
+	  P := -sum(r,i->DY_(2*n+r+i)*DY_(n+i)); -- s = -(dt_1*t_1 + ... + dt_r*t_r)
+	  powers := matrix{{sub(g,DY)}};
+	  d := 1;
+	  while true do (
+	       powers = powers | matrix {{P^d*sub(g,DY) % I1}};
+	       Cpowers = coefficients powers;
+	       KerC := ker lift(Cpowers#1, K); -- kernel of the coefficients matrix
+	       if KerC != 0 then (
+		    Sring := K(monoid[s]);
+		    return sum(d+1, i->(gens KerC)_(i,0)*Sring_0^i);
+		    ) ;
+	       d = d + 1;
+	       )
+	  );
      SDY := K (monoid [s, gens DY, WeylAlgebra => DY.monoid.Options.WeylAlgebra, MonomialOrder=>{Weights=>toList(n+1:0)|toList(n+2*r:1)}]);
      v := gens SDY; 
      SX := take(v,{0,n}); notSX := drop(v,{0,n}); 
@@ -182,7 +197,7 @@ generalB (List, RingElement) := RingElement => o->(F,g) -> (
      g' := SDYtoSX sub(g,SDY);
      I3 := I2 : g';
      I4 := eliminate(drop(gens SXring,1), I3);
-     Sring := K(monoid [SXring_0]);
+     Sring = K(monoid [SXring_0]);
      sub(I4_0, Sring)
      )
 

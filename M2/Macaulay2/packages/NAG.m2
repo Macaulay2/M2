@@ -1,17 +1,18 @@
 newPackage(
-	"NAG",
-    	Version => "1.0", 
-    	Date => "04/01/2008",
-    	Authors => {
-	     {Name => "Anton Leykin", Email => "leykin@ima.umn.edu"}
-	     },
-    	HomePage => "http://www.ima.umn.edu/~leykin",
-    	Headline => "Numerical Algebraic Geometry",
-	Configuration => { "PHCpack" => "phc",  "Bertini" => "bertini", "HOM4PS2" => "hom4ps2" },	
-	-- DebuggingMode should be true while developing a package, 
-	--   but false after it is done
-    	DebuggingMode => true 
-    	)
+     "NAG",
+     Version => "1.0",
+     Date => "10/01/2008",
+     Headline => "Numerical Algebraic Geometry",
+     HomePage => "http://www.math.uic.edu/~leykin/NAG4M2",
+     AuxiliaryFiles => true,
+     Authors => {
+	  {Name => "Anton Leykin", Email => "leykin@math.uic.edu"}
+	  },
+     Configuration => { "PHCpack" => "phc",  "Bertini" => "bertini", "HOM4PS2" => "hom4ps2" },	
+     -- DebuggingMode should be true while developing a package, 
+     --   but false after it is done
+     DebuggingMode => true 
+     )
 
 -- Any symbols or functions that the user is to have access to
 -- must be placed in one of the following two lists
@@ -1247,20 +1248,13 @@ fromPreSLP (ZZ,Sequence) := (nIns,S) -> (
      )
 
 beginDocumentation()
-
-document { 
-	Key => NAG,
-	Headline => "Numerical Algebraic Geometry",
-	EM "NAG (Numerical Algebraic Geometry)", " implements methods of polynomial homotopy continuation
-	to solve systems of polynomial equations and deal with complex algebraic varieties."
-	}
+load "NAG/doc.m2"
 
 TEST ///
      assert(multistepPredictor(2_QQ,{0,0,0}) === {-3/8, 37/24, -59/24, 55/24}) -- Wikipedia: Adams-Bashforth
      assert(multistepPredictor(2_QQ,{-1}) === {-1/8, 5/8}) -- computed by hand
      assert(flatten entries (coefficients first multistepPredictorLooseEnd(2_QQ,{0,0,0}))#1=={1/120, 1/16, 11/72, 1/8})
 ///
-  
        
 end
 
@@ -1268,10 +1262,9 @@ end
 -- package.  None of it will be executed when the file is loaded,
 -- because loading stops when the symbol "end" is encountered.
 
-restart
 loadPackage "NAG"
 installPackage "NAG"
-installPackage("PackageTemplate", RemakeAllDocumentation=>true)
+restart; installPackage("NAG", RemakeAllDocumentation=>true, AbsoluteLinks=>false, RerunExamples=>true)
 check "NAG"
 
 -- Local Variables:

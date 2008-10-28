@@ -249,18 +249,27 @@ getIntRoots RingElement := List => f -> (
      );-- end getIntRoots
  
 -- log canonical threshold computation via b-function
-lct = method()
-lct Ideal := RingElement => I -> (
+lct = method(Options => {Strategy=>GeneralBernsteinSato})
+lct Ideal := RingElement => o -> I -> (
 -- IN:  I,      ideal in QQ[x_1,...,x_n]
 -- OUT: lct(I), an element of QQ
      W := makeWeylAlgebra ring I;
      F := (sub(I,W))_*;
-     w := toList (numgens ring I:0) | toList(#F:1); 
-     b := bFunction(AnnFs F, w);
-     S := ring b;
-     r := numgens I;
-     -- lct(I) = min root of b(s-r)
-     min bFunctionRoots sub(b, {S_0=>S_0-r})  
+     if o.Strategy === ViaBFunction then (
+     	  w := toList (numgens ring I:0) | toList(#F:1); 
+     	  b := bFunction(AnnFs F, w);
+     	  S := ring b;
+     	  r := numgens I;
+     	  -- lct(I) = min root of b(s-r)
+     	  b = sub(b, {S_0=>S_0-r})
+	  )  
+     else if o.Strategy === GeneralBernsteinSato then (
+	  b = generalB(F,1_W);
+	  S = ring b;
+     	  b = sub(b, {S_0=>-S_0});
+	  )
+     else error "unknown Strategy";
+     min bFunctionRoots b
      )   
 
 
