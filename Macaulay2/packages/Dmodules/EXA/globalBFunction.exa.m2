@@ -61,9 +61,12 @@ QQ[x_1..x_6];
 I = minors(2, matrix{{x_1, x_2, x_3}, {x_4, x_5, x_6}}) 
 W = makeWA(QQ[x_1..x_3]);
 F = {x_2^2-x_1*x_3, x_1^3-x_3^2}; -- x_3 does not finish
-b = {1_W,x_1,x_2,x_3} / (g->print factorBFunction generalB (F,g,GuessedRoots=>{-2}))
 F = {x_1^3-x_2^2, x_2^3-x_3^2};
-F = {x_1^4-x_2^3, x_3^2-x_1*x_2^2}; -- does not finish
+F = {x_1^4-x_2^3, x_3^2-x_1*x_2^2}; -- 1 finishes
+b = {1_W,x_1,x_2,x_3} / (g->print factorBFunction generalB (F,g))
+b = {1_W,x_1,x_2,x_3} / (g->print factorBFunction generalB (F,g,GuessedRoots=>{-2}))
+time factorBFunction generalB (F,1_W)
+time factorBFunction generalB (F,1_W,Strategy=>LinearAlgebra)
 
 
 

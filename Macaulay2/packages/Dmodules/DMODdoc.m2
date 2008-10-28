@@ -51,9 +51,11 @@ document {
 	  TO {"globalBFunction", " -- global b-function"},
 	  TO {"globalB", " -- global b-function and b-operator"},
 	  TO {"globalBoperator", " -- global b-operator"},
+	  TO {"generalB", " -- general Bernstein-Sato polynomial"},
 	  TO {"paramBpoly", " -- Bernstein-Sato polynomials of a
 	       polynomial with parametric coefficients"},
 	  TO {"factorBFunction", " -- factors a univariate polynomial"},
+	  TO {"bFunctionRoots", " -- gets roots of a b-function"},
 	  TO {"getIntRoots", " -- gets integer roots of a b-function"},
 	  {TO {"AnnFs"},  " -- annihilator ideal of ", EM "f", SUP "s" },
 	  {TO {"AnnIFs"}, " -- annihilator ideal  of ", EM "f", SUP "s", 
@@ -82,7 +84,8 @@ document {
 	  TO {"diffOps", " -- differential operators on affine varieties"},
 	  {TO "populateCechComplexCC", ", ", TO "pruneCechComplexCC", 
 	       " -- characteristic cycles of local cohomology"},
-	  TO {"logCohomology", "-- logarithmic cohomology groups"}
+	  TO {"logCohomology", "-- logarithmic cohomology groups"},
+	  TO {"lct", "-- log canonical threshold"}
 	  },
      HEADER3 "Programming aids:",
      UL{TO {"createDpairs", " -- tags coordinate and derivation variables"},
@@ -287,6 +290,63 @@ document {
      SeeAlso => { "bFunction" }
      }
 
+document { 
+     Key => {(generalB,List,RingElement), generalB},
+     Headline => "global general Bernstein-Sato polynomial",
+     Usage => "b = generalB f",
+     Inputs => {
+	  "F" => {"a list of polynomials (should live in the Weyl algebra)"},
+	  "g" => {"a polynomial (should live in the Weyl algebra)"}
+	  },
+     Outputs => {
+	  "b" => RingElement => {"the general Bernstein-Sato polynomial ", 
+	       EM "b(s)",  " in ", EM "Q[s]"}
+	  },
+     EXAMPLE lines ///
+     W = makeWA(QQ[x_1..x_3]);
+     factorBFunction generalB ({x_2^2-x_1*x_3, x_1^3-x_3^2}, x_2)
+     ///,
+     Caveat => {
+	  "The Weyl algebra should not have any parameters. 
+     	  Similarly, it should not be a homogeneous Weyl algebra"
+	  },
+     SeeAlso => { "bFunction", "globalBFunction", "lct" }
+     }
+document { 
+     Key => {(lct,Ideal), lct},
+     Headline => "compute the log canonical threshold for an ideal",
+     Usage => "l = lct I",
+     Inputs => {
+	  "I" => {"an ideal in a polynomial ring"}
+	  },
+     Outputs => {
+	  "l" => RingElement => {"a rational number, the log canonical threshold of ", EM "I"}
+	  },
+     EXAMPLE lines ///
+     QQ[x_1..x_3];
+     I = ideal (x_2^2-x_1*x_3, x_1^3-x_3^2);
+     lct I
+     ///,
+     SeeAlso => { "bFunction", "generalB" }
+     }
+document {
+     Key => [lct,Strategy],
+     Headline => "specify strategy for computing lct",
+     UL { 
+	  {BOLD "ViaBFunction", " -- use ", TO "bFunction" },
+	  {BOLD "GeneralBernsteinSato", " -- use ", TO "globalB" }
+	  }
+     }
+document {
+     Key => GeneralBernsteinSato,
+     Headline => "a strategy option for lct",
+     "see ", TO "lct"
+     }
+document {
+     Key => ViaBFunction,
+     Headline => "a strategy option for lct",
+     "see ", TO "lct"
+     }
 document {
      Key => {(factorBFunction, RingElement),factorBFunction},
      Headline => "factorization of a b-function",
@@ -324,6 +384,19 @@ document {
 	  List => {"the list of the integer roots of ", TT "b"}   
 	  },
      SeeAlso => {"globalBFunction", "bFunction"}
+     }
+
+document {
+     Key => {(bFunctionRoots, RingElement), bFunctionRoots},
+     Headline => "get roots of a b-function",
+     Usage => "bFunctionRoots b",
+     Inputs => {
+     	  "b" => "the output of one of the b-function routines" 
+	  },
+     Outputs => {
+	  List => {"the list of the roots of ", TT "b"}   
+	  },
+     SeeAlso => {"globalBFunction", "bFunction", "generalB"}
      }
 
 document {
