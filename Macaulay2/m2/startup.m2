@@ -535,7 +535,7 @@ if firstTime and not noloaddata and version#"dumpdata" then (
 scan(commandLine, arg -> if arg === "-q" or arg === "--dumpdata" then noinitfile = true)
 homeDirectory = getenv "HOME" | "/"
 
-path = (x -> select(x, i -> i =!= null)) deepSplice {
+path = (x -> select(x, i -> i =!= null)) splice {
 	  if not noinitfile then (
 	       applicationDirectory() | "local/" | LAYOUT#"packages", 
 	       applicationDirectory() | "local/" | LAYOUT#"datam2",

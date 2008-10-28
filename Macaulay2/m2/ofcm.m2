@@ -277,7 +277,7 @@ processDegrees := (degs,degrk,nvars) -> (
 	  )
      else (
      	  if not instance(degs,List) then error "Degrees: expected a list";
-     	  degs = apply(deepSplice degs, d -> if class d === ZZ then {d} else d);
+     	  degs = apply(spliceInside degs, d -> if class d === ZZ then {d} else d);
      	  scan(degs, d -> if not (instance(d,List) and all(d, i -> instance(i,ZZ))) then error "expected degree to be an integer or list of integers");
      	  if degrk === null then (
 	       if not same(length \ degs) then error "expected degrees all of the same rank";
@@ -418,14 +418,14 @@ tensor(Monoid, Monoid) := Monoid => opts -> (M,N) -> (
      opts = new MutableHashTable from opts;
      if opts.Variables === null 
      then opts.Variables = join(Mopts.Variables, Nopts.Variables)
-     else opts.Variables = deepSplice opts.Variables;
+     else opts.Variables = spliceInside opts.Variables;
      if opts.VariableBaseName =!= null then (
 	  x := opts.VariableBaseName;
 	  opts.Variables = apply(#opts.Variables, i -> x_i);
 	  );
      if opts.MonomialOrder === null 
      then opts.MonomialOrder = trimMO join(Mopts.MonomialOrder,Nopts.MonomialOrder); -- product order
-     if instance(opts.Degrees,List) then opts.Degrees = deepSplice opts.Degrees;
+     if instance(opts.Degrees,List) then opts.Degrees = spliceInside opts.Degrees;
      if opts.Degrees === null and opts.DegreeRank === null then (
 	  M0 := apply(Mopts.DegreeRank, i -> 0);
 	  N0 := apply(Nopts.DegreeRank, i -> 0);

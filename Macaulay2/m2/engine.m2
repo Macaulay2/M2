@@ -1,5 +1,7 @@
 --		Copyright 1993-2002 by Daniel R. Grayson
 
+spliceInside = x -> new class x from deepSplice toSequence x
+
 -- basic type
 
 setAttribute(RawObject,ReverseDictionary,symbol RawObject)
@@ -106,7 +108,7 @@ grevOption := (key,v) -> (
      if instance(v,ZZ) 
      then v = getdegs ( varcount, varcount + v - 1 )
      else (
-	  if instance(v,List) then v = deepSplice v;
+	  if instance(v,List) then v = spliceInside v;
 	  if not isListOfIntegers(v) then error "expected an integer or a list of integers";
 	  );
      bump(#v);
@@ -182,7 +184,7 @@ makeMonomialOrdering = (monsize,inverses,nvars,degs,weights,ordering) -> (
      varcount = 0;
      MonSize = 0;
      numvars = nvars;
-     weights = deepSplice \ deepSplice toList weights;
+     weights = spliceInside \ spliceInside toList weights;
      if isListOfListsOfIntegers weights then null
      else if isListOfIntegers weights then weights = {weights}
      else error "Weights: expected a list of integers or a list of lists of small integers";
@@ -268,7 +270,7 @@ ZZ _ RawFreeModule := (i,F) -> (
 
 RawRing ^ ZZ := (R,i) -> rawFreeModule(R,i)
 RawRing ^ List := (R,i) -> (
-     i = deepSplice i;
+     i = spliceInside i;
      v := - flatten i;
      if #v === 0 then rawFreeModule(R, #i ) 
      else rawFreeModule(R,toSequence v ))
@@ -292,7 +294,7 @@ rawExtract(RawMatrix,ZZ,ZZ) :=
 rawExtract(RawMutableMatrix,ZZ,ZZ) := (m,r,c) -> rawMatrixEntry(m,r,c)
 
 rawExtract(RawMatrix,Sequence,Sequence) := 
-rawExtract(RawMutableMatrix,Sequence,Sequence) := (m,r,c) -> rawSubmatrix(m,deepSplice r,deepSplice c)
+rawExtract(RawMutableMatrix,Sequence,Sequence) := (m,r,c) -> rawSubmatrix(m,spliceInside r,spliceInside c)
 
 RawMatrix _ Sequence := 
 RawMutableMatrix _ Sequence := (m,rc) -> ((r,c) -> rawExtract(m,r,c)) rc
