@@ -1,3 +1,4 @@
+--status: I'm working on the interface to factory and intend to get it done before the 1.2 release
 A = QQ[a]
 f = a^2+1
 k = A/f
