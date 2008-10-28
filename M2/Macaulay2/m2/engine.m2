@@ -184,7 +184,7 @@ makeMonomialOrdering = (monsize,inverses,nvars,degs,weights,ordering) -> (
      varcount = 0;
      MonSize = 0;
      numvars = nvars;
-     weights = spliceInside \ spliceInside toList weights;
+     weights = spliceInside toList weights;
      if isListOfListsOfIntegers weights then null
      else if isListOfIntegers weights then weights = {weights}
      else error "Weights: expected a list of integers or a list of lists of small integers";
