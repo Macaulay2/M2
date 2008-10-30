@@ -1,0 +1,11 @@
+
+S = (ZZ/101)[x, y, Degrees => {2:1}, MonomialOrder => VerticalList{MonomialSize => 32, GRevLex => {2:1},
+      Position => Up}]
+
+T = S [w_0, w_1, w_2, Degrees => {3:VerticalList{1, 5}}, Heft => {0, 1}, MonomialOrder =>
+      VerticalList{MonomialSize => 32, GRevLex => {3:5}, Position => Up}]
+
+I = ideal(y^2*w_0+(-x^2)*w_2,x^3*w_1+(-y^3)*w_2,x*(w_0*w_1)+(-y)*w_2^2,y*(w_0^2*w_1)+(-x)*w_2^3,w_0^3*w_1
+      ^2+(-1)*w_2^5)
+
+-- display is not optimal
