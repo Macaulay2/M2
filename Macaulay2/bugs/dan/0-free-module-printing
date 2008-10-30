@@ -1,0 +1,7 @@
+i18 : toString (ZZ/3)^2
+
+o18 = ZZ/3^2					<<<<< not right
+
+i19 : toString expression (ZZ/3)^2
+
+o19 = (ZZ/3)^2
