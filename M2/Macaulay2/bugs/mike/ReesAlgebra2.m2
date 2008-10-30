@@ -325,7 +325,8 @@ analyticSpread(Module,RingElement) := ZZ => (M,a) -> dim specialFiberIdeal(M,a)
 distinguished = method(Options => {Variable => w})
 distinguished(Ideal) := List => o -> i -> (
      R:=ring i;
-     (reesAi,A) := reesAlgebra (i,Variable=>o.Variable);
+     reesAi := reesAlgebra (i,Variable=>o.Variable);
+     A = map(reesAi,R);
      (T,B) := flattenRing reesAi;
      L:=decompose substitute(i,T);
      apply(L, p->kernel(map(T/p, T)*B*A))
@@ -333,7 +334,8 @@ distinguished(Ideal) := List => o -> i -> (
 
 distinguished(Ideal,RingElement) := List => o -> (i,a) -> (
      R:=ring i;
-     (reesAi,A) := reesAlgebra (i,a,Variable=>o.Variable);
+     reesAi := reesAlgebra (i,a,Variable=>o.Variable);
+     A = map(reesAi,R);
      (T,B) := flattenRing reesAi;
      L:=decompose substitute(i,T);
      apply(L, p->kernel(map(T/p, T)*B*A))
@@ -800,12 +802,28 @@ doc ///
       If $M$ is an ideal or module over a ring $R$, and $F\to M$ is a
       surjection from a free module, then reesAlgebra(M) returns the ring
       $Sym(F)/J$, where $J = reesIdeal(M)$.  
+      
+      In the following example, we find the Rees Algebra of a monomial curve
+      singularity.  We also demonstrate the use of @TO reesIdeal@, @TO symmetricKernel@,
+      @TO isLinearType@, @TO normalCone@, @TO associatedGradedRing@, @TO specialFiberIdeal@.
     Example
-  Caveat
+      S = QQ[x_0..x_4]
+      i = monomialCurveIdeal(S,{2,3,5,6})
+      time I = reesIdeal i;
+      reesIdeal(i, Variable=>v)
+      time I=reesIdeal(i,i_0);
+      time (J=symmetricKernel gens i);
+      isLinearType(i,i_0)
+      isLinearType i
+      reesAlgebra (i,i_0)
+      trim ideal normalCone (i, i_0)
+      trim ideal associatedGradedRing (i,i_0)
+      trim specialFiberIdeal (i,i_0)
   SeeAlso
     reesIdeal
     symmetricKernel
 ///
+
 
 doc ///
   Key
@@ -834,11 +852,22 @@ doc ///
      isomorphism. It is known, for example, that any complete intersection
      ideal is of linear type.
 
-     Giving the element {\tt f} computes the @TO reesIdeal@ in a different manner, which is
-     sometimes faster, sometimes slower.
-  Caveat
+     This routine computes the @TO reesIdeal@ of {\tt M}.  Giving the element {\tt
+     f} computes the @TO reesIdeal@ in a different manner, which is sometimes
+     faster, sometimes slower.  
+   Example
+      S = QQ[x_0..x_4]
+      i = monomialCurveIdeal(S,{2,3,5,6})
+      isLinearType i
+      isLinearType(i, i_0)
+      I = reesIdeal i
+      select(I_*, f -> first degree f > 1)
+   Example
+      S = ZZ/101[x,y,z]
+      for p from 1 to 5 do print isLinearType (ideal vars S)^p
   SeeAlso
     reesIdeal
+    monomialCurveIdeal
 ///
 
 doc ///
@@ -854,17 +883,16 @@ doc ///
   Inputs
     I:Ideal
     f:RingElement
-      optional argument, if given it should be a non-zeor divisor in the ideal {\tt I}
+      optional argument, if given it should be a non-zero divisor in the ideal {\tt I}
   Outputs
     :Ring
       the ring $R[It] \otimes R/I$ of the normal cone of $I$
   Description
-   Text
-    The normal cone of an ideal $I\subset R$ is the ring $R/I \oplus I/I^2
-    \oplus \ldots$, also called the associated graded ring of $R$ with respect
-    to $I$.  If $S$ is the Rees algebra of $I$, then this ring is isomorphic to
-    $S/IS$, which is how it is computed here.
-  Caveat
+    Text
+      The normal cone of an ideal $I\subset R$ is the ring $R/I \oplus I/I^2
+      \oplus \ldots$, also called the associated graded ring of $R$ with
+      respect to $I$.  If $S$ is the Rees algebra of $I$, then this ring is
+      isomorphic to $S/IS$, which is how it is computed here.
   SeeAlso
     reesAlgebra
     associatedGradedRing
@@ -884,7 +912,7 @@ doc ///
   Inputs
     I:Ideal
     f:RingElement
-      optional argument, if given it should be a non-zeor divisor in the ideal {\tt I}
+      optional argument, if given it should be a non-zero divisor in the ideal {\tt I}
   Outputs
     :Ring
       the associated graded ring $R[It] \otimes R/I$
@@ -912,7 +940,7 @@ doc ///
   Inputs
     I:Ideal
     f:RingElement
-      optional argument, if given it should be a non-zeor divisor in the ideal {\tt I}
+      optional argument, if given it should be a non-zero divisor in the ideal {\tt I}
   Outputs
     :ZZ
       the normalized leading coefficient of the Hilbert-Samuel polynomial of $I$
@@ -963,7 +991,10 @@ doc ///
      The name derives from the fact that $Proj(T/mm*T)$ is the special fiber of
      the blowup of $Spec R$ along the subscheme defined by $I$.
    Example
-  Caveat
+     R=QQ[a,b,c,d,e,f]
+     M=matrix{{a,c,e},{b,d,f}}
+     analyticSpread image M
+     specialFiberIdeal image M
   SeeAlso
      reesIdeal
 ///
@@ -997,7 +1028,10 @@ doc ///
      Mathematical Society Lecture Note Series, 336. Cambridge University Press,
      Cambridge, 2006, by Craig Huneke and Irena Swanson.
    Example
-  Caveat
+     R=QQ[a,b,c,d,e,f]
+     M=matrix{{a,c,e},{b,d,f}}
+     analyticSpread image M
+     specialFiberIdeal image M
   SeeAlso
      specialFiberIdeal
      reesIdeal
@@ -1016,7 +1050,7 @@ doc ///
   Inputs
     I:Ideal
     f:RingElement
-      optional argument, if given it should be a non-zeor divisor in the ideal {\tt I}
+      optional argument, if given it should be a non-zero divisor in the ideal {\tt I}
   Outputs
     :List
   Description
@@ -1042,7 +1076,22 @@ doc ///
      Ein and Lazarsfeld.
 
    Example
-  Caveat
+     T = ZZ/101[c,d];
+     D = 4;
+     P = product(D, i -> random(1,T))
+     R = ZZ/101[a,b,c,d]
+     I = ideal(a^2, a*b*(substitute(P,R)), b^2)
+   Text
+     There is one minimal associated prime (a thick line in $P^3$) and $D$
+     embedded primes (points on the line).
+   Example
+     ass I 
+     primaryDecomposition I
+   Text
+     Only the minimal prime is a distinguished component, and it has multiplicity 2.
+   Example
+     distinguished(I)
+     K = distinguishedAndMult(I)
   SeeAlso
     distinguishedAndMult
 ///
@@ -1060,16 +1109,14 @@ doc ///
   Inputs
     I:Ideal
     f:RingElement
-      optional argument, if given it should be a non-zeor divisor in the ideal {\tt I}
+      optional argument, if given it should be a non-zero divisor in the ideal {\tt I}
   Outputs
     :List
-      of pairs $(d,P)$, where $d$ is the multiplicity of $I$ along the prime ideal $P$,
+      of pairs ${d,P}$, where $d$ is the multiplicity of $I$ along the prime ideal $P$,
       where $P$ is the ideal of a distinguished subvariety of the normal cone of $I$
   Description
    Text
-     See @TO distinguished@ for the definition of distinguished subvarieties.
-   Example
-  Caveat
+     See @TO distinguished@ for the definition of distinguished subvarieties, and for an example.
   SeeAlso
     distinguished
 ///
@@ -1391,4 +1438,5 @@ primaryDecomposition I
 distinguished(I) -- only the minimal prime is a distinguished component
 K = distinguishedAndMult(I) -- get multiplicity 2 
 ///
+
 
