@@ -161,24 +161,24 @@ reesAlgebra = method (TypicalValue=>Ring,Options=>{Variable => w})
 -- than just the defining ideal as in reesIdeal. 
 
 reesAlgebra Ideal := 
-reesAlgebra Module := o-> M -> (
-     R:=ring M;
-     reesIM := reesIdeal M;
-     reesAM := (ring reesIM)/reesIM;
-     --A:= map(reesAM, R);
-     --(reesAM,A)
-     reesAM
-     )
+reesAlgebra Module := o-> M ->  quotient reesIdeal(M, o)
+--     R:=ring M;
+--     reesIM := reesIdeal M;
+--     reesAM := (ring reesIM)/reesIM;
+--     --A:= map(reesAM, R);
+--     --(reesAM,A)
+--     reesAM
+--     )
 
 reesAlgebra(Ideal, RingElement) := 
-reesAlgebra(Module, RingElement) := o->(M,a)->(
-     R:=ring M;
-     reesIM := reesIdeal(M,a);
-     reesAM := (ring reesIM)/reesIM;
-     --A:= map(reesAM, R);
-     --(reesAM,A)
-     reesAM
-     )
+reesAlgebra(Module, RingElement) := o->(M,a)-> quotient reesIdeal(M,a,o)
+--     R:=ring M;
+--     reesIM := reesIdeal(M,a);
+--     reesAM := (ring reesIM)/reesIM;
+--     --A:= map(reesAM, R);
+--     --(reesAM,A)
+--     reesAM
+--     )
        
 isLinearType=method(TypicalValue =>Boolean)
 
@@ -388,11 +388,8 @@ distinguishedAndMult(Ideal) := List => o -> i -> (
     ReesI := reesIdeal( i, Variable => o.Variable);
     (S,toFlatS) := flattenRing ring ReesI;
      I:=(toFlatS ReesI)+substitute(i,S);
---     Itop:=top I;
---     L:=decompose Itop;
      L:=decompose I;
      apply(L,P->(Pcomponent := I:(saturate(I,P)); 
---     apply(L,P->(Pcomponent := Itop:(saturate(Itop,P)); 
 	       --the P-primary component. The multiplicity is
 	       --computed as (degree Pcomponent)/(degree P)
        	  {(degree Pcomponent)/(degree P), kernel(map(S/P, R))})))
@@ -402,11 +399,8 @@ distinguishedAndMult(Ideal,RingElement) := List => o -> (i,a) -> (
     ReesI := reesIdeal( i,a, Variable => o.Variable);
     (S,toFlatS) := flattenRing ring ReesI;
      I:=(toFlatS ReesI)+substitute(i,S);
---     Itop:=top I;
---     L:=decompose Itop;
      L:=decompose I;
      apply(L,P->(Pcomponent := I:(saturate(I,P)); 
---     apply(L,P->(Pcomponent := Itop:(saturate(Itop,P)); 
 	       --the P-primary component. The multiplicity is
 	       --computed as (degree Pcomponent)/(degree P)
        	  {(degree Pcomponent)/(degree P), kernel(map(S/P, R))})))
@@ -436,8 +430,6 @@ doc ///
        their documentation.
 ///
 
--- We may want to change the examples.  Otherwise complete except that
--- we may want to give the full reference to Eisenbud Huneke Ulrich.
 doc ///
   Key
      symmetricKernel
@@ -501,17 +493,52 @@ doc ///
 doc ///
   Key
     [symmetricKernel, Variable]
+    [reesIdeal, Variable]
+    [reesAlgebra, Variable]
+    [normalCone, Variable]
+    [associatedGradedRing, Variable]
+    [specialFiberIdeal, Variable]
+    [distinguished, Variable]
+    [distinguishedAndMult, Variable]
   Headline
-    Choose name for variables in the new ring
+    Choose name for variables in the created ring
+  Usage
+    symmetricKernel(...,Variable=>w)
+    reesIdeal(...,Variable=>w)
+    reesAlgebra(...,Variable=>w)
+    normalCone(...,Variable=>w)
+    associatedGradedRing(...,Variable=>w)
+    specialFiberIdeal(...,Variable=>w)
+    distinguished(...,Variable=>w)
+    distinguishedAndMult(...,Variable=>w)
   Description
     Text
-      @TO symmetricKernel@ introduces new variables and the option @TO
-      Variable@ allows the user to specify a variable name for this purpose,
-      the default variable is {\tt w}.
+      Each of these functions creates a new ring of the form R[w_0, \ldots, w_r]
+      or R[w_0, \ldots, w_r]/J, where R is the ring of the input ideal or module.
+      This option allows the user to change the names of the new variables in this ring.
+      The default variable is {\tt w}.
     Example
       R = QQ[x,y,z]/ideal(x*y^2-z^9)
       J = ideal(x,y,z)
-      symmetricKernel(gens J, Variable=>p)
+      I = reesIdeal(J, Variable => p)
+    Text
+      To lift the result to an ideal in a flattened ring, use @TO flattenRing@:
+    Example
+      describe ring I
+      I1 = first flattenRing I
+      describe ring oo      
+    Text
+      Note that the rings of I and I1 both have bigradings. Use @TO newRing@ to
+      make a new ring with different degrees.
+    Example
+      S = newRing(ring I1, Degrees=>{numgens ring I1:1})
+      describe S
+      I2 = sub(I1,vars S)
+      res I2
+  SeeAlso
+    flattenRing
+    newRing
+    substitute
 ///
 
 doc ///
@@ -720,6 +747,28 @@ doc ///
       transpose gens I
       i=minors(2,m);
       time I=reesIdeal (i,i_0);
+   Text
+      {\bf Investigating plane curve singularities}
+   Example
+      R = ZZ/32003[x,y,z]
+      I = ideal(x,y)
+      cusp = ideal(x^2*z-y^3)
+      RI = reesIdeal(I)
+      S = ring RI
+      totalTransform = substitute(cusp, S) + RI
+      D = decompose totalTransform -- the components are the proper transform of the cuspidal curve and the exceptional curve 
+      totalTransform = first flattenRing totalTransform
+      L = primaryDecomposition totalTransform 
+      apply(L, i -> (degree i)/(degree radical i))
+   Text
+      The total transform of the cusp contains the exceptional with
+      multiplicity two.  The proper transform of the cusp is a smooth curve but
+      is tangent to the exceptional curve.
+   Example
+      use ring L_0
+      singular = ideal(singularLocus(L_0));
+      SL = saturate(singular, ideal(x,y,z));
+      saturate(SL, ideal(w_0,w_1)) -- we get 1 so it is smooth.
   Caveat
   SeeAlso
     symmetricKernel
@@ -1027,115 +1076,12 @@ doc ///
 
 end
 
-
-
-doc ///
-  Key
-  Headline
-
-  Usage
-
-  Inputs
-
-  Outputs
-
-  Consequences
-
-  Description
-   Text
-   Text
-   Example
-   Text
-   Example
-  Caveat
-  SeeAlso
-///
-
-end
 restart
 loadPackage "ReesAlgebra2"
 installPackage(ReesAlgebra2, IgnoreExampleErrors=>true)
 
 end
 
-
--- needs updating, like most of this documentation.
-document {
-     Key => [reesIdeal, Variable],
-     Headline=> "symmetricKernel introduces new variables and the option 
-     Variable allows the user to specify a variable name for this purpose, 
-     the default variable is", TT  "w", "but the default value of the option 
-     is null."     
-     }
-
-document {
-     Key => [reesAlgebra, Variable],
-     Headline=> "rees introduces new variables and the option 
-     Variable allows the user to specify a variable name for this purpose, 
-     the default is", TT  "w"     
-     }
-
-
-document {
-     Key => [normalCone, Variable],
-     Headline=> "symmetricKernel introduces new variables and the option 
-     Variable allows the user to specify a variable name for this purpose, 
-     the default variable is", TT  "w", "but the default value of the option 
-     is null."     
-     }
-
-
-document {
-     Key => [associatedGradedRing, Variable],
-     Headline=> "symmetricKernel introduces new variables and the option 
-     Variable allows the user to specify a variable name for this purpose, 
-     the default variable is", TT  "w", "but the default value of the option 
-     is null."     
-     }
-
-document {
-     Key => [specialFiberIdeal, Variable],
-     Headline=> "symmetricKernel introduces new variables and the option 
-     Variable allows the user to specify a variable name for this purpose, 
-     the default variable is", TT  "w", "but the default value of the option 
-     is null."     
-     }
-
-document {
-     Key => [distinguished, Variable],
-     Headline=> "distinguished introduces new variables and the option 
-     Variable allows the user to specify a variable name for this purpose, 
-     the default is", TT  "w"     
-     }
-
-document {
-     Key => {distinguishedAndMult, (distinguishedAndMult,Ideal),
-	  (distinguishedAndMult, Ideal, RingElement)},
-     Headline => "compute the distinguished subvarieties of a variety along 
-     with their multiplicities",
-     Usage => "distinguishedAndMult I" ,
-     Inputs => {"I" => {ofClass Ideal, " in ", ofClass PolynomialRing}, 
-	  "a" => {ofClass RingElement, "stuff."}},
-     Outputs => {{ofClass List, " of pairs where the first entry 
-	       is the multiplicity of the second entry which is one 
-	       of the ideals defining a component of the support of 
-	       the normal cone over ", TT "I"}},
-     "Stuff."
-     }
-
-document {
-     Key => [distinguishedAndMult, Variable],
-     Headline=> "distinguishedAndMult introduces new variables and the option 
-     Variable allows the user to specify a variable name for this purpose, 
-     the default is", TT  "w"     
-     }
-
-end    
-
--- From M2 workshop
-
-
-restart
 
 --NOTE Oct 5
 -- I think we should combine the examples section for 
@@ -1149,70 +1095,9 @@ distinguished, distinguishedAndMult
 --universalEmbedding, multiplicity, analyticSpread
 
 
-///
---Example for universalEmbedding
-
---Here is an example from the paper
---``What is the Rees Algebra of a Module'' by 
---David Eisenbud, Craig Huneke and Bernd Ulrich,
---Proc. Am. Math. Soc. 131, 701--708, 2002
---That shows that one cannot, in general, define the
---Rees algebra of a module by using *any* embedding of 
---that module, even when the module is isomorphic
---to an ideal; this is the reason for using the map
---provided by the routine universalEmbedding. Note that
---The same paper shows that such problems do not arise
---when the ring is torsion-free as a ZZ-module, or when
---one takes the natural embedding of the ideal into the ring.
-restart
-load "./ReesAlgebra.m2"
-p=3
-S=ZZ/p[x,y,z]
-R=S/((ideal(x^p,y^p))+(ideal(x,y,z))^(p+1))
-i=module ideal(z)
---As a module (or ideal), Hom(i,R^1) is minimally generated by 3 elements
-betti Hom(i,R^1)
---Thus the universal embedding of i into a free module is into R^3,
-ui=universalEmbedding i
---it is a monomorphism:
-kernel ui
---It is easy to make two other embeddings of i in free modules. First,
---the natural inclusion of i into R as an ideal
-inci=map(R^1,i,matrix{{z}})
-kernel inci
---and second, the map defined by multiplication by x and y. 
-gi=map(R^2, i, matrix{{x},{y}})
-kernel gi
---We can compose ui, inci and gi with a surjection R--> i to get maps
--- u:R^1 --> R^3, inc: R^1 --> R^1 and g:R^1 --> R^2 having image i
-u= map(R^3,R^{-1},ui)
-inc=map(R^1, R^{-1}, matrix{{z}})
-g=map(R^2, R^{-1}, matrix{{x},{y}})
---We now form the symmetric kernels of these maps and compare them.
---Note that since symmetricKernel defines a new ring, we must bring
---them to the same ring to make the comparison.
---First the map u, which would be used by reesIdeal:
-A=symmetricKernel u
---Next the inclusion:
-B1=symmetricKernel inc
-B=(map(ring A, ring B1)) B1
---Finallly, the map g1:
-C1 = symmetricKernel g
-C=(map(ring A, ring C1)) C1
---The following test yields ``true'', as implied by the theorem
---of Eisenbud, Huneke and Ulrich.
-A==B
---But the following yields ``false'', showing that one must take care
---in general, which inclusion one uses.
-A==C
-///
 
 TEST///
 --TEST for universalEmbedding
-restart
-notify=true
-load "ReesAlgebra.m2"
-
 p=3
 S=ZZ/p[x,y,z]
 R=S/((ideal(x^p,y^p))+(ideal(x,y,z))^(p+1))
