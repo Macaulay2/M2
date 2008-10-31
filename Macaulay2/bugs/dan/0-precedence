@@ -1,0 +1,26 @@
+i6 : expression class o4
+
+o6 = (QQ [a])[x]
+
+o6 : Expression of class Adjacent
+
+i7 : Adjacent{Adjacent{4,5},6}
+
+o7 = (4 5)6
+
+o7 : Expression of class Adjacent
+
+i8 : Adjacent{3,Adjacent{4,5}}
+
+o8 = 3 4 5
+
+o8 : Expression of class Adjacent
+
+i9 : ZZ/101[x]
+
+       ZZ
+o9 = (---)[x]
+      101
+
+o9 : PolynomialRing
+
