@@ -1,0 +1,18 @@
+
+    i3 : QQ[x]
+
+    o3 = QQ [x]
+
+    o3 : PolynomialRing
+
+    i4 : x 
+
+    o4 = x
+
+    o4 : QQ [x]
+
+    i5 : dismiss o3
+    stdio:5:1:(1):[0]: no method found for applying dismiss to:
+	 argument   :  QQ [x] (of class PolynomialRing)
+
+This could unassign x, releasing it for other uses...
