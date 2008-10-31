@@ -559,17 +559,20 @@ net Adjacent := net FunctionApplication := m -> (
      p := precedence m;
      fun := m#0;
      netfun := net fun;
+     div := instance(fun,Divide);
+     pfun := if div then strength1 symbol symbol else precedence fun;
      args := m#1;
+     if instance(args,Array) then (p = p-1; div = true; );
      netargs := net args;
      if precedence args >= p
-     then if precedence fun > p
+     then if pfun > p
      then (
-	  if class netfun === Net and netfun#?0 and width netfun > width netfun#0
+	  if div or class netfun === Net and netfun#?0 and width netfun > width netfun#0
 	  then horizontalJoin (netfun, netargs)
 	  else horizontalJoin (netfun, " ", netargs)
 	  )
      else horizontalJoin (bigParenthesize netfun, netargs)
-     else if precedence fun > p
+     else if pfun > p
      then horizontalJoin (netfun, bigParenthesize netargs)
      else horizontalJoin (bigParenthesize netfun, bigParenthesize netargs)
      )
@@ -677,7 +680,7 @@ net Power := v -> (
 	       )
 	  else (
 	       horizontalJoin (
-		    if precedence x < prec symbol ^
+		    if precedence x <= prec symbol ^
 		    then ( bigParenthesize expectExponent net x, nety)
 		    else (            	   net x, nety)
 		    )
@@ -772,6 +775,7 @@ net Divide := x -> (
      wtop := width top;
      wbot := width bot;
      w := max(wtop,wbot);
+     if instance(x#0,Divide) or instance(x#1,Divide) then w = w+2;
      itop := (w-wtop+1)//2;
      if itop != 0 then top = spaces itop | top;
      ibot := (w-wbot+1)//2;
