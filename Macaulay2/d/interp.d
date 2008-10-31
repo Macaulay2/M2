@@ -123,14 +123,14 @@ readeval4(file:TokenFile,printout:bool,dictionary:Dictionary,returnLastvalue:boo
 			      if err.message == returnMessage || err.message == continueMessage || err.message == continueMessageWithArg 
 			      || err.message == breakMessage || err.message == throwMessage then (
 				   if stopIfBreakReturnContinue then return lastvalue;
-				   printErrorMessage(err.position,"warning: unhandled " + err.message);
+				   printWarningMessage(err.position,"unhandled " + err.message);
 				   );
 			      if err.message == unwindMessage then (
 				   lastvalue = nullE;
 				   )
 			      else (
 				   if !err.printed then (
-					printErrorMessage(err.position,"warning: unprinted error message: " + err.message);
+					printWarningMessage(err.position,"unprinted error message: " + err.message);
 					);
 			      	   if stopIfError || returnIfError then return lastvalue;
 				   );

@@ -493,8 +493,7 @@ bindTokenLocally(token:Token,dictionary:Dictionary):void := (
      when r
      is entry:Symbol do (
 	  if dictionary.frameID == entry.frameID
-	  then printErrorMessage(token, "warning: local declaration of " + token.word.name
-	       + " shields variable with same name" );
+	  then printWarningMessage(token, "local declaration of " + token.word.name + " shields variable with same name" );
 	  )
      else nothing;
      token.dictionary = dictionary;
