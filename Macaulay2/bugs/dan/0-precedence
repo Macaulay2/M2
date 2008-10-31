@@ -24,3 +24,21 @@ o9 = (---)[x]
 
 o9 : PolynomialRing
 
+i14 : Power{Power{symbol a,2},Sum{3,4}}
+
+       23 + 4
+o14 = a							fixed
+
+o14 : Expression of class Power
+
+i3 : ZZ[x]/x^5/x^3
+
+     ZZ [x]
+     ------
+        5
+       x
+o3 = ------				make this bar wider
+        3
+       x
+
+o3 : QuotientRing
