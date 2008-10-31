@@ -498,6 +498,7 @@ export dummyToken   := Token(
      Macaulay2Dictionary,dummySymbol,false);
 export position(t:Token):Position := Position(t.filename,t.line,t.column,t.loadDepth);
 export printErrorMessage(t:Token,message:string):void := printErrorMessage(position(t),message);
+export printWarningMessage(t:Token,message:string):void := printWarningMessage(position(t),message);
 
 export parseWORD    := newParseinfo();			    -- parsing functions filled in later
 

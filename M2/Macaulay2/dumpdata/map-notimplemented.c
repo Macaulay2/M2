@@ -8,7 +8,7 @@ int nummaps() {
   return 0;
 }
 
-int getmaps(int nmaps, struct MAP maps[nmaps]) {
+int getmaps(int nmaps, struct MAP *maps) {
   return ERROR;
 }
 

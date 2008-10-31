@@ -313,10 +313,10 @@ gettoken1(file:PosFile,sawNewline:bool):Token := (
 			      )
 			 );
 	       	    c = peek(file);
-	       	    if int('.') == c then printErrorMessage(file.pos,"warning: character '"+char(c)+"' immediately following floating point number");
+	       	    if int('.') == c then printWarningMessage(file.pos,"character '"+char(c)+"' immediately following floating point number");
 		    );
 	       c = peek(file);
-	       if isalpha(c) then printErrorMessage(file.pos,"warning: character '"+char(c)+"' immediately following number");
+	       if isalpha(c) then printWarningMessage(file.pos,"character '"+char(c)+"' immediately following number");
 	       s := takestring(tokenbuf);
 	       return Token(Word(s,typecode,0, parseWORD),file.pos.filename, line, column, file.pos.loadDepth,globalDictionary,dummySymbol,sawNewline)) 
 	  else if ch == int('/') && peek(file,1) == int('/') && peek(file,2) == int('/') then (
