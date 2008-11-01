@@ -33,7 +33,7 @@ ARGS1 := $(ARGS), PackagePrefix => \"$(prefix)/\", Encapsulate => $(Encapsulate)
 ARGS2 := $(ARGS), PackagePrefix => \"@encapdir@/\", Encapsulate => false
 
 check ::
-	@ for i in $(PACKAGES) ; \
+	@ for i in $(TESTEDPACKAGES) ; \
 	  do ( \
 	     set -x ; \
 		  ../bin/M2@EXE@ -q --stop \

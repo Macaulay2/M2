@@ -385,7 +385,22 @@ AC_SUBST(PACKAGES,"
   ConwayPolynomials
   SimpleDoc
   EdgeIdeals
+  FourTiTwo
+  StatePolytope
 ")
+
+AC_SUBST(UNTESTEDPACKAGES,"FourTiTwo StatePolytope")
+AC_ARG_WITH(untested-packages, AS_HELP_STRING(--with-untested-packages=...,specify the names of the packages not to test ($UNTESTEDPACKAGES)), UNTESTEDPACKAGES=$withval)
+
+# compute the tested packages
+AC_SUBST(TESTEDPACKAGES)
+UNTESTEDPACKAGES=" $UNTESTEDPACKAGES "
+for i in $PACKAGES
+do case $UNTESTEDPACKAGES in
+   *" $i "*) ;;
+   *) TESTEDPACKAGES="$TESTEDPACKAGES $i" ;;
+   esac
+done
 
 # convert the newlines in the list above to spaces
 PACKAGES=`echo $PACKAGES`
