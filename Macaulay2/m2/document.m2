@@ -679,7 +679,10 @@ headline FinalDocumentTag := headline DocumentTag := tag -> (
 	  if d === null then (
 	       if signalDocError tag
 	       and DocumentTag.Title tag === currentPackage#"title"
-	       then stderr << "--warning: tag has no documentation: " << tag << ", key " << toExternalString DocumentTag.Key tag << endl;
+	       then (
+		    stderr << "--warning: tag has no documentation: " << tag << ", key " 
+	       	    << {* toExternalString -- can't work for shadowed symbols *} DocumentTag.Key tag 
+	       	    << endl);
 	       return null;
 	       ));
      if d#?Headline then d#Headline
