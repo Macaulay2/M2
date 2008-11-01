@@ -104,7 +104,6 @@ then ISSUE_FLAVOR=[`</etc/issue head -1 | sed 's/^\([A-Za-z ]*\).*/\1/' | sed 's
      esac
      ISSUE=$ISSUE_FLAVOR-$ISSUE_RELEASE
 fi
-AC_MSG_NOTICE([issue to be used in distribution file names: $ISSUE])
 
 AC_SUBST(OS,"`  uname -s | sed s=/=-=g  `")
 AC_SUBST(REL,"`  uname -r | sed -e s=/=-=g -e 's= =+=' -e 's=[()]==g'  `")
@@ -121,6 +120,9 @@ case $OS in
   dnl needs to know that C:/FOO/BAR is an absolute path.
   CYGWIN*) OS=MicrosoftWindows ; ISSUE=Cygwin ;;
 esac
+
+AC_MSG_NOTICE([operating system to be used in distribution file names: $OS])
+AC_MSG_NOTICE([issue to be used in distribution file names: $ISSUE])
 
 case $OS in
   MacOS) 
@@ -250,7 +252,7 @@ EOF
 	     *a2*a4*) CONSTRUCTOR_ORDER_LIB=LR ;;
 	     *a4*a2*) CONSTRUCTOR_ORDER_LIB=RL ;;
 	 esac
-	 rm -f libconf_test*.a conf_test*.cc conf_test*.$OBJEXT conf_main*.cc conf_main
+	 rm -f libconf_test* conf_test* conf_main*
 	 AC_MSG_RESULT([link order o1a2o3a4, construction order $CONSTRUCTOR_ORDER, obj order $CONSTRUCTOR_ORDER_OBJ, lib order $CONSTRUCTOR_ORDER_LIB])
     else AC_MSG_ERROR([test failed, see config.log])
     fi
@@ -277,7 +279,7 @@ AC_LANG(C)
 AC_SUBST(HAVE_PERSONALITY,)
 AC_CHECK_FUNC(personality, HAVE_PERSONALITY=1, HAVE_PERSONALITY=0)
 
-AC_SUBST(PTHREADS,yes) AC_ARG_ENABLE(pthreads, AS_HELP_STRING(--enable-pthreads,enable pthreads in gc), PTHREADS=$enableval)
+AC_SUBST(PTHREADS,yes) AC_ARG_ENABLE(pthreads, AS_HELP_STRING(--disable-pthreads,[disable pthreads (for gc)]), PTHREADS=$enableval)
 AC_SUBST(STRIP,yes)    AC_ARG_ENABLE(strip, AS_HELP_STRING(--disable-strip,do not strip the symbol table from the Macaulay 2 binary), STRIP=$enableval)
 AC_SUBST(STATIC,no)    AC_ARG_ENABLE(static, AS_HELP_STRING(--enable-static,enable static linking), STATIC=$enableval)
 AC_SUBST(MEMDEBUG,no)  AC_ARG_ENABLE(memdebug, AS_HELP_STRING(--enable-memdebug,enable memory allocation debugging), MEMDEBUG=$enableval)
@@ -296,10 +298,20 @@ AC_ARG_ENABLE(altivec, AS_HELP_STRING(--enable-altivec,compile with "-faltivec" 
 )
 
 AC_PROG_FC()
-USE_FCLIBS=yes
+USE_FCLIBS=unspecified
 AC_ARG_ENABLE(fc-lib-ldflags,
-    AS_HELP_STRING(--disable-fc-lib-ldflags,specify that no linker flags are required to link with a Fortran library),
+    AS_HELP_STRING(--disable-fc-lib-ldflags,[do not use extra libraries for linking with Fortran (the default under Cygwin)]),
     USE_FCLIBS=$enableval)
+
+if test "$USE_FCLIBS" = unspecified
+then if test "$ISSUE" = Cygwin
+     then USE_FCLIBS=no
+          AC_MSG_NOTICE([by default under Cygwin, not adding linker flags to link with Fortran libraries])
+     else USE_FCLIBS=yes
+          AC_MSG_NOTICE([by default, adding linker flags to link with Fortran libraries])
+     fi
+fi
+
 AC_SUBST(FCLIBS_DYNAMIC,)
 AC_SUBST(FCLIBS_STATIC,)
 AC_SUBST(FCLIBS_FLAGS,)
