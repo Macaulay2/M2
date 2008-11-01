@@ -1,0 +1,7 @@
+this package has some duplications in its genome:
+
+    i1 : loadPackage "BoijSoderberg"
+    --warning: pureBetti redefined
+    --warning: pureBettiDiagram redefined
+
+    o1 = BoijSoderberg

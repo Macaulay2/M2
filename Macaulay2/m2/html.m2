@@ -545,7 +545,14 @@ uninstallPackage String := opts -> pkg -> (
 	       enc := dir|"encapinfo";
 	       if not fileExists enc then error ("expected package to contain file: ",enc);
 	       symlinkDirectory(dir, installDirectory, Verbose => debugLevel > 0, Undo => true);
-	       scan(reverse findFiles dir, fn -> if isDirectory fn then removeDirectory fn else removeFile fn);
+	       scan(reverse findFiles dir, fn -> (
+			 if isDirectory fn then (
+			      if length readDirectory fn == 2 then removeDirectory fn;
+			      -- we silently ignore nonempty directories, which could result from
+			      -- removing an open file on an NFS file system
+			      )
+			 else removeFile fn
+			 ));
 	       ));
      )
 
@@ -952,8 +959,12 @@ installPackage Package := opts -> pkg -> (
      -- make symbolic links
      if opts.Encapsulate and opts.MakeLinks then (
      	  stderr << "--making symbolic links from \"" << installDirectory << "\" to \"" << buildDirectory << "\"" << endl;
-	  symlinkDirectory(buildDirectory, installDirectory, Verbose => debugLevel > 0, Exclude => {"encapinfo", "postinstall", "preremove"})
-	  );
+	  symlinkDirectory(buildDirectory, installDirectory,
+	       Verbose => debugLevel > 0, 
+	       Exclude => {
+		    "^encapinfo$", "^postinstall$", "^preremove$", -- configuration files for epkg
+		    "^\\.nfs"				    -- removed open files on NFS mounted file systems
+		    }));
 
      -- all done
      SRC = null;
