@@ -2,13 +2,13 @@
 -- PURPOSE : Methods for Janet bases and Pommaret bases
 --           (as particular cases of involutive bases)
 -- PROGRAMMER : Daniel Robertz
--- UPDATE HISTORY : 8 February 2008
--- (tested with Macaulay 2, version 0.9.95)
+-- UPDATE HISTORY : 02 October 2008
+-- (tested with Macaulay 2, version 1.1)
 ---------------------------------------------------------------------------
 newPackage(
         "InvolutiveBases",
-        Version => "1.0",
-        Date => "February 8, 2008",
+        Version => "1.01",
+        Date => "October 02, 2008",
         Authors => {{Name => "Daniel Robertz",
                   Email => "daniel@momo.math.rwth-aachen.de",
                   HomePage => "http://wwwb.math.rwth-aachen.de/~daniel/"}},
@@ -16,8 +16,16 @@ newPackage(
         DebuggingMode => true
         )
 
+
+-- news in version 1.01:
+--      invSyzygies and janetResolution respect gradings
+--      new: factorModuleBasis enumerates standard monomials
+--      "pretty printing" for InvolutiveBasis and FactorModuleBasis
+
+
 export {basisElements, multVar, janetMultVar, pommaretMultVar, janetBasis, InvolutiveBasis,
-     isPommaretBasis, invReduce, invSyzygies, janetResolution, Involutive, multVars}
+     isPommaretBasis, invReduce, invSyzygies, janetResolution, Involutive, multVars,
+     FactorModuleBasis, factorModuleBasis}
 
 ----------------------------------------------------------------------
 -- type InvolutiveBasis
@@ -41,8 +49,41 @@ multVar(ChainComplex, ZZ) := (C, n) -> (
 
 
 ----------------------------------------------------------------------
+-- type FactorModuleBasis
+----------------------------------------------------------------------
+
+FactorModuleBasis = new Type of HashTable
+
+--basisElements = method()
+
+basisElements FactorModuleBasis := F -> F#0
+
+--multVar = method()
+
+multVar(FactorModuleBasis) := F -> (
+     v := generators ring F#0;
+     apply(F#1, i->set(select(v, j -> i#j == 1))))
+
+
+----------------------------------------------------------------------
 -- subroutines (not exported)
 ----------------------------------------------------------------------
+
+involutiveBasisPrettyPrint = J -> (
+     if numgens target J#0 == 1 then
+          netList(transpose {first entries J#0, apply(multVar J, elements)})
+     else
+          netList(transpose { apply(toList(0..(numgens source J#0)-1), i->(J#0)_i),
+               apply(multVar J, elements)})
+     -- alternatively,
+     -- netList(transpose {transpose entries J#0, apply(multVar J, elements)})
+     )
+
+
+InvolutiveBasis#{Standard,BeforePrint} = involutiveBasisPrettyPrint;
+
+FactorModuleBasis#{Standard,BeforePrint} = involutiveBasisPrettyPrint;
+
 
 -- determine multiplicative variables for list of exponents exp2 with
 -- respect to Janet division
@@ -122,6 +163,49 @@ janetMultVarMonomials = L -> (
      for i from 0 to length(p)-1 list J#(p#i))
 
 
+-- recursive procedure that partitions the complement of a
+-- multiple closed set of monomials (in particular a given
+-- initial ideal) into monomial cones;
+-- decomposeComplement is used by factorModuleBasis
+
+decomposeComplement = (E, eta, a) -> (
+     m := length E;
+     if m == 0 then (
+          { (a, eta) }
+     )
+     else (
+	  n := length eta;
+	  -- assuming length(eta) = length(a) = n
+	  -- and for every entry m of the list E, length(m) = n
+	  i := 0;
+	  while (i < n and eta#i == 0) do i = i+1;
+          if i == n then error "list of polynomials is not autoreduced";
+	  if sum(eta) == 1 then (
+	       z := for j from 0 to n-1 list 0;
+	       for j when a#i + j < E#0#i list (a_{0..(i-1)} | {a#i + j} | a_{(i+1)..(n-1)}, z)
+	  )
+          else (
+	       -- assuming E is sorted lexicographically
+               d := E#(m-1)#i;
+	       s := 0;
+	       local t;
+	       C := flatten for j from 0 to d-1 list (
+		    t = s;
+	            while (t < m and E#t#i == j) do t = t+1;
+		    if t == m then error "list of exponent lists is not sorted lexicographically";
+		    D := decomposeComplement(E_{s..(t-1)},
+                         eta_{0..(i-1)} | {0} | eta_{(i+1)..(n-1)},
+                         a_{0..(i-1)} | {a#i + j} | a_{(i+1)..(n-1)});
+		    s = t;
+		    D);
+               C | apply(decomposeComplement(E_{s..(m-1)},
+                         eta_{0..(i-1)} | {0} | eta_{(i+1)..(n-1)},
+                         a_{0..(i-1)} | {a#i + d} | a_{(i+1)..(n-1)}),
+                    k->(k#0, (k#1)_{0..(i-1)} | {1} | (k#1)_{(i+1)..(n-1)}))
+	  )
+     ))
+
+
 -- given a monomial m in a polynomial ring with n variables,
 -- return the class of m
 
@@ -129,7 +213,7 @@ monomialClass = (m, n) -> (
      -- alternatively, use 'support' and 'index'
      expon := (exponents m)#0;
      k := n-1;
-     while (k >= 0 and expon#k == 0) do ( k = k-1; );
+     while (k >= 0 and expon#k == 0) do k = k-1;
      k)
 
 
@@ -255,6 +339,7 @@ janetBasis = method(TypicalValue => InvolutiveBasis)
 janetBasis(GroebnerBasis) := G -> (
      M := generators G;
      R := ring M;
+     if not isPolynomialRing(R) then error "janetBasis is only defined for polynomial rings";
      v := generators R;
      M = for i from 0 to (numgens target M)-1 list
           submatrix(M, select(toList(0..(numgens source M)-1),
@@ -271,7 +356,7 @@ janetBasis(GroebnerBasis) := G -> (
 	  P = flatten for i from 0 to length(J)-1 list (
 	       for j in v list (
 		    if J#i#j == 1 then continue;
-		    j * N_{i}
+		    map(target N, R^{ -(degree(j) + (degrees source N_{i})_0)}, j * N_{i})
 		    )
 	       );
 	  P = for i in P list (
@@ -283,14 +368,13 @@ janetBasis(GroebnerBasis) := G -> (
 	       i
 	       );
 	  while length(P) > 0 do (
-	       Q = P#0;
-	       for i from 1 to length(P)-1 do Q = Q | P#i;
-	       N = N | matrix { (sort Q)_0 };
+	       Q = fold((M1, M2) -> M1 | M2, P);
+	       N = N | (sort Q)_{0};
 	       J = janetMultVarMonomials for i in flatten entries N^{c} list leadMonomial i;
 	       P = flatten for i from 0 to length(J)-1 list (
 		    for j in v list (
 			 if J#i#j == 1 then continue;
-			 j * N_{i}
+	   	         map(target N, R^{ -(degree(j) + (degrees source N_{i})_0)}, j * N_{i})
 			 )
 		    );
 	       P = for i in P list (
@@ -330,6 +414,46 @@ isPommaretBasis = method(TypicalValue => Boolean)
 isPommaretBasis(InvolutiveBasis) := J -> pommaretMultVar(J#0) === multVar(J)
 
 
+-- enumeration of a (monomial) vector space basis of R/I
+-- in terms of monomial cones, where I is an ideal of R
+-- with Janet basis J
+
+factorModuleBasis = method(TypicalValue => FactorModuleBasis)
+
+factorModuleBasis(InvolutiveBasis) := J -> (
+     R := ring J#0;
+     v := generators R;
+     n := length v;
+     e := for i from 0 to n-1 list 1;
+     z := for i from 0 to n-1 list 0;
+     r := numgens target J#0;
+     l := numgens source J#0;
+     G := gens target J#0;
+     L := leadTerm J#0;
+     L = for i from 0 to l-1 list
+          { leadMonomial sum entries L_i, leadComponent L_i };
+     L = for i from 0 to r-1 list (
+	  for j from 0 to l-1 list (
+	       if L#j#1 != i then continue;
+	       (exponents L#j#0)#0
+	  ));
+     L = apply(L, E->for i in decomposeComplement(sort E, e, z) list
+	  (product for j from 0 to n-1 list (v#j)^(i#0#j), i#1));
+     L = { for i from 0 to r-1 list (
+	       if length(L#i) == 0 then continue;
+	       matrix({ for j in L#i list j#0 }) ** G_{i}
+          ),
+          flatten for i from 0 to r-1 list
+	  for j in L#i list hashTable(for k from 0 to n-1 list v#k => j#1#k) };
+     if length(L#0) == 0 then
+	  new FactorModuleBasis from hashTable { 0 => matrix {{}}, 1 => {} }
+     else
+	  new FactorModuleBasis from hashTable {
+	       0 => fold((M1, M2) -> M1 | M2, L#0),
+	       1 => L#1 })
+
+
+
 -- given a Janet basis J for a submodule of a free module
 -- over a polynomial ring and an element p of this free module,
 -- return the normal form of p modulo the Janet basis and the
@@ -344,6 +468,7 @@ isPommaretBasis(InvolutiveBasis) := J -> pommaretMultVar(J#0) === multVar(J)
 invReduce = method()
 
 invReduce(Matrix,InvolutiveBasis) := (p, J) -> (
+     if numgens target p != numgens target J#0 then error "the free modules containing the Janet basis and the element to be reduced must be the same";
      R := ring J#0;
      v := generators R;
      L := leadTerm J#0;
@@ -417,6 +542,7 @@ invSyzygies = method(TypicalValue => InvolutiveBasis)
 
 invSyzygies(InvolutiveBasis) := J -> (
      bas := J#0;
+     d := degrees source bas;
      mult := J#1;
      R := ring bas;
      v := generators R;
@@ -427,7 +553,7 @@ invSyzygies(InvolutiveBasis) := J -> (
 	       if mult#i#j == 1 then continue;
                r = invReduce(j * bas_{i}, J);
 	       if (r#0)_0 != zl then error "given data is not a Janet basis";
-	       r = matrix { j * (R^(length(mult)))_i } - r#1;
+	       r = map(source J#0, R^{ -(degree(j) + d#i)}, matrix { j * (R^(length(mult)))_i } - r#1);
 	       (r, hashTable(for k in v list if k <= j then ( k => 1 ) else ( k => mult#i#k )))
 	  )
      );
@@ -469,8 +595,7 @@ janetResolution(InvolutiveBasis) := J -> (
 	  S = invSyzygies R#(-1);
           S = (map(source schreyerOrder leadTerm R#(-1)#0, source S#0, S#0), S#1);
      );
-     C := chainComplex(apply(R, i->i#0) |
-	  { matrix(ring R#0#0, for i in toList(1..numgens source R#-1#0) list {}) });
+     C := chainComplex(apply(R, i->i#0) | { map(source R#-1#0, (ring R#0#0)^0, 0) });
      for i from 1 to length(R) do C.dd#i.cache.multVars = R#(i-1)#1;
      C)
 
@@ -493,7 +618,7 @@ document {
         Headline => "Methods for Janet bases and Pommaret bases in Macaulay 2",
         EM "InvolutiveBases", " is a package which provides routines for dealing with Janet and Pommaret bases.",
 	PARA{
-             "Janet bases can be constructed from given Groebner bases. It can be checked whether a Janet basis is a Pommaret basis. Involutive reduction modulo a Janet basis can be performed. Syzygies and free resolutions can be computed using Janet bases. A convenient way to use this strategy is to use an optional argument for ", TO "resolution", ", see ", TO "Involutive", "."
+             TEX "Janet bases can be constructed from given Gr\\\"obner bases. It can be checked whether a Janet basis is a Pommaret basis. Involutive reduction modulo a Janet basis can be performed. Syzygies and free resolutions can be computed using Janet bases. A convenient way to use this strategy is to use an optional argument for ", TO "resolution", ", see ", TO "Involutive", "."
 	    },
 	PARA{
              "Some references:"
@@ -505,33 +630,54 @@ document {
              "M. Janet, Lecons sur les systemes des equationes aux derivees partielles. Cahiers Scientifiques IV. Gauthiers-Villars, Paris, 1929.",
              "J.-F. Pommaret, Partial Differential Equations and Group Theory. Kluwer Academic Publishers, 1994.",
              "W. Plesken and D. Robertz, Janet's approach to presentations and resolutions for polynomials and linear pdes. Archiv der Mathematik 84(1), 2005, pp. 22-37.",
+	     TEX "D. Robertz, Janet Bases and Applications. In: Rosenkranz, M. and Wang, D. (eds.), Gr\\\"obner Bases in Symbolic Analysis, Radon Series on Computational and Applied Mathematics 2, de Gruyter, 2007, pp. 139-168.",
              "W. M. Seiler, A Combinatorial Approach to Involution and delta-Regularity: I. Involutive Bases in Polynomial Algebras of Solvable Type. II. Structure Analysis of Polynomial Modules with Pommaret Bases. Preprints, arXiv:math/0208247 and arXiv:math/0208250."
            }
         }
 
 document {
-        Key => {basisElements,(basisElements,InvolutiveBasis)},
-        Headline => "extract the matrix of generators from an involutive basis",
-        Usage => "basisElements J",
-        Inputs => {{ "J, ", ofClass InvolutiveBasis }},
-        Outputs => {{ ofClass Matrix, ", the columns are generators for the module spanned by J" }},
+        Key => {basisElements,(basisElements,InvolutiveBasis),(basisElements,FactorModuleBasis)},
+        Headline => "extract the matrix of generators from an involutive basis or factor module basis",
+        Usage => "B = basisElements J or B = basisElements F",
+        Inputs => {
+	     "J" => InvolutiveBasis,
+	     "F" => FactorModuleBasis
+	     },
+        Outputs => {
+	   B => Matrix
+	   },
+	PARA{
+	     TEX "If the argument of basisElements is ", ofClass InvolutiveBasis, ", then the columns of B are generators for the module spanned by the involutive basis. These columns form a Gr\\\"obner basis for this module."
+	    },
+	PARA{
+	     "If the argument of basisElements is ", ofClass FactorModuleBasis, ", then the columns of B are generators for the monomial cones in the factor module basis."
+	    },
         EXAMPLE lines ///
-          R = QQ[x,y]
-	  I = ideal(x^3,y^2)
+          R = QQ[x,y];
+	  I = ideal(x^3,y^2);
 	  J = janetBasis I;
 	  basisElements J
         ///,
-        SeeAlso => {janetBasis,multVar}
+        EXAMPLE lines ///
+	  R = QQ[x,y,z];
+	  M = matrix {{x*y,x^3*z}};
+	  J = janetBasis M;
+	  F = factorModuleBasis J
+	  basisElements F
+	  multVar F
+        ///,
+        SeeAlso => {multVar,janetBasis,factorModuleBasis}
         }
 
 document {
-        Key => {multVar,(multVar,InvolutiveBasis),(multVar,ChainComplex,ZZ)},
-        Headline => "extract the sets of multiplicative variables for each generator from an involutive basis",
-        Usage => "m = multVar(J) or m = multVar(C,n)",
+        Key => {multVar,(multVar,InvolutiveBasis),(multVar,ChainComplex,ZZ),(multVar,FactorModuleBasis)},
+        Headline => "extract the sets of multiplicative variables for each generator (in several contexts)",
+        Usage => "m = multVar(J) or m = multVar(C,n) or m = multVar(F)",
 	Inputs => {
 	     "J" => InvolutiveBasis,
 	     "C" => ChainComplex,
-	     "n" => ZZ
+	     "n" => ZZ,
+	     "F" => FactorModuleBasis
 	     },
         Outputs => {
 	   "m" => List => { "list of sets of variables of the polynomial ring" }
@@ -542,19 +688,30 @@ document {
 	PARA{
 	     "If the arguments of multVar are ", ofClass ChainComplex, " and ", ofClass ZZ, ", where C is the result of either ", TO "janetResolution", " or ", TO "resolution", " called with the optional argument 'Strategy => Involutive', then the i-th set in m consists of the multiplicative variables for the i-th generator in the n-th differential of C."
 	    },
+	PARA{
+	     "If the argument of multVar is ", ofClass FactorModuleBasis, ", then the i-th set in m consists of the multiplicative variables for the i-th monomial cone in F."
+	    },
         EXAMPLE lines ///
-          R = QQ[x,y]
-	  I = ideal(x^3,y^2)
+          R = QQ[x,y];
+	  I = ideal(x^3,y^2);
 	  J = janetBasis I;
 	  multVar J
         ///,
         EXAMPLE lines ///
-          R = QQ[x,y,z]
-	  I = ideal(x,y,z)
+          R = QQ[x,y,z];
+	  I = ideal(x,y,z);
 	  C = res(I, Strategy => Involutive)
 	  multVar(C, 2)
         ///,
-        SeeAlso => {janetBasis,janetMultVar,pommaretMultVar,basisElements,janetResolution,Involutive}
+        EXAMPLE lines ///
+	  R = QQ[x,y,z];
+	  M = matrix {{x*y,x^3*z}};
+	  J = janetBasis M
+	  F = factorModuleBasis J
+	  basisElements F
+	  multVar F
+        ///,
+        SeeAlso => {janetBasis,janetMultVar,pommaretMultVar,basisElements,janetResolution,Involutive,factorModuleBasis}
         }
 
 document {
@@ -578,22 +735,22 @@ document {
 	     "If the arguments for janetBasis are ", ofClass ChainComplex, " and ", ofClass ZZ, ", where C is the result of either ", TO "janetResolution", " or ", TO "resolution", " called with the optional argument 'Strategy => Involutive', then J is the Janet basis extracted from the n-th differential of C."
 	    },
         EXAMPLE lines ///
-          R = QQ[x,y]
-	  I = ideal(x^3,y^2)
+          R = QQ[x,y];
+	  I = ideal(x^3,y^2);
 	  J = janetBasis I;
 	  basisElements J
 	  multVar J
         ///,
         EXAMPLE lines ///
-	  R = QQ[x,y]
-	  M = matrix {{x*y-y^3, x*y^2, x*y-x}, {x, y^2, x}}
+	  R = QQ[x,y];
+	  M = matrix {{x*y-y^3, x*y^2, x*y-x}, {x, y^2, x}};
 	  J = janetBasis M;
 	  basisElements J
 	  multVar J
         ///,
         EXAMPLE lines ///
-          R = QQ[x,y,z]
-	  I = ideal(x,y,z)
+          R = QQ[x,y,z];
+	  I = ideal(x,y,z);
 	  C = res(I, Strategy => Involutive)
 	  janetBasis(C, 2)
         ///,
@@ -607,8 +764,8 @@ document {
         Inputs => {{ "M, ", ofClass Matrix, " or ", ofClass List }},
         Outputs => {{ "list of sets of variables of the polynomial ring; the i-th set consists of the multiplicative variables for the i-th generator in J" }},
         EXAMPLE lines ///
-          R = QQ[x1,x2,x3]
-	  M = matrix {{ x1*x2*x3, x2^2*x3, x1*x2*x3^2 }}
+          R = QQ[x1,x2,x3];
+	  M = matrix {{ x1*x2*x3, x2^2*x3, x1*x2*x3^2 }};
 	  janetMultVar M
         ///,
         SeeAlso => {pommaretMultVar,janetBasis,multVar,isPommaretBasis}
@@ -621,8 +778,8 @@ document {
         Inputs => {{ "M, ", ofClass Matrix, " or ", ofClass List }},
         Outputs => {{ "list of sets of variables of the polynomial ring; the i-th set consists of the multiplicative variables for the i-th generator in J" }},
         EXAMPLE lines ///
-          R = QQ[x1,x2,x3]
-	  M = matrix {{ x1*x2*x3, x2^2*x3, x1*x2*x3^2 }}
+          R = QQ[x1,x2,x3];
+	  M = matrix {{ x1*x2*x3, x2^2*x3, x1*x2*x3^2 }};
 	  pommaretMultVar M
         ///,
         SeeAlso => {janetMultVar,janetBasis,multVar,isPommaretBasis}
@@ -637,14 +794,14 @@ document {
 	   "P" => Boolean => { "the result equals true if and only if J is a Pommaret basis" }
 	   },
         EXAMPLE lines ///
-          R = QQ[x,y]
-	  I = ideal(x^3,y^2)
+          R = QQ[x,y];
+	  I = ideal(x^3,y^2);
 	  J = janetBasis I
 	  isPommaretBasis J
         ///,
         EXAMPLE lines ///
-          R = QQ[x,y]
-	  I = ideal(x*y,y^2)
+          R = QQ[x,y];
+	  I = ideal(x*y,y^2);
 	  J = janetBasis I
 	  isPommaretBasis J
         ///,
@@ -670,6 +827,49 @@ TEST ///
 ///
 
 document {
+        Key => {factorModuleBasis,(factorModuleBasis,InvolutiveBasis)},
+        Headline => "enumerate standard monomials",
+        Usage => "F = factorModuleBasis(J)",
+	Inputs => {
+	     "J" => InvolutiveBasis
+	     },
+        Outputs => {
+	   "F" => FactorModuleBasis => {"a partition of the set of monomials that are not leading monomial of any element of the module spanned by J, into monomial cones"}
+	   },
+	PARA{ "The result represents a collection of finitely many cones of monomials, each cone being the set of multiples of a certain monomial by all monomials in certain variables; the generating monomials are accessed by ", TO "basisElements", "; the sets of variables for each cone are obtained from ", TO "multVar", "." },
+        EXAMPLE lines ///
+	  R = QQ[x,y,z];
+	  M = matrix {{x*y,x^3*z}};
+	  J = janetBasis M;
+	  F = factorModuleBasis J
+	  basisElements F
+	  multVar F
+        ///,
+        EXAMPLE lines ///
+	  R = QQ[x,y];
+          M = matrix {{x*y-y^3, x*y^2, x*y-x}, {x, y^2, x}};
+          J = janetBasis M
+          F = factorModuleBasis J
+	  basisElements F
+	  multVar F
+        ///,
+        SeeAlso => {janetBasis,basisElements,multVar}
+        }
+
+TEST ///
+     -- loadPackage "InvolutiveBases"
+     R = QQ[x1,x2,x3]
+     M = matrix {{x1*x2,x1^3*x3}}
+     J = janetBasis M
+     F = factorModuleBasis J
+     assert ( F#0 == matrix {{ 1, x1, x1^2, x1^3 }} )
+     assert ( values applyPairs (F#1#0, (a,b)->if a == x1 then (a, b == 0) else (a, b == 1)) == { true, true, true } )
+     assert ( values applyPairs (F#1#1, (a,b)->if a == x3 then (a, b == 1) else (a, b == 0)) == { true, true, true } )
+     assert ( values applyPairs (F#1#2, (a,b)->if a == x3 then (a, b == 1) else (a, b == 0)) == { true, true, true } )
+     assert ( values applyPairs (F#1#3, (a,b)->if a == x1 then (a, b == 1) else (a, b == 0)) == { true, true, true } )
+///
+
+document {
         Key => {invReduce,(invReduce,Matrix,InvolutiveBasis),(invReduce,RingElement,InvolutiveBasis)},
         Headline => "compute normal form modulo involutive basis by involutive reduction",
         Usage => "(r,c) = invReduce(p,J)",
@@ -683,7 +883,7 @@ document {
 	   },
 	Consequences => { "the columns of r are in normal form modulo J, and p = r + J#0 * c, where * is matrix multiplication" },
         EXAMPLE lines ///
-          R = QQ[x,y,z]
+          R = QQ[x,y,z];
 	  M = matrix {{x+y+z, x*y+y*z+z*x, x*y*z-1}};
 	  J = janetBasis M;
 	  p = matrix {{y,y^2,y^3}}
@@ -699,10 +899,9 @@ document {
         Inputs => {{ "J, ", ofClass InvolutiveBasis }},
         Outputs => {{ ofClass InvolutiveBasis, ", an involutive basis for the syzygies of J" }},
         EXAMPLE lines ///
-          R = QQ[x,y,z]
-          I = ideal(x,y,z)
-          G = gb I
-          J = janetBasis G
+          R = QQ[x,y,z];
+          I = ideal(x,y,z);
+          J = janetBasis I
           invSyzygies J
         ///,
         Caveat => { "cannot be iterated because ", TO "schreyerOrder", " is not used; call ", TO "janetResolution", " instead" },
@@ -715,10 +914,23 @@ document {
      }
 
 document {
+     Key => FactorModuleBasis,
+     Headline => "the class of all factor module bases"
+     }
+
+document {
         Key => Involutive,
         Headline => "name for an optional argument",
 	PARA{
              "The symbol Involutive is allowed as value for the optional argument ", TO "Strategy", " for ", TO "resolution", ". If provided, the resolution is constructed using ", TO "janetResolution", "."
+	    }
+     }
+
+document {
+        Key => multVars,
+        Headline => "key in the cache table of a differential in a Janet resolution",
+	PARA{
+             "The symbol multVars is used as a key in the cache table of a differential in a resolution if it is constructed using ", TO "janetResolution", ". In that case it stores the sets of multiplicative variables for the Janet basis given by that differential."
 	    }
      }
 
@@ -740,15 +952,15 @@ document {
              "Note that janetResolution can be combined with ", TO "resolution", ": when providing the option 'Strategy => Involutive' to ", TO "resolution", ", janetResolution constructs the resolution."
 	    },
         EXAMPLE lines ///
-          R = QQ[x,y,z]
-	  M = matrix {{x,y,z}}
+          R = QQ[x,y,z];
+	  M = matrix {{x,y,z}};
           C = janetResolution M
 	  janetBasis(C, 2)
 	  multVar(C, 2)
         ///,
         EXAMPLE lines ///
-          R = QQ[x,y,z]
-	  I = ideal(x,y,z)
+          R = QQ[x,y,z];
+	  I = ideal(x,y,z);
 	  res(I, Strategy => Involutive)
         ///,
         SeeAlso => {janetBasis,multVar,invSyzygies}
