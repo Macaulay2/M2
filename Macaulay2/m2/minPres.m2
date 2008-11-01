@@ -277,8 +277,6 @@ findReductor = (L) -> (
 	  );
      if redVar =!= {} then (redVar#1, redVar#1 - (1/(redVar#0))*L2#0#1)
      )
-	       
-
 
 reduceLinears = method(Options => {Limit=>infinity})
 reduceLinears Ideal := o -> (I) -> (
@@ -328,34 +326,7 @@ backSubstitute = (M) -> (
          pairs H)
      )
 
--- This will be folded into flattenRing.
--- So the call in minPressy below should be:
---  (flatI, notused) = flattenRing(I, Quotient=>false)
-flattenQuotient = method()
-flattenQuotient Ideal := (I) -> (
-     -- returns triple (J,f,g)
-     -- where if R = ring I, S = ring J, then
-     -- (a) S is a flattened poly ring (not a quotient ring)
-     -- (b) f : R --> S, g : S --> R
-     --     and f, g induce isomorphisms of R/I with T/J.
-     -- (c) T/J cannot be written as a polynomial ring in fewer variables
-     --     (can we really get this?)
-     -- Assumptions: R is not a Weyl algebra, but can be skew commutative
-     --
-     R := ring I;
-     (S1,F) := flattenRing R;
-     I1 := if S1 =!= R then F I else I;
-     S := ambient S1;
-     J := lift(I1,S); -- includes quotient ideal of S1, if any.
-     f := map(R,S,generators(R, CoefficientRing => coefficientRing S));
-     g := map(S,R,vars S);  -- ONLY well-defined R --> S/J !!
-     (J,f,g)
-     )
-
-minPressy = method()
-
--- Modified version, 10/24/08
-minPressy Ideal := (I) -> (
+minPressy = (I) -> (
      --  Returns: an ideal J in a polynomial ring over ZZ or a base field
      --  such that (ring I)/I is isomorphic to  (ring J)/J.
      --  Approach: look at generators of I, find those with linear
@@ -367,7 +338,7 @@ minPressy Ideal := (I) -> (
      --  if the ring I is a tower, flatten it first, and if the ring has quotient
      -- elements, add them to flatI
      R := ring I;
-     (flatI,F,G) := flattenQuotient I;
+     (flatI,F) := flattenRing I;
      flatR := ring flatI;
      (S,IS) := (flatR, flatI);
      if any(degrees flatR, d -> d =!= {1}) then (
