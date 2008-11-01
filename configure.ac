@@ -384,6 +384,7 @@ AC_SUBST(PACKAGES,"
   InvolutiveBases
   ConwayPolynomials
   SimpleDoc
+  EdgeIdeals
 ")
 
 # convert the newlines in the list above to spaces
