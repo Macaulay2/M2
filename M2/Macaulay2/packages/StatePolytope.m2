@@ -1,7 +1,7 @@
 newPackage(
 	"StatePolytope",
-    	Version => "1.1", 
-    	Date => "July 16, 2008",
+    	Version => "1.2", 
+    	Date => "October 6, 2008",
     	Authors => {
 	     {Name => "Dave Swinarski", Email => "swinarsk@math.columbia.edu"}
 	     },
