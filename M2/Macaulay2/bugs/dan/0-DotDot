@@ -1,0 +1,1 @@
+replace DotDot and Colon by BinaryOperation after adding precedences

@@ -252,7 +252,7 @@ export {
 	symbol Height,
 	symbol Hilbert,
 	symbol Holder,
-	symbol Holder2,
+--	symbol Holder2,
 	symbol Hom,
 	symbol HomePage,
 	symbol Homogeneous,
