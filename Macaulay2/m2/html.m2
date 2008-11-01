@@ -970,19 +970,13 @@ installPackage Package := opts -> pkg -> (
      SRC = null;
      stderr << "--installed package " << pkg << " in " << buildDirectory << endl;
      currentPackage = oldpkg;
-     if not noinitfile and prefixDirectory =!= null then makePackageIndex();
+     if not noinitfile then (
+	  userMacaulay2Directory();
+	  if prefixDirectory =!= null then makePackageIndex();
+	  )
      )
 
-userMacaulay2Directory := () -> (
-     dir := applicationDirectory();
-     if not isDirectory dir or not isDirectory (dir|"encap/") then (
-	  stderr << "--initializing user Macaulay 2 directory \"" << dir << "\"" << endl;
-	  makeDirectory(dir);
-	  makeDirectory(dir|"encap/");
-	  makeDirectory(dir|"local/");
-	  makeDirectory(dir|"code/");
-	  -- make sample init.m2 file
-	  dir|"init.m2" << ///-- This is a sample init.m2 file provided with Macaulay2.
+sampleInitFile = ///-- This is a sample init.m2 file provided with Macaulay2.
 -- It contains Macaulay 2 code and is automatically loaded upon
 -- startup of Macaulay2, unless you use the "-q" option.
 
@@ -1011,45 +1005,9 @@ userMacaulay2Directory := () -> (
 -- Uncomment and edit the following line to preload your favorite package.
 -- needsPackage "StateTables"
 
-/// << close;	  
-     	  --
-     	  absPrefixDirectory := "/" | relativizeFilename ("/", prefixDirectory);
-	  -- make dot-emacs file
-	  dir|"dot-emacs" << ///
-(setq load-path 
-      (append
-       '( "/// << absPrefixDirectory << ///share/emacs/site-lisp/" )
-       load-path
-       ))
+///
 
-(load "M2-init" t)
-
-; comment out the following line with an initial semicolon if you want to use your f12 key for something else
-(global-set-key [ f12 ] 'M2)
-
-/// << close;
-	  -- make dot-profile file
-          dir|"dot-profile" << ///
-PATH=/// << absPrefixDirectory << ///bin:$PATH
-export PATH
-
-MANPATH=/// << absPrefixDirectory << ///man:$MANPATH
-export MANPATH
-
-MANPATH=/// << absPrefixDirectory << ///share/man:$MANPATH
-export MANPATH
-
-LD_LIBRARY_PATH=/// << absPrefixDirectory << ///lib:$LD_LIBRARY_PATH
-export LD_LIBRARY_PATH
-/// << close;
-	  -- make dot-cshrc file
-     	  dir|"dot-cshrc" << ///
-setenv PATH /// << absPrefixDirectory << ///bin:$PATH
-setenv MANPATH /// << absPrefixDirectory << ///bin:$MANPATH
-setenv LD_LIBRARY_PATH /// << absPrefixDirectory << ///lib:$LD_LIBRARY_PATH
-/// << close;
-	  -- make README file
-	  dir|"README" << ///Welcome to Macaulay2!
+readmeFile = ///Welcome to Macaulay2!
 			     
 This directory is used to contain data and code specific to Macaulay2.  For
 example, your initialization file, init.m2, is in this directory, and is
@@ -1072,24 +1030,24 @@ subdirectory "encap/" to house the code for those packages in separate
 subdirectories.  The subdirectory "local/" will hold a single merged directory
 tree for those packages, with symbolic links to the files of the packages.
 
-Sometimes Macaulay 2 has been installed in a nonstandard location, and you
-will need to set up your environment correctly so the program can be found and
-will run, and so the documentation can be found.  The files "dot-profile" and
-"dot-cshrc" in this directory contain commands you can incorporate into your
-files ".profile" or ".cshrc" in your home directory.  Users of "bash" or "sh"
-will want to modify ".profile", and users of "csh" or "tcsh" will want to
-modify ".chsrc".  The file "dot-emacs" in this directory contains code you
-can incorporate into your file ".emacs" in your home directory.
-
 Good luck!
 
 http://www.math.uiuc.edu/Macaulay2/
 
 Daniel R. Grayson <dan@math.uiuc.edu>,
 Michael R. Stillman <mike@math.cornell.edu>
-/// << close;
-	  );
-     dir)
+///
+
+userMacaulay2Directory = () -> (
+     dir := applicationDirectory();
+     makeDirectory(dir);
+     makeDirectory(dir|"encap/");
+     makeDirectory(dir|"local/");
+     makeDirectory(dir|"code/");
+     f := (n,c) -> (n = dir|n; if not fileExists n then n << c << close);
+     f("init.m2", sampleInitFile);
+     f("README", readmeFile);
+     )
 
 makePackageIndex = method(Dispatch => Thing)
 makePackageIndex Sequence := x -> (
@@ -1104,7 +1062,7 @@ makePackageIndex List := path -> (
 	  );
      absoluteLinks = true;
      key := "Macaulay 2";
-     htmlDirectory = userMacaulay2Directory();		    -- links are relative to this directory
+     htmlDirectory = applicationDirectory();		    -- links are relative to this directory
      fn := htmlDirectory | "index.html";
      if notify then stderr << "--making index of installed packages in " << fn << endl;
      fn << html HTML { 
