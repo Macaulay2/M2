@@ -104,6 +104,10 @@ stderr << "--loading configuration for package \"PKG\" from file " << currentFil
 }
 ///
 
+closePackage = pkg -> (
+     (db -> if isOpen db then close db) pkg#"raw documentation database";
+     )
+
 -- gdbm makes architecture dependent files, so we try to distinguish them, in case
 -- they get mixed
 databaseSuffix = "-" | version#"endianness" | "-" | version#"pointer size" | ".db"
@@ -232,6 +236,7 @@ newPackage(String) := opts -> (title) -> (
 
      global currentPackage <- newpkg;
      setAttribute(newpkg,ReverseDictionary,pkgsym);
+     if instance(value pkgsym,Package) then closePackage value pkgsym;
      pkgsym <- newpkg;
      loadedPackages = {Core};
      dictionaryPath = join( {newpkg#"private dictionary"}, {Core.Dictionary, OutputDictionary, PackageDictionary});
