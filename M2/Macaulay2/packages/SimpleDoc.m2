@@ -79,7 +79,7 @@ items = (text, indents) -> (
      )
 
 DescriptionFcns = new HashTable from {
-     "Example" => (text,indents) -> EXAMPLE text,
+     "Example" => (text,indents) -> ("print (text, indents)"; EXAMPLE text),
      "Text" => markup
      }
 
