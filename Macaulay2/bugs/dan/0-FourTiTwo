@@ -1,0 +1,2 @@
+we want to distribute the package FourTiTwo but we don't want to run its tests, because they depend
+on an external program being present.  Add an option to newPackage to flag that desire (?).
