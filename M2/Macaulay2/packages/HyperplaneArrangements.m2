@@ -1,11 +1,16 @@
--- Feb 3 2008: rudimentary hyperplane arrangements package;
+-- October 8 2008: hyperplane arrangements package;
 -- Graham Denham and Greg Smith, with
 -- thanks to Sorin Popescu for the Orlik-Solomon code
+--
+-- new in this release: multiplier ideals; bug fixes (in particular
+-- involving empty arrangements); some caching; a "circuits" method;
+-- test for (Lie algebra) decomposability; a random arrangement;
+-- a hash table full of popular "canned" arrangements.
 
 newPackage(
      "HyperplaneArrangements",
-     Version => "0.4",
-     Date => "3 February 2008",
+     Version => "0.5",
+     Date => "8 October 2008",
      Authors => {
 	  {Name => "Graham Denham", HomePage => "http://www.math.uwo.ca/~gdenham/"},
 	  {Name => "Gregory G. Smith", Email => "ggsmith@mast.queensu.ca", HomePage => "http://www.mast.queensu.ca/~ggsmith"}
@@ -14,12 +19,12 @@ newPackage(
      DebuggingMode => true
      )
 
-export {Arrangement, arrangement, -- compress, trim, coefficients,
+export {Arrangement, arrangement, arrangementLibrary, -- compress, trim, coefficients,
 --     euler, poincare, cone, rank, ring, matrix,
      deletion, orlikSolomon, HypAtInfinity, typeA, typeB, typeD, graphic, 
-     Flat, flat, flats, tolist, closure, meet, vee, subArrangement, changeRing,
-     restriction, arrangementSum, EPY, der, crit, omega, HS, dlogPhi,
-     freeDlogPhi}
+     Flat, flat, flats, circuits, tolist, closure, meet, vee, subArrangement, 
+     changeRing, restriction, arrangementSum, EPY, der, crit, omega, HS, dlogPhi,
+     freeDlogPhi, isDecomposable, multIdeal, randomArrangement}
 
 Arrangement = new Type of HashTable
 Arrangement.synonym = "hyperplane arrangement"
@@ -36,6 +41,7 @@ debug Core
 net Arrangement := A -> if hasAttribute(A,ReverseDictionary) then toString getAttribute(A,ReverseDictionary) else net expression A
 dictionaryPath = delete(Core#"private dictionary", dictionaryPath)
 
+net Arrangement := A -> net expression A
 expression Arrangement := A -> new RowExpression from { A.hyperplanes }
 describe Arrangement := A -> net A.hyperplanes
 
@@ -50,8 +56,68 @@ arrangement (List,Ring) := Arrangement => (L,R) -> (
 	  symbol hyperplanes => A,
 	  symbol cache => new CacheTable
 	  })
-arrangement List := Arrangement => L -> arrangement(L, ring L#0)
+
+arrangement List := Arrangement => L -> (
+     if #L == 0 then error "Empty arrangement has no default ring"
+     else arrangement(L, ring L#0))
+
 arrangement (Arrangement,Ring) := Arrangement => (A,R) -> arrangement(A.hyperplanes,R)
+
+arrangement (Matrix,Ring) := Arrangement => (M,R) -> (
+     arrangement(flatten entries((vars R)*M), R));
+
+arrangement Matrix := Arrangement => M -> (
+     k := ring M_(0,0);
+     x := symbol x;
+     n := numrows M;
+     R := k[x_1..x_n];
+     arrangement(M,R));
+
+-- look up a canned arrangement
+
+arrangement String := Arrangement => name -> (
+     if not arrangementLibrary#?name then error "No information available for ", name;
+     k := ring arrangementLibrary#name;
+     if k == ZZ then k = QQ;
+     arrangement(k**arrangementLibrary#name));
+
+arrangement (String, PolynomialRing) := Arrangement => (name,R) -> (
+     if not arrangementLibrary#?name then error "No information available for ", name;
+     arrangement(arrangementLibrary#name,R));
+
+arrangement (String, Ring) := Arrangement => (name,k) -> (
+     if not arrangementLibrary#?name then error("No information available for ", name);
+     arrangement(k**arrangementLibrary#name));
+
+-- here are some canned arrangements that are convenient to have
+-- on hand
+
+arrangementLibrary = hashTable({
+     "braid" => transpose matrix {{1,0,0},{0,1,0},{0,0,1},{1,-1,0},{1,0,-1},{0,1,-1}},
+     "X2" => transpose matrix {{1,0,0},{0,1,0},{0,0,1},{0,1,-1},{1,0,-1},
+	  {1,1,0},{1,1,-2}},
+     "X3" => transpose matrix {{1,0,0},{0,1,0},{0,0,1},{1,1,0},{1,0,1},{0,1,1}},
+     "Pappus" => transpose matrix {{1,0,0},{0,1,0},{0,0,1},{1,-1,0},{0,1,-1},
+	  {1,-1,-1},{2,1,1},{2,1,-1},{2,-5,1}},
+     "(9_3)_2" => transpose matrix {{1,0,0},{0,1,0},{0,0,1},{1,1,0},{0,1,1},{1,0,3},
+	  {1,2,1},{1,2,3},{4,6,6}},
+     "nonFano" => transpose matrix {{1,0,0},{0,1,0},{0,0,1},{0,1,-1},{1,0,-1},
+	  {1,-1,0},{1,1,-1}},
+     "MacLane" => (ZZ/31627)**transpose matrix{{1,0,0},{0,1,0},{0,0,1},{1,-1,0},
+	  {1,0,-1},{0,1,25207},{1,25207,-1},{1,25207,6419}},
+     "Hessian" => (ZZ/31627)**transpose matrix{{1,0,0},{0,1,0},{0,0,1},
+	  {1,1,1},{1,1,6419},{1,1,25207},{1,6419,1},{1,6419,6419},{1,6419,25207},
+	  {1,25207,1},{1,25207,6419},{1,25207,25207}},
+     "Ziegler1" => transpose matrix {{1,0,0},{0,1,0},{0,0,1},{1,-1,0},{0,1,-1},
+	  {1,0,-1},{1,0,-2},{1,0,-3},{1,0,-4},{1,0,-5},{1,-1,-1},{1,-1,-2},{1,-1,-4}},
+     "Ziegler2" => transpose matrix {{1,0,0},{0,1,0},{0,0,1},{1,-1,0},{0,1,-1},
+	  {1,0,-1},{1,0,-2},{1,0,-3},{1,0,-4},{1,0,-5},{1,-1,-1},{1,-1,-3},{1,-1,-4}},
+     "prism" => transpose matrix {{1,0,0,0},{0,1,0,0},{0,0,1,0},{0,0,0,1},{1,1,0,1},
+	  {1,0,1,1}},
+     "notTame" => transpose matrix {{1,0,0,0},{0,1,0,0},{0,0,1,0},{0,0,0,1},
+	  {1,1,0,0},{1,0,1,0},{1,0,0,1},{0,1,1,0},{0,1,0,1},{0,0,1,1},
+          {1,1,1,0},{1,1,0,1},{1,0,1,1},{0,1,1,1},{1,1,1,1}}
+     })
 
 ring Arrangement := Ring => A -> A.ring
 
@@ -64,23 +130,43 @@ coefficients Arrangement := Matrix => options -> A -> (
      if (tolist A == {}) then 0 else jacobian matrix A)
 
 rank Arrangement := A -> 
-     if (tolist A == {}) then 0 else rank coefficients A
+     if (tolist A == {}) then 0 else (
+	  k := coefficientRing ring A;
+	  rank lift(coefficients A, k));
 
 normal := h -> (
      h/leadCoefficient h);  -- representative of functional, mod scalars
 
-trim Arrangement := Arrangement => options -> A -> 
-     if (tolist A == {}) then A else (
-     	  seen := new MutableHashTable;
-     	  L := select(tolist A, h -> if seen#?(normal h) or h == 0 
-	       then false else seen#(normal h) = true);
-	  arrangement(L, ring A))
+-- reduce an arrangement with possibly repeated hyperplanes to a 
+-- simple arrangement.  Cache the simple arrangement and multipliticies.
+
+trim Arrangement := Arrangement => options -> A ->  (
+     if A.cache.?simple then return(A.cache.simple);
+     if (tolist A == {}) then (
+	  A.cache.simple = A; A.cache.m = {}; A)
+     else (
+	  count := new MutableHashTable;
+	  scan(tolist A, h -> (
+		    if h != 0 then (
+		    	 if not count#?(normal h) then count#(normal h) = 0;
+			 count#(normal h) = 1+count#(normal h))));
+	  (L,m) := (keys(count),values(count));
+	  A' := arrangement(L, ring A);
+ 	  A.cache.m = m; 
+	  A.cache.simple = A'));
 
 compress Arrangement := Arrangement => A -> 
      if (A.hyperplanes == {}) then A else (
 	  L := select(A.hyperplanes, h -> h != 0);
 	  arrangement(L, ring A))
 
+dual Arrangement := Arrangement => A -> (
+     if (tolist A == {}) then error "dual expects a nonempty arrangement";
+     C := transpose gens kernel coefficients A; 
+     R := ring A;
+     f := map(coefficientRing R, R);
+     arrangement(f C));
+        
 -- equality testing
 
 Arrangement == Arrangement := (A,B) -> (
@@ -92,7 +178,7 @@ Arrangement == Arrangement := (A,B) -> (
 
 deletion = method(TypicalValue => Arrangement)
 deletion (Arrangement,RingElement) := Arrangement => (A,h) -> (
-     arrangement select(A.hyperplanes,i->(i != h)));
+     arrangement(select(A.hyperplanes,i->(i != h)), ring A))
 
 cone (Arrangement,RingElement) := Arrangement => (A,h) -> (
      arrangement ((apply(A.hyperplanes,i->homogenize(i,h))) | {h}));
@@ -131,18 +217,28 @@ monomialSubIdeal := I -> (  -- note: add options (See SP's code)
 -- a hyperplane H_j at infinity.
 --
 -- not clear this is the best...
+--
+-- we also expect this method to cache the circuits of A, as a 
+-- list of exterior monomials, since this calculation is expensive.
 
 orlikSolomon = method(TypicalValue => Ideal, 
                       Options => {Projective => false, HypAtInfinity => 0});
 
-orlikSolomon (Arrangement,Ring) := Ideal => o -> (A,E) -> (
+orlikSolomon (Arrangement,PolynomialRing) := Ideal => o -> (A,E) -> (
      n := #A.hyperplanes;
+     if n == 0 then (
+	  if o.Projective then error "Empty projective arrangement is not allowed."
+	  else return ideal(0_E)); -- empty affine arrangement is contractible.
      e := symbol e;
-     Ep := coefficientRing(ring A)[e_1..e_n,SkewCommutative=>true];
-     C := substitute(syz coefficients A,Ep);
-     M := monomialSubIdeal( ideal( (vars Ep) * C));
-     f := map(E,Ep,vars E);
-     I := ideal append( apply(flatten entries gens f M, r -> partial r),0_E);
+     k := coefficientRing(E);
+     if not A.cache.?circuits then A.cache.circuits = new MutableHashTable;
+     if not A.cache.circuits#?k then ( -- cache the next part if possible
+          Ep := k[e_1..e_n,SkewCommutative=>true];
+     	  C := substitute(syz coefficients A,Ep);
+     	  M := monomialSubIdeal( ideal( (vars Ep) * C));
+	  A.cache.circuits#k = (Ep, flatten entries gens M));
+     f := map(E,A.cache.circuits#k_0,vars E);
+     I := ideal append( apply(A.cache.circuits#k_1/f, r -> partial r),0_E);
      if o.Projective then trim I+ideal(E_(o.HypAtInfinity)) else trim I);
 
 -- remark, above, characteristic of E does not need to match A.
@@ -150,6 +246,14 @@ orlikSolomon (Arrangement,Ring) := Ideal => o -> (A,E) -> (
 orlikSolomon (Arrangement,Symbol) := Ideal => o -> (A,e) -> (
      n := #A.hyperplanes;
      E := coefficientRing(ring A)[e_1..e_n,SkewCommutative=>true];
+     orlikSolomon(A,E,o));
+
+-- one can just specify a coefficient ring
+
+orlikSolomon (Arrangement,Ring) := Ideal => o -> (A,k) -> (
+     e := symbol e;
+     n := #A.hyperplanes;
+     E := k[e_1..e_n,SkewCommutative=>true];
      orlikSolomon(A,E,o));
 
 orlikSolomon (Arrangement) := Ideal => o -> (A) -> (
@@ -162,18 +266,18 @@ poincare (Arrangement) := RingElement => A -> (
      numerator reduceHilbert hilbertSeries ((ring I)/I));
 
 -- Euler characteristic of (proj) complement
+-- complement of empty arrangement is CP^{n-1}
 
 euler (Arrangement) := ZZ => A -> (
-     I := orlikSolomon(A,Projective=>true);
-     f := numerator reduceHilbert hilbertSeries ((ring I)/I);
-     sub(f,{(ring f)_0 => -1}));
+     if #tolist A == 0 then dim ring A else (
+     	  I := orlikSolomon(A,Projective=>true);
+     	  f := numerator reduceHilbert hilbertSeries ((ring I)/I);
+     	  sub(f,{(ring f)_0 => -1})));
 
 -- euler(Flat) coming later
 
 -- some constructions of Coxeter type
--- adjusted to allow choice of coefficient ring: following the defaults,
--- the OS algebra would be constructed over ZZ, which is too slow.
--- default coefficients are now QQ, but this can be adjusted.
+-- default coefficients are now QQ
 
 typeA = method(TypicalValue => Arrangement)
 typeA (ZZ,PolynomialRing) := Arrangement => (n,R) -> (
@@ -224,6 +328,14 @@ graphic (List,Ring) := Arrangement => (G,k) -> (
 
 graphic (List) := Arrangement => G -> (
      graphic(G,QQ));
+
+-- return a random arrangement of n hyperplanes in l-space.  For large enough 
+-- N, this will tend to be the uniform matroid.
+
+randomArrangement = method(TypicalValue => Arrangement)
+randomArrangement (ZZ,ZZ,ZZ) := Arrangement => (n,l,N) -> (
+     m := QQ**matrix randomMutableMatrix(l,n,0.,N);
+     arrangement m);     
 
 -- intersection lattice and flats:
 
@@ -288,7 +400,7 @@ Flat ^ Flat := Flat => meet  -- ooh, cool.  But note L_1^L_2 isn't L_1^(L_2) !
 subArrangement = method(TypicalValue => Arrangement)
 subArrangement (Flat) := Arrangement => (F) -> (
      A := arrangement F;
-     arrangement(A.hyperplanes_(tolist F)));
+     arrangement(A.hyperplanes_(tolist F), ring A));
 
 -- the next version is redundant, but I'm putting it in 
 -- in case users want to use the usual notation
@@ -336,6 +448,16 @@ flats (ZZ,Arrangement) := List => (j,A) -> (
 flats (Arrangement) := List => A -> (
      apply(rank A,j->flats(j,A)));
 
+-- return list of indices of hyperplanes in minimal dependent sets
+
+circuits = method(TypicalValue => List) 
+circuits Arrangement := List => A -> (
+     if #tolist A == 0 then return({}); -- empty arrangement is special
+     k := coefficientRing(ring A);
+     if not A.cache.?circuits or A.cache.circuits#?k then orlikSolomon A;
+-- turn each monomial in list into its set of indices
+     (m -> indices m)\A.cache.circuits#k_1);     
+     
 -- direct sum of two arrangements  ( can't overload "directSum" or "tensor")
 
 arrangementSum = method(TypicalValue => Arrangement)
@@ -343,20 +465,35 @@ arrangementSum (Arrangement, Arrangement) := Arrangement => (A,B) -> (
      R := ring A; S := ring B;
      RS := tensor(R,S,Degrees => toList ((numgens(R)+numgens(S)):1));
      f := map(RS,R); g := map(RS,S);
-     arrangement ((tolist A)/f|(tolist B)/g));
+     arrangement ((tolist A)/f|(tolist B)/g, RS));
 
 -- change of rings shares an abbreviation:
 
 changeRing = method(TypicalValue => Arrangement)
 changeRing (Arrangement, Ring) := Arrangement => (A, k) -> (
      R := ring A;
-     f := map(R**k,R);
-     arrangement ((tolist A)/f));
+     f := map(R**k, R);
+     arrangement ((tolist A)/f, R));
 
 Arrangement ** Ring := Arrangement => changeRing
 Arrangement ** Arrangement := Arrangement => arrangementSum
 
-symExt= (m,R) ->(
+-- check if arrangement is decomposable in the sense of Papadima-Suciu
+
+isDecomposable = method(TypicalValue => Boolean)
+
+isDecomposable (Arrangement,Ring) := Boolean => (A,k) -> (
+     I = orlikSolomon (A,k);
+     b = betti res(coker vars ((ring I)/I), LengthLimit=>3);
+     phi3 = 3*b_(3,{3},3)-3*b_(1,{1},1)*b_(2,{2},2)+b_(1,{1},1)^3-b_(1,{1},1);
+     multiplicities = apply(flats(2,A),i->length tolist i);
+     sum(multiplicities,m->m*(2-3*m+m^2)) == phi3);
+
+isDecomposable (Arrangement) := Boolean => A -> (
+     k := coefficientRing(ring A);
+     isDecomposable(A,k));
+
+symExt = (m,R) ->(
      if (not(isPolynomialRing(R))) then error "expected a polynomial ring or an exterior algebra";
      if (numgens R != numgens ring m) then error "the given ring has a wrong number of variables";
      ev := map(R,ring m,vars R);
@@ -369,7 +506,7 @@ symExt= (m,R) ->(
 
 EPY = method(TypicalValue => Module);
 
-EPY (Ideal,Ring) := Module => (j, R) -> (
+EPY (Ideal,PolynomialRing) := Module => (j, R) -> (
      modT := (ring j)^1/(j*(ring j^1));
      F := res(prune modT, LengthLimit=>3);
      g := transpose F.dd_2;
@@ -383,7 +520,7 @@ EPY (Ideal) := Module => (j) -> (
      EPY(j, R));
 
 EPY (Arrangement) := Module => A -> EPY orlikSolomon A;
-EPY (Arrangement,Ring) := Module => (A,R) -> EPY(orlikSolomon A, R);
+EPY (Arrangement,PolynomialRing) := Module => (A,R) -> EPY(orlikSolomon A, R);
 
 -- add exceptionals, complex refl groups?
 
@@ -393,10 +530,8 @@ EPY (Arrangement,Ring) := Module => (A,R) -> EPY(orlikSolomon A, R);
 der = method(TypicalValue => Matrix, Options => {Strategy => null});
 der (Arrangement) := Matrix => o -> A -> (
      if o.Strategy === Classic then der1(A) else (
-	  count := new MutableHashTable;
-	  (tolist trim A)/(h -> count#(normal h) = 0);
-	  (tolist A)/(h -> count#(normal h) = count#(normal h)+1);
-	  der2(A,apply(tolist A, h->count#(normal h)))));
+	  if not A.cache.?simple then trim(A);
+     	  der2(A.cache.simple, A.cache.m)));
 
 der (Arrangement,List) := Matrix => o -> (A,m) -> (
      der2(A,m));   -- it's a multiarrangement if multiplicities supplied
@@ -408,7 +543,8 @@ der1 = A -> (
      Q := product tolist A;   -- defining polynomial
      J := jacobian ideal Q;
      m := gens ker map(transpose J | -Q, Degree => -1);
-     submatrix'(m,{numrows m - 1},));
+     l := rank A;
+     submatrix(m,0..(l-1),));
 
 -- simple arrangement with a vector of multiplicities
 
@@ -421,6 +557,39 @@ der2 = (A,m) -> (
      D := diagonalMatrix apply(n, i-> hyps_i^(m_i));
      proj := map(R^-m,R^(n+l),map(R^n,R^l,0) | map(R^n,R^n,1));
      proj*gens ker(map(P, Degree=>-1) | D));
+
+-- compute multiplier ideals of an arrangement, via theorems of 
+-- Mustata and Teitler
+
+weight := (F,m) -> (
+     sum((tolist F)/(i->m_i)));
+
+multIdeal = method(TypicalValue => Ideal)
+-- it's expensive to recompute the list of irreducible flats, 
+-- as well as intersections of ideals.  So we cache a hash table
+-- whose keys are the lists of exponents on each ideal, and whose
+-- values are the intersection.
+
+multIdeal (RR,Arrangement,List) := Ideal => (s,A,m) -> (
+     if (#tolist A != #m) then error "expected one weight for each hyperplane";
+     R := ring A;
+     if not A.cache.?irreds then
+	  A.cache.irreds = select(flatten drop(flats(A),1), F->(0 != euler F));
+     exps := A.cache.irreds/(F->floor(s*weight(F,m))-rank(F)+1);
+     if not A.cache.?multipliers then A.cache.multipliers = new MutableHashTable;
+     if not A.cache.multipliers#?exps then (
+	  ideals := A.cache.irreds/(F-> ideal tolist (A_F));
+	  A.cache.multipliers#exps = intersect apply(#exps, i->(ideals_i)^(exps_i)))
+     else
+     	  A.cache.multipliers#exps);
+
+multIdeal (RR,Arrangement) := Ideal => (s,A) -> (
+     if not A.cache.?simple then trim A;
+     multIdeal(s,A.cache.simple,A.cache.m));
+
+-- numeric argument might be in a subring of RR:
+multIdeal (Number,Arrangement) := Ideal => (s,A) -> multIdeal(numeric(s), A);
+multIdeal (Number,Arrangement,List) := Ideal => (s,A,m) -> multIdeal(numeric(s), A, m);
 
 -- critical set ideal: internal use only.
 
@@ -483,13 +652,15 @@ document {  Key => Arrangement,
      }
 document { 
      Key => {arrangement, (arrangement,List), (arrangement,List,Ring),
-     	  (arrangement,Arrangement,Ring)},
+     	  (arrangement,Arrangement,Ring), (arrangement,Matrix), (arrangement,Matrix,Ring)},
      Headline => "create a hyperplane arrangement",
-     Usage => "arrangement(L,R)",
+     Usage => "arrangement(L,R) or arrangement(M) or arrangement(M,R)",
      Inputs => {
 	  "L" => {"a list of linear equations in the ring ", TT "R"},
 	  "R" => {"a polynomial ring or linear quotient of a
 	       polynomial ring"},	  
+	  "M" => {"a matrix whose rows represent linear forms defining
+	       hyperplanes"},
           },
      Outputs => {
 	  Arrangement => {"the hyperplane arrangement determined by ",
@@ -523,8 +694,38 @@ document {
 	  TO2(RingElement, "ring elements"), " in ", TT "R", ", then
 	  the induced identity map is used to map them from ", 
 	  TT "ring L#0", " into ", TT "R", "."},
-     SeeAlso => {HyperplaneArrangements}
+     SeeAlso => {HyperplaneArrangements,(arrangement,String,PolynomialRing)}
      }
+
+document { 
+     Key => {(arrangement,String,PolynomialRing)},
+     Headline => "look up a built-in hyperplane arrangement",
+     Usage => "arrangement(s) or arrangement(s,R) or arrangement(s,k)",
+     Inputs => {
+	  "s" => String => "the name of a built-in arrangement",
+  	  "R" => PolynomialRing => "an optional coordinate ring for the 
+  	  arrangement",
+	  },
+     Outputs => {
+	  Arrangement => {"the hyperplane arrangement named ", TT "s", "."}
+	  },
+     "The built-in arrangements are stored in a global ", TO HashTable, 
+     " called ", TT "arrangementLibrary", ".  Accordingly, the user can
+     see what arrangements are available by examining the keys:",
+     EXAMPLE lines ///
+	  keys arrangementLibrary
+	  R = QQ[x,y,z];
+	  A = arrangement("Pappus",R)
+	  poincare A
+	  isDecomposable A
+     	  A = arrangement("prism", ZZ/101) -- can also specify coefficient ring
+	  ring A
+     ///,
+     Caveat => {"The arrangements ", TT "MacLane", " and ", TT "Hessian", " are
+	  defined over ", TT "ZZ/31627", ", where ", TT "6419", " is a cube root
+	  of unity."}
+}	  
+
 document { 
      Key => (ring,Arrangement),
      Headline => "get the associated ring",
@@ -615,6 +816,27 @@ document {
      Consequences => {
           },     
      "description",
+     EXAMPLE {
+          },
+     SeeAlso => {}
+     }
+
+document { 
+     Key => (dual,Arrangement),
+     Headline => "the Gale dual of A",
+     Usage => "dual A",
+     Inputs => {
+	  "A" => Arrangement
+          },
+     Outputs => {
+	  Arrangement
+          },
+     Consequences => {
+          },     
+     "The Gale transform of a rank ", TT "l", "arrangement of ", TT "n",
+     " hyperplanes is an arrangement of ", TT "n", " hyperplanes of rank ",
+     TT "n-l", ".  Here it is computed as the arrangement given by the 
+     rows of the matrix presenting the kernel of the cofficients of ", TT "A", ".",
      EXAMPLE {
           },
      SeeAlso => {}
@@ -722,6 +944,27 @@ document {
 	  }
      }
 
+document { 
+     Key => {randomArrangement, (randomArrangement,ZZ,ZZ,ZZ)},
+     Headline => "generate an arrangement at random",
+     Usage => "randomArrangement(n,l,N)",
+     Inputs => {
+	  "n" => ZZ => "number of hyperplanes",
+	  "l" => ZZ => "dimension of ambient space",
+	  "N" => ZZ => "absolute value of upper bound on coefficients"
+          },
+     Outputs => { 
+	  Arrangement => {"a random, rational arrangement of ", TT "n", " hyperplanes
+	       in ", TT "l", " variables."}
+	  },
+     "As ", TT "N", " increases, the random arrangement is a generic arrangement
+     with probability tending to 1.",
+     EXAMPLE lines ///
+     	  randomArrangement(4,3,5)
+	  tally apply(12, i -> poincare randomArrangement(6,3,5))
+     ///
+     }
+
 document {
      Key => {orlikSolomon,(orlikSolomon,Arrangement),
 	     (orlikSolomon,Arrangement,Ring),
@@ -734,6 +977,9 @@ document {
 	   with one variable for each hyperplane",
 	  "e" => Symbol => "a name for an indexed variable"
 	  },
+     Consequences => {
+	  {"the list of ", TO circuits, " of ", TT "A", " is cached."}
+          },
      Outputs => {
 	  Ideal => {"the defining ideal of the Orlik-Solomon algebra of ", 
 	            TT "A"}
@@ -797,6 +1043,7 @@ document {
 document {
      Key => {flats,(flats,ZZ,Arrangement),(flats,Arrangement)},
      Headline => "list the flats of an arrangement of given rank",
+     SeeAlso => circuits,
      Usage => "flats(n,A)",
      Inputs => {
   	  "n" => ZZ => "rank",
@@ -808,11 +1055,39 @@ document {
      "If the rank is omitted, the ", TO2{Flat,"flats"}, " of each rank are
      listed.",
      EXAMPLE lines ///
-     	  A = typeA(3)
+     	  A := typeA(3)
 	  flats(2,A)
      ///
      }
      
+document {
+     Key => {circuits,(circuits,Arrangement)},
+     SeeAlso => flats,
+     Headline => "list the circuits of an arrangement",
+     Usage => "circuits(A)",
+     Inputs => {
+	  "A" => Arrangement => "hyperplane arrangement"
+	  },
+     Outputs => {
+	  "L" => List => {"A list of circuits of ", TT "A", " each one expressed
+	       as a list of indices."}
+	  },
+     "By definition, a circuit is a minimal set of hyperplanes with linearly 
+     dependent normal vectors.",
+     EXAMPLE lines ///
+     	  R := QQ[x,y,z];
+	  A := arrangement {x,y,z,x-y,x-z,y-z};
+	  L := circuits A
+	  (C -> (tolist A)_C)\L
+     ///,
+     "An arrangement has circuits of length 2 if and only if it has repeated 
+     hyperplanes:",
+     EXAMPLE lines ///
+     	  A' := restriction(A,x)
+	  circuits A'
+     ///
+}
+
 document {
      Key => {closure,(closure,Arrangement,List)},
      Headline => "closure operation in the intersection lattice",
@@ -933,10 +1208,10 @@ document {
      case, one can also write ", TO2((symbol ^, Arrangement, Flat), "A^F"), 
      ".",
      EXAMPLE lines ///
-     	  A = typeA(3)
-     	  flats(2,A)
-	  A' = restriction first oo
-	  x = (ring A)_0  -- the subspace need not be in the arrangement
+     	  A := typeA(3)
+     	  L := flats(2,A)
+	  A' := restriction first L
+	  x := (ring A)_0  -- the subspace need not be in the arrangement
 	  restriction(A,x)
      ///,
      "The restriction is, in general, a multiarrangement.  Use ", TO(trim),
@@ -1058,6 +1333,12 @@ document {
      TT "D(f_i)", " is in ", TT "ideal(f_i^(m_i))", 
      " for each linear form ", TT "f_i", ".",
      PARA {},
+     "The ", TT "j", "th column of the output matrix expresses the ", TT "j", "th generator
+     of the derivation module in terms of its value on each linear form, in order.",
+     EXAMPLE {
+	  "R = QQ[x,y,z];",
+	  "der arrangement {x,y,z,x-y,x-z,y-z}"
+     }, PARA {},     
      "This method is implemented in such a way that any derivations of 
      degree 0 are ignored.  Equivalently, the arrangement ", TT "A", " is
      forced to be essential: that is, the intersection of all the hyperplanes
@@ -1091,32 +1372,149 @@ document {
      multiarrangements."
      }     
 
+document {
+     Key => {multIdeal, (multIdeal,RR,Arrangement), 
+	  (multIdeal,RR,Arrangement,List), (multIdeal,Number,Arrangement),
+	  (multIdeal,Number,Arrangement,List)},
+     Headline => "compute a multiplier ideal",
+     Usage => "multIdeal(s,A) or multIdeal(s,A,m)",
+     Inputs => {
+	  "A" => Arrangement => "a hyperplane arrangement",
+	  "s" => RR => "a real number",
+	  "m" => List => "optional list of positive integer multiplicities",
+     },
+     Outputs => {
+	  Ideal => {"the multiplier ideal of the arrangement at the value",
+	       TT "s"},
+     },
+     "The multiplier ideals of an given ideal depend on a nonnegative
+     real parameter.  This method computes the multiplier ideals of
+     the defining ideal of a hyperplane arrangement, optionally with
+     multiplicities ", TT "m", ".  This uses the
+     explicit formula of M. Mustata [TAMS 358 (2006), no 11, 5015--5023], as 
+     simplified by Z. Teitler [PAMS 136 (2008), no 5, 1902--1913].",
+     PARA {}, "One can compute directly:",
+     EXAMPLE lines ///
+          A = typeA(3);
+	  hilbertSeries multIdeal(3,A)
+     ///,
+     "Since the multiplier ideal is a locally constant function of its
+     real parameter, one test to see at what values it changes:",
+     -- using "lines" in the next example gives incorrect html:
+     EXAMPLE {
+	  "H = new MutableHashTable",
+	  "scan(40,i -> (
+	  	    s := i/20.;
+	  	    I := multIdeal(s,A);
+	  	    if not H#?I then H#I = {s} else H#I = H#I|{s}));",
+	  "netList sort values H -- values of s giving same multiplier ideal"
+	  }
+}
+
+document {
+     Key => {EPY, (EPY,Arrangement), (EPY,Ideal), 
+	  (EPY,Arrangement,PolynomialRing),(EPY,Ideal,PolynomialRing)},
+     Headline => "compute the Eisenbud-Popescu-Yuzvinsky module of an arrangement",
+     Usage => "EPY(A) or EPY(A,S) or EPY(I) or EPY(I,S)",
+     Inputs => {
+	  "A" => Arrangement => "an arrangement of n hyperplanes",
+	  "I" => Ideal => "an ideal of the exterior algebra, the quotient by which has a 
+	  linear, injective resolution",
+	  "S" => PolynomialRing => "an optional polynomial ring in n variables",
+     },
+     Outputs => {
+	  Module => {"The Eisenbud-Popescu-Yuzvinsky module (see below) of ", TT "I", 
+	       " or, if an arrangement is given, of its Orlik-Solomon ideal."}
+     },
+     "Let ", TT "OS", " denote the ", TO2(orlikSolomon, "Orlik-Solomon algebra"), " of 
+     the arrangement ", TT "A", 
+     ", regarded as a quotient of an exterior algebra ", TT "E", ".  The module ", 
+     TT "EPY(A)", " is, by definition, the ", TT "S", "-module which is BGG-dual to
+     the linear, injective resolution of ", TT "OS", " as an ", TT "E", "-module.",
+     PARA {},
+     "Equivalently, ", TT "EPY(A)", " is the single nonzero cohomology module in the
+     Aomoto complex of ", TT "A", ".  For details, see Eisenbud-Popescu-Yuzvinsky, 
+     [TAMS 355 (2003), no 11, 4365--4383].",
+     EXAMPLE lines ///
+     	  R = QQ[x,y];
+	  FA = EPY arrangement {x,y,x-y}
+	  betti res FA
+     ///,
+     "In particular, ", TT "EPY(A)", " has a linear free resolution over the polynomial ring,
+     namely the Aomoto complex of ", TT "A", ".",
+     EXAMPLE { -- change to typeB(3) if this takes too long
+	  "A = typeA(4)",
+	  "factor poincare A",
+	  "betti res EPY A"
+     }
+}
+
+document {
+     Key => {isDecomposable, (isDecomposable,Arrangement), 
+	     (isDecomposable,Arrangement,Ring)},
+     Headline => "test if an arrangement is decomposable",
+     Usage => "isDecomposable(A) or isDecomposable(A,k)",
+     Inputs => {
+	  "A" => Arrangement => "a hyperplane arrangement",
+	  "k" => Ring => "an optional coefficient ring, by default the
+	       coefficient ring of the arrangement",
+     },
+     Outputs => {
+	  Boolean => {"whether or not the arrangement decomposes in the
+	       sense of Papadima and Suciu [Comment. Helv. 2006]"}
+     },
+     "An arrangement is said to be decomposable if the derived subalgebra of
+     its holonomy Lie algebra is a direct sum of the derived subalgebras of
+     free Lie algebras, indexed by the rank-2 ", TO2{Flat,"flats"}, 
+     " of the arrangement.",
+     EXAMPLE lines ///
+	  X3 = arrangement "X3"
+	  isDecomposable X3
+	  isDecomposable(X3,ZZ/5)
+	  isDecomposable typeA(3)
+	  ///
+}
+
 TEST ///
 R = ZZ[x,y,z];
 trivial = arrangement({},R);
+nontrivial = arrangement{x},R);
 assert(rank trivial == 0)
 assert(ring trivial == R)
 assert(0 == matrix trivial)
 assert(0 == coefficients trivial)
+assert(deletion(nontrivial,x) == trivial)
+assert(trivial**trivial == trivial)
+assert(trivial**QQ != trivial)
+trim trivial
 
 A = typeA(3)
 assert((prune image der A) == (ring A)^{-1,-2,-3})  -- free module of derivations?
 assert((prune image der(A, {2,2,2,2,2,2})) == (ring A)^{-4,-4,-4})
-trim trivial
 
 A3 = arrangement({x,y,z,x-y,x-z,y-z},R)
 describe A3
 assert(rank A3 == 3)
 assert(pdim EPY A3 == 3)
+assert(not isDecomposable A3)
+
+X3 = arrangement "X3"
+assert(isDecomposable X3)
+assert(multIdeal(2,X3) == multIdeal(2.2,X3))
+
+M = arrangement "MacLane"
+P = poincare M
+t = (ring P)_0
+assert(1+8*t+20*t^2+13*t^3 == P)
+
 ///
 end
-
 
 A3' = arrangement {x,y,z,x-y,x-z,y-z}
 A3' == A3
 --product A3
 --A3.hyperplanes
---X3 = arrangement {x,y,z,y-z,x-z,2*x+y}
+
 --NF = arrangement {x,y,z,x-y,x-z,y-z,x+y-z}
 --///
 
