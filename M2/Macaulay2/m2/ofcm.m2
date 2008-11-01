@@ -47,7 +47,7 @@ monoidParts = (M) -> (
      nonnull splice (
 	  if M.?generatorExpressions then toSequence RLE M.generatorExpressions,
 	  Degrees => RLE if o.DegreeRank === 1 then flatten o.Degrees else (x -> VerticalList x) \ o.Degrees,
-	  if o.Heft =!= {1} then Heft => o.Heft,
+	  if o.Heft =!= {1} then Heft => RLE o.Heft,
 	  MonomialOrder => rle o.MonomialOrder,
 	  ( MonomialSize, WeylAlgebra, SkewCommutative, Inverses ) / (key -> if o#?key and o#key =!= O#key then key => o#key)))
 
@@ -168,6 +168,18 @@ madeTrivialMonoid := false
 
 dotprod = (c,d) -> sum( min(#c, #d), i -> c#i * d#i )
 
+fix := s -> if instance(s,ZZ) then s else baseName s;
+fixWA := diffs -> (
+     if class diffs =!= List then diffs = {diffs};
+     apply(diffs, x -> 
+	  if instance(x,List) then (
+	       if #x =!= 2 then error "WeylAlgebra option member: expected {x,dx}";
+	       fix \ x)
+	  else if instance(x,Option) then (
+	       if #x =!= 2 then error "WeylAlgebra option member: expected x=>dx";
+	       fix x#0 => fix x#1)
+	  else fix x))
+
 makeit1 := (opts) -> (
      M := new GeneralOrderedMonoid of MonoidElement;
      M#"original options" = opts;
@@ -218,6 +230,7 @@ makeit1 := (opts) -> (
      M.RawMonomialOrdering = rawMO;
      M#"raw creation log" = new Bag from {logMO};
      opts = new MutableHashTable from opts;
+     opts.WeylAlgebra = fixWA opts.WeylAlgebra;
      opts.MonomialOrder = new VerticalList from MOoptsint; -- these are the options given to rawMonomialOrdering, except Tiny and Small aren't there yet and GRevLex=>n hasn't been expanded
      M#"options" = MOopts; -- these are exactly the arguments given to rawMonomialOrdering
      remove(opts, MonomialSize);
@@ -328,7 +341,10 @@ findHeft = (degrk,degs) -> (
 processHeft = (degrk,degs,heft) -> (
      if heft === null then heft = findHeft(degrk,degs)
      else (
-	  if not instance(heft,List) or not all(heft,i -> instance(i,ZZ)) then error "expected Heft option to be a list of integers";
+	  if not instance(heft,List) or (
+	       heft = deepSplice heft;
+	       not all(heft,i -> instance(i,ZZ))
+	       ) then error "expected Heft option to be a list of integers";
 	  if #heft > degrk then error("expected Heft option to be of length at most the degree rank (", degrk, ")");
 	  if #heft < degrk then heft = join(heft, degrk - #heft : 0);
 	  if not chkHeft(degs,heft) then heft = findHeft(degrk,degs);

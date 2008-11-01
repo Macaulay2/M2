@@ -176,7 +176,6 @@ Ring OrderedMonoid := PolynomialRing => (			  -- no memoize
 	       else if coeffWeyl and h != -1 then error "coefficient Weyl algebra has no homogenizing variable";
 	       diffs = select(diffs, x -> class x === List);
 	       diffs = apply(diffs, x -> (
-			 if #x =!= 2 then error "WeylAlgebra: expected x=>dx, {x,dx}";
 			 if class x#0 === Sequence and class x#1 === Sequence
 			 then (
 			      if #(x#0) =!= #(x#1) then error "expected sequences of the same length";
