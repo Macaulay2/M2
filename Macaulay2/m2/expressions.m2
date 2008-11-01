@@ -54,27 +54,33 @@ Expression#operator = ""
 value' = method(Dispatch => Thing)
 value' Sequence := x -> apply(x,value')
 value' Thing := identity
--- value' Symbol := value					    -- do we really want this? try it without
+
+-- with the following line we have no way to distinguish between "hold symbol x" and "hold x" when x has a value:
+-- but without it, we have no way to recover a polynomial from its expression, without introducing Holder2 or something like it
+value' Symbol := value
+
 value Expression := value'
 
-Holder2 = new WrapperType of Expression			    -- Holder{ printable form, value form }
-Holder = new WrapperType of Holder2			    -- Holder{ printable form, value form }, with printable form === value form
-Holder2.synonym = "holder"
+--Holder2 = new WrapperType of Expression			    -- Holder{ printable form, value form }
+--Holder2.synonym = "holder"
+--Holder = new WrapperType of Holder2			    -- Holder{ printable form, value form }, with printable form === value form
+Holder = new WrapperType of Expression
 Holder.synonym = "holder"
 
-new Holder2 from VisibleList := (H,x) -> (
-     assert( #x === 2 );
-     if instance(x#0,Holder) then {x#0#0,x#1} else {x#0,x#1})
-new Holder from VisibleList := (H,x) -> (
-     assert( #x === 1 );
-     {x#0,x#0})
+-- new Holder2 from VisibleList := (H,x) -> (
+--      assert( #x === 2 );
+--      if instance(x#0,Holder) then {x#0#0,x#1} else {x#0,x#1})
+--new Holder from VisibleList := (H,x) -> (
+--     assert( #x === 1 );
+--     {x#0,x#0})
 
 hold = method(Dispatch => Thing, TypicalValue => Expression)
 hold Thing := x -> new Holder from {x}
 hold Expression := identity
 
 unhold = method()
-unhold Holder2 := first
+unhold Holder := first
+-- unhold Holder2 := first
 unhold Expression := identity
 
 AssociativeExpression = new Type of Expression
@@ -113,10 +119,15 @@ toString'(Function, Expression) := (fmt,v) -> (
      else demark(op#operator,names)
      )
 
-texMath Holder2 := v -> "{" | texMath v#0 | "}"
-html Holder2 := v -> html v#0
-net Holder2 := v -> net v#0
-toString'(Function, Holder2) := (fmt,v) -> fmt v#0
+--texMath Holder2 := v -> "{" | texMath v#0 | "}"
+--html Holder2 := v -> html v#0
+--net Holder2 := v -> net v#0
+texMath Holder := v -> "{" | texMath v#0 | "}"
+html Holder := v -> html v#0
+net Holder := v -> net v#0
+
+--toString'(Function, Holder2) := (fmt,v) -> fmt v#0
+toString'(Function, Holder) := (fmt,v) -> fmt v#0
 
 remove(Sequence,expression)
 
@@ -453,7 +464,9 @@ Thing      .. Expression := (x,y) -> DotDot{x,y}
 Expression     ..  Thing := (x,y) -> DotDot{x,y}
 
 -----------------------------------------------------------------------------
-value' Holder2 := x -> x#1
+--value' Holder2 := x -> x#1
+--value' Holder := x -> x#1
+value' Holder := x -> x#0
 value' OneExpression := v -> 1
 value' ZeroExpression := v -> 0
 -----------------------------------------------------------------------------
@@ -590,22 +603,24 @@ texMath Adjacent := texMath FunctionApplication := m -> (
      )
 -----------------------------------------------------------------------------
 
+returns = t -> x -> t
+
 	      precedence Sequence := x -> if #x === 0 then prec symbol x else if #x === 1 then prec symbol : else prec symbol x
-     	  precedence Parenthesize := x -> 0
-	      precedence Equation := x -> prec symbol ==
-	     precedence HashTable := x -> 0		    -- some things might print out as symbols though...
-		 precedence Thing := x -> 0
-		 precedence Colon := x -> prec symbol :
-		precedence DotDot := x -> prec symbol ..
-		   precedence Sum := x -> prec symbol +
-	       precedence Product := x -> prec symbol *
- precedence NonAssociativeProduct := x -> prec symbol **
-		 precedence Minus := x -> strength1 symbol -
-   precedence FunctionApplication := x -> prec symbol SPACE
-              precedence Adjacent := x -> prec symbol SPACE
-		precedence Divide := x -> prec symbol /
-	     precedence Subscript := x -> prec symbol _
-	   precedence Superscript := x -> prec symbol ^
+     	  precedence Parenthesize := returns 0
+	      precedence Equation := returns prec symbol ==
+	     precedence HashTable := returns 0		    -- some things might print out as symbols though...
+		 precedence Thing := returns 0
+		 precedence Colon := returns prec symbol :
+		precedence DotDot := returns prec symbol ..
+		   precedence Sum := returns prec symbol +
+	       precedence Product := returns prec symbol *
+ precedence NonAssociativeProduct := returns prec symbol **
+		 precedence Minus := returns strength1 symbol -
+   precedence FunctionApplication := returns prec symbol SPACE
+              precedence Adjacent := returns prec symbol SPACE
+		precedence Divide := returns prec symbol /
+	     precedence Subscript := returns prec symbol _
+	   precedence Superscript := returns prec symbol ^
 		 precedence Power := x -> if x#1 === 1 then precedence x#0 else prec symbol ^
 		    precedence ZZ := x -> if x>=0 then strength1 symbol symbol else prec symbol -
 		    precedence RR :=
@@ -616,9 +631,9 @@ texMath Adjacent := texMath FunctionApplication := m -> (
 		precedence Symbol :=
 		   precedence Net :=
 		precedence String :=
-	    precedence Expression :=
-	        precedence Holder := x -> strength1 symbol symbol
-	       precedence Holder2 := x -> precedence x#0
+	    precedence Expression := returns strength1 symbol symbol
+	        precedence Holder := x -> precedence x#0
+--	       precedence Holder2 := x -> precedence x#0
        precedence BinaryOperation := x -> prec x#0
 -----------------------------------------------------------------------------
 -- printing two dimensional ascii output
@@ -720,7 +735,9 @@ startsWithSymbol Symbol := i -> true
 startsWithSymbol Product :=
 startsWithSymbol Subscript :=
 startsWithSymbol Power :=
-startsWithSymbol Holder2 := i -> startsWithSymbol i#0
+
+startsWithSymbol Holder := i -> startsWithSymbol i#0
+-- startsWithSymbol Holder2 := i -> startsWithSymbol i#0
 
 net Product := v -> (
      n := # v;
