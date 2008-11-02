@@ -753,6 +753,7 @@ installPackage Package := opts -> pkg -> (
 	  then if hadExampleError then error(toString numExampleErrors, " error(s) occurred running example files");
 
 	  -- process documentation
+	  rawkey := "raw documentation database";
 	  stderr << "--processing documentation nodes..." << endl;
      	  SRC = new MutableHashTable;
 	  scan(nodes, 
@@ -781,11 +782,11 @@ installPackage Package := opts -> pkg -> (
 		    )
 	       );
 
+          if pkg#?rawkey and isOpen pkg#rawkey then close pkg#rawkey;
 	  shield (
 	       moveFile(rawdbnametmp,rawdbname);
 	       );
 
-	  rawkey := "raw documentation database";
 	  pkg#rawkey = openDatabase rawdbname;
 	  addEndFunction(() -> if pkg#?rawkey and isOpen pkg#rawkey then close pkg#rawkey);
 
