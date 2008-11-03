@@ -4,7 +4,7 @@ newPackage(
     	Date => "September 27, 2006",
     	Authors => {
 	     {Name => "David Eisenbud", Email => "de@msri.org", HomePage => "http://www.msri.org/~de/"},
-	     {Name => "Mike Stillman", Email => "", HomePage => ""}
+	     {Name => "Mike Stillman"}
 	     },
     	Headline => "Local rings at the origin",
     	DebuggingMode => true

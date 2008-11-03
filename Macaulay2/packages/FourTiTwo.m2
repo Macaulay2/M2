@@ -18,9 +18,9 @@ newPackage(
     	Version => "0.3", 
     	Date => "July 2, 2008",
     	Authors => {
-	     {Name => "Mike Stillman", Email => "mike@math.cornell.edu", HomePage => ""},
-	     {Name => "Josephine Yu", Email => "jyu@math.mit.edu", HomePage => ""},
-	     {Name => "Sonja Petrovic", Email => "petrovic@math.uic.edu", HomePage => ""}
+	     {Name => "Mike Stillman", Email => "mike@math.cornell.edu"},
+	     {Name => "Josephine Yu", Email => "jyu@math.mit.edu"},
+	     {Name => "Sonja Petrovic", Email => "petrovic@math.uic.edu"}
 	     },
     	Headline => "Interface to 4ti2",
 	Configuration => { "path" => "",

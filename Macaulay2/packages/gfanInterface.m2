@@ -3,7 +3,7 @@ newPackage(
     	Version => "0.1", 
     	Date => "March 11, 2007",
     	Authors => {
-	     {Name => "Mike Stillman", Email => "mike@math.cornell.edu", HomePage => ""}
+	     {Name => "Mike Stillman", Email => "mike@math.cornell.edu"}
 	     },
     	Headline => "Interface to A. Jensen's gfan package",
 	Configuration => { "path" => "",
