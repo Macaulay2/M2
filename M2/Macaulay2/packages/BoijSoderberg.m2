@@ -4,7 +4,7 @@ newPackage(
     	Date => "June 16, 2008",
     	Authors => {
 	     {Name => "David Eisenbud", Email => "de@msri.org", HomePage => "http://www.msri.org/~de/"},
-	     {Name => "Frank Schreyer", Email => "", HomePage => ""},
+	     {Name => "Frank Schreyer"},
 	     {Name => "Mike Stillman", Email => "mike@math.cornell.edu", HomePage => "http://www.math.cornell.edu/~mike"}
 	     },
     	Headline => "betti diagram operations useful for investigating the Boij-Soderberg conjectures",
