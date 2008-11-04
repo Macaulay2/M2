@@ -1,0 +1,6 @@
+currently 'configure', with no arguments, fails on the Mac because NTL compiles
+itself for 64 bit, incompatibly.
+
+1) control what NTL does, somehow
+
+2) it should be easy to select 32 or 64 bit compilation with 'configure'.
