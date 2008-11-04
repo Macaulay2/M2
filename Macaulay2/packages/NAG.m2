@@ -20,13 +20,14 @@ export {
      solveSystem, track, refine, totalDegreeStartSystem,
      areEqual, sortSolutions, multistepPredictor, multistepPredictorLooseEnd,
      --options
-     Software,PHCpack,Bertini,HOM4PS2,
+     Software,PHCpack,Bertini,HOM4PS2,M2,
      gamma,tDegree,tStep,tStepMin,stepIncreaseFactor,numberSuccessesBeforeIncrease,
      Predictor,RungeKutta4,Multistep,Tangent,Euler,Secant,MultistepDegree,
      finalMaxCorSteps, maxCorSteps, 
      Projectivize,
      AffinePatches, DynamicPatch,
-     RandomSeed     
+     RandomSeed,
+     SLP, HornerForm     
      }
 exportMutable {
      }
@@ -1264,7 +1265,8 @@ end
 
 loadPackage "NAG"
 installPackage "NAG"
-restart; installPackage("NAG", RemakeAllDocumentation=>true, AbsoluteLinks=>false, RerunExamples=>true)
+restart
+installPackage("NAG", RemakeAllDocumentation=>true, AbsoluteLinks=>false, RerunExamples=>true)
 check "NAG"
 
 -- Local Variables:
