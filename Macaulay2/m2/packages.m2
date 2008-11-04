@@ -105,7 +105,8 @@ stderr << "--loading configuration for package \"PKG\" from file " << currentFil
 ///
 
 closePackage = pkg -> (
-     (db -> if isOpen db then close db) pkg#"raw documentation database";
+     if pkg#?"raw documentation database"
+     then (db -> if isOpen db then close db) pkg#"raw documentation database";
      )
 
 -- gdbm makes architecture dependent files, so we try to distinguish them, in case
