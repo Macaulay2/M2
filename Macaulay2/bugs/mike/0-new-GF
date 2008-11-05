@@ -1,0 +1,40 @@
+debug Core
+GF 97^2 [x]
+assert ( toString x == "x" )
+rawPairs(raw coefficientRing class x,raw x)
+GF 101^2 [x]
+assert ( toString x == "x" )
+rawPairs(raw coefficientRing class x,raw x)
+
+gives this:
+
+    i1 : debug Core
+
+    i2 : GF 97^2 [x]
+
+    o2 = GF 9409[x]
+
+    o2 : PolynomialRing
+
+    i3 : assert ( toString x == "x" )
+
+    i4 : rawPairs(raw coefficientRing class x,raw x)
+
+    o4 = (1 : (1), 1 : (a))
+
+    o4 : Sequence
+
+    i5 : GF 101^2 [x]
+
+    o5 = GF 10201[x]
+
+    o5 : PolynomialRing
+
+    i6 : assert ( toString x == "x" )
+    stdio:6:1:(2):[3]: error: assertion failed
+
+    i7 : rawPairs(raw coefficientRing class x,raw x)
+
+    o7 = (1 : (1), 1 : (1))
+
+    o7 : Sequence
