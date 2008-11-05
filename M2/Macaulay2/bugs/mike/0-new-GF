@@ -38,3 +38,5 @@ gives this:
     o7 = (1 : (1), 1 : (1))
 
     o7 : Sequence
+
+The difference between the two fields is that the larger one is constructed without using rawGaloisField
