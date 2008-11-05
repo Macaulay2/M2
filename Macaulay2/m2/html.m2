@@ -1057,10 +1057,6 @@ makePackageIndex Sequence := x -> (
      )
 makePackageIndex List := path -> (
      initInstallDirectory options installPackage;
-     if prefixDirectory === null then (
-	  stderr << "warning: can't make package index" << endl;
-	  return;
-	  );
      absoluteLinks = true;
      key := "Macaulay 2";
      htmlDirectory = applicationDirectory();		    -- links are relative to this directory

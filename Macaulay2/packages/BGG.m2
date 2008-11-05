@@ -4,9 +4,9 @@ newPackage(
     	Date => "September 26, 2006",
     	Authors => {
 	     {Name => "David Eisenbud", Email => "de@msri.org", HomePage => "http://www.msri.org/~de/"},
-	     {Name => "Frank Schreyer", Email => "", HomePage => ""},
-	     {Name => "Sorin Popescu", Email => "", HomePage => ""},
-	     {Name => "Mike Stillman", Email => "", HomePage => ""}
+	     {Name => "Frank Schreyer"},
+	     {Name => "Sorin Popescu"},
+	     {Name => "Mike Stillman"}
 	     },
     	Headline => "Bernstein-Gelfand-Gelfand correspondence",
     	DebuggingMode => true

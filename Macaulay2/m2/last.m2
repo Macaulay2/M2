@@ -33,7 +33,7 @@ addStartFunction(
 isprefix = (s,t) -> s === substring(0,#s,t)
 
 addStartFunction( () -> if not noinitfile then userMacaulay2Directory() )
-addStartFunction( () -> if not noinitfile and prefixDirectory =!= null then makePackageIndex() )
+addStartFunction( () -> if not noinitfile then makePackageIndex() )
 
 addStartFunction( () -> if not noinitfile and prefixDirectory =!= null then (
 	  GLOBAL := prefixDirectory;			    -- installed doc
