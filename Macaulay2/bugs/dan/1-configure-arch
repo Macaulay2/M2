@@ -6,4 +6,7 @@ itself for 64 bit, incompatibly.
 2) it should be easy to select 32 or 64 bit compilation with 'configure'.
 
 3) make disable-fc-lib-ldflags the default on Mac, because with veclib
-framework we don't need fortran libraries, and something fails.
+framework we don't need fortran libraries, and we get these annoying
+messages:
+    ld: warning in /usr/local/lib/gcc/i686-apple-darwin8/4.2.3/libgfortranbegin.a, file is not of required architecture
+    ld: warning in /usr/local/lib/gcc/i686-apple-darwin8/4.2.3/libgcc.a, file is not of required architecture
