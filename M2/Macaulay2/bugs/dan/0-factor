@@ -70,44 +70,35 @@ int main () {
   // crashing seeds: 0 2 3 4 5 6 7 8 9 10 11 12
   // non-crashing seeds: 1 13
 
-#if 0
-
-  On( SW_RATIONAL );
-  setCharacteristic(101);
-  Variable a('a');
-  Variable x('x');
-  CanonicalForm mipo = a*a - 2;
-  cout << "a^2     = " << a*a << endl;
-  CanonicalForm f = (x+a)*(x+a+1)*(x+a+1)*(x+a+34);
-  cout << "f = " << f << endl;
-  cout << "x.level() = " << x.level() << endl ;
-  cout << "a.level() = " << a.level() << endl ;
-  CFFList g = Factorize(f,mipo);
-  cout << "g = " << g << endl;
-
-#else
-
   Off( SW_RATIONAL );
   setCharacteristic(101);
   Variable x('x'), y('y');
-  CanonicalForm mipo = y*y - 2;
-  Variable a = rootOf( mipo, 'a' );
+  CanonicalForm mipo1 = x*x - 2; // 2 is not a square mod 101
+  Variable a = rootOf( mipo1, 'a' );
   cout << "a.level() = " << a.level() << endl ;
   cout << "a^2     = " << a*a << endl;
-  Variable b = rootOf( mipo, 'b' );
+  CanonicalForm mipo2 = y*y*y - a;
+  Variable b = rootOf( mipo1, 'b' );
   cout << "b.level() = " << b.level() << endl ;
   cout << "b^2     = " << b*b << endl;
-  CanonicalForm f = (x+a)*(x+a+1)*(x+a+1)*(x+a+34);
-  CanonicalForm g = (x+a)*(x+a+1)*(x+a+3)*(x+a-34);
+  CanonicalForm f = (x+a)*(x+a+1)*(x+a+1)*(x+y+a+34);
+  CanonicalForm g = (x+a)*(x+a+1)*(x+a+3)*(x+y+a-34);
   CanonicalForm k = (x+a)*(x+a+1);
   cout << "f = " << f << endl;
   cout << "g = " << g << endl;
+
   CanonicalForm h = gcd(f,g);
   cout << "gcd(f,g) = " << h << " =? " << k << endl;
-  cout << "f = " << f << endl;
-  CFFList fac2 = factorize(f);
-  cout << "factorize(f,a) = " << fac2 << endl;
 
+  CanonicalForm h2 = alg_gcd(f,g);
+  cout << "alg_gcd(f,g) = " << h2 << " =? " << k << endl;
+
+  cout << "f = " << f << endl;
+  CFFList fac1 = Factorize(f,mipo1);
+  cout << "fac1 = " << fac1 << endl;
+#if 0
+  CFFList fac2 = factorize(f);	// this leads to an assertion failure
+  cout << "factorize(f) = " << fac2 << endl;
 #endif
 
   return 0;
@@ -116,5 +107,5 @@ int main () {
 #include <templates/ftmpl_inst.cc>
 
 // Local Variables:
-// compile-command: "g++ -g -I../../../BUILD/Linux-i686/debug/libraries/final/usr/lib/Macaulay2/Core/include -L../../../BUILD/Linux-i686/debug/libraries/final/usr/lib/Macaulay2/Core/lib -x c++ 0-factor -lfac -lcf -lcfmem -lntl -lgmp -o 0-factor.exe && (nm -o --demangle 0-factor.exe | grep new) && ./0-factor.exe"
+// compile-command: "g++ -g -I../../../BUILD/Linux-i686/debug/libraries/final/usr/lib/Macaulay2/Core/include -L../../../BUILD/Linux-i686/debug/libraries/final/usr/lib/Macaulay2/Core/lib  -I../../../BUILD/debug/libraries/final/usr/lib/Macaulay2/Core/include -L../../../BUILD/debug/libraries/final/usr/lib/Macaulay2/Core/lib -x c++ 0-factor -lfac -lcf -lcfmem -lntl -lgmp -o 0-factor.exe && (nm -o --demangle 0-factor.exe | grep new) && ./0-factor.exe"
 // End:
