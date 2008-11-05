@@ -4,3 +4,6 @@ itself for 64 bit, incompatibly.
 1) control what NTL does, somehow
 
 2) it should be easy to select 32 or 64 bit compilation with 'configure'.
+
+3) make disable-fc-lib-ldflags the default on Mac, because with veclib
+framework we don't need fortran libraries, and something fails.
