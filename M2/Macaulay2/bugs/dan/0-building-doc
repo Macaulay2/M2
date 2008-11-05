@@ -1,0 +1,19 @@
+Add this to a new node on documenting running from the build tree:
+
+    (1) It makes a difference whether you are "installing" the absolute latest, or
+    just running it in place, in the build directory.  If you are running from an
+    installed M2, then prefixDirectory will have a nonnull value, like this:
+
+	i1 : prefixDirectory
+
+	o1 = /usr/
+
+    I recently made a change so the viewHelp main index is updated when the build
+    M2 starts running.  Naturally, it has no idea where the installed M2 is, so it
+    can't index the documentation there.  The solution is to run your M2 with 
+
+	   --prefix /usr/
+
+    or something similar added to the command line.  Then, when indexing, it will
+    know where the installed files are, too.  Recall that in emacs this can be done
+    with C-U F12, which offers you the command line for editing.
