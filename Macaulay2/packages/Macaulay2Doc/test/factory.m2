@@ -9,8 +9,17 @@ p = d*(x^5-a)
 q = d*(x^7-a)
 debug Core
 rawGCD(raw p,raw q,raw f)
-gcd(p,q)
+gcd(p,q)						    -- to do
 assert( gcd(p,q) == d )
+
+--
+k = GF 9
+R = k[x]
+d = x-a
+p = d*(x^5-a)
+q = d*(x^7-a)
+gcd(p,q)						    -- already hooked up
+factor p						    -- crashes
 
 S = QQ[a,x]
 

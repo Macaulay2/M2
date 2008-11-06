@@ -1,111 +1,134 @@
 // -*- c++ -*-
 
-// gcd now works over GF, so work on factoring
+#if 0
 
+gcd now works over GF, so work on factoring
+-----------------------------------------------------------------------------
+From: hannes@mathematik.uni-kl.de
+Subject: Re: Singular Factory
+To: dan@math.uiuc.edu
+Date: Mon, 27 Oct 2008 18:32:18 +0100 (CET)
+In-Reply-To: <200810250230.m9P2Ug1Z012463@u123.math.uiuc.edu> from "Daniel R. Grayson" at Oct 24, 2008 09:30:42 PM
 
-// From: hannes@mathematik.uni-kl.de
-// Subject: Re: Singular Factory
-// To: dan@math.uiuc.edu
-// Date: Tue, 7 Nov 2006 09:36:13 +0100 (CET)
-// Cc: hannes@mathematik.uni-kl.de
-// In-Reply-To: <200611031821.kA3IL8Jv018521@u123.math.uiuc.edu> from "Dan Grayson" at Nov 03, 2006 12:21:08 PM
+//  
+//  
+//  Does factory support factorization or gcd over algebraic extensions generated
+//  by more than one element?
+//  
+Factorize and alg_gcd do.
+
+Hans
+-----------------------------------------------------------------------------
+From: hannes@mathematik.uni-kl.de
+Subject: Re: Singular Factory
+To: dan@math.uiuc.edu
+Date: Tue, 7 Nov 2006 09:36:13 +0100 (CET)
+Cc: hannes@mathematik.uni-kl.de
+In-Reply-To: <200611031821.kA3IL8Jv018521@u123.math.uiuc.edu> from "Dan Grayson" at Nov 03, 2006 12:21:08 PM
+
 // 
-// >
-// >
-// > Hi, Hannes,
-// >
-// > It was good to see you at the IMA.
-// >
-// > How would I hook up M2 to Singular/Factory so it can factor and do gcd's over
-// > non-prime finite fields?  Can I specify the irreducible polynomial of the
-// > generator of the finite field?  If so, must its root generate the
-// > multiplicative group?
-// >
-// Hi Dan,
-// factory assumes only, that the minimal polynomial of the field extension is
-// given as a irreducible polynomial.
-// (There is also another representation, which uses the root
-// of the multiplicative group, but we do not use it, so its untested.)
 // 
-// GCD:
+//  Hi, Hannes,
 // 
-//     This one should now work in char 0 also:
+//  It was good to see you at the IMA.
 // 
-// 	Here an example for gcd in a field extension of Z/p by mipo
-// 	(a polynomial of type CanonicalForm):
-// 	  setCharacteristic(p);
-// 	  Variable a=rootOf(mipo);
-// 	  // build F and G using a to represent a root of mipo
-// 	  return gcd(F,G);
+//  How would I hook up M2 to Singular/Factory so it can factor and do gcd's over
+//  non-prime finite fields?  Can I specify the irreducible polynomial of the
+//  generator of the finite field?  If so, must its root generate the
+//  multiplicative group?
 // 
-//     This one should not be needed any longer:
-// 
-// 	for extentions of Q:
-// 	  setCharacteristic(0);
-// 	  CFList as(mipo);
-// 	  Variable a=rootOf(mipo);
-// 	  // build F and G using a to represent a root of mipo
-// 	  return  alg_gcd( F, G, as);
-// 
-// Factorization:
-// 
-//     And factorization of G:
-//       setCharacteristic(p); // resp. setCharacteristic(0);
-//       Variable a=rootOf(mipo);
-//       // build G using a to represent a root of mipo
-//       CFFList L=Factorize(G, mipo);
-// 
+Hi Dan,
+factory assumes only, that the minimal polynomial of the field extension is
+given as a irreducible polynomial.
+(There is also another representation, which uses the root
+of the multiplicative group, but we do not use it, so its untested.)
+
+GCD:
+
+    This one should now work in char 0 also:
+
+	Here an example for gcd in a field extension of Z/p by mipo
+	(a polynomial of type CanonicalForm):
+	  setCharacteristic(p);
+	  Variable a=rootOf(mipo);
+	  // build F and G using a to represent a root of mipo
+	  return gcd(F,G);
+
+    This one should not be needed any longer:
+
+	for extentions of Q:
+	  setCharacteristic(0);
+	  CFList as(mipo);
+	  Variable a=rootOf(mipo);
+	  // build F and G using a to represent a root of mipo
+	  return  alg_gcd( F, G, as);
+
+Factorization:
+
+    And factorization of G:
+      setCharacteristic(p); // resp. setCharacteristic(0);
+      Variable a=rootOf(mipo);
+      // build G using a to represent a root of mipo
+      CFFList L=Factorize(G, mipo);
+-----------------------------------------------------------------------------
+From: hannes@mathematik.uni-kl.de
+Subject: Re: Singular Factory
+To: dan@math.uiuc.edu
+Date: Wed, 5 Nov 2008 18:45:27 +0100 (CET)
+Cc: hannes@mathematik.uni-kl.de
+In-Reply-To: <no.id> from "Daniel R. Grayson" at Nov 04, 2008 02:37:04 PM
+
+//  
+//  
+//  I tried to figure it out (how to do it) and couldn't.  I can't even use the
+//  result of one rootOf as part of the input to the next one.  And since Factorize
+//  takes one minimal polynomial as its second argument, it's counterintuitive that
+//  it could handle much more.
+//  
+//  Can you tell me how to do it?
+
+Sorry, rootOf is used in factory, but not in libfac,
+and libfac provides that stuff:
+
+For factorization/gcd in that case one should use 
+CFFList newfactoras( const CanonicalForm & f, const CFList & as, int success)
+(from libfac/factor.h)
+example:
+CFList as(mipo); // polynomial in Var(1)
+as.append(mipo2); // polynomial in Var(1), Var(2)
+CanonicalForm F=....; // polynomial in Var(1)...Var(n), Var(1) and Var(2)
+                      // considered as algebraic variables accouding to mipo,mipo2
+
+CanonicalForm G=....;
+
+CanonicalForm result= alg_gcd( F, G, as);
+
+int success=-1;
+CFFList qs=newfactoras(F,as,success);
+
+Hans
+-----------------------------------------------------------------------------
+#endif
 
 #include <factor.h>
+CanonicalForm alg_gcd(const CanonicalForm &, const CanonicalForm &, const CFList &);
 using std::cout;
 using std::endl;
-
 int main () {
   factoryseed(123);
-  // change the seed and watch it crash, or not
-  // when compiled with ntl
-  // crashing seeds: 0 1 2 3 4 5 6 7 8 9 10 11 12 13
-  // non-crashing seeds: 
-  // when compiled without ntl
-  // crashing seeds: 0 2 3 4 5 6 7 8 9 10 11 12
-  // non-crashing seeds: 1 13
-
   Off( SW_RATIONAL );
   setCharacteristic(101);
   Variable x('x'), y('y');
-  CanonicalForm mipo1 = x*x - 2; // 2 is not a square mod 101
-  Variable a = rootOf( mipo1, 'a' );
-  cout << "a.level() = " << a.level() << endl ;
-  cout << "a^2     = " << a*a << endl;
-  CanonicalForm mipo2 = y*y*y - a;
-  Variable b = rootOf( mipo1, 'b' );
-  cout << "b.level() = " << b.level() << endl ;
-  cout << "b^2     = " << b*b << endl;
-  CanonicalForm f = (x+a)*(x+a+1)*(x+a+1)*(x+y+a+34);
-  CanonicalForm g = (x+a)*(x+a+1)*(x+a+3)*(x+y+a-34);
-  CanonicalForm k = (x+a)*(x+a+1);
+  CanonicalForm mipo = x*x - 2;
+  CanonicalForm a = rootOf(mipo);
+  CanonicalForm f = (y+a)*(y+a+1);
   cout << "f = " << f << endl;
-  cout << "g = " << g << endl;
-
-  CanonicalForm h = gcd(f,g);
-  cout << "gcd(f,g) = " << h << " =? " << k << endl;
-
-  CanonicalForm h2 = alg_gcd(f,g);
-  cout << "alg_gcd(f,g) = " << h2 << " =? " << k << endl;
-
-  cout << "f = " << f << endl;
-  CFFList fac1 = Factorize(f,mipo1);
-  cout << "fac1 = " << fac1 << endl;
-#if 0
-  CFFList fac2 = factorize(f);	// this leads to an assertion failure
-  cout << "factorize(f) = " << fac2 << endl;
-#endif
-
+  CFFList fac = Factorize(f,mipo);
+  cout << "Factorize(f) = " << fac << endl;
   return 0;
 }
-
 #include <templates/ftmpl_inst.cc>
 
 // Local Variables:
-// compile-command: "g++ -g -I../../../BUILD/Linux-i686/debug/libraries/final/usr/lib/Macaulay2/Core/include -L../../../BUILD/Linux-i686/debug/libraries/final/usr/lib/Macaulay2/Core/lib  -I../../../BUILD/debug/libraries/final/usr/lib/Macaulay2/Core/include -L../../../BUILD/debug/libraries/final/usr/lib/Macaulay2/Core/lib -x c++ 0-factor -lfac -lcf -lcfmem -lntl -lgmp -o 0-factor.exe && (nm -o --demangle 0-factor.exe | grep new) && ./0-factor.exe"
+// compile-command: "g++ -g -I../../../BUILD/Linux-i686/debug/Macaulay2/e -I../../../BUILD/Linux-i686/debug/libraries/final/usr/lib/Macaulay2/Core/include -L../../../BUILD/Linux-i686/debug/libraries/final/usr/lib/Macaulay2/Core/lib  -I../../../BUILD/debug/libraries/final/usr/lib/Macaulay2/Core/include -L../../../BUILD/debug/libraries/final/usr/lib/Macaulay2/Core/lib -x c++ 0-factor -lfac -lcf -lcfmem -lntl -lgmp -o 0-factor.exe && ./0-factor.exe"
 // End:
