@@ -655,13 +655,15 @@ Matrix_array_OrNull * rawCharSeries(const Matrix *M)
 void rawDummy(void) {
   struct enter_factory foo;
   // we use this routine just for testing bits of stand-alone factory code
-  On( SW_RATIONAL );
+  Off( SW_RATIONAL );
   setCharacteristic(101);
   Variable a('a');
   Variable x('x');
   CanonicalForm mipo = a*a - 2;
   cout << "a^2     = " << a*a << endl;
   CanonicalForm f = (x+a)*(x+a+1)*(x+a+1)*(x+a+34);
+  cout << "f = " << f << endl;
+  // f = Prem(f,mipo);
   cout << "f = " << f << endl;
   cout << "x.level() = " << x.level() << endl ;
   cout << "a.level() = " << a.level() << endl ;
