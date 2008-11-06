@@ -973,7 +973,7 @@ installPackage Package := opts -> pkg -> (
      currentPackage = oldpkg;
      if not noinitfile then (
 	  userMacaulay2Directory();
-	  if prefixDirectory =!= null then makePackageIndex();
+	  makePackageIndex();
 	  )
      )
 
