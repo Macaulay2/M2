@@ -15,6 +15,13 @@ distribution tar file from the source code svn 1.1 branch, here is one way:
 	  --enable-rpm \
           --enable-build-libraries="gc gdbm gmp mpfr readline ntl factory libfac lapack"
 
+      svn co svn://Macaulay2.math.uiuc.edu/Macaulay2/trunk/M2 M2
+      cd M2
+      make
+      mkdir BUILD/opt
+      cd BUILD/opt
+      ../../configure  --prefix=/home/mike/M2-builds/M2/BUILD/opt/installed' --enable-tarfile --enable-frobby
+
 
 ----------------------
 MacOS X notes
