@@ -1557,10 +1557,16 @@ int PolyRing::n_logical_terms(int nvars0, const ring_elem f) const
 
 ArrayPairOrNull PolyRing::list_form(const Ring *coeffR, const ring_elem f) const
 {
-  const PolynomialRing *coeffR1 = coeffR->cast_to_PolynomialRing();
+  // Either coeffR should be the actual coefficient ring (possible a "toField"ed ring)
+  // or a polynomial ring.  In the latter case, the last set of variables are part of
+  // the coefficients
   int nvars0 = n_vars();
-  if (coeffR1 != 0)
-    nvars0 -= coeffR1->n_vars();
+  if (coeffR != K_)
+    {
+      const PolynomialRing *coeffR1 = coeffR->cast_to_PolynomialRing();
+      if (coeffR1 != 0)
+	nvars0 -= coeffR1->n_vars();
+    }
   int n = n_logical_terms(nvars0,f);
   Monomial_array *monoms = GETMEM(Monomial_array *, sizeofarray(monoms,n));
   RingElement_array *coeffs = GETMEM(RingElement_array *, sizeofarray(coeffs,n));
