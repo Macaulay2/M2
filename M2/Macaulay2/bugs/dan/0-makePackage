@@ -1,0 +1,7 @@
+makePackage fails when there are no entries in the menu:
+
+--making example results for makePackageIndex in file /home/mike/M2-builds/M2-1.1.1/installed/Macaulay2-1.1.1/share/doc$
+ulimit  -t 80; ulimit  -m 200000; ulimit  -v 200000; cd .; time ../bin/M2 --silent --print-width 77 --stop --int -q  <"$
+/home/mike/M2-builds/M2-1.1.1/installed/Macaulay2-1.1.1/share/doc/Macaulay2/Macaulay2Doc/example-output/_make__Package_$
+stdio:1:1:(1):[0]: error: empty element of type "UL" encountered
+
