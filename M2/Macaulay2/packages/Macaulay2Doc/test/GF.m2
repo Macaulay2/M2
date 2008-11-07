@@ -15,8 +15,9 @@ S = K[x]
 assert(toString promote(a,S) == "a")
 raw promote(a,S)  -- now it works
 
---end
-gives this:
+end
+------------------------------------
+gives (gave) this:  fixed 11/7/08
 
     i1 : debug Core
 
