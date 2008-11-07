@@ -6,6 +6,18 @@ GF 101^2 [x]
 assert ( toString x == "x" )
 rawPairs(raw coefficientRing class x,raw x)
 
+-- This works in 1.1
+debug Core
+R = ZZ/101[a]/(a^2+47*a-26)
+toField R
+K = GF R
+S = K[x]
+promote(a,S)
+raw oo  -- now it works
+
+
+raw F
+
 gives this:
 
     i1 : debug Core

@@ -318,14 +318,18 @@ bool PolyRing::promote(const Ring *Rf, const ring_elem f, ring_elem &result) con
   //  Rf is the coeff ring of this
   //  Rf is not the coeff ring K of this, but is a base ring of K (e.g. ZZ --> QQ, A --> frac(A), any others?)
   //  Rf is a poly ring in a smaller number of variables
-  const PolynomialRing *Rf1 = Rf->cast_to_PolynomialRing();
+
   int nvars0 = n_vars();
-  if (Rf1 != 0)
-    nvars0 -= Rf1->n_vars();
-  if (Rf1 && nvars0 == 0) 
+  if (Rf != K_)
     {
-      result = copy(f);
-      return true;
+      const PolynomialRing *Rf1 = Rf->cast_to_PolynomialRing();
+      if (Rf1 != 0)
+	nvars0 -= Rf1->n_vars();
+      if (Rf1 && nvars0 == 0)
+	{
+	  result = copy(f);
+	  return true;
+	}
     }
   int *exp = newarray_atomic_clear(int,nvars0);
   result = make_logical_term(Rf,f,exp);
@@ -347,7 +351,7 @@ bool PolyRing::lift(const Ring *Rg, const ring_elem f, ring_elem &result) const
       return true;
     }
   int nvars0 = n_vars();
-  if (Rg1 != 0)
+  if (Rg1 != 0 && Rg1 != K_)
     nvars0 -= Rg1->n_vars();
   int *exp = newarray_atomic(int,nvars0);
   lead_logical_exponents(nvars0,f,exp);
@@ -1644,7 +1648,7 @@ ring_elem PolyRing::make_logical_term(const Ring *coeffR, const ring_elem a, con
   const PolynomialRing *logicalK = coeffR->cast_to_PolynomialRing();
 
   int nvars0 = n_vars();
-  if (logicalK == 0)
+  if (K_ == coeffR || logicalK == 0)
     {
       int *m = M_->make_one();
       M_->from_expvector(exp0,m);
@@ -1742,10 +1746,13 @@ const int * PolyRing::lead_flat_monomial(const ring_elem f) const
 ring_elem PolyRing::get_coeff(const Ring *coeffR, const ring_elem f, const int *vp) const
   // note: vp is a varpower monomial.
 {
-  const PolynomialRing *coeffR1 = coeffR->cast_to_PolynomialRing();
   int nvars0 = n_vars();
-  if (coeffR1 != 0)
-    nvars0 -= coeffR1->n_vars();
+  if (coeffR != K_)
+    {
+      const PolynomialRing *coeffR1 = coeffR->cast_to_PolynomialRing();
+      if (coeffR1 != 0)
+	nvars0 -= coeffR1->n_vars();
+    }
 
   int *exp = newarray_atomic(int, nvars0);
   int *exp2 = newarray_atomic(int, n_vars()); // FLAT number of variables
