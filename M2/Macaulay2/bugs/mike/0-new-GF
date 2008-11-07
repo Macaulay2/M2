@@ -12,12 +12,10 @@ R = ZZ/101[a]/(a^2+47*a-26)
 toField R
 K = GF R
 S = K[x]
-promote(a,S)
-raw oo  -- now it works
+assert(toString promote(a,S) == "a")
+raw promote(a,S)  -- now it works
 
-
-raw F
-
+--end
 gives this:
 
     i1 : debug Core
