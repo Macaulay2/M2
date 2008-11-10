@@ -118,10 +118,10 @@ int main () {
   factoryseed(123);
   Off( SW_RATIONAL );
   setCharacteristic(101);
-  Variable x('x'), y('y');
-  CanonicalForm mipo = x*x - 2;
-  CanonicalForm a = rootOf(mipo);
-  CanonicalForm f = (y+a)*(y+a+1);
+  Variable a('a'), x('x');
+  CanonicalForm mipo = a*a - 2;
+  CanonicalForm b = rootOf(a*a - 2);
+  CanonicalForm f = (x+b)*(x+b+1);
   cout << "f = " << f << endl;
   CFFList fac = Factorize(f,mipo);
   cout << "Factorize(f) = " << fac << endl;
