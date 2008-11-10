@@ -159,8 +159,8 @@ static void checkURL(char *s) {
   s = concat(s[0] == '/' ? rootname : Dirname,s);
   if (-1 == access(s, R_OK)) {
     char *p = demangle(s);
-    if (0 == strcmp(p,s)) error("can't reach %s",s);
-    else error("can't reach %s ==> %s",s,p);
+    if (0 == strcmp(p,s)) error("broken link: %s",s);
+    else error("broken link %s ==> %s",s,p);
     u = concat(s,"");
 #if 0
     {
