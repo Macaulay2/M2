@@ -114,6 +114,10 @@ closePackage = pkg -> (
 databaseSuffix = "-" | version#"endianness" | "-" | version#"pointer size" | ".db"
 
 newPackage(String) := opts -> (title) -> (
+     scan({(Version,String),(AuxiliaryFiles,Boolean),(DebuggingMode,Boolean),(InfoDirSection,String),(Authors,List),(Configuration,List)},
+	  (k,K) -> if not instance(opts#k,K) then error("newPackage: expected ",toString k," option of class ",toString K));
+     scan({(Headline,String),(HomePage,String),(Date,String)},
+	  (k,K) -> if opts#k =!= null and not instance(opts#k,K) then error("newPackage: expected ",toString k," option of class ",toString K));
      originalTitle := title;
      if not match("^[a-zA-Z0-9]+$",title) then error( "package title not alphanumeric: ",title);
      -- stderr << "--package \"" << title << "\" loading" << endl;
