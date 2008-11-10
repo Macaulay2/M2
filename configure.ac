@@ -387,10 +387,11 @@ AC_SUBST(PACKAGES,"
   EdgeIdeals
   FourTiTwo
   StatePolytope
+  ConvexPolyhedron
 ")
 
 AC_SUBST(UNTESTEDPACKAGES,"FourTiTwo StatePolytope")
-AC_ARG_WITH(untested-packages, AS_HELP_STRING(--with-untested-packages=...,specify the names of the packages not to test ($UNTESTEDPACKAGES)), UNTESTEDPACKAGES=$withval)
+AC_ARG_WITH(untested-packages, AS_HELP_STRING(--with-untested-packages=...,specify the names of the packages not to test and whose examples should not be run ($UNTESTEDPACKAGES)), UNTESTEDPACKAGES=$withval)
 
 # compute the tested packages
 AC_SUBST(TESTEDPACKAGES)
