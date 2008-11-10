@@ -55,11 +55,13 @@ Module ** Ring := Module => (M,R) -> R ** M		    -- grandfathered, even though o
 
 Ring ** Module := Module => (R,M) -> (
      A := ring M;
-     try promote(1_A, R) else error "can't tensor by this ring";
-     if A === R then M
-     else if M.?generators then cokernel promote(presentation M, R)
-     else if M.?relations then cokernel promote(M.relations,R)
-     else R^(promote(- degrees M,A,R)))
+     if A === R then return M;
+     pr := try (promote(1_A, R); true) else false;
+     if pr then (
+     	  if M.?generators then cokernel promote(presentation M, R)
+     	  else if M.?relations then cokernel promote(M.relations,R)
+     	  else R^(promote(- degrees M,A,R)))
+     else map(R,A) ** M)
 
 Matrix ** Ring := Matrix => (f,R) -> R ** f		    -- grandfathered, even though our modules are left modules
 
