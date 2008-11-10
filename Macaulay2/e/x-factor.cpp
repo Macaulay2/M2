@@ -468,16 +468,24 @@ const RingElementOrNull *rawExtendedGCDRingElement(const RingElement *f, const R
 
   struct enter_factory foo(P);
   if (foo.mode == modeError) return 0;
+  if (foo.mode == modeGF) {
+    algebraicElement_Fac = rootOf(convertToFactory(*foo.gf->get_minimal_poly(),inExtension),'a');
+    {
+      struct enter_M2 bar;
+      (RingElement::make_raw(P->Ncoeffs()->cast_to_GF(), foo.gf->var(0)))->promote(P,algebraicElement_M2); // sets algebraicElement_M2
+    }
+  }
   CanonicalForm p = convertToFactory(*f,inExtension);
   CanonicalForm q = convertToFactory(*g,inExtension);
   CanonicalForm a, b;
   CanonicalForm h = extgcd(p,q,a,b);
   ret = convertToM2(P,h);
-  if (error()) return NULL;
+  if (error()) { algebraicElement_M2 = NULL ; return NULL; }
   *A = convertToM2(P,a);
-  if (error()) return NULL;
+  if (error()) { algebraicElement_M2 = NULL ; return NULL; }
   *B = convertToM2(P,b);
-  if (error()) return NULL;
+  if (error()) { algebraicElement_M2 = NULL ; return NULL; }
+  algebraicElement_M2 = NULL;
   return ret;
 }
 
@@ -499,11 +507,19 @@ const RingElementOrNull *rawPseudoRemainder(const RingElement *f, const RingElem
 
   struct enter_factory foo(P);
   if (foo.mode == modeError) return 0;  
+  if (foo.mode == modeGF) {
+    algebraicElement_Fac = rootOf(convertToFactory(*foo.gf->get_minimal_poly(),inExtension),'a');
+    {
+      struct enter_M2 bar;
+      (RingElement::make_raw(P->Ncoeffs()->cast_to_GF(), foo.gf->var(0)))->promote(P,algebraicElement_M2); // sets algebraicElement_M2
+    }
+  }
   CanonicalForm p = convertToFactory(*f,inExtension);
   CanonicalForm q = convertToFactory(*g,inExtension);
   CanonicalForm h = Prem(p,q);
   const RingElement *r = convertToM2(P,h);
-  if (error()) return NULL;
+  if (error()) { algebraicElement_M2 = NULL ; return NULL; }
+  algebraicElement_M2 = NULL;
   return r;
 }
 
@@ -521,6 +537,10 @@ void rawFactor(const RingElement *g,
 	       return;
 	  }
 	  struct enter_factory foo(P);
+	  if (foo.mode == modeGF) {
+	    ERROR("not implemented yet");
+	    return;
+	  }
 	  if (foo.mode == modeError) return;
 	  CanonicalForm h = convertToFactory(*g,inExtension);
 	  // displayCF(P,h);
@@ -576,6 +596,10 @@ M2_arrayint_OrNull rawIdealReorder(const Matrix *M)
 
 	     struct enter_factory foo(P);
 	     if (foo.mode == modeError) return NULL;
+	     if (foo.mode == modeGF) {
+	       ERROR("not implemented yet");
+	       return NULL;
+	     }
 
 	     List<int> t = neworderint(I);
 
@@ -623,6 +647,10 @@ Matrix_array_OrNull * rawCharSeries(const Matrix *M)
 
 	     struct enter_factory foo(P);
 	     if (foo.mode == modeError) return NULL;
+	     if (foo.mode == modeGF) {
+	       ERROR("not implemented yet");
+	       return NULL;
+	     }
 	     init_seeds();
 
 	     List<CFList> t = IrrCharSeries(I);
