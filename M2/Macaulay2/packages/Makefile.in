@@ -53,7 +53,7 @@ install-one ::
 	../bin/M2@EXE@ -q --stop -e errorDepth=0 -e debugLevel=$(debugLevel) -e "installPackage(\"$(NAMEOFPACKAGE)\" $(ARGS2))" -e "exit 0"
 
 install-others ::
-	@ for i in $(TESTEDPACKAGES) ; \
+	@ for i in @TESTEDPACKAGES@ ; \
 	  do ( \
 	      if [ "$$i" != Macaulay2Doc ] ; \
 	      then \
@@ -68,7 +68,7 @@ install-others ::
 	done
 
 install-others ::
-	@ for i in $(UNTESTEDPACKAGES) ; \
+	@ for i in @UNTESTEDPACKAGES@ ; \
 	  do ( \
 	      if [ "$$i" != Macaulay2Doc ] ; \
 	      then \
