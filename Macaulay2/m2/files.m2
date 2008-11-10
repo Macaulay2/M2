@@ -177,7 +177,14 @@ symlinkDirectory(String,String) := opts -> (src,dst) -> (
 
 -----------------------------------------------------------------------------
 
-String << Thing := File => (filename,x) -> openOut filename << x
+String << Thing := File => (filename,x) -> (
+     files := select(openFiles(), f -> toString f === filename);
+     (
+	  if #files === 0
+     	  then openOut filename 
+	  else if #files === 1 then first files
+	  else error("multiple files already open with name ", format filename)	       
+     	  ) << x)
 
 counter := 0
 

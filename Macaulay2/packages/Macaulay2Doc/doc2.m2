@@ -362,7 +362,8 @@ document {
      	  },
      Consequences => {{
 	  "The object ", TT "x", " is prepared for printing (with ", TO "net", ") and printed on the output file(s) ", TT "f", ".
-	  If ", TT "f", " is a string, then it is interpreted as a filename or pipe to open, an output file is created, used, and returned.
+	  If ", TT "f", " is a string, then it is interpreted as a filename and an output file is opened, used, and returned,
+	  unless a single open file with the same name already exists, in which case it is used and returned.
 	  If ", TT "f", " is a list, then the output operation is performed on each one.
 	  If ", TT "f", " is ", TO "null", ", then the output is discarded; thus ", TO "null", " is useful as a dummy output file.
 	  If ", TT "f", " is omitted, as in the second usage line, then the output is sent to ", TO "stdio", ", and it will appear (usually) on the screen."
