@@ -29,8 +29,10 @@ splitByIndent = (text, indents) -> (
 indentationLevel = (s) -> (
      lev := 0;
      for i from 0 to #s-1 do (
-	  if s#i === " " then lev = lev+1
-	  else if s#i === "\t" then lev = 8*((lev+8)//8)
+	  c := s#i;
+	  if c === " " then lev = lev+1
+	  else if c === "\t" then lev = 8*((lev+8)//8)
+	  else if c === "\r" then lev = 0
 	  else return (lev, replace("[[:space:]]+$","",substring(i, s)))
 	  );
      (infinity, "")
