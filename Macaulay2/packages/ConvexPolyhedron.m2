@@ -11,6 +11,7 @@ newPackage("ConvexPolyhedron",
     Authors => {
          {Name => "René Birkner", Email => "rbirkner@mi.fu-berlin.de"}},
     DebuggingMode => true,
+    AuxiliaryFiles=>true,
     Configuration => {}
     )
 
