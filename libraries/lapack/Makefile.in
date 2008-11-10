@@ -10,6 +10,9 @@ BUILDOPTIONS = PLAT= FORTRAN="@FC@" OPTS="-O2 -g" NOOPT= LOADER="@FC@" RANLIB=@R
 ifeq (@FC@,gfortran)
 BUILDOPTIONS += TIMER=INT_ETIME 
 endif
+ifeq (@FC@,f95)
+BUILDOPTIONS += TIMER=INT_ETIME 
+endif
 BUILDTARGET = blaslib lapack_install lib
 ifeq (@SHARED@,yes)
 BUILDTARGET += ../liblapack.so
