@@ -390,6 +390,7 @@ export {
 	symbol RemakeAllDocumentation,
 	symbol Repository,
 	symbol RerunExamples,
+	symbol RunExamples,
 	symbol Resolution,
 	symbol Result,
 	symbol RevLex,

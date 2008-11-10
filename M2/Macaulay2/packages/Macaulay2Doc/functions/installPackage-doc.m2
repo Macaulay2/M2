@@ -22,6 +22,7 @@ document {
 	  [installPackage,PackagePrefix],
 	  [installPackage,RemakeAllDocumentation],
 	  [installPackage,RerunExamples],
+	  [installPackage,RunExamples],
 	  [installPackage,UserMode]
 	  },
      Headline => "load and install a package and its documentation ",
@@ -36,6 +37,7 @@ document {
 	       },
 	  DebuggingMode => Boolean => { "whether to enter ", TO "the debugger", " if an error occurs during installation" },
 	  RerunExamples => Boolean => "whether to rerun all the examples during installation",
+	  RunExamples => Boolean => "whether to run the examples during installation",
 	  IgnoreExampleErrors => Boolean => "whether to ignore errors that occur during the running of examples during installation",
      	  CheckDocumentation => Boolean => "whether to check the package's documentation for consistency and completeness",
 	  MakeDocumentation => Boolean => "whether to make the documentation for the package during installation",

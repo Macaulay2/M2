@@ -524,6 +524,7 @@ installPackage = method(Options => {
 	  MakeInfo => true,
 	  RemakeAllDocumentation => true,		    -- until we get better dependency graphs between documentation nodes, "false" here will confuse users
 	  RerunExamples => false,
+	  RunExamples => true,
 	  AbsoluteLinks => true,
 	  MakeLinks => true,
 	  DebuggingMode => false
@@ -725,7 +726,8 @@ installPackage Package := opts -> pkg -> (
 		    desc := "example results for " | fkey;
 		    changefun := () -> remove(rawDocUnchanged,fkey);
 		    inputhash := hash inputs;
-		    if not opts.RerunExamples and fileExists outf and gethash outf === inputhash then (
+		    if not opts.RunExamples
+		    or not opts.RerunExamples and fileExists outf and gethash outf === inputhash then (
 			 -- do nothing
 			 )
 		    else if (
