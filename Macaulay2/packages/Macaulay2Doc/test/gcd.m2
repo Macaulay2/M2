@@ -43,6 +43,24 @@ g = (3*x^3+x*y+y^2) * d
 h = gcd(f,g)
 assert(h == -11* d)
 
+R = ZZ/101[x]
+d = x^3+x-2;
+f = d*(x^5+x-1);
+g = d*(x^6-x-1);
+assert(gcd(f,g) == d)
+w = gcdCoefficients(f,g)
+assert( w#0 == 24*d)					    -- actually, we'd like w#0 == d.  I wonder why factory doesn't ensure that?
+assert( w#0 == f * w#1 + g * w#2 )
+
+R = (GF 25)[x]
+d = x^3+x-a;
+f = d*(x^5+x-1);
+g = d*(x^6-a*x-1);
+assert(gcd(f,g) == d)
+w = gcdCoefficients(f,g)
+assert( w#0 == -d)					    -- actually, we'd like w#0 == d.  I wonder why factory doesn't ensure that?
+assert( w#0 == f * w#1 + g * w#2 )
+
 debug Core
 R = QQ[x,y]
 f = 1+x^2
