@@ -137,7 +137,7 @@ namespace safe {
 
      static inline int32_t mult(int32_t x, int32_t y, const char *msg) {
 	  int64_t z = (int64_t)x * y;
-	  int32_t w = z;
+	  int32_t w = (int32_t)z;
 	  if expect_false (z != (int64_t)w) ov(msg);
 	  return w;
      }
@@ -147,7 +147,7 @@ namespace safe {
 
      static inline int32_t mult_by(int32_t &x, int32_t y, const char *msg) {
 	  int64_t z = (int64_t)x * y;
-	  int32_t w = z;
+	  int32_t w = (int32_t)z;
 	  if expect_false (z != (int64_t)w) ov(msg);
 	  return x=w;
      }
