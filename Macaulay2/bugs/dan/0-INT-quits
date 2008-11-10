@@ -1,8 +1,0 @@
-change this behavior so it doesn't exit:
-
-/tmp/M2-10925-1_edges.m2:0: (input file)
---making example results for coverIdeal in file /home/25/dan/.Macaulay2/encap/share/doc/Macaulay2/EdgeIdeals/example-output/_cover__Ideal.out
-ulimit  -t 80; ulimit  -m 200000; ulimit  -v 200000; cd .; time M2-1.1 --silent --print-width 77 --stop --int -q -e 'loadPackage("EdgeIdeals", FileName => "/home/users/dan/src/M2/trunk/Macaulay2/packages/EdgeIdeals.m2")' <"/tmp/M2-10925-1_cover__Ideal.m2" >>"/home/25/dan/.Macaulay2/encap/share/doc/Macaulay2/EdgeIdeals/example-output/_cover__Ideal.errors" 2>&1
-  C-c C-csubprocess interrupted with INT, exiting, too
-
-Process M2 exited abnormally with code 2
