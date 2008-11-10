@@ -6,8 +6,8 @@
 ---------------------------------------------------------------------------
 newPackage("ConvexPolyhedron",
     Headline => "A package for computations with convex polyhedra",
-    Version => 0.5,
-    Date => "November 05, 2008",
+    Version => "0.5",
+    Date => "November 5, 2008",
     Authors => {
          {Name => "René Birkner", Email => "rbirkner@mi.fu-berlin.de"}},
     DebuggingMode => true,
