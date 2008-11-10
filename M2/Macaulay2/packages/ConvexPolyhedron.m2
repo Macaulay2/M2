@@ -1,7 +1,7 @@
---*- utf-8 --
+--*- coding: utf-8 -*-
 ---------------------------------------------------------------------------
 -- PURPOSE: Computations with convex polyhedra 
--- PROGRAMMER : René Birkner 
+-- PROGRAMMER : RenÃ© Birkner 
 -- UPDATE HISTORY : April 2008
 ---------------------------------------------------------------------------
 newPackage("ConvexPolyhedron",
@@ -9,7 +9,7 @@ newPackage("ConvexPolyhedron",
     Version => 0.5,
     Date => "November 05, 2008",
     Authors => {
-         {Name => "René Birkner", Email => "rbirkner@mi.fu-berlin.de"}},
+         {Name => "RenÃ© Birkner", Email => "rbirkner@mi.fu-berlin.de"}},
     DebuggingMode => true,
     Configuration => {}
     )
