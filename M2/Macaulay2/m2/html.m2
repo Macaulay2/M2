@@ -441,25 +441,23 @@ runFile := (inf,inputhash,outf,tmpf,desc,pkg,announcechange,rundir,usermode) -> 
      if r == 0 then (
 	  moveFile(tmpf,outf);
 	  return true;
-	  )
-     else (
-	  if r == 2 then (
-	       stderr << "subprocess interrupted with INT, exiting, too" << endl;
-	       removeFile tmpf;
-	       exit r;
-	       );
-	  stderr << tmpf << ":0: (output file) error return code: (" << r//256 << "," << r%256 << ")" << endl;
-	  stderr << aftermatch(M2errorRegexp,get tmpf);
-	  stderr << inf  << ":0: (input file)" << endl;
-	  scan(statusLines get inf, x -> stderr << x << endl);
-	  if r == 131 then (
-	       stderr << "subprocess terminated abnormally, exiting" << endl;
-	       exit r;
-	       );
-	  hadExampleError = true;
-	  numExampleErrors = numExampleErrors + 1;
-	  return false;
-	  ))
+	  );
+     stderr << tmpf << ":0: (output file) error return code: (" << r//256 << "," << r%256 << ")" << endl;
+     stderr << aftermatch(M2errorRegexp,get tmpf);
+     stderr << inf  << ":0: (input file)" << endl;
+     scan(statusLines get inf, x -> stderr << x << endl);
+     if r == 2 then (
+	  removeFile tmpf;
+	  error "subprocess interrupted";
+	  );
+     if r == 131 then (
+	  removeFile tmpf;
+	  error "subprocess terminated abnormally";
+	  );
+     hadExampleError = true;
+     numExampleErrors = numExampleErrors + 1;
+     return false;
+     )
 
 runString := (x,pkg,rundir,usermode) -> (
      tfn := temporaryFileName();
