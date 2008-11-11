@@ -3,9 +3,9 @@
 Constant = new Type of BasicList
 
 precedence = method(Dispatch => Thing)
-prec = x -> (getParsing x)#0
-strength2 = x -> (getParsing x)#1
-strength1 = x -> (getParsing x)#2
+lprec = prec = x -> (getParsing x)#0
+rprec = strength2 = x -> (getParsing x)#1
+uprec = strength1 = x -> (getParsing x)#2
 
 -- local variables
 EmptyName := symbol EmptyName

@@ -14,7 +14,7 @@ Parser.synonym = "parser"
 	  
 export Analyzer
 Analyzer = new SelfInitializingType of FunctionClosure
-Analyzer.synonym = "lexcical analyzer"
+Analyzer.synonym = "lexical analyzer"
 
 -- character sets and converters
 space = set characters " \t\f\n\r"

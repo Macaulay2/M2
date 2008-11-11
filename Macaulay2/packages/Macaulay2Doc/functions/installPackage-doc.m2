@@ -73,18 +73,24 @@ document {
 	  },
      "The main action of this routine is to generate the documentation of the given package and install the Macaulay2 package and documentation. ",
      PARA{ "The actual file loaded is ", TT "PACKAGENAME.m2", ", which should be on the load ", TO "path", " and should contain a package named ", TT "PACKAGENAME", "."},
-     PARA{ "In order to accomplish this, several steps are performed, or bypassed, depending on the optional parameters." },
+     PARA{ "In order to accomplish this, several steps are performed (or bypassed, depending on the values of the optional arguments)." },
      UL {
-	  "load the package, if not already loaded",
-	  "determine which help pages have changed since last install",
-	  {"run any new or previously failed examples, or all examples, as specified by the ", TT "RemakeAllExamples", " option"},
-	  {"generate the html pages of modified help pages, or all html pages, as specificed by the ", TT "RemakeAllDocumentation", " option"},
-	  {"generate the info pages, or not, as specified by the ", TT "MakeInfo", " option"},
-	  {"install the documentation and package in the location specified by the ", TT "PackagePrefix", " option"},
-	  {"create symbolic links in the location specified by the ", TT "InstallPrefix", " option"},
-	  {"place a link to this html documentation in the file ", TT "index.html", " in the user's ", TT "application directory", "; see ", TO "makePackageIndex"}
+	  {"load the package, if not already loaded (see ", TO "loadPackage", ")"},
+	  {"determine which help pages have changed since last install"},
+	  {"run any new or previously failed examples, or all examples, as specified by the ", TO "RemakeAllExamples", " option"},
+	  {"generate the html pages of modified help pages, or all html pages, as specificed by the ", TO "RemakeAllDocumentation", " option"},
+	  {"generate the info pages, or not, as specified by the ", TO "MakeInfo", " option"},
+	  {"install the documentation and package in the location specified by the ", TO "PackagePrefix", " option"},
+	  {"create symbolic links in the location specified by the ", TO "InstallPrefix", " option"},
+	  {"place a link to this html documentation in the 
+	       file ", TT "index.html", " in the user's ", TO "application directory", "; see ", TO "makePackageIndex"}
 	  },
-     SeeAlso => {"packages", "epkg"}
+     PARA {
+	  "The current value of ", TO "prefixPath", " is used to determine how to direct documentation hyperlinks from one
+	  package to another, provided the value of the option ", TO "AbsoluteLinks", " is ", TO "true", ".  Otherwise,
+	  all documentation hyperlinks are relative to positions within a single tree of directories, as describe by ", TO "LAYOUT", "."
+	  },
+     SeeAlso => {"packages", "epkg", "prefixPath", "LAYOUT"}
      }
 
 -- Local Variables:
