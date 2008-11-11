@@ -170,11 +170,62 @@ document {
 *}
 
 document {
+     Key => "prefixPath",
+     Headline => "absolute locations of Macaulay 2 files",
+     PARA {
+	  "The absolute location of a Macaulay 2 file can be obtained by concatenating three components: (a) the
+	  prefix, which is one of the members of the list ", TO "prefixPath", "; (b) the relative location of the directory
+	  containing the file, as recorded in the hash table ", TO "LAYOUT", "; and (c) the base name of the file.
+	  The value of ", TO "prefixPath", " is used by ", TO "installPackage", " when determining how to direct
+	  documentation hyperlinks from one package to another, provided the option ", TO "AbsoluteLinks", " is set to ", TO "true", "."
+	  },
+     PARA {
+	  "The initial value of ", TO "prefixPath", " contains just the following two optional items.
+	  If the variable ", TO "prefixDirectory", " was
+	  given a non-null value initially or by a ", TT "-e", " command line argument,
+	  then it will be the last element of ", TO "prefixPath", ".  If the ", TT "-q", " 
+	  option was not given on the command line used to invoke Macaulay 2, then the value of ", TT "applicationDirectory()|\"local/\"", "
+	  will be the first element of ", TO "prefixPath", ".  No attempt is made to synchronize the value of ", TO "prefixPath", "
+	  with the values of ", TO "prefixDirectory", " and of ", TT "applicationDirectory()", ", which may change."
+	  },
+     PARA {
+	  "When running a newly compiled version of Macaulay 2, adding something like ", TT "-E 'prefixDirectory=\"/usr/\"'", " to
+	  the command line is a good way to direct hyperlinks created by ", TO "installPackage", " to the documentation provided by
+	  an older copy of Macaulay 2 installed with the prefix ", TT "/usr/", ", and that, in turn, is easily done within
+	  emacs by the keystroke sequence ", TT "CTRL-U f12", ", which offers you a chance to edit the command line."
+	  },
+     PARA {
+	  "The initial value of ", TO "prefixPath", " described above can be overridden by the user's ", TO "initialization file", ")."
+	  },
+     PARA {
+	  "The list ", TO "prefixPath", " should be distinguished from the list ", TO "path", ", which is used to locate files to be
+	  loaded, by functions such as ", TO "searchPath", ", ", TO "load", ", ", TO "loadPackage", ", and ", TO "needsPackage", "."
+	  },
+     PARA {
+	  "The following example shows the list of places where we might find the source code of a package called ", TT "Foo", "
+	  after it has been installed by ", TO "installPackage", "."
+	  },
+     EXAMPLE ///apply(prefixPath, p -> p | LAYOUT#"packages" | "Foo.m2")///,
+     PARA {
+     	  "This example shows the list of places where we might reasonably find the html file documenting a
+	  function named ", TT "bar", " in a package called ", TT "Foo", "."
+	  }	   
+     EXAMPLE ///apply(prefixPath, p -> p | LAYOUT#"packagehtml" "Foo" | "bar.html")///,
+     PARA {
+     	  "This example shows the list of places where we might reasonably find the info file documenting a
+	  package called ", TT "Foo", "."
+	  }	   
+     EXAMPLE ///apply(prefixPath, p -> p | LAYOUT#"info" | "Foo.info")///,
+     SeeAlso => {"commandLine", "Invoking the program", applicationDirectory, "prefixDirectory", "path", searchPath, load, loadPackage, needsPackage}
+     }
+
+document {
      Key => "LAYOUT",
      Headline => "relative locations of Macaulay 2 files",
      PARA {
 	  "The hash table ", TT "LAYOUT", " is a translation table from symbolic names to directory paths,
-	  which are to interpreted relative to the path stored in ", TO "prefixDirectory", ".
+	  which are to interpreted relative to the path stored in ", TO "prefixDirectory", ", or in one
+	  of the directories contained in the list ", TO "prefixPath", ".
 	  Some of the entries are strings: these provide paths to various types of files associated with
 	  the main Macaulay 2 system.  The remaining entries are functions.  These provide paths to various
 	  types of files associated with packages, and accept a string containing the name of the package

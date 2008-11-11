@@ -54,16 +54,22 @@ absoluteLinks := false
 
 isAbsoluteURL := url -> match( "^(#|mailto:|[a-z]+://)", url )
 
-rel := url -> (
-     if isAbsolutePath url then concatenate("file://", externalPath, url)
-     else if isAbsoluteURL url then url
-     else (
-	  -- stderr << "rel : url = " << url << endl
-	  -- << "    (prefixDirectory | url) = " << (prefixDirectory | url) << endl
-	  -- << "     fileExists (prefixDirectory | url) = " << fileExists (prefixDirectory | url) << endl;
-	  if absoluteLinks and class prefixDirectory === String and fileExists (prefixDirectory | url) 
-	  then concatenate("file://", externalPath, prefixDirectory | url)
-     	  else relativizeFilename(htmlDirectory, url)))
+searchPrefixPath = url -> 
+     for i in prefixPath do (
+	  p := i|url;
+	  stderr << "-- " << p << "  " << fileExists p << endl;
+	  if fileExists p then return p;
+	  )
+
+toURL := path -> (
+     if isAbsolutePath path then concatenate("file://", externalPath, path)
+     else if isAbsoluteURL path then path
+     else if absoluteLinks then (
+	  p := searchPrefixPath path;
+	  if p =!= null
+	  then concatenate("file://", externalPath, p)
+	  else relativizeFilename(htmlDirectory, path))
+     else relativizeFilename(htmlDirectory, path))
 
 htmlFilename = method(Dispatch => Thing)
 htmlFilename Thing := x -> htmlFilename makeDocumentTag x
@@ -79,14 +85,14 @@ htmlFilename FinalDocumentTag := tag -> (
 html IMG  := x -> (
      (o,cn) := override(IMG.Options,toSequence x);
      if o#"alt" === null then error ("IMG item is missing alt attribute");
-     concatenate("<img src=", format rel o#"src", " alt=", format o#"alt", "/>"))
+     concatenate("<img src=", format toURL o#"src", " alt=", format o#"alt", "/>"))
 
 html HREF := x -> (
      r := html last x;
      if match("^ +$",r) then r = #r : "&nbsp;&nbsp;";
-     concatenate("<a href=\"", rel first x, "\">", r, "</a>")
+     concatenate("<a href=\"", toURL first x, "\">", r, "</a>")
      )
-tex  HREF := x -> concatenate("\\special{html:<a href=\"", texLiteral rel first x, "\">}", tex last x, "\\special{html:</a>}")
+tex  HREF := x -> concatenate("\\special{html:<a href=\"", texLiteral toURL first x, "\">}", tex last x, "\\special{html:</a>}")
 html TO   := x -> (
      tag := x#0;
      d := fetchPrimaryRawDocumentation tag;
@@ -104,7 +110,7 @@ html TO   := x -> (
 	  warning "missing documentation";
 	  concatenate( "<tt>", r, "</tt>", if x#?1 then x#1, " (missing documentation <!-- tag: ",toString DocumentTag.Key tag," -->)")
 	  )
-     else concatenate( "<a href=\"", rel htmlFilename getPrimary x#0, "\" title=\"", headline x#0, "\">", r, "</a>", if x#?1 then x#1))
+     else concatenate( "<a href=\"", toURL htmlFilename getPrimary x#0, "\" title=\"", headline x#0, "\">", r, "</a>", if x#?1 then x#1))
 html TO2  := x -> (
      tag := x#0;
      headline tag;		   -- this is a kludge, just to generate error messages about missing links 
@@ -120,7 +126,7 @@ html TO2  := x -> (
      then (
 	  warning "missing documentation";
 	  concatenate("<tt>", htmlLiteral x#1, "</tt> (missing documentation <!-- tag: ",DocumentTag.FormattedKey tag," -->)"))
-     else concatenate("<a href=\"", rel htmlFilename getPrimary x#0, "\">", htmlLiteral x#1, "</a>"))
+     else concatenate("<a href=\"", toURL htmlFilename getPrimary x#0, "\">", htmlLiteral x#1, "</a>"))
 
 next := tag -> ( if NEXT#?tag then HREF { htmlFilename NEXT#tag, nextButton } else nextButton, " | ")
 prev := tag -> ( if PREV#?tag then HREF { htmlFilename PREV#tag, prevButton } else prevButton, " | ")
@@ -143,23 +149,23 @@ links := tag -> (
      f := FORWARD tag;
      b := BACKWARD tag;
      nonnull splice (
-	  if topDocumentTag =!= null then LINK { "href" => rel htmlDirectory|topFileName, "rel" =>"Top", linkTitleTag topDocumentTag },
-	  LINK { "href" => rel htmlDirectory|indexFileName, "rel" => "Index" },
-	  LINK { "href" => rel htmlDirectory|tocFileName,   "rel" => "Table-of-Contents" },
-	  LINK { "href" => rel Macaulay2HomePage(), "rel" => "Macaulay-2-Home-Page" },
-	  if f =!= null then LINK { "href" => rel htmlFilename f, "rel" => "Next", linkTitleTag f},
-	  if b =!= null then LINK { "href" => rel htmlFilename b, "rel" => "Previous", linkTitleTag b},
+	  if topDocumentTag =!= null then LINK { "href" => toURL htmlDirectory|topFileName, "rel" =>"Top", linkTitleTag topDocumentTag },
+	  LINK { "href" => toURL htmlDirectory|indexFileName, "rel" => "Index" },
+	  LINK { "href" => toURL htmlDirectory|tocFileName,   "rel" => "Table-of-Contents" },
+	  LINK { "href" => toURL Macaulay2HomePage(), "rel" => "Macaulay-2-Home-Page" },
+	  if f =!= null then LINK { "href" => toURL htmlFilename f, "rel" => "Next", linkTitleTag f},
+	  if b =!= null then LINK { "href" => toURL htmlFilename b, "rel" => "Previous", linkTitleTag b},
 	  if NEXT#?tag then (
-	       LINK { "href" => rel htmlFilename NEXT#tag, "rel" => "Forward", linkTitleTag NEXT#tag},
-	       LINK { "href" => rel htmlFilename LAST tag, "rel" => "Last", linkTitleTag LAST tag}
+	       LINK { "href" => toURL htmlFilename NEXT#tag, "rel" => "Forward", linkTitleTag NEXT#tag},
+	       LINK { "href" => toURL htmlFilename LAST tag, "rel" => "Last", linkTitleTag LAST tag}
 	       ),
 	  if PREV#?tag then (
-	       LINK { "href" => rel htmlFilename PREV#tag, "rel" => "Backward", linkTitleTag PREV#tag},
-	       LINK { "href" => rel htmlFilename FIRST tag, "rel" => "First", linkTitleTag FIRST tag},
+	       LINK { "href" => toURL htmlFilename PREV#tag, "rel" => "Backward", linkTitleTag PREV#tag},
+	       LINK { "href" => toURL htmlFilename FIRST tag, "rel" => "First", linkTitleTag FIRST tag},
 	       ),
-	  if UP#?tag then LINK { "href" => rel htmlFilename UP#tag, "rel" => "Up", linkTitleTag UP#tag},
-	  LINK { "href" => rel LAYOUT#"packagesrc" "Style" | "doc.css", "rel" => "stylesheet", "type" => "text/css" },
-	  LINK { "href" => rel LAYOUT#"packagesrc" "Style" | "doc-no-buttons.css", "rel" => "alternate stylesheet", "title" => "no buttons", "type" => "text/css" },
+	  if UP#?tag then LINK { "href" => toURL htmlFilename UP#tag, "rel" => "Up", linkTitleTag UP#tag},
+	  LINK { "href" => toURL LAYOUT#"packagesrc" "Style" | "doc.css", "rel" => "stylesheet", "type" => "text/css" },
+	  LINK { "href" => toURL LAYOUT#"packagesrc" "Style" | "doc-no-buttons.css", "rel" => "alternate stylesheet", "title" => "no buttons", "type" => "text/css" },
 	  if SRC#?tag then (
      	       LINK { 
 		    "href" => concatenate("file://",externalPath, toAbsolutePath SRC#tag#0), 
@@ -167,7 +173,7 @@ links := tag -> (
 		    "type" => "text/plain" } ) ) )
 
 BUTTON := (s,alt) -> (
-     s = rel s;
+     s = toURL s;
      if alt === null
      then error "required attribute: ALT"
      else IMG("src" => s, "alt" => concatenate("[",alt,"]")))

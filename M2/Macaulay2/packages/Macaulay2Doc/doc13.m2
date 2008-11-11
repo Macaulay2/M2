@@ -703,7 +703,6 @@ document { Key => "sourceHomeDirectory",
      }
 document { Key => "prefixDirectory",
      Headline => "the prefix directory",
-     SeeAlso => { "sourceHomeDirectory", "buildHomeDirectory" },
      PARA {
 	 "When Macaulay 2 is successfully installed, its files are installed in a directory tree whose layout, relative to the root, is determined
 	 by the hash table ", TO "LAYOUT", ".  When M2 starts up, it detects whether it is running in such a layout, and sets ", TO "prefixDirectory", "
@@ -712,8 +711,11 @@ document { Key => "prefixDirectory",
 	 called ", TT "share/Macaulay2/Core/", "."
 	 },
      PARA {
-	  "The prefix directory can be set at an early stage when ", TT "M2", " starts up with the ", TT "--prefix", " command line option."
-	  }
+	  "The prefix directory can be set by the user at an early stage when ", TT "M2", " starts up with the ", TT "--prefix", " command 
+	  line option.  This will affect the value of ", TO "path", " and thus the locations of the files loaded initially.  Use the
+	  ", TT "--notify", " command line option to display the locations of files as they are loaded."
+	  },
+     SeeAlso => { "sourceHomeDirectory", "buildHomeDirectory", "prefixPath", "Invoking the program" }
      }
 document { Key => getGlobalSymbol,
      Headline => "create a global symbol in a global dictionary",

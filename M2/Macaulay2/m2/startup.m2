@@ -577,6 +577,7 @@ if not nosetup then (
 
 processCommandLineOptions 2
 (core "runStartFunctions")()
+
 errorDepth = loadDepth
 if class Core =!= Symbol and not core "noinitfile" then (
      -- the location of init.m2 is documented in the node "initialization file"

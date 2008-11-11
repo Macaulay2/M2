@@ -863,7 +863,8 @@ document {
      EXAMPLE ///run "M2 --help";///,
      PARA{},
      "To terminate the program, one may type ", TO "exit", ", ", TO "quit", ",
-     ", TO "end", ", or the end of file character."
+     ", TO "end", ", or the end of file character.",
+     SeeAlso => {"prefixDirectory","prefixPath"}
      }
 
 document {

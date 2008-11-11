@@ -1252,6 +1252,7 @@ exportMutable {
 	symbol oooo,
 	symbol path,
 	symbol prefixDirectory,
+	symbol prefixPath,
 	symbol printWidth,
 	symbol printingAccuracy,
 	symbol printingPrecision,
