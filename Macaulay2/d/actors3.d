@@ -121,7 +121,6 @@ equalmethod(x:Expr,y:Expr):Expr := (
 EqualEqualfun(x:Expr,y:Expr):Expr := (
      -- some cases, where the types are equal, call immediately for strict equality
      -- some cases call for simple recursive routines
-     if x == y then True else
      when x
      is xx:ZZ do (
 	  when y 

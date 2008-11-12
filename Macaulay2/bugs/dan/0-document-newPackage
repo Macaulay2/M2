@@ -1,3 +1,0 @@
-the documentation of newPackage should mention what happens if you put
-needsPackage "Foo" inside, outside (above), and both
-

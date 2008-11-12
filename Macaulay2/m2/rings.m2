@@ -7,8 +7,6 @@ Ring == ZZ := (R,i) -> (
 
 use Ring := x -> ( if x.?use then x.use x; x)
 
-Ring == Ring := (R,S) -> R === S
-
 ZZ == Ring := (i,R) -> R == i
 
 poincare Ring := R -> poincare module R

@@ -1515,8 +1515,18 @@ document { Key => "printingSeparator",
      }
 
 document { Key => "notify",
-     Headline => "whether to notify the user when a file is loaded"
+     Headline => "whether to notify the user when a file is loaded",
+     Usage => "notify = true\nnotify = false",
+     Consequences => {
+	  {"If ", TO "notify", " is set to ", TO "true", ", then each time a file or a package is loaded, a message will be displayed."}
+	  },
+     EXAMPLE lines ///
+     notify = true
+     loadPackage "FirstPackage"
+     ///,
+     SeeAlso => {load, needs, loadPackage, needsPackage}
      }
+
 document { Key => "fileExitHooks",
      Headline => "a list of hooks (functions) to execute when the current file has been loaded"
      }

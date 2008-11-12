@@ -67,7 +67,11 @@ document {
      Consequences => { {"Loads the package PACKAGENAME that is in the file PACKAGENAME.m2"} },
      PARA { "The file ", TT "PACKAGENAME.m2", " should be on the load ", TO "path", "
     	   and should contain a package named ", TT "PACKAGENAME", "." },
+     PARA {
+	  "If the variable ", TO "notify", " is set to true, then an informational message is displayed after the file is loaded."
+	  },
      EXAMPLE {
+	  ///notify = true///,
 	  ///loadPackage "FirstPackage"///
 	  },
      SeeAlso => {"packages", "an example of a package", needsPackage, load }
@@ -93,7 +97,11 @@ document {
      Consequences => { {"Loads the package ", TT "PACKAGENAME", " in the file ", TT "PACKAGENAME.m2"} },
      PARA { "The file ", TT "PACKAGENAME.m2", " should be on the load ", TO "path", " and should contain a package named ", TT "PACKAGENAME", "." },
      PARA { "For example, to load the sample package ", TT "FirstPackage", ":"},
+     PARA {
+	  "If the variable ", TO "notify", " is set to true, then an informational message is displayed after the file is loaded."
+	  },
      EXAMPLE {
+	  ///notify = true///,
 	  ///needsPackage "FirstPackage"///,
 	  ///needsPackage "FirstPackage"///	  
 	  },
@@ -210,7 +218,10 @@ document {
      PARA {
 	  "The dictionaries for the symbols in the packages loaded by the user are moved out of the way to avoid conflicts, so
 	  just the standard pre-loaded packages are visible to the source code of the package.  In addition, the package
-	  ", TO2( "SimpleDoc::SimpleDoc", "SimpleDoc"), " is made available."
+	  ", TO2( "SimpleDoc::SimpleDoc", "SimpleDoc"), " is made available.  If functions from additional packages are needed
+	  by the code in the new package, then ", TO "needsPackage", " can be used (after the use of ", TO "newPackage", ") to provide them.
+	  If functions from additional packages are needed by the user who will load the new package, then 
+	  ", TO "needsPackage", " can be used (before the use of ", TO "newPackage", ") to provide them."
 	  },
      EXAMPLE { 
 ///newPackage("Foo", 
