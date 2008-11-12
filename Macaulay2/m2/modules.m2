@@ -178,7 +178,7 @@ toString Module := M -> (
 	  else (
 	       if numgens M === 0
 	       then "0"
-	       else toString ring M | "^" | toString numgens M
+	       else toString expression M
 	       )
 	  )
      )
