@@ -131,6 +131,7 @@ pathdo := (loadfun,path,filename,reportfun) -> (
 	  );
      if null === scan(newpath, dir -> (
 	       if class dir =!= String then error "member of 'path' not a string";
+	       if dir#?0 and dir#-1 =!= "/" then error ///member of 'path' does not end with "/"///;
 	       fullfilename := dir | filename;
 	       if fileExists fullfilename then (
 		    ret = loadfun fullfilename;
