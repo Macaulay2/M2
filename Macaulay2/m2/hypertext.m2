@@ -130,7 +130,7 @@ BK := local BK
 SP := local SP
 
 scan( ((net,net'), (info,info')), (f,f') -> (
-	  f' = f' <- method(); -- this will return either a f (or string), or a sequence of fs and BKs, for later splicing
+	  f' = f' <- method(Dispatch => Thing); -- this will return either a f (or string), or a sequence of fs and BKs, for later splicing
 	  f' Option := o -> ();
 	  f' String := identity;
 	  f' BR := br -> ("", BK);

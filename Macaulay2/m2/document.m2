@@ -236,7 +236,10 @@ fetchPrimaryRawDocumentation DocumentTag := tag -> (
 fetchAnyRawDocumentation := (fkey) -> scan(value \ values PackageDictionary, 
      pkg -> if class pkg === Package then (
 	  r := fetchRawDocumentation(pkg,fkey);
-	  if r =!= null then break r))
+	  if r =!= null then (
+	       if r#?PrimaryTag then r = fetchPrimaryRawDocumentation r#PrimaryTag;
+	       break r
+	       )))
 
 proKey := "processed documentation"
 -- proKeyDB := "processed documentation database"
@@ -671,7 +674,6 @@ apropos String := (pattern) -> (
 headline = method(Dispatch => Thing)
 headline Thing := key -> getOption(key,Headline)	    -- old method
 headline FinalDocumentTag := headline DocumentTag := tag -> (
-
      d := fetchPrimaryRawDocumentation tag;
      if d === null then (
 	  -- if debugLevel > 0 and formattedKey tag == "Ring ^ ZZ" then error "debug me";
