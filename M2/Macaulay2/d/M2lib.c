@@ -53,17 +53,18 @@ static const char *get_cc_version(void) {
   return buf;
 }
 
-static void putstderr(char *m) {
-     write(STDERR,m,strlen(m));
-     write(STDERR,NEWLINE,strlen(NEWLINE));
-     }
+static void putstderr(const char *m) {
+  int r;
+  r = write(STDERR,m,strlen(m));
+  r = write(STDERR,NEWLINE,strlen(NEWLINE));
+}
 
-void WerrorS(char *m) {
+void WerrorS(const char *m) {
   putstderr(m);
   exit(1);
 }
 
-void WarnS(char *m) {
+void WarnS(const char *m) {
   putstderr(m);
 }
 
@@ -202,7 +203,7 @@ static void interrupt_handler(int sig)
 	       fflush(stdout);
 	       if (NULL == fgets(buf,sizeof(buf),stdin)) {
 		    fprintf(stderr,"exiting\n");
-		    exit(1);
+		    exit(11);
 	            }
 	       if (buf[0]=='y' || buf[0]=='Y') {
 #                   ifdef DEBUG
@@ -224,7 +225,7 @@ static void interrupt_handler(int sig)
 		    else {
 #                   endif
 			 fprintf(stderr,"exiting\n");
-		    	 exit(1);
+		    	 exit(12);
 #                   ifdef ABORT
 			 }
 #                   endif
@@ -237,7 +238,7 @@ static void interrupt_handler(int sig)
 #              ifndef NDEBUG
      	       trap();
 #              endif
-	       exit(1);
+	       exit(13);
 	       }
 	  }
      else {
@@ -477,7 +478,7 @@ char **argv;
      savepid = pid;		/* glibc getpid() caches the result in memory and performs the system call only once, so we can't use it after dumpdata */
      if (0 != sigsetjmp(loaddata_jump,TRUE)) {
 	  pid = savepid;
-	  if (gotArg("--notify", saveargv)) fprintf(stderr,"--loaded cached memory data\n");
+	  if (gotArg("--notify", saveargv)) putstderr("--loaded cached memory data");
 	  struct GC_stack_base sb;
 	  GC_get_stack_base(&sb);
 	  GC_stackbottom = (char *)sb.mem_base;	/* the stack may have moved (since we may have reloaded all the static data) */
@@ -678,17 +679,26 @@ int system_dumpdata(M2_string datafilename)
 #endif
      }
 
+#define FENCE 0x47474747
+
 int system_loaddata(int notify, M2_string datafilename){
 #if !DUMPDATA
      return ERROR;
 #else
      char *datafilename_s = tocharstar(datafilename);
+     volatile int fence0 = FENCE;
      sigjmp_buf save_loaddata_jump;
+     volatile int fence1 = FENCE;
      int loadDepth = system_loadDepth;
      memcpy(save_loaddata_jump,loaddata_jump,sizeof(loaddata_jump));
      if (ERROR == loaddata(notify,datafilename_s)) return ERROR;
      memcpy(loaddata_jump,save_loaddata_jump,sizeof(loaddata_jump));
      system_loadDepth = loadDepth + 1;
+     if (fence0 != FENCE || fence1 != FENCE) {
+       putstderr("--internal error: fence around loaddata longjmp save area on stack destroyed, aborting");
+       abort();
+     }
+     if (notify) putstderr("--loaddata: data loaded, ready for longjmp");
      siglongjmp(loaddata_jump,1);
 #endif
      }

@@ -445,7 +445,7 @@ AC_SUBST(DUMPDATA,)
 AC_ARG_ENABLE(dumpdata, AS_HELP_STRING(--disable-dumpdata,do not cache data with dumpdata), DUMPDATA=$enableval)
 if ! test "$DUMPDATA"
 then case $OS in
-	 Linux|SunOS) DUMPDATA=yes;;
+	 Linux|SunOS) DUMPDATA=no;; dnl # sigh, dumpdata no longer works, even under linux
 	 *) DUMPDATA=no;;
      esac
      AC_MSG_NOTICE([default dumpdata option for $OS operating system used, value: $DUMPDATA])
