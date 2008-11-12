@@ -239,7 +239,9 @@ netList VisibleList := o -> (x) -> (
      x = apply(x, row -> if instance(row,List) then row else {row});
      (br,hs,vs,bx,algn) := (o.BaseRow,o.HorizontalSpace,o.VerticalSpace,o.Boxes,splice o.Alignment);
      if #x == 0 then return if bx then stack(2 : "++") else stack();
-     if br < 0 or br >= #x then error "netList: base row out of bounds";
+     if br < 0
+     or br >= #x+1					    -- this allows the base row to be absent
+     then error "netList: base row out of bounds";
      x = apply(x, row->apply(row, net));
      n := maxN(length \ x);
      if n == 0 then return if bx then stack(2 : "++") else stack();
@@ -270,7 +272,11 @@ netList VisibleList := o -> (x) -> (
      	  x = between(stack(vs : ""),x);
 	  br = 2*br;
 	  );
-     (stack x)^(sum(0 .. br-1, i -> depth x#i) + sum(1 .. br, i -> height x#i)))
+     (stack x)^(
+	  sum(0 .. br-1, i -> depth x#i)
+	  +
+	  sum(1 .. br, i -> try height x#i else 1)	    -- this allows the base row to be absent
+	  ))
 
 -- Local Variables:
 -- compile-command: "make -C $M2BUILDDIR/Macaulay2/m2 "

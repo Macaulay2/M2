@@ -970,7 +970,8 @@ document { Key => {(netList, VisibleList),
      Inputs => { 
 	  "v" => {"a list of lists of things to be converted to nets and displayed as a table in a net"},
 	  Boxes => Boolean => {"whether to draw boxes around the individual nets"},
-	  BaseRow => ZZ => {"the index of the base row, for the purpose of setting the baseline net produced"},
+	  BaseRow => ZZ => {"the index of the base row, for the purpose of setting the baseline of the net produced.  The value
+	       is allowed to be as large as the length of ", TT "v", ", larger by 1 than one might expect."},
 	  HorizontalSpace => ZZ => {"the amount of space horizontally between entries or between entries and their enclosing boxes"},
 	  VerticalSpace => ZZ => "the amount of space vertically between entries or between entries and their enclosing boxes",
 	  Alignment => {TT "Center", ", ", TT "Left", ", ", TT "Right", ", or a list of those symbols indicating horizontal adjustment; if it's a list, the ", TT "i", "-th
