@@ -142,7 +142,9 @@ export peek(o:PosFile, offset:int):int := (
      c);
 export peek(o:PosFile):int := peek(o,0);
 export isatty(o:PosFile):bool := o.file.inisatty;
-export close(o:PosFile):int := close(o.file);
+export close(o:PosFile):int := (
+     when close(o.file) is errmsg do ERROR else 0
+     );
 export setprompt(o:PosFile,prompt:function():string):void := setprompt(o.file,prompt);
 export unsetprompt(o:PosFile):void := unsetprompt(o.file);
 export openPosIn(filename:string):(PosFile or errmsg) := (
