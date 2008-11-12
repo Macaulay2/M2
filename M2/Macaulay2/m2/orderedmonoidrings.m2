@@ -119,7 +119,7 @@ listForm RingElement := (f) -> (
      n := numgens R;
      k := coefficientRing R;
      (cc,mm) := rawPairs(raw k, raw f);
-     toList apply(cc, mm, (c,m) -> (exponents(n,m), new k from c)))
+     toList apply(cc, mm, (c,m) -> (exponents(n,m), promote(c,k))))
 
 -- this way turns out to be much slower by a factor of 10
 -- listForm RingElement := (f) -> (
