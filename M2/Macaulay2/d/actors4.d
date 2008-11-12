@@ -610,12 +610,10 @@ getfun(e:Expr):Expr := (
 	  else (
 	       when readfile(f.infd)
 	       is s:string do (
-		    closeIn(f);
-		    Expr(s)
-		    )
-	       else buildErrorPacket("unable to read file: "+syserrmsg())
-	       )
-	  )
+		    stat := close(f); -- we even close the output side of a pipe, so we can find out if the process exited normally
+		    when stat is m:errmsg do buildErrorPacket(m.message)
+		    else Expr(s))
+	       else buildErrorPacket("unable to read file: "+syserrmsg())))
      is filename:string do (
 	  when get(filename)
 	  is e:errmsg do buildErrorPacket(e.message)

@@ -495,28 +495,17 @@ close(g:Expr):Expr := (
 	       m.mysql = null();
 	       );
 	  g)
-     is f:file do ( 
-	  if !f.input && !f.output && !f.listener then return buildErrorPacket("file already closed");
-	  if close(f) == 0 then g
-	  else buildErrorPacket(if f.pid != 0 then "error return from child" else "error closing file"))
+     is f:file do when close(f) is m:errmsg do buildErrorPacket(m.message) else g
      is x:Database do dbmclose(x)
      else buildErrorPacket("expected a file or database"));
 setupfun("close",close).protected = false;
 closeIn(g:Expr):Expr := (
-     when g
-     is f:file do ( 
-	  if f.infd == -1 then return buildErrorPacket("file already closed");
-	  if closeIn(f) == 0 then g
-	  else buildErrorPacket(if f.pid != 0 then "error closing pipe" else "error closing file"))
-     else buildErrorPacket("expected an open input file"));
+     when g is f:file do when closeIn(f) is m:errmsg do buildErrorPacket(m.message) else g
+     else WrongArg("an input file"));
 setupfun("closeIn",closeIn).protected = false;
 closeOut(g:Expr):Expr := (
-     when g
-     is f:file do ( 
-	  if f.infd == -1 && f.outfd == -1 then return buildErrorPacket("file already closed");
-	  if closeOut(f) == 0 then g
-	  else buildErrorPacket(if f.pid != 0 then "error closing pipe" else "error closing file"))
-     else buildErrorPacket("expected an open output file"));
+     when g is f:file do when closeOut(f) is m:errmsg do buildErrorPacket(m.message) else g
+     else WrongArg("an output file"));
 setupfun("closeOut",closeOut).protected = false;
 flush(g:Expr):Expr := (
      when g

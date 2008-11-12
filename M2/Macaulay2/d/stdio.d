@@ -395,48 +395,66 @@ cleanUp(o:file):void := (
 	  rmfile(o);
 	  );
      );
-export closeListener(o:file):int := (
-     if o.listenerfd == NOFD then return ERROR;
+export closeListener(o:file):(errmsg or null) := (
+     if o.listenerfd == NOFD then return errmsg("close: listener not open");
      haderror := close(o.listenerfd) == ERROR;
      o.listenerfd = NOFD;
      o.listener = false;
      cleanUp(o); 
-     if haderror then ERROR else 0);
-export closeIn(o:file):int := (
-     if o.infd == NOFD then return ERROR;
-     if o == stdin then return 0;			    -- silently refuse to close stdin
+     if haderror then return errmsg("closing listener: " + syserrmsg());
+     null());
+export closeIn(o:file):(errmsg or null) := (
+     stat := 0;
+     if o.infd == NOFD then return errmsg("close: file not open");
+     if o == stdin then return null();			    -- silently refuse to close stdin
      if o.input then flushinput(o);
      haderror := false;
      haderror = haderror || o.infd != o.outfd && close(o.infd) == ERROR;
      haderror = haderror || o.outfd == NOFD && (
-	  o.pid != 0 && 0 != wait(o.pid) ||
+	  o.pid != 0 && (stat = wait(o.pid); o.pid = 0; 0 != stat) ||
 	  o.listenerfd != NOFD && close(o.listenerfd) == ERROR
 	  );
      o.infd = NOFD;
      o.input = false;
      cleanUp(o);
-     if haderror then ERROR else 0     
-     );
-export closeOut(o:file):int := (
-     if o.outfd == NOFD then return ERROR;
+     if haderror then (
+	  if stat != 0 then return errmsg("close: process exited with code " + tostring(stat));
+	  return errmsg("closing input file: " + syserrmsg());
+	  );
+     null());
+export closeOut(o:file):(errmsg or null) := (
+     stat := 0;
+     if o.outfd == NOFD then return errmsg("close: file not open");
      haderror := false;
      haderror = haderror || flush(o) == ERROR;
      haderror = haderror || o.infd != o.outfd && close(o.outfd) == ERROR;
      haderror = haderror || o.infd == NOFD && (
-	  o.pid != 0 && 0 != wait(o.pid) ||
+	  o.pid != 0 && (stat = wait(o.pid); o.pid = 0; 0 != stat) ||
 	  o.listenerfd != NOFD && close(o.listenerfd) == ERROR
 	  );
      o.outfd = NOFD;
      o.output = false;
      cleanUp(o);
-     if haderror then ERROR else 0     
-     );
-export close(o:file):int := (
-     if o.input && closeIn(o) == ERROR
-     || o.output && closeOut(o) == ERROR
-     || o.listener && closeListener(o) == ERROR 
-     then ERROR else 0
-     );
+     if haderror then (
+	  if stat != 0 then return errmsg("close: process exited with code " + tostring(stat));
+	  return errmsg("closing output file: " + syserrmsg());
+	  );
+     null());
+export close(o:file):(errmsg or null) := (
+     if !o.input && !o.output && !o.listener then return (errmsg or null)(errmsg("close: file not open"));
+     stat := (errmsg or null)(null());
+     if o.input then (
+	  stat = closeIn(o);
+	  );
+     if o.output then (
+	  r := closeOut(o);
+	  when r is errmsg do when stat is null do stat = r else nothing else nothing;
+	  );
+     if o.listener then (
+	  r := closeListener(o);
+	  when r is errmsg do when stat is null do stat = r else nothing else nothing;
+	  );
+     stat);
 closem():void := (
      f := openfiles;
      while true do when f is null do break is fileCell:FileCell do (
@@ -794,9 +812,8 @@ export get(filename:string):(string or errmsg) := (
 	       )
 	  is s:string do (
 	       r := close(f);
-	       if r == ERROR then (string or errmsg)(errmsg(fileErrorMessage(f,"close")))
-	       else if r != 0 && length(filename) > 0 && filename . 0 == '!'
-	       then (string or errmsg)(errmsg("process exit code " + tostring(r)))
+	       when r is m:errmsg
+	       do (string or errmsg)(m)
 	       else (string or errmsg)(s))));
 
 export Manipulator := {fun:function(file):int};
