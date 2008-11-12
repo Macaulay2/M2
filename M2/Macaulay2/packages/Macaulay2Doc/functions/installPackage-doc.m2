@@ -86,9 +86,16 @@ document {
 	       file ", TT "index.html", " in the user's ", TO "application directory", "; see ", TO "makePackageIndex"}
 	  },
      PARA {
-	  "The current value of ", TO "prefixPath", " is used to determine how to direct documentation hyperlinks from one
-	  package to another, provided the value of the option ", TO "AbsoluteLinks", " is ", TO "true", ".  Otherwise,
-	  all documentation hyperlinks are relative to positions within a single tree of directories, as describe by ", TO "LAYOUT", "."
+	  "The current value of ", TO "prefixPath", " is used to determine how to direct documentation hyperlinks,
+	  provided the value of the option ", TO "AbsoluteLinks", " is ", TO "true", ", as it is by default; the link
+	  will be directed to the appropriate file if one is found by searching the trees referred to by ", TO "prefixPath", ".  
+	  Otherwise, all documentation hyperlinks are relative to positions within a single tree of directories, as describe by ", TO "LAYOUT", "."
+	  },
+     PARA {
+	  "It might be necessary to run ", TO "installPackage", " twice if a package with the same name is already installed:
+	  the second installation will redirect the hyperlinks to the freshly installed documentation, because the files will 
+	  have been installed by the first installation.
+	  This applies, for example, to those authors who are developing updates to packages already included with Macaulay 2."
 	  },
      SeeAlso => {"packages", "epkg", "prefixPath", "LAYOUT"}
      }

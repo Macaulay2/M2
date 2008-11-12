@@ -57,7 +57,6 @@ isAbsoluteURL := url -> match( "^(#|mailto:|[a-z]+://)", url )
 searchPrefixPath = url -> 
      for i in prefixPath do (
 	  p := i|url;
-	  stderr << "-- " << p << "  " << fileExists p << endl;
 	  if fileExists p then return p;
 	  )
 
@@ -1092,7 +1091,7 @@ makePackageIndex List := path -> (
 				   r = sort r;
 				   DIV {
 					HEADER3 {"Packages in ", toAbsolutePath prefixDirectory},
-					if #r > 0 then UL apply(r, pkg -> HREF { realpath ( prefixDirectory | LAYOUT#"packagehtml" pkg | "index.html" ), pkg }) 
+					if #r > 0 then UL apply(r, pkg -> HREF { prefixDirectory | LAYOUT#"packagehtml" pkg | "index.html", pkg }) 
 					}
 				   )
 			      )
