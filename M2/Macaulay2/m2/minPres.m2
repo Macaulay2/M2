@@ -364,7 +364,7 @@ minPressy = (I) -> (
      I.cache.minimalPresentationMap = map(newS, R, toList X);
      trivialToNewS J)
 
-minimalPresentation Ideal := opts -> (I) -> minPressy I
+minimalPresentation Ideal := prune Ideal := opts -> (I) -> minPressy I
 
 minimalPresentation Ring := prune Ring := Ring => opts -> (R) -> (
      -- 1 argument: A ring R (most often a quotient ring).
