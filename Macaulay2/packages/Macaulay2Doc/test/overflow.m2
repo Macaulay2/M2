@@ -1,17 +1,17 @@
 -- notice 4 weights are given for 3 variables as part of this test
 R = ZZ/101[t,x,z,MonomialOrder=>Weights=>4:-1,Global=>false]
---old status: monomial overflow, Mike has to fix it
---old status:  incorrect input to the monomial order routine trashes some memory
---old status:  perhaps due to an array bound overflow
---old status: when it finally gets to
---old status:      void Monoid::mult(const_monomial m, const_monomial n, monomial result) const
---old status: in monoid.ccp
---old status:  we find trash in the first word of each monomial
---old status:    (gdb) p *m@4			 
---old status:    $14 = {0x53535353, 0x1, 0x1, 0x1}
---old status:    (gdb) p *n@4			 
---old status:    $15 = {0x53535353, 0x1, 0x0, 0x0}
---old status: it also seems that the characteristic 101 has become stored in _P1 as 100
+--status: monomial overflow, Mike has to fix it
+--status:  incorrect input to the monomial order routine trashes some memory
+--status:  perhaps due to an array bound overflow
+--status: when it finally gets to
+--status:      void Monoid::mult(const_monomial m, const_monomial n, monomial result) const
+--status: in monoid.ccp
+--status:  we find trash in the first word of each monomial
+--status:    (gdb) p *m@4			 
+--status:    $14 = {0x53535353, 0x1, 0x1, 0x1}
+--status:    (gdb) p *n@4			 
+--status:    $15 = {0x53535353, 0x1, 0x0, 0x0}
+--status: it also seems that the characteristic 101 has become stored in _P1 as 100
 gb ideal "tz+z3,t3x+z5+xzt"
 
 S = ZZ/101[x,y,z, MonomialOrder => Eliminate 2, MonomialSize => 16 ];
