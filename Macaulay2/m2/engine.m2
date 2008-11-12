@@ -103,18 +103,19 @@ intOption := (key,n) -> (
      checkCount n;
      bump n;
      key => n)
+fixList := v -> if instance(v,List) then spliceInside v else v
 grevOption := (key,v) -> (
      key = fix1 key;
      if instance(v,ZZ) 
      then v = getdegs ( varcount, varcount + v - 1 )
      else (
-	  if instance(v,List) then v = spliceInside v;
-	  if not isListOfIntegers(v) then error "expected an integer or a list of integers";
+	  v = fixList v;
+	  if not isListOfIntegers v then error "expected an integer or a list of integers";
 	  );
      bump(#v);
      key => v)
 optionFixes := hashTable {
-     Weights => (key,val) -> key => val,
+     Weights => (key,val) -> key => fixList val,
      Position => (key,val) -> key => val,
      MonomialSize => (key,val) -> if processMonSize val then key => val,
      Lex => intOption,

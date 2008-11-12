@@ -52,7 +52,7 @@ w = gcdCoefficients(f,g)
 assert( w#0 == 24*d)					    -- actually, we'd like w#0 == d.  I wonder why factory doesn't ensure that?
 assert( w#0 == f * w#1 + g * w#2 )
 
-R = (GF 25)[x]
+R = GF 25[x]
 d = x^3+x-a;
 f = d*(x^5+x-1);
 g = d*(x^6-a*x-1);

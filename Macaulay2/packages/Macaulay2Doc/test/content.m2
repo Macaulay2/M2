@@ -41,6 +41,8 @@ assert(raw(1/b) == rawContent raw f)
 assert(raw(a*b*x+y) == rawRemoveContent raw f)
 assert((raw(1/b), raw(a*b*x+y)) == rawSplitContent raw f)
 
+--status: the next line detects a nonzero divisor, but it shouldn't
+--status: perhaps Mike can fix it
 x/(a+1)
 
 f = 1/(a+1)*x  + 1/(b+1)*y + 1/(a^2-b^2)*x*y
