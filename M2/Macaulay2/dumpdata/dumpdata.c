@@ -284,6 +284,8 @@ int loaddata(int notify, char const *filename) {
 	       "--warning: memory maps have changed, can't load cached data from file: %s\n"
 	       "--     Your options are:\n"
 	       "--          endure this warning message each time you start M2;\n"
+	       "--          set the environment variable LOADDATA_DEBUG to get more information;\n"
+	       "--          set the environment variable LOADDATA_IGNORE_CHECKSUMS (dangerous);\n"
 	       "--          use \"M2 --dumpdata\" to recreate the file in your current environment;\n"
 	       "--          use \"M2 --no-loaddata\" to run M2 without loading the file; or\n"
 	       "--          delete the file, which is used only for quick initial loading of code.\n",
@@ -294,6 +296,12 @@ int loaddata(int notify, char const *filename) {
   {
     long pos = ftell(f);
     fclose(f);
+    if (notify | debug) {
+      for (i=0; i<ndumps; i++) {
+	fprintf(stderr, "--loaddata: about to map ");
+	fdprintmap(STDERR,&dumpmaps[i]);
+      }
+    }
     /* now we must stop using static memory and the heap! */
     pos = ((pos + PAGESIZE - 1)/PAGESIZE) * PAGESIZE;
 #if USE_BRK

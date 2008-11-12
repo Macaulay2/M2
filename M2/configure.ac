@@ -278,6 +278,7 @@ AC_LANG(C)
 
 AC_SUBST(HAVE_PERSONALITY,)
 AC_CHECK_FUNC(personality, HAVE_PERSONALITY=1, HAVE_PERSONALITY=0)
+AC_DEFINE_UNQUOTED(HAVE_PERSONALITY,$HAVE_PERSONALITY,[whether personality() is found])
 
 AC_SUBST(PTHREADS,yes) AC_ARG_ENABLE(pthreads, AS_HELP_STRING(--disable-pthreads,[disable pthreads (for gc)]), PTHREADS=$enableval)
 AC_SUBST(STRIP,yes)    AC_ARG_ENABLE(strip, AS_HELP_STRING(--disable-strip,do not strip the symbol table from the Macaulay 2 binary), STRIP=$enableval)

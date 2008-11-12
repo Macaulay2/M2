@@ -1,7 +1,7 @@
 # @configure_input@
 VPATH = @srcdir@
 include ../../include/config.Makefile
-CFLAGS += -O0
+CFLAGS += -O0 -fno-stack-protector
 CPPFLAGS += -I../../include
 .PHONY : all clean distclean install check default tags
 
@@ -42,10 +42,11 @@ check:: testprintmaps; ./$<
 testprintmaps:libdump.a
 clean::; rm -f testprintmaps
 
-ifeq "@HAVE_PERSONALITY@" "yes"
+ifeq "@HAVE_PERSONALITY@" "1"
 # we don't want to link with M2's libraries, because this program gets distributed
 LDLIBS =
 all:: personality
+clean::; rm -f personality
 install:: personality @encapdir@/@bindirtail@  ; @INSTALL_PROGRAM@ $< @encapdir@/@bindirtail@/personality
 @encapdir@/@bindirtail@ :; @INSTALL@ -d "$@"
 PERDIR = @encapdir@/@packagesdirtail@/personality

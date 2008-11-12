@@ -296,7 +296,9 @@ usage := arg -> (
      << "                       bin/../cache/Macaulay2-$M2ARCH-data, where bin is the" << newline
      << "                       directory containing the Macaulay2 executable" << newline
      << "    EDITOR             default text editor" << newline
-     << "    LOADDATA_IGNORE_CHECKSUMS	   (for debugging)" << newline
+     << "    LOADDATA_IGNORE_CHECKSUMS (loaddata: disable verification of memory map checksums)" << newline
+     << "    COMPAREVDSO               (loaddata: enable verification for the vdso segment)" << newline
+     << "    LOADDATA_DEBUG            (loaddata: verbose debugging messages)" << newline
      ;)
 
 tryLoad := (ofn,fn) -> if fileExists fn then (
