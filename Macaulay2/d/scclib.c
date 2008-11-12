@@ -668,47 +668,43 @@ int system_symlink(M2_string oldfilename,M2_string newfilename) {
 M2_string system_readfile(fd)
 int fd;
 {
-     M2_string s;
-     unsigned int filesize;
      struct stat buf;
-     if (ERROR == fstat(fd,&buf) || !S_ISREG(buf.st_mode) || 0 == buf.st_size) {
-       char *text;
-       unsigned int bufsize = 1024;
-       unsigned int size = 0;
-       text = getmem_atomic(bufsize);
-       while (TRUE) {
-	    int n = read(fd,text+size,bufsize-size);
-	    if (ERROR == n) {
+     size_t bufsize = 1024;
+     char *text;
+     size_t size = 0;
+     if (!(ERROR == fstat(fd,&buf) || !S_ISREG(buf.st_mode) || 0 == buf.st_size)) {
+       off_t filesize = buf.st_size;
+       off_t pos = lseek(fd,0,SEEK_CUR);
+       if (pos != (off_t)(-1)) bufsize -= pos;
+       bufsize = (size_t)filesize;
+       if ((off_t)(bufsize) != filesize || bufsize > SSIZE_MAX) return NULL; /* file too big */
+     }
+     text = getmem_atomic(bufsize);
+     while (TRUE) {
+	  int n = read(fd,text+size,bufsize-size);
+	  if (ERROR == n) {
 #ifdef EINTR
-		 if (errno == EINTR) break;
+	       if (errno == EINTR) break;
 #endif
-		 return NULL;
-		 }
-	    if (0 == n) break;
-	    size += n;
-	    if (size == bufsize) {
-		 char *p;
-		 int newbufsize = 2 * bufsize;
-		 p = getmem_atomic(newbufsize);
-		 memcpy(p,text,size);
-		 bufsize = newbufsize;
-		 GC_FREE(text);
-		 text = p;
-		 }
-	    }
-       s = (M2_string)getmem_atomic(sizeofarray(s,size));
-       s->len = size;
-       memcpy(s->array,text,size);
-       GC_FREE(text);
-       return s;
-     }
-     else {
-       filesize = buf.st_size;
-       s = (M2_string)getmem_atomic(sizeofarray(s,filesize));
-       s->len = filesize;
-       if (filesize != read(fd,s->array,filesize)) fatal("can't read entire file, file descriptor %d", fd);
-       return s;
-     }
+	       return NULL;
+	       }
+	  if (0 == n) break;
+	  size += n;
+	  if (size == bufsize) {
+	       char *p;
+	       size_t newbufsize = 2 * bufsize;
+	       p = getmem_atomic(newbufsize);
+	       memcpy(p,text,size);
+	       bufsize = newbufsize;
+	       GC_FREE(text);
+	       text = p;
+	       }
+	  }
+     M2_string s = (M2_string)getmem_atomic(sizeofarray(s,size));
+     s->len = size;
+     memcpy(s->array,text,size);
+     GC_FREE(text);
+     return s;
 }
 
 static const char *hostname_error_message;
