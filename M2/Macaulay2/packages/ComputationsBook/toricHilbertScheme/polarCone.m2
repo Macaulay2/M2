@@ -86,7 +86,7 @@ isRedundant = (V, vert) -> (
 --         indices of the original rays which do NOT vanish 
 --         at the corresponding row vector in 'projA'
 ------------------------------------------------------------
-fourierMotzkin = (A, V, spot) -> (
+fourierMotzkin' = (A, V, spot) -> (
      -- initializing local variables
      numRow := #A;               -- equal to the length of V
      numCol := #(A#0);           pos := {};       
@@ -181,7 +181,7 @@ polarCone(Matrix, Matrix) := (Z, H) -> (
      A = apply(A, e -> e_(T | toList(n..(n+d-1)))); 
      -- successive projections eliminate the variables 'T'.
      if A =!= {} then scan(T, t -> (
-	       D := fourierMotzkin(A, V, t);
+	       D := fourierMotzkin'(A, V, t);
 	       A = D#0;          V = D#1;));
      -- output formating
      A = apply(A, e -> primitive e);
