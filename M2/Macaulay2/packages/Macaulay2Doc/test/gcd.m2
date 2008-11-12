@@ -58,7 +58,7 @@ f = d*(x^5+x-1);
 g = d*(x^6-a*x-1);
 assert(gcd(f,g) == d)
 w = gcdCoefficients(f,g)
-assert( w#0 == -d)					    -- actually, we'd like w#0 == d.  I wonder why factory doesn't ensure that?
+assert( w#0 == -d or w#0 == 2*d) -- actually, we'd like w#0 == d.  I wonder why factory doesn't ensure that?
 assert( w#0 == f * w#1 + g * w#2 )
 
 debug Core
