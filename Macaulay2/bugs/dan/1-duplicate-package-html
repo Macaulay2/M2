@@ -1,4 +1,0 @@
-fix the links in the package html -- if a package is installed by a user that
-has the same name as a system package, and AbsoluteLinks is true, which is the
-default, then all the links go to the installed version of the package rather
-than to the new package.
