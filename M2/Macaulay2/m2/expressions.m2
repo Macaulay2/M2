@@ -97,7 +97,7 @@ lookupi := x -> (
      if r === null then error "encountered null or missing value";
      r)
 
-toString' := method()
+toString' = method()
 toString'(Function,Thing) := (toString,x) -> toString x
 toString Expression := v -> toString'(toString,v)
 
@@ -605,7 +605,7 @@ texMath Adjacent := texMath FunctionApplication := m -> (
 
 returns = t -> x -> t
 
-	      precedence Sequence := x -> if #x === 0 then prec symbol x else if #x === 1 then prec symbol : else prec symbol x
+	      precedence Sequence := x -> if #x === 1 then prec symbol : else strength1 symbol symbol
      	  precedence Parenthesize := returns 0
 	      precedence Equation := returns prec symbol ==
 	     precedence HashTable := returns 0		    -- some things might print out as symbols though...
