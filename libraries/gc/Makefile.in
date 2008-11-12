@@ -17,7 +17,7 @@ endif
 ifeq (@DEBUG@,yes)
 CONFIGOPTIONS += --enable-gc-debug --enable-gc-assertions
 else
-INSTALLTARGET = install-strip
+# INSTALLTARGET = install-strip
 endif
 
 CONFIGOPTIONS += --enable-large-config --disable-gcj-support --disable-java-finalization
