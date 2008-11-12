@@ -112,9 +112,6 @@ document {
 	 "This command is run each time the program is started, therefore 
 	 overwriting this file.  Thus, one can simply restart Macaulay2 to
 	 obtain the same consequence."},
-     EXAMPLE {
-	  "makePackageIndex()"
-	  },
      SeeAlso => {"packages"}
      }
 

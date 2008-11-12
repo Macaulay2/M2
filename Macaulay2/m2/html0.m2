@@ -174,6 +174,7 @@ new UL from VisibleList := (UL,x) -> (
 	       if class e === TO then LI{TOH{e#0}}
 	       else if class e === LI then e
 	       else LI e)))
+ul = x -> if #x>0 then UL x
 
 DIV        = withOptions_{"class"} new MarkUpTypeWithOptions of HypertextContainer
 DIV1       = withOptions_{"class"=>"single"} withQname_"div" new MarkUpTypeWithOptions of HypertextContainer -- phase this one out!
