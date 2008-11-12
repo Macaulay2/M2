@@ -92,11 +92,11 @@ static void *elf_header_location() {
 #endif
 
 #ifdef ELF
-#include <regex.h>
+#include "../regex/regex.h"
 static int matches(char *pattern, char *text) {
   regex_t regex_pattern;
-  if (regcomp(&regex_pattern, pattern, REG_EXTENDED|REG_NEWLINE|REG_NOSUB) != 0) return ERROR;
-  return REG_NOMATCH != regexec(&regex_pattern, text, 0,0,0);
+  if (M2_regcomp(&regex_pattern, pattern, REG_EXTENDED|REG_NEWLINE|REG_NOSUB) != 0) return ERROR;
+  return REG_NOMATCH != M2_regexec(&regex_pattern, text, 0,0,0);
 }
 #endif
 

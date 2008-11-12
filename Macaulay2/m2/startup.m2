@@ -325,7 +325,9 @@ showMaps := () -> (
      )
 
 dump := () -> (
-     if not version#"dumpdata" then error "not configured for dumping data with this version of Macaulay 2";
+     if not version#"dumpdata" then (
+	  error "not configured for dumping data with this version of Macaulay 2";
+	  );
      arch := if getenv "M2ARCH" =!= "" then getenv "M2ARCH" else version#"architecture";
      fn := (
 	  if buildHomeDirectory =!= null then concatenate(buildHomeDirectory , "cache/", "Macaulay2-", arch, "-data") else 
@@ -586,10 +588,11 @@ if class Core =!= Symbol and not core "noinitfile" then (
      tryLoad ("init.m2", applicationDirectory() | "init.m2");
      tryLoad ("init.m2", "init.m2");
      );
-errorDepth = loadDepth+1				    -- anticipate loadDepth being 2 later
+
 processCommandLineOptions 3
 interpreterDepth = 0
-n := interpreter()					    -- loadDepth is incremented by commandInterpreter
+errorDepth = loadDepth+1      -- anticipate loadDepth being incremented
+n := interpreter()	      -- loadDepth is incremented by commandInterpreter
 if class n === ZZ and 0 <= n and n < 128 then exit n
 if n === null then exit 0
 debuggingMode = false

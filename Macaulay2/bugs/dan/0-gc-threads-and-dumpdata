@@ -1,4 +1,0 @@
-gc threads and dumpdata/loaddata seem to conflict.  I have asked Hans Boehm about it.
-
-should we disable dumpdata on the builds???
-probably yes
