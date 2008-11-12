@@ -1027,10 +1027,17 @@ SYNOPSIS Thing := SYNOPSIS Sequence := o -> x -> (
 	  x
 	  })
 
+documentableMethods := s -> select(methods s,isDocumentableMethod)
+
+fmeth := f -> (						    -- compare with documentationValue(Symbol,Function) below
+     b := documentableMethods f;
+     if #b > 0 then (
+	  c := smenu b;
+	  if #c > 0 then DIV1 { SUBSECTION { "Ways to use ", toString f }, c } 
+	  )
+     )
+
 briefSynopsis := key -> (
-     -- we still want to put
-     --	       moreGeneral s
-     -- back somewhere....
      o := getDoc key;
      if o === null then return null;
      r := nonnull {
@@ -1048,23 +1055,13 @@ briefSynopsis := key -> (
 	  if o.?Inputs then DIV1 { "Inputs:", UL o.Inputs },
 	  if o.?Consequences and #o.Consequences > 0 then DIV1 { "Consequences:", UL o.Consequences },
 	  if o.?Outputs then DIV1 { "Outputs:", UL o.Outputs },
-	  if o#?"optional inputs" then DIV1 { TO2{ "using functions with optional inputs", "Optional inputs"}, ":", UL o#"optional inputs" }
+	  if o#?"optional inputs" then DIV1 { TO2{ "using functions with optional inputs", "Optional inputs"}, ":", UL o#"optional inputs" },
 	  };
      if #r > 0 then fixup UL r)
 
 synopsis := key -> (
      s := briefSynopsis key;
      if s =!= null then DIV1 { SUBSECTION "Synopsis", s }
-     )
-
-documentableMethods := s -> select(methods s,isDocumentableMethod)
-
-fmeth := f -> (						    -- compare with documentationValue(Symbol,Function) below
-     b := documentableMethods f;
-     if #b > 0 then (
-	  c := smenu b;
-	  if #c > 0 then DIV1 { SUBSECTION { "Ways to use ", toString f }, c } 
-	  )
      )
 
 noBriefDocThings := hashTable { symbol <  => true, symbol >  => true, symbol == => true }
@@ -1079,11 +1076,10 @@ briefDocumentation Thing := x -> (
      if r =!= null then << endl << r << endl
      else (
 	  if headline x =!= null then << endl << commentize headline x << endl;
-	  if instance(x, Function) or class x === ScriptedFunctor then (
-	       s := fmeth x;
-	       if s =!= null then << endl << s << endl;)))
-
--- page = (title,body) -> HTML { HEAD { TITLE title }, BODY body }
+	  );
+     if instance(x, Function) or instance(x, ScriptedFunctor) then (
+	  s := fmeth x;
+	  if s =!= null then << endl << s << endl;))
 
 help = method(Dispatch => Thing)
 help String := key -> (

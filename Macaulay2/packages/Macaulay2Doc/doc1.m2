@@ -40,6 +40,7 @@ document {
      	  SPAN (///help "getting started"///, ///            -- ///),
      	  SPAN (///help "a first Macaulay 2 session"///, /// -- ///),
      	  SPAN (///help x///, ///                            -- display the documentation for ///, TT ///x///),
+     	  SPAN (///? f///, ///                               -- display brief documentation for a function ///, TT ///f///),
 	  SPAN (///printWidth = 80///, ///                   -- set print width to 80 characters///),
      	  SPAN (///viewHelp///, ///                          -- view documentation in a browser///),
      	  SPAN (///viewHelp x///, ///                        -- view documentation on ///, TT ///x///, /// in browser///),
