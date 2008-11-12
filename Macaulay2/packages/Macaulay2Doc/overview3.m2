@@ -209,12 +209,12 @@ document {
      PARA {
      	  "This example shows the list of places where we might reasonably find the html file documenting a
 	  function named ", TT "bar", " in a package called ", TT "Foo", "."
-	  }	   
+	  },
      EXAMPLE ///apply(prefixPath, p -> p | LAYOUT#"packagehtml" "Foo" | "bar.html")///,
      PARA {
      	  "This example shows the list of places where we might reasonably find the info file documenting a
 	  package called ", TT "Foo", "."
-	  }	   
+	  },
      EXAMPLE ///apply(prefixPath, p -> p | LAYOUT#"info" | "Foo.info")///,
      SeeAlso => {"commandLine", "Invoking the program", applicationDirectory, "prefixDirectory", "path", searchPath, load, loadPackage, needsPackage}
      }
