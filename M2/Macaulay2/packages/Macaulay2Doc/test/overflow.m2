@@ -1,5 +1,6 @@
 -- notice 4 weights are given for 3 variables as part of this test
 R = ZZ/101[t,x,z,MonomialOrder=>Weights=>4:-1,Global=>false]
+--status: this bug is visible when building the debug version
 --status: monomial overflow, Mike has to fix it
 --status:  incorrect input to the monomial order routine trashes some memory
 --status:  perhaps due to an array bound overflow
