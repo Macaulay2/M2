@@ -1079,7 +1079,7 @@ makePackageIndex List := path -> (
 		    Bookmark this page for future reference."
 		    },
 	       HEADER3 "Documentation",
-	       UL splice {
+	       ul splice {
                	    if prefixDirectory =!= null then HREF { prefixDirectory | LAYOUT#"packagehtml" "Macaulay2Doc" | "index.html", "Macaulay 2" },
 		    apply(toSequence unique path, pkgdir -> (
 			      prefixDirectory := minimizeFilename(pkgdir | relativizeFilename(LAYOUT#"packages",""));
