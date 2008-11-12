@@ -6,6 +6,9 @@ TARDIR = BLAS
 CONFIGURECMD = :
 BUILDOPTIONS = BLASLIB=libblas.a
 INSTALLCMD = $(MKDIR_P) $(LIBRARIESDIR)/lib && @INSTALL_DATA@ libblas.a $(LIBRARIESDIR)/lib/libblas.a
+ifeq (@FC@,)
+$(error no fortran compiler provided)
+endif
 include ../Makefile.library
 Makefile : @srcdir@/Makefile.in ; cd ../.. && ./config.status libraries/blas/Makefile
 foo :; echo $(INSTALLCMD)

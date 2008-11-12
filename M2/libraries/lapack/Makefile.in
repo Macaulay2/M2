@@ -13,6 +13,9 @@ endif
 ifeq (@FC@,f95)
 BUILDOPTIONS += TIMER=INT_ETIME 
 endif
+ifeq (@FC@,)
+$(error no fortran compiler provided)
+endif
 BUILDTARGET = blaslib lapack_install lib
 ifeq (@SHARED@,yes)
 BUILDTARGET += ../liblapack.so
