@@ -91,11 +91,23 @@ static void *elf_header_location() {
 }
 #endif
 
-int isNotCheckable(map m) {
-     /* this functions returns TRUE for a few extra static memory map sections for which we don't care if the checksum changes */
-     /* in GNU-Linux, this applies to the linux-gate.so.1 [vdso] section */
 #ifdef ELF
-     return m->from == elf_header_location() && getenv("COMPAREVDSO") == NULL;
+#include <regex.h>
+static int matches(char *pattern, char *text) {
+  regex_t regex_pattern;
+  if (regcomp(&regex_pattern, pattern, REG_EXTENDED|REG_NEWLINE|REG_NOSUB) != 0) return ERROR;
+  return REG_NOMATCH != regexec(&regex_pattern, text, 0,0,0);
+}
+#endif
+
+int isNotCheckable(map m) {
+#ifdef ELF
+     /* return TRUE for a few extra static memory map sections for which we don't care if the checksum changes */
+     /* in GNU-Linux, this applies to the linux-gate.so.1 [vdso] section */
+     return
+       m->filename != NULL && matches("^/lib.*/ld-.*\\.so$",m->filename)
+       ||
+       m->from == elf_header_location() && getenv("COMPAREVDSO") == NULL;
 #else
      return FALSE;
 #endif

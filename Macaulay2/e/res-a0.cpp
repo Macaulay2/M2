@@ -502,11 +502,11 @@ void res2_comp::initialize(const Matrix *mat,
   skeleton_sort = SortStrategy & 63;
   reduction_sort = (SortStrategy >> 6) & 63;
   reduction_sort |= FLAGS_DEGREE;      // ALWAYS do by increasing degree.
-  do_by_level = (SortStrategy & FLAGS_LEVEL ? 1 : 0);
+  do_by_level = (unsigned char)(SortStrategy & FLAGS_LEVEL ? 1 : 0);
   if (SortStrategy & FLAGS_LEVEL_STRIP) do_by_level = 2;
-  do_by_degree = (SortStrategy & FLAGS_DEGREELEVEL ? 1 : 0);
+  do_by_degree = (unsigned char)(SortStrategy & FLAGS_DEGREELEVEL ? 1 : 0);
   auto_reduce = (SortStrategy & FLAGS_AUTO) >> SHIFT_AUTO;
-  use_respolyHeaps = (SortStrategy & FLAGS_GEO ? 1 : 0);
+  use_respolyHeaps = (unsigned char)(SortStrategy & FLAGS_GEO ? 1 : 0);
 
   if (do_by_degree) do_by_level = 0;
   if (gbTrace >= 3)
@@ -627,9 +627,9 @@ res2_pair *res2_comp::new_res2_pair(res2_pair *first,
   p->me = next_component++;
   p->pair_num = p->me;
   p->syz_type = SYZ2_S_PAIR;
-  p->level = first->level + 1;
-  p->degree = M->primary_degree(basemon) + first->degree
-    - M->primary_degree(first->syz->monom) - 1;
+  p->level = (unsigned char)(first->level + 1);
+  p->degree = (short unsigned int)(M->primary_degree(basemon) + first->degree
+				   - M->primary_degree(first->syz->monom) - 1);
   p->compare_num = 0;		// Will be set after pairs are done
   p->syz = R->new_term(K->from_int(1), basemon, first);
 #if 0
@@ -650,7 +650,7 @@ res2_pair *res2_comp::new_base_res2_pair(int i)
   p->pair_num = p->me;
   p->syz_type = SYZ2_MINIMAL;
   p->level = 0;
-  p->degree = generator_matrix->rows()->primary_degree(i) - lodegree;
+  p->degree = (short unsigned int)(generator_matrix->rows()->primary_degree(i) - lodegree);
   p->compare_num = i;
   int *m = M->make_one();
   p->syz = R->new_term(K->from_int(1), m, p); // circular link...
@@ -668,7 +668,7 @@ res2_pair *res2_comp::new_res2_pair(int i)
   p->pair_num = p->me;
   p->syz_type = SYZ2_S_PAIR;
   p->level = 1;
-  p->degree = generator_matrix->cols()->primary_degree(i) - 1 - lodegree;
+  p->degree = (short unsigned int)(generator_matrix->cols()->primary_degree(i) - 1 - lodegree);
   p->compare_num = 0;
   p->syz = R->from_vector(base_components, (*generator_matrix)[i]);
   p->mi = new MonomialIdeal(P, mi_stash);

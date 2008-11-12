@@ -202,39 +202,6 @@ setupfun("exit",exitfun).protected = false;
 
 applythem(obj:HashTable,fn:FunctionClosure):void := applyFCE(fn,Expr(obj));
 
--- match(subject:string,i:int,pattern:string,j:int):bool := (
---      while true do (
--- 	  if j == length(pattern) 
--- 	  then return i == length(subject)
--- 	  else if pattern.j == '*' then (
--- 	       if match(subject,i,pattern,j+1)
--- 	       then return true
--- 	       else if i < length(subject)
--- 	       then i = i+1
--- 	       else return false
--- 	       )
--- 	  else if i < length(subject) && subject.i == pattern.j
--- 	  then (
--- 	       i=i+1; 
--- 	       j=j+1
--- 	       )
--- 	  else return false));
--- matchfun(e:Expr):Expr := (
---      when e
---      is a:Sequence do
---      if length(a) == 2 then
---      when a.0 
---      is subject:string do
---      when a.1
---      is pattern:string do
---      if match(subject,0,pattern,0) then True else False
---      else WrongArgString(2)
---      else WrongArgString(1)
---      else WrongNumArgs(2)
---      else WrongNumArgs(2)
---      );
--- setupfun("match",matchfun);
-
 lookupCountFun(e:Expr):Expr := (
      when e
      is s:SymbolClosure do Expr(toInteger(s.symbol.lookupCount))
