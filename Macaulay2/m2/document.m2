@@ -506,6 +506,7 @@ checkForExampleOutputFile := (node,pkg) -> (
      else false)
 
 currentExampleKey := ""
+processExamplesStrict = true
 processExamplesLoop = method(Dispatch => Thing)
 processExamplesLoop TO :=
 processExamplesLoop TO2 :=
@@ -519,8 +520,13 @@ processExamplesLoop ExampleItem := x -> (
 	  if exampleResults#?exampleCounter
 	  then PRE exampleResults#exampleCounter
 	  else (
-	       if #exampleResults === exampleCounter then error("example results terminate prematurely: ", toString currentExampleKey);
-	       PRE concatenate("i", toString (exampleCounter+1), " : ",x)
+	       if #exampleResults === exampleCounter 
+	       then (
+		    if processExamplesStrict
+		    then error("example results terminate prematurely: ", toString currentExampleKey)
+		    else stderr << "--warning: example results terminate prematurely: " << currentExampleKey << endl
+		    );
+	       PRE concatenate("i", toString (exampleCounter+1), " : -- example results terminated prematurely")
 	       ));
      exampleCounter = exampleCounter + 1;
      ret)

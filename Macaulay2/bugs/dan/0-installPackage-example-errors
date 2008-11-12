@@ -1,1 +1,0 @@
-if examples fail, and there are too few lines of output, installPackage fails, even if IgnoreExampleErrors is set.

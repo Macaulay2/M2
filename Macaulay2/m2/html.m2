@@ -777,7 +777,12 @@ installPackage Package := opts -> pkg -> (
 			 )
 		    else (
 			 if debugLevel > 0 then stderr << "--processing   " << tag << endl;
-			 pkg#"processed documentation"#fkey = help tag;
+			 pkg#"processed documentation"#fkey = (
+			      processExamplesStrict = not opts.IgnoreExampleErrors;
+			      -- sort of a kludge: what if an error occurs and the variable isn't reset?
+			      first(
+				   help tag,
+				   processExamplesStrict = true));
 			 -- get source filename and linenum, too:
 			 if pkg#"raw documentation"#?fkey then (
 			      doc := pkg#"raw documentation"#fkey;
