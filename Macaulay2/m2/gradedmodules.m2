@@ -421,13 +421,13 @@ super GradedModule := GradedModule => (M) -> (
      scan(spots M, i -> E#i = super M#i);
      E)
 
-minimalPresentation GradedModule := GradedModule => opts -> (M) -> (
+minimalPresentation GradedModule := prune GradedModule := GradedModule => opts -> (M) -> (
      E := new GradedModule;
      E.ring = M.ring;
      scan(spots M, i -> E#i = minimalPresentation M#i);
      E)
 
-minimalPresentation GradedModuleMap := GradedModuleMap => opts -> f -> 
+minimalPresentation GradedModuleMap := prune GradedModuleMap := GradedModuleMap => opts -> f -> 
   map(minimalPresentation(f.target), 
       minimalPresentation(f.source), 
       k -> minimalPresentation f_k,

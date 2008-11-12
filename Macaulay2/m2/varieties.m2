@@ -238,7 +238,7 @@ sheaf Variety := X -> sheaf_X ring X
 --	  )
 --     }
 
-minimalPresentation CoherentSheaf := opts -> F -> sheaf minimalPresentation HH^0 F(>=0)
+minimalPresentation CoherentSheaf := prune CoherentSheaf := opts -> F -> sheaf minimalPresentation HH^0 F(>=0)
 
 cotangentSheaf = method(Options => {Minimize => true})
 tangentSheaf = method(Options => {Minimize => true})

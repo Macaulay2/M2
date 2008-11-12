@@ -80,7 +80,7 @@ topCoefficients RingElement := f -> (
      	  (monoms,coeffs) := topCoefficients matrix{{f}};
      	  (monoms_(0,0), coeffs_(0,0))))
 
-minimalPrimes Ideal := (cacheValue symbol minimalPrimes) (
+minimalPrimes Ideal := decompose Ideal := (cacheValue symbol minimalPrimes) (
      (I) -> (
 	  R := ring I;
 	  if isQuotientRing R then (

@@ -949,7 +949,7 @@ image ChainComplexMap := ChainComplex => (f) -> (
      scan(spots C, k -> if C#?(k-1) then C.dd#k = map(C#(k-1),C#k,matrix E.dd_(k-deg)));
      C)
 
-minimalPresentation ChainComplex := ChainComplex => opts -> (C) -> (
+minimalPresentation ChainComplex := prune ChainComplex := ChainComplex => opts -> (C) -> (
      D := new ChainComplex;
      complete C;
      complete C.dd;
@@ -958,7 +958,7 @@ minimalPresentation ChainComplex := ChainComplex => opts -> (C) -> (
      scan(spots C.dd, i -> D.dd#i = minimalPresentation C.dd#i);
      D)
 
-minimalPresentation ChainComplexMap := ChainComplexMap => opts -> (f) -> (
+minimalPresentation ChainComplexMap := prune ChainComplexMap := ChainComplexMap => opts -> (f) -> (
      complete f;
      map(minimalPresentation target f, minimalPresentation source f, k -> minimalPresentation f#k)
      )
