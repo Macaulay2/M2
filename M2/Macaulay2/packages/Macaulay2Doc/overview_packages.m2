@@ -155,7 +155,7 @@ document {
 document {
      Key => "an example of a package",
      "Here is a basic example of a complete package:",
-     TABLE { "class" => "examples",  TR TD PRE get first searchPath(path,"FirstPackage.m2")  },
+     TABLE { "class" => "examples",  TR TD PRE get (first searchPath(path,"FirstPackage.m2") | "FirstPackage.m2")  },
      SeeAlso => {
 	     "packages",
 	     newPackage,
