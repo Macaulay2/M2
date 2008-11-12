@@ -160,7 +160,7 @@ setupMethods((), {
 	  leadComponent, degreesRing, degrees, assign, numgens, conjugate,
 	  autoload, relations, cone, standardForm, inverse, numeric, round,
 	  determinant, presentation, dismiss, degreesMonoid, precision, 
-	  norm, clean, numColumns, numRows, fraction, part, coefficient, preimage, minimalPrimes
+	  norm, clean, numColumns, numRows, fraction, part, coefficient, preimage, minimalPrimes, decompose
 	  })
 
 use = method()
@@ -192,12 +192,10 @@ generators = method(
 	  }
      )
 
-minimalPresentation = method(
-     Options=>{
-	  Variable => null,
-	  Strategy => null
-	  }
-     )
+(o -> (
+	  minimalPresentation = method(o);
+	  prune = method(o);
+)) (Options => { Variable => null, Strategy => null })
 
 status = method (
      Options => new OptionTable from {

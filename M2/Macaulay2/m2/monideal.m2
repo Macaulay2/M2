@@ -315,7 +315,7 @@ associatedPrimes MonomialIdeal := List => o -> (I) -> (
 
 --  PRIMARY DECOMPOSITION  ---------------------------------
 
-minimalPrimes MonomialIdeal := (cacheValue symbol minimalPrimes) (
+minimalPrimes MonomialIdeal := decompose MonomialIdeal := (cacheValue symbol minimalPrimes) (
      (I) -> (
 	  minI := squarefreeDual radical I;
 	  apply(flatten entries generators minI, monomialIdeal @@ support)))

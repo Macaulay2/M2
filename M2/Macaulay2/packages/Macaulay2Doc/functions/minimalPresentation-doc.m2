@@ -12,9 +12,15 @@ document {
      }
 
 document { 
-     Key => {(minimalPresentation,Ring),minimalPresentationMap, minimalPresentationMapInv},
+     Key => prune,
+     Headline => "prune, e.g., compute a minimal presentation",
+     SeeAlso => {minimalPresentation}
+     }
+
+document { 
+     Key => {(minimalPresentation,Ring),(prune,Ring),minimalPresentationMap, minimalPresentationMapInv},
      Headline => "compute a minimal presentation of a quotient ring",
-     Usage => "S = minimalPresentation R",
+     Usage => "S = minimalPresentation R\nS = prune R",
      Inputs => { "R" => { "a quotient ring" } },
      Outputs => { "S" => { "a quotient ring, minimally presented if ", TT "R", " is homogeneous, isomorphic to ", TT "R" } },
      Consequences => {
@@ -34,10 +40,10 @@ document {
 	  "R.minimalPresentationMap",
 	  "R.minimalPresentationMapInv"
 	  },
-     SeeAlso => {(minimalPresentation, Ideal), (trim, Ring), (trim, QuotientRing)}     
+     SeeAlso => {(minimalPresentation, Ideal), (prune, Ideal), (trim, Ring), (trim, QuotientRing)}     
      }
 document { 
-     Key => (minimalPresentation,Ideal),
+     Key => {(minimalPresentation,Ideal), (prune,Ideal)},
      Headline => "compute a minimal presentation of the quotient ring 
      defined by an ideal",
      Usage => "J = minimalPresentation I",
@@ -72,89 +78,8 @@ document {
      SeeAlso => {(minimalPresentation,Ring), (trim, Ideal)}
      }
 
--- document { 
---      Key => (minimalPresentation,ChainComplex),
---      Headline => "",
---      Usage => "",
---      Inputs => {
--- 	  },
---      Outputs => {
--- 	  },
---      Consequences => {
--- 	  },     
---      "description",
---      EXAMPLE {
--- 	  },
---      Caveat => {},
---      SeeAlso => {}
---      }
--- document { 
---      Key => (minimalPresentation,CoherentSheaf),
---      Headline => "",
---      Usage => "",
---      Inputs => {
--- 	  },
---      Outputs => {
--- 	  },
---      Consequences => {
--- 	  },     
---      "description",
---      EXAMPLE {
--- 	  },
---      Caveat => {},
---      SeeAlso => {}
---      }
--- document { 
---      Key => (minimalPresentation,GradedModuleMap),
---      Headline => "",
---      Usage => "",
---      Inputs => {
--- 	  },
---      Outputs => {
--- 	  },
---      Consequences => {
--- 	  },     
---      "description",
---      EXAMPLE {
--- 	  },
---      Caveat => {},
---      SeeAlso => {}
---      }
--- document { 
---      Key => (minimalPresentation,GradedModule),
---      Headline => "",
---      Usage => "",
---      Inputs => {
--- 	  },
---      Outputs => {
--- 	  },
---      Consequences => {
--- 	  },     
---      "description",
---      EXAMPLE {
--- 	  },
---      Caveat => {},
---      SeeAlso => {}
---      }
--- document { 
---      Key => (minimalPresentation,ChainComplexMap),
---      Headline => "",
---      Usage => "",
---      Inputs => {
--- 	  },
---      Outputs => {
--- 	  },
---      Consequences => {
--- 	  },     
---      "description",
---      EXAMPLE {
--- 	  },
---      Caveat => {},
---      SeeAlso => {}
---      }
-
 document { 
-     Key => (minimalPresentation,Matrix),
+     Key => {(minimalPresentation,Matrix),(prune,Matrix)},
      Headline => "minimally present source and target of a matrix",
      Usage => "minimalPresentation f",
      Inputs => {
@@ -197,7 +122,10 @@ document {
      Key => {(minimalPresentation,Module),
 	  (minimalPresentation, GradedModule),(minimalPresentation, GradedModuleMap),
 	  (minimalPresentation, ChainComplex),(minimalPresentation, ChainComplexMap),
-	  (minimalPresentation, CoherentSheaf)},
+	  (minimalPresentation, CoherentSheaf),(prune,Module),
+	  (prune, GradedModule),(prune, GradedModuleMap),
+	  (prune, ChainComplex),(prune, ChainComplexMap),
+	  (prune, CoherentSheaf)},
      Headline => "minimal presentation of a module",
      Usage => "N = minimalPresentation M",
      Inputs => {
@@ -235,7 +163,7 @@ document {
      SeeAlso => {(minimalPresentation, Matrix), (trim, Module), (mingens,Module)}
      }
 document { 
-     Key => [minimalPresentation, Variable],
+     Key => {[minimalPresentation, Variable],[prune, Variable]},
      Headline => "specify the variable for the new isomorphic ring",
      Usage => "minimalPresentation(..., Variable => u)",
      Inputs => {

@@ -319,7 +319,7 @@ presentation(Module) := Matrix => M -> (
 	  else relations M))
 -----------------------------------------------------------------------------  
 
-minimalPresentation(Module) := Module => opts -> (cacheValue (symbol minimalPresentation => opts)) (M -> (
+minimalPresentation(Module) := prune(Module) := Module => opts -> (cacheValue (symbol minimalPresentation => opts)) (M -> (
 	  if isFreeModule M then (
 	       M.cache.pruningMap = id_M;
 	       return M);
@@ -396,7 +396,7 @@ addHook(Module, symbol minimalPresentation, (opts,M) -> (
 	       N.cache.pruningMap = map(M,N,id_(target ch) // ch);	    -- yuk, taking an inverse here, gb should give inverse change matrices, or the pruning map should go the other way
 	       break N)))
 
-minimalPresentation(Matrix) := Matrix => opts -> (m) -> (
+minimalPresentation(Matrix) := prune(Matrix) := Matrix => opts -> (m) -> (
      M := source m;
      if not M.cache.?pruningMap then m = m * (minimalPresentation M).cache.pruningMap;
      N := target m;

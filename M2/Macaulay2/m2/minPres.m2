@@ -366,7 +366,7 @@ minPressy = (I) -> (
 
 minimalPresentation Ideal := opts -> (I) -> minPressy I
 
-minimalPresentation Ring := Ring => opts -> (R) -> (
+minimalPresentation Ring := prune Ring := Ring => opts -> (R) -> (
      -- 1 argument: A ring R (most often a quotient ring).
      -- Return:  A ring isomorphic to R using minimalPresentation on
      -- the presentation ideal of R.  For more information see
