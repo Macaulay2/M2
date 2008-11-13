@@ -1,0 +1,17 @@
+things to do manually before release
+
+       look at html documentation 
+
+       look at info documentation
+
+       try viewHelp
+
+       update Macaulay2/man/M2.1.in
+
+       check that getPackage works for all the packages available
+
+       test *.rpm files
+
+       test *.deb files
+
+       test *.tar.gz file
