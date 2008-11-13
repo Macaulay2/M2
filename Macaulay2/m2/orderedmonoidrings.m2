@@ -95,7 +95,15 @@ precision PolynomialRing := precision @@ coefficientRing
 isHomogeneous PolynomialRing := R -> (
      opts := options R;
      k := coefficientRing R;
-     (isField k or isHomogeneous k) and #opts.WeylAlgebra === 0)
+     (isField k or isHomogeneous k)
+     and 
+     #opts.WeylAlgebra === 0 or 
+     (
+	  degs := degrees R;
+	  hd := 2 * if R.?homogenize then degs#(R.homogenize) else degree 1_R;
+	  all( apply(R.diffs0,R.diffs1,(i,j) -> degs_i + degs_j), d -> d === hd)
+     	  )
+     )
 
 standardForm RingElement := (f) -> (
      R := ring f;
