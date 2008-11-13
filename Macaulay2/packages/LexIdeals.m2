@@ -11,8 +11,6 @@ newPackage(
 	DebuggingMode => true
 	)
 
-needsPackage "SimpleDoc"
-
 export {macaulayRep, macaulayBound, macaulayLowerOperator, isHF, hilbertFunct, 
      isCM, lexIdeal, isLexIdeal, isPurePower, LPP, generateLPPs, isLPP, cancelAll, 
      multUpperHF, multLowerBound, multUpperBound, multBounds, PrintIdeals, MaxDegree}
@@ -496,6 +494,8 @@ multBounds(Ideal) := I -> (
      << endl; << "lower bound = " << lowerBound << " degree = " << mult << " upper bound = " << upperBound << endl;
      lowerBound <= mult and mult <= upperBound
      )
+
+beginDocumentation()
 
 ------------------------------------------------------------------------
 --

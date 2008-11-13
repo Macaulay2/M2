@@ -389,6 +389,7 @@ AC_SUBST(PACKAGES,"
   FourTiTwo
   StatePolytope
   ConvexPolyhedron
+  Text
 ")
 
 AC_SUBST(UNTESTEDPACKAGES,"FourTiTwo StatePolytope")

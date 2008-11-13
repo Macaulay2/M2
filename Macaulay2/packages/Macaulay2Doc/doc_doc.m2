@@ -222,14 +222,3 @@ document {
      SeeAlso => {document, TO}
      }
 
-document {
-     Key => PARA,
-     Headline => "hypertext paragraph container",
-     Usage => "PARA x",
-     Inputs => {
-	  "x" => String => {", a ", TO2("hypertext list format", "hypertext list")}
-	  },
-     Outputs => { {" a ", TO "hypertext", " paragraph containing ", TT "x" }
-     },
-     "For an example, see ", TO "hypertext list format", "."
-     }

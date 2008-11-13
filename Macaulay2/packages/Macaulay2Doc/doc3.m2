@@ -490,8 +490,6 @@ document { Key => {(methodOptions, Function),(methodOptions, Command),(methodOpt
      ///
      }
 
-document { Key => ExampleItem,
-     Headline => "a type of hypertext for holding example inputs awaiting outputs" }
 document { Key => {(numRows, Matrix),(numRows, MutableMatrix),numRows},
      Headline => "number of rows in a matrix or mutable matrix",
      Usage => "numRows m", Inputs => { "m" }, Outputs => {{ "the number of rows in ", TT "m" }}}

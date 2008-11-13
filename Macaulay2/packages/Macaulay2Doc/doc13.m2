@@ -466,14 +466,6 @@ document { Key => {(validate, Hypertext),validate},
 	  }
      }
 
-document { Key => IntermediateMarkUpType,
-     Headline => "the class of intermediate mark-up types",
-     "An intermediate mark-up type is one that needs further processing to put it into final form.  A good example of one is ", TO "TOH", ", which
-     represents a link to a documentation node, together with the headline of that node, which may not have been created yet at the time
-     the ", TT "TOH", " link is encountered.  Another good example is ", TO "HREF", ", which creates a link using the HTML ", TT "A", " element:
-     when the link is created, the relative path to the target page depends on the path to the page incorporating the link!"
-     }
-
 document { Key => VerticalList,
      Headline => "a type of visible self-initializing list that prints vertically",
      Usage => "VerticalList x",

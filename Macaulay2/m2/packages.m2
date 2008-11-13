@@ -404,10 +404,10 @@ beginDocumentation = () -> (
 	  if notify then stderr << "--beginDocumentation: using documentation database, skipping the rest of " << currentFileName << endl;
 	  currentPackage#"documentation not loaded" = true;
 	  return end;
-	  )
-     else (
-	  if notify then stderr << "--beginDocumentation: reading the rest of " << currentFileName << endl;
-	  )
+	  );
+     if notify then stderr << "--beginDocumentation: reading the rest of " << currentFileName << endl;
+     needsPackage "Text";
+     needsPackage "SimpleDoc";
      )
 
 debug = method()

@@ -159,7 +159,8 @@ document {
      Key => beginDocumentation,
      Headline => "package item: start documentation section",
      Usage => "beginDocumentation()",
-     Consequences => { "Initiates the documentation section of a package" },
+     Consequences => { "Initiates the documentation section of a package.  Loads the packages
+	  ", TO "SimpleDoc:SimpleDoc", " and ", TO "Text:Text", "." },
      PARA {
 	  "Documentation for a package, and tests for the package, are 
 	  placed after this point in a package file.  This way, documentation can

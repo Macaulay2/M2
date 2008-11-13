@@ -16,6 +16,8 @@ newPackage(
 
 export {doc, docTemplate, docExample, packageTemplate}
 
+needsPackage "Text"
+
 doc = method()
 doc String := (s) -> document toDoc s
 
