@@ -166,6 +166,7 @@ toString DocumentTag := net DocumentTag := x -> concatenate ( DocumentTag.Title 
 package DocumentTag := DocumentTag.Package
 hasDocumentation = key -> (
      tag := makeDocumentTag key;
+     if DocumentTag.Title tag === "" then error("key to be documented is exported by no package: ", DocumentTag.FormattedKey tag);
      pkg := getpkg DocumentTag.Title tag;
      fkey := DocumentTag.FormattedKey tag;
      null =!= fetchRawDocumentation(pkg,fkey))
