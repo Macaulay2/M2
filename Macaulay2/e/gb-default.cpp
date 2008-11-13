@@ -2391,13 +2391,18 @@ void gbA::start_computation()
       show_mem_usage();
       if (gbTrace >= 3)
 	{
-	  fprintf(stderr, "ncalls = %ld\n", ncalls);
-	  fprintf(stderr, "nloop = %ld\n", nloops);
-	  fprintf(stderr, "nsaved = %ld\n", nsaved_unneeded);
+	  buffer o;
+	  o << "ncalls = " << ncalls;
+	  emit_line(o.str());
+	  o.reset();
+	  o << "nloop = " << nloops;
+	  emit_line(o.str());
+	  o.reset();
+	  o << "nsaved = " << nsaved_unneeded;
+	  emit_line(o.str());
 	}
     }
 }
-
 
 /*******************************
  ** Minimalization of the GB ***
