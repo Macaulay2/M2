@@ -214,6 +214,7 @@ gb Matrix := GroebnerBasis => opts -> (f) -> (
      checkArgGB f;
      type := gbTypeCode opts;
      G := elseSomething( gbGetSuitable(f,type), () -> newGB(f,type,opts) );
+     if "done" === RawStatusCodes#(rawStatus1 raw G) then return G;
      ifSomething( gbGetHilbertHint(f,opts), 
 	  hil -> (
 	       log := FunctionApplication { rawGBSetHilbertFunction, (G.RawComputation,raw hil) };
