@@ -1,3 +1,0 @@
-if Foo is a preinstalled system package, and a package with the same name is
-installed locally by the user, then the documentation hyperlinks in its
-documentation are directed to the system package instead of the local package

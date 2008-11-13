@@ -431,7 +431,8 @@ getPackage = method(Options => {
 	  Version => null, 
 	  CurrentVersion => null,
 	  UserMode => true,
-	  DebuggingMode => false
+	  DebuggingMode => false,
+	  Configuration => {}
 	  })
 installMethod(getPackage, opts -> () -> lines getwww (opts.Repository | "packages" ))
 getPackage String := opts -> pkgname -> (
@@ -474,10 +475,16 @@ getPackage String := opts -> pkgname -> (
 	  stderr << "--file downloaded: " << fn << endl;
 	  filename << m2file << close;
 	  );
-     installPackage(pkgname, 
+     pkg := loadPackage(pkgname,
+	  DebuggingMode => opts.DebuggingMode,
+	  Configuration => opts.Configuration,
+	  FileName => filename,
+	  LoadDocumentation => true
+	  );
+     installPackage(pkg, 
 	  IgnoreExampleErrors => true, 
-	  FileName => filename, 
 	  DebuggingMode => opts.DebuggingMode, 
+	  FileName => filename, 
 	  UserMode => opts.UserMode);
      )
 
