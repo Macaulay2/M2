@@ -1142,7 +1142,7 @@ initializeReverseOptionTable := () -> (
 					if om =!= null then (
 					     if instance(m,MethodFunctionWithOptions) then m = (m,x);
 					     scanKeys(om, s -> addro(s,m)))))))
-		    else if instance(x, MethodFunctionWithOptions) then (
+		    else if instance(x, Function) then (
 			 o := options x;
 			 if o =!= null then scanKeys(o, s -> addro(s,x)))))))
 optionFor := s -> (
