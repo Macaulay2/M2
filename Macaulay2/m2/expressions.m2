@@ -750,7 +750,7 @@ net Product := v -> (
 	       i -> (
 		    term := v#i;
 		    nterm := net term;
-	       	    if precedence term <= p then (
+	       	    if precedence term <= p and class term =!= Divide then (
 			 seps#i = seps#(i+1) = "";
 			 nterm = bigParenthesize nterm;
 			 );
@@ -780,11 +780,15 @@ net NonAssociativeProduct := v -> (
 	  horizontalJoin splice mingle (seps, boxes)
 	  )
      )
+
 net Minus := x -> (
      term := x#0;
      horizontalJoin if precedence term < precedence x
      then ("-", bigParenthesize net term)
-     else (if class term === Divide then "- " else "-", net term))
+     else (
+	  term = net term;
+	  h := height term - 1;
+	  (if term#?h and term#h#?0 and term#h#0 === "-" then "- " else "-", term)))
 
 net Divide := x -> (
      top := net x#0;
