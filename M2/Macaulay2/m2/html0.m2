@@ -62,7 +62,7 @@ htmlMarkUpTypeWithOptions := opts -> s -> (
      if ewnl#?s then (off = off|"\n";onoff = onoff|"\n");
      t -> (
 	  o := "";
-	  (opts',u) := override(opts, toSequence t);
+	  (opts',u) := try override(opts, toSequence t) else error("mark up type ",toString class t, ": invalid option name encountered");
 	  scanPairs(opts', (k,v) -> if v =!= null then o = concatenate(o, " ", k, "=", format v));
 	  if #u === 0 then concatenate(lt, s, o, onoff)
 	  else concatenate(lt, s, o, ">", apply(sequence u,html), off)
