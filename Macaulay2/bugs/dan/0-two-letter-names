@@ -1,3 +1,6 @@
+This is mostly done, since the html symbols are now in a new package called "Text".
+But maybe we should move 'document' there, and rename it to "Documentation".
+
 change to priority 1
 
 get rid of unused two letter names!
