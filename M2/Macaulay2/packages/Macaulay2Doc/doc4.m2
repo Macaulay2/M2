@@ -681,7 +681,7 @@ document {
 document {
      Key => {(getPackage,String), getPackage, CurrentVersion, 
 	  [getPackage,CurrentVersion], [getPackage,Version], [getPackage,UserMode],Repository,[getPackage,Repository],
-	  [getPackage, DebuggingMode]
+	  [getPackage, DebuggingMode], [getPackage, Configuration]
 	  },
      Headline => "download a package from the repository",
      SYNOPSIS (
@@ -694,6 +694,7 @@ document {
 	       Repository => String => {"the URL of the repository"},
 	       DebuggingMode => Boolean => {"the debugging mode to be passed to ", TO "installPackage"},
 	       UserMode => Boolean => {"the user mode to be passed to ", TO "installPackage"},
+	       Configuration => List => {"the list of configuration values to be passed to ", TO "loadPackage"}
 	       },
 	  Outputs => {
 	       },
