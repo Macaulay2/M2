@@ -680,7 +680,7 @@ installPackage Package := opts -> pkg -> (
 	  scan(nodes, tag -> (
 		    fkey := DocumentTag.FormattedKey tag;
 		    if rawDoc#?fkey then (
-			 v := toExternalString rawDoc#fkey;
+			 v := toExternalStringWithText rawDoc#fkey;
 			 if rawdocDatabase#?fkey then (
 			      if rawdocDatabase#fkey === v 
 			      then rawDocUnchanged#fkey = true

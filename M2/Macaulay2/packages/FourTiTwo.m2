@@ -217,7 +217,6 @@ toricGraverDegrees Matrix := Matrix => (A ->(
 
 
 beginDocumentation()
-needsPackage "SimpleDoc";
 
 doc ///
      Key 

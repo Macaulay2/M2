@@ -24,7 +24,6 @@ newPackage("EdgeIdeals",
 
 needsPackage "GenericInitialIdeal"
 needsPackage "SimplicialComplexes"
-needsPackage "SimpleDoc"
 
 export {HyperGraph, 
         hyperGraph, 
@@ -1103,6 +1102,7 @@ vertexCovers HyperGraph := H -> (
 vertices = method();
 vertices HyperGraph := H -> H#"vertices";
 
+beginDocumentation()
 
 ---------------------------------------------------------
 ---------------------------------------------------------

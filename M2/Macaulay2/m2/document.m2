@@ -198,6 +198,24 @@ local currentNodeName
 local currentHelpTag
 fixup := method(Dispatch => Thing)
 
+valueWithText = s -> (
+     sav := dictionaryPath;
+     sav2 := loadedPackages;
+     needsPackage "Text";
+     v := value s;
+     dictionaryPath = sav;
+     loadedPackages = sav2;
+     v)
+
+toExternalStringWithText = s -> (
+     sav := dictionaryPath;
+     sav2 := loadedPackages;
+     needsPackage "Text";
+     v := toExternalString s;
+     dictionaryPath = sav;
+     loadedPackages = sav2;
+     v)
+
 rawKey := "raw documentation"
 rawKeyDB := "raw documentation database"
 fetchRawDocumentation = method()
@@ -207,7 +225,7 @@ fetchRawDocumentation(Package,String) := (pkg,fkey) -> (		    -- returns null if
      else (
 	  if pkg#?rawKeyDB then (
 	       d = pkg#rawKeyDB;
-	       if isOpen d and d#?fkey then value d#fkey)))
+	       if isOpen d and d#?fkey then valueWithText d#fkey)))
 fetchRawDocumentation(String,String) := (pkgtitle,fkey) -> fetchRawDocumentation(getpkg pkgtitle, fkey)
 fetchRawDocumentation DocumentTag := tag -> (
      fetchRawDocumentation(getpkg DocumentTag.Title tag, DocumentTag.FormattedKey tag)

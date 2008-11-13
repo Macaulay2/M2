@@ -93,8 +93,8 @@ processStrategy := (v) -> (
 	       if not strategyCodes#?s then error("unknown strategy encountered");
 	       strategyCodes#s)))     
 
-undocumented' Faugere
-undocumented' F4
+-- undocumented' Faugere
+-- undocumented' F4
 
 -- These must match the values in e/comp_gb.cpp
 
@@ -104,8 +104,8 @@ processAlgorithm := (a,f) -> (
      if (a === Homogeneous or a === Homogeneous2) and not isHomogeneous f then error "gb: homogeneous algorithm specified with inhomogeneous matrrix";
      if a === Homogeneous then 1
      else if a === Inhomogeneous then 2
-     else if a === F4 then error "the F4 algorithm option has been replaced by LinearAlgebra"
-     else if a === Faugere then error "the Faugere algorithm option has been replaced by LinearAlgebra"
+--     else if a === F4 then error "the F4 algorithm option has been replaced by LinearAlgebra"
+--     else if a === Faugere then error "the Faugere algorithm option has been replaced by LinearAlgebra"
      else if a === Sugarless then 4
      else if a === Homogeneous2 then 5
      else if a === LinearAlgebra then (warnexp(); 6)
