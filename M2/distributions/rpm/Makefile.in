@@ -1,5 +1,11 @@
 # @configure_input@
 
+# Here are Reex Dieter's rpms:
+
+# http://koji.fedoraproject.org/packages/Macaulay2/1.1/2.fc10/src/Macaulay2-1.1-2.fc10.src.rpm
+# http://koji.fedoraproject.org/packages/Macaulay2/1.1/2.fc10/i386/Macaulay2-1.1-2.fc10.i386.rpm
+# http://koji.fedoraproject.org/packages/Macaulay2/1.1/2.fc10/i386/Macaulay2-debuginfo-1.1-2.fc10.i386.rpm
+
 # override this on the make command line, as needed!
 DISTRIBUTION = @DISTRIBUTION@
 
