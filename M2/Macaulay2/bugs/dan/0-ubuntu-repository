@@ -1,1 +1,4 @@
 Apply to ubuntu to get Macaulay 2 in the standard repository.
+
+Apparently someone started packaging Macaulay2 for debian/ubuntu and never
+finished, so I've sent email to 439888@bugs.debian.org and subscribed also.
