@@ -60,8 +60,36 @@ getpidfun(e:Expr):Expr := (
 	  then Expr(toInteger(getpid()))
 	  else WrongNumArgs(0))
      else WrongNumArgs(0));
--- processID is a function, in case we have threads!
 setupfun("processID",getpidfun);
+
+getpgrpfun(e:Expr):Expr := (
+     when e
+     is a:Sequence do (
+	  if length(a) == 0
+	  then Expr(toInteger(getpgrp()))
+	  else WrongNumArgs(0))
+     else WrongNumArgs(0));
+setupfun("groupID",getpgrpfun);
+
+setpgidfun(e:Expr):Expr := (
+     when e
+     is a:Sequence do (
+	  if length(a) == 2
+	  then (
+	       when a.0 is pid:ZZ do
+	       if !isInt(pid) then WrongArgSmallInteger(1) else
+	       when a.1 is pgid:ZZ do
+	       if !isInt(pgid) then WrongArgSmallInteger(2) else (
+		    r := setpgid(toInt(pid),toInt(pgid));
+		    if r == ERROR
+		    then buildErrorPacket("setGroupID: "+syserrmsg())
+		    else nullE)
+	       else WrongArgZZ(2)
+	       else WrongArgZZ(1)
+	       )
+	  else WrongNumArgs(2))
+     else WrongNumArgs(0));
+setupfun("setGroupID",setpgidfun);
 
 absfun(e:Expr):Expr := (
      when e

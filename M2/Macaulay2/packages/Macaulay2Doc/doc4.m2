@@ -41,8 +41,40 @@ document {
 document {
      Key => processID,
      Headline => "the process identifier",
-     TT "processID()", " -- returns the process identifier of the current 
-     Macaulay 2 process."
+     Usage => "processID()",
+     Outputs => {
+	  ZZ => "the process identifier of the current Macaulay 2 process"
+	  },
+     SeeAlso => {groupID, setGroupID}
+     }
+
+document {
+     Key => groupID,
+     Headline => "the process group identifier",
+     Usage => "groupID()",
+     Outputs => {
+	  ZZ => "the process group identifier of the current Macaulay 2 process"
+	  },
+     SeeAlso => {processID, setGroupID}
+     }
+
+document {
+     Key => setGroupID,
+     Headline => "set the process group identifier",
+     Usage => "setGroupID(pid,pgid)",
+     Inputs => {
+	  "pid" => ZZ,
+	  "pgid" => ZZ
+	  },
+     Consequences => {
+	  {
+	       "The process group id of the process with process id ", TT "pid", " is
+	       set to ", TT "pgid", ".  If ", TT "pid", " is 0, the current process
+	       is affected.  If ", TT "pgid", " is 0, the new process group id is
+	       equal to the process id."
+	       }
+	  },
+     SeeAlso => {processID, groupID}
      }
 
 document {

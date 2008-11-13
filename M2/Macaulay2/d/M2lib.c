@@ -375,6 +375,14 @@ int system_getpid(void) {
      return pid;
 }
 
+int system_getpgrp(void) {
+  return getpgrp();
+}
+
+int system_setpgid(int pid0, int pgid) {
+  return setpgid(pid0,pgid);
+}
+
 #include <readline/readline.h>
 
 static char *endianness() {

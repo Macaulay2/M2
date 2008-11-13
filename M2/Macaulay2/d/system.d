@@ -3,6 +3,8 @@
 use C;
 import sleep(t:int):int;
 import getpid():int;
+import getpgrp():int;
+import setpgid(pid:int,pgid:int):int;
 import exit(x:int):void;
 import exceptionFlag:bool;				    -- indicates interrupt, stepping, or alarm
 import interruptShield:bool;
