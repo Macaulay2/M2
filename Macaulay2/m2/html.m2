@@ -1120,10 +1120,10 @@ chk := ret -> if ret != 0 then (
      error "external command failed"
      )
 browserMethods := hashTable {
-     "firefox" => "firefox \"%s\"&",
-     "open" => "open \"%s\"",
-     "netscape" => "netscape -remote \"openURL(%s)\"",
-     "windows firefox" => "/cygdrive/c/Program\\ Files/Mozilla\\ Firefox/firefox -remote \"openURL(%s)\" & "
+     "firefox" => url -> {"firefox", url},
+     "open" => url -> {"open", url},
+     "netscape" => url -> {"netscape", "-remote",  "openURL(" | url | ")" },
+     "windows firefox" => url -> { "/cygdrive/c/Program Files/Mozilla Firefox/firefox", "-remote", "openURL(" | url | ")" }
      }
 URL = new SelfInitializingType of BasicList
 new URL from String := (URL,str) -> new URL from {str}
@@ -1137,8 +1137,13 @@ show URL := x -> (
 	  else if runnable "netscape" then browser = "netscape"
 	  else error "no browser found, and none specified in $WWWBROWSER"
 	  );
-     if browserMethods#?browser then browser = browserMethods#browser;
-     chk run if match("%s",browser) then replace("%s",url,browser) else browser | " " | url
+     cmd := if browserMethods#?browser then browserMethods#browser url else { browser, url };
+     if fork() == 0 then (
+	  setGroupID(0,0);
+     	  exec cmd;
+     	  stderr << "exec failed: " << toExternalString cmd << endl;
+	  exit 1
+	  )
      )
 
 fix := fn -> "file://" | externalPath | replace(" ","%20",fn) 		    -- might want to replace more characters

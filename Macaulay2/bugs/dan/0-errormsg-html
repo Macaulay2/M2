@@ -1,0 +1,5 @@
+confusing error message:
+
+i4 : html DIV { ZZ => "asdf" }
+stdio:4:1:(1):[0]: error: encountered an unknown key or option
+
