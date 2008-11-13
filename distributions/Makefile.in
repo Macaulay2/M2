@@ -10,11 +10,11 @@ include Makefile.filenames
 # package filename list generators
 exclude = egrep -v '/\.nfs|/Macaulay2-[^/]*-data$$'
 files_arch = (cd $(prefix) && ( \
-		find @package@ | egrep -v '^@package@/@datadirtail@($$|/)' && \
-		find @package@/@mandirtail@ )) | $(exclude)
+		find @package@ | egrep -v '^@package@/(@datadirtail@|@infodirtail@)($$|/)' && \
+		find @package@/@mandirtail@ )) | $(exclude) | sort | uniq
 files_comm = (cd $(prefix) && ( \
 		echo @package@ ; \
-		find @package@/@datadirtail@ | egrep -v '^@package@/@mandirtail@($$|/)' )) | $(exclude)
+		find @package@/@datadirtail@ @package@/@infodirtail@ | egrep -v '^@package@/@mandirtail@($$|/)' )) | $(exclude) | sort | uniq
 
 tarballs     : tarballs.@COMPRESS@
 tarballs.bz2 : ../$(PKG_TBZ) ../$(PKG_COM_TBZ)
