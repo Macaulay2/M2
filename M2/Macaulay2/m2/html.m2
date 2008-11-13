@@ -869,7 +869,9 @@ installPackage Package := opts -> pkg -> (
 			 infofile << "\037" << endl << "File: " << infobasename << ", Node: " << infoTagConvert' fkey;
 			 if NEXT#?tag then infofile << ", Next: " << infoTagConvert' DocumentTag.FormattedKey NEXT#tag;
 			 if PREV#?tag then infofile << ", Prev: " << infoTagConvert' DocumentTag.FormattedKey PREV#tag;
-			 if UP#?tag   then infofile << ", Up: " << infoTagConvert' DocumentTag.FormattedKey UP#tag;
+			 -- nodes without an Up: link tend to make the emacs info reader unable to construct the table of contents,
+			 -- and the display isn't as nice after that error occurs
+			 infofile << ", Up: " << if UP#?tag then infoTagConvert' DocumentTag.FormattedKey UP#tag else "Top";
 			 infofile << endl << endl << info getPDoc fkey << endl));
 	       infofile << "\037" << endl << "Tag Table:" << endl;
 	       scan(values byteOffsets, b -> infofile << b << endl);
