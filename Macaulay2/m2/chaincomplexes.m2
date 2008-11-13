@@ -664,6 +664,14 @@ rawBettiTally = v -> (
      v)
 
 net BettiTally := v -> netList(rawBettiTally v, Alignment => Right, HorizontalSpace => 1, BaseRow => 1, Boxes => false)
+texMath BettiTally := v -> (
+     v = rawBettiTally v;
+     concatenate(
+	  "\\begin{matrix}\n",
+	  apply(v, row -> (between("&", apply(row,x->if not match("^[0-9]*$",x) then ("\\text{",x,"}") else x)), "\\\\")),
+	  "\\end{matrix}\n",
+	  ))
+tex BettiTally := v -> concatenate("$", texMath v, "$")
 
 heft = method()
 heft Ring := R -> (
