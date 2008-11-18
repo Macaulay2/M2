@@ -1,0 +1,19 @@
+turn off the ntl wizard for non-optimized builds as described in doc/config.txt
+
+Here is the report under cygwin:
+
+    Basic Configuration Options:
+    NTL_STD_CXX
+    NTL_GMP_LIP
+    NTL_CXX_ONLY
+    NTL_NO_INIT_TRANS
+
+    Resolution of double-word types:
+    long long
+    unsigned long long
+
+    Performance Options:
+    NTL_SPMM_ASM
+    NTL_AVOID_BRANCHING
+    NTL_GF2X_ALTCODE1
+    NTL_GF2X_NOINLINE
