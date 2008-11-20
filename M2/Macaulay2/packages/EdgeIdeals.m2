@@ -1,3 +1,4 @@
+-- -*- coding: utf-8 -*-
 
 needsPackage "SimplicialComplexes"
 
@@ -216,7 +217,7 @@ hyperGraph (Graph) := HyperGraph => (G) ->
 --------------------------------------------------------------
 
 HyperGraph == HyperGraph := (G,H) -> (
-     G#"ring" == H#"ring" and
+     G#"ring" === H#"ring" and
      set(G#"vertices") === set(H#"vertices") and
      set(apply(G#"edges", set)) === set(apply(H#"edges",set))
      ) 

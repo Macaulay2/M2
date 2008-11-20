@@ -1,3 +1,4 @@
+-- -*- coding: utf-8 -*-
 newPackage ( "Parsing",
      Authors => {
 	  { Name => "Daniel R. Grayson", Email => "dan@math.uiuc.edu", HomePage => "http://www.math.uiuc.edu/~dan/" }
@@ -499,5 +500,5 @@ document { Key => optP,
 	  
 
 -- Local Variables:
--- compile-command: "make -C $M2BUILDDIR/Macaulay2/packages NAMEOFPACKAGE=Parsing install-one"
+-- compile-command: "make -C $M2BUILDDIR/Macaulay2/packages PACKAGES=Parsing pre-install"
 -- End:

@@ -1,3 +1,4 @@
+-- -*- coding: utf-8 -*-
 newPackage(
 	"BoijSoderberg",
     	Version => "0.2", 

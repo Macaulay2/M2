@@ -1,3 +1,4 @@
+-- -*- coding: utf-8 -*-
 newPackage(
      "ChainComplexExtras",
      Version => "0.5",

@@ -41,5 +41,5 @@ beginDocumentation()
 load "./DMODdoc.m2"
 
 -- Local Variables:
--- compile-command: "make -C $M2BUILDDIR/Macaulay2/packages NAMEOFPACKAGE=Dmodules install-one"
+-- compile-command: "make -C $M2BUILDDIR/Macaulay2/packages PACKAGES=Dmodules pre-install"
 -- End:

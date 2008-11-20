@@ -1,3 +1,4 @@
+-- -*- coding: utf-8 -*-
 newPackage(
 	"EllipticIntegrals",
     	Version => "1.0", 

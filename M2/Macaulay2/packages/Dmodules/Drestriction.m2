@@ -970,7 +970,7 @@ bFunctionM(Module, List, List) := (M, w, m) -> (
      --sanity check
      if #m != n then 
      error "wrong shift vector length";
-     if any(m, u -> class u != ZZ) then
+     if any(m, u -> class u =!= ZZ) then
      error "shift vector should consist of integers";
      
      i := 0;

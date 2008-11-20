@@ -1,3 +1,4 @@
+-- -*- coding: utf-8 -*-
 ---------------------------------------------------------------------------
 -- PURPOSE : Compute the rees algebra of a module as it is defined in the 
 --           paper "What is the Rees algebra of a module?" by Craig Huneke, 
@@ -89,7 +90,6 @@ symmetricKernel(Matrix,Ideal) := Ideal => o -> (f, I) -> (
      	  msource := -(min flatten degrees source f)+1;
      	  ntarf := rank target f;
      	  nsouf := rank source f;
---	  error "debug me";
      	  tardeglist :=  degrees source vars R | degrees target (f**R^{-mtar});
 	  Rtar1 := kk(monoid [oldvarlist,Y_1..Y_(ntarf),Degrees=>tardeglist]);
      	  F := map(Rtar1, R);

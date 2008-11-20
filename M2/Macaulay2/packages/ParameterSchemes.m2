@@ -1,3 +1,4 @@
+-- -*- coding: utf-8 -*-
 newPackage(
 	"ParameterSchemes",
     	Version => "0.01", 

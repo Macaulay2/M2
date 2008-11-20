@@ -1,3 +1,4 @@
+-- -*- coding: utf-8 -*-
 newPackage (
      "Benchmark",
      Headline => "a standard Macaulay 2 benchmark",
@@ -500,5 +501,5 @@ Here is another possible benchmark, but it doesn't work for us yet:
 --      	22.04 seconds
 
 -- Local Variables:
--- compile-command: "make -C $M2BUILDDIR/Macaulay2/packages NAMEOFPACKAGE=Benchmark install-one"
+-- compile-command: "make -C $M2BUILDDIR/Macaulay2/packages PACKAGES=Benchmark pre-install"
 -- End:

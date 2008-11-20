@@ -726,7 +726,7 @@ ExternalProduct(Module, Module) := options -> (M, N) -> (
      WW.projMap2 = map(W2, WW, join(toList(nW1:0), projList2));
 
 -- MAKE TWISTMAP TO DIAGONAL
-     if W1 == W2 and options.TwistMap then (
+     if W1 === W2 and options.TwistMap then (
 	  n := n1;
 	  nW := nW1;
 	  naux := m1;
@@ -805,7 +805,7 @@ ExternalProduct(ChainComplex, ChainComplex) := options -> (F, G) -> (
 
 
 -- MAKE TWISTMAP TO DIAGONAL
-     if W1 == W2 and options.TwistMap then (
+     if W1 === W2 and options.TwistMap then (
 	  n := n1;
 	  nW := nW1;
 	  naux := m1;

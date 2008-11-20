@@ -1,3 +1,4 @@
+-- -*- coding: utf-8 -*-
 newPackage ("Macaulay2Doc",
      InfoDirSection => "Macaulay 2 and its packages", 
      AuxiliaryFiles => true,

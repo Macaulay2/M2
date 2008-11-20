@@ -1,5 +1,5 @@
+-- -*- coding: utf-8 -*-
 --		Copyright 1996 by Daniel R. Grayson
-
 newPackage ( "Browse",
      Authors => {
 	  { Name => "Daniel R. Grayson", Email => "dan@math.uiuc.edu", HomePage => "http://www.math.uiuc.edu/~dan/" }
@@ -156,5 +156,5 @@ document {
      }
 
 -- Local Variables:
--- compile-command: "make -C $M2BUILDDIR/Macaulay2/packages NAMEOFPACKAGE=Browse install-one"
+-- compile-command: "make -C $M2BUILDDIR/Macaulay2/packages PACKAGES=Browse pre-install"
 -- End:

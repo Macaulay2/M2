@@ -1,3 +1,4 @@
+-- -*- coding: utf-8 -*-
 newPackage(
    "Regularity",
    Version => "1.0",

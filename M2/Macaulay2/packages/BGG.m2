@@ -1,3 +1,4 @@
+-- -*- coding: utf-8 -*-
 newPackage(
 	"BGG",
     	Version => "1.0", 
@@ -1072,6 +1073,5 @@ random(E^{-1,-1,-1,-1,-1,-1,-3},E^{-2,-2,-2,-2,-2,-4})
 beilinson(oo,S)
 
 -- Local Variables:
--- compile-command: "make -C $M2BUILDDIR/Macaulay2/packages NAMEOFPACKAGE=BGG install-one"
+-- compile-command: "make -C $M2BUILDDIR/Macaulay2/packages PACKAGES=BGG pre-install"
 -- End:
-

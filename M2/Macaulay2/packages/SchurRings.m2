@@ -1,3 +1,4 @@
+-- -*- coding: utf-8 -*-
 --		Copyright 1996-2002,2004 by Daniel R. Grayson
 
 newPackage(
@@ -897,5 +898,5 @@ schur{1,1,1} % I
 exponents oo
 
 -- Local Variables:
--- compile-command: "make -C $M2BUILDDIR/Macaulay2/packages NAMEOFPACKAGE=SchurRings install-one"
+-- compile-command: "make -C $M2BUILDDIR/Macaulay2/packages PACKAGES=SchurRings pre-install"
 -- End:

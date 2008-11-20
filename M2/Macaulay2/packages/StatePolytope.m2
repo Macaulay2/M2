@@ -1,3 +1,4 @@
+-- -*- coding: utf-8 -*-
 newPackage(
 	"StatePolytope",
     	Version => "1.2", 

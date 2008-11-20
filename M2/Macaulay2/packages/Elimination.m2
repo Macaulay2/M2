@@ -1,3 +1,4 @@
+-- -*- coding: utf-8 -*-
 newPackage("Elimination",
      Version => "1.0", 
      Date => "January 5, 2005",
@@ -233,5 +234,5 @@ loadPackage "Elimination"
 installPackage Elimination
 
 -- Local Variables:
--- compile-command: "make -C $M2BUILDDIR/Macaulay2/packages NAMEOFPACKAGE=Elimination install-one"
+-- compile-command: "make -C $M2BUILDDIR/Macaulay2/packages PACKAGES=Elimination pre-install"
 -- End:

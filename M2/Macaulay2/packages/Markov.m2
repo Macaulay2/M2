@@ -1,3 +1,4 @@
+-- -*- coding: utf-8 -*-
 newPackage("Markov",
      Authors => {
 	  {Name => "Luis Garcia"},
@@ -751,5 +752,5 @@ scan(F, g -> (
 	  ))
 
 -- Local Variables:
--- compile-command: "make -C $M2BUILDDIR/Macaulay2/packages NAMEOFPACKAGE=Markov install-one"
+-- compile-command: "make -C $M2BUILDDIR/Macaulay2/packages PACKAGES=Markov pre-install"
 -- End:
