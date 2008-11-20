@@ -1,3 +1,4 @@
+-- -*- coding: utf-8 -*-
 newPackage( "Style",
      AuxiliaryFiles => true,
      Version => "1.0"
@@ -9,5 +10,5 @@ document { Key => "Style",
      }
 
 -- Local Variables:
--- compile-command: "make -C $M2BUILDDIR/Macaulay2/packages NAMEOFPACKAGE=Style install-one"
+-- compile-command: "make -C $M2BUILDDIR/Macaulay2/packages PACKAGES=Style pre-install"
 -- End:

@@ -1,3 +1,4 @@
+-- -*- coding: utf-8 -*-
 newPackage(
      "SymmetricPolynomials",
      Version => "0.1",

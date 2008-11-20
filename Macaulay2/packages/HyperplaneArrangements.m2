@@ -1,3 +1,4 @@
+-- -*- coding: utf-8 -*-
 -- October 8 2008: hyperplane arrangements package;
 -- Graham Denham and Greg Smith, with
 -- thanks to Sorin Popescu for the Orlik-Solomon code
@@ -47,7 +48,7 @@ describe Arrangement := A -> net A.hyperplanes
 
 arrangement = method(TypicalValue => Arrangement)
 arrangement (List,Ring) := Arrangement => (L,R) -> (
-     if #L > 0 and ring L#0 != R then (
+     if #L > 0 and ring L#0 =!= R then (
 	  f := map(R, ring L#0);
 	  A := L / f)
      else A = L;
@@ -78,7 +79,7 @@ arrangement Matrix := Arrangement => M -> (
 arrangement String := Arrangement => name -> (
      if not arrangementLibrary#?name then error "No information available for ", name;
      k := ring arrangementLibrary#name;
-     if k == ZZ then k = QQ;
+     if k === ZZ then k = QQ;
      arrangement(k**arrangementLibrary#name));
 
 arrangement (String, PolynomialRing) := Arrangement => (name,R) -> (
@@ -1480,7 +1481,7 @@ R = ZZ[x,y,z];
 trivial = arrangement({},R);
 nontrivial = arrangement{x},R);
 assert(rank trivial == 0)
-assert(ring trivial == R)
+assert(ring trivial === R)
 assert(0 == matrix trivial)
 assert(0 == coefficients trivial)
 assert(deletion(nontrivial,x) == trivial)

@@ -1,3 +1,4 @@
+-- -*- coding: utf-8 -*-
 newPackage ("RandomSearch",
        	Version => "0.2", 
     	Date => "December 2, 2006",

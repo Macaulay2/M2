@@ -1,3 +1,4 @@
+-- -*- coding: utf-8 -*-
 --		Copyright 1993-2008 by Daniel R. Grayson
 
 newPackage "Text"

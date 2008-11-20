@@ -1,3 +1,4 @@
+-- -*- coding: utf-8 -*-
 newPackage ("TangentCone",
        	Version => "1.0", 
     	Date => "June 27, 2006",
@@ -77,5 +78,5 @@ TEST ///
 ///
 
 -- Local Variables:
--- compile-command: "make -C $M2BUILDDIR/Macaulay2/packages NAMEOFPACKAGE=TangentCone install-one"
+-- compile-command: "make -C $M2BUILDDIR/Macaulay2/packages PACKAGES=TangentCone pre-install"
 -- End:

@@ -1,3 +1,4 @@
+-- -*- coding: utf-8 -*-
 newPackage (
      "SecondPackage",
      Version => "1.0", 

@@ -1,3 +1,4 @@
+-- -*- coding: utf-8 -*-
 newPackage(
      "NAG",
      Version => "1.0",
@@ -1270,5 +1271,5 @@ installPackage("NAG", RemakeAllDocumentation=>true, AbsoluteLinks=>false, RerunE
 check "NAG"
 
 -- Local Variables:
--- compile-command: "make -C $M2BUILDDIR/Macaulay2/packages NAMEOFPACKAGE=PackageTemplate install-one"
+-- compile-command: "make -C $M2BUILDDIR/Macaulay2/packages PACKAGES=PackageTemplate pre-install"
 -- End:

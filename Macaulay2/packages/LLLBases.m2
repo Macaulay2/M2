@@ -1,3 +1,4 @@
+-- -*- coding: utf-8 -*-
 newPackage("LLLBases",
      Version => "1.1", 
      Date => "July 7, 2005",
@@ -1631,5 +1632,5 @@ TEST ///
 ///
 
 -- Local Variables:
--- compile-command: "make -C $M2BUILDDIR/Macaulay2/packages NAMEOFPACKAGE=LLLBases install-one"
+-- compile-command: "make -C $M2BUILDDIR/Macaulay2/packages PACKAGES=LLLBases pre-install"
 -- End:

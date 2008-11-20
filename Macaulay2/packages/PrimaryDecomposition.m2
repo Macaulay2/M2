@@ -1,3 +1,4 @@
+-- -*- coding: utf-8 -*-
 newPackage(
      "PrimaryDecomposition",
      AuxiliaryFiles => true,
@@ -139,5 +140,5 @@ document {
 load "PrimaryDecomposition/doc.m2"
 
 -- Local Variables:
--- compile-command: "make -C $M2BUILDDIR/Macaulay2/packages NAMEOFPACKAGE=PrimaryDecomposition install-one"
+-- compile-command: "make -C $M2BUILDDIR/Macaulay2/packages PACKAGES=PrimaryDecomposition pre-install"
 -- End:

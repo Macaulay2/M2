@@ -1,3 +1,4 @@
+-- -*- coding: utf-8 -*-
 ---------------------------------------------------------------------------
 -- PURPOSE : Methods for Janet bases and Pommaret bases
 --           (as particular cases of involutive bases)

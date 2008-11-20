@@ -1,3 +1,4 @@
+-- -*- coding: utf-8 -*-
 newPackage ( "Classic",
      Authors => {
 	  { Name => "Daniel R. Grayson", Email => "dan@math.uiuc.edu", HomePage => "http://www.math.uiuc.edu/~dan/" }
@@ -152,5 +153,5 @@ document {
      }
 
 -- Local Variables:
--- compile-command: "make -C $M2BUILDDIR/Macaulay2/packages NAMEOFPACKAGE=Classic install-one"
+-- compile-command: "make -C $M2BUILDDIR/Macaulay2/packages PACKAGES=Classic pre-install"
 -- End:

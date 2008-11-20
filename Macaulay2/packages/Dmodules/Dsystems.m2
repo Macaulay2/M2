@@ -175,7 +175,7 @@ RatAnn(RingElement, RingElement) := (g,f) -> (
      createDpairs W;
      dpV := W.dpairVars;
      -- error checking
-     if W != ring g then
+     if W =!= ring g then
      error "Expected elements of the same ring";
      if W.monoid.Options.WeylAlgebra === {} then
      error "Expected element of a Weyl algebra";

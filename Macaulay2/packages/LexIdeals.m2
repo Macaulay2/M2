@@ -1,3 +1,4 @@
+-- -*- coding: utf-8 -*-
 newPackage(
 	"LexIdeals", 
 	Version => "1.2",

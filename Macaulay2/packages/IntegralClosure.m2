@@ -1,3 +1,4 @@
+-- -*- coding: utf-8 -*-
 newPackage(
 	"IntegralClosure",
     	Version => "1.0", 
@@ -90,7 +91,7 @@ integralClosureHelper = (J, fractions, phi, counter, newVar, indexVar) -> (
 	  -- From now on, we work in this quotient:
 	  (newPhi, fracs) := idealizerReal(J, J_0, Variable => newVar, Index => indexVar);  
 	  targ := target newPhi;
-	  if targ == S then (
+	  if targ === S then (
 	       return {newPhi*phi, join(fracs,fractions)})
 	  else (
 	       newI1 := ideal presentation targ;

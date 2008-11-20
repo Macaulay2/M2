@@ -1,3 +1,4 @@
+-- -*- coding: utf-8 -*-
 newPackage(
 	"gfanInterface",
     	Version => "0.1", 

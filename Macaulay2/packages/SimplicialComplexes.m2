@@ -1,3 +1,4 @@
+-- -*- coding: utf-8 -*-
 -- Code for Simplicial Complexes
 newPackage(
 	"SimplicialComplexes",
@@ -1435,5 +1436,5 @@ assert(C.dd_1 * C.dd_2 == 0)
 
 
 -- Local Variables:
--- compile-command: "make -C $M2BUILDDIR/Macaulay2/packages NAMEOFPACKAGE=SimplicialComplexes install-one"
+-- compile-command: "make -C $M2BUILDDIR/Macaulay2/packages PACKAGES=SimplicialComplexes pre-install"
 -- End:

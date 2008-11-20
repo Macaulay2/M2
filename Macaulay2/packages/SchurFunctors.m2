@@ -1,3 +1,4 @@
+-- -*- coding: utf-8 -*-
 newPackage(
     	  "SchurFunctors",
    	  Version => "0.5.0",

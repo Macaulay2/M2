@@ -1,3 +1,4 @@
+-- -*- coding: utf-8 -*-
 ---------------------------------------------------------------------------
 -- PURPOSE: compute the polar dual of a rational convex polyhedral cone 
 --          using Fourier-Motzkin elimination
@@ -570,6 +571,6 @@ installPackage "FourierMotzkin"
 
 
 -- Local Variables:
--- compile-command: "make -C $M2BUILDDIR/Macaulay2/packages NAMEOFPACKAGE=FourierMotzkin install-one"
+-- compile-command: "make -C $M2BUILDDIR/Macaulay2/packages PACKAGES=FourierMotzkin pre-install"
 -- End:
 

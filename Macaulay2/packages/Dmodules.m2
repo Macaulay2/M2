@@ -1,3 +1,4 @@
+-- -*- coding: utf-8 -*-
 newPackage("Dmodules", 
      Version => "1.1",
      Date => "10/01/2008",
@@ -13,5 +14,5 @@ newPackage("Dmodules",
 load "Dmodules/Dmodules.m2"
 
 -- Local Variables:
--- compile-command: "make -C $M2BUILDDIR/Macaulay2/packages NAMEOFPACKAGE=Dmodules install-one"
+-- compile-command: "make -C $M2BUILDDIR/Macaulay2/packages PACKAGES=Dmodules pre-install"
 -- End:
