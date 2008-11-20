@@ -1,0 +1,6 @@
+cygwin port doesn't work now:
+
+       on my system, it crashes in __w32_sharedptr_initialize()
+
+       on the machine of "Dr. Volker Zell" <dr.volker.zell@oracle.com> it doesn't link
+       he has installed http://gcc.gnu.org/wiki/GFortranBinaries, by the way
