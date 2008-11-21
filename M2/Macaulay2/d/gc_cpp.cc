@@ -30,7 +30,7 @@ Authors: John R. Ellis and Jesse Hull
 
 #include <stdlib.h>
 #include "gc_cpp.h"
-#include "config.h"
+#include <M2/config.h>
 
 extern "C" void outofmem();
 

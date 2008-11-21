@@ -44,22 +44,27 @@ document {
 	  MakeInfo => Boolean => { "whether to make the info pages.  This is a form of the documentation that can be viewed using the
 	       Unix command ", TT "info", " or using ", TT "emacs", "." 
 	       },
-	  PackagePrefix => { "the path to the directory where the files of the package should be installed.  The default value is the subdirectory
-	       named ", TT "encap", " of the user's ", TO "application directory", "." },
-	  Encapsulate => Boolean => { "whether to encapsulate all the installed files in a subdirectory 
-	       of the directory specified by the ", TT "PackagePrefix", " option.  Unless overridden by
-	       the ", TT "EncapsulateDirectory", " option, its name has the form
+	  InstallPrefix => { "the path to the directory where the files should be installed, in case encapsulation is not
+	       enabled, or where the links should be created, in case encapsulation is enabled.  The value of this option can
+	       be a string or a function of no arguments returning a string.  The default value is the subdirectory named ", TT "local", " of
+	       the user's ", TO "application directory", "." },
+	  PackagePrefix => { "the path to the directory where the files of the package should be installed in case encapsulation is
+	       enabled.  The default value is the subdirectory named ", TT "encap", " of the user's ", TO "application directory", ".
+	       (Note: in version 1.1 and before, the files were installed here also when encapsulation was not enabled.)" },
+	  Encapsulate => Boolean => { "whether to encapsulate all the installed files in a subdirectory of
+	       the directory specified by the ", TT "PackagePrefix", " option, 
+	       whose name is specified by the ", TT "EncapsulateDirectory", " option.
+	       Encapsulation makes it easy to delete all the files associated with a package
+	       (see ", TO "epkg", ").  On the other hand, encapsulation involves the use of symbolic links, which are of limited
+	       utility in a Cygwin version of Macaulay 2, because non-Cygwin programs don't understand them." 
+	       },
+	  EncapsulateDirectory => { "a string that gives the name of the encapsulation subdirectory, terminated with a ", TT "/", ", in the case where
+	        the value of the ", TT "Encapsulate", " option is ", TT "true", ", or a function that accepts a package and returns
+		such a string.  The default function returns a string that has the form
 	       ", TT "PACKAGENAME-VERSION", ", where ", TT "VERSION", " is the version number specified 
 	       by the package as value of the ", TO "Version", " option
-	       provided to ", TO "newPackage", ".  Encapsulation makes it easy to delete all the files associated with a package
-	       (see ", TO "epkg", ")." 
+	       provided to ", TO "newPackage", "."
 	       },
-	  EncapsulateDirectory => String => { "the name of the encapsulation subdirectory, terminated with a ", TT "/", ", in the case where
-	        the value of the ", TT "Encapsulate", " option is ", TT "true", "."
-	       },
-	  InstallPrefix => { "the path to the directory where the links should be created, in case encapsulation is enabled.  The value of this option can
-	       be a string or a function of 0 arguments returning a string.  The default value is the subdirectory named ", TT "local", " of
-	       the user's ", TO "application directory", "." },
 	  MakeLinks => Boolean => { "whether to make links to the files after installing them, in case encapsulation is enabled" },
 	  AbsoluteLinks => { "whether the links made should contain absolute paths, rather than relative paths" },
 	  RemakeAllDocumentation => { "whether to regenerate all of the help pages for this package.  The default action
@@ -89,7 +94,7 @@ document {
 	  "The current value of ", TO "prefixPath", " is used to determine how to direct documentation hyperlinks,
 	  provided the value of the option ", TO "AbsoluteLinks", " is ", TO "true", ", as it is by default; the link
 	  will be directed to the appropriate file if one is found by searching the trees referred to by ", TO "prefixPath", ".  
-	  Otherwise, all documentation hyperlinks are relative to positions within a single tree of directories, as describe by ", TO "LAYOUT", "."
+	  Otherwise, all documentation hyperlinks are relative to positions within a single tree of directories, as describe by ", TO "Layout", "."
 	  },
      PARA {
 	  "It might be necessary to run ", TO "installPackage", " twice if a package with the same name is already installed:
@@ -97,7 +102,22 @@ document {
 	  have been installed by the first installation.
 	  This applies, for example, to those authors who are developing updates to packages already included with Macaulay 2."
 	  },
-     SeeAlso => {"packages", "epkg", "prefixPath", "LAYOUT"}
+     PARA {
+	  "The files of the package are placed in subdirectories of the appropriate prefix directory as specified by ", TO "Layout", ", depending on
+	  the value of the ", TO "SeparateExec", " option: when it is false the files are all in ", 
+	  TT (Layout#1#"packages"|"PACKAGENAME.m2"), ", ",
+	  TT (Layout#1#"info"|"PACKAGENAME.info"), ", ",
+	  TT (Layout#1#"lib"|"PACKAGENAME.info"), ", ",
+	  TT replace("PKG", "PACKAGENAME", Layout#1#"package"), ", and ",
+	  TT replace("PKG", "PACKAGENAME", Layout#1#"packagedoc"), 
+	  "; when it is true the paths to the files are modified to reflect the type of your machine, e.g., ",
+	  TT (Layout#2#"packages"|"PACKAGENAME.m2"), ", ",
+	  TT (Layout#2#"info"|"PACKAGENAME.info"), ", ",
+	  TT (Layout#2#"lib"|"PACKAGENAME.info"), ", ",
+	  TT replace("PKG", "PACKAGENAME", Layout#2#"package"), ", and ",
+	  TT replace("PKG", "PACKAGENAME", Layout#2#"packagedoc"), "."
+	  },
+     SeeAlso => {"packages", "epkg", "prefixPath", "Layout"}
      }
 
 -- Local Variables:

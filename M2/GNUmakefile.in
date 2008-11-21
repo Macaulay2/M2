@@ -1,18 +1,17 @@
 # @configure_input@
 CONFIG_FILES = @srcdir@/configure @srcdir@/config/install-sh @srcdir@/config/config.sub @srcdir@/config/config.guess @srcdir@/config/files
 include include/config.Makefile
-DIRS := @encapdir@/@bindirtail@ @encapdir@/@mandirtail@/man1 @encapdir@/@emacsdirtail@ @encapdir@/@corem2srcdirtail@ @encapdir@/@docpackagesdirtail@
 VPATH = @srcdir@
 .PRECIOUS: @srcdir@/configure config.status
-.PHONY: install all clean distclean reconfigure reconfigure-libs reconfigure-all configure-help install-others install-Macaulay2Doc everything
+.PHONY: reconfigure-libs reconfigure-all configure-help
 # make sure we're ready to go
 GNUmakefile : GNUmakefile.in; ./config.status GNUmakefile
 include/config.Makefile: include/config.Makefile.in ; ./config.status include/config.Makefile
 # include/config.Makefile depends on ./config.status, too, but we are including it
-# it's enough that include/config.h depends on ./config.status
+# it's enough that include/M2/config.h depends on ./config.status
 all :: include/config.Makefile
-include/config.h: include/config.h.in ./config.status ; ./config.status include/config.h
-all :: include/config.h
+include/M2/config.h: include/M2/config.h.in ./config.status ; ./config.status include/M2/config.h
+all :: include/M2/config.h
 @srcdir@/configure : @srcdir@/configure.ac @srcdir@/config/files
 	$(MAKE) -C @srcdir@ -f Makefile
 	@echo '-----------------------------------------------------------------------------'
@@ -39,15 +38,14 @@ status : @srcdir@/configure
 	@echo '#'
 	@echo '-----------------------------------------------------------------------------'
 # announce we're starting
-install all clean distclean install-others install-Macaulay2Doc ::; @echo '-------- making '$@', @PACKAGE_VERSION@ for ARCH=@ARCH@ OS=@OS@ REL=@REL@ --------'
+install all clean distclean ::; @echo '-------- making '$@', @PACKAGE_VERSION@ for ARCH=@ARCH@ OS=@OS@ REL=@REL@ --------'
 # the first install target, the only place in the tree where 'all' is a prerequisite of 'install', hopefully.
-install install-others install-Macaulay2Doc :: all
-install install-others install-Macaulay2Doc :: $(DIRS)
+install :: pre-install
+pre-install :: all
 # the first distclean target:
 distclean:: clean
-$(DIRS) :; $(INSTALL) -d $@
-install clean distclean all ::; $(MAKE) -C libraries $@
-all distclean check clean install install-others install-Macaulay2Doc ::; $(MAKE) -C Macaulay2 $@
+pre-install clean distclean all ::; $(MAKE) -C libraries $@
+pre-install all distclean check clean ::; $(MAKE) -C Macaulay2 $@
 subst : config.status ; ./config.status
 show : config.status ; egrep '^s,' $< | sed -e 's/^s,@\(.*\)@,\(.*\),g/\1=\2/' -e 's/^s,.*]\*\(.*\)\\).*\\2 \(.*\) ,/#define \1 \2/' -e 's/.#_!!_#.//g'
 reconfigure:: $(CONFIG_FILES)
@@ -58,24 +56,24 @@ reconfigure:: $(CONFIG_FILES)
 reconfigure all ::; chmod a-w $(shell cat @srcdir@/config/files)
 check-vars reconfigure all check ::; ! egrep -nH '@[A-Za-z_]+@' $(shell cat @srcdir@/config/files) | sed -e 's=^\([^:]*\):=@srcdir@/\1.in:='  | egrep .
 configure-help: $(CONFIG_FILES) ; @ @srcdir@/configure --help
-relink: ; rm -f Macaulay2/bin/M2@EXE@ && $(MAKE) -C Macaulay2/d ../bin/M2@EXE@
-relink-nostrip: ; rm -f Macaulay2/bin/M2@EXE@ && $(MAKE) -C Macaulay2/d STRIP=no ../bin/M2@EXE@
-dist clean distclean check install src tarball deb rpm dmg cygwin :: ; $(MAKE) -C distributions $@
+relink: ; rm -f @pre_exec_prefix@/bin/M2@EXE@ && $(MAKE) -C Macaulay2/d @pre_exec_prefix@/bin/M2@EXE@
+relink-nostrip: ; rm -f @pre_exec_prefix@/bin/M2@EXE@ && $(MAKE) -C Macaulay2/d STRIP=no @pre_exec_prefix@/bin/M2@EXE@
+dist clean distclean check pre-install src tarball deb rpm dmg cygwin :: ; $(MAKE) -C distributions $@
 check ::; $(MAKE) -C libraries $@
-install clean distclean all check ::; $(MAKE) -C check-configure -f Makefile $@
+distclean check ::; $(MAKE) -C check-configure -f Makefile $@
 reconfigure-all : reconfigure reconfigure-libs 
 reconfigure-libs ::; $(MAKE) -C libraries reconfigure
-distclean::; rm -f @CONFIGURED_FILES@ include/config.h include/config.Makefile config.cache config.log config.status configure.options
+distclean::; rm -f @CONFIGURED_FILES@ include/M2/config.h include/config.Makefile config.cache config.log config.status configure.options
 help :
 	@ echo "usage: make [option...] [target...]"
 	@ echo ""
 	@ echo "targets:"
 	@ echo "  all                         build/compile all files [the default target]"
 	@ echo "  help                        show this help"
-	@ echo "  relink                      remove Macaulay2/bin/M2@EXE@ and rebuild it"
-	@ echo "  install                     generate the documentation, install all files"
-	@ echo "    install-Macaulay2Doc         install just the Macaulay2 package"
-	@ echo "    install-others            install just the other packages"
+	@ echo "  relink                      remove M2@EXE@ and rebuild it"
+	@ echo "  relink-nostrip              remove M2@EXE@ and rebuild it, unstripped"
+	@ echo "  pre-install                 generate the documentation in the staging area"
+	@ echo "  install                     install files, make distributions"
 	@ echo "  check                       run the tests"
 	@ echo "  distributions:"
 	@ echo "    src                       generate source tar file"
@@ -108,8 +106,8 @@ help :
 	@ echo ""
 	@ echo "      --recheck                       re-run configure with same options"
 	@ echo ""
-install install-others install-Macaulay2Doc all clean distclean::; @echo "-------- done making '$@' --------"
-install all::
+pre-install install all clean distclean::; @echo "-------- done making '$@' --------"
+pre-install::
 	@echo "************************************************"
 	@echo "*                                              *"
 	@echo "*    don't forget to run 'make -k check'       *"
@@ -117,5 +115,5 @@ install all::
 	@echo "************************************************"
 
 # Local Variables:
-# compile-command: "make -C $M2BUILDDIR"
+# compile-command: "make -C $M2BUILDDIR "
 # End:

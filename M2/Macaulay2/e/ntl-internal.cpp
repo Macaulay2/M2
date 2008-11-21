@@ -4,7 +4,7 @@
 
 #include <cstdio>
 
-#include "config.h"
+#include <M2/config.h>
 #include <gc/gc.h>
 #include <gmp.h>
 #include <mpfr.h>

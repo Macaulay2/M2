@@ -2,7 +2,7 @@
 
 #include "../d/M2inits.h"
 #include "exceptions.hpp"
-#include "config.h"
+#include <M2/config.h>
 #include <assert.h>
 #include <iostream>
 using std::cout;

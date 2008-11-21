@@ -1,6 +1,6 @@
 document {
      Key => {Macaulay2Doc,"Macaulay2"},
-     PARA IMG ("src" => LAYOUT#"packagesrc" "Style" | "9planets.gif", "alt" => "image of nine planets"),
+     PARA IMG ("src" => replace("PKG","Style",Layout#1#"package") | "9planets.gif", "alt" => "image of nine planets"),
      "Macaulay 2 is a software system devoted to supporting research in 
      algebraic geometry and commutative algebra, developed with funding
      from the National Science Foundation.  We are eager to help new users

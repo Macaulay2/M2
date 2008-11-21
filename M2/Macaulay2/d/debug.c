@@ -3,7 +3,7 @@
 #include <unistd.h>
 #include <stdio.h>
 
-#include "config.h"
+#include <M2/config.h>
 #include <stdint.h>
 
 #include "debug.h"
@@ -23,8 +23,9 @@ void trapchk(void *p) {
 #define STDERR 2
 int badBlock() {
      char buf[120];
+     int r;
      sprintf(buf,"%s:%d: internal error: smashed block in memory block allocator\n",__FILE__,__LINE__);
-     write(STDERR,buf,strlen(buf));
+     r = write(STDERR,buf,strlen(buf));
      abort();
 }
 

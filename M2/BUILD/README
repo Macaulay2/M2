@@ -1,0 +1,7 @@
+This directory may be used as a convenient location for the build directory
+trees.  For example, it may contain subdirectories "Linux-i686" and
+"Linux-x86_64".  Those directories in turn may contain subdirectories, if
+desired, with names such as "ubuntu", "debian", and "ubuntu-debug", or even
+"ubuntu/normal" and "ubuntu/debug", serving as the actual build directories.
+
+See also "StagingArea/README".

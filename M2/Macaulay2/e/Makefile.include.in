@@ -3,8 +3,6 @@
 
 %.o : %.cpp; $(COMPILE.cc) $(OUTPUT_OPTION) $< -Wno-old-style-cast
 
-CPPFLAGS += -I../../../include
-CPPFLAGS += -I../../../libraries/final@FINALPREFIX@/@librariesdirtail@/include
 CPPFLAGS += -I../../util
 CPPFLAGS += -I..
 
@@ -17,3 +15,7 @@ endif
 
 LIBGB      = libgb.a
 PRE.cc   = $(COMPILE.cc) -E 
+
+# Local Variables:
+# compile-command: "make -C $M2BUILDDIR/Macaulay2/e Makefile.include "
+# End:

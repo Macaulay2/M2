@@ -35,13 +35,13 @@ step.)  Details about the file naming conventions are visible there.  Typical
 names include these:
   
      @PACKAGE_TARNAME@-@PACKAGE_VERSION@-common.tar.gz
-     @PACKAGE_TARNAME@-@PACKAGE_VERSION@-@ARCH@-@OS@-@ISSUE@.tar.gz
+     @PACKAGE_TARNAME@-@PACKAGE_VERSION@-@MACHINE@.tar.gz
 
 If there is a later version than @PACKAGE_VERSION@, use that instead. 
 
 The files with "common" in the name contain the Macaulay 2 files that are
 independent of the architecture of your computer.  The files with a string such
-as "@ARCH@-@OS@-@ISSUE@" in the name contain the architecture-dependent files,
+as "@MACHINE@" in the name contain the architecture-dependent files,
 including the executable file "M2@EXE@".  The component "@ARCH@" is the
 architecture of the machine, the component "@OS@" is the operating system, and
 the component "@ISSUE@" is the issue of the operating system.  
@@ -56,7 +56,7 @@ in /foo/bar, as follows.
 
      cd /foo/bar
      tar zxfp @PACKAGE_TARNAME@-@PACKAGE_VERSION@-common.tar.gz
-     tar zxfp @PACKAGE_TARNAME@-@PACKAGE_VERSION@-@ARCH@-@OS@-@ISSUE@.tar.gz
+     tar zxfp @PACKAGE_TARNAME@-@PACKAGE_VERSION@-@MACHINE@.tar.gz
 
 (If you downloaded files ending with bz2 instead of gz, then change the z in the
 first parameter to j.)

@@ -3,8 +3,7 @@
 addStartFunction(
      () -> (
 	  path = prepend("./",path);
-	  if sourceHomeDirectory =!= null then path = append(path,sourceHomeDirectory|"packages/");
-	  if prefixDirectory =!= null then path = append(path,prefixDirectory|LAYOUT#"packages");
+	  if prefixDirectory =!= null then path = append(path,prefixDirectory|currentLayout#"packages");
 	  ))
 
 Package = new Type of MutableHashTable
@@ -39,7 +38,10 @@ loadPackage = method(
 	  Configuration => {}
 	  } )
 packageLoadingOptions := new MutableHashTable
+checkPackageName = title -> if not match("^[a-zA-Z0-9]+$",title) then error( "package title not alphanumeric: ",title)
+
 loadPackage String := opts -> pkgtitle -> (
+     checkPackageName pkgtitle;
      filename := if opts.FileName === null then pkgtitle | ".m2" else opts.FileName;
      packageLoadingOptions#pkgtitle = opts;
      -- if opts.DebuggingMode =!= true then loadDepth = loadDepth - 1;
@@ -110,17 +112,17 @@ closePackage = pkg -> (
      )
 
 -- gdbm makes architecture dependent files, so we try to distinguish them, in case
--- they get mixed
+-- they get mixed.  Yes, that's in addition to installing them in directories that
+-- are specified to be suitable for machine dependent data.
 databaseSuffix = "-" | version#"endianness" | "-" | version#"pointer size" | ".db"
 
 newPackage(String) := opts -> (title) -> (
+     checkPackageName title;
      scan({(Version,String),(AuxiliaryFiles,Boolean),(DebuggingMode,Boolean),(InfoDirSection,String),(Authors,List),(Configuration,List)},
 	  (k,K) -> if not instance(opts#k,K) then error("newPackage: expected ",toString k," option of class ",toString K));
      scan({(Headline,String),(HomePage,String),(Date,String)},
 	  (k,K) -> if opts#k =!= null and not instance(opts#k,K) then error("newPackage: expected ",toString k," option of class ",toString K));
      originalTitle := title;
-     if not match("^[a-zA-Z0-9]+$",title) then error( "package title not alphanumeric: ",title);
-     -- stderr << "--package \"" << title << "\" loading" << endl;
      dismiss title;
      saveD := dictionaryPath;
      saveP := loadedPackages;
@@ -193,7 +195,7 @@ newPackage(String) := opts -> (title) -> (
 	  "source file" => toAbsolutePath currentFileName,
 	  "undocumented keys" => new MutableHashTable,
 	  "package prefix" => (
-	       m := regex("(/|^)" | LAYOUT#"packages" | "$", currentFileDirectory);
+	       m := regex("(/|^)" | currentLayout#"packages" | "$", currentFileDirectory);
 	       if m#?1 
 	       then substring(currentFileDirectory,0,m#1#0 + m#1#1)
 	       else prefixDirectory
@@ -202,37 +204,29 @@ newPackage(String) := opts -> (title) -> (
      newpkg#"test number" = 0;
      if newpkg#"package prefix" =!= null then (
 	  -- these assignments might be premature, for any package that is loaded before dumpdata, as the "package prefix" might change:
-	  rawdbname := newpkg#"package prefix" | LAYOUT#"packagecache" title | "rawdocumentation" | databaseSuffix;
+	  rawdbname := newpkg#"package prefix" | replace("PKG",title,currentLayout#"packagecache") | "rawdocumentation" | databaseSuffix;
 	  if fileExists rawdbname then (
 	       rawdb := openDatabase rawdbname;
+	       if notify then stderr << "--opened database: " << rawdbname << endl;
 	       newpkg#"raw documentation database" = rawdb;
-	       addEndFunction(() -> if isOpen rawdb then close rawdb));
-     	  {*
-	  dbname := newpkg#"package prefix" | LAYOUT#"packagecache" title | "documentation" | databaseSuffix;
-	  if fileExists dbname then (
-	       db := openDatabase dbname;
-	       newpkg#"processed documentation database" = db;
-	       addEndFunction(() -> if isOpen db then close db);
+	       addEndFunction(() -> if isOpen rawdb then close rawdb))
+	  else (
+	       if notify then stderr << "--database not present: " << rawdbname << endl;
 	       );
-     	  *}
-	  newpkg#"index.html" = newpkg#"package prefix" | LAYOUT#"packagehtml" newpkg#"title" | "index.html";
-	  );
-     {*
-     addStartFunction(() -> 
-	  if not ( newpkg#?"processed documentation database" and isOpen newpkg#"processed documentation database" ) and prefixDirectory =!= null 
-	  then (
-	       dbname := prefixDirectory | LAYOUT#"packagecache" title | "documentation" | databaseSuffix; -- what if there is more than one prefix directory?
-	       if fileExists dbname then (
-		    db := newpkg#"processed documentation database" = openDatabase dbname;
-		    addEndFunction(() -> if isOpen db then close db))));
-     *}
+	  newpkg#"index.html" = newpkg#"package prefix" | replace("PKG",newpkg#"title",currentLayout#"packagehtml") | "index.html";
+	  )
+     else if notify then stderr << "--package prefix null, not opening database for package " << newpkg << endl;
      addStartFunction(() -> 
 	  if not ( newpkg#?"raw documentation database" and isOpen newpkg#"raw documentation database" ) and prefixDirectory =!= null 
 	  then (
-	       dbname := prefixDirectory | LAYOUT#"packagecache" title | "rawdocumentation" | databaseSuffix; -- what if there is more than one prefix directory?
+	       dbname := prefixDirectory | replace("PKG",title,currentLayout#"packagecache") | "rawdocumentation" | databaseSuffix; -- what if there is more than one prefix directory?
 	       if fileExists dbname then (
 		    db := newpkg#"raw documentation database" = openDatabase dbname;
-		    addEndFunction(() -> if isOpen db then close db))));
+	       	    if notify then stderr << "--opened database: " << rawdbname << endl;
+		    addEndFunction(() -> if isOpen db then close db))
+	       else (
+	       	    if notify then stderr << "--database not present: " << rawdbname << endl;
+		    )));
      pkgsym := (
 	  if PackageDictionary#?title
 	  then getGlobalSymbol(PackageDictionary,title)
@@ -318,25 +312,38 @@ findSynonyms Symbol := x -> (
      scan(dictionaryPath, d -> scan(pairs d, (nam,sym) -> if x === sym and getGlobalSymbol nam === sym then r = append(r,nam)));
      sort unique r)
 
+warn0 := (sym,front,behind,syns) -> (
+     stderr << "--warning: symbol '" << sym << "' in " << behind << " is shadowed by a symbol in " << front << endl;
+     if #syns > 0
+     then if #syns > 1
+     then stderr << "--  use one of the synonyms " << demark(", ",syns) << endl
+     else stderr << "--  use the synonym " << syns#0 << endl
+     else stderr << "--  no synonym is available" << endl)
+warnedAlready := new MutableHashTable; addStartFunction(() -> warnedAlready = new MutableHashTable)
+warn := x -> if not warnedAlready#?x then (warn0 x; warnedAlready#x = true)
+
 checkShadow = () -> (
      d := dictionaryPath;
      n := #d;
-     for i from 0 to n-1 do
-     for j from i+1 to n-1 do
-     scan(keys d#i, nam -> if d#j#?nam and d#i#nam =!= d#j#nam then (
-	       stderr << "--warning: symbol '" << nam << "' in " << d#j << " is shadowed by a symbol in " << d#i << endl;
-	       sym := d#j#nam;
-	       w := findSynonyms sym;
-	       w = select(w, s -> s != nam);
-	       if #w > 0 then stderr << "--   synonym" << (if #w > 1 then "s") << " for " << nam << ": " << demark(", ",w) << endl
-	       else if class User === Package
-	       and User#?"private dictionary"
-	       and member(User#"private dictionary",dictionaryPath) then for i from 0 do (
-		    newsyn := nam | "$" | toString i;
-		    if not isGlobalSymbol newsyn then (
-			 User#"private dictionary"#newsyn = sym;
-			 stderr << "--   new synonym provided for '" << nam << "': " << newsyn << endl;
-			 break)))))
+     for i from 0 to n-1 do for j from i+1 to n-1 do (
+	  front := d#i;
+	  behind := d#j;
+	  if warnedAlready#?(front,behind) then continue;
+     	  scan(keys front, nam -> if behind#?nam and front#nam =!= behind#nam then (
+		    sym := behind#nam;
+		    syns := findSynonyms sym;
+		    syns = select(syns, s -> s != nam);
+		    if #syns == 0 and class User === Package and User#?"private dictionary" and member(User#"private dictionary",dictionaryPath)
+		    then for i from 0 do (
+			 newsyn := nam | "$" | toString i;
+			 if not isGlobalSymbol newsyn then (
+			      User#"private dictionary"#newsyn = sym;
+			      syns = {newsyn};
+			      break));
+		    warn(nam,front,behind,syns);
+		    ));
+	  if not mutable front and not mutable behind then warnedAlready#(front,behind) = true;
+	  ))
 
 endPackage = method()
 endPackage String := title -> (

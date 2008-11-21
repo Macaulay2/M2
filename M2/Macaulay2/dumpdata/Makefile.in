@@ -3,8 +3,6 @@ VPATH = @srcdir@
 include ../../include/config.Makefile
 CFLAGS += -O0 -fno-stack-protector
 CPPFLAGS += -I../../include
-.PHONY : all clean distclean install check default tags
-
 checkit: checkit.o libdump.a
 map.o: map.h file.h std.h warning.h
 map.o: map-solaris.c map-linux.c map-macosx.c
@@ -43,15 +41,15 @@ testprintmaps:libdump.a
 clean::; rm -f testprintmaps
 
 ifeq "@HAVE_PERSONALITY@" "1"
-# we don't want to link with M2's libraries, because this program gets distributed
-LDLIBS =
+exec_prefix := @pre_exec_prefix@
+prefix := @pre_prefix@
 all:: personality
 clean::; rm -f personality
-install:: personality @encapdir@/@bindirtail@  ; @INSTALL_PROGRAM@ $< @encapdir@/@bindirtail@/personality
-@encapdir@/@bindirtail@ :; @INSTALL@ -d "$@"
-PERDIR = @encapdir@/@packagesdirtail@/personality
+pre-install:: personality @bindir@  ; @INSTALL_PROGRAM@ $< @bindir@/personality
+@bindir@ :; @INSTALL@ -d "$@"
+PERDIR = @packagesdir@/personality
 $(PERDIR):; @INSTALL@ -d "$@"
-install:: personality.c $(PERDIR) ; @INSTALL_DATA@ $^
+pre-install:: personality.c $(PERDIR) ; @INSTALL_DATA@ $^
 endif
 
 # Local Variables:

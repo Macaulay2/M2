@@ -130,6 +130,7 @@ betti fano
 --
 -- The documentation has the following form:
 --^
+needsPackage "Text"
 document {
      Key => Fano2, 
         TT "Fano2(k,X,GR) or  Fano2(k,X)", " -- computes 

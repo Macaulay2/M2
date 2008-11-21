@@ -15,14 +15,14 @@ Prefix: @FINALPREFIX@
 %post
 #!/bin/sh -e
 prefix=@FINALPREFIX@
-cd $prefix/@infodirtail@
+cd $prefix/@infodir@
 for p in @PACKAGES@
 do install-info --quiet --info-dir=. $p.info
 done
 %preun
 #! /bin/sh -e
 prefix=@FINALPREFIX@
-cd $prefix/@infodirtail@
+cd $prefix/@infodir@
 for p in @PACKAGES@
 do install-info --remove --quiet --info-dir=. $p.info
 done

@@ -584,6 +584,7 @@ document {
 document { Key => (options, MarkUpType),
      "Optional arguments of mark up types allow attributes to be added to html elements.",
      EXAMPLE lines ///
+     	  needsPackage "Text"
      	  DIV
      	  options DIV
 	  d = DIV { "class" => "examples", "hi there" }

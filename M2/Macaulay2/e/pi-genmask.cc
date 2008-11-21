@@ -1,4 +1,4 @@
-#include "config.h"
+#include <M2/config.h>
 #if HAVE_STDINT_H
 #include <stdint.h>
 #elif HAVE_INTTYPES_H

@@ -12,5 +12,5 @@ document {
 	  removeFile fn
      ///,
      "If ", TT "fn", " refers to a symbolic link, then whether the file exists is determined by the content of the link and whether there is
-     a file with the new path determined by it."
+     a file with the new path determined by it.  The presence of a symbolic link can be detected with ", TO "readlink", "."
      }

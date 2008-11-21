@@ -19,7 +19,7 @@ include ../Makefile.filenames
 # notice that fakeroot is required, get it here: http://ftp.debian.org/debian/pool/main/f/fakeroot
 
 # commands for testing the rpm file:
-#  install:
+#  pre-install:
 #    rpm -i -v --nodeps *.rpm
 #  remove:
 #	Version: 0.9.95
@@ -33,10 +33,10 @@ include ../Makefile.filenames
 #   mpfr-2.3.0-1.fc8
 
 ############################## main targets
-all install :: warning
-all install :: ../../@PKG_RPM@ ../../@PKG_COM_RPM@
+all pre-install :: warning
+all pre-install :: ../../@PKG_RPM@ ../../@PKG_COM_RPM@
 ifeq ($(TIDY),yes)
-all install :: tidy
+all pre-install :: tidy
 endif
 always :
 warning: always
@@ -55,7 +55,7 @@ SEDOPTS = -e 's=^\.="=' -e 's=$$="='
 	mv files@FINALPREFIX@/@package@/* files@FINALPREFIX@
 	rmdir files@FINALPREFIX@/@package@
 	cd files@FINALPREFIX@ && rm -f INSTALL encapinfo postinstall preremove
-	find files@FINALPREFIX@/@man1dirtail@ -name \*.1 | xargs gzip
+	find files@FINALPREFIX@/@mandir@/man1 -name \*.1 | xargs gzip
 
 .prepared-common :
 	rm -rf files-common
@@ -65,7 +65,7 @@ SEDOPTS = -e 's=^\.="=' -e 's=$$="='
 	rmdir files-common@FINALPREFIX@/@package@
 	cd files-common@FINALPREFIX@ && rm -f INSTALL encapinfo postinstall preremove
 	find files-common@FINALPREFIX@ -name \*.info | xargs gzip
-	find files-common@FINALPREFIX@/@packagesdirtail@/Macaulay2Doc -name \*.c -o -name \*.h | xargs rm
+	find files-common@FINALPREFIX@/@packagesdir@/Macaulay2Doc -name \*.c -o -name \*.h | xargs rm
 
 ../../@PKG_RPM@ : Macaulay2-body.spec ../../$(PKG_TZ) Makefile .prepared packages-used
 	sed -e '/Requires/,$$d' -e 's/^Release: .*/Release: $(DISTRIBUTION)/' Macaulay2-body.spec >Macaulay2.spec
@@ -82,7 +82,7 @@ SEDOPTS = -e 's=^\.="=' -e 's=$$="='
 	@FAKEROOT@ rpmbuild -bb Macaulay2-common.spec
 
 libraries-used : .prepared always
-	ldd files@FINALPREFIX@/@bindirtail@/M2@EXE@ > $@.tmp
+	ldd files@FINALPREFIX@/@bindir@/M2@EXE@ > $@.tmp
 	cat $@.tmp | sed -e 's/.* => //' -e 's/^	//' -e 's/ .*//' | egrep '^/' >$@ || true
 	rm $@.tmp
 

@@ -5,7 +5,6 @@ VPATH = @srcdir@
 LD_LIBRARY_PATH := $(BUILTLIBPATH)/lib:$(LD_LIBRARY_PATH)
 export LD_LIBRARY_PATH
 
-# here is the list of packages to install with Macaulay2, as defined in configure.ac
 PACKAGES = @PACKAGES@
 
 RemakeAllDocumentation ?= false
@@ -14,73 +13,50 @@ CheckDocumentation ?= true
 RerunExamples ?= false
 debugLevel ?= 0
 
-ARGS := , MakeLinks => false
-ARGS += , RerunExamples => $(RerunExamples)
-ARGS += , IgnoreExampleErrors => $(IgnoreExampleErrors)
-ARGS += , RemakeAllDocumentation => $(RemakeAllDocumentation)
-ARGS += , CheckDocumentation => $(CheckDocumentation)
-ARGS += , MakeInfo => true
-ARGS += , UserMode => false
-ARGS += , DebuggingMode => false
+ARGS := RemakeAllDocumentation => $(RemakeAllDocumentation), \
+	IgnoreExampleErrors => $(IgnoreExampleErrors), \
+	RerunExamples => $(RerunExamples), \
+	CheckDocumentation => $(CheckDocumentation), \
+	UserMode => false, \
+	InstallPrefix => \"@STAGINGAREA@/\", \
+	SeparateExec => true
 
-ifeq (@ENCAP@,yes)
-Encapsulate = true
-else
-Encapsulate = false
+# so the user can override arguments to installPackage:
+ifneq "$(IARGS)" ""
+ARGS := $(ARGS), $(IARGS)
 endif
 
-ARGS1 := $(ARGS), PackagePrefix => \"$(prefix)/\", Encapsulate => $(Encapsulate), EncapsulateDirectory => \"@package@/\"
-ARGS2 := $(ARGS), PackagePrefix => \"@encapdir@/\", Encapsulate => false
-
 check ::
-	@ for i in $(TESTEDPACKAGES) ; \
+	@ for i in $(PACKAGES) ; \
 	  do ( \
 	     set -x ; \
-		  ../bin/M2@EXE@ -q --stop \
-		    -e "needsPackage(\"$$i\",LoadDocumentation=>true); check($$i,UserMode=>false); exit 0" ; \
+	     @pre_exec_prefix@/bin/M2@EXE@ -q --stop -e "needsPackage(\"$$i\",LoadDocumentation=>true); check($$i,UserMode=>false); exit 0" ; \
 	     ) ; \
 	  done
 
-install :: install-Macaulay2Doc install-others
-install-Macaulay2Doc ::
-	@ set -x ;  ../bin/M2@EXE@ -q --stop \
-		    -e errorDepth=0 \
-		    -e debugLevel=$(debugLevel) \
-		    -e "installPackage(\"Macaulay2Doc\" $(ARGS1))" \
-		    -e "exit 0"
-
-install-one ::
-	../bin/M2@EXE@ -q --stop -e errorDepth=0 -e debugLevel=$(debugLevel) -e "installPackage(\"$(NAMEOFPACKAGE)\" $(ARGS2))" -e "exit 0"
-
-install-others ::
-	@ for i in @TESTEDPACKAGES@ ; \
+pre-install ::
+	@ for i in $(PACKAGES) ; \
 	  do ( \
-	      if [ "$$i" != Macaulay2Doc ] ; \
-	      then \
-		  set -x ; \
-		  ../bin/M2@EXE@ -q --stop \
-		    -e errorDepth=0 \
-		    -e debugLevel=$(debugLevel) \
-		    -e "installPackage(\"$$i\" $(ARGS2))" \
-		    -e "exit 0" ; \
-	      fi ; \
+	     set -x ; \
+	     @pre_exec_prefix@/bin/M2@EXE@ \
+		    $(M2DIRS) -q --stop -e errorDepth=0 -e debugLevel=$(debugLevel) $(EARGS) \
+		    -e "installPackage(\"$$i\", $(ARGS)); exit 0" ; \
 	     ) || exit 1 ; \
 	done
 
-install-others ::
-	@ for i in @UNTESTEDPACKAGES@ ; \
-	  do ( \
-	      if [ "$$i" != Macaulay2Doc ] ; \
-	      then \
-		  set -x ; \
-		  ../bin/M2@EXE@ -q --stop \
-		    -e errorDepth=0 \
-		    -e debugLevel=$(debugLevel) \
-		    -e "installPackage(\"$$i\" $(ARGS2), RunExamples => false)" \
-		    -e "exit 0" ; \
-	      fi ; \
-	     ) || exit 1 ; \
-	done
+prefix := @pre_prefix@
+@packagesdir@/%.m2 : %.m2 ; @INSTALL_DATA@ $^ $@
+all :: $(addprefix @packagesdir@/, $(PACKAGES:=.m2))
+	@ for i in $(PACKAGES) ; \
+	  do if [ -d $$i ] ; \
+	     then echo copying auxiliary files made for package $$i ; \
+		  tar cf - $$i | tar xfp - -C @packagesdir@ || exit 1 ; \
+	     fi ; \
+	     if [ -d @srcdir@/$$i ] ; \
+	     then echo copying auxiliary files for package $$i ; \
+		  tar cf - --exclude-vcs -C @srcdir@ $$i | tar xfp - -C @packagesdir@ || exit 1 ; \
+	     fi ; \
+	  done 
 
 clean::; rm -rf tmp *.installed
 
@@ -90,13 +66,13 @@ Makefile: Makefile.in; cd ../..; ./config.status Macaulay2/packages/Makefile
 distclean::; rm -f Makefile
 
 ## here is the list of other files to install along with Macaulay2
-install :: @encapdir@/@packagesdirtail@/eliminate.m2 @encapdir@/@packagesdirtail@/D-modules.m2
-@encapdir@/@packagesdirtail@/eliminate.m2 : eliminate.m2 ; cp $^ "$@"
-@encapdir@/@packagesdirtail@/D-modules.m2 : D-modules.m2 ; cp $^ "$@"
+pre-install :: @packagesdir@/eliminate.m2 @packagesdir@/D-modules.m2
+@packagesdir@/eliminate.m2 : eliminate.m2 ; cp $^ "$@"
+@packagesdir@/D-modules.m2 : D-modules.m2 ; cp $^ "$@"
 
 # this one we need for compatibility with the book
-install :: @encapdir@/@packagesdirtail@/LLL.m2
-@encapdir@/@packagesdirtail@/LLL.m2 : LLL.m2 ; cp $^ "$@"
+pre-install :: @packagesdir@/LLL.m2
+@packagesdir@/LLL.m2 : LLL.m2 ; cp $^ "$@"
 
 # Local Variables:
 # compile-command: "make -C $M2BUILDDIR/Macaulay2/packages "

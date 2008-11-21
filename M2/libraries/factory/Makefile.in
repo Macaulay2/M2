@@ -28,6 +28,11 @@ Makefile : @srcdir@/Makefile.in ; cd ../.. && ./config.status libraries/factory/
 #      #include <wchar.h>
 #    }
 
+uninstall clean ::
+	cd $(LIBRARIESDIR) && rm -rf \
+		include/factory.h include/factoryconf.h include/cf_gmp.h include/templates/ftmpl_* \
+		lib/libcf.a lib/libcfmem.a
+
 # Local Variables:
 # compile-command: "make -C $M2BUILDDIR/libraries/factory "
 # End:

@@ -69,8 +69,8 @@ document {
      system that has to be told, since otherwise M2 can't even start up.  Hopefully, the missing shared libraries
      are located in ", TT "/foo/bar/lib", ", and all we have to do is to tell the operating system by
      setting the environment variable ", TT "LD_LIBRARY_PATH", ", if you are running a Unix operating system.
-     If you have down loaded a version of Macaulay 2 that comes with dynamically loaded libraries of its own,
-     they will be in the directory ", TT concatenate("/foo/bar/",LAYOUT#"libm2"), ".
+     If you have downloaded a version of Macaulay 2 that comes with dynamically loaded libraries of its own,
+     they will be in the directory ", TT concatenate("/foo/bar/",Layout#1#"libraries","lib/"), ".
      After setting ", TT "LD_LIBRARY_PATH", " temporarily you may use ", TO "setup", " to record the correct value in your 
      system start up files.",
      PARA {"Alternatively, you may be getting something like this:"},
@@ -899,7 +899,7 @@ document {
      It also provides for dynamic completion of symbols in the language.",
      PARA{},
      "There is an ASCII version of this section of the documentation distributed
-     in the file ", TT (LAYOUT#"emacs" | "M2-emacs-hlp.txt"), ". It might be useful for you to visit
+     in the file ", TT (Layout#1#"emacs" | "M2-emacs-hlp.txt"), ". It might be useful for you to visit
      that file with emacs now, thereby avoiding having to cut and paste bits of
      text into emacs buffers for the deomonstrations below.",
      PARA{},
@@ -1078,25 +1078,23 @@ document {
      program, which is provided to it as the argument in position number 0 on the command line.  If it's not an absolute path, it searches
      along the path of directories mentioned in the environment variable PATH until it finds a file with the same name.  If the
      result is a symbolic link, the link is followed.  The final
-     result is assumed to be in a directory named \"", TT LAYOUT#"bin", "\", and the
+     result is assumed to be in a directory named \"", TT Layout#1#"bin", "\", and the
      startup files are located relative to that.  The path to the top level directory is stored in the variable
      ", TO "prefixDirectory", ", which you can examine to see whether it all worked out.
      For detailed information about the relative location of Macaulay 2 files,
-     see ", TO "LAYOUT", ".  Special arrangements are made during compilation to allow the program to be run and
-     tested; see ", TO "buildHomeDirectory", " and ", TO "sourceHomeDirectory", ".",
+     see ", TO "Layout", ".",
      PARA{},
-     "A possible data memory dump file may be located in the directory ", TT LAYOUT#"cache", " and loaded with ", TO "loaddata", ".
-     If the file is present and and loading it works, then startup will be quicker.  If it's absent then the necessary setup files will be loaded instead;
+     "A possible data memory dump file may be located in the directory ", TT replace("PKG","Core",Layout#1#"packagecache"), " 
+     and loaded with ", TO "loaddata", ".  If the file is present and and loading it works, then startup will be quicker.  
+     If it's absent then the necessary setup files will be loaded instead;
      if problems with it are encountered, it is always safe to delete it.
      The name of the file data dump file is of the form \"Macaulay2-*-data\",
      where \"*\" is replaced by the value of the environment
      variable name M2ARCH if present, or else is a value computed at compile time and
      stored in the hash table called ", TO "version", " and accessible as ", TT "version#\"architecture\"", ".",
      Subnodes => {
-	  TO "LAYOUT",
-     	  TO "prefixDirectory",
-	  TO "buildHomeDirectory",
-	  TO "sourceHomeDirectory"
+	  TO "Layout",
+     	  TO "prefixDirectory"
 	  }
      }
 

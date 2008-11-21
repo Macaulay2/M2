@@ -10,7 +10,7 @@ CONFIG_MAKEFILE = loaded
 all::
 
 # the usual phony targets
-.PHONY : all check initialize clean distclean install always reconfigure
+.PHONY : all check initialize clean distclean install pre-install always reconfigure
 
 # cygwin 'make' might get confused by setting SHELL
 # SHELL = @SHELL@
@@ -40,17 +40,30 @@ prefix = @prefix@
 # override them on the "configure" command line instead:
 exec_prefix = @exec_prefix@
 datarootdir = @datarootdir@
+abs_top_srcdir = @abs_top_srcdir@
 docdir = @docdir@
 INSTALL = @INSTALL@
 ##
 
-BUILTLIBPATH = @TOPDIR@/libraries/final@FINALPREFIX@/@librariesdirtail@
-CPPFLAGS := -I$(BUILTLIBPATH)/include $(CPPFLAGS)
+M2DIRS = --srcdir "@abs_top_builddir@" --srcdir "@abs_top_srcdir@"
+
+ifeq (@CC@-@ISYSTEM@,gcc-yes)
+IFLAG = -isystem
+else
+IFLAG = -I
+endif
+
+FINALLIBPATH = @librariesdir@
+BUILTLIBPATH = @abs_top_builddir@/libraries/final
+CPPFLAGS := \
+	 $(IFLAG)@abs_top_srcdir@/include \
+	 $(IFLAG)@abs_top_builddir@/include \
+	 $(IFLAG)$(BUILTLIBPATH)/include \
+	 $(CPPFLAGS)
 LDFLAGS := -L$(BUILTLIBPATH)/lib $(LDFLAGS)
 LD_LIBRARY_PATH := $(BUILTLIBPATH)/lib:$(LD_LIBRARY_PATH)
 export LD_LIBRARY_PATH
 
-FINALLIBPATH = @FINALPREFIX@/@librariesdirtail@
 
 AR = ar
 
@@ -93,3 +106,7 @@ endif
 
 # MKDIR_P = @ MKDIR_P @
 MKDIR_P = @INSTALL@ -d
+
+# Local Variables:
+# compile-command: "make -C $M2BUILDDIR include/config.Makefile"
+# End:

@@ -3,27 +3,26 @@ include ../../include/config.Makefile
 VPATH = @srcdir@
 LD_LIBRARY_PATH := $(BUILTLIBPATH)/lib:$(LD_LIBRARY_PATH)
 export LD_LIBRARY_PATH
-ARGS = -q --silent --stop -e errorDepth=0
-.PHONY : all clean distclean install check default
-MADEDIRS = @encapdir@/@emacsdirtail@
-MADEFILES = M2-symbols.el M2-symbols M2-emacs-hlp.txt M2-emacs.m2
-all::; x=; for i in $(MADEFILES) ; do test -f $$i || x=x ; done ; if test "$$x"; then $(MAKE) $(MADEFILES); fi
-install:: $(MADEFILES)
-clean::; rm -f $(MADEFILES)
-M2-symbols M2-symbols.el : makesyms.m2 ../m2/exports.m2 ../bin/M2@EXE@; ../bin/M2@EXE@ $(ARGS) @srcdir@/makesyms.m2 -e 'exit 0' </dev/null
-M2-emacs-hlp.txt: makehlp.m2 ../bin/M2@EXE@; ../bin/M2@EXE@ $(ARGS) @srcdir@/makehlp.m2 -e 'exit 0' </dev/null
-M2-emacs.m2: makem2.m2 ../bin/M2@EXE@; ../bin/M2@EXE@ $(ARGS) @srcdir@/makem2.m2 -e 'exit 0' </dev/null
-distclean:: clean; rm -f Makefile
-$(MADEDIRS) :; @INSTALL@ -d "$@"
-install:: $(MADEDIRS)
-all    :: M2-mode.el M2.el M2-symbols.el M2-init.el
-install:: M2-mode.el M2.el M2-symbols.el M2-init.el; @INSTALL_DATA@ $^ @encapdir@/@emacsdirtail@
-install:: @encapdir@/@emacsdirtail@
-install:: M2-emacs-hlp.txt M2-emacs.m2 M2-README; @INSTALL_DATA@ $^ @encapdir@/@emacsdirtail@
+ARGS = -q --silent --stop -e errorDepth=0 $(M2DIRS)
+prefix := @pre_prefix@
+MADEFILES = M2-symbols.el M2-emacs-hlp.txt M2-emacs.m2
+SRCFILES = M2-mode.el M2.el M2-README
+clean::; rm -f $(MADEFILES) M2-symbols @emacsdir@/M2*
+M2-symbols @emacsdir@/M2-symbols.el : makesyms.m2 ../m2/exports.m2 @pre_exec_prefix@/bin/M2@EXE@
+	@pre_exec_prefix@/bin/M2@EXE@ $(ARGS) @srcdir@/makesyms.m2 -e 'exit 0' </dev/null
+M2-emacs-hlp.txt: makehlp.m2 @pre_exec_prefix@/bin/M2@EXE@; @pre_exec_prefix@/bin/M2@EXE@ $(ARGS) @srcdir@/makehlp.m2 -e 'exit 0' </dev/null
+M2-emacs.m2: makem2.m2 @pre_exec_prefix@/bin/M2@EXE@; @pre_exec_prefix@/bin/M2@EXE@ $(ARGS) @srcdir@/makem2.m2 -e 'exit 0' </dev/null
+distclean :: clean; rm -f Makefile
+all:: $(MADEFILES)
+@emacsdir@ :; @INSTALL@ -d "$@"
+pre-install:: @emacsdir@
+pre-install:: $(addprefix @emacsdir@/, $(SRCFILES) $(MADEFILES) M2-init.el)
+verify: $(addprefix @emacsdir@/, $(SRCFILES) $(MADEFILES) M2-init.el) $(SRCFILES) $(MADEFILES) M2-init.el; ls -lrt $^
+@emacsdir@/% : % ; @INSTALL_DATA@ $^ @emacsdir@
 Makefile : Makefile.in; cd ../..; ./config.status Macaulay2/emacs/Makefile
 all:: M2-init.el
 M2-init.el : M2-init.el.in; cd ../..; ./config.status Macaulay2/emacs/M2-init.el
-clean::; rm -rf M2-init.el
+distclean::; rm -rf M2-init.el
 
 # Local Variables:
 # compile-command: "make -C $M2BUILDDIR/Macaulay2/emacs "

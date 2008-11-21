@@ -1,4 +1,4 @@
-#include "config.h"
+#include <M2/config.h>
 #include <factor.h>		/* to get version number of libfac */
 
 extern "C" {

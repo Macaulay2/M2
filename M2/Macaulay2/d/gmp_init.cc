@@ -1,4 +1,4 @@
-#include "config.h"
+#include <M2/config.h>
 #include <gc/gc.h>
 
 #include "gmp_init.h"

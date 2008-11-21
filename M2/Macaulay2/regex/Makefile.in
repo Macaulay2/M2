@@ -4,7 +4,7 @@ CFILES = regex.c
 all :: $(CFILES:.c=.o)
 include ../../include/config.Makefile
 CPPFLAGS := -I@srcdir@ $(CPPFLAGS)
-.PHONY : all clean distclean install tar check tags
+.PHONY : tags
 CPPFLAGS += \
 	-Dre_compile_fastmap=M2_re_compile_fastmap \
 	-Dre_compile_pattern=M2_re_compile_pattern \

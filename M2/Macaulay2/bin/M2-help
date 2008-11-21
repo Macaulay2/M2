@@ -1,2 +1,0 @@
-#! /bin/sh
-${WWBROWSER:-firefox} "$HOME/.Macaulay2/index.html"

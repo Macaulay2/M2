@@ -8,15 +8,16 @@ include ../Makefile.filenames
 TAROPTIONS = --owner=0 --group=0 --mode=a+rX,og-ws
 .PHONY : prepare
 ############################## main targets
-all install :: tidy_before
-all install :: ../../@PKG_DEB@ ../../@PKG_COM_DEB@
+pre-install ::
+all pre-install :: tidy_before
+all pre-install :: ../../@PKG_DEB@ ../../@PKG_COM_DEB@
 	@ echo "============================================================================="
 	@ echo "package files prepared:"
 	@ echo "        @PKG_DEB@"
 	@ echo "        @PKG_COM_DEB@"
 	@ echo "============================================================================="
 ifeq ($(TIDY),yes)
-all install :: tidy_after
+all pre-install :: tidy_after
 endif
 #################################
 
@@ -26,10 +27,6 @@ endif
 
 ifneq (@OPTIMIZE@,yes)
 $(error expected --enable-optimize, in order to make a ubuntu package)
-endif
-
-ifneq (@ENCAP@,yes)
-$(error expected --enable-encap, in order to make a ubuntu package)
 endif
 
 ../../@PKG_DEB@ : @srcdir@/macaulay2/debian-binary macaulay2/control.tar.gz macaulay2/data.tar.gz
@@ -67,8 +64,8 @@ prepare : ../../$(PKG_TZ) ../../$(PKG_COM_TZ)
 	rmdir @package@
 	$(MKDIR_P) tmp@FINALPREFIX@/share/doc/macaulay2
 	$(MKDIR_P) tmp-common@FINALPREFIX@/share/doc/macaulay2-common
-	cp tmp-common@FINALPREFIX@/@docpackagesdirtail@/README tmp@FINALPREFIX@/share/doc/macaulay2/copyright
-	cp tmp-common@FINALPREFIX@/@docpackagesdirtail@/README tmp-common@FINALPREFIX@/share/doc/macaulay2-common/copyright
+	cp tmp-common@FINALPREFIX@/@docdir@/README tmp@FINALPREFIX@/share/doc/macaulay2/copyright
+	cp tmp-common@FINALPREFIX@/@docdir@/README tmp-common@FINALPREFIX@/share/doc/macaulay2-common/copyright
 	gzip -9 <@srcdir@/macaulay2/changelog >tmp@FINALPREFIX@/share/doc/macaulay2/changelog.gz
 	gzip -9 <@srcdir@/macaulay2-common/changelog >tmp-common@FINALPREFIX@/share/doc/macaulay2-common/changelog.gz
 	find tmp tmp-common -name .linkdir | xargs rm -f
@@ -99,7 +96,7 @@ clean :: tidy
 distclean : clean; rm -f Makefile control
 always :
 libraries-used : .prepared always
-	ldd tmp@FINALPREFIX@/@bindirtail@/M2@EXE@ | sed -e 's/.* => //' -e 's/^	//' -e 's/ .*//' | egrep '^/' >$@ || true
+	ldd tmp@FINALPREFIX@/@bindir@/M2@EXE@ | sed -e 's/.* => //' -e 's/^	//' -e 's/ .*//' | egrep '^/' >$@ || true
 packages-used : libraries-used
 	cat libraries-used | while read x ; do find /var/lib/dpkg/info -name \*.list | xargs egrep -l "^$$x"; done | sort | uniq | sed -e 's=.*/==' -e 's=\.list$$==' >$@
 macaulay2/control : macaulay2/control.prelim macaulay2/data.tar.gz packages-used

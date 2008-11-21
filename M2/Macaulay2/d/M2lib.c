@@ -283,6 +283,8 @@ M2_string actors5_CCVERSION;
 M2_string actors5_VERSION;
 M2_string actors5_OS;
 M2_string actors5_ARCH;
+M2_string actors5_ISSUE;
+M2_string actors5_MACHINE;
 M2_string actors5_NODENAME;
 M2_string actors5_REL;
 M2_string actors5_timestamp;
@@ -390,6 +392,36 @@ static char *endianness() {
      return (char *)x;
 }
 
+static void warning(const char *s,...)
+{
+  char buf[200];
+  va_list ap;
+  va_start(ap,s);
+  vsprintf(buf,s,ap);
+  if (errno != 0)
+    fprintf(stderr,"warning: %s: %s\n", buf, strerror(errno));
+  else
+    fprintf(stderr,"warning: %s\n", buf);
+  fflush(stderr);
+  va_end(ap);
+}
+
+#include <dlfcn.h>
+
+static void call_shared_library() {
+  const char *libname = "M2.so";
+  const char *funname = "entry";
+  void *handle;
+  int (*g)();
+  errno = 0;
+  handle = dlopen(libname, RTLD_LAZY | RTLD_GLOBAL);
+  if (handle == NULL) { warning("can't load library %s", libname); return; }
+  g = dlsym(handle, funname);
+  if (g == NULL) { warning("can't link function %s from sharable library %s",funname,libname); return; }
+  g();
+  if (0 != dlclose(handle)) { warning("can't close sharable library %s",libname); return; }
+}
+
 int Macaulay2_main(argc,argv)
 int argc; 
 char **argv;
@@ -412,6 +444,8 @@ char **argv;
      extern void actors4_setupargv();
      extern void interp_process(), interp_process2();
      extern int interp_topLevel();
+
+     call_shared_library();
 
 #if HAVE_PERSONALITY && !PROFILING
      if (!gotArg("--no-personality", argv)) {
@@ -546,6 +580,8 @@ char **argv;
      actors5_VERSION = tostring(PACKAGE_VERSION);
      actors5_OS = tostring(OS);
      actors5_ARCH = tostring(ARCH);
+     actors5_MACHINE = tostring(MACHINE);
+     actors5_ISSUE = tostring(ISSUE);
      actors5_NODENAME = tostring(NODENAME);
      actors5_REL = tostring(REL);
      {

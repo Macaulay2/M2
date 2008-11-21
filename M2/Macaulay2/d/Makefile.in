@@ -11,7 +11,7 @@ all :: tags
 endif
 all :: compat.h
 
-all :: ../bin/M2@EXE@
+all :: @pre_exec_prefix@/bin/M2@EXE@
 	printenv LD_LIBRARY_PATH
 ifneq (@OBJDUMP@,)
 	- @OBJDUMP@ -x $< | grep RPATH
@@ -21,7 +21,7 @@ ifneq (@LDD@,)
 endif
 
 recompile :
-	rm -f ../bin/M2@EXE@
+	rm -f @pre_exec_prefix@/bin/M2@EXE@
 	$(MAKE)
 
 ## standard options
@@ -32,6 +32,12 @@ ifeq (@STATIC@,no)
 ifeq (@OS@,Linux)
 ifneq (@LIBRARIES@,)
 M2_LDFLAGS += -Wl,-rpath,$(FINALLIBPATH)/lib
+# let's put in a few of the usual places, too, just for good luck
+M2_LDFLAGS += -Wl,-rpath,/usr/local/lib/Macaulay2/Core/lib
+M2_LDFLAGS += -Wl,-rpath,/usr/lib/Macaulay2/Core/lib
+# use 
+#   objdump -x M2 | grep RPATH
+# to see if his worked
 endif
 endif
 endif
@@ -136,7 +142,7 @@ DFILES += C.d
 actors4.oo basic.oo engine.oo interface.oo objects.oo : ../e/engine.h
 
 # these files depend on USE_MYSQL, which is in config.h:
-actors4.oo actors2.oo : ../../include/config.h
+actors4.oo actors2.oo : ../../include/M2/config.h
 
 M2_OBJECTS += $(DFILES:.d=.oo) 
 SRCFILES += $(DFILES)
@@ -242,12 +248,12 @@ M2_LIBRARIES :=
 endif
 
 clean::; rm -f compat.c compat.h
-compat.c compat.h : configure ../../include/config.h
+compat.c compat.h : configure ../../include/M2/config.h
 	FLAGS="$(LDFLAGS) $(LOADLIBES) $(LDLIBS)" @srcdir@/configure
 
 M2types.o : M2types.h
 M2lib.o scclib.o : compat.h ../c/compat.h ../c/compat.c types.h
-gmp_int.o M2lib.o scclib.o gdbm_interface.o gc_cpp.o version.o M2inits.o debug.o : ../../include/config.h
+gmp_int.o M2lib.o scclib.o gdbm_interface.o gc_cpp.o version.o M2inits.o debug.o : ../../include/M2/config.h
 
 clean::; rm -f startup.c
 SSTRING := -e 's/\\/\\\\/g' -e 's/"/\\"/g' -e 's/\(.*\)/"\1\\n"/'
@@ -299,7 +305,7 @@ M2_LIBRARIES += @FCLIBS_FLAGS@
 M2_LIBRARIES += @FCLIBS_STATIC@
 
 ifeq (@MYSQL@,yes)
-M2_LIBRARIES += -lmysqlclient
+M2_LIBRARIES += -L/usr/lib/mysql -lmysqlclient
 endif
 
 ifeq "@STATIC@" "yes"
@@ -335,8 +341,9 @@ else
 M2_OBJECTS_AND_LIBRARIES := $(M2_OBJECTS_AND_LIBRARIES) gmp_memory.o 
 endif
 
-clean::; rm -f ../bin/M2@EXE@
-../bin/M2@EXE@ : $(M2_OBJECTS) $(M2_LIBDEPS) gmp_memory.o
+clean::; rm -f @pre_exec_prefix@/bin/M2@EXE@
+@pre_exec_prefix@/bin : ; $(MKDIR_P) "$@"
+@pre_exec_prefix@/bin/M2@EXE@ : $(M2_OBJECTS) $(M2_LIBDEPS) gmp_memory.o | @pre_exec_prefix@/bin
 	$(COMPILE.c) tmp_init.c -o tmp_init.o
 	time @CC@ $(M2_LDFLAGS) $(M2_OBJECTS_AND_LIBRARIES) -lm -o "$@".tmp
 ifeq "$(STRIP)" "yes"
