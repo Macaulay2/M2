@@ -1,0 +1,44 @@
+links don't quite work:
+
+  - in a package Foo, links to Foo should be redirected to Top
+
+  - links of the form
+
+    	  *note foo:bar.
+
+    might work better with a space in them
+
+    	  *note foo: bar.
+
+--
+
+This kind of menu item goes to a line number in a node:
+
+  * c-mode-hook:                           Program Modes.       (line  45)
+
+Maybe we can use it.
+
+--
+
+The last link below just looks silly:  we can have more characters as part of
+the visible name of the link, and it looks like there are two links:
+
+    File: Macaulay2Doc.info, Node: syz_lpMatrix_rp, Next: Syzygies, Prev: syz_lpGroebnerBasis_rp, Up: Top
+
+    syz(Matrix) -- compute the syzygy matrix
+    ****************************************
+
+    Synopsis
+    ========
+
+      * Usage: syz h
+      * Function: "syz"  (*note syz::)
+      * Inputs:
+	  * h, a matrix  (*note matrix:Matrix.), a matrix
+      * Outputs:
+	  * a matrix  (*note matrix:Matrix.), the matrix of minimal or trimmed
+	    generators for the syzygies among the columns of h
+      * Optional inputs  (*note Optional inputs:using functions with optional
+	inputs.):
+	  * Algorithm => default value Inhomogeneous, see "gb(..., Algorithm =>
+	    ...)"  (*note gb_lp..._cm Algorithm => ..._rp::)
