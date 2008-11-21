@@ -1,5 +1,5 @@
 AC_INIT(Macaulay 2, 1.1.1, Macaulay2@math.uiuc.edu, Macaulay2) dnl -*- autoconf -*-
-AC_CONFIG_HEADERS(include/config.h)
+AC_CONFIG_HEADERS(include/M2/config.h)
 AC_CONFIG_FILES(m4_include(config/files))
 AC_SUBST(CONFIGURED_FILES,"$ac_config_files")
 AC_SUBST(CONFIG_ARGS,"$ac_configure_args")
@@ -75,8 +75,6 @@ then AC_MSG_CHECKING(whether $STRIPCMD accepts the remove-section option)
      AC_SUBST(STRIP_REMOVE_SECTION,$val)
 fi
 
-AC_SUBST(TOPDIR,`pwd`)
-
 AC_MSG_CHECKING("checking whether $MAKE is GNU make")
 if "$MAKE" -n --version nothing | grep GNU >/dev/null 2>&1
 then AC_MSG_RESULT(yes)
@@ -120,6 +118,8 @@ case $OS in
   dnl needs to know that C:/FOO/BAR is an absolute path.
   CYGWIN*) OS=MicrosoftWindows ; ISSUE=Cygwin ;;
 esac
+
+AC_DEFINE_UNQUOTED(ISSUE,"$ISSUE",[distribution and issue of operating system])
 
 AC_MSG_NOTICE([operating system to be used in distribution file names: $OS])
 AC_MSG_NOTICE([issue to be used in distribution file names: $ISSUE])
@@ -392,19 +392,6 @@ AC_SUBST(PACKAGES,"
   Text
 ")
 
-AC_SUBST(UNTESTEDPACKAGES,"FourTiTwo StatePolytope")
-AC_ARG_WITH(untested-packages, AS_HELP_STRING(--with-untested-packages=...,specify the names of the packages not to test and whose examples should not be run ($UNTESTEDPACKAGES)), UNTESTEDPACKAGES=$withval)
-
-# compute the tested packages
-AC_SUBST(TESTEDPACKAGES)
-UNTESTEDPACKAGES=" $UNTESTEDPACKAGES "
-for i in $PACKAGES
-do case $UNTESTEDPACKAGES in
-   *" $i "*) ;;
-   *) TESTEDPACKAGES="$TESTEDPACKAGES $i" ;;
-   esac
-done
-
 # convert the newlines in the list above to spaces
 PACKAGES=`echo $PACKAGES`
 
@@ -414,8 +401,8 @@ AC_DEFINE_UNQUOTED(buildsystemtype,"$build",the type of system on which the pack
 AC_DEFINE_UNQUOTED(hostsystemtype,"$host",the type of system on which the package runs)
 
 case $host in
-   i486-*|i586-*|i686-*)
-	newhost=`echo $host | sed s/i.86-/i386-/`
+   i586-*|i686-*)
+	newhost=`echo $host | sed s/i.86-/i486-/`
 	AC_MSG_NOTICE([warning: building for host $host might not be compatible enough, consider using option "--build=$newhost"]) ;;
 esac
 
@@ -475,7 +462,7 @@ if test "$CYGWIN" = yes
 then if test "$DEBUG$" = yes
      then AC_MSG_ERROR([--enable-cygwin and --enable-debug both specified])
      fi
-     ENCAP=yes M2TARFILE=yes
+     M2TARFILE=yes
      if ! test "$SRCTARFILE" -o -d "$srcdir/.svn"
      then AC_MSG_ERROR([source tar file needed for cygwin distribution, specify it with --with-srctarfile=...])
      fi
@@ -483,15 +470,15 @@ fi
 
 AC_SUBST(DEB,no)
 AC_ARG_ENABLE(deb,  AS_HELP_STRING(--enable-deb,prepare a *.deb package (for debian, ubuntu, ...) (enables encap)), DEB=$enableval)
-test "$DEB" = yes && ENCAP=yes M2TARFILE=yes
+test "$DEB" = yes && M2TARFILE=yes
 
 AC_SUBST(RPM,no)
 AC_ARG_ENABLE(rpm,  AS_HELP_STRING(--enable-rpm,prepare a *.rpm package (for red hat based systems) (enables encap)), RPM=$enableval)
-test "$RPM" = yes && ENCAP=yes M2TARFILE=yes
+test "$RPM" = yes && M2TARFILE=yes
 
 AC_SUBST(DMG,no)
 AC_ARG_ENABLE(dmg,  AS_HELP_STRING(--enable-dmg,prepare a *.dmg package (for Mac OS) (enables encap)), DMG=$enableval)
-test "$DMG" = yes && ENCAP=yes M2TARFILE=yes
+test "$DMG" = yes && M2TARFILE=yes
 
 AC_SUBST(M2SUFFIX,)
 test "$program_suffix" != NONE && M2SUFFIX=$program_suffix
@@ -698,7 +685,7 @@ test $BUILD_ntl = yes && BUILTLIBS="-lntl $BUILTLIBS"
 AC_ARG_WITH(veclib, AS_HELP_STRING(--with-veclib,[use "-framework vecLib" for lapack]), LIBS="-framework vecLib $LIBS" )
 
 AC_SUBST(MYSQL,no)
-AC_ARG_WITH(mysql, AS_HELP_STRING(--with-mysql,[compile and link with mysql]), MYSQL=$withval LDFLAGS="$LDFLAGS -L/usr/lib/mysql")
+AC_ARG_WITH(mysql, AS_HELP_STRING(--with-mysql,[compile and link with mysql]), MYSQL=$withval)
 test "$MYSQL" = no; USE_MYSQL=$?
 AC_DEFINE_UNQUOTED(USE_MYSQL,$USE_MYSQL,[whether to link with the mysql library])
 
@@ -803,13 +790,40 @@ test $BUILD_lapack = yes && BUILTLIBS="-llapack -lblas $BUILTLIBS"
 SAVELIBS=$LIBS
 
 AC_SUBST(FINALPREFIX,/usr)
-AC_ARG_WITH(final-prefix,
-    AS_HELP_STRING(--with-final-prefix=...,final installation prefix (/usr) (used by libtool and our installation scripts)),
-    FINALPREFIX=$withval)
+AC_ARG_WITH(final-prefix,AS_HELP_STRING(--with-final-prefix=...,prefix for installation of architecture-independent files (/usr)),FINALPREFIX=$withval)
 case $FINALPREFIX in
     /*) ;;
     *) AC_MSG_ERROR(final prefix should begin with /) ;;
 esac
+
+AC_SUBST(FINALEXECPREFIX,$FINALPREFIX)
+AC_ARG_WITH(final-exec-prefix,AS_HELP_STRING(--with-final-exec-prefix=...,prefix for installation of architecture-dependent files (/usr)),FINALEXECPREFIX=$withval)
+case $FINALEXECPREFIX in
+    /*) ;;
+    *) AC_MSG_ERROR(final exec prefix should begin with /) ;;
+esac
+
+[
+a=`echo $FINALEXECPREFIX/ | sed s,///*,/,g`
+b=`echo $FINALPREFIX/ | sed s,///*,/,g`
+while
+  case $a in
+  */*) a1=`echo $a | sed 's,/.*,/*,'`
+       case $b in
+	 $a1)
+	    a=`echo $a | sed 's,[^/]*/,,'`
+	    b=`echo $b | sed 's,[^/]*/,,'`
+	    true ;; 
+	 *) false ;; 
+       esac 
+       ;;
+  *) false ;;
+  esac
+do :; done
+a=`echo $a | sed 's,[^/][^/]*,..,'g`
+]
+AC_SUBST(TOCOMMON,$a$b)
+AC_DEFINE_UNQUOTED(TOCOMMON,"$TOCOMMON",[the relative path from the exec prefix to the prefix])
 
 AC_SUBST(NM_DEMANGLES,)
 AC_MSG_CHECKING(whether nm accepts the demangle option)
@@ -898,10 +912,6 @@ fi
 
 AC_SUBST(package,Macaulay2-$PACKAGE_VERSION)
 AC_SUBST(encapdir,)
-if test "$ENCAP" = yes
-then encapdir="\${prefix}/$package"
-else encapdir="\${prefix}"
-fi
 AC_SUBST(EXE,$M2SUFFIX$EXEEXT)
 
 AC_SUBST(DESC,$PACKAGE_VERSION-$host_cpu-$OS-$REL)
@@ -936,13 +946,6 @@ do case $i in
    esac
 done
 
-# Here we compute the relative positions of various subdirectories with respect to ${prefix}, so we can record the layout
-# of the directory tree, and check that the subdirectories specified are within the tree.
-AC_SUBST(bindirtail,) AC_SUBST(datadirtail,) AC_SUBST(datarootdirtail,) AC_SUBST(docdirtail,) AC_SUBST(dvidirtail,)
-AC_SUBST(htmldirtail,) AC_SUBST(includedirtail,) AC_SUBST(infodirtail,) AC_SUBST(libdirtail,) AC_SUBST(libexecdirtail,)
-AC_SUBST(localedirtail,) AC_SUBST(localstatedirtail,) AC_SUBST(mandirtail,) AC_SUBST(pdfdirtail,)
-AC_SUBST(psdirtail,) AC_SUBST(sbindirtail,) AC_SUBST(sharedstatedirtail,) AC_SUBST(sysconfdirtail,)
-
 AC_MSG_NOTICE([using LIBRARIES    = $LIBRARIES (libraries to be built from downloaded sources)])
 AC_MSG_NOTICE([using BUILTLIBS    = $BUILTLIBS])
 AC_MSG_NOTICE([using SINGULARLIBS = $SINGULARLIBS])
@@ -957,7 +960,10 @@ fi
 
 # Here we insert autoconf's default values so we can compute the relative locations in the directory tree
 test "$prefix" || prefix=/usr/local
-test "$exec_prefix" = NONE && exec_prefix='${prefix}'
+if test "$ENCAP" = yes
+then prefix="$prefix/$package"
+     AC_MSG_NOTICE([encap enabled, changing prefix to $prefix])
+fi
 
 # these are the variables that make their way into autoconf after version 2.59
 test "$datarootdir" || AC_SUBST(datarootdir,'${prefix}/share')
@@ -968,28 +974,62 @@ test "$pdfdir"      || AC_SUBST(pdfdir,'${docdir}')
 test "$psdir"       || AC_SUBST(psdir,'${docdir}')
 test "$localedir"   || AC_SUBST(localedir,'${datarootdir}/locale')
 
-
+# Here we normalize all the configure variables so each one begins either with ${prefix} or with ${exec_prefix},
+# so they can be handled more simply in Macaulay2, by a single text replacement.
+case $prefix in
+  *,*) AC_MSG_ERROR([expected "\${prefix}" => "$prefix" to contain no comma]) ;;
+esac
+case $exec_prefix in
+  *,*) AC_MSG_ERROR([expected "\${exec_prefix}" => "$exec_prefix" to contain no comma]) ;;
+esac
+# put docdir and datarootdir at end, because we are changing the values of the variables, and
+# other variables depend on them
 for i in bindir datadir includedir infodir libdir libexecdir localstatedir mandir sbindir \
-         sharedstatedir sysconfdir datarootdir psdir pdfdir docdir dvidir htmldir localedir
+         sharedstatedir sysconfdir psdir pdfdir dvidir htmldir localedir docdir datarootdir
 do eval w=\$$i ; eval v="$w" ; eval v="$v" ; eval v="$v" ; eval v="$v" ; eval v="$v"
    case $v in
-     "$prefix" | "$prefix"/) eval ${i}tail="$prefix" ;;
-     "$prefix"/*) eval ${i}tail=`echo $v | sed "s,^$prefix/,,"` ;; # let's just hope $prefix contains no comma
-     *) AC_MSG_ERROR(expected "$i" value "$w" to start with "prefix" value "$prefix") ;;
+     "$exec_prefix"|"$exec_prefix"/*)
+	   eval ${i}=`echo $v | sed s,"^$exec_prefix","'\\${exec_prefix}'",`
+	   ;; dnl # assume $exec_prefix contains no comma
+     "$prefix"|"$prefix"/*)
+	   eval ${i}=`echo $v | sed s,"^$prefix","'\\${prefix}'",`
+	   ;; dnl # assume $prefix contains no comma
+     *) AC_MSG_ERROR([expected "\${$i}" => "$w" => "$v"
+           to start with "\${prefix}" => "$prefix"
+	   or with "\${exec_prefix}" => "$exec_prefix"]) ;;
    esac
 done
 
-AC_SUBST(docdirtail,$datadirtail/doc)
-AC_SUBST(packagesdirtail,$datadirtail/Macaulay2)
-AC_SUBST(docpackagesdirtail,$docdirtail/Macaulay2)
-AC_SUBST(libm2dirtail,$libdirtail/Macaulay2)
-AC_SUBST(man1dirtail,$mandirtail/man1)
-AC_SUBST(man3dirtail,$mandirtail/man3)
-AC_SUBST(emacsdirtail,$datadirtail/emacs/site-lisp)
-AC_SUBST(librariesdirtail,$libm2dirtail/Core)
-AC_SUBST(coredatadirtail,$packagesdirtail/Core)
-AC_SUBST(corem2srcdirtail,$coredatadirtail/m2)
-AC_SUBST(corecachedirtail,$libm2dirtail/Core/cache)
+AC_SUBST(MACHINE,"$ARCH-$OS-$ISSUE")
+AC_DEFINE_UNQUOTED(MACHINE,"$MACHINE",[complete machine description (to appear in name of tar file)])
+
+AC_SUBST(STAGINGAREA,StagingArea)
+AC_ARG_WITH(staging-area,AS_HELP_STRING(--with-staging-area=...,directory for pre-installation of files (StagingArea)),STAGINGAREA=$withval)
+AC_ARG_ENABLE(common-staging-area,AS_HELP_STRING(--enable-common-staging-area,use a common staging area),
+    if test "$STAGINGAREA" != StagingArea
+    then AC_MSG_ERROR(--with-staging-area and --enable-common-staging-area options both provided)
+    fi
+    STAGINGAREA=\${abs_top_srcdir}/BUILD/StagingArea dnl # this depends on config.Makefile.in setting abs_top_srcdir
+    )
+[
+case `pwd` in
+  .) ;;
+  *)
+    case "$STAGINGAREA" in
+      [\\/]* | ?:[\\/]* | '${abs'* );;
+      .) STAGINGAREA=`pwd`;;
+      *) STAGINGAREA=`pwd`/"$STAGINGAREA";;
+    esac;;
+esac
+]
+AC_SUBST(pre_prefix,$STAGINGAREA/common) dnl # as in layout.m2.in
+AC_SUBST(pre_exec_prefix,$STAGINGAREA/$MACHINE) dnl # as in layout.m2.in
+
+AC_SUBST(packagesdir,$datadir/Macaulay2)
+AC_SUBST(libm2dir,$libdir/Macaulay2)
+AC_SUBST(emacsdir,$datadir/emacs/site-lisp)
+AC_SUBST(librariesdir,$libm2dir/Core)
+AC_SUBST(packagecacheCore,$libm2dir/Core/cache)
 
 AC_OUTPUT()
 

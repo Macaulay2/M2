@@ -1,8 +1,7 @@
 # @configure_input@
-justM2 all default :: initialize phase1
-quick-install : justM2 install
+all :: initialize phase1
 include ../../include/config.Makefile
-VPATH = @srcdir@
+VPATH = @srcdir@ @srcdir@/../d
 srcdir = $(shell cd @srcdir@; /bin/pwd)
 all:: VERSION
 all:: initialize
@@ -13,7 +12,7 @@ LD_LIBRARY_PATH := $(BUILTLIBPATH)/lib:$(LD_LIBRARY_PATH)
 export LD_LIBRARY_PATH
 ##############################
 .SUFFIXES: .m2
-.PHONY: clean all install html distclean check default initialize prep always tags install-tmp
+.PHONY: html initialize prep tags install-tmp
 # there is a parallel list of tutorials in overview3.m2
 DUMPEDM2FILES := setup.m2 startup.m2
 DUMPEDM2DOCFILES := \
@@ -57,8 +56,8 @@ install.m : install.m2.in ; cd ../.. && ./config.status Macaulay2/m2/install.m2
 MADEM2FILES += tvalues.m2
 TVFILES := $(shell cd @srcdir@/../d && egrep -l -e "-- . typical value: " *.d)
 all :: tvalues.m2
-tvalues.m2 : always
-	(cd @srcdir@/../d && egrep -e "-- . typical value: " $(TVFILES) | sed 's/.*-- . typical value: \(.*\)/typval(\1)/') >$@
+tvalues.m2 : $(TVFILES)
+	(cd @srcdir@/../d && egrep -e "-- . typical value: " $^ | sed 's/.*-- . typical value: \(.*\)/typval(\1)/') >$@
 ############################## installedpackages.m2
 INSTALLEDPACKAGES := $(shell cat @srcdir@/installedpackages)
 MADEM2FILES += installedpackages.m2
@@ -72,8 +71,7 @@ OTHERDUMPEDM2FILES += \
 ##############################
 DUMPEDM2FILES += $(MADEM2FILES)
 #################################
-default:: 
-all default justM2:: tags
+all :: tags
 tags: Makefile @srcdir@/TAGS @srcdir@/TAGS.doc
 clean::; rm -f TAGS @srcdir@/TAGS @srcdir@/TAGS.doc
 @srcdir@/TAGS: \
@@ -81,7 +79,7 @@ clean::; rm -f TAGS @srcdir@/TAGS @srcdir@/TAGS.doc
 		$(NONDOCM2FILES) \
 		installedpackages \
 		$(OTHERM2FILES) \
-		$(shell find @srcdir@/../packages -name "*.m2" -a -not -name .\#\* -o -name examples -prune | grep -v Macaulay2Doc/examples | sort) \
+		$(shell find @srcdir@/../packages -name "*.m2" -a -not -name .\#\* | sort) \
 		../e/statuscodes \
 		../emacs/makehlp.m2 \
 		../emacs/makem2.m2 \
@@ -118,7 +116,7 @@ clean::; rm -f TAGS @srcdir@/TAGS @srcdir@/TAGS.doc
 	@echo making $@ : $^
 	@ set -e ; \
 	  cd @srcdir@ && \
-	  find ../packages/Macaulay2Doc -name '*.m2' -o -name examples -prune | grep -v Macaulay2Doc/examples | while read i ; do echo  ; echo $$i,0 ; done >TAGS.doc
+	  find ../packages/Macaulay2Doc -name '*.m2' | while read i ; do echo  ; echo $$i,0 ; done >TAGS.doc
 clean::; rm -f TAGS.doc
 prep :: $(DUMPEDM2FILES)
 
@@ -126,25 +124,25 @@ phase1 :: prep
 
 ifneq "@DUMPDATA@" "no"
 phase1 :: ../cache/@DUMPDATAFILE@
-../cache/@DUMPDATAFILE@ redump : $(DUMPEDM2FILES) $(DUMPEDM2DOCFILES) ../bin/M2@EXE@ $(OTHERDUMPEDM2FILES)
+../cache/@DUMPDATAFILE@ redump : $(DUMPEDM2FILES) $(DUMPEDM2DOCFILES) @pre_exec_prefix@/bin/M2@EXE@ $(OTHERDUMPEDM2FILES)
 	rm -f ../cache/@DUMPDATAFILE@
-	../bin/M2@EXE@ -q --stop -e 'errorDepth = 0' --dumpdata
+	@pre_exec_prefix@/bin/M2@EXE@ -q --stop -e 'errorDepth = 0' $(M2DIRS) --dumpdata
 	printenv LD_LIBRARY_PATH
 endif
 
 phase1 :: ../cache/Macaulay2-made
-../cache/Macaulay2-made : $(DUMPEDM2FILES) $(DUMPEDM2DOCFILES) ../bin/M2@EXE@
+../cache/Macaulay2-made : $(DUMPEDM2FILES) $(DUMPEDM2DOCFILES) @pre_exec_prefix@/bin/M2@EXE@
 	touch $@
 
 ## .gdbinit
-justM2 all:: .gdbinit .gdb-files .gdb-run-it
-gdb: .gdbinit .gdb-files; gdb ../bin/M2@EXE@
+all:: .gdbinit .gdb-files .gdb-run-it
+gdb: .gdbinit .gdb-files; gdb @pre_exec_prefix@/bin/M2@EXE@
 .gdbinit: .gdbinit.$(USER); cp $< $@
 .gdbinit.$(USER):; touch $@
 clean::; rm -f .gdbinit
 .gdb-files: Makefile
 	echo 'echo -- loading .gdb-files\n' >$@
-	echo 'file ../bin/M2@EXE@' >>$@
+	echo 'file @pre_exec_prefix@/bin/M2@EXE@' >>$@
 clean :: ; rm -f .gdb-files
 .gdb-run-it: Makefile
 	echo 'echo -- loading .gdb-run-it\n' >$@
@@ -152,7 +150,7 @@ clean :: ; rm -f .gdb-files
 	echo 'run -q --no-loaddata --no-readline --no-personality' >>$@
 clean :: ; rm -f .gdb-run-it
 profile : gmon.out
-	gprof ../bin/M2@EXE@ >profile
+	gprof @pre_exec_prefix@/bin/M2@EXE@ >profile
 clean ::; rm -f profile
 
 ifeq "@DEBUG@" "yes"
@@ -160,48 +158,34 @@ EGFLAGS = -k
 EGMORE = || true
 endif
 
-
-$(htmldocdir) : ; install -d $@
-
 TMPDIR = tmp
-
 check:: $(TMPDIR) test2
 $(TMPDIR) :; mkdir $@
-test2: phase1 ../bin/M2@EXE@
+test2: phase1 @pre_exec_prefix@/bin/M2@EXE@
 	$(MAKE) -k -C $(TMPDIR) -f $(srcdir)/Makefile.tests srcdir=$(srcdir)
 	touch $@
 clean::; rm -f test2
 
 check:: test3
 test3:
-	echo 2+3 | ../bin/M2@EXE@
+	echo 2+3 | @pre_exec_prefix@/bin/M2@EXE@
 	touch $@
 clean::; rm -f test3
 
 ifeq (@OS@,Linux)
 # check:: test4
 test4: ../util/screen
-	echo 2+3 | ../util/screen ../bin/M2@EXE@
+	echo 2+3 | ../util/screen @pre_exec_prefix@/bin/M2@EXE@
 	touch $@
 clean::; rm -f test4
 endif
 
-install:: @encapdir@/@packagesdirtail@
-@encapdir@/@packagesdirtail@ :
-	@INSTALL@ -d @encapdir@/@packagesdirtail@
-
-install:: $(DUMPEDM2FILES) demo1.m2 VERSION
-	@INSTALL@ -d "@encapdir@/@corem2srcdirtail@"
-	@INSTALL_DATA@ $^ "@encapdir@/@corem2srcdirtail@"
-
-ifeq "@ENCAP@" "yes"
-ENCAPVALUE = true
-else 
-ENCAPVALUE = false
-endif
-
-install:: all
-
+prefix := @pre_prefix@
+@packagesdir@ :; @INSTALL@ -d $@
+@packagesdir@/Core  : ; @INSTALL@ -d $@
+@packagesdir@/Core/%.m2 : %.m2 ; @INSTALL_DATA@ $^ $@
+FILES_TO_COPY := $(DUMPEDM2FILES) demo1.m2 VERSION
+pre-install :: all @packagesdir@ $(addprefix @packagesdir@/Core/, $(FILES_TO_COPY)) @packagesdir@/Core
 clean::; rm -rf ../cache/@DUMPDATAFILE@ cache *.obj *.exe runexample temp.data distfiles loads.m2 mpcodes.m2 version.m2 core gmon.out
 distclean : clean; rm -f Makefile
 always:

@@ -6,8 +6,7 @@ document {
      Headline => "the Macaulay 2 license agreement",
      "This is the text of the license agreement under which Macaulay 2 is distributed.",
      PARA{},
-     if sourceHomeDirectory =!= null then PRE separate("\f",get(sourceHomeDirectory | "COPYING"))
-     else if prefixDirectory =!= null then PRE separate("\f",get(prefixDirectory | LAYOUT#"docpackages" | "COPYING"))
+     if prefixDirectory =!= null then PRE separate("\f",get(prefixDirectory | currentLayout#"docdir" | "COPYING"))
      else (
 	  stderr << "warning: can't locate file \"COPYING\"" << endl;
 	  SPAN {"See the GNU GENERAL PUBLIC LICENSE, Version 2, June 1991, available at ", HREF "http://www.gnu.org/licenses/gpl.txt", "."}
@@ -175,7 +174,7 @@ document {
      PARA {
 	  "The absolute location of a Macaulay 2 file can be obtained by concatenating three components: (a) the
 	  prefix, which is one of the members of the list ", TO "prefixPath", "; (b) the relative location of the directory
-	  containing the file, as recorded in the hash table ", TO "LAYOUT", "; and (c) the base name of the file.
+	  containing the file, as recorded in the hash table ", TO "Layout", "; and (c) the base name of the file.
 	  The value of ", TO "prefixPath", " is used by ", TO "installPackage", " when determining how to direct
 	  documentation hyperlinks from one package to another, provided the option ", TO "AbsoluteLinks", " is set to ", TO "true", "."
 	  },
@@ -205,70 +204,59 @@ document {
 	  "The following example shows the list of places where we might find the source code of a package called ", TT "Foo", "
 	  after it has been installed by ", TO "installPackage", "."
 	  },
-     EXAMPLE ///apply(prefixPath, p -> p | LAYOUT#"packages" | "Foo.m2")///,
+     EXAMPLE ///apply(prefixPath, p -> p | Layout#1#"packages" | "Foo.m2")///,
      PARA {
      	  "This example shows the list of places where we might reasonably find the html file documenting a
 	  function named ", TT "bar", " in a package called ", TT "Foo", "."
 	  },
-     EXAMPLE ///apply(prefixPath, p -> p | LAYOUT#"packagehtml" "Foo" | "bar.html")///,
+     EXAMPLE ///apply(prefixPath, p -> p | replace("PKG","Foo",Layout#1#"packagehtml") | "bar.html")///,
      PARA {
      	  "This example shows the list of places where we might reasonably find the info file documenting a
 	  package called ", TT "Foo", "."
 	  },
-     EXAMPLE ///apply(prefixPath, p -> p | LAYOUT#"info" | "Foo.info")///,
+     EXAMPLE ///apply(prefixPath, p -> p | Layout#1#"info" | "Foo.info")///,
      SeeAlso => {"commandLine", "Invoking the program", applicationDirectory, "prefixDirectory", "path", searchPath, load, loadPackage, needsPackage}
      }
 
 document {
-     Key => "LAYOUT",
+     Key => "Layout",
      Headline => "relative locations of Macaulay 2 files",
      PARA {
-	  "The hash table ", TT "LAYOUT", " is a translation table from symbolic names to directory paths,
+	  "The hash table ", TT "Layout", " is a translation table from symbolic names to directory paths,
 	  which are to interpreted relative to the path stored in ", TO "prefixDirectory", ", or in one
 	  of the directories contained in the list ", TO "prefixPath", ".
-	  Some of the entries are strings: these provide paths to various types of files associated with
-	  the main Macaulay 2 system.  The remaining entries are functions.  These provide paths to various
-	  types of files associated with packages, and accept a string containing the name of the package
-	  as argument.  Finally, for convenience, many Macaulay 2 files are regarded as being associated
-	  with a special package called ", TO2{"Macaulay2Doc::Core", "Core"}, ", and the corresponding documentation files
-	  are part of the package ", TT "Macaulay2", "."
-     	  },
-     EXAMPLE "LAYOUT",
+	  The entries are strings: these provide paths to various types of files associated with
+	  the Macaulay 2.  
+	  All of the strings start with one of the prefixes ", TT "EXEC/", " or ", TT "COMMON/", ", which indicate whether
+	  the directory is a repository for architecture dependent files or for architecture independent files, respectively.
+	  In addition, some of the strings contain ", TT "PKG", " as a substring, which should be replayce
+	  by the name of package whose files will be stored in that directory."
+	  },
      PARA {
-	  "Let's apply the functions above to the name of a fictional package named \"", TT "FOO", "\" to see what paths are returned."
+	  "Basic Macaulay 2 files are regarded as being associated
+	  with a special package called ", TO2{"Macaulay2Doc::Core", "Core"}, ", but the corresponding documentation files
+	  are part of the package ", TT "Macaulay2Doc", "."
      	  },
-     EXAMPLE ///applyValues (LAYOUT, f -> if instance(f,Function) then f "FOO" else f)///,
-     "Here are the meanings of the keys used in ", TO "LAYOUT", ".  Some of these entries may not be in use.",
+     EXAMPLE "Layout",
+     "Here are the meanings of the keys used in ", TO "Layout", ".  Some of these entries may not be in use.",
      UL {
 	  LI { TT format "bin", " : executable files (M2)" },
-	  LI { TT format "cache", " : cached data files (used by dumpdata and loaddata)" },
 	  LI { TT format "data", " : machine independent data files, not just for Macaulay 2" },
-	  LI { TT format "datam2", " : Macaulay 2 source files (*.m2) for Macaulay 2; this directory appears on the ", TO "path" },
 	  LI { TT format "doc", " : documentation, not just for Macaulay 2" },
-	  LI { TT format "docm2", " : documentation for Macaulay 2 and its packages" },
-	  LI { TT format "docm2rel", " : documentation for Macaulay 2 itself (the Core package)" },
-	  LI { TT format "docpackages", " : documentation for Macaulay 2 packages" },
+	  LI { TT format "docdir", " : documentation for Macaulay 2 packages" },
 	  LI { TT format "emacs", " : emacs source files (*.el, *.elc)" },
-	  LI { TT format "emacsdoc", " : documentation for using Macaulay 2 itself with emacs" },
-	  LI { TT format "images", " : images for Macaulay 2 itself" },
 	  LI { TT format "info", " : documentation in info form, not just for Macaulay 2" },
 	  LI { TT format "lib", " : machine dependent data and executable files, not just for Macaulay 2" },
-	  LI { TT format "libm2", " : machine dependent data and executable files for Macaulay 2 itself" },
-	  LI { TT format "m2", " : source files for Macaulay 2 itself (the Core package: *.m2)" },
+	  LI { TT format "libraries", " : dynamically loadable libraries from third party packages linked with Macaulay 2" },
 	  LI { TT format "man", " : man pages" },
-	  LI { TT format "man1", " : man pages, section 1" },
-	  LI { TT format "man3", " : man pages, section 3" },
-	  LI { TT format "libraries", " : files associated with third party libraries linked with Macaulay 2" },
+	  LI { TT format "package", " : additional source files for the Macaulay 2 package FOO" },
 	  LI { TT format "packagecache", " : cached data files for the Macaulay 2 package FOO" },
 	  LI { TT format "packagedoc", " : documentation for the Macaulay 2 package FOO" },
 	  LI { TT format "packageexampleoutput", " : example output files for the Macaulay 2 package FOO" },
 	  LI { TT format "packagehtml", " : html documentation for the Macaulay 2 package FOO (*.html)" },
 	  LI { TT format "packageimages", " : images for the Macaulay 2 package FOO (*.jpg)" },
 	  LI { TT format "packages", " : source files for Macaulay 2 packages; this directory appears on the ", TO "path" },
-	  LI { TT format "packagesrc", " : additional source files for the Macaulay 2 package FOO" },
 	  LI { TT format "packagetests", " : test files  for the Macaulay 2 package FOO" },
-	  LI { TT format "share", " : machine independent files for Macaulay 2 itself" },
-	  LI { TT format "style", " : style files for Macaulay 2 itself" }
 	  }
      }
 
@@ -388,7 +376,7 @@ document {
 	  which in the years since its introduction in 1988 has become the pre-eminent 
 	  system for mathematics on the computer.",
 	  },
-     IMG { "src" => LAYOUT#"packagesrc" "Style" | "grayson2005.jpg", "alt" => "picture of Grayson" }
+     IMG { "src" => replace("PKG","Style",Layout#1#"package") | "grayson2005.jpg", "alt" => "picture of Grayson" }
      }
 
 document {
@@ -404,7 +392,7 @@ document {
 	  1983 to 1992 with Dave Bayer he wrote Macaulay, a specialized computer
 	  algebra system for algebraic geometry and the predecessor of this program.",
 	  },
-     IMG { "src" => LAYOUT#"packagesrc" "Style" | "stillman.jpg", "alt" => "picture of Stillman" }
+     IMG { "src" => replace("PKG","Style",Layout#1#"package") | "stillman.jpg", "alt" => "picture of Stillman" }
      }
 
 document {

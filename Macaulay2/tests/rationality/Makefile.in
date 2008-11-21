@@ -1,6 +1,6 @@
 VPATH = @srcdir@
 
-M2 = ../../bin/M2@EXE@
+M2 = @pre_exec_prefix@/bin/M2@EXE@
 ARGS = -q --stop
 ARGS += -e 'path = prepend("@srcdir@/",path)'
 

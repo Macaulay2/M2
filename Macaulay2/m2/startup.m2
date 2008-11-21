@@ -221,8 +221,6 @@ if firstTime then (
      dumpdataFile = null;
      )
 
-sourceHomeDirectory = null				    -- home directory of Macaulay 2
-buildHomeDirectory  = null	       -- parent of the directory of the executable described in command line argument 0
 prefixDirectory = null					    -- prefix directory, after installation, e.g., "/usr/local/"
 encapDirectory = null	   -- encap directory, after installation, if present, e.g., "/usr/local/encap/Macaulay2-0.9.5/"
 
@@ -260,6 +258,7 @@ notyet := arg -> if phase == 1 then (
 obsolete := arg -> error ("warning: command line option ", arg, " is obsolete")
 progname := notdir commandLine#0
 
+local dump
 usage := arg -> (
      << "usage:"             << newline
      << "    " << progname << " [option ...] [file ...]" << newline
@@ -291,6 +290,7 @@ usage := arg -> (
      << "    -q                 don't load user's init.m2 file or use packages in home directory" << newline
      << "    -E '...'           evaluate expression '...' before initialization" << newline
      << "    -e '...'           evaluate expression '...' after initialization" << newline
+     << "    --top-srcdir '...' add top source or build tree '...' to initial path" << newline
      << "environment:"       << newline
      << "    M2ARCH             a hint to find the dumpdata file as" << newline
      << "                       bin/../cache/Macaulay2-$M2ARCH-data, where bin is the" << newline
@@ -306,14 +306,6 @@ tryLoad := (ofn,fn) -> if fileExists fn then (
      markLoaded(fn,ofn,notify);
      true) else false
 
-loadSetup := () -> (
-     sourceHomeDirectory =!= null and tryLoad("setup.m2", minimizeFilename(sourceHomeDirectory | "/m2/setup.m2"))
-     or
-     prefixDirectory =!= null and tryLoad("setup.m2", minimizeFilename(prefixDirectory | LAYOUT#"m2" | "setup.m2"))
-     or
-     error "file setup.m2 not found"
-     )
-
 showMaps := () -> (
      if version#"operating system" === "SunOS" then (
 	  stack lines get ("!/usr/bin/pmap "|processID())
@@ -324,29 +316,6 @@ showMaps := () -> (
      else "memory maps not available"
      )
 
-dump := () -> (
-     if not version#"dumpdata" then (
-	  error "not configured for dumping data with this version of Macaulay 2";
-	  );
-     arch := if getenv "M2ARCH" =!= "" then getenv "M2ARCH" else version#"architecture";
-     fn := (
-	  if buildHomeDirectory =!= null then concatenate(buildHomeDirectory , "cache/", "Macaulay2-", arch, "-data") else 
-	  if prefixDirectory =!= null then concatenate(prefixDirectory, LAYOUT#"cache", "Macaulay2-", arch, "-data")	  
-	  );
-     if fn === null then error "can't find cache directory for dumpdata file";
-     fntmp := fn | ".tmp";
-     fnmaps := fn | ".maps";
-     fnmaps << showMaps() << endl << close;
-     runEndFunctions();
-     dumpdataFile = toAbsolutePath fn;					    -- so we know after "loaddata" where we put the file
-     collectGarbage();
-     interpreterDepth = 0;
-     stderr << "--dumping to " << fntmp << endl;
-     dumpdata fntmp;
-     stderr << "--success" << endl;
-     moveFile(fntmp,fn,Verbose=>true);
-     exit 0;
-     )
 
 argno := 1
 
@@ -359,14 +328,14 @@ action := hashTable {
      "-silent" => obsolete,
      "-tty" => notyet,
      "--copyright" => arg -> if phase == 1 then fullCopyright = true,
-     "--dumpdata" => arg -> (noinitfile = noloaddata = true; if phase == 3 then dump()),
+     "--dumpdata" => arg -> (noinitfile = noloaddata = true; if phase == 4 then dump()),
      "--help" => arg -> (usage(); exit 0),
      "--int" => arg -> arg,
      "--no-backtrace" => arg -> if phase == 1 then backtrace = false,
      "--no-debug" => arg -> debuggingMode = false,
      "--no-loaddata" => arg -> if phase == 1 then noloaddata = true,
      "--no-personality" => arg -> arg,
-     "--no-prompts" => arg -> if phase == 2 then noPrompts(),
+     "--no-prompts" => arg -> if phase == 3 then noPrompts(),
      "--no-readline" => arg -> arg,			    -- handled in d/stdio.d
      "--no-setup" => arg -> if phase == 1 then noloaddata = nosetup = true,
      "--notify" => arg -> if phase <= 2 then notify = true,
@@ -380,11 +349,11 @@ action := hashTable {
 	       topLevelMode = TeXmacs;
 	       printWidth = 80;
 	       )
-	  else if phase == 2 then (
+	  else if phase == 3 then (
 	       topLevelMode = TeXmacs;
 	       printWidth = 80;
 	       )
-	  else if phase == 3 then (
+	  else if phase == 4 then (
 	       texmacsmode = true;
 	       topLevelMode = TeXmacs;
 	       addEndFunction(() -> if texmacsmode then (
@@ -402,11 +371,17 @@ valueNotify := arg -> (
      if notify then stderr << "--evaluating command line argument " << argno << ": " << format arg << endl;
      value arg)
 
+initialPath := {}
+
 action2 := hashTable {
-     "-E" => arg -> if phase == 2 then valueNotify arg,
-     "-e" => arg -> if phase == 3 then valueNotify arg,
-     "--print-width" => arg -> if phase == 2 then printWidth = value arg,
-     "--prefix" => arg -> if phase == 1 or phase == 2 then (
+     "--srcdir" => arg -> if phase == 2 then (
+	  if not match("/$",arg) then arg = arg|"/";
+	  initialPath = join(initialPath,select({arg|"Macaulay2/m2/",arg|"Macaulay2/packages/"},isDirectory));
+	  ),
+     "-E" => arg -> if phase == 3 then valueNotify arg,
+     "-e" => arg -> if phase == 4 then valueNotify arg,
+     "--print-width" => arg -> if phase == 3 then printWidth = value arg,
+     "--prefix" => arg -> if phase == 1 or phase == 3 then (
 	  if not match("/$",arg) then arg = arg | "/";
 	  prefixDirectory = arg;
 	  )
@@ -425,7 +400,7 @@ processCommandLineOptions := phase0 -> (			    -- 3 passes
 	       debuggingMode = false;
 	       stopIfError = noinitfile = nobanner = true;
 	       )
-	  else if phase == 3 then (
+	  else if phase == 4 then (
 	       if not commandLine#?2 then error "script file name missing";
 	       arg := commandLine#2;
 	       scriptCommandLine = drop(commandLine,2);
@@ -446,7 +421,7 @@ processCommandLineOptions := phase0 -> (			    -- 3 passes
 		    usage();
 		    exit 1;
 		    )
-	       else if phase == 3 then if instance(load, Function) then load arg else simpleLoad arg;
+	       else if phase == 4 then if instance(load, Function) then load arg else simpleLoad arg;
 	       argno = argno+1;
 	       );
 	  loadDepth = ld;
@@ -469,103 +444,99 @@ if not isAbsolutePath exe then exe = currentDirectory | exe ;
 dir  := s -> ( m := regex(".*/",s); if 0 == #m then "./" else substring(m#0#0,m#0#1-1,s))
 base := s -> ( m := regex(".*/",s); if 0 == #m then s    else substring(m#0#1,      s))
 exe = concatenate(realpath dir exe, "/", base exe)
-bindirsuffix := LAYOUT#"bin";
 issuffix := (s,t) -> s === substring(t,-#s)
-fromexetoprefix := exe -> (
-     bindir := dir exe | "/";
-     if issuffix(bindirsuffix,bindir) then substring(bindir,0,#bindir-#bindirsuffix))
-fromexetom2dir := exe -> (
-     prefix := fromexetoprefix exe;
-     if prefix =!= null then prefix | LAYOUT#"m2")
-VERSIONfn := "VERSION"
-while true do (
-     -- search for VERSION file with right version number in it, or for ../c/scc1, whichever comes first
-     -- this works either in the build directory or in the final install directory, even if symbolic links intervene
-     if fileExists (dir dir exe | "/c/scc1") then (		    -- we are in the build directory
-	  buildHomeDirectory = dir dir exe | "/";
-	  sourceHomeDirectory = (
-	       if fileExists (buildHomeDirectory|"m2/setup.m2") then buildHomeDirectory 
-	       else (
-		    srcdirfile := buildHomeDirectory|"srcdir";   -- special file buit by the configure script during compilation
-		    if fileExists srcdirfile then (
-			 srcdir := minimizeFilename (concatPath(buildHomeDirectory,first lines get srcdirfile)|"/");
-			 setup := srcdir | "m2/setup.m2";
-			 if fileExists setup then srcdir
-			 else ( stderr << "--warning: file missing: " << setup << endl; )
-			 )
-		    else ( stderr << "--warning: file missing: " << srcdirfile << endl; )));
-	  break);
-     m2dir := fromexetom2dir exe;
-     if m2dir =!= null then (
-	  VERSIONfn = m2dir | "VERSION";
-	  if fileExists VERSIONfn then (
-	       VERSION := get VERSIONfn;
-	       VERSIONregex := concatenate("^[[:space:]]*",version#"VERSION","[[:space:]]*$");
-	       if match(VERSIONregex,VERSION) then (
-		    prefixDirectory = fromexetoprefix exe;  --  found it
-		    break;
-		    )));
-     if null === readlink exe then (
-	  stderr
-	  << "--warning: expected to find file " << format VERSIONfn << " containing " << format version#"VERSION" << endl
-	  << "--:        We seem to be running " << format exe << endl
-	  << "--:        Perhaps " << commandLine#0 << " has been moved or copied to a different directory." << endl;
-	  error "file VERSION containing current version number not found");
-     s := readlink exe;
-     exe = if isAbsolutePath s then s else realpath dir exe | "/" | s;
+bindir := dir exe | "/";
+if readlink exe =!= null then exe = (
+     if isAbsolutePath readlink exe
+     then readlink exe
+     else realpath dir exe | "/" | readlink exe
+     )
+currentLayout = (
+     if issuffix(Layout#2#"bin",bindir) then Layout#2 else
+     if issuffix(Layout#1#"bin",bindir) then Layout#1
+     )
+prefixDirectory = if currentLayout =!= null then substring(bindir,0,#bindir-#currentLayout#"bin")
+m2dir   := if prefixDirectory =!= null then prefixDirectory | replace("PKG","Core",currentLayout#"package")
+srcversion := if m2dir =!= null and fileExists(m2dir|"VERSION") then first separate get(m2dir|"VERSION")
+if not nosetup and srcversion =!= version#"VERSION" then (
+     stderr << "--warning: possible mismatch: source code version: " << srcversion
+     << ", executable version " << version#"VERSION" << endl
+     )
+
+describePath := () -> (
+     stderr << "--file search starts here:" << endl;
+     for d in path do (
+     	  stderr << "--    " << d << endl;
+	  ))
+
+loadSetup := () -> (
+     if notify then describePath();
+     if prefixDirectory =!= null then (
+	  fn := minimizeFilename(prefixDirectory | replace("PKG","Core",currentLayout#"package") | "setup.m2");
+      	  tryLoad("setup.m2", fn) or error("file ",fn," not found; perhaps the common files should be installed, too")
+	  )
+     else error "no prefixDirectory determined, can't load setup.m2"
+     )
+
+dump = () -> (
+     if not version#"dumpdata" then (
+	  error "not configured for dumping data with this version of Macaulay 2";
+	  );
+     arch := if getenv "M2ARCH" =!= "" then getenv "M2ARCH" else version#"architecture";
+     fn := (
+	  if prefixDirectory =!= null then concatenate(prefixDirectory, replace("PKG","Core",currentLayout#"packagecache"), "Macaulay2-", arch, "-data")	  
+	  );
+     if fn === null then error "can't find cache directory for dumpdata file";
+     fntmp := fn | ".tmp";
+     fnmaps := fn | ".maps";
+     fnmaps << showMaps() << endl << close;
+     runEndFunctions();
+     dumpdataFile = toAbsolutePath fn;					    -- so we know after "loaddata" where we put the file
+     collectGarbage();
+     interpreterDepth = 0;
+     stderr << "--dumping to " << fntmp << endl;
+     dumpdata fntmp;
+     stderr << "--success" << endl;
+     moveFile(fntmp,fn,Verbose=>true);
+     exit 0;
      )
 
 if firstTime and not nobanner then (
      if topLevelMode === TeXmacs then stderr << TeXmacsBegin << "verbatim:";
      stderr << (if fullCopyright then copyright else first separate copyright) << newline << flush;
-     if topLevelMode === TeXmacs then stderr << TeXmacsEnd << flush;
-     )
-
+     if topLevelMode === TeXmacs then stderr << TeXmacsEnd << flush)
 if firstTime and not noloaddata and version#"dumpdata" then (
      -- try to load dumped data
      arch := if getenv "M2ARCH" =!= "" then getenv "M2ARCH" else version#"architecture";
      datafile := minimizeFilename (
-	  if buildHomeDirectory =!= null then concatenate(buildHomeDirectory, "/cache/Macaulay2-", arch, "-data")
-	  else if prefixDirectory =!= null then concatenate(prefixDirectory, LAYOUT#"cache", "Macaulay2-", arch, "-data")
+	  if prefixDirectory =!= null then concatenate(prefixDirectory, replace("PKG","Core",currentLayout#"packagecache"), "Macaulay2-", arch, "-data")
 	  else concatenate("Macaulay2-", arch, "-data")
 	  );
      if fileExists datafile then (
 	  if notify then stderr << "--loading cached memory data from " << datafile << newline << flush;
      	  try loaddata(notify,datafile);
-	  if notify then stderr << "--warning: unable to load data from " << datafile << newline << flush;
-	  )
-     )
+	  if notify then stderr << "--warning: unable to load data from " << datafile << newline << flush))
 
 scan(commandLine, arg -> if arg === "-q" or arg === "--dumpdata" then noinitfile = true)
 homeDirectory = getenv "HOME" | "/"
 
 path = (x -> select(x, i -> i =!= null)) deepSplice {
 	  if not noinitfile then (
-	       applicationDirectory() | "local/" | LAYOUT#"packages", 
-	       applicationDirectory() | "local/" | LAYOUT#"datam2",
+	       applicationDirectory() | "local/" | currentLayout#"packages", 
 	       applicationDirectory() | "code/"
 	       ),
 	  if prefixDirectory =!= null then (
-	       prefixDirectory | LAYOUT#"packages",
-	       prefixDirectory | LAYOUT#"m2", 
-	       prefixDirectory | LAYOUT#"datam2"),
-	  if sourceHomeDirectory =!= null then (
-	       sourceHomeDirectory|"m2/",
-	       sourceHomeDirectory|"packages/"
-	       ),
-	  if buildHomeDirectory =!= null then (
-	       buildHomeDirectory|"tutorial/final/",
-	       if buildHomeDirectory =!= sourceHomeDirectory then (
-		    buildHomeDirectory|"m2/",
-		    buildHomeDirectory|"packages/")),
-	  if sourceHomeDirectory =!= null then (
-	       sourceHomeDirectory|"test/", 
-	       sourceHomeDirectory|"test/engine/")
+	       prefixDirectory | currentLayout#"packages",
+	       prefixDirectory | replace("PKG","Core",currentLayout#"package"))
 	  }
 
 if firstTime then normalPrompts()
 
 printWidth = fileWidth stdio
+
+processCommandLineOptions 2				    -- just for path to core files and packages
+
+path = join(initialPath, path)
 
 if firstTime and not nosetup then loadSetup()
 
@@ -579,7 +550,7 @@ if not nosetup then (
      core = nm -> value getGlobalSymbol nm
      )
 
-processCommandLineOptions 2
+processCommandLineOptions 3
 (core "runStartFunctions")()
 
 errorDepth = loadDepth
@@ -589,7 +560,7 @@ if class Core =!= Symbol and not core "noinitfile" then (
      tryLoad ("init.m2", "init.m2");
      );
 
-processCommandLineOptions 3
+processCommandLineOptions 4
 interpreterDepth = 0
 errorDepth = loadDepth+1      -- anticipate loadDepth being incremented
 n := interpreter()	      -- loadDepth is incremented by commandInterpreter

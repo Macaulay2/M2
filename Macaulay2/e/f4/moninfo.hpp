@@ -5,7 +5,7 @@
 
 #include <cstdio>
 
-#include "config.h"
+#include <M2/config.h>
 #include <stdio.h>
 #if HAVE_STDINT_H
 #include <stdint.h>

@@ -71,6 +71,7 @@ findFiles String := opts -> name -> (
      prepend(name,flatten apply(readDirectory name, 
 	       f -> if f === "." or f === ".." then {} else findFiles(name|f,opts)))
      )
+findFiles List := opts -> names -> flatten apply(names,findFiles)
 
 backupFileRegexp = "\\.~[0-9.]+~$"					    -- we don't copy backup files.
 
@@ -322,7 +323,7 @@ else
 endif
 ///
 stripdir := dir -> if dir === "/" then dir else replace("/$","",dir)
-fixes := { ("PATH", LAYOUT#"bin"), ("MANPATH", LAYOUT#"man"), ("INFOPATH", LAYOUT#"info" ), ("LD_LIBRARY_PATH", LAYOUT#"lib" )}
+fixes := { ("PATH", currentLayout#"bin"), ("MANPATH", currentLayout#"man"), ("INFOPATH", currentLayout#"info" ), ("LD_LIBRARY_PATH", currentLayout#"lib" )}
 fix := (var,dir,templ) -> replace_("VAR",var) replace_("DIR",stripdir dir) templ
 dotprofileFix = dotbashrcFix = concatenate apply(fixes, (var,dir) -> fix(var,dir,bashtempl))
 dotloginFix = dotcshrcFix = concatenate apply(fixes, (var,dir) -> fix(var,dir,cshtempl))

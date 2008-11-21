@@ -114,14 +114,20 @@ grep :
 	@false
 else
 grep :
-	find . \( -name .svn -o -name BUILD -o -name autom4te.cache \) -prune -false -o -type f | xargs grep -nH -e $(SEARCH)
+	find . \( -name .svn -o -name BUILD -o -name autom4te.cache \) -prune -false -o -type f | xargs grep -nH -e $(SEARCH) || [ $$? = 123 ]
 endif
 
 announce:
-	@ echo '-*- compilation -*-'
+	@ echo '-*- compilation; coding: utf-8 -*-'
 	@ echo ' -- Macaulay 2 compilation:'
 	@ echo ' --   Paste this output into an emacs buffer and run M-x compilation-mode'
 	@ echo ' --   and then C-C ` (same as M-x next-error) to view the errors.'
+
+TAGS.config : config/files always
+	(echo configure.ac ; cat $< | sed 's/$$/.in/') | xargs etags -o $@
+always:
+
+diffs :;@ i=1 ; while test -f diffs-$$i ; do i=$$(expr $$i + 1 ) ; done ; svn diff >diffs-$$i ; echo created diffs-$$i
 
 # Local Variables:
 # mode: Makefile

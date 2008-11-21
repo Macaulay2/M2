@@ -1,4 +1,4 @@
-#include "config.h"
+#include <M2/config.h>
 #ifndef M2_CONFIG_H
 #error "M2_CONFIG_H not defined, perhaps the wrong file named config.h was loaded"
 #endif

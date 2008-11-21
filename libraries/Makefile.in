@@ -3,13 +3,16 @@ include ../include/config.Makefile
 all check reconfigure :: Makefile.library
 	@ set -e ; for p in @LIBRARIES@ ; do (set -ex ; $(MAKE) -C $$p $@) || false ; done 
 distclean :: clean
-distclean clean :: Makefile.library
+untar fetch distclean clean :: Makefile.library
 	@ set -e ; for p in @LIBLIST@ libtool ; do (set -ex ; $(MAKE) -C $$p $@) || false ; done 
-install :
-	if [ -d final@FINALPREFIX@/@librariesdirtail@/lib ] ; \
-	then @INSTALL@ -d @encapdir@/@librariesdirtail@/lib ; \
-	     tar cf - --exclude="*.a" --exclude="*.old" -C final@FINALPREFIX@/@librariesdirtail@/lib . \
-	     | tar xf - -C @encapdir@/@librariesdirtail@/lib ; \
+prefix := @pre_prefix@
+exec_prefix := @pre_exec_prefix@
+pre-install :
+	@ echo installing shareable library files in @librariesdir@/lib
+	if [ -d final/lib ] ; \
+	then @INSTALL@ -d @librariesdir@/lib ; \
+	     tar cf - --exclude="*.a" --exclude="*.la" --exclude="*.pc" --exclude="*.old" -C final/lib . \
+	     | tar xfv - -C @librariesdir@/lib ; \
 	fi
 Makefile         : Makefile.in         ; cd .. && ./config.status libraries/Makefile
 Makefile.library : Makefile.library.in ; cd .. && ./config.status libraries/Makefile.library

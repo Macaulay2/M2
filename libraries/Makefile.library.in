@@ -3,25 +3,27 @@
 LIBRARY_MODE = yes
 include ../../include/config.Makefile
 
-PREFIX = $(shell cd .. ; pwd)/final@FINALPREFIX@
+# some libraries (gdbm, mpfr, readline, gmp, and gc) use libtool, which 
+# insists on installing its files to a directory whose trailing part is the
+# prefix that was used at compile time, i.e., the only change allowed to the prefix
+# between compile time and install time is to prepend a string
+
+PREFIX = $(BUILTLIBPATH)
 LIBNAME = $(shell basename `pwd`)
 
 TARDIR ?= $(LIBNAME)-$(VERSION)
 TARFILE ?= $(LIBNAME)-$(VERSION).tar.gz
 
-LIBRARIESDIR = $(PREFIX)/@librariesdirtail@
-FINALLIBRARIESDIR = @FINALPREFIX@/@librariesdirtail@
-
-CPPFLAGS := -I$(LIBRARIESDIR)/include $(CPPFLAGS)
-LDFLAGS := -L$(LIBRARIESDIR)/lib $(LDFLAGS)
+LIBRARIESDIR := $(PREFIX)
+FINALLIBRARIESDIR = @FINALPREFIX@
 
 export PATH := @abs_top_srcdir@/autoconf/final/bin:$(PATH)
 
 all install :: .installed-$(VERSION)
 unconfigure : ; rm -f .configured-$(VERSION) .compiled-$(VERSION) .installed-$(VERSION)
 reconfigure : unconfigure .configured-$(VERSION)
-uninstall   : ; rm -f .installed-$(VERSION)
-reinstall   : uninstall .installed-$(VERSION)
+uninstall   :: ; rm -f .installed-$(VERSION)
+reinstall   : uninstall install
 diffs : .untarred-$(VERSION) .untarred2-$(VERSION) ; diff -ur --exclude=configure tmp/$(TARDIR) $(TARDIR) |egrep -v '^Only in ' >$@ || echo diffs: `pwd`/$@
 unmark : ; rm -f .configured-$(VERSION) .compiled-$(VERSION)
 package-clean : unmark ; if [ -d $(BUILDDIR) ]; then $(MAKE) -C $(BUILDDIR) clean ; fi
@@ -48,7 +50,7 @@ CONFIGENV     = env \
 	FFLAGS="$(FCFLAGS)" \
 	FCFLAGS="$(FCFLAGS)"
 
-CONFIGURECMD  ?= $(PRECONFIGURE) && $(CONFIGENV) ./configure --prefix=$(FINALLIBRARIESDIR) $(CONFIGOPTIONS)
+CONFIGURECMD  ?= $(PRECONFIGURE) && $(CONFIGENV) ./configure --prefix=$(LIBRARIESDIR) $(CONFIGOPTIONS)
 BUILDTARGET   ?= 
 BUILDCMD      ?= $(MAKE) $(BUILDOPTIONS) $(BUILDTARGET)
 INSTALLTARGET ?= install

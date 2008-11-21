@@ -395,6 +395,7 @@ document { Key => {ofClass,(ofClass, Type),(ofClass, ImmutableType),(ofClass, Li
      	  ofClass class 3
 	  peek oo
      	  ofClass Ring
+	  needsPackage "Text"
      	  SPAN ofClass {HashTable, ProjectiveVariety}
 	  document { Key => foo, "We may need ", ofClass ZZ, " and ", ofClass HashTable, "." }
 	  help foo
@@ -675,29 +676,11 @@ document { Key => "backupFileRegexp",
      Caveat => "Perhaps, instead of this being a global variable, there should be a way
      to change the default values for optional arguments to functions.  We may change this."
      }
-document { Key => "buildHomeDirectory",
-     SeeAlso => { "sourceHomeDirectory", "prefixDirectory" },
-     Headline => "the directory where the Macaulay 2 program is being built",
-     "When Macaulay 2 is built, i.e., is compiled, the directory tree containing the compiled (object) files may be different from the directory
-     tree containing the source code.  The build home directory is the directory in that tree named ", TT "Macaulay2", " and containing subdirectories called
-     ", TT "c", ", ", TT "d", ", ", TT "e", ", and ", TT "dumpdata", ".  Knowing that directory allows Macaulay2 to construct a suitable initial value for
-     the ", TO "path", " that allows all the source code files to be found at startup time.  If building is not in progress, the value of this variable
-     will be ", TO "null", "."
-     }
-document { Key => "sourceHomeDirectory",
-     SeeAlso => { "buildHomeDirectory", "prefixDirectory" },
-     Headline => "the directory where the source code is while Macaulay 2 is being built",
-     "When Macaulay 2 is built, i.e., is compiled, the directory tree containing the compiled (object) files may be different from the directory
-     tree containing the source code.  The source home directory is the directory in that tree named ", TT "Macaulay2", " and containing subdirectories called
-     ", TT "c", ", ", TT "d", ", ", TT "e", ", and ", TT "dumpdata", ".  Knowing that directory allows Macaulay2 to construct a suitable initial value for
-     the ", TO "path", " that allows all the source code files to be found at startup time.  If building is not in progress, the value of this variable
-     will be ", TO "null", "."
-     }
 document { Key => "prefixDirectory",
      Headline => "the prefix directory",
      PARA {
 	 "When Macaulay 2 is successfully installed, its files are installed in a directory tree whose layout, relative to the root, is determined
-	 by the hash table ", TO "LAYOUT", ".  When M2 starts up, it detects whether it is running in such a layout, and sets ", TO "prefixDirectory", "
+	 by the hash table ", TO "Layout", ".  When M2 starts up, it detects whether it is running in such a layout, and sets ", TO "prefixDirectory", "
 	 to the root of that directory tree.  The way it does that is that it locates the running M2 executable and determines whether it is
 	 located in a directory whose name is ", TT "bin", " that has a sibling directory called ", TT "share", " that leads to a directory
 	 called ", TT "share/Macaulay2/Core/", "."
@@ -707,7 +690,7 @@ document { Key => "prefixDirectory",
 	  line option.  This will affect the value of ", TO "path", " and thus the locations of the files loaded initially.  Use the
 	  ", TT "--notify", " command line option to display the locations of files as they are loaded."
 	  },
-     SeeAlso => { "sourceHomeDirectory", "buildHomeDirectory", "prefixPath", "Invoking the program" }
+     SeeAlso => { "prefixPath", "Invoking the program" }
      }
 document { Key => getGlobalSymbol,
      Headline => "create a global symbol in a global dictionary",

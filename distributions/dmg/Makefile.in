@@ -8,9 +8,9 @@ include ../Makefile.filenames
 PKG_DMG = @package@-@ARCH@-@OS@-@REL@.dmg
 
 ############################## main targets
-all install :: ../../$(PKG_DMG)
+all pre-install :: ../../$(PKG_DMG)
 ifeq ($(TIDY),yes)
-all install :: tidy
+all pre-install :: tidy
 endif
 
 ../../$(PKG_DMG) : ../../$(PKG_TZ) Makefile

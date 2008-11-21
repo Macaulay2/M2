@@ -7,10 +7,10 @@ BUILDDIR = $(TARDIR)/src
 TARFILE = ntl-$(VERSION).tar.gz
 URL = http://shoup.net/ntl
 CONFIGURECMD = ./configure \
-	PREFIX=@FINALPREFIX@/@librariesdirtail@ \
-	LIBDIR=@FINALPREFIX@/@librariesdirtail@/lib \
-	INCLUDEDIR=@FINALPREFIX@/@librariesdirtail@/include \
-	DOCDIR=@FINALPREFIX@/@librariesdirtail@/share/doc \
+	PREFIX=@librariesdir@ \
+	LIBDIR=@librariesdir@/lib \
+	INCLUDEDIR=@librariesdir@/include \
+	DOCDIR=@librariesdir@/share/doc \
 	NTL_GMP_LIP=on NTL_STD_CXX=on NTL_NO_INIT_TRANS=on NTL_CXX_ONLY=on \
 	CC="@CXX@" \
 	CXX="@CXX@" \
@@ -20,15 +20,16 @@ CONFIGURECMD = ./configure \
 	LDFLAGS="$(LDFLAGS)"
 
 INSTALLOPTIONS = \
-	PREFIX=$(PREFIX)/@librariesdirtail@ \
-	LIBDIR=$(PREFIX)/@librariesdirtail@/lib \
-	INCLUDEDIR=$(PREFIX)/@librariesdirtail@/include \
-	DOCDIR=$(PREFIX)/@librariesdirtail@/share/doc
+	PREFIX=$(LIBRARIESDIR) \
+	LIBDIR=$(LIBRARIESDIR)/lib \
+	INCLUDEDIR=$(LIBRARIESDIR)/include \
+	DOCDIR=$(LIBRARIESDIR)/share/doc
 
 INSTALLCMD     = $(MAKE) $(INSTALLOPTIONS) install
 include ../Makefile.library
 check :: ; $(MAKE) -C $(BUILDDIR) check
 Makefile : @srcdir@/Makefile.in ; cd ../.. && ./config.status libraries/ntl/Makefile
+clean uninstall ::; cd $(LIBRARIESDIR) && rm -rf include/NTL lib/libntl.* share/doc/NTL 
 # Local Variables:
 # compile-command: "make -C $M2BUILDDIR/libraries/ntl "
 # End:

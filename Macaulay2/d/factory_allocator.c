@@ -1,7 +1,7 @@
 #include <stdlib.h>
 #include <unistd.h>
 
-#include "config.h"
+#include <M2/config.h>
 #include <gc/gc.h>
 
 #include "debug.h"

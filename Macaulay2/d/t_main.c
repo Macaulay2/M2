@@ -1,7 +1,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 
-#include "config.h"
+#include <M2/config.h>
 #include <gc/gc.h>
 
 #include "memdebug.h"

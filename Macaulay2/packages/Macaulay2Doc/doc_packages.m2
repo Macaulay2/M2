@@ -10,7 +10,7 @@ document {
      BOLD "Available packages",
      UL {
 	  TO "packages provided with Macaulay 2",
-	  {"The directory containing the packages is ", HREF { LAYOUT#"packages",LAYOUT#"packages" }}
+	  {"The directory containing the packages is ", HREF { Layout#1#"packages",Layout#1#"packages" }}
 	  },
      PARA{},
      BOLD "Functions useful when ", TO "using packages", ".",

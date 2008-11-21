@@ -4,31 +4,13 @@ VPATH = @srcdir@
 SRCDIR = @srcdir@
 DEPENDS = yes
 
-ifeq (@CXX@-@ISYSTEM@,g++-yes)
-# We are using the -MM option to create *.dep files, which ignores "system" include files.
-# We want ../../include/config.h to be a "system" include file, so changing it
-# will not force a recompilation of all of our C++ files.
-#  M2CPPFLAGS  = -isystem ../../include
-#  M2CPPFLAGS += -isystem @srcdir@/../../include
-#  M2CPPFLAGS += -isystem ../util
-# But we also want it searched before all the directories specified by the builder with -I, sigh.
-M2CPPFLAGS  = -I../../include
-M2CPPFLAGS += -I@srcdir@/../../include
-M2CPPFLAGS += -I../util
-else
-M2CPPFLAGS  = -I../../include
-M2CPPFLAGS += -I@srcdir@/../../include
-M2CPPFLAGS += -I../util
-endif
-M2CPPFLAGS += -I.
-CPPFLAGS := $(M2CPPFLAGS) $(CPPFLAGS)
-
 PRE.cc   = $(COMPILE.cc) -E 
 
 include @srcdir@/Makefile.files
 include Makefile.common
+CPPFLAGS := -I. $(CPPFLAGS)
 
-.PHONY : all clean distclean install tar check tags
+.PHONY : tags
 
 ###################################################################
 ## Targets ##
@@ -94,6 +76,7 @@ clean::
 Makefile : Makefile.in; cd ../..; ./config.status Macaulay2/e/Makefile
 all :: Makefile.common
 Makefile.common : Makefile.common.in; cd ../..; ./config.status Macaulay2/e/Makefile.common
+Makefile.include : Makefile.include.in; cd ../..; ./config.status Macaulay2/e/Makefile.include
 clean::; rm -f *.dep dep-*.tmp
 ifeq "$(DEPENDS)" "yes"
 include $(ENGINE_CFILES:.c=.dep) $(ENGINE_CCFILES:.cpp=.dep)

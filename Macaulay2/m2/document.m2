@@ -293,8 +293,6 @@ packageKey = method(Dispatch => Thing)	    -- assume the input key has been norm
 packageKey   String := fkey -> (
      r := scan(loadedPackages, pkg -> if fetchRawDocumentation(pkg,fkey) =!= null then break pkg);
      if r === null then (
-	  -- if debugLevel > 0 then error "debug me";
-	  -- value PackageDictionary#"Missing"
 	  currentPackage
 	  )
      else r)
@@ -507,7 +505,7 @@ separateM2output String := r -> (
 
 makeExampleOutputFileName := (fkey,pkg) -> (			 -- may return 'null'
      if pkg#?"package prefix" and pkg#"package prefix" =!= null 
-     then pkg#"package prefix" | LAYOUT#"packageexampleoutput" pkg#"title" | toFilename fkey | ".out"
+     then pkg#"package prefix" | replace("PKG",pkg#"title",currentLayout#"packageexampleoutput") | toFilename fkey | ".out"
      )
 
 exampleResults := {}
@@ -701,7 +699,6 @@ headline Thing := key -> getOption(key,Headline)	    -- old method
 headline FinalDocumentTag := headline DocumentTag := tag -> (
      d := fetchPrimaryRawDocumentation tag;
      if d === null then (
-	  -- if debugLevel > 0 and formattedKey tag == "Ring ^ ZZ" then error "debug me";
 	  d = fetchAnyRawDocumentation formattedKey tag;    -- this is a kludge!  Our heuristics for determining the package of a tag are bad.
 	  if d === null then (
 	       if signalDocError tag
@@ -1206,7 +1203,7 @@ documentationValue(Symbol,Package) := (s,pkg) -> if pkg =!= Core then (
 	  DIV1 { SUBSECTION "Version", "This documentation describes version ", pkg.Options.Version, " of ",
 	       if pkg#"title" === "Macaulay2Doc" then "Macaulay2" else pkg#"title",
 	       "." },
-	  if pkg#"title" =!= "Macaulay2Doc" then DIV1 {SUBSECTION "Source code", "The source code is in the file ", HREF { LAYOUT#"packages" | fn, fn }, "."},
+	  if pkg#"title" =!= "Macaulay2Doc" then DIV1 {SUBSECTION "Source code", "The source code is in the file ", HREF { currentLayout#"packages" | fn, fn }, "."},
 	  if #e > 0 then DIV1 {
 	       SUBSECTION "Exports",
 	       fixup UL {

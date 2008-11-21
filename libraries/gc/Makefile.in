@@ -1,33 +1,25 @@
 URL = http://www.hpl.hp.com/personal/Hans_Boehm/gc/gc_source
-
 VERSION = 7.1
 TARDIR = gc-7.1
-
 ifeq (@PTHREADS@,yes)
 CONFIGOPTIONS += --enable-threads=posix
 CONFIGOPTIONS += --enable-parallel-mark
 else 
 CONFIGOPTIONS += --disable-threads
 endif
-
 ifeq (@SHARED@,no)
 CONFIGOPTIONS += --disable-shared
 endif
-
 ifeq (@DEBUG@,yes)
 CONFIGOPTIONS += --enable-gc-debug --enable-gc-assertions
 else
 # INSTALLTARGET = install-strip
 endif
-
 CONFIGOPTIONS += --enable-large-config --disable-gcj-support --disable-java-finalization
-
 # PATCHFILE = @srcdir@/patch-7.0
-
 include ../Makefile.library
 Makefile : @srcdir@/Makefile.in ; cd ../.. && ./config.status libraries/gc/Makefile
-clean :: ; rm -rf $(LIBRARIESDIR)/lib/libgc.* $(LIBRARIESDIR)/lib/libcord.* $(LIBRARIESDIR)/include/gc $(LIBRARIESDIR)/share/gc \
-		$(LIBRARIESDIR)/lib/pkgconfig/bdw-gc.pc
+uninstall clean :: ; cd $(LIBRARIESDIR) && rm -rf lib/libgc.* lib/libcord.* include/gc share/gc lib/pkgconfig/bdw-gc.pc include/gc.h include/gc_cpp.h
 # Local Variables:
 # compile-command: "make -C $M2BUILDDIR/libraries/gc "
 # End:

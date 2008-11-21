@@ -20,10 +20,6 @@ ifneq (@OPTIMIZE@,yes)
 $(error expected --enable-optimize, in order to make a cygwin package)
 endif
 
-ifneq (@ENCAP@,yes)
-$(error expected --enable-encap, in order to make a cygwin package)
-endif
-
 include ../../include/config.Makefile
 include ../Makefile.filenames
 VPATH = @srcdir@
@@ -39,7 +35,7 @@ DISTFILES := server/Macaulay2/@package@-$(DISTRIBUTION).tar.bz2 \
 	     server/Macaulay2/@package@-$(DISTRIBUTION)-src.tar.bz2 \
 	     server/Macaulay2/setup.hint
 
-all install :: server/Macaulay2 $(DISTFILES) server/setup.ini tidy
+all pre-install :: server/Macaulay2 $(DISTFILES) server/setup.ini tidy
 	@ echo "============================================================================="
 	@ echo "the cygwin package files have been prepared in cygwin/server"
 	@ echo "============================================================================="
@@ -76,7 +72,7 @@ server/Macaulay2/@package@-$(DISTRIBUTION).tar.bz2 : .prepared
 	(cd files && @FAKEROOT@ tar cjf - *) >$@
 
 libraries-used : .prepared
-	cygcheck files@FINALPREFIX@/@bindirtail@/M2@EXE@ \
+	cygcheck files@FINALPREFIX@/@bindir@/M2@EXE@ \
 	| sed -e 's/^  *//' \
 	| dd conv=lcase \
 	| sed 's=\\=/=g' \
@@ -128,9 +124,9 @@ server/Macaulay2/@package@-$(DISTRIBUTION)-src.tar.bz2 : server/Macaulay2 mkrt
 	@FAKEROOT@ tar cfj $@ @package@-$(DISTRIBUTION)/.
 endif
 
-install :: Macaulay2.README
-	@INSTALL@ -d @encapdir@/share/doc/Cygwin
-	@INSTALL@ Macaulay2.README @encapdir@/share/doc/Cygwin
+pre-install :: Macaulay2.README
+	@INSTALL@ -d @prefix@/share/doc/Cygwin
+	@INSTALL@ Macaulay2.README @prefix@/share/doc/Cygwin
 
 upload :; rsync --verbose --compress --archive --rsh='ssh -x -a' server/. u00:to/Macaulay2/Repositories/cygwin-test
 clean ::; rm -rf server files src-files

@@ -8,7 +8,7 @@ cat <<EOF >compat.h
 #include <stdlib.h>
 #include <math.h>
 
-#include "config.h"
+#include <M2/config.h>
 #include <gc/gc.h>
 #include <string.h>
 #include <gmp.h>

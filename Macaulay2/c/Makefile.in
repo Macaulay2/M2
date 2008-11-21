@@ -10,7 +10,7 @@ VPATH = @srcdir@
 	mv y.tab.c $*.c
 	rm -f y.tab.h y.output
 ############################################################
-.PHONY : clean all install tags
+.PHONY : tags
 YFLAGS := -vdlt
 
 # we don't include @LIBS@ here because including -llapack would make it also

@@ -3,24 +3,21 @@
 .PHONY: check all clean initialize book distclean justM2
 ################################# prologue
 all ::
-install ::
 justM2 all :: initialize
 
 include ../include/config.Makefile
 VPATH = @srcdir@
 ################################# .
-install install-others install-Macaulay2Doc :: @encapdir@/@docpackagesdirtail@ @encapdir@/@docpackagesdirtail@ \
-	   @encapdir@/@docpackagesdirtail@/COPYING \
-	   @encapdir@/@docpackagesdirtail@/README \
-	   @encapdir@/@docpackagesdirtail@/LAYOUT
+prefix := @pre_prefix@
+pre-install :: @docdir@ @docdir@ \
+	   @docdir@/COPYING \
+	   @docdir@/README \
+	   @docdir@/LAYOUT
 
-@encapdir@/@docpackagesdirtail@:; $(MKDIR_P) "$@"
-@encapdir@/@docpackagesdirtail@/COPYING : COPYING ; @INSTALL_DATA@ $< "$@"
-@encapdir@/@docpackagesdirtail@/LAYOUT  : LAYOUT  ; @INSTALL_DATA@ $< "$@"
-@encapdir@/@docpackagesdirtail@/README  : README  ; @INSTALL_DATA@ $< "$@"
-
-# install install-others install-Macaulay2Doc :: @encapdir@/@docpackagesdirtail@/INSTALL
-# @encapdir@/INSTALL  : INSTALL  ; @INSTALL_DATA@ $< "$@"
+@docdir@:; $(MKDIR_P) "$@"
+@docdir@/COPYING : COPYING ; @INSTALL_DATA@ $< "$@"
+@docdir@/LAYOUT  : LAYOUT  ; @INSTALL_DATA@ $< "$@"
+@docdir@/README  : README  ; @INSTALL_DATA@ $< "$@"
 
 ################################# srcdir
 initialize :: srcdir
@@ -30,8 +27,8 @@ clean::; rm -f srcdir
 initialize :: cache
 cache :; mkdir $@
 distclean clean ::; rm -rf cache
-install install install-others install-Macaulay2Doc :: @encapdir@/@corecachedirtail@
-@encapdir@/@corecachedirtail@:; @INSTALL@ -d "$@"
+pre-install :: @packagecacheCore@
+@packagecacheCore@:; @INSTALL@ -d "$@"
 ################################# util
 initialize::; $(MAKE) -C util all
 distclean clean ::; $(MAKE) DEPENDS=no -C util $@
@@ -53,8 +50,7 @@ initialize distclean clean ::; $(MAKE) DEPENDS=no -C e $@
 ################################# dumpdata
 ifeq "@DUMPDATA@" "yes"
 justM2 ::; $(MAKE) -C dumpdata all
-install all check ::; $(MAKE) -C dumpdata $@
-install-others install-Macaulay2Doc ::; $(MAKE) -C dumpdata "install"
+pre-install all check ::; $(MAKE) -C dumpdata $@
 endif
 distclean clean ::; $(MAKE) DEPENDS=no -C dumpdata $@
 ################################# compat
@@ -68,22 +64,20 @@ initialize ::; $(MAKE) DEPENDS=no -C d compat.h
 justM2 all ::; util/restart d/restart.tmp $(MAKE) -C d all
 distclean clean ::; $(MAKE) DEPENDS=no -C d $@
 ################################# bin
-install distclean clean ::; $(MAKE) -C bin $@
-install-others install-Macaulay2Doc ::; $(MAKE) -C bin "install"
+# obsolete
 ################################# basictests
 check ::; $(MAKE) -C packages/Macaulay2Doc/basictests -k
 distclean clean ::; $(MAKE) -C packages/Macaulay2Doc/basictests $@
 ################################# m2
-install distclean clean check justM2 all ::; $(MAKE) -C m2 $@
-install-others install-Macaulay2Doc ::; $(MAKE) -C m2 "install"
+pre-install distclean clean check justM2 all ::; $(MAKE) -C m2 $@
 ################################# test
 check ::; $(MAKE) -C packages/Macaulay2Doc/test -k
 distclean clean ::; $(MAKE) -C packages/Macaulay2Doc/test $@
 ################################# packages
-all check install install-others install-Macaulay2Doc clean distclean ::; $(MAKE) -C packages $@
+all check pre-install clean distclean ::; $(MAKE) -C packages $@
 ################################# html-check-links
 initialize::; $(MAKE) -C html-check-links all
-install ::; $(MAKE) DEPENDS=no -C html-check-links check
+pre-install ::; $(MAKE) DEPENDS=no -C html-check-links check
 distclean clean ::; $(MAKE) DEPENDS=no -C html-check-links $@
 ################################# probe
 clean distclean ::; $(MAKE) -C probe $@
@@ -92,11 +86,11 @@ book ::;  $(MAKE) -C book all
 distclean clean ::; $(MAKE) -C book $@
 ################################# emacs
 all ::;  $(MAKE) -C emacs all
-install distclean clean ::; $(MAKE) -C emacs $@
-install-others install-Macaulay2Doc  ::;  $(MAKE) -C emacs "install"
+pre-install distclean clean ::; $(MAKE) -C emacs $@
 ################################# man
-all install :: ; $(MAKE) -C man $@
-install-others install-Macaulay2Doc :: ; $(MAKE) -C man "install"
+all pre-install :: ; $(MAKE) -C man $@
+################################# pre-install, at the end
+all :: pre-install
 ################################# Makefile
 Makefile : Makefile.in
 	cd ..; ./config.status Macaulay2/Makefile

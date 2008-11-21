@@ -5,7 +5,7 @@
 #include <stdio.h>
 #include <gmp.h>
 
-#include "config.h"
+#include <M2/config.h>
 #include <gc/gc.h>
 #include <string.h>
 #include "M2types.h"

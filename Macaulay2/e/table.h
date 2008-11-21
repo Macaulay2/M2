@@ -7,7 +7,7 @@
 
 /******************************************************/
 /*these next lines added by MES, July 2002, to use our gc routines..*/
-#include "config.h"
+#include <M2/config.h>
 #include <gc/gc.h>
 #include "../d/M2mem.h"
 #define ALLOC getmem
