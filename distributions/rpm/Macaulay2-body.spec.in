@@ -8,18 +8,18 @@ License: GPLv2
 Group: Applications/Engineering
 Requires: Macaulay2-common = @PACKAGE_VERSION@
 Buildroot: @abs_builddir@/files
-Prefix: @FINALPREFIX@
+Prefix: @prefix@
 %define _rpmdir ../../
 %define _rpmfilename @PKG_RPM@
 %define _unpackaged_files_terminate_build 1
 %post
 #!/bin/sh -e
-prefix=@FINALPREFIX@
+prefix=@prefix@
 [ @DUMPDATA@ = yes -a -d $prefix/@packagecacheCore@ ] || mkdir $prefix/@packagecacheCore@
 [ @DUMPDATA@ = yes ] && $prefix/bin/M2 --dumpdata
 %preun
 #! /bin/sh -e
-prefix=@FINALPREFIX@
+prefix=@prefix@
 rm -f $prefix/@packagecacheCore@/*-data
 rm -f $prefix/@packagecacheCore@/*-data.maps
 %description

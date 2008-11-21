@@ -8,20 +8,20 @@ Summary: Macaulay 2 is a software system for algebraic geometry research
 License: GPLv2
 Group: Applications/Engineering
 Buildroot: @abs_builddir@/files-common
-Prefix: @FINALPREFIX@
+Prefix: @prefix@
 %define _rpmdir ../../
 %define _rpmfilename @PKG_COM_RPM@
 %define _unpackaged_files_terminate_build 1
 %post
 #!/bin/sh -e
-prefix=@FINALPREFIX@
+prefix=@prefix@
 cd $prefix/@infodir@
 for p in @PACKAGES@
 do install-info --quiet --info-dir=. $p.info
 done
 %preun
 #! /bin/sh -e
-prefix=@FINALPREFIX@
+prefix=@prefix@
 cd $prefix/@infodir@
 for p in @PACKAGES@
 do install-info --remove --quiet --info-dir=. $p.info

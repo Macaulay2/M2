@@ -6,12 +6,12 @@
 # This script will be run in a hostile environment by setup.exe, and there is no way
 # to test it in advance in the same environment.
 
-cd @FINALPREFIX@/share/info
+cd @prefix@/share/info
 for p in @PACKAGES@
 do install-info --remove $p.info dir
 done
 
-STARTFILE=@FINALPREFIX@/share/emacs/site-lisp/site-start.el
+STARTFILE=@prefix@/share/emacs/site-lisp/site-start.el
 REGEX="^\(load \"M2-init\.el\" t\)$"
 REGEX2="^(load \"M2-init\.el\" t)$"
 if [ -f "$STARTFILE" ] && egrep -q "$REGEX" "$STARTFILE"

@@ -3,8 +3,7 @@ include ../../include/config.Makefile
 VPATH = @srcdir@
 TIDY = yes
 CHOWN = chown
-prefixtail=$(shell echo @FINALPREFIX@ | sed 's=^/==')
-include ../Makefile.filenames
+prefixtail=$(shell echo @prefix@ | sed 's,^/,,')
 TAROPTIONS = --owner=0 --group=0 --mode=a+rX,og-ws
 .PHONY : prepare
 ############################## main targets
@@ -21,12 +20,19 @@ all pre-install :: tidy_after
 endif
 #################################
 
+ifneq (@prefix@,/usr)
+$(error expected configuration with --prefix=/usr, to comply with debian package standards)
+endif
+ifneq "${prefix}" "@prefix@"
+$(error prefix set to new value)
+endif
+
 ifneq (@DEBUG@,no)
-$(error expected --disable-debug, in order to make a ubuntu package)
+$(error expected --disable-debug, in order to make a *.deb package)
 endif
 
 ifneq (@OPTIMIZE@,yes)
-$(error expected --enable-optimize, in order to make a ubuntu package)
+$(error expected --enable-optimize, in order to make a *.deb package)
 endif
 
 ../../@PKG_DEB@ : @srcdir@/macaulay2/debian-binary macaulay2/control.tar.gz macaulay2/data.tar.gz
@@ -50,28 +56,24 @@ macaulay2-common/control.tar.gz : macaulay2-common/control macaulay2-common/post
 	cd macaulay2-common && chmod 0755 postinst prerm
 	tar cfz $@ $(TAROPTIONS) -C macaulay2-common control postinst prerm
 
-.prepared : ; $(MAKE) prepare && touch $@
-prepare : ../../$(PKG_TZ) ../../$(PKG_COM_TZ)
-	rm -rf tmp@FINALPREFIX@ tmp-common@FINALPREFIX@
-	$(MKDIR_P) tmp@FINALPREFIX@
-	$(MKDIR_P) tmp-common@FINALPREFIX@
-	tar xfp ../../$(PKG_TZ) @TAR_COMPRESS_OPTION@
-	for i in @package@/* ; do if [ -f "$$i" ] ; then rm "$$i" ; fi ; done
-	mv @package@/* tmp@FINALPREFIX@
-	tar xfp ../../$(PKG_COM_TZ) @TAR_COMPRESS_OPTION@
-	for i in @package@/* ; do if [ -f "$$i" ] ; then rm "$$i" ; fi ; done
-	mv @package@/* tmp-common@FINALPREFIX@
-	rmdir @package@
-	$(MKDIR_P) tmp@FINALPREFIX@/share/doc/macaulay2
-	$(MKDIR_P) tmp-common@FINALPREFIX@/share/doc/macaulay2-common
-	cp tmp-common@FINALPREFIX@/@docdir@/README tmp@FINALPREFIX@/share/doc/macaulay2/copyright
-	cp tmp-common@FINALPREFIX@/@docdir@/README tmp-common@FINALPREFIX@/share/doc/macaulay2-common/copyright
-	gzip -9 <@srcdir@/macaulay2/changelog >tmp@FINALPREFIX@/share/doc/macaulay2/changelog.gz
-	gzip -9 <@srcdir@/macaulay2-common/changelog >tmp-common@FINALPREFIX@/share/doc/macaulay2-common/changelog.gz
-	find tmp tmp-common -name .linkdir | xargs rm -f
+T=tar --create --file=- --mode=a+rX,og-ws --exclude='.nfs*' --exclude='Macaulay2-*-data'
+prepare : .prepared
+.prepared : 
+	rm -rf tmp@prefix@ tmp-common@prefix@
+	$(MKDIR_P) tmp@prefix@
+	$(MKDIR_P) tmp-common@prefix@
+	$(T) -C @pre_exec_prefix@ . | tar xfp - -C tmp@prefix@
+	$(T) -C @pre_prefix@      . | tar xfp - -C tmp-common@prefix@
+	$(MKDIR_P) tmp@prefix@/share/doc/macaulay2
+	$(MKDIR_P) tmp-common@prefix@/share/doc/macaulay2-common
+	cp tmp-common@docdir@/README tmp@prefix@/share/doc/macaulay2/copyright
+	cp tmp-common@docdir@/README tmp-common@prefix@/share/doc/macaulay2-common/copyright
+	gzip -9 <@srcdir@/macaulay2/changelog >tmp@prefix@/share/doc/macaulay2/changelog.gz
+	gzip -9 <@srcdir@/macaulay2-common/changelog >tmp-common@prefix@/share/doc/macaulay2-common/changelog.gz
 	find tmp-common -name \*.info | while read x ; do gzip --best "$$x" ; done
 	find tmp tmp-common -name man -type d | while read x ; do find $$x -type f -not -name \*.gz | while read y ; do gzip --best "$$y" ; done ; done
 	find tmp -name \*.so -o -name \*.so.\* -o -name \*.la | xargs chmod a-x Makefile
+	touch $@
 macaulay2/data.tar.gz        : prepare; (cd tmp        && tar cfz - $(TAROPTIONS) *) >$@
 macaulay2-common/data.tar.gz : prepare;	(cd tmp-common && tar cfz - $(TAROPTIONS) *) >$@
 macaulay2/md5sums            : prepare; (cd tmp        && find * -type f | xargs md5sum) >$@
@@ -82,20 +84,18 @@ check :
 	- @LINTIAN@ -I ../../@PKG_COM_DEB@
 endif
 tidy_before :
-	rm -rf @package@ tmp tmp-common
+	rm -rf .prepared tmp tmp-common
 	rm -rf macaulay2/control.tar.gz macaulay2/data.tar.gz macaulay2/md5sums
 	rm -rf macaulay2-common/control.tar.gz macaulay2-common/data.tar.gz macaulay2-common/md5sums
 tidy tidy_after :
-	rm -rf @package@ tmp tmp-common
+	rm -rf .prepared tmp tmp-common
 	rm -rf macaulay2/control.tar.gz macaulay2/data.tar.gz macaulay2/md5sums
 	rm -rf macaulay2-common/control.tar.gz macaulay2-common/data.tar.gz macaulay2-common/md5sums
 clean :: tidy
-	rm -rf @package@
-	rm -rf ../../@PKG_DEB@
-	rm -rf ../../@PKG_COM_DEB@
+	rm -rf ../../@PKG_DEB@ ../../@PKG_COM_DEB@
 distclean : clean; rm -f Makefile control
 libraries-used : .prepared always
-	ldd tmp@FINALPREFIX@/@bindir@/M2@EXE@ | sed -e 's/.* => //' -e 's/^	//' -e 's/ .*//' | egrep '^/' >$@ || true
+	ldd tmp@bindir@/M2@EXE@ | sed -e 's/.* => //' -e 's/^	//' -e 's/ .*//' | egrep '^/' >$@ || true
 packages-used : libraries-used
 	cat libraries-used | while read x ; do find /var/lib/dpkg/info -name \*.list | xargs egrep -l "^$$x"; done | sort | uniq | sed -e 's=.*/==' -e 's=\.list$$==' >$@
 macaulay2/control : macaulay2/control.prelim macaulay2/data.tar.gz packages-used
@@ -117,5 +117,5 @@ Makefile : Makefile.in; cd ../..; ./config.status distributions/deb/Makefile
 macaulay2/control.prelim : macaulay2/control.prelim.in; cd ../..; ./config.status distributions/deb/macaulay2/control.prelim
 
 # Local Variables:
-# compile-command: "make -C $M2BUILDDIR/distributions/deb "
+# compile-command: "make -C $M2BUILDDIR/distributions/deb pre-install "
 # End:

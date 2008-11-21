@@ -15,7 +15,6 @@ TARDIR ?= $(LIBNAME)-$(VERSION)
 TARFILE ?= $(LIBNAME)-$(VERSION).tar.gz
 
 LIBRARIESDIR := $(PREFIX)
-FINALLIBRARIESDIR = @FINALPREFIX@
 
 export PATH := @abs_top_srcdir@/autoconf/final/bin:$(PATH)
 

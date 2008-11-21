@@ -1,0 +1,11 @@
+$ uname -a
+Linux gallium 2.6.24-16-generic #1 SMP Thu Apr 10 12:47:45 UTC 2008 x86_64 GNU/Linux
+      	      			       	       	  	       	        ^^
+      	      			       	       	  	       	        ^^
+      	      			       	       	  	       	        ^^
+
+../../../../../Macaulay2/e/exptable.c: In function 'exponent_table_put':
+../../../../../Macaulay2/e/exptable.c:67: warning: cast to pointer from integer of different size
+../../../../../Macaulay2/e/exptable.c:67: warning: cast from pointer to integer of different size
+../../../../../Macaulay2/e/exptable.c: In function 'exponent_table_get':
+../../../../../Macaulay2/e/exptable.c:75: warning: cast from pointer to integer of different size

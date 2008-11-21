@@ -1,5 +1,5 @@
 #! /bin/sh -e
-prefix=@FINALPREFIX@
+prefix=@prefix@
 case "$1" in
     remove|deconfigure|upgrade)
 	rm -f $prefix/lib/Macaulay2/Core/cache/*
