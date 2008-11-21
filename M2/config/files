@@ -2,7 +2,6 @@ GNUmakefile
 check-configure/Makefile
 include/config.Makefile
 distributions/Makefile
-distributions/Makefile.filenames
 distributions/tar/Makefile
 distributions/dmg/Makefile
 distributions/rpm/Makefile

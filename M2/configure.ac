@@ -345,7 +345,7 @@ AC_SUBST(EXPERIMENT,no)
 AC_ARG_ENABLE(experimental-code, AS_HELP_STRING(--enable-experimental-code,enable experimental code), EXPERIMENT=$enableval)
 test "$EXPERIMENT" = no; val=$?; AC_DEFINE_UNQUOTED(EXPERIMENT,$val,whether experimental code has been enabled)
 
-AC_SUBST(M2TARFILE,no) AC_ARG_ENABLE(tarfile, AS_HELP_STRING(--enable-tarfile,prepare a binary package as compressed tar files), M2TARFILE=$enableval)
+AC_SUBST(M2TARFILE,no) AC_ARG_ENABLE(tarfile, AS_HELP_STRING(--enable-tarfile,prepare binary and source packages as compressed tar files), M2TARFILE=$enableval)
 AC_SUBST(TARLIBS,no)   AC_ARG_ENABLE(tarlibs, AS_HELP_STRING(--enable-tarlibs,include symbolic links to needed shared libraries for tar), TARLIBS=$enableval)
 AC_SUBST(SHARED,no)    AC_ARG_ENABLE(shared, AS_HELP_STRING(--enable-shared,enable building of shared libraries), SHARED=$enableval)
 
@@ -462,7 +462,6 @@ if test "$CYGWIN" = yes
 then if test "$DEBUG$" = yes
      then AC_MSG_ERROR([--enable-cygwin and --enable-debug both specified])
      fi
-     M2TARFILE=yes
      if ! test "$SRCTARFILE" -o -d "$srcdir/.svn"
      then AC_MSG_ERROR([source tar file needed for cygwin distribution, specify it with --with-srctarfile=...])
      fi
@@ -470,15 +469,12 @@ fi
 
 AC_SUBST(DEB,no)
 AC_ARG_ENABLE(deb,  AS_HELP_STRING(--enable-deb,prepare a *.deb package (for debian, ubuntu, ...) (enables encap)), DEB=$enableval)
-test "$DEB" = yes && M2TARFILE=yes
 
 AC_SUBST(RPM,no)
 AC_ARG_ENABLE(rpm,  AS_HELP_STRING(--enable-rpm,prepare a *.rpm package (for red hat based systems) (enables encap)), RPM=$enableval)
-test "$RPM" = yes && M2TARFILE=yes
 
 AC_SUBST(DMG,no)
 AC_ARG_ENABLE(dmg,  AS_HELP_STRING(--enable-dmg,prepare a *.dmg package (for Mac OS) (enables encap)), DMG=$enableval)
-test "$DMG" = yes && M2TARFILE=yes
 
 AC_SUBST(M2SUFFIX,)
 test "$program_suffix" != NONE && M2SUFFIX=$program_suffix
@@ -924,8 +920,6 @@ AC_SUBST(DESC,$PACKAGE_VERSION-$host_cpu-$OS-$REL)
 if ! test "$FAKEROOT"
 then if test "$DEB" = yes -o "$RPM" = yes
      then AC_MSG_ERROR([program "fakeroot" not installed, required for creating *.deb or *.rpm distributions])
-     elif test "$M2TARFILE" = yes
-     then AC_MSG_NOTICE([warning: program "fakeroot" not installed, tar file will appear to contain files not owned by root])
      fi
 fi
 
