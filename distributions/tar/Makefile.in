@@ -1,8 +1,6 @@
 # @configure_input@
 include ../../include/config.Makefile
-TIDY=yes
-VPATH=@srcdir@
-DEPENDS=yes
+D=../../
 S=@package@.tar
 E=@package@-@MACHINE@.tar
 C=@package@-common.tar
@@ -14,19 +12,22 @@ EJ=$(E).bz2
 CG=$(C).gz
 CJ=$(C).bz2
 pre-install tarballs :: tarballs.@COMPRESS@
-tarballs.bz2 : ../../$(EJ) ../../$(CJ) ../../$(SJ)
-tarballs.gz  : ../../$(EG) ../../$(CG) ../../$(SG)
-T=tar --create --file=$@ --owner=0 --group=0 --mode=a+rX,og-ws \
-	--exclude='.nfs*' --exclude='Macaulay2-*-data' \
-	--transform 's,^\.,@package@,'
+J=$(addprefix $(D), $(SJ) $(CJ) $(EJ))
+G=$(addprefix $(D), $(SG) $(CG) $(EG))
+tarballs.bz2 : $(J)
+tarballs.gz  : $(G)
+clean ::; rm -rf $(J) $(G)
+T=tar --create --file=$@ --owner=0 --group=0 --mode=a+rX,og-ws --exclude='.nfs*' --exclude='Macaulay2-*-data'
+A=--transform 's,^\.,@package@,'
+B=--transform 's,^,@package@/,'
 TJ=$(T) --bzip2
 TG=$(T) --gzip
-../../$(CJ) : always ; $(TJ) -C @pre_prefix@ .
-../../$(CG) : always ; $(TG) -C @pre_prefix@ .
-../../$(EJ) : always ; $(TJ) -C @pre_exec_prefix@ .
-../../$(EG) : always ; $(TG) -C @pre_exec_prefix@ .
-../../$(SJ) : always ; svn ls -R @top_srcdir@ | egrep -v '/$$' | $(TJ) -C @top_srcdir@ --files-from=-
-../../$(SG) : always ; svn ls -R @top_srcdir@ | egrep -v '/$$' | $(TG) -C @top_srcdir@ --files-from=-
+../../$(CJ) : always ; $(TJ) -C @pre_prefix@ $(A) .
+../../$(CG) : always ; $(TG) -C @pre_prefix@ $(A) .
+../../$(EJ) : always ; $(TJ) -C @pre_exec_prefix@ $(A) .
+../../$(EG) : always ; $(TG) -C @pre_exec_prefix@ $(A) .
+../../$(SJ) : always ; svn ls -R @top_srcdir@ | egrep -v '/$$' | $(TJ) -C @top_srcdir@ $(B) --files-from=-
+../../$(SG) : always ; svn ls -R @top_srcdir@ | egrep -v '/$$' | $(TG) -C @top_srcdir@ $(B) --files-from=-
 Makefile : Makefile.in; cd ../..; ./config.status distributions/tar/Makefile
 distclean : ; rm -rf Makefile
 # Local Variables:
