@@ -1,5 +1,5 @@
 #!/bin/sh -e
-prefix=@FINALPREFIX@
+prefix=@prefix@
 DUMPDATA=@DUMPDATA@
 case "$1" in
     abort-upgrade|configure)

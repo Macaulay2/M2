@@ -1,12 +1,16 @@
 # @configure_input@
 # see http://cygwin.com/setup.html for info on making cygwin packages
 
+
 # override this on the make command line, as needed!
 DISTRIBUTION = @DISTRIBUTION@
 
-ifneq (@FINALPREFIX@,/usr)
-$(error expected --with-final-prefix=/usr, to comply with cygwin package standards)
+ifneq (@prefix@,/usr)
+$(error expected configuration with --prefix=/usr, to comply with cygwin package standards)
 endif
+ifneq "${prefix}" "@prefix@"
+$(error prefix set to new value)
+fi
 
 ifneq (@STRIP@,yes)
 $(error expected --enable-strip, to comply with cygwin package standards)
@@ -24,9 +28,8 @@ include ../../include/config.Makefile
 include ../Makefile.filenames
 VPATH = @srcdir@
 
-finalprefix := @FINALPREFIX@
-prefixtail  := $(shell basename $(finalprefix))
-prefixdir   := $(shell dirname $(finalprefix))
+prefixtail  := $(shell basename @prefix@)
+prefixdir   := $(shell dirname @prefix@)
 ifeq ($(prefixdir),/)
 prefixdir = /.
 endif
@@ -59,10 +62,10 @@ endif
 	@FAKEROOT@ tar xzf ../../$(PKG_TGZ) -C files$(prefixdir)
 	@FAKEROOT@ tar xzf ../../$(PKG_COM_TGZ) -C files$(prefixdir)
 	mv files$(prefixdir)/@package@ files$(prefixdir)/$(prefixtail)
-	cd files$(finalprefix) && rm -f INSTALL encapinfo postinstall preremove
-	$(MKDIR_P) files/etc/postinstall files@FINALPREFIX@
+	cd files@prefix@ && rm -f INSTALL encapinfo postinstall preremove
+	$(MKDIR_P) files/etc/postinstall files@prefix@
 	@INSTALL_PROGRAM@ postinstall.sh files/etc/postinstall/@PACKAGE_TARNAME@.sh
-	$(MKDIR_P) files/etc/preremove files@FINALPREFIX@
+	$(MKDIR_P) files/etc/preremove files@prefix@
 	@INSTALL_PROGRAM@ preremove.sh files/etc/preremove/@PACKAGE_TARNAME@.sh
 ifneq (@FAKEROOT@,)
 	@FAKEROOT@ chown -R root.root files
@@ -72,7 +75,7 @@ server/Macaulay2/@package@-$(DISTRIBUTION).tar.bz2 : .prepared
 	(cd files && @FAKEROOT@ tar cjf - *) >$@
 
 libraries-used : .prepared
-	cygcheck files@FINALPREFIX@/@bindir@/M2@EXE@ \
+	cygcheck files@prefix@/@bindir@/M2@EXE@ \
 	| sed -e 's/^  *//' \
 	| dd conv=lcase \
 	| sed 's=\\=/=g' \

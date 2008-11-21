@@ -286,7 +286,6 @@ AC_SUBST(STATIC,no)    AC_ARG_ENABLE(static, AS_HELP_STRING(--enable-static,enab
 AC_SUBST(MEMDEBUG,no)  AC_ARG_ENABLE(memdebug, AS_HELP_STRING(--enable-memdebug,enable memory allocation debugging), MEMDEBUG=$enableval)
 AC_SUBST(OPTIMIZE,yes) AC_ARG_ENABLE(optimize, AS_HELP_STRING(--disable-optimize,disable optimization), OPTIMIZE=$enableval)
 AC_SUBST(DEBUG,no)     AC_ARG_ENABLE(debug, AS_HELP_STRING(--enable-debug,enable debugging (and disable stripping)), DEBUG=$enableval)
-AC_SUBST(ENCAP,yes)    AC_ARG_ENABLE(encap, AS_HELP_STRING(--disable-encap,do not encapsulate file in a subdirectory), ENCAP=$enableval)
 AC_SUBST(XCODE,no)     AC_ARG_ENABLE(xcode, AS_HELP_STRING(--enable-xcode,create Macaulay2/d/interpret.a for use with xcode), XCODE=$enableval)
 AC_SUBST(FROBBY,no)    AC_ARG_ENABLE(frobby, AS_HELP_STRING(--enable-frobby,[download, compile, and link with frobby library]), 
     AC_DEFINE(HAVE_FROBBY,1,[whether we are linking with the frobby library])
@@ -457,9 +456,12 @@ AC_ARG_WITH(srctarfile, AS_HELP_STRING(--with-srctarfile=...,source tar file to 
     SRCTARFILE=`cd "$dirname" && pwd`/`basename "$withval"`)
 
 AC_SUBST(CYGWIN,no)
-AC_ARG_ENABLE(cygwin,  AS_HELP_STRING(--enable-cygwin,prepare a binary package for cygwin (disables encap)), CYGWIN=$enableval)
+AC_ARG_ENABLE(cygwin,  AS_HELP_STRING(--enable-cygwin,prepare a binary package for cygwin), CYGWIN=$enableval)
 if test "$CYGWIN" = yes 
-then if test "$DEBUG$" = yes
+then if test "$OPTIMIZE" = no
+     then AC_MSG_ERROR([--disable-optimize and --enable-cygwin both specified])
+     fi
+     if test "$DEBUG$" = yes
      then AC_MSG_ERROR([--enable-cygwin and --enable-debug both specified])
      fi
      if ! test "$SRCTARFILE" -o -d "$srcdir/.svn"
@@ -468,13 +470,37 @@ then if test "$DEBUG$" = yes
 fi
 
 AC_SUBST(DEB,no)
-AC_ARG_ENABLE(deb,  AS_HELP_STRING(--enable-deb,prepare a *.deb package (for debian, ubuntu, ...) (enables encap)), DEB=$enableval)
+AC_ARG_ENABLE(deb,  AS_HELP_STRING(--enable-deb,prepare a *.deb package (for debian, ubuntu, ...)), DEB=$enableval)
+if test "$DEB" = yes 
+then if test "$OPTIMIZE" = no
+     then AC_MSG_ERROR([--disable-optimize and --enable-deb both specified])
+     fi
+     if test "$DEBUG" = yes
+     then AC_MSG_ERROR([--enable-debug and --enable-deb both specified])
+     fi
+fi
 
 AC_SUBST(RPM,no)
-AC_ARG_ENABLE(rpm,  AS_HELP_STRING(--enable-rpm,prepare a *.rpm package (for red hat based systems) (enables encap)), RPM=$enableval)
+AC_ARG_ENABLE(rpm,  AS_HELP_STRING(--enable-rpm,prepare a *.rpm package (for red hat based systems)), RPM=$enableval)
+if test "$RPM" = yes 
+then if test "$OPTIMIZE" = no
+     then AC_MSG_ERROR([--disable-optimize and --enable-rpm both specified])
+     fi
+     if test "$DEBUG" = yes
+     then AC_MSG_ERROR([--enable-debug and --enable-rpm both specified])
+     fi
+fi
 
 AC_SUBST(DMG,no)
-AC_ARG_ENABLE(dmg,  AS_HELP_STRING(--enable-dmg,prepare a *.dmg package (for Mac OS) (enables encap)), DMG=$enableval)
+AC_ARG_ENABLE(dmg,  AS_HELP_STRING(--enable-dmg,prepare a *.dmg package (for Mac OS)), DMG=$enableval)
+if test "$DPM" = yes 
+then if test "$OPTIMIZE" = no
+     then AC_MSG_ERROR([--disable-optimize and --enable-dpm both specified])
+     fi
+     if test "$DEBUG" = yes
+     then AC_MSG_ERROR([--enable-debug and --enable-dpm both specified])
+     fi
+fi
 
 AC_SUBST(M2SUFFIX,)
 test "$program_suffix" != NONE && M2SUFFIX=$program_suffix
@@ -785,42 +811,6 @@ test $BUILD_lapack = yes && BUILTLIBS="-llapack -lblas $BUILTLIBS"
 # after this point we add no more libraries to $LIBS, e.g., with AC_SEARCH_LIBS()
 SAVELIBS=$LIBS
 
-AC_SUBST(FINALPREFIX,/usr)
-AC_ARG_WITH(final-prefix,AS_HELP_STRING(--with-final-prefix=...,prefix for installation of architecture-independent files (/usr)),FINALPREFIX=$withval)
-case $FINALPREFIX in
-    /*) ;;
-    *) AC_MSG_ERROR(final prefix should begin with /) ;;
-esac
-
-AC_SUBST(FINALEXECPREFIX,$FINALPREFIX)
-AC_ARG_WITH(final-exec-prefix,AS_HELP_STRING(--with-final-exec-prefix=...,prefix for installation of architecture-dependent files (/usr)),FINALEXECPREFIX=$withval)
-case $FINALEXECPREFIX in
-    /*) ;;
-    *) AC_MSG_ERROR(final exec prefix should begin with /) ;;
-esac
-
-[
-a=`echo $FINALEXECPREFIX/ | sed s,///*,/,g`
-b=`echo $FINALPREFIX/ | sed s,///*,/,g`
-while
-  case $a in
-  */*) a1=`echo $a | sed 's,/.*,/*,'`
-       case $b in
-	 $a1)
-	    a=`echo $a | sed 's,[^/]*/,,'`
-	    b=`echo $b | sed 's,[^/]*/,,'`
-	    true ;; 
-	 *) false ;; 
-       esac 
-       ;;
-  *) false ;;
-  esac
-do :; done
-a=`echo $a | sed 's,[^/][^/]*,..,'g`
-]
-AC_SUBST(TOCOMMON,$a$b)
-AC_DEFINE_UNQUOTED(TOCOMMON,"$TOCOMMON",[the relative path from the exec prefix to the prefix])
-
 AC_SUBST(NM_DEMANGLES,)
 AC_MSG_CHECKING(whether nm accepts the demangle option)
 if nm --help 2>&1 | grep demangle >/dev/null
@@ -953,9 +943,12 @@ fi
 
 # Here we insert autoconf's default values so we can compute the relative locations in the directory tree
 test "$prefix" || prefix=/usr/local
-if test "$ENCAP" = yes
-then prefix="$prefix/$package"
-     AC_MSG_NOTICE([encap enabled, changing prefix to $prefix])
+
+# for distributions, prefix should be /usr
+if test "$prefix" != /usr
+then test "$CYGWIN" = yes && AC_MSG_ERROR(--enable-cygwin specified and --prefix not set to /usr)
+     test "$DEB"    = yes && AC_MSG_ERROR(--enable-deb specified and --prefix not set to /usr)
+     test "$RPM"    = yes && AC_MSG_ERROR(--enable-rpm specified and --prefix not set to /usr)
 fi
 
 # these are the variables that make their way into autoconf after version 2.59
@@ -966,10 +959,6 @@ test "$htmldir"     || AC_SUBST(htmldir,'${docdir}')
 test "$pdfdir"      || AC_SUBST(pdfdir,'${docdir}')
 test "$psdir"       || AC_SUBST(psdir,'${docdir}')
 test "$localedir"   || AC_SUBST(localedir,'${datarootdir}/locale')
-
-if test $ENCAP = yes -a "${exec_prefix}" != '${prefix}'
-then AC_MSG_ERROR([--enable-encap and --exec-prefix both used, and conflict])
-fi
 
 # Here we normalize all the configure variables so each one begins either with ${prefix} or with ${exec_prefix},
 # so they can be handled more simply in Macaulay2, by a single text replacement.

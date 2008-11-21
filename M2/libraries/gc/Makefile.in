@@ -1,3 +1,8 @@
+# warning: we don't use libcord.so, but it gets compiled with an RPATH set like this:
+#   $ objdump -x libcord.so | grep RPA
+#     RPATH                /home/dan/src/M2/trunk/BUILD/Linux-x86_64/ubuntu/include/.././libraries/final/lib
+# That might happen to other sharable libraries we import
+# That's why it's better for sharable libraries to be distributed as separate packages.
 URL = http://www.hpl.hp.com/personal/Hans_Boehm/gc/gc_source
 VERSION = 7.1
 TARDIR = gc-7.1

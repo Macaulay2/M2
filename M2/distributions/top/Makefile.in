@@ -1,4 +1,5 @@
 # @configure_input@
+# here we make the files that are needed at top level for ../tar and might be needed for ../install (if --enable-encap)
 include ../../include/config.Makefile
 install pre-install all :: postinstall preremove INSTALL encapinfo
 Makefile : @srcdir@/Makefile.in; cd ../..; ./config.status distributions/top/Makefile
@@ -6,8 +7,9 @@ postinstall : @srcdir@/postinstall.in; cd ../..; ./config.status distributions/t
 preremove : @srcdir@/preremove.in; cd ../..; ./config.status distributions/top/preremove
 INSTALL : @srcdir@/INSTALL.in; cd ../..; ./config.status distributions/top/INSTALL
 distclean : ; rm -rf Makefile
-RLS = sed 's,^linkdir \./,linkdir ,'
-prefix=.
+RLS = sed 's,^linkdir PRE/,linkdir ,'
+prefix=PRE
+exec_prefix=PRE
 encapinfo : Makefile
 	( \
 	  echo encap 2.0 ;\

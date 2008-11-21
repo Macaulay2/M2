@@ -11,7 +11,8 @@ EG=$(E).gz
 EJ=$(E).bz2
 CG=$(C).gz
 CJ=$(C).bz2
-pre-install tarballs :: tarballs.@COMPRESS@
+pre-install :: tarballs
+tarballs :: tarballs.@COMPRESS@
 J=$(addprefix $(D), $(SJ) $(CJ) $(EJ))
 G=$(addprefix $(D), $(SG) $(CG) $(EG))
 tarballs.bz2 : $(J)
@@ -22,12 +23,12 @@ A=--transform 's,^\.,@package@,'
 B=--transform 's,^,@package@/,'
 TJ=$(T) --bzip2
 TG=$(T) --gzip
-../../$(CJ) : always ; $(TJ) -C @pre_prefix@ $(A) .
-../../$(CG) : always ; $(TG) -C @pre_prefix@ $(A) .
-../../$(EJ) : always ; $(TJ) -C @pre_exec_prefix@ $(A) .
-../../$(EG) : always ; $(TG) -C @pre_exec_prefix@ $(A) .
-../../$(SJ) : always ; svn ls -R @top_srcdir@ | egrep -v '/$$' | $(TJ) -C @top_srcdir@ $(B) --files-from=-
-../../$(SG) : always ; svn ls -R @top_srcdir@ | egrep -v '/$$' | $(TG) -C @top_srcdir@ $(B) --files-from=-
+$(D)$(CJ) : always ; $(TJ) -C @pre_prefix@ $(A) .
+$(D)$(CG) : always ; $(TG) -C @pre_prefix@ $(A) .
+$(D)$(EJ) : always ; $(TJ) -C @pre_exec_prefix@ $(A) .
+$(D)$(EG) : always ; $(TG) -C @pre_exec_prefix@ $(A) .
+$(D)$(SJ) : always ; svn ls -R @top_srcdir@ | egrep -v '/$$' | $(TJ) -C @top_srcdir@ $(B) --files-from=-
+$(D)$(SG) : always ; svn ls -R @top_srcdir@ | egrep -v '/$$' | $(TG) -C @top_srcdir@ $(B) --files-from=-
 Makefile : @srcdir@/Makefile.in; cd ../..; ./config.status distributions/tar/Makefile
 distclean : ; rm -rf Makefile
 # Local Variables:

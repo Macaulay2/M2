@@ -1,6 +1,6 @@
 # @configure_input@
 
-# Here are Reex Dieter's rpms:
+# Here are Rex Dieter's rpms:
 
 # http://koji.fedoraproject.org/packages/Macaulay2/1.1/2.fc10/src/Macaulay2-1.1-2.fc10.src.rpm
 # http://koji.fedoraproject.org/packages/Macaulay2/1.1/2.fc10/i386/Macaulay2-1.1-2.fc10.i386.rpm
@@ -8,6 +8,13 @@
 
 # override this on the make command line, as needed!
 DISTRIBUTION = @DISTRIBUTION@
+
+ifneq (@prefix@,/usr)
+$(error expected configuration with --prefix=/usr, to comply with rpm package standards)
+endif
+ifneq "${prefix}" "@prefix@"
+$(error prefix set to new value)
+fi
 
 include ../../include/config.Makefile
 CHOWN = chown
@@ -49,22 +56,22 @@ SEDOPTS = -e 's=^\.="=' -e 's=$$="='
 
 .prepared :
 	rm -rf files
-	umask 022 ; $(MKDIR_P) files@FINALPREFIX@
-	umask 022 ; @FAKEROOT@ tar xfp ../../$(PKG_TZ)     @TAR_COMPRESS_OPTION@ -C files@FINALPREFIX@
-	mv files@FINALPREFIX@/@package@/* files@FINALPREFIX@
-	rmdir files@FINALPREFIX@/@package@
-	cd files@FINALPREFIX@ && rm -f INSTALL encapinfo postinstall preremove
-	find files@FINALPREFIX@/@mandir@/man1 -name \*.1 | xargs gzip
+	umask 022 ; $(MKDIR_P) files@prefix@
+	umask 022 ; @FAKEROOT@ tar xfp ../../$(PKG_TZ)     @TAR_COMPRESS_OPTION@ -C files@prefix@
+	mv files@prefix@/@package@/* files@prefix@
+	rmdir files@prefix@/@package@
+	cd files@prefix@ && rm -f INSTALL encapinfo postinstall preremove
+	find files@prefix@/@mandir@/man1 -name \*.1 | xargs gzip
 
 .prepared-common :
 	rm -rf files-common
-	umask 022 ; $(MKDIR_P) files-common@FINALPREFIX@
-	umask 022 ; @FAKEROOT@ tar xfp ../../$(PKG_COM_TZ) @TAR_COMPRESS_OPTION@ -C files-common@FINALPREFIX@
-	mv files-common@FINALPREFIX@/@package@/* files-common@FINALPREFIX@
-	rmdir files-common@FINALPREFIX@/@package@
-	cd files-common@FINALPREFIX@ && rm -f INSTALL encapinfo postinstall preremove
-	find files-common@FINALPREFIX@ -name \*.info | xargs gzip
-	find files-common@FINALPREFIX@/@packagesdir@/Macaulay2Doc -name \*.c -o -name \*.h | xargs rm
+	umask 022 ; $(MKDIR_P) files-common@prefix@
+	umask 022 ; @FAKEROOT@ tar xfp ../../$(PKG_COM_TZ) @TAR_COMPRESS_OPTION@ -C files-common@prefix@
+	mv files-common@prefix@/@package@/* files-common@prefix@
+	rmdir files-common@prefix@/@package@
+	cd files-common@prefix@ && rm -f INSTALL encapinfo postinstall preremove
+	find files-common@prefix@ -name \*.info | xargs gzip
+	find files-common@prefix@/@packagesdir@/Macaulay2Doc -name \*.c -o -name \*.h | xargs rm
 
 ../../@PKG_RPM@ : Macaulay2-body.spec ../../$(PKG_TZ) Makefile .prepared packages-used
 	sed -e '/Requires/,$$d' -e 's/^Release: .*/Release: $(DISTRIBUTION)/' Macaulay2-body.spec >Macaulay2.spec
@@ -81,7 +88,7 @@ SEDOPTS = -e 's=^\.="=' -e 's=$$="='
 	@FAKEROOT@ rpmbuild -bb Macaulay2-common.spec
 
 libraries-used : .prepared always
-	ldd files@FINALPREFIX@/@bindir@/M2@EXE@ > $@.tmp
+	ldd files@prefix@/@bindir@/M2@EXE@ > $@.tmp
 	cat $@.tmp | sed -e 's/.* => //' -e 's/^	//' -e 's/ .*//' | egrep '^/' >$@ || true
 	rm $@.tmp
 

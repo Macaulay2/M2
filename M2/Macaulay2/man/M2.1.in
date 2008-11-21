@@ -46,7 +46,7 @@ options:
 See also \fIM2-help\fR(1).
 
 The documentation for Macaulay 2 is available locally starting in
-@FINALPREFIX@/@docdir@/Macaulay2Doc/html/index.html.
+@prefix@/@docdir@/Macaulay2Doc/html/index.html.
 
 The home page for Macaulay 2 is \fBhttp://www.math.uiuc.edu/Macaulay2/\fR.
 

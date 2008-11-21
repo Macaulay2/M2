@@ -17,12 +17,12 @@
 
 # My current theory is that it ended because I used ">>"
 
-cd @FINALPREFIX@/share/info
+cd @prefix@/share/info
 for p in @PACKAGES@
 do install-info $p.info dir
 done
 
-STARTFILE=@FINALPREFIX@/share/emacs/site-lisp/site-start.el
+STARTFILE=@prefix@/share/emacs/site-lisp/site-start.el
 LINE="(load \"M2-init.el\" t)"
 REGEX="^\(load \"M2-init\.el\" t\)$"
 if ! [ -f "$STARTFILE" ] || ! egrep -q "$REGEX" "$STARTFILE"
