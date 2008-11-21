@@ -4,8 +4,8 @@ document {
      "The package ", EM "NAG (Numerical Algebraic Geometry)", " implements methods of polynomial homotopy continuation                                                                                                  
      to solve systems of polynomial equations and deal with complex algebraic varieties.",
      HEADER3 "Under construction:",
-     "In order to download the current versions of packages from the repository type ", TT "svn ci svn://macaulay2.math.uiuc.edu/Macaulay2/trunk/M2/Macaulay2/packages", 
-     " (google \"svn\" for details). ", "This package is stored in ", TT "NAG.m2", " and the subdirectory ", TT "NAG", ".",
+     "In order to download the current versions of packages from the repository type ", BR, TT "svn co svn://macaulay2.math.uiuc.edu/Macaulay2/trunk/M2/Macaulay2/packages", 
+     BR, " (google \"svn\" for details). ", "This package is stored in ", TT "NAG.m2", " and the subdirectory ", TT "NAG", ".",
      HEADER3 "Functions:",
      UL{
 	  TO{"solveSystem"},
