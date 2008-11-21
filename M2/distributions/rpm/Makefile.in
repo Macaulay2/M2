@@ -38,7 +38,6 @@ all pre-install :: ../../@PKG_RPM@ ../../@PKG_COM_RPM@
 ifeq ($(TIDY),yes)
 all pre-install :: tidy
 endif
-always :
 warning: always
 ifeq (@FAKEROOT@,)
 	@echo "============================================================================="

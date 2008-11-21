@@ -1,53 +1,30 @@
 # @configure_input@
 include ../include/config.Makefile
 VPATH = @srcdir@
-.PHONY : always
-always :
-include Makefile.filenames
-
-tarballs tarballs.bz2 tarballs.gz :; $(MAKE) -C tar $@
-
-src-files : src-files ; svn ls -R @srcdir@ | egrep -v '/$$' | sed 's=^=@package@/=' <$< >$@
-@package@ : GNUmakefile ; rm -f $@ && ln -sf @srcdir@ $@
-mkrt : src-files @package@
-ifneq (@FAKEROOT@,)
-	cat src-files | @FAKEROOT@ xargs chown root.root
-endif
-$(SRC_TGZ) : mkrt ; @FAKEROOT@ tar cfz $@ --files-from=src-files
-$(SRC_TBZ) : mkrt ; @FAKEROOT@ tar cfj $@ --files-from=src-files
-src : $(SRC_TZ)
-
 ifeq "@M2TARFILE@" "yes"
-pre-install :: tarballs
+pre-install ::; $(MAKE) -C tar pre-install
 endif
-clean ::; rm -f ../$(PKG_TGZ) ../$(PKG_TBZ) ../$(PKG_COM_TGZ) ../$(PKG_COM_TBZ)
-
 ifeq "@DEB@" "yes"
-pre-install :: deb
-check :: ; $(MAKE) -C deb $@
+pre-install ::; $(MAKE) -C deb pre-install
 endif
-deb : ../$(PKG_TZ) ../$(PKG_COM_TZ) ; $(MAKE) -C deb pre-install
-clean distclean :: ; $(MAKE) -C deb $@
-
 ifeq "@RPM@" "yes"
-pre-install :: rpm
+pre-install ::; $(MAKE) -C rpm pre-install
 endif
-rpm : ../$(PKG_TZ) ../$(PKG_COM_TZ) ; $(MAKE) -C rpm pre-install
-clean distclean :: ; $(MAKE) -C rpm $@
-
 ifeq "@DMG@" "yes"
-pre-install :: dmg
+pre-install ::; $(MAKE) -C dmg pre-install
 endif
-dmg : ../$(PKG_TZ) ../$(PKG_COM_TZ) ; $(MAKE) -C dmg pre-install
-clean distclean :: ; $(MAKE) -C dmg $@
-
 ifeq "@CYGWIN@" "yes"
-pre-install :: cygwin
+pre-install ::; $(MAKE) -C cygwin pre-install
 endif
-cygwin : ../$(PKG_TGZ) ../$(PKG_COM_TGZ) ; $(MAKE) -C cygwin pre-install
-clean distclean :: ; $(MAKE) -C cygwin $@
+check ::
+	$(MAKE) -C deb $@
+pre-install clean distclean ::
+	$(MAKE) -C dmg $@
+	$(MAKE) -C rpm $@
+	$(MAKE) -C deb $@
+	$(MAKE) -C cygwin $@
+	$(MAKE) -C tar $@
 Makefile : Makefile.in; cd ..; ./config.status distributions/Makefile
-
 # Local Variables:
 # compile-command: "make -C $M2BUILDDIR/distributions pre-install "
 # End:
