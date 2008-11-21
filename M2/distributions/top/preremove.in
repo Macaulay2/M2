@@ -1,0 +1,11 @@
+#! /bin/sh -e
+prefix=$ENCAP_SOURCE/$ENCAP_PKGNAME
+exec_prefix=$prefix
+infodir="@infodir@"; eval infodir="$infodir"; eval infodir="$infodir"
+cd "$infodir"
+prefix=$ENCAP_TARGET
+exec_prefix=$prefix
+infodir="@infodir@"; eval infodir="$infodir"; eval infodir="$infodir"
+for i in *.info
+do (set -x ; install-info --info-dir="$infodir" --remove "$i")
+done

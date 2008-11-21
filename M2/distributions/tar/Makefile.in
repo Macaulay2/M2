@@ -28,7 +28,7 @@ TG=$(T) --gzip
 ../../$(EG) : always ; $(TG) -C @pre_exec_prefix@ $(A) .
 ../../$(SJ) : always ; svn ls -R @top_srcdir@ | egrep -v '/$$' | $(TJ) -C @top_srcdir@ $(B) --files-from=-
 ../../$(SG) : always ; svn ls -R @top_srcdir@ | egrep -v '/$$' | $(TG) -C @top_srcdir@ $(B) --files-from=-
-Makefile : Makefile.in; cd ../..; ./config.status distributions/tar/Makefile
+Makefile : @srcdir@/Makefile.in; cd ../..; ./config.status distributions/tar/Makefile
 distclean : ; rm -rf Makefile
 # Local Variables:
 # compile-command: "make -C $M2BUILDDIR/distributions/tar pre-install "

@@ -1,6 +1,9 @@
 # @configure_input@
 include ../include/config.Makefile
 VPATH = @srcdir@
+
+install pre-install all ::; $(MAKE) -C top $@
+
 ifeq "@M2TARFILE@" "yes"
 pre-install ::; $(MAKE) -C tar pre-install
 endif

@@ -58,7 +58,7 @@ check-vars reconfigure all check ::; ! egrep -nH '@[A-Za-z_]+@' $(shell cat @src
 configure-help: $(CONFIG_FILES) ; @ @srcdir@/configure --help
 relink: ; rm -f @pre_exec_prefix@/bin/M2@EXE@ && $(MAKE) -C Macaulay2/d @pre_exec_prefix@/bin/M2@EXE@
 relink-nostrip: ; rm -f @pre_exec_prefix@/bin/M2@EXE@ && $(MAKE) -C Macaulay2/d STRIP=no @pre_exec_prefix@/bin/M2@EXE@
-dist clean distclean check pre-install src tarball deb rpm dmg cygwin :: ; $(MAKE) -C distributions $@
+all dist clean distclean check pre-install :: ; $(MAKE) -C distributions $@
 check ::; $(MAKE) -C libraries $@
 distclean check ::; $(MAKE) -C check-configure -f Makefile $@
 reconfigure-all : reconfigure reconfigure-libs 
