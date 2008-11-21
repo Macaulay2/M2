@@ -48,11 +48,7 @@ prefix := @pre_prefix@
 @packagesdir@/%.m2 : %.m2 ; @INSTALL_DATA@ $^ $@
 all :: $(addprefix @packagesdir@/, $(PACKAGES:=.m2))
 	@ for i in $(PACKAGES) ; \
-	  do if [ -d $$i ] ; \
-	     then echo copying auxiliary files made for package $$i ; \
-		  tar cf - $$i | tar xfp - -C @packagesdir@ || exit 1 ; \
-	     fi ; \
-	     if [ -d @srcdir@/$$i ] ; \
+	  do if [ -d @srcdir@/$$i ] ; \
 	     then echo copying auxiliary files for package $$i ; \
 		  tar cf - --exclude-vcs -C @srcdir@ $$i | tar xfp - -C @packagesdir@ || exit 1 ; \
 	     fi ; \
