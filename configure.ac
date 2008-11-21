@@ -907,7 +907,6 @@ then
 fi
 
 AC_SUBST(package,Macaulay2-$PACKAGE_VERSION)
-AC_SUBST(encapdir,)
 AC_SUBST(EXE,$M2SUFFIX$EXEEXT)
 
 AC_SUBST(DESC,$PACKAGE_VERSION-$host_cpu-$OS-$REL)
@@ -967,6 +966,10 @@ test "$htmldir"     || AC_SUBST(htmldir,'${docdir}')
 test "$pdfdir"      || AC_SUBST(pdfdir,'${docdir}')
 test "$psdir"       || AC_SUBST(psdir,'${docdir}')
 test "$localedir"   || AC_SUBST(localedir,'${datarootdir}/locale')
+
+if test $ENCAP = yes -a "${exec_prefix}" != '${prefix}'
+then AC_MSG_ERROR([--enable-encap and --exec-prefix both used, and conflict])
+fi
 
 # Here we normalize all the configure variables so each one begins either with ${prefix} or with ${exec_prefix},
 # so they can be handled more simply in Macaulay2, by a single text replacement.

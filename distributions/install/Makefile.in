@@ -1,0 +1,18 @@
+# @configure_input@
+include ../../include/config.Makefile
+T=tar --create --mode=a+rX,og-ws --exclude='.nfs*'
+@prefix@ :; $(MKDIR_P) $@
+install :: @prefix@
+	$(T) -C @pre_prefix@      . | tar xfp - -C @prefix@
+	$(T) -C @pre_exec_prefix@ . | tar xfp - -C @prefix@
+ifeq "@ENCAP@" "yes"
+install :: ../top/postinstall ../top/preremove
+	@INSTALL@ -m 755 $^ @prefix@
+install :: ../top/INSTALL ../top/encapinfo
+	@INSTALL@ -m 644 $^ @prefix@
+endif
+Makefile : @srcdir@/Makefile.in; cd ../..; ./config.status distributions/install/Makefile
+distclean : ; rm -rf Makefile
+# Local Variables:
+# compile-command: "make -C $M2BUILDDIR/distributions/install install "
+# End:

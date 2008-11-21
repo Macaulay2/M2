@@ -1,0 +1,22 @@
+# @configure_input@
+include ../../include/config.Makefile
+install pre-install all :: postinstall preremove INSTALL encapinfo
+Makefile : @srcdir@/Makefile.in; cd ../..; ./config.status distributions/top/Makefile
+postinstall : @srcdir@/postinstall.in; cd ../..; ./config.status distributions/top/postinstall
+preremove : @srcdir@/preremove.in; cd ../..; ./config.status distributions/top/preremove
+INSTALL : @srcdir@/INSTALL.in; cd ../..; ./config.status distributions/top/INSTALL
+distclean : ; rm -rf Makefile
+RLS = sed 's,^linkdir \./,linkdir ,'
+prefix=.
+encapinfo : Makefile
+	( \
+	  echo encap 2.0 ;\
+	  echo contact dan@math.uiuc.edu ;\
+	  echo linkdir "@libm2dir@/*" ;\
+	  echo linkdir "@docdir@/*" ;\
+	  echo linkdir "@packagesdir@/*" ;\
+	  echo linkdir "@libm2dir@/*" \
+	) | $(RLS) >$@
+# Local Variables:
+# compile-command: "make -C $M2BUILDDIR/distributions/top all "
+# End:
