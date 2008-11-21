@@ -332,7 +332,7 @@ infoTagConvert DocumentTag := tag -> (
      else (
 	  concatenate("(",pkgname,")",tagConvert if pkgname === fkey then "Top" else fkey)))
 info TO  := x -> concatenate(format DocumentTag.FormattedKey x#0, if x#?1 then x#1, "  (*note ", infoTagConvert x#0, "::)")
-info TO2 := x -> concatenate(x#1, "  (*note ", x#1, ":", infoTagConvert x#0, ".)")
+info TO2 := x -> concatenate(x#1, "  (*note ", x#1, ": ", infoTagConvert x#0, ".)")
 info TOH := x -> concatenate(DocumentTag.FormattedKey x#0, if x#?1 then x#1, commentize headline x#0,, "  (*note ", infoTagConvert x#0, "::)" )
 
 info IMG := net IMG := tex IMG  := x -> (
