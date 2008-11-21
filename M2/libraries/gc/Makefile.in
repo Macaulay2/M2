@@ -25,6 +25,7 @@ CONFIGOPTIONS += --enable-large-config --disable-gcj-support --disable-java-fina
 include ../Makefile.library
 Makefile : @srcdir@/Makefile.in ; cd ../.. && ./config.status libraries/gc/Makefile
 uninstall clean :: ; cd $(LIBRARIESDIR) && rm -rf lib/libgc.* lib/libcord.* include/gc share/gc lib/pkgconfig/bdw-gc.pc include/gc.h include/gc_cpp.h
+all install ::; rm -fv $(LIBRARIESDIR)/lib/libcord*
 # Local Variables:
 # compile-command: "make -C $M2BUILDDIR/libraries/gc "
 # End:

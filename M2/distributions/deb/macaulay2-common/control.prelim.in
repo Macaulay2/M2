@@ -13,5 +13,5 @@ Description: a software system for algebraic geometry research
  Home page: http://www.math.uiuc.edu/Macaulay2/.
  .
  This package contains the architecture independent portion of Macaulay2, and is
- normally installed automatically when one of the architecture dependent packages
- is installed.
+ normally installed automatically when one of the architecture dependent 
+ packages is installed.

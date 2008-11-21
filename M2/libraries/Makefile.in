@@ -7,10 +7,12 @@ untar fetch distclean clean :: Makefile.library
 	@ set -e ; for p in @LIBLIST@ libtool ; do (set -ex ; $(MAKE) -C $$p $@) || false ; done 
 prefix := @pre_prefix@
 exec_prefix := @pre_exec_prefix@
+# maybe we should just install each libraries directly into the staging area ...
 pre-install :
 	@ echo installing shareable library files in @librariesdir@/lib
 	if [ -d final/lib ] ; \
-	then @INSTALL@ -d @librariesdir@/lib ; \
+	then rm -rf @librariesdir@/lib ;\
+	     @INSTALL@ -d @librariesdir@/lib ; \
 	     tar cf - --exclude="*.a" --exclude="*.la" --exclude="*.pc" --exclude="*.old" -C final/lib . \
 	     | tar xfv - -C @librariesdir@/lib ; \
 	fi

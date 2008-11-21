@@ -1,5 +1,6 @@
 # @configure_input@
 include ../../include/config.Makefile
+.PHONY : src src.gz src.bz2 tarballs tarballs.gz tarballs.bz2
 D=../../
 S=@package@.tar
 E=@package@-@MACHINE@.tar
@@ -13,12 +14,17 @@ CG=$(C).gz
 CJ=$(C).bz2
 pre-install :: tarballs
 tarballs :: tarballs.@COMPRESS@
-J=$(addprefix $(D), $(SJ) $(CJ) $(EJ))
-G=$(addprefix $(D), $(SG) $(CG) $(EG))
+# these are separate targets, because they work only when online, due to the use of "svn ls":
+src : $(D)$(SZ)
+src.gz : $(D)$(SZ)
+src.bz2 : $(D)$(SZ)
+#
+J=$(D)$(CJ) $(D)$(EJ)
+G=$(D)$(CG) $(D)$(EG)
 tarballs.bz2 : $(J)
 tarballs.gz  : $(G)
 clean ::; rm -rf $(J) $(G)
-T=tar --create --file=$@ --owner=0 --group=0 --mode=a+rX,og-ws --exclude='.nfs*' --exclude='Macaulay2-*-data'
+T=tar --create --owner=0 --group=0 --mode=a+rX,og-ws --exclude='.nfs*' --exclude='Macaulay2-*-data' --file=$@
 A=--transform 's,^\.,@package@,'
 B=--transform 's,^,@package@/,'
 TJ=$(T) --bzip2

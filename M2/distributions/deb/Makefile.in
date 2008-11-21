@@ -56,7 +56,7 @@ macaulay2-common/control.tar.gz : macaulay2-common/control macaulay2-common/post
 	cd macaulay2-common && chmod 0755 postinst prerm
 	tar cfz $@ $(TAROPTIONS) -C macaulay2-common control postinst prerm
 
-T=tar --create --file=- --mode=a+rX,og-ws --exclude='.nfs*' --exclude='Macaulay2-*-data'
+T=tar --create --mode=a+rX,og-ws --exclude='.nfs*' --exclude='Macaulay2-*-data' --file=-
 prepare : .prepared
 .prepared : 
 	rm -rf tmp@prefix@ tmp-common@prefix@
@@ -64,6 +64,12 @@ prepare : .prepared
 	$(MKDIR_P) tmp-common@prefix@
 	$(T) -C @pre_exec_prefix@ . | tar xfp - -C tmp@prefix@
 	$(T) -C @pre_prefix@      . | tar xfp - -C tmp-common@prefix@
+	if [ -d tmp-common@prefix@/info ] ; \
+	then $(MKDIR_P) tmp-common@prefix@/share/info && mv tmp-common@prefix@/info/* tmp-common@prefix@/share/info && rmdir tmp-common@prefix@/info; \
+	fi
+	if [ -d tmp-common@prefix@/man ] ; \
+	then $(MKDIR_P) tmp-common@prefix@/share/man && mv tmp-common@prefix@/man/* tmp-common@prefix@/share/man && rmdir tmp-common@prefix@/man; \
+	fi
 	$(MKDIR_P) tmp@prefix@/share/doc/macaulay2
 	$(MKDIR_P) tmp-common@prefix@/share/doc/macaulay2-common
 	cp tmp-common@docdir@/README tmp@prefix@/share/doc/macaulay2/copyright
@@ -79,6 +85,7 @@ macaulay2-common/data.tar.gz : prepare;	(cd tmp-common && tar cfz - $(TAROPTIONS
 macaulay2/md5sums            : prepare; (cd tmp        && find * -type f | xargs md5sum) >$@
 macaulay2-common/md5sums     : prepare;	(cd tmp-common && find * -type f | xargs md5sum) >$@
 ifneq (@LINTIAN@,)
+SUP = fgrep -v 
 check :
 	- @LINTIAN@ -I ../../@PKG_DEB@
 	- @LINTIAN@ -I ../../@PKG_COM_DEB@
