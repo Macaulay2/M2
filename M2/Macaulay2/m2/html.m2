@@ -861,7 +861,7 @@ installPackage Package := opts -> pkg -> (
 	       infofile := openOut (infodir|tmpinfobasename);
 	       stderr << "--making info file in " << infofile << endl;
 	       upto30 := t -> concatenate(t,30-#t:" ");
-	       infofile << "This is " << infobasename << ", produced by Macaulay 2, version " << version#"VERSION" << endl << endl;
+	       infofile << " -*- coding: utf-8 -*- This is " << infobasename << ", produced by Macaulay 2, version " << version#"VERSION" << endl << endl;
 	       infofile << "INFO-DIR-SECTION " << pkg.Options.InfoDirSection << endl;
 	       infofile << "START-INFO-DIR-ENTRY" << endl;
 	       infofile << upto30 concatenate( "* ", infotitle, ": (", infotitle, ").") << "  ";
