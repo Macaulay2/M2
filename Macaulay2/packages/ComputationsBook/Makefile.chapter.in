@@ -33,8 +33,6 @@ test-mike.out : test.m2 always
 	  $(M2CMD) $(INPUT) $(EXIT) >test.out.tmp; \
 	  mv test.out.tmp test-mike.out
 
-always:
-
 distclean::clean
 distclean::; rm -f Makefile
 

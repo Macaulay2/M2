@@ -94,7 +94,6 @@ clean :: tidy
 	rm -rf ../../@PKG_DEB@
 	rm -rf ../../@PKG_COM_DEB@
 distclean : clean; rm -f Makefile control
-always :
 libraries-used : .prepared always
 	ldd tmp@FINALPREFIX@/@bindir@/M2@EXE@ | sed -e 's/.* => //' -e 's/^	//' -e 's/ .*//' | egrep '^/' >$@ || true
 packages-used : libraries-used

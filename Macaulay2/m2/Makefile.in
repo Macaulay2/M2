@@ -188,7 +188,6 @@ FILES_TO_COPY := $(DUMPEDM2FILES) demo1.m2 VERSION
 pre-install :: all @packagesdir@ $(addprefix @packagesdir@/Core/, $(FILES_TO_COPY)) @packagesdir@/Core
 clean::; rm -rf ../cache/@DUMPDATAFILE@ cache *.obj *.exe runexample temp.data distfiles loads.m2 mpcodes.m2 version.m2 core gmon.out
 distclean : clean; rm -f Makefile
-always:
 
 # Local Variables:
 # compile-command: "make -C $M2BUILDDIR/Macaulay2/m2 "
