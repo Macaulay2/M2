@@ -1,23 +1,19 @@
 # @configure_input@
 include ../../include/config.Makefile
-
+ENCAP = @ENCAP@
 ifeq "${ENCAP}" "yes"
-ifneq "${exec_prefix}" "${prefix}"
-$(error ENCAP=yes but values of exec_prefix and prefix differ)
+SUFFIX=/@package@
+install :: ${prefix}$(SUFFIX)
+	@INSTALL@ -m 755 ../top/postinstall ../top/preremove ${prefix}$(SUFFIX)
+	@INSTALL@ -m 644 ../top/INSTALL     ../top/encapinfo ${prefix}$(SUFFIX)
+else
+SUFFIX=
 endif
-prefix := ${prefix}/@package@
-install :: ../top/postinstall ../top/preremove
-	@INSTALL@ -m 755 $^ @prefix@
-install :: ../top/INSTALL ../top/encapinfo
-	@INSTALL@ -m 644 $^ @prefix@
-endif
-
 T=tar --create --mode=a+rX,og-ws --exclude='.nfs*'
-
-@prefix@ :; $(MKDIR_P) $@
-install :: @prefix@
-	$(T) -C @pre_prefix@      . | tar xfp - -C @prefix@
-	$(T) -C @pre_exec_prefix@ . | tar xfp - -C @prefix@
+${prefix}$(SUFFIX) :; $(MKDIR_P) $@
+install :: ${prefix}$(SUFFIX)
+	$(T) -C @pre_prefix@      . | tar xfp - -C ${prefix}$(SUFFIX)
+	$(T) -C @pre_exec_prefix@ . | tar xfp - -C ${prefix}$(SUFFIX)
 Makefile : @srcdir@/Makefile.in; cd ../..; ./config.status distributions/install/Makefile
 distclean : ; rm -rf Makefile
 # Local Variables:
