@@ -6,7 +6,10 @@ CONFIGOPTIONS += --disable-shared
 endif
 include ../Makefile.library
 Makefile : @srcdir@/Makefile.in ; cd ../.. && ./config.status libraries/gdbm/Makefile
-uninstall clean::; cd $(LIBRARIESDIR) && rm -rf include/gdbm.* info/gdbm.* lib/libgdbm.* man/man3/gdbm.*
+uninstall clean::
+	if [ -d $(LIBRARIESDIR) ] ; \
+	then cd $(LIBRARIESDIR) && rm -rf include/gdbm.* info/gdbm.* lib/libgdbm.* man/man3/gdbm.* ;\
+	fi
 # Local Variables:
 # compile-command: "make -C $M2BUILDDIR/libraries/gdbm "
 # End:

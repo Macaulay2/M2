@@ -7,10 +7,12 @@ endif
 include ../Makefile.library
 Makefile : @srcdir@/Makefile.in ; cd ../.. && ./config.status libraries/libtool/Makefile
 uninstall clean ::
-	cd $(LIBRARIESDIR) && rm -rf lib/libltdl* share/aclocal/libtool.m4 \
+	if [ -d $(LIBRARIESDIR) ] ;\
+	then cd $(LIBRARIESDIR) && rm -rf lib/libltdl* share/aclocal/libtool.m4 \
 		share/aclocal/ltdl.m4 share/info/libtool.* \
 		share/libtool bin/libtool* include/libltdl include/ltdl.h \
-		share/aclocal/argz.m4 share/aclocal/lt*.m4
+		share/aclocal/argz.m4 share/aclocal/lt*.m4 ;\
+	fi
 # Local Variables:
 # compile-command: "make -C $M2BUILDDIR/libraries/libtool "
 # End:

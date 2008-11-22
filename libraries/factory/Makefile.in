@@ -29,9 +29,11 @@ Makefile : @srcdir@/Makefile.in ; cd ../.. && ./config.status libraries/factory/
 #    }
 
 uninstall clean ::
-	cd $(LIBRARIESDIR) && rm -rf \
+	if [ -d $(LIBRARIESDIR) ] ;\
+	then cd $(LIBRARIESDIR) && rm -rf \
 		include/factory.h include/factoryconf.h include/cf_gmp.h include/templates/ftmpl_* \
-		lib/libcf.a lib/libcfmem.a
+		lib/libcf.a lib/libcfmem.a ;\
+	fi
 
 # Local Variables:
 # compile-command: "make -C $M2BUILDDIR/libraries/factory "
