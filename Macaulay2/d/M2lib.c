@@ -406,20 +406,37 @@ static void warning(const char *s,...)
   va_end(ap);
 }
 
+static void error(const char *s,...)
+{
+  char buf[200];
+  va_list ap;
+  va_start(ap,s);
+  vsprintf(buf,s,ap);
+  if (errno != 0)
+    fprintf(stderr,"error: %s: %s\n", buf, strerror(errno));
+  else
+    fprintf(stderr,"error: %s\n", buf);
+  fflush(stderr);
+  va_end(ap);
+  exit(1);
+}
+
 #include <dlfcn.h>
 
 static void call_shared_library() {
-  const char *libname = "M2.so";
+#if 0
+  const char *libname = "libM2.so";
   const char *funname = "entry";
   void *handle;
   int (*g)();
   errno = 0;
   handle = dlopen(libname, RTLD_LAZY | RTLD_GLOBAL);
-  if (handle == NULL) { warning("can't load library %s", libname); return; }
+  if (handle == NULL) { error("can't load library %s", libname); return; }
   g = dlsym(handle, funname);
-  if (g == NULL) { warning("can't link function %s from sharable library %s",funname,libname); return; }
+  if (g == NULL) { error("can't link function %s from sharable library %s",funname,libname); return; }
   g();
-  if (0 != dlclose(handle)) { warning("can't close sharable library %s",libname); return; }
+  if (0 != dlclose(handle)) { error("can't close sharable library %s",libname); return; }
+#endif
 }
 
 int Macaulay2_main(argc,argv)
