@@ -1,0 +1,13 @@
+fix these:
+
+config.status: WARNING:  '../../distributions/top/Makefile.in' seems to ignore the --datarootdir setting
+config.status: WARNING:  '../../distributions/top/preremove.in' seems to ignore the --datarootdir setting
+config.status: WARNING:  '../../distributions/top/postinstall.in' seems to ignore the --datarootdir setting
+config.status: WARNING:  '../../distributions/rpm/Makefile.in' seems to ignore the --datarootdir setting
+config.status: WARNING:  '../../distributions/rpm/Macaulay2-common-body.spec.in' seems to ignore the --datarootdir setting
+config.status: WARNING:  '../../distributions/deb/Makefile.in' seems to ignore the --datarootdir setting
+config.status: WARNING:  '../../Macaulay2/Makefile.in' seems to ignore the --datarootdir setting
+config.status: WARNING:  '../../Macaulay2/d/layout.m2.in' seems to ignore the --datarootdir setting
+config.status: WARNING:  '../../Macaulay2/packages/Style/Makefile.in' seems to ignore the --datarootdir setting
+config.status: WARNING:  '../../Macaulay2/man/M2.1.in' seems to ignore the --datarootdir setting
+config.status: WARNING:  '../../Macaulay2/man/Makefile.in' seems to ignore the --datarootdir setting
