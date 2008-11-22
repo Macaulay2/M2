@@ -29,7 +29,10 @@ INSTALLCMD     = $(MAKE) $(INSTALLOPTIONS) install
 include ../Makefile.library
 check :: ; $(MAKE) -C $(BUILDDIR) check
 Makefile : @srcdir@/Makefile.in ; cd ../.. && ./config.status libraries/ntl/Makefile
-clean uninstall ::; cd $(LIBRARIESDIR) && rm -rf include/NTL lib/libntl.* share/doc/NTL 
+clean uninstall ::
+	if [ -d $(LIBRARIESDIR) ] ;\
+	then cd $(LIBRARIESDIR) && rm -rf include/NTL lib/libntl.* share/doc/NTL  ;\
+	fi
 # Local Variables:
 # compile-command: "make -C $M2BUILDDIR/libraries/ntl "
 # End:

@@ -7,7 +7,8 @@ all:: @librariesdir@/lib/libM2.so
 %.lo: %.c ; $(COMPILE.c) -fPIC $< $(OUTPUT_OPTION)
 %.lo: %.cc; $(COMPILE.cpp) -fPIC $< $(OUTPUT_OPTION)
 %.so: %.lo; $(CC) $(LDFLAGS) $(TARGET_ARCH) -shared $^ $(OUTPUT_OPTION) -Wl,-e,$*_main
-@librariesdir@/lib/libM2.so : M2.so ; cp $^ $@
+@librariesdir@/lib:; $(MKDIR_P) "$@"
+@librariesdir@/lib/libM2.so : M2.so @librariesdir@/lib ; cp $< $@
 uninstall clean::; rm -rf @librariesdir@/lib/libM2.so
 #Local Variables:
 #compile-command: "make -C $M2BUILDDIR/libraries/M2 "
