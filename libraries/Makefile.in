@@ -1,7 +1,7 @@
 VPATH = @srcdir@
 include ../include/config.Makefile
 all check reconfigure :: Makefile.library
-	@ set -e ; for p in @LIBRARIES@ M2 ; do (set -ex ; $(MAKE) -C $$p $@) || false ; done 
+	@ set -e ; for p in @LIBRARIES@ ; do (set -ex ; $(MAKE) -C $$p $@) || false ; done 
 distclean :: clean
 untar fetch distclean clean :: Makefile.library
 	@ set -e ; for p in @LIBLIST@ libtool M2 ; do (set -ex ; $(MAKE) -C $$p $@) || false ; done 
