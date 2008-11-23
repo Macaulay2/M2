@@ -9,14 +9,15 @@
 # override this on the make command line, as needed!
 DISTRIBUTION = @DISTRIBUTION@
 
+include ../../include/config.Makefile
+
 ifneq (@prefix@,/usr)
 $(error expected configuration with --prefix=/usr, to comply with rpm package standards)
 endif
 ifneq "${prefix}" "@prefix@"
 $(error prefix set to new value)
-fi
+endif
 
-include ../../include/config.Makefile
 CHOWN = chown
 TIDY = yes
 VPATH = @srcdir@
