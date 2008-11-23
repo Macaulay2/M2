@@ -1,10 +1,9 @@
 VPATH = @srcdir@
 include ../include/config.Makefile
-all check reconfigure :: Makefile.library
-	@ set -e ; for p in @LIBRARIES@ ; do (set -ex ; $(MAKE) -C $$p $@) || false ; done 
+all check reconfigure untar fetch distclean clean :: Makefile.library
 distclean :: clean
-untar fetch distclean clean :: Makefile.library
-	@ set -e ; for p in @LIBLIST@ libtool M2 ; do (set -ex ; $(MAKE) -C $$p $@) || false ; done 
+$(foreach lib,@LIBRARIES@,$(eval all check reconfigure ::;$(MAKE) -C $(lib) $@))
+$(foreach lib,@LIBRARIES@ libtool M2,$(eval untar fetch distclean clean ::;$(MAKE) -C $(lib) $@))
 prefix := @pre_prefix@
 exec_prefix := @pre_exec_prefix@
 # maybe we should just install each libraries directly into the staging area ...
