@@ -1,9 +1,10 @@
 # http://www.netlib.org/lapack/
 # documentation: http://www.netlib.org/lapack/lug/
 URL = http://www.netlib.org/lapack
-TARFILE = lapack.tgz
+TARFILE = lapack-$(VERSION).tgz
 VERSION = 3.1.1
-TARDIR = lapack-$(VERSION)
+# VERSION = 3.2
+# version 3.2 doesn't compile
 CONFIGURECMD = cp make.inc.example make.inc
 # see lapack-3.1.1/make.inc for the build option combinations:
 BUILDOPTIONS = PLAT= FORTRAN="@FC@" OPTS="-O2 -g" NOOPT= LOADER="@FC@" RANLIB=@RANLIB@ LOADOPTS="$(LDFLAGS)"
