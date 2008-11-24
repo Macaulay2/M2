@@ -183,7 +183,7 @@ endif
 prefix := @pre_prefix@
 @packagesdir@ :; @INSTALL@ -d $@
 @packagesdir@/Core  : ; @INSTALL@ -d $@
-@packagesdir@/Core/%.m2 : %.m2 ; @INSTALL_DATA@ $^ $@
+@packagesdir@/Core/% : % ; @INSTALL_DATA@ $^ $@
 FILES_TO_COPY := $(DUMPEDM2FILES) demo1.m2 VERSION
 pre-install :: all @packagesdir@ @packagesdir@/Core $(addprefix @packagesdir@/Core/, $(FILES_TO_COPY))
 clean::; rm -rf ../cache/@DUMPDATAFILE@ cache *.obj *.exe runexample temp.data distfiles loads.m2 mpcodes.m2 version.m2 core gmon.out
