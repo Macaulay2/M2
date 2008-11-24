@@ -89,8 +89,6 @@ all ::;  $(MAKE) -C emacs all
 pre-install distclean clean ::; $(MAKE) -C emacs $@
 ################################# man
 all pre-install :: ; $(MAKE) -C man $@
-################################# pre-install, at the end
-all :: pre-install
 ################################# Makefile
 Makefile : Makefile.in
 	cd ..; ./config.status Macaulay2/Makefile

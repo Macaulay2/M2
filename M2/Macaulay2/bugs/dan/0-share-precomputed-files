@@ -24,4 +24,7 @@ fix installPackage so it doens't clobber the source file if it's in the same loc
 
 note: perhaps the architecture dependent directory should not be in the staging
 area at all, because the libraries might get built with debugging options in
-some build trees
+some build trees.  Yes, so installPackage needs an option call
+InstallExecPrefix in addition to InstallPrefix, and we can eliminate the option
+SeparateExec.  We can get rid of the suffixes x86_64-Linux-Ubuntu-8.10 and
+common, too, and have just one Layout once again.
