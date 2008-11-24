@@ -1,0 +1,20 @@
+version 3.2:
+
+g77 -O2 -g -c spstrf.f -o spstrf.o
+spstrf.f: In subroutine `spstrf':
+spstrf.f:102: warning:
+         INTRINSIC          MAX, MIN, SQRT, MAXLOC
+                                            ^
+Reference to unimplemented intrinsic `MAXLOC' at (^) (assumed EXTERNAL)
+spstrf.f:102: 
+         INTRINSIC          MAX, MIN, SQRT, MAXLOC
+                                            ^
+Invalid declaration of or reference to symbol `maxloc' at (^) [initially seen at (^)]
+spstrf.f:204: 
+                        ITEMP = MAXLOC( WORK( (N+J):(2*N) ), 1 )
+                                        1          2
+Invalid token at (2) in expression or subexpression at (1)
+spstrf.f:291: 
+                        ITEMP = MAXLOC( WORK( (N+J):(2*N) ), 1 )
+                                        1          2
+Invalid token at (2) in expression or subexpression at (1)
