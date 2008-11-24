@@ -1,5 +1,7 @@
 # @configure_input@
 CONFIG_FILES = @srcdir@/configure @srcdir@/config/install-sh @srcdir@/config/config.sub @srcdir@/config/config.guess @srcdir@/config/files
+# we make an exception here and use pre-install as the first target
+pre-install ::
 include include/config.Makefile
 VPATH = @srcdir@
 .PRECIOUS: @srcdir@/configure config.status
