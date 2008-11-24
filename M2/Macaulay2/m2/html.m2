@@ -444,7 +444,8 @@ runFile := (inf,inputhash,outf,tmpf,desc,pkg,announcechange,rundir,usermode) -> 
      if fileExists outf then removeFile outf;
      pkgname := toString pkg;
      ldpkg := if pkgname != "Macaulay2Doc" then concatenate("-e 'loadPackage(\"",pkgname,"\", FileName => \"",pkg#"source file","\")'") else "";
-     args := "--silent --print-width 77 --stop --int" | (if usermode then "" else " -q") | " " | ldpkg;
+     src := concatenate apply(srcdirs, d -> (" --srcdir ",format d));
+     args := "--silent --print-width 77 --stop --int" | (if usermode then "" else " -q") | " " | src | ldpkg;
      cmdname := commandLine#0;
      if ulimit === null then (
 	  ulimit = utest " -t 80" | utest " -m 200000"| utest " -v 200000";

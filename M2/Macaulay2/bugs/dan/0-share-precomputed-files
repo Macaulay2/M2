@@ -21,3 +21,7 @@ in make.info
 fix package loading so all files are found whether they were installed with SeparateExec or not
 
 fix installPackage so it doens't clobber the source file if it's in the same location as where it will get installed
+
+note: perhaps the architecture dependent directory should not be in the staging
+area at all, because the libraries might get built with debugging options in
+some build trees

@@ -20,12 +20,13 @@ void outofmem(void) {
 #endif
      {
 	  const char *msg = "\n\n *** out of memory, exiting ***\n";
-	  write(STDERR,msg,strlen(msg));
+	  int r = write(STDERR,msg,strlen(msg));
+	  if (r == ERROR) exit(1);
 	  exit(1);
      }
 }
 
-char *getmem(unsigned int n)
+char *getmem(size_t n)
 {
   char *p;
   p = GC_MALLOC(n);
@@ -37,7 +38,7 @@ char *getmem(unsigned int n)
   return p;
 }
 
-char *getmem_clear(unsigned int n)
+char *getmem_clear(size_t n)
 {
   char *p;
   p = GC_MALLOC(n);
@@ -53,7 +54,7 @@ char *getmem_clear(unsigned int n)
   return p;
 }
 
-char *getmem_atomic(unsigned int n)
+char *getmem_atomic(size_t n)
 {
   char *p;
   p = GC_MALLOC_ATOMIC(n);
@@ -65,7 +66,7 @@ char *getmem_atomic(unsigned int n)
   return p;
 }
 
-char *getmem_malloc(unsigned int n)
+char *getmem_malloc(size_t n)
 {
   char *p;
   p = malloc(n);
@@ -77,7 +78,7 @@ char *getmem_malloc(unsigned int n)
   return p;
 }
 
-char *getmem_atomic_clear(unsigned int n)
+char *getmem_atomic_clear(size_t n)
 {
   char *p;
   p = GC_MALLOC_ATOMIC(n);

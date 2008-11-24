@@ -20,21 +20,6 @@ all pre-install :: tidy_after
 endif
 #################################
 
-ifneq (@prefix@,/usr)
-$(error expected configuration with --prefix=/usr, to comply with debian package standards)
-endif
-ifneq "${prefix}" "@prefix@"
-$(error prefix set to new value)
-endif
-
-ifneq (@DEBUG@,no)
-$(error expected --disable-debug, in order to make a *.deb package)
-endif
-
-ifneq (@OPTIMIZE@,yes)
-$(error expected --enable-optimize, in order to make a *.deb package)
-endif
-
 ../../@PKG_DEB@ : @srcdir@/macaulay2/debian-binary macaulay2/control.tar.gz macaulay2/data.tar.gz
 	rm -f $@
 	ar rc $@.tmp $^

@@ -388,7 +388,7 @@ int system_setpgid(int pid0, int pgid) {
 #include <readline/readline.h>
 
 static char *endianness() {
-     static int x[2] = {0x61626364,0};
+     static int32_t x[2] = {0x61626364,0};
      return (char *)x;
 }
 

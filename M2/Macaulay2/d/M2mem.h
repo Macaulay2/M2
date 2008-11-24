@@ -1,12 +1,14 @@
+#include <stddef.h>
+
 #if defined(__cplusplus)
 extern "C" {
 #endif
   extern void outofmem(void);
-  extern char *getmem(unsigned int);
-  extern char *getmem_clear(unsigned int);
-  extern char *getmem_atomic(unsigned int);
-  extern char *getmem_malloc(unsigned int);
-  extern char *getmem_atomic_clear(unsigned int);
+  extern char *getmem(size_t);
+  extern char *getmem_clear(size_t);
+  extern char *getmem_atomic(size_t);
+  extern char *getmem_malloc(size_t);
+  extern char *getmem_atomic_clear(size_t);
 #if defined(__cplusplus)
 }
 #endif

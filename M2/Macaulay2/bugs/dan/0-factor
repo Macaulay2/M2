@@ -69,7 +69,9 @@ Factorization:
       setCharacteristic(p); // resp. setCharacteristic(0);
       Variable a=rootOf(mipo);
       // build G using a to represent a root of mipo
-      CFFList L=Factorize(G, mipo);
+      CFFList L=Factorize(G, mipo);     // <<<=== no, this should be factorize, instead, if you use mipo, and it's only for polynomials in 1 variable
+
+
 -----------------------------------------------------------------------------
 From: hannes@mathematik.uni-kl.de
 Subject: Re: Singular Factory
@@ -118,17 +120,17 @@ int main () {
   factoryseed(123);
   Off( SW_RATIONAL );
   setCharacteristic(101);
-  Variable a('a'), x('x');
+  Variable x('x'), y('y');
+  Variable a;
   CanonicalForm mipo = a*a - 2;
-  CanonicalForm b = rootOf(a*a - 2);
-  CanonicalForm f = (x+b)*(x+b+1);
+  CanonicalForm f = (y+a)*(y+a+1);
   cout << "f = " << f << endl;
   CFFList fac = Factorize(f,mipo);
-  cout << "Factorize(f) = " << fac << endl;
+  cout << "Factorize(f,mipo) = " << fac << endl;
   return 0;
 }
 #include <templates/ftmpl_inst.cc>
 
 // Local Variables:
-// compile-command: "g++ -g -I../../../BUILD/Linux-i686/debug/Macaulay2/e -I../../../BUILD/Linux-i686/debug/libraries/final/usr/lib/Macaulay2/Core/include -L../../../BUILD/Linux-i686/debug/libraries/final/usr/lib/Macaulay2/Core/lib  -I../../../BUILD/debug/libraries/final/usr/lib/Macaulay2/Core/include -L../../../BUILD/debug/libraries/final/usr/lib/Macaulay2/Core/lib -x c++ 0-factor -lfac -lcf -lcfmem -lntl -lgmp -o 0-factor.exe && ./0-factor.exe"
+// compile-command: "g++ -g -I../../../BUILD/Linux-x86_64/ubuntu/libraries/final/include -L../../../BUILD/Linux-x86_64/ubuntu/libraries/final/lib  -I../../../BUILD/ubuntu/libraries/final/include -L../../../BUILD/ubuntu/libraries/final/usr/lib/Macaulay2/Core/lib -x c++ 0-factor -lfac -lcf -lcfmem -lntl -lgmp -o 0-factor.exe && ./0-factor.exe"
 // End:

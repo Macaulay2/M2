@@ -11,18 +11,10 @@ DISTRIBUTION = @DISTRIBUTION@
 
 include ../../include/config.Makefile
 
-ifneq (@prefix@,/usr)
-$(error expected configuration with --prefix=/usr, to comply with rpm package standards)
-endif
-ifneq "${prefix}" "@prefix@"
-$(error prefix set to new value)
-endif
-
 CHOWN = chown
 TIDY = yes
 VPATH = @srcdir@
 DEPENDS = yes
-include ../Makefile.filenames
 
 # notice that fakeroot is required, get it here: http://ftp.debian.org/debian/pool/main/f/fakeroot
 
