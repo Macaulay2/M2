@@ -47,6 +47,7 @@ if firstTime then (
      texmacsmode = false;
      restarting = false;
      restarted = false;
+     srcdirs = {};
 
      markLoaded = (fullfilename,origfilename,notify) -> ( 
 	  fullfilename = minimizeFilename fullfilename;
@@ -376,6 +377,7 @@ initialPath := {}
 action2 := hashTable {
      "--srcdir" => arg -> if phase == 2 then (
 	  if not match("/$",arg) then arg = arg|"/";
+	  srcdirs = append(srcdirs,arg);
 	  initialPath = join(initialPath,select({arg|"Macaulay2/m2/",arg|"Macaulay2/packages/"},isDirectory));
 	  ),
      "-E" => arg -> if phase == 3 then valueNotify arg,

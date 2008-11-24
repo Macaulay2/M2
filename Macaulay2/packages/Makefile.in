@@ -26,23 +26,8 @@ ifneq "$(IARGS)" ""
 ARGS := $(ARGS), $(IARGS)
 endif
 
-check ::
-	@ for i in $(PACKAGES) ; \
-	  do ( \
-	     set -x ; \
-	     @pre_exec_prefix@/bin/M2@EXE@ -q --stop -e "needsPackage(\"$$i\",LoadDocumentation=>true); check($$i,UserMode=>false); exit 0" ; \
-	     ) ; \
-	  done
-
-pre-install ::
-	@ for i in $(PACKAGES) ; \
-	  do ( \
-	     set -x ; \
-	     @pre_exec_prefix@/bin/M2@EXE@ \
-		    $(M2DIRS) -q --stop -e errorDepth=0 -e debugLevel=$(debugLevel) $(EARGS) \
-		    -e "installPackage(\"$$i\", $(ARGS)); exit 0" ; \
-	     ) || exit 1 ; \
-	done
+$(foreach i, $(PACKAGES),$(eval check ::; @pre_exec_prefix@/bin/M2@EXE@ -q --stop -e "needsPackage(\"${i}\",LoadDocumentation=>true); check(${i},UserMode=>false); exit 0"))
+$(foreach i, $(PACKAGES),$(eval pre-install ::; @pre_exec_prefix@/bin/M2@EXE@ $(M2DIRS) -q --stop -e errorDepth=0 -e debugLevel=$(debugLevel) $(EARGS) -e "installPackage(\"${i}\", $(ARGS)); exit 0"))
 
 prefix := @pre_prefix@
 @packagesdir@/%.m2 : %.m2 ; @INSTALL_DATA@ $^ $@

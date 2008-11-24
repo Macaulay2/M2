@@ -2,30 +2,10 @@
 # see http://cygwin.com/setup.html for info on making cygwin packages
 
 include ../../include/config.Makefile
-include ../Makefile.filenames
 VPATH = @srcdir@
 
 # override this on the make command line, as needed!
 DISTRIBUTION = @DISTRIBUTION@
-
-ifneq (@prefix@,/usr)
-$(error expected configuration with --prefix=/usr, to comply with cygwin package standards)
-endif
-ifneq "${prefix}" "@prefix@"
-$(error prefix set to new value)
-endif
-
-ifneq (@STRIP@,yes)
-$(error expected --enable-strip, to comply with cygwin package standards)
-endif
-
-ifneq (@DEBUG@,no)
-$(error expected --disable-debug, in order to make a cygwin package)
-endif
-
-ifneq (@OPTIMIZE@,yes)
-$(error expected --enable-optimize, in order to make a cygwin package)
-endif
 
 prefixtail  := $(shell basename @prefix@)
 prefixdir   := $(shell dirname @prefix@)

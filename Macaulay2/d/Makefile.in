@@ -11,33 +11,29 @@ all :: tags
 endif
 all :: compat.h
 
-all :: @pre_exec_prefix@/bin/M2@EXE@
-	printenv LD_LIBRARY_PATH
-ifneq (@OBJDUMP@,)
-	- @OBJDUMP@ -x $< | grep RPATH
-endif
-ifneq (@LDD@,)
-	- @LDD@ $<
-endif
-
 recompile :
 	rm -f @pre_exec_prefix@/bin/M2@EXE@
 	$(MAKE)
+
+all :: @pre_exec_prefix@/bin/M2@EXE@
+	printenv LD_LIBRARY_PATH
+ifneq (@LDD@,)
+	- @LDD@ $<
+endif
 
 ## standard options
 
 M2_LDFLAGS  =
 
-ifeq (@STATIC@,no)
-ifeq (@OS@,Linux)
+ifeq (@OS@ @SHARED@,Linux yes)
 ifneq (@LIBRARIES@,)
-M2_LDFLAGS += -Wl,-rpath,$(FINALLIBPATH)/lib
-# let's put in a few of the usual places, too, just for good luck
-M2_LDFLAGS += -Wl,-rpath,/usr/local/lib/Macaulay2/Core/lib
-M2_LDFLAGS += -Wl,-rpath,/usr/lib/Macaulay2/Core/lib
-# use 
-#   objdump -x M2 | grep RPATH
-# to see if his worked
+M2_LDFLAGS += -Wl,-rpath,@librariesdir@/lib
+ifneq (@OBJDUMP@,)
+all :: @pre_exec_prefix@/bin/M2@EXE@
+	@OBJDUMP@ -x $< | egrep RPATH
+	@OBJDUMP@ -x $< | egrep "RPATH +@librariesdir@/lib$$"
+else
+all ::; echo "--warning: 'objdump' not installed, can't check rpath in M2 binary"
 endif
 endif
 endif

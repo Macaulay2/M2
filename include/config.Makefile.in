@@ -53,7 +53,6 @@ else
 IFLAG = -I
 endif
 
-FINALLIBPATH = @librariesdir@
 BUILTLIBPATH = @abs_top_builddir@/libraries/final
 CPPFLAGS := \
 	 $(IFLAG)@abs_top_srcdir@/include \

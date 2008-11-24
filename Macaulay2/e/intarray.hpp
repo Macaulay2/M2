@@ -9,8 +9,8 @@ const int init_intarray_size = 16;
 class intarray
 {
   int *entries;
-  int  len;			// Allocated length
-  int  max;			// Current length
+  size_t  len;			// Allocated length
+  size_t  max;			// Current length
 public:
   intarray() : entries(NULL), len(0), max(0) {}
 
@@ -41,17 +41,17 @@ public:
 
   void expand(int newtop);
 
-  int  length() const { return max; }
+  size_t  length() const { return max; }
 
-  void shrink(int newmax) { if (newmax < max) max = newmax; }
+  void shrink(size_t newmax) { if (newmax < max) max = newmax; }
 
-  int operator[](int i) const
+  int operator[](size_t i) const
     {
       assert(i < max);
       return entries[i];
     }
 
-  int &operator[](int i)
+  int &operator[](size_t i)
     {
       assert(i < max);
       return entries[i];

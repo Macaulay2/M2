@@ -1,6 +1,10 @@
+VERSION = 5.2
+PATCHES = 001 002 003 004 005 006 007 008 009 010 011 012 013
+
 RELAX = yes
 URL = ftp://ftp.gnu.org/gnu/readline
-VERSION = 5.2
+PATCHURL = $(URL)/readline-$(VERSION)-patches
+
 BUILDTARGET = all
 INSTALLTARGET = install
 
@@ -13,6 +17,11 @@ endif
 
 include ../Makefile.library
 Makefile : @srcdir@/Makefile.in ; cd ../.. && ./config.status libraries/readline/Makefile
+
+PATCHFILES := $(addprefix tarfiles/readline52-,$(PATCHES))
+$(PATCHFILES) :; rm -f $@; cd tarfiles && wget $(PATCHURL)/$(notdir $@)
+fetch : $(PATCHFILES)
+
 clean::
 	rm -rf $(LIBRARIESDIR)/lib/libhistory.* $(LIBRARIESDIR)/lib/libreadline.* \
 		$(LIBRARIESDIR)/include/readline $(LIBRARIESDIR)/info/readline.*
