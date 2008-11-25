@@ -84,7 +84,7 @@ addStartFunction(
 
 ---------------------------------
 
-if notify then stderr << "--loading setup.m2" << endl
+if notify then stderr << "--loading " << minimizeFilename currentFileName << endl
 
 match := X -> null =!= regex X -- defined as a method later
 

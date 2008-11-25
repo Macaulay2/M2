@@ -443,23 +443,37 @@ exe := minimizeFilename (
      if isStablePath commandLine#0 then concatenate(currentDirectory|commandLine#0)
      else pathsearch commandLine#0)
 if not isAbsolutePath exe then exe = currentDirectory | exe ;
-dir  := s -> ( m := regex(".*/",s); if 0 == #m then "./" else substring(m#0#0,m#0#1-1,s))
-base := s -> ( m := regex(".*/",s); if 0 == #m then s    else substring(m#0#1,      s))
+dir  := s -> ( m := regex(".*/",s); if m === null or 0 === #m then "./" else substring(m#0#0,m#0#1-1,s))
+base := s -> ( m := regex(".*/",s); if m === null or 0 === #m then s    else substring(m#0#1,      s))
 exe = concatenate(realpath dir exe, "/", base exe)
 issuffix := (s,t) -> t =!= null and s === substring(t,-#s)
 bindir := dir exe | "/";
-if readlink exe =!= null then exe = (
-     if isAbsolutePath readlink exe
-     then readlink exe
-     else realpath dir exe | "/" | readlink exe
-     )
 currentLayout = (
      if issuffix(Layout#2#"bin",bindir) then Layout#2 else
      if issuffix(Layout#1#"bin",bindir) then Layout#1
      )
 prefixDirectory = if currentLayout =!= null then substring(bindir,0,#bindir-#currentLayout#"bin")
+if readlink exe =!= null then (
+     exe2 = (
+	  if isAbsolutePath readlink exe
+     	  then readlink exe
+     	  else realpath dir exe | "/" | readlink exe);
+     bindir2 := dir exe2 | "/";
+     currentLayout2 := (
+	  if issuffix(Layout#2#"bin",bindir2) then Layout#2 else
+	  if issuffix(Layout#1#"bin",bindir2) then Layout#1
+	  );
+     )
+prefixDirectory2 := if currentLayout2 =!= null then substring(bindir2,0,#bindir2-#currentLayout2#"bin")
+if not isDirectory(prefixDirectory|currentLayout#"packages") and isDirectory(prefixDirectory2|currentLayout2#"packages") then (
+     prefixDirectory = prefixDirectory2;
+     currentLayout = currentLayout2;
+     )
 stA := "StagingArea/"
-topBuilddir := if issuffix(stA,prefixDirectory) then substring(prefixDirectory,0,#prefixDirectory-#stA)
+topBuilddir := (
+     if issuffix(stA,prefixDirectory) then substring(prefixDirectory,0,#prefixDirectory-#stA)
+     else
+     if issuffix(stA,prefixDirectory2) then substring(prefixDirectory2,0,#prefixDirectory2-#stA))
 topSrcdir := if topBuilddir =!= null and readlink(topBuilddir|"srcdir") =!= null then minimizeFilename(topBuilddir|readlink(topBuilddir|"srcdir")|"/");
 
 describePath := () -> (
@@ -470,11 +484,11 @@ describePath := () -> (
 
 loadSetup := () -> (
      if notify then describePath();
-     if prefixDirectory =!= null then (
-	  fn := minimizeFilename(prefixDirectory | replace("PKG","Core",currentLayout#"package") | "setup.m2");
-      	  tryLoad("setup.m2", fn) or error("file ",fn," not found; perhaps the common files should be installed, too")
-	  )
-     else error "no prefixDirectory determined, can't load setup.m2"
+     for d in path do (
+	  fn := minimizeFilename(d|"setup.m2");
+	  if tryLoad("setup.m2", fn) then return;
+	  );
+     error "can't load setup.m2; run with --notify option to see the path used for searching"
      )
 
 dump = () -> (
