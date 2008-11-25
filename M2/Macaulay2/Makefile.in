@@ -27,8 +27,6 @@ clean::; rm -f srcdir
 initialize :: cache
 cache :; mkdir $@
 distclean clean ::; rm -rf cache
-pre-install :: @packagecacheCore@
-@packagecacheCore@:; @INSTALL@ -d "$@"
 ################################# util
 initialize::; $(MAKE) -C util all
 distclean clean ::; $(MAKE) DEPENDS=no -C util $@

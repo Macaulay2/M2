@@ -24,7 +24,6 @@ distributions/deb/macaulay2-common/postrm
 distributions/deb/macaulay2-common/postinst
 distributions/deb/macaulay2-common/prerm
 distributions/deb/macaulay2-common/preinst
-distributions/deb/macaulay2/control.prelim
 distributions/deb/macaulay2/postrm
 distributions/deb/macaulay2/postinst
 distributions/deb/macaulay2/prerm

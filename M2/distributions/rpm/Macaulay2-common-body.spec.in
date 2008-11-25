@@ -10,7 +10,7 @@ Group: Applications/Engineering
 Buildroot: @abs_builddir@/files-common
 Prefix: @prefix@
 %define _rpmdir ../../
-%define _rpmfilename @PKG_COM_RPM@
+%define _rpmfilename %PKG_COM_RPM%
 %define _unpackaged_files_terminate_build 1
 %post
 #!/bin/sh -e

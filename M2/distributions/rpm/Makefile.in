@@ -1,13 +1,13 @@
 # @configure_input@
 
+# override this on the make command line, as needed
+DISTRIBUTION = @DISTRIBUTION@
+
 # Here are Rex Dieter's rpms:
 
 # http://koji.fedoraproject.org/packages/Macaulay2/1.1/2.fc10/src/Macaulay2-1.1-2.fc10.src.rpm
 # http://koji.fedoraproject.org/packages/Macaulay2/1.1/2.fc10/i386/Macaulay2-1.1-2.fc10.i386.rpm
 # http://koji.fedoraproject.org/packages/Macaulay2/1.1/2.fc10/i386/Macaulay2-debuginfo-1.1-2.fc10.i386.rpm
-
-# override this on the make command line, as needed!
-DISTRIBUTION = @DISTRIBUTION@
 
 include ../../include/config.Makefile
 
@@ -16,7 +16,8 @@ TIDY = yes
 VPATH = @srcdir@
 DEPENDS = yes
 
-# notice that fakeroot is required, get it here: http://ftp.debian.org/debian/pool/main/f/fakeroot
+PKG_RPM = @PACKAGE_TARNAME@-@PACKAGE_VERSION@-$(DISTRIBUTION).@ARCH@-@OS@-@ISSUE@.rpm
+PKG_COM_RPM = @PACKAGE_TARNAME@-@PACKAGE_VERSION@-$(DISTRIBUTION).common.rpm
 
 # commands for testing the rpm file:
 #  pre-install:
@@ -34,75 +35,83 @@ DEPENDS = yes
 
 ############################## main targets
 all pre-install :: warning
-all pre-install :: ../../@PKG_RPM@ ../../@PKG_COM_RPM@
+all pre-install :: ../../$(PKG_COM_RPM) ../../$(PKG_RPM)
 ifeq ($(TIDY),yes)
 all pre-install :: tidy
 endif
 warning: always
-ifeq (@FAKEROOT@,)
-	@echo "============================================================================="
-	@echo "Warning: 'fakeroot' not installed (at configuration time), so"
-	@echo "  either run this as root, or use 'make CHOWN=:' to bypass ownership setting."
-	@echo "============================================================================="
-endif
+	@if [ `@FAKEROOT@ id -u` != 0 ] ; \
+	 then ( \
+	    echo "=============================================================================" ;\
+	    echo "Warning: 'fakeroot' not installed (at configuration time), so" ;\
+	    echo "  either run this as root, or use 'make CHOWN=:' to bypass ownership setting." ;\
+	    echo "  It is available at http://ftp.debian.org/debian/pool/main/f/fakeroot/" ;\
+	    echo "=============================================================================" \
+	  ) >&2 ;\
+	 fi
+
 SEDOPTS = -e 's=^\.="=' -e 's=$$="='
+
+T=tar --create --mode=a+rX,og-ws --exclude='.nfs*' --exclude='Macaulay2-*-data' --file=-
 
 .prepared :
 	rm -rf files
 	umask 022 ; $(MKDIR_P) files@prefix@
-	umask 022 ; @FAKEROOT@ tar xfp ../../$(PKG_TZ)     @TAR_COMPRESS_OPTION@ -C files@prefix@
-	mv files@prefix@/@package@/* files@prefix@
-	rmdir files@prefix@/@package@
-	cd files@prefix@ && rm -f INSTALL encapinfo postinstall preremove
-	find files@prefix@/@mandir@/man1 -name \*.1 | xargs gzip
+	umask 022 ; $(T) -C @pre_exec_prefix@ . | @FAKEROOT@ tar xfp - -C files@prefix@
 
 .prepared-common :
 	rm -rf files-common
 	umask 022 ; $(MKDIR_P) files-common@prefix@
-	umask 022 ; @FAKEROOT@ tar xfp ../../$(PKG_COM_TZ) @TAR_COMPRESS_OPTION@ -C files-common@prefix@
-	mv files-common@prefix@/@package@/* files-common@prefix@
-	rmdir files-common@prefix@/@package@
-	cd files-common@prefix@ && rm -f INSTALL encapinfo postinstall preremove
+	umask 022 ; $(T) -C @pre_prefix@ . | @FAKEROOT@ tar xfp - -C files-common@prefix@
+	find files-common@mandir@/man1 -name \*.1 | xargs gzip
 	find files-common@prefix@ -name \*.info | xargs gzip
-	find files-common@prefix@/@packagesdir@/Macaulay2Doc -name \*.c -o -name \*.h | xargs rm
 
-../../@PKG_RPM@ : Macaulay2-body.spec ../../$(PKG_TZ) Makefile .prepared packages-used
-	sed -e '/Requires/,$$d' -e 's/^Release: .*/Release: $(DISTRIBUTION)/' Macaulay2-body.spec >Macaulay2.spec
+Macaulay2.spec: Macaulay2-body.spec packages-used Makefile .prepared 
+	sed -e '/Requires/,$$d' \
+	    -e 's/^Release: .*/Release: $(DISTRIBUTION)/' \
+	    -e 's/%PKG_RPM%/$(PKG_RPM)/g' <$< >$@
 	( echo -n "Requires: Macaulay2-common = @PACKAGE_VERSION@" && \
 	  cat packages-used | while read pkg rel ; do echo -n ", $$pkg >= $$rel" ; done && \
 	  echo ) >>Macaulay2.spec
 	sed '1,/Requires/d' Macaulay2-body.spec >>Macaulay2.spec
 	(cd files && find . -type d -a -name Macaulay2 -prune -o -type f) | sed $(SEDOPTS) >>Macaulay2.spec
-	@FAKEROOT@ rpmbuild -bb Macaulay2.spec
 
-../../@PKG_COM_RPM@ : Macaulay2-common-body.spec ../../$(PKG_COM_TZ) Makefile .prepared-common
-	sed -e 's/^Release: .*/Release: $(DISTRIBUTION)/' Macaulay2-common-body.spec >Macaulay2-common.spec
+../../$(PKG_RPM) : Macaulay2.spec .prepared; @FAKEROOT@ rpmbuild -bb Macaulay2.spec
+
+Macaulay2-common.spec : Macaulay2-common-body.spec Makefile .prepared-common
+	sed -e 's/^Release: .*/Release: $(DISTRIBUTION)/' \
+	    -e 's/%PKG_COM_RPM%/$(PKG_COM_RPM)/g' <$< >$@
 	(cd files-common && find -type d -a -name Macaulay2 -prune -o -type f) | sed $(SEDOPTS) >>Macaulay2-common.spec
-	@FAKEROOT@ rpmbuild -bb Macaulay2-common.spec
+
+../../$(PKG_COM_RPM) : Macaulay2-common.spec .prepared-common; @FAKEROOT@ rpmbuild -bb Macaulay2-common.spec
 
 libraries-used : .prepared always
-	ldd files@prefix@/@bindir@/M2@EXE@ > $@.tmp
+	ldd files@bindir@/M2@EXE@ > $@.tmp
 	cat $@.tmp | sed -e 's/.* => //' -e 's/^	//' -e 's/ .*//' | egrep '^/' >$@ || true
 	rm $@.tmp
 
 STRIP_VERSION_CMD := sed 's/-[0-9][0-9.]*[0-9]\(-\|$$\).*//'
 
 packages-used : libraries-used
+	rpm --query -f "$$x" 2>&1
 	cat libraries-used \
 	| while read x ; \
-	do rpm --query -f "$$x" | sed 's/\([^.]*\)-\([0-9][0-9.]*[0-9]\)\(-.*$$\|$$\)/\1 \2/' ; \
+	do rpm --query -f "$$x" | sed 's/\([^.]*\)-\([0-9][0-9.]*[0-9]\)\(-.*$$\|$$\)/\1 \2/' ;\
 	done | fgrep -v 'is not owned by any package' | sort | uniq | sed -e 's=.*/==' -e 's=\.list$$==' >$@
 
 test-install :
-	sudo rpm -i -v ../../@PKG_COM_RPM@
-	sudo rpm -i -v ../../@PKG_RPM@
+	sudo rpm -i -v ../../$(PKG_COM_RPM)
+	sudo rpm -i -v ../../$(PKG_RPM)
 test-remove  :
 	sudo rpm -e -v Macaulay2-@PACKAGE_VERSION@
 	sudo rpm -e -v Macaulay2-common-@PACKAGE_VERSION@
 
-check : ; rpmlint -i ../../@PKG_RPM@ ../../@PKG_COM_RPM@
+ifneq (@RPMLINT@,)
+check : ; @RPMLINT@ -i ../../$(PKG_COM_RPM) ../../$(PKG_RPM)
+endif
+
 tidy : ; rm -rf files files-common Macaulay2.spec Macaulay2-common.spec
-clean :: tidy; rm -f ../../@PKG_RPM@ ../../@PKG_COM_RPM@ libraries-used libraries-used.tmp packages-used
+clean :: tidy; rm -f ../../$(PKG_RPM) ../../$(PKG_COM_RPM) libraries-used libraries-used.tmp packages-used
 distclean : clean; rm -f Makefile Macaulay2-body.spec Macaulay2-common-body.spec
 Makefile : Makefile.in; cd ../..; ./config.status distributions/rpm/Makefile
 Macaulay2-body.spec : Macaulay2-body.spec.in; cd ../..; ./config.status distributions/rpm/Macaulay2-body.spec

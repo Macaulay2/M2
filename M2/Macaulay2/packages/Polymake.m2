@@ -109,3 +109,7 @@ select(L, s -> match(///^[[:alpha:]]///,s))
 viewHelp regex
 
 map(ZZ^0,ZZ^0,0)
+
+-- Local Variables:
+-- compile-command: "make -C $M2BUILDDIR/Macaulay2/packages PACKAGES=Polymake pre-install"
+-- End:
