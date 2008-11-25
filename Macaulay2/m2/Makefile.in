@@ -3,10 +3,8 @@ all :: initialize phase1
 include ../../include/config.Makefile
 VPATH = @srcdir@ @srcdir@/../d
 srcdir = $(shell cd @srcdir@; /bin/pwd)
-all:: VERSION
 all:: initialize
 Makefile : Makefile.in ; cd ../.. && ./config.status Macaulay2/m2/Makefile
-VERSION : VERSION.in ../../config.status  ; cd ../.. && ./config.status Macaulay2/m2/VERSION
 emacs html: all; $(MAKE) -C ../$@
 LD_LIBRARY_PATH := $(BUILTLIBPATH)/lib:$(LD_LIBRARY_PATH)
 export LD_LIBRARY_PATH
@@ -184,7 +182,7 @@ prefix := @pre_prefix@
 @packagesdir@ :; @INSTALL@ -d $@
 @packagesdir@/Core  : ; @INSTALL@ -d $@
 @packagesdir@/Core/% : % ; @INSTALL_DATA@ $^ $@
-FILES_TO_COPY := $(DUMPEDM2FILES) demo1.m2 VERSION
+FILES_TO_COPY := $(DUMPEDM2FILES) demo1.m2
 pre-install :: all @packagesdir@ @packagesdir@/Core $(addprefix @packagesdir@/Core/, $(FILES_TO_COPY))
 clean::; rm -rf ../cache/@DUMPDATAFILE@ cache *.obj *.exe runexample temp.data distfiles loads.m2 mpcodes.m2 version.m2 core gmon.out
 distclean : clean; rm -f Makefile

@@ -1,2 +1,3 @@
-all reconfigure reconfigure-all status :
-	@ for i in * ; do if [ -d $$i ] ; then (set -x ; $(MAKE) -C $$i "$@") || exit 1 ; fi ; done
+pre-install install all reconfigure reconfigure-all status distclean clean::
+	for i in * */* ; do if [ -f "$$i"/GNUmakefile ] ; then $(MAKE) -C "$$i" $@ ; fi ; done
+# distclean clean::; rm -rf CommonStagingArea/*

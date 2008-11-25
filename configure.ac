@@ -809,6 +809,18 @@ then AC_MSG_CHECKING([whether the vecLib framework is available])
 fi
 test $BUILD_lapack = yes && BUILTLIBS="-llapack -lblas $BUILTLIBS"
 
+if test $BUILD_lapack = yes
+then # test whether the fortran compiler can handle lapack, which, starting with
+     # version 3.2, requires fortran 90, not fortran 77
+    AC_LANG(Fortran)
+    AC_MSG_CHECKING([whether the fortran compiler is modern enough for lapack])
+    AC_COMPILE_IFELSE([instrinsic maxloc],
+	AC_MSG_ERROR(the fortran compiler ($FC) does not support the Fortran 90 language required for compiling lapack),
+	AC_MSG_RESULT(yes))
+fi
+
+
+
 # after this point we add no more libraries to $LIBS, e.g., with AC_SEARCH_LIBS()
 SAVELIBS=$LIBS
 
@@ -991,12 +1003,13 @@ AC_SUBST(MACHINE,"$ARCH-$OS-$ISSUE")
 AC_DEFINE_UNQUOTED(MACHINE,"$MACHINE",[complete machine description (to appear in name of tar file)])
 
 AC_SUBST(STAGINGAREA,StagingArea)
-AC_ARG_WITH(staging-area,AS_HELP_STRING(--with-staging-area=...,directory for pre-installation of files (StagingArea)),STAGINGAREA=$withval)
+AC_SUBST(EXECSTAGINGAREA,StagingArea)
+AC_ARG_WITH(staging-area,AS_HELP_STRING(--with-staging-area=...,directory for pre-installation of architecture-independent files (StagingArea)),STAGINGAREA=$withval)
 AC_ARG_ENABLE(common-staging-area,AS_HELP_STRING(--enable-common-staging-area,use a common staging area),
     if test "$STAGINGAREA" != StagingArea
     then AC_MSG_ERROR(--with-staging-area and --enable-common-staging-area options both provided)
     fi
-    STAGINGAREA=\${abs_top_srcdir}/BUILD/StagingArea dnl # this depends on config.Makefile.in setting abs_top_srcdir
+    STAGINGAREA=\${abs_top_srcdir}/BUILD/CommonStagingArea dnl # this depends on config.Makefile.in setting abs_top_srcdir
     )
 [
 case `pwd` in
@@ -1006,11 +1019,16 @@ case `pwd` in
       [\\/]* | ?:[\\/]* | '${abs'* );;
       .) STAGINGAREA=`pwd`;;
       *) STAGINGAREA=`pwd`/"$STAGINGAREA";;
+    esac
+    case "$EXECSTAGINGAREA" in
+      [\\/]* | ?:[\\/]* | '${abs'* );;
+      .) EXECSTAGINGAREA=`pwd`;;
+      *) EXECSTAGINGAREA=`pwd`/"$EXECSTAGINGAREA";;
     esac;;
 esac
 ]
 AC_SUBST(pre_prefix,$STAGINGAREA/common) dnl # as in layout.m2.in
-AC_SUBST(pre_exec_prefix,$STAGINGAREA/$MACHINE) dnl # as in layout.m2.in
+AC_SUBST(pre_exec_prefix,$EXECSTAGINGAREA/$MACHINE) dnl # as in layout.m2.in
 
 AC_SUBST(packagesdir,$datadir/Macaulay2)
 AC_SUBST(libm2dir,$libdir/Macaulay2)
