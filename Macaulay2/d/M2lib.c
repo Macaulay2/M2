@@ -392,6 +392,7 @@ static char *endianness() {
      return (char *)x;
 }
 
+#if 0
 static void warning(const char *s,...)
 {
   char buf[200];
@@ -405,7 +406,9 @@ static void warning(const char *s,...)
   fflush(stderr);
   va_end(ap);
 }
+#endif
 
+#if 0
 static void error(const char *s,...)
 {
   char buf[200];
@@ -420,6 +423,7 @@ static void error(const char *s,...)
   va_end(ap);
   exit(1);
 }
+#endif
 
 #include <dlfcn.h>
 

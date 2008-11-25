@@ -21,7 +21,7 @@ pre-install ::; $(MAKE) -C cygwin pre-install
 endif
 check ::
 	$(MAKE) -C deb $@
-pre-install clean distclean ::
+clean distclean ::
 	$(MAKE) -C dmg $@
 	$(MAKE) -C rpm $@
 	$(MAKE) -C deb $@
