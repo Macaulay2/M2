@@ -1,6 +1,7 @@
 # @configure_input@
 include ../../include/config.Makefile
 VPATH = @srcdir@
+clean::; rm -f M2@EXE@
 distclean::; rm -f Makefile
 distclean:: clean
 Makefile : Makefile.in; cd ../..; ./config.status Macaulay2/bin/Makefile

@@ -40,7 +40,7 @@ void intern_polyring(const PolynomialRing *G)
   GC_REGISTER_FINALIZER_IGNORE_SELF(const_cast<PolynomialRing *>(G),remove_polyring,0,0,0);
   polyrings_nfinalized++;
   if (gbTrace>=3)
-    fprintf(stderr, "\n   -- registering polynomial ring %ld at %p\n", polyrings_nfinalized, (void *)G);
+    fprintf(stderr, "\n   -- registering polynomial ring %ld at %p\n", polyrings_nfinalized, (const void *)G);
 }
 
 unsigned long IM2_Ring_hash(const Ring *R)

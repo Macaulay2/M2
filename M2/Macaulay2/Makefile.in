@@ -64,7 +64,7 @@ initialize ::; $(MAKE) DEPENDS=no -C d compat.h
 justM2 all ::; util/restart d/restart.tmp $(MAKE) -C d all
 distclean clean ::; $(MAKE) DEPENDS=no -C d $@
 ################################# bin
-# obsolete
+distclean clean ::; $(MAKE) DEPENDS=no -C bin $@
 ################################# basictests
 check ::; $(MAKE) -C packages/Macaulay2Doc/basictests -k
 distclean clean ::; $(MAKE) -C packages/Macaulay2Doc/basictests $@
