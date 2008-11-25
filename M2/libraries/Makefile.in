@@ -8,7 +8,7 @@ prefix := @pre_prefix@
 exec_prefix := @pre_exec_prefix@
 # maybe we should just install each libraries directly into the staging area ...
 pre-install :
-	@ echo installing shareable library files in @librariesdir@/lib
+	@ echo installing sharable library files in @librariesdir@/lib
 	if [ -d final/lib ] ; \
 	then rm -rf @librariesdir@/lib ;\
 	     @INSTALL@ -d @librariesdir@/lib ; \

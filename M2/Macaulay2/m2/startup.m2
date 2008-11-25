@@ -446,7 +446,7 @@ if not isAbsolutePath exe then exe = currentDirectory | exe ;
 dir  := s -> ( m := regex(".*/",s); if 0 == #m then "./" else substring(m#0#0,m#0#1-1,s))
 base := s -> ( m := regex(".*/",s); if 0 == #m then s    else substring(m#0#1,      s))
 exe = concatenate(realpath dir exe, "/", base exe)
-issuffix := (s,t) -> s === substring(t,-#s)
+issuffix := (s,t) -> t =!= null and s === substring(t,-#s)
 bindir := dir exe | "/";
 if readlink exe =!= null then exe = (
      if isAbsolutePath readlink exe
@@ -458,12 +458,9 @@ currentLayout = (
      if issuffix(Layout#1#"bin",bindir) then Layout#1
      )
 prefixDirectory = if currentLayout =!= null then substring(bindir,0,#bindir-#currentLayout#"bin")
-m2dir   := if prefixDirectory =!= null then prefixDirectory | replace("PKG","Core",currentLayout#"package")
-srcversion := if m2dir =!= null and fileExists(m2dir|"VERSION") then first separate get(m2dir|"VERSION")
-if not nosetup and srcversion =!= version#"VERSION" then (
-     stderr << "--warning: possible mismatch: source code version: " << srcversion
-     << ", executable version " << version#"VERSION" << endl
-     )
+stA := "StagingArea/"
+topBuilddir := if issuffix(stA,prefixDirectory) then substring(prefixDirectory,0,#prefixDirectory-#stA)
+topSrcdir := if topBuilddir =!= null and readlink(topBuilddir|"srcdir") =!= null then minimizeFilename(topBuilddir|readlink(topBuilddir|"srcdir")|"/");
 
 describePath := () -> (
      stderr << "--file search starts here:" << endl;
@@ -528,8 +525,17 @@ path = (x -> select(x, i -> i =!= null)) deepSplice {
 	       applicationDirectory() | "code/"
 	       ),
 	  if prefixDirectory =!= null then (
-	       prefixDirectory | currentLayout#"packages",
-	       prefixDirectory | replace("PKG","Core",currentLayout#"package"))
+	       if topBuilddir =!= null then (
+		    if topSrcdir =!= null then (
+		    	 topSrcdir|"Macaulay2/m2/",
+		    	 topSrcdir|"Macaulay2/packages/"
+			 ),
+		    topBuilddir|"Macaulay2/m2/",
+		    topBuilddir|"Macaulay2/packages/"
+		    ),
+	       prefixDirectory | replace("PKG","Core",currentLayout#"package"),
+	       prefixDirectory | currentLayout#"packages"
+	       )
 	  }
 
 if firstTime then normalPrompts()

@@ -1,0 +1,25 @@
+On a 64 bit machine where size_t is a 64 bit integer, we get many warnings like these:
+
+     ** compiling ../../../../../Macaulay2/e/x-relem.cpp
+    In file included from ../../../../../Macaulay2/e/monoid.hpp:10,
+		     from ../../../../../Macaulay2/e/x-relem.cpp:5:
+    ../../../../../Macaulay2/e/intarray.hpp: In member function 'void intarray::append(int)':
+    ../../../../../Macaulay2/e/intarray.hpp:65: warning: conversion to 'int' from 'size_t' may alter its value
+    ../../../../../Macaulay2/e/intarray.hpp: In member function 'int* intarray::alloc(int)':
+    ../../../../../Macaulay2/e/intarray.hpp:73: warning: conversion to 'int' from 'long unsigned int' may alter its value
+    ../../../../../Macaulay2/e/intarray.hpp: In member function 'intarray& intarray::operator=(const intarray&)':
+    ../../../../../Macaulay2/e/intarray.hpp:93: warning: conversion to 'int' from 'const size_t' may alter its value
+    In file included from ../../../../../Macaulay2/e/poly.hpp:32,
+		     from ../../../../../Macaulay2/e/polyring.hpp:18,
+		     from ../../../../../Macaulay2/e/x-relem.cpp:14:
+    ../../../../../Macaulay2/e/qring.hpp: In member function 'int QRingInfo::n_quotients() const':
+    ../../../../../Macaulay2/e/qring.hpp:39: warning: conversion to 'int' from 'size_t' may alter its value
+    ../../../../../Macaulay2/e/x-relem.cpp: In function 'M2_bool IM2_RingElement_is_graded(const RingElement*)':
+    ../../../../../Macaulay2/e/x-relem.cpp:704: warning: conversion to 'M2_bool' from 'int' may alter its value
+    ../../../../../Macaulay2/e/x-relem.cpp: In function 'const RingElement_array* rawGetParts(M2_arrayint_struct*, const RingElement*)':
+    ../../../../../Macaulay2/e/x-relem.cpp:905: warning: conversion to 'unsigned int' from 'long int' may alter its value
+    ../../../../../Macaulay2/e/array.hpp: In member function 'void array<T>::expand(int) [with T = vecterm*]':
+    ../../../../../Macaulay2/e/array.hpp:62:   instantiated from 'T& array<T>::operator[](int) [with T = vecterm*]'
+    ../../../../../Macaulay2/e/matrix.hpp:78:   instantiated from here
+    ../../../../../Macaulay2/e/array.hpp:21: warning: conversion to 'unsigned int' from 'long unsigned int' may alter its value
+    ../../../../../Macaulay2/e/array.hpp:24: warning: conversion to 'unsigned int' from 'long unsigned int' may alter its value
