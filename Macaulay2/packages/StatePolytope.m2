@@ -98,7 +98,7 @@ return str
 
 createPolymakeInputFile = (statePolytopePointsList,I) -> (
 openOut "temporarypolymakefile.txt";
-polymakeinput :=  concatenate("POINTS",newline);
+polymakeinput :=  concatenate("_application polytope\nPOINTS",newline);
 for i from 0 to (#statePolytopePointsList - 1) do polymakeinput = concatenate(polymakeinput,concatenate(printHilbPt(statePolytopePointsList_i,I),newline));
 "temporarypolymakefile.txt" << polymakeinput << closeOut
 )
@@ -156,7 +156,7 @@ st := get polymakesession;
      for i from 0 to (numgens(ring(I))-1) do barycenterstring = concatenate(barycenterstring, concatenate(barycenter," "));
      str = replace("VERTICES",barycenterstring,str);
      openOut "augmentedtemporarypolymakefile.txt";
-     "augmentedtemporarypolymakefile.txt" << str << closeOut;
+     "augmentedtemporarypolymakefile.txt" << "_application polytope\n" << str << closeOut;
      polymakesession2 = "!polymake augmentedtemporarypolymakefile.txt VERTICES";
      polymakesession2 << closeOut;
      augmentedstatepolytope := get polymakesession2;
@@ -337,3 +337,7 @@ check StatePolytope
 --initialIdealsList = value replace("[+-][^,{}]*}","}",replace("[+-][^,{}]*,",",",markedInitialIdealsString));
 --return initialIdealsList
 --)
+
+-- Local Variables:
+-- compile-command: "make -C $M2BUILDDIR/Macaulay2/packages PACKAGES=StatePolytope pre-install"
+-- End:

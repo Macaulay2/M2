@@ -454,7 +454,7 @@ currentLayout = (
      )
 prefixDirectory = if currentLayout =!= null then substring(bindir,0,#bindir-#currentLayout#"bin")
 if readlink exe =!= null then (
-     exe2 = (
+     exe2 := (
 	  if isAbsolutePath readlink exe
      	  then readlink exe
      	  else realpath dir exe | "/" | readlink exe);

@@ -64,6 +64,7 @@ AC_CHECK_PROGS(ETAGS,etags :)
 AC_CHECK_PROGS(LINTIAN,lintian)
 AC_CHECK_PROGS(LDD,ldd)
 AC_CHECK_PROGS(FAKEROOT,fakeroot)
+AC_CHECK_PROGS(RPMLINT,rpmlint)
 AC_CHECK_PROGS(STRIPCMD,strip)
 if test "$STRIPCMD" != ""
 then AC_MSG_CHECKING(whether $STRIPCMD accepts the remove-section option)
@@ -143,17 +144,6 @@ AC_CONFIG_AUX_DIR(config)
 AC_CANONICAL_HOST()
 AC_SUBST(ARCH,$build_cpu)
 AC_DEFINE_UNQUOTED(ARCH,"$ARCH",[machine hardware type])
-
-AC_SUBST(DEBARCH,)
-case $ARCH in
-  x86_64) DEBARCH=amd64 ;;
-  *) DEBARCH=$ARCH ;;
-esac
-
-AC_SUBST(PKG_RPM,$PACKAGE_TARNAME-$PACKAGE_VERSION-$DISTRIBUTION.$ARCH-$OS-$ISSUE.rpm)
-AC_SUBST(PKG_COM_RPM,$PACKAGE_TARNAME-$PACKAGE_VERSION-$DISTRIBUTION.common.rpm)
-AC_SUBST(PKG_DEB,$PACKAGE_TARNAME-$PACKAGE_VERSION-$DEBARCH-$OS-$ISSUE.deb)
-AC_SUBST(PKG_COM_DEB,$PACKAGE_TARNAME-$PACKAGE_VERSION-common.deb)
 
 AC_VALIDATE_CACHED_SYSTEM_TUPLE()
 dnl AC_ARG_VAR(CC,C compiler to use)
@@ -1002,33 +992,33 @@ done
 AC_SUBST(MACHINE,"$ARCH-$OS-$ISSUE")
 AC_DEFINE_UNQUOTED(MACHINE,"$MACHINE",[complete machine description (to appear in name of tar file)])
 
-AC_SUBST(STAGINGAREA,StagingArea)
-AC_SUBST(EXECSTAGINGAREA,StagingArea)
-AC_ARG_WITH(staging-area,AS_HELP_STRING(--with-staging-area=...,directory for pre-installation of architecture-independent files (StagingArea)),STAGINGAREA=$withval)
+COMMONSTAGINGAREA=StagingArea
+AC_SUBST(LOCALSTAGINGAREA,StagingArea)
+AC_ARG_WITH(staging-area,AS_HELP_STRING(--with-staging-area=...,directory for pre-installation of architecture-independent files (StagingArea)),COMMONSTAGINGAREA=$withval)
 AC_ARG_ENABLE(common-staging-area,AS_HELP_STRING(--enable-common-staging-area,use a common staging area),
-    if test "$STAGINGAREA" != StagingArea
+    if test "$COMMONSTAGINGAREA" != StagingArea
     then AC_MSG_ERROR(--with-staging-area and --enable-common-staging-area options both provided)
     fi
-    STAGINGAREA=\${abs_top_srcdir}/BUILD/CommonStagingArea dnl # this depends on config.Makefile.in setting abs_top_srcdir
+    COMMONSTAGINGAREA=\${abs_top_srcdir}/BUILD/CommonStagingArea dnl # this depends on config.Makefile.in setting abs_top_srcdir
     )
 [
 case `pwd` in
   .) ;;
   *)
-    case "$STAGINGAREA" in
+    case "$COMMONSTAGINGAREA" in
       [\\/]* | ?:[\\/]* | '${abs'* );;
-      .) STAGINGAREA=`pwd`;;
-      *) STAGINGAREA=`pwd`/"$STAGINGAREA";;
+      .) COMMONSTAGINGAREA=`pwd`;;
+      *) COMMONSTAGINGAREA=`pwd`/"$COMMONSTAGINGAREA";;
     esac
-    case "$EXECSTAGINGAREA" in
+    case "$LOCALSTAGINGAREA" in
       [\\/]* | ?:[\\/]* | '${abs'* );;
-      .) EXECSTAGINGAREA=`pwd`;;
-      *) EXECSTAGINGAREA=`pwd`/"$EXECSTAGINGAREA";;
+      .) LOCALSTAGINGAREA=`pwd`;;
+      *) LOCALSTAGINGAREA=`pwd`/"$LOCALSTAGINGAREA";;
     esac;;
 esac
 ]
-AC_SUBST(pre_prefix,$STAGINGAREA/common) dnl # as in layout.m2.in
-AC_SUBST(pre_exec_prefix,$EXECSTAGINGAREA/$MACHINE) dnl # as in layout.m2.in
+AC_SUBST(pre_prefix,$COMMONSTAGINGAREA/common) dnl # as in layout.m2.in
+AC_SUBST(pre_exec_prefix,$LOCALSTAGINGAREA/$MACHINE) dnl # as in layout.m2.in
 
 AC_SUBST(packagesdir,$datadir/Macaulay2)
 AC_SUBST(libm2dir,$libdir/Macaulay2)

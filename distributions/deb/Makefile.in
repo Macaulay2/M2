@@ -7,25 +7,39 @@ prefixtail=$(shell echo @prefix@ | sed 's,^/,,')
 TAROPTIONS = --owner=0 --group=0 --mode=a+rX,og-ws
 .PHONY : prepare
 ############################## main targets
+
+ifeq (@ARCH@,x86_64)
+DEBARCH=amd64
+else
+DEBARCH=@ARCH@
+endif
+
+PKG_DEB = @PACKAGE_TARNAME@-@PACKAGE_VERSION@-$(DEBARCH)-@OS@-@ISSUE@.deb
+PKG_COM_DEB = @PACKAGE_TARNAME@-@PACKAGE_VERSION@-common.deb
+
 pre-install ::
+all pre-install :: macaulay2/control.prelim
+macaulay2/control.prelim : @srcdir@/macaulay2/control.prelim.in Makefile
+	<$< >$@ sed -e 's/[@]DEBARCH[@]/$(DEBARCH)/g' -e 's/[@]PACKAGE_VERSION[@]/@PACKAGE_VERSION@/g'
+	! egrep -nH '@[A-Za-z_]+@' <$@
 all pre-install :: tidy_before
-all pre-install :: ../../@PKG_DEB@ ../../@PKG_COM_DEB@
+all pre-install :: ../../$(PKG_DEB) ../../$(PKG_COM_DEB)
 	@ echo "============================================================================="
 	@ echo "package files prepared:"
-	@ echo "        @PKG_DEB@"
-	@ echo "        @PKG_COM_DEB@"
+	@ echo "        $(PKG_DEB)"
+	@ echo "        $(PKG_COM_DEB)"
 	@ echo "============================================================================="
 ifeq ($(TIDY),yes)
 all pre-install :: tidy_after
 endif
 #################################
 
-../../@PKG_DEB@ : @srcdir@/macaulay2/debian-binary macaulay2/control.tar.gz macaulay2/data.tar.gz
+../../$(PKG_DEB) : @srcdir@/macaulay2/debian-binary macaulay2/control.tar.gz macaulay2/data.tar.gz
 	rm -f $@
 	ar rc $@.tmp $^
 	sed -e 's=\(debian-binary\|control.tar.gz\|data.tar.gz\)/\( *[0-9]* *\)[0-9 ]\{12\}=\1 \20     0     =g' < $@.tmp > $@
 	rm $@.tmp
-../../@PKG_COM_DEB@ : @srcdir@/macaulay2-common/debian-binary macaulay2-common/control.tar.gz macaulay2-common/data.tar.gz
+../../$(PKG_COM_DEB) : @srcdir@/macaulay2-common/debian-binary macaulay2-common/control.tar.gz macaulay2-common/data.tar.gz
 	rm -f $@
 	ar rc $@.tmp $^
 	sed -e 's=\(debian-binary\|control.tar.gz\|data.tar.gz\)/\( *[0-9]* *\)[0-9 ]\{12\}=\1 \20     0     =g' < $@.tmp > $@
@@ -64,6 +78,7 @@ prepare : .prepared
 	find tmp-common -name \*.info | while read x ; do gzip --best "$$x" ; done
 	find tmp tmp-common -name man -type d | while read x ; do find $$x -type f -not -name \*.gz | while read y ; do gzip --best "$$y" ; done ; done
 	find tmp -name \*.so -o -name \*.so.\* -o -name \*.la | xargs chmod a-x Makefile
+	find tmp tmp-common -depth -mindepth 1 -type d -empty -delete
 	touch $@
 macaulay2/data.tar.gz        : prepare; (cd tmp        && tar cfz - $(TAROPTIONS) *) >$@
 macaulay2-common/data.tar.gz : prepare;	(cd tmp-common && tar cfz - $(TAROPTIONS) *) >$@
@@ -72,8 +87,11 @@ macaulay2-common/md5sums     : prepare;	(cd tmp-common && find * -type f | xargs
 ifneq (@LINTIAN@,)
 SUP = fgrep -v 
 check :
-	- @LINTIAN@ -I ../../@PKG_DEB@
-	- @LINTIAN@ -I ../../@PKG_COM_DEB@
+	- @LINTIAN@ -I ../../$(PKG_DEB)
+	- @LINTIAN@ -I ../../$(PKG_COM_DEB)
+else
+check :
+	@echo "install 'lintian' for checking *.deb packages"
 endif
 tidy_before :
 	rm -rf .prepared tmp tmp-common
@@ -84,7 +102,7 @@ tidy tidy_after :
 	rm -rf macaulay2/control.tar.gz macaulay2/data.tar.gz macaulay2/md5sums
 	rm -rf macaulay2-common/control.tar.gz macaulay2-common/data.tar.gz macaulay2-common/md5sums
 clean :: tidy
-	rm -rf ../../@PKG_DEB@ ../../@PKG_COM_DEB@
+	rm -rf ../../$(PKG_DEB) ../../$(PKG_COM_DEB)
 distclean : clean; rm -f Makefile control
 libraries-used : .prepared always
 	ldd tmp@bindir@/M2@EXE@ | sed -e 's/.* => //' -e 's/^	//' -e 's/ .*//' | egrep '^/' >$@ || true
@@ -106,7 +124,6 @@ macaulay2-common/control : macaulay2-common/control.prelim macaulay2-common/data
 	 echo Installed-Size: $$size \
 	) >$@
 Makefile : Makefile.in; cd ../..; ./config.status distributions/deb/Makefile
-macaulay2/control.prelim : macaulay2/control.prelim.in; cd ../..; ./config.status distributions/deb/macaulay2/control.prelim
 
 # Local Variables:
 # compile-command: "make -C $M2BUILDDIR/distributions/deb pre-install "

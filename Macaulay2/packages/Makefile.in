@@ -18,7 +18,7 @@ ARGS := RemakeAllDocumentation => $(RemakeAllDocumentation), \
 	RerunExamples => $(RerunExamples), \
 	CheckDocumentation => $(CheckDocumentation), \
 	UserMode => false, \
-	InstallPrefix => \"@STAGINGAREA@/\", \
+	InstallPrefix => \"@LOCALSTAGINGAREA@/\", \
 	SeparateExec => true
 
 # so the user can override arguments to installPackage:
