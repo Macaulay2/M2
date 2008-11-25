@@ -40,7 +40,7 @@ endif
 ############################## loads.m2
 LOADSEQUENCE := $(shell cat @srcdir@/loadsequence)
 DUMPEDM2FILES += $(LOADSEQUENCE)
-NONDOCM2FILES += $(LOADSEQUENCE)
+NONDOCM2FILES += $(patsubst version.m2, version.m2.in, $(LOADSEQUENCE))
 # M2 files made in the build directory are not mentioned in LOADSEQUENCE
 MADEM2FILES += loads.m2
 loads.m2 : loads.awk loadsequence
