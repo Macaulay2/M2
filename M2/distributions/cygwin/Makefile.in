@@ -114,7 +114,7 @@ pre-install :: Macaulay2.README
 upload :; rsync --verbose --compress --archive --rsh='ssh -x -a' server/. u00:to/Macaulay2/Repositories/cygwin-test
 clean ::; rm -rf files src-files
 distclean clean ::; $(MAKE) -C server $@
-distclean : clean; rm -f Makefile Macaulay2.README setup.hint
+distclean :: clean; rm -f Makefile Macaulay2.README setup.hint
 Makefile : Makefile.in; cd ../..; ./config.status distributions/cygwin/Makefile
 postinstall.sh : postinstall.sh.in; cd ../..; ./config.status distributions/cygwin/postinstall.sh
 preremove.sh : preremove.sh.in; cd ../..; ./config.status distributions/cygwin/preremove.sh
