@@ -1,4 +1,5 @@
 #! /bin/sh -e
+# we ignore @datarootdir@
 prefix=$ENCAP_SOURCE/$ENCAP_PKGNAME
 exec_prefix=$prefix
 infodir="@infodir@"; eval infodir="$infodir"; eval infodir="$infodir"

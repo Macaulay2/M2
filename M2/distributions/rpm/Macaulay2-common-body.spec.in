@@ -13,16 +13,16 @@ Prefix: @prefix@
 %define _rpmfilename %PKG_COM_RPM%
 %define _unpackaged_files_terminate_build 1
 %post
-#!/bin/sh -e
+#! /bin/sh -e
 prefix=@prefix@
-cd $prefix/@infodir@
+cd @infodir@
 for p in @PACKAGES@
 do install-info --quiet --info-dir=. $p.info
 done
 %preun
 #! /bin/sh -e
 prefix=@prefix@
-cd $prefix/@infodir@
+cd @infodir@
 for p in @PACKAGES@
 do install-info --remove --quiet --info-dir=. $p.info
 done
