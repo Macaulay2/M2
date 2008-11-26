@@ -1,4 +1,0 @@
--- -*- M2-comint -*-
-
-i1 : p = getWWW "http://www.math.uiuc.edu/Macaulay2/Makefile"
-stdio:1:5:(2):[2]: can't open socket : Temporary failure in name resolution

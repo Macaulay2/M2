@@ -1,8 +1,0 @@
--- -*- M2-comint -*- {* hash: -284944792 *}
-
-i1 : makePackageIndex()
-warning: can't make package index
-
-i2 : 
-0.79user 0.06system 0:00.86elapsed 98%CPU (0avgtext+0avgdata 0maxresident)k
-0inputs+0outputs (0major+10847minor)pagefaults 0swaps

@@ -1,9 +1,0 @@
--- -*- M2-comint -*- {* hash: -211056412 *}
-
-i1 : currentLineNumber()
-
-o1 = 2
-
-i2 : 
-0.79user 0.03system 0:00.83elapsed 99%CPU (0avgtext+0avgdata 0maxresident)k
-0inputs+0outputs (0major+10842minor)pagefaults 0swaps

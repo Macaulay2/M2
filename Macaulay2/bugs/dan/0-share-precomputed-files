@@ -1,6 +1,8 @@
 This is basically ready to go.  We need to do an experiment where we make a fat
 tar file and see how it goes, from scratch.
 
+Also, we need to get rid of Macaulay2Doc/examples/ and the code that detects it
+
 For sage and other builders of Macaulay2, it would be very nice if
 ./BUILD/share were to contain all the precomputed architecture independent
 files normally built, so that we could include those files in a (bulky) source

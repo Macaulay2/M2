@@ -441,11 +441,6 @@ case $COMPRESS in
     *) AC_MSG_ERROR(unrecognized option for enable-compress) ;;
 esac
 
-AC_SUBST(SRCTARFILE,)
-AC_ARG_WITH(srctarfile, AS_HELP_STRING(--with-srctarfile=...,source tar file to use for inclusion with distributions (cygwin)),
-    dirname=`dirname  "$withval"`
-    SRCTARFILE=`cd "$dirname" && pwd`/`basename "$withval"`)
-
 AC_SUBST(CYGWIN,no)
 AC_ARG_ENABLE(cygwin,  AS_HELP_STRING(--enable-cygwin,prepare a binary package for cygwin), CYGWIN=$enableval)
 if test "$CYGWIN" = yes 
@@ -454,9 +449,6 @@ then if test "$OPTIMIZE" = no
      fi
      if test "$DEBUG$" = yes
      then AC_MSG_ERROR([--enable-cygwin and --enable-debug both specified])
-     fi
-     if ! test "$SRCTARFILE" -o -d "$srcdir/.svn"
-     then AC_MSG_ERROR([source tar file needed for cygwin distribution, specify it with --with-srctarfile=...])
      fi
 fi
 

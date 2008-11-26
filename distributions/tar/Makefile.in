@@ -34,10 +34,11 @@ $(D)$(CJ) : always ; $(TJ) -C @pre_prefix@ $(A) .
 $(D)$(CG) : always ; $(TG) -C @pre_prefix@ $(A) .
 $(D)$(EJ) : always ; $(TJ) -C @pre_exec_prefix@ $(A) .
 $(D)$(EG) : always ; $(TG) -C @pre_exec_prefix@ $(A) .
-$(D)$(SJ) : always ; svn ls -R @top_srcdir@ | egrep -v '/$$' | $(TJ) -C @top_srcdir@ $(B) --files-from=-
-$(D)$(SG) : always ; svn ls -R @top_srcdir@ | egrep -v '/$$' | $(TG) -C @top_srcdir@ $(B) --files-from=-
+$(D)$(SJ) : always ; (cd @top_srcdir@ ; svn-ls) | egrep -v '/$$' | $(TJ) -C @top_srcdir@ $(B) --files-from=-
+$(D)$(SG) : always ; (cd @top_srcdir@ ; svn-ls) | egrep -v '/$$' | $(TG) -C @top_srcdir@ $(B) --files-from=-
 Makefile : @srcdir@/Makefile.in; cd ../..; ./config.status distributions/tar/Makefile
 distclean : ; rm -rf Makefile
+srcfiles :; cd @top_srcdir@ ; svn-ls
 # Local Variables:
 # compile-command: "make -C $M2BUILDDIR/distributions/tar pre-install "
 # End:

@@ -1,0 +1,5 @@
+#! /bin/sh -e
+sed -n "/\f/N;/\f./N;/^\f\n.*\nfile$/{s,..,$1,;s/\n.*//;p};d" <.svn/entries 
+sed -n "/\f/N;/\f./N;/^\f\n.*\ndir$/{s,..,,;s/\n.*//;p};d" <.svn/entries | while read x ; do ( cd $x && svn-ls $1$x/ ) ; done
+
+

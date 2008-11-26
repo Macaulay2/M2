@@ -63,6 +63,7 @@ LDFLAGS := -L$(BUILTLIBPATH)/lib $(LDFLAGS)
 LD_LIBRARY_PATH := $(LD_LIBRARY_PATH)
 export LD_LIBRARY_PATH
 
+export PATH := @abs_top_srcdir@/bin:${PATH}
 
 AR = ar
 

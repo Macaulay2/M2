@@ -1,9 +1,0 @@
--- -*- M2-comint -*- {* hash: -617988417 *}
-
-i1 : floor (7.234232131231*10^6)
-
-o1 = 7234232
-
-i2 : 
-0.77user 0.04system 0:00.81elapsed 100%CPU (0avgtext+0avgdata 0maxresident)k
-0inputs+0outputs (0major+10831minor)pagefaults 0swaps
