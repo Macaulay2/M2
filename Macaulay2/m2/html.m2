@@ -15,7 +15,8 @@ local prefix; local topNodeButton
 local nullButton; local masterIndexButton; local tocButton; local homeButton; local myHomeButton;
 local NEXT; local PREV; local UP; local tableOfContents; local linkTable; local SRC
 local nextButton; local prevButton; local upButton; local backwardButton; local forwardButton
-local masterIndex; local layout
+local masterIndex
+layout := Layout#2
 
 hadExampleError := false
 numExampleErrors := 0;
@@ -589,6 +590,7 @@ dispatcherMethod := m -> m#-1 === Sequence and (
 load "install.m2"
 
 installPackage Package := opts -> pkg -> (
+     oldlayout := layout;
      layout = if opts.SeparateExec then Layout#2 else Layout#1;
 
      use pkg;
@@ -996,7 +998,8 @@ installPackage Package := opts -> pkg -> (
      if not noinitfile then (
 	  userMacaulay2Directory();
 	  makePackageIndex();
-	  )
+	  );
+     layout = oldlayout;
      )
 
 sampleInitFile = ///-- This is a sample init.m2 file provided with Macaulay2.
