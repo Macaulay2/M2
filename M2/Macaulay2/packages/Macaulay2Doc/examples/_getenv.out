@@ -1,9 +1,0 @@
--- -*- M2-comint -*- {* hash: 117804375 *}
-
-i1 : getenv "HOME"
-
-o1 = /home/dan
-
-i2 : 
-0.79user 0.03system 0:00.82elapsed 100%CPU (0avgtext+0avgdata 0maxresident)k
-0inputs+0outputs (0major+10844minor)pagefaults 0swaps

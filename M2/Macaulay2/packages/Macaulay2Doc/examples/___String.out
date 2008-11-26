@@ -1,9 +1,0 @@
--- -*- M2-comint -*- {* hash: -66286613 *}
-
-i1 : "abcd"
-
-o1 = abcd
-
-i2 : 
-0.80user 0.02system 0:00.82elapsed 100%CPU (0avgtext+0avgdata 0maxresident)k
-0inputs+0outputs (0major+10848minor)pagefaults 0swaps

@@ -1,9 +1,0 @@
--- -*- M2-comint -*- {* hash: 992036812 *}
-
-i1 : if 5 > 4 then 8 else 7
-
-o1 = 8
-
-i2 : 
-0.77user 0.07system 0:00.85elapsed 99%CPU (0avgtext+0avgdata 0maxresident)k
-0inputs+0outputs (0major+10844minor)pagefaults 0swaps

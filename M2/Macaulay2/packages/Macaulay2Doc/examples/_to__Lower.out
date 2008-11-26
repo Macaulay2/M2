@@ -1,9 +1,0 @@
--- -*- M2-comint -*- {* hash: 734416034 *}
-
-i1 : toLower "A b C d E f"
-
-o1 = a b c d e f
-
-i2 : 
-0.76user 0.05system 0:00.84elapsed 97%CPU (0avgtext+0avgdata 0maxresident)k
-0inputs+0outputs (0major+10842minor)pagefaults 0swaps
