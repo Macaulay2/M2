@@ -18,6 +18,7 @@ PKG_DEB = @PACKAGE_TARNAME@-@PACKAGE_VERSION@-$(DEBARCH)-@OS@-@ISSUE@.deb
 PKG_COM_DEB = @PACKAGE_TARNAME@-@PACKAGE_VERSION@-common.deb
 
 pre-install ::
+all pre-install ::; [ "${prefix}" = /usr -a @DEBUG@ = no -a @OPTIMIZE@ = yes -a @STRIP@ = yes ]
 all pre-install :: macaulay2/control.prelim
 macaulay2/control.prelim : @srcdir@/macaulay2/control.prelim.in Makefile
 	<$< >$@ sed -e 's/[@]DEBARCH[@]/$(DEBARCH)/g' -e 's/[@]PACKAGE_VERSION[@]/@PACKAGE_VERSION@/g'
@@ -32,6 +33,7 @@ all pre-install :: ../../$(PKG_DEB) ../../$(PKG_COM_DEB)
 ifeq ($(TIDY),yes)
 all pre-install :: tidy_after
 endif
+
 #################################
 
 ../../$(PKG_DEB) : @srcdir@/macaulay2/debian-binary macaulay2/control.tar.gz macaulay2/data.tar.gz

@@ -1,30 +1,9 @@
+This is basically ready to go.  We need to do an experiment where we make a fat
+tar file and see how it goes, from scratch.
+
 For sage and other builders of Macaulay2, it would be very nice if
 ./BUILD/share were to contain all the precomputed architecture independent
 files normally built, so that we could include those files in a (bulky) source
 distribution.  That would make the documentation for StatePolytope and
 FourTiTwo uniform, i.e., the example output would be there, as run on some
 other machine.
-
-    Makefile
-        all :: a.out
-	a.out : a.m2 | M2
-       
-
-See 
-
-    (make)Top:: > *Note Rules:: > Prerequisite Types
-
-in make.info
-
--- in progress, notes:
-
-fix package loading so all files are found whether they were installed with SeparateExec or not
-
-fix installPackage so it doens't clobber the source file if it's in the same location as where it will get installed
-
-note: perhaps the architecture dependent directory should not be in the staging
-area at all, because the libraries might get built with debugging options in
-some build trees.  Yes, so installPackage needs an option call
-InstallExecPrefix in addition to InstallPrefix, and we can eliminate the option
-SeparateExec.  We can get rid of the suffixes x86_64-Linux-Ubuntu-8.10 and
-common, too, and have just one Layout once again.
