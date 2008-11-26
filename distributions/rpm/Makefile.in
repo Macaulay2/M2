@@ -34,12 +34,13 @@ PKG_COM_RPM = @PACKAGE_TARNAME@-@PACKAGE_VERSION@-$(DISTRIBUTION).common.rpm
 #   mpfr-2.3.0-1.fc8
 
 ############################## main targets
-all pre-install :: warning
+all pre-install ::; [ "${prefix}" = /usr -a @DEBUG@ = no -a @OPTIMIZE@ = yes -a @STRIP@ = yes ]
+all pre-install :: check-id
 all pre-install :: ../../$(PKG_COM_RPM) ../../$(PKG_RPM)
 ifeq ($(TIDY),yes)
 all pre-install :: tidy
 endif
-warning: always
+check-id: always
 	@if [ `@FAKEROOT@ id -u` != 0 ] ; \
 	 then ( \
 	    echo "=============================================================================" ;\

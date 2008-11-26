@@ -19,7 +19,10 @@ makeDirectory String := name -> (			    -- make the whole path, too
 
 copyFile = method(Options => new OptionTable from { Verbose => false, UpdateOnly => false })
 copyFile(String,String) := opts -> (src,tar) -> (
-     if opts.UpdateOnly and fileExists tar and fileTime src <= fileTime tar then (
+     if src === tar then (
+     	  if opts.Verbose then stderr << "--skipping: " << src << " the same as " << tar << endl;
+	  )
+     else if opts.UpdateOnly and fileExists tar and fileTime src <= fileTime tar then (
      	  if opts.Verbose then stderr << "--skipping: " << src << " not newer than " << tar << endl;
 	  )
      else (

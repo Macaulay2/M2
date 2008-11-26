@@ -535,7 +535,7 @@ homeDirectory = getenv "HOME" | "/"
 
 path = (x -> select(x, i -> i =!= null)) deepSplice {
 	  if not noinitfile then (
-	       applicationDirectory() | "local/" | currentLayout#"packages", 
+	       applicationDirectory() | "local/" | Layout#1#"packages", 
 	       applicationDirectory() | "code/"
 	       ),
 	  if prefixDirectory =!= null then (
