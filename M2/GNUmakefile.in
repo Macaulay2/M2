@@ -48,7 +48,7 @@ pre-install :: all
 distclean:: clean
 pre-install clean distclean all ::; $(MAKE) -C libraries $@
 all::.link-test
-clean::; rm -f .link-test StagingArea srcdir
+clean::; rm -rf .link-test StagingArea srcdir
 .link-test: GNUmakefile
 	if [ "@abs_builddir@"/StagingArea/common != "@pre_prefix@" ] ;\
 	then rm -rf StagingArea/common ;\

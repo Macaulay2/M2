@@ -6,7 +6,7 @@ $(foreach lib,@LIBRARIES@,$(eval untar fetch all check reconfigure ::;$(MAKE) -C
 $(foreach lib,@LIBLIST@ libtool M2,$(eval distclean clean ::;$(MAKE) -C $(lib) $$@))
 prefix := @pre_prefix@
 exec_prefix := @pre_exec_prefix@
-# maybe we should just install each libraries directly into the staging area ...
+ifeq (@SHARED@,yes)
 pre-install :
 	@ echo installing sharable library files in @librariesdir@/lib
 	if [ -d final/lib ] ; \
@@ -15,6 +15,7 @@ pre-install :
 	     tar cf - --exclude="*.a" --exclude="*.la" --exclude="*.pc" --exclude="*.old" -C final/lib . \
 	     | tar xfv - -C @librariesdir@/lib ; \
 	fi
+endif
 Makefile         : Makefile.in         ; cd .. && ./config.status libraries/Makefile
 Makefile.library : Makefile.library.in ; cd .. && ./config.status libraries/Makefile.library
 clean :: ; rm -rf final
