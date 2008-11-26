@@ -4,20 +4,23 @@
 #define STDERR 2
 
 static void *our_gmp_default_allocate (unsigned n) {
-     char *msg = "our_gmp_default_allocate called\n";
-     write(STDERR,msg,strlen(msg));
+     const char *msg = "our_gmp_default_allocate called\n";
+     int r = write(STDERR,msg,strlen(msg));
+     if (r == -1) abort();
      abort();
 }
 
 static void *our_gmp_default_reallocate (void *p, unsigned n, unsigned m) {
-     char *msg = "our_gmp_default_reallocate called\n";
-     write(STDERR,msg,strlen(msg));
+     const char *msg = "our_gmp_default_reallocate called\n";
+     int r = write(STDERR,msg,strlen(msg));
+     if (r == -1) abort();
      abort();
 }
 
 static void our_gmp_default_free (void *p , unsigned n) {
-     char *msg = "our_gmp_default_free called\n";
-     write(STDERR,msg,strlen(msg));
+     const char *msg = "our_gmp_default_free called\n";
+     int r = write(STDERR,msg,strlen(msg));
+     if (r == -1) abort();
      abort();
 }
 

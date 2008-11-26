@@ -39,7 +39,7 @@ MADEM2FILES += mpcodes.m2
 endif
 ############################## loads.m2
 LOADSEQUENCE := $(shell cat @srcdir@/loadsequence)
-DUMPEDM2FILES += $(LOADSEQUENCE)
+DUMPEDM2FILES += $(patsubst version.m2, version.m2.in, $(LOADSEQUENCE))
 NONDOCM2FILES += $(patsubst version.m2, version.m2.in, $(LOADSEQUENCE))
 # M2 files made in the build directory are not mentioned in LOADSEQUENCE
 MADEM2FILES += loads.m2
@@ -184,8 +184,8 @@ prefix := @pre_prefix@
 @packagesdir@/Core/% : % ; @INSTALL_DATA@ $^ $@
 FILES_TO_COPY := $(DUMPEDM2FILES) demo1.m2
 pre-install :: all @packagesdir@ @packagesdir@/Core $(addprefix @packagesdir@/Core/, $(FILES_TO_COPY))
-clean::; rm -rf ../cache/@DUMPDATAFILE@ cache *.obj *.exe runexample temp.data distfiles loads.m2 mpcodes.m2 version.m2 core gmon.out
-distclean : clean; rm -f Makefile
+clean::; rm -rf ../cache/@DUMPDATAFILE@ cache *.obj *.exe runexample temp.data distfiles loads.m2 mpcodes.m2 core gmon.out
+distclean : clean; rm -f Makefile version.m2
 
 # Local Variables:
 # compile-command: "make -C $M2BUILDDIR/Macaulay2/m2 "
