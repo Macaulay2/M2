@@ -249,8 +249,8 @@ void runchild()
 	  char buf[100];
 	  sprintf(buf,"%s: Couldn't exec the program '%s'%s", 
 	       progname, argv[1], endl);
-     	  write(STDERR, buf, strlen(buf));
-     	  _exit(1);
+     	  int r = write(STDERR, buf, strlen(buf));
+     	  _exit(r ? 1 : 1);
 	  }
      }
 
@@ -270,7 +270,10 @@ HandleSIGCHLD(int sig)
 		    unsigned int n;
      		    char buf[BUFFER_SIZE];
 		    while (0 < (n = read(masterfd,buf,sizeof(buf)))) {
-			 write(STDOUT,buf,n);
+			 int r = write(STDOUT,buf,n);
+			 if (r == ERROR) {
+			   error("failed to write output");
+			 }
 			 }
 		    if (code == 0) {
 			 sprintf(buf,"process exited: signal %d", sig0);

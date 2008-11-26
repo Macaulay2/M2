@@ -52,6 +52,7 @@ clean::; rm -rf .link-test StagingArea srcdir
 .link-test: GNUmakefile
 	if [ "@abs_builddir@"/StagingArea/common != "@pre_prefix@" ] ;\
 	then rm -rf StagingArea/common ;\
+	     $(MKDIR_P) StagingArea ;\
 	     ln -s "@pre_prefix@" StagingArea/common ;\
 	fi
 	rm -f srcdir
