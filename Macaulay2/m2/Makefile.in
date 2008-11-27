@@ -124,7 +124,7 @@ ifneq "@DUMPDATA@" "no"
 phase1 :: ../cache/@DUMPDATAFILE@
 ../cache/@DUMPDATAFILE@ redump : $(DUMPEDM2FILES) $(DUMPEDM2DOCFILES) @pre_exec_prefix@/bin/M2@EXE@ $(OTHERDUMPEDM2FILES)
 	rm -f ../cache/@DUMPDATAFILE@
-	@pre_exec_prefix@/bin/M2@EXE@ -q --stop -e 'errorDepth = 0' $(M2DIRS) --dumpdata
+	@pre_exec_prefix@/bin/M2@EXE@ -q --stop -e 'errorDepth = 0' --dumpdata
 	printenv LD_LIBRARY_PATH
 endif
 

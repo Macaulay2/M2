@@ -1,3 +1,0 @@
-config.Makefile: no longer needed:
-
-M2DIRS = --srcdir "@abs_top_builddir@" --srcdir "@abs_top_srcdir@"
