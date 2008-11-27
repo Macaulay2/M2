@@ -1,13 +1,19 @@
 # @configure_input@
 VPATH = @srcdir@
 include ../../include/config.Makefile
+all:: M2.1
 # ignore @datarootdir@
-all ::
+docdir := @docdir@
 prefix := @pre_prefix@
 @mandir@/man1:; @INSTALL@ -d $@
 pre-install :: @mandir@/man1/M2.1
 @mandir@/man1/M2.1 : M2.1 | @mandir@/man1 ; @INSTALL_DATA@ $< $@
-Makefile : Makefile.in; (cd ../..; ./config.status Macaulay2/man/Makefile)
+Makefile : Makefile.in; cd ../..; ./config.status Macaulay2/man/Makefile
+M2.1: M2.1.in Makefile; sed <$< >$@ \
+	    -e 's,[@]PACKAGE_TARNAME[@],@PACKAGE_TARNAME@,g' \
+	    -e 's,[@]PACKAGE_VERSION[@],@PACKAGE_VERSION@,g' \
+	    -e 's,[@]PACKAGE_NAME[@],@PACKAGE_NAME@,g' \
+	    -e 's,[@]docdir[@],$(docdir),g'
 clean :: ; rm -f M2.1 M2-help.1
 # Local Variables:
 # compile-command: "make -C $M2BUILDDIR/Macaulay2/man "
