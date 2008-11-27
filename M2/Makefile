@@ -1,6 +1,6 @@
 .PHONY : all monitor
 
-all: check-autoconf configure monitor include/config.h.in.stamp
+all: check-autoconf configure monitor include/M2/config.h.in.stamp
 	@echo '--: The configure script in this directory has been prepared.'
 	@echo '--: To configure and build Macaulay 2:'
 	@echo '--: '
@@ -68,7 +68,7 @@ check-autoconf :
 
 # autoheader's job is to make include/config.h, but if there are no changes, it doesn't touch it, 
 # which means "make" will keep trying
-include/config.h.in.stamp : configure.ac # aclocal.m4
+include/M2/config.h.in.stamp : configure.ac # aclocal.m4
 	autoheader
 	touch "$@"
 
