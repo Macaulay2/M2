@@ -8,6 +8,7 @@ preremove : @srcdir@/preremove.in; cd ../..; ./config.status distributions/top/p
 INSTALL : @srcdir@/INSTALL.in; cd ../..; ./config.status distributions/top/INSTALL
 distclean : ; rm -rf Makefile
 RLS = sed 's,^linkdir PRE/,linkdir ,'
+# ignore @datarootdir@
 prefix=PRE
 exec_prefix=PRE
 encapinfo : Makefile

@@ -15,6 +15,7 @@ Prefix: @prefix@
 %post
 #! /bin/sh -e
 prefix=@prefix@
+datarootdir=@datarootdir@
 cd @infodir@
 for p in @PACKAGES@
 do install-info --quiet --info-dir=. $p.info
@@ -22,6 +23,7 @@ done
 %preun
 #! /bin/sh -e
 prefix=@prefix@
+datarootdir=@datarootdir@
 cd @infodir@
 for p in @PACKAGES@
 do install-info --remove --quiet --info-dir=. $p.info

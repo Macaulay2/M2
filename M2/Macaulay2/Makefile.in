@@ -6,6 +6,7 @@ all ::
 justM2 all :: initialize
 
 include ../include/config.Makefile
+# ignore @datarootdir@
 VPATH = @srcdir@
 ################################# .
 prefix := @pre_prefix@
