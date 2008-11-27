@@ -15,7 +15,6 @@ CJ=$(C).bz2
 pre-install :: tarballs
 all pre-install ::; [ "${prefix}" = /usr -a @DEBUG@ = no -a @OPTIMIZE@ = yes -a @STRIP@ = yes ]
 tarballs :: tarballs.@COMPRESS@
-# these are separate targets, because they work only when online, due to the use of "svn ls":
 src : $(D)$(SZ)
 src.gz : $(D)$(SZ)
 src.bz2 : $(D)$(SJ)
