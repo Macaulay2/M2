@@ -1,5 +1,6 @@
 # @configure_input@
 include ../../include/config.Makefile
+# ignore @datarootdir@
 VPATH = @srcdir@
 TIDY = yes
 CHOWN = chown

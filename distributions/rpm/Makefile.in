@@ -10,6 +10,7 @@ DISTRIBUTION = @DISTRIBUTION@
 # http://koji.fedoraproject.org/packages/Macaulay2/1.1/2.fc10/i386/Macaulay2-debuginfo-1.1-2.fc10.i386.rpm
 
 include ../../include/config.Makefile
+# ignore @datarootdir@
 
 CHOWN = chown
 TIDY = yes
@@ -69,12 +70,11 @@ T=tar --create --mode=a+rX,og-ws --exclude='.nfs*' --exclude='Macaulay2-*-data' 
 
 Macaulay2.spec: Macaulay2-body.spec packages-used Makefile .prepared 
 	sed -e '/Requires/,$$d' \
-	    -e 's/^Release: .*/Release: $(DISTRIBUTION)/' \
-	    -e 's/%PKG_RPM%/$(PKG_RPM)/g' <$< >$@
+	    -e 's/^Release: .*/Release: $(DISTRIBUTION)/' <$< >$@
 	( echo -n "Requires: Macaulay2-common = @PACKAGE_VERSION@" && \
 	  cat packages-used | while read pkg rel ; do echo -n ", $$pkg >= $$rel" ; done && \
 	  echo ) >>Macaulay2.spec
-	sed '1,/Requires/d' Macaulay2-body.spec >>Macaulay2.spec
+	sed -e '1,/Requires/d' -e 's/%PKG_RPM%/$(PKG_RPM)/g' <$< >>$@
 	(cd files && find . -type d -a -name Macaulay2 -prune -o -type f) | sed $(SEDOPTS) >>Macaulay2.spec
 
 ../../$(PKG_RPM) : Macaulay2.spec .prepared; @FAKEROOT@ rpmbuild -bb Macaulay2.spec
@@ -94,7 +94,6 @@ libraries-used : .prepared always
 STRIP_VERSION_CMD := sed 's/-[0-9][0-9.]*[0-9]\(-\|$$\).*//'
 
 packages-used : libraries-used
-	rpm --query -f "$$x" 2>&1
 	cat libraries-used \
 	| while read x ; \
 	do rpm --query -f "$$x" | sed 's/\([^.]*\)-\([0-9][0-9.]*[0-9]\)\(-.*$$\|$$\)/\1 \2/' ;\

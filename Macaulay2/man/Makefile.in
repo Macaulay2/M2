@@ -1,6 +1,7 @@
 # @configure_input@
 VPATH = @srcdir@
 include ../../include/config.Makefile
+# ignore @datarootdir@
 all ::
 prefix := @pre_prefix@
 @mandir@/man1:; @INSTALL@ -d $@

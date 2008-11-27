@@ -2,6 +2,7 @@
 -- run
 --     help Layout
 -- for documentation of this table
+-- ignore @datarootdir@
 t := hashTable {
      "exec" => "${exec_prefix}/",
      "common" => "${prefix}/",
