@@ -4,6 +4,7 @@ RingMap = new Type of HashTable
 
 RingMap.synonym = "ring map"
 matrix RingMap := opts -> f -> f.matrix
+toExternalString RingMap := 				    -- only approximately right
 toString RingMap := f -> concatenate(
      "map(", toString target f, ",", toString source f, ",", toString first entries matrix f, ")"
      )
