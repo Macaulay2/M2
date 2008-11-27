@@ -101,17 +101,16 @@ toExternalString MutableList := s -> (
      error "anonymous mutable list cannot be converted to external string";
      -- concatenate("new ",toExternalString class s, " from {...", toString(#s), "...}" )
      )
-toExternalString BasicList := s -> concatenate(
-     (if class s === List then "{" else ("new ", 
-	       toString class s,			    -- was toExternalString !
-	       " from {")),
-     between(", ",apply(toList s,toExternalString)),
-     "}" )
-toExternalString Array := s -> concatenate ( "[", between(", ",toExternalString \ toList s), "]" )
-toExternalString Sequence := s -> (
-     if # s === 1 then concatenate("1 : (",toExternalString s#0,")")
-     else concatenate("(",between(",",toExternalString \ s),")")
+mid := s -> (
+     if #s === 1 then toExternalString s#0
+     else between(",",apply(toSequence s,x -> if x === null then "" else toExternalString x))
      )
+toExternalString BasicList := s -> concatenate(
+     (if class s === List then "{" else ("new ", toString class s, " from {")), mid s, "}" )
+toExternalString Array := s -> concatenate("[",mid s,"]")
+toExternalString Sequence := s -> (
+     if # s === 1 then concatenate("1:(",toExternalString s#0,")")
+     else concatenate("(",mid s,")"))
 -----------------------------------------------------------------------------
 describe = method()
 describe Thing := net
