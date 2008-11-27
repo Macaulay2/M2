@@ -3,6 +3,7 @@
 Constant = new Type of BasicList
 
 precedence = method(Dispatch => Thing)
+rightPrecedence = method(Dispatch => Thing)
 lprec = prec = x -> (getParsing x)#0
 rprec = strength2 = x -> (getParsing x)#1
 uprec = strength1 = x -> (getParsing x)#2
@@ -285,16 +286,6 @@ Power.synonym = "power expression"
 Power#operator = "^"
 value' Power := (x) -> (value' x#0) ^ (value' x#1)
 
-Colon = new HeaderType of Expression
-Colon.synonym = "colon expression"
-Colon#operator = ":"
-value' Colon := (x) -> (value' x#0) : (value' x#1)
-
-DotDot = new HeaderType of Expression
-DotDot.synonym = "dot-dot expression"
-DotDot#operator = ".."
-value' DotDot := (x) -> (value' x#0) .. (value' x#1)
-
 Subscript = new HeaderType of Expression
 Subscript.synonym = "subscript expression"
 Subscript#operator = "_"
@@ -449,19 +440,19 @@ Holder     _ Holder     := (x,y) -> Subscript{x#0,y#0}
 Expression _ Thing      := (x,y) -> x _ (expression y)
      Thing _ Expression := (x,y) -> (expression x) _ y
 
-Expression : Expression := (x,y) -> Colon{x,y}
-Holder     : Expression := (x,y) -> Colon{x#0,y}
-Expression     : Holder := (x,y) -> Colon{x,y#0}
-Holder         : Holder := (x,y) -> Colon{x#0,y#0}
-Thing      : Expression := (x,y) -> Colon{x,y}
-Expression     :  Thing := (x,y) -> Colon{x,y}
+Expression : Expression := (x,y) -> BinaryOperation{symbol :,x,y}
+Holder     : Expression := (x,y) -> BinaryOperation{symbol :,x#0,y}
+Expression     : Holder := (x,y) -> BinaryOperation{symbol :,x,y#0}
+Holder         : Holder := (x,y) -> BinaryOperation{symbol :,x#0,y#0}
+Thing      : Expression := (x,y) -> BinaryOperation{symbol :,x,y}
+Expression     :  Thing := (x,y) -> BinaryOperation{symbol :,x,y}
 
-Expression .. Expression := (x,y) -> DotDot{x,y}
-Holder     .. Expression := (x,y) -> DotDot{x#0,y}
-Expression     .. Holder := (x,y) -> DotDot{x,y#0}
-Holder         .. Holder := (x,y) -> DotDot{x#0,y#0}
-Thing      .. Expression := (x,y) -> DotDot{x,y}
-Expression     ..  Thing := (x,y) -> DotDot{x,y}
+Expression .. Expression := (x,y) -> BinaryOperation{symbol ..,x,y}
+Holder     .. Expression := (x,y) -> BinaryOperation{symbol ..,x#0,y}
+Expression     .. Holder := (x,y) -> BinaryOperation{symbol ..,x,y#0}
+Holder         .. Holder := (x,y) -> BinaryOperation{symbol ..,x#0,y#0}
+Thing      .. Expression := (x,y) -> BinaryOperation{symbol ..,x,y}
+Expression     ..  Thing := (x,y) -> BinaryOperation{symbol ..,x,y}
 
 -----------------------------------------------------------------------------
 --value' Holder2 := x -> x#1
@@ -544,10 +535,19 @@ value' BinaryOperation := (m) -> (
      if binary#?(m#0) then binary#(m#0) (value' m#1,value' m#2) else m
      )
 net BinaryOperation := m -> (
-     -- must put precedences here eventually
-     horizontalJoin( net m#1, toString m#0, net m#2 )
+     x := net m#1;
+     y := net m#2;
+     if rightPrecedence m#1 < lprec m#0 then x = bigParenthesize x;
+     if precedence m#2 <= rprec m#0 then y = bigParenthesize y;
+     horizontalJoin( x, toString m#0, y )
      )
-toString'(Function, BinaryOperation) := (fmt,m) -> horizontalJoin( "(", fmt m#1, toString m#0, fmt m#2, ")" )
+toString'(Function, BinaryOperation) := (fmt,m) -> (
+     x := fmt m#1;
+     y := fmt m#2;
+     if rightPrecedence m#1 < lprec m#0 then x = bigParenthesize x;
+     if precedence m#2 <= rprec m#0 then y = bigParenthesize y;
+     horizontalJoin( x, toString m#0, y )
+     )
 -----------------------------------------------------------------------------
 FunctionApplication = new HeaderType of Expression -- {fun,args}
 FunctionApplication.synonym = "function application expression"
@@ -610,8 +610,6 @@ returns = t -> x -> t
 	      precedence Equation := returns prec symbol ==
 	     precedence HashTable := returns 0		    -- some things might print out as symbols though...
 		 precedence Thing := returns 0
-		 precedence Colon := returns prec symbol :
-		precedence DotDot := returns prec symbol ..
 		   precedence Sum := returns prec symbol +
 	       precedence Product := returns prec symbol *
  precedence NonAssociativeProduct := returns prec symbol **
@@ -634,7 +632,9 @@ returns = t -> x -> t
 	    precedence Expression := returns strength1 symbol symbol
 	        precedence Holder := x -> precedence x#0
 --	       precedence Holder2 := x -> precedence x#0
-       precedence BinaryOperation := x -> prec x#0
+       precedence BinaryOperation := x -> lprec x#0
+  rightPrecedence BinaryOperation := x -> rprec x#0
+            rightPrecedence Thing := precedence
 -----------------------------------------------------------------------------
 -- printing two dimensional ascii output
 
@@ -833,12 +833,6 @@ net MatrixExpression := x -> (
 	  side := "|" ^ (height m, depth m);
 	  horizontalJoin(side," ",m," ",side)))
 html MatrixExpression := x -> html TABLE toList x
-
-net Colon := x -> net x#0 | ":" | net x#1
-toString Colon := x -> toString x#0 | ":" | toString x#1
-
-net DotDot := x -> net x#0 | ".." | net x#1
-toString DotDot := x -> toString x#0 | ".." | toString x#1
 
 -----------------------------------------------------------------------------
 -- tex stuff
