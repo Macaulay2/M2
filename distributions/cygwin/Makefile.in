@@ -17,7 +17,7 @@ all pre-install :: server/Macaulay2 $(DISTFILES) server/setup.ini tidy
 	@ echo "the cygwin package files have been prepared in cygwin/server"
 	@ echo "============================================================================="
 server/setup.ini : $(DISTFILES)
-	PATH=`cd @srcdir@; pwd`:$(PATH) $(MAKE) -C server setup.ini
+	PATH=@abs_srcdir@:$$PATH $(MAKE) -C server setup.ini
 server/Macaulay2 : ; $(MKDIR_P) $@
 
 TIDY = yes
@@ -44,8 +44,9 @@ server/Macaulay2/@package@-$(DISTRIBUTION).tar.bz2 : .prepared
 	(cd files && @FAKEROOT@ tar cjf - *) >$@
 
 libraries-used : .prepared
-	cygcheck files@prefix@/@bindir@/M2@EXE@ \
-	| sed -e 's/^  *//' \
+	cygcheck files@bindir@/M2@EXE@ >$@.tmp
+	<$@.tmp \
+	  sed -e 's/^  *//' \
 	| dd conv=lcase \
 	| sed 's=\\=/=g' \
 	| egrep "(/lib/|/bin/).*\.dll$$" \
@@ -54,7 +55,7 @@ libraries-used : .prepared
 	| tee $@
 
 packages-used : libraries-used
-	cat libraries-used \
+	cat $< \
 	| while read x ; do cygcheck -f $$x ; done \
 	| sort | uniq \
 	| sed 's/\([a-zA-Z0-9]*\)-\([0-9.]*\)-.*/\1 \2/' \
