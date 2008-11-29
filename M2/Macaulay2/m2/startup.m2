@@ -465,7 +465,10 @@ if readlink exe =!= null then (
 	  );
      )
 prefixDirectory2 := if currentLayout2 =!= null then substring(bindir2,0,#bindir2-#currentLayout2#"bin")
-if not isDirectory(prefixDirectory|currentLayout#"packages") and isDirectory(prefixDirectory2|currentLayout2#"packages") then (
+if prefixDirectory2 =!= null
+   and isDirectory(prefixDirectory2|currentLayout2#"packages")
+   and not isDirectory(prefixDirectory|currentLayout#"packages")
+then (
      prefixDirectory = prefixDirectory2;
      currentLayout = currentLayout2;
      )
@@ -474,7 +477,7 @@ topBuilddir := (
      if issuffix(stA,prefixDirectory) then substring(prefixDirectory,0,#prefixDirectory-#stA)
      else
      if issuffix(stA,prefixDirectory2) then substring(prefixDirectory2,0,#prefixDirectory2-#stA))
-topSrcdir := if topBuilddir =!= null and readlink(topBuilddir|"srcdir") =!= null then minimizeFilename(topBuilddir|readlink(topBuilddir|"srcdir")|"/");
+topSrcdir := if topBuilddir =!= null and fileExists(topBuilddir|"srcdir") then minimizeFilename(topBuilddir|first lines get(topBuilddir|"srcdir"));
 
 describePath := () -> (
      stderr << "--file search starts here:" << endl;

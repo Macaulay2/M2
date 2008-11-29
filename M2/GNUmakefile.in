@@ -56,7 +56,7 @@ clean::; rm -rf .link-test StagingArea srcdir
 	     ln -s "@pre_prefix@" StagingArea/common ;\
 	fi
 	rm -f srcdir
-	ln -s "@srcdir@" srcdir
+	echo "@srcdir@/" >srcdir
 	touch $@
 pre-install all distclean check clean ::; $(MAKE) -C Macaulay2 $@
 subst : config.status ; ./config.status
