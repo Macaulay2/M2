@@ -52,10 +52,10 @@ MADEM2FILES += install.m2
 install.m : install.m2.in ; cd ../.. && ./config.status Macaulay2/m2/install.m2
 ############################## tvalues.m2
 MADEM2FILES += tvalues.m2
-TVFILES := $(shell cd @srcdir@/../d && egrep -l -e "-- . typical value: " *.d)
+TVFILES := $(shell egrep -l -e "-- . typical value: " @srcdir@/../d/*.d)
 all :: tvalues.m2
 tvalues.m2 : $(TVFILES)
-	(cd @srcdir@/../d && egrep -e "-- . typical value: " $^ | sed 's/.*-- . typical value: \(.*\)/typval(\1)/') >$@
+	egrep -e "-- . typical value: " $^ | sed 's/.*-- . typical value: \(.*\)/typval(\1)/' >$@
 ############################## installedpackages.m2
 INSTALLEDPACKAGES := $(shell cat @srcdir@/installedpackages)
 MADEM2FILES += installedpackages.m2
