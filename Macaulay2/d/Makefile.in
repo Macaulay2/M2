@@ -212,7 +212,7 @@ CPPFLAGS := $(M2INCLUDES) $(CPPFLAGS) $(M2_CPPFLAGS)
 CFLAGS += -Wno-unused-label $(M2_CFLAGS)
 
 ifeq (gcc,@CC@)
-ifeq "@CYGWIN@" "yes"
+ifeq (@ISSUE@,Cygwin)
 M2_LDFLAGS  += -Wl,--enable-auto-import
     # we add this linker option to prevent these warning messages:
     # /usr/lib/gcc/i686-pc-cygwin/3.4.4/../../../../i686-pc-cygwin/bin/ld: warning: auto-importing has been activated without --enable-auto-import specified on the command line.
