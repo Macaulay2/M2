@@ -1507,7 +1507,7 @@ document { Key => "printingSeparator",
      EXAMPLE lines ///
      	  3000000000000.
 	  printingSeparator
-	  printingSeparator = "e"
+	  printingSeparator = "E"
      	  3000000000000.
      ///,
      SeeAlso => {"printingPrecision", "printingAccuracy", "printingLeadLimit", "printingTrailLimit", format}

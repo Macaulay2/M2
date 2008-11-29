@@ -39,7 +39,6 @@ T=tar --create --mode=a+rX,og-ws --exclude='.nfs*' --exclude='Macaulay2-*-data' 
 	@INSTALL_PROGRAM@ preremove.sh files/etc/preremove/@PACKAGE_TARNAME@.sh
 	$(MKDIR_P) files@prefix@/share/doc/Cygwin
 	@INSTALL_DATA@ Macaulay2.README files@prefix@/share/doc/Cygwin/Macaulay2-@PACKAGE_VERSION@.README
-	@FAKEROOT@ chown -R root.root files
 
 server/Macaulay2/@package@-$(DISTRIBUTION).tar.bz2 : .prepared
 	(cd files && @FAKEROOT@ tar cjf - *) >$@
