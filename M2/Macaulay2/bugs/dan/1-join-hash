@@ -1,0 +1,5 @@
+join(List,List) has to compute new hash codes by scanning the new list,
+presumably.  Perhaps it could save time by computing the answer from the
+previous hash codes.
+
+Similarly for new List from List, toList, toSequence, etc.
