@@ -544,9 +544,9 @@ net BinaryOperation := m -> (
 toString'(Function, BinaryOperation) := (fmt,m) -> (
      x := fmt m#1;
      y := fmt m#2;
-     if rightPrecedence m#1 < lprec m#0 then x = bigParenthesize x;
-     if precedence m#2 <= rprec m#0 then y = bigParenthesize y;
-     horizontalJoin( x, toString m#0, y )
+     if rightPrecedence m#1 < lprec m#0 then x = ("(",x,")");
+     if precedence m#2 <= rprec m#0 then y = ("(",y,")");
+     concatenate( x, toString m#0, y )
      )
 -----------------------------------------------------------------------------
 FunctionApplication = new HeaderType of Expression -- {fun,args}
