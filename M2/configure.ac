@@ -957,29 +957,23 @@ test "$localedir"   || AC_SUBST(localedir,'${datarootdir}/locale')
 
 # Here we normalize all the configure variables so each one begins either with ${prefix} or with ${exec_prefix},
 # so they can be handled more simply in Macaulay2, by a single text replacement.
-case $prefix in
-  *,*) AC_MSG_ERROR([expected "\${prefix}" => "$prefix" to contain no comma]) ;;
-esac
-case $exec_prefix in
-  *,*) AC_MSG_ERROR([expected "\${exec_prefix}" => "$exec_prefix" to contain no comma]) ;;
-esac
+save_prefix=$prefix
+save_exec_prefix=$exec_prefix
+prefix=NONE
+exec_prefix=NOWHERE
 # put docdir and datarootdir at end, because we are changing the values of the variables, and
 # other variables depend on them
 for i in bindir datadir includedir infodir libdir libexecdir localstatedir mandir sbindir \
          sharedstatedir sysconfdir psdir pdfdir dvidir htmldir localedir docdir datarootdir
 do eval w=\$$i ; eval v="$w" ; eval v="$v" ; eval v="$v" ; eval v="$v" ; eval v="$v"
    case $v in
-     "$exec_prefix"|"$exec_prefix"/*)
-	   eval ${i}=`echo $v | sed s,"^$exec_prefix","'\\${exec_prefix}'",`
-	   ;; dnl # assume $exec_prefix contains no comma
-     "$prefix"|"$prefix"/*)
-	   eval ${i}=`echo $v | sed s,"^$prefix","'\\${prefix}'",`
-	   ;; dnl # assume $prefix contains no comma
-     *) AC_MSG_ERROR([expected "\${$i}" => "$w" => "$v"
-           to start with "\${prefix}" => "$prefix"
-	   or with "\${exec_prefix}" => "$exec_prefix"]) ;;
+     "$exec_prefix"|"$exec_prefix"/*) eval ${i}=`echo $v | sed s,"^$exec_prefix","'\\${exec_prefix}'",` ;;
+     "$prefix"|"$prefix"/*) eval ${i}=`echo $v | sed s,"^$prefix","'\\${prefix}'",` ;;
+     *) AC_MSG_ERROR([expected "\${$i}" => "$w" to start with "\${prefix}" or with "\${exec_prefix}"]) ;;
    esac
 done
+prefix=$save_prefix
+exec_prefix=$save_exec_prefix
 
 AC_SUBST(MACHINE,"$ARCH-$OS-$ISSUE")
 AC_DEFINE_UNQUOTED(MACHINE,"$MACHINE",[complete machine description (to appear in name of tar file)])
