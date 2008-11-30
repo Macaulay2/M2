@@ -3,31 +3,25 @@ include ../../include/config.Makefile
 TIDY = yes
 VPATH = @srcdir@
 DEPENDS = yes
-
 PKG_DMG = @package@-@ARCH@-@OS@-@REL@.dmg
-
-############################## main targets
 all pre-install :: ../../$(PKG_DMG)
 ifeq ($(TIDY),yes)
 all pre-install :: tidy
 endif
-
-../../$(PKG_DMG) : ../../$(PKG_TZ) Makefile
+T=tar --create --mode=a+rX,og-ws --exclude='.nfs*' --exclude='Macaulay2-*-data' --file=-
+../../$(PKG_DMG) : Makefile
 	rm -rf files
-	umask 022 ; $(MKDIR_P) files
-	umask 022 ; tar xfp ../../$(PKG_TZ) @TAR_COMPRESS_OPTION@ -C files
-	umask 022 ; tar xfp ../../$(PKG_COM_TZ) @TAR_COMPRESS_OPTION@ -C files
-	cd files/@package@ && rm -f INSTALL encapinfo postinstall preremove
+	umask 022 ; $(MKDIR_P) files/@package@
+	umask 022 ; $(T) -C @pre_exec_prefix@ . | tar xfp - -C files/@package@
+	umask 022 ; $(T) -C @pre_prefix@ . | tar xfp - -C files/@package@
 	cp @srcdir@/ReadMe-MacOSX.rtf files/@package@
 	ln -s @package@/ReadMe-MacOSX.rtf files
 	rm -f "$@"
-	hdiutil create -srcfolder files -volname @package@-@ARCH@-@OS@-@REL@ "$@"
-tidy : ; rm -rf files
-
-clean :: tidy; rm -f "../../$(PKG_DMG)"
+	hdiutil create -srcfolder files -volname "@package@-@ARCH@-@OS@-@REL@" "$@"
+tidy:; rm -rf files
+clean:: tidy; rm -f "../../$(PKG_DMG)"
 distclean : clean; rm -f Makefile
 Makefile : Makefile.in; cd ../..; ./config.status distributions/dmg/Makefile
-
 # Local Variables:
 # compile-command: "make -C $M2BUILDDIR/distributions/dmg "
 # End:
