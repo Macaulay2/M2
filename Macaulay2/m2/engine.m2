@@ -53,7 +53,7 @@ checkCount := i -> if not isCount i then error "expected a small positive intege
 
 fixup1 := method(Dispatch => Thing)			    -- stage 1, everything except Tiny and Small
 fixup2 := method(Dispatch => Thing)			    -- stage 2, Tiny and Small
-err := o -> error ("unrecognized ordering option " | toString o)
+err := o -> error ("unrecognized ordering item " | toString o)
 
 deglist := {}						    -- filled in below each time
 getdegs := (m,n) -> (
@@ -145,7 +145,7 @@ fixup1 Option := o -> (
      key := o#0;
      val := o#1;
      if optionFixes#?key then optionFixes#key (key,val)
-     else error ("unrecognized ordering option keyword : " | toString key)
+     else error ("unrecognized ordering item keyword : " | toString key)
      )
 intOption2 := (key,n) -> (
      bump n;
