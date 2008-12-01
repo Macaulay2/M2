@@ -47,9 +47,9 @@ monoidParts = (M) -> (
      nonnull splice (
 	  if M.?generatorExpressions then toSequence RLE M.generatorExpressions,
 	  Degrees => RLE if o.DegreeRank === 1 then flatten o.Degrees else (x -> VerticalList x) \ o.Degrees,
-	  if o.Heft =!= {1} then Heft => RLE o.Heft,
+	  if o.Heft =!= null then Heft => RLE o.Heft,
 	  MonomialOrder => rle o.MonomialOrder,
-	  ( MonomialSize, WeylAlgebra, SkewCommutative, Inverses ) / (key -> if o#?key and o#key =!= O#key then key => o#key)))
+	  ( MonomialSize, WeylAlgebra, SkewCommutative, Inverses, Global ) / (key -> if o#?key and o#key =!= O#key then key => o#key)))
 
 expression GeneralOrderedMonoid := M -> (
      T := if (options M).Local === true then List else Array;

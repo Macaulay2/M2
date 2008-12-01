@@ -41,14 +41,15 @@ toString HashTable := s -> (
 	  else "",
 	  "}"))
 toString MutableList := s -> concatenate(toString class s,"{...",toString(#s),"...}")
+toStringn := i -> if i === null then "" else toString i
 toString BasicList := s -> concatenate(
      if class s =!= List then toString class s,
-     "{", between(", ",apply(toList s,toString)), "}"
+     "{", between(", ",apply(toList s,toStringn)), "}"
      )
-toString Array := s -> concatenate ( "[", between(", ",toString \ toList s), "]" )
+toString Array := s -> concatenate ( "[", between(", ",toStringn \ toList s), "]" )
 toString Sequence := s -> (
      if # s === 1 then concatenate("1 : (",toString s#0,")")
-     else concatenate("(",between(",",toString \ s),")")
+     else concatenate("(",between(",",toStringn \ s),")")
      )
 net Command := toString Command := toExternalString Command := f -> (
      if hasAttribute(f,ReverseDictionary) then return toString getAttribute(f,ReverseDictionary) else "{*Command*}"
@@ -131,8 +132,8 @@ String == Net := (s,n) -> n == s
 
 net String := x -> stack separate x			    -- was horizontalJoin
 net RR := net Boolean := net File := net ZZ := net Database := toString
-net000 := horizontalJoin ()
-net Nothing := null -> net000
+-- net000 := horizontalJoin ()
+net Nothing := null -> "null" -- was net000
 
 Net | Net := Net => horizontalJoin
 Net || Net := Net => stack
@@ -150,14 +151,16 @@ net Net := identity
 
 comma := ", "
 
+netn := i -> if i === null then "" else net i
+
 net Sequence := x -> horizontalJoin deepSplice (
      if #x === 0 then "()"
      else if #x === 1 then ("1 : (", net x#0, ")")
-     else ("(", toSequence between(comma,apply(x,net)), ")"))
+     else ("(", toSequence between(comma,apply(x,netn)), ")"))
 
 net List := x -> horizontalJoin deepSplice (
      "{",
-     toSequence between(comma,apply(x,net)),
+     toSequence between(comma,apply(x,netn)),
      "}")
 
 VerticalList = new SelfInitializingType of List
@@ -169,12 +172,12 @@ net VerticalList := x -> if #x === 0 then "{}" else (
      horizontalJoin("{"^(h,d), n, "}"^(h,d)))
 net Array := x -> horizontalJoin deepSplice (
      "[",
-     toSequence between(comma,apply(x,net)),
+     toSequence between(comma,apply(x,netn)),
      "]")
 net BasicList := x -> horizontalJoin deepSplice (
       net class x, 
       "{",
-      toSequence between(comma,apply(toList x,net)),
+      toSequence between(comma,apply(toList x,netn)),
       "}")
 net MutableList := x -> (
      if #x > 0 

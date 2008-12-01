@@ -111,25 +111,33 @@ hilbertSeries Module := options -> (M) -> (
 	       if ord < ord2 then return trimm(ser,ord);
 	       )
 	  )
-     else error "expected infinity or an integer as value of Order option";
+     else error "hlibertSeries: expected infinity or an integer as value of Order option";
      A := ring M;
-     num := poincare M;
      T := degreesRing A;
-     denom := tally (degree \ select(generators A, x -> x != 0));
      if ord === infinity then (
+     	  num := poincare M;
+     	  denom := tally (degree \ select(generators A, x -> x != 0));
 	  y := apply(pairs denom, (i,e) -> {1 - T_i,e});
 	  y = sort y;
 	  y = apply(y, t -> Power t);
 	  M.cache#"exact hilbertSeries" = Divide{num, Product y})
-     else if class ord === ZZ then (
-	  s := if num == 0 then 0_T else (
-	       m := min min(listForm num / first);
+     else (
+	  h := reduceHilbert hilbertSeries M;				    -- exact version
+     	  dl := degreeLength A;
+	  num = numerator h;
+	  denom = denominator h;
+	  s := if num == 0 then 0_T
+	  else (
+	       error "under development";
 	       n := ord;
-	       N := n - m;
-	       f := num * product apply(
+	       N := n - min flatten exponents num;
+	       ed := product apply(
 		    pairs denom,
-		    (i,e) -> (geometricSeries( product(#i, j -> T_j ^ (i_j)), N)) ^ e
+		    (i,e) -> (
+			 geometricSeries( product(#i, j -> T_j ^ (i_j)), N)) ^ e
 		    );
+	       error "debug me";
+	       f := num * ed;
 	       trimm(f,n));
 	  M.cache#"approximate hilbertSeries" = (ord,s);
 	  s))
