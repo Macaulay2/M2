@@ -338,7 +338,8 @@ findHeft = (degrk,degs) -> (
      if g > 1 then heft = apply(heft, h -> h // g);
      heft);
 
-processHeft = (degrk,degs,heft) -> (
+processHeft = (degrk,degs,heft,inverses) -> (
+     if inverses then return null;
      if heft === null then heft = findHeft(degrk,degs)
      else (
 	  if not instance(heft,List) or (
@@ -396,7 +397,7 @@ makeMonoid := (opts) -> (
 			 if instance(i,ZZ) or instance(i,Symbol) or instance(i,IndexedVariable) then i
 			 else try baseName i else error("SkewCommutative option: expected base name for: ",toString i)
 			 ))));
-     opts.Heft = processHeft(degrk,degs,opts.Heft);
+     opts.Heft = processHeft(degrk,degs,opts.Heft,opts.Inverses);
      opts = new OptionTable from opts;
      makeit1 opts)
 
