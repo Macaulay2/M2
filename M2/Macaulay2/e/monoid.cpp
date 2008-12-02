@@ -304,13 +304,15 @@ void Monoid::text_out(buffer &o) const
       o << "}";
     }
 
-  o << "," << newline << "  Heft => {";
-  for (i=0; i<heftvals_->len; i++)
-    {
-      if (i != 0) o << ", ";
-      o << heftvals_->array[i];
-    }
-  o << "}";
+  if (heftvals_ != NULL) {
+    o << "," << newline << "  Heft => {";
+    for (i=0; i<heftvals_->len; i++)
+      {
+	if (i != 0) o << ", ";
+	o << heftvals_->array[i];
+      }
+    o << "}";
+  }
 
   if (mo_ != 0)
     {
