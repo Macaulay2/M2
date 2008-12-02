@@ -60,24 +60,23 @@ degreeLength PolynomialRing := (RM) -> degreeLength RM.FlatMonoid
 protect basering
 protect FlatMonoid
 
+degreesRing List := PolynomialRing => memoize(
+     hft -> if #hft === 0 then degreesRing 0 else ZZ degreesMonoid hft
+     )
+
 degreesRing ZZ := PolynomialRing => memoize(
-     (n) -> (
-	  local ZZn;
-	  local Zn;
+     n -> (
 	  if n == 0 then (
-	       ZZn = new PolynomialRing from rawPolynomialRing();
-	       ZZn.basering = ZZ;
-	       ZZn.FlatMonoid = ZZn.monoid = monoid[];
-	       ZZn.numallvars = 0;
-	       ZZn.baseRings = {ZZ};
-	       ZZn.degreesRing = ZZn;
-	       ZZn.isCommutative = true;
-	       ZZn.generatorSymbols = {};
-	       ZZn.generatorExpressions = {};
-	       ZZn.generators = {};
-	       ZZn.indexSymbols = new HashTable;
-	       ZZn.indexStrings = new HashTable;
-	       ZZn)
+	       S := new PolynomialRing from rawPolynomialRing();
+	       S.basering = ZZ;
+	       S.FlatMonoid = S.monoid = monoid[DegreeRank => 0, Inverses => true, Global => false];
+	       S.numallvars = 0;
+	       S.baseRings = {ZZ};
+	       S.degreesRing = S;
+	       S.isCommutative = true;
+	       S.generatorSymbols = S.generatorExpressions = S.generators = {};
+	       S.indexSymbols = S.indexStrings = new HashTable;
+	       S)
 	  else ZZ degreesMonoid n))
 
 degreesRing PolynomialRing := PolynomialRing => R -> (
@@ -162,7 +161,6 @@ Ring OrderedMonoid := PolynomialRing => (			  -- no memoize
      	  local RM;
 	  Weyl := M.Options.WeylAlgebra =!= {};
 	  skews := monoidIndices(M,M.Options.SkewCommutative);
-	  degRing := if degreeLength M != 0 then degreesRing degreeLength M else ZZ;
 	  coeffOptions := options R;
 	  coeffWeyl := coeffOptions =!= null and coeffOptions.WeylAlgebra =!= {};
 	  coeffSkew := coeffOptions =!= null and coeffOptions.SkewCommutative =!= {};
@@ -243,7 +241,8 @@ Ring OrderedMonoid := PolynomialRing => (			  -- no memoize
 	  RM.baseRings = append(R.baseRings,R);
 	  commonEngineRingInitializations RM;
 	  RM.monoid = M;
-	  RM.degreesRing = degRing;
+	  if M.?degreesRing then RM.degreesRing = M.degreesRing;
+	  if M.?degreesMonoid then RM.degreesMonoid = M.degreesMonoid;
 	  RM.isCommutative = not Weyl and not RM.?SkewCommutative;
      	  ONE := RM#1;
 	  if R.?char then RM.char = R.char;

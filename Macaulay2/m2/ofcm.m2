@@ -49,7 +49,7 @@ monoidParts = (M) -> (
 	  Degrees => RLE if o.DegreeRank === 1 then flatten o.Degrees else (x -> VerticalList x) \ o.Degrees,
 	  if o.Heft =!= null then Heft => RLE o.Heft,
 	  MonomialOrder => rle o.MonomialOrder,
-	  ( MonomialSize, WeylAlgebra, SkewCommutative, Inverses, Global ) / (key -> if o#?key and o#key =!= O#key then key => o#key)))
+	  ( DegreeRank, MonomialSize, WeylAlgebra, SkewCommutative, Inverses, Global ) / (key -> if o#?key and o#key =!= O#key then key => o#key)))
 
 expression GeneralOrderedMonoid := M -> (
      T := if (options M).Local === true then List else Array;
@@ -83,14 +83,26 @@ indices := (M,vars) -> apply(vars, x -> (
 	  else error "expected a variable of the ring"))
 
 degreesMonoid ZZ := memoize(
-     (n) -> (
+     n -> (
 	  T := getGlobalSymbol "T";
-	  Zn := monoid [if n === 1 then T else T_0 .. T_(n-1),
+	  monoid [
+	       if n === 1 then T else T_0 .. T_(n-1),
 	       Degrees => {n : {}}, 
-	       MonomialOrder => RevLex,
+	       MonomialOrder => {Weights => {n:-1}, GroupRevLex => n},
 	       Global => false,
-	       Inverses=>true];
-	  Zn))
+	       Inverses=>true]))
+
+degreesMonoid List := memoize(
+     hft -> (
+	  if not all(hft, i -> instance(i,ZZ)) then error "degreesMonoid: expected a list of integers";
+	  n := # hft;
+	  T := getGlobalSymbol "T";
+	  monoid [
+	       if n === 1 then T else T_0 .. T_(n-1),
+	       Degrees => {n : {}},
+	       MonomialOrder => {Weights => -hft, GroupRevLex => n},
+	       Global => false,
+	       Inverses => true]))
 
 monoidDefaults = (
      new OptionTable from {
@@ -127,7 +139,8 @@ options PolynomialRing := options @@ monoid
 
 generators GeneralOrderedMonoid := opts -> M -> M.generators
 vars GeneralOrderedMonoid := M -> M.generators
-degreesMonoid GeneralOrderedMonoid := Monoid => M -> degreesMonoid degreeLength M
+degreesMonoid GeneralOrderedMonoid := Monoid => M -> if M.?degreesMonoid then M.degreesMonoid else error "no degrees monoid present"
+degreesRing GeneralOrderedMonoid := Monoid => M -> if M.?degreesRing then M.degreesRing else error "no degrees ring present"
 
 standardForm(MonoidElement) := (m) -> new HashTable from rawSparseListFormMonomial raw m
 exponents(MonoidElement) :=
@@ -238,16 +251,20 @@ makeit1 := (opts) -> (
      remove(opts, VariableBaseName);
      M.Options = new OptionTable from opts;
      toString M := toExternalString M := x -> toString expression x;
-     M.RawMonoid = (
-	  if numvars == 0 and not madeTrivialMonoid then (
-	       madeTrivialMonoid = true;
-	       rawMonoid())
-	  else rawMonoid(
+     if numvars == 0 and not madeTrivialMonoid then (
+	  madeTrivialMonoid = true;
+	  M.RawMonoid = rawMonoid();
+	  )
+     else (
+     	  M.degreesRing = degreesRing if opts.Heft =!= null then opts.Heft else degrk;
+     	  M.degreesMonoid = monoid M.degreesRing;
+	  M.RawMonoid = rawMonoid(
 	       M.RawMonomialOrdering,
 	       toSequence M.generators / toString,
-	       raw degreesRing degrk,
+	       raw M.degreesRing,
 	       flatten vardegs,
-	       if opts.Heft === null then toList(degrk:0) else flatten opts.Heft));
+	       if opts.Heft === null then toList(degrk:0) else flatten opts.Heft);
+	  );
      raw M := x -> x.RawMonomial;
      net M := x -> net expression x;
      M ? M := (x,y) -> rawCompareMonomial(raw M, raw x, raw y);
