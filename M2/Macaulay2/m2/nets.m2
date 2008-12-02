@@ -132,7 +132,7 @@ String == Net := (s,n) -> n == s
 
 net String := x -> stack separate x			    -- was horizontalJoin
 net RR := net Boolean := net File := net ZZ := net Database := toString
--- net000 := horizontalJoin ()
+net000 := horizontalJoin ()
 net Nothing := null -> "null" -- was net000
 
 Net | Net := Net => horizontalJoin
@@ -151,7 +151,7 @@ net Net := identity
 
 comma := ", "
 
-netn := i -> if i === null then "" else net i
+netn = i -> if i === null then net000 else net i
 
 net Sequence := x -> horizontalJoin deepSplice (
      if #x === 0 then "()"
@@ -244,7 +244,7 @@ netList VisibleList := o -> (x) -> (
      if br < 0
      or br >= #x+1					    -- this allows the base row to be absent
      then error "netList: base row out of bounds";
-     x = apply(x, row->apply(row, net));
+     x = apply(x, row->apply(row, netn));
      n := maxN(length \ x);
      if n == 0 then return if bx then stack(2 : "++") else stack();
      x = apply(x, row -> if #row == n then row else join(row, n-#row : stack()));
