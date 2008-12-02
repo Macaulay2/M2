@@ -1,71 +1,66 @@
--- -*- coding: utf-8 -*-
 ---------------------------------------------------------------------------
 -- PURPOSE: compute the polar dual of a rational convex polyhedral cone 
 --          using Fourier-Motzkin elimination
 -- PROGRAMMER : Gregory G. Smith 
--- UPDATE HISTORY : 2 July 2000, 5 March 2006, 1 July 2008
+-- UPDATE HISTORY : 2 July 2000, 5 March 2006, 1 July 2008, 
+--                  1 December 2008
 ---------------------------------------------------------------------------
 newPackage(
 	"FourierMotzkin",
-    	Version => "1.1", 
-    	Date => "1 July 2008",
+    	Version => "1.2", 
+    	Date => "1 December 2008",
     	Authors => {{
 		  Name => "Gregory G. Smith", 
 		  HomePage => "http://www.mast.queensu.ca/~ggsmith",
 		  Email => "ggsmith@mast.queensu.ca"}},
     	Headline => "convex hulls and polar cones",
-    	DebuggingMode => true
+    	DebuggingMode => false
     	)
 
 export fourierMotzkin
 
 
--- PURPOSE : transposition along the antidiagonal?
---   INPUT : 'M'  a Matrix. 
---  OUTPUT : a Matrix.
--- COMMENT : used to compute Gaussian elimination in the in the form in 
---           which I think.  
-rotateMatrix := M -> (
-     numRow := rank source M;
-     numCol := rank target M;
-     matrix table(numRow, numCol, (i,j) -> M_(numCol-j-1, numRow-i-1)))
+-- Transposition along the antidiagonal; used to compute row-reduced 
+-- echelon form of a matrix
+rotateMatrix = method();
+rotateMatrix Matrix := Matrix => M -> (
+     n := rank source M;
+     m := rank target M;
+     matrix table(n, m, (i,j) -> M_(m-j-1, n-i-1)))
 
 
--- PURPOSE : determine if an row vector/inequality is redundant.
---   INPUT : 'V' a list of sets of integers.  Each entry contains indices 
---               of the original rays which do NOT vanish at the 
---               corresponding row vector.
---     'vertices' a set of integers; the original rays for the row vector 
---                in question.
---  OUTPUT : a boolean.
--- COMMENT : see Exercise 2.15 (i) in Ziegler.
-isRedundant := (V, vertices) -> (
-     -- the row vector is redundant iff 'vertices' contains an entry in 'V'
-     x := 0;
+-- Determine if an row vector/inequality is redundant; see Exercise 2.15 
+-- in Ziegler.
+-- 'V' : a list of sets of integers.  Each entry contains indices of the 
+--       original rays which do NOT vanish at the corresponding row vector.
+-- 'S' : a set of integers; the original rays for the row vector.
+isRedundant = method();
+isRedundant (List, Set) := Boolean => (V, S) -> (
+     -- the row vector is redundant iff 'S' contains an entry in 'V'
+     flag := 0;
      k := 0;
      numRow := #V;  -- equals the number of inequalities
-     while ((x < 1) and (k < numRow)) do (
-	  if isSubset(V#k, vertices) then x = x + 1;
+     while ((flag < 1) and (k < numRow)) do (
+	  if isSubset(V#k, S) then flag = flag + 1;
 	  k = k + 1);
-     x === 1)
+     flag === 1)
 
 
--- PURPOSE : eliminates the first variable in the inequalities 'A' using 
---          the double description version of Fourier-Motzkin elimination
---   INPUT : 'A' a list of lists of integers.  Each entry is a corresponds 
---               to a row vector in the system of inequalities
---           'V' a list of sets of integers.  Each entry contains indices 
---               of the original rays which do NOT vanish at the 
---               corresponding row vector;  the complement of the 'V_i'
---               appearing in Exercise 2.15 in Ziegler.
---         'spot' an integer.  The index of the variable being eliminated
---  OUTPUT : a list {projA, projV} where 'projA' a list of lists of 
---           integers.  Each entry is a corresponds to a row vector in the 
---           projected system of inequalities.  'projV' : a list of sets 
---           of integers.  Each entry contains indices of the original 
---           rays which do NOT vanish at the corresponding row vector in 
---           'projA'
-fourierMotzkinElimination := (A, V, spot) -> (
+-- Eliminates the first variable in the inequalities 'A' using the double 
+-- description version of Fourier-Motzkin elimination
+-- 'A' : a list of lists of integers.  Each entry is a corresponds to a 
+--       row vector in the system of inequalities.
+-- 'V' : a list of sets of integers.  Each entry contains indices of the 
+--       original rays which do NOT vanish at the corresponding row vector;  
+--       the complement of the 'V_i' appearing in Exercise 2.15 in Ziegler.
+-- 's': an integer.  The index of the variable being eliminated
+-- Output is a list '{projA, projV}'.  'projA' a list of lists of integers;
+-- each entry is a corresponds to a row vector in the projected system of 
+-- inequalities.  'projV' is a list of sets of integers; each entry 
+-- contains indices of the original rays which do NOT vanish at the 
+-- corresponding row vector in 'projA'
+fourierMotzkinElimination = method();
+fourierMotzkinElimination (List, List, ZZ) := List => (A, V, s) -> (
      -- initializing local variables
      numCol := 0;
      if A =!= {} then numCol = #(A#0);
@@ -83,7 +78,7 @@ fourierMotzkinElimination := (A, V, spot) -> (
 	       projA = append(projA, A#k);
 	       projV = append(projV, V#k));
 	  k = k+1);	  
-     -- generate new irredundant inequalities.
+     -- generate new inequalities.
      scan(pos, i -> 
 	  scan(neg, j -> (
 		    vertices := V#i + V#j;
@@ -98,20 +93,24 @@ fourierMotzkinElimination := (A, V, spot) -> (
 			 projV = append(projV, vertices)))));
      -- don't forget the implicit inequalities '-t <= 0'.
      scan(pos, i -> (
-	  vertices := V#i + set{spot};
+	  vertices := V#i + set{s};
 	  if not isRedundant(projV, vertices) 
 	  then (
 	       projA = append(projA, A#i);
 	       projV = append(projV, vertices))));
      -- remove the first column 
-     projA = apply(projA, e -> e_{1..(numCol-1)});
+     projA = apply(projA, e -> primitive e_{1..(numCol-1)});
+     -- remove redundant inequalities
+     irredundant := select(toList(0..#projA-1), 
+	  i -> not isRedundant(delete(projV#i,projV),projV#i));
+     projA = apply(irredundant, i -> projA#i);
+     projV = apply(irredundant, i -> projV#i);     
      {projA, projV})   
 
 
--- PURPOSE : divides a list of integers by their gcd.
---   INPUT : 'L' a non-empty list of integers. 
---  OUTPUT : a list of integers.
-primitive := L -> (
+-- divides a list of integers by their gcd.
+primitive = method();
+primitive List := List => L -> (
      -- finding greatest common divisor
      n := #L-1;
      g := abs(L#n);
@@ -123,31 +122,25 @@ primitive := L -> (
      else apply(L, i -> i // g))
 
 
--- PURPOSE : determines the least common multiple of a list of integers
---   INPUT : 'L' a list of integers.
---  OUTPUT : an integers
-lcm := L -> (
+-- determines the least common multiple of a list of integers
+lcm = method();
+lcm List := List => L -> (
      R := ring L#0;
      l := 1_R;
      scan(L, i -> (l = ((l*i) // (gcd(l,i))) ));     
      l)
 
 
--- PURPOSE : converts a list of 'QQ' to 'ZZ' by multiplying by a common 
-             denominator
---   INPUT : 'L' a list of 'QQ' 
---  OUTPUT : a list of integers
--- converts a list of QQ to ZZ by multiplying by a common 
--- denominator.
-toZZ := L -> (
+-- Converts a list of 'QQ' to 'ZZ' by multiplying by a common denominator
+toZZ = method();
+toZZ List := List => L -> (
      -- finding common denominator
      d := apply(L, e -> denominator e);
      l := lcm d;
      apply(L, e -> (numerator(l*e))))
 
 
-
--- PURPOSE : computes the dual representation for the polyhedral cone
+-- Computes the dual representation for the polyhedral cone
 fourierMotzkin = method();
 
 --   INPUT : 'Z' a matrix; the columns are the rays generating the cone
@@ -159,7 +152,7 @@ fourierMotzkin = method();
 --           'E' a matrix; the columns are the rays generating the linear 
 --               space in the polar cone
 -- COMMENT :  'cone(Z) + affine(H) = {x : A^t * x <= 0, E^t * x = 0}'
-fourierMotzkin(Matrix, Matrix) := (Z, H) -> (
+fourierMotzkin (Matrix, Matrix) := Sequence => (Z, H) -> (
      -- checking for input errors
      R := ring source Z;
      if (R =!= ring source H) then
@@ -178,7 +171,7 @@ fourierMotzkin(Matrix, Matrix) := (Z, H) -> (
 	  Y = Z;
 	  B = H)
      else error ("expected a matrix over 'ZZ' or 'QQ'");
-     -- expressing 'cone(Y)+affine(B)' in the form {x : Ax <= 0}
+     -- expressing 'cone(Y) + affine(B)' in the form {x : Ax <= 0}
      d := rank target Y;
      if (rank source B > 0) then Y = Y | B | -B;
      n := rank source Y;
@@ -222,12 +215,12 @@ fourierMotzkin(Matrix, Matrix) := (Z, H) -> (
      -- successive projections eliminate the remaining variables 'T'
      if (A =!= {}) then
      scan(T, t -> (
-	       --<< "FM: elim " << t << " " << #A << " " << #V << endl;
 	       D := fourierMotzkinElimination(A, V, t);
-	       A = D#0;
-	       V = D#1));
+	       A = apply(D#0, e -> primitive e);
+	       V = D#1;
+	       ));
      -- output formating
-     A = apply(A, e -> primitive e);
+     --A = apply(A, e -> primitive e);
      if (A === {}) then A = map(ZZ^d, ZZ^0, 0)
      else A = transpose matrix A;
      if (E === {}) then E = map(ZZ^d, ZZ^0, 0)
@@ -239,7 +232,7 @@ fourierMotzkin(Matrix, Matrix) := (Z, H) -> (
 
 
 --   INPUT : 'Z' a matrix; the columns are the rays generating the cone
-fourierMotzkin(Matrix) := Z -> (
+fourierMotzkin Matrix := Sequence => Z -> (
      -- creating zero equalities
      R := ring target Z;
      d := rank target Z;
@@ -292,7 +285,12 @@ document {
 	HREF("http://homepages.cwi.nl/~lex/", "Alexander
 	Schrijver's"), " ", EM "Theory of Linear and Integer
 	Programming", " Wiley-Interscience Series in Discrete
-	Mathematics, John Wiley and Sons, Chichester, 1986."  
+	Mathematics, John Wiley and Sons, Chichester, 1986.",
+	
+	PARA{}, "We thank ",
+	HREF("http://page.mi.fu-berlin.de/rbirkner/indexen.htm", "Rene Birkner"),
+	" for help debugging the package."
+	     
 	}
 
 document {     
@@ -442,8 +440,8 @@ document {
 
      EXAMPLE {
 	  "vectorConfig = {{1,0},{-2,1},{1,0},{0,1}}",
-	  "h = findHeft vectorConfig",
-	  "S = QQ[x_1,x_2,y_1,y_2, Heft => h, Degrees => vectorConfig];",
+	  "heft = findHeft vectorConfig",
+	  "S = QQ[x_1,x_2,y_1,y_2, Heft => heft, Degrees => vectorConfig];",
 	  "irrelevantIdeal = intersect(ideal(x_1,x_2), ideal(y_1,y_2))",
 	  "res (S^1/irrelevantIdeal)",
 	  },
@@ -458,8 +456,8 @@ document {
      EXAMPLE {
 	  "vectorConfig = {{1,0,0,0},{0,1,0,0},{0,-1,1,0},{0,1,-1,1},
 	  {1,0,-1,1},{-1,0,0,1}}",
-          "h = findHeft vectorConfig",
-	  "R = QQ[x_1..x_6, Heft => h, Degrees => vectorConfig];",
+          "heft = findHeft vectorConfig",
+	  "R = QQ[x_1..x_6, Heft => heft, Degrees => vectorConfig];",
 	  "irrelevantIdeal = ideal(x_3*x_4*x_5*x_6,x_1*x_4*x_5*x_6,x_1*x_2*x_5*x_6,
      x_1*x_2*x_3*x_6,x_2*x_3*x_4*x_5,x_1*x_2*x_3*x_4)",
           "res (R^1/irrelevantIdeal)"
@@ -538,39 +536,95 @@ document {
      1995."  }
      
 TEST ///
-C = transpose matrix{{1,1,1,1}};
+C = transpose matrix{{1,1,1,1}}
 assert(C == (fourierMotzkin fourierMotzkin C)#0)
+///
 
-C = transpose matrix(QQ, {{0,0,1}, {1,0,1}, {0,1,1}});
+TEST ///
+C = transpose matrix(QQ, {{0,0,1}, {1,0,1}, {0,1,1}})
 assert( (entries transpose C) == 
      (entries transpose ((fourierMotzkin fourierMotzkin C)#0)) )
+///
 
-C = map(ZZ^3,ZZ^0,0);
-H = transpose matrix{{1,0,-1},{0,1,-1}};
-P = fourierMotzkin (C,H);
+TEST ///
+C = map(ZZ^3,ZZ^0,0)
+H = transpose matrix{{1,0,-1},{0,1,-1}}
+P = fourierMotzkin (C,H)
 assert(P#0 == C)
 assert(P#1 == transpose matrix{{1,1,1}})
+///
 
-C = transpose matrix{{1,1,0}, {0,1,1}};
-H = transpose matrix{{1,0,-1}};
-P = fourierMotzkin fourierMotzkin (C,H);
+TEST ///
+C = transpose matrix{{1,1,0}, {0,1,1}}
+H = transpose matrix{{1,0,-1}}
+fourierMotzkin (C,H)
+P = fourierMotzkin fourierMotzkin (C,H)
 assert(P#0 == transpose matrix{{0,1,1}})
 assert(P#1 == H)
+///
 
+TEST ///
+Set == Set := Boolean => (X,Y) -> isSubset(X,Y) and isSubset(Y,X);
+M =  matrix{{1,1,1,1,1,1,1,1},{ -1,1,-2,2,1,-2,2,-1},{2,2,1,-1,-2,-1,1,-2}}
+dualM = set {{ -3, -1, -1}, { -3, -1, 1}, { -2, -1, 0}, { -3, 1, -1}, { -2, 1, 0}, 
+     { -3, 1, 1}, { -2, 0, -1}, { -2, 0, 1}}
+assert(set entries transpose (fourierMotzkin M)#0 == dualM)
+assert(set entries transpose (fourierMotzkin M_{4..7,0..3})#0 == dualM)
+assert(set entries transpose (fourierMotzkin M_{7,0..6})#0 == dualM)
+///
+
+TEST ///
+Set == Set := Boolean => (X,Y) -> isSubset(X,Y) and isSubset(Y,X);
+crossPoly = transpose matrix {{1, 1, 1, 1, -1}, {1, -1, -1, 1, -1},
+     {1, -1, 1, -1, -1}, {1,-1, 1, 1, -1}, {1, 1, -1, -1, 1}, 
+     {1, 1, -1, 1, 1}, {1, 1, 1, -1, 1}, {1, 1, 1, 1, 1}, 
+     {1, -1, -1, -1, 1}, {1, -1, -1, 1, 1}, {1, -1, 1, -1, 1}, 
+     {1, -1, 1, 1, 1}, {1, 1, -1, -1, -1}, {1, 1, -1, 1, -1}, 
+     {1, 1, 1, -1, -1}, {1, -1, -1, -1, -1}}
+cube =  set {{-1, 0, 0, -1, 0}, {-1, -1, 0, 0, 0}, {-1, 0, 0, 1, 0}, {-1, 1, 0,
+      0, 0}, {-1, 0, -1, 0, 0}, {-1, 0, 0, 0, -1}, {-1, 0, 0, 0, 1}, {-1, 0, 1,
+      0, 0}}
+assert(set entries transpose (fourierMotzkin crossPoly)#0 == cube)
+///
+
+TEST ///
+Set == Set := Boolean => (X,Y) -> isSubset(X,Y) and isSubset(Y,X);
+diamond = transpose matrix{
+     {1/2, -1, -1},
+     {1/2, -1,  1},
+     {1/2,  1, -1},
+     {1/2,  1,  1}}
+dualDiamond = matrix {{ -2/1, -1/1, 0/1}, { -2/1, 0/1, -1/1}, 
+      { -2/1,1/1, 0/1}, { -2/1, 0/1, 1/1}}
+assert(set entries transpose (fourierMotzkin diamond)#0 == set entries dualDiamond)
+///
+
+TEST ///
+Set == Set := Boolean => (X,Y) -> isSubset(X,Y) and isSubset(Y,X);
+avisIn2 = transpose matrix {{1, -1, 0, -1, 0, 0}, {1, -1, 0, 0, 0, -1}, 
+     {1, 0, -1, -1, 0, 0}, {1, 0, -1, 0, -1, 0}, {1, 0, 0, 0, -1, -1},
+     {0, -1, 1, 0, 0, 1}, {0, 1, -1, 0, 1, 0}, {0, 0, 0, -1, 1, 1}, 
+     {0, 0, 1, 1, -1, 0}, {0, 1, 0, 1, 0, -1}, {2, -1, -1, -1, -1, -1}, 
+     {0, 1, 0, 0, 0, 0}, {0, 0, 1, 0, 0, 0}, {0, 0, 0, 1, 0, 0}, 
+     {0, 0, 0, 0, 1, 0}, {0, 0, 0, 0, 0, 1}}
+avisExt2 = transpose matrix {{ -1, 0, 0, 0, 0, 0}, { -1, -1, -1, 0, 0, 0}, 
+     { -2, 0, -1, 0, -1, 0}, { -1, 0, 0, -1, -1, 0}, { -2, 0, -1, -1, -1, 0},
+     { -2, -1, -1, 0, -1, 0}, { -2, -1, 0, 0, 0, -1}, { -1, 0, 0, -1, 0, -1}, 
+     { -2, -1, 0, -1, 0, -1}, { -2, -1, -1, 0, 0, -1}, { -2, -1, -1, 0, -1, -1}, 
+     { -4, -2, -3, 0, -1, -2}, { -4, -3, -2, 0, -2, -1}, { -2, -1, 0, -1, -1, -1}, 
+     { -2, 0, 0, -1, -1, -1}, { -3, -1, 0, -1, -1, -2}, { -2, 0, -1, -1, -1, -1}, 
+     { -3, 0, -1, -1, -2, -1}}
+assert(set entries transpose (fourierMotzkin avisIn2)#0 == set entries transpose avisExt2)
 ///
 
 end
+
+------------------------------------------------------------
+
+restart
+uninstallPackage "FourierMotzkin"
+path = prepend(homeDirectory | "Code/", path);
 installPackage "FourierMotzkin"
+check "FourierMotzkin"
 
-
-	  
-	  
-"Polarity: Find dual polytopes"
-
-"Regular triangulations"
-
-
--- Local Variables:
--- compile-command: "make -C $M2BUILDDIR/Macaulay2/packages PACKAGES=FourierMotzkin pre-install"
--- End:
 
