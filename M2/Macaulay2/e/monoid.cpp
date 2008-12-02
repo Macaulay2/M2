@@ -284,25 +284,22 @@ void Monoid::text_out(buffer &o) const
   if (nvars_ > 0)
     o << varnames_->array[nvars_-1];
 
-  o << "," << newline << "  Degrees => {";
   int ndegrees = degree_monoid()->monomial_size();
-  if (ndegrees == 0)
-      o << "}";
-  else
+  o << "," << newline << "  DegreeLength => " << ndegrees;
+
+  o << "," << newline << "  Degrees => {";
+  for (i=0; i<nvars_; i++)
     {
-      for (i=0; i<nvars_; i++)
+      if (i != 0) o << ", ";
+      if (ndegrees != 1) o << '{';
+      for (int j=0; j<ndegrees; j++)
 	{
-	  if (i != 0) o << ", ";
-	  if (ndegrees > 1) o << '{';
-	  for (int j=0; j<ndegrees; j++)
-	    {
-	      if (j != 0) o << ", ";
-	      o << degvals_->array[i*ndegrees+j];
-	    }
-	  if (ndegrees > 1) o << '}';	  
+	  if (j != 0) o << ", ";
+	  o << degvals_->array[i*ndegrees+j];
 	}
-      o << "}";
+      if (ndegrees != 1) o << '}';	  
     }
+  o << "}";
 
   if (heftvals_ != NULL) {
     o << "," << newline << "  Heft => {";
