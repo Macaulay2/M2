@@ -51,7 +51,9 @@ addStartFunction( () -> if not noinitfile and prefixDirectory =!= null then (
 	  makeDirectory(LOCAL|currentLayout#"docdir");
 	  scan(join(
 		    {"Macaulay2"},			    -- this is a hold-over : M2 versions before 1.1 had a package called "Macaulay2" !
-		    readDirectory (GLOBAL|currentLayout#"docdir")
+     	       	    if isDirectory (GLOBAL|currentLayout#"docdir")
+		    then readDirectory (GLOBAL|currentLayout#"docdir")
+		    else {}
 		    ),
 	       fn -> if fn =!= "." and fn =!= ".." then (
 		    tardir := LOCAL|currentLayout#"docdir";
