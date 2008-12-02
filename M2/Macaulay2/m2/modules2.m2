@@ -96,11 +96,13 @@ trimm := (f,n) -> (
 
 hilbertSeries PolynomialRing := options -> (R) -> hilbertSeries(R^1, options)
 hilbertSeries Ring := options -> (R) -> error "no method for computing hilbert series for this ring"
-hilbertSeries Module := options -> (M) -> (
+hilbertSeries Module := opts -> (M) -> (
      -- some examples compute degrees of inhomogeneous modules, so we can't refuse to compute when the module is not homogeneous.
      -- is it guaranteed to work in some sense?
      -- if not isHomogeneous M then error "expected a homogeneous module";
-     ord := options.Order;
+     A := ring M;
+     if (options A).Heft === null then error "hilbertSeries: ring has no heft vector";
+     ord := opts.Order;
      if ord === infinity then (
 	  if M.cache#?"exact hilbertSeries" then return M.cache#"exact hilbertSeries";
 	  )
@@ -112,7 +114,6 @@ hilbertSeries Module := options -> (M) -> (
 	       )
 	  )
      else error "hlibertSeries: expected infinity or an integer as value of Order option";
-     A := ring M;
      T := degreesRing A;
      if ord === infinity then (
      	  num := poincare M;

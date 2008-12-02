@@ -547,7 +547,9 @@ hilbertSeries = method(Options => {
 	  }
      )
 
-hilbertSeries Ideal := options -> (I) -> hilbertSeries((ring I)^1/I,options)
+hilbertSeries Ideal := opts -> (I) -> (
+     if (options ring I).Heft === null then error "hilbertSeries: ring has no heft vector";
+     hilbertSeries((ring I)^1/I,opts))
 
 ring Ideal := (I) -> I.ring
 
