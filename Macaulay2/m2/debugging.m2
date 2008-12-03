@@ -186,7 +186,7 @@ generateAssertions List := y -> stack apply(y,
 	  t := try value lin else local oops;
 	  concatenate if t === null then lin
 	  else if t === local oops
-	  then ("assert( (try ", lin, " else oops) === ", toExternalString t, " )")
+	  then ("assert( (try ", lin, " else oops) === oops )")
 	  else ("assert( ("    , lin,            ") === ", toExternalString t, " )")
 	  ))
 

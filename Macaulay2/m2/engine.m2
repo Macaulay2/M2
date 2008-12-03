@@ -47,8 +47,8 @@ ProductOrder = new SelfInitializingType of BasicList
 
 isSmall := i -> class i === ZZ and i < 2^15 and i > -2^15
 isCount := i -> class i === ZZ and i >= 0 and i < 2^15
-isListOfIntegers := x -> class x === List and all(x,i -> class i === ZZ)
-isListOfListsOfIntegers := x -> class x === List and all(x,isListOfIntegers)
+isListOfIntegers = x -> class x === List and all(x,i -> class i === ZZ)
+isListOfListsOfIntegers = x -> class x === List and all(x,isListOfIntegers)
 checkCount := i -> if not isCount i then error "expected a small positive integer"
 
 fixup1 := method(Dispatch => Thing)			    -- stage 1, everything except Tiny and Small
@@ -167,6 +167,17 @@ fixup2 Option := o -> (
      if optionFixes2#?key then optionFixes2#key (key,val) else o
      )
 
+processWeights = (nvars,weights) -> (
+     weights = spliceInside toList weights;
+     if #weights > 0 and isListOfIntegers weights then weights = {weights}
+     else if not isListOfListsOfIntegers weights 
+     then error "expected a list of integers or a list of lists of small integers";
+     scan(weights, 
+	  wt -> (
+	       if # wt != nvars
+	       then error("Weights: expected weight vector of length ",toString nvars," but got ",toString (#wt))));
+     weights);
+
 makeMonomialOrdering = (monsize,inverses,nvars,degs,weights,ordering) -> (
      -- 'monsize' is the old MonomialSize option, usually 8 or 16, or 'null' if unset
      -- 'inverses' is true or false, and tells whether the old "Inverses => true" option was used.
@@ -185,11 +196,7 @@ makeMonomialOrdering = (monsize,inverses,nvars,degs,weights,ordering) -> (
      varcount = 0;
      MonSize = 0;
      numvars = nvars;
-     weights = spliceInside toList weights;
-     if isListOfListsOfIntegers weights then null
-     else if isListOfIntegers weights then weights = {weights}
-     else error "Weights: expected a list of integers or a list of lists of small integers";
-     scan(weights, wt -> if # wt != nvars then error("Weights: expected weight vector of length ",toString nvars," but got ",toString (#wt)));
+     weights = processWeights(nvars,weights);
      ordering = join(weights / (i -> Weights => i), ordering);
      t':= toList nonnull splice fixup1 ordering;
      if varcount < nvars then t' = append(t',fixup1(GRevLex => nvars - varcount));
