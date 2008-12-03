@@ -88,11 +88,21 @@ hilbertFunction(List,Ring) := hilbertFunction(List,Ideal) := hilbertFunction(Lis
      U := monoid ring f;
      coefficient(U_d,f))
 
-geometricSeries := (x,n) -> sum(n, i -> x^i)
-
-trimm := (f,n) -> (
-     R := ring f;
-     0_R + sum(select(listForm f, (deg,coe) -> first deg < n), (deg,coe) -> coe * R_deg))
+recipN = (n,wts,f) -> (
+     -- n is a positive integer
+     -- wts is a weight vector
+     -- f is a polynomial of the form 1 plus terms of positive weight, which we verify
+     -- we compute the terms of the expansion of 1/f of weight less than n
+     if n <= 0 then error "expected a positive integer";
+     if part(,0,wts,f) != 1 then error "expected a polynomial of the form 1 plus terms of positive weight";
+     g := 1_(ring f);  -- g always has the form 1 plus terms weight 1,2,...,m-1
+     m := 1;			   -- 1-f*g always has terms of wt m and higher
+     tr := h -> part(,m-1,wts,h);
+     while m < n do (
+	  m = 2*m;
+	  g = g + tr(g * (1 - tr(g * tr f)));
+	  );
+     if m === n then g else part(,n-1,wts,g))
 
 hilbertSeries PolynomialRing := options -> (R) -> hilbertSeries(R^1, options)
 hilbertSeries Ring := options -> (R) -> error "no method for computing hilbert series for this ring"
@@ -110,10 +120,10 @@ hilbertSeries Module := opts -> (M) -> (
 	  if M.cache#?"approximate hilbertSeries" then (
 	       (ord2,ser) := M.cache#"approximate hilbertSeries";
 	       if ord == ord2 then return ser;
-	       if ord < ord2 then return trimm(ser,ord);
+	       if ord < ord2 then return part(,ord,(options ring M).Heft,ser);
 	       )
 	  )
-     else error "hlibertSeries: expected infinity or an integer as value of Order option";
+     else error "hilbertSeries: expected infinity or an integer as value of Order option";
      T := degreesRing A;
      if ord === infinity then (
      	  num := poincare M;
@@ -123,29 +133,24 @@ hilbertSeries Module := opts -> (M) -> (
 	  y = apply(y, t -> Power t);
 	  M.cache#"exact hilbertSeries" = Divide{num, Product y})
      else (
-	  h := reduceHilbert hilbertSeries M;				    -- exact version
-     	  dl := degreeLength A;
-	  num = numerator h;
-	  denom = denominator h;
-	  s := if num == 0 then 0_T
-	  else (
-	       error "under development";
-	       n := ord;
-	       N := n - min flatten exponents num;
-	       ed := product apply(
-		    pairs denom,
-		    (i,e) -> (
-			 geometricSeries( product(#i, j -> T_j ^ (i_j)), N)) ^ e
-		    );
-	       error "debug me";
-	       f := num * ed;
-	       trimm(f,n));
+	  h := reduceHilbert hilbertSeries M;
+	  s := (
+	       num = numerator h;
+	       if num == 0 then 0_T else (
+		    wts := (options ring M).Heft;
+		    (lo,hi) := weightRange(wts,num);
+		    if ord < lo then 0_T else (
+			 denom = value denominator h;
+			 g := gcd(num,denom);
+			 (num,denom) = (num // g,denom // g);
+			 part(,ord,wts,num * recipN(ord - lo + 1,wts,denom)))));
 	  M.cache#"approximate hilbertSeries" = (ord,s);
 	  s))
 
 reduceHilbert = method()
 reduceHilbert Divide := ser -> (
      num := numerator ser;				    -- an element of the degrees ring
+     if num == 0 then return Divide {num, 1_(ring num)};
      den := denominator ser;				    -- a Product of Powers
      newden := Product nonnull apply(toList den, pwr -> (
 	       fac := pwr#0;				    -- 1-T_i
