@@ -17,11 +17,9 @@ document {
 	  "poincareN", "hilbertPolynomial", "hilbertFunction"}
      }
 
-undocumented {(hilbertSeries,QuotientRing), (hilbertSeries, PolynomialRing)}
-
 document { 
-     Key => (hilbertSeries,Ring),
-     Headline => "compute the Hilbert series of the ring",
+     Key => {(hilbertSeries, PolynomialRing), (hilbertSeries,QuotientRing)},
+     Headline => "compute the Hilbert series of a ring",
      Usage => "hilbertSeries R",
      Inputs => {
 	  "R"

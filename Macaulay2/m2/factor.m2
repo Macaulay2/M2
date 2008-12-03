@@ -6,6 +6,9 @@ monic := t -> (
      if c * c' == 1 then t = t * c';
      t)
 
+gcd(ZZ,RingElement) := (r,s) -> gcd(promote(r,ring s),s)
+gcd(RingElement,ZZ) := (r,s) -> gcd(promote(s,ring r),r)
+
 gcd(RingElement,RingElement) := RingElement => (r,s) -> (
      R := ring r;
      if ring s =!= R then error "gcd: expected elements in the same ring";

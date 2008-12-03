@@ -8,7 +8,7 @@ notsamering := (X,Y) -> (
      else error("expected ",X.synonym," and ",Y.synonym," for the same ring"))
 samering := (M,N) -> if ring M === ring N then (M,N) else notsamering(class M,class N)
 
-module Ring := Module => (stashValue symbol module) (R -> R^1)
+module Ring := Module => R -> R^1
 
 matrix(RingFamily,List) := Matrix => opts -> (R,m) -> matrix(default R, m, opts)
 
@@ -539,17 +539,6 @@ leadTerm(ZZ,Ideal) := Matrix => (n,I) -> leadTerm(n,generators gb I)
 jacobian Ideal := Matrix => (I) -> jacobian generators I
 poincare Ideal := (I) -> poincare comodule I
 Ideal _ List := (I,w) -> (module I)_w
-
-protect symbol Order
-assert( class infinity === InfiniteNumber )
-hilbertSeries = method(Options => {
-     	  Order => infinity
-	  }
-     )
-
-hilbertSeries Ideal := opts -> (I) -> (
-     if (options ring I).Heft === null then error "hilbertSeries: ring has no heft vector";
-     hilbertSeries((ring I)^1/I,opts))
 
 ring Ideal := (I) -> I.ring
 
