@@ -1,0 +1,53 @@
+implement this in a reasonable way:
+
+    import = s -> getGlobalSymbol(User#"private dictionary",s) <- value Core#"private dictionary"#s;
+    import "rawGetPart";
+    import "raw";
+    S = QQ[a..d, Degrees => {{2,-1},{1,0},{0,1},{-1,2}}]
+    M = S^1/(b^2,b*c,c^2)
+    f = poincare M
+    A = ring f
+    f = (map(A,A,apply(gens A, x -> 1-x))) f
+    new A from rawGetPart({1,1},raw f,codim M,codim M)
+
+=============================================================================
+
+Date: Sun, 23 Nov 2008 16:51:45 -0800 (PST)
+In-Reply-To: <200811231607.mANG7xbs013690@u123.math.uiuc.edu>
+Subject: [Macaulay2] Re: multidegrees
+From: Paul Zinn-Justin <pzinn@lptms.u-psud.fr>
+To: Macaulay2 <macaulay2@googlegroups.com>
+Reply-To: macaulay2@googlegroups.com
+
+
+I'm referring to multidegrees as defined in Miller+Sturmfels,
+Combinatorial Commutative Algebra (p 165).
+their example 8.46 is to take S=k[a,b,c,d] with multigrading [b]=
+(1,0), [c]=(0,1) and something irrelevant for a and d.
+take
+M=S/<b^2,b c,c^2>
+then
+mdeg M=3 t_1 t_2
+
+(and in particular deg M=3)
+
+Paul Zinn-Justin
+
+On Nov 23, 5:07 pm, "Daniel R. Grayson" <d...@math.uiuc.edu> wrote:
+> Could you give an example and tell me what answer you would like M2 to give?
+
+=============================================================================
+
+Actually, it doesn't quite work. Let's try a small change: replace the
+definition of M with
+
+M = S^1/(a^2,a*b,b^2)
+
+then we get
+f = (map(A,A,apply(gens A, x -> 1-x))) f
+
+--error message bumped: division is not defined in this ring
+--error message bumped: division is not defined in this ring
+--error message bumped: division is not defined in this ring
+stdio:8:5:(1):[0]: division is not defined in this ring
+

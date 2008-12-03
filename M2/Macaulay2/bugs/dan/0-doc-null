@@ -1,0 +1,15 @@
+
+    i4 : help (part, ZZ, RingElement)
+
+    o4 = part(ZZ,RingElement) -- sum of monomials of a polynomial of a given degree(s)
+	 *****************************************************************************
+
+	 ...
+
+	 See also
+	 ========
+
+-->	   * "degree"null
+	   * "parts" -- display a polynomial degree by degree
+
+    o4 : DIV

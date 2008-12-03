@@ -1247,12 +1247,10 @@ document {
      input from the socket obtained by connecting to the specified host at
      the port appropriate for the specified service.  Warning: if the process
      providing the service expects interaction, it will not get it, and this
-     command will hang.  This feature is not available on Sun computers,
-     because Sun doesn't provide static versions of crucial libraries dealing
-     with network communications.",
+     command will hang.",
      PARA{},
      TT "get f", " -- yields a string containing the rest of the input from the 
-     file ", TT "f", ", closing the file.",
+     file ", TT "f", ", closing the (input side of the) file.",
      EXAMPLE {
 	  ///"junk" << "hi there" << close///,
       	  ///get "junk"///,

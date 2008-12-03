@@ -9,7 +9,7 @@ GET := (host,url,connection) -> (
      << "User-Agent: Macaulay2" << endl
      << "Host: " << host << endl
      << endl << flush;
-     get connection
+     first( get connection, close connection )
      )
 
 POST := (host,url,body,connection) -> (
@@ -22,7 +22,7 @@ POST := (host,url,body,connection) -> (
      << "Content-length: " << # body << endl << endl
      << body << endl
      << endl << flush;
-     get connection
+     first( get connection, close connection )
      )
 
 getpost := (host,url,body,connection) -> (
