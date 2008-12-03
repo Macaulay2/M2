@@ -341,6 +341,7 @@ export {
 	symbol RLE,
 	symbol RR,
 	symbol RealField,
+	symbol Reduce,
 	symbol RemakeAllDocumentation,
 	symbol Repository,
 	symbol RerunExamples,
