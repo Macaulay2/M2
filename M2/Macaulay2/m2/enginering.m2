@@ -298,15 +298,47 @@ numgens EngineRing := R -> #R.generators
 
 generators EngineRing := opts -> R -> if opts.CoefficientRing === null then R.generators else if opts.CoefficientRing === R then {} else errorGenCoeff()
 
-part(ZZ,RingElement) := RingElement => (d,f) -> part({d},f)
+prepwts = wts -> (
+     wts = spliceInside toList wts;
+     if not isListOfIntegers wts then error "part: expected a list of integers";
+     wts)
+
+part(Nothing,Nothing,List,RingElement) := 
+part(Nothing,ZZ,List,RingElement) := 
+part(ZZ,Nothing,List,RingElement) := 
+part(ZZ,ZZ,List,RingElement) := RingElement => (d,e,wts,f) -> new ring f from rawGetPart(prepwts wts, raw f, d, e)
+
+part(InfiniteNumber,ZZ,List,RingElement) := RingElement => (d,e,wts,f) -> (
+     if d < 0 then part(,e,wts,f) else 0_(ring f))
+part(ZZ,InfiniteNumber,List,RingElement) := RingElement => (d,e,wts,f) -> (
+     if e > 0 then part(d,,wts,f) else 0_(ring f))
+part(InfiniteNumber,InfiniteNumber,List,RingElement) := RingElement => (d,e,wts,f) -> (
+     prepwts wts;				    -- just for the error messages
+     if d < e then f else 0_(ring f))
+
+defaultWeight := f -> (
+     if degreeLength ring f =!= 1 then error "part: expected a singly graded ring";
+     flatten degrees (ring f).FlatMonoid)
+
+part(Nothing,Nothing,RingElement) :=
+part(InfiniteNumber,InfiniteNumber,RingElement) := 
+part(InfiniteNumber,ZZ,RingElement) := 
+part(ZZ,InfiniteNumber,RingElement) :=
+part(Nothing,ZZ,RingElement) := 
+part(ZZ,Nothing,RingElement) :=
+part(ZZ,ZZ,RingElement) := RingElement => (d,e,f) -> part(d,e,defaultWeight f,f)
+
+part(ZZ,RingElement) := RingElement => (d,f) -> part(d,d,f)
+part(ZZ,List,RingElement) := RingElement => (d,wts,f) -> part(d,d,wts,f)
+
+part(Sequence,RingElement) := Sequence => (s,f) -> apply(s,d->part(d,f))
+
 part(List,RingElement) := RingElement => (d,f) -> (
-     if degreeLength ring f =!= #d
-     then error ("degree length of ring element doesn't match specified degree");
-     u := select(terms f, t -> d === degree t);
+     if degreeLength ring f =!= #d then error ("degree length of ring element doesn't match specified degree");
+     u := select(terms f, t -> d === degree t);		    -- this is slow!
      if #u === 0 then 0_(ring f)
      else sum u
      )
-part(Sequence,RingElement) := Sequence => (s,f) -> apply(s,d->part(d,f))
 
 Ring _ ZZ := RingElement => (R,i) -> (generators R)#i
 

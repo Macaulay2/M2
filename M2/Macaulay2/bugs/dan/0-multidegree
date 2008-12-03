@@ -51,3 +51,25 @@ f = (map(A,A,apply(gens A, x -> 1-x))) f
 --error message bumped: division is not defined in this ring
 stdio:8:5:(1):[0]: division is not defined in this ring
 
+=============================================================================
+Date: Wed, 3 Dec 2008 06:35:29 -0800 (PST)
+In-Reply-To: <200812031338.mB3Dc2W3013330@u123.math.uiuc.edu>
+Subject: [Macaulay2] Re: multidegrees
+From: Paul Zinn-Justin <pzinn@lptms.u-psud.fr>
+To: Macaulay2 <macaulay2@googlegroups.com>
+Reply-To: macaulay2@googlegroups.com
+
+
+Yes, the problem is that the K-polynomial is a Laurent polynomial, not
+necessarily an ordinary polynomial.
+I think this is unavoidable (there's a discussion of positive vs non-
+positive multigradings in the previous sections of the book, but I
+think it is irrelevant here: even with positive multigradings one can
+get negative powers. I'll ask an expert tomorrow for confirmation on
+this point).
+
+So one should expand in formal power series when doing the change of
+variables T_i -> 1-T_i.
+In other words what one is really doing is picking up the leading
+contribution as each of the variables T_i tends to 1 in a correlated
+manner: T_i ~ exp( epsilon x_i), epsilon -> 0.
