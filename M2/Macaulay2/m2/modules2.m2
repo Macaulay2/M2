@@ -80,14 +80,6 @@ poincare Module := (cacheValue symbol poincare) (
 	  -- if not isHomogeneous M then error "expected a homogeneous module";
 	  new degreesRing M from rawHilbert raw leadTerm gb presentation cokernel presentation M))
 
-hilbertFunction(ZZ,Module) := hilbertFunction(ZZ,Ring) := hilbertFunction(ZZ,Ideal) := (d,M) -> hilbertFunction({d},M)
-hilbertFunction(List,Ring) := hilbertFunction(List,Ideal) := hilbertFunction(List,Module) := (d,M) -> (
-     if not all(d,i->class i === ZZ) then error "expected degree to be an integer or list of integers";
-     if degreeLength M =!= #d then error "degree length mismatch";
-     f := hilbertSeries(M, Order => sum d+1);
-     U := monoid ring f;
-     coefficient(U_d,f))
-
 recipN = (n,wts,f) -> (
      -- n is a positive integer
      -- wts is a weight vector
@@ -104,8 +96,38 @@ recipN = (n,wts,f) -> (
 	  );
      if m === n then g else part(,n-1,wts,g))
 
-hilbertSeries PolynomialRing := options -> (R) -> hilbertSeries(R^1, options)
-hilbertSeries Ring := options -> (R) -> error "no method for computing hilbert series for this ring"
+heft = method()
+heft Ring := R -> (
+     o := options R;
+     if o =!= null and o.?Heft then o.Heft
+     else error "no heft vector"
+     )
+heft Module := M -> heft ring M
+
+exactKey := "exact hilbertSeries"
+approxKey := "approximate hilbertSeries"
+fromCache := (ord,X) -> (
+     if ord === infinity then (
+	  if X.cache#?exactKey then X.cache#exactKey
+	  )
+     else if class ord === ZZ then (
+	  if X.cache#?approxKey then (
+	       (ord2,ser) := X.cache#approxKey;
+	       if ord == ord2 then ser
+	       else if ord < ord2 then part(,ord,heft X,ser)))
+     else error "hilbertSeries: expected infinity or an integer as value of Order option")
+
+
+protect symbol Order
+assert( class infinity === InfiniteNumber )
+hilbertSeries = method(Options => {
+     	  Order => infinity
+	  }
+     )
+
+hilbertSeries QuotientRing := opts -> S -> hilbertSeries(cokernel presentation S,opts)
+hilbertSeries Ideal := opts -> (I) -> hilbertSeries(comodule I,opts)
+hilbertSeries PolynomialRing := opts -> R -> hilbertSeries(R^1, opts)
 hilbertSeries Module := opts -> (M) -> (
      -- some examples compute degrees of inhomogeneous modules, so we can't refuse to compute when the module is not homogeneous.
      -- is it guaranteed to work in some sense?
@@ -113,17 +135,8 @@ hilbertSeries Module := opts -> (M) -> (
      A := ring M;
      if (options A).Heft === null then error "hilbertSeries: ring has no heft vector";
      ord := opts.Order;
-     if ord === infinity then (
-	  if M.cache#?"exact hilbertSeries" then return M.cache#"exact hilbertSeries";
-	  )
-     else if class ord === ZZ then (
-	  if M.cache#?"approximate hilbertSeries" then (
-	       (ord2,ser) := M.cache#"approximate hilbertSeries";
-	       if ord == ord2 then return ser;
-	       if ord < ord2 then return part(,ord,(options ring M).Heft,ser);
-	       )
-	  )
-     else error "hilbertSeries: expected infinity or an integer as value of Order option";
+     r := fromCache(ord,M);
+     if r =!= null then return r;
      T := degreesRing A;
      if ord === infinity then (
      	  num := poincare M;
@@ -131,7 +144,7 @@ hilbertSeries Module := opts -> (M) -> (
 	  y := apply(pairs denom, (i,e) -> {1 - T_i,e});
 	  y = sort y;
 	  y = apply(y, t -> Power t);
-	  M.cache#"exact hilbertSeries" = Divide{num, Product y})
+	  M.cache#exactKey = Divide{num, Product y})
      else (
 	  h := reduceHilbert hilbertSeries M;
 	  s := (
@@ -144,7 +157,7 @@ hilbertSeries Module := opts -> (M) -> (
 			 g := gcd(num,denom);
 			 (num,denom) = (num // g,denom // g);
 			 part(,ord,wts,num * recipN(ord - lo + 1,wts,denom)))));
-	  M.cache#"approximate hilbertSeries" = (ord,s);
+	  M.cache#approxKey = (ord,s);
 	  s))
 
 reduceHilbert = method()
@@ -161,6 +174,15 @@ reduceHilbert Divide := ser -> (
 		    );
 	       if ex > 0 then Power {fac,ex}));
      Divide {num, newden})
+
+hilbertFunction(ZZ,Module) := hilbertFunction(ZZ,Ring) := hilbertFunction(ZZ,Ideal) := (d,M) -> hilbertFunction({d},M)
+hilbertFunction(List,Ring) := (d,R) -> hilbertFunction(d,R^1)
+hilbertFunction(List,Ideal) := hilbertFunction(List,Module) := (d,M) -> (
+     if not all(d,i->class i === ZZ) then error "expected degree to be an integer or list of integers";
+     if degreeLength M =!= #d then error "degree length mismatch";
+     f := hilbertSeries(M, Order => sum((options ring M).Heft,d,times));
+     U := monoid ring f;
+     coefficient(U_d,f))
 
 ProjectiveHilbertPolynomial = new Type of HashTable
 ProjectiveHilbertPolynomial.synonym = "projective Hilbert polynomial"

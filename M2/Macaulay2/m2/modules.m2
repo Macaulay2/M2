@@ -330,10 +330,10 @@ Ring ^ List := Module => (
 SparseDisplayThreshhold := 15
 
 Ring ^ ZZ := Module => (R,n) -> (
-     if R.?RawRing
-     then new Module from (R, rawFreeModule(R.RawRing,n))
-     else notImplemented()
-     )
+     if n === 1 then if R.?module then return R.module;
+     M := if R.?RawRing then new Module from (R, rawFreeModule(R.RawRing,n)) else notImplemented();
+     if n === 1 then R.module = M;
+     M)
 
 InexactFieldFamily ^ ZZ := Module => (T,n) -> (default T)^n
 

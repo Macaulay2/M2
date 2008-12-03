@@ -183,9 +183,6 @@ dim QuotientRing := (R) -> (
      else dim ultimate(ambient,R) - codim R
      )
 
-hilbertSeries QuotientRing := opts -> (S) -> (
-     if (options S).Heft === null then error "hilbertSeries: ring has no heft vector";
-     hilbertSeries(cokernel presentation S,opts))
 monoid QuotientRing := o -> (cacheValue monoid) (S -> monoid ambient S)
 degreesRing QuotientRing := (cacheValue degreesRing) (S -> degreesRing ambient S)
 QuotientRing_String := (S,s) -> if S#?s then S#s else (
