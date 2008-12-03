@@ -447,12 +447,15 @@ Holder         : Holder := (x,y) -> BinaryOperation{symbol :,x#0,y#0}
 Thing      : Expression := (x,y) -> BinaryOperation{symbol :,x,y}
 Expression     :  Thing := (x,y) -> BinaryOperation{symbol :,x,y}
 
-Expression .. Expression := (x,y) -> BinaryOperation{symbol ..,x,y}
 Holder     .. Expression := (x,y) -> BinaryOperation{symbol ..,x#0,y}
 Expression     .. Holder := (x,y) -> BinaryOperation{symbol ..,x,y#0}
 Holder         .. Holder := (x,y) -> BinaryOperation{symbol ..,x#0,y#0}
-Thing      .. Expression := (x,y) -> BinaryOperation{symbol ..,x,y}
-Expression     ..  Thing := (x,y) -> BinaryOperation{symbol ..,x,y}
+InfiniteNumber .. InfiniteNumber :=
+InfiniteNumber .. ZZ             :=
+ZZ             .. InfiniteNumber :=
+Expression     .. Expression     :=
+Thing          .. Expression     :=
+Expression     .. Thing          := (x,y) -> BinaryOperation{symbol ..,x,y}
 
 -----------------------------------------------------------------------------
 --value' Holder2 := x -> x#1

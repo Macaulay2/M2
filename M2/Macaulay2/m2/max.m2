@@ -20,11 +20,8 @@ InfiniteNumber + InfiniteNumber := (x,y) -> if x === y then x else indeterminate
 InfiniteNumber - InfiniteNumber := (x,y) -> if x =!= y then x else indeterminate
 InfiniteNumber * InfiniteNumber := (x,y) -> if x === y then infinity else neginfinity
 InfiniteNumber / InfiniteNumber := (x,y) -> indeterminate
-InfiniteNumber .. InfiniteNumber := (i,j) -> if i < j then error "infinite range specified" else ()
 InfiniteNumber == InfiniteNumber := (x,y) -> x === y
 
-InfiniteNumber .. ZZ := (i,n) -> if i < n then error "infinite range specified" else ()
-ZZ .. InfiniteNumber := (n,i) -> if n < i then error "infinite range specified" else ()
 InfiniteNumber + ZZ := (i,j) -> i
 ZZ + InfiniteNumber := (i,j) -> j
 InfiniteNumber - ZZ := (i,j) -> i

@@ -315,11 +315,17 @@ numgens PolynomialRing := R -> numgens monoid R
 isSkewCommutative PolynomialRing := R -> isSkewCommutative coefficientRing R or 0 < #(options R).SkewCommutative
 weightRange = method()
 weightRange(List,RingElement) := (w,f) -> rawWeightRange(w,raw f)
-weightRange RingElement := f -> weightRange(first \ degrees ring f, f)
+weightRange RingElement := f -> (
+     if degreeLength ring f === 1
+     then weightRange(first \ degrees ring f, f)
+     else error "weightRange: expected a singly graded ring")
 parts = method()
-parts RingElement := f -> sum(select(apply(
+parts RingElement := f -> (
+     if degreeLength ring f === 1
+     then sum(select(apply(
 	       ((i,j) -> i .. j) weightRange(first \ degrees (ring f).FlatMonoid, f),
 	       n -> part_n f), p -> p != 0), p -> new Parenthesize from {p})
+     else error "parts: expected a singly graded ring")
 
 off := 0
 pw := (v,wts) -> (
