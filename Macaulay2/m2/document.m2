@@ -712,7 +712,7 @@ headline FinalDocumentTag := headline DocumentTag := tag -> (
      if d#?Headline then d#Headline
      else headline DocumentTag.Key tag			    -- revert to old method, eliminate?
      )
-commentize = s -> if s =!= null then concatenate(" -- ",s)
+commentize = s -> if s =!= null then concatenate(" -- ",s) else ""
 -----------------------------------------------------------------------------
 isMissingDoc = tag -> null === fetchPrimaryRawDocumentation tag
 isUndocumented = tag -> (

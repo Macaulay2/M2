@@ -638,7 +638,7 @@ getfun(e:Expr):Expr := (
 	  else (
 	       when readfile(f.infd)
 	       is s:string do (
-		    stat := close(f); -- we even close the output side of a pipe, so we can find out if the process exited normally
+		    stat := closeIn(f); -- the user may close the output side of a pipe first, so we can find out now if the process exited normally
 		    when stat is m:errmsg do buildErrorPacket(m.message)
 		    else Expr(s))
 	       else buildErrorPacket("unable to read file: "+syserrmsg())))
