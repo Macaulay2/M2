@@ -105,29 +105,23 @@ heft Ring := R -> (
 heft Module := M -> heft ring M
 
 exactKey := "exact hilbertSeries"
+reducedKey := "reduced exact hilbertSeries"
 approxKey := "approximate hilbertSeries"
-fromCache := (ord,X) -> (
-     if ord === infinity then (
-	  if X.cache#?exactKey then X.cache#exactKey
-	  )
-     else if class ord === ZZ then (
-	  if X.cache#?approxKey then (
-	       (ord2,ser) := X.cache#approxKey;
-	       if ord == ord2 then ser
-	       else if ord < ord2 then part(,ord,heft X,ser)))
-     else error "hilbertSeries: expected infinity or an integer as value of Order option")
+fromCache := (ord,reduced,X) -> (
+)
 
 
 protect symbol Order
 assert( class infinity === InfiniteNumber )
 hilbertSeries = method(Options => {
-     	  Order => infinity
+     	  Order => infinity,
+	  Reduce => false
 	  }
      )
 
-hilbertSeries QuotientRing := opts -> S -> hilbertSeries(cokernel presentation S,opts)
-hilbertSeries Ideal := opts -> (I) -> hilbertSeries(comodule I,opts)
+hilbertSeries QuotientRing := 
 hilbertSeries PolynomialRing := opts -> R -> hilbertSeries(R^1, opts)
+hilbertSeries Ideal := opts -> (I) -> hilbertSeries(comodule I,opts)
 hilbertSeries Module := opts -> (M) -> (
      -- some examples compute degrees of inhomogeneous modules, so we can't refuse to compute when the module is not homogeneous.
      -- is it guaranteed to work in some sense?
@@ -135,18 +129,33 @@ hilbertSeries Module := opts -> (M) -> (
      A := ring M;
      if (options A).Heft === null then error "hilbertSeries: ring has no heft vector";
      ord := opts.Order;
-     r := fromCache(ord,M);
-     if r =!= null then return r;
+     reduced := opts.Reduce;
+     if ord === infinity then (
+	  if reduced then (
+	       if M.cache#?reducedKey then return M.cache#reducedKey;
+	       if M.cache#?exactKey then return (M.cache#reducedKey = reduceHilbert M.cache#exactKey);
+	       )
+	  else (
+	       if M.cache#?exactKey then return M.cache#exactKey;
+	       )
+	  )
+     else if class ord === ZZ then (
+	  if M.cache#?approxKey then (
+	       (ord2,ser) := M.cache#approxKey;
+	       if ord == ord2 then return ser
+	       else if ord < ord2 then return part(,ord,heft M,ser)))
+     else error "hilbertSeries: expected infinity or an integer as value of Order option";
      T := degreesRing A;
      if ord === infinity then (
      	  num := poincare M;
      	  denom := tally (degree \ select(generators A, x -> x != 0));
-	  y := apply(pairs denom, (i,e) -> {1 - T_i,e});
-	  y = sort y;
-	  y = apply(y, t -> Power t);
-	  M.cache#exactKey = Divide{num, Product y})
+	  r := Divide{
+	       num,
+	       Product apply(sort apply(pairs denom, (i,e) -> {1 - T_i,e}), t -> Power t)};
+	  M.cache#exactKey = r;
+	  if reduced then M.cache#reducedKey = reduceHilbert r else r)
      else (
-	  h := reduceHilbert hilbertSeries M;
+	  h := hilbertSeries(M,Reduce => true);
 	  s := (
 	       num = numerator h;
 	       if num == 0 then 0_T else (
