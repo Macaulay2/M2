@@ -298,8 +298,7 @@ numgens EngineRing := R -> #R.generators
 
 generators EngineRing := opts -> R -> if opts.CoefficientRing === null then R.generators else if opts.CoefficientRing === R then {} else errorGenCoeff()
 
-part(ZZ,RingElement) := RingElement => (d,f) -> new ring f from rawGetPart(first \ degrees (ring f).FlatMonoid, raw f, d, d)
-
+part(ZZ,RingElement) := RingElement => (d,f) -> part({d},f)
 part(List,RingElement) := RingElement => (d,f) -> (
      if degreeLength ring f =!= #d
      then error ("degree length of ring element doesn't match specified degree");
