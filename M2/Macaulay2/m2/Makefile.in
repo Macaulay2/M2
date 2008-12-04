@@ -3,6 +3,10 @@ all :: initialize phase1
 include ../../include/config.Makefile
 VPATH = @srcdir@ @srcdir@/../d
 srcdir = $(shell cd @srcdir@; /bin/pwd)
+
+prefix := @pre_prefix@
+exec_prefix := @pre_exec_prefix@
+
 all:: initialize
 Makefile : Makefile.in ; cd ../.. && ./config.status Macaulay2/m2/Makefile
 emacs html: all; $(MAKE) -C ../$@
@@ -121,9 +125,10 @@ prep :: $(DUMPEDM2FILES)
 phase1 :: prep
 
 ifneq "@DUMPDATA@" "no"
-phase1 :: ../cache/@DUMPDATAFILE@
-../cache/@DUMPDATAFILE@ redump : $(DUMPEDM2FILES) $(DUMPEDM2DOCFILES) @pre_exec_prefix@/bin/M2@EXE@ $(OTHERDUMPEDM2FILES)
-	rm -f ../cache/@DUMPDATAFILE@
+phase1 :: @libm2dir@/Core/cache/@DUMPDATAFILE@
+@libm2dir@/Core/cache/@DUMPDATAFILE@ redump : $(DUMPEDM2FILES) $(DUMPEDM2DOCFILES) @pre_exec_prefix@/bin/M2@EXE@ $(OTHERDUMPEDM2FILES)
+	rm -f @libm2dir@/Core/cache/@DUMPDATAFILE@
+	$(MKDIR_P) @libm2dir@/Core/cache
 	@pre_exec_prefix@/bin/M2@EXE@ -q --stop -e 'errorDepth = 0' --dumpdata
 	printenv LD_LIBRARY_PATH
 endif
@@ -178,7 +183,6 @@ test4: ../util/screen
 clean::; rm -f test4
 endif
 
-prefix := @pre_prefix@
 @packagesdir@ :; @INSTALL@ -d $@
 @packagesdir@/Core  : ; @INSTALL@ -d $@
 @packagesdir@/Core/% : % ; @INSTALL_DATA@ $^ $@

@@ -45,9 +45,6 @@ docdir = @docdir@
 INSTALL = @INSTALL@
 ##
 
-# M2DIRS = --srcdir "@abs_top_builddir@" --srcdir "@abs_top_srcdir@"
-M2DIRS = 
-
 ifeq (@CC@-@ISYSTEM@,gcc-yes)
 IFLAG = -isystem
 else
