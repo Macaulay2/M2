@@ -3,7 +3,7 @@ include ../../include/config.Makefile
 VPATH = @srcdir@
 LD_LIBRARY_PATH := $(BUILTLIBPATH)/lib:$(LD_LIBRARY_PATH)
 export LD_LIBRARY_PATH
-ARGS = -q --silent --stop -e errorDepth=0 $(M2DIRS)
+ARGS = -q --silent --stop -e errorDepth=0
 prefix := @pre_prefix@
 MADEFILES = M2-symbols.el M2-emacs-hlp.txt M2-emacs.m2
 SRCFILES = M2-mode.el M2.el M2-README
