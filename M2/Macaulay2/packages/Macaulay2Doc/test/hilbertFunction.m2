@@ -11,3 +11,4 @@ a = timing (
      hilbFunc = (k,u) -> coefficient(T_0^k*T_1^u,HS);
      hilbFunc(3,6))
 b = timing hilbertFunction({3,6},R)			   -- this was too slow
+time hilbertFunction({9,15},R)

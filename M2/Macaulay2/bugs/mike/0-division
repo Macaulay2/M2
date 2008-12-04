@@ -1,0 +1,22 @@
+This is important to get fixed, because it applies to reducing Hilbert series to lowest terms.
+
+    Macaulay 2, version 1.1
+    with packages: Classic, Core, Elimination, IntegralClosure, LLLBases, Parsing, PrimaryDecomposition, SchurRings, TangentCone
+
+    i1 : use degreesRing 2
+
+    o1 = ZZ[T , T ]
+	     0   1
+
+    o1 : PolynomialRing
+
+    i2 : describe oo
+
+    o2 = ZZ[T , T , Degrees => {2:{}}, MonomialOrder => {MonomialSize => 32}, DegreeRank => 0, Inverses => true, Global => false]
+	     0   1                                      {Weights => {2:-1} }
+							{GroupRevLex => 2  }
+							{Position => Up    }
+
+    i3 : 1 % (1 - T_0 * T_1^-1)
+
+     *** out of memory, exiting ***

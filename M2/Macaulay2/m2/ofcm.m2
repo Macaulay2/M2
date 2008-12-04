@@ -99,7 +99,7 @@ degreesMonoid List := memoize(
 	  T := getGlobalSymbol "T";
 	  monoid [
 	       if n === 1 then T else T_0 .. T_(n-1),
-	       Degrees => {n : {}},
+	       Degrees => hft,
 	       MonomialOrder => {Weights => -hft, GroupRevLex => n},
 	       Global => false,
 	       Inverses => true]))
@@ -256,7 +256,11 @@ makeit1 := (opts) -> (
 	  M.RawMonoid = rawMonoid();
 	  )
      else (
-     	  M.degreesRing = degreesRing if opts.Heft =!= null then opts.Heft else degrk;
+     	  M.degreesRing = (
+	       if opts.Heft =!= null 
+	       then degreesRing opts.Heft 
+	       else degreesRing degrk {* shouldn't really be needed *} 
+	       );
      	  M.degreesMonoid = monoid M.degreesRing;
 	  M.RawMonoid = rawMonoid(
 	       M.RawMonomialOrdering,

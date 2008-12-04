@@ -47,6 +47,7 @@ HirzOmegaTable2 = (a,b)->(
 
 -- This one produces negative values for the hilbert function of H^1 !!
 HirzOmegaTable(2,2)
+{* -- output
 H^0
 0 0 0 0 0
 0 0 0 0 4
@@ -55,6 +56,7 @@ H^0
 0 0 1 4 14
 H^1
 0 0 -58 -59 -62
+*}
 
 -- This one seems fine, and time wise is sort of OK.
 HirzOmegaTable2(2,2)
