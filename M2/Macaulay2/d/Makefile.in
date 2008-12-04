@@ -4,6 +4,8 @@ VPATH = @srcdir@
 # these can be overridden on the command line
 DEPENDS = yes
 STRIP = @STRIP@
+prefix := @pre_prefix@
+exec_prefix := @pre_exec_prefix@
 ############################## main targets
 all :: tokens_stub.o
 ifneq (@ETAGS@,)
@@ -12,13 +14,13 @@ endif
 all :: compat.h
 
 recompile :
-	rm -f @pre_exec_prefix@/bin/M2@EXE@
+	rm -f @bindir@/M2@EXE@
 	$(MAKE)
 
-all :: @pre_exec_prefix@/bin/M2@EXE@
+all :: @bindir@/M2@EXE@
 	printenv LD_LIBRARY_PATH
 ifneq (@LDD@,)
-	- @LDD@ $<
+	- @LDD@ $< | ( ! egrep -v " => /usr/lib/| => /lib/|/lib/ld-linux.so|linux-gate" )
 endif
 
 ## standard options
@@ -29,7 +31,7 @@ ifeq (@OS@ @SHARED@,Linux yes)
 ifneq (@LIBRARIES@,)
 M2_LDFLAGS += -Wl,-rpath,@librariesdir@/lib
 ifneq (@OBJDUMP@,)
-all :: @pre_exec_prefix@/bin/M2@EXE@
+all :: @bindir@/M2@EXE@
 	@OBJDUMP@ -x $< | egrep RPATH
 	@OBJDUMP@ -x $< | egrep "RPATH +@librariesdir@/lib$$"
 else
@@ -272,7 +274,7 @@ endif
 M2_OBJECTS += tmp_init.o
 tmp_init.o : tmp_init.c 
 clean::; rm -f tmp_init.c
-tmp_init.c : $(DFILES) Makefile
+tmp_init.c : $(DFILES)
 	echo 'char timestamp[] = __DATE__ ", " __TIME__;' >tmp
 	for i in $(DFILES:.d=) ; do echo "void $${i}__prepare();" ; done >>tmp
 	echo 'int main_inits() {' >>tmp
@@ -337,9 +339,9 @@ else
 M2_OBJECTS_AND_LIBRARIES := $(M2_OBJECTS_AND_LIBRARIES) gmp_memory.o 
 endif
 
-clean::; rm -f @pre_exec_prefix@/bin/M2@EXE@
-@pre_exec_prefix@/bin : ; $(MKDIR_P) "$@"
-@pre_exec_prefix@/bin/M2@EXE@ : $(M2_OBJECTS) $(M2_LIBDEPS) gmp_memory.o | @pre_exec_prefix@/bin
+clean::; rm -f @bindir@/M2@EXE@
+@bindir@ : ; $(MKDIR_P) "$@"
+@bindir@/M2@EXE@ : $(M2_OBJECTS) $(M2_LIBDEPS) gmp_memory.o | @bindir@
 	$(COMPILE.c) tmp_init.c -o tmp_init.o
 	time @CC@ $(M2_LDFLAGS) $(M2_OBJECTS_AND_LIBRARIES) -lm -o "$@".tmp
 ifeq "$(STRIP)" "yes"
@@ -364,7 +366,7 @@ endif
 
 tags: @srcdir@/TAGS
 clean::; rm -f TAGS @srcdir@/TAGS
-@srcdir@/TAGS: Makefile $(SRCFILES)
+@srcdir@/TAGS: $(SRCFILES)
 	cd @srcdir@ && @ETAGS@ $(shell ../util/echoout -r $(SRCFILES))
 
 clean ::; rm -f *.log a.out *.o *.sym *.a *.oo *.sig *.sg *.dep *.dp core gmon.out mapfile restart.tmp
@@ -373,6 +375,15 @@ Makefile : Makefile.in; cd ../..; ./config.status Macaulay2/d/Makefile
 all :: .gdbinit
 .gdbinit:; if [ -f @srcdir@/.gdbinit.$(USER) ]; then cp @srcdir@/.gdbinit.$(USER) $@; fi
 clean::; rm -f .gdbinit
+
+pre-install all :: @bindir@/M2@EXE@
+	@ echo "make: -----------------------------------------------------------------------------"
+	@ echo "make:"
+	@ echo "make: Macaulay 2 executable is available here:"
+	@ echo "make: $^"
+	@ echo "make:"
+	@ echo "make: -----------------------------------------------------------------------------"
+
 
 # Local Variables:
 # compile-command: "make -C $M2BUILDDIR/Macaulay2/d "
