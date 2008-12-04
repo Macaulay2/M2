@@ -61,12 +61,7 @@ protect basering
 protect FlatMonoid
 
 degreesRing List := PolynomialRing => memoize(
-     hft -> if #hft === 0 then degreesRing 0 else ZZ degreesMonoid hft
-     )
-
-degreesRing ZZ := PolynomialRing => memoize(
-     n -> (
-	  if n == 0 then (
+     hft -> if #hft === 0 then (
 	       S := new PolynomialRing from rawPolynomialRing();
 	       S.basering = ZZ;
 	       S.FlatMonoid = S.monoid = monoid[DegreeRank => 0, Inverses => true, Global => false];
@@ -77,11 +72,13 @@ degreesRing ZZ := PolynomialRing => memoize(
 	       S.generatorSymbols = S.generatorExpressions = S.generators = {};
 	       S.indexSymbols = S.indexStrings = new HashTable;
 	       S)
-	  else ZZ degreesMonoid n))
+	  else ZZ degreesMonoid hft)
+
+degreesRing ZZ := PolynomialRing => memoize( n -> if n == 0 then degreesRing {} else ZZ degreesMonoid n )
 
 degreesRing PolynomialRing := PolynomialRing => R -> (
      if R.?degreesRing then R.degreesRing
-     else degreesRing degreeLength R)
+     else error "no degreesRing for this ring")
 
 degreesRing Ring := R -> error "no degreesRing for this ring"
 

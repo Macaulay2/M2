@@ -1,0 +1,27 @@
+Date: Wed, 3 Dec 2008 11:33:54 -0600
+From: "Daniel R. Grayson" <dan@math.uiuc.edu>
+To: mike.stillman@mac.com
+CC: dan@math.uiuc.edu
+Subject: power series computation speed up
+Reply-to: dan@math.uiuc.edu
+
+
+It would be *very* nice to have a raw multiplication routine that would
+multiply two polynomials f and g discarding the terms of weight \ge n wrt a
+weight vector v.
+
+Then we could do power series expansions more rapidly, by a factor of 2 or 1.333.
+
+=============================================================================
+
+Date: Wed, 3 Dec 2008 14:32:23 -0600
+From: "Daniel R. Grayson" <dan@math.uiuc.edu>
+To: Michael Stillman <mike.stillman@mac.com>
+CC: dan@math.uiuc.edu
+In-reply-to: <FF42EFD8-3D0A-48CF-92E8-2814C9B4B48D@mac.com> (message from
+	Michael Stillman on Wed, 03 Dec 2008 13:33:44 -0500)
+Subject: Re: power series computation speed up
+Reply-to: dan@math.uiuc.edu
+
+
+It might be even nicer to have a list of weight vectors and a corresponding list of limits.

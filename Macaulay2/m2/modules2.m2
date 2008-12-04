@@ -110,6 +110,27 @@ approxKey := "approximate hilbertSeries"
 fromCache := (ord,reduced,X) -> (
 )
 
+reduceHilbert = method()
+reduceHilbert Divide := ser -> (
+     num := numerator ser;				    -- an element of the degrees ring
+     if num == 0 then return Divide {num, 1_(ring num)};
+     den := denominator ser;				    -- a Product of Powers
+     newden := Product nonnull apply(toList den, pwr -> (
+	       fac := pwr#0;				    -- 1-T_i
+	       ex  := pwr#1;	 			    -- exponent
+	       while ex > 0 and (
+     	       	    if debugLevel == 13 then stderr << "--dividing by " << fac << "..." << flush,
+		    num % fac == 0,
+     	       	    if debugLevel == 13 then stderr << "done" << endl,
+		    )#1
+	       do (
+     	       	    if debugLevel == 13 then stderr << "--dividing..." << flush;
+		    num = num // fac;
+     	       	    if debugLevel == 13 then stderr << "done" << endl;
+		    ex = ex - 1;
+		    );
+	       if ex > 0 then Power {fac,ex}));
+     Divide {num, newden})
 
 protect symbol Order
 assert( class infinity === InfiniteNumber )
@@ -168,21 +189,6 @@ hilbertSeries Module := opts -> (M) -> (
 			 part(,ord,wts,num * recipN(ord - lo + 1,wts,denom)))));
 	  M.cache#approxKey = (ord,s);
 	  s))
-
-reduceHilbert = method()
-reduceHilbert Divide := ser -> (
-     num := numerator ser;				    -- an element of the degrees ring
-     if num == 0 then return Divide {num, 1_(ring num)};
-     den := denominator ser;				    -- a Product of Powers
-     newden := Product nonnull apply(toList den, pwr -> (
-	       fac := pwr#0;				    -- 1-T_i
-	       ex  := pwr#1;	 			    -- exponent
-	       while ex > 0 and num % fac == 0 do (
-		    num = num // fac;
-		    ex = ex - 1;
-		    );
-	       if ex > 0 then Power {fac,ex}));
-     Divide {num, newden})
 
 hilbertFunction(ZZ,Module) := hilbertFunction(ZZ,Ring) := hilbertFunction(ZZ,Ideal) := (d,M) -> hilbertFunction({d},M)
 hilbertFunction(List,Ring) := (d,R) -> hilbertFunction(d,R^1)
