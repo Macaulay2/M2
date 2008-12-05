@@ -14,14 +14,6 @@ Then we could do power series expansions more rapidly, by a factor of 2 or 1.333
 
 =============================================================================
 
-Date: Wed, 3 Dec 2008 14:32:23 -0600
-From: "Daniel R. Grayson" <dan@math.uiuc.edu>
-To: Michael Stillman <mike.stillman@mac.com>
-CC: dan@math.uiuc.edu
-In-reply-to: <FF42EFD8-3D0A-48CF-92E8-2814C9B4B48D@mac.com> (message from
-	Michael Stillman on Wed, 03 Dec 2008 13:33:44 -0500)
-Subject: Re: power series computation speed up
-Reply-to: dan@math.uiuc.edu
+No, this isn't important:
 
-
-It might be even nicer to have a list of weight vectors and a corresponding list of limits.
+>>> It might be even nicer to have a list of weight vectors and a corresponding list of limits.
