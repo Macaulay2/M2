@@ -67,7 +67,8 @@ minors(ZZ,Matrix) := Ideal => opts -> (j,m) -> (
 	       and all(f, s -> class s === List)
 	       )
 	  ) then error "expected a list of 2 lists of integers";
-     ideal map(ring m, rawMinors(j, raw m, getMinorsStrategy(ring m,opts), 
+     if j <= 0 then ideal 1_(ring m)
+     else ideal map(ring m, rawMinors(j, raw m, getMinorsStrategy(ring m,opts), 
 	       if opts.Limit === infinity then -1 else opts.Limit,
 	       if f =!= null then f#0, 
 	       if f =!= null then f#1)))
