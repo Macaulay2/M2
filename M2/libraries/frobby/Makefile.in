@@ -1,5 +1,5 @@
 VPATH = @srcdir@
-VERSION = 0.7.4
+VERSION = 0.7.7-M2
 # PATCHFILE = patch-$(VERSION)
 TARDIR = frobby_v$(VERSION)
 TARFILE := frobby_v$(VERSION).tar.gz
