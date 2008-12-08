@@ -1,18 +1,19 @@
 VPATH = @srcdir@
 VERSION = 0.7.7-M2
-# PATCHFILE = patch-$(VERSION)
+PATCHFILE = patch-$(VERSION)
 TARDIR = frobby_v$(VERSION)
 TARFILE := frobby_v$(VERSION).tar.gz
 # this site was unreliable:
 # URL = http://www.broune.com/frobby
 URL = http://www.math.uiuc.edu/Macaulay2/Extra
 BUILDTARGET = library
-BUILDOPTIONS = GMP_INC_DIR=$(LIBRARIESDIR)/include
+BUILDOPTIONS = GMP_INC_DIR=$(LIBRARIESDIR)/include CFLAGS="$(CFLAGS)"
 CONFIGURECMD = :
 INSTALLCMD = \
 	cp bin/release/frobby.a $(LIBRARIESDIR)/lib/libfrobby.a && \
 	cp src/frobby.h $(LIBRARIESDIR)/include/frobby.h
 include ../Makefile.library
+CFLAGS += -Wno-deprecated
 Makefile : @srcdir@/Makefile.in ; cd ../.. && ./config.status libraries/frobby/Makefile
 # Local Variables:
 # compile-command: "make -C $M2BUILDDIR/libraries/frobby "
