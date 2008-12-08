@@ -1,0 +1,16 @@
+diff -ur --exclude=configure tmp/frobby_v0.7.7-M2/Makefile frobby_v0.7.7-M2/Makefile
+--- tmp/frobby_v0.7.7-M2/Makefile	2008-11-11 19:15:39.000000000 -0600
++++ frobby_v0.7.7-M2/Makefile	2008-12-08 11:51:16.000000000 -0600
+@@ -42,10 +42,10 @@
+ endif
+ 
+ ifndef ldflags
+-  ldflags = -lgmpxx -lgmp -L/sw/lib
++  ldflags = $(LDFLAGS) -lgmpxx -lgmp -L/sw/lib
+ endif
+ 
+-cflags = -Wall -ansi -pedantic -Wextra -Wno-uninitialized \
++cflags = $(CFLAGS) -Wall -ansi -pedantic -Wextra -Wno-uninitialized \
+          -Wno-unused-parameter -Werror -isystem $(GMP_INC_DIR)
+ program = frobby
+ library = libfrobby.a
