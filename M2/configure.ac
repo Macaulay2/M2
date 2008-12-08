@@ -303,22 +303,10 @@ then if test "$ISSUE" = Cygwin
      fi
 fi
 
-AC_SUBST(FCLIBS_DYNAMIC,)
-AC_SUBST(FCLIBS_STATIC,)
-AC_SUBST(FCLIBS_FLAGS,)
 if test "$FC"
 then AC_FC_DUMMY_MAIN()
      AC_FC_WRAPPERS()
      AC_FC_LIBRARY_LDFLAGS()
-     test "$USE_FCLIBS" = no && FCLIBS=
-     for i in $FCLIBS
-     do case $i in
-	     -L*) FCLIBS_FLAGS="$FCLIBS_FLAGS $i" ;;
-	     -lgcc_s) FCLIBS_DYNAMIC="$FCLIBS_DYNAMIC $i" ;; dnl # see discussion in emacs info about -static-libgcc and -shared-libgcc
-	     -lm) FCLIBS_DYNAMIC="$FCLIBS_DYNAMIC $i" ;;
-	     *) FCLIBS_STATIC="$FCLIBS_STATIC $i" ;;
-	esac
-     done
 fi
 
 if test "$PTHREADS" = yes
@@ -770,6 +758,7 @@ LIBS=$SAVELIBS
 # one of them to $LIBS, making it impossible to check for the presence of C or
 # C++ libraries.  (I'm not sure why putting -llapack on the gcc command line
 # needlessly causes the library to be linked against.)
+FORTRANUSED=no
 if test "$LAPACK" = yes
 then AC_MSG_CHECKING([whether the vecLib framework is available])
      SAVELIBS=$LIBS LIBS="-framework vecLib $LIBS"
@@ -782,6 +771,7 @@ then AC_MSG_CHECKING([whether the vecLib framework is available])
 	 [
 	     AC_MSG_RESULT(no)
 	     LIBS=$SAVELIBS
+	     FORTRANUSED=yes
 	     if test $BUILD_lapack = no
 	     then AC_LANG(Fortran)
 		  AC_SEARCH_LIBS(sgemv,blas f77blas,,BUILD_lapack=yes)
@@ -801,7 +791,19 @@ then # test whether the fortran compiler can handle lapack, which, starting with
 	AC_MSG_RESULT(yes))
 fi
 
-
+test "$USE_FCLIBS" = no && FCLIBS=
+test "$FORTRANUSED" = no && FCLIBS=
+AC_SUBST(FCLIBS_DYNAMIC,)
+AC_SUBST(FCLIBS_STATIC,)
+AC_SUBST(FCLIBS_FLAGS,)
+for i in $FCLIBS
+do case $i in
+	-L*) FCLIBS_FLAGS="$FCLIBS_FLAGS $i" ;;
+	-lgcc_s) FCLIBS_DYNAMIC="$FCLIBS_DYNAMIC $i" ;; dnl # see discussion in emacs info about -static-libgcc and -shared-libgcc
+	-lm) FCLIBS_DYNAMIC="$FCLIBS_DYNAMIC $i" ;;
+	*) FCLIBS_STATIC="$FCLIBS_STATIC $i" ;;
+   esac
+done
 
 # after this point we add no more libraries to $LIBS, e.g., with AC_SEARCH_LIBS()
 SAVELIBS=$LIBS
