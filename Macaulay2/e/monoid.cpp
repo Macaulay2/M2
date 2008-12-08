@@ -284,7 +284,7 @@ void Monoid::text_out(buffer &o) const
   if (nvars_ > 0)
     o << varnames_->array[nvars_-1];
 
-  int ndegrees = degree_monoid()->monomial_size();
+  int ndegrees = degree_monoid()->n_vars();
   o << "," << newline << "  DegreeLength => " << ndegrees;
 
   o << "," << newline << "  Degrees => {";
