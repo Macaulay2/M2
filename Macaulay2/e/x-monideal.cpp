@@ -314,31 +314,106 @@ M2_arrayint rawMonomialIdealLCM(const MonomialIdeal *I)
   return I->lcm();
 }
 
-const MonomialIdealOrNull *rawAlexanderDual(const MonomialIdeal *I, const M2_arrayint top)
-{
-  return I->alexander_dual(top);
-}
 
 #if HAVE_FROBBY
 #include "frobby.h"
 
 class MyTermConsumer : public Frobby::TermConsumer {
+  int nv; // The size of exponentVector coming from frobby
+  int *exp;
   MonomialIdeal *J;
 public:
-  MyTermConsumer(MonomialIdeal *J0) : J(J0) {}
-  virtual void consume(mpz_ptr* exponentVector) { }
+  MyTermConsumer(const PolynomialRing *R, int nv0) : nv(nv0)
+  {
+    J = new MonomialIdeal(R);
+    exp = newarray_atomic(int,nv);
+  }
+  ~MyTermConsumer()
+  {
+    deletearray(exp);
+    J = 0;
+  }
+  virtual void consume(mpz_ptr* exponentVector) 
+  { 
+    // insert into J.  This is a minimal generator of J
+    for (int i=0; i<nv; i++)
+      exp[i] = mpz_get_si(exponentVector[i]); // overflow should not occur, as input fit
+
+    fprintf(stderr, "got ");
+    for (int j=0; j<nv; j++)
+      fprintf(stderr, "%d ", exp[j]);
+    fprintf(stderr, "\n");
+      
+    Bag *b = new Bag();
+    varpower::from_ntuple(nv, exp, b->monom());
+    J->insert_minimal(b);
+  }
   MonomialIdeal *result() { return J; }
 };
 
-const MonomialIdeal *FrobbyAlexanderDual(MonomialIdeal *I)
+const MonomialIdeal *FrobbyAlexanderDual(const MonomialIdeal *I, const M2_arrayint top)
+// Assumption: top is an array of at least the number of variables of I
+//   whose v-th entry is at least as large as the v-th exp of any mingen of I
 {
-  MonomialIdeal *J = NULL;
-  MyTermConsumer M(J);
-  Frobby::Ideal F(5);
-  Frobby::alexanderDual(F, 0, M);
+  // Create a Frobby Ideal containing I.
+  int nv = I->topvar() + 1;
+  if (nv == 0)
+    {
+      // Handle this case separately WRITE THIS
+      return 0;
+    }
+
+  mpz_t *topvec = 0;
+  if (top->len > 0)
+    {
+      topvec = newarray(mpz_t, top->len);
+      for (int i=0; i<top->len; i++)
+	mpz_init_set_si(topvec[i], top->array[i]);
+    }
+
+  int *exp = newarray_atomic(int, nv);
+  Frobby::Ideal F(nv);
+  for (Index<MonomialIdeal> i = I->first(); i.valid(); i++)
+    {
+      Bag *b = I->operator[](i);
+      varpower::to_ntuple(nv, b->monom().raw(), exp);
+      fprintf(stderr, "adding ");
+      for (int j=0; j<nv; j++)
+	{
+	  fprintf(stderr, "%d ", exp[j]);
+	  F.addExponent(exp[j]);
+	}
+      fprintf(stderr, "\n");
+    }
+
+  // Now create the consumer object, and call Frobby
+  MyTermConsumer M(I->get_ring(), nv);
+  Frobby::alexanderDual(F, topvec, M);
+
+  // Clean up
+  if (topvec != 0)
+    {
+      for (int i=0; i<top->len; i++)
+	mpz_clear(topvec[i]);
+      deletearray(topvec);
+    }
+  deletearray(exp);
+
+  // Extract the answer as a MonomialIdeal
   return M.result();
 }
 #endif
+
+const MonomialIdealOrNull *rawAlexanderDual(const MonomialIdeal *I, const M2_arrayint top)
+{
+#if HAVE_FROBBY
+  return FrobbyAlexanderDual(I,top);
+#else
+  return I->alexander_dual(top);
+#endif
+}
+
+
 // Local Variables:
 // compile-command: "make -C $M2BUILDDIR/Macaulay2/e "
 // End:

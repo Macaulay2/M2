@@ -1367,7 +1367,25 @@ Nterm * PolyRing::powerseries_division_algorithm(Nterm *f, Nterm *g, Nterm *&quo
   // The algorithm used is as follows.
   // Given a non-zero polynomial f = f(t,t^-1), let v(f) = top - bottom
   //   where top is the largest exponent in f, and bottom is the smallest.
-  //   So if f is a monomial, v(f) = 0.  Also, v(fg) = v(f)v(g) (at least if the
+  //   So if f is a monomial, v(f) = 0.  Also, v(fg) = v(f)+v(g) (at least if the
+  //   coefficient ring is a domain), and v(f) >= 0 always.
+  // The algorithm is as follows:
+  //   Reduce f = f0 by lt(g) to obtain f1, then again to obtain f2, etc.
+  //   So v(f1) >= v(f2) >= ... >= v(fi),
+  //   and either fi = 0, v(fi) < v(g), or v(f(i+1)) > v(fi).
+  //   In this case, the remainder returned is fi.
+  //   (Note: the last case won't happen if the coefficients are a field, or the
+  //   lead coefficient of g is a unit).
+
+  // This is intended for use when the monomial order has an initial weight vector and the first
+  //   term of the divisor's weight value is strictly greater than the other terms. 
+  //   AND where (all) inverses are present,
+  // and the coefficient ring is a field, or is ZZ.
+  // The algorithm used is as follows.
+  // Given a non-zero polynomial f = f(t,t^-1), let v(f) = top - bottom
+  //   where top is the weight vec value of the first monomial of f, and bottom is the weight vec value
+  //   for the last term of f.
+  //   So if f is a monomial, v(f) = 0.  Also, v(fg) = v(f)+v(g) (at least if the
   //   coefficient ring is a domain), and v(f) >= 0 always.
   // The algorithm is as follows:
   //   Reduce f = f0 by lt(g) to obtain f1, then again to obtain f2, etc.
@@ -1395,34 +1413,18 @@ Nterm * PolyRing::powerseries_division_algorithm(Nterm *f, Nterm *g, Nterm *&quo
       Nterm *z = a;
       for ( ; z->next != 0; z = z->next);
 
-      if (degree_monoid()->n_vars() != 0) flast = M_->primary_degree(z->monom);
-      else {
-	M_->to_expvector(z->monom, _EXP1);
-	flast = ntuple::degree(nvars_, _EXP1);
-      }
-
+      flast = M_->first_weight_value(z->monom);
     }
 
-  if (g != 0)
+  if (b != 0)
     {
       int gfirst, glast;
       Nterm *z = b;
 
-      if (degree_monoid()->n_vars() != 0) gfirst = M_->primary_degree(z->monom);
-      else {
-	M_->to_expvector(z->monom, _EXP1);
-	gfirst = ntuple::degree(nvars_, _EXP1);
-      }
-
+      gfirst = M_->first_weight_value(z->monom);
       for ( ; z->next != 0; z = z->next);
-
-      if (degree_monoid()->n_vars() != 0) glast = M_->primary_degree(z->monom);
-      else {
-	M_->to_expvector(z->monom, _EXP1);
-	glast = ntuple::degree(nvars_, _EXP1);
-      }
-
-      gval = abs(gfirst-glast);
+      glast = M_->first_weight_value(z->monom);
+      gval = gfirst-glast;
     }
 
   
@@ -1430,14 +1432,10 @@ Nterm * PolyRing::powerseries_division_algorithm(Nterm *f, Nterm *g, Nterm *&quo
   while (t != NULL)
     {
       int ffirst;
-      
-      if (degree_monoid()->n_vars() != 0) ffirst = M_->primary_degree(t->monom);
-      else {
-	M_->to_expvector(t->monom, _EXP1);
-	ffirst = ntuple::degree(nvars_, _EXP1);
-      }
 
-      int fval = abs(ffirst-flast);
+      ffirst = M_->first_weight_value(t->monom);
+      int fval = ffirst - flast;
+
       if (fval >= gval)
 	{
 	  //o << "t = "; elem_text_out(o,t); o << newline;
