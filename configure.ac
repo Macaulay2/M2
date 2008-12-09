@@ -120,8 +120,9 @@ case $OS in
   CYGWIN*) OS=MicrosoftWindows ; ISSUE=Cygwin ;;
 esac
 
-AC_DEFINE_UNQUOTED(ISSUE,"$ISSUE",[distribution and issue of operating system])
+test "$ISSUE" || ISSUE=$REL
 
+AC_DEFINE_UNQUOTED(ISSUE,"$ISSUE",[issue (flavor) of operating system, if any])
 AC_MSG_NOTICE([operating system to be used in distribution file names: $OS])
 AC_MSG_NOTICE([issue to be used in distribution file names: $ISSUE])
 
