@@ -101,7 +101,7 @@ document {
 	  },
      PARA {
 	  "This function is intended to be run only by users, not by system administrators, nor on behalf of users by system
-	  administors, because system administrators can easily install Macaulay 2 in such a way that the files can all be
+	  administrators, because system administrators can easily install Macaulay 2 in such a way that the files can all be
 	  found."
 	  },
      SeeAlso => {
