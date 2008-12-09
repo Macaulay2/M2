@@ -7,10 +7,10 @@ TARFILE := frobby_v$(VERSION).tar.gz
 # URL = http://www.broune.com/frobby
 URL = http://www.math.uiuc.edu/Macaulay2/Extra
 BUILDTARGET = library
-BUILDOPTIONS = GMP_INC_DIR=$(LIBRARIESDIR)/include CFLAGS="$(CFLAGS)"
+BUILDOPTIONS = GMP_INC_DIR=$(LIBRARIESDIR)/include CFLAGS="$(CFLAGS)" CXX="$(CXX)"
 CONFIGURECMD = :
 INSTALLCMD = \
-	cp bin/release/frobby.a $(LIBRARIESDIR)/lib/libfrobby.a && \
+	cp bin/libfrobby.a $(LIBRARIESDIR)/lib/libfrobby.a && \
 	cp src/frobby.h $(LIBRARIESDIR)/include/frobby.h
 include ../Makefile.library
 CFLAGS += -Wno-deprecated
