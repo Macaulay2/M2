@@ -28,4 +28,4 @@ extern char *BaseName(char *) ;
 extern char *newsuffix(char *, char *);
 extern char *newsuffixbase(char *, char *);
 extern bool debug;
-extern void tty();
+extern int tty();

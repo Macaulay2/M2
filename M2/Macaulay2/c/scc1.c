@@ -133,8 +133,8 @@ char *newsuffixbase(char *s, char *suf){
      return u;
      }
 
-void tty(){
-     freopen("/dev/tty","w",stdout);
+int tty(){
+     return NULL != freopen("/dev/tty","w",stdout);
      }
 
 bool oldc = FALSE;

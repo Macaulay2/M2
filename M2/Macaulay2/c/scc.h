@@ -1,6 +1,6 @@
 /*		Copyright 1993 by Daniel R. Grayson		*/
 
-#include "config.h"
+#include "M2/config.h"
 #include "compat.h"
 #define put(s) fputs(s,stdout)
 
