@@ -52,6 +52,8 @@ class Monoid : public mutable_object
 
   M2_arrayint local_vars; // These are the variables which are < 1 in the monomial order.
 
+  int first_weights_slot_; // < 0 if none, otherwise the location of the first weight vec value
+                           // in each monomial
   VECTOR(int) nslots_;
   
   
@@ -183,6 +185,9 @@ public:
   int degree_weights(const_monomial m, M2_arrayint wts) const;
   void degree_of_varpower(const_varpower vp, monomial result) const;
 
+  long first_weight_value(const_monomial m) const { return m[first_weights_slot_]; }
+  // Returns the value of the first weight vector in the monomial order.
+  // If none, returns 0.
 };
 
 #if 0

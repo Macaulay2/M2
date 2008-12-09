@@ -104,10 +104,18 @@ Monoid::Monoid(MonomialOrdering *mo,
   n_after_component_ = monomial_size_ - n_before_component_;
   component_up_ = monorder_->component_up;
 
-  // Now we can set nslots_
+  // Now we can set nslots_ and first_weights_slot_
   int total = 0;
+  first_weights_slot_ = -1;
   for (int i=0; i<monorder_->nblocks; i++)
     {
+      enum MonomialOrdering_type typ = monorder_->blocks[i].typ;
+      if (first_weights_slot_ < 0 && (typ == MO_GREVLEX || typ == MO_GREVLEX_WTS 
+	  || typ == MO_GREVLEX4 || typ == MO_GREVLEX4_WTS
+	  || typ == MO_GREVLEX2 || typ == MO_GREVLEX2_WTS
+				     || typ == MO_WEIGHTS))
+	first_weights_slot_ = total;
+	
       total += monorder_->blocks[i].nslots;
       nslots_.push_back(total);
     }
