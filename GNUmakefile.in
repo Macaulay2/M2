@@ -76,7 +76,7 @@ check ::; $(MAKE) -C libraries $@
 distclean check ::; $(MAKE) -C check-configure -f Makefile $@
 reconfigure-all : reconfigure reconfigure-libs 
 reconfigure-libs ::; $(MAKE) -C libraries reconfigure
-clean::; rm -f confdefs.h configure.lineno conftest.*
+clean::; rm -f confdefs.h configure.lineno conftest.* include/config.h
 distclean::; rm -f @CONFIGURED_FILES@ include/M2/config.h include/config.Makefile config.cache config.log config.status configure.options
 help :
 	@ echo "usage: make [option...] [target...]"
