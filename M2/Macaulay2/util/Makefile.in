@@ -1,5 +1,8 @@
 # @configure_input@
 include ../../include/config.Makefile
+.LIBPATTERNS = lib%.a
+vpath %.a  $(BUILTLIBPATH)/lib
+vpath %.so $(BUILTLIBPATH)/lib
 VPATH = @srcdir@
 EXES := echoout timestmp restart updat
 CPPFLAGS :=  -I. -I../../include $(CPPFLAGS)
@@ -48,6 +51,7 @@ LDLIBS += -lpthread
 endif
 
 all :: gc_tested
+gc_test : gc_test.c -lgc
 gc_tested: gc_test; ./$<; touch $@
 clean ::; rm -f gc_tested gc_test
 
