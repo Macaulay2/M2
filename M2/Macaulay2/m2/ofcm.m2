@@ -507,7 +507,7 @@ tensor(Monoid, Monoid) := Monoid => opts -> (M,N) -> (
 	  if opts.DegreeMap === null then opts.DegreeMap = Mopts.DegreeMap;
 	  if opts.DegreeLift === null then opts.DegreeLift = Mopts.DegreeLift;
 	  );
-     opts.Heft = processHeft(opts.DegreeRank,opts.Degrees,opts.Heft);
+     opts.Heft = processHeft(opts.DegreeRank,opts.Degrees,opts.Heft,opts.Inverses);
      opts.Inverses = if opts.Inverses === null then Mopts.Inverses or Nopts.Inverses else opts.Inverses;
      wfix := (M,w,bump) -> (
 	  if class w === Option then w = {w};
