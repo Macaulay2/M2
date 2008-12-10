@@ -13,7 +13,7 @@ document {
      Headline => "the Hilbert function",
      Usage => "hilbertFunction(d,X)",
      Inputs => {
-	  "d" => {"an integer (or a list of integers) specifying a degree (or multidegree)"}
+	  "d" => {"an integer (or a list of integers) specifying a degree (or multidegree)"},
 	  "M" => {"a ring, module, ideal, coherent sheaf, or projective variety"}
 	  },
      Outputs => {
@@ -30,7 +30,7 @@ document {
      hilbertFunction({3,3}, R)
      basis({3,3},R)
      ///,     
-     "The standard meaning of subscripts on functions permits a simpler syntax to be used."
+     "The standard meaning of subscripts on functions permits a simpler syntax to be used.",
      EXAMPLE lines ///
      hilbertFunction_{3,3} R
      ///,
