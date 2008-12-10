@@ -3,12 +3,12 @@
 --          using Fourier-Motzkin elimination
 -- PROGRAMMER : Gregory G. Smith 
 -- UPDATE HISTORY : 2 July 2000, 5 March 2006, 1 July 2008, 
---                  1 December 2008
+--                  10 December 2008
 ---------------------------------------------------------------------------
 newPackage(
 	"FourierMotzkin",
     	Version => "1.2", 
-    	Date => "1 December 2008",
+    	Date => "10 December 2008",
     	Authors => {{
 		  Name => "Gregory G. Smith", 
 		  HomePage => "http://www.mast.queensu.ca/~ggsmith",
@@ -228,7 +228,7 @@ fourierMotzkin (Matrix, Matrix) := Sequence => (Z, H) -> (
      if (outputZZ === false) then (
 	  A = substitute(A, QQ); 
 	  E = substitute(E, QQ));
-     (A, E))
+     (sort A, sort E))
 
 
 --   INPUT : 'Z' a matrix; the columns are the rays generating the cone
@@ -564,57 +564,53 @@ assert(P#1 == H)
 ///
 
 TEST ///
-Set == Set := Boolean => (X,Y) -> isSubset(X,Y) and isSubset(Y,X);
 M =  matrix{{1,1,1,1,1,1,1,1},{ -1,1,-2,2,1,-2,2,-1},{2,2,1,-1,-2,-1,1,-2}}
-dualM = set {{ -3, -1, -1}, { -3, -1, 1}, { -2, -1, 0}, { -3, 1, -1}, { -2, 1, 0}, 
-     { -3, 1, 1}, { -2, 0, -1}, { -2, 0, 1}}
-assert(set entries transpose (fourierMotzkin M)#0 == dualM)
-assert(set entries transpose (fourierMotzkin M_{4..7,0..3})#0 == dualM)
-assert(set entries transpose (fourierMotzkin M_{7,0..6})#0 == dualM)
+dualM =  matrix {{ -2, -2, -2, -3, -3, -2, -3, -3}, 
+     { -1, 1, 0, -1, 1, 0, -1, 1}, {0, 0, -1, -1, -1, 1, 1, 1}}
+assert( (fourierMotzkin M)#0 == dualM)
+assert( (fourierMotzkin M_{4..7,0..3})#0 == dualM)
+assert( (fourierMotzkin M_{7,0..6})#0 == dualM)
 ///
 
 TEST ///
-Set == Set := Boolean => (X,Y) -> isSubset(X,Y) and isSubset(Y,X);
 crossPoly = transpose matrix {{1, 1, 1, 1, -1}, {1, -1, -1, 1, -1},
      {1, -1, 1, -1, -1}, {1,-1, 1, 1, -1}, {1, 1, -1, -1, 1}, 
      {1, 1, -1, 1, 1}, {1, 1, 1, -1, 1}, {1, 1, 1, 1, 1}, 
      {1, -1, -1, -1, 1}, {1, -1, -1, 1, 1}, {1, -1, 1, -1, 1}, 
      {1, -1, 1, 1, 1}, {1, 1, -1, -1, -1}, {1, 1, -1, 1, -1}, 
      {1, 1, 1, -1, -1}, {1, -1, -1, -1, -1}}
-cube =  set {{-1, 0, 0, -1, 0}, {-1, -1, 0, 0, 0}, {-1, 0, 0, 1, 0}, {-1, 1, 0,
-      0, 0}, {-1, 0, -1, 0, 0}, {-1, 0, 0, 0, -1}, {-1, 0, 0, 0, 1}, {-1, 0, 1,
-      0, 0}}
-assert(set entries transpose (fourierMotzkin crossPoly)#0 == cube)
+cube =   matrix {{ -1, -1, -1, -1, -1, -1, -1, -1}, 
+     { -1, 1, 0, 0, 0, 0, 0, 0}, {0, 0, -1, 1, 0, 0, 0, 0}, 
+     {0, 0, 0, 0, -1, 1, 0, 0}, {0, 0, 0, 0, 0, 0, -1, 1}}
+assert( (fourierMotzkin crossPoly)#0 == cube)
 ///
 
 TEST ///
-Set == Set := Boolean => (X,Y) -> isSubset(X,Y) and isSubset(Y,X);
 diamond = transpose matrix{
      {1/2, -1, -1},
      {1/2, -1,  1},
      {1/2,  1, -1},
      {1/2,  1,  1}}
-dualDiamond = matrix {{ -2/1, -1/1, 0/1}, { -2/1, 0/1, -1/1}, 
+dualDiamond = sort transpose matrix {{ -2/1, -1/1, 0/1}, { -2/1, 0/1, -1/1}, 
       { -2/1,1/1, 0/1}, { -2/1, 0/1, 1/1}}
-assert(set entries transpose (fourierMotzkin diamond)#0 == set entries dualDiamond)
+assert( (fourierMotzkin diamond)#0 == dualDiamond)
 ///
 
 TEST ///
-Set == Set := Boolean => (X,Y) -> isSubset(X,Y) and isSubset(Y,X);
 avisIn2 = transpose matrix {{1, -1, 0, -1, 0, 0}, {1, -1, 0, 0, 0, -1}, 
      {1, 0, -1, -1, 0, 0}, {1, 0, -1, 0, -1, 0}, {1, 0, 0, 0, -1, -1},
      {0, -1, 1, 0, 0, 1}, {0, 1, -1, 0, 1, 0}, {0, 0, 0, -1, 1, 1}, 
      {0, 0, 1, 1, -1, 0}, {0, 1, 0, 1, 0, -1}, {2, -1, -1, -1, -1, -1}, 
      {0, 1, 0, 0, 0, 0}, {0, 0, 1, 0, 0, 0}, {0, 0, 0, 1, 0, 0}, 
      {0, 0, 0, 0, 1, 0}, {0, 0, 0, 0, 0, 1}}
-avisExt2 = transpose matrix {{ -1, 0, 0, 0, 0, 0}, { -1, -1, -1, 0, 0, 0}, 
+avisExt2 = sort transpose matrix {{ -1, 0, 0, 0, 0, 0}, { -1, -1, -1, 0, 0, 0}, 
      { -2, 0, -1, 0, -1, 0}, { -1, 0, 0, -1, -1, 0}, { -2, 0, -1, -1, -1, 0},
      { -2, -1, -1, 0, -1, 0}, { -2, -1, 0, 0, 0, -1}, { -1, 0, 0, -1, 0, -1}, 
      { -2, -1, 0, -1, 0, -1}, { -2, -1, -1, 0, 0, -1}, { -2, -1, -1, 0, -1, -1}, 
      { -4, -2, -3, 0, -1, -2}, { -4, -3, -2, 0, -2, -1}, { -2, -1, 0, -1, -1, -1}, 
      { -2, 0, 0, -1, -1, -1}, { -3, -1, 0, -1, -1, -2}, { -2, 0, -1, -1, -1, -1}, 
      { -3, 0, -1, -1, -2, -1}}
-assert(set entries transpose (fourierMotzkin avisIn2)#0 == set entries transpose avisExt2)
+assert( (fourierMotzkin avisIn2)#0 == avisExt2)
 ///
 
 end
