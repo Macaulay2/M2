@@ -19,8 +19,7 @@ document {
      Outputs => {
 	  ZZ => {"the dimension of the degree ", TT "d", " part of ", TT "M", ".  For an
 	       ideal, the corresponding quotient ring is used.
-	       For a projective variety, the underlying graded ring is used.  For a coherent
-	       sheaf, the underlying graded module is used."}
+	       For a projective varieties and coherent sheaves, the functionality is not yet implemented."}
 	  },
      PARA {
      	  "In the following example, compare the rank of the source of the basis map to the number provided by ", TO "hilbertFunction", "."
@@ -55,12 +54,6 @@ document {
      hilbertFunction({2,2}, I)
      S = R/I;
      basis({2,2},S)
-     ///,
-     "Here is an example with a projective variety.",
-     EXAMPLE lines ///
-     V = Proj(ZZ/101[symbol x_0..symbol x_2]);
-     hilbertFunction(3, V)
-     basis(3, ring V)
      ///,
      Caveat => {
 	  "It can be much faster to compute a basis for the desired degree, because hilbertFunction works by

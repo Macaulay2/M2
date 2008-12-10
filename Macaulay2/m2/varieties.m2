@@ -296,18 +296,20 @@ degree ProjectiveVariety := X -> degree ring X
 
 pdim CoherentSheaf := F -> pdim module F
 
-hilbertSeries ProjectiveVariety := options -> X -> hilbertSeries(ring X,options)
-hilbertSeries CoherentSheaf := options -> F -> (
+hilbertSeries ProjectiveVariety := opts -> X -> ( notImplemented(); hilbertSeries(ring X,opts) )
+hilbertSeries CoherentSheaf := opts -> F -> (
      if class variety F =!= ProjectiveVariety then error "expected a coherent sheaf over a projective variety";
-     hilbertSeries(module F,options))
+     notImplemented();
+     hilbertSeries(module F,opts))
 
-hilbertPolynomial ProjectiveVariety := ProjectiveHilbertPolynomial => opts -> X -> hilbertPolynomial(ring X, opts)
-hilbertPolynomial CoherentSheaf := options -> F -> (
+hilbertPolynomial ProjectiveVariety := ProjectiveHilbertPolynomial => opts -> X -> ( notImplemented(); hilbertPolynomial(ring X, opts) )
+hilbertPolynomial CoherentSheaf := opts -> F -> (
+     notImplemented();
      if class variety F =!= ProjectiveVariety then error "expected a coherent sheaf over a projective variety";
-     hilbertPolynomial(F.module,options))
+     hilbertPolynomial(F.module,opts))
 
-hilbertFunction(List,CoherentSheaf) := hilbertFunction(ZZ,CoherentSheaf) := (d,F) -> hilbertFunction(d,F.module)
-hilbertFunction(List,ProjectiveVariety) := hilbertFunction(ZZ,ProjectiveVariety) := (d,X) -> hilbertFunction(d,ring X)
+hilbertFunction(List,CoherentSheaf) := hilbertFunction(ZZ,CoherentSheaf) := (d,F) -> ( notImplemented(); hilbertFunction(d,F.module))
+hilbertFunction(List,ProjectiveVariety) := hilbertFunction(ZZ,ProjectiveVariety) := (d,X) -> ( notImplemented(); hilbertFunction(d,ring X))
 
 dual CoherentSheaf := F -> sheaf_(F.variety) dual F.module
 betti CoherentSheaf := F -> (
