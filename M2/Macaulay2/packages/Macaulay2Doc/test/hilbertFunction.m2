@@ -14,3 +14,19 @@ assert( a == 80 )
 b = time hilbertFunction({3,6},R)			   -- this was too slow
 assert( a == b )
 assert( 10 == hilbertFunction({9,15},R) )
+
+--
+
+R=ZZ/31991[x_1..x_4, Degrees=>{{1,0},{-2,1},{1,0},{0,1}}, Heft=>{1,3}];
+OM = ker matrix{{x_1,-2*x_2,x_3,0},{0,x_2,0,x_4}};
+a=2
+b=2
+-- k=32
+k=12
+A=coker matrix{{(x_3*x_4)^k,(x_1*x_4)^k,(x_1*x_2)^k,(x_2*x_3)^k}};
+E2=Ext^2(A,OM);
+time size hilbertSeries(E2,Order => 0)			    -- this computes a lot of numbers
+assert( oo == 1017 )
+time r = hilbertFunction({0,0},E2)
+time r' = numgens source basis({0,0},E2)		    -- this shows basis can be a lot faster than hilbertFunction, which uses hilbertSeries
+assert( r == r' )
