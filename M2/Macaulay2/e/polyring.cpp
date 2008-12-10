@@ -1421,10 +1421,22 @@ Nterm * PolyRing::powerseries_division_algorithm(Nterm *f, Nterm *g, Nterm *&quo
       int gfirst, glast;
       Nterm *z = b;
 
-      gfirst = M_->first_weight_value(z->monom);
-      for ( ; z->next != 0; z = z->next);
-      glast = M_->first_weight_value(z->monom);
-      gval = gfirst-glast;
+      if (z->next == 0)
+	gval = 0;
+      else 
+	{
+	  gfirst = M_->first_weight_value(z->monom);
+	  int gsecond = M_->first_weight_value(z->next->monom);
+	  if (gfirst == gsecond)
+	    {
+	      // In this case, we return silently
+	      quot = 0;
+	      return t;
+	    }
+	  for ( ; z->next != 0; z = z->next);
+	  glast = M_->first_weight_value(z->monom);
+	  gval = gfirst-glast;
+	}
     }
 
   
