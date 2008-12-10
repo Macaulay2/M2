@@ -847,6 +847,7 @@ export {
 	symbol monomialSubideal,
 	symbol monomials,
 	symbol moveFile,
+	symbol multidegree,
 	symbol mutable,
 	symbol mutableIdentity,
 	symbol mutableMatrix,

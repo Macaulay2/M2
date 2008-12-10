@@ -352,6 +352,11 @@ degree Module := (
 	       if liftable(x,ZZ) then x = lift(x,ZZ);
 	       x)))()
 
+multidegree Module := M -> (
+     A := degreesRing M;
+     onem := map(A,A,apply(generators A, t -> 1-t));
+     part(codim M,onem numerator poincare M))
+
 length Module := M -> (
      if not isHomogeneous M then notImplemented();
      if dim M > 0 then return infinity;

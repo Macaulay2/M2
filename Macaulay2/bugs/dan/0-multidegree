@@ -1,12 +1,16 @@
-Here is the current implementation of multidegrees:
+--*- M2 -*-
+-- Here is the current implementation of degrees and multidegrees in multigraded rings:
 
-S = QQ[a..d, Degrees => {{2,-1},{1,0},{0,1},{-1,2}}]
-heft S
-M = S^1/(b^2,b*c,c^2)
+S = QQ[a..d, Degrees => {{2,-1},{1,0},{0,1},{ -1,2}}];
+M = S^1/(b^2,b*c,c^2);
 degree M
-M' = S^1/(a^2,a*b,b^2)
+toString multidegree M
+N = S^1/a;
+toString multidegree N
+degree N
+M' = S^1/(a^2,a*b,b^2);
+toString multidegree M'
 degree M'
-
 =============================================================================
 
 implement this in a reasonable way:
