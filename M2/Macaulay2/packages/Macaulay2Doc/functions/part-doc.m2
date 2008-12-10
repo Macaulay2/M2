@@ -31,13 +31,12 @@ document {
 	       "F = a^3 + (b*d+1)^2",
 	       "part_{0,0} F"
 	       },
-	  "In polynomial rings over other polynomial rings, variables in the 
-	  coefficient ring have degree 0.",
+	  "Polynomial rings over other polynomial rings are multigraded, by default.",
 	  EXAMPLE {
 	       "A = QQ[a,b,c]",
 	       "B = A[x,y]",
 	       "degree(a*x)",
-	       "part_1 (a*x+b*y-1)^3"
+	       "part_{2,2} (a*x+b*y-1)^3"
 	       }
 	  ),
      SYNOPSIS (
