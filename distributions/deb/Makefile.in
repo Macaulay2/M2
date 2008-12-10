@@ -22,6 +22,7 @@ pre-install ::
 all pre-install ::; [ "${prefix}" = /usr -a @DEBUG@ = no -a @OPTIMIZE@ = yes -a @STRIP@ = yes ]
 all pre-install :: macaulay2/control.prelim
 macaulay2/control.prelim : @srcdir@/macaulay2/control.prelim.in Makefile
+	rm -f $@
 	<$< >$@ sed -e 's/[@]DEBARCH[@]/$(DEBARCH)/g' -e 's/[@]PACKAGE_VERSION[@]/@PACKAGE_VERSION@/g'
 	! egrep -nH '@[A-Za-z_]+@' <$@
 all pre-install :: tidy_before
@@ -40,12 +41,12 @@ endif
 ../../$(PKG_DEB) : @srcdir@/macaulay2/debian-binary macaulay2/control.tar.gz macaulay2/data.tar.gz
 	rm -f $@
 	ar rc $@.tmp $^
-	sed -e 's=\(debian-binary\|control.tar.gz\|data.tar.gz\)/\( *[0-9]* *\)[0-9 ]\{12\}=\1 \20     0     =g' < $@.tmp > $@
+	sed -e 's=\(debian-binary\|control.tar.gz\|data.tar.gz\)/\( *[0-9]* *\)[0-9 ]\{12\}=\1 \20     0     =g' <$@.tmp >$@
 	rm $@.tmp
 ../../$(PKG_COM_DEB) : @srcdir@/macaulay2-common/debian-binary macaulay2-common/control.tar.gz macaulay2-common/data.tar.gz
 	rm -f $@
 	ar rc $@.tmp $^
-	sed -e 's=\(debian-binary\|control.tar.gz\|data.tar.gz\)/\( *[0-9]* *\)[0-9 ]\{12\}=\1 \20     0     =g' < $@.tmp > $@
+	sed -e 's=\(debian-binary\|control.tar.gz\|data.tar.gz\)/\( *[0-9]* *\)[0-9 ]\{12\}=\1 \20     0     =g' <$@.tmp >$@
 	rm $@.tmp
 
 macaulay2/control.tar.gz : macaulay2/control macaulay2/postinst macaulay2/prerm
