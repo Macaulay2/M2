@@ -161,7 +161,7 @@ public:
   MonomialIdeal * radical() const;
 
   MonomialIdeal * borel() const;
-  int is_borel() const;
+  bool is_borel() const;
 
   MonomialIdeal * operator+(const MonomialIdeal &F) const;
   MonomialIdeal * operator-(const MonomialIdeal &F) const;

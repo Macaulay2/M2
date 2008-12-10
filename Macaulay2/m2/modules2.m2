@@ -118,15 +118,10 @@ reduceHilbert Divide := ser -> (
      newden := Product nonnull apply(toList den, pwr -> (
 	       fac := pwr#0;				    -- 1-T_i
 	       ex  := pwr#1;	 			    -- exponent
-	       while ex > 0 and (
-     	       	    if debugLevel == 13 then stderr << "--dividing by " << fac << "..." << flush,
-		    num % fac == 0,
-     	       	    if debugLevel == 13 then stderr << "done" << endl,
-		    )#1
+	       while ex > 0
+	       and num % fac == 0			    -- this works because of Mike's magic in the engine
 	       do (
-     	       	    if debugLevel == 13 then stderr << "--dividing..." << flush;
 		    num = num // fac;
-     	       	    if debugLevel == 13 then stderr << "done" << endl;
 		    ex = ex - 1;
 		    );
 	       if ex > 0 then Power {fac,ex}));
@@ -184,9 +179,11 @@ hilbertSeries Module := opts -> (M) -> (
 		    (lo,hi) := weightRange(wts,num);
 		    if ord < lo then 0_T else (
 			 denom = value denominator h;
-			 g := gcd(num,denom);
-			 (num,denom) = (num // g,denom // g);
-			 part(,ord,wts,num * recipN(ord - lo + 1,wts,denom)))));
+			 -- factory can't handle the negative exponents that occur in degrees rings:
+			 --  g := gcd(num,denom);
+			 --  (num,denom) = (num // g,denom // g);
+			 p := if denom === 1 then num else num * recipN(ord - lo + 1,wts,denom);
+			 part(,ord,wts,p))));
 	  M.cache#approxKey = (ord,s);
 	  s))
 
@@ -327,33 +324,31 @@ dim Module := M -> (
      if c === infinity then -1 else dim ring M - c
      )
 
-fixZZ := x -> if liftable(x,ZZ) then lift(x,ZZ) else x
-
 degree Ring := R -> degree R^1
 degree Module := (
      () -> (
      	  -- constants:
-	       ZZ1 := degreesRing 1;
-	       T := ZZ1_0;
-	       h := 1 - T;
+	  ZZ1 := degreesRing 1;
+	  T := ZZ1_0;
+	  h := 1 - T;
+	  local ev;
 	  M -> (
-	       ev := map(ZZ,ZZ1,{1});			    -- ring maps are defined later
 	       hs := hilbertSeries M;
 	       hn := numerator hs;
 	       hd := value denominator hs;
 	       if hn == 0 then return 0;
 	       n := degreeLength M;
 	       if n === 0 then return lift(hn,ZZ);		    -- assert( hd == 1 );
-	       if n > 1 then (
-		    ZZn := degreesRing n;
-		    to1 := map(ZZ1,ZZn,toList(n:T));
-		    hn = to1 hn;
-	       	    if hn == 0 then return 0;
-		    hd = to1 hd;
-		    );
+	       to1 := map(ZZ1,ring hn,toList(n:T));
+	       hn = to1 hn;
+	       if hn == 0 then return 0;
+	       hd = to1 hd;
 	       while hn % h == 0 do hn = hn // h;
 	       while hd % h == 0 do hd = hd // h;
-	       fixZZ(ev hn/ev hd))))()
+	       if ev === null then ev = map(ZZ,ZZ1,{1}); -- ring maps are defined only later
+	       x := ev hn/ev hd;
+	       if liftable(x,ZZ) then x = lift(x,ZZ);
+	       x)))()
 
 length Module := M -> (
      if not isHomogeneous M then notImplemented();
