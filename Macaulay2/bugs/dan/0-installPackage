@@ -1,0 +1,2 @@
+make installPackage much faster at detecting a package is already installed
+better yet, have it mark the installation as complete so that "make" can tel
