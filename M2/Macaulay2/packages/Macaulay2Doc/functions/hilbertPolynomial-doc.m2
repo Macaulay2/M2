@@ -93,6 +93,10 @@ document {
 	  },
      "We compute the ", TO2(hilbertPolynomial, "Hilbert polynomial"),
      " of a coherent sheaf.",
+     PARA {
+	  "This method is not implemented yet."
+	  }
+{*
      EXAMPLE {
 	  "R = ZZ/101[x_0..x_2];",
 	  "V = Proj R;",
@@ -100,6 +104,7 @@ document {
 	  "h = hilbertPolynomial S",
      	  "hilbertPolynomial(S, Projective=>false)"
 	  }
+*}
      }
 
 document { 
@@ -148,10 +153,14 @@ document {
      Outputs => {
 	  ProjectiveHilbertPolynomial => "unless the option Projective is false" 
 	  },
+     PARA {
+	  "This method is not implemented yet."
+	  }
      "We compute an example of the ", 
      TO2(hilbertPolynomial, "Hilbert polynomial"), " of a projective
      Hilbert variety. This is the same as the Hilbert polynomial of
      its coordinate ring.",
+{*
      EXAMPLE {
 	  "R = QQ[a..d];",
 	  "I = monomialCurveIdeal(R, {1,3,4});",
@@ -159,15 +168,18 @@ document {
 	  "h = hilbertPolynomial V",
      	  "hilbertPolynomial(V, Projective=>false)"
 	  },
+*}
      PARA{},
      "These Hilbert polynomials can serve as ", 
      TO2 (hilbertFunction,"Hilbert functions"), 
      " too since the values of the Hilbert polynomial eventually are
      the same as the Hilbert function. ",
+{*
      EXAMPLE {
 	  "apply(5, k-> h(k))",
 	  "apply(5, k-> hilbertFunction(k,V))"
 	  }
+*}
      }
 
 document { 

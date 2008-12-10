@@ -10,7 +10,6 @@ document {
      "The Hilbert series is the formal power series in the variables of the
      degrees ring whose coefficients are the dimensions of the corresponding
      graded component.", 
-     PARA{}, 
      "Note that the series is provided as a type of expression called
      a ", TO "Divide", ".",
      SeeAlso => {"degreesRing", "reduceHilbert", "poincare",
@@ -176,11 +175,16 @@ document {
      projective variety, that is, the Hilbert series of the
      homogeneous coordinate ring of ", TT "V", ". The saturation of
      the ideal may need to be computed.",
+     PARA {
+	  "This method is not implemented yet."
+	  }
+{*
      EXAMPLE {
 	  "V = Proj(QQ[x,y])",
 	  "s = hilbertSeries V",
 	  "numerator s"
 	  }
+*}
      }
 document { 
      Key => [hilbertSeries, Order],

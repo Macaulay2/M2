@@ -228,7 +228,7 @@ ZZ * ProjectiveHilbertPolynomial := ProjectiveHilbertPolynomial => (b,h) -> (
      else applyValues(h,c -> b*c)
      )
 
-hilbertSeries ProjectiveHilbertPolynomial := options -> h -> (
+hilbertSeries ProjectiveHilbertPolynomial := opts -> h -> (
      T := degreesRing 1;
      t := T_0;
      d := max keys h;
