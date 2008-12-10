@@ -77,8 +77,9 @@ poincare Module := (cacheValue symbol poincare) (
      M -> (
 	  -- some examples compute degrees of inhomogeneous modules, so we can't refuse to compute when the module is not homogeneous.
 	  -- is it guaranteed to work in some sense?
-	  -- if not isHomogeneous M then error "expected a homogeneous module";
-	  new degreesRing M from rawHilbert raw leadTerm gb presentation cokernel presentation M))
+	  -- let's find those instances
+	  if not isHomogeneous M then error "expected a homogeneous module";
+	  new degreesRing M from rawHilbert raw leadTerm gb {* presentation cokernel ?? *} presentation M))
 
 recipN = (n,wts,f) -> (
      -- n is a positive integer
@@ -164,7 +165,7 @@ hilbertSeries Module := opts -> (M) -> (
      T := degreesRing A;
      if ord === infinity then (
      	  num := poincare M;
-     	  denom := tally (degree \ select(generators A, x -> x != 0));
+     	  denom := tally degrees A.FlatMonoid;
 	  r := Divide{
 	       num,
 	       Product apply(sort apply(pairs denom, (i,e) -> {1 - T_i,e}), t -> Power t)};

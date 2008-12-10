@@ -342,7 +342,7 @@ info IMG := net IMG := tex IMG  := x -> (
 
 info HREF := net HREF := x -> net last x
 
-scan( (net,html,tex), op -> op TOH := x -> op SPAN{ new TO from toList x, commentize headline x#0 } )
+scan( (net,html,tex), op -> op TOH := x -> op SPAN nonnull { new TO from toList x, commentize headline x#0 } )
 
 info LITERAL := tex LITERAL := net LITERAL := x -> ""
 html LITERAL := x -> concatenate x
