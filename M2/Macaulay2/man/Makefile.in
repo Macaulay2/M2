@@ -9,7 +9,9 @@ prefix := @pre_prefix@
 pre-install :: @mandir@/man1/M2.1
 @mandir@/man1/M2.1 : M2.1 | @mandir@/man1 ; @INSTALL_DATA@ $< $@
 Makefile : Makefile.in; cd ../..; ./config.status Macaulay2/man/Makefile
-M2.1: M2.1.in Makefile; sed <$< >$@ \
+M2.1: M2.1.in Makefile
+	rm -f $@
+	sed <$< >$@ \
 	    -e 's,[@]PACKAGE_TARNAME[@],@PACKAGE_TARNAME@,g' \
 	    -e 's,[@]PACKAGE_VERSION[@],@PACKAGE_VERSION@,g' \
 	    -e 's,[@]PACKAGE_NAME[@],@PACKAGE_NAME@,g' \
