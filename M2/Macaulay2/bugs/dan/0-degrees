@@ -1,3 +1,31 @@
+Date: Tue, 9 Dec 2008 21:56:20 -0600
+From: "Daniel R. Grayson" <dan@math.uiuc.edu>
+To: mike.stillman@mac.com
+CC: dan@math.uiuc.edu
+Subject: heft and degrees
+Reply-to: dan@math.uiuc.edu
+
+
+I think we have to use the heft vector when computing degrees:
+
+    i4 : R = QQ[x,Heft => {2}]
+
+    o4 = R
+
+    o4 : PolynomialRing
+
+    i5 : degree R
+
+	 1
+    o5 = -
+	 2
+
+    o5 : QQ
+
+Now all I have to do is to invent a mathematical justification for doing so...
+
+=============================================================================
+
 Check that this algorithm is right for modules over rings with strange negative
 multidegrees and unusual heft vectors.
 
@@ -9,13 +37,15 @@ degree Module := (
 	  h := 1 - T;
 	  local ev;
 	  M -> (
+	       hft := heft M;
+	       if hft === null then error "degree: no heft vector defined";
 	       hs := hilbertSeries M;
 	       hn := numerator hs;
 	       hd := value denominator hs;
 	       if hn == 0 then return 0;
 	       n := degreeLength M;
 	       if n === 0 then return lift(hn,ZZ);		    -- assert( hd == 1 );
-	       to1 := map(ZZ1,ring hn,toList(n:T));
+	       to1 := map(ZZ1,ring hn,apply(hft,i->T^i));	    -- this assigns a privileged role to the heft vector, which we need to investigate
 	       hn = to1 hn;
 	       if hn == 0 then return 0;
 	       hd = to1 hd;

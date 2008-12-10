@@ -440,8 +440,8 @@ document {
 
      EXAMPLE {
 	  "vectorConfig = {{1,0},{-2,1},{1,0},{0,1}}",
-	  "heft = findHeft vectorConfig",
-	  "S = QQ[x_1,x_2,y_1,y_2, Heft => heft, Degrees => vectorConfig];",
+	  "hft = findHeft vectorConfig",
+	  "S = QQ[x_1,x_2,y_1,y_2, Heft => hft, Degrees => vectorConfig];",
 	  "irrelevantIdeal = intersect(ideal(x_1,x_2), ideal(y_1,y_2))",
 	  "res (S^1/irrelevantIdeal)",
 	  },
@@ -456,8 +456,8 @@ document {
      EXAMPLE {
 	  "vectorConfig = {{1,0,0,0},{0,1,0,0},{0,-1,1,0},{0,1,-1,1},
 	  {1,0,-1,1},{-1,0,0,1}}",
-          "heft = findHeft vectorConfig",
-	  "R = QQ[x_1..x_6, Heft => heft, Degrees => vectorConfig];",
+          "hft = findHeft vectorConfig",
+	  "R = QQ[x_1..x_6, Heft => hft, Degrees => vectorConfig];",
 	  "irrelevantIdeal = ideal(x_3*x_4*x_5*x_6,x_1*x_4*x_5*x_6,x_1*x_2*x_5*x_6,
      x_1*x_2*x_3*x_6,x_2*x_3*x_4*x_5,x_1*x_2*x_3*x_4)",
           "res (R^1/irrelevantIdeal)"
