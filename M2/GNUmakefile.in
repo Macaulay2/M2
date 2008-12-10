@@ -47,17 +47,16 @@ pre-install :: all
 # the first distclean target:
 distclean:: clean
 pre-install clean distclean all ::; $(MAKE) -C libraries $@
-all::.link-test
-clean::; rm -rf .link-test StagingArea srcdir
-.link-test: GNUmakefile
+all:: srcdir
+clean::; rm -rf srcdir .link-test StagingArea srcdir
+srcdir: GNUmakefile
 	if [ "@abs_builddir@"/StagingArea/common != "@pre_prefix@" ] ;\
 	then rm -rf StagingArea/common ;\
 	     $(MKDIR_P) StagingArea ;\
 	     ln -s "@pre_prefix@" StagingArea/common ;\
 	fi
-	rm -f srcdir
-	echo "@srcdir@/" >srcdir
-	touch $@
+	rm -f $@ .link-test
+	echo "@srcdir@/" >$@
 pre-install all distclean check clean ::; $(MAKE) -C Macaulay2 $@
 subst : config.status ; ./config.status
 show : config.status ; egrep '^s,' $< | sed -e 's/^s,@\(.*\)@,\(.*\),g/\1=\2/' -e 's/^s,.*]\*\(.*\)\\).*\\2 \(.*\) ,/#define \1 \2/' -e 's/.#_!!_#.//g'
