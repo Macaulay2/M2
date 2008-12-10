@@ -367,7 +367,7 @@ AC_SUBST(PACKAGES,"
   EdgeIdeals
   FourTiTwo
   StatePolytope
-  ConvexPolyhedron
+  Polyhedra
   Text
 ")
 
