@@ -167,7 +167,7 @@ public:
   bool is_zero() const;
 
   // degrees
-  int is_homogeneous() const;
+  bool is_homogeneous() const;
   Matrix *homogenize(int v, M2_arrayint wts) const;
 
   // Simplification of column set

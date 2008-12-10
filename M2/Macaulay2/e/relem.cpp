@@ -188,7 +188,7 @@ Monomial *RingElement::lead_monom(int nvars) const
   return Monomial::make(resultvp.raw());
 }
 
-int RingElement::is_homogeneous() const
+bool RingElement::is_homogeneous() const
 {
   return R->is_homogeneous(val);
 }

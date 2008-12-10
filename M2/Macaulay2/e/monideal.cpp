@@ -829,7 +829,7 @@ MonomialIdeal *MonomialIdeal::borel() const
   return result;
 }
 
-int MonomialIdeal::is_borel() const
+bool MonomialIdeal::is_borel() const
 {
   int *bexp = newarray_atomic(int,get_ring()->n_vars());
   for (Index<MonomialIdeal> i = first(); i.valid(); i++)

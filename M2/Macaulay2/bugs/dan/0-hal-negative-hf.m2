@@ -1,3 +1,7 @@
+-- this now works, so let's speed it up
+
+errorDepth = 0
+
 -- hilbertFunction is producing incorrect values, and is taking a huge amount
 -- of time too.  HirzOmegaTable is the original.  HirzOmegaTable2 changes hilbertFunction
 -- to numgens source basis, which seems to work here.
@@ -9,16 +13,19 @@ HirzOmegaTable = (a,b)->(
     k=16*max(abs(a),abs(b));
     A=coker matrix{{(x_3*x_4)^k,(x_1*x_4)^k,(x_1*x_2)^k,(x_2*x_3)^k}};
     print "H^0";
+    hilbertFunction({a,b},OM);
     for i from -a to a do
                    (for j from -b to b do <<" " << hilbertFunction({i,j},OM);
                    print " ");
     E2=Ext^2(A,OM);
     print "H^1";
+    hilbertFunction({a,b},E2);
     for i from -a to a do
                    (for j from -b to b do <<" " << hilbertFunction({i,j},E2);
                     print " ");
     E3=Ext^3(A,OM);
     print "H^2";
+    hilbertFunction({a,b},E3);
     for i from -a to a do
                    (for j from -b to b do <<" " << hilbertFunction({i,j},E3);
                    print " "))

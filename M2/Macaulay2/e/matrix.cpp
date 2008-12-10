@@ -305,7 +305,7 @@ bool Matrix::is_zero() const
   return true;
 }
 
-int Matrix::is_homogeneous() const
+bool Matrix::is_homogeneous() const
 {
   if (!get_ring()->is_graded()) return 0;
   int *d = degree_monoid()->make_one();

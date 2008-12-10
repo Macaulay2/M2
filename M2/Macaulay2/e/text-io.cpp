@@ -47,13 +47,13 @@ void emit_wrapped(const char *s)
     fprintf(stdout, "\n");
     fprintf(stdout, wrapping_prefix);
   }
-  fprintf(stdout, s);
+  fputs(s, stdout);
   fflush(stdout);
 }
 
 void emit(const char *s)
 {
-  fprintf(stdout, s);
+  fputs(s, stdout);
   fflush(stdout);
 }
 
