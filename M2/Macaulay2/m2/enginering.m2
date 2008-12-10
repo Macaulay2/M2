@@ -229,6 +229,7 @@ coefficientRing FractionField := F -> coefficientRing last F.baseRings
 isHomogeneous FractionField := (F) -> isHomogeneous last F.baseRings
 
 factoryGood = R -> ( -- we're ignoring quotient rings here, even though gcd and factoring may not actually work in them
+     if (options R).Inverses === true then return false;
      R = ultimate(coefficientRing, R);
      R === QQ or
      R === ZZ or

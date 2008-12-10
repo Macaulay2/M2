@@ -238,8 +238,8 @@ Ring OrderedMonoid := PolynomialRing => (			  -- no memoize
 	  RM.baseRings = append(R.baseRings,R);
 	  commonEngineRingInitializations RM;
 	  RM.monoid = M;
-	  if M.?degreesRing then RM.degreesRing = M.degreesRing;
-	  if M.?degreesMonoid then RM.degreesMonoid = M.degreesMonoid;
+	  if flatmonoid.?degreesRing then RM.degreesRing = flatmonoid.degreesRing;
+	  if flatmonoid.?degreesMonoid then RM.degreesMonoid = flatmonoid.degreesMonoid;
 	  RM.isCommutative = not Weyl and not RM.?SkewCommutative;
      	  ONE := RM#1;
 	  if R.?char then RM.char = R.char;

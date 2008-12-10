@@ -6,7 +6,7 @@
 ---------------------------------------------------------------------------
 newPackage("Polyhedra",
     Headline => "A package for computations with convex polyhedra",
-    Version => 0.5,
+    Version => "0.5",
     Date => "December 10, 2008",
     Authors => {
          {Name => "René Birkner", Email => "rbirkner@mi.fu-berlin.de"}},
