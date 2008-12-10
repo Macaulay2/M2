@@ -150,7 +150,59 @@ sudo apt-get install flex
 others to get:
 sudo apt-get install emacs
 
+#######################################################
+## capybara install ###################################
+#######################################################
 
+
+##########################################################################
+### get the machine ready ################################################
+##########################################################################
+# create a version of make that knows about capybara, and where you will put it
+mkdir ~/bin
+echo 'exec /usr/bin/make -I ~/local/capybara/include "$@"' > ~/bin/make
+chmod u+x ~/bin/make
+
+# files from home-dir copied to ~, possibly modifed
+# .emacs, .profile, .bashrc: copied to ~ (possibly modified: .profile)
+# now log off, back on.
+export PATH=~/local/capybara/bin:$PATH
+export MANPATH=~/local/capybara/man:$MANPATH
+export INFOPATH=~local/capybara/info:$INFOPATH
+
+##########################################################################
+### installing capybara ##################################################
+### these are taken from the INSTALL file in the capybara distribution ###
+##########################################################################
+export ENCAPDIR=$HOME/local/capybara/encap
+export FINALDESTINATION=$HOME/local/capybara
+cd ~/local
+mkdir capybara
+cd capybara
+mkdir encap
+cd encap
+svn co svn://macaulay2.math.uiuc.edu/capybara/trunk/capybara capybara
+
+
+mkdir $FINALDESTINATION/include
+cd $ENCAPDIR/capybara/include/
+ln -s ~/local/capybara/encap/capybara/include/capybara $FINALDESTINATION/include/.
+
+# set up the local-overrides file
+cp $ENCAPDIR/capybara/include/capybara/local-overrides.sample $ENCAPDIR/capybara/include/capybara/local-overrides
+# edit local-overrides,  make sure: (these cannot have ~ in them, as configure complains)
+#  FINALDESTINATION = /Users/mike/capybara
+#  ENCAPDIR = /Users/mike/capybara/encap
+#  (optional) AUTOCLEAN = no
+
+# create epkg and capybara
+cd $ENCAPDIR/capybara/share/capybara/packages/epkg
+make PREREQ=
+rm $FINALDESTINATION/include/capybara
+epkg capybara
+
+ln -s $ENCAPDIR/capybara/share/capybara/packages ~
+cd ~/packages/4ti2
 #------------------------------------------------------
 #- Below this line are older notes that have not ------
 #- been considered lately!! ---------------------------

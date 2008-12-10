@@ -1,3 +1,16 @@
+R = QQ[x,y, Degrees => {{1,0},{0,1}}]
+S = degreesRing R
+describe S
+T_0
+1 % (1 - T_0)
+
+
+-- test of division in different settings
+(1-T_0^4) % (T_0 + T_1 + T_0^2)
+(1-T_0^4) // (T_0^-3*T_1)
+(1-T_0^4) % (T_0^-3*T_1) == 0
+
+end
 This is important to get fixed, because it applies to reducing Hilbert series to lowest terms.
 
     i5 : QQ[x,y, Degrees => {{1,0},{0,1}}]
@@ -47,3 +60,6 @@ length is additive, because degrees rings are integral domains; this is the
 appropriate analogue of additivity of degrees.  Thus if all we're interested in
 is testing divisibility and getting the right quotient when the remainder is
 zero,this algorithm will work.
+
+
+
