@@ -91,7 +91,6 @@ Ext(Module,Module) := Module => (M,N) -> (
   if not isHomogeneous N or not isHomogeneous M
   then error "'Ext' received an inhomogeneous module";
   if N == 0 or M == 0 then return cacheModule.cache#cacheKey = B^0;
-  pushvar(symbol flagInhomogeneity,true);
   p := presentation B;
   A := ring p;
   I := ideal mingens ideal p;
@@ -170,7 +169,6 @@ Ext(Module,Module) := Module => (M,N) -> (
   -- now compute the total Ext as a single homology module
   tot := minimalPresentation homology(DeltaBar,DeltaBar);
   cacheModule.cache#cacheKey = tot;
-  popvar symbol flagInhomogeneity;
   tot)
 
 Ext(Module, Ring) := (M,R) -> Ext(M,R^1)

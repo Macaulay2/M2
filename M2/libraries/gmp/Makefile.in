@@ -8,9 +8,9 @@ ifeq (@SHARED@,no)
 CONFIGOPTIONS += --disable-shared
 endif
 # ifeq (Darwin i386,$(shell uname -sm))
-# PRECONFIGURE = autoconf && (cd mpn/x86 && rm -fv *dive_1* */*dive_1* */*/*dive_1* */*mode1o* */*/*mode1o*) || false
+# PRECONFIGURE = autoreconf -i && (cd mpn/x86 && rm -fv *dive_1* */*dive_1* */*/*dive_1* */*mode1o* */*/*mode1o*) || false
 # else 
-# PRECONFIGURE = autoconf
+# PRECONFIGURE = autoreconf -i
 # endif
 include ../Makefile.library
 check :: ; $(MAKE) -C $(BUILDDIR) check

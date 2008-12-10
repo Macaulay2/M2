@@ -7,8 +7,7 @@ CONFIGOPTIONS +=
 ifeq (@SHARED@,no)
 CONFIGOPTIONS += --disable-shared
 endif
-# autoconf breaks their configure script now:
-# PRECONFIGURE = autoconf
+# PRECONFIGURE = autoreconf -i
 include ../Makefile.library
 Makefile : @srcdir@/Makefile.in ; cd ../.. && ./config.status libraries/mpfr/Makefile
 # Local Variables:

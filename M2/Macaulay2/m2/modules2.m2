@@ -372,9 +372,9 @@ minimalPresentation(Module) := prune(Module) := Module => opts -> (cacheValue (s
 	       M.cache.pruningMap = id_M;
 	       return M);
 	  homog := isHomogeneous M;
-	  if homog then pushvar(symbol flagInhomogeneity,true);
+	  if debugLevel > 0 and homog then pushvar(symbol flagInhomogeneity,true);
 	  C := runHooks(Module,symbol minimalPresentation,(opts,M));
-	  if homog then popvar symbol flagInhomogeneity;
+	  if debugLevel > 0 and homog then popvar symbol flagInhomogeneity;
 	  if C =!= null then return C;
 	  error "minimalPresentation: internal error: no method for this type of module"
 	  ))
@@ -489,7 +489,7 @@ Hom(Module, Module) := Module => (M,N) -> (
 -- An alternate Hom routine:
 Hom(Module, Module) := Module => (M,N) -> (
      homog := isHomogeneous M and isHomogeneous N;
-     if homog then pushvar(symbol flagInhomogeneity,true);
+     if debugLevel > 0 and homog then pushvar(symbol flagInhomogeneity,true);
      -- This version is perhaps less transparent, but is
      -- easier to determine the link with homomorphisms.
      m := presentation M;
@@ -501,7 +501,7 @@ Hom(Module, Module) := Module => (M,N) -> (
      -- will need to reconstruct the map corresponding to
      -- an element.
      MN.cache.Hom = {M,N,source mdual,target n};
-     if homog then popvar symbol flagInhomogeneity;
+     if debugLevel > 0 and homog then popvar symbol flagInhomogeneity;
      MN)
 
 homomorphism = method()

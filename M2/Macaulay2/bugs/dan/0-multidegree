@@ -1,3 +1,14 @@
+Here is the current implementation of multidegrees:
+
+S = QQ[a..d, Degrees => {{2,-1},{1,0},{0,1},{-1,2}}]
+heft S
+M = S^1/(b^2,b*c,c^2)
+degree M
+M' = S^1/(a^2,a*b,b^2)
+degree M'
+
+=============================================================================
+
 implement this in a reasonable way:
 
     import = s -> getGlobalSymbol(User#"private dictionary",s) <- value Core#"private dictionary"#s;
@@ -9,6 +20,7 @@ implement this in a reasonable way:
     A = ring f
     f = (map(A,A,apply(gens A, x -> 1-x))) f
     new A from rawGetPart({1,1},raw f,codim M,codim M)
+    part(codim M,f)
 
 =============================================================================
 
