@@ -12,6 +12,8 @@ TARDIR = factory
 TARFILE := factory-$(shell echo $(VERSION) | sed 's/\./-/g').tar.gz
 URL = ftp://www.mathematik.uni-kl.de/pub/Math/Singular/Factory
 PRECONFIGURE = autoconf
+# this doesn't work, because autoheader fails with factory
+# PRECONFIGURE = autoreconf -vi
 CONFIGOPTIONS += --enable-NTL
 ifeq (@OPTIMIZE@,yes)
 CXXFLAGS += -Wno-deprecated --no-rtti --no-exceptions

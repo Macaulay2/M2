@@ -77,7 +77,7 @@ resolutionInEngine := opts -> (M) -> (
      if not M.cache.?resolution 
      or M.cache.resolution.Resolution.length < maxlevel
      then M.cache.resolution = (
-     	  if flagInhomogeneity then (
+          if flagInhomogeneity then (
 	       if not isHomogeneous M then error "internal error: res: inhomogeneous matrix flagged";
 	       if debugLevel > 0 then stderr << "--res: matrix is homogeneous, good" << endl;
 	       );

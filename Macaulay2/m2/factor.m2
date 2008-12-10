@@ -39,35 +39,23 @@ pseudoRemainder(RingElement,RingElement) := RingElement => (f,g) -> (
      if R =!= ring g then error "expected elements of the same ring";
      new R from rawPseudoRemainder(raw f, raw g));
 
-reorder := I -> (					    -- rawIdealReorder
-     f := generators I;
-     R := ring I;
-     rawIdealReorder raw f)
-
--- lcm2 := (x,y) -> x*y//gcd(x,y)
--- lcm := args -> (
---      n := 1;
---      scan(args, i -> n = lcm2(n,i));
---      n)
--- commden := (f) -> lcm apply( last \ listForm f, denominator)
-
 inversePermutation = v -> ( w := new MutableList from #v:null; scan(#v, i -> w#(v#i)=i); toList w)
 
 irreducibleCharacteristicSeries = method()
 irreducibleCharacteristicSeries Ideal := I -> (		    -- rawCharSeries
-     f := generators I;
-     f = compress f;					    -- avoid a bug in Messollen's code for rawCharSeries when a generator is zero
      R := ring I;
      if not factoryGood R then error "not implemented for this type of ring";
-     -- if coefficientRing R === QQ then f = matrix { first entries f / (r -> r * commden r) };
-     re := reorder I; -- we need to substitute R_(re#i) => R_i beforehand and undo it afterward
-     allgens := matrix {generators(R, CoefficientRing => ultimate(coefficientRing,R))};
-     f = substitute(f,allgens_(inversePermutation re));
-     ics := rawCharSeries raw f;
-     ics = apply(ics, m -> map(R,m));
-     phi := map(R,R,allgens_re);
-     {ics,phi}
-     )
+     m := generators I;
+     m = compress m;					    -- avoid a bug in Messollen's code for rawCharSeries when a generator is zero
+     (S,g) := flattenRing R;
+     m = g m;
+     re := rawIdealReorder raw m; -- we need to substitute S_(re#i) => T_i beforehand and let the user undo it afterward, if desired
+     re' := inversePermutation re; -- so the two substitutions are S_j => T_(re'_j) and T_i => S_(re_i)
+     k := coefficientRing R;
+     T := k ( monoid [ Variables => S.generatorSymbols_re, Degrees => (degrees S)_re, MonomialOrder => Lex, Heft => heft S ] );
+     toT := map(T,S,(generators T)_re');
+     toS := map(S,T,(generators S)_re );
+     (apply(rawCharSeries raw toT m, rawmat -> map(T,rawmat)),toS))
 
 factor ZZ := options -> (n) -> Product apply(sort pairs factorInteger n, (p,i)-> Power{p,i} )
 factor QQ := options -> (r) -> factor numerator r / factor denominator r
