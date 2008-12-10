@@ -4,10 +4,10 @@
 -- PROGRAMMER : René Birkner 
 -- UPDATE HISTORY : April 2008
 ---------------------------------------------------------------------------
-newPackage("ConvexPolyhedron",
+newPackage("Polyhedra",
     Headline => "A package for computations with convex polyhedra",
-    Version => "0.5",
-    Date => "November 5, 2008",
+    Version => 0.5,
+    Date => "December 10, 2008",
     Authors => {
          {Name => "René Birkner", Email => "rbirkner@mi.fu-berlin.de"}},
     DebuggingMode => true,
@@ -16,12 +16,14 @@ newPackage("ConvexPolyhedron",
     )
 
 export {Polyhedron, Cone, Fan, convexHull, posHull, intersection, makeFan, addCone,
-        ambdim, conedim, genCones, halfspaces, hyperplanes, linspace, polydim, rays, vertices,
-        areCompatible, commonFace, contains, equals, isCompact, isFace, isPure,
-	faces, fVector, hilbertBasis, minkSummandCone, smallestFace, tailCone, vertexEdgeMatrix, vertexFacetMatrix,
-	affineHull, affineImage, bipyramid, coneToPolyhedron, directproduct,  dualCone, 
-	minkowskisum, normalfan, polar, pyramid, 
-	crosspolytope, cyclicPolytope, hypercube, newtonPolytope, statePolytope, stdSimplex}
+        symmDiff, union, 
+        ambdim, cones, genCones, halfspaces, hyperplanes, linspace, rays, vertices,
+        areCompatible, commonFace, contains, equals, isCompact, isComplete, isEmpty, isFace, isPointed, isProjective, isPure, isSmooth,
+	faces, fVector, hilbertBasis, inInterior, interiorPoint, interiorVector, latticePoints, minkSummandCone, skeleton, smallestFace, 
+	smoothSubfan, tailCone, vertexEdgeMatrix, vertexFacetMatrix,
+	affineHull, affineImage, bipyramid, coneToPolyhedron, directProduct,  dualCone, 
+	minkowskiSum, normalfan, polar, pyramid, 
+	crosspolytope, cyclicPolytope, hirzebruch, hypercube, newtonPolytope, statePolytope, stdSimplex}
 
 needsPackage "FourierMotzkin"
 
@@ -51,7 +53,12 @@ net Polyhedron := P -> ( info:= hashTable{"ambient dimension" => P#"ambientdimen
 							"number of facets" => P#"facetsnr", 
 							"number of vertices" => P#"verticesnr",
 							"number of rays" => P#"raysnr"};
-				net info)
+				horizontalJoin flatten ( 
+				"{", 
+	  			-- the first line prints the parts vertically, second: horizontally
+				stack (horizontalJoin \ sort apply(pairs info,(k,v) -> (net k, " => ", net v))),
+				-- between(", ", apply(pairs x,(k,v) -> net k | "=>" | net v)), 
+				"}" ))
 
 
 -- Modifying the standard output for a Cone to give an overview of its characteristica
@@ -60,7 +67,12 @@ net Cone := C -> ( info:= hashTable{"ambient dimension" => C#"ambientDimension",
 							"dimension of lineality space" => C#"linSpaceDim",
 							"number of facets" => C#"facetsnr", 
 							"number of rays" => C#"raysnr"};
-				net info)
+				horizontalJoin flatten ( 
+				"{", 
+	  			-- the first line prints the parts vertically, second: horizontally
+				stack (horizontalJoin \ sort apply(pairs info,(k,v) -> (net k, " => ", net v))),
+				-- between(", ", apply(pairs x,(k,v) -> net k | "=>" | net v)), 
+				"}" ))
 
 
 -- Modifying the standard output for a Cone to give an overview of its characteristica
@@ -68,7 +80,12 @@ net Fan := F -> ( info:= hashTable{"ambient dimension" => F#"ambientDimension",
 							"top dimension of the cones" => F#"topDimension",
 							"number of generating cones" => F#"noGenCones",
 							"number of rays" => F#"noRays"};
-				net info)
+				horizontalJoin flatten ( 
+				"{", 
+	  			-- the first line prints the parts vertically, second: horizontally
+				stack (horizontalJoin \ sort apply(pairs info,(k,v) -> (net k, " => ", net v))),
+				-- between(", ", apply(pairs x,(k,v) -> net k | "=>" | net v)), 
+				"}" ))
 
 
 
@@ -396,11 +413,52 @@ intersection(Matrix) := M -> (
 intersection(Cone,Cone) := (C1,C2) -> (
 	-- checking if C1 and C2 lie in the same space
 	if ((C1#"ambientDimension") =!= (C2#"ambientDimension")) then (
-		error ("Polyhedra must lie in the same ambientspace"));
+		error ("Cones must lie in the same ambientspace"));
 	M := (halfspaces C1)||(halfspaces C2);
 	N := (hyperplanes C1)||(hyperplanes C2);
 	intersection(M,N))
 
+
+intersection List := L -> (
+     -- Checking for input errors
+     C := L#0;
+     if (((class C) != Cone) and ((class C) != Polyhedron)) then (
+	  error ("The input must be cones and/or polyhedra"));
+     n := C#"ambientDimension";
+     local M,v,N,w;
+     if ((class C) == Cone) then (
+	  M = halfspaces C;
+	  v = map(QQ^(numgens target halfspaces C),QQ^1,0);
+	  N = hyperplanes C;
+	  w = map(QQ^(numgens target hyperplanes C),QQ^1,0))
+     else (
+	  M = (halfspaces C)#0;
+	  v = (halfspaces C)#1;
+	  N = (hyperplanes C)#0;
+	  w = (hyperplanes C)#1);
+     L = drop(L,1);
+     scan(L, C1 -> (
+	       -- Checking for further input errors
+	       if (((class C1) != Cone) and ((class C1) != Polyhedron)) then (
+		    error ("The input must be cones and/or polyhedra"));
+	       if ((ambdim C1) != n) then (
+		    error ("All Cones and Polyhedra must be in the same ambient space"));
+	       if ((class C1) == Cone) then (
+		    M = M || halfspaces C1;
+		    v = v || map(QQ^(numgens target halfspaces C1),QQ^1,0);
+		    N = N || hyperplanes C1;
+		    w = w || map(QQ^(numgens target hyperplanes C1),QQ^1,0))
+	       else (
+		    M = M || (halfspaces C1)#0;
+		    v = v || (halfspaces C1)#1;
+		    N = N || (hyperplanes C1)#0;
+		    w = w || (hyperplanes C1)#1)));
+     if ((v == 0*v) and (w == 0*w)) then (
+	  C = intersection(M,N))
+     else (
+	  C = intersection(M,v,N,w));
+     C)
+     
 
 
 makeFan = method(TypicalValue => Fan)
@@ -420,11 +478,21 @@ makeFan List := L -> (
      F#"noGenCones" = 1;
      F#"rays" = rayList;
      F#"noRays" = #rayList;
+     F#"isPure" = true;
+     F#"faces" = {};
+     F#"isComplete" = false;
+     if (ad == C#"ambientDimension") then (
+	       F#"faces" = toList symmDiff(F#"faces",faces(1,C));
+	       if (F#"faces" == {}) then (F#"isComplete" = true));
      scan(L, C -> (
 	       if (class(C) != Cone) then ( error ("input must be a list of cones"));
 	       F = addCone(C,F);
 	       if (F#?"comperror") then (error ("Cones are not compatible"))));
      F)
+
+
+makeFan Cone := C -> (
+     makeFan({C}));
 
 
 
@@ -468,19 +536,58 @@ addCone (Cone,Fan) := (C,F) -> (
 	  newGC = append(newGC,C);
 	  inserted = true);
      if inserted then (
+	  if (d == C#"ambientDimension") then (
+	       F#"faces" = toList symmDiff(F#"faces",faces(1,C));
+	       if (F#"faces" == {}) then (F#"isComplete" = true));
 	  rayList := F#"rays";
 	  rm := rays C;
 	  scan(numgens source rm, i -> (rayList = append(rayList,rm_{i})));
 	  F#"rays" = unique rayList;
 	  F#"noRays" = #(F#"rays"));
+     F#"isPure" = (dim(first(newGC)) == dim(last(newGC)));
      F#"generatingCones" = newGC;
-     F#"topDimension" = conedim(newGC#0);
+     F#"topDimension" = dim(newGC#0);
      F#"noGenCones" = #newGC;
      F)
-     
-    
-	       
 
+addCone (Cone,List) := (C,L) -> (
+     local F;
+     if (L == {}) then (
+	  F = makeFan(C))
+     else (
+	  F = makeFan(prepend(C,L)));
+     F)
+     
+
+addCone (List,Fan) := (L,F) -> (     
+    if (#L == 1) then (F = addCone(L#0,F))
+    else if (#L > 1) then ( C := L#0;
+	 F = addCone(drop(L,1),addCone(C,F)));
+    F)
+
+
+symmDiff = method(TypicalValue => List)
+symmDiff(List,List) := (S1,S2) -> (
+     L := {};
+     L2 := set {};
+     scan(S1, s -> (
+	       insert := true;
+	       scan(#S2, i -> ( if (s == S2#i) then (
+			      insert = false;
+			      L2 = L2 + set{i})));
+	       if insert then ( L = append(L,s))));
+     scan(#S2, i -> (if (not member(i,L2)) then ( L = append(L,S2#i))));
+     L)
+
+union = method(TypicalValue => List)
+union(List,List) := (L1,L2) -> (
+     L := {};
+     scan(L1, C -> (
+	       insert := true;
+	       i := 0;
+	       while (insert and (i < #L2)) do (if (C == L2#i) then (insert = false); i=i+1);
+	       if insert then L = append(L,C)));
+     L2|L)
 
 
 -- PURPOSE : Giving the defining affine hyperplanes
@@ -496,15 +603,46 @@ ambdim(Polyhedron) := P -> (
 ambdim(Cone) := C -> (
 	C#"ambientDimension")
 
+--   INPUT : 'F'  a Fan 
+--  OUTPUT : an integer, which is the dimension of the ambient space
+ambdim(Fan) := F -> (
+	F#"ambientDimension")
 
 
--- PURPOSE : Giving the dimension of the Polyhedron
+
+-- PURPOSE : Giving the k dimensionial Cones of the Fan
+--   INPUT : (k,F)  where 'k' is a positive integer and F is a Fan 
+--  OUTPUT : a List of Cones
+cones = method(TypicalValue => List)
+cones(ZZ,Fan) := (k,F) -> (
+	L := {};
+	i := 0;
+	stopper := false;
+	while (i < F#"noGenCones") and (not stopper) do (
+	     C := (F#"generatingCones")#i;
+	     if (dim(C) >= k) then (L=union(L,faces(dim(C)-k,C)))
+	     else stopper = true;
+	     i=i+1);
+	L)
+
+
+	     
 --   INPUT : 'P'  a Polyhedron 
---  OUTPUT : an integer, the dimension of the polyhedron
-conedim = method(TypicalValue => ZZ)
-conedim(Cone) := C -> (
+--  OUTPUT : an integer, which is the dimension of the polyhedron
+dim(Polyhedron) := P -> (
+	P#"polyhedronDimension")
+
+
+--   INPUT : 'C'  a Cone 
+--  OUTPUT : an integer, which is the dimension of the Cone
+dim(Cone) := C -> (
 	C#"coneDimension")
 
+
+--   INPUT : 'F'  a Fan 
+--  OUTPUT : an integer, which is the highest dimension of Cones in 'F'
+dim(Fan) := F -> (
+	F#"topDimension")
 
 
 -- PURPOSE : Giving the generating Cones of the Fan
@@ -560,15 +698,6 @@ linspace(Polyhedron) := P -> (
 --   INPUT : 'C'  a Cone
 linspace(Cone) := C -> (
 	C#"linealityspace")
-
-
-
--- PURPOSE : Giving the dimension of the Polyhedron
---   INPUT : 'P'  a Polyhedron 
---  OUTPUT : an integer, the dimension of the polyhedron
-polydim = method(TypicalValue => ZZ)
-polydim(Polyhedron) := P -> (
-	P#"polyhedronDimension")
 
 
 
@@ -703,7 +832,6 @@ contains(Polyhedron,Cone) := (P,C) -> (
 
 
 
-
 -- PURPOSE : Check if 'P' contains 'p'
 --   INPUT : '(P,p)'  a Polyhedron 'P' and a point 'p' given as a matrix
 contains(Polyhedron,Matrix) := (P,p) -> (
@@ -716,7 +844,6 @@ contains(Polyhedron,Matrix) := (P,p) -> (
 
 
 
-
 -- PURPOSE : Check if 'C' contains 'p'
 --   INPUT : '(C,p)'  a Cone 'C' and a point 'p' given as a matrix
 contains(Cone,Matrix) := (C,p) -> (
@@ -726,6 +853,33 @@ contains(Cone,Matrix) := (C,p) -> (
        if ((numgens source p) =!= 1) then (
 	   error ("The point must be given as a one row matrix"));
       contains(C,convexHull(p)))
+
+
+
+-- PURPOSE : Check if 'L' contains 'C'
+--   INPUT : '(L,C)'  a List 'L' and a Cone 'C'
+contains(List,Cone) := (L,C) -> (
+      i := 0;
+      stopper := false;
+      while (not stopper) and (i < #L) do (
+	   C' := L#i;
+	   -- checking for input errors
+	   if (class(C') != Cone) then (
+		error ("Input must be a list of Cones"));
+	   if (ambdim(C) == ambdim(C')) then (stopper = equals(C,C'));
+	   i = i+1);
+      stopper)
+ 
+ 
+ -- PURPOSE : Check if 'F' contains 'C'
+--   INPUT : '(F,C)'  a Fan 'F' and a Cone 'C'
+contains(Fan,Cone) := (F,C) -> (
+      -- Checking for input errors
+      if (ambdim(F) != ambdim(C)) then (
+	   error ("Fan and Cone must lie in the same ambient space"));
+      L := cones(dim(C),F);
+      contains(L,C))
+      
 
 
 
@@ -744,6 +898,17 @@ equals(Cone,Cone) := (C1,C2) -> (
      contains(C1,C2) and contains(C2,C1))      
 
 
+-- PURPOSE : Check if 'F1' equals 'F2'
+--   INPUT : '(F1,F2)'  two Fans
+equals(Fan,Fan) := (F1,F2) -> (
+     (symmDiff(F1#"generatingCones",F2#"generatingCones") == {}))      
+
+Polyhedron == Polyhedron := (P,Q) -> (equals(P,Q))
+
+Cone == Cone := (C1,C2) -> (equals(C1,C2))
+
+Fan == Fan := (F1,F2) -> (equals(F1,F2))
+
 
 -- PURPOSE : Tests if a Polyhedron is compact
 --   INPUT : 'P'  a Polyhedron
@@ -751,6 +916,20 @@ equals(Cone,Cone) := (C1,C2) -> (
 isCompact = method(TypicalValue => Boolean)
 isCompact(Polyhedron) := P -> (
      ((P#"linealityspace" == 0) and (P#"rays" == 0)))
+
+
+-- PURPOSE : Tests if a Fan is complete
+--   INPUT : 'F'  a Fan
+--  OUTPUT : 'true' or 'false'
+isComplete = method(TypicalValue => Boolean)
+isComplete(Fan) := F -> (
+     F#"isComplete")
+
+
+isEmpty = method(TypicalValue => Boolean)
+isEmpty Polyhedron := P -> (
+     P#"polyhedronDimension" == -1)
+
 
 
      
@@ -786,9 +965,143 @@ isFace(Cone,Cone) := (C1,C2) -> (
      test)
 
 
+-- PURPOSE : Tests if a Cone is pointed
+--   INPUT : 'C'  a Cone
+--  OUTPUT : 'true' or 'false'
+isPointed = method(TypicalValue => Boolean)
+isPointed Cone := C -> (
+     (rank(C#"linealityspace") == 0))
+
+
+--   INPUT : 'F',  a Fan
+--  OUTPUT : 'true' or 'false'
+isPointed Fan := F -> (
+     isPointed((F#"generatingCones")#0))
+
+
+
+-- PURPOSE : Tests if a Polyhedron is compact
+--   INPUT : 'P'  a Polyhedron
+--  OUTPUT : 'true' or 'false'
+isProjective = method(TypicalValue => Boolean)
+isProjective(Fan) := F -> (
+     test := false;
+     if (isComplete(F)) then (
+	  i := 0;
+	  L := hashTable apply(F#"generatingCones", l -> (i=i+1; i=>l));
+	  n := F#"ambientDimension";
+	  edges := cones(n-1,F);
+	  edgeTCTable := hashTable apply(edges, e -> ( select(1..(#L), j -> (contains(L#j,e))) => e));
+	  i = 0;
+	  edgeTable := apply(pairs edgeTCTable, e -> (i=i+1; 
+		    v := transpose hyperplanes (e#1);
+		    if (not (contains(dualCone(L#((e#0)#0)),v))) then (v = (-1)*v);
+		    (e#0, e#1, i, v)));
+	  edgeTCNoTable := hashTable apply(edgeTable, e -> (e#0 => (e#2,e#3)));
+	  edgeTable = hashTable apply(edgeTable, e -> (e#1 => (e#2,e#3)));
+	  corrList := {};
+	  scan(keys L, j -> (
+		    M := faces(2,L#j);
+		    scan(M, C -> (
+			      stopper := false;
+			      k := 0;
+			      while ((k < #corrList) and (not stopper)) do (
+				   if (C == corrList#k#0) then (
+					corrList = take(corrList,{0,k-1})|{{corrList#k#0,append(corrList#k#1,j)}}|take(corrList,{k+1,(#corrList)-1});
+					stopper = true); 
+				   k=k+1);
+			      if (not stopper) then corrList = append(corrList, {C,{j}})))));
+	  m = #(keys edgeTable);
+	  HP = map(QQ^0,QQ^m,0);
+	  NM = map(QQ^n,QQ^m,0);
+	  scan(#corrList, j -> (
+		    v := corrList#j#1;
+		    HPnew := NM;
+		    v = apply(v, e -> (L#e));
+		    C := v#0;
+		    v = drop(v,1);
+		    C1 := C;
+		    while (v != {}) do (
+			 C2 := v#0;
+			 v = drop(v,1);
+			 C' := intersection(C1,C2);
+			 if (dim(C') == n-1) then (
+			      scan(keys edgeTable, k -> ( if (k == C') then (a,b)=edgeTable#k));
+			      if (not contains(dualCone(C2),b)) then ( b = (-1)*b);
+			      HPnew = (HPnew_{0..a-2})|(b)|(HPnew_{a..m-1});
+			      C1 = C2)
+			 else (v = append(v,C2)));
+		    C'' := intersection(C,C1);
+		    scan(keys edgeTable, k -> ( if (k == C'') then (a,b)=edgeTable#k));
+		    if (not contains(dualCone(C),b)) then ( b = (-1)*b);
+		    HPnew = (HPnew_{0..a-2})|(b)|(HPnew_{a..m-1});
+		    HP = HP || HPnew));
+	  v := flatten entries interiorVector intersection(id_(QQ^m),HP);
+	  M := {};
+	  if (all(v, e -> (e > 0))) then (
+	       i = 1;
+	       p := map(QQ^n,QQ^1,0);
+	       M = {p};
+	       Lyes := {};
+	       Lno := {};
+	       vlist := keys edgeTCTable;
+	       edgerecursion := (i,p,vertexlist,Mvertices) -> (
+		    vLyes := {};
+		    vLno := {};
+		    scan(vertexlist, w -> (
+			      if (member(i,w)) then (vLyes = append(vLyes,w))
+			      else (vLno = append(vLno,w))));
+		    scan(vLyes, w -> (
+			      j := edgeTCNoTable#w;
+			      if (w#0 == i) then (
+				   (vLno,Mvertices) = edgerecursion(w#1,p+(j#1)*(v#((j#0)-1)),vLno,append(Mvertices,p+(j#1)*(v#((j#0)-1)))))
+			      else (
+				   (vLno,Mvertices) = edgerecursion(w#0,p-(j#1)*(v#((j#0)-1)),vLno,append(Mvertices,p-(j#1)*(v#((j#0)-1)))))));
+		    (vLno,Mvertices));
+	       M = unique ((edgerecursion(i,p,vlist,M))#1);
+	       verts := M#0;
+	       scan(1..(#M-1), j -> (verts = verts | M#j));
+	       test = convexHull verts));
+     test)
+
+
+
+-- PURPOSE : Checks if the Fan is of pure dimension
+--   INPUT : 'F'  a Fan
+--  OUTPUT : 'true' or 'false'
 isPure = method(TypicalValue => Boolean)
 isPure Fan := F -> (
-      conedim first (F#"generatingCones") == conedim last (F#"generatingCones"))
+      F#"isPure")
+
+
+-- PURPOSE : Checks if the input is smooth
+isSmooth = method(TypicalValue => Boolean)
+
+--   INPUT : 'C'  a Cone
+--  OUTPUT : 'true' or 'false'
+isSmooth Cone := C -> (
+      smooth := false;
+      R := rays C;
+      C = posHull R;
+      if (dim(C) == ambdim(C)) then (
+	   if ((numgens source R) == (numgens target R)) then ( smooth = (abs(det(R)) == 1)))
+      else (
+	   if ((numgens source R) == dim(C)) then (
+		A := smithNormalForm(R, ChangeMatrix=>{false,false});
+		smooth = (det(A^{0..(numgens source A)-1}) == 1)));
+      smooth);
+	   
+
+--   INPUT : 'F'  a Fan
+--  OUTPUT : 'true' or 'false'
+isSmooth Fan := F -> (
+     smooth := true;
+     i := 0;
+     while ((i < F#"noGenCones") and (smooth)) do (
+	  C := (F#"generatingCones")#i;
+	  smooth = isSmooth(C);
+	  i = i+1);
+     smooth)
 
 
      
@@ -999,6 +1312,40 @@ hilbertBasis Cone := (C) -> (
      apply(H,h -> preim(h,A)))
 
 
+inInterior = method(TypicalValue => Boolean)
+inInterior (Matrix,Polyhedron) := (p,P) -> (
+     smallestFace(p,P) == P)
+
+inInterior (Matrix,Cone) := (p,C) -> (
+     smallestFace(p,C) == C)
+
+
+interiorPoint = method(TypicalValue => Matrix)
+interiorPoint Polyhedron := P -> (
+     Vm := vertices P;
+     n := numgens source Vm;
+     ones := matrix toList(n:{1/n});
+     Vm * ones)
+
+
+interiorVector = method(TypicalValue => Matrix)
+interiorVector Cone := C -> (
+     Rm := rays C;
+     ones := matrix toList(numgens source Rm:{1_QQ});
+     Rm * ones)
+
+
+latticePoints = method(TypicalValue => List)
+latticePoints Polyhedron := P -> (
+     -- Checking for input errors
+     if (not isCompact(P)) then (
+	  error ("The polyhedron must be compact"));
+     V := (vertices(P)) || (matrix{toList((numgens source vertices(P)):1_QQ)});
+     L := hilbertBasis posHull V;
+     L = apply(select(L, l -> (last(flatten(entries(l))) == 1)), v -> (v^{0..(ambdim(P)-1)}));
+     L)
+
+
 -- PURPOSE : Computing the Cone of the Minkowskisummands of a Polyhedron 'P', the minimal 
 --           Minkowskisummands, and minimal decompositions
 --   INPUT : 'P',  a polyhedron
@@ -1134,7 +1481,18 @@ minkSummandCone Polyhedron := P -> (
       zerovec := matrix toList(numgens source M: {0_QQ});
       Q := intersection(negId,zerovec,M,onevec);
       (C,summList,vertices(Q)))
-     
+
+
+
+-- PURPOSE : Computing the 'n'-skeleton of a fan
+--   INPUT : (n,F),  where 'n' is a positive integer and
+--                   'F' is a Fan
+skeleton = method(TypicalValue => Fan)
+skeleton(ZZ,Fan) := (n,F) -> (
+     -- Checking for input errors
+     if (n < 0) or (dim(F) < n) then (
+	  error ("The integer must be between 0 and dim(F)"));
+     makeFan(cones(n,F)))
 
 
 -- PURPOSE : Computing the smallest face of 'P' containing 'p'
@@ -1200,6 +1558,26 @@ smallestFace(Matrix,Cone) := (p,C) -> (
 
 
 
+-- PURPOSE : Computing the subfan of all smooth cones of the Fan
+--   INPUT : 'F',  a Fan
+--  OUTPUT : The Fan of smooth cones
+smoothSubfan = method(TypicalValue => Fan)
+smoothSubfan Fan := F -> (
+     facerecursion := (L,F) -> (
+	  scan(L, C -> (
+		    if (isSmooth(C)) then (
+			 F = addCone(C,F))
+		    else (
+			 L' := faces(1,C);
+			 F = facerecursion(L',F))));
+	  F);
+     L := F#"generatingCones";
+     F = {};
+     facerecursion(L,F))			 
+
+
+
+
 -- PURPOSE : Computing the tail cone of a given Polyhedron
 --   INPUT : 'P',  a Polyhedron
 --  OUTPUT : The Cone generated by the rays and the lineality space of 'P'
@@ -1214,7 +1592,7 @@ tailCone Polyhedron := P -> (
 --  OUTPUT : 
 vertexEdgeMatrix = method(TypicalValue => Matrix)
 vertexEdgeMatrix Polyhedron := P -> (
-     eP := apply(faces(polydim(P)-1,P),vertices);
+     eP := apply(faces(dim(P)-1,P),vertices);
      vp := vertices(P);
      vList := hashTable apply(numgens source vp, i -> ( vp_{i} => i+1));
      d := #vList;
@@ -1353,11 +1731,11 @@ coneToPolyhedron(Cone) := C -> (
 
 
 -- PURPOSE : Computing the direct product of two polyhedra in the direct product of their ambient spaces
-directproduct = method(TypicalValue => Polyhedron)
+directProduct = method(TypicalValue => Polyhedron)
 
 --   INPUT : '(P,Q)',  two polyhedra
 --  OUTPUT : A polyhedron which is the direct product
-directproduct (Polyhedron,Polyhedron) := (P,Q) -> (
+directProduct (Polyhedron,Polyhedron) := (P,Q) -> (
      -- Extracting halfspaces and hyperplanes of P and Q
      (Mp,vp) := halfspaces(P);
      (Np,wp) := hyperplanes(P);
@@ -1378,7 +1756,7 @@ directproduct (Polyhedron,Polyhedron) := (P,Q) -> (
 
 --   INPUT : '(C1,C2)',  two cones
 --  OUTPUT : A cone which is the direct product
-directproduct (Cone,Cone) := (C1,C2) -> (
+directProduct (Cone,Cone) := (C1,C2) -> (
      -- Extracting halfspaces and hyperplanes of P and Q
      Mp := halfspaces(C1);
      Np := hyperplanes(C1);
@@ -1397,19 +1775,25 @@ directproduct (Cone,Cone) := (C1,C2) -> (
 
 --   INPUT : '(C,P)',  a cone and a polyhedron
 --  OUTPUT : A polyhedron which is the direct product
-directproduct (Cone,Polyhedron) := (C,P) -> (
+directProduct (Cone,Polyhedron) := (C,P) -> (
      -- Converting the Cone into a Polyhedron
      Q := coneToPolyhedron C;
-     directproduct(Q,P))
+     directProduct(Q,P))
 
 
 --   INPUT : '(P,C)',  a polyhedron and a cone
 --  OUTPUT : A polyhedron which is the direct product
-directproduct (Polyhedron,Cone) := (P,C) -> (
+directProduct (Polyhedron,Cone) := (P,C) -> (
      -- Converting the Cone into a Polyhedron
      Q := coneToPolyhedron C;
-     directproduct(P,Q))
+     directProduct(P,Q))
 
+
+
+Polyhedron * Polyhedron := (P1,P2) -> directProduct(P1,P2)
+Polyhedron * Cone := (P,C) -> directProduct(P,C)
+Cone * Polyhedron := (C,P) -> directProduct(C,P)
+Cone * Cone := (C1,C2) -> directProduct(C1,C2)
 
 
 -- PURPOSE : Computing the dual cone
@@ -1424,11 +1808,11 @@ dualCone Cone := C -> (
 
 
 -- PURPOSE : Computing the Minkowskisum of two polyhedra in the same ambientspace
-minkowskisum = method(TypicalValue => Polyhedron)
+minkowskiSum = method(TypicalValue => Polyhedron)
 
 --   INPUT : '(P1,P2)',  two polyhedra
 --  OUTPUT : The Minkowskisum as a polyhedron
-minkowskisum(Polyhedron,Polyhedron) := (P1,P2) -> (
+minkowskiSum(Polyhedron,Polyhedron) := (P1,P2) -> (
      -- Checking for input errors
      if (P1#"ambientdimension" =!= P2#"ambientdimension") then (
 	  error ("Polyhedra must lie in the same space"));
@@ -1446,7 +1830,7 @@ minkowskisum(Polyhedron,Polyhedron) := (P1,P2) -> (
 
 --   INPUT : '(C1,C2)',  two cones
 --  OUTPUT : The Minkowskisum as a cone
-minkowskisum(Cone,Cone) := (C1,C2) -> (
+minkowskiSum(Cone,Cone) := (C1,C2) -> (
      -- Checking for input errors
      if (C1#"ambientDimension" =!= C2#"ambientDimension") then (
 	  error ("Cones must lie in the same space"));
@@ -1458,7 +1842,7 @@ minkowskisum(Cone,Cone) := (C1,C2) -> (
 
 --   INPUT : '(C,P)',  a cone and a polyhedron
 --  OUTPUT : The Minkowskisum as a polyhedron
-minkowskisum(Cone,Polyhedron) := (C,P) -> (
+minkowskiSum(Cone,Polyhedron) := (C,P) -> (
      -- Checking for input errors
      if (C#"ambientDimension" =!= P#"ambientdimension") then (
 	  error ("Cone and polyhedron must lie in the same space"));
@@ -1470,7 +1854,7 @@ minkowskisum(Cone,Polyhedron) := (C,P) -> (
 
 --   INPUT : '(P,C)',  a polyhedron and a cone
 --  OUTPUT : The Minkowskisum as a polyhedron
-minkowskisum(Polyhedron,Cone) := (P,C) -> (
+minkowskiSum(Polyhedron,Cone) := (P,C) -> (
      -- Checking for input errors
      if (C#"ambientDimension" =!= P#"ambientdimension") then (
 	  error ("Cone and polyhedron must lie in the same space"));
@@ -1481,13 +1865,19 @@ minkowskisum(Polyhedron,Cone) := (P,C) -> (
 
 
 
+Polyhedron + Polyhedron := (P1,P2) -> minkowskiSum(P1,P2)
+Polyhedron + Cone := (P,C) -> minkowskiSum(P,C)
+Cone + Polyhedron := (C,P) -> minkowskiSum(P,C)
+Cone + Cone := (C1,C2) -> minkowskiSum(C1,C2)
+
+
 -- PURPOSE : Computing the inner normalfan of a polyhedron
 --   INPUT : 'P',  a Polyhedron
 --  OUTPUT : 'F',  a Fan, which is the outer normalfan of 'P'
 normalfan = method(TypicalValue => Fan)
 normalfan Polyhedron := P -> (
      vm := vertices P;
-     L={};
+     L := {};
      scan(numgens source vm, i -> (
 	       Q := affineImage(P,(-1)*(vm_{i}));
 	       L = append(L,dualCone(posHull(Q)))));
@@ -1573,6 +1963,17 @@ cyclicPolytope(ZZ,ZZ) := (d,n) -> (
 	  error ("There must be a positive number of points"));
      M := map(ZZ^d, ZZ^n, (i,j) -> j^(i+1));
      convexHull M)
+
+
+-- PURPOSE : Computing the cone of the Hirzebruch surface H_r
+--   INPUT : 'r'  a positive integer
+--  OUTPUT : The Hirzebruch surface H_r
+hirzebruch = method(TypicalValue => Fan)
+hirzebruch ZZ := (r) -> (
+     -- Checking for input errors
+     if (r < 0) then (
+	  error ("Input must be a positive integer"));
+     normalfan convexHull matrix {{0,1,0,1+r},{0,0,1,1}})
 
 
 
@@ -1771,5 +2172,3 @@ assert(image(substitute(TM, QQ)) == image(P2#"vertices"))
 assert(equals(hypercube 2, polar crosspolytope 2))
     
 ///
-
-end
