@@ -155,7 +155,7 @@ document {
 	  },
      PARA {
 	  "This method is not implemented yet."
-	  }
+	  },
      "We compute an example of the ", 
      TO2(hilbertPolynomial, "Hilbert polynomial"), " of a projective
      Hilbert variety. This is the same as the Hilbert polynomial of
