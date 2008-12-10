@@ -158,7 +158,7 @@ setupMethods((), {
 	  coefficients, monomials, size, sum, product, exponents, nullhomotopy, module, raw,
 	  hilbertFunction, content, leadTerm, leadCoefficient, leadMonomial, components,
 	  leadComponent, degreesRing, degrees, assign, numgens, conjugate,
-	  autoload, relations, cone, standardForm, inverse, numeric, round,
+	  autoload, relations, cone, standardForm, inverse, numeric, round, degree, multidegree,
 	  determinant, presentation, dismiss, degreesMonoid, precision, 
 	  norm, clean, numColumns, numRows, fraction, part, coefficient, preimage, minimalPrimes, decompose
 	  })
@@ -166,7 +166,6 @@ setupMethods((), {
 use = method()
 use Thing := identity
 
-degree = method ( )
 
 default = method()
 --default Type := (X) -> (

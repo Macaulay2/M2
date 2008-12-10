@@ -88,7 +88,7 @@ degreesMonoid ZZ := memoize(
 	  monoid [
 	       if n === 1 then T else T_0 .. T_(n-1),
 	       Degrees => {n : {}}, 
-	       MonomialOrder => {Weights => {n:-1}, GroupRevLex => n},
+	       MonomialOrder => {Weights => {n:-1}, GroupLex => n},
 	       Global => false,
 	       Inverses=>true]))
 
@@ -100,7 +100,7 @@ degreesMonoid List := memoize(
 	  monoid [
 	       if n === 1 then T else T_0 .. T_(n-1),
 	       Degrees => hft,
-	       MonomialOrder => {Weights => -hft, GroupRevLex => n},
+	       MonomialOrder => {Weights => -hft, GroupLex => n},
 	       Global => false,
 	       Inverses => true]))
 

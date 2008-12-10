@@ -261,6 +261,10 @@ Ring OrderedMonoid := PolynomialRing => (			  -- no memoize
 --		    ) rawPairs(raw R, raw f),
 --	       f}
 	  );
+     	  if M.Options.Inverses === true then (
+	       denominator RM := f -> RM_( - min \ transpose exponents f );
+	       numerator RM := f -> f * denominator f;
+	       );
 	  factor RM := opts -> f -> (
 	       c := 1;
 	       (facs,exps) := rawFactor raw f;	-- example value: ((11, x+1, x-1, 2x+3), (1, 1, 1, 1)); constant term is first, if there is one
