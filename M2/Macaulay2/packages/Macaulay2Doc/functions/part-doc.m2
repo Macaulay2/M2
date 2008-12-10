@@ -50,8 +50,9 @@ document {
 		    the elements of ", TT "s"}
 	       },
 	  EXAMPLE lines ///
-	       f = (1+x+y)^3
-	       part(1..3, f)
+	  R = QQ[x,y]
+	  f = (1+x+y)^3
+	  part(1..3, f)
 	  ///
 	  ),
      SeeAlso => {degree, 

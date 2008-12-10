@@ -27,6 +27,14 @@ document {
 	  "hf = hilbertSeries R",
 	  "denominator hf"
 	  },
+     PARA {
+	  "For a Laurent polynomial in a ring with inverses of variables, it gives the monomial needed to clear
+	  all the denominators in each of the terms."
+	  },
+     EXAMPLE lines ///
+     R = QQ[x,y,z,Inverses => true, MonomialOrder => Lex]
+     denominator (x*y^-1+y*z^-2+1+y^-1*z^-1)
+     ///,
      SeeAlso => {
 	  numerator,
 	  "fraction fields",
