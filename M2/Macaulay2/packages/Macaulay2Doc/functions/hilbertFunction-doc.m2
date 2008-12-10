@@ -58,7 +58,7 @@ document {
      ///,
      "Here is an example with a projective variety.",
      EXAMPLE lines ///
-     V = Proj(ZZ/101[x_0..x_2]);
+     V = Proj(ZZ/101[symbol x_0..symbol x_2]);
      hilbertFunction(3, V)
      basis(3, ring V)
      ///,
