@@ -333,13 +333,15 @@ degree Module := (
 	  h := 1 - T;
 	  local ev;
 	  M -> (
+	       hft := heft M;
+	       if hft === null then error "degree: no heft vector defined";
 	       hs := hilbertSeries M;
 	       hn := numerator hs;
 	       hd := value denominator hs;
 	       if hn == 0 then return 0;
 	       n := degreeLength M;
 	       if n === 0 then return lift(hn,ZZ);		    -- assert( hd == 1 );
-	       to1 := map(ZZ1,ring hn,toList(n:T));
+	       to1 := map(ZZ1,ring hn,apply(hft,i->T^i));	    -- this assigns a privileged role to the heft vector, which we need to investigate
 	       hn = to1 hn;
 	       if hn == 0 then return 0;
 	       hd = to1 hd;
