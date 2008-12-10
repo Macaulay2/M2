@@ -58,13 +58,15 @@ static void advertise () {
      if (__gmp_allocate_func == (void *(*) (size_t))getmem) {
 	  if (lastMessage == withGCindirect) return;
 	  lastMessage = withGCindirect;
-	  printf("--gmp allocating with gc (indirectly)\n");
+	  printf("--gmp allocating with gc (indirectly, via getmem())\n");
      }
+#if 0
      else if (__gmp_allocate_func == GC_malloc) {
 	  if (lastMessage == withGC) return;
 	  lastMessage = withGC;
 	  printf("--gmp allocating with gc\n");
      }
+#endif
      else {
 	  if (lastMessage == withFactory) return;
 	  lastMessage = withFactory;
@@ -585,20 +587,24 @@ M2_arrayint_OrNull rawIdealReorder(const Matrix *M)
 	    }
 	     const int N = P->n_vars();
 
-	     CFList I;
-	     int i;
-	     for (i = 0; i < M->n_rows(); i++) {
-		  for (int j=0; j < M->n_cols(); j++) {
-		    const RingElement *g = RingElement::make_raw(P, M->elem(i,j));
-		    I.append(convertToFactory(*g,inExtension));
-		  }
-	     }
-
 	     struct enter_factory foo(P);
 	     if (foo.mode == modeError) return NULL;
 	     if (foo.mode == modeGF) {
 	       ERROR("not implemented yet");
 	       return NULL;
+	     }
+
+	     CFList I;
+	     int i;
+	     for (i = 0; i < M->n_rows(); i++) {
+		  for (int j=0; j < M->n_cols(); j++) {
+		    const RingElement *g;
+		    {
+		      struct enter_M2 c;
+		      g = RingElement::make_raw(P, M->elem(i,j));
+		    }
+		    I.append(convertToFactory(*g,inExtension));
+		  }
 	     }
 
 	     List<int> t = neworderint(I);
@@ -637,13 +643,7 @@ Matrix_array_OrNull * rawCharSeries(const Matrix *M)
 		  return 0;
 	     }
 
-	     CFList I;
-	     for (int i = 0; i < M->n_rows(); i++) {
-		  for (int j=0; j < M->n_cols(); j++) {
-		    const RingElement *g = RingElement::make_raw(P, M->elem(i,j));
-		    I.append(convertToFactory(*g,inExtension));
-		  }
-	     }
+	     init_seeds();
 
 	     struct enter_factory foo(P);
 	     if (foo.mode == modeError) return NULL;
@@ -651,7 +651,18 @@ Matrix_array_OrNull * rawCharSeries(const Matrix *M)
 	       ERROR("not implemented yet");
 	       return NULL;
 	     }
-	     init_seeds();
+
+	     CFList I;
+	     for (int i = 0; i < M->n_rows(); i++) {
+		  for (int j=0; j < M->n_cols(); j++) {
+		    const RingElement *g;
+		    {
+		      struct enter_M2 c;
+		      g = RingElement::make_raw(P, M->elem(i,j));
+		    }
+		    I.append(convertToFactory(*g,inExtension));
+		  }
+	     }
 
 	     List<CFList> t = IrrCharSeries(I);
 
