@@ -78,7 +78,7 @@ public:
   MonomialOrNull  *lead_monom(int nvars) const;
   ////////////////////////////////////
 
-  int       is_homogeneous() const;
+  bool       is_homogeneous() const;
   RingElement *homogenize(int v, M2_arrayint wts) const;
   RingElement *homogenize(int v, int deg, M2_arrayint wts) const;
   void degree_weights(M2_arrayint wts, int &lo, int &hi) const;
