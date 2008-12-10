@@ -5,10 +5,12 @@ R = ZZ/2[y_{1,1}..y_{3,3},x_{1,1}..x_{3,3},Degrees => {9:{1,2},9:{1,1}}]/ideal (
      splice apply(e, i -> (x_i^2,y_i^2,x_i*y_i)),
      apply(e, i -> product(select(d, j->s#?(i+j)),j->y_(i+j))));
 time hs = hilbertSeries(R,Reduce=>true);
-a = timing (
+a = time (
      HS = numerator hs;
      use ring HS;
      hilbFunc = (k,u) -> coefficient(T_0^k*T_1^u,HS);
      hilbFunc(3,6))
-b = timing hilbertFunction({3,6},R)			   -- this was too slow
-time hilbertFunction({9,15},R)
+assert( a == 80 )
+b = time hilbertFunction({3,6},R)			   -- this was too slow
+assert( a == b )
+assert( 10 == hilbertFunction({9,15},R) )
