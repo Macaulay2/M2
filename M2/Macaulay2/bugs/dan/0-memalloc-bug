@@ -2,11 +2,7 @@
 Macaulay 2, version 1.1.1
 with packages: Classic, Core, Elimination, IntegralClosure, LLLBases, Parsing, PrimaryDecomposition, SchurRings, SimpleDoc, TangentCone
 
-i1 : R = QQ[x,y,z]
-
-o1 = R
-
-o1 : PolynomialRing
+i1 : R = QQ[x,y,z];
 
 i2 : irreducibleCharacteristicSeries ideal (x^2+y^2+z^2+3, x^3+y^3+2, x^4+1)
 
