@@ -160,7 +160,7 @@ hilbertSeries Module := opts -> (M) -> (
 	  if M.cache#?approxKey then (
 	       (ord2,ser) := M.cache#approxKey;
 	       if ord == ord2 then return ser
-	       else if ord < ord2 then return part(,ord,heft M,ser)))
+	       else if ord < ord2 then return part(,ord-1,heft M,ser)))
      else error "hilbertSeries: expected infinity or an integer as value of Order option";
      T := degreesRing A;
      if ord === infinity then (
@@ -179,12 +179,11 @@ hilbertSeries Module := opts -> (M) -> (
 		    wts := (options ring M).Heft;
 		    (lo,hi) := weightRange(wts,num);
 		    if ord < lo then 0_T else (
-			 denom = value denominator h;
-			 -- factory can't handle the negative exponents that occur in degrees rings:
-			 --  g := gcd(num,denom);
-			 --  (num,denom) = (num // g,denom // g);
-			 p := if denom === 1 then num else num * recipN(ord - lo + 1,wts,denom);
-			 part(,ord,wts,p))));
+		    	 num = part(,ord-1,wts,num);
+			 scan(denominator h, denom -> (
+				   rec := recipN(ord-lo,wts,denom#0);
+				   scan(denom#1, i -> num = part(,ord-1,num * rec))));
+			 part(,ord-1,wts,num))));
 	  M.cache#approxKey = (ord,s);
 	  s))
 

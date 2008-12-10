@@ -209,6 +209,13 @@ document {
 	  "R = ZZ/101[x,y, Degrees=>{{1,2},{2,3}}];",
 	  "hilbertSeries(R/x^3, Order =>5)"
 	  },     
+     "The heft vector provides a suitable monomial ordering and degrees in the ring of the Hilbert series.",
+     EXAMPLE lines ///
+     R = QQ[a..d,Degrees=>{{-2,-1},{-1,0},{0,1},{1,2}}]
+     hilbertSeries(R, Order =>3)
+     degrees ring oo
+     heft R
+     ///,
      }
 
 TEST ///
