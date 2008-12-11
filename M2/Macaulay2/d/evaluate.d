@@ -1214,15 +1214,15 @@ steppingFurther(c:Code):bool := steppingFlag && (
      p := codePosition(c);
      if p == dummyPosition || int(p.loadDepth) < errorDepth then return true;
      if stepCount > 0 then (
-	  if debugLevel == 1001 then (
-	       stderr << "--stepping: " << tostring(p) << " " << present(tostring(c)) << endl;
-	       );
 	  if lastCodePosition.filename != p.filename
 	  || lastCodePosition.line != p.line
 	  then (
      	       stepCount = stepCount - 1;
      	       lastCodePosition.filename = p.filename;
 	       lastCodePosition.line = p.line;
+	       if debugLevel == 1001 && stepCount > 0 then (
+		    stderr << "--evaluating: " << tostring(p) << " " << present(tostring(c)) << endl;
+		    );
 	       );
 	  stepCount > 0)
      else if microStepCount > 0 then (
@@ -1264,7 +1264,6 @@ handleError(c:Code,e:Expr):Expr := (
 			      if z.message == returnMessage then return z.value;
 			      if z.message == stepMessageWithArg || z.message == stepMessage then (
 				   setSteppingFlag();
---				   lastLocatedCode.filename = "";
      	       	    	      	   lastCodePosition.filename = "";
 				   stepCount = (
 					when z.value is step:ZZ do
