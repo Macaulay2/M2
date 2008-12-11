@@ -25,7 +25,7 @@ getSourceLines Sequence := x -> ((filename,start,startcol,stop,stopcol) -> if fi
      if #file < stop then error("line number ",toString stop, " not found in file ", filename);
      while stop >= start and file#(stop-1) === "" do stop = stop-1;
      stack prepend(
-	  concatenate("-- ",filename, ":", toString start, if stop > start then ("-" ,toString stop)),
+	  concatenate(filename, ":", toString start, if stop > start then ("-" ,toString stop),": --source lines:"),
 	  apply(start-1 .. stop-1, i -> file#i)
 	  )
      )) x
@@ -175,12 +175,13 @@ usage := () -> (
      << "     disassemble errorCode  -- display the microcode" << endl
      )
 firstTime := true
+addStartFunction(() -> firstTime = true)
 debuggerHook = () -> (
+     << code errorCode << endl;
      if firstTime then ( 
 	  usage(); 
 	  firstTime = false; 
 	  );
-     << endl << " -- current expression: " << code errorCode << endl
      )
 
 -- Local Variables:

@@ -1220,9 +1220,7 @@ steppingFurther(c:Code):bool := steppingFlag && (
      	       stepCount = stepCount - 1;
      	       lastCodePosition.filename = p.filename;
 	       lastCodePosition.line = p.line;
-	       if debugLevel == 1001 && stepCount > 0 then (
-		    stderr << "--evaluating: " << tostring(p) << " " << present(tostring(c)) << endl;
-		    );
+	       if debugLevel == 1001 && stepCount > 0 then printErrorMessage(p,"--evaluating: "+present(tostring(c)));
 	       );
 	  stepCount > 0)
      else if microStepCount > 0 then (
@@ -1256,9 +1254,9 @@ handleError(c:Code,e:Expr):Expr := (
 	       if !err.printed || backtrace && localFrame != oldReportFrame then (
 		    if debuggingMode && !stopIfError && (! (p.filename === "stdio")) then (
 			 if !err.printed then printError(err);
-			 printErrorMessage(err.position,"--entering debugger--");
+			 printErrorMessage(err.position,"--entering debugger");
 			 z := debuggerFun(localFrame,c);
-			 stderr << "--leaving debugger--" << endl;
+			 printErrorMessage(err.position,"--leaving debugger");
 			 when z is z:Error do (
 			      if z.message == breakMessage then return buildErrorPacket(unwindMessage);
 			      if z.message == returnMessage then return z.value;
