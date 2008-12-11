@@ -163,15 +163,16 @@ usage := () -> (
      << "     end                    -- abandon the code, enter debugger one level up" << endl
      << "     listLocalSymbols       -- display local symbols and their values" << endl
      << "     listUserSymbols        -- display user symbols and their values" << endl
-     << "     continue               -- execute the code and continue" << endl
-     << "     continue n             -- execute the code, stop after n microsteps" << endl
-     << "     step 0                 -- bypass the code and then stop again" << endl
-     << "     step                   -- execute the code and step one line" << endl
-     << "     step n                 -- execute the code, stepping through n lines" << endl
-     << "     return                 -- bypass code, return 'null', and continue" << endl
-     << "     return x               -- bypass code, return 'x', and continue" << endl
-     -- << "     disassemble errorCode  -- examine the code microsteps" << endl
-     << "     value errorCode        -- execute the code, returning its value" << endl
+     << "     return                 -- return null, continue" << endl
+     << "     return x               -- return x, continue" << endl
+     << "     continue               -- execute current expression, continue" << endl
+     << "     step 0                 -- bypass current expression, stopping immediately" << endl
+     << "     step                   -- execute current expression, step 1 line" << endl
+     << "     step n                 -- execute current expression, step n lines" << endl
+     << "     step -n                -- bypass current expression, step n lines" << endl
+     << "     continue n             -- execute current expression, step n microsteps" << endl
+     << "     value errorCode        -- execute current expression, display its value" << endl
+     << "     disassemble errorCode  -- display the microcode" << endl
      )
 firstTime := true
 debuggerHook = () -> (
