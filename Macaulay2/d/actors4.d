@@ -1252,90 +1252,24 @@ precision(e:Expr):Expr := (
      );
 setupfun("precision0",precision);
 
--- locate:
-
-extent := {filename:string, minline:int, mincol:int, maxline:int, maxcol:int};
-code := extent("",0,0,0,0);
-
-locate(e:Code):void;
-
-lookat(p:Position):void := (
-     if p == dummyPosition then return;
-     code.filename = p.filename;
-     if code.minline > int(p.line) then (
-	  code.minline = int(p.line);
-	  code.mincol = int(p.column);
-	  )
-     else if code.minline == int(p.line) && code.mincol > int(p.column) then (
-	  code.mincol = int(p.column);
-	  );
-     if code.maxline < int(p.line) then (
-	  code.maxline = int(p.line);
-	  code.maxcol = int(p.column);
-	  )
-     else if code.maxline == int(p.line) && code.maxcol < int(p.column) then (
-	  code.maxcol = int(p.column);
-	  );
-     );
-
-locate(x:Token):void := lookat(position(x));
-
-locate(e:Code):void := (
-     when e
-     is nullCode do nothing
-     is v:adjacentCode do (lookat(v.position); locate(v.lhs); locate(v.rhs);)
-     is v:arrayCode do foreach c in v.z do locate(c)
-     is v:Error do lookat(v.position)
-     is v:semiCode do foreach c in v.w do locate(c)
-     is v:binaryCode do (lookat(v.position); locate(v.lhs); locate(v.rhs);)
-     is v:forCode do ( lookat(v.position); locate(v.fromClause); locate(v.toClause); locate(v.whenClause); locate(v.listClause); locate(v.doClause); )
-     is v:functionCode do (locate(v.arrow);locate(v.body);)
-     is v:globalAssignmentCode do (lookat(v.position); locate(v.rhs);)
-     is v:globalMemoryReferenceCode do lookat(v.position)
-     is v:globalSymbolClosureCode do lookat(v.position)
-     is v:ifCode do ( lookat(v.position); locate(v.predicate); locate(v.thenClause); locate(v.elseClause); )
-     is v:integerCode do lookat(v.position)
-     is v:listCode do foreach c in v.y do locate(c)
-     is v:localAssignmentCode do (lookat(v.position); locate(v.rhs);)
-     is v:localMemoryReferenceCode do lookat(v.position)
-     is v:localSymbolClosureCode do lookat(v.position)
-     is v:multaryCode do ( lookat(v.position); foreach c in v.args do locate(c);)
-     is v:newCode do ( lookat(v.position); locate(v.newClause); )
-     is v:newFromCode do ( lookat(v.position); locate(v.newClause); locate(v.fromClause); )
-     is v:newLocalFrameCode do locate(v.body)
-     is v:newOfCode do ( lookat(v.position); locate(v.newClause); locate(v.ofClause); )
-     is v:newOfFromCode do ( lookat(v.position); locate(v.newClause); locate(v.ofClause); locate(v.fromClause); )
-     is v:parallelAssignmentCode do (lookat(v.position); locate(v.rhs);)
-     is v:realCode do lookat(v.position)
-     is v:sequenceCode do foreach c in v.x do locate(c)
-     is v:stringCode do nothing
-     is v:ternaryCode do ( lookat(v.position); locate(v.arg1); locate(v.arg2); locate(v.arg3);)
-     is v:tryCode do ( lookat(v.position); locate(v.code); locate(v.thenClause); locate(v.elseClause); )
-     is v:catchCode do ( lookat(v.position); locate(v.code); )
-     is v:unaryCode do (lookat(v.position); locate(v.rhs);)
-     is v:whileDoCode do ( lookat(v.position); locate(v.predicate); locate(v.doClause); )
-     is v:whileListCode do ( lookat(v.position); locate(v.predicate); locate(v.listClause); )
-     is v:whileListDoCode do ( lookat(v.position); locate(v.predicate); locate(v.listClause); locate(v.doClause); )
-     );
-
 locate0():void := (
-     code.filename = "{*unknown file name*}";
-     code.minline = 1000000;
-     code.maxline = 0;
+     locatedCode.filename = "{*unknown file name*}";
+     locatedCode.minline = 1000000;
+     locatedCode.maxline = 0;
      );
 
 locate1():Expr := (
-     if code.minline == 1000000 then (
-	  code.minline = 0;
-	  code.mincol = 0;
-	  code.maxcol = 0;
+     if locatedCode.minline == 1000000 then (
+	  locatedCode.minline = 0;
+	  locatedCode.mincol = 0;
+	  locatedCode.maxcol = 0;
 	  );
      Expr(Sequence(
-	       Expr(minimizeFilename(code.filename)),
-	       Expr(toInteger(code.minline)),
-	       Expr(toInteger(code.mincol)),
-	       Expr(toInteger(code.maxline)),
-	       Expr(toInteger(code.maxcol))
+	       Expr(minimizeFilename(locatedCode.filename)),
+	       Expr(toInteger(locatedCode.minline)),
+	       Expr(toInteger(locatedCode.mincol)),
+	       Expr(toInteger(locatedCode.maxline)),
+	       Expr(toInteger(locatedCode.maxcol))
 	       )));
 
 locate(e:Expr):Expr := (
