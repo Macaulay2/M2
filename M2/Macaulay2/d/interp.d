@@ -120,6 +120,12 @@ readeval4(file:TokenFile,printout:bool,dictionary:Dictionary,returnLastvalue:boo
 			 if lastvalue == endInput then return nullE;
 			 -- when f is globalAssignmentCode do lastvalue = nullE else nothing;
 			 when lastvalue is err:Error do (
+			      if err.message == returnMessage
+			      || err.message == continueMessage || err.message == continueMessageWithArg 
+			      || err.message == stepMessage || err.message == stepMessageWithArg 
+			      || err.message == breakMessage || err.message == throwMessage then (
+				   if stopIfBreakReturnContinue then return lastvalue;
+				   );
 			      if err.message == unwindMessage then (
 				   lastvalue = nullE;
 				   )
