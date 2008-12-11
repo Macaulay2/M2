@@ -180,7 +180,7 @@ debuggerHook = () -> (
 	  usage(); 
 	  firstTime = false; 
 	  );
-     << endl << " -- code just attempted: " << code errorCode << endl
+     << endl << " -- current expression: " << code errorCode << endl
      )
 
 -- Local Variables:

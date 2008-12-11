@@ -1160,74 +1160,6 @@ parallelAssignmentFun(x:parallelAssignmentCode):Expr := (
 
 -----------------------------------------------------------------------------
 
--- locate:
-
-export positionRange := {filename:string, minline:int, mincol:int, maxline:int, maxcol:int};
-export locatedCode := positionRange("",0,0,0,0);
-
-export locate(e:Code):void;
-
-lookat(p:Position):void := (
-     if p == dummyPosition then return;
-     locatedCode.filename = p.filename;
-     if locatedCode.minline > int(p.line) then (
-	  locatedCode.minline = int(p.line);
-	  locatedCode.mincol = int(p.column);
-	  )
-     else if locatedCode.minline == int(p.line) && locatedCode.mincol > int(p.column) then (
-	  locatedCode.mincol = int(p.column);
-	  );
-     if locatedCode.maxline < int(p.line) then (
-	  locatedCode.maxline = int(p.line);
-	  locatedCode.maxcol = int(p.column);
-	  )
-     else if locatedCode.maxline == int(p.line) && locatedCode.maxcol < int(p.column) then (
-	  locatedCode.maxcol = int(p.column);
-	  );
-     );
-
-export locate(x:Token):void := lookat(position(x));
-
-export locate(e:Code):void := (
-     when e
-     is nullCode do nothing
-     is v:adjacentCode do (lookat(v.position); locate(v.lhs); locate(v.rhs);)
-     is v:arrayCode do foreach c in v.z do locate(c)
-     is v:Error do lookat(v.position)
-     is v:semiCode do foreach c in v.w do locate(c)
-     is v:binaryCode do (lookat(v.position); locate(v.lhs); locate(v.rhs);)
-     is v:forCode do ( lookat(v.position); locate(v.fromClause); locate(v.toClause); locate(v.whenClause); locate(v.listClause); locate(v.doClause); )
-     is v:functionCode do (locate(v.arrow);locate(v.body);)
-     is v:globalAssignmentCode do (lookat(v.position); locate(v.rhs);)
-     is v:globalMemoryReferenceCode do lookat(v.position)
-     is v:globalSymbolClosureCode do lookat(v.position)
-     is v:ifCode do ( lookat(v.position); locate(v.predicate); locate(v.thenClause); locate(v.elseClause); )
-     is v:integerCode do lookat(v.position)
-     is v:listCode do foreach c in v.y do locate(c)
-     is v:localAssignmentCode do (lookat(v.position); locate(v.rhs);)
-     is v:localMemoryReferenceCode do lookat(v.position)
-     is v:localSymbolClosureCode do lookat(v.position)
-     is v:multaryCode do ( lookat(v.position); foreach c in v.args do locate(c);)
-     is v:newCode do ( lookat(v.position); locate(v.newClause); )
-     is v:newFromCode do ( lookat(v.position); locate(v.newClause); locate(v.fromClause); )
-     is v:newLocalFrameCode do locate(v.body)
-     is v:newOfCode do ( lookat(v.position); locate(v.newClause); locate(v.ofClause); )
-     is v:newOfFromCode do ( lookat(v.position); locate(v.newClause); locate(v.ofClause); locate(v.fromClause); )
-     is v:parallelAssignmentCode do (lookat(v.position); locate(v.rhs);)
-     is v:realCode do lookat(v.position)
-     is v:sequenceCode do foreach c in v.x do locate(c)
-     is v:stringCode do nothing
-     is v:ternaryCode do ( lookat(v.position); locate(v.arg1); locate(v.arg2); locate(v.arg3);)
-     is v:tryCode do ( lookat(v.position); locate(v.code); locate(v.thenClause); locate(v.elseClause); )
-     is v:catchCode do ( lookat(v.position); locate(v.code); )
-     is v:unaryCode do (lookat(v.position); locate(v.rhs);)
-     is v:whileDoCode do ( lookat(v.position); locate(v.predicate); locate(v.doClause); )
-     is v:whileListCode do ( lookat(v.position); locate(v.predicate); locate(v.listClause); )
-     is v:whileListDoCode do ( lookat(v.position); locate(v.predicate); locate(v.listClause); locate(v.doClause); )
-     );
-
------------------------------------------------------------------------------
-
 export backtrace := true;
 export steppingFlag := false;
 export determineExceptionFlag():void := (
@@ -1276,48 +1208,21 @@ export clearSteppingFlag():void := (
      );
 
 lastCode := dummyCode;
-lastLocatedCode := positionRange("",0,0,0,0);
-copyLast():void := (
-     lastLocatedCode.filename = locatedCode.filename;
-     lastLocatedCode.maxline = locatedCode.maxline;
-     lastLocatedCode.minline = locatedCode.minline;
-     lastLocatedCode.maxcol = locatedCode.maxcol;
-     lastLocatedCode.mincol = locatedCode.mincol;
-     );
-
-export locate0():void := (
-     locatedCode.filename = "{*unknown file name*}";
-     locatedCode.minline = 1000000;
-     locatedCode.maxline = 0;
-     );
-
-export locate1():void := (
-     if locatedCode.minline == 1000000 then (
-	  locatedCode.minline = 0;
-	  locatedCode.mincol = 0;
-	  locatedCode.maxcol = 0;
-	  ));
+lastCodePosition := Position("",ushort(0),ushort(0),uchar(0));
 
 steppingFurther(c:Code):bool := steppingFlag && (
      p := codePosition(c);
-     if int(p.loadDepth) < errorDepth then return true;	    -- we should speed it up, when the user is stepping through his code but not the system code
+     if p == dummyPosition || int(p.loadDepth) < errorDepth then return true;
      if stepCount > 0 then (
-	  locate0();
-     	  locate(c);
-	  locate1();
 	  if debugLevel == 1001 then (
-	       stderr << "--stepping: from " 
-	       << lastLocatedCode.filename << ":" << lastLocatedCode.minline << "-" << lastLocatedCode.maxline
-	       << " to "
-	       << locatedCode.filename << ":" << locatedCode.minline << "-" << locatedCode.maxline
-	       << endl
-	       << "--code: " << tostring(c) << endl;
+	       stderr << "--stepping: " << tostring(p) << " " << present(tostring(c)) << endl;
 	       );
-     	  if lastLocatedCode.filename != locatedCode.filename
-     	  || lastLocatedCode.maxline != locatedCode.maxline
-     	  || lastLocatedCode.minline != locatedCode.minline then (
+	  if lastCodePosition.filename != p.filename
+	  || lastCodePosition.line != p.line
+	  then (
      	       stepCount = stepCount - 1;
-	       copyLast();
+     	       lastCodePosition.filename = p.filename;
+	       lastCodePosition.line = p.line;
 	       );
 	  stepCount > 0)
      else if microStepCount > 0 then (
@@ -1359,7 +1264,8 @@ handleError(c:Code,e:Expr):Expr := (
 			      if z.message == returnMessage then return z.value;
 			      if z.message == stepMessageWithArg || z.message == stepMessage then (
 				   setSteppingFlag();
-				   lastLocatedCode.filename = "";
+--				   lastLocatedCode.filename = "";
+     	       	    	      	   lastCodePosition.filename = "";
 				   stepCount = (
 					when z.value is step:ZZ do
 					if isInt(step) then toInt(step) else 1
