@@ -156,7 +156,7 @@ methods Thing := F -> (
      -- sort -- too slow
      new VerticalList from sortByName keys found)
 
-usage := () -> (
+debuggerUsageMessage = () -> (
      << endl
      << " -- useful debugger commands:" << endl
      << "     break                  -- leave the debugger, returning to top level" << endl
@@ -172,16 +172,13 @@ usage := () -> (
      << "     return                 -- return null as value of current expression" << endl
      << "     return x               -- return x as value of current expression" << endl
      << "     value errorCode        -- execute current expression, obtain value" << endl
-     << "     disassemble errorCode  -- display the microcode" << endl
+     << "     disassemble errorCode  -- display the microcode" << endl;
      )
-firstTime := true
-addStartFunction(() -> firstTime = true)
-debuggerHook = () -> (
-     << code errorCode << endl;
-     if firstTime then ( 
-	  usage(); 
-	  firstTime = false; 
-	  );
+inDebugger = false
+addStartFunction(() -> inDebugger = false)
+debuggerHook = entering -> (
+     inDebugger = entering;
+     if entering then << code errorCode << endl;
      )
 
 -- Local Variables:
