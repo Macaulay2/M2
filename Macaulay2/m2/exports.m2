@@ -1182,7 +1182,7 @@ exportMutable {
 	symbol dictionaryPath,
 	symbol encapDirectory,
 	symbol engineDebugLevel,
-	symbol errorCode,
+	symbol current,
 	symbol errorDepth,
 	symbol fileExitHooks,
 	symbol gbTrace,
