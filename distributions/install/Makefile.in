@@ -3,18 +3,25 @@ include ../../include/config.Makefile
 ENCAP = @ENCAP@
 ifeq "${ENCAP}" "yes"
 SUFFIX=/@package@
-install :: ${prefix}$(SUFFIX)
-	@INSTALL@ -m 755 ../top/postinstall ../top/preremove ${prefix}$(SUFFIX)
-	@INSTALL@ -m 644 ../top/INSTALL     ../top/encapinfo ${prefix}$(SUFFIX)
+install :: $(DESTDIR)${prefix}$(SUFFIX)
+	@INSTALL@ -m 755 ../top/postinstall ../top/preremove $(DESTDIR)${prefix}$(SUFFIX)
+	@INSTALL@ -m 644 ../top/INSTALL     ../top/encapinfo $(DESTDIR)${prefix}$(SUFFIX)
 else
 SUFFIX=
 endif
 T=tar --create --mode=a+rX,og-ws --exclude='.nfs*'
-${prefix}$(SUFFIX) :; $(MKDIR_P) $@
-install :: ${prefix}$(SUFFIX)
-	$(T) -C @pre_prefix@      . | tar xfp - -C ${prefix}$(SUFFIX)
-	$(T) -C @pre_exec_prefix@ . | tar xfp - -C ${prefix}$(SUFFIX)
+$(DESTDIR)${prefix}$(SUFFIX) :; $(MKDIR_P) $@
+install :: $(DESTDIR)${prefix}$(SUFFIX)
+	$(T) -C @pre_prefix@      . | tar xfp - -C $(DESTDIR)${prefix}$(SUFFIX)
+	$(T) -C @pre_exec_prefix@ . | tar xfp - -C $(DESTDIR)${prefix}$(SUFFIX)
+	$(POST_INSTALL)
+	cd $(DESTDIR)@infodir@ && for i in *.info ; do (set -x ; install-info --info-dir=$(DESTDIR)@infodir@ $$i) ; done
+ifeq (@DUMPDATA@,yes)
+	$(DESTDIR)@bindir@/M2 --stop --dumpdata
+endif
+	$(NORMAL_INSTALL)
 Makefile : @srcdir@/Makefile.in; cd ../..; ./config.status distributions/install/Makefile
+uninstall :; @echo "uninstall: not implemented yet" >&2 ; false
 distclean : ; rm -rf Makefile
 # Local Variables:
 # compile-command: "make -C $M2BUILDDIR/distributions/install install "
