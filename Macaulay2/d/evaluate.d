@@ -1227,6 +1227,7 @@ steppingFurther(c:Code):bool := steppingFlag && (
      	  if lastCode != c then (
 	       microStepCount = microStepCount - 1;
 	       lastCode = c;
+	       if microStepCount > 0 then printErrorMessage(p,"--evaluating: "+present(tostring(c)));
 	       );
 	  microStepCount > 0)
      else false);
@@ -1241,7 +1242,9 @@ handleError(c:Code,e:Expr):Expr := (
 	  || err.message == unwindMessage
 	  || err.message == throwMessage
 	  then (
-	       if err.position == dummyPosition then err.position = codePosition(c); -- there will be no way to enter the debugger to figure out an unhandled break
+	       -- an error message that is really being used to transfer control must be passed up the line
+	       -- the position is plugged in just in case it's unhandled
+	       if err.position == dummyPosition then err.position = codePosition(c);
 	       return e;
 	       );
 	  p := codePosition(c);
@@ -1258,34 +1261,31 @@ handleError(c:Code,e:Expr):Expr := (
 			 z := debuggerFun(localFrame,c);
 			 printErrorMessage(err.position,"--leaving debugger");
 			 when z is z:Error do (
-			      if z.message == breakMessage then return buildErrorPacket(unwindMessage);
-			      if z.message == returnMessage then return z.value;
-			      if z.message == stepMessageWithArg || z.message == stepMessage then (
+			      if z.message == breakMessage then buildErrorPacket(unwindMessage)
+			      else if z.message == returnMessage then z.value
+			      else if z.message == stepMessageWithArg || z.message == stepMessage then (
 				   setSteppingFlag();
      	       	    	      	   lastCodePosition.filename = "";
 				   stepCount = (
 					when z.value is step:ZZ do
 					if isInt(step) then toInt(step) else 1
 					else 1);
-				   return
-				   if stepCount <= 0 then (
-					stepCount = - stepCount;
-					nullE)
-				   else (
+				   if stepCount < 0 then (
+					microStepCount = - stepCount;
+					stepCount = 0;
+					eval(c))
+				   else if stepCount > 0 then (
 					stepCount = stepCount + 1;
-					handleError(c,eval(c))));
-			      if z.message == continueMessageWithArg || z.message == continueMessage then (
-				   when z.value is step:ZZ do (
-					if isInt(step) then (
-					     setSteppingFlag();
-					     lastCode = c;
-					     microStepCount = toInt(step);
-					     ))
-				   else nothing;
-				   return eval(c)))
-			 else nothing)
-		    else (printError(err);)));
-	  e)
+					eval(c))
+				   else nullE)
+			      else if z.message == continueMessage then eval(c)
+			      else e)
+			 else e)
+		    else (
+			 printError(err);
+			 e))
+	       else e)
+	  else e)
      else e);
 
 export eval(c:Code):Expr := (

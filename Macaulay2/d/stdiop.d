@@ -111,7 +111,9 @@ printMessage(position:Position,message:string):void := (
      	  stderr << position << '[' << recursionDepth << "]: " << message << endl;
 	  );
      );
-export printErrorMessage(position:Position,message:string):void := printMessage(position,if message.0 == '-' then message else "error: "+message);
+export printErrorMessage(position:Position,message:string):void := (
+     printMessage(position, if message.0 == '-' then message else "error: "+message)
+     );
 export printWarningMessage(position:Position,message:string):void := printMessage(position,"warning: "+message);
 export printErrorMessage(filename:string,line:ushort,column:ushort,message:string):void := (
      printErrorMessage(Position(filename,line,column,uchar(0)), message);

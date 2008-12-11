@@ -504,14 +504,14 @@ export parseWORD    := newParseinfo();			    -- parsing functions filled in late
 
 -- debugging
 
-export returnMessage := "return command";
-export continueMessage := "continue command";
-export continueMessageWithArg := "continue command with argument";
-export stepMessage := "step command";
-export stepMessageWithArg := "step command with argument";
-export breakMessage := "break command";
-export throwMessage := "throw command";
-export unwindMessage := "unwind command";
+export returnMessage := "unhandled return command";
+export continueMessage := "unhandled continue command";
+export continueMessageWithArg := "unhandled continue command, with argument";
+export stepMessage := "unhandled step command";
+export stepMessageWithArg := "unhandled step command, with argument";
+export breakMessage := "unhandled break command";
+export throwMessage := "unhandled throw command";
+export unwindMessage := "unhandled unwind command";
 export interruptMessage := "interrupted";
 export alarmMessage := "alarm occurred";
 export steppingMessage := "--stepping limit reached";
