@@ -161,12 +161,11 @@ debuggerUsageMessage = ///useful debugger commands:
     end                 -- abandon the code, enter debugger one level up
     listLocalSymbols    -- display local symbols and their values
     listUserSymbols     -- display user symbols and their values
-    step 0              -- bypass current expression, then stop
+    step 0              -- bypass current expression
     step                -- execute current expression, step 1 line
     step n              -- execute current expression, step n lines
-    step -n             -- bypass current expression, step n lines
+    step -n             -- execute current expression, trace n microsteps
     continue            -- execute current expression, continue
-    continue n          -- execute current expression, step n microsteps
     return              -- return null as value of current expression
     return x            -- return x as value of current expression
     code current        -- source code of current expression
