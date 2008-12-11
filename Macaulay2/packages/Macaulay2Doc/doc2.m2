@@ -852,17 +852,23 @@ document {
      things which can be converted to strings and concatenated) is printed.
      Execution of the code is interrupted, and control is returned
      to top level. Here is an explicit example showing how this command is used:",
-	PRE///exampleCode = p -> (
-		if not isPrime p	
-	    	then error "expected a prime integer";
-	    	if p == 2
-	    	then error "expected an odd prime";
-	    	lift((p+1)/2, ZZ)
-	    	);///,
-	"Eventually we will have a means of ensuring that the line 
-     number printed out with the error message will have more 
-     significance, but currently it is the location in the code of 
-     the error expression itself."
+     PRE///exampleCode = p -> (
+     if not isPrime p	
+     then error "expected a prime integer";
+     if p == 2
+     then error "expected an odd prime";
+     lift((p+1)/2, ZZ)
+     );///,
+     PARA {	   
+	  "Eventually we will have a means of ensuring that the line 
+	  number printed out with the error message will have more 
+	  significance, but currently it is the location in the code of 
+	  the error expression itself."
+	  },
+     PARA {
+	  "If the error message begins with a hyphen, then the word \"error\" will not be
+	  inserted into the error message."
+	  }
      }
 
 document {

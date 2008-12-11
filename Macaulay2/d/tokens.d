@@ -514,7 +514,7 @@ export throwMessage := "throw command";
 export unwindMessage := "unwind command";
 export interruptMessage := "interrupted";
 export alarmMessage := "alarm occurred";
-export steppingMessage := "stepping";
+export steppingMessage := "--stepping limit reached";
 
 export buildErrorPacket(message:string):Expr := Expr(Error(dummyPosition,message,nullE,false,dummyFrame));
 
