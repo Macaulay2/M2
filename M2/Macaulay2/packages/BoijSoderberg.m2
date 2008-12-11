@@ -235,7 +235,7 @@ pureBetti List := (Degs)-> (
 --Input: Degs must be a strictly increasing list of positive integers
 --Output: List of ranks of the minimal integral betti sequence that satisfy the
 --"Peskine-Szpiro" equations
-     if not isStrictlyIncreasing Degs then error "--pureBetti was given degrees that were not strictly increasing";
+     if not isStrictlyIncreasing Degs then error "pureBetti was given degrees that were not strictly increasing";
      c:= # Degs;
      p:=1;
      for i from 1 to c-1 do (for j from 0 to i-1 do p=p*(Degs_i-Degs_j));
@@ -266,7 +266,7 @@ pureBetti List := (Degs) -> (
      c := # Degs;
      p := 1;
      for i from 1 to c-1 do (
-	  if Degs#i <= Degs#(i-1) then error "--pureBetti: expected an increasing list of integers";
+	  if Degs#i <= Degs#(i-1) then error "pureBetti: expected an increasing list of integers";
 	  for j from 0 to i-1 do p=p*(Degs_i-Degs_j)
 	  );
      D := for i from 0 to c-1 list (-1)^i * product(i, j->Degs_j-Degs_i) * product(i+1..c-1, j->Degs_j-Degs_i);

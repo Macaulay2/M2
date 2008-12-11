@@ -341,7 +341,7 @@ action := hashTable {
      "--no-setup" => arg -> if phase == 1 then noloaddata = nosetup = true,
      "--notify" => arg -> if phase <= 2 then notify = true,
      "--no-tty" => arg -> arg,			    -- handled in d/stdio.d
-     "--script" => arg -> error "--script option should be first argument, of two",
+     "--script" => arg -> error "script option should be first argument, of two",
      "--silent" => arg -> nobanner = true,
      "--stop" => arg -> (if phase == 1 then stopIfError = true; debuggingMode = false;), -- see also M2lib.c and tokens.d
      "--restarted" => arg -> restarted = true,
