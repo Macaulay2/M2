@@ -165,6 +165,9 @@ usage := () -> (
      << "     listUserSymbols        -- display user symbols and their values" << endl
      << "     continue               -- execute the code and continue" << endl
      << "     continue n             -- execute the code, stop after n microsteps" << endl
+     << "     step 0                 -- bypass the code and then stop again" << endl
+     << "     step                   -- execute the code and step one line" << endl
+     << "     step n                 -- execute the code, stepping through n lines" << endl
      << "     return                 -- bypass code, return 'null', and continue" << endl
      << "     return x               -- bypass code, return 'x', and continue" << endl
      -- << "     disassemble errorCode  -- examine the code microsteps" << endl

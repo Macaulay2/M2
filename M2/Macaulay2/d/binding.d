@@ -275,6 +275,7 @@ bump();
      export returnS := special("return",nunaryop,precSpace,wide);
      export breakS := special("break",nunaryop,precSpace,wide);
      export continueS := special("continue",nunaryop,precSpace,wide);
+     export stepS := special("step",nunaryop,precSpace,wide);
      -- export codePositionS := special("codePosition",unaryop,precSpace,narrow);
      special("new",unarynew,precSpace,narrow);
      special("for",unaryfor,precSpace,narrow);

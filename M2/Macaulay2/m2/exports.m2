@@ -1062,6 +1062,7 @@ export {
 	symbol status,
 	symbol stderr,
 	symbol stdio,
+	symbol step,
 	symbol sublists,
 	symbol submatrix,
 	symbol submatrix',

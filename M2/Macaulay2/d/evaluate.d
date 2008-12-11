@@ -1160,6 +1160,74 @@ parallelAssignmentFun(x:parallelAssignmentCode):Expr := (
 
 -----------------------------------------------------------------------------
 
+-- locate:
+
+export positionRange := {filename:string, minline:int, mincol:int, maxline:int, maxcol:int};
+export locatedCode := positionRange("",0,0,0,0);
+
+export locate(e:Code):void;
+
+lookat(p:Position):void := (
+     if p == dummyPosition then return;
+     locatedCode.filename = p.filename;
+     if locatedCode.minline > int(p.line) then (
+	  locatedCode.minline = int(p.line);
+	  locatedCode.mincol = int(p.column);
+	  )
+     else if locatedCode.minline == int(p.line) && locatedCode.mincol > int(p.column) then (
+	  locatedCode.mincol = int(p.column);
+	  );
+     if locatedCode.maxline < int(p.line) then (
+	  locatedCode.maxline = int(p.line);
+	  locatedCode.maxcol = int(p.column);
+	  )
+     else if locatedCode.maxline == int(p.line) && locatedCode.maxcol < int(p.column) then (
+	  locatedCode.maxcol = int(p.column);
+	  );
+     );
+
+export locate(x:Token):void := lookat(position(x));
+
+export locate(e:Code):void := (
+     when e
+     is nullCode do nothing
+     is v:adjacentCode do (lookat(v.position); locate(v.lhs); locate(v.rhs);)
+     is v:arrayCode do foreach c in v.z do locate(c)
+     is v:Error do lookat(v.position)
+     is v:semiCode do foreach c in v.w do locate(c)
+     is v:binaryCode do (lookat(v.position); locate(v.lhs); locate(v.rhs);)
+     is v:forCode do ( lookat(v.position); locate(v.fromClause); locate(v.toClause); locate(v.whenClause); locate(v.listClause); locate(v.doClause); )
+     is v:functionCode do (locate(v.arrow);locate(v.body);)
+     is v:globalAssignmentCode do (lookat(v.position); locate(v.rhs);)
+     is v:globalMemoryReferenceCode do lookat(v.position)
+     is v:globalSymbolClosureCode do lookat(v.position)
+     is v:ifCode do ( lookat(v.position); locate(v.predicate); locate(v.thenClause); locate(v.elseClause); )
+     is v:integerCode do lookat(v.position)
+     is v:listCode do foreach c in v.y do locate(c)
+     is v:localAssignmentCode do (lookat(v.position); locate(v.rhs);)
+     is v:localMemoryReferenceCode do lookat(v.position)
+     is v:localSymbolClosureCode do lookat(v.position)
+     is v:multaryCode do ( lookat(v.position); foreach c in v.args do locate(c);)
+     is v:newCode do ( lookat(v.position); locate(v.newClause); )
+     is v:newFromCode do ( lookat(v.position); locate(v.newClause); locate(v.fromClause); )
+     is v:newLocalFrameCode do locate(v.body)
+     is v:newOfCode do ( lookat(v.position); locate(v.newClause); locate(v.ofClause); )
+     is v:newOfFromCode do ( lookat(v.position); locate(v.newClause); locate(v.ofClause); locate(v.fromClause); )
+     is v:parallelAssignmentCode do (lookat(v.position); locate(v.rhs);)
+     is v:realCode do lookat(v.position)
+     is v:sequenceCode do foreach c in v.x do locate(c)
+     is v:stringCode do nothing
+     is v:ternaryCode do ( lookat(v.position); locate(v.arg1); locate(v.arg2); locate(v.arg3);)
+     is v:tryCode do ( lookat(v.position); locate(v.code); locate(v.thenClause); locate(v.elseClause); )
+     is v:catchCode do ( lookat(v.position); locate(v.code); )
+     is v:unaryCode do (lookat(v.position); locate(v.rhs);)
+     is v:whileDoCode do ( lookat(v.position); locate(v.predicate); locate(v.doClause); )
+     is v:whileListCode do ( lookat(v.position); locate(v.predicate); locate(v.listClause); )
+     is v:whileListDoCode do ( lookat(v.position); locate(v.predicate); locate(v.listClause); locate(v.doClause); )
+     );
+
+-----------------------------------------------------------------------------
+
 export backtrace := true;
 export steppingFlag := false;
 export determineExceptionFlag():void := (
@@ -1204,14 +1272,34 @@ export clearSteppingFlag():void := (
      );
 
 lastCode := dummyCode;
+lastLocatedCode := positionRange("",0,0,0,0);
+copyLast():void := (
+     lastLocatedCode.filename = locatedCode.filename;
+     lastLocatedCode.maxline = locatedCode.maxline;
+     lastLocatedCode.minline = locatedCode.minline;
+     lastLocatedCode.maxcol = locatedCode.maxcol;
+     lastLocatedCode.mincol = locatedCode.mincol;
+     );
 stepCount := 0;
+microStepCount := 0;
 steppingFurther(c:Code):bool := (
      if !steppingFlag then return false;
-     if stepCount == 0 then return false;
-     if lastCode != c then (
-     	  stepCount = stepCount - 1;
-	  lastCode = c);
-     stepCount > 0);
+     if stepCount > 0 then (
+     	  locate(c);
+     	  if lastLocatedCode.filename != locatedCode.filename
+     	  || lastLocatedCode.maxline != locatedCode.maxline
+     	  || lastLocatedCode.minline != locatedCode.minline then (
+     	       stepCount = stepCount - 1;
+	       copyLast();
+	       );
+	  stepCount > 0)
+     else if microStepCount > 0 then (
+     	  if lastCode != c then (
+	       microStepCount = microStepCount - 1;
+	       lastCode = c;
+	       );
+	  microStepCount > 0)
+     else false);
 
 export eval(c:Code):Expr := (
      e := (
@@ -1367,8 +1455,12 @@ export eval(c:Code):Expr := (
 	       ));
      when e is err:Error do (
 	  if SuppressErrors then return e;
-	  if err.message == returnMessage || err.message == continueMessage || err.message == continueMessageWithArg || 
-	  err.message == breakMessage || err.message == unwindMessage || err.message == throwMessage
+	  if err.message == returnMessage
+	  || err.message == continueMessage || err.message == continueMessageWithArg
+	  || err.message == stepMessage || err.message == stepMessageWithArg
+	  || err.message == breakMessage
+	  || err.message == unwindMessage
+	  || err.message == throwMessage
 	  then (
 	       if err.position == dummyPosition then err.position = codePosition(c); -- there will be no way to enter the debugger to figure out an unhandled break
 	       return e;
@@ -1389,13 +1481,30 @@ export eval(c:Code):Expr := (
 			 when z is z:Error do (
 			      if z.message == breakMessage then return buildErrorPacket(unwindMessage);
 			      if z.message == returnMessage then return z.value;
+			      if z.message == stepMessageWithArg || z.message == stepMessage then (
+				   steppingFlag = true;
+				   exceptionFlag = true;
+				   lastLocatedCode.filename = "";
+				   stepCount = (
+				   	when z.value is step:ZZ do
+				   	if isInt(step) then toInt(step) else 1
+				   	else 1);
+				   if stepCount <= 0 then (
+					stepCount = - stepCount + 1;
+					return nullE;
+					)
+				   else (
+					stepCount = stepCount + 1;
+					return eval(c);
+					)
+				   );
 			      if z.message == continueMessageWithArg || z.message == continueMessage then (
 				   when z.value is step:ZZ do (
 					if isInt(step) then (
 					     steppingFlag = true;
 					     lastCode = c;
 					     exceptionFlag = true;
-					     stepCount = toInt(step);
+					     microStepCount = toInt(step);
 					     ))
 				   else nothing;
 				   return eval(c)))
@@ -1414,6 +1523,9 @@ export evalexcept(c:Code):Expr := (
 	       SuppressErrors = false;
 	       clearInterruptFlag();
 	       printErrorMessageE(c,interruptMessage))
+	  else if steppingFlag then (
+	       e					    -- is this right?
+	       )
 	  else (
 	       SuppressErrors = false;
 	       clearAllFlags();
@@ -1463,6 +1575,14 @@ continueFun(a:Code):Expr := (
 	       if a == dummyCode then continueMessage else continueMessageWithArg,
 	       e,false,dummyFrame)));
 setupop(continueS,continueFun);
+
+stepFun(a:Code):Expr := (
+     e := if a == dummyCode then nullE else eval(a);
+     when e is Error do e else (
+	  Expr(Error(dummyPosition,
+	       if a == dummyCode then stepMessage else stepMessageWithArg,
+	       e,false,dummyFrame))));
+setupop(stepS,stepFun);
 
 breakFun(a:Code):Expr := (
      e := if a == dummyCode then dummyExpr else eval(a);
