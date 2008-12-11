@@ -130,7 +130,7 @@ readeval4(file:TokenFile,printout:bool,dictionary:Dictionary,returnLastvalue:boo
 				   lastvalue = nullE;
 				   )
 			      else (
-				   if !err.printed then printErrorMessage(err.position,err.message);
+				   if !err.printed then printErrorMessage(err);
 			      	   if stopIfError || returnIfError then return lastvalue;
 				   );
 			      )
