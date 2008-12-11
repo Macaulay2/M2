@@ -391,10 +391,14 @@ debugger(f:Frame,c:Code):Expr := (
        setGlobalVariable(errorCodeS,Expr(CodeClosure(f,c)));
 	 incrementInterpreterDepth();
 	   if debuggerHook != nullE then (
-		r := applyES(debuggerHook,emptySequence);
+		r := applyEE(debuggerHook,True);
 		when r is Error do return r else nothing;
 		);
 	   ret := loadprintstdin(newStaticLocalDictionaryClosure(localDictionaryClosure(f)),true,false);
+	   if debuggerHook != nullE then (
+		r := applyEE(debuggerHook,False);
+		when r is Error do return r else nothing;
+		);
 	 decrementInterpreterDepth();
        setGlobalVariable(errorCodeS,oldDebuggerCode);
      setDebuggingMode(true);
