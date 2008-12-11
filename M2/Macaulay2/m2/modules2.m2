@@ -356,6 +356,8 @@ multidegree Module := M -> (
      A := degreesRing M;
      onem := map(A,A,apply(generators A, t -> 1-t));
      part(codim M,onem numerator poincare M))
+multidegree Ring := R -> multidegree R^1
+multidegree Ideal := I -> multidegree cokernel generators I
 
 length Module := M -> (
      if not isHomogeneous M then notImplemented();
