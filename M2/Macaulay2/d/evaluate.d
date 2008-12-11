@@ -1490,7 +1490,7 @@ export eval(c:Code):Expr := (
 				   	if isInt(step) then toInt(step) else 1
 				   	else 1);
 				   if stepCount <= 0 then (
-					stepCount = - stepCount + 1;
+					stepCount = - stepCount;
 					return nullE;
 					)
 				   else (
