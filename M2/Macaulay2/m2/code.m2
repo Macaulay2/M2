@@ -156,11 +156,9 @@ methods Thing := F -> (
      -- sort -- too slow
      new VerticalList from sortByName keys found)
 
-debuggerUsageMessage = ///useful debugger commands:
+debuggerUsageMessage = ///--debugger commands that leave the debugger:
     break               -- leave the debugger, returning to top level
     end                 -- abandon the code, enter debugger one level up
-    listLocalSymbols    -- display local symbols and their values
-    listUserSymbols     -- display user symbols and their values
     step 0              -- bypass current expression
     step                -- execute current expression, step 1 line
     step n              -- execute current expression, step n lines
@@ -168,6 +166,9 @@ debuggerUsageMessage = ///useful debugger commands:
     continue            -- execute current expression, continue
     return              -- return null as value of current expression
     return x            -- return x as value of current expression
+-- other debugger commands:
+    listLocalSymbols    -- display local symbols and their values
+    listUserSymbols     -- display user symbols and their values
     code current        -- source code of current expression
     value current       -- execute current expression, obtain value
     disassemble current -- microcode of current expression///

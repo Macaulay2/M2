@@ -281,6 +281,7 @@ export Error := {
      printed:bool,
      frame:Frame
      };
+export printErrorMessage(err:Error):void := printErrorMessage(err.position,err.message);
 export Database := {
      filename:string,
      hash:int,
