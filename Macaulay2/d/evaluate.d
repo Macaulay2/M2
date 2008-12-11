@@ -1266,7 +1266,11 @@ export clearAlarmedFlag():void := (
      alarmedFlag = false;
      determineExceptionFlag();
      );
+stepCount := 0;
+microStepCount := 0;
 export clearSteppingFlag():void := (
+     stepCount = 0;
+     microStepCount = 0;
      steppingFlag = false;
      determineExceptionFlag();
      );
@@ -1280,12 +1284,34 @@ copyLast():void := (
      lastLocatedCode.maxcol = locatedCode.maxcol;
      lastLocatedCode.mincol = locatedCode.mincol;
      );
-stepCount := 0;
-microStepCount := 0;
+
+export locate0():void := (
+     locatedCode.filename = "{*unknown file name*}";
+     locatedCode.minline = 1000000;
+     locatedCode.maxline = 0;
+     );
+
+export locate1():void := (
+     if locatedCode.minline == 1000000 then (
+	  locatedCode.minline = 0;
+	  locatedCode.mincol = 0;
+	  locatedCode.maxcol = 0;
+	  ));
+
 steppingFurther(c:Code):bool := (
-     if !steppingFlag then return false;
+     steppingFlag && 
      if stepCount > 0 then (
+	  locate0();
      	  locate(c);
+	  locate1();
+	  if debugLevel == 1001 then (
+	       stderr << "--stepping: from " 
+	       << lastLocatedCode.filename << ":" << lastLocatedCode.minline << "-" << lastLocatedCode.maxline
+	       << " to "
+	       << locatedCode.filename << ":" << locatedCode.minline << "-" << locatedCode.maxline
+	       << endl
+	       << "--code: " << tostring(c) << endl;
+	       );
      	  if lastLocatedCode.filename != locatedCode.filename
      	  || lastLocatedCode.maxline != locatedCode.maxline
      	  || lastLocatedCode.minline != locatedCode.minline then (
@@ -1482,8 +1508,7 @@ export eval(c:Code):Expr := (
 			      if z.message == breakMessage then return buildErrorPacket(unwindMessage);
 			      if z.message == returnMessage then return z.value;
 			      if z.message == stepMessageWithArg || z.message == stepMessage then (
-				   steppingFlag = true;
-				   exceptionFlag = true;
+				   setSteppingFlag();
 				   lastLocatedCode.filename = "";
 				   stepCount = (
 				   	when z.value is step:ZZ do
@@ -1501,9 +1526,8 @@ export eval(c:Code):Expr := (
 			      if z.message == continueMessageWithArg || z.message == continueMessage then (
 				   when z.value is step:ZZ do (
 					if isInt(step) then (
-					     steppingFlag = true;
+					     setSteppingFlag();
 					     lastCode = c;
-					     exceptionFlag = true;
 					     microStepCount = toInt(step);
 					     ))
 				   else nothing;
@@ -1524,16 +1548,14 @@ export evalexcept(c:Code):Expr := (
 	       clearInterruptFlag();
 	       printErrorMessageE(c,interruptMessage))
 	  else if steppingFlag then (
-	       e					    -- is this right?
-	       )
+	       clearSteppingFlag();
+	       printErrorMessageE(c,"done stepping, returning to top level");
+	       e)
 	  else (
 	       SuppressErrors = false;
 	       clearAllFlags();
-	       printErrorMessageE(c,"unknown exception")
-	       )
-	  )
-     else e
-     );
+	       printErrorMessageE(c,"unknown exception")))
+     else e);
 
 export eval(f:Frame,c:Code):Expr := (
      saveLocalFrame := localFrame;
