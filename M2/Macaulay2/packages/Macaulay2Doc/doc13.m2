@@ -590,7 +590,7 @@ document { Key => Pseudocode,
      the interanl function ", TO "disassemble", " can display their contents, the function ", TO "pseudocode", " can convert
      a function closure to pseudocode, the function ", TO "value", " can evaluate it (bindings of values to local symbols
      are enclosed with the pseudocode), the operator ", TO "===", " can be used for equality testing, 
-     and when the debugger is activated after an error, the variable ", TO "errorCode", " contains the pseudcode step whose execution produced the error.",
+     and when the debugger is activated after an error, the variable ", TO "current", " contains the pseudcode step whose execution produced the error.",
      }
 document { Key => pseudocode,
      Headline => "produce the pseudocode for a function",
@@ -614,9 +614,9 @@ document { Key => disassemble,
           disassemble oo
      ///
      }
-document { Key => "errorCode",
+document { Key => "current",
      Headline => "the pseudocode that produced an error",
-     Usage => "errorCode",
+     Usage => "current",
      Outputs => { Pseudocode => { "the pseudocode that produced an error, or ", TO "null", ", if none" } },
      "Use ", TO "value", " to evaluate the code again, for debugging purposes."
      }
@@ -625,7 +625,7 @@ document { Key => (value, Pseudocode),
      Usage => "value p",
      Inputs => { "p" },
      Outputs => {{ "the value returned by evaluation of ", TT "p" }},
-     SeeAlso => { "errorCode", pseudocode }
+     SeeAlso => { "current", pseudocode }
      }
 document { Key => SheafOfRings,
      SeeAlso => { Variety, OO },

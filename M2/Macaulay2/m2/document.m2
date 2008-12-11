@@ -1270,13 +1270,7 @@ help Array := key -> (		    -- optional argument
 
 help Sequence := key -> (						    -- method key
      checkLoadDocumentation();
-     if key === () then return (
-	  if inDebugger 
-	  then (
-	       debuggerUsageMessage();
-	       )
-	  else help "initial help"
-	  );
+     if key === () then return if inDebugger then debuggerUsageMessage else help "initial help" ;
      if null === lookup key then error("expected ", toString key, " to be a method");
      currentHelpTag = makeDocumentTag key;
      ret := fixup DIV { topheader key, synopsis key, makeDocBody key, caveat key, sourcecode key, seealso key, theMenu key };

@@ -381,14 +381,14 @@ commandInterpreter(e:Expr):Expr := (
      ret);
 setupfun("commandInterpreter",commandInterpreter);
 
-errorCodeS := setupvar("errorCode",nullE);
+currentS := setupvar("current",nullE);
 debugger(f:Frame,c:Code):Expr := (
      -- stdIO << "-- recursionDepth = " << recursionDepth << endl;
      oldrecursionDepth := recursionDepth;
      recursionDepth = 0;
      setDebuggingMode(false);
-       oldDebuggerCode := getGlobalVariable(errorCodeS);
-       setGlobalVariable(errorCodeS,Expr(CodeClosure(f,c)));
+       oldDebuggerCode := getGlobalVariable(currentS);
+       setGlobalVariable(currentS,Expr(CodeClosure(f,c)));
 	 incrementInterpreterDepth();
 	   if debuggerHook != nullE then (
 		r := applyEE(debuggerHook,True);
@@ -400,7 +400,7 @@ debugger(f:Frame,c:Code):Expr := (
 		when r is Error do return r else nothing;
 		);
 	 decrementInterpreterDepth();
-       setGlobalVariable(errorCodeS,oldDebuggerCode);
+       setGlobalVariable(currentS,oldDebuggerCode);
      setDebuggingMode(true);
      recursionDepth = oldrecursionDepth;
      ret);
