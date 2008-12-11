@@ -1298,8 +1298,9 @@ export locate1():void := (
 	  locatedCode.maxcol = 0;
 	  ));
 
-steppingFurther(c:Code):bool := (
-     steppingFlag && 
+steppingFurther(c:Code):bool := steppingFlag && (
+     p := codePosition(c);
+     if int(p.loadDepth) < errorDepth then return true;	    -- we should speed it up, when the user is stepping through his code but not the system code
      if stepCount > 0 then (
 	  locate0();
      	  locate(c);
@@ -1326,6 +1327,63 @@ steppingFurther(c:Code):bool := (
 	       );
 	  microStepCount > 0)
      else false);
+
+handleError(c:Code,e:Expr):Expr := (
+     when e is err:Error do (
+	  if SuppressErrors then return e;
+	  if err.message == returnMessage
+	  || err.message == continueMessage || err.message == continueMessageWithArg
+	  || err.message == stepMessage || err.message == stepMessageWithArg
+	  || err.message == breakMessage
+	  || err.message == unwindMessage
+	  || err.message == throwMessage
+	  then (
+	       if err.position == dummyPosition then err.position = codePosition(c); -- there will be no way to enter the debugger to figure out an unhandled break
+	       return e;
+	       );
+	  p := codePosition(c);
+	  clearAllFlags();
+	  clearAlarm();
+	  if int(p.loadDepth) >= errorDepth && !err.position === p then (
+	       oldReportFrame := err.frame;
+	       err.frame = noRecycle(localFrame);
+	       err.position = p;
+	       if !err.printed || backtrace && localFrame != oldReportFrame then (
+		    if debuggingMode && !stopIfError && (! (p.filename === "stdio")) then (
+			 if !err.printed then printError(err);
+			 printErrorMessage(err.position,"--entering debugger--");
+			 z := debuggerFun(localFrame,c);
+			 stderr << "--leaving debugger--" << endl;
+			 when z is z:Error do (
+			      if z.message == breakMessage then return buildErrorPacket(unwindMessage);
+			      if z.message == returnMessage then return z.value;
+			      if z.message == stepMessageWithArg || z.message == stepMessage then (
+				   setSteppingFlag();
+				   lastLocatedCode.filename = "";
+				   stepCount = (
+					when z.value is step:ZZ do
+					if isInt(step) then toInt(step) else 1
+					else 1);
+				   return
+				   if stepCount <= 0 then (
+					stepCount = - stepCount;
+					nullE)
+				   else (
+					stepCount = stepCount + 1;
+					handleError(c,eval(c))));
+			      if z.message == continueMessageWithArg || z.message == continueMessage then (
+				   when z.value is step:ZZ do (
+					if isInt(step) then (
+					     setSteppingFlag();
+					     lastCode = c;
+					     microStepCount = toInt(step);
+					     ))
+				   else nothing;
+				   return eval(c)))
+			 else nothing)
+		    else (printError(err);)));
+	  e)
+     else e);
 
 export eval(c:Code):Expr := (
      e := (
@@ -1479,63 +1537,7 @@ export eval(c:Code):Expr := (
 	       r := evalSequence(v.z);
 	       if evalSequenceHadError then evalSequenceErrorMessage else Array(r)
 	       ));
-     when e is err:Error do (
-	  if SuppressErrors then return e;
-	  if err.message == returnMessage
-	  || err.message == continueMessage || err.message == continueMessageWithArg
-	  || err.message == stepMessage || err.message == stepMessageWithArg
-	  || err.message == breakMessage
-	  || err.message == unwindMessage
-	  || err.message == throwMessage
-	  then (
-	       if err.position == dummyPosition then err.position = codePosition(c); -- there will be no way to enter the debugger to figure out an unhandled break
-	       return e;
-	       );
-	  p := codePosition(c);
-     	  clearAllFlags();
-     	  clearAlarm();
-     	  if int(p.loadDepth) >= errorDepth && !err.position === p then (
-	       oldReportFrame := err.frame;
-	       err.frame = noRecycle(localFrame);
-	       err.position = p;
-	       if !err.printed || backtrace && localFrame != oldReportFrame then (
-		    if debuggingMode && !stopIfError && (! (p.filename === "stdio")) then (
-			 if !err.printed then printError(err);
-			 printErrorMessage(err.position,"--entering debugger--");
-			 z := debuggerFun(localFrame,c);
-			 stderr << "--leaving debugger--" << endl;
-			 when z is z:Error do (
-			      if z.message == breakMessage then return buildErrorPacket(unwindMessage);
-			      if z.message == returnMessage then return z.value;
-			      if z.message == stepMessageWithArg || z.message == stepMessage then (
-				   setSteppingFlag();
-				   lastLocatedCode.filename = "";
-				   stepCount = (
-				   	when z.value is step:ZZ do
-				   	if isInt(step) then toInt(step) else 1
-				   	else 1);
-				   if stepCount <= 0 then (
-					stepCount = - stepCount;
-					return nullE;
-					)
-				   else (
-					stepCount = stepCount + 1;
-					return eval(c);
-					)
-				   );
-			      if z.message == continueMessageWithArg || z.message == continueMessage then (
-				   when z.value is step:ZZ do (
-					if isInt(step) then (
-					     setSteppingFlag();
-					     lastCode = c;
-					     microStepCount = toInt(step);
-					     ))
-				   else nothing;
-				   return eval(c)))
-			 else nothing)
-		    else (printError(err);)));
-	  e)
-     else e);
+     when e is Error do handleError(c,e) else e);
 
 export evalexcept(c:Code):Expr := (
      e := eval(c);
