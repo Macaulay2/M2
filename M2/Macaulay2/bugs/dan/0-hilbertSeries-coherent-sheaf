@@ -1,0 +1,46 @@
+Cc: Michael Stillman <mike@math.cornell.edu>
+From: David Eisenbud <de@msri.org>
+To: dan@math.uiuc.edu
+In-Reply-To: <200812102118.mBALI3do020929@u123.math.uiuc.edu>
+Subject: Re: hilbertFunction
+Date: Wed, 10 Dec 2008 13:45:30 -0800
+
+Dear Dan and Mike,
+
+Certainly I would not have expected that for a coherent sheaf!
+
+There I would expect the Hilbert function of the global section module.
+If the given underlying module M has depth >= 2, this is the same,
+but not otherwise. The right function H(m) can be computed
+for n > n_0, say, tas the Hilbert function of
+
+Hom(mm^d, M),
+
+where mm is the maximal homogeneous ideal and d is computed from
+the Castelnuovo-Mumford regularity of M (as a module over a polynomial
+ring.)
+
+This is all a little complicated. Worth including "automatically"?
+
+Regards,
+
+David
+
+
+--
+David Eisenbud
+Professor of Mathematics,
+University of California, Berkeley
+www.msri.org/~de
+
+
+On Dec 10, 2008, at 1:18 PM, Daniel R. Grayson wrote:
+
+>
+> For a projective variety hilbertFunction() simply applies itself to  
+> the
+> underlying graded ring.  Similarly for coherent sheaves.  This might  
+> be
+> unexpected behavior.  Should we fix it?
+
+

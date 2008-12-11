@@ -1,0 +1,7 @@
+there are some things from standards.info that we should start adhering to:
+
+      7.2.4 `DESTDIR': support for staged installs	 * done
+      7.2.6 Standard Targets for Users
+      7.2.7 Install Command Categories		  * done
+
+Also, perhaps we should download libraries only if explicitly requested.
