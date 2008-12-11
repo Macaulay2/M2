@@ -2,18 +2,18 @@
 include ../../include/config.Makefile
 ENCAP = @ENCAP@
 ifeq "${ENCAP}" "yes"
-SUFFIX=/@package@
-install :: $(DESTDIR)${prefix}$(SUFFIX)
-	@INSTALL@ -m 755 ../top/postinstall ../top/preremove $(DESTDIR)${prefix}$(SUFFIX)
-	@INSTALL@ -m 644 ../top/INSTALL     ../top/encapinfo $(DESTDIR)${prefix}$(SUFFIX)
+encapfix=/@package@
+install :: $(DESTDIR)${prefix}${encapfix}
+	@INSTALL@ -m 755 ../top/postinstall ../top/preremove $(DESTDIR)${prefix}${encapfix}
+	@INSTALL@ -m 644 ../top/INSTALL     ../top/encapinfo $(DESTDIR)${prefix}${encapfix}
 else
-SUFFIX=
+encapfix=
 endif
 T=tar --create --mode=a+rX,og-ws --exclude='.nfs*'
-$(DESTDIR)${prefix}$(SUFFIX) :; $(MKDIR_P) $@
-install :: $(DESTDIR)${prefix}$(SUFFIX)
-	$(T) -C @pre_prefix@      . | tar xfp - -C $(DESTDIR)${prefix}$(SUFFIX)
-	$(T) -C @pre_exec_prefix@ . | tar xfp - -C $(DESTDIR)${prefix}$(SUFFIX)
+$(DESTDIR)${prefix}${encapfix} :; $(MKDIR_P) $@
+install :: $(DESTDIR)${prefix}${encapfix}
+	$(T) -C @pre_prefix@      . | tar xfp - -C $(DESTDIR)${prefix}${encapfix}
+	$(T) -C @pre_exec_prefix@ . | tar xfp - -C $(DESTDIR)${prefix}${encapfix}
 	$(POST_INSTALL)
 	cd $(DESTDIR)@infodir@ && for i in *.info ; do (set -x ; install-info --info-dir=$(DESTDIR)@infodir@ $$i) ; done
 ifeq (@DUMPDATA@,yes)
