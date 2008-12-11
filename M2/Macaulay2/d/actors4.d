@@ -1252,18 +1252,8 @@ precision(e:Expr):Expr := (
      );
 setupfun("precision0",precision);
 
-locate0():void := (
-     locatedCode.filename = "{*unknown file name*}";
-     locatedCode.minline = 1000000;
-     locatedCode.maxline = 0;
-     );
-
-locate1():Expr := (
-     if locatedCode.minline == 1000000 then (
-	  locatedCode.minline = 0;
-	  locatedCode.mincol = 0;
-	  locatedCode.maxcol = 0;
-	  );
+locate2():Expr := (
+     locate1();
      Expr(Sequence(
 	       Expr(minimizeFilename(locatedCode.filename)),
 	       Expr(toInteger(locatedCode.minline)),
@@ -1288,13 +1278,13 @@ locate(e:Expr):Expr := (
      is c:CodeClosure do (
 	  locate0();
 	  locate(c.code);
-	  locate1())
+	  locate2())
      is s:SpecialExpr do locate(s.e)
      is f:FunctionClosure do (
 	  locate0();
 	  locate(f.model.arrow);
 	  locate(f.model.body);
-	  locate1())
+	  locate2())
      else WrongArg("a function, symbol, sequence, or null"));
 setupfun("locate",locate);
 

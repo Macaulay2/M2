@@ -163,15 +163,15 @@ usage := () -> (
      << "     end                    -- abandon the code, enter debugger one level up" << endl
      << "     listLocalSymbols       -- display local symbols and their values" << endl
      << "     listUserSymbols        -- display user symbols and their values" << endl
-     << "     return                 -- return null, continue" << endl
-     << "     return x               -- return x, continue" << endl
-     << "     continue               -- execute current expression, continue" << endl
      << "     step 0                 -- bypass current expression, stopping immediately" << endl
      << "     step                   -- execute current expression, step 1 line" << endl
      << "     step n                 -- execute current expression, step n lines" << endl
      << "     step -n                -- bypass current expression, step n lines" << endl
+     << "     continue               -- execute current expression, continue" << endl
      << "     continue n             -- execute current expression, step n microsteps" << endl
-     << "     value errorCode        -- execute current expression, display its value" << endl
+     << "     return                 -- return null as value of current expression" << endl
+     << "     return x               -- return x as value of current expression" << endl
+     << "     value errorCode        -- execute current expression, obtain value" << endl
      << "     disassemble errorCode  -- display the microcode" << endl
      )
 firstTime := true
