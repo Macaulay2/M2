@@ -139,7 +139,7 @@ pathdo := (loadfun,path,filename,reportfun) -> (
 		    break true)))
      then error splice("file not found",
 	  if singledir =!= null then (" in \"",singledir,"\"") else " on path",
-	  ": \"", toString filename, "\"");
+	  ": \"", filename, "\"");
      ret)
 
 tryload := (filename,loadfun,notify) -> pathdo(loadfun,path,filename, fullfilename -> markLoaded(fullfilename,filename,notify))
