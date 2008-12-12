@@ -82,7 +82,7 @@
 (define-key M2-comint-mode-map [ (control C) r ] 'scroll-right)
 (define-key M2-comint-mode-map [ f8 ] 'switch-to-completions)
 (define-key M2-comint-mode-map [ (control C) c ] 'switch-to-completions)
-(define-key M2-comint-mode-map [ return ] 'M2-send-or-jump)
+(define-key M2-comint-mode-map [ return ] 'M2-send-or-jump) 
 ;; (define-key M2-comint-mode-map [ (control C) d ] 'M2-find-documentation)
 
 (mapcar
