@@ -178,7 +178,7 @@ document {
      PARA {
 	  "This method is not implemented yet."
 	  }
-{*
+{* temporarily disabled
      EXAMPLE {
 	  "V = Proj(QQ[x,y])",
 	  "s = hilbertSeries V",

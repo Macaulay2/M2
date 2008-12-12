@@ -96,7 +96,7 @@ document {
      PARA {
 	  "This method is not implemented yet."
 	  }
-{*
+{* temporarily disabled
      EXAMPLE {
 	  "R = ZZ/101[x_0..x_2];",
 	  "V = Proj R;",
@@ -131,10 +131,10 @@ document {
      "These Hilbert polynomials can serve as ", 
      TO2 (hilbertFunction,"Hilbert functions"), 
      " too since the values of the Hilbert polynomial eventually are
-     the same as the Hilbert function. ",
+     the same as the Hilbert function.",
      EXAMPLE {
-	  "apply(5, k-> h(k))",
-	  "apply(5, k-> hilbertFunction(k,I))"
+	  "apply(10, k-> h(k))",
+	  "apply(10, k-> hilbertFunction(k,I))"
 	  },
      Caveat => {
 	  "As is often the case, calling this function on an ideal ", 
@@ -160,7 +160,7 @@ document {
      TO2(hilbertPolynomial, "Hilbert polynomial"), " of a projective
      Hilbert variety. This is the same as the Hilbert polynomial of
      its coordinate ring.",
-{*
+{* temporarily disabled
      EXAMPLE {
 	  "R = QQ[a..d];",
 	  "I = monomialCurveIdeal(R, {1,3,4});",
@@ -174,7 +174,7 @@ document {
      TO2 (hilbertFunction,"Hilbert functions"), 
      " too since the values of the Hilbert polynomial eventually are
      the same as the Hilbert function. ",
-{*
+{* temporarily disabled
      EXAMPLE {
 	  "apply(5, k-> h(k))",
 	  "apply(5, k-> hilbertFunction(k,V))"
