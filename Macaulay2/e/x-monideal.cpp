@@ -406,10 +406,13 @@ const MonomialIdeal *FrobbyAlexanderDual(const MonomialIdeal *I, const M2_arrayi
 
 const MonomialIdealOrNull *rawAlexanderDual(const MonomialIdeal *I, const M2_arrayint top)
 {
+  return I->alexander_dual(top);
+#if 0
 #if HAVE_FROBBY
   return FrobbyAlexanderDual(I,top);
 #else
   return I->alexander_dual(top);
+#endif
 #endif
 }
 

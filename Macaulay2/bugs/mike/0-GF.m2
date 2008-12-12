@@ -32,7 +32,7 @@ R = GF(729, Variable=>a)
 S = GF(27, Variable=>b)
 F = map(R,S,{a^28})
 isWellDefined F
-F a
+F a  -- gives error
 a^3
 
 R = ZZ/3[a]/(a^6+2*a^4+a^2+2*a+2)
