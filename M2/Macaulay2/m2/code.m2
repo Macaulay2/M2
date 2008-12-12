@@ -176,8 +176,13 @@ debuggerUsageMessage = ///--debugger commands that leave the debugger:
 inDebugger = false
 addStartFunction(() -> inDebugger = false)
 debuggerHook = entering -> (
-     inDebugger = entering;
-     if entering then << code current << endl;
+     if entering then (
+	  pushvar(symbol inDebugger, true);
+	  << code current << endl;
+	  )
+     else (
+	  popvar symbol inDebugger;
+	  )
      )
 
 -- Local Variables:
