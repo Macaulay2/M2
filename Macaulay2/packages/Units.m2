@@ -17,6 +17,10 @@ Number Number :=
 MKS Constant := CGS Constant := Constant MKS := Constant CGS := Constant Number := Number Constant := 
 MKS MKS := CGS CGS := MKS Number := Number MKS := CGS Number := Number CGS := times
 
+square = x -> x^2
+cubic = x -> x^3
+reciprocal = x -> x^-1
+
 MKS/MKS := CGS/CGS := (x,y) -> (
      if x == 0 then return x;
      if y == 0 then error "division by 0";
@@ -41,6 +45,7 @@ use CGS ; toCGS = map(CGS,MKS,{m,kg}|drop(gens CGS,2))
 use MKS ; toMKS = map(MKS,CGS,{cm,g}|drop(gens MKS,2))
 
 units = x -> (
+     kelvin = K;
      one = 1_(ring gm);
      mole = mol;
      amp = ampere = A;
@@ -50,7 +55,11 @@ units = x -> (
      day = 24 hour;
      wk = week = 7 day;
      fortnight = 14 day;
-     year = tropicalyear = 365.242198781 day;
+     yr = year = tropicalyear = 365.242198781 day;
+     mo = month = yr/12;
+     decade = 10 yr;
+     century = 100 yr;
+     millennia = millennium = 1000 year;
      meter = m;
      gm = gram  = .001 kg;
      t = tonne = 1000 kg;
@@ -70,10 +79,15 @@ units = x -> (
      pico  = 1e-12;
      femto = 1e-15;
      atto  = 1e-18;
-     inch = 2.54 centi meter;
-     foot = 12 inch;
-     yard = 3 foot;
+     inch = 2.54 cm;
+     ft = foot = 12 inch;
+     chain = 66 ft;
+     yd = yard = 3 foot;
+     rod = 5.5 yard;
+     furlong = 40 rod;
      mile = 5280 foot;
+     acre = mile^2/640;
+     league = 3 mile;
      marathon = 26 mile + 385 yard;
      N = newton = kg m / s^2;
      mm = milli m;
@@ -101,13 +115,15 @@ units = x -> (
      diopter = 1/m;
      radian = m/m;
      circle = 2. pi radian;
-     steradian = m^2/m^2;
+     sr = steradian = m^2/m^2;
      arcdeg = deg = {* degree = *} 1/360 * circle;
      arcmin = arcdeg/60;
      arcsec = arcmin/60;
      degC = degcelsius = K;
      degF = degfahrenheit = 5/9 * degC;
-     c = 2.99792458e8 m/s;
+     light = c = 2.99792458e8 m/s;
+     au = astronomicalunit = 499.004783806 light second;
+     solarmass = 1.9891e30 kg;
      mu0 = 4 pi 1e-7 H/m;
      epsilon0 = 1/mu0 c^2;
      e = 1.602176462e-19 C;
@@ -128,6 +144,13 @@ units = x -> (
      Hg = 13.5951 gram force / cm^3;
      mmHg = mm Hg;
      inHg = inch Hg;
+     dyne = cm gram / s^2;
+     erg = cm dyne;
+     P = poise = gram / cm s;
+     candela = cd;
+     lm = lumen = cd sr;
+     lx = lux = lm/m^2;
+     footcandle = lumen/ft^2;
      )
 
 apply({CGS,MKS},
@@ -135,6 +158,8 @@ apply({CGS,MKS},
 	  use UUU;
 	  type := new MutableHashTable;
 	  scan({
+		    1_UUU => "dimensionless quantity",
+		    s => "time",
 	       	    m => "length",
 		    m^2 => "area",
 		    m^3 => "volume",
@@ -156,7 +181,14 @@ apply({CGS,MKS},
 		    m/s => "velocity",
 		    m/s^2 => "acceleration",
 		    kg/m^3 => "density",
-		    newton s/m^2 => "viscosity"
+		    poise => "viscosity",
+		    kelvin => "temperature",
+		    candela => "luminous intensity",
+		    lumen => "luminous flux",
+		    lux => "illuminance, exitance",
+		    cd/m^2 => "luminance",
+		    J/K => "entropy",
+		    W/K => "entropy flow"
 	       	    },
 	       x -> ( m := leadMonomial x#0; type#m = if type#?m then append(type#m,x#1) else {x#1}));
 	  UUU#{Standard,AfterPrint} = x -> (
