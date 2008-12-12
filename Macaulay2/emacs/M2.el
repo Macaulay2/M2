@@ -82,7 +82,7 @@
 (define-key M2-comint-mode-map [ (control C) r ] 'scroll-right)
 (define-key M2-comint-mode-map [ f8 ] 'switch-to-completions)
 (define-key M2-comint-mode-map [ (control C) c ] 'switch-to-completions)
-(define-key M2-comint-mode-map [ return ] 'M2-send-or-jump) 
+(define-key M2-comint-mode-map [ return ] 'M2-send-to-program-or-jump-to-source-code) 
 ;; (define-key M2-comint-mode-map [ (control C) d ] 'M2-find-documentation)
 
 (mapcar
@@ -282,10 +282,10 @@ can be executed with \\[M2-send-to-program]."
      (re-search-backward "<<<")
      (match-end 0))))
 
-(defun M2-send-or-jump()
+(defun M2-send-to-program-or-jump-to-source-code()
   "If line the cursor is on is recognized as a Macaulay2 error message, jump to the
   location specified in the corresponding file.  Otherwise, send the input to the command
-  interpreter using \\[comint-send-input\\]."
+  interpreter using \\[comint-send-input]."
   (interactive)
   (if (save-excursion (beginning-of-line) (looking-at "^ *\\(o+[1-9][0-9]* = \\)?\\([^:\n]+\\):\\([0-9]+\\)\\(:\\([0-9]+\\):\\|-[0-9]+:\\)"))
       (let ((filename (buffer-substring (match-beginning 2) (match-end 2)))
