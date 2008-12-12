@@ -1825,15 +1825,22 @@ document {
      }
 
 document {
-     Key => {scanLines, (scanLines,Function,String)},
+     Key => {scanLines, (scanLines,Function,String), (scanLines,Function,List)},
      Headline => "apply a function to each line of a file",
      Usage => "scanLines(f,fn)",
-     Inputs => { "f", "fn" => "the name of a file" },
+     Inputs => { "f", "fn" => "the name of a file, or a list of names of files" },
+     Consequences => {
+	  {"applies ", TT "f", " to each line of the file(s)"}
+	  },
      Outputs => {
 	  {
 	       "returns ", TO "null", " unless the function uses ", TT "break x", " with a non-null value for ", TT "x", ",
 	       in which case scanning stops and ", TT "x", " is returned immediately"
 	       }
+	  },
+     PARA {
+	  "The file is read and processed one block at a time, making this procedure potentially much better at conserving
+	  memory than ", TT "scan(lines get fn,f)", " when the file is very large."
 	  }
      }
 

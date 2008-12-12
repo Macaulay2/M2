@@ -19,10 +19,10 @@ J = ideal(x*y*w_2+x*y*w_3+(-z^2+z*u-u^2)*w_4,
     y^2*w_0^2*w_1*w_2^2+2*y^2*w_0^2*w_1*w_2*w_3+y^2*w_0^2*w_1*w_3^2-9*x*u*w_0*w_1*w_3*w_4^2-5*y^2*w_0*w_2*w_4^3+13*y^2*w_0*w_3*w_4^3+(4*x*z-5*x*u)*w_4^5,
     u*w_0^2*w_1^2*w_2^2+5*u*w_0^2*w_1^2*w_2*w_3+(-9*z-5*u)*w_0^2*w_1^2*w_3^2-2*u*w_0*w_1*w_2*w_4^3+(-9*z+4*u)*w_0*w_1*w_3*w_4^3+u*w_4^6,
     w_0^3*w_1^3*w_2^3+3*w_0^3*w_1^3*w_2^2*w_3+3*w_0^3*w_1^3*w_2*w_3^2+w_0^3*w_1^3*w_3^3-3*w_0^2*w_1^2*w_2^2*w_4^3+21*w_0^2*w_1^2*w_2*w_3*w_4^3-3*w_0^2*w_1^2*w_3^2*w_4^3+3*w_0*w_1*w_2*w_4^6+3*w_0*w_1*w_3*w_4^6-w_4^9)
-F = (flattenRing J)_1
-time res (F J) -- very fast
-res J -- very long
-
+(J',F) = flattenRing J
+R' = ring J'
+time res F J -- very fast
+time res J -- was very long
 
 end
 
