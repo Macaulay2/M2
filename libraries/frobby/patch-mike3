@@ -1,0 +1,54 @@
+diff -ur --exclude=configure tmp/frobby_vmike3/Makefile frobby_vmike3/Makefile
+--- tmp/frobby_vmike3/Makefile	2008-12-10 20:04:17.000000000 -0600
++++ frobby_vmike3/Makefile	2008-12-12 16:46:41.000000000 -0600
+@@ -42,10 +42,13 @@
+ endif
+ 
+ ifndef ldflags
+-  ldflags = -lgmpxx -lgmp -L/sw/lib
++  ldflags = $(LDFLAGS) -lgmpxx -lgmp -L/sw/lib
+ endif
+ 
+-cflags = -Wall -ansi -pedantic -Wextra -Wno-uninitialized \
++ifndef CXX
++  CXX=g++
++endif
++cflags = $(CFLAGS) -Wall -ansi -pedantic -Wno-uninitialized \
+          -Wno-unused-parameter -isystem $(GMP_INC_DIR)
+ program = frobby
+ library = libfrobby.a
+@@ -135,7 +138,7 @@
+ 	echo > $(outdir)$(program)
+ endif
+ ifneq ($(MODE), analysis)
+-	g++ $(objs) $(ldflags) -o $(outdir)$(program)
++	$(CXX) $(objs) $(ldflags) -o $(outdir)$(program)
+ 	if [ -f $(outdir)$(program).exe ]; then \
+ 	  mv -f $(outdir)$(program).exe $(outdir)$(program); \
+ 	fi
+@@ -149,7 +152,7 @@
+ bin/$(library): $(objs) | bin/
+ 	rm -f bin/$(library)
+ ifeq ($(MODE), shared)
+-	g++ -shared $(ldflags) -o bin/$(library) $(patsubst main.o,,$(objs))
++	$(CXX) -shared $(ldflags) -o bin/$(library) $(patsubst main.o,,$(objs))
+ else
+ 	ar crs bin/$(library) $(patsubst main.o,,$(objs))
+ endif
+@@ -158,14 +161,14 @@
+ # In analysis mode no file is created, so create one
+ # to allow dependency analysis to work.
+ $(outdir)%.o: src/%.cpp
+-	  g++ ${cflags} -c $< -o $(outdir)$(subst src/,,$(<:.cpp=.o))
++	  $(CXX) ${cflags} -c $< -o $(outdir)$(subst src/,,$(<:.cpp=.o))
+ ifeq ($(MODE), analysis)
+ 	  echo > $(outdir)$(subst src/,,$(<:.cpp=.o))
+ endif
+ 
+ # ***** Dependency management
+ depend:
+-	g++ ${cflags} -MM $(sources) | sed 's/^[^\ ]/$$(outdir)&/' > .depend
++	$(CXX) ${cflags} -MM $(sources) | sed 's/^[^\ ]/$$(outdir)&/' > .depend
+ -include .depend
+ 
+ clean: tidy
