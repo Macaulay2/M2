@@ -75,10 +75,7 @@ Ring ** Matrix := Matrix => (R,f) -> (
 -----------------------------------------------------------------------------       
 poincare Module := (cacheValue symbol poincare) (
      M -> (
-	  -- some examples compute degrees of inhomogeneous modules, so we can't refuse to compute when the module is not homogeneous.
-	  -- is it guaranteed to work in some sense?
-	  -- let's find those instances
-	  if not isHomogeneous M then error "expected a homogeneous module";
+	  -- see the comment in the documentation for (degree,Ideal) about what this means when M is not homogeneous
 	  new degreesRing M from rawHilbert raw leadTerm gb {* presentation cokernel ?? *} presentation M))
 
 recipN = (n,wts,f) -> (
@@ -178,7 +175,7 @@ hilbertSeries Module := opts -> (M) -> (
 	       if num == 0 then 0_T else (
 		    wts := (options ring M).Heft;
 		    (lo,hi) := weightRange(wts,num);
-		    if ord < lo then 0_T else (
+		    if ord <= lo then 0_T else (
 		    	 num = part(,ord-1,wts,num);
 			 scan(denominator h, denom -> (
 				   rec := recipN(ord-lo,wts,denom#0);
@@ -192,7 +189,7 @@ hilbertFunction(List,Ring) := (d,R) -> hilbertFunction(d,R^1)
 hilbertFunction(List,Ideal) := hilbertFunction(List,Module) := (d,M) -> (
      if not all(d,i->class i === ZZ) then error "expected degree to be an integer or list of integers";
      if degreeLength M =!= #d then error "degree length mismatch";
-     f := hilbertSeries(M, Order => sum((options ring M).Heft,d,times));
+     f := hilbertSeries(M, Order => 1 + sum((options ring M).Heft,d,times));
      U := monoid ring f;
      coefficient(U_d,f))
 
