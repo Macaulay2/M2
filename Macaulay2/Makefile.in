@@ -9,7 +9,6 @@ include ../include/config.Makefile
 # ignore @datarootdir@
 VPATH = @srcdir@
 ################################# .
-prefix := @pre_prefix@
 pre-install :: @docdir@ @docdir@ \
 	   @docdir@/COPYING \
 	   @docdir@/README \
@@ -84,10 +83,9 @@ clean distclean ::; $(MAKE) -C probe $@
 book ::;  $(MAKE) -C book all
 distclean clean ::; $(MAKE) -C book $@
 ################################# emacs
-all ::;  $(MAKE) -C emacs all
-pre-install distclean clean ::; $(MAKE) -C emacs $@
+all pre-install distclean clean ::; $(MAKE) -C emacs $@
 ################################# man
-all pre-install :: ; $(MAKE) -C man $@
+all clean distclean pre-install :: ; $(MAKE) -C man $@
 ################################# Makefile
 Makefile : Makefile.in
 	cd ..; ./config.status Macaulay2/Makefile

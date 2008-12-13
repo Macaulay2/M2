@@ -1,6 +1,5 @@
 VPATH=@srcdir@
 include ../../include/config.Makefile
-exec_prefix=@pre_exec_prefix@
 Makefile : @srcdir@/Makefile.in ; cd ../.. && ./config.status libraries/M2/Makefile
 all:: @librariesdir@/lib/libM2.so
 %.lo: %.f ; $(COMPILE.f) -fPIC $< $(OUTPUT_OPTION)

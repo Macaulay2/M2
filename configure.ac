@@ -970,8 +970,8 @@ for i in bindir datadir includedir infodir libdir libexecdir localstatedir mandi
          sharedstatedir sysconfdir psdir pdfdir dvidir htmldir localedir docdir datarootdir
 do eval w=\$$i ; eval v="$w" ; eval v="$v" ; eval v="$v" ; eval v="$v" ; eval v="$v"
    case $v in
-     "$exec_prefix"|"$exec_prefix"/*) eval ${i}=`echo $v | sed s,"^$exec_prefix","'\\${exec_prefix}\\${encapfix}'",` ;;
-     "$prefix"|"$prefix"/*) eval ${i}=`echo $v | sed s,"^$prefix","'\\${prefix}\\${encapfix}'",` ;;
+     "$exec_prefix"|"$exec_prefix"/*) eval ${i}=`echo $v | sed s,"^$exec_prefix","'\\${pre_exec_prefix}'",` ;;
+     "$prefix"|"$prefix"/*) eval ${i}=`echo $v | sed s,"^$prefix","'\\${pre_prefix}'",` ;;
      *) AC_MSG_ERROR([expected "\${$i}" => "$w" to start with "\${prefix}" or with "\${exec_prefix}"]) ;;
    esac
 done

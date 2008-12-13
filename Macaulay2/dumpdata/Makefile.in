@@ -41,8 +41,6 @@ testprintmaps:libdump.a
 clean::; rm -f testprintmaps
 
 ifeq "@HAVE_PERSONALITY@" "1"
-exec_prefix := @pre_exec_prefix@
-prefix := @pre_prefix@
 all:: personality
 clean::; rm -f personality
 pre-install:: personality @bindir@  ; @INSTALL_PROGRAM@ $< @bindir@/personality
