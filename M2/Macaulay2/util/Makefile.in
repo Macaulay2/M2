@@ -13,15 +13,15 @@ ifeq (@OS@,Linux)
 EXES += screen
 endif
 
-.PHONY : all clean distclean
+.PHONY : stage1 clean distclean
 
-all:: $(EXES)
+stage1:: $(EXES)
 
 # overlay.h is no longer needed
-#  all:: overlay.h
+#  stage1:: overlay.h
 #  overlay.h : overlay ; ./$< >$@
 
-# all :: targettypes.h
+# stage1 :: targettypes.h
 #  we don't need targettypes.h any more
 #  it's replaced by stdint.h
 #  and it makes cross-compiling not work
@@ -33,7 +33,7 @@ clean ::; rm -f $(EXES) *.o $(EXES:=.exe) $(EXES:=.obj) targettypes.h
 ../bin/linkexec : linkexec ; cp -a $< $@
 
 ifeq "@OS@" "Windows-95-98-NT"
-all:: ../setup.exe
+stage1:: ../setup.exe
 ../setup.exe : setup
 	cp setup.exe ..
 endif
@@ -50,7 +50,7 @@ ifeq "@PTHREADS@" "yes"
 LDLIBS += -lpthread
 endif
 
-all :: gc_tested
+stage1 :: gc_tested
 gc_test : gc_test.c -lgc
 gc_tested: gc_test; ./$<; touch $@
 clean ::; rm -f gc_tested gc_test

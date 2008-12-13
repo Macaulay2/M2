@@ -1,7 +1,7 @@
 # @configure_input@
 VPATH = @srcdir@
 CFILES = regex.c
-all :: $(CFILES:.c=.o)
+stage1 :: $(CFILES:.c=.o)
 include ../../include/config.Makefile
 CPPFLAGS := -I@srcdir@ $(CPPFLAGS)
 .PHONY : tags
@@ -39,7 +39,7 @@ ifeq "$(DEPENDS)" "yes"
 include $(CFILES:.c=.dep) $(CCFILES:.cpp=.dep)
 endif
 ifneq (@ETAGS@,)
-all :: tags
+stage1 :: tags
 endif
 tags:: @srcdir@/TAGS
 clean :: ; rm -f *.o *.dep *.s *.E LOGFILE

@@ -32,11 +32,11 @@ TEX=latex
 	makeindex $*.idx
 	pdf$(TEX) $*
 
-all:: $(BOOKNAME).tex
+stage1:: $(BOOKNAME).tex
 
 $(BOOKNAME).bbl : papers.bib
 
-all:: $(BOOKNAME).dvi $(BOOKNAME).ps $(BOOKNAME).pdf
+stage1:: $(BOOKNAME).dvi $(BOOKNAME).ps $(BOOKNAME).pdf
 
 ## for M2book.pdf put these lines in texmf.cnf
 # main_memory = 1263000

@@ -11,8 +11,8 @@ DISTFILES := server/Macaulay2/@package@-$(DISTRIBUTION).tar.bz2 \
 	     server/Macaulay2/@package@-$(DISTRIBUTION)-src.tar.bz2 \
 	     server/Macaulay2/setup.hint
 
-all pre-install ::; [ "${prefix}" = /usr -a @DEBUG@ = no -a @OPTIMIZE@ = yes -a @STRIP@ = yes ]
-all pre-install :: server/Macaulay2 $(DISTFILES) server/setup.ini tidy
+stage1 stage2 ::; [ "${prefix}" = /usr -a @DEBUG@ = no -a @OPTIMIZE@ = yes -a @STRIP@ = yes ]
+stage1 stage2 :: server/Macaulay2 $(DISTFILES) server/setup.ini tidy
 	@ echo "============================================================================="
 	@ echo "the cygwin package files have been prepared in cygwin/server"
 	@ echo "============================================================================="

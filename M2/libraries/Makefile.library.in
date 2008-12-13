@@ -18,7 +18,7 @@ LIBRARIESDIR := $(PREFIX)
 
 export PATH := @abs_top_srcdir@/autoconf/final/bin:$(PATH)
 
-all install :: .installed-$(VERSION)
+stage1 install :: .installed-$(VERSION)
 unconfigure : ; rm -f .configured-$(VERSION) .compiled-$(VERSION) .installed-$(VERSION)
 reconfigure : unconfigure .configured-$(VERSION)
 uninstall   :: ; rm -f .installed-$(VERSION)

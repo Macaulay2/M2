@@ -6,21 +6,21 @@ export LD_LIBRARY_PATH
 ARGS = -q --silent --stop -e errorDepth=0
 MADEFILES = M2-symbols.el M2-emacs-hlp.txt M2-emacs.m2
 SRCFILES = M2-mode.el M2.el M2-README
-all::
+stage1::
 clean::; rm -f $(MADEFILES) M2-symbols @emacsdir@/M2*
 M2-symbols M2-symbols.el : makesyms.m2 ../m2/exports.m2 @pre_exec_prefix@/bin/M2@EXE@
 	@pre_exec_prefix@/bin/M2@EXE@ $(ARGS) @srcdir@/makesyms.m2 -e 'exit 0' </dev/null
 M2-emacs-hlp.txt: makehlp.m2 @pre_exec_prefix@/bin/M2@EXE@; @pre_exec_prefix@/bin/M2@EXE@ $(ARGS) @srcdir@/makehlp.m2 -e 'exit 0' </dev/null
 M2-emacs.m2: makem2.m2 @pre_exec_prefix@/bin/M2@EXE@; @pre_exec_prefix@/bin/M2@EXE@ $(ARGS) @srcdir@/makem2.m2 -e 'exit 0' </dev/null
 distclean :: clean; rm -f Makefile
-pre-install:: @emacsdir@
-pre-install:: $(MADEFILES)
+stage2:: @emacsdir@
+stage2:: $(MADEFILES)
 @emacsdir@ :; @INSTALL@ -d "$@"
-pre-install:: $(addprefix @emacsdir@/, $(SRCFILES) $(MADEFILES) M2-init.el)
+stage2:: $(addprefix @emacsdir@/, $(SRCFILES) $(MADEFILES) M2-init.el)
 verify: $(addprefix @emacsdir@/, $(SRCFILES) $(MADEFILES) M2-init.el) $(SRCFILES) $(MADEFILES) M2-init.el; ls -lrt $^
 @emacsdir@/% : % ; @INSTALL_DATA@ $^ @emacsdir@
 Makefile : Makefile.in; cd ../..; ./config.status Macaulay2/emacs/Makefile
-all:: M2-init.el
+stage1:: M2-init.el
 M2-init.el : M2-init.el.in; cd ../..; ./config.status Macaulay2/emacs/M2-init.el
 distclean::; rm -rf M2-init.el
 

@@ -2,7 +2,7 @@
 # FULLDEBUG = TRUE
 include ../../include/config.Makefile
 VPATH = @srcdir@
-all::
+stage1::
 CPPFLAGS += -I@srcdir@ -I.
 YACC = @YACC@
 %.tab.c %.tab.h: %.y; $(YACC.y) $< && mv y.tab.c $*.tab.c && mv y.tab.h $*.tab.h
@@ -38,9 +38,9 @@ LFLAGS += -d
 YFLAGS += --debug
 endif
 ifneq (@ETAGS@,)
-all :: TAGS
+stage1 :: TAGS
 endif
-all:: html-check-links
+stage1:: html-check-links
 
 getmem.o: html-check-links.h  getmem.h
 grammar.fixed.o:  html-check-links.h  buffer.h  getmem.h grammar.h
@@ -56,7 +56,7 @@ DIR = $(shell pwd)
 NEW = @htmldir@/Macaulay2Doc/html
 check : html-check-links
 	@echo "make: Entering directory \`$(NEW)'"
-	(cd $(NEW) && find . -name \*.html | xargs "$(DIR)"/html-check-links) || true
+	cd $(NEW) && find . -name \*.html | xargs "$(DIR)"/html-check-links
 	@echo "make: Leaving directory \`$(NEW)'"
 
 Makefile : Makefile.in

@@ -2,22 +2,22 @@
 include ../include/config.Makefile
 VPATH = @srcdir@
 
-install pre-install all ::; $(MAKE) -C top $@
+install stage2 stage1 ::; $(MAKE) -C top $@
 
 ifeq "@M2TARFILE@" "yes"
-pre-install ::; $(MAKE) -C tar pre-install
+stage2 ::; $(MAKE) -C tar stage2
 endif
 ifeq "@DEB@" "yes"
-pre-install ::; $(MAKE) -C deb pre-install
+stage2 ::; $(MAKE) -C deb stage2
 endif
 ifeq "@RPM@" "yes"
-pre-install ::; $(MAKE) -C rpm pre-install
+stage2 ::; $(MAKE) -C rpm stage2
 endif
 ifeq "@DMG@" "yes"
-pre-install ::; $(MAKE) -C dmg pre-install
+stage2 ::; $(MAKE) -C dmg stage2
 endif
 ifeq "@CYGWIN@" "yes"
-pre-install ::; $(MAKE) -C cygwin pre-install
+stage2 ::; $(MAKE) -C cygwin stage2
 endif
 check ::
 	$(MAKE) -C deb $@
@@ -28,9 +28,9 @@ clean distclean ::
 	$(MAKE) -C cygwin $@
 	$(MAKE) -C tar $@
 
-uninstall install pre-install distclean ::; $(MAKE) -C install $@
+uninstall install stage2 distclean ::; $(MAKE) -C install $@
 
 Makefile : Makefile.in; cd ..; ./config.status distributions/Makefile
 # Local Variables:
-# compile-command: "make -C $M2BUILDDIR/distributions pre-install "
+# compile-command: "make -C $M2BUILDDIR/distributions stage2 "
 # End:

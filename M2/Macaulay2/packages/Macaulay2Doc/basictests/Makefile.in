@@ -13,7 +13,7 @@ LDFLAGS += -L$(DOTS)/../libraries/final/lib
 
 TESTRESULTS := $(notdir $(patsubst %.m2, %.okay, $(wildcard @srcdir@/*.m2)))
 
-all check:: $(TESTRESULTS)
+stage1 check:: $(TESTRESULTS)
 distclean :: clean
 
 $(TESTRESULTS) : @pre_exec_prefix@/bin/M2@EXE@
@@ -27,7 +27,7 @@ ARGS := --silent -q --stop --no-loaddata --no-setup -e 'srcdir = "@srcdir@/"'
 
 clean::	; rm -f *.okay
 LOADLIBES += -lgc
-all:: testgc; ./testgc
+stage1:: testgc; ./testgc
 clean:: ; rm -f testgc
 Makefile : Makefile.in ; cd $(DOTS)/.. && ./config.status Macaulay2/packages/Macaulay2Doc/basictests/Makefile
 distclean ::; rm -f Makefile

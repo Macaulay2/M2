@@ -1,7 +1,7 @@
 # @configure_input@
 CONFIG_FILES = @srcdir@/configure @srcdir@/config/install-sh @srcdir@/config/config.sub @srcdir@/config/config.guess @srcdir@/config/files
-# we make an exception here and use pre-install as the first target
-pre-install ::
+# we make an exception here and use stage2 as the first target
+stage2 ::
 include include/config.Makefile
 VPATH = @srcdir@
 
@@ -9,12 +9,15 @@ VPATH = @srcdir@
 .PHONY : scripts
 scripts : pre-install.sh post-install.sh normal-install.sh
 rm-scripts clean ::; rm -f pre-install.sh post-install.sh normal-install.sh
-DUMMY_MAKE = $(MAKE) -s -n install -o pre-install -o all PRE_INSTALL=turn-off POST_INSTALL=turn-off NORMAL_INSTALL=turn-off
-pre-install.sh    : install-scripts.awk ; $(DUMMY_MAKE) PRE_INSTALL=turn-on |gawk -f $^ >$@
-post-install.sh   : install-scripts.awk ; $(DUMMY_MAKE) POST_INSTALL=turn-on |gawk -f $^ >$@
-normal-install.sh : install-scripts.awk ; $(DUMMY_MAKE) NORMAL_INSTALL=turn-on |gawk -f $^ >$@
+MI = $(MAKE) -n install -o all PRE_INSTALL=turn-off POST_INSTALL=turn-off NORMAL_INSTALL=turn-off
+pre-install.sh    : install-scripts.awk ; $(MI) PRE_INSTALL=turn-on |gawk -f $^ >$@
+post-install.sh   : install-scripts.awk ; $(MI) POST_INSTALL=turn-on |gawk -f $^ >$@
+normal-install.sh : install-scripts.awk ; $(MI) NORMAL_INSTALL=turn-on |gawk -f $^ >$@
 install ::; $(NORMAL_INSTALL)
 #
+
+# we want 'all' to be a single-colon rule so -o all will work
+all : stage1 stage2
 
 .PRECIOUS: @srcdir@/configure config.status
 .PHONY: reconfigure-libs reconfigure-all configure-help
@@ -23,9 +26,9 @@ GNUmakefile : GNUmakefile.in; ./config.status GNUmakefile
 include/config.Makefile: include/config.Makefile.in ; ./config.status include/config.Makefile
 # include/config.Makefile depends on ./config.status, too, but we are including it
 # it's enough that include/M2/config.h depends on ./config.status
-all :: include/config.Makefile
+stage1 :: include/config.Makefile
 include/M2/config.h: include/M2/config.h.in ./config.status ; ./config.status include/M2/config.h
-all :: include/M2/config.h
+stage1 :: include/M2/config.h
 @srcdir@/configure : @srcdir@/configure.ac @srcdir@/config/files
 	$(MAKE) -C @srcdir@ -f Makefile
 	@echo '-----------------------------------------------------------------------------'
@@ -52,14 +55,14 @@ status : @srcdir@/configure
 	@echo '#'
 	@echo '-----------------------------------------------------------------------------'
 # announce we're starting
-install all clean distclean ::; @echo '-------- making '$@', @PACKAGE_VERSION@ for ARCH=@ARCH@ OS=@OS@ REL=@REL@ --------'
+install stage1 clean distclean ::; @echo '-------- making '$@', @PACKAGE_VERSION@ for ARCH=@ARCH@ OS=@OS@ REL=@REL@ --------'
 # the first install target, the only place in the tree where 'all' is a prerequisite of 'install', hopefully.
-install :: pre-install
-pre-install :: all
+install :: all
+stage2 :: stage1
 # the first distclean target:
 distclean:: clean
-pre-install clean distclean all ::; $(MAKE) -C libraries $@
-all:: srcdir
+stage2 clean distclean stage1 ::; $(MAKE) -C libraries $@
+stage1:: srcdir
 clean::; rm -rf srcdir .link-test StagingArea srcdir
 srcdir: GNUmakefile
 	if [ "@abs_builddir@"/StagingArea/common != "@pre_prefix@" ] ;\
@@ -69,7 +72,7 @@ srcdir: GNUmakefile
 	fi
 	rm -f $@ .link-test
 	echo "@srcdir@/" >$@
-pre-install all distclean check clean ::; $(MAKE) -C Macaulay2 $@
+stage2 stage1 distclean check clean ::; $(MAKE) -C Macaulay2 $@
 subst : config.status ; ./config.status
 show : config.status ; egrep '^s,' $< | sed -e 's/^s,@\(.*\)@,\(.*\),g/\1=\2/' -e 's/^s,.*]\*\(.*\)\\).*\\2 \(.*\) ,/#define \1 \2/' -e 's/.#_!!_#.//g'
 reconfigure:: $(CONFIG_FILES)
@@ -77,12 +80,12 @@ reconfigure:: $(CONFIG_FILES)
 	@ echo "============================================================================="
 	@ echo "warning: to reconfigure the libraries, use 'make reconfigure-libs' or 'make reconfigure-all'"
 	@ echo "============================================================================="
-reconfigure all ::; chmod a-w $(shell cat @srcdir@/config/files)
-check-vars reconfigure all check ::; ! egrep -nH '@[A-Za-z_]+@' $(shell cat @srcdir@/config/files) | sed -e 's=^\([^:]*\):=@srcdir@/\1.in:='  | egrep .
+reconfigure stage1 ::; chmod a-w $(shell cat @srcdir@/config/files)
+check-vars reconfigure stage1 check ::; ! egrep -nH '@[A-Za-z_]+@' $(shell cat @srcdir@/config/files) | sed -e 's=^\([^:]*\):=@srcdir@/\1.in:='  | egrep .
 configure-help: $(CONFIG_FILES) ; @ @srcdir@/configure --help
 relink: ; rm -f @pre_exec_prefix@/bin/M2@EXE@ && $(MAKE) -C Macaulay2/d @pre_exec_prefix@/bin/M2@EXE@
 relink-nostrip: ; rm -f @pre_exec_prefix@/bin/M2@EXE@ && $(MAKE) -C Macaulay2/d STRIP=no @pre_exec_prefix@/bin/M2@EXE@
-all dist clean distclean check pre-install install :: ; $(MAKE) -C distributions $@
+stage1 dist clean distclean check stage2 install :: ; $(MAKE) -C distributions $@
 check ::; $(MAKE) -C libraries $@
 distclean check ::; $(MAKE) -C check-configure -f Makefile $@
 reconfigure-all : reconfigure reconfigure-libs 
@@ -90,25 +93,18 @@ reconfigure-libs ::; $(MAKE) -C libraries reconfigure
 clean::; rm -f confdefs.h configure.lineno conftest.* include/config.h
 distclean::; rm -f @CONFIGURED_FILES@ include/M2/config.h include/config.Makefile config.cache config.log config.status configure.options
 help :
-	@ echo "usage: make [option...] [target...]"
+	@ echo "usage: make ..."
 	@ echo ""
 	@ echo "targets:"
-	@ echo "  all                         build/compile all files [the default target]"
+	@ echo "  all                         build/compile all files and distributions [the default target]"
 	@ echo "  help                        show this help"
 	@ echo "  relink                      remove M2@EXE@ and rebuild it"
 	@ echo "  relink-nostrip              remove M2@EXE@ and rebuild it, unstripped"
-	@ echo "  pre-install                 generate the documentation in the staging area"
-	@ echo "  install                     install files, make distributions"
+	@ echo "  stage2                 generate the documentation in the staging area"
+	@ echo "  install                     make and install files"
+	@ echo "  install -o all              install files (without re-making them)"
 	@ echo "  check                       run the tests"
-	@ echo "  distributions:"
-	@ echo "    src                       generate source tar file"
-	@ echo "    tarball                   generate binary tar file"
-	@ echo "    deb                       generate *.deb files (2)"
-	@ echo "    rpm                       generate *.rpm files (2)"
-	@ echo "    dmg                       generate *.dmg file"
-	@ echo "    cygwin                    generate cygwin package files (3)"
-	@ echo "    dist                      generate all of the above"
-	@ echo "  clean                       remove all generated files except makefiles"
+	@ echo "  clean                       remove all generated files except configured files"
 	@ echo "  distclean                   remove all generated files"
 	@ echo "  configuration:"
 	@ echo "    status                    show options used with 'configure'"
@@ -126,13 +122,8 @@ help :
 	@ echo "      RerunExamples=true             rerun example output files"
 	@ echo "      debugLevel=1                   turn on further M2 debugging output"
 	@ echo "      MAPFILE=yes                    create a mapfile when linking M2"
-	@ echo ""
-	@ echo "./config.status options:"
-	@ echo ""
-	@ echo "      --recheck                       re-run configure with same options"
-	@ echo ""
-pre-install install all clean distclean::; @echo "-------- done making '$@' --------"
-pre-install::
+stage2 install stage1 clean distclean::; @echo "-------- done making '$@' --------"
+stage2::
 	@echo "************************************************"
 	@echo "*                                              *"
 	@echo "*    don't forget to run 'make -k check'       *"

@@ -12,7 +12,7 @@ LIB  := compat.$(LIBEXT)
 CFILES = $(notdir $(wildcard @srcdir@/*.c))
 OFILES := $(CFILES:.c=.o)
 
-all :: $(LIB)
+stage1 :: $(LIB)
 
 ifeq "@CC@" "cl"
 $(LIB): $(OFILES)

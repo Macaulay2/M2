@@ -21,7 +21,7 @@ PKG_RPM = @PACKAGE_TARNAME@-@PACKAGE_VERSION@-$(DISTRIBUTION).@ARCH@-@OS@-@ISSUE
 PKG_COM_RPM = @PACKAGE_TARNAME@-@PACKAGE_VERSION@-$(DISTRIBUTION).common.rpm
 
 # commands for testing the rpm file:
-#  pre-install:
+#  stage2:
 #    rpm -i -v --nodeps *.rpm
 #  remove:
 #	Version: 0.9.95
@@ -35,11 +35,11 @@ PKG_COM_RPM = @PACKAGE_TARNAME@-@PACKAGE_VERSION@-$(DISTRIBUTION).common.rpm
 #   mpfr-2.3.0-1.fc8
 
 ############################## main targets
-all pre-install ::; [ "${prefix}" = /usr -a @DEBUG@ = no -a @OPTIMIZE@ = yes -a @STRIP@ = yes ]
-all pre-install :: check-id
-all pre-install :: ../../$(PKG_COM_RPM) ../../$(PKG_RPM)
+stage1 stage2 ::; [ "${prefix}" = /usr -a @DEBUG@ = no -a @OPTIMIZE@ = yes -a @STRIP@ = yes ]
+stage1 stage2 :: check-id
+stage1 stage2 :: ../../$(PKG_COM_RPM) ../../$(PKG_RPM)
 ifeq ($(TIDY),yes)
-all pre-install :: tidy
+stage1 stage2 :: tidy
 endif
 check-id: always
 	@if [ `@FAKEROOT@ id -u` != 0 ] ; \

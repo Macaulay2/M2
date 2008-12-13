@@ -12,8 +12,8 @@ EG=$(E).gz
 EJ=$(E).bz2
 CG=$(C).gz
 CJ=$(C).bz2
-pre-install :: tarballs
-all pre-install ::; [ "${prefix}" = /usr -a @DEBUG@ = no -a @OPTIMIZE@ = yes -a @STRIP@ = yes ]
+stage2 :: tarballs
+stage1 stage2 ::; [ "${prefix}" = /usr -a @DEBUG@ = no -a @OPTIMIZE@ = yes -a @STRIP@ = yes ]
 tarballs :: tarballs.@COMPRESS@
 src : $(D)$(SZ)
 src.gz : $(D)$(SZ)
@@ -39,5 +39,5 @@ Makefile : @srcdir@/Makefile.in; cd ../..; ./config.status distributions/tar/Mak
 distclean : ; rm -rf Makefile
 srcfiles :; cd @top_srcdir@ ; svn-ls
 # Local Variables:
-# compile-command: "make -C $M2BUILDDIR/distributions/tar pre-install "
+# compile-command: "make -C $M2BUILDDIR/distributions/tar stage2 "
 # End:

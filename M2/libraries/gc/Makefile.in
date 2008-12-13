@@ -30,7 +30,7 @@ uninstall clean ::
 		rm -rf lib/libgc.* lib/libcord.* include/gc share/gc lib/pkgconfig/bdw-gc.pc \
 			include/gc.h include/gc_cpp.h ; \
 	fi
-all install ::; rm -fv $(LIBRARIESDIR)/lib/libcord*
+stage1 install ::; rm -fv $(LIBRARIESDIR)/lib/libcord*
 # Local Variables:
 # compile-command: "make -C $M2BUILDDIR/libraries/gc "
 # End:

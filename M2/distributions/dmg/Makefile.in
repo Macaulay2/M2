@@ -4,9 +4,9 @@ TIDY = yes
 VPATH = @srcdir@
 DEPENDS = yes
 PKG_DMG = @package@-@ARCH@-@OS@-@REL@.dmg
-all pre-install :: ../../$(PKG_DMG)
+stage1 stage2 :: ../../$(PKG_DMG)
 ifeq ($(TIDY),yes)
-all pre-install :: tidy
+stage1 stage2 :: tidy
 endif
 T=tar --create --mode=a+rX,og-ws --exclude='.nfs*' --exclude='Macaulay2-*-data' --file=-
 ../../$(PKG_DMG) : Makefile

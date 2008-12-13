@@ -27,7 +27,7 @@ ARGS := $(ARGS), $(IARGS)
 endif
 
 $(foreach i, $(PACKAGES),$(eval check ::; @pre_exec_prefix@/bin/M2@EXE@ -q --stop -e "needsPackage(\"${i}\",LoadDocumentation=>true); check(${i},UserMode=>false); exit 0"))
-$(foreach i, $(PACKAGES),$(eval pre-install ::; @pre_exec_prefix@/bin/M2@EXE@ $(M2DIRS) -q --stop -e errorDepth=0 -e debugLevel=$(debugLevel) $(EARGS) -e "installPackage(\"${i}\", $(ARGS)); exit 0"))
+$(foreach i, $(PACKAGES),$(eval stage2 ::; @pre_exec_prefix@/bin/M2@EXE@ $(M2DIRS) -q --stop -e errorDepth=0 -e debugLevel=$(debugLevel) $(EARGS) -e "installPackage(\"${i}\", $(ARGS)); exit 0"))
 
 @packagesdir@/%.m2 : %.m2 ; @INSTALL_DATA@ $^ $@
 
@@ -39,12 +39,12 @@ Makefile: Makefile.in; cd ../..; ./config.status Macaulay2/packages/Makefile
 distclean::; rm -f Makefile
 
 ## here is the list of other files to install along with Macaulay2
-pre-install :: @packagesdir@/eliminate.m2 @packagesdir@/D-modules.m2
+stage2 :: @packagesdir@/eliminate.m2 @packagesdir@/D-modules.m2
 @packagesdir@/eliminate.m2 : eliminate.m2 ; cp $^ "$@"
 @packagesdir@/D-modules.m2 : D-modules.m2 ; cp $^ "$@"
 
 # this one we need for compatibility with the book
-pre-install :: @packagesdir@/LLL.m2
+stage2 :: @packagesdir@/LLL.m2
 @packagesdir@/LLL.m2 : LLL.m2 ; cp $^ "$@"
 
 # Local Variables:

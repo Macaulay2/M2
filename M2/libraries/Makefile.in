@@ -1,11 +1,11 @@
 VPATH = @srcdir@
 include ../include/config.Makefile
-all check reconfigure untar fetch distclean clean :: Makefile.library
+stage1 check reconfigure untar fetch distclean clean :: Makefile.library
 distclean :: clean
-$(foreach lib,@LIBRARIES@,$(eval untar fetch all check reconfigure ::;$(MAKE) -C $(lib) $$@))
+$(foreach lib,@LIBRARIES@,$(eval untar fetch stage1 check reconfigure ::;$(MAKE) -C $(lib) $$@))
 $(foreach lib,@LIBLIST@ libtool M2,$(eval distclean clean ::;$(MAKE) -C $(lib) $$@))
 ifeq (@SHARED@,yes)
-pre-install :
+stage2 :
 	@ echo installing sharable library files in @librariesdir@/lib
 	if [ -d final/lib ] ; \
 	then rm -rf @librariesdir@/lib ;\
