@@ -9,10 +9,10 @@ ENCAP = @ENCAP@
 
 ifeq "${ENCAP}" "yes"
 pre_prefix      = $(DESTDIR)${prefix}/@package@
-exec_pre_prefix = $(DESTDIR)${exec_prefix}/@package@
+pre_exec_prefix = $(DESTDIR)${exec_prefix}/@package@
 else
 pre_prefix      = $(DESTDIR)${prefix}
-exec_pre_prefix = $(DESTDIR)${exec_prefix}
+pre_exec_prefix = $(DESTDIR)${exec_prefix}
 endif
 
 ifeq "${ENCAP}" "yes"
