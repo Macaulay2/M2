@@ -4,6 +4,18 @@ CONFIG_FILES = @srcdir@/configure @srcdir@/config/install-sh @srcdir@/config/con
 pre-install ::
 include include/config.Makefile
 VPATH = @srcdir@
+
+# experimental
+.PHONY : scripts
+scripts : pre-install.sh post-install.sh normal-install.sh
+rm-scripts clean ::; rm -f pre-install.sh post-install.sh normal-install.sh
+DUMMY_MAKE = $(MAKE) -s -n install -o pre-install -o all PRE_INSTALL=turn-off POST_INSTALL=turn-off NORMAL_INSTALL=turn-off
+pre-install.sh    : install-scripts.awk ; $(DUMMY_MAKE) PRE_INSTALL=turn-on |gawk -f $^ >$@
+post-install.sh   : install-scripts.awk ; $(DUMMY_MAKE) POST_INSTALL=turn-on |gawk -f $^ >$@
+normal-install.sh : install-scripts.awk ; $(DUMMY_MAKE) NORMAL_INSTALL=turn-on |gawk -f $^ >$@
+install ::; $(NORMAL_INSTALL)
+#
+
 .PRECIOUS: @srcdir@/configure config.status
 .PHONY: reconfigure-libs reconfigure-all configure-help
 # make sure we're ready to go
@@ -126,6 +138,7 @@ pre-install::
 	@echo "*    don't forget to run 'make -k check'       *"
 	@echo "*                                              *"
 	@echo "************************************************"
+
 
 # Local Variables:
 # compile-command: "make -C $M2BUILDDIR "
