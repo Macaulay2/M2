@@ -4,8 +4,6 @@ VPATH = @srcdir@
 # these can be overridden on the command line
 DEPENDS = yes
 STRIP = @STRIP@
-prefix := @pre_prefix@
-exec_prefix := @pre_exec_prefix@
 ############################## main targets
 all :: tokens_stub.o
 ifneq (@ETAGS@,)

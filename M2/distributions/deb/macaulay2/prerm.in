@@ -2,7 +2,7 @@
 prefix=@prefix@
 case "$1" in
     remove|deconfigure|upgrade)
-	rm -f $prefix/lib/Macaulay2/Core/cache/*
+	rm -f @packagecacheCore@/*
 	;;
     failed-upgrade) ;;
     *) echo "prerm called with unknown argument \`$1'" >&2

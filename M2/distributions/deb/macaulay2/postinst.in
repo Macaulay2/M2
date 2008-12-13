@@ -4,7 +4,7 @@ DUMPDATA=@DUMPDATA@
 case "$1" in
     abort-upgrade|configure)
 	if [ "$DUMPDATA" = yes ]
-	then $prefix/bin/M2 --dumpdata
+	then @bindir@/M2@EXE@ --dumpdata
 	fi
 	;;
     abort-remove|abort-deconfigure) ;;

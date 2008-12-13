@@ -27,10 +27,10 @@ t := hashTable {
      }
 if class Layout === Symbol then (
      Layout = hashTable {
-	  1 => applyValues( t, x -> replace("^\\$\\{(exec_)?prefix\\}(\\$\\{encapfix\\})?/","",x)),
+	  1 => applyValues( t, x -> replace("^\\$\\{(pre_)?(exec_)?prefix\\}/","",x)),
 	  2 => applyValues( t, x -> 
-	       replace("^\\$\\{prefix\\}(\\$\\{encapfix\\})?","common",	    -- as in configure.ac
-		    replace("^\\$\\{exec_prefix\\}(\\$\\{encapfix\\})?",version#"machine", -- as in configure.ac
+	       replace("^\\$\\{(pre_)?prefix\\}","common",	    -- as in configure.ac
+		    replace("^\\$\\{(pre_)?exec_prefix\\}",version#"machine", -- as in configure.ac
 			 x)))
 	       })
 t = null

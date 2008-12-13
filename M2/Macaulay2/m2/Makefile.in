@@ -4,9 +4,6 @@ include ../../include/config.Makefile
 VPATH = @srcdir@ @srcdir@/../d
 srcdir = $(shell cd @srcdir@; /bin/pwd)
 
-prefix := @pre_prefix@
-exec_prefix := @pre_exec_prefix@
-
 all:: initialize
 Makefile : Makefile.in ; cd ../.. && ./config.status Macaulay2/m2/Makefile
 emacs html: all; $(MAKE) -C ../$@
@@ -16,16 +13,16 @@ export LD_LIBRARY_PATH
 .SUFFIXES: .m2
 .PHONY: html initialize prep tags install-tmp
 # there is a parallel list of tutorials in overview3.m2
-DUMPEDM2FILES := setup.m2 startup.m2
+DUMPEDM2FILES := startup.m2 setup.m2
+DUMPEDM2SRCFILES := startup.m2 setup.m2
 DUMPEDM2DOCFILES := \
 		@srcdir@/../packages/Macaulay2Doc/*.m2 \
 		@srcdir@/../packages/Macaulay2Doc/functions/*.m2 \
 		@srcdir@/../packages/Macaulay2Doc/variables/*.m2 \
 		../packages/Macaulay2Doc.m2
-NONDOCM2FILES := startup.m2 setup.m2
 OTHERM2FILES := sagbi.m2
 ############################## statuscodes.m2
-MADEM2FILES += statuscodes.m2
+DUMPEDM2FILES += statuscodes.m2
 initialize :: statuscodes.m2
 statuscodes.m2 : ../e/statuscodes
 	( \
@@ -39,30 +36,30 @@ ifdef MP
 mpcodes.m2: ../../include/MP.h mpcodes.sed
 	sed -f mpcodes.sed $< > $@
 all:: mpcodes.m2
-MADEM2FILES += mpcodes.m2
+DUMPEDM2FILES += mpcodes.m2
 endif
 ############################## loads.m2
 LOADSEQUENCE := $(shell cat @srcdir@/loadsequence)
-DUMPEDM2FILES += $(patsubst version.m2, version.m2.in, $(LOADSEQUENCE))
-NONDOCM2FILES += $(patsubst version.m2, version.m2.in, $(LOADSEQUENCE))
-# M2 files made in the build directory are not mentioned in LOADSEQUENCE
-MADEM2FILES += loads.m2
+DUMPEDM2FILES += $(LOADSEQUENCE)
+DUMPEDM2SRCFILES += $(patsubst version.m2, version.m2.in, $(LOADSEQUENCE))
+DUMPEDM2FILES += loads.m2
 loads.m2 : loads.awk loadsequence
 	@echo making $@
 	@awk -f $^ >$@
 
 ############################## install.m2
-MADEM2FILES += install.m2
+DUMPEDM2FILES += install.m2
 install.m : install.m2.in ; cd ../.. && ./config.status Macaulay2/m2/install.m2
 ############################## tvalues.m2
-MADEM2FILES += tvalues.m2
+DUMPEDM2FILES += tvalues.m2
 TVFILES := $(shell egrep -l -e "-- . typical value: " @srcdir@/../d/*.d)
 all :: tvalues.m2
 tvalues.m2 : $(TVFILES)
 	egrep -e "-- . typical value: " $^ | sed 's/.*-- . typical value: \(.*\)/typval(\1)/' >$@
+clean::;rm -rf tvalues.m2
 ############################## installedpackages.m2
 INSTALLEDPACKAGES := $(shell cat @srcdir@/installedpackages)
-MADEM2FILES += installedpackages.m2
+DUMPEDM2FILES += installedpackages.m2
 initialize :: installedpackages.m2
 installedpackages.m2 : installedpackages Makefile
 	exec <$< >$@ ; echo 'Core#"pre-installed packages" = {'; read x ; echo \"$$x\"; while read x ; do echo , \"$$x\" ; done ; echo '}'
@@ -70,15 +67,13 @@ clean :: ; rm -f installedpackages.m2
 OTHERDUMPEDM2FILES += \
 	$(wildcard $(patsubst %, @srcdir@/../packages/%/*.m2, $(INSTALLEDPACKAGES))) \
 	$(wildcard $(patsubst %, @srcdir@/../packages/%.m2  , $(INSTALLEDPACKAGES)))
-##############################
-DUMPEDM2FILES += $(MADEM2FILES)
 #################################
 all :: tags
 tags: Makefile @srcdir@/TAGS @srcdir@/TAGS.doc
 clean::; rm -f TAGS @srcdir@/TAGS @srcdir@/TAGS.doc
 @srcdir@/TAGS: \
 		../d/layout.m2.in \
-		$(NONDOCM2FILES) \
+		$(DUMPEDM2SRCFILES) \
 		installedpackages \
 		$(OTHERM2FILES) \
 		$(shell find @srcdir@/../packages -name "*.m2" -a -not -name .\#\* | sort) \

@@ -2,9 +2,10 @@ VPATH = @srcdir@
 LDFLAGS = -L$(BUILTLIBPATH)/lib
 CPPFLAGS =  -I$(BUILTLIBPATH)/include
 include ../include/config.Makefile
-check ::; @srcdir@/../configure -n LDFLAGS="$(LDFLAGS)" CPPFLAGS="$(CPPFLAGS)" --disable-building
-distclean :: ; rm -f Makefile
-Makefile : Makefile.in ; cd .. && ./config.status check-configure/Makefile
+check::; @srcdir@/../configure -n LDFLAGS="$(LDFLAGS)" CPPFLAGS="$(CPPFLAGS)" --disable-building
+clean check::; rm -f config.status config.log 
+distclean:: clean ; rm -f Makefile
+Makefile: Makefile.in ; cd .. && ./config.status check-configure/Makefile
 # Local Variables:
 # compile-command: "make -C $M2BUILDDIR/check-configure -f Makefile check "
 # End:

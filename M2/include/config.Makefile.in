@@ -35,10 +35,12 @@ LDFLAGS = @LDFLAGS@
 ### Here we set the make-variables that configure uses as make-variables inside configure-variables.
 # The user should override only this one:
 prefix = @prefix@
+exec_prefix = @exec_prefix@
 # We assume relative positions of files within the tree are known to the configure script.
 # Thus the user should not override these on the "make" command line, but may
 # override them on the "configure" command line instead:
-exec_prefix = @exec_prefix@
+pre_prefix = @pre_prefix@
+pre_exec_prefix = @pre_exec_prefix@
 datarootdir = @datarootdir@
 abs_top_srcdir = @abs_top_srcdir@
 docdir = @docdir@

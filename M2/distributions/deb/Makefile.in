@@ -110,8 +110,10 @@ clean :: tidy
 distclean : clean; rm -f Makefile control
 libraries-used : .prepared always
 	ldd tmp@bindir@/M2@EXE@ | sed -e 's/.* => //' -e 's/^	//' -e 's/ .*//' | egrep '^/' >$@ || true
+clean ::; rm -f libraries-used
 packages-used : libraries-used
 	cat libraries-used | while read x ; do find /var/lib/dpkg/info -name \*.list | xargs egrep -l "^$$x"; done | sort | uniq | sed -e 's=.*/==' -e 's=\.list$$==' >$@
+clean ::; rm -f packages-used
 macaulay2/control : macaulay2/control.prelim macaulay2/data.tar.gz packages-used
 	(cat $< && \
 	 size=`gunzip<macaulay2/data.tar.gz|wc -c` && \
@@ -121,13 +123,15 @@ macaulay2/control : macaulay2/control.prelim macaulay2/data.tar.gz packages-used
 	 cat packages-used | while read x ; do echo -n ", $$x" ; done && \
 	 echo \
 	) >$@
+clean ::; rm -f macaulay2/control
 macaulay2-common/control : macaulay2-common/control.prelim macaulay2-common/data.tar.gz
 	(cat $< && \
 	 size=`gunzip<macaulay2-common/data.tar.gz|wc -c` && \
 	 size=`echo $$size | sed 's/^\([0-9][0-9]*\).*/\1/'` && \
 	 echo Installed-Size: $$size \
 	) >$@
-Makefile : Makefile.in; cd ../..; ./config.status distributions/deb/Makefile
+clean::; rm -f macaulay2/control.prelim
+% : %.in; cd ../..; ./config.status distributions/deb/$@
 
 # Local Variables:
 # compile-command: "make -C $M2BUILDDIR/distributions/deb pre-install "
