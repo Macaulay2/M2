@@ -1,15 +1,15 @@
 # @configure_input@
 ############################### targets to use
-.PHONY: check all clean initialize book distclean justM2
+.PHONY: check stage1 clean initialize book distclean justM2
 ################################# prologue
-all ::
-justM2 all :: initialize
+stage1 ::
+justM2 stage1 :: initialize
 
 include ../include/config.Makefile
 # ignore @datarootdir@
 VPATH = @srcdir@
 ################################# .
-pre-install :: @docdir@ @docdir@ \
+stage2 :: @docdir@ @docdir@ \
 	   @docdir@/COPYING \
 	   @docdir@/README \
 	   @docdir@/LAYOUT
@@ -28,15 +28,15 @@ initialize :: cache
 cache :; mkdir $@
 distclean clean ::; rm -rf cache
 ################################# util
-initialize::; $(MAKE) -C util all
+initialize::; $(MAKE) -C util stage1
 distclean clean ::; $(MAKE) DEPENDS=no -C util $@
 ################################# c
 distclean clean ::; $(MAKE) DEPENDS=no -C c $@
-all justM2 ::; $(MAKE) -C c all
+stage1 justM2 ::; $(MAKE) -C c stage1
 ################################# e
-all check justM2 initialize ::; $(MAKE) -C e DEPENDS=no initialize
-justM2 ::; $(MAKE) -C e all
-all ::; $(MAKE) -C e $@
+stage1 check justM2 initialize ::; $(MAKE) -C e DEPENDS=no initialize
+justM2 ::; $(MAKE) -C e stage1
+stage1 ::; $(MAKE) -C e $@
 
 # check ::; $(MAKE) -C e $@
 check ::
@@ -47,51 +47,51 @@ check ::
 initialize distclean clean ::; $(MAKE) DEPENDS=no -C e $@
 ################################# dumpdata
 ifeq "@DUMPDATA@" "yes"
-justM2 ::; $(MAKE) -C dumpdata all
-pre-install all check ::; $(MAKE) -C dumpdata $@
+justM2 ::; $(MAKE) -C dumpdata stage1
+stage2 stage1 check ::; $(MAKE) -C dumpdata $@
 endif
 distclean clean ::; $(MAKE) DEPENDS=no -C dumpdata $@
 ################################# compat
-all clean distclean ::; $(MAKE) -C compat $@
+stage1 clean distclean ::; $(MAKE) -C compat $@
 ################################# regex
-all ::; $(MAKE) -C regex $@
+stage1 ::; $(MAKE) -C regex $@
 clean distclean ::; $(MAKE) DEPENDS=no -C regex $@
 ################################# d
 initialize ::; $(MAKE) DEPENDS=no -C d compat.h
 ### util/restart and util/update cooperate here:
-justM2 all ::; util/restart d/restart.tmp $(MAKE) -C d all
+justM2 stage1 ::; util/restart d/restart.tmp $(MAKE) -C d stage1
 distclean clean ::; $(MAKE) DEPENDS=no -C d $@
 ################################# bin
-all distclean clean ::; $(MAKE) DEPENDS=no -C bin $@
+stage1 distclean clean ::; $(MAKE) DEPENDS=no -C bin $@
 ################################# basictests
 check ::; $(MAKE) -C packages/Macaulay2Doc/basictests -k
 distclean clean ::; $(MAKE) -C packages/Macaulay2Doc/basictests $@
 ################################# m2
-pre-install distclean clean check justM2 all ::; $(MAKE) -C m2 $@
+stage2 distclean clean check justM2 stage1 ::; $(MAKE) -C m2 $@
 ################################# test
 check ::; $(MAKE) -C packages/Macaulay2Doc/test -k
 distclean clean ::; $(MAKE) -C packages/Macaulay2Doc/test $@
 ################################# packages
-all check pre-install clean distclean ::; $(MAKE) -C packages $@
+stage1 check stage2 clean distclean ::; $(MAKE) -C packages $@
 ################################# html-check-links
-initialize::; $(MAKE) -C html-check-links all
-pre-install ::; $(MAKE) DEPENDS=no -C html-check-links check
+initialize::; $(MAKE) -C html-check-links stage1
+stage2 ::; $(MAKE) DEPENDS=no -C html-check-links check
 distclean clean ::; $(MAKE) DEPENDS=no -C html-check-links $@
 ################################# probe
 clean distclean ::; $(MAKE) -C probe $@
 ################################# book, currently not made
-book ::;  $(MAKE) -C book all
+book ::;  $(MAKE) -C book stage1
 distclean clean ::; $(MAKE) -C book $@
 ################################# emacs
-all pre-install distclean clean ::; $(MAKE) -C emacs $@
+stage1 stage2 distclean clean ::; $(MAKE) -C emacs $@
 ################################# man
-all clean distclean pre-install :: ; $(MAKE) -C man $@
+stage1 clean distclean stage2 :: ; $(MAKE) -C man $@
 ################################# Makefile
 Makefile : Makefile.in
 	cd ..; ./config.status Macaulay2/Makefile
 distclean::; rm -f Makefile
 ################################# final status messages
-justM2 all clean distclean::
+justM2 stage1 clean distclean::
 	@echo "-------- done making '$@' --------"
 #################################
 clean :: ; rm -f gmon.out

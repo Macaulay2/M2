@@ -1,7 +1,7 @@
 VPATH=@srcdir@
 include ../../include/config.Makefile
 Makefile : @srcdir@/Makefile.in ; cd ../.. && ./config.status libraries/M2/Makefile
-all:: @librariesdir@/lib/libM2.so
+stage1:: @librariesdir@/lib/libM2.so
 %.lo: %.f ; $(COMPILE.f) -fPIC $< $(OUTPUT_OPTION)
 %.lo: %.c ; $(COMPILE.c) -fPIC $< $(OUTPUT_OPTION)
 %.lo: %.cc; $(COMPILE.cpp) -fPIC $< $(OUTPUT_OPTION)

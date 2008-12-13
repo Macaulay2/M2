@@ -5,17 +5,17 @@ VPATH = @srcdir@
 DEPENDS = yes
 STRIP = @STRIP@
 ############################## main targets
-all :: tokens_stub.o
+stage1 :: tokens_stub.o
 ifneq (@ETAGS@,)
-all :: tags
+stage1 :: tags
 endif
-all :: compat.h
+stage1 :: compat.h
 
 recompile :
 	rm -f @bindir@/M2@EXE@
 	$(MAKE)
 
-all :: @bindir@/M2@EXE@
+stage1 :: @bindir@/M2@EXE@
 	printenv LD_LIBRARY_PATH
 ifneq (@LDD@,)
 	- @LDD@ $< | ( ! egrep -v " => /usr/lib/| => /lib/|/lib/ld-linux.so|linux-gate" )
@@ -29,11 +29,11 @@ ifeq (@OS@ @SHARED@,Linux yes)
 ifneq (@LIBRARIES@,)
 M2_LDFLAGS += -Wl,-rpath,@librariesdir@/lib
 ifneq (@OBJDUMP@,)
-all :: @bindir@/M2@EXE@
+stage1 :: @bindir@/M2@EXE@
 	@OBJDUMP@ -x $< | egrep RPATH
 	@OBJDUMP@ -x $< | egrep "RPATH +@librariesdir@/lib$$"
 else
-all ::; echo "--warning: 'objdump' not installed, can't check rpath in M2 binary"
+stage1 ::; echo "--warning: 'objdump' not installed, can't check rpath in M2 binary"
 endif
 endif
 endif
@@ -359,7 +359,7 @@ clean::; rm -f mapfile.demangled
 interpret.a : $(M2_OBJECTS); $(AR) rcs $@ $^
 ifeq "@XCODE@" "yes"
 # Mike uses Xcode, an IDE, under MacOS 10 to link against
-all :: interpret.a
+stage1 :: interpret.a
 endif
 
 tags: @srcdir@/TAGS
@@ -370,11 +370,11 @@ clean::; rm -f TAGS @srcdir@/TAGS
 clean ::; rm -f *.log a.out *.o *.sym *.a *.oo *.sig *.sg *.dep *.dp core gmon.out mapfile restart.tmp
 distclean : clean; rm -f Makefile
 Makefile : Makefile.in; cd ../..; ./config.status Macaulay2/d/Makefile
-all :: .gdbinit
+stage1 :: .gdbinit
 .gdbinit:; if [ -f @srcdir@/.gdbinit.$(USER) ]; then cp @srcdir@/.gdbinit.$(USER) $@; fi
 clean::; rm -f .gdbinit
 
-pre-install all :: @bindir@/M2@EXE@
+stage2 stage1 :: @bindir@/M2@EXE@
 	@ echo "make: -----------------------------------------------------------------------------"
 	@ echo "make:"
 	@ echo "make: Macaulay 2 executable is available here:"

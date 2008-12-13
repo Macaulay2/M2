@@ -18,22 +18,22 @@ endif
 PKG_DEB = @PACKAGE_TARNAME@-@PACKAGE_VERSION@-$(DEBARCH)-@OS@-@ISSUE@.deb
 PKG_COM_DEB = @PACKAGE_TARNAME@-@PACKAGE_VERSION@-common.deb
 
-pre-install ::
-all pre-install ::; [ "${prefix}" = /usr -a @DEBUG@ = no -a @OPTIMIZE@ = yes -a @STRIP@ = yes ]
-all pre-install :: macaulay2/control.prelim
+stage2 ::
+stage1 stage2 ::; [ "${prefix}" = /usr -a @DEBUG@ = no -a @OPTIMIZE@ = yes -a @STRIP@ = yes ]
+stage1 stage2 :: macaulay2/control.prelim
 macaulay2/control.prelim : @srcdir@/macaulay2/control.prelim.in Makefile
 	rm -f $@
 	<$< >$@ sed -e 's/[@]DEBARCH[@]/$(DEBARCH)/g' -e 's/[@]PACKAGE_VERSION[@]/@PACKAGE_VERSION@/g'
 	! egrep -nH '@[A-Za-z_]+@' <$@
-all pre-install :: tidy_before
-all pre-install :: ../../$(PKG_DEB) ../../$(PKG_COM_DEB)
+stage1 stage2 :: tidy_before
+stage1 stage2 :: ../../$(PKG_DEB) ../../$(PKG_COM_DEB)
 	@ echo "============================================================================="
 	@ echo "package files prepared:"
 	@ echo "        $(PKG_DEB)"
 	@ echo "        $(PKG_COM_DEB)"
 	@ echo "============================================================================="
 ifeq ($(TIDY),yes)
-all pre-install :: tidy_after
+stage1 stage2 :: tidy_after
 endif
 
 #################################
@@ -134,5 +134,5 @@ clean::; rm -f macaulay2/control.prelim
 % : %.in; cd ../..; ./config.status distributions/deb/$@
 
 # Local Variables:
-# compile-command: "make -C $M2BUILDDIR/distributions/deb pre-install "
+# compile-command: "make -C $M2BUILDDIR/distributions/deb stage2 "
 # End:

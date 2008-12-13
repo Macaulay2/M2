@@ -3,7 +3,7 @@ all :
 		--prefix=/usr/local
 
 install :
-	$(MAKE) -s install -o pre-install -o all prefix=/usr/local/encap ENCAP=yes
+	$(MAKE) -n -s install -o pre-install -o all prefix=/usr/local/encap ENCAP=yes
 
 #		--enable-tarfile \
 #		--enable-deb \

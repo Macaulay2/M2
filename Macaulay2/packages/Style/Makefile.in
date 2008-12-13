@@ -8,9 +8,9 @@ VPATH = @srcdir@
 IMAGES = up.gif next.gif previous.gif top.gif index.gif null.gif recbg.jpg 9planets.gif grayson2005.jpg toc.gif home.gif stillman.jpg
 clean::
 distclean: clean; rm -f Makefile
-pre-install :: @docdir@/Core/images
+stage2 :: @docdir@/Core/images
 @docdir@/Core/images:; @INSTALL@ -d "$@"
-pre-install:: $(IMAGES); @INSTALL_DATA@ $^ @docdir@/Core/images
+stage2:: $(IMAGES); @INSTALL_DATA@ $^ @docdir@/Core/images
 Makefile : Makefile.in; cd ../../..; ./config.status Macaulay2/packages/Images/Makefile
 
 # for gimp to find this *.scm file, put

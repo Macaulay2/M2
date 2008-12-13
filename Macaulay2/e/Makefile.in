@@ -16,10 +16,10 @@ CPPFLAGS := -I. $(CPPFLAGS)
 ## Targets ##
 #############
 
-all :: initialize
+stage1 :: initialize
 
 ifneq (@ETAGS@,)
-all :: tags
+stage1 :: tags
 endif
 tags:: @srcdir@/TAGS
 @srcdir@/TAGS: Makefile.in @srcdir@/*.hpp @srcdir@/*.h @srcdir@/*.cpp @srcdir@/*.c \
@@ -29,7 +29,7 @@ tags:: @srcdir@/TAGS
 
 
 # overflows
-all :: run-overflow-test
+stage1 :: run-overflow-test
 run-overflow-test : overflow-test
 	./$^ sub 2>/dev/null || echo test succeeded
 	./$^ minus 2>/dev/null || echo test succeeded
@@ -43,14 +43,14 @@ clean :: ; rm -f overflow-test
 pi : pi.h
 
 # the target 'initialize' is used by the Makefile in the parent directory
-initialize all :: $(addsuffix .hpp, $(GENERATED_H))
+initialize stage1 :: $(addsuffix .hpp, $(GENERATED_H))
 
-all::; $(MAKE) -C f4
+stage1::; $(MAKE) -C f4
 
 ifeq "$(SHARED)" "yes"
-all:: ../lib/libengine1.so ../lib/libengine2.so
+stage1:: ../lib/libengine1.so ../lib/libengine2.so
 else
-all:: $(ENGINE_OFILES)
+stage1:: $(ENGINE_OFILES)
 endif
 
 %.ii: %.cpp; $(PRE.cc)        $< $(OUTPUT_OPTION)
@@ -74,7 +74,7 @@ clean::
 	rm -f *.lo *.o *.rpo TAGS LOGFILE $(addsuffix .hpp, $(GENERATED_H))
 	$(MAKE) -C f4 $@
 Makefile : Makefile.in; cd ../..; ./config.status Macaulay2/e/Makefile
-all :: Makefile.common
+stage1 :: Makefile.common
 Makefile.common : Makefile.common.in; cd ../..; ./config.status Macaulay2/e/Makefile.common
 Makefile.include : Makefile.include.in; cd ../..; ./config.status Macaulay2/e/Makefile.include
 clean::; rm -f *.dep dep-*.tmp
@@ -96,7 +96,7 @@ doxygen : ; cd @srcdir@ && doxygen
 distclean: clean; rm -f Makefile
 
 ifeq (@NM_DEMANGLES@,yes)
-all:: check-global-new-delete
+stage1:: check-global-new-delete
 check-global-new-delete : $(ENGINE_OBJFILES) ; nm -o --demangle $^ | egrep '[WUT] operator (new|delete)' || true
 endif
 
@@ -116,7 +116,7 @@ pm-test.o : pm.hpp
 
 clean :: ; rm -f pi-demangled.s pi-test.s pi-test.o pi.s pi.E pi.o pi-test pi-test-run pi-masks.h
 
-all::; @ echo "LOGFILE: `wc -l LOGFILE` entries `wc -c LOGFILE` bytes."
+stage1::; @ echo "LOGFILE: `wc -l LOGFILE` entries `wc -c LOGFILE` bytes."
 
 # Local Variables:
 # compile-command: "make -C $M2BUILDDIR/Macaulay2/e "

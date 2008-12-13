@@ -376,7 +376,7 @@ document {
 	  which in the years since its introduction in 1988 has become the pre-eminent 
 	  system for mathematics on the computer.",
 	  },
-     IMG { "src" => replace("PKG","Style",Layout#1#"package") | "grayson2005.jpg", "alt" => "picture of Grayson" }
+     IMG { "src" => replace("PKG","Style",currentLayout#"package") | "grayson2005.jpg", "alt" => "picture of Grayson" }
      }
 
 document {
@@ -392,7 +392,7 @@ document {
 	  1983 to 1992 with Dave Bayer he wrote Macaulay, a specialized computer
 	  algebra system for algebraic geometry and the predecessor of this program.",
 	  },
-     IMG { "src" => replace("PKG","Style",Layout#1#"package") | "stillman.jpg", "alt" => "picture of Stillman" }
+     IMG { "src" => replace("PKG","Style",currentLayout#"package") | "stillman.jpg", "alt" => "picture of Stillman" }
      }
 
 document {

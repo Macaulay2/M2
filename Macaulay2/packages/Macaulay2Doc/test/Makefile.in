@@ -9,15 +9,15 @@ include $(DOTS)/../include/config.Makefile
 SRCDIR = @srcdir@
 include Makefile.test
 
-all check clean ::
+stage1 check clean ::
 	$(MAKE) -k -C slow $@
 
 clean ::
 	$(MAKE) -k -C engine $@
 
 # the raw engine tests are obsolete!
-all check ::
- 	: skipping: $(MAKE) -k -C engine $@
+stage1 check ::
+	: skipping: $(MAKE) -k -C engine $@
 
 ifneq "@DUMPDATA@" "no"
 RESULTS += dumpdata.out
