@@ -38,7 +38,7 @@ loadPackage = method(
 	  Configuration => {}
 	  } )
 packageLoadingOptions := new MutableHashTable
-checkPackageName = title -> if not match("^[a-zA-Z0-9]+$",title) then error( "package title not alphanumeric: ",title)
+checkPackageName = title -> if not match("^[a-zA-Z0-9]+$",title) then error( "package title not alphanumeric: ",format title)
 
 loadPackage String := opts -> pkgtitle -> (
      checkPackageName pkgtitle;

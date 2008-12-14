@@ -2,7 +2,7 @@
 
 getSourceLines = method(Dispatch => Thing) 
 getSourceLines Nothing := null -> null
-getSourceLines Sequence := x -> ((filename,start,startcol,stop,stopcol) -> if filename =!= "stdio" and filename =!= "a string" then (
+getSourceLines Sequence := x -> ((filename,start,startcol,stop,stopcol,pos,poscol) -> if filename =!= "stdio" and filename =!= "a string" then (
      wp := set characters " \t\r);";
      file := (
 	  if filename === "layout.m2"
@@ -25,7 +25,11 @@ getSourceLines Sequence := x -> ((filename,start,startcol,stop,stopcol) -> if fi
      if #file < stop then error("line number ",toString stop, " not found in file ", filename);
      while stop >= start and file#(stop-1) === "" do stop = stop-1;
      stack prepend(
-	  concatenate(filename, ":", toString start, if stop > start then ("-" ,toString stop),": --source lines:"),
+	  concatenate(filename, ":", 
+	       toString start, ":", toString (startcol+1),
+	       "-",
+	       toString stop, ":", toString (stopcol+1),
+	       ": --source lines:"),
 	  apply(start-1 .. stop-1, i -> file#i)
 	  )
      )) x
@@ -171,7 +175,9 @@ debuggerUsageMessage = ///--debugger commands that leave the debugger:
     listUserSymbols     -- display user symbols and their values
     code current        -- source code of current expression
     value current       -- execute current expression, obtain value
-    disassemble current -- microcode of current expression///
+    disassemble current -- microcode of current expression
+-- emacs commands in *M2* buffer:
+    <return>	        -- when on an error message line, jump to source///
 
 inDebugger = false
 addStartFunction(() -> inDebugger = false)

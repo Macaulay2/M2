@@ -287,7 +287,7 @@ can be executed with \\[M2-send-to-program]."
   location specified in the corresponding file.  Otherwise, send the input to the command
   interpreter using \\[comint-send-input]."
   (interactive)
-  (if (save-excursion (beginning-of-line) (looking-at "^ *\\(o+[1-9][0-9]* = \\)?\\([^:\n]+\\):\\([0-9]+\\)\\(:\\([0-9]+\\):\\|-[0-9]+:\\|: \\)"))
+  (if (save-excursion (beginning-of-line) (looking-at "^ *\\(o+[1-9][0-9]* = \\)?\\([^:\n]+\\):\\([0-9]+\\)\\(:\\([0-9]+\\)[:-]\\|-[0-9]+:\\|: \\)"))
       (let ((filename (buffer-substring (match-beginning 2) (match-end 2)))
 	    (linenum (string-to-number (buffer-substring (match-beginning 3) (match-end 3))))
 	    (colnum (if (match-beginning 5) (string-to-number (buffer-substring (match-beginning 5) (match-end 5))) 1)))
@@ -298,7 +298,7 @@ can be executed with \\[M2-send-to-program]."
 	  (message "error message here, file %s line %d column %d" filename linenum colnum)
 	  (find-file-other-window filename)
 	  (goto-line linenum)
-	  (forward-char (- colnum 1)))))
+	  (move-to-column (- colnum 1)))))
     (comint-send-input)))
 
 (defun M2-send-to-program() 

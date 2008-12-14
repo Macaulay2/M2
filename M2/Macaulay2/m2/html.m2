@@ -993,6 +993,7 @@ installPackage Package := opts -> pkg -> (
 
      -- all done
      SRC = null;
+     if not hadExampleError then buildDirectory|pkgDirectory|buildPackage|".installed" << close;
      stderr << "--installed package " << pkg << " in " << buildDirectory << endl;
      currentPackage = oldpkg;
      if not noinitfile then (

@@ -10,7 +10,7 @@ distclean : ; rm -rf Makefile
 # ignore @datarootdir@
 pre_prefix=PRE
 pre_exec_prefix=PRE
-RLS = sed 's,^linkdir PRE/,linkdir ,'
+RLS = sed 's, PRE/, ,'
 encapinfo : Makefile
 	( \
 	  echo encap 2.0 ;\
@@ -18,7 +18,9 @@ encapinfo : Makefile
 	  echo linkdir "@libm2dir@/*" ;\
 	  echo linkdir "@docdir@/*" ;\
 	  echo linkdir "@packagesdir@/*" ;\
-	  echo linkdir "@libm2dir@/*" \
+	  echo linkdir "@libm2dir@/*" ;\
+	  echo exclude "@infodir@/dir" ;\
+	  echo exclude "@infodir@/dir.old" \
 	) | $(RLS) >$@
 clean::; rm -f encapinfo
 # Local Variables:

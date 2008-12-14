@@ -1,16 +1,11 @@
 # @configure_input@ -*- GNUmakefile -*-
-
 ifneq ($(CONFIG_MAKEFILE),)
 $(error config.Makefile already loaded)
 endif
 CONFIG_MAKEFILE = loaded
-
-# the usual phony targets
 .PHONY : all check initialize clean distclean install stage1 stage2 always reconfigure
-
-# every makefile that includes this one should use 'all' as the
-# default (first) target
-# we want 'all' to be a single-colon rule, so "make -o all install" will work
+# Every makefile that includes this one should use 'all' as the # default (first) target.
+# We need 'all' to be a single-colon rule, so "make -o all install" will work.
 all: stage1 stage2
 
 # cygwin 'make' might get confused by setting SHELL
