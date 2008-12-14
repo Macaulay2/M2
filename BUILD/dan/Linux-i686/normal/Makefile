@@ -1,14 +1,18 @@
-all :
+.PHONY : configure install
+
+configure :
 	../../../../configure \
+		--enable-encap \
+		--enable-common-staging-area \
 		--prefix=/usr/local
 
 install :
-	$(MAKE) -n -s install -o pre-install -o all prefix=/usr/local/encap ENCAP=yes
+	rm -rf /usr/local/encap/Macaulay2-1.1.1
+	$(MAKE) install -o all prefix=/usr/local/encap
 
 #		--enable-tarfile \
 #		--enable-deb \
-#		--enable-common-staging-area \
-#		--enable-encap \
+
 
 # Local Variables:
 # compile-command: "make -f Makefile "

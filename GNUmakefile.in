@@ -1,23 +1,24 @@
 # @configure_input@
-CONFIG_FILES = @srcdir@/configure @srcdir@/config/install-sh @srcdir@/config/config.sub @srcdir@/config/config.guess @srcdir@/config/files
-# we make an exception here and use stage2 as the first target
-stage2 ::
 include include/config.Makefile
 VPATH = @srcdir@
+
+all:stage2
+stage2::stage1
+install:normal all; $(MAKE) -C distributions $@
+normal:;$(NORMAL_INSTALL) 
 
 # experimental
 .PHONY : scripts
 scripts : pre-install.sh post-install.sh
-rm-scripts clean ::; rm -f pre-install.sh post-install.sh normal-install.sh
+clean::rm-scripts
+rm-scripts:;rm -f pre-install.sh post-install.sh normal-install.sh
 MI = $(MAKE) -s --no-print-directory -n install -o all PRE_INSTALL=turn-off POST_INSTALL=turn-off NORMAL_INSTALL=turn-off
 pre-install.sh    : install-scripts.awk ; $(MI) PRE_INSTALL=turn-on |gawk -f $^ >$@
 post-install.sh   : install-scripts.awk ; $(MI) POST_INSTALL=turn-on |gawk -f $^ >$@
 normal-install.sh : install-scripts.awk ; $(MI) NORMAL_INSTALL=turn-on |gawk -f $^ >$@
-install ::; $(NORMAL_INSTALL)
 #
 
-# we want 'all' to be a single-colon rule so -o all will work
-all : stage1 stage2
+
 
 .PRECIOUS: @srcdir@/configure config.status
 .PHONY: reconfigure-libs reconfigure-all configure-help
@@ -26,9 +27,9 @@ GNUmakefile : GNUmakefile.in; ./config.status GNUmakefile
 include/config.Makefile: include/config.Makefile.in ; ./config.status include/config.Makefile
 # include/config.Makefile depends on ./config.status, too, but we are including it
 # it's enough that include/M2/config.h depends on ./config.status
-stage1 :: include/config.Makefile
+stage1:: include/config.Makefile
 include/M2/config.h: include/M2/config.h.in ./config.status ; ./config.status include/M2/config.h
-stage1 :: include/M2/config.h
+stage1:: include/M2/config.h
 @srcdir@/configure : @srcdir@/configure.ac @srcdir@/config/files
 	$(MAKE) -C @srcdir@ -f Makefile
 	@echo '-----------------------------------------------------------------------------'
@@ -54,11 +55,6 @@ status : @srcdir@/configure
 	@echo '#  to run it that way again.'
 	@echo '#'
 	@echo '-----------------------------------------------------------------------------'
-# announce we're starting
-install stage1 clean distclean ::; @echo '-------- making '$@', @PACKAGE_VERSION@ for ARCH=@ARCH@ OS=@OS@ REL=@REL@ --------'
-# the first install target, the only place in the tree where 'all' is a prerequisite of 'install', hopefully.
-install :: all
-stage2 :: stage1
 # the first distclean target:
 distclean:: clean
 stage2 clean distclean stage1 ::; $(MAKE) -C libraries $@
@@ -75,6 +71,7 @@ srcdir: GNUmakefile
 stage2 stage1 distclean check clean ::; $(MAKE) -C Macaulay2 $@
 subst : config.status ; ./config.status
 show : config.status ; egrep '^s,' $< | sed -e 's/^s,@\(.*\)@,\(.*\),g/\1=\2/' -e 's/^s,.*]\*\(.*\)\\).*\\2 \(.*\) ,/#define \1 \2/' -e 's/.#_!!_#.//g'
+CONFIG_FILES = @srcdir@/configure @srcdir@/config/install-sh @srcdir@/config/config.sub @srcdir@/config/config.guess @srcdir@/config/files
 reconfigure:: $(CONFIG_FILES)
 	./config.status --recheck && ./config.status
 	@ echo "============================================================================="
@@ -85,7 +82,7 @@ check-vars reconfigure stage1 check ::; ! egrep -nH '@[A-Za-z_]+@' $(shell cat @
 configure-help: $(CONFIG_FILES) ; @ @srcdir@/configure --help
 relink: ; rm -f @pre_exec_prefix@/bin/M2@EXE@ && $(MAKE) -C Macaulay2/d @pre_exec_prefix@/bin/M2@EXE@
 relink-nostrip: ; rm -f @pre_exec_prefix@/bin/M2@EXE@ && $(MAKE) -C Macaulay2/d STRIP=no @pre_exec_prefix@/bin/M2@EXE@
-stage1 dist clean distclean check stage2 install :: ; $(MAKE) -C distributions $@
+stage1 dist clean distclean check stage2 :: ; $(MAKE) -C distributions $@
 check ::; $(MAKE) -C libraries $@
 distclean check ::; $(MAKE) -C check-configure -f Makefile $@
 reconfigure-all : reconfigure reconfigure-libs 
@@ -122,14 +119,6 @@ help :
 	@ echo "      RerunExamples=true             rerun example output files"
 	@ echo "      debugLevel=1                   turn on further M2 debugging output"
 	@ echo "      MAPFILE=yes                    create a mapfile when linking M2"
-stage2 install stage1 clean distclean::; @echo "-------- done making '$@' --------"
-stage2::
-	@echo "************************************************"
-	@echo "*                                              *"
-	@echo "*    don't forget to run 'make -k check'       *"
-	@echo "*                                              *"
-	@echo "************************************************"
-
 
 # Local Variables:
 # compile-command: "make -C $M2BUILDDIR "

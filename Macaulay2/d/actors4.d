@@ -1324,14 +1324,17 @@ locate1():void := (
 	  locatedCode.mincol = 0;
 	  locatedCode.maxcol = 0;
 	  ));
-locate2():Expr := (
+locate2(c:Code):Expr := (
      locate1();
+     p := codePosition(c);
      Expr(Sequence(
 	       Expr(minimizeFilename(locatedCode.filename)),
 	       Expr(toInteger(locatedCode.minline)),
 	       Expr(toInteger(locatedCode.mincol)),
 	       Expr(toInteger(locatedCode.maxline)),
-	       Expr(toInteger(locatedCode.maxcol))
+	       Expr(toInteger(locatedCode.maxcol)),
+	       Expr(toInteger(int(p.line))),
+	       Expr(toInteger(int(p.column)))
 	       )));
 locate(e:Expr):Expr := (
      when e
@@ -1345,19 +1348,33 @@ locate(e:Expr):Expr := (
 	  then nullE
 	  else Expr(
 	       Sequence(
-		    minimizeFilename(p.filename),toInteger(int(p.line)),toInteger(int(p.column)),toInteger(int(p.line)),toInteger(int(p.column)))))
+		    minimizeFilename(p.filename),
+		    toInteger(int(p.line)),toInteger(int(p.column)),
+		    toInteger(int(p.line)),toInteger(int(p.column)+length(s.symbol.word.name)-1),
+		    toInteger(int(p.line)),toInteger(int(p.column))
+		    )))
      is c:CodeClosure do (
 	  locate0();
 	  locate(c.code);
-	  locate2())
+	  locate2(c.code))
      is s:SpecialExpr do locate(s.e)
      is f:FunctionClosure do (
 	  locate0();
 	  locate(f.model.arrow);
 	  locate(f.model.body);
-	  locate2())
+	  locate2(f.model.body))
      else WrongArg("a function, symbol, sequence, or null"));
 setupfun("locate",locate);
+
+export bar := 1;
+
+-- codePosition(e:Expr):Expr := (
+--      when e is c:CodeClosure do (
+-- 	  p := codePosition(c.code);
+-- 	  Expr(Sequence(
+-- 	       minimizeFilename(p.filename),toInteger(int(p.line)),toInteger(int(p.column)),toInteger(int(p.line)),toInteger(int(p.column)))))
+--      else WrongArg("pseudocode"));
+-- setupfun("codePosition", codePosition);
 
 export storeInHashTableWithCollisionHandler(x:HashTable,key:Expr,value:Expr,handler:Expr):Expr := (
      if !x.mutable then return buildErrorPacket("attempted to modify an immutable hash table");

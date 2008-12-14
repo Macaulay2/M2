@@ -1,9 +1,8 @@
 # @configure_input@
 ############################### targets to use
-.PHONY: check stage1 clean initialize book distclean justM2
+.PHONY: check stage1 clean initialize book distclean
 ################################# prologue
-stage1 ::
-justM2 stage1 :: initialize
+stage1 :: initialize
 
 include ../include/config.Makefile
 # ignore @datarootdir@
@@ -32,10 +31,9 @@ initialize::; $(MAKE) -C util stage1
 distclean clean ::; $(MAKE) DEPENDS=no -C util $@
 ################################# c
 distclean clean ::; $(MAKE) DEPENDS=no -C c $@
-stage1 justM2 ::; $(MAKE) -C c stage1
+stage1 ::; $(MAKE) -C c stage1
 ################################# e
-stage1 check justM2 initialize ::; $(MAKE) -C e DEPENDS=no initialize
-justM2 ::; $(MAKE) -C e stage1
+stage1 check initialize ::; $(MAKE) -C e DEPENDS=no initialize
 stage1 ::; $(MAKE) -C e $@
 
 # check ::; $(MAKE) -C e $@
@@ -47,7 +45,6 @@ check ::
 initialize distclean clean ::; $(MAKE) DEPENDS=no -C e $@
 ################################# dumpdata
 ifeq "@DUMPDATA@" "yes"
-justM2 ::; $(MAKE) -C dumpdata stage1
 stage2 stage1 check ::; $(MAKE) -C dumpdata $@
 endif
 distclean clean ::; $(MAKE) DEPENDS=no -C dumpdata $@
@@ -59,7 +56,10 @@ clean distclean ::; $(MAKE) DEPENDS=no -C regex $@
 ################################# d
 initialize ::; $(MAKE) DEPENDS=no -C d compat.h
 ### util/restart and util/update cooperate here:
-justM2 stage1 ::; util/restart d/restart.tmp $(MAKE) -C d stage1
+# old way:
+# stage1 ::; util/restart d/restart.tmp $(MAKE) -C d stage1
+# new way:
+stage1::; $(MAKE) -C d stage1
 distclean clean ::; $(MAKE) DEPENDS=no -C d $@
 ################################# bin
 stage1 distclean clean ::; $(MAKE) DEPENDS=no -C bin $@
@@ -67,7 +67,7 @@ stage1 distclean clean ::; $(MAKE) DEPENDS=no -C bin $@
 check ::; $(MAKE) -C packages/Macaulay2Doc/basictests -k
 distclean clean ::; $(MAKE) -C packages/Macaulay2Doc/basictests $@
 ################################# m2
-stage2 distclean clean check justM2 stage1 ::; $(MAKE) -C m2 $@
+stage2 distclean clean check stage1 ::; $(MAKE) -C m2 $@
 ################################# test
 check ::; $(MAKE) -C packages/Macaulay2Doc/test -k
 distclean clean ::; $(MAKE) -C packages/Macaulay2Doc/test $@
@@ -75,7 +75,7 @@ distclean clean ::; $(MAKE) -C packages/Macaulay2Doc/test $@
 stage1 check stage2 clean distclean ::; $(MAKE) -C packages $@
 ################################# html-check-links
 initialize::; $(MAKE) -C html-check-links stage1
-stage2 ::; $(MAKE) DEPENDS=no -C html-check-links check
+check stage2 ::; $(MAKE) DEPENDS=no -C html-check-links check
 distclean clean ::; $(MAKE) DEPENDS=no -C html-check-links $@
 ################################# probe
 clean distclean ::; $(MAKE) -C probe $@
@@ -90,9 +90,6 @@ stage1 clean distclean stage2 :: ; $(MAKE) -C man $@
 Makefile : Makefile.in
 	cd ..; ./config.status Macaulay2/Makefile
 distclean::; rm -f Makefile
-################################# final status messages
-justM2 stage1 clean distclean::
-	@echo "-------- done making '$@' --------"
 #################################
 clean :: ; rm -f gmon.out
 

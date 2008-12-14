@@ -88,7 +88,7 @@ ifeq (@NM_DEMANGLES@,yes)
 NMFLAGS += --demangle
 endif
 dups-tmp: $(ENGINE_OBJFILES)
-	- nm $(NMFLAGS) $(ENGINE_OBJFILES) |grep ' T ' |sort +2 |uniq -2 -d |tee dups-tmp
+	nm $(NMFLAGS) $(ENGINE_OBJFILES) |grep ' T ' |sort +2 |uniq -2 -d |tee dups-tmp
 dups-okay: dups-tmp
 	@if [ -s $< ]; then echo "Multiple definitions found:"; cat $<; exit 1; \
 	 else touch $@; fi
@@ -97,7 +97,13 @@ distclean: clean; rm -f Makefile
 
 ifeq (@NM_DEMANGLES@,yes)
 stage1:: check-global-new-delete
-check-global-new-delete : $(ENGINE_OBJFILES) ; nm -o --demangle $^ | egrep '[WUT] operator (new|delete)' || true
+check-global-new-delete : $(ENGINE_OBJFILES)
+	nm $(NMFLAGS) $^ | egrep '[WUT] operator (new|delete)' > refnewdel.tmp
+	@if [ -s refnewdel.tmp ] ; then \
+		echo "--warning: 'operator new' or 'operator delete' referred to in the following files:" >&2 ;\
+		sed 's/^/   /' refnewdel.tmp ;\
+	fi
+clean::; rm -f refnewdel.tmp
 endif
 
 initialize :: statuscodes.h
@@ -115,8 +121,6 @@ pi-masks.h : pi-genmask
 pm-test.o : pm.hpp
 
 clean :: ; rm -f pi-demangled.s pi-test.s pi-test.o pi.s pi.E pi.o pi-test pi-test-run pi-masks.h
-
-stage1::; @ echo "LOGFILE: `wc -l LOGFILE` entries `wc -c LOGFILE` bytes."
 
 # Local Variables:
 # compile-command: "make -C $M2BUILDDIR/Macaulay2/e "

@@ -117,6 +117,11 @@ document {
 	  TT replace("PKG", "PACKAGENAME", Layout#2#"package"), ", and ",
 	  TT replace("PKG", "PACKAGENAME", Layout#2#"packagedoc"), "."
 	  },
+     PARA {
+	  "In addition, if no errors occurred during running the examples, then an empty file whose name is 
+	  ", TT (Layout#1#"packages"|"PACKAGENAME.m2"), " or
+	  ", TT (Layout#2#"packages"|"PACKAGENAME.m2"), " is created, to signify that installation was completed."
+	  },
      SeeAlso => {"packages", "epkg", "prefixPath", "Layout"}
      }
 

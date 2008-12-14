@@ -55,9 +55,13 @@ lex.o : grammar.fixed.c
 DIR = $(shell pwd)
 NEW = @htmldir@/Macaulay2Doc/html
 check : html-check-links
+ifneq (,$(findstring w,$(MAKEFLAGS)))
 	@echo "make: Entering directory \`$(NEW)'"
+endif
 	cd $(NEW) && find . -name \*.html | xargs "$(DIR)"/html-check-links
+ifneq (,$(findstring w,$(MAKEFLAGS)))
 	@echo "make: Leaving directory \`$(NEW)'"
+endif
 
 Makefile : Makefile.in
 	cd ../..; ./config.status Macaulay2/html-check-links/Makefile

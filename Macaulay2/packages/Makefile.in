@@ -17,7 +17,7 @@ ARGS := RemakeAllDocumentation => $(RemakeAllDocumentation), \
 	IgnoreExampleErrors => $(IgnoreExampleErrors), \
 	RerunExamples => $(RerunExamples), \
 	CheckDocumentation => $(CheckDocumentation), \
-	UserMode => false, \
+	AbsoluteLinks => false, UserMode => false, \
 	InstallPrefix => \"@LOCALSTAGINGAREA@/\", \
 	SeparateExec => true
 
@@ -26,27 +26,35 @@ ifneq "$(IARGS)" ""
 ARGS := $(ARGS), $(IARGS)
 endif
 
-$(foreach i, $(PACKAGES),$(eval check ::; @pre_exec_prefix@/bin/M2@EXE@ -q --stop -e "needsPackage(\"${i}\",LoadDocumentation=>true); check(${i},UserMode=>false); exit 0"))
-$(foreach i, $(PACKAGES),$(eval stage2 ::; @pre_exec_prefix@/bin/M2@EXE@ $(M2DIRS) -q --stop -e errorDepth=0 -e debugLevel=$(debugLevel) $(EARGS) -e "installPackage(\"${i}\", $(ARGS)); exit 0"))
+$(foreach i, $(PACKAGES),\
+$(eval \
+    check ::; @bindir@/M2@EXE@ -q --stop -e "needsPackage(\"${i}\",LoadDocumentation=>true); check(${i},UserMode=>false); exit 0" \
+))
 
-@packagesdir@/%.m2 : %.m2 ; @INSTALL_DATA@ $^ $@
+define bld
+stage2: @packagesdir@/$(1).installed
+@packagesdir@/$(1).installed : $(1).m2 $(wildcard $(1)/*)
+	@bindir@/M2@EXE@ $(M2DIRS) \
+	    -q --stop \
+	    -e errorDepth=0 \
+	    -e debugLevel=$(debugLevel) \
+	    $(EARGS) \
+	    -e "installPackage(\"$(1)\", $(ARGS)); exit 0"
+endef
+$(foreach i, $(PACKAGES), $(eval $(call bld,$i)))
 
 clean::; rm -rf tmp *.installed
-
-distclean::clean
-clean check distclean ::; $(MAKE) -C ComputationsBook $@
+clean check ::; $(MAKE) -C ComputationsBook $@
 Makefile: Makefile.in; cd ../..; ./config.status Macaulay2/packages/Makefile
-distclean::; rm -f Makefile
+distclean:clean
+	$(MAKE) -C ComputationsBook $@
+	rm -f Makefile
 
 ## here is the list of other files to install along with Macaulay2
-stage2 :: @packagesdir@/eliminate.m2 @packagesdir@/D-modules.m2
-@packagesdir@/eliminate.m2 : eliminate.m2 ; cp $^ "$@"
-@packagesdir@/D-modules.m2 : D-modules.m2 ; cp $^ "$@"
-
+@packagesdir@/%.m2 : %.m2 ; @INSTALL_DATA@ $^ $@
+stage2: @packagesdir@/eliminate.m2 @packagesdir@/D-modules.m2
 # this one we need for compatibility with the book
-stage2 :: @packagesdir@/LLL.m2
-@packagesdir@/LLL.m2 : LLL.m2 ; cp $^ "$@"
-
+stage2 : @packagesdir@/LLL.m2
 # Local Variables:
 # compile-command: "make -C $M2BUILDDIR/Macaulay2/packages "
 # End:
