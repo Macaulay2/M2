@@ -6,8 +6,6 @@ vpath %.so $(BUILTLIBPATH)/lib
 VPATH = @srcdir@
 EXES := echoout timestmp restart updat
 CPPFLAGS :=  -I. -I../../include $(CPPFLAGS)
-LD_LIBRARY_PATH := $(BUILTLIBPATH)/lib:$(LD_LIBRARY_PATH)
-export LD_LIBRARY_PATH
 
 ifeq (@OS@,Linux)
 EXES += screen

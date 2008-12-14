@@ -7,8 +7,6 @@ srcdir = $(shell cd @srcdir@; /bin/pwd)
 stage1:: initialize
 Makefile : Makefile.in ; cd ../.. && ./config.status Macaulay2/m2/Makefile
 emacs html: stage1; $(MAKE) -C ../$@
-LD_LIBRARY_PATH := $(BUILTLIBPATH)/lib:$(LD_LIBRARY_PATH)
-export LD_LIBRARY_PATH
 ##############################
 .SUFFIXES: .m2
 .PHONY: html initialize prep tags install-tmp

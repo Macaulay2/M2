@@ -2,9 +2,6 @@
 include ../../include/config.Makefile
 VPATH = @srcdir@
 
-LD_LIBRARY_PATH := $(BUILTLIBPATH)/lib:$(LD_LIBRARY_PATH)
-export LD_LIBRARY_PATH
-
 PACKAGES = @PACKAGES@
 
 RemakeAllDocumentation ?= false
@@ -21,6 +18,12 @@ ARGS := RemakeAllDocumentation => $(RemakeAllDocumentation), \
 	InstallPrefix => \"@LOCALSTAGINGAREA@/\", \
 	SeparateExec => true
 
+ifeq (${RemakePackages},true)
+REMAKEPACKAGES = always
+else
+REMAKEPACKAGES =
+endif
+
 # so the user can override arguments to installPackage:
 ifneq "$(IARGS)" ""
 ARGS := $(ARGS), $(IARGS)
@@ -33,7 +36,8 @@ $(eval \
 
 define bld
 stage2: @packagesdir@/$(1).installed
-@packagesdir@/$(1).installed : $(1).m2 $(wildcard $(1)/*)
+@packagesdir@/$(1).installed : $(1).m2 $(wildcard $(1)/*) $(REMAKEPACKAGES)
+	@echo remaking $(1) because of: $$^
 	@bindir@/M2@EXE@ $(M2DIRS) \
 	    -q --stop \
 	    -e errorDepth=0 \
