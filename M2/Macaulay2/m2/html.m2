@@ -387,11 +387,11 @@ capture String := s -> (
 -- the code above for making html for Macaulay 2 itself
 -----------------------------------------------------------------------------
 
-makeMasterIndex := keylist -> (
+makeMasterIndex := (keylist,verbose) -> (
      numAnchorsMade = 0;
      fn := buildDirectory | htmlDirectory | indexFileName;
      title := "Symbol Index";
-     stderr << "--making  '" << title << "' in " << fn << endl;
+     if verbose then stderr << "--making '" << title << "' in " << fn << endl;
      r := HTML {
 	  HEAD splice { TITLE title, links() },
 	  BODY {
@@ -544,6 +544,7 @@ installPackage = method(Options => {
 	  RunExamples => true,
 	  AbsoluteLinks => true,
 	  MakeLinks => true,
+	  Verbose => true,
 	  DebuggingMode => false
 	  })
 uninstallPackage = method(Options => { 
@@ -591,6 +592,7 @@ dispatcherMethod := m -> m#-1 === Sequence and (
 load "install.m2"
 
 installPackage Package := opts -> pkg -> (
+     verbose := opts.Verbose or debugLevel > 0;
      oldlayout := layout;
      layout = if opts.SeparateExec then Layout#2 else Layout#1;
 
@@ -615,7 +617,7 @@ installPackage Package := opts -> pkg -> (
      stderr << "--installing package " << pkg << " in " << buildDirectory << endl;
      
      currentSourceDir := pkg#"source directory";
-     stderr << "--using package sources found in " << currentSourceDir << endl;
+     if verbose then stderr << "--using package sources found in " << currentSourceDir << endl;
 
      -- copy package source file
      pkgDirectory := layout#"packages";
@@ -637,7 +639,7 @@ installPackage Package := opts -> pkg -> (
 	  then (
 	       if not (options pkg).AuxiliaryFiles
 	       then error ("package ",toString pkg," has auxiliary files in \"",dn,"\", but newPackage wasn't given AuxiliaryFiles=>true");
-	       stderr << "--copying auxiliary source files from " << dn << endl;
+	       if verbose then stderr << "--copying auxiliary source files from " << dn << endl;
 	       makeDirectory (buildDirectory|srcDirectory);
 	       copyDirectory(dn, buildDirectory|srcDirectory, UpdateOnly => true, Verbose => debugLevel > 0, excludes);
 	       )
@@ -678,7 +680,7 @@ installPackage Package := opts -> pkg -> (
 	  docDir := pkg#"package prefix" | replace("PKG",pkg#"title",layout#"packagecache");
 	  rawdbname := docDir | "rawdocumentation" | databaseSuffix;
 	  rawdbnametmp := rawdbname | ".tmp";
-	  stderr << "--storing raw documentation in " << rawdbname << endl;
+	  if verbose then stderr << "--storing raw documentation in " << rawdbname << endl;
 	  makeDirectory docDir;
 	  if fileExists rawdbnametmp then removeFile rawdbnametmp;
 	  if fileExists rawdbname then (
@@ -715,9 +717,9 @@ installPackage Package := opts -> pkg -> (
 	  close rawdocDatabase;
 
 	  -- run tests that are functions
-	  stderr << "--running tests that are functions" << endl;
+	  if verbose then stderr << "--running tests that are functions" << endl;
 	  scan(pairs pkg#"test inputs", (key,str) -> if instance(str, Function) then (
-		    stderr << "--  running test " << key << ", function " << str << endl;
+		    if verbose then stderr << "--  running test " << key << ", function " << str << endl;
 		    str();
 		    ));
 
@@ -728,7 +730,7 @@ installPackage Package := opts -> pkg -> (
 	       f := get outf;
 	       m := regex("\\`.*\\{\\*.* hash: *(-?[0-9]+).*\\*\\}",f);
 	       if m =!= null then value substring(f,m#1#0,m#1#1));
-	  stderr << "--making example result files in " << exampleOutputDir << endl;
+	  if verbose then stderr << "--making example result files in " << exampleOutputDir << endl;
 	  hadExampleError = false;
 	  numExampleErrors = 0;
 	  scan(pairs pkg#"example inputs", (fkey,inputs) -> (
@@ -778,7 +780,7 @@ installPackage Package := opts -> pkg -> (
 
 	  -- process documentation
 	  rawkey := "raw documentation database";
-	  stderr << "--processing documentation nodes..." << endl;
+	  if verbose then stderr << "--processing documentation nodes..." << endl;
      	  SRC = new MutableHashTable;
 	  scan(nodes, 
 	       tag -> if isUndocumented tag then (
@@ -820,7 +822,7 @@ installPackage Package := opts -> pkg -> (
 	  addEndFunction(() -> if pkg#?rawkey and isOpen pkg#rawkey then close pkg#rawkey);
 
 	  -- make table of contents, including next, prev, and up links
-	  stderr << "--assembling table of contents" << endl;
+	  if verbose then stderr << "--assembling table of contents" << endl;
 	  assembleTree(pkg,getPrimary \ select(nodes,tag -> not isUndocumented tag)); -- sets tableOfContents
 	  -- if chkdoc then stderr << "+++++" << endl << "table of contents, in tree form:" << endl << tableOfContents << endl << "+++++" << endl;
 	  pkg#"table of contents" = Bag {tableOfContents}; -- we bag it because it might be big!
@@ -835,7 +837,8 @@ installPackage Package := opts -> pkg -> (
 	       numDocumentationWarnings = 0;
 	       scan((if pkg#"title" == "Macaulay2Doc" then Core else pkg)#"exported symbols", s -> (
 			 tag := makeDocumentTag s;
-			 if not isUndocumented tag and not hasDocumentation s and signalDocError tag then stderr << "--warning: symbol has no documentation: " << tag << endl;
+			 if not isUndocumented tag and not hasDocumentation s and signalDocError tag
+			 then stderr << "--warning: symbol has no documentation: " << tag << endl;
 			 f := value s;
 			 if instance(f, Function) then (
 			      scan(methods f, m -> if isDocumentableMethod m then (
@@ -866,7 +869,7 @@ installPackage Package := opts -> pkg -> (
 	       infobasename := infotitle|".info";
 	       tmpinfobasename := infobasename|".tmp";
 	       infofile := openOut (infodir|tmpinfobasename);
-	       stderr << "--making info file in " << infofile << endl;
+	       if verbose then stderr << "--making info file in " << infofile << endl;
 	       upto30 := t -> concatenate(t,30-#t:" ");
 	       infofile << " -*- coding: utf-8 -*- This is " << infobasename << ", produced by Macaulay 2, version " << version#"VERSION" << endl << endl;
 	       infofile << "INFO-DIR-SECTION " << pkg.Options.InfoDirSection << endl;
@@ -897,18 +900,18 @@ installPackage Package := opts -> pkg -> (
 	       infofile << "\037" << endl << "End Tag Table" << endl;
 	       infofile << close;
 	       moveFile(infodir|tmpinfobasename,infodir|infobasename);
-	       stderr << "--completed info file moved to " << infodir|infobasename << endl;
+	       if verbose then stderr << "--completed info file moved to " << infodir|infobasename << endl;
 	       printWidth = savePW;
 	       )
 	  else (
-	       stderr << "--not making info file" << endl;
+	       if verbose then stderr << "--not making info file" << endl;
 	       );
 
 	  -- make html files
 	  htmlDirectory = replace("PKG",pkg#"title",layout#"packagehtml"); -- if layout =!= currentLayout, this may cause problems
 	  setupButtons();
 	  makeDirectory (buildDirectory|htmlDirectory);
-	  stderr << "--making html pages in " << buildDirectory|htmlDirectory << endl;
+	  if verbose then stderr << "--making html pages in " << buildDirectory|htmlDirectory << endl;
 	  scan(nodes, tag -> if not isUndocumented tag then (
 	       -- key := DocumentTag.Key tag;
 	       fkey := DocumentTag.FormattedKey tag;
@@ -932,7 +935,7 @@ installPackage Package := opts -> pkg -> (
 	       << endl << close));
 
 	  -- make master.html with master index of all the html files
-	  makeMasterIndex select(nodes,tag -> not isUndocumented tag and instance(DocumentTag.Key tag,Symbol));
+	  makeMasterIndex(select(nodes,tag -> not isUndocumented tag and instance(DocumentTag.Key tag,Symbol)), verbose);
 
 	  -- make table of contents
 	  maketableOfContents();
@@ -942,7 +945,7 @@ installPackage Package := opts -> pkg -> (
      -- make postinstall and preremove files, if encap
      if opts.Encapsulate then (
 	  octal := s -> (n := 0 ; z := first ascii "0"; scan(ascii s, i -> n = 8*n + i - z); n);
-	  stderr << "--making INSTALL, postinstall, preremove, and encapinfo files in " << buildDirectory << endl;
+	  if verbose then stderr << "--making INSTALL, postinstall, preremove, and encapinfo files in " << buildDirectory << endl;
      	  fix := s -> (
 	       s = replace("info/", layout#"info", s);
 	       s = replace("bin/", layout#"bin", s);
@@ -989,7 +992,7 @@ installPackage Package := opts -> pkg -> (
 
      -- make symbolic links
      if opts.Encapsulate and opts.MakeLinks then (
-     	  stderr << "--making symbolic links from \"" << installDirectory << "\" to \"" << buildDirectory << "\"" << endl;
+     	  if verbose then stderr << "--making symbolic links from \"" << installDirectory << "\" to \"" << buildDirectory << "\"" << endl;
 	  scan(unique {layout#"common",layout#"exec"}, d ->
 	       symlinkDirectory(buildDirectory|d, installDirectory,
 		    Verbose => debugLevel > 0, 
@@ -1001,7 +1004,7 @@ installPackage Package := opts -> pkg -> (
      -- all done
      SRC = null;
      if not hadExampleError then buildDirectory|pkgDirectory|buildPackage|".installed" << close;
-     stderr << "--installed package " << pkg << " in " << buildDirectory << endl;
+     << "--installed package " << pkg << " in " << buildDirectory << endl;
      currentPackage = oldpkg;
      if not noinitfile then (
 	  userMacaulay2Directory();

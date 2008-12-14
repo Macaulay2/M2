@@ -9,6 +9,7 @@ document {
 	  (installPackage,String),
 	  (installPackage,Package),
 	  [installPackage,AbsoluteLinks],
+	  [installPackage,Verbose],
 	  [installPackage,CacheExampleOutput],
 	  [installPackage,CheckDocumentation],
 	  [installPackage,DebuggingMode],
@@ -77,6 +78,10 @@ document {
 	       named ", TT "examples", ", for use in a future installation.  This value will override any value explicitly specified
 	       when ", TO "newPackage", " is called.  After the directory is created, it will necessary for the user to specify
 	       ", TT "AuxiliaryFiles=>true", " with the ", TO "newPackage", " command."
+	       },
+	  Verbose => Boolean => {
+	       "whether to display some details of the installation procedure.  For even more information set ", TO "debugLevel", " to
+	       a number greater than 0 or a number greater than 5."
 	       }
 	  },
      Consequences => {
