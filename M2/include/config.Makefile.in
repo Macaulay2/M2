@@ -56,57 +56,43 @@ CPPFLAGS := \
 	 $(IFLAG)$(BUILTLIBPATH)/include \
 	 $(CPPFLAGS)
 LDFLAGS := -L$(BUILTLIBPATH)/lib $(LDFLAGS)
-LD_LIBRARY_PATH := $(LD_LIBRARY_PATH)
+LD_LIBRARY_PATH := $(BUILTLIBPATH)/lib:$(LD_LIBRARY_PATH)
 export LD_LIBRARY_PATH
-
 export PATH := @abs_top_srcdir@/bin:${PATH}
-
 AR = ar
-
 ifeq (,$(findstring --no-print-directory,$(MAKEFLAGS)))
 MAKEFLAGS += -w
 endif
-
 ifeq "@OS@ @ARCH@" "Linux alpha"
 AS = gcc -c -x assembler-with-cpp
 endif
-
 M2_CPPFLAGS += @M2_CPPFLAGS@
-
 ifeq "@GCC@" "yes"
 # if it's gcc, we can get stricter warning and error messages
 ifneq ($(RELAX),yes)
 # but sometimes that's bad, e.g., during configure scripts with loosely written test programs
 # -Winline gives too many warning messages
 M2_BOTH      = -pipe -Wall -Wshadow -Wcast-qual -Wno-parentheses -Wno-sign-compare 
-
 ifeq "@OPTIMIZE@" "yes"
 # gcc 3.3.2 doesn't accept this:
 # M2_BOTH += -Werror=uninitialized
 M2_BOTH += -Wuninitialized
 endif
-
 # M2_CFLAGS   += -Werror=implicit-function-declaration -Werror=write-strings $(M2_BOTH)
 M2_CFLAGS   += -Wimplicit-function-declaration -Wwrite-strings $(M2_BOTH)
-
 M2_CXXFLAGS += -Wconversion $(M2_BOTH)
 # -Werror-implicit-function-declaration is important, because if we include the wrong include file and a function that
 # returns a 64-bit pointer is not declared as such, then only 32 bits of the return value will be used.
 endif
 endif
-
 STRIPCMD = @STRIPCMD@
 ifeq "$(STRIP)" "yes"
 ifneq "@OS@" "Darwin"
 LDFLAGS  += -s
 endif
 endif
-
-# MKDIR_P = @ MKDIR_P @
 MKDIR_P = @INSTALL@ -d
-
 always:
-
 # Local Variables:
 # compile-command: "make -C $M2BUILDDIR include/config.Makefile"
 # End:
