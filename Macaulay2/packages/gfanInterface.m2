@@ -10,7 +10,9 @@ newPackage(
 	Configuration => { "path" => "",
 	     "keep files" => true
 	      },
-    	DebuggingMode => true
+    	DebuggingMode => true,
+	AuxiliaryFiles => true,
+	CacheExampleOutput => true
     	)
 
 export {

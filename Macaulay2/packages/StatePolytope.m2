@@ -10,7 +10,9 @@ newPackage(
 	-- DebuggingMode should be true while developing a package, 
 	--   but false after it is done
 	Configuration => {"gfan command" => "gfan"},
-    	DebuggingMode => true 
+    	DebuggingMode => true,
+	AuxiliaryFiles => true,
+	CacheExampleOutput => true
     	)
 
 export { 

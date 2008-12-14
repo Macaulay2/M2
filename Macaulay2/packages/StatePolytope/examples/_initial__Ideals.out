@@ -1,0 +1,18 @@
+-- -*- M2-comint -*- {* hash: -1549979493 *}
+
+i1 : R = QQ[a,b];
+
+i2 : I = ideal(a^2+b^2,a*b);
+
+o2 : Ideal of R
+
+i3 : initialIdeals(I)  
+
+        3        2     2        3
+o3 = {{b , a*b, a }, {b , a*b, a }}
+
+o3 : List
+
+i4 : 
+0.56user 0.06system 0:00.63elapsed 99%CPU (0avgtext+0avgdata 0maxresident)k
+1984inputs+0outputs (11major+8230minor)pagefaults 0swaps

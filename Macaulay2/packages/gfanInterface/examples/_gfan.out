@@ -1,0 +1,58 @@
+-- -*- M2-comint -*- {* hash: 1249026324 *}
+
+i1 : R = ZZ/32003[symbol a..symbol d];
+
+i2 : I = monomialCurveIdeal(R,{1,3,4})
+
+                        3      2     2    2    3    2
+o2 = ideal (b*c - a*d, c  - b*d , a*c  - b d, b  - a c)
+
+o2 : Ideal of R
+
+i3 : time (M,L) = gfan I
+sh: gfan: not found
+sh: gfan_leadingterms: not found
+using temporary file /tmp/M2-1803-1
+     -- used 0. seconds
+
+o3 = ({}, {})
+
+o3 : Sequence
+
+i4 : M/toString/print;
+
+i5 : L/toString/print;
+
+i6 : S = ZZ/32003[a..e];
+
+i7 : I = ideal"a+b+c+d,ab+bc+cd+da,abc+bcd+cda+dab,abcd-e4"
+
+                                                                         
+o7 = ideal (a + b + c + d, a*b + b*c + a*d + c*d, a*b*c + a*b*d + a*c*d +
+     ------------------------------------------------------------------------
+                       4
+     b*c*d, a*b*c*d - e )
+
+o7 : Ideal of S
+
+i8 : (inL,L) = gfan I;
+sh: gfan: not found
+sh: gfan_leadingterms: not found
+using temporary file /tmp/M2-1803-2
+
+i9 : #inL
+
+o9 = 0
+
+i10 : (inL1, L1) = gfan(I, Symmetries=>{(b,c,d,a,e)});
+sh: gfan: not found
+sh: gfan_leadingterms: not found
+using temporary file /tmp/M2-1803-3
+
+i11 : #inL1
+
+o11 = 0
+
+i12 : 
+0.56user 0.04system 0:00.62elapsed 98%CPU (0avgtext+0avgdata 0maxresident)k
+0inputs+24outputs (0major+9186minor)pagefaults 0swaps

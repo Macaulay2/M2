@@ -1,0 +1,102 @@
+-- -*- M2-comint -*- {* hash: 674048408 *}
+
+i1 : A = matrix"1,1,1,1;0,1,2,3"
+
+o1 = | 1 1 1 1 |
+     | 0 1 2 3 |
+
+              2        4
+o1 : Matrix ZZ  <--- ZZ
+
+i2 : R = QQ[a..d]
+
+o2 = R
+
+o2 : PolynomialRing
+
+i3 : M = toricMarkov(A)
+-------------------------------------------------
+4ti2 version 1.3.1, Copyright (C) 2006 4ti2 team.
+4ti2 comes with ABSOLUTELY NO WARRANTY.
+This is free software, and you are welcome
+to redistribute it under certain conditions.
+For details, see the file COPYING.
+-------------------------------------------------
+Using 64 bit integers.
+4ti2 Total Time:  0.00 secs.
+using temporary file name /tmp/M2-27531-1
+
+o3 = | 0 1  -2 1 |
+     | 1 -2 1  0 |
+     | 1 -1 -1 1 |
+
+              3        4
+o3 : Matrix ZZ  <--- ZZ
+
+i4 : I = toBinomial(M,R)
+
+               2           2
+o4 = ideal (- c  + b*d, - b  + a*c, - b*c + a*d)
+
+o4 : Ideal of R
+
+i5 : B = syz A
+
+o5 = | -1 2  |
+     | 2  -3 |
+     | -1 0  |
+     | 0  1  |
+
+              4        2
+o5 : Matrix ZZ  <--- ZZ
+
+i6 : N = toricMarkov(transpose B, InputType => "lattice")
+-------------------------------------------------
+4ti2 version 1.3.1, Copyright (C) 2006 4ti2 team.
+4ti2 comes with ABSOLUTELY NO WARRANTY.
+This is free software, and you are welcome
+to redistribute it under certain conditions.
+For details, see the file COPYING.
+-------------------------------------------------
+Using 64 bit integers.
+4ti2 Total Time:  0.00 secs.
+using temporary file name /tmp/M2-27531-2
+
+o6 = | 0 1  -2 1 |
+     | 1 -2 1  0 |
+     | 1 -1 -1 1 |
+
+              3        4
+o6 : Matrix ZZ  <--- ZZ
+
+i7 : J = toBinomial(N,R) -- toricMarkov(transpose B, R, InputType => "lattice")
+
+               2           2
+o7 = ideal (- c  + b*d, - b  + a*c, - b*c + a*d)
+
+o7 : Ideal of R
+
+i8 : I == J
+
+o8 = true
+
+i9 : toricMarkov(A,R)
+-------------------------------------------------
+4ti2 version 1.3.1, Copyright (C) 2006 4ti2 team.
+4ti2 comes with ABSOLUTELY NO WARRANTY.
+This is free software, and you are welcome
+to redistribute it under certain conditions.
+For details, see the file COPYING.
+-------------------------------------------------
+Using 64 bit integers.
+4ti2 Total Time:  0.00 secs.
+using temporary file name /tmp/M2-27531-3
+
+               2           2
+o9 = ideal (- c  + b*d, - b  + a*c, - b*c + a*d)
+
+o9 : Ideal of R
+
+i10 : 
+0.58user 0.12system 0:00.95elapsed 74%CPU (0avgtext+0avgdata 0maxresident)k
+1944inputs+48outputs (11major+17134minor)pagefaults 0swaps

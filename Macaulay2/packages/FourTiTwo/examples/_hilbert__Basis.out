@@ -1,0 +1,67 @@
+-- -*- M2-comint -*- {* hash: 824115731 *}
+
+i1 : A = matrix "1,1,1,1; 1,2,3,4"
+
+o1 = | 1 1 1 1 |
+     | 1 2 3 4 |
+
+              2        4
+o1 : Matrix ZZ  <--- ZZ
+
+i2 : B = syz A
+
+o2 = | 1  2  |
+     | -2 -3 |
+     | 1  0  |
+     | 0  1  |
+
+              4        2
+o2 : Matrix ZZ  <--- ZZ
+
+i3 : hilbertBasis(transpose B)
+-------------------------------------------------
+4ti2 version 1.3.1, Copyright (C) 2006 4ti2 team.
+4ti2 comes with ABSOLUTELY NO WARRANTY.
+This is free software, and you are welcome
+to redistribute it under certain conditions.
+For details, see the file COPYING.
+-------------------------------------------------
+
+
+Final basis has 1 inhomogeneous, 3 homogeneous and 0 free elements.
+
+4ti2 Total Time: 0.00 secs
+using temporary file name /tmp/M2-27962-1
+
+o3 = | 3 2 1 0 |
+     | 0 1 2 3 |
+     | 1 1 1 1 |
+
+              3        4
+o3 : Matrix ZZ  <--- ZZ
+
+i4 : hilbertBasis(A, InputType => "lattice")
+-------------------------------------------------
+4ti2 version 1.3.1, Copyright (C) 2006 4ti2 team.
+4ti2 comes with ABSOLUTELY NO WARRANTY.
+This is free software, and you are welcome
+to redistribute it under certain conditions.
+For details, see the file COPYING.
+-------------------------------------------------
+
+
+Final basis has 1 inhomogeneous, 3 homogeneous and 0 free elements.
+
+4ti2 Total Time: 0.00 secs
+using temporary file name /tmp/M2-27962-2
+
+o4 = | 3 2 1 0 |
+     | 0 1 2 3 |
+     | 1 1 1 1 |
+
+              3        4
+o4 : Matrix ZZ  <--- ZZ
+
+i5 : 
+0.55user 0.08system 0:00.63elapsed 99%CPU (0avgtext+0avgdata 0maxresident)k
+8inputs+32outputs (0major+9550minor)pagefaults 0swaps

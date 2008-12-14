@@ -186,7 +186,7 @@ document {
 document {
      Key => {(newPackage,String), newPackage, Date, [newPackage,Date], Authors, [newPackage,Authors], Version, [newPackage, Version],
 	  [newPackage,Headline],HomePage, [newPackage,HomePage],[newPackage,DebuggingMode],Email,Name,Configuration,[newPackage,Configuration],
-	  InfoDirSection, [newPackage,InfoDirSection],AuxiliaryFiles,[newPackage,AuxiliaryFiles]
+	  InfoDirSection, [newPackage,InfoDirSection],AuxiliaryFiles,[newPackage,AuxiliaryFiles],[newPackage,CacheExampleOutput]
 	  }, 
      Headline => "package item: start a new package",
      Usage => "newPackage ( title )",
@@ -204,6 +204,12 @@ document {
 	  DebuggingMode => Boolean => {"whether ", TO "debuggingMode", " should be true during package loading"},
           AuxiliaryFiles => Boolean => {"whether the package source to be distributed includes a directory for
 	       auxiliary files, with the same name as the package"},
+	  CacheExampleOutput => Boolean => {
+	       "whether ", TO "installPackage", " should cache (newer) example output in a subdirectory of the ", TO2{[newPackage,AuxiliaryFiles],"auxiliary file directory"}, "
+	       named ", TT "examples", ", for use in a future installation.  This value can be overridden by a value explicitly specified
+	       when ", TO "installPackage", " is called.  After the directory is created, it will necessary for the user also to specify
+	       ", TT "AuxiliaryFiles=>true"."
+	       }
 	  Configuration => List => {"a list of configuration options for the package.  The keys and values should be constant expressions,
 	       such as strings and integers, not incorporating symbols to be exported by the package (and not yet defined).
 	       The first time the package is loaded by the user, unless the ", TT "-q", " option is specified on the ", TT "M2", " command
