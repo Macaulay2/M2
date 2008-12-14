@@ -68,7 +68,9 @@ export PATH := @abs_top_srcdir@/bin:${PATH}
 
 AR = ar
 
+ifeq (,$(findstring --no-print-directory,$(MAKEFLAGS)))
 MAKEFLAGS += -w
+endif
 
 ifeq "@OS@ @ARCH@" "Linux alpha"
 AS = gcc -c -x assembler-with-cpp
