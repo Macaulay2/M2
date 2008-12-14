@@ -14,7 +14,7 @@ ARGS := RemakeAllDocumentation => $(RemakeAllDocumentation), \
 	IgnoreExampleErrors => $(IgnoreExampleErrors), \
 	RerunExamples => $(RerunExamples), \
 	CheckDocumentation => $(CheckDocumentation), \
-	AbsoluteLinks => false, UserMode => false, \
+	AbsoluteLinks => false, UserMode => false, Verbose => false, \
 	InstallPrefix => \"@LOCALSTAGINGAREA@/\", \
 	SeparateExec => true
 
@@ -37,9 +37,9 @@ $(eval \
 define bld
 stage2: @packagesdir@/$(1).installed
 @packagesdir@/$(1).installed : $(1).m2 $(wildcard $(1)/*) $(REMAKEPACKAGES)
-	@echo remaking $(1) because of: $$^
+	: remaking $(1) because of: $$^
 	@bindir@/M2@EXE@ $(M2DIRS) \
-	    -q --stop \
+	    -q --stop --silent \
 	    -e errorDepth=0 \
 	    -e debugLevel=$(debugLevel) \
 	    $(EARGS) \
