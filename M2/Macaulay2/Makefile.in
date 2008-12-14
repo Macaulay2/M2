@@ -75,7 +75,7 @@ distclean clean ::; $(MAKE) -C packages/Macaulay2Doc/test $@
 stage1 check stage2 clean distclean ::; $(MAKE) -C packages $@
 ################################# html-check-links
 initialize::; $(MAKE) -C html-check-links stage1
-check stage2 ::; $(MAKE) DEPENDS=no -C html-check-links check
+check ::; $(MAKE) DEPENDS=no -C html-check-links check
 distclean clean ::; $(MAKE) DEPENDS=no -C html-check-links $@
 ################################# probe
 clean distclean ::; $(MAKE) -C probe $@
