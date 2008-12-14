@@ -1,4 +1,5 @@
 #! /bin/sh -e
+# ignore @datarootdir@
 case "$1" in
     remove|upgrade|failed-upgrade|abort-install|abort-upgrade|disappear)
         ;;
