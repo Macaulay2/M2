@@ -9,7 +9,7 @@ VPATH = @srcdir@
 .PHONY : scripts
 scripts : pre-install.sh post-install.sh normal-install.sh
 rm-scripts clean ::; rm -f pre-install.sh post-install.sh normal-install.sh
-MI = $(MAKE) -n install -o all PRE_INSTALL=turn-off POST_INSTALL=turn-off NORMAL_INSTALL=turn-off
+MI = $(MAKE) -s --no-print-directory -n install -o all PRE_INSTALL=turn-off POST_INSTALL=turn-off NORMAL_INSTALL=turn-off
 pre-install.sh    : install-scripts.awk ; $(MI) PRE_INSTALL=turn-on |gawk -f $^ >$@
 post-install.sh   : install-scripts.awk ; $(MI) POST_INSTALL=turn-on |gawk -f $^ >$@
 normal-install.sh : install-scripts.awk ; $(MI) NORMAL_INSTALL=turn-on |gawk -f $^ >$@

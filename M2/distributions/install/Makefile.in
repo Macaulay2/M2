@@ -15,28 +15,26 @@ pre_prefix      = $(DESTDIR)${prefix}
 pre_exec_prefix = $(DESTDIR)${exec_prefix}
 endif
 
-ifeq "${ENCAP}" "yes"
-install :: ${pre_prefix}
-	@INSTALL@ -m 755 ../top/postinstall ../top/preremove ${pre_prefix}
-	@INSTALL@ -m 644 ../top/INSTALL     ../top/encapinfo ${pre_prefix}
-endif
-
 T=tar --create --mode=a+rX,og-ws --exclude='.nfs*'
-${pre_prefix} ${pre_exec_prefix} :; $(MKDIR_P) $@
-install :: ${pre_prefix}
-	$(T) -C @pre_prefix@      . | tar xfp - -C ${pre_prefix}
-install :: ${pre_exec_prefix}
-	$(T) -C @pre_exec_prefix@ . | tar xfp - -C ${pre_exec_prefix}
+
 install ::
+	$(MKDIR_P) ${pre_prefix}
+	$(MKDIR_P) ${pre_exec_prefix}
+	$(T) -C @pre_prefix@      . | tar xfp - -C ${pre_prefix}
+	$(T) -C @pre_exec_prefix@ . | tar xfp - -C ${pre_exec_prefix}
 	$(POST_INSTALL)
 	cd @infodir@ && for i in *.info ; do (set -x ; install-info --info-dir=@infodir@ $$i) ; done
 	$(NORMAL_INSTALL)
+ifeq "${ENCAP}" "yes"
+	@INSTALL@ -m 755 ../top/postinstall ../top/preremove ${pre_prefix}
+	@INSTALL@ -m 644 ../top/INSTALL     ../top/encapinfo ${pre_prefix}
+endif
 ifeq (@DUMPDATA@,yes)
-install ::
 	$(POST_INSTALL)
 	@bindir@/M2@EXE@ --stop --dumpdata
 	$(NORMAL_INSTALL)
 endif
+
 Makefile : @srcdir@/Makefile.in; cd ../..; ./config.status distributions/install/Makefile
 uninstall :; @echo "uninstall: not implemented yet" >&2 ; false
 distclean : ; rm -rf Makefile
