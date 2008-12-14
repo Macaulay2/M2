@@ -1,0 +1,74 @@
+-- -*- M2-comint -*- {* hash: -1801979901 *}
+
+i1 : A = matrix "1,1,1,1; 1,2,3,4"
+
+o1 = | 1 1 1 1 |
+     | 1 2 3 4 |
+
+              2        4
+o1 : Matrix ZZ  <--- ZZ
+
+i2 : toricGroebner(A)
+-------------------------------------------------
+4ti2 version 1.3.1, Copyright (C) 2006 4ti2 team.
+4ti2 comes with ABSOLUTELY NO WARRANTY.
+This is free software, and you are welcome
+to redistribute it under certain conditions.
+For details, see the file COPYING.
+-------------------------------------------------
+Using 64 bit integers.
+4ti2 Total Time:  0.00 secs.
+using temporary file name /tmp/M2-27904-1
+
+o2 = | -1 1  1  -1 |
+     | -1 2  -1 0  |
+     | 0  -1 2  -1 |
+
+              3        4
+o2 : Matrix ZZ  <--- ZZ
+
+i3 : R = QQ[a..d]
+
+o3 = R
+
+o3 : PolynomialRing
+
+i4 : toricGroebner(A,R)
+-------------------------------------------------
+4ti2 version 1.3.1, Copyright (C) 2006 4ti2 team.
+4ti2 comes with ABSOLUTELY NO WARRANTY.
+This is free software, and you are welcome
+to redistribute it under certain conditions.
+For details, see the file COPYING.
+-------------------------------------------------
+Using 64 bit integers.
+4ti2 Total Time:  0.00 secs.
+using temporary file name /tmp/M2-27904-2
+
+                        2         2
+o4 = ideal (b*c - a*d, b  - a*c, c  - b*d)
+
+o4 : Ideal of R
+
+i5 : toricGroebner(A,Weights=>{1,2,3,4})
+-------------------------------------------------
+4ti2 version 1.3.1, Copyright (C) 2006 4ti2 team.
+4ti2 comes with ABSOLUTELY NO WARRANTY.
+This is free software, and you are welcome
+to redistribute it under certain conditions.
+For details, see the file COPYING.
+-------------------------------------------------
+Using 64 bit integers.
+4ti2 Total Time:  0.00 secs.
+using temporary file name /tmp/M2-27904-3
+
+o5 = | -1 1  1  -1 |
+     | -1 2  -1 0  |
+     | 0  -1 2  -1 |
+
+              3        4
+o5 : Matrix ZZ  <--- ZZ
+
+i6 : 
+0.60user 0.10system 0:00.73elapsed 96%CPU (0avgtext+0avgdata 0maxresident)k
+8inputs+56outputs (0major+17078minor)pagefaults 0swaps

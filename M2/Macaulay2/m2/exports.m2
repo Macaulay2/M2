@@ -117,6 +117,7 @@ export {
 	symbol Boolean,
 	symbol Boxes,
 	symbol CC,
+	symbol CacheExampleOutput,
 	symbol CacheFunction,
 	symbol CacheTable,
 	symbol CallLimit,

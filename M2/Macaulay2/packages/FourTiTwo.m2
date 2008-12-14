@@ -27,7 +27,9 @@ newPackage(
 	Configuration => { "path" => "",
 	     "keep files" => true
 	      },
-    	DebuggingMode => true
+    	DebuggingMode => true,
+	CacheExampleOutput => true,
+	AuxiliaryFiles => true
     	)
 
 export {

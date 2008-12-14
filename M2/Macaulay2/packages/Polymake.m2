@@ -7,7 +7,8 @@ newPackage(
 		  Email => "jyu@math.mit.edu", 
 		  HomePage => "http://www.math.mit.edu/~jyu/"}},
     	Headline => "a package for interfacing with polymake",
-    	DebuggingMode => true
+    	DebuggingMode => true,
+	CacheExampleOutput => true
     	)
 
 export {PolymakeObject, polymakeObject,

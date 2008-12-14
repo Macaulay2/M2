@@ -9,6 +9,7 @@ document {
 	  (installPackage,String),
 	  (installPackage,Package),
 	  [installPackage,AbsoluteLinks],
+	  [installPackage,CacheExampleOutput],
 	  [installPackage,CheckDocumentation],
 	  [installPackage,DebuggingMode],
 	  [installPackage,Encapsulate],
@@ -70,7 +71,13 @@ document {
 	  RemakeAllDocumentation => { "whether to regenerate all of the help pages for this package.  The default action
      	       is to rebuild only the html pages of the documentation entries that have been changed since the last time
      	       the package was installed.  However, some changes to an entry, such as to its headline, will change the html of other pages
-	       that cross-reference it."}
+	       that cross-reference it."},
+	  CacheExampleOutput => Boolean => {
+	       "whether to cache (newer) example output in a subdirectory of the ", TO2{[newPackage,AuxiliaryFiles],"auxiliary file directory"}, "
+	       named ", TT "examples", ", for use in a future installation.  This value will override any value explicitly specified
+	       when ", TO "newPackage", " is called.  After the directory is created, it will necessary for the user to specify
+	       ", TT "AuxiliaryFiles=>true", " with the ", TO "newPackage", " command."
+	       }
 	  },
      Consequences => {
 	  {"The package is installed in a local directory, so that in the future, one may simply use ", TO "loadPackage", ".  Documentation for the

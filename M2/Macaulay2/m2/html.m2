@@ -535,6 +535,7 @@ installPackage = method(Options => {
 	  EncapsulateDirectory => pkg -> pkg#"title"|"-"|pkg.Options.Version|"/",
 	  IgnoreExampleErrors => false,
 	  FileName => null,
+	  CacheExampleOutput => false,			    -- overrides the value specified by newPackage
 	  CheckDocumentation => true,
 	  MakeDocumentation => true,
 	  MakeInfo => true,
@@ -722,7 +723,6 @@ installPackage Package := opts -> pkg -> (
 
 	  -- make example output files, or else copy them from old package directory tree
 	  exampleDir' := realpath(currentSourceDir|buildPackage|"/examples") | "/";
-	  infn' := fkey -> exampleDir'|toFilename fkey|".m2";
 	  outfn' := fkey -> exampleDir'|toFilename fkey|".out";
 	  gethash := outf -> (
 	       f := get outf;
@@ -735,15 +735,21 @@ installPackage Package := opts -> pkg -> (
 		    -- args:
 		    inf := infn fkey;
 		    outf := outfn fkey;
-		    inf' := infn' fkey;
 		    outf' := outfn' fkey;
 		    tmpf := tmpfn fkey;
 		    desc := "example results for " | fkey;
 		    changefun := () -> remove(rawDocUnchanged,fkey);
 		    inputhash := hash inputs;
+	  	    possiblyCache := () -> (
+			 if opts.CacheExampleOutput or (options pkg).CacheExampleOutput === true 
+			 then if not fileExists outf' or fileExists outf' and fileTime outf > fileTime outf' 
+			 then (
+			      if not isDirectory exampleDir' then makeDirectory exampleDir';
+			      copyFile(outf,outf',Verbose=>true);
+			      ));
 		    if not opts.RunExamples
 		    or not opts.RerunExamples and fileExists outf and gethash outf === inputhash then (
-			 -- do nothing
+			 possiblyCache();
 			 )
 		    else if (
 			 not opts.RerunExamples 
@@ -757,6 +763,7 @@ installPackage Package := opts -> pkg -> (
 			 if runFile(inf,inputhash,outf,tmpf,desc,pkg,changefun,".",opts.UserMode)
 			 then (
 			      removeFile inf;
+			      possiblyCache();
 			      )
 			 );
 		    -- read, separate, and store example output

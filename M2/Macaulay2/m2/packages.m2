@@ -78,6 +78,7 @@ newPackage = method(
 	  AuxiliaryFiles => false,
 	  DebuggingMode => false,
 	  InfoDirSection => "Macaulay 2 and its packages",
+	  CacheExampleOutput => null,
 	  Headline => null,
 	  Authors => {}, -- e.g., Authors => { {Name => "Dan Grayson", Email => "dan@math.uiuc.edu", HomePage => "http://www.math.uiuc.edu/~dan/"} }
 	  HomePage => null,

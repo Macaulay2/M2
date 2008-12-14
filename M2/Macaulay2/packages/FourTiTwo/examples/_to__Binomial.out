@@ -1,0 +1,36 @@
+-- -*- M2-comint -*- {* hash: -1967764034 *}
+
+i1 : A = matrix "1,1,1,1; 1,2,3,4"
+
+o1 = | 1 1 1 1 |
+     | 1 2 3 4 |
+
+              2        4
+o1 : Matrix ZZ  <--- ZZ
+
+i2 : B = syz A
+
+o2 = | 1  2  |
+     | -2 -3 |
+     | 1  0  |
+     | 0  1  |
+
+              4        2
+o2 : Matrix ZZ  <--- ZZ
+
+i3 : R = QQ[a..d]
+
+o3 = R
+
+o3 : PolynomialRing
+
+i4 : toBinomial(transpose B,R)
+
+               2           3    2
+o4 = ideal (- b  + a*c, - b  + a d)
+
+o4 : Ideal of R
+
+i5 : 
+0.54user 0.06system 0:00.54elapsed 112%CPU (0avgtext+0avgdata 0maxresident)k
+0inputs+0outputs (0major+6484minor)pagefaults 0swaps
