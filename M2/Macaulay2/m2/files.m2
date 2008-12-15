@@ -280,7 +280,7 @@ mungeFile = (filename, headerline, trailerline, text) -> (
 	       << ///   y     yes
    n     no
    r     review
-   q	 quit
+   q     quit
    !     yes to this and to future questions
    ?     this explanation
 ///;	      ) else
