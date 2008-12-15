@@ -1,0 +1,5 @@
+.nfs*
+Macaulay2-*-data
+*.installed
+info/dir
+info/dir.old

@@ -245,33 +245,42 @@ regexpString := s -> replace(///([][\.^$+*{()}])///,///\\1///,s)
 
 promptUser := true
 mungeFile = (filename, headerline, trailerline, text) -> (
-     oldcontents := if fileExists filename then get filename else "";
      headerline = headerline | newline;
      trailerline = trailerline | newline;
      text = replace("/PREFIX/",prefixDirectory,text);
      insert := headerline | text | trailerline;
-     hdr := "^" | regexpString headerline;
-     tlr := "^" | regexpString trailerline;
-     regexp := hdr | "(.|\n)*" | tlr ;
-     if match(regexp,oldcontents) then (
-     	  excerpt := first select(regexp, oldcontents);
-	  if 1 < length select(hdr,excerpt) or 1 < length select(tlr,excerpt) then (
-	       error("multiple Macaulay 2 insertion markers encountered in file: ", filename);
-	       );
-     	  newcontents := replace(regexp, insert, oldcontents);
-     	  if oldcontents == newcontents then (
-	       stderr << "--initialization text already in file, no changes needed: " << filename << endl;
-	       return false;
-	       );
+     local action;
+     if fileExists filename then (
+	  hdr := "^" | regexpString headerline;
+	  tlr := "^" | regexpString trailerline;
+     	  regexp := hdr | "(.|\n)*" | tlr ;
+     	  oldcontents := get filename;
+	  if match(regexp,oldcontents) then (
+	       action = "insert text in";
+	       excerpt := first select(regexp, oldcontents);
+	       if 1 < length select(hdr,excerpt) or 1 < length select(tlr,excerpt) then (
+		    error("multiple Macaulay 2 insertion markers encountered in file: ", filename);
+		    );
+	       newcontents := replace(regexp, insert, oldcontents);
+	       if oldcontents == newcontents then (
+		    stderr << "--initialization text already in file, no changes needed: " << filename << endl;
+		    return false;
+		    );
+	       )
+	  else (
+	       action = "append text to";
+	       newcontents = oldcontents | newline | insert; 
+	       )
 	  )
      else (
-	  newcontents = oldcontents | newline | insert; 
+	  action = "create";
+	  newcontents = insert;
 	  );
      filename = realpath filename;			    -- no other editor does this, but it seems like a good idea...
      tmp := filename | ".Macaulay2.tmp";
      tmp << newcontents << close;
      if promptUser then while true do (
-	  response := toLower read concatenate( if fileExists filename then "modify " else "create ", format filename, " ? [y/n/r/q/!/?]: ");
+	  response := toLower read concatenate(action, " ", format filename, " ? [y/n/r/q/!/?]: ");
 	  if response == "y" then break else
 	  if response == "n" then return false else
 	  if response == "q" then return true else
@@ -303,6 +312,7 @@ mungeFile = (filename, headerline, trailerline, text) -> (
      false)
 
 dotemacsFix = ///
+;; add "/PREFIX/share/emacs/site-lisp/" to load-path
 (setq load-path
        (append
         '( "/PREFIX/share/emacs/site-lisp/" )
@@ -320,14 +330,15 @@ dotemacsFix = ///
 ///
 
 bashtempl := ///
+## add "/PREFIX/DIR" to the environment variable VAR
 case "$VAR" in 
      "/PREFIX/DIR"|"/PREFIX/DIR:"*|*":/PREFIX/DIR"|*":/PREFIX/DIR:"*) ;;
      "") VAR="/PREFIX/DIR" ; export VAR ;;
      *) VAR="/PREFIX/DIR:$VAR" ; export VAR ;;
 esac
 ///
-
 cshtempl := ///
+## add "/PREFIX/DIR" to the environment variable VAR
 if ( $?VAR == 1 ) then
   switch ("$VAR")
     case "/PREFIX/DIR":
@@ -352,34 +363,32 @@ fix := (var,dir,templ) -> replace_("VAR",var) replace_("DIR",stripdir dir) templ
 dotprofileFix = dotbashrcFix = concatenate apply(fixes, (var,dir) -> fix(var,dir,bashtempl))
 dotloginFix = dotcshrcFix = concatenate apply(fixes, (var,dir) -> fix(var,dir,cshtempl))
 
+startToken := "## Macaulay 2 start"
+endToken := "## Macaulay 2 end"
+
 setupEmacs = method()
 setup = method()
-installMethod(setupEmacs, () -> (
+mungeEmacs = () -> mungeFile( homeDirectory | ".emacs", ";; Macaulay 2 start", ";; Macaulay 2 end", dotemacsFix )
+prelim := () -> (
      promptUser = true;
      if prefixDirectory === null then error "can't determine Macaulay 2 prefix (prefixDirectory not set)";
-     if mungeFile( homeDirectory | ".emacs", ";; Macaulay 2 start", ";; Macaulay 2 end", dotemacsFix ) then return; -- same line below
-     ))
+     )
+installMethod(setupEmacs, () -> ( prelim(); mungeEmacs(); ))
 installMethod(setup, () -> (
-     promptUser = true;
-     if prefixDirectory === null then error "can't determine Macaulay 2 prefix (prefixDirectory not set)";
-     ---- from bash info:
-     -- After reading that file, it looks for `~/.bash_profile',
-     -- `~/.bash_login', and `~/.profile', in that order, and reads and
-     -- executes commands from the first one that exists and is readable.
-     if fileExists(homeDirectory | ".bash_profile")
-     then if mungeFile( homeDirectory | ".bash_profile", "## Macaulay 2 start", "## Macaulay 2 end", dotprofileFix ) then return;
-     if fileExists(homeDirectory | ".bash_login" )
-     then if mungeFile( homeDirectory | ".bash_login"  , "## Macaulay 2 start", "## Macaulay 2 end", dotprofileFix ) then return;
-     if mungeFile( homeDirectory | ".profile", "## Macaulay 2 start", "## Macaulay 2 end", dotprofileFix ) then return;
-     if mungeFile( homeDirectory | ".login", "## Macaulay 2 start", "## Macaulay 2 end", dotloginFix ) then return;
-     if mungeFile( homeDirectory | ".cshrc", "## Macaulay 2 start", "## Macaulay 2 end", dotcshrcFix ) then return;
-     -- tcsh reads .tcshrc, or, if that doesn't exists, .cshrc
-     if fileExists(homeDirectory | ".tcshrc"  )
-     then if mungeFile( homeDirectory | ".tcshrc"  , "## Macaulay 2 start", "## Macaulay 2 end", dotcshrcFix ) then return;
-     if mungeFile( homeDirectory | ".bashrc", "## Macaulay 2 start", "## Macaulay 2 end", dotbashrcFix ) then return;
-     if mungeFile( homeDirectory | ".emacs", ";; Macaulay 2 start", ";; Macaulay 2 end", dotemacsFix ) then return; -- same line above
-     ))
-
+     -- tcsh reads .tcshrc,or,that doesn't exists,.cshrc
+     -- from bash info:
+     --     After reading that file, it looks for `~/.bash_profile',
+     --     `~/.bash_login', and `~/.profile', in that order, and reads and
+     --     executes commands from the first one that exists and is readable.
+     prelim();
+     fileExists(homeDirectory|".bash_profile") and mungeFile(homeDirectory|".bash_profile",startToken,endToken,dotprofileFix) or
+     fileExists(homeDirectory|".bash_login") and mungeFile(homeDirectory|".bash_login",startToken,endToken,dotprofileFix) or
+     mungeFile(homeDirectory|".profile",startToken,endToken,dotprofileFix) or
+     mungeFile(homeDirectory|".bashrc",startToken,endToken,dotbashrcFix) or
+     mungeFile(homeDirectory|".login",startToken,endToken,dotloginFix) or
+     fileExists(homeDirectory|".tcshrc" ) and mungeFile(homeDirectory|".tcshrc",startToken,endToken,dotcshrcFix) or
+     mungeFile(homeDirectory|".cshrc",startToken,endToken,dotcshrcFix) or
+     mungeEmacs(); ))
 
 scanLines = method()
 ifbrk := x -> if x =!= null then break x

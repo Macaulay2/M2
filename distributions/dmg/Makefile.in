@@ -8,7 +8,7 @@ stage1 stage2 :: ../../$(PKG_DMG)
 ifeq ($(TIDY),yes)
 stage1 stage2 :: tidy
 endif
-T=tar --create --mode=a+rX,og-ws --exclude='.nfs*' --exclude='Macaulay2-*-data' --file=-
+T=tar --create --mode=a+rX,og-ws --exclude-from=@srcdir@/../tar-exclusions --file=-
 ../../$(PKG_DMG) : Makefile
 	rm -rf files
 	umask 022 ; $(MKDIR_P) files/@package@
