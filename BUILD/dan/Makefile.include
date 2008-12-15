@@ -1,0 +1,14 @@
+# -*- Makefile -*-
+# to be included two levels down from here
+default: all install check-links
+#
+.PHONY : everything world configure all install
+include include/configuration
+rebuild-world: distclean world
+world: configure all install check
+configure include/configuration:; ../../../../configure $(CONFIGOPTIONS)
+all:; $(MAKE) $@ $(BUILDOPTIONS)
+install:clean-target; $(MAKE) $@ -o all $(INSTALLOPTIONS)
+clean-target:
+check-links:; $(MAKE) -C Macaulay2/html-check-links check
+distclean check:; $(MAKE) $@
