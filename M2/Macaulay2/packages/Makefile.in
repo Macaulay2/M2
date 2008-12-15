@@ -35,16 +35,17 @@ $(eval \
     check ::; @bindir@/M2@EXE@ -q --stop -e "needsPackage(\"${i}\",LoadDocumentation=>true); check(${i},UserMode=>false); exit 0" \
 ))
 
+@infodir@/dir :; @INSTALL_DATA@ @top_srcdir@/files/info-dir-template $@
 define bld
-stage2: @packagesdir@/$(1).installed
-@packagesdir@/$(1).installed : $(1).m2 $(wildcard $(1)/*.m2) $(REMAKEPACKAGES)
-	: remaking $(1) because of: $$?
+stage2: @infodir@/dir @packagesdir@/$(1).installed
+@packagesdir@/$(1).installed : $(1).m2 $$(wildcard @srcdir@/$(1)/*.m2 @srcdir@/$(1)/*/*.m2) $(REMAKEPACKAGES)
 	@bindir@/M2@EXE@ $(M2DIRS) \
 	    -q --stop --silent \
 	    -e errorDepth=0 \
 	    -e debugLevel=$(debugLevel) \
 	    $(EARGS) \
 	    -e "installPackage(\"$(1)\", $(ARGS)); exit 0"
+	install-info --quiet --info-dir=@infodir@ @infodir@/$1.info
 endef
 $(foreach i, $(PACKAGES), $(eval $(call bld,$i)))
 

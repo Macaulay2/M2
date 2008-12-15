@@ -16,7 +16,7 @@ pre_prefix      = $(DESTDIR)${prefix}
 pre_exec_prefix = $(DESTDIR)${exec_prefix}
 endif
 #############################################################################
-T=tar --create --mode=a+rX,og-ws --exclude='.nfs*' --exclude='*.installed'
+T=tar --create --mode=a+rX,og-ws --exclude-from=@srcdir@/../tar-exclusions
 install ::
 	$(MKDIR_P) ${pre_prefix}
 	$(T) -C @pre_prefix@      . | tar xfp - -C ${pre_prefix}
@@ -30,6 +30,9 @@ ifeq (@DUMPDATA@,yes)
 	@bindir@/M2@EXE@ --stop --dumpdata
 	$(NORMAL_INSTALL)
 endif
+
+install::@infodir@/dir
+@infodir@/dir :; @INSTALL_DATA@ @top_srcdir@/files/info-dir-template $@
 
 define ii
 install::

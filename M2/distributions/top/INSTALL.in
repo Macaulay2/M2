@@ -78,7 +78,11 @@ postinstall, and preremove.
 	cd bin
 	./M2 -e 'setup();exit 0' 
 
-   After you log in again, your PATH will have Macaulay2's bin directory on it.
+   You will be give an opportunity to review, accept, or reject the proposed
+   changes to your files.  Backups will be made.  After you log in again,
+   your PATH will have Macaulay2's bin directory on it.  The variables
+   MANPATH, INFOPATH, and LD_LIBRARY_PATH will also have entries added to
+   them.
 
    The most common cause for a failure at this point is for some dynamic
    libraries not to be found on your system.  In this case, under linux, the

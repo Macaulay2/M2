@@ -87,7 +87,11 @@ document {
      Key => setup,
      Usage => "setup()",
      Consequences => {
-	  {"initialization files for emacs and the standard command shells will have lines added to them to allow the Macaulay 2 files to be found" }
+	  {"Initialization files for emacs and the standard command shells will have lines added to them to allow the 
+	       Macaulay 2 files to be found.
+	       A missing initialization file will be created only if doing so will not prevent the command shell from
+	       reading further initialization files.
+	       The user is prompted before each file is modified and offered the opportunity to review or reject the changes." }
 	  },
      PARA {
 	  "Backup files are made carefully, and if a mangled initialization file is detected, it will not be modified.
@@ -97,7 +101,11 @@ document {
 	  "The initialization files will contain added commands that add the appropriate directory to the front of the
 	  environment variable ", TT "PATH", " so the program ", TT "M2", " can be found, unless that directory already occurs
 	  in the path, in which case it does not check whether that directory is the first one on the path containing a program
-	  whose name is ", TT "M2", ", for fear of escalating a competition with another init file."
+	  whose name is ", TT "M2", ", for fear of escalating a competition with another init file.  (The expert user may prefer to remove
+	  those commands and instead, to create a symbolic link from a directory already on their path to the program ", TT "M2", ".)"
+	  },
+     PARA {
+	  "The other environment variables affected are ", TT "MANPATH", ", ", TT "INFOPATH", ", and ", TT "LD_LIBRARY_PATH", "."
 	  },
      PARA {
 	  "This function is intended to be run only by users, not by system administrators, nor on behalf of users by system
@@ -113,7 +121,8 @@ document {
      Key => setupEmacs,
      Usage => "setupEmacs()",
      Consequences => {
-	  {"the initialization file for emacs (.emacs in your home directory) will have lines added to allow the Macaulay 2 emacs mode to operate" }
+	  {"The initialization file for emacs (.emacs in your home directory) will have lines added to allow the Macaulay 2 emacs mode to operate.
+	       The user is prompted before the file is modified and offered the opportunity to review or reject the change." }
 	  },
      PARA {
 	  "A backup files is made carefully, and if a mangled initialization file is detected, it will not be modified.

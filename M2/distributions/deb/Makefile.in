@@ -59,7 +59,7 @@ macaulay2-common/control.tar.gz : macaulay2-common/control macaulay2-common/post
 	cd macaulay2-common && chmod 0755 postinst prerm
 	tar cfz $@ $(TAROPTIONS) -C macaulay2-common control postinst prerm
 
-T=tar --create --mode=a+rX,og-ws --exclude='.nfs*' --exclude='Macaulay2-*-data' --file=-
+T=tar --create --mode=a+rX,og-ws --exclude-from=@srcdir@/../tar-exclusions --file=-
 prepare : .prepared
 .prepared : 
 	rm -rf tmp@prefix@ tmp-common@prefix@

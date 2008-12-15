@@ -54,7 +54,7 @@ check-id: always
 
 SEDOPTS = -e 's=^\.="=' -e 's=$$="='
 
-T=tar --create --mode=a+rX,og-ws --exclude='.nfs*' --exclude='Macaulay2-*-data' --file=-
+T=tar --create --mode=a+rX,og-ws --exclude-from=@srcdir@/../tar-exclusions --file=-
 
 .prepared :
 	rm -rf files

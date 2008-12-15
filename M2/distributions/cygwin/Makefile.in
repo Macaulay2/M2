@@ -27,7 +27,7 @@ else
 tidy :
 endif
 
-T=tar --create --mode=a+rX,og-ws --exclude='.nfs*' --exclude='Macaulay2-*-data' --file=-
+T=tar --create --mode=a+rX,og-ws --exclude-from=@srcdir@/../tar-exclusions --file=-
 
 .prepared : server/Macaulay2 postinstall.sh preremove.sh
 	rm -rf files

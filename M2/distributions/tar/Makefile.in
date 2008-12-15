@@ -24,7 +24,7 @@ G=$(D)$(CG) $(D)$(EG)
 tarballs.bz2 : $(J)
 tarballs.gz  : $(G)
 clean ::; rm -rf $(J) $(G) $(D)$(SZ) $(D)$(SJ)
-T=tar --create --owner=0 --group=0 --mode=a+rX,og-ws --exclude='.nfs*' --exclude='Macaulay2-*-data' --file=$@
+T=tar --create --owner=0 --group=0 --mode=a+rX,og-ws --exclude-from=@srcdir@/../tar-exclusions --file=$@
 A=--transform 's,^\.,@package@,'
 B=--transform 's,^,@package@/,'
 TJ=$(T) --bzip2
