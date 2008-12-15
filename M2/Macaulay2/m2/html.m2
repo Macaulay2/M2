@@ -1107,8 +1107,8 @@ makePackageIndex List := path -> (
 	       -- buttonBar tag, HR{},
 	       PARA {
 		    "This is the top level documentation page for Macaulay 2 and its packages, stored in 
-		    your ", TO2 (applicationDirectory,"application directory"), ".
-		    Bookmark this page for future reference, or run the ", TO "viewHelp", " command in Macaulay 2
+		    your application directory.
+		    Bookmark this page for future reference, or run the viewHelp command in Macaulay 2
 		    to open up your browser on this page."
 		    },
 	       HEADER3 "Documentation",
