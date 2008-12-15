@@ -42,7 +42,7 @@ DUMPEDM2FILES += $(LOADSEQUENCE)
 DUMPEDM2SRCFILES += $(patsubst version.m2, version.m2.in, $(LOADSEQUENCE))
 DUMPEDM2FILES += loads.m2
 loads.m2 : loads.awk loadsequence
-	@echo making $@
+	: making $@
 	@awk -f $^ >$@
 
 ############################## install.m2
@@ -101,14 +101,14 @@ clean::; rm -f TAGS @srcdir@/TAGS @srcdir@/TAGS.doc
 		../../Makefile ../../GNUmakefile.in \
 		@srcdir@/../packages/*/Makefile.in \
 		@srcdir@/README.DOC
-	@echo making $@
+	: making $@
 	@ set -e ; \
 	  cd @srcdir@ && \
 	  for i in $(patsubst @srcdir@/%, "%", $^) ; \
 	  do [ -f $$i ] || (echo "file not found: $$i" >&2; exit 1) ; echo  ; echo $$i,0 ; done >TAGS
 
 @srcdir@/TAGS.doc: Makefile.in $(shell find @srcdir@/../packages/Macaulay2Doc -not \( -name .svn -prune \) -type d)
-	@echo making $@ : $^
+	: making $@ : $^
 	@ set -e ; \
 	  cd @srcdir@ && \
 	  find ../packages/Macaulay2Doc -name '*.m2' | while read i ; do echo  ; echo $$i,0 ; done >TAGS.doc

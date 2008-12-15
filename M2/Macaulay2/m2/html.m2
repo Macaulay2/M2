@@ -120,7 +120,7 @@ html TO   := x -> (
 	  warning "missing documentation";
 	  concatenate( "<tt>", r, "</tt>", if x#?1 then x#1, " (missing documentation <!-- tag: ",toString DocumentTag.Key tag," -->)")
 	  )
-     else concatenate( "<a href=\"", toURL htmlFilename getPrimary x#0, "\" title=\"", headline x#0, "\">", r, "</a>", if x#?1 then x#1))
+     else concatenate( "<a href=\"", toURL htmlFilename toFinalDocumentTag getPrimary x#0, "\" title=\"", headline x#0, "\">", r, "</a>", if x#?1 then x#1))
 html TO2  := x -> (
      tag := x#0;
      headline tag;		   -- this is a kludge, just to generate error messages about missing links 
@@ -136,7 +136,7 @@ html TO2  := x -> (
      then (
 	  warning "missing documentation";
 	  concatenate("<tt>", htmlLiteral x#1, "</tt> (missing documentation <!-- tag: ",DocumentTag.FormattedKey tag," -->)"))
-     else concatenate("<a href=\"", toURL htmlFilename getPrimary x#0, "\">", htmlLiteral x#1, "</a>"))
+     else concatenate("<a href=\"", toURL htmlFilename toFinalDocumentTag getPrimary x#0, "\">", htmlLiteral x#1, "</a>"))
 
 next := tag -> ( if NEXT#?tag then HREF { htmlFilename NEXT#tag, nextButton } else nextButton, " | ")
 prev := tag -> ( if PREV#?tag then HREF { htmlFilename PREV#tag, prevButton } else prevButton, " | ")
@@ -409,10 +409,10 @@ makeMasterIndex := (keylist,verbose) -> (
      fn << html r << endl << close
      )
 
-maketableOfContents := () -> (
+maketableOfContents := (verbose) -> (
      fn := buildDirectory | htmlDirectory | tocFileName;
      title := DocumentTag.FormattedKey topDocumentTag | " : Table of Contents";
-     stderr << "--making  '" << title << "' in " << fn << endl;
+     if verbose then stderr << "--making  " << title << "' in " << fn << endl;
      fn
      << html HTML {
 	  HEAD splice { TITLE title, links() },
@@ -614,7 +614,7 @@ installPackage Package := opts -> pkg -> (
      setupNames(opts,pkg);
      initInstallDirectory opts;
      
-     stderr << "--installing package " << pkg << " in " << buildDirectory << endl;
+     if verbose then stderr << "--installing package " << pkg << " in " << buildDirectory << endl;
      
      currentSourceDir := pkg#"source directory";
      if verbose then stderr << "--using package sources found in " << currentSourceDir << endl;
@@ -938,7 +938,7 @@ installPackage Package := opts -> pkg -> (
 	  makeMasterIndex(select(nodes,tag -> not isUndocumented tag and instance(DocumentTag.Key tag,Symbol)), verbose);
 
 	  -- make table of contents
-	  maketableOfContents();
+	  maketableOfContents verbose;
 
      	  );						    -- end if opts.MakeDocumentation
 
@@ -1004,7 +1004,7 @@ installPackage Package := opts -> pkg -> (
      -- all done
      SRC = null;
      if not hadExampleError then buildDirectory|pkgDirectory|buildPackage|".installed" << close;
-     << "--installed package " << pkg << " in " << buildDirectory << endl;
+     if verbose then << "--installed package " << pkg << " in " << buildDirectory << endl;
      currentPackage = oldpkg;
      if not noinitfile then (
 	  userMacaulay2Directory();
@@ -1095,7 +1095,7 @@ makePackageIndex List := path -> (
      initInstallDirectory options installPackage;
      absoluteLinks = true;
      key := "Macaulay 2";
-     htmlDirectory = applicationDirectory();		    -- links are relative to this directory
+     htmlDirectory = applicationDirectory();
      fn := htmlDirectory | "index.html";
      if notify then stderr << "--making index of installed packages in " << fn << endl;
      fn << html HTML { 
@@ -1106,8 +1106,10 @@ makePackageIndex List := path -> (
 	  BODY { 
 	       -- buttonBar tag, HR{},
 	       PARA {
-		    "This is the top level documentation page for Macaulay 2 and its packages.
-		    Bookmark this page for future reference."
+		    "This is the top level documentation page for Macaulay 2 and its packages, stored in 
+		    your ", TO2 (applicationDirectory,"application directory"), ".
+		    Bookmark this page for future reference, or run the ", TO "viewHelp", " command in Macaulay 2
+		    to open up your browser on this page."
 		    },
 	       HEADER3 "Documentation",
 	       ul splice {

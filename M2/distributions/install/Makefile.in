@@ -1,11 +1,13 @@
 # @configure_input@
 include ../../include/config.Makefile
+ENCAP = @ENCAP@
 VPATH = @srcdir@
 ifneq (${prefix},${exec_prefix})
 $(error prefix and exec_prefix not the same)
 endif
-
-ENCAP = @ENCAP@
+INFOFILES := $(notdir $(wildcard @infodir@/*.info))
+#############################################################################
+# this changes @infodir@:
 ifeq "${ENCAP}" "yes"
 pre_prefix      = $(DESTDIR)${prefix}/@package@
 pre_exec_prefix = $(DESTDIR)${exec_prefix}/@package@
@@ -13,15 +15,12 @@ else
 pre_prefix      = $(DESTDIR)${prefix}
 pre_exec_prefix = $(DESTDIR)${exec_prefix}
 endif
-
+#############################################################################
 T=tar --create --mode=a+rX,og-ws --exclude='.nfs*' --exclude='*.installed'
 install ::
 	$(MKDIR_P) ${pre_prefix}
 	$(T) -C @pre_prefix@      . | tar xfp - -C ${pre_prefix}
 	$(T) -C @pre_exec_prefix@ . | tar xfp - -C ${pre_exec_prefix}
-	$(POST_INSTALL)
-	cd @infodir@ && for i in *.info ; do (set -x ; install-info --info-dir=@infodir@ $$i) ; done
-	$(NORMAL_INSTALL)
 ifeq "${ENCAP}" "yes"
 	@INSTALL@ -m 755 ../top/postinstall ../top/preremove ${pre_prefix}
 	@INSTALL@ -m 644 ../top/INSTALL     ../top/encapinfo ${pre_prefix}
@@ -32,9 +31,25 @@ ifeq (@DUMPDATA@,yes)
 	$(NORMAL_INSTALL)
 endif
 
+define ii
+install::
+	$(POST_INSTALL)
+	install-info --quiet --info-dir=@infodir@ @infodir@/$1
+	$(NORMAL_INSTALL)
+endef
+$(foreach i,$(INFOFILES), $(eval $(call ii,$i)))
+
 Makefile : @srcdir@/Makefile.in; cd ../..; ./config.status distributions/install/Makefile
 uninstall :; @echo "uninstall: not implemented yet" >&2 ; false
 distclean : ; rm -rf Makefile
+
+.PHONY: report-installed-M2-location
+install:: report-installed-M2-location
+report-installed-M2-location:
+	: : : : : : : : : : : : : : : : : : : : : : : : : : : : : : : :
+	: installed Macaulay 2 executable location:
+	:    @bindir@/M2@EXE@
+	: : : : : : : : : : : : : : : : : : : : : : : : : : : : : : : :
 
 # Local Variables:
 # compile-command: "make -C $M2BUILDDIR/distributions/install install "

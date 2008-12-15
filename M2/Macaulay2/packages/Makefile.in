@@ -36,7 +36,7 @@ $(eval \
 
 define bld
 stage2: @packagesdir@/$(1).installed
-@packagesdir@/$(1).installed : $(1).m2 $(wildcard $(1)/*) $(REMAKEPACKAGES)
+@packagesdir@/$(1).installed : $(1).m2 $(wildcard $(1)/*.m2) $(REMAKEPACKAGES)
 	: remaking $(1) because of: $$^
 	@bindir@/M2@EXE@ $(M2DIRS) \
 	    -q --stop --silent \

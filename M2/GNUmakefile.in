@@ -91,12 +91,10 @@ clean::; rm -f confdefs.h configure.lineno conftest.* include/config.h
 distclean::; rm -f @CONFIGURED_FILES@ include/M2/config.h include/config.Makefile config.cache config.log config.status configure.options
 .PHONY all:report-M2-location
 report-M2-location:
-	@echo Macaulay 2 executable location:
-	@echo "    @bindir@/M2@EXE@"
-.PHONY install:report-installed-M2-location
-report-installed-M2-location:
-	@echo installed Macaulay 2 executable location:
-	@echo "    $(DESTDIR)/${exec_prefix}/bin/M2@EXE@"
+	: : : : : : : : : : : : : : : : : : : : : : : : : : : : : : : :
+	: Macaulay 2 executable location:
+	:    @bindir@/M2@EXE@
+	: : : : : : : : : : : : : : : : : : : : : : : : : : : : : : : :
 help :
 	@ echo "Macaulay 2 version @PACKAGE_VERSION@"
 	@ echo ""

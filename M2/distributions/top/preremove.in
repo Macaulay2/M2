@@ -8,5 +8,5 @@ pre_prefix=$ENCAP_TARGET
 pre_exec_prefix=$prefix
 infodir="@infodir@"; eval infodir="$infodir"; eval infodir="$infodir"
 for i in *.info
-do (set -x ; install-info --info-dir="$infodir" --remove "$i")
+do (set -x ; install-info --quiet --info-dir="$infodir" --remove "$i")
 done
