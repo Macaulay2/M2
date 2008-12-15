@@ -1,6 +1,7 @@
 GNUmakefile
 check-configure/Makefile
 include/config.Makefile
+include/configuration
 distributions/Makefile
 distributions/install/Makefile
 distributions/top/Makefile

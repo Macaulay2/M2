@@ -60,7 +60,7 @@ LD_LIBRARY_PATH := $(BUILTLIBPATH)/lib:$(LD_LIBRARY_PATH)
 export LD_LIBRARY_PATH
 export PATH := @abs_top_srcdir@/bin:${PATH}
 AR = ar
-ifeq (,$(findstring --no-print-directory,$(MAKEFLAGS)))
+ifeq (,$(findstring --no-print-directory,$(word 1,$(MAKEFLAGS))))
 MAKEFLAGS += -w
 endif
 ifeq "@OS@ @ARCH@" "Linux alpha"

@@ -21,7 +21,7 @@ CPPFLAGS += \
 scCMD = $(COMPILE.c) -S $(OUTPUT_OPTION) $<
 %.s : %.c
 	@ echo '$(scCMD)' >> LOGFILE
-	@ echo " ** compiling $< to assembly code, making $@"
+	: " ** compiling $< to assembly code, making $@"
 	@ $(scCMD)
 EcCMD = $(COMPILE.c) -E $(OUTPUT_OPTION) $<
 %.E : %.c

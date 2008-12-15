@@ -1,16 +1,19 @@
-everything:all install
-configure :
+.PHONY : everything world configure all install
+include include/configuration
+everything: all install
+world : configure everything
+configure include/configuration:
 	../../../../configure \
 		--enable-encap \
 		--enable-common-staging-area \
 		--prefix=/usr/local
 
 all :
-	$(MAKE) -s
+	time $(MAKE) -f GNUmakefile
 
 install :
-	rm -rf /usr/local/encap/Macaulay2-1.1.1
-	$(MAKE) install -o all prefix=/usr/local/encap POST_INSTALL=": start post install" NORMAL_INSTALL=": start normal install"
+	rm -rf /usr/local/encap/Macaulay2-$(PACKAGE_VERSION)
+	time $(MAKE) install -o all prefix=/usr/local/encap
 
 
 #		--enable-tarfile \

@@ -344,12 +344,6 @@ clean::; rm -f @bindir@/M2@EXE@
 ifneq (@LDD@,)
 	- @LDD@ $< | ( ! egrep -v " => /usr/lib/| => /lib/|/lib/ld-linux.so|linux-gate" )
 endif
-	@ echo "make: -----------------------------------------------------------------------------"
-	@ echo "make:"
-	@ echo "make: Macaulay 2 executable is available here:"
-	@ echo "make: $^"
-	@ echo "make:"
-	@ echo "make: -----------------------------------------------------------------------------"
 ifeq "$(STRIP)" "yes"
 ifneq "@STRIPCMD@" ""
 ifeq (@STRIP_REMOVE_SECTION@,yes)

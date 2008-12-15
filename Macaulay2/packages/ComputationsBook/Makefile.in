@@ -21,7 +21,7 @@ check :: $(CHAPTERS)
 $(CHAPTERS):; mkdir "$@"
 endif
 
-ifeq (,$(findstring k,$(MAKEFLAGS)))
+ifeq (,$(findstring k,$(word 1,$(MAKEFLAGS))))
 EXIT = || exit 1
 else
 EXIT = 
