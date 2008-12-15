@@ -19,7 +19,8 @@ ARGS := RemakeAllDocumentation => $(RemakeAllDocumentation), \
 	SeparateExec => true
 
 ifeq (${RemakePackages},true)
-REMAKEPACKAGES = always
+RemakePackagesOption:
+REMAKEPACKAGES = RemakePackagesOption
 else
 REMAKEPACKAGES =
 endif
@@ -37,7 +38,7 @@ $(eval \
 define bld
 stage2: @packagesdir@/$(1).installed
 @packagesdir@/$(1).installed : $(1).m2 $(wildcard $(1)/*.m2) $(REMAKEPACKAGES)
-	: remaking $(1) because of: $$^
+	: remaking $(1) because of: $$?
 	@bindir@/M2@EXE@ $(M2DIRS) \
 	    -q --stop --silent \
 	    -e errorDepth=0 \
