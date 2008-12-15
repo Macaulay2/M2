@@ -294,7 +294,7 @@ mungeFile = (filename, headerline, trailerline, text) -> (
    ?     this explanation
 ///;	      ) else
      	  if response == "r" then (
-	       << "text to be appended to file " << format filename << ":" << endl
+	       << "new text proposed for file " << format filename << ":" << endl
 	       << "  " << stack lines insert << endl;
 	       )
 	  else << "unrecognized response" << endl;
