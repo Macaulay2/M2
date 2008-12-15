@@ -131,6 +131,7 @@
 (defvar M2-history (list M2-command) "The history of recent Macaulay2 command lines.")
 (defvar M2-send-to-buffer "*M2*" "*The default buffer that \\[M2-send-to-program] sends input to.")
 (defvar M2-el-version "$Revision$  $URL$")
+(defun M2-el-version() (interactive) (message "M2-el-version: %s" M2-el-version))
 (make-variable-buffer-local 'M2-send-to-buffer)
 
 (defun M2-add-width-option (command)

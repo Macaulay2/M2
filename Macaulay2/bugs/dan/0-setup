@@ -1,1 +1,4 @@
 document setup() better, and discourage expert users from using it
+
+PS: Or better yet, maybe setup() and setupEmacs() should always display the
+proposed changes and prompt the user for permission to proceed.
