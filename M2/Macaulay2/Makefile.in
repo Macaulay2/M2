@@ -8,7 +8,7 @@ include ../include/config.Makefile
 # ignore @datarootdir@
 VPATH = @srcdir@
 ################################# .
-stage2 :: @docdir@ @docdir@ \
+stage1 :: @docdir@ @docdir@ \
 	   @docdir@/COPYING \
 	   @docdir@/README \
 	   @docdir@/LAYOUT
