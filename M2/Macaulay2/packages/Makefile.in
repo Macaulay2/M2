@@ -32,22 +32,22 @@ endif
 
 $(foreach i, $(PACKAGES),\
 $(eval \
-    check ::; @bindir@/M2@EXE@ -q --stop -e "needsPackage(\"${i}\",LoadDocumentation=>true); check(${i},UserMode=>false); exit 0" \
+    check ::; @pre_bindir@/M2@EXE@ -q --stop -e "needsPackage(\"${i}\",LoadDocumentation=>true); check(${i},UserMode=>false); exit 0" \
 ))
 
-info-dir: @infodir@ @infodir@/dir
-@infodir@:; $(MKDIR_P) $@
-@infodir@/dir:; @INSTALL_DATA@ @top_srcdir@/files/info-dir-template $@
+info-dir: @pre_infodir@ @pre_infodir@/dir
+@pre_infodir@:; $(MKDIR_P) $@
+@pre_infodir@/dir:; @INSTALL_DATA@ @top_srcdir@/files/info-dir-template $@
 define bld
-all: info-dir @packagesdir@/$(1).installed
-@packagesdir@/$(1).installed : $(1).m2 $$(wildcard @srcdir@/$(1)/*.m2 @srcdir@/$(1)/*/*.m2) $(REMAKEPACKAGES)
-	@bindir@/M2@EXE@ $(M2DIRS) \
+all: info-dir @pre_packagesdir@/$(1).installed
+@pre_packagesdir@/$(1).installed : $(1).m2 $$(wildcard @srcdir@/$(1)/*.m2 @srcdir@/$(1)/*/*.m2) $(REMAKEPACKAGES)
+	@pre_bindir@/M2@EXE@ $(M2DIRS) \
 	    -q --stop --silent \
 	    -e errorDepth=0 \
 	    -e debugLevel=$(debugLevel) \
 	    $(EARGS) \
 	    -e "installPackage(\"$(1)\", $(ARGS)); exit 0"
-	install-info --quiet --info-dir=@infodir@ @infodir@/$1.info
+	install-info --quiet --info-dir=@pre_infodir@ @pre_infodir@/$1.info
 endef
 $(foreach i, $(PACKAGES), $(eval $(call bld,$i)))
 
@@ -59,10 +59,10 @@ distclean:clean
 	rm -f Makefile
 
 ## here is the list of other files to install along with Macaulay2
-@packagesdir@/%.m2 : %.m2 ; @INSTALL_DATA@ $^ $@
-all: @packagesdir@/eliminate.m2 @packagesdir@/D-modules.m2
+@pre_packagesdir@/%.m2 : %.m2 ; @INSTALL_DATA@ $^ $@
+all: @pre_packagesdir@/eliminate.m2 @pre_packagesdir@/D-modules.m2
 # this one we need for compatibility with the book
-all : @packagesdir@/LLL.m2
+all : @pre_packagesdir@/LLL.m2
 # Local Variables:
 # compile-command: "make -C $M2BUILDDIR/Macaulay2/packages "
 # End:

@@ -117,10 +117,10 @@ prep :: $(DUMPEDM2FILES)
 phase1 :: prep
 
 ifneq "@DUMPDATA@" "no"
-phase1 :: @libm2dir@/Core/cache/@DUMPDATAFILE@
-@libm2dir@/Core/cache/@DUMPDATAFILE@ redump : $(DUMPEDM2FILES) $(DUMPEDM2DOCFILES) @pre_exec_prefix@/bin/M2@EXE@ $(OTHERDUMPEDM2FILES)
-	rm -f @libm2dir@/Core/cache/@DUMPDATAFILE@
-	$(MKDIR_P) @libm2dir@/Core/cache
+phase1 :: @pre_libm2dir@/Core/cache/@DUMPDATAFILE@
+@pre_libm2dir@/Core/cache/@DUMPDATAFILE@ redump : $(DUMPEDM2FILES) $(DUMPEDM2DOCFILES) @pre_bindir@/M2@EXE@ $(OTHERDUMPEDM2FILES)
+	rm -f @pre_libm2dir@/Core/cache/@DUMPDATAFILE@
+	$(MKDIR_P) @pre_libm2dir@/Core/cache
 	@pre_exec_prefix@/bin/M2@EXE@ -q --stop -e 'errorDepth = 0' --dumpdata
 	printenv LD_LIBRARY_PATH
 endif
@@ -176,11 +176,11 @@ test4: ../util/screen
 clean::; rm -f test4
 endif
 
-@packagesdir@ :; @INSTALL@ -d $@
-@packagesdir@/Core  : ; @INSTALL@ -d $@
-@packagesdir@/Core/% : % ; @INSTALL_DATA@ $^ $@
+@pre_packagesdir@ :; @INSTALL@ -d $@
+@pre_packagesdir@/Core  : ; @INSTALL@ -d $@
+@pre_packagesdir@/Core/% : % ; @INSTALL_DATA@ $^ $@
 FILES_TO_COPY := $(DUMPEDM2FILES) demo1.m2
-all:@packagesdir@ @packagesdir@/Core $(addprefix @packagesdir@/Core/, $(FILES_TO_COPY))
+all:@pre_packagesdir@ @pre_packagesdir@/Core $(addprefix @pre_packagesdir@/Core/, $(FILES_TO_COPY))
 clean::; rm -rf ../cache/@DUMPDATAFILE@ cache *.obj *.exe runexample temp.data distfiles loads.m2 mpcodes.m2 core gmon.out
 distclean : clean; rm -f Makefile version.m2
 

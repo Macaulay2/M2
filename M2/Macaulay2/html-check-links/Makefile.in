@@ -52,7 +52,7 @@ TAGS: $(SRC); @ETAGS@ $^
 lex.o : grammar.fixed.c
 
 DIR = $(shell pwd)
-NEW = @htmldir@/Macaulay2Doc/html
+NEW = @pre_htmldir@/Macaulay2Doc/html
 check : html-check-links
 ifneq (,$(findstring w,$(word 1,$(MAKEFLAGS))))
 	@echo "make: Entering directory \`$(NEW)'"

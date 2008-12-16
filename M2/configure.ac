@@ -964,19 +964,45 @@ save_prefix=$prefix
 save_exec_prefix=$exec_prefix
 prefix=NONE
 exec_prefix=NOWHERE
+# here we normalize *everything*
 # put docdir and datarootdir at end, because we are changing the values of the variables, and
 # other variables depend on them
 for i in bindir datadir includedir infodir libdir libexecdir localstatedir mandir sbindir \
          sharedstatedir sysconfdir psdir pdfdir dvidir htmldir localedir docdir datarootdir
 do eval w=\$$i ; eval v="$w" ; eval v="$v" ; eval v="$v" ; eval v="$v" ; eval v="$v"
    case $v in
-     "$exec_prefix"|"$exec_prefix"/*) eval ${i}=`echo $v | sed s,"^$exec_prefix","'\\${pre_exec_prefix}'",` ;;
-     "$prefix"|"$prefix"/*) eval ${i}=`echo $v | sed s,"^$prefix","'\\${pre_prefix}'",` ;;
+     "$exec_prefix"|"$exec_prefix"/*)
+	   eval pre_${i}=`echo $v | sed s,"^$exec_prefix","'\\${pre_exec_prefix}'",` 
+	   eval     ${i}=`echo $v | sed s,"^$exec_prefix","'\\${exec_prefix}'",` 
+	   ;;
+     "$prefix"|"$prefix"/*)
+	   eval pre_${i}=`echo $v | sed s,"^$prefix","'\\${pre_prefix}'",`
+	   eval     ${i}=`echo $v | sed s,"^$prefix","'\\${prefix}'",`
+	   ;;
      *) AC_MSG_ERROR([expected "\${$i}" => "$w" to start with "\${prefix}" or with "\${exec_prefix}"]) ;;
    esac
 done
 prefix=$save_prefix
 exec_prefix=$save_exec_prefix
+
+AC_SUBST(pre_bindir)
+AC_SUBST(pre_datadir)
+AC_SUBST(pre_includedir)
+AC_SUBST(pre_infodir)
+AC_SUBST(pre_libdir)
+AC_SUBST(pre_libexecdir)
+AC_SUBST(pre_localstatedir)
+AC_SUBST(pre_mandir)
+AC_SUBST(pre_sbindir)
+AC_SUBST(pre_sharedstatedir)
+AC_SUBST(pre_sysconfdir)
+AC_SUBST(pre_psdir)
+AC_SUBST(pre_pdfdir)
+AC_SUBST(pre_dvidir)
+AC_SUBST(pre_htmldir)
+AC_SUBST(pre_localedir)
+AC_SUBST(pre_docdir)
+AC_SUBST(pre_datarootdir)
 
 AC_SUBST(MACHINE,"$ARCH-$OS-$ISSUE")
 AC_DEFINE_UNQUOTED(MACHINE,"$MACHINE",[complete machine description (to appear in name of tar file)])
@@ -1013,7 +1039,13 @@ AC_SUBST(packagesdir,$datadir/Macaulay2)
 AC_SUBST(libm2dir,$libdir/Macaulay2)
 AC_SUBST(emacsdir,$datadir/emacs/site-lisp)
 AC_SUBST(librariesdir,$libm2dir/Core)
-AC_SUBST(packagecacheCore,$libm2dir/Core/cache)
+AC_SUBST(packagecachecoredir,$libm2dir/Core/cache)
+
+AC_SUBST(pre_packagesdir,$pre_datadir/Macaulay2)
+AC_SUBST(pre_libm2dir,$pre_libdir/Macaulay2)
+AC_SUBST(pre_emacsdir,$pre_datadir/emacs/site-lisp)
+AC_SUBST(pre_librariesdir,$pre_libm2dir/Core)
+AC_SUBST(pre_packagecachecoredir,$pre_libm2dir/Core/cache)
 
 AC_OUTPUT()
 

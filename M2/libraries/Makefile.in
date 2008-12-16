@@ -15,12 +15,12 @@ $(foreach lib,@LIBLIST@  ,$(foreach target, distclean clean,$(eval $(target): $(
 ifeq (@SHARED@,yes)
 all:install-shared
 install-shared:
-	: installing sharable library files in @librariesdir@/lib
+	: installing sharable library files in @pre_librariesdir@/lib
 	if [ -d final/lib ] ; \
-	then rm -rf @librariesdir@/lib ;\
-	     @INSTALL@ -d @librariesdir@/lib ; \
+	then rm -rf @pre_librariesdir@/lib ;\
+	     @INSTALL@ -d @pre_librariesdir@/lib ; \
 	     tar cf - --exclude="*.a" --exclude="*.la" --exclude="*.pc" --exclude="*.old" -C final/lib . \
-	     | tar xfv - -C @librariesdir@/lib ; \
+	     | tar xfv - -C @pre_librariesdir@/lib ; \
 	fi
 endif
 Makefile         : Makefile.in         ; cd .. && ./config.status libraries/Makefile

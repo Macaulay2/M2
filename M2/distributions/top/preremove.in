@@ -1,12 +1,8 @@
 #! /bin/sh -e
 # we want to ignore the --datarootdir setting, whatever that means, so here we we mention it: @datarootdir@
 pre_prefix=$ENCAP_SOURCE/$ENCAP_PKGNAME
-pre_exec_prefix=$prefix
-infodir="@infodir@"; eval infodir="$infodir"; eval infodir="$infodir"
-cd "$infodir"
-pre_prefix=$ENCAP_TARGET
-pre_exec_prefix=$prefix
-infodir="@infodir@"; eval infodir="$infodir"; eval infodir="$infodir"
+prefix=$ENCAP_TARGET
+cd "@pre_infodir@"
 for i in *.info
-do (set -x ; install-info --quiet --info-dir="$infodir" --remove "$i")
+do (set -x ; install-info --quiet --info-dir="@infodir@" --remove "$i")
 done

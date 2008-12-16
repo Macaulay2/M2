@@ -8,8 +8,9 @@ preremove : @srcdir@/preremove.in; cd ../..; ./config.status distributions/top/p
 INSTALL : @srcdir@/INSTALL.in; cd ../..; ./config.status distributions/top/INSTALL
 distclean : ; rm -rf Makefile
 # we want to ignore the --datarootdir setting, whatever that means, so here we we mention it: @datarootdir@
-pre_prefix=PRE
-pre_exec_prefix=PRE
+# we want the relative paths here:
+override prefix = PRE
+override exec_prefix = PRE
 RLS = sed 's, PRE/, ,'
 encapinfo : Makefile
 	( \
@@ -18,7 +19,6 @@ encapinfo : Makefile
 	  echo linkdir "@libm2dir@/*" ;\
 	  echo linkdir "@docdir@/*" ;\
 	  echo linkdir "@packagesdir@/*" ;\
-	  echo linkdir "@libm2dir@/*" ;\
 	  echo exclude "@infodir@/dir" ;\
 	  echo exclude "@infodir@/dir.old" \
 	) | $(RLS) >$@

@@ -65,7 +65,11 @@ T=tar --create --mode=a+rX,og-ws --exclude-from=@srcdir@/../tar-exclusions --fil
 	rm -rf files-common
 	umask 022 ; $(MKDIR_P) files-common@prefix@
 	umask 022 ; $(T) -C @pre_prefix@ . | @FAKEROOT@ tar xfp - -C files-common@prefix@
-	find files-common@mandir@/man1 -name \*.1 | xargs gzip
+	: warning: fixed layout in use, just trying both common possibilities:
+	find \
+		files-common@prefix@/man/man1 \
+		files-common@prefix@/share/man/man1 \
+		-name \*.1 | xargs gzip
 	find files-common@prefix@ -name \*.info | xargs gzip
 
 Macaulay2.spec: Macaulay2-body.spec packages-used Makefile .prepared 
@@ -87,7 +91,8 @@ Macaulay2-common.spec : Macaulay2-common-body.spec Makefile .prepared-common
 ../../$(PKG_COM_RPM) : Macaulay2-common.spec .prepared-common; @FAKEROOT@ rpmbuild -bb Macaulay2-common.spec
 
 libraries-used : .prepared always
-	ldd files@bindir@/M2@EXE@ > $@.tmp
+	: warning: fixed layout in use:
+	ldd files@prefix@/bin/M2@EXE@ > $@.tmp
 	cat $@.tmp | sed -e 's/.* => //' -e 's/^	//' -e 's/ .*//' | egrep '^/' >$@ || true
 	rm $@.tmp
 
