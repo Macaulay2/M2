@@ -757,9 +757,11 @@ installPackage Package := opts -> pkg -> (
 			 not opts.RerunExamples 
 			 and fileExists outf' 
 			 and gethash outf' === inputhash
-			 and not fileExists tmpf
 			 )
-		    then copyFile(outf',outf)
+		    then (
+			 if fileExists tmpf then removeFile tmpf;
+			 copyFile(outf',outf);
+			 )
 		    else (
 			 inf << concatenate apply(inputs, s -> s|"\n") << close;
 			 if runFile(inf,inputhash,outf,tmpf,desc,pkg,changefun,".",opts.UserMode)
