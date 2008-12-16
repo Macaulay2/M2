@@ -12,7 +12,7 @@ Macaulay2HomePage := () -> "http://www.math.uiuc.edu/Macaulay2/index-" | version
 -- we've turned off checking for existence of files...
 
 local prefix; local topNodeButton
-local nullButton; local masterIndexButton; local tocButton; local homeButton; local myHomeButton;
+local nullButton; local masterIndexButton; local tocButton; local homeButton; local directoryButton;
 local NEXT; local PREV; local UP; local tableOfContents; local linkTable; local SRC
 local nextButton; local prevButton; local upButton; local backwardButton; local forwardButton
 local masterIndex
@@ -202,16 +202,9 @@ html HTML := t -> concatenate(
 
 buttonBar := (tag) -> ButtonTABLE {{ 
 	  DIV splice {
-     	       forward tag,
-	       backward tag,
-	       next tag,
-	       prev tag,
-	       up tag,
+     	       forward tag, backward tag, next tag, prev tag, up tag,
      	       (if tag =!= topDocumentTag then topNodeButton else topNodeButton#-1, " | "),
-     	       masterIndexButton, " | ",
-     	       tocButton, " | ",
-     	       homeButton, " | ",
-     	       myHomeButton
+     	       masterIndexButton, " | ", tocButton, " | ", directoryButton, " | ", homeButton
 	       }}}
 
 upAncestors := tag -> reverse (
@@ -361,8 +354,8 @@ assembleTree := (pkg,nodes) -> (
 setupButtons := () -> (
      topNodeButton = HREF {htmlDirectory|topFileName, "top" };
      tocButton = HREF {htmlDirectory|tocFileName, "toc"};
-     homeButton = HREF {Macaulay2HomePage (), "M2 home"};
-     myHomeButton = HREF { "file://" | externalPath | applicationDirectory() | "index.html", "my home"};
+     homeButton = HREF {Macaulay2HomePage (), "Macaulay 2 web site"};
+     directoryButton = HREF { "file://" | externalPath | applicationDirectory() | "index.html", "directory"};
      nullButton = "";
      masterIndexButton = HREF {htmlDirectory|indexFileName,"index"};
      forwardButton = "next";
@@ -395,7 +388,7 @@ makeMasterIndex := (keylist,verbose) -> (
      r := HTML {
 	  HEAD splice { TITLE title, links() },
 	  BODY {
-	       DIV { topNodeButton, " | ", tocButton, " | ", homeButton, " | ", myHomeButton },
+	       DIV { topNodeButton, " | ", tocButton, " | ", directoryButton, " | ", homeButton },
 	       HR{},
 	       HEADER1 title,
 	       DIV between(LITERAL "&nbsp;&nbsp;&nbsp;",apply(alpha, c -> HREF {"#"|c, c})), 
@@ -417,7 +410,7 @@ maketableOfContents := (verbose) -> (
      << html HTML {
 	  HEAD splice { TITLE title, links() },
 	  BODY {
-	       DIV { topNodeButton, " | ", masterIndexButton, " | ", homeButton, " | ", myHomeButton },
+	       DIV { topNodeButton, " | ", masterIndexButton, " | ", directoryButton, " | ", homeButton },
 	       HR{},
 	       HEADER1 title,
 	       toDoc tableOfContents
@@ -452,7 +445,7 @@ runFile := (inf,inputhash,outf,tmpf,desc,pkg,announcechange,rundir,usermode) -> 
 	  ulimit = utest " -t 80" | utest " -m 200000"| utest " -v 200000";
 	  );
      tmpf << "-- -*- M2-comint -*- {* hash: " << inputhash << " *}" << endl << close;
-     cmd := ulimit | "cd " | rundir | "; time " | cmdname | " " | args | " <" | format inf | " >>" | format tmpf | " 2>&1";
+     cmd := ulimit | "cd " | rundir | "; " | cmdname | " " | args | " <" | format inf | " >>" | format tmpf | " 2>&1";
      stderr << cmd << endl;
      r := run cmd;
      if r == 0 then (
@@ -1108,8 +1101,7 @@ makePackageIndex List := path -> (
 	  BODY { 
 	       -- buttonBar tag, HR{},
 	       PARA {
-		    "This is the top level documentation page for Macaulay 2 and its packages, stored in 
-		    your application directory.
+		    "This is the directory for Macaulay 2 and its packages.
 		    Bookmark this page for future reference, or run the viewHelp command in Macaulay 2
 		    to open up your browser on this page."
 		    },

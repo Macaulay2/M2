@@ -2,6 +2,10 @@ links don't quite work:
 
   - in a package Foo, links to Foo should be redirected to Top
 
+  - in the node for Ideal, the link to "content" is broken,
+    probably because it's redirected to "content_lpRingElement_rp".
+    It needs to be a more complex link.
+
 This menu item is bad because there is a colon on the left side:
 
     * Parser : Analyzer: Parser _co Analyzer.  combine a parser with a lexical

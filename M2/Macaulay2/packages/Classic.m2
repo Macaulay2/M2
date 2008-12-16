@@ -33,8 +33,10 @@ arrayPolyP = toList % seqP_";" listPolyP
 export poly ; poly = method()
 poly String :=  RingElement => polyP : nonspaceAnalyzer
 ideal String := Ideal => ideal % listPolyP : nonspaceAnalyzer
-monomialIdeal String := MonomialIdeal => monomialIdeal % listPolyP : nonspaceAnalyzer
-matrix String := Matrix => opts -> matrix_opts % arrayPolyP : nonspaceAnalyzer
+monomialIdeal String := MonomialIdeal => 
+                 monomialIdeal % listPolyP : nonspaceAnalyzer
+matrix String := Matrix => opts -> 
+                  matrix_opts % arrayPolyP : nonspaceAnalyzer
 -- end --
 
 beginDocumentation()
