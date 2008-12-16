@@ -1,98 +1,45 @@
 # @configure_input@
-############################### targets to use
-.PHONY: check stage1 clean initialize book distclean
-################################# prologue
-stage1 :: initialize
-
-include ../include/config.Makefile
 # ignore @datarootdir@
 VPATH = @srcdir@
-################################# .
-stage1 :: @docdir@ @docdir@ \
-	   @docdir@/COPYING \
-	   @docdir@/README \
-	   @docdir@/LAYOUT
-
-@docdir@:; $(MKDIR_P) "$@"
-@docdir@/COPYING : COPYING ; @INSTALL_DATA@ $< "$@"
-@docdir@/LAYOUT  : LAYOUT  ; @INSTALL_DATA@ $< "$@"
-@docdir@/README  : README  ; @INSTALL_DATA@ $< "$@"
-
-################################# srcdir
-initialize :: srcdir
-srcdir :; echo "@srcdir@" >$@
-clean::; rm -f srcdir
-################################# cache
-initialize :: cache
-cache :; mkdir $@
-distclean clean ::; rm -rf cache
-################################# util
-initialize::; $(MAKE) -C util stage1
-distclean clean ::; $(MAKE) DEPENDS=no -C util $@
-################################# c
-distclean clean ::; $(MAKE) DEPENDS=no -C c $@
-stage1 ::; $(MAKE) -C c stage1
-################################# e
-stage1 check initialize ::; $(MAKE) -C e DEPENDS=no initialize
-stage1 ::; $(MAKE) -C e $@
-
-# check ::; $(MAKE) -C e $@
-check ::
-	@ echo "---###################################----"
-	@ echo "---#### disabled: make -C e check ####----"
-	@ echo "---###################################----"
-
-initialize distclean clean ::; $(MAKE) DEPENDS=no -C e $@
-################################# dumpdata
+.PHONY: initialize-dirs
+include ../include/config.Makefile
+initialize-dirs:
+	$(MAKE) DEPENDS=no -C e initialize
+	$(MAKE) DEPENDS=no -C d initialize
+all: initialize-dirs @docdir@ @docdir@/COPYING @docdir@/README @docdir@/LAYOUT all-dirs
+check: check-dirs
+clean: clean-dirs
+distclean: distclean-dirs
+	rm -f Makefile
+define do-dirs
+$1-dirs:
+	$$(MAKE) -C compat $1 $2
+	$$(MAKE) -C util $1 $2
+	$$(MAKE) -C html-check-links $1 $2
+	$$(MAKE) -C probe $1 $2
+	$$(MAKE) -C regex $1 $2
+	$$(MAKE) -C c $1 $2
 ifeq "@DUMPDATA@" "yes"
-stage2 stage1 check ::; $(MAKE) -C dumpdata $@
+	$$(MAKE) -C dumpdata $1 $2
 endif
-distclean clean ::; $(MAKE) DEPENDS=no -C dumpdata $@
-################################# compat
-stage1 clean distclean ::; $(MAKE) -C compat $@
-################################# regex
-stage1 ::; $(MAKE) -C regex $@
-clean distclean ::; $(MAKE) DEPENDS=no -C regex $@
-################################# d
-initialize ::; $(MAKE) DEPENDS=no -C d compat.h
-### util/restart and util/update cooperate here:
-# old way:
-# stage1 ::; util/restart d/restart.tmp $(MAKE) -C d stage1
-# new way:
-stage1::; $(MAKE) -C d stage1
-distclean clean ::; $(MAKE) DEPENDS=no -C d $@
-################################# bin
-stage1 distclean clean ::; $(MAKE) DEPENDS=no -C bin $@
-################################# basictests
-check ::; $(MAKE) -C packages/Macaulay2Doc/basictests -k
-distclean clean ::; $(MAKE) -C packages/Macaulay2Doc/basictests $@
-################################# m2
-stage2 distclean clean check stage1 ::; $(MAKE) -C m2 $@
-################################# test
-check ::; $(MAKE) -C packages/Macaulay2Doc/test -k
-distclean clean ::; $(MAKE) -C packages/Macaulay2Doc/test $@
-################################# packages
-stage1 check stage2 clean distclean ::; $(MAKE) -C packages $@
-################################# html-check-links
-initialize::; $(MAKE) -C html-check-links stage1
-check ::; $(MAKE) DEPENDS=no -C html-check-links check
-distclean clean ::; $(MAKE) DEPENDS=no -C html-check-links $@
-################################# probe
-clean distclean ::; $(MAKE) -C probe $@
-################################# book, currently not made
-book ::;  $(MAKE) -C book stage1
-distclean clean ::; $(MAKE) -C book $@
-################################# emacs
-stage1 stage2 distclean clean ::; $(MAKE) -C emacs $@
-################################# man
-stage1 clean distclean stage2 :: ; $(MAKE) -C man $@
-################################# Makefile
-Makefile : Makefile.in
-	cd ..; ./config.status Macaulay2/Makefile
-distclean::; rm -f Makefile
-#################################
-clean :: ; rm -f gmon.out
-
+	$$(MAKE) -C e $1 $2
+	$$(MAKE) -C d $1 $2
+	$$(MAKE) -C m2 $1 $2
+	$$(MAKE) -C emacs $1 $2
+	$$(MAKE) -C man $1 $2
+	$$(MAKE) -C packages $1 $2
+	$$(MAKE) -C tests $1 $2
+	$$(MAKE) -C packages/Macaulay2Doc/basictests $1 $2
+	$$(MAKE) -C packages/Macaulay2Doc/test $1 $2
+	$$(MAKE) -C book $1 $2
+endef
+$(foreach t,all, $(eval $(call do-dirs,$t)))
+$(foreach t,check, $(eval $(call do-dirs,$t,-k)))
+$(foreach t,clean distclean, $(eval $(call do-dirs,$t,DEPENDS=no)))
+@docdir@:; $(MKDIR_P) "$@"
+@docdir@/% : % ; @INSTALL_DATA@ $< "$@"
+Makefile : Makefile.in; cd ..; ./config.status Macaulay2/Makefile
+clean: ; rm -f gmon.out
 # Local Variables:
 # compile-command: "make -C $M2BUILDDIR/Macaulay2 "
 # End:

@@ -14,7 +14,7 @@ CHAPTERS = completeIntersections \
 	   toricHilbertScheme \
 	   varieties
 
-.PHONY: clean changes distclean stage1 check
+.PHONY: changes
 
 ifneq "@srcdir@" "."
 check :: $(CHAPTERS)
@@ -27,7 +27,7 @@ else
 EXIT = 
 endif
 
-stage1 :: check
+all: check
 
 check capture changes :: Makefile.chapter
 $(foreach d,$(CHAPTERS),$(eval capture check ::; $(MAKE) -C ${d} -I .. $$@))

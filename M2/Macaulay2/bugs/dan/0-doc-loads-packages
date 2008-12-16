@@ -1,0 +1,25 @@
+This appears while installing Macaulay2Doc!
+
+Benchmark: type "runBenchmarks" to run the three standard benchmarks
+Benchmark: type "runBenchmarks {m,n,...}" to run benchmarks m,n,...
+Benchmarks available:
+       "gb4by4comm": gb of the ideal of generic commuting 4 by 4 matrices over ZZ/101
+       "yang-subring": an example of Yang-Hui He
+       "res39": res of a generic 3 by 9 matrix over ZZ/101
+       "yang-gb1": an example of Yang-Hui He arising in string theory
+       "resG25": res of the coordinate ring of Grassmannian(2,5)
+       "deg2generic": gb of a generic ideal of codimension 2 and degree 2
+       "gb3445": gb of a random ideal with elements of degree 3,4,4,5 in 8 variables
+       "gbB148": gb of Bayesian graph ideal #148
+
+So does this:
+
+--warning: symbol 'graph' in User#"private dictionary" is shadowed by a symbol in EdgeIdeals.Dictionary
+--  use the synonym graph$0
+--loading configuration for package "FourTiTwo" from file /home/dan/.Macaulay2/init-FourTiTwo.m2
+--warning: symbol 'isPure' in SimplicialComplexes.Dictionary is shadowed by a symbol in Polyhedra.Dictionary
+--  use the synonym SimplicialComplexes$isPure
+--warning: symbol 'fVector' in SimplicialComplexes.Dictionary is shadowed by a symbol in Polyhedra.Dictionary
+--  use the synonym SimplicialComplexes$fVector
+--warning: symbol 'faces' in SimplicialComplexes.Dictionary is shadowed by a symbol in Polyhedra.Dictionary
+--  use the synonym SimplicialComplexes$faces

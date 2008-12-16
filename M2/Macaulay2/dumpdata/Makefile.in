@@ -13,7 +13,7 @@ file.o: std.h
 warning.o: warning.h std.h
 gdb: checkit; gdb checkit
 ifneq (@ETAGS@,)
-stage1 :: tags
+all: tags
 endif
 tags: @srcdir@/TAGS
 @srcdir@/TAGS: Makefile @srcdir@/*.h @srcdir@/*.c ; cd @srcdir@ && @ETAGS@ *.h *.c
@@ -28,7 +28,7 @@ LD_DEBUG =
 
 $(EXTRAOBJS): /usr/lib/libc.a; $(AR) x $< $@	
 libdump.a: libdump.a(file.o warning.o map.o dumpdata.o maputil.o printmaps.o $(EXTRAOBJS)); ranlib libdump.a
-stage1:: libdump.a
+all: libdump.a
 check:: checkit
 	./checkit dump "hi there" && ./checkit load "look!"
 #	LD_DEBUG=$(LD_DEBUG) LOADDATA_DEBUG=true; export LD_DEBUG LOADDATA_DEBUG; set -x; ./checkit dump "hi there" && ./checkit load "look!"
@@ -41,13 +41,13 @@ testprintmaps:libdump.a
 clean::; rm -f testprintmaps
 
 ifeq "@HAVE_PERSONALITY@" "1"
-stage1:: personality
+all: personality
 clean::; rm -f personality
-stage2:: personality @bindir@  ; @INSTALL_PROGRAM@ $< @bindir@/personality
+all: personality @bindir@  ; @INSTALL_PROGRAM@ $< @bindir@/personality
 @bindir@ :; @INSTALL@ -d "$@"
 PERDIR = @packagesdir@/personality
 $(PERDIR):; @INSTALL@ -d "$@"
-stage2:: personality.c $(PERDIR) ; @INSTALL_DATA@ $^
+all: personality.c $(PERDIR) ; @INSTALL_DATA@ $^
 endif
 
 # Local Variables:

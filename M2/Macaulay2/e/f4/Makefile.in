@@ -5,11 +5,11 @@ DEPENDS = yes
 include ../Makefile.include
 include ../Makefile.common
 
-.PHONY : stage1 place_into_lib
+.PHONY : place_into_lib
 
 include @srcdir@/Makefile.files
 
-stage1 :: $(F4_OBJECT_FILES)
+all: $(F4_OBJECT_FILES)
 check_it : $(F4_OBJECT_FILES) check_it.o
 	gcc -o check_it check_it.o $(F4_OBJECT_FILES) -L/sw/lib -lgc
 

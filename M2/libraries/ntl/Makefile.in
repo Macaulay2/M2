@@ -31,7 +31,10 @@ INSTALLOPTIONS = \
 
 INSTALLCMD     = $(MAKE) $(INSTALLOPTIONS) install
 include ../Makefile.library
-check :: ; $(MAKE) -C $(BUILDDIR) check
+check: check-once
+check-once: .installed-$(VERSION)
+	$(MAKE) -C $(BUILDDIR) check
+	touch $@
 Makefile : @srcdir@/Makefile.in ; cd ../.. && ./config.status libraries/ntl/Makefile
 clean uninstall ::
 	if [ -d $(LIBRARIESDIR) ] ;\

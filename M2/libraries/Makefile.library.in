@@ -3,6 +3,8 @@
 LIBRARY_MODE = yes
 include ../../include/config.Makefile
 
+TARFILE_DIR = @abs_top_srcdir@/BUILD/tarfiles
+
 # some libraries (gdbm, mpfr, readline, gmp, and gc) use libtool, which 
 # insists on installing its files to a directory whose trailing part is the
 # prefix that was used at compile time, i.e., the only change allowed to the prefix
@@ -18,7 +20,9 @@ LIBRARIESDIR := $(PREFIX)
 
 export PATH := @abs_top_srcdir@/autoconf/final/bin:$(PATH)
 
-stage1 install :: .installed-$(VERSION)
+all:install post-install
+post-install:
+install: .installed-$(VERSION)
 unconfigure : ; rm -f .configured-$(VERSION) .compiled-$(VERSION) .installed-$(VERSION)
 reconfigure : unconfigure .configured-$(VERSION)
 uninstall   :: ; rm -f .installed-$(VERSION)
@@ -28,7 +32,7 @@ unmark : ; rm -f .configured-$(VERSION) .compiled-$(VERSION)
 package-clean : unmark ; if [ -d $(BUILDDIR) ]; then $(MAKE) -C $(BUILDDIR) clean ; fi
 package-distclean : unmark ; if [ -d $(BUILDDIR) ]; then $(MAKE) -C $(BUILDDIR) distclean ; fi
 
-fetch : .fetched-$(VERSION)
+fetch : $(TARFILE_DIR)/$(TARFILE)
 patch : .patched-$(VERSION)
 untar : .untarred-$(VERSION)
 compile : .compiled-$(VERSION)
@@ -66,9 +70,9 @@ else
 .patched-$(VERSION) : .untarred-$(VERSION) ; touch $@
 endif
 
-UNTARCMD ?= tar xzf tarfiles/$(TARFILE)
-.untarred-$(VERSION) : .fetched-$(VERSION) ; $(UNTARCMD) && touch $@
-.untarred2-$(VERSION) : .fetched-$(VERSION) ; mkdir tmp ; $(UNTARCMD) -C tmp && touch $@
+UNTARCMD ?= tar xzf $(TARFILE_DIR)/$(TARFILE)
+.untarred-$(VERSION) : $(TARFILE_DIR)/$(TARFILE) ; $(UNTARCMD) && touch $@
+.untarred2-$(VERSION) : $(TARFILE_DIR)/$(TARFILE) ; mkdir tmp ; $(UNTARCMD) -C tmp && touch $@
 
 ifeq ($(FETCHER),)
 ifneq (@WGET@,)
@@ -92,23 +96,19 @@ endif
 
 CHECKFETCHED = case "$(URL)" in \
 	http:*) \
-	    if file tarfiles/$(TARFILE) | grep HTML ; \
+	    if file $(TARFILE_DIR)/$(TARFILE) | grep HTML ; \
 	    then echo tried to fetch file, but HTML file returned instead >&2 ; exit 1 ; \
 	    fi ;; \
 	esac
 
-.fetched-$(VERSION) :
-	$(MKDIR_P) tarfiles
-	(cd tarfiles && $(FETCHER) $(URL)/$(TARFILE) $(FETCHOPTS) && $(CHECKFETCHED)) && touch $@
-
-distclean :: package-distclean
-
-clean ::; rm -rf .patched* .untarred* $(LIBNAME)* .compiled* .configured* .installed* .untarred2* diffs tmp $(TARDIR)
-distclean :: clean ; rm -rf Makefile tarfiles/* .fetched*
-check ::
-
+$(TARFILE_DIR)/$(TARFILE) :
+	$(MKDIR_P) $(TARFILE_DIR)
+	(cd $(TARFILE_DIR) && $(FETCHER) $(URL)/$(TARFILE) $(FETCHOPTS) && $(CHECKFETCHED))
+distclean: package-distclean
+clean::; rm -rf .patched* .untarred* $(LIBNAME)* .compiled* .configured* .installed* .untarred2* diffs tmp $(TARDIR)
+distclean: clean ; rm -rf Makefile
+check:
 ls :; ls -la . tarfiles
-
 help :;
 	@ echo ""
 	@ echo "usage: make [option...] [target...]"

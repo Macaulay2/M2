@@ -39,7 +39,7 @@ info-dir: @infodir@ @infodir@/dir
 @infodir@:; $(MKDIR_P) $@
 @infodir@/dir:; @INSTALL_DATA@ @top_srcdir@/files/info-dir-template $@
 define bld
-stage2: info-dir @packagesdir@/$(1).installed
+all: info-dir @packagesdir@/$(1).installed
 @packagesdir@/$(1).installed : $(1).m2 $$(wildcard @srcdir@/$(1)/*.m2 @srcdir@/$(1)/*/*.m2) $(REMAKEPACKAGES)
 	@bindir@/M2@EXE@ $(M2DIRS) \
 	    -q --stop --silent \
@@ -60,9 +60,9 @@ distclean:clean
 
 ## here is the list of other files to install along with Macaulay2
 @packagesdir@/%.m2 : %.m2 ; @INSTALL_DATA@ $^ $@
-stage2: @packagesdir@/eliminate.m2 @packagesdir@/D-modules.m2
+all: @packagesdir@/eliminate.m2 @packagesdir@/D-modules.m2
 # this one we need for compatibility with the book
-stage2 : @packagesdir@/LLL.m2
+all : @packagesdir@/LLL.m2
 # Local Variables:
 # compile-command: "make -C $M2BUILDDIR/Macaulay2/packages "
 # End:

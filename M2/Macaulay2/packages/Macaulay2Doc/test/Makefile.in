@@ -9,23 +9,22 @@ include $(DOTS)/../include/config.Makefile
 SRCDIR = @srcdir@
 include Makefile.test
 
-stage1 check clean ::
-	$(MAKE) -k -C slow $@
+all:
 
-clean ::
-	$(MAKE) -k -C engine $@
-
-# the raw engine tests are obsolete!
-stage1 check ::
-	: skipping: $(MAKE) -k -C engine $@
+check::
+	$(MAKE) -C slow $@
+	: skipping obsolete raw engine tests: $(MAKE) -k -C engine $@
+clean::
+	$(MAKE) -C slow $@
+	$(MAKE) -C engine $@
 
 ifneq "@DUMPDATA@" "no"
 RESULTS += dumpdata.out
 endif
 
-distclean ::
-	$(MAKE) -k -C engine $@
-	$(MAKE) -k -C slow $@
+distclean::
+	$(MAKE) -C engine $@
+	$(MAKE) -C slow $@
 
 docStructure.out : docStructure.m2
 
@@ -40,7 +39,7 @@ status ::
 
 MIKE_TESTS := $(wildcard @srcdir@/mt-*.m2 @srcdir@/gigantic/mt-*.m2)
 MIKE_RESULTS := $(patsubst @srcdir@/%.m2, %.out, $(MIKE_TESTS))
-mike-tests:: $(MIKE_RESULTS) ; grep sys $^ 
+mike-tests: $(MIKE_RESULTS) ; grep sys $^ 
 
 # Local Variables:
 # compile-command: "make -k -C $M2BUILDDIR/Macaulay2/packages/Macaulay2Doc/test "

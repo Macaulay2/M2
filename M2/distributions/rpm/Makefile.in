@@ -21,7 +21,6 @@ PKG_RPM = @PACKAGE_TARNAME@-@PACKAGE_VERSION@-$(DISTRIBUTION).@ARCH@-@OS@-@ISSUE
 PKG_COM_RPM = @PACKAGE_TARNAME@-@PACKAGE_VERSION@-$(DISTRIBUTION).common.rpm
 
 # commands for testing the rpm file:
-#  stage2:
 #    rpm -i -v --nodeps *.rpm
 #  remove:
 #	Version: 0.9.95
@@ -35,13 +34,14 @@ PKG_COM_RPM = @PACKAGE_TARNAME@-@PACKAGE_VERSION@-$(DISTRIBUTION).common.rpm
 #   mpfr-2.3.0-1.fc8
 
 ############################## main targets
-stage1 stage2 ::; [ "${prefix}" = /usr -a @DEBUG@ = no -a @OPTIMIZE@ = yes -a @STRIP@ = yes ]
-stage1 stage2 :: check-id
-stage1 stage2 :: ../../$(PKG_COM_RPM) ../../$(PKG_RPM)
+all: chk-opts check-id ../../$(PKG_COM_RPM) ../../$(PKG_RPM) maybe-tidy
+chk-opts:; [ "${prefix}" = /usr -a @DEBUG@ = no -a @OPTIMIZE@ = yes -a @STRIP@ = yes ]
 ifeq ($(TIDY),yes)
-stage1 stage2 :: tidy
+maybe-tidy: tidy
+else
+maybe-tidy:
 endif
-check-id: always
+check-id:
 	@if [ `@FAKEROOT@ id -u` != 0 ] ; \
 	 then ( \
 	    echo "=============================================================================" ;\

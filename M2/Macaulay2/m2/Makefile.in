@@ -1,12 +1,11 @@
 # @configure_input@
-stage1 :: initialize phase1
+all: initialize phase1
 include ../../include/config.Makefile
 VPATH = @srcdir@ @srcdir@/../d
 srcdir = $(shell cd @srcdir@; /bin/pwd)
 
-stage1:: initialize
+all: initialize
 Makefile : Makefile.in ; cd ../.. && ./config.status Macaulay2/m2/Makefile
-emacs html: stage1; $(MAKE) -C ../$@
 ##############################
 .SUFFIXES: .m2
 .PHONY: html initialize prep tags install-tmp
@@ -33,7 +32,7 @@ clean::; rm -f statuscodes.m2
 ifdef MP
 mpcodes.m2: ../../include/MP.h mpcodes.sed
 	sed -f mpcodes.sed $< > $@
-stage1:: mpcodes.m2
+all: mpcodes.m2
 DUMPEDM2FILES += mpcodes.m2
 endif
 ############################## loads.m2
@@ -51,7 +50,7 @@ install.m : install.m2.in ; cd ../.. && ./config.status Macaulay2/m2/install.m2
 ############################## tvalues.m2
 DUMPEDM2FILES += tvalues.m2
 TVFILES := $(shell egrep -l -e "-- . typical value: " @srcdir@/../d/*.d)
-stage1 :: tvalues.m2
+all: tvalues.m2
 tvalues.m2 : $(TVFILES)
 	egrep -e "-- . typical value: " $^ | sed 's/.*-- . typical value: \(.*\)/typval(\1)/' >$@
 clean::;rm -rf tvalues.m2
@@ -66,7 +65,7 @@ OTHERDUMPEDM2FILES += \
 	$(wildcard $(patsubst %, @srcdir@/../packages/%/*.m2, $(INSTALLEDPACKAGES))) \
 	$(wildcard $(patsubst %, @srcdir@/../packages/%.m2  , $(INSTALLEDPACKAGES)))
 #################################
-stage1 :: tags
+all: tags
 tags: Makefile @srcdir@/TAGS @srcdir@/TAGS.doc
 clean::; rm -f TAGS @srcdir@/TAGS @srcdir@/TAGS.doc
 @srcdir@/TAGS: \
@@ -131,7 +130,7 @@ phase1 :: ../cache/Macaulay2-made
 	touch $@
 
 ## .gdbinit
-stage1:: .gdbinit .gdb-files .gdb-run-it
+all: .gdbinit .gdb-files .gdb-run-it
 gdb: .gdbinit .gdb-files; gdb @pre_exec_prefix@/bin/M2@EXE@
 .gdbinit: .gdbinit.$(USER); cp $< $@
 .gdbinit.$(USER):; touch $@
@@ -158,7 +157,7 @@ TMPDIR = tmp
 check:: $(TMPDIR) test2
 $(TMPDIR) :; mkdir $@
 test2: phase1 @pre_exec_prefix@/bin/M2@EXE@
-	$(MAKE) -k -C $(TMPDIR) -f $(srcdir)/Makefile.tests srcdir=$(srcdir)
+	$(MAKE) -C $(TMPDIR) -f $(srcdir)/Makefile.tests srcdir=$(srcdir)
 	touch $@
 clean::; rm -f test2
 
@@ -180,7 +179,7 @@ endif
 @packagesdir@/Core  : ; @INSTALL@ -d $@
 @packagesdir@/Core/% : % ; @INSTALL_DATA@ $^ $@
 FILES_TO_COPY := $(DUMPEDM2FILES) demo1.m2
-stage2 :: stage1 @packagesdir@ @packagesdir@/Core $(addprefix @packagesdir@/Core/, $(FILES_TO_COPY))
+all:@packagesdir@ @packagesdir@/Core $(addprefix @packagesdir@/Core/, $(FILES_TO_COPY))
 clean::; rm -rf ../cache/@DUMPDATAFILE@ cache *.obj *.exe runexample temp.data distfiles loads.m2 mpcodes.m2 core gmon.out
 distclean : clean; rm -f Makefile version.m2
 

@@ -1,22 +1,23 @@
 VPATH = @srcdir@
-
 M2 = @pre_exec_prefix@/bin/M2@EXE@
 ARGS = -q --stop
 ARGS += -e 'path = prepend("@srcdir@/",path)'
-
-check ::; $(M2) $(ARGS) < @srcdir@/plausibility1.m2
-check ::; $(M2) $(ARGS) < @srcdir@/plausibility2.m2
-check ::; $(M2) $(ARGS) < @srcdir@/plausibility3.m2
-check ::; $(M2) $(ARGS) < @srcdir@/plausibility4.m2
-check ::; $(M2) $(ARGS) -q --stop < @srcdir@/proof-fixed.m2
-diffs :
+check:
+	$(M2) $(ARGS) < @srcdir@/plausibility1.m2
+	$(M2) $(ARGS) < @srcdir@/plausibility2.m2
+	$(M2) $(ARGS) < @srcdir@/plausibility3.m2
+	$(M2) $(ARGS) < @srcdir@/plausibility4.m2
+	$(M2) $(ARGS) -q --stop < @srcdir@/proof-fixed.m2
+diffs:
 	-cat @srcdir@/plausibility1.m2 @srcdir@/plausibility2.m2 @srcdir@/plausibility3.m2 @srcdir@/plausibility4.m2 \
 	 | diff -u @srcdir@/plausibility.m2 -
 	-diff -u @srcdir@/proof.m2 @srcdir@/proof-fixed.m2
 	-diff -u @srcdir@/proof.m2 @srcdir@/proof-fixed.m2
 
 Makefile : Makefile.in; cd ../../..; ./config.status Macaulay2/tests/rationality/Makefile
-
+clean:
+distclean:clean;rm -f Makefile
+all:
 # Local Variables:
 # compile-command: "make -C $M2BUILDDIR/Macaulay2/tests/rationality/ -k check"
 # End:

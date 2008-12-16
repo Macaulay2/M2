@@ -1,6 +1,6 @@
 # @configure_input@
 ############################## main target
-stage1:: scc1
+all: scc1
 include ../../include/config.Makefile
 top_srcdir = @top_srcdir@
 VPATH = @srcdir@
@@ -37,7 +37,7 @@ $(OFILES) : $(HFILES)
 grammar.o : grammar.c; @CC@ $(CPPFLAGS) $(CFLAGS) -c $< $(OUTPUT_OPTION)
 ############################## tags
 ifneq (@ETAGS@,)
-stage1 :: tags
+all: tags
 endif
 tags : @srcdir@/TAGS
 @srcdir@/TAGS: $(SRCFILES); cd @srcdir@ && @ETAGS@ $(SRCFILES)

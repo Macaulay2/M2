@@ -18,26 +18,24 @@ endif
 PKG_DEB = @PACKAGE_TARNAME@-@PACKAGE_VERSION@-$(DEBARCH)-@OS@-@ISSUE@.deb
 PKG_COM_DEB = @PACKAGE_TARNAME@-@PACKAGE_VERSION@-common.deb
 
-stage2 ::
-stage1 stage2 ::; [ "${prefix}" = /usr -a @DEBUG@ = no -a @OPTIMIZE@ = yes -a @STRIP@ = yes ]
-stage1 stage2 :: macaulay2/control.prelim
+all: chk-ops macaulay2/control.prelim tidy_before ../../$(PKG_DEB) ../../$(PKG_COM_DEB) announce maybe-tidy
+chk-opts:; [ "${prefix}" = /usr -a @DEBUG@ = no -a @OPTIMIZE@ = yes -a @STRIP@ = yes ]
 macaulay2/control.prelim : @srcdir@/macaulay2/control.prelim.in Makefile
 	rm -f $@
 	<$< >$@ sed -e 's/[@]DEBARCH[@]/$(DEBARCH)/g' -e 's/[@]PACKAGE_VERSION[@]/@PACKAGE_VERSION@/g'
 	! egrep -nH '@[A-Za-z_]+@' <$@
-stage1 stage2 :: tidy_before
-stage1 stage2 :: ../../$(PKG_DEB) ../../$(PKG_COM_DEB)
+announce:
 	@ echo "============================================================================="
 	@ echo "package files prepared:"
 	@ echo "        $(PKG_DEB)"
 	@ echo "        $(PKG_COM_DEB)"
 	@ echo "============================================================================="
 ifeq ($(TIDY),yes)
-stage1 stage2 :: tidy_after
+maybe-tidy: tidy_after
+else
+maybe-tidy: tidy_after
 endif
-
 #################################
-
 ../../$(PKG_DEB) : @srcdir@/macaulay2/debian-binary macaulay2/control.tar.gz macaulay2/data.tar.gz
 	rm -f $@
 	ar rc $@.tmp $^
@@ -134,5 +132,5 @@ clean::; rm -f macaulay2/control.prelim
 % : %.in; cd ../..; ./config.status distributions/deb/$@
 
 # Local Variables:
-# compile-command: "make -C $M2BUILDDIR/distributions/deb stage2 "
+# compile-command: "make -C $M2BUILDDIR/distributions/deb "
 # End:

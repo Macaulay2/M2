@@ -11,8 +11,9 @@ DISTFILES := server/Macaulay2/@package@-$(DISTRIBUTION).tar.bz2 \
 	     server/Macaulay2/@package@-$(DISTRIBUTION)-src.tar.bz2 \
 	     server/Macaulay2/setup.hint
 
-stage1 stage2 ::; [ "${prefix}" = /usr -a @DEBUG@ = no -a @OPTIMIZE@ = yes -a @STRIP@ = yes ]
-stage1 stage2 :: server/Macaulay2 $(DISTFILES) server/setup.ini tidy
+all: chk-opts server/Macaulay2 $(DISTFILES) server/setup.ini maybe-tidy announce
+chk-opts:; [ "${prefix}" = /usr -a @DEBUG@ = no -a @OPTIMIZE@ = yes -a @STRIP@ = yes ]
+announce: 
 	@ echo "============================================================================="
 	@ echo "the cygwin package files have been prepared in cygwin/server"
 	@ echo "============================================================================="
@@ -21,10 +22,11 @@ server/setup.ini : $(DISTFILES)
 server/Macaulay2 : ; $(MKDIR_P) $@
 
 TIDY = yes
+tidy: maybe-tidy
 ifeq ($(TIDY),yes)
-tidy :; rm -rf files
+maybe-tidy :; rm -rf files
 else
-tidy :
+maybe-tidy :
 endif
 
 T=tar --create --mode=a+rX,og-ws --exclude-from=@srcdir@/../tar-exclusions --file=-

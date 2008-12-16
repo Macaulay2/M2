@@ -33,7 +33,7 @@ RESULTS := $(notdir $(patsubst %.m2, %.out, $(TESTFILES))) \
 PAT := 'internal error|:[0-9][0-9]*:[0-9][0-9]*:\([0-9][0-9]*\):|^GC|^0x|^out of mem|non-zero status|^Command terminated|user.*system.*elapsed|^[0-9]+\.[0-9]+user'
 FILTER := egrep -a $(PAT)
 
-stage1 check :: $(RESULTS)
+check :: $(RESULTS)
 $(RESULTS) : @pre_exec_prefix@/bin/M2@EXE@
 
 ARGS := --silent --stop -q -e 'path=join(path,{"$(SRCDIR)/","$(SRCDIR)/$(DOTS)/packages/"})'
@@ -77,8 +77,6 @@ review :
 	  do echo `basename $$i .errors`.m2: ; \
 	     <$$i $(FILTER) ; \
 	  done
-
-stage1 check :: 
 
 clean::; rm -f *.okay *.out core *.errors
 distclean:: clean; rm -f Makefile

@@ -4,9 +4,11 @@ TIDY = yes
 VPATH = @srcdir@
 DEPENDS = yes
 PKG_DMG = @package@-@ARCH@-@OS@-@REL@.dmg
-stage1 stage2 :: ../../$(PKG_DMG)
+all: ../../$(PKG_DMG) maybe-tidy
 ifeq ($(TIDY),yes)
-stage1 stage2 :: tidy
+maybe-tidy: tidy
+else
+maybe-tidy:
 endif
 T=tar --create --mode=a+rX,og-ws --exclude-from=@srcdir@/../tar-exclusions --file=-
 ../../$(PKG_DMG) : Makefile
