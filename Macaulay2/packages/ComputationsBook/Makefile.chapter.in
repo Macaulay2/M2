@@ -2,7 +2,7 @@
 # this makefile is run from a subdirectory, hence an extra ../ in the paths
 VPATH = $(chapter_srcdir)
 include ../../../../include/config.Makefile
-stage1:: check
+all: check
 check: test.out.expected.trim test.out.trim
 	diff -u test.out.expected.trim test.out.trim
 diff:

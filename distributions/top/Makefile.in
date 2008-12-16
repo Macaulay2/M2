@@ -1,7 +1,7 @@
 # @configure_input@
 # here we make the files that are needed at top level for ../tar and might be needed for ../install (if --enable-encap)
 include ../../include/config.Makefile
-install stage2 stage1 :: postinstall preremove INSTALL encapinfo
+install all: postinstall preremove INSTALL encapinfo
 Makefile : @srcdir@/Makefile.in; cd ../..; ./config.status distributions/top/Makefile
 postinstall : @srcdir@/postinstall.in; cd ../..; ./config.status distributions/top/postinstall
 preremove : @srcdir@/preremove.in; cd ../..; ./config.status distributions/top/preremove
@@ -24,5 +24,5 @@ encapinfo : Makefile
 	) | $(RLS) >$@
 clean::; rm -f encapinfo
 # Local Variables:
-# compile-command: "make -C $M2BUILDDIR/distributions/top stage1 "
+# compile-command: "make -C $M2BUILDDIR/distributions/top "
 # End:

@@ -1,4 +1,4 @@
-stage1 : setup.ini
+all : setup.ini
 setup.ini : Macaulay2/*
 	genini Macaulay2 >setup.ini
 clean :; rm -f setup.ini

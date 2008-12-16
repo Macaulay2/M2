@@ -11,48 +11,35 @@ ifeq (@OS@,Linux)
 EXES += screen
 endif
 
-.PHONY : stage1 clean distclean
-
-stage1:: $(EXES)
+all: $(EXES)
 
 # overlay.h is no longer needed
-#  stage1:: overlay.h
+#  all: overlay.h
 #  overlay.h : overlay ; ./$< >$@
 
-# stage1 :: targettypes.h
+# all: targettypes.h
 #  we don't need targettypes.h any more
 #  it's replaced by stdint.h
 #  and it makes cross-compiling not work
 # targettypes.h : targettypes ; ./$^ >$@
-
-clean ::; rm -f overlay.h overlay gmon.out
+clean:; rm -f overlay.h overlay gmon.out $(EXES) *.o $(EXES:=.exe) $(EXES:=.obj) targettypes.h gc_tested gc_test
 updat.o : restart.h
-clean ::; rm -f $(EXES) *.o $(EXES:=.exe) $(EXES:=.obj) targettypes.h
 ../bin/linkexec : linkexec ; cp -a $< $@
-
 ifeq "@OS@" "Windows-95-98-NT"
-stage1:: ../setup.exe
-../setup.exe : setup
-	cp setup.exe ..
+all: ../setup.exe
+../setup.exe : setup; cp setup.exe ..
 endif
-
-distclean : clean
-	rm -f Makefile
-
+distclean : clean; rm -f Makefile
 Makefile : Makefile.in; cd ../..; ./config.status Macaulay2/util/Makefile
-
 # gc_test
 CPPFLAGS += -I@srcdir@/../../include
 LDLIBS += -lgc
 ifeq "@PTHREADS@" "yes"
 LDLIBS += -lpthread
 endif
-
-stage1 :: gc_tested
+all: gc_tested
 gc_test : gc_test.c -lgc
-gc_tested: gc_test; ./$<; touch $@
-clean ::; rm -f gc_tested gc_test
-
+gc_tested: gc_test; ./$< && touch $@
 # Local Variables:
 # compile-command: "make -C $M2BUILDDIR/Macaulay2/util "
 # End:

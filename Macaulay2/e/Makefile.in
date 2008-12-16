@@ -16,10 +16,10 @@ CPPFLAGS := -I. $(CPPFLAGS)
 ## Targets ##
 #############
 
-stage1 :: initialize
+all: initialize maybe-tags
 
 ifneq (@ETAGS@,)
-stage1 :: tags
+all: tags
 endif
 tags:: @srcdir@/TAGS
 @srcdir@/TAGS: Makefile.in @srcdir@/*.hpp @srcdir@/*.h @srcdir@/*.cpp @srcdir@/*.c \
@@ -29,7 +29,7 @@ tags:: @srcdir@/TAGS
 
 
 # overflows
-stage1 :: run-overflow-test
+all: run-overflow-test
 run-overflow-test : overflow-test
 	./$^ sub 2>/dev/null || echo test succeeded
 	./$^ minus 2>/dev/null || echo test succeeded
@@ -43,14 +43,14 @@ clean :: ; rm -f overflow-test
 pi : pi.h
 
 # the target 'initialize' is used by the Makefile in the parent directory
-initialize stage1 :: $(addsuffix .hpp, $(GENERATED_H))
+initialize all: $(addsuffix .hpp, $(GENERATED_H))
 
-stage1::; $(MAKE) -C f4
+all:; $(MAKE) -C f4
 
 ifeq "$(SHARED)" "yes"
-stage1:: ../lib/libengine1.so ../lib/libengine2.so
+all: ../lib/libengine1.so ../lib/libengine2.so
 else
-stage1:: $(ENGINE_OFILES)
+all: $(ENGINE_OFILES)
 endif
 
 %.ii: %.cpp; $(PRE.cc)        $< $(OUTPUT_OPTION)
@@ -74,7 +74,7 @@ clean::
 	rm -f *.lo *.o *.rpo TAGS LOGFILE $(addsuffix .hpp, $(GENERATED_H))
 	$(MAKE) -C f4 $@
 Makefile : Makefile.in; cd ../..; ./config.status Macaulay2/e/Makefile
-stage1 :: Makefile.common
+all: Makefile.common
 Makefile.common : Makefile.common.in; cd ../..; ./config.status Macaulay2/e/Makefile.common
 Makefile.include : Makefile.include.in; cd ../..; ./config.status Macaulay2/e/Makefile.include
 clean::; rm -f *.dep dep-*.tmp
@@ -96,7 +96,7 @@ doxygen : ; cd @srcdir@ && doxygen
 distclean: clean; rm -f Makefile
 
 ifeq (@NM_DEMANGLES@,yes)
-stage1:: check-global-new-delete
+all: check-global-new-delete
 check-global-new-delete : $(ENGINE_OBJFILES)
 	nm $(NMFLAGS) $^ | egrep '[WUT] operator (new|delete)' > refnewdel.tmp
 	@if [ -s refnewdel.tmp ] ; then \
@@ -106,7 +106,7 @@ check-global-new-delete : $(ENGINE_OBJFILES)
 clean::; rm -f refnewdel.tmp
 endif
 
-initialize :: statuscodes.h
+initialize : statuscodes.h
 statuscodes.h : statuscodes
 	sed 's/\(.*\):\(.*\):\(.*\)/  \2 = \1,/' <$< >$@
 clean::; rm -f statuscodes.h

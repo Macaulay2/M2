@@ -8,7 +8,7 @@ DUMPDATALIB = ../dumpdata/libdump.a
 DUMPDATALIBOPT = -ldump
 endif
 
-stage1:: probe.out test-probe
+all: probe.out test-probe
 extra:: probe-gdb.out probe-compare
 ARGS = abcdefghijklmnopqrstuvwxyzabcdefghijklmnopqrstuvwxyzabcdefghijklmnopqrstuvwxyz b c d
 

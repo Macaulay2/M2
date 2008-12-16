@@ -6,6 +6,9 @@ BOOKNAME = Macaulay2-@PACKAGE_VERSION@-book
 DVIPSFLAGS = -z
 TEX=latex
 
+all:
+check:
+
 %.bux : %.tex
 	$(TEX) $*
 	makeindex $*.idx
@@ -32,11 +35,13 @@ TEX=latex
 	makeindex $*.idx
 	pdf$(TEX) $*
 
-stage1:: $(BOOKNAME).tex
+# doesn't work currently...
+# all: $(BOOKNAME).tex
 
 $(BOOKNAME).bbl : papers.bib
 
-stage1:: $(BOOKNAME).dvi $(BOOKNAME).ps $(BOOKNAME).pdf
+# doesn't work currently...
+# all: $(BOOKNAME).dvi $(BOOKNAME).ps $(BOOKNAME).pdf
 
 ## for M2book.pdf put these lines in texmf.cnf
 # main_memory = 1263000

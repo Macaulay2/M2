@@ -1,11 +1,10 @@
 # @configure_input@
 VPATH = @srcdir@
 include ../../include/config.Makefile
-stage1:: M2.1
+all: M2.1 @mandir@/man1/M2.1
 # ignore @datarootdir@
 docdir := @docdir@
 @mandir@/man1:; @INSTALL@ -d $@
-stage2 :: @mandir@/man1/M2.1
 @mandir@/man1/M2.1 : M2.1 | @mandir@/man1 ; @INSTALL_DATA@ $< $@
 Makefile : Makefile.in; cd ../..; ./config.status Macaulay2/man/Makefile
 M2.1: M2.1.in Makefile

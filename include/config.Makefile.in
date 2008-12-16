@@ -3,13 +3,10 @@ ifneq ($(CONFIG_MAKEFILE),)
 $(error config.Makefile already loaded)
 endif
 CONFIG_MAKEFILE = loaded
-.PHONY : all check initialize clean distclean install stage1 stage2 always reconfigure
-# Every makefile that includes this one should use 'all' as the # default (first) target.
-# We need 'all' to be a single-colon rule, so "make -o all install" will work.
-all: stage1 stage2
+.PHONY : all check initialize clean distclean install always reconfigure
+all:
 
-# cygwin 'make' might get confused by setting SHELL
-# SHELL = @SHELL@
+SHELL = /bin/sh
 
 .DELETE_ON_ERROR :
 

@@ -1,35 +1,34 @@
 # @configure_input@
 include include/config.Makefile
 VPATH = @srcdir@
-
-all:stage2
-stage2::stage1
+.PRECIOUS: @srcdir@/configure config.status
+.PHONY: reconfigure-libs reconfigure-all configure-help report-M2-location help scripts
+all: check-vars srcdir protect-configs include/config.Makefile include/M2/config.h all-dirs report-M2-location
+check:check-dirs
+clean:clean-dirs
+	rm -f srcdir .link-test srcdir confdefs.h configure.lineno conftest.* include/config.h
+	rm -rf StagingArea conf_*
+	rm -f pre-install.sh post-install.sh normal-install.sh
+distclean:clean distclean-dirs
+	rm -f @CONFIGURED_FILES@ include/M2/config.h include/config.Makefile config.cache config.log configure.options config.status
+define do-dirs
+$1-dirs:
+	$$(MAKE) -C libraries $1 $2
+	$$(MAKE) -C Macaulay2 $1 $2
+	$$(MAKE) -C distributions $1 $2
+	$$(MAKE) -C check-configure $1 $2
+endef
+$(foreach t,all check clean distclean, $(eval $(call do-dirs,$t)))
 install:normal all; $(MAKE) -C distributions $@
 normal:;$(NORMAL_INSTALL) 
-
-# experimental
-.PHONY : scripts
 scripts : pre-install.sh post-install.sh
-clean::rm-scripts
-rm-scripts:;rm -f pre-install.sh post-install.sh normal-install.sh
 MI = $(MAKE) -s --no-print-directory -n install -o all PRE_INSTALL=turn-off POST_INSTALL=turn-off NORMAL_INSTALL=turn-off
 pre-install.sh    : install-scripts.awk ; $(MI) PRE_INSTALL=turn-on |gawk -f $^ >$@
 post-install.sh   : install-scripts.awk ; $(MI) POST_INSTALL=turn-on |gawk -f $^ >$@
 normal-install.sh : install-scripts.awk ; $(MI) NORMAL_INSTALL=turn-on |gawk -f $^ >$@
-#
-
-
-
-.PRECIOUS: @srcdir@/configure config.status
-.PHONY: reconfigure-libs reconfigure-all configure-help
-# make sure we're ready to go
 GNUmakefile : GNUmakefile.in; ./config.status GNUmakefile
 include/config.Makefile: include/config.Makefile.in ; ./config.status include/config.Makefile
-# include/config.Makefile depends on ./config.status, too, but we are including it
-# it's enough that include/M2/config.h depends on ./config.status
-stage1:: include/config.Makefile
 include/M2/config.h: include/M2/config.h.in ./config.status ; ./config.status include/M2/config.h
-stage1:: include/M2/config.h
 @srcdir@/configure : @srcdir@/configure.ac @srcdir@/config/files
 	$(MAKE) -C @srcdir@ -f Makefile
 	@echo '-----------------------------------------------------------------------------'
@@ -55,11 +54,6 @@ status : @srcdir@/configure
 	@echo '#  to run it that way again.'
 	@echo '#'
 	@echo '-----------------------------------------------------------------------------'
-# the first distclean target:
-distclean:: clean
-stage2 clean distclean stage1 ::; $(MAKE) -C libraries $@
-stage1:: srcdir
-clean::; rm -rf srcdir .link-test StagingArea srcdir
 srcdir: GNUmakefile
 	if [ "@abs_builddir@"/StagingArea/common != "@pre_prefix@" ] ;\
 	then rm -rf StagingArea/common ;\
@@ -68,28 +62,22 @@ srcdir: GNUmakefile
 	fi
 	rm -f $@ .link-test
 	echo "@srcdir@/" >$@
-stage2 stage1 distclean check clean ::; $(MAKE) -C Macaulay2 $@
 subst : config.status ; ./config.status
 show : config.status ; egrep '^s,' $< | sed -e 's/^s,@\(.*\)@,\(.*\),g/\1=\2/' -e 's/^s,.*]\*\(.*\)\\).*\\2 \(.*\) ,/#define \1 \2/' -e 's/.#_!!_#.//g'
 CONFIG_FILES = @srcdir@/configure @srcdir@/config/install-sh @srcdir@/config/config.sub @srcdir@/config/config.guess @srcdir@/config/files
-reconfigure:: $(CONFIG_FILES)
+reconfigure: recheck check-vars protect-configs
+recheck: $(CONFIG_FILES)
 	./config.status --recheck && ./config.status
 	@ echo "============================================================================="
 	@ echo "warning: to reconfigure the libraries, use 'make reconfigure-libs' or 'make reconfigure-all'"
 	@ echo "============================================================================="
-reconfigure stage1 ::; chmod a-w $(shell cat @srcdir@/config/files)
-check-vars reconfigure stage1 check ::; ! egrep -nH '@[A-Za-z_]+@' $(shell cat @srcdir@/config/files) | sed -e 's=^\([^:]*\):=@srcdir@/\1.in:='  | egrep .
+protect-configs:; chmod a-w $(shell cat @srcdir@/config/files)
+check-vars:; ! egrep -nH '@[A-Za-z_]+@' $(shell cat @srcdir@/config/files) | sed -e 's=^\([^:]*\):=@srcdir@/\1.in:='  | egrep .
 configure-help: $(CONFIG_FILES) ; @ @srcdir@/configure --help
 relink: ; rm -f @pre_exec_prefix@/bin/M2@EXE@ && $(MAKE) -C Macaulay2/d @pre_exec_prefix@/bin/M2@EXE@
 relink-nostrip: ; rm -f @pre_exec_prefix@/bin/M2@EXE@ && $(MAKE) -C Macaulay2/d STRIP=no @pre_exec_prefix@/bin/M2@EXE@
-stage1 dist clean distclean check stage2 :: ; $(MAKE) -C distributions $@
-check ::; $(MAKE) -C libraries $@
-distclean check ::; $(MAKE) -C check-configure -f Makefile $@
 reconfigure-all : reconfigure reconfigure-libs 
-reconfigure-libs ::; $(MAKE) -C libraries reconfigure
-clean::; rm -f confdefs.h configure.lineno conftest.* include/config.h conf_*
-distclean::; rm -f @CONFIGURED_FILES@ include/M2/config.h include/config.Makefile config.cache config.log config.status configure.options
-.PHONY all:report-M2-location
+reconfigure-libs :; $(MAKE) -C libraries reconfigure
 report-M2-location:
 	: : : : : : : : : : : : : : : : : : : : : : : : : : : : : : : :
 	: Macaulay 2 executable location:
@@ -144,7 +132,6 @@ help :
 	@ echo "  ENCAP=yes           install in ${prefix}/@package@ instead"
 	@ echo "  MAPFILE=yes         create a mapfile when linking M2"
 	@ echo "  DESTDIR=/Foo/Bar    install in /Foo/Bar${prefix} instead"
-
 # Local Variables:
 # compile-command: "make -C $M2BUILDDIR "
 # End:
