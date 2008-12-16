@@ -296,7 +296,6 @@ can be executed with \\[M2-send-to-program]."
 	 ((equal filename "stdio") (message "source code was from standard input"))
 	 ((not (file-exists-p filename)) (message "file not found: %s" filename))
 	 (t
-	  (message "error message here, file %s line %d column %d" filename linenum colnum)
 	  (find-file-other-window filename)
 	  (goto-line linenum)
 	  (move-to-column (- colnum 1)))))

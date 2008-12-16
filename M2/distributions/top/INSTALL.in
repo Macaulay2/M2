@@ -72,7 +72,8 @@ postinstall, and preremove.
 -------------------------------------------------
 
    Arrange for Macaulay 2 to set up your .emacs files and your command shell
-   init files so that M2 will be on the path.
+   init files so that M2 will be on the path.  But first see the warning
+   below, if you are not following our procedure precisely.
 
         cd /foo/bar/Macaulay2-@PACKAGE_VERSION@
 	cd bin
@@ -83,6 +84,18 @@ postinstall, and preremove.
    your PATH will have Macaulay2's bin directory on it.  The variables
    MANPATH, INFOPATH, and LD_LIBRARY_PATH will also have entries added to
    them.
+
+   Warning: there is at least one important situation where you will not want
+   to run the Macaulay 2 "setup()" command.  For example, suppose you have
+   installed M2, not in its own private location as described above, but in a
+   directory with many other executable files.  Suppose also that your account
+   is adapted so it will run programs correctly on hardware of more than one
+   architecture, or on differing operating systems, or even on various releases
+   of the same operating system.  Then "setup()" will modify your command shell
+   init files so the directory containing M2 will the first one searched when
+   looking for a program.  If you then try to use your account on different
+   hardware, incorrect programs may be found, namely, those in the same
+   directory as M2.  Similarly, incorrect sharable libraries may also be found.
 
    The most common cause for a failure at this point is for some dynamic
    libraries not to be found on your system.  In this case, under linux, the
