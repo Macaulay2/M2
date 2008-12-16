@@ -112,6 +112,19 @@ document {
 	  administrators, because system administrators can easily install Macaulay 2 in such a way that the files can all be
 	  found."
 	  },
+     Caveat => {
+	  "Warning: there is at least one important situation where you will not want
+	  to run the Macaulay 2 ", TT "setup()", " command.  For example, suppose you have
+	  installed M2, not in its own private location as described above, but in a
+	  directory with many other executable files.  Suppose also that your account
+	  is adapted so it will run programs correctly on hardware of more than one
+	  architecture, or on differing operating systems, or even on various releases
+	  of the same operating system.  Then ", TT "setup()", " will modify your command shell
+	  init files so the directory containing M2 will the first one searched when
+	  looking for a program.  If you then try to use your account on different
+	  hardware, incorrect programs may be found, namely, those in the same
+	  directory as M2.  Similarly, incorrect sharable libraries may also be found."
+	  },
      SeeAlso => {
 	  setupEmacs
 	  }
