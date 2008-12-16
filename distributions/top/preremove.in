@@ -1,5 +1,5 @@
 #! /bin/sh -e
-# we ignore @datarootdir@
+# we want to ignore the --datarootdir setting, whatever that means, so here we we mention it: @datarootdir@
 pre_prefix=$ENCAP_SOURCE/$ENCAP_PKGNAME
 pre_exec_prefix=$prefix
 infodir="@infodir@"; eval infodir="$infodir"; eval infodir="$infodir"

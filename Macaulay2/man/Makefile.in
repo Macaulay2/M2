@@ -2,7 +2,7 @@
 VPATH = @srcdir@
 include ../../include/config.Makefile
 all: M2.1 @mandir@/man1/M2.1
-# ignore @datarootdir@
+# we want to ignore the --datarootdir setting, whatever that means, so here we we mention it: @datarootdir@
 docdir := @docdir@
 @mandir@/man1:; @INSTALL@ -d $@
 @mandir@/man1/M2.1 : M2.1 | @mandir@/man1 ; @INSTALL_DATA@ $< $@

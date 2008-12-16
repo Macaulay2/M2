@@ -7,7 +7,7 @@ postinstall : @srcdir@/postinstall.in; cd ../..; ./config.status distributions/t
 preremove : @srcdir@/preremove.in; cd ../..; ./config.status distributions/top/preremove
 INSTALL : @srcdir@/INSTALL.in; cd ../..; ./config.status distributions/top/INSTALL
 distclean : ; rm -rf Makefile
-# ignore @datarootdir@
+# we want to ignore the --datarootdir setting, whatever that means, so here we we mention it: @datarootdir@
 pre_prefix=PRE
 pre_exec_prefix=PRE
 RLS = sed 's, PRE/, ,'

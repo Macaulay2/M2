@@ -1,5 +1,5 @@
 #! /bin/sh -e
-# ignore @datarootdir@
+# we want to ignore the --datarootdir setting, whatever that means, so here we we mention it: @datarootdir@
 case "$1" in
     remove|upgrade|failed-upgrade|abort-install|abort-upgrade|disappear)
         ;;

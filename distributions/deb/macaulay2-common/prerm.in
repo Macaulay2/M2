@@ -1,4 +1,5 @@
 #! /bin/sh -e
+# we want to ignore the --datarootdir setting, whatever that means, so here we we mention it: @datarootdir@
 prefix=@prefix@
 case "$1" in
     remove|deconfigure|upgrade)

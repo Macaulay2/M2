@@ -10,7 +10,7 @@ DISTRIBUTION = @DISTRIBUTION@
 # http://koji.fedoraproject.org/packages/Macaulay2/1.1/2.fc10/i386/Macaulay2-debuginfo-1.1-2.fc10.i386.rpm
 
 include ../../include/config.Makefile
-# ignore @datarootdir@
+# we want to ignore the --datarootdir setting, whatever that means, so here we we mention it: @datarootdir@
 
 CHOWN = chown
 TIDY = yes
