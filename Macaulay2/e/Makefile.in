@@ -16,7 +16,7 @@ CPPFLAGS := -I. $(CPPFLAGS)
 ## Targets ##
 #############
 
-all: initialize maybe-tags
+all: initialize tags
 
 ifneq (@ETAGS@,)
 all: tags
