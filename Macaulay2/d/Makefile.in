@@ -12,7 +12,7 @@ endif
 initialize all: compat.h
 
 recompile :
-	rm -f @bindir@/M2@EXE@
+	rm -f @pre_bindir@/M2@EXE@
 	$(MAKE)
 
 ## standard options
@@ -22,7 +22,7 @@ ifeq (@OS@ @SHARED@,Linux yes)
 ifneq (@LIBRARIES@,)
 M2_LDFLAGS += -Wl,-rpath,@librariesdir@/lib
 all: obj-info
-obj-info: @bindir@/M2@EXE@
+obj-info: @pre_bindir@/M2@EXE@
 ifneq (@OBJDUMP@,)
 	@OBJDUMP@ -x $< | egrep RPATH
 	@OBJDUMP@ -x $< | egrep "RPATH +@librariesdir@/lib$$"
@@ -331,9 +331,9 @@ else
 M2_OBJECTS_AND_LIBRARIES := $(M2_OBJECTS_AND_LIBRARIES) gmp_memory.o 
 endif
 
-clean::; rm -f @bindir@/M2@EXE@
-@bindir@ : ; $(MKDIR_P) "$@"
-@bindir@/M2@EXE@: $(M2_OBJECTS) $(M2_LIBDEPS) gmp_memory.o | @bindir@
+clean::; rm -f @pre_bindir@/M2@EXE@
+@pre_bindir@ : ; $(MKDIR_P) "$@"
+@pre_bindir@/M2@EXE@: $(M2_OBJECTS) $(M2_LIBDEPS) gmp_memory.o | @pre_bindir@
 	$(COMPILE.c) tmp_init.c -o tmp_init.o
 	time @CC@ $(M2_LDFLAGS) $(M2_OBJECTS_AND_LIBRARIES) -lm -o "$@".tmp
 	printenv LD_LIBRARY_PATH
@@ -372,7 +372,7 @@ all: .gdbinit
 .gdbinit:; if [ -f @srcdir@/.gdbinit.$(USER) ]; then cp @srcdir@/.gdbinit.$(USER) $@; fi
 clean::; rm -f .gdbinit
 
-all: @bindir@/M2@EXE@
+all: @pre_bindir@/M2@EXE@
 
 
 # Local Variables:

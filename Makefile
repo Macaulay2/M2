@@ -129,6 +129,12 @@ always:
 
 diffs :;@ i=1 ; while test -f diffs-$$i ; do i=$$(expr $$i + 1 ) ; done ; svn diff >diffs-$$i ; echo created diffs-$$i
 
+check-vardirs:
+	egrep -nH '@(bin|data|include|info|lib|libexec|localstate|man|sbin|sharedstate|sysconf|ps|pdf|dvi|html|locale|doc|dataroot|packages|libm2|emacs|libraries|packagecachecore)dir@' $(shell cat ./config/files | sed 's/$$/.in/')
+check-pre-vardirs:
+	egrep -nH '@pre_(bin|data|include|info|lib|libexec|localstate|man|sbin|sharedstate|sysconf|ps|pdf|dvi|html|locale|doc|dataroot|packages|libm2|emacs|libraries|packagecachecore)dir@' $(shell cat ./config/files | sed 's/$$/.in/')
+
+
 # Local Variables:
 # mode: Makefile
 # compile-command: "make -f Makefile "

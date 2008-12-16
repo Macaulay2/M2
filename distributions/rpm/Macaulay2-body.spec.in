@@ -16,14 +16,14 @@ Prefix: @prefix@
 #! /bin/sh -e
 prefix=@prefix@
 exec_prefix=@exec_prefix@
-[ @DUMPDATA@ = yes -a -d @packagecacheCore@ ] || mkdir @packagecacheCore@
+[ @DUMPDATA@ = yes -a -d @packagecachecoredir@ ] || mkdir @packagecachecoredir@
 [ @DUMPDATA@ = yes ] && @bindir@/M2 --dumpdata
 %preun
 #! /bin/sh -e
 prefix=@prefix@
 exec_prefix=@exec_prefix@
-rm -f @packagecacheCore@/*-data
-rm -f @packagecacheCore@/*-data.maps
+rm -f @packagecachecoredir@/*-data
+rm -f @packagecachecoredir@/*-data.maps
 %description
 Macaulay 2 is a software system for algebraic geometry research, written by
 Daniel R. Grayson and Michael E. Stillman.  Based on Groebner bases, it

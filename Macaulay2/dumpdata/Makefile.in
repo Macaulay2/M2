@@ -43,9 +43,9 @@ clean::; rm -f testprintmaps
 ifeq "@HAVE_PERSONALITY@" "1"
 all: personality
 clean::; rm -f personality
-all: personality @bindir@  ; @INSTALL_PROGRAM@ $< @bindir@/personality
-@bindir@ :; @INSTALL@ -d "$@"
-PERDIR = @packagesdir@/personality
+all: personality @pre_bindir@  ; @INSTALL_PROGRAM@ $< @pre_bindir@/personality
+@pre_bindir@ :; @INSTALL@ -d "$@"
+PERDIR = @pre_packagesdir@/personality
 $(PERDIR):; @INSTALL@ -d "$@"
 all: personality.c $(PERDIR) ; @INSTALL_DATA@ $^
 endif

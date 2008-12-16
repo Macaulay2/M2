@@ -6,7 +6,7 @@ include ../include/config.Makefile
 initialize-dirs:
 	$(MAKE) DEPENDS=no -C e initialize
 	$(MAKE) DEPENDS=no -C d initialize
-all: initialize-dirs @docdir@ @docdir@/COPYING @docdir@/README @docdir@/LAYOUT all-dirs
+all: initialize-dirs @pre_docdir@/COPYING @pre_docdir@/README @pre_docdir@/LAYOUT all-dirs
 check: check-dirs
 clean: clean-dirs
 distclean: distclean-dirs
@@ -36,8 +36,8 @@ endef
 $(foreach t,all, $(eval $(call do-dirs,$t)))
 $(foreach t,check, $(eval $(call do-dirs,$t,-k)))
 $(foreach t,clean distclean, $(eval $(call do-dirs,$t,DEPENDS=no)))
-@docdir@:; $(MKDIR_P) "$@"
-@docdir@/% : % ; @INSTALL_DATA@ $< "$@"
+@pre_docdir@:; $(MKDIR_P) "$@"
+@pre_docdir@/% : % | @pre_docdir@ ; @INSTALL_DATA@ $< "$@"
 Makefile : Makefile.in; cd ..; ./config.status Macaulay2/Makefile
 clean: ; rm -f gmon.out
 # Local Variables:

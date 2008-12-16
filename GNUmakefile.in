@@ -85,7 +85,7 @@ reconfigure-libs :; $(MAKE) -C libraries reconfigure
 report-M2-location:
 	: : : : : : : : : : : : : : : : : : : : : : : : : : : : : : : :
 	: Macaulay 2 executable location:
-	:    @bindir@/M2@EXE@
+	:    @pre_bindir@/M2@EXE@
 	: : : : : : : : : : : : : : : : : : : : : : : : : : : : : : : :
 help :
 	@ echo "Macaulay 2 version @PACKAGE_VERSION@"
@@ -95,7 +95,7 @@ help :
 	@ echo "    DEBUG=@DEBUG@ OPTIMIZE=@OPTIMIZE@ ENCAP=@ENCAP@"
 	@ echo ""
 	@ echo "Macaulay 2 executable location:"
-	@ echo "   @bindir@/M2@EXE@"
+	@ echo "   @pre_bindir@/M2@EXE@"
 	@ echo ""
 	@ echo "usage: make ..."
 	@ echo ""

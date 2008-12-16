@@ -26,19 +26,23 @@ LDFLAGS = @LDFLAGS@
 #      http://cr.yp.to/unix.html, the section on "Filesystem layout"
 
 ### Here we set the make-variables that configure uses as make-variables inside configure-variables.
-# The user should override only this one:
+# The user may override only "prefix" and "exec_prefix"
 prefix = @prefix@
 exec_prefix = @exec_prefix@
+datarootdir = @datarootdir@
+PACKAGE_TARNAME = @PACKAGE_TARNAME@
+docdir = @docdir@
+
 # We assume relative positions of files within the tree are known to the configure script.
 # Thus the user should not override these on the "make" command line, but may
 # override them on the "configure" command line instead:
 pre_prefix = @pre_prefix@
 pre_exec_prefix = @pre_exec_prefix@
-datarootdir = @datarootdir@
+# we want to ignore the --datarootdir setting, whatever that means, so here we we mention it: @datarootdir@
 abs_top_srcdir = @abs_top_srcdir@
-docdir = @docdir@
+
+
 INSTALL = @INSTALL@
-##
 
 ifeq (@CC@-@ISYSTEM@,gcc-yes)
 IFLAG = -isystem
