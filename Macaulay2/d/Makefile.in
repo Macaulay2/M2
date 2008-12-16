@@ -182,7 +182,7 @@ endif
 %.dep : %.d
 	$(SCC1) -dep -J. $<
 	mv $*.dp $*.dep
-	../util/updat $*.sg $*.sig
+	../util/updat $*.sg $*.sig || [ $? = 88 ]
 %.c   : %.d
 	$(SCC1) $(SCCFLAGS) +gc -J. -noline $<
 %.oo  : %.d
