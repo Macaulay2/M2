@@ -1,4 +1,5 @@
 -- -*- coding: utf-8 -*-
+needsPackage "Text";
 newPackage(
 	"SimpleDoc",
     	Version => "1.0", 

@@ -309,10 +309,13 @@ document {
 document {
      Key => Keyword,
      Headline => "the class of all keywords",
-     "Keywords are symbols that are treated specially by the system while parsing user input.  Some of them,
-     such as ", TO "and", ", consist of alphanumeric characters and look just like
-     ordinary symbols.  Others, such as ", TO "==>", ", consist of special characters
-     and are called operators."
+     PARA {
+     	  "Keywords are symbols that are treated specially by the system while parsing user input.  Some of them,
+     	  such as ", TO "and", ", consist of alphanumeric characters and look just like
+     	  ordinary symbols.  Others, such as ", TO "==>", ", consist of special characters
+     	  and are called operators."
+	  },
+     SeeAlso => {"precedence of operators"}
      }
 
 document {
