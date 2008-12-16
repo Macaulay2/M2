@@ -64,7 +64,6 @@ searchPrefixPath = url -> (				    -- entries on the prefixPath may have differe
 	       )
 	  );
      if debugLevel > 5 then stderr << "--file " << url << " not found in " << prefixPath << endl;
-     if debugLevel > 10 then error "debug me";
      )
 
 toURL := path -> (

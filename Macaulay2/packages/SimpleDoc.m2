@@ -1,5 +1,4 @@
 -- -*- coding: utf-8 -*-
-needsPackage "Text";
 newPackage(
 	"SimpleDoc",
     	Version => "1.0", 
@@ -352,3 +351,7 @@ toDoc ///
     matrix
     (directSum,List)
 ///
+
+endPackage "SimpleDoc"
+-- this needs to go at the end:
+needsPackage "Text"
