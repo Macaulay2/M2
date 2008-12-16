@@ -18,7 +18,7 @@ endif
 PKG_DEB = @PACKAGE_TARNAME@-@PACKAGE_VERSION@-$(DEBARCH)-@OS@-@ISSUE@.deb
 PKG_COM_DEB = @PACKAGE_TARNAME@-@PACKAGE_VERSION@-common.deb
 
-all: chk-ops macaulay2/control.prelim tidy_before ../../$(PKG_DEB) ../../$(PKG_COM_DEB) announce maybe-tidy
+all: chk-opts macaulay2/control.prelim tidy_before ../../$(PKG_DEB) ../../$(PKG_COM_DEB) announce maybe-tidy
 chk-opts:; [ "${prefix}" = /usr -a @DEBUG@ = no -a @OPTIMIZE@ = yes -a @STRIP@ = yes ]
 macaulay2/control.prelim : @srcdir@/macaulay2/control.prelim.in Makefile
 	rm -f $@
