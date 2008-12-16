@@ -8,7 +8,10 @@ DUMPDATALIB = ../dumpdata/libdump.a
 DUMPDATALIBOPT = -ldump
 endif
 
-all: probe.out test-probe
+# by default, we build nothing:
+all:
+
+build: probe.out test-probe
 extra:: probe-gdb.out probe-compare
 ARGS = abcdefghijklmnopqrstuvwxyzabcdefghijklmnopqrstuvwxyzabcdefghijklmnopqrstuvwxyz b c d
 
@@ -44,4 +47,5 @@ addresses : probe.out
 	rm syms
 clean ::; rm -f addresses probe probe.o probe.out
 distclean : clean ; rm -f Makefile
+check:
 Makefile : Makefile.in; cd ../..; ./config.status Macaulay2/probe/Makefile

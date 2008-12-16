@@ -125,8 +125,9 @@ phase1 :: @libm2dir@/Core/cache/@DUMPDATAFILE@
 	printenv LD_LIBRARY_PATH
 endif
 
-phase1 :: ../cache/Macaulay2-made
-../cache/Macaulay2-made : $(DUMPEDM2FILES) $(DUMPEDM2DOCFILES) @pre_exec_prefix@/bin/M2@EXE@
+# try to eliminate this intermediate file:
+phase1 :: .Macaulay2-made
+.Macaulay2-made : $(DUMPEDM2FILES) $(DUMPEDM2DOCFILES) @pre_exec_prefix@/bin/M2@EXE@
 	touch $@
 
 ## .gdbinit
