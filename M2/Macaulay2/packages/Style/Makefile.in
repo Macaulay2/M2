@@ -3,7 +3,7 @@
 # this Makefile used to be in ../../html and ../../images, so if anything is missing, look there.
 
 include ../../../include/config.Makefile
-# ignore @datarootdir@
+# we want to ignore the --datarootdir setting, whatever that means, so here we we mention it: @datarootdir@
 VPATH = @srcdir@
 IMAGES = up.gif next.gif previous.gif top.gif index.gif null.gif recbg.jpg 9planets.gif grayson2005.jpg toc.gif home.gif stillman.jpg
 clean::

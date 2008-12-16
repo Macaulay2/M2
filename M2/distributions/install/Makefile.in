@@ -1,4 +1,5 @@
 # @configure_input@
+# we want to ignore the --datarootdir setting, whatever that means, so here we we mention it: @datarootdir@
 include ../../include/config.Makefile
 ENCAP = @ENCAP@
 VPATH = @srcdir@

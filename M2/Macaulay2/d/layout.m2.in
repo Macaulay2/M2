@@ -2,7 +2,7 @@
 -- run
 --     help Layout
 -- for documentation of this table
--- ignore @datarootdir@
+-- we want to ignore the --datarootdir setting, whatever that means, so here we we mention it: @datarootdir@
 t := hashTable {
      "exec" => "${exec_prefix}/",
      "common" => "${prefix}/",
