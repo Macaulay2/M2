@@ -55,10 +55,12 @@ status : @srcdir@/configure
 	@echo '#'
 	@echo '-----------------------------------------------------------------------------'
 srcdir: GNUmakefile
-	if [ "@abs_builddir@"/StagingArea/common != "@pre_prefix@" ] ;\
-	then rm -rf StagingArea/common ;\
+	: creating link to common staging area, if necessary...
+	@ if [ "@abs_builddir@"/StagingArea/common != "@pre_prefix@" ] ;\
+	then (set -x ;\
+	     rm -rf StagingArea/common ;\
 	     $(MKDIR_P) StagingArea ;\
-	     ln -s "@pre_prefix@" StagingArea/common ;\
+	     ln -s "@pre_prefix@" StagingArea/common) ;\
 	fi
 	rm -f $@ .link-test
 	echo "@srcdir@/" >$@
@@ -72,7 +74,9 @@ recheck: $(CONFIG_FILES)
 	@ echo "warning: to reconfigure the libraries, use 'make reconfigure-libs' or 'make reconfigure-all'"
 	@ echo "============================================================================="
 protect-configs:; chmod a-w $(shell cat @srcdir@/config/files)
-check-vars:; ! egrep -nH '@[A-Za-z_]+@' $(shell cat @srcdir@/config/files) | sed -e 's=^\([^:]*\):=@srcdir@/\1.in:='  | egrep .
+check-vars:
+	: "checking for strings that look like unsubstituted configure variables in all *.in files..."
+	@ ! egrep -nH '@[A-Za-z_]+@' $(shell cat @srcdir@/config/files) | sed -e 's=^\([^:]*\):=@srcdir@/\1.in:='  | egrep .
 configure-help: $(CONFIG_FILES) ; @ @srcdir@/configure --help
 relink: ; rm -f @pre_exec_prefix@/bin/M2@EXE@ && $(MAKE) -C Macaulay2/d @pre_exec_prefix@/bin/M2@EXE@
 relink-nostrip: ; rm -f @pre_exec_prefix@/bin/M2@EXE@ && $(MAKE) -C Macaulay2/d STRIP=no @pre_exec_prefix@/bin/M2@EXE@
