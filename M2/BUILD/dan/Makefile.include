@@ -1,8 +1,9 @@
 # -*- Makefile -*-
 # to be included (now) one level down from here
+TARGETS = everything world configure all install check-links distclean clean
 default: all install check-links
 #
-.PHONY : everything world configure all install
+.PHONY : everything world configure all install check-links distclean clean
 include include/configuration
 rebuild-world: distclean world
 world: configure all install check
