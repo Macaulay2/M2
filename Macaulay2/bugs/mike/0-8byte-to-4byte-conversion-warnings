@@ -1,0 +1,264 @@
+e/GF.cpp:199: warning: conversion to 'int' from 'long int' may alter its value
+e/LLL.cpp:243: warning: conversion to 'int' from 'long int' may alter its value
+e/LLL.cpp:57: warning: conversion to 'int' from 'long int' may alter its value
+e/QQ.cpp:54: warning: conversion to 'int' from 'long int' may alter its value
+e/QQ.cpp:74: warning: conversion to 'int' from 'long unsigned int' may alter its value
+e/ZZ.cpp:52: warning: conversion to 'unsigned int' from 'long unsigned int' may alter its value
+e/ZZ.cpp:58: warning: conversion to 'int' from 'long int' may alter its value
+e/ZZ.cpp:66: warning: conversion to 'unsigned int' from 'long unsigned int' may alter its value
+e/ZZ.cpp:73: warning: conversion to 'int' from 'long int' may alter its value
+e/ZZ.cpp:91: warning: conversion to 'int' from 'long unsigned int' may alter its value
+e/ZZp.cpp:131: warning: conversion to 'int' from 'long int' may alter its value
+e/array.hpp:103: warning: conversion to 'unsigned int' from 'long unsigned int' may alter its value
+e/array.hpp:120: warning: conversion to 'unsigned int' from 'long unsigned int' may alter its value
+e/array.hpp:125: warning: conversion to 'unsigned int' from 'long unsigned int' may alter its value
+e/array.hpp:184: warning: conversion to 'unsigned int' from 'long unsigned int' may alter its value
+e/array.hpp:197: warning: conversion to 'unsigned int' from 'long unsigned int' may alter its value
+e/array.hpp:21: warning: conversion to 'unsigned int' from 'long unsigned int' may alter its value
+e/array.hpp:24: warning: conversion to 'unsigned int' from 'long unsigned int' may alter its value
+e/array.hpp:36: warning: conversion to 'unsigned int' from 'long unsigned int' may alter its value
+e/array.hpp:41: warning: conversion to 'unsigned int' from 'long unsigned int' may alter its value
+e/array.hpp:46: warning: conversion to 'unsigned int' from 'long unsigned int' may alter its value
+e/array.hpp:97: warning: conversion to 'unsigned int' from 'long unsigned int' may alter its value
+e/buffer.cpp:38: warning: conversion to 'int' from 'size_t' may alter its value
+e/buffer.cpp:45: warning: conversion to 'int' from 'size_t' may alter its value
+e/buffer.cpp:52: warning: conversion to 'int' from 'size_t' may alter its value
+e/buffer.cpp:59: warning: conversion to 'int' from 'size_t' may alter its value
+e/buffer.cpp:66: warning: conversion to 'int' from 'size_t' may alter its value
+e/buffer.cpp:73: warning: conversion to 'int' from 'size_t' may alter its value
+e/buffer.cpp:79: warning: conversion to 'int' from 'size_t' may alter its value
+e/buffer.cpp:86: warning: conversion to 'int' from 'size_t' may alter its value
+e/buffer.cpp:93: warning: conversion to 'int' from 'size_t' may alter its value
+e/comb.cpp:42: warning: conversion to 'int' from 'ulong' may alter its value
+e/dmat-LU.cpp:109: warning: conversion to 'int' from 'long int' may alter its value
+e/dmat-LU.cpp:133: warning: conversion to 'int' from 'long int' may alter its value
+e/dmat-LU.cpp:160: warning: conversion to 'int' from 'long int' may alter its value
+e/dmat-LU.cpp:190: warning: conversion to 'int' from 'long int' may alter its value
+e/dmat-LU.cpp:191: warning: conversion to 'int' from 'long int' may alter its value
+e/dmat-LU.cpp:212: warning: conversion to 'int' from 'long int' may alter its value
+e/dmat-LU.cpp:213: warning: conversion to 'int' from 'long int' may alter its value
+e/dmat-LU.cpp:248: warning: conversion to 'int' from 'long int' may alter its value
+e/dmat-LU.cpp:250: warning: conversion to 'int' from 'long int' may alter its value
+e/dmat-LU.cpp:285: warning: conversion to 'int' from 'long int' may alter its value
+e/dmat-LU.cpp:290: warning: conversion to 'int' from 'long int' may alter its value
+e/dmat-LU.cpp:60: warning: conversion to 'int' from 'long int' may alter its value
+e/dmat-LU.cpp:96: warning: conversion to 'int' from 'long int' may alter its value
+e/dmat.cpp:472: warning: conversion to 'int' from 'long int' may alter its value
+e/dmat.cpp:510: warning: conversion to 'int' from 'long int' may alter its value
+e/dmat.cpp:511: warning: conversion to 'int' from 'long int' may alter its value
+e/exptable.c:67: warning: cast from pointer to integer of different size
+e/exptable.c:67: warning: cast to pointer from integer of different size
+e/exptable.c:75: warning: cast from pointer to integer of different size
+e/f4/../array.hpp:21: warning: conversion to 'unsigned int' from 'long unsigned int' may alter its value
+e/f4/../array.hpp:24: warning: conversion to 'unsigned int' from 'long unsigned int' may alter its value
+e/f4/../intarray.hpp:65: warning: conversion to 'int' from 'size_t' may alter its value
+e/f4/../intarray.hpp:73: warning: conversion to 'int' from 'long unsigned int' may alter its value
+e/f4/../intarray.hpp:93: warning: conversion to 'int' from 'const size_t' may alter its value
+e/f4/../qring.hpp:39: warning: conversion to 'int' from 'size_t' may alter its value
+e/f4/f4-m2-interface.cpp:116: warning: conversion to 'int' from 'long int' may alter its value
+e/f4/f4-m2-interface.cpp:152: warning: conversion to 'int' from 'size_t' may alter its value
+e/f4/f4-m2-interface.cpp:163: warning: conversion to 'int' from 'size_t' may alter its value
+e/f4/f4-m2-interface.cpp:164: warning: conversion to 'int' from 'size_t' may alter its value
+e/f4/f4-m2-interface.cpp:57: warning: conversion to 'int' from 'monomial_word' may alter its value
+e/f4/f4-m2-interface.cpp:63: warning: conversion to 'int' from 'monomial_word' may alter its value
+e/f4/f4-m2-interface.cpp:65: warning: conversion to 'int' from 'long int' may alter its value
+e/f4/f4-monlookup.cpp:110: warning: conversion to 'int' from 'varpower_word' may alter its value
+e/f4/f4-monlookup.cpp:221: warning: conversion to 'int' from 'long int' may alter its value
+e/f4/f4-monlookup.cpp:234: warning: conversion to 'int' from 'const long int' may alter its value
+e/f4/f4-monlookup.cpp:244: warning: conversion to 'int' from 'const long int' may alter its value
+e/f4/f4-monlookup.cpp:316: warning: conversion to 'int' from 'long unsigned int' may alter its value
+e/f4/f4-monlookup.cpp:513: warning: conversion to 'int' from 'size_t' may alter its value
+e/f4/f4-monlookup.cpp:85: warning: conversion to 'int' from 'varpower_word' may alter its value
+e/f4/f4-spairs.cpp:240: warning: conversion to 'int' from 'long int' may alter its value
+e/f4/f4-spairs.cpp:261: warning: conversion to 'int' from 'long int' may alter its value
+e/f4/f4-spairs.cpp:314: warning: conversion to 'int' from 'long unsigned int' may alter its value
+e/f4/f4-syz.cpp:149: warning: conversion to 'int' from 'size_t' may alter its value
+e/f4/f4-syz.cpp:163: warning: conversion to 'int' from 'size_t' may alter its value
+e/f4/f4-syz.cpp:164: warning: conversion to 'int' from 'size_t' may alter its value
+e/f4/f4-syz.cpp:187: warning: conversion to 'double' from 'long int' may alter its value
+e/f4/f4-syz.cpp:279: warning: conversion to 'int' from 'long unsigned int' may alter its value
+e/f4/f4-syz.cpp:314: warning: conversion to 'int' from 'long int' may alter its value
+e/f4/f4-syz.cpp:322: warning: conversion to 'int' from 'long int' may alter its value
+e/f4/f4-syz.cpp:335: warning: conversion to 'int' from 'long int' may alter its value
+e/f4/f4-syz.cpp:346: warning: conversion to 'int' from 'long int' may alter its value
+e/f4/f4-syz.cpp:356: warning: conversion to 'int' from 'long int' may alter its value
+e/f4/f4-syz.cpp:374: warning: conversion to 'int' from 'long int' may alter its value
+e/f4/f4-syz.cpp:59: warning: conversion to 'int' from 'long int' may alter its value
+e/f4/f4.cpp:116: warning: conversion to 'int' from 'size_t' may alter its value
+e/f4/f4.cpp:128: warning: conversion to 'int' from 'long int' may alter its value
+e/f4/f4.cpp:147: warning: conversion to 'int' from 'long int' may alter its value
+e/f4/f4.cpp:226: warning: conversion to 'int' from 'size_t' may alter its value
+e/f4/f4.cpp:260: warning: conversion to 'int' from 'long unsigned int' may alter its value
+e/f4/f4.cpp:281: warning: conversion to 'int' from 'size_t' may alter its value
+e/f4/f4.cpp:282: warning: conversion to 'int' from 'size_t' may alter its value
+e/f4/f4.cpp:305: warning: conversion to 'double' from 'long int' may alter its value
+e/f4/f4.cpp:373: warning: conversion to 'int' from 'long int' may alter its value
+e/f4/f4.cpp:375: warning: conversion to 'int' from 'long int' may alter its value
+e/f4/f4.cpp:484: warning: conversion to 'int' from 'size_t' may alter its value
+e/f4/f4.cpp:485: warning: conversion to 'int' from 'size_t' may alter its value
+e/f4/f4.cpp:554: warning: conversion to 'int' from 'size_t' may alter its value
+e/f4/f4.cpp:555: warning: conversion to 'int' from 'size_t' may alter its value
+e/f4/f4.cpp:608: warning: conversion to 'int' from 'long unsigned int' may alter its value
+e/f4/f4.cpp:646: warning: conversion to 'int' from 'long int' may alter its value
+e/f4/f4.cpp:657: warning: conversion to 'int' from 'long int' may alter its value
+e/f4/f4.cpp:661: warning: conversion to 'int' from 'size_t' may alter its value
+e/f4/f4.cpp:691: warning: conversion to 'int' from 'size_t' may alter its value
+e/f4/f4.cpp:720: warning: conversion to 'double' from 'long int' may alter its value
+e/f4/f4.cpp:737: warning: conversion to 'double' from 'long int' may alter its value
+e/f4/f4.cpp:754: warning: conversion to 'int' from 'size_t' may alter its value
+e/f4/f4.cpp:853: warning: conversion to 'double' from 'clock_t' may alter its value
+e/f4/f4.cpp:857: warning: conversion to 'double' from 'clock_t' may alter its value
+e/f4/f4.cpp:861: warning: conversion to 'double' from 'clock_t' may alter its value
+e/f4/f4.cpp:953: warning: conversion to 'int' from 'size_t' may alter its value
+e/f4/f4.cpp:954: warning: conversion to 'int' from 'size_t' may alter its value
+e/f4/f4.cpp:973: warning: conversion to 'int' from 'size_t' may alter its value
+e/f4/gausser.cpp:74: warning: conversion to 'int' from 'long int' may alter its value
+e/f4/gausser.cpp:76: warning: conversion to 'int' from 'long int' may alter its value
+e/f4/moninfo.hpp:155: warning: conversion to 'int' from 'varpower_word' may alter its value
+e/f4/moninfo.hpp:156: warning: conversion to 'int' from 'varpower_word' may alter its value
+e/f4/moninfo.hpp:205: warning: conversion to 'int' from 'long int' may alter its value
+e/f4/moninfo.hpp:271: warning: conversion to 'int' from 'long int' may alter its value
+e/f4/monsort.hpp:218: warning: conversion to 'int' from 'long unsigned int' may alter its value
+e/f4/monsort.hpp:219: warning: conversion to 'int' from 'long unsigned int' may alter its value
+e/f4/monsort.hpp:222: warning: conversion to 'int' from 'long unsigned int' may alter its value
+e/f4/monsort.hpp:223: warning: conversion to 'int' from 'long unsigned int' may alter its value
+e/f4/monsort.hpp:310: warning: conversion to 'double' from 'long int' may alter its value
+e/f4/ntuple-monomial.cpp:19: warning: conversion to 'int' from 'const long int' may alter its value
+e/f4/varpower-monomial.cpp:148: warning: conversion to 'int' from 'const long int' may alter its value
+e/f4/varpower-monomial.cpp:149: warning: conversion to 'int' from 'const long int' may alter its value
+e/f4/varpower-monomial.cpp:14: warning: conversion to 'int' from 'const long int' may alter its value
+e/f4/varpower-monomial.cpp:197: warning: conversion to 'int' from 'const long int' may alter its value
+e/f4/varpower-monomial.cpp:198: warning: conversion to 'int' from 'const long int' may alter its value
+e/f4/varpower-monomial.cpp:244: warning: conversion to 'int' from 'const long int' may alter its value
+e/f4/varpower-monomial.cpp:245: warning: conversion to 'int' from 'const long int' may alter its value
+e/f4/varpower-monomial.cpp:25: warning: conversion to 'int' from 'const long int' may alter its value
+e/f4/varpower-monomial.cpp:284: warning: conversion to 'int' from 'const long int' may alter its value
+e/f4/varpower-monomial.cpp:295: warning: conversion to 'int' from 'long int' may alter its value
+e/f4/varpower-monomial.cpp:298: warning: conversion to 'int' from 'long int' may alter its value
+e/f4/varpower-monomial.cpp:38: warning: conversion to 'int' from 'const long int' may alter its value
+e/f4/varpower-monomial.cpp:59: warning: conversion to 'int' from 'long int' may alter its value
+e/f4/varpower-monomial.cpp:60: warning: conversion to 'int' from 'long int' may alter its value
+e/fractionfreeLU.cpp:116: warning: conversion to 'int' from 'long int' may alter its value
+e/fractionfreeLU.cpp:18: warning: conversion to 'int' from 'long int' may alter its value
+e/fractionfreeLU.cpp:46: warning: conversion to 'int' from 'long int' may alter its value
+e/fractionfreeLU.cpp:64: warning: conversion to 'int' from 'long int' may alter its value
+e/fractionfreeLU.cpp:69: warning: conversion to 'int' from 'long int' may alter its value
+e/freemod.cpp:65: warning: conversion to 'int' from 'size_t' may alter its value
+e/gb-default.cpp:1138: warning: conversion to 'int' from 'size_t' may alter its value
+e/gb-default.cpp:1139: warning: conversion to 'int' from 'size_t' may alter its value
+e/gb-default.cpp:1559: warning: conversion to 'int' from 'long int' may alter its value
+e/gb-default.cpp:1934: warning: conversion to 'int' from 'long unsigned int' may alter its value
+e/gb-default.cpp:2053: warning: conversion to 'int' from 'size_t' may alter its value
+e/gb-default.cpp:2072: warning: conversion to 'int' from 'long unsigned int' may alter its value
+e/gb-default.cpp:2275: warning: conversion to 'int' from 'size_t' may alter its value
+e/gbring.cpp:99: warning: conversion to 'int' from 'long unsigned int' may alter its value
+e/gbweight.cpp:66: warning: conversion to 'int' from 'long int' may alter its value
+e/intarray.hpp:65: warning: conversion to 'int' from 'size_t' may alter its value
+e/intarray.hpp:73: warning: conversion to 'int' from 'long unsigned int' may alter its value
+e/intarray.hpp:93: warning: conversion to 'int' from 'const size_t' may alter its value
+e/lapack.cpp:1009: warning: conversion to 'int' from 'long int' may alter its value
+e/lapack.cpp:1071: warning: conversion to 'int' from 'long int' may alter its value
+e/lapack.cpp:1139: warning: conversion to 'int' from 'long int' may alter its value
+e/lapack.cpp:1199: warning: conversion to 'int' from 'long int' may alter its value
+e/lapack.cpp:1265: warning: conversion to 'int' from 'long int' may alter its value
+e/lapack.cpp:1266: warning: conversion to 'int' from 'long int' may alter its value
+e/lapack.cpp:1333: warning: conversion to 'int' from 'long int' may alter its value
+e/lapack.cpp:1334: warning: conversion to 'int' from 'long int' may alter its value
+e/lapack.cpp:1405: warning: conversion to 'int' from 'long int' may alter its value
+e/lapack.cpp:1406: warning: conversion to 'int' from 'long int' may alter its value
+e/lapack.cpp:1407: warning: conversion to 'int' from 'long int' may alter its value
+e/lapack.cpp:1408: warning: conversion to 'int' from 'long int' may alter its value
+e/lapack.cpp:1487: warning: conversion to 'int' from 'long int' may alter its value
+e/lapack.cpp:1488: warning: conversion to 'int' from 'long int' may alter its value
+e/lapack.cpp:1489: warning: conversion to 'int' from 'long int' may alter its value
+e/lapack.cpp:1490: warning: conversion to 'int' from 'long int' may alter its value
+e/lapack.cpp:188: warning: conversion to 'int' from 'long int' may alter its value
+e/lapack.cpp:189: warning: conversion to 'int' from 'long int' may alter its value
+e/lapack.cpp:21: warning: conversion to 'int' from 'long int' may alter its value
+e/lapack.cpp:22: warning: conversion to 'int' from 'long int' may alter its value
+e/lapack.cpp:253: warning: conversion to 'int' from 'long int' may alter its value
+e/lapack.cpp:318: warning: conversion to 'int' from 'long int' may alter its value
+e/lapack.cpp:400: warning: conversion to 'int' from 'long int' may alter its value
+e/lapack.cpp:461: warning: conversion to 'int' from 'long int' may alter its value
+e/lapack.cpp:525: warning: conversion to 'int' from 'long int' may alter its value
+e/lapack.cpp:526: warning: conversion to 'int' from 'long int' may alter its value
+e/lapack.cpp:592: warning: conversion to 'int' from 'long int' may alter its value
+e/lapack.cpp:593: warning: conversion to 'int' from 'long int' may alter its value
+e/lapack.cpp:661: warning: conversion to 'int' from 'long int' may alter its value
+e/lapack.cpp:662: warning: conversion to 'int' from 'long int' may alter its value
+e/lapack.cpp:663: warning: conversion to 'int' from 'long int' may alter its value
+e/lapack.cpp:664: warning: conversion to 'int' from 'long int' may alter its value
+e/lapack.cpp:743: warning: conversion to 'int' from 'long int' may alter its value
+e/lapack.cpp:744: warning: conversion to 'int' from 'long int' may alter its value
+e/lapack.cpp:745: warning: conversion to 'int' from 'long int' may alter its value
+e/lapack.cpp:746: warning: conversion to 'int' from 'long int' may alter its value
+e/lapack.cpp:832: warning: conversion to 'int' from 'long int' may alter its value
+e/lapack.cpp:833: warning: conversion to 'int' from 'long int' may alter its value
+e/lapack.cpp:944: warning: conversion to 'int' from 'long int' may alter its value
+e/lapack.cpp:945: warning: conversion to 'int' from 'long int' may alter its value
+e/mat.cpp:138: warning: conversion to 'int' from 'long int' may alter its value
+e/mat.cpp:139: warning: conversion to 'int' from 'long int' may alter its value
+e/mat.cpp:150: warning: conversion to 'int' from 'long int' may alter its value
+e/mat.cpp:161: warning: conversion to 'int' from 'long int' may alter its value
+e/mat.cpp:162: warning: conversion to 'int' from 'long int' may alter its value
+e/matrix.cpp:32: warning: conversion to 'int' from 'long unsigned int' may alter its value
+e/matrix.cpp:973: warning: conversion to 'int' from 'size_t' may alter its value
+e/matrix.cpp:992: warning: conversion to 'int' from 'size_t' may alter its value
+e/mem.cpp:27: warning: conversion to 'int' from 'long unsigned int' may alter its value
+e/montable.cpp:214: warning: conversion to 'int' from 'size_t' may alter its value
+e/montableZZ.cpp:325: warning: conversion to 'int' from 'size_t' may alter its value
+e/ntl-interface.cpp:15: warning: conversion to 'int' from 'long int' may alter its value
+e/ntl-interface.cpp:16: warning: conversion to 'int' from 'long int' may alter its value
+e/ntl-interface.cpp:34: warning: conversion to 'int' from 'long int' may alter its value
+e/ntl-interface.cpp:35: warning: conversion to 'int' from 'long int' may alter its value
+e/ntl-interface.cpp:68: warning: conversion to 'int' from 'long int' may alter its value
+e/ntl-interface.cpp:69: warning: conversion to 'int' from 'long int' may alter its value
+e/ntl-interface.cpp:73: warning: conversion to 'double' from 'long int' may alter its value
+e/polyring.cpp:1416: warning: conversion to 'int' from 'long int' may alter its value
+e/polyring.cpp:1428: warning: conversion to 'int' from 'long int' may alter its value
+e/polyring.cpp:1429: warning: conversion to 'int' from 'long int' may alter its value
+e/polyring.cpp:1437: warning: conversion to 'int' from 'long int' may alter its value
+e/polyring.cpp:1448: warning: conversion to 'int' from 'long int' may alter its value
+e/polyring.cpp:1810:2: warning: #warning "Mike needs to write PolyRing::contract0 !!"
+e/polyring.cpp:88: warning: conversion to 'int' from 'long unsigned int' may alter its value
+e/qring.hpp:39: warning: conversion to 'int' from 'size_t' may alter its value
+e/reducedgb-ZZ.cpp:91: warning: conversion to 'int' from 'size_t' may alter its value
+e/reducedgb-field-local.cpp:368: warning: conversion to 'int' from 'size_t' may alter its value
+e/reducedgb-field-local.cpp:81: warning: conversion to 'int' from 'size_t' may alter its value
+e/reducedgb-field.cpp:84: warning: conversion to 'int' from 'size_t' may alter its value
+e/res-a0-poly.cpp:14: warning: conversion to 'int' from 'long unsigned int' may alter its value
+e/res-a1-poly.cpp:14: warning: conversion to 'int' from 'long unsigned int' may alter its value
+e/schorder.cpp:89: warning: conversion to 'int' from 'size_t' may alter its value
+e/smat.cpp:151: warning: conversion to 'int' from 'long int' may alter its value
+e/smat.cpp:344: warning: conversion to 'int' from 'long int' may alter its value
+e/smat.cpp:470: warning: conversion to 'int' from 'long int' may alter its value
+e/smat.cpp:491: warning: conversion to 'int' from 'long int' may alter its value
+e/smat.cpp:82: warning: conversion to 'int' from 'long int' may alter its value
+e/text-io.cpp:27: warning: conversion to 'int' from 'long unsigned int' may alter its value
+e/text-io.cpp:44: warning: conversion to 'int' from 'long unsigned int' may alter its value
+e/varpower.cpp:291: warning: conversion to 'int' from 'long int' may alter its value
+e/varpower.cpp:346: warning: conversion to 'int' from 'long int' may alter its value
+e/varpower.cpp:355: warning: conversion to 'int' from 'long int' may alter its value
+e/varpower.cpp:399: warning: conversion to 'int' from 'long int' may alter its value
+e/varpower.cpp:416: warning: conversion to 'int' from 'long int' may alter its value
+e/varpower.cpp:505: warning: conversion to 'int' from 'long int' may alter its value
+e/varpower.cpp:506: warning: conversion to 'int' from 'long int' may alter its value
+e/varpower.cpp:551: warning: conversion to 'int' from 'long int' may alter its value
+e/varpower.cpp:590: warning: conversion to 'int' from 'long int' may alter its value
+e/varpower.cpp:626: warning: conversion to 'int' from 'long int' may alter its value
+e/varpower.cpp:639: warning: conversion to 'int' from 'long int' may alter its value
+e/x-factor.cpp:224: warning: conversion to 'int' from 'long unsigned int' may alter its value
+e/x-factor.cpp:325: warning: conversion to 'int' from 'long unsigned int' may alter its value
+e/x-mutablemat.cpp:368: warning: conversion to 'int' from 'long int' may alter its value
+e/x-mutablemat.cpp:392: warning: conversion to 'int' from 'long int' may alter its value
+e/x-mutablemat.cpp:483: warning: conversion to 'int' from 'long int' may alter its value
+e/x-mutablemat.cpp:484: warning: conversion to 'int' from 'long int' may alter its value
+e/x-mutablemat.cpp:508: warning: conversion to 'int' from 'long int' may alter its value
+e/x-mutablemat.cpp:532: warning: conversion to 'int' from 'long int' may alter its value
+e/x-mutablemat.cpp:58: warning: conversion to 'int' from 'long int' may alter its value
+e/x-mutablemat.cpp:63: warning: conversion to 'int' from 'long int' may alter its value
+e/x-mutablemat.cpp:68: warning: conversion to 'int' from 'long int' may alter its value
+e/x-mutablemat.cpp:69: warning: conversion to 'int' from 'long int' may alter its value
+e/x-mutablemat.cpp:87: warning: conversion to 'int' from 'long int' may alter its value
+e/x-mutablemat.cpp:88: warning: conversion to 'int' from 'long int' may alter its value
+e/x-relem.cpp:905: warning: conversion to 'unsigned int' from 'long int' may alter its value

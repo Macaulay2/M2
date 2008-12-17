@@ -1,8 +1,1 @@
-document setup() better, and discourage expert users from using it
-
-PS: Or better yet, maybe setup() and setupEmacs() should always display the
-proposed changes and prompt the user for permission to proceed.
-
-fix the message so it says append/insert/create, as appropriate
-offer experts the chance to make symbolic links to M2 and mention which directories are suitable
-figure out a way for the user to get the info dir file built, check whether dir entries are made, whether dir is writable.
+fix it so it puts just one line in each file that loads another file: .profile-M2, .login-M2, .emacs-M2.
