@@ -243,6 +243,32 @@ toFilename String := s -> (
 
 regexpString := s -> replace(///([][\.^$+*{()}])///,///\\1///,s)
 
+supplantFileFile = (tmp,filename,backupq) -> (
+     if fileExists filename then (
+	  stderr << "--initialization text about to be added to file: " << filename << endl;
+	  if backupq
+	  then moveFile(filename,Verbose=>true)		    -- move file out of way
+	  else removeFile filename
+	  )
+     else (
+	  stderr << "--file about to be created for initialization text: " << filename << endl;
+	  );
+     linkFile(tmp,filename);
+     removeFile tmp;
+     stderr << "--operation complete" << endl;
+     )
+
+supplantStringFile = (text,filename,backupq) -> (
+     text = replace("/PREFIX/",prefixDirectory,text);
+     if fileExists filename and text === get filename then (
+	  stderr << "--initialization text already in file, no changes needed: " << filename << endl;
+	  return;
+	  );
+     tmp := filename | ".Macaulay2.tmp";
+     tmp << text << close;
+     supplantFileFile(tmp,filename,backupq);
+     )
+
 promptUser := true
 mungeFile = (filename, headerline, trailerline, text) -> (
      headerline = headerline | newline;
@@ -299,16 +325,7 @@ mungeFile = (filename, headerline, trailerline, text) -> (
 	       )
 	  else << "unrecognized response" << endl;
 	  );
-     if fileExists filename then (
-	  stderr << "--initialization text about to be added to file: " << filename << endl;
-	  moveFile(filename,Verbose=>true);		    -- move file out of way
-	  )
-     else (
-	  stderr << "--file about to be created for initialization text: " << filename << endl;
-	  );
-     linkFile(tmp,filename);
-     removeFile tmp;
-     stderr << "--operation complete" << endl;
+     supplantFileFile(tmp,filename,true);
      false)
 
 dotemacsFix = ///
@@ -360,15 +377,33 @@ endif
 stripdir := dir -> if dir === "/" then dir else replace("/$","",dir)
 fixes := { ("PATH", currentLayout#"bin"), ("MANPATH", currentLayout#"man"), ("INFOPATH", currentLayout#"info" ), ("LD_LIBRARY_PATH", currentLayout#"lib" )}
 fix := (var,dir,templ) -> replace_("VAR",var) replace_("DIR",stripdir dir) templ
-dotprofileFix = dotbashrcFix = concatenate apply(fixes, (var,dir) -> fix(var,dir,bashtempl))
-dotloginFix = dotcshrcFix = concatenate apply(fixes, (var,dir) -> fix(var,dir,cshtempl))
 
 startToken := "## Macaulay 2 start"
 endToken := "## Macaulay 2 end"
+M2profile := ".profile-Macaulay2"
+M2login   := ".login-Macaulay2"
+M2emacs   := ".emacs-Macaulay2"
+M2profileRead := replace("filename",M2profile,
+///if [ -f ~/filename ]
+then . ~/filename
+fi
+///)
+M2loginRead   := replace("filename",M2login,
+///if ( -e ~/filename ) source ~/filename
+///)
+M2emacsRead   := replace("filename",format ("~/"|M2emacs),
+///(load filename t)
+///)
+
+local dotprofileFix
+local dotloginFix
 
 setupEmacs = method()
 setup = method()
-mungeEmacs = () -> mungeFile( homeDirectory | ".emacs", ";; Macaulay 2 start", ";; Macaulay 2 end", dotemacsFix )
+mungeEmacs = () -> (
+     supplantStringFile(dotemacsFix,homeDirectory|M2emacs,false);
+     mungeFile(homeDirectory|".emacs", ";; Macaulay 2 start", ";; Macaulay 2 end", M2emacsRead )
+     )
 prelim := () -> (
      promptUser = true;
      if prefixDirectory === null then error "can't determine Macaulay 2 prefix (prefixDirectory not set)";
@@ -381,13 +416,17 @@ installMethod(setup, () -> (
      --     `~/.bash_login', and `~/.profile', in that order, and reads and
      --     executes commands from the first one that exists and is readable.
      prelim();
-     fileExists(homeDirectory|".bash_profile") and mungeFile(homeDirectory|".bash_profile",startToken,endToken,dotprofileFix) or
-     fileExists(homeDirectory|".bash_login") and mungeFile(homeDirectory|".bash_login",startToken,endToken,dotprofileFix) or
-     mungeFile(homeDirectory|".profile",startToken,endToken,dotprofileFix) or
-     mungeFile(homeDirectory|".bashrc",startToken,endToken,dotbashrcFix) or
-     mungeFile(homeDirectory|".login",startToken,endToken,dotloginFix) or
-     fileExists(homeDirectory|".tcshrc" ) and mungeFile(homeDirectory|".tcshrc",startToken,endToken,dotcshrcFix) or
-     mungeFile(homeDirectory|".cshrc",startToken,endToken,dotcshrcFix) or
+     dotprofileFix = concatenate apply(fixes, (var,dir) -> fix(var,dir,bashtempl));
+     dotloginFix = concatenate apply(fixes, (var,dir) -> fix(var,dir,cshtempl));
+     supplantStringFile(dotprofileFix,homeDirectory|M2profile,false);
+     supplantStringFile(dotloginFix,homeDirectory|M2login,false);
+     fileExists(homeDirectory|".bash_profile") and mungeFile(homeDirectory|".bash_profile",startToken,endToken,M2profileRead) or
+     fileExists(homeDirectory|".bash_login") and mungeFile(homeDirectory|".bash_login",startToken,endToken,M2profileRead) or
+     mungeFile(homeDirectory|".profile",startToken,endToken,M2profileRead) or
+     mungeFile(homeDirectory|".bashrc",startToken,endToken,M2profileRead) or
+     mungeFile(homeDirectory|".login",startToken,endToken,M2loginRead) or
+     fileExists(homeDirectory|".tcshrc" ) and mungeFile(homeDirectory|".tcshrc",startToken,endToken,M2loginRead) or
+     mungeFile(homeDirectory|".cshrc",startToken,endToken,M2loginRead) or
      mungeEmacs(); ))
 
 scanLines = method()
