@@ -1,12 +1,12 @@
 # -*- Makefile -*-
-# to be included two levels down from here
+# to be included (now) one level down from here
 default: all install check-links
 #
 .PHONY : everything world configure all install
 include include/configuration
 rebuild-world: distclean world
 world: configure all install check
-configure include/configuration:; ../../../../configure $(CONFIGOPTIONS)
+configure include/configuration:; ../../../configure $(CONFIGOPTIONS)
 all:; $(MAKE) $@ $(BUILDOPTIONS)
 install:clean-target; $(MAKE) $@ -o all $(INSTALLOPTIONS)
 clean-target:
