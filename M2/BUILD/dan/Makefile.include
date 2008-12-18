@@ -8,7 +8,7 @@ check-links:; $(MAKE) -C builds/$(DIRECTORY) -C Macaulay2/html-check-links check
 check:; $(MAKE) -C builds/$(DIRECTORY) -k $@
 configure builds/$(DIRECTORY)/include/configuration:; mkdir -p builds/$(DIRECTORY) && cd builds/$(DIRECTORY) && $(PWD)/../../configure $(CONFIGOPTIONS)
 default: arch-chk all install check-links
-distclean:; $(MAKE) -C builds/$(DIRECTORY) $@
+distclean:; $(MAKE) -C builds/$(DIRECTORY) $@ && find . -type f
 install-it:; $(MAKE) -C builds/$(DIRECTORY) install -o all $(INSTALLOPTIONS)
 install:pre-install install-it post-install
 pre-install post-install:

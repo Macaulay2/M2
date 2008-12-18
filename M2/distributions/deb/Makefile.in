@@ -105,7 +105,6 @@ tidy tidy_after :
 	rm -rf macaulay2-common/control.tar.gz macaulay2-common/data.tar.gz macaulay2-common/md5sums
 clean :: tidy
 	rm -rf ../../$(PKG_DEB) ../../$(PKG_COM_DEB)
-distclean : clean; rm -f Makefile control
 libraries-used : .prepared always
 	ldd tmp@bindir@/M2@EXE@ | sed -e 's/.* => //' -e 's/^	//' -e 's/ .*//' | egrep '^/' >$@ || true
 clean ::; rm -f libraries-used
@@ -122,7 +121,6 @@ macaulay2/control : macaulay2/control.prelim macaulay2/data.tar.gz packages-used
 	 echo \
 	) >$@
 clean ::; rm -f macaulay2/control
-distclean::; rm -f macaulay2/control.prelim
 macaulay2-common/control : macaulay2-common/control.prelim macaulay2-common/data.tar.gz
 	(cat $< && \
 	 size=`gunzip<macaulay2-common/data.tar.gz|wc -c` && \
@@ -130,7 +128,7 @@ macaulay2-common/control : macaulay2-common/control.prelim macaulay2-common/data
 	 echo Installed-Size: $$size \
 	) >$@
 clean ::; rm -f macaulay2-common/control
-distclean::; rm -f macaulay2-common/control.prelim
+distclean: clean; rm -f Makefile control macaulay2/control.prelim macaulay2-common/control.prelim
 % : %.in; cd ../..; ./config.status distributions/deb/$@
 
 # Local Variables:
