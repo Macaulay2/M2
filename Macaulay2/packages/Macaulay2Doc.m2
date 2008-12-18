@@ -14,9 +14,12 @@ Core#"base packages" = prepend("Macaulay2Doc",Core#"base packages")
 
 beginDocumentation()
 
+-- this is big, so we always notify:
+stderr << "--loading the Macaulay2 documentation from " << currentFileDirectory << "/Macaulay2Doc" << endl
+
 scan(pairs Core#"raw documentation", (k,v) -> Macaulay2Doc#"raw documentation"#k = v)
 
-load replace("\\.m2$","/loads.m2",toAbsolutePath currentFileName)
+load "./Macaulay2Doc/loads.m2"				    -- the ./ makes it load from the current directory
 
 if keys Macaulay2Doc#"private dictionary" =!= {} 
 then error splice("Macaulay2 documentation: global symbols inadvertently defined: ", 

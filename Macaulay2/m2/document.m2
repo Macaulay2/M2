@@ -17,10 +17,7 @@ checkLoadDocumentation = () -> (
 	  )
      then (
 	  -- the documentation for things in the package Core is in the package Macaulay2Doc !
-	  oldnotify := notify;
-	  notify = false;
 	  needsPackage "Macaulay2Doc";
-	  notify = oldnotify;
 	  ))
 
 getpkg := memoize(

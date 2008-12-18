@@ -129,6 +129,7 @@ endif
 phase1 :: .Macaulay2-made
 .Macaulay2-made : $(DUMPEDM2FILES) $(DUMPEDM2DOCFILES) @pre_exec_prefix@/bin/M2@EXE@
 	touch $@
+clean ::; rm -f .Macaulay2-made
 
 ## .gdbinit
 all: .gdbinit .gdb-files .gdb-run-it

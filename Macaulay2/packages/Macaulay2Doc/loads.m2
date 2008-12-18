@@ -2,8 +2,6 @@
 -- should rewrite this to load all the m2 files there
 -- perhaps write a "pathFind" routine so we can find files such as Macaulay2 on the path.
 
-if notify then stderr << "--loading the Macaulay2 documentation" << endl
-
 load "./doc.m2"
 load "./doc1.m2"
 load "./doc2.m2"

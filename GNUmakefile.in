@@ -11,6 +11,7 @@ clean:clean-dirs
 	rm -f pre-install.sh post-install.sh normal-install.sh
 distclean:clean distclean-dirs
 	rm -f @CONFIGURED_FILES@ include/M2/config.h include/config.Makefile config.cache config.log configure.options config.status
+	find . -type d -empty -not -wholename '*/.svn/*' -delete 
 define do-dirs
 $1-dirs:
 	$$(MAKE) -C libraries $1 $2

@@ -1,0 +1,2 @@
+The doc databases for packages may not be getting built if we start fresh with
+just the CommonStagingArea files, because *.installed is there.

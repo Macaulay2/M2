@@ -244,24 +244,23 @@ toFilename String := s -> (
 regexpString := s -> replace(///([][\.^$+*{()}])///,///\\1///,s)
 
 supplantFileFile = (tmp,filename,backupq) -> (
+     msg :=
      if fileExists filename then (
-	  stderr << "--initialization text about to be added to file: " << filename << endl;
 	  if backupq
 	  then moveFile(filename,Verbose=>true)		    -- move file out of way
-	  else removeFile filename
+	  else removeFile filename;
+	  "initialization text placed in file"
 	  )
-     else (
-	  stderr << "--file about to be created for initialization text: " << filename << endl;
-	  );
+     else "file created for initialization text";
      linkFile(tmp,filename);
      removeFile tmp;
-     stderr << "--operation complete" << endl;
+     stderr << "--" << msg << ": " << filename << endl;
      )
 
 supplantStringFile = (text,filename,backupq) -> (
      text = replace("/PREFIX/",prefixDirectory,text);
      if fileExists filename and text === get filename then (
-	  stderr << "--initialization text already in file, no changes needed: " << filename << endl;
+	  stderr << "--initialization text already in file: " << filename << endl;
 	  return;
 	  );
      tmp := filename | ".Macaulay2.tmp";
@@ -322,29 +321,36 @@ mungeFile = (filename, headerline, trailerline, text) -> (
      	  if response == "r" then (
 	       << "new text proposed for file " << format filename << ":" << endl
 	       << "  " << stack lines insert << endl;
+	       if excerpt =!= null then
+	       << "replacing existing text:" << endl
+	       << "  " << stack lines excerpt << endl
 	       )
 	  else << "unrecognized response" << endl;
 	  );
      supplantFileFile(tmp,filename,true);
      false)
 
-dotemacsFix = ///
-;; add "/PREFIX/share/emacs/site-lisp/" to load-path
-(setq load-path
-       (append
-        '( "/PREFIX/share/emacs/site-lisp/" )
-        load-path))
+emacstempl := ///
+;; add "/PREFIX/DIR" to VAR if it isn't there
+(if (not (member "/PREFIX/DIR" VAR))
+     (setq VAR (cons "/PREFIX/DIR" VAR)))
+///
 
+dotemacsFix0 = ///
 ;; this version will give an error if M2-init.el is not found:
 (load "M2-init")
 
 ;; this version will not give an error if M2-init.el is not found:
 ;(load "M2-init" t)
 
-; comment out the following line with an initial semicolon if you 
-; want to use your f12 key for something else
+; You may comment out the following line with an initial semicolon if you 
+; want to use your f12 key for something else.  However, this action
+; will be undone the next time you run setup() or setupEmacs().
 (global-set-key [ f12 ] 'M2)
 ///
+
+emacsHeader := ";-*-emacs-lisp-*-\n"
+shHeader := "#-*-sh-*-\n"
 
 bashtempl := ///
 ## add "/PREFIX/DIR" to the environment variable VAR
@@ -374,8 +380,18 @@ else
   setenv VAR "/PREFIX/DIR"
 endif
 ///
+
+shellfixes := {
+     ("PATH", currentLayout#"bin"),
+     ("MANPATH", currentLayout#"man"),
+     ("INFOPATH", currentLayout#"info"),
+     ("LD_LIBRARY_PATH", currentLayout#"lib")}
+emacsfixes := {
+     ("load-path", currentLayout#"emacs"),
+     ("exec-path", currentLayout#"bin"),
+     ("Info-default-directory-list", currentLayout#"info")}
+
 stripdir := dir -> if dir === "/" then dir else replace("/$","",dir)
-fixes := { ("PATH", currentLayout#"bin"), ("MANPATH", currentLayout#"man"), ("INFOPATH", currentLayout#"info" ), ("LD_LIBRARY_PATH", currentLayout#"lib" )}
 fix := (var,dir,templ) -> replace_("VAR",var) replace_("DIR",stripdir dir) templ
 
 startToken := "## Macaulay 2 start"
@@ -397,6 +413,7 @@ M2emacsRead   := replace("filename",format ("~/"|M2emacs),
 
 local dotprofileFix
 local dotloginFix
+local dotemacsFix
 
 setupEmacs = method()
 setup = method()
@@ -416,8 +433,9 @@ installMethod(setup, () -> (
      --     `~/.bash_login', and `~/.profile', in that order, and reads and
      --     executes commands from the first one that exists and is readable.
      prelim();
-     dotprofileFix = concatenate apply(fixes, (var,dir) -> fix(var,dir,bashtempl));
-     dotloginFix = concatenate apply(fixes, (var,dir) -> fix(var,dir,cshtempl));
+     dotprofileFix = concatenate(shHeader, apply(shellfixes, (var,dir) -> fix(var,dir,bashtempl)));
+     dotloginFix = concatenate(shHeader,apply(shellfixes, (var,dir) -> fix(var,dir,cshtempl)));
+     dotemacsFix = concatenate(emacsHeader, apply(emacsfixes, (var,dir) -> fix(var,dir,emacstempl)), dotemacsFix0);
      supplantStringFile(dotprofileFix,homeDirectory|M2profile,false);
      supplantStringFile(dotloginFix,homeDirectory|M2login,false);
      fileExists(homeDirectory|".bash_profile") and mungeFile(homeDirectory|".bash_profile",startToken,endToken,M2profileRead) or
