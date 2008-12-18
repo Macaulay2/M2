@@ -480,7 +480,7 @@ export process():void := (
      setstopIfError(false);				    -- this is usually true after loaddata(), we want to reset it
      setLoadDepth(loadDepth);				    -- loaddata() in M2lib.c increments it, so we have to reflect that at top level
      everytimeRun();
-     ret := readeval(stringTokenFile("layout.m2",startupString1),false,false); -- we don't know the right directory!
+     ret := readeval(stringTokenFile(startupFile1,startupString1),false,false); -- we don't know the right directory!
      when ret is err:Error do (
 	  if !err.printed then printError(err);		    -- just in case
 	  if stopIfError
@@ -488,7 +488,7 @@ export process():void := (
 	  else if !topLevel()				    -- give a prompt for debugging
 	  then Exit(err))
      else nothing;
-     ret = readeval(stringTokenFile("startup.m2",startupString2),false,false); -- startup.m2 calls commandInterpreter and eventually returns -- we don't know the right directory!
+     ret = readeval(stringTokenFile(startupFile2,startupString2),false,false); -- startup.m2 calls commandInterpreter and eventually returns -- we don't know the right directory!
      when ret is err:Error do (
 	  if !err.printed then printError(err);		    -- just in case
 	  if stopIfError 
