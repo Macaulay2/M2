@@ -459,7 +459,8 @@ document {
      R := QQ[x];
      (x+2)^10);
 g()
-	  ///
+	       ///
+	       }
 	  ),
      SYNOPSIS {
 	  Heading => "multiple local assignment",
