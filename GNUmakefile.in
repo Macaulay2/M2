@@ -19,7 +19,7 @@ $1-dirs:
 	$$(MAKE) -C distributions $1 $2
 	$$(MAKE) -C check-configure $1 $2
 endef
-$(foreach t,all check clean distclean, $(eval $(call do-dirs,$t)))
+$(foreach t,all check clean distclean,$(eval $(call do-dirs,$t)))
 install:normal all; $(MAKE) -C distributions $@
 normal:;$(NORMAL_INSTALL) 
 scripts : pre-install.sh post-install.sh
