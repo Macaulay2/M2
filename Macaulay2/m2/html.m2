@@ -173,8 +173,8 @@ links := tag -> (
 	       LINK { "href" => toURL htmlFilename FIRST tag, "rel" => "First", linkTitleTag FIRST tag},
 	       ),
 	  if UP#?tag then LINK { "href" => toURL htmlFilename UP#tag, "rel" => "Up", linkTitleTag UP#tag},
-	  LINK { "href" => toURL replace("PKG","Style",currentLayout#"package") | "doc.css", "rel" => "stylesheet", "type" => "text/css" },
-	  LINK { "href" => toURL replace("PKG","Style",currentLayout#"package") | "doc-no-buttons.css", "rel" => "alternate stylesheet", "title" => "no buttons", "type" => "text/css" },
+	  LINK { "href" => toURL (replace("PKG","Style",currentLayout#"package") | "doc.css"), "rel" => "stylesheet", "type" => "text/css" },
+	  LINK { "href" => toURL (replace("PKG","Style",currentLayout#"package") | "doc-no-buttons.css"), "rel" => "alternate stylesheet", "title" => "no buttons", "type" => "text/css" },
 	  if SRC#?tag then (
      	       LINK { 
 		    "href" => concatenate("file://",externalPath, toAbsolutePath SRC#tag#0), 
