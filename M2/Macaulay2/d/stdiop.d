@@ -61,9 +61,11 @@ isAbsolutePath(s:string):bool := (
      );
 export absoluteFilename(filename:string):string := (
      if !isAbsolutePath(filename) then filename = getcwd() + filename;
-     f := realpath(filename);
-     if filename.(length(filename)-1) == '/' then f = f + '/';
-     f);
+     shorten(filename));
+-- I want this to work:
+--     f := realpath(filename);
+--     if filename.(length(filename)-1) == '/' then f = f + '/';
+--     f);
 export relativizeFilename(cwd:string,filename:string):string := (
      -- what about MacOS?
      cwd = absoluteFilename(cwd);
@@ -91,10 +93,8 @@ export verifyMinimizeFilename(filename:string):string := (
      if isAbsolutePath(f) then return f;
      pwd := getenv("PWD")+"/";
      if pwd === getcwd() then return f;
-     h := absoluteFilename(f);
-     k := realpath(
-	  shorten(pwd+f) -- this simulates what emacs does, textually, which might be wrong
-	  );
+     h := realpath(getcwd()+f);			       -- this is the right way
+     k := realpath(shorten(pwd+f)); -- this simulates what emacs does, textually, which might be wrong
      if k === h then f else h);
 export tostring(w:Position) : string := (
      if w == dummyPosition 
