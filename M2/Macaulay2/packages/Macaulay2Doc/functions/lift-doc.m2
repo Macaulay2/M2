@@ -84,6 +84,10 @@ document {
      PARA{
 	  "A continued fraction method is used to lift a real number to a rational number.",
 	  },
+     PARA {
+	  "For division of matrices, which might be thought of as lifting
+	  one homomorphism over another, see ", TO (symbol //,Matrix, Matrix), "."
+	  },
      EXAMPLE lines ///
 	  12/127.
 	  lift(oo,QQ)

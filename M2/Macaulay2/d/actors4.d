@@ -1328,7 +1328,7 @@ locate2(c:Code):Expr := (
      locate1();
      p := codePosition(c);
      Expr(Sequence(
-	       Expr(minimizeFilename(locatedCode.filename)),
+	       Expr(verifyMinimizeFilename(locatedCode.filename)),
 	       Expr(toInteger(locatedCode.minline)),
 	       Expr(toInteger(locatedCode.mincol)),
 	       Expr(toInteger(locatedCode.maxline)),
@@ -1348,7 +1348,7 @@ locate(e:Expr):Expr := (
 	  then nullE
 	  else Expr(
 	       Sequence(
-		    minimizeFilename(p.filename),
+		    verifyMinimizeFilename(p.filename),
 		    toInteger(int(p.line)),toInteger(int(p.column)),
 		    toInteger(int(p.line)),toInteger(int(p.column)+length(s.symbol.word.name)-1),
 		    toInteger(int(p.line)),toInteger(int(p.column))
@@ -1372,7 +1372,7 @@ export bar := 1;
 --      when e is c:CodeClosure do (
 -- 	  p := codePosition(c.code);
 -- 	  Expr(Sequence(
--- 	       minimizeFilename(p.filename),toInteger(int(p.line)),toInteger(int(p.column)),toInteger(int(p.line)),toInteger(int(p.column)))))
+-- 	       verifyMinimizeFilename(p.filename),toInteger(int(p.line)),toInteger(int(p.column)),toInteger(int(p.line)),toInteger(int(p.column)))))
 --      else WrongArg("pseudocode"));
 -- setupfun("codePosition", codePosition);
 

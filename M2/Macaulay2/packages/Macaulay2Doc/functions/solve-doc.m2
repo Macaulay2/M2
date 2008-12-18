@@ -17,7 +17,6 @@ document {
      ", the matrix ", TT "A", " must be a square
      non-singular matrix.  Third, if ", TT "A", " and ", TT "b", 
      " are mutable matrices over ", TO "RR", " or ", TO "CC", ", they must be dense matrices.",
-     PARA{},
      EXAMPLE lines ///
      	  kk = ZZ/101;
      	  A = matrix"1,2,3,4;1,3,6,10;19,7,11,13" ** kk
@@ -58,6 +57,10 @@ document {
           A'' = I // A
 	  norm(A' - A'')
           ///,
+     PARA {
+	  "For division of matrices, which can also be thought of as solving a
+	  system of linear equations, see ", TO (symbol //,Matrix, Matrix), "."
+	  },
      Caveat => {"This function is limited in scope, but is sometimes useful for very large 
 	  matrices"},
      SeeAlso => {LUdecomposition, SVD, MutableMatrix, norm, random}
