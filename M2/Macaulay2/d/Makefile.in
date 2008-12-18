@@ -350,6 +350,8 @@ endif
 endif
 endif
 	mv "$@".tmp "$@"
+	ln -sf @pre_bindir@/M2@EXE@ @abs_top_builddir@
+clean::; rm -f @abs_top_builddir@/M2@EXE@
 
 mapfile.demangled : mapfile ; demangle <$< >$@
 clean::; rm -f mapfile.demangled

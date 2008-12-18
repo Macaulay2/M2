@@ -467,7 +467,7 @@ if readlink exe =!= null then (
 prefixDirectory2 := if currentLayout2 =!= null then substring(bindir2,0,#bindir2-#currentLayout2#"bin")
 if prefixDirectory2 =!= null
    and isDirectory(prefixDirectory2|currentLayout2#"packages")
-   and not isDirectory(prefixDirectory|currentLayout#"packages")
+   and (currentLayout === null or not isDirectory(prefixDirectory|currentLayout#"packages"))
 then (
      prefixDirectory = prefixDirectory2;
      currentLayout = currentLayout2;
