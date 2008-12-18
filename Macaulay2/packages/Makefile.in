@@ -39,8 +39,8 @@ info-dir: @pre_infodir@ @pre_infodir@/dir
 @pre_infodir@:; $(MKDIR_P) $@
 @pre_infodir@/dir:; @INSTALL_DATA@ @top_srcdir@/files/info-dir-template $@
 define bld
-all: info-dir @pre_packagesdir@/$(1).installed
-@pre_packagesdir@/$(1).installed : $(1).m2 $$(wildcard @srcdir@/$(1)/*.m2 @srcdir@/$(1)/*/*.m2) $(REMAKEPACKAGES)
+all: info-dir @libm2dir@/$(1)/.installed
+@libm2dir@/$(1)/.installed : $(1).m2 $$(wildcard @srcdir@/$(1)/*.m2 @srcdir@/$(1)/*/*.m2) $(REMAKEPACKAGES)
 	@pre_bindir@/M2@EXE@ $(M2DIRS) \
 	    -q --stop --silent \
 	    -e errorDepth=0 \

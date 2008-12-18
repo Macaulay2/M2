@@ -302,9 +302,8 @@ hilbertSeries CoherentSheaf := opts -> F -> (
      notImplemented();
      hilbertSeries(module F,opts))
 
-hilbertPolynomial ProjectiveVariety := ProjectiveHilbertPolynomial => opts -> X -> ( notImplemented(); hilbertPolynomial(ring X, opts) )
+hilbertPolynomial ProjectiveVariety := ProjectiveHilbertPolynomial => opts -> X -> hilbertPolynomial(ring X, opts)
 hilbertPolynomial CoherentSheaf := opts -> F -> (
-     notImplemented();
      if class variety F =!= ProjectiveVariety then error "expected a coherent sheaf over a projective variety";
      hilbertPolynomial(F.module,opts))
 

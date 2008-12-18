@@ -454,10 +454,7 @@ currentLayout = (
      )
 prefixDirectory = if currentLayout =!= null then substring(bindir,0,#bindir-#currentLayout#"bin")
 if readlink exe =!= null then (
-     exe2 := (
-	  if isAbsolutePath readlink exe
-     	  then readlink exe
-     	  else realpath dir exe | "/" | readlink exe);
+     exe2 := concatPath(realpath dir exe | "/", readlink exe);
      bindir2 := dir exe2 | "/";
      currentLayout2 := (
 	  if issuffix(Layout#2#"bin",bindir2) then Layout#2 else
@@ -477,7 +474,9 @@ topBuilddir := (
      if issuffix(stA,prefixDirectory) then substring(prefixDirectory,0,#prefixDirectory-#stA)
      else
      if issuffix(stA,prefixDirectory2) then substring(prefixDirectory2,0,#prefixDirectory2-#stA))
-topSrcdir := if topBuilddir =!= null and fileExists(topBuilddir|"srcdir") then minimizeFilename(topBuilddir|first lines get(topBuilddir|"srcdir"));
+topSrcdir := if topBuilddir =!= null and fileExists(topBuilddir|"srcdir") then (
+     sdir := first lines get(topBuilddir|"srcdir");
+     minimizeFilename concatPath(topBuilddir,sdir))
 
 describePath := () -> (
      stderr << "--file search starts here:" << endl;

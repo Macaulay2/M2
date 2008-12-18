@@ -1,15 +1,15 @@
 # -*- Makefile -*-
 default:
-include $(DIRECTORY)/include/configuration
+include builds/$(DIRECTORY)/include/configuration
 .PHONY : everything world configure all install check-links distclean clean arch-chk install-it rebuild-world default
-all:; $(MAKE) -C "$(DIRECTORY)" $@ $(BUILDOPTIONS)
+all:; $(MAKE) -C builds/$(DIRECTORY) $@ $(BUILDOPTIONS)
 arch-chk:
-check-links:; $(MAKE) -C "$(DIRECTORY)" -C Macaulay2/html-check-links check
-check:; $(MAKE) -C "$(DIRECTORY)" -k $@
-configure $(DIRECTORY)/include/configuration:; mkdir -p $(DIRECTORY) && cd $(DIRECTORY) && ../../../configure $(CONFIGOPTIONS)
+check-links:; $(MAKE) -C builds/$(DIRECTORY) -C Macaulay2/html-check-links check
+check:; $(MAKE) -C builds/$(DIRECTORY) -k $@
+configure builds/$(DIRECTORY)/include/configuration:; mkdir -p builds/$(DIRECTORY) && cd builds/$(DIRECTORY) && $(PWD)/../../configure $(CONFIGOPTIONS)
 default: arch-chk all install check-links
-distclean:; $(MAKE) -C "$(DIRECTORY)" $@
-install-it:; $(MAKE) -C "$(DIRECTORY)" install -o all $(INSTALLOPTIONS)
+distclean:; $(MAKE) -C builds/$(DIRECTORY) $@
+install-it:; $(MAKE) -C builds/$(DIRECTORY) install -o all $(INSTALLOPTIONS)
 install:pre-install install-it post-install
 pre-install post-install:
 rebuild-world: arch-chk distclean world

@@ -1497,12 +1497,10 @@ document {
      "The functions ", TO "degree", " and ", TO "dim", " are designed so they
      correspond the degree and dimension of the algebraic variety that may have
      been used to produce the Hilbert polynomial.",
-{* temporarily disabled
      EXAMPLE {
 	  "Z = Proj(QQ[x_0..x_12]/(x_0^3+x_12^3))",
 	  "hilbertPolynomial Z"
 	  }
-*}
      }
 document {
      Key => (symbol SPACE, ProjectiveHilbertPolynomial, ZZ),

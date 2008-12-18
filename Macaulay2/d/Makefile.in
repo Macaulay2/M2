@@ -182,7 +182,7 @@ endif
 %.dep : %.d
 	$(SCC1) -dep -J. $<
 	mv $*.dp $*.dep
-	../util/updat $*.sg $*.sig || [ $? = 88 ]
+	../util/updat $*.sg $*.sig || [ $$? = 88 ]
 %.c   : %.d
 	$(SCC1) $(SCCFLAGS) +gc -J. -noline $<
 %.oo  : %.d
@@ -248,15 +248,17 @@ gmp_int.o M2lib.o scclib.o gdbm_interface.o gc_cpp.o version.o M2inits.o debug.o
 clean::; rm -f startup.c
 SSTRING := -e 's/\\/\\\\/g' -e 's/"/\\"/g' -e 's/\(.*\)/"\1\\n"/'
 layout.m2 : layout.m2.in ; cd ../.. ; ./config.status Macaulay2/d/layout.m2
-startup.c : ../m2/startup.m2 layout.m2
-	(echo 'char startupString1[] =' ; \
-	 cat layout.m2 | sed $(SSTRING) ; \
-	 echo ';' ; \
-	 echo 'char startupString2[] =' ; \
-	 cat $< | sed $(SSTRING) ; \
-	 echo ';' \
+startup.c : @srcdir@/../m2/startup.m2 layout.m2
+	(\
+	 echo    'char startupString1[] ='   ; cat layout.m2                         | sed $(SSTRING) ; echo  ';' ; \
+	 echo -n 'char startupFile1  [] = "' ; echo -n @abs_srcdir@/layout.m2.in                      ; echo '";' ; \
+	 echo    'char startupString2[] ='   ; cat @srcdir@/../m2/startup.m2         | sed $(SSTRING) ; echo  ';' ; \
+	 echo -n 'char startupFile2  [] = "' ; echo -n @abs_srcdir@/../m2/startup.m2                  ; echo '";' ; \
         ) >$@
 clean :: ; rm -f layout.m2 startup.c
+clean-startup.c :; rm -f startup.c
+cat-startup.c :; cat startup.c
+redo-startup:clean-startup.c startup.c cat-startup.c
 
 ifeq "@DUMPDATA@" "yes"
 M2_LIBDEPS += ../dumpdata/libdump.a
@@ -338,7 +340,7 @@ clean::; rm -f @pre_bindir@/M2@EXE@
 	time @CC@ $(M2_LDFLAGS) $(M2_OBJECTS_AND_LIBRARIES) -lm -o "$@".tmp
 	printenv LD_LIBRARY_PATH
 ifneq (@LDD@,)
-	- @LDD@ $< | ( ! egrep -v " => /usr/lib/| => /lib/|/lib/ld-linux.so|linux-gate" )
+	- @LDD@ $@ | ( ! egrep -v " => /usr/lib/| => /lib/|/lib/ld-linux.so|linux-gate" )
 endif
 ifeq "$(STRIP)" "yes"
 ifneq "@STRIPCMD@" ""

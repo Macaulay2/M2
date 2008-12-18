@@ -113,13 +113,11 @@ document {
      "The command ", TO dim,  "is designed so that the result 
      is the dimension of the projective scheme that 
      may have been used to produce the given Hilbert polynomial.",
-{* temporarily disabled
      EXAMPLE {
 	  "V = Proj(QQ[x_0..x_5]/(x_0^3+x_5^3))",
 	  "P = hilbertPolynomial V",
 	  "dim P"
 	  },
-*}
       SeeAlso => {hilbertPolynomial, (degree,ProjectiveHilbertPolynomial), (euler,ProjectiveHilbertPolynomial)}
      }
 document { 

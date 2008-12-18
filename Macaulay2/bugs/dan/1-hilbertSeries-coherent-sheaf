@@ -1,4 +1,5 @@
-search for "{* temporarily disabled" to find the 7 disabled bits of example code
+search for "{* temporarily disabled" to find the 1 disabled bits of example code
+The other six were for hilbertPolynomial, which is okay.
 
 Cc: Michael Stillman <mike@math.cornell.edu>
 From: David Eisenbud <de@msri.org>
