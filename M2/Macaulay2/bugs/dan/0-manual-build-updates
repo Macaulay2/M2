@@ -19,3 +19,4 @@ things to do manually before release
        check that alarm works or devise an automated test
 
        check that installPackage works for the user (now, with no symbolic links)
+       	     and that it creates a documentation database and finds and uses it

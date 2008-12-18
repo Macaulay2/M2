@@ -1,23 +1,19 @@
 # -*- Makefile -*-
-# to be included (now) one level down from here
-
+default:
+include $(DIRECTORY)/include/configuration
+.PHONY : everything world configure all install check-links distclean clean arch-chk install-it rebuild-world default
+all:; $(MAKE) -C "$(DIRECTORY)" $@ $(BUILDOPTIONS)
+arch-chk:
+check-links:; $(MAKE) -C "$(DIRECTORY)" -C Macaulay2/html-check-links check
+check:; $(MAKE) -C "$(DIRECTORY)" -k $@
+configure $(DIRECTORY)/include/configuration:; mkdir -p $(DIRECTORY) && cd $(DIRECTORY) && ../../../configure $(CONFIGOPTIONS)
 default: arch-chk all install check-links
+distclean:; $(MAKE) -C "$(DIRECTORY)" $@
+install-it:; $(MAKE) -C "$(DIRECTORY)" install -o all $(INSTALLOPTIONS)
+install:pre-install install-it post-install
+pre-install post-install:
 rebuild-world: arch-chk distclean world
 world: arch-chk configure all install check
-
-.PHONY : everything world configure all install check-links distclean clean
-include include/configuration
-configure include/configuration:; ../../../configure $(CONFIGOPTIONS)
-all:; $(MAKE) $@ $(BUILDOPTIONS)
-install:pre-install install-it post-install
-install-it:; $(MAKE) install -o all $(INSTALLOPTIONS)
-install:post-install
-pre-install post-install:
-check-links:; $(MAKE) -C Macaulay2/html-check-links check
-check:; $(MAKE) -k $@
-distclean:; $(MAKE) $@
-arch-chk:
-
 CONFIGOPTIONS += --enable-encap
 CONFIGOPTIONS += --enable-common-staging-area
 CONFIGOPTIONS += --prefix=/usr

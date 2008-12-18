@@ -1,0 +1,8 @@
+speed up "replace", for example, this:
+
+      replace ( "^(.*) (.*) \\[", "%\\1 %\\2 @\\1 \\2 [", cedict)
+
+is too slow, compared to emacs (cedict has 5643739 bytes and the replacement will happen 80100 times)
+
+
+Also, make it interruptable.
