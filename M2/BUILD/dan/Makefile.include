@@ -9,8 +9,10 @@ rebuild-world: distclean world
 world: configure all install check
 configure include/configuration:; ../../../configure $(CONFIGOPTIONS)
 all:; $(MAKE) $@ $(BUILDOPTIONS)
-install:clean-target; $(MAKE) $@ -o all $(INSTALLOPTIONS)
-clean-target:
+install:pre-install install-it post-install
+install-it:; $(MAKE) install -o all $(INSTALLOPTIONS)
+install:post-install
+pre-install post-install:
 check-links:; $(MAKE) -C Macaulay2/html-check-links check
 check:; $(MAKE) -k $@
 distclean:; $(MAKE) $@
