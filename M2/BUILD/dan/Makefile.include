@@ -1,12 +1,12 @@
 # -*- Makefile -*-
 # to be included (now) one level down from here
-TARGETS = everything world configure all install check-links distclean clean
-default: all install check-links
-#
+
+default: arch-chk all install check-links
+rebuild-world: arch-chk distclean world
+world: arch-chk configure all install check
+
 .PHONY : everything world configure all install check-links distclean clean
 include include/configuration
-rebuild-world: distclean world
-world: configure all install check
 configure include/configuration:; ../../../configure $(CONFIGOPTIONS)
 all:; $(MAKE) $@ $(BUILDOPTIONS)
 install:pre-install install-it post-install
@@ -16,6 +16,7 @@ pre-install post-install:
 check-links:; $(MAKE) -C Macaulay2/html-check-links check
 check:; $(MAKE) -k $@
 distclean:; $(MAKE) $@
+arch-chk:
 
 CONFIGOPTIONS += --enable-encap
 CONFIGOPTIONS += --enable-common-staging-area

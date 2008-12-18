@@ -19,6 +19,9 @@ load "./doc11.m2"
 load "./doc12.m2"
 load "./doc13.m2"
 load "./doc14.m2"
+
+load "./changes.m2"
+
 load "./overviewA.m2"
 load "./overviewB.m2"
 load "./overviewC.m2"
