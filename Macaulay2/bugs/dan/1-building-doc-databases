@@ -1,5 +1,5 @@
 The doc databases for packages may not be getting built if we start fresh with
-just the CommonStagingArea files, because *.installed is there.
+just the CommonStagingArea files, because *.installed is there. (FIXED)
 
 It would be nice also if a missing database could be rebuilt automatically, provided
 the directory is writable.

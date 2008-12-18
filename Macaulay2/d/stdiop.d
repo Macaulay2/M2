@@ -61,7 +61,7 @@ isAbsolutePath(s:string):bool := (
      );
 export absoluteFilename(filename:string):string := (
      if !isAbsolutePath(filename) then filename = getcwd() + filename;
-     shorten(filename));
+     realpath(filename));
 export relativizeFilename(cwd:string,filename:string):string := (
      -- what about MacOS?
      cwd = absoluteFilename(cwd);
@@ -84,12 +84,20 @@ export minimizeFilename(filename:string):string := (
      c := if length(a) <= length(b) then a else b;
      if length(c) == 0 then c = "./";
      c);
-
+export verifyMinimizeFilename(filename:string):string := (
+     f := minimizeFilename(filename);
+     if isAbsolutePath(f) then return f;
+     pwd := getenv("PWD")+"/";
+     if pwd === getcwd() then return f;
+     h := absoluteFilename(f);
+     k := realpath(
+	  shorten(pwd+"/"+f) -- this simulates what emacs does, textually, which might be wrong
+	  );
+     if k === h then f else h);
 export tostring(w:Position) : string := (
      if w == dummyPosition 
      then "{*dummy position*}"
-     else errfmt(minimizeFilename(w.filename),int(w.line),int(w.column + 1),int(w.loadDepth))
-     );
+     else errfmt(verifyMinimizeFilename(w.filename),int(w.line),int(w.column + 1),int(w.loadDepth)));
 export (o:file) << (w:Position) : file := (
      o << tostring(w)
      );

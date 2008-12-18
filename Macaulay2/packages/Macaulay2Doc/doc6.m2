@@ -181,13 +181,15 @@ document {
 document {
      Key => "minExponent",
      "This constant is the smallest exponent (of 2) that can be stored internally in the binary representation of
-     an inexact real (or complex) number.  It cannot be changed."
+     an inexact real (or complex) number.  It cannot be changed.",
+     EXAMPLE "minExponent"
      }
 
 document {
      Key => "maxExponent",
      "This constant is the largest exponent (of 2) that can be stored internally in the binary representation of
-     an inexact real (or complex) number.  It cannot be changed."
+     an inexact real (or complex) number.  It cannot be changed.",
+     EXAMPLE "maxExponent"
      }
 
 document {

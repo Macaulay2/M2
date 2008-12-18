@@ -445,7 +445,21 @@ document {
 	       a := b := 44
 	       a
 	       b
-	  ///	  
+	  ///,
+	  PARA {
+	       "By the way, there is a difference between a variable (to which values can be assigned) and a symbol (which
+	       can be used as an indeterminate in making a polynomial ring).  If you want a local variable to which is assigned
+	       the corresponding local symbol, then combine the use of ", TO ":=", " with the use of ", TO "local", ", as
+	       in the following example, which illustrates a good way to do a computation in a temporary ring
+	       without disturbing the values of any global variables.",
+	       },
+	  EXAMPLE {
+	       ///g = () -> (
+     x := local x;
+     R := QQ[x];
+     (x+2)^10);
+g()
+	  ///
 	  ),
      SYNOPSIS {
 	  Heading => "multiple local assignment",

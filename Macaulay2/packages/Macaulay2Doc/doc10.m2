@@ -372,7 +372,11 @@ document {
 
 document {
      Key => factor,
-     Headline => "factor a ring element or a ZZ-module"
+     Headline => "factor a ring element or a ZZ-module",
+     PARA {
+	  "For division of matrices, which can be thought of as factoring
+	  one homomorphism through another, see ", TO (symbol //,Matrix, Matrix), "."
+	  }
      }
 
 document {
