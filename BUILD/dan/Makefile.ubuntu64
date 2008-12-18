@@ -18,5 +18,5 @@ guess:
 	../../config/config.guess
 
 # Local Variables:
-# compile-command: "make -f Makefile.ubuntu64 "
+# compile-command: "time make -f Makefile.ubuntu64 "
 # End:
