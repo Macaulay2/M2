@@ -669,11 +669,12 @@ installPackage Package := opts -> pkg -> (
 
 	  -- cache raw documentation in database, and check for changes
 	  rawDocUnchanged := new MutableHashTable;
-	  docDir := pkg#"package prefix" | replace("PKG",pkg#"title",layout#"packagecache");
-	  rawdbname := docDir | "rawdocumentation" | databaseSuffix;
+	  libDir := pkg#"package prefix" | replace("PKG",pkg#"title",layout#"packagelib");
+	  cacheDir := pkg#"package prefix" | replace("PKG",pkg#"title",layout#"packagecache");
+	  rawdbname := cacheDir | "rawdocumentation" | databaseSuffix;
 	  rawdbnametmp := rawdbname | ".tmp";
 	  if verbose then stderr << "--storing raw documentation in " << rawdbname << endl;
-	  makeDirectory docDir;
+	  makeDirectory cacheDir;
 	  if fileExists rawdbnametmp then removeFile rawdbnametmp;
 	  if fileExists rawdbname then (
 	       tmp := openDatabase rawdbname;   -- just to make sure the database file isn't open for writing
@@ -997,7 +998,7 @@ installPackage Package := opts -> pkg -> (
 
      -- all done
      SRC = null;
-     if not hadExampleError then buildDirectory|pkgDirectory|buildPackage|".installed" << close;
+     if not hadExampleError then libDir|".installed" << close;
      if verbose then << "--installed package " << pkg << " in " << buildDirectory << endl;
      currentPackage = oldpkg;
      if not noinitfile then (

@@ -39,15 +39,18 @@ info-dir: @pre_infodir@ @pre_infodir@/dir
 @pre_infodir@:; $(MKDIR_P) $@
 @pre_infodir@/dir:; @INSTALL_DATA@ @top_srcdir@/files/info-dir-template $@
 define bld
-all: info-dir @libm2dir@/$(1)/.installed
-@libm2dir@/$(1)/.installed : $(1).m2 $$(wildcard @srcdir@/$(1)/*.m2 @srcdir@/$(1)/*/*.m2) $(REMAKEPACKAGES)
+all: info-dir @pre_libm2dir@/$1/.installed
+@pre_libm2dir@/$1/.installed : $1.m2 $$(wildcard @srcdir@/$1/*.m2 @srcdir@/$1/*/*.m2) $(REMAKEPACKAGES)
+	: installing package $1
 	@pre_bindir@/M2@EXE@ $(M2DIRS) \
 	    -q --stop --silent \
 	    -e errorDepth=0 \
 	    -e debugLevel=$(debugLevel) \
 	    $(EARGS) \
-	    -e "installPackage(\"$(1)\", $(ARGS)); exit 0"
+	    -e "installPackage(\"$1\", $(ARGS)); exit 0"
 	install-info --quiet --info-dir=@pre_infodir@ @pre_infodir@/$1.info
+	: check to see if the file was made:
+	[ -f $$@ ]
 endef
 $(foreach i, $(PACKAGES), $(eval $(call bld,$i)))
 
