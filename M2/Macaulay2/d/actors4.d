@@ -1367,15 +1367,6 @@ locate(e:Expr):Expr := (
 setupfun("locate",locate);
 
 export bar := 1;
-
--- codePosition(e:Expr):Expr := (
---      when e is c:CodeClosure do (
--- 	  p := codePosition(c.code);
--- 	  Expr(Sequence(
--- 	       verifyMinimizeFilename(p.filename),toInteger(int(p.line)),toInteger(int(p.column)),toInteger(int(p.line)),toInteger(int(p.column)))))
---      else WrongArg("pseudocode"));
--- setupfun("codePosition", codePosition);
-
 export storeInHashTableWithCollisionHandler(x:HashTable,key:Expr,value:Expr,handler:Expr):Expr := (
      if !x.mutable then return buildErrorPacket("attempted to modify an immutable hash table");
      h := hash(key);

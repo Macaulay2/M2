@@ -1343,7 +1343,13 @@ changeDirectory(e:Expr):Expr := (
      else WrongArgString());
 setupfun("changeDirectory",changeDirectory);
 
-realpathfun(e:Expr):Expr := when e is filename:string do Expr(realpath(filename)) else WrongArgString();
+realpathfun(e:Expr):Expr := (
+     when e is f:string do (
+     	  when realpath(f)
+     	  is null do buildErrorPacket(syscallErrorMessage("realpath"))
+     	  is p:string do Expr(p)
+     	  )
+     else WrongArgString());
 setupfun("realpath",realpathfun);
 
 setupconst("typicalValues", Expr(typicalValues));

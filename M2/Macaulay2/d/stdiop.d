@@ -18,7 +18,7 @@ use ctype;
 export Position := {filename:string, line:ushort, column:ushort, loadDepth:uchar};
 export (s:Position) === (t:Position) : bool := s == t || s.filename === t.filename && s.line == t.line && s.column == t.column;
 export dummyPosition := Position("{*dummy file name*}",ushort(0),ushort(0),uchar(loadDepth));
-shorten(s:string):string := (
+shorten(s:string):string := (				    -- purely textual
      -- shorten filenames like "/a/b/c/../d////e/f" to "/a/b/d/e/f"
      while true do (
 	  i := 0;
@@ -53,18 +53,21 @@ shorten(s:string):string := (
 	       );
 	  );
      );
-isAbsolutePath(s:string):bool := (
+isAbsolutePath(s:string):bool := (                         			    -- purely textual
      -- eventually make this happen only in MSDOS
      length(s) >= 1 && s.0 == '/' ||
      length(s) >= 3 && s.1 == ':' && s.2 == '/' ||
      s === "stdio"
      );
-absoluteFilename(filename:string):string := (
-     if !isAbsolutePath(filename) then filename = getcwd() + filename;
-     -- old way was: shorten(filename), purely textual, could get into trouble with symbolic links
-     f := realpath(filename);				    -- new way looks at the file system
-     if length(filename) == 0 || filename.(length(filename)-1) == '/' && length(f)>0 && f.(length(f)-1) != '/' then f = f + '/';
-     f);
+absoluteFilename(filename:string):string := (					    -- purely textual
+     if !isAbsolutePath(filename)
+     then filename = getcwd() + filename;		    -- using getcwd() instead of getenv("PWD"), which is what emacs thinks about
+     shorten(filename)
+     -- if we wanted to take real paths into account we would do it like this instead:
+     -- f := realpath(filename);
+     -- if length(filename) == 0 || filename.(length(filename)-1) == '/' && length(f)>0 && f.(length(f)-1) != '/' then f = f + '/';
+     -- f
+     );
 export relativizeFilename(cwd:string,filename:string):string := (
      cwd = absoluteFilename(cwd);
      if length(cwd) == 0 || cwd.(length(cwd)-1) != '/' then cwd = cwd + '/';
@@ -87,12 +90,22 @@ export minimizeFilename(filename:string):string := (
      if length(c) == 0 then c = "./";
      c);
 export verifyMinimizeFilename(filename:string):string := (
+     p := when realpath(filename) is null do return filename is s:string do s;
      f := minimizeFilename(filename);
      if isAbsolutePath(f) then return f;
+     if !(length(f) >= 3 && f.0 == '.' && f.1 == '.' && f.2 == '/') then (
+	  -- we assume realpath(getenv("PWD")) and getcwd() would be the same, so the only problem for
+	  -- emacs would be if the minimized path begins with ../
+	  return f;
+	  );
      pwd := getenv("PWD")+"/";
      if pwd === getcwd() then return f;
-     h := realpath(getcwd()+f);			       -- this is the right way
-     k := realpath(shorten(pwd+f)); -- this simulates what emacs does, textually, which might be wrong
+     h := when
+     realpath(getcwd()+f)			       -- this is correct
+     is null do return filename is s:string do s;
+     k := when
+     realpath(shorten(pwd+f))                    -- this simulates what emacs does, textually, which might be wrong
+     is null do return filename is s:string do s;
      if k === h then f else h);
 export tostring(w:Position) : string := (
      if w == dummyPosition 

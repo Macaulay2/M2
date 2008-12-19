@@ -130,8 +130,6 @@ phase1 :: .Macaulay2-made
 .Macaulay2-made : $(DUMPEDM2FILES) $(DUMPEDM2DOCFILES) @pre_exec_prefix@/bin/M2@EXE@
 	touch $@
 clean ::; rm -f .Macaulay2-made
-
-## .gdbinit
 all: .gdbinit .gdb-files .gdb-run-it
 gdb: .gdbinit .gdb-files; gdb @pre_exec_prefix@/bin/M2@EXE@
 .gdbinit: .gdbinit.$(USER); cp $< $@
@@ -146,37 +144,8 @@ clean :: ; rm -f .gdb-files
 	echo 'echo \n' >>$@
 	echo 'run -q --no-loaddata --no-readline --no-personality' >>$@
 clean :: ; rm -f .gdb-run-it
-profile : gmon.out
-	gprof @pre_exec_prefix@/bin/M2@EXE@ >profile
+profile : gmon.out; gprof @pre_exec_prefix@/bin/M2@EXE@ >profile
 clean ::; rm -f profile
-
-ifeq "@DEBUG@" "yes"
-EGFLAGS = -k
-EGMORE = || true
-endif
-
-TMPDIR = tmp
-check:: $(TMPDIR) test2
-$(TMPDIR) :; mkdir $@
-test2: phase1 @pre_exec_prefix@/bin/M2@EXE@
-	$(MAKE) -C $(TMPDIR) -f $(srcdir)/Makefile.tests srcdir=$(srcdir)
-	touch $@
-clean::; rm -f test2
-
-check:: test3
-test3:
-	echo 2+3 | @pre_exec_prefix@/bin/M2@EXE@
-	touch $@
-clean::; rm -f test3
-
-ifeq (@OS@,Linux)
-# check:: test4
-test4: ../util/screen
-	echo 2+3 | ../util/screen @pre_exec_prefix@/bin/M2@EXE@
-	touch $@
-clean::; rm -f test4
-endif
-
 @pre_packagesdir@ :; @INSTALL@ -d $@
 @pre_packagesdir@/Core  : ; @INSTALL@ -d $@
 @pre_packagesdir@/Core/% : % ; @INSTALL_DATA@ $^ $@
@@ -184,7 +153,6 @@ FILES_TO_COPY := $(DUMPEDM2FILES) demo1.m2
 all:@pre_packagesdir@ @pre_packagesdir@/Core $(addprefix @pre_packagesdir@/Core/, $(FILES_TO_COPY))
 clean::; rm -rf ../cache/@DUMPDATAFILE@ cache *.obj *.exe runexample temp.data distfiles loads.m2 mpcodes.m2 core gmon.out
 distclean : clean; rm -f Makefile version.m2
-
 # Local Variables:
 # compile-command: "make -C $M2BUILDDIR/Macaulay2/m2 "
 # End:

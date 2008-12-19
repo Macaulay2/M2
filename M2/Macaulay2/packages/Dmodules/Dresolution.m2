@@ -194,8 +194,7 @@ Dresolution (Module, List) := options -> (M, w) -> (
      s := rank source N;
      t := rank target N;
      M.cache.resolution#w#0 = target N;
-     M.cache.resolution#w.dd#0 = map(W^0, M.cache.resolution#w#0, transpose (
-	  compress matrix toList(t:{0_W})) );
+     M.cache.resolution#w.dd#0 = map(W^0, M.cache.resolution#w#0, 0);
 
      -- MAKE THE FIRST STEP OF THE RESOLUTION
      shiftvec := apply(degrees target N, i -> i#0); 

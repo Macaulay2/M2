@@ -1479,7 +1479,7 @@ document {
 TEST ///
 R = ZZ[x,y,z];
 trivial = arrangement({},R);
-nontrivial = arrangement{x},R);
+nontrivial = arrangement({x},R);
 assert(rank trivial == 0)
 assert(ring trivial === R)
 assert(0 == matrix trivial)

@@ -167,11 +167,15 @@ fixup2 Option := o -> (
      if optionFixes2#?key then optionFixes2#key (key,val) else o
      )
 
+oops = () -> error "expected a list of integers or a list of lists of small integers"
+
 processWeights = (nvars,weights) -> (
      weights = spliceInside toList weights;
      if #weights > 0 and isListOfIntegers weights then weights = {weights}
-     else if not isListOfListsOfIntegers weights 
-     then error "expected a list of integers or a list of lists of small integers";
+     else (
+	  weights = apply(weights, w -> ( if not instance(w,List) then oops(); deepSplice w));
+	  if not isListOfListsOfIntegers weights then oops();
+	  );
      scan(weights, 
 	  wt -> (
 	       if # wt != nvars

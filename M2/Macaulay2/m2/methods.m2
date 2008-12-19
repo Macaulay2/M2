@@ -433,14 +433,7 @@ scan(flexiblePostfixOperators, op -> (
 -- helper functions useable in documentation
 -----------------------------------------------------------------------------
 
-sourceFileStamp = () -> concatenate(
-     "-- line ",
-     toString currentLineNumber(),
-     " in ",
-     if not isAbsolutePath currentFileName and currentFileName != "stdio" then ("/",relativizeFilename ("/",concatenate(currentDirectory, currentFileName)))
-     else currentFileName
-     )
-
+sourceFileStamp = () -> concatenate("--",toAbsolutePath currentFileName, ":", toString currentLineNumber(), ": location of test code")
 TEST = method()
 TEST String := s -> (
      currentPackage#"test inputs"#(currentPackage#"test number") = (currentFileName,currentLineNumber(),concatenate( sourceFileStamp(), newline, s));

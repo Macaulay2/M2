@@ -28,7 +28,7 @@ For details, see the file COPYING.
 -------------------------------------------------
 Using 64 bit integers.
 4ti2 Total Time:  0.00 secs.
-using temporary file name /tmp/M2-27589-1
+using temporary file name /tmp/M2-9177-1
 
 o3 = | 0 1 2 3 |
      | 3 2 1 0 |
@@ -37,5 +37,3 @@ o3 = | 0 1 2 3 |
 o3 : Matrix ZZ  <--- ZZ
 
 i4 : 
-0.66user 0.07system 0:00.68elapsed 109%CPU (0avgtext+0avgdata 0maxresident)k
-8inputs+16outputs (0major+10620minor)pagefaults 0swaps

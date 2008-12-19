@@ -4,15 +4,18 @@ include builds/$(DIRECTORY)/include/configuration
 .PHONY : everything world configure all install check-links distclean clean arch-chk install-it rebuild-world default
 all:; $(MAKE) -C builds/$(DIRECTORY) $@ $(BUILDOPTIONS)
 arch-chk:
-check-links:; $(MAKE) -C builds/$(DIRECTORY) -C Macaulay2/html-check-links check
+everything:; $(MAKE) -C builds/$(DIRECTORY) all RemakeAllDocumentation=true RemakePackages=true RerunExamples=true
+check-links:; $(MAKE) -C builds/$(DIRECTORY)/Macaulay2/html-check-links check
 check:; $(MAKE) -C builds/$(DIRECTORY) -k $@
 configure builds/$(DIRECTORY)/include/configuration:; mkdir -p builds/$(DIRECTORY) && cd builds/$(DIRECTORY) && $(PWD)/../../configure $(CONFIGOPTIONS)
 default: arch-chk all install check-links
-distclean:; $(MAKE) -C builds/$(DIRECTORY) $@ && find . -type f
+distclean: distclean1 distclean2
+distclean1:; $(MAKE) -C builds/$(DIRECTORY) distclean
+distclean2:; find builds/$(DIRECTORY) -type f | sed 's/^/=== /'
 install-it:; $(MAKE) -C builds/$(DIRECTORY) install -o all $(INSTALLOPTIONS)
 install:pre-install install-it post-install
 pre-install post-install:
-rebuild-world: arch-chk distclean world
+rebuild-world: arch-chk distclean configure everything install check
 world: arch-chk configure all install check
 CONFIGOPTIONS += --enable-encap
 CONFIGOPTIONS += --enable-common-staging-area

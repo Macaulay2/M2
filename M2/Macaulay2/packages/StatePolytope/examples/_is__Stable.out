@@ -46,5 +46,3 @@ VERTICES
 o5 = false
 
 i6 : 
-9.84user 0.55system 0:16.02elapsed 64%CPU (0avgtext+0avgdata 0maxresident)k
-90704inputs+64outputs (469major+93579minor)pagefaults 0swaps

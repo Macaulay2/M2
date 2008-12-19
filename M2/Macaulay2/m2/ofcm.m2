@@ -319,7 +319,7 @@ processDegrees := (degs,degrk,nvars) -> (
 	  )
      else (
      	  if not instance(degs,List) then error "Degrees: expected a list";
-     	  degs = apply(spliceInside degs, d -> if class d === ZZ then {d} else d);
+     	  degs = apply(spliceInside degs, d -> if class d === ZZ then {d} else spliceInside d);
      	  scan(degs, d -> if not (instance(d,List) and all(d, i -> instance(i,ZZ))) then error "expected degree to be an integer or list of integers");
      	  if degrk === null then (
 	       if not same(length \ degs) then error "expected degrees all of the same rank";

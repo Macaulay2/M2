@@ -423,7 +423,10 @@ processCommandLineOptions := phase0 -> (			    -- 3 passes
 		    usage();
 		    exit 1;
 		    )
-	       else if phase == 4 then if instance(load, Function) then load arg else simpleLoad arg;
+	       else if phase == 4 then (
+		    if not isStablePath arg and instance(load, Function) then load arg
+		    else simpleLoad arg;
+		    );
 	       argno = argno+1;
 	       );
 	  loadDepth = ld;
