@@ -3,8 +3,10 @@ include include/config.Makefile
 VPATH = @srcdir@
 .PRECIOUS: @srcdir@/configure config.status
 .PHONY: reconfigure-libs reconfigure-all configure-help report-M2-location help scripts
-all: check-vars srcdir protect-configs include/config.Makefile include/M2/config.h all-dirs report-M2-location
-check:check-dirs
+all:configged check-vars srcdir protect-configs include/config.Makefile include/M2/config.h all-dirs report-M2-location
+configged:include/configuration
+include/configuration: config.status; ./config.status
+check:configged check-dirs
 clean:clean-dirs
 	rm -f srcdir .link-test srcdir confdefs.h configure.lineno conftest.* include/config.h
 	rm -rf StagingArea conf_*
@@ -20,9 +22,9 @@ $1-dirs:
 	$$(MAKE) -C check-configure $1 $2
 endef
 $(foreach t,all check clean distclean,$(eval $(call do-dirs,$t)))
-install:normal all; $(MAKE) -C distributions $@
+install:configged normal all; $(MAKE) -C distributions $@
 normal:;$(NORMAL_INSTALL) 
-scripts : pre-install.sh post-install.sh
+scripts: pre-install.sh post-install.sh
 MI = $(MAKE) -s --no-print-directory -n install -o all PRE_INSTALL=turn-off POST_INSTALL=turn-off NORMAL_INSTALL=turn-off
 pre-install.sh    : install-scripts.awk ; $(MI) PRE_INSTALL=turn-on |gawk -f $^ >$@
 post-install.sh   : install-scripts.awk ; $(MI) POST_INSTALL=turn-on |gawk -f $^ >$@
