@@ -1,6 +1,5 @@
 #-*- Makefile -*-
-#BUILDOPTIONS += RemakeAllDocumentation=true
-#BUILDOPTIONS += RemakePackages=true
+BUILDOPTIONS += RemakeAllDocumentation=true RemakePackages=true
 #BUILDOPTIONS += -s
 #INSTALLOPTIONS += -s
 
