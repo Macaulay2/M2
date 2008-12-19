@@ -33,9 +33,9 @@ endif
 	$$(MAKE) -C packages/Macaulay2Doc/test $1 $2
 	$$(MAKE) -C book $1 $2
 endef
-$(foreach t,all, $(eval $(call do-dirs,$t)))
-$(foreach t,check, $(eval $(call do-dirs,$t,-k)))
-$(foreach t,clean distclean, $(eval $(call do-dirs,$t,DEPENDS=no)))
+$(foreach t,all,$(eval $(call do-dirs,$t)))
+$(foreach t,check,$(eval $(call do-dirs,$t,-k)))
+$(foreach t,clean distclean,$(eval $(call do-dirs,$t,DEPENDS=no)))
 @pre_docdir@:; $(MKDIR_P) "$@"
 @pre_docdir@/% : % | @pre_docdir@ ; @INSTALL_DATA@ $< "$@"
 Makefile : Makefile.in; cd ..; ./config.status Macaulay2/Makefile
