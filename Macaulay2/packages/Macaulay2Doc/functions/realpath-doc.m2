@@ -15,10 +15,10 @@ document {
 	  symlinkFile(p,q)
 	  readlink q
 	  realpath q
-	  p << "hi there" << close
+	  p << close
 	  realpath q
 	  removeFile q
      ///,
      SeeAlso => {readlink},
-     Caveat => "Links going nowhere are not traversed, as the example shows."
+     Caveat => "A broken link (one pointing to a file that doesn't exist) is not traversed, as the example shows."
      }

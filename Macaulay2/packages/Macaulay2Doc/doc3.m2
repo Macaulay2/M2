@@ -1292,12 +1292,17 @@ document { Key => toAbsolutePath,
      Usage => "toAbsolutePath filename",
      Inputs => { "filename" => String },
      Outputs => {
-	  String => {"the absolute path name of ", TT "filename"}
+	  String => {"the absolute (real) path name of ", TT "filename"}
 	  },
      EXAMPLE lines ///
          toAbsolutePath "a/b.m2"
      ///,
-     SeeAlso => {File,minimizeFilename, relativizeFilename, baseFilename, "path"}     
+     PARA {
+	  "Paths of the form ", TT "foo/x/../bar", ", where ", TT "x", " is a symbolic
+	  link, are handled by following the link, rather than by simplifying to
+	  ", TT "foo/bar", ".  The resulting path is a real one, as might have been returned by ", TO "realpath", "."
+	  },
+     SeeAlso => {File,minimizeFilename, relativizeFilename, baseFilename, "path"}
      }
 document { Key => baseFilename,
      Headline => "the base part of a filename or path",
@@ -1327,6 +1332,11 @@ document { Key => minimizeFilename,
          minimizeFilename "a/b/c/../d"
 	 minimizeFilename "../../../../../../"
      ///,
+     PARA {
+	  "Paths of the form ", TT "foo/x/../bar", ", where ", TT "x", " is a symbolic
+	  link, are handled by following the link, rather than by simplifying to
+	  ", TT "foo/bar", ".  The resulting path is a real one, as returned by ", TO "realpath", "."
+	  },
      SeeAlso => {File,relativizeFilename, baseFilename, toAbsolutePath, searchPath, "path"}
      }
 document { Key => relativizeFilename,
@@ -1339,6 +1349,11 @@ document { Key => relativizeFilename,
          relativizeFilename("a/b/c/d","a/b/")
          relativizeFilename("a/b/c/d","a/b/e/f")
      ///,
+     PARA {
+	  "Paths of the form ", TT "foo/x/../bar", ", where ", TT "x", " is a symbolic
+	  link, are handled by following the link, rather than by simplifying to
+	  ", TT "foo/bar", ".  The resulting path is a real one, as might have been returned by ", TO "realpath", "."
+	  },
      SeeAlso => {File,minimizeFilename, baseFilename, toAbsolutePath, searchPath, "path"}
      }
 document {

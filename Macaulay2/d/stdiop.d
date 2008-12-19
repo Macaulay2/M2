@@ -59,15 +59,13 @@ isAbsolutePath(s:string):bool := (
      length(s) >= 3 && s.1 == ':' && s.2 == '/' ||
      s === "stdio"
      );
-export absoluteFilename(filename:string):string := (
+absoluteFilename(filename:string):string := (
      if !isAbsolutePath(filename) then filename = getcwd() + filename;
-     shorten(filename));
--- I want this to work:
---     f := realpath(filename);
---     if filename.(length(filename)-1) == '/' then f = f + '/';
---     f);
+     -- old way was: shorten(filename), purely textual, could get into trouble with symbolic links
+     f := realpath(filename);				    -- new way looks at the file system
+     if length(filename) == 0 || filename.(length(filename)-1) == '/' && length(f)>0 && f.(length(f)-1) != '/' then f = f + '/';
+     f);
 export relativizeFilename(cwd:string,filename:string):string := (
-     -- what about MacOS?
      cwd = absoluteFilename(cwd);
      if length(cwd) == 0 || cwd.(length(cwd)-1) != '/' then cwd = cwd + '/';
      filename = absoluteFilename(filename);
