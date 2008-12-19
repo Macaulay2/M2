@@ -43,7 +43,7 @@ install::
 	install-info --quiet --info-dir=@infodir@ @infodir@/$1
 	$(NORMAL_INSTALL)
 endef
-$(foreach i,$(INFOFILES), $(eval $(call ii,$i)))
+$(foreach i,$(INFOFILES),$(eval $(call ii,$i)))
 
 Makefile : @srcdir@/Makefile.in; cd ../..; ./config.status distributions/install/Makefile
 uninstall :; @echo "uninstall: not implemented yet" >&2 ; false

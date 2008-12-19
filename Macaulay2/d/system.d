@@ -77,7 +77,7 @@ import isRegularFile(name:string):int;
 export ArrayStringOrNull := null or array(string);
 import wordexp(word:string):ArrayStringOrNull;
 import readlink(filename:string):string;
-import realpath(filename:string):string;
+import realpath(filename:string):(null or string);
 import noErrorMessage:string;
 import regexmatchErrorMessage:string;
 import regexmatch(pattern:string, offset:int, text:string):array(int);

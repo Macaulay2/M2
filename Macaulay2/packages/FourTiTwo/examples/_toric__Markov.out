@@ -24,7 +24,7 @@ For details, see the file COPYING.
 -------------------------------------------------
 Using 64 bit integers.
 4ti2 Total Time:  0.00 secs.
-using temporary file name /tmp/M2-27531-1
+using temporary file name /tmp/M2-9116-1
 
 o3 = | 0 1  -2 1 |
      | 1 -2 1  0 |
@@ -60,7 +60,7 @@ For details, see the file COPYING.
 -------------------------------------------------
 Using 64 bit integers.
 4ti2 Total Time:  0.00 secs.
-using temporary file name /tmp/M2-27531-2
+using temporary file name /tmp/M2-9116-2
 
 o6 = | 0 1  -2 1 |
      | 1 -2 1  0 |
@@ -90,7 +90,7 @@ For details, see the file COPYING.
 -------------------------------------------------
 Using 64 bit integers.
 4ti2 Total Time:  0.00 secs.
-using temporary file name /tmp/M2-27531-3
+using temporary file name /tmp/M2-9116-3
 
                2           2
 o9 = ideal (- c  + b*d, - b  + a*c, - b*c + a*d)
@@ -98,5 +98,3 @@ o9 = ideal (- c  + b*d, - b  + a*c, - b*c + a*d)
 o9 : Ideal of R
 
 i10 : 
-0.58user 0.12system 0:00.95elapsed 74%CPU (0avgtext+0avgdata 0maxresident)k
-1944inputs+48outputs (11major+17134minor)pagefaults 0swaps

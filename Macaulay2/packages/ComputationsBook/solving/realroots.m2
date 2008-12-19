@@ -68,7 +68,7 @@ eliminant = (h, C) -> (
      assert( dim A == 0 );
      F := coefficientRing A;
      assert( isField F );
-     assert( F == coefficientRing C );
+     assert( F === coefficientRing C );
      B := basis A;
      d := numgens source B;
      M := fold((M, i) -> M || 

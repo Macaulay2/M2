@@ -10,11 +10,11 @@ o1 : Matrix ZZ  <--- ZZ
 
 i2 : s = temporaryFileName()
 
-o2 = /tmp/M2-27527-1
+o2 = /tmp/M2-9108-1
 
 i3 : F = openOut(s)
 
-o3 = /tmp/M2-27527-1
+o3 = /tmp/M2-9108-1
 
 o3 : File
 
@@ -22,7 +22,7 @@ i4 : putMatrix(F,A)
 
 i5 : close(F)
 
-o5 = /tmp/M2-27527-1
+o5 = /tmp/M2-9108-1
 
 o5 : File
 
@@ -35,5 +35,3 @@ o6 = | 1 1 1 1 |
 o6 : Matrix ZZ  <--- ZZ
 
 i7 : 
-0.57user 0.04system 0:00.61elapsed 99%CPU (0avgtext+0avgdata 0maxresident)k
-0inputs+8outputs (0major+6464minor)pagefaults 0swaps

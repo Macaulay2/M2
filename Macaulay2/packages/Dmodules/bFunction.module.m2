@@ -35,7 +35,7 @@ bFunction(Module, List, List) := RingElement => o -> (M, w, m) -> (
 	  bf' = (map(S, ring bf', matrix{{s}})) bf';
 	  bf' = substitute(bf', { s => s - m#i });
 	  -- bf = lcm (bf, bf')
-	  bf = lift(bf * bf' / gcd(bf, bf'), S);
+	  bf = bf * (bf' / gcd(bf, bf'));
 	  i = i + 1;
 	  );
      bf 
@@ -128,7 +128,7 @@ bFunction2(Module, List, List) := o -> (M, w, m) -> (
      while i < n do (
 	  bf' := bFunction(ideal I#i, w, o);
 	  bf' = (map(S, ring bf', matrix{{S_0-m#i}})) bf';
-	  bf = lift(bf * bf' / gcd(bf, bf'), S);
+	  bf = bf * (bf' / gcd(bf, bf'));
 	  i = i + 1;
 	  );
      bf      

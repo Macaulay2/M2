@@ -599,7 +599,7 @@ TEST "
 R = ZZ/101[a..d,t]
 f = a^2-d^3*b-1
 assert(homogenize(f,t) == a^2*t^2 - d^3*b - t^4)
-assert(homogenize(f,t,{1,2,3,4,2}) == a^2*t^6 - d^3*b - t^7)
+assert(homogenize(f,t,{1,2,3,4,1}) == a^2*t^12-t^14-b*d^3)
 assert(homogenize(f,b,{1,1,0,-1,1}) == a^2 - d^3*b^5 - b^2)
 
 m = map(R^{1,-1}, , {{a,b},{c,d-1}})

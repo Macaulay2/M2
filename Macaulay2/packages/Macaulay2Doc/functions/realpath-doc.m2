@@ -20,5 +20,5 @@ document {
 	  removeFile q
      ///,
      SeeAlso => {readlink},
-     Caveat => "A broken link (one pointing to a file that doesn't exist) is not traversed, as the example shows."
+     Caveat => "Every component of the path must exist in the file system and be accessible to the user."
      }

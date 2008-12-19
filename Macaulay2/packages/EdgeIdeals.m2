@@ -4419,9 +4419,9 @@ assert(#(first edges G)==3)
 TEST///
 S = QQ[a..e]
 G = graph monomialIdeal(a*b,c*e)
-assert(ring G == S)
+assert(ring G === S)
 H = hyperGraph(S,{{a,b,c},{a,d}})
-assert(ring H == S)
+assert(ring H === S)
 ///
 
 -------------------------------------

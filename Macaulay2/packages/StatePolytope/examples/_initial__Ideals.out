@@ -14,5 +14,3 @@ o3 = {{b , a*b, a }, {b , a*b, a }}
 o3 : List
 
 i4 : 
-0.56user 0.06system 0:00.63elapsed 99%CPU (0avgtext+0avgdata 0maxresident)k
-1984inputs+0outputs (11major+8230minor)pagefaults 0swaps

@@ -1298,9 +1298,9 @@ document { Key => toAbsolutePath,
          toAbsolutePath "a/b.m2"
      ///,
      PARA {
-	  "Paths of the form ", TT "foo/x/../bar", ", where ", TT "x", " is a symbolic
-	  link, are handled by following the link, rather than by simplifying to
-	  ", TT "foo/bar", ".  The resulting path is a real one, as might have been returned by ", TO "realpath", "."
+	  "Paths of the form ", TT "foo/x/../bar", ", are shortened to ", TT "foo/bar", " without
+	  checking the file system to see whether ", TT "x", " is a symbolic link.  For the other
+	  behavior, see ", TO "realpath", "."
 	  },
      SeeAlso => {File,minimizeFilename, relativizeFilename, baseFilename, "path"}
      }
@@ -1333,9 +1333,9 @@ document { Key => minimizeFilename,
 	 minimizeFilename "../../../../../../"
      ///,
      PARA {
-	  "Paths of the form ", TT "foo/x/../bar", ", where ", TT "x", " is a symbolic
-	  link, are handled by following the link, rather than by simplifying to
-	  ", TT "foo/bar", ".  The resulting path is a real one, as returned by ", TO "realpath", "."
+	  "Paths of the form ", TT "foo/x/../bar", ", are shortened to ", TT "foo/bar", " without
+	  checking the file system to see whether ", TT "x", " is a symbolic link.  For the other
+	  behavior, see ", TO "realpath", "."
 	  },
      SeeAlso => {File,relativizeFilename, baseFilename, toAbsolutePath, searchPath, "path"}
      }
@@ -1350,9 +1350,9 @@ document { Key => relativizeFilename,
          relativizeFilename("a/b/c/d","a/b/e/f")
      ///,
      PARA {
-	  "Paths of the form ", TT "foo/x/../bar", ", where ", TT "x", " is a symbolic
-	  link, are handled by following the link, rather than by simplifying to
-	  ", TT "foo/bar", ".  The resulting path is a real one, as might have been returned by ", TO "realpath", "."
+	  "Paths of the form ", TT "foo/x/../bar", ", are shortened to ", TT "foo/bar", " without
+	  checking the file system to see whether ", TT "x", " is a symbolic link.  For the other
+	  behavior, see ", TO "realpath", "."
 	  },
      SeeAlso => {File,minimizeFilename, baseFilename, toAbsolutePath, searchPath, "path"}
      }

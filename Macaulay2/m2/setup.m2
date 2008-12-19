@@ -121,11 +121,7 @@ pathdo := (loadfun,path,filename,reportfun) -> (
      if class filename =!= String then error "expected a string";
      newpath := (
 	  if isStablePath filename then {
-	       singledir :=
-	       if isAbsolutePath filename
-	       then ""
-	       else if currentFileDirectory != "--startupString--/" then currentFileDirectory
-	       else "./"
+	       singledir := if isAbsolutePath filename then "" else currentFileDirectory
 	       }
 	  else path
 	  );
@@ -138,7 +134,9 @@ pathdo := (loadfun,path,filename,reportfun) -> (
 		    reportfun fullfilename;
 		    break true)))
      then error splice("file not found",
-	  if singledir =!= null then (" in \"",singledir,"\"") else " on path",
+	  if singledir === "" then ""
+	  else if singledir =!= null then (" in \"",singledir,"\"")
+	  else " on path",
 	  ": \"", filename, "\"");
      ret)
 

@@ -626,7 +626,7 @@ installPackage Package := opts -> pkg -> (
      	  
 	  -- copy package source subdirectory
 	  srcDirectory := replace("PKG",pkg#"title",layout#"package");
-	  dn := realpath(currentSourceDir|buildPackage);
+	  dn := realpath currentSourceDir | buildPackage;
 	  if isDirectory dn
 	  then (
 	       if not (options pkg).AuxiliaryFiles
@@ -717,7 +717,7 @@ installPackage Package := opts -> pkg -> (
 		    ));
 
 	  -- make example output files, or else copy them from old package directory tree
-	  exampleDir' := realpath(currentSourceDir|buildPackage|"/examples") | "/";
+	  exampleDir' := realpath currentSourceDir | buildPackage | "/examples" | "/";
 	  outfn' := fkey -> exampleDir'|toFilename fkey|".out";
 	  gethash := outf -> (
 	       f := get outf;

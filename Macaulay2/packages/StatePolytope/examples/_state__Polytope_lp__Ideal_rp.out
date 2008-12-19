@@ -25,5 +25,3 @@ o3 = {{11, 7, 7, 11}, {11, 3, 15, 7}, {8, 6, 18, 4}, {6, 9, 18, 3}, {3, 15,
 o3 : List
 
 i4 : 
-2.81user 0.20system 0:03.10elapsed 97%CPU (0avgtext+0avgdata 0maxresident)k
-0inputs+16outputs (0major+29476minor)pagefaults 0swaps
