@@ -32,7 +32,11 @@ endif
 
 STOP = --stop --silent
 
-$(foreach i,$(PACKAGES),$(eval check ::; @pre_bindir@/M2@EXE@ -q $(STOP) -e "needsPackage(\"${i}\",LoadDocumentation=>true); check(${i},UserMode=>false); exit 0"))
+define cmd
+check ::
+	@pre_bindir@/M2@EXE@ -q $(STOP) -e "needsPackage(\"$1\",LoadDocumentation=>true); check($1,UserMode=>false); exit 0"
+endef
+$(foreach i,$(PACKAGES),$(eval $(call cmd,$i)))
 
 info-dir: @pre_infodir@ @pre_infodir@/dir
 @pre_infodir@:; $(MKDIR_P) $@
