@@ -1,0 +1,18 @@
+#-*- Makefile -*-
+#BUILDOPTIONS += RemakeAllDocumentation=true RemakePackages=true
+#BUILDOPTIONS += -s
+#INSTALLOPTIONS += -s
+
+# CONFIGOPTIONS += --enable-tarfile
+# CONFIGOPTIONS += --enable-rpm
+PRE = $(HOME)/local.Linux/encap
+CONFIGOPTIONS += --build=i486-pc-linux-gnu
+INSTALLOPTIONS += prefix=$(PRE)
+DIRECTORY = u123
+include Makefile.include
+pre-install:;	rm -rf $(PRE)/Macaulay2-$(PACKAGE_VERSION)
+arch-chk:; [ `hostname` = u123.math.uiuc.edu ]
+show:; : $(MAKE)
+# Local Variables:
+# compile-command: "time make -f Makefile.u123 "
+# End:
