@@ -1614,11 +1614,12 @@ toPairs(r:array(int)):Expr := Expr(
      );
 
 regexmatch(e:Expr):Expr := (
+     ignorecase := false;
      when e is a:Sequence do
      if length(a) == 2 then
      when a.0 is regexp:string do
      when a.1 is text:string do (
-	  r := regexmatch(regexp,0,text);
+	  r := regexmatch(regexp,0,text,ignorecase);
 	  if regexmatchErrorMessage != noErrorMessage then buildErrorPacket("regex: "+regexmatchErrorMessage)
      	  else if length(r) != 0 then toPairs(r) 
 	  else nullE)
@@ -1628,7 +1629,7 @@ regexmatch(e:Expr):Expr := (
      when a.0 is regexp:string do
      when a.1 is offset:ZZ do if !isInt(offset) then WrongArgSmallInteger(2) else
      when a.2 is text:string do (
-	  r := regexmatch(regexp,toInt(offset),text);
+	  r := regexmatch(regexp,toInt(offset),text,ignorecase);
 	  if length(r) != 0 then toPairs(r) 
 	  else if regexmatchErrorMessage == noErrorMessage
 	  then nullE
@@ -1642,12 +1643,13 @@ setupfun("regex",regexmatch);
 
 foo := "foo";
 replace(e:Expr):Expr := (
+     ignorecase := false;
      when e is a:Sequence do
      if length(a) == 3 then
      when a.0 is regexp:string do
      when a.1 is replacement:string do
      when a.2 is text:string do (
-	  r := regexreplace(regexp,replacement,text,foo);
+	  r := regexreplace(regexp,replacement,text,foo,ignorecase);
 	  if r == foo then buildErrorPacket("replace: "+regexmatchErrorMessage)
 	  else Expr(r))
      else WrongArgString(3)

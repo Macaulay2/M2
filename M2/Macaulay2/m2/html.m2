@@ -998,7 +998,11 @@ installPackage Package := opts -> pkg -> (
 
      -- all done
      SRC = null;
-     if not hadExampleError then libDir|".installed" << close;
+     if not hadExampleError then (
+	  iname := libDir|".installed";
+	  iname << close;
+	  if verbose then stderr << "--file created: " << iname << endl;
+	  );
      if verbose then << "--installed package " << pkg << " in " << buildDirectory << endl;
      currentPackage = oldpkg;
      if not noinitfile then (

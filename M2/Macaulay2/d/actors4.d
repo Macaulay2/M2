@@ -113,15 +113,15 @@ select(a:Sequence,f:Expr):Expr := (
      new Sequence len found do (
 	  foreach p at i in b do if p then provide a.i));
 foo := array(string)();
-select(pat:string,rep:string,subj:string):Expr := (
-     r := regexselect(pat,rep,subj,foo);
+select(pat:string,rep:string,subj:string,ignorecase:bool):Expr := (
+     r := regexselect(pat,rep,subj,foo,ignorecase);
      if r == foo then return buildErrorPacket("select: "+regexmatchErrorMessage);
      Expr(list(new Sequence len length(r) do foreach s in r do provide Expr(s))));
-select(e:Expr,f:Expr):Expr := (
+select(e:Expr,f:Expr,ignorecase:bool):Expr := (
      when e
      is pat:string do (
      	  when f is subj:string
-	  do select(pat,"\\0",subj) 
+	  do select(pat,"\\0",subj,ignorecase) 
      	  else WrongArgString(2)
 	  )
      is obj:HashTable do (
@@ -162,10 +162,10 @@ select(n:int,a:Sequence,f:Expr):Expr := (
 	  else b.i = false);
      new Sequence len found do (
 	  foreach p at i in b do if p then provide a.i));
-select(n:Expr,e:Expr,f:Expr):Expr := (
+select(n:Expr,e:Expr,f:Expr,ignorecase:bool):Expr := (
      when n is pat:string do
      when e is rep:string do
-     when f is subj:string do select(pat,rep,subj)
+     when f is subj:string do select(pat,rep,subj,ignorecase)
      else WrongArgString(3)
      else WrongArgString(2)
      is nn:ZZ do
@@ -203,15 +203,23 @@ select(n:Expr,e:Expr,f:Expr):Expr := (
      else WrongArg(0+1,"an integer or string")
      else WrongArgZZ(0+1));
 select(e:Expr):Expr := (
+     ignorecase := false;
      when e is a:Sequence do (
 	  if length(a) == 2
-	  then select(a.0,a.1)
+	  then select(a.0,a.1,ignorecase)
 	  else if length(a) == 3
-	  then select(a.0,a.1,a.2)
+	  then select(a.0,a.1,a.2,ignorecase)
 	  else WrongNumArgs(2,3))  -- could change this later
      else WrongNumArgs(2,3));
 setupfun("select",select);
 
+any(f:Expr,n:int):Expr := (
+     for i from 0 to n-1 do (
+	  v := applyEE(f,Expr(toInteger(i)));
+	  when v is err:Error do if err.message == breakMessage then return if err.value == dummyExpr then nullE else err.value else return v else nothing;
+	  if v == True then return True;
+	  );
+     False);
 any(f:Expr,obj:HashTable):Expr := (
      foreach bucket in obj.table do (
 	  p := bucket;
@@ -233,6 +241,7 @@ any(f:Expr,e:Expr):Expr := (
      when e
      is a:Sequence do Expr(any(f,a))
      is b:List do Expr(any(f,b.v))
+     is i:ZZ do if isInt(i) then Expr(any(f,toInt(i))) else WrongArgSmallInteger(1)
      is c:HashTable do 
      if c.mutable then WrongArg(1,"an immutable hash table") else
      Expr(any(f,c))

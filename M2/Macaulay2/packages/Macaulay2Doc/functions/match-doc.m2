@@ -2,28 +2,26 @@
 --- author(s): dan
 --- notes: 
 
-document {
-     Key => match, 
-     Headline => "regular expression matching",
-     Subnodes => {TO (match,String,String)}
-     }
-
 document { 
-     Key => (match,String,String),
+     Headline => "regular expression matching",
+     Key => {(match,String,String),match,lastMatch},
      Usage => "match(p,s)",
      Inputs => {
-	  "p" => "a regular expression describing a pattern",
+	  "p" => "a regular expression",
 	  "s" => "a subject string to be searched"
 	  },
      Outputs => {
-	  {"whether the pattern ", TT "p", " matches a substring of the string ", TT "s", "."}
+	  {"whether the regular expression ", TT "p", " matches the string ", TT "s"}
 	  },
-     PARA {
-     	  "Warning: in version 0.9.2 and earlier ", TO "match", " behaved differently, and 
-     	  the arguments were in the other order."},
-     EXAMPLE {
-	  ///match ("asd", "--asd--")///,
-	  ///match ("asd", "--as--")///
+     Consequences => {
+	  {"the variable ", TO "lastMatch", " is set to the value returned by ", TO "regex", ", which
+	       is called by ", TO "match"}
 	  },
+     EXAMPLE lines ///
+     match ("asd", "--asd--")
+     lastMatch
+     match ("asd", "--as--")
+     lastMatch
+     ///,
      SeeAlso => {"regular expressions", "regex", "replace"}
      }

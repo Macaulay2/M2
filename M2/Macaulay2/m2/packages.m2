@@ -50,7 +50,7 @@ loadPackage String := opts -> pkgtitle -> (
      load filename;
      -- if opts.DebuggingMode =!= true then loadDepth = loadDepth + 1;
      remove(packageLoadingOptions,pkgtitle);
-     if not PackageDictionary#?pkgtitle then error("the file ", filename, " did not define a package ", pkgtitle);
+     if not PackageDictionary#?pkgtitle then error("the file ", filename, " did not define a package called ", pkgtitle);
      value PackageDictionary#pkgtitle)
 
 needsPackage = method(Options => options loadPackage)

@@ -1002,7 +1002,7 @@ static regex_t regex_pattern;
 #define regexec_empty_return REG_NOMATCH
 #define match_length(i) (match_end(i) - match_start(i))
 
-M2_arrayint system_regexmatch(M2_string pattern, int offset, M2_string text) {
+M2_arrayint system_regexmatch(M2_string pattern, int offset, M2_string text, M2_bool ignorecase) {
   static struct M2_arrayint_struct empty[1] = {{0}};
   int regcomp_return;
   system_regexmatchErrorMessage = &noErrorMessage;
@@ -1012,7 +1012,7 @@ M2_arrayint system_regexmatch(M2_string pattern, int offset, M2_string text) {
     {
 	char *s_pattern;
 	s_pattern = tocharstar(pattern);
-	regcomp_return = regcomp(&regex_pattern, s_pattern, SYNTAX_FLAGS);
+	regcomp_return = regcomp(&regex_pattern, s_pattern, SYNTAX_FLAGS | (ignorecase ? REG_ICASE : 0));
 	GC_FREE(s_pattern);
     }
     if (regcomp_return != 0) {
@@ -1064,7 +1064,7 @@ void cat(int *xlen, int *xoff, char **x, int ylen, char *y) {
      *xoff += ylen;
 }
 
-M2_string system_regexreplace(M2_string pattern, M2_string replacement, M2_string text, M2_string errorflag) {
+M2_string system_regexreplace(M2_string pattern, M2_string replacement, M2_string text, M2_string errorflag, M2_bool ignorecase) {
   int regcomp_return;
   system_regexmatchErrorMessage = &noErrorMessage;
   if (last_pattern != pattern) {
@@ -1072,7 +1072,7 @@ M2_string system_regexreplace(M2_string pattern, M2_string replacement, M2_strin
     {
       char *s_pattern;
       s_pattern = tocharstar(pattern);
-      regcomp_return = regcomp(&regex_pattern, s_pattern, SYNTAX_FLAGS);
+      regcomp_return = regcomp(&regex_pattern, s_pattern, SYNTAX_FLAGS | (ignorecase ? REG_ICASE : 0));
       GC_FREE(s_pattern);
     }
     if (regcomp_return != 0) {
@@ -1139,7 +1139,7 @@ M2_string system_regexreplace(M2_string pattern, M2_string replacement, M2_strin
   }
 }
 
-M2_stringarray system_regexselect(M2_string pattern, M2_string replacement, M2_string text, M2_stringarray errorflag) {
+M2_stringarray system_regexselect(M2_string pattern, M2_string replacement, M2_string text, M2_stringarray errorflag, M2_bool ignorecase) {
   int regcomp_return;
   system_regexmatchErrorMessage = &noErrorMessage;
   if (last_pattern != pattern) {
@@ -1147,7 +1147,7 @@ M2_stringarray system_regexselect(M2_string pattern, M2_string replacement, M2_s
     {
       char *s_pattern;
       s_pattern = tocharstar(pattern);
-      regcomp_return = regcomp(&regex_pattern, s_pattern, SYNTAX_FLAGS);
+      regcomp_return = regcomp(&regex_pattern, s_pattern, SYNTAX_FLAGS | (ignorecase ? REG_ICASE : 0));
       GC_FREE(s_pattern);
     }
     if (regcomp_return != 0) {

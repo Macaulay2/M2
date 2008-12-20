@@ -39,7 +39,7 @@ installMethod(symbol >=, Thing, Thing, Boolean => x -> (dummy x;))
 
 installMethod(symbol .., ZZ, ZZ, Sequence => x -> (dummy x;))
 ancestor(Type,Type) := Boolean => ancestor
-any(BasicList,Function) := any(BasicList,BasicList,Function) := any(HashTable,Function) := Boolean => any
+any(ZZ,Function) := any(BasicList,Function) := any(BasicList,BasicList,Function) := any(HashTable,Function) := Boolean => any
 append(BasicList,Thing) := BasicList => append
 prepend(Thing,BasicList) := BasicList => prepend
 apply(BasicList,Function) := BasicList => apply

@@ -43,7 +43,7 @@ minPosition BasicList := ZZ => x -> (
 number = x -> # select x
 
 all = method(TypicalValue => Boolean)
-all(HashTable,Function) := all(BasicList,Function) := (x,p) -> not any(x, i -> not p i)
+all(ZZ,Function) := all(HashTable,Function) := all(BasicList,Function) := (x,p) -> not any(x, i -> not p i)
 all(BasicList,BasicList,Function) := (x,y,p) -> not any(apply(x,y,identity), ij -> not p ij)
 
 same = v -> (
@@ -165,6 +165,22 @@ commonest Set := keys
 commonest Tally := t -> (
      t = hashTable(join, apply(pairs t, (k,v) -> (v,{k})));
      if #t === 0 then {} else t#(max keys t))
+
+-- suggested by Allen Knutson:
+insert = method()
+insert(ZZ,Thing,VisibleList) := (i,x,s) -> (
+     j := i;
+     if j < 0 then j = j + #s + 1;
+     if j < 0 or j > #s then error("insert: index ", toString i, " out of bounds: 0..", toString length s);
+     join(take(s,{0,j-1}),{x},take(s,{j,#s-1})))
+switch = method()
+switch(ZZ,ZZ,VisibleList) := (i,j,s) -> (
+     t := new MutableList from s;
+     t#i = s#j;
+     t#j = s#i;
+     new class s from t)
+isSorted = method(Dispatch => Thing)
+isSorted VisibleList := s -> all(#s-1, i -> s#i <= s#(i+1))
 
 -- Local Variables:
 -- compile-command: "make -C $M2BUILDDIR/Macaulay2/m2 "
