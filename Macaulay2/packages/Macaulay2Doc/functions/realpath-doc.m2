@@ -20,5 +20,5 @@ document {
 	  removeFile q
      ///,
      SeeAlso => {readlink},
-     Caveat => "Every component of the path must exist in the file system and be accessible to the user."
+     Caveat => "Every component of the path must exist in the file system and be accessible to the user.  Terminal slashes will be dropped."
      }

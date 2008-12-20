@@ -579,7 +579,7 @@ extern void regfree _RE_ARGS ((regex_t *__preg));
 #endif /* regex.h */
 
 /*
-Local variables:
+Local variables disabled:
 make-backup-files: t
 version-control: t
 trim-versions-without-asking: nil
