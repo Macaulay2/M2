@@ -53,7 +53,7 @@ all: info-dir @pre_libm2dir@/$1/.installed
 	    -e "installPackage(\"$1\", $(ARGS)); exit 0"
 	install-info --quiet --info-dir=@pre_infodir@ @pre_infodir@/$1.info
 	: check to see if the file was made:
-	[ -f $$@ ]
+	[ "${IgnoreExampleErrors}" = true -o -f $$@ ]
 endef
 $(foreach i, $(PACKAGES), $(eval $(call bld,$i)))
 
