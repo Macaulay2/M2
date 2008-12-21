@@ -106,6 +106,7 @@ fi
 
 AC_SUBST(OS,"`  uname -s | sed s=/=-=g  `")
 AC_SUBST(REL,"`  uname -r | sed -e s=/=-=g -e 's= =+=' -e 's=[()]==g'  `")
+AC_SUBST(UNAME_INFO,"` uname -pmso `")
 
 case $OS-$REL in
   Darwin-7.*) REL=10.3 ; OS=MacOS ;;
