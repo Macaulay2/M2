@@ -28,9 +28,9 @@ PATH := autoconf/final/bin:$(PATH)
 export PATH
 
 check-make:
-	: "use the list of features to check whether this version of GNU make is modern enough (version 3.81 is)"
-	: "(the order-only feature is just a proxy)"
-	echo "$(.FEATURES)" | grep order-only
+	: '  Use list of GNU "make" features to check whether this version is modern enough (version 3.81 is).  '
+	: '  (The order-only feature is just a proxy.)  '
+	echo "$(.FEATURES)" | grep order-only >/dev/null
 
 configure : configure.ac config/files # aclocal.m4
 	@ set -x ; autoconf

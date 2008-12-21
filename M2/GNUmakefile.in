@@ -3,14 +3,17 @@ include include/config.Makefile
 VPATH = @srcdir@
 .PRECIOUS:@srcdir@/configure config.status
 .PHONY:reconfigure-libs reconfigure-all configure-help report-M2-location help scripts
-all:check-make configured check-vars srcdir protect-configs include/config.Makefile include/M2/config.h all-dirs report-M2-location
+all:check-make check-machine configured check-vars srcdir protect-configs include/config.Makefile include/M2/config.h all-dirs report-M2-location
 check-make:
-	: "use the list of features to check whether this version of GNU make is modern enough (version 3.81 is)"
-	: "(the order-only feature is just a proxy)"
-	echo "$(.FEATURES)" | grep order-only
+	: '  Use list of GNU "make" features to check whether this version is modern enough (version 3.81 is).  '
+	: '  (The order-only feature is just a proxy.)  '
+	echo "$(.FEATURES)" | grep order-only >/dev/null
 configured:include/configuration
 include/configuration: config.status; ./config.status
 check:configured check-dirs
+check-machine:
+	: make sure we are running on the same type of machine we were configured for, roughly
+	[ "@UNAME_INFO@" = "` uname -pmso `" ]
 clean:clean-dirs
 	rm -f srcdir .link-test srcdir confdefs.h configure.lineno conftest.* include/config.h
 	rm -rf StagingArea conf_*
