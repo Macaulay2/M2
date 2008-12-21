@@ -1,6 +1,6 @@
 .PHONY : all monitor
 
-all: check-autoconf configure monitor include/M2/config.h.in.stamp
+all: check-make check-autoconf configure monitor include/M2/config.h.in.stamp
 	@echo '--: The configure script in this directory has been prepared.'
 	@echo '--: To configure and build Macaulay 2:'
 	@echo '--: '
@@ -26,6 +26,11 @@ AUTOCONF_VERSION = $(MAJOR).$(MINOR)
 
 PATH := autoconf/final/bin:$(PATH)
 export PATH
+
+check-make:
+	: "use the list of features to check whether this version of GNU make is modern enough (version 3.81 is)"
+	: "(the order-only feature is just a proxy)"
+	echo "$(.FEATURES)" | grep order-only
 
 configure : configure.ac config/files # aclocal.m4
 	@ set -x ; autoconf
