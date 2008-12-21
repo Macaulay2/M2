@@ -1,0 +1,33 @@
+
+i32 : x = new MutableList from (0..10)
+
+o32 = MutableList{...11...}
+
+o32 : MutableList
+
+i33 : x#-1
+
+o33 = 10
+
+i34 : x#-1 = 4									fix
+stdio:37:3:(1):[0]: error: negative subscript out of bounds 0 .. 10
+
+
+i31 : switch(-3,8,splice [0..10])						fix
+stdio:17:8:(1):[1]: error: negative subscript out of bounds 0 .. 10
+
+
+
+i35 : take(0..10,{-2,2})							too late to fix
+
+o35 = (0, 1, 2)
+
+o35 : Sequence
+
+
+i36 : drop(0..10,{-2,2})							too late to fix
+
+o36 = (3, 4, 5, 6, 7, 8, 9, 10)
+
+o36 : Sequence
+
