@@ -7,7 +7,7 @@ arch-chk:
 everything:; $(MAKE) -C builds/$(DIRECTORY) all RemakeAllDocumentation=true RemakePackages=true RerunExamples=true
 check-links:; $(MAKE) -C builds/$(DIRECTORY)/Macaulay2/html-check-links check
 check:; $(MAKE) -C builds/$(DIRECTORY) -k $@
-configure builds/$(DIRECTORY)/include/configuration:; mkdir -p builds/$(DIRECTORY) && cd builds/$(DIRECTORY) && $(PWD)/../../configure $(CONFIGOPTIONS)
+configure builds/$(DIRECTORY)/include/configuration:; mkdir -p builds/$(DIRECTORY) && (D=`pwd`; cd builds/$(DIRECTORY) && $$D/../../configure $(CONFIGOPTIONS))
 default: arch-chk all install check-links
 distclean: distclean1 distclean2
 distclean1:; $(MAKE) -C builds/$(DIRECTORY) distclean
