@@ -11,7 +11,7 @@ newPackage("Dmodules",
 	  }
      )
 
-load "Dmodules/Dmodules.m2"
+load "./Dmodules/Dmodules.m2"
 
 -- Local Variables:
 -- compile-command: "make -C $M2BUILDDIR/Macaulay2/packages PACKAGES=Dmodules pre-install"

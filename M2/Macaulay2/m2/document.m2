@@ -702,7 +702,7 @@ headline FinalDocumentTag := headline DocumentTag := tag -> (
 	       and DocumentTag.Title tag === currentPackage#"title"
 	       then (
 		    stderr << "--warning: tag has no documentation: " << tag << ", key " 
-	       	    << {* toExternalString -- can't work for shadowed symbols *} DocumentTag.Key tag 
+	       	    << toExternalString {* toExternalString can't work for shadowed symbols without synonyms *} DocumentTag.Key tag 
 	       	    << endl);
 	       return null;
 	       ));

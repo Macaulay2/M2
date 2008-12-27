@@ -1,6 +1,6 @@
 document {
      Key => "changes to Macaulay 2, by version",
-     MENU {
+     Subnodes => {
 	  TO "changes, 1.0 and 1.1",
 	  TO "changes, 1.2"
 	  }
@@ -8,8 +8,80 @@ document {
 
 document {
      Key => "changes, 1.2",
-     PARA ///
-     ///
+     UL {
+	  LI {
+	       "new functions:",
+	       UL {
+		    TO RLE,
+		    TO heft,
+		    TO "IntegralClosure :: idealizerReal",
+		    TO insert,
+		    TO inversePermutation,
+		    TO isSorted,
+		    TO multidegree,
+		    TO "step",
+		    TO switch,
+		    }
+	       },
+	  LI {
+	       "new methods for old functions:",
+	       UL {
+		    TO (all,ZZ,Function),
+		    TO (any,ZZ,Function),
+		    TO (degreesRing,List),
+		    TO (findFiles,List),
+		    TO (flattenRing,Ideal),
+		    TO (image,RingMap),
+		    TO (map,Module,Module,RingMap,Matrix),
+		    TO (map,Module,Nothing,RingMap,Matrix),
+		    TO (map,Module,RingMap),
+		    TO (map,Ring,Ring,RingMap),
+		    TO (max,GradedModule),
+		    TO (min,GradedModule),
+		    TO (part,ZZ,ZZ,List,RingElement),
+		    TO (symmetricAlgebra,Matrix),
+		    TO (symmetricAlgebra,Ring,Ring,Matrix),
+		    TO (symbol <-, Sequence),
+		    }
+	       },
+	  LI {
+	       "new variables:",
+	       UL {
+		    TO "currentLayout",
+		    TO "lastMatch"
+		    }
+	       },
+	  LI {
+	       "new optional arguments to functions:",
+	       UL {
+		    TO [basis, SourceRing],
+		    TO [GF, LengthLimit],
+		    TO [hilbertSeries, Reduce],
+		    TO [installPackage, SeparateExec],
+		    TO [lift, Verify],
+		    TO [map, DegreeLift],
+		    TO [matrix, DegreeLift],
+		    TO [monoid, DegreeLift],
+		    TO [monoid, Join],
+		    TO [symmetricAlgebra, DegreeLift],
+		    TO [symmetricAlgebra, DegreeMap],
+		    TO [tensor, DegreeMap],
+		    TO [tensor, Join],
+		    }
+	       },
+	  LI {
+	       "new packages:",
+	       UL {
+		    TO "ConwayPolynomials :: ConwayPolynomials",
+		    TO "EdgeIdeals :: EdgeIdeals",
+		    TO "FourTiTwo :: FourTiTwo",
+		    TO "Polyhedra :: Polyhedra",
+		    TO "SimpleDoc :: SimpleDoc",
+		    TO "StatePolytope :: StatePolytope",
+		    TO "Text :: Text"
+		    }
+	       }
+	  }
      }
 
 document {

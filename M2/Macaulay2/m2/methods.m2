@@ -248,7 +248,11 @@ toExternalString Keyword := s -> concatenate("symbol ", simpleToString s)
 toExternalString Symbol := s -> (
      n := simpleToString s;
      if not isGlobalSymbol n then error("can't convert local symbol or invisible global symbol ",s," to external string");
-     if getGlobalSymbol n =!= s then error("can't convert symbol ",s," to external string because it is shadowed by ", getGlobalSymbol n);
+     if getGlobalSymbol n =!= s then (
+	  syns := findSynonyms s;
+	  if syns#?0 then n = syns#0
+	  else error("can't convert symbol ",s," to external string because it is shadowed by ", getGlobalSymbol n, " and there is no synonym")
+	  );
      if value s === s then n else concatenate("symbol ", n))
 toExternalString Boolean := simpleToString
 toExternalString Nothing := simpleToString
