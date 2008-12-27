@@ -9,21 +9,30 @@ document {
      SeeAlso =>{ "scan", "apply", "select", "all", "member"}
      }
 document { 
-     Key => (any,BasicList,Function),
+     Key => {(any,BasicList,Function),(any,ZZ,Function)},
      Headline => "whether any elements of a list satisfy a specified condition",
      Usage => "any(L,f)",
      Inputs => {
-	  "L" => BasicList,
+	  "L" => {"or ", ofClass {ZZ}, ".  If an integer is given, then the sequence ", TT "0..L-1", " is used."},
 	  "f" => Function => "which returns true or false"
 	  },
      Outputs => {
 	  Boolean => {TO "true", " if ", TT "f", " returns true when applied to any element of ", TT "L", 
 	       " and ", TO "false", " otherwise"}
 	  },
-     EXAMPLE {
-	  "any({1,2,3,4}, even)",
-	  "any({1,3,5,7}, even)"
+     EXAMPLE lines ///
+     any({1,2,3,4}, even)
+     any({1,3,5,7}, even)
+     any(20,n -> n == 15)
+     ///,
+     PARA {
+	  "We can test whether a permutation has a fixed point as follows."
 	  },
+     EXAMPLE lines ///
+     fp = x -> any(#x, i -> x#i == i);
+     fp {2,3,4,0,1}
+     fp {2,4,0,3,1}
+     ///,
      SeeAlso => { "scan", "apply", "select", "any", "member" }
      }
 document { 

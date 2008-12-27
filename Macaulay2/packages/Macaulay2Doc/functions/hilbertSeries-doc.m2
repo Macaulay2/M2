@@ -232,3 +232,18 @@ assert( hilbertSeries (M, Order => 4) == t^3+t^2+t+1 )
 assert( hilbertSeries (M, Order => 7) == t^6+t^5+t^4+t^3+t^2+t+1 )
 ///
 
+document {
+     Key => [hilbertSeries,Reduce],
+     Headline => "reduce the Hilbert series",
+     Usage => "hilbertSeries(..., Reduce => true)",
+     Consequences => {{"the resulting rational function is reduced by cancelling
+	       factors of the numerator that occur explicitly as factors of the denominator.  
+	       See also ", TO "reduceHilbert", "."
+	       }},
+     EXAMPLE lines ///
+     R = QQ[x,y,z];
+     hilbertSeries ideal (x,y)
+     hilbertSeries(ideal (x,y), Reduce => true)
+     ///
+     }
+	  

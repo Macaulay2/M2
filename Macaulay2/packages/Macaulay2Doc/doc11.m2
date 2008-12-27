@@ -284,7 +284,34 @@ document {
      created before the polynomial ring is created."
      }
 
+document {
+     Key => {(RLE,VisibleList),RLE},
+     Headline => "run length encoding",
+     Usage => "RLE x",
+     Inputs => { "x" },
+     Outputs => {{ "a list equivalent to ", TT "x", ", in which runs and sequences have been expressed 
+	       symbolically as ", TO2{Expression,"expressions"}}},
+     PARA {"The result is useful in printed displays, as a way of making them more compact.  The original list can
+	  be recovered by appying ", TO "value", " to the elements of the result, and then using ", TO "deepSplice", ",
+	  provided that ", TT "x", " contains no entries that are sequences."},
+     EXAMPLE lines ///
+     x = {1,2,3,a,b,c,a,b,c,4,4,4,"asdf"};
+     y = RLE x
+     peek y
+     value \ y
+     deepSplice \\ oo
+     x === oo
+     ///,
+     SeeAlso => {BinaryOperation, Holder}
+     }
 
+undocumented { 
+     (image,RingMap),					    -- just an error message referring to coimage
+     (symbol ==, Constant, RingElement),
+     (symbol ==, RingElement, Constant),
+     ((symbol SPACE, symbol =), Function, Thing),
+     ((symbol _*, symbol =), RingFamily) 
+     }
 
 -- Local Variables:
 -- compile-command: "make -C $M2BUILDDIR/Macaulay2/m2 "
