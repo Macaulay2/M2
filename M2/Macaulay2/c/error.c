@@ -135,3 +135,9 @@ void failpos(char *filename, int lineno, node p) {
 	  }
      myexit(1);
      }
+
+/*
+# Local Variables:
+# compile-command: "make -C $M2BUILDDIR/Macaulay2/c "
+# End:
+*/

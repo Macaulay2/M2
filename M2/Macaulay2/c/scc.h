@@ -21,6 +21,8 @@ typedef struct NODE *node;
 typedef struct ENV *env;
 typedef node (*chkfun) (node,env);
 
+#define ZERO_MEM(v) memset(v,0,sizeof(*v))
+
 struct NODE {
      enum TAG { cons_tag, position_tag, string_tag, int_const_tag,
 	  double_const_tag, type_tag, char_const_tag,
@@ -114,6 +116,8 @@ struct ENV {
      bool make_used;
      node current_package;
      node signature;		/* kept in reverse order */
+     int partial_definitions_active;
+     node previous_partial_definition;
      };
 void fatalpos(node, char *,...);
 node totype(node);
@@ -149,3 +153,9 @@ void unwind(node *);
 #include "type.h"
 #include "scc1.h"
 #include "grammar.h"
+
+/*
+# Local Variables:
+# compile-command: "make -C $M2BUILDDIR/Macaulay2/c "
+# End:
+*/

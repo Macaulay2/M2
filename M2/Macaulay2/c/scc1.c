@@ -18,7 +18,6 @@ bool debug = FALSE;
 static char Copyright[] = "Copyright 1993 by Daniel R. Grayson";
 static char Version[]   = "Safe C - version 0.1";
 
-
 char *getmem(unsigned n) {
      char *p = malloc(n);
      if (p == NULL) fatal("out of memory");
@@ -273,7 +272,7 @@ int main(int argc, char **argv){
 	       ||
 	       EQUAL == strcmp(".d",tail(argv[i]))
 	       ) {
-     	       global = empty_env;
+	       ZERO_MEM(&global);
 	       readsetup(&global);
 	       {
 		    node f;
@@ -358,3 +357,9 @@ int main(int argc, char **argv){
      }
 
      
+
+/*
+# Local Variables:
+# compile-command: "make -C $M2BUILDDIR/Macaulay2/c "
+# End:
+*/

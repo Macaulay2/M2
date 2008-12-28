@@ -60,3 +60,9 @@ bool isarithmetictype(node e);
 bool isobject(node e);
 node basictype(node n);
 node UniqueString(char *s);
+
+/*
+# Local Variables:
+# compile-command: "make -C $M2BUILDDIR/Macaulay2/c "
+# End:
+*/

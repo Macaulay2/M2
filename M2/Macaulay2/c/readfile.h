@@ -16,3 +16,9 @@ extern node readfile(char *filename);
 extern int tabwidth;
 extern bool sigreadfile(char *, char **);
 extern char *sigpath;
+
+/*
+# Local Variables:
+# compile-command: "make -C $M2BUILDDIR/Macaulay2/c "
+# End:
+*/

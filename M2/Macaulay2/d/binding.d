@@ -414,6 +414,24 @@ lookup(token:Token,forcedef:bool):void := (
 lookup(token:Token):void := lookup(token,true);
 lookuponly(token:Token):void := lookup(token,false);
 -----------------------------------------------------------------------------
+export opsWithBinaryMethod := array(SymbolClosure)(
+     LessLessS, GreaterGreaterS, EqualEqualS, QuestionS, BarBarS, LongDoubleArrowS, LongLongDoubleArrowS, LongBiDoubleArrowS, DeductionS,
+     ColonS, BarS, HatHatS, AmpersandS, DotDotS, MinusS, PlusS, PlusPlusS, StarStarS, StarS, BackslashBackslashS, DivideS, LeftDivideS, PercentS, SlashSlashS, AtS, 
+     AdjacentS, AtAtS, PowerS, UnderscoreS, PowerStarStarS, orS, andS);
+export opsWithUnaryMethod := array(SymbolClosure)( StarS, MinusS, PlusS, LessLessS, notS, DeductionS, QuestionS,LessS,GreaterS,LessEqualS,GreaterEqualS);
+export opsWithPostfixMethod := array(SymbolClosure)( TildeS, ParenStarParenS, UnderscoreStarS, PowerStarS ,ExclamationS );
+
+-- ":=" "=" "<-" "->"  "=>" "===" "=!=" "!=" "#" "#?" "." ".?" ";" "," "<" ">" "<=" ">="
+export fixedBinaryOperators := array(SymbolClosure)(ColonEqualS,EqualS,LeftArrowS,RightArrowS,DoubleArrowS,EqualEqualEqualS,NotEqualEqualEqualS,NotEqualS,SharpS,SharpQuestionS,
+     DotS,DotQuestionS,SemicolonS,commaS,LessS,GreaterS,LessEqualS,GreaterEqualS);
+
+-- "#" "," "<" ">" "<=" ">="
+export fixedPrefixOperators := array(SymbolClosure)(commaS,SharpS);
+
+-- ";" ","
+export fixedPostfixOperators := array(SymbolClosure)(SemicolonS,commaS);
+
+-----------------------------------------------------------------------------
 bind(token:Token,dictionary:Dictionary):void := (
      token.dictionary = dictionary;
      lookup(token););
@@ -457,24 +475,6 @@ bindParenParmList(e:ParseTree,dictionary:Dictionary,desc:functionDescription):vo
 	  )
      is p:EmptyParentheses do nothing
      else makeErrorTree(e,"expected parenthesized argument list or symbol"));
-
-export opsWithBinaryMethod := array(SymbolClosure)(
-     LessLessS, GreaterGreaterS, EqualEqualS, QuestionS, BarBarS, LongDoubleArrowS, LongLongDoubleArrowS, LongBiDoubleArrowS, DeductionS,
-     ColonS, BarS, HatHatS, AmpersandS, DotDotS, MinusS, PlusS, PlusPlusS, StarStarS, StarS, BackslashBackslashS, DivideS, LeftDivideS, PercentS, SlashSlashS, AtS, 
-     AdjacentS, AtAtS, PowerS, UnderscoreS, PowerStarStarS, orS, andS);
-export opsWithUnaryMethod := array(SymbolClosure)( StarS, MinusS, PlusS, LessLessS, notS, DeductionS, QuestionS,LessS,GreaterS,LessEqualS,GreaterEqualS);
-export opsWithPostfixMethod := array(SymbolClosure)( TildeS, ParenStarParenS, UnderscoreStarS, PowerStarS ,ExclamationS );
-
--- ":=" "=" "<-" "->"  "=>" "===" "=!=" "!=" "#" "#?" "." ".?" ";" "," "<" ">" "<=" ">="
-export fixedBinaryOperators := array(SymbolClosure)(ColonEqualS,EqualS,LeftArrowS,RightArrowS,DoubleArrowS,EqualEqualEqualS,NotEqualEqualEqualS,NotEqualS,SharpS,SharpQuestionS,
-     DotS,DotQuestionS,SemicolonS,commaS,LessS,GreaterS,LessEqualS,GreaterEqualS);
-
--- "#" "," "<" ">" "<=" ">="
-export fixedPrefixOperators := array(SymbolClosure)(commaS,SharpS);
-
--- ";" ","
-export fixedPostfixOperators := array(SymbolClosure)(SemicolonS,commaS);
-
 opHasBinaryMethod(o:Symbol):bool := (
      foreach s in opsWithBinaryMethod do if s.symbol == o then return true;
      return false;

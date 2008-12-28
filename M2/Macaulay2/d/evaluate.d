@@ -33,6 +33,12 @@ export trace := false;
 NumberErrorMessagesShown := 0;
 ----------------------------------------------------------------------------------------
 -- a forward reference: we have many mutually recursive functions in this file, too bad!
+export backtrace := true;
+export steppingFlag := false;
+stepCount := 0;
+microStepCount := 0;
+lastCode := dummyCode;
+lastCodePosition := Position("",ushort(0),ushort(0),uchar(0));
 export eval(c:Code):Expr;
 export applyEE(f:Expr,e:Expr):Expr;
 export evalAllButTail(c:Code):Code := while true do c = (
@@ -154,7 +160,6 @@ assignelemfun(lhsarray:Code,lhsindex:Code,rhs:Code):Expr := (
 	  else storeInDictionary(dc,lhsindex,rhs))
      else printErrorMessageE(lhsarray,"expected a list, hash table, database, or dictionary")
      );
-AssignElemFun = assignelemfun;
 
 assignquotedobject(x:HashTable,i:Code,rhs:Code):Expr := (
      when i
@@ -171,7 +176,6 @@ assignquotedelemfun(lhsarray:Code,lhsindex:Code,rhs:Code):Expr := (
      is x:HashTable do assignquotedobject(x,lhsindex,rhs)
      else printErrorMessageE(lhsarray,"'.' expected left hand side to be a hash table")
      );
-AssignQuotedElemFun = assignquotedelemfun;
 
 evalWhileDoCode(c:whileDoCode):Expr := (
      while true do (
@@ -1160,8 +1164,6 @@ parallelAssignmentFun(x:parallelAssignmentCode):Expr := (
 
 -----------------------------------------------------------------------------
 
-export backtrace := true;
-export steppingFlag := false;
 export determineExceptionFlag():void := (
      exceptionFlag = interruptedFlag || steppingFlag || alarmedFlag;
      );
@@ -1198,18 +1200,12 @@ export clearAlarmedFlag():void := (
      alarmedFlag = false;
      determineExceptionFlag();
      );
-stepCount := 0;
-microStepCount := 0;
 export clearSteppingFlag():void := (
      stepCount = 0;
      microStepCount = 0;
      steppingFlag = false;
      determineExceptionFlag();
      );
-
-lastCode := dummyCode;
-lastCodePosition := Position("",ushort(0),ushort(0),uchar(0));
-
 steppingFurther(c:Code):bool := steppingFlag && (
      p := codePosition(c);
      if p == dummyPosition || int(p.loadDepth) < errorDepth then return true;
@@ -1454,7 +1450,7 @@ export evalexcept(c:Code):Expr := (
 	       printErrorMessageE(c,interruptMessage))
 	  else if steppingFlag then (
 	       clearSteppingFlag();
-	       printErrorMessageE(c,"done stepping, returning to top level");
+	       printErrorMessageE(c,"--done stepping, returning to top level");
 	       e)
 	  else (
 	       SuppressErrors = false;
@@ -1795,6 +1791,9 @@ export binarymethod(left:Expr,right:Expr,methodkey:Expr,methodkeyname:string):Ex
      method := lookupBinaryMethod(Class(left),Class(right),methodkey,hash(methodkey));
      if method == nullE then MissingMethodPair(methodkeyname,left,right)
      else applyEEE(method,left,right));
+
+AssignElemFun = assignelemfun;
+AssignQuotedElemFun = assignquotedelemfun;
 
 -- Local Variables:
 -- compile-command: "make -C $M2BUILDDIR/Macaulay2/d "
