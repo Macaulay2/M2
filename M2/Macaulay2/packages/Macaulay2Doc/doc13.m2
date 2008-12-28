@@ -610,21 +610,52 @@ document { Key => disassemble,
      Outputs => { String => {"the disassembled form of ", TT "c"} },
      SeeAlso => { pseudocode },
      EXAMPLE lines ///
-     	  pseudocode resolution
-          disassemble oo
+     disassemble res
+     ///,
+     PARA {
+	  "It may be useful to disassemble code during debugging, as in the following demonstration."
+	  },
+     EXAMPLE lines ///
+     load "demo1.m2"
+     code g
+     g 2
+     code current
+     disassemble current
      ///
      }
 document { Key => "current",
      Headline => "the pseudocode that produced an error",
      Usage => "current",
      Outputs => { Pseudocode => { "the pseudocode that produced an error, or ", TO "null", ", if none" } },
-     "Use ", TO "value", " to evaluate the code again, for debugging purposes."
+     "Use ", TO "value", " to evaluate the code again, for debugging purposes.",
+     EXAMPLE lines ///
+     load "demo1.m2"
+     code g
+     g 2
+     code current
+     disassemble current
+     value current
+     x = 11
+     value current
+     continue
+     ///
      }
 document { Key => (value, Pseudocode),
      Headline => "execute pseudocode",
      Usage => "value p",
      Inputs => { "p" },
      Outputs => {{ "the value returned by evaluation of ", TT "p" }},
+     PARA {
+	  "Here is an example of its use in the debugger, to see whether modifying the value of a local
+	  variable fixed the problem in the code, by executing just the offending line."
+	  },
+     EXAMPLE lines ///
+     load "demo1.m2"
+     g 2
+     value current
+     x = 11
+     value current
+     ///,
      SeeAlso => { "current", pseudocode }
      }
 document { Key => SheafOfRings,

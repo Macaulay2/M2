@@ -1048,16 +1048,34 @@ document { Key => "continue",
      Headline => "continue with the next iteration of a loop",
      Usage => "continue x",
      Inputs => {"x"},
-     Consequences => {{"the currently executing ", TT "list", "-clause of a ", TO "for", "-loop or ", TO "while", "-loop is finished, and iteration continues with the
-	       ", TO "do", "-clause or the next iteration of the loop, if any.  The value ", TT "x", " is
-	       added to the list being accumulated.  If ", TT "x", " is omitted, then no value is added to the list, and the statement may be used in a ", TT "do", "-clause."
-	       }},
+     Consequences => {
+	  {"the currently executing ", TT "list", "-clause of a ", TO "for", "-loop or ", TO "while", "-loop is 
+	       finished, and iteration continues with the ", TO "do", "-clause or the next iteration of
+	       the loop, if any.  The value ", TT "x", " is added to the list being accumulated.
+	       If ", TT "x", " is omitted, then no value is added to the list, and the statement may be used in a ", TT "do", "-clause."
+	       },
+	  {"Alternatively, as a deubgger command, causes execution to be resumed, starting with the current expression."}
+	  },
      EXAMPLE lines ///
           for i from 1 to 4 list (continue 4; print ho) do print hi
           for i from 1 to 4 list (continue ; 14) do print hi
           for i from 1 to 4 list 14 do print hi
 	  i = 0 ; while i < 10 do ( i = i+1; if i == 5 then continue ; print i )
-     ///}
+     ///,
+     PARA {
+	  "Here is an example of the use of ", TO "continue", " in the debugger after altering a value so continuation will not cause the
+	  error to recur."
+	  },
+     EXAMPLE lines ///
+     load "demo1.m2"
+     code g
+     g 2
+     code f
+     x
+     x = 11
+     continue
+     ///
+     }
 document { Key => "copyright",
      Headline => "a string containing the copyright notice for Macaulay 2",
      EXAMPLE "copyright" }
@@ -1073,23 +1091,50 @@ document { Key => {listSymbols,(listSymbols, Dictionary), (listSymbols, List)},
      ///}
 
 document { Key => listLocalSymbols,
-     Headline => "compact display of symbols and their values",
-     Usage => "listLocalSymbols f",
-     Inputs => { "f" => {ofClass{Pseudocode,Symbol,Dictionary,Function}}},
-     Outputs => { Net => {"a compact display of the symbols in the local dictionaries attached to the closure ", TT "f", ", and their values"}},
-     EXAMPLE lines ///
-     	  x:=3; y:="hi there"; z:=2^30; f = x->x;
-	  listLocalSymbols f
-	  listLocalSymbols symbol x
-     ///,
+     Headline => "display of local symbols and their values",
      SYNOPSIS (
-	  Heading => "listing local symbols with a certain type of value",
+	  Usage => "listLocalSymbols f",
+	  Inputs => { "f" => {ofClass{Pseudocode,Symbol,Dictionary,Function}}},
+	  Outputs => { Net => {"a compact display of the symbols in the local dictionaries attached to the closure ", TT "f", ", and their values"}},
+	  EXAMPLE lines ///
+	       x:=3; y:="hi there"; z:=2^30; f = x->x;
+	       listLocalSymbols f
+	       listLocalSymbols symbol x
+	  ///
+	  ),
+     SYNOPSIS (
+	  Usage => "listLocalSymbols",
+	  Outputs => { Net => {"a compact display of the symbols in the local dictionaries attached to ", TO "current"}},
+	  PARA {
+	       "This usage works only in the debugger, where ", TO "current", " has a non-null value."
+	       },
+	  EXAMPLE lines ///
+	  load "demo1.m2"
+	  g 2
+	  listLocalSymbols
+	  ///,
+	  ),
+     SYNOPSIS (
      	  Usage => "listLocalSymbols(X,f)",
      	  Inputs => { "X" => Type, "f" => {ofClass{Pseudocode,Symbol,Dictionary,Function}}},
      	  Outputs => { Net => {"a compact display of the symbols in the local dictionaries attached to the closure ", TT "f", ", and their values, provided their
 		    values are instances of the type ", TT "X"}},
 	  EXAMPLE lines ///
-	       listLocalSymbols(ZZ,f)
+	  h := x -> y -> y+1;
+	  listLocalSymbols(ZZ,h 11)
+	  ///
+	  ),
+     SYNOPSIS (
+	  Usage => "listLocalSymbols X",
+	  Outputs => { Net => {"a compact display of the symbols in the local dictionaries attached to ", TO "current", " whose values
+		    have type ", TT "X", "."}},
+	  PARA {
+	       "This usage works only in the debugger, where ", TO "current", " has a non-null value."
+	       },
+	  EXAMPLE lines ///
+	  load "demo1.m2"
+	  g 2
+	  listLocalSymbols ZZ
 	  ///
 	  )
      }

@@ -46,19 +46,32 @@ document {
      SeeAlso => "listUserSymbols"
      }
 
-
 document {
      Key => listUserSymbols,
      Headline => "display the user's symbols",
-	Usage => "listUserSymbols",
-     TT "listUserSymbols", " is a command which returns a display of the variables 
-     defined by the user, along with their types.",
-     BR{},
- TT "listUserSymbols X", " limits the list to those variables whose
-     values are instances of ", TO "class", " ", TT "X", ".",
-     PARA{},
-     "After using ", TO "loaddata", " to restore 
-     a previous session, this function is useful to determine what user defined variables are present.",
+     SYNOPSIS {
+     	  Usage => "listUserSymbols",
+     	  Outputs => {
+	       {"a display of the variables defined by the user, along with their types and values, in abbreviated form"}
+	       },
+	  EXAMPLE lines ///
+	  t=3;
+	  R=QQ[x];
+	  listUserSymbols
+	  ///
+	  },
+     SYNOPSIS {
+     	  Usage => "listUserSymbols X",
+	  Inputs => {
+	       "X" => Type
+	       },
+     	  Outputs => {
+	       {"a display of the variables of type ", TT "X", " defined by the user, along with their types and values, in abbreviated form"}
+	       },
+	  EXAMPLE lines ///
+	  listUserSymbols ZZ
+	  ///
+	  },
      SeeAlso => {"userSymbols"}
      }
 
