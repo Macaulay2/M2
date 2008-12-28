@@ -365,18 +365,23 @@ document { Key => "the debugger",
      "Let's peek at the code of the function ", TT "g", ".",
      EXAMPLE "code g",
      "We see that the function g calls a function ", TT "f", ", but ", TT "f", " is not visible to us
-     (because ", TT "f", " is a local variable).",
-     PARA{},
-     "The first few times we use ", TT "g", " seem to work.",
+     (because ", TT "f", " is a local variable).  In emacs' ", EM "Macaulay2 Interaction Mode", ", pressing
+     return (", TT "RET", " or ", TT "enter", ") after positioning the cursor on the output line displaying the file name and line number
+     will bring up the source code in a new buffer.",
+     PARA{"The first few times we use ", TT "g", ", it seems to work."},
      EXAMPLE {"g 4", "g 3"},
-     "The following attempt results in an error, and the debugger starts up automatically.",
+     "However, the following attempt results in an error, and the debugger starts up automatically.",
      EXAMPLE "g 2",
+     "We use ", TO "help", ", as instructed, to view the commands available in the debugger.",
+     EXAMPLE "help",
      "As suggested, we can use ", TO "listLocalSymbols", " to list the local symbols and their values.",
      EXAMPLE "listLocalSymbols",
      "We see the the value of ", TT "x", " is 0, and that explains the error message about division by zero.
      The other local symbols are the ones defined in the body of the function ", TT "f", ", whose
      code can now be displayed with ", TO "code", ".",
      EXAMPLE "code f",
+     "We can use ", TO "step", " with argument 0 to bypass the current expression.",
+     EXAMPLE "step 0",
      "If we decide the problem is one level up, we can use ", TT "end", " to quit this
      instance of the debugger.  In this case, the debugger will be entered again
      at the point inside the function ", TT "g", " from which the function ", TT "f", " was called.",
@@ -385,7 +390,8 @@ document { Key => "the debugger",
      EXAMPLE "listLocalSymbols",
      "After we are done debugging, we can quit the debugger entirely and return to top level
      with ", TO "break", ".",
-     EXAMPLE "break"
+     EXAMPLE "break",
+     SeeAlso => { "break", "end", "step", "continue", "return", "listLocalSymbols", "listUserSymbols", "code", "value", "disassemble" }
      }     
 
 -- Local Variables:

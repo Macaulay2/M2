@@ -486,9 +486,61 @@ document {
      }
 
 document {
+     Key => "step",
+     Headline => "step by single lines in the debugger",
+     Usage => "step n",
+     Inputs => { "n" => ZZ },
+     Consequences => {
+	  {"This command is active within the debugger.  The current expression is executed and execution
+	       is continued until ", TT "n", " lines of source code whose load depth is as large as ", TO "errorDepth", " have 
+	       been encountered.  If ", TT "n", " is omitted, then 1 is used.  If ", TT "n", " is negative then
+	       instead, ", TT "n", " microsteps in the inner interpreter are executed and traced." }
+	  },
+     PARA {
+	  "One useful way to debug code suspected of being in error is to insert an explicit error message, such
+	  as ", TT ///error "debug me"///, ", and start stepping from there, as in the following demonstration."
+	  },
+     EXAMPLE lines ///
+     load "demo2.m2"
+     code f
+     f 0
+     help
+     step 0
+     code current
+     disassemble current
+     step -5
+     step
+     step 0
+     step
+     ///,
+     SeeAlso => { "debugging" }
+     }
+
+document {
      Key => end,
      Headline => "stop loading a file",
-     TT "end", " -- a symbol which causes loading of a file to be stopped.",
+     Usage => "end",
+     Consequences => {
+	  {"This symbol, encountered at top level, causes loading of the current input file to be stopped."},
+	  {"Alternatively, in the debugger it causes the current code to be abandoned, and the
+	       debugger to be re-entered one level further up.  If there are no more suspended levels
+	       of execution, then control is returned to the top level."
+	       }
+	  },
+     EXAMPLE lines ///
+     load "demo3.m2"
+     get loadedFiles#(#loadedFiles-1)
+     ///,
+     PARA {
+	  "Here is an example of its use in the debugger."
+	  },
+     EXAMPLE lines ///
+     load "demo1.m2"
+     g 2
+     end
+     end
+     g 3
+     ///,
      SeeAlso =>{ "needs", "load", "input" }
      }
 

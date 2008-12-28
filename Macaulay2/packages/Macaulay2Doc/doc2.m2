@@ -93,11 +93,15 @@ document {
 document {
      Key => "return",
      Headline => "return from a function",
-     TT "return x", " returns ", TT "x", " as the value of the function currently
-     being evaluated.",BR{},
-     TT "return;", " returns ", TO "null", " as the value of the function currently
-     being evaluated.",
-     PARA{},
+     Usage => "return x",
+     Inputs => {
+	  "x" => {"If ", TT "x", " is omitted, then ", TO "null", " is used."} 
+	  },
+     Consequences => {
+	  {"Returns ", TT "x", " as the value of the function currently being evaluated."},
+	  {"Alternatively, as a debugger command, returns ", TT "x", " as the value of the
+	       current expression and resumes execution."}
+	  },
      EXAMPLE {
 	  "f = x -> (
      if x == 3 then return;
@@ -107,6 +111,16 @@ document {
 	  "f 3",
 	  "f 4"
 	  },
+     PARA {
+	  "Here is an example of the use of ", TO "return", " as a debugger command."
+	  },
+     EXAMPLE lines ///
+     load "demo1.m2"
+     code g
+     g 2
+     code f
+     return 1/11
+     ///,
      SeeAlso => { "break" }
      }
 

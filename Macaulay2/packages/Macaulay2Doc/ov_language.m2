@@ -583,18 +583,35 @@ document {
      Usage => "break x",
      Consequences => {
 	  { "this interrupts execution of a loop controlled by ", TO "for", ", ", TO "while", ", ", TO "apply", ", or ", TO "scan", ", returning ",
-     	       TT "x", " as the value of the loop currently being evaluated"
-	       }
+     	       TT "x", " as the value of the loop currently being evaluated."
+	       },
+	  { "Alternatively, as a top level command in the debugger, it leaves the debugger, returning the user to top level." }
 	  },
      PARA {
 	  "Omitting ", TT "x", ", and executing ", TT "break", ", interrupts execution of a loop as above, returning
-     	  ", TO "null", " as the value of the function currently being evaluated, except, in the case of a ", TO "for", " loop or a ", TO "while", " loop with 
-     	  a list clause, the list accumulated so far is returned as the value."
+     	  ", TO "null", " as the value of the function currently being evaluated, except, in the case of 
+	  a ", TO "for", " loop or a ", TO "while", " loop with a list clause, the list accumulated so far is returned as the value."
 	  },
-     Caveat => {
-     	  "Warning: trying to break from a loop controlled by ", TO "table", " will probably not do what you expect, since ", TO "table", " is implemented by two nested
-     	  loops controlled by ", TO "apply", ", and only the inner one will stop."
+     EXAMPLE "for i from 1 to 10 do if i == 7 then break hi",
+     PARA {
+     	  "Warning: trying to break from a loop controlled by ", TO "table", " will probably not do what you
+	  expect, since ", TO "table", " is implemented by two nested
+     	  loops controlled by ", TO "apply", ", and only the inner one will stop, as in the following example."
 	  },
+     EXAMPLE lines ///
+     table(3,3,(i,j) -> if i == 1 then break 3 else hi)
+     table(3,3,(i,j) -> if j == 1 then break 3 else hi)
+     ///,
+     PARA {
+	  "Here is an example as a debugger command."
+	  },
+     EXAMPLE lines ///
+     load "demo1.m2"
+     g 2
+     x
+     break
+     g 3
+     ///,
      SeeAlso => { "apply", "scan", "while", "for" }
      }
 

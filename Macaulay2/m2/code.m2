@@ -72,7 +72,7 @@ editMethod String := filename -> (
 	  editor, " ", filename))
 EDIT := method(Dispatch => Thing)
 EDIT Nothing := arg -> (stderr << "--warning: source code not available" << endl;)
-EDIT Sequence := x -> ((filename,start,startcol,stop,stopcol) -> (
+EDIT Sequence := x -> ((filename,start,startcol,stop,stopcol,pos,poscol) -> (
      editor := EDITOR();
      if 0 != run concatenate(
 	  if getenv "DISPLAY" != "" and editor != "emacs" then "xterm -e ",
@@ -177,7 +177,7 @@ debuggerUsageMessage = ///--debugger commands that leave the debugger:
     value current       -- execute current expression, obtain value
     disassemble current -- microcode of current expression
 -- emacs commands in *M2* buffer:
-    <return>	        -- when on an error message line, jump to source///
+    RET                 -- when on an error message line, jump to source///
 
 inDebugger = false
 addStartFunction(() -> inDebugger = false)

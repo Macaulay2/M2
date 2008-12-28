@@ -164,55 +164,141 @@ undocumented {
 document {
      Key => code,
      Headline => "display source code",
-     TT "code f", " -- prints out the source code of the function or command", TT "f", ".",
-     BR{},
-     TT "code(f,X)", " -- prints out the source code of the particular 
-     method that would be applied if ", TT "f", " were applied to an argument of 
-     class ", TT "X", ".",
-     BR{},
-     TT "code(f,X,Y)", " -- prints out the source code of the particular 
-     method that would be applied if ", TT "f", " were applied to arguments of
-     classes ", TT "X", " and ", TT "Y", ".",
-     BR{},
-     TT "code(f,X,Y,Z)", " -- prints out the source code of the 
-     particular method that would be applied if ", TT "f", " were applied to 
-     arguments of classes ", TT "X", ", ", TT "Y", ", and ", TT "Z", ".",
-     BR{},
-     TT "code {v,w,...}", " -- prints out the source code for each
-     of the items listed.",
-     PARA{},
-     EXAMPLE "code methods use",
-     SeeAlso => "methods"
+     SYNOPSIS (
+	  Usage => "code f",
+	  Inputs => {
+	       "f" => {ofClass{Function,Command}}
+	       },
+	  Outputs => {Net => {"the source code of the function or command", TT "f"}},
+	  EXAMPLE "code listUserSymbols"
+	  ),
+     SYNOPSIS {
+	  Usage => "code(f,X)",
+	  Inputs => {
+	       "f" => {ofClass{Function,Keyword}},
+	       "X" => Type
+	       },
+	  Outputs => {Net => {"the source code of method for applying ", TT "f", " to an
+		    argument of type ", TT "X"
+		    }},
+	  EXAMPLE "code(res,Ideal)"
+	  },
+     SYNOPSIS {
+	  Usage => "code(f,X,Y)",
+	  Inputs => {
+	       "f" => {ofClass{Function,Keyword}},
+	       "X" => Type,
+	       "Y" => Type
+	       },
+	  Outputs => {Net => {"the source code of method for applying ", TT "f", " to
+		    arguments of type ", TT "X", " and ", TT "Y"
+		    }},
+	  EXAMPLE "code(symbol :, Ideal, Ideal)"
+	  },
+     SYNOPSIS {
+	  Usage => "code(f,X,Y,Z)",
+	  Inputs => {
+	       "f" => {ofClass{Function,Keyword}},
+	       "X" => Type,
+	       "Y" => Type,
+	       "Z" => Type
+	       },
+	  Outputs => {Net => {"the source code of method for applying ", TT "f", " to
+		    arguments of type ", TT "X", ", ", TT "Y, and ", TT "Z"
+		    }}
+	  },
+     SYNOPSIS {
+	  Usage => "code(f,X,Y,Z,T)",
+	  Inputs => {
+	       "f" => {ofClass{Function,Keyword}},
+	       "X" => Type,
+	       "Y" => Type,
+	       "Z" => Type,
+	       "T" => Type
+	       },
+	  Outputs => {Net => {"the source code of method for applying ", TT "f", " to
+		    arguments of type ", TT "X", ", ", TT "Y, and ", TT "Z", ", and ", TT "T"
+		    }}
+	  },
+     SYNOPSIS {
+	  Usage => "code {v,w,...}",
+	  Inputs => {
+	       "{v,w,...}" => List
+	       },
+	  Outputs => {Net => {"the source code of the functions or commands", TT "v,w,...", ".  
+		    Such a list can be obtained, for example, with ", TO "methods", "."
+		    }},
+	  EXAMPLE "code methods use"
+	  }
      }
 
 document {
      Key => edit,
      Headline => "edit source code",
-     TT "edit", " -- a command which starts the text editor",
-     BR{},
-     TT "edit f", " -- starts the text editor at the source code of the
-     function ", TT "f", ".",
-     BR{},
-     TT "edit(f,X)", " -- edits the source code of the particular 
-     method that would be applied if ", TT "f", " were applied to an argument of 
-     class ", TT "X", ".",
-     BR{},
-     TT "edit(f,X,Y)", " -- edits the source code of the particular 
-     method that would be applied if ", TT "f", " were applied to arguments of
-     classes ", TT "X", " and ", TT "Y", ".",
-     BR{},
-     TT "edit(f,X,Y,Z)", " -- edits the source code of the 
-     particular method that would be applied if ", TT "f", " were applied to 
-     arguments of classes ", TT "X", ", ", TT "Y", ", and ", TT "Z", ".",
-     PARA{},
-     "The name of the user's preferred editor is take from the environment 
-     variable ", TT "EDITOR", ".  If X is running and the editor is not
-     emacs, then the editor is started in a new ", TT "xterm", " window.",
-     PARA{},
-     "For an interactive example, try ", TT "edit(dim,Module)", ".",
-     PARA{},
-     "The value returned is the exit code returned by the editor, as with
-     ", TO "run", ", usually zero."
+     SYNOPSIS {
+	  Usage => "edit f",
+	  Inputs => {
+	       "f" => {ofClass{Function,Command}}
+	       },
+	  Outputs => {Net => {"the editor is started up, pointing at the source code of the function or command", TT "f"}},
+	  },
+     SYNOPSIS {
+	  Usage => "edit(f,X)",
+	  Inputs => {
+	       "f" => {ofClass{Function,Keyword}},
+	       "X" => Type
+	       },
+	  Outputs => {Net => {"the editor is started up, pointing at the source code of method for applying ", TT "f", " to an
+		    argument of type ", TT "X"
+		    }},
+	  },
+     SYNOPSIS {
+	  Usage => "edit(f,X,Y)",
+	  Inputs => {
+	       "f" => {ofClass{Function,Keyword}},
+	       "X" => Type,
+	       "Y" => Type
+	       },
+	  Outputs => {Net => {"the editor is started up, pointing at the source code of method for applying ", TT "f", " to
+		    arguments of type ", TT "X", " and ", TT "Y"
+		    }},
+	  },
+     SYNOPSIS {
+	  Usage => "edit(f,X,Y,Z)",
+	  Inputs => {
+	       "f" => {ofClass{Function,Keyword}},
+	       "X" => Type,
+	       "Y" => Type,
+	       "Z" => Type
+	       },
+	  Outputs => {Net => {"the editor is started up, pointing at the source code of method for applying ", TT "f", " to
+		    arguments of type ", TT "X", ", ", TT "Y, and ", TT "Z"
+		    }}
+	  },
+     SYNOPSIS {
+	  Usage => "edit(f,X,Y,Z,T)",
+	  Inputs => {
+	       "f" => {ofClass{Function,Keyword}},
+	       "X" => Type,
+	       "Y" => Type,
+	       "Z" => Type,
+	       "T" => Type
+	       },
+	  Outputs => {Net => {"the editor is started up, pointing at the source code of method for applying ", TT "f", " to
+		    arguments of type ", TT "X", ", ", TT "Y, and ", TT "Z", ", and ", TT "T"
+		    }}
+	  },
+     PARA{
+	  "The name of the user's preferred editor is take from the environment 
+	  variable ", TT "EDITOR", ".  If X is running and the editor is not
+	  emacs, then the editor is started in a new ", TT "xterm", " window."
+	  },
+     PARA{
+	  "For an interactive example, try ", TT "edit(dim,Module)", ".",
+	  },
+     PARA{
+	  "The value returned is the exit code returned by the editor, as with ", TO "run", ", usually zero."
+	  }
      }
 
 document {

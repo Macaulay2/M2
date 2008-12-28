@@ -569,8 +569,8 @@ fixupEntry := method(Dispatch => Thing)
 fixupEntry Thing := fixup
 fixupEntry Type := identity
 fixupEntry Option := z -> z#0 => fixupEntry z#1
-fixupList := x -> (
-     if not instance(x,List) then error "expected documentation option to be a list";
+fixupList := (x,nm) -> (
+     if not instance(x,List) then error(toString nm," => ... : expected a list");
      apply(nonnull x,fixupEntry))
 enlist := x -> if class x === List then x else {x}
 chkIsString := key -> val -> if class val === String then val else error("expected ",toString key," option to be a string")
@@ -592,9 +592,9 @@ fixupTable := new HashTable from {
 --	       }
 	  ),
      BaseFunction => val -> (if val =!= null and not instance(val,Function) then error "expected BaseFunction option value to be a function"; val),
-     Inputs => val -> fixupList val,
-     Outputs => val -> fixupList val,
-     Consequences => val -> fixupList val,
+     Inputs => val -> fixupList(val,Inputs),
+     Outputs => val -> fixupList(val,Outputs),
+     Consequences => val -> fixupList(val,Consequences),
      Headline => chkIsStringFixup Headline,
      Heading => chkIsString Heading,
      Description => val -> extractExamples fixup val,
