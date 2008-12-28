@@ -523,3 +523,9 @@ bool sigreadfile(char *name, char **pathopened) {
      assertpos(e == NULL,e);
      return TRUE;
      }     
+
+/*
+# Local Variables:
+# compile-command: "make -C $M2BUILDDIR/Macaulay2/c "
+# End:
+*/

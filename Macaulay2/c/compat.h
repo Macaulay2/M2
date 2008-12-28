@@ -69,3 +69,9 @@ extern char errfmtnc[];
 #define malloc(n) GC_MALLOC(n)
 #define free(n) GC_FREE(n)
 
+
+/*
+# Local Variables:
+# compile-command: "make -C $M2BUILDDIR/Macaulay2/c "
+# End:
+*/

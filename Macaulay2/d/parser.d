@@ -194,6 +194,7 @@ export errorbinary(lhs:ParseTree, token2:Token, file:TokenFile, prec:int,obeylin
 export defaultunary(token1:Token,file:TokenFile,prec:int,obeylines:bool):ParseTree := (
      accumulate(ParseTree(token1),file,prec,obeylines)
      );
+export precSpace := 0;		-- filled in later by binding.d
 export parse(file:TokenFile,prec:int,obeylines:bool):ParseTree;
 export nparse(file:TokenFile,prec:int,obeylines:bool):ParseTree;
 export unaryop(token1:Token,file:TokenFile,prec:int,obeylines:bool):ParseTree := (
@@ -211,7 +212,6 @@ export nnunaryop(token1:Token,file:TokenFile,prec:int,obeylines:bool):ParseTree 
 	  ret := nparse(file,token1.word.parse.unaryStrength,obeylines);
 	  if ret == errorTree then ret
 	  else accumulate(ParseTree(Unary(token1,ret)),file,prec,obeylines)));
-export precSpace := 0;		-- filled in later by binding.d
 export defaultbinary(lhs:ParseTree, token2:Token, file:TokenFile, prec:int, obeylines:bool):ParseTree := (
      if token2.followsNewline then (
      	  printErrorMessage(token2,"missing semicolon or comma on previous line?");

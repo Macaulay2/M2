@@ -14,3 +14,9 @@ char errfmt[] = "%s:%d:%d: %s";
 char errfmtnc[] = "%s:%d: %s";
 #endif
 
+
+/*
+# Local Variables:
+# compile-command: "make -C $M2BUILDDIR/Macaulay2/c "
+# End:
+*/

@@ -22,18 +22,18 @@ void printstringconst(node p){
      }
 
 char *tostring(node e){
+     if (e == NULL) return "<<NULL>>";
      switch(e->tag){
+          case cons_tag: pp(e);return "<<cons>>";
 	  case position_tag: return tostring(e->body.position.contents);
-	  case symbol_tag: return tostring(e->body.symbol.name);
-	  case int_const_tag: {
-	       return e->body.int_const.contents;
-	       }
-     	  case char_const_tag: {
-	       return strperm(intToString(e->body.char_const.contents));
-	       }
 	  case string_tag: return e->body.string.contents;
+	  case int_const_tag: return e->body.int_const.contents;
+          case double_const_tag: return e->body.double_const.contents;
+          case type_tag: return tostring(e->body.type.name);
+	  case symbol_tag: return tostring(e->body.symbol.name);
+     	  case char_const_tag: return strperm(intToString(e->body.char_const.contents));
 	  case string_const_tag: return e->body.string_const.contents;
-	  default: assert(FALSE); return NULL;
+	  default: assert(FALSE); return "<<unrecognized node type>>";
 	  }
      }
 
@@ -1342,3 +1342,9 @@ void dprint(node e){
 	  case cons_tag: { dprintcons(CAR(e),CDR(e)); return; }
 	  }
      }
+
+/*
+# Local Variables:
+# compile-command: "make -C $M2BUILDDIR/Macaulay2/c "
+# End:
+*/

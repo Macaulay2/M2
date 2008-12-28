@@ -47,3 +47,9 @@ extern node getmem_S, sizeof_S, function_K, define_S, define_recursive_types_K,
    ushort_K, uint_K, ulong_K, uchar_K, oror_S, andand_S, pointer_K,
    str_S, double_K, int_K, goto_S, long_K, short_K, char_K, bool_K, tmp_S, zero, one;
 
+
+/*
+# Local Variables:
+# compile-command: "make -C $M2BUILDDIR/Macaulay2/c "
+# End:
+*/

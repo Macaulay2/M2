@@ -29,3 +29,9 @@ extern char *newsuffix(char *, char *);
 extern char *newsuffixbase(char *, char *);
 extern bool debug;
 extern int tty();
+
+/*
+# Local Variables:
+# compile-command: "make -C $M2BUILDDIR/Macaulay2/c "
+# End:
+*/

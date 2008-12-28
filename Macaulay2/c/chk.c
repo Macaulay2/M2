@@ -4,7 +4,6 @@
 
 node chkcolon(node, env);
 node chklhscolon(node, env);
-const struct ENV empty_env;
 
 bool cancellable(node e, node f){
      return (iscons(e) && (
@@ -79,9 +78,17 @@ node pushoptlist(node l, node ll){
      return l;
      }
 
-void perform(node w, env v){
-     v->before = pushopt(v->before,w);
+static bool isassignment(node f) {
+     return iscons(f) && CAR(f) == assign_S;
      }
+
+void perform(node w, env v){
+  if (v->partial_definitions_active > 0 && isassignment(w)) {
+    warningpos(v->previous_partial_definition,"previous partial definition");
+    errorpos(w,"assignment while previous partial definition active");
+  }
+  v->before = pushopt(v->before,w);
+}
 
 void performlist(node w, env v){
      v->before = pushoptlist(v->before,w);
@@ -99,14 +106,14 @@ void performfinals(env v){
 
 void pushenvblock(env *vp){
      env w = new(struct ENV);	/* this gets freed in popenv */
-     *w = empty_env;
+     ZERO_MEM(w);
      w->previous = *vp;
      *vp = w;
      }
 
 void pushenv(env *vp){
      env w = new(struct ENV);	/* this gets freed in popenv */
-     *w = empty_env;
+     ZERO_MEM(w);
      w->previous = *vp;
      *vp = w;
      w->before = w->previous->before;
@@ -2450,6 +2457,10 @@ node chklhscolon(node e, env v){
 		    errorpos(f,"redeclaration");
      	       	    errorpos(s,"here is the previous definition");
 		    }
+	       else {
+		    /* warningpos(f,"completion of previous partial definition"); */
+		    v->partial_definitions_active--;
+	            }
 	       }
 	  else {
 	       s = newsymbol(f,funtype,v,/* intern_F| ??? */ constant_F);
@@ -2471,12 +2482,12 @@ node chkcolon(node e, env v){
 	  && NULL == sym->body.symbol.value->body.type.definition
 	  && NULL == sym->body.symbol.value->body.type.forward) {
      	  errorpos(e,"obsolete type declaration");
-#if 0
-	  internsymbol(sym,v);	/* partial definition */
-#endif
 	  return NULL;
 	  }
      if (isfunctiontype(t)) {
+          /* warningpos(e,"partial definition"); */
+	  v->partial_definitions_active++;
+	  v->previous_partial_definition = e;
 	  internsymbol(sym,v);	/* partial definition */
 	  return s;
 	  }
@@ -2732,3 +2743,9 @@ void init_chk(){
      setchkfun(import_K,chkimport);
      setchkfun(kindof_K,chkkindof);
      }
+
+/*
+# Local Variables:
+# compile-command: "make -C $M2BUILDDIR/Macaulay2/c "
+# End:
+*/

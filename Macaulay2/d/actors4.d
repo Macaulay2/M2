@@ -1265,7 +1265,6 @@ setupfun("precision0",precision);
 
 positionRange := {filename:string, minline:int, mincol:int, maxline:int, maxcol:int};
 locatedCode := positionRange("",0,0,0,0);
-locate(e:Code):void;
 lookat(p:Position):void := (
      if p == dummyPosition then return;
      locatedCode.filename = p.filename;

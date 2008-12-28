@@ -50,3 +50,9 @@ extern node caar(node);
 extern node caadr(node);
 extern node cadar(node);
 
+
+/*
+# Local Variables:
+# compile-command: "make -C $M2BUILDDIR/Macaulay2/c "
+# End:
+*/

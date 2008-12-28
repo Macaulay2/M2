@@ -12,3 +12,9 @@ extern void printsymbol(node);
 extern void pp(node);
 extern char *tostring(node);
 extern void dprint(node);
+
+/*
+# Local Variables:
+# compile-command: "make -C $M2BUILDDIR/Macaulay2/c "
+# End:
+*/

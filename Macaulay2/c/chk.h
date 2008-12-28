@@ -7,4 +7,9 @@ node chktype(node,env);
 node chk(node, env);
 node chklist(node e, env v);
 void init_chk(void);
-extern const struct ENV empty_env;
+
+/*
+# Local Variables:
+# compile-command: "make -C $M2BUILDDIR/Macaulay2/c "
+# End:
+*/

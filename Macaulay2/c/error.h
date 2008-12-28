@@ -22,3 +22,9 @@ node badnumargs(node e,int n);
 node notimpl(node e);
 void quit(void);
 void downpos(node n);
+
+/*
+# Local Variables:
+# compile-command: "make -C $M2BUILDDIR/Macaulay2/c "
+# End:
+*/

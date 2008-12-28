@@ -596,3 +596,9 @@ chkfun getchkfun(node e){
      if (e!=NULL && e->tag == symbol_tag) return e->body.symbol.chk;
      else return NULL;
      }
+
+/*
+# Local Variables:
+# compile-command: "make -C $M2BUILDDIR/Macaulay2/c "
+# End:
+*/
