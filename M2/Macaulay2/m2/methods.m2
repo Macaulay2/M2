@@ -228,10 +228,11 @@ setupMethods(TypicalValue => Boolean,
 	  isSubset,isHomogeneous, isIsomorphism, isPrime, isField, isConstant
 	  })
 setupMethods(TypicalValue => ZZ,
-     {length,binomial,degreeLength,height,char,pdim,dim,depth,width,euler,genus})
+     {binomial,degreeLength,height,char,pdim,dim,depth,width,euler,genus})
 setupMethods(TypicalValue => List,
      {eulers, genera})
 
+length = method(TypicalValue => ZZ, Dispatch => Thing)
 codim = method( Options => true )
 radical = method( Options=>{ Unmixed=>false, CompleteIntersection => null, Strategy => Decompose } )
 regularity = method( TypicalValue => ZZ, Options => { Weights => null } )

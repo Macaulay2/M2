@@ -109,7 +109,8 @@ document {
      	       EXAMPLE "ZZ[a,b,c] === ZZ[a,b,c]",
      	       "Thus it is a good idea to assign a new ring to a variable for future reference."
 	       )
-       	  }
+       	  },
+     SeeAlso => {"heft vectors"}
      }
 
 document {

@@ -310,6 +310,7 @@ makeit1 := (opts) -> (
      M)
 
 processDegrees := (degs,degrk,nvars) -> (
+     if not (degrk === null or instance(degrk,ZZ)) then error("DegreeRank => ... : expected an integer or null");
      if degs === null then degs = (
 	  if degrk === null then (
 	       degrk = 1;
