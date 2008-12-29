@@ -113,24 +113,20 @@ Hans
 #endif
 
 #include <factor.h>
-CanonicalForm alg_gcd(const CanonicalForm &, const CanonicalForm &, const CFList &);
+// CanonicalForm alg_gcd(const CanonicalForm &, const CanonicalForm &, const CFList &);
 using std::cout;
 using std::endl;
 int main () {
   factoryseed(123);
   Off( SW_RATIONAL );
   setCharacteristic(101);
-  Variable x('x'), y('y');
-  Variable a;
-  CanonicalForm mipo = a*a - 2;
-  CanonicalForm f = (y+a)*(y+a+1);
+  Variable a('a'), x('x');
+  CanonicalForm mipo = a*a - 2, f = x*x-2;
   cout << "f = " << f << endl;
-  CFFList fac = Factorize(f,mipo);
-  cout << "Factorize(f,mipo) = " << fac << endl;
+  cout << "Factorize(f,mipo) = " << Factorize(f,mipo) << endl;
   return 0;
 }
-#include <templates/ftmpl_inst.cc>
 
 // Local Variables:
-// compile-command: "g++ -g -I../../../BUILD/Linux-x86_64/ubuntu/libraries/final/include -L../../../BUILD/Linux-x86_64/ubuntu/libraries/final/lib  -I../../../BUILD/ubuntu/libraries/final/include -L../../../BUILD/ubuntu/libraries/final/usr/lib/Macaulay2/Core/lib -x c++ 0-factor -lfac -lcf -lcfmem -lntl -lgmp -o 0-factor.exe && ./0-factor.exe"
+// compile-command: "g++ -g -I../../../BUILD/dan/builds/ubuntu32/libraries/final/include -L../../../BUILD/dan/builds/ubuntu32/libraries/final/lib  -I../../../BUILD/dan/builds/ubuntu32/libraries/final/include -L../../../BUILD/dan/builds/ubuntu32/libraries/final/usr/lib/Macaulay2/Core/lib -x c++ 0-factor -lfac -lcf -lcfmem -lntl -lgmp -o 0-factor.exe && (ulimit -v 100000 -t 1 ; set -x ; time ./0-factor.exe | dd count=20)"
 // End:
