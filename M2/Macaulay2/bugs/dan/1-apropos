@@ -17,4 +17,4 @@ and regex.  The default would be true only for apropos.
 In scclib.c it involves adding REG_ICASE to SYNTAX_FLAGS.
 
 But it's hard, because we don't have a way for compiled functions to have
-options.  So we need to insert a top level method.
+options.  So we need to make one, or insert a top level method.

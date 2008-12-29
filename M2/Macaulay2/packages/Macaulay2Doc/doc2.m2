@@ -100,7 +100,8 @@ document {
      Consequences => {
 	  {"Returns ", TT "x", " as the value of the function currently being evaluated."},
 	  {"Alternatively, as a debugger command, returns ", TT "x", " as the value of the
-	       current expression and resumes execution."}
+	       current expression and stops execution at the next possible point, entering
+	       the debugger again."}
 	  },
      EXAMPLE {
 	  "f = x -> (
@@ -120,6 +121,7 @@ document {
      g 2
      code f
      return 1/11
+     continue
      ///,
      SeeAlso => { "break" }
      }

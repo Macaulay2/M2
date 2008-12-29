@@ -21,4 +21,6 @@ things to do manually before release
        check that installPackage works for the user (now, with no symbolic links)
        	     and that it creates a documentation database and finds and uses it
 
+       check that installPackage "Macaulay2Doc" works
+
        try edit(dim,Module), in emacs under X and in emacs in an xterm

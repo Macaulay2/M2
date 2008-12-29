@@ -1,3 +1,5 @@
+-- all fixed --
+
 
 i32 : x = new MutableList from (0..10)
 
@@ -9,11 +11,11 @@ i33 : x#-1
 
 o33 = 10
 
-i34 : x#-1 = 4									fix
+i34 : x#-1 = 4									fixed
 stdio:37:3:(1):[0]: error: negative subscript out of bounds 0 .. 10
 
 
-i31 : switch(-3,8,splice [0..10])						fix
+i31 : switch(-3,8,splice [0..10])						fixed
 stdio:17:8:(1):[1]: error: negative subscript out of bounds 0 .. 10
 
 

@@ -80,6 +80,13 @@ document {
 		    TO "StatePolytope :: StatePolytope",
 		    TO "Text :: Text"
 		    }
+	       },
+	  LI {
+	       "miscellaneous changes:",
+	       UL {
+		    LI {"the behavior of ", TO "return", " in the debugger has changed: it now stops in the debugger
+			 at the next available opportunity"}
+		    }
 	       }
 	  }
      }
@@ -97,26 +104,30 @@ document {
      Ubuntu, and Microsoft Windows.  The files for downloading are now divided
      into two archives, depending on whether they depend on the architecture.
      ///,
-     PARA ///
-     Packages have been contributed: NoetherNormalization, by Bart Snapp and
-     Nathaniel Stapleton; GenericInitialIdeal and Regularity, by Alexandra
-     Seceleanu and Nathaniel Stapleton; InvolutiveBases, by Daniel Robertz;
-     ChainComplexExtras, by Frank Moore and Greg Smith; HyperplaneArrangements,
-     by Graham Denham and Gregory G. Smith; LexIdeals, by Chris Francisco;
-     ReesAlgebra, by David Eisenbud, Amelia Taylor, and Sorin Popescu; and
-     TangentCone, by Craig Huneke and David Eisenbud.
-     ///,
-     PARA ///
-     A good implementation of real and complex numbers to arbitrary precision,
-     based on the mpfr library from mpfr.org, has been implemented.  The
-     library is remarkable for the care taken to return correctly rounded
-     results.  It is hoped that this will form a good base for experimentation
-     with algebraic algorithms that mix symbolic and numeric techniques.  Basic
-     transcendental functions are also provided, and pi is now a symbolic
-     constant usable in numeric expressions of any precision.  An interface to
-     lapack routines for singular value decomposition and eigenvectors is
-     provided (but they operate only with 53 bits of precision).
-     ///,
+     PARA {
+	  "Packages have been contributed: ", 
+	  TO2{ "NoetherNormalization::NoetherNormalization","NoetherNormalization"},
+	  ", by Bart Snapp and Nathaniel Stapleton;
+	  ", TO2{"GenericInitialIdeal::GenericInitialIdeal","GenericInitialIdeal"}, " and
+	  ", TO2{"Regularity::Regularity","Regularity"}, ",
+	  by Alexandra Seceleanu and Nathaniel Stapleton;
+	  ", TO2{"InvolutiveBases::InvolutiveBases","InvolutiveBases"}, ", by Daniel Robertz;
+	  ", TO2{"ChainComplexExtras::ChainComplexExtras","ChainComplexExtras"}, ", by Frank Moore and Greg Smith;
+	  ", TO2{"HyperplaneArrangements::HyperplaneArrangements","HyperplaneArrangements"}, ", by Graham Denham and Gregory G. Smith;
+	  ", TO2{"LexIdeals::LexIdeals","LexIdeals"}, ", by Chris Francisco;
+	  ", TO2{"ReesAlgebra::ReesAlgebra","ReesAlgebra"}, ", by David Eisenbud, Amelia Taylor, and Sorin Popescu; and
+	  ", TO2{"TangentCone::TangentCone","TangentCone"}, ", by Craig Huneke and David Eisenbud."
+	       },
+     PARA {"A good implementation of real and complex numbers to arbitrary precision,
+	  based on the mpfr library from ", HREF "http://mpfr.org/", ", has been implemented.  The
+	  library is remarkable for the care taken to return correctly rounded
+	  results.  It is hoped that this will form a good base for experimentation
+	  with algebraic algorithms that mix symbolic and numeric techniques.  Basic
+	  transcendental functions are also provided, and pi is now a symbolic
+	  constant usable in numeric expressions of any precision.  An interface to
+	  lapack routines for singular value decomposition and eigenvectors is
+	  provided (but they operate only with 53 bits of precision).
+	  "},
      PARA ///
      An interface with TeXmacs has been provided, so Macaulay 2 can be run with
      a good graphical user interface.  More work remains to be done, but it is
@@ -147,29 +158,26 @@ document {
      A bug in division (f//g) resulting in incorrect answers over quotient
      rings was fixed.
      ///,
-     PARA ///
-     A bug in "trim" and "mingens" resulting in incorrect answers was fixed.
-     ///,
+     PARA {"A bug in ", TO "trim", " and ", TO "mingens", " resulting in incorrect answers was fixed."},
      PARA ///
      A bug in computation of the Groebner basis of an exterior algebra over Z
      was fixed.
      ///,
-     PARA ///
-     A bug in fraction division was fixed.  Fraction field code now checks for
-     non-units in many more places.  For rings that have been declared by the
-     user to be fields, and yet are not fields, attempting to divide by a
-     non-unit results in an error, and sets a value so that the function
-     "getNonUnit" returns that value.
-     ///,
+     PARA {
+	  "A bug in fraction division was fixed.  Fraction field code now checks for
+     	  non-units in many more places.  For rings that have been declared by the
+     	  user to be fields, and yet are not fields, attempting to divide by a
+     	  non-unit results in an error, and sets a value so that the function
+     	  ", TO "getNonUnit", " returns that value."
+	  },
      PARA ///
      The Groebner basis routine can now handle large monomial ideals without a
      stack overflow.
      ///,
-     PARA ///
-     The function monomialIdeal, over polynomial rings over Z, now incorporates
-     leading monomials with nonzero coefficients.  Formerly the coefficients
-     had to be units.
-     ///,
+     PARA {"The function ", TO "monomialIdeal", ", over polynomial rings over ", TO "ZZ", ", now incorporates
+     	  leading monomials with nonzero coefficients.  Formerly the coefficients
+     	  had to be units."
+	  },
      PARA ///
      Codimension (and dimension) computations over polynomial rings over Z work
      once again.
@@ -189,37 +197,74 @@ document {
      which can be manipulated with the operations that can manipulate chain
      complexes.
      ///,
-     PARA ///
-     Support for utf-8 encoding of unicode characters in strings provided via
-     "utf8".
-     ///,
-     PARA ///
-     A new function "scanLines" can be used for reading a big file one line at
-     a time.
-     ///,
-     PARA ///
-     A new format for multi-line block comments is {* ... *}.
-     ///,
-     PARA ///
-     M2 can now be run with script files by using///, PRE ///       #! /usr/bin/M2 --script///, 
-     PARA ///
-     as the first line of the script file.
-     ///,
+     PARA {"Support for utf-8 encoding of unicode characters in strings provided via ", TO "utf8", "."},
+     PARA {"A new function ", TO "scanLines", " can be used for reading a big file one line at a time."},
+     PARA ///A new format for multi-line block comments is {* ... *}.///,
+     PARA ///M2 can now be run with script files by using///,
+     PRE ///       #! /usr/bin/M2 --script///, 
+     PARA ///as the first line of the script file.///,
      PARA ///
      Under Microsoft Windows, the links in the html form of the documentation
      now work in such a way that browsers can follow them, and viewHelp now
      works (if it finds firefox).
      ///,
-     PARA ///
-     Here are the functions added to the Core package since 0.9.95: acosh,
-     acot, agm, ancestors, asinh, atan2, BesselJ, BesselY, clean, commonest,
-     commonRing, cot, coth, cpuTime, csc, csch, debugError, default, eint, erf,
-     erfc, expm1, fillMatrix, Gamma, gbRemove, gbSnapshot, getSymbol,
-     globalAssign, httpHeaders, installHilbertFunction, instances, isANumber,
-     isFinite, isInfinite, isReal, lngamma, log1p, LUdecomposition, markedGB,
-     norm, openOutAppend, parts, powermod, scanLines, sec, sech, seeParsing,
-     setupEmacs, size2, toCC, toRR, utf8, Wikipedia, zeta.
-     ///,
+     PARA {
+	  "Here are the functions added to the Core package since 0.9.95: ",
+	  TO "acosh", ", ",
+	  TO "acot", ", ",
+	  TO "agm", ", ",
+	  TO "ancestors", ", ",
+	  TO "asinh", ", ",
+	  TO "atan2", ", ",
+	  TO "BesselJ", ", ",
+	  TO "BesselY", ", ",
+	  TO "clean", ", ",
+	  TO "commonest", ", ",
+	  TO "commonRing", ", ",
+	  TO "cot", ", ",
+	  TO "coth", ", ",
+	  TO "cpuTime", ", ",
+	  TO "csc", ", ",
+	  TO "csch", ", ",
+	  TO "debugError", ", ",
+	  TO "default", ", ",
+	  TO "eint", ", ",
+	  TO "erf", ", ",
+	  TO "erfc", ", ",
+	  TO "expm1", ", ",
+	  TO "fillMatrix", ", ",
+	  TO "Gamma", ", ",
+	  TO "gbRemove", ", ",
+	  TO "gbSnapshot", ", ",
+	  TO "getSymbol", ", ",
+	  TO "globalAssign", ", ",
+	  TO "httpHeaders", ", ",
+	  TO "installHilbertFunction", ", ",
+	  TO "instances", ", ",
+	  TO "isANumber", ", ",
+	  TO "isFinite", ", ",
+	  TO "isInfinite", ", ",
+	  TO "isReal", ", ",
+	  TO "lngamma", ", ",
+	  TO "log1p", ", ",
+	  TO "LUdecomposition", ", ",
+	  TO "markedGB", ", ",
+	  TO "norm", ", ",
+	  TO "openOutAppend", ", ",
+	  TO "parts", ", ",
+	  TO "powermod", ", ",
+	  TO "scanLines", ", ",
+	  TO "sec", ", ",
+	  TO "sech", ", ",
+	  TO "seeParsing", ", ",
+	  TO "setupEmacs", ", ",
+	  TO "size2", ", ",
+	  TO "toCC", ", ",
+	  TO "toRR", ", ",
+	  TO "utf8", ", ",
+	  TO "Wikipedia", ", and ",
+	  TO "zeta", "."
+	  },
      PARA ///
      Compilation of Macaulay 2 from source has been improved.  Needed third
      party libraries will now be downloaded and compiled automatically if they

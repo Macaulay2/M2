@@ -1,7 +1,0 @@
-Make a database of conway polynomials at package install time.  Then there
-won't be a delay for the user when loading it.
-
-This will require an installation hook that the package author can use to
-produce the file!
-
-Make sure we have tests for them.

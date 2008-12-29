@@ -40,6 +40,7 @@ document {
 	  "Developer's Corner",
 	       TO "handling hypertext",
      	  "Appendix",
+	       TO "changes to Macaulay 2, by version",
 	       TO "mathematical examples",
 	       TO "basic commutative algebra",
 	       -- Mike wanted this: TO "frequently encountered problems",
