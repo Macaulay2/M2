@@ -505,13 +505,12 @@ document {
      code f
      f 0
      help
-     step 0
-     code current
+     return
      disassemble current
-     step -5
+     step -3
      step
-     step 0
      step
+     t
      ///,
      SeeAlso => { "debugging" }
      }

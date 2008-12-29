@@ -1,4 +1,0 @@
-we need a way to specify that absolute paths be used in all error messages and
-file locations, because it may happen that emacs is interpreting things
-relative to getenv "PWD" and we are interpreting with respect to getcwd().  In
-that case, perhaps emacs will not find our files.

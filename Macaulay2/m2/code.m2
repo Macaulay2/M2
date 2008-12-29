@@ -29,7 +29,7 @@ getSourceLines Sequence := x -> ((filename,start,startcol,stop,stopcol,pos,posco
 	       toString start, ":", toString (startcol+1),
 	       "-",
 	       toString stop, ":", toString (stopcol+1),
-	       ": --source lines:"),
+	       ": --source code:"),
 	  apply(start-1 .. stop-1, i -> file#i)
 	  )
      )) x
@@ -162,22 +162,22 @@ methods Thing := F -> (
 
 debuggerUsageMessage = ///--debugger commands that leave the debugger:
     break               -- leave the debugger, returning to top level
-    end                 -- abandon the code, enter debugger one level up
-    step 0              -- bypass current expression
-    step                -- execute current expression, step 1 line
-    step n              -- execute current expression, step n lines
-    step -n             -- execute current expression, trace n microsteps
-    continue            -- execute current expression, continue
-    return              -- return null as value of current expression
-    return x            -- return x as value of current expression
+    end                 -- enter debugger one level up
+    end of file char    -- enter debugger one level up
+    return              -- bypass current expression, return null, stop
+    return x            -- bypass current expression, return x, stop
+    continue            -- continue
+    step                -- step 1 line
+    step n              -- step n lines
+    step -n             -- trace n microsteps
 -- other debugger commands:
     listLocalSymbols    -- display local symbols and their values
     listUserSymbols     -- display user symbols and their values
     code current        -- source code of current expression
     value current       -- execute current expression, obtain value
-    disassemble current -- microcode of current expression
+    disassemble current -- display microcode of current expression
 -- emacs commands in *M2* buffer:
-    RET                 -- when on an error message line, jump to source///
+    RET                 -- on an file/position line, go to source///
 
 inDebugger = false
 addStartFunction(() -> inDebugger = false)

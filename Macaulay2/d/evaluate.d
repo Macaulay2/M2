@@ -35,8 +35,8 @@ NumberErrorMessagesShown := 0;
 -- a forward reference: we have many mutually recursive functions in this file, too bad!
 export backtrace := true;
 export steppingFlag := false;
-stepCount := 0;
-microStepCount := 0;
+stepCount := -1;
+microStepCount := -1;
 lastCode := dummyCode;
 lastCodePosition := Position("",ushort(0),ushort(0),uchar(0));
 export eval(c:Code):Expr;
@@ -114,7 +114,7 @@ assignvector(m:List,i:Code,rhs:Code):Expr := (
 	  if isInt(j)
 	  then (
 	       k := toInt(j);
-	       if k < -length(x) then k = k + length(x);
+	       if k < 0 then k = k + length(x);
 	       if k < 0 then return printErrorMessageE(i,"negative subscript out of bounds 0 .. "+tostring(length(x)-1));
 	       val := eval(rhs);
 	       when val is Error do return val else (
@@ -1201,31 +1201,31 @@ export clearAlarmedFlag():void := (
      determineExceptionFlag();
      );
 export clearSteppingFlag():void := (
-     stepCount = 0;
-     microStepCount = 0;
+     stepCount = -1;
+     microStepCount = -1;
      steppingFlag = false;
      determineExceptionFlag();
      );
 steppingFurther(c:Code):bool := steppingFlag && (
      p := codePosition(c);
      if p == dummyPosition || int(p.loadDepth) < errorDepth then return true;
-     if stepCount > 0 then (
+     if stepCount >= 0 then (
 	  if lastCodePosition.filename != p.filename
 	  || lastCodePosition.line != p.line
 	  then (
      	       stepCount = stepCount - 1;
      	       lastCodePosition.filename = p.filename;
 	       lastCodePosition.line = p.line;
-	       if debugLevel == 1001 && stepCount > 0 then printErrorMessage(p,"--evaluating: "+present(tostring(c)));
+	       if debugLevel == 1001 && stepCount >= 0 then printErrorMessage(p,"--evaluating: "+present(tostring(c)));
 	       );
-	  stepCount > 0)
-     else if microStepCount > 0 then (
+	  stepCount >= 0)
+     else if microStepCount >= 0 then (
      	  if lastCode != c then (
 	       microStepCount = microStepCount - 1;
 	       lastCode = c;
-	       if microStepCount > 0 then printErrorMessage(p,"--evaluating: "+present(tostring(c)));
+	       if microStepCount >= 0 then printErrorMessage(p,"--evaluating: "+present(tostring(c)));
 	       );
-	  microStepCount > 0)
+	  microStepCount >= 0)
      else false);
 
 handleError(c:Code,e:Expr):Expr := (
@@ -1258,7 +1258,10 @@ handleError(c:Code,e:Expr):Expr := (
 			 -- printErrorMessage(err.position,"--leaving debugger");
 			 when z is z:Error do (
 			      if z.message == breakMessage then buildErrorPacket(unwindMessage)
-			      else if z.message == returnMessage then z.value
+			      else if z.message == returnMessage then (
+				   setSteppingFlag();
+     	       	    	      	   lastCodePosition.filename = "";
+				   z.value)
 			      else if z.message == stepMessageWithArg || z.message == stepMessage then (
 				   setSteppingFlag();
      	       	    	      	   lastCodePosition.filename = "";
@@ -1268,12 +1271,9 @@ handleError(c:Code,e:Expr):Expr := (
 					else 1);
 				   if stepCount < 0 then (
 					microStepCount = - stepCount;
-					stepCount = 0;
-					eval(c))
-				   else if stepCount > 0 then (
-					stepCount = stepCount + 1;
-					eval(c))
-				   else nullE)
+					stepCount = -1;
+					);
+				   eval(c))
 			      else if z.message == continueMessage then eval(c)
 			      else e)
 			 else e)
