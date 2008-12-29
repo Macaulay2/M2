@@ -29,6 +29,10 @@ tags:: @srcdir@/TAGS
 
 
 # overflows
+LDLIBS = -lgc
+ifeq (@PTHREADS@,yes)
+LDLIBS += -lpthread
+endif
 all: run-overflow-test
 run-overflow-test : overflow-test
 	./$^ sub 2>/dev/null || echo test succeeded
@@ -55,7 +59,7 @@ endif
 
 %.ii: %.cpp; $(PRE.cc)        $< $(OUTPUT_OPTION)
 %.s : %.cpp; $(COMPILE.cc) -S $< $(OUTPUT_OPTION)
-%-demangled.s : %.s; demangle <$< | egrep -v '\.loc|^\.LBB|^\.LCF|^\.LBE|^\.LBE|^\.LVL|^\.LFB' >$@
+%.ss : %.s ; demangle <$< >$@
 
 %.lo : %.c  ; $(COMPILE.c)  -fPIC $< $(OUTPUT_OPTION)
 %.lo : %.cc ; $(COMPILE.cc) -fPIC $< $(OUTPUT_OPTION)
