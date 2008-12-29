@@ -2,11 +2,12 @@
 #define _exceptions_h_
 
 #include <stdexcept>
+#include "newdelete.hpp"
 
 using namespace std;
 
 namespace exc {
-     struct engine_error : public runtime_error {
+     struct engine_error : public runtime_error, our_new_delete {
 	  explicit engine_error(const string &msg) : runtime_error(msg) {}
      };
      struct overflow_error : public engine_error {
