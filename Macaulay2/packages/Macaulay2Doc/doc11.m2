@@ -399,6 +399,100 @@ undocumented {
      ((symbol _*, symbol =), RingFamily) 
      }
 
+document {
+     Key => {(isSorted,VisibleList), isSorted},
+     Usage => "isSorted x",
+     Inputs => { "x" },
+     Outputs => { Boolean => {"whether the elements of the list ", TT "x", " are in increasing order"}},
+     SourceCode => (isSorted,VisibleList),
+     EXAMPLE lines ///
+     isSorted {1,2,2,3}
+     isSorted {1,2,3,2}
+     ///
+     }     
+
+document {
+     Key => {(switch,ZZ,ZZ,VisibleList), switch},
+     Usage => "switch(i,j,x)",
+     Inputs => {"i","j","x"},
+     Outputs => {{"a copy of the list ", TT "x", " in which the elements at positions ", TT "i", " and ", TT "j", " have
+	       been interchanged.  A negative value of ", TT "i", " or ", TT "j", " is taken relative to the end of the list."
+	       }},
+     EXAMPLE lines ///
+     switch(3,9,0..10)
+     switch(0,-1,0..10)
+     ///
+     }
+
+document {
+     Key => {(insert,ZZ,Thing,VisibleList), insert},
+     Usage => "insert(i,a,x)",
+     Inputs => {"i","t","x"},
+     Outputs => {{"a copy of the list ", TT "x", " in which ", TT "t", " has been inserted
+	       into position ", TT "i", " of the result.  A negative value of ", TT "i", " 
+	       is taken relative to the end of the list."
+	       }},
+     EXAMPLE lines ///
+     insert(4,t,0..10)
+     insert(0,t,0..10)
+     insert(11,t,0..10)
+     insert(-1,t,0..10)
+     ///
+     }
+
+document {
+     Key => {heft,(heft, Ring),(heft, Module)},
+     Usage => "heft X",
+     Inputs => { "X" => {ofClass{Ring,Module}} },
+     Outputs => { List => {"the heft vector in use for ", TT "X", ", if ", TT "X", " is a 
+	       ring, or for the ring of ", TT "X", ", if ", TT "X", " is a module.
+	       If there is no heft vector, then ", TO "null", " is returned."
+	       }},
+     EXAMPLE lines ///
+     S = QQ[a..d,DegreeRank => 4];
+     degrees S
+     heft S
+     ///,
+     SeeAlso => {"heft vectors"}
+     }
+
+document {
+     Key => "heft vectors",
+     PARA {
+	  "A ", EM "heft vector", " for a polynomial ring is a vector with integer entries, of the same length
+	  as the degree vectors of the variables of the ring, whose dot product with each of them
+	  is (strictly) positive.  Unless one is specified explicitly, then a good one will be
+	  found automatically.  The heft vector is used in various internal algorithms
+	  as a way of organizing the sequence of steps, proceeding incrementally to larger
+	  values of the dot product of the degree of a monomial with the heft vector."
+	  },
+     EXAMPLE lines ///
+     R = QQ[a..d];
+     degrees R
+     heft R
+     S = QQ[a..d,DegreeRank => 4];
+     degrees S
+     heft S
+     T = QQ[a,b,Degrees => {1,-1}]
+     degrees T
+     heft T
+     U = QQ[a..d,Degrees => {{2,0},{1,-1},{0,-2},{-1,-3}}]
+     degrees U
+     heft U
+     ///,
+     PARA {
+	  "The heft vector, multiplied by -1, is used as the weight vector in the monomial ordering of 
+	  the degrees ring, and the order of its approximate expansions refers to 
+	  the weight formed with respect to that weight vector."
+	  },
+     EXAMPLE lines ///
+     hilbertSeries U
+     describe ring numerator oo
+     hilbertSeries(U,Order => 8)
+     ///,
+     SeeAlso => {heft, [monoid,Heft], degreesRing}
+     }
+
 -- Local Variables:
 -- compile-command: "make -C $M2BUILDDIR/Macaulay2/m2 "
 -- End:
