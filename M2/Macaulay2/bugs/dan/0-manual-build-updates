@@ -24,3 +24,5 @@ things to do manually before release
        check that installPackage "Macaulay2Doc" works
 
        try edit(dim,Module), in emacs under X and in emacs in an xterm
+
+       verify that ~/.Macaulay2/README is restored if it is deleted

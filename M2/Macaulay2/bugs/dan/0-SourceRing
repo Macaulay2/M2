@@ -1,0 +1,25 @@
+should this work?
+
+i12 : QQ[x]/x^6
+
+      QQ[x]
+o12 = -----
+         6
+        x
+
+o12 : QuotientRing
+
+i15 : basis (o12, SourceRing => ambient o12 )
+
+o15 = | 1 x x2 x3 x4 x5 |
+
+             /QQ[x]\1      /QQ[x]\6
+o15 : Matrix |-----|  <--- |-----|
+             |   6 |       |   6 |
+             \  x  /       \  x  /
+
+i16 : ambient o12
+
+o16 = QQ[x]
+
+o16 : PolynomialRing
