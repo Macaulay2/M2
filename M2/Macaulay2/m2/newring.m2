@@ -84,6 +84,7 @@ graphIdeal RingMap := Ideal => opts -> (f) -> (
      m := numgens R;
      n := numgens S;
      k := coefficientRing R;
+     if S === k then return ideal 0_R;
      if not ( isAffineRing R and isAffineRing S and k === coefficientRing S ) then error "expected polynomial rings over the same ring";
      gensk := generators(k, CoefficientRing => ZZ);
      if not all(gensk, x -> promote(x,R) == f promote(x,S)) then error "expected ring map to be identity on coefficient ring";

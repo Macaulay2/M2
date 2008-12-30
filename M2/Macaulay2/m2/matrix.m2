@@ -177,10 +177,10 @@ expression Matrix := m -> MatrixExpression applyTable(entries m, expression)
 
 toExternalString Matrix := m -> concatenate (
      "map(", 
-     toExternalString target m, ", ", 
-     toExternalString source m, ", ", 
-     toString entries m,
-     if not all(degree m, zero) then (", Degree => ", toString degree m),
+     toExternalString target m, ",", 
+     toExternalString source m, ",", 
+     if m == 0 then "0" else toString entries m,
+     if not all(degree m, zero) then (",Degree=>", toString degree m),
      ")"
      )
 
@@ -459,6 +459,7 @@ rawSetDegree = (M,N,m,d) -> rawMatrixRemake2(M, N, d, m, 0)
 
 map(Module) := Matrix => opts -> (M) -> map(M,M,1,opts)
 
+map(Module,ZZ,ZZ) := Matrix => opts -> (M,n,i) -> map(M,(ring M)^n,i)
 map(Module,Module,ZZ) := Matrix => opts -> (M,N,i) -> (
      local R;
      if i === 0 then (

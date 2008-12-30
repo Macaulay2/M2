@@ -103,7 +103,14 @@ map(Ring,Ring,Matrix) := RingMap => opts -> (R,S,m) -> (
 	  symbol matrix => mE,
 	  symbol RawRingMap => rawRingMap m.RawMatrix,
 	  symbol DegreeMap => degmap,
-	  symbol DegreeLift => if opts.DegreeLift =!= null then opts.DegreeLift else notImplemented,
+	  symbol DegreeLift => (
+	       if opts.DegreeLift =!= null then opts.DegreeLift
+	       else if degmap === identity then identity
+	       else if degreeLength S === 0
+	       then if degreeLength R === 0 then identity
+	       else (x -> if all(x,zero) then {} else error "RingMap DegreeLift: degree cannot be lifted")
+	       else notImplemented
+	       ),
 	  symbol cache => new CacheTable
 	  }
      )
@@ -430,7 +437,9 @@ map(Module,Module,RingMap,RawMatrix) := opts -> (M,N,p,f) -> (
      (R,S) := (ring M,ring N);
      (M',N') := (cover M,p cover N);
      if R =!= target p or S =!= source p then error "expected rings to match";
-     if target f =!= raw M' or source f =!= raw N' then error "expected matrix to match covering modules";
+     if target f =!= raw M' then error "expected target of matrix to match (cover of) target module";
+     ---- we relax this check so "basis" can return something for basis(QQ[x]/x^2,SourceRing=>QQ):
+     -- if source f =!= raw N' then error "expected source of matrix to match (cover of) source module";
      deg := if opts.Degree === null then rawMultiDegree f else degreeCheck(opts.Degree,R);
      new Matrix from {
 	  symbol RingMap => p,
@@ -442,9 +451,8 @@ map(Module,Module,RingMap,RawMatrix) := opts -> (M,N,p,f) -> (
 map(Module,Nothing,RingMap,RawMatrix) := Matrix => o -> (M,N,p,f) -> (
      d := degreeLength M;
      degs := pack(d,degrees source f);
-     m := p.DegreeMap;
-     if m =!= identity then error "not implemented yet: non-trivial degrees map attached to ring map";
-     map(M,(source p)^-degs,p,f))
+     srcdegs := apply(degs,p.DegreeLift);
+     map(M,(source p)^-srcdegs,p,f))
 
 map(Module,Nothing,RingMap,Matrix) := 
 map(Module,Module,RingMap,Matrix) := Matrix => o -> (M,N,p,f) -> map(M,N,p,raw f,o)

@@ -195,7 +195,9 @@ toExternalString Module := M -> (
 	  else (
 	       if numgens M === 0
 	       then "0"
-	       else toString ring M | "^" | toString (- degrees M)
+	       else if all(degrees M, deg -> all(deg, zero)) 
+	       then toString ring M | "^" | numgens M
+	       else toString ring M | "^" | toExternalString (- degrees M)
 	       )
 	  )
      )

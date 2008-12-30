@@ -677,8 +677,18 @@ basis(List,List,Module) := opts -> (lo,hi,M) -> (
 	  );
      if heft === null then heft = () else heft = toSequence heft;
      M.cache#"rawBasis log" = log := FunctionApplication { rawBasis, (raw pres, lo, hi, heft, var, opts.Truncate, opts.Limit) };
-     if opts.SourceRing === null or opts.SourceRing === A then map(M,,value log)
-     else map(M,,map(A,opts.SourceRing),value log))
+     f := value log;
+     S := opts.SourceRing;
+     if S === null or S === R then map(M,,f)
+     else (
+     	  p := map(R,S);
+	  d := degreeLength S;
+	  N := S ^ (
+	       if d === 0 
+	       then rank source f
+	       else apply(pack(d,degrees source f), deg -> try - p.DegreeLift deg else toList (d:0))
+	       );
+ 	  map(M,N,p,f)))
 
 basis(List,Module) := opts -> (deg,M) -> basis(deg,deg,M,opts)
 basis(ZZ,Module) := opts -> (deg,M) -> basis({deg},M,opts)

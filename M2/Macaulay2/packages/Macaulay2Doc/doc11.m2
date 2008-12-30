@@ -468,8 +468,8 @@ document {
 	  "A ", EM "heft vector", " for a polynomial ring is a vector with integer entries, of the same length
 	  as the degree vectors of the variables of the ring, whose dot product with each of them
 	  is (strictly) positive.  Unless one is specified explicitly, then a good one will be
-	  found automatically.  The heft vector is used in various internal algorithms
-	  as a way of organizing the sequence of steps, proceeding incrementally to larger
+	  found automatically.  The heft vector is used in various internal algorithms, such as the one
+	  in ", TO "basis", ", as a way of organizing the sequence of steps, proceeding incrementally to larger
 	  values of the dot product of the degree of a monomial with the heft vector."
 	  },
      EXAMPLE lines ///
@@ -577,6 +577,7 @@ document {
 
 document {
      Key => inversePermutation,
+     Headline => "inverse permutation",
      Usage => "y = inversePermutation x",
      Inputs => {
 	  "x" => List => {"a list of length ", TT "n", " whose elements are the numbers 0, 1, 2, ..., ", TT "n-1", ", in some order,
