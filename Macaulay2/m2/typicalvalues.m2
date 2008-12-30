@@ -86,7 +86,7 @@ openDatabaseOut String := Database => openDatabaseOut
 openIn String := File => openIn
 openOut String := File => openOut
 openOutAppend String := File => openOutAppend
-openInOut String := File => openInOut
+openInOut String := openInOut File := File => openInOut
 openListener String := File => openListener
 pack(BasicList,ZZ) := List => pack
 pack(ZZ,BasicList) := List => pack

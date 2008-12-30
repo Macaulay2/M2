@@ -274,6 +274,11 @@ openpipe(filename:string,input:bool,output:bool):(file or errmsg) := (
 export openIn(f:file):(file or errmsg) := accept(f,true,false);
 export openOut(f:file):(file or errmsg) := accept(f,false,true);
 export openInOut(f:file):(file or errmsg) := accept(f,true,true);
+export expandFileName(filename:string):string := (
+     if length(filename) >= 2 && filename.0 == '~' && filename.1 == '/' then (
+	  h := getenv("HOME");
+	  if length(h) == 0 then filename else h + substr(filename,1))
+     else filename);
 export openIn(filename:string):(file or errmsg) := (
      if filename === "-"
      then (file or errmsg)(stdin)
@@ -282,9 +287,10 @@ export openIn(filename:string):(file or errmsg) := (
      else if length(filename) > 0 && filename . 0 == '!'
      then openpipe(filename,true,false)
      else (
+	  filename = expandFileName(filename);
      	  fd := openin(filename);
      	  if fd == ERROR
-     	  then (file or errmsg)(errmsg(syscallErrorMessage("opening input file '"+filename+ "'")))
+     	  then (file or errmsg)(errmsg(syscallErrorMessage("opening input file \""+filename+ "\"")))
      	  else (file or errmsg)(addfile(file(nextHash(), filename, 0, 
 	  	    false, "",
 		    false, NOFD,NOFD,0,
@@ -298,18 +304,20 @@ export openOut(filename:string):(file or errmsg) := (
      else if length(filename) > 0 && filename . 0 == '!'
      then openpipe(filename,false,true)
      else (
+	  filename = expandFileName(filename);
      	  fd := openout(filename);
      	  if fd == ERROR
-     	  then (file or errmsg)(errmsg(syscallErrorMessage("opening output file '"+filename+"'")))
+     	  then (file or errmsg)(errmsg(syscallErrorMessage("opening output file \""+filename+"\"")))
      	  else (file or errmsg)(addfile(file(nextHash(), filename, 0, 
 	  	    false, "",
 		    false, NOFD,NOFD,0,
 		    false, NOFD, false,           "",          0, 0, false,false,noprompt,noprompt,false,true,false,0,
 		    true,  fd, 0 != isatty(fd), newbuffer(), 0, 0, false,dummyNetList,0,-1,false)))));
 export openOutAppend(filename:string):(file or errmsg) := (
+     filename = expandFileName(filename);
      fd := openoutappend(filename);
      if fd == ERROR
-     then (file or errmsg)(errmsg(syscallErrorMessage("opening output (append) file '"+filename+"'")))
+     then (file or errmsg)(errmsg(syscallErrorMessage("opening output (append) file \""+filename+"\"")))
      else (file or errmsg)(addfile(file(nextHash(), filename, 0, 
 	       false, "",
 	       false, NOFD,NOFD,0,

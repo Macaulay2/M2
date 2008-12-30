@@ -1,6 +1,6 @@
 #-*- Makefile -*-
-#BUILDOPTIONS += RemakeAllDocumentation=true RemakePackages=true
-#PACKAGES = Macaulay2Doc
+# BUILDOPTIONS += RemakeAllDocumentation=true RemakePackages=true
+PACKAGES = Macaulay2Doc
 BUILDOPTIONS += -s
 #INSTALLOPTIONS += -s
 # CONFIGOPTIONS += --enable-tarfile

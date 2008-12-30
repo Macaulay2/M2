@@ -39,12 +39,12 @@ addStartFunction( () -> (
 	       if isDirectory(prefixDirectory|"common/") then prefixDirectory|"common/",
 	       if isDirectory(prefixDirectory|version#"machine") then prefixDirectory|version#"machine"
 	       };
-	  if not noinitfile then (
+	  if not noinitfile and getenv "HOME" =!= "" then (
 	       prefixPath = prepend(applicationDirectory()|"local/", prefixPath);
 	       userMacaulay2Directory();
 	       makePackageIndex())))
 
-addStartFunction( () -> if not noinitfile and prefixDirectory =!= null then (
+addStartFunction( () -> if not noinitfile and prefixDirectory =!= null and getenv "HOME" =!= "" then (
 	  isprefix := (s,t) -> s === substring(0,#s,t);
 	  GLOBAL := prefixDirectory;			    -- installed doc
 	  LOCAL := applicationDirectory() | "local/";	    -- user's "local" application directory doc

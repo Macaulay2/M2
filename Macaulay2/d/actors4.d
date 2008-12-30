@@ -218,6 +218,7 @@ any(f:Expr,n:int):Expr := (
 	  v := applyEE(f,Expr(toInteger(i)));
 	  when v is err:Error do if err.message == breakMessage then return if err.value == dummyExpr then nullE else err.value else return v else nothing;
 	  if v == True then return True;
+	  if v != False then return buildErrorPacket("any: expected true or false");
 	  );
      False);
 any(f:Expr,obj:HashTable):Expr := (
@@ -228,6 +229,7 @@ any(f:Expr,obj:HashTable):Expr := (
 	       v := applyEEE(f,p.key,p.value);
 	       when v is err:Error do if err.message == breakMessage then return if err.value == dummyExpr then nullE else err.value else return v else nothing;
 	       if v == True then return True;
+	       if v != False then return buildErrorPacket("any: expected true or false");
 	       p = p.next;
 	       ));
      False);
@@ -235,7 +237,9 @@ any(f:Expr,a:Sequence):Expr := (
      foreach x at i in a do (
 	  y := applyEE(f,x);
 	  when y is err:Error do if err.message == breakMessage then return if err.value == dummyExpr then nullE else err.value else return y else nothing;
-	  if y == True then return True);
+	  if y == True then return True;
+	  if y != False then return buildErrorPacket("any: expected true or false");
+	  );
      False);
 any(f:Expr,e:Expr):Expr := (
      when e
@@ -251,7 +255,9 @@ any(f:Expr,a:Sequence,b:Sequence):Expr := (
      foreach x at i in a do (
 	  y := applyEEE(f,x,b.i);
 	  when y is err:Error do if err.message == breakMessage then return if err.value == dummyExpr then nullE else err.value else return y else nothing;
-	  if y == True then return True);
+	  if y == True then return True;
+	  if y != False then return buildErrorPacket("any: expected true or false");
+	  );
      False);
 any(f:Expr,a:Sequence,y:Expr):Expr := (
      when y

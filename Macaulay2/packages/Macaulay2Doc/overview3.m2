@@ -218,46 +218,61 @@ document {
      SeeAlso => {"commandLine", "Invoking the program", applicationDirectory, "prefixDirectory", "path", searchPath, load, loadPackage, needsPackage}
      }
 
+doc := new HashTable from {
+     "bin" => "executable files (M2)",
+     "common" => "architecture independent files",
+     "data" => "architecture independent data files",
+     "doc" => "documentation",
+     "docdir" => "documentation for Macaulay 2 packages",
+     "emacs" => "emacs source files (*.el, *.elc)",
+     "exec" => "architecture dependent files",
+     "info" => "documentation in info form",
+     "lib" => "architecture dependent data and executable files",
+     "libraries" => "dynamically loadable libraries from third party packages linked with Macaulay 2",
+     "man" => "man pages",
+     "package" => "additional source files for the Macaulay 2 package PKG",
+     "packagecache" => "cached data files for the Macaulay 2 package PKG",
+     "packagedoc" => "documentation for the Macaulay 2 package PKG",
+     "packageexampleoutput" => "example output files for the Macaulay 2 package PKG",
+     "packagehtml" => "html documentation for the Macaulay 2 package PKG (*.html)",
+     "packageimages" => "images for the Macaulay 2 package PKG (*.jpg)",
+     "packagelib" => "architecture dependent files for the Macaulay 2 package PKG",
+     "packages" => "source files for Macaulay 2 packages; this directory appears on the path",
+     "packagetests" => "test files for the Macaulay 2 package PKG"
+     }
+assert( set keys Layout#1 === set keys Layout#2 )
+assert( set keys Layout#1 === set keys doc )
+
 document {
-     Key => "Layout",
+     Key => {"currentLayout", "Layout"},
      Headline => "relative locations of Macaulay 2 files",
      PARA {
-	  "The hash table ", TT "Layout", " is a translation table from symbolic names to directory paths,
-	  which are to interpreted relative to the path stored in ", TO "prefixDirectory", ", or in one
+	  "Macaulay 2 comes with a variety of types of files, and some of them are associated with a 
+	  particular Macaulay 2 package.  The hash table ", TT "currentLayout", " is a translation 
+	  table from names, corresponding to the various types of files, to directory paths.  The
+	  directory paths are to be interpreted relative to the path stored in ", TO "prefixDirectory", " or in one
 	  of the directories contained in the list ", TO "prefixPath", ".
-	  The entries are strings: these provide paths to various types of files associated with
-	  the Macaulay 2.  
-	  All of the strings start with one of the prefixes ", TT "EXEC/", " or ", TT "COMMON/", ", which indicate whether
-	  the directory is a repository for architecture dependent files or for architecture independent files, respectively.
-	  In addition, some of the strings contain ", TT "PKG", " as a substring, which should be replayce
+	  Some of the strings contain ", TT "PKG", " as a substring, which should be replaced
 	  by the name of package whose files will be stored in that directory."
 	  },
      PARA {
+	  "The hash table ", TO "Layout", " contains the two possible values for ", TO "currentLayout", ";
+	  corresponding to the two possible values for the ", TO "SeparateExec", " option used with ", TO "installPackage", ".
+	  The hash table ", TT "Layout#2", " is used if architecture dependent files are to be stored in
+	  a directory tree separate from the one used for architecture independent files.  The hash table ", TT "Layout#1", "
+	  is used otherwise."
+	  },
+     PARA {
 	  "Basic Macaulay 2 files are regarded as being associated
-	  with a special package called ", TO2{"Macaulay2Doc::Core", "Core"}, ", but the corresponding documentation files
+	  with a special package called ", TO2{"Macaulay2Doc::Core", "Core"}, ", and the corresponding documentation files
 	  are part of the package ", TT "Macaulay2Doc", "."
      	  },
-     EXAMPLE "Layout",
-     "Here are the meanings of the keys used in ", TO "Layout", ".  Some of these entries may not be in use.",
-     UL {
-	  LI { TT format "bin", " : executable files (M2)" },
-	  LI { TT format "data", " : machine independent data files, not just for Macaulay 2" },
-	  LI { TT format "doc", " : documentation, not just for Macaulay 2" },
-	  LI { TT format "docdir", " : documentation for Macaulay 2 packages" },
-	  LI { TT format "emacs", " : emacs source files (*.el, *.elc)" },
-	  LI { TT format "info", " : documentation in info form, not just for Macaulay 2" },
-	  LI { TT format "lib", " : machine dependent data and executable files, not just for Macaulay 2" },
-	  LI { TT format "libraries", " : dynamically loadable libraries from third party packages linked with Macaulay 2" },
-	  LI { TT format "man", " : man pages" },
-	  LI { TT format "package", " : additional source files for the Macaulay 2 package FOO" },
-	  LI { TT format "packagecache", " : cached data files for the Macaulay 2 package FOO" },
-	  LI { TT format "packagedoc", " : documentation for the Macaulay 2 package FOO" },
-	  LI { TT format "packageexampleoutput", " : example output files for the Macaulay 2 package FOO" },
-	  LI { TT format "packagehtml", " : html documentation for the Macaulay 2 package FOO (*.html)" },
-	  LI { TT format "packageimages", " : images for the Macaulay 2 package FOO (*.jpg)" },
-	  LI { TT format "packages", " : source files for Macaulay 2 packages; this directory appears on the ", TO "path" },
-	  LI { TT format "packagetests", " : test files  for the Macaulay 2 package FOO" },
-	  }
+     EXAMPLE {
+	  "Layout"
+	  },
+     "Here are the meanings of the keys used in ", TO "currentLayout", ".",
+     UL apply(sort pairs doc, (k,v) -> LI { TT format k, " : " | v}),
+     SeeAlso => {[installPackage,SeparateExec]}
      }
 
 document {

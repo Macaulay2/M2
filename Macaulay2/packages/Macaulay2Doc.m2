@@ -22,11 +22,9 @@ scan(pairs Core#"raw documentation", (k,v) -> Macaulay2Doc#"raw documentation"#k
 load "./Macaulay2Doc/loads.m2"				    -- the ./ makes it load from the current directory
 
 if keys Macaulay2Doc#"private dictionary" =!= {} 
-then error splice("Macaulay2 documentation: global symbols inadvertently defined: ", 
-     toSequence between_", " apply(values Macaulay2Doc#"private dictionary", s -> (
-	       p := locate s;
-	       toString s | " [" | p#0 | ":" | toString p#1 | "]"
-	       )))
+then error splice (
+     "global symbols inadvertently defined by package Macaulay2Doc: ", 
+     toSequence between_", " values Macaulay2Doc#"private dictionary")
 
 -- Local Variables:
 -- compile-command: "make -C $M2BUILDDIR/Macaulay2/packages install-Macaulay2"

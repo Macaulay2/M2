@@ -192,150 +192,268 @@ document {
 document {
      Key => stdio,
      Headline => "the standard input output file",
-     TT "stdio", " the standard input output file.",
-     PARA{},
-     "Use this file to get input from the terminal, or to display information
-     on the user's screen.  This is the file always used by ", TO "print", "
-     and used ", TO "<<", " if it is not explicitly given a file."
+     Usage => "stdio",
+     Outputs => {
+	  { "the standard input output file" }
+	  },
+     PARA{
+	  "Use this file to get input from the terminal, or to display information
+	  on the user's screen.  This is the file always used by ", TO "print", "
+	  and used ", TO "<<", " if it is not explicitly given a file."
+	  },
+     EXAMPLE lines ///
+     << "hi" << endl
+     stdio << "hi" << endl
+     ///,
+     SeeAlso => {stderr, (symbol <<, File, Thing)}
      }
 
 document {
      Key => stderr,
      Headline => "the standard error output file",
-     TT "stderr", " the standard error output file.",
-     PARA{},
-     "Use this file to display error messages on the user's screen."
+     Usage => "stderr",
+     Outputs => {
+	  {"the standard error output file"}
+	  },
+     PARA{
+	  "Macaulay 2 uses this file to display error messages on the user's screen.  In unix, it
+	  corresponds to file descriptor 2.  The user may use this file to display warning messages."
+	  },
+     SeeAlso => {stdio}
      }
 
 document {
      Key => {(openListener, String),openListener},
      Headline => "open a port for listening",
-     TT "f = openListener \"$:service\"", "  opens a listener on the local
-     host at the specified service port.",
-     BR{},
-     TT "f = openListener \"$\"", "  opens a listener on the local
-     host at the Macaulay2 port (2500).",
-     PARA{},
-     "Use ", TT "openInOut f", " to accept an incoming connection on the listener,
-     returning a new input output file which serves as the connection.  The function
-     ", TT "isReady", " can be used to determine whether an incoming connection has
-     arrived, without blocking."
+     Usage => "f = openListener s",
+     Inputs => {"s" => {"of the form ", TT format "$:service", ", where ", TT "service", " is
+	       replaced by the name or number of a service port, or of the form ", TT format "$"}},
+     Outputs => {
+	  "f" => {
+	       "an open listener on the local host at the specified service port, which is taken to be
+	       port 2500 when ", TT "s", " has the second form"
+	       }
+	  },
+     PARA{
+	  "Use ", TT "openInOut f", " to accept an incoming connection on the listener,
+	  returning a new input output file which serves as the connection.  The function
+	  ", TO "isReady", " can be used to determine whether an incoming connection has
+	  arrived, without blocking."
+	  },
+     SeeAlso => {openInOut, isReady}
      }
 document {
      Key => {(openIn, String),openIn},
-     Headline => "open an input file",
-     TT "openIn \"fff\"", " opens an input file whose filename is ", TT "fff", ".",
-     PARA{},
-     "Other options are available.  For details, see ", TO "openInOut", "."
+     Headline => "open an output file",
+     Usage => "openIn fn",
+     Inputs => { "fn" },
+     Outputs => {
+	  { "an open input file whose filename is ", TT "fn", ".
+	       Filenames starting with ", TT "!", " or with ", TT "$", " are treated specially, see ", TO "openInOut", "." }
+	  },
+     EXAMPLE lines ///
+     "test-file" << "hi there" << close;
+     g = openIn "test-file"
+     fileLength g
+     atEndOfFile g
+     read g
+     atEndOfFile g
+     close g
+     removeFile "test-file"
+     ///,
+     PARA{"A filename starting with ", TT "~/", " will have the tilde replaced by the user's home directory."},
+     SeeAlso => {openOut, openOutAppend, openInOut, fileLength, read, close, atEndOfFile, (symbol <<, File, Thing)}
      }
 document {
      Key => {(openOut, String),openOut},
      Headline => "open an output file",
-     TT "openOut \"fff\"", " opens an output file whose filename is ", TT "fff", ".",
-     PARA{},
-     "Other options are available.  For details, see ", TO "openInOut", "."
-     }
-document { Key => {(openOutAppend,String), openOutAppend},
-     Headline => "open an output file for appending",
-     Usage => "openOutAppend fn",
-     Inputs => { "fn" => String => "a filename" },
-     Outputs => { File },
-     "An output file whose name is ", TT "fn", " is opened for appending.
-     The current contents of that file remain, and anything written to the file will
-     be appended to the end.",
-     SeeAlso => {File, openIn, openOut, openInOut}
+     Usage => "openOut fn",
+     Inputs => { "fn" },
+     Outputs => {
+	  { "an open output file whose filename is ", TT "fn", ".
+	       Filenames starting with ", TT "!", " or with ", TT "$", " are treated specially, see ", TO "openInOut", "." }
+	  },
+     EXAMPLE lines ///
+     g = openOut "test-file"
+     g << "hi there"
+     g << close
+     get "test-file"
+     removeFile "test-file"
+     ///,
+     PARA{"A filename starting with ", TT "~/", " will have the tilde replaced by the user's home directory."},
+     SeeAlso => {openIn, openInOut, openOutAppend, get, removeFile, close, (symbol <<, File, Thing)}
      }
 document {
-     Key => {(openInOut, String),openInOut},
+     Key => {(openOutAppend, String),openOutAppend},
+     Headline => "open an output file for appending",
+     Usage => "openOutAppend fn",
+     Inputs => { "fn" },
+     Outputs => {
+	  { "an open output file whose filename is ", TT "fn" }
+	  },
+     EXAMPLE lines ///
+     g = openOut "test-file"
+     g << "hi there" << endl << close
+     h = openOutAppend "test-file"
+     h << "ho there" << endl << close
+     get "test-file"
+     removeFile "test-file"
+     ///,
+     PARA{"A filename starting with ", TT "~/", " will have the tilde replaced by the user's home directory."},
+     SeeAlso => {openIn, openInOut, openOut, File, get, removeFile, (symbol <<, File, Thing)}
+     }
+document {
+     Key => {openInOut,(openInOut, String),(openInOut, File)},
      Headline => "open an input output file",
-     TT "openInOut \"fff\"", " opens an input output file whose 
-     filename is ", TT "fff", ".",
-     BR{},
-     TT "openInOut \"!cmd\"", " opens an input output file which corresponds to a pipe 
-     receiving the output from the shell command ", TT "cmd", ".",
-     BR{},
-     TT "openInOut \"$hostname:service\"", "opens an input output file
-     by connecting to the specified service port at the specified host.",
-     BR{},
-     TT "openInOut \"$:service\"", " opens an input output file by
-     listening to the specified service port on the local host, and 
-     waiting for an incoming connection.",
-     BR{},
-     TT "openInOut \"$hostname\"", " opens an input output file
-     by connecting to the Macaulay2 service port (2500) at the specified host.",
-     BR{},
-     TT "openInOut \"$\"", " opens an input output file by listening to the
-     Macaulay2 service port (2500) on the local host, and waiting for an
-     incoming connection.",
-     BR{},
-     TT "openInOut f", " opens an input output file by accepting a
-     connection to the listener ", TT "f", ", previously created with
-     ", TO "openListener", ".",
-     PARA{},
-     "In order to open a socket successfully, there must be a process
-     accepting connections for the desired service on the specified host.",
-     PARA{},
-     "Socket connections are not available on Sun computers, because Sun 
-     doesn't provide static versions of crucial libraries dealing with 
-     network communications, or the static version doesn't provide network 
-     name service for looking up hostnames.",
-     PARA{},
-     "The various forms listed above can be used also with all other input
-     output operations that open files, such as ", TO "openIn", ",
-     ", TO "openOut", ", ", TO "get", ", and ", TO "<<", ", with data transfer 
-     possible only in the direction specified.  The only subtlety is that 
-     with ", TT ///openIn "!foo"///, " the standard input of the command
-     ", TT "foo", " is closed, but with ", TT ///openOut "!foo"///, " the
-     standard output of the command ", TT "foo", " is connected to the
-     standard output of the parent Macaulay2 process."
+     Usage => "openInOut f",
+     Inputs => {
+	  "f" => {ofClass{String,File}}
+	  },
+     Outputs => {
+	  {"an open input output file"}
+	  },
+     PARA {
+	  "There are various options for the argument ", TT "f", "."
+	  },
+     UL {
+	  LI {
+	       "a string not starting with ", TT "!", " or ", TT "$", ": the string is
+	       taken as the name of an input output file to open.  For example, in Unix,
+	       it might be a named pipe.  A filename starting with ", TT "~/", " will have 
+	       the tilde replaced by the user's home directory."
+	       },
+	  LI {
+	       "a string of the form ", TT format "!cmd", ": the command
+	       ", TT "cmd", " will be started, and two pipes will be opened, connected to its standard input and
+	       standard output file descriptors.
+	       Warning: pipes hold only 4096 bites, so if you write more than that to the resulting input output
+	       file (as input for the command) without reading any data, you may block while the
+	       command is blocked waiting to write more output; in this case, Macaulay 2 will appear to hang."
+	       },
+	  LI {
+	       "a string of the form ", TT format "$hostname:service", ": a connection will be
+	       made to the specified service at the specified host.  If the service
+	       port is omitted, along with the colon, then port 2500 is used.  If the hostname is omitted,
+	       an incoming connection will be waited for."
+	       },
+	  LI {
+	       "a listener created previously by ", TO "openListener", ": a new connection will be created.  To avoid
+	       blocking the Macaulay 2 process while waiting for the incoming connection, use ", TO "isReady", "."
+	       }
+	  },
+     PARA{
+	  "In order to open a socket successfully, there must be a process
+	  accepting connections for the desired service on the specified host."
+	  },
+     PARA{
+	  "The various forms listed above can be used also with all other input
+	  output operations that open files, such as ", TO "openIn", ",
+	  ", TO "openOut", ", ", TO "get", ", and ", TO "<<", ", with data transfer 
+	  possible only in the direction specified.  A possibly confusing asymmetry is that 
+	  with ", TT ///openIn "!foo"///, " or with ", TT ///get "!foo"///, " the standard input of the command
+	  ", TT "foo", " is closed, but with ", TT ///openOut "!foo"///, " the
+	  standard output of the command ", TT "foo", " is connected to the
+	  standard output of the parent Macaulay2 process."
+	  },
+     SeeAlso => {openIn, openOut, openListener}
      }
 
 document {
      Key => protect,
      Headline => "protect a symbol",
-     TT "protect s", " protects the symbol ", TT "s", " from having its value changed.",
-     PARA{},
-     "There is no unprotect function, because we want to allow the compiler
-     to take advantage of the unchangeability.",
-     PARA{},
-     "The documentation function ", TO "document", " protects the symbols
-     it documents."
+     Usage => "protect s",
+     Inputs => { "s" => Symbol },
+     Outputs => { "s" => Symbol },
+     Consequences => {
+	  { "the symbol ", TT "s", " is protected from having its value changed" }
+	  },
+     PARA {
+	  "There is no function for unprotecting symbols.",
+	  },
+     EXAMPLE lines ///
+     mutable symbol s
+     s = 5
+     s
+     protect symbol s
+     mutable symbol s
+     try s = 7
+     s
+     ///,
+     SeeAlso => {mutable, "try"}
      }
 
 document {
-     Key => {isInputFile,(isInputFile, File)},
+     Key => {(isInputFile, File),isInputFile},
      Headline => "whether a file is open for input",
-     TT "isInputFile f", " whether ", TT "f", " is an input file.",
-     PARA{},
-     "The return value is ", TO "true", " or ", TO "false", "."
+     Usage => "isInputFile f",
+     Inputs => { "f" },
+     Outputs => {
+	  Boolean => { " whether ", TT "f", " is an open input file" }
+	  },
+     EXAMPLE lines ///
+     "test-file" << "hi there" << close
+     isInputFile oo
+     f = openIn "test-file"
+     isInputFile f
+     isOpen f
+     get f
+     isInputFile f
+     isOpen f
+     removeFile "test-file"
+     ///,
+     SeeAlso => {openIn,openInOut,get,isOpen,close}
      }
 
 document {
-     Key => isOutputFile,
+     Key => {(isOutputFile, File),isOutputFile},
      Headline => "whether a file is open for output",
-     TT "isOutputFile f", " whether ", TT "f", " is an output file.",
-     PARA{},
-     "The return value is ", TO "true", " or ", TO "false", "."
+     Usage => "isOutputFile f",
+     Inputs => { "f" },
+     Outputs => {
+	  Boolean => { " whether ", TT "f", " is an open output file" }
+	  },
+     EXAMPLE lines ///
+     f = "test-file" << "hi there"
+     isOutputFile f
+     close f
+     isOutputFile f
+     get "test-file"
+     removeFile "test-file"
+     ///,
+     SeeAlso => {openOut, openInOut, close, get, removeFile}
      }
 
 document {
-     Key => {isOpen,(isOpen, Database),(isOpen, File),(isOutputFile, File)},
+     Key => {isOpen,(isOpen, Database),(isOpen, File)},
      Headline => "whether a file or database is open",
-     TT "isOpen f", " whether ", TT "f", " is an open file or an
-     open database.",
-     PARA{},
-     "An open file is either an input file, an output file, an
-     input output file, or a listener.",
-     PARA{},
-     "The return value is ", TO "true", " or ", TO "false", "."
+     Usage => "isOpen f",
+     Inputs => { "f" => {ofClass{File,Database}}},
+     Outputs => {
+	  Boolean => { " whether ", TT "f", " is an open file or open database" }
+	  },
+     PARA{
+     	  "An open file is either an input file, an output file, an input output file, or a listener.",
+	  },
+     EXAMPLE lines ///
+     f = "test-file" << "hi there"
+     isOpen f
+     close f
+     isOpen f
+     get "test-file"
+     removeFile "test-file"
+     ///,
+     SeeAlso => {openIn, openInOut, openListener, close, get, removeFile}
      }
 
 document {
-     Key => {isListener,(isListener, File)},
+     Key => {(isListener, File),isListener},
      Headline => "whether a file is open for listening",
-     TT "isListener f", " whether ", TT "f", " is a listener.",
-     PARA{},
-     "The return value is ", TO "true", " or ", TO "false", "."
+     Usage => "isListener f",
+     Inputs => { "f" },
+     Outputs => {
+	  Boolean => { " whether ", TT "f", " is an open listener" }
+	  },
+     SeeAlso => {openListener}
      }
 
 ---------------------
@@ -363,7 +481,7 @@ document {
      SeeAlso => {"left shift"}
      }
 
-undocumented {(symbol <<, File, Symbol),(symbol <<, File, Net),(symbol <<, File, String)}
+undocumented {(symbol <<, File, Symbol),(symbol <<, File, Net)}
 document {
      Key => { (symbol <<, File, Thing),(symbol <<, String, Thing), (symbol <<, File, Manipulator),(symbol <<, List, Thing),
 	  (symbol <<, Nothing, Thing),(symbol <<, Nothing, Manipulator), (symbol <<, Thing) },
@@ -380,6 +498,7 @@ document {
 	  "The object ", TT "x", " is prepared for printing (with ", TO "net", ") and printed on the output file(s) ", TT "f", ".
 	  If ", TT "f", " is a string, then it is interpreted as a filename and an output file is opened, used, and returned,
 	  unless a single open file with the same name already exists, in which case it is used and returned.
+	  Filenames starting with ", TT "!", " or with ", TT "$", " are treated specially, see ", TO "openInOut", ".
 	  If ", TT "f", " is a list, then the output operation is performed on each one.
 	  If ", TT "f", " is ", TO "null", ", then the output is discarded; thus ", TO "null", " is useful as a dummy output file.
 	  If ", TT "f", " is omitted, as in the second usage line, then the output is sent to ", TO "stdio", ", and it will appear (usually) on the screen."

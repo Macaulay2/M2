@@ -392,6 +392,8 @@ document {
      }
 
 undocumented { 
+     (tex,BettiTally),(texMath,BettiTally),
+     (toExternalString,RingElement), (toExternalString,RingMap),
      (image,RingMap),					    -- just an error message referring to coimage
      (symbol ==, Constant, RingElement),
      (symbol ==, RingElement, Constant),
@@ -401,6 +403,7 @@ undocumented {
 
 document {
      Key => {(isSorted,VisibleList), isSorted},
+     Headline => "whether a list is sorted",
      Usage => "isSorted x",
      Inputs => { "x" },
      Outputs => { Boolean => {"whether the elements of the list ", TT "x", " are in increasing order"}},
@@ -413,6 +416,7 @@ document {
 
 document {
      Key => {(switch,ZZ,ZZ,VisibleList), switch},
+     Headline => "copy a list, switching two elements",
      Usage => "switch(i,j,x)",
      Inputs => {"i","j","x"},
      Outputs => {{"a copy of the list ", TT "x", " in which the elements at positions ", TT "i", " and ", TT "j", " have
@@ -426,6 +430,7 @@ document {
 
 document {
      Key => {(insert,ZZ,Thing,VisibleList), insert},
+     Headline => "copy a list, inserting an element",
      Usage => "insert(i,a,x)",
      Inputs => {"i","t","x"},
      Outputs => {{"a copy of the list ", TT "x", " in which ", TT "t", " has been inserted
@@ -442,6 +447,7 @@ document {
 
 document {
      Key => {heft,(heft, Ring),(heft, Module)},
+     Headline => "heft vector of ring or module",
      Usage => "heft X",
      Inputs => { "X" => {ofClass{Ring,Module}} },
      Outputs => { List => {"the heft vector in use for ", TT "X", ", if ", TT "X", " is a 
@@ -491,6 +497,29 @@ document {
      hilbertSeries(U,Order => 8)
      ///,
      SeeAlso => {heft, [monoid,Heft], degreesRing}
+     }
+
+document {
+     Key => {multidegree,(multidegree,Module), (multidegree,Ideal), (multidegree,Ring)},
+     Headline => "multidegree",
+     Usage => "multidegree M",
+     Inputs => { "M" => {ofClass{Module,Ideal,Ring}} },
+     Outputs => { {"the multidegree of ", TT "M", ".  If ", TT "M", " is an ideal, the corresponding quotient ring is used."} },
+     PARA {
+	  "The multidegree is defined on page 165 of ", EM "Combinatorial Commutative Algebra", ", by
+	  Miller and Sturmfels, on page 165.  It is an element of the degrees ring of ", TT "M", ".  Our
+	  implementation agrees with their definition provided the heft vector of the ring has every entry equal to 1."
+	  },
+     EXAMPLE lines ///
+     S = QQ[a..d, Degrees => {{2,-1},{1,0},{0,1},{-1,2}}];
+     heft S
+     multidegree ideal (b^2,b*c,c^2)
+     multidegree ideal a
+     multidegree ideal (a^2,a*b,b^2)
+     describe ring oo
+     ///,
+     Caveat => {"This implementation is provisional in the case where the heft vector does not have every entry equal to 1."},
+     SeeAlso => {"heft vectors", degreesRing}
      }
 
 -- Local Variables:

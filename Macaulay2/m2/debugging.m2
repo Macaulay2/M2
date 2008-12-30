@@ -122,7 +122,7 @@ typicalValues#frame = MutableList
 
 symbolLocation = s -> (
      t := locate s;
-     if t =!= null then t#0 | ":" | toString t#1| ":" | toString t#2 | "-" | toString t#3| ":" | toString t#4
+     if t =!= null then t#0 | ":" | toString t#1| ":" | toString (t#2+1) | "-" | toString t#3| ":" | toString (t#4+1)
      else "")
 
 select2 := (type,syms) -> apply(

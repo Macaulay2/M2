@@ -746,6 +746,7 @@ document { Key => mkdir,
 	  removeFile fn
 	  removeDirectory p
      ///,
+     PARA{"A filename starting with ", TT "~/", " will have the tilde replaced by the home directory."},
      SeeAlso => {makeDirectory}
      }
 
@@ -762,6 +763,7 @@ document {
 	  removeDirectory (dir|"/a/b")
 	  removeDirectory (dir|"/a")
      ///,
+     PARA{"A filename starting with ", TT "~/", " will have the tilde replaced by the home directory."},
      SeeAlso => {mkdir}
      }
 
