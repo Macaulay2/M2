@@ -110,7 +110,7 @@ html TEX := str -> (
      f(///\\bf\> *///,//////);
      f(///\\bullet\> *///,///&bull;///);
      f(///\\cap\> *///,///&cap;///);
-     f(///\\cdots,\> *///,///&hellip;///);
+     f(///\\cdots\> *///,///&hellip;///);
      f(///\\centerline\> *///,//////);
      f(///\\cong\> *///,///&#8773;///);
      f(///\\cos\> *///,///cos///);
@@ -118,7 +118,7 @@ html TEX := str -> (
      f(///\\daleth\> *///,///&daleth;///);
      f(///\\datefont\> *///,//////);
      f(///\\delta\> *///,///&delta;///);
-     f(///\\dots,\> *///,///&hellip;///);
+     f(///\\dots\> *///,///&hellip;///);
      f(///\\ell\> *///,///<em>l</em>///);
      f(///\\emptyset\> *///,///&Oslash///);
      f(///\\epsilon\> *///,///&epsilon;///);

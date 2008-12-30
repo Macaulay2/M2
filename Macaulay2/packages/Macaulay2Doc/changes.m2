@@ -12,13 +12,15 @@ document {
 	  LI {
 	       "new functions:",
 	       UL {
-		    TO RLE,
+		    TO groupID,
 		    TO heft,
 		    TO "IntegralClosure :: idealizerReal",
 		    TO insert,
 		    TO inversePermutation,
 		    TO isSorted,
 		    TO multidegree,
+		    TO RLE,
+		    TO selectVariables,
 		    TO "step",
 		    TO switch,
 		    }
@@ -48,25 +50,54 @@ document {
 	       "new variables:",
 	       UL {
 		    TO "currentLayout",
+		    TO "prefixPath",
 		    TO "lastMatch"
+		    }
+	       },
+	  LI {
+	       "new symbols:",
+	       UL {
+		    TO FlatMonoid,
+		    TO Join,
+		    TO Reduce,
+		    TO Result,
+		    TO RunExamples,
+		    TO SeparateExec,
+		    TO SourceRing
 		    }
 	       },
 	  LI {
 	       "new optional arguments to functions:",
 	       UL {
-		    TO [basis, SourceRing],
-		    TO [GF, LengthLimit],
-		    TO [hilbertSeries, Reduce],
-		    TO [installPackage, SeparateExec],
-		    TO [lift, Verify],
-		    TO [map, DegreeLift],
-		    TO [matrix, DegreeLift],
-		    TO [monoid, DegreeLift],
-		    TO [monoid, Join],
-		    TO [symmetricAlgebra, DegreeLift],
-		    TO [symmetricAlgebra, DegreeMap],
-		    TO [tensor, DegreeMap],
-		    TO [tensor, Join],
+		    TO [GF,LengthLimit],
+		    TO [basis,SourceRing],
+		    TO [check,UserMode],
+		    TO [flattenRing,Result],
+		    TO [getPackage,Configuration],
+		    TO [getPackage,UserMode],
+		    TO [hilbertSeries,Reduce],
+		    TO [installPackage,CacheExampleOutput],
+		    TO [installPackage,RunExamples],
+		    TO [installPackage,SeparateExec],
+		    TO [installPackage,UserMode],
+		    TO [installPackage,Verbose],
+		    TO [lift,Verify],
+		    TO [map,DegreeLift],
+		    TO [matrix,DegreeLift],
+		    TO [monoid,DegreeLift],
+		    TO [monoid,Join],
+		    TO [newPackage,CacheExampleOutput],
+		    TO [newRing,DegreeLift],
+		    TO [newRing,DegreeMap],
+		    TO [newRing,Join],
+		    TO [prune,Strategy],
+		    TO [prune,Variable],
+		    TO [symmetricAlgebra,DegreeLift],
+		    TO [symmetricAlgebra,DegreeMap],
+		    TO [symmetricAlgebra,Join],
+		    TO [tensor,DegreeLift],
+		    TO [tensor,DegreeMap],
+		    TO [tensor,Join],
 		    }
 	       },
 	  LI {
@@ -87,7 +118,106 @@ document {
 		    LI {"the behavior of ", TO "return", " in the debugger has changed: it now stops in the debugger
 			 at the next available opportunity"
 			 },
-		    LI {"filenames starting with ", TT "~/", " will have the tilde replaced by the home directory"}
+		    LI {"filenames starting with ", TT "~/", " will have the tilde replaced by the home directory"},
+		    LI {"the ", EM "D", " language, in which the Macaulay 2 interpreter is written, is now type-safe"},
+		    LI {"during compilation of Macaulay 2, as much of the computation as possible is now done
+			 to satisfy the make-target ", TT "all", ", with the resulting files placed in a staging
+			 area, ready for quickly satisfying the make-target ", TT "install", "."
+			 },
+		    LI {"during compilation of Macaulay 2, it is now possible to keep the architecture independent
+			 files in a separate directory tree, saving time if versions for multiple architectures
+			 are to be built.  Including those files in a source tar file will allow the distribution
+			 of a ", EM "fat", " source tar file, speeding up compilation."
+			 },
+		    LI {"pressing the RET key in the Macaulay 2 interaction buffer on a line containing
+			 a source file name and line number will open up the source file at that position in
+			 a new buffer.  This allows error messages to be treated with dispatch."
+			 },
+		    LI {"the behavior of ", TO "setup", " has changed, in that the commands that set the paths are
+			 now placed in separate files in the home directory of the user, and those files are
+			 sourced only if they are present.  That enables the user to continue to share the usual 
+			 init files on multiple machines, even though Macaulay 2 may be installed in various different
+			 locations."
+			 },
+		    LI {TO "hilbertFunction", " is now faster at computing power series expansions"},
+		    LI {"A new division algorithm has been implemented in rings with inverses,
+			 where the monomials can involve negative exponents, and hence are not well-ordered.
+			 See ", TO "division in polynomial rings with inverses", "."
+			 },
+		    LI {"a bug in ", TO "irreducibleCharacteristicSeries", ", upon with ", TO "minimalPrimes", "
+			 depends, was fixed.  Now the new ring supporting the characteristic series will
+			 have variables with the same names and degrees, but the ordering of the variables
+			 and the monomial ordering will be different.  This ensures that homogeneity will
+			 be preserved.  Also, for convenience, the routine
+			 now returns a sequence, instead of a list, suitable for immediate parallel assignment."
+			 },
+		    LI {TO "minors", " has been altered so the ideal of ", TT "n", " by ", TT "n", " minors that it provides for negative
+			 values of ", TT "n", " is the unit ideal."
+			 },
+		    LI {TO "parts", " has been altered so that for multigraded rings, it does not use the first component
+			 of the degree vector.  New functionality has been added."
+			 },
+		    LI {"heft vectors are now automatically computed, ", TO "heft vectors"},
+		    LI {"the description of a ring provided by ", TO "describe", " is now abbreviated by making use of
+			 run length encoding"
+			 },
+		    LI {"browsers started by ", TO "viewHelp", " are now run in a separate process group
+			 so they don't die when Macaulay 2 terminates"
+			 },
+		    LI {TO "prune", " and ", TO "decompose", " are no longer synonyms of ", TO "minimalPresentation", " and ", TO "minimalPrimes", ",
+			 respectively"
+			 },
+		    LI {TO "get", " has been fixed so it returns an error message if the process associated with the pipe has died"},
+		    LI {TO "searchPath", " now does what the documentation said it would do"},
+		    LI {"comparison of rings with ", TO "==", " instead of ", TO "===", " is no longer supported"},
+		    LI {"the output operation ", TT "s<<x", ", when ", TT "s", " is a string, has been changed
+			 so that if a file with filename ", TT "s", " is already open, that file will be used
+			 instead of opening a new file with the same name, erasing the data already written
+			 to the file"
+			 },
+		    LI {"tensor product of a module with a ring has been modified so it will make a ring map
+			 between the two rings that is derived from the names of the variables"
+			 },
+		    LI {
+			 TO "GF", " now uses Conway polynomials when possible.  Maps between Galois fields
+			 made with them are now easy to produce with ", TT "map(E,F)"
+			 },
+		    LI {
+			 "the degrees in symmetric algebras have been corrected"
+			 },
+		    LI {
+			 "the default for polynomial rings over polynomial rings is now to join
+			 the degree vectors of monomials in the base to the degree vectors of
+			 the top level monoid, usually resulting in a multigraded ring.  For example,
+			 QQ[x][y] is now bigraded."
+			 },
+		    LI {
+			 "inverting a noninvertible matrix results in an error message now"
+			 },
+		    LI {
+			 TO "export", ", given a string (rather than a symbol) will now make a new
+			 symbol with that name, even if a symbol with the same name already exists 
+			 in another visible package"
+			 },
+		    LI {
+			 "homomorphisms of modules over different rings with respect to a ring homomorphism
+			 between them, are now supported.  Composition, coimage (replacing pushForward1), and kernel work.
+			 An option has been added to ", TO "basis", " so it will return such a homomorphism."
+			 },
+		    LI {
+			 TO "basis", " will now check finite dimensionality in advance, to avoid running out of memory"
+			 },
+		    LI {
+			 "Functions and types associated with hypertext and documentation have been isolated in a new package
+			 called ", TO2{"Text::Text","Text"}, ", which gets loaded automatically by ", TO "beginDocumentation", "."
+			 },
+		    LI {
+			 TT "errorCode", " has been renamed to ", TO "current"
+			 },
+		    LI {
+			 "the file layout system, as described by ", TO "Layout", ", formerly called ", TT "LAYOUT", ", now 
+			 supports separation of architecture independent files from architecture dependent files"
+			 }
 		    }
 	       }
 	  }

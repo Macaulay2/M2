@@ -171,10 +171,13 @@ document {
  	  it at 1 returns the dimension over the ground field, which for a graded (homogenous)
 	  is the same as the length."
 	  },
-     Caveat => {"The degree in multigraded rings is not defined.  If the base ring is ", TO "ZZ", ",
+     Caveat => {
+	  "If the base ring is ", TO "ZZ", ",
 	  or the module is not homogeneous, it is likely that the answer is not what
 	  you would expect.  Similarly, if the degrees of the variables
-	  are not all one, the answer is harder to interpret."},
+	  are not all ", TT "{1}", ", then the answer is harder to interpret.  See ", TO "heft vectors", " and
+	  ", TO "multidegree", "."
+	  },
      SeeAlso => {hilbertPolynomial, isHomogeneous}
      }
 

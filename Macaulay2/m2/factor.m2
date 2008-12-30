@@ -49,15 +49,20 @@ irreducibleCharacteristicSeries Ideal := I -> (		    -- rawCharSeries
      if not factoryGood R then error "not implemented for this type of ring";
      m := generators I;
      m = compress m;					    -- avoid a bug in Messollen's code for rawCharSeries when a generator is zero
-     (S,g) := flattenRing R;
-     m = g m;
+     (S,RtoS) := flattenRing R;
+     StoR := RtoS^-1;
+     m = RtoS m;
      re := rawIdealReorder raw m; -- we need to substitute S_(re#i) => T_i beforehand and let the user undo it afterward, if desired
      re' := inversePermutation re; -- so the two substitutions are S_j => T_(re'_j) and T_i => S_(re_i)
      k := coefficientRing R;
      T := k ( monoid [ Variables => S.generatorSymbols_re, Degrees => (degrees S)_re, MonomialOrder => Lex, Heft => heft S ] );
-     toT := map(T,S,(generators T)_re');
-     toS := map(S,T,(generators S)_re );
-     (apply(rawCharSeries raw toT m, rawmat -> map(T,rawmat)),toS))
+     StoT := map(T,S,(generators T)_re');
+     TtoS := map(S,T,(generators S)_re );
+     RtoT := StoT * RtoS;
+     TtoR := StoR * TtoS;
+     RtoT.cache.inverse = TtoR;
+     TtoR.cache.inverse = RtoT;
+     (apply(rawCharSeries raw StoT m, rawmat -> map(T,rawmat)),TtoR))
 
 factor ZZ := options -> (n) -> Product apply(sort pairs factorInteger n, (p,i)-> Power{p,i} )
 factor QQ := options -> (r) -> factor numerator r / factor denominator r

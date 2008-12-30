@@ -488,7 +488,7 @@ document {
      ///,
      PARA {
 	  "The heft vector, multiplied by -1, is used as the weight vector in the monomial ordering of 
-	  the degrees ring, and the order of its approximate expansions refers to 
+	  the degrees ring, and the ", EM "order", " of the series expansions of the Hilbert series refers to 
 	  the weight formed with respect to that weight vector."
 	  },
      EXAMPLE lines ///
@@ -496,7 +496,18 @@ document {
      describe ring numerator oo
      hilbertSeries(U,Order => 8)
      ///,
-     SeeAlso => {heft, [monoid,Heft], degreesRing}
+     PARA {
+	  "The heft vector is used in the computation of degrees of modules over a polynomial ring ", TT "R", ", because it
+	  gives a homomorphism from the degrees ring of ", TT "R", " to the Laurent
+	  polynomial ring in one variable ", TT "T", " that sends monomials corresponding to the degrees of
+	  variables of ", TT "R", " to positive powers of ", TT "T", ".  The degree is then defined to be the coefficient
+	  of the lead term in the expansion of the Hilbert series in powers of ", TT "1-T", "."
+	  },
+     EXAMPLE lines ///
+     R = QQ[x,y,Heft=>{3}];
+     degree R
+     ///,
+     SeeAlso => {heft, [monoid,Heft], degreesRing, multidegree}
      }
 
 document {
@@ -520,6 +531,76 @@ document {
      ///,
      Caveat => {"This implementation is provisional in the case where the heft vector does not have every entry equal to 1."},
      SeeAlso => {"heft vectors", degreesRing}
+     }
+
+document {
+     Key => "division in polynomial rings with inverses",
+     PARA {
+	  "Starting with version 1.2, a new division algorithm has been implemented in 
+	  rings with inverses, where the monomials can involve negative exponents, and hence
+	  do not form a well-ordered set.  The ring should have a monomial ordering whose
+	  first test involves at least one weight vector, explicitly, or perhaps implicitly, as with
+	  ", TO "GRevLex", ".  The algorithm will work when dividing by
+	  a polynomial that is ", EM "monic", " in the sense that its lead monomial has coefficient 1,
+	  and all other terms have smaller weight, where the weight is computed with
+	  respect to just the first weight vector.  When we say the algorithm works, we
+	  mean: (1) that it terminates; and (2) that the remainder is zero if and only if the denominator
+	  divides the numerator."
+	  },
+     PARA {
+	  "Define the length of a nonzero ring element to be the weight of the first term minus
+	  the weight of the last term.  The length is greater than or equal to 0, because
+	  the terms in a sorted polynomial are decreasing in weight."
+	  },
+     PARA {
+	  "We refuse to start dividing unless the denominator is monic in the sense defined above.
+	  When dividing, we keep subtracting monomial multiples of the denominator
+	  from the numerator to eliminate the lead term of the numerator, which is always possible
+	  because the ring contains the reciprocals of its variables.  We stop
+	  when we get a remainder whose length is strictly less than the length of the denominator."
+	  },
+     PARA {
+	  "This algorithm works because, in an integral domain, the length of a product is
+	  the sum of the lengths of the factors.  Thus the remainder, if it is not zero, can
+	  not be a multiple of the denominator."
+	  },
+     PARA {
+	  "This will be good enough for applications to Hilbert series, because in our degrees rings, the denominator of a
+	  Hilbert series will be a product of terms ", TT "1-T", ", where ", TT "T", " is a monomial of
+	  strictly negative weight.  That's because the weight vector is minus the heft
+	  vector of the original ring, and ", TT "T", " is the monomial constructed from the degree
+	  vector of one of the variables in the original ring.  Note that any divisor of
+	  such a product will also be 1 plus terms of negative weight."
+	  },
+     SeeAlso => {"heft vectors", "polynomial rings", degreesRing}
+     }
+
+document {
+     Key => inversePermutation,
+     Usage => "y = inversePermutation x",
+     Inputs => {
+	  "x" => List => {"a list of length ", TT "n", " whose elements are the numbers 0, 1, 2, ..., ", TT "n-1", ", in some order,
+	       representing the permutation defined by sending ", TT "i", " to ", TT "x#i"
+	       }
+	  },
+     Outputs => {
+	  "y" => List => {"the list representing the inverse permutation of ", TT "x" }
+	  },
+     EXAMPLE lines ///
+     x = {1,2,3,4,5,0}
+     y = inversePermutation x
+     all(#x, i -> x#(y#i) == i)
+     all(#x, i -> y#(x#i) == i)
+     ///,
+     PARA {
+	  "We compose permutations with ", TT "_", "; see ", TO "(symbol _, VisibleList, List)", "."
+	  },
+     EXAMPLE lines ///
+     x_x_x
+     x_x_x_x_x_x
+     x_y
+     y_x
+     ///
      }
 
 -- Local Variables:

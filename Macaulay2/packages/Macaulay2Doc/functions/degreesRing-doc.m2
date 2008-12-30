@@ -42,7 +42,9 @@ document {
      used in the degrees ring is ", TT "RevLex", " so the polynomials
      in it will be displayed with the smallest exponents first,
      because such polynomials are often used as Hilbert series.",
-     SeeAlso => {"poincare", "poincareN", "hilbertFunction", "hilbertSeries", "hilbertPolynomial", "reduceHilbert" }
+     SeeAlso => {
+	  "poincare", "poincareN", "hilbertFunction", "hilbertSeries", "hilbertPolynomial", "reduceHilbert",
+	  "division in polynomial rings with inverses" }
      }
 
 undocumented {(degreesRing, QuotientRing), (degreesRing,PolynomialRing)}
