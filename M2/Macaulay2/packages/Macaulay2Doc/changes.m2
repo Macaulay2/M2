@@ -85,7 +85,9 @@ document {
 	       "miscellaneous changes:",
 	       UL {
 		    LI {"the behavior of ", TO "return", " in the debugger has changed: it now stops in the debugger
-			 at the next available opportunity"}
+			 at the next available opportunity"
+			 },
+		    LI {"filenames starting with ", TT "~/", " will have the tilde replaced by the home directory"}
 		    }
 	       }
 	  }

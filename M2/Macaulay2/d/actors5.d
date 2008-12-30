@@ -1461,8 +1461,9 @@ setupfun("currentTime",currentTime);
 
 mkdir(e:Expr):Expr := (
      when e is name:string do (
+	  name = expandFileName(name);
 	  r := mkdir(name);
-	  if r == -1 then buildErrorPacket("can't make directory '" + name + "' : " + syserrmsg())
+	  if r == -1 then buildErrorPacket("can't make directory \"" + name + "\": " + syserrmsg())
 	  else nullE)
      else WrongArgString());
 setupfun("mkdir",mkdir);

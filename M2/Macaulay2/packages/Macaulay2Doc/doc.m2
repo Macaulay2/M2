@@ -1288,27 +1288,27 @@ document {
 document {
      Key => {get,(get, File),(get, String)},
      Headline => "get the contents of a file",
-     TT "get \"f\"", " -- yields a string containing the contents of the file whose name
-     is f.",
-     PARA{},
-     TT "get \"!f\"", " -- yields a string containing the output from the shell
-     command \"f\".",
-     PARA{},
-     TT "get \"$hostname:service\"", " -- yields a string containing the
-     input from the socket obtained by connecting to the specified host at
-     the port appropriate for the specified service.  Warning: if the process
-     providing the service expects interaction, it will not get it, and this
-     command will hang.",
-     PARA{},
-     TT "get f", " -- yields a string containing the rest of the input from the 
-     file ", TT "f", ", closing the (input side of the) file.",
-     EXAMPLE {
-	  ///"junk" << "hi there" << close///,
-      	  ///get "junk"///,
-	  ///removeFile "junk"///,
-     	  if version#"operating system" =!= "Windows-95-98-NT" then ///get "!date"///
+     Usage => "get f",
+     Inputs => {
+	  "f" => {ofClass{File,String}, ".  If ", TT "f", " is a string, then it is opened, as with
+	       ", TO "openIn", ".  Filenames starting
+	       with ", TT "!", " or with ", TT "$", " are treated specially, see ", TO "openInOut", "."
+	       }
+  	  },
+     Outputs => {
+	  {"a string containing the contents of the file.  If the file was already open and partially
+	       read, the remainder of the contents of the file are returned."}
 	  },
-     SeeAlso =>{ "File", "read" }
+     Consequences => {
+	  {"In the case where ", TT "f", " is a file, its input side is closed."}
+	  },
+     EXAMPLE lines ///
+     "test-file" << "hi there" << close
+     get "test-file"
+     removeFile "test-file"
+     get "!date"
+     ///,
+     SeeAlso =>{ read, removeFile, close, (symbol <<, File, Thing) }
      }
 
 document {
