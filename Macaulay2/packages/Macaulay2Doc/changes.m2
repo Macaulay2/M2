@@ -202,7 +202,7 @@ document {
 		    LI {
 			 "homomorphisms of modules over different rings with respect to a ring homomorphism
 			 between them, are now supported.  Composition, coimage (replacing pushForward1), and kernel work.
-			 An option has been added to ", TO "basis", " so it will return such a homomorphism."
+			 An option has been added to ", TO "basis", " to ask it to return such a homomorphism."
 			 },
 		    LI {
 			 TO "basis", " will now check finite dimensionality in advance, to avoid running out of memory"
