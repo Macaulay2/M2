@@ -30,6 +30,7 @@ expression QQ := r -> (
      then -((expression (-n))/(expression d))
      else (expression n)/(expression d)
      )
+toString QQ := r -> if denominator r === 1 then simpleToString numerator r else simpleToString r
 net QQ := r -> net expression r
 QQ.InverseMethod = x -> 1/x
 QQ.dim = 0
