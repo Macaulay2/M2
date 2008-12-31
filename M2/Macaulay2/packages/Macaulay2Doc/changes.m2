@@ -33,7 +33,6 @@ document {
 		    TO (degreesRing,List),
 		    TO (findFiles,List),
 		    TO (flattenRing,Ideal),
-		    TO (image,RingMap),
 		    TO (map,Module,Module,RingMap,Matrix),
 		    TO (map,Module,Nothing,RingMap,Matrix),
 		    TO (map,Module,RingMap),

@@ -63,7 +63,7 @@ peek'(ZZ,HashTable) := (depth,s) -> (
 peek'(ZZ,Dictionary) := (depth,d) -> (
      if depth === 0 then net d
      else horizontalJoin(
-	  "Dictionary{", 
+	  toString class d, "{", 
 	  stack apply(sort pairs d, (lhs,rhs) -> horizontalJoin splice (peek lhs," => ",peek'(depth-1,rhs))),
 	  "}"))
 
