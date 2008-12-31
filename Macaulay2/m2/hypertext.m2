@@ -333,6 +333,7 @@ infoTagConvert DocumentTag := tag -> (
      then tagConvert fkey
      else (
 	  concatenate("(",pkgname,")",tagConvert if pkgname === fkey then "Top" else fkey)))
+infoLinkConvert := s -> replace(":"," -- ",s)
 info TO  := x -> (
      tag := x#0;
      f := DocumentTag.FormattedKey tag;
@@ -340,7 +341,7 @@ info TO  := x -> (
      concatenate(format f, if x#?1 then x#1,
 	  if fetchRawDocumentation tag === null
 	  then " (missing documentation)"
-	  else (" (*note ", f, ": ", infoTagConvert tag, ".)")
+	  else (" (*note ", infoLinkConvert f, ": ", infoTagConvert tag, ",)")
 	  )
      )
 info TO2 := x -> (
@@ -350,17 +351,17 @@ info TO2 := x -> (
      concatenate(x#1, 
 	  if fetchRawDocumentation tag === null
 	  then " (missing documentation)"
-	  else (" (*note ", f, ": ", infoTagConvert tag, ".)")
+	  else (" (*note ", infoLinkConvert f, ": ", infoTagConvert tag, ",)")
 	  )
      )
 info TOH := x -> (
      tag := x#0;
      f := DocumentTag.FormattedKey tag;
      tag = getPrimary tag;
-     concatenate(f, if x#?1 then x#1, commentize headline tag,, 
+     concatenate(f, if x#?1 then x#1, commentize headline tag,
 	  if fetchRawDocumentation tag === null
 	  then " (missing documentation)"
-	  else (" (*note ", f, ": ", infoTagConvert tag, ".)")
+	  else (" (*note ", infoLinkConvert f, ": ", infoTagConvert tag, ",)")
 	  )
      )
 
@@ -471,8 +472,9 @@ info MENU := r -> (
 	  x -> class x === TO,
 	  v -> stack apply(v, i -> pre | wrap (
 		    fkey := DocumentTag.FormattedKey i#0;
-		    icon := infoTagConvert i#0;
-		    t := fkey | if fkey === icon then "::" else ": " | icon | ".";
+		    icon := infoTagConvert getPrimary i#0;
+		    cfkey := infoLinkConvert fkey;
+		    t := cfkey | if cfkey === icon then "::" else ": " | icon | ".";
 		    h := headline i#0;
 		    if h =!= null then t = concatenate(t,28-#t:" ","  ") | h;
 		    t)),

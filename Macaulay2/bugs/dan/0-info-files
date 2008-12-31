@@ -26,24 +26,22 @@ Maybe we can use it.
 
 --
 
-This looks bad:
-
-    changes to Macaulay 2, by version
-    *********************************
-
-
+prevent this from wrapping, because it breaks the links:
 
     * Menu:
 
-    * changes, 1.0 and 1.1:  0 and 1.1.
-    * changes, 1.2:          2.
+    * Tutorial colon  Elementary uses of Groebner bases: Tutorial_co Elementary uses of Groebner bases.
+    * Tutorial colon  Canonical Embeddings of Plane Curves and Gonality: Tutorial_co Canonical Embeddings of Plane Curves and Gonality.
+    * Tutorial colon  Fano varieties: Tutorial_co Fano varieties.
+    * Tutorial colon  Divisors: Tutorial_co Divisors.
 
-The info file actually has this in it:
+This is the way it wraps:
 
     * Menu:
 
-    * changes, 1.0 and 1.1: changes_cm 1.0 and 1.1.
-    * changes, 1.2: changes_cm 1.2.
-
-So the problem is periods in the name of the node. --- I think I've fixed this now.
-
+    * Tutorial --  Elementary uses of Groebner bases: Tutorial_co Elementary uses
+      of Groebner bases.
+    * Tutorial --  Canonical Embeddings of Plane Curves and Gonality: Tutorial_co
+      Canonical Embeddings of Plane Curves and Gonality.
+    * Tutorial --  Fano varieties: Tutorial_co Fano varieties.
+    * Tutorial --  Divisors: Tutorial_co Divisors.
