@@ -1,0 +1,24 @@
+In this example there is no weight vector, so our new algorithm in rawDivMod
+shouldn't fire at all, but it seems to do one subtraction step, anyway.  Is
+that right?  Should I document it?  (Dan)
+
+
+i4 :      R = QQ[x,y, Inverses => true, MonomialOrder => Lex]
+
+o4 = R
+
+o4 : PolynomialRing
+
+i5 :      quotientRemainder(x^100 - x^89, x^5 - 1)
+
+       95   95    89
+o5 = (x  , x   - x  )
+
+o5 : Sequence
+
+i6 :      quotientRemainder(x^100 - y^89, x^5 - 1)
+
+       95   95    89
+o6 = (x  , x   - y  )
+
+o6 : Sequence

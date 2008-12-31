@@ -1,3 +1,0 @@
-allow ~/ in file names at a low level
-it gets expanded before the file is created
-but not if HOME is not set
