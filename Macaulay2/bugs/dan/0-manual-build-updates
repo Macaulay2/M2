@@ -30,3 +30,8 @@ things to do manually before release
        verify that ~/.Macaulay2/README is restored if it is deleted
 
        run M-x Info-validate on the info file
+
+       make sure the links in the html documentation work
+
+       run "make -k check" and check the output
+

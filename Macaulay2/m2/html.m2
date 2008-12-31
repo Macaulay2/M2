@@ -1200,7 +1200,7 @@ viewHelp = key -> (
 	       if not member("-q",commandLine) then applicationDirectory()|"local/",
 	       prefixDirectory
 	       };
-	  fn := htmlFilename DocumentTag.FormattedKey getPrimary makeDocumentTag key;
+	  fn := htmlFilename toFinalDocumentTag getPrimary makeDocumentTag key;
 	  p := null;
 	  scan(prefixes, dir -> if fileExists (dir|fn) then (p = dir|fn;break));
 	  if p === null then error("html file not found: ",fn)

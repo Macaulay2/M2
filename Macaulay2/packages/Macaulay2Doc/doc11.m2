@@ -394,7 +394,6 @@ document {
 undocumented { 
      (tex,BettiTally),(texMath,BettiTally),
      (toExternalString,RingElement), (toExternalString,RingMap),
-     (image,RingMap),					    -- just an error message referring to coimage
      (symbol ==, Constant, RingElement),
      (symbol ==, RingElement, Constant),
      ((symbol SPACE, symbol =), Function, Thing),

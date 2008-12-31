@@ -124,20 +124,20 @@ document {
 	  the value of the ", TO "SeparateExec", " option: when it is false the files are all in ", 
 	  TT (Layout#1#"packages"|"PACKAGENAME.m2"), ", ",
 	  TT (Layout#1#"info"|"PACKAGENAME.info"), ", ",
-	  TT (Layout#1#"lib"|"PACKAGENAME.info"), ", ",
+	  TT replace("PKG", "PACKAGENAME", Layout#1#"packagelib"), ", ",
 	  TT replace("PKG", "PACKAGENAME", Layout#1#"package"), ", and ",
 	  TT replace("PKG", "PACKAGENAME", Layout#1#"packagedoc"), 
 	  "; when it is true the paths to the files are modified to reflect the type of your machine, e.g., ",
 	  TT (Layout#2#"packages"|"PACKAGENAME.m2"), ", ",
 	  TT (Layout#2#"info"|"PACKAGENAME.info"), ", ",
-	  TT (Layout#2#"lib"|"PACKAGENAME.info"), ", ",
+	  TT replace("PKG", "PACKAGENAME", Layout#2#"packagelib"), ", ",
 	  TT replace("PKG", "PACKAGENAME", Layout#2#"package"), ", and ",
 	  TT replace("PKG", "PACKAGENAME", Layout#2#"packagedoc"), "."
 	  },
      PARA {
 	  "In addition, if no errors occurred during running the examples, then an empty file whose name is 
-	  ", TT (Layout#1#"packages"|"PACKAGENAME.m2"), " or
-	  ", TT (Layout#2#"packages"|"PACKAGENAME.m2"), " is created, to signify that installation was completed."
+	  ", TT (replace("PKG", "PACKAGENAME", Layout#1#"packagelib")|".installed"), " or
+	  ", TT (replace("PKG", "PACKAGENAME", Layout#2#"packagelib")|".installed"), " is created, to signify that installation was completed."
 	  },
      SeeAlso => {"packages", "epkg", "prefixPath", "Layout"}
      }
