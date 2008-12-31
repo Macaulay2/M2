@@ -23,3 +23,27 @@ This kind of menu item goes to a line number in a node:
   * c-mode-hook:                           Program Modes.       (line  45)
 
 Maybe we can use it.
+
+--
+
+This looks bad:
+
+    changes to Macaulay 2, by version
+    *********************************
+
+
+
+    * Menu:
+
+    * changes, 1.0 and 1.1:  0 and 1.1.
+    * changes, 1.2:          2.
+
+The info file actually has this in it:
+
+    * Menu:
+
+    * changes, 1.0 and 1.1: changes_cm 1.0 and 1.1.
+    * changes, 1.2: changes_cm 1.2.
+
+So the problem is periods in the name of the node. --- I think I've fixed this now.
+

@@ -572,6 +572,11 @@ document {
 	  vector of one of the variables in the original ring.  Note that any divisor of
 	  such a product will also be 1 plus terms of negative weight."
 	  },
+     EXAMPLE lines ///
+     R = QQ[x,y, Inverses => true, MonomialOrder => Lex, Weights => {1,2}]
+     quotientRemainder(x^100 - x^89, x^5 - 1)
+     quotientRemainder(x^100 - y^61, x^5 - 1)
+     ///,
      SeeAlso => {"heft vectors", "polynomial rings", degreesRing}
      }
 

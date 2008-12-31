@@ -4,40 +4,4 @@ restart
 R = QQ [a, b, c, d, e]
 S = R [w_0, w_1, w_2, Join=>false]
 J = ideal(b*w_0-c*w_1+d*w_2,a*w_0-b*w_1+c*w_2)
-decompose J						    -- oops
-
-v = toList apply(0..7, i -> S_i => S_i)
-map(S,S,v)						    -- oops
-
-
---
-
-    i2 : map(QQ[a,b],QQ[c,d],{c=>a,d=>b})
-
-    o2 = map(QQ [a, b],QQ [c, d],{a, b})
-
-    o2 : RingMap QQ [a, b] <--- QQ [c, d]
-
-    i3 : map(QQ[a,b],QQ[c,d],{c=>a})	      	   	     	  --oops
-    stdio:3:1:(1):[0]: no method found for applying promote to:
-	 argument 1 :  d (of class QQ [c, d])
-	 argument 2 :  QQ [a, b]
-
-    i4 : map(QQ[a,b],QQ[c,d])
-
-    o4 = map(QQ [a, b],QQ [c, d],{0, 0})
-
-    o4 : RingMap QQ [a, b] <--- QQ [c, d]
-
-    i5 : map(QQ[a,b],QQ[a,d])                                                                                                                                      
-
-    o5 = map(QQ [a, b],QQ [a, d],{a, 0})                                                                                                                           
-
-    o5 : RingMap QQ [a, b] <--- QQ [a, d]                                                                                                                          
-
-    i6 : map(QQ[a,b],QQ[a,b])                                                                                                                                      
-
-    o6 = map(QQ [a, b],QQ [a, b],{a, b})                                                                                                                           
-
-    o6 : RingMap QQ [a, b] <--- QQ [a, b]                                                                                                                          
-
+decompose J						    -- oops -- fixed

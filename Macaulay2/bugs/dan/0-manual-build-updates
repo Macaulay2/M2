@@ -6,6 +6,8 @@ things to do manually before release
 
        try viewHelp
 
+       try viewHelp res, etc.
+
        update Macaulay2/man/M2.1.in
 
        check that getPackage works for all the packages available
