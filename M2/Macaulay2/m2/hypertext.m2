@@ -334,12 +334,35 @@ infoTagConvert DocumentTag := tag -> (
      else (
 	  concatenate("(",pkgname,")",tagConvert if pkgname === fkey then "Top" else fkey)))
 info TO  := x -> (
-     f := DocumentTag.FormattedKey x#0;
-     concatenate(format f, if x#?1 then x#1, "  (*note ", f, ": ", infoTagConvert getPrimary x#0, ".)"))
-info TO2 := x -> concatenate(x#1, "  (*note ", x#1, ": ", infoTagConvert getPrimary x#0, ".)")
+     tag := x#0;
+     f := DocumentTag.FormattedKey tag;
+     tag = getPrimary tag;
+     concatenate(format f, if x#?1 then x#1,
+	  if fetchRawDocumentation tag === null
+	  then " (missing documentation)"
+	  else (" (*note ", f, ": ", infoTagConvert tag, ".)")
+	  )
+     )
+info TO2 := x -> (
+     tag := x#0;
+     f := DocumentTag.FormattedKey tag;
+     tag = getPrimary tag;
+     concatenate(x#1, 
+	  if fetchRawDocumentation tag === null
+	  then " (missing documentation)"
+	  else (" (*note ", f, ": ", infoTagConvert tag, ".)")
+	  )
+     )
 info TOH := x -> (
-     f := DocumentTag.FormattedKey x#0;
-     concatenate(f, if x#?1 then x#1, commentize headline x#0,, "  (*note ", f, ": ", infoTagConvert getPrimary x#0, ".)" ))
+     tag := x#0;
+     f := DocumentTag.FormattedKey tag;
+     tag = getPrimary tag;
+     concatenate(f, if x#?1 then x#1, commentize headline tag,, 
+	  if fetchRawDocumentation tag === null
+	  then " (missing documentation)"
+	  else (" (*note ", f, ": ", infoTagConvert tag, ".)")
+	  )
+     )
 
 info IMG := net IMG := tex IMG  := x -> (
      (o,cn) := override(IMG.Options,toSequence x);
