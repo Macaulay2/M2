@@ -131,6 +131,12 @@ mdt := makeDocumentTag Thing := opts -> key -> (
 	  );
      new DocumentTag from {nkey,fkey, {* pkg *} ,pkgTitle pkg})
 makeDocumentTag String := opts -> key -> (
+     if match("^ |  +| $", key)
+     then (
+	  -- this is important, because the names of info nodes get extracted from text where
+	  -- lines might be wrapped and multiple spaces are reduced to one:
+	  error("expected key to have only single interior spaces:", format key);
+	  );
      m := regex("[[:space:]]*::[[:space:]]*",key);
      if m === null then (mdt opts) key
      else (

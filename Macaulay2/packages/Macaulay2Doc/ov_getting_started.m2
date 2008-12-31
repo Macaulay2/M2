@@ -602,7 +602,16 @@ document {
 	  "A useful tip: in emacs, if you place your cursor on one of the lines which starts with a '*',
 	  and press return, then you will get help on that topic."
 	  },
-     EXAMPLE ///* "jacobian(Ideal)"///,	  
+     EXAMPLE ///* "jacobian(Ideal)"///,
+     PARA {
+	  "Reading the info form of the documentation in emacs is perhaps better than using ", TO "infoHelp", ",
+	  because the preferred way of running Macaulay 2 is also in emacs. If you do so, we
+	  recommend configuring the emacs variable ", TT "Info-hide-note-references", " so
+	  its value is ", TT "hide", ".  The reason is that the Macaulay 2 documentation sets up
+	  hyperlinks with all the required text already in them, but if ", TT "Info-hide-note-references", "
+	  is set to ", TT "t", ", then it will insert ", TT "See", " or ", TT "see", " in front of
+	  the hyperlink unless it sees that word (or ", TT "in", ") already present in the text."
+	  },
      PARA {"The function ", TO apropos, " is useful to find functions and other defined symbols 
 	  which match a search string.  For example, to find all symbols
 	  in Macaulay2 which contain the string 'deal', use"

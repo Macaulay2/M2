@@ -339,7 +339,7 @@ export {
 	symbol QQ,
 	symbol Quotient,
 	symbol QuotientRing,
-	symbol RLE,
+	symbol runLengthEncode,
 	symbol RR,
 	symbol RealField,
 	symbol Reduce,

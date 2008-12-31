@@ -303,7 +303,7 @@ document {
      "Macaulay2 examples corresponding to the Singular examples in the
      book by Greuel-Pfister may also be found here.",
      Subnodes => {
-	  TO "Elementary uses of Groebner bases I.  Math 634 Fall 2005",
+	  TO "Elementary uses of Groebner bases I. Math 634 Fall 2005",
 	  TO "modules in Macaulay2",
 	  TO "M2SingularBook"
 	  }

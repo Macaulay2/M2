@@ -50,6 +50,12 @@ scan((
 	  ),
      (op,joiner) -> op Hypertext := x -> joiner apply(noopts x,op))
 
+scan((
+	  (info,horizontalJoin),
+	  (net,horizontalJoin)
+	  ),
+     (op,joiner) -> op HypertextParagraph := x -> wrap joiner apply(noopts x,op))
+
 -- defop := (joiner,op) -> x -> joiner apply(x,op)
 -- info Hypertext := defop(horizontalJoin,info)
 -- net Hypertext := defop(horizontalJoin,net)
@@ -97,34 +103,41 @@ specials := new HashTable from {
 
 texMath Function := texMath Boolean := x -> "\\text{" | tex x | "}"
 
--- spacing between lines and paragraphs:
--- observation of browsers reveals:
-    -- nonempty PARA items get at least one blank line above and below
-    -- empty PARA items produce just one blank line
-    -- multiple consecutive empty PARA items have the same effect as one
-    -- empty BR items produce one line break, forcing the current line to terminate, and a second one does it again
-    -- empty DIV items produce one line break, forcing the current line to terminate, but a second one has no new effect
-    -- DIV items are single spaced on separate lines
-    -- nested DIV items don't space more widely
-    -- multiple empty BR items produce multiple line breaks
-    -- PARA "a", BR {}, PARA "c"        leads to "\na\n\n\n\nc\n"
-    -- PARA "a", "b", BR {}, PARA "c"   leads to "\na\n\nb\n\nc\n"
-    -- but: DIV elements can contain DIV elements and PARA elements
-    -- and: DIV{DIV PARA "a", DIV PARA "b", DIV PARA "c" } should format just like DIV{ PARA "a", PARA "b", PARA "c" }
-    -- that means the conversion to nets cannot be a totally recursive algorithm
+{*
+ spacing between lines and paragraphs:
+ observation of browsers reveals:
+     nonempty PARA items get at least one blank line above and below
+     empty PARA items produce just one blank line
+     multiple consecutive empty PARA items have the same effect as one
+     empty BR items produce one line break, forcing the current line to terminate, and a second one does it again
+     empty DIV items produce one line break, forcing the current line to terminate, but a second one has no new effect
+     DIV items are single spaced on separate lines
+     nested DIV items don't space more widely
+     multiple empty BR items produce multiple line breaks
+     PARA "a", BR {}, PARA "c"        leads to "\na\n\n\n\nc\n"
+     PARA "a", "b", BR {}, PARA "c"   leads to "\na\n\nb\n\nc\n"
+     but: DIV elements can contain DIV elements and PARA elements
+     and: DIV{DIV PARA "a", DIV PARA "b", DIV PARA "c" } should format just like DIV{ PARA "a", PARA "b", PARA "c" }
+     that means the conversion to nets cannot be a totally recursive algorithm
 
-    -- that leads to this algorithm:
-    --  introduce new symbols: BK SP
-    --  expand PARA{x} to SP x SP
-    --  expand BR{}    to "" BK
-    --  expand DIV{x}  to BK x BK
-    --  do the expansions above recursively, do the collapses below at top level
-    --  collapse each sequence of consecutive SPs and BKs to BK "" BK if there is at least one SP in there, else to BK
-    --  collect things between BKs and wrap them into nets, with empty sequences, if we didn't collapse each BK...BK, becoming empty nets of height 0 and depth 0
-    --  discard each BK
-    --  stack all the nets
+     that leads to this algorithm:
+      introduce new symbols: BK SP
+      expand PARA{x} to SP x SP
+      expand BR{}    to "" BK
+      expand DIV{x}  to BK x BK
+      do the expansions above recursively, do the following collapses at top level:
+           collapse each sequence of consecutive SPs and BKs to BK "" BK if there is at least one SP in there, else to BK
+      collect things between BKs and wrap them into nets, with empty sequences, 
+           if we didn't collapse each BK...BK, becoming empty nets of height 0 and depth 0
+      discard each BK
+      stack all the nets
 
-    -- We modify that slightly, by removing all the initial and final BKs and SPs at top level
+     We modify that slightly, by removing all the initial and final BKs and SPs at top level
+
+     One more consideration: info MENUs should not be wrapped, but they can be contained in a DIV, which
+     must arrange for the wrapping of strings contained in it.  Also, HypertextParagraphs have already been
+     wrapped, so they don't need to be wrapped again.
+*}
 
 BK := local BK
 SP := local SP
@@ -135,8 +148,8 @@ scan( ((net,net'), (info,info')), (f,f') -> (
 	  f' String := identity;
 	  f' BR := br -> ("", BK);
 	  f' Hypertext := f;
-	  f' HypertextParagraph := x -> (SP, f x, SP);
-	  f' UL := x -> (BK, f x, BK);
+	  f' HypertextParagraph := x -> (SP, {f x}, SP);    -- use { } to indicate wrapping is already done (or not desired)
+	  f' UL := x -> (BK, {f x}, BK);
 	  f' HypertextContainer := x -> (BK, apply(toSequence x, f'), BK);
      	  f' Thing := x -> error("no hypertext conversion method for: ",toString x," of class ",toString class x);
 	  f HypertextContainer := x -> (
@@ -147,8 +160,11 @@ scan( ((net,net'), (info,info')), (f,f') -> (
 	       m := -1;
 	       while x#?m and (x#m === SP or x#m === BK) do m = m-1;
 	       x = drop(x,m+1);
-	       x = splice sublists(x, i -> i === BK or i === SP, SPBKs -> if member(SP,SPBKs) then (BK,"",BK) else BK);
-	       x = splice sublists(x, i -> i =!= BK, wrap @@ horizontalJoin, BK -> ());
+	       x = splice sublists(x, i -> i === BK or i === SP, 
+		    SPBKs -> if member(SP,SPBKs) then (BK,"",BK) else BK);
+	       x = splice sublists(x, i -> i =!= BK,
+		    x -> if #x===1 and instance(x#0,List) then horizontalJoin x#0 else wrap horizontalJoin x, 
+		    BK -> ());
 	       stack x);
 	  ))
      
@@ -333,35 +349,34 @@ infoTagConvert DocumentTag := tag -> (
      then tagConvert fkey
      else (
 	  concatenate("(",pkgname,")",tagConvert if pkgname === fkey then "Top" else fkey)))
-infoLinkConvert := s -> replace(":"," -- ",s)
+infoLinkConvert := s -> replace(":","_colon_",s)
 info TO  := x -> (
      tag := x#0;
      f := DocumentTag.FormattedKey tag;
+     if x#?1 then f = f|x#1;
      tag = getPrimary tag;
-     concatenate(format f, if x#?1 then x#1,
+     concatenate(
 	  if fetchRawDocumentation tag === null
-	  then " (missing documentation)"
-	  else (" (*note ", infoLinkConvert f, ": ", infoTagConvert tag, ",)")
-	  )
-     )
+	  then (f, " (missing documentation)")
+	  else ("*note ", infoLinkConvert f, ": ", infoTagConvert tag, ",")))
 info TO2 := x -> (
-     tag := x#0;
-     f := DocumentTag.FormattedKey tag;
-     tag = getPrimary tag;
-     concatenate(x#1, 
+     tag := getPrimary x#0;
+     concatenate(
 	  if fetchRawDocumentation tag === null
-	  then " (missing documentation)"
-	  else (" (*note ", infoLinkConvert f, ": ", infoTagConvert tag, ",)")
+	  then (x#1, " (missing documentation)")
+	  else ("*note ", infoLinkConvert x#1, ": ", infoTagConvert tag, ",")
 	  )
      )
 info TOH := x -> (
      tag := x#0;
      f := DocumentTag.FormattedKey tag;
+     if x#?1 then f = f|x#1;
      tag = getPrimary tag;
-     concatenate(f, if x#?1 then x#1, commentize headline tag,
+     concatenate(
 	  if fetchRawDocumentation tag === null
-	  then " (missing documentation)"
-	  else (" (*note ", infoLinkConvert f, ": ", infoTagConvert tag, ",)")
+	  then (f," (missing documentation)")
+	  else ("*note ", infoLinkConvert f, ": ", infoTagConvert tag, ","),
+	  commentize headline tag
 	  )
      )
 
@@ -467,7 +482,8 @@ html MENU := x -> html redoMENU x
 
 info MENU := r -> (
      pre := "* ";
-     printWidth = printWidth - #pre;
+     savePW := printWidth;
+     printWidth = 0; -- wrapping a menu item makes it hard for emacs info to follow links
      ret := sublists(toList r, 
 	  x -> class x === TO,
 	  v -> stack apply(v, i -> pre | wrap (
@@ -480,7 +496,7 @@ info MENU := r -> (
 		    t)),
 	  x -> stack("",info DIV x)
 	  );
-     printWidth = printWidth + #pre;
+     printWidth = savePW;
      stack join({"* Menu:",""}, ret))
 
 html COMMENT := x -> concatenate("<!--",x,"-->")

@@ -10,7 +10,7 @@ Hypertext.synonym = "mark-up list"
 HypertextParagraph = new Type of Hypertext		    -- one of these will be a paragraph
 HypertextParagraph.synonym = "mark-up list paragraph"
 
-HypertextContainer = new Type of HypertextParagraph	    -- one of these may contain paragraphs or containers, and its method for printing has to handle the line breaks
+HypertextContainer = new Type of Hypertext	    -- one of these may contain paragraphs or containers, and its method for printing has to handle the line breaks
 HypertextContainer.synonym = "mark-up list container"
 
      MarkUpType = new Type of SelfInitializingType

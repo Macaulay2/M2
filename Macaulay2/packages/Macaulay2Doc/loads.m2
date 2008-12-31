@@ -71,7 +71,7 @@ document {
      ld "tu_divisors.m2"
      }
 document {
-     Key => "Elementary uses of Groebner bases I.  Math 634 Fall 2005",
+     Key => "Elementary uses of Groebner bases I. Math 634 Fall 2005",
      ld "tu_elementary1.m2"
      }
 document {
