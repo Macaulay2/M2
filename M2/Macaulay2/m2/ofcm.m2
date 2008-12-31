@@ -36,7 +36,7 @@ degrees GeneralOrderedMonoid := M -> M.Options.Degrees
 raw GeneralOrderedMonoid := M -> M.RawMonoid
 
 rle = method()
-rle List := x -> apply(RLE x, y -> if instance(y,Holder) then hold rle y#0 else y)
+rle List := x -> apply(runLengthEncode x, y -> if instance(y,Holder) then hold rle y#0 else y)
 rle Option := x -> x#0 => rle x#1
 rle Thing := identity
 
@@ -45,9 +45,9 @@ monoidParts = (M) -> (
      o := M#"original options";	-- if we used M.Options we'd run into lots of long lists as in GRevLex => {1,1,1,1,1,1,1}
      o = M.Options;
      nonnull splice (
-	  if M.?generatorExpressions then toSequence RLE M.generatorExpressions,
-	  Degrees => RLE if o.DegreeRank === 1 then flatten o.Degrees else (x -> VerticalList x) \ o.Degrees,
-	  if o.Heft =!= null then Heft => RLE o.Heft,
+	  if M.?generatorExpressions then toSequence runLengthEncode M.generatorExpressions,
+	  Degrees => runLengthEncode if o.DegreeRank === 1 then flatten o.Degrees else (x -> VerticalList x) \ o.Degrees,
+	  if o.Heft =!= null then Heft => runLengthEncode o.Heft,
 	  MonomialOrder => rle o.MonomialOrder,
 	  ( DegreeRank, MonomialSize, WeylAlgebra, SkewCommutative, Inverses, Global ) / (key -> if o#?key and o#key =!= O#key then key => o#key)))
 

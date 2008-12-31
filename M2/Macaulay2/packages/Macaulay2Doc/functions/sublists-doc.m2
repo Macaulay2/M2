@@ -12,7 +12,7 @@ document {
      Usage => "sublist(x,f,g,h)",
      Inputs => { "x", "f", "g", "h" },
      Outputs => {
-	  { "a list of results obtained by applying ", TT "g", " to each of the maximal nonempty lists
+	  { "a list of results obtained by applying ", TT "g", " to each of the maximal nonempty sequences
 	       of consecutive elements ", TT "i", " of ", TT "x", " for which ", TT "f i", " is true, and by 
 	       applying ", TT "h", " to each of the elements ", TT "i", " of ", TT "x", " for which ", TT "f i", " is false."}
 	  },

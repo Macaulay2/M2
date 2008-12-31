@@ -65,8 +65,8 @@ succ(ZZ,ZZ) := (x,y) -> x+1 === y
 succ(Symbol,Symbol) := (x,y) -> succS#?x and succS#x === y
 succ(IndexedVariable,IndexedVariable) := (x,y) -> x#0 === y#0 and succ(x#1,y#1)
 succ(Thing,Thing) := x -> false
-RLE = method(Dispatch => Thing)
-RLE VisibleList := x -> (
+runLengthEncode = method(Dispatch => Thing)
+runLengthEncode VisibleList := x -> (
      if #x === 0 then return x;
      dupout := true;
      while first(dupout,dupout = false) do x = new class x from (

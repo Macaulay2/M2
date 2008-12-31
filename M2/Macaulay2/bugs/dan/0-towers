@@ -24,27 +24,3 @@ is used in the expression R.FlatMonoid.
 
 This should all be documented.
 
-Also implement the interface for algebraic extensions of QQ.
-
---
-
-default betti weight is screwy
-
-fix prune of Ring
-
-fix decompose using flattenRing:
-
-    i1 : R = QQ[x][y]
-
-    o1 = R
-
-    o1 : PolynomialRing
-
-    i2 : decompose ideal y
-    stdio:2:1:(1):[0]: factorization not implemented for coefficient rings that are not fields
-
-    i5 : factor (x^2-y^2)
-
-    o5 = (- y + x)(y + x)
-
-    o5 : Expression of class Product

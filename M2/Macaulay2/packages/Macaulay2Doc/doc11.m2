@@ -371,9 +371,9 @@ document {
      }
 
 document {
-     Key => {(RLE,VisibleList),RLE},
+     Key => {(runLengthEncode,VisibleList),runLengthEncode},
      Headline => "run length encoding",
-     Usage => "RLE x",
+     Usage => "runLengthEncode x",
      Inputs => { "x" },
      Outputs => {{ "a list equivalent to ", TT "x", ", in which runs and sequences have been expressed 
 	       symbolically as ", TO2{Expression,"expressions"}}},
@@ -382,7 +382,7 @@ document {
 	  provided that ", TT "x", " contains no entries that are sequences."},
      EXAMPLE lines ///
      x = {1,2,3,a,b,c,a,b,c,4,4,4,"asdf"};
-     y = RLE x
+     y = runLengthEncode x
      peek y
      value \ y
      deepSplice \\ oo
