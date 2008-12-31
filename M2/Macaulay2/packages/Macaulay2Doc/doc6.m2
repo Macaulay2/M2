@@ -142,9 +142,9 @@ document {
      "Numbers displayed inside more complicated objects are printed with the number of digits
      specified by ", TO "printingPrecision", ".",
      EXAMPLE {"printingPrecision","{1/3.,1/3p100}"},
-     "The notion of equality tested by ", TO "===", " amounts to equality of the internal binary digits.",
+     "The notion of equality tested by ", TO "==", " amounts to equality of the internal binary digits.",
      EXAMPLE {".5p100 == .5p30", ".2p100 == .2p30"},
-     "The notion of (strict) equality tested by ", TO "==", " also takes the precision into account.",
+     "The notion of (strict) equality tested by ", TO "===", " also takes the precision into account.",
      EXAMPLE {".5p100 === .5p30", ".2p100 === .2p30"},
      "Perhaps surprisingly, the IEEE floating point standard also specifies that every number, including 0,
      has a sign bit, and strict equality testing takes it into account, as it must do, because some arithmetic
