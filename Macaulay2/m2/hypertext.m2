@@ -246,7 +246,8 @@ texMath STRONG := tex STRONG := x -> concatenate("{\\bf ",apply(x,tex),"}")
 texMath ITALIC := tex ITALIC := x -> concatenate("{\\sl ",apply(x,tex),"}")
 texMath TEX := tex TEX := x -> concatenate toList x
 
-info PRE := net PRE := x -> net concatenate x
+info PRE := x -> wrap(printWidth,"-",net concatenate x)
+net PRE := x -> net concatenate x
 html PRE   := x -> concatenate( 
      "<pre>", 
      demark(newline, apply(lines concatenate x, htmlLiteral)),
@@ -318,6 +319,7 @@ infoLiteral#"(" = "_lp"
 infoLiteral#"_" = "_us"
 infoLiteral#")" = "_rp"
 infoLiteral#"," = "_cm"
+infoLiteral#"." = "_pd"
 infoLiteral#"*" = "_st"
 infoLiteral#":" = "_co"
 infoLit := n -> concatenate apply(characters n, c -> infoLiteral#c);
@@ -331,9 +333,13 @@ infoTagConvert DocumentTag := tag -> (
      then tagConvert fkey
      else (
 	  concatenate("(",pkgname,")",tagConvert if pkgname === fkey then "Top" else fkey)))
-info TO  := x -> concatenate(format DocumentTag.FormattedKey x#0, if x#?1 then x#1, "  (*note ", infoTagConvert x#0, "::)")
-info TO2 := x -> concatenate(x#1, "  (*note ", x#1, ": ", infoTagConvert x#0, ".)")
-info TOH := x -> concatenate(DocumentTag.FormattedKey x#0, if x#?1 then x#1, commentize headline x#0,, "  (*note ", infoTagConvert x#0, "::)" )
+info TO  := x -> (
+     f := DocumentTag.FormattedKey x#0;
+     concatenate(format f, if x#?1 then x#1, "  (*note ", f, ": ", infoTagConvert getPrimary x#0, ".)"))
+info TO2 := x -> concatenate(x#1, "  (*note ", x#1, ": ", infoTagConvert getPrimary x#0, ".)")
+info TOH := x -> (
+     f := DocumentTag.FormattedKey x#0;
+     concatenate(f, if x#?1 then x#1, commentize headline x#0,, "  (*note ", f, ": ", infoTagConvert getPrimary x#0, ".)" ))
 
 info IMG := net IMG := tex IMG  := x -> (
      (o,cn) := override(IMG.Options,toSequence x);

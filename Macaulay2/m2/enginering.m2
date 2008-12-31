@@ -385,6 +385,26 @@ degree RingElement := f -> if f == 0 then -infinity else rawMultiDegree raw f
 
 leadTerm RingElement := RingElement => (f) -> someTerms(f,0,1)
 
+divmod := R -> (f,g) -> (
+     (q,r) := rawDivMod(raw f, raw g);
+     (new R from q, new R from r))
+quotientRemainder(RingElement,RingElement) := (f,g) -> (
+     R := ring f;
+     S := ring g;
+     m := quotientRemainder(R,S) := (
+	  if R === S then divmod R
+	  else if member(R,S.baseRings) then (
+	       (x,y) -> divmod(promote(x,S), y)
+	       )
+	  else if member(S,R.baseRings) then (
+	       (x,y) -> divmod(x, promote(y,R))
+	       )
+	  else error "expected pair to have a method for quotientRemainder"
+	  );
+     m(f,g))
+quotientRemainder(Number,RingElement) := (f,g) -> quotientRemainder(try promote(f,class g) else error "can't promote number to ring", g)
+quotientRemainder(RingElement,Number) := (f,g) -> quotientRemainder(f, try promote(g,class f) else error "can't promote number to ring")
+
 Number % RingElement := (f,g) -> (try promote(f,class g) else error "can't promote number to ring") % g
 RingElement % Number := (f,g) -> f % (try promote(g,class f) else error "can't promote number to ring")
 RingElement % RingElement := RingElement => (f,g) -> (
