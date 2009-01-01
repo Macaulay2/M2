@@ -788,8 +788,9 @@ makeDocBody := method(Dispatch => Thing)
 makeDocBody Thing := key -> (
      tag := makeDocumentTag key;
      pkg := getpkg DocumentTag.Title tag;
-     rec := fetchPrimaryRawDocumentation tag;
-     fkey := DocumentTag.FormattedKey tag;
+     ptag := getPrimary tag;
+     rec := fetchRawDocumentation ptag;
+     fkey := DocumentTag.FormattedKey ptag;
      if rec =!= null then (
 	  comment := COMMENT{"file://",externalPath,toAbsolutePath rec#"filename",":",toString rec#"linenum"}; 
 	  docBody := extractBody rec;

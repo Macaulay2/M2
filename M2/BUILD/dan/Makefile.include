@@ -17,6 +17,7 @@ install:pre-install install-it post-install
 pre-install post-install:
 rebuild-world: arch-chk distclean configure everything install check
 world: arch-chk configure all install check
+check-info:; $(MAKE) -C builds/$(DIRECTORY)/Macaulay2/packages $@
 CONFIGOPTIONS += --enable-encap
 CONFIGOPTIONS += --enable-common-staging-area
 CONFIGOPTIONS += --prefix=/usr
