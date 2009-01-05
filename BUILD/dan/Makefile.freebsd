@@ -1,4 +1,19 @@
 #-*- Makefile -*-
+
+#   pkg_add -r autoconf
+#   pkg_add -r curl
+#   pkg_add -r g95
+#   pkg_add -r wget
+#   pkg_add -r m4
+#   pkg_add -r emacs
+#   pkg_add -r xauth
+#   pkg_add -r mpfr
+#   pkg_add -r libgmp
+#   pkg_add -r libgdbm
+#   pkg_add -r gdbm
+#   pkg_add -r lapack
+#   pkg_add -r ntl  --- too old
+
 #BUILDOPTIONS += RemakeAllDocumentation=true RemakePackages=true
 #BUILDOPTIONS += RerunExamples=true
 #PACKAGES = Macaulay2Doc
@@ -6,7 +21,7 @@
 #INSTALLOPTIONS += -s
 CONFIGOPTIONS += --enable-tarfile CPPFLAGS="-I/usr/local/include" LDFLAGS="-L/usr/local/lib"
 INSTALLOPTIONS += prefix=/usr/local/encap
-DIRECTORY = ubuntu32
+DIRECTORY = freebsd
 include Makefile.include
 pre-install:;	rm -rf /usr/local/encap/Macaulay2-$(PACKAGE_VERSION)
 arch-chk:
