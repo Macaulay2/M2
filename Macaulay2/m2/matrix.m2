@@ -73,8 +73,12 @@ Number * Matrix := (r,m) -> (
      S := ring m;
      try r = promote(r,S) else error "can't promote scalar to ring of matrix";
      map(target m, source m, reduce(target m, raw r * raw m)))
-RingElement * Matrix := (r,m) -> map(target m, source m, reduce(target m, raw r * raw m))
-Matrix * RingElement := (m,r) -> map(target m, source m, reduce(target m, raw m * raw r))
+RingElement * Matrix := (r,m) -> (
+     r = promote(r,ring m);
+     map(target m, source m, reduce(target m, raw r * raw m)))
+Matrix * RingElement := (m,r) -> (
+     r = promote(r,ring m);
+     map(target m, source m, reduce(target m, raw m * raw r)))
 
 sameRing := (m,n) -> (
      if ring m =!= ring n then (
