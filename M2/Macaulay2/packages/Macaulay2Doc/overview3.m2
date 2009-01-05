@@ -64,7 +64,10 @@ document {
      Key => "MPFR",
      PARA {
 	  "The ", TT "MPFR", " library is used by Macaulay 2 for its arbitrary precision real number arithmetic
-	  and associated transcendental functions.  It is available at ", HREF "http://www.mpfr.org/", "."
+	  and associated transcendental functions.  It is available at ", HREF "http://www.mpfr.org/", ".  The
+	  library is remarkable for the care taken to return correctly rounded
+	  results.  It is hoped that this will form a good base for experimentation
+	  with algebraic algorithms that mix symbolic and numeric techniques."
 	  }
      }
 
