@@ -6,6 +6,10 @@
 
 # 7.1-RELEASE
 
+# to see what's there:
+#   ftp ftp.freebsd.org
+#   cd pub/FreeBSD/ports/i386/packages-7.1-release/Latest
+
 #   pkg_add -r emacs
 #   pkg_add -r xauth
 #   pkg_add -r subversion
@@ -16,10 +20,12 @@
 #   pkg_add -r gmake
 #   pkg_add -r g95
 #   pkg_add -r libgmp (fetched by mpfr)
-#   pkg_add -r mpfr 
+#   pkg_add -r mpfr
 #   pkg_add -r gdbm
 #   pkg_add -r lapack (fetches blas, also)
 #   pkg_add -r ntl  --- in 7.0-RELEASE, too old
+#   pkg_add -r boehm-gc -- in 7.1-RELEASE, too old, only version 6.8
+#   pkg_add -r gcc44 -- to update the compiler, not required, version 4.2.1 is standard in 7.1-RELEASE
 
 #BUILDOPTIONS += RemakeAllDocumentation=true RemakePackages=true
 #BUILDOPTIONS += RerunExamples=true
@@ -32,8 +38,8 @@ DIRECTORY = freebsd
 include Makefile.include
 pre-install:;	rm -rf /usr/local/encap/Macaulay2-$(PACKAGE_VERSION)
 arch-chk:
-	[ `hostname` = freebsd ]
+	[ `hostname` = freebsd.gallium ]
 	[ `uname -m` = i386 ]
 # Local Variables:
-# compile-command: "time make -f Makefile.freebsd "
+# compile-command: "time gmake -f Makefile.freebsd "
 # End:

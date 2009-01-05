@@ -29,10 +29,8 @@ tags:: @srcdir@/TAGS
 
 
 # overflows
-LDLIBS = -lgc
-ifeq (@PTHREADS@,yes)
-LDLIBS += -lpthread
-endif
+LDLIBS = @GC_LIBS@
+
 all: run-overflow-test
 run-overflow-test : overflow-test
 	./$^ sub 2>/dev/null || echo test succeeded

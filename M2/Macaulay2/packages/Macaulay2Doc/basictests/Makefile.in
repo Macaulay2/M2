@@ -27,10 +27,7 @@ ARGS := --silent -q --stop --no-loaddata --no-setup -e 'srcdir = "@srcdir@/"'
 	@ touch $@
 
 clean::	; rm -f *.okay
-LOADLIBES += -lgc
-ifeq "@PTHREADS@" "yes"
-LOADLIBES += -lpthread
-endif
+LOADLIBES += @GC_LIBS@
 check-gc: testgc; ./testgc
 clean:: ; rm -f testgc
 Makefile : Makefile.in ; cd $(DOTS)/.. && ./config.status Macaulay2/packages/Macaulay2Doc/basictests/Makefile

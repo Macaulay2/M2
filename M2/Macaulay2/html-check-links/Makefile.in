@@ -24,12 +24,9 @@ endif
 
 # we don't include @LIBS@ here because including -llapack would make it also
 # necessary to link with the fortran support libraries:
-LOADLIBES += -lgc
-# we should add this only after checking for its presence in configure.ac:
+LOADLIBES += @GC_LIBS@
+# we should have added this only after checking for its presence/necessity in configure.ac:
 # LOADLIBES += -ldl
-ifeq "@PTHREADS@" "yes"
-LOADLIBES += -lpthread
-endif
 
 ifeq (@DEBUG@,yes)
 CPPFLAGS += -DYYDEBUG

@@ -606,7 +606,15 @@ then AC_SEARCH_LIBS(GC_free,gc,,BUILD_gc=yes)
 	     [ AC_MSG_RESULT([cross-compiling, test not possible]) ])
      fi
 fi
-test $BUILD_gc = yes && BUILTLIBS="-lgc $BUILTLIBS"
+AC_SUBST(GC_LIBS,-lgc)
+if test $BUILD_gc = yes
+then if test $PTHREADS = yes
+     then # libpthread isn't really built by us, but gc will need to link against it
+	  BUILTLIBS="-lpthread $BUILTLIBS"
+	  GC_LIBS="$GC_LIBS -lpthread"
+     fi
+     BUILTLIBS="-lgc $BUILTLIBS"
+fi
 
 AC_LANG(C)
 if test $BUILD_gdbm = no
