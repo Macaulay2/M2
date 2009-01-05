@@ -13,7 +13,7 @@ include/configuration: config.status; ./config.status
 check:configured check-dirs
 check-machine:
 	: make sure we are running on the same type of machine we were configured for, roughly
-	[ "@UNAME_INFO@" = "` uname -pmso `" ]
+	[ "@UNAME_INFO@" = "` uname -pmso 2>/dev/null || uname -pms `" ]
 clean:clean-dirs
 	rm -f srcdir .link-test srcdir confdefs.h configure.lineno conftest.* include/config.h
 	rm -rf StagingArea conf_*
