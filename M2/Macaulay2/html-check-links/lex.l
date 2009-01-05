@@ -15,6 +15,7 @@ static void yyunput(int, char *) __attribute__ ((unused));
 char *filename = "", *Dirname="", *rootname = "";
 int lineno = 1, column = 1, tagline, tagcol;
 int yywrap(void) { lineno = 1, column = 1; return 1; }
+#define YY_NO_INPUT
 %}
 
 ID       [a-zA-Z][a-zA-Z0-9]*
