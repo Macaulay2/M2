@@ -1,0 +1,17 @@
+#-*- Makefile -*-
+#BUILDOPTIONS += RemakeAllDocumentation=true RemakePackages=true
+#BUILDOPTIONS += RerunExamples=true
+#PACKAGES = Macaulay2Doc
+#BUILDOPTIONS += -s
+#INSTALLOPTIONS += -s
+CONFIGOPTIONS += --enable-tarfile CPPFLAGS="-I/usr/local/include" LDFLAGS="-L/usr/local/lib"
+INSTALLOPTIONS += prefix=/usr/local/encap
+DIRECTORY = ubuntu32
+include Makefile.include
+pre-install:;	rm -rf /usr/local/encap/Macaulay2-$(PACKAGE_VERSION)
+arch-chk:
+	[ `hostname` = freebsd ]
+	[ `uname -m` = i386 ]
+# Local Variables:
+# compile-command: "time make -f Makefile.freebsd "
+# End:
