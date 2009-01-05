@@ -983,7 +983,7 @@ bFunctionM(Module, List, List) := (M, w, m) -> (
 	  bf' = (map(S, ring bf', matrix{{s}})) bf';
 	  bf' = substitute(bf', { s => s - m#i });
 	  -- bf = lcm (bf, bf')
-	  bf = bf * (bf' / gcd(bf, bf'));
+	  bf = bf * (bf' // gcd(bf, bf'));
 	  i = i + 1;
 	  );
      bf 
