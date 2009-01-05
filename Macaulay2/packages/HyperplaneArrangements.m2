@@ -171,7 +171,7 @@ dual Arrangement := Arrangement => A -> (
 -- equality testing
 
 Arrangement == Arrangement := (A,B) -> (
-     if (A.ring == B.ring) then ((tolist A) == (tolist B))
+     if (A.ring === B.ring) then ((tolist A) == (tolist B))
      	  else false)
 
 -- deletion; restriction is a special case of res. to a flat, so comes 
