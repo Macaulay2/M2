@@ -8,14 +8,23 @@ extern int libfac_interruptflag; /* extracted from libfac's factor.h */
 #define GDBM_STATIC
 #include <gdbm.h>
 
-#include <alloca.h>
-
 #include "M2mem.h"
 #include "M2mem2.h"
 #include "M2inits.h"
 #include "../dumpdata/map.h"
 #include "types.h"
 #include "debug.h"
+
+#if HAVE_ALLOCA_H
+#include <alloca.h>
+#else
+#ifdef __GNUC__
+#ifndef alloca
+#define alloca __builtin_alloca
+#endif
+#endif
+
+#endif
 
 /* char *config_args[] = { CONFIG_ARGS 0 }; */
 const char *config_args = CONFIG_ARGS ;
@@ -85,7 +94,7 @@ static sigjmp_buf stack_trace_jump;
 
 void segv_handler2(int sig) {
      // fprintf(stderr,"--SIGSEGV during stack trace\n");
-     longjmp(stack_trace_jump,1);
+     siglongjmp(stack_trace_jump,1);
 }
 
 void stack_trace() {

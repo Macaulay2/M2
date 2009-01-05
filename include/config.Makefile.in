@@ -44,17 +44,15 @@ abs_top_srcdir = @abs_top_srcdir@
 
 INSTALL = @INSTALL@
 
-ifeq (@CC@-@ISYSTEM@,gcc-yes)
-IFLAG = -isystem
-else
-IFLAG = -I
-endif
+# we can't use -isystem instead of -I for our library include files, because then they might be supplanted
+# by older include files in a directory specified by the user with CPPFLAGS=-I/foo/bar, causing
+# version skew (gcc preprocessor searches -I directories first, then -isystem directories)
 
 BUILTLIBPATH = @abs_top_builddir@/libraries/final
 CPPFLAGS := \
-	 $(IFLAG)@abs_top_srcdir@/include \
-	 $(IFLAG)@abs_top_builddir@/include \
-	 $(IFLAG)$(BUILTLIBPATH)/include \
+	 -I@abs_top_srcdir@/include \
+	 -I@abs_top_builddir@/include \
+	 -I$(BUILTLIBPATH)/include \
 	 $(CPPFLAGS)
 LDFLAGS := -L$(BUILTLIBPATH)/lib $(LDFLAGS)
 LD_LIBRARY_PATH := $(BUILTLIBPATH)/lib:$(LD_LIBRARY_PATH)
