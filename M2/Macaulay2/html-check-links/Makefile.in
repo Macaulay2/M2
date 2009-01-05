@@ -18,7 +18,9 @@ YSRC := grammar.y
 SRC :=  $(YSRC) $(CSRC) $(LSRC) $(HSRC)
 CFILES := $(CSRC) $(LSRC:.l=.c) $(YSRC:.y=.fixed.c)
 YFLAGS += -d
+ifeq ($(YACC),bison)
 YFLAGS += --verbose
+endif
 
 # we don't include @LIBS@ here because including -llapack would make it also
 # necessary to link with the fortran support libraries:
