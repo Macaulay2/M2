@@ -33,10 +33,7 @@ distclean : clean; rm -f Makefile
 Makefile : Makefile.in; cd ../..; ./config.status Macaulay2/util/Makefile
 # gc_test
 CPPFLAGS += -I@srcdir@/../../include
-LDLIBS += -lgc
-ifeq "@PTHREADS@" "yes"
-LDLIBS += -lpthread
-endif
+LDLIBS += @GC_LIBS@
 all: gc_tested
 gc_test : gc_test.c -lgc
 gc_tested: gc_test; ./$< && touch $@
