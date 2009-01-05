@@ -1,0 +1,13 @@
+This seems to have never worked!  (fixed)
+
+Macaulay 2, version 1.1.1
+with packages: Classic, Core, Elimination, IntegralClosure, LLLBases, Parsing, PrimaryDecomposition, SchurRings, SimpleDoc, TangentCone
+--current directory /home/dan/src/M2/trunk/Macaulay2/packages/ComputationsBook/varieties/
+--prefix  directory /usr/local/
+
+i1 : k = ZZ/101;
+
+i2 : R = k[x];
+
+i3 : 1_k * vars R
+stdio:3:5:(1):[0]: error: ring element and matrix should have the same base ring

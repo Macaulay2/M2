@@ -1,0 +1,4 @@
+# -*- awk -*- well, actually this file goes to sed...
+
+# "print null" now prints "null", but before it printed "":
+s=^null$==

@@ -1,5 +1,9 @@
 #-*- Makefile -*-
 
+# VBoxManage setextradata "Linux Guest" VBoxInternal/Devices/pcnet/0/LUN#0/Config/guestssh/Protocol  TCP
+# VBoxManage setextradata "Linux Guest" VBoxInternal/Devices/pcnet/0/LUN#0/Config/guestssh/GuestPort 22
+# VBoxManage setextradata "Linux Guest" VBoxInternal/Devices/pcnet/0/LUN#0/Config/guestssh/HostPort  2222
+
 #   pkg_add -r autoconf
 #   pkg_add -r curl
 #   pkg_add -r g95
