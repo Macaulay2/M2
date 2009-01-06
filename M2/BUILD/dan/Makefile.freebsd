@@ -1,33 +1,4 @@
 #-*- Makefile -*-
-
-# VBoxManage setextradata "Linux Guest" VBoxInternal/Devices/pcnet/0/LUN#0/Config/guestssh/Protocol  TCP
-# VBoxManage setextradata "Linux Guest" VBoxInternal/Devices/pcnet/0/LUN#0/Config/guestssh/GuestPort 22
-# VBoxManage setextradata "Linux Guest" VBoxInternal/Devices/pcnet/0/LUN#0/Config/guestssh/HostPort  2222
-
-# 7.1-RELEASE
-
-# to see what's there:
-#   ftp ftp.freebsd.org
-#   cd pub/FreeBSD/ports/i386/packages-7.1-release/Latest
-
-#   pkg_add -r emacs
-#   pkg_add -r xauth
-#   pkg_add -r subversion
-#   pkg_add -r m4 (fetched by autoconf?)
-#   pkg_add -r autoconf262
-#   pkg_add -r bash
-#   pkg_add -r curl	--or--     pkg_add -r wget
-#   pkg_add -r gmake
-#   pkg_add -r gtar
-#   pkg_add -r g95
-#   pkg_add -r libgmp (fetched by mpfr)
-#   pkg_add -r mpfr
-#   pkg_add -r gdbm
-#   pkg_add -r lapack (fetches blas, also)
-#   pkg_add -r ntl  --- in 7.0-RELEASE, too old
-#   pkg_add -r boehm-gc -- in 7.1-RELEASE, too old, only version 6.8
-#   pkg_add -r gcc44 -- to update the compiler, not required, version 4.2.1 is standard in 7.1-RELEASE
-
 #BUILDOPTIONS += RemakeAllDocumentation=true RemakePackages=true
 #BUILDOPTIONS += RerunExamples=true
 #PACKAGES = Macaulay2Doc
