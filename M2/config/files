@@ -19,6 +19,7 @@ distributions/cygwin/setup.hint-base
 distributions/cygwin/server/Makefile
 distributions/cygwin/postinstall.sh
 distributions/cygwin/preremove.sh
+distributions/freebsd/Makefile
 distributions/deb/Makefile
 distributions/deb/macaulay2-common/control.prelim
 distributions/deb/macaulay2-common/postrm

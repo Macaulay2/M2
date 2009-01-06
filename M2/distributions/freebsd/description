@@ -1,0 +1,6 @@
+Macaulay 2 is a software system for algebraic geometry research, written by
+Daniel R. Grayson and Michael E. Stillman.  Based on Groebner bases, it
+provides algorithms for computing homological invariants of rings and
+modules.
+
+Home page: http://www.math.uiuc.edu/Macaulay2/.
