@@ -70,7 +70,7 @@ else
 .patched-$(VERSION) : .untarred-$(VERSION) ; touch $@
 endif
 
-UNTARCMD ?= tar xzf $(TARFILE_DIR)/$(TARFILE)
+UNTARCMD ?= @TAR@ xzf $(TARFILE_DIR)/$(TARFILE)
 .untarred-$(VERSION) : $(TARFILE_DIR)/$(TARFILE) ; $(UNTARCMD) && touch $@
 .untarred2-$(VERSION) : $(TARFILE_DIR)/$(TARFILE) ; mkdir tmp ; $(UNTARCMD) -C tmp && touch $@
 

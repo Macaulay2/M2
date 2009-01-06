@@ -18,6 +18,7 @@
 #   pkg_add -r bash
 #   pkg_add -r curl	--or--     pkg_add -r wget
 #   pkg_add -r gmake
+#   pkg_add -r gtar
 #   pkg_add -r g95
 #   pkg_add -r libgmp (fetched by mpfr)
 #   pkg_add -r mpfr

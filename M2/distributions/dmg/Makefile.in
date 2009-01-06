@@ -10,12 +10,12 @@ maybe-tidy: tidy
 else
 maybe-tidy:
 endif
-T=tar --create --mode=a+rX,og-ws --exclude-from=@srcdir@/../tar-exclusions --file=-
+T=@TAR@ --create --mode=a+rX,og-ws --exclude-from=@srcdir@/../tar-exclusions --file=-
 ../../$(PKG_DMG) : Makefile
 	rm -rf files
 	umask 022 ; $(MKDIR_P) files/@package@
-	umask 022 ; $(T) -C @pre_exec_prefix@ . | tar xfp - -C files/@package@
-	umask 022 ; $(T) -C @pre_prefix@ . | tar xfp - -C files/@package@
+	umask 022 ; $(T) -C @pre_exec_prefix@ . | @TAR@ xfp - -C files/@package@
+	umask 022 ; $(T) -C @pre_prefix@ . | @TAR@ xfp - -C files/@package@
 	cp @srcdir@/ReadMe-MacOSX.rtf files/@package@
 	ln -s @package@/ReadMe-MacOSX.rtf files
 	rm -f "$@"

@@ -65,6 +65,7 @@ AC_CHECK_PROGS(LINTIAN,lintian)
 AC_CHECK_PROGS(LDD,ldd)
 AC_CHECK_PROGS(FAKEROOT,fakeroot)
 AC_CHECK_PROGS(RPMLINT,rpmlint)
+AC_CHECK_PROGS(TAR,gtar tar)
 AC_CHECK_PROGS(STRIPCMD,strip)
 if test "$STRIPCMD" != ""
 then AC_MSG_CHECKING(whether $STRIPCMD accepts the remove-section option)
@@ -76,10 +77,16 @@ then AC_MSG_CHECKING(whether $STRIPCMD accepts the remove-section option)
      AC_SUBST(STRIP_REMOVE_SECTION,$val)
 fi
 
-AC_MSG_CHECKING("checking whether $MAKE is GNU make")
-if "$MAKE" -n --version nothing | grep GNU >/dev/null 2>&1
+AC_MSG_CHECKING(whether $MAKE is GNU make)
+if "$MAKE" -n --version nothing | head -1 | grep GNU >/dev/null 2>&1
 then AC_MSG_RESULT(yes)
-else AC_MSG_ERROR("GNU make is required: $MAKE")
+else AC_MSG_ERROR("$MAKE: GNU make is required")
+fi
+
+AC_MSG_CHECKING(whether $TAR is GNU tar)
+if "$TAR" --version | head -1 | grep "GNU tar" >/dev/null 2>&1
+then AC_MSG_RESULT(yes)
+else AC_MSG_ERROR("$TAR: GNU tar is required")
 fi
 
 AC_SUBST(NODENAME,"`uname -n`")

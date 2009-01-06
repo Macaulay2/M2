@@ -19,8 +19,8 @@ install-shared:
 	if [ -d final/lib ] ; \
 	then rm -rf @pre_librariesdir@/lib ;\
 	     @INSTALL@ -d @pre_librariesdir@/lib ; \
-	     tar cf - --exclude="*.a" --exclude="*.la" --exclude="*.pc" --exclude="*.old" -C final/lib . \
-	     | tar xfv - -C @pre_librariesdir@/lib ; \
+	     @TAR@ cf - --exclude="*.a" --exclude="*.la" --exclude="*.pc" --exclude="*.old" -C final/lib . \
+	     | @TAR@ xfv - -C @pre_librariesdir@/lib ; \
 	fi
 endif
 Makefile         : Makefile.in         ; cd .. && ./config.status libraries/Makefile
