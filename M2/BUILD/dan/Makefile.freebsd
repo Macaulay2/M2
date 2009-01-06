@@ -1,11 +1,15 @@
 #-*- Makefile -*-
 
-# freebsd 7.1-RELEASE build instructions:
-# 
+# build instructions under freebsd 7.1-RELEASE
+
 # to see what's there:
 #   ftp ftp.freebsd.org
 #   cd pub/FreeBSD/ports/i386/packages-7.1-release/Latest
-# 
+
+
+# start with the developer's freebsd, X11 not needed,
+# with a 4GB disk, of which 3GB will be used
+
 # use pkg_add -r to install the following packages:
 # 
 # required to build:
@@ -21,8 +25,7 @@
 #   lapack (fetches blas, also)
 #   ntl
 #   boehm-gc -- in 7.1-RELEASE, too old, only version 6.8
-#   gcc44 -- to update the compiler, not required, version 4.2.1 is standard in 7.1-RELEASE
-#   gfind -- used just for "make distclean" in GNUmakefile.in (-wholename option)
+#   gfind
 # 
 # optional but useful:
 #   subversion
@@ -30,6 +33,7 @@
 #   xauth
 #   epkg
 #   bash
+#   gcc44 -- to update the compiler, version 4.2.1 is standard in 7.1-RELEASE
 # 
 # VirtualBox settings:
 #  VBoxManage setextradata "Linux Guest" VBoxInternal/Devices/pcnet/0/LUN#0/Config/guestssh/Protocol  TCP
@@ -42,7 +46,12 @@
 #BUILDOPTIONS += -s
 #INSTALLOPTIONS += -s
 CONFIGOPTIONS += --enable-freebsd CPPFLAGS="-I/usr/local/include" LDFLAGS="-L/usr/local/lib"
+
+# I put these two options together just in case the common staging area is
+# is used with one of our other ports that has --mandir at the default value:
 CONFIGOPTIONS += --disable-common-staging-area --mandir='$${prefix}/man'
+# The other freebsd ports all put man pages in /usr/local/man
+
 INSTALLOPTIONS += prefix=/usr/local/encap
 DIRECTORY = freebsd
 include Makefile.include
