@@ -3,11 +3,6 @@ include ../../include/config.Makefile
 # we (may) want to ignore the --datarootdir setting, whatever that means, so here we we mention it: datarootdir
 VPATH = @srcdir@
 TIDY = yes
-
-# example:
-#  $ pkg_info -W /usr/local/lib/libntl.a 
-#  /usr/local/lib/libntl.a was installed by package ntl-5.4.2_1
-
 PKG = @PACKAGE_TARNAME@-@PACKAGE_VERSION@-@ARCH@-@OS@-@ISSUE@.tbz
 packinglist: packages-used Makefile
 	echo @name @PACKAGE_TARNAME@-@PACKAGE_VERSION@ >$@
@@ -56,7 +51,13 @@ libraries-used : .prepared files/bin/M2@EXE@
 packages-used : libraries-used Makefile
 	cat libraries-used | while read x ; do pkg_info -W "$$x" | sed -e 's=.* was installed by package =='; done >$@
 
-clean:; rm -f libraries-used packages-used .prepared ../../$(PKG) +CONTENTS
+ifeq ($(TIDY),yes)
+maybe-tidy: tidy_after
+else
+maybe-tidy:
+endif
+tidy tidy_after:; rm -f .prepared libraries-used packages-used +CONTENTS files packinglist
+clean:tidy; rm -f ../../$(PKG)
 distclean: clean; rm -f Makefile
 % : %.in; cd ../..; ./config.status distributions/freebsd/$@
 

@@ -33,7 +33,7 @@ announce:
 ifeq ($(TIDY),yes)
 maybe-tidy: tidy_after
 else
-maybe-tidy: tidy_after
+maybe-tidy:
 endif
 #################################
 ../../$(PKG_DEB) : @srcdir@/macaulay2/debian-binary macaulay2/control.tar.gz macaulay2/data.tar.gz
@@ -77,15 +77,15 @@ prepare : .prepared
 	cp tmp-common@docdir@/README tmp-common@prefix@/share/doc/macaulay2-common/copyright
 	gzip -9 <@srcdir@/macaulay2/changelog >tmp@prefix@/share/doc/macaulay2/changelog.gz
 	gzip -9 <@srcdir@/macaulay2-common/changelog >tmp-common@prefix@/share/doc/macaulay2-common/changelog.gz
-	find tmp-common -name \*.info | while read x ; do gzip --best "$$x" ; done
-	find tmp tmp-common -name man -type d | while read x ; do find $$x -type f -not -name \*.gz | while read y ; do gzip --best "$$y" ; done ; done
-	find tmp -name \*.so -o -name \*.so.\* -o -name \*.la | xargs chmod a-x Makefile
-	find tmp tmp-common -depth -mindepth 1 -type d -empty -delete
+	@FIND@ tmp-common -name \*.info | while read x ; do gzip --best "$$x" ; done
+	@FIND@ tmp tmp-common -name man -type d | while read x ; do @FIND@ $$x -type f -not -name \*.gz | while read y ; do gzip --best "$$y" ; done ; done
+	@FIND@ tmp -name \*.so -o -name \*.so.\* -o -name \*.la | xargs chmod a-x Makefile
+	@FIND@ tmp tmp-common -depth -mindepth 1 -type d -empty -delete
 	touch $@
 macaulay2/data.tar.gz        : prepare; (cd tmp        && @TAR@ cfz - $(TAROPTIONS) *) >$@
 macaulay2-common/data.tar.gz : prepare;	(cd tmp-common && @TAR@ cfz - $(TAROPTIONS) *) >$@
-macaulay2/md5sums            : prepare; (cd tmp        && find * -type f | xargs md5sum) >$@
-macaulay2-common/md5sums     : prepare;	(cd tmp-common && find * -type f | xargs md5sum) >$@
+macaulay2/md5sums            : prepare; (cd tmp        && @FIND@ * -type f | xargs md5sum) >$@
+macaulay2-common/md5sums     : prepare;	(cd tmp-common && @FIND@ * -type f | xargs md5sum) >$@
 ifneq (@LINTIAN@,)
 SUP = fgrep -v 
 check :
@@ -109,7 +109,7 @@ libraries-used : .prepared always
 	ldd tmp@bindir@/M2@EXE@ | sed -e 's/.* => //' -e 's/^	//' -e 's/ .*//' | egrep '^/' >$@ || true
 clean ::; rm -f libraries-used
 packages-used : libraries-used
-	cat libraries-used | while read x ; do find /var/lib/dpkg/info -name \*.list | xargs egrep -l "^$$x"; done | sort | uniq | sed -e 's=.*/==' -e 's=\.list$$==' >$@
+	cat libraries-used | while read x ; do @FIND@ /var/lib/dpkg/info -name \*.list | xargs egrep -l "^$$x"; done | sort | uniq | sed -e 's=.*/==' -e 's=\.list$$==' >$@
 clean ::; rm -f packages-used
 macaulay2/control : macaulay2/control.prelim macaulay2/data.tar.gz packages-used
 	(cat $< && \
