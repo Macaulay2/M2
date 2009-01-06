@@ -1,0 +1,12 @@
+fix this!
+
+    i1 : loadPackage "HyperplaneArrangements"
+
+    o1 = HyperplaneArrangements
+
+    o1 : Package
+
+    i2 : check HyperplaneArrangements  -- nothing happens
+
+    i3 : check HyperplaneArrangements  -- works the second time
+    --running test 0 of package HyperplaneArrangements on line 1518 in file 
