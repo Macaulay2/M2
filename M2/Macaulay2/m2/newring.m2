@@ -38,7 +38,7 @@ tensor(Ring,Ring) := Ring => opts -> (R,S) -> (
      if R === (try coefficientRing S) then return S;
      if S === (try coefficientRing R) then return R;
      if R === QQ and ZZ === (try coefficientRing S) then (
-	  (A,f,g) := flattenRing S;
+	  (A,f) := flattenRing S;
 	  T := QQ monoid A;
 	  I := ideal A;
 	  B := ring I;

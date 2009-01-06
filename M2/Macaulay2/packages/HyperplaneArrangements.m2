@@ -7,6 +7,11 @@
 -- involving empty arrangements); some caching; a "circuits" method;
 -- test for (Lie algebra) decomposability; a random arrangement;
 -- a hash table full of popular "canned" arrangements.
+-- 
+-- next time: think about making coefficient and coordinate rings
+-- into options.
+--
+-- 6 Jan 09: fixed bug in changeRing and errors in TEST section
 
 newPackage(
      "HyperplaneArrangements",
@@ -474,7 +479,7 @@ changeRing = method(TypicalValue => Arrangement)
 changeRing (Arrangement, Ring) := Arrangement => (A, k) -> (
      R := ring A;
      f := map(R**k, R);
-     arrangement ((tolist A)/f, R));
+     arrangement ((tolist A)/f, R**k));
 
 Arrangement ** Ring := Arrangement => changeRing
 Arrangement ** Arrangement := Arrangement => arrangementSum
@@ -512,7 +517,9 @@ EPY (Ideal,PolynomialRing) := Module => (j, R) -> (
      F := res(prune modT, LengthLimit=>3);
      g := transpose F.dd_2;
      G := res(coker g,LengthLimit=>4);
-     coker symExt(G.dd_4, R));
+     FA := coker symExt(G.dd_4, R);
+     d := first flatten degrees cover FA;
+     FA**(ring FA)^{d});  -- GD: I want this to be generated in degree 0
 
 EPY (Ideal) := Module => (j) -> (
      n := numgens ring j;
@@ -1485,7 +1492,7 @@ assert(ring trivial === R)
 assert(0 == matrix trivial)
 assert(0 == coefficients trivial)
 assert(deletion(nontrivial,x) == trivial)
-assert(trivial**trivial == trivial)
+assert(trivial**trivial != trivial)
 assert(trivial**QQ != trivial)
 trim trivial
 
@@ -1511,8 +1518,8 @@ assert(1+8*t+20*t^2+13*t^3 == P)
 ///
 end
 
-A3' = arrangement {x,y,z,x-y,x-z,y-z}
-A3' == A3
+--A3' = arrangement {x,y,z,x-y,x-z,y-z}
+--A3' == A3
 --product A3
 --A3.hyperplanes
 
@@ -1520,9 +1527,6 @@ A3' == A3
 --///
 
 end
-
-
-
 
 document {
      Key => HyperplaneArrangements,
