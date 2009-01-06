@@ -8,7 +8,7 @@ everything:; $(MAKE) -C builds/$(DIRECTORY) all RemakeAllDocumentation=true Rema
 check-links:; $(MAKE) -C builds/$(DIRECTORY)/Macaulay2/html-check-links check
 check:; $(MAKE) -C builds/$(DIRECTORY) -k $@
 configure builds/$(DIRECTORY)/include/configuration:../../configure; mkdir -p builds/$(DIRECTORY) && (D=`pwd`; cd builds/$(DIRECTORY) && $$D/../../configure $(CONFIGOPTIONS))
-default: arch-chk all install check-links check-info
+default: arch-chk all install check-links
 distclean: distclean1 distclean2
 distclean1:; $(MAKE) -C builds/$(DIRECTORY) distclean
 distclean2:; find builds/$(DIRECTORY) -type f | sed 's/^/=== /'

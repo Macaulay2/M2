@@ -62,7 +62,8 @@ check-info::@pre_infodir@/$1.info.errors
 endef
 $(foreach i, $(PACKAGES), $(eval $(call bld,$i)))
 
-check::check-info
+# the Info-validate function doesn't work well enough to be useful:
+# check::check-info
 
 clean::; rm -rf tmp *.installed
 clean check ::; $(MAKE) -C ComputationsBook $@
