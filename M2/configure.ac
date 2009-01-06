@@ -66,6 +66,7 @@ AC_CHECK_PROGS(LDD,ldd)
 AC_CHECK_PROGS(FAKEROOT,fakeroot)
 AC_CHECK_PROGS(RPMLINT,rpmlint)
 AC_CHECK_PROGS(TAR,gtar tar)
+AC_CHECK_PROGS(FIND,gfind find)
 AC_CHECK_PROGS(STRIPCMD,strip)
 if test "$STRIPCMD" != ""
 then AC_MSG_CHECKING(whether $STRIPCMD accepts the remove-section option)
@@ -87,6 +88,12 @@ AC_MSG_CHECKING(whether $TAR is GNU tar)
 if "$TAR" --version | head -1 | grep "GNU tar" >/dev/null 2>&1
 then AC_MSG_RESULT(yes)
 else AC_MSG_ERROR("$TAR: GNU tar is required")
+fi
+
+AC_MSG_CHECKING(whether $FIND is GNU find)
+if "$FIND" --version | head -1 | grep "GNU findutils" >/dev/null 2>&1
+then AC_MSG_RESULT(yes)
+else AC_MSG_ERROR("$FIND: GNU find is required")
 fi
 
 AC_SUBST(NODENAME,"`uname -n`")

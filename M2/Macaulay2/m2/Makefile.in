@@ -73,7 +73,7 @@ clean::; rm -f TAGS @srcdir@/TAGS @srcdir@/TAGS.doc
 		$(DUMPEDM2SRCFILES) \
 		installedpackages \
 		$(OTHERM2FILES) \
-		$(shell find @srcdir@/../packages -name "*.m2" -a -not -name .\#\* | sort) \
+		$(shell @FIND@ @srcdir@/../packages -name "*.m2" -a -not -name .\#\* | sort) \
 		../e/statuscodes \
 		../emacs/makehlp.m2 \
 		../emacs/makem2.m2 \
@@ -106,11 +106,11 @@ clean::; rm -f TAGS @srcdir@/TAGS @srcdir@/TAGS.doc
 	  for i in $(patsubst @srcdir@/%, "%", $^) ; \
 	  do [ -f $$i ] || (echo "file not found: $$i" >&2; exit 1) ; echo  ; echo $$i,0 ; done >TAGS
 
-@srcdir@/TAGS.doc: Makefile.in $(shell find @srcdir@/../packages/Macaulay2Doc -not \( -name .svn -prune \) -type d)
+@srcdir@/TAGS.doc: Makefile.in $(shell @FIND@ @srcdir@/../packages/Macaulay2Doc -not \( -name .svn -prune \) -type d)
 	: making $@ : $^
 	@ set -e ; \
 	  cd @srcdir@ && \
-	  find ../packages/Macaulay2Doc -name '*.m2' | while read i ; do echo  ; echo $$i,0 ; done >TAGS.doc
+	  @FIND@ ../packages/Macaulay2Doc -name '*.m2' | while read i ; do echo  ; echo $$i,0 ; done >TAGS.doc
 clean::; rm -f TAGS.doc
 prep :: $(DUMPEDM2FILES)
 

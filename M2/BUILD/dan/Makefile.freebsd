@@ -22,6 +22,7 @@
 #   ntl
 #   boehm-gc -- in 7.1-RELEASE, too old, only version 6.8
 #   gcc44 -- to update the compiler, not required, version 4.2.1 is standard in 7.1-RELEASE
+#   gfind -- used just for "make distclean" in GNUmakefile.in (-wholename option)
 # 
 # optional but useful:
 #   subversion

@@ -58,7 +58,7 @@ check : html-check-links
 ifneq (,$(findstring w,$(word 1,$(MAKEFLAGS))))
 	@echo "make: Entering directory \`$(NEW)'"
 endif
-	cd $(NEW) && find . -name \*.html | xargs "$(DIR)"/html-check-links
+	cd $(NEW) && @FIND@ . -name \*.html | xargs "$(DIR)"/html-check-links
 ifneq (,$(findstring w,$(word 1,$(MAKEFLAGS))))
 	@echo "make: Leaving directory \`$(NEW)'"
 endif

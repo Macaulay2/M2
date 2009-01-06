@@ -66,11 +66,11 @@ T=@TAR@ --create --mode=a+rX,og-ws --exclude-from=@srcdir@/../tar-exclusions --f
 	umask 022 ; $(MKDIR_P) files-common@prefix@
 	umask 022 ; $(T) -C @pre_prefix@ . | @FAKEROOT@ @TAR@ xfp - -C files-common@prefix@
 	: warning: fixed layout in use, just trying both common possibilities:
-	find \
+	@FIND@ \
 		files-common@prefix@/man/man1 \
 		files-common@prefix@/share/man/man1 \
 		-name \*.1 | xargs gzip
-	find files-common@prefix@ -name \*.info | xargs gzip
+	@FIND@ files-common@prefix@ -name \*.info | xargs gzip
 
 Macaulay2.spec: Macaulay2-body.spec packages-used Makefile .prepared 
 	sed -e '/Requires/,$$d' \
@@ -79,14 +79,14 @@ Macaulay2.spec: Macaulay2-body.spec packages-used Makefile .prepared
 	  cat packages-used | while read pkg rel ; do echo -n ", $$pkg >= $$rel" ; done && \
 	  echo ) >>Macaulay2.spec
 	sed -e '1,/Requires/d' -e 's/%PKG_RPM%/$(PKG_RPM)/g' <$< >>$@
-	(cd files && find . -type d -a -name Macaulay2 -prune -o -type f) | sed $(SEDOPTS) >>Macaulay2.spec
+	(cd files && @FIND@ . -type d -a -name Macaulay2 -prune -o -type f) | sed $(SEDOPTS) >>Macaulay2.spec
 
 ../../$(PKG_RPM) : Macaulay2.spec .prepared; @FAKEROOT@ rpmbuild -bb Macaulay2.spec
 
 Macaulay2-common.spec : Macaulay2-common-body.spec Makefile .prepared-common
 	sed -e 's/^Release: .*/Release: $(DISTRIBUTION)/' \
 	    -e 's/%PKG_COM_RPM%/$(PKG_COM_RPM)/g' <$< >$@
-	(cd files-common && find -type d -a -name Macaulay2 -prune -o -type f) | sed $(SEDOPTS) >>Macaulay2-common.spec
+	(cd files-common && @FIND@ -type d -a -name Macaulay2 -prune -o -type f) | sed $(SEDOPTS) >>Macaulay2-common.spec
 
 ../../$(PKG_COM_RPM) : Macaulay2-common.spec .prepared-common; @FAKEROOT@ rpmbuild -bb Macaulay2-common.spec
 
