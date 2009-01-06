@@ -65,12 +65,21 @@ status : @srcdir@/configure
 	@echo '#'
 	@echo '-----------------------------------------------------------------------------'
 srcdir: GNUmakefile
-	: creating link to common staging area, if necessary...
+	: creating or removing symbolic link to common staging area, if necessary,
+	: based on comparision of these directories:
+	:                      pre_prefix : @pre_prefix@
+	: abs_builddir/StagingArea/common : @abs_builddir@/StagingArea/common
 	@ if [ "@abs_builddir@"/StagingArea/common != "@pre_prefix@" ] ;\
 	then (set -x ;\
 	     rm -rf StagingArea/common ;\
 	     $(MKDIR_P) StagingArea ;\
 	     ln -s "@pre_prefix@" StagingArea/common) ;\
+	else \
+	     if [ -L "@abs_builddir@"/StagingArea/common ] ;\
+	     then (set -x ;\
+		   rm StagingArea/common ;\
+		  ) ;\
+	     fi ;\
 	fi
 	rm -f $@ .link-test
 	echo "@srcdir@/" >$@

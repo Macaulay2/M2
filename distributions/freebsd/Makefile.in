@@ -13,7 +13,11 @@ packinglist: packages-used Makefile
 		echo   @exec install-info          --quiet --info-dir="%D/@tail_infodir@" "%D/@tail_infodir@/$$i" ; \
 		echo @unexec install-info --remove --quiet --info-dir="%D/@tail_infodir@" "%D/@tail_infodir@/$$i" ; \
 	     done ) >>$@
-all: ../../$(PKG)
+all: chk-opts ../../$(PKG)
+chk-opts:
+	: we check that prefix is /usr/local, in case we are distributing
+	: our own sharable libraries and use the rpath in the executable file to find them:
+	[ "${prefix}" = /usr/local -a @DEBUG@ = no -a @OPTIMIZE@ = yes -a @STRIP@ = yes ]
 ../../$(PKG): .prepared packinglist
 	chmod a+x post-install post-deinstall
 	pkg_create \
@@ -38,7 +42,7 @@ view : ../../$(PKG)
 	@ rm -f +CONTENTS
 
 T=@TAR@ --create --mode=a+rX,og-ws --exclude-from=@srcdir@/../tar-exclusions --file=-
-.prepared :
+.prepared : always
 	rm -rf files
 	$(MKDIR_P) files
 	$(T) -C @pre_exec_prefix@ . | @TAR@ xfp - -C files

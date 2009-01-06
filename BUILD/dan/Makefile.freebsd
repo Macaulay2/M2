@@ -45,6 +45,10 @@
 #PACKAGES = Macaulay2Doc
 #BUILDOPTIONS += -s
 #INSTALLOPTIONS += -s
+DIRECTORY = freebsd
+include Makefile.include
+CONFIGOPTIONS  += prefix=/usr/local
+INSTALLOPTIONS += prefix=/usr/local/encap
 CONFIGOPTIONS += --enable-freebsd CPPFLAGS="-I/usr/local/include" LDFLAGS="-L/usr/local/lib"
 
 # I put these two options together just in case the common staging area is
@@ -52,9 +56,6 @@ CONFIGOPTIONS += --enable-freebsd CPPFLAGS="-I/usr/local/include" LDFLAGS="-L/us
 CONFIGOPTIONS += --disable-common-staging-area --mandir='$${prefix}/man'
 # The other freebsd ports all put man pages in /usr/local/man
 
-INSTALLOPTIONS += prefix=/usr/local/encap
-DIRECTORY = freebsd
-include Makefile.include
 pre-install:;	rm -rf /usr/local/encap/Macaulay2-$(PACKAGE_VERSION)
 arch-chk:
 	[ `hostname` = freebsd.gallium ]

@@ -1,0 +1,2 @@
+etags can include one tags file in another, so we could use that to make
+better tag files for everything

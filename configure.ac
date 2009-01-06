@@ -1,4 +1,5 @@
-AC_INIT(Macaulay 2, 1.1.1, Macaulay2@math.uiuc.edu, Macaulay2) dnl -*- autoconf -*-
+dnl -*- autoconf -*-
+AC_INIT(Macaulay 2, 1.1.1, Macaulay2@math.uiuc.edu, Macaulay2)
 AC_CONFIG_HEADERS(include/M2/config.h)
 AC_CONFIG_FILES(m4_include(config/files))
 AC_SUBST(CONFIGURED_FILES,"$ac_config_files")
@@ -25,7 +26,7 @@ do eval v=\$$x
    test "$v" && echo "   $x=$v"
 done
 
-AC_SUBST(DISTRIBUTION) dnl use this starting number to sequentially number the downstream distributions
+AC_SUBST(DISTRIBUTION) # use this starting number to sequentially number the downstream distributions
 test "$DISTRIBUTION" || DISTRIBUTION=1
 
 for i in $CFLAGS
@@ -99,7 +100,7 @@ fi
 AC_SUBST(NODENAME,"`uname -n`")
 AC_DEFINE_UNQUOTED(NODENAME,"$NODENAME",hostname used for compilation)
 
-AC_SUBST(ISSUE) dnl no initial value
+AC_SUBST(ISSUE) # no initial value
 AC_ARG_WITH(issue, AS_HELP_STRING([--with-issue=...,specify the OS issue (e.g., Ubuntu-7.10)]),ISSUE=$withval)
 if test -f /etc/issue -a ! "$ISSUE"
 then ISSUE_FLAVOR=[`</etc/issue head -1 | sed 's/^\([A-Za-z ]*\).*/\1/' | sed 's/ //g' `]
@@ -109,7 +110,7 @@ then ISSUE_FLAVOR=[`</etc/issue head -1 | sed 's/^\([A-Za-z ]*\).*/\1/' | sed 's
 	 "Fedora"*) ISSUE_FLAVOR=Fedora ;;
 	 "RedHatEnterprise"*) ISSUE_FLAVOR=RedHatEnterprise ;;
 	 "RedHat"*) ISSUE_FLAVOR=RedHat ;;
-	 "Debian"*) ISSUE_FLAVOR=Debian ;;  dnl Debian GNU/Linux 4.0 \n \l
+	 "Debian"*) ISSUE_FLAVOR=Debian ;;  # Debian GNU/Linux 4.0 \n \l
 	 "") ISSUE_FLAVOR=unknown ;;
      esac
      case $ISSUE_RELEASE in
@@ -130,8 +131,8 @@ case $OS-$REL in
 esac
 
 case $OS in
-  dnl Here we normalize the name of the OS for windows for startup.m2, which
-  dnl needs to know that C:/FOO/BAR is an absolute path.
+  # Here we normalize the name of the OS for windows for startup.m2, which
+  # needs to know that C:/FOO/BAR is an absolute path.
   CYGWIN*) OS=MicrosoftWindows ; ISSUE=Cygwin ;;
 esac
 
@@ -148,7 +149,7 @@ because there might be a better way.  See the discussion in emacs info about -st
 and -shared-libgcc, try both of those in LDFLAGS, and also try -lgcc and -lgcc_eh in LIBS.
 If all else fails, add "LIBS=-lgcc_s.10.5" to the configure command line.  Check whether the 
 binary ends up requiring a sharable library with a similar name. ***]])
-	dnl # LIBS="$LIBS -lgcc_s.10.5" # what kind of crock is this??
+	# LIBS="$LIBS -lgcc_s.10.5" # what kind of crock is this??
 	;;
 esac
 
@@ -168,7 +169,7 @@ AC_PROG_RANLIB()
 AC_PROG_INSTALL()
 AC_PROG_AWK()
 AC_PROG_CC()
-AC_SUBST(GCC) dnl gets set to yes or no somehow
+AC_SUBST(GCC) # gets set to yes or no somehow
 
 AC_PROG_CXX()
 AC_PROG_YACC()
@@ -263,7 +264,7 @@ EOF
     else AC_MSG_ERROR([test failed, see config.log])
     fi
 
-AC_HEADER_TIME() dnl # time.h sys/time.h
+AC_HEADER_TIME() # time.h sys/time.h
 AC_CHECK_HEADERS(sys/ioctl.h termios.h sys/mman.h sys/socket.h netdb.h netinet/in.h arpa/inet.h sys/time.h sys/wait.h sys/resource.h io.h linux/personality.h)
 AC_CHECK_HEADERS(stddef.h stdint.h inttypes.h bits/wordsize.h endian.h elf.h execinfo.h)
 AC_CHECK_HEADERS(sys/types.h)
@@ -298,10 +299,11 @@ AC_SUBST(FROBBY,no)    AC_ARG_ENABLE(frobby, AS_HELP_STRING(--enable-frobby,[dow
     AC_DEFINE(HAVE_FROBBY,1,[whether we are linking with the frobby library])
     FROBBY=$enableval)
 AC_ARG_ENABLE(altivec, AS_HELP_STRING(--enable-altivec,compile with "-faltivec" option), 
-    ALTIVEC=$enableval
-    LDFLAGS="$LDFLAGS -faltivec"
-    CFLAGS="CFLAGS -faltivec"
-    CXXFLAGS="$CXXFLAGS -faltivec"
+    if test "$enableval" = yes
+    then LDFLAGS="$LDFLAGS -faltivec"
+	 CFLAGS="CFLAGS -faltivec"
+	 CXXFLAGS="$CXXFLAGS -faltivec"
+    fi
 )
 
 AC_PROG_FC()
@@ -427,7 +429,7 @@ AC_SUBST(DUMPDATA,)
 AC_ARG_ENABLE(dumpdata, AS_HELP_STRING(--disable-dumpdata,do not cache data with dumpdata), DUMPDATA=$enableval)
 if ! test "$DUMPDATA"
 then case $OS in
-	 Linux|SunOS) DUMPDATA=no;; dnl # sigh, dumpdata no longer works, even under linux
+	 Linux|SunOS) DUMPDATA=no;; # sigh, dumpdata no longer works, even under linux
 	 *) DUMPDATA=no;;
      esac
      AC_MSG_NOTICE([default dumpdata option for $OS operating system used, value: $DUMPDATA])
@@ -727,7 +729,7 @@ SAVELIBS=$LIBS
 if ! test "$SINGULARLIBS"
 then SINGULARLIBS="-lfac -lcf"
 fi
-AC_SUBST(SINGULARLIBS) dnl no initial value
+AC_SUBST(SINGULARLIBS) # no initial value
 while test $BUILD_factory = no -o $BUILD_libfac = no
 do AC_LANG(C++)
    AC_CHECK_HEADER(factory.h,,BUILD_factory=yes BUILD_libfac=yes ; break)
@@ -834,7 +836,7 @@ AC_SUBST(FCLIBS_FLAGS,)
 for i in $FCLIBS
 do case $i in
 	-L*) FCLIBS_FLAGS="$FCLIBS_FLAGS $i" ;;
-	-lgcc_s) FCLIBS_DYNAMIC="$FCLIBS_DYNAMIC $i" ;; dnl # see discussion in emacs info about -static-libgcc and -shared-libgcc
+	-lgcc_s) FCLIBS_DYNAMIC="$FCLIBS_DYNAMIC $i" ;; # see discussion in emacs info about -static-libgcc and -shared-libgcc
 	-lm) FCLIBS_DYNAMIC="$FCLIBS_DYNAMIC $i" ;;
 	*) FCLIBS_STATIC="$FCLIBS_STATIC $i" ;;
    esac
@@ -951,13 +953,13 @@ AC_SUBST(LIBS_STATIC,)
 AC_SUBST(LIBS_DYNAMIC,)
 for i in $LIBS
 do case $i in 
-	# we must link dynamically with some libraries
-	-lncurses | dnl ncurses has a database which we aren't providing and whose location we don't know
-	-lsocket  | dnl dynamic loading of libraries is used to determine the current way to look up an IP number
-	-lgcc_s*  ) dnl libgcc_s comes only in dynamic form
+	# we must link dynamically with some libraries:
+	#   ncurses: has a database which we aren't providing and whose location we don't know
+	#    socket: dynamic loading of libraries is used to determine the current way to look up an IP number
+	#  libgcc_s: comes only in dynamic form
+	-lncurses | -lsocket  | -lgcc_s*  ) 
 	   LIBS_DYNAMIC="$LIBS_DYNAMIC $i" ;;
-	*) 
-	   LIBS_STATIC="$LIBS_STATIC $i" ;;
+	*) LIBS_STATIC="$LIBS_STATIC $i" ;;
    esac
 done
 
@@ -976,11 +978,14 @@ fi
 # Here we insert autoconf's default values so we can compute the relative locations in the directory tree
 test "$prefix" || prefix=/usr/local
 
-# for distributions, prefix should be /usr
+# for some distributions, prefix should be /usr
 if test "$prefix" != /usr
-then test "$CYGWIN" = yes && AC_MSG_ERROR(--enable-cygwin specified and --prefix not set to /usr)
-     test "$DEB"    = yes && AC_MSG_ERROR(--enable-deb specified and --prefix not set to /usr)
-     test "$RPM"    = yes && AC_MSG_ERROR(--enable-rpm specified and --prefix not set to /usr)
+then test "$CYGWIN"  = yes && AC_MSG_ERROR(--enable-cygwin specified and --prefix not set to /usr)
+     test "$DEB"     = yes && AC_MSG_ERROR(--enable-deb specified and --prefix not set to /usr)
+     test "$RPM"     = yes && AC_MSG_ERROR(--enable-rpm specified and --prefix not set to /usr)
+fi
+if test "$prefix" != /usr/local
+then test "$FREEBSD" = yes && AC_MSG_ERROR(--enable-freebsd specified and --prefix not set to /usr/local)
 fi
 
 # these are the variables that make their way into autoconf after version 2.59
@@ -1062,14 +1067,19 @@ AC_SUBST(tail_datarootdir)
 AC_SUBST(MACHINE,"$ARCH-$OS-$ISSUE")
 AC_DEFINE_UNQUOTED(MACHINE,"$MACHINE",[complete machine description (to appear in name of tar file)])
 
-COMMONSTAGINGAREA=StagingArea
-AC_SUBST(LOCALSTAGINGAREA,StagingArea)
-AC_ARG_WITH(staging-area,AS_HELP_STRING(--with-staging-area=...,directory for pre-installation of architecture-independent files (StagingArea)),COMMONSTAGINGAREA=$withval)
-AC_ARG_ENABLE(common-staging-area,AS_HELP_STRING(--enable-common-staging-area,use a common staging area),
-    if test "$COMMONSTAGINGAREA" != StagingArea
-    then AC_MSG_ERROR(--with-staging-area and --enable-common-staging-area options both provided)
+AC_SUBST(COMMONSTAGINGAREA,StagingArea) # staging area for common files
+AC_SUBST(LOCALSTAGINGAREA,StagingArea) # staging area for arch. dep. files
+AC_ARG_WITH(staging-area,
+    AS_HELP_STRING(--with-staging-area=...,directory for pre-installation of architecture-independent files (StagingArea)),
+    COMMONSTAGINGAREA=$withval)
+AC_ARG_ENABLE(common-staging-area,
+    AS_HELP_STRING(--enable-common-staging-area,use the common staging area),
+    if test "$enableval" = yes
+    then if test "$COMMONSTAGINGAREA" != StagingArea
+	 then AC_MSG_ERROR(--with-staging-area and --enable-common-staging-area options both provided)
+	 fi
+	 COMMONSTAGINGAREA=\${abs_top_srcdir}/BUILD/CommonStagingArea # this depends on config.Makefile.in setting abs_top_srcdir
     fi
-    COMMONSTAGINGAREA=\${abs_top_srcdir}/BUILD/CommonStagingArea dnl # this depends on config.Makefile.in setting abs_top_srcdir
     )
 [
 case `pwd` in
@@ -1087,8 +1097,10 @@ case `pwd` in
     esac;;
 esac
 ]
-AC_SUBST(pre_prefix,$COMMONSTAGINGAREA/common) dnl # as in layout.m2.in
-AC_SUBST(pre_exec_prefix,$LOCALSTAGINGAREA/$MACHINE) dnl # as in layout.m2.in
+AC_SUBST(pre_prefix,$COMMONSTAGINGAREA/common) # as in layout.m2.in
+AC_SUBST(pre_exec_prefix,$LOCALSTAGINGAREA/$MACHINE) # as in layout.m2.in
+AC_MSG_NOTICE([staging area for common files: $pre_prefix])
+AC_MSG_NOTICE([staging area for architecture dependent files: $pre_exec_prefix])
 
 AC_SUBST(tail_packagesdir,Macaulay2)
 AC_SUBST(tail_libm2dir,Macaulay2)
@@ -1110,8 +1122,7 @@ AC_SUBST(pre_packagecachecoredir,$pre_libm2dir/$tail_packagecachecoredir)
 
 AC_OUTPUT()
 
-
-dnl # Local Variables:
-dnl # mode: sh
-dnl # compile-command: "make -f Makefile"
-dnl # End:
+dnl Local Variables:
+dnl mode: sh
+dnl compile-command: "make -f Makefile"
+dnl End:
