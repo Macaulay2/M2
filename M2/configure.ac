@@ -999,12 +999,14 @@ for i in bindir datadir includedir infodir libdir libexecdir localstatedir mandi
 do eval w=\$$i ; eval v="$w" ; eval v="$v" ; eval v="$v" ; eval v="$v" ; eval v="$v"
    case $v in
      "$exec_prefix"|"$exec_prefix"/*)
-	   eval pre_${i}=`echo $v | sed s,"^$exec_prefix","'\\${pre_exec_prefix}'",` 
-	   eval     ${i}=`echo $v | sed s,"^$exec_prefix","'\\${exec_prefix}'",` 
+	   eval tail_${i}=`echo $v | sed s,"^$exec_prefix/","",` 
+	   eval  pre_${i}=`echo $v | sed s,"^$exec_prefix","'\\${pre_exec_prefix}'",` 
+	   eval      ${i}=`echo $v | sed s,"^$exec_prefix","'\\${exec_prefix}'",` 
 	   ;;
      "$prefix"|"$prefix"/*)
-	   eval pre_${i}=`echo $v | sed s,"^$prefix","'\\${pre_prefix}'",`
-	   eval     ${i}=`echo $v | sed s,"^$prefix","'\\${prefix}'",`
+	   eval tail_${i}=`echo $v | sed s,"^$prefix/","",` 
+	   eval  pre_${i}=`echo $v | sed s,"^$prefix","'\\${pre_prefix}'",`
+	   eval      ${i}=`echo $v | sed s,"^$prefix","'\\${prefix}'",`
 	   ;;
      *) AC_MSG_ERROR([expected "\${$i}" => "$w" to start with "\${prefix}" or with "\${exec_prefix}"]) ;;
    esac
@@ -1030,6 +1032,25 @@ AC_SUBST(pre_htmldir)
 AC_SUBST(pre_localedir)
 AC_SUBST(pre_docdir)
 AC_SUBST(pre_datarootdir)
+
+AC_SUBST(tail_bindir)
+AC_SUBST(tail_datadir)
+AC_SUBST(tail_includedir)
+AC_SUBST(tail_infodir)
+AC_SUBST(tail_libdir)
+AC_SUBST(tail_libexecdir)
+AC_SUBST(tail_localstatedir)
+AC_SUBST(tail_mandir)
+AC_SUBST(tail_sbindir)
+AC_SUBST(tail_sharedstatedir)
+AC_SUBST(tail_sysconfdir)
+AC_SUBST(tail_psdir)
+AC_SUBST(tail_pdfdir)
+AC_SUBST(tail_dvidir)
+AC_SUBST(tail_htmldir)
+AC_SUBST(tail_localedir)
+AC_SUBST(tail_docdir)
+AC_SUBST(tail_datarootdir)
 
 AC_SUBST(MACHINE,"$ARCH-$OS-$ISSUE")
 AC_DEFINE_UNQUOTED(MACHINE,"$MACHINE",[complete machine description (to appear in name of tar file)])
@@ -1062,17 +1083,23 @@ esac
 AC_SUBST(pre_prefix,$COMMONSTAGINGAREA/common) dnl # as in layout.m2.in
 AC_SUBST(pre_exec_prefix,$LOCALSTAGINGAREA/$MACHINE) dnl # as in layout.m2.in
 
-AC_SUBST(packagesdir,$datadir/Macaulay2)
-AC_SUBST(libm2dir,$libdir/Macaulay2)
-AC_SUBST(emacsdir,$datadir/emacs/site-lisp)
-AC_SUBST(librariesdir,$libm2dir/Core)
-AC_SUBST(packagecachecoredir,$libm2dir/Core/cache)
+AC_SUBST(tail_packagesdir,Macaulay2)
+AC_SUBST(tail_libm2dir,Macaulay2)
+AC_SUBST(tail_emacsdir,emacs/site-lisp)
+AC_SUBST(tail_librariesdir,Core)
+AC_SUBST(tail_packagecachecoredir,Core/cache)
 
-AC_SUBST(pre_packagesdir,$pre_datadir/Macaulay2)
-AC_SUBST(pre_libm2dir,$pre_libdir/Macaulay2)
-AC_SUBST(pre_emacsdir,$pre_datadir/emacs/site-lisp)
-AC_SUBST(pre_librariesdir,$pre_libm2dir/Core)
-AC_SUBST(pre_packagecachecoredir,$pre_libm2dir/Core/cache)
+AC_SUBST(packagesdir,$datadir/$tail_packagesdir)
+AC_SUBST(libm2dir,$libdir/$tail_libm2dir)
+AC_SUBST(emacsdir,$datadir/$tail_emacsdir)
+AC_SUBST(librariesdir,$libm2dir/$tail_librariesdir)
+AC_SUBST(packagecachecoredir,$libm2dir/$tail_packagecachecoredir)
+
+AC_SUBST(pre_packagesdir,$pre_datadir/$tail_packagesdir)
+AC_SUBST(pre_libm2dir,$pre_libdir/$tail_libm2dir)
+AC_SUBST(pre_emacsdir,$pre_datadir/$tail_emacsdir)
+AC_SUBST(pre_librariesdir,$pre_libm2dir/$tail_librariesdir)
+AC_SUBST(pre_packagecachecoredir,$pre_libm2dir/$tail_packagecachecoredir)
 
 AC_OUTPUT()
 
