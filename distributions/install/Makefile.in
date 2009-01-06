@@ -19,11 +19,11 @@ endif
 override prefix := ${prefix0}
 override exec_prefix := ${exec_prefix0}
 #############################################################################
-T=tar --create --mode=a+rX,og-ws --exclude-from=@srcdir@/../tar-exclusions
+T=@TAR@ --create --file=- --mode=a+rX,og-ws --exclude-from=@srcdir@/../tar-exclusions
 install ::
 	$(MKDIR_P) ${prefix}
-	$(T) -C @pre_prefix@      . | tar xfp - -C ${prefix}
-	$(T) -C @pre_exec_prefix@ . | tar xfp - -C ${exec_prefix}
+	$(T) -C @pre_prefix@      . | @TAR@ xfp - -C ${prefix}
+	$(T) -C @pre_exec_prefix@ . | @TAR@ xfp - -C ${exec_prefix}
 ifeq "${ENCAP}" "yes"
 	@INSTALL@ -m 755 ../top/postinstall ../top/preremove ${prefix}
 	@INSTALL@ -m 644 ../top/INSTALL     ../top/encapinfo ${prefix}

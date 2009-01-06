@@ -54,17 +54,17 @@ check-id:
 
 SEDOPTS = -e 's=^\.="=' -e 's=$$="='
 
-T=tar --create --mode=a+rX,og-ws --exclude-from=@srcdir@/../tar-exclusions --file=-
+T=@TAR@ --create --mode=a+rX,og-ws --exclude-from=@srcdir@/../tar-exclusions --file=-
 
 .prepared :
 	rm -rf files
 	umask 022 ; $(MKDIR_P) files@prefix@
-	umask 022 ; $(T) -C @pre_exec_prefix@ . | @FAKEROOT@ tar xfp - -C files@prefix@
+	umask 022 ; $(T) -C @pre_exec_prefix@ . | @FAKEROOT@ @TAR@ xfp - -C files@prefix@
 
 .prepared-common :
 	rm -rf files-common
 	umask 022 ; $(MKDIR_P) files-common@prefix@
-	umask 022 ; $(T) -C @pre_prefix@ . | @FAKEROOT@ tar xfp - -C files-common@prefix@
+	umask 022 ; $(T) -C @pre_prefix@ . | @FAKEROOT@ @TAR@ xfp - -C files-common@prefix@
 	: warning: fixed layout in use, just trying both common possibilities:
 	find \
 		files-common@prefix@/man/man1 \

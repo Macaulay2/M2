@@ -29,13 +29,13 @@ else
 maybe-tidy :
 endif
 
-T=tar --create --mode=a+rX,og-ws --exclude-from=@srcdir@/../tar-exclusions --file=-
+T=@TAR@ --create --mode=a+rX,og-ws --exclude-from=@srcdir@/../tar-exclusions --file=-
 
 .prepared : server/Macaulay2 postinstall.sh preremove.sh
 	rm -rf files
 	$(MKDIR_P) files@prefix@
-	$(T) -C @pre_exec_prefix@ . | @FAKEROOT@ tar xfp - -C files@prefix@
-	$(T) -C @pre_prefix@      . | @FAKEROOT@ tar xfp - -C files@prefix@
+	$(T) -C @pre_exec_prefix@ . | @FAKEROOT@ @TAR@ xfp - -C files@prefix@
+	$(T) -C @pre_prefix@      . | @FAKEROOT@ @TAR@ xfp - -C files@prefix@
 	$(MKDIR_P) files/etc/postinstall files/etc/preremove
 	@INSTALL_PROGRAM@ postinstall.sh files/etc/postinstall/@PACKAGE_TARNAME@.sh
 	@INSTALL_PROGRAM@ preremove.sh files/etc/preremove/@PACKAGE_TARNAME@.sh
@@ -43,7 +43,7 @@ T=tar --create --mode=a+rX,og-ws --exclude-from=@srcdir@/../tar-exclusions --fil
 	@INSTALL_DATA@ Macaulay2.README files@prefix@/share/doc/Cygwin/Macaulay2-@PACKAGE_VERSION@.README
 
 server/Macaulay2/@package@-$(DISTRIBUTION).tar.bz2 : .prepared
-	(cd files && @FAKEROOT@ tar cjf - *) >$@
+	(cd files && @FAKEROOT@ @TAR@ cjf - *) >$@
 
 libraries-used : .prepared
 	cygcheck files@bindir@/M2@EXE@ >$@.tmp
