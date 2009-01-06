@@ -1,0 +1,38 @@
+# @configure_input@
+include ../../include/config.Makefile
+# we (may) want to ignore the --datarootdir setting, whatever that means, so here we we mention it: datarootdir
+VPATH = @srcdir@
+TIDY = yes
+
+# example:
+#  $ pkg_info -W /usr/local/lib/libntl.a 
+#  /usr/local/lib/libntl.a was installed by package ntl-5.4.2_1
+
+PKG = @PACKAGE_TARNAME@-@PACKAGE_VERSION@-@ARCH@-@OS@-@ISSUE@.tbz
+packinglist:
+	touch $@
+all: $(PKG)
+$(PKG): prepare packinglist
+	pkg_create \
+		-c "-a software system for algebraic geometry research" \
+		-d @srcdir@/description \
+		-f packinglist \
+		-p files \
+		$(PKG)
+
+T=@TAR@ --create --mode=a+rX,og-ws --exclude-from=@srcdir@/../tar-exclusions --file=-
+prepare: .prepared
+.prepared :
+	rm -rf files
+	$(MKDIR_P) files
+	$(T) -C @pre_exec_prefix@ . | @TAR@ xfp - -C files
+	$(T) -C @pre_prefix@      . | @TAR@ xfp - -C files
+	touch $@
+
+clean:
+distclean: clean; rm -f Makefile
+% : %.in; cd ../..; ./config.status distributions/freebsd/$@
+
+# Local Variables:
+# compile-command: "make -C $M2BUILDDIR/distributions/freebsd "
+# End:

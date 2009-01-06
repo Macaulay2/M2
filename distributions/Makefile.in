@@ -10,6 +10,9 @@ endif
 ifeq "@DEB@" "yes"
 	$(MAKE) -C deb all
 endif
+ifeq "@FREEBSD@" "yes"
+	$(MAKE) -C freebsd all
+endif
 ifeq "@RPM@" "yes"
 	$(MAKE) -C rpm all
 endif
@@ -30,6 +33,7 @@ clean distclean:
 	$(MAKE) -C dmg $@
 	$(MAKE) -C rpm $@
 	$(MAKE) -C deb $@
+	$(MAKE) -C freebsd $@
 	$(MAKE) -C cygwin $@
 	$(MAKE) -C tar $@
 	$(MAKE) -C top $@

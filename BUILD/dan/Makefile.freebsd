@@ -40,7 +40,7 @@
 #PACKAGES = Macaulay2Doc
 #BUILDOPTIONS += -s
 #INSTALLOPTIONS += -s
-CONFIGOPTIONS += --enable-tarfile CPPFLAGS="-I/usr/local/include" LDFLAGS="-L/usr/local/lib"
+CONFIGOPTIONS += --enable-tarfile --enable-freebsd CPPFLAGS="-I/usr/local/include" LDFLAGS="-L/usr/local/lib"
 INSTALLOPTIONS += prefix=/usr/local/encap
 DIRECTORY = freebsd
 include Makefile.include
