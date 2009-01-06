@@ -619,7 +619,7 @@ installPackage Package := opts -> pkg -> (
      if not fileExists fn then error("file ", fn, " not found");
      copyFile(fn, buildDirectory|pkgDirectory|bn, Verbose => debugLevel > 5);
 
-     excludes := Exclude => {"^CVS$", "^\\.svn$", "^examples$"};
+     excludes := Exclude => {"^CVS$", "^\\.svn$"};
 
      if pkg === Core then (
 	  ) else (

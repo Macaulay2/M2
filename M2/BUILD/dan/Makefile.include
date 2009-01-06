@@ -1,6 +1,10 @@
 # -*- Makefile -*-
 default:
+ifneq ($(DIRECTORY),)
 include builds/$(DIRECTORY)/include/configuration
+else
+$(error DIRECTORY variable unset)
+endif
 .PHONY : everything world configure all install check-links distclean clean arch-chk install-it rebuild-world default
 all:; $(MAKE) -C builds/$(DIRECTORY) $@ $(BUILDOPTIONS)
 arch-chk:

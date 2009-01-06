@@ -1,0 +1,3 @@
+now that installPackage copies the examples subdirectory, it is important to
+see that a second installation of the same package doesn't wipe out more recent
+example output
