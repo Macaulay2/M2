@@ -40,7 +40,8 @@
 #PACKAGES = Macaulay2Doc
 #BUILDOPTIONS += -s
 #INSTALLOPTIONS += -s
-CONFIGOPTIONS += --enable-tarfile --enable-freebsd CPPFLAGS="-I/usr/local/include" LDFLAGS="-L/usr/local/lib"
+CONFIGOPTIONS += --enable-freebsd CPPFLAGS="-I/usr/local/include" LDFLAGS="-L/usr/local/lib"
+CONFIGOPTIONS += --disable-common-staging-area --mandir='$${prefix}/man'
 INSTALLOPTIONS += prefix=/usr/local/encap
 DIRECTORY = freebsd
 include Makefile.include

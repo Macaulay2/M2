@@ -13,12 +13,13 @@ packinglist: packages-used Makefile
 	echo @name @PACKAGE_TARNAME@-@PACKAGE_VERSION@ >$@
 	echo @srcdir @abs_builddir@/files >>$@
 	(cd files ; find . -type f | sed 's=^\./==' ) >>$@
+	echo @unexec rm -f %D/@tail_mandir@/man1/M2.1 %D/@tail_mandir@/man1/M2.1.gz >>$@
 	(cd files/@tail_infodir@; for i in *.info ; do \
 		echo   @exec install-info          --quiet --info-dir="%D/@tail_infodir@" "%D/@tail_infodir@/$$i" ; \
 		echo @unexec install-info --remove --quiet --info-dir="%D/@tail_infodir@" "%D/@tail_infodir@/$$i" ; \
 	     done ) >>$@
-all: $(PKG)
-$(PKG): .prepared packinglist
+all: ../../$(PKG)
+../../$(PKG): .prepared packinglist
 	chmod a+x post-install post-deinstall
 	pkg_create \
 		-c -"a software system for algebraic geometry research" \
@@ -28,9 +29,9 @@ $(PKG): .prepared packinglist
 		-K post-deinstall \
 		-p /usr/local \
 		-P "`cat packages-used`" \
-		$(PKG)
+		../../$(PKG)
 
-view : $(PKG)
+view : ../../$(PKG)
 	@TAR@ tvjf $^ | head -20
 	@ echo +CONTENTS:
 	@ @TAR@ xvjf $^ +CONTENTS
@@ -47,6 +48,7 @@ T=@TAR@ --create --mode=a+rX,og-ws --exclude-from=@srcdir@/../tar-exclusions --f
 	$(MKDIR_P) files
 	$(T) -C @pre_exec_prefix@ . | @TAR@ xfp - -C files
 	$(T) -C @pre_prefix@      . | @TAR@ xfp - -C files
+	cd files/@tail_mandir@ && gzip */*.1
 	touch $@
 
 libraries-used : .prepared files/bin/M2@EXE@
@@ -54,7 +56,7 @@ libraries-used : .prepared files/bin/M2@EXE@
 packages-used : libraries-used Makefile
 	cat libraries-used | while read x ; do pkg_info -W "$$x" | sed -e 's=.* was installed by package =='; done >$@
 
-clean:; rm -f libraries-used packages-used .prepared $(PKG) +CONTENTS
+clean:; rm -f libraries-used packages-used .prepared ../../$(PKG) +CONTENTS
 distclean: clean; rm -f Makefile
 % : %.in; cd ../..; ./config.status distributions/freebsd/$@
 
