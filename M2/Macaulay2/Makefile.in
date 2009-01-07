@@ -4,7 +4,7 @@ VPATH = @srcdir@
 include ../include/config.Makefile
 all: initialize-in-subdirs @pre_docdir@/COPYING @pre_docdir@/README @pre_docdir@/LAYOUT
 DIRS = e d
-$(foreach d,$(DIRS),$(eval initialize-in-$d:; $$(MAKE) -C $d initialize))
+$(foreach d,$(DIRS),$(eval initialize-in-$d:; $$(MAKE) -C $d initialize DEPENDS=no))
 $(foreach d,$(DIRS),$(eval .PHONY initialize-in-subdirs:initialize-in-$d))
 $(foreach d,$(DIRS),$(eval .PHONY: initialize-in-subdirs))
 SUBDIRS = compat util html-check-links probe regex c 
