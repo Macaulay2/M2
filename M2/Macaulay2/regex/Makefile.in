@@ -4,7 +4,7 @@ CFILES = regex.c
 all: $(CFILES:.c=.o)
 include ../../include/config.Makefile
 CPPFLAGS := -I@srcdir@ $(CPPFLAGS)
-.PHONY : tags
+.PHONY: tags
 CPPFLAGS += \
 	-Dre_compile_fastmap=M2_re_compile_fastmap \
 	-Dre_compile_pattern=M2_re_compile_pattern \
@@ -43,7 +43,7 @@ all: tags
 endif
 tags:: @srcdir@/TAGS
 clean :: ; rm -f *.o *.dep *.s *.E LOGFILE
-Makefile : Makefile.in; cd ../..; ./config.status Macaulay2/regex/Makefile
+Makefile: Makefile.in; cd ../..; ./config.status Macaulay2/regex/Makefile
 distclean::; rm -f Makefile
 
 # Local Variables:

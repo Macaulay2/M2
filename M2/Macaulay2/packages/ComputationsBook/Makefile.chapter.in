@@ -17,18 +17,18 @@ INPUT = -e 'input "$<"'
 book_patterns := $(chapter_srcdir)/../patterns
 chapter_patterns := $(chapter_srcdir)/patterns
 
-test.out.trim : test.out $(book_patterns) $(chapter_patterns)
+test.out.trim: test.out $(book_patterns) $(chapter_patterns)
 	<$< awk '{print $$0}' | sed -f $(book_patterns) -f $(chapter_patterns) >$@
 
-test.out.expected.trim : test.out.expected $(book_patterns) $(chapter_patterns)
+test.out.expected.trim: test.out.expected $(book_patterns) $(chapter_patterns)
 	<$< awk '{print $$0}' | sed -f $(book_patterns) -f $(chapter_patterns) >$@
 
-test.out : test.m2 always
+test.out: test.m2 always
 	@ set -xe ; \
 	  $(ULIMIT); $(M2CMD) $(INPUT) $(EXIT) >test.out.tmp; \
 	  mv test.out.tmp test.out
 
-test-mike.out : test.m2 always
+test-mike.out: test.m2 always
 	@ set -xe ; \
 	  $(M2CMD) $(INPUT) $(EXIT) >test.out.tmp; \
 	  mv test.out.tmp test-mike.out

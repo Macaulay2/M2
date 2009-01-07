@@ -10,7 +10,7 @@ VPATH = @srcdir@
 	mv y.tab.c $*.c
 	rm -f y.tab.h y.output
 ############################################################
-.PHONY : tags
+.PHONY: tags
 YFLAGS := -vdlt
 
 # we don't include @LIBS@ here because including -llapack would make it also
@@ -29,23 +29,23 @@ endif
 LOADLIBES += @GC_LIBS@
 
 ############################## compiling
-scc1 : $(OFILES)
+scc1: $(OFILES)
 $(OFILES) : $(HFILES)
-grammar.o : grammar.c; @CC@ $(CPPFLAGS) $(CFLAGS) -c $< $(OUTPUT_OPTION)
+grammar.o: grammar.c; @CC@ $(CPPFLAGS) $(CFLAGS) -c $< $(OUTPUT_OPTION)
 ############################## tags
 ifneq (@ETAGS@,)
 all: tags
 endif
-tags : @srcdir@/TAGS
+tags: @srcdir@/TAGS
 @srcdir@/TAGS: $(SRCFILES); cd @srcdir@ && @ETAGS@ $(SRCFILES)
 ############################## cleaning
-clean :
+clean:
 	rm -f *.o scc1 scc.a grammar.output grammar.tab.h \
 		scc.install TAGS scc core y.tab.h y.output grammar.c
-distclean : clean
+distclean: clean
 	rm -f Makefile
 
-Makefile : Makefile.in
+Makefile: Makefile.in
 	cd ../..; ./config.status Macaulay2/c/Makefile
 
 # Local Variables:

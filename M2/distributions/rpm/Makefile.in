@@ -56,12 +56,12 @@ SEDOPTS = -e 's=^\.="=' -e 's=$$="='
 
 T=@TAR@ --create --mode=a+rX,og-ws --exclude-from=@srcdir@/../tar-exclusions --file=-
 
-.prepared :
+.prepared:
 	rm -rf files
 	umask 022 ; $(MKDIR_P) files@prefix@
 	umask 022 ; $(T) -C @pre_exec_prefix@ . | @FAKEROOT@ @TAR@ xfp - -C files@prefix@
 
-.prepared-common :
+.prepared-common:
 	rm -rf files-common
 	umask 022 ; $(MKDIR_P) files-common@prefix@
 	umask 022 ; $(T) -C @pre_prefix@ . | @FAKEROOT@ @TAR@ xfp - -C files-common@prefix@
@@ -83,14 +83,14 @@ Macaulay2.spec: Macaulay2-body.spec packages-used Makefile .prepared
 
 ../../$(PKG_RPM) : Macaulay2.spec .prepared; @FAKEROOT@ rpmbuild -bb Macaulay2.spec
 
-Macaulay2-common.spec : Macaulay2-common-body.spec Makefile .prepared-common
+Macaulay2-common.spec: Macaulay2-common-body.spec Makefile .prepared-common
 	sed -e 's/^Release: .*/Release: $(DISTRIBUTION)/' \
 	    -e 's/%PKG_COM_RPM%/$(PKG_COM_RPM)/g' <$< >$@
 	(cd files-common && @FIND@ -type d -a -name Macaulay2 -prune -o -type f) | sed $(SEDOPTS) >>Macaulay2-common.spec
 
 ../../$(PKG_COM_RPM) : Macaulay2-common.spec .prepared-common; @FAKEROOT@ rpmbuild -bb Macaulay2-common.spec
 
-libraries-used : .prepared always
+libraries-used: .prepared always
 	: warning: fixed layout in use:
 	ldd files@prefix@/bin/M2@EXE@ > $@.tmp
 	cat $@.tmp | sed -e 's/.* => //' -e 's/^	//' -e 's/ .*//' | egrep '^/' >$@ || true
@@ -98,29 +98,29 @@ libraries-used : .prepared always
 
 STRIP_VERSION_CMD := sed 's/-[0-9][0-9.]*[0-9]\(-\|$$\).*//'
 
-packages-used : libraries-used
+packages-used: libraries-used
 	cat libraries-used \
 	| while read x ; \
 	do rpm --query -f "$$x" | sed 's/\([^.]*\)-\([0-9][0-9.]*[0-9]\)\(-.*$$\|$$\)/\1 \2/' ;\
 	done | fgrep -v 'is not owned by any package' | sort | uniq | sed -e 's=.*/==' -e 's=\.list$$==' >$@
 
-test-install :
+test-install:
 	sudo rpm -i -v ../../$(PKG_COM_RPM)
 	sudo rpm -i -v ../../$(PKG_RPM)
-test-remove  :
+test-remove:
 	sudo rpm -e -v Macaulay2-@PACKAGE_VERSION@
 	sudo rpm -e -v Macaulay2-common-@PACKAGE_VERSION@
 
 ifneq (@RPMLINT@,)
-check : ; @RPMLINT@ -i ../../$(PKG_COM_RPM) ../../$(PKG_RPM)
+check:; @RPMLINT@ -i ../../$(PKG_COM_RPM) ../../$(PKG_RPM)
 endif
 
-tidy : ; rm -rf files files-common Macaulay2.spec Macaulay2-common.spec
-clean :: tidy; rm -f ../../$(PKG_RPM) ../../$(PKG_COM_RPM) libraries-used libraries-used.tmp packages-used
-distclean : clean; rm -f Makefile Macaulay2-body.spec Macaulay2-common-body.spec
-Makefile : Makefile.in; cd ../..; ./config.status distributions/rpm/Makefile
-Macaulay2-body.spec : Macaulay2-body.spec.in; cd ../..; ./config.status distributions/rpm/Macaulay2-body.spec
-Macaulay2-common-body.spec : Macaulay2-common-body.spec.in; cd ../..; ./config.status distributions/rpm/Macaulay2-common-body.spec
+tidy:; rm -rf files files-common Macaulay2.spec Macaulay2-common.spec
+clean:: tidy; rm -f ../../$(PKG_RPM) ../../$(PKG_COM_RPM) libraries-used libraries-used.tmp packages-used
+distclean: clean; rm -f Makefile Macaulay2-body.spec Macaulay2-common-body.spec
+Makefile: Makefile.in; cd ../..; ./config.status distributions/rpm/Makefile
+Macaulay2-body.spec: Macaulay2-body.spec.in; cd ../..; ./config.status distributions/rpm/Macaulay2-body.spec
+Macaulay2-common-body.spec: Macaulay2-common-body.spec.in; cd ../..; ./config.status distributions/rpm/Macaulay2-common-body.spec
 
 # Local Variables:
 # compile-command: "make -C $M2BUILDDIR/distributions/rpm "

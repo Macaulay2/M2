@@ -22,7 +22,7 @@ ifeq (@DEBUG@,yes)
 CONFIGOPTIONS += --enable-assertions
 endif
 include ../Makefile.library
-Makefile : @srcdir@/Makefile.in ; cd ../.. && ./config.status libraries/factory/Makefile
+Makefile: @srcdir@/Makefile.in ; cd ../.. && ./config.status libraries/factory/Makefile
 # HINT:
 # Under freebsd there is a problem in the file /usr/include/c++/3.4/cwchar .
 # You have to bracket the following include with extern "C" like this:

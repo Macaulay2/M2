@@ -23,20 +23,20 @@ export PATH := @abs_top_srcdir@/autoconf/final/bin:$(PATH)
 all:install post-install
 post-install:
 install: .installed-$(VERSION)
-unconfigure : ; rm -f .configured-$(VERSION) .compiled-$(VERSION) .installed-$(VERSION)
-reconfigure : unconfigure .configured-$(VERSION)
-uninstall   :: ; rm -f .installed-$(VERSION)
-reinstall   : uninstall install
-diffs : .untarred-$(VERSION) .untarred2-$(VERSION) ; diff -ur --exclude=configure tmp/$(TARDIR) $(TARDIR) |egrep -v '^Only in ' >$@ || echo diffs: `pwd`/$@
-unmark : ; rm -f .configured-$(VERSION) .compiled-$(VERSION)
-package-clean : unmark ; if [ -d $(BUILDDIR) ]; then $(MAKE) -C $(BUILDDIR) clean ; fi
-package-distclean : unmark ; if [ -d $(BUILDDIR) ]; then $(MAKE) -C $(BUILDDIR) distclean ; fi
+unconfigure:; rm -f .configured-$(VERSION) .compiled-$(VERSION) .installed-$(VERSION)
+reconfigure: unconfigure .configured-$(VERSION)
+uninstall:: ; rm -f .installed-$(VERSION)
+reinstall: uninstall install
+diffs: .untarred-$(VERSION) .untarred2-$(VERSION) ; diff -ur --exclude=configure tmp/$(TARDIR) $(TARDIR) |egrep -v '^Only in ' >$@ || echo diffs: `pwd`/$@
+unmark:; rm -f .configured-$(VERSION) .compiled-$(VERSION)
+package-clean: unmark ; if [ -d $(BUILDDIR) ]; then $(MAKE) -C $(BUILDDIR) clean ; fi
+package-distclean: unmark ; if [ -d $(BUILDDIR) ]; then $(MAKE) -C $(BUILDDIR) distclean ; fi
 
-fetch : $(TARFILE_DIR)/$(TARFILE)
-patch : .patched-$(VERSION)
-untar : .untarred-$(VERSION)
-compile : .compiled-$(VERSION)
-configure : .configured-$(VERSION)
+fetch: $(TARFILE_DIR)/$(TARFILE)
+patch: .patched-$(VERSION)
+untar: .untarred-$(VERSION)
+compile: .compiled-$(VERSION)
+configure: .configured-$(VERSION)
 
 PRECONFIGURE  ?= :
 
@@ -108,8 +108,8 @@ distclean: package-distclean
 clean::; rm -rf .patched* .untarred* $(LIBNAME)* .compiled* .configured* .installed* .untarred2* diffs tmp $(TARDIR)
 distclean: clean ; rm -rf Makefile
 check:
-ls :; ls -la . tarfiles
-help :;
+ls:; ls -la . tarfiles
+help:;
 	@ echo ""
 	@ echo "usage: make [option...] [target...]"
 	@ echo ""

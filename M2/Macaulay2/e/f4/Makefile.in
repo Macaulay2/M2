@@ -5,18 +5,18 @@ DEPENDS = yes
 include ../Makefile.include
 include ../Makefile.common
 
-.PHONY : place_into_lib
+.PHONY: place_into_lib
 
 include @srcdir@/Makefile.files
 
 all: $(F4_OBJECT_FILES)
-check_it : $(F4_OBJECT_FILES) check_it.o
+check_it: $(F4_OBJECT_FILES) check_it.o
 	gcc -o check_it check_it.o $(F4_OBJECT_FILES) -L/sw/lib -lgc
 
 %.s : %.c; $(COMPILE.cc) -S $< $(OUTPUT_OPTION)
 
-Makefile : Makefile.in; cd ../../..; ./config.status Macaulay2/e/f4/Makefile
-clean ::; rm -f *.o *.rpo
+Makefile: Makefile.in; cd ../../..; ./config.status Macaulay2/e/f4/Makefile
+clean::; rm -f *.o *.rpo
 distclean: clean; rm -f Makefile
 
 clean::; rm -f *.dep dep-*.tmp LOGFILE

@@ -10,7 +10,7 @@ ifeq (@OPTIMIZE@,yes)
 CXXFLAGS += -Wno-deprecated --no-rtti --no-exceptions
 endif
 include ../Makefile.library
-Makefile : @srcdir@/Makefile.in ; cd ../.. && ./config.status libraries/libfac/Makefile
+Makefile: @srcdir@/Makefile.in ; cd ../.. && ./config.status libraries/libfac/Makefile
 clean uninstall ::
 	if [ -d $(LIBRARIESDIR) ] ;\
 	then cd $(LIBRARIESDIR) && rm -rf include/factor.h lib/libfac.a ;\

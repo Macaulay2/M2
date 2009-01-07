@@ -20,7 +20,7 @@ override prefix := ${prefix0}
 override exec_prefix := ${exec_prefix0}
 #############################################################################
 T=@TAR@ --create --file=- --mode=a+rX,og-ws --exclude-from=@srcdir@/../tar-exclusions
-install ::
+install::
 	$(MKDIR_P) ${prefix}
 	$(T) -C @pre_prefix@      . | @TAR@ xfp - -C ${prefix}
 	$(T) -C @pre_exec_prefix@ . | @TAR@ xfp - -C ${exec_prefix}
@@ -45,9 +45,9 @@ install::
 endef
 $(foreach i,$(INFOFILES),$(eval $(call ii,$i)))
 
-Makefile : @srcdir@/Makefile.in; cd ../..; ./config.status distributions/install/Makefile
-uninstall :; @echo "uninstall: not implemented yet" >&2 ; false
-distclean : ; rm -rf Makefile
+Makefile: @srcdir@/Makefile.in; cd ../..; ./config.status distributions/install/Makefile
+uninstall:; @echo "uninstall: not implemented yet" >&2 ; false
+distclean:; rm -rf Makefile
 
 .PHONY: report-installed-M2-location
 install:: report-installed-M2-location

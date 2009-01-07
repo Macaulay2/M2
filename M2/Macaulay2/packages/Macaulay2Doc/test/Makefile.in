@@ -26,12 +26,12 @@ distclean::
 	$(MAKE) -C engine $@
 	$(MAKE) -C slow $@
 
-docStructure.out : docStructure.m2
+docStructure.out: docStructure.m2
 
-Makefile : Makefile.in; cd $(DOTS)/..; ./config.status Macaulay2/packages/Macaulay2Doc/test/Makefile
-Makefile.test : Makefile.test.in; cd $(DOTS)/..; ./config.status Macaulay2/packages/Macaulay2Doc/test/Makefile.test
+Makefile: Makefile.in; cd $(DOTS)/..; ./config.status Macaulay2/packages/Macaulay2Doc/test/Makefile
+Makefile.test: Makefile.test.in; cd $(DOTS)/..; ./config.status Macaulay2/packages/Macaulay2Doc/test/Makefile.test
 
-status ::
+status::
 	: skipping: $(MAKE) -C engine $@
 	$(MAKE) -C slow $@
 	: skipping: $(MAKE) -C goals $@

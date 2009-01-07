@@ -121,7 +121,16 @@ fi
 
 AC_SUBST(OS,"`  uname -s | sed s=/=-=g  `")
 AC_SUBST(REL,"`  uname -r | sed -e s=/=-=g -e 's= =+=' -e 's=[()]==g'  `")
-AC_SUBST(UNAME_INFO,"` uname -pmso 2>/dev/null || uname -pms `")
+AC_SUBST(UNAME_INFO_COMMAND," uname -pmso 2>/dev/null || uname -pms ")
+AC_SUBST(UNAME_INFO,"` eval $UNAME_INFO_COMMAND `")
+dnl interesting behavior: $A expansion happens after statement separation!
+dnl       $ A="echo hi 2>/dev/null "
+dnl       $ echo "`$A`"
+dnl       hi 2>/dev/null
+dnl       $ $A
+dnl       hi 2>/dev/null
+dnl       $ eval $A
+dnl       hi
 
 case $OS-$REL in
   Darwin-7.*) REL=10.3 ; OS=MacOS ;;

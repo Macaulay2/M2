@@ -10,8 +10,8 @@ ifeq (@FC@,)
 $(error no fortran compiler provided)
 endif
 include ../Makefile.library
-Makefile : @srcdir@/Makefile.in ; cd ../.. && ./config.status libraries/blas/Makefile
-foo :; echo $(INSTALLCMD)
+Makefile: @srcdir@/Makefile.in ; cd ../.. && ./config.status libraries/blas/Makefile
+foo:; echo $(INSTALLCMD)
 # Local Variables:
 # compile-command: "make -C $M2BUILDDIR/libraries/blas "
 # End:

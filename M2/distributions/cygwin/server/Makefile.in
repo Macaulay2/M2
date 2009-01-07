@@ -1,5 +1,5 @@
-all : setup.ini
-setup.ini : Macaulay2/*
+all: setup.ini
+setup.ini: Macaulay2/*
 	genini Macaulay2 >setup.ini
-clean :; rm -f setup.ini
-distclean :; rm -f Makefile
+clean:; rm -f setup.ini
+distclean:; rm -f Makefile

@@ -1,0 +1,10 @@
+# -*- makefile-gmake -*-
+# @configure_input@
+define d
+all: $1
+$1: @srcdir@/$1.in; ./config.status $1
+endef
+$(foreach f, $(shell cat @srcdir@/config/files),$(eval $(call d,$f)))
+# Local Variables:
+# compile-command: "make -C $M2BUILDDIR -f Makefile.configfiles "
+# End:

@@ -5,9 +5,9 @@ all: M2.1 @pre_mandir@/man1/M2.1
 # we want to ignore the --datarootdir setting, whatever that means, so here we we mention it: @datarootdir@
 @pre_mandir@/man1:; @INSTALL@ -d $@
 @pre_mandir@/man1/M2.1 : M2.1 | @pre_mandir@/man1 ; @INSTALL_DATA@ $< $@
-Makefile : Makefile.in; cd ../..; ./config.status Macaulay2/man/Makefile
+Makefile: Makefile.in; cd ../..; ./config.status Macaulay2/man/Makefile
 M2.1: M2.1.in ; cd ../..; ./config.status Macaulay2/man/M2.1
-clean :: ; rm -f M2.1 M2-help.1
+clean:: ; rm -f M2.1 M2-help.1
 # Local Variables:
 # compile-command: "make -C $M2BUILDDIR/Macaulay2/man "
 # End:

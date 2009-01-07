@@ -24,14 +24,14 @@ server/Macaulay2 : ; $(MKDIR_P) $@
 TIDY = yes
 tidy: maybe-tidy
 ifeq ($(TIDY),yes)
-maybe-tidy :; rm -rf files
+maybe-tidy:; rm -rf files
 else
-maybe-tidy :
+maybe-tidy:
 endif
 
 T=@TAR@ --create --mode=a+rX,og-ws --exclude-from=@srcdir@/../tar-exclusions --file=-
 
-.prepared : server/Macaulay2 postinstall.sh preremove.sh
+.prepared: server/Macaulay2 postinstall.sh preremove.sh
 	rm -rf files
 	$(MKDIR_P) files@prefix@
 	$(T) -C @pre_exec_prefix@ . | @FAKEROOT@ @TAR@ xfp - -C files@prefix@
@@ -45,7 +45,7 @@ T=@TAR@ --create --mode=a+rX,og-ws --exclude-from=@srcdir@/../tar-exclusions --f
 server/Macaulay2/@package@-$(DISTRIBUTION).tar.bz2 : .prepared
 	(cd files && @FAKEROOT@ @TAR@ cjf - *) >$@
 
-libraries-used : .prepared
+libraries-used: .prepared
 	cygcheck files@bindir@/M2@EXE@ >$@.tmp
 	<$@.tmp \
 	  sed -e 's/^  *//' \
@@ -56,14 +56,14 @@ libraries-used : .prepared
 	| sort | uniq \
 	| tee $@
 
-packages-used : libraries-used
+packages-used: libraries-used
 	cat $< \
 	| while read x ; do cygcheck -f $$x ; done \
 	| sort | uniq \
 	| sed 's/\([a-zA-Z0-9]*\)-\([0-9.]*\)-.*/\1 \2/' \
 	| tee $@
 
-setup.hint : setup.hint-base packages-used
+setup.hint: setup.hint-base packages-used
 	( set -e ; \
 	  cat setup.hint-base ; \
 	  echo -n "requires:" ; \
@@ -76,18 +76,18 @@ server/Macaulay2/@package@-$(DISTRIBUTION)-src.tar.bz2 : ../../@package@.tar.bz2
 ../../@package@.tar.bz2: always
 	$(MAKE) -C ../tar src.bz2
 
-upload :; rsync --verbose --compress --archive --rsh='ssh -x -a' server/. u00:to/Macaulay2/Repositories/cygwin-test
+upload:; rsync --verbose --compress --archive --rsh='ssh -x -a' server/. u00:to/Macaulay2/Repositories/cygwin-test
 
-clean ::; rm -rf files src-files
+clean::; rm -rf files src-files
 distclean: clean
 	rm -f Makefile Macaulay2.README setup.hint
 	$(MAKE) -C server $@
-clean ::; $(MAKE) -C server $@
-Makefile : Makefile.in; cd ../..; ./config.status distributions/cygwin/Makefile
-postinstall.sh : postinstall.sh.in; cd ../..; ./config.status distributions/cygwin/postinstall.sh
-preremove.sh : preremove.sh.in; cd ../..; ./config.status distributions/cygwin/preremove.sh
-setup.hint-base : setup.hint-base.in; cd ../..; ./config.status distributions/cygwin/setup.hint-base
-Macaulay2.README : Macaulay2.README.in; cd ../..; ./config.status distributions/cygwin/Macaulay2.README
+clean::; $(MAKE) -C server $@
+Makefile: Makefile.in; cd ../..; ./config.status distributions/cygwin/Makefile
+postinstall.sh: postinstall.sh.in; cd ../..; ./config.status distributions/cygwin/postinstall.sh
+preremove.sh: preremove.sh.in; cd ../..; ./config.status distributions/cygwin/preremove.sh
+setup.hint-base: setup.hint-base.in; cd ../..; ./config.status distributions/cygwin/setup.hint-base
+Macaulay2.README: Macaulay2.README.in; cd ../..; ./config.status distributions/cygwin/Macaulay2.README
 
 # Local Variables:
 # compile-command: "make -C $M2BUILDDIR/distributions/cygwin "

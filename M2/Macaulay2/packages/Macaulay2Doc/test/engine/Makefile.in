@@ -7,10 +7,10 @@ include $(DOTS)/../include/config.Makefile
 SRCDIR = @srcdir@
 include ../Makefile.test
 
-Makefile : Makefile.in; cd ../../..; ./config.status Macaulay2/test/engine/Makefile
+Makefile: Makefile.in; cd ../../..; ./config.status Macaulay2/test/engine/Makefile
 
 LDLIBS = 
-.PHONY : benchmark
+.PHONY: benchmark
 # factor.poly was generated with toString (x+3*y-14)^15*(x^2+y^4+z^7-x*y-13*x*z^2+12)^3
 CFLAGS := -g -Wall -Wshadow -Wcast-qual -Wno-parentheses -Wno-sign-compare -Wno-unused-label
 CFLAGS += -O2
@@ -40,14 +40,14 @@ benchmark gmon.out : factor factor.poly
 	time ./factor < @srcdir@/factor.poly >factor.out
 	cat factor.out
 	fgrep -s '( (x^2-y*x-13*z^2*x+y^4+z^7+12)^3, (x+3*y-14)^15 )' factor.out >/dev/null
-factor.gprof : gmon.out
+factor.gprof: gmon.out
 	gprof -b ./factor >$@
-factor-demangled.gprof : factor.gprof Makefile
+factor-demangled.gprof: factor.gprof Makefile
 	<$< sed -e 's/\(_GLOBAL__D_\)/global destructor /' -e 's/\(_GLOBAL__I_\)/global constructor /' | demangle >$@
 factor.o factor-init.o : factor.h
 mapfile factor : factor.o factor-init.o factor-init1.o 
 	@CXX@ $(LDFLAGS) factor.o factor-init.o $(LOADLIBES) $(LDLIBS) factor-init1.o -o "$@"
-mapfile.demangled : mapfile
+mapfile.demangled: mapfile
 	demangle <$< >$@
 
 clean::; rm -f *.o

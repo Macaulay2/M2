@@ -49,7 +49,7 @@ COMPILE.cpp = $(COMPILE.cc)
 	@ echo " ** preprocessing $<, making $@"
 	@ $(COMPILE.cc) -E $(OUTPUT_OPTION) $<
 
-ntl_interface.o : ntl_interface.cpp
+ntl_interface.o: ntl_interface.cpp
 	@ echo '$(COMPILE.cc) $(OUTPUT_OPTION) $<' >> LOGFILE
 	@ echo " ** compiling $<"
 	@ $(COMPILE.cc) $(OUTPUT_OPTION) $< -Wno-old-style-cast

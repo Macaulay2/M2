@@ -4,6 +4,9 @@ include ../../include/config.Makefile
 VPATH = @srcdir@
 PACKAGES = @PACKAGES@
 
+# packages under development that should be checked but not installed:
+DEVEL = EllipticIntegrals
+
 RemakeAllDocumentation ?= false
 IgnoreExampleErrors ?= false
 CheckDocumentation ?= true
@@ -31,13 +34,10 @@ ARGS := $(ARGS), $(IARGS)
 endif
 
 STOP = --stop --silent
-
-define cmd
-check ::
-	@pre_bindir@/M2@EXE@ -q $(STOP) -e "needsPackage(\"$1\",LoadDocumentation=>true); check($1,UserMode=>false); exit 0"
-endef
-$(foreach i,$(PACKAGES),$(eval $(call cmd,$i)))
-
+$(foreach i,\
+	$(sort $(PACKAGES) $(DEVEL)),\
+	$(eval check::; \
+		@pre_bindir@/M2@EXE@ -q $(STOP) -e "needsPackage(\"$i\",LoadDocumentation=>true); check($i,UserMode=>false); exit 0"))
 info-dir: @pre_infodir@ @pre_infodir@/dir
 @pre_infodir@:; $(MKDIR_P) $@
 @pre_infodir@/dir:; @INSTALL_DATA@ @top_srcdir@/files/info-dir-template $@
@@ -52,13 +52,12 @@ all: info-dir @pre_libm2dir@/$1/.installed
 	    $(EARGS) \
 	    -e "installPackage(\"$1\", $(ARGS)); exit 0"
 	install-info --quiet --info-dir=@pre_infodir@ @pre_infodir@/$1.info
-	: check to see if the file was made:
-	[ "${IgnoreExampleErrors}" = true -o -f $$@ ]
+	@ [ "${IgnoreExampleErrors}" = true -o -f $$@ ] || (echo error: file $$@ not made by installPackage >&2; false)
 check-info::@pre_infodir@/$1.info.errors
 @pre_infodir@/$1.info.errors: @pre_infodir@/$1.info
 	emacs --batch --eval '(progn (find-file "$$<") (Info-validate) (switch-to-buffer " *problems in info file*") (write-file "$$@") (kill-emacs))'
 	cat $$@
-	[ ! -s $$@ ]
+	@ [ ! -s $$@ ] || (echo error: stopping, info validation errors (above) >&2; false)
 endef
 $(foreach i, $(PACKAGES), $(eval $(call bld,$i)))
 
@@ -76,7 +75,7 @@ distclean:clean
 @pre_packagesdir@/%.m2 : %.m2 ; @INSTALL_DATA@ $^ $@
 all: @pre_packagesdir@/eliminate.m2 @pre_packagesdir@/D-modules.m2
 # this one we need for compatibility with the book
-all : @pre_packagesdir@/LLL.m2
+all: @pre_packagesdir@/LLL.m2
 # Local Variables:
 # compile-command: "make -C $M2BUILDDIR/Macaulay2/packages "
 # End:

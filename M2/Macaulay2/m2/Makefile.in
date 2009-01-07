@@ -5,7 +5,7 @@ VPATH = @srcdir@ @srcdir@/../d
 srcdir = $(shell cd @srcdir@; /bin/pwd)
 
 all: initialize
-Makefile : Makefile.in ; cd ../.. && ./config.status Macaulay2/m2/Makefile
+Makefile: Makefile.in ; cd ../.. && ./config.status Macaulay2/m2/Makefile
 ##############################
 .SUFFIXES: .m2
 .PHONY: html initialize prep tags install-tmp
@@ -20,8 +20,8 @@ DUMPEDM2DOCFILES := \
 OTHERM2FILES := sagbi.m2
 ############################## statuscodes.m2
 DUMPEDM2FILES += statuscodes.m2
-initialize :: statuscodes.m2
-statuscodes.m2 : ../e/statuscodes
+initialize:: statuscodes.m2
+statuscodes.m2: ../e/statuscodes
 	( \
 		echo 'RawStatusCodes = new HashTable from {' ; \
 		sed 's/\(.*\):\(.*\):\(.*\)/  \1 => \3,/' ; \
@@ -40,27 +40,27 @@ LOADSEQUENCE := $(shell cat @srcdir@/loadsequence)
 DUMPEDM2FILES += $(LOADSEQUENCE)
 DUMPEDM2SRCFILES += $(patsubst version.m2, version.m2.in, $(LOADSEQUENCE))
 DUMPEDM2FILES += loads.m2
-loads.m2 : loads.awk loadsequence
+loads.m2: loads.awk loadsequence
 	: making $@
 	@awk -f $^ >$@
 
 ############################## install.m2
 DUMPEDM2FILES += install.m2
-install.m : install.m2.in ; cd ../.. && ./config.status Macaulay2/m2/install.m2
+install.m: install.m2.in ; cd ../.. && ./config.status Macaulay2/m2/install.m2
 ############################## tvalues.m2
 DUMPEDM2FILES += tvalues.m2
 TVFILES := $(shell egrep -l -e "-- . typical value: " @srcdir@/../d/*.d)
 all: tvalues.m2
-tvalues.m2 : $(TVFILES)
+tvalues.m2: $(TVFILES)
 	egrep -e "-- . typical value: " $^ | sed 's/.*-- . typical value: \(.*\)/typval(\1)/' >$@
 clean::;rm -rf tvalues.m2
 ############################## installedpackages.m2
 INSTALLEDPACKAGES := $(shell cat @srcdir@/installedpackages)
 DUMPEDM2FILES += installedpackages.m2
-initialize :: installedpackages.m2
-installedpackages.m2 : installedpackages Makefile
+initialize:: installedpackages.m2
+installedpackages.m2: installedpackages Makefile
 	exec <$< >$@ ; echo 'Core#"pre-installed packages" = {'; read x ; echo \"$$x\"; while read x ; do echo , \"$$x\" ; done ; echo '}'
-clean :: ; rm -f installedpackages.m2
+clean:: ; rm -f installedpackages.m2
 OTHERDUMPEDM2FILES += \
 	$(wildcard $(patsubst %, @srcdir@/../packages/%/*.m2, $(INSTALLEDPACKAGES))) \
 	$(wildcard $(patsubst %, @srcdir@/../packages/%.m2  , $(INSTALLEDPACKAGES)))
@@ -112,12 +112,12 @@ clean::; rm -f TAGS @srcdir@/TAGS @srcdir@/TAGS.doc
 	  cd @srcdir@ && \
 	  @FIND@ ../packages/Macaulay2Doc -name '*.m2' | while read i ; do echo  ; echo $$i,0 ; done >TAGS.doc
 clean::; rm -f TAGS.doc
-prep :: $(DUMPEDM2FILES)
+prep:: $(DUMPEDM2FILES)
 
-phase1 :: prep
+phase1:: prep
 
 ifneq "@DUMPDATA@" "no"
-phase1 :: @pre_libm2dir@/Core/cache/@DUMPDATAFILE@
+phase1:: @pre_libm2dir@/Core/cache/@DUMPDATAFILE@
 @pre_libm2dir@/Core/cache/@DUMPDATAFILE@ redump : $(DUMPEDM2FILES) $(DUMPEDM2DOCFILES) @pre_bindir@/M2@EXE@ $(OTHERDUMPEDM2FILES)
 	rm -f @pre_libm2dir@/Core/cache/@DUMPDATAFILE@
 	$(MKDIR_P) @pre_libm2dir@/Core/cache
@@ -126,10 +126,10 @@ phase1 :: @pre_libm2dir@/Core/cache/@DUMPDATAFILE@
 endif
 
 # try to eliminate this intermediate file:
-phase1 :: .Macaulay2-made
-.Macaulay2-made : $(DUMPEDM2FILES) $(DUMPEDM2DOCFILES) @pre_exec_prefix@/bin/M2@EXE@
+phase1:: .Macaulay2-made
+.Macaulay2-made: $(DUMPEDM2FILES) $(DUMPEDM2DOCFILES) @pre_exec_prefix@/bin/M2@EXE@
 	touch $@
-clean ::; rm -f .Macaulay2-made
+clean::; rm -f .Macaulay2-made
 all: .gdbinit .gdb-files .gdb-run-it
 gdb: .gdbinit .gdb-files; gdb @pre_exec_prefix@/bin/M2@EXE@
 .gdbinit: .gdbinit.$(USER); cp $< $@
@@ -138,21 +138,21 @@ clean::; rm -f .gdbinit
 .gdb-files: Makefile
 	echo 'echo -- loading .gdb-files\n' >$@
 	echo 'file @pre_exec_prefix@/bin/M2@EXE@' >>$@
-clean :: ; rm -f .gdb-files
+clean:: ; rm -f .gdb-files
 .gdb-run-it: Makefile
 	echo 'echo -- loading .gdb-run-it\n' >$@
 	echo 'echo \n' >>$@
 	echo 'run -q --no-loaddata --no-readline --no-personality' >>$@
-clean :: ; rm -f .gdb-run-it
-profile : gmon.out; gprof @pre_exec_prefix@/bin/M2@EXE@ >profile
-clean ::; rm -f profile
+clean:: ; rm -f .gdb-run-it
+profile: gmon.out; gprof @pre_exec_prefix@/bin/M2@EXE@ >profile
+clean::; rm -f profile
 @pre_packagesdir@ :; @INSTALL@ -d $@
 @pre_packagesdir@/Core  : ; @INSTALL@ -d $@
 @pre_packagesdir@/Core/% : % ; @INSTALL_DATA@ $^ $@
 FILES_TO_COPY := $(DUMPEDM2FILES) demo1.m2 demo2.m2 demo3.m2
 all:@pre_packagesdir@ @pre_packagesdir@/Core $(addprefix @pre_packagesdir@/Core/, $(FILES_TO_COPY))
 clean::; rm -rf ../cache/@DUMPDATAFILE@ cache *.obj *.exe runexample temp.data distfiles loads.m2 mpcodes.m2 core gmon.out
-distclean : clean; rm -f Makefile version.m2
+distclean: clean; rm -f Makefile version.m2
 # Local Variables:
 # compile-command: "make -C $M2BUILDDIR/Macaulay2/m2 "
 # End:

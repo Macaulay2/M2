@@ -1,4 +1,5 @@
 GNUmakefile
+Makefile.configfiles
 check-configure/Makefile
 include/config.Makefile
 include/configuration

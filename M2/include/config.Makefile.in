@@ -3,12 +3,12 @@ ifneq ($(CONFIG_MAKEFILE),)
 $(error config.Makefile already loaded)
 endif
 CONFIG_MAKEFILE = loaded
-.PHONY : all check initialize clean distclean install always reconfigure
+.PHONY: all check initialize clean distclean install always reconfigure
 all:
 
 SHELL = /bin/sh
 
-.DELETE_ON_ERROR :
+.DELETE_ON_ERROR:
 
 # here we set the variables that "make" uses
 CC = @CC@

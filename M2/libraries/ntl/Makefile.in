@@ -35,7 +35,7 @@ check: check-once
 check-once: .installed-$(VERSION)
 	$(MAKE) -C $(BUILDDIR) check
 	touch $@
-Makefile : @srcdir@/Makefile.in ; cd ../.. && ./config.status libraries/ntl/Makefile
+Makefile: @srcdir@/Makefile.in ; cd ../.. && ./config.status libraries/ntl/Makefile
 clean uninstall ::
 	if [ -d $(LIBRARIESDIR) ] ;\
 	then cd $(LIBRARIESDIR) && rm -rf include/NTL lib/libntl.* share/doc/NTL  ;\

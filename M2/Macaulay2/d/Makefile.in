@@ -11,7 +11,7 @@ all: tags
 endif
 initialize all: compat.h
 
-recompile :
+recompile:
 	rm -f @pre_bindir@/M2@EXE@
 	$(MAKE)
 
@@ -52,8 +52,8 @@ SRCFILES :=
 ## engine object files
 include @srcdir@/../e/Makefile.files
 include @srcdir@/../e/f4/Makefile.files
-tmp_init.o : @srcdir@/../e/Makefile.files
-tmp_init.o : @srcdir@/../e/f4/Makefile.files
+tmp_init.o: @srcdir@/../e/Makefile.files
+tmp_init.o: @srcdir@/../e/f4/Makefile.files
 EFILES := $(ENGINE_OFILES:%=../e/%) 
 EFILES += $(F4_OBJECT_FILES:%=../e/f4/%) 
 
@@ -191,7 +191,7 @@ endif
 	rm $*.c
 
 # The following line has been included to remove old style cast warnings while compiling
-M2-factory.o : M2-factory.cpp ; $(COMPILE.cc) -Wno-old-style-cast $(OUTPUT_OPTION) $<
+M2-factory.o: M2-factory.cpp ; $(COMPILE.cc) -Wno-old-style-cast $(OUTPUT_OPTION) $<
 
 M2INCLUDES  = -I../../include
 M2INCLUDES += -I@srcdir@/../../include
@@ -241,24 +241,24 @@ clean::; rm -f compat.c compat.h
 compat.c compat.h : configure ../../include/M2/config.h
 	FLAGS="$(LDFLAGS) $(LOADLIBES) $(LDLIBS)" @srcdir@/configure
 
-M2types.o : M2types.h
+M2types.o: M2types.h
 M2lib.o scclib.o : compat.h ../c/compat.h ../c/compat.c types.h
 gmp_int.o M2lib.o scclib.o gdbm_interface.o gc_cpp.o version.o M2inits.o debug.o : ../../include/M2/config.h
 
 clean::; rm -f startup.c
 SSTRING := -e 's/\\/\\\\/g' -e 's/"/\\"/g' -e 's/\(.*\)/"\1\\n"/'
 BSTRING := -e 's/\\/\\\\/g' -e 's/"/\\"/g' -e 's/\(.*\)/"\1"/'
-layout.m2 : layout.m2.in ; cd ../.. ; ./config.status Macaulay2/d/layout.m2
-startup.c : @srcdir@/../m2/startup.m2 layout.m2
+layout.m2: layout.m2.in ; cd ../.. ; ./config.status Macaulay2/d/layout.m2
+startup.c: @srcdir@/../m2/startup.m2 layout.m2
 	(\
 	 echo 'char startupString1[] =' ; cat layout.m2                         | sed $(SSTRING) ; echo  ';' ; \
 	 echo 'char startupFile1  [] =' ; echo @abs_srcdir@/layout.m2.in        | sed $(BSTRING) ; echo  ';' ; \
 	 echo 'char startupString2[] =' ; cat @srcdir@/../m2/startup.m2         | sed $(SSTRING) ; echo  ';' ; \
 	 echo 'char startupFile2  [] =' ; echo  @abs_srcdir@/../m2/startup.m2   | sed $(BSTRING) ; echo  ';' ; \
         ) >$@
-clean :: ; rm -f layout.m2 startup.c
-clean-startup.c :; rm -f startup.c
-cat-startup.c :; cat startup.c
+clean:: ; rm -f layout.m2 startup.c
+clean-startup.c:; rm -f startup.c
+cat-startup.c:; cat startup.c
 redo-startup:clean-startup.c startup.c cat-startup.c
 
 ifeq "@DUMPDATA@" "yes"
@@ -267,9 +267,9 @@ M2_LIBRARIES += -L../dumpdata -ldump
 endif
 
 M2_OBJECTS += tmp_init.o
-tmp_init.o : tmp_init.c 
+tmp_init.o: tmp_init.c 
 clean::; rm -f tmp_init.c
-tmp_init.c : $(DFILES)
+tmp_init.c: $(DFILES)
 	echo 'char timestamp[] = __DATE__ ", " __TIME__;' >tmp
 	for i in $(DFILES:.d=) ; do echo "void $${i}__prepare();" ; done >>tmp
 	echo 'int main_inits() {' >>tmp
@@ -279,9 +279,9 @@ tmp_init.c : $(DFILES)
 
 ###################### libraries
 
-libfactory_init1.a : factory_init1.o ; ar ru $@ $^
-libfactory_init2.a : factory_init2.o ; ar ru $@ $^
-libM2inits2.a      : M2inits2.o       ; ar ru $@ $^
+libfactory_init1.a: factory_init1.o ; ar ru $@ $^
+libfactory_init2.a: factory_init2.o ; ar ru $@ $^
+libM2inits2.a: M2inits2.o       ; ar ru $@ $^
 
 ifeq (@CONSTRUCTOR_ORDER_LIB@,LR)
 M2_LIBRARIES += -L. -lfactory_init1 @SINGULARLIBS@ -lfactory_init2
@@ -356,10 +356,10 @@ endif
 	ln -sf @pre_bindir@/M2@EXE@ @abs_top_builddir@
 clean::; rm -f @abs_top_builddir@/M2@EXE@
 
-mapfile.demangled : mapfile ; demangle <$< >$@
+mapfile.demangled: mapfile ; demangle <$< >$@
 clean::; rm -f mapfile.demangled
 
-interpret.a : $(M2_OBJECTS); $(AR) rcs $@ $^
+interpret.a: $(M2_OBJECTS); $(AR) rcs $@ $^
 ifeq "@XCODE@" "yes"
 # Mike uses Xcode, an IDE, under MacOS 10 to link against
 all: interpret.a
@@ -370,9 +370,9 @@ clean::; rm -f TAGS @srcdir@/TAGS
 @srcdir@/TAGS: $(SRCFILES)
 	cd @srcdir@ && @ETAGS@ $(shell ../util/echoout -r $(SRCFILES))
 
-clean ::; rm -f *.log a.out *.o *.sym *.a *.oo *.sig *.sg *.dep *.dp core gmon.out mapfile restart.tmp
-distclean : clean; rm -f Makefile
-Makefile : Makefile.in; cd ../..; ./config.status Macaulay2/d/Makefile
+clean::; rm -f *.log a.out *.o *.sym *.a *.oo *.sig *.sg *.dep *.dp core gmon.out mapfile restart.tmp
+distclean: clean; rm -f Makefile
+Makefile: Makefile.in; cd ../..; ./config.status Macaulay2/d/Makefile
 all: .gdbinit
 .gdbinit:; if [ -f @srcdir@/.gdbinit.$(USER) ]; then cp @srcdir@/.gdbinit.$(USER) $@; fi
 clean::; rm -f .gdbinit

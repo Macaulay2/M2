@@ -14,7 +14,7 @@ diffs:
 	-diff -u @srcdir@/proof.m2 @srcdir@/proof-fixed.m2
 	-diff -u @srcdir@/proof.m2 @srcdir@/proof-fixed.m2
 
-Makefile : Makefile.in; cd ../../..; ./config.status Macaulay2/tests/rationality/Makefile
+Makefile: Makefile.in; cd ../../..; ./config.status Macaulay2/tests/rationality/Makefile
 clean:
 distclean:clean;rm -f Makefile
 all:

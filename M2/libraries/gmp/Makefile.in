@@ -14,7 +14,7 @@ endif
 # endif
 include ../Makefile.library
 check:; $(MAKE) -C $(BUILDDIR) check
-Makefile : @srcdir@/Makefile.in ; cd ../.. && ./config.status libraries/gmp/Makefile
+Makefile: @srcdir@/Makefile.in ; cd ../.. && ./config.status libraries/gmp/Makefile
 # Local Variables:
 # compile-command: "make -C $M2BUILDDIR/libraries/gmp "
 # End:
