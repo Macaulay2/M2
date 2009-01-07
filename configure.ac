@@ -92,7 +92,7 @@ else AC_MSG_ERROR("$TAR: GNU tar is required")
 fi
 
 AC_MSG_CHECKING(whether $FIND is GNU find)
-if "$FIND" --version | head -1 | grep "GNU findutils" >/dev/null 2>&1
+if "$FIND" --version | head -1 | grep "GNU find" >/dev/null 2>&1
 then AC_MSG_RESULT(yes)
 else AC_MSG_ERROR("$FIND: GNU find is required")
 fi
@@ -1102,23 +1102,23 @@ AC_SUBST(pre_exec_prefix,$LOCALSTAGINGAREA/$MACHINE) # as in layout.m2.in
 AC_MSG_NOTICE([staging area for common files: $pre_prefix])
 AC_MSG_NOTICE([staging area for architecture dependent files: $pre_exec_prefix])
 
-AC_SUBST(tail_packagesdir,Macaulay2)
-AC_SUBST(tail_libm2dir,Macaulay2)
-AC_SUBST(tail_emacsdir,emacs/site-lisp)
-AC_SUBST(tail_librariesdir,Core)
-AC_SUBST(tail_packagecachecoredir,Core/cache)
+AC_SUBST(packagesdir,$datadir/Macaulay2)
+AC_SUBST(libm2dir,$libdir/Macaulay2)
+AC_SUBST(emacsdir,$datadir/emacs/site-lisp)
+AC_SUBST(librariesdir,$libm2dir/Core)
+AC_SUBST(packagecachecoredir,$libm2dir/Core/cache)
 
-AC_SUBST(packagesdir,$datadir/$tail_packagesdir)
-AC_SUBST(libm2dir,$libdir/$tail_libm2dir)
-AC_SUBST(emacsdir,$datadir/$tail_emacsdir)
-AC_SUBST(librariesdir,$libm2dir/$tail_librariesdir)
-AC_SUBST(packagecachecoredir,$libm2dir/$tail_packagecachecoredir)
+AC_SUBST(tail_packagesdir,$tail_datadir/Macaulay2)
+AC_SUBST(tail_libm2dir,$tail_libdir/Macaulay2)
+AC_SUBST(tail_emacsdir,$tail_datadir/emacs/site-lisp)
+AC_SUBST(tail_librariesdir,$tail_libm2dir/Core)
+AC_SUBST(tail_packagecachecoredir,$tail_libm2dir/Core/cache)
 
-AC_SUBST(pre_packagesdir,$pre_datadir/$tail_packagesdir)
-AC_SUBST(pre_libm2dir,$pre_libdir/$tail_libm2dir)
-AC_SUBST(pre_emacsdir,$pre_datadir/$tail_emacsdir)
-AC_SUBST(pre_librariesdir,$pre_libm2dir/$tail_librariesdir)
-AC_SUBST(pre_packagecachecoredir,$pre_libm2dir/$tail_packagecachecoredir)
+AC_SUBST(pre_packagesdir,$pre_datadir/Macaulay2)
+AC_SUBST(pre_libm2dir,$pre_libdir/Macaulay2)
+AC_SUBST(pre_emacsdir,$pre_datadir/emacs/site-lisp)
+AC_SUBST(pre_librariesdir,$pre_libm2dir/Core)
+AC_SUBST(pre_packagecachecoredir,$pre_libm2dir/Core/cache)
 
 AC_OUTPUT()
 
