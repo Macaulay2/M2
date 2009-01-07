@@ -3,7 +3,7 @@ include include/config.Makefile
 VPATH = @srcdir@
 .PRECIOUS:@srcdir@/configure config.status
 .PHONY:reconfigure-libs reconfigure-all configure-help report-M2-location help scripts
-all:check-make check-machine configured check-vars srcdir protect-configs include/config.Makefile include/M2/config.h all-dirs report-M2-location
+all:check-make configured check-vars srcdir protect-configs include/config.Makefile include/M2/config.h check-machine all-dirs report-M2-location
 check-make:
 	: '  Use list of GNU "make" features to check whether this version is modern enough (version 3.81 is).  '
 	: '  (The order-only feature is just a proxy.)  '
