@@ -15,7 +15,7 @@ INSTALLCMD = \
 	cp src/frobby.h $(LIBRARIESDIR)/include/frobby.h
 include ../Makefile.library
 CFLAGS += -Wno-deprecated
-Makefile : @srcdir@/Makefile.in ; cd ../.. && ./config.status libraries/frobby/Makefile
+Makefile: @srcdir@/Makefile.in ; cd ../.. && ./config.status libraries/frobby/Makefile
 # Local Variables:
 # compile-command: "make -C $M2BUILDDIR/libraries/frobby "
 # End:

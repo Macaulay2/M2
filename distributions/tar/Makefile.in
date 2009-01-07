@@ -1,6 +1,6 @@
 # @configure_input@
 include ../../include/config.Makefile
-.PHONY : src src.gz src.bz2 tarballs tarballs.gz tarballs.bz2
+.PHONY: src src.gz src.bz2 tarballs tarballs.gz tarballs.bz2
 D=../../
 S=@package@.tar
 E=@package@-@MACHINE@.tar
@@ -14,17 +14,17 @@ CG=$(C).gz
 CJ=$(C).bz2
 all: chk-opts tarballs 
 install:
-chk-opts ::; [ "${prefix}" = /usr -a @DEBUG@ = no -a @OPTIMIZE@ = yes -a @STRIP@ = yes ]
-tarballs :: tarballs.@COMPRESS@
-src : $(D)$(SZ)
-src.gz : $(D)$(SZ)
-src.bz2 : $(D)$(SJ)
+chk-opts::; [ "${prefix}" = /usr -a @DEBUG@ = no -a @OPTIMIZE@ = yes -a @STRIP@ = yes ]
+tarballs:: tarballs.@COMPRESS@
+src: $(D)$(SZ)
+src.gz: $(D)$(SZ)
+src.bz2: $(D)$(SJ)
 #
 J=$(D)$(CJ) $(D)$(EJ)
 G=$(D)$(CG) $(D)$(EG)
-tarballs.bz2 : $(J)
-tarballs.gz  : $(G)
-clean ::; rm -rf $(J) $(G) $(D)$(SZ) $(D)$(SJ)
+tarballs.bz2: $(J)
+tarballs.gz: $(G)
+clean::; rm -rf $(J) $(G) $(D)$(SZ) $(D)$(SJ)
 T=@TAR@ --create --owner=0 --group=0 --mode=a+rX,og-ws --exclude-from=@srcdir@/../tar-exclusions --file=$@
 A=--transform 's,^\.,@package@,'
 B=--transform 's,^,@package@/,'
@@ -36,9 +36,9 @@ $(D)$(EJ) : always ; $(TJ) -C @pre_exec_prefix@ $(A) .
 $(D)$(EG) : always ; $(TG) -C @pre_exec_prefix@ $(A) .
 $(D)$(SJ) : always ; (cd @top_srcdir@ ; svn-ls) | egrep -v '/$$' | $(TJ) -C @top_srcdir@ $(B) --files-from=-
 $(D)$(SG) : always ; (cd @top_srcdir@ ; svn-ls) | egrep -v '/$$' | $(TG) -C @top_srcdir@ $(B) --files-from=-
-Makefile : @srcdir@/Makefile.in; cd ../..; ./config.status distributions/tar/Makefile
-distclean : ; rm -rf Makefile
-srcfiles :; cd @top_srcdir@ ; svn-ls
+Makefile: @srcdir@/Makefile.in; cd ../..; ./config.status distributions/tar/Makefile
+distclean:; rm -rf Makefile
+srcfiles:; cd @top_srcdir@ ; svn-ls
 # Local Variables:
 # compile-command: "make -C $M2BUILDDIR/distributions/tar "
 # End:

@@ -38,7 +38,7 @@ clean distclean:
 	$(MAKE) -C tar $@
 	$(MAKE) -C top $@
 	$(MAKE) -C install $@
-Makefile : Makefile.in; cd ..; ./config.status distributions/Makefile
+Makefile: Makefile.in; cd ..; ./config.status distributions/Makefile
 # Local Variables:
 # compile-command: "make -C $M2BUILDDIR/distributions "
 # End:

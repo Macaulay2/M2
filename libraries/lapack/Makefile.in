@@ -27,7 +27,7 @@ INSTALLCMD = \
 	&& install blas.a $(LIBRARIESDIR)/lib/libblas.a
 include ../Makefile.library
 check:; $(MAKE) -C $(BUILDDIR) $(BUILDOPTIONS) lapack_testing blas_testing
-Makefile : @srcdir@/Makefile.in ; cd ../.. && ./config.status libraries/lapack/Makefile
+Makefile: @srcdir@/Makefile.in ; cd ../.. && ./config.status libraries/lapack/Makefile
 # Local Variables:
 # compile-command: "make -C $M2BUILDDIR/libraries/lapack "
 # End:

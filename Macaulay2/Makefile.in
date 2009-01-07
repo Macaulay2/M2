@@ -1,45 +1,30 @@
 # @configure_input@
 # we want to ignore the --datarootdir setting, whatever that means, so here we we mention it: @datarootdir@
 VPATH = @srcdir@
-.PHONY: initialize-dirs
 include ../include/config.Makefile
-initialize-dirs:
-	$(MAKE) DEPENDS=no -C e initialize
-	$(MAKE) DEPENDS=no -C d initialize
-all: initialize-dirs @pre_docdir@/COPYING @pre_docdir@/README @pre_docdir@/LAYOUT all-dirs
-check: check-dirs
-clean: clean-dirs
-distclean: distclean-dirs
-	rm -f Makefile
-define do-dirs
-$1-dirs:
-	$$(MAKE) -C compat $1 $2
-	$$(MAKE) -C util $1 $2
-	$$(MAKE) -C html-check-links $1 $2
-	$$(MAKE) -C probe $1 $2
-	$$(MAKE) -C regex $1 $2
-	$$(MAKE) -C c $1 $2
+all: initialize-in-subdirs @pre_docdir@/COPYING @pre_docdir@/README @pre_docdir@/LAYOUT
+DIRS = e d
+$(foreach d,$(DIRS),$(eval initialize-in-$d:; $$(MAKE) -C $d initialize))
+$(foreach d,$(DIRS),$(eval .PHONY initialize-in-subdirs:initialize-in-$d))
+$(foreach d,$(DIRS),$(eval .PHONY: initialize-in-subdirs))
+SUBDIRS = compat util html-check-links probe regex c 
 ifeq "@DUMPDATA@" "yes"
-	$$(MAKE) -C dumpdata $1 $2
+SUBDIRS += dumpdata
 endif
-	$$(MAKE) -C e $1 $2
-	$$(MAKE) -C d $1 $2
-	$$(MAKE) -C m2 $1 $2
-	$$(MAKE) -C emacs $1 $2
-	$$(MAKE) -C man $1 $2
-	$$(MAKE) -C packages $1 $2
-	$$(MAKE) -C tests $1 $2
-	$$(MAKE) -C packages/Macaulay2Doc/basictests $1 $2
-	$$(MAKE) -C packages/Macaulay2Doc/test $1 $2
-	$$(MAKE) -C book $1 $2
+SUBDIRS += e d m2 emacs man packages tests packages/Macaulay2Doc/basictests packages/Macaulay2Doc/test book
+define do-in-subdirs
+$(foreach d,$(SUBDIRS),$(eval .PHONY: $1-in-subdirs))
+$(foreach d,$(SUBDIRS),$(eval .PHONY $1 $1-in-subdirs:$1-in-$d))
+$(foreach d,$(SUBDIRS),$(eval $1-in-$d:; $$(MAKE) -C $d $1 $2))
 endef
-$(foreach t,all,$(eval $(call do-dirs,$t)))
-$(foreach t,check,$(eval $(call do-dirs,$t,-k)))
-$(foreach t,clean distclean,$(eval $(call do-dirs,$t,DEPENDS=no)))
+$(foreach t,all,$(eval $(call do-in-subdirs,$t)))
+$(foreach t,check,$(eval $(call do-in-subdirs,$t,-k)))
+$(foreach t,clean distclean,$(eval $(call do-in-subdirs,$t,DEPENDS=no)))
 @pre_docdir@:; $(MKDIR_P) "$@"
 @pre_docdir@/% : % | @pre_docdir@ ; @INSTALL_DATA@ $< "$@"
-Makefile : Makefile.in; cd ..; ./config.status Macaulay2/Makefile
-clean: ; rm -f gmon.out
+Makefile: Makefile.in; cd ..; ./config.status Macaulay2/Makefile
+clean:; rm -f gmon.out
+distclean:; rm -f Makefile
 # Local Variables:
 # compile-command: "make -C $M2BUILDDIR/Macaulay2 "
 # End:

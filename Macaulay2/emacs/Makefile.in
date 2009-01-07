@@ -10,16 +10,16 @@ M2-symbols M2-symbols.el : makesyms.m2 ../m2/exports.m2 @pre_exec_prefix@/bin/M2
 	@pre_exec_prefix@/bin/M2@EXE@ $(ARGS) @srcdir@/makesyms.m2 -e 'exit 0'
 M2-emacs-hlp.txt: makehlp.m2 @pre_exec_prefix@/bin/M2@EXE@; @pre_exec_prefix@/bin/M2@EXE@ $(ARGS) @srcdir@/makehlp.m2 -e 'exit 0'
 M2-emacs.m2: makem2.m2 @pre_exec_prefix@/bin/M2@EXE@; @pre_exec_prefix@/bin/M2@EXE@ $(ARGS) @srcdir@/makem2.m2 -e 'exit 0'
-distclean :: clean; rm -f Makefile
+distclean:: clean; rm -f Makefile
 all: @pre_emacsdir@
 all: $(MADEFILES)
 @pre_emacsdir@ :; @INSTALL@ -d "$@"
 all: $(addprefix @pre_emacsdir@/, $(SRCFILES) $(MADEFILES) M2-init.el)
 verify: $(addprefix @pre_emacsdir@/, $(SRCFILES) $(MADEFILES) M2-init.el) $(SRCFILES) $(MADEFILES) M2-init.el; ls -lrt $^
 @pre_emacsdir@/% : % ; @INSTALL_DATA@ $^ @pre_emacsdir@
-Makefile : Makefile.in; cd ../..; ./config.status Macaulay2/emacs/Makefile
+Makefile: Makefile.in; cd ../..; ./config.status Macaulay2/emacs/Makefile
 all: M2-init.el
-M2-init.el : M2-init.el.in; cd ../..; ./config.status Macaulay2/emacs/M2-init.el
+M2-init.el: M2-init.el.in; cd ../..; ./config.status Macaulay2/emacs/M2-init.el
 distclean::; rm -rf M2-init.el
 
 # Local Variables:

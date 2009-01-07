@@ -34,8 +34,8 @@ check:: checkit
 #	LD_DEBUG=$(LD_DEBUG) LOADDATA_DEBUG=true; export LD_DEBUG LOADDATA_DEBUG; set -x; ./checkit dump "hi there" && ./checkit load "look!"
 debug1:; gdb --args ./checkit dump "hi there"
 debug2:; gdb --args ./checkit load "look!"
-distclean : clean; rm -f Makefile
-Makefile : Makefile.in; cd ../..; ./config.status Macaulay2/dumpdata/Makefile
+distclean: clean; rm -f Makefile
+Makefile: Makefile.in; cd ../..; ./config.status Macaulay2/dumpdata/Makefile
 check:: testprintmaps; ./$<
 testprintmaps:libdump.a
 clean::; rm -f testprintmaps

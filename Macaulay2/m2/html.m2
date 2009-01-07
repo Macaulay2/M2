@@ -451,7 +451,7 @@ runFile := (inf,inputhash,outf,tmpf,desc,pkg,announcechange,rundir,usermode) -> 
 	  moveFile(tmpf,outf);
 	  return true;
 	  );
-     stderr << tmpf << ":0: (output file) error return code: (" << r//256 << "," << r%256 << ")" << endl;
+     stderr << tmpf << ":0: (output file) error: program exited with return code: (" << r//256 << "," << r%256 << ")" << endl;
      stderr << aftermatch(M2errorRegexp,get tmpf);
      stderr << inf  << ":0: (input file)" << endl;
      scan(statusLines get inf, x -> stderr << x << endl);

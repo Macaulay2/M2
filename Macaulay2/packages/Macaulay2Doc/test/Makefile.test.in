@@ -33,7 +33,7 @@ RESULTS := $(notdir $(patsubst %.m2, %.out, $(TESTFILES))) \
 PAT := 'internal error|:[0-9][0-9]*:[0-9][0-9]*:\([0-9][0-9]*\):|^GC|^0x|^out of mem|non-zero status|^Command terminated|user.*system.*elapsed|^[0-9]+\.[0-9]+user'
 FILTER := egrep -a $(PAT)
 
-check :: $(RESULTS)
+check:: $(RESULTS)
 $(RESULTS) : @pre_exec_prefix@/bin/M2@EXE@
 
 ARGS := --silent --stop -q -e 'path=join(path,{"$(SRCDIR)/","$(SRCDIR)/$(DOTS)/packages/"})'
@@ -41,7 +41,7 @@ ARGS += --no-debug --print-width 140
 # ARGS += -e 'errorDepth=0'
 # ARGS += -e 'gbTrace=5'
 
-status :: $(TESTFILES)
+status:: $(TESTFILES)
 	@ egrep -n '^--status:' $(TESTFILES) /dev/null || true
 
 %.out : %.m2
@@ -70,7 +70,7 @@ status :: $(TESTFILES)
 		     exit $$a ; \
 		fi
 
-review :
+review:
 	@ echo error: `ls *.errors | wc -l` errors occurred
 	@ echo summary of errors:
 	@ for i in *.errors ; \

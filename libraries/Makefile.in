@@ -1,17 +1,12 @@
 VPATH = @srcdir@
 include ../include/config.Makefile
-all check reconfigure untar fetch distclean clean: Makefile.library
-#
 BUILT_TARGETS = untar fetch all check reconfigure
 ALL_TARGETS = $(BUILT_TARGETS) clean distclean
-define do-dir
-.PHONY:$1-$2
-$1-$2:
-	$$(MAKE) -C $1 $2
-endef
-$(foreach lib,@LIBLIST@ libtool M2,$(foreach target, $(ALL_TARGETS),$(eval $(call do-dir,$(lib),$(target)))))
-$(foreach lib,@LIBRARIES@,$(foreach target, $(BUILT_TARGETS),$(eval $(target): $(lib)-$(target))))
-$(foreach lib,@LIBLIST@  ,$(foreach target, distclean clean,$(eval $(target): $(lib)-$(target))))
+$(ALL_TARGETS): Makefile.library
+$(foreach d,@LIBLIST@ libtool M2,$(foreach t, $(ALL_TARGETS),$(eval $t-in-$d:; $$(MAKE) -C $d $t)))
+$(foreach d,@LIBLIST@ libtool M2,$(foreach t, $(ALL_TARGETS),$(eval .PHONY: $t-in-$d)))
+$(foreach d,@LIBRARIES@,$(foreach t, $(BUILT_TARGETS),$(eval $t: $t-in-$d)))
+$(foreach d,@LIBLIST@  ,$(foreach t, distclean clean,$(eval $t: $t-in-$d)))
 ifeq (@SHARED@,yes)
 all:install-shared
 install-shared:
@@ -23,8 +18,7 @@ install-shared:
 	     | @TAR@ xfv - -C @pre_librariesdir@/lib ; \
 	fi
 endif
-Makefile         : Makefile.in         ; cd .. && ./config.status libraries/Makefile
-Makefile.library : Makefile.library.in ; cd .. && ./config.status libraries/Makefile.library
+$(foreach f,Makefile Makefile.library,$(eval $f: $f.in; cd .. && ./config.status libraries/$f))
 clean:; rm -rf final
 distclean:clean ; rm -f Makefile
 # Local Variables:

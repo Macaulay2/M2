@@ -14,7 +14,7 @@ check:
 	makeindex $*.idx
 	mv $*.dvi $*-prelim.dvi
 	cp $*.aux $*.bux
-.PRECIOUS : %.bux
+.PRECIOUS: %.bux
 %.bbl : %.bux
 	cp $*.bux $*.aux
 	bibtex $*
@@ -53,7 +53,7 @@ $(BOOKNAME).tex : ../cache/Macaulay2-doc book.m2 booktex.m2
 	@pre_exec_prefix@/bin/M2@EXE@ -q book.m2 -e 'exit 0'
 	mv M2book.tmp $(BOOKNAME).tex
 
-clean :; rm -rf Macaulay2-*-book.*
+clean:; rm -rf Macaulay2-*-book.*
 
-distclean : clean
+distclean: clean
 	rm -f Makefile

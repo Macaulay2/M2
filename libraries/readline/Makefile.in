@@ -16,11 +16,11 @@ INSTALLTARGET += install-shared
 endif
 
 include ../Makefile.library
-Makefile : @srcdir@/Makefile.in ; cd ../.. && ./config.status libraries/readline/Makefile
+Makefile: @srcdir@/Makefile.in ; cd ../.. && ./config.status libraries/readline/Makefile
 
 PATCHFILES := $(addprefix tarfiles/readline52-,$(PATCHES))
 $(PATCHFILES) :; rm -f $@; cd tarfiles && wget $(PATCHURL)/$(notdir $@)
-fetch : $(PATCHFILES)
+fetch: $(PATCHFILES)
 
 clean::
 	rm -rf $(LIBRARIESDIR)/lib/libhistory.* $(LIBRARIESDIR)/lib/libreadline.* \

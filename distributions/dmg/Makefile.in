@@ -22,8 +22,8 @@ T=@TAR@ --create --mode=a+rX,og-ws --exclude-from=@srcdir@/../tar-exclusions --f
 	hdiutil create -srcfolder files -volname "@package@-@ARCH@-@OS@-@REL@" "$@"
 tidy:; rm -rf files
 clean:: tidy; rm -f "../../$(PKG_DMG)"
-distclean : clean; rm -f Makefile
-Makefile : Makefile.in; cd ../..; ./config.status distributions/dmg/Makefile
+distclean: clean; rm -f Makefile
+Makefile: Makefile.in; cd ../..; ./config.status distributions/dmg/Makefile
 # Local Variables:
 # compile-command: "make -C $M2BUILDDIR/distributions/dmg "
 # End:

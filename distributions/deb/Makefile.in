@@ -6,7 +6,7 @@ TIDY = yes
 CHOWN = chown
 prefixtail=$(shell echo @prefix@ | sed 's,^/,,')
 TAROPTIONS = --owner=0 --group=0 --mode=a+rX,og-ws
-.PHONY : prepare
+.PHONY: prepare
 ############################## main targets
 
 ifeq (@ARCH@,x86_64)
@@ -58,8 +58,8 @@ macaulay2-common/control.tar.gz : macaulay2-common/control macaulay2-common/post
 	@TAR@ cfz $@ $(TAROPTIONS) -C macaulay2-common control postinst prerm
 
 T=@TAR@ --create --mode=a+rX,og-ws --exclude-from=@srcdir@/../tar-exclusions --file=-
-prepare : .prepared
-.prepared : 
+prepare: .prepared
+.prepared: 
 	rm -rf tmp@prefix@ tmp-common@prefix@
 	$(MKDIR_P) tmp@prefix@
 	$(MKDIR_P) tmp-common@prefix@
@@ -88,14 +88,14 @@ macaulay2/md5sums            : prepare; (cd tmp        && @FIND@ * -type f | xar
 macaulay2-common/md5sums     : prepare;	(cd tmp-common && @FIND@ * -type f | xargs md5sum) >$@
 ifneq (@LINTIAN@,)
 SUP = fgrep -v 
-check :
+check:
 	- @LINTIAN@ -I ../../$(PKG_DEB)
 	- @LINTIAN@ -I ../../$(PKG_COM_DEB)
 else
-check :
+check:
 	@echo "install 'lintian' for checking *.deb packages"
 endif
-tidy_before :
+tidy_before:
 	rm -rf .prepared tmp tmp-common
 	rm -rf macaulay2/control.tar.gz macaulay2/data.tar.gz macaulay2/md5sums
 	rm -rf macaulay2-common/control.tar.gz macaulay2-common/data.tar.gz macaulay2-common/md5sums
@@ -103,14 +103,14 @@ tidy tidy_after :
 	rm -rf .prepared tmp tmp-common
 	rm -rf macaulay2/control.tar.gz macaulay2/data.tar.gz macaulay2/md5sums
 	rm -rf macaulay2-common/control.tar.gz macaulay2-common/data.tar.gz macaulay2-common/md5sums
-clean :: tidy
+clean:: tidy
 	rm -rf ../../$(PKG_DEB) ../../$(PKG_COM_DEB)
-libraries-used : .prepared always
+libraries-used: .prepared always
 	ldd tmp@bindir@/M2@EXE@ | sed -e 's/.* => //' -e 's/^	//' -e 's/ .*//' | egrep '^/' >$@ || true
-clean ::; rm -f libraries-used
-packages-used : libraries-used
+clean::; rm -f libraries-used
+packages-used: libraries-used
 	cat libraries-used | while read x ; do @FIND@ /var/lib/dpkg/info -name \*.list | xargs egrep -l "^$$x"; done | sort | uniq | sed -e 's=.*/==' -e 's=\.list$$==' >$@
-clean ::; rm -f packages-used
+clean::; rm -f packages-used
 macaulay2/control : macaulay2/control.prelim macaulay2/data.tar.gz packages-used
 	(cat $< && \
 	 size=`gunzip<macaulay2/data.tar.gz|wc -c` && \
@@ -120,14 +120,14 @@ macaulay2/control : macaulay2/control.prelim macaulay2/data.tar.gz packages-used
 	 cat packages-used | while read x ; do echo -n ", $$x" ; done && \
 	 echo \
 	) >$@
-clean ::; rm -f macaulay2/control
+clean::; rm -f macaulay2/control
 macaulay2-common/control : macaulay2-common/control.prelim macaulay2-common/data.tar.gz
 	(cat $< && \
 	 size=`gunzip<macaulay2-common/data.tar.gz|wc -c` && \
 	 size=`echo $$size | sed 's/^\([0-9][0-9]*\).*/\1/'` && \
 	 echo Installed-Size: $$size \
 	) >$@
-clean ::; rm -f macaulay2-common/control
+clean::; rm -f macaulay2-common/control
 distclean: clean; rm -f Makefile control macaulay2/control.prelim macaulay2-common/control.prelim
 % : %.in; cd ../..; ./config.status distributions/deb/$@
 

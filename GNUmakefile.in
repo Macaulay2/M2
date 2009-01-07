@@ -3,32 +3,27 @@ include include/config.Makefile
 VPATH = @srcdir@
 .PRECIOUS:@srcdir@/configure config.status
 .PHONY:reconfigure-libs reconfigure-all configure-help report-M2-location help scripts
-all:check-make configured check-vars srcdir protect-configs include/config.Makefile include/M2/config.h check-machine all-dirs report-M2-location
-check-make:
-	: '  Use list of GNU "make" features to check whether this version is modern enough (version 3.81 is).  '
-	: '  (The order-only feature is just a proxy.)  '
-	echo "$(.FEATURES)" | grep order-only >/dev/null
+all:check-make configured check-vars srcdir protect-configs configfiles check-machine all-in-subdirs report-M2-location
+configfiles:; $(MAKE) -f Makefile.configfiles
+check-make:; @ echo "$(.FEATURES)" | grep order-only >/dev/null || (echo error: version >= 3.81 of GNU make is required >&2; false)
 configured:include/configuration
 include/configuration: config.status; ./config.status
-check:configured check-dirs
-check-machine:
-	: make sure we are running on the same type of machine we were configured for, roughly
-	[ "@UNAME_INFO@" = "` uname -pmso 2>/dev/null || uname -pms `" ]
-clean:clean-dirs
+check:configured check-in-subdirs
+check-machine:; @[ "@UNAME_INFO@" = "` @UNAME_INFO_COMMAND@ `" ] || (echo "error: reconfiguration required (uname output seems different)" >&2; false)
+distclean:clean distclean-in-subdirs
+	rm -f @CONFIGURED_FILES@ include/M2/config.h include/config.Makefile config.cache config.log configure.options config.status
+	@FIND@ . -type d -empty -not -wholename '*/.svn/*' -delete 
+SUBDIRS = libraries Macaulay2 distributions check-configure
+define do-in-subdirs
+$(foreach d,$(SUBDIRS),$(eval .PHONY: $1-in-subdirs))
+$(foreach d,$(SUBDIRS),$(eval .PHONY $1 $1-in-subdirs:$1-in-$d))
+$(foreach d,$(SUBDIRS),$(eval $1-in-$d:; $$(MAKE) -C $d $1))
+endef
+$(foreach t,all check clean distclean,$(eval $(call do-in-subdirs,$t)))
+clean:
 	rm -f srcdir .link-test srcdir confdefs.h configure.lineno conftest.* include/config.h
 	rm -rf StagingArea conf_*
 	rm -f pre-install.sh post-install.sh normal-install.sh
-distclean:clean distclean-dirs
-	rm -f @CONFIGURED_FILES@ include/M2/config.h include/config.Makefile config.cache config.log configure.options config.status
-	@FIND@ . -type d -empty -not -wholename '*/.svn/*' -delete 
-define do-dirs
-$1-dirs:
-	$$(MAKE) -C libraries $1 $2
-	$$(MAKE) -C Macaulay2 $1 $2
-	$$(MAKE) -C distributions $1 $2
-	$$(MAKE) -C check-configure $1 $2
-endef
-$(foreach t,all check clean distclean,$(eval $(call do-dirs,$t)))
 install:configured normal all; $(MAKE) -C distributions $@
 normal:;$(NORMAL_INSTALL) 
 scripts: pre-install.sh post-install.sh
@@ -36,7 +31,7 @@ MI = $(MAKE) -s --no-print-directory -n install -o all PRE_INSTALL=turn-off POST
 pre-install.sh    : install-scripts.awk ; $(MI) PRE_INSTALL=turn-on |gawk -f $^ >$@
 post-install.sh   : install-scripts.awk ; $(MI) POST_INSTALL=turn-on |gawk -f $^ >$@
 normal-install.sh : install-scripts.awk ; $(MI) NORMAL_INSTALL=turn-on |gawk -f $^ >$@
-GNUmakefile : GNUmakefile.in; ./config.status GNUmakefile
+GNUmakefile: GNUmakefile.in; ./config.status GNUmakefile
 include/config.Makefile: include/config.Makefile.in ; ./config.status include/config.Makefile
 include/M2/config.h: include/M2/config.h.in ./config.status ; ./config.status include/M2/config.h
 @srcdir@/configure : @srcdir@/configure.ac @srcdir@/config/files
@@ -47,13 +42,13 @@ include/M2/config.h: include/M2/config.h.in ./config.status ; ./config.status in
 	@echo '-----------------------------------------------------------------------------'
 	@$(MAKE) status
 	@exit 1
-config.status : @srcdir@/configure
+config.status: @srcdir@/configure
 	@echo '-----------------------------------------------------------------------------'
 	@echo '# error: $@ not there or older than $^'
 	@echo '#  Exiting so you can run $^ the same way you did before.'
 	@$(MAKE) status
 	@exit 1
-status : @srcdir@/configure
+status: @srcdir@/configure
 	@echo '-----------------------------------------------------------------------------'
 	@echo '#  Here is the way you ran $^ before:'
 	@echo '#'
@@ -83,8 +78,8 @@ srcdir: GNUmakefile
 	fi
 	rm -f $@ .link-test
 	echo "@srcdir@/" >$@
-subst : config.status ; ./config.status
-show : config.status ; egrep '^s,' $< | sed -e 's/^s,@\(.*\)@,\(.*\),g/\1=\2/' -e 's/^s,.*]\*\(.*\)\\).*\\2 \(.*\) ,/#define \1 \2/' -e 's/.#_!!_#.//g'
+subst: config.status ; ./config.status
+show: config.status ; egrep '^s,' $< | sed -e 's/^s,@\(.*\)@,\(.*\),g/\1=\2/' -e 's/^s,.*]\*\(.*\)\\).*\\2 \(.*\) ,/#define \1 \2/' -e 's/.#_!!_#.//g'
 CONFIG_FILES = @srcdir@/configure @srcdir@/config/install-sh @srcdir@/config/config.sub @srcdir@/config/config.guess @srcdir@/config/files
 reconfigure: recheck check-vars protect-configs
 recheck: $(CONFIG_FILES)
@@ -97,16 +92,16 @@ check-vars:
 	: "checking for strings that look like unsubstituted configure variables in all *.in files..."
 	@ ! egrep -nH '@[A-Za-z_]+@' $(shell cat @srcdir@/config/files) | sed -e 's=^\([^:]*\):=@srcdir@/\1.in:='  | egrep .
 configure-help: $(CONFIG_FILES) ; @ @srcdir@/configure --help
-relink: ; rm -f @pre_exec_prefix@/bin/M2@EXE@ && $(MAKE) -C Macaulay2/d @pre_exec_prefix@/bin/M2@EXE@
-relink-nostrip: ; rm -f @pre_exec_prefix@/bin/M2@EXE@ && $(MAKE) -C Macaulay2/d STRIP=no @pre_exec_prefix@/bin/M2@EXE@
-reconfigure-all : reconfigure reconfigure-libs 
-reconfigure-libs :; $(MAKE) -C libraries reconfigure
+relink:; rm -f @pre_exec_prefix@/bin/M2@EXE@ && $(MAKE) -C Macaulay2/d @pre_exec_prefix@/bin/M2@EXE@
+relink-nostrip:; rm -f @pre_exec_prefix@/bin/M2@EXE@ && $(MAKE) -C Macaulay2/d STRIP=no @pre_exec_prefix@/bin/M2@EXE@
+reconfigure-all: reconfigure reconfigure-libs 
+reconfigure-libs:; $(MAKE) -C libraries reconfigure
 report-M2-location:
 	: : : : : : : : : : : : : : : : : : : : : : : : : : : : : : : :
 	: Macaulay 2 executable location:
 	:    @pre_bindir@/M2@EXE@
 	: : : : : : : : : : : : : : : : : : : : : : : : : : : : : : : :
-help :
+help:
 	@ echo "Macaulay 2 version @PACKAGE_VERSION@"
 	@ echo ""
 	@ echo "make files configured with:"

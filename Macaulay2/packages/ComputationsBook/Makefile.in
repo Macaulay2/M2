@@ -17,7 +17,7 @@ CHAPTERS = completeIntersections \
 .PHONY: changes
 
 ifneq "@srcdir@" "."
-check :: $(CHAPTERS)
+check:: $(CHAPTERS)
 $(CHAPTERS):; mkdir "$@"
 endif
 

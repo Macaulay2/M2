@@ -2,17 +2,17 @@
 # here we make the files that are needed at top level for ../tar and might be needed for ../install (if --enable-encap)
 include ../../include/config.Makefile
 install all: postinstall preremove INSTALL encapinfo
-Makefile : @srcdir@/Makefile.in; cd ../..; ./config.status distributions/top/Makefile
-postinstall : @srcdir@/postinstall.in; cd ../..; ./config.status distributions/top/postinstall
-preremove : @srcdir@/preremove.in; cd ../..; ./config.status distributions/top/preremove
-INSTALL : @srcdir@/INSTALL.in; cd ../..; ./config.status distributions/top/INSTALL
-distclean : ; rm -rf Makefile
+Makefile: @srcdir@/Makefile.in; cd ../..; ./config.status distributions/top/Makefile
+postinstall: @srcdir@/postinstall.in; cd ../..; ./config.status distributions/top/postinstall
+preremove: @srcdir@/preremove.in; cd ../..; ./config.status distributions/top/preremove
+INSTALL: @srcdir@/INSTALL.in; cd ../..; ./config.status distributions/top/INSTALL
+distclean:; rm -rf Makefile
 # we want to ignore the --datarootdir setting, whatever that means, so here we we mention it: @datarootdir@
 # we want the relative paths here:
 override prefix = PRE
 override exec_prefix = PRE
 RLS = sed 's, PRE/, ,'
-encapinfo : Makefile
+encapinfo: Makefile
 	( \
 	  echo encap 2.0 ;\
 	  echo contact dan@math.uiuc.edu ;\
