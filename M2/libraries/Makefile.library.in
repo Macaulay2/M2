@@ -25,7 +25,7 @@ post-install:
 install: .installed-$(VERSION)
 unconfigure:; rm -f .configured-$(VERSION) .compiled-$(VERSION) .installed-$(VERSION)
 reconfigure: unconfigure .configured-$(VERSION)
-uninstall:: ; rm -f .installed-$(VERSION)
+uninstall::; rm -f .installed-$(VERSION)
 reinstall: uninstall install
 diffs: .untarred-$(VERSION) .untarred2-$(VERSION) ; diff -ur --exclude=configure tmp/$(TARDIR) $(TARDIR) |egrep -v '^Only in ' >$@ || echo diffs: `pwd`/$@
 unmark:; rm -f .configured-$(VERSION) .compiled-$(VERSION)

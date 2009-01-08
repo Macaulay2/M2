@@ -4,15 +4,17 @@ include ../../include/config.Makefile
 VPATH = @srcdir@
 TIDY = yes
 PKG = @PACKAGE_TARNAME@-@PACKAGE_VERSION@-@ARCH@-@OS@-@ISSUE@.tbz
-packinglist: packages-used Makefile
+packinglist: .prepared packages-used
 	echo @name @PACKAGE_TARNAME@-@PACKAGE_VERSION@ >$@
 	echo @srcdir @abs_builddir@/files >>$@
-	(cd files ; find . -type f | sed 's=^\./==' ) >>$@
+	(cd files && find * -type f ) >>$@
+	echo @comment >>$@
 	echo @unexec rm -f %D/@tail_mandir@/man1/M2.1 %D/@tail_mandir@/man1/M2.1.gz >>$@
 	(cd files/@tail_infodir@; for i in *.info ; do \
 		echo   @exec install-info          --quiet --info-dir="%D/@tail_infodir@" "%D/@tail_infodir@/$$i" ; \
 		echo @unexec install-info --remove --quiet --info-dir="%D/@tail_infodir@" "%D/@tail_infodir@/$$i" ; \
 	     done ) >>$@
+	(cd files && @FIND@ @tail_docdir@ @tail_packagesdir@ @tail_libm2dir@ -depth -type d | sed 's/^/@dirrm /') >>$@
 all: chk-opts ../../$(PKG)
 chk-opts:
 	: we check that prefix is /usr/local, in case we are distributing
@@ -48,11 +50,12 @@ T=@TAR@ --create --mode=a+rX,og-ws --exclude-from=@srcdir@/../tar-exclusions --f
 	$(T) -C @pre_exec_prefix@ . | @TAR@ xfp - -C files
 	$(T) -C @pre_prefix@      . | @TAR@ xfp - -C files
 	cd files/@tail_mandir@ && gzip */*.1
+	cd files && find * -type d -empty -exec touch {}/.empty ';'
 	touch $@
 
-libraries-used : .prepared files/bin/M2@EXE@
+libraries-used : files/bin/M2@EXE@
 	ldd files/bin/M2@EXE@ | sed -e 's/.* => //' -e 's/^	//' -e 's/ .*//' | egrep '^/' >$@ || true
-packages-used : libraries-used Makefile
+packages-used : libraries-used
 	cat libraries-used | while read x ; do pkg_info -W "$$x" | sed -e 's=.* was installed by package =='; done >$@
 
 ifeq ($(TIDY),yes)

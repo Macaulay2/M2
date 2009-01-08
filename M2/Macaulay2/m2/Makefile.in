@@ -60,7 +60,7 @@ DUMPEDM2FILES += installedpackages.m2
 initialize:: installedpackages.m2
 installedpackages.m2: installedpackages Makefile
 	exec <$< >$@ ; echo 'Core#"pre-installed packages" = {'; read x ; echo \"$$x\"; while read x ; do echo , \"$$x\" ; done ; echo '}'
-clean:: ; rm -f installedpackages.m2
+clean::; rm -f installedpackages.m2
 OTHERDUMPEDM2FILES += \
 	$(wildcard $(patsubst %, @srcdir@/../packages/%/*.m2, $(INSTALLEDPACKAGES))) \
 	$(wildcard $(patsubst %, @srcdir@/../packages/%.m2  , $(INSTALLEDPACKAGES)))
@@ -138,12 +138,12 @@ clean::; rm -f .gdbinit
 .gdb-files: Makefile
 	echo 'echo -- loading .gdb-files\n' >$@
 	echo 'file @pre_exec_prefix@/bin/M2@EXE@' >>$@
-clean:: ; rm -f .gdb-files
+clean::; rm -f .gdb-files
 .gdb-run-it: Makefile
 	echo 'echo -- loading .gdb-run-it\n' >$@
 	echo 'echo \n' >>$@
 	echo 'run -q --no-loaddata --no-readline --no-personality' >>$@
-clean:: ; rm -f .gdb-run-it
+clean::; rm -f .gdb-run-it
 profile: gmon.out; gprof @pre_exec_prefix@/bin/M2@EXE@ >profile
 clean::; rm -f profile
 @pre_packagesdir@ :; @INSTALL@ -d $@

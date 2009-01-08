@@ -1,40 +1,91 @@
 .TH M2 1 "" "@PACKAGE_TARNAME@-@PACKAGE_VERSION@" "@PACKAGE_NAME@"
 .\" see groff(7) and groff_man(7)
+.\" Mention @datarootdir@
 .SH "NAME"
-M2 - start Macaulay 2, a software system for algebraic geometry research.
-.SH "SYNOPSIS"
+M2 - start \fIMacaulay 2\fP, a software system for algebraic geometry research.
 
-usage:
-    M2 [option ...] [file ...]
+.SH SYNOPSIS
+\fBM2\fP [\fIoption\fP ...] [\fIfile\fP ...]
+.SH DESCRIPTION
+The command \fBM2\fP starts \fIMacaulay 2\fP, which is a software system devoted to supporting research in algebraic geometry and commutative algebra.
 
-options:
-    [\fB\-\-help\fR]             print this brief help message and exit
-    [\fB\-\-no\-backtrace\fR]     print no backtrace after error
-    [\fB\-\-copyright\fR]        display full copyright messasge
-    [\fB\-\-no\-debug\fR]         do not enter debugger upon error
-    [\fB\-\-dumpdata\fR]         read source code, dump data if so configured, exit (no init.m2)
-    [\fB\-\-fullbacktrace\fR]    print full backtrace after error
-    [\fB\-\-no\-loaddata\fR]      don't try to load the dumpdata file
-    [\fB\-\-int\fR]              don't handle interrupts
-    [\fB\-\-notify\fR]           notify when loading files during initialization
-    [\fB\fR]                   and when evaluating command line arguments
-    [\fB\-\-no\-prompts\fR]       print no input prompts
-    [\fB\-\-no\-readline\fR]      don't use readline
-    [\fB\-\-no\-setup\fR]         don't try to load setup.m2 or to loaddata
-    [\fB\-\-no\-personality\fR]   don't set the personality and re-exec M2 (linux only)
-    [\fB\-\-prefix DIR\fR]       set prefixDirectory
-    [\fB\-\-print\-width n\fR]    set printWidth=n (the default is the window width)
-    [\fB\-\-script\fR]           as first argument, interpret second argument as name of a script
-    [\fB\fR]                   implies \-\-stop, \-\-no\-debug, \-\-silent and \-q
-    [\fB\fR]                   see scriptCommandLine
-    [\fB\-\-silent\fR]           no startup banner
-    [\fB\-\-stop\fR]             exit on error
-    [\fB\-\-texmacs\fR]          TeXmacs session mode
-    [\fB\-\-version\fR]          print version number and exit
-    [\fB\-q\fR]                 don't load user's init.m2 file or use packages in home directory
-    [\fB\-E '...'\fR]           evaluate expression '...' before initialization
-    [\fB\-e '...'\fR]           evaluate expression '...' after initialization
-    [\fB\-x\fR]                 example prompts, don't use readline
+.SS Options
+
+.TP
+\fB\-\-help\fR
+print this brief help message and exit
+.TP
+\fB\-\-no\-backtrace\fR
+print no backtrace after error
+.TP
+\fB\-\-copyright\fR
+display full copyright messasge
+.TP
+\fB\-\-no\-debug\fR
+do not enter debugger upon error
+.TP
+\fB\-\-dumpdata\fR
+read source code, dump data if so configured, exit (no init.m2)
+.TP
+\fB\-\-fullbacktrace\fR
+print full backtrace after error
+.TP
+\fB\-\-no\-loaddata\fR
+don't try to load the dumpdata file
+.TP
+\fB\-\-int\fR
+don't handle interrupts
+.TP
+\fB\-\-notify\fR
+notify when loading files during initialization
+and when evaluating command line arguments
+.TP
+\fB\-\-no\-prompts\fR
+print no input prompts
+.TP
+\fB\-\-no\-readline\fR
+don't use readline
+.TP
+\fB\-\-no\-setup\fR
+don't try to load setup.m2 or to loaddata
+.TP
+\fB\-\-no\-personality\fR
+don't set the personality and re-exec M2 (linux only)
+.TP
+\fB\-\-prefix DIR\fR
+set prefixDirectory
+.TP
+\fB\-\-print\-width n\fR
+set printWidth=n (the default is the window width)
+.TP
+\fB\-\-script\fR
+as first argument, interpret second argument as name of a script
+implies \-\-stop, \-\-no\-debug, \-\-silent and \-q
+see scriptCommandLine
+.TP
+\fB\-\-silent\fR
+no startup banner
+.TP
+\fB\-\-stop\fR
+exit on error
+.TP
+\fB\-\-texmacs\fR
+TeXmacs session mode
+.TP
+\fB\-\-version\fR
+print version number and exit
+.TP
+\fB\-q\fR
+don't load user's init.m2 file or use packages in home directory
+.TP
+\fB\-E '...'\fR
+evaluate expression '...' before initialization
+.TP
+\fB\-e '...'\fR
+evaluate expression '...' after initialization
+.TP
+\fB\-x\fR
+example prompts, don't use readline
 
 .\" .SH "DESCRIPTION"
 .\" .SH "OPTIONS"
@@ -43,22 +94,22 @@ options:
 .\" .SH "FOOTNOTES"
 .SH "SEE ALSO"
 
-See also \fIM2-help\fR(1).
+The documentation for \fIMacaulay 2\fP is available locally starting in
+@docdir@/Macaulay2Doc/html/index.html, where ${prefix} is replaced by the directory prefix used when
+the package was installed.  The directory is available as the value of the \fIMacaulay 2\fP variable
+prefixDirectory, but the best way to get to it is to viewHelp in \fIMacaulay 2\fP.
 
-The documentation for Macaulay 2 is available locally starting in
-@docdir@/Macaulay2Doc/html/index.html.
-
-The home page for Macaulay 2 is \fBhttp://www.math.uiuc.edu/Macaulay2/\fR.
+The home page for \fIMacaulay 2\fP is \fBhttp://www.math.uiuc.edu/Macaulay2/\fR.
 
 .SH "AUTHOR"
 
-Macaulay 2 is written by Daniel R. Grayson and Michael E. Stillman
+\fIMacaulay 2\fP is written by Daniel R. Grayson and Michael E. Stillman
 with generous support of the National Science Foundation, for which we
 are grateful.
 
 .SH "COPYRIGHT"
 
-Macaulay 2 is copyright 1993-2007 by Daniel R. Grayson and Michael
+\fIMacaulay 2\fP is copyright 1993-2007 by Daniel R. Grayson and Michael
 E. Stillman.  We permit you to use it under the terms of the GNU
 General Public License, version 2, as published by the Free Software
 Foundation.  This is free software.  There is no warranty; not even
@@ -66,5 +117,6 @@ for merchantability or fitness for a particular purpose.
 
 .\" -- Local Variables:
 .\" -- mode: nroff
+.\" -- compile-command: "make -C $M2BUILDDIR/Macaulay2/man view"
 .\" -- fill-column: 100
 .\" -- End:
