@@ -483,12 +483,12 @@ runString := (x,pkg,rundir,usermode) -> (
 check = method(Options => {
 	  UserMode => true	  
 	  })
-prep = pkg -> (
+prep := pkg -> (
      use pkg;
      if pkg#?"documentation not loaded" then pkg = loadPackage(pkg#"title", LoadDocumentation => true);
      hadExampleError = false;
      numExampleErrors = 0;
-     )
+     pkg)
 onecheck = (seqno,pkg,usermode) -> (
      (filename,lineno,s) := pkg#"test inputs"#seqno;
      stderr << "--running test " << seqno << " of package " << pkg << " on line " << lineno << " in file " << filename << endl;
@@ -496,13 +496,13 @@ onecheck = (seqno,pkg,usermode) -> (
      runString(s,pkg,".",usermode);
      )
 check(ZZ,Package) := opts -> (seqno,pkg) -> (
-     prep pkg;
+     pkg = prep pkg;
      onecheck(seqno,pkg,opts.UserMode);
      if hadExampleError then error("error occurred running test for package ", toString pkg, ": ", toString seqno);
      )
 check(ZZ,String) := opts -> (seqno,pkg) -> check(seqno, needsPackage (pkg, LoadDocumentation => true), opts)
 check Package := opts -> pkg -> (
-     prep pkg;
+     pkg = prep pkg;
      scan(keys pkg#"test inputs", seqno -> onecheck(seqno,pkg,opts.UserMode));
      if hadExampleError then error(toString numExampleErrors, " error(s) occurred running tests for package ", toString pkg);
      )
@@ -737,8 +737,9 @@ installPackage Package := opts -> pkg -> (
 		    inputhash := hash inputs;
 	  	    possiblyCache := () -> (
 			 if opts.CacheExampleOutput or (options pkg).CacheExampleOutput === true 
-			 then if not fileExists outf' or fileExists outf' and fileTime outf > fileTime outf' 
+			 and not fileExists outf' or fileExists outf' and fileTime outf > fileTime outf' 
 			 then (
+			      if verbose then stderr << "--caching example output for " << fkey << " in " << outf' << endl;
 			      if not isDirectory exampleDir' then makeDirectory exampleDir';
 			      copyFile(outf,outf',Verbose=>true);
 			      ));

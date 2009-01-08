@@ -3,23 +3,25 @@
 VPATH = @srcdir@
 include ../include/config.Makefile
 all: initialize-in-subdirs @pre_docdir@/COPYING @pre_docdir@/README @pre_docdir@/LAYOUT
-DIRS = e d
-$(foreach d,$(DIRS),$(eval initialize-in-$d:; $$(MAKE) -C $d initialize DEPENDS=no))
-$(foreach d,$(DIRS),$(eval .PHONY initialize-in-subdirs:initialize-in-$d))
-$(foreach d,$(DIRS),$(eval .PHONY: initialize-in-subdirs))
+$(foreach d,d e,							\
+	$(eval initialize-in-$d:; $$(MAKE) -C $d initialize DEPENDS=no)	\
+	$(eval .PHONY initialize-in-subdirs:initialize-in-$d)		\
+	$(eval .PHONY: initialize-in-subdirs))
 SUBDIRS = compat util html-check-links probe regex c 
 ifeq "@DUMPDATA@" "yes"
 SUBDIRS += dumpdata
 endif
 SUBDIRS += e d m2 emacs man packages tests packages/Macaulay2Doc/basictests packages/Macaulay2Doc/test book
 define do-in-subdirs
-$(foreach d,$(SUBDIRS),$(eval .PHONY: $1-in-subdirs))
-$(foreach d,$(SUBDIRS),$(eval .PHONY $1 $1-in-subdirs:$1-in-$d))
-$(foreach d,$(SUBDIRS),$(eval $1-in-$d:; $$(MAKE) -C $d $1 $2))
+$(foreach d,$(SUBDIRS),
+	$(eval .PHONY: $1-in-subdirs)
+	$(eval .PHONY $1 $1-in-subdirs:$1-in-$d)
+	$(eval $1-in-$d:; $$(MAKE) -C $d $1 $2))
 endef
-$(foreach t,all,$(eval $(call do-in-subdirs,$t)))
-$(foreach t,check,$(eval $(call do-in-subdirs,$t,-k)))
-$(foreach t,clean distclean,$(eval $(call do-in-subdirs,$t,DEPENDS=no)))
+$(foreach t,all check,				\
+	$(eval $(call do-in-subdirs,$t)))
+$(foreach t,clean distclean,				\
+	$(eval $(call do-in-subdirs,$t,DEPENDS=no)))
 @pre_docdir@:; $(MKDIR_P) "$@"
 @pre_docdir@/% : % | @pre_docdir@ ; @INSTALL_DATA@ $< "$@"
 Makefile: Makefile.in; cd ..; ./config.status Macaulay2/Makefile

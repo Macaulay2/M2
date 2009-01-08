@@ -230,9 +230,13 @@ document {
 			 in another visible package."
 			 },
 		    LI {
-			 "Homomorphisms of modules over different rings with respect to a ring homomorphism
-			 between them, are now supported.  Composition, coimage (replacing pushForward1), and kernel work.
-			 An option has been added to ", TO "basis", " to ask it to return such a homomorphism."
+			 "Homomorphisms (maps) of modules over different rings with respect to a ring homomorphism
+			 between them are now supported.  Composition, coimage (replacing pushForward1), and kernel work.
+			 An option has been added to ", TO "basis", " to ask it to return such a homomorphism.  See ",
+			 TO (map,Module,Module,RingMap,Matrix), ", ",
+		    	 TO (map,Module,Nothing,RingMap,Matrix), ", ",
+		    	 TO (map,Module,RingMap), ", and ",
+		    	 TO (map,Ring,Ring,RingMap), "."
 			 },
 		    LI {
 			 "The function ", TO "basis", " will now check finite dimensionality in advance, to avoid running out of memory."

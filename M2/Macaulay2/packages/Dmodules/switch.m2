@@ -22,12 +22,13 @@ getDtrace = () -> INFOLEVEL
 -- format: pInfo(min_level, Thing)
 pInfo = method();
 pInfo(ZZ, Thing) := (minLevel, s) -> (
-     if minLevel <= getDtrace() then print s 
+     if minLevel <= getDtrace() then print s ;
+     << flush;
      ); 
 pInfo(ZZ, List) := (minLevel, l) -> (
      if minLevel <= getDtrace() then (
 	  scan(l, u-><<u); 
-     	  << endl;
+     	  << endl << flush;
 	  )
      ); 
 ----------------------------------------------------------------------------------

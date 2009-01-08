@@ -15,7 +15,7 @@ document {
 	  BaseFunction => check,
 	  Inputs => {
 	       "P" => {ofClass {Package, String}},
-	       UserMode => Boolean => { "whether the M2 processes started to run the tessts will ignore packages installed in the user's 
+	       UserMode => Boolean => { "whether the M2 processes started to run the tests will ignore packages installed in the user's 
 	       	    ", TO2{"applicationDirectory", "application directory"}, "."
 		    }
 	       },
@@ -61,5 +61,12 @@ check LLLBases///,
 	       },
 	  PRE///check "LLLBases"///,
 	  ),
+     Caveat => { "Currently, if the package was only partially loaded because the documentation was
+	  obtainable from a database (see ", TO "beginDocumentation", "), then the package will be reloaded,
+	  this time completely, to ensure that all tests are considered; this may affect user objects
+	  of types declared by the package, as they may be not usable by the new instance of the 
+	  package.  In a future version, either the tests and the documentation will both be cached, 
+	  or neither will."
+	  },
      SeeAlso => {"packages", installPackage, loadPackage}
      }
