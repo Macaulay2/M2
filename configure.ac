@@ -91,11 +91,11 @@ then AC_MSG_RESULT(yes)
 else AC_MSG_ERROR("$TAR: GNU tar is required")
 fi
 
-AC_MSG_CHECKING(whether $FIND is GNU find)
-if "$FIND" --version | head -1 | grep "GNU find" >/dev/null 2>&1
-then AC_MSG_RESULT(yes)
-else AC_MSG_ERROR("$FIND: GNU find is required")
-fi
+dnl AC_MSG_CHECKING(whether $FIND is GNU find)
+dnl if "$FIND" --version | head -1 | grep "GNU find" >/dev/null 2>&1
+dnl then AC_MSG_RESULT(yes)
+dnl else AC_MSG_ERROR("$FIND: GNU find is required")
+dnl fi
 
 AC_SUBST(NODENAME,"`uname -n`")
 AC_DEFINE_UNQUOTED(NODENAME,"$NODENAME",hostname used for compilation)
