@@ -14,6 +14,9 @@
 void *trapaddr = (void *)1;
 int trapcount = 0;
 int trapset = 0;
+
+void trap(void) {}		/* I used to be concerned that this function would get optimized away, but it isn't static ... */
+
 void *pointers[10];		/* during debugging we can put pointers here, visible to the garbage collector */
 void trapchk(void *p) { 
      trapcount++;

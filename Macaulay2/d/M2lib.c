@@ -29,8 +29,6 @@ extern int libfac_interruptflag; /* extracted from libfac's factor.h */
 /* char *config_args[] = { CONFIG_ARGS 0 }; */
 const char *config_args = CONFIG_ARGS ;
 
-void trap(void) {}		/* we don't put it in debug.c, or it will get optimized away! */
-
 #if !defined(PROFILING)
 #error PROFILING not defined
 #endif

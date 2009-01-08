@@ -40,7 +40,7 @@ run-overflow-test : overflow-test
 	./$^ add 2>/dev/null || echo test succeeded
 	touch $@
 clean :: ; rm -f run-overflow-test
-pi overflow-test : overflow.o
+pi overflow-test : overflow.o ../d/debug.o
 clean :: ; rm -f overflow-test
 pi : pi.h
 
