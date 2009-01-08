@@ -35,3 +35,30 @@ profile64 :
 		--enable-build-libraries="gc gdbm gmp mpfr readline ntl factory libfac" \
 		--enable-frobby
 
+# These are for use on linux/ubuntu
+
+opt :
+	mkdir -p opt
+	cd opt
+	../../../configure \
+		--prefix="`pwd`/installed" \
+		--enable-tarfile \
+		--enable-build-libraries="gc gdbm gmp mpfr readline ntl factory libfac lapack" \
+		--enable-frobby
+
+debug :
+	mkdir -p debug
+	cd debug; ../../../configure \
+		--prefix="`pwd`/installed" \
+		--enable-debug \
+		--disable-optimize \
+		--enable-build-libraries="gc gdbm gmp mpfr readline ntl factory libfac lapack" \
+		--enable-frobby
+
+profile :
+	mkdir -p profile
+	cd profile; ../../../configure \
+		--prefix="`pwd`/installed" \
+		--enable-profile \
+		--enable-build-libraries="gc gdbm gmp mpfr readline ntl factory libfac lapack" \
+		--enable-frobby
