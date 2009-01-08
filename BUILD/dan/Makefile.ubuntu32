@@ -1,13 +1,18 @@
-#-*- Makefile -*-
+# -*- Makefile -*-
 # BUILDOPTIONS += RemakeAllDocumentation=true RemakePackages=true
 # BUILDOPTIONS += RerunExamples=true
 # PACKAGES = Macaulay2Doc
 # BUILDOPTIONS += -s
 # INSTALLOPTIONS += -s
 # CONFIGOPTIONS += --enable-tarfile
-# CONFIGOPTIONS += --enable-deb
+CONFIGOPTIONS += --enable-deb
 INSTALLOPTIONS += prefix=/usr/local/encap
+ifeq ($(DEBUG),yes)
+CONFIGOPTIONS += --enable-debug
+DIRECTORY = ubuntu32.debug
+else
 DIRECTORY = ubuntu32
+endif
 include Makefile.include
 pre-install:;	rm -rf /usr/local/encap/Macaulay2-$(PACKAGE_VERSION)
 arch-chk:

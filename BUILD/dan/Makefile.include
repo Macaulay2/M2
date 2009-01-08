@@ -1,18 +1,25 @@
 # -*- Makefile -*-
 default:
+ifneq ($(DIRECTORY),none)
 ifneq ($(DIRECTORY),)
 include builds/$(DIRECTORY)/include/configuration
 else
-$(error DIRECTORY variable unset)
+$(warning DIRECTORY variable unset)
+endif
 endif
 .PHONY : everything world configure all install check-links distclean clean arch-chk install-it rebuild-world default
 all:; $(MAKE) -C builds/$(DIRECTORY) $@ $(BUILDOPTIONS)
+clean:; $(MAKE) -C builds/$(DIRECTORY) $@
 arch-chk:
 everything:; $(MAKE) -C builds/$(DIRECTORY) all RemakeAllDocumentation=true RemakePackages=true
 check-links:; $(MAKE) -C builds/$(DIRECTORY)/Macaulay2/html-check-links check
 check:; $(MAKE) -C builds/$(DIRECTORY) -k $@
 configure builds/$(DIRECTORY)/include/configuration:../../configure; mkdir -p builds/$(DIRECTORY) && (D=`pwd`; cd builds/$(DIRECTORY) && $$D/../../configure $(CONFIGOPTIONS))
-default: arch-chk all install check-links
+default: arch-chk all
+ifneq ($(DEBUG),yes)
+default: install
+endif
+default: check-links
 distclean: distclean1 distclean2
 distclean1:; $(MAKE) -C builds/$(DIRECTORY) distclean
 distclean2:; find builds/$(DIRECTORY) -type f | sed 's/^/=== /'
@@ -23,6 +30,13 @@ rebuild-world: arch-chk distclean configure everything install check
 world: arch-chk configure all install check
 check-info:; $(MAKE) -C builds/$(DIRECTORY)/Macaulay2/packages $@
 ../../configure :; $(MAKE) -C ../..
+find-M2:
+	: : : : : : : : : : : : : : : : : : M2s : : : : : : : : : : : : : : 
+	@for i in `pwd`/builds/*/StagingArea/*/bin/M2 ; do echo $$i ; done
+	: : : : : : : : : : : : : : : : : : : : : : : : : : : : : : : : : : 
 CONFIGOPTIONS += --enable-encap
 CONFIGOPTIONS += --enable-common-staging-area
 CONFIGOPTIONS += --prefix=/usr
+# Local Variables:
+# compile-command: "time make -f Makefile.include find-M2 DIRECTORY=none"
+# End:

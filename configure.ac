@@ -1,4 +1,3 @@
-dnl -*- autoconf -*-
 AC_INIT(Macaulay 2, 1.1.1, Macaulay2@math.uiuc.edu, Macaulay2)
 AC_CONFIG_HEADERS(include/M2/config.h)
 AC_CONFIG_FILES(m4_include(config/files))
@@ -1132,6 +1131,6 @@ AC_SUBST(pre_packagecachecoredir,$pre_libm2dir/Core/cache)
 AC_OUTPUT()
 
 dnl Local Variables:
-dnl mode: sh
+dnl mode: autoconf
 dnl compile-command: "make -f Makefile"
 dnl End:

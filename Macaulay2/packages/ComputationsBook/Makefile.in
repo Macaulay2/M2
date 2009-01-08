@@ -1,47 +1,20 @@
 # @configure_input@
 include ../../../include/config.Makefile
 VPATH = @srcdir@
-CHAPTERS = completeIntersections \
-	   constructions \
-	   d-modules \
-	   exterior-algebra \
-	   geometry \
-	   monomialIdeals \
-	   preface \
-	   programming \
-	   schemes \
-	   solving \
-	   toricHilbertScheme \
-	   varieties
-
-.PHONY: changes
-
-ifneq "@srcdir@" "."
-check:: $(CHAPTERS)
-$(CHAPTERS):; mkdir "$@"
-endif
-
-ifeq (,$(findstring k,$(word 1,$(MAKEFLAGS))))
-EXIT = || exit 1
-else
-EXIT = 
-endif
-
+CHAPTERS = completeIntersections constructions d-modules exterior-algebra geometry \
+	   monomialIdeals preface programming schemes solving toricHilbertScheme varieties
+.PHONY: changes capture
 all: check
-
-check capture changes :: Makefile.chapter
-$(foreach d,$(CHAPTERS),$(eval capture check ::; $(MAKE) -C ${d} -I .. $$@))
-$(foreach i,$(CHAPTERS),$(eval changes::; diff -u @srcdir@/${i}/chapter.m2 @srcdir@/${i}/test.m2 ; diff -u @srcdir@/${i}/chapter.out.expected @srcdir@/${i}/test.out.expected))
-
-clean::
-	rm -f */*.trim */*.out programming/foo */*.tmp
-
+$(CHAPTERS):; $(MKDIR_P) "$@"
+check capture changes :: Makefile.chapter $(CHAPTERS)
+$(foreach d,$(CHAPTERS),											\
+	$(eval capture check ::; $(MAKE) -C $d -I .. $$@)							\
+	$(eval changes::; diff -u @srcdir@/$d/chapter.m2 @srcdir@/$d/test.m2 || true)				\
+	$(eval changes::; diff -u @srcdir@/$d/chapter.out.expected @srcdir@/$d/test.out.expected || true))
+clean:; rm -f */*.trim */*.out programming/foo */*.tmp
 Makefile: Makefile.in; cd ../../..; ./config.status Macaulay2/packages/ComputationsBook/Makefile
 Makefile.chapter: Makefile.chapter.in; cd ../../..; ./config.status Macaulay2/packages/ComputationsBook/Makefile.chapter
-
-distclean::clean
-distclean::; rm -f Makefile
-
+distclean:clean; rm -f Makefile
 # Local Variables:
 # compile-command: "make -C $M2BUILDDIR/Macaulay2/packages/ComputationsBook "
 # End:

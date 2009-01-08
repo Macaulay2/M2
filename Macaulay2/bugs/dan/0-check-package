@@ -1,4 +1,4 @@
-fix this!
+fixed
 
     i1 : loadPackage "HyperplaneArrangements"
 

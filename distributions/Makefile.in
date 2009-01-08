@@ -1,43 +1,44 @@
 # @configure_input@
 include ../include/config.Makefile
 VPATH = @srcdir@
-
 all:
-	$(MAKE) -C top $@
+.PHONY: all
+$(foreach d,top tar deb freebsd rpm dmg cygwin,	\
+	$(eval .PHONY: all-in-$d)		\
+	$(eval all-in-$d:; $(MAKE) -C $d all))
 ifeq "@M2TARFILE@" "yes"
-	$(MAKE) -C tar all
+all: all-in-tar
 endif
 ifeq "@DEB@" "yes"
-	$(MAKE) -C deb all
+all: all-in-deb
+check: check-in-deb
+check-in-deb:; $(MAKE) -C deb check
 endif
 ifeq "@FREEBSD@" "yes"
-	$(MAKE) -C freebsd all
+all: all-in-freebsd
 endif
 ifeq "@RPM@" "yes"
-	$(MAKE) -C rpm all
+all: all-in-rpm
 endif
 ifeq "@DMG@" "yes"
-	$(MAKE) -C dmg all
+all: all-in-dmg
 endif
 ifeq "@CYGWIN@" "yes"
-	$(MAKE) -C cygwin all
+all: all-in-cygwin
 endif
-
-install:
-	$(MAKE) -C top $@
-	$(MAKE) -C install $@
-
-check:
-	$(MAKE) -C deb $@
-clean distclean:
-	$(MAKE) -C dmg $@
-	$(MAKE) -C rpm $@
-	$(MAKE) -C deb $@
-	$(MAKE) -C freebsd $@
-	$(MAKE) -C cygwin $@
-	$(MAKE) -C tar $@
-	$(MAKE) -C top $@
-	$(MAKE) -C install $@
+$(foreach t,clean distclean,						\
+   $(foreach d,dmg rpm deb freebsd cygwin tar top install, $(eval	\
+      .PHONY: $t $t-in-$d						\
+						          )$(eval	\
+      $t: $t-in-$d							\
+						          )$(eval	\
+      $t-in-$d:; $(MAKE) -C $d $t					\
+						)))
+$(foreach t,install,					\
+	$(foreach d,top install,			\
+		$(eval .PHONY: $t $t-in-$d)		\
+		$(eval $t: $t-in-$d)			\
+		$(eval $t-in-$d:; $(MAKE) -C $d $t)))
 Makefile: Makefile.in; cd ..; ./config.status distributions/Makefile
 # Local Variables:
 # compile-command: "make -C $M2BUILDDIR/distributions "

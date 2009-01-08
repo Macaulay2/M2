@@ -1,0 +1,17 @@
+Mike, pushForward1 has been supplanted by coimage, but pushForward1 had many
+options, no longer available.  Is that a problem?
+
+i1 : options pushForward1
+
+o1 = OptionTable{BasisElementLimit => infinity     }
+                 DegreeLimit => {}
+                 MonomialOrder => EliminationOrder
+                 PairLimit => infinity
+                 StopBeforeComputation => false
+                 StopWithMinimalGenerators => false
+                 Strategy => NonLinear
+                 UseHilbertFunction => true
+
+o1 : OptionTable
+
+i3 : options coimage
