@@ -25,3 +25,13 @@ debug64 :
 		--enable-build-libraries="gc gdbm gmp mpfr readline ntl factory libfac" \
 		--enable-frobby
 
+profile64 :
+	mkdir -p profile64
+	cd profile64; ../../../configure \
+		--prefix="`pwd`/installed" \
+		CC="gcc -m64" CXX="g++ -m64" \
+		--build=x86_64-apple-darwin \
+		--enable-profile \
+		--enable-build-libraries="gc gdbm gmp mpfr readline ntl factory libfac" \
+		--enable-frobby
+
