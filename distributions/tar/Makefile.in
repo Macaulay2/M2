@@ -14,7 +14,11 @@ CG=$(C).gz
 CJ=$(C).bz2
 all: chk-opts tarballs 
 install:
-chk-opts::; [ "${prefix}" = /usr -a @DEBUG@ = no -a @OPTIMIZE@ = yes -a @STRIP@ = yes ]
+chk-opts: check-prefix-is-slash-usr check-debug-disabled check-optimize-enabled check-strip-enabled
+check-prefix-is-slash-usr:; [ "${prefix}" = /usr ]
+check-debug-disabled:; [ @DEBUG@ = no ]
+check-optimize-enabled:; [ @OPTIMIZE@ = yes ]
+check-strip-enabled:; [ @STRIP@ = yes ]
 tarballs:: tarballs.@COMPRESS@
 src: $(D)$(SZ)
 src.gz: $(D)$(SZ)

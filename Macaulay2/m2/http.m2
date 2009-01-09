@@ -1,12 +1,13 @@
 --		Copyright 1996 by Daniel R. Grayson
 
 getWWW = method()
+httpProduct := concatenate("Macaulay2/", version#"VERSION")
 
 GET := (host,url,connection) -> (
      connection = 
      openInOut connection
-     << "GET " << url << " HTTP/1.0" << endl
-     << "User-Agent: Macaulay2" << endl
+     << "GET " << url << " HTTP/1.1" << endl
+     << "User-Agent: " << httpProduct << endl
      << "Host: " << host << endl
      << endl << flush;
      first( get connection, close connection )
@@ -15,8 +16,8 @@ GET := (host,url,connection) -> (
 POST := (host,url,body,connection) -> (
      connection = 
      openInOut connection
-     << "POST " << url << " HTTP/1.0" << endl
-     << "User-Agent: Macaulay2" << endl
+     << "POST " << url << " HTTP/1.1" << endl
+     << "User-Agent: " << httpProduct << endl
      << "Host: " << host << endl
      << "Content-type: application/x-www-form-urlencoded" << endl
      << "Content-length: " << # body << endl << endl
@@ -63,13 +64,14 @@ getWWW (String,Nothing) := (url,body) -> (
 
 httpHeaders = method()
 httpHeaders String := s -> concatenate(
-///HTTP/1.1 200 OK
-Server: Macaulay 2, version ///, version#"VERSION", ///
+-- for documentation of http protocol see http://www.w3.org/Protocols/rfc2616/rfc2616.html
+"HTTP/1.1 200 OK
+Server: ", httpProduct, "
 Connection: close
-Content-Length: ///, toString length s, ///
+Content-Length: ", toString length s, "
 Content-type: text/html; charset=utf-8
 
-///, s)
+", s)
 
 -----------------------------------------------------------------------------
 

@@ -1,0 +1,29 @@
+tex isn't getting formatted: we need a method for net(TEX), or ??
+
+also, we should document which tex features are available, and show examples in SimpleDoc
+
+can we restrict the use of ^ and _ to math mode?
+
+There must be a way to do \rm in a nested way:
+
+i30 : html TEX "$ x^2 { \\rm abc } y^2$ cde"
+
+o30 = <i> x<sup>2</sup> abc  y<sup>2</sup></i> cde
+
+
+    i36 : help "FourTiTwo"
+
+    o36 = FourTiTwo -- Interface for 4ti2
+	  *******************************
+
+
+
+	  Description
+	  ===========
+
+	  Interfaces most of the functionality of the software {\tt 4ti2} available at  {\tt http://www.4ti2.de/}. (The user needs to have 4ti2 installed on
+	  his/her machine.)
+
+	  A {\tt d\times n} integral matrix {\tt A} (with nonnegative entries) specifies a map from a polynomial ring in d variables to a polynomial ring with n
+	  variables by specifying exponents of the variables indexing its columns. For example, if {\tt A} is a matrix <br> 3 2 1 0<br> 0 1 2 3<br> the map from
+	  {\tt k[s,t]} to {\tt k[a,b,c,d]} is given by <br> {\tt (s,t)-> (s^3, s^2t,st^2,t^3)}. <br>
