@@ -112,12 +112,12 @@ html TO   := x -> (
 	       stderr << "--warning: tag cited also declared as undocumented: " << tag << endl;
 	       warning();
 	       );
-	  concatenate( "<tt>", r, "</tt>", if x#?1 then x#1, " (missing documentation <!-- tag: ",toString DocumentTag.Key tag," -->)")
+	  concatenate( "<tt>", r, "</tt>", if x#?1 then x#1, " (missing documentation<!-- tag: ",toString DocumentTag.Key tag," -->)")
 	  )
      else if d === null					    -- isMissingDoc
      then (
 	  warning "missing documentation";
-	  concatenate( "<tt>", r, "</tt>", if x#?1 then x#1, " (missing documentation <!-- tag: ",toString DocumentTag.Key tag," -->)")
+	  concatenate( "<tt>", r, "</tt>", if x#?1 then x#1, " (missing documentation<!-- tag: ",toString DocumentTag.Key tag," -->)")
 	  )
      else concatenate( "<a href=\"", toURL htmlFilename toFinalDocumentTag getPrimary x#0, "\" title=\"", headline x#0, "\">", r, "</a>", if x#?1 then x#1))
 html TO2  := x -> (
@@ -129,12 +129,12 @@ html TO2  := x -> (
 	       stderr << "--warning: tag cited also declared as undocumented: " << tag << endl;
 	       warning();
 	       );
-	  concatenate("<tt>", htmlLiteral x#1, "</tt> (missing documentation <!-- tag: ",DocumentTag.FormattedKey tag," -->)")
+	  concatenate("<tt>", htmlLiteral x#1, "</tt> (missing documentation<!-- tag: ",DocumentTag.FormattedKey tag," -->)")
 	  )
      else if d === null					    -- isMissingDoc
      then (
 	  warning "missing documentation";
-	  concatenate("<tt>", htmlLiteral x#1, "</tt> (missing documentation <!-- tag: ",DocumentTag.FormattedKey tag," -->)"))
+	  concatenate("<tt>", htmlLiteral x#1, "</tt> (missing documentation<!-- tag: ",DocumentTag.FormattedKey tag," -->)"))
      else concatenate("<a href=\"", toURL htmlFilename toFinalDocumentTag getPrimary x#0, "\">", htmlLiteral x#1, "</a>"))
 
 next := tag -> ( if NEXT#?tag then HREF { htmlFilename NEXT#tag, nextButton } else nextButton, " | ")
