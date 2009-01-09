@@ -5,8 +5,7 @@
 
 opt64 :
 	mkdir -p opt64
-	cd opt64
-	../../../configure \
+	cd opt64; ../../../configure \
 		--prefix="`pwd`/installed" \
 		CC="gcc -m64" CXX="g++ -m64" \
 		--build=x86_64-apple-darwin \
@@ -39,8 +38,7 @@ profile64 :
 
 opt :
 	mkdir -p opt
-	cd opt
-	../../../configure \
+	cd opt;	../../../configure \
 		--prefix="`pwd`/installed" \
 		--enable-tarfile \
 		--enable-build-libraries="gc gdbm gmp mpfr readline ntl factory libfac lapack" \
