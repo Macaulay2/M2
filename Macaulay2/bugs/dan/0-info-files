@@ -1,12 +1,4 @@
-links don't quite work:
-
-  - in a package Foo, links to Foo should be redirected to Top
-
-  - in the node for Ideal, the link to "content" is broken,
-    probably because it's redirected to "content_lpRingElement_rp".
-    It needs to be a more complex link.
-
---
+defer this:
 
 This kind of menu item goes to a line number in a node:
 
