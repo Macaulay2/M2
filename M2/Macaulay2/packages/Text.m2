@@ -491,23 +491,55 @@ document {
      Usage => "html t",
      Inputs => { "t" },
      Outputs => { {"a string containing the result of converting ", TT "t", " to html"} },
-     "This method handles conversion to html, but only for a limited subset of TeX,
-     but nevertheless, it can be useful in documentation nodes.",
-     EXAMPLE {
-	  "TEX ///A formula: $a \\times \\ {b\\over c^3}$///",
-	  ///html oo///
-	  }
+     "This method handles conversion to html, but only for a limited subset of TeX.
+     Nevertheless, it can be useful in documentation nodes.  It is useful to use
+     strings delimited by ", TO "///", ", because in strings delimited by ", TO "\"", ",
+     the backslashes often used in TeX must be doubled.",
+     (
+	  a := ///TEX ////A formula: $a \times \ {b\over c^3}$/////////;
+     	  EXAMPLE {a, "html oo" }
+	  ),
+     PARA {
+     	  "Here is the way the TeX above appears if used in documentation: ", value a, "."
+	  },
+     PARA {
+	  "Here are some examples designed to illustrate each feature of TeX we've implemented."
+	  },
+     UL apply({
+	       ///TEX ////A formula: $a\times \ {b\over c^3}$/////////,
+	       ///TEX ////A ``formula'' {\bf can be} `printed'. /////////,
+	       ///TEX ////A formula, $$\{x_1^2,\dots,x_n^2\},$$ can be displayed./////////,
+	       ///TEX ////Matrices can be displayed if there is only one of them in the string: $$\begin{pmatrix}3&4&x^2+1\\5&6&7\end{pmatrix}.$$/////////,
+	       ///TEX ////${\mathbf a+b+c} \in {\mathbb R}, {\mathcal 1234}, 1234$/////////,
+	       ///TEX ////{\tt res(Module)} is the {\cal method} for {\em making} {\it resolutions}./////////,
+	       ///TEX ////\url{http://www.math.uiuc.edu/Macaulay2/}/////////,
+	       ///TEX ////$\frac x4 + \frac{x^2+1}{y+3} + {3\over 4}$/////////,
+	       ///TEX ////$R^\times, x_{i,j}$/////////,
+	       ///TEX ////\"a \"o \"u \# \& \'e $x\,\,\,y$ \^a \^e \`e \NN \QQ \RR \ZZ \PP \Gamma \Lambda \Omega \Psi \Theta \aleph \alpha/////////,
+	       ///TEX ////\backslash \beta \beth \bullet \cap \cdots a \cong b \cos x + a \cup b, \daleth \delta \ell \emptyset/////////,
+	       ///TEX ////\epsilon \equiv \exists \forall \gamma \ge \gimel \ge \infty \in \int x \lambda \ldots \leftarrow a \le b \leq c/////////,
+	       ///TEX ////$4 < 5 < 6 > 3 > 2, \mu \mapsto \mu^2, \{x \mid x \in \ZZ, x \ne 0, x \cong{} 3 \mod\ 11\}$/////////,
+	       ///TEX ////\par 1 2\break 3 4 5\break 6 7 \nu \omega \oplus \otimes \partial \phi \break \pi x\prime/////////,
+	       ///TEX ////\prod_{i \in \ZZ} x_i/////////,
+	       ///TEX ////$\psi + \rho \rightarrow A\setminus B, \sigma, \sin 1.1, A \subset B, C \subseteq D, E \supset F, G \supseteq H$/////////,
+	       ///TEX ////\sum_{i=1}^n y_i/////////,
+	       ///TEX ////\tau{} + \theta{} \to{} x \wedge{} \wp{} + \xi{} - \lbrace\zeta\rbrace/////////
+	       },
+	  s -> LI { PARA {TT s}, PARA { EM "will display as" }, PARA {value s} }
+	  ),
      }
 
 document {
      Key => TEX,
      Headline => "hypertext TEX item",
      Usage => "TEX x",
-     Inputs => {"x" => {}},
-     Outputs => {TEX => {}},
+     Inputs => {"x"},
+     Outputs => {TEX},
      TT "TEX s", " includes the string ", TT "s", ", presumably
      containing TeX commands, in the TeX version of the documentation
-     containing this ", TO "hypertext", " item."
+     containing this ", TO "hypertext", " item.  The main benefit of this is that in the HTML
+     and TeX versions of the documentation, good typesetting can done.  For details on the conversions
+     to HTML that are currently implemented, see ", TO (html, TEX), "."
      }
 
 document {

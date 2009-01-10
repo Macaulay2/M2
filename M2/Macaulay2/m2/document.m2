@@ -686,10 +686,12 @@ getExampleInputs Sequence    :=
 getExampleInputs Hypertext   := t -> apply(toSequence t, getExampleInputs)
 getExampleInputs ExampleItem := t -> 1 : t#0
 
-examples = x -> (
+examples = method(Dispatch => Thing)
+examples Hypertext := x -> stack deepSplice getExampleInputs x
+examples Thing := x -> (
      checkLoadDocumentation();
      d := fetchRawDocumentation makeDocumentTag x;
-     if d =!= null then stack deepSplice getExampleInputs d.Description)
+     if d =!= null then (stack deepSplice getExampleInputs d.Description)^-1)
 apropos = method()
 apropos String := (pattern) -> (
      last \ sort unique select(
