@@ -572,11 +572,12 @@ document {
      Key => needs,
      Headline => "read Macaulay 2 commands if necessary",
      Usage => "needs \"f\"",
-     Consequences => {{"the file named ", TT "f", " is loaded if it hasn't been loaded yet"}},
+     Consequences => {{"The file named ", TT "f", " is loaded with ", TO "load", " if it hasn't been loaded yet; if it
+	       has changed since the last time it was loaded, it will be loaded again, from
+	       the same location as the time before, without searching along the ", TO "path", "."}},
      PARA {
 	  "If the variable ", TO "notify", " is set to true, then an informational message is displayed after the file is loaded."
-	  },
-     SeeAlso => {"load", "notify"}
+	  }
      }
 
 document {

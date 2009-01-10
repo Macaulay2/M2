@@ -98,7 +98,7 @@ rotateOutputLines := x -> (
 
 Thing#AfterEval = x -> (
      if x =!= null then (
-     	  s := getGlobalSymbol(OutputDictionary,concatenate(interpreterDepth:"o",toString lineNumber));
+     	  s := getGlobalSymbol(OutputDictionary,concatenate(interpreterDepth:"o",simpleToString lineNumber));
      	  s <- x;
 	  );
      rotateOutputLines x;
@@ -129,8 +129,9 @@ pathdo := (loadfun,path,filename,reportfun) -> (
 	       if class dir =!= String then error "member of 'path' not a string";
 	       fullfilename := concatenate(dir, if dir#?0 and dir#-1 =!= "/" then "/", filename);
 	       if fileExists fullfilename then (
+		    filetime := fileTime fullfilename;
 		    ret = loadfun fullfilename;
-		    reportfun fullfilename;
+		    reportfun (fullfilename,filetime);
 		    break true)))
      then error splice("file not found",
 	  if singledir === "" then ""
@@ -139,10 +140,12 @@ pathdo := (loadfun,path,filename,reportfun) -> (
 	  ": \"", filename, "\"");
      ret)
 
-tryload := (filename,loadfun,notify) -> pathdo(loadfun,path,filename, fullfilename -> markLoaded(fullfilename,filename,notify))
+tryload := (filename,loadfun,notify) -> pathdo(loadfun,path,filename, (fullfilename,filetime) -> markLoaded(fullfilename,filename,notify,filetime))
 load = (filename) -> (tryload(filename,simpleLoad,notify);)
 input = (filename) -> (tryload(filename,simpleInput,false);)
-needs = s -> if not filesLoaded#?s then load s
+needs = s -> if not filesLoaded#?s then load s else (
+     (fullfilename,filetime) := filesLoaded#s;
+     if filetime < fileTime fullfilename then load fullfilename)
 warning = x -> (
      if debugLevel > 0 then (
      	  if x =!= () then stderr << "--warning: " << x << endl;
