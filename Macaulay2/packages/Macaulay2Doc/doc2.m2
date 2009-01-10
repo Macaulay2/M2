@@ -885,7 +885,7 @@ a+a"///,
 	  },
      PARA{
 	  "During evaluation of the string, error messages will refer to the location of the error 
-	  as ", TT " a string ", " with a line number and a column number,
+	  as ", TT "currentString", " with a line number and a column number,
 	  and the value of the variable ", TO "currentString", " is set to the string, to aid in debugging."
 	  },
      EXAMPLE lines ///
