@@ -6,16 +6,6 @@ links don't quite work:
     probably because it's redirected to "content_lpRingElement_rp".
     It needs to be a more complex link.
 
-This menu item is bad because there is a colon on the left side:
-
-    * Parser : Analyzer: Parser _co Analyzer.  combine a parser with a lexical
-      analyzer to make a complete system
-
-This menu item looks terrible on the screen:
-
-	  * Algorithm => default value Inhomogeneous, see "gb(..., Algorithm =>
-	    ...)"  (*note gb_lp..._cm Algorithm => ..._rp::)
-
 --
 
 This kind of menu item goes to a line number in a node:
@@ -23,25 +13,3 @@ This kind of menu item goes to a line number in a node:
   * c-mode-hook:                           Program Modes.       (line  45)
 
 Maybe we can use it.
-
---
-
-prevent this from wrapping, because it breaks the links:
-
-    * Menu:
-
-    * Tutorial colon  Elementary uses of Groebner bases: Tutorial_co Elementary uses of Groebner bases.
-    * Tutorial colon  Canonical Embeddings of Plane Curves and Gonality: Tutorial_co Canonical Embeddings of Plane Curves and Gonality.
-    * Tutorial colon  Fano varieties: Tutorial_co Fano varieties.
-    * Tutorial colon  Divisors: Tutorial_co Divisors.
-
-This is the way it wraps:
-
-    * Menu:
-
-    * Tutorial --  Elementary uses of Groebner bases: Tutorial_co Elementary uses
-      of Groebner bases.
-    * Tutorial --  Canonical Embeddings of Plane Curves and Gonality: Tutorial_co
-      Canonical Embeddings of Plane Curves and Gonality.
-    * Tutorial --  Fano varieties: Tutorial_co Fano varieties.
-    * Tutorial --  Divisors: Tutorial_co Divisors.

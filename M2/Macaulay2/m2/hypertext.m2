@@ -345,10 +345,10 @@ infoTagConvert String := tagConvert
 infoTagConvert DocumentTag := tag -> (
      pkgname := DocumentTag.Title tag;
      fkey := DocumentTag.FormattedKey tag;
-     if currentPackage#"title" === pkgname
-     then tagConvert fkey
-     else (
-	  concatenate("(",pkgname,")",tagConvert if pkgname === fkey then "Top" else fkey)))
+     if pkgname === fkey then fkey = "Top";
+     fkey = tagConvert fkey;
+     if pkgname =!= currentPackage#"title" then fkey = concatenate("(",pkgname,")",fkey);
+     fkey)
 infoLinkConvert := s -> replace(":","_colon_",s)
 info TO  := x -> (
      tag := x#0;
