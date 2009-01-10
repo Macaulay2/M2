@@ -273,6 +273,10 @@ document {
 		    LI {
 			 "Unicode, encoded in ", TT "utf-8", " format, is supported in documentation pages, both in html form and in 
 			 emacs info form: 你好."
+			 },
+		    LI {
+			 "When an error occurs within a string being evaluated with ", TO "value", ", the 
+			 appropriates lines of the string will be displayed if the debugger is entered."
 			 }
 		    }
 	       }

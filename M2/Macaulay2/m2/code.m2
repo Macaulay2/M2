@@ -178,6 +178,8 @@ debuggerUsageMessage = ///--debugger commands that leave the debugger:
     code current        -- source code of current expression
     value current       -- execute current expression, obtain value
     disassemble current -- display microcode of current expression
+    currentString       -- the string being evaluated by 'value', if
+    	      	   	-- an error occurred within it
 -- emacs commands in *M2* buffer:
     RET                 -- on an file/position line, go to source///
 

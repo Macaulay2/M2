@@ -15,9 +15,12 @@ newPackage(
     	DebuggingMode => false
     	)
 
-export {doc, docTemplate, docExample, packageTemplate}
+export {doc, docTemplate, docExample, packageTemplate, simpleDocFrob}
 
 needsPackage "Text"
+
+simpleDocFrob = method()
+simpleDocFrob(ZZ,Matrix) := (n,M) -> directSum(n:M)
 
 doc = method()
 doc String := (s) -> document toDoc s
@@ -68,7 +71,7 @@ markup = (text, indents) -> (
      splits := splitByIndent(text, indents);
      apply(splits, (i,j) -> (
 	       m := markup2(text_{i+1..j},indents_{i+1..j});
-	       if not (#m == 3 and m#0 === "" and instance(m#1,UL) and m#2 === "") then m = PARA m;
+	       if not (#m == 3 and m#0 === "" and instance(m#1,UL) and m#2 === "") then m = DIV m;
 	       m)))
     
 items = (text, indents) -> (
@@ -121,11 +124,11 @@ toDoc = (text) -> (
 docExample = "
 doc ///
   Key
-    (frob,ZZ,Matrix)
+    (simpleDocFrob,ZZ,Matrix)
   Headline
     A sample documentation node
   Usage
-    x = from(n,M)
+    x = simpleDocFrob(n,M)
   Inputs
     n:ZZ
       positive
@@ -133,11 +136,10 @@ doc ///
       which is square
   Outputs
     x:Matrix
-      A block diagonal matrix with {\\tt n}
+      A block diagonal matrix with {\\tt n} 
       copies of {\\tt M} along the diagonal
   Consequences
-    This section is used if there are side effects
-    that this function performs
+    This section is used if the function causes side effects.
   Description
    Text
      Each paragraph of text begins with \"Text\".  The following 
@@ -145,11 +147,10 @@ doc ///
      However, see @TO (matrix,List)@.
    Example
      M = matrix\"1,2;3,4\";
-     frob(3,M)
+     simpleDocFrob(3,M)
   Caveat
     This is not a particularly useful function
   SeeAlso
-    \"Introduction\"
     matrix
     (directSum,List)
 ///
@@ -241,6 +242,8 @@ document {
 
 doc get (currentFileDirectory | "SimpleDoc/doc.txt")
 
+value docExample
+
 doc ///
   Key
     "docExample"
@@ -250,12 +253,20 @@ doc ///
     docExample
   Description
    Text
-     docExample is a @TO String@.  The documentation
-     node used to create this documentation page:
+     The variable docExample is a @TO String@ containing an example of
+     the use of @TO (doc,String)@ to write a documentation page, visible
+     @TO2 {(simpleDocFrob,ZZ,Matrix), "here"}@.
    Example
      print docExample
   SeeAlso
     "docTemplate"
+///
+
+doc ///
+  Key
+    simpleDocFrob
+  Headline
+    an example of a function to document
 ///
 
 doc ///
@@ -313,13 +324,14 @@ help flup
 
 print docTemplate
 print docExample
-frob = method()
-frob(ZZ,Matrix) := (n,M) -> M
+simpleDocFrob = method()
+simpleDocFrob(ZZ,Matrix) := (n,M) -> M
 value docExample
 
 toDoc ///
   Key
-    (frob,ZZ,Matrix)
+    (simpleDocFrob,ZZ,Matrix)
+    simpleDocFrob
   Headline
     A sample documentation node
   Usage
@@ -343,7 +355,7 @@ toDoc ///
      However, see @TO (matrix,List)@.
    Example
      M = matrix{{1,2},{3,4}}
-     frob(3,M)
+     simpleDocFrob(3,M)
   Caveat
     This is not a particularly useful function
   SeeAlso

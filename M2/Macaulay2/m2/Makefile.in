@@ -86,6 +86,7 @@ clean::; rm -f TAGS @srcdir@/TAGS @srcdir@/TAGS.doc
 		@srcdir@/../packages/*/*.m2 \
 		@srcdir@/../packages/Macaulay2Doc/test/*.m2 \
 		@srcdir@/../packages/Macaulay2Doc/test/engine/*.m2 \
+		@srcdir@/../packages/SimpleDoc/doc.txt \
 		@srcdir@/../bugs/*/*.m2 \
 		loadsequence \
 		Makefile.in \
