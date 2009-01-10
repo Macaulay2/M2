@@ -57,7 +57,7 @@ html TEX := str -> (
 	  oldstr != str
 	  ) do null;
      f(///\\begin\{pmatrix\}(.*)\\end\{pmatrix\}///, ///
-<table border=1><tr><td><table><tr><td>\1</td></tr></table></td></tr></table>
+<table class="matrix" border=1><tr><td><table><tr><td>\1</td></tr></table></td></tr></table>
 ///);
      while (
 	  oldstr = str;
