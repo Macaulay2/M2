@@ -20,6 +20,22 @@ a:active { background-color: transparent; color: #ee0000; }
 
 table.buttons td { text-align: center; }
 
+table.matrix {
+  background-color: #c0ffff;
+  border-style: solid;
+  border-top-color: #c0ffff;
+  border-bottom-color: #50b0b0;
+  border-left-color: #a0ffff;
+  border-right-color: #50b0b0;
+  border-width: 3px;
+  border-spacing: 0px;
+  text-align: center;
+}
+
+table.matrix td {
+  text-align: "center";
+}
+
 table.examples { 
      margin-left: 2em;
      width: 25%;
