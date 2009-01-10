@@ -71,7 +71,12 @@ markup = (text, indents) -> (
      splits := splitByIndent(text, indents);
      apply(splits, (i,j) -> (
 	       m := markup2(text_{i+1..j},indents_{i+1..j});
-	       if not (#m == 3 and m#0 === "" and instance(m#1,UL) and m#2 === "") then m = DIV m;
+	       if not (#m == 3 and m#0 === "" and instance(m#1,UL) and m#2 === "") 
+	       then m = (
+		    -- LI{PARA{...},PARA{...},PARA{...}} results in too much vertical space at top and bottom when viewed
+		    -- in a browser, so here we try to arrange for LI{DIV{...},PARA{...},DIV{...}}
+		    if i+1 != 0 and j+1 != #text then PARA else DIV
+		    ) m;
 	       m)))
     
 items = (text, indents) -> (
