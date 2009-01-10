@@ -257,6 +257,10 @@ document {
 			 but we recommend reading it in emacs with ", TT "M-x info", ", configuring the emacs
 			 variable ", TT "Info-hide-note-references", " so its value is ", TT "hide", ".
 			 See ", TO "reading the documentation", "."
+			 },
+		    LI {
+			 "Now the function ", TO "needs", " will reload the requested file not only if the file has
+			 not been loaded before, but also if it has changed since the previous time."
 			 }
 		    }
 	       }

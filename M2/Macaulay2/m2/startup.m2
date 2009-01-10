@@ -49,9 +49,9 @@ if firstTime then (
      restarted = false;
      srcdirs = {};
 
-     markLoaded = (fullfilename,origfilename,notify) -> ( 
+     markLoaded = (fullfilename,origfilename,notify,filetime) -> ( 
 	  fullfilename = minimizeFilename fullfilename;
-	  filesLoaded#origfilename = fullfilename; 
+	  filesLoaded#origfilename = (fullfilename,filetime); 
 	  loadedFiles##loadedFiles = toAbsolutePath fullfilename; 
 	  if notify then stderr << "--loaded " << fullfilename << endl;
 	  );
@@ -303,8 +303,9 @@ usage := arg -> (
      ;)
 
 tryLoad := (ofn,fn) -> if fileExists fn then (
+     filetime := fileTime fn;
      r := simpleLoad fn;
-     markLoaded(fn,ofn,notify);
+     markLoaded(fn,ofn,notify,filetime);
      true) else false
 
 showMaps := () -> (
