@@ -1,3 +1,8 @@
+
+This should all be documented, now that it's working:
+
+----
+
 new option behavior for monoid[...]
 
 Heft	       		    if no Heft vector is given one will be computed with Fourier-Motzkin,
@@ -21,6 +26,3 @@ ConstantCoefficients	    this option has been removed.  ConstantCoefficients=>fa
 Warning: the monoid of R=A[...] is monoid[...] and not tensor(monoid
 [...],monoid A).  To get the latter thing, the newly exported symbol FlatMonoid
 is used in the expression R.FlatMonoid.
-
-This should all be documented.
-
