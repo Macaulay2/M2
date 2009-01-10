@@ -1,38 +1,40 @@
 --		Copyright 1993-1999, 2008 by Daniel R. Grayson
 
+emptyStack = stack()
+
 getSourceLines = method(Dispatch => Thing) 
 getSourceLines Nothing := null -> null
-getSourceLines Sequence := x -> ((filename,start,startcol,stop,stopcol,pos,poscol) -> if filename =!= "stdio" and filename =!= "a string" then (
-     wp := set characters " \t\r);";
-     file := (
-	  if filename === "layout.m2"
-	  then startupString1
-	  else if filename === "startup.m2"
-	  then startupString2
-	  else (
-	       if not fileExists filename then error ("couldn't find file ", filename);
-	       get filename
+getSourceLines Sequence := x -> (
+     (filename,start,startcol,stop,stopcol,pos,poscol) -> if filename =!= "stdio" then (
+	  wp := set characters " \t\r);";
+	  file := (
+	       if filename === "layout.m2" then startupString1
+	       else if filename === "startup.m2" then startupString2
+	       else if filename === "currentString" then currentString
+	       else (
+		    if not fileExists filename then error ("couldn't find file ", filename);
+		    get filename
+		    )
+	       );
+	  file = lines file;
+	  while (
+	       file#?stop 
+	       and (				  -- can improve this
+		    l := set characters file#stop;
+		    l #? ")" and isSubset(l, wp)
+		    )
+	       ) do stop = stop + 1;
+	  if #file < stop then error("line number ",toString stop, " not found in file ", filename);
+	  while stop >= start and file#(stop-1) === "" do stop = stop-1;
+	  stack prepend(
+	       concatenate(filename, ":", 
+		    toString start, ":", toString (startcol+1),
+		    "-",
+		    toString stop, ":", toString (stopcol+1),
+		    ": --source code:"),
+	       apply(start-1 .. stop-1, i -> file#i)
 	       )
-	  );
-     file = lines file;
-     while (
-	  file#?stop 
-     	  and (				  -- can improve this
-	       l := set characters file#stop;
-	       l #? ")" and isSubset(l, wp)
-	       )
-	  ) do stop = stop + 1;
-     if #file < stop then error("line number ",toString stop, " not found in file ", filename);
-     while stop >= start and file#(stop-1) === "" do stop = stop-1;
-     stack prepend(
-	  concatenate(filename, ":", 
-	       toString start, ":", toString (startcol+1),
-	       "-",
-	       toString stop, ":", toString (stopcol+1),
-	       ": --source code:"),
-	  apply(start-1 .. stop-1, i -> file#i)
-	  )
-     )) x
+	  )) x
 
 limit := 4
 indent := n -> "| "^(height n, depth n) | n
@@ -184,7 +186,8 @@ addStartFunction(() -> inDebugger = false)
 debuggerHook = entering -> (
      if entering then (
 	  pushvar(symbol inDebugger, true);
-	  << code current << endl;
+	  c := code current;
+	  if c =!= null then << c << endl;
 	  )
      else (
 	  popvar symbol inDebugger;
