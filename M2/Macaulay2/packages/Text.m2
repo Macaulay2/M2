@@ -503,7 +503,8 @@ document {
      	  "Here is the way the TeX above appears if used in documentation: ", value a, "."
 	  },
      PARA {
-	  "Here are some examples designed to illustrate each feature of TeX we've implemented."
+	  "Here are some examples designed to illustrate each feature of TeX we've implemented.  (This
+	  documentation page should be viewed in its html form.)"
 	  },
      UL apply({
 	       ///TEX ////A formula: $a\times \ {b\over c^3}$/////////,

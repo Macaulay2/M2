@@ -19,18 +19,15 @@ document {
 fghij"///,
      "Strings, like anything else, can be assigned to variables.",
      EXAMPLE ///w = "abcdefghij"///,
-     "There are escape sequences that make it possible to
-     enter special characters:",
-     PRE "      \\n             newline
-      \\f             form feed
-      \\r             return
-      \\\\             \\ 
-      \\\"             \"
-      \\t             tab
-      \\xxx           ascii character with octal value xxx
-      \\uxxxx         unicode character with hex value xxxx, encoded with utf-8",
+     PARA {
+     	  "There are escape sequences that make it possible to
+     	  enter special characters, see ", TO ///"///  -- "
+	  , "."
+	  },
      EXAMPLE ///u = "abc\101\102\n\tstu"///,
-     "We can use ", TO "peek", " to see what characters are in the string.",
+     PARA {
+     	  "We can use ", TO "peek", " to see what characters are in the string."
+	  },
      EXAMPLE "peek u",
      "Another way to enter special characters into strings is to use ", TO "///", -- ///
 										  "
@@ -120,17 +117,21 @@ fghij"///,
 document {
      Key => String,
      Headline => "the class of all strings",
-     "A string is thing which contains a sequence of characters (bytes).
-     A string is normally entered as a sequence of characters surrounded 
-     by quotation marks.",
-     PARA{},
+     PARA{
+	  "A string is thing which contains a sequence of characters (bytes).
+	  A string is normally entered as a sequence of characters surrounded 
+	  by quotation marks."
+	  },
      EXAMPLE "\"abcd\"",
-     PARA{},
-     "For an alternate method of entering strings which does not involve
-     any escape sequences, see ", TO "///", ".",	    -- ///
-     PARA{},
-     "A net is a two-dimensional array of characters, and strings are regarded
-     as a type of net.  See ", TO "Net", "."
+     PARA{
+	  "Strings involving special characters can be entered by using the backslash
+	  as an escape character, see ", TO "\"", ".  For an alternate method of entering strings 
+	  with fewer escape sequences, see ", TO "///", ".",
+	  },
+     PARA{
+	  "A net is a two-dimensional array of characters, and strings are regarded
+	  as a type of ", TO2{ Net, "net" }, "."
+	  }
      }
 
 
@@ -162,12 +163,37 @@ document {
      without treating the characters ", TT "\\", " and ", TT "\"", " specially.
      A series of more than 3 slashes can be represented within the string by doubling all but the
      last two, and a series of 1 or more slashes can be represented at the end of the string by doubling
-     each of them.",
+     each of them; this allows an arbitrary string to be represented.",
      EXAMPLE {
 	  "/// \\ \" ///",
       	  "ascii oo",
+	  "///-- //// -- /////////",
+	  "///-- ////// -- ///////////",
+	  "//////////////"
 	  },
-     SeeAlso => "String"
+     SeeAlso => {String, "\"", ascii}
+     }
+
+document {
+     Key => "\"",
+     Headline => "delineate a string with quotation marks",
+     PARA {
+     	  "This method for entering a string involves the use of backslashes as escape characters."
+	  },
+     PRE "      \\n             newline
+      \\f             form feed
+      \\r             return
+      \\\\             \\ 
+      \\\"             \"
+      \\t             tab
+      \\xxx           ascii character with octal value xxx
+      \\uxxxx         unicode character with hex value xxxx, encoded with utf-8",
+     EXAMPLE lines ///
+     " \" \f \r \\ \t \013 \u4f60 "
+     ascii oo
+     utf8 ooo
+     ///,
+     SeeAlso => {String, "///", ascii, utf8}
      }
 
 document {

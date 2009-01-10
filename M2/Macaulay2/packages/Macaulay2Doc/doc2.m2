@@ -883,9 +883,19 @@ a+a"///,
      	  "Since the local assignment to ", TT "a", " above occurred in a new scope,
      	  the value of the global variable ", TT "a", " is unaffected."
 	  },
-     PARA{},
-     "During evaluation of the string, error messages will refer to the location of the error as ", TT " a string ", " with a line number and a column number,
-     and the value of the variable ", TO "currentString", " is set to the string, to aid in debugging."
+     PARA{
+	  "During evaluation of the string, error messages will refer to the location of the error 
+	  as ", TT " a string ", " with a line number and a column number,
+	  and the value of the variable ", TO "currentString", " is set to the string, to aid in debugging."
+	  },
+     EXAMPLE lines ///
+     debuggingMode = stopIfError = false;
+     value "1/0"
+     debuggingMode = true;
+     value "1/0"
+     break
+     ///,
+     SeeAlso => {"debugging", "stopIfError", "debuggingMode"}
      }
 
 document {

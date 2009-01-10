@@ -411,7 +411,7 @@ value(e:Expr):Expr := (
      is s:string do (
       	  savecs := getGlobalVariable(currentString);
 	  setGlobalVariable(currentString,Expr(s));
-	  r := readeval(stringTokenFile("a string", s+newline),true,true);
+	  r := readeval(stringTokenFile("currentString", s+newline),true,true);
 	  setGlobalVariable(currentString,savecs);
 	  when r 
 	  is err:Error do (
@@ -440,7 +440,7 @@ internalCapture(e:Expr):Expr := (
 	  stdIO.outfd = NOFD;
 	  oldbuf := stdIO.outbuffer;
 	  stdIO.outbuffer = tmpbuf;
-	  stringFile := stringTokenFile("a string", s+newline);
+	  stringFile := stringTokenFile("currentString", s+newline);
 	  stringFile.posFile.file.echo = true;
 	  oldLineNumber := lineNumber;
 	  previousLineNumber = -1;
