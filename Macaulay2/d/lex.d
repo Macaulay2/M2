@@ -112,7 +112,7 @@ recognize(file:PosFile):(null or Word) := (
 	  (null or Word)(word)));
 -- the next char from o will be " or ' - we return the string it delimits
 -- with the delimiters
-getstringslashes(o:PosFile):(null or Word) := (
+getstringslashes(o:PosFile):(null or Word) := (		    -- /// ... ///
      getc(o);		  -- pass '/'
      getc(o);		  -- pass '/'
      getc(o);		  -- pass '/'
@@ -128,11 +128,19 @@ getstringslashes(o:PosFile):(null or Word) := (
 	       printErrorMessage(pos,"EOF or ERROR in string or character constant beginning here");
 	       return NULL;
 	       );
-	  if (
-	       ch == int('/')
-	       && peek(o,0) == int('/') 
-	       && peek(o,1) == int('/')
-	       ) then break;
+	  -- this allows us to get 3,4,5,... slashes within the string by typing 4,6,8,... slashes
+	  -- and to get 1,2,3,... slashes at the end of the string by typing 5,7,9,... slashes
+	  while ch == int('/')
+	  && peek(o,0) == int('/') 
+	  && peek(o,1) == int('/')
+	  && peek(o,2) == int('/') do (
+	       tokenbuf << '/';
+	       getc(o);
+	       getc(o);
+	       );
+	  if ch == int('/')
+	  && peek(o,0) == int('/') 
+	  && peek(o,1) == int('/') then break;
 	  if ch == int('\"') || ch == int('\\') then tokenbuf << '\\';
      	  tokenbuf << char(ch);
 	  if isnewline(ch) && hadnewline && isatty(o) then (

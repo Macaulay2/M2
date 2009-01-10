@@ -156,10 +156,13 @@ document {
 
 document {
      Key => "///",					    -- ///
-     Headline => "delineate a string",
+     Headline => "delineate a string with slashes",
      "This method for entering a string involves no escape characters, so
      it can be used for easily inserting large chunks of text into a string
-     without treating the characters ", TT "\\", " and ", TT "\"", " specially.",
+     without treating the characters ", TT "\\", " and ", TT "\"", " specially.
+     A series of more than 3 slashes can be represented within the string by doubling all but the
+     last two, and a series of 1 or more slashes can be represented at the end of the string by doubling
+     each of them.",
      EXAMPLE {
 	  "/// \\ \" ///",
       	  "ascii oo",

@@ -4,23 +4,19 @@ html TEX := str -> (
      local oldstr;
      str = concatenate str;
      origstr := str;
-     abbrev := () -> format if #origstr < 20 then origstr else substring(0,20,origstr) | "...";
+     abbrev := () -> format if #origstr > 20 then (substring(0,20,origstr) | "...") else origstr;
      f := (p,r) -> (
 	  n := replace(p,r,str);
 	  if n != str and debugLevel > 0 then (
 	       stderr << "html TEX: ///" << str << "/// matches ///" << p << "/// and becomes ///" << n << "///" << endl;
 	       );
 	  str = n);
-     f(///''///,///&rdquo;///);
-     f(///'///,///&rsquo;///); -- This is for text.  But an apostrophe in math mode should be a prime!
      -- we could try replacing \$ by \dollar and then bring it back later...
      -- but watch out for \\$ and \\\\$ ...
      -- but replace \\\$ and \\\\\$ ...
      f(///(^|[^\$])\$\$([^$]*[^\$])?\$\$([^$]|$)///,///\1<p align=center><i>\2</i></p>\3///);
      f(///(^|[^\$])\$([^$]*[^\$])\$([^$]|$)///,///\1<i>\2</i>\3///);
      if match(///(^|[^\])\$///,str) then error("unmatched dollar signs in TeX string ",abbrev());
-     f(///``///,///&ldquo;///);
-     f(///`///,///&lsquo;///);
      f(///\\\{///,///\lbrace ///);
      f(///\\\}///,///\rbrace ///);
 
@@ -76,22 +72,28 @@ html TEX := str -> (
 	  f(///\^ *\{([^{}]*)\}///,///<sup>\1</sup>///);
 	  f(///_ *\{([^{}]*)\}///,///<sub>\1</sub>///);
 	  oldstr != str) do null;
+     f(///\\\^a///,///&acirc;///);
+     f(///\\\^e///,///&ecirc;///);
+     f(///\\\^(.)///,///\1///);
      f(///\^(\\[a-zA-Z]*)///,///<sup>\1</sup>///);
      f(///_(\\[a-zA-Z]*)///,///<sub>\1</sub>///);
      f(///\^ *(.)///,///<sup>\1</sup>///);
      f(///_ *(.)///,///<sub>\1</sub>///);
      if match(///\\\\///,str) then error(///in conversion to html, unknown TeX control sequence \\ in string ///,abbrev());
-     f(///\\frac *([0-9]) *([0-9])///,///{\1/\2}///);
-     f(///\\"a///,///&auml;///);
-     f(///\\"o///,///&ouml;///);
-     f(///\\"u///,///&uuml;///);
+     f(///\\frac *(.) *(.)///,///{\1/\2}///);
+     f(///\\"a///,///&auml;///);			    -- "
+     f(///\\"o///,///&ouml;///);			    -- "
+     f(///\\"u///,///&uuml;///);			    -- "
      f(///\\#///,///#///);
      f(///\\&///,///&amp;///);
-     f(///\\'e///,///&eacute;///);
      f(///\\,///,///&nbsp;///);
-     f(///\\\^a///,///&acirc;///);
-     f(///\\\^e///,///&ecirc;///);
+     f(///\\'e///,///&eacute;///);
      f(///\\`e///,///&egrave;///);
+     f(///\\[`'](.)///,///\1///);
+     f(///``///,///&ldquo;///);
+     f(///`///,///&lsquo;///);
+     f(///''///,///&rdquo;///);
+     f(///'///,///&rsquo;///); -- This is for text.  But an apostrophe in math mode should be a prime!
      f(///\\NN\> *///,///&#x2115;///);			    -- these unicode characters are experimental
      f(///\\QQ\> *///,///&#x211A;///);			    -- on at least some machines they are represented by bitmaps, not by truetype fonts!
      f(///\\RR\> *///,///&#x211D;///);
@@ -104,7 +106,6 @@ html TEX := str -> (
      f(///\\Theta\> *///,///&Theta;///);
      f(///\\aleph\> *///,///&aleph;///);
      f(///\\alpha\> *///,///&alpha;///);
-     f(///\\backslash\> *///,///\///);
      f(///\\beta\> *///,///&beta;///);
      f(///\\beth\> *///,///&beth;///);
      f(///\\bf\> *///,//////);
@@ -112,12 +113,12 @@ html TEX := str -> (
      f(///\\bullet\> *///,///&bull;///);
      f(///\\cap\> *///,///&cap;///);
      f(///\\cdots\> *///,///&hellip;///);
-     f(///\\centerline\> *///,//////);
+     -- f(///\\centerline\> *///,"");
      f(///\\cong\> *///,///&#8773;///);
      f(///\\cos\> *///,///cos///);
      f(///\\cup\> *///,///&cup;///);
      f(///\\daleth\> *///,///&daleth;///);
-     f(///\\datefont\> *///,//////);
+     -- f(///\\datefont\> *///,//////);
      f(///\\delta\> *///,///&delta;///);
      f(///\\dots\> *///,///&hellip;///);
      f(///\\ell\> *///,///<em>l</em>///);
@@ -131,9 +132,8 @@ html TEX := str -> (
      f(///\\gimel\> *///,///&gimel;///);
      f(///\\in\> *///,///&isin;///);
      f(///\\infty\> *///,///&infin;///);
-     f(///\\infty\> *///,///&infin;///);
      f(///\\int\> *///,///&int;///);
-     f(///\\it\> *///,//////);
+     -- f(///\\it\> *///,//////);
      f(///\\lambda\> *///,///&lambda;///);
      f(///\\ldots\> *///,///...///);
      f(///\\leftarrow\> *///,///&larr;///);
@@ -145,7 +145,7 @@ html TEX := str -> (
      f(///\\mid\> *///,///&nbsp;|&nbsp;///);
      f(///\\mod\> *///,///mod///);
      f(///\\mu\> *///,///&mu;///);
-     f(///\\neq\> *///,///&ne;///);
+     f(///\\neq?\> *///,///&ne;///);
      f(///\\nu\> *///,///&nu;///);
      f(///\\omega\> *///,///&omega;///);
      f(///\\oplus\> *///,///&oplus;///);
@@ -170,7 +170,7 @@ html TEX := str -> (
      f(///\\supseteq\> *///,///&supe;///);
      f(///\\sum\> *///,///&sum;///);
      f(///\\tau\> *///,///&tau;///);
-     f(///\\textrm\> *///,//////);
+     -- f(///\\textrm\> *///,//////);
      f(///\\\$ *///,///$///);
      f(///\\theta\> *///,///&theta;///);
      f(///\\times\> *///,///&times;///);
@@ -180,7 +180,7 @@ html TEX := str -> (
      f(///\\wp\> *///,///&weierp;///);
      f(///\\xi\> *///,///&xi;///);
      f(///\\zeta\> *///,///&zeta;///);
-     f(///Macaulay2///,///<i>Macaulay2</i>///);
+     -- f(///Macaulay2///,///<i>Macaulay2</i>///); -- this is a bad idea because it interferes with URLs and filenames
      f(///Macaulay 2///,///<i>Macaulay 2</i>///);
      while (
 	  oldstr = str;
@@ -188,8 +188,10 @@ html TEX := str -> (
 	  oldstr != str) do null;
      f(///\\lbrace\> *///,///{///);
      f(///\\rbrace\> *///,///}///);
+     f(///\\backslash\> *///,"--TEMPORARY BACKSLASH--");
      r := unique sort select("\\\\(.|[a-zA-Z]+)?",str);
      if #r > 0 then error("in conversion to html, unknown TeX control sequence(s): ",concatenate between(", ",r)," in string ",abbrev());
+     f("--TEMPORARY BACKSLASH--",///\///);
      str)
 
 -- Local Variables:

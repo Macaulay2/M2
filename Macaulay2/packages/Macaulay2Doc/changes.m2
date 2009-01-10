@@ -1,3 +1,4 @@
+-- -*- coding:utf-8 -*-
 document {
      Key => "changes to Macaulay 2, by version",
      Subnodes => {
@@ -261,6 +262,17 @@ document {
 		    LI {
 			 "Now the function ", TO "needs", " will reload the requested file not only if the file has
 			 not been loaded before, but also if it has changed since the previous time."
+			 },
+		    LI {
+			 "It is now possible to represent a series of three or more slashes within a string delimited by
+			 ", TO "///", " by typing a longer series."
+			 },
+		    LI {
+			 "The conversion of ", TO "TEX", " to html has been improved and documented, see ", TO "Text::html(TEX)", "."
+			 },
+		    LI {
+			 "Unicode, encoded in ", TT "utf-8", " format, is supported in documentation pages, both in html form and in 
+			 emacs info form: 你好."
 			 }
 		    }
 	       }
