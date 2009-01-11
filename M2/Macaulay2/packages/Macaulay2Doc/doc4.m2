@@ -45,6 +45,7 @@ document {
      Outputs => {
 	  ZZ => "the process identifier of the current Macaulay 2 process"
 	  },
+     EXAMPLE "processID()",
      SeeAlso => {groupID, setGroupID}
      }
 
@@ -55,6 +56,7 @@ document {
      Outputs => {
 	  ZZ => "the process group identifier of the current Macaulay 2 process"
 	  },
+     EXAMPLE "groupID()",
      SeeAlso => {processID, setGroupID}
      }
 
