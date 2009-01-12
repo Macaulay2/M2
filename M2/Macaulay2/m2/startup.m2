@@ -20,6 +20,7 @@ or regex("a|b","a") =!= {(0,1)}
 or regex("^a+$"," \naaa\n ") =!= {(2,3)}
 or replace("a","b","-a-a-") =!= "-b-b-"
 or regex("$a","$a") =!= null
+or regex(".*","a\nb") =!= {(0, 1)}
 or select("a+","aaa aaaa") =!= {"aaa","aaaa"}
 then error "regex regular expression library not working"
 
@@ -138,6 +139,7 @@ if firstTime then (
      then re = re | "|.:/";				    -- "C:/FOO/BAR"
      re = re | "|\\$";					    -- $www.uiuc.edu:80
      re = re | "|!";					    -- !date
+     re = re | "|~/";					    -- ~/foo/bar
      isAbsolutePathRegexp := "^(" | re | ")";		    -- whether the path will work from any directory and get to the same file
      re = re | "|\\./";					    -- ./foo/bar
      re = re | "|\\.\\./";				    -- ../foo/bar

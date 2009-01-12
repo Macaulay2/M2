@@ -1333,7 +1333,7 @@ setupfun("clearEcho",clearEcho);
 
 readlinkfun(e:Expr):Expr := (
      when e is filename:string do (
-	  v := readlink(filename);
+	  v := readlink(expandFileName(filename));
 	  if length(v) == 0 then nullE else Expr(v))
      else WrongArgString());
 setupfun("readlink",readlinkfun);
@@ -1345,7 +1345,7 @@ setupfun("changeDirectory",changeDirectory);
 
 realpathfun(e:Expr):Expr := (
      when e is f:string do (
-     	  when realpath(f)
+     	  when realpath(expandFileName(f))
      	  is null do buildErrorPacket(syscallErrorMessage("realpath"))
      	  is p:string do Expr(p)
      	  )
@@ -1361,14 +1361,14 @@ setupconst("fixedPrefixOperators",    Expr(new array(Expr) len length(fixedPrefi
 setupconst("fixedPostfixOperators",   Expr(new array(Expr) len length(fixedPostfixOperators) do foreach s in fixedPostfixOperators do provide Expr(s)));
 
 fileExists(e:Expr):Expr := (
-     when e is name:string do toExpr(fileExists(name))
+     when e is name:string do toExpr(fileExists(expandFileName(name)))
      else WrongArgString()
      );
 setupfun("fileExists",fileExists);
 
 removeDirectory(e:Expr):Expr := (
      when e is name:string do
-     if rmdir(name) == ERROR 
+     if rmdir(expandFileName(name)) == ERROR 
      then buildErrorPacket(syscallErrorMessage("removing a directory"))
      else nullE
      else WrongArgString()
@@ -1377,7 +1377,7 @@ setupfun("removeDirectory",removeDirectory);
 
 removeFile(e:Expr):Expr := (
      when e is name:string do
-     if unlink(name) == ERROR 
+     if unlink(expandFileName(name)) == ERROR 
      then buildErrorPacket(syscallErrorMessage("removing a file"))
      else nullE
      else WrongArgString()
@@ -1385,27 +1385,30 @@ removeFile(e:Expr):Expr := (
 setupfun("removeFile",removeFile);
 
 readDirectory(e:Expr):Expr := (
-     when e is name:string do (
-	  r := readDirectory(name);
-	  when r is null do buildErrorPacket("can't read directory '" + name + "' : " + syserrmsg())
+     when e is filename:string do (
+	  filename = expandFileName(filename);
+	  r := readDirectory(filename);
+	  when r is null do buildErrorPacket("can't read directory '" + filename + "' : " + syserrmsg())
 	  is x:array(string) do Expr(list(new Sequence len length(x) do foreach i in x do provide Expr(i))))
      else WrongArgString());
 setupfun("readDirectory",readDirectory);
 
 isDirectory(e:Expr):Expr := (
-     when e is name:string do (
-	  if !fileExists(name) then return False;
-	  r := isDirectory(name);
-	  if r == -1 then buildErrorPacket("can't see file '" + name + "' : " + syserrmsg())
+     when e is filename:string do (
+	  filename = expandFileName(filename);
+	  if !fileExists(filename) then return False;
+	  r := isDirectory(filename);
+	  if r == -1 then buildErrorPacket("can't see file '" + filename + "' : " + syserrmsg())
 	  else if r == 1 then True else False)
      else WrongArgString()
      );
 setupfun("isDirectory",isDirectory);
 
 isRegularFile(e:Expr):Expr := (
-     when e is name:string do (
-	  r := isRegularFile(name);
-	  if r == -1 then buildErrorPacket("can't see file '" + name + "' : " + syserrmsg())
+     when e is filename:string do (
+     	  filename = expandFileName(filename);
+	  r := isRegularFile(filename);
+	  if r == -1 then buildErrorPacket("can't see file '" + filename + "' : " + syserrmsg())
 	  else if r == 1 then True else False)
      else WrongArgString()
      );
@@ -1414,8 +1417,12 @@ setupfun("isRegularFile",isRegularFile);
 linkfun(e:Expr):Expr := (
      when e is s:Sequence do if length(s) != 2 then WrongNumArgs(2) else
      when s.0 is oldfilename:string do
-     when s.1 is newfilename:string do
-     if -1 == link(oldfilename,newfilename) then buildErrorPacket("failed to link file " + oldfilename + " to " + newfilename + " : " + syserrmsg()) else nullE     
+     when s.1 is newfilename:string do (
+	  oldfilename = expandFileName(oldfilename);
+	  newfilename = expandFileName(newfilename);
+     	  if -1 == link(oldfilename,newfilename)
+	  then buildErrorPacket("failed to link file " + oldfilename + " to " + newfilename + " : " + syserrmsg()) else nullE     
+	  )
      else WrongArgString(2)
      else WrongArgString(1)
      else WrongNumArgs(2));
@@ -1424,25 +1431,31 @@ setupfun("linkFile",linkfun);
 symlinkfun(e:Expr):Expr := (
      when e is s:Sequence do if length(s) != 2 then WrongNumArgs(2) else
      when s.0 is oldfilename:string do
-     when s.1 is newfilename:string do
-     if -1 == symlink(oldfilename,newfilename) then buildErrorPacket("failed to symlink file " + oldfilename + " to " + newfilename + " : " + syserrmsg()) else nullE     
+     when s.1 is newfilename:string do (
+	  oldfilename = expandFileName(oldfilename);
+	  newfilename = expandFileName(newfilename);
+     	  if -1 == symlink(oldfilename,newfilename)
+	  then buildErrorPacket("failed to symbolically link file " + oldfilename + " to " + newfilename + " : " + syserrmsg()) else nullE
+	  )
      else WrongArgString(2)
      else WrongArgString(1)
      else WrongNumArgs(2));
 setupfun("symlinkFile",symlinkfun);
 
 fileTime(e:Expr):Expr := (
-     when e is name:string do (
-	  r := fileTime(name);
+     when e is filename:string do (
+	  filename = expandFileName(filename);
+	  r := fileTime(filename);
 	  if r == -1
-	  then buildErrorPacket("can't see file '" + name + "' : " + syserrmsg())
+	  then buildErrorPacket("can't see file '" + filename + "' : " + syserrmsg())
 	  else Expr(toInteger(r))
 	  )
      is args:Sequence do if length(args) != 2 then WrongNumArgs(2) else (
 	  when args.0 is modtime:ZZ do if !isInt(modtime) then WrongArgSmallInteger(2) else (
-	       when args.1 is name:string do (
-		    r := setFileTime(name,toInt(modtime));
-		    if r == -1 then buildErrorPacket("can't set modification time of file '" + name + "' : " + syserrmsg())
+	       when args.1 is filename:string do (
+	  	    filename = expandFileName(filename);
+		    r := setFileTime(filename,toInt(modtime));
+		    if r == -1 then buildErrorPacket("can't set modification time of file '" + filename + "' : " + syserrmsg())
 	  	    else nullE
 		    )
 	       else WrongArgString(1)
@@ -1460,10 +1473,10 @@ currentTime(e:Expr):Expr := (
 setupfun("currentTime",currentTime);
 
 mkdir(e:Expr):Expr := (
-     when e is name:string do (
-	  name = expandFileName(name);
-	  r := mkdir(name);
-	  if r == -1 then buildErrorPacket("can't make directory \"" + name + "\": " + syserrmsg())
+     when e is filename:string do (
+	  filename = expandFileName(filename);
+	  r := mkdir(filename);
+	  if r == -1 then buildErrorPacket("can't make directory \"" + filename + "\": " + syserrmsg())
 	  else nullE)
      else WrongArgString());
 setupfun("mkdir",mkdir);
@@ -1936,7 +1949,7 @@ fileMode(e:Expr):Expr := (
 			 if !isInt(mode)
 			 then WrongArgSmallInteger(1)
 			 else (
-			      r := chmod(filename,toInt(mode));
+			      r := chmod(expandFileName(filename),toInt(mode));
 			      if r == -1
 			      then buildErrorPacket(syscallErrorMessage("chmod"))
 			      else nullE))
@@ -1952,7 +1965,7 @@ fileMode(e:Expr):Expr := (
 	  if r == -1 then buildErrorPacket(syscallErrorMessage("fstat"))
 	  else Expr(toInteger(r)))
      is fn:string do (
-	  r := fileMode(fn);
+	  r := fileMode(expandFileName(fn));
 	  if r == -1 then buildErrorPacket(syscallErrorMessage("stat"))
 	  else Expr(toInteger(r)))
      else WrongArg("string, integer and string or file"));
@@ -1975,6 +1988,7 @@ fileLength(e:Expr):Expr := (
 	  else if f.output then Expr(toInteger(f.bytesWritten + f.outindex))
      	  else buildErrorPacket("file not open"))
      is filename:string do (
+	  filename = expandFileName(filename);
 	  ret := fileLength(filename);
 	  if ret == ERROR
 	  then Expr(buildErrorPacket(syscallErrorMessage("length of a file: \"" + present(filename) + "\"")))
