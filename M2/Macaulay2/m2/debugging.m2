@@ -181,13 +181,17 @@ clearAll = Command (() -> (
 
 generateAssertions = method(TypicalValue => Net)
 generateAssertions String := s -> generateAssertions select(lines s, x -> not match("^[[:space:]]*(--.*)?$",x))
-generateAssertions List := y -> (stack apply(y, 
-     lin -> ( 
-	  t := try value lin else local oops;
-	  concatenate if t === local oops
-	  then ("assert( (try ", lin, " else oops) === oops )")
-	  else ("assert( ("    , lin,            ") === ", toExternalString t, " )")
-	  )))^-1
+generateAssertions List := y -> (
+     nogens := {PolynomialRing, QuotientRing};
+     stack apply(y, 
+	  lin -> ( 
+	       t := try value lin else local oops;
+	       concatenate if t === local oops
+	       then ("assert( (try ", lin, " else oops) === oops )")
+	       else if all(nogens, X -> not instance(t,X))
+	       then ("assert( ("    , lin,            ") === ", toExternalString t, " )")
+	       else ()
+	       )))^-1
 
 -- Local Variables:
 -- compile-command: "make -C $M2BUILDDIR/Macaulay2/m2 "
