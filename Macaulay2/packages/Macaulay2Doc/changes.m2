@@ -277,6 +277,14 @@ document {
 		    LI {
 			 "When an error occurs within a string being evaluated with ", TO "value", ", the 
 			 appropriates lines of the string will be displayed if the debugger is entered."
+			 },
+		    LI {
+			 "A new method for ", TO "substring", " accepts a pair of integers as first argument
+			 of the sort returned by ", TO "regex", "."
+			 },
+		    LI {
+			 "Regular expression handling, by the functions ", TO "regex", ", ", TO "match", ", ", TO "replace", ", and ", TO "select", ",
+			 is now much faster because strings are not copied."
 			 }
 		    }
 	       }

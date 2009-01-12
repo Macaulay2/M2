@@ -260,6 +260,7 @@ export List := v -> (
      pd := currentPackage#"private dictionary";
      d := currentPackage.Dictionary;
      title := currentPackage#"title";
+     syms := new MutableHashTable;
      scan(v, sym -> (
 	       local nam;
 	       if instance(sym, Option) then (
@@ -283,15 +284,17 @@ export List := v -> (
 		    );
 	       syn := title | "$" | nam;
 	       d#syn = d#nam = sym;
+	       syms#sym = true;
 	       ));
-     currentPackage#"exported symbols" = join(currentPackage#"exported symbols",select(v,s -> instance(s,Symbol)));
-     )
+     syms = keys syms;
+     currentPackage#"exported symbols" = join(currentPackage#"exported symbols",syms);
+     syms)
 exportMutable = method(Dispatch => Thing)
 exportMutable Symbol := x -> exportMutable {x}
 exportMutable List := v -> (
-     export v;
-     currentPackage#"exported mutable symbols" = join(currentPackage#"exported mutable symbols",select(v,s -> instance(s,Symbol)));
-     )
+     syms := export v;
+     currentPackage#"exported mutable symbols" = join(currentPackage#"exported mutable symbols",syms);
+     syms)
 
 addStartFunction( () -> if prefixDirectory =!= null then Core#"package prefix" = prefixDirectory )
 
@@ -404,6 +407,7 @@ use Package := pkg -> (
      	  loadedPackages = prepend(pkg,loadedPackages);
      	  dictionaryPath = prepend(pkg.Dictionary,dictionaryPath);
 	  );
+     if pkg.?use then pkg.use pkg;
      )
 
 beginDocumentation = () -> (

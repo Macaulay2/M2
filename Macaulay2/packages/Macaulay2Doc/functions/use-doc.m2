@@ -18,7 +18,8 @@ document {
 	  "PACKAGENAME" => "which was previously loaded, and then dismissed."
 	  },
      Consequences => {
-	  "activates the package, making all of its exported symbols visible."
+	  "activates the package, making all of its exported symbols visible",
+	  "runs the function stored under the key ", TT "symbol use", " in the package, if there is one"
 	  },     
      "This function is only necessary after dismissing a package.",
      EXAMPLE lines ///

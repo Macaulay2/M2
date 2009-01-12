@@ -1203,22 +1203,22 @@ document {
      }
 
 document {
-     Key => {substring,(substring, String, ZZ),(substring, ZZ, String),(substring, ZZ, ZZ, String),(substring, String, ZZ, ZZ)},
+     Key => {substring,(substring, String, ZZ),(substring, ZZ, String),(substring, ZZ, ZZ, String),
+	  (substring, String, ZZ, ZZ),(substring, Sequence, String)},
      Headline => "extract part of a string",
-     TT "substring(i,n,s)", " -- yields the substring of the string ", TT "s", " starting at 
-     position ", TT "i", " with length ", TT "n", ".",
-     PARA{},
-     "substring(i,s)   -- yields the substring of ", TT "s", " starting at position ", TT "i", " and
-     continuing to the end of ", TT "s", ".",
-     PARA{},
-     "Positions are numbered starting at 0.",
-     PARA{},
-     "If the starting position ", TT "i", " is negative, it means to start from the end of the string.",
-     PARA{},
-     "Requests for character positions out of bounds are silently ignored.",
-     PARA{},
-     "In an older version of the program the string argument was placed first;
-     the old way will still work."
+     SYNOPSIS (
+	  Usage => "substring(i,n,s)\nsubstring(s,i,n)\nsubstring((i,n),s)",
+	  Inputs => { "i" => ZZ, "n" => ZZ, "s" => String },
+	  Outputs => {{ "the substring of the string ", TT "s", " starting at position ", TT "i", " with length ", TT "n" }}
+	  ),
+     SYNOPSIS (
+	  Usage => "substring(i,s)\nsubstring(s,i)",
+	  Inputs => { "i" => ZZ, "s" => String },
+	  Outputs => {{ "the substring of the string ", TT "s", " starting at position ", TT "i", " and continuing to the end of the string" }}
+	  ),
+     PARA{"Positions are numbered starting at 0."},
+     PARA{"If the starting position ", TT "i", " is negative, it means to start at a position obtained by counting backward from the end of the string."},
+     PARA{"Requests for character positions out of bounds are silently ignored."},
      }
 
 document {
