@@ -27,11 +27,7 @@ AUTOCONF_VERSION = $(MAJOR).$(MINOR)
 PATH := autoconf/final/bin:$(PATH)
 export PATH
 
-check-make:
-	: '  Use list of GNU "make" features to check whether this version is modern enough (version 3.81 is).  '
-	: '  (The order-only feature is just a proxy.)  '
-	echo "$(.FEATURES)" | grep order-only >/dev/null
-
+check-make:; @ echo "$(.FEATURES)" | grep order-only >/dev/null || (echo error: version >= 3.81 of GNU make is required >&2; false)
 configure : configure.ac config/files # aclocal.m4
 	@ set -x ; autoconf
 

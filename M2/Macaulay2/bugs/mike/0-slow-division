@@ -1,0 +1,56 @@
+-- -*- M2 -*-
+
+division seems to be slower now than in version 1.1, whether we have inverses or not:
+
++ M2-1.1 --no-readline --print-width 157
+Macaulay 2, version 1.1
+with packages: Classic, Core, Elimination, IntegralClosure, LLLBases, Parsing, PrimaryDecomposition, SchurRings, TangentCone
+--current directory /home/dan/src/M2/trunk/BUILD/dan/
+--prefix  directory /usr/local/encap/Macaulay2-1.1/
+
+i1 : QQ[x]
+
+o1 = QQ [x]
+
+o1 : PolynomialRing
+
+i2 : time (1-x^195)^5//(1-x)//(1-x);
+     -- used 0.268017 seconds
+
+i3 : use degreesRing 1
+
+o3 = ZZ [T]
+
+o3 : PolynomialRing
+
+i4 : time (1-T^195)^5//(1-T)//(1-T);
+     -- used 0.172011 seconds
+
+i5 : 
+
+Process M2 finished
+
++ ulimit -v 500000
++ /home/dan/src/M2/trunk/BUILD/dan/builds/ubuntu32/StagingArea/i686-Linux-Ubuntu-8.10/bin/M2 --no-readline --print-width 157
+Macaulay 2, version 1.1.1
+with packages: Classic, Core, Elimination, IntegralClosure, LLLBases, Parsing, PrimaryDecomposition, SchurRings, SimpleDoc, TangentCone
+--current directory /home/dan/src/M2/trunk/BUILD/dan/
+--prefix  directory /home/dan/src/M2/trunk/BUILD/dan/builds/ubuntu32/StagingArea/
+
+i1 : QQ[x]
+
+o1 = QQ[x]
+
+o1 : PolynomialRing
+
+i2 : time (1-x^195)^5//(1-x)//(1-x);
+     -- used 0.376023 seconds
+
+i3 : use degreesRing 1
+
+o3 = ZZ[T]
+
+o3 : PolynomialRing
+
+i4 : time (1-T^195)^5//(1-T)//(1-T);
+     -- used 0.424026 seconds
