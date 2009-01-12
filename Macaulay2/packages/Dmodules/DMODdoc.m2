@@ -94,6 +94,17 @@ document {
      }
 -----------------------------------------------
 
+scan({
+    -- some optional arguments
+    	 SetVariables
+         },
+    s -> if s =!= null then document {
+         Key => s,
+         Headline => "name for an optional argument",
+         "A symbol used as the name of an optional argument, for some function(s)."
+         }
+    )
+
 document {
      Key => bFunction,
      Headline => "b-function",
@@ -1422,11 +1433,13 @@ document {
      },
 
 document {
-     Key => {(makeWeylAlgebra,PolynomialRing), makeWeylAlgebra},
+     Key => {(makeWeylAlgebra,PolynomialRing), makeWeylAlgebra, 
+	  [makeWeylAlgebra,SetVariables]},
      Headline => "Weyl algebra corresponding to a polynomial ring",
      Usage => "makeWeylAlgebra R",
      Inputs => {
-	  "a (commutative) ring of polynomials"
+	  "R"=>"a (commutative) ring of polynomials",
+	  SetVariables=>Boolean=>"whether to set variables of the created algebra to be global"
 	  },
      Outputs => {
 	  PolynomialRing => "the (non-commutative) Weyl algebra" 
@@ -1442,11 +1455,6 @@ document {
      UL{"makeWA"},
      Caveat =>{"The polynomial ring R must be commutative."},
      SeeAlso => {"WeylAlgebra"}
-     }
-
-document {
-     Key => [makeWeylAlgebra,SetVariables],
-     Headline => "set variables of the created algebra to be global"
      }
 
 document {
