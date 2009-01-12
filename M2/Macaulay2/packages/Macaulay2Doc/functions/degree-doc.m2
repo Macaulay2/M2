@@ -124,7 +124,7 @@ document {
      ", TT "S/I", ".  See ", TO (degree,Module), " for more details.",
      EXAMPLE {
 	  "S = QQ[a..f];",
-	  "I = ideal(a^195, b^195, c^195, d^195, e^195);",
+	  "I = ideal(a^5, b^5, c^5, d^5, e^5);",
 	  "degree I",
 	  "degree(S^1/I)",
 	  },

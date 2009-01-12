@@ -1,0 +1,7 @@
+We could make these go over 5,6,7,8:
+
+i52 : scan(5,9,identity)
+stdio:54:1:(1):[0]: error: expected argument 1 to be a list or sequence
+
+i53 : apply(5,9,identity)
+stdio:55:1:(1):[0]: error: expected argument 1 to be a list or sequence

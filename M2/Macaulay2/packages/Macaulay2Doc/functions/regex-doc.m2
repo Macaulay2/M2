@@ -10,7 +10,8 @@ document {
 	  "n" => {"the starting position in ", TT "s", " at which to begin the search.  If it is
 	       omitted, the search starts at the beginning of the string."},
 	  "r" => {"the extent of the search.  If it is omitted, the search extends to the end of the string.
-	       If it is 0, then the regular expression matches only at the starting position."
+	       If it is 0, then the regular expression matches only at the starting position.
+	       If it is negative, then positions to the left of the starting position are examined for matches."
 	       },	       
 	  "s" => "the subject string to be searched"
 	  },
@@ -36,6 +37,15 @@ document {
      m = regex("a+",2,s)
      substring(m#0,s)
      m = regex("a+",2,3,s)
+     s = "line 1\nline 2\nline 3";
+     m = regex("^.*$",8,-8,s)
+     substring(m#0,s)
+     m = regex("^",10,-10,s)
+     substring(0,m#0#0,s)
+     substring(m#0#0,s)
+     m = regex("^.*$",4,-10,s)
+     substring(m#0,s)
+     m = regex("a.*$",4,-10,s)
      ///,
      SeeAlso => {"regular expressions", "match", "replace", (substring,Sequence,String)}
      }
