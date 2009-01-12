@@ -90,6 +90,7 @@ export minimizeFilename(filename:string):string := (
      if length(c) == 0 then c = "./";
      c);
 export verifyMinimizeFilename(filename:string):string := (
+     filename = expandFileName(filename);
      p := when realpath(filename) is null do return filename is s:string do s;
      f := minimizeFilename(filename);
      if isAbsolutePath(f) then return f;

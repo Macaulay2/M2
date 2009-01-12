@@ -309,12 +309,14 @@ export dbmcheck(ret:int):Expr := (
      else Expr(toInteger(ret)));
 export dbmopenin(filename:string):Expr := (
      mutable := false;
+     filename = expandFileName(filename);
      handle := dbmopen(filename,mutable);
      if handle == -1 
      then buildErrorPacket(dbmstrerror() + " : " + filename)
      else Expr(Database(filename,nextHash(),handle,true,mutable)));
 export dbmopenout(filename:string):Expr := (
      mutable := true;
+     filename = expandFileName(filename);
      handle := dbmopen(filename,mutable);
      if handle == -1 
      then buildErrorPacket(dbmstrerror() + " : " + filename)

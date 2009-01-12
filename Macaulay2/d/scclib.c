@@ -987,7 +987,7 @@ int system_strncmp(M2_string s,M2_string t,int n) {
 #define regfree M2_regfree
 #include "regex.h"
 
-#define SYNTAX_FLAGS   (RE_SYNTAX_POSIX_EXTENDED /* | REG_NEWLINE */ | (ignorecase ? RE_ICASE : 0))
+#define SYNTAX_FLAGS ((RE_SYNTAX_POSIX_EXTENDED | (ignorecase ? RE_ICASE : 0)) & ~RE_DOT_NEWLINE)
 
 struct M2_string_struct noErrorMessage;
 M2_string system_noErrorMessage = &noErrorMessage;
