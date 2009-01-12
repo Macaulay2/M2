@@ -1209,7 +1209,11 @@ documentationValue(Symbol,Package) := (s,pkg) -> if pkg =!= Core then (
 	  DIV1 { SUBSECTION "Version", "This documentation describes version ", pkg.Options.Version, " of ",
 	       if pkg#"title" === "Macaulay2Doc" then "Macaulay2" else pkg#"title",
 	       "." },
-	  if pkg#"title" =!= "Macaulay2Doc" then DIV1 {SUBSECTION "Source code", "The source code is in the file ", HREF { currentLayout#"packages" | fn, fn }, "."},
+	  if pkg#"title" =!= "Macaulay2Doc" 
+	  then DIV1 {
+	       SUBSECTION "Source code",
+	       "The source code is in the file ", HREF { installationLayout#"packages" | fn, fn }, "."
+	       },
 	  if #e > 0 then DIV1 {
 	       SUBSECTION "Exports",
 	       fixup UL {

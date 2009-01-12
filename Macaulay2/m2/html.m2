@@ -16,7 +16,8 @@ local nullButton; local masterIndexButton; local tocButton; local homeButton; lo
 local NEXT; local PREV; local UP; local tableOfContents; local linkTable; local SRC
 local nextButton; local prevButton; local upButton; local backwardButton; local forwardButton
 local masterIndex
-layout := Layout#2
+installationLayout = null
+addStartFunction(() -> installationLayout = currentLayout)
 
 hadExampleError := false
 numExampleErrors := 0;
@@ -79,10 +80,10 @@ toURL := path -> (
 htmlFilename = method(Dispatch => Thing)
 htmlFilename Thing := x -> htmlFilename makeDocumentTag x
 htmlFilename DocumentTag := tag -> (
-     -- this one is used for storing the file, hence "layout"
+     -- this one is used for storing the file, hence "installationLayout"
      fkey := DocumentTag.FormattedKey tag;
      pkgtitle := DocumentTag.Title tag;
-     replace("PKG",pkgtitle,layout#"packagehtml") | if fkey === pkgtitle then topFileName else toFilename fkey|".html" )
+     replace("PKG",pkgtitle,installationLayout#"packagehtml") | if fkey === pkgtitle then topFileName else toFilename fkey|".html" )
 htmlFilename FinalDocumentTag := tag -> (
      -- this one is used for creating links to the file, hence "Layout", since the bifurcation of the layout
      -- into common and exec halves is not retained in the final installation; it's just a convenience while assembling
@@ -585,8 +586,8 @@ load "install.m2"
 
 installPackage Package := opts -> pkg -> (
      verbose := opts.Verbose or debugLevel > 0;
-     oldlayout := layout;
-     layout = if opts.SeparateExec then Layout#2 else Layout#1;
+     oldlayout := installationLayout;
+     installationLayout = if opts.SeparateExec then Layout#2 else Layout#1;
 
      use pkg;
      chkdoc = opts.CheckDocumentation;			    -- oops, this will have a lingering effect...
@@ -612,7 +613,7 @@ installPackage Package := opts -> pkg -> (
      if verbose then stderr << "--using package sources found in " << currentSourceDir << endl;
 
      -- copy package source file
-     pkgDirectory := layout#"packages";
+     pkgDirectory := installationLayout#"packages";
      makeDirectory (buildDirectory|pkgDirectory);
      bn := buildPackage | ".m2";
      fn := currentSourceDir|bn;
@@ -625,7 +626,7 @@ installPackage Package := opts -> pkg -> (
 	  ) else (
      	  
 	  -- copy package source subdirectory
-	  srcDirectory := replace("PKG",pkg#"title",layout#"package");
+	  srcDirectory := replace("PKG",pkg#"title",installationLayout#"package");
 	  dn := realpath currentSourceDir | "/" | buildPackage;
 	  if isDirectory dn
 	  then (
@@ -642,7 +643,7 @@ installPackage Package := opts -> pkg -> (
      	  );
 
      -- copy package source subdirectory examples
-     exampleOutputDir := buildDirectory|replace("PKG",pkg#"title",layout#"packageexampleoutput");
+     exampleOutputDir := buildDirectory|replace("PKG",pkg#"title",installationLayout#"packageexampleoutput");
 
      if opts.MakeDocumentation then (
 	  pkg#"package prefix" = buildDirectory;
@@ -669,8 +670,8 @@ installPackage Package := opts -> pkg -> (
 
 	  -- cache raw documentation in database, and check for changes
 	  rawDocUnchanged := new MutableHashTable;
-	  libDir := pkg#"package prefix" | replace("PKG",pkg#"title",layout#"packagelib");
-	  cacheDir := pkg#"package prefix" | replace("PKG",pkg#"title",layout#"packagecache");
+	  libDir := pkg#"package prefix" | replace("PKG",pkg#"title",installationLayout#"packagelib");
+	  cacheDir := pkg#"package prefix" | replace("PKG",pkg#"title",installationLayout#"packagecache");
 	  rawdbname := cacheDir | "rawdocumentation" | databaseSuffix;
 	  rawdbnametmp := rawdbname | ".tmp";
 	  if verbose then stderr << "--storing raw documentation in " << rawdbname << endl;
@@ -859,7 +860,7 @@ installPackage Package := opts -> pkg -> (
 	  if opts.MakeInfo then (
 	       savePW := printWidth;
 	       printWidth = 79;
-	       infodir := buildDirectory|layout#"info";
+	       infodir := buildDirectory|installationLayout#"info";
 	       makeDirectory infodir;
 	       infotitle := pkg#"title";
 	       infobasename := infotitle|".info";
@@ -904,7 +905,7 @@ installPackage Package := opts -> pkg -> (
 	       );
 
 	  -- make html files
-	  htmlDirectory = replace("PKG",pkg#"title",layout#"packagehtml"); -- if layout =!= currentLayout, this may cause problems
+	  htmlDirectory = replace("PKG",pkg#"title",installationLayout#"packagehtml"); -- if installationLayout =!= currentLayout, this may cause problems
 	  setupButtons();
 	  makeDirectory (buildDirectory|htmlDirectory);
 	  if verbose then stderr << "--making html pages in " << buildDirectory|htmlDirectory << endl;
@@ -943,8 +944,8 @@ installPackage Package := opts -> pkg -> (
 	  octal := s -> (n := 0 ; z := first ascii "0"; scan(ascii s, i -> n = 8*n + i - z); n);
 	  if verbose then stderr << "--making INSTALL, postinstall, preremove, and encapinfo files in " << buildDirectory << endl;
      	  fix := s -> (
-	       s = replace("info/", layout#"info", s);
-	       s = replace("bin/", layout#"bin", s);
+	       s = replace("info/", installationLayout#"info", s);
+	       s = replace("bin/", installationLayout#"bin", s);
 	       s);
 	  -- postinstall
 	  f := buildDirectory | "postinstall" 
@@ -973,7 +974,7 @@ installPackage Package := opts -> pkg -> (
 	  << ///contact dan@math.uiuc.edu/// << endl;
 	  removeLastSlash := s -> if s#?0 and s#-1 === "/" then substring(s,0,#s-1) else s;
 	  scan(("packagecache","packagedoc","package","libraries"),
-	       k -> f << "linkdir" << " " << removeLastSlash replace("PKG","*",layout#k) << endl);
+	       k -> f << "linkdir" << " " << removeLastSlash replace("PKG","*",installationLayout#k) << endl);
 	  fileMode(octal "644",f);
 	  f << close;
 	  -- INSTALL
@@ -989,7 +990,7 @@ installPackage Package := opts -> pkg -> (
      -- make symbolic links
      if opts.Encapsulate and opts.MakeLinks then (
      	  if verbose then stderr << "--making symbolic links from \"" << installDirectory << "\" to \"" << buildDirectory << "\"" << endl;
-	  scan(unique {layout#"common",layout#"exec"}, d ->
+	  scan(unique {installationLayout#"common",installationLayout#"exec"}, d ->
 	       symlinkDirectory(buildDirectory|d, installDirectory,
 		    Verbose => debugLevel > 0, 
 		    Exclude => {
@@ -1010,7 +1011,7 @@ installPackage Package := opts -> pkg -> (
 	  userMacaulay2Directory();
 	  makePackageIndex();
 	  );
-     layout = oldlayout;
+     installationLayout = oldlayout;
      )
 
 sampleInitFile = ///-- This is a sample init.m2 file provided with Macaulay2.
