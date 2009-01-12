@@ -1,4 +1,4 @@
--- Copyright 1999-2006 by Anton Leykin and Harrison Tsai
+-- Copyright 1999-2009 by Anton Leykin and Harrison Tsai
 
 TEST /// input "Dmodules/TST/AnnFs.tst.m2" ///
 TEST /// input "Dmodules/TST/DHom.tst.m2" ///
@@ -312,6 +312,20 @@ document {
 	  },
      SeeAlso => { "bFunction", "globalBFunction", "lct" }
      }
+document {
+     Key => [generalB,Strategy],
+     Headline => "specify strategy for computing general Bernstein-Sato polynomial",
+     UL { 
+	  {BOLD "ViaLinearAlgebra", 
+	       " -- use linear algebra to find a relation for the powers of indeterminate ", 
+	       EM "s" }
+	  }
+     }
+document {
+     Key => ViaLinearAlgebra,
+     Headline => "an option for generalB=>Strategy",
+     "see ", TO "generalB"
+     } 
 document { 
      Key => {(lct,Ideal), lct},
      Headline => "compute the log canonical threshold for an ideal",
@@ -440,7 +454,14 @@ document {
      } 
 
 document {
-     Key => {(AnnFs, RingElement), AnnFs},
+     Key => AnnFs,
+     Headline => "the annihilating ideal of f^s",
+     "Either a single or a list of polynomials can be supplied for ",  EM "f", ".",
+     SeeAlso => {"AnnIFs", "WeylAlgebra"}
+     }
+
+document {
+     Key => {(AnnFs, RingElement)},
      Headline => "the annihilating ideal of f^s",
      Usage => "AnnFs f",
      Inputs => {
@@ -491,6 +512,26 @@ document {
 	  this ring should not be a homogeneous Weyl algebra."
      	  },
      SeeAlso => {"AnnFs", "WeylAlgebra"}
+     }  
+
+document {
+     Key => {(AnnFs, List)},
+     Headline => "the annihilating ideal of f_1^{s_1}...f_r^{s_r}",
+     Usage => "AnnFs F",
+     Inputs => {
+	  "F" => { 
+	       "{f_1,...,f_r}, a list of polynomials in n variables                           
+	       (f_i has to be an element of A_n, the Weyl algebra)"
+	       }
+	  },
+     Outputs => {
+	  Ideal => {"an ideal in A_n<t_1,..., t_r,dt_1,...,dt_r>"}
+	  },
+     EXAMPLE lines ///
+     W = makeWA ( QQ[x_1..x_3] ) 
+     AnnFs {x_2^2-x_1*x_3, x_1^3-x_3^2}
+     ///,
+     SeeAlso => {"AnnIFs", "WeylAlgebra"}
      }  
 
 document {
@@ -1404,6 +1445,11 @@ document {
      }
 
 document {
+     Key => [makeWeylAlgebra,SetVariables],
+     Headline => "set variables of the created algebra to be global"
+     }
+
+document {
      Key => {Ddual, (Ddual,Module), (Ddual,Ideal)},
      Headline => "holonomic dual of a D-module",
      Usage => "Ddual M, Ddual I",
@@ -1432,7 +1478,7 @@ document {
      }
 
 document {
-     Key => [Dlocalize,Strategy],
+     Key => {[Dlocalize,Strategy],[DlocalizeAll,Strategy],[Dlocalization,Strategy],[DlocalizeMap,Strategy]},
      Headline=>"strategy for computing a localization of a D-module",
      UL{
 	  {BOLD "Oaku", " -- use the Oaku algorithm"},
@@ -1583,14 +1629,20 @@ document {
      }
 
 document {
-     Key => [Dresolution,Strategy],
+     Key => {[Dres,Strategy],[Dresolution,Strategy]},
      Headline => "strategy for computing a resolution of a D-module",
      UL { 
 	  {BOLD "Schreyer", 
 	       " -- uses Schreyer method in homogeneous Weyl algebra"},
 	  {BOLD "Vhomogenize", " -- uses V-homogenization method of Oaku"}
+     	  }
      }
-}
+document {
+     Key => {[Dres,LengthLimit],[Dresolution,LengthLimit]},
+     Headline => "the limit for the length of a resolution of a D-module",
+     "In case the actual length of the resolution exceeds the limit, it is truncated.
+     The default value is infinity." 
+     }
 document {
      Key => Schreyer,
      Headline => "strategy for computing a resolution of a D-module"
@@ -1653,7 +1705,12 @@ document {
      }	
 
 document {
-     Key => [Drestriction,Strategy],
+     Key => {[DintegrationIdeal,Strategy],
+	  [DintegrationComplex,Strategy],[Dintegrate,Strategy],
+	  [DintegrationAll,Strategy],[DintegrationClasses,Strategy],
+	  [Drestriction,Strategy],[DrestrictionIdeal,Strategy],
+	  [DrestrictionComplex,Strategy],[Drestrict,Strategy],
+	  [DrestrictionAll,Strategy],[DrestrictionClasses,Strategy]},
 	  "Option is passed to Dresolution. See ",
 	  TO [Dresolution,Strategy]
 	  }
@@ -2280,7 +2337,11 @@ document {
      Headline => "a key in the hashtable created by deRham",
      SeeAlso => "deRham"
      }
-
+document {
+     Key => LocalizeMap,
+     Headline => "a key in the hashtable created by deRham",
+     SeeAlso => "deRham"
+     }
 document {
      Key => OmegaRes,
      Headline => "a key in the hashtable created by deRham",

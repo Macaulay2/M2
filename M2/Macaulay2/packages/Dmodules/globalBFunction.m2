@@ -153,7 +153,10 @@ globalBFunction RingElement := RingElement => o -> f -> (
 
 --------------------------------------------------------------
 -- global generalized Bernstein-Sato polynomial
-generalB = method(Options => {GuessedRoots => null, Strategy => ViaLinearAlgebra})
+generalB = method(Options => {
+	  -- GuessedRoots => null, -- should this be removed?
+	  Strategy => ViaLinearAlgebra
+	  })
 generalB (List, RingElement) := RingElement => o->(F,g) -> (
 -- Input:   F = {f_1,...,f_r}, a list of polynomials in n variables                                                                                                                                       
 --                             (f_i has to be an element of A_n, the Weyl algebra).                                                                                                                       
@@ -190,7 +193,8 @@ generalB (List, RingElement) := RingElement => o->(F,g) -> (
      SXring := K(monoid [SX]);
      SDYtoSX := map(SXring,SDY, gens SXring | toList(n+2*r:0) );
      I2' := sub(I1,SDY) + ideal (SDY_0 + sum(r,i->dT#i*T#i)); -- I2 + (s-\sigma)
-     if o.GuessedRoots =!= null and #o.GuessedRoots == 1 then I2' = I2' + ideal(SDY_0 - first o.GuessedRoots);
+     --if o.GuessedRoots =!= null and #o.GuessedRoots == 1 
+     --then I2' = I2' + ideal(SDY_0 - first o.GuessedRoots);
      G2' := flatten entries gens gb I2'; 
      I2 := SDYtoSX ideal select(G2', f->all(listForm f, m->sum drop(first m,n+1)==0));
      --I2 := SDYtoSX eliminate(notSX,I2'); -- works incorrectly for Weyl algebras
