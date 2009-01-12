@@ -59,6 +59,7 @@ mutable(Thing) := Boolean => mutable
 instance(Thing,Type) := Boolean => instance
 regex(String,String) := List => regex
 regex(String,ZZ,String) := List => regex
+regex(String,ZZ,ZZ,String) := List => regex
 characters String := List => characters
 concatenate Nothing := concatenate String := concatenate Symbol := concatenate ZZ := concatenate BasicList := String => concatenate
 deepSplice BasicList := BasicList => deepSplice

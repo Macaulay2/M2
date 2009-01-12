@@ -3,29 +3,26 @@
 --- notes: 
 
 document { 
-     Key => regex,
-     Headline => "regular expression matching"
-     }
-
-document { 
-     Key => (regex,String,String),
-     Usage => "z = regex(p,s)",
+     Key => {regex,(regex,String,ZZ,String),(regex,String,ZZ,ZZ,String),(regex,String,String)},
+     Usage => "z = regex(p,n,r,s)\nz = regex(p,n,s)",
      Inputs => {
 	  "p" => "a regular expression describing a pattern",
-	  "s" => "a subject string to be searched"
+	  "n" => {"the starting position in ", TT "s", " at which to begin the search.  If it is
+	       omitted, the search starts at the beginning of the string."},
+	  "r" => {"the extent of the search.  If it is omitted, the search extends to the end of the string.
+	       If it is 0, then the regular expression matches only at the starting position."
+	       },	       
+	  "s" => "the subject string to be searched"
 	  },
      Outputs => {
-	  "z" => {"a list of pairs of integers describing the first substring of ", TT "s", " found that
-	       matches the pattern, or null if nothing matched.  The pair of integers can be used
-	       as the first argument to ", TO "substring", " to obtain the matched substring."}
+	  "z" => {"a list of pairs of integers describing the first substring of ", TT "s", " found that 
+	       matches the pattern, or ", TO "null", " if nothing matched.  The substring begins at
+	       a position between ", TT "n", " and ", TT "n+r", "."}
 	  },
-     PARA {
-	  "The value returned is a list of pairs of integers corresponding to the
-	  parenthesized subexpressions successfully matched.  
-	  If no matching substring was found, then ", TO "null", " is returned.
-	  The first member of each pair is the offset within
-	  ", TT "s", " of the substring matched, and the second is the length."
-	  },
+     "The value returned is a list of pairs of integers corresponding to the
+     parenthesized subexpressions successfully matched, suitable for use as the first
+     argument of ", TO "substring", ".  The first member of each pair is the offset within
+     ", TT "s", " of the substring matched, and the second is the length.",
      EXAMPLE lines ///
      s = "The cat is black.";
      word = ////\b([a-z]+)\b////;
@@ -33,35 +30,14 @@ document {
      substring(m#0,s)
      substring(m#1,s)
      substring(m#2,s)
-     ///,
-     SeeAlso => {(regex,String,ZZ,String), "regular expressions", "match", "replace"}
-     }
-
-document { 
-     Key => (regex,String,ZZ,String),
-     Usage => "z = regex(p,n,s)",
-     Inputs => {
-	  "p" => "a regular expression describing a pattern",
-	  "n" => {"the offset in ", TT "s", " at which to begin the search"},
-	  "s" => "a subject string to be searched"
-	  },
-     Outputs => {
-	  "z" => {"a list of pairs of integers describing the first substring of ", TT "s", " found that 
-	       matches the pattern, or null if nothing matched"}
-	  },
-     "The value returned is a list of pairs of integers corresponding to the
-     parenthesized subexpressions successfully matched.  
-     If no matching substring was found, then ", TO "null", " is returned.
-     The first member of each pair is the offset within
-     ", TT "s", " of the substring matched, and the second is the length.",
-     EXAMPLE lines ///
-     s = "aa b c aaaa";
+     s = "aa     aaaa";
      m = regex("a+",0,s)
-     n = regex("a+",4,s)
      substring(m#0,s)
-     substring(n#0,s)
+     m = regex("a+",2,s)
+     substring(m#0,s)
+     m = regex("a+",2,3,s)
      ///,
-     SeeAlso => {(regex,String,String), "regular expressions", "match", "replace"}
+     SeeAlso => {"regular expressions", "match", "replace", (substring,Sequence,String)}
      }
 
 document {
