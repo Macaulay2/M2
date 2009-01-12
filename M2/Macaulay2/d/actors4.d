@@ -837,7 +837,15 @@ substrfun(e:Expr):Expr := (
 	  when args.1
 	  is s:string do Expr(substr(s,toInt(i)))
 	  else WrongArgString(2))
-     else WrongArg(1,"a string or an integer")
+     is pair:Sequence do (
+	  if length(pair) != 2 then WrongArg(1,"a sequence of length 2") else
+	  when pair.0 is i:ZZ do if !isInt(i) then WrongArg(1,"a pair of small integers") else (
+	       when pair.1 is j:ZZ do if !isInt(j) then WrongArg(1,"a pair of small integers") else
+	       when args.1 is s:string do Expr(substr(s,toInt(i),toInt(j)))
+	       else WrongArgString(2)
+	       else WrongArg(1,"a pair of integers"))
+	  else WrongArg(1,"a pair of integers"))
+     else WrongArg(1,"a string, an integer, or a pair of integers")
      else WrongNumArgs(2,3)
      else WrongNumArgs(2,3));
 setupfun("substring",substrfun);

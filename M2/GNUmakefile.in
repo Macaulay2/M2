@@ -3,7 +3,7 @@ include include/config.Makefile
 VPATH = @srcdir@
 .PRECIOUS:@srcdir@/configure config.status
 .PHONY:reconfigure-libs reconfigure-all configure-help report-M2-location help scripts
-all:check-make configured check-vars srcdir protect-configs configfiles check-machine all-in-subdirs report-M2-location
+all:check-make configured check-for-undefined-configure-variables srcdir protect-configs configfiles check-machine all-in-subdirs report-M2-location
 configfiles:; $(MAKE) -f Makefile.configfiles
 check-make:; @ echo "$(.FEATURES)" | grep order-only >/dev/null || (echo error: version >= 3.81 of GNU make is required >&2; false)
 configured:include/configuration
@@ -12,7 +12,6 @@ check:configured check-in-subdirs
 check-machine:; @[ "@UNAME_INFO@" = "` @UNAME_INFO_COMMAND@ `" ] || (echo "error: reconfiguration required (uname output seems different)" >&2; false)
 distclean:clean distclean-in-subdirs
 	rm -f @CONFIGURED_FILES@ include/M2/config.h include/config.Makefile config.cache config.log configure.options config.status
-	@FIND@ . -name .svn -not -prune -o -type d -empty -delete
 $(foreach t,all check clean distclean,					\
 	$(foreach d,libraries Macaulay2 distributions check-configure,	\
 	   $(eval .PHONY: $t-in-subdirs)				\
@@ -79,14 +78,14 @@ srcdir: GNUmakefile
 subst: config.status ; ./config.status
 show: config.status ; egrep '^s,' $< | sed -e 's/^s,@\(.*\)@,\(.*\),g/\1=\2/' -e 's/^s,.*]\*\(.*\)\\).*\\2 \(.*\) ,/#define \1 \2/' -e 's/.#_!!_#.//g'
 CONFIG_FILES = @srcdir@/configure @srcdir@/config/install-sh @srcdir@/config/config.sub @srcdir@/config/config.guess @srcdir@/config/files
-reconfigure: recheck check-vars protect-configs
+reconfigure: recheck check-for-undefined-configure-variables protect-configs
 recheck: $(CONFIG_FILES)
 	./config.status --recheck && ./config.status
 	@ echo "============================================================================="
 	@ echo "warning: to reconfigure the libraries, use 'make reconfigure-libs' or 'make reconfigure-all'"
 	@ echo "============================================================================="
 protect-configs:; chmod a-w $(shell cat @srcdir@/config/files)
-check-vars:
+check-for-undefined-configure-variables:
 	: "checking for strings that look like unsubstituted configure variables in all *.in files..."
 	@ ! egrep -nH '@[A-Za-z_]+@' $(shell cat @srcdir@/config/files) | sed -e 's=^\([^:]*\):=@srcdir@/\1.in:='  | egrep .
 configure-help: $(CONFIG_FILES) ; @ @srcdir@/configure --help

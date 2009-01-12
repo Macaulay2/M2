@@ -16,7 +16,11 @@ firstTime := class PackageDictionary === Symbol
 match := X -> null =!= regex X
 
 if regex(".*/","/aa/bb") =!= {(0, 4)}
-or regex(".*/","aabb") =!= null
+or regex("a|b","a") =!= {(0,1)}
+or regex("^a+$"," \naaa\n ") =!= {(2,3)}
+or replace("a","b","-a-a-") =!= "-b-b-"
+or regex("$a","$a") =!= null
+or select("a+","aaa aaaa") =!= {"aaa","aaaa"}
 then error "regex regular expression library not working"
 
 -- we do this bit *before* "debug Core", so that Core (the symbol, not the package), which may not be there yet, ends up in the right dictionary

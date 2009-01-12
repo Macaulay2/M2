@@ -1,7 +1,8 @@
 # @configure_input@
 VPATH = @srcdir@
-CFILES = regex.c
-all: $(CFILES:.c=.o)
+CFILES = regcomp.c regex.c regex_internal.c regexec.c
+HFILES = regex.h regex_internal.h
+all: regex.o
 include ../../include/config.Makefile
 CPPFLAGS := -I@srcdir@ $(CPPFLAGS)
 .PHONY: tags
@@ -33,7 +34,7 @@ EcCMD = $(COMPILE.c) -E $(OUTPUT_OPTION) $<
 	@ echo " ** creating $@ from $<"
 	@ @CC@  -MM $(CPPFLAGS) $< >$*-tmp.dep && <$*-tmp.dep sed 's/\($*\)\.o[ :]*/\1.o $@ : /' >$@ && rm $*-tmp.dep
 
-@srcdir@/TAGS: $(CFILES); cd @srcdir@ && @ETAGS@ $(CFILES)
+@srcdir@/TAGS: $(HFILES) $(CFILES); cd @srcdir@ && @ETAGS@ $(HFILES) $(CFILES)
 DEPENDS = yes
 ifeq "$(DEPENDS)" "yes"
 include $(CFILES:.c=.dep) $(CCFILES:.cpp=.dep)

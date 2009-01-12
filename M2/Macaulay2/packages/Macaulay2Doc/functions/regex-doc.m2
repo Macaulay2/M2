@@ -16,13 +16,24 @@ document {
 	  },
      Outputs => {
 	  "z" => {"a list of pairs of integers describing the first substring of ", TT "s", " found that
-	       matches the pattern, or null if nothing matched"}
+	       matches the pattern, or null if nothing matched.  The pair of integers can be used
+	       as the first argument to ", TO "substring", " to obtain the matched substring."}
 	  },
-     "The value returned is a list of pairs of integers corresponding to the
-     parenthesized subexpressions successfully matched.  
-     If no matching substring was found, then ", TO "null", " is returned.
-     The first member of each pair is the offset within
-     ", TT "s", " of the substring matched, and the second is the length.",
+     PARA {
+	  "The value returned is a list of pairs of integers corresponding to the
+	  parenthesized subexpressions successfully matched.  
+	  If no matching substring was found, then ", TO "null", " is returned.
+	  The first member of each pair is the offset within
+	  ", TT "s", " of the substring matched, and the second is the length."
+	  },
+     EXAMPLE lines ///
+     s = "The cat is black.";
+     word = ////\b([a-z]+)\b////;
+     m = regex(word|" "|word,s)
+     substring(m#0,s)
+     substring(m#1,s)
+     substring(m#2,s)
+     ///,
      SeeAlso => {(regex,String,ZZ,String), "regular expressions", "match", "replace"}
      }
 
@@ -43,10 +54,13 @@ document {
      If no matching substring was found, then ", TO "null", " is returned.
      The first member of each pair is the offset within
      ", TT "s", " of the substring matched, and the second is the length.",
-     EXAMPLE {
-	  ///regex("a",0,"a b c a")///,
-	  ///regex("a",1,"a b c a")///,
-	  },
+     EXAMPLE lines ///
+     s = "aa b c aaaa";
+     m = regex("a+",0,s)
+     n = regex("a+",4,s)
+     substring(m#0,s)
+     substring(n#0,s)
+     ///,
      SeeAlso => {(regex,String,String), "regular expressions", "match", "replace"}
      }
 
@@ -108,17 +122,26 @@ document {
 	  },
      "In order to match one of the special characters itself, precede it with a backslash.",
      PARA {"We illustrate the use of regular expressions with ", TO (regex,String,String), "."},
-     EXAMPLE {
-     	  ///regex("d", "1abcddddeF2")///,
-     	  ///regex("d*", "1abcddddeF2")///,
-     	  ///regex("d+", "1abcddddeF2")///,
-     	  ///regex("d+", "1abceF2")///,
-     	  ///regex("cdd+e", "1abcddddeF2")///,
-     	  ///regex("cd(d+)e", "1abcddddeF2")///,
-     	  ///regex("[a-z]+", "1abcddddeF2")///,
-     	  ///regex("[[:alpha:]]+", "Dog cat cat.")///,
-	  ///regex("([[:alpha:]]+) *\\1","Dog cat cat.")///,
-	  },
+     EXAMPLE lines ///
+     s = "1abcddddeF2";
+     regex("d", s)
+     substring(oo#0,s)
+     regex("d*", s)
+     substring(oo#0,s)
+     regex("d+", s)
+     substring(oo#0,s)
+     regex("d+", "1abceF2")
+     regex("cdd+e", s)
+     substring(oo#0,s)
+     regex("cd(d+)e", s)
+     substring(oo#0,s),substring(oo#1,s)
+     regex("[a-z]+", s)
+     substring(oo#0,s)
+     t = "Dog cat cat.";
+     regex("[[:alpha:]]+", t)
+     regex("([[:alpha:]]+) *\\1",t)
+     substring(oo#0,t),substring(oo#1,t)
+     ///,
      "For complete documentation on regular expressions see the entry for ", TT "regex", " in
      section 7 of the unix man pages, or read the the GNU ", TT "regex", " manual.",
      Subnodes => {
