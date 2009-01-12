@@ -6,7 +6,7 @@ List ? List := (s,t) -> if class s === class t then toSequence s ? toSequence t 
 
 VisibleList _ ZZ := (s,i) -> s#i
 String _ ZZ := String => (s,i) -> s#i
-String _ Sequence := String => (s,i) -> ((j,k) -> substring(j,k,s)) i
+String _ Sequence := String => (s,p) -> substring(p,s)
 
 List | List  := List => join
 Array | Array  := Array => join
