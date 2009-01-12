@@ -8,6 +8,7 @@
 #include "assprime.hpp"
 #include "monideal-minprimes.hpp"
 #include "exceptions.hpp"
+#include "text-io.hpp"
 
 static int monideals_nfinalized = 0;
 static int monideals_nremoved = 0;
@@ -339,10 +340,13 @@ public:
     for (int i=0; i<nv; i++)
       exp[i] = mpz_get_si(exponentVector[i]); // overflow should not occur, as input fit
 
-    fprintf(stderr, "got ");
-    for (int j=0; j<nv; j++)
-      fprintf(stderr, "%d ", exp[j]);
-    fprintf(stderr, "\n");
+    if (gbTrace >= 5)
+      {
+	fprintf(stderr, "got ");
+	for (int j=0; j<nv; j++)
+	  fprintf(stderr, "%d ", exp[j]);
+	fprintf(stderr, "\n");
+      }
       
     Bag *b = new Bag();
     varpower::from_ntuple(nv, exp, b->monom());
@@ -377,13 +381,14 @@ const MonomialIdeal *FrobbyAlexanderDual(const MonomialIdeal *I, const M2_arrayi
     {
       Bag *b = I->operator[](i);
       varpower::to_ntuple(nv, b->monom().raw(), exp);
-      fprintf(stderr, "adding ");
+
+      if (gbTrace >= 4) fprintf(stderr, "adding ");
       for (int j=0; j<nv; j++)
 	{
-	  fprintf(stderr, "%d ", exp[j]);
+	  if (gbTrace >= 4) fprintf(stderr, "%d ", exp[j]);
 	  F.addExponent(exp[j]);
 	}
-      fprintf(stderr, "\n");
+      if (gbTrace >= 4) fprintf(stderr, "\n");
     }
 
   // Now create the consumer object, and call Frobby
@@ -404,16 +409,20 @@ const MonomialIdeal *FrobbyAlexanderDual(const MonomialIdeal *I, const M2_arrayi
 }
 #endif
 
-const MonomialIdealOrNull *rawAlexanderDual(const MonomialIdeal *I, const M2_arrayint top)
+const MonomialIdealOrNull *rawAlexanderDual(const MonomialIdeal *I, const M2_arrayint top, int strategy)
 {
-  return I->alexander_dual(top);
-#if 0
+  switch (strategy) {
 #if HAVE_FROBBY
-  return FrobbyAlexanderDual(I,top);
-#else
-  return I->alexander_dual(top);
+  case 0:
+    if (gbTrace >= 1)
+      emit_line("[Alexander dual: frobby]");
+    return FrobbyAlexanderDual(I,top);
 #endif
-#endif
+  default:
+    if (gbTrace >= 1)
+      emit_line("[Alexander dual: M2 monideal");
+    return I->alexander_dual(top);
+  }
 }
 
 

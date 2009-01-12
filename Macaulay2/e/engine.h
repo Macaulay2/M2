@@ -1537,7 +1537,8 @@ extern "C" {
 
   M2_arrayint rawMonomialIdealLCM(const MonomialIdeal *I); /* connected, same name */
 
-  const MonomialIdealOrNull *rawAlexanderDual(const MonomialIdeal *I, const M2_arrayint top); /* connected, same name */
+  const MonomialIdealOrNull *rawAlexanderDual(const MonomialIdeal *I, const M2_arrayint top, int strategy); /* connected, same name */
+  /* 0 is the default, 1 is an alternate strategy */
 
   /**************************************************/
   /**** Groebner basis and resolution routines ******/

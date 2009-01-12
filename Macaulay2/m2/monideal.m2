@@ -280,7 +280,7 @@ dual(MonomialIdeal, List) := (I,a) -> (
      	  if #aI =!= #a then error ( "expected list of length ", toString (#aI));
 	  scan(a, aI, (b,c) -> if b<c then error "exponent vector not large enough" );
 	  );
-     newMonomialIdeal(ring I, rawAlexanderDual(raw I, a))
+     newMonomialIdeal(ring I, rawAlexanderDual(raw I, a, 0)) -- 0 is the default algorithm
      )
 
 dual(MonomialIdeal,RingElement) := (I,r) -> dual(I,first exponents r)
