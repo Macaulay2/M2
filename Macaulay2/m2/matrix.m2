@@ -1,21 +1,17 @@
 --		Copyright 1995-2002 by Daniel R. Grayson and Michael Stillman
 -- methods of "map" with a RawMatrix replace "getMatrix", which was a private function
 
+oops := R -> error (
+     if degreeLength R === 1
+     then "expected degree to be an integer or list of integers of length 1"
+     else ("expected degree to be a list of integers of length ", toString degreeLength R))
+
 degreeCheck = (d,R) -> (				    -- assume d =!= null
      if class d === ZZ then d = {d};
-     if class d === List or class d === Sequence
-     and all(d,i -> class i === ZZ) 
-     and #d === degreeLength R
-     then (
-	  )
-     else (
-	  if degreeLength R === 1
-	  then error "expected degree to be an integer or list of integers of length 1"
-	  else error (
-	       "expected degree to be a list of integers of length ",
-	       toString degreeLength R
-	       )
-	  );
+     if class d === Sequence then d = toList d;
+     if not instance(d,List) then oops R;
+     d = spliceInside toList d;
+     if not ( all(d,i -> class i === ZZ) and #d === degreeLength R ) then oops R;
      toSequence d)
 
 map(Module,Module,RawMatrix) := opts -> (tar,src,f) -> (

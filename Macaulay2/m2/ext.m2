@@ -77,6 +77,11 @@ Ext(ZZ, Ideal, Module) := (i,I,N) -> Ext^i(module I,N)
 
 -- total ext over complete intersections
 
+-- change 2009/1/12:
+--  some modifications contributed 23 Mar 2007 by "Paul S. Aspinwall" <psa@cgtp.duke.edu>,
+--  but we also get rid of the fudge factor entirely, depending instead on automatic
+--  computation of the heft vector
+
 Ext(Module,Module) := Module => (M,N) -> (
   cacheModule := M; -- we have no way to tell whether N is younger than M, sigh
   cacheKey := (Ext,M,N);
@@ -106,15 +111,11 @@ Ext(Module,Module) := Module => (M,N) -> (
   C := complete resolution M';
   X := getGlobalSymbol "X";
   K := coefficientRing A;
-  -- compute the fudge factor for the adjustment of bidegrees
-  fudge := if #f > 0 then 1 + max(first \ degree \ f) // 2 else 0;
   S := K(monoid [X_1 .. X_c, toSequence A.generatorSymbols,
     Degrees => {
-      apply(0 .. c-1, i -> {-2, - first degree f_i}),
-      apply(0 .. n-1, j -> { 0,   first degree A_j})
-      },
-    Heft => {-fudge, 1}
-    ]);
+      apply(0 .. c-1, i -> prepend(-2, - degree f_i)),
+      apply(0 .. n-1, j -> prepend( 0,   degree A_j))
+      }]);
   -- make a monoid whose monomials can be used as indices
   Rmon := monoid [X_1 .. X_c,Degrees=>{c:{2}}];
   -- make group ring, so 'basis' can enumerate the monomials
@@ -150,7 +151,7 @@ Ext(Module,Module) := Module => (M,N) -> (
   -- make a free module whose basis elements have the right degrees
   spots := C -> sort select(keys C, i -> class i === ZZ);
   Cstar := S^(apply(spots C,
-      i -> toSequence apply(degrees C_i, d -> {i,first d})));
+      i -> toSequence apply(degrees C_i, d -> prepend(i,d))));
   -- assemble the matrix from its blocks.
   -- We omit the sign (-1)^(n+1) which would ordinarily be used,
   -- which does not affect the homology.
@@ -158,7 +159,7 @@ Ext(Module,Module) := Module => (M,N) -> (
     DegreeMap => prepend_0);
   Delta := map(Cstar, Cstar, 
     transpose sum(keys blks, m -> S_m * toS sum blks#m),
-    Degree => {-1,0});
+    Degree => { -1, degreeLength A:0 });
   DeltaBar := Delta ** (toS ** N');
   assert isHomogeneous DeltaBar;
   assert(DeltaBar * DeltaBar == 0);
