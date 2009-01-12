@@ -1004,7 +1004,7 @@ struct re_pattern_buffer regex_pattern;
 #define re_search_empty_return (-1)
 #define match_length(match,i) (match_end(match,i) - match_start(match,i))
 
-M2_arrayint system_regexmatch(M2_string pattern, int start, M2_string text, M2_bool ignorecase) {
+M2_arrayint system_regexmatch(M2_string pattern, int start, int range, M2_string text, M2_bool ignorecase) {
   static struct M2_arrayint_struct empty[1] = {{0}};
   const char *regcomp_return;
   system_regexmatchErrorMessage = &noErrorMessage;
@@ -1023,7 +1023,7 @@ M2_arrayint system_regexmatch(M2_string pattern, int start, M2_string text, M2_b
   {
     int regexec_return;
     static struct re_registers match;
-    regexec_return = re_search(&regex_pattern, text->array, text->len, start, text->len - start, &match);
+    regexec_return = re_search(&regex_pattern, text->array, text->len, start, range, &match);
     if (regexec_return == re_search_empty_return) return empty;
     else {
       int n = match_num(match);

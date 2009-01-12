@@ -37,7 +37,7 @@ EcCMD = $(COMPILE.c) -E $(OUTPUT_OPTION) $<
 @srcdir@/TAGS: $(HFILES) $(CFILES); cd @srcdir@ && @ETAGS@ $(HFILES) $(CFILES)
 DEPENDS = yes
 ifeq "$(DEPENDS)" "yes"
-include $(CFILES:.c=.dep) $(CCFILES:.cpp=.dep)
+include regex.dep
 endif
 ifneq (@ETAGS@,)
 all: tags

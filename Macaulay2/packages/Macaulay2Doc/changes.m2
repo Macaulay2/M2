@@ -285,6 +285,9 @@ document {
 		    LI {
 			 "Regular expression handling, by the functions ", TO "regex", ", ", TO "match", ", ", TO "replace", ", and ", TO "select", ",
 			 is now much faster because strings are not copied."
+			 },
+		    LI {
+			 "The function ", TO "regex", " now has a form which restricts the range of the search."
 			 }
 		    }
 	       }

@@ -662,7 +662,7 @@ installPackage Package := opts -> pkg -> (
 	       scan(readDirectory exampleOutputDir, fn -> (
 			 fn = exampleOutputDir | fn;
 			 if match("\\.out$",fn) and not exampleOutputFiles#?fn then (
-			      stderr << "--warning: removing obsolete example output file: " <<  fn << endl;
+			      -- stderr << "--warning: removing obsolete example output file: " <<  fn << endl;
 			      removeFile fn;
 			      );
 			 )));

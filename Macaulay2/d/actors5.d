@@ -1633,7 +1633,7 @@ regexmatch(e:Expr):Expr := (
      if length(a) == 2 then
      when a.0 is regexp:string do
      when a.1 is text:string do (
-	  r := regexmatch(regexp,0,text,ignorecase);
+	  r := regexmatch(regexp,0,length(text),text,ignorecase);
 	  if regexmatchErrorMessage != noErrorMessage then buildErrorPacket("regex: "+regexmatchErrorMessage)
      	  else if length(r) != 0 then toPairs(r) 
 	  else nullE)
@@ -1641,14 +1641,29 @@ regexmatch(e:Expr):Expr := (
      else WrongArgString(1)
      else if length(a) == 3 then
      when a.0 is regexp:string do
-     when a.1 is offset:ZZ do if !isInt(offset) then WrongArgSmallInteger(2) else
+     when a.1 is start:ZZ do if !isInt(start) then WrongArgSmallInteger(2) else
      when a.2 is text:string do (
-	  r := regexmatch(regexp,toInt(offset),text,ignorecase);
+	  istart := toInt(start);
+	  r := regexmatch(regexp,istart,length(text)-istart,text,ignorecase);
 	  if length(r) != 0 then toPairs(r) 
 	  else if regexmatchErrorMessage == noErrorMessage
 	  then nullE
 	  else buildErrorPacket("regex: "+regexmatchErrorMessage))
      else WrongArgString(3)
+     else WrongArgZZ(2)
+     else WrongArgString(1)
+     else if length(a) == 4 then
+     when a.0 is regexp:string do
+     when a.1 is start:ZZ do if !isInt(start) then WrongArgSmallInteger(2) else
+     when a.2 is range:ZZ do if !isInt(range) then WrongArgSmallInteger(3) else
+     when a.3 is text:string do (
+	  r := regexmatch(regexp,toInt(start),toInt(range),text,ignorecase);
+	  if length(r) != 0 then toPairs(r) 
+	  else if regexmatchErrorMessage == noErrorMessage
+	  then nullE
+	  else buildErrorPacket("regex: "+regexmatchErrorMessage))
+     else WrongArgString(4)
+     else WrongArgZZ(3)
      else WrongArgZZ(2)
      else WrongArgString(1)
      else WrongNumArgs(2,3)

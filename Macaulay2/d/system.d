@@ -80,7 +80,7 @@ import readlink(filename:string):string;
 import realpath(filename:string):(null or string);
 import noErrorMessage:string;
 import regexmatchErrorMessage:string;
-import regexmatch(pattern:string, offset:int, text:string, ignorecase:bool):array(int);
+import regexmatch(pattern:string, start:int, range:int, text:string, ignorecase:bool):array(int);
 import regexreplace(pattern:string, replacement: string, text:string, errflag:string, ignorecase:bool):string;
 import regexselect(pattern:string, replacement: string, text:string, errflag:array(string), ignorecase:bool):array(string);
 import readDirectory(name:string):(null or array(string));
