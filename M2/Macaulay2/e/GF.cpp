@@ -8,6 +8,8 @@
 #include "polyring.hpp"
 #include "gbring.hpp"
 
+extern char system_interruptedFlag;
+
 bool GF::initialize_GF(const RingElement *prim)
 {
   // set the GF ring tables.  Returns false if there is an error.
@@ -72,6 +74,8 @@ bool GF::initialize_GF(const RingElement *prim)
   _one_table[0] = Q_-1;
   for (i=1; i<=Q_-1; i++)
     {
+      if (system_interruptedFlag)
+	return false;
       ring_elem f1 = _originalR->add(polys[i], oneR);
       for (j=1; j<=Q_-1; j++)
 	if (_originalR->is_equal(f1, polys[j]))
@@ -97,17 +101,6 @@ bool GF::initialize_GF(const RingElement *prim)
 }
 
 GF::GF() {}
-
-#if 0
-// GF::GF(const RingElement *prim)
-// : Ring(prim->get_ring()->charac(),
-// 	1,1,this /* Visual C WARNING */,Monoid::get_trivial_monoid(), 
-// 	prim->get_ring()->degree_monoid()),
-//   K(prim->get_ring()->cast_to_PolynomialRing()),
-//   primitive_element(prim)
-// {
-// }
-#endif
 
 GF::~GF()
 {

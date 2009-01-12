@@ -294,17 +294,19 @@ setupfun("rawColon",rawColon);
 
 export rawAlexanderDual(e:Expr):Expr := (
      when e is s:Sequence do
-     if length(s) != 2 then WrongNumArgs(2) else
+     if length(s) != 3 then WrongNumArgs(3) else
      when s.0 is I:RawMonomialIdeal do
-     if !isSequenceOfSmallIntegers(s.1) then WrongArg(2,"a sequence of small integers")
+     if !isSequenceOfSmallIntegers(s.1) then WrongArg(2,"a sequence of small integers") else
+     if !isSmallInt(s.2) then WrongArgSmallInteger(3)
      else toExpr(Ccode(RawMonomialIdealOrNull,
  	       "(engine_RawMonomialIdealOrNull)rawAlexanderDual(",
  	       "(MonomialIdeal *)", I, ",",
- 	       "(const M2_arrayint)", getSequenceOfSmallIntegers(s.1),
+ 	       "(const M2_arrayint)", getSequenceOfSmallIntegers(s.1), ",",
+	       getSmallInt(s.2),
  	       ")"
  	       ))
      else WrongArg(1,"a raw monomial ideal")
-     else WrongArg("a raw monomial ideal and array of ints")
+     else WrongArg("a raw monomial ideal, array of ints, and another small integer")
      );
 setupfun("rawAlexanderDual",rawAlexanderDual);
 

@@ -13,6 +13,14 @@ opt64 :
 		--enable-build-libraries="gc gdbm gmp mpfr readline ntl factory libfac" \
 		--enable-frobby
 
+nonfrobby64 :
+	mkdir -p nonfrobby64
+	cd nonfrobby64; ../../../configure \
+		CC="gcc -m64" CXX="g++ -m64" \
+		--build=x86_64-apple-darwin \
+		--enable-build-libraries="gc gdbm gmp mpfr readline ntl factory libfac"
+
+
 debug64 :
 	mkdir -p debug64
 	cd debug64; ../../../configure \
