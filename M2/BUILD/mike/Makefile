@@ -10,8 +10,8 @@ opt64 :
 		CC="gcc -m64" CXX="g++ -m64" \
 		--build=x86_64-apple-darwin \
 		--enable-dmg \
-		--enable-build-libraries="gc gdbm gmp mpfr readline ntl factory libfac" \
-		--enable-frobby
+		--enable-build-libraries="gc gdbm gmp mpfr readline ntl factory libfac frobby"
+#		--enable-frobby
 
 nonfrobby64 :
 	mkdir -p nonfrobby64
@@ -29,8 +29,8 @@ debug64 :
 		--build=x86_64-apple-darwin \
 		--enable-debug \
 		--disable-optimize \
-		--enable-build-libraries="gc gdbm gmp mpfr readline ntl factory libfac" \
-		--enable-frobby
+		--enable-build-libraries="gc gdbm gmp mpfr readline ntl factory libfac frobby"
+#		--enable-frobby
 
 profile64 :
 	mkdir -p profile64
@@ -39,8 +39,8 @@ profile64 :
 		CC="gcc -m64" CXX="g++ -m64" \
 		--build=x86_64-apple-darwin \
 		--enable-profile \
-		--enable-build-libraries="gc gdbm gmp mpfr readline ntl factory libfac" \
-		--enable-frobby
+		--enable-build-libraries="gc gdbm gmp mpfr readline ntl factory libfac frobby"
+#		--enable-frobby
 
 # These are for use on linux/ubuntu
 
@@ -49,8 +49,8 @@ opt :
 	cd opt;	../../../configure \
 		--prefix="`pwd`/installed" \
 		--enable-tarfile \
-		--enable-build-libraries="gc gdbm gmp mpfr readline ntl factory libfac lapack" \
-		--enable-frobby
+		--enable-build-libraries="gc gdbm gmp mpfr readline ntl factory libfac lapack frobby" \
+#		--enable-frobby
 
 debug :
 	mkdir -p debug
@@ -58,13 +58,13 @@ debug :
 		--prefix="`pwd`/installed" \
 		--enable-debug \
 		--disable-optimize \
-		--enable-build-libraries="gc gdbm gmp mpfr readline ntl factory libfac lapack" \
-		--enable-frobby
+		--enable-build-libraries="gc gdbm gmp mpfr readline ntl factory libfac lapack frobby" \
+#		--enable-frobby
 
 profile :
 	mkdir -p profile
 	cd profile; ../../../configure \
 		--prefix="`pwd`/installed" \
 		--enable-profile \
-		--enable-build-libraries="gc gdbm gmp mpfr readline ntl factory libfac lapack" \
-		--enable-frobby
+		--enable-build-libraries="gc gdbm gmp mpfr readline ntl factory libfac lapack frobby" \
+#		--enable-frobby
