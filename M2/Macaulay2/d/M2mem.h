@@ -5,6 +5,7 @@ extern "C" {
 #endif
   extern void outofmem(void);
   extern char *getmem(size_t);
+  extern char *getmoremem(char *,size_t);
   extern char *getmem_clear(size_t);
   extern char *getmem_atomic(size_t);
   extern char *getmem_malloc(size_t);

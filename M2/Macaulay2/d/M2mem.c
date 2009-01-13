@@ -90,6 +90,18 @@ char *getmem_atomic_clear(size_t n)
   return p;
 }
 
+char *getmoremem(char *old, size_t n)
+{
+  char *p;
+  p = GC_REALLOC(old,n);
+  if (p == NULL) outofmem();
+#ifdef DEBUG
+  memset(p,0xbe,n);
+  trapchk(p);
+#endif
+  return p;
+}
+
 /*
  Local Variables:
  compile-command: "make -C $M2BUILDDIR/Macaulay2/d "
