@@ -9,6 +9,7 @@
 #include "monideal-minprimes.hpp"
 #include "exceptions.hpp"
 #include "text-io.hpp"
+#include "../d/M2inits.h"
 
 static int monideals_nfinalized = 0;
 static int monideals_nremoved = 0;
@@ -355,26 +356,9 @@ public:
   MonomialIdeal *result() { return J; }
 };
 
-const MonomialIdeal *FrobbyAlexanderDual(const MonomialIdeal *I, const M2_arrayint top)
-// Assumption: top is an array of at least the number of variables of I
-//   whose v-th entry is at least as large as the v-th exp of any mingen of I
+static MonomialIdeal *FrobbyAlexanderDual(const MonomialIdeal *I, const mpz_t *topvec)
 {
-  // Create a Frobby Ideal containing I.
   int nv = I->topvar() + 1;
-  if (nv == 0)
-    {
-      // Handle this case separately WRITE THIS
-      return 0;
-    }
-
-  mpz_t *topvec = 0;
-  if (top->len > 0)
-    {
-      topvec = newarray(mpz_t, top->len);
-      for (int i=0; i<top->len; i++)
-	mpz_init_set_si(topvec[i], top->array[i]);
-    }
-
   int *exp = newarray_atomic(int, nv);
   Frobby::Ideal F(nv);
   for (Index<MonomialIdeal> i = I->first(); i.valid(); i++)
@@ -394,6 +378,34 @@ const MonomialIdeal *FrobbyAlexanderDual(const MonomialIdeal *I, const M2_arrayi
   // Now create the consumer object, and call Frobby
   MyTermConsumer M(I->get_ring(), nv);
   Frobby::alexanderDual(F, topvec, M);
+  deletearray(exp);
+  // Extract the answer as a MonomialIdeal
+  return M.result();
+}
+
+static MonomialIdeal *wrapperFrobbyAlexanderDual(const MonomialIdeal *I, const M2_arrayint top)
+// Assumption: top is an array of at least the number of variables of I
+//   whose v-th entry is at least as large as the v-th exp of any mingen of I
+{
+  // Create a Frobby Ideal containing I.
+  int nv = I->topvar() + 1;
+  if (nv == 0)
+    {
+      INTERNAL_ERROR("attempting to use frobby with zero variables");
+      return 0;
+    }
+
+  mpz_t *topvec = 0;
+  if (top->len > 0)
+    {
+      topvec = newarray(mpz_t, top->len);
+      for (int i=0; i<top->len; i++)
+	mpz_init_set_si(topvec[i], top->array[i]);
+    }
+
+  enterMalloc();  // WARNING: the consumer should not create or destroy M2 gmp ints
+  MonomialIdeal *result = FrobbyAlexanderDual(I, topvec);
+  enterM2(); // resets memory functions
 
   // Clean up
   if (topvec != 0)
@@ -402,26 +414,40 @@ const MonomialIdeal *FrobbyAlexanderDual(const MonomialIdeal *I, const M2_arrayi
 	mpz_clear(topvec[i]);
       deletearray(topvec);
     }
-  deletearray(exp);
 
-  // Extract the answer as a MonomialIdeal
-  return M.result();
+  return result;
 }
 #endif
 
-const MonomialIdealOrNull *rawAlexanderDual(const MonomialIdeal *I, const M2_arrayint top, int strategy)
+static MonomialIdealOrNull *alexDual(const MonomialIdeal *I, const M2_arrayint top, int strategy)
 {
+  if (I->topvar() < 0)
+    strategy = 1; // i.e. don't use frobby if there are no generators and/or variables
   switch (strategy) {
 #if HAVE_FROBBY
   case 0:
     if (gbTrace >= 1)
       emit_line("[Alexander dual: frobby]");
-    return FrobbyAlexanderDual(I,top);
+    return wrapperFrobbyAlexanderDual(I,top);
 #endif
   default:
     if (gbTrace >= 1)
-      emit_line("[Alexander dual: M2 monideal");
+      emit_line("[Alexander dual: M2 monideal]");
     return I->alexander_dual(top);
+  }
+}
+
+
+const MonomialIdealOrNull *rawAlexanderDual(const MonomialIdeal *I, const M2_arrayint top, int strategy)
+{
+  try {
+    MonomialIdeal *result = alexDual(I,top,strategy);
+    intern_monideal(result);
+    return result;
+  }
+  catch (exc::engine_error e) {
+    ERROR(e.what());
+    return NULL;
   }
 }
 
