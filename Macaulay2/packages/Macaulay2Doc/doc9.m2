@@ -154,9 +154,7 @@ document {
      Key => {(Ext,Module,Module),(Ext,Ideal,Ideal),(Ext,Ideal,Module),(Ext,Ideal,Ring),(Ext,Module,Ideal),(Ext,Module,Ring)},
      Headline => "total Ext module",
      Usage => "Ext(M,N)",
-     Inputs => { 
-	  "M" => {ofClass{Module,Ideal,Ring}}, 
-	  "N" => {ofClass{Module,Ideal,Ring}}},
+     Inputs => { "M" => {ofClass{Ideal,Ring}}, "N" => {ofClass{Ideal,Ring}}},
      Outputs => {
 	  TEX { "the $Ext$ module of $M$ and $N$,
 	       as a multigraded module, with the modules $Ext^i(M,N)$ for all values of $i$ appearing simultaneously." }},

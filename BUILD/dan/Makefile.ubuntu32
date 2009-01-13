@@ -5,12 +5,13 @@
 # BUILDOPTIONS += -s
 # INSTALLOPTIONS += -s
 # CONFIGOPTIONS += --enable-tarfile
-CONFIGOPTIONS += --enable-deb
-INSTALLOPTIONS += prefix=/usr/local/encap
 ifeq ($(DEBUG),yes)
+INSTALLOPTIONS += prefix=/none
 CONFIGOPTIONS += --enable-debug
 DIRECTORY = ubuntu32.debug
 else
+INSTALLOPTIONS += prefix=/usr/local/encap
+CONFIGOPTIONS += --enable-deb
 DIRECTORY = ubuntu32
 endif
 include Makefile.include
