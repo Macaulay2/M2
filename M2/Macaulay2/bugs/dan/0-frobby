@@ -1,0 +1,40 @@
+Date: Tue, 13 Jan 2009 07:55:36 -0600
+From: "Daniel R. Grayson" <dan@math.uiuc.edu>
+To: Michael Stillman <mike.stillman@mac.com>
+CC: dan@math.uiuc.edu
+In-reply-to: <45D4BCEC-C86F-4B9A-BEFF-DCCB46908D75@mac.com> (message from
+	Michael Stillman on Tue, 13 Jan 2009 01:05:24 -0500)
+Subject: Re: frobby
+Reply-to: dan@math.uiuc.edu
+
+
+Okay, I'll do all that.
+
+I'll add something to the changes doc node and to the web page as well.
+
+Removing the code can be done much later
+
+Do you have some good benchmarks for comparison?  
+
+The version hash table will display the version number of it.
+
+> From: Michael Stillman <mike.stillman@mac.com>
+> To: Dan Grayson <dan@math.uiuc.edu>
+> Subject: frobby
+> Date: Tue, 13 Jan 2009 01:05:24 -0500
+> 
+> I think I would like to change frobby to be one of our libraries, not  
+> just experimental.  It seems to be working well now, and it is really  
+> very fast.
+> 
+> If we are to do this, then what needs to be done?  Here is a list.  Is  
+> it complete?
+>    add frobby to the list of build packages, remove --enable-frobby
+>    make sure it gets built at same time it does now (i.e. after gc, gmp)
+>    in x-monideal.cpp, remove code that happens if HAVE_FROBBY is not  
+> defined
+>    add a note that we are using frobby, written by Bjarke Roune (bjarke@daimi.au.dk 
+> )
+> 
+> 
+
