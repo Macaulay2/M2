@@ -67,7 +67,7 @@ endif
 OPTCFILES += M2inits1.cc M2inits2.cc M2inits3.cc factory_init1.cc factory_init2.cc factory_init3.cc
 CFILES += M2types.c M2mem.c scclib.c M2lib.c gmp_aux.c gdbm_interface.c
 CFILES += factory_allocator.c main.c
-SRCFILES += $(OPTCFILES) $(CFILES)
+SRCFILES += $(OPTCFILES) $(CFILES) M2inits.c
 
 M2_OBJECTS += $(CFILES:.c=.o)
 M2_OBJECTS += version.o

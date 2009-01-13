@@ -38,6 +38,20 @@ char *getmem(size_t n)
   return p;
 }
 
+void freememlen(void *s, size_t old) {
+#    ifdef DEBUG
+     trapchk(s);
+#    endif
+     GC_FREE(s);
+}
+
+void freemem(void *s) {
+#    ifdef DEBUG
+     trapchk(s);
+#    endif
+     GC_FREE(s);
+}
+
 char *getmem_clear(size_t n)
 {
   char *p;
@@ -90,17 +104,30 @@ char *getmem_atomic_clear(size_t n)
   return p;
 }
 
-char *getmoremem(char *old, size_t n)
-{
-  char *p;
-  p = GC_REALLOC(old,n);
-  if (p == NULL) outofmem();
-#ifdef DEBUG
-  memset(p,0xbe,n);
-  trapchk(p);
-#endif
-  return p;
-}
+char *getmoremem (char *s, size_t old, size_t new) {
+     void *p = GC_REALLOC(s,new);
+     if (p == NULL) outofmem();
+#    ifdef DEBUG
+     trapchk(p);
+#    endif
+     return p;
+     }
+
+char *getmoremem_atomic (char *s, size_t old, size_t new) {
+     void *p = GC_MALLOC_ATOMIC(new);
+     size_t min = old<new ? old : new;
+     if (p == NULL) outofmem();
+     memcpy(p, s, min);
+     GC_FREE(s);
+#    ifdef DEBUG
+     {
+       int excess = new - min;
+       if (excess > 0) memset(p+min,0xbe,excess);
+     }
+     trapchk(p);
+#    endif
+     return p;
+     }
 
 /*
  Local Variables:

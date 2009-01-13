@@ -53,33 +53,6 @@ void *GC_malloc_function (size_t new) {
      }
 #endif
 
-void *GC_realloc_function (void *s, size_t old, size_t new) {
-     void *p = GC_REALLOC(s,new);
-     if (p == NULL) outofmem();
-#    ifdef DEBUG
-     trapchk(p);
-#    endif
-     return p;
-     }
-
-void *GC_realloc_atomic_function (void *s, size_t old, size_t new) {
-     void *p = GC_MALLOC_ATOMIC(new);
-     if (p == NULL) outofmem();
-     memcpy(p, s, old<new ? old : new);
-     GC_FREE(s);
-#    ifdef DEBUG
-     trapchk(p);
-#    endif
-     return p;
-     }
-
-void GC_free_function (void *s, size_t old) {
-#    ifdef DEBUG
-     trapchk(s);
-#    endif
-     GC_FREE(s);
-}
-
 extern int initializeGMP();
 
 static void *(*save_gmp_allocate_func  )(size_t);
@@ -106,14 +79,12 @@ void enterFactory() {
   }
 }
 
-void enterM2(void) {
+void enterM2(void) { 
   mp_set_memory_functions
     ( 
-     (void *(*) (size_t)) getmem, 
+     (void *(*) (size_t)) getmem,
      (void *(*) (void *, size_t, size_t)) getmoremem,
-     GC_free_function
-      );
-}
+     freememlen ); }
 
 void M2inits(void) __attribute__ ((constructor));
 void M2inits(void) {
