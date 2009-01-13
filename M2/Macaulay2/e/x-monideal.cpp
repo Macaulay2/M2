@@ -428,6 +428,8 @@ static MonomialIdealOrNull *alexDual(const MonomialIdeal *I, const M2_arrayint t
   case 0:
     if (gbTrace >= 1) emit_line(" -- [Alexander dual: frobby]");
     return wrapperFrobbyAlexanderDual(I,top);
+#else
+#warning "frobby not enabled"
 #endif
   default:
     if (gbTrace >= 1) emit_line(" -- [Alexander dual: M2 monideal]");
