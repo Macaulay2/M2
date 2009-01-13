@@ -1,0 +1,106 @@
+In-Reply-To: <200605231814.k4NIElV19287@u00.math.uiuc.edu>
+From: Michael Stillman <mike@math.cornell.edu>
+Subject: Re: Re: 
+Date: Tue, 23 May 2006 16:37:26 -0400
+To: dan@math.uiuc.edu
+
+I like the idea of having perhaps two features:
+
+(1) a new option to gb, res, and anything else which generally  
+stashes its results.  It could be
+   UseCache (or simply Cache)
+If false, it either doesn't use the cache, or removes the cached value.
+
+(2) clearCache
+which basically does what you mention below.  The main problem here  
+is: how far away does an object have to be from your object for its  
+cache to not be cleared?
+
+On May 23, 2006, at 2:14 PM, Dan Grayson wrote:
+
+>
+> You could also empty all the caches of all the values of I.
+>
+>     i35 : I.gens.cache
+>
+>     o35 = CacheTable{...3...}
+>
+>     o35 : CacheTable
+>
+>     i36 : scan(values I, x -> if x.?cache then scan(keys x.cache,  
+> remove_(x.cache)))
+>
+>     i37 : I.gens.cache
+>
+>     o37 = CacheTable{}
+>
+>     o37 : CacheTable
+>
+> Should do that to I.cache, too.
+>
+>>
+>> Well, you could just get the keys of the cache and remove each of  
+>> them from the cache.
+>>
+>>
+>>     i21 : peek I.gens.cache
+>>
+>>     o21 = CacheTable{image => image | x y  
+>> |                                                                     
+>>          }
+>> 		     isHomogeneous => true
+>> 		     OptionTable{HardDegreeLimit => } => GroebnerBasis[status:  
+>> done; S-pairs encountered up to degree 0]
+>> 				 Syzygies => false
+>> 				 SyzygyRows => 0
+>>
+>>     i23 : scan(keys I.gens.cache, key -> remove(I.gens.cache,key))
+>>
+>>     i24 : I.gens.cache
+>>
+>>     o24 = CacheTable{}
+>>
+>>
+>>> From: Michael Stillman <mike@math.cornell.edu>
+>>> Subject: Re: Re:
+>>> Date: Tue, 23 May 2006 14:07:15 -0400
+>>> To: dan@math.uiuc.edu
+>>>
+>>> How do we clean the cache associated with an object now?
+>>>
+>>> On May 23, 2006, at 2:02 PM, Dan Grayson wrote:
+>>>
+>>>>
+>>>> Why not just add an option to gb so that, instead of computing, it
+>>>> discards any
+>>>> cached computation it might have left behind when called with the
+>>>> same optional
+>>>> arguments previously?
+>>>>
+>>>> 	  gb(I, DegreeLimit=>4, CleanCache => true)
+>>>>
+>>>> But first tell me why you wanted to remove the cached gb.  If you
+>>>> just wanted
+>>>> to save space, perhaps we need a function that removes all cached
+>>>> large
+>>>> computations associated with objects of various types.
+>>>>
+>>>>> To: Dan Grayson <dan@math.uiuc.edu>
+>>>>> From: Michael Stillman <mike@math.cornell.edu>
+>>>>> Subject:
+>>>>> Date: Tue, 23 May 2006 13:52:32 -0400
+>>>>>
+>>>>> Our description of how to remove a cached GB is no longer correct.
+>>>>>
+>>>>> We used to do something like this:
+>>>>>     remove((generators I).cache, {false,0})
+>>>>> but now the cached location is different, harder to get at.
+>>>>>
+>>>>> Perhaps something like: getGroebnerKey(I, DegreeLimit=>4, ...)
+>>>>> could return the key that one would use to get at the GB.
+>>>>>
+>>>>> Then it would be easier to remove.
+>>>>>
+>>>
+>>
+
