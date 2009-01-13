@@ -426,17 +426,14 @@ static MonomialIdealOrNull *alexDual(const MonomialIdeal *I, const M2_arrayint t
   switch (strategy) {
 #if HAVE_FROBBY
   case 0:
-    if (gbTrace >= 1)
-      emit_line("[Alexander dual: frobby]");
+    if (gbTrace >= 1) emit_line(" -- [Alexander dual: frobby]");
     return wrapperFrobbyAlexanderDual(I,top);
 #endif
   default:
-    if (gbTrace >= 1)
-      emit_line("[Alexander dual: M2 monideal]");
+    if (gbTrace >= 1) emit_line(" -- [Alexander dual: M2 monideal]");
     return I->alexander_dual(top);
   }
 }
-
 
 const MonomialIdealOrNull *rawAlexanderDual(const MonomialIdeal *I, const M2_arrayint top, int strategy)
 {

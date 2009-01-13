@@ -459,6 +459,7 @@ export {
 	symbol adjoint,
 	symbol adjoint1,				    -- adjoint' ?
 	symbol alarm,
+	symbol alexanderDual,
 	symbol all,
 	symbol ambient,
 	symbol ancestor,
@@ -784,6 +785,7 @@ export {
 	symbol kill,
 	symbol koszul,
 	symbol last,
+	symbol lcmOfGens,
 	symbol leadCoefficient,
 	symbol leadComponent,
 	symbol leadMonomial,

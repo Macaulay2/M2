@@ -157,7 +157,7 @@ independentSets MonomialIdeal := o -> (M) -> (
 independentSets Ideal := o -> (M) -> independentSets(monomialIdeal M,o)
 
 -----------------------------------------------------------------------------
--- this code below here is by Greg Smith
+-- this code below here is by Greg Smith (and partially Mike Stillman)
 -----------------------------------------------------------------------------
 
 expression MonomialIdeal := (I) -> (
@@ -229,68 +229,37 @@ jacobian MonomialIdeal := Matrix => (I) -> jacobian generators I
 resolution MonomialIdeal := ChainComplex => options -> I -> resolution ideal I
 betti MonomialIdeal := I -> betti ideal I
 
-
-lcmgens := local lcmgens
-alexanderdual := local alexanderdual
-
--- Old version: MES will remove this soon (5-30-08)
---lcmOfGens := (I) -> if I.cache#?lcmgens then I.cache#lcmgens else I.cache#lcmgens = (
---     if I == 0 then toList (numgens ring I : 0)
---     else max \ transpose apply(first entries generators I, i -> first exponents i)
---     )
-
-
--- The following is not exported directly (it is a subroutine for minimalPrimes, dual).
--- OBSOLETE? MES 5-30-08
-squarefreeDual = (J) -> (if J == 0 
-  then monomialIdeal 1_(ring J) 
-  else intersect (monomialIdeal @@ support \ first entries generators J))
--- Old version, now obsolete?  MES 5-30-08
-dual(MonomialIdeal, List) := (I,a) -> ( -- Alexander dual
-     R := ring I;
-     X := generators R;
-     aI := lcmOfGens I;
-     if aI =!= a then (
-     	  if #aI =!= #a then error ( "expected list of length ", toString (#aI));
-	  scan(a, aI, (b,c) -> if b<c then error "exponent vector not large enough" );
-	  );
-     P := monomialIdeal apply(#X, i -> X#i^(a#i+1));
-     monomialIdeal( (generators (P:I)) % P )
-     )
--- OBSOLETE? MES 5-30-08
-dual MonomialIdeal := (I) -> (
-  if I.cache#?alexanderdual
-    then I.cache#alexanderdual
-    else I.cache#alexanderdual = (
-	 d := lcmOfGens(I);
-	 if max d === 1 then squarefreeDual I
-	 else dual(I, lcmOfGens(I))
-    ))
-
-lcmOfGens = (I) -> (if I.cache#?lcmgens 
-  then I.cache#lcmgens 
-  else I.cache#lcmgens = rawMonomialIdealLCM raw I)
+lcmOfGens = method()
+lcmOfGens MonomialIdeal := (I) -> (if I.cache#?lcmOfGens 
+  then I.cache#lcmOfGens 
+  else I.cache#lcmOfGens = rawMonomialIdealLCM raw I)
 
  -- We use E. Miller's definition for nonsquare 
  -- free monomial -- ideals.
 
-dual(MonomialIdeal, List) := (I,a) -> (
+alexanderDual = method(Options=>{Strategy=>0})
+
+alexanderDual(MonomialIdeal, List) := o -> (I,a) -> (
      aI := lcmOfGens I;
      if aI =!= a then (
      	  if #aI =!= #a then error ( "expected list of length ", toString (#aI));
 	  scan(a, aI, (b,c) -> if b<c then error "exponent vector not large enough" );
 	  );
-     newMonomialIdeal(ring I, rawAlexanderDual(raw I, a, 0)) -- 0 is the default algorithm
+     newMonomialIdeal(ring I, rawAlexanderDual(raw I, a, o.Strategy)) -- 0 is the default algorithm
      )
 
-dual(MonomialIdeal,RingElement) := (I,r) -> dual(I,first exponents r)
+alexanderDual(MonomialIdeal,RingElement) := o -> (I,r) -> alexanderDual(I,first exponents r,o)
 
-dual MonomialIdeal := (I) -> (
-  if I.cache#?alexanderdual
-    then I.cache#alexanderdual
-    else I.cache#alexanderdual = (
-	 dual(I, lcmOfGens I)
+alexanderDual MonomialIdeal := o -> (I) -> (
+  if I.cache#?alexanderDual
+    then I.cache#alexanderDual
+    else I.cache#alexanderDual = (
+	 alexanderDual(I, lcmOfGens I, o)
     ))
+
+dual(MonomialIdeal, List) := (I,a) -> alexanderDual(I,a)
+dual(MonomialIdeal,RingElement) := (I,r) -> alexanderDual(I,r)
+dual MonomialIdeal := (I) -> alexanderDual I
 
 --  ASSOCIATED PRIMES  -------------------------------------
 ass0 := (I) -> (
@@ -298,7 +267,7 @@ ass0 := (I) -> (
      then I.cache#associatedPrimes
      else I.cache#associatedPrimes = (
      	  R := ring I;
-     	  J := dual I;
+     	  J := alexanderDual I;
      	  M := first entries generators J;
 	  H := new MutableHashTable;
      	  scan(M, m -> (
@@ -317,14 +286,14 @@ associatedPrimes MonomialIdeal := List => o -> (I) -> (
 
 minimalPrimes MonomialIdeal := decompose MonomialIdeal := (cacheValue symbol minimalPrimes) (
      (I) -> (
-	  minI := squarefreeDual radical I;
+	  minI := alexanderDual radical I;
 	  apply(flatten entries generators minI, monomialIdeal @@ support)))
 
 irreducibleDecomposition = method();
 irreducibleDecomposition MonomialIdeal := List => (I) -> (
      R := ring I;
      aI := lcmOfGens I;
-     M := first entries generators dual I;
+     M := first entries generators alexanderDual I;
      apply(M, m -> (
 	       s := first keys standardForm leadMonomial m;
 	       monomialIdeal apply(keys s, v -> R_v^(aI#v + 1 - s#v))))
@@ -333,7 +302,7 @@ irreducibleDecomposition MonomialIdeal := List => (I) -> (
 primaryDecomposition MonomialIdeal := List => o -> (I) -> (
      R := ring I;
      aI := lcmOfGens I;
-     J := dual I;
+     J := alexanderDual I;
      M := first entries generators J;
      H := new MutableHashTable;
      scan(M, m -> (
