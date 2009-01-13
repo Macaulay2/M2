@@ -107,7 +107,12 @@ void enterFactory() {
 }
 
 void enterM2(void) {
-  mp_set_memory_functions( (void *(*) (size_t)) getmem, GC_realloc_function, GC_free_function);
+  mp_set_memory_functions
+    ( 
+     (void *(*) (size_t)) getmem, 
+     (void *(*) (void *, size_t, size_t)) getmoremem,
+     GC_free_function
+      );
 }
 
 void M2inits(void) __attribute__ ((constructor));

@@ -288,6 +288,9 @@ document {
 			 },
 		    LI {
 			 "The function ", TO "regex", " now has a form which restricts the range of the search."
+			 },
+		    LI {
+			 "The total Ext functor now accepts multigraded modules, see ", TO "(Ext,Module,Module)", "."
 			 }
 		    }
 	       }
