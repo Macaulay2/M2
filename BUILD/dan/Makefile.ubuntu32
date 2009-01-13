@@ -7,7 +7,7 @@
 # CONFIGOPTIONS += --enable-tarfile
 ifeq ($(DEBUG),yes)
 INSTALLOPTIONS += prefix=/none
-CONFIGOPTIONS += --enable-debug
+CONFIGOPTIONS += --enable-debug --disable-pthreads
 DIRECTORY = ubuntu32.debug
 else
 INSTALLOPTIONS += prefix=/usr/local/encap

@@ -1041,11 +1041,8 @@ M2_arrayint system_regexmatch(M2_string pattern, int start, int range, M2_string
 void grow(int *len, int off, char **str, int newlen) {
      int d = 2**len+1;
      if (newlen < d) newlen = d;
-     char *p = getmem(newlen);
-     memcpy(p,*str,off);
-     GC_FREE(*str);
+     *str = getmoremem_atomic(*str,*len,newlen);
      *len = newlen;
-     *str = p;
 }
 
 void cat(int *xlen, int *xoff, char **x, int ylen, char *y) {
@@ -1166,7 +1163,7 @@ M2_stringarray system_regexselect(M2_string pattern, M2_string replacement, M2_s
 	 }
 	 cat(&buflen,&bufct,&buf,plen,p);
 	 /* reset the start after the matched part */
-	 start += match_end(match,0);
+	 start = match_end(match,0);
 	 /* make an M2_string and append it to the return list */
 	 {
 	      if (retct == retlen) {
