@@ -10,6 +10,7 @@ restart = Command (
      () -> (
 	  restarting = true;
 	  runEndFunctions();
+	  scan(openFiles(), f -> if f =!= stdio and f =!= stderr then close f);
 	  exec if member("--restarted",commandLine) then commandLine else join({commandLine#0,"--restarted"},drop(commandLine,1))
 	  )
      )
