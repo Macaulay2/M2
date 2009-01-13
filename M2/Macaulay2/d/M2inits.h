@@ -3,7 +3,7 @@ extern "C" {
 #endif
 
 extern void M2inits(), M2inits1(), M2inits2();
-extern void enterFactory(), enterM2();
+extern void enterFactory(), enterM2(), enterMalloc();
 extern int M2inits_run;
 extern int factory_init1_run, factory_init2_run;
 extern void factory_init1(), factory_init2();
