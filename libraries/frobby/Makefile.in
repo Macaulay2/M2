@@ -12,7 +12,8 @@ BUILDOPTIONS = GMP_INC_DIR=$(LIBRARIESDIR)/include CFLAGS="$(CFLAGS)" CXX="$(CXX
 CONFIGURECMD = :
 INSTALLCMD = \
 	cp bin/libfrobby.a $(LIBRARIESDIR)/lib/libfrobby.a && \
-	cp src/frobby.h $(LIBRARIESDIR)/include/frobby.h
+	cp src/frobby.h $(LIBRARIESDIR)/include/frobby.h && \
+	cp src/stdinc.h $(LIBRARIESDIR)/include/stdinc.h
 include ../Makefile.library
 CFLAGS += -Wno-deprecated
 Makefile: @srcdir@/Makefile.in ; cd ../.. && ./config.status libraries/frobby/Makefile

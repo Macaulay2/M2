@@ -156,6 +156,7 @@ if firstTime then (
 	  | "--GC " | version#"gc version" | ", by H. Boehm and Alan J. Demers" | newline
 	  | "--Singular-Factory " | version#"factory version" | ", by G.-M. Greuel et al." | newline
 	  | "--Singular-Libfac " | version#"libfac version" | ", by M. Messollen" | newline
+	  | "--frobby " | version#"frobby version" | ", by B. H. Roune" | newline
 	  | "--NTL " | version#"ntl version" | ", by V. Shoup" | newline
      	  | "--GNU MP " | version#"gmp version" | ", by T. Granlund et al." | newline
      	  | "--MPFR " | version#"mpfr version" | ", by Free Software Foundation" | newline

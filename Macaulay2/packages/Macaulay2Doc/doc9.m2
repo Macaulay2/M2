@@ -476,7 +476,11 @@ document {
 	  "e" => {"a list of exponents"}
 	  },
      Outputs => { {"the Alexander dual of ", TT "I", " formed with respect to the monomial whose exponents are listed in ", TT "e" } },
-     "The monomial corresponding to ", TT "e", " should be divisible by all of the minimal generators of ", TT "I", ".",
+     PARA { "The monomial corresponding to ", TT "e", " should be divisible by all of the minimal generators of ", TT "I", "." },
+     PARA {
+	  "The computation is done by calling the ", TO "frobby", " library, written by B. H. Roune;
+	  setting ", TO "gbTrace", " to a positive value will cause a message to be printed when it is called."
+	  },
      SeeAlso => {(dual,MonomialIdeal)}
      }
 
@@ -555,8 +559,11 @@ document {
      PARA{},
      "See Ezra Miller's Ph.D. thesis 'Resolutions and 
      Duality for Monomial Ideals'.",
-     PARA{},
-     "Implemented by Greg Smith."
+     PARA { "Implemented by Greg Smith." },
+     PARA {
+	  "The computation is done by calling the ", TO "frobby", " library, written by B. H. Roune;
+	  setting ", TO "gbTrace", " to a positive value will cause a message to be printed when it is called."
+	  }
      }
 
 document {

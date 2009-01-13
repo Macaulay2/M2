@@ -48,6 +48,7 @@ extern long personality(unsigned long persona);
 #endif
 
 const char *get_libfac_version();	/* in version.cc */
+const char *get_frobby_version();	/* in version.cc */
 static const char *get_cc_version(void) {
   static char buf[100] = "cc (unknown)";
 # ifdef __GNUC__
@@ -304,6 +305,7 @@ M2_string actors5_startupFile1;
 M2_string actors5_startupFile2;
 M2_string actors5_NTLVERSION;
 M2_string actors5_LIBFACVERSION;
+M2_string actors5_FROBBYVERSION;
 M2_string actors5_FACTORYVERSION;
 M2_string actors5_READLINEVERSION;
 M2_string actors5_MPFRVERSION;
@@ -620,6 +622,7 @@ char **argv;
 	  actors5_FACTORYVERSION = tostring(p);
      }
      actors5_LIBFACVERSION = tostring(get_libfac_version());
+     actors5_FROBBYVERSION = tostring(get_frobby_version());
      sprintf(READLINEVERSION,"%d.%d",(rl_readline_version>>8)&0xff,rl_readline_version&0xff);
      actors5_READLINEVERSION = tostring(READLINEVERSION);
      actors5_MPFRVERSION = tostring(mpfr_version);

@@ -291,6 +291,11 @@ document {
 			 },
 		    LI {
 			 "The total Ext functor now accepts multigraded modules, see ", TO "(Ext,Module,Module)", "."
+			 },
+		    LI {
+			 "Macaulay 2 now incorporates ", TO "frobby", ", a free library for computing
+			 the Alexander dual of a monomial ideal (see ", TO "(dual,MonomialIdeal)", "), written
+			 by Bjarke Hammersholt Roune, and available at ", HREF "http://www.broune.com/frobby/", "."
 			 }
 		    }
 	       }

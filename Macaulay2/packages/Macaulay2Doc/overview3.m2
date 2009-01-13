@@ -27,6 +27,7 @@ document {
      Subnodes => {
 	  TO "Singular-Factory",
 	  TO "Singular-Libfac",
+	  TO "frobby",
 	  TO "GNU MP",
 	  TO "MPFR",
 	  TO "GC garbage collector",
@@ -98,6 +99,16 @@ document {
 	  "Too many exclusions",
 	  "Too many heap sections: Increase MAXHINCR or MAX_HEAP_SECTS",
 	  "Too many root sets"
+	  }
+     }
+
+document {
+     Key => "frobby",
+     PARA {
+	  "Starting with version 1.2, Macaulay 2 incorporates ", TT "frobby", ", a free library of routines for computing
+	  the Alexander dual of a monomial ideal (see ", TO (dual,MonomialIdeal), "), written
+	  by Bjarke Hammersholt Roune, and available at ", HREF "http://www.broune.com/frobby/", ".
+	  It is distributed under the terms of the GNU General Public License."
 	  }
      }
 
