@@ -353,7 +353,7 @@ document {
 	  with ", TT ///openIn "!foo"///, " or with ", TT ///get "!foo"///, " the standard input of the command
 	  ", TT "foo", " is closed, but with ", TT ///openOut "!foo"///, " the
 	  standard output of the command ", TT "foo", " is connected to the
-	  standard output of the parent Macaulay2 process."
+	  standard output of the parent Macaulay 2 process."
 	  },
      SeeAlso => {openIn, openOut, openListener}
      }

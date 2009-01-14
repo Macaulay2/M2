@@ -157,9 +157,8 @@ lastLN := 0
 lastWI := 0
      
 load "loads.m2"
-
+-- after this point, private global symbols, such as noinitfile, are no longer visible
 protect Core.Dictionary
-
 -- Local Variables:
 -- compile-command: "make -C $M2BUILDDIR/Macaulay2/m2 "
 -- End:

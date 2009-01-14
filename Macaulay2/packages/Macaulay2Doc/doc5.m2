@@ -391,7 +391,7 @@ document {
 	  "set{1,3,2} === set{1,2,3}"
 	  },
      PARA{},
-     TO2(Ideal,"Ideals"), " in Macaulay2 come equipped with a specific sequence of generators, so the following two ideals are not considered strictly equal,
+     TO2(Ideal,"Ideals"), " in Macaulay 2 come equipped with a specific sequence of generators, so the following two ideals are not considered strictly equal,
      and thus the set containing them will appear to have two elements.",
      EXAMPLE {
      	  "I = ideal(a,b); J = ideal(b,a);",

@@ -418,8 +418,8 @@ local dotemacsFix
 setupEmacs = method()
 setup = method()
 mungeEmacs = () -> (
-     supplantStringFile(dotemacsFix,homeDirectory|M2emacs,false);
-     mungeFile(homeDirectory|".emacs", ";; Macaulay 2 start", ";; Macaulay 2 end", M2emacsRead )
+     supplantStringFile(dotemacsFix,"~/"|M2emacs,false);
+     mungeFile("~/"|".emacs", ";; Macaulay 2 start", ";; Macaulay 2 end", M2emacsRead )
      )
 prelim := () -> (
      promptUser = true;
@@ -436,15 +436,15 @@ installMethod(setup, () -> (
      dotprofileFix = concatenate(shHeader, apply(shellfixes, (var,dir) -> fix(var,dir,bashtempl)));
      dotloginFix = concatenate(shHeader,apply(shellfixes, (var,dir) -> fix(var,dir,cshtempl)));
      dotemacsFix = concatenate(emacsHeader, apply(emacsfixes, (var,dir) -> fix(var,dir,emacstempl)), dotemacsFix0);
-     supplantStringFile(dotprofileFix,homeDirectory|M2profile,false);
-     supplantStringFile(dotloginFix,homeDirectory|M2login,false);
-     fileExists(homeDirectory|".bash_profile") and mungeFile(homeDirectory|".bash_profile",startToken,endToken,M2profileRead) or
-     fileExists(homeDirectory|".bash_login") and mungeFile(homeDirectory|".bash_login",startToken,endToken,M2profileRead) or
-     mungeFile(homeDirectory|".profile",startToken,endToken,M2profileRead) or
-     mungeFile(homeDirectory|".bashrc",startToken,endToken,M2profileRead) or
-     mungeFile(homeDirectory|".login",startToken,endToken,M2loginRead) or
-     fileExists(homeDirectory|".tcshrc" ) and mungeFile(homeDirectory|".tcshrc",startToken,endToken,M2loginRead) or
-     mungeFile(homeDirectory|".cshrc",startToken,endToken,M2loginRead) or
+     supplantStringFile(dotprofileFix,"~/"|M2profile,false);
+     supplantStringFile(dotloginFix,"~/"|M2login,false);
+     fileExists("~/"|".bash_profile") and mungeFile("~/"|".bash_profile",startToken,endToken,M2profileRead) or
+     fileExists("~/"|".bash_login") and mungeFile("~/"|".bash_login",startToken,endToken,M2profileRead) or
+     mungeFile("~/"|".profile",startToken,endToken,M2profileRead) or
+     mungeFile("~/"|".bashrc",startToken,endToken,M2profileRead) or
+     mungeFile("~/"|".login",startToken,endToken,M2loginRead) or
+     fileExists("~/"|".tcshrc" ) and mungeFile("~/"|".tcshrc",startToken,endToken,M2loginRead) or
+     mungeFile("~/"|".cshrc",startToken,endToken,M2loginRead) or
      mungeEmacs(); ))
 
 scanLines = method()

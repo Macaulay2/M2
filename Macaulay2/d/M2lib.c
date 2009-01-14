@@ -587,7 +587,7 @@ char **argv;
 
      system_stime();
 
-     if (__gmp_allocate_func != (void *(*) (size_t))getmem) {
+     if (__gmp_allocate_func != (void *(*) (size_t))getmem_atomic) {
 	  fprintf(stderr,"--internal warning: possible memory leak, gmp allocator not set up properly, resetting\n");
 	  enterM2();
      }

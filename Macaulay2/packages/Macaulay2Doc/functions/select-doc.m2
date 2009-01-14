@@ -51,7 +51,7 @@ document {
      Key => (select,ZZ,BasicList,Function),
      Headline => "select a limited number of elements from a list",
      Usage => "select(n,v,f)",
-     Inputs => { "n", "v", "f" },
+     Inputs => { "n", "v", "f" => {"returning either ", TO "true", " or ", TO "false"}},
      Outputs => {
 	  {"a list containing at most ", TT "n", " elements of the list ", TT "v", " 
 	       that yield ", TT "true", " when the function ", TT "f", " is applied."}
@@ -68,10 +68,10 @@ document {
      Key => (select,HashTable,Function),
      Headline => "select part of a hash table",
      Usage => "select(v,f)",
-     Inputs => { "v", "f" },
+     Inputs => { "v", "f" => {"returning either ", TO "true", " or ", TO "false"} },
      Outputs => {
-	  {"whose pairs are those key-value pairs of the hash table ", TT "v", " that
-	       yield ", TT "true", " when the function ", TT "f", " is applied to the value."}
+	  {"whose pairs are those key-value pairs ", TT "(k,w)", " of the hash table ", TT "v", " that
+	       yield ", TT "true", " when the function ", TT "f", " is applied to the value ", TT "w", "."}
 	  },
      "The hash table ", TT "v", " should be immutable: to scan the values in a mutable hash
      table, use ", TT "scan(values x, f)", ".",
@@ -86,7 +86,7 @@ document {
      Key => (select,ZZ,HashTable,Function),
      Headline => "select a limited number of pairs from a hash table",
      Usage => "select(n,v,f)",
-     Inputs => { "n", "v", "f" },
+     Inputs => { "n", "v", "f" => {"returning either ", TO "true", " or ", TO "false"} },
      Outputs => {
 	  {"whose pairs are those key-value pairs of the hash table ", TT "v", " that
 	       yield ", TT "true", " when the function ", TT "f", " is applied to the value,
@@ -105,10 +105,7 @@ document {
      Key => (select,BasicList,Function),
      Headline => "select elements from a list",
      Usage => "select(v,f)",
-     Inputs => {
-	  "v",
-	  "f"
-	  },
+     Inputs => { "v", "f" => {"returning either ", TO "true", " or ", TO "false"} },
      Outputs => {
 	  {"a list of those elements of the list ", TT "v", " that yield ", TT "true", " when the function ", TT "f", " is applied"}
 	  },

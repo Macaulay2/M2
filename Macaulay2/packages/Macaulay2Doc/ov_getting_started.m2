@@ -3,7 +3,7 @@
 document {
      Key => "getting started",
      PARA {
-	  "Macaulay2 is available from our web page ", 
+	  "Macaulay 2 is available from our web page ", 
 	  HREF "http://www.math.uiuc.edu/Macaulay2/",
 	  ".  There you will find online documentation, 
 	  the source code, and precompiled versions
@@ -19,14 +19,14 @@ document {
 	  "
 	  },
      Subnodes => {
-	  TO "checking your Macaulay2 installation",
+	  TO "checking your Macaulay 2 installation",
 	  TO "finding the Macaulay 2 files",
 	  TO "teaching M2 how to find its shared libraries",
 	  TO "teaching your shell how to find M2",
 	  TO "moving or copying the Macaulay 2 files",
 	  TO "running Macaulay 2 in a terminal window",
-	  TO "using Macaulay2 with emacs",
-	  TO "using Macaulay2 with TeXmacs",
+	  TO "using Macaulay 2 with emacs",
+	  TO "using Macaulay 2 with TeXmacs",
 	  TO "a first Macaulay 2 session",
 	  TO "reading the documentation",
 	  TO "getting help or reporting bugs",
@@ -35,7 +35,7 @@ document {
      }
 
 document {
-     Key => "using Macaulay2 with TeXmacs",
+     Key => "using Macaulay 2 with TeXmacs",
      PARA {
 	  "Texmacs is a free visual text editor for mathematics that can be used to produce TeX output.  It also supports
 	  interactive use with various symbolic algebra programs, such as Macaulay 2.  Texmacs is available
@@ -53,7 +53,7 @@ document {
 	  can click on the icon that looks like a computer terminal and select ", TT "Macaulay 2", " from the resulting submenu."
 	  },
      PARA {
-	  "The interface is implemented by a special top level mode in Macaulay2 that causes
+	  "The interface is implemented by a special top level mode in Macaulay 2 that causes
 	  the output to be converted to mathML, see ", TO "TeXmacs", ".  MathML conversion methods have
 	  not been implemented yet for all data types."
 	  }
@@ -143,8 +143,8 @@ document {
 	  },
      SeeAlso => {
 	  setup,
-	  "setting up the Macaulay2 emacs interface",
-	  "using Macaulay2 with emacs"	  
+	  "setting up the Macaulay 2 emacs interface",
+	  "using Macaulay 2 with emacs"	  
 	  }
      }
 
@@ -172,7 +172,7 @@ document { Key => "finding the Macaulay 2 files",
      PRE ///     type M2///,
      "The response will be of the following form.",
      PRE ///     M2 is /foo/bar/bin/M2///,
-     "The Macaulay2 files come in a directory tree that mimics the directory
+     "The Macaulay 2 files come in a directory tree that mimics the directory
      tree found on unix systems in the directory /usr.  In particular, its
      top-level directory has subdirectories called ", TT "bin", ", ", TT "info", ", ", TT "lib", ", and
      ", TT "share", ", so now we know, from the output above, that the Macaulay
@@ -231,8 +231,8 @@ document { Key => "teaching your shell how to find M2",
      ", TO "setup", ").  If that doesn't work, read onward.",
      PARA {},
      "Your goal is to add the directory containing M2 to the value of the PATH environment variable.
-     For this, you must know where the Macaulay2 files are: see ", TO "finding the Macaulay 2 files", ".  Your system administrator may have installed
-     the Macaulay2 files under /usr, in which case you will see M2 in /usr/bin, and you can ignore the 
+     For this, you must know where the Macaulay 2 files are: see ", TO "finding the Macaulay 2 files", ".  Your system administrator may have installed
+     the Macaulay 2 files under /usr, in which case you will see M2 in /usr/bin, and you can ignore the 
      rest of this section.  The files may also be installed under /usr/local, in which case you will see M2
      in /usr/local/bin, and you can ignore the rest of this section, provided you have /usr/local/bin
      on your PATH.  Or the files may be installed somewhere else, such as in /Applications/Macaulay2,
@@ -363,10 +363,10 @@ document { Key => "teaching emacs how to find M2",
      }
 
 document {
-     Key => "checking your Macaulay2 installation",
-     Headline => "and bookmarking the Macaulay2 documentation",
+     Key => "checking your Macaulay 2 installation",
+     Headline => "and bookmarking the Macaulay 2 documentation",
      PARA {"At a command prompt in a terminal window, type ", TT "M2", 
-	  ".  If Macaulay2 has been installed correctly on your machine, 
+	  ".  If Macaulay 2 has been installed correctly on your machine, 
 	  you should see a prompt such as this:"},
 PRE///    indigo% M2
     Macaulay 2, version 1.0
@@ -379,12 +379,12 @@ PRE///    indigo% M2
 	  " in your home directory (on unix machines),
 	  or called ", TT "Library/Application Support/Macaulay2", " under MacOS X.  Inside this 
 	  directory are several files of interest, including an ", 
-	  TT "index.html", " file that contains links to your local copy of the Macaulay2 documentation."},
-     PARA {"The ", TO viewHelp, " command in Macaulay2 starts up your web browser (if it is not
+	  TT "index.html", " file that contains links to your local copy of the Macaulay 2 documentation."},
+     PARA {"The ", TO viewHelp, " command in Macaulay 2 starts up your web browser (if it is not
 	  already running) and places you at this ", TT "index.html", " page.
 	  "},
 PRE///    viewHelp///,
-     PARA {"This web page includes links to the main Macaulay2 documentation, as well as
+     PARA {"This web page includes links to the main Macaulay 2 documentation, as well as
 	  documentation for any installed packages.   This is a good time to
 	  bookmark the page in your browser."},
      PARA {"At this point you should try something simple in Macaulay2, such as"},
@@ -395,16 +395,16 @@ PRE///    printWidth = 60
 	  To exit Macaulay2, type one of: ", TO "exit", ", ", TO "end", ", ", TO "quit", ", or your 
 	  end of file character (which, under Unix, is often CONTROL-D)."},
 	  PRE///    exit///,
-     PARA {"Macaulay2 can be run in this way from the command line, but it is
-	  generally much more convenient to run Macaulay2 from inside the emacs
+     PARA {"Macaulay 2 can be run in this way from the command line, but it is
+	  generally much more convenient to run Macaulay 2 from inside the emacs
 	  text editor.  This is because you can more easily view larger objects,
 	  do command completion, use cut and paste, search, save your session,
-	  and so on.  There is a nice mode for running Macaulay2 inside
+	  and so on.  There is a nice mode for running Macaulay 2 inside
 	  emacs."},
      }
 
 document {
-     Key => "setting up the Macaulay2 emacs interface",
+     Key => "setting up the Macaulay 2 emacs interface",
      PARA {"If you are a newcomer to emacs, you should spend a few minutes
 	  going through the emacs tutorial.  Start up emacs with the command 
 	  ", TT "emacs", " and then start up the emacs tutorial with the keystrokes 
@@ -415,10 +415,10 @@ document {
           to examine the online emacs manual which can be read with ", TT "info", "
           mode; you may enter or re-enter that mode with the keystrokes ", TT "C-h i", ".  "
           },
-     PARA {"The Macaulay2 emacs interface consists of several files
+     PARA {"The Macaulay 2 emacs interface consists of several files
 	  in the directory ", 
 	  TT "share/emacs/site-lisp/",
-	  " in the Macaulay2 distribution tree.  If you're lucky, then your system administrator has installed Macaulay 2 so
+	  " in the Macaulay 2 distribution tree.  If you're lucky, then your system administrator has installed Macaulay 2 so
 	  that directory ends up in the same place where emacs looks for its files, as listed by the emacs variable ", TT "loadpath", ".
 	  If not, then in order for emacs to be able to find these files, place the following lines
 	  in the ", TT ".emacs", " file in your home directory, creating the file if necessary.  Alternatively, 
@@ -437,7 +437,7 @@ PRE///    ;; .emacs file in your home directory
 	  change the f12 to some other key, e.g., f8, in the ", TT ".emacs", " file, or you should disable
 	  the systems use of the f12 key."
 	  },
-     PARA {"If Macaulay2 doesn't start up (in a buffer named ", TT "*M2*", "), check that you
+     PARA {"If Macaulay 2 doesn't start up (in a buffer named ", TT "*M2*", "), check that you
 	  typed in the above lines correctly into ", TT ".emacs", ".  If they look okay, then
 	  see ", TO "teaching emacs how to find M2-init.el", ", ", TO "teaching emacs how to find M2", ", and ",
 	  TO "teaching your shell how to find M2", "."
@@ -445,35 +445,35 @@ PRE///    ;; .emacs file in your home directory
      }
 
 document {
-     Key => "using Macaulay2 with emacs",
+     Key => "using Macaulay 2 with emacs",
      PARA {
 	  "Emacs is a free text editor written by Richard Stallman, which can be used as an ascii-oriented interface to Macaulay 2.
 	  The best way to edit Macaulay 2 code or to run Macaulay 2 is with emacs.
 	  Emacs is available as part of many operating systems, as well as from ", HREF "http://www.gnu.org/software/emacs/", "."
 	  },
      Subnodes => {
-	  TO "setting up the Macaulay2 emacs interface",
+	  TO "setting up the Macaulay 2 emacs interface",
 	  TO "teaching emacs how to find M2-init.el",
 	  TO "teaching emacs how to find M2",
 	  TO "running Macaulay 2 in emacs",
-	  TO "using Macaulay2 with emacs after it has been set up",
+	  TO "using Macaulay 2 with emacs after it has been set up",
 	  TO "editing Macaulay 2 code with emacs"
 	  }
      }
 
 document {
-     Key => "using Macaulay2 with emacs after it has been set up",
-     PARA {"In this section, we show by example how to use the Macaulay2 emacs interface.
+     Key => "using Macaulay 2 with emacs after it has been set up",
+     PARA {"In this section, we show by example how to use the Macaulay 2 emacs interface.
 	  We assume that you have already set up this interface, as described in 
-	  ", TO "setting up the Macaulay2 emacs interface", ".  After creating or changing
+	  ", TO "setting up the Macaulay 2 emacs interface", ".  After creating or changing
 	  the .emacs file mentioned there, you need to exit and restart emacs.  For the rest
 	  of this section, we assume that you are running emacs."
 	  },
      "The aspects of this interface that we describe include",
      UL {
-	  "Starting Macaulay2 with the f12 key, or with M-x M2",
+	  "Starting Macaulay 2 with the f12 key, or with M-x M2",
 	  "Working with two buffers",
-	  "Sending lines or selected text to Macaulay2 using the f11 key",
+	  "Sending lines or selected text to Macaulay 2 using the f11 key",
 	  "Command completion with TAB",
 	  "Horizontal scrolling with f3,f4,f5,f6,f7"
 	  },
@@ -501,7 +501,7 @@ document {
      	  "You may use ", TT "C-x o", " freely to switch from one window to the other.
 	  Verify that Macaulay 2 is running by entering a command such as ", TT "2+2", ".  
 	  Now create (using C-x C-f) a file, named something like foo.m2 (the final .m2 is
-	  important, as it informs emacs to use the Macaulay2 mode).
+	  important, as it informs emacs to use the Macaulay 2 mode).
 	  Paste the following text into a buffer.  If you wish, save the file using C-x C-s."
 	  },
      PRE ///    R = QQ[x,y,z]
@@ -595,7 +595,7 @@ document {
 	  TT ///viewHelp (jacobian,Ideal)///
      	  },
      PARA {"Using 'help' instead of 'viewHelp' results in the help text appearing 
-	  in your Macaulay2 session. " 
+	  in your Macaulay 2 session. " 
 	  },
      EXAMPLE ///help "jacobian"///,
      PARA {
@@ -614,7 +614,7 @@ document {
 	  },
      PARA {"The function ", TO apropos, " is useful to find functions and other defined symbols 
 	  which match a search string.  For example, to find all symbols
-	  in Macaulay2 which contain the string 'deal', use"
+	  in Macaulay 2 which contain the string 'deal', use"
      	  },
      EXAMPLE ///apropos "deal"///,
      PARA {"The documentation for most functions comes with example code.  You can 
@@ -671,7 +671,7 @@ document {
      "Because some answers can be very long, it is a good idea to run the
      program in a window which does not wrap output lines, and allows the
      user to scroll left horizontally to see the rest of the output.  (See
-	  ", TO "using Macaulay2 with emacs", ".)",
+	  ", TO "using Macaulay 2 with emacs", ".)",
      EXAMPLE "100!",
      "Multiple expressions may be separated by semicolons.",
      EXAMPLE "1;2;3*4",
@@ -835,7 +835,7 @@ document {
      PARA {
 	  "In this section we learn how to use emacs to edit Macaulay 2 code.
 	  Assuming you have set up your emacs init file as described in 
-	  ", TO "setting up the Macaulay2 emacs interface", " when you visit a file
+	  ", TO "setting up the Macaulay 2 emacs interface", " when you visit a file
 	  whose name ends with ", TT ".m2", " you will see on the mode line the
 	  name Macaulay 2 in parentheses, indicating that the file is being
 	  edited in Macaulay 2 mode."
@@ -926,7 +926,7 @@ document {
      "Because some answers can be very wide, it is a good idea to run Macaulay 2
      in a window which does not wrap output lines and allows the
      user to scroll horizontally to see the rest of the output.  We
-     provide a package for ", TO2{"using Macaulay2 with emacs","emacs"}, " that implements this.
+     provide a package for ", TO2{"using Macaulay 2 with emacs","emacs"}, " that implements this.
      It also provides for dynamic completion of symbols in the language.",
      PARA{},
      "There is an ASCII version of this section of the documentation distributed

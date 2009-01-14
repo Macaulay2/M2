@@ -136,7 +136,8 @@ document {
      SeeAlso => {"Groebner bases", (symbol %, RingElement, Ideal)},
      }
 
-needsPackage "Elimination"
+-- we should be able to link to the right nodes without this:
+-- needsPackage "Elimination"
 document {
      Key => "elimination of variables",
      TEX "Let's consider the problem of finding the polynomial relation 

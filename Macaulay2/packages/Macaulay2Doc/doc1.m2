@@ -93,7 +93,7 @@ document {
      "Some example uses:",
      UL {
 	  (TT "viewHelp", " -- top of local copy of the documentation, including installed packages"),	  
-	  (TT "viewHelp \"Macaulay 2\"", " -- top of Macaulay2 doc"),
+	  (TT "viewHelp \"Macaulay 2\"", " -- top of Macaulay 2 doc"),
 	  (TT "viewHelp ideal", " -- online doc for the 'ideal' function"),
 	  (TT "viewHelp \"matrices\"", " -- overview of matrices in Macaulay 2"),
 	  (TT "viewHelp (ideal,List)", " -- online doc for ideal(List) method"),
@@ -115,10 +115,10 @@ document {
 	  },
      Consequences => {
 	  "The given documentation page is displayed using info, if you are running
-	  Macaulay2 in a terminal window."},
+	  Macaulay 2 in a terminal window."},
      "Some example uses:",
      UL {
-	  (TT "infoHelp \"Macaulay 2\"", " -- top of Macaulay2 doc"),
+	  (TT "infoHelp \"Macaulay 2\"", " -- top of Macaulay 2 doc"),
 	  (TT "infoHelp ideal", " -- online doc for the 'ideal' function"),
 	  (TT "infoHelp \"matrices\"", " -- overview of matrices in Macaulay 2"),
 	  (TT "infoHelp (ideal,List)", " -- online doc for ideal(List) method"),

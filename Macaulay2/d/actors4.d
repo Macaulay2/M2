@@ -109,7 +109,9 @@ select(a:Sequence,f:Expr):Expr := (
 	  if y == True then (
 	       b.i = true;
 	       found = found + 1;
-	       ));
+	       )
+	  else if y != False then return buildErrorPacket("select: expected predicate to yield true or false");
+	  );
      new Sequence len found do (
 	  foreach p at i in b do if p then provide a.i));
 foo := array(string)();
@@ -131,10 +133,11 @@ select(e:Expr,f:Expr,ignorecase:bool):Expr := (
 	       p := bucket;
 	       while p != p.next do (
 		    newvalue := applyEE(f,p.value);
-		    when newvalue 
+		    when newvalue
 		    is err:Error do if err.message == breakMessage then return if err.value == dummyExpr then nullE else err.value else return newvalue
 		    else if newvalue == True 
-		    then storeInHashTable(u,p.key,p.hash,p.value);
+		    then (storeInHashTable(u,p.key,p.hash,p.value);)
+	  	    else if newvalue != False then return buildErrorPacket("select: expected predicate to yield true or false");
 		    p = p.next;
 		    ));
 	  sethash(u,obj.mutable);
@@ -158,7 +161,9 @@ select(n:int,a:Sequence,f:Expr):Expr := (
 	       if y == True then (
 		    b.i = true;
 		    found = found + 1;
-		    ))
+		    )
+	       else if y != False then return buildErrorPacket("select: expected predicate to yield true or false");
+	       )
 	  else b.i = false);
      new Sequence len found do (
 	  foreach p at i in b do if p then provide a.i));
@@ -186,7 +191,8 @@ select(n:Expr,e:Expr,f:Expr,ignorecase:bool):Expr := (
 		    then (
 			 storeInHashTable(u,p.key,p.hash,p.value);
 			 nval = nval-1;
-			 );
+			 )
+	  	    else if newvalue != False then return buildErrorPacket("select: expected predicate to yield true or false");
 		    p = p.next;
 		    ));
 	  sethash(u,obj.mutable);

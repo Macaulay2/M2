@@ -5,7 +5,7 @@ document {
      "See ", TO "modules", " for an overview of modules in Macaulay2.  See
      ", TO "modules in Macaulay2", " for a tutorial overview of modules.",
      PARA{},
-     "Modules in Macaulay2 are implemented as ", TO "subquotient modules", ".  
+     "Modules in Macaulay 2 are implemented as ", TO "subquotient modules", ".  
      Submodules and quotients of free modules are perhaps the most common and important
      modules, and subquotients form the smallest class
      of modules which naturally includes these cases.",
@@ -260,7 +260,7 @@ document {
 	  "coker F",
 	  "image F",
 	  },
-     "Some routines in Macaulay2 have abbreviations, for example ", TT "ker", 
+     "Some routines in Macaulay 2 have abbreviations, for example ", TT "ker", 
      " may be used for ", TT "kernel", ", and 
      ", TT "coker", " may be used for ", TT "cokernel", ".  
      The ", TT "image", " function has no abbreviated form.",
@@ -344,7 +344,7 @@ document {
 	  "I = ideal(x*y,x*z,y*z)",
 	  "M = I/I^2"
 	  },
-     TEX "Macaulay2 represents each module (at least conceptually) as a subquotient module, that is, a submodule of 
+     TEX "Macaulay 2 represents each module (at least conceptually) as a subquotient module, that is, a submodule of 
      a quotient of an ambient free module.  A subquotient module is determined by two
      matrices $f : R^m \\rightarrow{} R^n$ and $g : R^p \\rightarrow{} R^n$.
      The {\\em subquotient module} with generators $f$ and relations $g$ is by definition the module
@@ -366,9 +366,9 @@ document {
  	  "N1 = (image f + image g)/(image g)",
 	  "M === N"
 	  },
-     "Notice that Macaulay2 allows one to write (image f)/(image g), even though 
+     "Notice that Macaulay 2 allows one to write (image f)/(image g), even though 
      mathematically this really means: (image f + image g)/(image g).  There is an important
-     difference however.  Modules in Macaulay2 always come with an ordered set of generators,
+     difference however.  Modules in Macaulay 2 always come with an ordered set of generators,
      and N1 has 4 more generators (all zero in the module!) than N.  The 
      modules M and N though are identical.",
      PARA{},
@@ -455,7 +455,7 @@ document {
 	  },
      "Notice that as is usual in Macaulay2, the target comes before the source.",
      PARA{},
-     "Macaulay2 doesn't display the source and target, unless they are both free
+     "Macaulay 2 doesn't display the source and target, unless they are both free
      modules.  Use ", TO target, " and ", TO source, " to get them.  The ",
      TO matrix, " routine recovers the matrix of free modules between the
      generators of the source and target.",
@@ -464,7 +464,7 @@ document {
 	  "target F == R^1",
 	  "matrix F"
 	  },
-     "Macaulay2 also does not check that the homomorphism is well-defined
+     "Macaulay 2 also does not check that the homomorphism is well-defined
      (i.e. the relations of the source map into the relations of the target).
      Use ", TO isWellDefined, " to check.  This generally requires a Groebner
      basis computation (which is performed automatically, if it is required

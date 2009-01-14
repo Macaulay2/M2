@@ -222,8 +222,8 @@ if firstTime then (
 	  );
      applicationDirectory = () -> (
 	  if instance(applicationDirectorySuffix, Function)
-	  then homeDirectory | applicationDirectorySuffix()
-	  else homeDirectory | applicationDirectorySuffix
+	  then "~/" | applicationDirectorySuffix()
+	  else "~/" | applicationDirectorySuffix
 	  );
 
      dumpdataFile = null;
@@ -302,7 +302,7 @@ usage := arg -> (
      << "environment:"       << newline
      << "    M2ARCH             a hint to find the dumpdata file as" << newline
      << "                       bin/../cache/Macaulay2-$M2ARCH-data, where bin is the" << newline
-     << "                       directory containing the Macaulay2 executable" << newline
+     << "                       directory containing the Macaulay 2 executable" << newline
      << "    EDITOR             default text editor" << newline
      << "    LOADDATA_IGNORE_CHECKSUMS (loaddata: disable verification of memory map checksums)" << newline
      << "    COMPAREVDSO               (loaddata: enable verification for the vdso segment)" << newline
@@ -547,10 +547,6 @@ scan(commandLine, arg -> if arg === "-q" or arg === "--dumpdata" then noinitfile
 homeDirectory = getenv "HOME" | "/"
 
 path = (x -> select(x, i -> i =!= null)) deepSplice {
-	  if not noinitfile then (
-	       applicationDirectory() | "local/" | Layout#1#"packages", 
-	       applicationDirectory() | "code/"
-	       ),
 	  if prefixDirectory =!= null then (
 	       if topBuilddir =!= null then (
 		    if topSrcdir =!= null then (
@@ -561,6 +557,18 @@ path = (x -> select(x, i -> i =!= null)) deepSplice {
 		    topBuilddir|"Macaulay2/packages/"
 		    ),
 	       prefixDirectory | replace("PKG","Core",currentLayout#"package"),
+	       prefixDirectory | currentLayout#"packages"
+	       )
+	  }
+
+packagepath = (x -> select(x, i -> i =!= null)) deepSplice {
+	  if prefixDirectory =!= null then (
+	       if topBuilddir =!= null then (
+		    if topSrcdir =!= null then (
+		    	 topSrcdir|"Macaulay2/packages/"
+			 ),
+		    topBuilddir|"Macaulay2/packages/"
+		    ),
 	       prefixDirectory | currentLayout#"packages"
 	       )
 	  }

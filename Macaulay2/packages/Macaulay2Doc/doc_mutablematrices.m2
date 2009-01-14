@@ -51,7 +51,7 @@ document {
 document {
      Key => MutableMatrix,
      Headline => "the class of all mutable matrices",
-     "A mutable matrix in Macaulay2 is a rectangular array of elements
+     "A mutable matrix in Macaulay 2 is a rectangular array of elements
      of a specific ring, whose entries can be modified.",
      PARA{},
      "A mutable matrix is different from a ", TO Matrix, " in that

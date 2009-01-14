@@ -37,7 +37,7 @@ document {
      }
 document { 
      Key => [forceGB, ChangeMatrix],
-     Headline => "inform Macaulay2 about the change of basis matrix from GB to generators",
+     Headline => "inform Macaulay 2 about the change of basis matrix from GB to generators",
      Usage => "forceGB(...,ChangeMatrix=>m)",
      Inputs => { "m" => Matrix },
      Consequences => {
@@ -59,7 +59,7 @@ document {
      }
 document { 
      Key => [forceGB, MinimalMatrix],
-     Headline => "inform Macaulay2 about the minimal generator matrix",
+     Headline => "inform Macaulay 2 about the minimal generator matrix",
      Usage => "",
      Inputs => {
 	  },
@@ -73,7 +73,7 @@ document {
      }
 document { 
      Key => [forceGB, SyzygyMatrix],
-     Headline => "inform Macaulay2 about the syzygy matrix",
+     Headline => "inform Macaulay 2 about the syzygy matrix",
      Usage => "forceGB(f,SyzygyMatrix=>z,...)",
      Inputs => { "z" => Matrix },
      Consequences => {

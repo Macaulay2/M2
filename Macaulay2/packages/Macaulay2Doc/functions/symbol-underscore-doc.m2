@@ -380,7 +380,7 @@ document {
 	  RingElement => "the (i,j)-th entry of the matrix M, where M_(0,0) is the 
 	   top left entry"
 	  },
-     "All indexing in Macaulay2 is zero-based, so the indices start at zero.",
+     "All indexing in Macaulay 2 is zero-based, so the indices start at zero.",
      EXAMPLE lines ///
      	  M = matrix{{1,2,3},{0,5,6}}
 	  M_(1,2)

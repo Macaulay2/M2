@@ -96,5 +96,5 @@ fillMatrix(A, Density=>.5)
 (P,L,U) = LUdecomposition A
 Q = id_(kk^#P) _ P
 Q * (matrix L) * (matrix U) - matrix A
--- warning: lapack support had many bugs in Macaulay2 versions <= 1.0
+-- warning: lapack support had many bugs in Macaulay 2 versions <= 1.0
 ///

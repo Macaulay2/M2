@@ -45,12 +45,15 @@ void freememlen(void *s, size_t old) {
      GC_FREE(s);
 }
 
+#if 0
+// currently unused
 void freemem(void *s) {
 #    ifdef DEBUG
      trapchk(s);
 #    endif
      GC_FREE(s);
 }
+#endif
 
 char *getmem_clear(size_t n)
 {

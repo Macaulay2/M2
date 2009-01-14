@@ -78,7 +78,7 @@ document {
      to ensure the matrix would be homogeneous.",
      EXAMPLE "isHomogeneous f",
      SUBSECTION "Alternate approaches",
-     "We could have let Macaulay2 take care of that for us, by replacing
+     "We could have let Macaulay 2 take care of that for us, by replacing
      the source module by its desired rank.",
      EXAMPLE lines ///
 	  g = map(R^3,4,(i,j) -> R_i^j)
@@ -489,7 +489,7 @@ document {
      PARA{},
      "The ring maps which are created are not always mathematically well-defined.
      For example, the map F below is the natural quotient map, but
-     the map ", TT "G", " is not mathematically well-defined, although we can use it in Macaulay2 to
+     the map ", TT "G", " is not mathematically well-defined, although we can use it in Macaulay 2 to
      lift elements of ", TT "E", " to ", TT "D", ".",
      EXAMPLE lines ///
 	  D = QQ[x,y,z];
