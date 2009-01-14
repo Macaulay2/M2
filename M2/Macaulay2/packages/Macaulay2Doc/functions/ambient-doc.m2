@@ -5,7 +5,7 @@
 document { 
      Key => ambient,
      Headline => "ambient free module of a subquotient, or ambient ring",
-     "Each module M in Macaulay2 is a quotient, submodule or subquotient of a free
+     "Each module M in Macaulay 2 is a quotient, submodule or subquotient of a free
      module, called the ambient free module of M.",
      PARA{},
      "The ambient ring of a quotient ring R/I is the polynomial ring of that it is a

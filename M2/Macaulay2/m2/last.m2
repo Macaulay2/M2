@@ -62,6 +62,11 @@ addStartFunction( () -> if not noinitfile and prefixDirectory =!= null and geten
 		    if readlink tar =!= null and not isprefix(tardir,realpath readlink tar) then removeFile tar;
 		    ))))
 
+userpath' := userpath = {
+	  applicationDirectory() | "code/",
+	  d1 := applicationDirectory() | "local/" | Layout#1#"packages", 
+	  d2 := applicationDirectory() | "local/" | Layout#2#"packages"
+	  }
 addStartFunction( () -> if not noinitfile then (
 	  -- remove empty directories and dead symbolic links from the local application directory
 	  dir := applicationDirectory() | "local/";
@@ -69,7 +74,9 @@ addStartFunction( () -> if not noinitfile then (
 	       fn -> if fn =!= dir then (
 		    if isDirectory fn and # readDirectory fn == 2 then removeDirectory fn else
 		    if readlink fn =!= null and not fileExists fn then removeFile fn
-		    ))))
+		    ));
+	  if isDirectory d1 and isDirectory d2 then stderr << "--warning: both types of layout in use for user-installed packages" << endl
+	  ))
 
 addStartFunction( () -> if dumpdataFile =!= null and fileExists dumpdataFile then (
 	  dumptime := fileTime dumpdataFile;
@@ -78,30 +85,20 @@ addStartFunction( () -> if dumpdataFile =!= null and fileExists dumpdataFile the
 	  stderr << "--warning: old dumpdata file: " << dumpdataFile << endl;
 	  stderr << "--         the following source files are newer:" << endl;
 	  scan(sort newfiles, fn -> stderr << "--         " << fn << endl)))
-
 addStartFunction( () -> if version#"gc version" < "7.0" then error "expected libgc version 7.0 or larger; perhaps our sharable library is not being found" )
-
 unexportedSymbols = () -> hashTable apply(pairs Core#"private dictionary", (n,s) -> if not Core.Dictionary#?n then (s => class value s => value s))
-
 scan(values Core#"private dictionary" - set values Core.Dictionary,
      s -> if mutable s and value s === s then error("mutable unexported unset symbol in Core: ", s))
-
-Core#"pre-installed packages" = {}			    -- these will loaded before dumping, see below
-Core#"base packages" = {}				    -- these will be kept visible with other packages are loaded
-
--- make sure this is after all public global symbols are defined or erased
-endPackage "Core"
--- after this point, private global symbols, such as noinitfile, are no longer visible
-
-flagLookup \ vars (0 .. 51)
-
+noinitfile' := noinitfile
 load "installedpackages.m2"
-
+Core#"base packages" = {}				    -- these will be kept visible while other packages are loaded
+path = packagepath
+endPackage "Core" -- after this point, private global symbols, such as noinitfile, are no longer visible, and public symbols have been exported
+flagLookup \ vars (0 .. 51)
 scan(Core#"pre-installed packages",	-- initialized in the file installedpackages.m2, which is made from the file installedpackages
      pkg -> needsPackage(pkg, DebuggingMode => not stopIfError))
-
 Core#"base packages" = join(Core#"pre-installed packages",Core#"base packages")
-
+if not noinitfile' then path = join(userpath',path)
 -- Local Variables:
 -- compile-command: "make -C $M2BUILDDIR/Macaulay2/m2 "
 -- End:

@@ -196,7 +196,7 @@ document { Key => tutorial,
      Usage => "tutorial x",
      Inputs => { "x" => String => "documentation in tutorial format" },
      Outputs => {{ "documentation in hypertext format" }},
-     PARA { "Some of the Macaulay2 documentation is written in this format." },
+     PARA { "Some of the Macaulay 2 documentation is written in this format." },
      EXAMPLE {
 	  "///-- We can compute $(x+y)^3$ as follows.
 R = QQ[x,y]
@@ -505,7 +505,7 @@ document { Key => FunctionClosure,
      }
 document { Key => CompiledFunction,
      Headline => "the class of all compiled functions",
-     "Compiled functions in Macaulay2 are written in a special purpose language, translated to C during compilation and not available to general users.",
+     "Compiled functions in Macaulay 2 are written in a special purpose language, translated to C during compilation and not available to general users.",
      EXAMPLE "class sin"
      }
 document { Key => CompiledFunctionClosure,
@@ -693,6 +693,9 @@ document { Key => "homeDirectory",
      Headline => "the home directory of the user",
      Usage => "homeDirectory",
      Outputs => { String => "the home directory of the user" },
+     PARA {"In file operations, file names beginning with ", TT "~/", " will have it replaced
+	  with the home directory."
+	  },
      EXAMPLE "homeDirectory"
      }
 document { Key => "backtrace",

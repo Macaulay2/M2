@@ -1,7 +1,7 @@
 document {
      Key => Package,
      Headline => "the class of all packages",
-     "A package is a body of Macaulay2 source code devoted to a 
+     "A package is a body of Macaulay 2 source code devoted to a 
      particular topic.  Many packages are distributed with Macaulay 2, 
      and others are available from various users on the internet.",
      PARA{},
@@ -112,13 +112,13 @@ document {
      Key => {makePackageIndex,(makePackageIndex, List), (makePackageIndex, Sequence)},
      Headline => "",
      Usage => "makePackageIndex()",
-     Consequences => {"Creates a file 'index.html' in your Macaulay2 directory,
-     containing links to the documentation for Macaulay2 and
+     Consequences => {"Creates a file 'index.html' in your Macaulay 2 directory,
+     containing links to the documentation for Macaulay 2 and
      all installed packages."},
      "This command may need to be run after installing a package via ", TO installPackage, ".",
      PARA {
 	 "This command is run each time the program is started, therefore 
-	 overwriting this file.  Thus, one can simply restart Macaulay2 to
+	 overwriting this file.  Thus, one can simply restart Macaulay 2 to
 	 obtain the same consequence."},
      SeeAlso => {"packages"}
      }
@@ -176,7 +176,7 @@ document {
      Key => {TEST, (TEST,String), (TEST,List)},
      Headline => "package item: register a test of the package",
      Usage => "TEST s",
-     Inputs => { "s" => {"a string or list of strings containing Macaulay2 code"} },
+     Inputs => { "s" => {"a string or list of strings containing Macaulay 2 code"} },
      Consequences => { {"Registers the string ", TT "s", " as a test of the current package"}},
      "This function should only occur in the documentation section of a package.  Use ", TO check, " to run all of the tests
      associated to a package.",

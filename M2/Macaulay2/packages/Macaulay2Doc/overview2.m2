@@ -885,7 +885,7 @@ document {
      ", TO "openInOut", " to create a file that serves as a bidirectional
      connection to a program.  That file is called an input output file.  In
      this example we open a connection to the unix utility ", TT "egrep", "
-     and use it to locate the symbol names in Macaulay2 that begin with
+     and use it to locate the symbol names in Macaulay 2 that begin with
      ", TT "in", ".",
      EXAMPLE {
 	  ///f = openInOut "!egrep '^in'"///,

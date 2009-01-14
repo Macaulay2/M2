@@ -110,8 +110,8 @@ void enterFactory() {
 void enterM2(void) { 
   mp_set_memory_functions
     ( 
-     (void *(*) (size_t)) getmem,
-     (void *(*) (void *, size_t, size_t)) getmoremem,
+     (void *(*) (size_t)) getmem_atomic,
+     (void *(*) (void *, size_t, size_t)) getmoremem_atomic,
      freememlen ); }
 
 void enterMalloc(void) {

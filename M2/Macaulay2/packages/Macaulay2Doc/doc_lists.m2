@@ -285,14 +285,14 @@ document {
      Key => List,
      Headline => "the class of all lists -- {...}",
      PARA {"For an overview of lists and sequences, see ", TO "lists and sequences", "."},
-     "Lists in Macaulay2 consist of elements of any type, enclosed in braces, and separated by commas.",
+     "Lists in Macaulay 2 consist of elements of any type, enclosed in braces, and separated by commas.",
      EXAMPLE "L = {a,1,b,2}",
      "The length of a list has two notations, the version with the ",  TT "#", " is faster when writing programs.",
      EXAMPLE "#L, length L",
      "The first entry of the list has index 0.  Indexing is performed using ", TO symbol#, ".",
      EXAMPLE "L#2",
      PARA{},
-     "Lists in Macaulay2 are immutable. See ", TO MutableList, " for making and using 
+     "Lists in Macaulay 2 are immutable. See ", TO MutableList, " for making and using 
      lists that you may modify.",
      PARA{},
      "In Macaulay2, there are several kinds of lists, the main difference being their notation.  These

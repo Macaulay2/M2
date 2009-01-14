@@ -59,7 +59,7 @@ document {
 	  LI "Spaces, tabs, and newline characters are completely ignored.",
 	  LI "A variable is either (1) a single letter, (2) a subscripted variable, or (3) a polynomial enclosed in parentheses.",
 	  LI { "Subscripted variables, e.g., ", TT "y_(1,1)", ", are written using brackets, as in ", TT "y[1,1]", ".  
-	       Instead of explicit numbers for subscripted variables, Macaulay2 user variables that have an integer value may be used."},
+	       Instead of explicit numbers for subscripted variables, Macaulay 2 user variables that have an integer value may be used."},
 	  LI { "Coefficients are either integers or rational numbers, starting with a + or - (which may be omitted for the first monomial).  Over finite
 	       fields, the division is performed in that field."},
 	  LI { "A monomial is written without symbols for multiplication or exponentiation,

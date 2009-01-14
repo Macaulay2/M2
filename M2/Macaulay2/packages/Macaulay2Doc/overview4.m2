@@ -365,7 +365,7 @@ document { Key => "the debugger",
      "Let's peek at the code of the function ", TT "g", ".",
      EXAMPLE "code g",
      "We see that the function g calls a function ", TT "f", ", but ", TT "f", " is not visible to us
-     (because ", TT "f", " is a local variable).  In emacs' ", EM "Macaulay2 Interaction Mode", ", pressing
+     (because ", TT "f", " is a local variable).  In emacs' ", EM "Macaulay 2 Interaction Mode", ", pressing
      return (", TT "RET", " or ", TT "enter", ") after positioning the cursor on the output line displaying the file name and line number
      will bring up the source code in a new buffer.",
      PARA{"The first few times we use ", TT "g", ", it seems to work."},

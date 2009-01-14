@@ -148,7 +148,7 @@ doc ///
   Description
    Text
      Each paragraph of text begins with \"Text\".  The following 
-     line starts a sequence of Macaulay2 example input lines.
+     line starts a sequence of Macaulay 2 example input lines.
      However, see @TO (matrix,List)@.
    Example
      M = matrix\"1,2;3,4\";
@@ -356,7 +356,7 @@ toDoc ///
   Description
    Text
      Each paragraph of text begins with the word Text.  The following 
-     line starts a sequence of Macaulay2 example input lines.
+     line starts a sequence of Macaulay 2 example input lines.
      However, see @TO (matrix,List)@.
    Example
      M = matrix{{1,2},{3,4}}

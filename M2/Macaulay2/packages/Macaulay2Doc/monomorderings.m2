@@ -615,7 +615,7 @@ document {
      orders, each with n1, n2, ..., nr variables.",
      PARA{},
      "This syntax is left here for compatibility with previous
-     Macaulay2 versions.",
+     Macaulay 2 versions.",
      EXAMPLE {
      	"R = ZZ[a..e, MonomialOrder => ProductOrder {3,2}];"
 	},

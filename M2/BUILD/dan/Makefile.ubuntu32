@@ -1,10 +1,11 @@
 # -*- Makefile -*-
-# BUILDOPTIONS += RemakeAllDocumentation=true RemakePackages=true
+BUILDOPTIONS += RemakeAllDocumentation=true RemakePackages=true
 # BUILDOPTIONS += RerunExamples=true
 # PACKAGES = Macaulay2Doc
 # BUILDOPTIONS += -s
 # INSTALLOPTIONS += -s
 # CONFIGOPTIONS += --enable-tarfile
+unexport DEBUG
 ifeq ($(DEBUG),yes)
 INSTALLOPTIONS += prefix=/none
 CONFIGOPTIONS += --enable-debug --disable-pthreads

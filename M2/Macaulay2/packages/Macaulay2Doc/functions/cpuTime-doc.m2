@@ -4,7 +4,7 @@
 
 document { 
      Key => cpuTime,
-     Headline => "seconds of cpu time used since Macaulay2 began",
+     Headline => "seconds of cpu time used since Macaulay 2 began",
      Usage => "cpuTime()",
      Outputs => {
 	  RR => "the number of seconds of cpu time used since the program was started"

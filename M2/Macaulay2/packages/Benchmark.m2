@@ -135,7 +135,7 @@ runBenchmarks0 = method()
 runBenchmarks0 List := x -> (
      << "-- beginning computation " << get "!date";
      << "-- " << first lines get "!uname -a" << endl;
-     << "-- Macaulay2 " << version#"VERSION";
+     << "-- Macaulay 2 " << version#"VERSION";
      << ", compiled with " << version#"compiler";
      << endl;
      scan(x,runBenchmark))
@@ -165,41 +165,41 @@ Here is another possible benchmark, but it doesn't work for us yet:
   --- Mac OS X side:
     -- beginning computation Mon Sep 17 21:52:30 EDT 2007
     -- Darwin indigo.local 8.10.1 Darwin Kernel Version 8.10.1: Wed May 23 16:33:00 PDT 2007; root:xnu-792.22.5~1/RELEASE_I386 i386 i386
-    -- Macaulay2 0.9.97, compiled with gcc 4.0.1
+    -- Macaulay 2 0.9.97, compiled with gcc 4.0.1
     -- res39: res of a generic 3 by 9 matrix over ZZ/101: 0.25 seconds
     -- resG25: res of the coordinate ring of Grassmannian(2,5): 2.43 seconds
     -- gbB148: gb of Bayesian graph ideal #148: 19.15 seconds
   --- 32 bit GNU/Linux side, under vmware:
     -- beginning computation Mon Sep 17 21:56:26 EDT 2007
     -- Linux indigo-ubuntu32 2.6.20-16-generic #2 SMP Thu Jun 7 20:19:32 UTC 2007 i686 GNU/Linux
-    -- Macaulay2 0.9.97, compiled with gcc 4.1.2
+    -- Macaulay 2 0.9.97, compiled with gcc 4.1.2
     -- res39: res of a generic 3 by 9 matrix over ZZ/101: 0.204013 seconds
     -- resG25: res of the coordinate ring of Grassmannian(2,5): 2.77217 seconds
     -- gbB148: gb of Bayesian graph ideal #148: 19.4452 seconds
   --- 64 bit GNU/Linux side, under vmware:
     -- beginning computation Thu Aug  9 20:23:47 EDT 2007
     -- Linux indigo-ubuntu 2.6.20-16-generic #2 SMP Thu Jun 7 19:00:28 UTC 2007 x86_64 GNU/Linux
-    -- Macaulay2 0.9.97, compiled with gcc 4.1.2
+    -- Macaulay 2 0.9.97, compiled with gcc 4.1.2
     -- res39: res of a generic 3 by 9 matrix over ZZ/101: 0.188012 seconds
     -- resG25: res of the coordinate ring of Grassmannian(2,5): 2.54816 seconds
     -- gbB148: gb of Bayesian graph ideal #148: 19.8732 seconds
 
 -- beginning computation Thu Jan  4 20:25:24 EST 2007
 -- Darwin bayer.math.columbia.edu 8.8.1 Darwin Kernel Version 8.8.1: Mon Sep 25 19:42:00 PDT 2006; root:xnu-792.13.8.obj~1/RELEASE_I386 i386 i386 iMac5,1 Darwin
--- Macaulay2 0.9.96, compiled with gcc 4.0.1
+-- Macaulay 2 0.9.96, compiled with gcc 4.0.1
 -- res39: 0.21 seconds
 -- resG25: 2.51 seconds
 
 -- Lenovo/IBM Thinkpad R61i with Core 2 Duo at 1.5 Ghz
   -- Linux gallium 2.6.22-14-generic #1 SMP Sun Oct 14 23:05:12 GMT 2007 i686 GNU/Linux
     -- beginning computation Wed Nov 14 18:58:46 CET 2007
-    -- Macaulay2 1.0beta, compiled with gcc 4.1.3
+    -- Macaulay 2 1.0beta, compiled with gcc 4.1.3
     -- res39: res of a generic 3 by 9 matrix over ZZ/101: 0.352022 seconds
     -- resG25: res of the coordinate ring of Grassmannian(2,5): 4.10826 seconds
     -- gbB148: gb of Bayesian graph ideal #148: 31.818 seconds
   -- Linux gallium 2.6.22-14-generic #1 SMP Sun Oct 14 21:45:15 GMT 2007 x86_64 GNU/Linux
     -- beginning computation Wed Nov 14 10:52:29 CST 2007
-    -- Macaulay2 1.0beta, compiled with gcc 4.1.3
+    -- Macaulay 2 1.0beta, compiled with gcc 4.1.3
     -- res39: res of a generic 3 by 9 matrix over ZZ/101: 0.252016 seconds
     -- resG25: res of the coordinate ring of Grassmannian(2,5): 3.66823 seconds
     -- gbB148: gb of Bayesian graph ideal #148: 32.8221 seconds
@@ -207,7 +207,7 @@ Here is another possible benchmark, but it doesn't work for us yet:
        -- this one is TOO SLOW
     -- beginning computation Tue Mar 18 15:14:38 GMTST 2008
     -- CYGWIN_NT-6.0 gallium 1.5.25(0.156/4/2) 2007-12-14 19:21 i686 Cygwin
-    -- Macaulay2 1.1, compiled with gcc 3.4.4
+    -- Macaulay 2 1.1, compiled with gcc 3.4.4
     -- res39: res of a generic 3 by 9 matrix over ZZ/101: .811 seconds
     -- resG25: res of the coordinate ring of Grassmannian(2,5): 12.496 seconds
     -- gbB148: gb of Bayesian graph ideal #148: 47.565 seconds
@@ -216,55 +216,55 @@ Here is another possible benchmark, but it doesn't work for us yet:
   -- Linux
     -- beginning computation Mon Sep 17 15:03:59 CDT 2007
     -- Linux dubnium 2.6.20-16-generic #2 SMP Fri Aug 31 00:55:27 UTC 2007 i686 GNU/Linux
-    -- Macaulay2 0.9.97, compiled with gcc 4.1.2
+    -- Macaulay 2 0.9.97, compiled with gcc 4.1.2
     -- res39: res of a generic 3 by 9 matrix over ZZ/101: 0.304019 seconds
     -- resG25: res of the coordinate ring of Grassmannian(2,5): 3.02419 seconds
     -- gbB148: gb of Bayesian graph ideal #148: 22.0254 seconds
   -- Windows Vista
     -- beginning computation Mon Sep 17 20:37:59 GMTDT 2007
     -- CYGWIN_NT-6.0 LENOVO-PC 1.5.24(0.156/4/2) 2007-01-31 10:57 i686 Cygwin
-    -- Macaulay2 0.9.97, compiled with gcc 3.4.4
+    -- Macaulay 2 0.9.97, compiled with gcc 3.4.4
     -- res39: res of a generic 3 by 9 matrix over ZZ/101: 0.578 seconds
     -- resG25: res of the coordinate ring of Grassmannian(2,5): 8.424 seconds
     -- gbB148: gb of Bayesian graph ideal #148: 32.916 seconds
 
 -- beginning computation Tue Apr 11 20:14:38 EDT 2006
 -- Linux mathvader1.math.cornell.edu 2.6.9-34.ELsmp #1 SMP Fri Feb 24 16:56:28 EST 2006 x86_64 x86_64 x86_64 GNU/Linux
--- Macaulay2 0.9.8, compiled with gcc 3.4.5
+-- Macaulay 2 0.9.8, compiled with gcc 3.4.5
 -- res39: 0.260961 seconds
 -- resG25: 3.89541 seconds
 
 -- beginning computation Mon Dec 23 00:06:16 CST 2002
 -- Linux u126.math.uiuc.edu 2.4.18-18.7.xsmp #1 SMP Wed Nov 13 19:01:42 EST 2002 i686 unknown
 --    Dell_dualX/2600 
--- Macaulay2 0.9, compiled with gcc 3.0
+-- Macaulay 2 0.9, compiled with gcc 3.0
 -- res39: 0.285138 seconds
 -- resG25: 4.98438 seconds
 --loaded benchmark.m2 from /home/17/dan/tmp/M2-linux/Macaulay2-0.9/lib/Macaulay2-0.9/packages/benchmark.m2
 
 -- beginning computation Mon Dec 31 19:22:33 CST 2001
 -- Linux capybara 2.4.18 #25 Sun Jul 28 15:59:31
--- Macaulay2 0.9.2, compiled with gcc 2.95
+-- Macaulay 2 0.9.2, compiled with gcc 2.95
 -- res39: 0.38 seconds
 -- resG25: 6.05 seconds
 
 -- Dell Latitude C840
 -- beginning computation Mon Sep 17 15:10:14 CDT 2007
 -- Linux rhodium 2.6.20-16-generic #2 SMP Thu Jun 7 20:19:32 UTC 2007 i686 GNU/Linux
--- Macaulay2 0.9.97, compiled with gcc 4.1.2
+-- Macaulay 2 0.9.97, compiled with gcc 4.1.2
 -- res39: res of a generic 3 by 9 matrix over ZZ/101: 0.584037 seconds
 -- resG25: res of the coordinate ring of Grassmannian(2,5): 6.90443 seconds
 -- gbB148: gb of Bayesian graph ideal #148: 52.2593 seconds
 
 -- beginning computation Tue Sep 30 22:05:23 CDT 2003
 -- Linux rhodium 2.4.20 #2 Mon Mar 17 22:02:15 PST 2003 i686 unknown
--- Macaulay2 0.9.2, compiled with gcc 3.2
+-- Macaulay 2 0.9.2, compiled with gcc 3.2
 -- res39: 0.37 seconds
 -- resG25: 6.1 seconds
 
 -- beginning computation Mon Jan  8 11:44:18 EST 2007
 -- Linux rhodium 2.6.18.1 #1 SMP PREEMPT Sat Nov 11 02:11:17 CET 2006 i686 pentium4 i386 GNU/Linux
--- Macaulay2 0.9.96, compiled with gcc 4.1.1
+-- Macaulay 2 0.9.96, compiled with gcc 4.1.1
 -- res39: 0.48003 seconds
 -- resG25: 6.56441 seconds
 -- gbB148: 59.9957 seconds
@@ -332,67 +332,67 @@ Here is another possible benchmark, but it doesn't work for us yet:
 -- gbB148: gb of Bayesian graph ideal #148: 54.1754 seconds <-- not quite as good
 
 -- Darwin habanero.local 7.7.0 Darwin Kernel Version 7.7.0: Sun Nov  7 16:06:51 PST 2004; root:xnu/xnu-517.9.5.obj~1/RELEASE_PPC  Power Macintosh powerpc
--- Macaulay2 0.9.5, compiled with gcc 3.3.0
+-- Macaulay 2 0.9.5, compiled with gcc 3.3.0
 -- res39: 0.72 seconds
 -- resG25: 6.82 seconds
 
 -- beginning computation Fri May  5 14:27:51 CDT 2006
 -- Linux u123.math.uiuc.edu 2.4.22-1.2199.4.legacy.nptl #1 Sun Feb 20 18:21:21 EST 2005 i686 i686 i386 GNU/Linux
--- Macaulay2 0.9.8, compiled with gcc 4.1.0
+-- Macaulay 2 0.9.8, compiled with gcc 4.1.0
 -- res39: 0.5 seconds
 -- resG25: 6.99 seconds
 
 -- beginning computation Fri May  5 13:38:03 CDT 2006
 -- Linux u123.math.uiuc.edu 2.4.22-1.2199.4.legacy.nptl #1 Sun Feb 20 18:21:21 EST 2005 i686 i686 i386 GNU/Linux
--- Macaulay2 0.9.8, compiled with gcc 3.3.2
+-- Macaulay 2 0.9.8, compiled with gcc 3.3.2
 -- res39: 0.56 seconds
 -- resG25: 7.38 seconds
 
 -- beginning computation Thu Oct 17 00:26:02 CEST 2002
 -- Linux abuch.imf.au.dk 2.4.9-34smp #1 SMP Sat Jun 1 05:54:57 EDT 2002 i686 unknown
--- Macaulay2 0.9.2, compiled with gcc 2.96
+-- Macaulay 2 0.9.2, compiled with gcc 2.96
 -- res39: 0.47 seconds
 -- resG25: 7.82 seconds
 
 -- beginning computation Sat May 25 17:27:49 CDT 2002
 -- Linux lisboa.ks.uiuc.edu 2.4.16 #9 Tue Feb 19 14:11:28 CST 2002 i686 unknown
 -- model name      : Intel(R) Pentium(R) 4 CPU 1700MHz
--- Macaulay2 0.9, compiled with gcc 3.0
+-- Macaulay 2 0.9, compiled with gcc 3.0
 -- res39: 0.44 seconds
 -- resG25: 8.43 seconds
 
 -- FreeBSD euclid.math.purdue.edu 4.5-RELEASE FreeBSD i386
--- Macaulay2 0.9.2, compiled with gcc 2.95
+-- Macaulay 2 0.9.2, compiled with gcc 2.95
 -- res39: 0.523437 seconds
 -- resG25: 8.14062 seconds
 
 -- Linux hn03 2.4.9-31pctr #1 SMP Thu May 9 13:22:43 CDT 2002 i686 unknown
--- Macaulay2 0.9.2, compiled with gcc 3.0
+-- Macaulay 2 0.9.2, compiled with gcc 3.0
 -- res39: 0.66 seconds
 -- resG25: 10.23 seconds
 
 -- OSF1 cosimo.medicis.polytechnique.fr V4.0 1229 alpha
--- 0.683216 seconds, Macaulay2 0.8.57, compiled with gcc 2.95
+-- 0.683216 seconds, Macaulay 2 0.8.57, compiled with gcc 2.95
 
 -- OSF1 agnesi.matematik.su.se V4.0 1091 alpha
--- 0.708576 seconds, Macaulay2 0.8.57, compiled with gcc 2.95
+-- 0.708576 seconds, Macaulay 2 0.8.57, compiled with gcc 2.95
 
 -- OSF1 despina.ks.uiuc.edu V4.0 1229 alpha
--- 0.75152 seconds, Macaulay2 0.8.52
+-- 0.75152 seconds, Macaulay 2 0.8.52
 
 -- CYGWIN_NT-5.0 NIOBIUM 1.3.2(0.39/3/2) 2001-05-20 23:28 i686 unknown (1 Ghz pentium III)
--- Macaulay2 0.9, compiled with gcc 2.95
+-- Macaulay 2 0.9, compiled with gcc 2.95
 -- res39: 0.802 seconds
 -- resG25: 10.936 seconds
 
 -- beginning computation Tue Apr 11 19:53:29 EDT 2006
 -- Linux rhodium 2.6.11 #3 SMP Tue Jun 28 07:39:29 CDT 2005 i686 unknown unknown GNU/Linux
--- Macaulay2 0.9.8, compiled with gcc 4.0.0
+-- Macaulay 2 0.9.8, compiled with gcc 4.0.0
 -- res39: 0.749886 seconds
 -- resG25: 11.1823 seconds
 
 -- Linux rhenium 2.2.16 #24 Sat Jun 10 15:07:27 CDT 2000 i686 unknown
--- Macaulay2 0.8.61, compiled with gcc 2.95
+-- Macaulay 2 0.8.61, compiled with gcc 2.95
 -- res39: 1.12 seconds
 -- resG25: 18.45 seconds
 
@@ -400,7 +400,7 @@ Here is another possible benchmark, but it doesn't work for us yet:
 -- 1.20106 seconds, 0.8.46
 
 -- SunOS sg0.math.cornell.edu 5.7 Generic_106541-08 sun4u sparc SUNW,Ultra-Enterprise
--- Macaulay2 0.8.60, compiled with gcc 2.95
+-- Macaulay 2 0.8.60, compiled with gcc 2.95
 -- res39: 1.37 seconds
 -- resG25: 18.29 seconds
 
@@ -410,38 +410,38 @@ Here is another possible benchmark, but it doesn't work for us yet:
 
 -- beginning computation Thu Aug  9 18:07:41 CDT 2001
 -- Linux rhenium 2.4.6 #61 Fri Jul 13 09:17:38 CDT 2001 i686 unknown
--- Macaulay2 0.9, compiled with gcc 2.95
+-- Macaulay 2 0.9, compiled with gcc 2.95
 -- res39: 1.71 seconds
 -- resG25: 25. seconds
 
 -- beginning computation Sun Sep  9 19:33:49 CDT 2001
 -- Linux rhenium 2.4.9 #67 Mon Sep 3 11:10:40 CDT 2001 i686 unknown
--- Macaulay2 0.9, compiled with gcc 3.0.1  (faster than 3.0 below)
+-- Macaulay 2 0.9, compiled with gcc 3.0.1  (faster than 3.0 below)
 -- res39: 1.71 seconds
 -- resG25: 27.27 seconds
 
 -- Linux rhenium 2.4.4 #55 Tue Jun 26 13:44:25 CDT 2001 i686 unknown
--- Macaulay2 0.9, compiled with gcc 3.0
+-- Macaulay 2 0.9, compiled with gcc 3.0
 -- res39: 1.93 seconds
 -- resG25: 28.47 seconds
 
 -- Linux hypatia.matematik.su.se 2.0.34 #2 Thu May 7 10:48:04 EDT 1998 alpha unknown
--- 2.01366 seconds, Macaulay2 0.8.52a, compiled with gcc 2.90 -- with DEBUG on!
+-- 2.01366 seconds, Macaulay 2 0.8.52a, compiled with gcc 2.90 -- with DEBUG on!
 
 -- SunOS orion.math.uiuc.edu 5.5.1 Generic_103640-26 sun4u sparc SUNW,Ultra-4
--- 2.14 seconds, Macaulay2 0.8.53, compiled with gcc 2.8
+-- 2.14 seconds, Macaulay 2 0.8.53, compiled with gcc 2.8
 
 -- Linux yttrium 2.2.6 #82 Sun Apr 18 15:06:16 CDT 1999 i686 unknown
 -- e-machine: Cyrix M II - 333 MMX
--- 2.45 seconds, Macaulay2 0.8.53, compiled with gcc 2.91
+-- 2.45 seconds, Macaulay 2 0.8.53, compiled with gcc 2.91
 
 -- SunOS andy 5.5.1 Generic_103640-29 sun4u sparc SUNW,Ultra-2
--- Macaulay2 0.8.60, compiled with gcc 2.95
+-- Macaulay 2 0.8.60, compiled with gcc 2.95
 -- res39: 2.7 seconds
 -- resG25: 37.77 seconds
 
 -- Linux geometry 2.3.18 #2 Thu Sep 16 17:50:47 CDT 1999 i586 unknown
--- 3.46 seconds, Macaulay2 0.8.55, compiled with gcc 2.95
+-- 3.46 seconds, Macaulay 2 0.8.55, compiled with gcc 2.95
 
 -- Linux geometry 2.1.121 #33 SMP Tue Sep 15 21:44:25 CDT 1998 i586
 -- 4.01 seconds, Macaulay 2 version 0.8.47, compiled with gcc
@@ -454,17 +454,17 @@ Here is another possible benchmark, but it doesn't work for us yet:
 -- 4.27 seconds, Macaulay 2 version 0.8.50
 
 -- Linux geometry 2.2.2 #77 Wed Feb 24 10:40:05 EST 1999 i586 unknown
--- 4.31 seconds, Macaulay2 0.8.53, compiled with gcc 2.91, statically linked
+-- 4.31 seconds, Macaulay 2 0.8.53, compiled with gcc 2.91, statically linked
 
 -- CYGWIN_NT-4.0 GEOMETRY 20.1 (0.3/1/1) 1998-12-3 20:39:18 i586 unknown
 -- 4.327 seconds, Macaulay 2 version 0.8.52
 -- gcc version egcs-2.91.60 19981201 (egcs-1.1.1 release)
 
 -- Linux geometry 2.2.2 #77 Wed Feb 24 10:40:05 EST 1999 i586 unknown
--- 4.36 seconds, Macaulay2 0.8.53, compiled with gcc 2.8, dynamically linked
+-- 4.36 seconds, Macaulay 2 0.8.53, compiled with gcc 2.8, dynamically linked
 
 -- Linux geometry 2.2.2 #77 Wed Feb 24 10:40:05 EST 1999 i586 unknown
--- 4.38 seconds, Macaulay2 0.8.53, compiled with gcc 2.91
+-- 4.38 seconds, Macaulay 2 0.8.53, compiled with gcc 2.91
 
 ----- with SHAREDLIBS, including engine and interpeter:
 -- Linux geometry 2.2.0-pre4 #65 Mon Jan 4 20:14:06 CST 1999 i586 unknown
@@ -475,7 +475,7 @@ Here is another possible benchmark, but it doesn't work for us yet:
 
 -- with SHAREDLIBS and DEBUG and egcs compiler
 -- Linux geometry 2.2.2 #77 Wed Feb 24 10:40:05 EST 1999 i586 unknown
--- 5.65 seconds, Macaulay2 0.8.52, compiled with gcc 2.91
+-- 5.65 seconds, Macaulay 2 0.8.52, compiled with gcc 2.91
 
 -- HP-UX ux1 B.10.10 U 9000/819 65611361 unlimited-user license
 -- 	6.26 seconds

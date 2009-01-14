@@ -464,7 +464,7 @@ document {
 document {
      Key => {operatorAttributes, Flexible, Binary, Prefix, Postfix},
      Usage => "operatorAttributes",
-     Outputs => {{ "an experimental hash table that give information about ", TO "operators", " in the Macaulay2 language" }},
+     Outputs => {{ "an experimental hash table that give information about ", TO "operators", " in the Macaulay 2 language" }},
      "Meanings of the symbols used:",
      UL {
 	  LI { TO "Flexible", " -- user defined methods may be installed" },

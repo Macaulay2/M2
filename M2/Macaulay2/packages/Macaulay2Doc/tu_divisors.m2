@@ -179,7 +179,7 @@ Q1 = divisor ideal(y-6*z, x-3*z)
 -- In the following code, the expressions
 -- {\tt D\#0} and {\tt D\#1} refer to the first and second ideals
 -- in the list representing $D$. ({\tt D\#0} is the first 
--- because Macaulay2 counts everything starting from 0.)
+-- because Macaulay 2 counts everything starting from 0.)
 normalForm = method()
 normalForm Divisor := D -> new Divisor from {D#0 : D#1, D#1 : D#0};
 -- Two pairs $(I,J), (I',J')$ define the same divisor

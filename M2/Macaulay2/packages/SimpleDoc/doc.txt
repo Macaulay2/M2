@@ -29,7 +29,7 @@
 
     The only keyword which is always required is @TO Key@.
 
-    Each line in the @TO Key@ section is evaluated as a Macaulay2 expression
+    Each line in the @TO Key@ section is evaluated as a Macaulay 2 expression
     to yield a documentation key.  The various types of documentation keys are
     described in @TO Key@.  (If a string is desired as a key, it must be
     surrounded by quotation marks.)
@@ -50,7 +50,7 @@
     details and examples see @TO (html,TEX)@, allowing various mathematical
     expressions, such as $\PP^3$ or $x_i^{33} + 1/2$, to be displayed in the
     html form of the documentation.
-    Also allowed is a pair of {\tt \@} characters, enclosing Macaulay2 code to
+    Also allowed is a pair of {\tt \@} characters, enclosing Macaulay 2 code to
     be executed, yielding appropriate hypertext.  For example, {\tt \@TO Key\@}
     will insert a link to another node of the documentation.
 

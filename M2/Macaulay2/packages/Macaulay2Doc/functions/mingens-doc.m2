@@ -9,7 +9,7 @@ document {
      TO (mingens, Module), ", ", TO(trim,Module), ", and ", TO(minimalPresentation,Module),
      ".",
      PARA{},
-     "Every module in Macaulay2 is a ",  TO "subquotient module", ".  A module
+     "Every module in Macaulay 2 is a ",  TO "subquotient module", ".  A module
      M is a submodule of a quotient of an ambient free module F.  If M is graded,
      or the ring R of M is local, then the notion of minimal generators and minimal
      presentation make sense.",
@@ -47,7 +47,7 @@ document {
 document { 
      Key => mingens,
      Headline => "minimal generator matrix",
-     "Every ideal and module in Macaulay2 comes equipped with
+     "Every ideal and module in Macaulay 2 comes equipped with
      a generating set, which is sometimes a larger 
      generating set than is required.  This routine returns a matrix
      whose columns generate the given ideal or module.",
@@ -86,7 +86,7 @@ document {
 	  "I = J*J",
 	  "mingens I"
 	  },
-     "Every module I in Macaulay2 is a submodule of a quotient of some ambient
+     "Every module I in Macaulay 2 is a submodule of a quotient of some ambient
      free module F.  This routine returns a minimal, or improved generating set 
      for the same module I.  If you want to minimize the generators and the relations of a 
      subquotient module, use ", TO trim, ".  If you want a minimal presentation, then use ", TO minimalPresentation, ".",
@@ -113,7 +113,7 @@ document {
      Outputs => {
 	  Matrix => "whose columns form a (partially computed) minimal generating set"
 	  },
-     "Every GroebnerBasis computation in Macaulay2 computes a generator matrix, in the process
+     "Every GroebnerBasis computation in Macaulay 2 computes a generator matrix, in the process
      of constructing the Groebner basis.  If the
      original ideal or module is homogeneous, then the columns of this matrix form a
      minimal set of generators.  In the inhomogeneous case, the columns generate, and an attempt 

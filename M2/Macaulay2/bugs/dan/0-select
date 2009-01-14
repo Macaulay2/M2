@@ -1,1 +1,0 @@
-select should insist on getting true or false, to prevent users' bugs.

@@ -101,7 +101,7 @@ document {
      	       of the modules.",
 	  },
      TEX "Each homomorphism of modules f : M \\rightarrow{} N 
-     in Macaulay2 is induced from a matrix f0 : (cover M) \\rightarrow{}(cover N).
+     in Macaulay 2 is induced from a matrix f0 : (cover M) \\rightarrow{}(cover N).
      This function returns this matrix.",
      EXAMPLE {
 	  "R = QQ[a..d];",

@@ -1018,13 +1018,13 @@ sampleInitFile = ///-- This is a sample init.m2 file provided with Macaulay2.
 -- It contains Macaulay 2 code and is automatically loaded upon
 -- startup of Macaulay2, unless you use the "-q" option.
 
--- Uncomment the following line to cause Macaulay2 to load "start.m2" in the current working directory upon startup.
+-- Uncomment the following line to cause Macaulay 2 to load "start.m2" in the current working directory upon startup.
 -- if fileExists "start.m2" then load(currentDirectory|"start.m2")
 
 -- Uncomment and edit the following lines to add your favorite directories containing Macaulay 2
 -- source code files to the load path.  Terminate each directory name with a "/".
 -- (To see your current load path, display the value of the variable "path".)
--- path = join( { homeDirectory | "src/singularities/", "/usr/local/src/M2/" }, path )
+-- path = join( { "~/" | "src/singularities/", "/usr/local/src/M2/" }, path )
 
 -- Uncomment the following line if you prefer Macaulay2's larger 2-dimensional display form for matrices.
 -- compactMatrixForm = false
@@ -1053,8 +1053,8 @@ automatically loaded upon startup of Macaulay2, unless you use the "-q" option.
 You may edit it to meet your needs.
 
 The web browser file "index.html" in this directory contains a list of links to
-the documentation of Macaulay2 and its installed packages and is updated every
-time you start Macaulay2 (unless you use the "-q" option).  To update it
+the documentation of Macaulay 2 and its installed packages and is updated every
+time you start Macaulay 2 (unless you use the "-q" option).  To update it
 manually, use "makePackageIndex()".  Point your web browser at that file and
 bookmark it.
 

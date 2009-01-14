@@ -54,7 +54,7 @@ document {
 	  b
 	  ///,
      "At this point, b is thought to be a variable of S.  If one typed
-     ", TT "a+b", ", an error would occur, since Macaulay2 doesn't know how to add elements
+     ", TT "a+b", ", an error would occur, since Macaulay 2 doesn't know how to add elements
      of R and S together.  This is fixed via:",
      EXAMPLE lines ///
 	  use R

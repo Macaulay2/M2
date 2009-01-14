@@ -1,7 +1,7 @@
 
 document { Key => "packages provided with Macaulay 2",
      PARA{
-     	  "The packages that are distributed with Macaulay2 are:"
+     	  "The packages that are distributed with Macaulay 2 are:"
 	  },
      UL apply(sort select(separate_" " version#"packages", pkg -> pkg =!= "Macaulay2"), pkg -> LI TO (pkg|"::"|pkg)),
      PARA {
@@ -16,7 +16,7 @@ document { Key => "packages provided with Macaulay 2",
      }
 
 document { Key => "packages",
-     "A package is a body of Macaulay2 source code devoted to a 
+     "A package is a body of Macaulay 2 source code devoted to a 
      particular topic.  Many packages are distributed with Macaulay 2, 
      and others are available from various users on the internet.",
      PARA{}, "For more detailed information about packages, see ", 
@@ -36,7 +36,7 @@ document { Key => "packages",
      }
 
 document { Key => "using packages",
-     "A package is a body of Macaulay2 source code devoted to a 
+     "A package is a body of Macaulay 2 source code devoted to a 
      particular topic.  Many packages are distributed with Macaulay 2, 
      and others are available from various users on the internet.",
      PARA{}, "For more detailed information about packages, see ", 
@@ -46,11 +46,11 @@ document { Key => "using packages",
      PRE///    loadPackage "FirstPackage"///,
      "or",
      PRE///    needsPackage "FirstPackage"///,
-     "Macaulay2 searches for the file FirstPackage.m2 on your search ", TO "path", ".
-     The packages provided with Macaulay2 are on your search path,
+     "Macaulay 2 searches for the file FirstPackage.m2 on your search ", TO "path", ".
+     The packages provided with Macaulay 2 are on your search path,
      as is your current working directory.",
      PARA{},
-     "Documentation for the packages provided with Macaulay2 is already installed.  TO
+     "Documentation for the packages provided with Macaulay 2 is already installed.  TO
      install documentation for another package, use ", TO installPackage, ".",
      PRE///    installPackage FirstPackage///,
      "You may see what packages have been loaded with the variable ", TO "loadedPackages", ".",

@@ -244,17 +244,26 @@ document {
 document {
      Key => "path",
      Headline => "list of directories to look in",
-     "A list of strings containing names of directories in which ", TO "load",
-     ", ", TO "input", ", ", TO "loadPackage", ", ", TO "needsPackage", ", and
-     ", TO "installPackage", " should seek files.  These strings are simply
-     concatenated with the filename being sought, so should include any
-     necessary terminal slashes.  One further directory is implicitly searched
-     first: the directory containing the current input file; when input is
-     coming from the standard input, that directory is the current directory of
-     the process.",
+     PARA {
+	  "A list of strings containing names of directories in which ", TO "load",
+	  ", ", TO "input", ", ", TO "loadPackage", ", ", TO "needsPackage", ", and
+	  ", TO "installPackage", " should seek files.  These strings are simply
+	  concatenated with the filename being sought, so should include a
+	  terminal slash.  One further directory is implicitly searched
+	  first: the directory containing the current input file; when input is
+	  coming from the standard input, that directory is the current directory of
+	  the process."
+	  },
+     PARA {
+	  "After the core Macaulay 2 files are loaded, unless the command line option 
+	  ", TT "-q", " is encountered, the following subdirectories will be
+	  prepended to the path, based on the value of the ", TO "applicationDirectory", "
+	  for your system."
+	  },
+     PRE concatenate between_"\n" apply(value Core#"private dictionary"#"userpath",s -> (5,s)),
      EXAMPLE {
 	  "path",
-	  ///path = append(path, homeDirectory | "resolutions/")///
+	  ///path = append(path, "~/resolutions/")///
 	  }
      }
 

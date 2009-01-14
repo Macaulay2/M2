@@ -57,8 +57,8 @@ commented out. When the bug gets fixed, the comments need to be removed.
 
 -------------------------------------------------------------------------
 
-Note: how to use Macaulay2 in emacs needs to be extremely prominent on
-the main Macaulay2 page.
+Note: how to use Macaulay 2 in emacs needs to be extremely prominent on
+the main Macaulay 2 page.
 
 This description must include information on how to comment and
 uncomment an entire section of code.

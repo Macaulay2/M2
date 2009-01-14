@@ -56,8 +56,8 @@ document {
 document {
      Key => "NTL library",
      PARA {
-	  "The ", TT "NTL", " library is used by Macaulay 2, through the ", TO "Singular-Factory", ",
-	  for its algebraic routines.  It is available at ", HREF "http://www.netlib.org/lapack/", "."
+	  "The ", TT "NTL", " library, written by Victor Shoup, is used by Macaulay 2, through the ", TO "Singular-Factory", " library,
+	  for its algebraic routines.  It is available at ", HREF "http://shoup.net/ntl/", "."
 	  }
      }
 
@@ -314,7 +314,7 @@ document {
      at Cornell University.  This course covers basic commutative
      algebra, at the level of Atiyah-Macdonald, and Greuel-Pfister.",
      PARA{},
-     "Macaulay2 examples corresponding to the Singular examples in the
+     "Macaulay 2 examples corresponding to the Singular examples in the
      book by Greuel-Pfister may also be found here.",
      Subnodes => {
 	  TO "Elementary uses of Groebner bases I. Math 634 Fall 2005",

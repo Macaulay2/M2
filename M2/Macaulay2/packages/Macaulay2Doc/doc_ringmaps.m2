@@ -84,7 +84,7 @@ document {
 	  f resolution coker vars R
 	  ///,
      Caveat => {"If the rings ", TT "R", " and ", TT "S", " have different degree monoids, then the degrees of the image
-        might need to be changed, since Macaulay2 sometimes doesn't have enough information to
+        might need to be changed, since Macaulay 2 sometimes doesn't have enough information to
 	determine the image degrees of elements of a free module."},
      }
 

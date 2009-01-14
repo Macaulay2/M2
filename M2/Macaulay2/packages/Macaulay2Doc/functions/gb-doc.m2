@@ -40,7 +40,7 @@ document {
 	   organizing the computation by degrees (the 'sugar' ecart vector)",
 	  HardDegreeLimit => "throws away all S-pairs of degrees beyond the limit. The computation
 	    will be re-initialized if higher degrees are required.",
-     	  Hilbert => {"informs Macaulay2 that this is the ", TO poincare, 
+     	  Hilbert => {"informs Macaulay 2 that this is the ", TO poincare, 
 	   " polynomial, and can be used to aid in the computation of the Groebner basis (Hilbert driven)"},
 	  PairLimit => ZZ => "stop after this number of spairs has been considered",
 	  StopBeforeComputation => Boolean => "initializes the Groebner basis engine but return before doing any computation (useful for 

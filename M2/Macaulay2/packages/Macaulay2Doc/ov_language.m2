@@ -1,20 +1,20 @@
 document {
-     Key => "The Macaulay2 language",
+     Key => "The Macaulay 2 language",
      
-     "The Macaulay2 language is a simple yet powerful interpreted language.  Every object has a type, such as ", TO "Type", ", ", TO "ZZ", "
+     "The Macaulay 2 language is a simple yet powerful interpreted language.  Every object has a type, such as ", TO "Type", ", ", TO "ZZ", "
      (integer), ", TO "String", ", ", TO "HashTable", ", ", TO "Ring", ", ", TO "Matrix", ", ", TO "Function", ", etc.  User defined variables may
      hold values of any type.",
      
      PARA{},
 
-     "Expressions in Macaulay2 include function calls, control structures (e.g., ", TO "for", " and ", TO "while", " loops), function definitions, and
+     "Expressions in Macaulay 2 include function calls, control structures (e.g., ", TO "for", " and ", TO "while", " loops), function definitions, and
      operator expressions.  Every expression returns an object, although ", TO "null", " is often returned if the expression is being used only to
      produce some side effect.",
 
      PARA{},
 
      "There is special syntax for creating and accessing strings, lists, sequences, and hashtables.  These are the key data types underlying many new
-     types.  The Macaulay2 engine implements rings, ring elements, and matrices, as instances of low-level types, and various high-level types,
+     types.  The Macaulay 2 engine implements rings, ring elements, and matrices, as instances of low-level types, and various high-level types,
      visible to the user, are based on them.  Examples include ", TO "Ring", ", ", TO "RingElement", ", ", TO "Matrix", ", ", TO "Ideal", ", ", 
      TO "RingMap", ", ", TO "Module", ", and ", TO "ChainComplex", ".",
 
@@ -987,7 +987,7 @@ dictionaryPath = select(dictionaryPath, d -> d =!= Core#"private dictionary")
 document {
      Key => seeParsing,
      Usage => "seeParsing()",
-     Headline => "display parsing precedence table for Macaulay2 operators",
+     Headline => "display parsing precedence table for Macaulay 2 operators",
      PARA {
 	  "We intend to eliminate this function in favor of ", TO "operatorAttributes", "."
 	  },

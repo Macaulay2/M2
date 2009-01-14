@@ -34,7 +34,7 @@ document {
      	       TO "primaryDecomposition",
 	       TO "combinatorial functions",
           "The Macaulay 2 Language",
-	       TO "The Macaulay2 language",
+	       TO "The Macaulay 2 language",
 	  "Packages",
 	       TO "packages provided with Macaulay 2",
 	  "Developer's Corner",

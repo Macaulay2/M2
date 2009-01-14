@@ -91,9 +91,9 @@ document {
 	  },
      Consequences => {
 	  {"The package is installed in a local directory, so that in the future, one may simply use ", TO "loadPackage", ".  Documentation for the
-	  package is also produced, running any Macaulay2 examples that are requested in the package documentation." }
+	  package is also produced, running any Macaulay 2 examples that are requested in the package documentation." }
 	  },
-     "The main action of this routine is to generate the documentation of the given package and install the Macaulay2 package and documentation. ",
+     "The main action of this routine is to generate the documentation of the given package and install the Macaulay 2 package and documentation. ",
      PARA{ "The actual file loaded is ", TT "PACKAGENAME.m2", ", which should be on the load ", TO "path", " and should contain a package named ", TT "PACKAGENAME", "."},
      PARA{ "In order to accomplish this, several steps are performed (or bypassed, depending on the values of the optional arguments)." },
      UL {

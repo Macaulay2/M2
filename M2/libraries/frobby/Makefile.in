@@ -9,6 +9,9 @@ TARFILE := frobby_v$(VERSION).tar.gz
 URL = http://www.math.uiuc.edu/Macaulay2/Extra
 BUILDTARGET = library
 BUILDOPTIONS = GMP_INC_DIR=$(LIBRARIESDIR)/include CFLAGS="$(CFLAGS)" CXX="$(CXX)"
+ifeq (@DEBUG@,yes)
+BUILDOPTIONS += MODE=debug
+endif
 CONFIGURECMD = :
 INSTALLCMD = \
 	cp bin/libfrobby.a $(LIBRARIESDIR)/lib/libfrobby.a && \

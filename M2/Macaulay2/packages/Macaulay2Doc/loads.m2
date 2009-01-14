@@ -1,6 +1,6 @@
 
 -- should rewrite this to load all the m2 files there
--- perhaps write a "pathFind" routine so we can find files such as Macaulay2 on the path.
+-- perhaps write a "pathFind" routine so we can find files such as Macaulay 2 on the path.
 
 load "./doc.m2"
 load "./doc1.m2"

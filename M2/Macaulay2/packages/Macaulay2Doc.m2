@@ -15,7 +15,7 @@ Core#"base packages" = prepend("Macaulay2Doc",Core#"base packages")
 beginDocumentation()
 
 -- this is big, so we always notify:
-stderr << "--loading the Macaulay2 documentation from " << currentFileDirectory << "Macaulay2Doc/" << endl
+stderr << "--loading the Macaulay 2 documentation from " << currentFileDirectory << "Macaulay2Doc/" << endl
 
 scan(pairs Core#"raw documentation", (k,v) -> Macaulay2Doc#"raw documentation"#k = v)
 

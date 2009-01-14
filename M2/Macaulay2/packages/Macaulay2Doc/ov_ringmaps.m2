@@ -156,12 +156,12 @@ document {
 	       	    "g = s^4+t^2+1"
 	       	    },
      	       "f and g are elements in ", TT "R3", " now and this is shown by the fact that 
-     	       Macaulay2 sees them as ", TT "-t^2", " and ", "0.  To recover 
+     	       Macaulay 2 sees them as ", TT "-t^2", " and ", "0.  To recover 
      	       these elements as polynomials in ", TT "R2", " type ", TT "use R2", " and 
      	       define them again in ", TT "R2", ".  The command substitute 
      	       does not work well here, where as if we want to see the image
      	       of elements of ", TT "R2", " in ", TT "R3", " it does work well 
-     	       and without using the command ", TT "use", ".  Macaulay2 always tells you 
+     	       and without using the command ", TT "use", ".  Macaulay 2 always tells you 
      	       which ring an element is in on the line after it prints the 
      	       ring element.",
      	       EXAMPLE {
@@ -215,7 +215,7 @@ document {
 	       	    "R6 = R5/J;",
 	       	    "describe R6"
 	       	    },
-	       "Notice that at each stage Macaulay2 only refers back to the last 
+	       "Notice that at each stage Macaulay 2 only refers back to the last 
 	       ring we defined.  All of the methods above work still here in theory, but 
 	       caution is advised.  We give an example below to illustrate.  Also, 
 	       note that many other computations will no longer work, because 
