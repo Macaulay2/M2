@@ -15,6 +15,7 @@ INSTALLOPTIONS += prefix=/usr/local/encap
 CONFIGOPTIONS += --enable-deb
 DIRECTORY = ubuntu32
 endif
+CONFIGOPTIONS += --enable-foo=" \\$$ \\ ' \\\\ \" "
 include Makefile.include
 pre-install:;	rm -rf /usr/local/encap/Macaulay2-$(PACKAGE_VERSION)
 arch-chk:

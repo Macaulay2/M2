@@ -659,10 +659,8 @@ import MPFRVERSION:string;
 import DUMPDATA:bool;
 import M2SUFFIX:string;
 import EXEEXT:string;
-import startupString1:string;
-import startupFile1:string;
-import startupString2:string;
-import startupFile2:string;
+import startupString:string;
+import startupFile:string;
 import endianness:string;
 import packages:string;
 import build:string;
@@ -702,8 +700,7 @@ storeInHashTable(x,Expr("build"),Expr(build));
 storeInHashTable(x,Expr("host"),Expr(host));
 sethash(x,false);
 setupconst("version", Expr(x));
-setupconst("startupString1", Expr(startupString1));
-setupconst("startupString2", Expr(startupString2));
+setupconst("startupString", Expr(startupString));
 
 remove(x:Sequence,i:int):Sequence := (
      n := length(x);

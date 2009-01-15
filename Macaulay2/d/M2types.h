@@ -11,10 +11,8 @@ extern "C" {
 #endif
 
 extern char newline[];
-extern char startupString1[];
-extern char startupString2[];
-extern char startupFile1[];
-extern char startupFile2[];
+extern char startupString[];
+extern char startupFile[];
 extern int tokens_debugLevel;
 extern int tokens_engineDebugLevel;
 

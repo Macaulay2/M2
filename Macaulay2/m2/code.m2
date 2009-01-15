@@ -8,8 +8,7 @@ getSourceLines Sequence := x -> (
      (filename,start,startcol,stop,stopcol,pos,poscol) -> if filename =!= "stdio" then (
 	  wp := set characters " \t\r);";
 	  file := (
-	       if filename === "layout.m2" then startupString1
-	       else if filename === "startup.m2" then startupString2
+	       if filename === "layout.m2" then startupString
 	       else if filename === "currentString" then currentString
 	       else (
 		    if not fileExists filename then error ("couldn't find file ", filename);

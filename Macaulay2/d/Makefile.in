@@ -248,15 +248,13 @@ gmp_int.o M2lib.o scclib.o gdbm_interface.o gc_cpp.o version.o M2inits.o debug.o
 clean::; rm -f startup.c
 SSTRING := -e 's/\\/\\\\/g' -e 's/"/\\"/g' -e 's/\(.*\)/"\1\\n"/'
 BSTRING := -e 's/\\/\\\\/g' -e 's/"/\\"/g' -e 's/\(.*\)/"\1"/'
-layout.m2: layout.m2.in ; cd ../.. ; ./config.status Macaulay2/d/layout.m2
-startup.c: @srcdir@/../m2/startup.m2 layout.m2
+startup.m2: startup.m2.in ; cd ../.. ; ./config.status Macaulay2/d/startup.m2
+startup.c: startup.m2
 	(\
-	 echo 'char startupString1[] =' ; cat layout.m2                         | sed $(SSTRING) ; echo  ';' ; \
-	 echo 'char startupFile1  [] =' ; echo @abs_srcdir@/layout.m2.in        | sed $(BSTRING) ; echo  ';' ; \
-	 echo 'char startupString2[] =' ; cat @srcdir@/../m2/startup.m2         | sed $(SSTRING) ; echo  ';' ; \
-	 echo 'char startupFile2  [] =' ; echo  @abs_srcdir@/../m2/startup.m2   | sed $(BSTRING) ; echo  ';' ; \
+	 echo 'char startupString[] =' ; cat startup.m2                         | sed $(SSTRING) ; echo  ';' ; \
+	 echo 'char startupFile  [] =' ; echo @abs_srcdir@/startup.m2.in        | sed $(BSTRING) ; echo  ';' ; \
         ) >$@
-clean:: ; rm -f layout.m2 startup.c
+clean:: ; rm -f startup.c
 clean-startup.c:; rm -f startup.c
 cat-startup.c:; cat startup.c
 redo-startup:clean-startup.c startup.c cat-startup.c
@@ -371,7 +369,7 @@ clean::; rm -f TAGS @srcdir@/TAGS
 	cd @srcdir@ && @ETAGS@ $(shell ../util/echoout -r $(SRCFILES))
 
 clean::; rm -f *.log a.out *.o *.sym *.a *.oo *.sig *.sg *.dep *.dp core gmon.out mapfile restart.tmp
-distclean: clean; rm -f Makefile
+distclean: clean; rm -f Makefile startup.m2
 Makefile: Makefile.in; cd ../..; ./config.status Macaulay2/d/Makefile
 all: .gdbinit
 .gdbinit:; if [ -f @srcdir@/.gdbinit.$(USER) ]; then cp @srcdir@/.gdbinit.$(USER) $@; fi
