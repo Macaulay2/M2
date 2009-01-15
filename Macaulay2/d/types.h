@@ -157,7 +157,7 @@ extern void fatal(const char *s,...);
 #else
 extern void fatal( va_alist  );
 #endif
-
+#define FATAL(s) fatal("%s:%d: fatal error: %s",__FILE__,__LINE__,s)
 
 extern struct FINAL {
      void (*final)();

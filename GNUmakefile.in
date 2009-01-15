@@ -49,7 +49,7 @@ status: @srcdir@/configure
 	@echo '-----------------------------------------------------------------------------'
 	@echo '#  Here is the way you ran $^ before:'
 	@echo '#'
-	@echo "     @CONFIG_CMD@"
+	@echo "# `cat config.args`"
 	@echo '#'
 	@echo '#  Type'
 	@echo '        make reconfigure'
