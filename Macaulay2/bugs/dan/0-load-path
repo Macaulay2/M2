@@ -1,4 +1,0 @@
-fix it so all the core files must come from the same directory
-
-(there are a couple that are built at compile time, so make an exception for
-those.)

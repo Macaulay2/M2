@@ -54,7 +54,11 @@ CPPFLAGS := \
 	 -I@abs_top_builddir@/include \
 	 -I$(BUILTLIBPATH)/include \
 	 $(CPPFLAGS)
+vpath %.h $(BUILTLIBPATH)/include
 LDFLAGS := -L$(BUILTLIBPATH)/lib $(LDFLAGS)
+vpath %.a $(BUILTLIBPATH)/lib
+vpath %.o $(BUILTLIBPATH)/lib
+vpath %.so $(BUILTLIBPATH)/lib
 LD_LIBRARY_PATH := $(BUILTLIBPATH)/lib:$(LD_LIBRARY_PATH)
 export LD_LIBRARY_PATH
 export PATH := @abs_top_srcdir@/bin:${PATH}

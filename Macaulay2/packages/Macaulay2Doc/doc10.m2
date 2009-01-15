@@ -397,26 +397,32 @@ document {
 document {
      Key => {(factor,RingElement),(factor,QQ),(factor,ZZ)},
      Headline => "factor a ring element",
-     TT "factor x", " -- factors x.",
-     PARA{},
-     "The result is a ", TO "Product", " each of whose factors is a 
-     ", TO "Power", " whose base is one of the factors found and whose
-     exponent is an integer.",
+     Usage => "factor x",
+     Inputs => {"x" => {"or ", ofClass{QQ,ZZ}}},
+     Outputs => {Product => {"the factorization of ", TT "x"}},
+     PARA{
+	  "The result is a ", TO "Product", " each of whose factors is a 
+	  ", TO "Power", " whose base is one of the factors found and whose
+	  exponent is an integer.",
+	  },
      EXAMPLE {
 	  "y = (2^15-4)/(2^15-5)",
       	  "x = factor y",
-      	  "value x",
+      	  "value x"
 	  },
-     "We may ", TO "peek", " inside ", TT "x", " to a high depth to see
-     its true structure as ", TO "Expression", ".",
+     PARA {
+	  "We may ", TO "peek", " inside ", TT "x", " to a high depth to see
+	  its true structure as ", TO "Expression", "."
+	  },
      EXAMPLE "peek'(100,x)",
-     PARA{},
-     "For small integers factorization is done by trial division.  Eventually
-     we will have code for large integers.  For multivariate polynomials the
-     factorization is done with code of Michael Messollen (see 
-     ", TO "Singular-Libfac", ").  For univariate
-     polynomials the factorization is in turn done with code of 
-     Gert-Martin Greuel and Ruediger Stobbe (see ", TO "Singular-Factory", ").",
+     PARA{
+	  "For small integers, factorization is done by trial division.  Eventually
+	  we will have code for large integers.  For multivariate polynomials the
+	  factorization is done with code of Michael Messollen (see 
+	  ", TO "Singular-Libfac", ").  For univariate
+	  polynomials the factorization is in turn done with code of 
+	  Gert-Martin Greuel and Ruediger Stobbe (see ", TO "Singular-Factory", ").",
+	  },
      EXAMPLE {
 	  "R = ZZ/101[u]",
       	  "factor (u^3-1)",
@@ -426,9 +432,7 @@ document {
      EXAMPLE {
 	  "F = frac(ZZ/101[t])",
       	  "factor ((t^3-1)/(t^3+1))",
-	  },
-     "The code for factoring in a fraction field is easy to read:",
-     EXAMPLE "code(factor,F)"
+	  }
      }
 
 document {
@@ -442,17 +446,21 @@ document {
 document {
      Key => {getWWW,(getWWW, String),(getWWW, String, Nothing),(getWWW, String, String)},
      Headline => "get a web page",
-     TT "getWWW URL", " -- obtain the contents of the web page, together with the http headers, at the address given by ", TT "URL", ", from an http server.",
-     BR{},
-     TT "getWWW(URL,TEXT)", " -- obtain the contents of the web page addressed
-     by ", TT "URL", " from an http server, using the POST method, provided 
-     with ", TT "TEXT", ".",
-     PARA{},
-     "This doesn't work under Solaris because Sun doesn't provide sockets
-     or name service to statically linked programs like this one.",
-     PARA{},
-     "Accessing a secure web site (whose URL begins with ", TT "https:", ")
-     depends on your having installed ", TT "openssl", " on your system."
+     SYNOPSIS (
+	  Usage => "getWWW URL",
+	  Inputs => {"URL" => String},
+	  Outputs => {{"the contents of the web page, together with the http headers, at the address given by ", TT "URL", ""}}
+	  ),
+     SYNOPSIS (
+	  Usage => "getWWW(URL,TEXT)",
+	  Inputs => {"URL" => String, "TEXT" => String},
+	  Outputs => {{"obtain the contents of the web page addressed by ", TT "URL", " from
+		    an http server, using the POST method, provided with ", TT "TEXT"}}
+	  ),
+     PARA{
+	  "Accessing a secure web site (whose URL begins with ", TT "https:", ")
+     	  depends on your having installed ", TT "openssl", " on your system."
+	  }
      }
 
 document {
@@ -463,54 +471,59 @@ document {
 
 document {
      Key => showUserStructure,
-     Headline => "show relationship between types defined by user",
-     TT "showUserStructure", " -- a command which displays the structure of 
-     types defined by the user and assigned to global variables.",
-     PARA{},
-     "Each such class is displayed to the right of its parent.",
-     PARA{},
-     "A type is an instance of the class ", TO "Type", ".",
-     EXAMPLE {
-	  "X = new Type of List",
-	  "Y = new Type of X",
-	  "Z = new Type of X",
-	  "showUserStructure",
-	  },
+     Headline => "show parent structure for those types defined by user",
+     Usage => "showUserStructure",
+     Outputs => {{ "a display of the parent structure of the types defined by the user and assigned to global variables" }},
+     PARA{"Each type is displayed to the right of its parent."},
+     PARA{"A type is an instance of the class ", TO "Type", "."},
+     EXAMPLE lines ///
+     R = QQ[x,y]
+     X = new Type of List
+     Y = new Type of X
+     Z = new Type of X
+     showUserStructure
+     ///,
      SeeAlso => { showStructure, parent, ancestors}
      }
 
 
 document {
      Key => showStructure,
-     Headline => "show relationship between types",
-     TT "showStructure", " -- a command which displays the structure of types
-     assigned to global variables.",
-     BR{},
-     TT "showStructure (X,Y,...)", " -- a command which displays the structure 
-     of the types specified.",
-     PARA{},
-     "Each such type is displayed to the right of its ", TO "parent", ".",
-     PARA{},
-     "A type is an instance of ", TO "Type", ", by definition.",
+     Headline => "display parent structure",
+     SYNOPSIS (
+     	  Usage => "showStructure",
+	  Outputs => {{ "a display of the parent structure of all types assigned to global variables" }}
+	  ),
+     SYNOPSIS (
+     	  Usage => "showStructure (X,Y,...)",
+	  Inputs => {"X" => Type,"Y" => Type},
+	  Outputs => {{ "a display of the class structure of the types specified" }}
+	  ),
+     PARA{"Each such type is displayed to the right of its ", TO "parent", "."},
+     PARA{"A type is an instance of ", TO "Type", ", by definition."},
      EXAMPLE {
 	  "showStructure",
+	  "showStructure(ZZ,QQ,RR,RR_200,QQ[x],Ring)"
 	  },
      SeeAlso => { "showClassStructure", "showUserStructure", ancestors }
      }
 
 document {
      Key => showClassStructure,
-     Headline => "show relationship between things",
-     TT "showClassStructure", " -- a command which displays the structure of things
-     assigned to global variables.",
-     BR{},
-     TT "showClassStructure (x,y,...)", " -- a command which displays the structure 
-     of the things specified.",
-     PARA{},
-     "Each such type is displayed to the right of its ", TO "class", ".",
-     EXAMPLE {
-	  "showClassStructure",
-	  },
+     Headline => "display class structure",
+     SYNOPSIS (
+     	  Usage => "showClassStructure",
+	  Outputs => {{ "a display of the class structure of all objects assigned to global variables" }}
+	  ),
+     SYNOPSIS (
+     	  Usage => "showClassStructure (x,y,...)",
+	  Inputs => {"x","y"},
+	  Outputs => {{ "a display of the class structure of objects specified" }}
+	  ),
+     PARA{"Each object is displayed to the right of its ", TO "class", "."},
+     EXAMPLE lines ///
+     showClassStructure
+     ///,
      SeeAlso => { "showStructure", "showUserStructure" }
      }
 
@@ -519,33 +532,30 @@ document {
      Headline => "the class of all algebraic varieties", 
      SeeAlso => "varieties"
      }
-
-document {
-     Key => AffineVariety,
-     Headline => "the class of all affine varieties",
-     "To create an affine variety, use ", TO "Spec", ".",
-     EXAMPLE { "Spec(QQ[x,y])" }
-     }
-
-document {
-     Key => ProjectiveVariety,
-     Headline => "the class of all projective varieties",
-     "To create a projective variety, use ", TO "Proj", ".",
-     EXAMPLE { "Proj(QQ[x,y])" }
-     }
-
+document { Key => AffineVariety, Headline => "the class of all affine varieties" }
+document { Key => ProjectiveVariety, Headline => "the class of all projective varieties" }
 document {
      Key => {(Spec, Ring),Spec},
      Headline => "make an affine variety",
-     TT "Spec R", " -- create an affine variety or scheme from the ring ", TT "R", ".",
-     EXAMPLE { "R = QQ[x,y];", "Spec R" }
+     Usage => "Spec R",
+     Inputs => {"R"},
+     Outputs => {{ "the affine variety (or scheme) formed from the ring ", TT "R" }},
+     EXAMPLE lines ///
+     R = QQ[x,y];
+     Spec R
+     ///
      }
 
 document {
      Key => {(Proj, Ring), Proj},
      Headline => "make a projective variety",
-     TT "Proj R", " -- create a projective variety or scheme from the graded ring ", TT "R", ".",
-     EXAMPLE { "R = QQ[x,y];", "Proj R" }
+     Usage => "Proj R",
+     Inputs => {"R"},
+     Outputs => {{ "the projective variety (or scheme) formed from the graded ring ", TT "R" }},
+     EXAMPLE lines ///
+     R = QQ[x,y];
+     Proj R
+     ///
      }
 
 document {
@@ -561,11 +571,13 @@ document {
 document {
      Key => (sheaf, Variety, Module),
      Headline => "make a coherent sheaf",
-     TT "sheaf(X,M)", " -- produce the coherent sheaf on the variety ", TT "X", " corresponding
-     to the module ", TT "M", ".",
-     PARA{},
-     "If ", TT "X", " is the affine variety ", TT "Spec R", ", then ", TT "M", " should be an ", TT "R", "-module.  If ", TT "X", " is 
-     the projective variety ", TT "Proj R", ", then ", TT "M", " should be a homogeneous ", TT "R", "-module."
+     Usage => "sheaf(X,M)",
+     Inputs => {"X","M"},
+     Outputs => {{ "the coherent sheaf on the variety ", TT "X", " corresponding to the module ", TT "M" }},
+     PARA{
+     	  "If ", TT "X", " is the affine variety ", TT "Spec R", ", then ", TT "M", " should be an ", TT "R", "-module.  If ", TT "X", " is 
+     	  the projective variety ", TT "Proj R", ", then ", TT "M", " should be a homogeneous ", TT "R", "-module."
+	  }
      }
 
 document {
@@ -574,135 +586,143 @@ document {
      TT "sheaf(X,R)", " -- produce the coherent sheaf on the variety ", TT "X", " corresponding
      to the ring ", TT "R", ".  The variety ", TT "X", " must be ", TT "Spec R", " or ", TT "Proj R", ".",
      EXAMPLE lines ///
-     	  R = QQ[x,y,z]
-	  X = Proj R
-	  Y = Spec R
-	  sheaf(X,R)
-	  sheaf(Y,R)
+     R = QQ[x,y,z]
+     X = Proj R
+     Y = Spec R
+     sheaf(X,R)
+     sheaf(Y,R)
      ///}
 
 document {
      Key => (sheaf, Variety),
      Headline => "make a coherent sheaf",
-     TT "sheaf(X)", " -- produce the structure sheaf of rings on the variety ", TT "X", ".",
+     Usage => "sheaf X",
+     Inputs => {"X"},
+     Outputs => {{ "the structure sheaf of rings on the variety ", TT "X" }},
      EXAMPLE lines ///
-     	  R = QQ[x,y,z]
-	  X = Proj R
-	  Y = Spec R
-	  sheaf X
-	  sheaf Y
-     ///}
+     R = QQ[x,y,z]
+     X = Proj R
+     Y = Spec R
+     sheaf X
+     sheaf Y
+     ///
+     }
 
 document {
-     Key => (sheaf, Module),
+     Key => {(sheaf, Module),(symbol ~, Module)},
      Headline => "make a coherent sheaf",
-     TT "sheaf M", " -- produce the coherent sheaf on a projective variety ", TT "X", "
-     corresponding to a homegeneous module ", TT "M", "."
+     Usage => "sheaf M\nM~",
+     Inputs => {"M" => "homogeneous" },
+     Outputs => {{ "the coherent sheaf on a projective variety ", TT "X", " corresponding to ", TT "M" }},
+     EXAMPLE lines ///
+     R = QQ[x,y,z];
+     X = Proj R
+     M = R^{1,2,3}
+     sheaf M
+     M~
+     ///
      }
 
 document {
-     Key => (symbol ~, Module),
-     Headline => "make a coherent sheaf",
-     TT "M~", " -- produce the coherent sheaf on a projective variety ", TT "X", "
-     corresponding to a homegeneous module ", TT "M", ".",
-     PARA{},
-     SeeAlso => "CoherentSheaf"
-     }
-
-document {
-     Key => (sheaf, Ring), 
-     Headline => "make the structure sheaf",
-     TT "sheaf R", " -- produce the structure sheaf on the projective variety ", TT "Proj R", "."
-     }
-
-document {
-     Key => (symbol ~, Ring),
-     Headline => "make the structure sheaf",
-     TT "R~", " -- produce the structure sheaf on the projective variety ", TT "Proj R", ".",
-     EXAMPLE { "R = QQ[x,y,z];", "R~", "variety oo" }
+     Key => {(sheaf, Ring),(symbol ~, Ring)},
+     Headline => "make a coherent sheaf of rings",
+     Usage => "sheaf R\nR~",
+     Inputs => {"R"},
+     Outputs => {{"the coherent sheaf on a projective variety ", TT "X", " corresponding to ", TT "M"}},
+     EXAMPLE lines ///
+     R = QQ[x,y,z];
+     X = Proj R
+     sheaf R
+     R~
+     ///
      }
 
 document {
      Key => (module, CoherentSheaf),
      Headline => "get the module defining a coherent sheaf",
-     TT "module F", " -- produce the module from which the coherent sheaf ", TT "F", " was defined.",
-     PARA{},
-     EXAMPLE {
-	  "X = Proj(QQ[x,y,z])",
-	  "F = OO_X(3)",
-	  "module F",
-	  "degrees oo",
-	  }
+     Usage => "module F",
+     Inputs => {"F"},
+     Outputs => {{"the module from which the coherent sheaf ", TT "F", " was defined"}},
+     EXAMPLE lines ///
+     X = Proj(QQ[x,y,z])
+     F = OO_X(3)
+     module F
+     degrees oo
+     ///,
+     SeeAlso => { OO, degrees, Proj }
      }
 
 document {
      Key => (symbol ++, CoherentSheaf, CoherentSheaf),
      Headline => "direct sum of coherent sheaves",
-     TT "F ++ G", " -- direct sum of coherent sheaves."
+     Usage => "F ++ G",
+     Inputs => {"F","G"},
+     Outputs => {{"the direct sum of ", TT "F", " and ", TT "G"}},
+     EXAMPLE lines ///
+     X = Proj(QQ[x,y,z])
+     OO_X(3) ++ OO_X(4)
+     module oo
+     ///
      }
 
 document {
      Key => (symbol **, CoherentSheaf, CoherentSheaf),
-     Headline => "tensor product of coherent sheaves",
-     TT "F ** G", " -- tensor product of coherent sheaves."
+     Headline => "tensor produce of coherent sheaves",
+     Usage => "F ** G",
+     Inputs => {"F","G"},
+     Outputs => {{"the tensor product of ", TT "F", " and ", TT "G"}},
+     EXAMPLE lines ///
+     X = Proj(QQ[x,y,z])
+     OO_X(-3) ++ OO_X(4)
+     oo ** oo
+     ///
      }
 
 document {
-     Key => {(symbol SPACE, CoherentSheaf, ZZ),
-	  (symbol SPACE, SheafOfRings, ZZ)},
+     Key => {(symbol SPACE, CoherentSheaf, ZZ), (symbol SPACE, SheafOfRings, ZZ)},
      Headline => "canonical twist of a coherent sheaf",
      Usage => "F(n)",
-     Inputs => {"F" => {"or a ", ofClass SheafOfRings, ", on a projective variety"}, "n"},
-     Outputs => {
-	  CoherentSheaf => "the twist of F on a projective variety by
-         the n-th power of the hyperplane line bundle.",
-	 },
-     PARA{},
-     EXAMPLE {
-	  "X = Proj(QQ[x,y,z])",
-	  "F = OO_X",
-	  "G = F(3)",
-	  "module G",
-	  "degrees oo",
-	  }
+     Inputs => {"F" => {"or ", ofClass SheafOfRings, ", on a projective variety"}, "n"},
+     Outputs => { CoherentSheaf => "the twist of F on a projective variety by the n-th power of the hyperplane line bundle." },
+     EXAMPLE lines ///
+     X = Proj(QQ[x,y,z])
+     F = OO_X
+     G = F(3)
+     module G
+     degrees oo
+     ///
      }
 
 document { 
-     Key => {(symbol /, CoherentSheaf, CoherentSheaf),
-	  (symbol /, CoherentSheaf, Ideal)
-	  },
+     Key => {(symbol /, CoherentSheaf, CoherentSheaf), (symbol /, CoherentSheaf, Ideal)},
      Headline => "quotient of coherent sheaves",
      Usage => "F / G",
-     Inputs => {
-	  "F",
-	  "G" => {"or ", ofClass Ideal}
-	  },
-     Outputs => {
-	  CoherentSheaf => {"the quotient sheaf ", TT "F/G"}
-	  },
+     Inputs => { "F", "G" => {"or ", ofClass Ideal} },
+     Outputs => { CoherentSheaf => {"the quotient sheaf ", TT "F/G"} },
      "We compute the cohomology of two sheaves supported on an elliptic curve.",
      EXAMPLE lines ///
-     	  X = Proj(QQ[x,y,z])
-	  I = ideal(y^2*z-x*(x-z)*(x-11*z))
-	  N = (sheaf module I)/(sheaf module I^2)
-	  G = OO_X^1/I
-	  HH^1(G)
-	  HH^1(N)
-	  ///,
+     X = Proj(QQ[x,y,z])
+     I = ideal(y^2*z-x*(x-z)*(x-11*z))
+     N = (sheaf module I)/(sheaf module I^2)
+     G = OO_X^1/I
+     HH^1(G)
+     HH^1(N)
+     ///,
      SeeAlso => {Proj, Spec, sheaf, (cohomology,ZZ,CoherentSheaf), OO}
      }
 
 document {
      Key => (exteriorPower, ZZ, CoherentSheaf),
-     TT "exteriorPower(i,F)", " -- calculate the ", TT "i", "-th exterior power of a coherent sheaf
-     ", TT "F", ".",
+     Usage => "exteriorPower(i,F)",
+     Inputs => {"i","F"},
+     Outputs => {{ "the ", TT "i", "-th exterior power of ", TT "F"}}
      }
 
 document {
      Key => {(symbol >=, ZZ),(symbol >=,InfiniteNumber)},
      Usage => "(>= d)",
      Inputs => { "d" },
-     Outputs => { { "a special object of class ", TT "LowerBound", " used to represent the set of natural numbers at least as large as ", TT "d" } }
+     Outputs => {{"a special object of class ", TT "LowerBound", " used to represent the set of natural numbers at least as large as ", TT "d"}}
      }
 
 document {
@@ -719,11 +739,11 @@ document {
      Inputs => { "X" => "a variety" },
      Outputs => { { "the structure sheaf of ", TT "X", "." } },
      EXAMPLE lines ///
-         R = QQ[x,y,z]/(y^2*z-x*(x-z)*(x-37*z));
-	 X = Proj R
-	 OO_X
-	 HH^1(OO_X)
-	 HH^0(OO_X(3))
+     R = QQ[x,y,z]/(y^2*z-x*(x-z)*(x-37*z));
+     X = Proj R
+     OO_X
+     HH^1(OO_X)
+     HH^0(OO_X(3))
      ///,
      SeeAlso => {CoherentSheaf, cohomology}
      }
@@ -734,17 +754,16 @@ document {
      Inputs => { "X" },
      Outputs => {{"a hashtable listing global symbols whose values are instances of type ", TT "X"}},
      EXAMPLE lines ///
-     	  20!
-	  instances ZZ
-	  ///
+     20!
+     instances ZZ
+     ///
      }
 
 document { Key => Core,
      Headline => "the core part of Macaulay 2",
      PARA {
      	  "This package contains the core functionality of Macaulay 2, without the documentation, 
-     	  which is in the package ", TO "Macaulay2", ".  It doesn't get installed in the usual way,
-	  and we hope to rename to ", TO "Macaulay2", " in the future."
+     	  which is in the package ", TO "Macaulay2Doc", "."
 	  }
      }
 
@@ -757,9 +776,10 @@ document { Key => toRR,
 	  },
      Outputs => {RR => {"the result of converting ", TT "x", " to a high-precision real number"}},
      EXAMPLE lines ///
-	  toRR(200,1/7)
-	  precision oo
-     ///}
+     toRR(200,1/7)
+     precision oo
+     ///
+     }
 
 document {
      Key => {toCC,
@@ -786,10 +806,7 @@ document {
 	  ),
      SYNOPSIS (
 	  Usage => "toCC(x,y)\ntoCC x",
-	  Inputs => { 
-	       "x" => RR,
-	       "y" => RR
-	       },
+	  Inputs => { "x" => RR, "y" => RR },
 	  Outputs => {CC => {"the complex number with real part ", TT "x", " and complex part ", TT "y", ".  If
 		    ", TT "y", " is omitted, the imaginary part is zero.  The precision of the result is
 		    the minimum precision of the arguments."}},
@@ -829,19 +846,21 @@ document {
 	  correct precision, when necessary."
 	  },
      EXAMPLE lines ///
-     	  pi
-     	  +pi
-     	  numeric_100 pi
-	  2. * pi
-	  2p100 * pi
-	  exp(2*pi*ii/17)
+     pi
+     +pi
+     numeric_100 pi
+     2. * pi
+     2p100 * pi
+     exp(2*pi*ii/17)
      ///,
      SeeAlso => { numeric, "defaultPrecision" }
      }
 
 document { Key => InexactField,
+     Headline => "the class of inexact fields",
      PARA {
-	  "An inexact field is one whose elements are real or complex numbers."
+	  "An inexact field is one whose elements are real or complex numbers,
+	  represented floating point approximations of varying accuracy or precision."
 	  },
      EXAMPLE lines ///
      numeric_100 pi
@@ -852,22 +871,33 @@ document { Key => InexactField,
      }
 
 document { Key => InexactFieldFamily,
+     Headline => "the class of all families of inexact fields",
      PARA {
-	  "This type is intended to serve as a parent class for those types of rings of numbers
-	  that have settable precision."
-	  }
+	  "All real numbers have the same class, ", TO "RR", ", but the rings they
+	  belong to depends on the number of binary digits of precision used
+	  to represent them.  Similarly for complex numbers, which all belong
+	  to the class ", TO "CC", ".  Thus ", TO "RR", " and ", TO "CC", " are regarded not as inexact
+	  fields, but as families of inexact fields."
+	  },
+     EXAMPLE lines ///
+     x = 1/3.
+     class x
+     ring x
+     x = 1/3.p200
+     class x
+     ring x
+     ///,
+     SeeAlso => { InexactField }
      }
 
 document { Key => RealField,
-     PARA {
-	  "A real number ring is a ring whose elements are real numbers of variable precision."
-	  }
+     Headline => "the class of all real fields",
+     PARA { "A real number ring is a ring whose elements are real numbers of variable precision." }
      }
 
 document { Key => ComplexField,
-     PARA {
-	  "A complex number ring is a ring whose elements are complex numbers of variable precision."
-	  }
+     Headline => "the class of all complex fields",
+     PARA { "A complex number ring is a ring whose elements are complex numbers of variable precision." }
      }
 
 -- Local Variables:
