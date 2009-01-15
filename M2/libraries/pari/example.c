@@ -32,9 +32,10 @@ static void printgmp0(mpz_t x) {
 
 void makegmpnum(mpz_t x) {
   mpz_init(x);
-  mpz_set_si(x,734985345L);
+  mpz_set_si(x,1L);
   mpz_mul_si(x,x,3331333L);
   mpz_mul_si(x,x,3333133L);
+  mpz_mul_si(x,x,3333313L);
   mpz_mul_si(x,x,3333313L);
   mpz_mul_si(x,x,3333331L);
 }
@@ -53,7 +54,7 @@ GEN toPari(mpz_t x) {
   return z;
 }
 
-void INTtoGmp(mpz_t z, GEN y) {
+static void INTtoGmp(mpz_t z, GEN y) {
   int i, m = lg(y), n = m-2, sign = y[1];
   mpz_init2(z,8 * sizeof(*y) * n);
   for (i=0; i<n; i++) z->_mp_d[i] = (mp_limb_t)gel(y,m-i-1);
@@ -63,66 +64,51 @@ void INTtoGmp(mpz_t z, GEN y) {
 typedef struct { int n; mpz_t *el; } mpz_col;
 typedef struct { int n; mpz_col *el; } mpz_mat;
 
-void printCOL(mpz_col q) {
+static void printCOL(mpz_col q) {
   int i;
   fputs("{", stdout);
   for (i=0; i<q.n; i++) { fputs(" ",stdout); mpz_out_str(stdout, 10, q.el[i]); }
   fputs(" }", stdout);
 }
 
-void printMAT (mpz_mat q) {
+static void printMAT0 (mpz_mat q) {
   int i;
   fputs("{", stdout);
   for (i=0; i<q.n; i++) { fputs(" ",stdout); printCOL(q.el[i]); }
-  fputs(" }", stdout);
+  fputs(" }\n", stdout);
 }
+#define printMAT(q) do { fputs(" " #q ": ", stdout); printMAT0(q); } while (0)
 
-mpz_col COLtoGmp(GEN y) {
+static mpz_col COLtoGmp(GEN y) {
   int i, m = lg(y), n = m-1;
   mpz_col z = { n, (mpz_t *)malloc(n * sizeof(mpz_t)) };
   for (i=0; i<n; i++) INTtoGmp(z.el[i],gel(y,i+1));
   return z;
 }
 
-mpz_mat MATtoGmp(GEN y) {
+static mpz_mat MATtoGmp(GEN y) {
   int i, m = lg(y), n = m-1;
   mpz_mat z = { n, (mpz_col *)malloc(n * sizeof(mpz_col)) };
   for (i=0; i<n; i++) z.el[i] = COLtoGmp(gel(y,i+1));
   return z;
 }
 
-void factorgmp(mpz_t z, mpz_t x) {
+mpz_mat factorgmp(mpz_t x) {
   pari_sp save_stack_pointer = avma;
-  GEN f = factor(toPari(x));
-  // ...
+  mpz_mat f = MATtoGmp(factor(toPari(x)));
   avma = save_stack_pointer;
+  return f;
 }
 
+void initpari() __attribute__ ((constructor));
+void initpari() {pari_init(10000000, 0);}
+
 int main (int argc, char **argv) {
-  pari_sp save_stack_pointer = avma;
-  pari_init(10000000, 0);
-  GEN z, w;
-  mpz_t y, y2;
+  mpz_t y;
   mpz_mat f;
   makegmpnum(y);
-  g(y);
-  printgmp(y);
-  z = toPari(y);
-  see(z);
-  beaut(z);
-  w = factor(z);
-  Voir(w);
-  see(w);
-  Voir(gel(w,1));
-  see(gel(w,1));
-  Voir(gel(w,2));
-  see(gel(w,2));
-  beaut(w);
-  f = MATtoGmp(w);
-  fputs(" f: ",stdout);
+  f = factorgmp(y);
   printMAT(f);
-  fputs("\n",stdout);
-  avma = save_stack_pointer;
   return 0;
 }
 /*
