@@ -49,6 +49,40 @@ extern long personality(unsigned long persona);
 
 const char *get_libfac_version();	/* in version.cc */
 const char *get_frobby_version();	/* in version.cc */
+
+#ifdef HAVE_PARI
+
+  #include <pari/pari.h>
+
+  void initpari() __attribute__ ((constructor));
+  void initpari() {
+    pari_init(1000000, 0);	/* we may want to change this number */
+    /*
+      pari_init flagrantly sets the memory allocation routines for gmp, so we have to set them back
+    */
+    enterM2();
+  }
+
+  static const char *get_pari_version() {
+    /*
+      /usr/include/pari/paricfg.h:#define PARI_VERSION_CODE 131843
+      /usr/include/pari/paricfg.h:#define PARI_VERSION(a,b,c) (((a) << 16) + ((b) << 8) + (c))
+      It's disappointing that the version number of libpari.so is not available at run time.
+    */
+    static char buf[100];
+    sprintf(buf,"%d.%d.%d",
+	    0xff & (PARI_VERSION_CODE >> 16),
+	    0xff & (PARI_VERSION_CODE >> 8),
+	    0xff & (PARI_VERSION_CODE >> 0)
+	    );
+    return buf;
+  }
+#else
+  static const char *get_pari_version() { 
+    return "not present"; 
+  }
+#endif
+
 static const char *get_cc_version(void) {
   static char buf[100] = "cc (unknown)";
 # ifdef __GNUC__
@@ -304,6 +338,7 @@ M2_string actors5_startupFile;
 M2_string actors5_NTLVERSION;
 M2_string actors5_LIBFACVERSION;
 M2_string actors5_FROBBYVERSION;
+M2_string actors5_PARIVERSION;
 M2_string actors5_FACTORYVERSION;
 M2_string actors5_READLINEVERSION;
 M2_string actors5_MPFRVERSION;
@@ -586,6 +621,7 @@ char **argv;
      system_stime();
 
      if (__gmp_allocate_func != (void *(*) (size_t))getmem_atomic) {
+          FATAL("possible memory leak, gmp allocator not set up properly");
 	  fprintf(stderr,"--internal warning: possible memory leak, gmp allocator not set up properly, resetting\n");
 	  enterM2();
      }
@@ -621,6 +657,7 @@ char **argv;
      }
      actors5_LIBFACVERSION = tostring(get_libfac_version());
      actors5_FROBBYVERSION = tostring(get_frobby_version());
+     actors5_PARIVERSION = tostring(get_pari_version());
      sprintf(READLINEVERSION,"%d.%d",(rl_readline_version>>8)&0xff,rl_readline_version&0xff);
      actors5_READLINEVERSION = tostring(READLINEVERSION);
      actors5_MPFRVERSION = tostring(mpfr_version);

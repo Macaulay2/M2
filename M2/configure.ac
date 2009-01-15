@@ -3,6 +3,7 @@ AC_CONFIG_HEADERS(include/M2/config.h)
 AC_CONFIG_FILES(m4_include(config/files))
 AC_SUBST(CONFIGURED_FILES,"$ac_config_files")
 AC_SUBST(CONFIG_ARGS,"$ac_configure_args")
+echo "$ac_configure_args" > config.args
 C_CONFIG_ARGS=` echo "$ac_configure_args" | sed -e 's=\\\\=\\\\\\\\=g' -e 's=\\"=\\\\"=g' `
 AC_DEFINE_UNQUOTED(CONFIG_ARGS,"$C_CONFIG_ARGS",arguments used for configure)
 AC_SUBST(CONFIG_CMD,"'$0' $ac_configure_args")
@@ -311,6 +312,12 @@ if test "$FROBBY" = yes
 then AC_DEFINE(HAVE_FROBBY,1,[whether we are linking with the frobby library])
 fi
 
+AC_SUBST(PARI,yes)
+AC_ARG_ENABLE(pari, AS_HELP_STRING(--disable-pari,[download, compile, and link with pari library]), PARI=$enableval)
+if test "$PARI" = yes
+then AC_DEFINE(HAVE_PARI,1,[whether we are linking with the pari library])
+fi
+
 AC_ARG_ENABLE(altivec, AS_HELP_STRING(--enable-altivec,compile with "-faltivec" option))
 if test "$enable_altivec" = yes
 then LDFLAGS="$LDFLAGS -faltivec"
@@ -548,8 +555,8 @@ AC_SUBST(BUILTLIBS,)
 #  factory needs ntl and gmp, libfac needs factory
 #  lapack includes blas, makes both libblas and liblapack
 #  mpfr needs gmp
-AC_SUBST(LIBLIST, "gc    gdbm    gmp    mpfr    readline    ntl    factory        libfac         lapack    frobby")
-AC_SUBST(LIBFILES,"libgc libgdbm libgmp libmpfr libreadline libntl libcf libcfmem libfac libblas liblapack libfrobby")
+AC_SUBST(LIBLIST, "gc    gdbm    gmp    mpfr    pari    readline    ntl    factory        libfac         lapack    frobby")
+AC_SUBST(LIBFILES,"libgc libgdbm libgmp libmpfr libpari libreadline libntl libcf libcfmem libfac libblas liblapack libfrobby")
 for i in $LIBLIST
 do eval BUILD_$i=no
 done
@@ -583,8 +590,18 @@ then AC_SEARCH_LIBS(__gmpz_init,gmp,,BUILD_gmp=yes)
 fi
 test $BUILD_gmp = yes && BUILTLIBS="-lgmp $BUILTLIBS"
 
-# frobby depends on gmp
+AC_LANG(C)
+if test "$PARI" = yes
+then if test $BUILD_pari = no
+     then AC_SEARCH_LIBS(pari_init,pari,,BUILD_pari=yes)
+	  AC_CHECK_HEADER(pari/pari.h,,BUILD_pari=yes)
+     fi
+     test $BUILD_pari = yes && BUILTLIBS="-lpari $BUILTLIBS"
+fi
+
+# we don't expect to find frobby already installed
 BUILD_frobby=$FROBBY
+# frobby depends on gmp
 test $BUILD_frobby = yes && BUILTLIBS="-lfrobby -lgmpxx $BUILTLIBS"
 
 AC_SUBST(ULIMIT_T,yes)
@@ -958,10 +975,11 @@ then if test "$DEB" = yes -o "$RPM" = yes
      fi
 fi
 
-# Here we split up LIBS into two parts, LIBS_STATIC and LIBS_DYNAMIC.
-# M2 will get linked against LIBS_STATIC and then against LIBS_DYNAMIC.
-# Under --enable-static the libraries in LIBS_STATIC will be linked statically.
+# Here we split up LIBS into three parts, LIBS_STATIC, LIBS_STATIC_OR_DYNAMIC, and LIBS_DYNAMIC.
+# M2 will get linked against LIBS_STATIC, LIBS_STATIC_OR_DYNAMIC, and LIBS_DYNAMIC, in that order
+# Under --enable-static the libraries in LIBS_STATIC_OR_DYNAMIC will be linked statically.
 AC_SUBST(LIBS_STATIC,)
+AC_SUBST(LIBS_STATIC_OR_DYNAMIC,)
 AC_SUBST(LIBS_DYNAMIC,)
 for i in $LIBS
 do case $i in 
@@ -969,9 +987,11 @@ do case $i in
 	#   ncurses: has a database which we aren't providing and whose location we don't know
 	#    socket: dynamic loading of libraries is used to determine the current way to look up an IP number
 	#  libgcc_s: comes only in dynamic form
-	-lncurses | -lsocket  | -lgcc_s*  ) 
-	   LIBS_DYNAMIC="$LIBS_DYNAMIC $i" ;;
-	*) LIBS_STATIC="$LIBS_STATIC $i" ;;
+	-lncurses | -lsocket  | -lgcc_s* ) LIBS_DYNAMIC="$LIBS_DYNAMIC $i" ;;
+	# we must link statically with some libraries:
+	#   libpari: provides no version number at run time, and we must ensure it is configured based on gmp
+	-lpari ) LIBS_STATIC="$LIBS_STATIC $i" ;;
+	*) LIBS_STATIC_OR_DYNAMIC="$LIBS_STATIC_OR_DYNAMIC $i" ;;
    esac
 done
 
@@ -979,6 +999,7 @@ AC_MSG_NOTICE([using LIBRARIES    = $LIBRARIES (libraries to be built from downl
 AC_MSG_NOTICE([using BUILTLIBS    = $BUILTLIBS])
 AC_MSG_NOTICE([using SINGULARLIBS = $SINGULARLIBS])
 AC_MSG_NOTICE([using LIBS_STATIC  = $LIBS_STATIC])
+AC_MSG_NOTICE([using LIBS_STATIC_OR_DYNAMIC  = $LIBS_STATIC_OR_DYNAMIC])
 AC_MSG_NOTICE([using LIBS_DYNAMIC = $LIBS_DYNAMIC])
 
 BUILDING=yes

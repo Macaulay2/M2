@@ -70,7 +70,6 @@ CFILES += factory_allocator.c main.c
 SRCFILES += $(OPTCFILES) $(CFILES) M2inits.c
 
 M2_OBJECTS += $(CFILES:.c=.o)
-M2_OBJECTS += version.o
 M2_OBJECTS += M2-factory.o
 
 ## *.c files, non source, made by us from other files
@@ -85,6 +84,7 @@ M2_OBJECTS += ../regex/regex.o
 ## *.cc files
 
 CCFILES := gmp_init.cc
+CCFILES += version.cc
 M2_OBJECTS += $(CCFILES:.cc=.o)
 SRCFILES += $(CCFILES)
 
@@ -148,7 +148,6 @@ endif
 TOSTATIC =
 UNSTATIC =
 
-ifeq "@STATIC@" "yes"
 ifeq (@OS@,Linux)
 # we'd really like to test whether ld is gnu ld here
 TOSTATIC = -Wl,-Bstatic
@@ -162,6 +161,11 @@ else
 $(error static linking requested, new OS)
 endif
 endif
+
+ifeq "@STATIC@" "yes"
+MAYBESTATIC = $(TOSTATIC)
+else 
+MAYBESTATIC =
 endif
 
 ############################## rules
@@ -228,7 +232,7 @@ endif
 endif
 
 ifeq "@STATIC@" "yes"
-M2_LIBRARIES := $(TOSTATIC)
+M2_LIBRARIES := $(MAYBESTATIC)
 ifeq (@OS@,Linux)
 # this is for gc somehow, see the end of gc/config.h
 M2_LDFLAGS += -Wl,-defsym,_DYNAMIC=0
@@ -289,7 +293,8 @@ endif
 M2_LIBDEPS    += libfactory_init1.a libfactory_init2.a
 
 M2_LIBRARIES +=  @BUILTLIBS@
-M2_LIBRARIES +=  @LIBS_STATIC@
+M2_LIBRARIES +=  $(TOSTATIC) @LIBS_STATIC@ $(UNSTATIC)
+M2_LIBRARIES +=  @LIBS_STATIC_OR_DYNAMIC@
 # I'm not sure whether compiling statically with libstdc++ is a good idea
 M2_LIBRARIES += -lstdc++
 M2_LIBRARIES += @FCLIBS_FLAGS@
