@@ -69,9 +69,6 @@ CFILES += M2types.c M2mem.c scclib.c M2lib.c gmp_aux.c gdbm_interface.c
 CFILES += factory_allocator.c main.c
 SRCFILES += $(OPTCFILES) $(CFILES) M2inits.c
 
-M2_OBJECTS += $(CFILES:.c=.o)
-M2_OBJECTS += M2-factory.o
-
 ## *.c files, non source, made by us from other files
 
 MADECFILES := startup.c
@@ -100,6 +97,13 @@ DFILES :=
 DFILES += interp.d
 DFILES += texmacs.d
 DFILES += interface.d
+ifeq (@PARI@,yes)
+DFILES += pari.d
+pari.oo : CPPFLAGS += -DINCLUDE_PARI_H
+pari-c.o : CFLAGS += -Wall -Wno-unused -Werror -UNDEBUG
+CFILES += pari-c.c
+HFILES += pari-c.h
+endif
 DFILES += actors5.d actors4.d actors3.d actors2.d actors.d
 ifeq (@MYSQL@,yes)
 DFILES += mysql.d
@@ -134,6 +138,8 @@ actors4.oo basic.oo engine.oo interface.oo objects.oo : ../e/engine.h
 # these files depend on USE_MYSQL, which is in config.h:
 actors4.oo actors2.oo : ../../include/M2/config.h
 
+M2_OBJECTS += $(CFILES:.c=.o)
+M2_OBJECTS += M2-factory.o
 M2_OBJECTS += $(DFILES:.d=.oo) 
 SRCFILES += $(DFILES)
 clean::; rm -f $(DFILES:.d=.c)

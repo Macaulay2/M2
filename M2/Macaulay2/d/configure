@@ -21,6 +21,13 @@ cat <<EOF >compat.h
 #include <mysql/mysql.h>
 #endif
 
+#ifdef HAVE_PARI
+#ifdef INCLUDE_PARI_H
+#include <pari/pari.h>
+#undef lgamma
+#endif
+#endif
+
 #include "gmp_aux.h"
 #include "memdebug.h"
 
