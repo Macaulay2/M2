@@ -622,7 +622,7 @@ setupfun("unstack",unstack);
 alarm(e:Expr):Expr := (
      when e is i:ZZ do 
      if isInt(i)
-     then Expr(toInteger(alarm(toInt(i))))
+     then Expr(toInteger(int(alarm(uint(toInt(i))))))
      else WrongArgSmallInteger()
      else WrongArgZZ()
      );

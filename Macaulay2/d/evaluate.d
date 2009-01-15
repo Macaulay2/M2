@@ -1168,7 +1168,7 @@ export determineExceptionFlag():void := (
      exceptionFlag = interruptedFlag || steppingFlag || alarmedFlag;
      );
 export clearAlarm():void := (
-     alarm(0);
+     alarm(uint(0));
      );
 export clearAllFlags():void := (
      exceptionFlag = false;

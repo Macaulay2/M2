@@ -18,7 +18,8 @@ import exp(x:double):double;
 import log(x:double):double;
 import floor(x:double):double;
 import ldexp(x:double,exp:int):double;
-import alarm(x:int):int;
+-- import alarm(x:int):int;
+import alarm(x:uint):uint;				    -- as in /usr/include/unistd.h under ubuntu
 import fork():int;
 rand():int ::= Ccode(int,"rand()");
 export drand(x:double,y:double):double := (
