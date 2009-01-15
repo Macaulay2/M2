@@ -56,7 +56,7 @@ Macaulay2/book/Makefile
 Macaulay2/c/Makefile
 Macaulay2/compat/Makefile
 Macaulay2/d/Makefile
-Macaulay2/d/layout.m2
+Macaulay2/d/startup.m2
 Macaulay2/dumpdata/Makefile
 Macaulay2/e/Makefile
 Macaulay2/e/Makefile.common
