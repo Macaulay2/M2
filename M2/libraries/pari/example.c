@@ -61,41 +61,48 @@ static void INTtoGmp(mpz_t z, GEN y) {
   z->_mp_size = sign < 0 ? -n : n;
 }
 
-typedef struct { int n; mpz_t *el; } mpz_col;
-typedef struct { int n; mpz_col *el; } mpz_mat;
+#define VARLEN 1
+typedef struct { unsigned int n; __mpz_struct *el[VARLEN]; } mpz_col;
+typedef struct { unsigned int n; mpz_col *el[VARLEN]; } mpz_mat;
+#define varsizeof(x,n) (sizeof(*x)+(n-VARLEN)*sizeof(x->el[0]))
 
-static void printCOL(mpz_col q) {
+static void printCOL(mpz_col *q) {
   int i;
   fputs("{", stdout);
-  for (i=0; i<q.n; i++) { fputs(" ",stdout); mpz_out_str(stdout, 10, q.el[i]); }
+  for (i=0; i<q->n; i++) { fputs(" ",stdout); mpz_out_str(stdout, 10, q->el[i]); }
   fputs(" }", stdout);
 }
 
-static void printMAT0 (mpz_mat q) {
+static void printMAT0 (mpz_mat *q) {
   int i;
   fputs("{", stdout);
-  for (i=0; i<q.n; i++) { fputs(" ",stdout); printCOL(q.el[i]); }
+  for (i=0; i<q->n; i++) { fputs(" ",stdout); printCOL(q->el[i]); }
   fputs(" }\n", stdout);
 }
 #define printMAT(q) do { fputs(" " #q ": ", stdout); printMAT0(q); } while (0)
 
-static mpz_col COLtoGmp(GEN y) {
+static mpz_col *COLtoGmp(GEN y) {
   int i, m = lg(y), n = m-1;
-  mpz_col z = { n, (mpz_t *)malloc(n * sizeof(mpz_t)) };
-  for (i=0; i<n; i++) INTtoGmp(z.el[i],gel(y,i+1));
+  mpz_col *z = (mpz_col *)malloc(varsizeof(z,n));
+  z->n = n;
+  for (i=0; i<n; i++) {
+    z->el[i] = (__mpz_struct *)malloc(sizeof(__mpz_struct));
+    INTtoGmp(z->el[i],gel(y,i+1));
+  }
   return z;
 }
 
-static mpz_mat MATtoGmp(GEN y) {
+static mpz_mat *MATtoGmp(GEN y) {
   int i, m = lg(y), n = m-1;
-  mpz_mat z = { n, (mpz_col *)malloc(n * sizeof(mpz_col)) };
-  for (i=0; i<n; i++) z.el[i] = COLtoGmp(gel(y,i+1));
+  mpz_mat *z = (mpz_mat *)malloc(varsizeof(z,n));
+  z->n = n;
+  for (i=0; i<n; i++) z->el[i] = COLtoGmp(gel(y,i+1));
   return z;
 }
 
-mpz_mat factorgmp(mpz_t x) {
+mpz_mat *factorgmp(mpz_t x) {
   pari_sp save_stack_pointer = avma;
-  mpz_mat f = MATtoGmp(factor(toPari(x)));
+  mpz_mat *f = MATtoGmp(factor(toPari(x)));
   avma = save_stack_pointer;
   return f;
 }
@@ -105,7 +112,7 @@ void initpari() {pari_init(10000000, 0);}
 
 int main (int argc, char **argv) {
   mpz_t y;
-  mpz_mat f;
+  mpz_mat *f;
   makegmpnum(y);
   f = factorgmp(y);
   printMAT(f);
