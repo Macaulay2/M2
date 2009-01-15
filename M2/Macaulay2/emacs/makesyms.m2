@@ -1,16 +1,18 @@
-symbols := join toSequence apply(
-     join(Core#"pre-installed packages", {"Core"}),
-     pkgnam -> (
-	  pkgsym := PackageDictionary#pkgnam;
-	  select(pairs (value pkgsym).Dictionary,(nam,sym) -> not match("\\$",nam) and #nam > 1)))
-
-symbols = join( apply(join(separate(" ",version#"packages"),{"Core"}), pkgnam -> (pkgnam,symbol Core)), symbols )
-symbols = sort symbols
-
+okay := method()
+okay(String,Keyword) := okay Thing := x -> false
+okay(String,Symbol) := (nam,sym) -> not match("\\$",nam) and #nam > 1
+symbols := sort join( 
+     apply(join(separate(" ",version#"packages"),{"Core"}), pkgnam -> (pkgnam,symbol Core)),
+     flatten apply(
+     	  join(Core#"pre-installed packages", {"Core","Text","Parsing","SimpleDoc"}),
+     	  pkgnam -> (
+	       pkg := needsPackage pkgnam;
+	       select(pairs pkg.Dictionary,okay))))
+assert all(symbols, okay)
 alphabet := set characters "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ"
-isKeyword := s -> not mutable s and s =!= symbol null and value s === null
-isAlpha := s -> alphabet#?((toString s)#0)
 is := X -> s -> instance(value s, X)
+isKeyword := is Keyword
+isAlpha := s -> alphabet#?((toString s)#0)
 
 Function and Function := (f,g) -> s -> f s and g s
 

@@ -2,44 +2,19 @@
 
 LIBRARY_MODE = yes
 include ../../include/config.Makefile
-
 TARFILE_DIR = @abs_top_srcdir@/BUILD/tarfiles
-
 # some libraries (gdbm, mpfr, readline, gmp, and gc) use libtool, which 
 # insists on installing its files to a directory whose trailing part is the
 # prefix that was used at compile time, i.e., the only change allowed to the prefix
 # between compile time and install time is to prepend a string
-
 PREFIX = $(BUILTLIBPATH)
 LIBNAME = $(shell basename `pwd`)
-
 TARDIR ?= $(LIBNAME)-$(VERSION)
 TARFILE ?= $(LIBNAME)-$(VERSION).tar.gz
-
+CHECKTARGET ?= check
+CHECKCMD ?= $(MAKE) -C $(BUILDDIR) $(CHECKTARGET)
 LIBRARIESDIR := $(PREFIX)
-
-export PATH := @abs_top_srcdir@/autoconf/final/bin:$(PATH)
-
-all:install post-install
-post-install:
-install: .installed-$(VERSION)
-unconfigure:; rm -f .configured-$(VERSION) .compiled-$(VERSION) .installed-$(VERSION)
-reconfigure: unconfigure .configured-$(VERSION)
-uninstall::; rm -f .installed-$(VERSION)
-reinstall: uninstall install
-diffs: .untarred-$(VERSION) .untarred2-$(VERSION) ; diff -ur --exclude=configure tmp/$(TARDIR) $(TARDIR) |egrep -v '^Only in ' >$@ || echo diffs: `pwd`/$@
-unmark:; rm -f .configured-$(VERSION) .compiled-$(VERSION)
-package-clean: unmark ; if [ -d $(BUILDDIR) ]; then $(MAKE) -C $(BUILDDIR) clean ; fi
-package-distclean: unmark ; if [ -d $(BUILDDIR) ]; then $(MAKE) -C $(BUILDDIR) distclean ; fi
-
-fetch: $(TARFILE_DIR)/$(TARFILE)
-patch: .patched-$(VERSION)
-untar: .untarred-$(VERSION)
-compile: .compiled-$(VERSION)
-configure: .configured-$(VERSION)
-
 PRECONFIGURE  ?= :
-
 CONFIGOPTIONS += --build=@build@ --host=@host@ --cache-file=/dev/null
 CONFIGENV     = env \
 	CPPFLAGS="$(CPPFLAGS)" \
@@ -52,28 +27,42 @@ CONFIGENV     = env \
 	LDLIBS="$(LDLIBS)" \
 	FFLAGS="$(FCFLAGS)" \
 	FCFLAGS="$(FCFLAGS)"
-
-CONFIGURECMD  ?= $(PRECONFIGURE) && $(CONFIGENV) ./configure --prefix=$(LIBRARIESDIR) $(CONFIGOPTIONS)
+CONFIGURESCRIPT ?= configure
+CONFIGURECMD  ?= $(PRECONFIGURE) && $(CONFIGENV) ./$(CONFIGURESCRIPT) --prefix=$(LIBRARIESDIR) $(CONFIGOPTIONS)
 BUILDTARGET   ?= 
 BUILDCMD      ?= $(MAKE) $(BUILDOPTIONS) $(BUILDTARGET)
 INSTALLTARGET ?= install
 INSTALLCMD    ?= $(MAKE) $(INSTALLOPTIONS) prefix=$(LIBRARIESDIR) $(INSTALLTARGET)
-
 BUILDDIR      ?= $(TARDIR)
+UNTARCMD ?= @TAR@ xzf $(TARFILE_DIR)/$(TARFILE)
+%.E: %.c; $(COMPILE.c) -E $(OUTPUT_OPTION) $<
+export PATH := @abs_top_srcdir@/autoconf/final/bin:$(PATH)
+all:install post-install
+post-install:
+install: .installed-$(VERSION)
+unconfigure:; rm -f .configured-$(VERSION) .compiled-$(VERSION) .installed-$(VERSION)
+reconfigure: unconfigure .configured-$(VERSION)
+uninstall::; rm -f .installed-$(VERSION)
+reinstall: uninstall install
+diffs: .untarred-$(VERSION) .untarred2-$(VERSION) ; diff -ur --exclude=configure tmp/$(TARDIR) $(TARDIR) |egrep -v '^Only in ' >$@ || echo diffs: `pwd`/$@
+unmark:; rm -f .configured-$(VERSION) .compiled-$(VERSION)
+package-clean: unmark ; if [ -d $(BUILDDIR) ]; then $(MAKE) -C $(BUILDDIR) clean ; fi
+package-distclean: unmark ; if [ -d $(BUILDDIR) ]; then $(MAKE) -C $(BUILDDIR) distclean ; fi
+fetch: $(TARFILE_DIR)/$(TARFILE)
+patch: .patched-$(VERSION)
+untar: .untarred-$(VERSION)
+compile: .compiled-$(VERSION)
+configure: .configured-$(VERSION)
 .installed-$(VERSION)  : .compiled-$(VERSION)   ; @ set -x ; ( cd $(BUILDDIR) && $(INSTALLCMD)   ) && touch $@
 .compiled-$(VERSION)   : .configured-$(VERSION) ; @ set -x ; ( cd $(BUILDDIR) && $(BUILDCMD)     ) && touch $@
 .configured-$(VERSION) : .patched-$(VERSION)    ; @ set -x ; ( cd $(BUILDDIR) && $(CONFIGURECMD) ) && touch $@
-
 ifneq ($(PATCHFILE),)
 .patched-$(VERSION) : $(PATCHFILE) .untarred-$(VERSION) ; patch -p0 <$< && touch $@
 else
 .patched-$(VERSION) : .untarred-$(VERSION) ; touch $@
 endif
-
-UNTARCMD ?= @TAR@ xzf $(TARFILE_DIR)/$(TARFILE)
 .untarred-$(VERSION) : $(TARFILE_DIR)/$(TARFILE) ; $(UNTARCMD) && touch $@
 .untarred2-$(VERSION) : $(TARFILE_DIR)/$(TARFILE) ; mkdir tmp ; $(UNTARCMD) -C tmp && touch $@
-
 ifeq ($(FETCHER),)
 ifneq (@WGET@,)
 FETCHER = @WGET@
@@ -85,7 +74,6 @@ $(error either curl or wget is needed for downloading library source code, pleas
 endif
 endif
 endif
-
 ifeq ($(FETCHER),curl)
 FETCHOPTS = -o "$(TARFILE)"
 else
@@ -93,21 +81,19 @@ ifneq ($(FETCHER),wget)
 FETCHOPTS = 
 endif
 endif
-
-CHECKFETCHED = case "$(URL)" in \
-	http:*) \
-	    if file $(TARFILE_DIR)/$(TARFILE) | grep HTML ; \
-	    then echo tried to fetch file, but HTML file returned instead >&2 ; exit 1 ; \
-	    fi ;; \
+CHECKFETCHED = case "$(URL)" in									\
+	http:*)											\
+	    if file $(TARFILE_DIR)/$(TARFILE) | grep HTML ;					\
+	    then echo tried to fetch file, but HTML file returned instead >&2 ; exit 1 ;	\
+	    fi ;;										\
 	esac
-
 $(TARFILE_DIR)/$(TARFILE) :
 	$(MKDIR_P) $(TARFILE_DIR)
 	(cd $(TARFILE_DIR) && $(FETCHER) $(URL)/$(TARFILE) $(FETCHOPTS) && $(CHECKFETCHED))
 distclean: package-distclean
 clean::; rm -rf .patched* .untarred* $(LIBNAME)* .compiled* .configured* .installed* .untarred2* diffs tmp $(TARDIR)
 distclean: clean ; rm -rf Makefile
-check:
+check:; $(CHECKCMD)
 ls:; ls -la . tarfiles
 help:;
 	@ echo ""

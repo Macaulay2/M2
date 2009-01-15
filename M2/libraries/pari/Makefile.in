@@ -1,0 +1,20 @@
+
+#				pari
+
+# http://pari.math.u-bordeaux.fr/
+VPATH = @srcdir@
+VERSION = 2.3.4
+URL = http://pari.math.u-bordeaux.fr/pub/pari/unix
+CHECKTARGET = bench test-all test-compat test-ellglobalred test-galois test-intnum test-qfbsolve test-rfrac test-round4 test-stark test-ploth
+BUILDTARGET = all
+CONFIGURECMD = $(CONFIGENV) ./Configure --prefix=$(LIBRARIESDIR) --with-gmp
+include ../Makefile.library
+Makefile: @srcdir@/Makefile.in ; cd ../.. && ./config.status libraries/pari/Makefile
+run-example: example; ./example
+example: example.c -lpari
+example: CFLAGS += -Wall -Wno-unused -Werror -UNDEBUG
+TAGS : @srcdir@/TAGS
+@srcdir@/TAGS: /usr/include/pari/*.h example.c ; etags -o @srcdir@/TAGS $^
+# Local Variables:
+# compile-command: "make -C $M2BUILDDIR/libraries/pari "
+# End:
