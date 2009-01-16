@@ -320,7 +320,7 @@ M2_arrayint rawMonomialIdealLCM(const MonomialIdeal *I)
 #if HAVE_FROBBY
 #include "frobby.h"
 
-class MyTermConsumer : public Frobby::TermConsumer {
+class MyTermConsumer : public Frobby::TermConsumer, our_new_delete {
   int nv; // The size of exponentVector coming from frobby
   int *exp;
   MonomialIdeal *J;
