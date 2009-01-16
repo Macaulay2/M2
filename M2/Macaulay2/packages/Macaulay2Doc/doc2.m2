@@ -955,7 +955,8 @@ document {
      }
 
 document {
-     Key => {gcd,(gcd, List),(gcd, Sequence),(gcd, QQ, QQ),(gcd, RingElement, RingElement),(gcd, ZZ, QQ),(gcd, QQ, ZZ),(gcd, ZZ, ZZ)},
+     Key => {gcd,(gcd, List),(gcd, Sequence),(gcd, QQ, QQ),(gcd, RingElement, RingElement),(gcd, ZZ, QQ),(gcd, QQ, ZZ),(gcd, ZZ, ZZ),
+	  (gcd,RingElement,ZZ),(gcd,ZZ,RingElement)},
      Headline => "greatest common divisor",
      Usage => "gcd(x,y,...)",
      Inputs => { "x" => ZZ },
