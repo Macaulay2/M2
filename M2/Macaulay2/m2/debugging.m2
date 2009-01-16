@@ -183,14 +183,20 @@ generateAssertions = method(TypicalValue => Net)
 generateAssertions String := s -> generateAssertions select(lines s, x -> not match("^[[:space:]]*(--.*)?$",x))
 generateAssertions List := y -> (
      nogens := {PolynomialRing, QuotientRing};
+     good := t -> (
+	  not mutable t
+	  and
+	  all(nogens, X -> not instance(t,X))
+	  );
+     eq := t -> "===";
      stack apply(y, 
 	  lin -> ( 
 	       t := try value lin else local oops;
 	       concatenate if t === local oops
 	       then ("assert( (try ", lin, " else oops) === oops )")
-	       else if all(nogens, X -> not instance(t,X))
-	       then ("assert( ("    , lin,            ") === ", toExternalString t, " )")
-	       else ()
+	       else if good t
+	       then ("assert( ("    , lin,            ") ",eq t," ", toExternalString t, " )")
+	       else lin
 	       )))^-1
 
 -- Local Variables:

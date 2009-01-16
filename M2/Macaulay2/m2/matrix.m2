@@ -179,6 +179,7 @@ toExternalString Matrix := m -> concatenate (
      "map(", 
      toExternalString target m, ",", 
      toExternalString source m, ",", 
+     if m.?RingMap then (toExternalString m.RingMap,","),
      if m == 0 then "0" else toString entries m,
      if not all(degree m, zero) then (",Degree=>", toString degree m),
      ")"

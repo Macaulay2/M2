@@ -237,7 +237,7 @@ document {
 			 TO (map,Module,Module,RingMap,Matrix), ", ",
 		    	 TO (map,Module,Nothing,RingMap,Matrix), ", ",
 		    	 TO (map,Module,RingMap), ", and ",
-		    	 TO (map,Ring,Ring,RingMap), "."
+		    	 TO (map,Ring,Ring,RingMap), ". "
 			 },
 		    LI {
 			 "The function ", TO "basis", " will now check finite dimensionality in advance, to avoid running out of memory."

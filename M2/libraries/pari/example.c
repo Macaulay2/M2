@@ -1,13 +1,29 @@
 #include <assert.h>
 #include <pari/pari.h>
 #include <gmp.h>
+
+#define PARI_GMP_REVERSE 0
+#if PARI_GMP_REVERSE
+#define fix(m,i) ((m)-(i)-1)
+#else
+#define fix(m,i) i
+#endif
+
+
+#define p64 1			/* 64 bit pointers */
+#if p64
+#define L "l"
+#else
+#define L ""
+#endif
+
 #define drop cgiv
 #define repile(x,y) { pari_sp ltop = avma; x = gerepileupto(ltop, y); }
 #define assign(x,y) { x = y; }
 #define see(x) see0(#x,x)
 static void see0(char *n, GEN z) {
   int i;
-  printf(" %s: %3d %p typ %ld lg %ld {", n, (GEN)top-z, z, typ(z), lg(z));
+  printf(" %s: %3" L "d %p typ %ld lg %ld {", n, (GEN)top-z, z, typ(z), lg(z));
   for (i=0; i<lg(z); i++) printf(" %p",gel(z,i));
   printf(" }\n");
 }
@@ -50,14 +66,14 @@ GEN toPari(mpz_t x) {
   z = cgeti(m);
   setlgefint(z,m);
   setsigne(z,sign);
-  for (i=0; i<n; i++) gel(z,m-i-1) = (GEN)x->_mp_d[i];
+  for (i=0; i<n; i++) gel(z,2+fix(n,i)) = (GEN)x->_mp_d[i];
   return z;
 }
 
 static void INTtoGmp(mpz_t z, GEN y) {
   int i, m = lg(y), n = m-2, sign = y[1];
   mpz_init2(z,8 * sizeof(*y) * n);
-  for (i=0; i<n; i++) z->_mp_d[i] = (mp_limb_t)gel(y,m-i-1);
+  for (i=0; i<n; i++) z->_mp_d[i] = (mp_limb_t)gel(y,2+fix(n,i));
   z->_mp_size = sign < 0 ? -n : n;
 }
 

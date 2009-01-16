@@ -1601,7 +1601,7 @@ document {
 	  (symbol ==,RR,QQ), (symbol ==,RR,RR), (symbol ==,RR,ZZ), (symbol ==,RingElement,ZZ), (symbol ==,Sequence,Sequence),
 	  (symbol ==,String,String), (symbol ==,Symbol,Symbol), (symbol ==,ZZ,CC), (symbol ==,ZZ,RR),
 	  (symbol ==,ZZ,RingElement), (symbol ==,ZZ,ZZ), (symbol==, Module, Module), (symbol==, Vector, Vector),
-	  (symbol==, RingMap, RingMap), (symbol==, BettiTally, BettiTally), (symbol==, VisibleList, VisibleList)
+	  (symbol==, BettiTally, BettiTally), (symbol==, VisibleList, VisibleList)
 	  },
      Headline => "equality",
      Usage => "x == y",

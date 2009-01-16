@@ -22,7 +22,6 @@ pretty := relns -> (
      if #s === 1 then s = first s;
      s)
 toExternalString QuotientRing := S -> toString expression S
-toString QuotientRing := S -> toExternalString S
 random QuotientRing := opts -> S -> (
      if S.baseRings === {ZZ} then (random char S)_S
      else notImplemented())
@@ -30,7 +29,9 @@ expression QuotientRing := S -> new Divide from { expression ambient S, expressi
 tex QuotientRing := S -> "$" | texMath S | "$"
 texMath QuotientRing := S -> texMath new Divide from { last S.baseRings, pretty S.relations }
 describe QuotientRing := R -> net expression R
-net QuotientRing := S -> if hasAttribute(S,ReverseDictionary) then toString getAttribute(S,ReverseDictionary) else net expression S
+pqr := f -> S -> if hasAttribute(S,ReverseDictionary) then toString getAttribute(S,ReverseDictionary) else f expression S
+net QuotientRing := pqr net
+toString QuotientRing := pqr toString
 ambient PolynomialRing := R -> R
 ambient QuotientRing := Ring => (cacheValue ambient) (R -> last R.baseRings)
 degrees QuotientRing := R -> degrees ambient R

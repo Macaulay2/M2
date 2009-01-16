@@ -4,7 +4,11 @@ RingMap = new Type of HashTable
 
 RingMap.synonym = "ring map"
 matrix RingMap := opts -> f -> f.matrix
-toExternalString RingMap := 				    -- only approximately right
+toExternalString RingMap := f -> concatenate(
+     "map(", toString target f, ",", toString source f, ",", toString first entries matrix f,
+     -- should do something about the degree map here
+     ")"
+     )
 toString RingMap := f -> concatenate(
      "map(", toString target f, ",", toString source f, ",", toString first entries matrix f, ")"
      )
@@ -94,24 +98,25 @@ map(Ring,Ring,Matrix) := RingMap => opts -> (R,S,m) -> (
      if n != numgens source m then error ("encountered values for ", toString numgens source m," variables");
      zdeg  := toList ( degreeLength R : 0 );
      mE = map(R^{zdeg}, R^-mdegs, mE, Degree => zdeg);
+     dR := ZZ^(degreeLength R);
+     dS := ZZ^(degreeLength S);
      new RingMap from {
-	  -- Ring maps have members that may be closures, and so comparison with === will give unpredictable results.
-	  -- Hence we put a new closure in every time, so f===g always just checks identity, in effect.
-          "unique id" => x -> x,
-	  symbol source => S,
 	  symbol target => R,
+	  symbol source => S,
 	  symbol matrix => mE,
 	  symbol RawRingMap => rawRingMap m.RawMatrix,
-	  symbol DegreeMap => degmap,
-	  symbol DegreeLift => (
-	       if opts.DegreeLift =!= null then opts.DegreeLift
-	       else if degmap === identity then identity
-	       else if degreeLength S === 0
-	       then if degreeLength R === 0 then identity
-	       else (x -> if all(x,zero) then {} else error "RingMap DegreeLift: degree cannot be lifted")
-	       else notImplemented
-	       ),
-	  symbol cache => new CacheTable
+	  symbol Matrix => map(dR,dS,transpose apply(entries id_dS,degmap)),
+	  symbol cache => new CacheTable from {
+	       symbol DegreeMap => degmap,
+	       symbol DegreeLift => (
+		    if opts.DegreeLift =!= null then opts.DegreeLift
+		    else if degmap === identity then identity
+		    else if degreeLength S === 0
+		    then if degreeLength R === 0 then identity
+		    else (x -> if all(x,zero) then {} else error "RingMap DegreeLift: degree cannot be lifted")
+		    else notImplemented
+		    )
+	       }
 	  }
      )
 
@@ -144,7 +149,7 @@ RingMap Matrix := Matrix => (p,m) -> (
      then error "expected source of ring map to be the same as ring of matrix";
      F := p target m;
      E := p source m;
-     map(F,E,map(S,rawRingMapEval(raw p, raw F, raw m)), Degree => p.DegreeMap degree m))
+     map(F,E,map(S,rawRingMapEval(raw p, raw F, raw m)), Degree => p.cache.DegreeMap degree m))
 
 RingMap Vector := Vector => (p,m) -> (
      f := p new Matrix from m;
@@ -264,9 +269,11 @@ RingMap * RingMap := RingMap => (g,f) -> (
 	  symbol target => target g,
 	  symbol matrix => m,
 	  symbol RawRingMap => rawRingMap raw m,
-	  symbol DegreeMap => g.DegreeMap @@ f.DegreeMap,
-	  symbol DegreeLift => f.DegreeLift @@ g.DegreeLift,
-	  symbol cache => new CacheTable
+	  symbol Matrix => g.Matrix * f.Matrix,
+	  symbol cache => new CacheTable from {
+	       symbol DegreeMap => g.cache.DegreeMap @@ f.cache.DegreeMap,
+	       symbol DegreeLift => f.cache.DegreeLift @@ g.cache.DegreeLift
+	       }
 	  }
      )
 
@@ -276,7 +283,7 @@ isHomogeneous RingMap := (f) -> (
      isHomogeneous R and isHomogeneous S and
      all(generators(R, CoefficientRing=>ZZ), r -> r == 0 or (
 	       s := f r;
-	       s == 0 or isHomogeneous s and degree s === f.DegreeMap degree r
+	       s == 0 or isHomogeneous s and degree s === f.cache.DegreeMap degree r
 	       )))
 
 substitute(Power,Thing) := (v,s) -> Power{substitute(v#0,s),v#1}
@@ -362,7 +369,7 @@ RingMap Module := Module => (f,M) -> (
      if M.?generators then image f M.generators
      else (
 	  d := degrees M;
-	  e := f.DegreeMap \ d;
+	  e := f.cache.DegreeMap \ d;
 	  if R === S and d === e
 	  then M -- use the same module if we can
      	  else S^-e
@@ -405,23 +412,9 @@ preimage(RingMap,Ideal) := (f,J) -> (
 
 List / RingMap := List => (v,f) -> apply(v,x -> f x)
 RingMap \ List := List => (f,v) -> apply(v,x -> f x)
-
-RingMap == RingMap := (f,g) -> (
-     f.target === g.target and
-     f.source === g.source and 
-     matrix f === matrix g and (
-	  d := degreeLength f.source;
-	  m := f.DegreeMap;
-	  n := g.DegreeMap;
-	  e := toList prepend(1, d-1 : 0);
-	  null === for i from 1 to d do (
-	       if m e =!= n e then break false;
-	       e = rotate(1,e))))
-
 RingMap == ZZ := (f,n) -> (
      if n == 1 then (source f === target f and f == id_(source f))
      else error "encountered integer other than 1 in comparison with a ring map")
-
 ZZ == RingMap := (n,f) -> f == n
 
 RingMap.InverseMethod = (cacheValue symbol inverse) ( f -> notImplemented() )
@@ -449,13 +442,16 @@ map(Module,Module,RingMap,RawMatrix) := opts -> (M,N,p,f) -> (
 map(Module,Nothing,RingMap,RawMatrix) := Matrix => o -> (M,N,p,f) -> (
      d := degreeLength M;
      degs := pack(d,degrees source f);
-     srcdegs := apply(degs,p.DegreeLift);
-     map(M,(source p)^-srcdegs,p,f))
+     deg := o.Degree;
+     if deg =!= null then degs = apply(degs, dg -> dg - deg);
+     srcdegs := apply(degs,p.cache.DegreeLift);
+     map(M,(source p)^-srcdegs,p,f,o))
 
 map(Module,Nothing,RingMap,Matrix) := 
 map(Module,Module,RingMap,Matrix) := Matrix => o -> (M,N,p,f) -> map(M,N,p,raw f,o)
-
-map(Module,RingMap) := Matrix => o -> (M,p) -> map(M,,p,generators M,o)
+map(Module,Module,RingMap,List) := Matrix => o -> (M,N,p,f) -> map(M,N,p,map(M,ring M ** N,f),o)
+map(Module,Nothing,RingMap,List) := Matrix => o -> (M,N,p,f) -> map(M,N,p,map(M,,f),o)
+map(Module,RingMap) := Matrix => o -> (M,p) -> map(M,,p,map(M,cover M,1),o)
 
 -- Local Variables:
 -- compile-command: "make -C $M2BUILDDIR/Macaulay2/m2 "
