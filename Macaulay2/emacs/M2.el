@@ -129,10 +129,13 @@
 (defvar M2-shell-exe "/bin/sh" "*The default shell executable name.")
 (defvar M2-command (concat M2-exe " --no-readline --print-width " (number-to-string (- (window-width) 1)) " ") "*The default Macaulay2 command line.")
 (defvar M2-history (list M2-command) "The history of recent Macaulay2 command lines.")
-(defvar M2-send-to-buffer "*M2*" "*The default buffer that \\[M2-send-to-program] sends input to.")
+(defvar M2-send-to-buffer-history '("*M2*") "The history of recent Macaulay2 send-to buffers.")
+(defvar M2-tag-history () "The history of recent Macaulay2 command name tags.")
 (defvar M2-el-version "$Revision$  $URL$")
-(defun M2-el-version() (interactive) (message "M2-el-version: %s" M2-el-version))
-(make-variable-buffer-local 'M2-send-to-buffer)
+(defun M2-el-version() 
+  "Display the version of the source file M2.el in the minibuffer."
+  (interactive)
+  (message "M2-el-version: %s" M2-el-version))
 
 (defun M2-add-width-option (command)
   (concat
@@ -141,54 +144,33 @@
    (number-to-string (- (window-width) 1))
    " "))
 
-(defun M2 (command)
-  "Run Macaulay 2 in a buffer.  With a prefix argument, the command line 
-that runs Macaulay 2 can be edited in the minibuffer.  The command line
-will always have the appropriate option for the width of the current window
-added to it."
+(defun M2 (command name)
+  "Run Macaulay 2 in a buffer.  With a prefix argument, the command line given
+to the shell to run Macaulay 2 can be edited in the minibuffer.  With prefix
+argument \\[universal-argument] \\[universal-argument] the tag from which the buffer name is constructed (by
+prepending and appending asterisks) can be entered in the minibuffer.  The
+command line will always have the appropriate option for the width of the
+current window added to it."
   (interactive
    (list
     (cond 
      (current-prefix-arg
-      (read-from-minibuffer
-	   "M2 command line: "
-	   (M2-add-width-option (if M2-history (car M2-history) M2-command))
-	   nil
-	   nil
-	   (if M2-history '(M2-history . 1) 'M2-history)))
+      (read-from-minibuffer "M2 command line: " (M2-add-width-option (if M2-history (car M2-history) M2-command)) 
+			    nil nil (if M2-history '(M2-history . 1) 'M2-history)))
      (M2-history (M2-add-width-option (car M2-history)))
-     (t (M2-add-width-option M2-command)))))
-  (setq foobar current-prefix-arg)
-  (switch-to-buffer 
-   (make-comint "M2" ; specifying "M2" here means the buffer will be named *M2*
-		M2-shell-exe ; name of shell program
-		nil			; starting input file
-		"-c" (concat "echo; set -x; " command)		; arguments to the program
-		))
+     (t (M2-add-width-option M2-command)))
+    (cond
+     ((equal current-prefix-arg '(16)) (read-from-minibuffer "M2 buffer name tag: " "M2" nil nil 'M2-tag-history '("M2" "M2-1.1")))
+     (M2-tag-history (car M2-tag-history))
+     (t "M2"))))
+  (switch-to-buffer (make-comint name M2-shell-exe nil "-c" (concat "echo; set -x; " command)))
   (M2-comint-mode))
-
-(defun Macaulay2 () "Run Macaulay 2 in a buffer, non-interactive." (M2 M2-command))
 (defvar M2-usual-jog 30 "Usual distance scrolled by M2-jog-left and M2-jog-right")
-(defvar M2-comint-prompt-regexp
-  (concat "^"
-	  "\\("
-	  "[ \t]*"
-	  "[io]*[1-9][0-9]* [:=] "
-	  "\\)"
-	  "?"
-	  )
-  "Regular expression used to recognize the Macaulay 2 prompt."
-  )
-
+(defvar M2-comint-prompt-regexp "^\\([ \t]*[io]*[1-9][0-9]* [:=] \\)?"
+  "Regular expression used to recognize the Macaulay 2 prompt.")
 (defun M2-left-hand-column () (window-hscroll))
-
 (defun M2-right-hand-column () (+ (window-hscroll) (window-width) -1))
-
-(defun M2-on-screen ()
-  (and 
-   (< (M2-left-hand-column) (current-column)) 
-   (< (current-column) (M2-right-hand-column))))
-
+(defun M2-on-screen () (and (< (M2-left-hand-column) (current-column)) (< (current-column) (M2-right-hand-column))))
 (defun M2-position-point (pos)
   "Scroll display horizontally so point ends up at center of screen, or
   at column position given by prefix argument."
@@ -301,24 +283,29 @@ can be executed with \\[M2-send-to-program]."
 	  (move-to-column (- colnum 1)))))
     (comint-send-input)))
 
-(defun M2-send-to-program() 
+(defun M2-send-to-program (send-to-buffer)
      "Send the current line except for a possible prompt, or the region, if the
 mark is active, to Macaulay 2 in its buffer, making its window visible.
 Afterwards, in the case where the mark is not active, move the cursor to
 the next line.  Alternatively, if the point is at a prompt or a blank line
 at the end of the buffer *M2*, get the next line of input from demo buffer
-set by M2-set-demo-buffer, or if it's at the end of the buffer *M2* with a
-line of input already there, submit it."
-     (interactive)
-     (or (get-buffer-window M2-send-to-buffer 'visible)
-	 (pop-to-buffer (prog1 (current-buffer) (pop-to-buffer M2-send-to-buffer))))
+set by `M2-set-demo-buffer', or if it's at the end of the buffer *M2* with a
+line of input already there, submit it.  With a prefix argument, the name of
+the buffer to which this and future uses of the command (in this buffer) should
+be sent can be entered, with history."
+     (interactive
+      (list
+       (cond (current-prefix-arg (read-from-minibuffer "buffer to send command to: " "*M2*" nil nil 'M2-send-to-buffer-history))
+	     (t (car M2-send-to-buffer-history)))))
+     (or (get-buffer-window send-to-buffer 'visible)
+	 (pop-to-buffer (prog1 (current-buffer) (pop-to-buffer send-to-buffer))))
      (select-window
       (prog1
 	  (selected-window)
 	  (let* ((send-it t)
 		 (cmd (if (and
 			  (equal (point) (point-max))
-			  (equal (current-buffer) (save-excursion (set-buffer M2-send-to-buffer))))
+			  (equal (current-buffer) (save-excursion (set-buffer send-to-buffer))))
 			 (if (equal (point) 
 				    (save-excursion
 				      (M2-to-end-of-prompt)
@@ -350,11 +337,11 @@ line of input already there, submit it."
 			  (save-excursion (M2-to-end-of-prompt) (point))
 			  (save-excursion (end-of-line) (point)))))))
 	    (progn
-	      (select-window (get-buffer-window (set-buffer M2-send-to-buffer) 'visible))
+	      (select-window (get-buffer-window (set-buffer send-to-buffer) 'visible))
 	      (goto-char (point-max))
 	      (insert cmd)
 	      (goto-char (point-max))
-	      (set-window-point (get-buffer-window M2-send-to-buffer 'visible) (point))
+	      (set-window-point (get-buffer-window send-to-buffer 'visible) (point))
 	      (if send-it (comint-send-input))
 	      ; (setq deactivate-mark t)
 	      ))))
@@ -362,7 +349,7 @@ line of input already there, submit it."
      (if (and (not (and (boundp 'mark-active) mark-active)) 
 	      (not (and
 		    (equal (point) (point-max))
-		    (equal (current-buffer) (save-excursion (set-buffer M2-send-to-buffer)))
+		    (equal (current-buffer) (save-excursion (set-buffer send-to-buffer)))
 		    )))
 	 (progn
 	   (end-of-line)
@@ -374,12 +361,12 @@ line of input already there, submit it."
 
 (defun M2-set-demo-buffer()
   "Set the variable M2-demo-buffer to the current buffer, so that later,
-M2-send-to-prorgram can obtain lines from this buffer."
+`M2-send-to-program' can obtain lines from this buffer."
   (interactive)
   (setq M2-demo-buffer (current-buffer)))
 
 (defun M2-switch-to-demo-buffer()
-  "Switch to the buffer given by the variable M2-demo-buffer."
+  "Switch to the buffer given by the variable `M2-demo-buffer'."
   (interactive)
   (switch-to-buffer M2-demo-buffer))
 

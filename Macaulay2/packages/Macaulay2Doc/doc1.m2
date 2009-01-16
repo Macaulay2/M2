@@ -2,7 +2,7 @@ scan((
      -- some optional arguments
 	  FollowLinks,Hilbert,Options,InstallPrefix,PackagePrefix,Exclude,Encapsulate,CompleteIntersection,MaximalRank,MaxReductionCount,Reverse,
 	  Algorithm,DebuggingMode,Dense,DivideConquer,First,Format,GBDegrees,Hermitian,CoefficientRing,Undo,SourceCode,Description,Variables,
-	  Boxes,BaseRow,HorizontalSpace,VerticalSpace,Alignment,Minimize,FileName,Unmixed,Decompose,AbsoluteLinks,RunExamples,
+	  Boxes,BaseRow,HorizontalSpace,VerticalSpace,Alignment,Minimize,FileName,Unmixed,Decompose,AbsoluteLinks,RunExamples,SourceRing,
 	  Inverses,WeylAlgebra,Degrees,MonomialSize,CheckDocumentation,IgnoreExampleErrors,MakeDocumentation,MakeInfo,MakeLinks,
 	  RemakeAllDocumentation,RerunExamples,UserMode,Generic,DegreeRank,Heft,
 	  KeepZeroes,Heading,ClosestFit,Density,Height,Norm,UpperTriangular,EncapsulateDirectory,Local,Binomial,Monomial,DegreeMap,DegreeLift,
