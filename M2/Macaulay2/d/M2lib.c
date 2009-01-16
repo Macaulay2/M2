@@ -53,16 +53,6 @@ const char *get_frobby_version();	/* in version.cc */
 #ifdef HAVE_PARI
 
   #include <pari/pari.h>
-
-  void initpari() __attribute__ ((constructor));
-  void initpari() {
-    pari_init(1000000, 0);	/* we may want to change this number */
-    /*
-      pari_init flagrantly sets the memory allocation routines for gmp, so we have to set them back
-    */
-    enterM2();
-  }
-
   static const char *get_pari_version() {
     /*
       /usr/include/pari/paricfg.h:#define PARI_VERSION_CODE 131843

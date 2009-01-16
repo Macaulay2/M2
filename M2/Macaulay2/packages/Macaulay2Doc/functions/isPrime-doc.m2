@@ -13,25 +13,37 @@ document {
 	  Boolean => {TO "true", " if ", TT "f", " is either a prime integer or an irreducible polynomial and ",
 	       TO "false", " otherwise"}
 	  },
-     EXAMPLE {
-	  "isPrime 91",
-	  "isPrime 101",
-	  "isPrime 31991",
-	  "isPrime 32003",
-	  "ZZ/2[t];",
-	  "isPrime(t^2+t+1)",
-          "isPrime(t^2+1)"
-	  },
-     "This function can be used to determine whether an ideal in a polynomial ring is prime.",
      EXAMPLE lines ///
-          R = QQ[a..d];
-	  I = monomialCurveIdeal(R,{1,5,8})
-	  isPrime I
-          ///,
-     Caveat => {
-	  {"At the moment, for integers larger than ", TT "2^31-1", " it checks for
-     	       divisibility by small primes, and then applies a strong pseudoprimality
-     	       test (Rabin-Miller) to the base 2."},},
+     ZZ/2[t];
+     isPrime(t^2+t+1)
+     isPrime(t^2+1)
+     isPrime 101
+     isPrime 158174196546819165468118574681196546811856748118567481185669501856749
+     isPrime 158174196546819165468118574681196546811856748118567481185669501856749^2
+     ///,
+     PARA {
+	  "Since ", TO "factor", " returns factors guaranteed only to be pseudoprimes, it
+	  may be useful to check their primality, as follows."
+	  },
+     EXAMPLE lines ///
+     f = factor 28752093487520394720397634653456
+     peek'_2 f
+     first \ toList f
+     isPrime \ oo
+     ///,
+     "This function can be used also to determine whether an ideal in a polynomial ring is prime.",
+     EXAMPLE lines ///
+     R = QQ[a..d];
+     I = monomialCurveIdeal(R,{1,5,8})
+     isPrime I
+     ///,
+     PARA {
+	  "Primality testing for integers is handled by ", TO "pari", "."
+	  },
+--      Caveat => {
+-- 	  {"At the moment, for integers larger than ", TT "2^31-1", " it checks for
+--      	       divisibility by small primes, and then applies a strong pseudoprimality
+--      	       test (Rabin-Miller) to the base 2."},},
      SeeAlso => {factor}
      }
 

@@ -406,6 +406,7 @@ document {
 	  exponent is an integer.",
 	  },
      EXAMPLE {
+	  "factor 124744878111332355674003415153753485211381849014286981744945",
 	  "y = (2^15-4)/(2^15-5)",
       	  "x = factor y",
       	  "value x"
@@ -415,9 +416,15 @@ document {
 	  its true structure as ", TO "Expression", "."
 	  },
      EXAMPLE "peek'(100,x)",
-     PARA{
-	  "For small integers, factorization is done by trial division.  Eventually
-	  we will have code for large integers.  For multivariate polynomials the
+     PARA {
+	  "For integers, factorization is done by ", TO "pari", "; the factors are actually
+	  just strong pseudoprimes in the sense of Baillie-Pomerance-Selfridge-Wagstaff,
+	  and may not be prime; to check primality, use ", TO "isPrime", ".
+	  According to the documentation of ", TO "pari", TEX ", such pseudoprimes are known
+	  to be prime up to $10^{13}$, and no nonprime pseudoprime is known."
+	  },
+     PARA {
+	  "For multivariate polynomials the
 	  factorization is done with code of Michael Messollen (see 
 	  ", TO "Singular-Libfac", ").  For univariate
 	  polynomials the factorization is in turn done with code of 

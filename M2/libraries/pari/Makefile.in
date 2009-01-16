@@ -10,7 +10,7 @@ BUILDTARGET = all
 CONFIGURECMD = $(CONFIGENV) ./Configure --prefix=$(LIBRARIESDIR) --with-gmp
 include ../Makefile.library
 Makefile: @srcdir@/Makefile.in ; cd ../.. && ./config.status libraries/pari/Makefile
-run-example: example; ./example
+run-example: example; strace -eopen ./example
 example: example.c -lpari
 example: CFLAGS += -Wall -Wno-unused -Werror -UNDEBUG
 TAGS : @srcdir@/TAGS

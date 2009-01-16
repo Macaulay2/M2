@@ -64,8 +64,12 @@ irreducibleCharacteristicSeries Ideal := I -> (		    -- rawCharSeries
      TtoR.cache.inverse = RtoT;
      (apply(rawCharSeries raw StoT m, rawmat -> map(T,rawmat)),TtoR))
 
-factor ZZ := options -> (n) -> Product apply(sort pairs factorInteger n, (p,i)-> Power{p,i} )
-factor QQ := options -> (r) -> factor numerator r / factor denominator r
+factor ZZ := ( f -> opts -> f ) (
+     if instance(Pari$factorint, Function) 
+     then n -> ( r := Pari$factorint n; Product apply(r#0,r#1,(p,i)-> Power{p,i}) )
+     else n -> Product apply(sort pairs factorInteger n, (p,i)-> Power{p,i})
+     )
+factor QQ := opts -> (r) -> factor numerator r / factor denominator r
 -----------------------------------------------------------------------------
 topCoefficients = method()
 topCoefficients Matrix := f -> (
