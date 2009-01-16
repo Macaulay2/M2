@@ -1,4 +1,5 @@
---		Copyright 1993-1999 by Daniel R. Grayson
+-- -*- coding: utf-8 -*-
+--		Copyright 1993-2009 by Daniel R. Grayson
 
 
 document {
@@ -28,6 +29,7 @@ document {
 	  TO "Singular-Factory",
 	  TO "Singular-Libfac",
 	  TO "frobby",
+	  TO "pari",
 	  TO "GNU MP",
 	  TO "MPFR",
 	  TO "GC garbage collector",
@@ -103,12 +105,23 @@ document {
      }
 
 document {
+     Key => "pari",
+     PARA {
+	  "Starting with version 1.2, Macaulay 2 incorporates ", TT "pari", ", a free library for fast computations in number theory,
+	  available at ", HREF "http://pari.math.u-bordeaux.fr/", ",
+	  originally developed by Henri Cohen and his co-workers at Université Bordeaux I, France.
+	  It is used by ", TO (factor,ZZ), ", ", TO (factor,QQ), ", and ", TO (isPrime,ZZ), ".
+	  It is distributed under the terms of the GNU General Public License, version 2, see ", TO "COPYING", "."
+	  }
+     }
+
+document {
      Key => "frobby",
      PARA {
 	  "Starting with version 1.2, Macaulay 2 incorporates ", TT "frobby", ", a free library of routines for computing
 	  the Alexander dual of a monomial ideal (see ", TO (dual,MonomialIdeal), "), written
 	  by Bjarke Hammersholt Roune, and available at ", HREF "http://www.broune.com/frobby/", ".
-	  It is distributed under the terms of the GNU General Public License."
+	  It is distributed under the terms of the GNU General Public License, version 2, see ", TO "COPYING", "."
 	  }
      }
 
@@ -119,7 +132,7 @@ document {
      University of Kaiserslautern, Macaulay 2 incorporates ", TT "Singular-Factory", ",
      version ", version#"factory version", ", a free library of polynomial routines
      that provides for factorization of polynomials.  It is distributed under the
-     terms of the GNU General Public License and is available at 
+     terms of the GNU General Public License (version 2 (see ", TO "COPYING", ") or version 3) and is available at 
      ", HREF "ftp://www.mathematik.uni-kl.de/pub/Math/Singular/Factory"," and at 
      ", HREF "http://www.mathematik.uni-kl.de/ftp/pub/Math/Singular/SOURCES", ".  It
      is part of ", TT "Singular", ", whose home page is ", HREF "http://www.singular.uni-kl.de/", ".",
@@ -140,7 +153,7 @@ document {
      a free library of routines, depending on ", TO "Singular-Factory", ", that provides
      factorization of multivariate polynomials over finite fields and computation of the minimal associated primes 
      of ideals via characteristic sets.  It is distributed under the terms of the
-     GNU General Public License, and is available at 
+     GNU General Public License (version 2 (see ", TO "COPYING", ") or version 3), and is available at 
      ", HREF "ftp://www.mathematik.uni-kl.de/pub/Math/Singular/Libfac"," and at 
      ", HREF "http://www.mathematik.uni-kl.de/ftp/pub/Math/Singular/SOURCES", ".  It
      is part of ", TT "Singular", ", whose home page is ", HREF "http://www.singular.uni-kl.de/", ".",
@@ -158,9 +171,9 @@ document {
      Key => "GNU MP",
      "The GNU MP library, gmp, version ", version#"gmp version", " provides
      routines for arbitrary precision integer and floating point arithmetic,
-     and is distributed under the terms of the GNU Lesser General Public License.
+     and is distributed under the terms of the GNU Lesser General Public License (LGPL), version 2.1 or later.
      It's available at ", HREF "ftp://ftp.gnu.org/gnu/gmp/", " and 
-     ", HREF "http://www.swox.com/gmp/", "."
+     ", HREF "http://gmplib.org/", "."
      }
 
 document {

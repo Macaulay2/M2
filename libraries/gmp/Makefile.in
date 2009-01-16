@@ -7,6 +7,11 @@ CONFIGOPTIONS += --enable-cxx
 ifeq (@SHARED@,no)
 CONFIGOPTIONS += --disable-shared
 endif
+
+# core 2 duo patch:
+# http://www.math.jmu.edu/~martin/
+# http://www.math.jmu.edu/~martin/gmp-4.2.x-core2-port.tar.gz
+
 # ifeq (Darwin i386,$(shell uname -sm))
 # PRECONFIGURE = autoreconf -i && (cd mpn/x86 && rm -fv *dive_1* */*dive_1* */*/*dive_1* */*mode1o* */*/*mode1o*) || false
 # else 

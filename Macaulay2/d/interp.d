@@ -28,7 +28,6 @@ use objects;
 use basic;
 use struct;
 use texmacs;
-use pari;						    -- this is just to get its constructors in the D language run
 
 import dirname(s:string):string;
 

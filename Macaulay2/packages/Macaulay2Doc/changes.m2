@@ -294,12 +294,15 @@ document {
 			 },
 		    LI {
 			 "Macaulay 2 now incorporates ", TO "frobby", ", a free library for computing
-			 the Alexander dual of a monomial ideal (see ", TO "(dual,MonomialIdeal)", "), written
-			 by Bjarke Hammersholt Roune, and available at ", HREF "http://www.broune.com/frobby/", "."
+			 the Alexander dual of a monomial ideal (see ", TO "(dual,MonomialIdeal)", ")."
 			 },
 		    LI {
 			 "The function ", TO "select", " will now give an error message if the
 			 function provided to it returns something neither ", TO "true", " nor ", TO "false", "."
+			 },
+		    LI {
+			 "Macaulay 2 now incorporates ", TO "pari", ", a free library for computing in number theory.
+			 It is called upon by ", TO (factor,ZZ), ", and we expect to use more of its functionality soon."
 			 }
 		    }
 	       }
