@@ -164,7 +164,7 @@ ifeq (@OS@,SunOS)
 TOSTATIC = -Wl,-Bstatic
 UNSTATIC = -Wl,-Bdynamic
 else
-$(error static linking requested, new OS)
+$(warning static linking requested, no method configured for this OS or linker)
 endif
 endif
 
@@ -199,6 +199,13 @@ endif
 	$(SCC1) $(SCCFLAGS) +gc -J. $<
 	$(COMPILE.c) -Wno-unused -Wno-uninitialized -Wno-cast-qual $*.c $(OUTPUT_OPTION)
 	rm $*.c
+%.ss : %.s ; demangle <$< >$@
+%.ii: %.cpp; $(PRE.cc)        $< $(OUTPUT_OPTION)
+%.s : %.cpp; $(COMPILE.cc) -S $< $(OUTPUT_OPTION)
+%.ii: %.cc; $(PRE.cc)        $< $(OUTPUT_OPTION)
+%.s : %.cc; $(COMPILE.cc) -S $< $(OUTPUT_OPTION)
+%.ii: %.c; $(PRE.c)        $< $(OUTPUT_OPTION)
+%.s : %.c; $(COMPILE.c) -S $< $(OUTPUT_OPTION)
 
 # The following line has been included to remove old style cast warnings while compiling
 M2-factory.o: M2-factory.cpp ; $(COMPILE.cc) -Wno-old-style-cast $(OUTPUT_OPTION) $<
