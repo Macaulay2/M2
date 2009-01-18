@@ -1,3 +1,4 @@
+-- -*- coding: utf-8 -*-
 --- status: Draft
 --- author(s): M2Fest 2005 -- Irena
 --- notes: 
@@ -49,7 +50,7 @@ document {
       	  "liftable(f,R)",
       	  "lift(1/f,R)"
 	  },
-     "One can form resolutions and Groebner bases of ideals in polynomial
+     "One can form resolutions and Gröbner bases of ideals in polynomial
      rings over fraction fields, as in the following example.
      Note that computations over fraction fields can be quite slow.",
      EXAMPLE {

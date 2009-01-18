@@ -1,3 +1,4 @@
+-- -*- coding: utf-8 -*-
 --- status: TODO
 --- author(s): 
 --- notes: 
@@ -71,7 +72,7 @@ document {
      "If f is ", ofClass RingElement, ", then it will be interpreted as a one by one matrix.",
      PARA{},
      "The kernel is the submodule of M of all elements mapping to zero under ", TT "f", ".
-     Over polynomial rings, this is computed using a Groebner basis computation.",
+     Over polynomial rings, this is computed using a Gröbner basis computation.",
      EXAMPLE lines ///
      	  R = ZZ/32003[vars(0..10)]
 	  M = genericSkewMatrix(R,a,5)

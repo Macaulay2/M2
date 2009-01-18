@@ -1,3 +1,4 @@
+-- -*- coding: utf-8 -*-
 --		Copyright 1993-2002 by Daniel R. Grayson
 
 
@@ -41,11 +42,11 @@ document {
 document {
      Key => "engine", 
      "The engine is the part of the program that is dedicated to
-     performing the computation of Groebner bases with Buchberger's
+     performing the computation of Gröbner bases with Buchberger's
      algorithm.  It is coded directly in C++ for speed.",
      PARA{},
      "The Macaulay 2 engine provides fast polynomial and matrix operations,
-     and Groebner bases, syzygies, Hilbert functions, resolutions and
+     and Gröbner bases, syzygies, Hilbert functions, resolutions and
      other operations that we feel need to be implemented directly for
      efficiency reasons.",
      }

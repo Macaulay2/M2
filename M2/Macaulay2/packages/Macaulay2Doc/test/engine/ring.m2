@@ -1,3 +1,4 @@
+-- -*- coding: utf-8 -*-
 --status: this old test depends on internal things and probably should be deleted
 
 
@@ -218,7 +219,7 @@ degree c
 
 assert( matrix {{X}} * matrix {{Y}} - matrix {{Y*X}} == 0)
 
--- Groebner bases
+-- Gröbner bases
 f = matrix {{x,y^2,z^3}}
 I = image f
 gb (I,DegreeLimit => -1)

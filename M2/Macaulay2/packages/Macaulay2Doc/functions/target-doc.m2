@@ -1,3 +1,4 @@
+-- -*- coding: utf-8 -*-
 --- status: DRAFT.
 --- author(s):  kummini
 --- notes: 
@@ -5,7 +6,7 @@
 document { 
      Key => target,
      Headline => "target of a map",
-     "This command returns the target of a morphism or Groebner basis.",
+     "This command returns the target of a morphism or Gröbner basis.",
      SeeAlso => {source}
      }
 document { 
@@ -33,13 +34,13 @@ document {
      }
 document { 
      Key => (target,GroebnerBasis),
-     Headline => "find target of a Groebner basis",
+     Headline => "find target of a Gröbner basis",
      Usage => "target g",
      Inputs => {
 		"g" => GroebnerBasis
 	  },
      Outputs => {
-		"the target of the matrix given by the generators of the Groebner
+		"the target of the matrix given by the generators of the Gröbner
 		basis"},
      EXAMPLE {
 		   "R = ZZ/10007[x,y,z];",

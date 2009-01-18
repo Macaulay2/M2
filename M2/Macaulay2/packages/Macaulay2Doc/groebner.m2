@@ -1,9 +1,10 @@
+-- -*- coding: utf-8 -*-
 --- status: DRAFT
 --- author(s): kummini 
 --- notes: 
 
 document {
-     Key => "Groebner bases",
+     Key => "Gröbner bases",
      "A Groebner basis is a specific generating set for an ideal or submodule, often
      used to compute other information, such as numerical invariants, operations such as
      intersections and ideal quotients, syzygies, etc.  In Macaulay2, Groebner bases
@@ -133,7 +134,7 @@ document {
        f = x^3+y^3+z^3
        f % I
        ///,
-     SeeAlso => {"Groebner bases", (symbol %, RingElement, Ideal)},
+     SeeAlso => {"Gröbner bases", (symbol %, RingElement, Ideal)},
      }
 
 -- we should be able to link to the right nodes without this:
@@ -259,7 +260,7 @@ document {
     	  "I = ideal(x^3 - 2*x*y, x^2*y - 2*y^2 + x);",
 	  "gens gb I"
 	  },
-	SeeAlso => {"monomial orderings", leadTerm, "Groebner bases",
+	SeeAlso => {"monomial orderings", leadTerm, "Gröbner bases",
 	"normal forms"}
 	}
 

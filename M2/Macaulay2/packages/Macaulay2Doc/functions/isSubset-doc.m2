@@ -1,3 +1,4 @@
+-- -*- coding: utf-8 -*-
 --- status: TODO
 --- author(s): 
 --- notes: 
@@ -49,7 +50,7 @@ document {
 	  "isSubset(I^2,I)",
 	  "isSubset(I,I^2)"
 	  },
-     "In polynomial rings, this is accomplished by computing a Groebner basis of ", TT "J", " and testing 
+     "In polynomial rings, this is accomplished by computing a Gröbner basis of ", TT "J", " and testing 
      whether every element of ", TT "I", " reduces to 0 modulo ", TT "I", "."
      }
 

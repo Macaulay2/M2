@@ -1,3 +1,4 @@
+-- -*- coding: utf-8 -*-
 --- status: TODO
 --- author(s): 
 --- notes: 
@@ -25,26 +26,26 @@ document {
 	  [gb,SyzygyRows],
 	  LinearAlgebra, Homogeneous2, Sugarless, Toric, UseSyzygies
 	  },
-     Headline => "compute a Groebner basis",
+     Headline => "compute a Gröbner basis",
      Usage => "gb I",
      Inputs => {
 	  "I" => "an ideal, module, or matrix",
 	  Algorithm => Symbol => {"possible values: ", TO "Homogeneous", ", ", TO "Inhomogeneous", ", ", TO "Homogeneous2", ", and ", TO "Sugarless", ".
 	       Experimental options include ", TO "LinearAlgebra", " and ", TO "Toric", "."},
-     	  BasisElementLimit => ZZ => "stop when this number of (nonminimal) Groebner basis elements has been found",
+     	  BasisElementLimit => ZZ => "stop when this number of (nonminimal) Gröbner basis elements has been found",
 	  ChangeMatrix => Boolean => { 
-	       "whether to compute the change of basis matrix from Groebner basis elements to original generators.  Use ", TO "getChangeMatrix", " to recover it."},
+	       "whether to compute the change of basis matrix from Gröbner basis elements to original generators.  Use ", TO "getChangeMatrix", " to recover it."},
 	  CodimensionLimit => ZZ => "stop computation once codimension of submodule of lead terms reaches this value (not functional yet)",
-	  DegreeLimit => List => "stop after the Groebner basis in this degree has been computed",
+	  DegreeLimit => List => "stop after the Gröbner basis in this degree has been computed",
 	  GBDegrees => List => "a list of positive integer weights, one for each variable in the ring, to be used for
 	   organizing the computation by degrees (the 'sugar' ecart vector)",
 	  HardDegreeLimit => "throws away all S-pairs of degrees beyond the limit. The computation
 	    will be re-initialized if higher degrees are required.",
      	  Hilbert => {"informs Macaulay 2 that this is the ", TO poincare, 
-	   " polynomial, and can be used to aid in the computation of the Groebner basis (Hilbert driven)"},
+	   " polynomial, and can be used to aid in the computation of the Gröbner basis (Hilbert driven)"},
 	  PairLimit => ZZ => "stop after this number of spairs has been considered",
-	  StopBeforeComputation => Boolean => "initializes the Groebner basis engine but return before doing any computation (useful for 
-	    using or viewing partially computed Groebner bases)",
+	  StopBeforeComputation => Boolean => "initializes the Gröbner basis engine but return before doing any computation (useful for 
+	    using or viewing partially computed Gröbner bases)",
 	  StopWithMinimalGenerators => Boolean => "stop as soon as the minimal set (or a trimmed set, if not homogeneous or local) of generators is known.  Intended for internal use only",
 	  Strategy => {
 	       "either ", TO "LongPolynomial", ", ", TO "Sort", ", or a list of these.  ", TO "LongPolynomial", ": 
@@ -52,21 +53,21 @@ document {
 	       ", TO "Sort", ": sort the S-pairs.
 	       Another symbol usable here is ", TT "UseSyzygies", ".
 	       Usually S-pairs are processed degree by degree in the order that they were constructed."},
-	  SubringLimit => ZZ => "stop after this number of elements of the Groebner basis lie in the first subring",
+	  SubringLimit => ZZ => "stop after this number of elements of the Gröbner basis lie in the first subring",
 	  Syzygies => Boolean => "whether to collect syzygies on the original generators during the computation.  Intended for internal use only",
 	  SyzygyLimit => ZZ => "stop when this number of non-zero syzygies has been found",
 	  SyzygyRows => ZZ => "for each syzygy and change of basis element, keep only this many rows of each syzygy"
 	  },
      Outputs => {
-	  GroebnerBasis => "a Groebner basis computation object"
+	  GroebnerBasis => "a Gröbner basis computation object"
 	  },
      Consequences => {
 	  },
-     "See ", TO "Groebner bases", " for more 
+     "See ", TO "Gröbner bases", " for more 
      information and examples.",
      PARA{},
-     "The returned value is not the Groebner basis itself.  The
-     matrix whose columns form a sorted, auto-reduced Groebner
+     "The returned value is not the Gröbner basis itself.  The
+     matrix whose columns form a sorted, auto-reduced Gröbner
      basis are obtained by applying ", TO generators, " (synonym: ", TT "gens", ")
      to the result of ", TT "gb", ".",
      EXAMPLE {
@@ -75,7 +76,7 @@ document {
 	  "G = gens gb I"
 	  },
      SeeAlso => {
-	  "Groebner bases",
+	  "Gröbner bases",
 	  (generators,GroebnerBasis),
 	  "gbTrace",
 	  installHilbertFunction,
@@ -87,7 +88,7 @@ document {
 
 document {
      Key => GroebnerBasisOptions,
-     "This class is used internally to record the options used with ", TO "gb", " when the resulting Groebner basis is
+     "This class is used internally to record the options used with ", TO "gb", " when the resulting Gröbner basis is
      cached inside a matrix."
      }
 

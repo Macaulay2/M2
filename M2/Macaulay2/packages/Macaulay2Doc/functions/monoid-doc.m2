@@ -1,3 +1,4 @@
+-- -*- coding: utf-8 -*-
 document {
      Key => {monoid,(monoid, Array),(monoid, List),(monoid, PolynomialRing),(monoid, QuotientRing), [monoid,DegreeRank], [monoid,Heft],
 	  [monoid,Inverses],[monoid,MonomialSize],VariableBaseName,[monoid,VariableBaseName],
@@ -16,7 +17,7 @@ document {
 	  Global => Boolean => {"whether monoid rings based on this monoid are to be global rings.
 	       If set to ", TO "true", ", and the option ", TT "Inverses=>true", " is
 	       not specified, then an error is signalled if any of the variables are not greater
-	       than 1 in the monomial ordering, as required by the standard theory of Groebner bases."
+	       than 1 in the monomial ordering, as required by the standard theory of Gröbner bases."
 	       },
 	  Local => Boolean => {"whether this ring is to be a local ring; implies ", TT "Global => false"},
 	  MonomialOrder => List => {"an option for specifying the monomial ordering, see ", TO "MonomialOrder"},

@@ -1,3 +1,5 @@
+-- -*- coding: utf-8 -*-
+-- -*- coding: utf-8 -*-
 document {
      Key => "ideals",
      HEADER2 "An overview",     
@@ -21,7 +23,7 @@ document {
 	  TO "minimal primes of an ideal",
 	  TO "associated primes of an ideal",
 	  TO "primary decomposition",
-	  -- TO "Groebner bases", -- already referred to in the Mathematical Overview
+	  -- TO "Gröbner bases", -- already referred to in the Mathematical Overview
 	  },
      PARA{},
      "For those operations where we consider an ideal as a module, such

@@ -1,3 +1,4 @@
+-- -*- coding: utf-8 -*-
 --- status: TODO
 --- author(s): 
 --- notes: 
@@ -7,11 +8,11 @@ document {
 	  (gbRemove,Ideal),
 	  (gbRemove,Matrix),
 	  (gbRemove,Module)},
-     Headline => "remove Groebner basis",
+     Headline => "remove Gröbner basis",
      Usage => "gbRemove M",
      Inputs => { "M" => {ofClass{Ideal,Matrix,Module}}},
-     Consequences => {"all Groebner bases computed for M are removed"},
-     "This is a simple way to remove the space associated with large Groebner bases
+     Consequences => {"all Gröbner bases computed for M are removed"},
+     "This is a simple way to remove the space associated with large Gröbner bases
      that are no longer needed.",
      EXAMPLE lines ///
      	  R = ZZ[a]/(a^2-3)[x,y]

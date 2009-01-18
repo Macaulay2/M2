@@ -1,3 +1,4 @@
+-- -*- coding: utf-8 -*-
 --- status: Draft
 --- author(s): MES
 --- notes: 
@@ -26,7 +27,7 @@ document {
      "The declaration is accomplished by setting ", TT "R.isField", " to be ", TT "true", ",
      and, in case the ring is a ring handled by the engine, informing the
      engine.  Polynomial rings over rings declared to be fields support
-     Groebner basis operations.",
+     Gröbner basis operations.",
      PARA{},
      "If the engine eventually discovers that some nonzero element of ", TT "R", "
      is not a unit, an error will be signalled.  The user may then use

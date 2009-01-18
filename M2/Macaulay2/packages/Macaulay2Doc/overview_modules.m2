@@ -1,3 +1,4 @@
+-- -*- coding: utf-8 -*-
 document {
      Key => Module,
      Headline => "the class of all modules",
@@ -70,7 +71,7 @@ document {
 	  TO (poincare, Module),
 	  TO (regularity, Module),
 	  },
-     "Annihilators, quotients and Groebner bases:",
+     "Annihilators, quotients and Gröbner bases:",
      UL {
 	  TO (gb, Module),
 	  TO (symbol :, Module, Ideal),
@@ -466,7 +467,7 @@ document {
 	  },
      "Macaulay 2 also does not check that the homomorphism is well-defined
      (i.e. the relations of the source map into the relations of the target).
-     Use ", TO isWellDefined, " to check.  This generally requires a Groebner
+     Use ", TO isWellDefined, " to check.  This generally requires a Gröbner
      basis computation (which is performed automatically, if it is required
 	  and has not already been done).",
      EXAMPLE {

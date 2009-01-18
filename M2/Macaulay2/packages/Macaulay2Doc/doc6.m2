@@ -1,3 +1,4 @@
+-- -*- coding: utf-8 -*-
 --		Copyright 1993-2002 by Daniel R. Grayson
 document {
      Key => odd,
@@ -92,7 +93,7 @@ document {
      may be equal without displaying the same numerator and denominator.",
      PARA{},
      "Computations over fraction fields, or polynomial rings over fraction fields,
-     especially Groebner basis computations, are much slower than over prime fields.
+     especially Gröbner basis computations, are much slower than over prime fields.
      Still, an attempt is made to speed up these computations as much as possible, and
      more is planned in the future.",
      PARA{},

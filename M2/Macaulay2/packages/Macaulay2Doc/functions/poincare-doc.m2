@@ -1,3 +1,5 @@
+-- -*- coding: utf-8 -*-
+-- -*- coding: utf-8 -*-
 --- status: DRAFT
 --- author(s): L. Gold
 --- notes: Do something about 3rd para. of "poincare" node
@@ -21,8 +23,8 @@ document {
 --      PARA{},
 --      TT "(cokernel f).cache.poincare = p", " -- inform the system that
 --      the Poincare polynomial of the cokernel of ", TT "f", " is ", TT "p",
---      ".  This can speed the computation of a Groebner basis of ",
---      TT "f", ".  For details, see ", TO "Groebner bases",
+--      ".  This can speed the computation of a Gröbner basis of ",
+--      TT "f", ".  For details, see ", TO "Gröbner bases",
 --      ".",
      SeeAlso => {"poincareN", "degreesRing", "hilbertFunction",
 	  "hilbertSeries", "hilbertPolynomial", "reduceHilbert"}

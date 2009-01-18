@@ -1,3 +1,4 @@
+-- -*- coding: utf-8 -*-
 --- status: Draft
 --- author(s): MES
 --- notes: This function is not functional yet
@@ -21,7 +22,7 @@ document {
 	  getNonUnit A
           ///,
      "Warning: this function does not work yet for divisions attempted in the course
-     of computing a Groebner basis or resolution.",
+     of computing a Gröbner basis or resolution.",
      SeeAlso => { "toField", "frac" }
      }
 

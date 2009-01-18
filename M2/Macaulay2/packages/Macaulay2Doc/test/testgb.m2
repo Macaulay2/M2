@@ -1,6 +1,8 @@
+-- -*- coding: utf-8 -*-
+
 -- Copyright 1995  Michael E. Stillman
 --
--- Test some of the Groebner basis/syzygy code 
+-- Test some of the Gröbner basis/syzygy code 
 --
 -- 
 
@@ -50,7 +52,7 @@ strat = LongPolynomial;
 		{4}, {4}, {4}, {4}, {4}, {4}, {4}, {4}, {4}, {4}, {4}, {4}, {4}, 
 		{4}, {4}, {4}, {4}, {4}, {4}, {4}, {4}});
 
-    -- test Hilbert-driven Groebner basis
+    -- test Hilbert-driven Gröbner basis
     R = ZZ/101[vars(0..17)];
     m1 = genericMatrix(R,R_0,3,3);
     m2 = genericMatrix(R,R_9,3,3);

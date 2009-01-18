@@ -1,3 +1,4 @@
+-- -*- coding: utf-8 -*-
 document {
      Key => {Macaulay2Doc,"Macaulay2"},
      PARA IMG ("src" => replace("PKG","Style",currentLayout#"package") | "9planets.gif", "alt" => "image of nine planets"),
@@ -21,7 +22,7 @@ document {
 	       TO "modules",
 	       TO "chain complexes",
 	       TO "varieties",
-	       TO "Groebner bases",
+	       TO "Gröbner bases",
 	  "Some Mathematical Computations",
 	       TO "normal forms",
 	       -- Mike wanted this: TO "Hilbert functions",

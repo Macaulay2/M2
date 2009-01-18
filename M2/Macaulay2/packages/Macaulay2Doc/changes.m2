@@ -303,6 +303,10 @@ document {
 		    LI {
 			 "Macaulay 2 now incorporates ", TO "pari", ", a free library for computing in number theory.
 			 It is called upon by ", TO (factor,ZZ), ", and we expect to use more of its functionality soon."
+			 },
+		    LI {
+			 "The quotient and remainder for two ring elements can now be obtained simultaneously,
+			 saving time.  See ", TO (quotientRemainder,RingElement,RingElement), "."
 			 }
 		    }
 	       }
@@ -355,7 +359,7 @@ document {
      Documentation has been improved, with every function documented.
      ///,
      PARA ///
-     Computation of Groebner bases over local rings has been improved.  New
+     Computation of Gröbner bases over local rings has been improved.  New
      notation QQ{x,y,z} for local rings.  More precisely
      ///,
      PARA ///
@@ -365,7 +369,7 @@ document {
      scalar product of the provided heft vector with the degree vector.
      ///,
      PARA ///
-     The implementation of the Groebner basis algorithm for polynomial rings
+     The implementation of the Gröbner basis algorithm for polynomial rings
      where the multi-degrees of the variables don't all have strictly positive
      first component has been fixed by having it use the heft vector provided.
      The problem was that bases were not minimalized, and S-pairs were
@@ -378,7 +382,7 @@ document {
      ///,
      PARA {"A bug in ", TO "trim", " and ", TO "mingens", " resulting in incorrect answers was fixed."},
      PARA ///
-     A bug in computation of the Groebner basis of an exterior algebra over Z
+     A bug in computation of the Gröbner basis of an exterior algebra over Z
      was fixed.
      ///,
      PARA {
@@ -389,7 +393,7 @@ document {
      	  ", TO "getNonUnit", " returns that value."
 	  },
      PARA ///
-     The Groebner basis routine can now handle large monomial ideals without a
+     The Gröbner basis routine can now handle large monomial ideals without a
      stack overflow.
      ///,
      PARA {"The function ", TO "monomialIdeal", ", over polynomial rings over ", TO "ZZ", ", now incorporates

@@ -1,3 +1,4 @@
+-- -*- coding: utf-8 -*-
 ----------- File Mike is Working on! -------------------------
 
 document {
@@ -121,7 +122,7 @@ document {
       	  "f = random(2,R)",
 	  "f = (leadCoefficient f)^(-1) * f"
 	  },
-     "Groebner bases, and all related computations work in these rings.",
+     "Gröbner bases, and all related computations work in these rings.",
      PARA{},
 	"The prime finite fields can be made easily as quotient rings of ", TO "ZZ", ".",
 	EXAMPLE "ZZ/101",
@@ -187,7 +188,7 @@ document {
      -- The variables get set?  Doing a quotient ring twice: ie. R/I, then R/I
      -- gives DIFFERENT rings.  Pointer to working with multiple rings.
      "The usual notation is used to form quotient rings.  For quotients of
-     polynomial rings, a Groebner basis is computed
+     polynomial rings, a Gröbner basis is computed
      and used to reduce ring elements to normal form after arithmetic operations.",
      EXAMPLE {
 	  "R = ZZ/11",
@@ -490,7 +491,7 @@ document {
       	  "liftable(f,R)",
       	  "lift(1/f,R)"
 	  },
-     "Note that computations, such as Groebner bases, over fraction fields can be quite slow.",
+     "Note that computations, such as Gröbner bases, over fraction fields can be quite slow.",
      SeeAlso => {
 	  frac,
 	  numerator,
@@ -545,7 +546,7 @@ document {
 	  "x*y",
 	  "matrix{{x}} * matrix{{y}}"
 	  },
-     "You may compute Groebner bases, syzygies, and form quotient rings of these skew
+     "You may compute Gröbner bases, syzygies, and form quotient rings of these skew
      commutative rings."
      }
 
@@ -635,7 +636,7 @@ document {
 	  "dx*x",
 	  "matrix{{dx}} * matrix{{x}}"
 	  },
-     "All Groebner basis and related computations work over this ring.  For an extensive
+     "All Gröbner basis and related computations work over this ring.  For an extensive
      collection of D-module routines (A D-module is a module over a Weyl algebra), see ",
      TO "Dmodules::Dmodules", "."
      }

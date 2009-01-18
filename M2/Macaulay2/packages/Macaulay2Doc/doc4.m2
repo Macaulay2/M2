@@ -1,3 +1,4 @@
+-- -*- coding: utf-8 -*-
 --		Copyright 1993-1998 by Daniel R. Grayson
 
 document {
@@ -673,8 +674,8 @@ document {
 	  D1 - P1*M*Q1 == 0
 	  prune coker M
      ///,
-     "This routine is under development.  The main idea is to compute a Groebner basis, transpose the generators, and repeat, until
-     we encounter a matrix whose transpose is already a Groebner basis.  This may depend heavily on the monomial order.",
+     "This routine is under development.  The main idea is to compute a Gröbner basis, transpose the generators, and repeat, until
+     we encounter a matrix whose transpose is already a Gröbner basis.  This may depend heavily on the monomial order.",
      Caveat => "The Smith normal form itself is NOT returned! This function is under development, 
      and its performance might need to be improved.  Also, this function
        doesn't warn the user if the ring is not a PID.",

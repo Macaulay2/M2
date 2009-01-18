@@ -1,3 +1,4 @@
+-- -*- coding: utf-8 -*-
 --------------------------------
 -- 4 by 4 commuting matrices.
 -- Adapted from 4by4.m2
@@ -159,7 +160,7 @@ mgb = rawGBGetMatrix(Gcomp)
 ---------------------------------------
 -- An example of Buchweitz
 -- I = (x_1^q, ..., x_n^q, f), over ZZ/p, q = p^d.
--- compute a Groebner basis, for various (random) f
+-- compute a Gröbner basis, for various (random) f
 -- and various q.
 needs "raw-util.m2"
 R = polyring(rawZZp 5, (symbol a .. symbol d))

@@ -1,39 +1,40 @@
+-- -*- coding: utf-8 -*-
 --- status: TODO
 --- author(s): 
 --- notes: 
 
 document { 
      Key => {forceGB, (forceGB,Matrix)},
-     Headline => "declare that the columns of a matrix are a Groebner basis",
+     Headline => "declare that the columns of a matrix are a Gröbner basis",
      Usage => "forceGB f",
      Inputs => { "f" => Matrix },
      Outputs => { GroebnerBasis },
      "Declares that the columns of the matrix ", TT "f", "
-     constitute a Groebner basis, autoreduces it, minimizes it, sorts it, and returns a Groebner basis object
+     constitute a Gröbner basis, autoreduces it, minimizes it, sorts it, and returns a Gröbner basis object
      declaring itself complete, without computing any S-pairs.",
      PARA{},
      "Sometimes one knows that a set of polynomials (or columns of such)
-     form a Groebner basis, but ", EM "Macaulay 2", " doesn't.  This is the
+     form a Gröbner basis, but ", EM "Macaulay 2", " doesn't.  This is the
      way to inform the system of this fact.",
      EXAMPLE {
 	  "gbTrace = 3;",
 	  "R = ZZ[x,y,z];",
 	  "f = matrix{{x^2-3, y^3-1, z^4-2}};",
 	  "g = forceGB f"},
-     "This Groebner basis object is stored with the matrix and can be
+     "This Gröbner basis object is stored with the matrix and can be
      obtained as usual:",
      EXAMPLE {
 	  "g === gb(f, StopBeforeComputation=>true)"
 	  },
-     "Requesting a Groebner basis for ", TT "f", " requires no computation.",
+     "Requesting a Gröbner basis for ", TT "f", " requires no computation.",
      EXAMPLE {
 	  "gens gb f"
 	  },
      PARA {
-	  "If an autoreduced Groebner basis is desired, replace ", TT "f", " by ", TT "gens forceGB f", " first."
+	  "If an autoreduced Gröbner basis is desired, replace ", TT "f", " by ", TT "gens forceGB f", " first."
 	  },
-     Caveat => {"If the columns do not form a Groebner basis, nonsensical answers may result"},
-     SeeAlso => {"Groebner bases"}
+     Caveat => {"If the columns do not form a Gröbner basis, nonsensical answers may result"},
+     SeeAlso => {"Gröbner bases"}
      }
 document { 
      Key => [forceGB, ChangeMatrix],
@@ -41,7 +42,7 @@ document {
      Usage => "forceGB(...,ChangeMatrix=>m)",
      Inputs => { "m" => Matrix },
      Consequences => {
-	  "Set the change of basis matrix from the Groebner basis
+	  "Set the change of basis matrix from the Gröbner basis
 	  to the original generators"
 	  },     
      "The matrix ", TT "m", " should have size a by b, where a is the
@@ -98,5 +99,5 @@ document {
      Caveat => {"If the columns of ", TT "z", " do not generate the 
 	  syzygy module of ", TT "f", ",
 	  nonsensical answers may result"},
-     SeeAlso => {"Groebner bases"}
+     SeeAlso => {"Gröbner bases"}
      }

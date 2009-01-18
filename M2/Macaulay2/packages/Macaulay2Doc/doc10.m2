@@ -1,3 +1,4 @@
+-- -*- coding: utf-8 -*-
 --		Copyright 1993-2002 by Daniel R. Grayson
 
 
@@ -133,7 +134,7 @@ document {
      which algorithm to use.  Strategies are specified by number and the
      algorithms available are",
      UL {
-	  SPAN (TT "Strategy => 0", " -- Compute syzygies on the Groebner bases of each syzygy
+	  SPAN (TT "Strategy => 0", " -- Compute syzygies on the Gröbner bases of each syzygy
 	       module.  The algorithm uses important speedups due to R. La Scala.
 	       This algorithm appears to be on the average the fastest."),
 	  SPAN (TT "Strategy => 1", " -- An older version of algorithm 0, which doesn't allow as 

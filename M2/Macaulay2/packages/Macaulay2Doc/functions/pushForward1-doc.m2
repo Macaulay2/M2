@@ -1,3 +1,4 @@
+-- -*- coding: utf-8 -*-
 --- status: Draft
 --- author(s): MES, taken from stuff before
 --- notes: 
@@ -32,7 +33,7 @@
 --       	  pushForward1(F,S^1)
 -- 	  ///,
 --      PARA{},
---      "The following code performs the Groebner computation using a product order 
+--      "The following code performs the Gröbner computation using a product order 
 --      rather than the default elimination order.",
 --      EXAMPLE lines ///
 --       	  F = map(S,R,matrix{{s^4, s^3*t, s*t^3, t^4}})     

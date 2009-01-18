@@ -1,3 +1,4 @@
+-- -*- coding: utf-8 -*-
 --- status: TODO
 --- author(s): MES, some from before
 --- notes: 
@@ -22,7 +23,7 @@ document {
 	 thesis should be used.",
 	 PARA{},
 	 "The method is to compute ", TT "(I:f)", " for ", TT "I", " and ", TT "f", " homogeneous,
-	 add a new variable ", TT "z", ", compute a Groebner basis of ", TT "(I,f-z)", " in reverse 
+	 add a new variable ", TT "z", ", compute a Gröbner basis of ", TT "(I,f-z)", " in reverse 
 	 lex order, divide by ", TT "z", ", and finally replace ", TT "z", " by ", TT "f", ".",
      SUBSECTION "Eliminate",
 	 TT "saturate(I,f,Strategy => Eliminate)", " -- indicates that the
@@ -87,7 +88,7 @@ document {
 	  },
      PARA{},
      "If I and J are both monomial ideals, then a faster algorithm is used.  If I or J is not a monomial ideal, 
-     generally Groebner bases will be used to the compute the saturation.  These will be computed as needed.",
+     generally Gröbner bases will be used to the compute the saturation.  These will be computed as needed.",
      PARA{},
      "The computation is currently not stored anywhere: this means
      that the computation cannot be continued after an interrupt.

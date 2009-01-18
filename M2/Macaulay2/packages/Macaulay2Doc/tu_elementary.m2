@@ -1,5 +1,6 @@
+-- -*- coding: utf-8 -*-
 -- 	In this tutorial we introduce a number
--- of basic operations using Groebner bases, and
+-- of basic operations using Gröbner bases, and
 -- at the same time become familiar with a range
 -- of useful Macaulay 2 constructs. The sections are:
 --
@@ -18,7 +19,7 @@
 -- A. First Steps; example with a monomial curve
 ------------------------------------------------
 
--- To compute the Groebner basis of an ideal
+-- To compute the Gröbner basis of an ideal
 -- $(x^2y,xy^2+x^3)$ in the polynomial ring in
 -- four variables we proceed as follows:
 --
@@ -157,7 +158,7 @@ betti Mres
 
 -- An interesting and illustrative open problem
 -- is to understand the initial ideal (and 
--- the Groebner basis) of a ``generic'' 
+-- the Gröbner basis) of a ``generic'' 
 -- regular sequence.  To study a very simple case
 -- we take a matrix of 2 random forms 
 -- in a polynomial ring in
@@ -177,7 +178,7 @@ GB = gens gb F
 LT = leadTerm gens gb F
 betti LT
 
--- shows that there are Groebner basis elements
+-- shows that there are Gröbner basis elements
 -- of degrees 2,3, and 4.  This result is
 -- dependent on the monomial order in the ring $R$;
 -- for example we could take the lexicographic
@@ -193,14 +194,14 @@ GB = gens gb F
 LT = leadTerm gens gb F
 betti LT
 
--- and there are Groebner basis elements of degrees 
+-- and there are Gröbner basis elements of degrees 
 -- $2,3,4,5,6.$
 
 
 -----------------------------------------------
 -- C. Division With Remainder
 -----------------------------------------------
--- A major application of Groebner bases is
+-- A major application of Gröbner bases is
 -- to decide whether an element is in a given
 -- ideal, and whether two elements reduce to
 -- the same thing modulo an ideal.  For
@@ -273,7 +274,7 @@ Tr^6 == I * (Tr^6 // I) + (Tr^6 % I)
 -- by the three $2 \times 2$ minors of a certain
 -- $2 \times 3$ matrix into the plane.  
 -- Such problems can be solved in a very 
--- simple and direct way using Groebner bases.
+-- simple and direct way using Gröbner bases.
 -- The technique lends itself to many extensions,
 -- and in its developed form can be used to find
 -- the closure of the image of any map of 
@@ -325,7 +326,7 @@ S = KK[y_0..y_3,MonomialOrder=> Eliminate 1]
 I1 = substitute(I, matrix{{y_0,y_1,y_2,y_3-y_0}})
 
 -- The elimination of 1 variable from the 
--- matrix of Groebner basis elements proceeds
+-- matrix of Gröbner basis elements proceeds
 -- as follows:
 
 J = selectInSubring(1,gens gb I1)
@@ -367,7 +368,7 @@ J1 = ker f
 ----------------------------------------------
 
 -- Another typical application of 
--- Groebner bases and syzygies is to the
+-- Gröbner bases and syzygies is to the
 -- computation of ideal quotients and 
 -- saturations.  Again we give an easy example
 -- that we can treat directly, and then 
@@ -483,7 +484,7 @@ I23 = I22 : d
 -- computation of the union of the $(I:d^n)$,
 -- which is called the saturation of $I$ with
 -- respect to $d$, and written $(I:d^\infty)$,
--- is first to compute a reverse lex Groebner
+-- is first to compute a reverse lex Gröbner
 -- basis.
 
 gens gb I1

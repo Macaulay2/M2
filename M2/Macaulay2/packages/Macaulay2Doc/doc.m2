@@ -1,3 +1,4 @@
+-- -*- coding: utf-8 -*-
 --		Copyright 1993-1999 by Daniel R. Grayson
 
 undocumented toList (symbol a .. symbol Z)
@@ -1112,7 +1113,7 @@ document {
      Headline => "a binary operator, usually used for remainder and reduction",
      Usage => "x % y",
      "The usual meaning for this operator is remainder, or normal form with respect
-     to a Groebner basis.",
+     to a Gröbner basis.",
      PARA{},
      "For integers, the remainder is non-negative.",
      EXAMPLE lines ///
@@ -1128,7 +1129,7 @@ document {
        B = QQ[a,b]
        (3*a^3-a*b-4) % (5*a-b)
      ///,
-     "In more complicated situations, Groebner bases are usually needed.  See ",
+     "In more complicated situations, Gröbner bases are usually needed.  See ",
      TO "methods for normal forms and remainder", ".",
      SeeAlso => { remainder, remainder', pseudoRemainder, "//"}
      }
@@ -1616,7 +1617,7 @@ document {
 	  to see whether two representations of the same mathematical object are being
 	  compared.  For example, an ideal in a ring is represented by giving its
 	  generators, and checking whether two sets of generators produce the same
-	  ideal involves a computation with Groebner bases.  The ideals must be defined
+	  ideal involves a computation with Gröbner bases.  The ideals must be defined
 	  in the same ring."
 	  },
      HEADER3 "Ideals",

@@ -1,3 +1,4 @@
+-- -*- coding: utf-8 -*-
 scan((
      -- some optional arguments
 	  FollowLinks,Hilbert,Options,InstallPrefix,PackagePrefix,Exclude,Encapsulate,CompleteIntersection,MaximalRank,MaxReductionCount,Reverse,
@@ -74,7 +75,7 @@ document {
      "Some other potential help topics:",
      UL {
 	  -- Mike wanted this: TT "help \"monomial orders\"",
-	  TT "help \"Groebner bases\"",
+	  TT "help \"Gröbner bases\"",
 	  TT "help \"multigraded polynomial rings\""
 	  },
      SeeAlso => {viewHelp, infoHelp,  apropos, code, examples, "reading the documentation"}
