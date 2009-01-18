@@ -1,14 +1,13 @@
--- -*- coding: utf-8 -*-
 newPackage(
-	"BoijSoderberg",
+	"BoijSoederberg",
     	Version => "0.2", 
     	Date => "June 16, 2008",
     	Authors => {
 	     {Name => "David Eisenbud", Email => "de@msri.org", HomePage => "http://www.msri.org/~de/"},
-	     {Name => "Frank Schreyer"},
+	     {Name => "Frank Schreyer", Email => "", HomePage => ""},
 	     {Name => "Mike Stillman", Email => "mike@math.cornell.edu", HomePage => "http://www.math.cornell.edu/~mike"}
 	     },
-    	Headline => "betti diagram operations useful for investigating the Boij-Soderberg conjectures",
+    	Headline => "betti diagram operations useful for investigating the Boij-Soederberg conjectures",
     	DebuggingMode => true
     	)
 
@@ -36,8 +35,7 @@ export {
      bott, -- documented
      
      CohomologyTally,
-     mat2cohom,
-     cohomologyTable -- not written
+     mat2cohom
      }
 -- Also defined here:
 -- pdim BettiTally
@@ -59,7 +57,7 @@ hf = (degrange, M) -> apply(degrange, d -> hilbertFunction(d,M))
 
 -- TO IMPLEMENT:
 --   matrix(CohomologyTally, ...)
---   cohomologyTable Sheaf (probably need HF for this)
+--   cohomologyTable Sheaf (probably need HF for this) -- done in BGG0
 --   BettiTally * CohomologyTally DONE
 --   supportFunctional
 -- TO DOCUMENT:
@@ -114,11 +112,6 @@ rawCohomologyTallyFormat = v -> (
 
 net CohomologyTally := v -> netList(rawCohomologyTallyFormat v, Alignment => Right, HorizontalSpace => 1, BaseRow => 1, Boxes => false)
 
-cohomologyTable = method()
-cohomologyTable(CoherentSheaf,ZZ,ZZ) := (F, lowDegree, highDegree) -> (
-     error "to be written"
-     )
-
 BettiTally * CohomologyTally := (B,C) -> (
      sum apply(keys B, (i,md,d) -> sum apply(keys C, (j,k) -> 
 	       if j > i and first md =!= -k then 0 else (-1)^(i-j) * B#(i,md,d) * C#(j,k)))
@@ -140,7 +133,7 @@ mat2betti Matrix := (M) -> mat2betti(M,0)
 
 mat2cohom = method()
 mat2cohom(Matrix,ZZ) := (M,lowDegree) -> (
-     -- lowDegreeis the degree of the first column
+     -- lowDegree is the degree of the first column
      e := entries M;
      n := #e-1; -- row indices are n-1 .. 0
      a := flatten apply(#e, i -> 
@@ -150,9 +143,21 @@ mat2cohom(Matrix,ZZ) := (M,lowDegree) -> (
      )
 
 TEST ///
-matrix "1,0,0,0;
+M = matrix "1,0,0,0;
         0,4,4,1"
-mat2betti oo
+B = mat2betti oo 
+assert (M == matrix B)
+
+B2 = mat2betti(M,2)
+assert(M == matrix B2)
+///
+
+TEST ///
+m = matrix "5,0,0,0,0;
+     	0,1,1,0,0;
+	0,0,0,1,2"
+c = mat2cohom (oo,0)
+
 ///
 
 matrix(BettiTally, ZZ, ZZ) := opts -> (B,lowestDegree, highestDegree) -> (
@@ -181,8 +186,12 @@ TEST ///
 R = ZZ/101[a..e]
 I = ideal borel monomialIdeal"abc,ad3,e4"
 B = betti res I
-matrix(B,0,3)
-matrix B
+M = matrix "1,0,0,0,0,0;
+     	    0,0,0,0,0,0;
+	    0,5,6,2,0,0;
+	    0,51,176,230,135,30"
+assert(matrix(B,0,3) == M)
+assert(matrix B == M)
 B = pureBettiDiagram{0,3,4,7,9}
 C = matrix B
 assert(B == mat2betti C)
@@ -212,7 +221,18 @@ isPure = method()
 isPure BettiTally := (B) -> lowestDegrees B == highestDegrees B
 
 TEST ///
---load "BoijSoderberg.m2"
+matrix "1,0,0;
+     	0,2,3"  
+B = mat2betti oo
+assert(isPure B)
+
+matrix "1,0,0; 0,2,1; 0,1,1"
+B2 = mat2betti oo
+assert(not isPure B2)
+///
+
+TEST ///
+--load "BoijSoederberg.m2"
 m=matrix"1,0,0;
 0,1,1;
 0,0,1"
@@ -230,34 +250,6 @@ assert(highestDegrees B == {0,-infinity,4})
 -------------------------------------
 -- Pure Betti diagrams --------------
 -------------------------------------
-pureBetti = method()
-pureBetti List := (Degs)-> (
---Input: Degs must be a strictly increasing list of positive integers
---Output: List of ranks of the minimal integral betti sequence that satisfy the
---"Peskine-Szpiro" equations
-     if not isStrictlyIncreasing Degs then error "pureBetti was given degrees that were not strictly increasing";
-     c:= # Degs;
-     p:=1;
-     for i from 1 to c-1 do (for j from 0 to i-1 do p=p*(Degs_i-Degs_j));
-     D:=for i from 0 to c-1 list(
-         (-1)^i* product(i, j->Degs_j-Degs_i)*product(i+1..c-1, j->Degs_j-Degs_i));
-     Bettis=for i from 0 to c-1 list (p/D_i);
-     Bettis= apply(Bettis/(gcd Bettis), i->lift(i,ZZ)))
-
---Now some routines for displaying the answer:
---Input: Degs must be a strictly increasing list of positive integers
---Output: Hash table with the same content as the BettiTally that would display
---the Betti numbers given by pureBetti
-
-pureBettiDiagram = method()
-pureBettiDiagram List := (Degs) -> (
---The betti diagram of a pure degree sequence (generator of the ray, according
---to Boij-Soderberg; need not be an actual resolution.)
-     Bettis:=pureBetti Degs;
-     BB:=new MutableHashTable;
-     scan(#Degs, i->BB#(i,{Degs_i},Degs_i)=Bettis_i);
-     new BettiTally from BB)
-
 --Input: Degs must be a strictly increasing list of positive integers
 --Output: List of ranks of the minimal integral betti sequence that satisfy the
 --"Peskine-Szpiro" equations
@@ -266,7 +258,7 @@ pureBetti List := (Degs) -> (
      c := # Degs;
      p := 1;
      for i from 1 to c-1 do (
-	  if Degs#i <= Degs#(i-1) then error "pureBetti: expected an increasing list of integers";
+	  if Degs#i <= Degs#(i-1) then error "--pureBetti: expected an increasing list of integers";
 	  for j from 0 to i-1 do p=p*(Degs_i-Degs_j)
 	  );
      D := for i from 0 to c-1 list (-1)^i * product(i, j->Degs_j-Degs_i) * product(i+1..c-1, j->Degs_j-Degs_i);
@@ -281,13 +273,27 @@ pureBettiDiagram List := (degs) -> (
      )
 
 TEST ///
-pureBetti{0,1,2,3,4}
-B=pureBetti{0,2,3,4}
+assert(pureBetti{0,1,2,3,4} == {1,4,6,4,1})
+B = pureBettiDiagram {0,1,2,3,4}
+assert(B == mat2betti matrix "1,4,6,4,1")
+
+B1=pureBetti{0,2,3,4}
+assert (B1 == {1,6,8,3})
 D1=pureBettiDiagram {0,2,3,4}
+assert (D1 == mat2betti matrix "1,0,0,0; 0,6,8,3")
+
+B2 = pureBetti {0,2,3,5}
+assert(B2 == {1,5,5,1})
+D2 = pureBettiDiagram {0,2,3,5}
+m = matrix "1,0,0,0;
+     	    0,5,5,0;
+	    0,0,0,1"   
+assert(D2 == mat2betti m)
+
 ///
 
 ---------------------------------------------
--- Decoomposing a Betti diagram into pures --
+-- Decomposing a Betti diagram into pures --
 ---------------------------------------------
 
 --input: list of rational numbers
@@ -298,7 +304,7 @@ isStrictlyIncreasing=L->(
      t)
 
 TEST ///
-debug BoijSoderberg
+debug BoijSoederberg
 L={1,4,5,9}
 assert(isStrictlyIncreasing L)
 L={1,4,5,9,9}
@@ -307,7 +313,7 @@ assert(not isStrictlyIncreasing L)
 
 --input: a BettiTally or a similar hash table
 --output: a triple, 
---First element: the first summand in the (conjectural) Boij-Soderberg decomposition
+--First element: the first summand in the (conjectural) Boij-Soederberg decomposition
 --second element: the multiplier
 --third element: the result of subtracting it.
 decompose1= B->(
@@ -319,7 +325,7 @@ decompose1= B->(
      )
 
 --input: a BettiTally
---output: The routine prints the Boij-Soderberg summands.
+--output: The routine prints the Boij-Soederberg summands.
 --prints "not in convex hull" if the given BettiTally is not in the convex
 --hull of the allowable pure betti diagrams. Prints an error message
 --if the decomposition fails. Returns a list of the components as a list of pairs,
@@ -337,10 +343,52 @@ decompose BettiTally := B-> (
      sum Components)
 
 TEST ///
-matrix "1,0,0,0;
+M=matrix "1,0,0,0;
         0,4,4,1"
-mat2betti oo	
-decompose oo
+B=mat2betti M
+C=decompose B
+L=set apply(toList C,x->x#1)
+m1=mat2betti matrix "1,0,0,0;
+                     0,6,8,3"
+m2=mat2betti matrix "1,0,0;
+                     0,3,2"
+M'=set{m1,m2}
+assert(L===M')
+
+M=matrix "1,0,0,0;
+     	  0,5,5,1;
+	  0,0,1,1"		    
+B=mat2betti M
+C=decompose B
+L=set apply(toList C,x->x#1)
+m1=mat2betti matrix "1,0,0,0;
+                     0,6,8,3"
+m2=mat2betti matrix "1,0,0,0;
+                     0,5,5,0;
+		     0,0,0,1"
+m3=mat2betti matrix "3,0,0,0;
+                     0,10,0,0;
+		     0,0,15,8"
+M'=set{m1,m2,m3}
+assert(L===M')
+
+M=matrix"1,0,0,0;
+     	 0,2,0,0;
+	 0,1,3,1"
+B=mat2betti M
+C=decompose B
+L=set apply(toList C,x->x#1)
+m1=mat2betti matrix"1,0,0;
+     	  0,2,0;
+	  0,0,1"
+m2=mat2betti matrix"3,0,0,0;
+     	  0,10,0,0;
+	  0,0,15,8"
+m3=mat2betti matrix"1,0,0;
+     	  0,0,0;
+	  0,4,3"
+M'=set{m1,m2,m3}
+assert(L===M')
 ///
 
 ---------------------------------------------
@@ -375,6 +423,21 @@ pureCohomologyTable(List, ZZ, ZZ) := (zeros, lo, hi) -> (
 	  if v == 0 then (w=w+1; continue;);
 	  (n-w,i) => lift(v,ZZ)
 	  ));
+
+TEST ///
+m = matrix "4,3,2,1,0,0,0,0;
+            0,0,0,0,1,2,3,4"
+A= mat2cohom (m,-3)
+assert(pureCohomologyTable({0},-3,4) == A)
+
+m2 = matrix "120,70,36,15,4,0,0,0,0,0,0;
+     	     0,0,0,0,0,0,0,0,0,0,0;
+	     0,0,0,0,0,1,0,0,0,0,0;
+	     0,0,0,0,0,0,6,20,45,84,140" 
+A2 = mat2cohom(m2, -5)
+assert(pureCohomologyTable({-3,-2,0},-5,5)==A2)
+
+///
 
 ---------------------------------------------
 -- Facet equations and the quadratic form ---
@@ -487,7 +550,7 @@ upperEquation=(A)->(L:=flipEquation(A);L_(#L-1))
 --the necessary lin comb of the PS equations.
 
 TEST ///
-load "BoijSoderberg.m2"
+load "BoijSoederberg.m2"
 d={0,1,4}
 F=facetEquation(d,0,0,3)
 numericalComplex F
@@ -561,6 +624,20 @@ facetEquation(List,ZZ,ZZ,ZZ) := (de,i,lowestDegree, highestDegree) -> (
      B1:=bettiMatrix(de,lowestDegree,highestDegree);
      if dotProduct(F,B1)>0 then F else -F)
 
+TEST ///
+m = matrix "0,1,-2;
+            0,0,0;
+	    0,0,0"
+assert(facetEquation({0,1,3},1,0,2) == m)
+
+m2 = matrix "24,-7,0,0,4;
+     	     7,0,0,-4,9;
+	     0,0,4,-9,12;
+	     0,0,0,0,10;
+	     0,0,0,0,0"
+assert(facetEquation({1,2,3,5,7}, 2,-1,3) == m2)
+///
+
 dotProduct=method()
 
 dotProduct(Matrix, Matrix):=(A,B)->
@@ -590,6 +667,34 @@ dotProduct(Matrix, ZZ, BettiTally) := (A,lowest, B) -> dotProduct(mat2betti(A,lo
 *}
 
 dotProduct(Matrix, BettiTally) := (A,B) -> dotProduct(A,0,B)
+
+TEST ///
+A = matrix"1,1,0;
+     	   0,1,1;
+	   0,1,1"
+B = matrix"0,1,-2;
+     	   0,0,0;
+	   0,0,0"
+assert(dotProduct(A, B) == 1)
+
+A1 = mat2betti A
+B1 = mat2betti B
+assert(dotProduct(A1, B1)==1)
+
+assert(dotProduct(A, 0, B1)==1)
+
+assert(dotProduct(A, B1)==1)
+
+A2=matrix"1,0,0,0;
+    0,5,5,1;
+    0,0,1,1" 
+B2 = facetEquation({0,2,4,5}, 1,0,2)
+assert(dotProduct(A2,B2)==2)
+assert(dotProduct(mat2betti A2, mat2betti B2)==2)
+assert(dotProduct(A2, mat2betti B2) == 2)
+
+///
+
 
 {* supportFunctional is NOT functional yet *}
 supportFunctional=method()
@@ -641,7 +746,7 @@ rkSchur = (n,L) -> (
      det map(ZZ^n, ZZ^n, (i,j)->binomial(M_i+n-1-i+j, n-1)))
 
 TEST ///
-debug BoijSoderberg
+debug BoijSoederberg
 rkSchur(6,{1,1,1,1}) -- exterior power
 rkSchur(6,{2}) -- symmetric power
 rkSchur(3,{3,2,0})
@@ -724,7 +829,8 @@ randomSocleModule(List, ZZ) := opts -> (L, m) -> (
 TEST ///
 L={0,1,3,4}
 B = pureBettiDiagram L
-betti res randomSocleModule(L,1)
+assert(betti res randomSocleModule(L,1) == mat2betti matrix"1,2,1,0;
+					0,1,2,1")
 assert(2*B == betti res randomSocleModule(L,2))
 assert(3*B == betti res randomSocleModule(L,3))
 
@@ -746,11 +852,63 @@ randomModule(List,ZZ) := opts -> (L, m) -> (
 TEST ///
 L={0,4,9,10}
 B = pureBetti L
-betti res randomModule(L,1)
-betti res randomModule(L,2)
-betti res randomModule(L,3)
-betti res randomModule(L,4)
-betti res randomModule(L,2, CoefficientRing=>ZZ/5)
+
+B'= betti res randomModule(L,1)
+M = mat2betti matrix"1,0,0,0;
+     	       	     0,0,0,0;
+		     0,0,0,0;
+		     0,3,0,0;
+		     0,0,0,0;
+		     0,0,0,0;
+		     0,0,3,0;
+		     0,0,0,0;
+		     0,0,0,0;
+		     0,0,0,1"
+assert(B' == M)
+
+B'=betti res randomModule(L,2)
+M = mat2betti matrix"2,0,0,0;
+     	       	     0,0,0,0;
+		     0,0,0,0;
+		     0,6,0,0;
+		     0,0,0,0;
+		     0,0,0,0;
+		     0,0,0,0;
+		     0,0,16,12"
+assert(B'==M)
+
+B'=betti res randomModule(L,3)
+M = mat2betti matrix"3,0,0,0;
+     	       	     0,0,0,0;
+		     0,0,0,0;
+		     0,9,0,0;
+		     0,0,0,0;
+		     0,0,0,0;
+		     0,0,0,0;
+		     0,0,24,18"
+assert(B'==M)
+
+B'=betti res randomModule(L,4)
+M = mat2betti matrix"4,0,0,0;
+     	       	     0,0,0,0;
+		     0,0,0,0;
+		     0,12,0,0;
+		     0,0,0,0;
+		     0,0,0,0;
+		     0,0,0,0;
+		     0,0,32,24"
+assert(B'==M)
+
+B'=betti res randomModule(L,2, CoefficientRing=>ZZ/5)
+M = mat2betti matrix"2,0,0,0;
+     	       	     0,0,0,0;
+		     0,0,0,0;
+		     0,6,0,0;
+		     0,0,0,0;
+		     0,0,0,0;
+		     0,0,0,0;
+		     0,0,16,12"
+assert(B'==M)
 ///
 
 -------------------------------------------
@@ -810,26 +968,48 @@ bott(List,ZZ,ZZ):=(L,low,high)->(
      )
      
 TEST ///
-bott({3,2,1},-10,0)
-bott({0,0,0},-5,5)
+B1=bott({3,2,1},-10,10)
+M=matrix"924,640,420,256,140,64,20,0,0,0,0,0,0,0,0,0,0,0,0,0,0;
+     	 0,0,0,0,0,0,0,4,0,0,0,0,0,0,0,0,0,0,0,0,0;
+	 0,0,0,0,0,0,0,0,4,0,0,0,0,0,0,0,0,0,0,0,0;
+	 0,0,0,0,0,0,0,0,0,20,64,140,256,420,640,924,1280,1716,2240,2860,3584"
+M1=mat2cohom(M,-10)
+assert(B1==M1)
+
+B2=bott({0,0,0},-5,5)
+M=matrix"35,20,10,4,1,0,0,0,0,0,0;
+         0,0,0,0,0,0,0,0,0,0,0;
+         0,0,0,0,0,0,0,0,0,0,0;
+         0,0,0,0,0,1,4,10,20,35,56"
+M2=mat2cohom(M,-5)
+assert(B2==M2)
+
 
 L={0,0,0}
+A=apply(7,i-> bott(L,i))
+AA={{{0, 0, 0, 0}, 0, 1}, 0, 0, 0, {{0, 0, 0, 0}, 3, 1}, {{1, 0, 0, 0}, 3, 4}, {{2, 0, 0, 0}, 3, 10}}
+assert(A==AA)
+
 for u from 0 to 6 do
 print bott(L,u)
+
 L={5,2,1,1}
-for u from 0 to 10 do (
-  bott({0,0},-1);
-  print bott(L,-u))
+A=apply(10,i->bott(L,i))
+AA={{{5, 2, 1, 1, 0}, 0, 945}, {{4, 1, 0, 0, 0}, 0, 224}, 0, 0, {{3, 0, 0, 0, 0}, 2, 35}, 0, {{3, 1, 1, 0, 0}, 3, 126}, {{3, 2, 1, 0, 0}, 3, 280}, {{3, 3, 1, 0, 0}, 3, 315}, 0}
+assert(A==AA)
+
+for u from 0 to 10 do
+print bott(L,u)
 ///
 
 beginDocumentation()
 
-document { Key => BoijSoderberg,
+document { Key => BoijSoederberg,
      Headline => "Betti diagram routines",
-     EM "BoijSoderberg", " is a package designed to help with the investigation of 
-     the Boij-Soderberg conjectures and theorems.  For the definitions and conjectures, see
+     EM "BoijSoederberg", " is a package designed to help with the investigation of 
+     the Boij-Soederberg conjectures and theorems.  For the definitions and conjectures, see
      math.AC/0611081, \"Graded Betti numbers of Cohen-Macaulay modules and 
-     the Multiplicity conjecture\", by Mats Boij, Jonas Soderberg.",
+     the Multiplicity conjecture\", by Mats Boij, Jonas Soederberg.",
      PARA{},
      SUBSECTION "Manipulation of Betti diagrams",
      UL {
@@ -849,16 +1029,14 @@ document { Key => BoijSoderberg,
      UL {
 	  TO CohomologyTally,
 	  TO pureCohomologyTable,
-	  TO bott,
-	  TO (cohomologyTable,CoherentSheaf,ZZ,ZZ)
+	  TO bott
 	  },
      SUBSECTION "Decomposition into pure diagrams",
      UL {
 	  TO (decompose,BettiTally)
 	  },
      SUBSECTION "Three constructions for pure resolutions.  These routines provide the
-     zero-th betti number given a degree sequence.  These Betti numbers will
-     be positive multiples of the zero-th betti number for the corresponding pure diagram.",
+     zero-th betti number given a degree sequence.",
      UL {
 	  TO pureTwoInvariant,
 	  TO pureWeyman,
@@ -883,9 +1061,10 @@ document {
      Key => CohomologyTally,
      Headline => "cohomology table",
      "A ", TT "CohomologyTally", " is designed to hold cohomology dimensions 
-     h^i(E(d)), for some sheaf or vector bundle F on P^n.  The initial motivation
+     h^i(E(d-i)) in the i-th row and the d-th column of the table, for some sheaf or vector bundle E on P^n.  The initial motivation
      was to provide a nice visual display of this information.  However, some
      computations involving CohomologyTally are implemented."
+     
      }
 
 document { 
@@ -896,7 +1075,7 @@ document {
 	  "B"
 	  },
      Outputs => {
-	  List => "of lowest degree shifts occurring in B"
+	  List => "of lowest degree shifts occuring in B"
 	  },
      EXAMPLE lines ///
      	  R = ZZ/101[a..e];
@@ -915,7 +1094,7 @@ document {
 	  "B"
 	  },
      Outputs => {
-	  List => "of highest degree shifts occurring in B"
+	  List => "of highest degree shifts occuring in B"
 	  },
      EXAMPLE lines ///
      	  R = ZZ/101[a..e];
@@ -928,7 +1107,7 @@ document {
 
 document { 
      Key => {(isPure,BettiTally),isPure},
-     Headline => "is a pure Betti diagram?",
+     Headline => "is a Betti diagram pure?",
      Usage => "isBure B",
      Inputs => {
 	  "B"
@@ -1105,12 +1284,48 @@ document {
      }
 
 document { 
-     Key => {pureCharFree, pureWeyman, pureTwoInvariant,
-	  (pureCharFree,List),
-	  (pureTwoInvariant,List),
-	  (pureWeyman,List)},
+     Key => {pureCharFree,
+	  (pureCharFree,List)},
      Headline => "first betti number of specific exact complex",
-     Usage => "pureCharFree L\n pureTwoInvariant L\npureWeyman L",
+     Usage => "pureCharFree",
+     Inputs => {
+	  List => "a strictly increasing sequence of degrees"
+	  },
+     Outputs => {
+	  ZZ => "The zero-th betti number of the corresponding pure
+	  resolution construction"
+	  }, 
+     TT "pureCharFree", " corresponds to the construction in math.AC/0712.1843v2, \"Betti Numbers of
+     Graded Modules and Cohomology of Vector Bundles\", Section 5.", 
+     EXAMPLE lines ///
+     	  L = {0,2,3,9}
+	  B = pureBettiDiagram L
+     	  pureCharFree L
+     	  L1 = {0,3,4,6}
+	  B1 = pureBettiDiagram L1
+	  pureCharFree L1
+	  ///,
+     "Thus, for large enough multiples m, m*B occurs as the Betti diagram of a module from the pureCharFree construction",
+     PARA{},
+     "However, we can find B itself as the Betti diagram of a module:",
+     EXAMPLE lines ///
+     	  betti res randomSocleModule(L,1)
+     	  betti res randomModule(L,1)
+     	  betti res randomModule({0,6,7,9},1)
+
+     	  betti res randomSocleModule(L1,1)
+     	  betti res randomModule(L1,1)
+     	  betti res randomModule({0,2,3,6},1)
+	  betti res randomSocleModule({0,2,3,6},1)
+     	  ///,
+     SeeAlso => {pureAll, pureWeyman, pureTwoInvariant}
+     }
+
+document { 
+     Key => {pureTwoInvariant,
+	  (pureTwoInvariant,List)},
+     Headline => "first betti number of specific exact complex",
+     Usage => "pureTwoInvariant",
      Inputs => {
 	  List => "a strictly increasing sequence of degrees"
 	  },
@@ -1118,10 +1333,83 @@ document {
 	  ZZ => "The zero-th betti number of the corresponding pure
 	  resolution construction"
 	  },
+     TO "pureTwoInvariant", " corresponds to the construction in math.AC/0709.1529v3 \"The Existence of Pure Free Resolutions\", Section 3.", 
+     EXAMPLE lines ///
+     	  L = {0,2,3,9}
+	  B = pureBettiDiagram L
+     	  pureTwoInvariant L 
+     	  L1 = {0,4,5,7}
+	  B1 = pureBettiDiagram L1
+	  pureTwoInvariant L1
+	  ///,
+     "Thus, for large enough multiples m, m*B occurs as the Betti diagram of a module from the pureTwoInvariant construction",
+     PARA{},
+     "However, B itself occurs as the betti table of a module:",
+     EXAMPLE lines ///
+     	  betti res randomSocleModule(L,1)
+     	  betti res randomModule(L,1)
+     	  betti res randomModule({0,6,7,9},1)
+
+     	  betti res randomSocleModule(L1,1)
+     	  betti res randomModule(L1,1)
+     	  betti res randomModule({0,2,3,7},1)
+     	  betti res randomSocleModule({0,2,3,7},1)
+     	  ///,
+     SeeAlso => {pureAll, pureWeyman, pureCharFree}
+     }
+
+document { 
+     Key => {pureWeyman,
+	  (pureWeyman,List)},
+     Headline => "first betti number of specific exact complex",
+     Usage => "pureWeyman L",
+     Inputs => {
+	  List => "a strictly increasing sequence of degrees"
+	  },
+     Outputs => {
+	  ZZ => "The zero-th betti number of the corresponding pure
+	  resolution construction"
+	  },
+     TO "pureWeyman", " corresponds to the construction in math.AC/0709.1529v3 \"The Existence of Pure Free Resolutions\", Section 4.", 
+     EXAMPLE lines ///
+     	  L = {0,2,3,9}
+	  B = pureBettiDiagram L
+     	  pureWeyman L
+	  
+	  L1 = {0,3,5,6}
+	  B1 = pureBettiDiagram L1
+	  pureWeyman L1
+	  
+	  ///,
+     "Thus, for large enough multiples m, m*B occurs as the Betti diagram of a module in the Weyman construction",
+     PARA{},
+     "However, B itself occurs for some modules:",
+     EXAMPLE lines ///
+     	  betti res randomSocleModule(L,1)
+     	  betti res randomModule(L,1)
+     	  betti res randomModule({0,6,7,9},1)
+
+     	  betti res randomSocleModule(L1,1)
+     	  betti res randomModule(L1,1)
+     	  betti res randomModule({0,1,3,6},1)
+     	  betti res randomSocleModule({0,1,3,6},1)     	  
+	  ///,
+     SeeAlso => {pureAll, pureCharFree, pureTwoInvariant}
+     }
+
+document { 
+     Key => {pureAll,
+	  (pureAll, List)},
+     Headline => "Vector of first betti number of our three specific exact complexes",
+     Usage => "pureAll",
+     Inputs => {
+	  List => "a strictly increasing sequence of degrees"
+	  },
+     Outputs => {
+	  ZZ => "The vector of zero-th betti numbers of the three corresponding pure
+	  resolution construction."
+	  },
      TO "pureAll", " returns all three numbers at one time.",
-     TT "pureTwoInvariant", " corresponds to the construction in ...", 
-     TT "pureCharFree", " corresponds to the construction in ...", 
-     TT "pureWeyman", " corresponds to the construction in ...", 
      EXAMPLE lines ///
      	  L = {0,2,3,9}
 	  B = pureBettiDiagram L
@@ -1139,8 +1427,9 @@ document {
      	  betti res randomModule(L,1)
      	  betti res randomModule({0,6,7,9},1)
      	  ///,
-     SeeAlso => {pureAll}
+     SeeAlso => {pureWeyman, pureTwoInvariant, pureCharFree}
      }
+
 
 document { 
      Key => {(randomModule,List,ZZ),randomModule},
@@ -1209,8 +1498,10 @@ document {
 	     "hi" => "the rightmost degree of the table"
 	     },
 	Outputs => {"the cohomology table, truncated at the given degrees "},
+	"Given a list of distinct integers this function produces a truncated cohomology table for a 
+	supernatural vector bundle with root sequence L. ",
 	EXAMPLE lines ///
-	   B = pureCohomologyTable({-3,-2,0},-5,5)
+	   pureCohomologyTable({-3,-2,0},-5,5)
      	///,
 	SeeAlso => {bott}
 	}
@@ -1218,6 +1509,13 @@ document {
 document { 
      Key => bott,
      Headline => "cohomology of Schur functors of tautological bundle on P^n",
+     "Given a weakly decreasing sequence of integers L and an integer u, bott(L,u) will 
+     perform a cohomology calculation for a vector bundle E=O(-u)\\tensor S_L(Q), on P^n, producing
+     another weakly decreasing sequence of integers corresponding to a partition M, a number i such that
+     H^i(E)=S_M(V) and the rank of this module.",
+     PARA{},
+     "The function bott(L,u,v) on a list of weaking decreasing integers L and integers u,v will compute 
+     our entire cohomology table for our Schur Functor between degrees u and v.",
      }
 
 document { 
@@ -1240,7 +1538,8 @@ document {
      Returns either 0, if all cohomology is zero,
      or a list of three elements: A weakly decreasing list of n+1 integers M;
      a number i such that H^i(E)=S_M(V); and 
-     the rank of this module.",
+     the rank of this module.  For more information on how the partition M is constructed, see
+     math.AC/0709.1529v3, \"The Existence of Pure Free Resolutions\", section 3.",
      PARA{},
      "For example, on P^3, E = S_3(Q) has H^0(S_3(Q)) = S_3(kk^4) = kk^20.",
      EXAMPLE lines ///
@@ -1376,17 +1675,18 @@ assert(dotProduct(A,-5,Bde) == 180)
 ///
 
 document { 
-     Key => dotProduct,
+     Key =>  {dotProduct,(dotProduct,Matrix,ZZ,BettiTally),(dotProduct,Matrix,BettiTally),(dotProduct,BettiTally,BettiTally),(dotProduct,Matrix,Matrix)},
      Headline => "entry by entry dot product of two Betti diagrams",
-     Usage => "dotProduct(M,lowestDeg,B)\ndotProduct(B,C)",
+     Usage => "dotProduct(M,lowestDeg,B)\ndotProduct(M,B)\ndotProduct(B,C)\ndotProduct(M,N)",
      Inputs => {
 	  "M" => Matrix,
+	  "N" => Matrix,
 	  "lowestDeg" => ZZ,
 	  "B" => BettiTally,
 	  "C" => BettiTally
 	  },
-     "In the first version , (M, lowestDeg) refers to
-     mat2betti(M, lowestDeg).",
+     "In the first version (M, lowestDeg) refers to
+     mat2betti(M, lowestDeg), and in the second version (M,B) refers to (M,0,B).",
      Outputs => {
 	  ZZ => "the entry by entry dot product"
 	  },
@@ -1395,6 +1695,15 @@ document {
      	  M = facetEquation(d,1,-5,5)
 	  B = pureBettiDiagram d
 	  dotProduct(M,-5,B)
+	  
+	  A = matrix"1,1,0; 0,1,1; 0,1,1"
+	  B = matrix"0,1,-2;0,0,0;0,0,0"
+	  dotProduct(A, B)
+	  A1 = mat2betti A
+	  B1 = mat2betti B
+	  dotProduct(A1, B1)
+	  dotProduct(A, 0, B1)
+	  dotProduct(A, B1)
 	  ///,
      SeeAlso => {facetEquation, pureBettiDiagram}
      }
@@ -1402,16 +1711,16 @@ document {
 end
 
 restart
-loadPackage "BoijSoderberg"
-installPackage "BoijSoderberg"
-installPackage("BoijSoderberg", RerunExamples=>true)
-viewHelp BoijSoderberg
-check BoijSoderberg
+loadPackage "BoijSoederberg"
+installPackage "BoijSoederberg"
+installPackage("BoijSoederberg", RerunExamples=>true)
+viewHelp BoijSoederberg
+check BoijSoederberg
 
 C = new CohomologyTally from {(0,0) => 2, (0,1) => 5, (0,2) => 8, (2, -3) => 1, (2, -4) => 3}
 M = matrix"3,1,0,0,0;0,0,0,0,0;0,0,2,5,8"
 mat2cohom(M,-2)
-debug BoijSoderberg
+debug BoijSoederberg
 
 B = pureBettiDiagram {0,2,3,4}
 C = pureCohomologyTable({1,0,0},-5,-5)
@@ -1432,8 +1741,8 @@ bott({5,3,1},-10,10,old)
 bott({3,2,1},-7,7,old)
 bott({3,2,1},-7,7)
 restart
---load "/Users/mike/local/conferences/2008-mrc-june-snowbird/boij-soderberg/boijSoderberg-orig.m2"
-load "/Users/mike/local/conferences/2008-mrc-june-snowbird/boij-soderberg/bs.m2"
+--load "/Users/mike/local/conferences/2008-mrc-june-snowbird/boij-soederberg/boijSoederberg-orig.m2"
+load "/Users/mike/local/conferences/2008-mrc-june-snowbird/boij-soederberg/bs.m2"
 
 document { 
      Key => {},
