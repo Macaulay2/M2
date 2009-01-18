@@ -1,12 +1,13 @@
+-- -*- coding: utf-8 -*-
 -- In this tutorial we introduce a number of basic operations 
--- using Groebner bases, and at the same time become familiar
+-- using Gröbner bases, and at the same time become familiar
 -- with a range of useful Macaulay 2 constructs.
 
 ----------------------------
--- A. A first Groebner basis 
+-- A. A first Gröbner basis 
 ----------------------------
 
--- To compute the Groebner basis of an ideal
+-- To compute the Gröbner basis of an ideal
 -- $(x^2y,xy^2+x^3)$ in the polynomial ring in
 -- four variables we proceed as follows:
 --
@@ -25,7 +26,7 @@ I = ideal(x^2*y,x*y^2+x^3)
 
 J = gens gb I
 
--- This is the Groebner basis of $I$ under the graded
+-- This is the Gröbner basis of $I$ under the graded
 -- reverse lexicographic order.  In Macaulay2, monomial
 -- orders are associated with a polynomial ring.
 
@@ -34,9 +35,9 @@ R = KK[x,y,z,w,MonomialOrder=>Lex]
 I = substitute(I,R)
 gens gb I
 
--- The Groebner basis is the same, since this is a small 
+-- The Gröbner basis is the same, since this is a small 
 -- example.  The polynomials are sorted in ascending monomial order
--- by their lead terms, but otherwise the two Groebner bases are
+-- by their lead terms, but otherwise the two Gröbner bases are
 -- the same here.
 
 ------------------------------------------------
@@ -45,7 +46,7 @@ gens gb I
 
 -- An interesting and illustrative open problem
 -- is to understand the initial ideal (and 
--- the Groebner basis) of a ``generic'' 
+-- the Gröbner basis) of a ``generic'' 
 -- regular sequence.  To study a very simple case
 -- we take a matrix of 2 random forms 
 -- in a polynomial ring in
@@ -68,7 +69,7 @@ betti LT
 -- and also in free resolutions (which we will learn about later).
 
 -- In this case, the output
--- shows that there are Groebner basis elements
+-- shows that there are Gröbner basis elements
 -- of degrees 2,3, and 4.  This result is
 -- dependent on the monomial order in the ring $R$;
 -- for example we could take the lexicographic
@@ -84,13 +85,13 @@ GB = gens gb F
 LT = leadTerm GB
 betti LT
 
--- and there are Groebner basis elements of degrees 
+-- and there are Gröbner basis elements of degrees 
 -- $2,3,4,5,6.$
 
 -----------------------------------------------
 -- C. Division With Remainder
 -----------------------------------------------
--- A major application of Groebner bases is
+-- A major application of Gröbner bases is
 -- to decide whether an element is in a given
 -- ideal, and whether two elements reduce to
 -- the same thing modulo an ideal.  For
@@ -160,7 +161,7 @@ Tr^6 == I * (Tr^6 // I) + (Tr^6 % I)
 ----------------------------------------------
 
 -- Computing the elimination ideal $I \cap k[xi, \ldots, xn]$
--- is one of the most important applications of Groebner bases.
+-- is one of the most important applications of Gröbner bases.
 
 R = KK[t,y,z,MonomialOrder=>Lex]
 I = ideal(y-(t^2+t+1), z-(t^3+1))

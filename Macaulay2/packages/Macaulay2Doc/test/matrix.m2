@@ -1,3 +1,4 @@
+-- -*- coding: utf-8 -*-
 -- test of matrix routines
 testMatOpR = (R,m,n) -> (
   assert(m + n == n + m);
@@ -211,7 +212,7 @@ opsTest = () -> (
   )
 
 hilbTest = () -> (
-  -- test of Hilbert functions (these will compute Groebner bases)
+  -- test of Hilbert functions (these will compute Gröbner bases)
 
   -- first a very simple test
   R = ZZ/101[symbol a..symbol c];

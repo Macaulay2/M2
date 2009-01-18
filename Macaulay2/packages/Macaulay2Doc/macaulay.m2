@@ -1,3 +1,4 @@
+-- -*- coding: utf-8 -*-
 
 document {
      Key => "replacements for commands and scripts from Macaulay",
@@ -107,7 +108,7 @@ document {
 		    LI ("putstd -- ", TO "not documented yet"),
 		    LI (BOLD "qring <I:ideal> <result A:ring> -- ", "In Macaulay2, if ", TT "I", " is 
 			 an ideal, then ", TT "A = (ring I)/I", " is equivalent, except that in Macaulay2,
-			 a Groebner basis of I is computed for you, if it is needed"),
+			 a Gröbner basis of I is computed for you, if it is needed"),
 		    LI ("quit -- ", TO "quit"),
 		    LI ("quotient -- ", TO "not documented yet"),
 		    LI ("random -- ", TO "not documented yet"),
@@ -333,7 +334,7 @@ document {
      
      HEADER3 "calc <computation> [hi degree]",
      HEADER3 "chcalc <computation> [new hi deg]",
-     "Compute the Groebner basis of ", 
+     "Compute the Gröbner basis of ", 
      TT "m", " up to a given degree, using ", TT "gb(m, DegreeLimit=>3)", 
      ".  Similarly,
      if a computation in Macaulay 2 has been halted by pressing <CTRL>-C, 
@@ -360,11 +361,11 @@ document {
      
      HEADER3 "codim <standard basis> [integer result]",
      "When computing the codimension of an ideal or module ", TT "M", 
-     ", a Groebner basis is computed automatically, if needed.  Use ", 
+     ", a Gröbner basis is computed automatically, if needed.  Use ", 
      TT "codim M", ".",
      "One use of this command in Macaulay1 was to compute the codimension 
      of a partially
-     computed Groebner basis.  ",
+     computed Gröbner basis.  ",
      -- Mike wanted this: "See ", TO "computing with partial results", " for examples of doing this.",
      HEADER3 "coef <matrix> <result monoms> <result coefs> [variable list]",
      "To obtain the matrices of monomials and their coefficients, use ", 
@@ -410,7 +411,7 @@ document {
      HEADER3 "continue",
      "In Macaulay2, one interrupts a computation using <CTRL>-C, as in 
      Macaulay1.  Restart the computation using the original command.  For 
-     Groebner basis and resolution commands, the computation starts off 
+     Gröbner basis and resolution commands, the computation starts off 
      where it left off.",
      
      HEADER3 "contract <ideal> <ideal> <result matrix>",
@@ -429,12 +430,12 @@ document {
      
      HEADER3 "degree <standard basis> [integer codim] [integer degree]",
      "When computing the degree of an ideal or module ", TT "M", 
-     ", a Groebner basis is computed automatically, if needed.  Use ", 
+     ", a Gröbner basis is computed automatically, if needed.  Use ", 
      TT "degree M", ".  Note that in Macaulay2, ", TT "degree", " returns
      only the degree.  Use ", TT "codim M", " to obtain the codimension.",
      "One use of this command in Macaulay1 was to compute the degree
      of a partially
-     computed Groebner basis.  ",
+     computed Gröbner basis.  ",
      -- Mike wanted this: "See ", TO "computing with partial results", " for examples of doing this.",
 
      HEADER3 "determinants <matrix> <p> <result>",
@@ -516,7 +517,7 @@ document {
 
      HEADER3 "forcestd <matrix> <result standard basis> [change of basis]",
      "In order to inform the system that the columns of the matrix ", TT "m",
-     " form a Groebner basis, use ", TT "forceGB m", ".  See ", TO "forceGB",
+     " form a Gröbner basis, use ", TT "forceGB m", ".  See ", TO "forceGB",
      ".",
      
      {*
@@ -700,7 +701,7 @@ isHomogeneous n
       	  "I = ideal(a,b^5,c^7-d^7-a^7)",
       	  "G = gb(I,StopBeforeComputation=>true)",
       	  "gens G"},
-     "Note that no Groebner basis elements have been computed yet",
+     "Note that no Gröbner basis elements have been computed yet",
      EXAMPLE {
 	  "gb(I,PairLimit=>2)",
       	  "m = gens G"},

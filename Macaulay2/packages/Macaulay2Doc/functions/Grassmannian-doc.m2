@@ -1,3 +1,4 @@
+-- -*- coding: utf-8 -*-
 document { Key => {(Grassmannian, ZZ, ZZ), 
 	  Grassmannian, 
 	  (Grassmannian, ZZ, ZZ, PolynomialRing),
@@ -26,7 +27,7 @@ document { Key => {(Grassmannian, ZZ, ZZ),
 	  "T_(0,2,3)"
 	  },
      "In many ways, more natural than returning an ideal would be to return the corresponding quotient ring or
-     variety, but creating a quotient ring involves computing a Groebner basis, which
+     variety, but creating a quotient ring involves computing a Gröbner basis, which
      might impose a heavy computational burden that the user would prefer to avoid.",
      SeeAlso => {"Schubert","pfaffians"}
      }

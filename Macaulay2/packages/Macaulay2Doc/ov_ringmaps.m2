@@ -1,3 +1,4 @@
+-- -*- coding: utf-8 -*-
 document {
      Key => RingMap,
      Headline => "the class of all ring maps",
@@ -23,7 +24,7 @@ document {
 	  "F (a+b)"
 	  },
      "The kernel of such ring maps are constructed with the aid of
-     Groebner bases.  Preimages of ideals are constructed using the
+     Gröbner bases.  Preimages of ideals are constructed using the
      same method. ",
      EXAMPLE {
 	  "I = kernel F",
@@ -219,7 +220,7 @@ document {
 	       ring we defined.  All of the methods above work still here in theory, but 
 	       caution is advised.  We give an example below to illustrate.  Also, 
 	       note that many other computations will no longer work, because 
-	       Groebner basis computations only work 
+	       Gröbner basis computations only work 
 	       over ", TO "ZZ", ", ", TT "ZZ/n", " and ", TO "QQ", " at this time. "
 	       ,
      	  SUBSECTION "using maps to move between rings",

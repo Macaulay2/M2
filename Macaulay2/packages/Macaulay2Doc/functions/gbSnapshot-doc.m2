@@ -1,3 +1,4 @@
+-- -*- coding: utf-8 -*-
 --- status: Draft
 --- author(s): MES
 --- notes: 
@@ -7,12 +8,12 @@ document {
 	  (gbSnapshot,Ideal),
 	  (gbSnapshot,Matrix),
 	  (gbSnapshot,Module)},
-     Headline => "the Groebner basis matrix as so far computed",
+     Headline => "the Gröbner basis matrix as so far computed",
      Usage => "gbSnapshot M",
      Inputs => { "M" => {ofClass{Ideal,Matrix,Module}}},
-     Outputs => { Matrix => "the Groebner basis as so far computed"},
+     Outputs => { Matrix => "the Gröbner basis as so far computed"},
      "This routine is useful to be able to obtain
-     partial results from a partially computed Groebner basis.
+     partial results from a partially computed Gröbner basis.
      Little computation is done (although a minimalization, auto-reduction and
      sort is performed).  ",
      EXAMPLE lines ///

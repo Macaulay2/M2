@@ -572,6 +572,25 @@ document {
      SeeAlso => { (map,Ring,Ring,List), isHomogeneous, (kernel,Matrix), (coimage,Matrix) }
      }
 
+document {
+     Key => {(quotientRemainder,RingElement,RingElement),
+	  (quotientRemainder,Number,RingElement), (quotientRemainder,RingElement,Number)},
+     Headline => "quotient and remainder",
+     Usage => "(q,r) = quotientRemainder(f,g)",
+     Inputs => {"f","g"},
+     Outputs => {
+	  "q" => RingElement => {"the quotient for the division of ", TT "f", " by ", TT "g"},
+	  "r" => RingElement => {"the remainder for the division of ", TT "f", " by ", TT "g"}
+	  },
+     EXAMPLE lines ///
+     R = QQ[x,y];
+     (q,r) = quotientRemainder(x^10+5,x-2);
+     q
+     r
+     q*(x-2)+r
+     ///
+     }
+
 -- Local Variables:
 -- compile-command: "make -C $M2BUILDDIR/Macaulay2/m2 "
 -- End:

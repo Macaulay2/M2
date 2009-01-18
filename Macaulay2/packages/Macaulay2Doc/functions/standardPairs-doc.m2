@@ -1,3 +1,4 @@
+-- -*- coding: utf-8 -*-
 --- status: Draft
 --- author(s): Smith
 --- notes: 
@@ -32,7 +33,7 @@ document {
 	  },     
      PARA{},
      "The standard pairs are computed with Algorithm 3.2.5 in
-     Groebner Deformations of Hypergeometric Differential 
+     Gröbner Deformations of Hypergeometric Differential 
      Equations, by Mutsumi Saito, Bernd Sturmfels and Nobuki Takayama;
      Algorithms and Computation in Mathematics 6, Springer-Verlag, 2000.  
      Implemented by Gregory G. Smith.",

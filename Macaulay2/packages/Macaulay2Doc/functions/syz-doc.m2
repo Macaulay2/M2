@@ -1,3 +1,4 @@
+-- -*- coding: utf-8 -*-
 --- status: Draft
 --- author(s): MES
 --- notes: 
@@ -11,7 +12,7 @@ document {
      Headline => "retrieve the syzygy matrix",
      Usage => "syz G",
      Inputs => {
-	  "G" => {"the Groebner basis of a matrix ", TT "h"}
+	  "G" => {"the Gröbner basis of a matrix ", TT "h"}
 	  },
      Outputs => {
 	  {"the matrix of syzygies among the columns of ", TT "h"}

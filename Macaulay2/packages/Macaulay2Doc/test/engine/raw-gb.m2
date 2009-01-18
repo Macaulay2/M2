@@ -1,3 +1,4 @@
+-- -*- coding: utf-8 -*-
 --status: this old test depends on internal things and probably should be deleted
 
 
@@ -17,14 +18,14 @@ G = mat {{x,y,z}}
 --status: no one maintains this old test file, so it's broken, since it tests the raw interface
 Gcomp = rawGB(G,false,0,{},false,0,algorithm,0)
 rawStartComputation Gcomp
-m = rawGBGetMatrix Gcomp -- Groebner basis
+m = rawGBGetMatrix Gcomp -- Gröbner basis
 assert(m === mat{{z,y,x}})
 assert(rawGBMatrixRemainder(Gcomp,mat{{x}}) == 0)
 
   -- Let's test syzygies:
 Gcomp = rawGB(G,true,3,{},false,0,0,0)
 rawStartComputation Gcomp
-m = rawGBGetMatrix Gcomp -- Groebner basis
+m = rawGBGetMatrix Gcomp -- Gröbner basis
 assert(m === mat{{z,y,x}})
 
 msyz = rawGBSyzygies Gcomp
@@ -38,7 +39,7 @@ R1 = polyring(rawZZp(101), (symbol x, symbol y, symbol z))
 G = mat {{x,y,z^2, x*z+z^2}}
 Gcomp = rawGB(G,false,0,{},false,0,0,0)
 rawStartComputation Gcomp
-m = rawGBGetMatrix Gcomp -- Groebner basis
+m = rawGBGetMatrix Gcomp -- Gröbner basis
 assert(m == mat{{y,x,z^2}})
 m1 = rawGBMinimalGenerators Gcomp -- mingens
 assert(m1 == mat{{y,x,z^2}})
@@ -50,7 +51,7 @@ R1 = polyring(rawZZp(101), (symbol x, symbol y, symbol z))
 G = mat {{x*y-y^2, x^2}}
 Gcomp = rawGB(G,false,0,{},false,0,algorithm,0)
 rawStartComputation Gcomp
-m = rawGBGetMatrix Gcomp -- Groebner basis
+m = rawGBGetMatrix Gcomp -- Gröbner basis
 assert(m == mat{{x*y-y^2, x^2, y^3}})
 
 Gcomp = rawGB(G,true,-1,{},false,0,0,0)
@@ -70,7 +71,7 @@ R1 = polyring(rawZZp(101), (symbol x, symbol y, symbol z))
 G = mat {{x*y-y^2, x^2, y^4}}
 Gcomp = rawGB(G,false,0,{},false,0,algorithm,0)
 rawStartComputation Gcomp
-m = rawGBGetMatrix Gcomp -- Groebner basis
+m = rawGBGetMatrix Gcomp -- Gröbner basis
 assert(m == mat{{x*y-y^2, x^2, y^3}})
 assert(rawGBMinimalGenerators(Gcomp) == mat{{x*y-y^2, x^2}})
 -----------------------------
@@ -96,7 +97,7 @@ R1 = polyring(rawZZp(101), (symbol x, symbol y, symbol z))
 G = mat {{x,y^2,z^3}}
 Gcomp = rawGB(G,false,0,{},false,0,algorithm,0)
 rawStartComputation Gcomp
-m = rawGBGetMatrix Gcomp -- Groebner basis
+m = rawGBGetMatrix Gcomp -- Gröbner basis
 assert(m === G)
 assert(rawGBMatrixRemainder(Gcomp,mat{{x-1}}) === mat{{-1_R1}})
 -----------------------------
@@ -106,7 +107,7 @@ R1 = polyring(rawZZp(101), (symbol x, symbol y, symbol z))
 G = mat {{x,y,z^2, x*z+z^2}}
 Gcomp = rawGB(G,false,0,{},false,0,0,0)
 rawStartComputation Gcomp
-m = rawGBGetMatrix Gcomp -- Groebner basis
+m = rawGBGetMatrix Gcomp -- Gröbner basis
 assert(m == mat{{y,x,z^2}})
 m1 = rawGBMinimalGenerators Gcomp -- mingens
 assert(m1 == mat{{y,x,z^2}})
@@ -270,7 +271,7 @@ c = rawRingVar(R1,3)
 d = rawRingVar(R1,4)
 G = mat{{b^4-13*a*c, 12*b*c^2-7*a*d^3, t*a-1}}
 Gcomp = rawGB(G,false,0,{},false,0,algorithm,0)
-rawStartComputation Gcomp -- Groebner basis
+rawStartComputation Gcomp -- Gröbner basis
 m = rawGBGetMatrix Gcomp
 << "check correctness" << endl;
 -----------------------------
@@ -305,7 +306,7 @@ time rawStartComputation Gcomp -- seems to be in an INFINITE LOOP!! (over QQ)
 m = rawGBGetMatrix Gcomp
 assert(7*m === mat{{7*a^2+a+1}})
 -------------------------------------------
--- Groebner bases with Schreyer orders ----
+-- Gröbner bases with Schreyer orders ----
 -------------------------------------------
 needs "raw-util.m2"
 R = polyring(rawZZp(101), (symbol a, symbol b, symbol c))
@@ -317,7 +318,7 @@ rawStartComputation G
 rawGBGetLeadTerms(G,10)
 << "DO A MORE SUBSTANTIAL Schreyer order GB" << endl;
 --------------------------------------------
--- Groebner bases using hilbert functions --
+-- Gröbner bases using hilbert functions --
 --------------------------------------------
 needs "raw-util.m2"
 gbTrace = 3
@@ -347,7 +348,7 @@ m2 = rawGBGetMatrix Gcomp;
 assert(m1 == m2)
 
 ------------------------------
--- Groebner bases over ZZ ----
+-- Gröbner bases over ZZ ----
 ------------------------------
 needs "raw-util.m2"
 R = polyring(rawZZ(), (symbol x, symbol y))
@@ -421,7 +422,7 @@ Gcomp = rawGB(G,false,0,{},false,0,0,0)
 --time rawStartComputation Gcomp
 --m1 = rawGBGetMatrix Gcomp;
 -----------------------------------
--- Groebner bases over quotients --
+-- Gröbner bases over quotients --
 -----------------------------------
 needs "raw-util.m2"
 R = polyring(rawZZp 101, (symbol x, symbol y, symbol z, symbol w))
@@ -447,7 +448,7 @@ P2 * P3 -- NOT ZERO !! -- BUG BUG -- CRASHES
 P4 = rawsyz P3
 P3 * P4 -- NOT ZERO !! -- BUG BUG
 -----------------------------------------
--- Groebner bases over quotients of ZZ --
+-- Gröbner bases over quotients of ZZ --
 -----------------------------------------
 needs "raw-util.m2"
 R = polyring(rawZZ(), (symbol x, symbol y, symbol z, symbol w))
@@ -459,7 +460,7 @@ m = mat{{rawPromote(A,f2)}}
 G2 = rawgb m
 assert(toString G1 == toString G2) -- this doesn't insure that they are the same...
 --------------------------------
--- Groebner bases over ZZ/p[i]/(i^2+1)
+-- Gröbner bases over ZZ/p[i]/(i^2+1)
 needs "raw-util.m2"
 R = polyring(rawZZ(), 1 : symbol i)
 A = rawQuotientRing(R, mat{{i^2+1}})

@@ -1,3 +1,4 @@
+-- -*- coding: utf-8 -*-
 --- status: TODO
 --- author(s): 
 --- notes: 
@@ -78,7 +79,7 @@ document {
 	  },
      "If I is not homogeneous, then an attempt is made to find
      a more efficient generating matrix, one which is better than a 
-     Groebner basis.  There is no guarantee that the generating set is small,
+     Gröbner basis.  There is no guarantee that the generating set is small,
      or that no subset also generates.  The only thing known is that the entries
      do generate the ideal.",
      EXAMPLE {
@@ -98,7 +99,7 @@ document {
 	  "trim I"
 	  },
      PARA{},
-     "If the base ring is a polynomial ring (or quotient of one), then a Groebner
+     "If the base ring is a polynomial ring (or quotient of one), then a Gröbner
      basis computation is started, and continued until all generators have been 
      considered.",
      SeeAlso => {trim, minimalPresentation,kernel,image}
@@ -114,12 +115,12 @@ document {
 	  Matrix => "whose columns form a (partially computed) minimal generating set"
 	  },
      "Every GroebnerBasis computation in Macaulay 2 computes a generator matrix, in the process
-     of constructing the Groebner basis.  If the
+     of constructing the Gröbner basis.  If the
      original ideal or module is homogeneous, then the columns of this matrix form a
      minimal set of generators.  In the inhomogeneous case, the columns generate, and an attempt 
      is made to keep the size of the generating set small.",
      PARA{},
-     "If the Groebner basis is only partially constructed,
+     "If the Gröbner basis is only partially constructed,
      the returned result will be a partial answer.  In the graded case this set can be 
      extended to a minimal set of generators for the ideal or module.",
      EXAMPLE {

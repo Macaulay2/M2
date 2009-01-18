@@ -1,3 +1,4 @@
+-- -*- coding: utf-8 -*-
 document {
      Key => (symbol _*,Ideal),
      Headline => "get the list of generators of an ideal",
@@ -44,7 +45,7 @@ document {
 	  TO (symbol ^,Ideal,ZZ),
 	  TO (trim, Ideal)
 	  },
-     "Groebner bases, normal forms, free resolutions",
+     "Gröbner bases, normal forms, free resolutions",
      UL {
 	  TO gb,
 	  TO leadTerm,

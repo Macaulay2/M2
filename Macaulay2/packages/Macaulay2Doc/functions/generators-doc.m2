@@ -1,3 +1,4 @@
+-- -*- coding: utf-8 -*-
 --- status: DRAFT
 --- author(s): last edit: MES
 --- notes: 
@@ -19,13 +20,13 @@ document {
      Outputs => { {"provides the generators of ", TT "x", 
 	       " in a convenient form, as a list or a matrix, depending on the type"} },
      PARA{},
-     "Produces the generators of a Groebner basis, a polynomial ring, an ideal,
+     "Produces the generators of a Gröbner basis, a polynomial ring, an ideal,
      a free module, a free group, a submodule given by
      means of generators (or for which generators have been computed),
      or a free monoid.",
      PARA{},
      "Usually the result is a list of generators, but the generators of
-     a module or Groebner basis are provided as the columns in a matrix.  
+     a module or Gröbner basis are provided as the columns in a matrix.  
      The matrix is stored in a module M under M.generators, unless the matrix
      is the identity matrix.",
      PARA{},
@@ -51,19 +52,19 @@ document {
 
 document { 
      Key => (generators,GroebnerBasis),
-     Headline => "the generator matrix of a Groebner basis",
+     Headline => "the generator matrix of a Gröbner basis",
      Usage => "generators g\ngens g",
      Inputs => { "g",	  
 	  CoefficientRing => "unused option" },
-     Outputs => {Matrix => {"whose columns are the generators of the Groebner basis ", TT "g"}},
+     Outputs => {Matrix => {"whose columns are the generators of the Gröbner basis ", TT "g"}},
      "The following ideal defines a set of 18 points over the complex numbers.  We compute a
-     lexicographic Groebner basis of the ideal.",
+     lexicographic Gröbner basis of the ideal.",
      EXAMPLE {
 	  "R = QQ[a..d, MonomialOrder=>Lex];",
 	  "I = ideal(a^7-b-3, a*b-1, a*c^2-3, b*d-4);",
 	  "gens gb I"
 	  },
-     SeeAlso => {"Groebner bases"}
+     SeeAlso => {"Gröbner bases"}
      }
 document {
      Key => (generators,Module),

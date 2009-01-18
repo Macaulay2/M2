@@ -1,3 +1,4 @@
+-- -*- coding: utf-8 -*-
 --- status: Draft
 --- author(s): MES
 --- notes: 
@@ -19,7 +20,7 @@ document {
      If M is an ideal, then hf should be the poincare polynomial of comodule M.
      If M is a matrix, then hf should be the poincare polynomial of cokernel M.",
      PARA {
-	  "An installed Hilbert function will be used by Groebner basis 
+	  "An installed Hilbert function will be used by Gröbner basis 
 	  computations when possible."},
      PARA {
 	  "Sometimes you know or are very sure that you know the Hilbert function.
@@ -38,7 +39,7 @@ document {
      "In this case, the savings is minimal, but often it can be dramatic.",
      PARA {
 	  "Another important situation is
-	  to compute a Groebner basis using a different monomial order.
+	  to compute a Gröbner basis using a different monomial order.
 	  In the example below", 
 	  },
      EXAMPLE lines ///

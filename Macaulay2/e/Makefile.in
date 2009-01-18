@@ -57,6 +57,8 @@ endif
 
 %.ii: %.cpp; $(PRE.cc)        $< $(OUTPUT_OPTION)
 %.s : %.cpp; $(COMPILE.cc) -S $< $(OUTPUT_OPTION)
+%.ii: %.cc; $(PRE.cc)        $< $(OUTPUT_OPTION)
+%.s : %.cc; $(COMPILE.cc) -S $< $(OUTPUT_OPTION)
 %.ss : %.s ; demangle <$< >$@
 
 %.lo : %.c  ; $(COMPILE.c)  -fPIC $< $(OUTPUT_OPTION)

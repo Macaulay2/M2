@@ -1,3 +1,4 @@
+-- -*- coding: utf-8 -*-
 --- status: TODO
 --- author(s): 
 --- notes: 
@@ -37,7 +38,7 @@ document {
      describe D
      ///,
      PARA{"Flattening an ideal instead of a quotient ring can save a lot of time spent computing the
-	  Groebner basis of the resulting ideal, if the flattened quotient is not needed."
+	  Gröbner basis of the resulting ideal, if the flattened quotient is not needed."
 	  },
      EXAMPLE lines ///
      A = ZZ[a]/(a^2-3)
