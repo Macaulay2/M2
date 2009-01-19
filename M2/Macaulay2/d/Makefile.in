@@ -100,7 +100,7 @@ DFILES += interface.d
 ifeq (@PARI@,yes)
 DFILES += pari.d
 pari.oo : CPPFLAGS += -DINCLUDE_PARI_H
-pari-c.o : CFLAGS += -Wall -Wno-unused -Werror -UNDEBUG
+pari-c.o : CFLAGS += -Wall -Wno-unused -UNDEBUG
 CFILES += pari-c.c
 HFILES += pari-c.h
 endif
