@@ -1175,7 +1175,10 @@ show URL := x -> (
 	  )
      )
 
-fix := fn -> "file://" | externalPath | replace(" ","%20",fn) 		    -- might want to replace more characters
+fix := fn -> (
+     r := "file://" | externalPath | replace(" ","%20",realpath fn); 		    -- might want to replace more characters
+     if debugLevel > 0 then stderr << "--fixed URL: " << r << endl;
+     r)
 showHtml = show Hypertext := x -> (
      fn := temporaryFileName() | ".html";
      fn << html HTML {
