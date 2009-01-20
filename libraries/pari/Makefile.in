@@ -6,18 +6,33 @@ VPATH = @srcdir@
 VERSION = 2.3.4
 URL = http://pari.math.u-bordeaux.fr/pub/pari/unix
 CHECKTARGET = bench test-all test-compat test-ellglobalred test-galois test-intnum test-qfbsolve test-rfrac test-round4 test-stark test-ploth
-BUILDTARGET = all
+BUILDTARGET = lib-sta
+INSTALLTARGET = install-lib-sta install-include
+
+ifeq (@SHARED@,yes)
+BUILDTARGET += lib-dyn
+INSTALLTARGET += install-lib-dyn
+endif
+
 CONFIGURECMD = $(CONFIGENV) ./Configure --prefix=$(LIBRARIESDIR) --with-gmp
+
 ifeq (@PROFILING@,yes)
 CONFIGURECMD += -pg
 BUILDTARGET = prf
 INSTALLOPTIONS = -C `config/objdir`.prf
-endif
+BUILDOPTIONS = -C `config/objdir`.prf
+else
 ifeq (@DEBUG@,yes)
 CONFIGURECMD += -g
 BUILDTARGET = dbg
 INSTALLOPTIONS = -C `config/objdir`.dbg
+BUILDOPTIONS = -C `config/objdir`.dbg
+else
+INSTALLOPTIONS = -C `config/objdir`
+BUILDOPTIONS = -C `config/objdir`
 endif
+endif
+
 include ../Makefile.library
 Makefile: @srcdir@/Makefile.in ; cd ../.. && ./config.status libraries/pari/Makefile
 run-example: example; ./example
