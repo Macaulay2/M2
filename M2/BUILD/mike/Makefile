@@ -10,16 +10,7 @@ opt64 :
 		CC="gcc -m64" CXX="g++ -m64" \
 		--build=x86_64-apple-darwin \
 		--enable-dmg \
-		--enable-build-libraries="gc gdbm gmp mpfr readline ntl factory libfac frobby"
-#		--enable-frobby
-
-nonfrobby64 :
-	mkdir -p nonfrobby64
-	cd nonfrobby64; ../../../configure \
-		CC="gcc -m64" CXX="g++ -m64" \
-		--build=x86_64-apple-darwin \
-		--enable-build-libraries="gc gdbm gmp mpfr readline ntl factory libfac"
-
+		--enable-build-libraries="gc gdbm gmp mpfr readline ntl factory libfac frobby pari"
 
 debug64 :
 	mkdir -p debug64
@@ -29,8 +20,7 @@ debug64 :
 		--build=x86_64-apple-darwin \
 		--enable-debug \
 		--disable-optimize \
-		--enable-build-libraries="gc gdbm gmp mpfr readline ntl factory libfac frobby"
-#		--enable-frobby
+		--enable-build-libraries="gc gdbm gmp mpfr readline ntl factory libfac frobby pari"
 
 profile64 :
 	mkdir -p profile64
@@ -39,8 +29,7 @@ profile64 :
 		CC="gcc -m64" CXX="g++ -m64" \
 		--build=x86_64-apple-darwin \
 		--enable-profile \
-		--enable-build-libraries="gc gdbm gmp mpfr readline ntl factory libfac frobby"
-#		--enable-frobby
+		--enable-build-libraries="gc gdbm gmp mpfr readline ntl factory libfac frobby pari"
 
 # These are for use on linux/ubuntu
 
@@ -49,8 +38,7 @@ opt :
 	cd opt;	../../../configure \
 		--prefix="`pwd`/installed" \
 		--enable-tarfile \
-		--enable-build-libraries="gc gdbm gmp mpfr readline ntl factory libfac lapack frobby" \
-#		--enable-frobby
+		--enable-build-libraries="gc gdbm gmp mpfr readline ntl factory libfac lapack frobby pari"
 
 debug :
 	mkdir -p debug
@@ -58,13 +46,12 @@ debug :
 		--prefix="`pwd`/installed" \
 		--enable-debug \
 		--disable-optimize \
-		--enable-build-libraries="gc gdbm gmp mpfr readline ntl factory libfac lapack frobby" \
-#		--enable-frobby
+		--enable-build-libraries="gc gdbm gmp mpfr readline ntl factory libfac lapack frobby pari"
 
 profile :
 	mkdir -p profile
 	cd profile; ../../../configure \
 		--prefix="`pwd`/installed" \
 		--enable-profile \
-		--enable-build-libraries="gc gdbm gmp mpfr readline ntl factory libfac lapack frobby" \
-#		--enable-frobby
+		--enable-build-libraries="gc gdbm gmp mpfr readline ntl factory libfac lapack frobby pari"
+
