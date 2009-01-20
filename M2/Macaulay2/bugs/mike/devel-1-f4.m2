@@ -82,6 +82,9 @@ time gens gb(I, Algorithm=>LinearAlgebra, GBDegrees=>toList(4:1));
 time gens gb(I, Algorithm=>LinearAlgebra, GBDegrees=>toList(4:1), DegreeLimit=>180);
 time gens gb(I, Algorithm=>LinearAlgebra, GBDegrees=>toList(4:1), DegreeLimit=>191);
 
+time gens gb(I, Algorithm=>LinearAlgebra, DegreeLimit=>191);
+time gens gb(I, Algorithm=>LinearAlgebra);
+
 -- interrupted in degree 191, used 58.43 seconds, space: 1.07 GB real, 1.16 GB virtual
 
 
