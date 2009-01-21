@@ -302,11 +302,16 @@ document {
 			 },
 		    LI {
 			 "Macaulay 2 now incorporates ", TO "pari", ", a free library for computing in number theory.
-			 It is called upon by ", TO (factor,ZZ), ", and we expect to use more of its functionality soon."
+			 It is used by ", TO (factor,ZZ), ", ", TO (factor,QQ), ", ", TO (isPseudoprime, ZZ), ", and ", TO (isPrime,ZZ), "."
 			 },
 		    LI {
 			 "The quotient and remainder for two ring elements can now be obtained simultaneously,
 			 saving time.  See ", TO (quotientRemainder,RingElement,RingElement), "."
+			 },
+		    LI {
+			 "The binary representation of a real number is now available using ", TO (promote,RR,QQ), ".
+			 The code for ", TO (lift,RR,QQ), " has been tightened up so a rational number is provided
+			 that provides exactly the same real number when promoted."
 			 }
 		    }
 	       }

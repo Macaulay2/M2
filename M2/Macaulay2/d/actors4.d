@@ -1461,6 +1461,23 @@ powermod(e:Expr):Expr := (
      );
 setupfun("powermod",powermod);
 
+partsRR(x:Expr):Expr := (
+     when x is xx:RR do (
+	  p := Ccode(ulong,"(unsigned long)((__mpfr_struct *)",xx,")->_mpfr_prec");
+	  sz := 8 * Ccode(int,"sizeof(*((__mpfr_struct *)",xx,")->_mpfr_d)");
+	  n := (p+sz-1)/sz;
+	  numbits := n * sz;
+	  prec := toInteger(p);
+	  sgn := toInteger(Ccode(long,"(long)((__mpfr_struct *)",xx,")->_mpfr_sign"));
+	  expt := toInteger(Ccode(long,"(long)((__mpfr_struct *)",xx,")->_mpfr_exp"));
+	  m := toInteger(0);
+	  for i from int(n)-1 to 0 by -1 do (
+	       m = (m << sz) + toInteger(Ccode(ulong,"(unsigned long)((__mpfr_struct *)",xx,")->_mpfr_d[",i,"]"));
+	       );
+	  Expr(Sequence(prec,sgn,expt,m,toInteger(numbits))))
+     else WrongArg("a real number"));
+setupfun("partsRR",partsRR);
+
 -- Local Variables:
 -- compile-command: "make -C $M2BUILDDIR/Macaulay2/d "
 -- End:

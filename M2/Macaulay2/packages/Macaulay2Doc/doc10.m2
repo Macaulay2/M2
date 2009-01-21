@@ -418,11 +418,8 @@ document {
 	  },
      EXAMPLE "peek'(100,x)",
      PARA {
-	  "For integers, factorization is done by ", TO "pari", "; the factors are actually
-	  just strong pseudoprimes in the sense of Baillie-Pomerance-Selfridge-Wagstaff,
-	  and may not be prime; to check primality, use ", TO "isPrime", ".
-	  According to the documentation of ", TO "pari", TEX ", such pseudoprimes are known
-	  to be prime up to $10^{13}$, and no nonprime pseudoprime is known."
+	  "For integers, factorization is done by ", TO "pari", TEX ", and the factors $x$ are actually
+	  just pseudoprimes, as described in the documentation of ", TO "isPseudoprime", "."
 	  },
      PARA {
 	  "For multivariate polynomials the

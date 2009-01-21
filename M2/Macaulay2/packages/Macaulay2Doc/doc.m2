@@ -271,25 +271,28 @@ document {
 document {
      Key => HashTable,
      Headline => "the class of all hash tables",
-     "A hash table consists of: a class type, a parent type, and a
-     set of key-value pairs.  The keys and values can be anything.
-     The access functions below accept a key and return the
-     corresponding value.  For details of the mechanism
-     underlying this, see ", TO "hashing", ".",
-     PARA{},
-     "One important feature of hash tables that when the keys
-     are consecutive integers starting at 0, the keys are scanned
-     in the natural order.",
-     PARA{},
-     "There is a subclass of HashTable called ", TO "MutableHashTable", "
-     which consists of those hash tables whose entries can be changed.",
-     PARA{},
-     "Access functions:",
+     PARA {
+	  "A hash table consists of: a class type, a parent type, and a
+	  set of key-value pairs.  The keys and values can be anything.
+	  The access functions below accept a key and return the
+	  corresponding value.  For details of the mechanism
+	  underlying this, see ", TO "hashing", "."
+	  },
+     PARA{
+	  "One important feature of hash tables that when the keys
+	  are consecutive integers starting at 0, the keys are scanned
+	  in the natural order."
+	  },
+     PARA{
+     	  "There is a subclass of HashTable called ", TO "MutableHashTable", "
+     	  which consists of those hash tables whose entries can be changed."
+	  },
+     PARA "Access functions:",
      UL {
  	  TO "#",
  	  TO "."
  	  },
-     "Query functions:",
+     PARA "Query functions:",
      UL {
  	  TO "#?",
  	  TO ".?"
@@ -313,17 +316,16 @@ document {
 	  },
      "Notice that the position of the maximal element is 1, as indexing in
      Macaulay 2 always starts at 0.",
-     PARA{},
-     "For elements in a polynomial ring, the order used is the ", 
-     TO2("monomial orderings","monomial order"),
-     " associated with the ring.",
+     PARA{
+	  "For elements in a polynomial ring, the order used is the ", TO2("monomial orderings","monomial order"),
+	  " associated with the ring.",
+	  },
      EXAMPLE {
 	  "R = QQ[r,s,x,y,z];",
 	  "z^2 + x*y + s*z",
 	  "maxPosition {z^2, s*z, x*y}",
 	  "maxPosition(z^2, s*z, x*y)"	  
 	  },
-     
      SeeAlso => { minPosition, max, min, sort, position }
      }
 
@@ -476,22 +478,28 @@ document {
 document {
      Key => input,
      Headline => "read Macaulay 2 commands and echo",
-     TT "input \"f\"", " -- reads and executes the commands found in the 
-     file named ", TT "f", ", echoing the input, printing the values, and incrementing
-     the line number.",
-     PARA{},
-     "The file is sought in the directory containing the file currently being loaded, if any, and then along
-     the ", TO "path", ", unless the name of the file begins with ", TT "/", ", ", TT "$", ", or ", TT "!", ".
-     If the file begins with ", TT "./", " or ", TT "../", ", then it looks instead in the directory of the
-     file currently being loaded (see ", TO "currentFileDirectory", ").  If no file is being loaded it will
-     look in the current directory (see ", TO "currentDirectory", ").",
-     PARA{},
-     "If one of the top level expressions in the file evaluates to the symbol ", TO "end", "
-     the reading of the file is stopped at that point.",
-     PARA{},
-     "If an error occurs while evaluating the expressions in the file,
-     reading is stopped.",
-     PARA{},
+     Usage => "input fn",
+     Inputs => { "fn" => String },
+     Consequences => {
+	  {"reads and executes the commands found in the file whose name is contained in the string ", TT "fn", ",
+	       echoing the input, printing the values, and incrementing the line number"
+	       }
+	  },
+     PARA{
+	  "The file is sought in the directory containing the file currently being loaded, if any, and then along
+	  the ", TO "path", ", unless the name of the file begins with ", TT "/", ", ", TT "~/", ", ", TT "$", ", or ", TT "!", ".
+	  If the file begins with ", TT "./", " or ", TT "../", ", then it looks instead in the directory of the
+	  file currently being loaded (see ", TO "currentFileDirectory", ").  If no file is being loaded it will
+	  look in the current directory (see ", TO "currentDirectory", ").",
+	  },
+     PARA{
+	  "If one of the top level expressions in the file evaluates to the symbol ", TO "end", "
+	  the reading of the file is stopped at that point.",
+	  },
+     PARA{
+	  "If an error occurs while evaluating the expressions in the file,
+	  reading is stopped.",
+	  },
      SeeAlso =>{ "path", "needs", "load"}
      }
 
@@ -511,7 +519,7 @@ document {
 	  as ", TT ///error "debug me"///, ", and start stepping from there, as in the following demonstration."
 	  },
      EXAMPLE lines ///
-     load "demo2.m2"
+     load "Macaulay2Doc/demo2.m2"
      code f
      f 0
      help
@@ -537,14 +545,14 @@ document {
 	       }
 	  },
      EXAMPLE lines ///
-     load "demo3.m2"
+     load "Macaulay2Doc/demo3.m2"
      get loadedFiles#(#loadedFiles-1)
      ///,
      PARA {
 	  "Here is an example of its use in the debugger."
 	  },
      EXAMPLE lines ///
-     load "demo1.m2"
+     load "Macaulay2Doc/demo1.m2"
      g 2
      end
      end

@@ -53,6 +53,8 @@ isPrime2 := n -> (			  -- assume n > 2
 
 biggest := 2^31-1
 
+isPseudoprime ZZ := Boolean => Pari$ispseudoprime
+
 isPrime ZZ := Boolean => (
      if instance(Pari$isprime,Function) then Pari$isprime
      else 

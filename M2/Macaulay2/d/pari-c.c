@@ -104,6 +104,18 @@ bool pari_isprime(mpz_t x) {
   return f != 0;
 }
 
+bool pari_ispseudoprime(mpz_t x, long flags) {
+  long f;
+  {
+    INIT;
+    pari_sp save_stack_pointer = avma;
+    f = ispseudoprime(toPari(x), flags);
+    avma = save_stack_pointer;
+    CLOSE;
+  }
+  return f != 0;
+}
+
 /*
 
   debugging stuff

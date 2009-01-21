@@ -1069,7 +1069,7 @@ document { Key => "continue",
 	  error to recur."
 	  },
      EXAMPLE lines ///
-     load "demo1.m2"
+     load "Macaulay2Doc/demo1.m2"
      code g
      g 2
      code f
@@ -1111,7 +1111,7 @@ document { Key => listLocalSymbols,
 	       "This usage works only in the debugger, where ", TO "current", " has a non-null value."
 	       },
 	  EXAMPLE lines ///
-	  load "demo1.m2"
+	  load "Macaulay2Doc/demo1.m2"
 	  g 2
 	  listLocalSymbols
 	  ///,
@@ -1134,7 +1134,7 @@ document { Key => listLocalSymbols,
 	       "This usage works only in the debugger, where ", TO "current", " has a non-null value."
 	       },
 	  EXAMPLE lines ///
-	  load "demo1.m2"
+	  load "Macaulay2Doc/demo1.m2"
 	  g 2
 	  listLocalSymbols ZZ
 	  ///

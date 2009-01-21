@@ -121,7 +121,7 @@ QQ _ ComplexField :=
 RR _ ComplexField :=
 CC _ ComplexField := (x,R) -> toCC(R.precision,x)
 
-approx := (r,limit) -> (
+lift(RR,QQ) := opts -> (r,QQ) -> (
      if r == 0 then return 0/1;
      r' := r;
      m := mutableIdentity(ZZ,2);
@@ -130,15 +130,20 @@ approx := (r,limit) -> (
 	  columnSwap(m,0,1);
 	  columnAdd(m,0,a,1);
 	  r' = r' - a;
-	  if r' == 0 or abs(r - m_(0,0) / m_(1,0)) < limit then return m_(0,0) / m_(1,0);
+	  q := m_(0,0) / m_(1,0);
+	  if r === q_RR then return q;
+	  if r' == 0 then return promote(r,QQ);
 	  r' = 1/r' ;
 	  ))
-lift(RR,QQ) := opts -> (r,QQ) -> approx(r,abs r / 2^(precision r - 16))
 lift(RR,ZZ) := opts -> (r,ZZ) -> (
      i := floor r; 
      if r == i then i 
      else if opts.Verify then error "can't lift to ZZ")
 lift(CC,QQ) := lift(CC,ZZ) := opts -> (z,R) -> if imaginaryPart z == 0 then lift(realPart z, R) else if opts.Verify then error "can't lift given complex number to real number"
+promote(RR,QQ) := (z,QQ) -> if z === 0. then 0/1 else if isFinite z then (
+     (prec,sgn,expt,m,numbits) := partsRR z;
+     m / 2^(numbits - expt)
+     ) else error "promote(RR,QQ): non-finite number encountered"
 
 ring RR := x -> new RealField of RR' from precision x
 ring CC := x -> new ComplexField of CC' from precision x

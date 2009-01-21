@@ -22,45 +22,29 @@ export parseInt(s:string):ZZ := (
 	  );
      i);
 export parseRR(s:string):RR := (			    -- 4.33234234234p345e-9
-     inPrec := false;
-     inExpon := false;
      prec := defaultPrecision;
-     exsign := false;
-     expon := long(0);
-     foreach c in s do (
-	  if c == 'e' then (
-		    inPrec = false;
-		    inExpon = true;
+     ss := new string len length(s) + 1 do (		    -- we add 1 to get at least one null character at the end
+     	  inPrec := false;
+	  foreach c in s do (
+	       if c == 'p' then (
+		    inPrec = true;
+		    prec = ulong(0);
 		    )
-	  else if c == 'p' then (
-	       inPrec = true;
-	       prec = ulong(0);
-	       )
-	  else if inPrec then (
-	       if isdigit(c) then prec = 10 * prec + (c - '0')
-	       )
-	  else if inExpon then (
-	       if isdigit(c) then expon = 10 * expon + (c - '0')
-	       else if c == '-' then exsign = true;
-	       ));
-     if exsign then expon = -expon;
-     pointSeen := false;
-     x := toInteger(0);
-     foreach c in s do (
-	  if c == '\"' then nothing
-	  else if c == '.' then pointSeen = true
-	  else if isdigit(c) then (
-	       x = x * 10 + (c - '0');
-	       if pointSeen then expon = expon - 1;
-	       )
-	  else break);
-     if isZero(x) then return toRR(0,prec);
-     eprec := max(prec, ulong(exponent(x)) + 4);
-     y := toRR(x,eprec);
-     if expon > 0 then y = y * pow10(expon,eprec)
-     else if expon < 0 then y = y / pow10(-expon,eprec);
-     if eprec != prec then y = toRR(y,prec);
-     y);
+	       else if inPrec then (
+		    if isdigit(c) then (
+			 prec = 10 * prec + (c - '0');
+			 )
+		    else (
+			 inPrec = false;
+		    	 provide c;
+			 )
+		    )
+	       else (
+		    provide c;
+		    ));
+	  while true do provide char(0);
+	  );
+     toRR(ss,prec));
 parseError := false;
 parseMessage := "";
 utf8(w:varstring,i:int):varstring := (

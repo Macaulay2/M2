@@ -3,6 +3,31 @@
 --- notes: 
 
 document { 
+     Key => {(isPseudoprime, ZZ), isPseudoprime},
+     Headline => "whether an integer is a pseudoprime",
+     Usage => "isPseudoprime x",
+     Inputs => { "x" },
+     Outputs => {
+	  Boolean => {TO "true", " if ", TT "x", " is a strong pseudoprime in the sense of Baillie-Pomerance-Selfridge-Wagstaff"}
+	  },
+     PARA {
+	  "The algorithm is provided by ", TO "pari", ".  The pseudoprimality test means that
+	  it has no small factors, that it is a Rabin-Miller pseudoprime for the 
+	  base $2$, and that it passes the strong Lucas test for the sequence $(P, -1)$, where $P$ is the 
+	  smallest positive integer such that $P^2 - 4$ is not a square modulo $x$.
+	  Such pseudoprimes may not be prime; to check primality, use ", TO "isPrime", ".
+	  According to the documentation of ", TO "pari", TEX ", such pseudoprimes are known
+	  to be prime up to $10^{13}$, and no nonprime pseudoprime is known."
+	  }
+     }
+
+TEST ///
+assert not isPseudoprime(101*1617839547365369353)
+assert not isPseudoprime(18158848484363*1617839547365369353)
+assert isPseudoprime 1617839547365369353
+///
+
+document { 
      Key => {isPrime, (isPrime, ZZ), (isPrime,Ideal)},
      Headline => "whether a integer, polynomial, or ideal is prime",
      Usage => "isPrime f",
@@ -44,7 +69,7 @@ document {
 -- 	  {"At the moment, for integers larger than ", TT "2^31-1", " it checks for
 --      	       divisibility by small primes, and then applies a strong pseudoprimality
 --      	       test (Rabin-Miller) to the base 2."},},
-     SeeAlso => {factor}
+     SeeAlso => {factor, isPseudoprime}
      }
 
 TEST "
