@@ -471,7 +471,7 @@ factor Module := opts -> (M) -> (
 
 -----------------------------------------------------------------------------
 
-dual Module := Module => F -> if F.cache.?dual then F.cache.dual else F.cache.dual = (
+dual Module := Module => {} >> o -> F -> if F.cache.?dual then F.cache.dual else F.cache.dual = (
      if not isFreeModule F then kernel transpose presentation F
      else new Module from (ring F,rawDual raw F))
 

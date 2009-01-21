@@ -153,7 +153,7 @@ setupMethods((), {
 	  Hom, diff, diff', contract, contract', subsets, partitions, member,
 	  koszul, symmetricPower, coefficientRing, trace, target, source,
 	  getChangeMatrix, poincare, cover, coverMap, super, poincareN, terms,
-	  dual, cokernel, coimage, comodule, image, someTerms, scanKeys, scanValues,
+	  cokernel, coimage, comodule, image, someTerms, scanKeys, scanValues,
 	  substitute, rank, complete, ambient, topComponents, baseName, remainder, quotientRemainder, remainder', quotientRemainder', quotient',
 	  coefficients, monomials, size, sum, product, exponents, nullhomotopy, module, raw,
 	  hilbertFunction, content, leadTerm, leadCoefficient, leadMonomial, components,
@@ -166,6 +166,7 @@ setupMethods((), {
 use = method()
 use Thing := identity
 
+dual = method(Options => true)
 
 default = method()
 --default Type := (X) -> (

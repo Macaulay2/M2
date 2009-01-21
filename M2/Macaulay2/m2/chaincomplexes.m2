@@ -591,7 +591,7 @@ Hom(Module, ChainComplex) := ChainComplex => (M,C) -> (
 	       ));
      D)
 
-dual ChainComplex := ChainComplex => (C) -> (
+dual ChainComplex := ChainComplex => {} >> o -> (C) -> (
 	  R := ring C;
 	  Hom(C,R^1))
 
@@ -616,7 +616,8 @@ Hom(Module, ChainComplexMap) := ChainComplexMap => (N,f) -> (
      scan(spots f, i -> g#i = Hom(N,f#i));
      g)
 
-transpose ChainComplexMap := dual ChainComplexMap := ChainComplexMap => f -> Hom(f, (ring f)^1)
+transpose ChainComplexMap := f -> dual f
+dual ChainComplexMap := ChainComplexMap => {} >> o -> f -> Hom(f, (ring f)^1)
 
 regularity ChainComplex := opts -> C -> regularity betti(C,opts)
 regularity Module := opts -> (M) -> (
@@ -630,7 +631,7 @@ BettiTally == BettiTally := (C,D) -> C === D
 BettiTally ++ BettiTally := (C,D) -> merge(C,D,plus)
 BettiTally ** BettiTally := (C,D) -> combine(C,D,(j,k)->apply(j,k,plus),times,plus)
 BettiTally ZZ := (C,n) -> applyKeys(C, (i,d,h) -> (i,d,h-n))
-dual BettiTally := (C) -> applyKeys(C,j -> apply(j,minus))
+dual BettiTally := {} >> o -> (C) -> applyKeys(C,j -> apply(j,minus))
 regularity BettiTally := opts -> (C) -> (
      if opts.Weights =!= null then C = betti(C,opts);
      max apply(keys C, (i,d,h) -> h-i))

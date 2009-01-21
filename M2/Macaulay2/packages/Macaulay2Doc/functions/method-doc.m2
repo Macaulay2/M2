@@ -9,7 +9,9 @@ document {
 	       for ", TT "f", ", and ", TT "v", " is its default value.
 	       The list of options could be also replaced by the corresponding ", TO "OptionTable", ".
 	       Specifying ", TT "true", " here indicates that option handling is done by the individual methods,
-	       which may have various sets of acceptable option names.  See ", TO "making new functions with optional arguments", "." },
+	       while still allowing dispatching to methods based on types of arguments to be done.
+	       The individual methods may have various sets of acceptable option names, possibly empty.
+	       See ", TO "making new functions with optional arguments", "." },
 	  Binary => Boolean => { "whether the method is to be binary: for three arguments or more the result will be computed by calling binary methods installed for
 	       ", TT "f", " with two arguments at a time." },
 	  Dispatch => { "the method for getting a list of types from the parameters; the value of this option should be ", TO "Thing", " or ", TO "Type", "

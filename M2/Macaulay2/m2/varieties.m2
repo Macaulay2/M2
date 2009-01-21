@@ -310,7 +310,7 @@ hilbertPolynomial CoherentSheaf := opts -> F -> (
 hilbertFunction(List,CoherentSheaf) := hilbertFunction(ZZ,CoherentSheaf) := (d,F) -> ( notImplemented(); hilbertFunction(d,F.module))
 hilbertFunction(List,ProjectiveVariety) := hilbertFunction(ZZ,ProjectiveVariety) := (d,X) -> ( notImplemented(); hilbertFunction(d,ring X))
 
-dual CoherentSheaf := F -> sheaf_(F.variety) dual F.module
+dual CoherentSheaf := {} >> o -> F -> sheaf_(F.variety) dual F.module
 betti CoherentSheaf := F -> (
      if class variety F =!= ProjectiveVariety then error "expected a coherent sheaf over a projective variety";
      betti F.module)

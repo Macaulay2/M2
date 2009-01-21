@@ -626,7 +626,7 @@ Hom(Module, Matrix) := Matrix => (N,f) -> (
      then dual N ** f
      else notImplemented())
 
-dual(Matrix) := Matrix => f -> (
+dual(Matrix) := Matrix => {} >> o -> f -> (
      R := ring f;
      Hom(f,R^1)
      )
