@@ -1,0 +1,30 @@
+diff -ur tmp/gc-7.1/libatomic_ops-1.2/configure gc-7.1/libatomic_ops-1.2/configure
+--- tmp/gc-7.1/libatomic_ops-1.2/configure	2006-07-11 17:55:09.000000000 -0500
++++ gc-7.1/libatomic_ops-1.2/configure	2009-01-21 12:02:24.000000000 -0600
+@@ -4722,9 +4722,9 @@
+ #
+ 
+ AMDEP_TRUE="$AMDEP_TRUE" ac_aux_dir="$ac_aux_dir"
+-PICFLAG=${PICFLAG}
+-CC=${CC}
+-DEFS=${DEFS}
++PICFLAG="${PICFLAG}"
++CC="${CC}"
++DEFS="${DEFS}"
+ 
+ _ACEOF
+ 
+diff -ur tmp/gc-7.1/libatomic_ops-1.2/configure.ac gc-7.1/libatomic_ops-1.2/configure.ac
+--- tmp/gc-7.1/libatomic_ops-1.2/configure.ac	2006-07-11 17:55:09.000000000 -0500
++++ gc-7.1/libatomic_ops-1.2/configure.ac	2009-01-21 12:02:13.000000000 -0600
+@@ -60,7 +60,7 @@
+ AM_CONDITIONAL(NEED_ASM, test x$need_asm = xtrue)
+ 
+ AC_CONFIG_FILES([Makefile src/Makefile src/atomic_ops/Makefile src/atomic_ops/sysdeps/Makefile doc/Makefile tests/Makefile])
+-AC_CONFIG_COMMANDS([default],[[]],[[PICFLAG=${PICFLAG}
+-CC=${CC}
+-DEFS=${DEFS}]])
++AC_CONFIG_COMMANDS([default],[[]],[[PICFLAG="${PICFLAG}"
++CC="${CC}"
++DEFS="${DEFS}"]])
+ AC_OUTPUT
