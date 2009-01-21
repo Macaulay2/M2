@@ -1,0 +1,40 @@
+  Key
+    schurModule
+    (schurModule, List, Module)
+  Headline
+    creates Schur module from a partition and free module
+  Usage
+    schurModule(lambda,E)
+  Inputs
+    lambda:List
+      a list of numbers representing a partition; e.g. {3,1} stands for 2 rows of length 3 and 1. 
+    E:Module
+      a free module
+  Outputs 
+    M:Module
+      The result of application of the Schur functor associated to lambda to E. 
+  Description
+    Text
+      Applies the Schur functor associated to lambda to the free module E.
+      For a detailed definition of the Schur module see p.106 of Fulton "Young Tableaux".
+
+      The resulting M comes with cached data M.cache.Schur = {f, finv, AT, ST} where 
+
+      {"f is a map from exterior_mu E to M;", 
+	  "finv is a map from M to exterior_mu E;",
+	  "AT is a hash table of all tableaux, whose entries increase in every column;",
+	  "ST is a hash table of all standard tableaux (tableaux in AT, whose entries nondecrease in every row)."
+	  }
+
+      Tableaux are represented with objects of class Filling, 
+      which is a doble list whose entries are lists giving the fillings of the corresponding columns.          
+    Example
+      M=QQ^3;
+      scan(4, i-> << i+1 << "-th symmetric power of M = " << schurModule({i+1},M) << endl)
+      S = schurModule({3,2,1}, M);
+      v = sum(numgens S, i-> (i+1)*S_i) -- an element of S represented by a vector
+      printSchurModuleElement(v, S); 
+  Caveat
+    The partition lambda should be a valid nonempty partition.
+  SeeAlso
+    schur

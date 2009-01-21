@@ -1,0 +1,37 @@
+  Key
+    schurModulesMap
+    (schurModulesMap, Module, Module, Function)
+  Headline
+    creates a map between two Schur modules via the specified function.
+  Usage
+    schurModulesMap(N,M,F)
+  Inputs
+    N:Module
+	Schur module
+    M:Module
+	Schur module
+    F:Function 
+        The function should specify, for every SST in the basis of M, 
+	a linear comination of tableaus of the shape specified by N.
+        The output of F should be a sequence of pairs (c,T) where c is a coefficient 
+	in ring(N) and T a tableau (not necessarily semistandard). 
+  Outputs
+    G:Matrix
+	A map between M and N.
+  Description
+    Text
+      Constructs the map between M and N specified by the function F.
+    Example 
+      n = 4;      --j-th differential of the Koszul Complex on the variables of R
+      j = 2;
+      mu1=apply(j,j->1)
+      mu2=apply(j+1,j->1)
+      R = QQ[x_1..x_n];
+      M=schurModule(mu1,R^n);
+      N=schurModule(mu2,R^n);
+      F = T -> apply(numgens R, j -> (R_j, augmentFilling(T,0,j)))
+      schurModulesMap(N,M,F)
+  Caveat
+    The function F should output lists of pairs where the second component is a filling of the partition corresponding to N.
+  SeeAlso
+    schur

@@ -1,0 +1,19 @@
+  Key
+    splitCharacter
+    (splitCharacter,RingElement)
+  Headline
+    Decomposes a symmetric polynomial as a sum of schur functions
+  Usage
+    splitCharacter(c)
+  Inputs
+    c: RingElement
+       A Symmetric polynomial 
+  Outputs
+    p: RingElement
+  Description
+    Text
+       Expresses a symmetric polynomial c as a linear combination of schur functions     
+    Example 
+       c=character({{1,1,1},{2}},4)
+       splitCharacter(c)	
+    
