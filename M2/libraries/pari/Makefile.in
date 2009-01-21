@@ -18,13 +18,11 @@ CONFIGURECMD = $(CONFIGENV) ./Configure --prefix=$(LIBRARIESDIR) --with-gmp
 
 ifeq (@PROFILING@,yes)
 CONFIGURECMD += -pg
-BUILDTARGET = prf
 INSTALLOPTIONS = -C `config/objdir`.prf
 BUILDOPTIONS = -C `config/objdir`.prf
 else
 ifeq (@DEBUG@,yes)
 CONFIGURECMD += -g
-BUILDTARGET = dbg
 INSTALLOPTIONS = -C `config/objdir`.dbg
 BUILDOPTIONS = -C `config/objdir`.dbg
 else
