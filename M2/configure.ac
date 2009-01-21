@@ -596,7 +596,7 @@ then if test $BUILD_pari = no
      then AC_SEARCH_LIBS(pari_init,pari,,BUILD_pari=yes)
 	  AC_CHECK_HEADER(pari/pari.h,,BUILD_pari=yes)
      fi
-     test $BUILD_pari = yes && BUILTLIBS="-lpari $BUILTLIBS"
+     test $BUILD_pari = yes && BUILTLIBS="\$(TOSTATIC) -lpari \$(UNSTATIC) $BUILTLIBS"
 fi
 
 # we don't expect to find frobby already installed
