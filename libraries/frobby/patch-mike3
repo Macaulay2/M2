@@ -1,6 +1,6 @@
 diff -ur --exclude=configure tmp/frobby_vmike3/Makefile frobby_vmike3/Makefile
 --- tmp/frobby_vmike3/Makefile	2008-12-10 20:04:17.000000000 -0600
-+++ frobby_vmike3/Makefile	2008-12-12 16:46:41.000000000 -0600
++++ frobby_vmike3/Makefile	2009-01-21 03:15:45.000000000 -0600
 @@ -42,10 +42,13 @@
  endif
  
@@ -52,3 +52,21 @@ diff -ur --exclude=configure tmp/frobby_vmike3/Makefile frobby_vmike3/Makefile
  -include .depend
  
  clean: tidy
+diff -ur --exclude=configure tmp/frobby_vmike3/src/hash_map/hash_map frobby_vmike3/src/hash_map/hash_map
+--- tmp/frobby_vmike3/src/hash_map/hash_map	2008-12-10 20:04:17.000000000 -0600
++++ frobby_vmike3/src/hash_map/hash_map	2009-01-21 08:03:57.000000000 -0600
+@@ -292,10 +292,10 @@
+     class hash_multimap
+     {
+       // concept requirements
+-      __glibcxx_class_requires(_Key, _SGIAssignableConcept)
+-      __glibcxx_class_requires(_Tp, _SGIAssignableConcept)
+-      __glibcxx_class_requires3(_HashFn, size_t, _Key, _UnaryFunctionConcept)
+-      __glibcxx_class_requires3(_EqualKey, _Key, _Key, _BinaryPredicateConcept)
++      //__glibcxx_class_requires(_Key, _SGIAssignableConcept)
++      //__glibcxx_class_requires(_Tp, _SGIAssignableConcept)
++      //__glibcxx_class_requires3(_HashFn, size_t, _Key, _UnaryFunctionConcept)
++      //__glibcxx_class_requires3(_EqualKey, _Key, _Key, _BinaryPredicateConcept)
+ 	
+     private:
+       typedef hashtable<pair<const _Key, _Tp>, _Key, _HashFn,
