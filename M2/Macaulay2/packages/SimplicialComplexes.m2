@@ -72,7 +72,7 @@ simplicialComplex List := SimplicialComplex => (faces) -> (
      newSimplicialComplex(J, complement generators L)
      )
 
-dual SimplicialComplex := (D) -> (
+dual SimplicialComplex := {} >> o -> (D) -> (
      newSimplicialComplex(monomialIdeal complement D.facets,
 	  complement generators D.faceIdeal)
      )
