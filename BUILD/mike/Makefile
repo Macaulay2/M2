@@ -9,6 +9,7 @@ opt64 :
 		--prefix="`pwd`/installed" \
 		CC="gcc -m64" CXX="g++ -m64" \
 		--build=x86_64-apple-darwin \
+		--disable-strip \
 		--enable-dmg \
 		--enable-build-libraries="gc gdbm gmp mpfr readline ntl factory libfac frobby pari"
 
@@ -35,6 +36,7 @@ opt32 :
 	mkdir -p opt32
 	cd opt32; ../../../configure \
 		--prefix="`pwd`/installed" \
+		--disable-strip \
 		--enable-dmg \
 		--enable-build-libraries="gc gdbm gmp mpfr readline ntl factory libfac frobby pari"
 

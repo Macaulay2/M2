@@ -501,7 +501,7 @@ adams(ZZ,AbstractSheaf) := (k,E) -> abstractSheaf nonnull (variety E, Rank => ra
      ChernCharacter => adams(k, ch E),
      if E.cache.?ChernClass then ChernClass => adams(k, E.cache.ChernClass)
      )
-dual AbstractSheaf := E -> adams(-1,E)
+dual AbstractSheaf := {} >> o -> E -> adams(-1,E)
 
 - AbstractSheaf := E -> abstractSheaf(variety E, Rank => - rank E, ChernCharacter => - ch E)
 AbstractSheaf - AbstractSheaf := (F,G) -> F + -G
