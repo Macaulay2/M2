@@ -237,9 +237,10 @@ lcmOfGens MonomialIdeal := (I) -> (if I.cache#?lcmOfGens
  -- We use E. Miller's definition for nonsquare 
  -- free monomial -- ideals.
 
-alexanderDual = method(Options=>{Strategy=>0})
+alexanderDual = local alexanderDual
+alexopts = {Strategy=>0}
 
-alexanderDual(MonomialIdeal, List) := o -> (I,a) -> (
+dual(MonomialIdeal, List) := alexopts >> o -> (I,a) -> (
      aI := lcmOfGens I;
      if aI =!= a then (
      	  if #aI =!= #a then error ( "expected list of length ", toString (#aI));
@@ -248,18 +249,14 @@ alexanderDual(MonomialIdeal, List) := o -> (I,a) -> (
      newMonomialIdeal(ring I, rawAlexanderDual(raw I, a, o.Strategy)) -- 0 is the default algorithm
      )
 
-alexanderDual(MonomialIdeal,RingElement) := o -> (I,r) -> alexanderDual(I,first exponents r,o)
+dual(MonomialIdeal,RingElement) := alexopts >> o -> (I,r) -> alexanderDual(I,first exponents r,o)
 
-alexanderDual MonomialIdeal := o -> (I) -> (
+dual MonomialIdeal := alexopts >> o -> (I) -> (
   if I.cache#?alexanderDual
     then I.cache#alexanderDual
     else I.cache#alexanderDual = (
-	 alexanderDual(I, lcmOfGens I, o)
+	 dual(I, lcmOfGens I, o)
     ))
-
-dual(MonomialIdeal, List) := (I,a) -> alexanderDual(I,a)
-dual(MonomialIdeal,RingElement) := (I,r) -> alexanderDual(I,r)
-dual MonomialIdeal := (I) -> alexanderDual I
 
 --  ASSOCIATED PRIMES  -------------------------------------
 ass0 := (I) -> (
