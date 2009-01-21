@@ -264,7 +264,7 @@ ass0 := (I) -> (
      then I.cache#associatedPrimes
      else I.cache#associatedPrimes = (
      	  R := ring I;
-     	  J := alexanderDual I;
+     	  J := dual I;
      	  M := first entries generators J;
 	  H := new MutableHashTable;
      	  scan(M, m -> (
@@ -283,14 +283,14 @@ associatedPrimes MonomialIdeal := List => o -> (I) -> (
 
 minimalPrimes MonomialIdeal := decompose MonomialIdeal := (cacheValue symbol minimalPrimes) (
      (I) -> (
-	  minI := alexanderDual radical I;
+	  minI := dual radical I;
 	  apply(flatten entries generators minI, monomialIdeal @@ support)))
 
 irreducibleDecomposition = method();
 irreducibleDecomposition MonomialIdeal := List => (I) -> (
      R := ring I;
      aI := lcmOfGens I;
-     M := first entries generators alexanderDual I;
+     M := first entries generators dual I;
      apply(M, m -> (
 	       s := first keys standardForm leadMonomial m;
 	       monomialIdeal apply(keys s, v -> R_v^(aI#v + 1 - s#v))))
@@ -299,7 +299,7 @@ irreducibleDecomposition MonomialIdeal := List => (I) -> (
 primaryDecomposition MonomialIdeal := List => o -> (I) -> (
      R := ring I;
      aI := lcmOfGens I;
-     J := alexanderDual I;
+     J := dual I;
      M := first entries generators J;
      H := new MutableHashTable;
      scan(M, m -> (
