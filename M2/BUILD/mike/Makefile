@@ -31,6 +31,28 @@ profile64 :
 		--enable-profile \
 		--enable-build-libraries="gc gdbm gmp mpfr readline ntl factory libfac frobby pari"
 
+opt32 :
+	mkdir -p opt32
+	cd opt32; ../../../configure \
+		--prefix="`pwd`/installed" \
+		--enable-dmg \
+		--enable-build-libraries="gc gdbm gmp mpfr readline ntl factory libfac frobby pari"
+
+debug32 :
+	mkdir -p debug32
+	cd debug32; ../../../configure \
+		--prefix="`pwd`/installed" \
+		--enable-debug \
+		--disable-optimize \
+		--enable-build-libraries="gc gdbm gmp mpfr readline ntl factory libfac frobby pari"
+
+profile32 :
+	mkdir -p profile32
+	cd profile32; ../../../configure \
+		--prefix="`pwd`/installed" \
+		--enable-profile \
+		--enable-build-libraries="gc gdbm gmp mpfr readline ntl factory libfac frobby pari"
+
 # These are for use on linux/ubuntu
 
 opt :
