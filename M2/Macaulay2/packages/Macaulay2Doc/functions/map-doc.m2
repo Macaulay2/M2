@@ -482,9 +482,9 @@ document {
 	  F = map(B,C)
 	  G = map(C,B)
 	  F*G
-	  oo == id_B
+	  oo === id_B
 	  G*F
-	  oo == id_C
+	  oo === id_C
 	  ///,
      PARA{},
      "The ring maps which are created are not always mathematically well-defined.
