@@ -1,0 +1,23 @@
+  Key
+    straighten
+    (straighten, Filling, Module)
+  Headline
+    Given a tableau of shape lambda express it as a linear combination of SST in the given schur Module 
+  Usage
+    straighten(T,M)
+  Inputs
+    T: Filling
+      Any filling with shape mu and entries between 0 and rank(E)-1. 
+    M: Module
+      A Schur module of the form S_{mu}(E) for some partition mu.
+  Outputs
+    T2: filling
+  Description
+    Text
+       A linear combination of semistandard tableaux representing  T in M.
+    Example 
+       bla
+  Caveat
+    The function F should output lists of pairs where the second component is a filling of the partition corresponding to N.
+  SeeAlso
+    schur

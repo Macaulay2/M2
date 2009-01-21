@@ -1,6 +1,6 @@
 -- -*- coding: utf-8 -*-
 newPackage(
-    	  "SchurFunctors",
+    	  "PieriMaps",
    	  Version => "0.5.0",
 	  Date => "May 17, 2008",
 	  Authors => {{
@@ -8,7 +8,7 @@ newPackage(
 		    Email => "ssam@mit.edu",
 		    HomePage => "http://www.mit.edu/~ssam/"
 		    }},
-	  Headline => "computations of Schur modules and maps between them",
+	  Headline => "computations of matrices based on the Pieri formulas",
 	  DebuggingMode => false
 	  )
 
@@ -335,8 +335,8 @@ saturatePieri(List, List, Module, ZZ) := (mu, boxes, V, p) -> (
 
 beginDocumentation()
 document {
-     Key => SchurFunctors,
-     Headline => "Methods for computing Schur functors and Pieri inclusions",
+     Key => PieriMaps,
+     Headline => "Methods for computing Pieri inclusions",
      PARA {
 	  "Some references:"
 	  },
@@ -459,8 +459,8 @@ document {
      }     	  
      
 end
-loadPackage "SchurFunctors"
-installPackage SchurFunctors
+loadPackage "PieriMaps"
+installPackage PieriMaps
 
 TEST ///
 standardTableaux(3,{3,2})

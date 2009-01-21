@@ -1,0 +1,35 @@
+  Key
+    schur
+    (schur, List, Matrix)
+  Headline
+    creates a map between Schur modules
+  Usage
+    schur(lambda,f)
+  Inputs
+    lambda:List
+      a list of numbers representing a partition
+    f:Module
+      a map between two free modules
+  Outputs 
+    F:Matrix
+      the result of applying the Schur functor associated to lambda to f
+  Description
+    Text
+      Applies the Schur functor associated to lambda to the map f between free modules.
+      The modules @TT "source F"@ and @TT "target F"@ are Schur modules containing 
+      certain data in cache (see @TO schurModule@).  
+    Example
+      R=QQ[x_1,x_2,x_3]
+      F=map(R^1,R^3,vars R)
+      L=schur({2},F) -- 2nd veronese embedding
+      F=matrix{{1_QQ,2,4},{3,9,27},{4,16,64}}
+      schur({1,1},F)
+      minors(2,F)
+      schur({1,1,1},F) == det F
+  Caveat
+    The partition lambda should be a valid nonempty partition.
+  SeeAlso
+    schurModule
+
+
+
