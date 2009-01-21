@@ -17,6 +17,13 @@ int mpfr_hash(mpfr_t x) {
   int h = 0;
   int n = (x->_mpfr_prec+mp_bits_per_limb-1)/mp_bits_per_limb;
   int i;
-  for (i = 0; i<n; i++, h*=3737) h += x->_mpfr_d[i];
-  return h * 3737 + x->_mpfr_exp + 11 * x->_mpfr_sign;
+  if (0 != mpfr_sgn(x))
+    for (i = 0; i<n; i++, h*=3737) h += x->_mpfr_d[i];
+  return 777 + h * 3737 + x->_mpfr_exp + 11 * x->_mpfr_sign;
 }
+
+/*
+ Local Variables:
+ compile-command: "make -C $M2BUILDDIR/Macaulay2/d "
+ End:
+*/

@@ -31,7 +31,7 @@ document {
      "See also the function ", TO matrix, ", which focuses on creating new matrices from
      rectangular arrays of ring elements or matrices.",
      Subnodes => {
-	  "Creating a map between modules (a matrix)",
+	  "Creating a map (matrix) between modules",
 	  TO (map,Module,Module,Function),
 	  TO (map,Module,Module,List), 
 	  TO (map,Module,Module,RingElement), 
@@ -43,6 +43,8 @@ document {
 	  TO (map,Module,Nothing,Matrix), 
 	  "Creating a map with a different degree",
 	  TO (map,Matrix), 
+     	  "Creating a map between modules over different rings",
+	  TO (map,Module,Module,RingMap,Matrix),
 	  "Creating a map between rings",
 	  TO (map,Ring,Ring),
 	  TO (map,Ring,Ring,List),

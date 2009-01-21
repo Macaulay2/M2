@@ -116,7 +116,7 @@ document {
 	  "Here is an example of the use of ", TO "return", " as a debugger command."
 	  },
      EXAMPLE lines ///
-     load "demo1.m2"
+     load "Macaulay2Doc/demo1.m2"
      code g
      g 2
      code f

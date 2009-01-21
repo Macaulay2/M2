@@ -82,19 +82,19 @@ document {
 	  lift(3.0,QQ)
 	  ///,
      PARA{
-	  "A continued fraction method is used to lift a real number to a rational number.",
+	  "A continued fraction method is used to lift a real number to a rational number, whereas
+	  ", TO "promote", " uses the internal binary representation.",
 	  },
+     EXAMPLE lines ///
+     	  lift(123/2341.,QQ)
+     	  promote(123/2341.,QQ)
+	  factor oo
+          ///,
      PARA {
 	  "For division of matrices, which might be thought of as lifting
 	  one homomorphism over another, see ", TO (symbol //,Matrix, Matrix), "."
 	  },
-     EXAMPLE lines ///
-	  12/127.
-	  lift(oo,QQ)
-          ///,
-     SeeAlso => {baseRings,liftable
-	  -- ,promote
-	  }
+     SeeAlso => {baseRings,liftable,promote}
      }
 
 TEST ///

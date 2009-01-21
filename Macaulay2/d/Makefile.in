@@ -357,7 +357,7 @@ clean::; rm -f @pre_bindir@/M2@EXE@
 	time @CC@ $(M2_LDFLAGS) $(M2_OBJECTS_AND_LIBRARIES) -lm -o "$@".tmp
 	printenv LD_LIBRARY_PATH
 ifneq (@LDD@,)
-	- @LDD@ $@ | ( ! egrep -v " => /usr/lib/| => /lib/|/lib/ld-linux.so|linux-gate" )
+	- @LDD@ $@.tmp | ( ! egrep -v " => /usr/lib/| => /lib/|/lib/ld-linux.so|linux-gate" )
 endif
 ifeq "$(STRIP)" "yes"
 ifneq "@STRIPCMD@" ""

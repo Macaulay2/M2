@@ -36,7 +36,8 @@ find-M2:
 	: : : : : : : : : : : : : : : : : : : : : : : : : : : : : : : : : : 
 CONFIGOPTIONS += --enable-encap
 CONFIGOPTIONS += --enable-common-staging-area
-CONFIGOPTIONS += --prefix=/usr
+PREFIX ?= /usr
+CONFIGOPTIONS += --prefix=$(PREFIX)
 # Local Variables:
 # compile-command: "time make -f Makefile.include find-M2 DIRECTORY=none"
 # End:

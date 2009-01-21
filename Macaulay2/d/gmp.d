@@ -835,6 +835,17 @@ export toRR(x:RR,prec:ulong):RR := (
      Ccode( void, "mpfr_set(", "(__mpfr_struct *)", z, ",", "(__mpfr_struct *)", x, ", GMP_RNDN)" );
      z);
 
+export toRR(s:string,prec:ulong):RR := (
+     z := newRR(prec);
+     r := Ccode( int, 
+	  "mpfr_set_str(", 
+	  "(__mpfr_struct *)",z,",", 
+	  s, "->array_,",
+	  "0,",
+	  "GMP_RNDN",
+	  ")" );
+     z);
+
 export toRR(x:QQ,prec:ulong):RR := (
      z := newRR(prec);
      Ccode( void, "mpfr_set_q(", "(__mpfr_struct *)", z, ",", "(__mpq_struct *)", x, ", GMP_RNDN)" );

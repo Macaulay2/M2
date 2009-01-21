@@ -225,7 +225,7 @@ map = method mopts
 setupMethods(Dispatch => Thing, {transpose} )
 setupMethods(TypicalValue => Boolean,
      {isBorel, isWellDefined, isInjective, isSurjective, isUnit, match,
-	  isSubset,isHomogeneous, isIsomorphism, isPrime, isField, isConstant
+	  isSubset,isHomogeneous, isIsomorphism, isPrime, isPseudoprime, isField, isConstant
 	  })
 setupMethods(TypicalValue => ZZ,
      {binomial,degreeLength,height,char,pdim,dim,depth,width,euler,genus})

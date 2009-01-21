@@ -110,7 +110,7 @@ document {
 	  "Starting with version 1.2, Macaulay 2 incorporates ", TT "pari", ", a free library for fast computations in number theory,
 	  available at ", HREF "http://pari.math.u-bordeaux.fr/", ",
 	  originally developed by Henri Cohen and his co-workers at Université Bordeaux I, France.
-	  It is used by ", TO (factor,ZZ), ", ", TO (factor,QQ), ", and ", TO (isPrime,ZZ), ".
+	  It is used by ", TO (factor,ZZ), ", ", TO (factor,QQ), ", ", TO (isPseudoprime, ZZ), ", and ", TO (isPrime,ZZ), ".
 	  It is distributed under the terms of the GNU General Public License, version 2, see ", TO "COPYING", "."
 	  }
      }

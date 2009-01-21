@@ -606,7 +606,7 @@ document {
 	  "Here is an example as a debugger command."
 	  },
      EXAMPLE lines ///
-     load "demo1.m2"
+     load "Macaulay2Doc/demo1.m2"
      g 2
      x
      break

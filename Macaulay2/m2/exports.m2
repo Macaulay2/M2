@@ -761,6 +761,7 @@ export {
 	symbol isPolynomialRing,
 	symbol isPrime,
 	symbol isPrimitive,
+	symbol isPseudoprime,
 	symbol isQuotientModule,
 	symbol isQuotientOf,
 	symbol isQuotientRing,
