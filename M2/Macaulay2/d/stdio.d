@@ -275,9 +275,13 @@ export openIn(f:file):(file or errmsg) := accept(f,true,false);
 export openOut(f:file):(file or errmsg) := accept(f,false,true);
 export openInOut(f:file):(file or errmsg) := accept(f,true,true);
 export expandFileName(filename:string):string := (
-     if length(filename) >= 2 && filename.0 == '~' && filename.1 == '/' then (
+     if length(filename) > 0 
+     && filename.0 == '~' 
+     && ( length(filename) == 1 || length(filename) >= 2 && filename.1 == '/'  )
+     then (
 	  h := getenv("HOME");
-	  if length(h) == 0 then filename else h + substr(filename,1))
+	  if length(h) == 0 then filename else h + substr(filename,1)
+	  )
      else filename);
 export openIn(filename:string):(file or errmsg) := (
      if filename === "-"
