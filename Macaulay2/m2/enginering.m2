@@ -301,16 +301,16 @@ prepwts = wts -> (
      if not isListOfIntegers wts then error "part: expected a list of integers";
      wts)
 
-part(Nothing,Nothing,List,RingElement) := 
-part(Nothing,ZZ,List,RingElement) := 
-part(ZZ,Nothing,List,RingElement) := 
-part(ZZ,ZZ,List,RingElement) := RingElement => (d,e,wts,f) -> new ring f from rawGetPart(prepwts wts, raw f, d, e)
+part(Nothing,Nothing,VisibleList,RingElement) := 
+part(Nothing,ZZ,VisibleList,RingElement) := 
+part(ZZ,Nothing,VisibleList,RingElement) := 
+part(ZZ,ZZ,VisibleList,RingElement) := RingElement => (d,e,wts,f) -> new ring f from rawGetPart(prepwts wts, raw f, d, e)
 
-part(InfiniteNumber,ZZ,List,RingElement) := RingElement => (d,e,wts,f) -> (
+part(InfiniteNumber,ZZ,VisibleList,RingElement) := RingElement => (d,e,wts,f) -> (
      if d < 0 then part(,e,wts,f) else 0_(ring f))
-part(ZZ,InfiniteNumber,List,RingElement) := RingElement => (d,e,wts,f) -> (
+part(ZZ,InfiniteNumber,VisibleList,RingElement) := RingElement => (d,e,wts,f) -> (
      if e > 0 then part(d,,wts,f) else 0_(ring f))
-part(InfiniteNumber,InfiniteNumber,List,RingElement) := RingElement => (d,e,wts,f) -> (
+part(InfiniteNumber,InfiniteNumber,VisibleList,RingElement) := RingElement => (d,e,wts,f) -> (
      prepwts wts;				    -- just for the error messages
      if d < e then f else 0_(ring f))
 
@@ -327,7 +327,7 @@ part(ZZ,Nothing,RingElement) :=
 part(ZZ,ZZ,RingElement) := RingElement => (d,e,f) -> part(d,e,defaultWeight f,f)
 
 part(ZZ,RingElement) := RingElement => (d,f) -> part(d,d,f)
-part(ZZ,List,RingElement) := RingElement => (d,wts,f) -> part(d,d,wts,f)
+part(ZZ,VisibleList,RingElement) := RingElement => (d,wts,f) -> part(d,d,wts,f)
 
 part(Sequence,RingElement) := Sequence => (s,f) -> apply(s,d->part(d,f))
 

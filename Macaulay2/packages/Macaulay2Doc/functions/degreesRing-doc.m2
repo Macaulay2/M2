@@ -65,6 +65,11 @@ document {
 undocumented {(degreesRing, QuotientRing), (degreesRing,PolynomialRing)}
 
 document { 
+     Key => degreesRing,
+     Headline => "the ring of degrees"
+     }
+
+document { 
      Key => {(degreesRing,Ring),(degreesRing, Module),(degreesRing,GeneralOrderedMonoid)},
      Headline => "the ring of degrees",
      Usage => "degreesRing R",
