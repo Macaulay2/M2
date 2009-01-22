@@ -4,7 +4,7 @@ newPackage(
      Version => "0.1",
      Date => "June 2008",
      Authors => {
-	  {Name => "Alexandra Seceleanu", HomePage => "http://www.math.uiuc.edu/~asecele2/"},
+	  {Name => "Alexandra Seceleanu", HomePage => "http://www.math.uiuc.edu/~asecele2/"}
 	  	  },
      Headline => "symmetric polynomials",
      DebuggingMode => true
