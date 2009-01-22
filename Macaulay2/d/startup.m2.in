@@ -222,9 +222,10 @@ if firstTime then (
 	  if version#"operating system" === "MacOS" then "Library/Application Support/Macaulay2/" else ".Macaulay2/"
 	  );
      applicationDirectory = () -> (
+	  getenv "HOME" | "/" |
 	  if instance(applicationDirectorySuffix, Function)
-	  then "~/" | applicationDirectorySuffix()
-	  else "~/" | applicationDirectorySuffix
+	  then applicationDirectorySuffix()
+	  else applicationDirectorySuffix
 	  );
 
      dumpdataFile = null;
