@@ -2,7 +2,7 @@
 newPackage(
      "SymmetricPolynomials",
      Version => "0.1",
-     Date => "23 November 2007",
+     Date => "June 2008",
      Authors => {
 	  {Name => "Alexandra Seceleanu", HomePage => "http://www.math.uiuc.edu/~asecele2/"},
 	  	  },
@@ -10,7 +10,7 @@ newPackage(
      DebuggingMode => true
      )
 
-export {elementarySymmetric}
+export {elementalSymm}
 
 mons = (X,i)-> (
     n := #X;
@@ -19,6 +19,7 @@ mons = (X,i)-> (
     )
 
 
+s := local s;
 
 
 symring= R->(
@@ -31,17 +32,19 @@ symring= R->(
  
 elementarySymmetricPolynomialRing =(cacheValue symbol  elementarySymmetricRing)symring
  
-elementarySymmetric = method();
-elementarySymmetric (RingElement):=  f -> (
+elementalSymm = method();
+elementalSymm (RingElement):=  f -> (
      R := ring f;
      n := # flatten entries vars R; 
      if n<2 then return f;
      S := elementarySymmetricPolynomialRing R;
      X= select(n,gens S,i->true);
+     use S;--
      I :=ideal for i from 1 to n list ( s_i-sum apply(subsets(n,i),l->product(apply(l,u->S_(u)))));
      l := for i from 1 to n list (
 	mons(X,i)
 	  );
+
      l1 := for i from 1 to n-1 list (
 	  flatten (for j from 1 to i list ((-1)^j*s_j*l_(i-j))|l_i|{(-1)^(i+1)*s_(i+1)})
 	  );
@@ -52,23 +55,43 @@ elementarySymmetric (RingElement):=  f -> (
      F := map(S,R);
      answer := F(f)%I;
      use ring f;
+---------New line: it creates a new ring whose variables are the elementary symmetric polynomials
+     F=QQ[s_1..s_n];
+     answer=substitute(answer,F);
+     E:=QQ[e_1..e_n];
+     MAP=map(E,F,vars E);
+     answer=MAP(answer);
      return answer;
      )
      
 
-elementarySymmetric (PolynomialRing):=  R->(
+elementalSymm (PolynomialRing):=  R->(
      return map(R,elementarySymmetricPolynomialRing R)
      )
 
-
-
 beginDocumentation()
 
-document {
-	Key => {elementarySymmetric},
-	Headline => "decomposition into elementary symmetric polynomials",
-	Usage => "",
-	Inputs => { "a Ring or a Polynomial" },
-	Outputs => {{ "the polynomial in the elementary symmetric polynomials that represents the input" }},
-	}
+doc ///
+  Key
+    elementalSymm
+    (elementalSymm, RingElement)
+  Headline
+    Expresses a symmetric polynomial as a sum of elementary symmetric functions
+  Usage
+    elementalSymm(f)
+  Inputs
+    f:RingElement
+      A symmetric polynomial in n variables  
+  Outputs 
+    G:RingElement
+      The representation of f as a sum of elementary symmetric functions.
+  Description
+    Text    
+      Expresses a symmetric polynomial as a sum of elementary symmetric functions
+    
+    Example
+      R=QQ[x_0,x_1,x_2,x_3]
+      q=x_0^2*x_1^2*x_2^2+x_0^2*x_1^2*x_2*x_3+x_0^2*x_1*x_2^2*x_3+x_0*x_1^2*x_2^2*x_3+x_0^2*x_1^2*x_3^2+x_0^2*x_1*x_2*x_3^2+x_0*x_1^2*x_2*x_3^2+x_0^2*x_2^2*x_3^2+x_0*x_1*x_2^2*x_3^2+x_1^2*x_2^2*x_3^2
+      elementalSymm(q)
+///
 
