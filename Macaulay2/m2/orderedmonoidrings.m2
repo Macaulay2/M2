@@ -82,6 +82,12 @@ degreesRing PolynomialRing := PolynomialRing => R -> (
 
 degreesRing Ring := R -> error "no degreesRing for this ring"
 
+degreesMonoid PolynomialRing := PolynomialRing => R -> (
+     if R.?degreesMonoid then R.degreesMonoid
+     else error "no degreesMonoid for this ring")
+
+degreesMonoid Ring := R -> error "no degreesMonoid for this ring"
+
 generators PolynomialRing := opts -> R -> (
      if opts.CoefficientRing === null then R.generators
      else if opts.CoefficientRing === R then {}

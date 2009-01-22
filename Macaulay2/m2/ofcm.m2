@@ -94,6 +94,7 @@ degreesMonoid ZZ := memoize(
 
 degreesMonoid List := memoize(
      hft -> (
+	  hft = deepSplice hft;
 	  if not all(hft, i -> instance(i,ZZ)) then error "degreesMonoid: expected a list of integers";
 	  n := # hft;
 	  T := getGlobalSymbol "T";

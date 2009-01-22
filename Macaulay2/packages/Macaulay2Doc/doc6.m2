@@ -415,12 +415,51 @@ document {
      PARA{},
      SeeAlso => { "monoid" }
      }     
+
+undocumented { (degreesMonoid,Ring) }
 document {
-     Key => {degreesMonoid,(degreesMonoid, GeneralOrderedMonoid), (degreesMonoid, ZZ)},
+     Key => {degreesMonoid,(degreesMonoid, GeneralOrderedMonoid),(degreesMonoid, ZZ),(degreesMonoid, List),(degreesMonoid, Module),(degreesMonoid, PolynomialRing),(degreesMonoid, QuotientRing)},
      Headline => "get the monoid of degrees",
-     TT "degreesMonoid n", " -- returns the monoid whose elements correspond
-     to the multidegrees of length ", TT "n", ", or, if ", TT "n", " is a monoid, the monoid whose elements correspond to 
-     degrees of elements of ", TT "n", "."
+     SYNOPSIS (
+	  Usage => "degreesMonoid x",
+	  Inputs => {
+	       "x" => {ofClass{List,ZZ}, "a list of integers, or a single integer"}
+	       },
+	  Outputs => {
+	       {"the monoid with inverses whose variables have degrees given by the elements of ", TT "x", ", and whose weights in
+		    the first component of the monomial ordering are minus the degrees.  If ", TT "x", " is an
+		    integer, then the number of variables is ", TT "x", ", the degrees are all ", TT "{}", ",
+		    and the weights are all ", TT "-1", "."
+		    }
+	       },
+	  PARA {
+	       "This is the monoid whose elements correspond to degrees of rings with heft vector ", TT "x", ",
+	       or, in case ", TT "x", " is an integer, of rings with degree rank ", TT "x", " and no heft vector;
+	       see ", TO "heft vectors", ".
+	       Hilbert series and polynomials of modules over such rings are elements of its monoid ring over ", TO "ZZ", ";
+	       see ", TO "hilbertPolynomial", " and ", TO "hilbertSeries", "  The monomial ordering
+	       is chosen so that the Hilbert series, which has an infinite number of terms,
+	       is bounded above by the weight."
+	       },
+	  EXAMPLE lines ///
+	  degreesMonoid {1,2,5}
+	  degreesMonoid 3
+	  ///
+	  ),
+     SYNOPSIS (
+     	  Usage => "degreesMonoid M",
+	  Inputs => { "M" => {ofClass{Module,PolynomialRing,QuotientRing}} },
+	  Outputs => { {"the degrees monoid for (the ring of) ", TT "M" } },
+	  EXAMPLE lines ///
+	  R = QQ[x,y,Degrees => {{1,-2},{2,-1}}];
+	  heft R
+	  degreesMonoid R
+	  S = QQ[x,y,Degrees => {-2,1}];
+	  heft S
+	  degreesMonoid S^3
+	  ///
+	  ),
+     SeeAlso => {heft, use, degreesRing}
      }
 document {
      Key => {(symbol SPACE, Ring, Array),(symbol SPACE,InexactFieldFamily,Array)},

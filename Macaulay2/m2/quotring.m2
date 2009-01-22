@@ -185,6 +185,7 @@ dim QuotientRing := (R) -> (
      )
 
 monoid QuotientRing := o -> (cacheValue monoid) (S -> monoid ambient S)
+degreesMonoid QuotientRing := (cacheValue degreesMonoid) (S -> degreesMonoid ambient S)
 degreesRing QuotientRing := (cacheValue degreesRing) (S -> degreesRing ambient S)
 QuotientRing_String := (S,s) -> if S#?s then S#s else (
      R := ultimate(ambient, S);

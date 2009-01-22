@@ -185,7 +185,7 @@ document {
 		    LI {"The function ", TO "minors", " has been altered so the ideal of ", TT "n", " by ", TT "n", " minors that it provides for negative
 			 values of ", TT "n", " is the unit ideal."
 			 },
-		    LI {"The function ", TO "parts", " has been altered so that for multigraded rings, it does not use the first component
+		    LI {"The function ", TO "part", " has been altered so that for multigraded rings, it does not use the first component
 			 of the degree vector.  New functionality has been added."
 			 },
 		    LI {"Heft vectors are now automatically computed, ", TO "heft vectors"},
@@ -312,6 +312,15 @@ document {
 			 "The binary representation of a real number is now available using ", TO (promote,RR,QQ), ".
 			 The code for ", TO (lift,RR,QQ), " has been tightened up so a rational number is provided
 			 that provides exactly the same real number when promoted."
+			 },
+		    LI {
+			 "The emacs commands ", TT "M-x M2", ", bound to ", TT "f12", ", and ", TT "M2-send-to-program", ", 
+			 bound to ", TT "f11", ", have some new capability.  
+     	       	    	 With prefix argument ", TT "C-u C-u", " to ", TT "M2", ", the tag from which the buffer name is constructed (by
+			 prepending and appending asterisks) can be entered in the minibuffer.
+		         With a prefix argument to ", TT "M2-send-to-program", ", the name of
+			 the buffer to which this and future uses of the command (in this buffer) should
+			 be sent can be entered, with history."
 			 }
 		    }
 	       }
