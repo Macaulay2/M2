@@ -389,6 +389,8 @@ AC_SUBST(PACKAGES,"
   ReesAlgebra
   Regularity
   SchurRings
+  SymmetricPolynomials
+  SchurFunctors
   SimplicialComplexes
   LLLBases
   Parsing
@@ -396,6 +398,8 @@ AC_SUBST(PACKAGES,"
   ChainComplexExtras
   Benchmark
   Schubert2
+  BoijSoederberg
+  Bruns
   Browse
   InvolutiveBases
   ConwayPolynomials
