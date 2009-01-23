@@ -135,18 +135,24 @@ symmetricAlgebra(Nothing,Nothing,Matrix) := RingMap => opts -> (T,S,f) -> symmet
 -- Copyright 2006 by Daniel R. Grayson
 
 coerce = method(Dispatch=>{Thing,Type})	-- this might be generally useful to the user, as the mathematical analogue of new...from...
-coerce(Thing,Thing) := first				    -- hmmm, this means there will be no error messages about undefined coercion methods
+coerce(Thing,Thing) := (x,Y) -> if instance(x,Y) then x else error("no method for coercing result to type ", toString Y)
 coerce(Ideal,Ring) := quotient @@ first
-coerce(Thing,Nothing) := x -> null			    -- avoid using this one, to save time earlier
-coerce(Ring,Ideal) := ideal @@ first			    -- avoid using this one, to save time earlier
-preprocessResultTemplate = (X,r) -> (
+coerce(Thing,Nothing) := (x,Nothing) -> null		    -- avoid using this one, to save time earlier
+coerce(Ring,Ideal) := (R,Ideal) -> ideal R		    -- avoid using this one, to save time earlier
+preprocessResultTemplate = (narrowers,r) -> (
      if instance(r,ZZ) then r = r:null;
      r = apply(sequence r,x -> if x === null then Thing else x);
      if #r == 0 then return r;
-     if not all(r, X -> instance(X,Type)) then error "expected Result option to be a type or a sequence of types or nulls";
-     if r#0 === Thing then r = prepend(class X, drop(r,1));
-     r)
-coerceResults = (resultTemplate,results) -> unsequence apply(take(results,#resultTemplate),resultTemplate,coerce)
+     if not all(r, T -> instance(T,Type)) then error "expected Result option to be a type or a sequence of types or nulls";
+     r = apply(#r, i -> if narrowers#?i and ancestor(r#i,narrowers#i) then narrowers#i else r#i );
+     toSequence r)
+coerceResults = (resultTemplate,results) -> (
+     if #resultTemplate > #results then error(
+	  if #results === 1 
+	  then ( "only 1 result is available" )
+	  else ( "only ", toString(#results), " results are available" )
+	  );
+     unsequence apply(take(results,#resultTemplate),resultTemplate,coerce))
 flatCoerce = (R,resultTemplate,results) -> (
      (X,p,q) := results;
      -- assert( instance(X,Ideal) or instance(X,Ring));
@@ -191,13 +197,13 @@ triv := R -> (
      (R,idR,idR))
 
 flattenRing Ring := opts -> R -> (
-     resultTemplate := preprocessResultTemplate(R, opts.Result);
+     resultTemplate := preprocessResultTemplate(1:Ring, opts.Result);
      k := opts.CoefficientRing;
      if k === R or k === null and (R.?isBasic or isField R) then flatCoerce(R,resultTemplate,triv R)
      else unable())
 
 flattenRing GaloisField := opts -> (cacheValue (symbol flattenRing => opts)) (F -> (
-     resultTemplate := preprocessResultTemplate(F, opts.Result);
+     resultTemplate := preprocessResultTemplate(1:Ring, opts.Result);
      A := ambient F;
      (X,p,q) := flattenRing(A, opts, Result => (resultTemplate#0,,));
      (p,q) = (map(target p, F, p), map(F, source q, q));
@@ -208,14 +214,14 @@ flatQuotient(Ring,Ideal) := (R,I) -> R/I
 flatQuotient(QuotientRing,Ideal) := (R,I) -> flatQuotient(ambient R,lift(I,ambient R))
 
 flattenRing Ideal := opts -> (cacheValue (symbol flattenRing => opts)) (J -> (
-     	  resultTemplate := preprocessResultTemplate(J, opts.Result);
+     	  resultTemplate := preprocessResultTemplate(1:Ideal, opts.Result);
 	  R := ring J;
 	  (I,p,q) := flattenRing(R,opts,Result => (Ideal,,));
 	  I = if ring I === R then J else I + p J;
 	  flatCoerce(ring J, resultTemplate,(I,p,q))))
 
 flattenRing QuotientRing := opts -> (cacheValue (symbol flattenRing => opts)) (R -> (
-     	  resultTemplate := preprocessResultTemplate(R, opts.Result);
+     	  resultTemplate := preprocessResultTemplate(1:Ring, opts.Result);
 	  if instance(ambient R, PolynomialRing) and (
 	       k := coefficientRing R;
 	       opts.CoefficientRing === null and (isField k or k.?isBasic)
@@ -231,7 +237,7 @@ flattenRing QuotientRing := opts -> (cacheValue (symbol flattenRing => opts)) (R
 	  r := flatCoerce(R, resultTemplate,(I,p,q))))
 
 flattenRing PolynomialRing := opts -> (cacheValue (symbol flattenRing => opts)) (R -> (
-     resultTemplate := preprocessResultTemplate(R, opts.Result);
+     resultTemplate := preprocessResultTemplate(1:Ring, opts.Result);
      if instance(resultTemplate,VisibleList) then apply(resultTemplate,x -> if x === null then Thing else x);
      A := coefficientRing R;
      Q := ultimate(ambient,R);

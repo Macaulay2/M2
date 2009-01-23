@@ -82,7 +82,7 @@ document {
      }
 
 document { 
-     Key => {(part,List,RingElement), (part,Sequence,RingElement)},
+     Key => {(part,List,RingElement)},
      Headline => "sum of terms of a polynomial of a given degree(s)",
      SYNOPSIS (
 	  Usage => "part(d,F)\npart_d F",
@@ -111,28 +111,6 @@ document {
 	       "B = A[x,y]",
 	       "degree(a*x)",
 	       "part_{2,2} (a*x+b*y-1)^3"
-	       }
-	  ),
-     SYNOPSIS (
-	  Usage => "part(s,F)",
-	  Inputs => {
-	       "s" => Sequence => {"a sequence of multidegrees"},
-	       "F" => RingElement => "an element in a polynomial ring"
-	       },
-	  Outputs => {
-	       Sequence => {"a sequence of the degree ", TT "d", " parts of the polynomial ", TT "F", " where ", TT "d", " ranges over
-		    the elements of ", TT "s"}
-	       },
-	  EXAMPLE lines ///
-	  R = QQ[x,y];
-	  f = (1+x+y)^6
-	  part(({1},{3},{5}), f)
-	  ///,
-	  PARA {
-	       "Warning: if the ring is singly graded and the degrees to be selected are consecutive,
-	       then it can be much faster to use ", TO (part,ZZ,ZZ,VisibleList,RingElement), " instead,
-	       because the code used here selects the desired parts one at a time, making many passes
-	       over the terms of ", TT "f", "."
 	       }
 	  ),
      SeeAlso => {degree, 

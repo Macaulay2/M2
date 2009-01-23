@@ -75,6 +75,12 @@ document {
 		    TO (symmetricAlgebra,Nothing,Ring,Matrix),
 		    TO (symmetricAlgebra,Ring,Nothing,Matrix),
 		    TO (symmetricAlgebra,Ring,Ring,Matrix),
+		    TO (symbol ^, RingElement, Ring),
+		    TO (symbol ^, Number, Ring),
+		    TO (symbol ^, RingElement, RingFamily),
+		    TO (symbol ^, Number, RingFamily),
+		    TO (symbol ^, Constant, Ring),
+		    TO (symbol ^, Constant, RingFamily)
 		    }
 	       },
 	  LI {
@@ -100,7 +106,7 @@ document {
 	  LI {
 	       "new optional arguments to functions:",
 	       UL {
-		    TO [GF,LengthLimit],
+		    TO [GF,SizeLimit],
 		    TO [basis,SourceRing],
 		    TO [check,UserMode],
 		    TO [flattenRing,Result],
@@ -186,7 +192,8 @@ document {
 			 values of ", TT "n", " is the unit ideal."
 			 },
 		    LI {"The function ", TO "part", " has been altered so that for multigraded rings, it does not use the first component
-			 of the degree vector.  New functionality has been added."
+			 of the degree vector.  New functionality has been added, and the method for ", TT "part(Sequence,RingElement)", "
+			 has been removed."
 			 },
 		    LI {"Heft vectors are now automatically computed, ", TO "heft vectors"},
 		    LI {"The description of a ring provided by ", TO "describe", " is now abbreviated by making use of

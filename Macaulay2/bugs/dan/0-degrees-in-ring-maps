@@ -1,0 +1,44 @@
+ring maps can get the wrong degree map!
+
+    i20 : R = QQ[a]
+
+    o20 = R
+
+    o20 : PolynomialRing
+
+    i21 : S = R[x]
+
+    o21 = S
+
+    o21 : PolynomialRing
+
+    i22 : degrees R^{-2}
+
+    o22 = {{2}}
+
+    o22 : List
+
+    i23 : degrees (S**R^{-2})
+
+    o23 = {{0, 2}}
+
+    o23 : List
+
+    i24 : f = map(S,R)
+
+    o24 = map(S,R,{a})
+
+    o24 : RingMap S <--- R
+
+    i25 : degrees (f**R^{-2})
+
+    o25 = {{0, 0}}
+
+    o25 : List
+
+    i26 : f.Matrix
+
+    o26 = 0
+
+		   2        1
+    o26 : Matrix ZZ  <--- ZZ

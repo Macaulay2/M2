@@ -91,13 +91,13 @@ promote(ZZ,CC') :=
 promote(QQ,CC') := 
 promote(RR,CC') := 
 promote(CC,CC') := (i,K) -> toCC(K.precision,i)
-lift(Number,InexactNumber) := opts -> (x,RR) -> lift(x,default RR)
+lift(Number,InexactNumber) := opts -> (x,RR) -> lift(x,default RR,opts)
 
 liftable(Number,InexactNumber) := (x,RR) -> liftable(x,default RR)
 liftable(CC,RR'):= (z,RR) -> imaginaryPart z == 0
 lift(CC,RR'):= opts -> (z,RR) -> (
      if imaginaryPart z == 0 then realPart z
-     else if opts.Verify then error "can't lift given complex number to real number"
+     else if opts.Verify then error "lift: complex number is not real"
      )
 
 -- lift and promote to and from other rings
@@ -138,8 +138,11 @@ lift(RR,QQ) := opts -> (r,QQ) -> (
 lift(RR,ZZ) := opts -> (r,ZZ) -> (
      i := floor r; 
      if r == i then i 
-     else if opts.Verify then error "can't lift to ZZ")
-lift(CC,QQ) := lift(CC,ZZ) := opts -> (z,R) -> if imaginaryPart z == 0 then lift(realPart z, R) else if opts.Verify then error "can't lift given complex number to real number"
+     else if opts.Verify then error "lift: real number is not integer")
+lift(CC,QQ) := lift(CC,ZZ) := opts -> (z,R) -> (
+     if imaginaryPart z == 0 then lift(realPart z, R) 
+     else if opts.Verify then error "lift: complex number not real"
+     )
 promote(RR,QQ) := (z,QQ) -> if z === 0. then 0/1 else if isFinite z then (
      (prec,sgn,expt,m,numbits) := partsRR z;
      m / 2^(numbits - expt)

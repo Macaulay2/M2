@@ -329,8 +329,6 @@ part(ZZ,ZZ,RingElement) := RingElement => (d,e,f) -> part(d,e,defaultWeight f,f)
 part(ZZ,RingElement) := RingElement => (d,f) -> part(d,d,f)
 part(ZZ,VisibleList,RingElement) := RingElement => (d,wts,f) -> part(d,d,wts,f)
 
-part(Sequence,RingElement) := Sequence => (s,f) -> apply(s,d->part(d,f))
-
 part(List,RingElement) := RingElement => (d,f) -> (
      if degreeLength ring f =!= #d then error ("degree length of ring element doesn't match specified degree");
      u := select(terms f, t -> d === degree t);		    -- this is slow!
