@@ -12,9 +12,9 @@ PushforwardComputation.synonym = "push-forward computation"
 protect NonLinear					    -- no longer exported
 
 pushOptions := new OptionTable from {
-	  Strategy => NonLinear,            -- use the best choice
+	  -- Strategy => NonLinear,            -- use the best choice
 	  UseHilbertFunction => true,  -- if possible
-	  MonomialOrder => EliminationOrder,
+	  MonomialOrder => Eliminate,       -- default is an elimination order
 	  StopWithMinimalGenerators => false,            -- determine the minimal generators of the subring
 	  BasisElementLimit => infinity,  -- number of generators of GB in the subring
 	  StopBeforeComputation => false,
@@ -28,12 +28,10 @@ pushNonLinear := opts -> (f,M) -> (				    -- this returns the presentation matr
 	-- create the computation
 	S := source f;
 	n1 := numgens target f;
-        order := if opts.MonomialOrder === EliminationOrder then 
-                     Eliminate n1
-                 else if opts.MonomialOrder === ProductOrder then 
-		     ProductOrder{n1, numgens S}
-		 else
-		     Lex;
+        order := if opts.MonomialOrder === Eliminate then Eliminate n1
+                 else if opts.MonomialOrder === ProductOrder then ProductOrder{n1, numgens S}
+		 else if opts.MonomialOrder === Lex then Lex
+		 else error("MonomialOrder option: expected Eliminate, ProductOrder, or Lex");
 	JJ := generators graphIdeal(f,MonomialOrder => order, VariableBaseName => local X);
 	m := presentation M;
 	-- now map M to the new ring.

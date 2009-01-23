@@ -4,7 +4,7 @@
 
 document { 
      Headline => "regular expression matching",
-     Key => {(match,String,String),match,lastMatch},
+     Key => {(match,String,String),match,"lastMatch"},
      Usage => "match(p,s)",
      Inputs => {
 	  "p" => "a regular expression",

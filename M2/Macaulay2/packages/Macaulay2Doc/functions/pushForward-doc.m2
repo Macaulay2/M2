@@ -3,12 +3,15 @@
 --- notes: 
 
 document { 
-     Key => {(pushForward,RingMap,Module),pushForward},
+     Key => {(pushForward,RingMap,Module),pushForward,[pushForward,MonomialOrder]},
      Headline => "",
      Usage => "pushForward(F,M)",
      Inputs => {
 	  "F" => "a ring map F: R --> S, graded",
-	  "M" => "over S, graded"
+	  "M" => "over S, graded",
+	  MonomialOrder => {"the type of monomial ordering to use in the computation,
+	       as keyword, either ", TO "Eliminate", ", ", TO "ProductOrder", ", or ", TO "Lex"
+	       }
 	  },
      Outputs => {
 	  Module => "M, considered as an R-module"
@@ -85,129 +88,3 @@ time   N = pushForward(F,M,BasisElementLimit=>5);
   hilbertPolynomial N
   ann N
 ///
-end
-
-document {
-     Key => pushForward,
-     TT "pushForward(f,M)", " -- yields an R-presentation of the S-module ", TT "M", ", where
-     ", TT "f:R --> S", " is a ring map, and ", TT "M", " is considered as 
-     an ", TT "R", "-module via ", TT "f", ".",
-     PARA{},
-     "If ", TT "M", " is not finitely generated over ", TT "R", ", then an error is raised.",
-     PARA{},
-
-     }
-
-
-document { 
-     Key => [pushForward, DegreeLimit],
-     Headline => "",
-     Usage => "",
-     Inputs => {
-	  },
-     Consequences => {
-	  },     
-     "description",
-     EXAMPLE {
-	  },
-     Caveat => {},
-     SeeAlso => {}
-     }
-document { 
-     Key => [pushForward, PairLimit],
-     Headline => "",
-     Usage => "",
-     Inputs => {
-	  },
-     Consequences => {
-	  },     
-     "description",
-     EXAMPLE {
-	  },
-     Caveat => {},
-     SeeAlso => {}
-     }
-document { 
-     Key => [pushForward, BasisElementLimit],
-     Headline => "",
-     Usage => "",
-     Inputs => {
-	  },
-     Consequences => {
-	  },     
-     "description",
-     EXAMPLE {
-	  },
-     Caveat => {},
-     SeeAlso => {}
-     }
-document { 
-     Key => [pushForward, StopWithMinimalGenerators],
-     Headline => "",
-     Usage => "",
-     Inputs => {
-	  },
-     Consequences => {
-	  },     
-     "description",
-     EXAMPLE {
-	  },
-     Caveat => {},
-     SeeAlso => {}
-     }
-document { 
-     Key => [pushForward, UseHilbertFunction],
-     Headline => "",
-     Usage => "",
-     Inputs => {
-	  },
-     Consequences => {
-	  },     
-     "description",
-     EXAMPLE {
-	  },
-     Caveat => {},
-     SeeAlso => {}
-     }
-document { 
-     Key => [pushForward, MonomialOrder],
-     Headline => "",
-     Usage => "",
-     Inputs => {
-	  },
-     Consequences => {
-	  },     
-     "description",
-     EXAMPLE {
-	  },
-     Caveat => {},
-     SeeAlso => {}
-     }
-document { 
-     Key => [pushForward, Strategy],
-     Headline => "",
-     Usage => "",
-     Inputs => {
-	  },
-     Consequences => {
-	  },     
-     "description",
-     EXAMPLE {
-	  },
-     Caveat => {},
-     SeeAlso => {}
-     }
-document { 
-     Key => [pushForward, StopBeforeComputation],
-     Headline => "",
-     Usage => "",
-     Inputs => {
-	  },
-     Consequences => {
-	  },     
-     "description",
-     EXAMPLE {
-	  },
-     Caveat => {},
-     SeeAlso => {}
-     }

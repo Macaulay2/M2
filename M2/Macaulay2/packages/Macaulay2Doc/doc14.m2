@@ -591,6 +591,40 @@ document {
      ///
      }
 
+document {
+     Key => (max,GradedModule),
+     Usage => "max C",
+     Inputs => { "C" },
+     Outputs => {
+	  ZZ => {"the maximum index of a component, possibly zero, of the graded module ", TT "C" }
+	  },
+     EXAMPLE lines ///
+     R = QQ[a..e]
+     C = res coker vars R
+     max C
+     dual C
+     max dual C
+     ///,
+     SeeAlso => {(min,GradedModule)}
+     }
+
+document {
+     Key => (min,GradedModule),
+     Usage => "max C",
+     Inputs => { "C" },
+     Outputs => {
+	  ZZ => {"the minimum index of a component, possibly zero, of the graded module ", TT "C" }
+	  },
+     EXAMPLE lines ///
+     R = QQ[a..e]
+     C = res coker vars R
+     min C
+     dual C
+     min dual C
+     ///,
+     SeeAlso => {(max,GradedModule)}
+     }
+
 -- Local Variables:
 -- compile-command: "make -C $M2BUILDDIR/Macaulay2/m2 "
 -- End:
