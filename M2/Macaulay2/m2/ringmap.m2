@@ -27,6 +27,8 @@ degmap0 := n -> ( d := toList ( n : 0 ); e -> d )
 map(RingFamily,Thing,Thing) := RingMap => opts -> (R,S,m) -> map(default R,S,m,opts)
 map(Thing,RingFamily,Thing) := RingMap => opts -> (R,S,m) -> map(R,default S,m,opts)
 
+workable = f -> try (f(); true) else false
+
 map(Ring,Ring,Matrix) := RingMap => opts -> (R,S,m) -> (
      if not isFreeModule target m or not isFreeModule source m
      then error "expected a homomorphism between free modules";
@@ -49,8 +51,20 @@ map(Ring,Ring,Matrix) := RingMap => opts -> (R,S,m) -> (
 		    " into a degree of length ", toString degreeLength R);
 	       opts.DegreeMap
 	       )
+	  else if workable (() -> promote({},S,R)) then (d -> first promote({d},S,R))
 	  else if degreeLength R === degreeLength S then identity
 	  else degmap0 degreeLength R);
+     dR := ZZ^(degreeLength R);
+     dS := ZZ^(degreeLength S);
+     degmapmatrix := map(dR,dS,transpose apply(entries id_dS,degmap));
+     deglift := (
+	  if opts.DegreeLift =!= null then opts.DegreeLift
+	  else if degmap === identity then identity
+	  else if degreeLength S === 0 and degreeLength R === 0 then identity
+	  else (d -> (
+		    (q,r) := quotientRemainder(transpose matrix {q}, degmapmatrix);
+		    if r != 0 then error "degreeLift: degree not liftable";
+		    flatten entries q)));
      mdegs := {};
      n := 0;
      A := S;
@@ -98,24 +112,15 @@ map(Ring,Ring,Matrix) := RingMap => opts -> (R,S,m) -> (
      if n != numgens source m then error ("encountered values for ", toString numgens source m," variables");
      zdeg  := toList ( degreeLength R : 0 );
      mE = map(R^{zdeg}, R^-mdegs, mE, Degree => zdeg);
-     dR := ZZ^(degreeLength R);
-     dS := ZZ^(degreeLength S);
      new RingMap from {
 	  symbol target => R,
 	  symbol source => S,
 	  symbol matrix => mE,
 	  symbol RawRingMap => rawRingMap m.RawMatrix,
-	  symbol Matrix => map(dR,dS,transpose apply(entries id_dS,degmap)),
+	  symbol Matrix => degmapmatrix,
 	  symbol cache => new CacheTable from {
 	       symbol DegreeMap => degmap,
-	       symbol DegreeLift => (
-		    if opts.DegreeLift =!= null then opts.DegreeLift
-		    else if degmap === identity then identity
-		    else if degreeLength S === 0
-		    then if degreeLength R === 0 then identity
-		    else (x -> if all(x,zero) then {} else error "RingMap DegreeLift: degree cannot be lifted")
-		    else notImplemented
-		    )
+	       symbol DegreeLift => deglift
 	       }
 	  }
      )
