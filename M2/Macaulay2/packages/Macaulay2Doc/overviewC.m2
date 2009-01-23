@@ -559,6 +559,12 @@ document {
 	  "R = QQ[a..d];",
       	  "symmetricAlgebra R^3"
 	  },
+     "Maps between symmetric algebras can be constructed functorially.",
+     EXAMPLE lines ///
+     vars R
+     symmetricAlgebra vars R
+     symmetricAlgebra transpose vars R
+     ///,
      "Until the ring is used with ", TO "use", " or assigned to a global variable, its
      generators are not assigned to global variables.",
      EXAMPLE {
