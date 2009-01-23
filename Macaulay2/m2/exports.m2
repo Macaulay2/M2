@@ -167,7 +167,6 @@ export {
 	symbol Down,
 	symbol EXAMPLE,
 	symbol Eliminate,
-	symbol EliminationOrder,
 	symbol Email,
 	symbol Encapsulate,
 	symbol EncapsulateDirectory,

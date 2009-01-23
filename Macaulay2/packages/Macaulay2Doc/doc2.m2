@@ -481,10 +481,10 @@ document {
      SeeAlso => {"left shift"}
      }
 
-undocumented {(symbol <<, File, Symbol),(symbol <<, File, Net)}
 document {
      Key => { (symbol <<, File, Thing),(symbol <<, String, Thing), (symbol <<, File, Manipulator),(symbol <<, List, Thing),
-	  (symbol <<, Nothing, Thing),(symbol <<, Nothing, Manipulator), (symbol <<, Thing) },
+	  (symbol <<, Nothing, Thing),(symbol <<, Nothing, Manipulator), (symbol <<, Thing),
+	  (symbol <<, File, Symbol),(symbol <<, File, Net),(symbol <<,File,String) },
      Headline => "print to a file",
      Usage => "f << x\n  << x",
      Inputs => { 

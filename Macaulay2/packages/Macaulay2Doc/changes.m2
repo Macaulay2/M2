@@ -44,7 +44,6 @@ document {
 		    TO (map,Module,Nothing,RingMap,Matrix),
 		    TO (map,Module,RingMap),
 		    TO (map,Module,ZZ,ZZ),
-		    TO (map,Ring,Ring,RingMap),
 		    TO (max,GradedModule),
 		    TO (min,GradedModule),
 		    TO (part,InfiniteNumber,InfiniteNumber,VisibleList,RingElement),
@@ -241,10 +240,8 @@ document {
 			 "Homomorphisms (maps) of modules over different rings with respect to a ring homomorphism
 			 between them are now supported.  Composition, coimage (replacing pushForward1), and kernel work.
 			 An option has been added to ", TO "basis", " to ask it to return such a homomorphism.  See ",
-			 TO (map,Module,Module,RingMap,Matrix), ", ",
-		    	 TO (map,Module,Nothing,RingMap,Matrix), ", ",
-		    	 TO (map,Module,RingMap), ", and ",
-		    	 TO (map,Ring,Ring,RingMap), ". "
+			 TO (map,Module,Module,RingMap,Matrix), ", ", TO (map,Module,Nothing,RingMap,Matrix), ", and ",
+		    	 TO (map,Module,RingMap), "."
 			 },
 		    LI {
 			 "The function ", TO "basis", " will now check finite dimensionality in advance, to avoid running out of memory."

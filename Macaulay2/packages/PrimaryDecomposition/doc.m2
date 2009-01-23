@@ -1,5 +1,5 @@
 document { 
-     Key => {(primaryDecomposition,Ideal)},
+     Key => {(primaryDecomposition,Ideal),(primaryDecomposition,MonomialIdeal)},
      Headline => "irredundant primary decomposition of an ideal",
      Usage => "primaryDecomposition I",
      Inputs => {

@@ -183,17 +183,15 @@ document {
      "The symbol ", TT "x", " now refers to the variable ", TT "x", " in the ring ", TT "S", ".
      There are several ways of now referring to ", TT "x", " in the ring ", TT "R", ".",
      EXAMPLE lines ///
-	  R_1
+	  R_0
 	  R_"x"
-	  x_R
 	  use R;
 	  x
 	  ///,
      SeeAlso => {(symbol _, Ring, ZZ), (symbol _, Symbol, Ring), (use,Ring)}
      }
 document { 
-     Key => {(symbol _, Symbol, Ring), -- ring variable by name
-	  (symbol _, RingElement, Ring)},
+     Key => {(symbol _, Symbol, Ring) },
      Headline => "get a ring variable by name",
      Usage => ///x_R///,
      Inputs => {
@@ -210,11 +208,10 @@ document {
 	  x
 	  ///,
      "The symbol ", TT "x", " now refers to the variable ", TT "x", " in the ring ", TT "S", ".
-     There are several ways of now referring to ", TT "x", " in the ring ", TT "R", ".",
+     There are various ways of now referring to ", TT "x", " in the ring ", TT "R", ".",
      EXAMPLE lines ///
-	  R_1
+	  R_0
 	  R_"x"
-	  x_R
 	  use R;
 	  x
 	  ///,

@@ -35,7 +35,7 @@ document {
 	  "1234//100",
       	  "1234%100"
 	  },
-     "Numbers can be promoted to larger rings as follows, see ", TO "(symbol _, RingElement, Ring)", ".",
+     "Numbers can be promoted to larger rings as follows, see ", TO (symbol _, RingElement, Ring), ".",
      EXAMPLE lines ///
      1_QQ
      (2/3)_CC

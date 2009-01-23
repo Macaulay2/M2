@@ -1,5 +1,5 @@
 document {
-     Key => {symbol <-, (symbol <-, IndexedVariable)},
+     Key => {symbol <-, (symbol <-, IndexedVariable), (symbol <-, Sequence)},
      Headline => "assignment with left side evaluated",
      SYNOPSIS (
 	  Heading => "assignment to symbols",

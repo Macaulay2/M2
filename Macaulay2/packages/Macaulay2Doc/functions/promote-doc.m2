@@ -41,11 +41,23 @@ undocumented {(promote,CC,CC_*),
      (promote,ZZ,RR_*),
      (promote,Matrix,InexactNumber'),
      (promote,ZZ,ZZ),
-     (promote,RR,QQ)
+     (promote,RR,QQ),
+     (symbol _,CC,ComplexField),
+     (symbol _,Constant,InexactFieldFamily),
+     (symbol _,Constant,Ring),
+     (symbol _,InexactFieldFamily,ZZ),
+     (symbol _,Number,InexactFieldFamily),
+     (symbol _,Number,Ring),
+     (symbol _,QQ,ComplexField),
+     (symbol _,QQ,RealField),
+     (symbol _,RR,ComplexField),
+     (symbol _,RR,RealField),
+     (symbol _,ZZ,ComplexField),
+     (symbol _,ZZ,RealField)
      }
 
 document { 
-     Key => {promote},
+     Key => {promote, (symbol _, RingElement, Ring)},
      Headline => "promote to another ring",
      Usage => "promote(f,R)",
      Inputs => {
@@ -79,7 +91,7 @@ document {
      oo === .101
      ///,
      PARA {
-	  "For promotion of ring elements, there is the following shorter notation, see ", TO "(symbol _, RingElement, Ring)", "."
+	  "For promotion of ring elements, there is the following shorter notation."
 	  },
      EXAMPLE ///13_R///,
      PARA{

@@ -3,6 +3,7 @@
 --- notes: 
 
 undocumented {
+     (mathML,VerticalList),
      (mathML, Adjacent),
      (mathML, Array),
      (mathML, Boolean),

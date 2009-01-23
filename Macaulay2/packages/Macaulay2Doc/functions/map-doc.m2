@@ -2,13 +2,7 @@
 --- author(s): 
 --- notes: 
 
--- deprecated:  (map,Module,RingElement)
---              (map,Module,ZZ)
---              (map,Module,Matrix),
---              (map,Ideal,Ideal)
---              (map,Ideal),
-
-undocumented {(map,Module,Module,ZZ),(map, RingFamily, Thing, Thing),(map, Thing, RingFamily, Thing)}
+undocumented {(map, RingFamily, Thing, Thing),(map, Thing, RingFamily, Thing)}
 
 document {
      Key => map,
@@ -161,13 +155,17 @@ document {
      }
 
 document {
-     Key => {(map,Module,Module,RingElement),(map,Module,Module,Number)},
-     Headline => "construct the map induced by multiplication by a ring element on the
-        generators",
+     Key => {(map,Module,Module,RingElement),(map,Module,Module,Number),(map,Module,ZZ,ZZ),(map,Module,Module,ZZ)},
+     Headline => "construct the map induced by multiplication by a ring element on the generators",
      Usage => "map(M,N,r)",
-     Inputs => { "M", "N" => {"over the same ring ", TT "R", " as ", TT "M"}, "r" => {"in the ring ", TT "R"} },
+     Inputs => { 
+	  "M",
+	  "N" => {"over the same ring ", TT "R", " as ", TT "M", ".  An integer here stands for the free
+	       module of that rank."
+	       },
+	  "r" => {"in the ring ", TT "R"} },
      Outputs => {
-	  {"The map induced by multiplication by r on the generators"}
+	  {"The map induced by multiplication by ", TT "r", " on the generators"}
 	  },
      "If ", TT "r", " is not zero, then 
      either ", TT "M", " and ", TT "N", " should be equal, or they should 
@@ -358,7 +356,7 @@ document {
 	  }
      }
 document {
-     Key => {(map,Ring,Ring,Matrix),[map,DegreeLift],[map,DegreeMap]},
+     Key => {(map,Ring,Ring,Matrix),[map,DegreeLift],[map,DegreeMap],(map,Ring,Ring,RingMap)},
      Headline => "make a ring map",
      Usage => "map(R,S,m)",
      Inputs => {
@@ -367,7 +365,7 @@ document {
 	  "m" => {"a ", TT "1", " by ", TT "n", " matrix over ", TT "R", ", where ", TT "n", " is the
      	       number of variables in the polynomial ring ", TT "S", ",
 	       or a matrix over the common coefficient ring of the 
-	       two rings."
+	       two rings.  If a ring map is used here, (just) its matrix will be used instead."
 	       },
 	  DegreeMap => Function => {
 	       "the degree map: a (linear) function from the multidegrees of ", TT "S", " to the multidegrees of ", TT "R", ",
@@ -570,5 +568,4 @@ document {
      Usage => "map(..., Degree=>d)",
      SeeAlso => {(map,Matrix)}
      }
-
 
