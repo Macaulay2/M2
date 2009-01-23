@@ -1360,13 +1360,6 @@ document {
 	  },
      }
 document {
-     Key => Limit,
-     Headline => "specify how many to compute",
-     TT "Limit => n", " -- an optional argument for ",
-     TO "minors", " specifying that the computation should stop 
-     after ", TT "n", " more elements are computed."
-     }
-document {
      Key => {fittingIdeal,(fittingIdeal, ZZ, Module)},
      Headline => "Fitting ideal of a module",
      TT "fittingIdeal(i,M)", " -- the i-th Fitting ideal of the module M",

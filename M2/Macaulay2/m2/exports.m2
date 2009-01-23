@@ -357,6 +357,7 @@ export {
 	symbol RingFamily,
 	symbol RingMap,
 	symbol RowExpression,
+	symbol SizeLimit,
 	symbol SPACE,
 	symbol SVD,
 	symbol SYNOPSIS,

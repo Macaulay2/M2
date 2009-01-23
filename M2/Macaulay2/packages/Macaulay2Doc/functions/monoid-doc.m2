@@ -2,8 +2,8 @@
 document {
      Key => {monoid,(monoid, Array),(monoid, List),(monoid, PolynomialRing),(monoid, QuotientRing), [monoid,DegreeRank], [monoid,Heft],
 	  [monoid,Inverses],[monoid,MonomialSize],VariableBaseName,[monoid,VariableBaseName],
-	  [monoid,WeylAlgebra],[monoid, Weights],[monoid, MonomialOrder],[monoid, Variables],
-	  [monoid,Degrees], [monoid,Local], SkewCommutative,[monoid,SkewCommutative],[monoid, Global]
+	  [monoid,WeylAlgebra],[monoid, Weights],[monoid, MonomialOrder],[monoid, Variables],[monoid,DegreeLift],[monoid,DegreeMap],
+	  [monoid,Degrees], [monoid,Local], SkewCommutative,[monoid,SkewCommutative],[monoid, Global], [monoid, Join]
 	  },
      Headline => "make or retrieve a monoid",
      Usage => "monoid [a,b,c,...]",
@@ -40,7 +40,24 @@ document {
 	       variables will be used as a computational aid
 	       in certain routines.  If no value for this option is specified, one will be computed for you, and thus there is no need to
 	       provide one unless the time spent computing one is onerous; if no heft vector exists, certain
-	       computations will not be supported, and others may run more slowly."},
+	       computations will not be supported, and others may run more slowly."
+	       },
+	  Join => Boolean => {
+	       "whether the degrees in a new monoid ring based on this monoid will be obtained by joining the degrees in the monoid
+	       with the degrees in the coefficient ring; default: ", TO "true"
+	       },
+	  DegreeMap => Function => {
+	       "the degree map, to be used if ", TT "Join => false", " is given:
+	       a (linear) function from the multidegrees of the (future) coefficient ring to the multidegrees
+	       of the monoid ring (polynomial ring) made from it with the monoid created here,
+	       to be used in determining homogeneity and in determining degrees in tensor products.
+	       The default is the ", TO "identity", "."
+	       },
+	  DegreeLift => Function => {
+	       "the degree lift function: a (partial) inverse of the degree map, giving an
+	       error when lifting is not possible.  If the degree map is the identity, then by default the identity map
+	       will be provided."
+	       }
 	  },
      Outputs => {
 	  {"a new monoid"}
@@ -91,6 +108,38 @@ document {
       	  y*x
 	  x*z-z*x
      ///,
+     "By default, (multi)degrees are concatenated when forming polynomial rings over polynomial
+     rings, as can be seen by examining the corresponding flattened monoid, which displays information
+     about all of the variables.",
+     EXAMPLE lines ///
+     QQ[x][y]
+     oo.FlatMonoid
+     QQ[x][y][z]
+     oo.FlatMonoid
+     ///,
+     "That behavior can be overridden with the ", TO "Join", " option.",
+     EXAMPLE lines ///
+     QQ[x][y,Join => false]
+     oo.FlatMonoid
+     ///,
+     "A degree map may be provided, and it will be used in computing tensor products.",
+     EXAMPLE lines ///
+     A = QQ[x];
+     B = A[y,Join => false,DegreeMap => x -> 7*x]
+     B.FlatMonoid
+     degrees A^{-1,-2}
+     degrees (B**A^{-1,-2})
+     ///,
+     "For certain applications, such as lifting matrices, a degree lift function can
+     be provided.",
+     EXAMPLE {
+     	  ///B = A[y,Join => false,DegreeMap => x -> 7*x,
+     DegreeLift => x -> apply(x, d -> lift(d/7,ZZ))]///,
+     	  ///matrix {{x_B}}///,
+	  ///degrees oo///,
+	  ///lift(matrix {{x_B}},A)///,
+	  ///degrees oo///
+	  },
      SYNOPSIS (
 	  Usage => "monoid R",
 	  Inputs => {
@@ -103,8 +152,8 @@ document {
 	       "If ", TT "R", " is a quotient ring of a polynomial ring ", TT "S", ", then the monoid of ", TT "S", " is returned."
 	       },
 	  EXAMPLE lines ///
-	       R = QQ[a..d, Weights=>{1,2,3,4}]
-	       monoid R
+	  R = QQ[a..d, Weights=>{1,2,3,4}]
+	  monoid R
 	  ///
 	  )
      }

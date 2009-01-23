@@ -172,11 +172,11 @@ IndexedVariable _ Ring := RingElement => (x,M) -> (
      )
 
 Number _ Ring := promote
+RingElement ^ Ring := Number ^ Ring := lift
+RingElement ^ RingFamily := Number ^ RingFamily := (x,R) -> lift(x, default R)
+Constant ^ Ring := Constant ^ RingFamily := (x,R) -> lift(x,R)
 
-RingElement _ Ring := (x,R) -> (
-     try promote(x,R)
-     else try (baseName x)_R
-     )
+RingElement _ Ring := promote
 
 madeTrivialMonoid := false
 
@@ -497,7 +497,7 @@ tensor(Monoid, Monoid) := Monoid => opts -> (M,N) -> (
 		    	      d -> (
 			 	   for i from #N0 to #M0-1 do if d#i =!= 0 then degreeNoLift();
 			 	   drop(d,#M0-#N0)))
-	       		 else x -> notImplemented())
+	       		 else x -> error "degree lift function not provided (DegreeLift option)")
 		    else lm);
 	       opts.Degrees = join(Mopts.Degrees, apply(Nopts.Degrees, opts.DegreeMap));
 	       if opts.Heft === null and Mopts.Heft =!= null then opts.Heft = Mopts.Heft {* a hint *};

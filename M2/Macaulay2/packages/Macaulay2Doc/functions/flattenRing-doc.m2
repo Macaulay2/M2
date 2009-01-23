@@ -10,12 +10,21 @@ undocumented {
      }
 
 document { 
-     Key => {flattenRing,(flattenRing, Ring),(flattenRing,Ideal), [flattenRing,CoefficientRing] },
+     Key => {flattenRing,(flattenRing, Ring),(flattenRing,Ideal), [flattenRing,CoefficientRing], [flattenRing, Result] },
      Headline => "write a ring as a (quotient) of a polynomial ring over ZZ or a prime field",
      Usage => "(S,F) = flattenRing R",
      Inputs => {
 	  "R" => {ofClass{Ring,Ideal}},
-	  CoefficientRing => Ring => "the desired coefficient ring for the result"
+	  CoefficientRing => Ring => "the desired coefficient ring for the result",
+	  Result => {
+	       "the number or type(s) of result(s) desired.  Three possible results are available:
+	       an ideal (", TO "Ideal", ") or the corresponding quotient ring (", TO "Ring", "),
+	       the isomorphism from ", TT "R", " to the flattened ring (", TO "RingMap", "),
+	       and the inverse isomorphism (", TO "RingMap", ").  Asking for a result of
+	       type ", TO "Nothing", " will yield ", TO "null", " in the corresponding
+	       position.  Omitting the result type but leaving its comma will yield
+	       the default."
+	       }
 	  },
      Outputs => {
 	  "S" => {ofClass{Ring,Ideal}, "a ring isomorphic to the original ring,
@@ -36,7 +45,16 @@ document {
      F^-1
      D
      describe D
+     flattenRing(B,Result => Ideal)
+     flattenRing(B,Result => (Ideal,,))
+     flattenRing(B,Result => (,,))
+     flattenRing(B,Result => 3)
+     flattenRing(B,Result => (Nothing,Nothing,))
      ///,
+     PARA {
+	  "Warning: flattening the same ring with different options may yield a separately constructed rings,
+	  unequal to each other."
+	  },
      PARA{"Flattening an ideal instead of a quotient ring can save a lot of time spent computing the
 	  Gröbner basis of the resulting ideal, if the flattened quotient is not needed."
 	  },

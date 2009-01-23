@@ -29,7 +29,7 @@ GF = method (
      Options => { 
 	  PrimitiveElement => FindOne,
 	  Variable => null,
-	  LengthLimit => 10000
+	  SizeLimit => 10000
 	  }
      )
 
@@ -112,7 +112,7 @@ GF(Ring) := GaloisField => opts -> (S) -> (
 	  var = S.generatorSymbols#0;
 	  );
      d := p^n-1;
-     if d < opts.LengthLimit
+     if d < opts.SizeLimit
      then (
 	  F := new GaloisField from rawGaloisField raw primitiveElement;
      	  F.degreeLength = 0;

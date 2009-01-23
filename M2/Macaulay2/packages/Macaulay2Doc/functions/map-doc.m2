@@ -358,16 +358,27 @@ document {
 	  }
      }
 document {
-     Key => (map,Ring,Ring,Matrix),
+     Key => {(map,Ring,Ring,Matrix),[map,DegreeLift],[map,DegreeMap]},
      Headline => "make a ring map",
      Usage => "map(R,S,m)",
      Inputs => {
 	  "R" => "the target ring",
 	  "S" => "the source ring",
-	  "m" => {"a 1 by n matrix over ", TT "R", ", where n is the
+	  "m" => {"a ", TT "1", " by ", TT "n", " matrix over ", TT "R", ", where ", TT "n", " is the
      	       number of variables in the polynomial ring ", TT "S", ",
 	       or a matrix over the common coefficient ring of the 
 	       two rings."
+	       },
+	  DegreeMap => Function => {
+	       "the degree map: a (linear) function from the multidegrees of ", TT "S", " to the multidegrees of ", TT "R", ",
+	       to be used in determining homogeneity and in determining degrees in tensor products.
+	       If the two rings have the same degree length, then the default degree map is the identity function."
+	       },
+	  DegreeLift => Function => {
+	       "the degree lift function: a (partial) inverse of the degree map, giving an
+	       error when lifting is not possible.  If the degree map is the identity, then by default the identity map
+	       will be provided.  If the degree length of ", TT "R", " is 0, then by default
+	       a suitable degree lift function will be provided."
 	       }
 	  },
      Outputs => {
@@ -397,6 +408,16 @@ document {
 	  "k = map(S,S,matrix {{c,b}})",
 	  "k(a^7 + b^3 + c)"
 	  },
+     "Specifying a degree map is a useful way to preserve homogeneity, which can speed computation.",
+     EXAMPLE lines ///
+     R = QQ[x,y,z];
+     S = QQ[t,u];
+     f = map(S,R,{t^2,t*u,u^2},DegreeMap => i -> 2*i)
+     isHomogeneous f
+     M = R^{1,2}
+     f M
+     f ** M
+     ///,
      SeeAlso => {"substitution and maps between rings"}
      }
 document {
@@ -547,38 +568,7 @@ document {
      Key => [map, Degree],
      Headline => "set the degree of a map",
      Usage => "map(..., Degree=>d)",
-     Inputs => {
-	  },
-     Consequences => {
-	  },     
-     "",
-     EXAMPLE {
-	  },
      SeeAlso => {(map,Matrix)}
      }
 
-document {
-     Key => [map,DegreeMap],
-     "A name for an optional argument used with ", TT "map", " when
-     creating a ring map, to specify a function that transforms degrees
-     of elements in the source ring to degrees of elements in the
-     target ring.  The function will be used later when tensoring a
-     module along the ring map to determine the degrees of the
-     generators in the result, and to determine whether the map is
-     homogeneous.",
-     EXAMPLE lines ///
-	  R = QQ[x,y,z];
-	  S = QQ[t,u];
-	  f = map(S,R,{t^2,t*u,u^2},DegreeMap => i -> 2*i)
-	  isHomogeneous f
-	  M = R^{1,2}
-	  f M
-	  f ** M
-	  ///,
-     "The default degree map function is the identity function, but when the two
-     rings have different degree lengths, a function must be explicitly
-     provided that transforms the lengths of the degree vectors appropriately, 
-     or else the default function which maps every degree to {0,...,0} 
-     will be provided automatically."
-     }
 
