@@ -482,13 +482,15 @@ map(Module,Module,ZZ) := Matrix => opts -> (M,N,i) -> (
 	  r = reduce(M, rawIdentity(M',0));
 	  deg = opts.Degree;
 	  if deg =!= null then r = rawSetDegree(M', M', r, degreeCheck(deg,R));
-	  new Matrix from {
+	  r = new Matrix from {
 	       symbol RawMatrix => r,
 	       symbol source => M,
 	       symbol target => M,
 	       symbol ring => R,
 	       symbol cache => new CacheTable
-	       })
+	       };
+	  r.cache.inverse = r;
+	  r)
      else if numgens cover M == numgens cover N then map(M,N,i * id_(cover M),opts) 
      else error "expected 0, or source and target with same number of generators")
 

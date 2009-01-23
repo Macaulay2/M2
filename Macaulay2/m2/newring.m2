@@ -121,7 +121,9 @@ symmetricAlgebra Module := Ring => opts -> (cacheValue (symmetricAlgebra => opts
 symmetricAlgebra(Ring,Ring,Matrix) := RingMap => opts -> (T,S,f) -> (
      key := (T,S,f) ;
      if f.cache#?key then f.cache#key else f.cache#key = (
-     	  map(T,S,vars T * promote(f,T))))
+     	  p := map(T,S,vars T * promote(cover f, T));
+	  if f.cache.?inverse then p.cache.inverse = map(S,T,vars S * promote(cover inverse f, S));
+	  p))
 symmetricAlgebra Matrix := RingMap => opts -> f -> symmetricAlgebra(symmetricAlgebra target f,symmetricAlgebra source f,f)
 symmetricAlgebra(Ring,Nothing,Matrix) := RingMap => opts -> (T,S,f) -> symmetricAlgebra(T,symmetricAlgebra source f,f)
 symmetricAlgebra(Nothing,Ring,Matrix) := RingMap => opts -> (T,S,f) -> symmetricAlgebra(symmetricAlgebra target f,S,f)

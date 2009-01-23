@@ -321,6 +321,9 @@ document {
 		         With a prefix argument to ", TT "M2-send-to-program", ", the name of
 			 the buffer to which this and future uses of the command (in this buffer) should
 			 be sent can be entered, with history."
+			 },
+		    LI {
+			 "The function ", TO "symmetricAlgebra", " is now functorial."
 			 }
 		    }
 	       }
