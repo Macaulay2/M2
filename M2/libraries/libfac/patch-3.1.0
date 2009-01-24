@@ -1,0 +1,12 @@
+diff -ur --exclude=configure tmp/libfac/Makefile.in libfac/Makefile.in
+--- tmp/libfac/Makefile.in	2008-04-28 03:16:06.000000000 -0500  
++++ libfac/Makefile.in	2009-01-24 09:04:28.000000000 -0600
+@@ -182,7 +182,7 @@
+ 		$(CXX) -o test $(LDFLAGS) OPTOBJ/test.o $(LIBS)
+ 
+ factests:	factest
+-		(cd tests ; factortest )
++		(cd tests ; ./factortest )
+ 
+ charsettest:	libfac	OPTOBJ/testcs.o
+ 		$(CXX) -o testcs $(LDFLAGS) OPTOBJ/testcs.o $(LIBS)
