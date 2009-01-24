@@ -14,10 +14,8 @@ document {
      SeeAlso => {codim}
      }
 
-undocumented {(dim,FractionField),(dim,GaloisField),(dim,PolynomialRing),(dim,QuotientRing),(dim, InexactField)}
-
 document { 
-     Key => (dim,Ring),
+     Key => {(dim,Ring),(dim,FractionField),(dim,GaloisField),(dim,PolynomialRing),(dim,QuotientRing),(dim, InexactField)},
      Usage => "dim R",
      Inputs => {"R"},
      Outputs => {ZZ},

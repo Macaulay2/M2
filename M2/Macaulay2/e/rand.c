@@ -55,6 +55,9 @@ M2_Integer rawRandomInteger(M2_Integer maxN)
   mpz_init(result);
   if (maxN == 0)
     mpz_urandomm(result, state, maxHeight);
+  else if (1 != mpz_sgn((__mpz_struct *)maxN)) {
+    mpz_set_si(result,0);
+  }
   else
     mpz_urandomm(result, state, maxN);
   return result;

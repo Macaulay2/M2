@@ -28,8 +28,8 @@ document {
      Key => {(tensor, Ring, Ring),
 	  (tensor, Monoid, Monoid),
 	  [tensor,DegreeRank],
-	  [tensor,Degrees],
-	  [tensor,Inverses],
+	  [tensor,Degrees],[tensor,DegreeLift],[tensor,DegreeMap],[tensor,Join],
+	  [tensor,Inverses],[tensor,Local],
 	  [tensor,Global],
 	  [tensor,MonomialOrder],
 	  [tensor,MonomialSize],
@@ -44,38 +44,39 @@ document {
      Inputs => {
 	  "A",
 	  "B",
-	  DegreeRank => ZZ => {"see the corresponding option in ", TO monoid},
-	  Degrees => List => {"see the corresponding option in ", TO monoid},
-	  Inverses => Boolean => "can be used, but is not advised",
-	  Global => Boolean => "can be used, but is not advised",
-	  MonomialOrder => List => {"see the corresponding option in ", TO monoid},
-	  MonomialSize => ZZ => {"see the corresponding option in ", TO monoid},
-	  SkewCommutative => "ignored by this routine",
-	  Variables => {"see the corresponding option in ", TO monoid},
-	  VariableBaseName => Symbol => {"see the corresponding option in ", TO monoid},
+	  DegreeRank => ZZ => {"see ", TO [monoid,DegreeRank]},
+	  Degrees => List => {"see ", TO [monoid,Degrees]},
+	  Inverses => Boolean => {"see ", TO [monoid,Inverses]},
+	  Global => Boolean => {"see ", TO [monoid,Global]},
+	  Local => Boolean => {"see ", TO [monoid,Local]},
+	  MonomialOrder => List => {"see ", TO [monoid,MonomialOrder]},
+	  MonomialSize => ZZ => {"see ", TO [monoid,MonomialSize]},
+	  SkewCommutative => "this option is ignored",
+	  Variables => {"see ", TO [monoid,Variables]},
+	  VariableBaseName => Symbol => {"see ", TO [monoid,VariableBaseName]},
 	  Weights => List => "ignored by this routine",
 	  WeylAlgebra => List => "ignored by this routine",
-	  Heft => List => {"see the corresponding option in ", TO monoid},
+	  Heft => List => {"see ", TO [monoid,Heft]},
+	  Join => Boolean => {"overrides the corresponding option in ", TT "A", "; see ", TO [monoid,Join]},
+	  DegreeMap => Boolean => {"overrides the corresponding option in ", TT "A", "; see ", TO [monoid,DegreeMap]},
+	  DegreeLift => Boolean => {"overrides the corresponding option in ", TT "A", "; see ", TO [monoid,DegreeLift]}
 	  },
      Outputs => {
-	  Ring => {"the tensor product ", TT "A**B"}
-	  },
-     PARA{
-	  "A and B may be monoids too, in which case the result is too.",
+	  {"the tensor product of A with B"}
 	  },
      PARA {
-	  "This is the same as ", TT "A ** B", " except that options are allowed.
-	  This method allows many of 
-	  the options available for monoids.  See
+	  "This is the same as ", TT "A ** B", " except that options are allowed,
+	  see ", TO (symbol **, Monoid, Monoid), " and ", TO (symbol **, Ring, Ring), ".
+	  This method allows many of the options available for monoids, see
 	  ", TO "monoid", " for details.  This method essentially combines the 
-	  variables of A and B into one monoid or ring."},
+	  variables of ", TT "A", " and ", TT "B", " into one monoid or ring."},
      EXAMPLE lines ///
      	  kk = ZZ/101
      	  A = kk[a,b]
 	  B = kk[c,d,e]
 	  ///,
      PARA{
-	  "The simplest version is to simply use ", TT "tensor", " or ", TT "**", ":",
+	  "The simplest version is to simply use ", TO "**", ":",
 	  },
      EXAMPLE lines ///
 	  describe(A**B)

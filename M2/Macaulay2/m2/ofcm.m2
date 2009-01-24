@@ -172,7 +172,7 @@ IndexedVariable _ Ring := RingElement => (x,M) -> (
      )
 
 Number _ Ring := promote
-RingElement ^ Ring := Number ^ Ring := lift
+RingElement ^ Ring := Number ^ Ring := (x,R) -> lift(x,R)
 RingElement ^ RingFamily := Number ^ RingFamily := (x,R) -> lift(x, default R)
 Constant ^ Ring := Constant ^ RingFamily := (x,R) -> lift(x,R)
 
@@ -464,6 +464,7 @@ tensor(Monoid, Monoid) := Monoid => opts -> (M,N) -> (
      Mopts := M.Options;
      Nopts := N.Options;
      opts = new MutableHashTable from opts;
+     remove(opts,Weights);
      if opts.Variables === null 
      then opts.Variables = join(Mopts.Variables, Nopts.Variables)
      else opts.Variables = spliceInside opts.Variables;
@@ -477,7 +478,11 @@ tensor(Monoid, Monoid) := Monoid => opts -> (M,N) -> (
      if opts.Degrees === null and opts.DegreeRank === null then (
 	  M0 := apply(Mopts.DegreeRank, i -> 0);
 	  N0 := apply(Nopts.DegreeRank, i -> 0);
-	  if opts.Join =!= false and Mopts.Join =!= false then (
+	  if (
+	       if opts.Join =!= null then opts.Join	    -- option to tensor overrides option to monoid
+	       else Mopts.Join =!= false		    -- the default is true, and null means it was unspecified
+	       )
+	  then (
 	       opts.DegreeRank = Mopts.DegreeRank + Nopts.DegreeRank;
 	       opts.Degrees = join( apply(Mopts.Degrees, d -> join(d,N0)), apply(Nopts.Degrees, e -> join(M0,e)) );
 	       if opts.Heft === null and Nopts.Heft =!= null and Mopts.Heft =!= null then opts.Heft = join(Mopts.Heft,Nopts.Heft);

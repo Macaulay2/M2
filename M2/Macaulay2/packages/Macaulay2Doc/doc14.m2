@@ -387,7 +387,8 @@ document {
 
 document {
      Headline => "fill a mutable matrix with random numbers",
-     Key => {fillMatrix,(fillMatrix, MutableMatrix),(fillMatrix, MutableMatrix, ZZ),[fillMatrix,Density],[fillMatrix,UpperTriangular]},
+     Key => {fillMatrix,(fillMatrix, MutableMatrix),(fillMatrix, MutableMatrix, ZZ),
+	  [fillMatrix, Height],[fillMatrix,Density],[fillMatrix,UpperTriangular]},
      Usage => "fillMatrix M\nfillMatrix(M,n)",
      BaseFunction => fillMatrix,
      Inputs => {
@@ -398,16 +399,15 @@ document {
 	  UpperTriangular => Boolean => "whether to fill entries only above the diagonal"
 	  },
      Outputs => {"M"},
-     Consequences => {{ "some entries of M are replaced with randomly generated numbers" }},
+     Consequences => {{ "some entries of M are replaced with randomly generated numbers, whose
+	       size depends on the value of the global variable ", TT "randomHeight" }},
      EXAMPLE lines ///
 	  printingPrecision = 2
 	  fillMatrix(mutableMatrix(RR,5,10))
 	  fillMatrix(mutableMatrix(ZZ,5,10),UpperTriangular=>true)
-	  randomHeight = 1000
-	  fillMatrix(mutableMatrix(QQ,5,10),Density=>.2)
-	  fillMatrix(mutableMatrix(ZZ,5,10),25)
-	  ///,
-     SeeAlso => { "randomHeight" }     
+	  fillMatrix(mutableMatrix(QQ,5,10),Density=>.2,Height=>1000)
+	  fillMatrix(mutableMatrix(ZZ,5,10),25,Height=>1000)
+	  ///
      }
 
 document { 

@@ -9,11 +9,12 @@ document {
 	  (symmetricAlgebra,Nothing,Ring,Matrix),
 	  (symmetricAlgebra,Ring,Nothing,Matrix),
 	  (symmetricAlgebra,Ring,Ring,Matrix),
-	  [symmetricAlgebra, WeylAlgebra],[symmetricAlgebra, VariableBaseName],
+	  [symmetricAlgebra, WeylAlgebra],[symmetricAlgebra, VariableBaseName],[symmetricAlgebra,DegreeLift],
+	  [symmetricAlgebra,DegreeMap],
 	  [symmetricAlgebra, SkewCommutative],[symmetricAlgebra, MonomialSize],[symmetricAlgebra, Weights],
 	  [symmetricAlgebra, Local],[symmetricAlgebra, Inverses],[symmetricAlgebra, Heft],
 	  [symmetricAlgebra, Global],[symmetricAlgebra, Degrees],[symmetricAlgebra, DegreeRank],
-	  [symmetricAlgebra, MonomialOrder], [symmetricAlgebra, Variables]
+	  [symmetricAlgebra, MonomialOrder], [symmetricAlgebra, Variables],[symmetricAlgebra,Join]
 	  },
      Headline => "the symmetric algebra of a module",
      SYNOPSIS (

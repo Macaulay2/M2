@@ -108,6 +108,7 @@ document {
 		    TO [GF,SizeLimit],
 		    TO [basis,SourceRing],
 		    TO [check,UserMode],
+		    TO [fillMatrix, Height],
 		    TO [flattenRing,Result],
 		    TO [getPackage,Configuration],
 		    TO [getPackage,UserMode],
@@ -119,7 +120,6 @@ document {
 		    TO [installPackage,Verbose],
 		    TO [lift,Verify],
 		    TO [map,DegreeLift],
-		    TO [matrix,DegreeLift],
 		    TO [monoid,DegreeLift],
 		    TO [monoid,Join],
 		    TO [newPackage,CacheExampleOutput],
@@ -328,6 +328,10 @@ document {
 			 },
 		    LI {
 			 "The function ", TO "symmetricAlgebra", " is now functorial."
+			 },
+		    LI {
+			 "The variable ", TT "randomHeight", " has been removed, replaced by 
+			 ", TO [fillMatrix, Height], " and ", TO [random,Height], "."
 			 }
 		    }
 	       }

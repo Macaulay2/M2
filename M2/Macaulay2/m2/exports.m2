@@ -1191,7 +1191,6 @@ exportMutable {
 	symbol printingLeadLimit,
 	symbol printingTrailLimit,
 	symbol printingSeparator,
-	symbol randomHeight,
 	symbol recursionLimit,
         symbol scriptCommandLine,
 	symbol stopIfError,

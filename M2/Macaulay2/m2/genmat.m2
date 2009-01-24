@@ -41,22 +41,27 @@ genericSymmetricMatrix(Ring,RingElement,ZZ) := (R,first,n) -> (
 		    nextvar = nextvar+1)));
      matrix table(n,n, (i,j) -> if i>j then vars#(j,i) else vars#(i,j)))
 
-randommat := opts -> (R,r,c) -> map(R, rawRandomConstantMatrix(R.RawRing, r, c, 
+randommat := opts -> (R,r,c) -> (
+     s := randomHeight;
+     randomHeight = opts.Height;
+     m := map(R, rawRandomConstantMatrix(R.RawRing, r, c, 
 	  opts.Density, 
 	  if opts.UpperTriangular then 1 else 0,
-	  0))
+	  0));
+     randomHeight = s;
+     m)
 
 random(List,Ring) := RingElement => opts -> (deg,R) -> (
      if #deg =!= degreeLength R then error ("expected length of degree vector to be ", degreeLength R);
-     if deg === {} then return random R;
+     if deg === {} then return random(R,opts);
      k := coefficientRing R;
      m := basis(deg, R);
-     n := matrix table(numgens source m,1, x -> promote(random k,R));
+     n := matrix table(numgens source m,1, x -> promote(random(k,opts),R));
      (m*n)_(0,0))
 
-random(ZZ,Ring) := RingElement => opts -> (n,R) -> random({n},R)
+random(ZZ,Ring) := RingElement => opts -> (n,R) -> random({n},R,opts)
 
-randomMR := (F,G) -> (
+randomMR := opts -> (F,G) -> (
      R := ring F;
      m := numgens F;
      n := numgens G;
@@ -64,34 +69,34 @@ randomMR := (F,G) -> (
      d1 := toList ( degreeLength F : 1 );
      d0 := toList ( degreeLength F : 0 );
      f := id_(R^k);
-     if m>k then f = f || random(R^(toList( m-k : d1 )), R^n)
-     else if n > k then f = f | random(R^m, R^(toList (n-k : -d1)));
+     if m>k then f = f || random(R^(toList( m-k : d1 )), R^n, opts)
+     else if n > k then f = f | random(R^m, R^(toList (n-k : -d1)), opts);
      f = mutableMatrix f;
      other := (i,m) -> (i + random(m-1)) % m;
      if m>k then (
-	  for i to k-1 do rowAdd(f, i, random(d0,R), random(k,m-1));
+	  for i to k-1 do rowAdd(f, i, random(d0,R,opts), random(k,m-1));
 	  for i to k-1 do rowSwap(f, i, other(i,m)))
      else if n>k then (
-	  for j to k-1 do columnAdd(f, j, random(d0,R), random(k,n-1));
+	  for j to k-1 do columnAdd(f, j, random(d0,R,opts), random(k,n-1));
 	  for j to k-1 do columnSwap(f, j, other(j,n)));
      if m>1 then (
 	  for i to m-1 do (
-	       rowAdd(f, i, random(d0,R), other(i,m));
-	       rowAdd(f, other(i,m), random(d0,R), i);
+	       rowAdd(f, i, random(d0,R,opts), other(i,m));
+	       rowAdd(f, other(i,m), random(d0,R,opts), i);
 	       );
 	  for i to m-1 do (
-	       rowAdd(f, i, random(d1,R), other(i,m));
-	       rowAdd(f, other(i,m), random(d1,R), i);
+	       rowAdd(f, i, random(d1,R,opts), other(i,m));
+	       rowAdd(f, other(i,m), random(d1,R,opts), i);
 	       );
 	  );
      if n>1 then (
 	  for j to n-1 do (
-	       columnAdd(f, j, random(d0,R), other(j,n));
-	       columnAdd(f, other(j,n), random(d0,R), j);
+	       columnAdd(f, j, random(d0,R,opts), other(j,n));
+	       columnAdd(f, other(j,n), random(d0,R,opts), j);
 	       );
 	  for j to n-1 do (
-	       columnAdd(f, j, random(d1,R), other(j,n));
-	       columnAdd(f, other(j,n), random(d1,R), j);
+	       columnAdd(f, j, random(d1,R,opts), other(j,n));
+	       columnAdd(f, other(j,n), random(d1,R,opts), j);
 	       );
 	  );
      map(F,G,new Matrix from f))
@@ -100,9 +105,9 @@ random(Module, Module) := Matrix => opts -> (F,G) -> (
      if not isFreeModule F or not isFreeModule G then error "random: expected free modules";
      R := ring F;
      if R =!= ring G then error "modules over different rings";
-     if opts.MaximalRank then return randomMR(F,G);
+     if opts.MaximalRank then return (randomMR opts)(F,G);
      p := char R;
-     if p === 0 then p = ZZ;
+     if p === 0 then p = opts.Height;
      degreesTable := table(degrees F, degrees G, 
 	  (i,j) -> toList apply(j,i,difference));
      degreesTally := tally flatten degreesTable;
