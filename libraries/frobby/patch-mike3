@@ -1,6 +1,6 @@
-diff -ur --exclude=configure tmp/frobby_vmike3/Makefile frobby_vmike3/Makefile
---- tmp/frobby_vmike3/Makefile	2008-12-10 20:04:17.000000000 -0600
-+++ frobby_vmike3/Makefile	2009-01-21 03:15:45.000000000 -0600
+diff -ur --exclude=configure /home/25/dan/src/M2/trunk/BUILD/dan/builds/u123/libraries/frobby/tmp/frobby_vmike3/Makefile frobby_vmike3/Makefile
+--- /home/25/dan/src/M2/trunk/BUILD/dan/builds/u123/libraries/frobby/tmp/frobby_vmike3/Makefile	2008-12-10 20:04:17.000000000 -0600
++++ frobby_vmike3/Makefile	2009-01-24 15:02:49.000000000 -0600
 @@ -42,10 +42,13 @@
  endif
  
@@ -26,16 +26,18 @@ diff -ur --exclude=configure tmp/frobby_vmike3/Makefile frobby_vmike3/Makefile
  	if [ -f $(outdir)$(program).exe ]; then \
  	  mv -f $(outdir)$(program).exe $(outdir)$(program); \
  	fi
-@@ -149,7 +152,7 @@
+@@ -149,23 +152,23 @@
  bin/$(library): $(objs) | bin/
  	rm -f bin/$(library)
  ifeq ($(MODE), shared)
 -	g++ -shared $(ldflags) -o bin/$(library) $(patsubst main.o,,$(objs))
-+	$(CXX) -shared $(ldflags) -o bin/$(library) $(patsubst main.o,,$(objs))
++	$(CXX) -shared $(ldflags) -o bin/$(library) $(patsubst $(outdir)main.o,,$(objs))
  else
- 	ar crs bin/$(library) $(patsubst main.o,,$(objs))
+-	ar crs bin/$(library) $(patsubst main.o,,$(objs))
++	ar crs bin/$(library) $(patsubst $(outdir)main.o,,$(objs))
  endif
-@@ -158,14 +161,14 @@
+ 
+ # Compile and output object files.
  # In analysis mode no file is created, so create one
  # to allow dependency analysis to work.
  $(outdir)%.o: src/%.cpp
@@ -52,9 +54,9 @@ diff -ur --exclude=configure tmp/frobby_vmike3/Makefile frobby_vmike3/Makefile
  -include .depend
  
  clean: tidy
-diff -ur --exclude=configure tmp/frobby_vmike3/src/hash_map/hash_map frobby_vmike3/src/hash_map/hash_map
---- tmp/frobby_vmike3/src/hash_map/hash_map	2008-12-10 20:04:17.000000000 -0600
-+++ frobby_vmike3/src/hash_map/hash_map	2009-01-21 08:03:57.000000000 -0600
+diff -ur --exclude=configure /home/25/dan/src/M2/trunk/BUILD/dan/builds/u123/libraries/frobby/tmp/frobby_vmike3/src/hash_map/hash_map frobby_vmike3/src/hash_map/hash_map
+--- /home/25/dan/src/M2/trunk/BUILD/dan/builds/u123/libraries/frobby/tmp/frobby_vmike3/src/hash_map/hash_map	2008-12-10 20:04:17.000000000 -0600
++++ frobby_vmike3/src/hash_map/hash_map	2009-01-24 15:02:49.000000000 -0600
 @@ -292,10 +292,10 @@
      class hash_multimap
      {
