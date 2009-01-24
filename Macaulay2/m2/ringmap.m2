@@ -62,7 +62,7 @@ map(Ring,Ring,Matrix) := RingMap => opts -> (R,S,m) -> (
 	  else if degmap === identity then identity
 	  else if degreeLength S === 0 and degreeLength R === 0 then identity
 	  else (d -> (
-		    (q,r) := quotientRemainder(transpose matrix {q}, degmapmatrix);
+		    (q,r) := quotientRemainder(transpose matrix {d}, degmapmatrix);
 		    if r != 0 then error "degreeLift: degree not liftable";
 		    flatten entries q)));
      mdegs := {};

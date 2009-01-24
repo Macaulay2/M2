@@ -266,13 +266,14 @@ matrix(Matrix) := Matrix => options -> (m) -> (
 
 matrix(List) := Matrix => options -> (m) -> (
      if #m === 0 then error "expected nonempty list";
-     m = apply(splice m,splice);
-     types := unique apply(m,class);
+     mm := apply(splice m,splice);
+     if #mm === 0 then error "expected nonempty list";
+     types := unique apply(mm,class);
      if #types === 1 then (
 	  type := types#0;
-	  if instance(type,Module) then matrix { apply(m, v -> new Matrix from v) }
+	  if instance(type,Module) then matrix { apply(mm, v -> new Matrix from v) }
 	  else if ancestor(List, type) then (
-	       if isTable m then (matrixTable options)(m)
+	       if isTable mm then (matrixTable options)(mm)
 	       else error "expected rows all to be the same length"
 	       )
 	  else error "expected a table of ring elements or matrices, or a list of elements of the same module")
