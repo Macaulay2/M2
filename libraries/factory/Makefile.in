@@ -1,12 +1,12 @@
 # VERSION = 3.0.2
-# PATCHFILE = @srcdir@/patch-$(VERSION)
+# PATCHFILE = @abs_srcdir@/patch-$(VERSION)
 # TARDIR = factory
 
 VERSION = 3.0.4
 TARDIR = factory
 
 VERSION = 3.1.0
-PATCHFILE = @srcdir@/patch-3.1.0b
+PATCHFILE = @abs_srcdir@/patch-3.1.0b
 TARDIR = factory
 
 TARFILE := factory-$(shell echo $(VERSION) | sed 's/\./-/g').tar.gz

@@ -2,7 +2,7 @@ VERSION = 2.3.2
 RELAX = yes
 URL = http://www.mpfr.org/mpfr-$(VERSION)
 # URL = http://macaulay2.com/Downloads/SourceCode
-# PATCHFILE = @srcdir@/patch-$(VERSION)
+# PATCHFILE = @abs_srcdir@/patch-$(VERSION)
 CONFIGOPTIONS += 
 ifeq (@SHARED@,no)
 CONFIGOPTIONS += --disable-shared

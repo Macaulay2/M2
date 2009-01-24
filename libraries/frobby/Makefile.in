@@ -1,7 +1,7 @@
 VPATH = @srcdir@
 #VERSION = 0.7.7-M2
 VERSION = mike3
-PATCHFILE = @srcdir@/patch-$(VERSION)
+PATCHFILE = @abs_srcdir@/patch-$(VERSION)
 TARDIR = frobby_v$(VERSION)
 TARFILE := frobby_v$(VERSION).tar.gz
 # this site was unreliable:
