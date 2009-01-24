@@ -51,7 +51,7 @@ document {
 		   "gens G",
 		   "betti G"
 	  },
-     "For an explanation of the diagram, see ", TO (betti, ChainComplex), ".",
+     "For an explanation of the diagram, see ", TO (betti, GradedModule), ".",
      }
 document { 
      Key => (betti,Matrix),
@@ -63,9 +63,9 @@ document {
 	  "S = ZZ/10007[x,y];",
 	  "betti matrix{{x^3,x*y^2},{y*x,y^2}}"
 	  },
-     "For an explanation of the diagram, see ", TO (betti, ChainComplex), ".",
+     "For an explanation of the diagram, see ", TO (betti, GradedModule), ".",
      Caveat => {"The diagram ignores the degree of the map itself."},
-     "For an explanation of the diagram, see ", TO (betti, ChainComplex), ".",
+     "For an explanation of the diagram, see ", TO (betti, GradedModule), ".",
      }
 document { 
      Key => {(betti,Module),(betti,CoherentSheaf)},
@@ -86,17 +86,17 @@ document {
      EXAMPLE {
 	 "betti coker map(S^{0,-1},,matrix{{x^2,y},{y^3,x^2}})",
 	 },
-     "For an explanation of the diagram, see ", TO (betti, ChainComplex), ".",
+     "For an explanation of the diagram, see ", TO (betti,GradedModule), ".",
      }
 
 document {
-     Key => (betti, ChainComplex),
-     Headline => "display of degrees in a chain complex",
+     Key => (betti, GradedModule),
+     Headline => "display of degrees in a graded module",
      Usage => "betti C",
-     Inputs => { "C" => ChainComplex },
+     Inputs => { "C" => GradedModule },
      Outputs => { { "a diagram showing the degrees of the generators of the modules in ", TT "C"} },
      "The diagram can be used to determine the degrees of the entries in the matrices
-     of the differentials in the chain complex, provided they are homogeneous maps
+     of the differentials in a chain complex (which is a type of graded module) provided they are homogeneous maps
      of degree 0.",
      PARA{},
      "Here is a sample diagram.",
@@ -132,5 +132,5 @@ document {
 		"I = ideal(x^2,y^3);",
 		"betti I",
 	},
-     "For an explanation of the diagram, see ", TO (betti, ChainComplex), ".",
+     "For an explanation of the diagram, see ", TO (betti,GradedModule), ".",
 	}

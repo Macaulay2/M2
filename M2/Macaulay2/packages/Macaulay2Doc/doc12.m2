@@ -588,7 +588,20 @@ undocumented {
      (symbol /,Expression,Thing), (symbol /,Thing,Expression),
      (symbol ==,Expression,Thing), (symbol ==,Thing,Expression),
      (symbol ^,Thing,Expression),
-     (symbol _,Expression,Thing), (symbol _,Thing,Expression)
+     (symbol _,Expression,Thing), 
+     (symbol _,Thing,Expression),
+     (symbol :,Expression,Expression),
+     (symbol :,Expression,Holder),
+     (symbol :,Expression,Thing),
+     (symbol :,Holder,Expression),
+     (symbol :,Holder,Holder),
+     (symbol :,Thing,Expression),
+     (symbol ..,Expression,Expression),
+     (symbol ..,Expression,Holder),
+     (symbol ..,Expression,Thing),
+     (symbol ..,Holder,Expression),
+     (symbol ..,Holder,Holder),
+     (symbol ..,Thing,Expression)
      }
 
 undocumented {(value, RingElement),(value, Nothing), (value, IndexedVariableTable)}

@@ -243,16 +243,16 @@ GradedModuleMap _ Array := GradedModuleMap => (f,v) -> f * (source f)_v
 GradedModuleMap ^ Array := GradedModuleMap => (f,v) -> (target f)^v * f
 
 GradedModuleMap | GradedModuleMap := (f,g) -> (
-     if target f != target g then (
-	  error "expected maps with the same target";
-	  );
-     if degree f != degree g then (
-	  error "expected maps with the same degree";
-	  );
-     
+     if target f != target g then error "expected maps with the same target";
+     if degree f != degree g then error "expected maps with the same degree";
      d := degree f;
-     map(target f, source f ++ source g, j -> f_j | g_j, Degree => d)
-     )
+     map(target f, source f ++ source g, j -> f_j | g_j, Degree => d))
+
+GradedModuleMap || GradedModuleMap := (f,g) -> (
+     if source f != source g then error "expected maps with the same source";
+     if degree f != degree g then error "expected maps with the same degree";
+     d := degree f;
+     map(target f ++ target g, source f, j -> f_j || g_j, Degree => d))
 
 GradedModuleMap * GradedModuleMap := GradedModuleMap => (g,f) -> (
      if target f != source g then error "expected composable maps of graded modules";

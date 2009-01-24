@@ -215,7 +215,7 @@ document {   -- This node is used as an example for the documentation node: Key,
 	  },
      "Some useful related functions",
      UL {
-	  TO (betti,ChainComplex),
+	  TO (betti,GradedModule),
 	  TO (status,Resolution),
 	  }
      }
@@ -843,8 +843,17 @@ document {
 	  (symbol ^,Constant,InexactNumber),
 	  (symbol ^,Constant,Number),
 	  (symbol ^,InexactNumber,Constant),
-	  (symbol ^,Number,Constant)
-	  },
+	  (symbol ^,Number,Constant),
+	  (symbol +,Constant,RingElement),
+	  (symbol +,RingElement,Constant),
+	  (symbol -,Constant,RingElement),
+	  (symbol -,RingElement,Constant),
+	  (symbol *,Constant,RingElement),
+	  (symbol *,RingElement,Constant),
+	  (symbol /,Constant,RingElement),
+	  (symbol /,Holder,OneExpression),
+	  (symbol /,RingElement,Constant)
+     	  },
      PARA {
 	  "A constant is a symbolic entity that can be approximated by a real or complex
 	  number to any desired accuracy.  It is converted to a numeric value of the 

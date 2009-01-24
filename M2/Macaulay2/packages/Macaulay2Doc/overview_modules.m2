@@ -612,75 +612,67 @@ document {
      or if ", TT "M", " is not graded, some of these functions still work, but
      care must be taken in interpreting the output.  Here, we just consider the
      standard grading case.",
-     
-	  SUBSECTION "checking homogeneity",
-	       "Let's start by making a module over a ring with 18 variables",
-	       EXAMPLE {
-		    "R = ZZ/32003[vars(0..17)];",
-		    "M = coker genericMatrix(R,a,3,6)"
-		    },
-	       "Use ", TO "isHomogeneous", " to check whether a given module is
-	       graded.",
-	       EXAMPLE "isHomogeneous M"
-	       ,
-	  SUBSECTION "codimension, degree, and sectional arithmetic genera",
-	       "Use ", TO (codim,Module), ", ", TO (degree,Module), ", and ", TO (genera,Module), " for some basic 
-	       numeric information about a module.",
-	       EXAMPLE {
-		    "codim M",
-		    "degree M",
-		    "genera M"
-		    },
-	       "The last number in the list of genera is the degree minus one.  The second to last
-	       number is the genus of the generic linear section curve, ..., and the first
-	       number is the arithmetic genus",
-	       ,
-	  SUBSECTION "the Hilbert series",
-	       "The Hilbert series (", TO (hilbertSeries, Module), ") of ", TT "M", " is by definition the formal power series ",
-	       TT "H(t) = sum(d in ZZ) dim(M_d) t^d", ".  This is a rational function with 
-	       denominator ", TT "(1-t)^n", ", where ", TT "n", " is the number of variables
-	       in the polynomial ring.  The numerator of this rational function is called
-	       the poincare polynomial, and is obtained by the ", TO (poincare,Module), " function.",
-	       EXAMPLE {
-		    "poincare M",
-	            "hf = hilbertSeries M"
-		    },
-	       PARA{},
-	       "It is often useful to divide the poincare polynomial by ", TT "(1-t)", " as many
-	       times as possible.  This can be done by using ", TO reduceHilbert, ":",
-	       EXAMPLE {
-		    "reduceHilbert hf"
-		    },
-	       EXAMPLE {
-		    "poincare' = (M) -> (
+     SUBSECTION "checking homogeneity",
+     "Let's start by making a module over a ring with 18 variables",
+     EXAMPLE {
+	  "R = ZZ/32003[vars(0..17)];",
+	  "M = coker genericMatrix(R,a,3,6)"
+	  },
+     "Use ", TO "isHomogeneous", " to check whether a given module is
+     graded.",
+     EXAMPLE "isHomogeneous M",
+     SUBSECTION "codimension, degree, and sectional arithmetic genera",
+     "Use ", TO (codim,Module), ", ", TO (degree,Module), ", and ", TO (genera,Module), " for some basic 
+     numeric information about a module.",
+     EXAMPLE {
+	  "codim M",
+	  "degree M",
+	  "genera M"
+	  },
+     "The last number in the list of genera is the degree minus one.  The second to last
+     number is the genus of the generic linear section curve, ..., and the first
+     number is the arithmetic genus",
+     SUBSECTION "the Hilbert series",
+     "The Hilbert series (", TO (hilbertSeries, Module), ") of ", TT "M", " is by definition the formal power series ",
+     TT "H(t) = sum(d in ZZ) dim(M_d) t^d", ".  This is a rational function with 
+     denominator ", TT "(1-t)^n", ", where ", TT "n", " is the number of variables
+     in the polynomial ring.  The numerator of this rational function is called
+     the poincare polynomial, and is obtained by the ", TO (poincare,Module), " function.",
+     EXAMPLE {
+	  "poincare M",
+	  "hf = hilbertSeries M"
+	  },
+     PARA{},
+     "It is often useful to divide the poincare polynomial by ", TT "(1-t)", " as many
+     times as possible.  This can be done by using ", TO reduceHilbert, ":",
+     EXAMPLE {
+	  "reduceHilbert hf"
+	  },
+     EXAMPLE {
+	  "poincare' = (M) -> (
 	H := poincare M;
 	t := (ring H)_0;  -- The variable t above
 	while H % (1-t) == 0 do H = H // (1-t);
 	H)",
-                    "poincare' M",
-		    }
-	       ,
-	  SUBSECTION "free resolutions",
-	       "The minimal free resolution ", TT "C", " is computed using ", TO (resolution,Module), ".  
-	       The specific matrices are obtained by indexing ", TT "C.dd", ".",
-	       EXAMPLE {
-		    "C = resolution M",
-		    "C.dd_3"
-		    },
-	       "For more information about chain complexes and resolutions, see ", TO "chain complexes",
-	       " and ", TO "computing resolutions", "."
-	       ,
-	  SUBSECTION "betti numbers",
-	       "Use ", TO (betti,ChainComplex), " to display the graded betti numbers of ", TT "M", ".",
-	       EXAMPLE "betti C",
-	       "This table should be interpreted as follows: the number in the ", 
-	       TT "i", "-th row and ", TT "j", "-th column (indices starting at 0),
-	       is the number of ", TT "j", "-th syzygies in degree ", TT "i+j", ".
-	       In the above example, there are 15 second syzygies of degree 4, and the entries
-	       of the maps ",
-	       TT "CC.d_1, CC.d_3, CC.d_4", " are all linear."
-	       
-	  
+          "poincare' M",
+	  },
+     SUBSECTION "free resolutions",
+     "The minimal free resolution ", TT "C", " is computed using ", TO (resolution,Module), ".  
+     The specific matrices are obtained by indexing ", TT "C.dd", ".",
+     EXAMPLE {
+	  "C = resolution M",
+	  "C.dd_3"
+	  },
+     "For more information about chain complexes and resolutions, see ", TO "chain complexes",
+     " and ", TO "computing resolutions", ".",
+     SUBSECTION "betti numbers",
+     "Use ", TO2{(betti,GradedModule),"betti"}, " to display the graded betti numbers of ", TT "M", ".",
+     EXAMPLE "betti C",
+     "This table should be interpreted as follows: the number in the ", 
+     TT "i", "-th row and ", TT "j", "-th column (indices starting at 0),
+     is the number of ", TT "j", "-th syzygies in degree ", TT "i+j", ".
+     In the above example, there are 15 second syzygies of degree 4, and the entries
+     of the maps ", TT "CC.d_1, CC.d_3, CC.d_4", " are all linear."
      }
 
 {*

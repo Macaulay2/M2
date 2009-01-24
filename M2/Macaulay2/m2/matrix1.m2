@@ -388,14 +388,14 @@ subquotient(Module,Matrix,Nothing) := (F,g,r) -> (
      subquotient(g,r))
 subquotient(Module,Nothing,Nothing) := (F,g,r) -> F
 
-Matrix ** Matrix := Matrix => (f,g) -> (
+Matrix ** Matrix := Matrix => ((f,g) -> (
      samering(target f,target g);
      samering(source f,source g);
      R := ring target f;
      map(target f ** target g, 
 	  source f ** source g, 
 	  map(R, f.RawMatrix ** g.RawMatrix),
-	  Degree => degree f + degree g))
+	  Degree => degree f + degree g))) @@ toSameRing
 
 Matrix ** Number := (f,r) -> r * f
 Number ** Matrix := (r,f) -> r * f
