@@ -1,0 +1,4 @@
+     X = Spec(GF 2[x,y])
+     Y = X ** GF 16
+
+stdio:9:12:(1):[0]: error: tensor product not implemented for these rings

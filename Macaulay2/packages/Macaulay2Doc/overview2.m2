@@ -153,8 +153,8 @@ document {
      "Some simple functions for discovering the shape of ", TT "C", ".",
      UL {
 	  TO (length, ChainComplex),
-	  TO (max, ChainComplex),
-	  TO (min, ChainComplex),
+	  TO (max, GradedModule),
+	  TO (min, GradedModule),
 	  },
      EXAMPLE {
 	  "length C",
@@ -691,7 +691,10 @@ document {
 	  },
      "Now verify that it contains the desired text with ", TO "get", ".",
      EXAMPLE ///get fn///,
-     "To load and execute that code, use ", TO "load", ".",
+     "To load and execute that code, use ", TO "load", ".  This is the function
+     you will use most often for using bits of code you have previously written,
+     unless you have incorporated them into a package, in which case you would
+     use ", TO "loadPackage", ".",
      EXAMPLE ///load fn///,
      "The command ", TO "needs", " can be used to load a file only if
      it hasn't already been loaded.",

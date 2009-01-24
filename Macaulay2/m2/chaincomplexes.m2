@@ -77,7 +77,7 @@ texMath ChainComplex := C -> (
 tex ChainComplex := C -> "$" | texMath C | "$"
 
 -----------------------------------------------------------------------------
-ChainComplexMap = new Type of MutableHashTable
+ChainComplexMap = new Type of GradedModuleMap
 ChainComplexMap.synonym = "chain complex map"
 ring ChainComplexMap := C -> ring source C
 complete ChainComplexMap := f -> (
@@ -677,7 +677,11 @@ texMath BettiTally := v -> (
 tex BettiTally := v -> concatenate("$", texMath v, "$")
 
 betti = method(TypicalValue => BettiTally, Options => { Weights => null })
-heftfun := wt -> if wt === null then d -> d#0 else d -> sum( min(#wt, #d), i -> wt#i * d#i )
+heftfun := wt -> (
+     if wt === null
+     then d -> 0					    -- when there is no heft vector, then we choose to make all hefts zero
+     else d -> sum( min(#wt, #d), i -> wt#i * d#i )
+     )
 betti BettiTally := opts -> t -> (
      heft := heftfun opts.Weights;
      applyKeys(t, (i,d,h) -> (i,d,heft d)))
@@ -706,7 +710,7 @@ betti Resolution := opts -> X -> (
      b = applyKeys(b, (i,d,h) -> (i,d,heft d));
      b)
 
-betti ChainComplex := opts -> C -> (
+betti GradedModule := opts -> C -> (
      heft := heftfun opts.Weights;
      if C.?Resolution and degreeLength ring C === 1 then betti(C.Resolution,opts)
      else (
@@ -823,8 +827,8 @@ ChainComplexMap ** ChainComplexMap := ChainComplexMap => (f,g) -> (
 ChainComplexMap ** ChainComplex := ChainComplexMap => (f,C) -> f ** id_C
 ChainComplex ** ChainComplexMap := ChainComplexMap => (C,f) -> id_C ** f
 
-min ChainComplex := C -> min spots C
-max ChainComplex := C -> max spots C
+-- min ChainComplex := C -> min spots C
+-- max ChainComplex := C -> max spots C
 
 tensorAssociativity(Module,Module,Module) := Matrix => (A,B,C) -> map((A**B)**C,A**(B**C),1)
 

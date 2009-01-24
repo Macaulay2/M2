@@ -676,10 +676,10 @@ document {
      "Information about a chain complex",
      UL {
 	  TO (length,ChainComplex),
-	  TO (min,ChainComplex),
-	  TO (max,ChainComplex),
-	  TO (betti,ChainComplex),
-	  TT "ring ChainComplex"
+	  TO (min,GradedModule),
+	  TO (max,GradedModule),
+	  TO (betti,GradedModule),
+	  TO (ring,ChainComplex)
 	  },
      "Operations on chain complexes",
      UL {
@@ -1530,23 +1530,23 @@ document {
      }
 
 document {
+     Key => (symbol **,ChainComplex,Ring),
+     Usage => "C ** R",
+     Inputs => {"C","R"},
+     Outputs => {{"the tensor product of ", TT "C", " with ", TT "R" }},
+     EXAMPLE lines ///
+     R = QQ[a..d];
+     C = res coker vars R
+     S = R[x]
+     C**S
+     ///
+     }
+
+document {
      Key => (symbol **, ChainComplexMap, ChainComplexMap),
      Headline => "tensor product",
      TT "f ** g", " -- tensor product of two maps of chain complexes.",
-     PARA{},
      SeeAlso => "ChainComplexMap"
-     }
-
-document {
-     Key => (max,ChainComplex),
-     Headline => "maximum index in a chain complex",
-     TT "max C", " -- the maximum index occurring in a chain complex."
-     }
-
-document {
-     Key => (min,ChainComplex),
-     Headline => "minimum index in a chain complex",
-     TT "min C", " -- the minimum index occurring in a chain complex."
      }
 
 TEST ///

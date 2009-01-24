@@ -625,6 +625,83 @@ document {
      SeeAlso => {(max,GradedModule)}
      }
 
+document { Key => {(symbol **,AffineVariety,Ring)},
+     Usage => "X ** R",
+     Inputs => {"X","R"},
+     Outputs => {{"the tensor product of ", TT "X", " with ", TT "R"}},
+     EXAMPLE lines ///
+     X = Spec(QQ[x,y])
+     Y = X ** (QQ[t])
+     describe Y
+     ///
+     }
+
+document { Key => (symbol **,GradedModule,GradedModule),
+     Usage => "C ** D",
+     Inputs => {"C","D"},
+     Outputs => {{"the tensor product of ", TT "C", " with ", TT "D"}},
+     EXAMPLE lines ///
+     C = gradedModule(ZZ^1,ZZ^6,ZZ^2)
+     C ** C
+     betti oo
+     ///
+     }
+
+document { Key => {(symbol **,GradedModule,Module),(symbol **,Module,GradedModule)},
+     Usage => "C ** M",
+     Inputs => {"C","M"},
+     Outputs => {{"the tensor product of ", TT "C", " with ", TT "M"}},
+     EXAMPLE lines ///
+     C = gradedModule(ZZ^1,ZZ^6,ZZ^2)
+     C ** ZZ^3
+     betti oo
+     ///,
+     PARA {"It also works the other way around."},
+     EXAMPLE lines ///
+     ZZ^3 ** C
+     ///
+     }
+
+document { Key => (symbol **,Matrix,RingElement),
+     Usage => "f ** r",
+     Inputs => {"f","r"},
+     Outputs => {{"the tensor product of ", TT "f", " with ", TT "r"}},
+     EXAMPLE lines ///
+     f = matrix "2,3,4;5,6,7"
+     f ** 10
+     ///,
+     PARA { "When the ring element is homogeneous, the degrees of the source module can change, which is
+	  what makes this operation different from scalar multiplication." },
+     EXAMPLE lines ///
+     QQ[x,y]
+     f = matrix "x,y"
+     g = f ** y^7
+     h = f * y^7
+     degrees g
+     degrees h
+     ///
+     }
+
+document { Key => (symbol |,GradedModuleMap,GradedModuleMap),
+     Usage => "f|g",
+     Inputs => {"f","g"},
+     Outputs => {{"the map of graded modules whose component in degree ", TT "i", " is ", TT "f_i|g_i", " see ", TO (symbol |, Matrix, Matrix)}},
+     EXAMPLE lines ///
+     f = gradedModuleMap( matrix "1;2", matrix "2,3" )
+     f|f
+     ///
+     }
+
+document { Key => (symbol ||,GradedModuleMap,GradedModuleMap),
+     Usage => "f||g",
+     Inputs => {"f","g"},
+     Outputs => {{"the map of graded modules whose component in degree ", TT "i", " is ", TT "f_i||g_i", " see ", TO (symbol ||, Matrix, Matrix)}},
+     EXAMPLE lines ///
+     f = gradedModuleMap( matrix "1;2", matrix "2,3" )
+     f||f
+     ///
+     }
+
 -- Local Variables:
 -- compile-command: "make -C $M2BUILDDIR/Macaulay2/m2 "
 -- End:

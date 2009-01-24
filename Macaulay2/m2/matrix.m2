@@ -76,11 +76,11 @@ Matrix * RingElement := (m,r) -> (
      r = promote(r,ring m);
      map(target m, source m, reduce(target m, raw m * raw r)))
 
-sameRing := (m,n) -> (
+toSameRing = (m,n) -> (
      if ring m =!= ring n then (
 	  try (promote(m,ring n) , n) else
 	  try (m , promote(n,ring m))
-	  else error "expected matrices over compatible rings"
+	  else error "expected compatible rings"
 	  )
      else (m,n))
 
@@ -100,7 +100,7 @@ Matrix == ZZ := (m,i) -> if i === 0 then rawIsZero m.RawMatrix else m - i == 0
 
 Matrix + Matrix := Matrix => (
      (f,g) -> map(target f, source f, f.RawMatrix + g.RawMatrix)
-     ) @@ sameRing
+     ) @@ toSameRing
 Matrix + RingElement := (f,r) -> if r == 0 then f else f + r*id_(target f)
 RingElement + Matrix := (r,f) -> if r == 0 then f else r*id_(target f) + f
 Number + Matrix := (i,f) -> if i === 0 then f else i*id_(target f) + f
@@ -108,7 +108,7 @@ Matrix + Number := (f,i) -> if i === 0 then f else f + i*id_(target f)
 
 Matrix - Matrix := Matrix => (
      (f,g) -> map(target f, source f, f.RawMatrix - g.RawMatrix)
-     ) @@ sameRing
+     ) @@ toSameRing
 Matrix - RingElement := (f,r) -> if r == 0 then f else f - r*id_(target f)
 RingElement - Matrix := (r,f) -> if r == 0 then -f else r*id_(target f) - f
 Number - Matrix := (i,f) -> if i === 0 then -f else i*id_(target f) - f
@@ -382,7 +382,7 @@ bothFree := (f,g) -> (
      or not isFreeModule source g or not isFreeModule target g then error "expected a homomorphism between free modules"
      else (f,g))
 
-diff(Matrix, Matrix) := Matrix => ( (f,g) -> map(ring f, rawMatrixDiff(f.RawMatrix, g.RawMatrix)) ) @@ bothFree @@ sameRing 
+diff(Matrix, Matrix) := Matrix => ( (f,g) -> map(ring f, rawMatrixDiff(f.RawMatrix, g.RawMatrix)) ) @@ bothFree @@ toSameRing 
 diff(RingElement, RingElement) := RingElement => (f,g) -> (diff(matrix{{f}},matrix{{g}}))_(0,0)
 diff(Matrix, RingElement) := (m,f) -> diff(m,matrix{{f}})
 diff(RingElement, Matrix) := (f,m) -> diff(matrix{{f}},m)
@@ -392,7 +392,7 @@ diff(Vector, Vector) := (v,w) -> diff(matrix{v}, transpose matrix{w})
 diff(Matrix, Vector) := (m,w) -> diff(m,transpose matrix {w})
 diff(Vector, Matrix) := (v,m) -> diff(matrix {v}, m)
 
-contract(Matrix, Matrix) := Matrix => ( (f,g) -> map(ring f, rawMatrixContract(f.RawMatrix, g.RawMatrix)) ) @@ bothFree @@ sameRing
+contract(Matrix, Matrix) := Matrix => ( (f,g) -> map(ring f, rawMatrixContract(f.RawMatrix, g.RawMatrix)) ) @@ bothFree @@ toSameRing
 contract(RingElement, RingElement) := RingElement => (f,g) -> (contract(matrix{{f}},matrix{{g}}))_(0,0)
 contract(Matrix, RingElement) := (m,f) -> contract(m,matrix{{f}})
 contract(RingElement, Matrix) := (f,m) -> contract(matrix{{f}},m)
@@ -410,8 +410,8 @@ contract(Number, Matrix) := (f,m) -> contract(matrix{{f}},m)
 contract(Vector, Number) := (v,f) -> (contract(matrix{v},matrix{{f}}))_0
 contract(Number, Vector) := (f,v) -> contract(matrix{{f}},transpose matrix{v})
 
-diff'(Matrix, Matrix) := Matrix => ((m,n) -> ( flip(dual target n, target m) * diff(n,m) * flip(source m, dual source n) )) @@ bothFree @@ sameRing
-contract'(Matrix, Matrix) := Matrix => ((m,n) -> ( flip(dual target n, target m) * contract(n,m) * flip(source m, dual source n) )) @@ bothFree @@ sameRing
+diff'(Matrix, Matrix) := Matrix => ((m,n) -> ( flip(dual target n, target m) * diff(n,m) * flip(source m, dual source n) )) @@ bothFree @@ toSameRing
+contract'(Matrix, Matrix) := Matrix => ((m,n) -> ( flip(dual target n, target m) * contract(n,m) * flip(source m, dual source n) )) @@ bothFree @@ toSameRing
 
 jacobian = method()
 jacobian Matrix := Matrix => (m) -> diff(transpose vars ring m, m)
