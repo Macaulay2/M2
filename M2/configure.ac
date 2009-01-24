@@ -587,26 +587,33 @@ then AC_SEARCH_LIBS(add_history,history,,BUILD_readline=yes)
 fi
 test $BUILD_readline = yes && BUILTLIBS="-lreadline -lhistory $BUILTLIBS"
 
-AC_LANG(C)
 if test $BUILD_gmp = no
-then AC_SEARCH_LIBS(__gmpz_init,gmp,,BUILD_gmp=yes)
+then AC_LANG(C)
+     AC_SEARCH_LIBS(__gmpz_init,gmp,,BUILD_gmp=yes)
      AC_CHECK_HEADER(gmp.h,,BUILD_gmp=yes)
 fi
-test $BUILD_gmp = yes && BUILTLIBS="-lgmp $BUILTLIBS"
+dnl frobby uses gmpxx
+if test $BUILD_gmp = yes
+then BUILTLIBS="-lgmpxx -lgmp $BUILTLIBS"
+else LIBS="-lgmpxx $LIBS"
+fi
 
-AC_LANG(C)
 if test "$PARI" = yes
 then if test $BUILD_pari = no
-     then AC_SEARCH_LIBS(pari_init,pari,,BUILD_pari=yes)
+     then AC_LANG(C)
+	  AC_SEARCH_LIBS(pari_init,pari,,BUILD_pari=yes)
 	  AC_CHECK_HEADER(pari/pari.h,,BUILD_pari=yes)
      fi
      test $BUILD_pari = yes && BUILTLIBS="\$(TOSTATIC) -lpari \$(UNSTATIC) $BUILTLIBS"
 fi
 
-# we don't expect to find frobby already installed
-BUILD_frobby=$FROBBY
-# frobby depends on gmp
-test $BUILD_frobby = yes && BUILTLIBS="-lfrobby -lgmpxx $BUILTLIBS"
+if test "$FROBBY" = yes
+then if test $BUILD_frobby = no
+     then AC_LANG(C++)
+	  AC_CHECK_HEADER(frobby.h,LIBS="-lfrobby $LIBS",BUILD_frobby=yes)
+     fi
+     test $BUILD_frobby = yes && BUILTLIBS="-lfrobby $BUILTLIBS"
+fi
 
 AC_SUBST(ULIMIT_T,yes)
 AC_SUBST(ULIMIT_M,yes)
@@ -615,11 +622,12 @@ AC_SUBST(ULIMIT_V,yes)
 ( ulimit -m 2000 2>/dev/null) || ULIMIT_M=no
 ( ulimit -v 2000 2>/dev/null) || ULIMIT_V=no
 
-AC_LANG(C)
+
 if test $BUILD_gmp = yes
 then BUILD_mpfr=yes
 elif test $BUILD_mpfr = no
-then AC_SEARCH_LIBS(mpfr_init,mpfr,,BUILD_mpfr=yes)
+then AC_LANG(C)
+     AC_SEARCH_LIBS(mpfr_init,mpfr,,BUILD_mpfr=yes)
      # check for lgamma -- it's in 2.3.0 but not in 2.2.1
      AC_SEARCH_LIBS(mpfr_lgamma,mpfr,,BUILD_mpfr=yes)
      AC_CHECK_HEADER(mpfr.h,,BUILD_mpfr=yes,[#include <gmp.h>])
@@ -643,9 +651,9 @@ then AC_SEARCH_LIBS(mpfr_init,mpfr,,BUILD_mpfr=yes)
 fi
 test $BUILD_mpfr = yes && BUILTLIBS="-lmpfr $BUILTLIBS"
 
-AC_LANG(C)
 if test $BUILD_gc = no
-then AC_SEARCH_LIBS(GC_free,gc,,BUILD_gc=yes)
+then AC_LANG(C)
+     AC_SEARCH_LIBS(GC_free,gc,,BUILD_gc=yes)
      AC_CHECK_HEADER(gc/gc.h,,BUILD_gc=yes)
      if test $BUILD_gc = no
      then AC_MSG_CHECKING(whether libgc is recent enough)
@@ -676,72 +684,69 @@ then if test $PTHREADS = yes
      BUILTLIBS="-lgc $BUILTLIBS"
 fi
 
-AC_LANG(C)
 if test $BUILD_gdbm = no
-then AC_SEARCH_LIBS(gdbm_close,gdbm,,BUILD_gdbm=yes)
+then AC_LANG(C)
+     AC_SEARCH_LIBS(gdbm_close,gdbm,,BUILD_gdbm=yes)
      AC_CHECK_HEADER(gdbm.h,,BUILD_gdbm=yes)
 fi
 test $BUILD_gdbm = yes && BUILTLIBS="-lgdbm $BUILTLIBS"
 
 if test $BUILD_ntl = no
-then
-    AC_LANG(C++)
-    AC_CHECK_HEADER(NTL/version.h,,BUILD_ntl=yes)
+then AC_LANG(C++)
+     AC_CHECK_HEADER(NTL/version.h,,BUILD_ntl=yes)
+     AC_MSG_CHECKING(for ntl library)
+     FOUND=
+     SAVELIBS=$LIBS
+     for lib in "" "-lntl"
+     do  test "$lib" && LIBS="$lib $LIBS"
+	 AC_LINK_IFELSE( [
+		 #include <NTL/tools.h>
+		 int main () { _ntl_GetTime(); }
+		 ],
+	     FOUND=yes; break;,
+	     LIBS=$SAVELIBS)
+     done
+     if test "$FOUND"
+     then if test "$lib"
+	 then AC_MSG_RESULT([$lib])
+	 else AC_MSG_RESULT([none needed])
+	 fi
+     else AC_MSG_RESULT(none found)
+	 BUILD_ntl=yes
+     fi 
 
-    AC_MSG_CHECKING(for ntl library)
-    FOUND=
-    SAVELIBS=$LIBS
-    for lib in "" "-lntl"
-    do  test "$lib" && LIBS="$lib $LIBS"
-	AC_LINK_IFELSE( [
-	        #include <NTL/tools.h>
-		int main () { _ntl_GetTime(); }
-		],
-	    FOUND=yes; break;,
-	    LIBS=$SAVELIBS)
-    done
-    if test "$FOUND"
-    then if test "$lib"
-	then AC_MSG_RESULT([$lib])
-	else AC_MSG_RESULT([none needed])
-	fi
-    else AC_MSG_RESULT(none found)
-	BUILD_ntl=yes
-    fi 
+     if test $BUILD_ntl = no
+     then AC_MSG_CHECKING([whether ntl library is recent enough, using NTL/version.h])
+	  AC_RUN_IFELSE([[
+		  #include <stdio.h>
+		  #include <NTL/version.h>
+		  main () {
+		      FILE *msg = fdopen(]]AS_MESSAGE_FD[[,"w");
+		      unsigned major, minor, revision;
+		      major = NTL_MAJOR_VERSION;
+		      minor = NTL_MINOR_VERSION;
+		      revision = NTL_REVISION;
+		      fprintf(msg,"(version %d.%d.%d found) ", major, minor, revision);
+		      return !( major > 5 || major == 5 && minor > 4 || major == 5 && minor == 4 && revision >= 1 ); }]],
+	     [ AC_MSG_RESULT(yes) ],
+	     [ AC_MSG_RESULT([no, version at least 5.4.1 is required (ntl will be built from downloaded sources)]); BUILD_ntl=yes ])
+     fi
 
-    if test $BUILD_ntl = no
-    then AC_MSG_CHECKING([whether ntl library is recent enough, using NTL/version.h])
-	 AC_RUN_IFELSE([[
-		 #include <stdio.h>
-		 #include <NTL/version.h>
-		 main () {
-		     FILE *msg = fdopen(]]AS_MESSAGE_FD[[,"w");
-		     unsigned major, minor, revision;
-		     major = NTL_MAJOR_VERSION;
-		     minor = NTL_MINOR_VERSION;
-		     revision = NTL_REVISION;
-		     fprintf(msg,"(version %d.%d.%d found) ", major, minor, revision);
-		     return !( major > 5 || major == 5 && minor > 4 || major == 5 && minor == 4 && revision >= 1 ); }]],
-	    [ AC_MSG_RESULT(yes) ],
-	    [ AC_MSG_RESULT([no, version at least 5.4.1 is required (ntl will be built from downloaded sources)]); BUILD_ntl=yes ])
-    fi
-
-    if test $BUILD_ntl = no
-    then AC_MSG_CHECKING([whether ntl library is compiled with gmp, using NTL/config.h])
-	 AC_RUN_IFELSE([[
-		 #include <NTL/config.h>
-		 main () {
-		     return !( 
-			 #ifdef NTL_GMP_LIP
-			 1
-			 #else
-			 0
-			 #endif
-			 ); }]],
-	    [ AC_MSG_RESULT(yes) ],
-	    [ AC_MSG_RESULT([no, ntl compiled with gmp is required (ntl will be built from downloaded sources)]); BUILD_ntl=yes ])
-    fi
-
+     if test $BUILD_ntl = no
+     then AC_MSG_CHECKING([whether ntl library is compiled with gmp, using NTL/config.h])
+	  AC_RUN_IFELSE([[
+		  #include <NTL/config.h>
+		  main () {
+		      return !( 
+			  #ifdef NTL_GMP_LIP
+			  1
+			  #else
+			  0
+			  #endif
+			  ); }]],
+	     [ AC_MSG_RESULT(yes) ],
+	     [ AC_MSG_RESULT([no, ntl compiled with gmp is required (ntl will be built from downloaded sources)]); BUILD_ntl=yes ])
+     fi
 fi
 test $BUILD_ntl = yes && BUILTLIBS="-lntl $BUILTLIBS"
 
@@ -790,7 +795,7 @@ do AC_LANG(C++)
 	   AC_MSG_RESULT(yes),
 	   AC_MSG_RESULT(no); BUILD_factory=yes BUILD_libfac=yes; break
 	   ))
-   AC_MSG_CHECKING([whether (recent) libfac and factory libraries are installed ($LIBS)])
+   AC_MSG_CHECKING([whether up-to-date libfac and factory libraries are installed])
    AC_RUN_IFELSE( [[ /* this is line 1 */
 	   #include <stdio.h>
 	   #include <string.h>
