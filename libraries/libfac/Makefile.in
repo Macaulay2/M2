@@ -1,7 +1,6 @@
-VERSION = 3.0.4
-
+# VERSION = 3.0.4
 VERSION = 3.1.0
-
+PATCHFILE = @srcdir@/patch-3.1.0
 TARDIR = libfac
 TARFILE := libfac-$(shell echo $(VERSION) | sed 's/\./-/g').tar.gz
 URL = ftp://www.mathematik.uni-kl.de/pub/Math/Singular/Libfac
@@ -9,6 +8,8 @@ CONFIGOPTIONS += --enable-NTL
 ifeq (@OPTIMIZE@,yes)
 CXXFLAGS += -Wno-deprecated --no-rtti --no-exceptions
 endif
+CHECKTARGET = tests
+CHECKOPTIONS = LIBS="-lfac -lcf -lcfmem -lntl -lgmp"
 include ../Makefile.library
 Makefile: @srcdir@/Makefile.in ; cd ../.. && ./config.status libraries/libfac/Makefile
 clean uninstall ::

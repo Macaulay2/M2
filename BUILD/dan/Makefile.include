@@ -8,10 +8,11 @@ $(warning DIRECTORY variable unset)
 endif
 endif
 .PHONY : everything world configure all install check-links distclean clean arch-chk install-it rebuild-world default
-all:; $(MAKE) -C builds/$(DIRECTORY) $@ $(BUILDOPTIONS)
-clean:; $(MAKE) -C builds/$(DIRECTORY) $@
+all:banner; $(MAKE) -C builds/$(DIRECTORY) $@ $(BUILDOPTIONS)
+banner:; @echo "-*- mode: compilation; default-directory: \"`pwd`/\" -*-"
+clean:banner; $(MAKE) -C builds/$(DIRECTORY) $@
 arch-chk:
-everything:; $(MAKE) -C builds/$(DIRECTORY) all RemakeAllDocumentation=true RemakePackages=true
+everything:banner; $(MAKE) -C builds/$(DIRECTORY) all RemakeAllDocumentation=true RemakePackages=true
 check-links:; $(MAKE) -C builds/$(DIRECTORY)/Macaulay2/html-check-links check
 check:; $(MAKE) -C builds/$(DIRECTORY) -k $@
 configure builds/$(DIRECTORY)/include/configuration:../../configure; mkdir -p builds/$(DIRECTORY) && (D=`pwd`; cd builds/$(DIRECTORY) && $$D/../../configure $(CONFIGOPTIONS))
@@ -20,14 +21,14 @@ ifneq ($(DEBUG),yes)
 default: install
 endif
 default: check-links
-distclean: distclean1 distclean2
+distclean: banner distclean1 distclean2
 distclean1:; $(MAKE) -C builds/$(DIRECTORY) distclean
 distclean2:; find builds/$(DIRECTORY) -type f | sed 's/^/=== /'
 install-it:; $(MAKE) -C builds/$(DIRECTORY) install -o all $(INSTALLOPTIONS)
 install:pre-install install-it post-install
 pre-install post-install:
-rebuild-world: arch-chk distclean configure everything install check
-world: arch-chk configure all install check
+rebuild-world: banner arch-chk distclean configure everything install check
+world: banner arch-chk configure all install check
 check-info:; $(MAKE) -C builds/$(DIRECTORY)/Macaulay2/packages $@
 ../../configure :; $(MAKE) -C ../..
 find-M2:

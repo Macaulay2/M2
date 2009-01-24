@@ -1,7 +1,7 @@
 VPATH = @srcdir@
 #VERSION = 0.7.7-M2
 VERSION = mike3
-PATCHFILE = patch-$(VERSION)
+PATCHFILE = @srcdir@/patch-$(VERSION)
 TARDIR = frobby_v$(VERSION)
 TARFILE := frobby_v$(VERSION).tar.gz
 # this site was unreliable:
@@ -17,6 +17,7 @@ INSTALLCMD = \
 	cp bin/libfrobby.a $(LIBRARIESDIR)/lib/libfrobby.a && \
 	cp src/frobby.h $(LIBRARIESDIR)/include/frobby.h && \
 	cp src/stdinc.h $(LIBRARIESDIR)/include/stdinc.h
+CHECKTARGET = test
 include ../Makefile.library
 CFLAGS += -Wno-deprecated
 Makefile: @srcdir@/Makefile.in ; cd ../.. && ./config.status libraries/frobby/Makefile
