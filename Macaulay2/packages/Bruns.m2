@@ -277,7 +277,7 @@ Description
   Example
     kk=ZZ/32003
     S=kk[a..e]
-    i=monomialCurveIdeal(S, {1,3,6,7})
+    i=monomialCurveIdeal(S, {1,3,4,5})
     betti (F=res i)
     time j=bruns F.dd_3;
     betti res j
