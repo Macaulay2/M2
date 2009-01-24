@@ -195,7 +195,13 @@ generators = method(
 (o -> (
 	  minimalPresentation = method(o);
 	  prune = method(o);
-)) (Options => { Variable => null, Strategy => null })
+	  )) (
+     Options => { 
+	  -- as far as I can tell these options are unused (now)
+	  -- Variable => null, 
+	  -- Strategy => null
+	  }
+     )
 
 status = method (
      Options => new OptionTable from {

@@ -343,37 +343,6 @@ document {
 --      order be used."
 --      }
 
-document {
-     Key => [pushForward,StopBeforeComputation],
-     TT "StopBeforeComputation => false", " -- an optional argument used with
-     ", TO "pushForward", ".",
-     PARA{},
-     "Tells whether to start the computation, with the default value
-     being ", TT "true", "."
-     }
-
-document {
-     Key => [pushForward,StopWithMinimalGenerators],
-     TT "StopWithMinimalGenerators => true", " -- an option for ", TO "pushForward", "
-     that specifies that the computation should stop as soon as a
-     complete list of minimal generators for the submodule or ideal has been
-     determined.",
-     PARA{},
-     "The value provided is simply passed on to ", TO "gb", ": see 
-     ", TO [gb,StopWithMinimalGenerators], " for details."
-     }
-
--- document {
---      Key => [pushForward,Strategy],
---      TT "pushForward(f,M,Strategy => v)", " -- an option for ", TO pushForward, " 
---      which can be used to specify the strategy to be used in the computation.",
---      PARA{},
---      "The strategy option value ", TT "v", " should be one of the following.",
---      UL {
--- 	  TO "NonLinear",
---      	  TO "Linear"
--- 	  }
---      }
 
 TEST "
     R = ZZ/101[a,b]

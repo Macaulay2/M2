@@ -12,14 +12,15 @@ PushforwardComputation.synonym = "push-forward computation"
 protect NonLinear					    -- no longer exported
 
 pushOptions := new OptionTable from {
-	  -- Strategy => NonLinear,            -- use the best choice
-	  UseHilbertFunction => true,  -- if possible
 	  MonomialOrder => Eliminate,       -- default is an elimination order
-	  StopWithMinimalGenerators => false,            -- determine the minimal generators of the subring
-	  BasisElementLimit => infinity,  -- number of generators of GB in the subring
+	  UseHilbertFunction => true,  -- if possible
 	  StopBeforeComputation => false,
 	  DegreeLimit => {},
-	  PairLimit => infinity
+	  PairLimit => infinity,
+	  -- unused options:
+	  -- Strategy => NonLinear,            -- use the best choice
+	  -- BasisElementLimit => infinity,  -- number of generators of GB in the subring
+	  -- StopWithMinimalGenerators => false            -- determine the minimal generators of the subring
 	  }
 
 pushNonLinear := opts -> (f,M) -> (				    -- this returns the presentation matrix of the pushforward module

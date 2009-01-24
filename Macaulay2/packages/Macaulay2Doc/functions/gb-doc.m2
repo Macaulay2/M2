@@ -44,9 +44,9 @@ document {
      	  Hilbert => {"informs Macaulay 2 that this is the ", TO poincare, 
 	   " polynomial, and can be used to aid in the computation of the Gröbner basis (Hilbert driven)"},
 	  PairLimit => ZZ => "stop after this number of spairs has been considered",
-	  StopBeforeComputation => Boolean => "initializes the Gröbner basis engine but return before doing any computation (useful for 
+	  StopBeforeComputation => Boolean => "whether to initialize the Gröbner basis engine but return before doing any computation (useful for 
 	    using or viewing partially computed Gröbner bases)",
-	  StopWithMinimalGenerators => Boolean => "stop as soon as the minimal set (or a trimmed set, if not homogeneous or local) of generators is known.  Intended for internal use only",
+	  StopWithMinimalGenerators => Boolean => "whether to stop as soon as the minimal set (or a trimmed set, if not homogeneous or local) of generators is known.  Intended for internal use only",
 	  Strategy => {
 	       "either ", TO "LongPolynomial", ", ", TO "Sort", ", or a list of these.  ", TO "LongPolynomial", ": 
 	       use a geobucket data structure while reducing polynomials;

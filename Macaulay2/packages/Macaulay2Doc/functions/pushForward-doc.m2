@@ -1,9 +1,16 @@
+--- -*- coding: utf-8 -*-
 --- status: Draft
 --- author(s): MES, taken also from original by DE
 --- notes: 
 
 document { 
-     Key => {(pushForward,RingMap,Module),pushForward,[pushForward,MonomialOrder]},
+     Key => {(pushForward,RingMap,Module),pushForward,
+	  [pushForward,MonomialOrder],
+	  [pushForward,UseHilbertFunction],
+	  [pushForward,StopBeforeComputation],
+	  [pushForward,DegreeLimit],
+	  [pushForward,PairLimit],
+	  },
      Headline => "",
      Usage => "pushForward(F,M)",
      Inputs => {
@@ -11,7 +18,12 @@ document {
 	  "M" => "over S, graded",
 	  MonomialOrder => {"the type of monomial ordering to use in the computation,
 	       as keyword, either ", TO "Eliminate", ", ", TO "ProductOrder", ", or ", TO "Lex"
-	       }
+	       },
+	  UseHilbertFunction => Boolean => {"whether to use the Hilbert function as a hint for the 
+	       Gröbner basis computation, if ", TT "M", " and ", TT "F", " are homogeneous" },
+	  StopBeforeComputation => Boolean => {"see ", TO [gb,StopBeforeComputation]},
+	  DegreeLimit => Boolean => {"see ", TO [gb,DegreeLimit]},
+	  PairLimit => Boolean => {"see ", TO [gb,PairLimit]}
 	  },
      Outputs => {
 	  Module => "M, considered as an R-module"

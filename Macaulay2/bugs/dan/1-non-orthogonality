@@ -1,0 +1,17 @@
+instances of non-orthogonality in the design:
+
+  methods
+    documentation key:  (f,X,Y)
+    declaration      :  f(X,Y) := (x,y) -> ...
+
+  optional arguments :
+    documentation key:  [f,Foo]
+    		  or :  [(f,X,Y),Foo]
+    declaration:
+  	   f = method( Options => {
+	       	       Foo => bar
+		       } )
+    another way to declare:
+          f = { Foo => bar } >> opts -> (x,y) -> ...
+	or
+          f(X,Y) := { Foo => bar } >> opts -> (x,y) -> ...
