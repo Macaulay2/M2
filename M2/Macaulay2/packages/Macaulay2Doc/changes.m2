@@ -126,8 +126,6 @@ document {
 		    TO [newRing,DegreeLift],
 		    TO [newRing,DegreeMap],
 		    TO [newRing,Join],
-		    TO [prune,Strategy],
-		    TO [prune,Variable],
 		    TO [symmetricAlgebra,DegreeLift],
 		    TO [symmetricAlgebra,DegreeMap],
 		    TO [symmetricAlgebra,Join],

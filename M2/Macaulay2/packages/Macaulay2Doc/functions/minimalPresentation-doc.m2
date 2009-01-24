@@ -162,40 +162,41 @@ document {
      ///,
      SeeAlso => {(minimalPresentation, Matrix), (trim, Module), (mingens,Module)}
      }
-document { 
-     Key => {[minimalPresentation, Variable],[prune, Variable]},
-     Headline => "specify the variable for the new isomorphic ring",
-     Usage => "minimalPresentation(..., Variable => u)",
-     Inputs => {
-	  "u" => Symbol
-	  },
-     Consequences => {
-	  {"variables in the resulting ring are ", TT "u_0, u_1, ..."}
-	  },     
-     EXAMPLE {
-	  "C = ZZ/101[x,y,z,u,w]/ideal(x-x^2-y,z+x*y,w^2-u^2);",
-	  "minimalPresentation(C,Variable => a)",
-	  },
-     Caveat => {"If the symbol, ", TT "u", " is used as a variable in 
-	  the original ring an error is returned."}
-     }
- 
- ///
- I = ideal(x*y, u^2-y^2, x+y+z, v^2-u^2-x^2) 
- -- trim returns x+y+z, y^2+yz, u^2+yz, v^2-z^2
- -- minpres returns y^2+yz, u^2+yz, v^2-z^2
- -- prune does nothing - as a module this is 
- -- minimal.
- 
- R = ZZ/101[a,b,w,x,y,z]
- I = ideal(a*w, a*x, a*y, a*z, b*w, b*x, b*y, b*z)
- M = koszul(2,gens I)
- M = matrix{{a*w, a*x, 3, x+w},{a*z, a*w, 2, z+w}}
- C = chainComplex M
- C.dd
- prune oo
- prune coker M
- 
- ///
- 
- 
+
+-- document { 
+--      Key => {[minimalPresentation, Variable],[prune, Variable]},
+--      Headline => "specify the variable for the new isomorphic ring",
+--      Usage => "minimalPresentation(..., Variable => u)",
+--      Inputs => {
+-- 	  "u" => Symbol
+-- 	  },
+--      Consequences => {
+-- 	  {"variables in the resulting ring are ", TT "u_0, u_1, ..."}
+-- 	  },     
+--      EXAMPLE {
+-- 	  "C = ZZ/101[x,y,z,u,w]/ideal(x-x^2-y,z+x*y,w^2-u^2);",
+-- 	  "minimalPresentation(C,Variable => a)",
+-- 	  },
+--      Caveat => {"If the symbol, ", TT "u", " is used as a variable in 
+-- 	  the original ring an error is returned."}
+--      }
+--  
+--  ///
+--  I = ideal(x*y, u^2-y^2, x+y+z, v^2-u^2-x^2) 
+--  -- trim returns x+y+z, y^2+yz, u^2+yz, v^2-z^2
+--  -- minpres returns y^2+yz, u^2+yz, v^2-z^2
+--  -- prune does nothing - as a module this is 
+--  -- minimal.
+--  
+--  R = ZZ/101[a,b,w,x,y,z]
+--  I = ideal(a*w, a*x, a*y, a*z, b*w, b*x, b*y, b*z)
+--  M = koszul(2,gens I)
+--  M = matrix{{a*w, a*x, 3, x+w},{a*z, a*w, 2, z+w}}
+--  C = chainComplex M
+--  C.dd
+--  prune oo
+--  prune coker M
+--  
+--  ///
+--  
+--  

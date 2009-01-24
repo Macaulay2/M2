@@ -733,7 +733,7 @@ addHook(Module, symbol resolution, (o,M) -> if ring M === ZZ then break chainCom
 addHook(Module, symbol minimalPresentation, (o,M) -> (
 	  return null;					    -- this routine isn't correct yet -- it only partially minimizes; we could use this for trim and improve it for this
 	  R := ring M;
-	  if R === ZZ and o.Strategy === null then (
+	  if R === ZZ then (
 	       h := presentation M;
 	       p := hermite h;				    -- check the column ordering, too!
 	       m := rank target p;

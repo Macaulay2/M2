@@ -7,7 +7,9 @@ document {
      Key => {forceGB, (forceGB,Matrix)},
      Headline => "declare that the columns of a matrix are a Gröbner basis",
      Usage => "forceGB f",
-     Inputs => { "f" => Matrix },
+     Inputs => { 
+	  "f" => Matrix 
+	  },
      Outputs => { GroebnerBasis },
      "Declares that the columns of the matrix ", TT "f", "
      constitute a Gröbner basis, autoreduces it, minimizes it, sorts it, and returns a Gröbner basis object
@@ -60,21 +62,11 @@ document {
      }
 document { 
      Key => [forceGB, MinimalMatrix],
-     Headline => "inform Macaulay 2 about the minimal generator matrix",
-     Usage => "",
-     Inputs => {
-	  },
-     Consequences => {
-	  },     
-     "description",
-     EXAMPLE {
-	  },
-     Caveat => {},
-     SeeAlso => {}
+     Headline => "specify the minimal generator matrix"
      }
 document { 
      Key => [forceGB, SyzygyMatrix],
-     Headline => "inform Macaulay 2 about the syzygy matrix",
+     Headline => "specify the syzygy matrix",
      Usage => "forceGB(f,SyzygyMatrix=>z,...)",
      Inputs => { "z" => Matrix },
      Consequences => {
