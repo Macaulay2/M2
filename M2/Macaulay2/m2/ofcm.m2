@@ -464,7 +464,7 @@ tensor(Monoid, Monoid) := Monoid => opts -> (M,N) -> (
      Mopts := M.Options;
      Nopts := N.Options;
      opts = new MutableHashTable from opts;
-     remove(opts,Weights);
+     opts.Weights = {};
      if opts.Variables === null 
      then opts.Variables = join(Mopts.Variables, Nopts.Variables)
      else opts.Variables = spliceInside opts.Variables;
