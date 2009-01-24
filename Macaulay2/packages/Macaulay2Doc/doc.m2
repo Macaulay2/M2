@@ -1543,63 +1543,6 @@ document {
      "See ", TO "===", " for details."
      }
 
-undocumented {
-         (symbol==, RingElement, Number),
-         (symbol==, Number, RingElement),
-         (symbol==, RingElement, Matrix),
-         (symbol==, Ideal, MonomialIdeal),
-         (symbol==, GradedModuleMap, ZZ),
-         (symbol==, InfiniteNumber, InfiniteNumber),
-         (symbol==, Holder, Holder),
-         (symbol==, Equation, Expression),
-         (symbol==, ZZ, Ring),
-         (symbol==, ZZ, QQ),
-         (symbol==, Matrix, ZZ),
-         (symbol==, ZZ, ChainComplex),
-         (symbol==, ChainComplex, ZZ),
-         (symbol==, MonomialIdeal, Ring),
-         (symbol==, Ring, MonomialIdeal),
-         (symbol==, MonomialIdeal, ZZ),
-         (symbol==, Equation, Holder),
-         (symbol==, Holder, Equation),
-         (symbol==, ChainComplexMap, ZZ),
-         (symbol==, ZZ, MutableMatrix),
-         (symbol==, ZZ, InfiniteNumber),
-         (symbol==, Nothing, Nothing),
-         (symbol==, Equation, Equation),
-         (symbol==, GradedModuleMap, RingElement),
-         (symbol==, RingElement, GradedModuleMap),
-         (symbol==, String, Net),
-         (symbol==, Ideal, Ring),
-         (symbol==, ZZ, Ideal),
-         (symbol==, Ideal, ZZ),
-         (symbol==, Matrix, RingElement),
-         (symbol==, MonomialIdeal, Ideal),
-         (symbol==, ZZ, GradedModuleMap),
-         (symbol==, GradedModule, GradedModule),
-         (symbol==, Expression, Equation),
-         (symbol==, Module, ZZ),
-         (symbol==, ZZ, Module),
-         (symbol==, ChainComplexMap, RingElement),
-         (symbol==, RingElement, ChainComplexMap),
-         (symbol==, Ring, ZZ),
-         (symbol==, QQ, ZZ),
-         (symbol==, ZZ, MonomialIdeal),
-         (symbol==, ZZ, ChainComplexMap),
-         (symbol==, MutableMatrix, ZZ),
-         (symbol==, MonoidElement, MonoidElement),
-         (symbol==, MonomialIdeal, MonomialIdeal),
-         (symbol==, InfiniteNumber, ZZ),
-         (symbol==, ChainComplexMap, ChainComplexMap),
-         (symbol==, Net, Net),
-         (symbol==, Net, String),
-         (symbol==, Module, Ideal),
-         (symbol==, Ideal, Module),
-         (symbol==, Ring, Ideal),
-	 (symbol==, RingMap, ZZ),
-	 (symbol==, ZZ, RingMap)
-	  }
-
 document {
      Key => { symbol ==,
 	  (symbol==, Matrix, Matrix), (symbol==, ProjectiveHilbertPolynomial, ProjectiveHilbertPolynomial),
@@ -1610,7 +1553,61 @@ document {
 	  (symbol ==,RR,QQ), (symbol ==,RR,RR), (symbol ==,RR,ZZ), (symbol ==,RingElement,ZZ), (symbol ==,Sequence,Sequence),
 	  (symbol ==,String,String), (symbol ==,Symbol,Symbol), (symbol ==,ZZ,CC), (symbol ==,ZZ,RR),
 	  (symbol ==,ZZ,RingElement), (symbol ==,ZZ,ZZ), (symbol==, Module, Module), (symbol==, Vector, Vector),
-	  (symbol==, BettiTally, BettiTally), (symbol==, VisibleList, VisibleList)
+	  (symbol==, BettiTally, BettiTally), (symbol==, VisibleList, VisibleList),
+	  (symbol==, RingElement, Number),
+	  (symbol==, Number, RingElement),
+	  (symbol==, RingElement, Matrix),
+	  (symbol==, Ideal, MonomialIdeal),
+	  (symbol==, GradedModuleMap, ZZ),
+	  (symbol==, InfiniteNumber, InfiniteNumber),
+	  (symbol==, Holder, Holder),
+	  (symbol==, Equation, Expression),
+	  (symbol==, ZZ, Ring),
+	  (symbol==, ZZ, QQ),
+	  (symbol==, Matrix, ZZ),
+	  (symbol==, ZZ, ChainComplex),
+	  (symbol==, ChainComplex, ZZ),
+	  (symbol==, MonomialIdeal, Ring),
+	  (symbol==, Ring, MonomialIdeal),
+	  (symbol==, MonomialIdeal, ZZ),
+	  (symbol==, Equation, Holder),
+	  (symbol==, Holder, Equation),
+	  (symbol==, ChainComplexMap, ZZ),
+	  (symbol==, ZZ, MutableMatrix),
+	  (symbol==, ZZ, InfiniteNumber),
+	  (symbol==, Nothing, Nothing),
+	  (symbol==, Equation, Equation),
+	  (symbol==, GradedModuleMap, RingElement),
+	  (symbol==, RingElement, GradedModuleMap),
+	  (symbol==, String, Net),
+	  (symbol==, Ideal, Ring),
+	  (symbol==, ZZ, Ideal),
+	  (symbol==, Ideal, ZZ),
+	  (symbol==, Matrix, RingElement),
+	  (symbol==, MonomialIdeal, Ideal),
+	  (symbol==, ZZ, GradedModuleMap),
+	  (symbol==, GradedModule, GradedModule),
+	  (symbol==, Expression, Equation),
+	  (symbol==, Module, ZZ),
+	  (symbol==, ZZ, Module),
+	  (symbol==, ChainComplexMap, RingElement),
+	  (symbol==, RingElement, ChainComplexMap),
+	  (symbol==, Ring, ZZ),
+	  (symbol==, QQ, ZZ),
+	  (symbol==, ZZ, MonomialIdeal),
+	  (symbol==, ZZ, ChainComplexMap),
+	  (symbol==, MutableMatrix, ZZ),
+	  (symbol==, MonoidElement, MonoidElement),
+	  (symbol==, MonomialIdeal, MonomialIdeal),
+	  (symbol==, InfiniteNumber, ZZ),
+	  (symbol==, ChainComplexMap, ChainComplexMap),
+	  (symbol==, Net, Net),
+	  (symbol==, Net, String),
+	  (symbol==, Module, Ideal),
+	  (symbol==, Ideal, Module),
+	  (symbol==, Ring, Ideal),
+	  (symbol==, RingMap, ZZ),
+	  (symbol==, ZZ, RingMap)
 	  },
      Headline => "equality",
      Usage => "x == y",
@@ -1821,28 +1818,24 @@ document {
 
 document {
      Key => {(random, Type),(random, RingFamily),(random, QuotientRing),(random, GaloisField),
-	  (random, ZZ, Ring),(random, List, Ring),"randomHeight"},
+	  (random, ZZ, Ring),(random, List, Ring),[random,Height]
+	  },
      Headline => "random element of a type",
      SYNOPSIS (
 	  Usage => "random T",
-	  Inputs => { "T" => {ofClass Type}},
-	  Outputs => { { "a random instance of the type ", TT "T" } },
+	  Inputs => { 
+	       "T" => {ofClass Type},
+	       Height => ZZ
+	       },
+	  Outputs => { { "a random instance of the type ", TT "T", ".  If the Height option specifies a number ", TT "h", "
+		    and ", TT "T", " is ", TO "ZZ", " and , then the integers
+		    returned are in the range ", TT "0 .. h-1", "; for ", TO "QQ", " 
+		    the numerator and denominator are in the range ", TT "1 .. h", "." } },
 	  EXAMPLE lines ///
 	  random RR
-	  random CC_80
-	  random (ZZ/101)
-	  k = GF 2048
-	  VerticalList for i to 5 list random k
-	  ///,
-	  PARA { "The current value of the variable ", TO "randomHeight", ", which can
-	       be set by the user, is the upper bound on the absolute values of
-	       random integers, and on the absolute values of numerators and denominators of
-	       random rational numbers." },
-	  EXAMPLE lines ///
-	  randomHeight
-	  for i to 10 list random ZZ
-	  randomHeight = 1000
-	  for i to 10 list random QQ
+	  random CC_100
+	  tally for i to 100 list random GF 11
+	  random GF(2,40)
 	  ///
 	  ),
      SYNOPSIS (

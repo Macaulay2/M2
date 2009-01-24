@@ -1,0 +1,21 @@
+compute degree lift function here in ofcm.m2
+
+	       opts.DegreeLift = (
+		    if lm === null then (
+			 if dm === identity then (
+		    	      d -> (
+			 	   for i from #N0 to #M0-1 do if d#i =!= 0 then degreeNoLift();
+			 	   drop(d,#M0-#N0)))
+	       		 else x -> error "degree lift function not provided (DegreeLift option)")
+		    else lm);
+
+as we do here in ringmap.m2
+
+     deglift := (
+	  if opts.DegreeLift =!= null then opts.DegreeLift
+	  else if degmap === identity then identity
+	  else if degreeLength S === 0 and degreeLength R === 0 then identity
+	  else (d -> (
+		    (q,r) := quotientRemainder(transpose matrix {q}, degmapmatrix);
+		    if r != 0 then error "degreeLift: degree not liftable";
+		    flatten entries q)));

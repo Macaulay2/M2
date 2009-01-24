@@ -3,7 +3,7 @@
 --- notes: 
 
 document { 
-     Key => "matrix",
+     Key => matrix,
      Headline => "make a matrix",
      "The simplest use of this function is to define a matrix by
      giving a doubly nested list of ring elements.  One may also
@@ -111,11 +111,11 @@ document {
 	  "target f"
 	  },
      "The map f is induced by the following 3 by 12 matrix from R^12
-     to the 3 generators of I.",
+     to the 3 generators of ", TT "I", ".",
      EXAMPLE {
 	  "matrix f"
 	  },
-     "To obtain the map which is the composite of this with the inclusion of I onto R,
+     "To obtain the map that is the composite of this with the inclusion of I onto R,
      use ", TO (super,Matrix), ".",
      EXAMPLE {
 	  "super f"
@@ -159,17 +159,6 @@ document {
 	  "matrix m"
 	  },
      SeeAlso => {mutableMatrix, mutableIdentity, MutableMatrix}
-     }
-document { 
-     Key => [matrix, Degree],
-     Headline => "not really an option?",
-     "This option does not appear to be used",
-     }
-
-document { 
-     Key => [matrix, DegreeMap],
-     "This option is not used",
-     Headline => "not really an option"
      }
 
 TEST ///

@@ -113,9 +113,23 @@ columnAdd(MutableMatrix,ZZ,RingElement,ZZ) := (A,r,f,i) -> (
      rawMatrixColumnChange(raw A,r,raw f,i,false);
      A)
 
-fillMatrix = method( Options => { UpperTriangular => false, Density => 1.0 } )
-fillMatrix(MutableMatrix) := opts -> M -> (rawMutableMatrixFillRandomDensity(raw M,opts.Density,if opts.UpperTriangular then 1 else 0); M)
-fillMatrix(MutableMatrix,ZZ) := opts -> (M,n) -> (rawMutableMatrixFillRandom(raw M,n); M)
+fillMatrix = method( Options => { 
+	  UpperTriangular => false, 
+	  Density => 1.0,
+	  Height => 10
+	  } )
+fillMatrix(MutableMatrix) := opts -> M -> (
+     s := randomHeight;
+     randomHeight = opts.Height;			    -- silly global variable
+     rawMutableMatrixFillRandomDensity(raw M,opts.Density,if opts.UpperTriangular then 1 else 0);
+     randomHeight := s;
+     M)
+fillMatrix(MutableMatrix,ZZ) := opts -> (M,n) -> (
+     s := randomHeight;
+     randomHeight = opts.Height;			    -- silly global variable
+     rawMutableMatrixFillRandom(raw M,n); 
+     randomHeight := s;
+     M)
 
 randomMutableMatrix = method(Options=>{Dense=>false}, TypicalValue=>MutableMatrix)
 

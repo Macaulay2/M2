@@ -214,14 +214,17 @@ sortColumns = method sopts
 sort = method sopts
 rsort = method sopts
 
-mopts := Options => {
-     Degree => null,					    -- for use with matrices
-     DegreeMap => null,					    -- for use in ring maps
-     DegreeLift => null					    -- for use in ring maps
-     }
-
-matrix = method mopts
-map = method mopts
+matrix = method (
+     Options => {
+	  -- maybe this isn't actually used ...
+     	  -- Degree => null
+     	  })
+map = method(
+     Options => {
+     	  Degree => null,
+     	  DegreeMap => null,
+     	  DegreeLift => null
+     	  })
 
 setupMethods(Dispatch => Thing, {transpose} )
 setupMethods(TypicalValue => Boolean,
