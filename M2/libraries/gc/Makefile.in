@@ -5,7 +5,7 @@
 # That's why it's better for sharable libraries to be distributed as separate packages.
 URL = http://www.hpl.hp.com/personal/Hans_Boehm/gc/gc_source
 VERSION = 7.1
-PATCHFILE = @srcdir@/patch-7.1
+PATCHFILE = @abs_srcdir@/patch-7.1
 VPATH = @srcdir@
 TARDIR = gc-7.1
 ifeq (@PTHREADS@,yes)
@@ -23,7 +23,7 @@ else
 # INSTALLTARGET = install-strip
 endif
 CONFIGOPTIONS += --enable-large-config --disable-gcj-support --disable-java-finalization
-# PATCHFILE = @srcdir@/patch-7.0
+# PATCHFILE = @abs_srcdir@/patch-7.0
 include ../Makefile.library
 Makefile: @srcdir@/Makefile.in ; cd ../.. && ./config.status libraries/gc/Makefile
 clean uninstall::

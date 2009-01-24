@@ -1,6 +1,6 @@
 # VERSION = 3.0.4
 VERSION = 3.1.0
-PATCHFILE = @srcdir@/patch-3.1.0
+PATCHFILE = @abs_srcdir@/patch-3.1.0
 TARDIR = libfac
 TARFILE := libfac-$(shell echo $(VERSION) | sed 's/\./-/g').tar.gz
 URL = ftp://www.mathematik.uni-kl.de/pub/Math/Singular/Libfac
