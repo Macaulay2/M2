@@ -4,7 +4,7 @@
 
 undocumented {(primaryDecomposition,MonomialIdeal)}
 document { 
-     Key => {primaryDecomposition,PrimaryDecomposition::(primaryDecomposition,Ideal)},
+     Key => {primaryDecomposition,"PrimaryDecomposition::(primaryDecomposition,Ideal)"},
      Headline => "irredundant primary decomposition of an ideal",
      Usage => "primaryDecomposition I",
      Inputs => {
