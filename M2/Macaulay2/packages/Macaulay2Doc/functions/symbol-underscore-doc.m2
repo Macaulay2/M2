@@ -251,10 +251,10 @@ document {
 	  RingElement => {"the variable of ", TT "R", " whose name is the indexed variable ", TT "v"}
 	  },
      EXAMPLE lines ///
-     	  R = QQ[t_1..t_4]
-	  S = QQ[t_1..t_12]
-	  (t_1)_R
-	  ///,
+     R = QQ[t_1..t_4]
+     symbol t_1
+     oo_R
+     ///,
      SeeAlso => {(symbol _, Ring , ZZ), (symbol _, Ring, String)}
      }
 document { 

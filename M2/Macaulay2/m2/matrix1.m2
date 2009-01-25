@@ -151,7 +151,7 @@ map(Module,Module,List) := Matrix => options -> (M,N,p) -> (
 fixDegree := (m,d) -> (
      M := target m;
      N := source m;
-     map(M,N,rawMatrixRemake2(raw cover M, raw cover N, degreeCheck(d,ring m), raw m)))
+     map(M,N,rawMatrixRemake2(raw cover M, raw cover N, degreeCheck(d,ring m), raw m, 0)))
 
 concatBlocks = mats -> (
      if not isTable mats then error "expected a table of matrices";
@@ -179,7 +179,7 @@ commonRing List := f -> (
      rings := if all(types, T -> instance(T,Ring)) then types else unique apply(f,ring);
      ring try sum apply(rings, R -> 0_R) else error "common ring not found")
 
-matrixTable := options -> (f) -> (
+matrixTable := opts -> (f) -> (
      R := commonRing f;
      havemat := false;
      f = applyTable(f, x -> (
@@ -187,9 +187,9 @@ matrixTable := options -> (f) -> (
 	       else if not ( instance(x,RingElement) or instance(x,Number) )
 	       then error "expected numbers, ring elements, and matrices";
 	       promote(x,R)));
-     if not havemat then return map(R^#f,, f, options);
+     if not havemat then return map(R^#f,, f, opts);
      types := unique apply(flatten f, class);
-     if # types === 1 and types#0 .?matrix then return ( types#0 .matrix options)(f);
+     if # types === 1 and types#0 .?matrix then return ( types#0 .matrix opts)(f);
      f = apply(f, row -> new MutableList from row);
      m := #f;
      n := #f#0;
@@ -253,9 +253,9 @@ matrixTable := options -> (f) -> (
 				   ))))));
      f = toList \ f;
      mm := concatBlocks f;
-     if options.Degree === null
+     if opts.Degree === null
      then mm
-     else fixDegree(mm,options.Degree)
+     else fixDegree(mm,opts.Degree)
      )
 
 matrix(Matrix) := Matrix => options -> (m) -> (
@@ -264,7 +264,7 @@ matrix(Matrix) := Matrix => options -> (m) -> (
      else map(cover target m, cover source m, m, Degree => degree m)
      )
 
-matrix(List) := Matrix => options -> (m) -> (
+matrix(List) := Matrix => opts -> (m) -> (
      if #m === 0 then error "expected nonempty list";
      mm := apply(splice m,splice);
      if #mm === 0 then error "expected nonempty list";
@@ -273,7 +273,7 @@ matrix(List) := Matrix => options -> (m) -> (
 	  type := types#0;
 	  if instance(type,Module) then matrix { apply(mm, v -> new Matrix from v) }
 	  else if ancestor(List, type) then (
-	       if isTable mm then (matrixTable options)(mm)
+	       if isTable mm then (matrixTable opts)(mm)
 	       else error "expected rows all to be the same length"
 	       )
 	  else error "expected a table of ring elements or matrices, or a list of elements of the same module")

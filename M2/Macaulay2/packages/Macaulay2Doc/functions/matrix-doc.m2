@@ -43,18 +43,18 @@ document {
 	  }
      }
 document { -- This node is used as an example in the node: Usage 
-     Key => (matrix,List),
+     Key => {(matrix,List),[matrix,Degree]},
      Headline => "create a matrix from a doubly-nested list of ring 
                   elements or matrices",
      Usage => "matrix v",
      Inputs => {
-	  "v" => "a list of lists of either ring elements or matrices"
+	  "v" => "a list of lists of either ring elements or matrices",
+	  Degree => {"an integer or a list of integers, to serve as the degree of the matrix"}
 	  },
-     Outputs => {
-	  "A matrix where the first list of v gives the first row (or set
-	  of rows, if the elements are matrices), the second list is the 
-          second row, etc."
-	  },
+     Outputs => { {
+	       "A matrix where the first list of ", TT "v", " gives the first 
+	       row (or set of rows, if the elements are matrices), the second list is the second row, etc."
+	       } },
      "An attempt is made to coerce the ring elements and matrices to
      a common ring.  If the entries are ring elements, they are used as
      the entries of the matrix, and if the entries are matrices, then
