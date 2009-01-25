@@ -1,4 +1,3 @@
--- -*- coding: utf-8 -*-
 newPackage(
    "Regularity",
    Version => "1.0",
@@ -208,42 +207,129 @@ mRegularity (Ideal):= opts -> I -> (
      return r
      );
 
+
+--=====================================================================
+-- functions for Giulio Caviglia's idea (computing regularity by slicing with hyperplanes)
+
+-- finding a hperplae that is not contained in any of the associated primes of Ass(inI)
+
+findHyperplane = (I,n) -> (
+     R := ring I;
+     d := # gens R;
+     inI := monomialIdeal apply(flatten entries gens gb I,leadTerm);
+     as := apply(ass inI - set {monomialIdeal gens R}, t-> flatten entries gens t); -- returns a list of lists containing gens of the Ass(in I) 
+     i := 1;
+     while (not i>n) do (
+	  subs = apply(subsets(d,i), s->apply(s, t->R_t));   
+	  l = select(1,subs, s-> not any(as, t-> isSubset(s,t)));
+	  if l != {} then return sum l#0 else i = i+1;	
+     	  );
+    return null
+          )	    	      
+
+slice = h -> (
+     R := ring h;
+     X := gens R;
+     d := #X;
+     z := index max support h;
+     S := R/h;
+     f := map(R, R, (for j to z-1 list X_j) |{X_(z)-h}|(for j from z+1 to d-1 list X_j));
+     g := map(coefficientRing R[X-set{X_z}],R);
+     return g*f
+     )    
+     
+     
+fastReg = method (TypicalValue=>ZZ,Options =>{Alarm => 5,Lenght=>3})     
+fastReg (Ideal):= opts -> I -> (     
+     while true do (
+	  alarm(2);
+	  try return regularity I else (
+	       h =findHyperplane(I,3);
+	       I = (slice h) (I);
+	       )
+	  )
+     )      
+     
+     
+--  h =findHyperplane(I,3)
+--  I = (slice h) (I);
+--  regularity I        
+     
+     
+     
+--Tests
+
+TEST ///
+R = QQ[x_0..x_5]
+I2 = ideal ( x_0^2+x_5^2, x_0^2+x_0*x_3+x_4^2, x_0^2+x_0*x_5+x_2*x_5, x_0^2-x_0*x_3-x_3*x_5, x_0^2-x_3*x_4, x_0*x_3)
+assert(mRegularity I2 == 4)
+///,
+
+TEST ///
+R=QQ[a,b,c,d,x_0..x_9,MonomialOrder =>  Eliminate 4]
+i=ideal( x_0-a*b,x_1-a*c,x_2-a*d,x_3-b*c,x_4-b*d,x_5-c*d,x_6-a^2,x_7-b^2,x_8-c^2,x_9-d^2)
+j=selectInSubring(1, gens gb i)
+I=ideal flatten entries j -- this is the ideal of the Veronesean,
+assert(mRegularity I == 3)
+///, 
+     
+
+
+
 --=======================================================================================
 
 beginDocumentation()	 
 
 document {
-     Key => Regularity, 
-     PARA {
-	  TT "Regularity", " is a package for computing the Castelnuovo-Mumford regularity
-	  of homogeneous ideals in a polynomial ring without having to compute a minimal 
-	  free resolution of the homogeneous ideal"
-	  }  
+     Key => Regularity,
+     Headline => "compute Castelnuovo-Mumford regularity of a homogeneous ideal", 
+     PARA {TT "Regularity", " is a package for computing the Castelnuovo-Mumford regularity
+     of homogeneous ideals in a polynomial ring without having to compute a minimal 
+     free resolution of the homogeneous ideal"},
+     PARA {"This package is based on two articles by Bermejo and Gimenez: ", TT"Saturation and Castelnuovo-mumford Regularity", ", Journal of Algebra 303/2006
+     and ", TT"Computing the Castelnuovo-Mumford Regularity of some subschemes of P^n using quotients of monomial ideals", ", Journal of Pure and Applied Algebra 164/2001."}  
 }
 
 document {
      Key => {mRegularity,(mRegularity,Ideal)},
-     Headline => "Castelnuovo-Mumford regularity",
+     Headline => "compute Castelnuovo-Mumford regularity",
      Usage => " mRegularity I",
      Inputs => {"I" => Ideal => {"a homogeneous ", TO Ideal},
 	  CM => Boolean =>  {"a parameter that should be set to ",TO true ," if the ideal is known to be Cohen-Macaulay"},
 	  MonCurve => Boolean =>{ " parameter that should be set to true if I is the ideal of a monomial curve"}
 	  },     
      Outputs =>{ "the Castelnuovo-Mumford regularity of the given ideal, if it is homogeneous, and -1 otherwise"},
-     SeeAlso =>"regularity",
-     "Example:",
-     PARA {},
-     "computing the regularity of the defining ideal of the second Veronesean of P3",
-     EXAMPLE{
-     "R=QQ[a,b,c,d,x_0..x_9,MonomialOrder =>  Eliminate 4];",
-     "i=ideal( x_0-a*b,x_1-a*c,x_2-a*d,x_3-b*c,x_4-b*d,x_5-c*d,x_6-a^2,x_7-b^2,x_8-c^2,x_9-d^2);",
-     "j=selectInSubring(1, gens gb i);",
-     "I=ideal flatten entries j; -- this is the ideal of the Veronesean",
-     "mRegularity I" 
+     PARA {"This package is based on two articles by Bermejo and Gimenez: ", TT"Saturation and Castelnuovo-mumford Regularity", ", Journal of Algebra 303/2006
+     and ", TT"Computing the Castelnuovo-Mumford Regularity of some subschemes of P^n using quotients of monomial ideals", ", Journal of Pure and Applied Algebra 164/2001."}, 
+     PARA {"computing the regularity of the defining ideal of the second Veronesean of P3"},
+     EXAMPLE lines ///
+     R=QQ[a,b,c,d,x_0..x_9,MonomialOrder =>  Eliminate 4]
+     i=ideal( x_0-a*b,x_1-a*c,x_2-a*d,x_3-b*c,x_4-b*d,x_5-c*d,x_6-a^2,x_7-b^2,x_8-c^2,x_9-d^2)
+     j=selectInSubring(1, gens gb i)
+     I=ideal flatten entries j -- this is the ideal of the Veronesean,
+     mRegularity I 
+     ///,
+     PARA {"This is an example where mRegularity is faster than regularity. Regularity takes approximately 190 seconds."},
+     EXAMPLE lines ///
+     R = QQ[x_0..x_5]
+     I1 = ideal (x_0^2*x_1+x_0*x_1*x_2-x_0*x_4^2,-x_0*x_2^2+x_0^2*x_5,x_0^2*x_2-x_0*x_1*x_4,x_0^3-x_2^3+x_0*x_1*x_3,x_0^3+x_0^2*x_1-x_1*x_2^2-x_0*x_2*x_5,x_0^3+x_2^3-x_0*x_5^2)
+     benchmark "mRegularity I1"
+     ///,
+     PARA {"This is an example where regularity is faster than mRegularity."},
+     EXAMPLE lines ///
+     R = QQ[x_0..x_5]
+     I2 = ideal ( x_0^2+x_5^2, x_0^2+x_0*x_3+x_4^2, x_0^2+x_0*x_5+x_2*x_5, x_0^2-x_0*x_3-x_3*x_5, x_0^2-x_3*x_4, x_0*x_3);
+     benchmark " mRegularity I2"
+     time regularity I2  
+     ///,
+     PARA {"This symbol is provided by the package Regularity." },
+     SeeAlso =>"regularity"
      },
-     PARA {"This symbol is provided by the package Regularity." }
-     }
-    end
+
+
+
+
+end
 
 
 --====================================================================================================================================
