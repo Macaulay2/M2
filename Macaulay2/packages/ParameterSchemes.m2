@@ -15,13 +15,12 @@ export { smallerMonomials,
      parameterFamily, 
      parameterIdeal, 
      pruneParameterScheme, 
-     groebnerScheme,
-     minPressy
+     groebnerScheme
      }
 
-load "/Users/mike/src/M2/Macaulay2/bugs/mike/minpressy.m2"
-
-<< "class is " << class minPressy << endl;
+--load "/Users/mike/src/M2/Macaulay2/bugs/mike/minpressy.m2"
+--
+--<< "class is " << class minPressy << endl;
 
 smallerMonomials = method()
 smallerMonomials(Ideal,RingElement) := (M,f) -> (
@@ -117,11 +116,11 @@ pruneParameterScheme(Ideal,Ideal) := (J,F) -> (
      R := ring F;
      A := coefficientRing R;
      if ring J =!= A then error "expected(ideal in coeffring A, family in A[x])";
-     time J1 := minPressy J;
+     time J1 := minimalPresentation J; -- minPressy J;
      map1 := J.cache.minimalPresentationMap;
      map2 := J.cache.minimalPresentationMapInv;
      B := ring J1;
-     phi := map2; -- map: A --> B
+     phi := map1; -- map: A --> B
      -- want the induced map from A[x] -> B[x]
      S := B (monoid R);
      phi' := map(S,R,vars S | substitute(phi.matrix,S));
@@ -255,7 +254,7 @@ gbTrace=3
 Jlocal = ideal gens gb Jlocal
 J1 = trim(ideal(t_40) + Jlocal)
 J2 = Jlocal : t_40
-P = minPressy J2;
+P = prune J2;
 -- Now: I want a point on V(J), on this component...
 -- This should be a function?
 A1 = ring P
@@ -272,7 +271,7 @@ res L
 
 use ring J
 J' = ideal apply(flatten entries gens J, f -> f // t_40);
-minPressy J'
+minimalPresentation J'
 -- There are two smooth components through the ideal I.
 -- Amelia Amelia Amelia Amelia Amelia Amelia Amelia Amelia
 
@@ -298,7 +297,7 @@ Z' = matrix{apply(numgens source Z, i -> (
 	  ))}
 coefficients(G' * Z', Variables => {S_0 .. S_(numgens R-1)})
 J = ideal flatten entries oo_1
-J0 = (minPressy J)_0
+J0 = (minimalPresentation J)_0
 S = kk{gens S, MonomialSize=>8}
 J0 = substitute(J0,S)
 gbTrace=3
@@ -378,7 +377,7 @@ primaryDecomposition I
 L1 = smallerMonomials I
 F0 = parameterFamily(I,L1,symbol t)
 J0 = parameterIdeal(I,F0);
-time minPressy J0;
+time minimalPresentation J0;
 time (J,F) = pruneParameterScheme(J0,F0);
 
 
