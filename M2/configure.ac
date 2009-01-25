@@ -398,6 +398,7 @@ AC_SUBST(PACKAGES,"
   ChainComplexExtras
   Benchmark
   Schubert2
+  LocalRings
   BoijSoederberg
   BGG
   Bruns
