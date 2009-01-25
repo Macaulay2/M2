@@ -12,7 +12,9 @@ document {
 	  "The module or chain complex provided should be over a ring whose degree length
 	  (see ", TO "degreeLength", ") is the same as the length of the list ", TT "w", ".
 	  The dot products of w with the multi-degrees occurring will be used to construct
-	  the resulting betti tally (see ", TO "BettiTally", ")."
+	  the resulting betti tally (see ", TO "BettiTally", ").  If the option is not
+	  specified, then the heft vector of the underlying ring is used, see ", TT "heft vectors", ".
+	  If the ring has no heft vector, then the weights are taken to be all zero."
 	  }
      }
 
@@ -93,13 +95,21 @@ document {
      Key => (betti, GradedModule),
      Headline => "display of degrees in a graded module",
      Usage => "betti C",
-     Inputs => { "C" => GradedModule },
+     Inputs => {
+	  "C" => GradedModule,
+	  Weights => List => {
+	       "a list of integers whose dot product with the multidegree of a basis
+	       element is enumerated in the display returned.  The default is the
+	       heft vector of the ring.  See ", TT "heft vectors", "."
+	       }
+	  },
      Outputs => { { "a diagram showing the degrees of the generators of the modules in ", TT "C"} },
-     "The diagram can be used to determine the degrees of the entries in the matrices
-     of the differentials in a chain complex (which is a type of graded module) provided they are homogeneous maps
-     of degree 0.",
-     PARA{},
-     "Here is a sample diagram.",
+     PARA {
+     	  "The diagram can be used to determine the degrees of the entries in the matrices
+     	  of the differentials in a chain complex (which is a type of graded module) provided they are homogeneous maps
+     	  of degree 0."
+     	  },
+     PARA{"Here is a sample diagram."},
      EXAMPLE {
 	  "R = ZZ/101[a..h]",
       	  "p = genericMatrix(R,a,2,4)",
@@ -107,16 +117,19 @@ document {
       	  "C = resolution cokernel leadTerm q",
       	  "betti C",
 	  },
-	"Column ", TT "j", " of the top row of the diagram gives the rank of the
-	free module ", TT "C_j", ". (Columns are numbered from 0.) The entry in
-	column ", TT "j", " in the row labelled ", TT "i", " is the number
-	of basis elements of degree ", TT "i+j", " in the free module", TT " C_j",
-	". When the chain complex is the resolution of a module the entries are
-	the total and the graded Betti numbers of the module.",
-     PARA{},
-     "If the numbers are needed in a program, then they are accessible, because
-     the value returned is ", ofClass BettiTally, ", and the diagram you see
-     on the screen is just the way it prints out."
+     PARA {
+	  "Column ", TT "j", " of the top row of the diagram gives the rank of the
+	  free module ", TT "C_j", ". (Columns are numbered from 0.)  The entry in
+	  column ", TT "j", " in the row labelled ", TT "i", " is the number
+	  of basis elements of (weighted) degree ", TT "i+j", " in the free module", TT " C_j",
+	  ".  When the chain complex is the resolution of a module the entries are
+	  the total and the graded Betti numbers of the module."
+	  },
+     PARA{
+	  "If the numbers are needed in a program, then they are accessible, because
+	  the value returned is ", ofClass BettiTally, ", and the diagram you see
+	  on the screen is just the way it prints out."
+	  }
      }
 
 document { 
