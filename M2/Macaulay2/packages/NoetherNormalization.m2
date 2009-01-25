@@ -1,4 +1,3 @@
--- -*- coding: utf-8 -*-
 --=========================================================================--
 
 newPackage(
@@ -113,27 +112,21 @@ inverseSequence = (U,X) -> (
      return N;
      );
 
-inversePermutation := f -> (
-     N := {};
-     X := gens source f;
-     U := flatten entries matrix f;
-     for i to #X - 1 do (
-	  for j to #U - 1 do (
-	       if X_i == U_j then (
-		    N = N|{X_j};
-		    break;
-		    );
-	       );
-	  );
-     return map(source f, target f, N);
-     );
-
 --========================================================
 
 -- comments: randomSum is used to make the random linear
 -- transformations which are candidates for putting I in
 -- noetherPosition. It takes in two lists and adds the second to the
 -- first with random coefficients.
+
+
+randomSum1 = (U,V,k,rr) -> (
+     for j to #V - 1 do (
+	  if rr == 0 then rand:= random(k) else rand=random(-rr,rr);
+	  U=for i to #U-1 list ( if not i<j then U_i+rand*V_j else U_i)
+	  );
+     return U;
+     );
 
 
 randomSum = (U,V,k,rr) -> (
@@ -152,7 +145,7 @@ randomSum = (U,V,k,rr) -> (
 -- takes the ideal and does a random linear transformation adding to
 -- the independent variables the dependent ones that are not initially
 -- integral. It then checks that the transformation put the ideal in
--- Noether position. It does this bye partially computing a Groebner
+-- Noether position. It does this by partially computing a Groebner
 -- basis for the ideal until the partially computed Groebner basis
 -- witnesses the integrality of all of the dependent variables. If the
 -- entire Groebner basis is computed and the integrality is never
@@ -247,32 +240,6 @@ noetherNormalization(QuotientRing) := noetherNormalization(PolynomialRing) := op
      if not isPolynomialRing ring ideal R then error "expected a quotient of a polynomial ring";
      noetherNormalization(ideal R, Verbose => opts.Verbose)
      );
-
---======================================================================================================================
---Assertions
-
-TEST ///
-uninstallPackage "NoetherNormalization"
-installPackage "NoetherNormalization"
-A = QQ[x_1..x_4]
-I = ideal(x_1^2 + x_1*x_4+1,x_1*x_2*x_3*x_4+1)
--- this test seems not to have been completely written. [dan]
--- assert( 
-(f,J,X) = noetherNormalization(I) 
-help noetherNormalization
-X_1
-x_3
---     == 
---     o4 == (map(A,A,{x_1,(3/5)*x_2+x_4,(-2)*x_2+x_3,x_2}),
---	  ideal(x_1^2+x_1*x_2+1,(-6/5)*x_1*x_2^3 + (3/5) * 
---	       ideal(x_1 * (x_2^2) * x_3)
---	       x_3
---	  +(-2)*x_1*x_2^2*x_4+x_1*x_2*x_3*x_4+1)
---	  ,map(A,QQ[x_4,x_3],{x_4,x_3}))
---o4     
- 
---assert(noetherNormalization(
-///
 
 
 --=========================================================================--
@@ -371,3 +338,24 @@ document {
      }
 
 --=========================================================================--
+
+--======================================================================================================================
+--Assertions
+
+TEST ///
+  --uninstallPackage "NoetherNormalization"
+  --installPackage "NoetherNormalization"
+A = QQ[x_1..x_4]
+I = ideal(x_1^2 + x_1*x_4+1,x_1*x_2*x_3*x_4+1)
+assert((noetherNormalization(I))_2=={x_4,x_3})
+///
+
+TEST ///
+--loadPackage "NoetherNormalization"
+R = QQ[x,y]
+I = ideal (y^2-x^2*(x+1))
+(F,J,xs) = noetherNormalization I
+assert(F === map(R,R,{x, y}))
+assert(J == ideal(-x^3-x^2+y^2))
+assert(xs == {y})
+///
