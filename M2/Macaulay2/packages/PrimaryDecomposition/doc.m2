@@ -1,47 +1,3 @@
-document { 
-     Key => {(primaryDecomposition,Ideal),(primaryDecomposition,MonomialIdeal)},
-     Headline => "irredundant primary decomposition of an ideal",
-     Usage => "primaryDecomposition I",
-     Inputs => {
-	  "I" => { ofClass Ideal, " or ", ofClass MonomialIdeal, " in a (quotient of a) polynomial ring ", TT "R", "."}
-	  },
-     Outputs => {
-	  List => {"of ", TO2(Ideal,"ideals"), ", a minimal list of primary ideals whose intersection is ", TT "I"}
-	  },
-     "This routine returns an irredundant primary decomposition
-     for the ideal ", TT "I", ".  The specific algorithm used varies
-     depending on the characteristics of the ideal, and can also be specified
-     using the optional argument ", TT "Strategy", ".",
-     PARA{},
-     "Primary decompositions algorithms are very sensitive to their input.  Some
-     algorithms work very well on certain classes of ideals, but poorly on other classes.
-     If this function seems to be taking too long, try another algorithm (using ",
-     TO [primaryDecomposition,Strategy], ").",
-     EXAMPLE {
-	  "R = QQ[a..i];",
-	  "I = permanents(2,genericMatrix(R,a,3,3))",
-          "C = primaryDecomposition I;",
-	  "I == intersect C",
-	  "#C",
-	  },
-     PARA{},
-     "Recall that ", TO (symbol/,List,Function), " applies a function to each element of a
-     list, returning the results as a list.  This is often useful with lists of ideals,
-     such as the list ", TT "C", " of primary components.",
-     EXAMPLE {
-	  "C/toString/print;",
-	  "C/codim",
-	  "C/degree"
-	  },
-     PARA{},
-     "The corresponding list of associated prime ideals is cached in ", TT ///I.cache#"AssociatedPrimes"///, ",
-     and can be obtained by using ", TO "PrimaryDecomposition :: associatedPrimes(Ideal)", ".",
-     EXAMPLE {
-	  "associatedPrimes I / print;"
-	  },
-     Caveat => {"The ground ring must be a prime field."},
-     SeeAlso => {(associatedPrimes,Ideal), radical, minimalPrimes, topComponents, removeLowestDimension}
-     }
 document {
      Key => {(associatedPrimes, Ideal),(associatedPrimes, MonomialIdeal)},
      Headline => "find the associated primes of an ideal",
@@ -209,6 +165,28 @@ document {
      }
 
 document {
+     Key => {isPrimary, (isPrimary, Ideal), (isPrimary, Ideal, Ideal)},
+     Headline => "determine whether an ideal is primary",
+     Usage => concatenate("isPrimary Q\n", "isPrimary(Q,P)\n"),
+     Inputs => {
+	  "Q" => Ideal => "an ideal to be checked for being primary",
+	  "P" => Ideal => {"the ", TO "radical", " of ", TT "Q"}
+	  },
+     Outputs => {
+	  Boolean => {TO "true", " if ", TT "Q", " is primary, ",
+	       TO "false", " otherwise"}
+	  },
+     EXAMPLE lines ///
+     	  Q = ZZ/101[x,y,z]
+	  isPrimary ideal(y^6)
+	  isPrimary(ideal(y^6), ideal(y))
+	  isPrimary ideal(x^4, y^7)
+	  isPrimary ideal(x*y, y^2)
+     ///,
+     SeeAlso => {primaryDecomposition}
+     }
+
+document {
      Key => [primaryComponent,Strategy],
      "The Strategy option value sets the localize strategy 
      option, and should be one of the following.",
@@ -229,13 +207,64 @@ document {
       sufficiently large.  The default value is 1." 
      }
 
+-- FIXME: This code causes an error message:
+--  PrimaryDecomposition/doc.m2:210:1:(1):[14]: item to be documented comes from another package: Macaulay2Doc :: primaryDecomposition
+--
+-- document { 
+--      Key => {primaryDecomposition,(primaryDecomposition,Ideal)},
+--      Headline => "irredundant primary decomposition of an ideal",
+--      Usage => "primaryDecomposition I",
+--      Inputs => {
+-- 	  "I" => { ofClass Ideal, " or ", ofClass MonomialIdeal, " in a (quotient of a) polynomial ring ", TT "R", "."}
+-- 	  },
+--      Outputs => {
+-- 	  List => {"of ", TO2(Ideal,"ideals"), ", a minimal list of primary ideals whose intersection is ", TT "I"}
+-- 	  },
+--      "This routine returns an irredundant primary decomposition
+--      for the ideal ", TT "I", ".  The specific algorithm used varies
+--      depending on the characteristics of the ideal, and can also be specified
+--      using the optional argument ", TT "Strategy", ". ",
+--      "In all cases, the radical of each entry of the output is equal to the corresponding ",
+--      "entry of the output of ", TO "associatedPrimes", ".",
+--      PARA{},
+--      "Primary decompositions algorithms are very sensitive to their input.  Some
+--      algorithms work very well on certain classes of ideals, but poorly on other classes.
+--      If this function seems to be taking too long, try another algorithm (using ",
+--      TO [primaryDecomposition,Strategy], ").",
+--      EXAMPLE {
+-- 	  "R = QQ[a..i];",
+-- 	  "I = permanents(2,genericMatrix(R,a,3,3))",
+--           "C = primaryDecomposition I;",
+-- 	  "I == intersect C",
+-- 	  "#C",
+-- 	  },
+--      PARA{},
+--      "Recall that ", TO (symbol/,List,Function), " applies a function to each element of a
+--      list, returning the results as a list.  This is often useful with lists of ideals,
+--      such as the list ", TT "C", " of primary components.",
+--      EXAMPLE {
+-- 	  "C/toString/print;",
+-- 	  "C/codim",
+-- 	  "C/degree"
+-- 	  },
+--      PARA{},
+--      "The corresponding list of associated prime ideals is cached in ", TT ///I.cache#"AssociatedPrimes"///, ",
+--      and can be obtained by using ", TO (associatedPrimes,Ideal), ".",
+--      EXAMPLE {
+-- 	  "associatedPrimes I / print;"
+-- 	  },
+--      Caveat => {"The ground ring must be a prime field."},
+--      SeeAlso => {PrimaryDecomposition,(associatedPrimes,Ideal), radical, minimalPrimes, topComponents, removeLowestDimension}
+--      }
+
+
 document {
      Key => {[primaryDecomposition,Strategy],EisenbudHunekeVasconcelos,ShimoyamaYokoyama,Hybrid,GTZ},
      "The strategy option value should be one of the following.",
      UL {
           ("Monomial", " -- uses Alexander duality of a monomial ideal"),
 	  ("Binomial", " -- finds a cellular resolution of a 
-	                     binomial ideal"),
+	                     binomial ideal.  NOT IMPLEMENTED YET."),
 	  ("EisenbudHunekeVasconcelos", " -- uses the algorithm of Eisenbud-Huneke-Vasconcelos"),
 	  ("ShimoyamaYokoyama", " -- uses the algorithm of Shimoyama-Yokoyama"),
 	  ("Hybrid"," -- uses parts of the above two algorithms"),
@@ -246,16 +275,39 @@ document {
      by monomials, then ", TT "Strategy => Monomial", " is implied.  
      In all other cases, the default is ", TT "Strategy => ShimoyamaYokoyama", ".",
      HEADER3 "Strategy => Monomial",
-     "Description, reference if possible, and then an example.  Also warn
-     that ideal must be monomial.",
-     HEADER3 "Strategy => Binomial",
-     "Description: get cellular resolution.  Give reference, example.",
+     "This strategy only works for monomial ideals, and is the default strategy for such ideals.  See the chapter
+     \"Monomial Ideals\" in the Macaulay 2 book.",
+     EXAMPLE lines ///
+     	  Q = QQ[x,y]
+	  I = ideal(x^2,x*y)
+	  primaryDecomposition(I, Strategy => Monomial)
+     ///,
      HEADER3 "Strategy => EisenbudHunekeVasconcelos",
-     "Description, example, reference",
+     "See \"Direct methods for primary decomposition\" by Eisenbud, Huneke, and Vasconcelos, Invent. Math. 110, 207-235 (1992).",
+     EXAMPLE lines ///
+     	  Q = QQ[x,y]
+	  I = ideal(x^2,x*y)
+	  primaryDecomposition(I, Strategy => EisenbudHunekeVasconcelos)
+     ///,
      HEADER3 "Strategy => ShimoyamaYokoyama", 
-     "Description, example, reference",
+     "This strategy is the default for non-monomial ideals.  See \"Localization and Primary Decomposition of Polynomial ideals\" by Shimoyama and Yokoyama, J. Symb. Comp. 22, 247-277 (1996).",
+     EXAMPLE lines ///
+     	  Q = QQ[x,y]
+	  I = ideal(x^2,x*y)
+	  primaryDecomposition(I, Strategy => ShimoyamaYokoyama)
+     ///,
      HEADER3 "Strategy => Hybrid",
-     "Description, example, reference", TO (localize,Ideal,Ideal)
+     "Use a hybrid of the Eisenbud-Huneke-Vasconcelos and Shimoyama-Yokoyama strategies.  The field ",
+     TT "Strategy", " is a list of two integers, indicating the strategy to use for finding associated primes and localizing, respectively. ",
+     "WARNING: Setting the second paramter to 1 works only if the ideal is homogeneous and equidimensional.",
+     EXAMPLE lines ///
+     	  Q = QQ[x,y]
+	  I = intersect(ideal(x^2), ideal(y^2))
+	  primaryDecomposition(I, Strategy => new Hybrid from (1,1))
+	  primaryDecomposition(I, Strategy => new Hybrid from (1,2))
+	  primaryDecomposition(I, Strategy => new Hybrid from (2,1))
+	  primaryDecomposition(I, Strategy => new Hybrid from (2,2))
+     ///,
      }
 
 TEST ///
