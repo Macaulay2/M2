@@ -222,8 +222,7 @@ rsort = method sopts
 
 matrix = method (
      Options => {
-	  -- maybe this isn't actually used ...
-     	  -- Degree => null
+     	  Degree => null
      	  })
 map = method(
      Options => {
