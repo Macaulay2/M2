@@ -5,7 +5,7 @@ newPackage(
     	Date => "September 27, 2006",
     	Authors => {
 	     {Name => "David Eisenbud", Email => "de@msri.org", HomePage => "http://www.msri.org/~de/"},
-	     {Name => "Mike Stillman"}
+	     {Name => "Mike Stillman", Email => "mike@math.cornell.edu", HomePage => "http://www.math.cornell.edu/~mike/"}
 	     },
     	Headline => "Local rings at the origin",
     	DebuggingMode => true
@@ -91,25 +91,31 @@ localPrune Module := (M) -> (
      )
 
 localResolution = method(Options => options resolution)
+localResolution Ideal := options -> (I) -> localResolution coker gens I
 localResolution Module := options -> (M) -> (
      R := ring M;
+     if not R.?maxIdeal then error "use setMaxIdeal first!";
      maxlength := resolutionLength(R,options);
-     if M.cache.?resolution
-     then (C := M.cache.resolution;
+     if M.cache.?localResolution
+     then (C := M.cache.localResolution;
      C.length = length C)
      else (
 	  C = new ChainComplex;
 	  C.ring = R;
-	  f := presentation M;
+	  -- f := presentation M;
+	  -- we have replaced presentation in the previous line by minimalPresentation. This has fixed a reported bug where 
+	  -- localResolution returned a non-minimal presentation.
+	  -- We have included the above mentioned example in the tests section.
+	  f := relations minimalPresentation M;
 	  C#0 = target f;
 	  C#1 = source f;
 	  C.dd#1 = f;
-	  M.cache.resolution = C;
+	  M.cache.localResolution = C;
 	  C.length = 1;
 	  );
      i := C.length;
-     while i < maxlength and C.dd#i != 0 do (
-	  g := localsyz C.dd#i;
+     while i < maxlength and C.dd_i != 0 do (
+	  g := localsyz C.dd_i;
 	  shield (
 	       i = i+1;
 	       C.dd#i = g;
@@ -128,124 +134,226 @@ document { Key => LocalRings,
      }
 
 document { 
-     Key => setMaxIdeal,
-     Headline => "",
-     Usage => "",
+     Key => {setMaxIdeal, (setMaxIdeal,Ideal)},
+     Headline => "set the maximal ideal for local ring methods",
+     Usage => "setMaxIdeal I",
      Inputs => {
+	  "I" => {ofClass Ideal, ", a maximal ideal of the ring R"}
 	  },
      Outputs => {
+	  Ideal => {"same ideal as input"}
 	  },
      Consequences => {
 	  },     
-     "description",
-     EXAMPLE {
-	  },
+     "The function adds new structure to the ring which specifies a maximal ideal which allows the user to employ local ring methods.",
+     EXAMPLE lines ///
+	  R = ZZ/32003[x,y,z,w,SkewCommutative=>true]
+	  setMaxIdeal(ideal(x,y,z,w))
+	  ///,
      Caveat => {},
-     SeeAlso => {}
+     SeeAlso => {localComplement, localsyz, localMingens, localModulo, localPrune, localResolution, residueMap, maxIdeal}
      }
 
 document { 
-     Key => localComplement,
-     Headline => "",
-     Usage => "",
-     Inputs => {
+     Key => {localComplement, (localComplement,Matrix)},
+     Headline => "find the splitting of the target of a map",
+     Usage => "localComplement m",
+     Inputs => { 
+	  "m" => {ofClass Matrix, ", representing a homomorphism of free modules over a local ring"},
 	  },
      Outputs => {
+	  Matrix => {"the complement of the image of the homomorphism represented by m"}
 	  },
      Consequences => {
-	  },     
-     "description",
-     EXAMPLE {
-	  },
+	  },   
+     "The function finds a splitting of the target of m as a direct sum of the image of m and the image of the output.",
+     EXAMPLE lines ///
+	  R = ZZ/32003[x,y]
+	  m = matrix{{x,y-1},{0,x}}
+	  setMaxIdeal(ideal(x,y))
+	  localComplement m
+	  ///,
      Caveat => {},
-     SeeAlso => {}
+     SeeAlso => {setMaxIdeal, localsyz, localMingens, localModulo, localPrune, localResolution, residueMap, maxIdeal}
      }
 
 document { 
-     Key => localsyz,
-     Headline => "",
-     Usage => "",
+     Key => {localsyz, (localsyz,Matrix)},
+     Headline => "find syzygies",
+     Usage => "localsyz m",
      Inputs => {
+	  "m" => {ofClass Matrix}
 	  },
      Outputs => {
+	  Matrix => {"giving minimal generators of the syzygies taking into account the local structure"}
 	  },
      Consequences => {
 	  },     
-     "description",
-     EXAMPLE {
-	  },
+     EXAMPLE lines ///
+	  R = ZZ/32003[x,y,z,w,SkewCommutative=>true]
+	  m = matrix{{x,y*z},{z*w,x}}
+	  setMaxIdeal(ideal(x,y,z,w))
+     	  localsyz m
+	  m * localsyz m
+	  ///,
      Caveat => {},
-     SeeAlso => {}
+     SeeAlso => {setMaxIdeal, localComplement, localMingens, localModulo, localPrune, localResolution, residueMap, maxIdeal}
      }
 
 document { 
-     Key => localMingens,
-     Headline => "",
-     Usage => "",
+     Key => {localMingens, (localMingens,Matrix)},
+     Headline => "finds a minimal set of generators",
+     Usage => "localMingens m",
      Inputs => {
+	  "m" => {ofClass Matrix}
 	  },
      Outputs => {
+	  Matrix => {"the matrix of minimal generators"}
 	  },
      Consequences => {
 	  },     
-     "description",
-     EXAMPLE {
-	  },
+     "We get a minimal set for the homogeneous case, but not necessarily otherwise.",
+     EXAMPLE lines ///
+	  R=QQ[a,b]
+	  setMaxIdeal ideal gens R
+	  mingens image matrix{{a-1,a,b},{a-1,a,b}}
+	  localMingens matrix {{a-1,a,b},{a-1,a,b}}
+	  ///,
      Caveat => {},
-     SeeAlso => {}
+     SeeAlso => {setMaxIdeal, localComplement, localsyz, localModulo, localPrune, localResolution, residueMap, maxIdeal}
      }
 
 document { 
-     Key => localModulo,
-     Headline => "",
-     Usage => "",
+     Key => {localModulo, (localModulo,Matrix,Matrix)},
+     Headline => "find the pre-image (pullback) of image of a map over a local ring",
+     Usage => "localModulo(m,n)",
      Inputs => {
+	  "m" => {ofClass Matrix},
+	  "n" => {ofClass Matrix}
 	  },
      Outputs => {
+	  Matrix => {"whose image is the pre-image (pullback) of the image of n under m"}
 	  },
      Consequences => {
 	  },     
-     "description",
-     EXAMPLE {
-	  },
-     Caveat => {},
-     SeeAlso => {}
+     "The maps m and n must have the same target, and their sources and targets must be free. If m is null, then it is taken to be the identity. If n is null, it is taken to be zero.",
+     EXAMPLE lines ///
+	  R = QQ[x,y,z]
+	  setMaxIdeal ideal vars R
+	  m = matrix {{x-1, y}}
+	  n = matrix {{y,z}}
+	  modulo (m,n)
+	  localModulo (m,n)
+	  ///,
+          Caveat => {},
+     SeeAlso => {setMaxIdeal, localComplement, localsyz, localMingens, localPrune, localResolution, residueMap, maxIdeal}
      }
 
 document { 
-     Key => localPrune,
-     Headline => "",
-     Usage => "",
+     Key => {localPrune, (localPrune,Module)},
+     Headline => "find a minimal presentation",
+     Usage => "localPrune M",
      Inputs => {
+	  "M" => {ofClass Module}
 	  },
      Outputs => {
+	  Module
 	  },
      Consequences => {
 	  },     
-     "description",
-     EXAMPLE {
-	  },
+     "The output is a minimal presentation of the input.",
+     EXAMPLE lines ///
+	  R=QQ[a,b]
+	  setMaxIdeal ideal gens R
+	  m = matrix{{a-1,a,b},{a-1,a,b}}
+	  prune m
+	  localPrune image m
+	  ///,
      Caveat => {},
-     SeeAlso => {}
+     SeeAlso => {setMaxIdeal, localComplement, localsyz, localMingens, localModulo, localResolution, residueMap, maxIdeal}
      }
 
 document { 
-     Key => localResolution,
-     Headline => "",
-     Usage => "",
+     Key => {localResolution, (localResolution,Module), (localResolution,Ideal)},
+     Headline => "find a resolution over a local ring",
+     Usage => "localResolution M",
      Inputs => {
-	  },
+	  "M" => {ofClass Module}, " or ", {ofClass Ideal},
+      	  },
+     PARA "This method has option inputs that it inherits from ", TO resolution, ".",
      Outputs => {
+	  ChainComplex
 	  },
      Consequences => {
 	  },     
-     "description",
-     EXAMPLE {
-	  },
+     PARA "This function iterates ", TO localsyz, " to obtain a resolution over the local ring.",
+     EXAMPLE lines ///
+	  R = ZZ/32003[x,y,z,w,SkewCommutative=>true]
+	  m = matrix{{x,y*z},{z*w,x}}
+	  setMaxIdeal(ideal(x,y,z,w))
+	  C = localResolution(coker m, LengthLimit=>10)
+	  C = localResolution(coker m)
+	  C^2
+	  C.dd_4
+	  ///,
+     EXAMPLE lines ///
+     	  R = QQ[x,y,z]
+	  setMaxIdeal ideal vars R
+	  m = matrix {{x-1, y, z-1}}
+	  C = resolution coker m
+	  C.dd
+	  LC = localResolution coker m
+	  LC.dd
+          ///,
+
      Caveat => {},
-     SeeAlso => {}
+     SeeAlso => {setMaxIdeal, localComplement, localsyz, localMingens, localModulo, localPrune, residueMap, maxIdeal}
      }
 
+
+
+TEST ///
+     --loadPackage "LocalRings"
+     R = QQ[x,y,z]
+     setMaxIdeal ideal vars R
+     m = matrix {{x-1, y, z-1}}
+     LC = localResolution coker m
+     LC.dd
+     assert (length LC == 2)
+     ///
+
+TEST ///
+     --loadPackage "LocalRings"
+     S=ZZ/101[t,x,y,z]
+     setMaxIdeal ideal vars S
+     assert(S.residueMap === map(S,S,{0,0,0,0}))
+     m=matrix"x,y2;z3,x4"
+     M=coker m
+     assert(localsyz m == 0)
+     ///
+     
+TEST ///
+     --loadPackage "LocalRings"
+     R = QQ[a,b,c,d]
+     setMaxIdeal(ideal(a-1,b-2,c-3,d-4))
+     I = ideal((1+a), (1+b))
+     G = localMingens gens I
+     assert(numgens source G == 1)
+     ///
+     
+TEST ///
+     --loadPackage "LocalRings"
+     kk = ZZ/32003
+     R = kk[x,y,z,w,SkewCommutative=>true]
+     m = matrix{{x,y*z},{z*w,x}}
+     setMaxIdeal(ideal(x,y,z,w))
+     C = localResolution(coker m, LengthLimit=>10)
+     C = localResolution(coker m)
+     for i from 1 to 10 do
+     	  assert(zero(C.dd_(i-1) * C.dd_i))
+     ///     
+     
+     
 end
 -- ###
 restart
@@ -253,7 +361,7 @@ loadPackage "LocalRings"
 kk=ZZ/101
 S=kk[t,x,y,z]
 setMaxIdeal ideal vars S
-assert(S.residueMap == map(S,S,{0,0,0,0}))
+assert(S.residueMap === map(S,S,{0,0,0,0}))
 
 m=matrix"x,y2;z3,x4"
 M=coker m
@@ -277,6 +385,26 @@ localResolution N -- and this MES: WORKING NOW
 NN=coker map (S^2, S^2, m)
 resolution NN
 localResolution NN
+
+
+
+
+restart
+loadPackage "LocalRings"
+kk=ZZ/101
+S=kk[t,x,y,z]
+setMaxIdeal ideal vars S
+m=matrix"x,y2;z3,x4"
+M=coker m
+C = localResolution M -- wrong answer, OK now: MES
+N=coker map (S^{-2,0},S^{-3,-4}, m)
+
+localResolution N
+errorDepth = 0
+res N
+
+
+
 
 
 
