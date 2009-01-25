@@ -704,7 +704,7 @@ rawBetti = (computation, type) -> (
      new BettiTally from w)
 
 ring Resolution := X -> X.ring
-heft Resolution := heft ChainComplex := C -> heft ring C
+heft Resolution := heft GradedModule := C -> heft ring C
 
 undocumented' (betti,Resolution)
 betti Resolution := opts -> X -> (

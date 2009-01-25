@@ -330,6 +330,10 @@ document {
 		    LI {
 			 "The variable ", TT "randomHeight", " has been removed, replaced by 
 			 ", TO [fillMatrix, Height], " and ", TO [random,Height], "."
+			 },
+		    LI {
+			 "The function ", TO betti, " now uses the dot product of the heft vector of the ring with
+			 the (multi)degrees of the basis elements in a chain complex in its display.  See ", TO "heft vectors", "."
 			 }
 		    }
 	       }
