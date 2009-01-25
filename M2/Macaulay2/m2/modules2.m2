@@ -95,18 +95,12 @@ recipN = (n,wts,f) -> (
      if m === n then g else part(,n-1,wts,g))
 
 heft = method()
-heft Ring := R -> (
-     o := options R;
-     if o =!= null and o.?Heft then o.Heft
-     else error "no heft vector"
-     )
+heft Ring := R -> ( o := options R; if o =!= null and o.?Heft then o.Heft )
 heft Module := M -> heft ring M
 
 exactKey := "exact hilbertSeries"
 reducedKey := "reduced exact hilbertSeries"
 approxKey := "approximate hilbertSeries"
-fromCache := (ord,reduced,X) -> (
-)
 
 reduceHilbert = method()
 reduceHilbert Divide := ser -> (

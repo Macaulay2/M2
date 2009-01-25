@@ -442,7 +442,7 @@ runFile := (inf,inputhash,outf,tmpf,desc,pkg,announcechange,rundir,usermode) -> 
      args := "--silent --print-width 77 --stop --int" | (if usermode then "" else " -q") | src | ldpkg;
      cmdname := commandLine#0;
      if ulimit === null then (
-	  ulimit = utest " -t 80" | utest " -m 200000"| utest " -v 200000";
+	  ulimit = utest "-t 80" | utest "-m 200000"| utest "-v 200000";
 	  );
      tmpf << "-- -*- M2-comint -*- {* hash: " << inputhash << " *}" << endl << close;
      cmd := ulimit | "cd " | rundir | "; " | cmdname | " " | args | " <" | format inf | " >>" | format tmpf | " 2>&1";

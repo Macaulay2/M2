@@ -100,7 +100,7 @@ document {
 	  Weights => List => {
 	       "a list of integers whose dot product with the multidegree of a basis
 	       element is enumerated in the display returned.  The default is the
-	       heft vector of the ring.  See ", TT "heft vectors", "."
+	       heft vector of the ring.  See ", TO "heft vectors", "."
 	       }
 	  },
      Outputs => { { "a diagram showing the degrees of the generators of the modules in ", TT "C"} },
@@ -129,7 +129,22 @@ document {
 	  "If the numbers are needed in a program, then they are accessible, because
 	  the value returned is ", ofClass BettiTally, ", and the diagram you see
 	  on the screen is just the way it prints out."
-	  }
+	  },
+     PARA {
+	  "The heft vector is used, by default, as the weight vector for weighting the
+	  components of the degree vectors of basis elements."
+	  },
+     EXAMPLE lines ///
+     R = QQ[a,b,c,Degrees=>{-1,-2,-3}];
+     heft R	  
+     betti res coker vars R
+     betti(oo, Weights => {1})
+     R = QQ[a,b,c,d,Degrees=>{{1,0},{2,1},{0,1},{-2,1}}];
+     heft R	  
+     b = betti res coker vars R
+     betti(b, Weights => {1,0})
+     betti(b, Weights => {0,1})
+     ///
      }
 
 document { 
