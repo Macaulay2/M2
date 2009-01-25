@@ -677,14 +677,15 @@ texMath BettiTally := v -> (
 tex BettiTally := v -> concatenate("$", texMath v, "$")
 
 betti = method(TypicalValue => BettiTally, Options => { Weights => null })
-heftfun := wt -> (
-     if wt === null
-     then d -> 0					    -- when there is no heft vector, then we choose to make all hefts zero
-     else d -> sum( min(#wt, #d), i -> wt#i * d#i )
+heftfun0 := wt -> d -> sum( min(#wt, #d), i -> wt#i * d#i )
+heftfun := (wt1,wt2) -> (
+     if wt1 =!= null then heftfun0 wt1
+     else if wt2 =!= null then heftfun0 wt2
+     else d -> 0
      )
-betti BettiTally := opts -> t -> (
-     heft := heftfun opts.Weights;
-     applyKeys(t, (i,d,h) -> (i,d,heft d)))
+betti BettiTally := opts -> t -> if opts.Weights === null then t else (
+     heftfn := heftfun0 opts.Weights;
+     applyKeys(t, (i,d,h) -> (i,d,heftfn d)))
 betti Matrix := opts -> f -> betti(chainComplex f, opts)
 betti GroebnerBasis := opts -> G -> betti(generators G, opts)
 betti Ideal := opts -> I -> betti(generators I, opts)
@@ -702,22 +703,25 @@ rawBetti = (computation, type) -> (
      w = select(w, option -> option#1 != 0);
      new BettiTally from w)
 
+ring Resolution := X -> X.ring
+heft Resolution := heft ChainComplex := C -> heft ring C
+
 undocumented' (betti,Resolution)
 betti Resolution := opts -> X -> (
      -- this version works only for rings of degree length 1
      b := rawBetti(X.RawComputation, 0); -- the raw version takes no weight option
-     heft := heftfun opts.Weights;
-     b = applyKeys(b, (i,d,h) -> (i,d,heft d));
+     heftfn := heftfun(opts.Weights,heft X);
+     b = applyKeys(b, (i,d,h) -> (i,d,heftfn d));
      b)
 
 betti GradedModule := opts -> C -> (
-     heft := heftfun opts.Weights;
-     if C.?Resolution and degreeLength ring C === 1 then betti(C.Resolution,opts)
+     if C.?Resolution and degreeLength ring C === 1 and heft C === {1} then betti(C.Resolution,opts)
      else (
 	  complete C;
+     	  heftfn := heftfun(opts.Weights,heft C);
 	  new BettiTally from flatten apply(
 	       select(pairs C, (i,F) -> class i === ZZ), 
-	       (i,F) -> apply(pairs tally degrees F, (d,n) -> (i,d,heft d) => n))))
+	       (i,F) -> apply(pairs tally degrees F, (d,n) -> (i,d,heftfn d) => n))))
 
 -----------------------------------------------------------------------------
 -- some extra betti tally routines by David Eisenbud and Mike :
