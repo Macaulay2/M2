@@ -234,7 +234,7 @@ document {
      "
      This function takes as input a coherent sheaf ", TT "F", ", two integers ", TT "l", 
      " and ", TT "h", ", and prints the dimension ", 
-     TT "dim HH^j F(i-j)", " for ", TT "h>=i>=l", ". As a simple example, we comput the dimensions of cohomology groups 
+     TT "dim HH^j F(i-j)", " for ", TT "h>=i>=l", ". As a simple example, we compute the dimensions of cohomology groups 
      of the projective plane.",   
      EXAMPLE lines ///
 	  S = ZZ/32003[x_0..x_2]; 
