@@ -169,13 +169,13 @@ EHVlocalize := (I,P) ->(
      if debugLevel >= 2 then(<< endl << "It equals " << endl << I1 << endl);
      gensI1 := flatten entries mingens I1;
      gensI1 = apply(gensI1, g -> 
-	  if degree g <= d then g else 0);
+	  if first degree g <= d then g else 0);
      I2 := ideal gensI1;
      if debugLevel >= 1 then (<< endl << "Finding the final top" << endl);
      I3 := topComponents I2;
      if debugLevel >= 2 then (<< endl << "It equals " << endl << I3 << endl);
      if debugLevel >= 1 then (<< endl << "Finding the radical" << endl);
-     radical I3;
+     --radical I3;
      trim substitute(I3,ring I)
      )
 
