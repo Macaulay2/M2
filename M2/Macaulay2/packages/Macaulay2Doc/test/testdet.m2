@@ -4,7 +4,7 @@
 testexterior = (p,m1,m2) -> 
   assert(exteriorPower(p,m1*m2) == exteriorPower(p,m1) * exteriorPower(p,m2))
 
-testsame = (p,m) ->
+testsame = (p,m) -> if p >= 0 then
      assert(minors(p,m) == ideal exteriorPower(p,m))
 
 testsame1 = (p,m) -> (
@@ -22,7 +22,7 @@ m = matrix{{a,b},{c,d}}
 assert(minors(2,m) == ideal(a*d-b*c))
 assert(minors(1,m) == ideal(a,b,c,d))
 assert(minors(0,m) == ideal(1_R))
-assert(minors(-1,m) == 0)
+assert(minors(-1,m) == 1)
 assert(minors(3,m) == 0)
 
 testsame1(1,m)
@@ -113,7 +113,7 @@ assert(minors(4,m) == ideal exteriorPower(4,m))
 assert(minors(5,m) == ideal exteriorPower(5,m))
 assert(minors(6,m) == ideal exteriorPower(6,m))
 assert(gens minors(0,m) == matrix{{1_R}})
-assert(numgens minors(-1,m) == 0)
+assert(numgens minors(-1,m) == 1)
 
 R = ZZ[vars(0..24)]
 m = genericMatrix(R,a,3,6)
