@@ -1,4 +1,5 @@
 -- -*- M2-comint -*- {* hash: -1549979493 *}
+--loading configuration for package "StatePolytope" from file /Users/mike/Library/Application Support/Macaulay2/init-StatePolytope.m2
 
 i1 : R = QQ[a,b];
 
