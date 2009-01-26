@@ -1,7 +1,7 @@
-diff -ur --exclude=configure /usr/home/dan/M2/BUILD/dan/builds/freebsd/libraries/frobby/tmp/frobby_vmike3/Makefile frobby_vmike3/Makefile
---- /usr/home/dan/M2/BUILD/dan/builds/freebsd/libraries/frobby/tmp/frobby_vmike3/Makefile	2008-12-10 20:04:17.000000000 -0600
-+++ frobby_vmike3/Makefile	2009-01-25 18:20:00.000000000 -0600
-@@ -42,10 +42,13 @@
+diff -ur --exclude=configure /Users/dan/src/M2/BUILD/dan/builds/mac/libraries/frobby/tmp/frobby_vmike3/Makefile frobby_vmike3/Makefile
+--- /Users/dan/src/M2/BUILD/dan/builds/mac/libraries/frobby/tmp/frobby_vmike3/Makefile	2008-12-10 20:04:17.000000000 -0600
++++ frobby_vmike3/Makefile	2009-01-26 15:54:38.000000000 -0600
+@@ -42,11 +42,14 @@
  endif
  
  ifndef ldflags
@@ -10,13 +10,15 @@ diff -ur --exclude=configure /usr/home/dan/M2/BUILD/dan/builds/freebsd/libraries
  endif
  
 -cflags = -Wall -ansi -pedantic -Wextra -Wno-uninitialized \
+-         -Wno-unused-parameter -isystem $(GMP_INC_DIR)
 +ifndef CXX
 +  CXX=g++
 +endif
 +cflags = $(CPPFLAGS) $(CFLAGS) -Wall -ansi -pedantic -Wno-uninitialized \
-          -Wno-unused-parameter -isystem $(GMP_INC_DIR)
++         -Wno-unused-parameter -I $(GMP_INC_DIR)
  program = frobby
  library = libfrobby.a
+ 
 @@ -135,7 +138,7 @@
  	echo > $(outdir)$(program)
  endif
@@ -54,9 +56,9 @@ diff -ur --exclude=configure /usr/home/dan/M2/BUILD/dan/builds/freebsd/libraries
  -include .depend
  
  clean: tidy
-diff -ur --exclude=configure /usr/home/dan/M2/BUILD/dan/builds/freebsd/libraries/frobby/tmp/frobby_vmike3/src/hash_map/hash_map frobby_vmike3/src/hash_map/hash_map
---- /usr/home/dan/M2/BUILD/dan/builds/freebsd/libraries/frobby/tmp/frobby_vmike3/src/hash_map/hash_map	2008-12-10 20:04:17.000000000 -0600
-+++ frobby_vmike3/src/hash_map/hash_map	2009-01-25 18:10:22.000000000 -0600
+diff -ur --exclude=configure /Users/dan/src/M2/BUILD/dan/builds/mac/libraries/frobby/tmp/frobby_vmike3/src/hash_map/hash_map frobby_vmike3/src/hash_map/hash_map
+--- /Users/dan/src/M2/BUILD/dan/builds/mac/libraries/frobby/tmp/frobby_vmike3/src/hash_map/hash_map	2008-12-10 20:04:17.000000000 -0600
++++ frobby_vmike3/src/hash_map/hash_map	2009-01-26 11:13:55.000000000 -0600
 @@ -292,10 +292,10 @@
      class hash_multimap
      {
@@ -72,3 +74,20 @@ diff -ur --exclude=configure /usr/home/dan/M2/BUILD/dan/builds/freebsd/libraries
  	
      private:
        typedef hashtable<pair<const _Key, _Tp>, _Key, _HashFn,
+diff -ur --exclude=configure /Users/dan/src/M2/BUILD/dan/builds/mac/libraries/frobby/tmp/frobby_vmike3/src/stdinc.h frobby_vmike3/src/stdinc.h
+--- /Users/dan/src/M2/BUILD/dan/builds/mac/libraries/frobby/tmp/frobby_vmike3/src/stdinc.h	2008-12-10 20:04:17.000000000 -0600
++++ frobby_vmike3/src/stdinc.h	2009-01-26 15:51:04.000000000 -0600
+@@ -14,8 +14,12 @@
+    You should have received a copy of the GNU General Public License
+    along with this program.  If not, see http://www.gnu.org/licenses/.
+ */
+-#include <gmp.h>
++
+ #include <gmpxx.h>
++#include <stddef.h>
++#include <string>
++#include <iosfwd>
++#include <gmp.h>
+ #include <memory>
+ using namespace std;
+ 
