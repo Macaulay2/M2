@@ -144,6 +144,8 @@ TEST ///
      R = A/x^6;
      f = basis(R,SourceRing => ambient R)
      assert( ring source f === ambient R)
+     assert( isHomogeneous f )
+     assert( {{0}, {1}, {2}, {3}, {4}, {5}} == degrees source f )
      use A
      assert( coimage f == 
 	  cokernel map(
