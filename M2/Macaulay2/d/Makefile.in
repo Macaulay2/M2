@@ -155,16 +155,19 @@ TOSTATIC =
 UNSTATIC =
 
 ifeq (@OS@,Linux)
-# we'd really like to test whether ld is gnu ld here
+TOSTATIC = -Wl,-Bstatic
+UNSTATIC = -Wl,-Bdynamic
+else
+ifeq (@OS@,FreeBSD)
 TOSTATIC = -Wl,-Bstatic
 UNSTATIC = -Wl,-Bdynamic
 else
 ifeq (@OS@,SunOS)
-# we'd really like to test whether ld is gnu ld here
 TOSTATIC = -Wl,-Bstatic
 UNSTATIC = -Wl,-Bdynamic
 else
 $(warning static linking requested, no method configured for this OS or linker)
+endif
 endif
 endif
 
