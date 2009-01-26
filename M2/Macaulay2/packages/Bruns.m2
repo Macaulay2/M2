@@ -501,6 +501,7 @@ TEST///
 TEST///
     loadPackage "Bruns"
     kk=ZZ/32003
+    S=kk[a..d]
     i=ideal(a^2,b^2,c^2, d^2)
     F=res i
     M = image F.dd_3
