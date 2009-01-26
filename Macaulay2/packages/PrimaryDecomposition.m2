@@ -146,7 +146,7 @@ TEST ///
      testResult = method()
      testResult(Ideal,List) := (I,L) -> (
 	  assert(#L > 0);
-	  scan(L, J -> assert(isIdeal J and ring J == ring I));
+	  scan(L, J -> assert(isIdeal J and ring J === ring I));
 	  assert(I == intersect L);
 	  if #L > 1 then (
 	       scan(#L, i -> (
