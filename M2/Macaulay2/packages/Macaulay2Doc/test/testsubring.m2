@@ -8,7 +8,6 @@
 
 pushforward1 = method(Options => options pushForward)
 pushforward1(RingMap, Module) := opts -> (f,M) -> (
-     assert( f.DegreeMap === identity );
      S := source f;
      g := gens M;
      N := source g;
