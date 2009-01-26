@@ -42,6 +42,7 @@ processComponent(Ideal, RingElement)  := (I,f) -> (
 correctBundle = method()
 correctBundle List  := --(B,I,f,J) 
 inp -> (
+     pInfo(3, "Correcting: "|toString inp);
      B := inp#0; I := inp#1; f := inp#2; J := inp#3;
      R := ring f; -- assume R = QQ[x_1,...,x_n,a_1...,a_n]
      n := numgens R // 2;
@@ -96,6 +97,7 @@ BMM(Ideal, RingElement) := (I,f) -> (
      scan(#dec, i->(
 	 compI := project dec#i;      
 	 projdec := drop(dec,{i,i})/project;
+	 pInfo(3,"Should component "|toString compI|" with "|toString prd#i|" be corrected?");
 	 if any(projdec, c->isSubset(c,compI)) 
 	 then toCorrect = toCorrect | {i} 
 	 else (  
@@ -106,12 +108,18 @@ BMM(Ideal, RingElement) := (I,f) -> (
      while #toCorrect > 0 do (
 	  i := first toCorrect; toCorrect = drop(toCorrect,1);
      	  compI := project dec#i;
-	  corB := correctBundle{B,I,f,compI};
-     	  corprd = primaryDecomposition corB;
+	  pInfo(3,"Correcting component "|toString compI);
+	  -- it suffices to consider supercomponents... 
+	  -- superComp := select(toList(0..#dec-1), j->isSubset(project dec#j,compI));
+	  corB := correctBundle{
+	       B, --intersect apply(superComp,j->prd#j),--...this is slower, though 
+	       I,f,
+	       project prd#i};
+	  corprd = primaryDecomposition corB;
      	  cordec = ass corB; 
-	  -- here assume that the largest component comes first
-	  comps = comps|{compI => (multiplicity@@poincare corprd#0 //  
-		    multiplicity@@poincare cordec#0)}; 
+	  j := position(cordec, J->project J==compI);
+	  comps = comps|{compI => (multiplicity@@poincare corprd#j //  
+		    multiplicity@@poincare cordec#j)}; 
 	  );
      comps = {I=>1} | comps ;
      if BMMidealREMEMBER then BMMstashedCC#(I,f) = comps;

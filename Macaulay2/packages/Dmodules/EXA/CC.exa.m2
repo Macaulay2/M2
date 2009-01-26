@@ -23,3 +23,9 @@ B = populateCechComplexCC(I,CCH2)
 scan(keys B, k->print (k=>B#k))
 pruneCechComplexCC B 
 scan(keys B, k->if #B#k>0 then print (k=>B#k))
+
+------------------------------------
+-- Brianson-Maisonobe-Merle formula
+S = QQ[x,y,z,a,b,c]
+cc = BMM({ideal S=>1},x^3+y^3+z^3)
+
