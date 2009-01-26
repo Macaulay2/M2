@@ -204,7 +204,7 @@ document {
 			 },
 		    LI {"The function ", TO "get", " has been fixed so it returns an error message if the process associated with the pipe has died."},
 		    LI {"The function ", TO "searchPath", " now does what the documentation said it would do."},
-		    LI {"Comparison of rings with ", TO "==", " instead of ", TO "===", " is no longer supported."},
+		    LI {"Comparison of rings and ring maps with ", TO "==", " instead of ", TO "===", " is no longer supported."},
 		    LI {"The output operation ", TT "s<<x", ", when ", TT "s", " is a string, has been changed
 			 so that if a file with filename ", TT "s", " is already open, that file will be used
 			 instead of opening a new file with the same name, erasing the data already written
