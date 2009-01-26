@@ -101,21 +101,14 @@ primedecomp = (I,strategy) -> (
 
 primaryDecomposition Ideal := List => o -> (J) -> (
      R := ring J;
-     if isPolynomialRing R 
+     (J',F) := flattenRing J;
+     if J === J'
      then primedecomp(J, o.Strategy)
      else (
-	  (A,F) := flattenRing R;
-	  G := F^-1;
-	  B := ring presentation A;
-	  J' := lift(F J,B);
-	  -- if B is suitable, then B1 is not needed
-	  B1 := (coefficientRing B)[gens B];
-	  toB1 := map(B1,B,vars B1);
-	  fromB1 := map(B,B1,vars B);
-	  J' = toB1 J';
+	  G := map(R, ring J', generators(R, CoefficientRing => coefficientRing ring J'));
 	  C := primedecomp(J', o.Strategy);
-	  J.cache#"AssociatedPrimes" = apply(associatedPrimes J', P -> trim G promote(fromB1 P,A));
-	  apply(C, Q -> trim G promote(fromB1 Q,A))
+	  J.cache#"AssociatedPrimes" = apply(associatedPrimes J', P -> trim G P);
+	  apply(C, Q -> trim G Q)
 	  ))
 
 isPrimary = method()
