@@ -150,6 +150,7 @@ regularSequence(Ideal,Ring) := Matrix => opts -> (I,A) -> (
 TEST /// 
 A = ZZ/5051[x, y, z];
 I = ideal (x, x*y, y*z);
+-- the success of this test depends on the random number generator:
 assert(regularSequence(I,A,Attempts=>1,Bound=>100,Sparseness=>.9) - matrix{{82*x, 95*y*z}}==0)
 ///
 	       
