@@ -25,7 +25,7 @@ b=2
 k=12
 A=coker matrix{{(x_3*x_4)^k,(x_1*x_4)^k,(x_1*x_2)^k,(x_2*x_3)^k}};
 E2=Ext^2(A,OM);
-time size hilbertSeries(E2,Order => 0)			    -- this computes a lot of numbers
+time size hilbertSeries(E2,Order => 1)			    -- this computes a lot of numbers
 assert( oo == 1017 )
 time r = hilbertFunction({0,0},E2)
 time r' = numgens source basis({0,0},E2)		    -- this shows basis can be a lot faster than hilbertFunction, which uses hilbertSeries
