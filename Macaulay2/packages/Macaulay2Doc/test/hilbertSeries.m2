@@ -20,6 +20,6 @@ A=coker matrix{{(x_3*x_4)^k,(x_1*x_4)^k,(x_1*x_2)^k,(x_2*x_3)^k}};
 use degreesRing A
 hilbertSeries OM
 hilbertSeries(OM, Reduce => true)
-hilbertSeries(OM, Order => 6)
+hilbertSeries(OM, Order => 7)
 assert( oo == T_0^2+2*T_0^3+T_1+3*T_0^4+2*T_0*T_1+T_0^(-2)*T_1^2+4*T_0^5+4*T_0^2*T_1+4*T_0^(-1)*T_1^2+T_0^(-4)*T_1^3+5*T_0^6+6*T_0^3*T_1
      + 7*T_1^2+4*T_0^(-3)*T_1^3+T_0^(-6)*T_1^4 )
