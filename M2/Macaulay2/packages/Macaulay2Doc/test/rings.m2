@@ -4,9 +4,9 @@ S = R/(a^3+b^3+c^3)
 g = R_{1,2,3}
 h = S_{1,2,3}
 assert( f == g )
-assert( class f == R )
-assert( class g == R )
-assert( class h == S )
+assert( class f === R )
+assert( class g === R )
+assert( class h === S )
 
 --Date: Fri, 16 Apr 2004 11:43:07 +0000 (UTC)
 --From: Ben Richert <brichert@polymail.cpunix.calpoly.edu>
