@@ -92,7 +92,7 @@ TEST ///
   M = comodule monomialCurveIdeal(P3,{1,3,8,9,12,13,17,21})
   P2 = ZZ/32003[a,b,c,d,e,f];
   F = map(P3,P2,random(P3^1, P3^{-1,-1,-1,-1,-1,-1}))
-time   N = pushForward(F,M,Strategy=>Linear);
+time   N = pushForward(F,M);
   P2 = ZZ/32003[a,b,c,d,e,f];
   F = map(P3,P2,random(P3^1, P3^{-1,-1,-1,-1,-1,-1}))
 time   N = pushForward(F,M,BasisElementLimit=>5);
