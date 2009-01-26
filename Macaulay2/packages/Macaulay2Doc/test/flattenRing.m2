@@ -3,32 +3,32 @@
 A = QQ[x,y]
 (S,p) = flattenRing A
 q = p^-1
-assert(q^-1 == p)
+assert(q^-1 === p)
 assert( S === target p and A === source p )
 assert( S === source q and A === target q )
-assert( p * q == 1 )
-assert( q * p == 1 )
+assert( p * q === id_S )
+assert( q * p === id_A )
 describe S
 assert( S === A )
 
 B = A/x^5
 (S,p) = flattenRing B
 q = p^-1
-assert(q^-1 == p)
+assert(q^-1 === p)
 assert( S === target p and B === source p )
 assert( S === source q and B === target q )
-assert( p * q == 1 )
-assert( q * p == 1 )
+assert( p * q === id_S )
+assert( q * p === id_B )
 describe S
 assert( S === B )
 C = B[t,u]
 (S,p) = flattenRing C
 q = p^-1
-assert(q^-1 == p)
+assert(q^-1 === p)
 assert( S === target p and C === source p )
 assert( S === source q and C === target q )
-assert( p * q == 1 )
-assert( q * p == 1 )
+assert( p * q === id_S )
+assert( q * p === id_C )
 describe S
 assert( numgens S == 4 )
 use ring ideal S
@@ -37,11 +37,11 @@ use C
 D = C/t^6
 (S,p) = flattenRing D
 q = p^-1
-assert(q^-1 == p)
+assert(q^-1 === p)
 assert( S === target p and D === source p )
 assert( S === source q and D === target q )
-assert( p * q == 1 )
-assert( q * p == 1 )
+assert( p * q === id_S )
+assert( q * p === id_D )
 describe S
 use ring ideal S
 assert( ideal S == ideal( t^6, x^5 ) )
@@ -50,32 +50,32 @@ assert( ideal S == ideal( t^6, x^5 ) )
 R = ZZ/101
 (S,p) = flattenRing R
 q = p^-1
-assert(q^-1 == p)
+assert(q^-1 === p)
 assert( S === target p and R === source p )
 assert( S === source q and R === target q )
-assert( p * q == 1 )
-assert( q * p == 1 )
+assert( p * q === id_S )
+assert( q * p === id_R )
 describe S
 assert( R === S )
 
 (S,p) = flattenRing(R,CoefficientRing => ZZ)
 q = p^-1
-assert(q^-1 == p)
+assert(q^-1 === p)
 assert( S === target p and R === source p )
 assert( S === source q and R === target q )
-assert( p * q == 1 )
-assert( q * p == 1 )
+assert( p * q === id_S )
+assert( q * p === id_R )
 describe S
 assert( R === S )
 
 E = ZZ/5[c]/(c^2+c+1)
 (S,p) = flattenRing E
 q = p^-1
-assert(q^-1 == p)
+assert(q^-1 === p)
 assert( S === target p and E === source p )
 assert( S === source q and E === target q )
-assert( p * q == 1 )
-assert( q * p == 1 )
+assert( p * q === id_S )
+assert( q * p === id_E )
 describe S
 assert( S === E )
 
@@ -84,7 +84,7 @@ allGenerators := R -> gens(R,CoefficientRing=>ZZ)
 k = GF(E,PrimitiveElement => - c - 2)
 (S,p) = flattenRing k
 q = p^-1
-assert(q^-1 == p)
+assert(q^-1 === p)
 assert( S === target p and k === source p )
 assert( S === source q and k === target q )
 scan(allGenerators k, x -> assert( q p x == x ) )
@@ -95,7 +95,7 @@ assert( S === E )
 F = k[t]/t^10
 (S,p) = flattenRing F
 q = p^-1
-assert(q^-1 == p)
+assert(q^-1 === p)
 assert( S === target p and F === source p )
 assert( S === source q and F === target q )
 scan(allGenerators k, x -> assert( q p x == x ) )
@@ -105,7 +105,7 @@ assert( S === F )
 
 (S,p) = flattenRing(F, CoefficientRing => ZZ/5)
 q = p^-1
-assert(q^-1 == p)
+assert(q^-1 === p)
 assert( S === target p and F === source p )
 assert( S === source q and F === target q )
 scan(allGenerators k, x -> assert( q p x == x ) )
@@ -116,7 +116,7 @@ assert( ideal S == ideal (t^10,c^2+c+1) )
 
 (S,p) = flattenRing(F, CoefficientRing => ZZ)
 q = p^-1
-assert(q^-1 == p)
+assert(q^-1 === p)
 assert( S === target p and F === source p )
 assert( S === source q and F === target q )
 scan(allGenerators k, x -> assert( q p x == x ) )
