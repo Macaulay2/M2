@@ -4,7 +4,14 @@
 #include "M2mem.h"
 #include "M2inits.h"
 #include "pari-c.h"
+
+#define FALSE 0
+#define TRUE 1
+
+/* for now, we must retain the state, because pari_close_opts will use the wrong gmp memory
+   allocation routines to free memory */
 #define RETAIN_PARI_STATE TRUE
+
 #define PARISIZE 1000000
 #define MAXPRIME 0
 #define init_flags INIT_DFTm
