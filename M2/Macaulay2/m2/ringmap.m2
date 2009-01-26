@@ -412,7 +412,7 @@ preimage(RingMap,Ideal) := (f,J) -> (
 List / RingMap := List => (v,f) -> apply(v,x -> f x)
 RingMap \ List := List => (f,v) -> apply(v,x -> f x)
 RingMap == ZZ := (f,n) -> (
-     if n == 1 then (source f === target f and f == id_(source f))
+     if n == 1 then (source f === target f and f === id_(source f))
      else error "encountered integer other than 1 in comparison with a ring map")
 ZZ == RingMap := (n,f) -> f == n
 
