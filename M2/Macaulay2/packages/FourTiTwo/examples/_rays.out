@@ -1,5 +1,4 @@
 -- -*- M2-comint -*- {* hash: -885222187 *}
---loading configuration for package "FourTiTwo" from file /Users/mike/Library/Application Support/Macaulay2/init-FourTiTwo.m2
 
 i1 : A = matrix "1,1,1,1; 1,2,3,4"
 
@@ -29,7 +28,7 @@ For details, see the file COPYING.
 -------------------------------------------------
 Using 64 bit integers.
 4ti2 Total Time:  0.01 secs.
-using temporary file name /tmp/M2-72295-1
+using temporary file name /tmp/M2-23619-1
 
 o3 = | 0 1 2 3 |
      | 3 2 1 0 |

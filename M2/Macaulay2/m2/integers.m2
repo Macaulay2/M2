@@ -33,6 +33,13 @@ gcd(QQ,QQ) := QQ => (x,y) -> (
      d := denominator x * (denominator y // gcd(denominator x, denominator y));
      gcd(numerator (x * d), numerator (y * d)) / d)
 
+lcm = method(Binary => true)
+lcm List := x -> lcm toSequence x
+lcm(ZZ,ZZ) := (f,g) -> abs f * (abs g // gcd(f,g))
+lcm(ZZ,QQ) := (f,g) -> abs f * (abs g / gcd(f,g))
+lcm(QQ,ZZ) := (f,g) -> abs f * (abs g / gcd(f,g))
+lcm(QQ,QQ) := (f,g) -> abs f * (abs g / gcd(f,g))
+
 smallprimes := {2,3,5,7,11,13,17,23,29,31,37,41,43,47}
 
 isPrime1 := n -> member(n,smallprimes) or all(smallprimes,p -> n%p =!= 0)

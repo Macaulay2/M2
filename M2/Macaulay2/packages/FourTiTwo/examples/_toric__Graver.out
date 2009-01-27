@@ -1,5 +1,4 @@
 -- -*- M2-comint -*- {* hash: 232114658 *}
---loading configuration for package "FourTiTwo" from file /Users/mike/Library/Application Support/Macaulay2/init-FourTiTwo.m2
 
 i1 : A = matrix "1,1,1,1; 1,2,3,4"
 
@@ -23,7 +22,7 @@ Final basis has 1 inhomogeneous, 10 homogeneous and 0 free elements.
 Writing 5 vectors to graver file, with respect to symmetry.
 
 4ti2 Total Time: 0.01 secs
-using temporary file name /tmp/M2-72453-1
+using temporary file name /tmp/M2-23777-1
 
 o2 = | 1 -2 1  0 |
      | 2 -3 0  1 |
@@ -54,7 +53,7 @@ Final basis has 1 inhomogeneous, 10 homogeneous and 0 free elements.
 Writing 5 vectors to graver file, with respect to symmetry.
 
 4ti2 Total Time: 0.01 secs
-using temporary file name /tmp/M2-72453-2
+using temporary file name /tmp/M2-23777-2
 
                2           3    2                   2           3      2
 o4 = ideal (- b  + a*c, - b  + a d, - b*c + a*d, - c  + b*d, - c  + a*d )

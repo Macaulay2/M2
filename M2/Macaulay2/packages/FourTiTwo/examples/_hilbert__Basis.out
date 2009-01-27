@@ -1,5 +1,4 @@
 -- -*- M2-comint -*- {* hash: 824115731 *}
---loading configuration for package "FourTiTwo" from file /Users/mike/Library/Application Support/Macaulay2/init-FourTiTwo.m2
 
 i1 : A = matrix "1,1,1,1; 1,2,3,4"
 
@@ -32,7 +31,7 @@ For details, see the file COPYING.
 Final basis has 1 inhomogeneous, 3 homogeneous and 0 free elements.
 
 4ti2 Total Time: 0.01 secs
-using temporary file name /tmp/M2-72443-1
+using temporary file name /tmp/M2-23767-1
 
 o3 = | 3 2 1 0 |
      | 0 1 2 3 |
@@ -54,7 +53,7 @@ For details, see the file COPYING.
 Final basis has 1 inhomogeneous, 3 homogeneous and 0 free elements.
 
 4ti2 Total Time: 0.01 secs
-using temporary file name /tmp/M2-72443-2
+using temporary file name /tmp/M2-23767-2
 
 o4 = | 3 2 1 0 |
      | 0 1 2 3 |

@@ -35,6 +35,10 @@ gcdCoefficients(RingElement,RingElement) := (f,g) -> (	    -- ??
      if numgens R > 1 then error "expected a polynomial ring in at most one variable";
      toList apply(rawExtendedGCD(raw f, raw g), r -> new R from r))
 
+lcm(ZZ,RingElement) := (r,s) -> lcm(promote(abs r,ring s),s)
+lcm(RingElement,ZZ) := (r,s) -> lcm(promote(abs s,ring r),r)
+lcm(RingElement,RingElement) := (f,g) -> f * (g // gcd(f,g))
+
 pseudoRemainder = method()
 pseudoRemainder(RingElement,RingElement) := RingElement => (f,g) -> (
      R := ring f;

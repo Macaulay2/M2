@@ -229,10 +229,9 @@ jacobian MonomialIdeal := Matrix => (I) -> jacobian generators I
 resolution MonomialIdeal := ChainComplex => options -> I -> resolution ideal I
 betti MonomialIdeal := I -> betti ideal I
 
-lcmOfGens = method()
-lcmOfGens MonomialIdeal := (I) -> (if I.cache#?lcmOfGens 
-  then I.cache#lcmOfGens 
-  else I.cache#lcmOfGens = rawMonomialIdealLCM raw I)
+lcm MonomialIdeal := (I) -> (if I.cache.?lcm 
+  then I.cache.lcm
+  else I.cache.lcm = (ring I) _ (rawMonomialIdealLCM raw I))
 
  -- We use E. Miller's definition for nonsquare 
  -- free monomial -- ideals.
@@ -241,7 +240,7 @@ alexanderDual = local alexanderDual
 alexopts = {Strategy=>0}
 
 dual(MonomialIdeal, List) := alexopts >> o -> (I,a) -> (
-     aI := lcmOfGens I;
+     aI := first exponents lcm I;
      if aI =!= a then (
      	  if #aI =!= #a then error ( "expected list of length ", toString (#aI));
 	  scan(a, aI, (b,c) -> if b<c then error "exponent vector not large enough" );
@@ -255,7 +254,7 @@ dual MonomialIdeal := alexopts >> o -> (I) -> (
   if I.cache#?alexanderDual
     then I.cache#alexanderDual
     else I.cache#alexanderDual = (
-	 dual(I, lcmOfGens I, o)
+	 dual(I, first exponents lcm I, o)
     ))
 
 --  ASSOCIATED PRIMES  -------------------------------------
@@ -289,7 +288,7 @@ minimalPrimes MonomialIdeal := decompose MonomialIdeal := (cacheValue symbol min
 irreducibleDecomposition = method();
 irreducibleDecomposition MonomialIdeal := List => (I) -> (
      R := ring I;
-     aI := lcmOfGens I;
+     aI := first exponents lcm I;
      M := first entries generators dual I;
      apply(M, m -> (
 	       s := first keys standardForm leadMonomial m;
@@ -298,7 +297,7 @@ irreducibleDecomposition MonomialIdeal := List => (I) -> (
 
 primaryDecomposition MonomialIdeal := List => o -> (I) -> (
      R := ring I;
-     aI := lcmOfGens I;
+     aI := first exponents lcm I;
      J := dual I;
      M := first entries generators J;
      H := new MutableHashTable;

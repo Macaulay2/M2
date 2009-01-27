@@ -408,7 +408,6 @@ AC_SUBST(PACKAGES,"
   SimpleDoc
   EdgeIdeals
   FourTiTwo
-  StatePolytope
   Polyhedra
   Text
 ")

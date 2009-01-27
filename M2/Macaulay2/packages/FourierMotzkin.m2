@@ -122,15 +122,6 @@ primitive List := List => L -> (
      else apply(L, i -> i // g))
 
 
--- determines the least common multiple of a list of integers
-lcm = method();
-lcm List := List => L -> (
-     R := ring L#0;
-     l := 1_R;
-     scan(L, i -> (l = ((l*i) // (gcd(l,i))) ));     
-     l)
-
-
 -- Converts a list of 'QQ' to 'ZZ' by multiplying by a common denominator
 toZZ = method();
 toZZ List := List => L -> (

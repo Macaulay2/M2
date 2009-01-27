@@ -5,7 +5,8 @@ VPATH = @srcdir@
 PACKAGES = @PACKAGES@
 
 # packages under development that should be checked but not installed:
-DEVEL = EllipticIntegrals
+DEVEL = EllipticIntegrals \
+   StatePolytope
 
 RemakeAllDocumentation ?= false
 IgnoreExampleErrors ?= false

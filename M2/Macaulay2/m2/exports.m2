@@ -785,7 +785,7 @@ export {
 	symbol kill,
 	symbol koszul,
 	symbol last,
-	symbol lcmOfGens,
+	symbol lcm,
 	symbol leadCoefficient,
 	symbol leadComponent,
 	symbol leadMonomial,
