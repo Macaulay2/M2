@@ -25,7 +25,7 @@ INSTALLCMD = \
 CHECKTARGET = test
 include ../Makefile.library
 CFLAGS += -Wno-deprecated
-CFLAGS += -Wfatal-errors
+# CFLAGS += -Wfatal-errors
 Makefile: @srcdir@/Makefile.in ; cd ../.. && ./config.status libraries/frobby/Makefile
 # Local Variables:
 # compile-command: "make -C $M2BUILDDIR/libraries/frobby "
