@@ -98,11 +98,11 @@ BMM(Ideal, RingElement) := (I,f) -> (
 	 compI := project dec#i;      
 	 projdec := drop(dec,{i,i})/project;
 	 pInfo(3,"Should component "|toString compI|" with "|toString prd#i|" be corrected?");
-	 if any(projdec, c->isSubset(c,compI)) 
+	 suspectedMultiplicity := multiplicity@@poincare prd#i // multiplicity@@poincare dec#i;
+	 if suspectedMultiplicity > 1 and any(projdec, c->isSubset(c,compI)) 
 	 then toCorrect = toCorrect | {i} 
 	 else (  
-	      comps = comps|{compI => (multiplicity@@poincare prd#i //  
-	      		multiplicity@@poincare dec#i)};
+	      comps = comps|{compI => suspectedMultiplicity};
 	      )
 	 ));
      while #toCorrect > 0 do (
@@ -115,8 +115,10 @@ BMM(Ideal, RingElement) := (I,f) -> (
 	       B, --intersect apply(superComp,j->prd#j),--...this is slower, though 
 	       I,f,
 	       project prd#i};
-	  corprd = primaryDecomposition corB;
-     	  cordec = ass corB; 
+	  cordec := {dec#i}; -- try localization
+	  corprd := { localize(corB,dec#i) };
+	  --corprd = primaryDecomposition corB; -- used to compute the whole primary decomposition ... is "localize" stable?
+     	  --cordec = ass corB; 
 	  j := position(cordec, J->project J==compI);
 	  comps = comps|{compI => (multiplicity@@poincare corprd#j //  
 		    multiplicity@@poincare cordec#j)}; 
