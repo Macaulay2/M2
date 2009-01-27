@@ -459,7 +459,6 @@ export {
 	symbol adjoint,
 	symbol adjoint1,				    -- adjoint' ?
 	symbol alarm,
-	symbol alexanderDual,
 	symbol all,
 	symbol ambient,
 	symbol ancestor,
