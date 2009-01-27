@@ -6,7 +6,7 @@ newPackage("Markov",
 	  },
      DebuggingMode => false,
      Headline => "Markov ideals, arising from Bayesian networks in statistics",
-     Version => "1.1"
+     Version => "1.2"
      )
 
 
@@ -22,8 +22,6 @@ newPackage("Markov",
 --   globalMarkovStmts G
 --   pairMarkovStmts G
 --
---   removeRedundantStmts S
---  
 --   markovRing (2,2,3,3)
 --
 --   marginMap(R,i) : R --> R
@@ -38,17 +36,10 @@ newPackage("Markov",
 
 
 export {makeGraph, displayGraph, localMarkovStmts, globalMarkovStmts, pairMarkovStmts,
-       markovRing, marginMap, markovMatrices, markovIdeal, writeDotFile, removeRedundants, bayesBall, prob,
-       hideMap, minimize,
-       gaussRing, gaussMinors, gaussIdeal, gaussTrekIdeal, Graph
-       }
+       markovRing, marginMap, hideMap, markovMatrices, markovIdeal, writeDotFile, removeRedundants, 
+       gaussRing, gaussMinors, gaussIdeal, gaussTrekIdeal, Graph}
 exportMutable {dotBinary,jpgViewer}
 
-IndependenceStatement = new Type of List
-  -- the canonical form is S = {set{A, B}, C}
-  -- where A, B, C are lists of increasing integers (or empty lists).
-  -- toList S --> {A,B,C}
-  
 -------------------------
 -- Graph visualization --
 -------------------------
@@ -70,7 +61,8 @@ Graph = new Type of HashTable
      -- { A => set {B,C,...}, ...}, where there are edges A->B, A->C, ...
      -- and A,B,C are integers.  The nodes of the graph must be 1,2,...,N.
 
-makeGraph = (g) -> (
+makeGraph = method()
+makeGraph List := (g) -> (
      h := new MutableHashTable;
      scan(#g, i -> h#(i+1) = set g#i);
      new Graph from h)
@@ -117,12 +109,12 @@ displayGraph(String,String,Graph) := (dotfilename,jpgfilename,G) -> (
 displayGraph(String,Graph) := (dotfilename,G) -> (
      jpgfilename := temporaryFileName() | ".jpg";
      displayGraph(dotfilename,jpgfilename,G);
-     removeFile jpgfilename;
+     --removeFile jpgfilename;
      )
 displayGraph Graph := (G) -> (
      dotfilename := temporaryFileName() | ".dot";
      displayGraph(dotfilename,G);
-     removeFile dotfilename;
+     --removeFile dotfilename;
      )
 
 -------------------------
@@ -314,7 +306,8 @@ bayesBall = (A,C,G) -> (
 --------------------------
 -- Markov relationships --
 --------------------------
-pairMarkovStmts = (G) -> (
+pairMarkovStmts = method()
+pairMarkovStmts Graph := (G) -> (
      -- given a graph G, returns a list of triples {A,B,C}
      -- where A,B,C are disjoint sets, and for every vertex v
      -- and non-descendent w of v,
@@ -323,8 +316,9 @@ pairMarkovStmts = (G) -> (
 	       ND := nondescendents(G,v);
 	       W := ND - parents(G,v);
 	       apply(toList W, w -> {set {v}, set{w}, ND - set{w}}))))
-			 
-localMarkovStmts = (G) -> (
+
+localMarkovStmts = method()			 
+localMarkovStmts Graph := (G) -> (
      -- Given a graph G, return a list of triples {A,B,C}
      -- of the form {v, nondescendents - parents, parents}
      result := {};
@@ -335,7 +329,8 @@ localMarkovStmts = (G) -> (
 	         result = append(result,{set{v}, ND - P, P})));
      removeRedundants result)
 
-globalMarkovStmts = (G) -> (
+globalMarkovStmts = method()
+globalMarkovStmts Graph := (G) -> (
      -- Given a graph G, return a complete list of triples {A,B,C}
      -- so that A and B are d-separated by C (in the graph G).
      -- If G is large, this should maybe be rewritten so that
@@ -373,7 +368,7 @@ markovRing = d -> (
      p = value "symbol p";
      if not markovRingList#?d then (
      	  start := (#d):1;
-     	  markovRingList#d = ZZ/32003[p_start .. p_d];
+     	  markovRingList#d = QQ[p_start .. p_d];
 	  markovRingList#d.markov = d;
 	  );
      markovRingList#d
@@ -387,7 +382,8 @@ markovRing = d -> (
   --   F p_(u1,u2,..., j, ,un) = p_(u1,u2,..., j, ,un), for j >= 2.
   --------------
 
-marginMap = (v,R) -> (
+marginMap = method()
+marginMap(ZZ,Ring) := (v,R) -> (
      -- R should be a Markov ring
      v = v-1;
      d := R.markov;
@@ -402,7 +398,8 @@ marginMap = (v,R) -> (
 			      p_newi))))));
      map(R,R,F))
 
-hideMap = (v,A) -> (
+hideMap = method()
+hideMap(ZZ,Ring) := (v,A) -> (
      -- creates a ring map inclusion F : S --> A.
      v = v-1;
      R := ring presentation A;
@@ -444,7 +441,8 @@ prob = (d,s) -> (
 	   else {s#i});
      sum apply (L, v -> p_v))
 
-markovMatrices = (R, Stmts) -> (
+markovMatrices = method()
+markovMatrices(Ring,List) := (R, Stmts) -> (
      -- R should be a Markov ring, and S is a list of
      -- independence statements
      d := R.markov;
@@ -459,7 +457,8 @@ markovMatrices = (R, Stmts) -> (
 		      		 prob(d,e))))))))
      )
 
-markovIdeal = (R,Stmts) -> (
+markovIdeal = method()
+markovIdeal(Ring,List) := (R,Stmts) -> (
      M := markovMatrices(R,Stmts);
      sum apply(M, m -> minors(2,m))
      )
@@ -512,9 +511,44 @@ gaussTrekIdeal(Ring, Graph) := (R,G) -> (
      )
 beginDocumentation()
 
-document {
-     Key => "Markov"
-     }
+doc ///
+  Key
+    Markov
+  Headline
+    Markov ideals, arising from Bayesian networks in statistics
+  Description
+    Text
+      This package is used to construct ideals corresponding to discrete graphical models,
+      as described in several places, including the paper: Garcia, Stillman and Sturmfels,
+      "The algebraic geometry of Bayesian networks", J. Symbolic Comput., 39(3-4):331–355, 2005.
+  
+      The paper also constructs Gaussian ideals, as described in the paper by Seth Sullivant:
+      "Algebraic geometry of Gaussian Bayesian networks", Adv. in Appl. Math. 40 (2008), no. 4, 482--513.
+      
+      Here is a typical use of this package.  We create the ideal in 16 variables whose zero set 
+      represents the probability distributions on four binary random variables which satisfy the
+      conditional independence statements coming from the "diamond" graph 4 --> 2,3 --> 1.
+    Example
+      R = markovRing(2,2,2,2)
+      G = makeGraph{{},{1},{1},{2,3}}
+      S = globalMarkovStmts G
+      I = markovIdeal(R,S)
+    Text
+      Sometime an ideal can be simplified by changing variables.  Very often, by using @TO marginMap@, 
+      such ideals can be transformed to binomial ideals.  This is the case here.
+    Example
+      F = marginMap(1,R)
+      J = F I;
+      netList pack(2,J_*)
+    Text
+      This ideal has 5 primary components.  The first is the one that has statistical significance.
+      The significance of the other components is still poorly understood.
+    Example
+      time netList primaryDecomposition J
+  Caveat
+    The parts of the package involving graphs might eventually be changed to use a package dealing
+    specifically with graphs.  This might change the interface to this package.  
+///
 
 document { 
      Key => {gaussRing, (gaussRing,ZZ)},
@@ -576,20 +610,83 @@ document {
      SeeAlso => {"makeGraph", "globalMarkovStmts", "localMarkovStmts", "gaussRing", "gaussMinors", "gaussTrekIdeal"}
      }
 
+doc ///
+  Key
+    markovRing
+  Headline
+    ring of probability distributions on several discrete random variables
+  Usage
+    markovRing(d1,d2,...,dr)
+  Inputs
+    di:ZZ
+      Each d_i should be a positive integer
+  Outputs
+    R:Ring
+      A polynomial ring with d1*d2*...*dr variables $p_{(i1,...,ir)}$,
+      with each i_j satisfying 1 <= i_j <= d_j.
+  Consequences
+    Information about this sequence of integers is placed into the ring, and is used 
+    by other functions in this package.  Also, at most one ring for each such sequence
+    is created: the results are cached.
+  Description
+   Example
+     R = markovRing(2,3,4,5);
+     numgens R
+     R_0, R_1, R_119
+     coefficientRing R
+  Caveat
+    Currently, the user has no choice about the names of the variables.  
+    Also, the base field is set to be QQ, without option of changing it.
+    These will hopefully change in a later version.  
+  SeeAlso
+///
+
+
 end
-document { 
-     Key => {},
-     Headline => "",
-     Usage => "",
-     Inputs => { 
-	   },
-     Outputs => {
-	  },
-     EXAMPLE lines ///
-     ///,
-     Caveat => ""
-     SeeAlso => ""
-     }
+doc ///
+  Key
+  Headline
+
+  Usage
+
+  Inputs
+
+  Outputs
+
+  Consequences
+
+  Description
+   Text
+   Text
+   Example
+   Text
+   Example
+  Caveat
+  SeeAlso
+///
+
+
+doc ///
+  Key
+  Headline
+
+  Usage
+
+  Inputs
+
+  Outputs
+
+  Consequences
+
+  Description
+   Text
+   Text
+   Example
+   Text
+   Example
+  Caveat
+  SeeAlso
+///
 
 end
 restart
