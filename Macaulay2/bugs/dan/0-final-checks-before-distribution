@@ -1,5 +1,11 @@
 things to do manually before release
 
+       fix bugs
+
+       add test files
+
+       check that readline and history and name completion work in an xterm
+
        look at html documentation 
 
        look at info documentation
