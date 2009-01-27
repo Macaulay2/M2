@@ -1,8 +1,0 @@
-Fixed: These have been removed.
-
---warning: symbol has no documentation: Macaulay2Doc :: lcmOfGens
---warning: method has no documentation: Macaulay2Doc :: lcmOfGens(MonomialIdeal), key: (lcmOfGens,MonomialIdeal)
---warning: symbol has no documentation: Macaulay2Doc :: alexanderDual
---warning: method has no documentation: Macaulay2Doc :: alexanderDual(MonomialIdeal), key: (alexanderDual,MonomialIdeal)
---warning: method has no documentation: Macaulay2Doc :: alexanderDual(MonomialIdeal,List), key: (alexanderDual,MonomialIdeal,List)
---warning: method has no documentation: Macaulay2Doc :: alexanderDual(MonomialIdeal,RingElement), key: (alexanderDual,MonomialIdeal,RingElement)
