@@ -102,6 +102,13 @@ primedecomp = (I,strategy) -> (
 primaryDecomposition Ideal := List => o -> (J) -> (
      R := ring J;
      (J',F) := flattenRing J;
+     A := ring J';
+     if not isPolynomialRing A then error "expected ideal in a polynomial ring or a quotient of one";
+     if not isCommutative A then
+       error "expected commutative polynomial ring";
+     kk := coefficientRing A;
+     if kk =!= QQ and not instance(kk,QuotientRing) then
+       error "expected base field to be QQ or ZZ/p";
      if J === J'
      then primedecomp(J, o.Strategy)
      else (

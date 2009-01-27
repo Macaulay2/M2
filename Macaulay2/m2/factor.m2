@@ -89,12 +89,16 @@ topCoefficients RingElement := f -> (
 minimalPrimes Ideal := decompose Ideal := (cacheValue symbol minimalPrimes) (
      (I) -> (
 	  R := ring I;
-	  if isQuotientRing R then (
-	       A := ultimate(ambient, R);
-	       I = lift(I,A);
-	       )
-	  else A = R;
+	  (I',F) := flattenRing I; -- F is not needed
+	  A := ring I';
+	  G := map(R, A, generators(R, CoefficientRing => coefficientRing A));
+     	  I = I';	  
 	  if not isPolynomialRing A then error "expected ideal in a polynomial ring or a quotient of one";
+	  if not isCommutative A then
+	    error "expected commutative polynomial ring";
+	  kk := coefficientRing A;
+	  if kk =!= QQ and not instance(kk,QuotientRing) then
+	    error "expected base field to be QQ or ZZ/p";
 	  if I == 0 then return {if A === R then I else ideal 0_R};
 	  if debugLevel > 0 then homog := isHomogeneous I;
 	  ics := irreducibleCharacteristicSeries I;
@@ -127,7 +131,7 @@ minimalPrimes Ideal := decompose Ideal := (cacheValue symbol minimalPrimes) (
 	  Psi = toList select(Psi,i -> i =!= null);
 	  components := apply(Psi, p -> ics#1 p);
 	  if A =!= R then (
-	       components = apply(components, I -> ideal(generators I ** R));
+	       components = apply(components, P -> trim(G P));
 	       );
 	  components
 	  ))
