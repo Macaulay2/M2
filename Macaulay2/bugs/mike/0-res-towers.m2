@@ -1,3 +1,5 @@
+FIXED.  Dan probably fixed it...
+
 kk = ZZ/101
 S = kk[x,y,z,u]
 R = S [w_0, w_1, w_2, w_3, w_4, Degrees => {5:{1, 3}}]

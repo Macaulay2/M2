@@ -1,3 +1,5 @@
+FIXED: the package was not the most recent version.  The most recent version came from SNowbird.
+
 this package has some duplications in its genome:
 
     i1 : loadPackage "BoijSoderberg"

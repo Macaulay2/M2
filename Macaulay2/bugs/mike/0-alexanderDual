@@ -1,3 +1,5 @@
+FIXED:  REMOVED alexanderDual and lcmOfGens.
+
 -- -*- M2 -*-
 
 -- The name space pollution caused by adding alexanderDual is especially curious,

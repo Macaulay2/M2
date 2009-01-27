@@ -1,3 +1,5 @@
+Fixed: These have been removed.
+
 --warning: symbol has no documentation: Macaulay2Doc :: lcmOfGens
 --warning: method has no documentation: Macaulay2Doc :: lcmOfGens(MonomialIdeal), key: (lcmOfGens,MonomialIdeal)
 --warning: symbol has no documentation: Macaulay2Doc :: alexanderDual
