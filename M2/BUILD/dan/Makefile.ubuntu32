@@ -1,5 +1,5 @@
 # -*- Makefile -*-
-BUILDOPTIONS += RemakeAllDocumentation=true RemakePackages=true
+# BUILDOPTIONS += RemakeAllDocumentation=true RemakePackages=true
 # BUILDOPTIONS += RerunExamples=true
 # PACKAGES = Macaulay2Doc
 # BUILDOPTIONS += -s

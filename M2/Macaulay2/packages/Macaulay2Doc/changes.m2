@@ -15,7 +15,6 @@ document {
 	       UL {
 		    TO groupID,
 		    TO heft,
-		    TO "IntegralClosure :: idealizerReal",
 		    TO insert,
 		    TO inversePermutation,
 		    TO isSorted,
@@ -147,11 +146,29 @@ document {
 		    }
 	       },
 	  LI {
-	       "miscellaneous changes:",
+	       "functionality removed or changed:",
 	       UL {
+		    LI {"Comparison of rings and ring maps with ", TO "==", " is no longer supported.
+			 Old code can be fixed by changing the comparison operator to ", TO "===", "."},
+		    LI {
+			 "The variable ", TT "randomHeight", " has been removed, replaced by 
+			 ", TO [fillMatrix, Height], " and ", TO [random,Height], "."
+			 },
+		    LI {
+			 "The function ", TO betti, " now uses the dot product of the heft vector of the ring with
+			 the (multi)degrees of the basis elements in a chain complex in its display.  See ", TO "heft vectors", "."
+			 },
 		    LI {"The behavior of ", TO "return", " in the debugger has changed: it now stops in the debugger
 			 at the next available opportunity."
 			 },
+		    LI {"The function ", TO "minors", " has been altered so the ideal of ", TT "n", " by ", TT "n", " minors that it provides for negative
+			 values of ", TT "n", " is the unit ideal."
+			 }
+		    }
+	       },
+	  LI {
+	       "functionality added or improved:",
+	       UL {
 		    LI {"Filenames starting with ", TT "~/", " will have the tilde replaced by the home directory."},
 		    LI {"The ", EM "D", " language, in which the Macaulay 2 interpreter is written, is now type-safe"},
 		    LI {"During compilation of Macaulay 2, as much of the computation as possible is now done
@@ -185,26 +202,23 @@ document {
 			 be preserved.  Also, for convenience, the routine
 			 now returns a sequence, instead of a list, suitable for immediate parallel assignment."
 			 },
-		    LI {"The function ", TO "minors", " has been altered so the ideal of ", TT "n", " by ", TT "n", " minors that it provides for negative
-			 values of ", TT "n", " is the unit ideal."
-			 },
 		    LI {"The function ", TO "part", " has been altered so that for multigraded rings, it does not use the first component
 			 of the degree vector.  New functionality has been added, and the method for ", TT "part(Sequence,RingElement)", "
 			 has been removed."
 			 },
-		    LI {"Heft vectors are now automatically computed, ", TO "heft vectors"},
+		    LI {"Heft vectors are now automatically computed, see ", TO "heft vectors", ".  Users who specify
+			 the Heft option explicitly may be able to avoid that now."},
 		    LI {"The description of a ring provided by ", TO "describe", " is now abbreviated by making use of
-			 run length encoding"
+			 run length encoding."
 			 },
 		    LI {"Browsers started by ", TO "viewHelp", " are now run in a separate process group
 			 so they don't die when Macaulay 2 terminates."
 			 },
-		    LI {"The function ", TO "prune", " and ", TO "decompose", " are no longer synonyms of ", TO "minimalPresentation", " and ", TO "minimalPrimes", ",
-			 respectively"
+		    LI {"The function ", TO "prune", " and ", TO "decompose", " are no longer exact
+			 synonyms of ", TO "minimalPresentation", " and ", TO "minimalPrimes", ", respectively."
 			 },
 		    LI {"The function ", TO "get", " has been fixed so it returns an error message if the process associated with the pipe has died."},
 		    LI {"The function ", TO "searchPath", " now does what the documentation said it would do."},
-		    LI {"Comparison of rings and ring maps with ", TO "==", " instead of ", TO "===", " is no longer supported."},
 		    LI {"The output operation ", TT "s<<x", ", when ", TT "s", " is a string, has been changed
 			 so that if a file with filename ", TT "s", " is already open, that file will be used
 			 instead of opening a new file with the same name, erasing the data already written
@@ -326,14 +340,6 @@ document {
 			 },
 		    LI {
 			 "The function ", TO "symmetricAlgebra", " is now functorial."
-			 },
-		    LI {
-			 "The variable ", TT "randomHeight", " has been removed, replaced by 
-			 ", TO [fillMatrix, Height], " and ", TO [random,Height], "."
-			 },
-		    LI {
-			 "The function ", TO betti, " now uses the dot product of the heft vector of the ring with
-			 the (multi)degrees of the basis elements in a chain complex in its display.  See ", TO "heft vectors", "."
 			 }
 		    }
 	       }
