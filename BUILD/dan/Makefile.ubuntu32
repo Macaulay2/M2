@@ -1,10 +1,12 @@
 # -*- Makefile -*-
 # BUILDOPTIONS += RemakeAllDocumentation=true
-BUILDOPTIONS += IgnoreExampleErrors=true
 # BUILDOPTIONS += RemakePackages=true
 # BUILDOPTIONS += RerunExamples=true
 # PACKAGES = Macaulay2Doc
-BUILDOPTIONS += PACKAGES="Polyhedra"
+
+# BUILDOPTIONS += IgnoreExampleErrors=true
+# BUILDOPTIONS += PACKAGES="Polyhedra"
+
 # BUILDOPTIONS += -s
 # INSTALLOPTIONS += -s
 # CONFIGOPTIONS += --enable-tarfile
