@@ -1,5 +1,4 @@
 -- -*- M2-comint -*- {* hash: -1257023276 *}
---loading configuration for package "FourTiTwo" from file /Users/mike/Library/Application Support/Macaulay2/init-FourTiTwo.m2
 
 i1 : A = matrix "1,1,1,1; 1,2,3,4"
 
@@ -11,11 +10,11 @@ o1 : Matrix ZZ  <--- ZZ
 
 i2 : s = temporaryFileName()
 
-o2 = /tmp/M2-72240-1
+o2 = /tmp/M2-23564-1
 
 i3 : F = openOut(s)
 
-o3 = /tmp/M2-72240-1
+o3 = /tmp/M2-23564-1
 
 o3 : File
 
@@ -23,7 +22,7 @@ i4 : putMatrix(F,A)
 
 i5 : close(F)
 
-o5 = /tmp/M2-72240-1
+o5 = /tmp/M2-23564-1
 
 o5 : File
 

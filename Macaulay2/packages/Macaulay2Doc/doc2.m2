@@ -955,20 +955,87 @@ document {
      }
 
 document {
-     Key => {gcd,(gcd, List),(gcd, Sequence),(gcd, QQ, QQ),(gcd, RingElement, RingElement),(gcd, ZZ, QQ),(gcd, QQ, ZZ),(gcd, ZZ, ZZ),
-	  (gcd,RingElement,ZZ),(gcd,ZZ,RingElement)},
+     Key => {gcd,
+	  (gcd, List),
+	  (gcd, Sequence),
+	  (gcd, QQ, QQ),
+	  (gcd, RingElement, RingElement),
+	  (gcd, ZZ, QQ),
+	  (gcd, QQ, ZZ),
+	  (gcd, ZZ, ZZ),
+	  (gcd,RingElement,ZZ),
+	  (gcd,ZZ,RingElement)},
      Headline => "greatest common divisor",
      Usage => "gcd(x,y,...)",
-     Inputs => { "x" => ZZ },
-     Outputs => { ZZ => { "the greatest commond divisor of the arguments" } },
+     Inputs => { "x" => ZZ, ", or ", ofClass QQ, ", or ",ofClass RingElement },
+     Outputs => { ZZ => { ", or ", ofClass QQ, ", or ",ofClass RingElement, ",
+	       the greatest commond divisor of the arguments" } },
      EXAMPLE lines ///
      gcd(12,8,48)
      R = QQ[x,y,z];
      gcd(x^2*y,x*y^3^6)
      gcd(x^36-1,x^24-1)
      ///,
-     SeeAlso => gcdCoefficients
+     SeeAlso => {gcdCoefficients, lcm}
      }
+
+doc ///
+  Key
+    lcm
+    (lcm, List)
+    (lcm, Sequence)
+    (lcm, QQ, QQ)
+    (lcm, RingElement, RingElement)
+    (lcm, ZZ, QQ)
+    (lcm, QQ, ZZ)
+    (lcm, ZZ, ZZ)
+    (lcm,RingElement,ZZ)
+    (lcm,ZZ,RingElement)  
+  Headline
+    least common multiple
+  Usage
+    lcm(x,y,...)
+  Inputs
+    x:RingElement
+      all the elements should be integers, rational numbers or ring elements
+  Outputs
+    m:RingElement
+      the least common multiple of the elements x,y,...
+  Description
+   Example
+     lcm(-6,15,14)
+     lcm(-6/7,15,14)
+     R = QQ[a..d];
+     lcm(a^2-d^2,(a-d)*(b+c))
+     factor oo
+  SeeAlso
+    gcd
+///
+
+doc ///
+  Key
+    (lcm,MonomialIdeal)
+  Headline
+    least common multiple of all minimal generators
+  Usage
+    m = lcm I
+  Inputs
+    I:MonomialIdeal
+  Outputs
+    m:RingElement
+  Description
+   Text
+     This function is implemented in the engine, as it is used in many algorithms involving monomial ideals.
+   Example
+     R = QQ[a..d];
+     I = monomialIdeal"a4,a3b6,a2b8c2,c4d5"
+     lcm I
+     first exponents lcm I
+  SeeAlso
+    (dual,MonomialIdeal)
+    (irreducibleDecomposition,MonomialIdeal)
+    (primaryDecomposition,MonomialIdeal)
+///
 
 document {
      Key => {concatenate,(concatenate, ZZ), (concatenate, BasicList), (concatenate, String), (concatenate, Nothing), (concatenate, Symbol)},

@@ -1,5 +1,4 @@
 -- -*- M2-comint -*- {* hash: -1967764034 *}
---loading configuration for package "FourTiTwo" from file /Users/mike/Library/Application Support/Macaulay2/init-FourTiTwo.m2
 
 i1 : A = matrix "1,1,1,1; 1,2,3,4"
 
