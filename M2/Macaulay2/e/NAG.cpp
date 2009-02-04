@@ -2,6 +2,7 @@
 
 #include "NAG.hpp"
 #include "matrix-con.hpp"
+#include <dlfcn.h>
 
 //                                        CONSTRUCTOR
 complex::complex(double r=0.0f,double im=0.0f)
@@ -146,12 +147,32 @@ StraightLineProgram_OrNull *StraightLineProgram::make(Matrix *m_consts, M2_array
 
 Matrix *StraightLineProgram::evaluate(const Matrix *values)
 {
+  complex out[rows_out*cols_out];
+
   int cur_node = num_consts;
   int i;
   if (values->n_cols() != num_inputs) 
     ERROR("different number of constants expected");
   for(i=0; i<num_inputs; i++, cur_node++)
     nodes[cur_node] = complex(BIGCC_VAL(values->elem(0,i)));
+
+  if(true) {
+  // evaluation via dynamically linked function
+  // input: nodes
+  // output: out
+  char *libname = "/Users/leykin/M2/Macaulay2/packages/NAG/libSLP.dylib";
+  char *funname = "slpFN";
+  void *handle;
+  void (*g)(complex*,complex*);
+  printf("loading slpFN\n");
+  handle = dlopen(libname, RTLD_LAZY | RTLD_GLOBAL);
+  if (handle == NULL) ERROR("can't load library %s", libname);
+  g = (void (*)(complex*,complex*)) dlsym(handle, funname);
+  if (g == NULL) ERROR("can't link function %s from library %s",funname,libname);
+  g(nodes,out);
+  printf("closing slpFN\n");
+  dlclose(handle);
+  } else { // evaluation by interpretation 
   i=4+rows_out*cols_out;
   for(; i<program->len; cur_node++) {
     switch (program->array[i]) {
@@ -176,6 +197,8 @@ Matrix *StraightLineProgram::evaluate(const Matrix *values)
       ERROR("unknown SLP operation");
     }
   }
+  }//end: evaluation by interpretation
+
   evaluated = true;
   const CCC* R = values->get_ring()->cast_to_CCC(); 
   //CCC* R = CCC::create(53); //values->get_ring();
@@ -184,6 +207,16 @@ Matrix *StraightLineProgram::evaluate(const Matrix *values)
   MatrixConstructor mat(T,S);
   mpfr_t re, im;
   mpfr_init(re); mpfr_init(im);
+  if(true){//dynamically linked
+    complex* c = out; 
+    for(i=0; i<rows_out; i++)
+      for(int j=0; j<cols_out; j++,c++) {
+	mpfr_set_d(re, c->getreal(), GMP_RNDN);
+	mpfr_set_d(im, c->getimaginary(), GMP_RNDN);
+	ring_elem e = R->from_BigReals(re,im);
+	mat.set_entry(i,j,e);
+      }
+  } else {//interptretation
   for(i=0; i<rows_out; i++)
   for(int j=0; j<cols_out; j++) {
     complex c = nodes[program->array[i*cols_out+j+4]]; 
@@ -192,6 +225,7 @@ Matrix *StraightLineProgram::evaluate(const Matrix *values)
     ring_elem e = R->from_BigReals(re,im);
     mat.set_entry(i,j,e);
   }
+  }//end: interpretation
   mpfr_clear(re); mpfr_clear(im);
   return mat.to_matrix(); //hmm... how to make a matrix from scratch?
 }

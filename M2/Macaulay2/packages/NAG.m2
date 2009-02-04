@@ -79,12 +79,12 @@ multistepPredictor (QQ,List) := List => (c,s) -> (
      t := symbol t;
      n := #s + 1; -- t_n is the one for which prediction is being made
      R := QQ; -- frac(QQ[h]);        
-     step := 1_R; -- h; WLOG, assume h=1 
+     stp := 1_R; -- h; WLOG, assume h=1 
      t_0 = 0_R;
      scan(n, j->(
-	       t_(j+1) = t_j+step;
+	       t_(j+1) = t_j+stp;
 	       if DBG>3 then << "t_("<< j+1 <<") = " << t_(j+1) << endl;
-	       if j<n-1 then step = c^(s#j)*step;
+	       if j<n-1 then stp = c^(s#j)*stp;
 	       ));
      multistepHash#(c,s) = apply(n, i->(
 	       -- lagrange poly
@@ -109,13 +109,13 @@ multistepPredictorLooseEnd (QQ,List) := List => (c,s) -> (
      n := #s + 2; -- t_n is the one for which prediction is being made
      a := symbol a;
      R := QQ[a];         
-     step := 1_R; -- h; WLOG, assume h=1 
+     stp := 1_R; -- h; WLOG, assume h=1 
      t_0 = 0_R;
      scan(n, j->(
-	       t_(j+1) = t_j+step;
+	       t_(j+1) = t_j+stp;
 	       if DBG>3 then << "t_("<< j+1 <<") = " << t_(j+1) << endl;
-	       step = if j<n-2 then c^(s#j)*step 
-	       else if j==n-2 then a*step;
+	       stp = if j<n-2 then c^(s#j)*stp 
+	       else if j==n-2 then a*stp;
 	       ));
      multistepHashLooseEnd#(c,s) = apply(n, i->(
 	       -- lagrange poly
@@ -1188,11 +1188,72 @@ evaluatePreSLP (Sequence,List) := (S,v)-> (
 	   ));
  matrix apply(entries S#2, r->apply(r, e->val#e))
  )
+
+-- create a file <fn>.cpp with C++ code for the function named fn that evaluates a preSLP S
+-- format:
+--   void fn(const complex* a, complex* b)
+-- here: input array a
+--       output array b 
+preSLPtoCPP = method()
+preSLPtoCPP (Sequence,String) := (S,fn)-> (
+     constants := S#0;
+     slp := S#1;
+     f := openOut(fn | ".cpp");
+     f << ///#include "NAG.hpp"/// << endl;
+     f << "void " << fn << "(const complex* a, complex* b)" << endl  
+     << "{" << endl 
+     << "  complex ii(0,1);" << endl
+     << "  complex c[" << #constants << "]; " << endl
+     << "  complex node[" << #slp << "];" << endl
+     << "  complex* n = node;" << endl; -- current node      
+     -- hardcode the constants
+     scan(#constants, i-> f << "c[" << i << "] = " << constants#i << ";" << endl);
+     scan(#slp, i->(
+	   n := slp#i;
+	   k := first n;
+	   f << "*n = ";
+	   if k === slpCOPY then (
+	   	if class n#1 === Option and n#1#0 == "const" 
+		then f << "c[" << n#1#1 << "];" 
+		else error "unknown node type"; 
+		)  
+	   else if k === slpMULTIsum then (
+		scan(2..1+n#1, j->(
+			  if class n#j === Option and n#j#0 == "const" 
+			  then f << "c[" << n#j#1 << "]"
+			  else if class n#j === ZZ 
+			  then f << "node[" << i+n#j << "]"
+		     	  else error "unknown node type";
+			  if j < 1+n#1 then f << " + ";
+		     	  ));
+		f << ";";
+		)
+	   else if k === slpPRODUCT then (
+		scan(1..2, j->(
+			  if class n#j === Option and n#j#0 == "in" 
+			  then f << "a[" << n#j#1 << "]" 
+			  else if class n#j === ZZ 
+			  then f << "node[" << i+n#j << "]"
+			  else error "unknown node type";
+			  if j < 2 then f << " * "; 
+			  ));
+		f << ";";
+	   	)
+	   else error "unknown SLP node key";   
+	   f << " n++;" << endl
+	   ));
+      f << "  // creating output" << endl << "  n = b;" << endl;
+      scan(flatten entries S#2, e->(
+	   	f << "  *(n++) = node[" << e << "];" << endl 		
+		));
+      f << "}" << endl << close; 	              
+      )
+
 ///
 restart
 loadPackage "NAG"; debug NAG;
 R = CC[x,y,z]
-g = 3*y^2+2*x
+g = 3*y^2+(2.1+ii)*x
 --g = 1 + 2*x^2 + 3*x*y^2 + 4*z^2
 --g = random(3,R)
 pre = poly2preSLP g
@@ -1200,8 +1261,16 @@ g3 = concatPreSLPs {pre,pre,pre}
 g6 = stackPreSLPs {g3,g3}
 eg = evaluatePreSLP(g6,gens R)
 eg_(1,1) == g
-///
+--preSLPtoCPP(g6,"slpFN")
+debug Core
+(constMAT, prog) = fromPreSLP(3,g6)
+rSLP = rawSLP(raw constMAT, prog)
+K = CC_53
+params = matrix{{ii_K,1_K,-1_K}}; 
+result = rawEvaluateSLP(rSLP, raw params)
+sub(g, params) - (map(K,result))_(0,0)
 
+///
 ----------------- SLPs -----------------------------------------------------
 -- SLP = (constants, array of ints)
 -- constants = one-row matrix
