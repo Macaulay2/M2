@@ -12,6 +12,15 @@ scan(keys B, k->print (k=>B#k)) -- CCs of Cech complex BEFORE pruning
 pruneCechComplexCC B 
 scan(keys B, k->if #B#k>0 then print (k=>B#k)) -- ................... AFTER ........
 
+
+W =  QQ[x_1..x_4, a_1..a_4];
+I = minors(2, matrix{{x_1, x_2, x_3}, {x_2, x_3, x_4}});
+cc = {ideal W => 1};
+B = populateCechComplexCC(I,cc)
+scan(keys B, k->print (k=>B#k)) -- CCs of Cech complex BEFORE pruning                                                                 
+pruneCechComplexCC B
+scan(keys B, k->if #B#k>0 then print (k=>B#k)) -- ................... AFTER ........                                                  
+
 -----------------------------------------------------------------------------
 -- Lyubeznik numbers
 

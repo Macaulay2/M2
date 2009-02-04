@@ -1,5 +1,5 @@
 restart
-loadPackage "NAG"; debug NAG;
+loadPackage("NAG", FileName => "../NAG.m2"); debug NAG;
 debug Core
 R = CC[x,y,z]
 

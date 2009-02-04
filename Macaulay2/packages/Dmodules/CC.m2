@@ -14,7 +14,8 @@ grad RingElement := f -> (
 -- processComponent(I,f) --
 -- computes the cotangent bundle of a component Y=V(I) relative to f
 ----------------------------------------------------------------------
--- output: the defining ideal J_f of the bundle
+-- output: (the defining ideal J_f of the bundle, 
+--          the defining ideal of the exceptional set where f|Y is not submersion)
 -- caveat: the correctness is guaranteed ONLY for top-dimensional components 
 --         of the projection of V(J_f) 
 processComponent = method()
@@ -32,7 +33,7 @@ processComponent(Ideal, RingElement)  := (I,f) -> (
      J := I + ideal (matrix{{R_n..R_(2*n-1)}}*(gens K));
      satJf := saturate(J, I0);
      out := satJf + ideal f;
-     out
+     (out,I0)
      );
 ----------------------------------------------------------------------
 -- correctBundle(B,I,f,J) --
@@ -48,11 +49,14 @@ inp -> (
      n := numgens R // 2;
      GRAD := grad f;
      Nspace := GRAD;
-     scan(flatten entries gens I, g-> Nspace = Nspace||grad g);
+     scan(flatten entries gens I, --project radical J, ???  
+	  g-> Nspace = Nspace||grad g);
      nRows := numgens target Nspace;
-
-     Kf := ker map( R^nRows/(J + ideal f), R^n, Nspace);
-     out  := B + ideal (matrix{{R_n..R_(2*n-1)}}*(gens Kf))
+     Kf := ker map( R^nRows/(J
+	       --+ideal f
+	       ), R^n, Nspace);
+     out  := --B + 
+     ideal (matrix{{R_n..R_(2*n-1)}}*(gens Kf))
      );
 
 ---------------------------------------------------------------------
@@ -91,16 +95,18 @@ BMM(Ideal, RingElement) := (I,f) -> (
      if BMMstashedCC#?(I,f) then return BMMstashedCC#(I,f);
      if f % I == 0 then return {};
      comps := {}; toCorrect := {};
-     B := processComponent(I,f);
+     (B,I0) := processComponent(I,f);
      prd := primaryDecomposition B;
      dec := ass B; 
      scan(#dec, i->(
 	 compI := project dec#i;      
 	 projdec := drop(dec,{i,i})/project;
-	 pInfo(3,"Should component "|toString compI|" with "|toString prd#i|" be corrected?");
 	 suspectedMultiplicity := multiplicity@@poincare prd#i // multiplicity@@poincare dec#i;
-	 if suspectedMultiplicity > 1 and any(projdec, c->isSubset(c,compI)) 
-	 then toCorrect = toCorrect | {i} 
+	 if suspectedMultiplicity > 1 and isSubset(I0,compI) -- and any(projdec, c->isSubset(c,compI)) 
+	 then (
+	      pInfo(3,"BMM: Component "|toString compI|" should be corrected");
+	      toCorrect = toCorrect | {i};
+	      ) 
 	 else (  
 	      comps = comps|{compI => suspectedMultiplicity};
 	      )
@@ -109,6 +115,7 @@ BMM(Ideal, RingElement) := (I,f) -> (
 	  i := first toCorrect; toCorrect = drop(toCorrect,1);
      	  compI := project dec#i;
 	  pInfo(3,"Correcting component "|toString compI);
+	  if isSubset(project I0, compI) then pInfo(3, "! it is in the exceptional set !");
 	  -- it suffices to consider supercomponents... 
 	  -- superComp := select(toList(0..#dec-1), j->isSubset(project dec#j,compI));
 	  corB := correctBundle{
@@ -116,6 +123,7 @@ BMM(Ideal, RingElement) := (I,f) -> (
 	       I,f,
 	       project prd#i};
 	  cordec := {dec#i}; -- try localization
+	  pInfo(3, ass corB);
 	  corprd := { localize(corB,dec#i) };
 	  --corprd = primaryDecomposition corB; -- used to compute the whole primary decomposition ... is "localize" stable?
      	  --cordec = ass corB; 
