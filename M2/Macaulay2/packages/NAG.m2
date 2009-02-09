@@ -1062,6 +1062,9 @@ evalPoly (RingElement, List) := (f,x) -> (
 --       multi_operation = {msum, mproduct} 
 --   output_description = Matrix over ZZ
 
+libPREFIX = "/tmp/slpFN.";
+slpCOMPILED = 100;
+slpEND = 0;
 slpCOPY = 1; -- "COPY"; -- node positions for slpCOPY commands are absolute
 slpMULTIsum = 2; -- "MULTIsum";
 slpPRODUCT = 3; -- "PRODUCT";
@@ -1195,23 +1198,26 @@ evaluatePreSLP (Sequence,List) := (S,v)-> (
 -- here: input array a
 --       output array b 
 preSLPtoCPP = method()
-preSLPtoCPP (Sequence,String) := (S,fn)-> (
+preSLPtoCPP (Sequence,String) := (S,filename)-> (
      constants := S#0;
      slp := S#1;
-     f := openOut(fn | ".cpp");
-     f << ///#include "NAG.hpp"/// << endl;
-     f << "void " << fn << "(const complex* a, complex* b)" << endl  
+     fn := "slpFN"; -- function name
+     f := openOut(filename);
+     f << ///#include "complex.hpp"/// << endl
+     << ///#define EXPORT __attribute__((visibility("default")))/// <<endl;
+     f << ///extern "C" EXPORT void /// << fn << "(complex* a, complex* b)" << endl  
      << "{" << endl 
      << "  complex ii(0,1);" << endl
      << "  complex c[" << #constants << "]; " << endl
      << "  complex node[" << #slp << "];" << endl
      << "  complex* n = node;" << endl; -- current node      
      -- hardcode the constants
-     scan(#constants, i-> f << "c[" << i << "] = " << constants#i << ";" << endl);
+     scan(#constants, i-> f << "c[" << i << "] = " << "complex(" <<
+	  realPart constants#i << "," << imaginaryPart constants#i << ");" << endl);
      scan(#slp, i->(
 	   n := slp#i;
 	   k := first n;
-	   f << "*n = ";
+	   f << "  *n = ";
 	   if k === slpCOPY then (
 	   	if class n#1 === Option and n#1#0 == "const" 
 		then f << "c[" << n#1#1 << "];" 
@@ -1279,10 +1285,17 @@ sub(g, params) - (map(K,result))_(0,0)
 --   #inputs 
 --   #rows in output
 --   #columns in output
---   output matrix entries (numbers of nodes) 
+--   #type of program ( or slpINTERPRETED)
+--   if COMPILED then {
+--     slpCOMPILED
+--     dynamic_library_filename: string?
+--   } else {
+--     list of commands
+--     output matrix entries (numbers of nodes) 
+--   }
   
-fromPreSLP = method()
-fromPreSLP (ZZ,Sequence) := (nIns,S) -> (
+preSLPinterpretedSLP = method()
+preSLPinterpretedSLP (ZZ,Sequence) := (nIns,S) -> (
 -- makes input for rawSLP from pre-slp
      consts := S#0;
      slp := S#1;   
@@ -1312,9 +1325,26 @@ fromPreSLP (ZZ,Sequence) := (nIns,S) -> (
 	   else error "unknown SLP node key";   
 	   curNode = curNode + 1;
 	   ));
-     p = {#consts,nIns,numgens target o, numgens source o} 
-         | apply(flatten entries o, e->e+#consts+nIns) 
-	 | p;
+     p = {#consts,nIns,numgens target o, numgens source o} | p | {slpEND}
+	 | apply(flatten entries o, e->e+#consts+nIns); 
+     (map(CC^1,CC^(#consts), {consts}), p)
+     )
+
+preSLPcompiledSLP = method()
+preSLPcompiledSLP (ZZ,Sequence,Thing) := (nIns,S,fname) -> (
+-- makes input for rawSLP from pre-slp
+     consts := S#0;
+     slp := S#1;   
+     o := S#2;
+     curNode = #consts+nIns;
+     p = {#consts,nIns,numgens target o, numgens source o} | {slpCOMPILED}
+          | { fname }; -- "lib_name" 
+     cppName := libPREFIX | toString fname | ".cpp";
+     libName := libPREFIX | toString fname | ".dylib";
+     preSLPtoCPP(S, cppName);
+     compileCommand := "gcc -dynamiclib -o " | libName | " " | cppName;
+     print compileCommand;
+     run(compileCommand);      
      (map(CC^1,CC^(#consts), {consts}), p)
      )
 
