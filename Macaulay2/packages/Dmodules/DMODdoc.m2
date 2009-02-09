@@ -2628,10 +2628,7 @@ document {
 W =  QQ[x_1..x_6, a_1..a_6];
 I = minors(2, matrix{{x_1, x_2, x_3}, {x_4, x_5, x_6}});
 cc = {ideal W => 1};
-B = populateCechComplexCC(I,cc)
-pruneCechComplexCC B 
-scan(keys B, k->if #B#k>0 then print (k=>B#k))
-	  ///,
+///,
      Caveat => {"The module has to be a regular holonomic complex-analytic module; 
 	  while the holomicity can be checked by ", 
 	  TO "isHolonomic", " there is no algorithm to check the regularity."},
@@ -2656,9 +2653,7 @@ document {
 W =  QQ[x_1..x_6, a_1..a_6];
 I = minors(2, matrix{{x_1, x_2, x_3}, {x_4, x_5, x_6}});
 cc = {ideal W => 1};
-B = populateCechComplexCC(I,cc)
-scan(keys B, k->print (k=>B#k)) -- CCs of Cech complex BEFORE pruning
-	  ///,
+///,
      Caveat => {"The module has to be a regular holonomic complex-analytic module; 
 	  while the holomicity can be checked by ", 
 	  TO "isHolonomic", " there is no algorithm to check the regularity."},
