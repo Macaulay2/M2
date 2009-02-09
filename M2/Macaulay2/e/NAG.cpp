@@ -5,7 +5,9 @@
 #include <dlfcn.h>
 
 //                                        CONSTRUCTOR
-complex::complex(double r=0.0f,double im=0.0f)
+complex::complex() { }
+
+complex::complex(double r, double im)
 {
   real=r;
   imag=im;
@@ -136,11 +138,19 @@ StraightLineProgram_OrNull *StraightLineProgram::make(Matrix *m_consts, M2_array
     res->rows_out = program->array[2];
     res->cols_out = program->array[3];
     res->program = program;
-    res->nodes = newarray(complex, program->len+res->num_consts+res->num_inputs);
+    res->is_compiled = (program->array[4] == slpCOMPILED);
+    if (res->is_compiled) {
+      // nodes = constants + input
+      res->nodes = newarray(complex, res->num_consts + res->num_inputs);
+      res->lib_name = new char[10];
+      sprintf(res->lib_name, "%d", program->array[5]);
+    } else {
+      res->lib_name = NULL;
+      res->nodes = newarray(complex, program->len+res->num_consts+res->num_inputs);
+    }
     for (int i=0; i<res->num_consts; i++) { 
       res->nodes[i] = complex(BIGCC_VAL(m_consts->elem(0,i)));
     }
-    res->evaluated = false;
   }
   return res;
 }
@@ -148,6 +158,7 @@ StraightLineProgram_OrNull *StraightLineProgram::make(Matrix *m_consts, M2_array
 Matrix *StraightLineProgram::evaluate(const Matrix *values)
 {
   complex out[rows_out*cols_out];
+  int out_entries_shift; // position of "out matrix"
 
   int cur_node = num_consts;
   int i;
@@ -156,50 +167,51 @@ Matrix *StraightLineProgram::evaluate(const Matrix *values)
   for(i=0; i<num_inputs; i++, cur_node++)
     nodes[cur_node] = complex(BIGCC_VAL(values->elem(0,i)));
 
-  if(true) {
-  // evaluation via dynamically linked function
-  // input: nodes
-  // output: out
-  char *libname = "/Users/leykin/M2/Macaulay2/packages/NAG/libSLP.dylib";
-  char *funname = "slpFN";
-  void *handle;
-  void (*g)(complex*,complex*);
-  printf("loading slpFN\n");
-  handle = dlopen(libname, RTLD_LAZY | RTLD_GLOBAL);
-  if (handle == NULL) ERROR("can't load library %s", libname);
-  g = (void (*)(complex*,complex*)) dlsym(handle, funname);
-  if (g == NULL) ERROR("can't link function %s from library %s",funname,libname);
-  g(nodes,out);
-  printf("closing slpFN\n");
-  dlclose(handle);
+  if(is_compiled) {
+    // evaluation via dynamically linked function
+    // input: nodes
+    // output: out
+    char libname[100]; 
+    sprintf(libname, "%s%s.dylib", libPREFIX, lib_name);
+    char *funname = "slpFN";
+    void *handle;
+    void (*g)(complex*,complex*);
+    printf("loading slpFN from %s\n", libname);
+    handle = dlopen(libname, RTLD_LAZY | RTLD_GLOBAL);
+    if (handle == NULL) ERROR("can't load library %s", libname);
+    g = (void (*)(complex*,complex*)) dlsym(handle, funname);
+    if (g == NULL) ERROR("can't link function %s from library %s",funname,libname);
+    g(nodes+num_consts,out);
+    printf("closing %s\n", libname);
+    dlclose(handle);
   } else { // evaluation by interpretation 
-  i=4+rows_out*cols_out;
-  for(; i<program->len; cur_node++) {
-    switch (program->array[i]) {
-    case slpCOPY: 
-      nodes[cur_node] = nodes[program->array[(++i)++]];
-      break;
-    case slpMULTIsum: 
-      {	
-	int n_summands = program->array[i+1];
-	nodes[cur_node] = (n_summands>0) ?  // create a temp var?  
-	  nodes[program->array[i+2]] : complex(); // zero if empty sum
-	for(int j=1; j<n_summands; j++)
-	  nodes[cur_node] = nodes[cur_node]+nodes[program->array[i+j+2]];
-	i += n_summands+2; 
+    i=4;
+    for(; program->array[i] != slpEND; cur_node++) {
+      switch (program->array[i]) {
+      case slpCOPY: 
+	nodes[cur_node] = nodes[program->array[(++i)++]];
+	break;
+      case slpMULTIsum: 
+	{	
+	  int n_summands = program->array[i+1];
+	  nodes[cur_node] = (n_summands>0) ?  // create a temp var?  
+	    nodes[program->array[i+2]] : complex(); // zero if empty sum
+	  for(int j=1; j<n_summands; j++)
+	    nodes[cur_node] = nodes[cur_node]+nodes[program->array[i+j+2]];
+	  i += n_summands+2; 
+	}
+	break;
+      case slpPRODUCT:
+	nodes[cur_node] = nodes[program->array[i+1]] * nodes[program->array[i+2]];
+	i+=3;
+	break;
+      default:
+	ERROR("unknown SLP operation");
       }
-      break;
-    case slpPRODUCT:
-      nodes[cur_node] = nodes[program->array[i+1]] * nodes[program->array[i+2]];
-      i+=3;
-      break;
-    default:
-      ERROR("unknown SLP operation");
     }
-  }
+    out_entries_shift = i+1;
   }//end: evaluation by interpretation
 
-  evaluated = true;
   const CCC* R = values->get_ring()->cast_to_CCC(); 
   //CCC* R = CCC::create(53); //values->get_ring();
   FreeModule* S = R->make_FreeModule(cols_out); 
@@ -207,7 +219,7 @@ Matrix *StraightLineProgram::evaluate(const Matrix *values)
   MatrixConstructor mat(T,S);
   mpfr_t re, im;
   mpfr_init(re); mpfr_init(im);
-  if(true){//dynamically linked
+  if(is_compiled){//dynamically linked
     complex* c = out; 
     for(i=0; i<rows_out; i++)
       for(int j=0; j<cols_out; j++,c++) {
@@ -217,17 +229,17 @@ Matrix *StraightLineProgram::evaluate(const Matrix *values)
 	mat.set_entry(i,j,e);
       }
   } else {//interptretation
-  for(i=0; i<rows_out; i++)
-  for(int j=0; j<cols_out; j++) {
-    complex c = nodes[program->array[i*cols_out+j+4]]; 
-    mpfr_set_d(re, c.getreal(), GMP_RNDN);
-    mpfr_set_d(im, c.getimaginary(), GMP_RNDN);
-    ring_elem e = R->from_BigReals(re,im);
-    mat.set_entry(i,j,e);
-  }
+    for(i=0; i<rows_out; i++)
+      for(int j=0; j<cols_out; j++) {
+	complex c = nodes[program->array[i*cols_out+j+out_entries_shift]]; 
+	mpfr_set_d(re, c.getreal(), GMP_RNDN);
+	mpfr_set_d(im, c.getimaginary(), GMP_RNDN);
+	ring_elem e = R->from_BigReals(re,im);
+	mat.set_entry(i,j,e);
+      }
   }//end: interpretation
   mpfr_clear(re); mpfr_clear(im);
-  return mat.to_matrix(); //hmm... how to make a matrix from scratch?
+  return mat.to_matrix(); 
 }
 
 void StraightLineProgram::text_out(buffer& o) const
@@ -235,7 +247,7 @@ void StraightLineProgram::text_out(buffer& o) const
   o<<"CONSTANT (count = "<< num_consts;
   o<<") nodes:\n";
   int cur_node = 0;
-  int i;
+  int i,j;
   for(i=0; i<num_consts; i++, cur_node++) {
     char s[100];
     nodes[cur_node].sprint(s);
@@ -246,11 +258,13 @@ void StraightLineProgram::text_out(buffer& o) const
   for(i=0; i<num_inputs; i++, cur_node++)
     o << cur_node << " ";
   o<<newline;   
-  o<<"OUTPUT ("<< rows_out << "x" << cols_out << ") nodes:\n";
-  for(i=4; i<4+cols_out*rows_out; i++)
-    o << program->array[i] << " ";
-  o<<newline;   
-  for(; i<program->len; cur_node++) {
+  if (is_compiled) {
+    o << "library = " << lib_name << newline;
+    return;
+  }
+
+  // if !is_compile
+  for(; program->array[i] != slpEND; cur_node++) {
     o<<cur_node<<" => ";
     switch (program->array[i]) {
     case slpCOPY: 
@@ -272,15 +286,13 @@ void StraightLineProgram::text_out(buffer& o) const
     }
     o<<newline;
   }
-  
-  if (evaluated) {
-    o<<"NODES\n";
-    for(i=0; i<program->len; i++){
-      char s[100];
-      nodes[i].sprint(s);
-      o<<"node["<< i <<"] = " << s << newline;
-    }
-  }
+  int out_shift = i+1;
+  o<<"OUTPUT ("<< rows_out << "x" << cols_out << ") nodes:\n";
+  for(i=0; i<rows_out; i++){
+    for(j=0; j<cols_out; j++)
+      o << program->array[out_shift+i*cols_out+j] << " ";
+    o<<newline;
+  }   
 }
 
 // Local Variables:

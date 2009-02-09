@@ -13,6 +13,7 @@ private:
   double real;  // Real Part
   double imag;      //  Imaginary Part                                                                                                       
 public:
+  complex();
   complex(double,double);
   complex(const complex&);
   complex(M2_CCC);
@@ -32,6 +33,9 @@ public:
 
 // see ../packages/NAG.m2 for the description of the structure of SLPs
 
+#define libPREFIX "/tmp/slpFN."
+#define slpCOMPILED 100
+#define slpEND 0
 #define slpCOPY 1
 #define slpMULTIsum 2
 #define slpPRODUCT 3
@@ -41,13 +45,14 @@ class StraightLineProgram : public object
   M2_arrayint program;
   complex* nodes; // array of CCs
   int num_consts, num_inputs, rows_out, cols_out;
-  bool evaluated;
+  bool is_compiled; //compiled and dynamically linked
+  char* lib_name;
   long precision;
 
   StraightLineProgram();
 public:
   static StraightLineProgram_OrNull *make(Matrix *consts, M2_arrayint program);
-  virtual ~StraightLineProgram() {}
+  virtual ~StraightLineProgram() { delete lib_name; }
   
   void text_out(buffer& o) const;
 
