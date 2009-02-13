@@ -1,0 +1,12 @@
+not wrong, or wrong in a different sense:
+
+     The following is WRONG.  In this local ring, $y$ is in the ideal $J$.
+
+     +-----------+
+     |i10 : y % J|
+     |           |
+     |o10 = 0    |
+     |           |
+     |o10 : R    |
+     +-----------+
+
