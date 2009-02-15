@@ -1,7 +1,7 @@
 restart
 loadPackage ("NAG", FileName=>"../NAG.m2", 
      Configuration=>{"PHCpack"=>"./phc", "Bertini"=>"./bertini", "HOM4PS2"=>"./hom4ps2_in_out"})
---debug Core; 
+debug Core; 
 debug NAG; DBG = 10; printingPrecision = 20; 
 load "benchmarks.m2"
 
