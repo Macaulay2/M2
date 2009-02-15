@@ -28,7 +28,7 @@ export {
      Projectivize,
      AffinePatches, DynamicPatch,
      RandomSeed,
-     SLP, HornerForm     
+     SLP, HornerForm, CompiledHornerForm     
      }
 exportMutable {
      }
@@ -154,7 +154,7 @@ track = method(TypicalValue => List, Options =>{
 	  AffinePatches => DynamicPatch,
 	  RandomSeed => 0,
 	  -- slp's 
-	  SLP => null -- possible values: SLP=>HornerForm 	  
+	  SLP => null -- possible values: HornerForm, CompiledHornerForm 	  
 	  } )
 track (List,List,List) := List => o -> (S,T,solsS) -> (
 -- tracks solutions from start system to target system
@@ -167,7 +167,7 @@ track (List,List,List) := List => o -> (S,T,solsS) -> (
      if n > 0 then R := ring first T else error "expected nonempty target system";
      if #S != n then 
      error "expected same number of polynomials in start and target systems";
-     if any(S, f->ring f != R) or any(T, f->ring f != R)
+     if any(S, f->ring f =!= R) or any(T, f->ring f =!= R)
      then error "expected all polynomials in the same ring";
      if o.tStep <= 0 then "expected positive tStep";  
 
@@ -308,9 +308,9 @@ track (List,List,List) := List => o -> (S,T,solsS) -> (
      Ht := JH_{n};
      
      -- evaluation functions
-     if o.SLP === HornerForm then (
+     if o.SLP === HornerForm or o.SLP === CompiledHornerForm then (
 	  slpMatrix := M -> (
-	       (constMAT, prog) = fromPreSLP( numgens ring M, 
+	       (constMAT, prog) = (if o.SLP === HornerForm then preSLPinterpretedSLP else preSLPcompiledSLP)( numgens ring M, 
 		    stackPreSLPs apply(entries M, row -> concatPreSLPs apply(row, poly2preSLP)) );
 	       rawSLP(raw constMAT, prog)
 	       );  
