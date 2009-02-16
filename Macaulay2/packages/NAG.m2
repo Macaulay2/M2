@@ -412,11 +412,11 @@ track (List,List,List) := List => o -> (S,T,solsS) -> (
 			 )
 		    else if o.Predictor == RungeKutta4 then (
 			 dt = min(tStep, 1-t0);
-			 k1 := dt*evalMinusInverseHxHt(x0,t0);
-			 k2 := dt*evalMinusInverseHxHt(x0+.5*k1,t0+.5*dt);
-			 k3 := dt*evalMinusInverseHxHt(x0+.5*k2,t0+.5*dt);
-			 k4 := dt*evalMinusInverseHxHt(x0+k3,t0+dt);
-			 dx = (1/6)*(k1+2*k2+2*k3+k4);
+			 k1 := evalMinusInverseHxHt(x0,t0);
+			 k2 := evalMinusInverseHxHt(x0+.5*k1,t0+.5*dt);
+			 k3 := evalMinusInverseHxHt(x0+.5*k2,t0+.5*dt);
+			 k4 := evalMinusInverseHxHt(x0+k3,t0+dt);
+			 dx = (1/6)*(k1+2*k2+2*k3+k4)*dt;     
 			 )
 		    else if o.Predictor == Multistep then (
      	       	    	 history#count#"rhsODE" = evalMinusInverseHxHt(x0,t0);
@@ -1060,14 +1060,14 @@ evalPoly (RingElement, List) := (f,x) -> (
 -- 	    or in => i (refers to i-th input) 
 --       binary_operation = {sum, product}
 --       multi_operation = {msum, mproduct} 
---   output_description = Matrix over ZZ
+--   output_description = Matrix over ZZ (each entry refers to a node)
 
 libPREFIX = "/tmp/slpFN.";
 slpCOMPILED = 100;
 slpEND = 0;
-slpCOPY = 1; -- "COPY"; -- node positions for slpCOPY commands are absolute
-slpMULTIsum = 2; -- "MULTIsum";
-slpPRODUCT = 3; -- "PRODUCT";
+slpCOPY = "COPY"; -- node positions for slpCOPY commands are absolute
+slpMULTIsum = "MULTIsum";
+slpPRODUCT = "PRODUCT";
 shiftConstsSLP = method(TypicalValue=>List);
 shiftConstsSLP (List,ZZ) := (slp,shift) -> apply(slp, 
      n->apply(n, b->
@@ -1158,7 +1158,7 @@ stackPreSLPs List := S -> (
      (c,p,o)
      );
      
-evaluatePreSLP = method()
+evaluatePreSLP = method() -- evaluates preSLP S at v
 evaluatePreSLP (Sequence,List) := (S,v)-> (
      val := {};
      constants := S#0;
@@ -1181,7 +1181,8 @@ evaluatePreSLP (Sequence,List) := (S,v)-> (
 	   else if k === slpPRODUCT then (
 		val = val | { 
 		     product(1..2, j->(
-          		       if class n#j === Option and n#j#0 == "in" then v#(n#j#1)
+          		       if class n#j === Option and n#j#0 == "const" then constants#(n#j#1)
+			       else if class n#j === Option and n#j#0 == "in" then v#(n#j#1)
 			       else if class n#j === ZZ then val#(i+n#j)
 			       else error "unknown node type" 
 			       ))
@@ -1191,6 +1192,87 @@ evaluatePreSLP (Sequence,List) := (S,v)-> (
 	   ));
  matrix apply(entries S#2, r->apply(r, e->val#e))
  )
+
+jacobianPreSLP = method() -- finds jacobian of S with respect to inputs listed in L
+jacobianPreSLP (Sequence, List) := (S,L) -> (  
+     constants := S#0 | {1_CC};
+     slp := S#1;
+     outMatrix := S#2;
+     if numgens target outMatrix != 1 then error "preSLP: row vector expected";
+     diffNodeVar := (ni,vj)->( 
+	  -- augments slp with nodes necessary to differentiate node #ni w.r.t. input #vj 
+	  -- output: the (absolute) position of the result in slp (or -1 "zero")
+	  n := slp#ni;
+	  k := first n;
+	  if k === slpCOPY then (
+	       if class n#1 === Option and n#1#0 == "const" 
+	       then return -1 -- "zero"
+	       else error "unknown node type"; 
+	       )  
+	  else if k === slpMULTIsum then (
+	       pos := toList apply(2..1+n#1, j->if class n#j === Option and n#j#0 == "const" then -1 -- "zero"
+		    else if class n#j === ZZ then diffNodeVar(ni+n#j,vj)
+		    else error "unknown node type" 
+		    );
+	       summands := select(pos, p->p!=-1);
+	       if #summands == 0 then return -1 -- "zero"
+	       else if #summands == 1 then return first summands
+	       else (
+		    slp = slp | {{slpMULTIsum,#summands} | apply(summands, i->i-#slp)};
+		    return (#slp-1);
+		    )
+	       )
+	   else if k === slpPRODUCT then (
+	       pos = toList apply(1..2, j->(
+			 if class n#j === Option and n#j#0 == "in" then (
+			      if n#j#1 == vj then ( 
+     	       	    	      	   slp = slp | {{slpPRODUCT}|
+					toList apply(1..2, t->if t==j 
+					     then "const"=> #constants-1 -- "one"
+					     else (
+						  if class n#t === ZZ then ni+n#t-#slp
+					     	  else n#t
+						  )
+					     )};
+				   (#slp-1)
+				   )
+			      else -1 -- "zero"
+			      )
+			 else if class n#j === ZZ then (
+			      p:=diffNodeVar(ni+n#j,vj);
+			      if p==-1 then -1 -- "zero"
+			      else (
+			      	   slp = slp | {
+				   	{slpPRODUCT}|
+				   	toList apply(1..2, t->
+					     if t==j 
+					     then p-#slp 
+					     else (
+					     	  if class n#t === ZZ then ni+n#t-#slp
+					     	  else n#t
+					     	  )
+					     )};
+			      	   (#slp-1)
+				   )
+			      )
+			 else error "unknown node type" 
+			 ));
+	       summands = select(pos, p->p!=-1);
+	       if #summands == 0 then return -1 -- "zero"
+	       else if #summands == 1 then return first summands
+	       else (
+		    slp = slp | {{slpMULTIsum,#summands} | apply(summands, p->p-#slp)};
+		    return (#slp-1);
+		    )
+	       )
+	   else error "unknown SLP node key";   
+	  ); 
+     newOut := transpose matrix apply(first entries outMatrix, ni->apply(L, vj->diffNodeVar(ni,vj)));
+     constants = constants | {0_CC};
+     slp = slp | {{slpCOPY, "const"=>#constants-1}};
+     ( constants, slp,  
+	 matrix apply(entries newOut, row->apply(row, i->if i==-1 then (#slp-1) else i)) ) 
+     );
 
 -- create a file <fn>.cpp with C++ code for the function named fn that evaluates a preSLP S
 -- format:
