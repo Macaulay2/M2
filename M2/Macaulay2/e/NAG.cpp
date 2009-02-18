@@ -120,6 +120,15 @@ void complex::sprint(char* s)
 
 StraightLineProgram::StraightLineProgram()
 {
+  handle = NULL;
+}
+
+StraightLineProgram::~StraightLineProgram()
+{ 
+  if (handle!=NULL) {
+    printf("closing library\n");
+    dlclose(handle);
+  }
 }
 
 StraightLineProgram_OrNull *StraightLineProgram::make(Matrix *m_consts, M2_arrayint program)
@@ -142,10 +151,15 @@ StraightLineProgram_OrNull *StraightLineProgram::make(Matrix *m_consts, M2_array
     if (res->is_compiled) {
       // nodes = constants + input
       res->nodes = newarray(complex, res->num_consts + res->num_inputs);
-      res->lib_name = new char[10];
-      sprintf(res->lib_name, "%d", program->array[5]);
+      char libname[100]; 
+      sprintf(libname, "%s%d.dylib", libPREFIX, program->array[5]);
+      char *funname = "slpFN";
+      printf("loading slpFN from %s\n", libname);
+      res->handle = dlopen(libname, RTLD_LAZY | RTLD_GLOBAL);
+      if (res->handle == NULL) ERROR("can't load library %s", libname);
+      res->compiled_fn = (void (*)(complex*,complex*)) dlsym(res->handle, funname);
+      if (res->compiled_fn == NULL) ERROR("can't link function %s from library %s",funname,libname);
     } else {
-      res->lib_name = NULL;
       res->nodes = newarray(complex, program->len+res->num_consts+res->num_inputs);
     }
     for (int i=0; i<res->num_consts; i++) { 
@@ -169,21 +183,9 @@ Matrix *StraightLineProgram::evaluate(const Matrix *values)
 
   if(is_compiled) {
     // evaluation via dynamically linked function
-    // input: nodes
+    // input: nodes (shifted by number of consts)
     // output: out
-    char libname[100]; 
-    sprintf(libname, "%s%s.dylib", libPREFIX, lib_name);
-    char *funname = "slpFN";
-    void *handle;
-    void (*g)(complex*,complex*);
-    printf("loading slpFN from %s\n", libname);
-    handle = dlopen(libname, RTLD_LAZY | RTLD_GLOBAL);
-    if (handle == NULL) ERROR("can't load library %s", libname);
-    g = (void (*)(complex*,complex*)) dlsym(handle, funname);
-    if (g == NULL) ERROR("can't link function %s from library %s",funname,libname);
-    g(nodes+num_consts,out);
-    printf("closing %s\n", libname);
-    dlclose(handle);
+    compiled_fn(nodes+num_consts,out);
   } else { // evaluation by interpretation 
     i=4;
     for(; program->array[i] != slpEND; cur_node++) {
@@ -259,7 +261,7 @@ void StraightLineProgram::text_out(buffer& o) const
     o << cur_node << " ";
   o<<newline;   
   if (is_compiled) {
-    o << "library = " << lib_name << newline;
+    o << "SLP is precompiled = " << newline;
     return;
   }
 
@@ -273,7 +275,7 @@ void StraightLineProgram::text_out(buffer& o) const
     case slpMULTIsum:
       {	o<<"sum";
 	int n_summands = program->array[i+1];
-	for(int j=0; j<n_summands; j++)
+	for(j=0; j<n_summands; j++)
 	  o<<" "<<program->array[i+j+2];
 	i += n_summands+2; }
       break;

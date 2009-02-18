@@ -26,10 +26,11 @@ result = rawEvaluateSLP(rSLP, raw params)
 sub(g, params) - (map(K,result))_(0,0)
 
 -- test compiled SLP -------------------------------------------------------
-(constMAT, prog) = preSLPcompiledSLP(3,g3,1) -- "1" = part of library's name
+(constMAT, prog) = preSLPcompiledSLP(3,g3) 
 rSLP = rawSLP(raw constMAT, prog)
 K = CC_53
 params = matrix{{ii_K,1_K,-1_K}}; 
 result = rawEvaluateSLP(rSLP, raw params)
-sub(g, params) - (map(K,result))_(0,0)
-
+KK = CC_1000;
+sub(sub(g,KK[gens R]), sub(params,KK)) - (map(K,result))_(0,0)
+evaluatePreSLP(preG, first entries params) - (map(K,result))_(0,0)

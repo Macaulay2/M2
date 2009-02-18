@@ -42,6 +42,7 @@ BERTINIexe = NAG#Options#Configuration#"Bertini";
 HOM4PS2exe = NAG#Options#Configuration#"HOM4PS2";
 
 DBG = 0; -- debug level (10=keep temp files)
+SLPcounter = 0; -- the number of compiled SLPs (used in naming dynamic libraries)
 
 -- CONVENTIONS ---------------------------------------
 
@@ -323,13 +324,13 @@ track (List,List,List) := List => o -> (S,T,solsS) -> (
 	       );
 	  );
      evalH := (x0,t0)-> (
-	  if o.SLP === HornerForm then r := transpose fromSlpMatrix(slpH, transpose x0 | matrix {{t0}})
+	  if o.SLP === HornerForm or o.SLP === CompiledHornerForm then r := transpose fromSlpMatrix(slpH, transpose x0 | matrix {{t0}})
      	  else if o.SLP === null then  r = lift(sub(transpose H, transpose x0 | matrix {{t0}}), K);
 	  if dPatch === null then r
 	  else r || matrix{{(dPatch*x0)_(0,0)-1}} -- patch equation evaluated  
 	  );
      evalHxNoPatch := (x0,t0)-> (
-	  if o.SLP === HornerForm then fromSlpMatrix(slpHx, transpose x0 | matrix {{t0}})
+	  if o.SLP === HornerForm or o.SLP === CompiledHornerForm then fromSlpMatrix(slpHx, transpose x0 | matrix {{t0}})
      	  else if o.SLP === null then lift(sub(Hx, transpose x0 | matrix {{t0}}), K)
 	  else error "unknown SLP option"
 	  );  
@@ -339,12 +340,13 @@ track (List,List,List) := List => o -> (S,T,solsS) -> (
 	  else r || matrix { flatten entries dPatch }
 	  );  
      evalHt := (x0,t0)-> (
-	  if o.SLP === HornerForm then r := fromSlpMatrix(slpHt, transpose x0 | matrix {{t0}})
+	  if o.SLP === HornerForm or o.SLP === CompiledHornerForm then r := fromSlpMatrix(slpHt, transpose x0 | matrix {{t0}})
      	  else if o.SLP === null then r= lift(sub(Ht, transpose x0 | matrix {{t0}}), K);
 	  if dPatch === null then r
 	  else r || matrix {{0_K}}
 	  );
      evalMinusInverseHxHt := (x0,t0)-> -(inverse evalHx(x0,t0))*evalHt(x0,t0);
+     solveHxTimesDXequalsMinusHt := (x0,t0) -> solve(evalHx(x0,t0),-evalHt(x0,t0)); 
           
      -- threshholds and other tuning parameters (should include most of them as options)
      epsilon := 1e-5; -- tracking tolerance (universal)
@@ -375,11 +377,14 @@ track (List,List,List) := List => o -> (S,T,solsS) -> (
 		    --	 );
 
 		    -- predictor step
+		    if DBG>9 then << ">>> predictor" << endl;
 		    local dx; local dt;
      	       	    if dPatch =!= null then ( -- generate dynamic patch
+			 if DBG>9 then << "dynamic patch... ";
 			 HxNoPatch := evalHxNoPatch(x0,t0);
 			 -- patch = conjugate of the normalized kernel vector 
 			 dPatch = matrix{ flatten entries normalize transpose gens ker HxNoPatch / conjugate };
+			 if DBG>9 then << "generated" << endl;
 			 );   
 		    if o.Predictor == Tangent then (
 		    	 Hx0 := evalHx(x0,t0);
@@ -396,9 +401,8 @@ track (List,List,List) := List => o -> (S,T,solsS) -> (
 			 H0 := evalH(x0,t0);
 			 Hx0 = evalHx(x0,t0);
 			 Ht0 = evalHt(x0,t0);
-	     	    	 invHx0 = inverse Hx0;
 			 dt = min(tStep, 1-t0);
-			 dx = -invHx0*(H0+Ht0*dt);
+			 dx = solve(Hx0, -H0-Ht0*dt);
 			 )
 		    else if o.Predictor == Secant then (
 			 dt = min(tStep, 1-t0);
@@ -412,11 +416,16 @@ track (List,List,List) := List => o -> (S,T,solsS) -> (
 			 )
 		    else if o.Predictor == RungeKutta4 then (
 			 dt = min(tStep, 1-t0);
-			 k1 := evalMinusInverseHxHt(x0,t0);
-			 k2 := evalMinusInverseHxHt(x0+.5*k1,t0+.5*dt);
-			 k3 := evalMinusInverseHxHt(x0+.5*k2,t0+.5*dt);
-			 k4 := evalMinusInverseHxHt(x0+k3,t0+dt);
-			 dx = (1/6)*(k1+2*k2+2*k3+k4)*dt;     
+			 --k1 := evalMinusInverseHxHt(x0,t0);
+			 --k2 := evalMinusInverseHxHt(x0+.5*k1,t0+.5*dt);
+			 --k3 := evalMinusInverseHxHt(x0+.5*k2,t0+.5*dt);
+			 --k4 := evalMinusInverseHxHt(x0+k3,t0+dt);
+			 --dx = (1/6)*(k1+2*k2+2*k3+k4)*dt;     
+			 dx1 := solveHxTimesDXequalsMinusHt(x0,t0);
+			 dx2 := solveHxTimesDXequalsMinusHt(x0+.5*dx1*dt,t0+.5*dt);
+			 dx3 := solveHxTimesDXequalsMinusHt(x0+.5*dx2*dt,t0+.5*dt);
+			 dx4 := solveHxTimesDXequalsMinusHt(x0+dx3*dt,t0+dt);
+			 dx = (1/6)*dt*(dx1+2*dx2+2*dx3+dx4);     
 			 )
 		    else if o.Predictor == Multistep then (
      	       	    	 history#count#"rhsODE" = evalMinusInverseHxHt(x0,t0);
@@ -470,6 +479,7 @@ track (List,List,List) := List => o -> (S,T,solsS) -> (
 		    x1 := x0 + dx;
 		    
 		    -- corrector step
+		    if DBG>9 then << ">>> corrector" << endl;
 		    dx = 1; -- dx = + infinity
 		    nCorSteps := 0;
 		    while norm dx > epsilon 
@@ -479,10 +489,12 @@ track (List,List,List) := List => o -> (S,T,solsS) -> (
 		    do ( 
 			 if norm x1 > divThresh then (error "infinity"; x1 = infinity; break);
 			 if DBG > 4 then << "x=" << toString x1 << " res=" <<  toString evalH(x1,t1) << " dx=" << dx << endl;
-			 dx = - (inverse evalHx(x1,t1))*evalH(x1,t1);
+			 -- dx = - (inverse evalHx(x1,t1))*evalH(x1,t1);
+			 dx = solve(evalHx(x1,t1), -evalH(x1,t1));
 			 x1 = x1 + dx;
 			 nCorSteps = nCorSteps + 1;
 			 );
+		    if DBG>9 then << ">>> step adjusting" << endl;
 		    if dt > o.tStepMin and nCorSteps == o.maxCorSteps then ( -- predictor failure 
 			 predictorSuccesses = 0;
 			 stepAdj = stepAdj - 1;
@@ -507,20 +519,17 @@ track (List,List,List) := List => o -> (S,T,solsS) -> (
 			 else stepAdj = 0; -- keep the same step size
 			 );
 		    );        	    
-	       (x0,symbol nSteps=>count)
+	       (x0,symbol nSteps=>count, new HashTable from history)
 	       ));
      
      if o.Projectivize then (
 	  if DBG>3 then print rawSols;
-	  return select(
-	       apply(select(rawSols,s -> first s =!= infinity), s->(
-		    	 s' = flatten entries first s;
-		    	 --if norm(last s) < epsilon then infinity 
-		    	 --else 
-			 (apply(drop(s',-1),u->(1/last s')*u),s#1)
-			 )
-	       	    ),
-	       s->s=!=infinity);
+	  return apply(rawSols, s->(
+		    s' = flatten entries first s;
+		    --if norm(last s) < epsilon then infinity 
+		    --else 
+		    {apply(drop(s',-1),u->(1/last s')*u)} | drop(toList s, 1)
+	       	    ));
 	  )
      else (
 	  return select(rawSols,s -> first s =!= infinity)/(s->(flatten entries first s, s#1));
@@ -1065,9 +1074,9 @@ evalPoly (RingElement, List) := (f,x) -> (
 libPREFIX = "/tmp/slpFN.";
 slpCOMPILED = 100;
 slpEND = 0;
-slpCOPY = "COPY"; -- node positions for slpCOPY commands are absolute
-slpMULTIsum = "MULTIsum";
-slpPRODUCT = "PRODUCT";
+slpCOPY = 1; --"COPY"; -- node positions for slpCOPY commands are absolute
+slpMULTIsum = 2; --"MULTIsum";
+slpPRODUCT = 3; --"PRODUCT";
 shiftConstsSLP = method(TypicalValue=>List);
 shiftConstsSLP (List,ZZ) := (slp,shift) -> apply(slp, 
      n->apply(n, b->
@@ -1285,7 +1294,140 @@ preSLPtoCPP (Sequence,String) := (S,filename)-> (
      slp := S#1;
      fn := "slpFN"; -- function name
      f := openOut(filename);
-     f << ///#include "complex.hpp"/// << endl
+     f << ///
+#include<stdio.h>
+#include<math.h>
+
+class complex
+{
+private:
+  double real;  // Real Part
+  double imag;      //  Imaginary Part                                                                                                       
+public:
+  complex();
+  complex(double,double);
+  complex(const complex&);
+  //complex(M2_CCC);
+  complex operator +(complex);
+  complex operator -(complex);
+  complex operator *(complex);
+  complex operator /(complex);
+  complex getconjugate();
+  complex getreciprocal();
+  double getmodulus();
+  double getreal();
+  double getimaginary();
+  bool operator ==(complex);
+  void operator =(complex);
+  void sprint(char*);
+};
+
+//                                        CONSTRUCTOR
+complex::complex() { }
+
+complex::complex(double r, double im)
+{
+  real=r;
+  imag=im;
+}
+ 
+//                                 COPY CONSTRUCTOR
+complex::complex(const complex &c)
+{
+  this->real=c.real;
+  this->imag=c.imag;
+}
+ 
+void complex::operator =(complex c)
+{
+  real=c.real;
+  imag=c.imag;
+}
+ 
+ 
+complex complex::operator +(complex c)
+{
+  complex tmp;
+  tmp.real=this->real+c.real;
+  tmp.imag=this->imag+c.imag;
+  return tmp;
+}
+ 
+complex complex::operator -(complex c)
+{
+  complex tmp;
+  tmp.real=this->real - c.real;
+  tmp.imag=this->imag - c.imag;
+  return tmp;
+}
+ 
+complex complex::operator *(complex c)
+{
+  complex tmp;
+  tmp.real=(real*c.real)-(imag*c.imag);
+  tmp.imag=(real*c.imag)+(imag*c.real);
+  return tmp;
+}
+ 
+complex complex::operator /(complex c)
+{
+  double div=(c.real*c.real) + (c.imag*c.imag);
+  complex tmp;
+  tmp.real=(real*c.real)+(imag*c.imag);
+  tmp.real/=div;
+  tmp.imag=(imag*c.real)-(real*c.imag);
+  tmp.imag/=div;
+  return tmp;
+}
+ 
+complex complex::getconjugate()
+{
+  complex tmp;
+  tmp.real=this->real;
+  tmp.imag=this->imag * -1;
+  return tmp;
+}
+ 
+complex complex::getreciprocal()
+{
+  complex t;
+  t.real=real;
+  t.imag=imag * -1;
+  double div;
+  div=(real*real)+(imag*imag);
+  t.real/=div;
+  t.imag/=div;
+  return t;
+}
+ 
+double complex::getmodulus()
+{
+  double z;
+  z=(real*real)+(imag*imag);
+  z=sqrt(z);
+  return z;
+}
+ 
+double complex::getreal()
+{
+  return real;
+}
+ 
+double complex::getimaginary()
+{
+  return imag;
+}
+ 
+bool complex::operator ==(complex c)
+{
+  return (real==c.real)&&(imag==c.imag) ? 1 : 0;
+}
+
+void complex::sprint(char* s)
+{
+  sprintf(s, "(%lf) + i*(%lf)", real, imag);
+}
+/// << endl
      << ///#define EXPORT __attribute__((visibility("default")))/// <<endl;
      f << ///extern "C" EXPORT void /// << fn << "(complex* a, complex* b)" << endl  
      << "{" << endl 
@@ -1413,11 +1555,13 @@ preSLPinterpretedSLP (ZZ,Sequence) := (nIns,S) -> (
      )
 
 preSLPcompiledSLP = method()
-preSLPcompiledSLP (ZZ,Sequence,Thing) := (nIns,S,fname) -> (
+preSLPcompiledSLP (ZZ,Sequence) := (nIns,S) -> (
 -- makes input for rawSLP from pre-slp
      consts := S#0;
      slp := S#1;   
      o := S#2;
+     fname := SLPcounter; SLPcounter = SLPcounter + 1; -- this gives libraries distinct names 
+                                                       -- the name of the function stays the same, should it change?
      curNode = #consts+nIns;
      p = {#consts,nIns,numgens target o, numgens source o} | {slpCOMPILED}
           | { fname }; -- "lib_name" 

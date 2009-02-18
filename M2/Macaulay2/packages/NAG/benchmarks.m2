@@ -103,9 +103,13 @@ ideal { n1^2 + n2^2 + n3^2 - 1,
 
 randomNFactorialSystem = (n,kk) -> (
      R = kk[vars(53..n+51)];
-     ideal apply(n-1, d-> sum(n-1, i -> random(-n,n)*R_i^(d+2)) - 1)
+     ideal apply(n-1, d-> sum(n-1, i -> random(-100,100)*R_i^(d+2)) - 100)
      )
-setRandomSeed 0
+
+randomQuadraticSystem = (n,kk) -> (
+     R = kk[vars(53..n+52)];
+     ideal apply(n, i->random(2,R) - 1)
+     )
 
 cyclic = (n,kk) -> (
      R = kk[vars(53..n+52)];

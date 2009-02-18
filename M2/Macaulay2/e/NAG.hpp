@@ -46,16 +46,16 @@ class StraightLineProgram : public object
   complex* nodes; // array of CCs
   int num_consts, num_inputs, rows_out, cols_out;
   bool is_compiled; //compiled and dynamically linked
-  char* lib_name;
+  void *handle; //dynamic library handle
+  void (*compiled_fn)(complex*,complex*);
   long precision;
 
   StraightLineProgram();
 public:
   static StraightLineProgram_OrNull *make(Matrix *consts, M2_arrayint program);
-  virtual ~StraightLineProgram() { delete lib_name; }
-  
-  void text_out(buffer& o) const;
+  virtual ~StraightLineProgram();
 
+  void text_out(buffer& o) const;
   Matrix *evaluate(const Matrix *vals);
 };
 
