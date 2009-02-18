@@ -2,7 +2,7 @@ restart
 loadPackage ("NAG", FileName=>"../NAG.m2", 
      Configuration=>{"PHCpack"=>"./phc", "Bertini"=>"./bertini", "HOM4PS2"=>"./hom4ps2_in_out"})
 debug Core; 
-debug NAG; DBG = 10; printingPrecision = 20; 
+debug NAG; DBG = 2; printingPrecision = 20; 
 load "benchmarks.m2"
 
 -- small example with 2 solutions -------------------------------------------
@@ -11,8 +11,9 @@ S = {x^2-1,y^2-1};
 T = {x^2+y^2-1, x*y};
 solsS = {(1,-1),(1,1),(-1,1),(-1,-1)};
 solsT = track(S,T,solsS, gamma=>1+ii,
-     --Predictor=>Euler,
+     Predictor=>Tangent,
      AffinePatches=>DynamicPatch,
+     --SLP=>CompiledHornerForm 
      --SLP=>HornerForm
      SLP=>null
      )
