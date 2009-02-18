@@ -1575,7 +1575,7 @@ preSLPcompiledSLP (ZZ,Sequence) := (nIns,S) -> (
      )
 
 beginDocumentation()
-load "NAG/doc.m2"
+load "./NAG/doc.m2"
 
 TEST ///
      assert(multistepPredictor(2_QQ,{0,0,0}) === {-3/8, 37/24, -59/24, 55/24}) -- Wikipedia: Adams-Bashforth
