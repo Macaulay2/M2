@@ -88,7 +88,7 @@ map(Ring,Ring,Matrix) := RingMap => opts -> (R,S,m) -> (
 	  else if r < n then error ("encountered values for ", toString r, " variables, but expected ", toString n)
 	  else if r == n then (
 	       if numgens A > 0 then (
-		    if member(A, R.baseRings) then (
+		    if A === R or member(A, R.baseRings) then (
 			 -- we can promote
 			 mE = mE | promote(vars A, R);
 			 if instance(A,GaloisField) then (
@@ -154,7 +154,7 @@ RingMap Matrix := Matrix => (p,m) -> (
      then error "expected source of ring map to be the same as ring of matrix";
      F := p target m;
      E := p source m;
-     map(F,E,map(S,rawRingMapEval(raw p, raw F, raw m)), Degree => p.cache.DegreeMap degree m))
+     map(F,E,map(S,rawRingMapEval(raw p, raw cover F, raw m)), Degree => p.cache.DegreeMap degree m))
 
 RingMap Vector := Vector => (p,m) -> (
      f := p new Matrix from m;

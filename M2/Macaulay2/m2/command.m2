@@ -4,6 +4,7 @@
 
 Command = new SelfInitializingType of BasicList
 Command.synonym = "command"
+globalAssignment Command
 new Command from Function := Command => (command,f) -> command {f}
 new Command from String   := Command => (command,cmdname) -> command {
      x -> (

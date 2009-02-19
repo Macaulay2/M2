@@ -1,6 +1,10 @@
 -- -*- fill-column: 107 -*-
 --		Copyright 1993-2002 by Daniel R. Grayson
 
+fixtitle = method()
+fixtitle Nothing := identity
+fixtitle String := s -> replace("\"","&quot;",s)
+
 Macaulay2HomePage := () -> "http://www.math.uiuc.edu/Macaulay2/index-" | version#"VERSION" | ".html"
 
 -----------------------------------------------------------------------------
@@ -79,18 +83,18 @@ toURL := path -> (
 
 htmlFilename = method(Dispatch => Thing)
 htmlFilename Thing := x -> htmlFilename makeDocumentTag x
+htmlFilename2 = (tag,layout) -> (
+     fkey := (class tag).FormattedKey tag;
+     pkgtitle := (class tag).Title tag;
+     replace("PKG",pkgtitle,layout#"packagehtml") | if fkey === pkgtitle then topFileName else toFilename fkey|".html" )
 htmlFilename DocumentTag := tag -> (
      -- this one is used for storing the file, hence "installationLayout"
-     fkey := DocumentTag.FormattedKey tag;
-     pkgtitle := DocumentTag.Title tag;
-     replace("PKG",pkgtitle,installationLayout#"packagehtml") | if fkey === pkgtitle then topFileName else toFilename fkey|".html" )
+     htmlFilename2(tag,installationLayout))
 htmlFilename FinalDocumentTag := tag -> (
-     -- this one is used for creating links to the file, hence "Layout", since the bifurcation of the layout
+     -- this one is used for creating links to the file, hence "currentLayout", since the bifurcation of the layout
      -- into common and exec halves is not retained in the final installation; it's just a convenience while assembling
      -- the distribution, so common files can be shared among build trees
-     fkey := FinalDocumentTag.FormattedKey tag;
-     pkgtitle := FinalDocumentTag.Title tag;
-     replace("PKG",pkgtitle,currentLayout#"packagehtml") | if fkey === pkgtitle then topFileName else toFilename fkey|".html" )
+     htmlFilename2(tag,currentLayout))
 
 html IMG  := x -> (
      (o,cn) := override(IMG.Options,toSequence x);
@@ -120,7 +124,7 @@ html TO   := x -> (
 	  warning "missing documentation";
 	  concatenate( "<tt>", r, "</tt>", if x#?1 then x#1, " (missing documentation<!-- tag: ",toString DocumentTag.Key tag," -->)")
 	  )
-     else concatenate( "<a href=\"", toURL htmlFilename toFinalDocumentTag getPrimary x#0, "\" title=\"", headline x#0, "\">", r, "</a>", if x#?1 then x#1))
+     else concatenate( "<a href=\"", toURL htmlFilename toFinalDocumentTag getPrimary x#0, "\" title=\"", fixtitle headline x#0, "\">", r, "</a>", if x#?1 then x#1))
 html TO2  := x -> (
      tag := x#0;
      headline tag;		   -- this is a kludge, just to generate error messages about missing links 
@@ -153,8 +157,8 @@ BACKWARD  := tag -> if PREV#?tag then BACKWARD0 PREV#tag else if UP#?tag then UP
 forward  := tag -> ( f := FORWARD  tag; ( if f =!= null then HREF { htmlFilename f, forwardButton } else forwardButton , " | "))
 backward := tag -> ( b := BACKWARD tag; ( if b =!= null then HREF { htmlFilename b, backwardButton} else backwardButton, " | "))
 
-linkTitle := s -> concatenate( " title=\"", s, "\"" )
-linkTitleTag := tag -> "title" => concatenate(DocumentTag.FormattedKey tag, commentize headline tag)
+linkTitle := s -> concatenate( " title=\"", fixtitle s, "\"" )
+linkTitleTag := tag -> "title" => fixtitle concatenate(DocumentTag.FormattedKey tag, commentize headline tag)
 links := tag -> (
      f := FORWARD tag;
      b := BACKWARD tag;
@@ -179,7 +183,7 @@ links := tag -> (
 	  if SRC#?tag then (
      	       LINK { 
 		    "href" => concatenate("file://",externalPath, toAbsolutePath SRC#tag#0), 
-		    "rel" => concatenate("Source (see text above line ", toString SRC#tag#1, ")"),
+		    "rel" => concatenate("Source: see text above line ", toString SRC#tag#1),
 		    "type" => "text/plain" } ) ) )
 
 BUTTON := (s,alt) -> (
@@ -191,7 +195,7 @@ BUTTON := (s,alt) -> (
 html HTML := t -> concatenate(
 ///<?xml version="1.0" encoding="utf-8" ?>  <!-- for emacs: -*- coding: utf-8 -*- -->
 <!-- Apache may like this line in the file .htaccess: AddCharset utf-8 .html -->
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.1 plus MathML 2.0 plus SVG 1.1//EN"	 "http://www.w3.org/Math/DTD/mathml2/xhtml-math11-f.dtd" >
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.1 plus MathML 2.0 plus SVG 1.1//EN"	 "http://www.w3.org/2002/04/xhtml-math-svg/xhtml-math-svg-flat.dtd" >
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en">
 ///,
      apply(t,html), 
@@ -442,7 +446,7 @@ runFile := (inf,inputhash,outf,tmpf,desc,pkg,announcechange,rundir,usermode) -> 
      args := "--silent --print-width 77 --stop --int" | (if usermode then "" else " -q") | src | ldpkg;
      cmdname := commandLine#0;
      if ulimit === null then (
-	  ulimit = utest "-t 80" | utest "-m 200000"| utest "-v 200000";
+	  ulimit = utest "-t 80" | utest "-m 200000"| utest "-v 200000" | utest "-s 8192";
 	  );
      tmpf << "-- -*- M2-comint -*- {* hash: " << inputhash << " *}" << endl << close;
      cmd := ulimit | "cd " | rundir | "; " | cmdname | " " | args | " <" | format inf | " >>" | format tmpf | " 2>&1";
@@ -464,6 +468,7 @@ runFile := (inf,inputhash,outf,tmpf,desc,pkg,announcechange,rundir,usermode) -> 
 	  removeFile tmpf;
 	  error "subprocess terminated abnormally";
 	  );
+     stderr << "M2: *** [check] Error " << r//256 << endl;
      hadExampleError = true;
      numExampleErrors = numExampleErrors + 1;
      return false;
@@ -1201,13 +1206,9 @@ viewHelp = key -> (
 	  show new URL from { fix (applicationDirectory() | "index.html") }
 	  }
      else (
-     	  prefixes := nonnull {
-	       if not member("-q",commandLine) then applicationDirectory()|"local/",
-	       prefixDirectory
-	       };
-	  fn := htmlFilename toFinalDocumentTag getPrimary makeDocumentTag key;
+	  fn := htmlFilename2(toFinalDocumentTag getPrimary makeDocumentTag key,Layout#1);
 	  p := null;
-	  scan(prefixes, dir -> if fileExists (dir|fn) then (p = dir|fn;break));
+	  scan(prefixPath, dir -> if fileExists (dir|fn) then (p = dir|fn;break));
 	  if p === null then error("html file not found: ",fn)
 	  else show new URL from { fix p }
 	  );

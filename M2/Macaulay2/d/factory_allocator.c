@@ -54,7 +54,7 @@ static listentry * blocklist[7] = { NULL, NULL, NULL, NULL, NULL, NULL, NULL };
 					  return (void*)retval; \
 				      } else { \
 					  char* dum = (char*)malloc( size+HEADER_BYTES ); \
-                                          if (dum == NULL) outofmem(); \
+                                          if (dum == NULL) outofmem2(size+HEADER_BYTES); \
 					  *((int*)dum) = size; \
 					  MARK_GOOD(dum); \
 					  return (void*)(dum+HEADER_BYTES); \
@@ -86,7 +86,7 @@ void* getBlock ( size_t size )
     else if ( size <= SIZE6 ) GETBLOCK( 6, SIZE6 )
     else {
 	char* dum = (char*)malloc( size+HEADER_BYTES );
-	if (dum == NULL) outofmem();
+	if (dum == NULL) outofmem2(size);
 	*((int*)dum) = size;
 	MARK_GOOD(dum);
 	return dum + HEADER_BYTES;

@@ -2626,7 +2626,7 @@ document {
      the characteristic cycles of the local cohomology modules.",    
      EXAMPLE lines ///
 W =  QQ[x_1..x_6, a_1..a_6];
-I = minors(2, matrix{{x_1, x_2, x_3}, {x_4, x_5, x_6}});
+I = minors(2, matrix{{x_1, x_2, x_3}, {x_4, 0, 0}});
 cc = {ideal W => 1};
 ///,
      Caveat => {"The module has to be a regular holonomic complex-analytic module; 
@@ -2651,7 +2651,7 @@ document {
      TEX "M_{f_{i_1},...,f_{i_k}}", " and places them in the corresponding places in the Cech complex.",
      EXAMPLE lines ///
 W =  QQ[x_1..x_6, a_1..a_6];
-I = minors(2, matrix{{x_1, x_2, x_3}, {x_4, x_5, x_6}});
+I = minors(2, matrix{{x_1, x_2, x_3}, {x_4, 0, 0}});
 cc = {ideal W => 1};
 ///,
      Caveat => {"The module has to be a regular holonomic complex-analytic module; 

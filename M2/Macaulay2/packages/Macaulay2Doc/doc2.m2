@@ -1028,7 +1028,7 @@ doc ///
      This function is implemented in the engine, as it is used in many algorithms involving monomial ideals.
    Example
      R = QQ[a..d];
-     I = monomialIdeal"a4,a3b6,a2b8c2,c4d5"
+     I = monomialIdeal "a4,a3b6,a2b8c2,c4d5"
      lcm I
      first exponents lcm I
   SeeAlso

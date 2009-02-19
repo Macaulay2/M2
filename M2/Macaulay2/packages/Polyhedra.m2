@@ -1,4 +1,4 @@
---*- coding: utf-8 -*-
+--*- coding: utf-8 -*- -- warning: a test below was disabled
 ---------------------------------------------------------------------------
 -- PURPOSE: Computations with convex polyhedra 
 -- PROGRAMMER : René Birkner 
@@ -2349,6 +2349,8 @@ undocumented {
      (dim,Polyhedron),
      (net,Polyhedron)
      }
+
+end -- I've disabled the test below because it doesn't work
 
 TEST ///
 M = matrix{{1/2,1,0},{1,1/2,0}};

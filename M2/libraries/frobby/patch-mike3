@@ -1,12 +1,12 @@
-diff -ur --exclude=configure /Users/dan/src/M2/BUILD/dan/builds/mac/libraries/frobby/tmp/frobby_vmike3/Makefile frobby_vmike3/Makefile
---- /Users/dan/src/M2/BUILD/dan/builds/mac/libraries/frobby/tmp/frobby_vmike3/Makefile	2008-12-10 20:04:17.000000000 -0600
-+++ frobby_vmike3/Makefile	2009-01-26 15:54:38.000000000 -0600
+diff -ur --exclude=configure /home/dan/M2/BUILD/dan/builds/debian64/libraries/frobby/tmp/frobby_vmike3/Makefile frobby_vmike3/Makefile
+--- /home/dan/M2/BUILD/dan/builds/debian64/libraries/frobby/tmp/frobby_vmike3/Makefile	2008-12-10 21:04:17.000000000 -0500
++++ frobby_vmike3/Makefile	2009-02-15 16:18:52.000000000 -0500
 @@ -42,11 +42,14 @@
  endif
  
  ifndef ldflags
 -  ldflags = -lgmpxx -lgmp -L/sw/lib
-+  ldflags = $(LDFLAGS) -lgmpxx -lgmp -L/sw/lib
++  ldflags = $(LDFLAGS) -lgmpxx -lgmp
  endif
  
 -cflags = -Wall -ansi -pedantic -Wextra -Wno-uninitialized \
@@ -56,9 +56,21 @@ diff -ur --exclude=configure /Users/dan/src/M2/BUILD/dan/builds/mac/libraries/fr
  -include .depend
  
  clean: tidy
-diff -ur --exclude=configure /Users/dan/src/M2/BUILD/dan/builds/mac/libraries/frobby/tmp/frobby_vmike3/src/hash_map/hash_map frobby_vmike3/src/hash_map/hash_map
---- /Users/dan/src/M2/BUILD/dan/builds/mac/libraries/frobby/tmp/frobby_vmike3/src/hash_map/hash_map	2008-12-10 20:04:17.000000000 -0600
-+++ frobby_vmike3/src/hash_map/hash_map	2009-01-26 11:13:55.000000000 -0600
+diff -ur --exclude=configure /home/dan/M2/BUILD/dan/builds/debian64/libraries/frobby/tmp/frobby_vmike3/src/NullCoefTermConsumer.h frobby_vmike3/src/NullCoefTermConsumer.h
+--- /home/dan/M2/BUILD/dan/builds/debian64/libraries/frobby/tmp/frobby_vmike3/src/NullCoefTermConsumer.h	2008-12-10 21:04:17.000000000 -0500
++++ frobby_vmike3/src/NullCoefTermConsumer.h	2009-02-15 16:18:52.000000000 -0500
+@@ -19,7 +19,7 @@
+ 
+ #include "CoefTermConsumer.h"
+ 
+-class NullCoefTermConsumer : public CoefTermConsumer {
++struct NullCoefTermConsumer : public CoefTermConsumer {
+   virtual ~NullCoefTermConsumer();
+ 
+   virtual void consume(const mpz_class& coef, const Term& term);
+diff -ur --exclude=configure /home/dan/M2/BUILD/dan/builds/debian64/libraries/frobby/tmp/frobby_vmike3/src/hash_map/hash_map frobby_vmike3/src/hash_map/hash_map
+--- /home/dan/M2/BUILD/dan/builds/debian64/libraries/frobby/tmp/frobby_vmike3/src/hash_map/hash_map	2008-12-10 21:04:17.000000000 -0500
++++ frobby_vmike3/src/hash_map/hash_map	2009-02-15 16:18:52.000000000 -0500
 @@ -292,10 +292,10 @@
      class hash_multimap
      {
@@ -74,3 +86,14 @@ diff -ur --exclude=configure /Users/dan/src/M2/BUILD/dan/builds/mac/libraries/fr
  	
      private:
        typedef hashtable<pair<const _Key, _Tp>, _Key, _HashFn,
+diff -ur --exclude=configure /home/dan/M2/BUILD/dan/builds/debian64/libraries/frobby/tmp/frobby_vmike3/src/stdinc.h frobby_vmike3/src/stdinc.h
+--- /home/dan/M2/BUILD/dan/builds/debian64/libraries/frobby/tmp/frobby_vmike3/src/stdinc.h	2008-12-10 21:04:17.000000000 -0500
++++ frobby_vmike3/src/stdinc.h	2009-02-15 16:30:12.000000000 -0500
+@@ -14,6 +14,7 @@
+    You should have received a copy of the GNU General Public License
+    along with this program.  If not, see http://www.gnu.org/licenses/.
+ */
++#include <stdio.h> /* to get FILE defined for gmp.h */
+ #include <gmp.h>
+ #include <gmpxx.h>
+ #include <memory>

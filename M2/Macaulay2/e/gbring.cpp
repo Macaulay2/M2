@@ -26,7 +26,7 @@ gbvector * GBRing::new_raw_term()
 {
   void *p = mem->new_elem();
   //void *p = GC_MALLOC(gbvector_size);
-  //  if (p == 0) outofmem();
+  //  if (p == 0) outofmem2(gbvector_size);
   return(reinterpret_cast<gbvector *>(p));
 }
 

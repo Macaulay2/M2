@@ -269,6 +269,34 @@ void QRingInfo_field_QQ::gbvector_normal_form(const FreeModule *F, gbvector *&f)
   f = head.next;
 }
 
+void QRingInfo_field_QQ::gbvector_normal_form(const FreeModule *F, gbvector *&f, bool use_denom, ring_elem &denom) const
+{
+  GBRing *GR = R->get_gb_ring();
+  gbvector head;
+  gbvector *result = &head;
+  result->next = NULL;
+  gbvector *t = f;
+  while (t != NULL)
+    {
+      GR->gbvector_get_lead_exponents(F, t, EXP1_);
+      int x = ringtable->find_divisor(EXP1_, 1);
+      if (x >= 0)
+	{
+	  const gbvector *r = quotient_gbvector(x);
+	  gbvector *zero = 0;
+	  GR->gbvector_reduce_lead_term(F,F,head.next,t,zero,r,zero,use_denom,denom);
+	}
+      else
+	{
+	  result->next = t;
+	  t = t->next;
+	  result = result->next;
+	  result->next = NULL;
+	}
+    }
+  f = head.next;
+}
+
 void QRingInfo_ZZ::destroy(GBRing *GR)
 {
   delete ringtableZZ;

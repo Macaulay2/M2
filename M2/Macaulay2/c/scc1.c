@@ -154,6 +154,7 @@ extern void fatalarrayindex();\n\
 extern void fatalarraylen();\n\
 extern void destroy();\n\
 extern void outofmem();\n\
+extern void outofmem2(size_t);\n\
 extern int do_memstats;\n\
 extern int numchunks[2];\n\
 extern int numbytes[2];\n\
@@ -182,6 +183,7 @@ int main(int argc, char **argv){
      char *p;
      struct test {char a;double b;};
      i = assert(0 == GRAIN % (sizeof(struct test) - sizeof(double)));
+     GC_INIT();
 #include "gc_fixes.h"
      progname = BaseName(argv[0]);
      yyinit();

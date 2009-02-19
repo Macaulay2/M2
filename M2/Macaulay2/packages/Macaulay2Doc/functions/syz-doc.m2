@@ -47,7 +47,7 @@ document {
 	  [syz,HardDegreeLimit],
 	  [syz,PairLimit],
 	  [syz,StopBeforeComputation],
-	  [syz,Strategy],
+	  [syz,Strategy],[syz,MaxReductionCount],
 	  [syz,SyzygyLimit],
 	  [syz,SyzygyRows]},
      Headline => "compute the syzygy matrix",
@@ -59,6 +59,10 @@ document {
 	  DegreeLimit => {"see ", TO [gb,DegreeLimit]},
 	  GBDegrees => {"see ", TO [gb,GBDegrees]},
 	  HardDegreeLimit => {"see ", TO [gb,HardDegreeLimit]},
+      	  MaxReductionCount => ZZ => {
+	       "the maximum number of reductions of an S-pair done before requeueing it, if the 
+	       ", TT "Inhomogeneous", " algorithm is in use"
+	       },
 	  PairLimit => {"see ", TO [gb,PairLimit]},
 	  StopBeforeComputation => {"see ", TO [gb,StopBeforeComputation]},
 	  Strategy => {"see ", TO [gb,Strategy]},

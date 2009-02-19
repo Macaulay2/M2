@@ -525,7 +525,7 @@ document {
      help
      return
      disassemble current
-     step -3
+     step(-3)
      step
      step
      t
@@ -1327,7 +1327,7 @@ document {
      removeFile "test-file"
      get "!date"
      ///,
-     SeeAlso =>{ read, removeFile, close, (symbol <<, File, Thing) }
+     SeeAlso =>{ read, removeFile, "close", (symbol <<, File, Thing) }
      }
 
 document {
@@ -1863,7 +1863,8 @@ document {
      Inputs => {
 	  "F" => {"a free module"},
 	  "G" => {"a free module"},
-	  MaximalRank => {"whether to ensure that the resulting map has maximal rank"},
+	  MaximalRank => {"whether to ensure that the resulting map has maximal rank: designed mostly
+	       for use with matrices of numbers: for polynomial rings, returns inhomogeneous results"},
 	  Density => RR => {"the proportion of entries to set"},
 	  UpperTriangular => Boolean => {"whether to set just entries strictly above the diagonal"}
 	  },

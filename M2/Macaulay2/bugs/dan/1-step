@@ -1,0 +1,4 @@
+"step" could be a command instead of a keyword with its own parsing syntax
+
+Leykin's package NAG broke when we made 'step' a keyword, because it uses
+it as a local variable.

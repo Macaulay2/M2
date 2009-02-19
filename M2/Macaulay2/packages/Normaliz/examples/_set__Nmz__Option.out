@@ -1,0 +1,8 @@
+-- -*- M2-comint -*- {* hash: -506775374 *}
+
+i1 : setNmzOption("triang",true);
+
+i2 : showNmzOptions()
+The following options are set:
+ -f -v -i 
+i3 : 

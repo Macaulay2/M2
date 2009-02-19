@@ -1,0 +1,23 @@
+In many places in the engine a routine is called, it returns an illegitimate
+value, and the caller interprets it as a particular type of error and returns
+an error message of its own, even if the reason for returning was due to an
+interrupt.  All the code should be audited.
+
+Here is an example!
+
+    loadPackage "Schubert2"
+    pt = base n
+    (e,n,d,m)=(3,1,6,4)
+    V = OO_pt^m+2;
+    F = flagBundle({m-n,n+2},V);
+    (S,Q) = F.Bundles;
+    B = symmetricPower_e Q;
+    P = projectiveBundle dual B;
+    R = intersectionRing P
+    f = ch OO_P(1)
+    (alarm 3; f^-1)
+
+    -- 
+    --     i11 : (alarm 3; f^-1)
+    --     stdio:11:12:(1):[0]: error: negative power of noninvertible element requested
+    -- 

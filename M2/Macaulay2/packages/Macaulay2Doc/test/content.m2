@@ -41,9 +41,8 @@ assert(raw(1/b) == rawContent raw f)
 assert(raw(a*b*x+y) == rawRemoveContent raw f)
 assert((raw(1/b), raw(a*b*x+y)) == rawSplitContent raw f)
 
---status: the next line detects a nonzero divisor, but it shouldn't
---status: perhaps Mike can fix it
-x/(a+1)
+-- This is now set to be not implemented:
+try (x/(a+1))
 
 f = 1/(a+1)*x  + 1/(b+1)*y + 1/(a^2-b^2)*x*y
 new kk from rawContent raw f
@@ -57,7 +56,8 @@ rawSplitContent raw M
 
 kk = frac(QQ[a,b])
 R = kk[x,y,z]
-KK = frac R
+try (KK = frac R)
+KK = frac(QQ[x,y,z,a,b,MonomialOrder=>{3,2}])
 S = KK[s,t,u,v]
 I = ideal(a*x-s, b*y-t, s*a^3-t*b^3)
 gens gb I

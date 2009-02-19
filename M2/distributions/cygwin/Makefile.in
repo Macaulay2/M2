@@ -82,6 +82,9 @@ server/Macaulay2/@package@-$(DISTRIBUTION)-src.tar.bz2 : ../../@package@.tar.bz2
 
 upload:; rsync --verbose --compress --archive --rsh='ssh -x -a' server/. u00:to/Macaulay2/Repositories/cygwin-test
 
+gcmem.exe gcmem: LDLIBS = -lgc
+mem: LDLIBS =
+
 clean::; rm -rf files src-files
 distclean: clean
 	rm -f Makefile Macaulay2.README setup.hint

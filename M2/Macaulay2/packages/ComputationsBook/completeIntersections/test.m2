@@ -93,8 +93,7 @@ M = cokernel f;
 time P = Ext(M,B^1/(x,y,z));
 S = ring P;
 transpose vars S
-R = K[X_1..X_3,Degrees => {{-2,-3},{-2,-4},{-2,-5}},
-        Heft => (options S).Heft {* Adjust => S.Adjust, Repair => S.Repair *} ];
+R = K[X_1..X_3,Degrees => {{-2,-3},{-2,-4},{-2,-5}}];
 phi = map(R,S,{X_1,X_2,X_3,0,0,0})
 P = prune (phi ** P);
 transpose vars ring P
@@ -105,7 +104,7 @@ changeRing = H -> (
    K := coefficientRing S;
    degs := select(degrees source vars S,
         d -> 0 != first d);
-   R := K[X_1 .. X_#degs, Degrees => degs {* , Repair => S.Repair, Adjust => S.Adjust *} ];
+   R := K[X_1 .. X_#degs, Degrees => degs];
    phi := map(R,S,join(gens R,(numgens S - numgens R):0));
    prune (phi ** H)
    );
@@ -129,7 +128,7 @@ Ext(Ring,Module) := (k,M) -> (
 time I = Ext(k,M);
 evenPart I
 oddPart I
-T = ZZ[t,u,Inverses=>true,MonomialOrder=>RevLex];
+T = ZZ[t,u,Inverses=>true,MonomialOrder=>RevLex,Weights=>{-3,-1}];
 poincareSeries2 = M -> (
    B := ring M;
    k := B/ideal vars B;
@@ -149,7 +148,7 @@ poincareSeries2 M'
 p = poincareSeries1 M
 load "simplify.m2"
 simplify p
-T' = QQ[t,Inverses=>true,MonomialOrder=>RevLex];
+T' = QQ[t,Inverses=>true,MonomialOrder=>RevLex,Weights=>{-1}];
 expansion = (n,q) -> (
     t := T'_0;
     rho := map(T',T,{t,1});

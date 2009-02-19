@@ -1182,9 +1182,10 @@ youngest(e:Expr):Expr := (
 	       e = nullE;
 	       foreach x in b do (
 		    when x
-		    is y:HashTable do (
-			 if y.mutable && y.hash>h then ( h = y.hash; e = x; );
-			 )
+		    is y:HashTable do if y.mutable && y.hash>h then ( h = y.hash; e = x; ) else nothing
+		    is y:file do if y.hash>h then ( h = y.hash; e = x; ) else nothing
+		    is y:CompiledFunctionClosure do if y.hash>h then ( h = y.hash; e = x; ) else nothing
+		    is y:SymbolClosure do if y.symbol.hash>h then ( h = y.symbol.hash; e = x; ) else nothing
 		    else nothing;
 		    );
 	       e))

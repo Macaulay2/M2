@@ -2,18 +2,22 @@
 #
 #      svn co svn://Macaulay2.math.uiuc.edu/Macaulay2/trunk/M2 M2
 
+.PHONY: always
 
-opt64 :
+always:
+
+opt64 : always
 	mkdir -p opt64
 	cd opt64; ../../../configure \
 		--prefix="`pwd`/installed" \
 		CC="gcc -m64" CXX="g++ -m64" \
 		--build=x86_64-apple-darwin \
 		--disable-strip \
+		--enable-download \
 		--enable-dmg \
 		--enable-build-libraries="gc gdbm gmp mpfr readline ntl factory libfac frobby pari"
 
-debug64 :
+debug64 : always
 	mkdir -p debug64
 	cd debug64; ../../../configure \
 		--prefix="`pwd`/installed" \
@@ -21,69 +25,79 @@ debug64 :
 		--build=x86_64-apple-darwin \
 		--enable-debug \
 		--disable-optimize \
+		--enable-download \
 		--enable-build-libraries="gc gdbm gmp mpfr readline ntl factory libfac frobby pari"
 
-profile64 :
+profile64 : always
 	mkdir -p profile64
 	cd profile64; ../../../configure \
 		--prefix="`pwd`/installed" \
 		CC="gcc -m64" CXX="g++ -m64" \
 		--build=x86_64-apple-darwin \
 		--enable-profile \
+		--enable-download \
 		--enable-build-libraries="gc gdbm gmp mpfr readline ntl factory libfac frobby pari"
 
-tiger32 :
+tiger32 : always
 	mkdir -p tiger32
-	cd tiger32; LDFLAGS=-shared-libgcc ../../../configure \
+	cd tiger32; LDFLAGS=-static-libgcc ../../../configure \
 		--prefix="`pwd`/installed" \
-		--disable-frobby \
 		--enable-dmg \
+		--enable-download \
 		--enable-build-libraries="gc gdbm gmp mpfr readline ntl factory libfac frobby pari"
 
-opt32 :
+opt32 : always
 	mkdir -p opt32
 	cd opt32; LDFLAGS=-shared-libgcc ../../../configure \
 		--prefix="`pwd`/installed" \
-		--disable-frobby \
 		--enable-dmg \
+		--enable-download \
 		--enable-build-libraries="gc gdbm gmp mpfr readline ntl factory libfac frobby pari"
 
-debug32 :
+debug32 : always
 	mkdir -p debug32
 	cd debug32; ../../../configure \
 		--prefix="`pwd`/installed" \
 		--enable-debug \
 		--disable-optimize \
+		--enable-download \
 		--enable-build-libraries="gc gdbm gmp mpfr readline ntl factory libfac frobby pari"
 
-profile32 :
+profile32 : always
 	mkdir -p profile32
 	cd profile32; ../../../configure \
 		--prefix="`pwd`/installed" \
 		--enable-profile \
+		--enable-download \
 		--enable-build-libraries="gc gdbm gmp mpfr readline ntl factory libfac frobby pari"
 
-# These are for use on linux/ubuntu
+# These are for use on linux/ubuntu/redhat
 
-opt :
+opt : always
 	mkdir -p opt
 	cd opt;	../../../configure \
 		--prefix="`pwd`/installed" \
 		--enable-tarfile \
+		--enable-download \
 		--enable-build-libraries="gc gdbm gmp mpfr readline ntl factory libfac lapack frobby pari"
 
-debug :
+debug : always
 	mkdir -p debug
 	cd debug; ../../../configure \
 		--prefix="`pwd`/installed" \
 		--enable-debug \
 		--disable-optimize \
+		--enable-download \
 		--enable-build-libraries="gc gdbm gmp mpfr readline ntl factory libfac lapack frobby pari"
 
-profile :
+profile : always
 	mkdir -p profile
 	cd profile; ../../../configure \
 		--prefix="`pwd`/installed" \
 		--enable-profile \
+		--enable-download \
 		--enable-build-libraries="gc gdbm gmp mpfr readline ntl factory libfac lapack frobby pari"
 
+upload : always
+	scp darwin64/*.dmg u00.math.uiuc.edu:/home/html/www/Macaulay2/Uploads
+	scp opt32/*.dmg u00.math.uiuc.edu:/home/html/www/Macaulay2/Uploads

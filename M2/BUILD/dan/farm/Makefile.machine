@@ -1,0 +1,30 @@
+# -*- makefile -*-
+DIR = $(shell pwd)
+MACHINE = $(notdir $(DIR))
+all: $(ISO) disk $(MACHINE) settings 
+start:; VBoxManage -nologo startvm $(MACHINE) -type vrdp
+poweroff:; VBoxManage controlvm $(MACHINE) poweroff
+$(ISO):; wget $(URL)
+disk:; VBoxManage createhd -filename $(DIR)/disk -size 5120 -register
+$(MACHINE):
+	rm -f machine.xml
+	VBoxManage createvm -name $(MACHINE) -settingsfile $(DIR)/machine.xml
+	VBoxManage registervm $(DIR)/machine.xml
+	VBoxManage modifyvm $(MACHINE) -hda $(DIR)/disk
+always:
+mount-cd:; VBoxManage modifyvm $(MACHINE) -dvd $(DIR)/$(ISO)
+umount-cd:; VBoxManage modifyvm $(MACHINE) -dvd none
+settings: always
+	VBoxManage modifyvm $(MACHINE) \
+		-boot1 dvd -boot2 disk \
+		-hwvirtex on -ioapic on \
+		-vrdp on -vrdpport $(RDPPORT) -vrdpauthtype null \
+		-memory 1024 -nic1 nat \
+		-dvd $(DIR)/$(ISO)
+	VBoxManage setextradata $(MACHINE) VBoxInternal/Devices/pcnet/0/LUN#0/Config/guestssh/Protocol  TCP
+	VBoxManage setextradata $(MACHINE) VBoxInternal/Devices/pcnet/0/LUN#0/Config/guestssh/GuestPort 22
+	VBoxManage setextradata $(MACHINE) VBoxInternal/Devices/pcnet/0/LUN#0/Config/guestssh/HostPort  $(SSHPORT)
+clean:; rm -rf machine.xml
+veryclean:; rm -rf disk
+show:; VBoxManage showvminfo $(MACHINE)
+state:; VBoxManage showvminfo $(MACHINE) |grep State:

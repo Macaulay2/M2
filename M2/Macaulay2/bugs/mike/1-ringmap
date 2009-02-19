@@ -1,0 +1,46 @@
+a possible optimization:
+
+From: Michael Stillman <mike.stillman@mac.com>
+To: dan@math.uiuc.edu
+In-reply-to: <200902081608.n18G8IPw001580@u123.math.uiuc.edu>
+Subject: Re: ringmaps
+Date: Sun, 08 Feb 2009 11:15:38 -0500
+
+Possibly, but let's not do that for 1.2.
+
+On Feb 8, 2009, at 11:08 AM, Daniel R. Grayson wrote:
+
+>
+> Concerning the fix we made to ringmap.m2 yesterday,
+>
+> -     map(F,E,map(S,rawRingMapEval(raw p, raw F, raw m)), Degree =>  
+> p.cache.DegreeMap degree m))
+> +     map(F,E,map(S,rawRingMapEval(raw p, raw cover F, raw m)),  
+> Degree => p.cache.DegreeMap degree m))
+>
+> I wonder whether we are copying the raw matrix returned by  
+> rawRingMapEval
+> needlessly just to alter the degrees of the source.  If so, we could  
+> gain
+> efficiency by letting rawRingMapEval take both source and target  
+> free modules.
+>
+>    i13 : rawRingMapEval(raw p, raw cover F, raw m)
+>
+>    o13 = 0
+>
+>    o13 : RawMatrix
+>
+>    i14 : degrees source oo
+>
+>    o14 = {0}
+>
+>    o14 : List
+>
+>    i16 : degrees source raw map(F,E,o13)
+>
+>    o16 = {1}
+>
+>    o16 : List
+
+

@@ -1,0 +1,32 @@
+#-*- Makefile -*-
+DIRECTORY = scientific
+CONFIGOPTIONS += --build=i386-pc-linux-gnu
+CONFIGOPTIONS += --enable-rpm
+include Makefile.include
+default: check
+
+# install packages, e.g.:
+# 	yum install emacs
+# search for packages, e.g.:
+#	yum list emacs
+#	yum provides /usr/include/gc/gc.h
+
+# install these:
+#	lapack.i386
+
+# get fakeroot:
+#     wget http://ftp.debian.org/debian/pool/main/f/fakeroot/fakeroot_1.11.tar.gz
+
+# VirtualBox settings:
+#  VBoxManage setextradata "scientific" VBoxInternal/Devices/pcnet/0/LUN#0/Config/guestssh/Protocol  TCP
+#  VBoxManage setextradata "scientific" VBoxInternal/Devices/pcnet/0/LUN#0/Config/guestssh/GuestPort 22
+#  VBoxManage setextradata "scientific" VBoxInternal/Devices/pcnet/0/LUN#0/Config/guestssh/HostPort  2226
+
+# .ssh/config settings:
+# Host scientific
+#   Hostname localhost
+#   Port 2226
+
+# Local Variables:
+# compile-command: "time make -f Makefile.scientific "
+# End:

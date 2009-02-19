@@ -1,8 +1,12 @@
 things to do manually before release
 
+       make sure "factor 100!" works (on some machines pari/gmp are reversed)
+
        fix bugs
 
        add test files
+
+       run ldd M2 to see that we don't depend on any of our own sharable libraries (yet)
 
        check that readline and history and name completion work in an xterm
 
@@ -43,3 +47,4 @@ things to do manually before release
 
        run "make -k check" and check the output
 
+       make sure the macos x readme file is up to date

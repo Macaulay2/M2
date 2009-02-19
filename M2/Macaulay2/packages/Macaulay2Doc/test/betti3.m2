@@ -2,8 +2,8 @@ assert ( toString infinity === "infinity" )
 assert ( toString(-infinity) === "-infinity" )
 assert ( (min {} .. max {}) === () )
 assert ( (infinity .. infinity) === () )
-assert ( (-infinity .. -infinity) === () )
-if not (try ( -infinity .. infinity; false) else true) then error "oops"
+assert ( (infinity .. 0) === () )
+assert ( (0 .. -infinity) === () )
 
 R = QQ[x]
 betti res R^0

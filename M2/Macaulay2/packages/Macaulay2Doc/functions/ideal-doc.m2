@@ -78,7 +78,8 @@ document {
 	  Ideal => {"which is the defining ideal of ", TT "R"}
 	  },
      "A ", TO2("QuotientRing","quotient ring"), " is a the quotient of its ", TO "ambient", 
-     " ", TO2("Ring","ring"), " by its defining ideal.", 
+     " ", TO2("Ring","ring"), " by its defining ideal.  Other rings have no ambient ring,
+     and the defining ideal is its zero ideal.", 
      EXAMPLE {
 	  "S = ZZ/2[x,y,z];",
 	  "ideal S",

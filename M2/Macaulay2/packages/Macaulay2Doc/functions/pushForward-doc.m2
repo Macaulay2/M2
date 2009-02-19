@@ -95,7 +95,7 @@ TEST ///
 time   N = pushForward(F,M);
   P2 = ZZ/32003[a,b,c,d,e,f];
   F = map(P3,P2,random(P3^1, P3^{-1,-1,-1,-1,-1,-1}))
-time   N = pushForward(F,M,BasisElementLimit=>5);
+time   N = pushForward(F,M);
   hilbertPolynomial M
   hilbertPolynomial N
   ann N

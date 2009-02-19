@@ -1,0 +1,9 @@
+-- -*- M2-comint -*- {* hash: -1907392577 *}
+
+i1 : setNmzFilename("VeryInteresting"); 
+
+i2 : getNmzFilename() 
+
+o2 = VeryInteresting
+
+i3 : 

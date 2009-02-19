@@ -1,0 +1,1 @@
+document "part" better - the weight vector assigns an integer weight to each variable, in order.

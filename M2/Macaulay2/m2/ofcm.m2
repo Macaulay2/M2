@@ -35,8 +35,8 @@ options GeneralOrderedMonoid := M -> M.Options
 degrees GeneralOrderedMonoid := M -> M.Options.Degrees
 raw GeneralOrderedMonoid := M -> M.RawMonoid
 
-rle = method()
-rle List := x -> apply(runLengthEncode x, y -> if instance(y,Holder) then hold rle y#0 else y)
+rle = method(Dispatch => Thing)
+rle VisibleList := x -> apply(runLengthEncode x, y -> if instance(y,Holder) then hold rle y#0 else y)
 rle Option := x -> x#0 => rle x#1
 rle Thing := identity
 
@@ -349,6 +349,8 @@ findHeft = (degrk,degs) -> (
      if degrk === 0 then return {};
      if degrk === 1 then return if all(degs,d->d#0 > 0) then {1} else if all(degs,d->d#0 < 0) then {-1} ;
      if #degs === 0 then return toList(degrk : 1);
+     if all(degs,d->d#0 > 0) then return splice {  1, degrk-1:0 };
+     if all(degs,d->d#0 < 0) then return splice { -1, degrk-1:0 };
      A := transpose matrix degs;
      needsPackage "FourierMotzkin";
      B := ((value getGlobalSymbol "fourierMotzkin") A)#0;

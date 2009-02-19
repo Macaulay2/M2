@@ -120,6 +120,13 @@ void dRRR(M2_RRR a)
   o << tocharstar(gmp_tostringRR(a)) << newline;
   emit(o.str());
 }
+
+void pring(const Ring *R)
+{
+  buffer o;
+  R->text_out(o);
+  emit(o.str());
+}
 // Local Variables:
 // compile-command: "make -C $M2BUILDDIR/Macaulay2/e "
 // End:

@@ -99,7 +99,7 @@ minimalPrimes Ideal := decompose Ideal := (cacheValue symbol minimalPrimes) (
 	  kk := coefficientRing A;
 	  if kk =!= QQ and not instance(kk,QuotientRing) then
 	    error "expected base field to be QQ or ZZ/p";
-	  if I == 0 then return {if A === R then I else ideal 0_R};
+	  if I == 0 then return {if A === R then I else ideal map(R^1,R^0,0)};
 	  if debugLevel > 0 then homog := isHomogeneous I;
 	  ics := irreducibleCharacteristicSeries I;
 	  if debugLevel > 0 and homog then (

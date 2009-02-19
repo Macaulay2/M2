@@ -1,0 +1,21 @@
+
+i4 : viewHelp (symbol^, RR, QQ)
+stdio:4:2:(1):[0]: error: documentation key for 'RR ^ QQ' encountered, but no method installed
+
+i5 :  viewHelp (symbol^, RR, class QQ)
+stdio:5:2:(1):[0]: error: documentation key for 'RR ^ Ring' encountered, but no method installed
+
+i6 :  viewHelp symbol^
+
+i7 :  lookup (symbol^, RR, class QQ)
+
+o7 = {*Function[/Applications/Macaulay2-1.1.99/share/Macaulay2/Core/ofcm.m2:175:45-175:55]*}
+
+o7 : FunctionClosure
+
+i8 : code oo
+
+o8 = /Applications/Macaulay2-1.1.99/share/Macaulay2/Core/ofcm.m2:175:46-175:56: --source code:
+     RingElement ^ Ring := Number ^ Ring := (x,R) -> lift(x,R)
+
+i9 :  viewHelp (symbol^, Number, class QQ)

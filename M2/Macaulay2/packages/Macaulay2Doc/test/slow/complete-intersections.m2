@@ -14,7 +14,7 @@ Ext(Module,Ring) := (M,k) -> (
    if ideal k != ideal vars B
    then error "expected the residue field of the module";
    changeRing Ext(M,coker vars B));
-T = ZZ[t,u, MonomialOrder => RevLex, Inverses=>true];
+T = ZZ[t,u, MonomialOrder => RevLex, Inverses=>true,Weights=>{-3,-1}];
 poincareSeries2 = M -> (
    B := ring M;
    k := B/ideal vars B;

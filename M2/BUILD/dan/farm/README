@@ -1,0 +1,11 @@
+packages to install
+
+	 virtualbox-ose
+	 virtualbox-ose-modules-generic
+	 virtualbox-ose-modules-2.6.24-21-generic
+	 virtualbox-ose-modules-2.6.24-23-generic
+	
+or
+
+	dpkg -i virtualbox-2.1_2.1.2-41885_Ubuntu_hardy_amd64.deb 
+

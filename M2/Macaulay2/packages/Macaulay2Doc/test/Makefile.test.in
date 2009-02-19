@@ -5,14 +5,17 @@
 DOTS ?= ../../..
 ifeq "@DEBUG@" "no"
 TLIMIT ?= 40
-MLIMIT ?= 150000
-VLIMIT ?= 150000
+# one test doesn't work with only 150MB RAM, ext-total.m2, on a 64 bit intel machine:
+MLIMIT ?= 235000
+VLIMIT ?= 235000
 else
 # give the debug version more time and space
 TLIMIT ?= 60
 MLIMIT ?= 300000
 VLIMIT ?= 300000
 endif
+# make the stack limit always the same as it would be under MacOS
+SLIMIT ?= 8192
 
 LIMIT :=
 ifeq (@ULIMIT_T@,yes)
@@ -24,6 +27,9 @@ endif
 ifeq (@ULIMIT_V@,yes)
 LIMIT += ulimit -v $(VLIMIT) ;
 endif
+ifeq (@ULIMIT_S@,yes)
+LIMIT += ulimit -s $(SLIMIT) ;
+endif
 
 TESTFILES := $(wildcard $(SRCDIR)/*.m2)
 
@@ -34,7 +40,7 @@ PAT := 'internal error|:[0-9][0-9]*:[0-9][0-9]*:\([0-9][0-9]*\):|^GC|^0x|^out of
 FILTER := egrep -a $(PAT)
 
 check:: $(RESULTS)
-$(RESULTS) : @pre_exec_prefix@/bin/M2@EXE@
+$(RESULTS) : @pre_exec_prefix@/bin/M2@EXE@ always
 
 ARGS := --silent --stop -q -e 'path=join(path,{"$(SRCDIR)/","$(SRCDIR)/$(DOTS)/packages/"})'
 ARGS += --no-debug --print-width 140

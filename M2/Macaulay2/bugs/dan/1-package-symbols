@@ -1,0 +1,2 @@
+the user needs a way to declare a symbol global but private within the package,
+even if it occurs in the core Macaulay2 system

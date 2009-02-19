@@ -1,0 +1,15 @@
+It would be nice to put PackageDictionary ahead of other dictionaries, even
+though it's still mutable.  So, we need a separate way of determining the
+dictionary into which new symbols go.
+
+    i1 : loadPackage Normaliz
+    stdio:1:1:(1):[0]: error: no method found for applying loadPackage to:
+	 argument   :  Normaliz (of class Symbol)
+
+    i2 : loadPackage "Normaliz"
+    --warning: symbol 'Normaliz' in PackageDictionary is shadowed by a symbol in User#"private dictionary"
+    --  use the synonym Package$Normaliz
+
+    o2 = Normaliz
+
+    o2 : Package

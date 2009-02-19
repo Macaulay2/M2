@@ -5,8 +5,7 @@ VPATH = @srcdir@
 PACKAGES = @PACKAGES@
 
 # packages under development that should be checked but not installed:
-DEVEL = EllipticIntegrals \
-   StatePolytope
+DEVEL = EllipticIntegrals
 
 RemakeAllDocumentation ?= false
 IgnoreExampleErrors ?= false
@@ -38,7 +37,9 @@ STOP = --stop --silent
 $(foreach i,\
 	$(sort $(PACKAGES) $(DEVEL)),\
 	$(eval check::; \
-		@pre_bindir@/M2@EXE@ -q $(STOP) -e "needsPackage(\"$i\",LoadDocumentation=>true); check($i,UserMode=>false); exit 0"))
+		if ! grep "CacheExampleOutput => true" @srcdir@/$i.m2 >/dev/null ;\
+		then @pre_bindir@/M2@EXE@ -q $(STOP) -e "needsPackage(\"$i\",LoadDocumentation=>true); check($i,UserMode=>false); exit 0" ;\
+		fi ))
 info-dir: @pre_infodir@ @pre_infodir@/dir
 @pre_infodir@:; $(MKDIR_P) $@
 @pre_infodir@/dir:; @INSTALL_DATA@ @top_srcdir@/files/info-dir-template $@
@@ -46,12 +47,17 @@ define bld
 all: info-dir @pre_libm2dir@/$1/.installed
 @pre_libm2dir@/$1/.installed : $1.m2 $$(wildcard @srcdir@/$1/* @srcdir@/$1/*/*) $(REMAKEPACKAGES)
 	: installing package $1
-	@pre_bindir@/M2@EXE@ $(M2DIRS) \
+	$(MKDIR_P) $1-temporary
+	@echo "make: Entering directory \`$(shell pwd)/$1-temporary'"
+	cd $1-temporary && @pre_bindir@/M2@EXE@ $(M2DIRS) \
 	    -q $(STOP) \
 	    -e errorDepth=0 \
 	    -e debugLevel=$(debugLevel) \
 	    $(EARGS) \
 	    -e "installPackage(\"$1\", $(ARGS)); exit 0"
+	@echo "make: Leaving directory \`$(shell pwd)/$1-temporary'"
+	ls -l $1-temporary
+	rm -rf $1-temporary
 	install-info --quiet --info-dir=@pre_infodir@ @pre_infodir@/$1.info
 	@ [ "${IgnoreExampleErrors}" = true -o -f $$@ ] || (echo error: file $$@ not made by installPackage >&2; false)
 check-info::@pre_infodir@/$1.info.errors
@@ -66,7 +72,9 @@ $(foreach i, $(PACKAGES), $(eval $(call bld,$i)))
 # check::check-info
 
 clean::; rm -rf tmp *.installed
-clean check ::; $(MAKE) -C ComputationsBook $@
+clean::; $(MAKE) -C ComputationsBook $@
+big-check:
+check::; $(MAKE) -C ComputationsBook check
 Makefile: Makefile.in; cd ../..; ./config.status Macaulay2/packages/Makefile
 distclean:clean
 	$(MAKE) -C ComputationsBook $@
@@ -74,7 +82,7 @@ distclean:clean
 
 ## here is the list of other files to install along with Macaulay2
 @pre_packagesdir@/%.m2 : %.m2 ; @INSTALL_DATA@ $^ $@
-all: @pre_packagesdir@/eliminate.m2 @pre_packagesdir@/D-modules.m2
+all: @pre_packagesdir@/D-modules.m2
 # this one we need for compatibility with the book
 all: @pre_packagesdir@/LLL.m2
 # Local Variables:

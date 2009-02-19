@@ -45,7 +45,7 @@ normalizeDocumentKey Sequence := identity
 normalizeDocumentKey  Nothing := key -> symbol null
 normalizeDocumentKey    Thing := key -> (
      if hasAttribute(key,ReverseDictionary) then return getAttribute(key,ReverseDictionary);
-     error("encountered unidentifiable document tag: ",key);
+     error("can't determine symbol whose value is document tag: ",key);
      )
 
 isDocumentableThing  = method(Dispatch => Thing)
@@ -127,7 +127,7 @@ mdt := makeDocumentTag Thing := opts -> key -> (
      pkg := (
 	  if class nkey === Symbol {* and package nkey =!= Core *} then package nkey
 	  else if opts#Package =!= null then opts#Package 
-	  else packageKey fkey
+	  else packageKey(key, fkey)
 	  );
      new DocumentTag from {nkey,fkey, {* pkg *} ,pkgTitle pkg})
 makeDocumentTag String := opts -> key -> (
@@ -289,16 +289,21 @@ record      := f -> x -> (
 -----------------------------------------------------------------------------
 -- identifying the package of a document tag
 -----------------------------------------------------------------------------
--- If we don't find it in a package, then we assume it's missing, and assign it to the "Missing" package.  -- or not...
--- That way we can compute the package during the loading of a package, while just some of the documentation has been installed.
--- Missing documentation can be detected when the package is closed, or later.
-packageKey = method(Dispatch => Thing)	    -- assume the input key has been normalized
-packageKey   String := fkey -> (
+packageKey0 = method(Dispatch => Thing)
+packageKey0 Thing := key -> currentPackage
+packageKey0 Array := key -> (
+     n := youngest apply(toSequence key, package);
+     assert( n =!= null );
+     n )
+packageKey0 Sequence := key -> (
+     n := youngest append(apply(toSequence key, package), currentPackage);
+     assert( n =!= null );
+     n )
+packageKey = method()
+packageKey(Array,String) := (key,fkey) -> packageKey0 key
+packageKey(Thing,String) := (key,fkey) -> (
      r := scan(loadedPackages, pkg -> if fetchRawDocumentation(pkg,fkey) =!= null then break pkg);
-     if r === null then (
-	  currentPackage
-	  )
-     else r)
+     if r === null then packageKey0 key else r)
 -----------------------------------------------------------------------------
 -- formatting document tags
 -----------------------------------------------------------------------------

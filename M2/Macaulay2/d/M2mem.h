@@ -4,6 +4,7 @@
 extern "C" {
 #endif
   extern void outofmem(void);
+  extern void outofmem2(size_t);
   extern char *getmem(size_t);
   extern void freemem(void *);
   extern void freememlen(void *, size_t);

@@ -1,0 +1,11 @@
+-- -*- M2-comint -*- {* hash: -614476100 *}
+
+i1 : setNmzExecPath("$HOME/normaliz/bin");  -- Unix
+
+i2 : setNmzExecPath("d:/normaliz/bin"); -- Windows
+
+i3 : getNmzExecPath() 
+
+o3 = d:/normaliz/bin/
+
+i4 : 

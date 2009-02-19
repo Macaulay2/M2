@@ -1,4 +1,4 @@
-AC_INIT(Macaulay 2, 1.1.99, Macaulay2@math.uiuc.edu, Macaulay2)
+AC_INIT(Macaulay 2, 1.2.1, Macaulay2@math.uiuc.edu, Macaulay2)
 AC_CONFIG_HEADERS(include/M2/config.h)
 AC_CONFIG_FILES(m4_include(config/files))
 AC_SUBST(CONFIGURED_FILES,"$ac_config_files")
@@ -111,6 +111,7 @@ then ISSUE_FLAVOR=[`</etc/issue head -1 | sed 's/^\([A-Za-z ]*\).*/\1/' | sed 's
 	 "Fedora"*) ISSUE_FLAVOR=Fedora ;;
 	 "RedHatEnterprise"*) ISSUE_FLAVOR=RedHatEnterprise ;;
 	 "RedHat"*) ISSUE_FLAVOR=RedHat ;;
+	 "Scientific"*) ISSUE_FLAVOR="ScientificLinux" ;;
 	 "Debian"*) ISSUE_FLAVOR=Debian ;;  # Debian GNU/Linux 4.0 \n \l
 	 "") ISSUE_FLAVOR=unknown ;;
      esac
@@ -137,6 +138,7 @@ case $OS-$REL in
   Darwin-7.*) REL=10.3 ; OS=MacOS ;;
   Darwin-8.*) REL=10.4 ; OS=MacOS ;;
   Darwin-9.*) REL=10.5 ; OS=MacOS ;;
+  Darwin-10.*) REL=10.6 ; OS=MacOS ;;
   Darwin-*) echo "Darwin release number translation needed in configure.ac" >&2 ; exit 1
 esac
 
@@ -307,13 +309,13 @@ AC_SUBST(ENCAP,no)     AC_ARG_ENABLE(encap, AS_HELP_STRING(--enable-encap,encaps
 AC_SUBST(XCODE,no)     AC_ARG_ENABLE(xcode, AS_HELP_STRING(--enable-xcode,create Macaulay2/d/interpret.a for use with xcode), XCODE=$enableval)
 
 AC_SUBST(FROBBY,yes)
-AC_ARG_ENABLE(frobby, AS_HELP_STRING(--disable-frobby,[download, compile, and link with frobby library]), FROBBY=$enableval)
+AC_ARG_ENABLE(frobby, AS_HELP_STRING(--disable-frobby,[do not download, compile, and link with frobby library]), FROBBY=$enableval)
 if test "$FROBBY" = yes
 then AC_DEFINE(HAVE_FROBBY,1,[whether we are linking with the frobby library])
 fi
 
 AC_SUBST(PARI,yes)
-AC_ARG_ENABLE(pari, AS_HELP_STRING(--disable-pari,[download, compile, and link with pari library]), PARI=$enableval)
+AC_ARG_ENABLE(pari, AS_HELP_STRING(--disable-pari,[do not download, compile, and link with pari library]), PARI=$enableval)
 if test "$PARI" = yes
 then AC_DEFINE(HAVE_PARI,1,[whether we are linking with the pari library])
 fi
@@ -368,7 +370,8 @@ test "$MEMDEBUG" = "yes" && DEBUG=yes
 test "$DEBUG" = "yes" && STRIP=no
 test "$PROFILING" = "yes" && CFLAGS="$CFLAGS -pg" CXXFLAGS="$CXXFLAGS -pg" LDFLAGS="$LDFLAGS -pg" STRIP=no
 
-AC_SUBST(PACKAGES,"
+AC_SUBST(PACKAGES, dnl oldest first:
+"
   Macaulay2Doc
   Style
   Classic
@@ -408,8 +411,13 @@ AC_SUBST(PACKAGES,"
   SimpleDoc
   EdgeIdeals
   FourTiTwo
+  StatePolytope
   Polyhedra
   Text
+  Polymake
+  gfanInterface
+  PieriMaps
+  Normaliz
 ")
 
 # convert the newlines in the list above to spaces
@@ -575,6 +583,9 @@ AC_ARG_ENABLE(build-libraries, AS_HELP_STRING(--enable-build-libraries=...,list 
        esac
     done])
 
+AC_SUBST(DOWNLOAD,no)
+AC_ARG_ENABLE(download, AS_HELP_STRING(--enable-download,enable automatic downloading of needed third-party libraries), DOWNLOAD=$enableval)
+
 # the order of these segments also reflects dependencies
 AC_LANG(C)
 AC_SEARCH_LIBS(tgoto,ncurses curses)
@@ -592,6 +603,27 @@ if test $BUILD_gmp = no
 then AC_LANG(C)
      AC_SEARCH_LIBS(__gmpz_init,gmp,,BUILD_gmp=yes)
      AC_CHECK_HEADER(gmp.h,,BUILD_gmp=yes)
+     if test $BUILD_gmp = no
+     then AC_MSG_CHECKING([whether gmp library is recent enough])
+          # version 4.1.4 of gmp has a random number generator different from 4.2.1's
+	  AC_RUN_IFELSE( [[
+	  #include <gmp.h>
+	  #include <stdio.h>
+	  int main() {
+	    int A=4,B=2,a=0,b=0,c=0,r=sscanf(__gmp_version,"%d.%d.%d",&a,&b,&c), t;
+	    if (r < 2) {
+	      fprintf(stderr,"failed to parse gmp version number: %s\n", __gmp_version);
+	      return 1;
+	    }
+	    t = a>A || a==A && b>=B;
+	    printf("(gmp version %s %s %d.%d) ",__gmp_version, t ? ">=" : "<", A, B);
+	    return !t;
+	  }
+	  ]],
+	  [ AC_MSG_RESULT(yes) ],
+	  [ AC_MSG_RESULT(no); BUILD_gmp=yes ],
+	  [ AC_MSG_RESULT([cross-compiling, test not possible]) ])
+     fi
 fi
 dnl frobby uses gmpxx
 if test $BUILD_gmp = yes
@@ -602,10 +634,10 @@ fi
 if test "$PARI" = yes
 then if test $BUILD_pari = no
      then AC_LANG(C)
-	  AC_SEARCH_LIBS(pari_init,pari,,BUILD_pari=yes)
+	  AC_SEARCH_LIBS(pari_init,pari,,BUILD_pari=yes,-lm)
 	  AC_CHECK_HEADER(pari/pari.h,,BUILD_pari=yes)
      fi
-     test $BUILD_pari = yes && BUILTLIBS="\$(TOSTATIC) -lpari \$(UNSTATIC) $BUILTLIBS"
+     test $BUILD_pari = yes && BUILTLIBS="-lpari $BUILTLIBS"
 fi
 
 if test "$FROBBY" = yes
@@ -619,10 +651,11 @@ fi
 AC_SUBST(ULIMIT_T,yes)
 AC_SUBST(ULIMIT_M,yes)
 AC_SUBST(ULIMIT_V,yes)
+AC_SUBST(ULIMIT_S,yes)
 ( ulimit -t 2000 2>/dev/null) || ULIMIT_T=no
 ( ulimit -m 2000 2>/dev/null) || ULIMIT_M=no
 ( ulimit -v 2000 2>/dev/null) || ULIMIT_V=no
-
+( ulimit -s 2000 2>/dev/null) || ULIMIT_S=no
 
 if test $BUILD_gmp = yes
 then BUILD_mpfr=yes
@@ -807,8 +840,8 @@ do AC_LANG(C++)
 	   extern const char * libfac_version;
 	   int main () {
 		FILE *msg = fdopen(]]AS_MESSAGE_FD[[,"w");
-		static int factoryV[3], fV[3] = {3,0,3}, fOK;
-		static int  libfacV[3], lV[3] = {3,0,1}, lOK;
+		static int factoryV[3], fV[3] = {3,1,0}, fOK;
+		static int  libfacV[3], lV[3] = {3,1,0}, lOK;
 		sscanf(FACTORYVERSION,"%d.%d.%d", &factoryV[0], &factoryV[1], &factoryV[2]);
 		sscanf(libfac_version,"%d.%d.%d", &libfacV[0], &libfacV[1], &libfacV[2]);
 		fOK = factoryV[0] > fV[0] ||
@@ -850,6 +883,10 @@ then AC_MSG_CHECKING([whether the vecLib framework is available])
 	     FORTRANUSED=yes
 	     if test $BUILD_lapack = no
 	     then AC_LANG(Fortran)
+	     	  if test "$FC" = ""
+		  then AC_MSG_ERROR(no fortran compiler found)
+		  else AC_MSG_NOTICE(using fortran compiler $FC)
+		  fi
 		  AC_SEARCH_LIBS(sgemv,blas f77blas,,BUILD_lapack=yes)
 		  AC_SEARCH_LIBS(dgetrf,lapack,,BUILD_lapack=yes)
 	     fi
@@ -980,7 +1017,7 @@ AC_SUBST(DESC,$PACKAGE_VERSION-$host_cpu-$OS-$REL)
 # by the 'configure' script, will be simply "alpha".
 
 if ! test "$FAKEROOT"
-then if test "$DEB" = yes -o "$RPM" = yes
+then if test "$RPM" = yes
      then AC_MSG_ERROR([program "fakeroot" not installed, required for creating *.deb or *.rpm distributions])
      fi
 fi
@@ -998,9 +1035,11 @@ do case $i in
 	#    socket: dynamic loading of libraries is used to determine the current way to look up an IP number
 	#  libgcc_s: comes only in dynamic form
 	-lncurses | -lsocket  | -lgcc_s* ) LIBS_DYNAMIC="$LIBS_DYNAMIC $i" ;;
-	# we must link statically with some libraries:
-	#   libpari: provides no version number at run time, and we must ensure it is configured based on gmp
-	-lpari ) LIBS_STATIC="$LIBS_STATIC $i" ;;
+	# but on some systems, libpari is provided only dynamically (fedora), so we link dynamically
+	# and later we'll figure out a run-time test for whether pari is based on gmp
+	# # we must link statically with some libraries:
+	# #   libpari: provides no version number at run time, and we must ensure it is configured based on gmp
+	# -lpari ) LIBS_STATIC="$LIBS_STATIC $i" ;;
 	*) LIBS_STATIC_OR_DYNAMIC="$LIBS_STATIC_OR_DYNAMIC $i" ;;
    esac
 done

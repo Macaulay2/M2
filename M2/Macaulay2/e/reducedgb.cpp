@@ -183,7 +183,7 @@ M2_bool ReducedGB::matrix_lift(const Matrix *m,
       g.fsyz = R->gbvector_zero();
 
       remainder(g, true, denom);
-      if (g.f == 0) all_zeroes = false;
+      if (g.f != 0) all_zeroes = false;
 
       vec fv = originalR->translate_gbvector_to_vec_denom(F, g.f, denom);
       K->negate_to(denom);

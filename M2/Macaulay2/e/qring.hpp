@@ -44,6 +44,9 @@ public:
 
   virtual void gbvector_normal_form(const FreeModule *F, gbvector *&f) const { }
 
+  virtual void gbvector_normal_form(const FreeModule *F, gbvector *&f, bool use_denom, ring_elem &denom) const 
+  {  gbvector_normal_form(F,f); }
+
   virtual const MonomialIdeal *  get_quotient_monomials() const { return 0; }
   // Each bag value is an "Nterm *".
 
@@ -97,6 +100,8 @@ public:
   void normal_form(ring_elem &f) const;
 
   void gbvector_normal_form(const FreeModule *F, gbvector *&f) const;
+
+  void gbvector_normal_form(const FreeModule *F, gbvector *&f, bool use_denom, ring_elem &denom) const;
 };
 
 class QRingInfo_ZZ : public QRingInfo

@@ -8,7 +8,8 @@ newPackage("Dmodules",
      Authors => {
 	  {Name => "Anton Leykin", Email => "leykin@math.uic.edu"},
 	  {Name => "Harrison Tsai"}
-	  }
+	  },
+     DebuggingMode => true				    -- temporary
      )
 
 load "./Dmodules/Dmodules.m2"

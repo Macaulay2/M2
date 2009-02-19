@@ -10,6 +10,26 @@
 #include "exceptions.hpp"
 #include "gb-walk.hpp"
 
+bool warning_given_for_gb_or_res_over_RR_or_CC = false;
+
+void test_over_RR_or_CC(const Ring *R)
+{
+  const PolynomialRing *P = R->cast_to_PolynomialRing();
+  if (
+      (R->is_RRR() || R->is_CCC())
+      ||
+      (P != 0 && (P->getCoefficients()->is_RRR() || P->getCoefficients()->is_CCC())))
+    {
+      if (!warning_given_for_gb_or_res_over_RR_or_CC)
+	{
+	  buffer o;
+	  o << "-- warning: experimental computation over inexact field begun" << newline;
+	  o << "--          results not reliable (one warning given per session)"  << newline;
+	  emit(o.str());
+	  warning_given_for_gb_or_res_over_RR_or_CC = true;
+	}
+    }
+}
 ////////////////////////////////////
 // new GB computations /////////////
 ////////////////////////////////////
@@ -412,6 +432,7 @@ ComputationOrNull *IM2_GB_make(const Matrix *m,
 {
   // Choose the correct computation here.
      try {
+          test_over_RR_or_CC(m->get_ring());
 	  clear_emit_size();
 	  return GBComputation::choose_gb(
 				  m,
@@ -441,6 +462,7 @@ ComputationOrNull *IM2_res_make(
 	   )
 {
      try {
+          test_over_RR_or_CC(m->get_ring());
 	  // Choose the correct computation here.
 	  clear_emit_size();
 	  return ResolutionComputation::choose_res(m,
@@ -481,6 +503,7 @@ IM2_GB_force(const Matrix *m, /* trimmed or minimal gens, may be the same as gb 
 	     const Matrix *change, /* same number of columns as 'gb', if not 0 */
 	     const Matrix *syz) /* possibly 0 too, otherwise same rows as change */
 {
+     test_over_RR_or_CC(m->get_ring());
      try {
 	  return GBDeclared::create(m,gb,change,syz);
      }
@@ -497,6 +520,7 @@ rawMarkedGB(const Matrix *leadterms,
 	     const Matrix *change, /* same number of columns as 'gb', if not 0 */
 	     const Matrix *syz) /* possibly 0 too, otherwise same rows as change */
 {
+     test_over_RR_or_CC(m->get_ring());
      try {
 	  return GBDeclared::create(leadterms,m,gb,change,syz);
      }

@@ -1,0 +1,6 @@
+
+i22 : gcd(500:1)
+stdio:20:1:(1):[0]: error: recursion limit of 300 exceeded
+
+i23 : lcm(500:1)
+stdio:21:1:(1):[0]: error: recursion limit of 300 exceeded

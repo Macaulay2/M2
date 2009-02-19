@@ -31,7 +31,7 @@ For details, see the file COPYING.
 Final basis has 1 inhomogeneous, 3 homogeneous and 0 free elements.
 
 4ti2 Total Time: 0.01 secs
-using temporary file name /tmp/M2-23767-1
+using temporary file name /tmp/M2-82926-1
 
 o3 = | 3 2 1 0 |
      | 0 1 2 3 |
@@ -53,7 +53,7 @@ For details, see the file COPYING.
 Final basis has 1 inhomogeneous, 3 homogeneous and 0 free elements.
 
 4ti2 Total Time: 0.01 secs
-using temporary file name /tmp/M2-23767-2
+using temporary file name /tmp/M2-82926-2
 
 o4 = | 3 2 1 0 |
      | 0 1 2 3 |

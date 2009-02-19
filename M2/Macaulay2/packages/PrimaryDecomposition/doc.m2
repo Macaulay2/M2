@@ -52,36 +52,9 @@ document {
 	       "removeLowestDimension"}
      }
 
-document {
-     Key => [associatedPrimes,Strategy],
-     "The strategy option value is currently not considered while computing associated primes",
-     PARA{},
-     "There are three methods for 
-     computing associated primes in Macaulay2: If the ideal is a monomial ideal, use code that 
-     Greg Smith and Serkan Hosten wrote.  If a primary decomposition has already been found, use the
-     stashed associated primes found.  If neither of these is the case, then use Ext 
-     modules to find the associated primes (this is ", TT "Strategy=>1", ")",
-     PARA{},
-     "In order to use the monomial ideal algorithm, it is necessary
-     to make ", TT "I", " into a monomial ideal.",
-     EXAMPLE lines ///
-         S = QQ[a,b,c,d,e];
-     	 I1 = ideal(a,b,c);
-	 I2 = ideal(a,b,d);
-	 I3 = ideal(a,e);
-	 P = I1*I2*I3
-	 L1 = associatedPrimes P
-	 L2 = apply(associatedPrimes monomialIdeal P, J -> ideal J)
-	 M1 = set apply(L1, I -> sort flatten entries gens I)
-	 M2 = set apply(L2, I -> sort flatten entries gens I)
-	 assert(M1 === M2)
-     ///,
-     "The method using Ext modules comes from     
-     Eisenbud-Huneke-Vasconcelos, Invent. Math 110 (1992) 207-235."
-     }
 
 document {
-     Key => (localize,Ideal,Ideal),
+     Key => {(localize,Ideal,Ideal),localize},
      Headline => "localize an ideal at a prime ideal",
      Usage => "localize(I,P)",
      Inputs => {
@@ -144,7 +117,7 @@ document {
 
 
 document {
-     Key => (primaryComponent, Ideal, Ideal),
+     Key => {(primaryComponent, Ideal, Ideal),primaryComponent},
      Headline => "find a primary component corresponding to an associated prime",
      Usage => "Q = primaryComponent(I,P)",
      Inputs => {
@@ -327,6 +300,66 @@ I = intersect(ideal(a^2,a*b,b^2), ideal(b,c,d^10))
 C = primaryDecomposition I
 associatedPrimes I
 ///
+
+document { Key => {(irreducibleDecomposition,MonomialIdeal),irreducibleDecomposition},
+     Headline => "express a monomial ideal as an intersection of irreducible monomial ideals",
+     Usage => "irreducibleDecomposition I",
+     Inputs => { "I" },
+     EXAMPLE lines ///
+        QQ[x..z];
+        I = monomialIdeal (x*y^3, x*y^2*z)
+	w = irreducibleDecomposition I
+	assert( I == intersect w )
+     ///,
+     Outputs => {{ "a list of irreducible monomial ideals whose intersection is ", TT "I" }}}
+
+document { 
+     Key => {primaryDecomposition, (primaryDecomposition, Ideal),(primaryDecomposition,MonomialIdeal)},
+     Headline => "irredundant primary decomposition of an ideal",
+     Usage => "primaryDecomposition I",
+     Inputs => {
+	  "I" => { ofClass Ideal, " or ", ofClass MonomialIdeal, " in a (quotient of a) polynomial ring ", TT "R", "."}
+	  },
+     Outputs => {
+	  List => {"of ", TO2(Ideal,"ideals"), ", a minimal list of primary ideals whose intersection is ", TT "I"}
+	  },
+     "This routine returns an irredundant primary decomposition
+     for the ideal ", TT "I", ".  The specific algorithm used varies
+     depending on the characteristics of the ideal, and can also be specified
+     using the optional argument ", TT "Strategy", ". ",
+     "In all cases, the radical of each entry of the output is equal to the corresponding ",
+     "entry of the output of ", TO "associatedPrimes", ".",
+     PARA{},
+     "Primary decompositions algorithms are very sensitive to their input.  Some
+     algorithms work very well on certain classes of ideals, but poorly on other classes.
+     If this function seems to be taking too long, try another algorithm (using ",
+     TO [primaryDecomposition,Strategy], ").",
+     EXAMPLE {
+	  "R = QQ[a..i];",
+	  "I = permanents(2,genericMatrix(R,a,3,3))",
+          "C = primaryDecomposition I;",
+	  "I == intersect C",
+	  "#C",
+	  },
+     PARA{},
+     "Recall that ", TO (symbol/,List,Function), " applies a function to each element of a
+     list, returning the results as a list.  This is often useful with lists of ideals,
+     such as the list ", TT "C", " of primary components.",
+     EXAMPLE {
+	  "C/toString/print;",
+	  "C/codim",
+	  "C/degree"
+	  },
+     PARA{},
+     "The corresponding list of associated prime ideals is cached in ", TT ///I.cache#"AssociatedPrimes"///, ",
+     and can be obtained by using ", TO (associatedPrimes,Ideal), ".",
+     EXAMPLE {
+	  "associatedPrimes I / print;"
+	  },
+     Caveat => {"The ground ring must be a prime field."},
+     SeeAlso => {PrimaryDecomposition,(associatedPrimes,Ideal), radical, minimalPrimes, topComponents, removeLowestDimension}
+     }
+
 -- Local Variables:
 -- compile-command: "make -C $M2BUILDDIR/Macaulay2/packages PrimaryDecomposition.installed "
 -- End:

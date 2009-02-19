@@ -276,6 +276,7 @@ mungeFile = (filename, headerline, trailerline, text) -> (
      insert := headerline | text | trailerline;
      local action;
      if fileExists filename then (
+     	  filename = realpath filename;	-- no other editor does this, but it seems like a good idea...
 	  hdr := "^" | regexpString headerline;
 	  tlr := "^" | regexpString trailerline;
      	  regexp := hdr | "(.|\n)*" | tlr ;
@@ -301,7 +302,6 @@ mungeFile = (filename, headerline, trailerline, text) -> (
 	  action = "create";
 	  newcontents = insert;
 	  );
-     filename = realpath filename;			    -- no other editor does this, but it seems like a good idea...
      tmp := filename | ".Macaulay2.tmp";
      tmp << newcontents << close;
      if promptUser then while true do (
@@ -418,6 +418,7 @@ local dotemacsFix
 setupEmacs = method()
 setup = method()
 mungeEmacs = () -> (
+     dotemacsFix = concatenate(emacsHeader, apply(emacsfixes, (var,dir) -> fix(var,dir,emacstempl)), dotemacsFix0);
      supplantStringFile(dotemacsFix,"~/"|M2emacs,false);
      mungeFile("~/"|".emacs", ";; Macaulay 2 start", ";; Macaulay 2 end", M2emacsRead )
      )
@@ -435,7 +436,6 @@ installMethod(setup, () -> (
      prelim();
      dotprofileFix = concatenate(shHeader, apply(shellfixes, (var,dir) -> fix(var,dir,bashtempl)));
      dotloginFix = concatenate(shHeader,apply(shellfixes, (var,dir) -> fix(var,dir,cshtempl)));
-     dotemacsFix = concatenate(emacsHeader, apply(emacsfixes, (var,dir) -> fix(var,dir,emacstempl)), dotemacsFix0);
      supplantStringFile(dotprofileFix,"~/"|M2profile,false);
      supplantStringFile(dotloginFix,"~/"|M2login,false);
      fileExists("~/"|".bash_profile") and mungeFile("~/"|".bash_profile",startToken,endToken,M2profileRead) or

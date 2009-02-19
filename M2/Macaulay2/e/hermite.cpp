@@ -508,7 +508,7 @@ M2_bool HermiteComputation::matrix_lift(const Matrix *m,
       vec fsyz = NULL;
 
       gb_reduce(f, fsyz);
-      if (f == 0) all_zeroes = false;
+      if (f != 0) all_zeroes = false;
 
       globalZZ->negate_vec_to(fsyz);
       mat_remainder.set_column(i, f);

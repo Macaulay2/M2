@@ -1,0 +1,25 @@
+-- -*- M2-comint -*- {* hash: 708722746 *}
+
+i1 : R=ZZ/37[x,y,t];
+
+i2 : I=ideal(x^3,x^2*y,y^3);
+
+o2 : Ideal of R
+
+i3 : setNmzOption("hilb",true);
+
+i4 : intclMonIdeal(I);
+done.done.
+i5 : exportNumInvs()
+
+i6 : nmzHilbertBasisElements
+
+o6 = 6
+
+i7 : nmzHomogeneousWeights
+
+o7 = (1, 1, -2)
+
+o7 : Sequence
+
+i8 : 

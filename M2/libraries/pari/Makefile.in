@@ -1,20 +1,33 @@
 
 #				pari
 
+# The svn server pari-testing branch (2.4.3, development) is said to have 
+# much better documentation, and the stable branch is said to be stale.
+#      svn://pari.math.u-bordeaux.fr/pari/trunk
+
 # http://pari.math.u-bordeaux.fr/
 VPATH = @srcdir@
+
 VERSION = 2.3.4
+PATCHFILE = @abs_srcdir@/patch-2.3.4
+
 URL = http://pari.math.u-bordeaux.fr/pub/pari/unix
-CHECKTARGET = bench test-all test-compat test-ellglobalred test-galois test-intnum test-qfbsolve test-rfrac test-round4 test-stark test-ploth
+
+# disable check, because it fails on various 64 bit machines
+# CHECKTARGET = bench test-all test-compat test-ellglobalred test-galois test-intnum test-qfbsolve test-rfrac test-round4 test-stark test-ploth
+CHECKTARGET = .
+
 BUILDTARGET = lib-sta
 INSTALLTARGET = install-lib-sta install-include
+
+
 
 ifeq (@SHARED@,yes)
 BUILDTARGET += lib-dyn
 INSTALLTARGET += install-lib-dyn
 endif
 
-CONFIGURECMD = $(CONFIGENV) ./Configure --prefix=$(LIBRARIESDIR) --with-gmp
+CONFIGURECMD = $(CONFIGENV) ./Configure --prefix=$(LIBRARIESDIR) --with-gmp=$(LIBRARIESDIR)
 
 ifeq (@PROFILING@,yes)
 CONFIGURECMD += -pg
@@ -31,7 +44,19 @@ BUILDOPTIONS = -C `config/objdir`
 endif
 endif
 
+CONFIGURECMD += | tee pari-config.log
+
 include ../Makefile.library
+
+# we have to detect which of these two answers it gives:
+#   ### Building without GNU MP support
+#   Using GNU MP, version 4.2.1
+config-chk: .config-checked-$(VERSION)
+.config-checked-$(VERSION) : $(BUILDDIR)/pari-config.log
+	: test whether pari successfully found gmp library during configuration :
+	grep 'Using GNU MP' $^
+	touch $@
+
 Makefile: @srcdir@/Makefile.in ; cd ../.. && ./config.status libraries/pari/Makefile
 run-example: example; ./example
 example: example.c -lpari

@@ -1,0 +1,17 @@
+
+And this will get the emacs app:
+
+  CVSROOT=:pserver:anonymous@cvs.sv.gnu.org:/sources/emacs cvs export -r "EMACS_22_3" emacs/mac/Emacs.app 
+  find emacs -name .cvsignore -delete
+
+> 
+> 
+> Mike, this looks like a tiny icon we could include in our *.dmg files!  Try it,
+> and I'll put it in our source tree for automatic inclusion.
+> 
+> > Actually, /usr/bin/emacs IS built with Carbon support; all you have to do is
+> > download the Emacs.app wrapper from the Emacs CVS repository, and then:
+> > 
+> > % ln /usr/bin/emacs Emacs.app/Contents/MacOS/Emacs
+> > 
+> > Presto! Carbonized Emacs on Leopard.

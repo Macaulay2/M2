@@ -84,7 +84,7 @@ graphIdeal RingMap := Ideal => opts -> (f) -> (
      m := numgens R;
      n := numgens S;
      k := coefficientRing R;
-     if S === k then return ideal 0_R;
+     if S === k then return ideal map(R^1,R^0,0);
      if not ( isAffineRing R and isAffineRing S and k === coefficientRing S ) then error "expected polynomial rings over the same ring";
      gensk := generators(k, CoefficientRing => ZZ);
      if not all(gensk, x -> promote(x,R) == f promote(x,S)) then error "expected ring map to be identity on coefficient ring";
@@ -241,7 +241,7 @@ flattenRing PolynomialRing := opts -> (cacheValue (symbol flattenRing => opts)) 
      if instance(resultTemplate,VisibleList) then apply(resultTemplate,x -> if x === null then Thing else x);
      A := coefficientRing R;
      Q := ultimate(ambient,R);
-     J := lift(ideal 0_R, Q);
+     J := lift(ideal map(R^1,R^0,0), Q);
      M := monoid R;
      n2 := numgens M;
      if opts.CoefficientRing === A or opts.CoefficientRing === null and (isField A or A.?isBasic)

@@ -823,20 +823,6 @@ document {
      SeeAlso => {isLLL, gcdLLL, kernelLLL, hermite}
      }
 document { 
-     Key => [LLL, Threshold],
-     Headline => "a rational number in the range (1/4,1], default is 3/4",
-     Usage => "",
-     Inputs => {
-	  },
-     Consequences => {
-	  },     
-     "description",
-     EXAMPLE {
-	  },
-     Caveat => {},
-     SeeAlso => {}
-     }
-document { 
      Key => [LLL, ChangeMatrix],
      Headline => "also find change of basis matrix",
      Usage => "(B,U) = LLL(A,ChangeMatrix=>true)",
@@ -858,20 +844,6 @@ document {
 	  "B == A*U",
 	  },
      SeeAlso => {LLLBases}
-     }
-document { 
-     Key => [LLL, Limit],
-     Headline => "",
-     Usage => "",
-     Inputs => {
-	  },
-     Consequences => {
-	  },     
-     "description",
-     EXAMPLE {
-	  },
-     Caveat => {},
-     SeeAlso => {}
      }
 document { 
      Key => [LLL, Strategy],
@@ -1080,20 +1052,6 @@ document {
 	  allow real and rational matrices too, but this is not yet implemented."},
      SeeAlso => {LLL, gcdLLL, kernelLLL, hermite}
      }
-document { 
-     Key => [isLLL, Threshold],
-     Headline => "",
-     Usage => "",
-     Inputs => {
-	  },
-     Consequences => {
-	  },     
-     "description",
-     EXAMPLE {
-	  },
-     Caveat => {},
-     SeeAlso => {}
-     }
 
 document {
      Key => {gcdLLL,(gcdLLL,List)},
@@ -1124,147 +1082,6 @@ document {
 	  "matrix{s} * z"
 	  },
      SeeAlso => {LLLBases, LLL, kernelLLL, hermite}
-     }
-document { 
-     Key => [gcdLLL, Threshold],
-     Headline => "",
-     Usage => "",
-     Inputs => {
-	  },
-     Consequences => {
-	  },     
-     "description",
-     EXAMPLE {
-	  },
-     Caveat => {},
-     SeeAlso => {}
-     }
-document { 
-     Key => [gcdLLL, Strategy],
-     Headline => "",
-     Usage => "",
-     Inputs => {
-	  },
-     Consequences => {
-	  },     
-     "description",
-     EXAMPLE {
-	  },
-     Caveat => {},
-     SeeAlso => {}
-     }
-
-document { 
-     Key => {gramm,(gramm,Matrix)},
-     Headline => "",
-     Usage => "",
-     Inputs => {
-	  },
-     Outputs => {
-	  },
-     Consequences => {
-	  },     
-     "description",
-     EXAMPLE {
-	  },
-     Caveat => {},
-     SeeAlso => {}
-     }
-
-document { 
-     Key => {kernelLLL,(kernelLLL,Matrix)},
-     Headline => "compute the kernel of an integer matrix using LLL bases",
-     Usage => "",
-     Inputs => {
-	  },
-     Outputs => {
-	  },
-     Consequences => {
-	  },     
-     "This function is provided by the package ", TO LLLBases, ".",
-     "description",
-     EXAMPLE {
-	  ///
-	  A = map(ZZ^10, ZZ^7, (i,j) -> if random 1.0 > .2 then random 1000 else 0)
-	  hermite A
-	  (B,U) = hermite(A, ChangeMatrix=>true)
-	  A*U == B
-	  ///
-	  },
-     Caveat => {},
-     SeeAlso => {}
-     }
-document { 
-     Key => [kernelLLL, Limit],
-     Headline => "",
-     Usage => "",
-     Inputs => {
-	  },
-     Consequences => {
-	  },     
-     "description",
-     EXAMPLE {
-	  },
-     Caveat => {},
-     SeeAlso => {}
-     }
-document { 
-     Key => {hermite,(hermite,Matrix)},
-     Headline => "compute the Hermite normal form and small multiplier matrix using LLL bases",
-     Usage => "hermite m",
-     Inputs => {
-	  },
-     Outputs => {
-	  },
-     Consequences => {
-	  },     
-     "description",
-     EXAMPLE {
-	  },
-     Caveat => {},
-     SeeAlso => {}
-     }
-document { 
-     Key => [hermite, Threshold],
-     Headline => "",
-     Usage => "",
-     Inputs => {
-	  },
-     Consequences => {
-	  },     
-     "description",
-     EXAMPLE {
-	  },
-     Caveat => {},
-     SeeAlso => {}
-     }
-document { 
-     Key => [hermite, Limit],
-     Headline => "",
-     Usage => "",
-     Inputs => {
-	  },
-     Consequences => {
-	  },     
-     "description",
-     EXAMPLE {
-	  },
-     Caveat => {},
-     SeeAlso => {}
-     }
-document { 
-     Key => [hermite, ChangeMatrix],
-     Headline => "",
-     Usage => "",
-     Inputs => {
-	  },
-     Consequences => {
-	  },     
-     "description",
-     EXAMPLE {
-	  },
-     Caveat => {},
-     SeeAlso => {}
      }
 
 document {
@@ -1630,6 +1447,193 @@ TEST ///
 			 prune subquotient(f, random(ZZ^d, ZZ^(d-1)));
 			 ))));
 ///
+
+end
+
+document { 
+     Key => [LLL, Threshold],
+     Headline => "a rational number in the range (1/4,1], default is 3/4",
+     Usage => "",
+     Inputs => {
+	  },
+     Consequences => {
+	  },     
+     "description",
+     EXAMPLE {
+	  },
+     Caveat => {},
+     SeeAlso => {}
+     }
+document { 
+     Key => [LLL, Limit],
+     Headline => "",
+     Usage => "",
+     Inputs => {
+	  },
+     Consequences => {
+	  },     
+     "description",
+     EXAMPLE {
+	  },
+     Caveat => {},
+     SeeAlso => {}
+     }
+document { 
+     Key => [isLLL, Threshold],
+     Headline => "",
+     Usage => "",
+     Inputs => {
+	  },
+     Consequences => {
+	  },     
+     "description",
+     EXAMPLE {
+	  },
+     Caveat => {},
+     SeeAlso => {}
+     }
+document { 
+     Key => [gcdLLL, Threshold],
+     Headline => "",
+     Usage => "",
+     Inputs => {
+	  },
+     Consequences => {
+	  },     
+     "description",
+     EXAMPLE {
+	  },
+     Caveat => {},
+     SeeAlso => {}
+     }
+document { 
+     Key => [gcdLLL, Strategy],
+     Headline => "",
+     Usage => "",
+     Inputs => {
+	  },
+     Consequences => {
+	  },     
+     "description",
+     EXAMPLE {
+	  },
+     Caveat => {},
+     SeeAlso => {}
+     }
+
+document { 
+     Key => {gramm,(gramm,Matrix)},
+     Headline => "",
+     Usage => "",
+     Inputs => {
+	  },
+     Outputs => {
+	  },
+     Consequences => {
+	  },     
+     "description",
+     EXAMPLE {
+	  },
+     Caveat => {},
+     SeeAlso => {}
+     }
+
+document { 
+     Key => {kernelLLL,(kernelLLL,Matrix)},
+     Headline => "compute the kernel of an integer matrix using LLL bases",
+     Usage => "",
+     Inputs => {
+	  },
+     Outputs => {
+	  },
+     Consequences => {
+	  },     
+     "This function is provided by the package ", TO LLLBases, ".",
+     "description",
+     EXAMPLE {
+	  ///
+	  A = map(ZZ^10, ZZ^7, (i,j) -> if random 1.0 > .2 then random 1000 else 0)
+	  hermite A
+	  (B,U) = hermite(A, ChangeMatrix=>true)
+	  A*U == B
+	  ///
+	  },
+     Caveat => {},
+     SeeAlso => {}
+     }
+document { 
+     Key => [kernelLLL, Limit],
+     Headline => "",
+     Usage => "",
+     Inputs => {
+	  },
+     Consequences => {
+	  },     
+     "description",
+     EXAMPLE {
+	  },
+     Caveat => {},
+     SeeAlso => {}
+     }
+document { 
+     Key => {hermite,(hermite,Matrix)},
+     Headline => "compute the Hermite normal form and small multiplier matrix using LLL bases",
+     Usage => "hermite m",
+     Inputs => {
+	  },
+     Outputs => {
+	  },
+     Consequences => {
+	  },     
+     "description",
+     EXAMPLE {
+	  },
+     Caveat => {},
+     SeeAlso => {}
+     }
+document { 
+     Key => [hermite, Threshold],
+     Headline => "",
+     Usage => "",
+     Inputs => {
+	  },
+     Consequences => {
+	  },     
+     "description",
+     EXAMPLE {
+	  },
+     Caveat => {},
+     SeeAlso => {}
+     }
+document { 
+     Key => [hermite, Limit],
+     Headline => "",
+     Usage => "",
+     Inputs => {
+	  },
+     Consequences => {
+	  },     
+     "description",
+     EXAMPLE {
+	  },
+     Caveat => {},
+     SeeAlso => {}
+     }
+document { 
+     Key => [hermite, ChangeMatrix],
+     Headline => "",
+     Usage => "",
+     Inputs => {
+	  },
+     Consequences => {
+	  },     
+     "description",
+     EXAMPLE {
+	  },
+     Caveat => {},
+     SeeAlso => {}
+     }
+
 
 -- Local Variables:
 -- compile-command: "make -C $M2BUILDDIR/Macaulay2/packages PACKAGES=LLLBases pre-install"

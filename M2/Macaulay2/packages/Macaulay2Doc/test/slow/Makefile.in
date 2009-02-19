@@ -7,12 +7,12 @@ VPATH = @srcdir@
 ifeq "@DEBUG@" "no"
 MLIMIT = 400000
 VLIMIT = 400000
-TLIMIT = 300
+TLIMIT = 450
 else
 # give the debug version more time and space
 MLIMIT = 600000
 VLIMIT = 600000
-TLIMIT = 450
+TLIMIT = 600
 endif
 
 SRCDIR = @srcdir@

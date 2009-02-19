@@ -10,8 +10,68 @@ document {
 document {
      Key => "changes, 1.2",
      UL {
-	  LI {
-	       "new functions:",
+	  LI { "major improvements and additions:",
+	       UL {
+		    LI { "Improved old documentation and added many new descriptions of functions." },
+		    LI {
+			 "Greatly improved the debugger. In particular, the debugger will 
+			 put you directly onto the line of the program with an error, and allows the user to
+			 execute a given number of steps of the program (see ", TO "step", ") and to conveniently display
+			 and change values of variables as they evolve."
+			 },
+		    LI { "Improved the making of packages: made it much easier for a user
+			 to create a complete package, including documentation."
+			 },
+		    LI { "Improved the handling of symmetric algebras and Rees algebras;
+			 improved implementation of things like analytic spread."
+			 },
+		    LI { "Improved handling of finite fields: ", TO "GF", " now uses ",
+			 TO2{"ConwayPolynomials :: ConwayPolynomials","Conway polynomials"}, " when possible.
+			 Maps between Galois fields made with them are now easy to produce 
+			 with ", TT "map(E,F)", "." },
+		    LI {"The function ", TO "hilbertFunction", " is now faster at computing power series expansions."},
+		    LI { "Homomorphisms (maps) of modules over different rings with respect to a ring homomorphism
+			 between them are now supported.  Composition, coimage (replacing pushForward1), and kernel work.
+			 An option has been added to ", TO "basis", " to ask it to return such a homomorphism.  See ",
+			 TO (map,Module,Module,RingMap,Matrix), ", ", TO (map,Module,Nothing,RingMap,Matrix), ", and ",
+		    	 TO (map,Module,RingMap), "."
+			 },
+		    LI { "The total Ext functor now accepts multigraded modules, see ", TO (Ext,Module,Module), "." },
+		    LI { "Macaulay 2 now incorporates ", TO "pari", ", a free library for computing in number theory.
+			 It is used by ", TO (factor,ZZ), ", ", TO (factor,QQ), ", ", TO (isPseudoprime, ZZ), ", and ", TO (isPrime,ZZ), "."
+			 },
+		    LI { "new packages, included:",
+			 UL {
+			      TO "BGG :: BGG",
+			      TO "BoijSoederberg :: BoijSoederberg",
+			      TO "Bruns :: Bruns",
+			      TO "ConwayPolynomials :: ConwayPolynomials",
+			      TO "EdgeIdeals :: EdgeIdeals",
+			      TO "FourTiTwo :: FourTiTwo",
+			      TO "gfanInterface::gfanInterface",
+			      TO "LocalRings :: LocalRings",
+			      TO "Polyhedra :: Polyhedra",
+			      TO "Polymake :: Polymake",
+			      TO "SimpleDoc :: SimpleDoc",
+			      TO "StatePolytope :: StatePolytope",
+			      TO "SymmetricPolynomials :: SymmetricPolynomials",
+			      TO "Text :: Text"
+			      }
+			 },
+		    LI { "downloadable ", HREF{"http://www.math.uiuc.edu/Macaulay2/Packages/", "packages"}, ":",
+			 UL {
+			      LI { EM "Kronecker", ", Kronecker normal form of a matrix pencil, by Edward Carter" },
+			      LI { EM "LDL", ", the ", TT "LDL'", " factorization of a positive semidefinite matrix, by Helfried Peyrl" }
+			      } },
+		    LI { "improved packages:",
+			 UL {
+			      TO "HyperplaneArrangements::HyperplaneArrangements",
+			      TO "ReesAlgebra::ReesAlgebra",
+			      TO "PieriMaps::PieriMaps",
+			      TO "Schubert2::Schubert2",
+			      TO "SchurFunctors::SchurFunctors"
+			      } } } },
+	  LI { "new functions:",
 	       UL {
 		    TO groupID,
 		    TO heft,
@@ -25,8 +85,7 @@ document {
 		    TO switch,
 		    }
 	       },
-	  LI {
-	       "new methods for old functions:",
+	  LI { "new methods for old functions:",
 	       UL {
 		    TO (all,ZZ,Function),
 		    TO (any,ZZ,Function),
@@ -81,16 +140,14 @@ document {
 		    TO (symbol ^, Constant, RingFamily)
 		    }
 	       },
-	  LI {
-	       "new variables:",
+	  LI { "new variables:",
 	       UL {
 		    TO "currentLayout",
 		    TO "prefixPath",
 		    TO "lastMatch"
 		    }
 	       },
-	  LI {
-	       "new symbols:",
+	  LI { "new symbols:",
 	       UL {
 		    TO FlatMonoid,
 		    TO Join,
@@ -101,8 +158,7 @@ document {
 		    TO SourceRing
 		    }
 	       },
-	  LI {
-	       "new optional arguments to functions:",
+	  LI { "new optional arguments to functions:",
 	       UL {
 		    TO [GF,SizeLimit],
 		    TO [basis,SourceRing],
@@ -133,20 +189,7 @@ document {
 		    TO [tensor,Join],
 		    }
 	       },
-	  LI {
-	       "new packages:",
-	       UL {
-		    TO "ConwayPolynomials :: ConwayPolynomials",
-		    TO "EdgeIdeals :: EdgeIdeals",
-		    TO "FourTiTwo :: FourTiTwo",
-		    TO "Polyhedra :: Polyhedra",
-		    TO "SimpleDoc :: SimpleDoc",
-		    TO "StatePolytope :: StatePolytope",
-		    TO "Text :: Text"
-		    }
-	       },
-	  LI {
-	       "functionality removed or changed:",
+	  LI { "functionality removed or changed:",
 	       UL {
 		    LI {"Comparison of rings and ring maps with ", TO "==", " is no longer supported.
 			 Old code can be fixed by changing the comparison operator to ", TO "===", "."},
@@ -163,11 +206,15 @@ document {
 			 },
 		    LI {"The function ", TO "minors", " has been altered so the ideal of ", TT "n", " by ", TT "n", " minors that it provides for negative
 			 values of ", TT "n", " is the unit ideal."
+			 },
+		    LI {
+			 "The optional argument to ", TO monoid, " and to polynomial ring creation 
+			 named ", TT "ConstantCoefficients", " has been removed.  Specifying ", TT "ConstantCoefficients=>false", " 
+			 can be accomplished by specifying ", TT "Join=>false", ".  See ", TO Join, "."
 			 }
 		    }
 	       },
-	  LI {
-	       "functionality added or improved:",
+	  LI { "functionality added or improved:",
 	       UL {
 		    LI {"Filenames starting with ", TT "~/", " will have the tilde replaced by the home directory."},
 		    LI {"The ", EM "D", " language, in which the Macaulay 2 interpreter is written, is now type-safe"},
@@ -190,10 +237,9 @@ document {
 			 init files on multiple machines, even though Macaulay 2 may be installed in various different
 			 locations."
 			 },
-		    LI {"The function ", TO "hilbertFunction", " is now faster at computing power series expansions."},
-		    LI {"A new division algorithm has been implemented in rings with inverses,
-			 where the monomials can involve negative exponents, and hence are not well-ordered.
-			 See ", TO "division in polynomial rings with inverses", "."
+		    LI {"A new division algorithm has been implemented in rings with monomials less than 1,
+			 e.g., where the monomials can involve negative exponents, and hence do not form a well-ordered set.
+			 See ", TO "division in polynomial rings with monomials less than 1", "."
 			 },
 		    LI {"A bug in ", TO "irreducibleCharacteristicSeries", ", upon with ", TO "minimalPrimes", "
 			 depends, was fixed.  Now the new ring supporting the characteristic series will
@@ -228,10 +274,6 @@ document {
 			 between the two rings that is derived from the names of the variables."
 			 },
 		    LI {
-			 TO "GF", " now uses Conway polynomials when possible.  Maps between Galois fields
-			 made with them are now easy to produce with ", TT "map(E,F)", "."
-			 },
-		    LI {
 			 "The degrees in symmetric algebras have been corrected."
 			 },
 		    LI {
@@ -247,13 +289,6 @@ document {
 			 "The function ", TO "export", ", given a string (rather than a symbol) will now make a new
 			 symbol with that name, even if a symbol with the same name already exists 
 			 in another visible package."
-			 },
-		    LI {
-			 "Homomorphisms (maps) of modules over different rings with respect to a ring homomorphism
-			 between them are now supported.  Composition, coimage (replacing pushForward1), and kernel work.
-			 An option has been added to ", TO "basis", " to ask it to return such a homomorphism.  See ",
-			 TO (map,Module,Module,RingMap,Matrix), ", ", TO (map,Module,Nothing,RingMap,Matrix), ", and ",
-		    	 TO (map,Module,RingMap), "."
 			 },
 		    LI {
 			 "The function ", TO "basis", " will now check finite dimensionality in advance, to avoid running out of memory."
@@ -306,19 +341,12 @@ document {
 			 "The function ", TO "regex", " now has a form which restricts the range of the search."
 			 },
 		    LI {
-			 "The total Ext functor now accepts multigraded modules, see ", TO "(Ext,Module,Module)", "."
-			 },
-		    LI {
 			 "Macaulay 2 now incorporates ", TO "frobby", ", a free library for computing
-			 the Alexander dual of a monomial ideal (see ", TO "(dual,MonomialIdeal)", ")."
+			 the Alexander dual of a monomial ideal (see ", TO (dual,MonomialIdeal), ")."
 			 },
 		    LI {
 			 "The function ", TO "select", " will now give an error message if the
 			 function provided to it returns something neither ", TO "true", " nor ", TO "false", "."
-			 },
-		    LI {
-			 "Macaulay 2 now incorporates ", TO "pari", ", a free library for computing in number theory.
-			 It is used by ", TO (factor,ZZ), ", ", TO (factor,QQ), ", ", TO (isPseudoprime, ZZ), ", and ", TO (isPrime,ZZ), "."
 			 },
 		    LI {
 			 "The quotient and remainder for two ring elements can now be obtained simultaneously,

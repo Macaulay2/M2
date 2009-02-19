@@ -28,7 +28,7 @@ anotherPolynomial % ourpoints
 R' = ZZ/101[x,y,z];
 ourpoints' = substitute(ourpoints,R')
 decompose ourpoints'
-oo / print @@ print;
+oo / (x -> <<endl) @@ print;
 ooo / degree
 S = QQ[z,y,x, MonomialOrder => Eliminate 2]
 ourpoints'' = substitute(ourpoints,S)

@@ -1,17 +1,15 @@
 #-*- Makefile -*-
-#BUILDOPTIONS += RemakeAllDocumentation=true RemakePackages=true
+#BUILDOPTIONS += RerunExamples=true
+#BUILDOPTIONS += RemakeAllDocumentation=true RemakePackages=true 
+#BUILDOPTIONS += IgnoreExampleErrors=true
 #BUILDOPTIONS += -s
 #INSTALLOPTIONS += -s
-
-# CONFIGOPTIONS += --enable-tarfile
-# CONFIGOPTIONS += --enable-rpm
+CONFIGOPTIONS += --enable-rpm
 PRE = $(HOME)/local.Linux/encap
 CONFIGOPTIONS += --build=i486-pc-linux-gnu
 
 # I want gmp 4.2.1 instead of 4.1.2 because the random number generator has changed:
 CONFIGOPTIONS += --enable-build-libraries=gmp
-
-CONFIGOPTIONS += --enable-common-staging-area
 
 DEBUG =
 unexport DEBUG
@@ -25,6 +23,7 @@ INSTALLOPTIONS += prefix=$(PRE)
 DIRECTORY = u123
 endif
 include Makefile.include
+default: install
 pre-install:;	rm -rf $(PRE)/Macaulay2-$(PACKAGE_VERSION)
 arch-chk:; [ `hostname` = u123.math.uiuc.edu ]
 show:; : $(MAKE)

@@ -391,6 +391,14 @@ Here is another possible benchmark, but it doesn't work for us yet:
 -- res39: 0.749886 seconds
 -- resG25: 11.1823 seconds
 
+-- beginning computation Wed Jan 28 11:31:26 CST 2009
+-- this is an eMac with an 800 Mhz Power PC G4 CPU
+-- Darwin cesium.local 8.11.0 Darwin Kernel Version 8.11.0: Wed Oct 10 18:26:00 PDT 2007; root:xnu-792.24.17~1/RELEASE_PPC Power Macintosh powerpc
+-- Macaulay 2 1.1.99, compiled with gcc 4.0.1
+-- res39: res of a generic 3 by 9 matrix over ZZ/101: 1.15 seconds
+-- resG25: res of the coordinate ring of Grassmannian(2,5): 14.73 seconds
+-- gbB148: gb of Bayesian graph ideal #148: 104.29 seconds
+
 -- Linux rhenium 2.2.16 #24 Sat Jun 10 15:07:27 CDT 2000 i686 unknown
 -- Macaulay 2 0.8.61, compiled with gcc 2.95
 -- res39: 1.12 seconds

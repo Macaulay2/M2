@@ -1,6 +1,7 @@
 --		Copyright 1993-2002 by Daniel R. Grayson
 
 Constant = new Type of BasicList
+globalAssignment Constant
 
 precedence = method(Dispatch => Thing)
 rightPrecedence = method(Dispatch => Thing)
@@ -452,7 +453,10 @@ Expression     .. Holder := (x,y) -> BinaryOperation{symbol ..,x,y#0}
 Holder         .. Holder := (x,y) -> BinaryOperation{symbol ..,x#0,y#0}
 InfiniteNumber .. InfiniteNumber :=
 InfiniteNumber .. ZZ             :=
-ZZ             .. InfiniteNumber :=
+ZZ             .. InfiniteNumber := (x,y) -> if x < y then (
+     error "infinite range requested";
+     -- BinaryOperation{symbol ..,x,y}
+     ) else ()
 Expression     .. Expression     :=
 Thing          .. Expression     :=
 Expression     .. Thing          := (x,y) -> BinaryOperation{symbol ..,x,y}
@@ -565,7 +569,7 @@ toString'(Function, Adjacent) := toString'(Function, FunctionApplication) := (fm
      else concatenate(fmt fun, fmt args)       -- f(x,y) or f(), ...
      else if precedence args >= p
      then if precedence fun > p
-     then concatenate(fmt fun, " ", fmt args)
+     then concatenate(fmt fun, if not instance(args,Array) then " ", fmt args)
      else concatenate("(", fmt fun, ")", fmt args)
      else if precedence fun > p
      then concatenate(fmt fun, "(", fmt args, ")")

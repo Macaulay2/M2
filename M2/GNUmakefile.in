@@ -8,7 +8,10 @@ configfiles:; $(MAKE) -f Makefile.configfiles
 check-make:; @ echo "$(.FEATURES)" | grep order-only >/dev/null || (echo error: version >= 3.81 of GNU make is required >&2; false)
 configured:include/configuration
 include/configuration: config.status; ./config.status
-check:configured check-in-subdirs
+check:configured check-in-Macaulay2
+check:; : +++ all Macaulay2 tests succeeded +++
+big-check:configured big-check-in-Macaulay2
+big-check-in-Macaulay2:; $(MAKE) -C Macaulay2 -k big-check
 check-machine:; @[ "@UNAME_INFO@" = "` @UNAME_INFO_COMMAND@ `" ] || (echo "error: reconfiguration required (uname output seems different)" >&2; false)
 distclean:clean distclean-in-subdirs
 	rm -f @CONFIGURED_FILES@ include/M2/config.h include/config.Makefile config.cache config.log configure.options config.status

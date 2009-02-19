@@ -1,0 +1,17 @@
+-- -*- M2-comint -*- {* hash: -590717586 *}
+
+i1 : R=QQ[x,y,z,w];
+
+i2 : T=matrix({{-1,-1,2,0},{1,1,-2,-1}});
+
+              2        4
+o2 : Matrix ZZ  <--- ZZ
+
+i3 : torusInvariants(T,R)
+
+             2           2
+o3 = ideal (x z, x*y*z, y z)
+
+o3 : Ideal of R
+
+i4 : 

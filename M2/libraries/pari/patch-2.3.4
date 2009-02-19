@@ -1,0 +1,14 @@
+diff -ur --exclude=configure /home/dan/src/M2/trunk/BUILD/dan/builds/cygwin/libraries/pari/tmp/pari-2.3.4/config/locatelib pari-2.3.4/config/locatelib
+--- /home/dan/src/M2/trunk/BUILD/dan/builds/cygwin/libraries/pari/tmp/pari-2.3.4/config/locatelib	2008-01-16 09:57:05.000000000 -0600
++++ pari-2.3.4/config/locatelib	2009-01-28 10:59:49.277530900 -0600
+@@ -17,6 +17,10 @@
+         if test -z "$try"; then
+           try=`ls $dir/lib$lib.a 2> /dev/null`
+         fi
++        # for .dll.a
++        if test -z "$try"; then
++          try=`ls $dir/lib$lib.dll.a 2> /dev/null`
++        fi
+       else
+         try=
+       fi;;

@@ -1,5 +1,5 @@
 vpath %.in @srcdir@
-all clean check:; $(MAKE) -C rationality $@
+all clean big-check check:; $(MAKE) -C rationality $@
 distclean-dirs:; $(MAKE) -C rationality distclean
 Makefile: Makefile.in; cd ../..; ./config.status Macaulay2/tests/Makefile
 distclean:clean distclean-dirs;rm -f Makefile

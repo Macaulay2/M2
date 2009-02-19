@@ -329,7 +329,7 @@ o65 = matrix {{x, y, z}}
 
 i66 : toExternalString vars R
 
-o66 = map(R^{{0}}, R^{{-1}, {-1}, {-1}}, {{x, y, z}})
+o66 = map(R^1,R^{{-1},{-1},{-1}},{{x, y, z}})
 
 i67 : R = QQ[x,y,z]/(x^3-y)
 
@@ -382,7 +382,7 @@ o75 = false
 
 i76 : x = set{1,a,{4,5},a}
 
-o76 = set {1, {4, 5}, a}
+o76 = set {{4, 5}, 1, a}
 
 o76 : Set
 
@@ -439,24 +439,24 @@ i85 : R.ideal
              3
 o85 = ideal(x  - y)
 
-o85 : Ideal of QQ [x, y, z]
+o85 : Ideal of QQ[x, y, z]
 
 i86 : ideal R
 
              3
 o86 = ideal(x  - y)
 
-o86 : Ideal of QQ [x, y, z]
+o86 : Ideal of QQ[x, y, z]
 
 i87 : code demark
 
-o87 = -- ../../../../../../Macaulay2/m2/fold.m2:23
+o87 = /home/dan/src/M2/1.2/Macaulay2/m2/fold.m2:23:16-23:41: --source code:
       demark = (s,v) -> concatenate between(s,v)
 
 i88 : code(symbol **, RingMap, Module)
 
 o88 = -- code for method: RingMap ** Module
-      -- ../../../../../../Macaulay2/m2/ringmap.m2:352-356
+      /home/dan/src/M2/1.2/Macaulay2/m2/ringmap.m2:384:38-388:30: --source code:
       RingMap ** Module := Module => (f,M) -> (
            R := source f;
            S := target f;
@@ -466,7 +466,7 @@ o88 = -- code for method: RingMap ** Module
 i89 : code(ideal, QuotientRing)
 
 o89 = -- code for method: ideal(QuotientRing)
-      -- ../../../../../../Macaulay2/m2/quotring.m2:5
+      /home/dan/src/M2/1.2/Macaulay2/m2/quotring.m2:5:25-5:30: --source code:
       ideal QuotientRing := R -> R.ideal
 
 i90 : denom = method();

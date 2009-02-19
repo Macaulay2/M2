@@ -238,12 +238,13 @@ packageTemplate = method()
 packageTemplate String := (packagename) -> 
      replace("%%NAME%%", packagename, packagetemplate)
 
-beginDocumentation()
 document { 
 	Key => SimpleDoc,
 	Headline => "simpler documentation for functions and methods",
 	EM "SimpleDoc", " contains a function to simplify writing documentation for functions "
 	}
+
+beginDocumentation()
 
 doc get (currentFileDirectory | "SimpleDoc/doc.txt")
 

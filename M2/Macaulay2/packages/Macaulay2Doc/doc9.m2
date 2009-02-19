@@ -23,13 +23,17 @@ document {
      }     
 
 document {
-     Key => {(markedGB, Matrix, Matrix), markedGB},
+     Key => {(markedGB, Matrix, Matrix), markedGB,
+	  [markedGB,SyzygyMatrix],[markedGB,MinimalMatrix],[markedGB,ChangeMatrix]},
      Usage => "markedGB(lt,m)",
      Headline => "make a marked Gröbner basis",
      Inputs => {
 	  "lt" => {"the matrix of monomials in (the columns of) ", TT "m", " to mark as lead terms, with respect to an
 	       unspecified monomial ordering"},
-	  "m" => {"the matrix whose columns are to form the generators of a Gröbner basis"}
+	  "m" => {"the matrix whose columns are to form the generators of a Gröbner basis"},
+	  SyzygyMatrix => Matrix => {"the matrix of syzygies"},
+	  MinimalMatrix => Matrix => {"the matrix of minimal generators" },
+	  ChangeMatrix => Matrix => {"the change-of-basis matrix" }
 	  },
      Outputs => {
 	  GroebnerBasis => {"the resulting Gröbner basis"}
@@ -466,6 +470,12 @@ document {
 --     }     
 --
 
+document {
+     Key => {[(dual,MonomialIdeal),Strategy], [(dual,MonomialIdeal,List),Strategy], [(dual,MonomialIdeal,RingElement),Strategy]},
+     PARA {
+	  "Specify ", TT "Strategy => 1", " to test an older strategy for performing the computation."
+	  }
+     }
 
 document {
      Key => (dual,MonomialIdeal,List),

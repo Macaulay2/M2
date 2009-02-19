@@ -1,6 +1,9 @@
+is := X -> s -> instance(value s, X)
+isAlpha := s -> match("^[[:alpha:]]+$",s)
+isAlphaNumeric := s -> match("^[[:alnum:]]+$",s)
+
 okay := method()
-okay(String,Keyword) := okay Thing := x -> false
-okay(String,Symbol) := (nam,sym) -> not match("\\$",nam) and #nam > 1
+okay(String,Keyword) := okay(String,Symbol) := (nam,sym) -> #nam > 1 and isAlphaNumeric nam
 symbols := sort join( 
      apply(join(separate(" ",version#"packages"),{"Core"}), pkgnam -> (pkgnam,symbol Core)),
      flatten apply(
@@ -9,10 +12,6 @@ symbols := sort join(
 	       pkg := needsPackage pkgnam;
 	       select(pairs pkg.Dictionary,okay))))
 assert all(symbols, okay)
-alphabet := set characters "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ"
-is := X -> s -> instance(value s, X)
-isKeyword := is Keyword
-isAlpha := s -> alphabet#?((toString s)#0)
 
 Function and Function := (f,g) -> s -> f s and g s
 
@@ -48,12 +47,19 @@ add := (face,words) -> if #words > 0 then (
      <<  " . " << face << ")" << endl
      )
 
-add( "font-lock-keyword-face", first \ select(symbols, (nam,sym) -> isKeyword sym and isAlpha nam))
-add( "font-lock-type-face", first \ select(symbols, (nam,sym) -> (is Type) sym))
-add( "font-lock-function-name-face", first \ select(symbols, (nam,sym) -> (is Function) sym))
+isKeyword := is Keyword
+add( "font-lock-keyword-face", first \ select(symbols, (nam,sym) -> isKeyword sym))
+
+isType := is Type
+add( "font-lock-type-face", first \ select(symbols, (nam,sym) -> isType sym))
+
+isFunction := is Function
+add( "font-lock-function-name-face", first \ select(symbols, (nam,sym) -> isFunction sym))
+
 add( ",font-lock-constant-face", first \ select(symbols, (nam,sym) -> (
-	       not (is Function) sym
-	       and not (is Type) sym
+	       not isFunction sym
+	       and not isType sym
+	       and not isKeyword sym
 	       and (sym === symbol null or value sym =!= null)
 	       and isAlpha nam)))
 -- f << "         (" << format "///\\(/?/?[^/]\\)*///" << " . (0 font-lock-string-face t))" << endl

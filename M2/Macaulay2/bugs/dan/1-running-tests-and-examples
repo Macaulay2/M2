@@ -1,0 +1,2 @@
+Ensure that examples and tests are run in a newly made unwritable directory, so
+files can't be made there.  This will improve the 3rd party packages.

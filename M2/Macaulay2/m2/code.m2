@@ -161,24 +161,26 @@ methods Thing := F -> (
      -- sort -- too slow
      new VerticalList from sortByName keys found)
 
-debuggerUsageMessage = ///--debugger commands that leave the debugger:
-    break               -- leave the debugger, returning to top level
-    end                 -- enter debugger one level up
-    end of file char    -- enter debugger one level up
+debuggerUsageMessage = ///--debugging control:
     return              -- bypass current expression, return null, stop
     return x            -- bypass current expression, return x, stop
-    continue            -- continue
     step                -- step 1 line
     step n              -- step n lines
-    step -n             -- trace n microsteps
--- other debugger commands:
+    step (-n)           -- trace n microsteps
+    end (or eof char)   -- enter debugger one level up
+    continue            -- leave the debugger, continuing execution
+                        -- with current expression
+    break               -- leave the debugger, returning to top level
+--debugging information:
     listLocalSymbols    -- display local symbols and their values
     listUserSymbols     -- display user symbols and their values
+    current             -- the current expression; initially, the one
+    	      	   	-- that produced an error
     code current        -- source code of current expression
     value current       -- execute current expression, obtain value
     disassemble current -- display microcode of current expression
     currentString       -- the string being evaluated by 'value', if
-    	      	   	-- an error occurred within it
+                        -- an error occurred within it
 -- emacs commands in *M2* buffer:
     RET                 -- on an file/position line, go to source///
 

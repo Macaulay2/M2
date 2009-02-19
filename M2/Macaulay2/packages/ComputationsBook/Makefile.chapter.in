@@ -8,7 +8,21 @@ check: test.out.expected.trim test.out.trim
 diff:
 	diff -b -u test.out.expected.trim test.out.trim
 
-ULIMIT := ulimit -v 800000; ulimit -t 3000
+LIMIT :=
+ifeq (@ULIMIT_T@,yes)
+LIMIT += ulimit -t 1200 ;
+endif
+ifeq (@ULIMIT_M@,yes)
+LIMIT += ulimit -m 800000 ;
+endif
+ifeq (@ULIMIT_V@,yes)
+LIMIT += ulimit -v 800000 ;
+endif
+ifeq (@ULIMIT_S@,yes)
+LIMIT += ulimit -s 8192 ;
+endif
+
+
 PATHJOIN := 'path = join({"./","$(chapter_srcdir)/"},path)'
 M2CMD := time nice -18 @pre_exec_prefix@/bin/M2@EXE@ --stop -q -e $(PATHJOIN) --print-width 0
 EXIT := -e "exit 0"
@@ -18,20 +32,14 @@ book_patterns := $(chapter_srcdir)/../patterns
 chapter_patterns := $(chapter_srcdir)/patterns
 
 test.out.trim: test.out $(book_patterns) $(chapter_patterns)
-	<$< awk '{print $$0}' | sed -f $(book_patterns) -f $(chapter_patterns) >$@
+	<$< sed -f $(book_patterns) -f $(chapter_patterns) >$@
 
 test.out.expected.trim: test.out.expected $(book_patterns) $(chapter_patterns)
-	<$< awk '{print $$0}' | sed -f $(book_patterns) -f $(chapter_patterns) >$@
+	<$< sed -f $(book_patterns) -f $(chapter_patterns) >$@
 
 test.out: test.m2 always
-	@ set -xe ; \
-	  $(ULIMIT); $(M2CMD) $(INPUT) $(EXIT) >test.out.tmp; \
-	  mv test.out.tmp test.out
-
-test-mike.out: test.m2 always
-	@ set -xe ; \
-	  $(M2CMD) $(INPUT) $(EXIT) >test.out.tmp; \
-	  mv test.out.tmp test-mike.out
+	$(LIMIT) $(M2CMD) $(INPUT) $(EXIT) >test.out.tmp
+	mv test.out.tmp test.out
 
 distclean::clean
 distclean::; rm -f Makefile
@@ -42,9 +50,8 @@ OLDM2 = M2-0.9.2
 OLDM2CMD := time nice -18 $(OLDM2) -s -q -e$(PATHJOIN)
 capture: test.oldout test.oldvalues
 test.oldvalues test.oldout : chapter.m2 ../capture.m2 ../Makefile.chapter
-	@ set -xe ; \
-	  $(ULIMIT); $(OLDM2CMD) -e'load "$(chapter_srcdir)/../capture.m2"; input "$<"; exit 0'  >test.oldout.tmp </dev/null; \
-	  mv test.oldout.tmp test.oldout
+	$(LIMIT) $(OLDM2CMD) -e'load "$(chapter_srcdir)/../capture.m2"; input "$<"; exit 0'  >test.oldout.tmp </dev/null
+	mv test.oldout.tmp test.oldout
 
 # Local Variables:
 # compile-command: "make -C $M2BUILDDIR/Macaulay2/packages/ComputationsBook "

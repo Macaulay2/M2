@@ -8,7 +8,7 @@ scan((
 	  RemakeAllDocumentation,RerunExamples,UserMode,Generic,DegreeRank,Heft,Limit,SizeLimit,StopWithMinimalGenerators,
 	  StopBeforeComputation,DegreeLimit,BasisElementLimit,SyzygyLimit,PairLimit,CodimensionLimit,Strategy,Syzygies,
 	  ChangeMatrix,SyzygyRows,MinimalMatrix,SyzygyMatrix,
-	  KeepZeroes,Heading,ClosestFit,Density,Height,Norm,UpperTriangular,EncapsulateDirectory,Local,Binomial,Monomial,DegreeMap,DegreeLift,
+	  KeepZeroes,Heading,ClosestFit,Density,Height,UpperTriangular,EncapsulateDirectory,Local,Binomial,Monomial,DegreeMap,DegreeLift,
 	  Join,CacheExampleOutput,Reduce,Result,SeparateExec),
      s -> if s =!= null then document {
 	  Key => s,
@@ -584,16 +584,6 @@ document {
      TT "options R", " -- returns the options used when the polynomial
      ring ", TT "R", " was created."
      }
-document { Key => (options, MarkUpType),
-     "Optional arguments of mark up types allow attributes to be added to html elements.",
-     EXAMPLE lines ///
-     	  needsPackage "Text"
-     	  DIV
-     	  options DIV
-	  d = DIV { "class" => "examples", "hi there" }
-	  html d
-	  net d
-     ///}
 document { Key => (options, Package),
      EXAMPLE lines ///
      	  options Core

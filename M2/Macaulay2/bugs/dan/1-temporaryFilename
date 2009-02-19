@@ -1,0 +1,19 @@
+This is not so great because no checking against the disk is done:
+
+    i1 : temporaryFileName ()
+
+    o2 = /tmp/M2-1262-1
+
+    i3 : temporaryFileName ()
+
+    o3 = /tmp/M2-1262-2
+
+    i4 : temporaryFileName ()
+
+    o4 = /tmp/M2-1262-3
+
+I've seen a collision!
+
+Often one wants to create a collection of files, so they might was well all be
+in the same directory.  Perhaps better would be a function that makes a new
+temporary directory and returns the name of it.

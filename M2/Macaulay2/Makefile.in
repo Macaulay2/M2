@@ -11,13 +11,16 @@ SUBDIRS = compat util html-check-links probe regex c
 ifeq "@DUMPDATA@" "yes"
 SUBDIRS += dumpdata
 endif
-SUBDIRS += e d m2 emacs man packages tests packages/Macaulay2Doc/basictests packages/Macaulay2Doc/test book
+SUBDIRS += e d packages/Macaulay2Doc/basictests m2 emacs man packages tests packages/Macaulay2Doc/test book
 define do-in-subdirs
 $(foreach d,$(SUBDIRS),
 	$(eval .PHONY: $1-in-subdirs)
 	$(eval .PHONY $1 $1-in-subdirs:$1-in-$d)
 	$(eval $1-in-$d:; $$(MAKE) -C $d $1 $2))
 endef
+big-check: big-check-in-tests big-check-in-packages
+big-check-in-tests:; $(MAKE) -C tests big-check
+big-check-in-packages:; $(MAKE) -C packages big-check
 $(foreach t,all check,				\
 	$(eval $(call do-in-subdirs,$t)))
 $(foreach t,clean distclean,				\

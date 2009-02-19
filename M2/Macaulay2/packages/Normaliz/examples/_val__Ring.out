@@ -1,0 +1,17 @@
+-- -*- M2-comint -*- {* hash: -2106276086 *}
+
+i1 : R=QQ[x,y,z,w];
+
+i2 : V0=matrix({{0,1,2,3},{-1,1,2,1}});
+
+              2        4
+o2 : Matrix ZZ  <--- ZZ
+
+i3 : valRing(V0,R)
+
+                                     2
+o3 = ideal (w, x*w, y, x*y, z, x*z, x z)
+
+o3 : Ideal of R
+
+i4 : 

@@ -251,7 +251,10 @@ MonomialOrder *monomialOrderMake(const MonomialOrdering *mo)
 	mo_block_lex4(result->blocks + this_block++, t->nvars);
 	break;
       case MO_WEIGHTS:
-	mo_block_wt_function(result->blocks + this_block++, t->nvars, wts);
+	// if extra weight values are given (more than "nvars", ignore the rest.
+	mo_block_wt_function(result->blocks + this_block++, 
+			     (t->nvars <= result->nvars ? t->nvars : result->nvars), 
+			     wts);
 	break;
       case MO_LAURENT:
 	mo_block_group_lex(result->blocks + this_block++, t->nvars);

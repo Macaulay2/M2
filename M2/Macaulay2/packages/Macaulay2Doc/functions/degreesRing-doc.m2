@@ -59,7 +59,7 @@ document {
      ///,
      SeeAlso => {
 	  "poincare", "poincareN", "hilbertFunction", "hilbertSeries", "hilbertPolynomial", "reduceHilbert",
-	  "division in polynomial rings with inverses", heft, use }
+	  "division in polynomial rings with monomials less than 1", heft, use }
      }
 
 undocumented {(degreesRing, QuotientRing), (degreesRing,PolynomialRing)}

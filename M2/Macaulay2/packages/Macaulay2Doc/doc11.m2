@@ -445,10 +445,10 @@ document {
      }
 
 document {
-     Key => {heft,(heft, Ring),(heft, Module)},
-     Headline => "heft vector of ring or module",
+     Key => {heft,(heft, Ring),(heft, Module),(heft,GradedModule),(heft,Resolution)},
+     Headline => "heft vector of ring, module, graded module, or resolution",
      Usage => "heft X",
-     Inputs => { "X" => {ofClass{Ring,Module}} },
+     Inputs => { "X" => {ofClass{Ring,Module,GradedModule,Resolution}} },
      Outputs => { List => {"the heft vector in use for ", TT "X", ", if ", TT "X", " is a 
 	       ring, or for the ring of ", TT "X", ", if ", TT "X", " is a module.
 	       If there is no heft vector, then ", TO "null", " is returned."
@@ -533,7 +533,7 @@ document {
      }
 
 document {
-     Key => "division in polynomial rings with inverses",
+     Key => "division in polynomial rings with monomials less than 1",
      PARA {
 	  "Starting with version 1.2, a new division algorithm has been implemented in 
 	  rings with inverses, where the monomials can involve negative exponents, and hence

@@ -64,6 +64,8 @@ macaulay2-common/control.tar.gz : macaulay2-common/control macaulay2-common/post
 T=@TAR@ --create --mode=a+rX,og-ws --exclude-from=@srcdir@/../tar-exclusions --file=-
 prepare: .prepared
 .prepared: 
+	: ensure change log is up to date...
+	fgrep 'macaulay2 (@PACKAGE_VERSION@) stable; ' <@srcdir@/changelog
 	rm -rf tmp@prefix@ tmp-common@prefix@
 	$(MKDIR_P) tmp@prefix@
 	$(MKDIR_P) tmp-common@prefix@
@@ -72,15 +74,15 @@ prepare: .prepared
 	if [ -d tmp-common@prefix@/info ] ; \
 	then $(MKDIR_P) tmp-common@prefix@/share/info && mv tmp-common@prefix@/info/* tmp-common@prefix@/share/info && rmdir tmp-common@prefix@/info; \
 	fi
-	if [ -d tmp-common@prefix@/man ] ; \
-	then $(MKDIR_P) tmp-common@prefix@/share/man && mv tmp-common@prefix@/man/* tmp-common@prefix@/share/man && rmdir tmp-common@prefix@/man; \
-	fi
+	$(MKDIR_P) tmp@prefix@/@tail_mandir@
+	mv -v tmp-common@prefix@/@tail_mandir@/* tmp@prefix@/@tail_mandir@
+	rmdir tmp-common@prefix@/@tail_mandir@
 	$(MKDIR_P) tmp@prefix@/share/doc/macaulay2
 	$(MKDIR_P) tmp-common@prefix@/share/doc/macaulay2-common
 	cp tmp-common@docdir@/README tmp@prefix@/share/doc/macaulay2/copyright
 	cp tmp-common@docdir@/README tmp-common@prefix@/share/doc/macaulay2-common/copyright
-	gzip -9 <@srcdir@/macaulay2/changelog >tmp@prefix@/share/doc/macaulay2/changelog.gz
-	gzip -9 <@srcdir@/macaulay2-common/changelog >tmp-common@prefix@/share/doc/macaulay2-common/changelog.gz
+	gzip -9 <@srcdir@/changelog >tmp@prefix@/share/doc/macaulay2/changelog.Debian.gz
+	gzip -9 <@srcdir@/changelog >tmp-common@prefix@/share/doc/macaulay2-common/changelog.Debian.gz
 	@FIND@ tmp-common -name \*.info | while read x ; do gzip --best "$$x" ; done
 	@FIND@ tmp tmp-common -name man -type d | while read x ; do @FIND@ $$x -type f -not -name \*.gz | while read y ; do gzip --best "$$y" ; done ; done
 	@FIND@ tmp -name \*.so -o -name \*.so.\* -o -name \*.la | xargs chmod a-x Makefile
@@ -92,12 +94,12 @@ macaulay2/md5sums            : prepare; (cd tmp        && @FIND@ * -type f | xar
 macaulay2-common/md5sums     : prepare;	(cd tmp-common && @FIND@ * -type f | xargs md5sum) >$@
 ifneq (@LINTIAN@,)
 SUP = fgrep -v 
-check:
-	- @LINTIAN@ -I ../../$(PKG_DEB)
-	- @LINTIAN@ -I ../../$(PKG_COM_DEB)
+check: check1 check2
+check1:; - @LINTIAN@ -I ../../$(PKG_DEB)
+check2:; - @LINTIAN@ -I ../../$(PKG_COM_DEB)
 else
 check:
-	@echo "install 'lintian' for checking *.deb packages"
+	@echo "--warning: 'lintian' not installed, not checking *.deb packages" >&2
 endif
 tidy_before:
 	rm -rf .prepared tmp tmp-common
@@ -109,27 +111,35 @@ tidy tidy_after :
 	rm -rf macaulay2-common/control.tar.gz macaulay2-common/data.tar.gz macaulay2-common/md5sums
 clean:: tidy
 	rm -rf ../../$(PKG_DEB) ../../$(PKG_COM_DEB)
-libraries-used: .prepared always
+libraries-used-directly: .prepared tmp@bindir@/M2@EXE@
+	objdump -x tmp@bindir@/M2@EXE@ | grep NEEDED | sed 's/ *NEEDED *//' | sort >$@
+clean::; rm -f libraries-used-directly
+libraries-used: .prepared tmp@bindir@/M2@EXE@
 	ldd tmp@bindir@/M2@EXE@ | sed -e 's/.* => //' -e 's/^	//' -e 's/ .*//' | egrep '^/' >$@ || true
 clean::; rm -f libraries-used
-packages-used: libraries-used
-	cat libraries-used | while read x ; do @FIND@ /var/lib/dpkg/info -name \*.list | xargs egrep -l "^$$x"; done | sort | uniq | sed -e 's=.*/==' -e 's=\.list$$==' >$@
+libraries-really-used: libraries-used libraries-used-directly
+	egrep `echo \`cat libraries-used-directly\` | sed -e 's=^=.*/=' -e 's= =|.*/=g'` <$< >$@
+packages-used: libraries-really-used
+	cat $^ |								\
+	while read x ;								\
+	do @FIND@ /var/lib/dpkg/info -name \*.list | xargs egrep -l "^$$x";	\
+	done | sort | uniq | sed -e 's=.*/==' -e 's=\.list$$==' >$@
 clean::; rm -f packages-used
 macaulay2/control : macaulay2/control.prelim macaulay2/data.tar.gz packages-used
-	(cat $< && \
-	 size=`gunzip<macaulay2/data.tar.gz|wc -c` && \
-	 size=`echo $$size | sed 's/^\([0-9][0-9]*\).*/\1/'` && \
-	 echo Installed-Size: $$size && \
-	 echo -n "Depends: macaulay2-common (= @PACKAGE_VERSION@)" && \
-	 cat packages-used | while read x ; do echo -n ", $$x" ; done && \
-	 echo \
+	(cat $< &&								\
+	 size=`gunzip<macaulay2/data.tar.gz|wc -c` &&				\
+	 size=`echo $$size | sed 's/^\([0-9][0-9]*\)[0-9][0-9][0-9].*/\1/'` &&	\
+	 echo Installed-Size: $$size &&						\
+	 echo -n "Depends: macaulay2-common (= @PACKAGE_VERSION@)" &&		\
+	 cat packages-used | while read x ; do echo -n ", $$x" ; done &&	\
+	 echo									\
 	) >$@
 clean::; rm -f macaulay2/control
 macaulay2-common/control : macaulay2-common/control.prelim macaulay2-common/data.tar.gz
-	(cat $< && \
-	 size=`gunzip<macaulay2-common/data.tar.gz|wc -c` && \
-	 size=`echo $$size | sed 's/^\([0-9][0-9]*\).*/\1/'` && \
-	 echo Installed-Size: $$size \
+	(cat $< &&								\
+	 size=`gunzip<macaulay2-common/data.tar.gz|wc -c` &&			\
+	 size=`echo $$size | sed 's/^\([0-9][0-9]*\)[0-9][0-9][0-9].*/\1/'` &&	\
+	 echo Installed-Size: $$size						\
 	) >$@
 clean::; rm -f macaulay2-common/control
 distclean: clean; rm -f Makefile control macaulay2/control.prelim macaulay2-common/control.prelim

@@ -13,7 +13,6 @@ ideal S
 use ring ideal S
 assert( ideal S == ideal(x^2-w_6*z,w_6*x-w_7*z,w_6^2-w_7*x,w_7^2-y^2-z^2) ) -- this may change, but hopefully, not by much
 trim ideal S
---status: I've asked Amelia about this
 assert( 4 == numgens trim ideal S )			    -- the ideal has swelled since 1.1
 
 R = QQ[w_1, w_2, x, y, z, Degrees => {3,3,1,1,1}, MonomialOrder => GRevLex => 5]
