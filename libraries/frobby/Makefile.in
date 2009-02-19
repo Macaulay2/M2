@@ -13,12 +13,18 @@ BUILDOPTIONS = GMP_INC_DIR=$(LIBRARIESDIR)/include \
 	CXX="$(CXX)" \
 	LDFLAGS="$(LDFLAGS)" \
 	CPPFLAGS="$(CPPFLAGS)"
-CHECKOPTIONS = GMP_INC_DIR=$(LIBRARIESDIR)/include CFLAGS="$(CFLAGS)" CXX="$(CXX)"
+CHECKOPTIONS = $(BUILDOPTIONS)
+
+# this ought to prevent trouble with carriage returns
+PATCHOPTIONS = --ignore-whitespace
+
 ifeq (@DEBUG@,yes)
 BUILDOPTIONS += MODE=debug
 endif
 CONFIGURECMD = :
 INSTALLCMD = \
+	$(MKDIR_P) $(LIBRARIESDIR)/lib && \
+	$(MKDIR_P) $(LIBRARIESDIR)/include && \
 	cp bin/libfrobby.a $(LIBRARIESDIR)/lib/libfrobby.a && \
 	cp src/frobby.h $(LIBRARIESDIR)/include/frobby.h && \
 	cp src/stdinc.h $(LIBRARIESDIR)/include/stdinc.h

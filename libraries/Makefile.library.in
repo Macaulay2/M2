@@ -42,9 +42,9 @@ export PATH := @abs_top_srcdir@/autoconf/final/bin:$(PATH)
 all:install post-install
 post-install:
 show-flags:; $(CONFIGENV) :
-install: .installed-$(VERSION)
+install: .installed-$(VERSION) config-chk
 unconfigure:; rm -f .configured-$(VERSION) .compiled-$(VERSION) .installed-$(VERSION)
-reconfigure: unconfigure .configured-$(VERSION)
+reconfigure: unconfigure configure
 uninstall::; rm -f .installed-$(VERSION)
 reinstall: uninstall install
 always:
@@ -55,14 +55,15 @@ package-clean: unmark ; if [ -d $(BUILDDIR) ]; then $(MAKE) -C $(BUILDDIR) clean
 package-distclean: unmark ; if [ -d $(BUILDDIR) ]; then $(MAKE) -C $(BUILDDIR) distclean ; fi
 fetch: $(TARFILE_DIR)/$(TARFILE)
 patch: .patched-$(VERSION)
-compile: .compiled-$(VERSION)
-configure: .configured-$(VERSION)
+compile: .compiled-$(VERSION) config-chk
+configure: .configured-$(VERSION) config-chk
+config-chk:
 .installed-$(VERSION)  : .compiled-$(VERSION)   ; @ set -x ; ( cd $(BUILDDIR) && $(INSTALLCMD)   ) && touch $@
 .compiled-$(VERSION)   : .configured-$(VERSION) ; @ set -x ; ( cd $(BUILDDIR) && $(BUILDCMD)     ) && touch $@
 .configured-$(VERSION) : .patched-$(VERSION)    ; @ set -x ; ( cd $(BUILDDIR) && $(CONFIGURECMD) ) && touch $@
 ifneq ($(PATCHFILE),)
 .patched-$(VERSION) : $(PATCHFILE)
-PATCHCMD = cd $(UNTARDIR) && patch -p0 <$(PATCHFILE)
+PATCHCMD = cd $(UNTARDIR) && patch -p0 $(PATCHOPTIONS) <$(PATCHFILE)
 else
 PATCHCMD = :
 endif
@@ -84,7 +85,11 @@ else
 ifneq (@CURL@,)
 FETCHER = @CURL@
 else
+ifeq (@DOWNLOAD@,yes)
 $(error either curl or wget is needed for downloading library source code, please install one of them and reconfigure)
+else
+FETCHER = false
+endif
 endif
 endif
 endif
@@ -103,7 +108,14 @@ CHECKFETCHED = case "$(URL)" in									\
 	esac
 $(TARFILE_DIR)/$(TARFILE) :
 	$(MKDIR_P) $(TARFILE_DIR)
+ifeq (@DOWNLOAD@,yes)
 	(cd $(TARFILE_DIR) && $(FETCHER) $(URL)/$(TARFILE) $(FETCHOPTS) && $(CHECKFETCHED))
+else
+	@ echo "error: third-party library source code not present: $(LIBNAME)" >&2
+	@ echo "       in file $@" >&2
+	@ echo "       and not configured for automatic downloading with --enable-download" >&2
+	@ false
+endif
 distclean: package-distclean
 clean::; rm -rf .patched* .untarred* $(LIBNAME)* .compiled* .configured* .installed* .untarred2* diffs tmp $(TARDIR) $(UNTARDIR) $(OLDUNTARDIR)
 distclean: clean ; rm -rf Makefile

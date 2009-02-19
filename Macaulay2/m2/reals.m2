@@ -124,6 +124,7 @@ CC _ ComplexField := (x,R) -> toCC(R.precision,x)
 lift(RR,QQ) := opts -> (r,QQ) -> (
      if r == 0 then return 0/1;
      r' := r;
+     p := precision r;
      m := mutableIdentity(ZZ,2);
      while true do (
 	  a := floor r';
@@ -131,7 +132,7 @@ lift(RR,QQ) := opts -> (r,QQ) -> (
 	  columnAdd(m,0,a,1);
 	  r' = r' - a;
 	  q := m_(0,0) / m_(1,0);
-	  if r === q_RR then return q;
+	  if r === numeric(p,q) then return q;
 	  if r' == 0 then return promote(r,QQ);
 	  r' = 1/r' ;
 	  ))

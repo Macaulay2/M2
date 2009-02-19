@@ -429,7 +429,9 @@ void cprintgetmem(node g){
       {
       put("     if (0 == ");
       cprint(s);
-      put(") outofmem()");
+      put(") outofmem2((size_t)");
+      cprintsomesizeof(t, length(g)==2 ? CADR(g) : NULL);
+      put(")");
       }
   }
 }

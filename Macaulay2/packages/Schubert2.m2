@@ -17,7 +17,7 @@ newPackage(
 
 export { AbstractSheaf, abstractSheaf, AbstractVariety, abstractVariety, schubertCycle,
      AbstractVarietyMap, adams, Base, BundleRanks, Bundles, VarietyDimension, Bundle,
-     CanonicalLineBundle, ch, chern, protect ChernCharacter, protect ChernClass, ChernClassSymbol, chi, ctop, expp, FlagBundle,
+     TautologicalLineBundle, ch, chern, protect ChernCharacter, protect ChernClass, ChernClassSymbol, chi, ctop, expp, FlagBundle,
      flagBundle, projectiveBundle, projectiveSpace, PP, FlagBundleStructureMap, integral, protect IntersectionRing,
      intersectionRing, logg, PullBack, PushForward, Rank, reciprocal, lowerstar,
      schur, SectionClass, sectionClass, segre, StructureMap, protect TangentBundle, tangentBundle, todd, protect ToddClass,
@@ -152,9 +152,13 @@ tangentBundle AbstractVarietyMap := f -> (
 AbstractSheaf QQ := AbstractSheaf ZZ := (F,n) -> (
      if n == 0 then return F;
      X := variety F;
-     if X.?CanonicalLineBundle then return F ** X.CanonicalLineBundle^**n;
-     error "expected a variety with a canonical line bundle";
-     )
+     if not X.?TautologicalLineBundle then error "expected a variety with a canonical line bundle";
+     L := (
+	  if n == 1
+	  then X.TautologicalLineBundle
+	  else abstractSheaf(X, Rank => 1, ChernClass => 1 + n * chern_1 X.TautologicalLineBundle)
+	  );
+     F ** L)
 AbstractSheaf RingElement := (F,n) -> (
      if n == 0 then return F;
      X := variety F;
@@ -164,8 +168,8 @@ AbstractSheaf RingElement := (F,n) -> (
      if not isHomogeneous n then error "expected homogeneous element of degree 0 or 1";
      d := first degree n;
      if d == 0 then (
-     	  if X.?CanonicalLineBundle 
-	  then F ** abstractSheaf(X, Rank => 1, ChernClass => n * chern_1 X.CanonicalLineBundle)
+     	  if X.?TautologicalLineBundle 
+	  then F ** abstractSheaf(X, Rank => 1, ChernClass => n * chern_1 X.TautologicalLineBundle)
      	  else error "expected a variety with an ample line bundle"
 	  )
      else if d == 1 then (
@@ -276,7 +280,13 @@ geometricSeries = (t,n,dim) -> (			    -- computes (1-t)^n assuming t^(dim+1) ==
 	  ti = ti * t;
 	  bin * ti))
 
-AbstractSheaf ^** ZZ := (E,n) -> abstractSheaf(variety E, ChernCharacter => (ch E)^n)
+AbstractSheaf ^** ZZ := (E,n) -> (
+     if n < 0 then (
+	  if rank E =!= 1 then error "negative power of abstract sheaf of rank not equal to 1 requested";
+	  E = dual E;
+	  n = - n;
+	  );
+     abstractSheaf(variety E, ChernCharacter => (ch E)^n))
 AbstractSheaf ^** QQ := AbstractSheaf ^** RingElement := (E,n) -> (
      if rank E != 1 then error "symbolic power works for invertible sheafs only";
      t := 1 - ch E;
@@ -329,7 +339,7 @@ flagBundle(List,AbstractSheaf) := opts -> (bundleRanks,E) -> (
      X := variety E;
      dgs := splice apply(bundleRanks, r -> 1 .. r);
      S := intersectionRing X;
-     T := S(monoid [flatten varNames, Degrees => dgs, Global => false, MonomialOrder => apply(bundleRanks, n -> Ord => n), Join => false]);
+     T := S(monoid [flatten varNames, Degrees => dgs, MonomialOrder => apply(bundleRanks, n -> Ord => n), Join => false]);
      -- (A,F) := flattenRing T; G := F^-1 ;
      A := T; F := identity;
      chclasses := apply(varNames, x -> F (1 + sum(x,v -> T_v)));
@@ -349,7 +359,7 @@ flagBundle(List,AbstractSheaf) := opts -> (bundleRanks,E) -> (
 	       bdl));
      FV.SubBundles = (() -> ( t := 0; for i from 0 to n-2 list t = t + bundles#i ))();
      FV.QuotientBundles = (() -> ( t := 0; for i from 0 to n-2 list t = t + bundles#(n-1-i) ))();
-     FV.CanonicalLineBundle = OO_FV(sum(1 .. #bundles - 1, i -> i * chern(1,bundles#i)));
+     FV.TautologicalLineBundle = OO_FV(sum(1 .. #bundles - 1, i -> i * chern(1,bundles#i)));
      pullback := method();
      pushforward := method();
      pullback ZZ := pullback QQ := r -> pullback promote(r,S);
@@ -482,7 +492,7 @@ coerce := (F,G) -> (
      )
 
 AbstractSheaf ++ ZZ := AbstractSheaf + ZZ := (F,n) -> n ++ F
-ZZ ++ AbstractSheaf := ZZ + AbstractSheaf := (n,F) -> if n === 0 then F else OO_(Y)^n ++ F
+ZZ ++ AbstractSheaf := ZZ + AbstractSheaf := (n,F) -> if n === 0 then F else OO_(variety F)^n ++ F
 
 AbstractSheaf ++ AbstractSheaf :=
 AbstractSheaf + AbstractSheaf := (

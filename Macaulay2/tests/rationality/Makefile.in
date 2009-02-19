@@ -2,7 +2,8 @@ VPATH = @srcdir@
 M2 = @pre_exec_prefix@/bin/M2@EXE@
 ARGS = -q --stop
 ARGS += -e 'path = prepend("@srcdir@/",path)'
-check:
+check :
+big-check:
 	$(M2) $(ARGS) < @srcdir@/plausibility1.m2
 	$(M2) $(ARGS) < @srcdir@/plausibility2.m2
 	$(M2) $(ARGS) < @srcdir@/plausibility3.m2

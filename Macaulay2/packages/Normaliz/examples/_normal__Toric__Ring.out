@@ -1,0 +1,16 @@
+-- -*- M2-comint -*- {* hash: 1155032830 *}
+
+i1 : R=ZZ/37[x,y,t];
+
+i2 : I=ideal(x^3, x^2*y, y^3, x*y^2);
+
+o2 : Ideal of R
+
+i3 : normalToricRing(I)
+
+             3   2      2   3
+o3 = ideal (x , x y, x*y , y )
+
+o3 : Ideal of R
+
+i4 : 

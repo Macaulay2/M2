@@ -694,6 +694,7 @@ Matrix_array_OrNull * rawCharSeries(const Matrix *M)
 void rawDummy(void) {
   struct enter_factory foo;
   // we use this routine just for testing bits of stand-alone factory code
+#ifdef DEVELOPMENT
   Off( SW_RATIONAL );
   setCharacteristic(101);
   Variable a('a');
@@ -708,6 +709,7 @@ void rawDummy(void) {
   cout << "a.level() = " << a.level() << endl ;
   CFFList fac = Factorize(f,mipo);
   cout << "fac = " << fac << endl;
+#endif
 }
 
 // Local Variables:

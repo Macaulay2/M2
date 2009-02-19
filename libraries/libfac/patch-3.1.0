@@ -1,6 +1,6 @@
-diff -ur --exclude=configure tmp/libfac/Makefile.in libfac/Makefile.in
---- tmp/libfac/Makefile.in	2008-04-28 03:16:06.000000000 -0500  
-+++ libfac/Makefile.in	2009-01-24 09:04:28.000000000 -0600
+diff -ur --exclude=configure /home/dan/src/M2/1.2/BUILD/dan/builds/ubuntu32/libraries/libfac/tmp/libfac/Makefile.in libfac/Makefile.in
+--- /home/dan/src/M2/1.2/BUILD/dan/builds/ubuntu32/libraries/libfac/tmp/libfac/Makefile.in	2008-04-28 01:16:06.000000000 -0700
++++ libfac/Makefile.in	2009-02-07 15:06:10.000000000 -0800
 @@ -182,7 +182,7 @@
  		$(CXX) -o test $(LDFLAGS) OPTOBJ/test.o $(LIBS)
  
@@ -10,3 +10,14 @@ diff -ur --exclude=configure tmp/libfac/Makefile.in libfac/Makefile.in
  
  charsettest:	libfac	OPTOBJ/testcs.o
  		$(CXX) -o testcs $(LDFLAGS) OPTOBJ/testcs.o $(LIBS)
+diff -ur --exclude=configure /home/dan/src/M2/1.2/BUILD/dan/builds/ubuntu32/libraries/libfac/tmp/libfac/test.cc libfac/test.cc
+--- /home/dan/src/M2/1.2/BUILD/dan/builds/ubuntu32/libraries/libfac/tmp/libfac/test.cc	2006-05-16 07:46:48.000000000 -0700
++++ libfac/test.cc	2009-02-08 14:27:32.000000000 -0800
+@@ -15,6 +15,7 @@
+ #endif
+ 
+ 
++#include <string.h>
+ 
+ void
+ setVarNames ( char * vnames )

@@ -1,12 +1,16 @@
 document { 
      Key => {solve,(solve,Matrix,Matrix),
-	  (solve,MutableMatrix,MutableMatrix)},
+	  (solve,MutableMatrix,MutableMatrix),[solve,MaximalRank],[solve,ClosestFit]
+	  },
      Headline => "solve a linear equation",
      Usage => "x = solve(A,b)",
      Inputs => {
 	  "A" => {ofClass Matrix, ", or ", ofClass MutableMatrix, " of size m by n over either
 	  a finite field ZZ/p, RR or CC"},
-	  "b" => {"the same type of matrix, over the same ring, of size m by r"}
+	  "b" => {"the same type of matrix, over the same ring, of size m by r"},
+	  MaximalRank => ZZ => {},
+	  ClosestFit => Boolean => {"whether to use the least squares method"},
+	  MaximalRank => Boolean => {"whether to assume the matrix has maximal rank, in case the least squares method is used"}
 	  },
      Outputs => {
 	  "x" => {"the same type of matrix, over the same ring, of size n by r,

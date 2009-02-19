@@ -1,0 +1,12 @@
+try this benchmark after we get flags passed through to isPrime
+
+> I've tested against Morain's ecpp-6.4.5 and got other people to test against primo on
+> Windows; I suspect part of the issue is that those implementations are distributed as
+> 32-bit executables so don't get the benefit of 64-bit libgmp arithmetic.  There is no
+> open-source ECPP implementation that I'm aware of, unless Franke's fastECPP happens to be
+> open source and he didn't mention this in the paper.
+> 
+> On the same hardware, I find that ecpp for 10^500+961 takes 428.2 seconds and
+> isprime(10^500+961,2) under pari takes 93.8.  For 10^800+1537 the timings are 1537 seconds
+> for ECPP and 508.3 for pari.
+> 

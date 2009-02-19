@@ -462,7 +462,7 @@ document {
      }
 
 document {
-     Key => {operatorAttributes, Flexible, Binary, Prefix, Postfix},
+     Key => {"operatorAttributes", Flexible, Binary, Prefix, Postfix},
      Usage => "operatorAttributes",
      Outputs => {{ "an experimental hash table that give information about ", TO "operators", " in the Macaulay 2 language" }},
      "Meanings of the symbols used:",
@@ -533,12 +533,17 @@ document { Key => {(randomMutableMatrix, ZZ, ZZ, RR, ZZ),
 	  Dense => {"whether the encoding of the matrix should be dense or not: see ", TO MutableMatrix}
 	  },
      Outputs => {
-	  {"a random mutable ", TT "nrows", " by ", TT "ncols", " matrix of integers.  The absolute value of the entries is bounded by ", TT "max", ", and
+	  {"a random mutable ", TT "nrows", " by ", TT "ncols", " matrix of integers.  
+	       The absolute value of the 
+	       entries is less than ", TT "max", ", and
 	       the frequency of entries equal to zero is given by ", TT "zerof", "." }
 	  },
+     "This function has been superceded by ", TO fillMatrix, ", which works over 
+     more rings, is much faster for large matrices, and is more flexible.",
      EXAMPLE lines ///
           randomMutableMatrix(10,15,.9,100)
-     ///
+     ///,
+     SeeAlso => {mutableMatrix, fillMatrix, setRandomSeed, random}
      }
 document { Key => {(mutableMatrix, Ring, ZZ, ZZ),(mutableMatrix, RingFamily, ZZ, ZZ) },
      Headline => "make a mutable matrix filled with zeroes",
@@ -1176,11 +1181,14 @@ document { Key => (module, Vector),
 	  class v
      ///}
 
-document { Key => {package,(package, Dictionary), (package, Thing), (package, HashTable), (package, Function), (package, DocumentTag), (package, Symbol)},
+document { Key => {package,(package, Dictionary), (package, Thing),
+	  (package, HashTable), (package, Function), (package, DocumentTag), (package, Symbol),
+	  (package, Sequence)
+	  },
      Headline => "get containing package",
      Usage => "package x",
      Inputs => {"x"},
-     Outputs => {{"the package in which ", TT "x", " was defined"}},
+     Outputs => {{"the package in which the documentation key ", TT "x", " was defined"}},
      EXAMPLE lines ///
      	  package sin
 	  package poly
@@ -1195,7 +1203,7 @@ document { Key => {(rotate, ZZ, VisibleList),rotate},
 	 rotate(3,p)
 	 rotate(-3,p)
      ///}
-document { Key => fileDictionaries,
+document { Key => "fileDictionaries",
      Headline => "local dictionaries for loaded files",
      Usage => "fileDictionaries#fn",
      Inputs => { "fn" => String },

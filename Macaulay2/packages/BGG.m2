@@ -1,7 +1,7 @@
 needsPackage "BoijSoederberg"
 newPackage(
 	"BGG",
-    	Version => "0.2", 
+    	Version => "1.0", 
     	Date => "June 30, 2008",
     	Authors => {
 	     {Name => "Hirotachi Abo", Email => "abo@uidaho.edu", HomePage => "http://www.webpages.uidaho.edu/~abo/"},

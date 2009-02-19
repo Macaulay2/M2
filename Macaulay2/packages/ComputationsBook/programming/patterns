@@ -1,2 +1,2 @@
 # the order of elements in a set can vary
-s/^o76 = Set .*/o76 = Set {{4, 5}, 1, a}/
+s/^o76 = set .*/o76 = set {...}/

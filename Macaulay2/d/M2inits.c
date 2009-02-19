@@ -56,7 +56,7 @@ void *GC_malloc_function (size_t new) {
 
 void *malloc_function (size_t new) {
      void *p = malloc(new);
-     if (p == NULL) outofmem();
+     if (p == NULL) outofmem2(new);
 #    ifdef DEBUG
      trapchk(p);
 #    endif
@@ -72,7 +72,7 @@ void free_function (void *s, size_t old) {
 
 void *realloc_function (void *s, size_t old, size_t new) {
      void *p = malloc(new);
-     if (p == NULL) outofmem();
+     if (p == NULL) outofmem2(new);
      memcpy(p, s, old<new ? old : new);
      free(s);
 #    ifdef DEBUG

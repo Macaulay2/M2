@@ -43,29 +43,32 @@ o6 = ideal (b*c - a*d, c  - b*d , a*c  - b d, b  - a c)
 o6 : Ideal of R
 
 i7 : time (inLs,Ls) = gfan I
-using temporary file /tmp/M2-1891-1
-     -- used 0.004 seconds
+using temporary file /tmp/M2-83125-1
+     -- used 0.002355 seconds
 
-         3          2   2      3          2   2    3      3        4     2 
-o7 = ({{c , a*d, a*c , a c}, {c , b*c, a*c , a c, a d}, {c , b*c, b , a*c ,
+           2          2   2      3          2   2      3          2   2  
+o7 = ({{b*d , a*d, a*c , a c}, {c , a*d, a*c , a c}, {c , b*c, a*c , a c,
      ------------------------------------------------------------------------
-      2      3        3     2     3        2    3       2   2         2   
-     a c}, {c , b*c, b , a*c }, {c , b*c, b d, b }, {b*d , b d, a*d, a c},
+      3      3        4     2   2      3        3     2     3        2    3  
+     a d}, {c , b*c, b , a*c , a c}, {c , b*c, b , a*c }, {c , b*c, b d, b },
      ------------------------------------------------------------------------
-         2   2    3            2        2    3     3     4     2        2  
-     {b*d , b d, b , a*d}, {b*d , b*c, b d, b , a*d }, {c , b*d , b*c, b d,
+         2   2         2        2   2    3            2        2    3     3  
+     {b*d , b d, a*d, a c}, {b*d , b d, b , a*d}, {b*d , b*c, b d, b , a*d },
      ------------------------------------------------------------------------
-      3       3      2                  2    2      3    2      3      2     
-     b }}, {{c  - b*d , - b*c + a*d, a*c  - b d, - b  + a c}, {c  - b*d , b*c
+       4     2        2    3         3      2                  2    2      3
+     {c , b*d , b*c, b d, b }}, {{- c  + b*d , - b*c + a*d, a*c  - b d, - b 
      ------------------------------------------------------------------------
-               2    2      3    2      4    3      3      2              4  
-     - a*d, a*c  - b d, - b  + a c, - b  + a d}, {c  - b*d , b*c - a*d, b  -
+        2      3      2                  2    2      3    2      3      2 
+     + a c}, {c  - b*d , - b*c + a*d, a*c  - b d, - b  + a c}, {c  - b*d ,
      ------------------------------------------------------------------------
-      3      2    2      3    2      3      2              3    2      2  
-     a d, a*c  - b d, - b  + a c}, {c  - b*d , b*c - a*d, b  - a c, a*c  -
+                   2    2      3    2      4    3      3      2            
+     b*c - a*d, a*c  - b d, - b  + a c, - b  + a d}, {c  - b*d , b*c - a*d,
      ------------------------------------------------------------------------
-      2      3      2                  2    2    3    2        3      2   
-     b d}, {c  - b*d , b*c - a*d, - a*c  + b d, b  - a c}, {- c  + b*d , -
+      4    3      2    2      3    2      3      2              3    2      2
+     b  - a d, a*c  - b d, - b  + a c}, {c  - b*d , b*c - a*d, b  - a c, a*c 
+     ------------------------------------------------------------------------
+        2      3      2                  2    2    3    2        3      2   
+     - b d}, {c  - b*d , b*c - a*d, - a*c  + b d, b  - a c}, {- c  + b*d , -
      ------------------------------------------------------------------------
         2    2                   3    2        3      2       2    2    3  
      a*c  + b d, - b*c + a*d, - b  + a c}, {- c  + b*d , - a*c  + b d, b  -
@@ -80,11 +83,12 @@ o7 : Sequence
 
 i8 : weightVector(inLs#0, Ls#0)
 
-o8 = {1, 1, 4, 5}
+o8 = {1, 1, 4, 6}
 
 o8 : List
 
 i9 : scan(#inLs, i -> print weightVector(inLs#i, Ls#i));
+{1, 1, 4, 6}
 {1, 1, 4, 5}
 {1, 1, 3, 2}
 {2, 2, 3, 1}
@@ -96,6 +100,10 @@ i9 : scan(#inLs, i -> print weightVector(inLs#i, Ls#i));
 {8, 8, 3, 1}
 
 i10 : scan(#inLs, i -> print groebnerCone(inLs#i, Ls#i));
+(| 0 0 |, | 1  0 |)
+ | 0 0 |  | 0  1 |
+ | 2 1 |  | -2 3 |
+ | 3 2 |  | -3 4 |
 (| 0 0 |, | 1  0 |)
  | 0 0 |  | 0  1 |
  | 2 1 |  | -2 3 |
@@ -134,5 +142,3 @@ i10 : scan(#inLs, i -> print groebnerCone(inLs#i, Ls#i));
  | -3 -4 |  | -3 4 |
 
 i11 : 
-0.75user 0.08system 0:00.82elapsed 101%CPU (0avgtext+0avgdata 0maxresident)k
-144inputs+32outputs (1major+12216minor)pagefaults 0swaps

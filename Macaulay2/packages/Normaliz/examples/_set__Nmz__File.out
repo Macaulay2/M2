@@ -1,0 +1,7 @@
+-- -*- M2-comint -*- {* hash: 1005389518 *}
+
+i1 : setNmzFile()
+
+o1 = nmzM2_19420
+
+i2 : 

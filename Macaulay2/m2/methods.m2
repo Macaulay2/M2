@@ -2,9 +2,9 @@
 
 -- temporary definitions to get error messages to work before methods are working, so we can debug methods
 assert( class between === Symbol )
-between = (m,v) -> mingle(v,#v-1:m)
+between = (m,v) -> mingle(v,#v-1:m)			    -- provisional
 assert( class toString === Symbol )
-toString = x -> (
+toString = x -> (					    -- provisional
      if hasAttribute(x,ReverseDictionary) then simpleToString getAttribute(x,ReverseDictionary)
      else if class x === Net then concatenate between("\n",unstack x)
      else simpleToString x
@@ -56,7 +56,10 @@ BinaryNoOptions := (outputs) -> (
      args -> (
 	  -- Common code for every associative method without options
 	  if #args === 2 then binaryLookup args
-	  else if #args >= 3 then self prepend(self(args#0,args#1),drop(args,2))
+	  else if #args >= 3 then (
+	       r := self(args#0,args#1);
+	       for i from 2 to #args-1 do r = self(r,args#i);
+	       r)
 	  else if #args === 1 then args#0
 	  else if #args === 0 then (
 	       f := lookup (1 : methodFunction);
@@ -178,7 +181,6 @@ random = method(Options => {
 	  MaximalRank => false,
 	  Density => 1.,
 	  UpperTriangular => false,
-	  Norm => 1.,
 	  Height => 10
 	  })
 random Type := opts -> (X) -> (
@@ -245,7 +247,6 @@ length = method(TypicalValue => ZZ, Dispatch => Thing)
 codim = method( Options => true )
 radical = method( Options=>{ Unmixed=>false, CompleteIntersection => null, Strategy => Decompose } )
 regularity = method( TypicalValue => ZZ, Options => { Weights => null } )
-primaryDecomposition = method( TypicalValue => List, Options => { Strategy => null } )
 associatedPrimes = method( TypicalValue => List, Options =>{ Strategy => 1 } )
 
 toString = method(Dispatch => Thing, TypicalValue => String)

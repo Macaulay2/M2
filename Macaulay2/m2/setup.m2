@@ -71,19 +71,6 @@ getSymbol = nm -> (
      error "no mutable dictionary on path";
      )
 
------------
-
-addStartFunction(
-     () -> (
-	  Function.GlobalReleaseHook = (X,x) -> (
-	       stderr << "--warning: " << toString X << " redefined" << endl;
-	       if hasAttribute(x,ReverseDictionary) then removeAttribute(x,ReverseDictionary);
-	       );
-	  )
-     )
-
----------------------------------
-
 if notify then stderr << "--loading " << minimizeFilename currentFileName << endl
 
 match := X -> null =!= regex X -- defined as a method later
@@ -141,7 +128,10 @@ pathdo := (loadfun,path,filename,reportfun) -> (
      ret)
 
 tryload := (filename,loadfun,notify) -> pathdo(loadfun,path,filename, (fullfilename,filetime) -> markLoaded(fullfilename,filename,notify,filetime))
-load = (filename) -> (tryload(filename,simpleLoad,notify);)
+load = (filename) -> (
+     -- could assert something here ...
+     tryload(filename,simpleLoad,notify);
+     )
 input = (filename) -> (tryload(filename,simpleInput,false);)
 needs = s -> if not filesLoaded#?s then load s else (
      (fullfilename,filetime) := filesLoaded#s;

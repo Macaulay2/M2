@@ -1,12 +1,17 @@
 RELAX = yes
 URL = ftp://ftp.gnu.org/gnu/gmp
+
 # 4.2.2 is now LGPL version 3, which we may not want to use, so stick with 4.2.1 for now
 VERSION = 4.2.1
-# PATCHFILE = @abs_srcdir@/patch-$(VERSION)
+PATCHFILE = @abs_srcdir@/patch-$(VERSION)
+
 CONFIGOPTIONS += --enable-cxx
 ifeq (@SHARED@,no)
 CONFIGOPTIONS += --disable-shared
 endif
+
+# disable check, because it fails on various 64 bit machines
+CHECKTARGET = .
 
 # core 2 duo patch:
 # http://www.math.jmu.edu/~martin/

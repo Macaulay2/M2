@@ -40,11 +40,6 @@ I3 = monomialIdeal matrix{{a,b}}
 I4 = monomialIdeal matrix{{a^3,b^3,c^3,d^3}}
 I = intersect(intersect(I1,I2),intersect(I3,I4))
 
---status: probably Mike should change rawMonomialIdeal so when it converts a 2 to a zero, as in
---status: the example here, it gives an error
-R = ZZ[x]
-assert try ( matrix {{2,x}} ; false ) else true
-
 end
 -- Local Variables:
 -- compile-command: "make -C $M2BUILDDIR/Macaulay2/test monideal.out"

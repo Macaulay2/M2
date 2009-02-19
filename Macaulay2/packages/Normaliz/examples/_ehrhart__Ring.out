@@ -1,0 +1,30 @@
+-- -*- M2-comint -*- {* hash: 1351154259 *}
+
+i1 : R=ZZ/37[x,y,t];
+
+i2 : I=ideal(x^3, x^2*y, y^3, x*y^2);
+
+o2 : Ideal of R
+
+i3 : ehrhartRing(I)
+
+              3   2      2   3           3    2        2    3
+o3 = {ideal (x , x y, x*y , y ), ideal (x t, x y*t, x*y t, y t)}
+
+o3 : List
+
+i4 : J=I+ideal(x*y^2*t^7);
+
+o4 : Ideal of R
+
+i5 : ehrhartRing(J)
+
+                2 7     2 6     2 5     2 4   2   3     2 3   2   2     2 2 
+o5 = {ideal (x*y t , x*y t , x*y t , x*y t , x y*t , x*y t , x y*t , x*y t ,
+     ------------------------------------------------------------------------
+      2        2    3   2      2   3
+     x y*t, x*y t, x , x y, x*y , y )}
+
+o5 : List
+
+i6 : 

@@ -23,7 +23,7 @@ document {
 	  [gb,SubringLimit],
 	  [gb,Syzygies],
 	  [gb,SyzygyLimit],
-	  [gb,SyzygyRows],
+	  [gb,SyzygyRows],[gb,MaxReductionCount],
 	  LinearAlgebra, Homogeneous2, Sugarless, Toric, UseSyzygies
 	  },
      Headline => "compute a Gröbner basis",
@@ -39,10 +39,15 @@ document {
 	  DegreeLimit => List => "stop after the Gröbner basis in this degree has been computed",
 	  GBDegrees => List => "a list of positive integer weights, one for each variable in the ring, to be used for
 	   organizing the computation by degrees (the 'sugar' ecart vector)",
-	  HardDegreeLimit => "throws away all S-pairs of degrees beyond the limit. The computation
-	    will be re-initialized if higher degrees are required.",
+	  HardDegreeLimit => {
+	       "throws away all S-pairs of degrees beyond the limit. The computation
+	       will be re-initialized if higher degrees are required."},
      	  Hilbert => {"informs Macaulay 2 that this is the ", TO poincare, 
-	   " polynomial, and can be used to aid in the computation of the Gröbner basis (Hilbert driven)"},
+	       " polynomial, and can be used to aid in the computation of the Gröbner basis (Hilbert driven)"},
+      	  MaxReductionCount => ZZ => {
+	       "the maximum number of reductions of an S-pair done before requeueing it, if the 
+	       ", TT "Inhomogeneous", " algorithm is in use"
+	       },
 	  PairLimit => ZZ => "stop after this number of spairs has been considered",
 	  StopBeforeComputation => Boolean => "whether to initialize the Gröbner basis engine but return before doing any computation (useful for 
 	    using or viewing partially computed Gröbner bases)",

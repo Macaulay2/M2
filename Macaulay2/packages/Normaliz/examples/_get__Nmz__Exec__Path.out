@@ -1,0 +1,7 @@
+-- -*- M2-comint -*- {* hash: 148600884 *}
+
+i1 : getNmzExecPath()
+
+o1 = 
+
+i2 : 

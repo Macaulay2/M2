@@ -24,6 +24,7 @@ static void uniq(void *p, ...) {
 }
 
 int main () {
+  GC_INIT();
   uniq(
        GC_malloc(12), GC_malloc(12), GC_malloc(12), (GC_gcollect(),GC_malloc(12)),
        GC_malloc(12), GC_malloc(12), GC_malloc(12), (GC_gcollect(),GC_malloc(12)),
@@ -33,3 +34,9 @@ int main () {
        (void *)0);
   return 0;
 }
+
+/*
+ Local Variables:
+ compile-command: "make -C $M2BUILDDIR/Macaulay2/packages/Macaulay2Doc/basictests "
+ End:
+*/

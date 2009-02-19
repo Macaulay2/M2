@@ -1,0 +1,30 @@
+in progress:
+
+Mac OS 10.5 PowerPC
+Mac OS 10.4 PowerPC
+Mac OS 10.5 intel 64 bit
+Mac OS 10.5 intel 32 bit
+Mac OS 10.4 intel 32 bit
+freebsd 7.1
+ubuntu 8.10 32 bit
+ubuntu 8.10 64 bit
+generic linux 32 bit
+generic linux 64 bit
+cygwin 1.5
+debian 4.0 32 bit
+debian 4.0 64 bit
+
+needed if the generic version doesn't work on it:
+
+Scientific Linux 5.2
+
+perhaps:
+
+Fedora 10
+
+possibly not needed:
+
+Red Hat
+Mac OS 10.4 intel 64 bit
+
+not needed:

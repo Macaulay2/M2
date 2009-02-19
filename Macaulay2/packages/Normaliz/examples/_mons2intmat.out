@@ -1,0 +1,31 @@
+-- -*- M2-comint -*- {* hash: -1632352369 *}
+
+i1 : R=ZZ/37[x,y,t];
+
+i2 : J=ideal(x^3, x^2*y, y^3, x*y^2,x*y^2*t^7);
+
+o2 : Ideal of R
+
+i3 : m=mons2intmat(J)
+
+o3 = | 3 0 0 |
+     | 2 1 0 |
+     | 0 3 0 |
+     | 1 2 0 |
+     | 1 2 7 |
+
+              5        3
+o3 : Matrix ZZ  <--- ZZ
+
+i4 : I=intmat2mons(m,R)
+
+             3   2    3     2     2 7
+o4 = ideal (x , x y, y , x*y , x*y t )
+
+o4 : Ideal of R
+
+i5 : I==J
+
+o5 = true
+
+i6 : 

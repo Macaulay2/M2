@@ -1,10 +1,10 @@
 newPackage(
 	"BoijSoederberg",
-    	Version => "0.2", 
-    	Date => "June 16, 2008",
+    	Version => "1.2", 
+    	Date => "February 8, 2009",
     	Authors => {
 	     {Name => "David Eisenbud", Email => "de@msri.org", HomePage => "http://www.msri.org/~de/"},
-	     {Name => "Frank Schreyer", Email => "", HomePage => ""},
+	     {Name => "Frank Schreyer", Email => "schreyer@math.uni-sb.de"},
 	     {Name => "Mike Stillman", Email => "mike@math.cornell.edu", HomePage => "http://www.math.cornell.edu/~mike"}
 	     },
     	Headline => "betti diagram operations useful for investigating the Boij-Soederberg conjectures",

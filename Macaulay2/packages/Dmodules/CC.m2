@@ -70,7 +70,7 @@ cotanbun RingElement := f -> (
 ---------------------------------------------------------------------
 -- multiplicity -- 
 -- given a Poincare polynomial for a module outputs its multiplicity
-multiplicity = method()
+multiplicity := method()
 multiplicity RingElement := f-> (
      R := ring f;
      while (f % (1-R_0) == 0) do f = f//(1-R_0);
@@ -101,12 +101,21 @@ BMM(Ideal, RingElement) := (I,f) -> (
      scan(#dec, i->(
 	 compI := project dec#i;      
 	 projdec := drop(dec,{i,i})/project;
+-- Anton, I have no idea which of these two versions you prefer
+-- the second one of them comes from the 1.2 release branch
+-- <<<<<<< .working
 	 suspectedMultiplicity := multiplicity@@poincare prd#i // multiplicity@@poincare dec#i;
 	 if suspectedMultiplicity > 1 and isSubset(I0,compI) -- and any(projdec, c->isSubset(c,compI)) 
 	 then (
 	      pInfo(3,"BMM: Component "|toString compI|" should be corrected");
 	      toCorrect = toCorrect | {i};
 	      ) 
+-- =======
+-- 	 pInfo(3,"Should component "|toString compI|" with "|toString prd#i|" be corrected?");
+-- 	 suspectedMultiplicity := multiplicity@@poincare prd#i // multiplicity@@poincare dec#i;
+-- 	 if suspectedMultiplicity > 1 and any(projdec, c->isSubset(c,compI)) 
+-- 	 then toCorrect = toCorrect | {i} 
+-- >>>>>>> .merge-right.r8463
 	 else (  
 	      comps = comps|{compI => suspectedMultiplicity};
 	      )
@@ -122,11 +131,19 @@ BMM(Ideal, RingElement) := (I,f) -> (
 	       B, --intersect apply(superComp,j->prd#j),--...this is slower, though 
 	       I,f,
 	       project prd#i};
+-- Anton, same here:
+-- <<<<<<< .working
 	  cordec := {dec#i}; -- try localization
 	  pInfo(3, ass corB);
 	  corprd := { localize(corB,dec#i) };
 	  --corprd = primaryDecomposition corB; -- used to compute the whole primary decomposition ... is "localize" stable?
      	  --cordec = ass corB; 
+-- =======
+-- 	  cordec := {dec#i}; -- try localization
+-- 	  corprd := { localize(corB,dec#i) };
+-- 	  --corprd = primaryDecomposition corB; -- used to compute the whole primary decomposition ... is "localize" stable?
+--      	  --cordec = ass corB; 
+-- >>>>>>> .merge-right.r8463
 	  j := position(cordec, J->project J==compI);
 	  comps = comps|{compI => (multiplicity@@poincare corprd#j //  
 		    multiplicity@@poincare cordec#j)}; 

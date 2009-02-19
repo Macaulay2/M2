@@ -1,0 +1,7 @@
+the documentation for 
+
+     Key => [associatedPrimes,Strategy]
+
+is in Macaulay2Doc, but the interesting content is perhaps in the package
+PrimaryDecomposition.  Maybe the options should be method by method, instead of global.
+

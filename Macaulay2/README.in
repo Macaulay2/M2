@@ -14,7 +14,7 @@ and Michael E. Stillman with generous support from the National Science
 Foundation, for which we are grateful.  Based on Groebner bases, it provides
 algorithms for computing homological invariants of rings and modules.
 
-Macaulay 2 is copyright 1993-2007 by Daniel R. Grayson and Michael E. Stillman.
+Macaulay 2 is copyright 1993-2009 by Daniel R. Grayson and Michael E. Stillman.
 We permit you to use it under the terms of the GNU General Public License,
 version 2, as published by the Free Software Foundation; see the file COPYING,
 or refer to

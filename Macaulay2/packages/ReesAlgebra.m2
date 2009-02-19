@@ -1,20 +1,3 @@
--- MES: todo
---  multiplicity: use newRing?
---  there is a comment that distinguished and mult still do not work.  Examples of this?
---  distinguishedAndMult looks like a work in progress
---  doc:
---    reesIdeal in its various forms
---    [reesIdeal,Variable]
---    reesAlgebra
---    [reesAlgebra,Variable]
---    isLinearType
---    normalCone, [normalCone,Variable]
---    associatedGradedRing, Variable
---    specialFiberIdeal, Variable
---    analyticSpread
---    distinguished
---    distinguishedAndMult
-
 --------------------------------------------------------------------------
 -- PURPOSE : Compute the rees algebra of a module as it is defined in the 
 --           paper "What is the Rees algebra of a module?" by Craig Huneke, 
@@ -29,7 +12,7 @@
 -- PROGRAMMERs : Rees algebra code written by David Eisenbud and
 --               Amelia Taylor with some assistance from Sorin Popescu. 
 -- UPDATE HISTORY : created 27 October 2006 
--- 	     	    updated 29 June 2008
+-- 	     	    updated 29 June 2008, and later
 --
 -- Missing documentation and most examples are now at the end of the file
 -- waiting to be included in the documentation -- more fixes to come
@@ -37,7 +20,7 @@
 newPackage(
 	"ReesAlgebra",
     	Version => "1.0", 
-    	Date => "June 29, 2008",
+    	Date => "February 8, 2009",
     	Authors => {{
 		  Name => "David Eisenbud",
 		  Email => "de@msri.org"},
@@ -45,7 +28,8 @@ newPackage(
 	     HomePage => "http://faculty1.coloradocollege.edu/~ataylor/",
    	     Email => "amelia.taylor@coloradocollege.edu"},
              {Name => "Sorin Popescu",
-	      Email => "sorin@math.sunysb.edu"}},  
+	      Email => "sorin@math.sunysb.edu"},
+	 {Name => "Michael E. Stillman", Email => "mike@math.cornell.edu"}},  
     	Headline => "Rees algebras",
     	DebuggingMode => true
     	)
@@ -1013,7 +997,7 @@ doc ///
   SeeAlso
     reesAlgebra
     normalCone
-    tangentCone
+    "tangentCone"
 ///
 
 
@@ -1378,12 +1362,10 @@ S=ZZ/101[x,y]
 i=ideal"x5,y5, x3y2"
 V1 = reesIdeal(i)
 use ring V1
-assert(V1 == ideal(-w_1*y^2+w_3*x^2,w_1*w_2*x-w_3^2*y,w_2*x^3-w_3*y^3,-w_1^2*w_2*y+w_3^3*x,w_1^3*w_
-     2^2-w_3^5))
+assert(V1 == ideal(-w_0*y^2+w_2*x^2,w_0*w_1*x-w_2^2*y,w_1*x^3-w_2*y^3,-w_0^2*w_1*y+w_2^3*x,w_0^3*w_1^2-w_2^5))
 V2 = reesIdeal(i,i_0)
 use ring V2
-assert(V2 == ideal(-w_1*y^2+w_3*x^2,w_1*w_2*x-w_3^2*y,w_2*x^3-w_3*y^3,-w_1^2*w_2*y+w_3^3*x,w_1^3*w_
-     2^2-w_3^5))
+assert(V2 == ideal(-w_0*y^2+w_2*x^2,w_0*w_1*x-w_2^2*y,w_1*x^3-w_2*y^3,-w_0^2*w_1*y+w_2^3*x,w_0^3*w_1^2-w_2^5))
 ///
 
 -- 3 very simple tests.  The first tests just reesIdeal, the second
@@ -1393,26 +1375,22 @@ S = ZZ/101[x,y]
 M = module ideal(x,y)
 V = reesIdeal M
 use ring V
-assert(V == ideal (-w_1*y+w_2*x))
+assert(V == ideal (-w_0*y+w_1*x))
 use S
 M = module (ideal(x,y))^2
 R = reesAlgebra M
-assert(numgens R_0 == 5)
-use ring ideal R_0
-assert(ideal R_0 == ideal (-w_2*y+w_3*x, -w_1*y + w_2*x, w_2^2 - w_1*w_3))
-F = map(R_0, S, {x,y})
-assert(F == R_1)
+assert(numgens R + numgens coefficientRing R == 5)
+use ambient R
+assert(ideal R == ideal (-w_1*y+w_2*x, -w_0*y + w_1*x, w_1^2 - w_0*w_2))
 use S
 M = module (ideal (x,y))^3
 V = reesIdeal M
 use ring V
-assert(V == ideal (-w_3*y+w_4*x,-w_2*y+w_3*x,-w_1*y+w_2*x,w_3^2-w_2*w_4,w_2*w_3-w_1*w_4,w_2^2-w_1*w_3))
+assert(V == ideal (-w_2*y+w_3*x,-w_1*y+w_2*x,-w_0*y+w_1*x,w_2^2-w_1*w_3,w_1*w_2-w_0*w_3,w_1^2-w_0*w_2))
 R = reesAlgebra M
-assert(numgens R_0 == 6)
-use ring ideal R_0
-assert(ideal R_0 == ideal (-w_3*y+w_4*x,-w_2*y+w_3*x,-w_1*y+w_2*x,w_3^2-w_2*w_4,w_2*w_3-w_1*w_4,w_2^2-w_1*w_3))
-F = map(R_0, S, {x,y})
-assert(F == R_1)
+assert(numgens R + numgens coefficientRing R == 6)
+use ambient R
+assert(ideal R == ideal (-w_2*y+w_3*x,-w_1*y+w_2*x,-w_0*y+w_1*x,w_2^2-w_1*w_3,w_1*w_2-w_0*w_3,w_1^2-w_0*w_2))
 ///
 
 --- Checking that the two methods for getting a Rees Ideal yields the

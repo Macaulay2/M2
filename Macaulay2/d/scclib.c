@@ -1194,6 +1194,10 @@ bool gotArg(const char *arg, char **argv) {
   return FALSE;
 }
 
+int system_fchmod(int fd, int mode) {
+  return fchmod(fd,mode);
+}
+
 /*
 // Local Variables:
 // compile-command: "make -C $M2BUILDDIR/Macaulay2/d "

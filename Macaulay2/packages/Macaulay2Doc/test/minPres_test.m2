@@ -1,10 +1,33 @@
+test = (C,V) -> (
+     assert( not isHomogeneous C or isHomogeneous V );
+     assert( not isHomogeneous C or isHomogeneous C.minimalPresentationMap );
+     assert( not isHomogeneous C or isHomogeneous C.minimalPresentationMapInv );
+     assert( target C.minimalPresentationMap === V );
+     assert( source C.minimalPresentationMap === C );
+     assert( target C.minimalPresentationMapInv === C );
+     assert( source C.minimalPresentationMapInv === V );
+     assert( C.minimalPresentationMap * C.minimalPresentationMapInv == 1 );
+     assert( C.minimalPresentationMapInv * C.minimalPresentationMap == 1 );
+     assert isWellDefined C.minimalPresentationMapInv;
+     assert isWellDefined C.minimalPresentationMap;
+     assert( kernel C.minimalPresentationMap == 0 );
+     assert( kernel C.minimalPresentationMapInv == 0 );
+     )
+
 C=ZZ/101[x,y,z,Degrees => {2,3,1}]/ideal(x-x^2-y,z+x*y)
 V= time minPres(C)
+test(C,V)
 assert( gens V == {x} )
 assert( degrees V == {{2}} )
 
 C=ZZ/101[x,y,z,Degrees => {{1,2},{1,3},{1,1}}]/ideal(x-x^2-y,z+x*y)
-V = time minPres(C,Variable => a)
+V = time minPres(C)
+test(C,V)
+assert( numgens C == 3 )
+assert( numgens V == 1 )
+assert( numgens ideal C == 2 )
+assert( numgens ideal V == 0 )
+
 assert( gens V == {x} )
 assert( degrees V == {{1,2}} )
 
@@ -26,9 +49,14 @@ use ring J1
 assert( J1 == ideal(y_2*y_6-y_3*y_7,y_1*y_5-w_16*y_6,w_11*y_1-y_3*y_7,w_16*y_1-w_11*y_6,w_11^2-w_16*y_2,w_16*w_11-y_2*y_5,w_16^2-w_11*y_5,y_4*y_5*y_7-w_11*y_2*y_8,w_16*y_4*y_7-y_2^2*y_8,w_12*y_7-y_1*y_2*y_8,y_4*y_5*y_6-w_11*y_3*y_8,w_14*y_6-y_1*y_2*y_8,w_12*y_6-y_1*y_3*y_8,w_16*y_4*y_6-y_2*y_3*y_8,w_14*y_5-w_16*y_2*y_8,w_12*y_5-w_16*y_3*y_8,w_14*y_3-w_11*y_4*y_6,w_14*y_2-w_11*y_4*y_7,w_12*y_2-w_11*y_4*y_6,w_14*y_1-y_4*y_6*y_7,w_12*y_1-y_4*y_6^2,w_11*w_14-y_2^2*y_8,w_16*w_14-w_11*y_2*y_8,w_11*w_12-y_2*y_3*y_8,w_16*w_12-w_11*y_3*y_8,w_14^2-y_2*y_4*y_7*y_8,w_12*w_14-y_3*y_4*y_7*y_8,w_12^2-y_3*y_4*y_6*y_8) )
 
 C = S/J
-V = time minPres(C,Variable => a)
---status: minPres no longer seems to obey the Variable option
---status: Amelia could fix it
-assert( gens V == {a_0,a_1,a_2,a_3,a_4,a_5,a_6,a_7,a_8,a_9,a_10,a_11} )
-use ring ideal V
-assert( ideal V == ideal(a_5*a_9-a_6*a_10,a_4*a_8-a_0*a_9,a_1*a_4-a_6*a_10,a_0*a_4-a_1*a_9,a_1^2-a_0*a_5,a_0*a_1-a_5*a_8,a_0^2-a_1*a_8,a_7*a_8*a_10-a_1*a_5*a_11,a_0*a_7*a_10-a_5^2*a_11,a_2*a_10-a_4*a_5*a_11,a_7*a_8*a_9-a_1*a_6*a_11,a_3*a_9-a_4*a_5*a_11,a_2*a_9-a_4*a_6*a_11,a_0*a_7*a_9-a_5*a_6*a_11,a_3*a_8-a_0*a_5*a_11,a_2*a_8-a_0*a_6*a_11,a_3*a_6-a_1*a_7*a_9,a_3*a_5-a_1*a_7*a_10,a_2*a_5-a_1*a_7*a_9,a_3*a_4-a_7*a_9*a_10,a_2*a_4-a_7*a_9^2,a_1*a_3-a_5^2*a_11,a_0*a_3-a_1*a_5*a_11,a_1*a_2-a_5*a_6*a_11,a_0*a_2-a_1*a_6*a_11,a_3^2-a_5*a_7*a_10*a_11,a_2*a_3-a_6*a_7*a_10*a_11,a_2^2-a_6*a_7*a_9*a_11) )
+V = time minPres C
+assert( target C.minimalPresentationMap === V )
+assert( source C.minimalPresentationMap === C )
+assert( target C.minimalPresentationMapInv === C )
+assert( source C.minimalPresentationMapInv === V )
+assert( C.minimalPresentationMap * C.minimalPresentationMapInv == 1 )
+assert( C.minimalPresentationMapInv * C.minimalPresentationMap == 1 )
+assert( numgens C == 17 )
+assert( numgens V <= 12 )
+assert( numgens J == 33 )
+assert( numgens ideal V <= 28 )

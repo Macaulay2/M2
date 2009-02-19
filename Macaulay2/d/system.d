@@ -16,6 +16,7 @@ import read(fd:int, buffer:string, buffersize:int):int;
 import read(fd:int, buffer:string, buffersize:int, offset:int):int;
 import readline(buffer:string, buffersize:int, offset:int, prompt:string):int;
 import link(oldfilename:string,newfilename:string):int;
+import fchmod(fd:int,mode:int):int;
 import symlink(oldfilename:string,newfilename:string):int;
 import unlink(filename:string):int;
 import openin(filename:string):int;

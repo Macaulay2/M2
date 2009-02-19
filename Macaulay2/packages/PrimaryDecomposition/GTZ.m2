@@ -74,14 +74,6 @@ PD1 = (I) -> (
      (J, time trim(I + ideal(h)))
      )
 -------------------------------------------------------
-debug PrimaryDecomposition
-
-factors = (F) -> (
-     facs := factor F;
-     facs = apply(#facs, i -> facs#i#0);
-     select(facs, f -> degree f =!= {0}))
-
-variables = (f) -> apply(positions(first exponents leadMonomial f, i -> i>0),j -> (ring f)_j)
 
 makeProductRing = (basevars) -> (
      -- basevars should be a product of variables
@@ -152,11 +144,11 @@ greedySat(Ideal,RingElement) := (I,F) -> (
 	  ));
      (satI, G))   
      
-saturation = method()
-saturation(Ideal,RingElement) := (I,F) -> (
-     facs := factors F;
-     ret := minSatPPD(I,facs);
-     (ret#0, ret#2))
+-- saturation = method()
+-- saturation(Ideal,RingElement) := (I,F) -> (
+--      facs := factors F;
+--      ret := minSatPPD(I,facs);
+--      (ret#0, ret#2))
 
 saturation = method()
 saturation(Ideal,RingElement) := (I,F) -> greedySat(I,F)

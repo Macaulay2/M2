@@ -1,0 +1,40 @@
+It's confusing that variables, such as AbstractSheaf in the example below, attached to
+a previous incarnation of a package being loaded, print out exactly the same way as
+the one in the current incarnation
+
+i1 : loadPackage "Schubert2"
+
+o1 = Schubert2
+
+o1 : Package
+
+i2 : pt = base ()
+
+o2 = pt
+
+o2 : an abstract variety of dimension 0
+
+i3 : loadPackage "Schubert2"
+
+o3 = Schubert2
+
+o3 : Package
+
+i5 : V = OO_pt^2
+
+o5 = V
+
+o5 : an abstract sheaf of rank 2 on pt
+
+i6 : flagBundle({2,2}, V)
+stdio:6:1:(1):[0]: error: no method found for applying flagBundle to:
+     argument 1 :  {2, 2} (of class List)
+     argument 2 :  V (of class AbstractSheaf)
+
+i7 : methods flagBundle
+
+o7 = {(flagBundle, List)                 }
+     {(flagBundle, List, AbstractSheaf)  }
+     {(flagBundle, List, AbstractVariety)}
+
+o7 : VerticalList

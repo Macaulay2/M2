@@ -10,7 +10,7 @@ newPackage(
      DebuggingMode => true
      )
 
-export {elementalSymm}
+export {elementarySymmetric}
 
 mons = (X,i)-> (
     n := #X;
@@ -32,8 +32,8 @@ symring= R->(
  
 elementarySymmetricPolynomialRing =(cacheValue symbol  elementarySymmetricRing)symring
  
-elementalSymm = method();
-elementalSymm (RingElement):=  f -> (
+elementarySymmetric = method();
+elementarySymmetric (RingElement):=  f -> (
      R := ring f;
      n := # flatten entries vars R; 
      if n<2 then return f;
@@ -65,7 +65,7 @@ elementalSymm (RingElement):=  f -> (
      )
      
 
-elementalSymm (PolynomialRing):=  R->(
+elementarySymmetric (PolynomialRing):=  R->(
      return map(R,elementarySymmetricPolynomialRing R)
      )
 
@@ -73,25 +73,32 @@ beginDocumentation()
 
 doc ///
   Key
-    elementalSymm
-    (elementalSymm, RingElement)
+    SymmetricPolynomials
   Headline
-    Expresses a symmetric polynomial as a sum of elementary symmetric functions
+    elementary symmetric functions
+///
+
+doc ///
+  Key
+    elementarySymmetric
+    (elementarySymmetric, RingElement)
+  Headline
+    Expresses a symmetric polynomial as a polynomial in the elementary symmetric functions
   Usage
-    elementalSymm(f)
+    elementarySymmetric(f)
   Inputs
     f:RingElement
-      A symmetric polynomial in n variables  
+      a symmetric polynomial in n variables  
   Outputs 
     G:RingElement
-      The representation of f as a sum of elementary symmetric functions.
+      the representation of f as a polynomial in the elementary symmetric functions.
   Description
     Text    
-      Expresses a symmetric polynomial as a sum of elementary symmetric functions
+      Expresses a symmetric polynomial as a polynomial in the elementary symmetric functions
     
     Example
       R=QQ[x_0,x_1,x_2,x_3]
       q=x_0^2*x_1^2*x_2^2+x_0^2*x_1^2*x_2*x_3+x_0^2*x_1*x_2^2*x_3+x_0*x_1^2*x_2^2*x_3+x_0^2*x_1^2*x_3^2+x_0^2*x_1*x_2*x_3^2+x_0*x_1^2*x_2*x_3^2+x_0^2*x_2^2*x_3^2+x_0*x_1*x_2^2*x_3^2+x_1^2*x_2^2*x_3^2
-      elementalSymm(q)
+      elementarySymmetric(q)
 ///
 

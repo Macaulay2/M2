@@ -1,0 +1,27 @@
+-- -*- M2-comint -*- {* hash: 1079330933 *}
+
+i1 : R=ZZ/37[x,y,t];
+
+i2 : I=ideal(x^3, x^2*y, y^3, x*y^2);
+
+o2 : Ideal of R
+
+i3 : intclMonIdeal(I)
+
+              3     2   2    3                 3      2    2      3
+o3 = {ideal (y , x*y , x y, x ), ideal (y, x, y t, x*y t, x y*t, x t)}
+
+o3 : List
+
+i4 : J=I+ideal(x*y^2*t^7);
+
+o4 : Ideal of R
+
+i5 : intclMonIdeal(J)
+
+              3     2   2    3
+o5 = {ideal (y , x*y , x y, x )}
+
+o5 : List
+
+i6 : 

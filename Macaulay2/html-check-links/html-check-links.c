@@ -1,5 +1,6 @@
 /* Copyright 1998 by Daniel R. Grayson */
 
+#include <gc.h>
 #include "html-check-links.h"
 #include "grammar.h"
 #include "getmem.h"
@@ -97,6 +98,7 @@ int main(int argc, char **argv) {
 # ifdef DEBUG
   /*    yydebug = 1; */
 # endif
+  GC_init();
   if (argc > i+1 && 0 == strcmp("--root",argv[i])) rootname = argv[i+1], i += 2;
   for (; i<argc; i++) process(argv[i]);
   return errors > 0 ? 1 : 0;

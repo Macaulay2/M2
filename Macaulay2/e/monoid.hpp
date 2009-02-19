@@ -109,7 +109,9 @@ public:
   bool primary_degrees_of_vars_positive() const;
 
   bool is_group() const { return n_invertible_vars_ == nvars_; }
-
+  bool has_monomials_lt_one() const { 
+    return (n_invertible_vars_ > 0 || local_vars->len > 0); }
+  
   void text_out(buffer &o) const;
 
   int n_vars()        const { return nvars_; }
@@ -185,9 +187,13 @@ public:
   int degree_weights(const_monomial m, M2_arrayint wts) const;
   void degree_of_varpower(const_varpower vp, monomial result) const;
 
+  bool weight_value_exists() const { return first_weights_slot_ >= 0; }
+  // True if the first part of the order has a weight vector.
+  // MUST be true in order for first_weight_value to not give erroneous value
+
   long first_weight_value(const_monomial m) const { return m[first_weights_slot_]; }
   // Returns the value of the first weight vector in the monomial order.
-  // If none, returns 0.
+  // If none, returns 0.  First call weight_value_exists() before using.
 };
 
 #if 0

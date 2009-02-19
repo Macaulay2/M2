@@ -231,9 +231,19 @@ const RingOrNull *IM2_Ring_frac(const Ring *R)
 	      ERROR("expected polynomial ring");
 	      return 0;
 	    }
+	  if (P->getMonoid()->getNonTermOrderVariables()->len > 0)
+	    {
+	      ERROR("cannot currently make fraction field over a polynomial ring with a non-global monomial order");
+	      return 0;
+	    }
 	  if (R->get_precision() > 0)
 	    {
 	      ERROR("cannot make fraction field over approximate field base");
+	      return 0;
+	    }
+	  if (P->getCoefficients()->cast_to_FractionField() != 0)
+	    {
+	      ERROR("fraction fields over other fraction fields not yet implemented");
 	      return 0;
 	    }
 	  return FractionField::create(P);
@@ -637,7 +647,8 @@ const RingElementOrNull *IM2_RingElement_power(const RingElement *a,
 					       M2_Integer n)
 {
      try {
-	  return a->power(n);
+       RingElement *z = a->power(n);
+       return error() ? NULL : z;
      }
      catch (exc::engine_error e) {
 	  ERROR(e.what());

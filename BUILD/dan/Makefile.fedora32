@@ -1,0 +1,49 @@
+#-*- Makefile -*-
+DIRECTORY = fedora32
+CONFIGOPTIONS += --build=i386-pc-linux-gnu
+CONFIGOPTIONS += --enable-rpm
+
+# but now configure.ac should detect it
+# # fedora 10 has factory 3.0.4 and libfac 3.0.4, but we want 3.1.0, or else some tests fail
+# CONFIGOPTIONS += --enable-build-libraries="factory libfac"
+
+INSTALLOPTIONS += prefix=$(HOME)/local/encap
+
+include Makefile.include
+default: install check
+
+
+# ftp://ftp.uci.edu/mirrors/fedora/linux/releases/10/Fedora/i386/iso/Fedora-10-i386-netinst.iso
+# install a minimal system over the network with development tools and software libraries
+
+# install packages:
+# 	yum install emacs
+# search for packages
+#	yum list emacs
+#	yum provides /usr/include/gc/gc.h
+
+# install these:
+
+# 	fakeroot
+# 	pari-devel
+#	gc-devel
+#	ntl-devel
+#	lapack-devel
+#	mpfr-devel
+#	factory-devel
+#	libfac-devel
+
+
+# VirtualBox settings:
+#  VBoxManage setextradata "fedora 10" VBoxInternal/Devices/pcnet/0/LUN#0/Config/guestssh/Protocol  TCP
+#  VBoxManage setextradata "fedora 10" VBoxInternal/Devices/pcnet/0/LUN#0/Config/guestssh/GuestPort 22
+#  VBoxManage setextradata "fedora 10" VBoxInternal/Devices/pcnet/0/LUN#0/Config/guestssh/HostPort  2225
+
+# .ssh/config settings:
+# Host fedora10
+#   Hostname localhost
+#   Port 2225
+
+# Local Variables:
+# compile-command: "time make -f Makefile.fedora32 "
+# End:

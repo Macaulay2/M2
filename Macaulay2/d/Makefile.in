@@ -99,8 +99,11 @@ DFILES += texmacs.d
 DFILES += interface.d
 ifeq (@PARI@,yes)
 DFILES += pari.d
-pari.oo : CPPFLAGS += -DINCLUDE_PARI_H
-pari-c.o : CFLAGS += -Wall -Wno-unused -UNDEBUG
+pari.oo: CPPFLAGS += -DINCLUDE_PARI_H
+pari.oo: CFLAGS += -Wno-shadow
+pari-c.o: CFLAGS += -Wall -Wno-unused -UNDEBUG
+# see REVERSE_PARI
+pari-c.o: ../../include/M2/config.h ../../config.status
 CFILES += pari-c.c
 HFILES += pari-c.h
 endif
@@ -154,6 +157,10 @@ endif
 TOSTATIC =
 UNSTATIC =
 
+ifeq (@OS@ @ISSUE@,MicrosoftWindows Cygwin)
+TOSTATIC = -Wl,-Bstatic
+UNSTATIC = -Wl,-Bdynamic
+else
 ifeq (@OS@,Linux)
 TOSTATIC = -Wl,-Bstatic
 UNSTATIC = -Wl,-Bdynamic
@@ -166,7 +173,8 @@ ifeq (@OS@,SunOS)
 TOSTATIC = -Wl,-Bstatic
 UNSTATIC = -Wl,-Bdynamic
 else
-$(warning static linking requested, no method configured for this OS or linker)
+$(warning no static linking method configured for this OS or linker)
+endif
 endif
 endif
 endif
@@ -174,7 +182,7 @@ endif
 ifeq "@STATIC@" "yes"
 MAYBESTATIC = $(TOSTATIC)
 else 
-MAYBESTATIC =
+MAYBESTATIC = $(UNSTATIC)
 endif
 
 ############################## rules
@@ -250,8 +258,12 @@ endif
 ifeq "@STATIC@" "yes"
 M2_LIBRARIES := $(MAYBESTATIC)
 ifeq (@OS@,Linux)
-# this is for gc somehow, see the end of gc/config.h
-M2_LDFLAGS += -Wl,-defsym,_DYNAMIC=0
+# This is for gc, see the end of gc/doc/README.linux:
+# --Dynamic libraries are supported on an ELF system.  A static executable
+# --should be linked with the gcc option "-Wl,-defsym,_DYNAMIC=0".
+# I'm turning this off, because we are never completely static any longer,
+# and because I don't understand it.
+# M2_LDFLAGS += -Wl,-defsym,_DYNAMIC=0
 endif
 else
 M2_LIBRARIES :=
@@ -309,23 +321,26 @@ endif
 M2_LIBDEPS    += libfactory_init1.a libfactory_init2.a
 
 M2_LIBRARIES +=  @BUILTLIBS@
-M2_LIBRARIES +=  $(TOSTATIC) @LIBS_STATIC@ $(UNSTATIC)
-M2_LIBRARIES +=  @LIBS_STATIC_OR_DYNAMIC@
+M2_LIBRARIES +=  $(TOSTATIC) @LIBS_STATIC@
+M2_LIBRARIES +=  $(MAYBESTATIC) @LIBS_STATIC_OR_DYNAMIC@
 # I'm not sure whether compiling statically with libstdc++ is a good idea
 M2_LIBRARIES += -lstdc++
-M2_LIBRARIES += @FCLIBS_FLAGS@
-M2_LIBRARIES += @FCLIBS_STATIC@
+
+# Under Ubuntu 8.10 -lgfortranbegin & -lgfortran come from libgfortran3, but that package isn't in Ubuntu 8.4
+# so we try to link it statically, because there are many Ubuntu users of 8.4.
+# Linking statically with -llapack -lblas results in conflicts between symbols in the two packages under Ubuntu:
+#     /usr/lib/gcc/x86_64-linux-gnu/4.3.2/../../../../lib/libblas.a(xerbla.o): In function `xerbla_':
+#     (.text+0x0): multiple definition of `xerbla_'
+#     /usr/lib/gcc/x86_64-linux-gnu/4.3.2/../../../../lib/liblapack.a(xerbla.o):(.text+0x0): first defined here
+#     collect2: ld returned 1 exit status
+# Note: static version is here:
+#  /usr/lib/gcc/x86_64-linux-gnu/4.3.2/libgfortran.a
+#  /usr/lib/gcc/x86_64-linux-gnu/4.3.2/libgfortranbegin.a
+M2_LIBRARIES += @FCLIBS_FLAGS@ $(TOSTATIC) @FCLIBS_STATIC@ $(UNSTATIC) @FCLIBS_DYNAMIC@ @LIBS_DYNAMIC@
 
 ifeq (@MYSQL@,yes)
 M2_LIBRARIES += -L/usr/lib/mysql -lmysqlclient
 endif
-
-ifeq "@STATIC@" "yes"
-M2_LIBRARIES += $(UNSTATIC)
-endif
-
-M2_LIBRARIES +=  @LIBS_DYNAMIC@
-M2_LIBRARIES += @FCLIBS_DYNAMIC@
 
 LINK_OUTPUT_OPTION = $(OUTPUT_OPTION)
 
@@ -357,10 +372,10 @@ clean::; rm -f @pre_bindir@/M2@EXE@
 @pre_bindir@ : ; $(MKDIR_P) "$@"
 @pre_bindir@/M2@EXE@: $(M2_OBJECTS) $(M2_LIBDEPS) gmp_memory.o | @pre_bindir@
 	$(COMPILE.c) tmp_init.c -o tmp_init.o
-	time @CC@ $(M2_LDFLAGS) $(M2_OBJECTS_AND_LIBRARIES) -lm -o "$@".tmp
+	time @CC@ $(M2_LDFLAGS) $(M2_OBJECTS_AND_LIBRARIES) -lm -lc -o "$@".tmp
 	printenv LD_LIBRARY_PATH
 ifneq (@LDD@,)
-	- @LDD@ $@.tmp | ( ! egrep -v " => /usr/lib/| => /lib/|/lib/ld-linux.so|linux-gate" )
+	- @LDD@ $@.tmp
 endif
 ifeq "$(STRIP)" "yes"
 ifneq "@STRIPCMD@" ""

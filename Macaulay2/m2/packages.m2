@@ -48,9 +48,10 @@ loadPackage String := opts -> pkgtitle -> (
      -- this was bad, because loadDepth might become negative, and then it gets converted to 255 in the pseudocode
      -- another problem was that loading the file might have resulted in an error.
      load filename;
+     actualFilename := loadedFiles#(#loadedFiles-1);
      -- if opts.DebuggingMode =!= true then loadDepth = loadDepth + 1;
      remove(packageLoadingOptions,pkgtitle);
-     if not PackageDictionary#?pkgtitle then error("the file ", filename, " did not define a package called ", pkgtitle);
+     if not PackageDictionary#?pkgtitle then error("the file ", actualFilename, " did not define a package called ", pkgtitle);
      value PackageDictionary#pkgtitle)
 
 needsPackage = method(Options => options loadPackage)
@@ -317,6 +318,8 @@ findSynonyms Symbol := x -> (
      sort unique r)
 
 warn0 := (sym,front,behind,syns) -> (
+     -- just for debugging:
+     -- error("symbol '",sym,"' in ",toString behind," is shadowed by a symbol in ",toString front);
      stderr << "--warning: symbol '" << sym << "' in " << behind << " is shadowed by a symbol in " << front << endl;
      if #syns > 0
      then if #syns > 1
@@ -357,7 +360,8 @@ endPackage String := title -> (
      exportDict := pkg.Dictionary;
      scan(sortByHash values exportDict, s -> if not ws#?s then (
 	       protect s;
-	       if value s =!= s and not hasAttribute(value s,ReverseDictionary) then setAttribute((value s),ReverseDictionary,s)));
+	       ---if value s =!= s and not hasAttribute(value s,ReverseDictionary) then setAttribute((value s),ReverseDictionary,s)
+	       ));
      if true or pkg =!= Core then (			    -- protect it later
 	  protect pkg#"private dictionary";
 	  protect exportDict;
@@ -382,7 +386,7 @@ endPackage String := title -> (
      if notify then stderr << "--package \"" << pkg << "\" loaded" << endl;
      pkg)
 
-package = method ()
+package = method (Dispatch => Thing)
 package Dictionary := d -> (
      if currentPackage =!= null and (currentPackage.Dictionary === d or currentPackage#?"private dictionary" and currentPackage#"private dictionary" === d)
      then currentPackage 
@@ -397,6 +401,7 @@ package Symbol := s -> (
 	       if d === PackageDictionary and class value s === Package then break value s
 	       else if package d =!= null then break package d)));
 package HashTable := package Function := x -> if hasAttribute(x,ReverseDictionary) then package getAttribute(x,ReverseDictionary)
+package Sequence := s -> package youngest s
 
 use Package := pkg -> (
      a := member(pkg,loadedPackages);

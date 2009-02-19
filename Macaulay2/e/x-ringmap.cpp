@@ -1,6 +1,7 @@
 #include "engine.h"
 #include "ringmap.hpp"
 #include "exceptions.hpp"
+#include "matrix.hpp"
 
 const Ring * IM2_RingMap_target(const RingMap *F)
 {
@@ -53,6 +54,11 @@ IM2_RingMap_eval_matrix(const RingMap *F,
 			const FreeModule *newTarget,
 			const Matrix *M)
 {
+     if (newTarget->rank() < M->n_rows())
+       {
+	 ERROR("expected FreeModule of rank at least %d", M->n_rows());
+	 return NULL;
+       }
      try {
 	  return F->eval(newTarget,M);
      }

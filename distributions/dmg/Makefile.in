@@ -11,7 +11,7 @@ else
 maybe-tidy:
 endif
 T=@TAR@ --create --mode=a+rX,og-ws --exclude-from=@srcdir@/../tar-exclusions --file=-
-../../$(PKG_DMG) : Makefile
+../../$(PKG_DMG) : Makefile always
 	rm -rf files
 	umask 022 ; $(MKDIR_P) files/@package@
 	umask 022 ; $(T) -C @pre_exec_prefix@ . | @TAR@ xfp - -C files/@package@

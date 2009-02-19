@@ -77,9 +77,10 @@ ring_elem Ring::get_non_unit() const
 
 void Ring::set_non_unit(ring_elem non_unit) const
 { 
+  if (_isfield == 1) // i.e. declared to be a field
+    ERROR("a non unit was found in a ring declared to be a field");
   const_cast<Ring *>(this)->_isfield = -1;
   const_cast<Ring *>(this)->_non_unit = non_unit;
-  ERROR("a non unit was found in a ring declared to be a field");
 }
 
 ring_elem Ring::var(int v) const
@@ -90,23 +91,21 @@ ring_elem Ring::var(int v) const
 
 ring_elem Ring::power(const ring_elem gg, mpz_t m) const
 {
-  bool negated = false;
   ring_elem ff = gg;
   int cmp = mpz_sgn(m);
   if (cmp == 0) return one();
+  mpz_t n;
+  mpz_init_set(n, m);
   if (cmp < 0)
     {
-      negated = true;
-      mpz_neg(m,m);
+      mpz_neg(n,n);
       ff = invert(ff);
       if (is_zero(ff))
 	{
-	  ERROR("element is not invertible");
+	  ERROR("either element not invertible, or no method available to compute its inverse");
 	  return ff;
 	}
     }
-  mpz_t n;
-  mpz_init_set(n, m);
   ring_elem prod = from_int(1);
   ring_elem base = copy(ff);
   ring_elem tmp;
@@ -122,7 +121,6 @@ ring_elem Ring::power(const ring_elem gg, mpz_t m) const
       if (mpz_sgn(n) == 0)
 	{
 	  mpz_clear(n);
-	  if (negated) mpz_neg(m,m);
 	  return prod;
 	}
       else
@@ -131,7 +129,6 @@ ring_elem Ring::power(const ring_elem gg, mpz_t m) const
 	  base = tmp;
 	}
     }
-
 }
 
 ring_elem Ring::power(const ring_elem gg, int n) const
@@ -144,7 +141,7 @@ ring_elem Ring::power(const ring_elem gg, int n) const
       ff = invert(ff);
       if (is_zero(ff))
 	{
-	  ERROR("element is not invertible");
+	  ERROR("negative power of noninvertible element requested");
 	  return ff;
 	}
     }

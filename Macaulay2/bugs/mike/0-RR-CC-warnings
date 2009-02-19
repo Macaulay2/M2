@@ -1,2 +1,0 @@
-the engine should give an error message when an algorithm is run over RR or CC
-that may be wrong due to round off error

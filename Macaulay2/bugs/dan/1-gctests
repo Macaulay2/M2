@@ -1,0 +1,6 @@
+put the dependency on -lgc back into gc_test and testgc, so they get
+run whenever the library changes, or else make the test get run always.
+
+The problem with the former was that .LIBPATTERNS didn't contain %.dylib, and
+the problem with the latter is that "always" ends up on the link compile line,
+so maybe we could make testgc.o depend on always, instead.

@@ -1,0 +1,11 @@
+-- -*- M2-comint -*- {* hash: -1343133357 *}
+
+i1 : setNmzVersion("normbig"); 
+
+i2 : getNmzVersion()
+
+o2 = normbig
+
+i3 : setNmzVersion("norm32"); 
+
+i4 : 

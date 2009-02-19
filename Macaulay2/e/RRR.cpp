@@ -250,17 +250,13 @@ ring_elem RRR::mult(const ring_elem f, const ring_elem g) const
 ring_elem RRR::power(const ring_elem f, int n) const
 {
   mpfr_ptr result = new_elem();
-  mpfr_pow_ui(result, MPF_VAL(f), n, GMP_RNDN);
+  mpfr_pow_si(result, MPF_VAL(f), n, GMP_RNDN);
   return MPF_RINGELEM(result);
 }
 ring_elem RRR::power(const ring_elem f, mpz_t n) const
 {
   mpfr_ptr result = new_elem();
-  int n1;
-  if (!RingZZ::get_si(n1, n)) 
-    { ERROR("exponent too large"); }
-  else
-    mpfr_pow_ui(result, MPF_VAL(f), n1, GMP_RNDN);
+  mpfr_pow_z(result, MPF_VAL(f), n, GMP_RNDN);
   return MPF_RINGELEM(result);
 }
 

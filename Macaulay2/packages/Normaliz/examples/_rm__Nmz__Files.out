@@ -1,0 +1,5 @@
+-- -*- M2-comint -*- {* hash: 458966811 *}
+
+i1 : rmNmzFiles();
+
+i2 : 

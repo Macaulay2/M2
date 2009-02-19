@@ -1,18 +1,19 @@
 -- notice 4 weights are given for 3 variables as part of this test
 R = ZZ/101[t,x,z,MonomialOrder=>Weights=>4:-1,Global=>false]
---status: this bug is visible when building the debug version
---status: monomial overflow, Mike has to fix it
---status:  incorrect input to the monomial order routine trashes some memory
---status:  perhaps due to an array bound overflow
---status: when it finally gets to
---status:      void Monoid::mult(const_monomial m, const_monomial n, monomial result) const
---status: in monoid.ccp
---status:  we find trash in the first word of each monomial
---status:    (gdb) p *m@4			 
---status:    $14 = {0x53535353, 0x1, 0x1, 0x1}
---status:    (gdb) p *n@4			 
---status:    $15 = {0x53535353, 0x1, 0x0, 0x0}
---status: it also seems that the characteristic 101 has become stored in _P1 as 100
+--fixed!
+--this bug was visible when building the debug version
+--monomial overflow, Mike has to fix it
+-- incorrect input to the monomial order routine trashes some memory
+-- perhaps due to an array bound overflow
+--when it finally gets to
+--     void Monoid::mult(const_monomial m, const_monomial n, monomial result) const
+--in monoid.ccp
+-- we find trash in the first word of each monomial
+--   (gdb) p *m@4			 
+--   $14 = {0x53535353, 0x1, 0x1, 0x1}
+--   (gdb) p *n@4			 
+--   $15 = {0x53535353, 0x1, 0x0, 0x0}
+--it also seems that the characteristic 101 has become stored in _P1 as 100
 gb ideal "tz+z3,t3x+z5+xzt"
 
 S = ZZ/101[x,y,z, MonomialOrder => Eliminate 2, MonomialSize => 16 ];
@@ -22,7 +23,7 @@ assert( gens gb ourpoints === matrix {{z^65-13*z^60-23*z^55+30*z^50-21*z^45+5*z^
 
 
 R = QQ[x,MonomialOrder => RevLex, Global => false]
-x^7							    -- monomial overflow
+x^7   -- used to overflow...
 assert( degree oo == {7} )
 
 R = QQ[x,MonomialSize => 8]

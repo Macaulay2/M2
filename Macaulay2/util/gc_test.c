@@ -48,6 +48,8 @@ static void reg(void *p) {
 int main() {
   int i;
 
+  GC_INIT();
+
 #include "gc_fixes.h"
 
   uniq("%s:%d: error: gc library doesn't find all the active pointers in registers or on the stack!\n"

@@ -18,7 +18,7 @@ For details, see the file COPYING.
 -------------------------------------------------
 Using 64 bit integers.
 4ti2 Total Time:  0.01 secs.
-using temporary file name /tmp/M2-23661-1
+using temporary file name /tmp/M2-82820-1
 
 o2 = | 0 1  -2 1 |
      | 1 -2 1  0 |
@@ -44,7 +44,7 @@ For details, see the file COPYING.
 -------------------------------------------------
 Using 64 bit integers.
 4ti2 Total Time:  0.01 secs.
-using temporary file name /tmp/M2-23661-2
+using temporary file name /tmp/M2-82820-2
 
                2           2           3      2     3    2
 o4 = ideal (- c  + b*d, - b  + a*c, - c  + a*d , - b  + a d)
@@ -60,8 +60,8 @@ to redistribute it under certain conditions.
 For details, see the file COPYING.
 -------------------------------------------------
 Using 64 bit integers.
-4ti2 Total Time:  0.01 secs.
-using temporary file name /tmp/M2-23661-3
+4ti2 Total Time:  0.02 secs.
+using temporary file name /tmp/M2-82820-3
 
                2           2
 o5 = ideal (- c  + b*d, - b  + a*c, - b*c + a*d)

@@ -142,6 +142,10 @@ browse = x -> (
 beginDocumentation()
 
 document {
+     Key => Browse
+     }
+
+document {
      Key => browse,
      Headline => "browse the contents of an object",
      TT "browse x", " -- provides an interactive mechanism which allows the user

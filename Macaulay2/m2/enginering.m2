@@ -228,12 +228,12 @@ coefficientRing FractionField := F -> coefficientRing last F.baseRings
 
 isHomogeneous FractionField := (F) -> isHomogeneous last F.baseRings
 
-factoryAlmostGood = R -> ( -- we're ignoring quotient rings here, even though gcd and factoring may not actually work in them
-     R = ultimate(coefficientRing, R);
-     R === QQ or
-     R === ZZ or
-     instance(R,QuotientRing) and ambient R === ZZ and isPrime char R or
-     instance(R,GaloisField))
+factoryAlmostGood = R -> (
+     k := coefficientRing R;
+     k === QQ or
+     k === ZZ or
+     instance(k,QuotientRing) and ambient k === ZZ and isPrime char k or
+     instance(k,GaloisField))
 factoryGood = R -> factoryAlmostGood R and not (options R).Inverses
 
 frac EngineRing := R -> if isField R then R else if R.?frac then R.frac else (
@@ -383,6 +383,20 @@ degree RingElement := f -> if f == 0 then -infinity else rawMultiDegree raw f
 
 leadTerm RingElement := RingElement => (f) -> someTerms(f,0,1)
 
+oops := () -> error "can't promote number to ring"
+promoteleftinexact = (f,g) -> (
+     p := precision ring g;
+     if p === infinity then oops();
+     f = numeric(p,f);
+     f = try promote(f,class g) else oops();
+     (f,g))
+promoteleftexact = (f,g) -> (
+     f = try promote(f,class g) else oops();
+     (f,g))
+exchange = (x,y) -> (y,x)
+promoterightexact   = exchange @@ promoteleftexact   @@ exchange
+promoterightinexact = exchange @@ promoteleftinexact @@ exchange
+
 divmod := R -> (f,g) -> (
      (q,r) := rawDivMod(raw f, raw g);
      (new R from q, new R from r))
@@ -400,11 +414,16 @@ quotientRemainder(RingElement,RingElement) := (f,g) -> (
 	  else error "expected pair to have a method for quotientRemainder"
 	  );
      m(f,g))
-quotientRemainder(Number,RingElement) := (f,g) -> quotientRemainder(try promote(f,class g) else error "can't promote number to ring", g)
-quotientRemainder(RingElement,Number) := (f,g) -> quotientRemainder(f, try promote(g,class f) else error "can't promote number to ring")
+quotientRemainder(Number,RingElement) := quotientRemainder @@ promoteleftexact
+quotientRemainder(RingElement,Number) := quotientRemainder @@ promoterightexact
+quotientRemainder(InexactNumber,RingElement) := quotientRemainder @@ promoteleftinexact
+quotientRemainder(RingElement,InexactNumber) := quotientRemainder @@ promoterightinexact
 
-Number % RingElement := (f,g) -> (try promote(f,class g) else error "can't promote number to ring") % g
-RingElement % Number := (f,g) -> f % (try promote(g,class f) else error "can't promote number to ring")
+rem0 := (f,g) -> f % g
+Number % RingElement := rem0 @@ promoteleftexact
+RingElement % Number := rem0 @@ promoterightexact
+InexactNumber % RingElement := rem0 @@ promoteleftinexact
+RingElement % InexactNumber := rem0 @@ promoterightinexact
 RingElement % RingElement := RingElement => (f,g) -> (
      R := class f;
      S := class g;
@@ -423,8 +442,11 @@ RingElement % RingElement := RingElement => (f,g) -> (
      f % g
      )
 
-Number // RingElement := (f,g) -> (try promote(f,class g) else error "can't promote number to ring") // g
-RingElement // Number := (f,g) -> f // (try promote(g,class f) else error "can't promote number to ring")
+quot0 = (f,g) -> f // g
+Number // RingElement := quot0 @@ promoteleftexact
+RingElement // Number := quot0 @@ promoterightexact
+InexactNumber // RingElement := quot0 @@ promoteleftinexact
+RingElement // InexactNumber := quot0 @@ promoterightinexact
 RingElement // RingElement := RingElement => (f,g) -> (
      R := class f;
      S := class g;
@@ -440,11 +462,12 @@ RingElement // RingElement := RingElement => (f,g) -> (
 	       )
 	  else error "expected pair to have a method for '//'"
 	  );
-     f // g
-     )
+     f // g)
 
-Number - RingElement := (f,g) -> (try promote(f,class g) else error "can't promote number to ring") - g
-RingElement - Number := (f,g) -> f - (try promote(g,class f) else error "can't promote number to ring")
+Number - RingElement := difference @@ promoteleftexact
+RingElement - Number := difference @@ promoterightexact
+InexactNumber - RingElement := difference @@ promoteleftinexact
+RingElement - InexactNumber := difference @@ promoterightinexact
 RingElement - RingElement := RingElement => (f,g) -> (
      R := class f;
      S := class g;
@@ -460,11 +483,12 @@ RingElement - RingElement := RingElement => (f,g) -> (
 	       )
 	  else error "expected pair to have a method for '-'"
 	  );
-     f - g
-     )
+     f - g)
 
-Number * RingElement := (f,g) -> (try promote(f,class g) else error "can't promote number to ring") * g
-RingElement * Number := (f,g) -> f * (try promote(g,class f) else error "can't promote number to ring")
+Number * RingElement := times @@ promoteleftexact
+RingElement * Number := times @@ promoterightexact
+InexactNumber * RingElement := times @@ promoteleftinexact
+RingElement * InexactNumber := times @@ promoterightinexact
 RingElement * RingElement := RingElement => (f,g) -> (
      R := class f;
      S := class g;
@@ -480,11 +504,12 @@ RingElement * RingElement := RingElement => (f,g) -> (
 	       )
 	  else error "expected pair to have a method for '*'"
 	  );
-     f * g
-     )
+     f * g)
 
-Number + RingElement := (f,g) -> (try promote(f,class g) else error "can't promote number to ring") + g
-RingElement + Number := (f,g) -> f + (try promote(g,class f) else error "can't promote number to ring")
+Number + RingElement := plus @@ promoteleftexact
+RingElement + Number := plus @@ promoterightexact
+InexactNumber + RingElement := plus @@ promoteleftinexact
+RingElement + InexactNumber := plus @@ promoterightinexact
 RingElement + RingElement := RingElement => (f,g) -> (
      R := class f;
      S := class g;
@@ -500,14 +525,16 @@ RingElement + RingElement := RingElement => (f,g) -> (
 	       )
 	  else error "expected pair to have a method for '+'"
 	  );
-     f + g
-     )
+     f + g)
 
 ZZ == RingElement := (i,x) -> i == raw x
 RingElement == ZZ := (x,i) -> raw x == i
 
-Number == RingElement := (f,g) -> (try promote(f,class g) else error "can't promote number to ring") == g
-RingElement == Number := (f,g) -> f == (try promote(g,class f) else error "can't promote number to ring")
+eq0 = (f,g) -> f == g
+Number == RingElement := eq0 @@ promoteleftexact
+RingElement == Number := eq0 @@ promoterightexact
+InexactNumber == RingElement := eq0 @@ promoteleftinexact
+RingElement == InexactNumber := eq0 @@ promoterightinexact
 RingElement == RingElement := (f,g) -> (
      R := class f;
      S := class g;
@@ -526,18 +553,11 @@ RingElement == RingElement := (f,g) -> (
      f == g
      )
 
-
-fraction(RingElement,RingElement) := (r,s) -> (
-     R := ring r;
-     S := ring s;
-     if R === S then (
-	  frac R;
-	  fraction(r,s))
-     else error "numerator and denominator not in the same ring"
-     )
-
-Number / RingElement := (f,g) -> (try promote(f,class g) else error "can't promote number to ring") / g
-RingElement / Number := (f,g) -> (1/g) * f
+frac0 = (f,g) -> f/g
+Number / RingElement := frac0 @@ promoteleftexact
+RingElement / Number := frac0 @@ promoterightexact
+InexactNumber / RingElement := frac0 @@ promoteleftinexact
+RingElement / InexactNumber := RingElement / Number := (f,g) -> (1/g) * f
 RingElement / RingElement := RingElement => (f,g) -> (
      R := class f;
      S := class g;
@@ -554,9 +574,14 @@ RingElement / RingElement := RingElement => (f,g) -> (
 	       )
 	  else error "expected pair to have a method for '/'"
 	  );
-     f / g
-     )
+     f / g)
 
+fraction(RingElement,RingElement) := (r,s) -> (
+     R := ring r;
+     S := ring s;
+     if R =!= S then error "numerator and denominator not in the same ring";
+     frac R;
+     fraction(r,s))
 -----------------------------------------------------------------------------
 
 isUnit(RingElement) := (f) -> 1 % ideal f == 0

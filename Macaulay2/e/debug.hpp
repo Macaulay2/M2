@@ -39,6 +39,7 @@ extern "C" void dstash();
 
 extern "C" void dRRR(M2_RRR a);
 
+extern "C" void pring(const Ring *R);
 
 // Local Variables:
 // compile-command: "make -C $M2BUILDDIR/Macaulay2/e "

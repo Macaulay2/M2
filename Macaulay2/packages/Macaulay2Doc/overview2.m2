@@ -932,41 +932,33 @@ document {
 
 document {
      Key => "using sockets",
-     "It's easy to use sockets as though they were files.  Simply replace
-     the file name by a string of the form ", TT "$host:service", " where
-     ", TT "host", " is the name of IP number of host to contact, and
-     ", TT "service", " is the port number or name to use.  If ", TT "service", "
-     is omitted, then port 2500 is used.  If ", TT "host", " is omitted, then
-     an incoming connection will be listened for.",
-     PARA{},
-     "For the demonstration, we use ", TO "fork", " to create a
-     separate process which will listen for a connection on port
-     7500 and then send us a message.",
-     if version#"operating system" === "Windows-95-98-NT"
-     then PRE "<< example doesn't work under Windows >>"
-     else
-     EXAMPLE {
-	  ///if (pid = fork()) == 0 then (
+     PARA{
+	  "It's easy to use sockets as though they were files.  Simply replace
+	  the file name by a string of the form ", TT "$host:service", " where
+	  ", TT "host", " is the name of IP number of host to contact, and
+	  ", TT "service", " is the port number or name to use.  If ", TT "service", "
+	  is omitted, then port 2500 is used.  If ", TT "host", " is omitted, then
+	  an incoming connection will be listened for."
+	  },
+     PARA{
+	  "The following code will illustrate two-way communication using sockets
+	  similar to the interaction used by web servers,
+	  and you may try it out on your machine, unless a firewall prevents it."
+	  },
+     PRE ///if (pid = fork()) == 0 then (
      try "$:7500" << "hi there" << close;
      exit 0;
-     )///},
-     "Let's wait for a while to make sure the child process is listening.",
-     if version#"operating system" === "Windows-95-98-NT"
-     then PRE "<< example doesn't work under Windows >>"
-     else
-     EXAMPLE "sleep 2",
-     "Now we can use an ordinary input command like ", TO "get", " to obtain 
-     the entire message.",
-     if version#"operating system" === "Windows-95-98-NT"
-     then PRE "<< example doesn't work under Windows >>"
-     else
-     EXAMPLE ///get "$localhost:7500"///,
-     "Finally, we can wait for the child process to finish.",
-     if version#"operating system" === "Windows-95-98-NT"
-     then PRE "<< example doesn't work under Windows >>"
-     else
-     EXAMPLE "wait pid",
-     PARA{},
+     )
+sleep 2
+get "$localhost:7500"
+wait pid///,
+     PARA {
+	  "The code uses ", TO "fork", " to create a separate process that will listen for a connection on port
+	  7500 and then send us a message.  The ", TO "sleep", " command pauses
+	  for a while to make sure the child process has had time to start listening.
+	  Then we use an ordinary input command, namely ", TO "get", ", to obtain the message.
+	  Finally, we ", TO "wait", " for the child process to finish, as we should."
+	  },
      SeeAlso => { "openInOut", "openListener", "getWWW" }
      }
 

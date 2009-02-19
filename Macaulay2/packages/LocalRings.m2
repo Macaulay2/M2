@@ -2,7 +2,7 @@
 newPackage(
 	"LocalRings",
     	Version => "1.0", 
-    	Date => "July, 2008",
+    	Date => "July 1, 2008",
     	Authors => {
 	     {Name => "David Eisenbud", Email => "de@msri.org", HomePage => "http://www.msri.org/~de/"},
 	     {Name => "Mike Stillman", Email => "mike@math.cornell.edu", HomePage => "http://www.math.cornell.edu/~mike/"}

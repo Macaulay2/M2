@@ -1,0 +1,2 @@
+hyperlinks to preinstalled packages don't work if the top level documentation is
+after beginDocumentation().  E.g., SimpleDoc, which I fixed.

@@ -3,7 +3,7 @@
 --- notes: 
 
 document { 
-     Key => {examples,(examples,Thing),(examples,Hypertext)},
+     Key => {examples,(examples,Thing)},
      Headline => "list the examples in documentation",
      Usage => "examples s",
      Inputs => {

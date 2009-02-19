@@ -160,12 +160,11 @@ Graver22 = graver I22;
 generateAmonos(Graver22);
 #monos
 scan(0..9,i->print toString monos#i) 
-localCoherentEquations = (IA) -> (
+localCoherentEquations = (IA,w) -> (
      -- IA is the toric ideal of A living in a ring equipped
      -- with weight order w, if we are computing the local 
      -- equations about the initial ideal of IA w.r.t. w.
      R := ring IA;
-     w := (monoid R).Options.Weights;
      M := ideal leadTerm IA;
      S := first entries ((gens M) % IA);
      -- Make the universal family J in a new ring.
@@ -187,9 +186,9 @@ localCoherentEquations = (IA) -> (
      );
 IA = toricIdeal A;
 Y = QQ[a..e, MonomialSize => 16,
-            Degrees => transpose A, Weights => {9,3,5,0,0}];
+            Degrees => transpose A, Weights => (w = {9,3,5,0,0})];
 IA = substitute(IA,Y);
-JM = localCoherentEquations(IA)
+JM = localCoherentEquations(IA,w)
 load "minPres.m2";
 G = removeRedundantVariables JM
 ideal gens gb(G JM)
@@ -203,11 +202,11 @@ A = {{1,1,1,1,1,1,1},{0,6,7,5,8,4,3},{3,7,2,0,7,6,1},
    {6,5,2,6,5,0,0}};
 IA = toricIdeal A
 Y = QQ[a..g, MonomialSize => 16,
-           Weights => {0,0,276,220,0,0,215},
+           Weights => (w = {0,0,276,220,0,0,215}),
            Degrees =>transpose A];
 IA = substitute(IA,Y);
 M = ideal leadTerm IA
-JM = localCoherentEquations(IA)
+JM = localCoherentEquations(IA,w)
 G = removeRedundantVariables JM;
 toString ideal gens gb(G JM)
 K = ideal(z_32*z_42*z_44-z_37^2,z_32^4*z_35-z_42,
@@ -239,7 +238,7 @@ code primitive
 code toZZ
 code rotateMatrix
 code isRedundant
-code fourierMotzkin
+code fourierMotzkin'
 code(polarCone,Matrix,Matrix)
 code(polarCone,Matrix)
 H = transpose matrix{

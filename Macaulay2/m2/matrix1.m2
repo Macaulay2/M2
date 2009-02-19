@@ -457,11 +457,7 @@ Ideal.synonym = "ideal"
 ideal = method(Dispatch => Thing, TypicalValue => Ideal)
 
 expression Ideal := (I) -> new FunctionApplication from { ideal, unsequence apply(toSequence first entries generators I, expression) }
-
-net Ideal := (I) -> (
-     if numgens I === 0 then "0"
-     else net expression I
-     )
+net Ideal := (I) -> net expression I
 toString Ideal := toExternalString Ideal := (I) -> toString expression I
 
 isIdeal Ideal := I -> true
@@ -588,13 +584,7 @@ ideal Module := Ideal => (M) -> (
      else error "expected a submodule of a free module of rank 1"
      )
 ideal List := ideal Sequence := Ideal => v -> ideal matrix {toList v}
-ideal RingElement := ideal Number := Ideal => v -> (
-     if v == 0 
-     then (
-	  A := ring v;
-	  ideal map(A^1,A^0,0))
-     else ideal {v}
-     )
+ideal RingElement := ideal Number := Ideal => v -> ideal {v}
 ideal Ring := R -> ideal map(R^1,R^0,0)
 
 homology(Matrix,Matrix) := Module => opts -> (g,f) -> (

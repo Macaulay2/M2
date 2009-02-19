@@ -1,4 +1,4 @@
--- -*- M2-comint -*- {* hash: 1249026324 *}
+-- -*- M2-comint -*- {* hash: 203253857 *}
 
 i1 : R = ZZ/32003[symbol a..symbol d];
 
@@ -9,19 +9,33 @@ o2 = ideal (b*c - a*d, c  - b*d , a*c  - b d, b  - a c)
 
 o2 : Ideal of R
 
-i3 : time (M,L) = gfan I
-sh: gfan: not found
-sh: gfan_leadingterms: not found
-using temporary file /tmp/M2-1803-1
-     -- used 0. seconds
-
-o3 = ({}, {})
-
-o3 : Sequence
+i3 : time (M,L) = gfan I;
+using temporary file /tmp/M2-83111-1
+     -- used 0.00239 seconds
 
 i4 : M/toString/print;
+{b*d^2, a*d, a*c^2, a^2*c}
+{c^3, a*d, a*c^2, a^2*c}
+{c^3, b*c, a*c^2, a^2*c, a^3*d}
+{c^3, b*c, b^4, a*c^2, a^2*c}
+{c^3, b*c, b^3, a*c^2}
+{c^3, b*c, b^2*d, b^3}
+{b*d^2, b^2*d, a*d, a^2*c}
+{b*d^2, b^2*d, b^3, a*d}
+{b*d^2, b*c, b^2*d, b^3, a*d^3}
+{c^4, b*d^2, b*c, b^2*d, b^3}
 
 i5 : L/toString/print;
+{-c^3+b*d^2, -b*c+a*d, a*c^2-b^2*d, -b^3+a^2*c}
+{c^3-b*d^2, -b*c+a*d, a*c^2-b^2*d, -b^3+a^2*c}
+{c^3-b*d^2, b*c-a*d, a*c^2-b^2*d, -b^3+a^2*c, -b^4+a^3*d}
+{c^3-b*d^2, b*c-a*d, b^4-a^3*d, a*c^2-b^2*d, -b^3+a^2*c}
+{c^3-b*d^2, b*c-a*d, b^3-a^2*c, a*c^2-b^2*d}
+{c^3-b*d^2, b*c-a*d, -a*c^2+b^2*d, b^3-a^2*c}
+{-c^3+b*d^2, -a*c^2+b^2*d, -b*c+a*d, -b^3+a^2*c}
+{-c^3+b*d^2, -a*c^2+b^2*d, b^3-a^2*c, -b*c+a*d}
+{-c^3+b*d^2, b*c-a*d, -a*c^2+b^2*d, b^3-a^2*c, -c^4+a*d^3}
+{c^4-a*d^3, -c^3+b*d^2, b*c-a*d, -a*c^2+b^2*d, b^3-a^2*c}
 
 i6 : S = ZZ/32003[a..e];
 
@@ -36,23 +50,17 @@ o7 = ideal (a + b + c + d, a*b + b*c + a*d + c*d, a*b*c + a*b*d + a*c*d +
 o7 : Ideal of S
 
 i8 : (inL,L) = gfan I;
-sh: gfan: not found
-sh: gfan_leadingterms: not found
-using temporary file /tmp/M2-1803-2
+using temporary file /tmp/M2-83111-2
 
 i9 : #inL
 
-o9 = 0
+o9 = 96
 
 i10 : (inL1, L1) = gfan(I, Symmetries=>{(b,c,d,a,e)});
-sh: gfan: not found
-sh: gfan_leadingterms: not found
-using temporary file /tmp/M2-1803-3
+using temporary file /tmp/M2-83111-3
 
 i11 : #inL1
 
-o11 = 0
+o11 = 24
 
 i12 : 
-0.56user 0.04system 0:00.62elapsed 98%CPU (0avgtext+0avgdata 0maxresident)k
-0inputs+24outputs (0major+9186minor)pagefaults 0swaps

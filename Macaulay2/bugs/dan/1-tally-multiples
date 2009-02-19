@@ -1,0 +1,39 @@
+Date: Thu, 12 Feb 2009 17:28:34 -0600
+From: "Daniel R. Grayson" <dan@math.uiuc.edu>
+To: stpyang@kth.se
+CC: ggsmith@mast.queensu.ca, dan@math.uiuc.edu
+In-reply-to: <1233725801.20747.5.camel@pinky-laptop> (message from Stephanie
+	Yang on Wed, 04 Feb 2009 06:36:41 +0100)
+Subject: Re: KaLaPs3
+Reply-to: dan@math.uiuc.edu
+
+
+I like your idea for ZZ * Tally, and I think we'll add it to the next version:
+
+    i1 : 2 * tally{1,1,2}
+    stdio:1:3:(1):[0]: error: no method for binary operator * applied to objects:
+    --            2 (of class ZZ)
+    --      *     Tally{1 => 2} (of class Tally)
+    --                  2 => 1
+
+    i2 :  tally{1,1,2} +  tally{1,1,5}
+
+    o2 = Tally{1 => 4}
+	       2 => 1
+	       5 => 1
+
+    o2 : Tally
+
+    i3 : ZZ * Tally := (n,t) -> applyValues(t,m -> n*m)
+
+    o3 = {*Function[stdio:3:20-3:44]*}
+
+    o3 : FunctionClosure
+
+    i4 : 10 * tally(1,1,2)
+
+    o4 = Tally{1 => 20}
+	       2 => 10
+
+    o4 : Tally
+

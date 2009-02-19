@@ -1,0 +1,30 @@
+-- -*- M2-comint -*- {* hash: -2096622116 *}
+
+i1 : sgr=matrix({{1,2,3},{4,5,6},{7,8,10}})
+
+o1 = | 1 2 3  |
+     | 4 5 6  |
+     | 7 8 10 |
+
+              3        3
+o1 : Matrix ZZ  <--- ZZ
+
+i2 : writeNmzData(sgr,1)
+
+i3 : nmzFile=setNmzFile()
+
+o3 = nmzM2_19281
+
+i4 : get(nmzFile|".in")
+
+o4 = 3
+     3
+     1 2 3 
+     4 5 6 
+     7 8 10 
+     1
+
+
+i5 : rmNmzFiles();
+
+i6 : 

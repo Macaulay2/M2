@@ -1,43 +1,37 @@
 # -*- Makefile -*-
-# BUILDOPTIONS += RemakeAllDocumentation=true
-# BUILDOPTIONS += RemakePackages=true
-# BUILDOPTIONS += RerunExamples=true
-# PACKAGES = Macaulay2Doc
 
-# BUILDOPTIONS += IgnoreExampleErrors=true
-# BUILDOPTIONS += PACKAGES="Polyhedra"
+# i386 must be architecture for debian based systems
+# we should automate this deeper
+# CONFIGOPTIONS += --build=i386-pc-linux-gnu
+# CONFIGOPTIONS += --enable-deb
 
-# BUILDOPTIONS += -s
-# INSTALLOPTIONS += -s
-# CONFIGOPTIONS += --enable-tarfile
-DEBUG = 
-unexport DEBUG
-PROFILE =
-unexport PROFILE
-ifeq ($(DEBUG),yes)
-INSTALLOPTIONS += prefix=/none
-CONFIGOPTIONS += --enable-debug --disable-pthreads
-DIRECTORY = ubuntu32.debug
-else
-ifeq ($(PROFILE),yes)
-INSTALLOPTIONS += prefix=/none
-CONFIGOPTIONS += --enable-profile --disable-pthreads
-DIRECTORY := ubuntu32.profile $(shell echo PROFILE = $(PROFILE) >&2 )
-else
+# DEBUG = 
+# unexport DEBUG
+# PROFILE =
+# unexport PROFILE
+# ifeq ($(DEBUG),yes)
+# INSTALLOPTIONS += prefix=/none
+# CONFIGOPTIONS += --enable-debug --disable-pthreads
+# DIRECTORY = ubuntu32.debug
+# else
+# ifeq ($(PROFILE),yes)
+# INSTALLOPTIONS += prefix=/none
+# CONFIGOPTIONS += --enable-profile --disable-pthreads
+# DIRECTORY := ubuntu32.profile $(shell echo PROFILE = $(PROFILE) >&2 )
+# else
+# INSTALLOPTIONS += prefix=/usr/local/encap
+# CONFIGOPTIONS += --enable-deb
+# DIRECTORY = ubuntu32
+# endif
+# endif
+
 INSTALLOPTIONS += prefix=/usr/local/encap
-# PREFIX = /usr/local
-# CONFIGOPTIONS += --enable-build-libraries=pari
-CONFIGOPTIONS += --enable-deb
 DIRECTORY = ubuntu32
-endif
-endif
-CONFIGOPTIONS += --enable-foo=" $$ \\ ' \\\\ \" "
 include Makefile.include
+default: install check
 pre-install:;	rm -rf /usr/local/encap/Macaulay2-$(PACKAGE_VERSION)
-arch-chk:
-	grep -q Ubuntu /etc/issue
-	[ `uname -m` = i686 ]
-foo:; : $(DIRECTORY)
+arch-chk:; grep -q Ubuntu /etc/issue && [ `uname -m` = i686 ]
 # Local Variables:
 # compile-command: "time make -f Makefile.ubuntu32 "
 # End:
+

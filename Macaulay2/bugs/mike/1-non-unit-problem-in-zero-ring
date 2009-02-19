@@ -1,0 +1,8 @@
+    i5 : R = QQ[x]/1
+
+    o5 = R
+
+    o5 : QuotientRing
+
+    i6 : x^-1
+    stdio:6:2:(1):[0]: element is not invertible

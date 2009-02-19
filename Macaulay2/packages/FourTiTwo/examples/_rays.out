@@ -27,8 +27,8 @@ to redistribute it under certain conditions.
 For details, see the file COPYING.
 -------------------------------------------------
 Using 64 bit integers.
-4ti2 Total Time:  0.01 secs.
-using temporary file name /tmp/M2-23619-1
+4ti2 Total Time:  0.02 secs.
+using temporary file name /tmp/M2-82778-1
 
 o3 = | 0 1 2 3 |
      | 3 2 1 0 |

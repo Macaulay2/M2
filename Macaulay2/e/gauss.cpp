@@ -367,7 +367,7 @@ M2_bool GaussElimComputation::matrix_lift(const Matrix *m,
 
       reduce(f, fsyz);
       R->negate_vec_to(fsyz);
-      if (f == 0) all_zeroes = false;
+      if (f != 0) all_zeroes = false;
       mat_remainder.set_column(i, f);
       mat_quotient.set_column(i, fsyz);
     }

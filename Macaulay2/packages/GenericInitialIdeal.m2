@@ -2,8 +2,8 @@
 
 newPackage(
      "GenericInitialIdeal",
-     Version => "0.1", 
-     Date => "May 15, 2007",
+     Version => "0.2", 
+     Date => "July 1, 2008",
      Authors => {
 	  {Name => "Alexandra Seceleanu", Email => "asecele2@uiuc.edu"},
 	  {Name => "Nathaniel Stapleton", Email => "nstaple2@math.uiuc.edu"}

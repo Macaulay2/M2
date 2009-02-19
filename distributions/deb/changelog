@@ -1,0 +1,9 @@
+macaulay2 (0.9.97) stable; urgency=low
+  * initial release
+ -- Daniel R Grayson <dan@math.uiuc.edu>  Wed, 29 Aug 2007 22:49:58 -0500
+macaulay2 (1.1.99) stable; urgency=low
+  * test release leading up to version 1.2
+ -- Daniel R Grayson <dan@math.uiuc.edu>  Wed, 28 Jan 2009 22:49:58 -0500
+macaulay2 (1.2) stable; urgency=low
+  * release version 1.2
+ -- Daniel R Grayson <dan@math.uiuc.edu>  Wed, 28 Jan 2009 22:49:58 -0500

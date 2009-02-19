@@ -1,6 +1,5 @@
 # @configure_input@
 include ../../include/config.Makefile
-.LIBPATTERNS = lib%.a
 vpath %.a  $(BUILTLIBPATH)/lib
 vpath %.so $(BUILTLIBPATH)/lib
 VPATH = @srcdir@
@@ -35,7 +34,14 @@ Makefile : Makefile.in; cd ../..; ./config.status Macaulay2/util/Makefile
 CPPFLAGS += -I@srcdir@/../../include
 LDLIBS += @GC_LIBS@
 all: gc_tested
-gc_test : gc_test.c -lgc
+gc_test : gc_test.c
+
+# these two lines tried to link statically with libcc to help the test work
+# but it makes more sense to let it test the same way we link with it
+# gc_test : -lgc
+# .LIBPATTERNS = lib%.a
+gc_test:
+
 gc_tested: gc_test; ./$< && touch $@
 # Local Variables:
 # compile-command: "make -C $M2BUILDDIR/Macaulay2/util "

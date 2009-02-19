@@ -1,8 +1,0 @@
-Macaulay 2, version 1.1.1
-with packages: Classic, Core, Elimination, IntegralClosure, LLLBases, Parsing, PrimaryDecomposition, SchurRings, SimpleDoc, TangentCone
-
-i1 : QQ[x,Inverses=>true,MonomialOrder=>RevLex];QQ[t];
-
-i3 : sub(x^-1,{x=>t})
-M2.debug: ../../../../../Macaulay2/e/overflow.hpp:111: int32_t safe::pos_add(int32_t, int32_t, const char*): Assertion `! over_1(x) && ! over_1(y)' failed.
-Aborted

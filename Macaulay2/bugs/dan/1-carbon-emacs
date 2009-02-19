@@ -1,0 +1,20 @@
+Date: Mon, 9 Feb 2009 13:03:38 -0600
+From: "Daniel R. Grayson" <dan@math.uiuc.edu>
+To: David Eisenbud <de@msri.org>, mike.stillman@mac.com
+CC: dan@math.uiuc.edu
+In-reply-to: <20D91587-0F11-4682-A3F4-99DAC1AAEF65@msri.org> (message from
+	David Eisenbud on Mon, 9 Feb 2009 09:48:13 -0800)
+Subject: Re: now the link!
+Reply-to: dan@math.uiuc.edu
+
+
+Mike, this looks like a tiny icon we could include in our *.dmg files!  Try it,
+and I'll put it in our source tree for automatic inclusion.
+
+> Actually, /usr/bin/emacs IS built with Carbon support; all you have to do is
+> download the Emacs.app wrapper from the Emacs CVS repository, and then:
+> 
+> % ln /usr/bin/emacs Emacs.app/Contents/MacOS/Emacs
+> 
+> Presto! Carbonized Emacs on Leopard.
+

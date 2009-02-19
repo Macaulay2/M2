@@ -27,7 +27,6 @@ export drand(x:double,y:double):double := (
      );
 export sqr(x:double):double := x*x;
 import close(fd:int):int;
-import fchmod(fd:int,mode:int):int;
 import isatty(fd:int):int;
 import dup2(fildes:int,fildes2:int):int;
 

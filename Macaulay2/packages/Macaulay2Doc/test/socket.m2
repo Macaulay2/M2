@@ -1,3 +1,6 @@
+
+end -- this test is disabled, because on machines with firewalls and on virtual machines, listening to a port may simply not work
+
 f = openListener "$"
 assert not isReady f
 

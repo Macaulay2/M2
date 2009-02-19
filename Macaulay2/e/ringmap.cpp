@@ -133,11 +133,6 @@ ring_elem RingMap::eval_term(const Ring *sourceK,
 			     int first_var,
 			     int nvars_in_source) const
 {
-#if 0
-//   // I think that this is removable MES 1/5/04
-//   assert(sourceK->total_n_vars() <= nvars);
-//   int first_var = sourceK->total_n_vars();
-#endif
   for (index_varpower i = vp; i.valid(); ++i)
     {
       int v = first_var + i.var();
@@ -168,10 +163,15 @@ ring_elem RingMap::eval_term(const Ring *sourceK,
 	{
 	  int v = first_var + i.var();
 	  int e = i.exponent();
+	  ring_elem g;
+	  if (e >= 0)
+	    g = _elem[v].bigelem;
+	  else
+	    g = R->invert(_elem[v].bigelem);
 	  for (int j=0; j<e; j++)
 	    {
 	      assert(v < nvars);
-	      ring_elem tmp = R->mult(_elem[v].bigelem,result);
+	      ring_elem tmp = R->mult(g,result);
 	      R->remove(result);
 	      result = tmp;
 	    }
@@ -183,7 +183,7 @@ ring_elem RingMap::eval_term(const Ring *sourceK,
 	int v = first_var + i.var();
 	int e = i.exponent();
 	assert(v < nvars);
-	if (_elem[v].bigelem_is_one)
+	if (_elem[v].bigelem_is_one && e > 0)
 	  {
 	    if (!_elem[v].coeff_is_one)
 	      {

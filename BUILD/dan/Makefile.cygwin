@@ -1,20 +1,19 @@
 #-*- Makefile -*-
-#BUILDOPTIONS += RemakeAllDocumentation=true RemakePackages=true
-#BUILDOPTIONS += -s
-#INSTALLOPTIONS += -s
-
 CONFIGOPTIONS += --disable-pthreads
 CONFIGOPTIONS += --enable-cygwin
 CONFIGOPTIONS += --build=i486-pc-cygwin
 
-INSTALLOPTIONS += prefix=/usr/local/encap
-DIRECTORY = cygwin
-include Makefile.include
-pre-install:;	rm -rf /usr/local/encap/Macaulay2-$(PACKAGE_VERSION)
-arch-chk:
-	[ `uname -s` = CYGWIN_NT-6.0 ]
-	[ `uname -m` = i686 ]
+BUILDOPTIONS += RemakePackages=true RemakeAllDocumentation=true
 
+# so we use 4.2.1 even if a more modern version is available:
+CONFIGOPTIONS += --enable-build-libraries=gmp
+
+INSTALLOPTIONS += prefix=/usr/local/encap
+DIRECTORY ?= cygwin
+include Makefile.include
+default:install check
+pre-install:;	rm -rf /usr/local/encap/Macaulay2-$(PACKAGE_VERSION)
+arch-chk:; [ `uname -s` = CYGWIN_NT-6.0 ] && [ `uname -m` = i686 ]
 # Local Variables:
 # compile-command: "time make -f Makefile.cygwin "
 # End:

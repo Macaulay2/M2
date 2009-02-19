@@ -55,7 +55,7 @@ ideal selectInSubring(1, gens gb I5)
 clearAll
 S = QQ[x, y, z];
 I = ideal(x^5+y^3+z^3, x^3+y^5+z^3, x^3+y^3+z^5);
-multiplicity = degree(I : saturate(I))
+degree(I : saturate(I))
 clearAll
 PP3 = QQ[t, x, y, z, w];
 L = ideal(x, y);

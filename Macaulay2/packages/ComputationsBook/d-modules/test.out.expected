@@ -22,19 +22,20 @@ o4 : D
 
 i5 : options D
 
-o5 = OptionTable{ConstantCoefficients => true                                    }
+o5 = OptionTable{DegreeLift => null                              }
+                 DegreeMap => null
                  DegreeRank => 1
                  Degrees => {{1}, {1}, {1}, {1}, {1}, {1}}
                  Global => true
                  Heft => {1}
                  Inverses => false
+                 Join => null
                  Local => false
-                 MonomialOrder => {GRevLex => {1, 1, 1, 1, 1, 1}, Position => Up}
-                 MonomialSize => 32
+                 MonomialOrder => {MonomialSize => 32           }
+                                  {GRevLex => {1, 1, 1, 1, 1, 1}}
+                                  {Position => Up               }
                  SkewCommutative => {}
-                 VariableBaseName => p
                  Variables => {x, y, z, Dx, Dy, Dz}
-                 Weights => {}
                  WeylAlgebra => {x => Dx, y => Dy, z => Dz}
 
 o5 : OptionTable
@@ -43,7 +44,7 @@ i6 : DeltaBern = inw(Delta,{1,1,1,1,1,1})
 
 o6 = ideal (Dz, Dy, Dx)
 
-o6 : Ideal of QQ [x, y, z, Dx, Dy, Dz]
+o6 : Ideal of QQ[x, y, z, Dx, Dy, Dz]
 
 i7 : dim DeltaBern 
 
@@ -63,7 +64,7 @@ i10 : AnnFs(f)
 
 o10 = ideal (w*Dz - z*Dw, w*Dy - y*Dw, z*Dy - y*Dz, w*Dx - x*Dw, z*Dx - x*Dz, y*Dx - x*Dy, x*Dx + y*Dy + z*Dz + w*Dw - 2s)
 
-o10 : Ideal of QQ [x, y, z, w, Dx, Dy, Dz, Dw, s]
+o10 : Ideal of QQ[x, y, z, w, Dx, Dy, Dz, Dw, s]
 
 i11 : L=ideal(x,y,Dz,Dw)
 
@@ -75,7 +76,7 @@ i12 : AnnIFs(L,f)
 
 o12 = ideal (y, x, w*Dz - z*Dw, z*Dz + w*Dw - 2s)
 
-o12 : Ideal of QQ [x, y, z, w, Dx, Dy, Dz, Dw, s]
+o12 : Ideal of QQ[x, y, z, w, Dx, Dy, Dz, Dw, s]
 
 i13 : f
 
@@ -89,7 +90,7 @@ i14 : globalBFunction(f)
        2
 o14 = s  + 3s + 2
 
-o14 : QQ [s]
+o14 : QQ[s]
 
 i15 : g=x^3+y^3+z^3+w^3
 
@@ -459,14 +460,14 @@ o87 : Matrix
 
 i88 : H.TransferCycles
 
-o88 = HashTable{0 => | 1/3x_1^6+2/3x_1^3x_2^3+1/3x_2^6+2/3x_1^3x_3^3+2/3x_2^3x_3^3+1/3x_3^6 |}
-                1 => | -x_1^5-x_1^2x_2^3-x_1^2x_3^3 |
-                     | x_1^3x_2^2+x_2^5+x_2^2x_3^3  |
-                     | -x_1^3x_3^2-x_2^3x_3^2-x_3^5 |
-                2 => | x_3^4    x_1x_2x_3^2 |
-                     | x_2x_3^3 x_1x_2^2x_3 |
-                     | x_1x_3^3 x_1^2x_2x_3 |
-                3 => | -x_3^3 -x_1x_2x_3 |
+o88 = HashTable{0 => | -1/12x_1^4x_2^3D_1-1/3x_1x_2^6D_1-1/12x_1^4x_3^3D_1-2/3x_1x_2^3x_3^3D_1-1/3x_1x_3^6D_1+1/12x_1^6x_2D_2+1/3x_1^3x_2^4D_2+1/3x_1^3x_2x_3^3D_2+1/12x_1^6x_3D_3+1/3x_1^3x_2^3x_3D_3+1/3x_1^3x_3^4D_3+1/3x_1^6+2/3x_1^3x_2^3+1/3x_2^6+2/3x_1^3x_3^3+2/3x_2^3x_3^3+1/3x_3^6 |}
+                1 => | 2/3x_1^5+2/3x_1^2x_2^3+2/3x_1^2x_3^3  |
+                     | -2/3x_1^3x_2^2-2/3x_2^5-2/3x_2^2x_3^3 |
+                     | 2/3x_1^3x_3^2+2/3x_2^3x_3^2+2/3x_3^5  |
+                2 => | 48x_1x_2x_3^2 600x_3^4    |
+                     | 48x_1x_2^2x_3 600x_2x_3^3 |
+                     | 48x_1^2x_2x_3 600x_1x_3^3 |
+                3 => | -x_1x_2x_3 -x_3^3 |
 
 o88 : HashTable
 
@@ -476,8 +477,8 @@ i89 : I = gkz(matrix{{1,2}}, {5})
 o89 = ideal (D  - D , x D  + 2x D  - 5)
               1    2   1 1     2 2
 
-o89 : Ideal of QQ [x , x , D , D ]
-                    1   2   1   2
+o89 : Ideal of QQ[x , x , D , D ]
+                   1   2   1   2
 
 i90 : PolySols I
 

@@ -1105,7 +1105,7 @@ M2_bool GB_comp::matrix_lift(const Matrix *m,
       gbvector * fsyz = _GR->gbvector_zero();
 
       gb_reduce(f, fsyz);
-      if (f == 0) all_zeroes = false;
+      if (f != 0) all_zeroes = false;
 
       vec fv = originalR->translate_gbvector_to_vec_denom(_F, f, denom);
       _K->negate_to(denom);

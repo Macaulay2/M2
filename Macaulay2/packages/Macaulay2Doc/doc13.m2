@@ -295,7 +295,7 @@ document { Key => {URL,(NewFromMethod, URL, String)},
      PARA {
 	  "The function ", TO "show", " knows how display entities of various types, including URLs."
 	  }}
-document { Key => {show, (show, TEX), (show, URL), (show, Hypertext)},
+document { Key => {show, (show, URL)},
      Headline => "display various TeX, hypertext, or a URL, in an external application",
      Usage => "show x",
      Inputs => { "x" => { ofClass{ Hypertext, TEX, URL } }},
@@ -309,17 +309,7 @@ document { Key => showHtml,
      "The result is the same as ", TT "show x", ".",
      Caveat => "This function may be phased out."
      }
-document { Key => {(irreducibleDecomposition,MonomialIdeal),irreducibleDecomposition},
-     Headline => "express a monomial ideal as an intersection of irreducible monomial ideals",
-     Usage => "irreducibleDecomposition I",
-     Inputs => { "I" },
-     EXAMPLE lines ///
-        QQ[x..z];
-        I = monomialIdeal (x*y^3, x*y^2*z)
-	w = irreducibleDecomposition I
-	assert( I == intersect w )
-     ///,
-     Outputs => {{ "a list of irreducible monomial ideals whose intersection is ", TT "I" }}}
+
 undocumented {(isConstant, Number)}
 document { Key => {isConstant,(isConstant, RingElement)},
      Headline => "whether a ring element is constant",
@@ -450,22 +440,6 @@ document { Key => "loadedFiles",
 	  value, with the corresponding key being a small integer, consecutively assigned, starting at 0."
 	  },
      EXAMPLE "peek loadedFiles"}
-
-
-undocumented {
-     (validate, TO),(validate, String),(validate, MarkUpTypeWithOptions, Set, BasicList),(validate, Type, Set, BasicList),(validate, TOH),(validate, Option),(validate, TO2),
-     (validate, COMMENT),(validate, CDATA),(validate, TEX), (validate, LITERAL)
-     }
-document { Key => {(validate, Hypertext),validate},
-     Usage => "validate x",
-     Inputs => { "x" => { TO "hypertext" } },
-     Consequences => { { "The hypertext is checked for validity, to ensure that the HTML code returned by ", TT "html x", " is valid." }},
-     PARA {
-	  "This function is somewhat provisional.  In particular, it is hard to check everything, because our hypertext format includes
-	  some entities of class ", TO "IntermediateMarkUpType", " that don't correspond directly to HTML.  Either those will have to be
-	  eliminated, or a more-final type of hypertext, convertible immediately to HTML, will have to be developed."
-	  }
-     }
 
 document { Key => VerticalList,
      Headline => "a type of visible self-initializing list that prints vertically",

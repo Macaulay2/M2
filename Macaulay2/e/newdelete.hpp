@@ -39,8 +39,8 @@
 #define GETMEM_ATOMIC(T,size) reinterpret_cast<T>(getmem_atomic(size))
 
 struct our_new_delete {
-  static inline void* operator new    ( size_t size ) { void *p = GC_MALLOC( size ); if (p == NULL) outofmem(); TRAPCHK(p); return p; }
-  static inline void* operator new [] ( size_t size ) { void *p = GC_MALLOC( size ); if (p == NULL) outofmem(); TRAPCHK(p); return p; }
+  static inline void* operator new    ( size_t size ) { void *p = GC_MALLOC( size ); if (p == NULL) outofmem2(size); TRAPCHK(p); return p; }
+  static inline void* operator new [] ( size_t size ) { void *p = GC_MALLOC( size ); if (p == NULL) outofmem2(size); TRAPCHK(p); return p; }
 
   static inline void* operator new    ( size_t size, void *existing_memory ) { return existing_memory; }
   static inline void* operator new [] ( size_t size, void *existing_memory ) { return existing_memory; }
@@ -66,8 +66,8 @@ struct our_new_delete_atomic {
      //   the compiler can't enforce this
      // suggestion:
      //   every class that inherits from this one should have "atomic" in its name
-  static inline void* operator new    ( size_t size ) { void *p = GC_MALLOC_ATOMIC( size ); if (p == NULL) outofmem(); TRAPCHK(p); return p; }
-  static inline void* operator new [] ( size_t size ) { void *p = GC_MALLOC_ATOMIC( size ); if (p == NULL) outofmem(); TRAPCHK(p); return p; }
+  static inline void* operator new    ( size_t size ) { void *p = GC_MALLOC_ATOMIC( size ); if (p == NULL) outofmem2(size); TRAPCHK(p); return p; }
+  static inline void* operator new [] ( size_t size ) { void *p = GC_MALLOC_ATOMIC( size ); if (p == NULL) outofmem2(size); TRAPCHK(p); return p; }
 
   static inline void* operator new    ( size_t size, void *existing_memory ) { return existing_memory; }
   static inline void* operator new [] ( size_t size, void *existing_memory ) { return existing_memory; }
@@ -91,9 +91,9 @@ inline our_new_delete::~our_new_delete() {}
 #include <gc/gc_allocator.h>
 
 // struct gc_malloc_alloc {
-//   static void* allocate(size_t n) { void* p = GC_MALLOC(n); if (p == NULL) outofmem(); return p; }
+//   static void* allocate(size_t n) { void* p = GC_MALLOC(n); if (p == NULL) outofmem2(n); return p; }
 //   static void deallocate(void* p, size_t /* n */) { GC_FREE(p); }
-//   static void* reallocate(void* p, size_t /* old size */, size_t newsize) { void* r = GC_REALLOC(p, newsize); if (NULL == r) outofmem(); return r; }
+//   static void* reallocate(void* p, size_t /* old size */, size_t newsize) { void* r = GC_REALLOC(p, newsize); if (NULL == r) outofmem2(newsize); return r; }
 // };
 
 #endif

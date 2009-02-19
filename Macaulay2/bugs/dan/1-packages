@@ -1,0 +1,9 @@
+findHeft does this
+
+     needsPackage "FourierMotzkin";
+
+but it should put the dictionary path back later ...
+
+and this line is just silly since the package would get loaded in front:
+
+     B := ((value getGlobalSymbol "fourierMotzkin") A)#0;

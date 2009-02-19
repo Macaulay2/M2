@@ -85,14 +85,14 @@ Macaulay2.spec: Macaulay2-body.spec packages-used Makefile .prepared
 	sed -e '1,/Requires/d' -e 's/%PKG_RPM%/$(PKG_RPM)/g' <$< >>$@
 	(cd files && @FIND@ . -type d -a -name Macaulay2 -prune -o -type f) | sed $(SEDOPTS) >>Macaulay2.spec
 
-../../$(PKG_RPM) : Macaulay2.spec .prepared; @FAKEROOT@ rpmbuild -bb Macaulay2.spec
+../../$(PKG_RPM) : Macaulay2.spec .prepared; @FAKEROOT@ rpmbuild --buildroot @abs_builddir@/files -bb Macaulay2.spec
 
 Macaulay2-common.spec: Macaulay2-common-body.spec Makefile .prepared-common
 	sed -e 's/^Release: .*/Release: $(DISTRIBUTION)/' \
 	    -e 's/%PKG_COM_RPM%/$(PKG_COM_RPM)/g' <$< >$@
 	(cd files-common && @FIND@ -type d -a -name Macaulay2 -prune -o -type f) | sed $(SEDOPTS) >>Macaulay2-common.spec
 
-../../$(PKG_COM_RPM) : Macaulay2-common.spec .prepared-common; @FAKEROOT@ rpmbuild -bb Macaulay2-common.spec
+../../$(PKG_COM_RPM) : Macaulay2-common.spec .prepared-common; @FAKEROOT@ rpmbuild --buildroot @abs_builddir@/files-common -bb Macaulay2-common.spec
 
 libraries-used: .prepared always
 	: warning: fixed layout in use:

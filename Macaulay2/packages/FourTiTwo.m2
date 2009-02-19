@@ -16,8 +16,8 @@
 
 newPackage(
 	"FourTiTwo",
-    	Version => "0.3", 
-    	Date => "July 2, 2008",
+    	Version => "1.0", 
+    	Date => "February 8, 2009",
     	Authors => {
 	     {Name => "Mike Stillman", Email => "mike@math.cornell.edu"},
 	     {Name => "Josephine Yu", Email => "jyu@math.mit.edu"},
@@ -228,7 +228,8 @@ doc ///
      	  Interface for 4ti2
      Description
           Text
-	       Interfaces most of the functionality of the software {\tt 4ti2} available at  {\tt http://www.4ti2.de/}.
+	       Interfaces most of the functionality of the software {\tt 4ti2} available at
+	       @HREF"http://www.4ti2.de/"@.
 	       (The user needs to have {\tt 4ti2} installed on his/her machine.)
 	        
 	       A $d\times n$ integral matrix $A$ (with nonnegative entries) specifies a map from a polynomial 
@@ -380,6 +381,9 @@ doc ///
 	       {\tt 4ti2} offers the use of weight vectors representing term orders, as follows:
 	  Example
 	       toricGroebner(A,Weights=>{1,2,3,4})
+     Caveat
+      	       It seems that some versions of 4ti2 do not pick up on the weight vector. It may be better to run gb computation in M2 directly with specified weights.	       
+
  ///;
  
  doc ///
@@ -659,17 +663,45 @@ TEST///
   R = QQ[x_1..x_18]
   I = toBinomial(M,R);
   assert(degree I == 192)
+  A1 = matrix "3,2,1,0;0,1,2,3" --one more example
+  R=QQ[x_0..x_3]
+  G4ti2=gens toricGroebner(A1,R)
+  GM2 =gens gb toricMarkov(A1,R)
+  Gtrue=toList flatten entries GM2  
+  G = toList flatten entries G4ti2
+  apply(0..#Gtrue-1, j->  (isSubset({Gtrue_j},G) )) --checking 4ti2's gb against M2's gb
+  assert(numrows GM2 == numrows G4ti2)
+  assert(numcols GM2 == numcols G4ti2)
+  Rwt=QQ[x_0..x_3,Weights=>{3,2,4,1}] --with wt vector
+  G4ti2=gens toBinomial(toricGroebner(A1,Weights=>{3,2,4,1}),Rwt) 
+  GM2=gens gb toricMarkov(A1,Rwt)
+  Gtrue=toList flatten entries GM2  
+  G = toList flatten entries G4ti2
+  assert(       numrows GM2 == numrows G4ti2       )
+  assert(       numcols GM2 == numcols G4ti2       )
+  apply(0..#Gtrue-1, j-> assert(isSubset({Gtrue_j},G)) ) --checking 4ti2's gb against M2's gb
 ///
 TEST///
   loadPackage "FourTiTwo"   --testing graver  
   A1 = matrix "3,2,1,0;0,1,2,3"
+  R=QQ[x_0..x_3]
   G = toricGraver(A1)
   assert( numrows G==5)
   assert(numcols G==4)
+  Gtrue = toBinomial(matrix{{1,-2,1,0},{0,1,-2,1},{1,-1,-1,1},{2,-3,0,1},{1,0,-3,2}},R) --known: Graver basis
+  Gtrue=toList flatten entries gens Gtrue  
+  G = toList flatten entries gens toBinomial(G,R)
+  apply(0..#Gtrue-1, j->  assert(isSubset({Gtrue_j},G)) ) --testing 4ti2 output against by-hand calculation!
   A = matrix "1,0,1,1,0,1,1,0,1,0,0,0,0,0,0,0,0,0;0,1,1,0,0,0,0,0,0,1,0,1,1,0,1,0,0,0;0,0,0,0,1,1,0,0,0,0,1,1,0,0,0,1,0,1;0,0,0,0,0,0,0,1,1,0,0,0,0,1,1,0,1,1;0,1,1,0,1,1,0,1,1,0,0,0,0,0,0,0,0,0;1,0,1,0,0,0,0,0,0,0,1,1,0,1,1,0,0,0;0,0,0,1,0,1,0,0,0,1,0,1,0,0,0,0,1,1;0,0,0,0,0,0,1,0,1,0,0,0,1,0,1,1,0,1;0,0,1,0,0,1,0,0,1,0,0,1,0,0,1,0,0,1"
   M = toricGraver(A);   --note this matrix is the design matrix for the p1 statistical model on 4 nodes using a constant rho. (see fienberg/rinaldo/petrovic; in prep-missing reference).
   assert(numrows M == 7462)
   assert(numcols M == 18)
+  AS=matrix"1,1,1,1,1,1,1,1;1,1,1,0,0,0,0,0;1,2,3,1,2,3,4,5"--scroll S(2,4)
+  R=QQ[x_1..x_8]
+  G4ti2 = toList flatten entries gens toBinomial(toricGraver(AS),R)
+  assert(#G4ti2 == 82)
+  Gtrue=toList flatten entries gens toBinomial(matrix" 1,-2,1,0,0,0,0,0;1,-1,0,-1,1,0,0,0;2,-2,0,-1,0,1,0,0;3,-3,0,-1,0,0,1,0;4,-4,0,-1,0,0,0,1;3,-3,0,0,-1,0,0,1;2,-2,0,0,0,-1,0,1;1,-1,0,0,0,0,-1,1;2,-2,0,0,-1,0,1,0;1,-1,0,0,0,-1,1,0;1,-1,0,0,-1,1,0,0;0,1,-1,-1,1,0,0,0;0,1,-1,0,0,-1,1,0;0,1,-1,0,0,0,-1,1;0,1,-1,0,-1,1,0,0;1,0,-1,-1,0,1,0,0;1,0,-1,0,-1,0,1,0;1,0,-1,0,0,-1,0,1;2,-1,-1,-1,0,0,1,0;2,-1,-1,0,-1,0,0,1;3,-2,-1,-1,0,0,0,1;0,2,-2,0,-1,0,1,0;1,1,-2,-1,0,0,1,0;0,2,-2,-1,0,1,0,0;2,0,-2,-1,0,0,0,1;0,2,-2,0,0,-1,0,1;1,1,-2,0,-1,0,0,1;0,0,0,1,-1,-1,1,0;0,0,0,1,-1,0,-1,1;0,0,0,1,-2,1,0,0;1,-1,0,1,-2,0,1,0;1,-1,0,1,-1,-1,0,1;2,-2,0,1,-2,0,0,1;0,0,0,0,0,1,-2,1;0,0,0,0,1,-2,1,0;1,-1,0,-1,0,2,-1,0;0,0,0,0,1,-1,-1,1;1,-1,0,-1,0,1,1,-1;1,-1,0,0,-1,0,2,-1;2,-2,0,-1,0,0,2,-1;1,-1,0,0,1,-2,0,1;0,0,0,1,0,-2,0,1;0,1,-1,0,1,-2,0,1;0,1,-1,-1,0,1,1,-1;0,1,-1,-1,0,2,-1,0;1,0,-1,-1,0,0,2,-1;0,1,-1,0,-1,0,2,-1;0,1,-1,1,-1,-1,0,1;0,1,-1,1,-2,0,1,0;1,0,-1,1,-2,0,0,1;0,3,-3,-1,0,0,1,0;1,2,-3,-1,0,0,0,1;0,3,-3,0,-1,0,0,1;0,2,-2,1,-2,0,0,1;0,2,-2,-1,0,0,2,-1;0,4,-4,-1,0,0,0,1;0,0,0,1,-2,0,2,-1;0,0,0,2,-2,-1,0,1;0,0,0,2,-3,0,1,0;1,-1,0,2,-3,0,0,1;0,0,0,1,0,-3,2,0;0,0,0,1,0,-1,-2,2;1,-1,0,-1,0,0,3,-2;0,0,0,0,1,0,-3,2;0,0,0,0,2,-3,0,1;0,1,-1,-1,0,0,3,-2;0,1,-1,2,-3,0,0,1;0,0,0,3,-4,0,0,1;0,0,0,1,0,0,-4,3;1,0,-1,0,-1,1,-1,1;1,0,-1,0,-2,2,0,0;1,0,-1,-1,1,-1,1,0;1,0,-1,-1,1,0,-1,1;1,0,-1,-2,2,0,0,0;1,0,-1,0,0,-2,2,0;1,0,-1,0,0,0,-2,2;2,0,-2,0,-2,1,0,1;2,0,-2,-2,1,0,1,0;2,0,-2,-1,0,-1,2,0;2,0,-2,0,-1,0,-1,2;3,0,-3,-2,0,0,2,0;3,0,-3,0,-2,0,0,2"  ,R)
+   apply(0..#Gtrue-1, j->  assert(isSubset({Gtrue_j},G4ti2)) ) -- checking 4ti2 output against by hand input!!
 ///
 
 

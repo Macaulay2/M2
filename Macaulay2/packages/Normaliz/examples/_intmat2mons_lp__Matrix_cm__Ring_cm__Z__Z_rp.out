@@ -1,0 +1,29 @@
+-- -*- M2-comint -*- {* hash: -1431319344 *}
+
+i1 : R=ZZ/37[x,y,t];
+
+i2 : m=matrix({{3,0,0},{2,1,0},{0,3,0},{1,2,7}})
+
+o2 = | 3 0 0 |
+     | 2 1 0 |
+     | 0 3 0 |
+     | 1 2 7 |
+
+              4        3
+o2 : Matrix ZZ  <--- ZZ
+
+i3 : I=intmat2mons(m,R)
+
+             3   2    3     2 7
+o3 = ideal (x , x y, y , x*y t )
+
+o3 : Ideal of R
+
+i4 : J=intmat2mons(m,R,0)
+
+             3   2    3
+o4 = ideal (x , x y, y )
+
+o4 : Ideal of R
+
+i5 : 

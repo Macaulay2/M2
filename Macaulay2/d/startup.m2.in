@@ -49,7 +49,7 @@ if firstTime then (
      markLoaded = (fullfilename,origfilename,notify,filetime) -> ( 
 	  fullfilename = minimizeFilename fullfilename;
 	  filesLoaded#origfilename = (fullfilename,filetime); 
-	  loadedFiles##loadedFiles = toAbsolutePath fullfilename; 
+	  loadedFiles##loadedFiles = realpath toAbsolutePath fullfilename; 
 	  if notify then stderr << "--loaded " << fullfilename << endl;
 	  );
      normalPrompts = () -> (
@@ -168,7 +168,7 @@ if firstTime then (
 	  { ("factory version", "3.0.2"), ("libfac version", "3.0.1") },
 	  (k,v) -> if version#k < v then stderr << "--warning: old " << k << " " << version#k << " < " << v << endl);
 
-     use = identity;				  -- temporary, until methods.m2
+     use = x -> x;				  -- temporary, until methods.m2
 
      Attributes = new MutableHashTable;
      -- values are hash tables with keys Symbol, String, Net (as symbols); replaces ReverseDictionary and PrintNames
@@ -182,7 +182,11 @@ if firstTime then (
 	  r := new MutableHashTable;
 	  scan(values Attributes, tab -> scan(pairs tab, (attr,x) -> if attr === attr0 then r#x = true));
 	  keys r);
-     removeAttribute = (val,attr) -> remove(Attributes#val,attr);
+     removeAttribute = (val,attr) -> (
+	  a := Attributes#val;
+	  remove(a,attr);
+	  if #a === 0 then remove(Attributes,val);
+	  );
      protect PrintNet;
      protect PrintNames;
      protect ReverseDictionary;
@@ -196,10 +200,12 @@ if firstTime then (
 	  if n =!= null then n(s,v);
 	  s <- v);
      globalAssignFunction = (X,x) -> (
+	  if not instance(X,Symbol) then error("globalAssignFunction: expected a symbol: ", toString X);
 	  if not hasAttribute(x,ReverseDictionary) then setAttribute(x,ReverseDictionary,X);
 	  use x;
 	  );
      globalReleaseFunction = (X,x) -> (
+	  if not instance(X,Symbol) then error("globalAssignFunction: expected a symbol: ", toString X);
 	  if hasAttribute(x,ReverseDictionary)
 	  and getAttribute(x,ReverseDictionary) === X
 	  then removeAttribute(x,ReverseDictionary)
@@ -212,12 +218,14 @@ if firstTime then (
 	       )
 	  else error "expected a type";
 	  );
-     globalAssignment {Type,Function};
+     globalAssignment {Type,Function,GlobalDictionary,Manipulator};
+     scan((symbol true,symbol false,symbol stdio, symbol stderr), sym -> globalAssignFunction(sym, value sym));
      scan(dictionaryPath, dict -> (
 	       scan(pairs dict, (nm,sym) -> (
 			 x := value sym;
-			 if instance(x, Function) or instance(x, Type) then setAttribute(x,ReverseDictionary,sym)))));
-
+			 f := lookup(GlobalAssignHook, class x);
+			 if f =!= null then f(sym,x);
+			 ))));
      applicationDirectorySuffix = () -> (
 	  if version#"operating system" === "MacOS" then "Library/Application Support/Macaulay2/" else ".Macaulay2/"
 	  );

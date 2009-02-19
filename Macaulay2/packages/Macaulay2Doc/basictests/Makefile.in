@@ -14,21 +14,37 @@ LDFLAGS += -L$(DOTS)/../libraries/final/lib
 TESTRESULTS := $(notdir $(patsubst %.m2, %.okay, $(wildcard @srcdir@/*.m2)))
 
 all:
-#all:check
+all:check
 check: $(TESTRESULTS) check-gc
 
 $(TESTRESULTS) : @pre_exec_prefix@/bin/M2@EXE@
 
 ARGS := --silent -q --stop --no-loaddata --no-setup -e 'srcdir = "@srcdir@/"'
 
+LIMIT :=
+ifeq (@ULIMIT_T@,yes)
+LIMIT += ulimit -t 20 ;
+endif
+ifeq (@ULIMIT_M@,yes)
+LIMIT += ulimit -m 200000 ;
+endif
+ifeq (@ULIMIT_V@,yes)
+LIMIT += ulimit -v 200000 ;
+endif
+ifeq (@ULIMIT_S@,yes)
+LIMIT += ulimit -s 8192 ;
+endif
+
 %.okay : %.m2
 	@ echo testing $<
-	@ env @pre_exec_prefix@/bin/M2@EXE@ $(ARGS) $< -e 'exit 0'
+	@ $(LIMIT) env @pre_exec_prefix@/bin/M2@EXE@ $(ARGS) $< -e 'exit 0'
 	@ touch $@
 
 clean::	; rm -f *.okay
 LOADLIBES += @GC_LIBS@
-check-gc: testgc; ./testgc
+testgc:
+check-gc: testgc.okay
+testgc.okay : testgc ; ./testgc && touch $@
 clean::; rm -f testgc
 Makefile : Makefile.in ; cd $(DOTS)/.. && ./config.status Macaulay2/packages/Macaulay2Doc/basictests/Makefile
 distclean :clean; rm -f Makefile

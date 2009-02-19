@@ -104,22 +104,43 @@ Monoid::Monoid(MonomialOrdering *mo,
   n_after_component_ = monomial_size_ - n_before_component_;
   component_up_ = monorder_->component_up;
 
-  // Now we can set nslots_ and first_weights_slot_
+  // Set nslots_
   int total = 0;
-  first_weights_slot_ = -1;
   for (int i=0; i<monorder_->nblocks; i++)
     {
-      enum MonomialOrdering_type typ = monorder_->blocks[i].typ;
-      if (first_weights_slot_ < 0 && (typ == MO_GREVLEX || typ == MO_GREVLEX_WTS 
-	  || typ == MO_GREVLEX4 || typ == MO_GREVLEX4_WTS
-	  || typ == MO_GREVLEX2 || typ == MO_GREVLEX2_WTS
-				     || typ == MO_WEIGHTS))
-	first_weights_slot_ = total;
-	
       total += monorder_->blocks[i].nslots;
       nslots_.push_back(total);
     }
 
+  // Set first_weight_value_
+  bool get_out = false;
+  first_weights_slot_ = -1;
+  for (int i=0; i<monorder_->nblocks && !get_out; i++)
+    {
+      switch (monorder_->blocks[i].typ) {
+      case MO_LEX:
+      case MO_LEX2:
+      case MO_LEX4:
+      case MO_NC_LEX: 
+	get_out = true;
+	break;
+      case MO_REVLEX:
+      case MO_LAURENT:
+      case MO_LAURENT_REVLEX:
+      case MO_GREVLEX:
+      case MO_GREVLEX2:
+      case MO_GREVLEX4:
+      case MO_GREVLEX_WTS:
+      case MO_GREVLEX2_WTS:
+      case MO_GREVLEX4_WTS:
+      case MO_WEIGHTS:
+	first_weights_slot_ = 0;
+      case MO_POSITION_UP: continue;
+      case MO_POSITION_DOWN: continue;
+      default:
+	INTERNAL_ERROR("monomial order block type not handled");
+      }
+    }
   EXP1_ = newarray_atomic(int,nvars_);
   EXP2_ = newarray_atomic(int,nvars_);
   EXP3_ = newarray_atomic(int,nvars_);
@@ -141,7 +162,7 @@ Monoid::Monoid(MonomialOrdering *mo,
 //	fprintf(stderr, "%d ", local_vars->array[i]);
 //      fprintf(stderr, "\n");
 //    }
-}
+    }
 
 void Monoid::set_degrees()
 {
@@ -550,11 +571,11 @@ void Monoid::elem_text_out(buffer &o, const_monomial m) const
 
 void Monoid::multi_degree(const_monomial m, monomial result) const
 {
-  if (nvars_ == 0) return;
   if (degree_monoid()->n_vars() == 0) return;
-
   degree_monoid()->one(result);
+  if (nvars_ == 0) return;
   monomial mon1 = degree_monoid()->make_one();
+
   to_expvector(m, EXP1_);
 
   for (int i=0; i<nvars_; i++)
