@@ -27,6 +27,7 @@ smallerMonomials(Ideal,RingElement) := (M,f) -> (
      -- input: a polynomial in a poly ring R
      -- output: an ordered list of monomials of R less than f, but of the same
      --   degree as (the leadterm of) f.
+     R := ring M;
      d := degree f;
      m := flatten entries basis(d,coker gens M);
      m = f + sum m;
