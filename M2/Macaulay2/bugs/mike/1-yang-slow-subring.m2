@@ -62,7 +62,7 @@ isHomogeneous F
 time V = ker F;
 time subring1 F;
 time subring2 F;
-time graphIdeal(F)
+time J = graphIdeal(F)
 
 -- 0.9.2 code
 gbTrace 3
@@ -73,10 +73,17 @@ betti ideal V
 -- Now change degrees of S
 S=ZZ/101[y_{1}..y_{22}, Degrees=>{2,2,2,1,3,3,3,3,3,3,3,3,3,1,1,1,1,1,1,1,1,1}]
 F = map(A,S,dterms);
+
+time J = graphIdeal F;
 isHomogeneous F
-time graphIdeal F
 time ker F;
+
+time gens gb J;
+time J = graphIdeal F;
+time gens gb(J, MaxReductionCount=>10000);
+
 time image F;
+
 end
 
 
