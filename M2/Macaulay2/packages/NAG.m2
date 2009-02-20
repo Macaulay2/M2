@@ -1595,6 +1595,12 @@ restart
 installPackage("NAG", RemakeAllDocumentation=>true, AbsoluteLinks=>false, RerunExamples=>true)
 check "NAG"
 
+R = CC[x,y,z]
+f1 = (y-x^2)*(x^2+y^2+z^2-1)*(x-0.5);
+f2 = (z-x^3)*(x^2+y^2+z^2-1)*(y-0.5);
+f3 = (y-x^2)*(z-x^3)*(x^2+y^2+z^2-1)*(z-0.5);
+
+
 -- Local Variables:
 -- compile-command: "make -C $M2BUILDDIR/Macaulay2/packages PACKAGES=PackageTemplate pre-install"
 -- End:
