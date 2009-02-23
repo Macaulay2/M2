@@ -70,8 +70,8 @@ cotanbun RingElement := f -> (
 ---------------------------------------------------------------------
 -- multiplicity -- 
 -- given a Poincare polynomial for a module outputs its multiplicity
-multiplicity := method()
-multiplicity RingElement := f-> (
+multiplicityPoincare := method()
+multiplicityPoincare RingElement := f-> (
      R := ring f;
      while (f % (1-R_0) == 0) do f = f//(1-R_0);
      sub(f, {R_0=>1})
@@ -101,7 +101,7 @@ BMM(Ideal, RingElement) := (I,f) -> (
      scan(#dec, i->(
 	 compI := project dec#i;      
 	 projdec := drop(dec,{i,i})/project;
-	 suspectedMultiplicity := multiplicity@@poincare prd#i // multiplicity@@poincare dec#i;
+	 suspectedMultiplicity := multiplicityPoincare@@poincare prd#i // multiplicityPoincare@@poincare dec#i;
 	 if suspectedMultiplicity > 1 and isSubset(I0,compI) -- and any(projdec, c->isSubset(c,compI)) 
 	 then (
 	      pInfo(3,"BMM: Component "|toString compI|" should be corrected");
@@ -128,8 +128,8 @@ BMM(Ideal, RingElement) := (I,f) -> (
 	  --corprd = primaryDecomposition corB; -- used to compute the whole primary decomposition ... is "localize" stable?
      	  --cordec = ass corB; 
 	  j := position(cordec, J->project J==compI);
-	  comps = comps|{compI => (multiplicity@@poincare corprd#j //  
-		    multiplicity@@poincare cordec#j)}; 
+	  comps = comps|{compI => (multiplicityPoincare@@poincare corprd#j //  
+		    multiplicityPoincare@@poincare cordec#j)}; 
 	  );
      comps = {I=>1} | comps ;
      if BMMidealREMEMBER then BMMstashedCC#(I,f) = comps;
