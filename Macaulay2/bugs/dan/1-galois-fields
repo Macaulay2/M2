@@ -1,0 +1,54 @@
+Maybe pari's equations for finite fields are better:
+
+Date: Tue, 24 Feb 2009 00:04:33 +0100
+To: Pari Developers <pari-dev@list.cr.yp.to>
+Subject: Re: ffinit
+Mail-Followup-To: Pari Developers <pari-dev@list.cr.yp.to>
+In-Reply-To: <158627b90902221108v546a446j6e225581c05cdd1b@mail.gmail.com>
+From: Bill Allombert <Bill.Allombert@math.u-bordeaux1.fr>
+
+On Sun, Feb 22, 2009 at 07:08:16PM +0000, John Cremona wrote:
+> I noticed that ffinit(3,582) produces a polynomial with 333 terms.  I
+> would have thought that using a sparse polynomial as the modulus would
+> be more efficient (I found x^582 + x^43 + x  - 1, for example).
+
+PARI does not implement a reduction algorithm that is significantly
+faster with sparse polynomial:
+? P=ffinit(3,582);
+? ffgen(P)^(3^582-1);
+time = 396 ms.
+? Q=(x^582 + x^43 + x - 1)*Mod(1,3);
+? ffgen(Q)^(3^582-1);
+time = 389 ms.
+
+so the only efficiency considered here is the efficiency of computing the
+polynomial itself and there is no contest:
+
+? ffinit(3,582);
+time = 12 ms.
+? polisirreducible((x^582 + x^43 + x  - 1)*Mod(1,3));
+time = 72 ms.
+? for(i=2,581,P=x^582+x^i+x-1;if(polisirreducible(P*Mod(1,3)),print(P);break));
+x^582 + x^43 + x - 1
+time = 2,977 ms.
+
+> I found the course code in polarit3.c which refers to various papers
+> and algorithms (Lenstra and Adleman), but can anyone say what are the
+> benefits of the polynomials these algorithms produce?  Actually I
+
+1) The algorithm is deterministic so the output is well defined.
+2) They have "small" coefficients (when centerlift()'ed).
+3) They can be computed very quickly (in polynomial time assuming the
+ERH)
+
+> could not quite tell whether in my case it might have been adding a
+> random poly of degree < 582 to x^582, in which case the denseness of
+> the reslt is not so surprising.
+
+It does not. Actually in this example, it returns the compositum of the
+finite fields defined by polsubcyclo(5,2), polsubcyclo(7, 3) and
+polsubcyclo(389, 97) (which are all irreducible mod 3).
+
+Cheers,
+Bill.
+
