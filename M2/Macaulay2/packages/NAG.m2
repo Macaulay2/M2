@@ -149,7 +149,7 @@ track = method(TypicalValue => List, Options =>{
 	  MultistepDegree => 3, -- used only for Predictor=>Multistep
 	  -- corrector 
 	  finalMaxCorSteps => 11,
-	  maxCorSteps => 4,
+	  maxCorSteps => 3,
 	  -- projectivization
 	  Projectivize => true, 
 	  AffinePatches => DynamicPatch,
@@ -186,6 +186,8 @@ track (List,List,List) := List => o -> (S,T,solsS) -> (
 	             "PHCtargetsols";
 	  batchfile := -- temporaryFileName() | 
 	             "PHCbat";
+          if DBG>=10 then {targetfile, startfile, outfile,
+	       solsSfile, solsTfile, batchfile } / removeFile ;
 	  -- writing data to the corresponding files                                                                                                                                                                           
      	  if n < numgens R then error "the system is underdetermined";
 	  if n > numgens R then (
@@ -216,7 +218,7 @@ track (List,List,List) := List => o -> (S,T,solsS) -> (
    	    -- fourth menu
 	    bat << "0" << endl; -- exit for now
 	  close bat;
-	  run(PHCexe|" -p <"|batchfile|" >null");
+	  run(PHCexe|" -p <"|batchfile|" >phc_session.log");
   	  run(PHCexe|" -z "|outfile|" "|solsTfile);
 	  -- parse and output the solutions                                                                                                                                                                                    
 	  result := parseSolutions(solsTfile, newR);
@@ -303,7 +305,7 @@ track (List,List,List) := List => o -> (S,T,solsS) -> (
      -- create homotopy
      t := symbol t;
      Rt := K[gens R, t]; -- how do you cleanly extend the generators list: e.g., what if "n" is a var name?
-     H := matrix {apply(#S, i->(1-t)^(o.tDegree)*sub(S#i,Rt)+o.gamma*t^(o.tDegree)*sub(T#i,Rt))};
+     H := matrix {apply(#S, i->o.gamma*(1-t)^(o.tDegree)*sub(S#i,Rt)+t^(o.tDegree)*sub(T#i,Rt))};
      JH := transpose jacobian H; 
      Hx := JH_(toList(0..n-1));
      Ht := JH_{n};
@@ -522,18 +524,20 @@ track (List,List,List) := List => o -> (S,T,solsS) -> (
 	       (x0,symbol nSteps=>count, new HashTable from history)
 	       ));
      
-     if o.Projectivize then (
+     ret := if o.Projectivize then (
 	  if DBG>3 then print rawSols;
-	  return apply(rawSols, s->(
+	  apply(rawSols, s->(
 		    s' = flatten entries first s;
 		    --if norm(last s) < epsilon then infinity 
 		    --else 
 		    {apply(drop(s',-1),u->(1/last s')*u)} | drop(toList s, 1)
-	       	    ));
+	       	    ))
 	  )
      else (
-	  return select(rawSols,s -> first s =!= infinity)/(s->(flatten entries first s, s#1));
+	  select(rawSols,s -> first s =!= infinity)/(s->(flatten entries first s, s#1))
 	  );
+     if DBG>=2 then << "Number of solutions = " << #ret << endl << "Average number of steps = " << toRR sum(ret,s->s#1#1)/#ret << endl;
+     ret
      )
 
 refine = method(TypicalValue => List, Options =>{epsilon=>1e-8, maxCorSteps=>30})
@@ -1017,11 +1021,31 @@ regeneration({x^2+y^2+z^2-1,x*y,y*z}
 
 areEqual = method(TypicalValue=>Boolean, Options=>{epsilon=>1e-6})
 areEqual (List,List) := o -> (a,b) -> (
-     #a == #b and norm matrix {a-b} < o.epsilon
+     if class last a === List then (
+	  #a == #b and all(#a, i->areEqual(a#i,b#i, epsilon=>o.epsilon))
+	  ) else (
+     	  #a == #b and norm matrix {a-b} < o.epsilon
+	  )
      ) 
 areEqual (CC,CC) := o -> (a,b) -> (
      abs(a-b) < o.epsilon
      ) 
+areEqual (Matrix,Matrix) := o -> (a,b) -> (
+     areEqual(flatten entries a, flatten entries b, epsilon=>o.epsilon)
+     ) 
+
+isGEQ := method(TypicalValue=>Boolean, Options=>{epsilon=>1e-6})
+isGEQ(List,List) := o->(t,s)-> (
+     for i from 0 to n-1 do ( 
+	  if not areEqual(t#i,s#i, epsilon=>o.epsilon) 
+	  then 
+	  if abs(realPart t#i - realPart s#i) < o.epsilon then 
+	  return imaginaryPart t#i > imaginaryPart s#i
+	  else return realPart t#i > realPart s#i
+	  ); 
+     true -- if approx. equal 
+     )
+
 sortSolutions = method(TypicalValue=>List, Options=>{epsilon=>1e-6})
 sortSolutions List := o -> sols -> (
 -- sorts numerical solutions     
@@ -1033,19 +1057,9 @@ sortSolutions List := o -> sols -> (
 		    -- find the first element that is "larger";
 		    -- "larger" means the first coord that is not (approx.) equal 
 		    -- has (significantly) larger realPart, if tie then larger imaginaryPart
-		    l := position(sorted, t->(
-			      for i from 0 to n-1 do ( 
-				   if not areEqual((first t)#i,(first s)#i, epsilon=>o.epsilon) 
-				   then 
-				   if abs(realPart (first t)#i - realPart (first s)#i) < o.epsilon then 
-			      	   return imaginaryPart (first t)#i > imaginaryPart (first s)#i
-				   else return realPart (first t)#i > realPart (first s)#i
-				   ); 
-			      true -- if approx. equal 
-			      ));
-		    
+		    l := position(sorted, t->isGEQ(first t, first s));
 		    if l === null then sorted = sorted | {s}
-		    else if not areEqual(first sorted#l, first s, epsilon=>o.epsilon) then sorted = take(sorted,l) | {s} | drop(sorted,l);
+		    else sorted = take(sorted,l) | {s} | drop(sorted,l);
 		    ));      
 	  );
      	  sorted
@@ -1055,6 +1069,20 @@ evalPoly = method(TypicalValue=>CC)
 evalPoly (RingElement, List) := (f,x) -> (
      sub(sub(f, sub(matrix{x},ring f)), coefficientRing ring f)
      )
+
+diffSolutions = method(TypicalValue=>Sequence, Options=>{epsilon=>1e-6})
+-- in:  A, B (presumably sorted)
+-- out: (a,b), where a and b are lists of indices where A and B differ
+diffSolutions (List,List) := o -> (A,B) -> (
+     i := 0; j := 0;
+     a := {}; b = {};
+     while i<#A and j<#B do 
+     if areEqual(A#i,B#j) then (i = i+1; j = j+1)
+     else if isGEQ(A#i,B#j) then (b = append(b,j); j = j+1)
+     else (a = append(a,i); i = i+1);	  
+     (a|toList(i..#A-1),b|toList(j..#B-1))	      	    
+     )
+
 
 ------------ preSLPs ------------------------------------------------------------------------
 -- preSLP = (constants, program, output_description)
@@ -1095,10 +1123,16 @@ poly2preSLP RingElement :=  g -> (
      constants := if const == 0 then {} else ( finalMULTIsum = finalMULTIsum | {"const"=>0}; {const} );
      f := g - const;
      scan(numgens R, i->(
-	       fnox := f%R_i;
+	       fnox := sum(select(listForm f,ec->(first ec)#i==0), (e,c)->c*R_e); -- fnox := f%R_i;
+	       if fnox == 0 then fnox = 0_R;
 	       fx := f - fnox;
 	       if fx != 0 then (
-	       	    (constfx, progfx, outfx) := poly2preSLP(fx//R_i);
+		    fxOverRi := --fx//R_i
+		    sum(listForm fx, (e,c)->c*R_(take(e,i)|{e#i-1}|drop(e,i+1)));
+		    if fxOverRi == 0 then fxOverRi = 0_R;      
+	       	    (constfx, progfx, outfx) := poly2preSLP(
+			 fxOverRi
+			 );
 	       	    -- shift constant nodes positions
 	       	    prog = prog | shiftConstsSLP(progfx, #constants); 
 	       	    constants = constants | constfx;
