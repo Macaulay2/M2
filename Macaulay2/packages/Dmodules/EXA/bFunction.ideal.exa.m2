@@ -1,4 +1,4 @@
-load "D-modules.m2"
+loadPackage ("Dmodules", FileName => "../../Dmodules.m2")
 
 -------------------------EXAMPLES for bFunction
 
@@ -10,7 +10,7 @@ bFunction(I, {1,1})
 --Example 1 (GD_of_HDE Example 5.2.10)
 R = QQ[x, y, dx, dy, WeylAlgebra => {x=>dx, y=>dy}]
 I = ideal(x, dy-1)     	    	 
-time bFunction(I, {1,0}, Strategy=>TrivialIntersection)
+time bFunction(I, {1,0})
 
 --Example 1b (GD_of_HDE Example 5.2.10)
 R = frac(QQ[p]/ ideal p)[x, y, dx, dy, WeylAlgebra => {x=>dx, y=>dy}]

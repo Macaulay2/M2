@@ -111,6 +111,11 @@ randomQuadraticSystem = (n,kk) -> (
      ideal apply(n, i->random(2,R) - 1)
      )
 
+randomSystem = (n,d,kk) -> (
+     R = kk[vars(53..n+52)]; 
+     ideal apply(n, i->sum(toList(1..d),j->random(j,R)) - 1)
+     )
+
 cyclic = (n,kk) -> (
      R = kk[vars(53..n+52)];
      ideal apply(1..n-1, d-> sum(0..n-1, i -> product(d, k -> R_((i+k)%n)))) 

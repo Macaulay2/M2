@@ -1,6 +1,4 @@
-restart
-load "Dloadfile.m2"
-Dtrace 4
+loadPackage ("Dmodules", FileName => "../../Dmodules.m2")
 
 ------------------------- EXAMPLES for Drestriction --------------------------------
 
