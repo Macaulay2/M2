@@ -1036,6 +1036,7 @@ areEqual (Matrix,Matrix) := o -> (a,b) -> (
 
 isGEQ := method(TypicalValue=>Boolean, Options=>{epsilon=>1e-6})
 isGEQ(List,List) := o->(t,s)-> (
+     n := #t;
      for i from 0 to n-1 do ( 
 	  if not areEqual(t#i,s#i, epsilon=>o.epsilon) 
 	  then 
