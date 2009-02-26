@@ -106,7 +106,9 @@ integralClosure2 Ring := Ring => o -> (R) -> (
      (S,phi) := flattenRing R;
      G := map(frac R, frac S, substitute(phi^-1 vars S, frac R));
      (newPhi,newG) := mikeIntegralClosureHelper(nonNormalLocus2 S, phi, G, o.Limit, o.Variable, 0);
-     R.icFractions2 = map(frac R,target newPhi,newG.matrix);
+     -- newPhi : R --> R', then integral closure
+     -- newG : frac R' --> frac R, an isomorphism
+     R.icFractions2 = first entries newG.matrix;
      R.icMap2 = newPhi;
      target newPhi
      )
@@ -1046,7 +1048,7 @@ use ring ideal J
 assert(ideal J == ideal (x^2-a_6*z, a_6*x-a_7*z, a_6^2-a_7*x, a_7^2-y^2-z^2))
 use Q
 assert(conductor2(Q.icMap2) == ideal(z^3,x*z^2,x^3*z,x^4))
-assert((icFractions2 Q).matrix == substitute(matrix{{x^3/z^2,x^2/z,x,y,z}},frac Q))
+assert(icFractions2 Q == substitute(matrix{{x^3/z^2,x^2/z,x,y,z}},frac Q))
 ///
 
 --Mike's inhomogenous test
@@ -1058,7 +1060,7 @@ L = time integralClosure2(Q,Variable => symbol x)
 use ring ideal L
 assert(ideal L == ideal(x_1^2-a*b*c))
 use Q
-(icFractions2 Q).matrix == substitute(matrix{{d/a^2,a,b,c}},frac Q)
+icFractions2 Q == substitute(matrix{{d/a^2,a,b,c}},frac Q)
 ///
 
 --Ex from Wolmer's book - tests longer example and published result.

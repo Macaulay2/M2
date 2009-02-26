@@ -60,10 +60,10 @@ static GEN toPari(mpz_t x) {
 }
 
 static void INTtoGmp(mpz_t z, GEN y) {
-  int i, m = lg(y), n = m-2, sign = y[1];
+  int i, m = lg(y), n = m-2;
   mpz_init2(z,8 * sizeof(*y) * n);
   for (i=0; i<n; i++) z->_mp_d[i] = (mp_limb_t)gel(y,2+fix(n,i));
-  z->_mp_size = sign < 0 ? -n : n;
+  z->_mp_size = y[1] < 0 ? -n : n;
 }
 
 
