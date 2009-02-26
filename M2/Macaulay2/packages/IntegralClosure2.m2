@@ -58,39 +58,7 @@ needsPackage "Elimination"
 --- program.  Right now it is well documented on its own.  I'm not
 --- sure what is best long term. 
 
-integralClosure2 = method(Options=>{
-	  Variable => global w,
-	  Limit => infinity})
-
-
--- OLD CODE: to be removed.
-integralClosure2 Ring := Ring => o -> (R) -> (
-     -- 1 argument: Quotient ring. 
-     -- 3 options: the variable name for new variables, a limit on the
-     -- number of times to run the recurions and the choice to run
-     -- Singh and Swansons characteristic p algorithm. 
-     -- Return: The quotient ring that is the integral closure of R or
-     -- a set of rings whose direct sum is the integral closure of R.
-     -- Method:  We work primarily with maps to ensure access to key
-     -- information at the end.  This also makes it easier to keep
-     -- track of ring flattenings and the recursion. 
-     M := flattenRing R;
-     ICout := integralClosureHelper(nonNormalLocus2 M_0, gens M_0, M_1,o.Limit, o.Variable, 0);
-     if #ICout == 2 then (
-	  R.icFractions2 = ICout#1;
-	  --R.icFractions2Short = ICout#2;
-	  R.icMap2 = ICout#0;
-	  target ICout#0
-	  )
-     else (
-	  n := substitute((#ICout)/2, ZZ);
-	  ICout = apply(n-1, i -> {ICout#(2*i), ICout#(2*i+1)});
-	  R.icFractions2 = apply(ICout, i -> i#1);
-	  R.icMap2 = apply(ICout, i -> i#0);
-	  RIdeal := apply(R.icMap2, i -> trim ideal target i);
-	  apply(RIdeal, i -> (ring i)/i)
-	  )
-     )
+{*
 
 -- version that MES has just provided, not in use in 1.2 yet
 integralClosure2 Ring := Ring => o -> (R) -> (
@@ -108,13 +76,87 @@ integralClosure2 Ring := Ring => o -> (R) -> (
      (newPhi,newG) := mikeIntegralClosureHelper(nonNormalLocus2 S, phi, G, o.Limit, o.Variable, 0);
      -- newPhi : R --> R', then integral closure
      -- newG : frac R' --> frac R, an isomorphism
+     -- Let's trim the ring R'
+     R' := target newPhi;
+     R'' := trim R';
+     newPhi = map(R'',R',vars R'') * newPhi;
      R.icFractions2 = first entries newG.matrix;
      R.icMap2 = newPhi;
      target newPhi
      )
+     
+     (newPhi,newG) := mikeIntegralClosureHelper(nonNormalLocus2 S, phi, G, o.Limit, o.Variable, 0);
+     -- newPhi : R --> R', then integral closure
+     -- newG : frac R' --> frac R, an isomorphism
+     -- Let's trim the ring R'
+     R' := target newPhi;
+     R'' := trim R';
+     newPhi = map(R'',R',vars R'') * newPhi;
+     R.icFractions2 = first entries newG.matrix;
+     R.icMap2 = newPhi;
+     target newPhi
+     )
+*}
+
+integralClosure2 = method(Options=>{
+	  Variable => global w,
+	  Limit => infinity})
+
+integralClosure2 Ring := Ring => o -> (R) -> (
+     -- 1 argument: affine ring R.  We might be able to handle rings over ZZ
+     --   if we choose J in the non-normal ideal some other way.
+     -- 2 options: Limit, Variable
+     (S,F) := flattenRing R;
+     G := map(frac R, frac S, substitute(F^-1 vars S, frac R));
+     nsteps := 0;
+     -- Choose an ideal J here
+     J = nonNormalLocus2 S;
+     -- loop (note: F : R --> Rn, G : frac Rn --> frac R)
+     while (
+	  F1 := F;
+	  (F,G,J) = integralClosure1(F1,G,J,nsteps,o.Variable);
+	  nsteps = nsteps + 1;
+	  nsteps < o.Limit and target F1 =!= target F
+	  ) do ();
+     R.icFractions2 = first entries G.matrix;
+     R.icMap2 = F;
+     target F
+     )
+
+-- integralClosure1(f : R --> R1, g : frac R1 --> frac R, J (radical) ideal in R1)
+--  return (f2 : R --> R2, g2 : frac R2 --> frac R, sub(J,R2))
+
+integralClosure1 = (F,G,J,nsteps,varname) -> (
+     -- F : R -> R0, R0 is assumed to be a domain
+     -- G : frac R0 --> frac R
+     -- J : ideal in the non-normal ideal of R0
+     -- new variables will be named varname_(nsteps,0),...
+     -- Return value:
+     --  (F1,G1,J1)
+     --    where
+     --      F1 : R --> R1
+     --      G1 : frac R1 --> frac R
+     --      J1 : is the extension of J to an ideal of R1.
+     -- R1 is integrally closed iff target F === target F1
+     R0 := target F;
+     time radJ = trim radical J;  -- ouch
+     f := findSmallGen radJ; -- we assume that f is a non-zero divisor!!
+     -- Compute Hom_S(radJ,radJ), using f as the common denominator.
+     time (F0,G0) := idealizer2(radJ, f, Variable => varname, Index2 => nsteps);
+     -- These would be correct, except that we want to clean up the
+     -- presentation
+     R1temp := target F0;
+     if R1temp === R0 then return(F,G,radJ);
+
+     R1 := minimalPresentation R1temp;
+     i := R1temp.minimalPresentationMap; -- R1temp --> R1
+     iinv := R1temp.minimalPresentationMapInv.matrix; -- R1 --> R1temp
+     iinvfrac := map(frac R1temp , frac R1, substitute(iinv,frac R1temp));
+     F0 = i*F0; -- R0 --> R1
+     (F0*F,G*G0*iinvfrac,F0 radJ)
+     )
 
 
--- Not in use in 1.2 yet
 mikeIntegralClosureHelper = (J, phi, G, counter, newVar, indexVar) -> (
      -- recursive helper function designed to build the integral
      -- closure of R
@@ -159,97 +201,39 @@ findSmallGen = (J) -> (
      L#0#2
      )
 
--- OLD CODE: to be removed.
-integralClosureHelper = (J, fractions, phi, counter, newVar, indexVar) -> (
-     -- recursive helper function designed to build the integral
-     -- closure of R = S/I.
-     -- 6 arguments: J is in the non normal locus of the target of
-     -- phi, is the composition of the relevent maps, fractions is a
-     -- list of the fractions being added, newVar is the letter used
-     -- for the new variables and indexVar keeps track of the current
-     -- index to be used for the new variables. 
-     -- track of the number of new variables being added, counter
-     -- keeps track of the depth of recursion.
-     -- return:  a list consisting of maps and fractions.
-     if counter == 0 then return (phi, fractions);
-     S := target phi;
-     I := ideal presentation target phi;
-     R := ring I;
-     << "entering helper" << endl;
-     J0 := findSmallGen J;
-     J1 := trim(ideal(0_S):J0); 
-     -- need to check if J0 is really the element we-- want - low degree. 
-     if J1 != ideal(0_S) then(
-	  -- If J0 is a ZD then we split the ring.
-	  -- need to try and clean up ideals as much as possible as we proceed.
-	  (S1, S1Map) := flattenRing(R/trim(substitute(J1, R) + I));
-	  (S2, S2Map) := flattenRing(R/trim(substitute(ideal(0_S):J1, R) + I));
-	  L := join(integralClosureHelper(nonNormalLocus2 (minimalPresentation S1), 
-	       	    fractions,
-		    (S1.minimalPresentationMap)*(S1Map)*map(source S1Map, S)*phi, 
-		    counter-1, newVar, indexVar),
-	       integralClosureHelper(nonNormalLocus2 (minimalPresentation S2), 
-			 fractions, 
-			 (S2.minimalPresentationMap)*(S2Map)*map(source S2Map, S)*phi, 
-			 counter-1, newVar, indexVar));
-	  return L
-	  )	
-     else(
-	  -- If J0 is a NZD then we continue setting f = J0.
-	  -- Compute Hom_R(J,J), with R = S/I.
-	  -- From now on, we work in this quotient:
-	  (newPhi, fracs) := idealizer2(J, J0, Variable => newVar, Index2 => indexVar);  
-     	  --error "check targ";
-	  targ := target newPhi;
-	  if targ === S then (
-	       return {newPhi*phi, join(fracs,fractions)})
-	  else (
-	       newI1 := trim ideal presentation targ;
-	       newJ1 := newPhi J;
-	       newI := minimalPresentation(newI1);
-	       S = ring newI;
-	       B2 := S/newI;
-	       FF :=
-	       substitute(((newI1).cache.minimalPresentationMap).matrix, B2);
-	       F := map(B2,target newPhi, FF);
-	       --error("check Maps");
-	       return integralClosureHelper(radical(F newJ1), join(fracs,fractions), F*newPhi*phi, counter-1,newVar,indexVar + # gens targ - # gens source newPhi )  
-     	       );
-     	  );
-     )
-
-
 idealizer2 = method(Options=>{Variable => global w, Index2 => 0})
 idealizer2 (Ideal, RingElement) := o -> (J, f) ->  (
      -- J is an ideal in a ring R
      -- f is a nonzero divisor in J
-     -- computes a ring B2 = Hom(J,J) = (f*J:J)/f
-     -- returns a sequence (F,G,fractions), where 
-     --   F : R --> B2 is the natural inclusion
-     --   G : B2 --> frac R, 
-     --   fractions: a list of the images of the new generators under G in frac R.
+     -- compute R1 = Hom(J,J) = (f*J:J)/f
+     -- returns a sequence (F,G), where 
+     --   F : R --> R1 is the natural inclusion
+     --   G : frac R1 --> frac R, 
      -- optional arguments:
      --   o.Variable: base name for new variables added
      --   o.Index2: the first subscript to use for such variables
      R := ring J;
-     I := ideal presentation R;
      idJ := mingens(f*J : J);
      if ideal(idJ) == ideal(f) then (
-	  (id_R, map(frac R, frac R, vars frac R), {})) -- in this case R is isomorphic to Hom(J,J)
+	  (id_R, map(frac R, frac R, vars frac R))) -- in this case R is isomorphic to Hom(J,J)
      else(
      	  H := compress (idJ % f);
      	  fractions := apply(first entries H,i->i/f);
      	  Hf := H | matrix{{f}};
+
      	  -- Make the new polynomial ring.
      	  n := numgens source H;
      	  newdegs := degrees source H - toList(n:degree f);
      	  degs = join(newdegs, (monoid R).Options.Degrees);
      	  MO := prepend(GRevLex => n, (monoid R).Options.MonomialOrder);
           kk := coefficientRing R;
-     	  A := kk(monoid [o.Variable_(o.Index2)..o.Variable_(o.Index2+n-1), gens R,
+     	  A := kk(monoid [o.Variable_(o.Index2,0)..o.Variable_(o.Index2,n-1), gens R,
 		    MonomialOrder=>MO, Degrees => degs]);
+     	  I := ideal presentation R;
      	  IA := ideal ((map(A,ring I,(vars A)_{n..numgens R + n-1})) (generators I));
      	  B := A/IA;
+
+     	  -- Make the linear and quadratic relations
      	  varsB := (vars B)_{0..n-1};
      	  RtoB := map(B, R, (vars B)_{n..numgens R + n - 1});
      	  XX := varsB | matrix{{1_B}};
@@ -260,10 +244,12 @@ idealizer2 (Ideal, RingElement) := o -> (J, f) ->  (
      	  tails := (symmetricPower(2,H) // f) // Hf;
      	  tails = RtoB tails;
      	  quads := matrix(B, entries (symmetricPower(2,varsB) - XX * tails));
-     	  B2 := (flattenRing(B/(trim (ideal lins + ideal quads))))_0;
-     	  F := map(B2, R, (vars B2)_{n..numgens R + n - 1});
-	  G := map(frac R, frac B2, matrix{fractions} | vars frac R);
-	  (F, G, fractions)
+     	  R1 := (flattenRing(B/(trim (ideal lins + ideal quads))))_0;
+
+     	  -- Now construct the trivial maps
+     	  F := map(R1, R, (vars R1)_{n..numgens R + n - 1});
+	  G := map(frac R, frac R1, matrix{fractions} | vars frac R);
+	  (F, G)
 	  )
      )
 
@@ -1437,7 +1423,7 @@ L={v^4-2*u^3*z+3*u^2*z^2-2*v^2*z^2,
 
 
 R = S/L_3
-time integralClosure R
+time integralClosure2 R
 icFractions R
 use S
 discriminant(L_2,v)
@@ -1537,3 +1523,41 @@ sub(D,K) * oo^-1
 trim radical ideal sub(D,R)
 Hom(oo,oo)
 prune oo
+
+
+-- 
+R = QQ[x,y]/(y^2-x^3)
+integralClosure2 R
+icFractions2 R
+icMap2 R
+
+R = QQ[y,x]/(y^2-x^4-x^6)
+integralClosure2 R
+icFractions2 R
+icMap2 R
+
+R = QQ[y,x]/(y^4-2*x^3*y^2-4*x^5*y+x^6-x^7)
+R' = integralClosure2 R
+icFractions2 R
+icMap2 R
+
+R = ZZ/32003[x,y]/(y^4-2*x^3*y^2-4*x^5*y+x^6-x^7)
+R' = integralClosure2 R
+icFractions2 R
+icMap2 R
+
+R = ZZ/32003[x,y,z]/(z^3*y^4-2*x^3*y^2*z^2-4*x^5*y*z+x^6*z-x^7)
+isHomogeneous R
+R' = integralClosure2 R
+icFractions2 R
+icMap2 R
+
+kk = ZZ/32003
+S = kk[v,u]
+I=ideal(5*v^6+7*v^2*u^4+6*u^6+21*v^2*u^3+12*u^5+21*v^2*u^2+6*u^4+7*v^2*u)
+R = S/I
+L = frac R
+time R' = integralClosure2 R
+ideal R'
+icFractions2 R
+conductor2 icMap2 R -- can't do it since not homogeneous
