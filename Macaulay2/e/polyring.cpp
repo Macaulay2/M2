@@ -1452,9 +1452,9 @@ Nterm * PolyRing::powerseries_division_algorithm(Nterm *f, Nterm *g, Nterm *&quo
   Nterm *nextterm = new_term();
   int gval = 0, flast = 0;
 
-  if (a != 0)
+  if (t != 0)
     {
-      Nterm *z = a;
+      Nterm *z = t;
       for ( ; z->next != 0; z = z->next);
 
       flast = M_->first_weight_value(z->monom);
