@@ -1593,13 +1593,22 @@ R = ZZ/32003[a,b,c]/(a^2-b*c)
 radical ideal(1_R)
 ----------------------------------------------
 
-R=ZZ/2[x,y,Weights=>{{8,9},{0,1}}]
+S=ZZ/2[x,y,Weights=>{{8,9},{0,1}}]
 I=ideal(y^8+y^2*x^3+x^9) -- eliminates x and y at some point. 
+R=S/I
+time R'=integralClosure2(R)
 
 S=ZZ/2[x,y,Weights=>{{31,12},{0,1}}]
-I=ideal"y12+y11+y10x2+y8x9+x31" -- really long
+I=ideal"y12+y11+y10x2+y8x9+x31" 
 R = S/I
-time R'=integralClosure2(R)
+time R'=integralClosure2(R) -- really long?
 transpose gens ideal S
 
+S=ZZ/2[x,y]
+I=ideal"y12+y11+y10x2+y8x9+x31" 
+R = S/I
+time R'=integralClosure2(R) -- really long?
+transpose gens ideal S
+icFracP2 R -- very much faster!
+----------------------------------------------
 loadPackage "ReesAlgebra"
