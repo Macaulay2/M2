@@ -110,7 +110,8 @@ integralClosure2 Ring := Ring => o -> (R) -> (
      G := map(frac R, frac S, substitute(F^-1 vars S, frac R));
      nsteps := 0;
      -- Choose an ideal J here
-     J = nonNormalLocus2 S;
+     --J = nonNormalLocus2 S;
+     J := promote(minors(codim ideal S, jacobian presentation S), S);
      -- loop (note: F : R --> Rn, G : frac Rn --> frac R)
      while (
 	  F1 := F;
@@ -139,6 +140,7 @@ integralClosure1 = (F,G,J,nsteps,varname) -> (
      --      J1 : is the extension of J to an ideal of R1.
      -- R1 is integrally closed iff target F === target F1
      R0 := target F;
+     J = trim J;
      time radJ = trim radical J;  -- ouch
      f := findSmallGen radJ; -- we assume that f is a non-zero divisor!!
      -- Compute Hom_S(radJ,radJ), using f as the common denominator.
@@ -152,46 +154,11 @@ integralClosure1 = (F,G,J,nsteps,varname) -> (
      i := R1temp.minimalPresentationMap; -- R1temp --> R1
      iinv := R1temp.minimalPresentationMapInv.matrix; -- R1 --> R1temp
      iinvfrac := map(frac R1temp , frac R1, substitute(iinv,frac R1temp));
+
+     -- We also want to trim the ring     
+     
      F0 = i*F0; -- R0 --> R1
      (F0*F,G*G0*iinvfrac,F0 radJ)
-     )
-
-
-mikeIntegralClosureHelper = (J, phi, G, counter, newVar, indexVar) -> (
-     -- recursive helper function designed to build the integral
-     -- closure of R
-     --
-     -- phi : R --> S, where R is the original ring whose integral closure we seek
-     --   and S is the current approximation to the integral closure
-     -- G : frac S --> frac R, is the representation as fractions of R.
-     -- J: an ideal in S s.t. V(J) is contained in the non-normal locus
-     -- counter: used to do partial computation: number of loops left (possibly Infinity)
-     -- newVar: a symbol which we use for new variables
-     -- indexVar: the next index to use for newVar.
-     -- Return value:
-     --   In the domain case:
-     --    (phi', G')
-     --   Otherwise:
-     --     Good question!
-     if counter == 0 then return (phi, G);
-     S := target phi;
-     J0 := findSmallGen J;
-     J1 := trim(ideal(0_S):J0); 
-     if J1 != 0 then error "ring is not a domain";
-     -- Compute Hom_S(J,J), using J0 as the common denominator.
-     (newPhi, newG, fracs) := idealizer2(J, J0, Variable => newVar, Index2 => indexVar);
-     T := target newPhi;
-     n := numgens T - numgens S;
-     if T === S then return (phi, G);
-     phi = newPhi*phi; -- phi : R --> T
-     G = G*newG; -- G : frac T --> frac R.     
-     -- Otherwise, let's clean up T, and modify the maps phi, G.
-     -- we get a ring U isom to T, with T --> U, U --> T.
-     U1 := minimalPresentation T;
-     i1 := T.minimalPresentationMap; -- T --> U1
-     i2 := T.minimalPresentationMapInv; -- U1 --> T
-     gt := map(frac T, frac U1, substitute(i2.matrix,frac T));
-     mikeIntegralClosureHelper(radical((i1*newPhi) J), i1*phi, G*gt, counter-1, newVar, indexVar+n)
      )
 
 findSmallGen = (J) -> (
@@ -244,7 +211,8 @@ idealizer2 (Ideal, RingElement) := o -> (J, f) ->  (
      	  tails := (symmetricPower(2,H) // f) // Hf;
      	  tails = RtoB tails;
      	  quads := matrix(B, entries (symmetricPower(2,varsB) - XX * tails));
-     	  R1 := (flattenRing(B/(trim (ideal lins + ideal quads))))_0;
+	  both := ideal lins + ideal quads;
+	  R1 := trim (flattenRing (B/both))_0;
 
      	  -- Now construct the trivial maps
      	  F := map(R1, R, (vars R1)_{n..numgens R + n - 1});
@@ -252,7 +220,6 @@ idealizer2 (Ideal, RingElement) := o -> (J, f) ->  (
 	  (F, G)
 	  )
      )
-
 
 nonNormalLocus2 = method()
 nonNormalLocus2 Ring := (R) -> (
@@ -1096,7 +1063,7 @@ newanswer = ideal(
     X_0^2-a^4*b^4*d^2-a^2*c^4*d^4+7*b*c^3*d^6-2*b^5*c*d^3*e-2*c^6*d^3*e+2*a^3*b*d^5*e+5*c*d^8*e+a^3*c^3*d^2*e^2-6*a^2*b^3*d^3*e^2-a*b*c^2*d^4*e^2-2*a*b^5*d*e^3-2*b^3*c^2*d^2*e^3+5*a*d^6*e^3-a^2*b*c*d^2*e^4+a^3*b*e^6+c*d^3*e^6+a*d*e^8)
 
 assert(ideal V == newanswer)   
-(icFractions2 S).matrix
+icFractions2 S
 ///
 
 -- Test of icFractions2
@@ -1429,7 +1396,13 @@ use S
 discriminant(L_2,v)
 factor oo
 
-
+A = kk[u,v]
+F = (map(A,S,{u,v,1})) L_3
+B = A/F
+time integralClosure2 B
+use ring F
+factor discriminant(F,u)
+factor discriminant(F,v)
 
 kk = ZZ/32003
 S = kk[u,v]
@@ -1525,30 +1498,32 @@ Hom(oo,oo)
 prune oo
 
 
--- 
+--------------
+-- Examples --
+--------------
 R = QQ[x,y]/(y^2-x^3)
 integralClosure2 R
 icFractions2 R
 icMap2 R
 
-R = QQ[y,x]/(y^2-x^4-x^6)
+R = QQ[y,x]/(y^2-x^4-x^7)
 integralClosure2 R
 icFractions2 R
 icMap2 R
 
 R = QQ[y,x]/(y^4-2*x^3*y^2-4*x^5*y+x^6-x^7)
-R' = integralClosure2 R
+time R' = integralClosure2 R
 icFractions2 R
 icMap2 R
 
-R = ZZ/32003[x,y]/(y^4-2*x^3*y^2-4*x^5*y+x^6-x^7)
-R' = integralClosure2 R
+R = QQ[x,y]/(y^4-2*x^3*y^2-4*x^5*y+x^6-x^7)
+time R' = integralClosure2 R
 icFractions2 R
 icMap2 R
 
 R = ZZ/32003[x,y,z]/(z^3*y^4-2*x^3*y^2*z^2-4*x^5*y*z+x^6*z-x^7)
 isHomogeneous R
-R' = integralClosure2 R
+time R' = integralClosure2 R
 icFractions2 R
 icMap2 R
 
@@ -1561,3 +1536,70 @@ time R' = integralClosure2 R
 ideal R'
 icFractions2 R
 conductor2 icMap2 R -- can't do it since not homogeneous
+
+-- Doug Leonard example ----------------------
+S=ZZ/2[z19,y15,y12,x9,u9,MonomialOrder=>{Weights=>{19,15,12,9,9},Weights=>{12,9,9,9,0},1,2,2}]
+
+I = ideal(
+     y15^2+y12*x9*u9,
+     y15*y12+x9^2*u9+x9*u9^2+y15,
+     y12^2+y15*x9+y15*u9+y12,
+     z19^3+y12*x9^3*u9^2+z19*y15*x9*u9+y15*x9^3*u9+y15*x9^2*u9^2
+       +z19*y12*x9*u9+z19*y15*u9+z19*y12*u9+y12*x9^2*u9)
+
+isHomogeneous I
+R = S/I;
+
+icFractions2 R
+errorDepth=0
+time A = icFracP2 R
+time A = integralClosure2 R;
+
+----------------------------------------------
+-- Another example from Doug Leonard
+S = ZZ/2[z19,y15,y12,x9,u9,MonomialOrder=>{Weights=>{19,15,12,9,9},Weights=>{12,9,9,9,0},1,2,2}]
+I = ideal(y15^3+x9*u9*y15+x9^3*u9^2+x9^2*u9^3,y15^2+y12*x9*u9,z19^3+(y12+y15)*(x9+1)*u9*z19+(y12*(x9*u9+1)+y15*(x9+u9))*x9^2*u9)
+R = S/I
+
+time A = integralClosure2 R;
+
+
+S = ZZ/2[z19,y15,y12,x9,u9,MonomialOrder=>{Weights=>{19,15,12,9,9},Weights=>{12,9,9,9,0},1,2,2}]
+
+I = ideal(
+     y15^2+y12*x9*u9,
+     y15*y12+x9^2*u9+x9*u9^2+y15,
+     y12^2+y15*x9+y15*u9+y12,
+     z19^3+y12*x9^3*u9^2+z19*y15*x9*u9+y15*x9^3*u9+y15*x9^2*u9^2
+       +z19*y12*x9*u9+z19*y15*u9+z19*y12*u9+y12*x9^2*u9)
+
+isHomogeneous I
+R = S/I;
+
+errorDepth=0
+time A = icFracP2 R
+time A = integralClosure2 R;
+icFractions2 R
+----------------------------------------------
+S = ZZ/32003[x,y];
+F = (y^2-3/4*y-15/17)^3-9*y*(y^2-3/4*y-15/17*x)-27*x^11
+R = S/F
+time R' = integralClosure2 R
+factor discriminant(F,y)
+factor discriminant(F,x)
+
+-- bug: 
+R = ZZ/32003[a,b,c]/(a^2-b*c)
+radical ideal(1_R)
+----------------------------------------------
+
+R=ZZ/2[x,y,Weights=>{{8,9},{0,1}}]
+I=ideal(y^8+y^2*x^3+x^9) -- eliminates x and y at some point. 
+
+S=ZZ/2[x,y,Weights=>{{31,12},{0,1}}]
+I=ideal"y12+y11+y10x2+y8x9+x31" -- really long
+R = S/I
+time R'=integralClosure2(R)
+transpose gens ideal S
+
+loadPackage "ReesAlgebra"
