@@ -19,7 +19,7 @@ newPackage(
 -- Do we still need isSinglyGraded?  i.e. is pushForward still a
 -- problem?
    
-export{integralClosure2, idealizer2, nonNormalLocus2, Index2,
+export{integralClosure2, idealizer2, ringFromFractions, nonNormalLocus2, Index2,
 isNormal2, conductor2, icFractions2, icMap2, icFracP2, conductor2Element,
 reportSteps2, icPIdeal2} 
 
@@ -141,9 +141,11 @@ integralClosure1 = (F,G,J,nsteps,varname) -> (
      -- R1 is integrally closed iff target F === target F1
      R0 := target F;
      J = trim J;
+     <<"radical";
      time radJ = trim radical J;  -- ouch
      f := findSmallGen radJ; -- we assume that f is a non-zero divisor!!
      -- Compute Hom_S(radJ,radJ), using f as the common denominator.
+     <<"idlizer";
      time (F0,G0) := idealizer2(radJ, f, Variable => varname, Index2 => nsteps);
      -- These would be correct, except that we want to clean up the
      -- presentation
@@ -183,8 +185,13 @@ idealizer2 (Ideal, RingElement) := o -> (J, f) ->  (
      idJ := mingens(f*J : J);
      if ideal(idJ) == ideal(f) then (
 	  (id_R, map(frac R, frac R, vars frac R))) -- in this case R is isomorphic to Hom(J,J)
-     else(
-     	  H := compress (idJ % f);
+     else(H := compress (idJ % f);
+	  ringFromFractions(H,f,Variable=>o.Variable,Index2=>o.Index2)
+	  )
+     )
+
+
+{*
      	  fractions := apply(first entries H,i->i/f);
      	  Hf := H | matrix{{f}};
 
@@ -219,6 +226,54 @@ idealizer2 (Ideal, RingElement) := o -> (J, f) ->  (
 	  G := map(frac R, frac R1, matrix{fractions} | vars frac R);
 	  (F, G)
 	  )
+*}
+     
+
+ringFromFractions = method(Options=>{Variable => global w, Index2 => 0})
+ringFromFractions (Matrix, RingElement) := o -> (H, f) ->  (
+     -- f is a nonzero divisor in R
+     -- H is a (row) matrix of numerators, elements of R
+     -- Forms the ring R1 = R[H_0/f, H_1/f, ..].
+     -- returns a sequence (F,G), where 
+     --   F : R --> R1 is the natural inclusion
+     --   G : frac R1 --> frac R, 
+     -- optional arguments:
+     --   o.Variable: base name for new variables added, defaults to w
+     --   o.Index2: the first subscript to use for such variables, defaults to 0
+     --   so in the default case, the new variables produced are w_{0,0}, w_{0,1}...
+          R := ring H;
+       	  fractions := apply(first entries H,i->i/f);
+          Hf := H | matrix{{f}};
+     	  -- Make the new polynomial ring.
+     	  n := numgens source H;
+     	  newdegs := degrees source H - toList(n:degree f);
+     	  degs = join(newdegs, (monoid R).Options.Degrees);
+     	  MO := prepend(GRevLex => n, (monoid R).Options.MonomialOrder);
+          kk := coefficientRing R;
+     	  A := kk(monoid [o.Variable_(o.Index2,0)..o.Variable_(o.Index2,n-1), gens R,
+		    MonomialOrder=>MO, Degrees => degs]);
+     	  I := ideal presentation R;
+     	  IA := ideal ((map(A,ring I,(vars A)_{n..numgens R + n-1})) (generators I));
+     	  B := A/IA;
+
+     	  -- Make the linear and quadratic relations
+     	  varsB := (vars B)_{0..n-1};
+     	  RtoB := map(B, R, (vars B)_{n..numgens R + n - 1});
+     	  XX := varsB | matrix{{1_B}};
+     	  -- Linear relations in the new variables
+     	  lins := XX * RtoB syz Hf; 
+     	  -- linear equations(in new variables) in the ideal
+     	  -- Quadratic relations in the new variables
+     	  tails := (symmetricPower(2,H) // f) // Hf;
+     	  tails = RtoB tails;
+     	  quads := matrix(B, entries (symmetricPower(2,varsB) - XX * tails));
+	  both := ideal lins + ideal quads;
+	  R1 := trim (flattenRing (B/both))_0;
+
+     	  -- Now construct the trivial maps
+     	  F := map(R1, R, (vars R1)_{n..numgens R + n - 1});
+	  G := map(frac R, frac R1, matrix{fractions} | vars frac R);
+	  (F, G)
      )
 
 nonNormalLocus2 = method()
