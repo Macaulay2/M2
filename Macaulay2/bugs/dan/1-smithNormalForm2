@@ -1,0 +1,41 @@
+
+i27 : A = matrix "-1,1;1,1;1,1"
+
+o27 = | -1 1 |
+      | 1  1 |
+      | 1  1 |
+
+               3        2
+o27 : Matrix ZZ  <--- ZZ
+
+i28 : smithNormalForm (A)
+
+o28 = (| 2 0 |, | 1 0 -1 |, | -1 0 |)
+       | 0 1 |  | 0 0 1  |  | 1  1 |
+       | 0 0 |  | 0 1 -1 |
+
+o28 : Sequence
+
+i29 : smithNormalForm (A, ChangeMatrix => {true, false})
+
+o29 = (| 2 0 |, | 1 0 -1 |)
+       | 0 1 |  | 0 0 1  |
+       | 0 0 |  | 0 1 -1 |
+
+o29 : Sequence
+
+i30 : smithNormalForm (A, ChangeMatrix => {false, true})
+
+o30 = (| 2 0 |, | -1 0 |)
+       | 0 1 |  | 1  1 |					this normal form doesn't have the right shape!
+
+o30 : Sequence
+
+it must be related to the KeepZeroes option    
+
+i32 : smithNormalForm (A, ChangeMatrix => {false, true}, KeepZeroes => true)
+
+o32 = (| 2 0 |, | -1 0 |)
+       | 0 1 |  | 1  1 |
+
+o32 : Sequence
