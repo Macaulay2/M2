@@ -1,0 +1,8 @@
+
+i24 : printingPrecision = -1
+
+o24 = -1
+
+i25 : net numeric_200 pi
+../get_str.c:1563:  assertion failed: (prec) > 1
+Aborted
