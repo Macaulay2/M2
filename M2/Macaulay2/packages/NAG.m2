@@ -141,13 +141,15 @@ track = method(TypicalValue => List, Options =>{
 	  tDegree=>1,
      	  -- step control
 	  tStep => 0.05, -- initial
-          tStepMin => 1e-2,
+          tStepMin => 1e-6,
 	  stepIncreaseFactor => 2_QQ,
 	  numberSuccessesBeforeIncrease => 4,
 	  -- predictor 
 	  Predictor=>RungeKutta4, 
+	  SLPpredictor=>false, --temp!!!
 	  MultistepDegree => 3, -- used only for Predictor=>Multistep
 	  -- corrector 
+	  SLPcorrector=>false, --temp!!!
 	  finalMaxCorSteps => 11,
 	  maxCorSteps => 3,
 	  -- projectivization
@@ -170,7 +172,9 @@ track (List,List,List) := List => o -> (S,T,solsS) -> (
      error "expected same number of polynomials in start and target systems";
      if any(S, f->ring f =!= R) or any(T, f->ring f =!= R)
      then error "expected all polynomials in the same ring";
-     if o.tStep <= 0 then "expected positive tStep";  
+     if o.tStep <= 0 then error "expected positive tStep";  
+     if (o.Projectivize or o.SLP===null) and (o.SLPpredictor or o.SLPcorrector) 
+     then error "SLPpredictor amd SLPcorrector can be used only with Projectize=false and SLP=!=null"; 
 
      -- PHCpack -------------------------------------------------------
      if o.Software == PHCpack then ( 
@@ -186,8 +190,8 @@ track (List,List,List) := List => o -> (S,T,solsS) -> (
 	             "PHCtargetsols";
 	  batchfile := -- temporaryFileName() | 
 	             "PHCbat";
-          if DBG>=10 then {targetfile, startfile, outfile,
-	       solsSfile, solsTfile, batchfile } / removeFile ;
+          {targetfile, startfile, outfile,
+	       solsSfile, solsTfile, batchfile } / (f->if fileExists f then removeFile f);
 	  -- writing data to the corresponding files                                                                                                                                                                           
      	  if n < numgens R then error "the system is underdetermined";
 	  if n > numgens R then (
@@ -264,6 +268,8 @@ track (List,List,List) := List => o -> (S,T,solsS) -> (
 	  );
      
      -- M2 (main code)  --------------------------------------------------------     
+     setupStartTime := currentTime();
+     
      if n != numgens R then error "expected a square system";
      
      K := CC_53; -- THE coefficient ring
@@ -310,45 +316,93 @@ track (List,List,List) := List => o -> (S,T,solsS) -> (
      Hx := JH_(toList(0..n-1));
      Ht := JH_{n};
      
+     -- evaluation times
+     etH := 0;
+     etHx := 0; 
+     etHt := 0;
      -- evaluation functions
-     if o.SLP === HornerForm or o.SLP === CompiledHornerForm then (
-	  slpMatrix := M -> (
-	       (constMAT, prog) = (if o.SLP === HornerForm then preSLPinterpretedSLP else preSLPcompiledSLP)( numgens ring M, 
-		    stackPreSLPs apply(entries M, row -> concatPreSLPs apply(row, poly2preSLP)) );
+     if o.SLP =!= null then (
+	  toSLP := pre -> (
+	       (constMAT, prog) = (if o.SLP === HornerForm 
+		    then preSLPinterpretedSLP 
+		    else preSLPcompiledSLP) (n+1, pre);
 	       rawSLP(raw constMAT, prog)
 	       );  
-	  slpH := slpMatrix H;
-	  slpHx := slpMatrix Hx;
-	  slpHt := slpMatrix Ht; 	  
+	  preH := prunePreSLP stackPreSLPs apply(entries H, row -> concatPreSLPs apply(row, poly2preSLP));
+	  slpHno := SLPcounter; slpH := toSLP preH; 
+	  slpHxno := SLPcounter; slpHx := toSLP prunePreSLP transposePreSLP jacobianPreSLP(preH,toList (0..n-1));
+	  slpHtno := SLPcounter; slpHt := toSLP prunePreSLP transposePreSLP jacobianPreSLP(preH,{n}); 
 	  fromSlpMatrix := (S,params) -> (
 	       result := rawEvaluateSLP(S, raw params);
 	       lift(map(K, result),K)
 	       );
 	  );
      evalH := (x0,t0)-> (
-	  if o.SLP === HornerForm or o.SLP === CompiledHornerForm then r := transpose fromSlpMatrix(slpH, transpose x0 | matrix {{t0}})
-     	  else if o.SLP === null then  r = lift(sub(transpose H, transpose x0 | matrix {{t0}}), K);
-	  if dPatch === null then r
-	  else r || matrix{{(dPatch*x0)_(0,0)-1}} -- patch equation evaluated  
+	  tr := timing (
+	       if o.SLP =!= null then r := transpose fromSlpMatrix(slpH, transpose x0 | matrix {{t0}})
+     	       else r = lift(sub(transpose H, transpose x0 | matrix {{t0}}), K);
+	       if dPatch === null then r
+	       else r || matrix{{(dPatch*x0)_(0,0)-1}} -- patch equation evaluated  
+	       );
+	  etH = etH + tr#0;
+	  tr#1
 	  );
      evalHxNoPatch := (x0,t0)-> (
-	  if o.SLP === HornerForm or o.SLP === CompiledHornerForm then fromSlpMatrix(slpHx, transpose x0 | matrix {{t0}})
-     	  else if o.SLP === null then lift(sub(Hx, transpose x0 | matrix {{t0}}), K)
-	  else error "unknown SLP option"
+	  if o.SLP =!= null then fromSlpMatrix(slpHx, transpose x0 | matrix {{t0}})
+     	  else lift(sub(Hx, transpose x0 | matrix {{t0}}), K)
 	  );  
-     evalHx := (x0,t0)-> (
-     	  r := evalHxNoPatch(x0,t0);
-	  if dPatch === null then r
-	  else r || matrix { flatten entries dPatch }
+     evalHx := (x0,t0)->( 
+	  tr := timing (
+     	       r := evalHxNoPatch(x0,t0);
+	       if dPatch === null then r
+	       else r || matrix { flatten entries dPatch }
+	       );
+	  etHx = etHx + tr#0;
+	  tr#1
 	  );  
-     evalHt := (x0,t0)-> (
-	  if o.SLP === HornerForm or o.SLP === CompiledHornerForm then r := fromSlpMatrix(slpHt, transpose x0 | matrix {{t0}})
-     	  else if o.SLP === null then r= lift(sub(Ht, transpose x0 | matrix {{t0}}), K);
-	  if dPatch === null then r
-	  else r || matrix {{0_K}}
+     evalHt := (x0,t0)->(
+	  tr := timing (
+	       if o.SLP =!= null then r := fromSlpMatrix(slpHt, transpose x0 | matrix {{t0}})
+     	       else r= lift(sub(Ht, transpose x0 | matrix {{t0}}), K);
+	       if dPatch === null then r
+	       else r || matrix {{0_K}}
+	       );
+	  etHt = etHt + tr#0;
+	  tr#1
 	  );
      evalMinusInverseHxHt := (x0,t0)-> -(inverse evalHx(x0,t0))*evalHt(x0,t0);
      solveHxTimesDXequalsMinusHt := (x0,t0) -> solve(evalHx(x0,t0),-evalHt(x0,t0)); 
+     
+     if o.SLPpredictor then (
+	  slpPred := rawSLP(raw matrix(K,{{}}), {
+		    0, --#constants 
+		    n+2, --#inputs: x,t,dt  
+		    n, --#rows in output: dx
+		    1, --#cols in output
+		    slpPREDICTOR,
+		    ( if o.Predictor === Tangent then predTANGENT
+		    	 else if o.Predictor === RungeKutta4 then predRUNGEKUTTA
+		    	 else error "no slp for the predictor"),
+		    slpHxno,
+		    slpHtno,
+		    slpHno 
+		    });
+	  SLPcounter = SLPcounter + 1;
+	  );
+     if o.SLPcorrector then (
+	  slpCorr := rawSLP(raw matrix(K,{{}}), {
+		    0, --#constants 
+		    n+2, --#inputs: x,t,dt  
+		    2, --#rows in output
+		    n, --#cols in output: x1,dx are ROWS
+		    slpCORRECTOR,
+		    slpHxno,
+		    slpHno, 
+		    o.maxCorSteps,
+		    o.finalMaxCorSteps
+		    });
+	  SLPcounter = SLPcounter + 1;
+	  );
           
      -- threshholds and other tuning parameters (should include most of them as options)
      epsilon := 1e-5; -- tracking tolerance (universal)
@@ -356,9 +410,12 @@ track (List,List,List) := List => o -> (S,T,solsS) -> (
      condNumberThresh := 1e3;
      stepDecreaseFactor := 1/o.stepIncreaseFactor;
      theSmallestNumber := 1e-12;
-      
-     rawSols := apply(solsS, s->(
-	       if DBG > 1 then << "tracking solution " << toString s << endl;
+
+     compStartTime := currentTime();      
+     rawSols := apply(#solsS, sN->(
+	       s := solsS#sN;
+	       if DBG > 0 then << "." << if (sN+1)%100 == 0 then endl else flush;
+	       if DBG > 2 then << "tracking solution " << toString s << endl;
      	       tStep := o.tStep;
 	       predictorSuccesses := 0;
 	       x0 := s; 
@@ -366,11 +423,11 @@ track (List,List,List) := List => o -> (S,T,solsS) -> (
 	       count := 1; -- number of computed points
 	       stepAdj := 0; -- step adjustment number (wrt previous step): 
 	                     -- newstep = oldstep * stepIncreaseFactor^stepAdj  
-	       history := new MutableHashTable from{ count => new MutableHashTable from {
+	       if DBG>1 then history := new MutableHashTable from{ count => new MutableHashTable from {
 			 "t"=>t0,"x"=>x0
 			 } };
 	       while x0 =!= infinity and 1-t0 > theSmallestNumber do (
-		    if DBG > 4 then << "current t = " << t0 << endl;
+		    if DBG > 4 then << "--- current t = " << t0 << endl;
                     -- monitor numerical stability: perhaps change patches if not stable ???
 		    -- Hx0 := evalHx(x0,t0);
 		    -- svd := sort first SVD Hx0;
@@ -389,15 +446,18 @@ track (List,List,List) := List => o -> (S,T,solsS) -> (
 			 if DBG>9 then << "generated" << endl;
 			 );   
 		    if o.Predictor == Tangent then (
-		    	 Hx0 := evalHx(x0,t0);
-			 Ht0 := evalHt(x0,t0);
-	     	    	 invHx0 := inverse Hx0;
-		    	 --invHx0timesHt0 := invHx0*Ht0;
-		    	 -- if norm invHx0timesHt0 > divThresh then (x0 = infinity; break);
-		    	 tStepSafe := 1; -- 1/(norm(Hx0)*norm(invHx0)); -- what is a good heuristic?
-		    	 dt = min(min(tStep,tStepSafe), 1-t0);
-		         --dx = -dt*invHx0timesHt0;
-			 dx = solve(Hx0,-dt*Ht0);
+			 tStepSafe := 1; -- 1/(norm(Hx0)*norm(invHx0)); -- what is a good heuristic?
+			 dt = min(min(tStep,tStepSafe), 1-t0);
+			 if o.SLP =!= null and o.SLPpredictor then (
+			      dxFromSLP := rawEvaluateSLP(slpPred, raw (transpose x0 | matrix {{t0,dt}}));
+			      dx = lift(map(K,dxFromSLP),K);
+			      )
+			 else (
+		    	      Hx0 := evalHx(x0,t0);
+			      Ht0 := evalHt(x0,t0);
+		    	      -- if norm invHx0timesHt0 > divThresh then (x0 = infinity; break);
+			      dx = solve(Hx0,-dt*Ht0);
+			      );
 			 ) 
 		    else if o.Predictor == Euler then (
 			 H0 := evalH(x0,t0);
@@ -423,11 +483,17 @@ track (List,List,List) := List => o -> (S,T,solsS) -> (
 			 --k3 := evalMinusInverseHxHt(x0+.5*k2,t0+.5*dt);
 			 --k4 := evalMinusInverseHxHt(x0+k3,t0+dt);
 			 --dx = (1/6)*(k1+2*k2+2*k3+k4)*dt;     
-			 dx1 := solveHxTimesDXequalsMinusHt(x0,t0);
-			 dx2 := solveHxTimesDXequalsMinusHt(x0+.5*dx1*dt,t0+.5*dt);
-			 dx3 := solveHxTimesDXequalsMinusHt(x0+.5*dx2*dt,t0+.5*dt);
-			 dx4 := solveHxTimesDXequalsMinusHt(x0+dx3*dt,t0+dt);
-			 dx = (1/6)*dt*(dx1+2*dx2+2*dx3+dx4);     
+			 if o.SLP =!= null and o.SLPpredictor then (
+			      dxFromSLP = rawEvaluateSLP(slpPred, raw (transpose x0 | matrix {{t0,dt}}));
+			      dx = lift(map(K,dxFromSLP),K);
+			      )
+			 else (
+			      dx1 := solveHxTimesDXequalsMinusHt(x0,t0);
+			      dx2 := solveHxTimesDXequalsMinusHt(x0+.5*dx1*dt,t0+.5*dt);
+			      dx3 := solveHxTimesDXequalsMinusHt(x0+.5*dx2*dt,t0+.5*dt);
+			      dx4 := solveHxTimesDXequalsMinusHt(x0+dx3*dt,t0+dt);
+			      dx = (1/6)*dt*(dx1+2*dx2+2*dx3+dx4);     
+			      )
 			 )
 		    else if o.Predictor == Multistep then (
      	       	    	 history#count#"rhsODE" = evalMinusInverseHxHt(x0,t0);
@@ -476,7 +542,8 @@ track (List,List,List) := List => o -> (S,T,solsS) -> (
 		    else error "unknown Predictor";
 		    
 		    if DBG > 3 then << "  dt = " << dt << "  dx = " << toString dx << endl;
-		    		    
+		    if DBG > 1 then history#count#"dx" = dx;
+
     	 	    t1 := t0 + dt;
 		    x1 := x0 + dx;
 		    
@@ -484,20 +551,29 @@ track (List,List,List) := List => o -> (S,T,solsS) -> (
 		    if DBG>9 then << ">>> corrector" << endl;
 		    dx = 1; -- dx = + infinity
 		    nCorSteps := 0;
-		    while norm dx > epsilon 
-		          and nCorSteps < (if 1-t1 < theSmallestNumber and dt < o.tStepMin 
-			                   then o.finalMaxCorSteps -- infinity
-			                   else o.maxCorSteps) 
-		    do ( 
-			 if norm x1 > divThresh then (error "infinity"; x1 = infinity; break);
-			 if DBG > 4 then << "x=" << toString x1 << " res=" <<  toString evalH(x1,t1) << " dx=" << dx << endl;
-			 -- dx = - (inverse evalHx(x1,t1))*evalH(x1,t1);
-			 dx = solve(evalHx(x1,t1), -evalH(x1,t1));
-			 x1 = x1 + dx;
-			 nCorSteps = nCorSteps + 1;
+		    if o.SLPcorrector then (
+			 corr'error := rawEvaluateSLP(slpCorr, raw (transpose x1 | matrix {{t1,dt}}));
+			 corr'error = transpose lift(map(K,corr'error),K);
+			 x1 = corr'error_{0};
+			 dx = corr'error_{1};
+			 if DBG > 4 then << "x=" << toString x1 << " res=" <<  toString evalH(x1,t1) << endl << " dx=" << dx << endl;
+			 )
+		    else(
+		    	 while norm dx > epsilon*norm x1 
+			 and nCorSteps < (if 1-t1 < theSmallestNumber and dt <= o.tStepMin 
+			      then o.finalMaxCorSteps -- infinity
+			      else o.maxCorSteps) 
+		    	 do ( 
+			      if norm x1 > divThresh then (error "infinity"; x1 = infinity; break);
+			      dx = solve(evalHx(x1,t1), -evalH(x1,t1));
+			      x1 = x1 + dx;
+			      nCorSteps = nCorSteps + 1;
+			      if DBG > 4 then <<"corrector step " << nCorSteps << endl <<"x=" << toString x1 << " res=" <<  toString evalH(x1,t1) 
+			      << endl << " dx=" << dx << endl;
+			      );
 			 );
 		    if DBG>9 then << ">>> step adjusting" << endl;
-		    if dt > o.tStepMin and nCorSteps == o.maxCorSteps then ( -- predictor failure 
+		    if dt > o.tStepMin and norm dx > epsilon * norm x1 then ( -- predictor failure 
 			 predictorSuccesses = 0;
 			 stepAdj = stepAdj - 1;
 	 	 	 tStep = stepDecreaseFactor*tStep;
@@ -505,11 +581,15 @@ track (List,List,List) := List => o -> (S,T,solsS) -> (
 			 ) 
 		    else ( -- predictor success
 			 predictorSuccesses = predictorSuccesses + 1;
-		         x0 = x1;
+		         -- make an extra corrector step
+			 --dx = solve(evalHx(x1,t1), -evalH(x1,t1));
+			 --x1 = x1 + dx;
+			 -- 
+			 x0 = x1;
 			 if dPatch =!= null then x0 = normalize x0;
 		         t0 = t1;
 			 count = count + 1;
-		         history#count = new MutableHashTable from {"t"=>t0,"x"=>x0,"stepAdj"=>stepAdj};
+		         if DBG>1 then history#count = new MutableHashTable from {"t"=>t0,"x"=>x0,"stepAdj"=>stepAdj};
 			 if nCorSteps <= o.maxCorSteps - 1 -- over 2 / minus 2 ???
               		    and predictorSuccesses >= o.numberSuccessesBeforeIncrease 
 			 then (			      
@@ -521,7 +601,7 @@ track (List,List,List) := List => o -> (S,T,solsS) -> (
 			 else stepAdj = 0; -- keep the same step size
 			 );
 		    );        	    
-	       (x0,symbol nSteps=>count, new HashTable from history)
+	       (x0,symbol nSteps=>count, if DBG>1 then new HashTable from history else "no history")
 	       ));
      
      ret := if o.Projectivize then (
@@ -534,9 +614,16 @@ track (List,List,List) := List => o -> (S,T,solsS) -> (
 	       	    ))
 	  )
      else (
-	  select(rawSols,s -> first s =!= infinity)/(s->(flatten entries first s, s#1))
+	  select(rawSols,s -> first s =!= infinity)/(s->{flatten entries first s} | drop(toList s,1))
 	  );
-     if DBG>=2 then << "Number of solutions = " << #ret << endl << "Average number of steps = " << toRR sum(ret,s->s#1#1)/#ret << endl;
+     if DBG>0 then (
+	  << "Number of solutions = " << #ret << endl << "Average number of steps per path = " << toRR sum(ret,s->s#1#1)/#ret << endl
+     	  << "Evaluation time: Hx = " << etHx << " , Ht = " << etHt << " , H = " << etH << endl;
+	  << "Setup time: " << compStartTime - setupStartTime << endl;
+	  << "Computing time:" << currentTime() - compStartTime << endl; 
+	  if o.SLP === CompiledHornerForm
+	  then << "Hx SLP: " << slpHx << endl << "Ht SLP: " << slpHt << endl << "H SLP: " << slpH << endl;  
+	  );
      ret
      )
 
@@ -1052,18 +1139,28 @@ sortSolutions List := o -> sols -> (
 -- sorts numerical solutions     
      if #sols == 0 then sols
      else (
-     	  n := # first first sols; 
-     	  sorted := {};
-	  scan(sols, s->(
+	  sorted := {0};
+	  scan(#sols-1, s->(
 		    -- find the first element that is "larger";
 		    -- "larger" means the first coord that is not (approx.) equal 
 		    -- has (significantly) larger realPart, if tie then larger imaginaryPart
-		    l := position(sorted, t->isGEQ(first t, first s));
-		    if l === null then sorted = sorted | {s}
-		    else sorted = take(sorted,l) | {s} | drop(sorted,l);
+		    --l := position(sorted, t->isGEQ(first t, first s));
+     	       	    s = s + 1;
+		    t := first sols#s;
+		    l := 0; r := #sorted-1;
+		    if isGEQ(t, first sols#(sorted#r)) then  sorted = sorted | {s}
+		    else if isGEQ(first sols#(sorted#l),t) then  sorted = {s} | sorted 
+		    else (
+		    	 while r-l>0 do (
+			      m := (l+r)//2;
+			      if isGEQ(first sols#(sorted#m), t) then r=m
+			      else l=m+1; 
+			      );
+		    	 sorted = take(sorted,r) | {s} | drop(sorted,r);
+		    	 )
 		    ));      
 	  );
-     	  sorted
+     apply(sorted, i->sols#i)
      )
 
 evalPoly = method(TypicalValue=>CC)
@@ -1102,10 +1199,17 @@ diffSolutions (List,List) := o -> (A,B) -> (
 
 libPREFIX = "/tmp/slpFN.";
 slpCOMPILED = 100;
+slpPREDICTOR = 101;
+slpCORRECTOR = 102;
 slpEND = 0;
 slpCOPY = 1; --"COPY"; -- node positions for slpCOPY commands are absolute
 slpMULTIsum = 2; --"MULTIsum";
 slpPRODUCT = 3; --"PRODUCT";
+
+-- types of predictors
+predRUNGEKUTTA = 1;
+predTANGENT = 2;
+
 shiftConstsSLP = method(TypicalValue=>List);
 shiftConstsSLP (List,ZZ) := (slp,shift) -> apply(slp, 
      n->apply(n, b->
@@ -1237,6 +1341,9 @@ evaluatePreSLP (Sequence,List) := (S,v)-> (
  matrix apply(entries S#2, r->apply(r, e->val#e))
  )
 
+transposePreSLP = method() 
+transposePreSLP(List,List,Matrix) := (C,slp,M) -> (C, slp, transpose M)
+
 jacobianPreSLP = method() -- finds jacobian of S with respect to inputs listed in L
 jacobianPreSLP (Sequence, List) := (S,L) -> (  
      constants := S#0 | {1_CC};
@@ -1316,7 +1423,45 @@ jacobianPreSLP (Sequence, List) := (S,L) -> (
      slp = slp | {{slpCOPY, "const"=>#constants-1}};
      ( constants, slp,  
 	 matrix apply(entries newOut, row->apply(row, i->if i==-1 then (#slp-1) else i)) ) 
-     );
+     )
+
+prunePreSLP = method() -- finds jacobian of S with respect to inputs listed in L
+prunePreSLP (List,List,Matrix) := (C,slp,outMatrix) -> (
+     -- look for duplicate constants
+     newC := {};
+     remap := apply(#C, i->(
+	       p := position(newC,c->C#i==c);
+	       if p =!= null 
+	       then p
+	       else ( 
+		    newC = newC | {C#i};
+		    #newC - 1
+		    )
+	       ));
+     newslp := apply(slp, n->(
+	   k := first n;
+	   if k === slpCOPY then (
+	   	if class n#1 === Option and n#1#0 == "const" then {n#0,"const"=>remap#(n#1#1)}
+		else error "unknown node type"
+		)  
+	   else if k === slpMULTIsum then (
+		{n#0,n#1} | toList apply(2..1+n#1, 
+		     j -> if class n#j === Option and n#j#0 == "const" 
+		     then "const"=>remap#(n#j#1) 
+		     else n#j
+		     )
+	   	)
+	   else if k === slpPRODUCT then (
+		{n#0} | toList apply(1..2, j->
+		     if class n#j === Option and n#j#0 == "const" 
+		     then "const" => remap#(n#j#1)
+		     else n#j
+		     )
+		)
+	   else error "unknown SLP node key"   
+	   ));
+     	  (newC,newslp,outMatrix)
+     )
 
 -- create a file <fn>.cpp with C++ code for the function named fn that evaluates a preSLP S
 -- format:
@@ -1495,8 +1640,13 @@ void complex::sprint(char* s)
 		)
 	   else if k === slpPRODUCT then (
 		scan(1..2, j->(
-			  if class n#j === Option and n#j#0 == "in" 
-			  then f << "a[" << n#j#1 << "]" 
+			  if class n#j === Option then (
+			       if n#j#0 == "in" 
+			       then f << "a[" << n#j#1 << "]"
+			       else if n#j#0 == "const"
+			       then f << "c[" << n#j#1 << "]"
+			       else error "unknown node type"
+			       ) 
 			  else if class n#j === ZZ 
 			  then f << "node[" << i+n#j << "]"
 			  else error "unknown node type";
@@ -1540,14 +1690,17 @@ sub(g, params) - (map(K,result))_(0,0)
 -- SLP = (constants, array of ints)
 -- constants = one-row matrix
 -- array of ints = 
---   #constants
---   #inputs 
---   #rows in output
---   #columns in output
---   #type of program ( or slpINTERPRETED)
+--0   #constants
+--1   #inputs 
+--2   #rows in output
+--3   #columns in output
+--4   #type of program (slpCOMPILED,slpINTERPRETED,slpPREDICTOR)
 --   if COMPILED then {
---     slpCOMPILED
---     dynamic_library_filename: string?
+--5     integer -> used to create the dynamic library filename
+--   }
+--   else if PREDICTOR then {
+--5     predictor type  
+--6+    list of catalog numbers of SLPs for Hx,Ht,H
 --   } else {
 --     list of commands
 --     output matrix entries (numbers of nodes) 
@@ -1559,6 +1712,7 @@ preSLPinterpretedSLP (ZZ,Sequence) := (nIns,S) -> (
      consts := S#0;
      slp := S#1;   
      o := S#2;
+     SLPcounter = SLPcounter + 1;
      curNode = #consts+nIns;
      p = {};
      scan(slp, n->(
@@ -1576,7 +1730,11 @@ preSLPinterpretedSLP (ZZ,Sequence) := (nIns,S) -> (
 	   	)
 	   else if k === slpPRODUCT then (
 		p = p | {slpPRODUCT} | toList apply(1..2, j->(
-          		       if class n#j === Option and n#j#0 == "in" then #consts + n#j#1
+          		       if class n#j === Option then (
+				    if n#j#0 == "in" then #consts + n#j#1
+				    else if n#j#0 == "const" then n#j#1
+				    else error "unknown node type"
+				    ) 
 			       else if class n#j === ZZ then curNode+n#j
 			       else error "unknown node type" 
 			       ))
@@ -1603,7 +1761,7 @@ preSLPcompiledSLP (ZZ,Sequence) := (nIns,S) -> (
      cppName := libPREFIX | toString fname | ".cpp";
      libName := libPREFIX | toString fname | ".dylib";
      preSLPtoCPP(S, cppName);
-     compileCommand := "gcc -dynamiclib -o " | libName | " " | cppName;
+     compileCommand := "gcc -dynamiclib -O3 -o " | libName | " " | cppName;
      print compileCommand;
      run(compileCommand);      
      (map(CC^1,CC^(#consts), {consts}), p)
