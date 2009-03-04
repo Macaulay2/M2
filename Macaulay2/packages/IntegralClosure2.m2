@@ -21,9 +21,17 @@ newPackage(
    
 export{integralClosure2, idealizer2, ringFromFractions, nonNormalLocus2, Index2,
 isNormal2, conductor2, icFractions2, icMap2, icFracP2, conductor2Element,
-reportSteps2, icPIdeal2} 
+reportSteps2, icPIdeal2,
+  canonicalIdeal, 
+  parametersInIdeal,
+  randomMinors,
+  S2ification,
+  endomorphisms, -- will change
+  vasconcelos -- will change
+} 
 
 needsPackage "Elimination"
+needsPackage "ReesAlgebra"
 
 -- PURPOSE : Front end for the integralClosure2 function.  It governs
 --           the iterative process using the helper function
@@ -57,46 +65,6 @@ needsPackage "Elimination"
 --- Should Singh/Swanson be an option to integralClosure2 or its own
 --- program.  Right now it is well documented on its own.  I'm not
 --- sure what is best long term. 
-
-{*
-
--- version that MES has just provided, not in use in 1.2 yet
-integralClosure2 Ring := Ring => o -> (R) -> (
-     -- 1 argument: Quotient ring. 
-     -- 3 options: the variable name for new variables, a limit on the
-     -- number of times to run the recurions and the choice to run
-     -- Singh and Swansons characteristic p algorithm. 
-     -- Return: The quotient ring that is the integral closure of R or
-     -- a set of rings whose direct sum is the integral closure of R.
-     -- Method:  We work primarily with maps to ensure access to key
-     -- information at the end.  This also makes it easier to keep
-     -- track of ring flattenings and the recursion. 
-     (S,phi) := flattenRing R;
-     G := map(frac R, frac S, substitute(phi^-1 vars S, frac R));
-     (newPhi,newG) := mikeIntegralClosureHelper(nonNormalLocus2 S, phi, G, o.Limit, o.Variable, 0);
-     -- newPhi : R --> R', then integral closure
-     -- newG : frac R' --> frac R, an isomorphism
-     -- Let's trim the ring R'
-     R' := target newPhi;
-     R'' := trim R';
-     newPhi = map(R'',R',vars R'') * newPhi;
-     R.icFractions2 = first entries newG.matrix;
-     R.icMap2 = newPhi;
-     target newPhi
-     )
-     
-     (newPhi,newG) := mikeIntegralClosureHelper(nonNormalLocus2 S, phi, G, o.Limit, o.Variable, 0);
-     -- newPhi : R --> R', then integral closure
-     -- newG : frac R' --> frac R, an isomorphism
-     -- Let's trim the ring R'
-     R' := target newPhi;
-     R'' := trim R';
-     newPhi = map(R'',R',vars R'') * newPhi;
-     R.icFractions2 = first entries newG.matrix;
-     R.icMap2 = newPhi;
-     target newPhi
-     )
-*}
 
 integralClosure2 = method(Options=>{
 	  Variable => global w,
@@ -165,6 +133,43 @@ integralClosure1 = (F,G,J,nsteps,varname) -> (
      (F0*F,G*G0*iinvfrac,F0 radJ)
      )
 
+---------------------------------------------------
+-- Support routines, perhaps should be elsewhere --
+---------------------------------------------------
+
+randomMinors = method()
+randomMinors(ZZ,ZZ,Matrix) := (n,d,M) -> (
+     --produces a list of n distinct randomly chosend d x d minors of M
+     r := numrows M;
+     c := numcols M;
+     if d>min(r,c) or 
+        n>max (binomial(r,d), binomial(c,d)) 
+	then error "matrix too small";
+     L := {}; -- L will be a list of minors, specified by the pair of lists "rows" and "cols"
+     dets := {}; -- the list of determinants taken so far
+     rowlist := toList(0..r-1);
+     collist := toList(0..c-1);
+     ds := toList(0..d-1);
+
+     for i from 1 to n do (
+      -- choose a random set of rows and of columns, add it to L 
+      -- only if it doesn't appear already. When a pair is added to L, 
+      -- the corresponding minor is added to "dets"
+       while ( 
+         rows := sort (random rowlist)_ds ;
+         cols := sort (random collist)_ds ;
+         for p in L do (if (rows,cols) == p then break true);
+         false)
+        do();
+       L = L|{(rows,cols)};
+       dets = dets | {det (M^rows_cols)}
+       );
+     dets
+     )
+
+-------------------------------------------
+-- Rings of fractions, finding fractions --
+-------------------------------------------
 findSmallGen = (J) -> (
      a := toList((numgens ring J):1);
      L := sort apply(J_*, f -> ((weightRange(a,f))_1, size f, f));
@@ -191,45 +196,6 @@ idealizer2 (Ideal, RingElement) := o -> (J, f) ->  (
 	  ringFromFractions(H,f,Variable=>o.Variable,Index2=>o.Index2)
 	  )
      )
-
-
-{*
-     	  fractions := apply(first entries H,i->i/f);
-     	  Hf := H | matrix{{f}};
-
-     	  -- Make the new polynomial ring.
-     	  n := numgens source H;
-     	  newdegs := degrees source H - toList(n:degree f);
-     	  degs = join(newdegs, (monoid R).Options.Degrees);
-     	  MO := prepend(GRevLex => n, (monoid R).Options.MonomialOrder);
-          kk := coefficientRing R;
-     	  A := kk(monoid [o.Variable_(o.Index2,0)..o.Variable_(o.Index2,n-1), gens R,
-		    MonomialOrder=>MO, Degrees => degs]);
-     	  I := ideal presentation R;
-     	  IA := ideal ((map(A,ring I,(vars A)_{n..numgens R + n-1})) (generators I));
-     	  B := A/IA;
-
-     	  -- Make the linear and quadratic relations
-     	  varsB := (vars B)_{0..n-1};
-     	  RtoB := map(B, R, (vars B)_{n..numgens R + n - 1});
-     	  XX := varsB | matrix{{1_B}};
-     	  -- Linear relations in the new variables
-     	  lins := XX * RtoB syz Hf; 
-     	  -- linear equations(in new variables) in the ideal
-     	  -- Quadratic relations in the new variables
-     	  tails := (symmetricPower(2,H) // f) // Hf;
-     	  tails = RtoB tails;
-     	  quads := matrix(B, entries (symmetricPower(2,varsB) - XX * tails));
-	  both := ideal lins + ideal quads;
-	  R1 := trim (flattenRing (B/both))_0;
-
-     	  -- Now construct the trivial maps
-     	  F := map(R1, R, (vars R1)_{n..numgens R + n - 1});
-	  G := map(frac R, frac R1, matrix{fractions} | vars frac R);
-	  (F, G)
-	  )
-*}
-     
 
 ringFromFractions = method(Options=>{Variable => global w, Index2 => 0})
 ringFromFractions (Matrix, RingElement) := o -> (H, f) ->  (
@@ -279,6 +245,89 @@ ringFromFractions (Matrix, RingElement) := o -> (H, f) ->  (
 	  G := map(frac R, frac R1, matrix{fractions} | vars frac R);
 	  (F, G)
      )
+
+vasconcelos = method()
+vasconcelos(Ideal,RingElement) := (I,f) -> (
+     --computes generators in frac ring I of
+     --(I^(-1)*I)^(-1) = Hom(I*I^-1, I*I^-1),
+     --which is in general a larger ring than Hom(I,I)
+     --(though in a 1-dim local ring, with a radical ideal I = mm,
+     --they are the same.)
+     --assumes that f is a nonzerodivisor (not necessarily in the conductor).
+     --returns the answer as a sequence (H,f) where
+     --H is a matrix of numerators
+     --f  is the denominator. MUST BE AN ELEMENT OF I.
+     if f%I != 0 then error "Proposed denominator was not in the ideal.";
+     m := presentation module I;
+     n := syz transpose m;
+     J := trim ideal flatten entries n;
+     H1 := ideal(f):J;
+     H := compress ((gens H1) % f);
+     (H,f)
+     )
+
+fInIdeal = (f,I) -> (
+     -- << "warning: fix fInIdeal" << endl;
+     if isHomogeneous I -- really want to say: is the ring local?
+       then f%I == 0
+       else substitute(I:f, ultimate(coefficientRing, ring I)) != 0
+     )
+
+endomorphisms = method()
+endomorphisms(Ideal,RingElement) := (I,f) -> (
+     --computes generators in frac ring I of
+     --Hom(I,I)
+     --assumes that f is a nonzerodivisor.
+     --NOTE: f must be IN THE CONDUCTOR; 
+     --else we get only the intersection of Hom(I,I) and f^(-1)*R.
+     --returns the answer as a sequence (H,f) where
+     --H is a matrix of numerators
+     --f = is the denominator.
+     if not fInIdeal(f,I) then error "Proposed denominator was not in the ideal.";
+     H1 := (f*I):I;
+     H := compress ((gens H1) % f);
+     (H,f)
+     )
+
+///
+load "integralClosure2.m2"
+kk=ZZ/101
+S=kk[a,b,c,d]
+I=monomialCurveIdeal(S, {3,5,6})
+R=S/I
+K = ideal(b,c)
+f=b*d
+vasconcelos(K, f)
+endomorphisms(K, f)
+codim K
+R1=ringFromFractions vasconcelos(K,f)
+R2=ringFromFractions endomorphisms(K,f)
+betti res I -- NOT depth 2.
+integralClosure2 R
+S2ification R
+///
+
+///
+
+restart
+load "integralClosure2.m2"
+kk=ZZ/101
+S=kk[a,b,c,d]
+I=monomialCurveIdeal(S, {3,5,6})
+M=jacobian I
+D = randomMinors(2,2,M)
+R=S/I
+J = trim substitute(ideal D ,R)
+vasconcelos (J, J_0)
+codim((J*((ideal J_0):J)):ideal(J_0))
+endomorphisms (J,J_0)
+vasconcelos (radical J, J_0)
+endomorphisms (radical J,J_0)
+codim J
+syz gens J
+
+///
+
 
 nonNormalLocus2 = method()
 nonNormalLocus2 Ring := (R) -> (
@@ -476,6 +525,135 @@ icPIdeal2 (RingElement, RingElement, ZZ) := Ideal => (a, D, N) -> (
      );
      J
      )
+
+----------------------------------------
+-- Integral closure of ideal -----------
+----------------------------------------
+extendIdeal = (I,f) -> (
+     --input: f: (module I) --> M, a map from an ideal to a module that is isomorphic
+     --to a larger ideal
+     --output: generators of an ideal J isomorphic to M, so that f becomes
+     --the inclusion map.
+     M:=target f;
+     iota:= matrix f;
+     psi:=syz transpose presentation M;
+     beta:=(transpose gens I)//((transpose iota)*psi);
+     trim ideal(psi*beta))
+
+TEST ///
+kk=ZZ/101
+S=kk[a,b,c]
+I =ideal"a3,ac2"
+M = module ideal"a2,ac"
+f=inducedMap(M,module I)
+extendIdeal(I,f)     
+///
+
+integralClosure(Ideal, ZZ) := opts -> (I,D) ->(
+     S:= ring I;
+     z:= local z;
+     w:= local w;
+     Reesi := (flattenRing reesAlgebra(I,Variable =>z))_0;
+     Rbar := integralClosure2(Reesi, Variable => w);
+     zIdeal := ideal(map(Rbar,Reesi))((vars Reesi)_{0..numgens I -1});
+     zIdealD := module zIdeal^D;
+     RbarPlus := ideal(vars Rbar)_{0..numgens Rbar - numgens S-1};
+     RbarPlusD := module RbarPlus^D;
+     gD := matrix inducedMap(RbarPlusD, zIdealD);
+     --     MM=(RbarPlus^D/(RbarPlus^(D+1)));
+     mapback := map(S,Rbar, matrix{{numgens Rbar-numgens S:0_S}}|(vars S));
+     M := coker mapback presentation RbarPlusD;
+     ID := I^D;
+     f := map(M, module ID, mapback gD);
+     extendIdeal(ID,f)
+     )
+integralClosure2(Ideal) := opts -> I -> integralClosure2(I,1)
+
+----------------------------------------
+-- Canonical ideal, S2ification --------
+----------------------------------------
+parametersInIdeal = method()
+
+parametersInIdeal = I ->(
+     --first find a maximal system of parameters in I, that is, a set of
+     --c = codim I elements generating an ideal of codimension c.
+     --assumes ring I is affine. 
+     --routine is probabilistic, often fails over ZZ/2, returns error when it fails.
+     R := ring I;
+     c := codim I;
+     G := sort(gens I, DegreeOrder=>Ascending);
+     s := 0; --  elements of G_{0..s-1} are already a sop (codim s)
+     while s<c do(
+     	  t = s-1; -- elements of G_{0..t} generate an ideal of codim <= s
+     	  --make t maximal with this property, and then add one
+     	  while codim ideal(G_{0..t})<=s and t<rank source G -1 do t=t+1;
+     	  G1 = G_{s..t};
+	  coeffs := random(source G1, R^{-last flatten degrees G1});
+	  lastcoef := lift(last last entries coeffs,ultimate(coefficientRing, R));
+	  coeffs = (1/lastcoef)*coeffs;
+     	  newg := G1*coeffs;
+     	  if s<c-1 then G = G_{0..s-1}|newg|G_{t..rank source G-1}
+	       else G = G_{0..s-1}|newg;
+	  if codim ideal G <s+1 then error ("random coeffs not general enough at step ",s);
+	  s = s+1);
+      ideal G)
+///
+kk=ZZ/5
+S=kk[a,b,c,d]
+PP = monomialCurveIdeal(S,{1,3,4})
+betti res PP
+parametersInIdeal PP
+betti res oo
+///     
+
+canonicalIdeal = method()
+canonicalIdeal Ring := R -> (
+     --find a canonical ideal in R
+     (S,f) := flattenRing R;
+     P := ideal S;
+     J := parametersInIdeal P;
+     Jp := J:P;
+     trim promote(Jp,R)
+     )
+///
+kk=ZZ/101
+S=kk[a,b,c,d]
+canonicalIdeal S
+PP = monomialCurveIdeal(S,{1,3,4})
+betti res PP
+w=canonicalIdeal (S/PP)
+///     
+
+S2ification = method()
+S2ification Ring := R -> (
+     --find the S2-ification of a domain (or more generally a generically Gorenstein ring) R.
+     --    Input: R, an affine ring
+     --    Output: (like "idealizer") a sequence whose 
+     -- first element is a map of rings from R to its S2-ification,
+     --and whose second element is a list of the fractions adjoined 
+     --to obtain the S2-ification.
+     --    Uses the method of Vasconcelos, "Computational Methods..." p. 161, taking the idealizer
+     --of a canonical ideal.
+     --Assumes that first element of canonicalIdeal R is a nonzerodivisor; else returns error.
+     --CAVEAT:
+          --If w_0 turns out to be a zerodivisor
+	  --then we should replace it with a general element of w. But if things
+	  --are multiply graded this might involve finding a degree with maximal heft 
+	  --or some such. How should this be done?? There should be a "general element"
+	  --routine...
+     w := canonicalIdeal R;
+     if ideal(0_R):w_0 == 0 then idealizer(w,w_0)
+     else error"first generator of the canonical ideal was a zerodivisor"
+     )
+
+///
+kk=ZZ/101
+S=kk[a,b,c,d]
+PP = monomialCurveIdeal(S,{1,3,4})
+betti res PP
+integralClosure2(S/PP)
+integralClosure2(target (S2ification(S/PP))_0)
+///     
 
 
 --------------------------------------------------------------------
