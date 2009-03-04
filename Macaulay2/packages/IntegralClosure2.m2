@@ -116,6 +116,7 @@ integralClosure2 Ring := Ring => o -> (R) -> (
      while (
 	  F1 := F;
 	  (F,G,J) = integralClosure1(F1,G,J,nsteps,o.Variable);
+	  << "fractions: " << first entries G.matrix << endl;
 	  nsteps = nsteps + 1;
 	  nsteps < o.Limit and target F1 =!= target F
 	  ) do ();
@@ -141,18 +142,19 @@ integralClosure1 = (F,G,J,nsteps,varname) -> (
      -- R1 is integrally closed iff target F === target F1
      R0 := target F;
      J = trim J;
-     <<"radical";
+     <<"radical" << flush;
      time radJ = trim radical J;  -- ouch
      f := findSmallGen radJ; -- we assume that f is a non-zero divisor!!
      -- Compute Hom_S(radJ,radJ), using f as the common denominator.
-     <<"idlizer";
+     <<"idlizer" << flush;
      time (F0,G0) := idealizer2(radJ, f, Variable => varname, Index2 => nsteps);
      -- These would be correct, except that we want to clean up the
      -- presentation
      R1temp := target F0;
      if R1temp === R0 then return(F,G,radJ);
 
-     R1 := minimalPresentation R1temp;
+     << "minpres" << flush;
+     time R1 := minimalPresentation R1temp;
      i := R1temp.minimalPresentationMap; -- R1temp --> R1
      iinv := R1temp.minimalPresentationMapInv.matrix; -- R1 --> R1temp
      iinvfrac := map(frac R1temp , frac R1, substitute(iinv,frac R1temp));
@@ -182,7 +184,7 @@ idealizer2 (Ideal, RingElement) := o -> (J, f) ->  (
      --   o.Variable: base name for new variables added
      --   o.Index2: the first subscript to use for such variables
      R := ring J;
-     idJ := mingens(f*J : J);
+     time idJ := mingens(f*J : J);
      if ideal(idJ) == ideal(f) then (
 	  (id_R, map(frac R, frac R, vars frac R))) -- in this case R is isomorphic to Hom(J,J)
      else(H := compress (idJ % f);
@@ -242,7 +244,7 @@ ringFromFractions (Matrix, RingElement) := o -> (H, f) ->  (
      --   o.Index2: the first subscript to use for such variables, defaults to 0
      --   so in the default case, the new variables produced are w_{0,0}, w_{0,1}...
           R := ring H;
-       	  fractions := apply(first entries H,i->i/f);
+       	  time fractions := apply(first entries H,i->i/f);
           Hf := H | matrix{{f}};
      	  -- Make the new polynomial ring.
      	  n := numgens source H;
@@ -254,21 +256,23 @@ ringFromFractions (Matrix, RingElement) := o -> (H, f) ->  (
 		    MonomialOrder=>MO, Degrees => degs]);
      	  I := ideal presentation R;
      	  IA := ideal ((map(A,ring I,(vars A)_{n..numgens R + n-1})) (generators I));
-     	  B := A/IA;
+     	  time B := A/IA;
 
      	  -- Make the linear and quadratic relations
      	  varsB := (vars B)_{0..n-1};
      	  RtoB := map(B, R, (vars B)_{n..numgens R + n - 1});
      	  XX := varsB | matrix{{1_B}};
      	  -- Linear relations in the new variables
-     	  lins := XX * RtoB syz Hf; 
+     	  time lins := XX * RtoB syz Hf; 
      	  -- linear equations(in new variables) in the ideal
      	  -- Quadratic relations in the new variables
-     	  tails := (symmetricPower(2,H) // f) // Hf;
+     	  time tails := (symmetricPower(2,H) // f) // Hf;
      	  tails = RtoB tails;
      	  quads := matrix(B, entries (symmetricPower(2,varsB) - XX * tails));
-	  both := ideal lins + ideal quads;
-	  R1 := trim (flattenRing (B/both))_0;
+	  time both := ideal lins + ideal quads;
+	  time gb both;
+	  time Bflat := flattenRing (B/both);
+	  time R1 := trim Bflat_0;
 
      	  -- Now construct the trivial maps
      	  F := map(R1, R, (vars R1)_{n..numgens R + n - 1});
