@@ -1,16 +1,9 @@
--- code to add to IntegralClosure2
--- isS2, isSk, isR1, isNormal
--- S2ification
--- canonicalIdeal (2 versions)
--- ringFromFractions (assumes the fractions form a ring?)
--- parametersInI, vasconcelos, endomorphisms, randomMinors
--- integralClosure Ideal
-
--- Example Leonard1 -----------------------------------------------
+-------------------------------------------------------------------
+-- leonard1
 S = QQ[x,y]
 I = ideal((y^2-y-x/3)^3-y*x^4*(y^2-y-x/3)-x^11);
 R = S/I
-time R' = integralClosure2 R
+R' = integralClosure2 R
 icFractions2 R
 
 -- Example vanHoeij1 ----------------------------------------------
@@ -22,6 +15,7 @@ F = poly"y10+(-2494x2+474)y8+(84366+2042158x4-660492x2)y6
 R = S/F
 time R' = integralClosure2 R
 icFractions2 R
+
 -- Example vanHoeij2 ----------------------------------------------
 S = QQ[x,y]
 F = poly"y20+y13x+x4y5+x3(x+1)2"
