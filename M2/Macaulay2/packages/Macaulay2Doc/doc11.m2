@@ -1,3 +1,4 @@
+-- -*- coding: utf-8 -*-
 --		Copyright 1993-2002 by Daniel R. Grayson
 
 document {
@@ -518,7 +519,8 @@ document {
      PARA {
 	  "The multidegree is defined on page 165 of ", EM "Combinatorial Commutative Algebra", ", by
 	  Miller and Sturmfels, on page 165.  It is an element of the degrees ring of ", TT "M", ".  Our
-	  implementation agrees with their definition provided the heft vector of the ring has every entry equal to 1."
+	  implementation agrees with their definition provided the heft vector of the ring has every entry equal to 1.
+	  See also ", EM "Gröbner geometry of Schubert polynomials", ", by Allen Knutson and Ezra Miller."
 	  },
      EXAMPLE lines ///
      S = QQ[a..d, Degrees => {{2,-1},{1,0},{0,1},{-1,2}}];
