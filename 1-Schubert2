@@ -1,0 +1,88 @@
+From: Michael Stillman <mike.stillman@mac.com>
+To: Dan Grayson <dan@math.uiuc.edu>
+Subject: schubert2
+Date: Thu, 05 Mar 2009 01:49:01 -0500
+
+I talked to Sheldon yesterday, showing him Schubert2.  He hadn't seen  
+it yet.  He asked about the following example.  I'm going to try to  
+figure out if we can do this one now, or not.  (from demo.m2).  I  
+think we can, but I need to figure out the syntax...
+
+----  
+#-------------------------------------------------------------------------
+---- # Riemann-Roch formulas.
+---- # Line bundle O(D) on a threefold.
+---- >
+---- > variety(X,dim=3,tan=sheaf(3,[-K,c2,c3])): # traditionally, -K is
+---- >                                           # used instead of c1
+---- > chi(o(D));
+----                         3          2          2
+----        integral(X, 1/6 D  - 1/4 K D  + (1/12 K  + 1/12 c2) D -  
+1/24 K c2)
+----
+
+
+=============================================================================
+
+From: Michael Stillman <mike.stillman@mac.com>
+To: Dan Grayson <dan@math.uiuc.edu>
+Subject: schubert2
+Date: Thu, 05 Mar 2009 02:02:36 -0500
+
+The example in the last email can almost be done as:
+
+X = base(3, Bundle=>(L,1,D), Bundle=>(T,3,b))
+X.TangentBundle = T
+chern L
+part_3(chi L)
+
+
+Problems:
+(1) He would like to name the first chern class of L to be D, not D_1.
+(2) He would like chern T = 1 - K + c_2 + c_3
+(3) chi L gives elements of degree higher than 3 !  This is a bug, as  
+X has dimension 3.
+
+(1) and (2) are perhaps cosmetic, but perhaps we have the ability to  
+name each chern class now?  I couldn't easily find it.
+
+Perhaps we need a way to introduce generators into the intersection  
+ring of X that have higher degree than 0.  That way we could first  
+define X with these values (and perhaps with whatever relations they  
+satisfy), then we could create the two sheaves afterwords?
+
+Or, once again, maybe we can do this?!
+
+I want to sit down and document what we have so far...  At least the  
+part that won't change.
+
+David E and Joe Harris are working on a book on intersection theory,  
+and they would like to do Schubert2 examples throughout.  I think that  
+this would be great, and that we should improve Schubert2 as much as  
+we can for that.  They plan on working hard on their book this fall  
+(although we can ask them next week what they would need/want from us  
+at various times).
+
+
+=============================================================================
+From: Michael Stillman <mike.stillman@mac.com>
+To: Dan Grayson <dan@math.uiuc.edu>
+Subject: schubert2
+Date: Thu, 05 Mar 2009 02:11:18 -0500
+
+Here is another way to get that formula, although this is perhaps a  
+bit tedious:
+
+A0 = QQ[D,K,c_2,c_3, Degrees => {1,1,2,3}]
+A = A0/truncate(4,ideal vars A0)
+X = abstractVariety(3,A)
+L = OO(D)
+T = abstractSheaf(X,Rank=>3,ChernClass=>1-K+c_2+c_3)
+X.TangentBundle = T
+part_3(todd X * ch L)
+
+
+-- note: chi L fails, as this doesn't know how to compute integral in  
+this case...
+-- this is why I needed to do the last line.
+
