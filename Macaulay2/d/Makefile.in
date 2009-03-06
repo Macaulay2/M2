@@ -96,7 +96,7 @@ SRCFILES += $(HFILES)
 DFILES := 
 DFILES += interp.d
 DFILES += texmacs.d
-DFILES += interface.d
+DFILES += interface2.d interface.d
 ifeq (@PARI@,yes)
 DFILES += pari.d
 pari.oo: CPPFLAGS += -DINCLUDE_PARI_H
