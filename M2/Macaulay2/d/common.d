@@ -224,6 +224,10 @@ export WrongArgString():Expr := WrongArg("a string");
 export WrongArgString(n:int):Expr := WrongArg(n,"a string");
 export WrongArgBoolean():Expr := WrongArg("true or false");
 export WrongArgBoolean(n:int):Expr := WrongArg(n,"true or false");
+export WrongArgMutableMatrix(n:int):Expr := WrongArg(n,"a raw mutable matrix");
+export WrongArgMutableMatrix():Expr := WrongArg("a raw mutable matrix");
+export WrongArgMatrix(n:int):Expr := WrongArg(n,"a raw matrix");
+export WrongArgMatrix():Expr := WrongArg("a raw matrix");
 export ArgChanged(name:string,n:int):Expr := (
      buildErrorPacket(quoteit(name) + " expected argument " + tostring(n)
 	  + " not to change its type during execution"));
