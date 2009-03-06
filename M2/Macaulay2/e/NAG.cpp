@@ -185,7 +185,7 @@ StraightLineProgram_OrNull *StraightLineProgram::make(Matrix *m_consts, M2_array
       res->nodes = newarray_atomic(complex, res->num_consts + res->num_inputs + res->rows_out*res->cols_out);
       char libname[100]; 
       sprintf(libname, "%s%d.dylib", libPREFIX, program->array[5]);
-      char *funname = "slpFN";
+      const char *funname = "slpFN";
       printf("loading slpFN from %s\n", libname);
       res->handle = dlopen(libname, RTLD_LAZY | RTLD_GLOBAL);
       if (res->handle == NULL) ERROR("can't load library %s", libname);
@@ -356,7 +356,7 @@ Matrix *StraightLineProgram::evaluate(const Matrix *values)
   switch(program->array[4]) {
   case slpPREDICTOR:
   case slpCORRECTOR:
-  case slpCOMPILED:
+  case slpCOMPILED: {
     //printf("predictor output: %d by %d\n", rows_out, cols_out);
     complex* c = out; 
     for(i=0; i<rows_out; i++)
@@ -368,6 +368,7 @@ Matrix *StraightLineProgram::evaluate(const Matrix *values)
 	mat.set_entry(i,j,e);
       }
     break;
+  }
   default: //interptretation
     for(i=0; i<rows_out; i++)
       for(int j=0; j<cols_out; j++) {
