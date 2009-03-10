@@ -1,0 +1,28 @@
+change
+
+=============================================================================
+
+Synopsis
+
+    * Usage: installPackage PACKAGENAME
+
+    * Inputs:
+          o PACKAGENAME, a String or Package
+
+	  ...
+to
+
+Synopsis
+
+    * Usage: installPackage "FOO"
+
+    * Inputs:
+          o "FOO", a String
+
+	  ...
+
+=============================================================================
+
+(this is a general problem for high level things that don't have example code,
+because running it would do invasive things to the users system.  We should
+have a way of stashing example output on a node by node basis.)
