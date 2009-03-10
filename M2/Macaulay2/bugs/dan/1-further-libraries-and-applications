@@ -1,6 +1,11 @@
-investigate adding:
+investigate adding (sage includes these):
 
       linbox		    linear algebra
       iml		    
       matplotlib	    2-d plots
       jmol		    3-d plots
+      polybori		    polynomials over boolean rings
+      libm4ri
+      genus2reduction
+      symmetrica
+      gap
