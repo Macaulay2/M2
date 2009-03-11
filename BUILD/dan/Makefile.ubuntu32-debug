@@ -1,0 +1,13 @@
+# -*- Makefile -*-
+DIRECTORY = ubuntu32-debug
+CONFIGOPTIONS += --enable-debug --disable-pthreads
+CONFIGOPTIONS += --enable-python
+CONFIGOPTIONS += --disable-tarfile
+INSTALLOPTIONS += prefix=/usr/local/encap
+DIRECTORY ?= ubuntu32
+include Makefile.include
+arch-chk:; grep -q Ubuntu /etc/issue && [ `uname -m` = i686 ]
+# default:check
+# Local Variables:
+# compile-command: "time make -f Makefile.ubuntu32-debug "
+# End:

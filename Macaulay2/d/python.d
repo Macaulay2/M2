@@ -10,4 +10,4 @@ PyRun(e:Expr):Expr := (
 	  RunSimpleString(s);
 	  nullE)
      else WrongArgString());
-setupfun("RunSimpleString",PyRun);
+setupfun("runSimpleString",PyRun);

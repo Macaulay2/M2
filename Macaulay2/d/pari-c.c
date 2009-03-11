@@ -8,9 +8,15 @@
 #define FALSE 0
 #define TRUE 1
 
+#ifndef PYTHON
 /* for now, we must retain the state, because pari_close_opts will use the wrong gmp memory
    allocation routines to free memory */
 #define RETAIN_PARI_STATE TRUE
+#else
+/* but a related issue is that when linking with python and running sage, it will tend to initialize
+   the pari library itself, and we don't want to interfere with that */
+#define RETAIN_PARI_STATE FALSE
+#endif
 
 #define PARISIZE 1000000
 #define MAXPRIME 0
@@ -26,14 +32,27 @@ void closepari() __attribute__ ((destructor));
 #define CLOSE closepari()
 #endif
 
+static int self_initialized;
+
 void initpari() {
-  assert( sizeof(*gen_0) == sizeof(mp_limb_t) ); /* our routine for direct copying does this one word at a time */
-  pari_init_opts( PARISIZE, MAXPRIME, init_flags);
+  static int firsttime = TRUE;
+  if (gen_0 == NULL) {
+    pari_init_opts( PARISIZE, MAXPRIME, init_flags);
+    self_initialized = TRUE;
+  }
+  if (firsttime) {
+    firsttime = FALSE;
+    assert( sizeof(*gen_0) == sizeof(mp_limb_t) ); /* our routine for direct copying does this one word at a time */
+  }
   enterM2();  /* pari_init sets the memory allocation routines for gmp, so we have to set them back */
 }
 
 void closepari() {
-  pari_close_opts(INIT_DFTm);
+  if (self_initialized) {
+    pari_close_opts(INIT_DFTm);
+    gen_0 = NULL;
+    self_initialized = FALSE;
+  }
 }
 
 #define varsizeof(x,n) (sizeof(*x)+(n-VARLEN)*sizeof(x->el[0]))
