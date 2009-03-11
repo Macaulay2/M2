@@ -1,3 +1,5 @@
+#if 0
+
 William Stein says:
 
 If one wants to use Sage from a C program, e.g., like this (see below), then
@@ -7,14 +9,13 @@ needed. This will also make "sage -python" and "sage -c" faster, since Ipython
 startup takes significant time.
 
 
-/*
+
 sage -sh
 gcc -I$SAGE_LOCAL/include/python2.5 $SAGE_LOCAL/lib/python/config/libpython2.5.a embed.c -o embed; ./embed
 
 See http://docs.python.org/extending/embedding.html
-*/
 
-
+#endif
 #include <Python.h>
 
 int
