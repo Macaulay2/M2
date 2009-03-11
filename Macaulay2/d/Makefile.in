@@ -97,6 +97,10 @@ DFILES :=
 DFILES += interp.d
 DFILES += texmacs.d
 DFILES += interface2.d interface.d
+ifeq (@PYTHON@,yes)
+DFILES += python.d
+CFILES += python-c.c
+endif
 ifeq (@PARI@,yes)
 DFILES += pari.d
 pari.oo: CPPFLAGS += -DINCLUDE_PARI_H
@@ -299,7 +303,7 @@ endif
 M2_OBJECTS += tmp_init.o
 tmp_init.o: tmp_init.c 
 clean::; rm -f tmp_init.c
-tmp_init.c: $(DFILES)
+tmp_init.c: $(DFILES) Makefile
 	echo 'char timestamp[] = __DATE__ ", " __TIME__;' >tmp
 	for i in $(DFILES:.d=) ; do echo "void $${i}__prepare();" ; done >>tmp
 	echo 'int main_inits() {' >>tmp

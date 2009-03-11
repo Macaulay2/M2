@@ -477,6 +477,10 @@ static void call_shared_library() {
 #endif
 }
 
+#ifdef HAVE_PYTHON
+#include <python2.5/Python.h>
+#endif
+
 int Macaulay2_main(argc,argv)
 int argc; 
 char **argv;
@@ -501,6 +505,10 @@ char **argv;
      extern int interp_topLevel();
 
      call_shared_library();
+
+#ifdef HAVE_PYTHON
+     Py_Initialize();
+#endif
 
 #if HAVE_PERSONALITY && !PROFILING
      if (!gotArg("--no-personality", argv)) {

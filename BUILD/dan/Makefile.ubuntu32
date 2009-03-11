@@ -5,6 +5,8 @@
 # CONFIGOPTIONS += --build=i386-pc-linux-gnu
 # CONFIGOPTIONS += --enable-deb
 
+# CONFIGOPTIONS += --enable-python
+
 # DEBUG = 
 # unexport DEBUG
 # PROFILE =
