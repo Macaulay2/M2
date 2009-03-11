@@ -9,3 +9,10 @@ investigate adding (sage includes these):
       genus2reduction
       symmetrica
       gap
+      palp		    lattice polytopes and toric geometry
+      polymake		    polytopes
+      cddlib		    polytopes
+      lrs		    polytopes
+      porta		    polytopes
+      4ti2		    polytopes
+      coin/or		    polytopes
