@@ -320,6 +320,12 @@ if test "$PARI" = yes
 then AC_DEFINE(HAVE_PARI,1,[whether we are linking with the pari library])
 fi
 
+AC_SUBST(PYTHON,no)
+AC_ARG_ENABLE(python, AS_HELP_STRING(--enable-python,[link with libpython]), PYTHON=$enableval)
+if test "$PYTHON" = yes
+then AC_DEFINE(HAVE_PYTHON,1,[whether we are linking with the python library])
+fi
+
 AC_ARG_ENABLE(altivec, AS_HELP_STRING(--enable-altivec,compile with "-faltivec" option))
 if test "$enable_altivec" = yes
 then LDFLAGS="$LDFLAGS -faltivec"
@@ -638,6 +644,12 @@ then if test $BUILD_pari = no
 	  AC_CHECK_HEADER(pari/pari.h,,BUILD_pari=yes)
      fi
      test $BUILD_pari = yes && BUILTLIBS="-lpari $BUILTLIBS"
+fi
+
+if test "$PYTHON" = yes
+then AC_LANG(C)
+     AC_SEARCH_LIBS(Py_Initialize,python2.5,,AC_MSG_ERROR(libpython2.5 not found))
+     AC_CHECK_HEADER(python2.5/Python.h,,AC_MSG_ERROR(include file python2.5/Python.h))
 fi
 
 if test "$FROBBY" = yes
