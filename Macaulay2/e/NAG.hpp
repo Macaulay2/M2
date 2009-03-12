@@ -33,6 +33,141 @@ public:
   void operator =(complex);
   void sprint(char*);
 };
+
+//                                        CONSTRUCTOR
+inline  complex::complex() { }
+
+inline complex::complex(double r)
+{
+  real=r;
+  imag=0;
+}
+
+inline complex::complex(double r, double im)
+{
+  real=r;
+  imag=im;
+}
+ 
+//                                 COPY CONSTRUCTOR
+inline complex::complex(const complex &c)
+{
+  this->real=c.real;
+  this->imag=c.imag;
+}
+ 
+inline complex::complex(M2_CCC mpfrCC)
+{
+  real = mpfr_get_d(mpfrCC->re,GMP_RNDN);
+  imag = mpfr_get_d(mpfrCC->im,GMP_RNDN);
+}
+ 
+inline void complex::operator =(complex c)
+{
+  real=c.real;
+  imag=c.imag;
+}
+ 
+ 
+inline complex complex::operator +(complex c)
+{
+  complex tmp;
+  tmp.real=this->real+c.real;
+  tmp.imag=this->imag+c.imag;
+  return tmp;
+}
+
+inline complex& complex::operator +=(const complex c)
+{
+  this->real+=c.real;
+  this->imag+=c.imag;
+  return *this;
+}
+ 
+inline complex complex::operator -(complex c)
+{
+  complex tmp;
+  tmp.real=this->real - c.real;
+  tmp.imag=this->imag - c.imag;
+  return tmp;
+}
+
+inline complex complex::operator -() const
+{
+  complex tmp;
+  tmp.real=-this->real;
+  tmp.imag=-this->imag;
+  return tmp;
+}
+ 
+inline complex complex::operator *(complex c)
+{
+  complex tmp;
+  tmp.real=(real*c.real)-(imag*c.imag);
+  tmp.imag=(real*c.imag)+(imag*c.real);
+  return tmp;
+}
+ 
+inline complex complex::operator /(complex c)
+{
+  double div=(c.real*c.real) + (c.imag*c.imag);
+  complex tmp;
+  tmp.real=(real*c.real)+(imag*c.imag);
+  tmp.real/=div;
+  tmp.imag=(imag*c.real)-(real*c.imag);
+  tmp.imag/=div;
+  return tmp;
+}
+ 
+inline complex complex::getconjugate()
+{
+  complex tmp;
+  tmp.real=this->real;
+  tmp.imag=this->imag * -1;
+  return tmp;
+}
+ 
+inline complex complex::getreciprocal()
+{
+  complex t;
+  t.real=real;
+  t.imag=imag * -1;
+  double div;
+  div=(real*real)+(imag*imag);
+  t.real/=div;
+  t.imag/=div;
+  return t;
+}
+ 
+inline double complex::getmodulus()
+{
+  double z;
+  z=(real*real)+(imag*imag);
+  z=sqrt(z);
+  return z;
+}
+ 
+inline double complex::getreal()
+{
+  return real;
+}
+ 
+inline double complex::getimaginary()
+{
+  return imag;
+}
+ 
+inline bool complex::operator ==(complex c)
+{
+  return (real==c.real)&&(imag==c.imag) ? 1 : 0;
+}
+
+inline void complex::sprint(char* s)
+{
+  sprintf(s, "(%lf) + i*(%lf)", real, imag);
+}
+
+
 void copy_complex_array(int n, const complex* a, complex* b);
 complex* make_copy_complex_array(int n, const complex* a);
 void multiply_complex_array_scalar(int n, complex* a, const complex b);
@@ -51,6 +186,7 @@ void multiply_complex_array_scalar(int n, complex* a, const complex b);
 // types of predictors
 #define RUNGE_KUTTA 1
 #define TANGENT 2
+#define EULER 3
 
 #define MAX_NUM_SLPs 100
 
@@ -67,6 +203,7 @@ class StraightLineProgram : public object
   void (*compiled_fn)(complex*,complex*);
   long precision;
   clock_t eval_time; // accumulates time spent in evaluation 
+  int n_calls; // number of times called   
 
   StraightLineProgram();
   void predictor(); // evaluates a predictor
