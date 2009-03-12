@@ -11,13 +11,13 @@ S = {x^2-1,y^2-1};
 T = {x^2+y^2-1, x*y};
 solsS = {(1,-1),(1,1),(-1,1),(-1,-1)};
 solsT = track(S,T,solsS, gamma=>1+ii,
-     Predictor=>Tangent,
-     AffinePatches=>DynamicPatch,
+     Software=>M2engine,
+     Projectivize=>false,
+     --Predictor=>Tangent,
+     --Predictor=>Euler,
      --SLP=>CompiledHornerForm 
-     --SLP=>HornerForm
-     SLP=>null
+     SLP=>HornerForm
      )
-solsT/(s->s#1#1) -- number of steps
 sortSolutions solsT/(s->s#0/round)
 
 -- cyclic roots -------------------------------------------------------------
@@ -41,10 +41,9 @@ T = T/(f->sub(f,apply(n, i->R_i=>R_i + i))); -- make it denser
 -- random -------------------------------------------------------------------
 setRandomSeed 0
 T = (randomNFactorialSystem(5,CC))_* -- N = 5
-------------------------------------------------------------------------------
-
--- TRACK -- define T before running this 
 (S,solsS) = totalDegreeStartSystem T;
+
+
 t = currentTime(); M = track(S,T,solsS, 
      --Software=>PHCpack,
      --gamma=>1, -- is in exceptional set

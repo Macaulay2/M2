@@ -6,138 +6,6 @@
 #include <time.h>
 #include "lapack.hpp"
 
-//                                        CONSTRUCTOR
-complex::complex() { }
-
-complex::complex(double r)
-{
-  real=r;
-  imag=0;
-}
-
-complex::complex(double r, double im)
-{
-  real=r;
-  imag=im;
-}
- 
-//                                 COPY CONSTRUCTOR
-complex::complex(const complex &c)
-{
-  this->real=c.real;
-  this->imag=c.imag;
-}
- 
-complex::complex(M2_CCC mpfrCC)
-{
-  real = mpfr_get_d(mpfrCC->re,GMP_RNDN);
-  imag = mpfr_get_d(mpfrCC->im,GMP_RNDN);
-}
- 
-void complex::operator =(complex c)
-{
-  real=c.real;
-  imag=c.imag;
-}
- 
- 
-complex complex::operator +(complex c)
-{
-  complex tmp;
-  tmp.real=this->real+c.real;
-  tmp.imag=this->imag+c.imag;
-  return tmp;
-}
-
-complex& complex::operator +=(const complex c)
-{
-  this->real+=c.real;
-  this->imag+=c.imag;
-  return *this;
-}
- 
-complex complex::operator -(complex c)
-{
-  complex tmp;
-  tmp.real=this->real - c.real;
-  tmp.imag=this->imag - c.imag;
-  return tmp;
-}
-
-complex complex::operator -() const
-{
-  complex tmp;
-  tmp.real=-this->real;
-  tmp.imag=-this->imag;
-  return tmp;
-}
- 
-complex complex::operator *(complex c)
-{
-  complex tmp;
-  tmp.real=(real*c.real)-(imag*c.imag);
-  tmp.imag=(real*c.imag)+(imag*c.real);
-  return tmp;
-}
- 
-complex complex::operator /(complex c)
-{
-  double div=(c.real*c.real) + (c.imag*c.imag);
-  complex tmp;
-  tmp.real=(real*c.real)+(imag*c.imag);
-  tmp.real/=div;
-  tmp.imag=(imag*c.real)-(real*c.imag);
-  tmp.imag/=div;
-  return tmp;
-}
- 
-complex complex::getconjugate()
-{
-  complex tmp;
-  tmp.real=this->real;
-  tmp.imag=this->imag * -1;
-  return tmp;
-}
- 
-complex complex::getreciprocal()
-{
-  complex t;
-  t.real=real;
-  t.imag=imag * -1;
-  double div;
-  div=(real*real)+(imag*imag);
-  t.real/=div;
-  t.imag/=div;
-  return t;
-}
- 
-double complex::getmodulus()
-{
-  double z;
-  z=(real*real)+(imag*imag);
-  z=sqrt(z);
-  return z;
-}
- 
-double complex::getreal()
-{
-  return real;
-}
- 
-double complex::getimaginary()
-{
-  return imag;
-}
- 
-bool complex::operator ==(complex c)
-{
-  return (real==c.real)&&(imag==c.imag) ? 1 : 0;
-}
-
-void complex::sprint(char* s)
-{
-  sprintf(s, "(%lf) + i*(%lf)", real, imag);
-}
  
 // Straiight Line Program class
 
@@ -145,6 +13,7 @@ StraightLineProgram::StraightLineProgram()
 {
   handle = NULL;
   eval_time = 0;
+  n_calls = 0;
 }
 
 StraightLineProgram::~StraightLineProgram()
@@ -184,7 +53,8 @@ StraightLineProgram_OrNull *StraightLineProgram::make(Matrix *m_consts, M2_array
       // nodes = constants + input + output
       res->nodes = newarray_atomic(complex, res->num_consts + res->num_inputs + res->rows_out*res->cols_out);
       char libname[100]; 
-      sprintf(libname, "%s%d.dylib", libPREFIX, program->array[5]);
+      sprintf(libname, "%s%d.dylib", libPREFIX, program->array[5]);//Mac OS
+      //sprintf(libname, "%s%d.so", libPREFIX, program->array[5]);//Linux (not working yet)
       const char *funname = "slpFN";
       printf("loading slpFN from %s\n", libname);
       res->handle = dlopen(libname, RTLD_LAZY | RTLD_GLOBAL);
@@ -265,7 +135,8 @@ void StraightLineProgram::evaluate(int n, const complex* values, complex* ret)
   }
 
   eval_time += clock()-start_t;
-  
+  n_calls++;  
+
   switch(program->array[4]) {
   case slpPREDICTOR:
   case slpCOMPILED:
@@ -345,6 +216,7 @@ Matrix *StraightLineProgram::evaluate(const Matrix *values)
   }
 
   eval_time += clock()-start_t;
+  n_calls++;
 
   const CCC* R = values->get_ring()->cast_to_CCC(); 
   //CCC* R = CCC::create(53); //values->get_ring();
@@ -366,9 +238,8 @@ Matrix *StraightLineProgram::evaluate(const Matrix *values)
 	mpfr_set_d(im, c->getimaginary(), GMP_RNDN);
 	ring_elem e = R->from_BigReals(re,im);
 	mat.set_entry(i,j,e);
-      }
-    break;
-  }
+      } 
+  } break;
   default: //interptretation
     for(i=0; i<rows_out; i++)
       for(int j=0; j<cols_out; j++) {
@@ -386,8 +257,11 @@ Matrix *StraightLineProgram::evaluate(const Matrix *values)
 
 void StraightLineProgram::text_out(buffer& o) const
 {
-  if (program->array[4]=slpCOMPILED) {
-    o << "(SLP is precompiled) " << newline << "Evaluation time = " << eval_time << "/" << CLOCKS_PER_SEC << " sec" << newline;
+  if (program->array[4]==slpCOMPILED) {
+    o << "(SLP is precompiled) " << newline;
+  }
+  if (program->array[4]!=slpPREDICTOR && program->array[4]!=slpCORRECTOR){
+    o << "Called " << n_calls << " times, total evaluation time = " << (eval_time / CLOCKS_PER_SEC) << "." << (eval_time%CLOCKS_PER_SEC) << " sec" << newline;
     return;
   }
   o<<"CONSTANT (count = "<< num_consts;
@@ -487,7 +361,8 @@ double norm2_complex_array(int n, complex* a) // square of 2-norm
   return t;
 }
 
-// lapack solve routine (direct call)
+// lapack solve routine (direct call) 
+// matrix A is transposed
 bool solve_via_lapack(
 		   int size, const complex* A, // size-by-size matrix of complex #s
 		   int bsize, const complex* b, // bsize-by-size RHS of Ax=b 
@@ -544,6 +419,64 @@ bool solve_via_lapack(
 
   deletearray(permutation);
   deletearray(At);
+
+  return ret;
+#endif
+}
+
+// lapack solve routine (direct call) 
+bool solve_via_lapack_without_transposition(
+		   int size, const complex* A, // size-by-size matrix of complex #s
+		   int bsize, const complex* b, // bsize-by-size RHS of Ax=b 
+		   complex* x //solution
+		   )
+{
+
+#if !LAPACK
+  ERROR("lapack not present");
+  return false;
+#else
+
+  bool ret = true;
+  int info;
+
+  int *permutation = newarray_atomic(int, size);
+  int i,j;
+  double *copyA = (double*) A; 
+  copy_complex_array(size,b,x);
+  double *copyb = (double*) x; // result is stored in copyb
+
+  /*
+  printf("-----------(solve)-----------------------------------\ncopyA:\n");
+  for (i=0; i<size*size; i++)
+    printf("(%lf %lf) ", *(copyA+2*i), *(copyA+2*i+1));
+  printf("\nb:\n");
+  for (i=0; i<size; i++)
+    printf("(%lf %lf) ", *(copyb+2*i), *(copyb+2*i+1));
+  */
+  zgesv_(&size, &bsize,
+	 copyA,
+	 &size, permutation, 
+	 copyb,
+	 &size, &info);
+  /*
+  printf("\nx = b:\n");
+  for (i=0; i<size; i++)
+    printf("(%lf %lf) ", *(copyb+2*i), *(copyb+2*i+1));
+  printf("\n");
+  */
+  if (info > 0)       
+    {
+      ERROR("according to zgesv, matrix is singular");
+      ret = false;
+    }
+  else if (info < 0)
+    {
+      ERROR("argument passed to zgesv had an illegal value");
+      ret = false;
+    }
+
+  deletearray(permutation);
 
   return ret;
 #endif
@@ -669,6 +602,234 @@ void StraightLineProgram::corrector()
   deletearray(x1t);
   deletearray(LHS);
   deletearray(RHS);
+}
+
+// this is an engine function
+const MatrixOrNull * rawTrackPaths(StraightLineProgram* slp_pred, StraightLineProgram* slp_corr, const Matrix* start_sols, 
+				   M2_bool is_projective,
+				   M2_RRR init_dt, M2_RRR min_dt, M2_RRR max_dt, 
+				   M2_RRR dt_increase_factor, M2_RRR dt_decrease_factor, int num_successes_before_increase, 
+				   M2_RRR epsilon, int max_corr_steps,
+				   int pred_type)
+{
+  double the_smallest_number = 1e-13;
+  double epsilon2 = mpfr_get_d(epsilon,GMP_RNDN); epsilon2 *= epsilon2; //epsilon^2
+  double t_step = mpfr_get_d(init_dt,GMP_RNDN); // initial step
+  double dt_min_dbl = mpfr_get_d(min_dt,GMP_RNDN);
+  double dt_increase_factor_dbl = mpfr_get_d(dt_increase_factor,GMP_RNDN);
+  double dt_decrease_factor_dbl = mpfr_get_d(dt_decrease_factor,GMP_RNDN);
+  
+  const CCC* R = start_sols->get_ring()->cast_to_CCC(); 
+  int n= start_sols->n_cols();  
+  int n_sols = start_sols->n_rows();
+
+  printf("epsilon2 = %e, t_step = %lf, dt_min_dbl = %lf, dt_increase_factor_dbl = %lf, dt_decrease_factor_dbl = %lf\n", 
+	 epsilon2, t_step, dt_min_dbl, dt_increase_factor_dbl, dt_decrease_factor_dbl);
+
+  // memory distribution for arrays
+  complex* s_sols = newarray(complex,n*n_sols);
+  complex* t_sols = newarray(complex,n*n_sols);
+  complex* x0t0 = newarray(complex,n+1); 
+    complex* x0 =  x0t0;
+    complex* t0 = x0t0+n;
+  complex* x1t1 = newarray(complex,n+1); 
+    complex* x1 =  x1t1;
+    complex* t1 = x1t1+n;
+  complex* dxdt = newarray(complex,n+1); 
+    complex* dx =  dxdt;
+    complex* dt = dxdt+n;
+  complex* Hxt = newarray_atomic(complex, n*(n+1));
+  complex* HxtH = newarray_atomic(complex, n*(n+2));
+  complex* HxH = newarray_atomic(complex, n*(n+1));
+    complex *LHS, *RHS;
+  complex one_half(0.5,0);
+  complex* xt = newarray_atomic(complex,n+1);
+  complex* dx1 = newarray_atomic(complex,n);
+  complex* dx2 = newarray_atomic(complex,n);
+  complex* dx3 = newarray_atomic(complex,n);
+  complex* dx4 = newarray_atomic(complex,n);
+
+  // read solutions: rows are solutions
+  int i,j;
+  complex* c = s_sols;
+  for(i=0; i<n_sols; i++) 
+    for(j=0; j<n; j++,c++) 
+      *c = complex(BIGCC_VAL(start_sols->elem(i,j)));
+				
+  complex* t_s = t_sols; //current target solution
+  complex* s_s = s_sols; //current start solution
+  				
+  for(int sol_n =0; sol_n<n_sols; sol_n++, s_s+=n, t_s+=n) {
+
+    copy_complex_array(n,s_s,x0);
+    *t0 = complex(0,0);
+
+    *dt = complex(t_step);
+    int predictor_successes = 0;
+    int count = 0; // number of computed points
+    bool is_infinity = false;
+    while (!is_infinity && 1 - t0->getreal() > the_smallest_number) {
+      if ( dt->getreal() > 1 - t0->getreal() ) 
+	*dt = complex(1-t0->getreal());
+      
+      //printf("p: dt = %lf\n", dt->getreal()); 
+      
+      // PREDICTOR in: x0t0,dt,pred_type
+      //           out: dx
+      switch(pred_type) {
+      case TANGENT: {
+	slp_pred->evaluate(n+1,x0t0, Hxt);
+	LHS = Hxt; 	
+	RHS = Hxt+n*n; 
+	multiply_complex_array_scalar(n,RHS,-*dt);
+	solve_via_lapack_without_transposition(n,LHS,1,RHS,dx);
+      } break;
+      case EULER: {
+	slp_pred->evaluate(n+1,x0t0, HxtH); // for Euler "H" is attached
+        LHS = HxtH;
+        RHS = HxtH+n*(n+1); // H
+	complex* Ht = RHS-n; 
+	multiply_complex_array_scalar(n,Ht,*dt);
+	add_to_complex_array(n,RHS,Ht);
+	negate_complex_array(n,RHS);
+	solve_via_lapack_without_transposition(n,LHS,1,RHS,dx);
+      } break;
+      case RUNGE_KUTTA: {
+	copy_complex_array(n+1,x0t0,xt);
+	
+	// dx1
+	slp_pred->evaluate(n+1,xt, Hxt);
+	LHS = Hxt; 	
+	RHS = Hxt+n*n; 
+	//
+	negate_complex_array(n,RHS);
+	solve_via_lapack_without_transposition(n,LHS,1,RHS,dx1);
+	
+	// dx2
+	multiply_complex_array_scalar(n,dx1,one_half*(*dt)); 
+	add_to_complex_array(n,xt,dx1); // x0+.5dx1*dt
+	xt[n] += one_half*(*dt); // t0+.5dt
+	//
+	slp_pred->evaluate(n+1,xt, Hxt);
+	LHS = Hxt; 	
+	RHS = Hxt+n*n; 
+	//
+	negate_complex_array(n,RHS);
+	solve_via_lapack_without_transposition(n,LHS,1,RHS,dx2);
+    
+	// dx3
+	multiply_complex_array_scalar(n,dx2,one_half*(*dt));
+	copy_complex_array(n,x0t0,xt); // spare t
+	add_to_complex_array(n,xt,dx2); // x0+.5dx2*dt
+	// xt[n] += one_half*(*dt); // t0+.5dt (SAME)
+	//
+	slp_pred->evaluate(n+1,xt, Hxt);
+	LHS = Hxt; 	
+	RHS = Hxt+n*n; 
+	//
+	negate_complex_array(n,RHS);
+	solve_via_lapack_without_transposition(n,LHS,1,RHS,dx3);
+    
+	// dx4
+	multiply_complex_array_scalar(n,dx3,*dt);
+	copy_complex_array(n+1,x0t0,xt);
+	add_to_complex_array(n,xt,dx3); // x0+dx3*dt
+	xt[n] += *dt; // t0+dt
+	//
+	slp_pred->evaluate(n+1,xt, Hxt);
+	LHS = Hxt; 	
+	RHS = Hxt+n*n; 
+	//
+	negate_complex_array(n,RHS);
+	solve_via_lapack_without_transposition(n,LHS,1,RHS,dx4);
+    
+	// "dx1" = .5*dx1*dt, "dx2" = .5*dx2*dt, "dx3" = dx3*dt
+	multiply_complex_array_scalar(n,dx4,*dt);
+	multiply_complex_array_scalar(n,dx1,2);
+	multiply_complex_array_scalar(n,dx2,4);
+	multiply_complex_array_scalar(n,dx3,2);
+	add_to_complex_array(n,dx4,dx1);
+	add_to_complex_array(n,dx4,dx2);
+	add_to_complex_array(n,dx4,dx3);
+	multiply_complex_array_scalar(n,dx4,1.0/6);
+	copy_complex_array(n,dx4,dx);
+      } break;
+      default: ERROR("unknown predictor"); 
+      };
+
+      copy_complex_array(n+1,x0t0,x1t1);
+      add_to_complex_array(n+1,x1t1,dxdt);
+
+      // CORRECTOR
+      int n_corr_steps=0; 
+      bool is_successful;
+      do {
+	n_corr_steps++;
+	//
+	slp_corr->evaluate(n+1,x1t1, HxH);
+	LHS = HxH; 	
+	RHS = HxH+n*n; // i.e., H
+	//
+	negate_complex_array(n,RHS);
+	solve_via_lapack_without_transposition(n,LHS,1,RHS,dx);
+	add_to_complex_array(n,x1t1,dx);
+	is_successful = norm2_complex_array(n,dx) < epsilon2*norm2_complex_array(n,x1t1);
+	//printf("c: |dx|^2 = %lf\n", norm2_complex_array(n,dx));
+      } while (!is_successful and n_corr_steps<max_corr_steps);
+    
+      if (dt->getreal() > dt_min_dbl && !is_successful) { 
+	// predictor failure 
+	predictor_successes = 0;
+	*dt = complex(dt_decrease_factor_dbl)*(*dt);
+      } else { 
+	// predictor success
+	predictor_successes = predictor_successes + 1;
+	copy_complex_array(n+1, x1t1, x0t0);
+	count++;
+	if (is_successful && predictor_successes >= num_successes_before_increase) { 
+	  predictor_successes = 0;
+	  *dt  = complex(dt_increase_factor_dbl)*(*dt);	
+	}
+      }
+    }
+    copy_complex_array(n,x0,t_s);
+    
+    //printf("(%d)", count); fflush(stdout);
+  }
+  
+  // construct output 
+  FreeModule* S = R->make_FreeModule(n); 
+  FreeModule* T = R->make_FreeModule(n_sols);
+  MatrixConstructor mat(T,S);
+  mpfr_t re, im;
+  mpfr_init(re); mpfr_init(im);
+  c = t_sols;
+  for(i=0; i<n_sols; i++) 
+    for(int j=0; j<n; j++,c++) {
+      mpfr_set_d(re, c->getreal(), GMP_RNDN);
+      mpfr_set_d(im, c->getimaginary(), GMP_RNDN);
+      ring_elem e = R->from_BigReals(re,im);
+      mat.set_entry(i,j,e);
+    }
+  mpfr_clear(re); mpfr_clear(im);
+  
+  // clear arrays
+  deletearray(t_sols);
+  deletearray(s_sols);
+  deletearray(x0t0);
+  deletearray(x1t1);
+  deletearray(dxdt);
+  deletearray(xt);
+  deletearray(dx1);
+  deletearray(dx2);
+  deletearray(dx3);
+  deletearray(dx4);
+  deletearray(Hxt);
+  deletearray(HxtH);
+  deletearray(HxH);
+
+
+  return mat.to_matrix();
 }
 
 // Local Variables:

@@ -22,7 +22,7 @@ export {
      areEqual, sortSolutions, multistepPredictor, multistepPredictorLooseEnd,
      --options
      Software,PHCpack,Bertini,HOM4PS2,M2,
-     gamma,tDegree,tStep,tStepMin,stepIncreaseFactor,numberSuccessesBeforeIncrease,
+     gamma,tDegree,tStep,tStepMin,tStepMax,stepIncreaseFactor,numberSuccessesBeforeIncrease,
      Predictor,RungeKutta4,Multistep,Tangent,Euler,Secant,MultistepDegree,
      finalMaxCorSteps, maxCorSteps, 
      Projectivize,
@@ -142,6 +142,7 @@ track = method(TypicalValue => List, Options =>{
      	  -- step control
 	  tStep => 0.05, -- initial
           tStepMin => 1e-6,
+	  tStepMax => 0.2,
 	  stepIncreaseFactor => 2_QQ,
 	  numberSuccessesBeforeIncrease => 4,
 	  -- predictor 
@@ -152,6 +153,7 @@ track = method(TypicalValue => List, Options =>{
 	  SLPcorrector=>false, --temp!!!
 	  finalMaxCorSteps => 11,
 	  maxCorSteps => 3,
+     	  CorrectorTolerance => 5e-6, -- tracking tolerance (universal)
 	  -- projectivization
 	  Projectivize => true, 
 	  AffinePatches => DynamicPatch,
@@ -175,6 +177,8 @@ track (List,List,List) := List => o -> (S,T,solsS) -> (
      if o.tStep <= 0 then error "expected positive tStep";  
      if (o.Projectivize or o.SLP===null) and (o.SLPpredictor or o.SLPcorrector) 
      then error "SLPpredictor amd SLPcorrector can be used only with Projectize=false and SLP=!=null"; 
+     if o.Software===M2engine and (o.Projectivize or o.SLP===null) 
+     then error "M2engine is implemented for Projectivize=>false and SLP != null";
 
      -- PHCpack -------------------------------------------------------
      if o.Software == PHCpack then ( 
@@ -222,7 +226,9 @@ track (List,List,List) := List => o -> (S,T,solsS) -> (
    	    -- fourth menu
 	    bat << "0" << endl; -- exit for now
 	  close bat;
+     	  compStartTime := currentTime();      
 	  run(PHCexe|" -p <"|batchfile|" >phc_session.log");
+	  if DBG>0 then << "PHCpack computation time: " << currentTime()-compStartTime << endl;
   	  run(PHCexe|" -z "|outfile|" "|solsTfile);
 	  -- parse and output the solutions                                                                                                                                                                                    
 	  result := parseSolutions(solsTfile, newR);
@@ -255,7 +261,9 @@ track (List,List,List) := List => o -> (S,T,solsS) -> (
 	  -- tempdir := temporaryFileName() | "NAG-bertini";
 	  -- mkdir tempdir; 	  
   	  makeBertiniInput(gens R, T, StartSystem=>S, StartSolutions=>solsS, gamma=>o.gamma);
+     	  compStartTime = currentTime();      
   	  run(BERTINIexe);
+	  if DBG>0 then << "Bertini's computation time: " << currentTime()-compStartTime << endl;
 	  result = readSolutionsBertini("raw_solutions");
 	  -- remove Bertini input/output files
     	  for f in {"failed_paths", "nonsingular_solutions",
@@ -329,9 +337,23 @@ track (List,List,List) := List => o -> (S,T,solsS) -> (
 	       rawSLP(raw constMAT, prog)
 	       );  
 	  preH := prunePreSLP stackPreSLPs apply(entries H, row -> concatPreSLPs apply(row, poly2preSLP));
-	  slpHno := SLPcounter; slpH := toSLP preH; 
-	  slpHxno := SLPcounter; slpHx := toSLP prunePreSLP transposePreSLP jacobianPreSLP(preH,toList (0..n-1));
-	  slpHtno := SLPcounter; slpHt := toSLP prunePreSLP transposePreSLP jacobianPreSLP(preH,{n}); 
+	  if o.Software=!=M2engine then (
+	       slpHno := SLPcounter; slpH := toSLP preH; 
+	       slpHxno := SLPcounter; slpHx := toSLP prunePreSLP transposePreSLP jacobianPreSLP(preH,toList (0..n-1));
+	       slpHtno := SLPcounter; slpHt := toSLP prunePreSLP transposePreSLP jacobianPreSLP(preH,{n}); 
+	       ) 
+	  else (
+	       -- take jacobian dH/(dx,dt) and DO NOT transpose
+	       preHxt := jacobianPreSLP(preH,toList (0..n));
+	       slpHxtno := SLPcounter;  
+	       if o.Predictor =!= Euler 
+	       then slpHxt := toSLP prunePreSLP preHxt
+	       else slpHxt = toSLP prunePreSLP (preHxt#0,preHxt#1,preHxt#2||preH#2); -- positions of the entries of H in the jacobian preslp do not change 
+	       -- take jacobian dH/(dx,dt), DO NOT transpose, augment with H
+	       preHx := jacobianPreSLP(preH,toList (0..n-1));
+	       slpHxHno := SLPcounter; slpHxH := toSLP prunePreSLP (preHx#0,preHx#1,
+		    preHx#2||preH#2); -- positions of the entries of H in the jacobian preslp do not change  
+	       );
 	  fromSlpMatrix := (S,params) -> (
 	       result := rawEvaluateSLP(S, raw params);
 	       lift(map(K, result),K)
@@ -404,15 +426,28 @@ track (List,List,List) := List => o -> (S,T,solsS) -> (
 	  SLPcounter = SLPcounter + 1;
 	  );
           
+
      -- threshholds and other tuning parameters (should include most of them as options)
-     epsilon := 1e-5; -- tracking tolerance (universal)
      divThresh := 1e7; 
      condNumberThresh := 1e3;
      stepDecreaseFactor := 1/o.stepIncreaseFactor;
      theSmallestNumber := 1e-12;
 
-     compStartTime := currentTime();      
-     rawSols := apply(#solsS, sN->(
+     compStartTime = currentTime();      
+     
+     rawSols := if o.Software===M2engine then (
+     	  entries map(K,rawTrackPaths(slpHxt, slpHxH, raw matrix apply(solsS,s->first entries transpose s), -- !!! this is counterproductive: have to convert back to list
+	       	    false,
+	       	    o.tStep, o.tStepMin, o.tStepMax, 
+		    toRR(o.stepIncreaseFactor), toRR(stepDecreaseFactor), o.numberSuccessesBeforeIncrease,
+	       	    o.CorrectorTolerance, o.maxCorSteps,
+		    ( -- pred_type:
+			 if o.Predictor === Tangent then predTANGENT
+		    	 else if o.Predictor === RungeKutta4 then predRUNGEKUTTA
+		    	 else if o.Predictor === Euler then predEULER
+		    	 else error "no slp for the predictor")
+		    ))     
+     ) else apply(#solsS, sN->(
 	       s := solsS#sN;
 	       if DBG > 0 then << "." << if (sN+1)%100 == 0 then endl else flush;
 	       if DBG > 2 then << "tracking solution " << toString s << endl;
@@ -559,7 +594,7 @@ track (List,List,List) := List => o -> (S,T,solsS) -> (
 			 if DBG > 4 then << "x=" << toString x1 << " res=" <<  toString evalH(x1,t1) << endl << " dx=" << dx << endl;
 			 )
 		    else(
-		    	 while norm dx > epsilon*norm x1 
+		    	 while norm dx > o.CorrectorTolerance*norm x1 
 			 and nCorSteps < (if 1-t1 < theSmallestNumber and dt <= o.tStepMin 
 			      then o.finalMaxCorSteps -- infinity
 			      else o.maxCorSteps) 
@@ -573,7 +608,7 @@ track (List,List,List) := List => o -> (S,T,solsS) -> (
 			      );
 			 );
 		    if DBG>9 then << ">>> step adjusting" << endl;
-		    if dt > o.tStepMin and norm dx > epsilon * norm x1 then ( -- predictor failure 
+		    if dt > o.tStepMin and norm dx > o.CorrectorTolerance * norm x1 then ( -- predictor failure 
 			 predictorSuccesses = 0;
 			 stepAdj = stepAdj - 1;
 	 	 	 tStep = stepDecreaseFactor*tStep;
@@ -608,21 +643,27 @@ track (List,List,List) := List => o -> (S,T,solsS) -> (
 	  if DBG>3 then print rawSols;
 	  apply(rawSols, s->(
 		    s' = flatten entries first s;
-		    --if norm(last s) < epsilon then infinity 
+		    --if norm(last s) < o.CorrectorTolerance then infinity 
 		    --else 
 		    {apply(drop(s',-1),u->(1/last s')*u)} | drop(toList s, 1)
 	       	    ))
 	  )
      else (
-	  select(rawSols,s -> first s =!= infinity)/(s->{flatten entries first s} | drop(toList s,1))
+	  if o.Software===M2engine then rawSols/(s->{s}) 
+	  else select(rawSols,s -> first s =!= infinity)/(s->{flatten entries first s} | drop(toList s,1))
 	  );
      if DBG>0 then (
-	  << "Number of solutions = " << #ret << endl << "Average number of steps per path = " << toRR sum(ret,s->s#1#1)/#ret << endl
-     	  << "Evaluation time: Hx = " << etHx << " , Ht = " << etHt << " , H = " << etH << endl;
+	  if o.Software=!=M2engine then (
+	       << "Number of solutions = " << #ret << endl << "Average number of steps per path = " << toRR sum(ret,s->s#1#1)/#ret << endl
+     	       << "Evaluation time (M2 measured): Hx = " << etHx << " , Ht = " << etHt << " , H = " << etH << endl;
+	       if o.SLP =!= null
+	       then << "Hx SLP: " << slpHx << endl << "Ht SLP: " << slpHt << endl << "H SLP: " << slpH << endl;  
+	       )
+	  else (
+	       << "Hxt SLP: " << slpHxt << endl << "HxH SLP: " << slpHxH << endl;  
+	       );
 	  << "Setup time: " << compStartTime - setupStartTime << endl;
 	  << "Computing time:" << currentTime() - compStartTime << endl; 
-	  if o.SLP === CompiledHornerForm
-	  then << "Hx SLP: " << slpHx << endl << "Ht SLP: " << slpHt << endl << "H SLP: " << slpH << endl;  
 	  );
      ret
      )
@@ -741,7 +782,7 @@ solveSystem List := List => o -> F -> (
                "singular_solutions", "midpath_data"} do
           if fileExists f then removeFile f;
 	  )
-     else if o.Software == hom4ps2 then (
+     else if o.Software == HOM4PS2 then (
 	  -- newR := coefficientRing R[xx_1..xx_(numgens R)];
 	  (name, p) := makeHom4psInput(R, F);
 	  targetfile = name; --(map(newR, R, gens newR)\F);
@@ -831,7 +872,7 @@ makeHom4psInput (Ring, List) := (R, T) -> (
 --      perm = hashtable of order of appearences of variables in the input
   filename := temporaryFileName() | "input"; 
   s := "{\n";
-  scan(T, p -> s = s | toString p | ";\n");
+  scan(T, p -> s = s | replace("ii", "I", toString p) | ";\n");
   s = s | "}\n";
   f := openOut filename; 
   f << s;
@@ -849,7 +890,7 @@ readSolutionsHom4ps (String, HashTable) := (f,p) -> (
   s := {};
   l := lines get f;
   i := 0; -- line counter
-  while #l#i > 2 do ( -- current line is non-empty	   
+  while substring(2,9,l#i) != "The order" do ( -- current line is non-empty	   
        coords := {};
        while #l#i > 2 do ( -- until an empty line
 	    a := select(separate(" ",  cleanupOutput(l#i)), t->#t>0);
@@ -857,7 +898,7 @@ readSolutionsHom4ps (String, HashTable) := (f,p) -> (
 	    i = i + 1;
        	    );
        if DBG>=10 then << coords << endl;
-       s = s | { apply(#coords, i->coords#(p#i)) };
+       s = s | { {apply(#coords, i->coords#(p#i))} };
        i = i + 4; -- skip to the next solution
        );
   s
@@ -871,7 +912,8 @@ makeBertiniInput (List, List) := o -> (v,T) -> (
 --      o.StartSystem = start system
   f := openOut "input"; -- THE name for Bertini's input file 
   f << "CONFIG" << endl;
-  f << "MPTYPE: 2;" << endl; -- multiprecision
+  --f << "MPTYPE: 2;" << endl; -- multiprecision
+  f << "MPTYPE: 0;" << endl; -- double precision (default?)
   if #o.StartSystem > 0 then
     f << "USERHOMOTOPY: 1;" << endl;
   f << endl << "END;" << endl << endl;
@@ -1209,6 +1251,7 @@ slpPRODUCT = 3; --"PRODUCT";
 -- types of predictors
 predRUNGEKUTTA = 1;
 predTANGENT = 2;
+predEULER = 3;
 
 shiftConstsSLP = method(TypicalValue=>List);
 shiftConstsSLP (List,ZZ) := (slp,shift) -> apply(slp, 
@@ -1494,7 +1537,6 @@ public:
   complex operator /(complex);
   complex getconjugate();
   complex getreciprocal();
-  double getmodulus();
   double getreal();
   double getimaginary();
   bool operator ==(complex);
@@ -1502,30 +1544,28 @@ public:
   void sprint(char*);
 };
 
-//                                        CONSTRUCTOR
-complex::complex() { }
-
-complex::complex(double r, double im)
+inline complex::complex() { }
+inline complex::complex(double r, double im)
 {
   real=r;
   imag=im;
 }
  
 //                                 COPY CONSTRUCTOR
-complex::complex(const complex &c)
+inline complex::complex(const complex &c)
 {
   this->real=c.real;
   this->imag=c.imag;
 }
  
-void complex::operator =(complex c)
+inline void complex::operator =(complex c)
 {
   real=c.real;
   imag=c.imag;
 }
  
  
-complex complex::operator +(complex c)
+inline complex complex::operator +(complex c)
 {
   complex tmp;
   tmp.real=this->real+c.real;
@@ -1533,7 +1573,7 @@ complex complex::operator +(complex c)
   return tmp;
 }
  
-complex complex::operator -(complex c)
+inline complex complex::operator -(complex c)
 {
   complex tmp;
   tmp.real=this->real - c.real;
@@ -1541,7 +1581,7 @@ complex complex::operator -(complex c)
   return tmp;
 }
  
-complex complex::operator *(complex c)
+inline complex complex::operator *(complex c)
 {
   complex tmp;
   tmp.real=(real*c.real)-(imag*c.imag);
@@ -1549,7 +1589,7 @@ complex complex::operator *(complex c)
   return tmp;
 }
  
-complex complex::operator /(complex c)
+inline complex complex::operator /(complex c)
 {
   double div=(c.real*c.real) + (c.imag*c.imag);
   complex tmp;
@@ -1559,8 +1599,7 @@ complex complex::operator /(complex c)
   tmp.imag/=div;
   return tmp;
 }
- 
-complex complex::getconjugate()
+inline complex complex::getconjugate()
 {
   complex tmp;
   tmp.real=this->real;
@@ -1568,7 +1607,7 @@ complex complex::getconjugate()
   return tmp;
 }
  
-complex complex::getreciprocal()
+inline complex complex::getreciprocal()
 {
   complex t;
   t.real=real;
@@ -1580,36 +1619,29 @@ complex complex::getreciprocal()
   return t;
 }
  
-double complex::getmodulus()
-{
-  double z;
-  z=(real*real)+(imag*imag);
-  z=sqrt(z);
-  return z;
-}
- 
-double complex::getreal()
+inline double complex::getreal()
 {
   return real;
 }
  
-double complex::getimaginary()
+inline double complex::getimaginary()
 {
   return imag;
 }
  
-bool complex::operator ==(complex c)
+inline bool complex::operator ==(complex c)
 {
   return (real==c.real)&&(imag==c.imag) ? 1 : 0;
 }
 
-void complex::sprint(char* s)
+inline void complex::sprint(char* s)
 {
   sprintf(s, "(%lf) + i*(%lf)", real, imag);
 }
-/// << endl
-     << ///#define EXPORT __attribute__((visibility("default")))/// <<endl;
-     f << ///extern "C" EXPORT void /// << fn << "(complex* a, complex* b)" << endl  
+/// << endl;
+     if o.System === MacOsX then f << ///#define EXPORT __attribute__((visibility("default")))/// <<endl;
+     if o.System === MacOsX then f << /// extern "C" EXPORT ///;
+     f << "void " << fn << "(complex* a, complex* b)" << endl  
      << "{" << endl 
      << "  complex ii(0,1);" << endl
      << "  complex c[" << #constants << "]; " << endl
@@ -1747,8 +1779,8 @@ preSLPinterpretedSLP (ZZ,Sequence) := (nIns,S) -> (
      (map(CC^1,CC^(#consts), {consts}), p)
      )
 
-preSLPcompiledSLP = method()
-preSLPcompiledSLP (ZZ,Sequence) := (nIns,S) -> (
+preSLPcompiledSLP = method(Options=>{System=>MacOsX})
+preSLPcompiledSLP (ZZ,Sequence) := o -> (nIns,S) -> (
 -- makes input for rawSLP from pre-slp
      consts := S#0;
      slp := S#1;   
@@ -1759,11 +1791,13 @@ preSLPcompiledSLP (ZZ,Sequence) := (nIns,S) -> (
      p = {#consts,nIns,numgens target o, numgens source o} | {slpCOMPILED}
           | { fname }; -- "lib_name" 
      cppName := libPREFIX | toString fname | ".cpp";
-     libName := libPREFIX | toString fname | ".dylib";
+     libName := libPREFIX | toString fname | ".so"; --".dylib";
      preSLPtoCPP(S, cppName);
-     compileCommand := "gcc -dynamiclib -O3 -o " | libName | " " | cppName;
+     compileCommand := if o.System === Linux then"gcc -shared -Wl,-soname," | libName | " -o " | libName | " " | cppName | " -lc -fPIC"
+     else if o.System === MacOsX then "gcc -dynamiclib -O3 -o " | libName | " " | cppName
+     else error "unknown OS";
      print compileCommand;
-     run(compileCommand);      
+     run compileCommand;      
      (map(CC^1,CC^(#consts), {consts}), p)
      )
 

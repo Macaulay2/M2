@@ -1,3 +1,4 @@
+loadPackage "ExampleIdeals"
 example2 = () -> (
      R = CC[s1,s2,g1,g2,C1,C2];
      ideal(
@@ -20,23 +21,6 @@ example1 = () -> (
   	  C1*g1*s1^2+C2*g2*s2^2 - 0.7)
      )
       
-katsura = method()
-katsura ZZ := n -> (
-     if n == 8 then (
-     R := CC[x1,x2,x3,x4,x5,x6,x7,x8,x9];
-     ideal { -x1+2*x9^2+2*x8^2+2*x7^2+2*x6^2+2*x5^2+2*x4^2+2*x3^2+2*x2^2+x1^2,
- 	  -x2+2*x9*x8+2*x8*x7+2*x7*x6+2*x6*x5+2*x5*x4+2*x4*x3+2*x3*x2+2*x2*x1,
- 	  -x3+2*x9*x7+2*x8*x6+2*x7*x5+2*x6*x4+2*x5*x3+2*x4*x2+2*x3*x1+x2^2,
- 	  -x4+2*x9*x6+2*x8*x5+2*x7*x4+2*x6*x3+2*x5*x2+2*x4*x1+2*x3*x2,
- 	  -x5+2*x9*x5+2*x8*x4+2*x7*x3+2*x6*x2+2*x5*x1+2*x4*x2+x3^2,
- 	  -x6+2*x9*x4+2*x8*x3+2*x7*x2+2*x6*x1+2*x5*x2+2*x4*x3,
- 	  -x7+2*x9*x3+2*x8*x2+2*x7*x1+2*x6*x2+2*x5*x3+x4^2,
- 	  -x8+2*x9*x2+2*x8*x1+2*x7*x2+2*x6*x3+2*x5*x4,
- 	  -1+2*x9+2*x8+2*x7+2*x6+2*x5+2*x4+2*x3+2*x2+x1 } 
-     )
-     else null
-     )
-
 stewartGough40real = () -> (
      R := CC[n1,n2,n3,h11,h12,h13,h21,h22,h23];
 ideal { n1^2 + n2^2 + n3^2 - 1,
@@ -107,17 +91,33 @@ randomNFactorialSystem = (n,kk) -> (
      )
 
 randomQuadraticSystem = (n,kk) -> (
-     R = kk[vars(53..n+52)];
+     R := kk[vars(53..n+52)];
      ideal apply(n, i->random(2,R) - 1)
      )
 
 randomSystem = (n,d,kk) -> (
-     R = kk[vars(53..n+52)]; 
+     R := kk[vars(53..n+52)]; 
      ideal apply(n, i->sum(toList(1..d),j->random(j,R)) - 1)
      )
 
 cyclic = (n,kk) -> (
-     R = kk[vars(53..n+52)];
+     R := kk[vars(53..n+52)];
      ideal apply(1..n-1, d-> sum(0..n-1, i -> product(d, k -> R_((i+k)%n)))) 
        + ideal(product gens R - 1))
 
+katsuraBench = n -> (
+     R := CC[vars(53..n+52)];
+     I := katsura(n,CC);
+     (map(R,ring I, vars R)) I
+     )
+
+randomGeneralizedEigenvalueProblem = n -> (
+     R := CC[symbol lambda, vars(53..n+52)];
+     A := sub(matrix randomMutableMatrix(n,n,0.,100), R);
+     B := sub(matrix randomMutableMatrix(n,n,0.,100), R);
+     x := transpose matrix{drop(gens R,1)};
+     T := flatten entries (A*x-R_0*B*x) | {n - 1 - sum flatten entries x};
+     S := apply(n,i->(R_0-exp(ii*i/(2*pi*n)))*(x_(i,0)-1)) | {n - 1 - sum flatten entries x};
+     solsS := apply(n,i->toSequence({exp(ii*i/(2*pi*n))} | toList(i:1) | {0} | toList(n-i-1:1)));
+     (S,T,solsS)
+     )

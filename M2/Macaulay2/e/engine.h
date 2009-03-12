@@ -1878,6 +1878,12 @@ enum gbTraceValues
   const MatrixOrNull *rawEvaluateSLP(StraightLineProgram *SLP, const Matrix *vals);
   M2_string rawStraightLineProgramToString(const StraightLineProgram *); /* connected */
   unsigned long rawStraightLineProgramHash(const StraightLineProgram *); /* connected */
+  const MatrixOrNull *rawTrackPaths(StraightLineProgram* slp_pred, StraightLineProgram* slp_corr, const Matrix* start_sols , 
+				    M2_bool is_projective,
+				    M2_RRR init_dt, M2_RRR min_dt, M2_RRR max_dt, 
+				    M2_RRR dt_increase_factor, M2_RRR dt_decrease_factor, int num_successes_before_increase,
+				    M2_RRR epsilon, int max_corr_steps,
+				    int pred_type);  
 #if defined(__cplusplus)
 }
 #endif

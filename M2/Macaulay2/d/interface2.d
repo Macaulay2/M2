@@ -61,3 +61,53 @@ export rawEvaluateSLP(e:Expr):Expr := (
      );
 setupfun("rawEvaluateSLP",rawEvaluateSLP);
 
+export rawTrackPaths(e:Expr):Expr := (
+     when e is s:Sequence do
+     if length(s) != 13 then WrongNumArgs(13)
+     else when s.0 is slp1:RawStraightLineProgram do 
+     	  when s.1 is slp2:RawStraightLineProgram do
+	  when s.2 is startSols:RawMatrix do
+	  when s.3 is isProj:Boolean do
+	  when s.4 is initDt:RR do
+	  when s.5 is minDt:RR do
+	  when s.6 is maxDt:RR do
+	  when s.7 is dtIncreaseFactor:RR do 
+	  when s.8 is dtDecreeaseFactor:RR do
+	  when s.9 is numSuccessesBeforeIncrease:ZZ do
+	  when s.10 is epsilon:RR do 
+	  when s.11 is maxCorrSteps:ZZ do
+	  when s.12 is predType:ZZ do
+	       toExpr(Ccode(RawMatrixOrNull,
+		    	 "(engine_RawMatrixOrNull)rawTrackPaths(",
+		    	 "(StraightLineProgram *)", slp1, ",",
+		    	 "(StraightLineProgram *)", slp2, ",",
+		    	 "(Matrix *)", startSols,",",
+			 toBoolean(s.3),",",
+			 "(M2_RRR)", initDt,",",
+			 "(M2_RRR)", minDt,",",
+			 "(M2_RRR)", maxDt,",",
+			 "(M2_RRR)", dtIncreaseFactor,",",
+			 "(M2_RRR)", dtDecreeaseFactor,",",
+			 toInt(s.9),",",
+			 "(M2_RRR)", epsilon,",",
+			 toInt(s.11),",",
+			 toInt(s.12),
+		    	 ")"
+		    	 ))
+	  else WrongArgZZ(13)
+	  else WrongArgRR(12)
+	  else WrongArgRR(11)
+	  else WrongArgZZ(10)
+	  else WrongArgRR(9)
+	  else WrongArgRR(8)
+	  else WrongArgRR(7)
+	  else WrongArgRR(6)
+	  else WrongArgRR(5)
+	  else WrongArgBoolean(4)
+	  else WrongArgMatrix(3)
+     	  else WrongArg(2,"a raw straight line program")
+     	  else WrongArg(1,"a raw straight line program")
+     else WrongNumArgs(13)
+     );
+setupfun("rawTrackPaths",rawTrackPaths);
+
