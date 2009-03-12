@@ -5,7 +5,15 @@ path = prepend("../", path)
 loadPackage "Schubert2"
 
 pt = base()
+
 -- # of elliptic cubics on a sextic 4 fold, a schubert-classic example from Rahul:
+-- Enumerative Geometry of Calabi-Yau 4-Folds
+-- Communications in Mathematical Physics
+-- Volume 281, Number 3 / August, 2008
+-- Pages 621-653
+-- Enumerative Geometry of Calabi-Yau 4-Folds
+-- A. Klemm and R. Pandharipande
+
 -- grass(3,6,c):
 Gc = flagBundle({3,3}, pt, VariableNames => {,c})
 (Sc,Qc) = Gc.Bundles
