@@ -1,21 +1,20 @@
 newPackage "Sage"
 loadPackage "Python"
 export { "sage", "plot", "plot3d" }
-runSimpleString "from sage.all import *"
-sage = s -> (
-     if debugLevel > 0 then stderr << "sage command: " << s << endl;
-     runSimpleString s
-     )
+python := s -> (
+     if debugLevel > 1 then stderr << "python command: " << s << endl;
+     runSimpleString s)
+python "from sage.all import *"
 x := local x
 y := local y
 sageRing := QQ[x,y]
-sage "x,y=var('x,y')"
-fix := s -> (
-     s = replace("\\^","**",s);
-     s = replace("/[0-9]+","\\0.",s);
-     s)
+python "x,y=var('x,y')"
+sage = s -> (
+     if debugLevel > 0 then stderr << "sage command: " << s << endl;
+     python concatenate("print(eval(preparse(", format s, ")))")
+     )
 plot = method()
-plot String := s -> sage concatenate ("show(plot(",fix s,"))")
+plot String := s -> sage concatenate ("show(plot(",s,"))")
 plot RingElement := f -> (
      R := ring f;
      if not instance(R,PolynomialRing) then error "expected an element of a polynomial ring";
@@ -23,7 +22,7 @@ plot RingElement := f -> (
      p := map(sageRing,R,{x});
      plot toString p f)
 plot3d = method()
-plot3d String := s -> sage concatenate ("show(plot3d(",fix s,", (x,-4,4),(y,-4,4)))")
+plot3d String := s -> sage concatenate ("show(plot3d(",s,", (x,-4,4),(y,-4,4)))")
 plot3d RingElement := f -> (
      R := ring f;
      if not instance(R,PolynomialRing) then error "expected an element of a polynomial ring";
