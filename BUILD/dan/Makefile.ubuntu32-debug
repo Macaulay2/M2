@@ -1,8 +1,9 @@
 # -*- Makefile -*-
 DIRECTORY = ubuntu32-debug
 CONFIGOPTIONS += --enable-debug --disable-pthreads
-CONFIGOPTIONS += --enable-python
+# CONFIGOPTIONS += --enable-python
 CONFIGOPTIONS += --disable-tarfile
+# CONFIGOPTIONS += LDFLAGS="-L/usr/lib/python2.5/config"
 INSTALLOPTIONS += prefix=/usr/local/encap
 DIRECTORY ?= ubuntu32
 include Makefile.include
