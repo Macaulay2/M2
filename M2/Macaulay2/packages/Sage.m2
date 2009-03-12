@@ -10,7 +10,10 @@ x := local x
 y := local y
 sageRing := QQ[x,y]
 sage "x,y=var('x,y')"
-fix := s -> replace("\\^","**",s)
+fix := s -> (
+     s = replace("\\^","**",s);
+     s = replace("/[0-9]+","\\0.",s);
+     s)
 plot = method()
 plot String := s -> sage concatenate ("show(plot(",fix s,"))")
 plot RingElement := f -> (
