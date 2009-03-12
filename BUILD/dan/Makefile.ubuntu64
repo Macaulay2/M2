@@ -1,5 +1,6 @@
 #-*- Makefile -*-
 CONFIGOPTIONS += --enable-deb
+CONFIGOPTIONS += --enable-python
 INSTALLOPTIONS += prefix=$(HOME)/local/encap
 DIRECTORY = ubuntu64
 include Makefile.include
