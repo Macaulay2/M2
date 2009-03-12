@@ -36,7 +36,7 @@ static int self_initialized;
 
 void initpari() {
   static int firsttime = TRUE;
-  if (gen_0 == NULL && FALSE /* groan */ ) {
+  if (gen_0 == NULL && TRUE /* groan */ ) {
     pari_init_opts( PARISIZE, MAXPRIME, init_flags);
     self_initialized = TRUE;
   }
