@@ -1,6 +1,6 @@
 newPackage "Sage"
 loadPackage "Python"
-export { "sage", "plot", "plot3d" }
+export { "sage", "plot", "plot3d", "implicitPlot" }
 python := s -> (
      if debugLevel > 1 then stderr << "python command: " << s << endl;
      runSimpleString s)
@@ -13,14 +13,16 @@ sage = s -> (
      if debugLevel > 0 then stderr << "sage command: " << s << endl;
      python concatenate("print(eval(preparse(", format s, ")))")
      )
-plot = method()
-plot String := s -> sage concatenate ("show(plot(",s,"))")
-plot RingElement := f -> (
+toSageRing := (f,n) -> (
      R := ring f;
      if not instance(R,PolynomialRing) then error "expected an element of a polynomial ring";
-     if not numgens R == 1 then error "expected an element of a polynomial ring in one variable";
-     p := map(sageRing,R,{x});
-     plot toString p f)
+     if not numgens R == n 
+     then error("expected an element of a polynomial ring in ",toString n," variable(s)");
+     p := map(sageRing,R,take({x,y},n));
+     p f)
+plot = method()
+plot String := s -> sage concatenate ("show(plot(",s,"))")
+plot RingElement := f -> plot toString toSageRing(f,1)
 plot3d = method()
 plot3d String := s -> sage concatenate ("show(plot3d(",s,", (x,-4,4),(y,-4,4)))")
 plot3d RingElement := f -> (
@@ -29,3 +31,11 @@ plot3d RingElement := f -> (
      if not numgens R == 2 then error "expected an element of a polynomial ring in one variable";
      p := map(sageRing,R,{x,y});
      plot3d replace("\\^","**",toString p f))
+implicitPlot = method()
+implicitPlot String := s -> sage concatenate(
+     "show(implicit_plot(",s,",plot_points=100))"
+     )
+implicitPlot RingElement := f -> implicitPlot concatenate(
+     toString toSageRing(f,2),
+     ",(x,-1.5,3),(y,-5,5)"
+     )
