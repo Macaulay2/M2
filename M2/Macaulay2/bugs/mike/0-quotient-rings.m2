@@ -1,3 +1,4 @@
+gbTrace = 3
 S = ZZ/32003[a..d]
 I = ideal random(S^1, S^{5:-8});
 time trim I;
