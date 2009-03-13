@@ -24,6 +24,7 @@ rg = s -> (
 rv = s -> (
      r("tmp = preparse("|format s|")"); 
      v "tmp")
+dir = s -> rg concatenate("dir(", s, ")")
 
 runSimpleString "x=2"
 runSimpleString "print(x)"
@@ -60,7 +61,7 @@ rg "sys.prefix"
 rg "sys.executable"
 
 -- sage
-r "from sage.all import *"
+r "from sage.all import *"				    -- need this
 rg "sage"
 rg "dir(sage)"
 rg "sage.version"
@@ -73,4 +74,13 @@ rv "x=2^100"
 g "x"
 objectType oo
 rv "R.<x,y,z> = QQ[]"
-g "R"
+rg "R"
+rg "plot(sin(x))"
+rv "plot(sin(x))"
+rg "show(plot(sin(x)))"
+rv "I = ideal(x^2,y*z)"
+rg "I"
+rv "G = I.groebner_basis()"
+rg "G"
+objectType oo
+dir "I"
