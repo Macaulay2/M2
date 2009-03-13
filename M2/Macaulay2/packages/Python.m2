@@ -7,6 +7,11 @@ export \\ (s -> currentPackage#"private dictionary"#s = Core#"private dictionary
 export { "pythonHelp" }
 pythonHelp = Command (() -> runString ///help()///)
 
+PythonObject#{Standard,AfterPrint} = x -> (
+     << endl;
+     << concatenate(interpreterDepth:"o") << lineNumber << " : PythonObject of type " << objectType x << endl;
+     )
+
 end
 
 needsPackage "Python"
@@ -15,39 +20,31 @@ rs = s -> (
      runString s)     
 rs "eval(compile( 'd = {}','','single' ),__builtins__) " -- this one includes all the builtins in d
 -- rs "eval(compile( 'd = {}','','single' ),{}) "		-- this one starts over somehow
-r = s -> rs concatenate("eval(compile(",format s,",'','single' ),d)")
-v = var -> rs concatenate("eval(compile(d[",format var,"],'','single' ),d)")
-g = s -> rs concatenate("d[", format s, "]")
-rg = s -> ( 
-     r("tmp = "|s); 
-     g "tmp")
-rv = s -> (
-     r("tmp = preparse("|format s|")"); 
-     v "tmp")
+e = s -> rs concatenate("eval(compile(",s,",'','single' ),d)")
+r = s -> e format s
+v = var -> e concatenate("d[",format var,"]")
+val = s -> rs concatenate("d[", format s, "]")
+rg = s -> ( r("tmp = "|s); val "tmp")
+sage = s -> ( r("tmp = preparse("|format s|")"); v "tmp")
 dir = s -> rg concatenate("dir(", s, ")")
 
 runSimpleString "x=2"
 runSimpleString "print(x)"
 rs "dir()"
 rs "dict"
--- rs "__builtins__"
 rs "__builtins__.keys()"
 rs "help()"
 quit
 rs "d"
 rs "__builtins__['d']"
 r "x=2"
-g "x"
-r "x"
-
+val "x"
 rg "range(2,100)"
 rs "range(2,100)"
-
 -- math
 r "from math import *"
 rg "sin(4.5)"
 rs "d.keys()"
-
 -- module sys
 -- http://docs.python.org/library/sys.html#module-sys
 sysGetObject "subversion"
@@ -55,32 +52,35 @@ sysGetObject "builtin_module_names"
 sysGetObject "copyright"
 r "import sys"
 rg "sys.version"
-rg "sys.modules"
-rg "sys.copyright"
-rg "sys.prefix"
-rg "sys.executable"
-
+r "from sys import *"
+rg "version"
+rg "modules"
+rg "copyright"
+rg "prefix"
+rg "executable"
 -- sage
-r "from sage.all import *"				    -- need this
+r "from sage.all import *"
 rg "sage"
 rg "dir(sage)"
 rg "sage.version"
+rg "version()"
 rg "dir(sage.version)"
 rg "sage.version.version"
 rg "plot"
 rg "preparse"
 rg "preparse('x=1')"
-rv "x=2^100"
-g "x"
+sage "x=2^100"
+val "x"
 objectType oo
-rv "R.<x,y,z> = QQ[]"
+sage "R.<x,y,z> = QQ[]"
 rg "R"
+rg "var('x')"
 rg "plot(sin(x))"
-rv "plot(sin(x))"
+sage "plot(sin(x))"
 rg "show(plot(sin(x)))"
-rv "I = ideal(x^2,y*z)"
+sage "I = ideal(x^2,y*z)"
 rg "I"
-rv "G = I.groebner_basis()"
+val "I"
+sage "G = I.groebner_basis()"
 rg "G"
-objectType oo
 dir "I"
