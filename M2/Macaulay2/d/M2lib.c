@@ -323,6 +323,7 @@ M2_string actors5_timestamp;
 M2_string actors5_GCVERSION;
 M2_string actors5_GMPVERSION;
 M2_string actors5_MysqlVERSION;
+M2_string actors5_PYTHONVERSION;
 M2_string actors5_startupString;
 M2_string actors5_startupFile;
 M2_string actors5_NTLVERSION;
@@ -690,6 +691,13 @@ char **argv;
 	  actors5_GCVERSION = tostring(buf);
 	  }
      actors5_GMPVERSION = tostring(__gmp_version);
+     actors5_PYTHONVERSION = tostring(
+#ifdef HAVE_PYTHON
+         PY_VERSION				      
+#else
+	 "not present"
+#endif
+         );
      actors5_MysqlVERSION = tostring(
 #if USE_MYSQL
          mysql_get_client_info()
