@@ -759,6 +759,9 @@ static void clean_up(void) {
 	  final_list->final();
 	  final_list = final_list->next;
 	  }
+#ifdef HAVE_PYTHON
+     if (Py_IsInitialized()) Py_Finalize();
+#endif
 #    ifndef NDEBUG
      trap();
 #    endif
