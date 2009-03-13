@@ -4,9 +4,9 @@ export { "sage", "plot", "plot3d", "implicitPlot" }
 python0 = s -> (
      if debugLevel > 1 then stderr << "python command: " << s << endl;
      runSimpleString s)
-python0 "dict = {}"
+python0 "sagedict = {}"
 python1 = s -> python0 concatenate(
-     "eval(compile(", s, ",'dummyfile','single'),dict)")
+     "eval(compile(", s, ",'dummyfile','single'),sagedict)")
 python = s -> python1 format s
 python "from sage.all import *"
 python "x,y=var('x,y')"
@@ -15,7 +15,7 @@ y := local y
 sageRing := QQ[x,y]
 sage = s -> (
      python concatenate("s = preparse(",format s,")");
-     python1 "dict['s']";
+     python1 "sagedict['s']";
      )
 toSageRing := (f,n) -> (
      R := ring f;
