@@ -11,10 +11,36 @@ int python_RunSimpleString(M2_string s) {
 
 PyObject *globals, *locals;
 
+static void init() {
+  if (!globals) {
+#if 0    
+    globals = PyEval_GetGlobals(); /* this returns null because no frame is currently executing */
+#elif 1
+    globals = PyDict_New();
+    PyDict_SetItemString(globals, "__builtins__", PyEval_GetBuiltins());
+#else
+    globals = PyDict_New();
+    PyRun_String("import __builtin__ as __builtins__",Py_eval_input, globals, locals);
+#endif
+  }
+}
+
 PyObject *python_RunString(M2_string s) {
   char *t = tocharstar(s);
-  PyObject *ret = PyRun_String(t,0,globals,locals);
+  init();
+  PyObject *ret = PyRun_String(t,Py_eval_input,globals,locals);
   GC_FREE(t);
+  if (PyErr_Occurred()) {
+    fprintf(stderr,"PyErr_Occurred()\n");
+#if 1
+    PyErr_Print();
+    return NULL;
+#else
+    PyObject *type, *value, *traceback;
+    PyErr_Fetch(&type,&value,&traceback);
+    return value;
+#endif
+  }
   return ret;
 }
 
