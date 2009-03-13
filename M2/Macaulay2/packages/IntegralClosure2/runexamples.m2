@@ -1,5 +1,5 @@
 loadPackage "IntegralClosure2"
-readExampleFile = (filename) -> (
+readExampleFile1 = (filename) -> (
      G := separateRegexp("---+", get filename);
      G = apply(G, s -> select(lines s, t -> #t > 0));
      G = select(G, s -> #s > 0);
@@ -20,9 +20,10 @@ runExamples HashTable := (H) -> runExamples(H, sort keys H)
 
 end
 restart
+loadPackage "ExampleIdeals"
 load "runexamples.m2"
-H = readExampleFile "examples1.m2"
+H = readExampleFile1 "examples1.m2"
 runExamples H
-runExamples(H,1)
+runExamples(H,20)
 netList runExamples(H,{1,2,3,4,5,6,7})
 
