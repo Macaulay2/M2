@@ -1,6 +1,6 @@
 newPackage "Sage"
 needsPackage "Python"
-export { "sage", "plot", "plot3d", "implicitPlot", "python" }
+export { "sage", "plot", "plot3d", "implicitPlot" }
 python0 = s -> (
      if debugLevel > 1 then stderr << "python command: " << s << endl;
      runSimpleString s)
