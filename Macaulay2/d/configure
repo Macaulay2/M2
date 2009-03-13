@@ -23,6 +23,8 @@ cat <<EOF >compat.h
 
 #ifdef HAVE_PYTHON
 #include <python2.5/Python.h>
+#else
+#define PyObject_Hash(o) 0
 #endif
 
 #ifdef HAVE_PARI
