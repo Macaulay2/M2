@@ -62,3 +62,8 @@ PyObject *python_SysGetObject(M2_string s) {
   GC_FREE(t);
   return ret;
 }
+
+PyObject *python_ObjectType(PyObject *o) {
+  return PyObject_Type(o);
+}
+

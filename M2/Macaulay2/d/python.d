@@ -26,3 +26,7 @@ setupfun("pythonMain",PyMain);
 import SysGetObject(s:string):pythonObjectOrNull;
 PySysGetObject(e:Expr):Expr := when e is s:string do toExpr(SysGetObject(s)) else WrongArgString();
 setupfun("sysGetObject",PySysGetObject);
+
+import ObjectType(o:pythonObject):pythonObjectOrNull;
+PyObjectType(e:Expr):Expr := when e is o:pythonObject do toExpr(ObjectType(o)) else WrongArg("a python object");
+setupfun("objectType",PyObjectType);
