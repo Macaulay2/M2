@@ -1001,7 +1001,7 @@ tostringfun(e:Expr):Expr := (
 	  -- Expr("<<a python object>>")
 	  str := Ccode(pythonObject,"(tokens_pythonObject)PyObject_Str((PyObject*)",po,")");
 	  r := Expr(Ccode(string,"tostring2(PyString_AS_STRING(",str,"))"));
-	  -- we should decrement the reference count of str here
+	  Ccode(void,"Py_DECREF((PyObject*)",str,")");
 	  r)
      );
 setupfun("simpleToString",tostringfun);
