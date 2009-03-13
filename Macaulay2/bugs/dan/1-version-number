@@ -1,0 +1,6 @@
+add this info to the version table:
+
+    gallium$ svn info | grep URL
+    URL: svn://macaulay2.math.uiuc.edu/Macaulay2/trunk/M2
+    gallium$ svnversion
+    8498:8529M
