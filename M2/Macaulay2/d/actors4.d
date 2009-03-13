@@ -997,7 +997,12 @@ tostringfun(e:Expr):Expr := (
 	  -- Ccode(string, "IM2_MonomialIdeal_to_string((MonomialIdeal*)",x,")" )
 	  )
      is c:RawComputation do Expr(Ccode(string, "(string)IM2_GB_to_string((Computation*)",c,")" ))
-     is po:pythonObject do Expr("<<a python object>>")
+     is po:pythonObject do (
+	  -- Expr("<<a python object>>")
+	  str := Ccode(pythonObject,"(tokens_pythonObject)PyObject_Str((PyObject*)",po,")");
+	  r := Expr(Ccode(string,"tostring2(PyString_AS_STRING(",str,"))"));
+	  -- we should decrement the reference count of str here
+	  r)
      );
 setupfun("simpleToString",tostringfun);
 

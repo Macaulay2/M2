@@ -40,10 +40,12 @@ PyObject *python_RunString(M2_string s) {
     return value;		/* this is not such a great thing to do */
 #endif
   }
+#if 0
   if (ret) {
     PyObject *str = PyObject_Str(ret);
     fprintf(stderr, "runString: %s\n", PyString_AS_STRING(str));
   }
+#endif
   return ret;
 }
 
