@@ -10,7 +10,7 @@ addEndFunction(() -> path = {})
 
 wr := (sep,x) -> wrap(printWidth, sep, net x)
 VisibleList.Wrap = 
-Tally.Wrap = RawMatrix.Wrap = Matrix.Wrap = Ideal.Wrap = RingElement.Wrap = VisibleList.Wrap = Sequence.Wrap = x -> wr("-",x)
+Tally.Wrap = RawMatrix.Wrap = Matrix.Wrap = Ideal.Wrap = RingElement.Wrap = VisibleList.Wrap = Sequence.Wrap = PythonObject.Wrap = x -> wr("-",x)
 String.Wrap = x -> ( x = net x; if height x + depth x <= 3 then wr("",x) else x )
 Net.Wrap = x -> if height x + depth x <= 3 then wr("-",x) else x
 Number.Wrap = x -> wr("",x)
