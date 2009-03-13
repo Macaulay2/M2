@@ -357,6 +357,20 @@ assert( oo == 1/12*n^4+5/3*n^3+125/12*n^2+125/6*n+2 )
 ----                         3          2          2
 ----        integral(X, 1/6 D  - 1/4 K D  + (1/12 K  + 1/12 c2) D - 1/24 K c2)
 ---- 
+
+X = base(3, Bundle=>(L,1,D), Bundle=>(T,3,b))
+X.TangentBundle = T
+chern L
+part_3(chi L)
+
+A0 = QQ[D,K,c_2,c_3, Degrees => {1,1,2,3}]
+A = A0/truncate(4,ideal vars A0)
+X = abstractVariety(3,A)
+L = OO(D)
+T = abstractSheaf(X,Rank=>3,ChernClass=>1-K+c_2+c_3)
+X.TangentBundle = T
+part_3(todd X * ch L)
+
 ---- #-------------------------------------------------------------------------
 ---- # number of bitangents to a plane curve
 ---- > 
