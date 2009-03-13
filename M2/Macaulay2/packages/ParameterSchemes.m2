@@ -66,7 +66,7 @@ standardMonomials(List) := (L) -> (
      apply(L, f -> standardMonomials(degree f, I))
      )
 
-parameterFamily = method(Options=>{Local=>false})
+parameterFamily = method(Options=>{Local=>false, Weights=>null})
 parameterFamily(Ideal,List,Symbol) := opts -> (M,L,t) -> (
      -- M is a monomial ideal
      -- L is a list of lists of monomials, #L is the
@@ -77,6 +77,18 @@ parameterFamily(Ideal,List,Symbol) := opts -> (M,L,t) -> (
      R := ring M;
      kk := coefficientRing R;
      nv := sum apply(L, s -> #s);
+     Mlist := flatten entries gens M;
+     dot := (a,b) -> sum for i from 0 to #a-1 list (a#i * b#i);
+     degs := if opts.Weights =!= null
+       then (
+	  flatten apply(#Mlist, i -> (
+		    m := Mlist_i;
+		    flatten apply(L#i, s -> (
+			      dot(opts.Weights,first exponents m - first exponents s)
+			      ))
+		    ))
+	  );
+     if degs =!= null then if min degs < 0 then error "expected positive weight values";
      if opts.Local then (
          R1 = kk{t_1..t_nv}; -- removed MonomialSize=>8
 	 U = kk[gens R,t_1..t_nv,MonomialOrder=>{
@@ -85,13 +97,14 @@ parameterFamily(Ideal,List,Symbol) := opts -> (M,L,t) -> (
 	 phi = map(U,R1,toList(U_(numgens R) .. U_(nv - 1 + numgens R)));
          )
      else (
-	 R1 = kk[t_1..t_nv]; -- removed MonomialSize=>8
+	 R1 = if opts.Weights === null then 
+	          kk[t_1..t_nv] -- removed MonomialSize=>8
+	      else kk[t_1..t_nv,Degrees=>degs];
      	 U = R1 (monoid R);
 	 U = newRing(U, Join=>false);
 	 phi = map(U,R1);
      );
      lastv := -1;
-     Mlist := flatten entries gens M;
      elems := apply(#Mlist, i -> (
 	       m := Mlist_i;
 	       substitute(m,U) + sum apply(L#i, p -> (
@@ -128,10 +141,10 @@ pruneParameterScheme(Ideal,Ideal) := (J,F) -> (
      (J1, phi' F)
      )
 
-groebnerScheme = method(Options=>{Minimize=>true})
+groebnerScheme = method(Options=>{Minimize=>true, Weights=>null})
 groebnerScheme Ideal := opts -> (I) -> (
      L1 := smallerMonomials I;
-     F0 := parameterFamily(I,L1,symbol t);
+     F0 := parameterFamily(I,L1,symbol t,Weights=>opts.Weights);
      J0 := parameterIdeal(I,F0);
      if opts.Minimize then
        (J0,F0) = pruneParameterScheme(J0,F0);

@@ -19,6 +19,13 @@ export {
      box,
      example,
 
+     toSingular,
+     singularGB,
+     
+     toMagma,
+     runSingularGB,
+     runMagmaGB,
+
      examplesStdSingular,
      examplesDGP,
      examplesSIN,
@@ -278,6 +285,15 @@ toSingular Ideal := (I) -> (
      a | g | ";\n"
      )
 
+singularGB =
+     ///
+     int ti=rtimer;
+     ideal J=groebner(@I@);
+     int ti2=rtimer-ti;
+     print("time used"); print(ti2);
+     print(size(J));
+     ///
+
 runSingularGB = method()
 runSingularGB Ideal := (I) -> (
      "foo" << "rtimer=1;\n"
@@ -288,7 +304,7 @@ runSingularGB Ideal := (I) -> (
      << "print(\"time used\"); print(ti2);\n"
      << "print(size(J));\n"
      << "exit(ti2);\n" << close;
-     run "/sw/bin/Singular <foo"
+     run "sage -singular <foo"
      )
 toMagma = method()
 toMagma Ring := (R) -> (
@@ -320,6 +336,15 @@ loadPackage "ExampleIdeals"
 debug ExampleIdeals
 R = ZZ/101[a..d]
 I = ideal random(R^1, R^{-2,-2})
+
+s = concatenate between("\n",{toSingular ring I,
+     toSingular I,
+     replace(singularGB, "@I@", "I"})
+
+"!/sw/bin/Singular" << s << close
+
+
+
 print toSingular R
 print toSingular I
 runMagmaGB I

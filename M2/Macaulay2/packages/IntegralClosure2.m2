@@ -1,3 +1,11 @@
+-- next in the todo list:
+--  add option for verbosity
+--  better test for integrally-closed-ness
+--    codim of singular locus? possibly by randomMinors
+--  incorporate 'vasconcelos', or at least try this
+--  canonical ideal: 2 versions, 
+--  incorporate S2ification into integralClosure
+
 newPackage(
 	"IntegralClosure2",
     	Version => "0.9", 
