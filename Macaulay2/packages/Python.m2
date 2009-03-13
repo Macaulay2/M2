@@ -1,7 +1,7 @@
 newPackage "Python"
 
 export \\ (s -> currentPackage#"private dictionary"#s = Core#"private dictionary"#s) \ {
-     "runSimpleString", "PythonObject", "runString"
+     "runSimpleString", "PythonObject", "runString", "sysGetObject"
      }
 
 export { "pythonHelp" }
@@ -11,10 +11,11 @@ end
 
 needsPackage "Python"
 runString "eval(compile( 'd = {}','','single' ),__builtins__) " -- this one includes all the builtins in d
-runString "eval(compile( 'd = {}','','single' ),{}) "		-- this one starts over somehow
+-- runString "eval(compile( 'd = {}','','single' ),{}) "		-- this one starts over somehow
 r = s -> runString concatenate("eval(compile(",format s,",'','single' ),d)")
 g = s -> runString concatenate("d[", format s, "]")
 r "from math import *"
+
 runString "d.keys()"
 
 runSimpleString "x=2"
@@ -33,3 +34,6 @@ r "x"
 r "tmp = sin(4.5)"
 g "tmp"
 runString "range(2,100)"
+sysGetObject "subversion"
+sysGetObject "builtin_module_names"
+sysGetObject "copyright"

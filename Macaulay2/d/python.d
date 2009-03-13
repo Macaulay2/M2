@@ -22,3 +22,7 @@ setupfun("runString",PyRunString);
 import Main():int;
 PyMain(e:Expr):Expr := toExpr(Main());
 setupfun("pythonMain",PyMain);
+
+import SysGetObject(s:string):pythonObjectOrNull;
+PySysGetObject(e:Expr):Expr := when e is s:string do toExpr(SysGetObject(s)) else WrongArgString();
+setupfun("sysGetObject",PySysGetObject);

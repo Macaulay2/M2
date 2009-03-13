@@ -55,3 +55,10 @@ int python_Main() {
   static int argc = 1;
   return Py_Main(argc,argv);
 }
+
+PyObject *python_SysGetObject(M2_string s) {
+  char *t = tocharstar(s);
+  PyObject *ret = PySys_GetObject(t);
+  GC_FREE(t);
+  return ret;
+}
