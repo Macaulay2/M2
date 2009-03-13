@@ -1,5 +1,5 @@
 newPackage "Sage"
-loadPackage "Python"
+needsPackage "Python"
 export { "sage", "plot", "plot3d", "implicitPlot", "python" }
 python0 = s -> (
      if debugLevel > 1 then stderr << "python command: " << s << endl;
@@ -9,10 +9,10 @@ python1 = s -> python0 concatenate(
      "eval(compile(", s, ",'dummyfile','single'),dict)")
 python = s -> python1 format s
 python "from sage.all import *"
+python "x,y=var('x,y')"
 x := local x
 y := local y
 sageRing := QQ[x,y]
-python "x,y=var('x,y')"
 sage = s -> (
      python concatenate("s = preparse(",format s,")");
      python1 "dict['s']";
@@ -29,17 +29,7 @@ plot String := s -> sage concatenate ("plot(",s,")")
 plot RingElement := f -> plot toString toSageRing(f,1)
 plot3d = method()
 plot3d String := s -> sage concatenate ("plot3d(",s,", (x,-4,4),(y,-4,4))")
-plot3d RingElement := f -> (
-     R := ring f;
-     if not instance(R,PolynomialRing) then error "expected an element of a polynomial ring";
-     if not numgens R == 2 then error "expected an element of a polynomial ring in one variable";
-     p := map(sageRing,R,{x,y});
-     plot3d replace("\\^","**",toString p f))
+plot3d RingElement := f -> plot3d toString toSageRing(f,2)
 implicitPlot = method()
-implicitPlot String := s -> sage concatenate(
-     "implicit_plot(",s,",plot_points=100)"
-     )
-implicitPlot RingElement := f -> implicitPlot concatenate(
-     toString toSageRing(f,2),
-     ",(x,-1.5,3),(y,-5,5)"
-     )
+implicitPlot String := s -> sage concatenate( "implicit_plot(",s,",plot_points=100)" )
+implicitPlot RingElement := f -> implicitPlot concatenate( toString toSageRing(f,2), ",(x,-1.5,3),(y,-5,5)" )

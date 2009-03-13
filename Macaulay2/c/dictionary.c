@@ -101,7 +101,7 @@ char *Csymbols[] = {
      /* end Mac */
      "auto", "break", "case", "const", "continue", "default",
      "register", "signed", "sizeof", "static","struct","switch","typedef",
-     "do", "double", "else", "enum", "extern", "float", "for", "goto", "if",
+     "do", "double", "else", "enum", "extern", "float", "for", "goto", "if", "mkdir", "stat",
      "union", "unsigned", "volatile", "wait", "remove", "expm1", "log1p", "erfc", "erf"
      };
 
