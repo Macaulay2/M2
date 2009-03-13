@@ -9,7 +9,7 @@ pythonHelp = Command (() -> runString ///help()///)
 
 PythonObject#{Standard,AfterPrint} = x -> (
      << endl;
-     << concatenate(interpreterDepth:"o") << lineNumber << " : PythonObject of type " << objectType x << endl;
+     << concatenate(interpreterDepth:"o") << lineNumber << " : PythonObject of type " << replace("<type '(.*)'>","\\1",toString objectType x) << endl;
      )
 
 end
@@ -20,10 +20,11 @@ rs = s -> (
      runString s)     
 rs "eval(compile( 'd = {}','','single' ),__builtins__) " -- this one includes all the builtins in d
 -- rs "eval(compile( 'd = {}','','single' ),{}) "		-- this one starts over somehow
+access = (d,s) -> concatenate(d,"[", format s, "]")
+val = s -> rs access("d",s)
 e = s -> rs concatenate("eval(compile(",s,",'','single' ),d)")
 r = s -> e format s
-v = var -> e concatenate("d[",format var,"]")
-val = s -> rs concatenate("d[", format s, "]")
+v = s -> e access("d",s)
 rg = s -> ( r("tmp = "|s); val "tmp")
 sage = s -> ( r("tmp = preparse("|format s|")"); v "tmp")
 dir = s -> rg concatenate("dir(", s, ")")
@@ -54,7 +55,7 @@ r "import sys"
 rg "sys.version"
 r "from sys import *"
 rg "version"
-rg "modules"
+rg "modules.keys()"
 rg "copyright"
 rg "prefix"
 rg "executable"
