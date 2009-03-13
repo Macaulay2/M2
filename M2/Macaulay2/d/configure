@@ -22,7 +22,7 @@ cat <<EOF >compat.h
 #endif
 
 #ifdef HAVE_PYTHON
-#include <python2.5/python.h>
+#include <python2.5/Python.h>
 #endif
 
 #ifdef HAVE_PARI

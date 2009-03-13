@@ -1,5 +1,5 @@
 newPackage "Python"
 
 export \\ (s -> currentPackage#"private dictionary"#s = Core#"private dictionary"#s) \ {
-     "runSimpleString", "PythonObject"
+     "runSimpleString", "PythonObject", "runString"
      }
