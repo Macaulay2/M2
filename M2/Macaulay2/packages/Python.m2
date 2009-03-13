@@ -1,9 +1,5 @@
 newPackage "Python"
 
 export \\ (s -> currentPackage#"private dictionary"#s = Core#"private dictionary"#s) \ {
-     "runSimpleString"
+     "runSimpleString", "PythonObject"
      }
-
-export { "loadSage" }
-
-loadSage = () -> runSimpleString "from sage.all import *"

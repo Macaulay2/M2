@@ -9,6 +9,15 @@ int python_RunSimpleString(M2_string s) {
   return ret;
 }
 
+PyObject *globals, *locals;
+
+PyObject *python_RunString(M2_string s) {
+  char *t = tocharstar(s);
+  PyObject *ret = PyRun_String(t,0,globals,locals);
+  GC_FREE(t);
+  return ret;
+}
+
 int python_Main() {
   static char pn[3] = "M2";
   static char *argv[2] = {pn,NULL};

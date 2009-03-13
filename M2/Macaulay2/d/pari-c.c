@@ -4,18 +4,19 @@
 #include "M2mem.h"
 #include "M2inits.h"
 #include "pari-c.h"
+#include "M2/config.h"
 
 #define FALSE 0
 #define TRUE 1
 
-#ifndef PYTHON
-/* for now, we must retain the state, because pari_close_opts will use the wrong gmp memory
-   allocation routines to free memory */
-#define RETAIN_PARI_STATE TRUE
-#else
+#ifdef HAVE_PYTHON
 /* but a related issue is that when linking with python and running sage, it will tend to initialize
    the pari library itself, and we don't want to interfere with that */
 #define RETAIN_PARI_STATE FALSE
+#else
+/* for now, we must retain the state, because pari_close_opts will use the wrong gmp memory
+   allocation routines to free memory */
+#define RETAIN_PARI_STATE TRUE
 #endif
 
 #define PARISIZE 1000000

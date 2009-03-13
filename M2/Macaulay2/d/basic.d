@@ -68,6 +68,7 @@ export hash(e:Expr):int := (
      is x:CompiledFunction do x.hash
      is x:CompiledFunctionClosure do x.hash
      is f:CompiledFunctionBody do 12347
+     is po:pythonObject do int(Ccode(long, "PyObject_Hash((PyObject *)",po,")"))
      );
 export hash(x:List):int := (
      h := x.class.hash + 23407;

@@ -303,6 +303,8 @@ export MysqlResultWrapper := {connection:MysqlConnectionWrapper, res:MysqlResult
 export MysqlField  := {MysqlField:void};
 export MysqlFieldWrapper  := {res:MysqlResultWrapper, fld:MysqlField};
 
+export pythonObject := {py:void};
+
 export Expr := (
      CC or
      RR or
@@ -342,7 +344,8 @@ export Expr := (
      SpecialExpr or
      SymbolClosure or
      file or
-     string
+     string or
+     pythonObject
      );
 export fun := function(Expr):Expr;
 
@@ -574,6 +577,7 @@ export codeClass := newbasictype();
 export mysqlConnectionClass := newbasictype();
 export mysqlFieldClass := newbasictype();
 export mysqlResultClass := newbasictype();
+export pythonObjectClass := newbasictype();
 export functionBodyClass := newbasictype();
 export compiledFunctionBodyClass := newbasictype();
 export errorClass := newbasictype();

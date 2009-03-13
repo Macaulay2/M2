@@ -997,6 +997,7 @@ tostringfun(e:Expr):Expr := (
 	  -- Ccode(string, "IM2_MonomialIdeal_to_string((MonomialIdeal*)",x,")" )
 	  )
      is c:RawComputation do Expr(Ccode(string, "(string)IM2_GB_to_string((Computation*)",c,")" ))
+     is po:pythonObject do Expr("<<a python object>>")
      );
 setupfun("simpleToString",tostringfun);
 
