@@ -31,15 +31,18 @@ PyObject *python_RunString(M2_string s) {
   PyObject *ret = PyRun_String(t,Py_eval_input,globals,locals);
   GC_FREE(t);
   if (PyErr_Occurred()) {
-    fprintf(stderr,"PyErr_Occurred()\n");
 #if 1
     PyErr_Print();
     return NULL;
 #else
     PyObject *type, *value, *traceback;
     PyErr_Fetch(&type,&value,&traceback);
-    return value;
+    return value;		/* this is not such a great thing to do */
 #endif
+  }
+  if (ret) {
+    PyObject *str = PyObject_Str(ret);
+    fprintf(stderr, "runString: %s\n", PyString_AS_STRING(str));
   }
   return ret;
 }
