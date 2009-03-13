@@ -6,15 +6,19 @@ use strings;
 use tokens;
 use common;
 
+pythonObjectOrNull := pythonObject or null;
+toExpr(r:pythonObjectOrNull):Expr := when r is null do buildErrorPacket("python error") is po:pythonObject do Expr(po);
+
 import RunSimpleString(s:string):int;
-PyRun(e:Expr):Expr := (
+PyRunSimpleString(e:Expr):Expr := (
      when e is s:string do if 0 == RunSimpleString(s) then nullE else buildErrorPacket("python error")
      else WrongArgString());
-setupfun("runSimpleString",PyRun);
+setupfun("runSimpleString",PyRunSimpleString);
+
+import RunString(s:string):pythonObjectOrNull;
+PyRunString(e:Expr):Expr := when e is s:string do toExpr(RunString(s)) else WrongArgString();
+setupfun("runString",PyRunString);
 
 import Main():int;
-PyMain(e:Expr):Expr := (
-     -- ignore e for now
-     -- later, e can be a list of strings to serve as argv
-     toExpr(Main()));
+PyMain(e:Expr):Expr := toExpr(Main());
 setupfun("pythonMain",PyMain);

@@ -21,6 +21,10 @@ cat <<EOF >compat.h
 #include <mysql/mysql.h>
 #endif
 
+#ifdef HAVE_PYTHON
+#include <python2.5/python.h>
+#endif
+
 #ifdef HAVE_PARI
 #ifdef INCLUDE_PARI_H
 #include <pari/pari.h>

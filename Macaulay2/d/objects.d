@@ -312,6 +312,7 @@ export equal(lhs:Expr,rhs:Expr):Expr := (
 	  else False
 	  )
      is Database do False
+     is pythonObject do False
      );
 export remove(x:HashTable,key:Expr):Expr := (
      if !x.mutable then (
@@ -447,6 +448,7 @@ export Class(e:Expr):HashTable := (
      is x:List do x.class
      is ZZ do ZZClass
      is CodeClosure do codeClass
+     is pythonObject do pythonObjectClass
      is MysqlConnectionWrapper do mysqlConnectionClass
      is MysqlResultWrapper do mysqlResultClass
      is MysqlFieldWrapper do mysqlFieldClass
@@ -531,6 +533,7 @@ setupconst("RawRingElement",Expr(rawRingElementClass));
 setupconst("RawRingMap",Expr(rawRingMapClass));
 setupconst("RawMonomialIdeal",Expr(rawMonomialIdealClass));
 setupconst("MysqlConnection",Expr(mysqlConnectionClass));
+setupconst("PythonObject",Expr(pythonObjectClass));
 setupconst("MysqlField",Expr(mysqlFieldClass));
 setupconst("MysqlResult",Expr(mysqlResultClass));
 setupconst("File",Expr(fileClass));
