@@ -2,10 +2,11 @@
 #include "M2types.h"
 #include <gc/gc.h>
 
-void python_RunSimpleString(M2_string s) {
+int python_RunSimpleString(M2_string s) {
   char *t = tocharstar(s);
-  PyRun_SimpleString(t);
+  int ret = PyRun_SimpleString(t);
   GC_FREE(t);
+  return ret;
 }
 
 int python_Main() {
