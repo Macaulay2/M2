@@ -62,8 +62,10 @@ debug32 : always
 		--enable-debug \
 		--disable-optimize \
 		--enable-download \
-		--enable-python \
-		--enable-build-libraries="gc gdbm gmp mpfr readline ntl factory libfac frobby pari"
+		LDFLAGS="-L/Users/mike/local/software/sage/sage-3.4/local/lib" \
+		CPPFLAGS="-I/Users/mike/local/software/sage/sage-3.4/local/include" \
+		--enable-python --with-libpython=/Users/mike/local/software/sage/sage-3.4/local/lib/python2.5/config/libpython2.5.a \
+		--enable-build-libraries="gc gdbm gmp mpfr readline ntl factory libfac frobby"
 
 profile32 : always
 	mkdir -p profile32
