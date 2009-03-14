@@ -80,10 +80,10 @@ sysGetObject "subversion"
 sysGetObject "builtin_module_names"
 sysGetObject "copyright"
 
-sys = context "import sys"
-sys.expr "sys.version"
+sys = context "import sys";
+expr "sys.version"
 
-sys2 = context "from sys import *"
+sys2 = context "from sys import *";
 expr "version"
 expr "modules.keys()"
 expr "copyright"
@@ -93,12 +93,12 @@ expr "executable"
 debugLevel = 1
 loadPackage "Python"
 
-math = context "from math import *"
-math.symbols()
-math.stmt "x = sin(3.4)"
-math.expr "sin(3.4)"
-math.expr "x"
-math.expr "e"
+math = context "from math import *";
+symbols()
+stmt "x = sin(3.4)"
+expr "sin(3.4)"
+expr "x"
+expr "e"
 
 sage = context("from sage.all import *", Preprocessor => "preparse");
 stmt "x = var('x')"
