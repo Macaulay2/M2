@@ -126,3 +126,4 @@ spam = context "from spam import *"
 spam.keys()
 spam.expr "system"
 spam.expr "system('echo hi there')"
+spam.expr "system('ech hi there')"
