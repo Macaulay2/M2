@@ -78,7 +78,7 @@ runExamples(H,25) -- bigger
 runExamples(H,26) -- bigger
 
 runExamples(H,27) -- {27, singular-huneke, 2.68845}
-runExamples(H,28) -- bigger?
+runExamples(H,28) -- currently: 378.12 sec uugh
 runExamples(H,29) -- {29, singular-theo1, .076252}
 runExamples(H,30) -- {30, singular-theo1a, .056603}
 runExamples(H,31) -- {31, singular-theo2, .179175}

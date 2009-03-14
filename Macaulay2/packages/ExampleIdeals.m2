@@ -26,7 +26,8 @@ export {
 
      toMagma,
      runMagmaGB,
-
+     runMagmaIntegralClosure,
+     
      examplesStdSingular,
      examplesDGP,
      examplesSIN,
@@ -327,7 +328,7 @@ singularIntegralClosure String := (idealName) ->
 
 runSingularGB = method()
 runSingularGB Ideal := (I) -> (
-     "foo" 
+     "foo"
      << toSingular ring I 
      << toSingular I
      << singularGB "I"
@@ -353,13 +354,33 @@ toMagma Ring := (R) -> (
 toMagma Ideal := (I) -> (
      a := "I := ideal< R | \n   ";
      g := concatenate between(",\n   ", apply(numgens I, i -> toString I_i));
-     a | g | ">;\n" | "time J := GroebnerBasis(I);\n"
+     a | g | ">;\n" 
      )
+
+magmaICstring = "time Js := Normalization(@I@);\n"
+
+magmaIntegralClosure = method()
+magmaIntegralClosure String := (idealName) -> 
+     replace("@I@",idealName,magmaICstring)
 
 runMagmaGB = method()
 runMagmaGB Ideal := (I) -> (
-     "foo" << toMagma ring I << toMagma I
-     << "#J;\n"
+     "foo" 
+     << toMagma ring I << endl
+     << toMagma I
+     << "time J := GroebnerBasis(I);\n"
+     << "#Js;\n"
+     << "quit;\n" << close;
+     run "magma <foo"
+     )
+
+runMagmaIntegralClosure = method()
+runMagmaIntegralClosure Ideal := (I) -> (
+     "foo" 
+     << toMagma ring I << endl
+     << toMagma I
+     << "time Js := Normalization(I);\n"
+     << "#Js;\n"
      << "quit;\n" << close;
      run "magma <foo"
      )
