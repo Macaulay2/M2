@@ -4,7 +4,10 @@ export \\ (s -> currentPackage#"private dictionary"#s = Core#"private dictionary
      "runSimpleString", "PythonObject", "runString", "sysGetObject", "objectType", "initspam"
      }
 
-export { "pythonHelp", "context", "rs", "val", "eval", "valuestring", "stmt", "expr", "Preprocessor" }
+export { "pythonHelp", "context", "rs", "Preprocessor" }
+
+exportMutable { "val", "eval", "valuestring", "stmt", "expr", "dict", "symbols" }
+
 pythonHelp = Command (() -> runString ///help()///)
 
 PythonObject#{Standard,AfterPrint} = x -> (
@@ -22,15 +25,17 @@ nextContext := () -> (
      numContexts = numContexts + 1;
      "context" | toString numContexts)
 Context = new Type of HashTable
+globalAssignment Context
+use Context := c -> scanPairs(c,(k,v) -> k <- v)
 context = method(Options => {
 	  Preprocessor => ""
 	  })
 context String := opts -> init -> (
-     d := nextContext();
-     rs("eval(compile( '",d," = {}','','single' ),__builtins__) ");
-     access := s -> concatenate(d,"[", format s, "]");
+     dict := nextContext();
+     rs("eval(compile( '",dict," = {}','','single' ),__builtins__) ");
+     access := s -> concatenate(dict,"[", format s, "]");
      val := s -> rs access s;
-     eval := s -> rs concatenate("eval(compile(",s,",'','single' ),",d,")");
+     eval := s -> rs concatenate("eval(compile(",s,",'','single' ),",dict,")");
      evalstring := s -> eval format concatenate s;
      evalstring init;
      valuestring := s -> (
@@ -44,17 +49,18 @@ context String := opts -> init -> (
 	  s = "temp = " | s;
 	  stmt s;
 	  val "temp");
-     kys := () -> runString concatenate("__builtins__[",format d,"].keys()");
-     new HashTable from {
-	  global dictionary => d,
+     symbols := () -> runString concatenate("__builtins__[",format dict,"].keys()");
+     c := new Context from {
+	  global dict => dict,
 	  global val => val,
 	  global eval => evalstring,
 	  global valuestring => valuestring,
 	  global stmt => stmt,
 	  global expr => expr,
-	  global keys => kys
-	  }
-     )
+	  global symbols => symbols
+	  };
+     use c;
+     c)
 
 end
 
@@ -78,52 +84,71 @@ sys = context "import sys"
 sys.expr "sys.version"
 
 sys2 = context "from sys import *"
-sys2.expr "version"
-sys2.expr "modules.keys()"
-sys2.expr "copyright"
-sys2.expr "prefix"
-sys2.expr "executable"
+expr "version"
+expr "modules.keys()"
+expr "copyright"
+expr "prefix"
+expr "executable"
 
 debugLevel = 1
 loadPackage "Python"
 
 math = context "from math import *"
-math.keys()
+math.symbols()
 math.stmt "x = sin(3.4)"
 math.expr "sin(3.4)"
 math.expr "x"
 math.expr "e"
 
-sage = context("from sage.all import *", Preprocessor => "preparse")
-sage.stmt "x = var('x')"
-sage.stmt "plot(sin(x))"
-sage.expr "320"
-sage.expr "sage"
-sage.expr "dir(sage)"
-sage.expr "sage.version"
-sage.expr "version()"
-sage.expr "dir(sage.version)"
-sage.expr "sage.version.version"
-sage.expr "plot"
-sage.expr "preparse"
-sage.expr "preparse('x=1')"
-sage.expr "x=2^100"
-sage.expr "x"
-sage.stmt "R.<x,y,z> = QQ[];"
-sage.expr "R"
-sage.stmt "x = var('x')"
-sage.expr "plot(sin(x))"
-sage.stmt "plot(sin(x))"
-sage.expr "show(plot(sin(x)))"
-sage.stmt "I = ideal(x^2,y*z)"
-sage.expr "I"
-sage.expr "dir(I)"
+sage = context("from sage.all import *", Preprocessor => "preparse");
+stmt "x = var('x')"
+stmt "plot(sin(x))"
+expr "320"
+expr "sage"
+expr "dir(sage)"
+expr "sage.version"
+expr "version()"
+expr "dir(sage.version)"
+expr "sage.version.version"
+expr "dir(sage.categories.morphism)"
+expr "sage.categories.morphism.__file__"
+expr "sage.categories.morphism.__doc__"
+expr "sage.categories.morphism.homset.Hom"
+expr "dir(sage.categories.morphism.homset.Hom)"
+expr "sage.categories.morphism.homset.Hom.__doc__"
+hash expr "SymmetricGroup(3)"
+hash expr "SymmetricGroup(3)" == hash expr "SymmetricGroup(3)"
+hash expr "SymmetricGroup(2)"
+hash expr "SymmetricGroup(2)" == hash expr "SymmetricGroup(3)"
+stmt "G = SymmetricGroup(3)"
+expr "G"
+expr "dir(G)"
+expr "G.set()"
+expr "G.sylow_subgroup(3)"
+expr "G.sylow_subgroup(2)"
+expr "G.dump.__doc__"
+expr "G.multiplication_table()"
+expr "plot"
+expr "preparse"
+expr "preparse('x=1')"
+expr "x=2^100"
+expr "x"
+stmt "R.<x,y,z> = QQ[];"
+expr "R"
+stmt "x = var('x')"
+expr "plot(sin(x))"
+stmt "plot(sin(x))"
+expr "show(plot(sin(x)))"
+stmt "I = ideal(x^2,y*z)"
+expr "I"
+expr "dir(I)"
+stmt "R.<t> = PowerSeriesRing(QQ)"
+expr "R"
+expr "exp(t)"
 
 initspam()
-sys2.expr "modules['spam']"
+spam = context "from spam import *";
+symbols()
+expr "system"
+expr "system('echo hi there')"
 
-spam = context "from spam import *"
-spam.keys()
-spam.expr "system"
-spam.expr "system('echo hi there')"
-spam.expr "system('ech hi there')"
