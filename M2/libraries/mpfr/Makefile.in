@@ -1,3 +1,4 @@
+# version 3.0 will be distributed under LGPL 3+
 VERSION = 2.3.2
 RELAX = yes
 URL = http://www.mpfr.org/mpfr-$(VERSION)
