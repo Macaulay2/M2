@@ -30,3 +30,7 @@ setupfun("sysGetObject",PySysGetObject);
 import ObjectType(o:pythonObject):pythonObjectOrNull;
 PyObjectType(e:Expr):Expr := when e is o:pythonObject do toExpr(ObjectType(o)) else WrongArg("a python object");
 setupfun("objectType",PyObjectType);
+
+import initspam():void;
+runinitspam(e:Expr):Expr := (initspam(); nullE);
+setupfun("initspam",runinitspam);

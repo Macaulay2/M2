@@ -1,10 +1,10 @@
 newPackage "Python"
 
 export \\ (s -> currentPackage#"private dictionary"#s = Core#"private dictionary"#s) \ {
-     "runSimpleString", "PythonObject", "runString", "sysGetObject", "objectType"
+     "runSimpleString", "PythonObject", "runString", "sysGetObject", "objectType", "initspam"
      }
 
-export { "pythonHelp", "context", "rs", "val", "eval", "valuestring", "process", "expr", "Preprocessor" }
+export { "pythonHelp", "context", "rs", "val", "eval", "valuestring", "stmt", "expr", "Preprocessor" }
 pythonHelp = Command (() -> runString ///help()///)
 
 PythonObject#{Standard,AfterPrint} = x -> (
@@ -36,13 +36,13 @@ context String := opts -> init -> (
      valuestring := s -> (
 	  evalstring("tmp = ",s);
 	  val "tmp");
-     process := s -> (
+     stmt := s -> (
 	  evalstring("tmp = ",opts.Preprocessor,"(",format s,")");
 	  if debugLevel > 0 then stderr << "--intermediate value: tmp = " << format toString runString access "tmp" << endl;
 	  eval access "tmp";);
      expr := s -> (
 	  s = "temp = " | s;
-	  process s;
+	  stmt s;
 	  val "temp");
      kys := () -> runString concatenate("__builtins__[",format d,"].keys()");
      new HashTable from {
@@ -50,7 +50,7 @@ context String := opts -> init -> (
 	  global val => val,
 	  global eval => evalstring,
 	  global valuestring => valuestring,
-	  global process => process,
+	  global stmt => stmt,
 	  global expr => expr,
 	  global keys => kys
 	  }
@@ -89,14 +89,14 @@ loadPackage "Python"
 
 math = context "from math import *"
 math.keys()
-math.process "x = sin(3.4)"
+math.stmt "x = sin(3.4)"
 math.expr "sin(3.4)"
 math.expr "x"
 math.expr "e"
 
 sage = context("from sage.all import *", Preprocessor => "preparse")
-sage.process "x = var('x')"
-sage.process "plot(sin(x))"
+sage.stmt "x = var('x')"
+sage.stmt "plot(sin(x))"
 sage.expr "320"
 sage.expr "sage"
 sage.expr "dir(sage)"
@@ -109,12 +109,20 @@ sage.expr "preparse"
 sage.expr "preparse('x=1')"
 sage.expr "x=2^100"
 sage.expr "x"
-sage.process "R.<x,y,z> = QQ[]"
+sage.stmt "R.<x,y,z> = QQ[];"
 sage.expr "R"
-sage.process "x = var('x')"
+sage.stmt "x = var('x')"
 sage.expr "plot(sin(x))"
-sage.process "plot(sin(x))"
+sage.stmt "plot(sin(x))"
 sage.expr "show(plot(sin(x)))"
-sage.process "I = ideal(x^2,y*z)"
+sage.stmt "I = ideal(x^2,y*z)"
 sage.expr "I"
 sage.expr "dir(I)"
+
+initspam()
+sys2.expr "modules['spam']"
+
+spam = context "from spam import *"
+spam.keys()
+spam.expr "system"
+spam.expr "system('echo hi there')"
