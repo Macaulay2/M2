@@ -508,6 +508,7 @@ char **argv;
      call_shared_library();
 
 #ifdef HAVE_PYTHON
+     Py_SetProgramName(argv[0]);
      Py_Initialize();
 #endif
 
