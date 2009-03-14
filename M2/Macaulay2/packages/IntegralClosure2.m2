@@ -1,11 +1,3 @@
--- next in the todo list:
---  add option for verbosity
---  better test for integrally-closed-ness
---    codim of singular locus? possibly by randomMinors
---  incorporate 'vasconcelos', or at least try this
---  canonical ideal: 2 versions, 
---  incorporate S2ification into integralClosure
-
 newPackage(
 	"IntegralClosure2",
     	Version => "0.9", 
@@ -76,12 +68,14 @@ needsPackage "ReesAlgebra"
 
 integralClosure2 = method(Options=>{
 	  Variable => global w,
-	  Limit => infinity})
+	  Limit => infinity,
+	  Strategy => {}})
 
 integralClosure2 Ring := Ring => o -> (R) -> (
      -- 1 argument: affine ring R.  We might be able to handle rings over ZZ
      --   if we choose J in the non-normal ideal some other way.
      -- 2 options: Limit, Variable
+     strategies := o.Strategy;
      (S,F) := flattenRing R;
      G := map(frac R, frac S, substitute(F^-1 vars S, frac R));
      nsteps := 0;
@@ -91,7 +85,7 @@ integralClosure2 Ring := Ring => o -> (R) -> (
      -- loop (note: F : R --> Rn, G : frac Rn --> frac R)
      while (
 	  F1 := F;
-	  (F,G,J) = integralClosure1(F1,G,J,nsteps,o.Variable);
+	  (F,G,J) = integralClosure1(F1,G,J,nsteps,o.Variable,strategies);
 	  << "fractions: " << first entries G.matrix << endl;
 	  nsteps = nsteps + 1;
 	  nsteps < o.Limit and target F1 =!= target F
@@ -104,7 +98,7 @@ integralClosure2 Ring := Ring => o -> (R) -> (
 -- integralClosure1(f : R --> R1, g : frac R1 --> frac R, J (radical) ideal in R1)
 --  return (f2 : R --> R2, g2 : frac R2 --> frac R, sub(J,R2))
 
-integralClosure1 = (F,G,J,nsteps,varname) -> (
+integralClosure1 = (F,G,J,nsteps,varname,strategies) -> (
      -- F : R -> R0, R0 is assumed to be a domain
      -- G : frac R0 --> frac R
      -- J : ideal in the non-normal ideal of R0
@@ -123,7 +117,11 @@ integralClosure1 = (F,G,J,nsteps,varname) -> (
      f := findSmallGen radJ; -- we assume that f is a non-zero divisor!!
      -- Compute Hom_S(radJ,radJ), using f as the common denominator.
      <<"idlizer" << flush;
-     time (F0,G0) := idealizer2(radJ, f, Variable => varname, Index2 => nsteps);
+     time (F0,G0) = 
+         idealizer2(radJ, f, 
+	      Variable => varname, 
+	      Index2 => nsteps,
+	      Strategy => strategies);
      -- These would be correct, except that we want to clean up the
      -- presentation
      R1temp := target F0;
@@ -185,8 +183,10 @@ findSmallGen = (J) -> (
      L#0#2
      )
 
-idealizer2 = method(Options=>{Variable => global w, Index2 => 0})
-idealizer2 (Ideal, RingElement) := o -> (J, f) ->  (
+idealizer2 = method(Options=>{Variable => global w, 
+	                Index2 => 0, Strategy => {}})
+
+idealizer2 (Ideal, RingElement) := o -> (J, g) ->  (
      -- J is an ideal in a ring R
      -- f is a nonzero divisor in J
      -- compute R1 = Hom(J,J) = (f*J:J)/f
@@ -197,61 +197,31 @@ idealizer2 (Ideal, RingElement) := o -> (J, f) ->  (
      --   o.Variable: base name for new variables added
      --   o.Index2: the first subscript to use for such variables
      R := ring J;
-     time idJ := mingens(f*J : J);
-     if ideal(idJ) == ideal(f) then (
-	  (id_R, map(frac R, frac R, vars frac R))) -- in this case R is isomorphic to Hom(J,J)
-     else(H := compress (idJ % f);
-	  ringFromFractions(H,f,Variable=>o.Variable,Index2=>o.Index2)
+     if member("vasconcelos", set o.Strategy) then (
+	  print "Using vasconcelos";
+     	  (H,f) := vasconcelos (J,g))
+     else (H,f) = endomorphisms (J,g);
+--     idJ := mingens(f*J : J);
+     if H == 0 then 
+	  (id_R, map(frac R, frac R, vars frac R)) -- in this case R is isomorphic to Hom(J,J)
+     else ringFromFractions(H,f,Variable=>o.Variable,Index2=>o.Index2)
 	  )
-     )
 
-ringFromFractions = method(Options=>{Variable => global w, Index2 => 0})
-ringFromFractions (Matrix, RingElement) := o -> (H, f) ->  (
-     -- f is a nonzero divisor in R
-     -- H is a (row) matrix of numerators, elements of R
-     -- Forms the ring R1 = R[H_0/f, H_1/f, ..].
-     -- returns a sequence (F,G), where 
-     --   F : R --> R1 is the natural inclusion
-     --   G : frac R1 --> frac R, 
-     -- optional arguments:
-     --   o.Variable: base name for new variables added, defaults to w
-     --   o.Index2: the first subscript to use for such variables, defaults to 0
-     --   so in the default case, the new variables produced are w_{0,0}, w_{0,1}...
-          R := ring H;
-       	  time fractions := apply(first entries H,i->i/f);
-          Hf := H | matrix{{f}};
-     	  -- Make the new polynomial ring.
-     	  n := numgens source H;
-     	  newdegs := degrees source H - toList(n:degree f);
-     	  degs = join(newdegs, (monoid R).Options.Degrees);
-     	  MO := prepend(GRevLex => n, (monoid R).Options.MonomialOrder);
-          kk := coefficientRing R;
-     	  A := kk(monoid [o.Variable_(o.Index2,0)..o.Variable_(o.Index2,n-1), gens R,
-		    MonomialOrder=>MO, Degrees => degs]);
-     	  I := ideal presentation R;
-     	  IA := ideal ((map(A,ring I,(vars A)_{n..numgens R + n-1})) (generators I));
-     	  time B := A/IA;
 
-     	  -- Make the linear and quadratic relations
-     	  varsB := (vars B)_{0..n-1};
-     	  RtoB := map(B, R, (vars B)_{n..numgens R + n - 1});
-     	  XX := varsB | matrix{{1_B}};
-     	  -- Linear relations in the new variables
-     	  time lins := XX * RtoB syz Hf; 
-     	  -- linear equations(in new variables) in the ideal
-     	  -- Quadratic relations in the new variables
-     	  time tails := (symmetricPower(2,H) // f) // Hf;
-     	  tails = RtoB tails;
-     	  quads := matrix(B, entries (symmetricPower(2,varsB) - XX * tails));
-	  time both := ideal lins + ideal quads;
-	  time gb both;
-	  time Bflat := flattenRing (B/both);
-	  time R1 := trim Bflat_0;
-
-     	  -- Now construct the trivial maps
-     	  F := map(R1, R, (vars R1)_{n..numgens R + n - 1});
-	  G := map(frac R, frac R1, matrix{fractions} | vars frac R);
-	  (F, G)
+endomorphisms = method()
+endomorphisms(Ideal,RingElement) := (I,f) -> (
+     --computes generators in frac ring I of
+     --Hom(I,I)
+     --assumes that f is a nonzerodivisor.
+     --NOTE: f must be IN THE CONDUCTOR; 
+     --else we get only the intersection of Hom(I,I) and f^(-1)*R.
+     --returns the answer as a sequence (H,f) where
+     --H is a matrix of numerators
+     --f = is the denominator.
+     if not fInIdeal(f,I) then error "Proposed denominator was not in the ideal.";
+     H1 := (f*I):I;
+     H := compress ((gens H1) % f);
+     (H,f)
      )
 
 vasconcelos = method()
@@ -274,6 +244,56 @@ vasconcelos(Ideal,RingElement) := (I,f) -> (
      (H,f)
      )
 
+ringFromFractions = method(Options=>{Variable => global w, Index2 => 0})
+ringFromFractions (Matrix, RingElement) := o -> (H, f) ->  (
+     -- f is a nonzero divisor in R
+     -- H is a (row) matrix of numerators, elements of R
+     -- Forms the ring R1 = R[H_0/f, H_1/f, ..].
+     -- returns a sequence (F,G), where 
+     --   F : R --> R1 is the natural inclusion
+     --   G : frac R1 --> frac R, 
+     -- optional arguments:
+     --   o.Variable: base name for new variables added, defaults to w
+     --   o.Index2: the first subscript to use for such variables, defaults to 0
+     --   so in the default case, the new variables produced are w_{0,0}, w_{0,1}...
+          R := ring H;
+       	  fractions := apply(first entries H,i->i/f);
+          Hf := H | matrix{{f}};
+     	  -- Make the new polynomial ring.
+     	  n := numgens source H;
+     	  newdegs := degrees source H - toList(n:degree f);
+     	  degs = join(newdegs, (monoid R).Options.Degrees);
+     	  MO := prepend(GRevLex => n, (monoid R).Options.MonomialOrder);
+          kk := coefficientRing R;
+     	  A := kk(monoid [o.Variable_(o.Index2,0)..o.Variable_(o.Index2,n-1), gens R,
+		    MonomialOrder=>MO, Degrees => degs]);
+     	  I := ideal presentation R;
+     	  IA := ideal ((map(A,ring I,(vars A)_{n..numgens R + n-1})) (generators I));
+     	  B := A/IA; -- this is sometimes a slow op
+
+     	  -- Make the linear and quadratic relations
+     	  varsB := (vars B)_{0..n-1};
+     	  RtoB := map(B, R, (vars B)_{n..numgens R + n - 1});
+     	  XX := varsB | matrix{{1_B}};
+     	  -- Linear relations in the new variables
+     	  lins := XX * RtoB syz Hf; 
+     	  -- linear equations(in new variables) in the ideal
+     	  -- Quadratic relations in the new variables
+     	  tails := (symmetricPower(2,H) // f) // Hf;
+     	  tails = RtoB tails;
+     	  quads := matrix(B, entries (symmetricPower(2,varsB) - XX * tails));
+	  both := ideal lins + ideal quads;
+	  gb both; -- sometimes slow
+	  Bflat := flattenRing (B/both); --sometimes very slow
+	  R1 := trim Bflat_0; -- sometimes slow
+
+     	  -- Now construct the trivial maps
+     	  F := map(R1, R, (vars R1)_{n..numgens R + n - 1});
+	  G := map(frac R, frac R1, matrix{fractions} | vars frac R);
+	  (F, G)
+     )
+
+
 fInIdeal = (f,I) -> (
      -- << "warning: fix fInIdeal" << endl;
      if isHomogeneous I -- really want to say: is the ring local?
@@ -281,23 +301,9 @@ fInIdeal = (f,I) -> (
        else substitute(I:f, ultimate(coefficientRing, ring I)) != 0
      )
 
-endomorphisms = method()
-endomorphisms(Ideal,RingElement) := (I,f) -> (
-     --computes generators in frac ring I of
-     --Hom(I,I)
-     --assumes that f is a nonzerodivisor.
-     --NOTE: f must be IN THE CONDUCTOR; 
-     --else we get only the intersection of Hom(I,I) and f^(-1)*R.
-     --returns the answer as a sequence (H,f) where
-     --H is a matrix of numerators
-     --f = is the denominator.
-     if not fInIdeal(f,I) then error "Proposed denominator was not in the ideal.";
-     H1 := (f*I):I;
-     H := compress ((gens H1) % f);
-     (H,f)
-     )
 
 ///
+restart
 load "integralClosure2.m2"
 kk=ZZ/101
 S=kk[a,b,c,d]
@@ -311,7 +317,8 @@ codim K
 R1=ringFromFractions vasconcelos(K,f)
 R2=ringFromFractions endomorphisms(K,f)
 betti res I -- NOT depth 2.
-integralClosure2 R
+time integralClosure2(R, Strategy => {"vasconcelos"})
+time integralClosure2(R, Strategy => {})
 S2ification R
 ///
 
@@ -1756,6 +1763,7 @@ integralClosure2 R
 icFractions2 R
 icMap2 R
 
+--from Eisenbud-Neumann p.11: simplest poly with 2 characteristic pairs. 
 R = QQ[y,x]/(y^4-2*x^3*y^2-4*x^5*y+x^6-x^7)
 time R' = integralClosure2 R
 icFractions2 R
