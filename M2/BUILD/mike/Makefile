@@ -46,12 +46,13 @@ tiger32 : always
 		--enable-download \
 		--enable-build-libraries="gc gdbm gmp mpfr readline ntl factory libfac frobby pari"
 
-opt32 : always
-	mkdir -p opt32
-	cd opt32; LDFLAGS=-shared-libgcc ../../../configure \
+darwin32 : always
+	mkdir -p darwin32
+	cd darwin32; LDFLAGS=-shared-libgcc ../../../configure \
 		--prefix="`pwd`/installed" \
 		--enable-dmg \
 		--enable-download \
+		--enable-python \
 		--enable-build-libraries="gc gdbm gmp mpfr readline ntl factory libfac frobby pari"
 
 debug32 : always
@@ -61,6 +62,7 @@ debug32 : always
 		--enable-debug \
 		--disable-optimize \
 		--enable-download \
+		--enable-python \
 		--enable-build-libraries="gc gdbm gmp mpfr readline ntl factory libfac frobby pari"
 
 profile32 : always
