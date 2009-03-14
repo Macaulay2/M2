@@ -12,7 +12,9 @@ pythonHelp = Command (() -> runString ///help()///)
 
 PythonObject#{Standard,AfterPrint} = x -> (
      << endl;
-     << concatenate(interpreterDepth:"o") << lineNumber << " : PythonObject of type " << replace("<type '(.*)'>","\\1",toString objectType x) << endl;
+     t := toString objectType x;
+     t = replace("<([a-z]+) '(.*)'>","of \\1 \\2",t);
+     << concatenate(interpreterDepth:"o") << lineNumber << " : PythonObject " << t << endl;
      )
 
 rs = s -> ( 
@@ -145,6 +147,11 @@ expr "dir(I)"
 stmt "R.<t> = PowerSeriesRing(QQ)"
 expr "R"
 expr "exp(t)"
+
+stmt "p = plot(sin(x))"
+p = expr "p"
+hash p			  -- this displays the plot and gives a hash code of 0!
+
 
 initspam()
 spam = context "from spam import *";
