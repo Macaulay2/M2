@@ -3,8 +3,9 @@ S = ZZ/32003[a..d]
 I = ideal random(S^1, S^{5:-8});
 time trim I;
 time gens gb I;
-time R = S/I
-time trim R; -- recomputing the GB FIX
+time R = S/I  -- PROBLEM: we do not want to copy the GB!!
+time trim R; -- recomputing the GB FIX.  GB no longer recomputed, but same problem as previous line.
+  -- one PROBLEM: gens gb I recomputes the matrix each time.
 time prune R; -- recomputes GB FIX
 time flattenRing R; -- very fast
 
@@ -17,10 +18,11 @@ time gens gb I1;
 
 J = ideal random(R^1, R^{3:-8});
 time B = R/J;
-time flattenRing B; -- doesn't seem quite so bad...  Why not? Still, it takes real time
+time flattenRing B; -- the engine knows a non-reduced GB of this.  We should be able
+  -- to just minimalize this rather than recomputing.
 
-time C = R[x,y]; -- quite ast, so this is possibly OK.
-time flattenRing C; -- takes a while: FIX
+time C = R[x,y]; -- quite fast, so this is possibly OK.
+time flattenRing C; -- takes a while: FIX.  The engine knows this one.
 
 
 end

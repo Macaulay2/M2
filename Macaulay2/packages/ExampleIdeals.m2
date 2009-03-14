@@ -21,9 +21,10 @@ export {
 
      toSingular,
      singularGB,
-     
+     singularIntegralClosure,
+     runSingularGB,     
+
      toMagma,
-     runSingularGB,
      runMagmaGB,
 
      examplesStdSingular,
@@ -264,6 +265,15 @@ toClassic Ideal := (I) -> (
      g = concatenate between(",\n   ", apply(numgens I, i -> replace(///[\*\^]///,"",toString I_i)));
      "ideal\"" | g | "\""
      )
+
+-----------------------------------------------
+-- Translation to Singular --------------------
+-----------------------------------------------
+-- ring variable name translation
+--   ring variable with no subscript, and no 's:  same
+--   ring variable with complicated subscripts need to be mapped
+--   I think that even doubly indexed variables can't be done?
+--   
 toSingular = method()
 toSingular Ideal := (I) -> (
      g = concatenate between(",\n   ", apply(numgens I, i -> replace(///[\*\^]///,"",toString I_i)));
@@ -276,7 +286,7 @@ toSingular Ring := (R) -> (
      p := char kk;
      a := "ring R = "|p|",(";
      b := concatenate between(",", (gens R)/toString);
-     c := "),dp;";
+     c := "),dp;\n";
      a | b | c
      )
 toSingular Ideal := (I) -> (
@@ -285,27 +295,50 @@ toSingular Ideal := (I) -> (
      a | g | ";\n"
      )
 
-singularGB =
+timerWrap = (str) -> (
+     "rtimer = 1;\nint ti=rtimer;"
+     |str|
+     ///     
+       int ti2=rtimer-ti;
+       print("time used"); print(ti2);
+
      ///
-     int ti=rtimer;
-     ideal J=groebner(@I@);
-     int ti2=rtimer-ti;
-     print("time used"); print(ti2);
-     print(size(J));
-     ///
+     )
+-- computing a GB in Singular
+-- string with name of ideal @I@
+singGBstring = 
+  ///
+    ideal J=groebner(@I@);
+    print(size(J));
+  ///
+
+-- computing an integral closure of a ring in Singular
+-- this is the integral closure of R/I...!
+-- string with name of ideal: @I@
+singICstring = "list nor=normal(@I@);\n"
+
+singularGB = method()
+singularGB String := (idealName) -> 
+     timerWrap replace("@I@",idealName,singGBstring)
+          
+singularIntegralClosure = method()
+singularIntegralClosure String := (idealName) -> 
+     timerWrap replace("@I@",idealName,singICstring)
 
 runSingularGB = method()
 runSingularGB Ideal := (I) -> (
-     "foo" << "rtimer=1;\n"
-     << toSingular ring I << toSingular I
-     << "int ti=rtimer;\n"
-     << "ideal J=groebner(I);\n"
-     << "int ti2=rtimer-ti;\n"
-     << "print(\"time used\"); print(ti2);\n"
-     << "print(size(J));\n"
-     << "exit(ti2);\n" << close;
-     run "sage -singular <foo"
+     "foo" 
+     << toSingular ring I 
+     << toSingular I
+     << singularGB "I"
+     << "exit(0);\n" << close;
+     run "/sw/bin/Singular <foo"
      )
+
+-----------------------------------------------
+-- Translation to Magma -----------------------
+-----------------------------------------------
+
 toMagma = method()
 toMagma Ring := (R) -> (
      -- note: R is assumed to be a polynomial ring.  Variables alowed: single letters, 
@@ -322,6 +355,7 @@ toMagma Ideal := (I) -> (
      g := concatenate between(",\n   ", apply(numgens I, i -> toString I_i));
      a | g | ">;\n" | "time J := GroebnerBasis(I);\n"
      )
+
 runMagmaGB = method()
 runMagmaGB Ideal := (I) -> (
      "foo" << toMagma ring I << toMagma I
@@ -332,6 +366,20 @@ runMagmaGB Ideal := (I) -> (
 end
 
 restart
+
+------------------------------------
+-- examples for the singular code --
+------------------------------------
+restart
+loadPackage "ExampleIdeals"
+R = QQ[a..d,h,r,t]
+assert(toSingular R == "ring R = 0,(a,b,c,d,h,r,t),dp;\n")
+R = QQ[a..d,h,rt]
+assert(toSingular R == "ring R = 0,(a,b,c,d,h,rt),dp;\n")
+R = QQ[x_1..x_4]
+assert(toSingular R == "ring R = 0,(x(1)-x(4)),dp;\n")
+
+singularGB
 loadPackage "ExampleIdeals"
 debug ExampleIdeals
 R = ZZ/101[a..d]
@@ -347,6 +395,8 @@ s = concatenate between("\n",{toSingular ring I,
 
 print toSingular R
 print toSingular I
+print singularIntegralClosure "I"
+
 runMagmaGB I
 runSingularGB I
 print toMagma R; print toMagma I
