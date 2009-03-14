@@ -44,88 +44,77 @@ context String := opts -> init -> (
 	  s = "temp = " | s;
 	  process s;
 	  val "temp");
+     kys := () -> runString concatenate("__builtins__[",format d,"].keys()");
      new HashTable from {
+	  global dictionary => d,
 	  global val => val,
 	  global eval => evalstring,
 	  global valuestring => valuestring,
 	  global process => process,
-	  global expr => expr	  
+	  global expr => expr,
+	  global keys => kys
 	  }
      )
 
 end
 
-debugLevel = 1
-loadPackage "Python"
-sage = context("from sage.all import *", Preprocessor => "preparse")
-sage.process "x = var('x')"
-sage.process "plot(sin(x))"
-sage.expr "320"
-
-rs = s -> ( if debugLevel > 0 then stderr << "python command: " << s << endl; runString s);
-rs "eval(compile( 'd = {}','','single' ),__builtins__) "
-access = (d,s) -> concatenate(d,"[", format s, "]");
-val = s -> rs access("d",s);
-eval = s -> rs concatenate("eval(compile(",s,",'','single' ),d)");
-evalstring = s -> eval format s;
-valuestring = s -> ( evalstring("tmp = "|s); val "tmp");
-sage = s -> (evalstring("tmp = preparse("|format s|")"); eval access("d","tmp"));
-dir = s -> valuestring concatenate("dir(", s, ")");
+pythonHelp
+quit
 
 runSimpleString "x=2"
 runSimpleString "print(x)"
 rs "dir()"
 rs "dict"
 rs "__builtins__.keys()"
-rs "help()"
-quit
-rs "d.keys()"
-rs "__builtins__['d']"
-evalstring "x=2"
-rs "d.keys()"
-val "x"
-valuestring "range(2,100)"
 rs "range(2,100)"
--- math
-evalstring "from math import *"
-valuestring "sin(4.5)"
-rs "d.keys()"
+
 -- module sys
 -- http://docs.python.org/library/sys.html#module-sys
 sysGetObject "subversion"
 sysGetObject "builtin_module_names"
 sysGetObject "copyright"
-evalstring "import sys"
-valuestring "sys.version"
-evalstring "from sys import *"
-valuestring "version"
-valuestring "modules.keys()"
-valuestring "copyright"
-valuestring "prefix"
-valuestring "executable"
--- sage
-evalstring "from sage.all import *"
-valuestring "sage"
-valuestring "dir(sage)"
-valuestring "sage.version"
-valuestring "version()"
-valuestring "dir(sage.version)"
-valuestring "sage.version.version"
-valuestring "plot"
-valuestring "preparse"
-valuestring "preparse('x=1')"
-sage "x=2^100"
-val "x"
-objectType oo
-sage "R.<x,y,z> = QQ[]"
-valuestring "R"
-valuestring "var('x')"
-valuestring "plot(sin(x))"
-sage "plot(sin(x))"
-valuestring "show(plot(sin(x)))"
-sage "I = ideal(x^2,y*z)"
-valuestring "I"
-val "I"
-sage "G = I.groebner_basis()"
-valuestring "G"
-dir "I"
+
+sys = context "import sys"
+sys.expr "sys.version"
+
+sys2 = context "from sys import *"
+sys2.expr "version"
+sys2.expr "modules.keys()"
+sys2.expr "copyright"
+sys2.expr "prefix"
+sys2.expr "executable"
+
+debugLevel = 1
+loadPackage "Python"
+
+math = context "from math import *"
+math.keys()
+math.process "x = sin(3.4)"
+math.expr "sin(3.4)"
+math.expr "x"
+math.expr "e"
+
+sage = context("from sage.all import *", Preprocessor => "preparse")
+sage.process "x = var('x')"
+sage.process "plot(sin(x))"
+sage.expr "320"
+sage.expr "sage"
+sage.expr "dir(sage)"
+sage.expr "sage.version"
+sage.expr "version()"
+sage.expr "dir(sage.version)"
+sage.expr "sage.version.version"
+sage.expr "plot"
+sage.expr "preparse"
+sage.expr "preparse('x=1')"
+sage.expr "x=2^100"
+sage.expr "x"
+sage.process "R.<x,y,z> = QQ[]"
+sage.expr "R"
+sage.process "x = var('x')"
+sage.expr "plot(sin(x))"
+sage.process "plot(sin(x))"
+sage.expr "show(plot(sin(x)))"
+sage.process "I = ideal(x^2,y*z)"
+sage.expr "I"
+sage.expr "dir(I)"
