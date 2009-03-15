@@ -13,7 +13,8 @@ VisibleList.Wrap =
 Tally.Wrap = RawMatrix.Wrap = Matrix.Wrap = Ideal.Wrap = RingElement.Wrap = VisibleList.Wrap = Sequence.Wrap = x -> wr("-",x)
 String.Wrap = x -> ( x = net x; if height x + depth x <= 3 then wr("",x) else x )
 Net.Wrap = x -> if height x + depth x <= 3 then wr("-",x) else x
-PythonObject.Wrap = Number.Wrap = x -> wr("",x)
+Number.Wrap = x -> wr("",x)
+if instance(PythonObject,Type) then PythonObject.Wrap = x -> wr("",x)
 QQ.Wrap = x -> wr("=",x)
 
 ignoreP := set { "Core", "Classic", "Parsing", "SimpleDoc" }
