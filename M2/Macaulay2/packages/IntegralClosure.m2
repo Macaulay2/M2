@@ -19,9 +19,9 @@ newPackage(
 -- Do we still need isSinglyGraded?  i.e. is pushForward still a
 -- problem?
    
-export{integralClosure, idealizer, nonNormalLocus, Index,
-isNormal, conductor, icFractions, icMap, icFracP, conductorElement,
-reportSteps, icPIdeal} 
+export{"integralClosure", "idealizer", "nonNormalLocus", "Index",
+"isNormal", "conductor", "icFractions", "icMap", "icFracP", "conductorElement",
+"reportSteps", "icPIdeal"} 
 
 needsPackage "Elimination"
 
