@@ -47,6 +47,7 @@ end
 restart
 load "runexamples.m2"
 H = readExampleFile1 "examples1.m2"
+loadPackage "ReesAlgebra"
 
 -----------------------------------------------------------
 -- The following is an idea of where we stand on 3/13/2009
