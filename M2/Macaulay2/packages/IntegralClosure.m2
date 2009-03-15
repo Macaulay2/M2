@@ -1,4 +1,4 @@
-newPackage(
+newPackage( 
 	"IntegralClosure",
     	Version => "0.9", 
     	Date => "March 15, 2009",
