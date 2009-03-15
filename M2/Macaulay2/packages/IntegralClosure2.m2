@@ -117,8 +117,10 @@ integralClosure1 = (F,G,J,nsteps,varname,strategies) -> (
      J = trim J;
      <<"radical" << flush;
      Jup := trim (flattenRing J)_0;
+     Jup = trim ideal apply(Jup_*, f -> product apply(apply(toList factor f, toList), first));
      time C := decompose Jup;
      C = apply(C, L -> promote(L,ring J));
+     print (C/codim);
      time C1 := select(C, L -> ((a,b) := endomorphisms(L,L_0); a != 0));
      if #C1 == 0 then (
 	  -- we are integrally closed

@@ -60,7 +60,7 @@ runExamples(H,7) -- {7, boehm2, .224295}
 runExamples(H,8) -- {8, boehm3, .705478}
 runExamples(H,9) -- {9, boehm4, 8.99051}
 runExamples(H,10) -- {10, boehm5, 68.0163}
-runExamples(H,11) -- {11,  boehm6, 7.62081} -- hugefractions?
+runExamples(H,11) -- {11,  boehm6, 7.62081} -- hugefractions? QQ problem
 runExamples(H,12) -- bigger
 runExamples(H,13) -- long
 runExamples(H,14) -- 
@@ -105,6 +105,8 @@ runExamples(H,50) -- {50, 2charPairs, 1.626}
 runExamples(H,51) -- {51, 2charPairsJacIdeal, .644675}
 runExamples(H,52) -- BUG??
 
+loadPackage "ReesAlgebra"
+runExamples(H,56)
 -----------------------------------------------------------
 
 
@@ -131,3 +133,22 @@ runSingIC(H,10)  -- these seem to take a while too...
 runSingIC(H,25)  -- 
 runSingIC(H,26)  -- 
 
+--- example rees3-32003:
+kk = ZZ/32003 -- -- time for int closure of ideal on 3/5/09 (DE big machine): 750 sec
+S = kk[a,b,c]
+I=ideal(a^4+b^4+c^4+a^3+a^2*b+a^2*c)
+time R=reesAlgebra ideal jacobian I
+J = ideal (flattenRing R)_0
+jac = trim(J + minors(codim J, jacobian J))
+use ring jac
+decompose trim ideal apply(jac_*, f -> f // gcd(f, diff(a,f)))
+time decompose trim ideal apply(jac_*, f -> product apply(apply(toList factor f, toList), first))
+
+
+time sum apply(jac_*, f -> decompose((ideal f) : ideal jacobian ideal f))
+
+jac_*/factor//netList
+use ring jac
+jac = trim(ideal"4c3+a2,4b3+a2" + jac)
+betti jac
+decompose jac

@@ -311,3 +311,24 @@ S=kk[a,b,c]
 I=ideal"a2,b3,c4"
 time R=reesAlgebra I
 ideal (flattenRing R)_0
+---------------------------------------------------------------------
+--rees1-32003
+kk = ZZ/32003 -- time for int closure of ideal on 3/5/09 (DE big machine): 16000 sec
+S = kk[a,b,c]
+I=ideal"a4+b4+c4+a2b2c+a2bc2"  
+time R=reesAlgebra ideal jacobian I
+ideal (flattenRing R)_0
+---------------------------------------------------------------------
+--rees2-32003
+kk = ZZ/32003 -- -- time for int closure of ideal on 3/5/09 (DE big machine): 
+S = kk[a,b,c]
+I=ideal(a^2*b^2*c+a^4+b^4+c^4)
+time R=reesAlgebra ideal jacobian I
+ideal (flattenRing R)_0
+---------------------------------------------------------------------
+--rees3-32003
+kk = ZZ/32003 -- -- time for int closure of ideal on 3/5/09 (DE big machine): 750 sec
+S = kk[a,b,c]
+I=ideal(a^4+b^4+c^4+a^3+a^2*b+a^2*c)
+time R=reesAlgebra ideal jacobian I
+ideal (flattenRing R)_0
