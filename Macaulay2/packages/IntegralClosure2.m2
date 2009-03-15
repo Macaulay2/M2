@@ -115,13 +115,23 @@ integralClosure1 = (F,G,J,nsteps,varname,strategies) -> (
      -- R1 is integrally closed iff target F === target F1
      R0 := target F;
      J = trim J;
+     if nsteps > 0 then ( -- MES: compute dimension of the orig ring above, so that we know the size of minors here,
+	                  -- with no extra computation
+	  newminors := ideal (0_R0);
+	  while newminors == 0 do
+	    newminors = ideal randomMinors(10,numgens R0 - dim R0,jacobian R0);
+	  error "look at J, newminors";
+	  J = J + newminors
+	  );
+     if codim J > 1 then return (F,G,ideal(1_R0));
      <<"radical" << flush;
      Jup := trim (flattenRing J)_0;
      Jup = trim ideal apply(Jup_*, f -> product apply(apply(toList factor f, toList), first));
      time C := decompose Jup;
      C = apply(C, L -> promote(L,ring J));
      print (C/codim);
-     time C1 := select(C, L -> ((a,b) := endomorphisms(L,L_0); a != 0));
+     C1 = select(C, L -> codim L == 1);
+     --time C1 := select(C, L -> ((a,b) := endomorphisms(L,L_0); a != 0));
      if #C1 == 0 then (
 	  -- we are integrally closed
 	  return (F,G,ideal(1_R0))
@@ -133,11 +143,27 @@ integralClosure1 = (F,G,J,nsteps,varname,strategies) -> (
      f := findSmallGen radJ; -- we assume that f is a non-zero divisor!!
      -- Compute Hom_S(radJ,radJ), using f as the common denominator.
      <<"idlizer" << flush;
+
+     (He,fe) := endomorphisms(radJ,f);
+     << "fractions to be added now" << endl;
+     << netList apply(flatten entries He, g -> G(g/f)) << endl;
+     -- disply these fractions in the original ring:
+     
+     
+     -- here is where we improve or change our fractions
+     if He == 0 then (
+	  -- there are no new fractions to add, and this process will add no new fractions
+	  return (F,G,ideal(1_R0));
+	  );
+     (F0,G0) = ringFromFractions(He,fe,Variable=>varname,Index2=>nsteps);
+     
+{*
      time (F0,G0) = 
          idealizer2(radJ, f, 
 	      Variable => varname, 
 	      Index2 => nsteps,
 	      Strategy => strategies);
+*}	 
      -- These would be correct, except that we want to clean up the
      -- presentation
      R1temp := target F0;

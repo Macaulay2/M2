@@ -320,7 +320,7 @@ time R=reesAlgebra ideal jacobian I
 ideal (flattenRing R)_0
 ---------------------------------------------------------------------
 --rees2-32003
-kk = ZZ/32003 -- -- time for int closure of ideal on 3/5/09 (DE big machine): 
+kk = ZZ/32003 -- -- time for int closure of ideal on 3/5/09 (DE big machine): 4500 sec
 S = kk[a,b,c]
 I=ideal(a^2*b^2*c+a^4+b^4+c^4)
 time R=reesAlgebra ideal jacobian I

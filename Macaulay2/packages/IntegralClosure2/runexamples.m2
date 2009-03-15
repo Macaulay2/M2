@@ -106,7 +106,9 @@ runExamples(H,51) -- {51, 2charPairsJacIdeal, .644675}
 runExamples(H,52) -- BUG??
 
 loadPackage "ReesAlgebra"
-runExamples(H,56)
+runExamples(H,56) 
+runExamples(H,55)
+runExamples(H,54) -- {54, rees1-32003, 48.1293} (3-15-09)
 -----------------------------------------------------------
 
 
