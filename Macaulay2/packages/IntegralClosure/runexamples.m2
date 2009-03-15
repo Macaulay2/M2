@@ -46,7 +46,7 @@ runSingIC HashTable := (H) -> runSingIC(H, sort keys H)
 end
 restart
 load "runexamples.m2"
-H = readExampleFile1 "examples1.m2"
+H = readExampleFile1 "examples.m2"
 loadPackage "ReesAlgebra"
 
 -----------------------------------------------------------
