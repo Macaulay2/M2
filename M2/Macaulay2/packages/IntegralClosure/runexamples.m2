@@ -1,5 +1,5 @@
 loadPackage "ExampleIdeals"
-loadPackage "IntegralClosure2"
+loadPackage "IntegralClosure"
 readExampleFile1 = (filename) -> (
      G := separateRegexp("---+", get filename);
      G = apply(G, s -> select(lines s, t -> #t > 0));
@@ -12,7 +12,7 @@ runExamples = method()
 runExamples (HashTable,ZZ) := (H,i) -> (
      I := value H#i#1();
      R := (ring I)/I;
-     t := timing (R' = integralClosure2 R);
+     t := timing (R' = integralClosure R);
      answer := {i, H#i#0, t#0};
      print answer;
      answer

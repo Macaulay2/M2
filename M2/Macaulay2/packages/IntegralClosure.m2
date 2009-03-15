@@ -5,7 +5,11 @@ newPackage(
     	Authors => {
 	     {Name => "Amelia Taylor",
 	     HomePage => "http://faculty1.coloradocollege.edu/~ataylor/",
-   	     Email => "amelia.taylor@coloradocollege.edu"}},
+   	     Email => "amelia.taylor@coloradocollege.edu"
+	     }
+	     {Name => "David Eisenbud", Email => "de@msri.org", HomePage => "http://www.msri.org/~de/"},
+	     {Name => "Mike Stillman", Email => "mike@math.cornell.edu", HomePage => "http://www.math.cornell.edu/~mike"}
+	     },
     	Headline => "Integral Closure",
     	DebuggingMode => true
     	)
