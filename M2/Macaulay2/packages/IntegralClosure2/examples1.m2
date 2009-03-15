@@ -159,33 +159,6 @@ J = ideal jacobian ideal F
 substitute(J:F, kk) -- check local quasi-homogeneity!
 ideal (flattenRing reesAlgebra J)_0
 ---------------------------------------------------------------------
---2charPairs
-kk = ZZ/32003
-S = kk[x,y]
-ideal"y4-2x3y2-4x5y+x6-x7"
----------------------------------------------------------------------
---2charPairsJacIdeal
-kk = ZZ/32003
-S = kk[x,y]
-F = ideal"y4-2x3y2-4x5y+x6-x7"
-J = ideal jacobian F
-substitute(J:F, kk) -- check local quasi-homogeneity!
-ideal (flattenRing reesAlgebra J)_0
----------------------------------------------------------------------
---ReesAlgOf 3 cubes
-kk = ZZ/32003
-S=kk[a,b,c]
-I=ideal"a3,b3,c3"
-R=reesAlgebra I
-ideal (flattenRing R)_0
----------------------------------------------------------------------
---ReesAlgOf 3 powers
-kk = ZZ/32003
-S=kk[a,b,c]
-I=ideal"a2,b3,c4"
-time R=reesAlgebra I
-ideal (flattenRing R)_0
----------------------------------------------------------------------
 --singular-huneke
 kk = ZZ/31991
 R = kk[a..e]
@@ -311,3 +284,30 @@ ideal"x2+y2+z2+w2+u2,x3+y3+z3,z4+w4+u4"
 --magma-curve
 R = QQ[x,y]
 ideal((x-y)*x*(y+x^2)^3-y^3*(x^3+x*y-y^2))
+---------------------------------------------------------------------
+--2charPairs
+kk = ZZ/32003
+S = kk[x,y]
+ideal"y4-2x3y2-4x5y+x6-x7"
+---------------------------------------------------------------------
+--2charPairsJacIdeal
+kk = ZZ/32003
+S = kk[x,y]
+F = ideal"y4-2x3y2-4x5y+x6-x7"
+J = ideal jacobian F
+substitute(J:F, kk) -- check local quasi-homogeneity!
+ideal (flattenRing reesAlgebra J)_0
+---------------------------------------------------------------------
+--ReesAlgOf 3 cubes
+kk = ZZ/32003
+S=kk[a,b,c]
+I=ideal"a3,b3,c3"
+R=reesAlgebra I
+ideal (flattenRing R)_0
+---------------------------------------------------------------------
+--ReesAlgOf 3 powers
+kk = ZZ/32003
+S=kk[a,b,c]
+I=ideal"a2,b3,c4"
+time R=reesAlgebra I
+ideal (flattenRing R)_0

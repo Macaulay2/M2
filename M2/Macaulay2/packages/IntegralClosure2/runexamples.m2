@@ -75,7 +75,7 @@ runExamples(H,22) -- seqfault
 runExamples(H,23) -- segfault
 runExamples(H,24) -- {24,  boehm19, .42077}
 runExamples(H,25) -- bigger
-runExamples(H,26) -- bigger
+runExamples(H,26) -- bigger.  This was very large.  Changes 3/14 change it to: 42.57 sec
 
 runExamples(H,27) -- {27, singular-huneke, 2.68845}
 runExamples(H,28) -- currently: 378.12 sec uugh
@@ -99,6 +99,12 @@ runExamples(H,45) -- {45, singular-unnamed2, .031908}
 runExamples(H,46) -- {46, singular-unnamed3, 1.44704}
 runExamples(H,47) -- bus error!!
 runExamples(H,48) -- {48, singular-unnamed5, .125091}
+
+runExamples(H,49) -- {49, magma-curve, 2.01796}
+runExamples(H,50) -- {50, 2charPairs, 1.626}
+runExamples(H,51) -- {51, 2charPairsJacIdeal, .644675}
+runExamples(H,52) -- BUG??
+
 -----------------------------------------------------------
 
 
