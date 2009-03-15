@@ -44,7 +44,7 @@ CodeSequenceLength(e:ParseTree,separator:Word):int := (
      	  when e
      	  is b:Binary do (
 	       if b.operator.word == separator
-	       then ( i = i + CodeSequenceLength(b.lhs,separator); e = b.rhs )
+	       then ( i = i + CodeSequenceLength(b.rhs,separator); e = b.lhs )
 	       else return i+1)
 	  is u:Unary do (
 	       if u.operator.word == separator
@@ -52,32 +52,26 @@ CodeSequenceLength(e:ParseTree,separator:Word):int := (
 	       else return i+1)
 	  else return i+1));
 fillCodeSequence(e:ParseTree,v:CodeSequence,m:int,separator:Word):int := (
-     -- starts filling v at position m, returns the next available position
-     while true do (
-     	  when e
-     	  is b:Binary do (
-	       if b.operator.word == separator
-	       then ( m = fillCodeSequence(b.lhs,v,m,separator); e = b.rhs )
-	       else ( v.m = convert(e); return m+1))
-	  is u:Unary do (
-	       if u.operator.word == separator
-	       then ( 
-		    v.m = Code(nullCode());
-		    m = m + 1; 
-		    e = u.rhs )
-	       else ( v.m = convert(e); return m+1))
-	  is p:EmptyParentheses do (
-	       (v.m = convert(e); return m+1))
-	  is dummy do (
-	       v.m = Code(nullCode());
-	       return m+1;
-	       )
-	  is p:Parentheses do (
-	       ( v.m = convert(e); return m+1))
-	  else ( v.m = convert(e); return m+1)));
+     -- Start filling v, in reverse, at position m-1, return the index of the last position filled.
+     -- We do it in reverse, because our comma operator is left associative (to prevent filling the parser stack),
+     -- and because we don't want to fill the stack with recursive calls to this function.
+     while true do
+     when e
+     is b:Binary do (
+	  if b.operator.word == separator
+	  then (m=fillCodeSequence(b.rhs,v,m,separator); e=b.lhs )
+	  else (m=m-1; v.m=convert(e); return m))
+     is u:Unary do (
+	  if u.operator.word == separator
+	  then (m=fillCodeSequence(u.rhs,v,m,separator); m=m-1; v.m=Code(nullCode()); return m)
+	  else (m=m-1; v.m=convert(e); return m))
+     is p:EmptyParentheses do ((m=m-1; v.m=convert(e); return m))
+     is dummy do (m=m-1; v.m=Code(nullCode()); return m)
+     is p:Parentheses do ((m=m-1; v.m=convert(e); return m))
+     else (m=m-1; v.m=convert(e); return m));
 makeCodeSequence(e:ParseTree,separator:Word):CodeSequence := (
      v := new CodeSequence len CodeSequenceLength(e,separator) do provide dummyCode;
-     fillCodeSequence(e,v,0,separator);
+     fillCodeSequence(e,v,length(v),separator);
      v);
 SymbolSequenceLength(e:ParseTree):int := (
      i := 0;
