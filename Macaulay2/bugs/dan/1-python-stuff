@@ -1,0 +1,5 @@
+	finalize each top level Python Object to run Py_DECREF on it
+
+	check for memory leaks
+
+	make an example of a dynamically loaded C library embedded in a python module
