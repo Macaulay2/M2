@@ -6,7 +6,7 @@ newPackage(
 	     {Name => "Amelia Taylor",
 	     HomePage => "http://faculty1.coloradocollege.edu/~ataylor/",
    	     Email => "amelia.taylor@coloradocollege.edu"
-	     }
+	     },
 	     {Name => "David Eisenbud", Email => "de@msri.org", HomePage => "http://www.msri.org/~de/"},
 	     {Name => "Mike Stillman", Email => "mike@math.cornell.edu", HomePage => "http://www.math.cornell.edu/~mike"}
 	     },
@@ -124,7 +124,7 @@ integralClosure1 = (F,G,J,nsteps,varname,strategies) -> (
 	  newminors := ideal (0_R0);
 	  while newminors == 0 do
 	    newminors = ideal randomMinors(10,numgens R0 - dim R0,jacobian R0);
-	  error "look at J, newminors";
+--	  error "look at J, newminors";
 	  J = J + newminors
 	  );
      if codim J > 1 then return (F,G,ideal(1_R0));
