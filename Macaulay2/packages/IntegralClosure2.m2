@@ -1,7 +1,7 @@
 newPackage(
 	"IntegralClosure2",
     	Version => "0.9", 
-    	Date => "February 8, 2009",
+    	Date => "March 15, 2009",
     	Authors => {
 	     {Name => "Amelia Taylor",
 	     HomePage => "http://faculty1.coloradocollege.edu/~ataylor/",
@@ -86,7 +86,7 @@ integralClosure2 Ring := Ring => o -> (R) -> (
      while (
 	  F1 := F;
 	  (F,G,J) = integralClosure1(F1,G,J,nsteps,o.Variable,strategies);
-	  << "fractions: " << first entries G.matrix << endl;
+	  --<< "fractions: " << first entries G.matrix << endl;
 	  nsteps = nsteps + 1;
 	  nsteps < o.Limit and target F1 =!= target F
 	  ) do ();
@@ -97,6 +97,9 @@ integralClosure2 Ring := Ring => o -> (R) -> (
 
 -- integralClosure1(f : R --> R1, g : frac R1 --> frac R, J (radical) ideal in R1)
 --  return (f2 : R --> R2, g2 : frac R2 --> frac R, sub(J,R2))
+
+doingMinimalization = true;
+
 
 integralClosure1 = (F,G,J,nsteps,varname,strategies) -> (
      -- F : R -> R0, R0 is assumed to be a domain
@@ -113,7 +116,18 @@ integralClosure1 = (F,G,J,nsteps,varname,strategies) -> (
      R0 := target F;
      J = trim J;
      <<"radical" << flush;
-     time radJ = trim radical J;  -- ouch
+     Jup := trim (flattenRing J)_0;
+     time C := decompose Jup;
+     C = apply(C, L -> promote(L,ring J));
+     time C1 := select(C, L -> ((a,b) := endomorphisms(L,L_0); a != 0));
+     if #C1 == 0 then (
+	  -- we are integrally closed
+	  return (F,G,ideal(1_R0))
+	  );
+     time radJ = trim intersect C1;
+     --error "look at C, C1, radJ";
+     --error "run: radJ = trim radical J;";
+     --time radJ = trim radical J;  -- ouch
      f := findSmallGen radJ; -- we assume that f is a non-zero divisor!!
      -- Compute Hom_S(radJ,radJ), using f as the common denominator.
      <<"idlizer" << flush;
@@ -127,16 +141,20 @@ integralClosure1 = (F,G,J,nsteps,varname,strategies) -> (
      R1temp := target F0;
      if R1temp === R0 then return(F,G,radJ);
 
-     << "minpres" << flush;
-     time R1 := minimalPresentation R1temp;
-     i := R1temp.minimalPresentationMap; -- R1temp --> R1
-     iinv := R1temp.minimalPresentationMapInv.matrix; -- R1 --> R1temp
-     iinvfrac := map(frac R1temp , frac R1, substitute(iinv,frac R1temp));
-
-     -- We also want to trim the ring     
+     if doingMinimalization then (
+       << "minpres" << flush;
+       time R1 := minimalPresentation R1temp;
+       i := R1temp.minimalPresentationMap; -- R1temp --> R1
+       iinv := R1temp.minimalPresentationMapInv.matrix; -- R1 --> R1temp
+       iinvfrac := map(frac R1temp , frac R1, substitute(iinv,frac R1temp));
      
-     F0 = i*F0; -- R0 --> R1
-     (F0*F,G*G0*iinvfrac,F0 radJ)
+       -- We also want to trim the ring     
+     
+       F0 = i*F0; -- R0 --> R1
+       (F0*F,G*G0*iinvfrac,F0 radJ)
+       )
+     else 
+       (F0,G0,F0 radJ)
      )
 
 ---------------------------------------------------
@@ -197,10 +215,17 @@ idealizer2 (Ideal, RingElement) := o -> (J, g) ->  (
      --   o.Variable: base name for new variables added
      --   o.Index2: the first subscript to use for such variables
      R := ring J;
+     --(Hv,fv) := vasconcelos(J,g);
+     (He,fe) := endomorphisms(J,g);
+     --<< "vasconcelos  fractions:" << netList prepend(fv,flatten entries Hv) << endl;
+     << "endomorphism fractions:" << netList prepend(fe,flatten entries He) << endl;
+{*
      if member("vasconcelos", set o.Strategy) then (
 	  print "Using vasconcelos";
      	  (H,f) := vasconcelos (J,g))
      else (H,f) = endomorphisms (J,g);
+*}     
+     (H,f) := (He,fe);
 --     idJ := mingens(f*J : J);
      if H == 0 then 
 	  (id_R, map(frac R, frac R, vars frac R)) -- in this case R is isomorphic to Hom(J,J)
@@ -219,7 +244,7 @@ endomorphisms(Ideal,RingElement) := (I,f) -> (
      --H is a matrix of numerators
      --f = is the denominator.
      if not fInIdeal(f,I) then error "Proposed denominator was not in the ideal.";
-     H1 := (f*I):I;
+     time H1 := (f*I):I;
      H := compress ((gens H1) % f);
      (H,f)
      )
@@ -237,9 +262,9 @@ vasconcelos(Ideal,RingElement) := (I,f) -> (
      --f  is the denominator. MUST BE AN ELEMENT OF I.
      if f%I != 0 then error "Proposed denominator was not in the ideal.";
      m := presentation module I;
-     n := syz transpose m;
+     time n := syz transpose m;
      J := trim ideal flatten entries n;
-     H1 := ideal(f):J;
+     time H1 := ideal(f):J;
      H := compress ((gens H1) % f);
      (H,f)
      )
