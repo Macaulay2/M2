@@ -14,7 +14,7 @@ Tally.Wrap = RawMatrix.Wrap = Matrix.Wrap = Ideal.Wrap = RingElement.Wrap = Visi
 String.Wrap = x -> ( x = net x; if height x + depth x <= 3 then wr("",x) else x )
 Net.Wrap = x -> if height x + depth x <= 3 then wr("-",x) else x
 Number.Wrap = x -> wr("",x)
-if instance(PythonObject,Type) then PythonObject.Wrap = x -> wr("",x)
+if instance(PythonObject,Type) then PythonObject.Wrap = x -> wr("",x) else protect PythonObject
 QQ.Wrap = x -> wr("=",x)
 
 ignoreP := set { "Core", "Classic", "Parsing", "SimpleDoc" }
