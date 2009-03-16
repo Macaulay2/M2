@@ -3,9 +3,21 @@ document {
      Key => "changes to Macaulay 2, by version",
      Subnodes => {
 	  TO "changes, 1.0 and 1.1",
-	  TO "changes, 1.2"
+	  TO "changes, 1.2",
+	  TO "changes, 1.3"
 	  }
      }
+
+
+document {
+     Key => "changes, 1.3",
+     UL {
+	  LI { "Very long lists can now be parsed without overflowing the stack and causing the program to crash.
+	       This was a problem for MacOS with lists of length greater than about 90000.  In a future version
+	       we will reduce the amount of memory required to parse, translate, and then evaluate the list." }
+	  }
+     }
+
 
 document {
      Key => "changes, 1.2",
