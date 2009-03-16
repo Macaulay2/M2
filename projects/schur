@@ -14,7 +14,7 @@ might already exist in the Schur.m2 M2 package, and the whole would
 duplicate/port to some extent what is available from Stembridge's package in
 Maple. It would also be useful for the Schubert project above...
 
---Mike: Schur rings are implemented in the engine.  There is an M2 package
+--Mike, March, 2008: Schur rings are implemented in the engine.  There is an M2 package
 --called "SchurRings" in M2/Macaulay2/packages/SchurRings.m2, written by
 --Schenck and Stillman.  It's almost working.
 
@@ -22,7 +22,7 @@ Maple. It would also be useful for the Schubert project above...
 
 Proposed by: Sorin Popescu <sorin@math.sunysb.edu>
 Potential Advisor: Mike Stillman
-Project assigned to: 
+Project assigned to: Mike
 Current status:
 
 =============================================================================

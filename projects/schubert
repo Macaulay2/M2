@@ -14,18 +14,17 @@ might be rather involved for a (single) student.
 
 [Sorin]
 
--- Mike and Dan are interested in this.
-
 =============================================================================
 
 Proposed by: Sorin Popescu <sorin@math.sunysb.edu>,
 	     Wolfram Decker <decker@math.uni-sb.de>,
 	     Frank Schreyer <schreyer@math.uni-sb.de>
 Potential Advisor: Sorin Popescu <sorin@math.sunysb.edu>
-Project assigned to: 
-Current status:
+Project assigned to: Grayson, Stillman, Eisenbud, Stromme
+Current status: June, 2008: a package Schubert2 has been written, some 
+     computations work, demo examples run, documentation is needed, further features are 
+     neeeded
 
 =============================================================================
 
 Progress log:
-

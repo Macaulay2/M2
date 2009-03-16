@@ -1,4 +1,4 @@
--*- mode: M2; coding: utf-8 -*-
+-- -*- coding: utf-8 -*-
 
 Title: Groebner fans
 
@@ -34,7 +34,7 @@ implementer.  [suggested by Frank]
 Proposed by: Wolfram Decker <decker@math.uni-sb.de>,
 	     Frank Schreyer <schreyer@math.uni-sb.de>
 Potential Advisor: Mike Stillman <mike@math.cornell.edu>
-Project assigned to: 
+Project assigned to: Andrew Hoefel
 Current status:
 
 =============================================================================
@@ -44,3 +44,5 @@ Progress log:
 March, 2008: Michael Stillman, Josephine Yu, and Anders Jensen worked a bit on
 this.  Gwyn Whieldon might also be interested in working on this.
 
+March, 2009: Andrew Hoefel has been interface to gfan lately, and the code is
+in progess.

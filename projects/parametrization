@@ -23,13 +23,17 @@ curves:
     Janko Boehm: Parametrisierung rationaler Kurven, Diplomarbeit, Bayreuth
     1999. and stuff quoted there.
 
+    Janko has written some of his code in Macaulay2, which we could perhaps use.
+
+The Magma people are working on this.
+
 =============================================================================
 
 Proposed by: Wolfram Decker <decker@math.uni-sb.de>,
 	     Frank Schreyer <schreyer@math.uni-sb.de>
 Potential Advisors: Schreyer, Decker, Boehm
 Project assigned to: 
-Current status: Magma is working on this.
+Current status: 
 
 =============================================================================
 
