@@ -11,7 +11,8 @@ newPackage(
 	     {Name => "Mike Stillman", Email => "mike@math.cornell.edu", HomePage => "http://www.math.cornell.edu/~mike"}
 	     },
     	Headline => "Integral Closure",
-    	DebuggingMode => true
+    	DebuggingMode => true, 
+	AuxiliaryFiles => true
     	)
  --
  -- Needs updating in the comments and the documentation.  Needs Irena
