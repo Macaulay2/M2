@@ -68,3 +68,28 @@ b. trim QuotientRing: (in matrix2.m2.  Why there???!)
   trim Ideal:  if the ideal already has a GB, then trim should use the trim of that!
                then when quotient-ing by this ideal a GB doesnt have to be recomputed.
   R[x]:  if R is a quotient ring, check to make sure that a GB is not recomputed.
+
+------------------------------------------------------------------
+-- engine to do about this:
+
+- GBobject --> quotient poly ring (R/I)
+-- (GBObject, polyring) --> quotient poly ring (R[x]/I, where I \subset R)
+-- (quotient ring, coeff ring, GB object) --> GB object
+-- selectInSubring on a GBObject gives a GBObject
+
+G : GBObject of an ideal  
+
+quotientRing G --> quotient ring
+quotientRing --> G
+(G, G') --> elements of G which are not div by leadterms of elems of G'
+(n, G) --> G'  (select in subring)
+(G,G') --> G''  -- concatenate the GB's "above" and including G, but outside of G'.
+
+-- All of these should be GB's of ideals, in component 0 or 1.
+getGBComputation(PolynomialRing) returns GBComputation
+makeQuotientRing(GBComputation) returns PolynomialRing
+subtractGB(GBComputation, GBComputation) returns GBComputation
+selectInSubring(int,GBComputation) returns GBComputation
+addGB(GBComputation, GBComputation) returns GBComputation
+
+copyGB(GBComputation) returns GBComputation  -- is this needed?
