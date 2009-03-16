@@ -1,0 +1,29 @@
+-*- M2 -*-
+
+Title: Test and improve integral closure code
+
+Description: Make a suite of tests and compare different systems
+performance. Identify problems in M2 and possibly improve the code.
+
+Systems to test:
+Macaulay2
+Singular
+Magma
+CoCoA
+
+
+=============================================================================
+
+Proposed by: David Eisenbud
+Potential Advisor: David Eisenbud 
+Project assigned to: 
+Current status:
+
+=============================================================================
+
+Progress log: March, 2009: David and Mike Stillman have a file of test examples. It's in the 
+directory packages/IntegralClosure . They have also begun to test Singular
+in this way.
+
+
+
