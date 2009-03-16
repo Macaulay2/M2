@@ -1,0 +1,26 @@
+-*- M2 -*-
+
+Title: Test and improve primary decomposition code
+
+Description: Make a suite of tests and compare different systems
+performance. Identify problems in M2 and possibly improve the code.
+
+Systems to test:
+Macaulay2
+Singular
+Magma
+CoCoA
+
+These might all be callable through SAGE
+
+=============================================================================
+
+Proposed by: David Eisenbud
+Potential Advisor: David Eisenbud 
+Project assigned to: 
+Current status:
+
+=============================================================================
+
+Progress log:
+
