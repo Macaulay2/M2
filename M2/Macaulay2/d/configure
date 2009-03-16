@@ -25,6 +25,9 @@ cat <<EOF >compat.h
 #include <python2.5/Python.h>
 #else
 #define PyObject_Hash(o) 0
+#define PyObject_Str(o) 0
+#define PyString_AS_STRING(o) 0
+#define Py_DECREF(o) 0
 #endif
 
 #ifdef HAVE_PARI
