@@ -11,8 +11,8 @@ Rybowicz), integral closure of curves
 
 Proposed by: Wolfram Decker <decker@math.uni-sb.de>,
 	     Frank Schreyer <schreyer@math.uni-sb.de>
-Potential Advisor: Mike
-Project assigned to: Amelia Taylor
+Potential Advisor:
+Project assigned to: Amelia Taylor, Stillman, Eisenbud
 
 Current status: code is being developed, it works, and it is currently being
 distributed as part of M2.
@@ -23,3 +23,6 @@ See M2/Macaulay2/packages/IntegralClosure.m2
 
 Progress log:
 
+March, 2009: the code is getting cleaned up and it's been sped up.  New engine
+interfaces are contemplated, and the gb code in the engine, which is overly
+dependent on C++ inheritance, will be cleaned up.

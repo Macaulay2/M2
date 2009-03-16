@@ -50,10 +50,19 @@ The package could include functions that:
 
 Proposed by: Dan Grayson
 Potential Advisor: 
-Project assigned to: 
-Current status:
+Project assigned to: unassigned, but various people have worked on parts
+     of this
+Current status: 
 
 =============================================================================
 
 Progress log:
 
+See the packages:
+     FourTiTwo
+     Polyhedra
+     StatePolytope
+     gfanInterface
+
+Birkner continues to develop the package Polyhedra, which seems to implement a
+lot of what is asked for.

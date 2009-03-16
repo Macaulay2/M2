@@ -23,6 +23,8 @@ This algorithm has been implemented in Singular by Frühbis:
     Notes of LMS, Cambridge University Press, to appear (2005/06).
     http://www.singular.uni-kl.de/publications.html
 
+Integral closure should be done before we start on this.
+
 =============================================================================
 
 Proposed by: Wolfram Decker <decker@math.uni-sb.de>,

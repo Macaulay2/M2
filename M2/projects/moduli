@@ -34,5 +34,8 @@ Current status:
 
 Progress log:
 
+February 2009: Stephanie Yang and Greg Smith have written some code in Macaulay
+2 working in this direction.
 
-
+Jameel Al-Aidrous has written a lot of code for the tautological subring of
+M_(g,n) in python (Berkeley PhD thesis, student of Graber and Eisenbud.)

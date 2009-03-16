@@ -1,4 +1,4 @@
--*- M2 -*-
+--*- M2 -*-
 
 Title: Cohomology
 
@@ -23,13 +23,19 @@ This would be good for someone who wants to learn the underlying (advanced) theo
 
 See the preliminary code in BGG.m2.
 
+See also the code on Frank Schreyer's web site
+(http://math.uni-sb.de/ag-schreyer/home/computeralgebra.htm) in
+computingRpi_star.m2 associated with math.AG/0506391, which implements the
+algorithm, but it needs to be put into a package form, with a general
+interface.
+
 =============================================================================
 
 Proposed by: Wolfram Decker <decker@math.uni-sb.de>,
 	     Frank Schreyer <schreyer@math.uni-sb.de>
 Potential Advisor: Frank Schreyer
-Project assigned to: Thomas Koeppe and Manoj Kummini, March, 2008
-Current status:
+Project assigned to: Mike Stillman and David Eisenbud, March, 2009.
+Current status: 
 
 =============================================================================
 

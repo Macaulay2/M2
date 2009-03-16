@@ -11,12 +11,18 @@ computations in local rings (Buchberger-Mora)
 Proposed by: Wolfram Decker <decker@math.uni-sb.de>,
 	     Frank Schreyer <schreyer@math.uni-sb.de>
 
-Project assigned to: Dan and Mike
+Project assigned to: Dan and Mike, March, 2008.
 
 Current status: Engine code is being developed.  We also need to write code for
    minimalization of resolutions. 
+
+We have to design a new type of top-level ring, where the not only are the
+monomials ordered locally, but also, fractions can occur as ring elements.
 
 =============================================================================
 
 Progress log:
 
+July, 2008: various routines were added to the package "Local".  Routines such
+as "localPrune" should be replaced by adding the corresponding functionality to
+"prune", to be invoked over local rings (still to be introduced).

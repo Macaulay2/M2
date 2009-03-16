@@ -2,17 +2,19 @@
 
 Title: interface M2 with bertini
 
-Description:
+Description: interface M2 with bertini
 
 =============================================================================
 
 Proposed by: dan and mike
 Potential Advisor: 
 Project assigned to: Anton Leykin, March, 2008
-Current status:
+Current status: 2009/3/16
 
 =============================================================================
 
 Progress log:
 
 He will also interface with phcpack and T-Y. Li's package hompack2.
+Preliminary results are encouraging.
+The name of his package, under development, is NAG.
