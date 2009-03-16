@@ -528,6 +528,37 @@ export treePosition(e:ParseTree):Position := (
 	  )
      );
 
+size(x:Token):int := Ccode(int,"sizeof(*",x,")");
+size(x:functionDescription):int := Ccode(int,"sizeof(*",x,")");
+export size(e:ParseTree):int := (
+     Ccode(int,"sizeof(",e,")") +
+     when e
+     is x:dummy do Ccode(int,"sizeof(*",x,")") + Ccode(int,"sizeof(*",x.position,")")
+     is x:Token do size(x)
+     is x:Adjacent do Ccode(int,"sizeof(*",x,")") + size(x.lhs) + size(x.rhs)
+     is x:Binary do Ccode(int,"sizeof(*",x,")") + size(x.lhs) + size(x.rhs) + size(x.operator)
+     is x:Arrow do Ccode(int,"sizeof(*",x,")") + size(x.lhs) + size(x.rhs) + size(x.operator) + size(x.desc)
+     is x:Unary do Ccode(int,"sizeof(*",x,")") + size(x.rhs) + size(x.operator)
+     is x:Postfix do Ccode(int,"sizeof(*",x,")") + size(x.lhs) + size(x.operator)
+     is x:Quote do Ccode(int,"sizeof(*",x,")") + size(x.rhs) + size(x.operator)
+     is x:GlobalQuote do Ccode(int,"sizeof(*",x,")") + size(x.rhs) + size(x.operator)
+     is x:LocalQuote do Ccode(int,"sizeof(*",x,")") + size(x.rhs) + size(x.operator)
+     is x:Parentheses do Ccode(int,"sizeof(*",x,")") + size(x.left) + size(x.right) + size(x.contents)
+     is x:EmptyParentheses do Ccode(int,"sizeof(*",x,")") + size(x.left) + size(x.right)
+     is x:IfThen do Ccode(int,"sizeof(*",x,")") + size(x.ifToken) + size(x.predicate) + size(x.thenclause)
+     is x:IfThenElse do Ccode(int,"sizeof(*",x,")") + size(x.ifToken) + size(x.predicate) + size(x.thenclause) + size(x.elseClause)
+     is x:TryThenElse do Ccode(int,"sizeof(*",x,")") + size(x.tryToken) + size(x.primary) + size(x.thenToken) + size(x.sequel) + size(x.elseToken) + size(x.alternate)
+     is x:TryElse do Ccode(int,"sizeof(*",x,")") + size(x.tryToken) + size(x.primary) + size(x.elseToken) + size(x.alternate)
+     is x:Try do Ccode(int,"sizeof(*",x,")") + size(x.tryToken) + size(x.primary)
+     is x:Catch do Ccode(int,"sizeof(*",x,")") + size(x.catchToken) + size(x.primary)
+     is x:For do Ccode(int,"sizeof(*",x,")")+ size(x.forToken) + size(x.variable) + size(x.inClause) + size(x.fromClause) + size(x.toClause) + size(x.whenClause) + size(x.listClause) + size(x.doClause)
+     is x:WhileDo do Ccode(int,"sizeof(*",x,")") + size(x.whileToken) + size(x.predicate) + size(x.dotoken) + size(x.doClause)
+     is x:WhileList do Ccode(int,"sizeof(*",x,")") + size(x.whileToken) + size(x.predicate) + size(x.listtoken) + size(x.listClause)
+     is x:WhileListDo do Ccode(int,"sizeof(*",x,")") + size(x.whileToken) + size(x.predicate) + size(x.dotoken) + size(x.doClause) + size(x.listtoken) + size(x.listClause)
+     is x:StartDictionary do Ccode(int,"sizeof(*",x,")") + size(x.body)
+     is x:New do Ccode(int,"sizeof(*",x,")") + size(x.newtoken) + size(x.newclass) + size(x.newparent) + size(x.newinitializer)
+     );
+
 -- Local Variables:
 -- compile-command: "make -C $M2BUILDDIR/Macaulay2/d "
 -- End:
