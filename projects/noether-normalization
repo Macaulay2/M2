@@ -62,10 +62,11 @@ Proposed by: Mike Stillman <mike@math.cornell.edu>
 Advisor: Mike Stillman <mike@math.cornell.edu>
 Project assigned to: Bart Snapp <snapp@math.uiuc.edu>,
                      Nathaniel Stapleton <nstaple2@math.uiuc.edu>
-Current status:
-     	       	    a lot of code has been written
-		    a little more work remains to do
-		    hopefully complete during Summer, 2007
+Current status:  complete, with the following idea for future work:
+
+    The current implementation seems to work. One might be able to increase
+    efficiency if instead of using the lexicographical ordering, a block
+    ordering is used instead.
 
 =============================================================================
 
