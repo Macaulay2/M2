@@ -11,7 +11,7 @@ investigate adding (sage includes these):
       gap
       palp		    lattice polytopes and toric geometry
       polymake		    polytopes
-      cddlib		    polytopes
+      cddlib		    polytopes	http://www.ifor.math.ethz.ch/~fukuda/cdd_home/cdd.html
       lrs		    polytopes
       porta		    polytopes
       4ti2		    polytopes
