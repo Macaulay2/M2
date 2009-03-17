@@ -1,0 +1,25 @@
+-*- M2; coding: utf-8 -*-
+
+Title: Primary Decomposition via GTZ
+
+Description:
+
+    Add this algorithm to Macaulay2's primary decomposition as an optional strategy.
+
+    [GTZ] Gianni, Patrizia; Trager, Barry; Zacharias, Gail, Gröbner bases and
+       primary decomposition of polynomial ideals. Computational aspects of
+       commutative algebra.  J. Symbolic Comput. 6 (1988), no. 2-3, 149-167.
+
+=============================================================================
+
+Proposed by: Mike Stillman
+Potential Advisor: Mike Stillman
+Project assigned to: 
+Current status: Mike has written some code in Macaulay2/packages/PrimaryDecomposition/GTZ.m2, but it's never
+	called from top level.  The 0-dimensional case needs work, perhaps with some engine reworking.
+	The code needs to be integrated.  It would be nice to get someone to work on this code!
+
+=============================================================================
+
+Progress log:
+
