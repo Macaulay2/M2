@@ -200,9 +200,9 @@ randomMinors(ZZ,ZZ,Matrix) := (n,d,M) -> (
      --produces a list of n distinct randomly chosend d x d minors of M
      r := numrows M;
      c := numcols M;
-     if d>min(r,c) or 
-        n>max (binomial(r,d), binomial(c,d)) 
-	then error "matrix too small";
+     if d > min(r,c) then return null;
+     if n >= binomial(r,d) * binomial(c,d)
+	then return (minors(d,M))_*;
      L := {}; -- L will be a list of minors, specified by the pair of lists "rows" and "cols"
      dets := {}; -- the list of determinants taken so far
      rowlist := toList(0..r-1);
@@ -303,6 +303,8 @@ vasconcelos(Ideal,RingElement) := (I,f) -> (
      (H,f)
      )
 
+debug Core -- for R.generatorSymbols
+
 ringFromFractions = method(Options=>{Variable => global w, Index => 0})
 ringFromFractions (Matrix, RingElement) := o -> (H, f) ->  (
      -- f is a nonzero divisor in R
@@ -324,7 +326,7 @@ ringFromFractions (Matrix, RingElement) := o -> (H, f) ->  (
      	  degs = join(newdegs, (monoid R).Options.Degrees);
      	  MO := prepend(GRevLex => n, (monoid R).Options.MonomialOrder);
           kk := coefficientRing R;
-     	  A := kk(monoid [o.Variable_(o.Index,0)..o.Variable_(o.Index,n-1), gens R,
+     	  A := kk(monoid [o.Variable_(o.Index,0)..o.Variable_(o.Index,n-1), R.generatorSymbols,
 		    MonomialOrder=>MO, Degrees => degs]);
      	  I := ideal presentation R;
      	  IA := ideal ((map(A,ring I,(vars A)_{n..numgens R + n-1})) (generators I));
@@ -844,9 +846,15 @@ document {
      "In the case that the input ring ", TT "R", " is reduced, but not a domain, 
      the direct sum of the rings returned is isomporphic to the integral closure 
      of ", TT "R", ", but the rings returned are not necessarily all domains.",
-     EXAMPLE{"S=ZZ/101[a..d]/ideal(a*(b-c),c*(b-d),b*(c-d));",
-	  "integralClosure S"
-	  },
+     PARA,
+     "Currently, the algorithm requires the ring to be a domain.  To find the 
+     integral closure of a reduced non-domain, do it for each component.",
+     EXAMPLE lines ///
+         S = ZZ/101[a..d]/ideal(a*(b-c),c*(b-d),b*(c-d));
+	 C = decompose ideal S
+	 Rs = apply(C, I -> (ring I)/I);
+	 "Rs/integralClosure"
+         ///,
      "The algorithm can correctly  proceed without decomposing a reduced ring 
      if it finds a non-zero divisor ", TT "f", " with which to compute 1/f(fJ:J), 
      where ", TT "J", " is the ideal defining the non-normal locus at that stage.",

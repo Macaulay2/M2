@@ -43,6 +43,13 @@ runSingIC (HashTable,ZZ) := (H,i) -> (
 runSingIC (HashTable,List) := (H,L) -> apply(L,a -> runSingIC(H,a))
 runSingIC HashTable := (H) -> runSingIC(H, sort keys H)
 
+charPairs = method()
+charPairs(ZZ,List,Ring) := (a,bs,kk) -> (
+     A := kk[symbol t];
+     B := kk[x,y];
+     F := map(A,B,{A_0^a, sum(bs,bi -> A_0^bi)});
+     coimage F
+     )
 end
 restart
 load "runexamples.m2"
@@ -155,3 +162,28 @@ use ring jac
 jac = trim(ideal"4c3+a2,4b3+a2" + jac)
 betti jac
 decompose jac
+
+----------------------------------------
+-- 
+kk = ZZ/32003
+charPairs(4,{6,7},kk)
+time integralClosure oo
+
+kk = ZZ/32003
+C = charPairs(4,{6,12,13},QQ)
+time C' = integralClosure C
+F = (ideal C)_0
+use ring F
+D = discriminant(F,x)
+factor D
+singularLocus C
+eliminate(o24_1,x)
+
+-- This one is really bad at the moment...
+kk = ZZ/32003
+C = charPairs(6,{9,15,17},kk)
+F = (ideal C)_0
+use ring oo
+factor discriminant(F,y)
+factor discriminant(F,x)
+time C' = integralClosure C
