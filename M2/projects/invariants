@@ -36,11 +36,18 @@ This one also perhaps:
 
 When integral closure is fast, that will be applicable here.
 
+Wolfram Decker says: Please note that Simon King has worked very hard to
+improve the Singular version of the project (originally written by one of my
+students).  So the reference to his ideas should be there.  Another tricky
+thing is to do fast linear algebra at some point.  This is where Kemper's Magma
+version and the Singular implementation differ.  Also, the case where the group
+order is divided by the characteristic of the base field is tricky.
+
 =============================================================================
 
 Proposed by: Wolfram Decker <decker@math.uni-sb.de>,
 	     Frank Schreyer <schreyer@math.uni-sb.de>
-Potential Advisor: 
+Potential Advisor: Wolfram Decker <decker@math.uni-sb.de>
 Project assigned to: 
 Current status:
 
