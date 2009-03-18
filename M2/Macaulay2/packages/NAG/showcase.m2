@@ -8,16 +8,18 @@ load "benchmarks.m2"
 
 -- random system in n variables of degree d 
 n = 5; d = 4; -- 
-setRandomSeed 0; T = (randomSystem(n,d,CC))_*; (S,solsS) = totalDegreeStartSystem T; -- n=1024, M2:7, H:11, B:51, P:68
+setRandomSeed 0; T = (randomSystem(n,d,CC))_*; (S,solsS) = totalDegreeStartSystem T; -- #sols=1024, M2:7, H:11, B:51, P:87
 n = 5; d = 5; -- 
-setRandomSeed 0; T = (randomSystem(n,d,CC))_*; (S,solsS) = totalDegreeStartSystem T; -- n=3125, M2:46, H:69, B:402, P:67
+setRandomSeed 0; T = (randomSystem(n,d,CC))_*; (S,solsS) = totalDegreeStartSystem T; -- #sols=3125, M2:46, H:69, B:402, P:674
 
 -- katsura
-T = (katsuraBench 12)_*; (S,solsS) = totalDegreeStartSystem T; -- n=2048, M2:11, H:19, B:37, P:67
-T = (katsuraBench 14)_*; (S,solsS) = totalDegreeStartSystem T; -- n=8192, M2:161, H:125, 
+T = (katsuraBench 11)_*; (S,solsS) = totalDegreeStartSystem T; -- #sols=1024, M2:4, H:7, B:15, P:50
+T = (katsuraBench 12)_*; (S,solsS) = totalDegreeStartSystem T; -- #sols=2048, M2:11, H:19, B:37, P:134
 
 -- random generalized eigenvalue problem
-setRandomSeed 0; (S,T,solsS) = randomGeneralizedEigenvalueProblem 35; -- n=35, M2:5, B:22, P:67 
+setRandomSeed 0; (S,T,solsS) = randomGeneralizedEigenvalueProblem 35; -- #sols=35, M2:5, B:22, P:432 
+
+
 
 -- PICK WHAT TO RUN: ------------------------------------------------------
 -- 1st run
