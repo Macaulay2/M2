@@ -52,7 +52,7 @@ Proposed by: Dan Grayson
 Potential Advisor: 
 Project assigned to: unassigned, but various people have worked on parts
      of this
-Current status: 
+Current status: almost done, see below.
 
 =============================================================================
 
@@ -65,4 +65,9 @@ See the packages:
      gfanInterface
 
 Birkner continues to develop the package Polyhedra, which seems to implement a
-lot of what is asked for.
+lot of what is asked for.  March, 2009: Birkner says his package almost
+completes the project.  Further work might include implementing the degree of a
+vertex (there are various candidates) and interfaces to graphics programs.  The
+first graphics program to interface to might be sage, via python embedded in
+Macaulay 2.
+
