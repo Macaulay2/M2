@@ -1,0 +1,3 @@
+hashing of the list of example strings returns a different answer when the hash
+code of List changes, so we should use a sequence, instead.  Those lists stored
+in pkg#"example inputs" as values should be sequences, instead.
