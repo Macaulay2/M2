@@ -293,20 +293,28 @@ reduceLinears Ideal := o -> (I) -> (
        count = count - 1;
        g := findReductor L;
        if g === null then break;
-       --<< "reducing using " << g#0 << endl << endl;
+--       << "---------------------------------" << endl;
+--       << "reducing using " << g#0 << endl << endl;
+--       << "  sending it to " << g#1 << endl << endl;
        F := map(R,R,{g#0 => g#1});
        L = apply(L, i -> F(i));
        g
        );
        -- Now loop through and improve M
-     M = backSubstitute M;  
+     M = backSubstitute M;
+--     << "------- backtracked ---------" << endl;
+--     scan(M, g -> (
+--       << "---------------------------------" << endl;
+--       << "reducing using " << g#0 << endl << endl;
+--       << "  sending it to " << g#1 << endl << endl;
+--       ));
      (ideal L, M)
      )
 
 backSubstitute = (M) -> (
      -- 1 argument: A list of pairs of variable and a polynomial. 
-     -- Return: A list of pairs of the form (variable x, poly x+g)
-     -- where x+g is in I, and x does not appear in any polynomial
+     -- Return: A list of pairs of the form (variable x, poly g)
+     -- where x-g is in I, and x does not appear in any polynomial
      -- later. 
      --
      -- If M has length <= 1, then nothing needs to be done
@@ -320,8 +328,10 @@ backSubstitute = (M) -> (
 	       v := g#0;
 	       restg := H#v;
 	       badset := xs * set support restg;
-	       if badset =!= set{} then (
-		    H#v = F(restg))
+	       while badset =!= set{} do (
+		    restg = F(restg);
+		    badset = xs * set support restg);
+	       H#v = restg;
 	       ));
          pairs H)
      )
