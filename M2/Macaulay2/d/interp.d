@@ -92,6 +92,7 @@ readeval4(file:TokenFile,printout:bool,dictionary:Dictionary,returnLastvalue:boo
 	       gettoken(file,true);
 	       );
 	  parsed := parse(file,SemicolonW.parse.precedence,true);
+	  if debugLevel == 123 then stderr << "parse tree size: " << size(parsed) << endl;
 	  if parsed == errorTree then (
 	       if fileError(file) then return buildErrorPacket(fileErrorMessage(file));
 	       if stopIfError || returnIfError then return buildErrorPacket("--backtrace: parse error--");
