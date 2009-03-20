@@ -18,17 +18,17 @@ newPackage(
 -- Any symbols or functions that the user is to have access to
 -- must be placed in one of the following two lists
 export {
-     solveSystem, track, refine, totalDegreeStartSystem,
-     areEqual, sortSolutions, multistepPredictor, multistepPredictorLooseEnd,
+     "solveSystem", "track", "refine", "totalDegreeStartSystem",
+     "areEqual", "sortSolutions", "multistepPredictor", "multistepPredictorLooseEnd",
      --options
-     Software,PHCpack,Bertini,HOM4PS2,M2,
-     gamma,tDegree,tStep,tStepMin,tStepMax,stepIncreaseFactor,numberSuccessesBeforeIncrease,
-     Predictor,RungeKutta4,Multistep,Tangent,Euler,Secant,MultistepDegree,
-     finalMaxCorSteps, maxCorSteps, 
-     Projectivize,
-     AffinePatches, DynamicPatch,
-     RandomSeed,
-     SLP, HornerForm, CompiledHornerForm     
+     "Software","PHCpack","Bertini","HOM4PS2","M2",
+     "gamma","tDegree","tStep","tStepMin","tStepMax","stepIncreaseFactor","numberSuccessesBeforeIncrease",
+     "Predictor","RungeKutta4","Multistep","Tangent","Euler","Secant","MultistepDegree",
+     "finalMaxCorSteps", "maxCorSteps", 
+     "Projectivize",
+     "AffinePatches", "DynamicPatch",
+     "RandomSeed",
+     "SLP", "HornerForm", "CompiledHornerForm", "CorrectorTolerance", "SLPcorrector", "SLPpredictor"
      }
 exportMutable {
      }

@@ -186,3 +186,14 @@ expr "system('echo hi there')"
 gc = context "import gc"
 expr "gc.set_debug(gc.DEBUG_LEAK)"
 expr "gc.set_debug(gc.DEBUG_STATS)"
+
+turtle = context "from turtle import *";
+t = turtle.stmt
+t "x=Pen()"
+t "x.color('blue')"
+t "x.forward(200)"
+t "x.left(200)"
+turtle "dir()"
+turtle "x.speed"
+t "x.speed('fastest')"
+turtle "speeds"
