@@ -1,0 +1,34 @@
+With this command
+
+  installPackage("NAG", RemakeAllDocumentation=>true, MakeLinks=>true, AbsoluteLinks=>true, RerunExamples=>true, SeparateExec=>false, IgnoreExampleErrors=>true)
+
+when I restart and do "viewHelp" I don't see NAG on the list of locally installed packages!
+
+With this command, I see it:
+
+  installPackage("NAG", RemakeAllDocumentation=>true, MakeLinks=>true, AbsoluteLinks=>true, RerunExamples=>true, SeparateExec=>true, IgnoreExampleErrors=>true)
+
+
+
+After
+
+   installPackage("NAG", RemakeAllDocumentation=>true, MakeLinks=>true, AbsoluteLinks=>false, RerunExamples=>true, IgnoreExampleErrors=>true)
+
+I see
+
+   ___Corrector__Tolerance.html:16:<link rel="stylesheet" type="text/css" href="../../../../../common/share/Macaulay2/Style/doc.css"/>
+
+, which is an incorrect reference (using ../common), even though the default value for the SeparateExec option to installPackage is false
+
+Also this one:
+
+   toc.html:55:<li><span><span><a href="../../../../../common/share/doc/Macaulay2/NAG/html/_track_lp__List_cm__List_cm__List_rp.html" title="track a user homotopy">track(List,List,List)</a> -- track a user homotopy</span></span></li>
+
+And this one:
+
+   ___Affine__Patches.html:34:<p>The object <tt>AffinePatches</tt> (missing documentation<!-- tag: AffinePatches -->) is <span>a <a href="../../../../../common/share/doc/Macaulay2/Macaulay2Doc/html/___Symbol.html">symbol</a></span>.</p>
+
+And these absolute links:
+
+   ___Bertini.html:18:<link rel="Source: see text above line 70" type="text/plain" href="file:///home/dan/.Macaulay2/local/share/Macaulay2/./NAG/doc.m2"/>
+   ___Bertini.html:30:<div class="single"><!--file:///home/dan/src/M2/trunk/Macaulay2/packages/NAG/doc.m2:70--><h2>Description</h2>
