@@ -153,7 +153,7 @@ document { Key => "moving or copying the Macaulay 2 files",
      "It is important, if you want to move or copy the Macaulay 2 files, to move or
      copy the entire directory tree, so their relative locations do not change.",
      PARA{},
-     "When ", TT "M2", " starts up, it locates the files it needs (such as ", TT "setup.m2", ",
+     "When ", TT "M2", " starts up, it locates the files it needs (such as ", TT "setup.m2", "),
      by first locating ", TT "M2", " and then traversing the directory tree it expects to find ", TT "M2", " in.  If you copy
      or move just ", TT "M2", " (or ", TT "M2.exe", ", under windows) to some other directory, then 
      that traversal will not be successful.",
