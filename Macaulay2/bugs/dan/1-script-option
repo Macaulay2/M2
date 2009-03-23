@@ -1,0 +1,6 @@
+gallium$ ./foo
+{*dummy position*}[0]: error: file not found in "/home/dan/src/M2/1.2/BUILD/dan/../../Macaulay2/d/": "./foo"
+{*dummy position*}[0]: error: file not found in "/home/dan/src/M2/1.2/BUILD/dan/../../Macaulay2/d/": "./foo"
+gallium$ cat foo
+#! /usr/bin/M2 --script
+print a
