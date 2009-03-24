@@ -18,6 +18,8 @@ export { smallerMonomials,
      groebnerScheme
      }
 
+needsPackage "FourierMotzkin"
+
 --load "/Users/mike/src/M2/Macaulay2/bugs/mike/minpressy.m2"
 --
 --<< "class is " << class minPressy << endl;
@@ -64,6 +66,40 @@ standardMonomials(Ideal) := (I) -> (
 standardMonomials(List) := (L) -> (
      I := ideal L;
      apply(L, f -> standardMonomials(degree f, I))
+     )
+
+
+findWtVec = (I) -> (
+     M := I_*;
+     L := smallerMonomials I;
+     W := flatten apply(#M, i -> (
+	       e := first exponents M#i;
+	       apply(L#i, t -> e - first exponents t)));
+     W = transpose matrix W;
+     (C,H) := fourierMotzkin W;
+     w := flatten entries sum(numColumns C, i -> C_{i});
+     maxw := max w;
+     result := apply(#w, i -> maxw+1-w#i);
+     (result, tally flatten entries(matrix {result} * W))
+     )
+
+findWeightCone = method()
+findWeightCone Ideal := (I) -> (
+     -- I should be a monomial ideal
+     L := flatten entries gens I;
+     M := transpose matrix flatten apply(L, f -> (
+	       b := basis(degree f, ring I);
+	       b = compress (b % I);
+	       apply(first entries b, g -> first exponents f - first exponents g)
+	       ));
+     M0 = M;
+     (C,H) := fourierMotzkin M;
+     M = fourierMotzkin(C,H);
+     C = -C;
+     w := flatten entries sum(numColumns C, i -> C_{i});
+     minw := min w;
+     result := apply(#w, i -> -minw+1+w#i);
+     (result,C,M)
      )
 
 parameterFamily = method(Options=>{Local=>false, Weights=>null})
@@ -141,11 +177,37 @@ pruneParameterScheme(Ideal,Ideal) := (J,F) -> (
      (J1, phi' F)
      )
 
+preprune = (J,F) -> (
+     -- asumption: J is homogeneous
+     R' := (coefficientRing ring J) [ gens ring J ];
+     J' := sub(J,R');
+     J0 := trim ideal apply(J'_*, f -> part_1 f);
+     pos := set ((flatten entries leadTerm J0)/index//sort);
+     wt := toList apply(0..numgens ring J - 1, i -> if member(i,pos) then 1 else 0);
+     others := sort toList((set toList(0..numgens ring J-1)) - pos);
+     pos = sort toList pos;
+     degs := flatten degrees ring J;
+     S := (coefficientRing ring J)[(gens ring J)_pos, (gens ring J)_others, 
+	  MonomialOrder=>{Weights=>join(wt_pos,wt_others), #pos, #others},
+     	  Degrees => join(degs_pos,degs_others), 
+	  MonomialSize => 8];
+     -- Now we need to change the ring of F
+     T := S (monoid ring F);
+     idS := map(S, ring J);
+     Fnew := (map(T, ring F, vars T | sub(idS.matrix,T))) F;
+     (sub(J,S), Fnew)
+     )
+
 groebnerScheme = method(Options=>{Minimize=>true, Weights=>null})
 groebnerScheme Ideal := opts -> (I) -> (
      L1 := smallerMonomials I;
      F0 := parameterFamily(I,L1,symbol t,Weights=>opts.Weights);
      J0 := parameterIdeal(I,F0);
+     if isHomogeneous J0 then (
+	  -- We change the ring so that the lead terms of the linear parts
+	  -- will occur as lead terms of J0.
+	  (J0,F0) = preprune(J0,F0);
+	  );
      if opts.Minimize then
        (J0,F0) = pruneParameterScheme(J0,F0);
      (J0,F0)
