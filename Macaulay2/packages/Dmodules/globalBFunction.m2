@@ -205,17 +205,41 @@ generalB (List, RingElement) := RingElement => o->(F,g) -> (
      sub(I4_0, Sring)
      )
 
-
-
-
-
-
-
-
-
-
-
-
-
+--------------------------------------------------------------
+-- global generalized Bernstein-Sato ideal 
+generalBideal = method(Options => {
+	  Strategy => ViaLinearAlgebra
+	  })
+generalBideal (List, RingElement) := RingElement => o->(F,g) -> (
+-- Input:   F = {f_1,...,f_r}, a list of polynomials in n variables                                                                                                                                       
+--                             (f_i has to be an element of A_n, the Weyl algebra).                                                                                                                       
+--          g, a polynomial
+-- Output:  the generalized B-S ideal, an ideal of QQ[s_1..s_r]
+     r := #F; 
+     AnnI := AnnFs F;
+     DY := ring AnnI;
+     K := coefficientRing DY;
+     n := numgens DY // 2 - r; -- DY = k[x_1,...,x_n,t_1,...,t_r,dx_1,...,dx_n,dt_1,...,dt_r]
+     I0 := if g==1 then AnnI else intersect(AnnI, ideal sub(g, DY));
+     w := toList(n:0) | toList(r:1);
+     --I1 := inw(I0, -w|w);
+     I1 := I0 + ideal sub(product F,DY);
+     s := symbol s; 
+     SDY := K (monoid [s_1..s_r, gens DY, 
+	       WeylAlgebra => DY.monoid.Options.WeylAlgebra, MonomialOrder=>{Weights=>toList(n+r:0)|toList(n+2*r:1)}]);
+     v := gens SDY; 
+     SX := take(v,{0,n+r-1}); notSX := drop(v,{0,n+r-1}); 
+     T := take(v,{n+r,n+2*r-1}); dT := take(v,{2*n+2*r,2*n+3*r-1});
+     SXring := K(monoid [SX]);
+     SDYtoSX := map(SXring,SDY, gens SXring | toList(n+2*r:0) );
+     I2' := sub(I1,SDY) + ideal apply(r,i->SDY_i + dT#i*T#i); -- I2 + (s_1-dt_1*t_1,...,s_n-dt_n*t_n)
+     G2' := flatten entries gens gb I2'; 
+     I2 := SDYtoSX ideal select(G2', f->all(listForm f, m->sum drop(first m,n+r)==0));
+     g' := SDYtoSX sub(g,SDY);
+     I3 := I2 : g';
+     I4 := eliminate(drop(gens SXring,r), I3);
+     Sring = K(monoid [take(gens SXring,r)]);
+     sub(I4, Sring)
+     )
 
 

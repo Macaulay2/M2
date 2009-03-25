@@ -116,12 +116,25 @@ next one takes > 1 day
 
 ///
 
+
 -- b = {1_W,x_1,x_2,x_3} / (g->print factorBFunction generalB (F,g,GuessedRoots=>{-2}))
 --time factorBFunction generalB (F,x_2)
 --time factorBFunction generalB (F,1_W)
 
 
+-- Examples for generalBideal
+restart; 
+loadPackage("Dmodules", FileName=>"../../Dmodules.m2");
 
+W = makeWA(QQ[x_1..x_3]);
+F = {x_2^2-x_1*x_3, x_1^3-x_3^2}; 
+F = {x_1^3-x_2^2, x_2^3-x_3^2};
+F = {x_1^4-x_2^3, x_3^2-x_1*x_2^2}; -- finishes in 200 sec
+b = time generalBideal (F,1_W)
+decompose b
+primaryDecomposition b
+sR = QQ[s,gens ring b]
+eliminate(sub(b,sR) + ideal(s-sub(sum gens ring b,sR)), drop(gens sR,1))
 
 
 

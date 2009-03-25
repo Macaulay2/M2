@@ -20,7 +20,6 @@ newPackage(
 export {
      "solveSystem", "track", "refine", "totalDegreeStartSystem",
      "areEqual", "sortSolutions", "multistepPredictor", "multistepPredictorLooseEnd",
-     --options
      "Software","PHCpack","Bertini","HOM4PS2","M2",
      "gamma","tDegree","tStep","tStepMin","tStepMax","stepIncreaseFactor","numberSuccessesBeforeIncrease",
      "Predictor","RungeKutta4","Multistep","Tangent","Euler","Secant","MultistepDegree",
@@ -1511,8 +1510,8 @@ prunePreSLP (List,List,Matrix) := (C,slp,outMatrix) -> (
 --   void fn(const complex* a, complex* b)
 -- here: input array a
 --       output array b 
-preSLPtoCPP = method()
-preSLPtoCPP (Sequence,String) := (S,filename)-> (
+preSLPtoCPP = method(TypicalValue=>Nothing, Options=>{System=>MacOsX})
+preSLPtoCPP (Sequence,String) := o-> (S,filename)-> (
      constants := S#0;
      slp := S#1;
      fn := "slpFN"; -- function name
@@ -1544,28 +1543,28 @@ public:
   void sprint(char*);
 };
 
-inline complex::complex() { }
-inline complex::complex(double r, double im)
+complex::complex() { }
+complex::complex(double r, double im)
 {
   real=r;
   imag=im;
 }
  
 //                                 COPY CONSTRUCTOR
-inline complex::complex(const complex &c)
+complex::complex(const complex &c)
 {
   this->real=c.real;
   this->imag=c.imag;
 }
  
-inline void complex::operator =(complex c)
+void complex::operator =(complex c)
 {
   real=c.real;
   imag=c.imag;
 }
  
  
-inline complex complex::operator +(complex c)
+complex complex::operator +(complex c)
 {
   complex tmp;
   tmp.real=this->real+c.real;
@@ -1573,7 +1572,7 @@ inline complex complex::operator +(complex c)
   return tmp;
 }
  
-inline complex complex::operator -(complex c)
+complex complex::operator -(complex c)
 {
   complex tmp;
   tmp.real=this->real - c.real;
@@ -1581,7 +1580,7 @@ inline complex complex::operator -(complex c)
   return tmp;
 }
  
-inline complex complex::operator *(complex c)
+complex complex::operator *(complex c)
 {
   complex tmp;
   tmp.real=(real*c.real)-(imag*c.imag);
@@ -1589,7 +1588,7 @@ inline complex complex::operator *(complex c)
   return tmp;
 }
  
-inline complex complex::operator /(complex c)
+complex complex::operator /(complex c)
 {
   double div=(c.real*c.real) + (c.imag*c.imag);
   complex tmp;
@@ -1599,7 +1598,7 @@ inline complex complex::operator /(complex c)
   tmp.imag/=div;
   return tmp;
 }
-inline complex complex::getconjugate()
+complex complex::getconjugate()
 {
   complex tmp;
   tmp.real=this->real;
@@ -1607,7 +1606,7 @@ inline complex complex::getconjugate()
   return tmp;
 }
  
-inline complex complex::getreciprocal()
+complex complex::getreciprocal()
 {
   complex t;
   t.real=real;
@@ -1619,22 +1618,22 @@ inline complex complex::getreciprocal()
   return t;
 }
  
-inline double complex::getreal()
+double complex::getreal()
 {
   return real;
 }
  
-inline double complex::getimaginary()
+double complex::getimaginary()
 {
   return imag;
 }
  
-inline bool complex::operator ==(complex c)
+bool complex::operator ==(complex c)
 {
   return (real==c.real)&&(imag==c.imag) ? 1 : 0;
 }
 
-inline void complex::sprint(char* s)
+void complex::sprint(char* s)
 {
   sprintf(s, "(%lf) + i*(%lf)", real, imag);
 }
@@ -1779,20 +1778,20 @@ preSLPinterpretedSLP (ZZ,Sequence) := (nIns,S) -> (
      (map(CC^1,CC^(#consts), {consts}), p)
      )
 
-preSLPcompiledSLP = method(Options=>{System=>MacOsX})
+preSLPcompiledSLP = method(TypicalValue=>Nothing, Options=>{System=>MacOsX})
 preSLPcompiledSLP (ZZ,Sequence) := o -> (nIns,S) -> (
 -- makes input for rawSLP from pre-slp
      consts := S#0;
      slp := S#1;   
-     o := S#2;
+     out := S#2;
      fname := SLPcounter; SLPcounter = SLPcounter + 1; -- this gives libraries distinct names 
                                                        -- the name of the function stays the same, should it change?
      curNode = #consts+nIns;
-     p = {#consts,nIns,numgens target o, numgens source o} | {slpCOMPILED}
+     p = {#consts,nIns,numgens target out, numgens source out} | {slpCOMPILED}
           | { fname }; -- "lib_name" 
      cppName := libPREFIX | toString fname | ".cpp";
-     libName := libPREFIX | toString fname | ".so"; --".dylib";
-     preSLPtoCPP(S, cppName);
+     libName := libPREFIX | toString fname | if o.System === Linux then ".so" else  ".dylib";
+     preSLPtoCPP(S, cppName, System=>o.System);
      compileCommand := if o.System === Linux then"gcc -shared -Wl,-soname," | libName | " -o " | libName | " " | cppName | " -lc -fPIC"
      else if o.System === MacOsX then "gcc -dynamiclib -O3 -o " | libName | " " | cppName
      else error "unknown OS";
@@ -1819,7 +1818,8 @@ end
 loadPackage "NAG"
 installPackage "NAG"
 restart
-installPackage("NAG", RemakeAllDocumentation=>true, AbsoluteLinks=>false, RerunExamples=>true)
+installPackage("NAG", FileName=>"../NAG.m2", SeparateExec=>true, AbsoluteLinks=>false, RerunExamples=>true)
+installPackage("NAG", SeparateExec=>true, AbsoluteLinks=>false, RerunExamples=>true)
 check "NAG"
 
 R = CC[x,y,z]

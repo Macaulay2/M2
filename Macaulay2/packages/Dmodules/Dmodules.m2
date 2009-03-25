@@ -1,4 +1,5 @@
-export { bFunctionRoots, lct, GeneralBernsteinSato, ViaBFunction, generalB, 
+export { generalBideal,
+     bFunctionRoots, lct, GeneralBernsteinSato, ViaBFunction, generalB, 
      --GuessedRoots, 
      ViaLinearAlgebra,
      ExternalProduct,TwistMap,twistMap,twistInvMap,projMap1,projMap2,

@@ -1,12 +1,16 @@
 document {
      Key => NAG,
      Headline => "Numerical Algebraic Geometry",
-     "The package ", EM "NAG (Numerical Algebraic Geometry)", " implements methods of polynomial homotopy continuation                                                                                                  
+     "The package ", EM "NAG4M2 (Numerical Algebraic Geometry for Macaulay 2)", " implements methods of polynomial homotopy continuation                                                                                                  
      to solve systems of polynomial equations and deal with complex algebraic varieties.",
      HEADER3 "Under construction:",
-     "In order to run the current version of the package Macaulay 2 needs to be compiled from the source code. Current source code is available from a repository: type ", BR{}, 
-     TT "svn co svn://macaulay2.math.uiuc.edu/Macaulay2/trunk/M2/", 
-     BR{}, " (google \"svn\" for details). ", BR{}, "The package will be included in the future releases of Macaulay 2.",
+     "The package will be included in the future releases of Macaulay 2.", BR{},
+     "In order to run the current version of the package Macaulay 2 needs to be compiled from the source code. ",
+     "Instructions are posted at ", TT "http://www.math.uiuc.edu/Macaulay2/Downloads/SourceCode", ".",
+     BR{}, BR{},"( Another way is to download the packages subdirectory only:", BR{}, 
+     TT "svn co svn://macaulay2.math.uiuc.edu/Macaulay2/trunk/M2/Macaulay2/packages", BR{},
+     "and then use ", BR{}, TT "loadPackage(\"NAG\", FileName=>\"packages/NAG.m2\").", BR{},  
+     "Note: in this case the functionality of the package is limited; in particular, SLP and M2engine options do not work. )", BR{},
      HEADER3 "Functions:",
      UL{
 	  TO{"solveSystem"},
@@ -48,19 +52,15 @@ track(S,T,solsS) / first
 
 					
 document {
-     Key => {[solveSystem,Software],[track,Software]},
+     Key => {[solveSystem,Software],[track,Software],"Software","M2","M2engine"},
      Headline => "specify software for the solver",
      UL{
-	  TO "M2",
+	  {"M2", " -- use top-level Macaulay2 homotopy continuation routines"},
+	  {"M2engine", " -- use subroutines implemented in Macaulay2 engine"},
 	  TO "PHCpack",
 	  TO "Bertini",
 	  TO "HOM4PS2"
 	  }
-     }
-							
-document {
-     Key => M2,
-     Headline => "use internal Macaulay 2 homotopy continuation routines"
      }
 document {
      Key => Bertini,

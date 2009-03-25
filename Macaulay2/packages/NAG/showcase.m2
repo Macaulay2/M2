@@ -1,7 +1,7 @@
 restart
 loadPackage ("NAG", FileName=>"../NAG.m2",
           Configuration=>{"PHCpack"=>"./phc", "Bertini"=>"./bertini", "HOM4PS2"=>"./hom4ps2_in_out"})
-debug Core; debug NAG; DBG = 1; printingPrecision = 20; 
+debug NAG; DBG = 1; printingPrecision = 20; 
 load "benchmarks.m2"
 
 -- PICK A SYSTEM: ---------------------------------------------------------
@@ -35,9 +35,9 @@ P = track(S,T,solsS, gamma=>1+ii,
      Software=>M2engine,
      Projectivize=>false,
      --Predictor=>Tangent,
-     Predictor=>Euler,
-     SLP=>HornerForm
-     --SLP=>CompiledHornerForm                                                                                                                                           
+     --Predictor=>Euler,
+     --SLP=>HornerForm
+     SLP=>CompiledHornerForm                                                                                                                                           
      );
 
 -- another run (needs PHCpack/HOM4PS/Bertini)
