@@ -1,0 +1,23 @@
+After
+
+	ulimit -v 1000000
+
+on a
+
+	x86_64 GNU/Linux
+
+system, if I (Dan) interrupt some engine code at the right time, then it runs
+out of memory unexpectedly on the next computation.
+
+    + M2 --no-readline --print-width 157
+    Macaulay 2, version 1.2
+    with packages: Elimination, IntegralClosure, LLLBases, PrimaryDecomposition, ReesAlgebra, SchurRings, TangentCone
+
+    i1 : (alarm 60; betti res Grassmannian (3,7))
+    stdio:1:18:(1):[0]: error: alarm occurred
+
+    i2 : betti res Grassmannian (3,6)
+
+
+     *** out of memory, exiting ***
+
