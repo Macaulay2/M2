@@ -161,6 +161,15 @@ Here is another possible benchmark, but it doesn't work for us yet:
 
 -- Results:
 
+---- an Intel Core 2 Quad with 8 GB of RAM in Las Vegas
+  -- beginning computation Wed Mar 25 17:53:19 PDT 2009
+  -- Linux ubuntu 2.6.24-23-server #1 SMP Thu Nov 27 18:45:02 UTC 2008 x86_64 GNU/Linux
+  -- Macaulay 2 1.2, compiled with gcc 4.2.3
+  -- res39: res of a generic 3 by 9 matrix over ZZ/101: .11 seconds
+  -- resG25: res of the coordinate ring of Grassmannian(2,5): 1.69 seconds
+  -- gbB148: gb of Bayesian graph ideal #148: 15.79 seconds
+  -- running four copies at once, the results were just a bit slower - the slowest for each test was .18/1.85/16.38.
+
 ---- a MacBook Pro (core 2 duo 2.4 GHZ, 4 GB ram):
   --- Mac OS X side:
     -- beginning computation Mon Sep 17 21:52:30 EDT 2007
