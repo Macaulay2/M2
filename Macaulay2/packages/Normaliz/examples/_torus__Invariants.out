@@ -1,4 +1,5 @@
--- -*- M2-comint -*- {* hash: -590717586 *}
+-- -*- M2-comint -*- {* hash: -362629993 *}
+--warning: function parametersInIdeal redefined
 
 i1 : R=QQ[x,y,z,w];
 

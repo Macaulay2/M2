@@ -1,4 +1,5 @@
--- -*- M2-comint -*- {* hash: -1163741525 *}
+-- -*- M2-comint -*- {* hash: -1350933452 *}
+--warning: function parametersInIdeal redefined
 
 i1 : R = ZZ/32003[symbol a..symbol d]
 

@@ -1,7 +1,7 @@
 restart
 loadPackage ("NAG", FileName=>"../NAG.m2",
-          Configuration=>{"PHCpack"=>"./phc", "Bertini"=>"./bertini", "HOM4PS2"=>"./hom4ps2_in_out"})
-debug NAG; DBG = 1; printingPrecision = 20; 
+          Configuration=>{"PHCpack"=>"phc", "Bertini"=>"bertini", "HOM4PS2"=>"./hom4ps2_in_out"})
+debug NAG; DBG = 2; printingPrecision = 20; 
 load "benchmarks.m2"
 
 -- PICK A SYSTEM: ---------------------------------------------------------
@@ -19,7 +19,8 @@ T = (katsuraBench 12)_*; (S,solsS) = totalDegreeStartSystem T; -- #sols=2048, M2
 -- random generalized eigenvalue problem
 setRandomSeed 0; (S,T,solsS) = randomGeneralizedEigenvalueProblem 35; -- #sols=35, M2:5, B:22, P:432 
 
-
+T = (sottileW())_*
+(S,solsS) = totalDegreeStartSystem T
 
 -- PICK WHAT TO RUN: ------------------------------------------------------
 -- 1st run
