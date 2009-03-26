@@ -1,4 +1,5 @@
--- -*- M2-comint -*- {* hash: -885222187 *}
+-- -*- M2-comint -*- {* hash: -657134594 *}
+--warning: function parametersInIdeal redefined
 
 i1 : A = matrix "1,1,1,1; 1,2,3,4"
 
@@ -28,7 +29,7 @@ For details, see the file COPYING.
 -------------------------------------------------
 Using 64 bit integers.
 4ti2 Total Time:  0.02 secs.
-using temporary file name /tmp/M2-82778-1
+using temporary file name /tmp/M2-73763-1
 
 o3 = | 0 1 2 3 |
      | 3 2 1 0 |

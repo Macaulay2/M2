@@ -1,4 +1,5 @@
--- -*- M2-comint -*- {* hash: -278167790 *}
+-- -*- M2-comint -*- {* hash: -1795371405 *}
+--warning: function parametersInIdeal redefined
 
 i1 : R = QQ[symbol a..symbol f];
 
@@ -9,7 +10,7 @@ o2 = ideal(c*d - b*e + a*f)
 o2 : Ideal of R
 
 i3 : P = groebnerFan(I)
-using temporary file /tmp/M2-83082-1
+using temporary file /tmp/M2-74104-1
 
 o3 = PolymakeObject{...11...}
 

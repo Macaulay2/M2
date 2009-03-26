@@ -1,4 +1,5 @@
--- -*- M2-comint -*- {* hash: 1165515918 *}
+-- -*- M2-comint -*- {* hash: 1393603511 *}
+--warning: function parametersInIdeal redefined
 
 i1 : getNmzFilename()
 

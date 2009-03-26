@@ -709,12 +709,16 @@ totalDegreeStartSystem List := Sequence => T -> (
      R := ring first T;
      S := apply(numgens R, i->R_i^(first degree T_i)-1);
      s := apply(numgens R, i->( 
-	  d = first degree T_i; 
+	  d := first degree T_i; 
 	  set apply(d, j->exp(ii*2*pi*j/d))
 	  ));
      solsS := first s;
      scan(drop(s,1), t->solsS=solsS**t);
-     solsS = toList solsS/deepSplice; 
+     if numgens R === 1 
+     then 
+       solsS = toList solsS/(a -> 1:a)
+     else
+       solsS = toList solsS/deepSplice; 
      (S, solsS)
      )     
 
@@ -1793,6 +1797,7 @@ preSLPcompiledSLP (ZZ,Sequence) := o -> (nIns,S) -> (
      libName := libPREFIX | toString fname | if o.System === Linux then ".so" else  ".dylib";
      preSLPtoCPP(S, cppName, System=>o.System);
      compileCommand := if o.System === Linux then"gcc -shared -Wl,-soname," | libName | " -o " | libName | " " | cppName | " -lc -fPIC"
+     else if o.System === MacOsX and version#"pointer size" === 8 then "g++ -m64 -dynamiclib -O2 -o " | libName | " " | cppName
      else if o.System === MacOsX then "gcc -dynamiclib -O3 -o " | libName | " " | cppName
      else error "unknown OS";
      print compileCommand;
