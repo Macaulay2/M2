@@ -5,7 +5,7 @@ investigate adding (sage includes these):
       matplotlib	    2-d plots
       jmol		    3-d plots
       polybori		    polynomials over boolean rings
-      libm4ri
+      m4ri		    fast arithmetic with dense matrices over F2; http://bitbucket.org/malb/m4ri/
       genus2reduction
       symmetrica
       gap
