@@ -1,4 +1,4 @@
--- -*- M2-comint -*- {* hash: 1547683729 *}
+-- -*- M2-comint -*- {* hash: -1648305215 *}
 --warning: function parametersInIdeal redefined
 
 i1 : R=ZZ/37[x,y,t];
@@ -25,7 +25,7 @@ nmzHomogeneousWeights=(1,1,-2)
 nmzMultiplicity=4
 nmzHVector=(1,3,0)
 nmzHilbertPolynomial=(2,6,4)
-nmz=(2,6,4)
+nmzPrimary=true
 nmzIdealMultiplicity=9
 
 i7 : 

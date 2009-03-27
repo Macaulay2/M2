@@ -1,4 +1,4 @@
--- -*- M2-comint -*- {* hash: 1136905187 *}
+-- -*- M2-comint -*- {* hash: 999037403 *}
 --warning: function parametersInIdeal redefined
 
 i1 : setNmzOption("triang",true);

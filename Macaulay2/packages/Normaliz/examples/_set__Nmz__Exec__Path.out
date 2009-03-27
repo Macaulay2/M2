@@ -1,4 +1,4 @@
--- -*- M2-comint -*- {* hash: -386388507 *}
+-- -*- M2-comint -*- {* hash: -247026523 *}
 --warning: function parametersInIdeal redefined
 
 i1 : setNmzExecPath("$HOME/normaliz/bin");  -- Unix
