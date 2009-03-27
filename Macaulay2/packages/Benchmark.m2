@@ -199,6 +199,14 @@ Here is another possible benchmark, but it doesn't work for us yet:
 -- res39: 0.21 seconds
 -- resG25: 2.51 seconds
 
+-- Quad-Core AMD Opteron(tm) Processor 2354, 2200 Mhz, 512 KB cache
+  -- beginning computation Fri Mar 27 11:01:31 EDT 2009
+  -- Linux habanero 2.6.24-21-generic #1 SMP Mon Aug 25 16:57:51 UTC 2008 x86_64 GNU/Linux
+  -- Macaulay 2 1.2, compiled with gcc 4.2.3
+  -- res39: res of a generic 3 by 9 matrix over ZZ/101: .292018 seconds
+  -- resG25: res of the coordinate ring of Grassmannian(2,5): 3.1402 seconds
+  -- gbB148: gb of Bayesian graph ideal #148: 23.6535 seconds
+
 -- Lenovo/IBM Thinkpad R61i with Core 2 Duo at 1.5 Ghz
   -- Linux gallium 2.6.22-14-generic #1 SMP Sun Oct 14 23:05:12 GMT 2007 i686 GNU/Linux
     -- beginning computation Wed Nov 14 18:58:46 CET 2007
