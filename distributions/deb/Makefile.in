@@ -65,7 +65,7 @@ T=@TAR@ --create --mode=a+rX,og-ws --exclude-from=@srcdir@/../tar-exclusions --f
 prepare: .prepared
 .prepared: 
 	: ensure change log is up to date...
-	fgrep 'macaulay2 (@PACKAGE_VERSION@) stable; ' <@srcdir@/changelog
+	fgrep 'macaulay2 (@PACKAGE_VERSION@) ' <@srcdir@/changelog
 	rm -rf tmp@prefix@ tmp-common@prefix@
 	$(MKDIR_P) tmp@prefix@
 	$(MKDIR_P) tmp-common@prefix@
