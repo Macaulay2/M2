@@ -1,4 +1,4 @@
--- -*- M2-comint -*- {* hash: -1985482470 *}
+-- -*- M2-comint -*- {* hash: -1614386310 *}
 --warning: function parametersInIdeal redefined
 
 i1 : setNmzDataPath("d:/normaliz/example"); 

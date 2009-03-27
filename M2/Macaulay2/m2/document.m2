@@ -499,7 +499,7 @@ extractExamplesLoop Hypertext := x -> join apply(toSequence x, extractExamplesLo
 
 extractExamples := docBody -> (
      ex := extractExamplesLoop docBody;
-     if #ex > 0 then currentPackage#"example inputs"#currentNodeName = ex;
+     if #ex > 0 then currentPackage#"example inputs"#currentNodeName = toSequence ex;
      docBody)
 
 M2outputRE := "(\n+)i+[1-9][0-9]* : "

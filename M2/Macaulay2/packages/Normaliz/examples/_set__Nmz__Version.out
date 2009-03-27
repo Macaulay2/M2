@@ -1,4 +1,4 @@
--- -*- M2-comint -*- {* hash: -1115045764 *}
+-- -*- M2-comint -*- {* hash: -1525258876 *}
 --warning: function parametersInIdeal redefined
 
 i1 : setNmzVersion("normbig"); 

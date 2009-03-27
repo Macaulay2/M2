@@ -1,4 +1,4 @@
--- -*- M2-comint -*- {* hash: 1832819866 *}
+-- -*- M2-comint -*- {* hash: -850316310 *}
 --warning: function parametersInIdeal redefined
 
 i1 : R=ZZ/37[x,y,t];
@@ -21,7 +21,7 @@ o5 = {{hilbert basis elements, 6}, {number extreme rays, 4}, {rank, 3},
      ------------------------------------------------------------------------
      {multiplicity, 4}, {h-vector, (1, 3, 0)}, {hilbert polynomial, (2, 6,
      ------------------------------------------------------------------------
-     4)}, {, (2, 6, 4)}, {ideal multiplicity, 9}}
+     4)}, {primary, true}, {ideal multiplicity, 9}}
 
 o5 : List
 

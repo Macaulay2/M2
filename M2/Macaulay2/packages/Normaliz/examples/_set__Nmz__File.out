@@ -1,8 +1,8 @@
--- -*- M2-comint -*- {* hash: 1006689351 *}
+-- -*- M2-comint -*- {* hash: -1407533009 *}
 --warning: function parametersInIdeal redefined
 
 i1 : setNmzFile()
 
-o1 = nmzM2_74263
+o1 = nmzM2_28303
 
 i2 : 
