@@ -407,3 +407,16 @@ help schurModule
 help schur
 installPackage "SchurFunctors"
 
+-- Discussion with Mike, Anton, Mauricio 3/26/09 about what needs to be done for this package.
+1. write mathematical documentation for schur and schurModule, explaining our conventions
+  Mauricio will do this by Sunday, April 5.
+2. document the type Filling, and implement some functions for it:
+  -- check whether a filling is standard, semi-standard
+  -- transpose
+  -- generate all (as a list) standard, semi-standard
+  -- to/from lists
+  -- pretty printing (done already).
+  -- example in doc: should show how this related to a basis for schurModules
+3. other functions need doc or examples:
+  character, splitCharacter (maybe the name should change)
+4. decomposeRep, characterRep, augmentFilling -- need documentation
