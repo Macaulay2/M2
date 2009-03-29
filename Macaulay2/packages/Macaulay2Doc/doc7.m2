@@ -940,7 +940,7 @@ document {
 document {
      Key => {(adjoint,Matrix,Module,Module),adjoint},
      Headline => "an adjoint map",
-     Usage => "adjoint(f,G,H)",
+     Usage => "adjoint(f,F,G)",
      Inputs => {
 	  "f" => {"a homomorphism ", TT "F ** G --> H", " between free modules"},
 	  "F" => "a free module",
@@ -957,17 +957,20 @@ document {
      PARA{},
      "No computation is required.  The resulting matrix has the same entries as ", 
      TT "f", ", but in a different layout.",
+     EXAMPLE lines ///
+	  R = QQ[x_1 .. x_24];
+	  f = genericMatrix(R,2,4*3)
+	  g = adjoint(f,R^4,R^3)
+	  ///,
      PARA{},
      "If ", TT "f", " is homogeneous, and ", TT "source f == F ** G", 
      ", including the grading, then 
      the resulting matrix will be homogeneous.",
+     EXAMPLE lines ///
+	  g = adjoint(f,R^4,R^{-1,-1,-1})
+	  isHomogeneous g
+	  ///,
      PARA{},
-     EXAMPLE {
-	  "R = QQ[x_1 .. x_12];",
-	  "f = genericMatrix(R,2,6)",
-	  "g = adjoint(f,R^2,R^{-1,-1,-1})",
-	  "isHomogeneous g"
-	  },
      SeeAlso => {adjoint1, flip, reshape, (symbol**,Module,Module), dual}
      }
 document {

@@ -650,7 +650,7 @@ integralClosure(Ideal) := opts -> I -> integralClosure(I,1)
 ----------------------------------------
 parametersInIdeal = method()
 
-parametersInIdeal = I ->(
+parametersInIdeal Ideal := I -> (
      --first find a maximal system of parameters in I, that is, a set of
      --c = codim I elements generating an ideal of codimension c.
      --assumes ring I is affine. 
