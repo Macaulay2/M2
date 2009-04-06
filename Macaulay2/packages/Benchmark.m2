@@ -110,6 +110,7 @@ benchmarks = new HashTable from {
 	  R=kk[vars(0..12)];
 	  fterms = ideal"4ef2-4dfg+10ah+3bh+3ch+3aj+5bj+5cj+7al+4bl+3cl+7f,2e2f-2deg-13ghi+18fi2-7gij-15ghk+24fik-11gjk+20fk2-11gil-12gkl-12ghm+16fim-8gjm+26fkm-19glm+8fm2+7e,3eh-3di+5ej-5dk+4el-4dm,18g2h-12fgi+13g2j-15fgk+13g2l-5fgm+10ae+3be+3ce,3eh-3di+5ej-5dk+3el-3dm,9g2h-5fgi+2g2j-4fgk+14g2l-17fgm+3ae+5be+5ce,8g2h-17fgi+8g2j-16fgk+18g2l-13fgm+7ae+4be+3ce,10eh-10di+3ej-3dk+7el-7dm,-16efg+16dg2-10ai-3bi-3ci-3ak-5bk-5ck-7am-4bm-3cm-7g,-6def+6d2g+16gh2-19fhi+28ghj-12fij+16gj2-5fhk-2fjk+10ghl-10fil+24gjl-10fkl+18gl2-7fhm-13fjm-10flm-7d,-12fgh+6f2i-10fgj+8f2k-10fgl+11f2m-10ad-3bd-3cd,-13fgh+11f2i-12fgj+10f2k-13fgl+14f2m-3ad-5bd-5cd,-20fgh+13f2i-13fgj+16f2k-3fgl+16f2m-7ad-4bd-3cd";
 	  dterms = matrix"gh-fi,gj-fk,gl-fm,ef-dg,aij-ahk,bij-bhk,cij-chk,ail-ahm,bil-bhm,cil-chm,akl-ajm,bkl-bjm,ckl-cjm,aeh-adi,beh-bdi,ceh-cdi,aej-adk,bej-bdk,cej-cdk,ael-adm,bel-bdm,cel-cdm";
+	  y = symbol y;
 	  S=kk[y_1..y_22, Degrees=>degrees source dterms];
 	  A = R/fterms;
 	  F = map(A,S,sub(dterms,A));
