@@ -8,7 +8,7 @@ time gb(J1, Algorithm=>Sugarless, Strategy=>LongPolynomial); -- 66.0 sec
 time gb(J1, Algorithm=>Homogeneous2, Strategy=>LongPolynomial); -- 43.8 sec
 time gb(J1, MaxReductionCount=>3000); -- 51.34 sec
 ----------------------------------------------
---random
+--random5556
 kk = ZZ/101;
 R = kk[a..g, MonomialSize=>8];
 J = ideal random(R^1, R^{-5,-5,-5,-6});
@@ -24,10 +24,10 @@ J = ideal"b2de+bd2f+a2dg+abdh+ad2i+b2cj+bc2k+bcdl+a2cm+abcn+ac2o+acdp,
 gbTrace=1
 time gb(J, Algorithm=>LinearAlgebra); -- 6.78 sec
 time gb(J, Algorithm=>Sugarless, Strategy=>LongPolynomial); -- 2.03 sec
-time gb(J, Algorithm=>Homogeneous2, Strategy=>LongPolynomial); --  sec
-time gb(J, MaxReductionCount=>3000); -- sec
+time gb(J, Algorithm=>Homogeneous2, Strategy=>LongPolynomial); -- 2.3 sec
+time gb(J, MaxReductionCount=>3000); -- 62.7 sec
 ----------------------------------------------
---
+--gbB148
 R = ZZ/32003[reverse(p_(1,1,1,1,1)..p_(2,2,2,2,2)), MonomialSize=>8];
 J = ideal(
      -p_(1,1,2,1,1)*p_(2,1,1,1,1)+p_(1,1,1,1,1)*p_(2,1,2,1,1),
