@@ -1921,8 +1921,14 @@ store(e:Expr):Expr := (			    -- called with (symbol,newvalue)
 		    else if sym === engineDebugLevelS then (engineDebugLevel = n; e)
 		    else if sym === recursionLimitS then (recursionLimit = n; e)
 		    else if sym === lineNumberS then (lineNumber = n; e)
-		    else if sym === printingPrecisionS then (printingPrecision = n; e)
-		    else if sym === printingAccuracyS then (printingAccuracy = n; e)
+		    else if sym === printingPrecisionS then (
+			 if n < 0 then return buildErrorPacket("printingPrecision can not be set to negative value");
+			 printingPrecision = n;
+			 e)
+		    else if sym === printingAccuracyS then (
+			 if n < -1 then return buildErrorPacket("printingAccuracy can not be set to value < -1");
+			 printingAccuracy = n;
+			 e)
 		    else if sym === printingLeadLimitS then (printingLeadLimit = n; e)
 		    else if sym === printingTrailLimitS then (printingTrailLimit = n; e)
 		    else if sym === gbTraceS then (gbTrace = n; e)
