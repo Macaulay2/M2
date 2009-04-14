@@ -1,14 +1,13 @@
 -- -*- coding: utf-8 -*-
-
 newPackage(
            "Normaliz",
-           Version=>"0.1.1",
-           Date=>"February 7, 2009",
-           Authors=>{{Name=> "G. Kämpf",
+           Version=>"0.2",
+           Date=>"March 06, 2009",
+           Authors=>{{Name=> "Gesa Kaempf",
                     Email=>"gkaempf@mathematik.uni-osnabrueck.de"}},
            Headline=>"a package to use Normaliz in Macaulay 2",
-	   AuxiliaryFiles => true,
-	   CacheExampleOutput => true,
+         --  AuxiliaryFiles => true,
+        --   CacheExampleOutput => true,
            DebuggingMode => false
            )
 
@@ -34,7 +33,11 @@ export{setNmzExecPath, getNmzExecPath,
 nmzExecPath="";
 nmzDataPath="";
 nmzFilename="";
-nmzVersion="";
+nmzUserCalled=true;  -- wether the user calls a method
+nmzFile="";
+nmzVersion=""; 
+nmzGen=true;      -- indicates whether ".gen" is generated
+numInvs={};
 -- component 1 is name of option
 -- 2 is default value
 -- 3 is command line option to be passed to Normaliz
@@ -70,7 +73,6 @@ setNmzExecPath String :=stringNmzExecPath->
         );
     ); 
     nmzExecPath=stringNmzExecPath;
-   
 )
 
 -- warning: if this variable is not set, this does not mean that there is no path set in the file nmzM2Exec.path. Use startNmz to check this!
@@ -97,6 +99,7 @@ setNmzFilename=method()
 setNmzFilename String :=stringNmzFilename->
 (
     nmzFilename=stringNmzFilename;
+    nmzFile=setNmzFile();
 );
 
 
@@ -118,7 +121,6 @@ setNmzDataPath String :=stringNmzDataPath->
         );
     ); 
     nmzDataPath=stringNmzDataPath;
-  
 );
 
 -- warning: if this variable is not set, this does not mean that there is no path set in the file nmzM2Data.path. Use startNmz to check this!
@@ -126,8 +128,6 @@ getNmzDataPath=()->
 (
        return nmzDataPath;
 )
-
-
 
 -- writes the path names into two files
 writeNmzPaths=()->
@@ -145,73 +145,44 @@ startNmz=()->
 
     inf:="nmzM2Exec.path";
     s:=get inf;
-    i:=#s;
-    if(i==0)          -- this is allowed
+    L:=select(".*/",s); -- delete everything after the last /
+    if(L=={})          -- this is allowed
     then(
          print "nmzExecPath not set";
     )
-    else(
-        t:=s#(i-1); 
-        while(not (t=="/" or i==1))
-        do( 
-           i=i-1; 
-           s=substring(0,i,s);
-           t=s#(i-1);
-        );
-    
-       if(i==1)
-       then(
-            print "nmzExecPath not set";
-       )
-       else( 
-           nmzExecPath=s;
+    else( 
+           nmzExecPath=L#0;
            print("nmzExecPath is "|nmzExecPath);
-       );
    );
 
-   if(not fileExists("nmzM2Data.path"))
+    if(not fileExists("nmzM2Data.path"))
     then error("startNmz(): First call writeNmzPaths().");
+
     inf="nmzM2Data.path";
-    s=get inf;
-    i=#s;
-    if(i==0)         -- this is allowed
+    s=get inf; 
+    L=select(".*/",s); -- delete everything after the last /
+    if(L=={})          -- this is allowed
     then(
          print "nmzDataPath not set";
     )
-    else(
-        t=s#(i-1); 
-        while(not (t=="/" or i==1))
-        do( 
-           i=i-1; 
-           s=substring(0,i,s);
-           t=s#(i-1);
-        );
-    
-       if(i==1)
-       then(
-            print "nmzDataPath not set";
-       )
-       else( 
-            nmzDataPath=s;
-            print("nmzDataPath is " | nmzDataPath);
-       );
+    else( 
+           nmzDataPath=L#0;
+           print("nmzDataPath is "|nmzDataPath);
    );
 );
 
 
 -- sets the file for the exchange of data
 setNmzFile=()->
-(
-    if(not nmzFilename=="")
+( 
+    if(nmzFilename!="")
     then(
-        nmzFile=nmzFilename;
+        nmzFile=nmzDataPath|nmzFilename;
     )
     else
     (
-        nmzFile="nmzM2_"|processID();
+     nmzFile=temporaryFileName();
     );
-
-        nmzFile=nmzDataPath|nmzFile;
     return(nmzFile);
 );
 
@@ -220,7 +191,7 @@ setNmzFile=()->
 -- sets the version, by default it is norm64
 setNmzExec=()->
 (
-    if(not nmzVersion=="")
+    if(nmzVersion!="")
     then(
         nmzExec=nmzVersion;  
     )
@@ -228,11 +199,8 @@ setNmzExec=()->
     (
         nmzExec="norm64"; 
     );
-
-
-        nmzExec=nmzExecPath|nmzExec;
-
-    return(nmzExec);
+    nmzExec=nmzExecPath|nmzExec;
+    return nmzExec;
 );
 
 
@@ -240,11 +208,13 @@ setNmzExec=()->
 rmNmzFiles=()->
 (
     suffixes:={"in","gen","out","sup","egn","esp","inv","tri","typ","hom","ext"};
+    if(nmzFilename=="" and nmzUserCalled) then error("rmNmzFiles: no filename specified");
     for i from 0 to #suffixes-1 
     do(
-      if(fileExists( setNmzFile()|"."|suffixes#i))
-      then removeFile(setNmzFile()|"."|suffixes#i);
+      if(fileExists( nmzFile|"."|suffixes#i))
+      then removeFile(nmzFile|"."|suffixes#i);
     );
+    setNmzFilename("");
 );
 
 
@@ -277,7 +247,7 @@ getKeyword=(s,j)->
 
 -- eliminates whitespaces and -, and transforms the next letter to upper case if possible
 elimWhitespaces=s->
-(   
+(
     tmp:="";
     while(match("[ -]",s))          -- while   or - is found
     do(
@@ -302,7 +272,9 @@ elimWhitespaces=s->
 doWriteNmzData=method()
 doWriteNmzData(Matrix, ZZ, ZZ):=(sgr, numCols, nMode)->
 (
-    outf:=setNmzFile() |".in" << "";  -- also sets the filename
+    if(nmzFilename=="" and nmzUserCalled)  
+    then error("doWriteNmzData: no filename specified"); 
+    outf:=nmzFile|".in" << ""; 
     outf << numRows(sgr) << endl;
     outf << numCols << endl;
 
@@ -332,37 +304,31 @@ writeNmzData(Matrix,ZZ):=(sgr, nmzMode)->
 readNmzData=method(TypicalValue=>Matrix)
 readNmzData(String):=(nmzSuffix)->
 (
-    if(nmzSuffix=="inv" or nmzSuffix=="out" or nmzSuffix=="in") 
+    if(nmzSuffix=="inv" or nmzSuffix=="in" or nmzSuffix=="out") 
     then error("readNmzData: To read .inv use getNumInvs(), to read .out or .in there is no function provided");
 
-    if(not fileExists(setNmzFile()|"."|nmzSuffix))
+    if(nmzFilename=="" and nmzUserCalled) then error("readNmzData: no filename specified");
+
+    if(not fileExists(nmzFile|"."|nmzSuffix))
     then( 
-        error("readNmzData: No file "|setNmzFile()|"."|nmzSuffix|" found. Perhaps you need to activate another option.");
+        error("readNmzData: No file "|nmzFile|"."|nmzSuffix|" found. Perhaps you need to activate another option.");
     );
 
-    inf:=get(setNmzFile()|"."|nmzSuffix);
+    inf:=get(nmzFile|"."|nmzSuffix);
     s=lines(inf);
-    i:=0;
-    if(i<#s)
-    then(
-         numRows:=value(s#i);
-         i=i+1;
-    );
-    if(i<#s)
-    then(
-         numCols:=value(s#i);
-         i=i+1;
-    );
     nmzGen:={};
+    i:=2;
     t:="";
     while(i<#s)
     do( 
-      t = select("[0-9-]+",s#i);
-      gen:=apply(t,value);
-      nmzGen=append(nmzGen,gen);
-      i=i+1;
+       t = select("[0-9-]+",s#i);
+       gen:=apply(t,value);
+       nmzGen=append(nmzGen,gen);
+       i=i+1;
     );
-    return(matrix(nmzGen));
+    if(nmzGen!={})
+    then  return(matrix(nmzGen))
+    else return;   -- should not appear unless the user calls it
 );
 
 -------------------------------------------------------------
@@ -370,23 +336,27 @@ readNmzData(String):=(nmzSuffix)->
 -- retrieving normaliz numerical invariants
 
 -------------------------------------------------------------
-
 getNumInvs=()->
+(
+  return numInvs;
+)
+
+doGetNumInvs=()->
 (
     numInvs:={};
     key:="";
     inv:=0;
 
-    if(not fileExists(setNmzFile()|".inv"))
-    then error("getNumInvs(): No file "|setNmzFile()|".inv"|" found.");
+    if(not fileExists(nmzFile|".inv"))
+    then error("doGetNumInvs(): No file "|nmzFile|".inv"|" found.");
 
-    inf:=get(setNmzFile()|".inv");  
+    inf:=get(nmzFile|".inv");  
     s:=lines(inf);
-   
+
     for i from 0 to #s-1   -- for each line in the file
     do(
        key="";
-       
+
        if(match("^integer", s#i))
        then( 
             (key,j)=getKeyword(s#i,8); 
@@ -404,8 +374,6 @@ getNumInvs=()->
                        (len,str):=getNumber(substring(7,s#i)); 
                        (key,j)=getKeyword(str,1);
                        inv={}; 
-                    --   en:="";
-                       --str=substring(j+10+#len,s#i);
                         t:= replace(".* = ","",s#i);
                         u:= select("[0-9-]+",t);
                         inv=toSequence(apply(u,value));
@@ -422,33 +390,20 @@ getNumInvs=()->
 -- types the numerical invariants on the standard output
 showNumInvs=()->
 (
-    if(not fileExists(setNmzFile()|".inv"))
-    then error("showNumInvs: No file "|setNmzFile()|".inv"|" found.");
-
     l:=getNumInvs();
-    for i from 0 to #l-1
-    do(
-       print(l#i#0|" : "|toString(l#i#1));
-    );
+    apply(l,(p)->(print(p#0|" : "|toString(p#1))));
 );
 
 -- makes the numerical invariants in the .inv file available to Macaulay 2, and prints them to the standard output, if the print option is true
 opts={Print => false}
 exportNumInvs=opts >> o->()->
 (
-    if(not fileExists(setNmzFile()|".inv"))
-    then error("exportNumInvs(): No file "|setNmzFile()|".inv"|" found.");
-
     l:=getNumInvs();
-    for i from 0 to #l-1
-    do(
-       value("nmz"|elimWhitespaces(" "|l#i#0)|"="|toString(l#i#1));
-       if(o.Print)
-       then(
-            print ("nmz"|elimWhitespaces(" "|l#i#0)|"="|toString(l#i#1));
-      );
-    );
-
+    apply(l,(p)->(
+                  value("nmz"|elimWhitespaces(" "|p#0)|"="|toString(p#1));
+                  if(o.Print)
+                  then(
+                  print ("nmz"|elimWhitespaces(" "|p#0)|"="|toString(p#1));)));
 )
 ----------------------------------------------------------
 
@@ -459,61 +414,79 @@ exportNumInvs=opts >> o->()->
 setNmzOption=method()
 setNmzOption (String,Boolean):=(s, onoff)->
 (
-   for i from 0 to #nmzOptions-1
-   do( 
-        if(s==nmzOptions#i#0)
-        then(
-            nmzOptions#i#1=onoff;
-            return(true);
-        );
-    );
-    print("setNmzOption: Invalid option "| s);
-    return(false);
+  i:=position(toList(nmzOptions),((x)->(return x#0===s;)));
+
+  if(instance(i,Nothing))
+  then(
+       print("setNmzOption: Invalid option "| s);
+       return(false);
+  )
+  else(
+       nmzOptions#i#1=onoff;
+       return(true);
+  );
 )
 
 collectNmzOptions=()->
 (
-  
    options:=" -f ";
-   gengen:=true;     -- indicates whether "gen" is generated
     for i from 0 to #nmzOptions-1
-    do(   
+    do(
         if(nmzOptions#i#1)
         then(
             options=options|nmzOptions#i#2|" ";
             if(nmzOptions#i#3=!=2)
             then(
-                gengen=nmzOptions#i#3;
+                nmzGen=nmzOptions#i#3;
             );
         );
     );
-    return(options,gengen);
+    return(options);
 )
 
 showNmzOptions=()->
 (
   << "The following options are set:"<< endl;
-  (options,gegen):=collectNmzOptions();
-  << options;
+  << collectNmzOptions();
 )
 
 
 runNormaliz=method()
 runNormaliz(Matrix,ZZ,ZZ):=(sgr,numCols, nmzMode)->
-(
-    doWriteNmzData(sgr,numCols,nmzMode);
-    (options,gengen):=collectNmzOptions();
+( 
+    nmzFile=setNmzFile();
 
-    cmd := setNmzExec()|options|nmzFile;
+    nmzUserCalled=false;
+    doWriteNmzData(sgr,numCols,nmzMode);
+    options:=collectNmzOptions();
+ 
+    cmd:="";
+    dir:=select(".*/",nmzFile);
+    if(dir!={}) then cmd="cd "|dir#0|";";
+
+    cmd = cmd|setNmzExec()|options|baseFilename(nmzFile);
     if debugLevel > 0 then << "--running command: " << cmd << endl;
     if 0 != run cmd then error ("command failed : ", cmd);
     if debugLevel > 0 then << "--command succeeded" << endl;
 
-        if(not gengen)  -- return nothing if .gen is not
-        then(           -- generated
-             return; 
+    if(not nmzGen)  -- return nothing if .gen is not
+    then(            -- generated
+         if(nmzFilename=="") 
+         then( 
+              rmNmzFiles(); 
+         );
+         nmzUserCalled=true;  -- back to default
+         return; 
        );
-    return(readNmzData("gen"));
+
+    M:=readNmzData("gen");
+    numInvs=doGetNumInvs();
+    if(nmzFilename=="") 
+    then(
+         rmNmzFiles();
+    );
+    nmzUserCalled=true;  -- back to default
+    return(M);
 );
 
 
@@ -532,7 +505,7 @@ normaliz(Matrix,ZZ):=(sgr,nmzMode)->
 mons2intmat=method()
 mons2intmat Ideal :=I->
 (
-   
+
     mat:={};
     v:={};
     g:=gens I;     -- matrix with one row
@@ -573,7 +546,6 @@ intmat2mons(Matrix,Ring):=(expoVecs, r)->
 );
 
 -- takes only the rows with last entry d
---intmat2monsSel=method(TypicalValue=>Ideal)
 intmat2mons(Matrix,Ring,ZZ):=(expoVecs,r,d)->
 (
    if(numColumns(expoVecs)< numgens(r))
@@ -609,7 +581,7 @@ runIntclToricRing=method()
 runIntclToricRing(Ideal,ZZ):=(I,nmzMode)->
 (
     expoVecs:=mons2intmat(I);
-     
+
      res:=runNormaliz(expoVecs,numColumns(expoVecs),nmzMode);
      if(instance(res,Nothing))
      then return
@@ -632,24 +604,22 @@ normalToricRing Ideal := I->
 runIntclMonIdeal=method()
 runIntclMonIdeal(Ideal,ZZ):=(I,nmzMode)->
 (
-    expoVecs=mons2intmat(I);
+    expoVecs:=mons2intmat(I);
     lastComp:=0;
 
     -- we test if there is room for the Rees algebra
 
     for i from 0 to numRows(expoVecs)-1
     do(
-    
         if(not expoVecs_(i,numColumns(expoVecs)-1)==0)
         then(
             lastComp=1;  break; -- no
         );
-    );
-
-    if(instance(runNormaliz(expoVecs,numColumns(expoVecs),nmzMode),Nothing))
-    then return;
+    ); 
 
     nmzData:=runNormaliz(expoVecs,numColumns(expoVecs)-1+lastComp,nmzMode);
+    
+    if(not nmzGen) then return;
 
     if(lastComp==1)
     then(
@@ -690,15 +660,11 @@ torusInvariants (Matrix, Ring) :=(T,R)->
     then(
           error("torusInvariants: wrong number of columns in matrix");
     );
-    
-    (options,gengen):=collectNmzOptions();
 
-    if(not gengen)  -- return nothing
-    then(
-         runNormaliz(T,numColumns(T),5);
-         return;
-    );
-    return(intmat2mons( runNormaliz(T,numColumns(T),5),R ) );
+    M:=runNormaliz(T,numColumns(T),5);
+    if(not nmzGen) then return;  -- M=null
+
+    return(intmat2mons(M,R) );
 )
 
 valRing=method()
@@ -712,15 +678,11 @@ valRing (Matrix,Ring) :=(V,R)->
     I:=id_(ZZ^(numColumns(V))); -- identity matrix
     V1:=I||V;
 
-    (options,gengen):=collectNmzOptions();
+    M:=runNormaliz(V1,numColumns(V),4);
+ 
+    if(not nmzGen) then return; -- M=null
 
-    if(not gengen) -- return nothing
-    then(
-          runNormaliz(V1,numColumns(V),4);
-          return;
-    );
-    
-    return(intmat2mons(runNormaliz(V1,numColumns(V),4),R));        
+    return(intmat2mons(M,R)); 
 )
 
 valRingIdeal=method()
@@ -742,35 +704,28 @@ valRingIdeal (Matrix,Ring):=(V,R)->
     );
     V1=matrix(V1);
 
-    (options,gengen):=collectNmzOptions();
+    M:=runNormaliz(V1,nc,4);
+    if(not nmzGen) then return; -- M=null
 
-    if(not gengen) -- return nothing
-    then(
-          runNormaliz(V1,nc,4);
-          return;
-    );
-    
-    nmzData:=runNormaliz(V1,nc,4);
-
-    I1:=intmat2mons(nmzData,R,0);
-    I2:=intmat2mons(nmzData,R,1);
-    return({I1,I2});        
+    I1:=intmat2mons(M,R,0);
+    I2:=intmat2mons(M,R,1);
+    return({I1,I2}); 
 )
 
--------------------------------------------------------------
+----------------------------------------------------------
 beginDocumentation()
 
 document {
      Key => Normaliz,
      Headline => "an interface to use Normaliz in Macaulay 2",
-     "The package ", EM "Normaliz"," provides an interface for the ues of ", TT "normaliz 2.1"," within Macaulay 2. The exchange of data is via files, the only possibility offered by ", TT "normaliz"," in its
-present version. In addition to the top level functions that aim at objects of type ", TO "Ideal"," or ", TO "Ring",  ", several other auxiliary functions allow the user to apply ", TT "normaliz"," to data of type ", TO "Matrix","."  }
+     "The package ", EM "Normaliz"," provides an interface for the use of ", TT "Normaliz 2.1"," within Macaulay 2. The exchange of data is via files, the only possibility offered by ", TT "Normaliz"," in its
+present version. In addition to the top level functions that aim at objects of type ", TO "Ideal"," or ", TO "Ring",  ", several other auxiliary functions allow the user to apply ", TT "Normaliz"," to data of type ", TO "Matrix","."  }
 
 
 
 document {
      Key => {setNmzExecPath, (setNmzExecPath,String)},
-     Headline => "sets the path to the executable for normaliz",
+     Headline => "sets the path to the executable for Normaliz",
      Usage => "setNmzExecPath(s)",
      Inputs => {
            String => "a string containing the path" 
@@ -778,20 +733,21 @@ document {
      Consequences => {
           {"The function stores ", TT "s", " in the global variable holding the path name."}
          },
-     "This is absolutely necessary if it is not in the search path. Note that the string should not contain ~or $ since Macaulay 2 seems to have problems with such paths.",
+     "This is absolutely necessary if it is not in the search path. Note that the string should not contain $ since Macaulay 2 seems to have problems with such paths.",
     EXAMPLE lines ///
-        setNmzExecPath("$HOME/normaliz/bin");  -- Unix
-        setNmzExecPath("d:/normaliz/bin"); -- Windows
+        setNmzExecPath("~/Normaliz2.1Linux");  -- Unix
+        setNmzExecPath("d:/Normaliz2.1Windows"); -- Windows
         getNmzExecPath() 
+        setNmzExecPath("")  --reset
         ///
         ,
-     {"The last ", TT "/", " is added if necessary. The paths in the examples are veraltet."},
+     {"The last ", TT "/", " is added if necessary."},
      SeeAlso => getNmzExecPath,
      }
 
 document {
      Key => {getNmzExecPath},
-     Headline => "returns the path to the executable for normaliz",
+     Headline => "returns the path to the executable for Normaliz",
      Usage => "getNmzExecPath()",
      Outputs => {
            String => "the string containing the path"
@@ -806,7 +762,7 @@ document {
 
 document {
      Key => {setNmzVersion, (setNmzVersion,String)},
-     Headline => "sets the version of the executable for normaliz",
+     Headline => "sets the version of the executable for Normaliz",
      Usage => "setNmzVersion(s)",
      Inputs => {
            String => {"should be one of the following: ", TT "norm32", ", ", TT "norm64", ", or ", TT "normbig" }
@@ -824,10 +780,10 @@ document {
 
 document {
      Key => getNmzVersion,
-     Headline => "returns the current version of normaliz to be used",
+     Headline => "returns the current version of Normaliz to be used",
      Usage => "getNmzVersion()",
      Outputs => {
-          String => "the current version of normaliz to be used"
+          String => "the current version of Normaliz to be used"
           },
      EXAMPLE lines ///
           getNmzVersion()
@@ -844,27 +800,36 @@ document {
      Inputs => {
            String => "the filename for the exchange of data"
           },
-     {"By default, the package creates a filename ", TT "nmzM2_pid", ", where ", TT "pid", "is the process identification of the current ", TT "Macaulay 2", " process."},
+     Consequences => {"stores the input string in the global variable holding the filename"},
+     {"If the input is the empty string, a temporary filename in a temporary directory will be created, but the global variable still stores the empty string.",BR{}, "Only if the user specifies a (non-empty) filename, the files created by ",TT"Normaliz"," are not removed."},
     EXAMPLE lines ///
-        setNmzFilename("VeryInteresting"); 
+        getNmzFilename()
+        setNmzFilename("VeryInteresting");
+        getNmzFilename()
+        setNmzFile()
+        setNmzFilename(""); 
         getNmzFilename() 
+        setNmzFile()
         ///
         ,
-     SeeAlso => getNmzFilename
+     SeeAlso => {getNmzFilename,setNmzFile}
      }
 
 
 document {
      Key => getNmzFilename,
-     Headline => "returns the current filename to be used",
+     Headline => "returns the current filename specified by the user",
      Usage => "getNmzFilename()",
      Outputs => {
-          String => "the current filename to be used for the exchange of data"
+          String => "the current filename specified by the user"
           },
+     "The default value is the empty string.",
      EXAMPLE lines ///
-          getNmzFilename()
-          setNmzFilename("VeryInteresting");
-          getNmzFilename()
+        getNmzFilename()
+        setNmzFilename("VeryInteresting");
+        getNmzFilename()
+        setNmzFilename(""); 
+        getNmzFilename() 
           ///,
      SeeAlso => setNmzFilename
      }
@@ -876,14 +841,13 @@ document {
      Inputs => {
            String => "the directory for the exchange of data"
           },
-     {"By default it is the current directory.  Note that the string should not contain ~or $ since Macaulay 2 seems to have problems with such paths."},
+     {"By default it is the current directory. The function does not check if the directory exists. If it does not exist, ", TT  "Normaliz"," will issue an error message. Use e.g. ", TO makeDirectory," to create an directory within Macaulay 2.",    BR{},"Note that the path should not contain $ since Macaulay 2 seems to have problems with such paths. If no filename is specified, this path is not used."},
     EXAMPLE lines ///
-        setNmzDataPath("d:/normaliz/example"); 
+        setNmzDataPath("d:/Normaliz2.1Windows/example"); 
         getNmzDataPath() 
         ///
         ,
      SeeAlso => getNmzDataPath,
-   
      }
 
 
@@ -896,7 +860,7 @@ document {
           },
      EXAMPLE lines ///
           getNmzDataPath()
-          setNmzDataPath("d:/normaliz/example");
+          setNmzDataPath("d:/Normaliz2.1Windows/example");
           getNmzDataPath()
           ///,
      Caveat =>{"This is the value stored in the global variable. The function ", TO startNmz, " retrieves the path names written by ", TO writeNmzPaths, " to the hard disk, so this can be a different path." },
@@ -910,9 +874,12 @@ document {
      Outputs => {
           String => "the path and the filename"
           },
-     "This function concatenates the data path, if defined, and the filename created by ", TO "setNmzFilename", " and returns it.",
+     "If a non-empty filename is specified by the user, this function returns the concatenated data path (if specified by ", TO setNmzDataPath,") and the filename. If no filename is specified, a temporary filename is created. In this case the files created by ", TT "Normaliz", " are removed automatically.",
      EXAMPLE lines ///
-          setNmzFile()
+        setNmzFilename("VeryInteresting");
+        setNmzFile()
+        setNmzFilename("");
+        nmzFile=setNmzFile()
           ///,
      }
 
@@ -930,11 +897,12 @@ document {
 
 document {
      Key => startNmz,
-     Headline => "initializes a session for normaliz",
+     Headline => "initializes a session for Normaliz",
      Usage => "startNmz()",
      "This function reads the files written by ", TO "writeNmzPaths", ", retrieves the path names, and types them on the standard output (as far as they have been set). Thus, once the path names have
-been stored, a ", TT "normaliz", " session can simply be opened by this function.", 
+been stored, a ", TT "Normaliz", " session can simply be opened by this function.", 
      EXAMPLE lines ///
+          writeNmzPaths();
           startNmz();
           ///,
      SeeAlso => writeNmzPaths
@@ -942,30 +910,35 @@ been stored, a ", TT "normaliz", " session can simply be opened by this function
 
 document {
      Key => rmNmzFiles,
-     Headline => "removes the files created by normaliz",
+     Headline => "removes the files created by Normaliz",
      Usage => "rmNmzFiles()",
-     "This function removes the files created for and by ", TT "normaliz", ", using the last filename created. These files are not removed automatically.",
+     "This function removes the files created for and by ", TT "Normaliz", ", using the last filename created. These files are removed automatically unless a (non-empty) filename has been specified using ", TO setNmzFilename,". In this case the filename is reset to the empty string.",
      EXAMPLE lines ///
+          setNmzFilename("VeryInteresting");
+          R=ZZ/37[x,y,z];
+          I=ideal(x^2*y, y^3);
+          normalToricRing(I);
+          get (setNmzFile()|".typ")
           rmNmzFiles();
+          getNmzFilename()
           ///,
      }
 
 document {
      Key => {writeNmzData, (writeNmzData, Matrix, ZZ)},
-     Headline => "creates an input file for normaliz",
+     Headline => "creates an input file for Normaliz",
      Usage => "writeNmzData(sgr, nmzMode)",
      Inputs =>{
                 Matrix => "generators of the semigroup",
                 ZZ => "the mode"
       },
       Consequences => {"an input file filename.in is written, using the last filename created"}, 
-     "This function creates an input file for ", TT "normaliz", ". The rows of ", TT "sgr", " are
-considered as the generators of the semigroup. The parameter ", TT "nmzMode"," sets the mode.",
+     "This function creates an input file for ", TT "Normaliz", ". The rows of ", TT "sgr", " are considered as the generators of the semigroup. The parameter ", TT "nmzMode"," sets the mode. If no filename has been specified, an error occurs.",
      EXAMPLE lines ///
+          setNmzFilename("example"); -- to keep the files
           sgr=matrix({{1,2,3},{4,5,6},{7,8,10}})
           writeNmzData(sgr,1)
-          nmzFile=setNmzFile()
-          get(nmzFile|".in")
+          get(setNmzFile()|".in")
           rmNmzFiles();
           ///,
      SeeAlso => readNmzData
@@ -973,7 +946,7 @@ considered as the generators of the semigroup. The parameter ", TT "nmzMode"," s
 
 document {
      Key => {readNmzData, (readNmzData, String)},
-     Headline => "reads an output file of normaliz",
+     Headline => "reads an output file of Normaliz",
      Usage => "readNmzData(s)",
      Inputs => {
                 String => "the suffix of the file to be read" 
@@ -981,26 +954,28 @@ document {
      Outputs => {
                  Matrix => " the content of the file"
      },
-     "Reads an output file of ", TT "normaliz", " containing an integer matrix and returns it as an ", TO "Matrix", ". For example, this function is useful if one wants to inspect the support hyperplanes. The filename is
-     created from the current filename in use and the suffix given to the function.",
+     "Reads an output file of ", TT "Normaliz", " containing an integer matrix and returns it as an ", TO "Matrix", ". For example, this function is useful if one wants to inspect the support hyperplanes. The filename is
+     created from the current filename specified by the user and the suffix given to the function.",
      EXAMPLE lines ///
+         setNmzFilename("example") -- to keep the files
          sgr=matrix({{1,2,3},{4,5,6},{7,8,10}});
          normaliz(sgr,0)
          readNmzData("sup")
+         rmNmzFiles();
           ///,
      SeeAlso => {writeNmzData, normaliz}
      }
 
 document {
      Key => {normaliz, (normaliz, Matrix, ZZ)},
-     Headline => "applies normaliz",
+     Headline => "applies Normaliz",
      Usage => "normaliz(sgr,nmzMode)",
      Inputs => {
                 Matrix => " the matrix",
                 ZZ => " the mode"
      },
      Outputs => {Matrix => "generators of the integral closure"},
-     "This function applies ", TT "normaliz", " to the parameter ", TT "sgr", " in the mode set by ", TT "nmzMode", ". The function returns the ", TO Matrix, " defined by the file with suffix ", TT "gen", " , if computed.",
+     "This function applies ", TT "Normaliz", " to the parameter ", TT "sgr", " in the mode set by ", TT "nmzMode", ". The function returns the ", TO Matrix, " defined by the file with suffix ", TT "gen", " , if computed.",
      EXAMPLE lines ///
          sgr=matrix({{1,2,3},{4,5,6},{7,8,10}});
          normaliz(sgr,0)
@@ -1014,7 +989,7 @@ document {
      Headline => "returns the numerical invariants computed",
      Usage => "getNumInvs()",
      Outputs => {List => "the numerical invariants"},
-     "This function returns a list whose length depends on the invariants available. The order of the elements in the list is always the same. Each list element has two parts. The first is a ", TO String, " describing the invariant, the second is the invariant, namely an ", TO ZZ, " for rank, index, multiplicity, a ", TO Sequence, " for the weights, the h-vector and the Hilbert polynomial and a ", TO Boolean, " for..."
+     "This function returns a list whose length depends on the invariants available. The order of the elements in the list is always the same. Each list element has two parts. The first is a ", TO String, " describing the invariant, the second is the invariant, namely an ", TO ZZ, " for rank, index, multiplicity, a ", TO Sequence, " for the weights, the h-vector and the Hilbert polynomial and a ", TO Boolean, " for homogeneous and primary."
      ,
      EXAMPLE lines ///
           R=ZZ/37[x,y,t];
@@ -1023,6 +998,7 @@ document {
           intclMonIdeal(I);
           getNumInvs()
           ///,
+     {"Note: This function is available even if no filename has been specified."},
      SeeAlso => {showNumInvs, exportNumInvs}
      }
 
@@ -1039,6 +1015,7 @@ document {
           intclMonIdeal(I);
           showNumInvs()
           ///,
+     {"Note: This function is available even if no filename has been specified."},
      SeeAlso => {getNumInvs, exportNumInvs}
      }
 
@@ -1057,6 +1034,7 @@ document {
           nmzHilbertBasisElements
           nmzHomogeneousWeights
           ///,
+     {"Note: This function is available even if no filename has been specified."},
      SeeAlso => {getNumInvs, showNumInvs}
      }
 
@@ -1075,7 +1053,6 @@ document {
           intclMonIdeal(I);
           exportNumInvs()
           exportNumInvs(Print=> true)
-         
           ///,
      }
 
@@ -1112,7 +1089,7 @@ document {
      Key => {showNmzOptions},
      Headline => "prints the enabled options",
      Usage => "showNmzOptions()",
-     "Prints the enabled options to the standard output. The ", TT "-f", " option is always set, but never printed.",
+     "Prints the enabled options to the standard output. The ", TT "-f", " option is always set.",
      EXAMPLE lines ///
           setNmzOption("triang",true);
           showNmzOptions()
@@ -1275,7 +1252,7 @@ document {
          V0=matrix({{0,1,2,3},{-1,1,2,1}});
          valRing(V0,R)
      ///,
-     Caveat => {"It is of course possible that ", TEX "S=K",". At present, ", TT "Normaliz cannot deal with the zero cone and will issue the (wrong) error message that the cone is not pointed."},
+     Caveat => {"It is of course possible that ", TEX "S=K",". At present, ", TT "Normaliz"," cannot deal with the zero cone and will issue the (wrong) error message that the cone is not pointed."},
      SeeAlso => {valRingIdeal, torusInvariants}
      }
 
@@ -1295,11 +1272,6 @@ document {
            V=matrix({{0,1,2,3,4},{-1,1,2,1,3}});
            valRingIdeal(V,R)
      ///,
-     Caveat => {"It is of course possible that ", TEX "S=K",". At present, ", TT "Normaliz cannot deal with the zero cone and will issue the (wrong) error message that the cone is not pointed."},
+     Caveat => {"It is of course possible that ", TEX "S=K",". At present, ", TT "Normaliz"," cannot deal with the zero cone and will issue the (wrong) error message that the cone is not pointed."},
      SeeAlso=> {valRing, torusInvariants}
      }
-
-
-
-     
-
