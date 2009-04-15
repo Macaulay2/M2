@@ -70,6 +70,10 @@ end
 restart
 load "runexamples.m2"
 
+-- where we stand at r8619, running on MBP 10.5.6:
+
+
+
 -----------------------------------------------------------
 -- The following is an idea of where we stand on 3/13/2009
 runExamples(H,1) -- {1, leonard1, .67977}

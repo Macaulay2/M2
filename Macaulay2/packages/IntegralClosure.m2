@@ -121,6 +121,7 @@ integralClosure1 = (F,G,J,nsteps,varname,strategies) -> (
      -- R1 is integrally closed iff target F === target F1
      R0 := target F;
      J = trim J;
+     if false then ( -- for now, leave out this code.
      if nsteps > 0 then ( -- MES: compute dimension of the orig ring above, so that we know the size of minors here,
 	                  -- with no extra computation
 	  newminors := ideal (0_R0);
@@ -129,6 +130,7 @@ integralClosure1 = (F,G,J,nsteps,varname,strategies) -> (
 --	  error "look at J, newminors";
 	  J = J + newminors
 	  );
+       );
      if codim J > 1 then return (F,G,ideal(1_R0));
      <<"radical" << flush;
      Jup := trim (flattenRing J)_0;
