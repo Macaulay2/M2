@@ -14,7 +14,8 @@ runExamples (HashTable,ZZ) := (H,i) -> (
      I := value H#i#1();
      R := (ring I)/I;
      t := timing (R' = integralClosure R);
-     answer := {i, H#i#0, t#0};
+     answer := {i, H#i#0, char ring I, numgens ring I, numgens I, t#0};
+     print "answer";
      print answer;
      answer
      )
@@ -53,26 +54,108 @@ charPairs(ZZ,List,Ring) := (a,bs,kk) -> (
      )
 
 H = readExampleFile1 "examples.m2"
+print netList(apply(keys H, h -> {h, H#h#0}), Boxes=>false, HorizontalSpace=>2)
 
 planecurves = select(keys H, i -> (I := value H#i#1(); numgens I == 1 and numgens ring I == 2))
 spacesurfaces = select(keys H, i -> (I := value H#i#1(); numgens I == 1 and numgens ring I == 3))
 others = sort toList(set keys H - set planecurves - set spacesurfaces)
 
-level1 = {} -- these are examples that take roughly < 1 sec 
-level2 = {} -- these are examples that take roughly 1-10 sec
-level3 = {} -- take 10-60 sec
-level4 = {} -- take 60-600 sec
+level1 = {1,2,6,7,8,15,16,24,27,
+     29,30,31,32,33,34,35,36,37,38,
+     41,44,45,48,51} -- these are examples that take roughly < 1 sec 
+level2 = {11,17,28,39,
+     43,46,49,50,53,55} -- these are examples that take roughly 1-10 sec
+level3 = {9,54,55} -- take 10-60 sec
+level4 = {10} -- take 60-600 sec
 level5 = {} -- finish, but take > 600 sec
-levelbig = {} -- these have not successfully completed
-levelbuggy = {} -- ones that crash (currently -- these will be 
+levelbig = {3,4,5,12,13,14,18,
+     20,21,25,26,40,42} -- these have not successfully completed, or just have not been done yet
+levelbuggy = {19,22,23,47,52} -- ones that crash (currently -- these will be 
   --moved out to one of the ones above when they start working)
 end
 restart
 load "runexamples.m2"
 
--- where we stand at r8619, running on MBP 10.5.6:
+-- where we stand at r8620, running on MBP 10.5.6:
+print netList runExamples(H, level1)
 
++--+------------------+-----+-+-+-------+
+|1 |leonard1          |0    |2|1|.784942|
++--+------------------+-----+-+-+-------+
+|2 |vanHoeij1         |0    |2|1|.369526|
++--+------------------+-----+-+-+-------+
+|6 |boehm1            |0    |3|1|.859257|
++--+------------------+-----+-+-+-------+
+|7 |boehm2            |0    |2|1|.246213|
++--+------------------+-----+-+-+-------+
+|8 |boehm3            |0    |3|1|.590833|
++--+------------------+-----+-+-+-------+
+|15| boehm10          |0    |3|1|.273083|
++--+------------------+-----+-+-+-------+
+|16| boehm11          |0    |3|1|1.00148|
++--+------------------+-----+-+-+-------+
+|24| boehm19          |0    |3|1|.426483|
++--+------------------+-----+-+-+-------+
+|29|singular-theo1    |32003|3|1|.145845|
++--+------------------+-----+-+-+-------+
+|30|singular-theo1a   |32003|4|1|.007109|
++--+------------------+-----+-+-+-------+
+|31|singular-theo2    |32003|3|1|.168751|
++--+------------------+-----+-+-+-------+
+|32|singular-theo2a   |32003|4|4|.184579|
++--+------------------+-----+-+-+-------+
+|33|singular-theo3    |32003|3|1|.274891|
++--+------------------+-----+-+-+-------+
+|34|singular-theo5    |32003|3|1|.188141|
++--+------------------+-----+-+-+-------+
+|35|singular-theo6    |32003|3|1|.094427|
++--+------------------+-----+-+-+-------+
+|36|singular-sakai1   |0    |2|1|.222489|
++--+------------------+-----+-+-+-------+
+|37|singular-sakai2   |0    |2|1|.238344|
++--+------------------+-----+-+-+-------+
+|38|singular-sakai3   |0    |2|1|.004263|
++--+------------------+-----+-+-+-------+
+|41|singular-sakai6   |0    |2|1|.376096|
++--+------------------+-----+-+-+-------+
+|44|singular-unnamed1 |0    |2|1|.206864|
++--+------------------+-----+-+-+-------+
+|45|singular-unnamed2 |0    |4|2|.004838|
++--+------------------+-----+-+-+-------+
+|48|singular-unnamed5 |32003|5|3|.009701|
++--+------------------+-----+-+-+-------+
+|51|2charPairsJacIdeal|32003|4|1|.586808|
++--+------------------+-----+-+-+-------+
 
+print netList runExamples(H, level2)
++--+-----------------+-----+-+-+-------+
+|9 |boehm4           |32003|3|1|46.9344|
++--+-----------------+-----+-+-+-------+
+|11| boehm6          |0    |3|1|8.08127|
++--+-----------------+-----+-+-+-------+
+|17| boehm12         |32003|3|1|2.54958|
++--+-----------------+-----+-+-+-------+
+|27|singular-huneke  |31991|5|8|.204536|
++--+-----------------+-----+-+-+-------+
+|39|singular-sakai4  |0    |2|1|2.41175|
++--+-----------------+-----+-+-+-------+
+|43|singular-koelman2|0    |2|1|2.37119|
++--+-----------------+-----+-+-+-------+
+|46|singular-unnamed3|0    |3|1|1.85067|
++--+-----------------+-----+-+-+-------+
+|49|magma-curve      |0    |2|1|1.77476|
++--+-----------------+-----+-+-+-------+
+|50|2charPairs       |32003|2|1|1.78311|
++--+-----------------+-----+-+-+-------+
+
+print netList runExamples(H, level4)
++--+--------------------+-----+-+-+-------+
+|10|boehm5              |32003|2|1|68.1336|
++--+--------------------+-----+-+-+-------+
+|28|singular-vasconcelos|32003|5|4|2.11198|
++--+--------------------+-----+-+-+-------+
+
+print netList runExamples(H, {53,54,55,56})
 
 -----------------------------------------------------------
 -- The following is an idea of where we stand on 3/13/2009
