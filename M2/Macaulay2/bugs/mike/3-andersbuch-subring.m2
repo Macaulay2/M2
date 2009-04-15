@@ -1,7 +1,7 @@
 R = ZZ/2003[x11,x12,x13,x21,x22,x23,x31,x32,x33,
             y11,y12,y13,y21,y22,y23,y31,y32,y33];
 
-f = map(R,R,{x11*y11+x12*y21, 
+f = map(R,R,DegreeMap => i -> 2*i, {x11*y11+x12*y21, 
 	  x11*y12+x12*y22, 
           x11*y13+x12*y23, 
 	  x21*y11+x22*y21, 
@@ -65,6 +65,7 @@ hf = 1-18*T^2+153*T^4-816*T^6+3060*T^8-8568*T^10+18564*T^12-31824*T^14+43758*T^1
 gbTrace=3
 time G = gb(J, DegreeLimit=>10);
 time G = gb(J);
+time G = gb(J, MaxReductionCount => 1);
 status G
 
 time selectInSubring(1,gens G)
