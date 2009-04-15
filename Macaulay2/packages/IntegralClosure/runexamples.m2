@@ -1,5 +1,6 @@
 loadPackage "ExampleIdeals"
 loadPackage "IntegralClosure"
+loadPackage "ReesAlgebra"
 readExampleFile1 = (filename) -> (
      G := separateRegexp("---+", get filename);
      G = apply(G, s -> select(lines s, t -> #t > 0));
@@ -50,11 +51,24 @@ charPairs(ZZ,List,Ring) := (a,bs,kk) -> (
      F := map(A,B,{A_0^a, sum(bs,bi -> A_0^bi)});
      coimage F
      )
+
+H = readExampleFile1 "examples.m2"
+
+planecurves = select(keys H, i -> (I := value H#i#1(); numgens I == 1 and numgens ring I == 2))
+spacesurfaces = select(keys H, i -> (I := value H#i#1(); numgens I == 1 and numgens ring I == 3))
+others = sort toList(set keys H - set planecurves - set spacesurfaces)
+
+level1 = {} -- these are examples that take roughly < 1 sec 
+level2 = {} -- these are examples that take roughly 1-10 sec
+level3 = {} -- take 10-60 sec
+level4 = {} -- take 60-600 sec
+level5 = {} -- finish, but take > 600 sec
+levelbig = {} -- these have not successfully completed
+levelbuggy = {} -- ones that crash (currently -- these will be 
+  --moved out to one of the ones above when they start working)
 end
 restart
 load "runexamples.m2"
-H = readExampleFile1 "examples.m2"
-loadPackage "ReesAlgebra"
 
 -----------------------------------------------------------
 -- The following is an idea of where we stand on 3/13/2009

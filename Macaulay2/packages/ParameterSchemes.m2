@@ -124,7 +124,7 @@ parameterFamily(Ideal,List,Symbol) := opts -> (M,L,t) -> (
 			      ))
 		    ))
 	  );
-     if degs =!= null then if min degs < 0 then error "expected positive weight values";
+     if degs =!= null then if min degs <= 0 then error "expected positive weight values";
      if opts.Local then (
          R1 = kk{t_1..t_nv}; -- removed MonomialSize=>8
 	 U = kk[gens R,t_1..t_nv,MonomialOrder=>{
@@ -135,7 +135,7 @@ parameterFamily(Ideal,List,Symbol) := opts -> (M,L,t) -> (
      else (
 	 R1 = if opts.Weights === null then 
 	          kk[t_1..t_nv] -- removed MonomialSize=>8
-	      else kk[t_1..t_nv,Degrees=>degs];
+	      else kk[t_1..t_nv,Degrees=>degs,MonomialOrder=>{Weights=>2*degs-splice{#degs:1}}];
      	 U = R1 (monoid R);
 	 U = newRing(U, Join=>false);
 	 phi = map(U,R1);
@@ -198,12 +198,33 @@ preprune = (J,F) -> (
      (sub(J,S), Fnew)
      )
 
+preprune = (J,F) -> (
+     -- asumption: J is homogeneous
+     R' := (coefficientRing ring J) [ gens ring J ];
+     J' := sub(J,R');
+     J0 := trim ideal apply(J'_*, f -> part_1 f);
+     pos := set ((flatten entries leadTerm J0)/index//sort);
+     wt := toList apply(0..numgens ring J - 1, i -> if member(i,pos) then 1 else 0);
+     others := sort toList((set toList(0..numgens ring J-1)) - pos);
+     pos = sort toList pos;
+     degs := flatten degrees ring J;
+     S := (coefficientRing ring J)[(gens ring J)_pos, (gens ring J)_others, 
+	  MonomialOrder=>{Weights=>join(wt_pos,wt_others), #pos, #others},
+     	  Degrees => join(degs_pos,degs_others), 
+	  MonomialSize => 8];
+     -- Now we need to change the ring of F
+     T := S (monoid ring F);
+     idS := map(S, ring J);
+     Fnew := (map(T, ring F, vars T | sub(idS.matrix,T))) F;
+     (sub(J,S), Fnew)
+     )
+
 groebnerScheme = method(Options=>{Minimize=>true, Weights=>null})
 groebnerScheme Ideal := opts -> (I) -> (
      L1 := smallerMonomials I;
      F0 := parameterFamily(I,L1,symbol t,Weights=>opts.Weights);
      J0 := parameterIdeal(I,F0);
-     if isHomogeneous J0 then (
+     if false and isHomogeneous J0 then (
 	  -- We change the ring so that the lead terms of the linear parts
 	  -- will occur as lead terms of J0.
 	  (J0,F0) = preprune(J0,F0);
