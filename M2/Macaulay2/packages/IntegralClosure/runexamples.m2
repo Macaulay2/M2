@@ -65,11 +65,11 @@ level1 = {1,2,6,7,8,15,16,24,27,
      41,44,45,48,51} -- these are examples that take roughly < 1 sec 
 level2 = {11,17,28,39,
      43,46,49,50,53,55} -- these are examples that take roughly 1-10 sec
-level3 = {9,54,55} -- take 10-60 sec
+level3 = {9,26,54,55} -- take 10-60 sec
 level4 = {10} -- take 60-600 sec
 level5 = {} -- finish, but take > 600 sec
 levelbig = {3,4,5,12,13,14,18,
-     20,21,25,26,40,42} -- these have not successfully completed, or just have not been done yet
+     20,21,25,40,42} -- these have not successfully completed, or just have not been done yet
 levelbuggy = {19,22,23,47,52} -- ones that crash (currently -- these will be 
   --moved out to one of the ones above when they start working)
 end
@@ -77,6 +77,8 @@ restart
 load "runexamples.m2"
 
 -- where we stand at r8620, running on MBP 10.5.6:
+print netList runExamples(H, {40,42})
+
 print netList runExamples(H, level1)
 
 +--+------------------+-----+-+-+-------+
