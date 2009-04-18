@@ -1,0 +1,10 @@
+improve this error message:
+
+    i2 : R=QQ[x,y][s,t];
+
+    i3 : J=ideal(x*t-y*s);
+
+    o3 : Ideal of R
+
+    i4 : saturate(J, x_R, Strategy => Bayer)
+    stdio:4:1:(1):[0]: error: expected degrees all of the same rank
