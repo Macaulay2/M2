@@ -2,8 +2,9 @@
 DIR = $(shell pwd)
 MACHINE = $(notdir $(DIR))
 all: $(ISO) disk $(MACHINE) settings 
+sha1sum md5sum:; $@ $(ISO)
 start:; VBoxManage -nologo startvm $(MACHINE) -type vrdp
-poweroff:; VBoxManage controlvm $(MACHINE) poweroff
+stop poweroff:; VBoxManage controlvm $(MACHINE) poweroff
 $(ISO):; wget $(URL)
 disk:; VBoxManage createhd -filename $(DIR)/disk -size 5120 -register
 $(MACHINE):
@@ -24,7 +25,10 @@ settings: always
 	VBoxManage setextradata $(MACHINE) VBoxInternal/Devices/pcnet/0/LUN#0/Config/guestssh/Protocol  TCP
 	VBoxManage setextradata $(MACHINE) VBoxInternal/Devices/pcnet/0/LUN#0/Config/guestssh/GuestPort 22
 	VBoxManage setextradata $(MACHINE) VBoxInternal/Devices/pcnet/0/LUN#0/Config/guestssh/HostPort  $(SSHPORT)
-clean:; rm -rf machine.xml
+clean:
+	VBoxManage modifyvm scientific64 -hda none
+	VBoxManage unregistervm $(MACHINE)
+	rm -rfv machine.xml
 veryclean:; rm -rf disk
 show:; VBoxManage showvminfo $(MACHINE)
 state:; VBoxManage showvminfo $(MACHINE) |grep State:
