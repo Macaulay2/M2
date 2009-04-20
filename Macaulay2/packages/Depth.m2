@@ -5,8 +5,8 @@
 
 newPackage(
      "Depth",
-     Version => "0.4.7", 
-     Date => "April 21, 2009",
+     Version => "0.4.9", 
+     Date => "April 2009",
      Authors => {
 	  {Name => "Bart Snapp", Email => "snapp@coastal.edu", HomePage => "http://ww2.coastal.edu/snapp/"}
 	  },
@@ -122,6 +122,11 @@ isRegularSequence(List, Module) := Boolean => (X,M) -> (
      regularSequenceCheck(X,M) == #splice(X) and ideal(X)*M != M
      )
 
+-- this routine actually consists of 2 tests. In the homogeneous case,
+-- we use an exercise from Eisenbud's book "Commutative algebra with a
+-- view toward Algebraic Geometry." See p. 555. Otherwise the routine
+-- is rather naive.
+
 -----------------------------------------------------------------------------
 
 isRegularSequence(Sequence, Module) := Boolean => (X,M) -> isRegularSequence(toList X,M)
@@ -172,6 +177,10 @@ I = ideal (x, x*y, y*z);
 -- the success of this test depends on the random number generator:
 assert(regularSequence(I,A,Attempts=>1,Bound=>100,Sparseness=>.9) - matrix{{82*x, 95*y*z}}==0)
 ///
+
+-----------------------------------------------------------------------------
+
+regularSequence(Ring) := Matrix => opts -> A -> regularSequence(ideal gens A,A)
 	       
 --=========================================================================--
 
@@ -309,6 +318,7 @@ document {
 document {
      Key => {regularSequence,
 	  (regularSequence,Ideal,Ring),
+	  (regularSequence,Ring),
 	  Attempts,
 	  Bound,
 	  Sparseness,
@@ -316,8 +326,7 @@ document {
 	  [regularSequence,Attempts],
 	  [regularSequence,Bound],
 	  [regularSequence,Maximal],
-	  [regularSequence,Sparseness]
-	  },
+	  [regularSequence,Sparseness]},
      Headline => "generates a regular sequence",
      Usage => "regularSequence(I,A)",
      Inputs => {
@@ -355,8 +364,7 @@ document {
      Y = transpose genericMatrix(A,y_(1,1),n,n);
      bracket = ideal flatten (X*Y - Y*X);
      B = A/bracket;
-     m = ideal gens B;
-     regularSequence(m,B,Attempts=>1,Maximal=>false)
+     regularSequence(B,Attempts=>1,Maximal=>false)
      ///,
      "Note, considering the example above, we can compute a regular sequence ", EM "faster", " than we can compute the depth:",
      EXAMPLE lines ///
@@ -366,9 +374,8 @@ document {
      Y = transpose genericMatrix(A,y_(1,1),n,n);
      bracket = ideal flatten (X*Y - Y*X);
      B = A/bracket;
-     m = ideal gens B;
-     time regularSequence(m,B)
-     time depth(m,B)
+     time regularSequence B
+     time depth B
      ///,
      PARA {
      	  "This symbol is provided by the package ", TO Depth, "."
@@ -411,28 +418,3 @@ computing the depth."},
 --=========================================================================--
 --=========================================================================--
 --=========================================================================--
-
-
-
--- regularElement Gives a regular element of an ideal.  Say in a
--- polynoial ring how to find out if an element is a zerodivisor?
--- basiselementlimit, take gb (I,f-z^d) look at lead terms and see if
--- z divides them. Homogeneous (I, fz-1) eliminate z write this for
--- modules first.  keep in mind the substitute command...  keep in
--- mind the eg (x*y,x*z,y*z) = I and finding a reg seq here.
-
---A = ZZ[x,y,z]
---M = A^1/ideal(y*z)
---I = ideal(x*y,x*z,y*z)
---g = gens gb I
---g_(0,2)
---isInjective((g_(0,1))*id_M)
-
---regularElement(Ideal,Module) := RingElement => (I,M) -> (
---     g gens gb I
---     isInjective g_0 *id_M
---    );
-
-
-
-
