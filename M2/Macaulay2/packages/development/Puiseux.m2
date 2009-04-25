@@ -2,13 +2,18 @@
 newPackage(
 	"Puiseux",
     	Version => "0.1", 
-    	Date => "March 23, 2009",
+    	Date => "April 24, 2009",
     	Authors => {},
     	Headline => "Computing Puiseux expansions of plane curves",
     	DebuggingMode => true
     	)
 
-export {NegativeSlopeOnly, polygon, slope}
+export {NegativeSlopeOnly, polygon, adjoinRoot, puiseux}
+
+----------------------------------------------
+-- Internal routines for the package ---------
+----------------------------------------------
+slope = (pts,i,j) -> (pts#j#1 - pts#i#1)/(pts#j#0 - pts#i#0)
 
 polynomialGCD = (f,g) -> (gens gb ideal(f,g))_(0,0)
 
@@ -40,7 +45,13 @@ squarefree = (f) -> (
      result
      );
 
-adjoinRoot = (f) -> (
+----------------------------------------------
+-- adjoining a root of a polynomial ----------
+-- this likely will change interface, and ----
+-- leave this file! --------------------------
+----------------------------------------------
+adjoinRoot = method()
+adjoinRoot RingElement := (f) -> (
      K1top := null;
      K1 := null;
      R := ring f;
@@ -75,38 +86,25 @@ adjoinRoot = (f) -> (
 	  )
      ))
 
-slope = (pts,i,j) -> (pts#j#1 - pts#i#1)/(pts#j#0 - pts#i#0)
+TEST ///
 
-transformPolynomial = (F, tm, ell) -> (
-     R := ring F;
-     Rnew := R;
-     (q,mu,m,beta) := tm;
-     if ring beta =!= coefficientRing R then
-	  Rnew = (ring beta)[x,y];
-     coeffvars := drop(gens ring beta, numgens coefficientRing Rnew - numgens coefficientRing R);
-     toRnew = map(Rnew,R,join({Rnew_0^q,Rnew_0^m*(beta+Rnew_1)},coeffvars));
-     F = (toRnew F) // Rnew_0^ell
-     )
-
-termsToSeries = (tms) -> (
-     -- tms is a list of (q,u,m,b)
-     -- this returns the corresponding truncated power series,
-     -- where t^q = x
-     truncdegree := 1 + sum apply(tms, tm -> tm#2);
-     K1 := ring(tms_0_3);
-     Rtrunc = K1[t, MonomialOrder=>RevLex, Global=>false]/(t^truncdegree);
-     t := Rtrunc_0;
-     lastm := 0;
-     sum apply(#tms, i -> (
-	       lastm = lastm + tms#i#2;
-	       tms#i#3 * t^(lastm)
-	       )
-     ))
-
-polygon = method(Options=>{NegativeSlopeOnly => false})
-polygon RingElement := opts -> (F) -> (
+///
+----------------------------------------
+-- Newton polygon information ----------
+----------------------------------------
+polygon1 = method()
+polygon1(RingElement,Boolean) := (F,negativeSlopeOnly) -> (
+     -- MES: Doesn't handle 0 slope.
+     --      Doesn't use option to choose negative slope only...
      -- F should be in a polynomial ring with 2 variables (over something else)
      -- find the lower lines for the Newton polygon of F.
+     -- input: F(x,y) in a polynomial ring A[x,y] (names can be different).
+     --          assumption: F(0,y) != 0.
+     --        negativeSlopeOnly: boolean
+     -- output:
+     --        a list of lists of the extremal points (j,i) which occur on the (lower) Newton
+     --          polygon of F.  (Here (j,i) <--> x^i y^j)
+     --          Each list consists of pairs(j,i), with descending j, on the line im + jq = ell
      minpairs = sort apply(pairs partition(x -> x#1, exponents F), (k,v) -> (k, min apply(v, first)));
      lastpoint = 0;     
      ylo = (position(minpairs, x -> x#1 == 0));
@@ -118,7 +116,6 @@ polygon RingElement := opts -> (F) -> (
        lastpoint = max thisedge;
        result)
   )
-
 
 edgesToInfo = method()
 edgesToInfo(List, RingElement, RingElement) := (elist,F,x) -> (
@@ -144,8 +141,80 @@ edgesToInfo(List, RingElement, RingElement) := (elist,F,x) -> (
 	    ))
   )
 
+polygon = method(Options=>{NegativeSlopeOnly => false})
+polygon(RingElement,RingElement) := opts -> (F,t) -> (
+     -- input: F(x,y) in a polynomial ring A[x,y] (names can be different).
+     --          assumption: F(0,y) != 0.
+     --        optional: whether to consider the zero slope too
+     -- output: a list of 4-tuples (a,b,m,G(t)), with a,b,m in ZZ, (a,b) = 1, a > 0, b >= 0.
+     --        such that the lines ai+bj = m are the extremal lines of the lower Newton polygon (terms x^i y^j)
+     --        and G(t) in A[t] consists of the extremal terms of F(x,y), except that
+     --        a term x^?? y^?? has been replaced by t^c.
+     -- Note: the denominator of the 
+     p := polygon1(F, opts.NegativeSlopeOnly);
+     edgesToInfo(p, F, t)     
+     )
+
+TEST ///
+restart
+load "development/Puiseux.m2"
+R = QQ[x,y]
+S = QQ[t]
+F = x^3*y^2 + x*y^4 + x^2*y^4 + y^7 + x^12*y + x^15
+p = polygon(F,t)
+netList p
+
+debug Puiseux
+e = polygon1(F,true)
+assert(e === {{(0, 15), (2, 3)}, {(2, 3), (4, 1)}, {(4, 1), (7, 0)}}) -- check that this is correct!
+
+F = x^3*y^2 + x*y^4 + x^2*y^4 + y^7 + x^12*y + x^15 + y^9
+p = polygon(F,t)  -- WRONG!
+assert(p == {(1,6,15,t^2+1),(1,1,5,t^2+1),(3,1,7,t+1)})
+netList p
+
+e = polygon1(F,true)
+assert(p === {{(0, 15), (2, 3)}, {(2, 3), (4, 1)}, {(4, 1), (7, 0)}}) -- check that this is correct!
+
+R = QQ[s,t]
+F = poly "s3t2+st4+s2t4+t7+s12t+s15"
+p = polygon(F,t)
+
+///
+
+
+transformPolynomial = (F, tm, ell) -> (
+     R := ring F;
+     Rnew := R;
+     (q,mu,m,beta) := tm;
+     if ring beta =!= coefficientRing R then
+	  Rnew = (ring beta)[x,y];
+     coeffvars := drop(gens ring beta, numgens coefficientRing Rnew - numgens coefficientRing R);
+     toRnew = map(Rnew,R,join({Rnew_0^q,Rnew_0^m*(beta+Rnew_1)},coeffvars));
+     F = (toRnew F) // Rnew_0^ell
+     )
+
+termsToSeries = (tms) -> (
+     -- MES: bad move redefining the ring each time.
+     --      also the truncation degree should be an input option?
+     -- tms is a list of (q,u,m,b)
+     -- this returns the corresponding truncated power series,
+     -- where t^q = x
+     truncdegree := 1 + sum apply(tms, tm -> tm#2);
+     K1 := ring(tms_0_3);
+     Rtrunc = K1[t, MonomialOrder=>RevLex, Global=>false]/(t^truncdegree);
+     t := Rtrunc_0;
+     lastm := 0;
+     sum apply(#tms, i -> (
+	       lastm = lastm + tms#i#2;
+	       tms#i#3 * t^(lastm)
+	       )
+     ))
+
 regularPart = method()
 regularPart(RingElement, ZZ) := (F, nterms) -> (
+     -- MES: THIS ONE IS REALLY SLOW!!
+     --      also: nterms is not quite what we want...
      R := ring F;
      x := R_0;
      y := R_1;
