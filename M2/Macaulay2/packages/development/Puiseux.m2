@@ -87,7 +87,14 @@ adjoinRoot RingElement := (f) -> (
      ))
 
 TEST ///
-
+restart
+load "development/Puiseux.m2"
+A1 = QQ
+R1 = A1[t]
+a = adjoinRoot(t^2+t+1) -- a primitive cube root of 1
+R2 = (ring a)[t]
+b = adjoinRoot(t^4+1)
+a+b
 ///
 ----------------------------------------
 -- Newton polygon information ----------
