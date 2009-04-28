@@ -22,6 +22,8 @@ runExamples (HashTable,ZZ) := (H,i) -> (
 runExamples (HashTable,List) := (H,L) -> apply(L,a -> runExamples(H,a))
 runExamples HashTable := (H) -> runExamples(H, sort keys H)
 
+viewResults = (L) -> print netList(L, Boxes=>false, HorizontalSpace=>2)
+
 runSingularIC = method()
 runSingularIC Ideal := (I) -> (
      "foo.sing"
@@ -64,7 +66,7 @@ level1 = {1,2,6,7,8,15,16,24,27,
      29,30,31,32,33,34,35,36,37,38,
      41,44,45,48,51} -- these are examples that take roughly < 1 sec 
 level2 = {11,17,28,39,
-     43,46,49,50,53,55} -- these are examples that take roughly 1-10 sec
+     43,46,49,50,53} -- these are examples that take roughly 1-10 sec
 level3 = {9,26,54,55} -- take 10-60 sec
 level4 = {10} -- take 60-600 sec
 level5 = {} -- finish, but take > 600 sec
@@ -76,10 +78,66 @@ end
 restart
 load "runexamples.m2"
 
+viewResults runExamples(H, level1)
+viewResults runExamples(H, level2)
+viewResults runExamples(H, level3)
+viewResults runExamples(H, level4)
+
+-- level1 examples, r8637, 4/28/09, MBP 10.5.6
+1   leonard1            0      2  1  .697777
+2   vanHoeij1           0      2  1  .323094
+6   boehm1              0      3  1  .841622
+7   boehm2              0      2  1  .238015
+8   boehm3              0      3  1  .538263
+15  boehm10             0      3  1  .218437
+16  boehm11             0      3  1  .978733
+24  boehm19             0      3  1  .391508
+27  singular-huneke     31991  5  8  .18715 
+29  singular-theo1      32003  3  1  .075406
+30  singular-theo1a     32003  4  1  .004476
+31  singular-theo2      32003  3  1  .194685
+32  singular-theo2a     32003  4  4  .105829
+33  singular-theo3      32003  3  1  .265903
+34  singular-theo5      32003  3  1  .180317
+35  singular-theo6      32003  3  1  .146639
+36  singular-sakai1     0      2  1  .160144
+37  singular-sakai2     0      2  1  .22397 
+38  singular-sakai3     0      2  1  .005533
+41  singular-sakai6     0      2  1  .372277
+44  singular-unnamed1   0      2  1  .189582
+45  singular-unnamed2   0      4  2  .007836
+48  singular-unnamed5   32003  5  3  .010352
+51  2charPairsJacIdeal  32003  4  1  .609814
+
+-- level2 examples, r8637
+11  boehm6                0      3  1  7.68076
+17  boehm12               32003  3  1  2.35116
+28  singular-vasconcelos  32003  5  4  2.14574
+39  singular-sakai4       0      2  1  2.2138 
+43  singular-koelman2     0      2  1  2.33951
+46  singular-unnamed3     0      3  1  1.77848
+49  magma-curve           0      2  1  1.71214
+50  2charPairs            32003  2  1  1.6427 
+53  ReesAlgOf 3 powers    32003  6  3  1.32399
+
+-- level3 examples, r8637
+9   boehm4       32003  3  1  46.6114
+26  huneke2      32003  6  3  26.0287
+54  rees1-32003  32003  6  3  41.2593
+55  rees2-32003  32003  6  3  25.7961
+
+-- level4 examples, r8637
+10  boehm5  32003  2  1  66.2583
+
+--------------------------------------------------
+
 -- where we stand at r8620, running on MBP 10.5.6:
 print netList runExamples(H, {40,42})
 
 print netList runExamples(H, level1)
+print netList runExamples(H, level2)
+print netList runExamples(H, level3)
+print netList runExamples(H, level4)
 
 +--+------------------+-----+-+-+-------+
 |1 |leonard1          |0    |2|1|.784942|
