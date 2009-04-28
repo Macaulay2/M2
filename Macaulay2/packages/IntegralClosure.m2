@@ -90,19 +90,22 @@ integralClosure Ring := Ring => o -> (R) -> (
      (S,F) := flattenRing R;
      G := map(frac R, frac S, substitute(F^-1 vars S, frac R));
      nsteps := 0;
-     -- Choose an ideal J here
-     --J = nonNormalLocus S;
---     J := promote(minors(codim ideal S, jacobian presentation S), S);
 
      if o.Verbosity >= 3 then (
 	  << "[jacobian time " << flush;
 	  );
+
+     -- Choose an ideal J here.  Allow option to start with a J?
+     --    J = nonNormalLocus S;
+     -- this one seems to be worse
+     --    J := promote(minors(codim ideal S, jacobian presentation S), S);
 
      t1 := timing (J := minors(codim ideal S, jacobian S));
 
      if o.Verbosity >= 3 then (
         << t1#0 " sec #minors " << numgens J << "]" << endl;
 	);
+
      -- loop (note: F : R --> Rn, G : frac Rn --> frac R)
      while (
 	  F1 := F;
@@ -158,16 +161,16 @@ integralClosure1 = (F,G,J,nsteps,varname,strategies) -> (
      if verbosity >= 3 then <<"radical" << flush;
      Jup := trim (flattenRing J)_0;
      Jup = trim ideal apply(Jup_*, f -> product apply(apply(toList factor f, toList), first));
-     time C := decompose Jup;
+     t1 := timing(C := decompose Jup);
      C = apply(C, L -> promote(L,ring J));
-     print (C/codim);
+     if verbosity >= 4 then print (C/codim);
      C1 = select(C, L -> codim L == 1);
      --time C1 := select(C, L -> ((a,b) := endomorphisms(L,L_0); a != 0));
      if #C1 == 0 then (
 	  -- we are integrally closed
 	  return (F,G,ideal(1_R0))
 	  );
-     time radJ = trim intersect C1;
+     t1 = timing (radJ = trim intersect C1);
      --error "look at C, C1, radJ";
      --error "run: radJ = trim radical J;";
      --time radJ = trim radical J;  -- ouch
@@ -202,7 +205,7 @@ integralClosure1 = (F,G,J,nsteps,varname,strategies) -> (
 
      if doingMinimalization then (
        if verbosity >= 5 then << "minpres" << flush;
-       time R1 := minimalPresentation R1temp;
+       t1 = timing(R1 := minimalPresentation R1temp);
        i := R1temp.minimalPresentationMap; -- R1temp --> R1
        iinv := R1temp.minimalPresentationMapInv.matrix; -- R1 --> R1temp
        iinvfrac := map(frac R1temp , frac R1, substitute(iinv,frac R1temp));
@@ -303,7 +306,7 @@ endomorphisms(Ideal,RingElement) := (I,f) -> (
      --H is a matrix of numerators
      --f = is the denominator.
      if not fInIdeal(f,I) then error "Proposed denominator was not in the ideal.";
-     time H1 := (f*I):I;
+     timing(H1 := (f*I):I);
      H := compress ((gens H1) % f);
      (H,f)
      )
@@ -321,9 +324,9 @@ vasconcelos(Ideal,RingElement) := (I,f) -> (
      --f  is the denominator. MUST BE AN ELEMENT OF I.
      if f%I != 0 then error "Proposed denominator was not in the ideal.";
      m := presentation module I;
-     time n := syz transpose m;
+     timing(n := syz transpose m);
      J := trim ideal flatten entries n;
-     time H1 := ideal(f):J;
+     timing(H1 := ideal(f):J);
      H := compress ((gens H1) % f);
      (H,f)
      )
