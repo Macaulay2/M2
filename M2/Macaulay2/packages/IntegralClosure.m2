@@ -33,8 +33,11 @@ export{"integralClosure", "idealizer", "ringFromFractions", "nonNormalLocus", "I
   "randomMinors",
   "S2ification",
   "endomorphisms",
-  "vasconcelos"
+  "vasconcelos",
+  "Verbosity"
 } 
+
+verbosity = 0
 
 needsPackage "Elimination"
 needsPackage "ReesAlgebra"
@@ -75,7 +78,9 @@ needsPackage "ReesAlgebra"
 integralClosure = method(Options=>{
 	  Variable => global w,
 	  Limit => infinity,
-	  Strategy => {}})
+	  Strategy => {}, -- a mix of certain symbols
+     	  Verbosity => 0}
+	  )
 
 integralClosure Ring := Ring => o -> (R) -> (
      -- 1 argument: affine ring R.  We might be able to handle rings over ZZ
@@ -87,15 +92,33 @@ integralClosure Ring := Ring => o -> (R) -> (
      nsteps := 0;
      -- Choose an ideal J here
      --J = nonNormalLocus S;
-     J := promote(minors(codim ideal S, jacobian presentation S), S);
+--     J := promote(minors(codim ideal S, jacobian presentation S), S);
+
+     if o.Verbosity >= 3 then (
+	  << "[jacobian time " << flush;
+	  );
+
+     t1 := timing (J := minors(codim ideal S, jacobian S));
+
+     if o.Verbosity >= 3 then (
+        << t1#0 " sec #minors " << numgens J << "]" << endl;
+	);
      -- loop (note: F : R --> Rn, G : frac Rn --> frac R)
      while (
 	  F1 := F;
-	  (F,G,J) = integralClosure1(F1,G,J,nsteps,o.Variable,strategies);
-	  --<< "fractions: " << first entries G.matrix << endl;
+	  t1 = timing((F,G,J) = integralClosure1(F1,G,J,nsteps,o.Variable,strategies));
 	  nsteps = nsteps + 1;
 	  nsteps < o.Limit and target F1 =!= target F
-	  ) do ();
+	  ) do (
+	    if o.Verbosity > 0 then (
+		 if o.Verbosity >= 5 then (
+		      << "[step " << nsteps << ": time " << t1#0<< " sec  fractions " << first entries G.matrix << "]" << endl << endl;
+		      )
+		 else (
+		      << "[step " << nsteps << ": time " << t1#0<< " sec  #fractions " << numColumns G.matrix << "]" << endl;
+		      );
+		 );
+	  );
      R.icFractions = first entries G.matrix;
      R.icMap = F;
      target F
@@ -132,7 +155,7 @@ integralClosure1 = (F,G,J,nsteps,varname,strategies) -> (
 	  );
        );
      if codim J > 1 then return (F,G,ideal(1_R0));
-     <<"radical" << flush;
+     if verbosity >= 3 then <<"radical" << flush;
      Jup := trim (flattenRing J)_0;
      Jup = trim ideal apply(Jup_*, f -> product apply(apply(toList factor f, toList), first));
      time C := decompose Jup;
@@ -150,13 +173,13 @@ integralClosure1 = (F,G,J,nsteps,varname,strategies) -> (
      --time radJ = trim radical J;  -- ouch
      f := findSmallGen radJ; -- we assume that f is a non-zero divisor!!
      -- Compute Hom_S(radJ,radJ), using f as the common denominator.
-     <<"idlizer" << flush;
+     if verbosity >= 3 then <<"idlizer" << flush;
 
      (He,fe) := endomorphisms(radJ,f);
-     << "fractions to be added now" << endl;
-     << netList apply(flatten entries He, g -> G(g/f)) << endl;
-     -- disply these fractions in the original ring:
-     
+     if verbosity >= 5 then (
+	  << "fractions to be added now" << endl;
+          << netList apply(flatten entries He, g -> G(g/f)) << endl;
+	  );
      
      -- here is where we improve or change our fractions
      if He == 0 then (
@@ -178,7 +201,7 @@ integralClosure1 = (F,G,J,nsteps,varname,strategies) -> (
      if R1temp === R0 then return(F,G,radJ);
 
      if doingMinimalization then (
-       << "minpres" << flush;
+       if verbosity >= 5 then << "minpres" << flush;
        time R1 := minimalPresentation R1temp;
        i := R1temp.minimalPresentationMap; -- R1temp --> R1
        iinv := R1temp.minimalPresentationMapInv.matrix; -- R1 --> R1temp
@@ -254,7 +277,7 @@ idealizer (Ideal, RingElement) := o -> (J, g) ->  (
      --(Hv,fv) := vasconcelos(J,g);
      (He,fe) := endomorphisms(J,g);
      --<< "vasconcelos  fractions:" << netList prepend(fv,flatten entries Hv) << endl;
-     << "endomorphism fractions:" << netList prepend(fe,flatten entries He) << endl;
+     if verbosity >= 5 then << "endomorphism fractions:" << netList prepend(fe,flatten entries He) << endl;
 {*
      if member("vasconcelos", set o.Strategy) then (
 	  print "Using vasconcelos";
@@ -307,7 +330,10 @@ vasconcelos(Ideal,RingElement) := (I,f) -> (
 
 debug Core -- for R.generatorSymbols
 
-ringFromFractions = method(Options=>{Variable => global w, Index => 0})
+ringFromFractions = method(Options=>{
+	  Variable => global w, 
+	  Index => 0,
+	  Verbosity => 0})
 ringFromFractions (Matrix, RingElement) := o -> (H, f) ->  (
      -- f is a nonzero divisor in R
      -- H is a (row) matrix of numerators, elements of R
@@ -367,7 +393,7 @@ fInIdeal = (f,I) -> (
 
 ///
 restart
-load "integralClosure.m2"
+load "IntegralClosure.m2"
 kk=ZZ/101
 S=kk[a,b,c,d]
 I=monomialCurveIdeal(S, {3,5,6})
@@ -1318,6 +1344,8 @@ S=ZZ/101[symbol x,symbol y,symbol z,MonomialOrder => Lex]
 I=ideal(x^6-z^6-y^2*z^4)
 Q=S/I
 time J = integralClosure (Q, Variable => symbol a)
+time J = integralClosure (Q, Variable => symbol a, Verbosity=>1)
+
 use ring ideal J
 assert(ideal J == ideal (x^2-a_6*z, a_6*x-a_7*z, a_6^2-a_7*x, a_7^2-y^2-z^2))
 use Q
