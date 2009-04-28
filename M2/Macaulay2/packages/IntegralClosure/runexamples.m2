@@ -15,7 +15,7 @@ runExamples (HashTable,ZZ) := (H,i) -> (
      R := (ring I)/I;
      t := timing (R' = integralClosure R);
      answer := {i, H#i#0, char ring I, numgens ring I, numgens I, t#0};
-     print "answer";
+     --print "answer";
      print answer;
      answer
      )
