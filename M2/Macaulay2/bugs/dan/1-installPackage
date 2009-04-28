@@ -1,0 +1,28 @@
+Date: Fri, 20 Mar 2009 14:05:18 -0500
+From: "Daniel R. Grayson" <dan@math.uiuc.edu>
+To: Anton Leykin <leykin@math.uic.edu>
+CC: dan@math.uiuc.edu, mike.stillman@mac.com
+In-reply-to: <64daa1890903200951x7e4e507di13709bcb773d38ab@mail.gmail.com>
+	(message from Anton Leykin on Fri, 20 Mar 2009 11:51:10 -0500)
+Subject: Re: AbsoluteLinks=>false ?
+Reply-to: dan@math.uiuc.edu
+
+
+I think the links are relative but incorrect, and that's a bug.  They would be
+correct if you put SeparateExec=>true as an option to installPackage.
+
+I see another problem: without SeparateExec=>true the page "viewHelp" brings up
+doesn't seem to show NAG on the list of locally installed packages!
+
+> Date: Fri, 20 Mar 2009 11:51:10 -0500
+> Subject: AbsoluteLinks=>false ?
+> From: Anton Leykin <leykin@math.uic.edu>
+> To: Dan Grayson <dan@math.uiuc.edu>
+> 
+> Hi Dan,
+> 
+> installPackage("NAG", RemakeAllDocumentation=>true, MakeLinks=>true,
+> AbsoluteLinks=>false, RerunExamples=>true)
+> 
+> does not generate relative paths in html docs (as it used to).
+> Any idea why?
