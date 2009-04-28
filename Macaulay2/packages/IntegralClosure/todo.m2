@@ -21,6 +21,10 @@ To do for our package:
 	   How does the result of this relate to the actual integral closure?  It should be almost right...
        9. put all of these in as strategies to the algorithm
        10. curve:  do it where it sits, or project to a plane curve.  Which is better?
+       11. reduce first birationally to a hypersurface (option).
 4. Test suite.
   Run this on several machines and algorithms and systems
   
+understand:
+S2-ification: is this worth doing?
+why does Hom(I^-1,I^-1) seem so hard to compute?

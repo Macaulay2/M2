@@ -791,3 +791,53 @@ gens gb oo
 I = toBinomial(matrix{{}}, QQ[x])
 gens I
 gens gb I
+
+
+-- Notes from Mike talking with Peter Malkin, 4/21/09
+
+in 1.3.2 (and in 1.3.1):
+
+These routines use the structure below:
+
+groebner, markov, 
+hilbert, graver, zsolve
+rays, circuits, qsolve
+
+also: minimise, walk, normalform
+
+a.mat: m by n
+a.rel: 1 by m: symols: >, =, <  (means: >= 0, == 0, <= 0)
+a.sign: 1 by n matrix: 0,1,-1,2
+
+a.sign: 0:  x_i unrestricted in sign
+        1:  x_i >= 0
+	-1: x_i <= 0.
+	2:  x_i is a Graver component
+
+a.mat, a.rel, a.sign.
+
+groebner, markov, zsolve: also can give a.rhs (1 x n matrix).
+
+groebner does this:
+Ax >= 0, x>=0.
+
+Ax-Iy = 0, x >= 0, y >= 0.
+
+doc on main page of 4ti2 web site: manual, and the slides.
+.rhs doesn't work for qsolve though, possibly.
+
+for hilbert, graver, zsolve, have the following filter:
+.ub, .lb can be used to provide upper and lower bounds (lower only for Graver components, or for <= vars).
+
+install glpk first, and make sure gmp is visible.
+./configure --with-gmp=.... --with-glpk=....
+
+call the different routines as: -p32, -p64, -parb
+
+tests are in 
+4ti2-1.3.2/test
+
+email Peter if I have more questions
+4ti2 google group: joined.
+
+glpk:open source linear progrmming

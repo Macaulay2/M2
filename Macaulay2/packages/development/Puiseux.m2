@@ -139,10 +139,9 @@ edgesToInfo(List, RingElement, RingElement) := (elist,F,x) -> (
 	    q := -x0//g;
 	    m := y0//g;
 	    ell := q * e#0#0 + m * e#0#1;
-	    i0 := e#-1#1;
-	    xpowers = apply(e, ji -> (ji#1-i0) // q);
+	    i0 := e#0#1;
 	    G = sum (L=apply(e, ji -> (
-		      d := (ji#1-i0) // q;
+		      d := (i0-ji#1)//q; -- // q; -- dvide by q when we adjoin a q-th root
 		      coefficient(R_{ji#1,ji#0},F) * x^d
 		      )));
 	    (m, q, ell, G)
@@ -170,7 +169,8 @@ transformPolynomial = (F, tm, ell) -> (
      if ring beta =!= coefficientRing R then
 	  Rnew = (ring beta)[x,y];
      coeffvars := drop(gens ring beta, numgens coefficientRing Rnew - numgens coefficientRing R);
-     toRnew = map(Rnew,R,join({Rnew_0^q,Rnew_0^m*(beta+Rnew_1)},coeffvars));
+     toRnew = map(Rnew,R,join({Rnew_0^q,Rnew_0^m*(beta^q+Rnew_1)},coeffvars));
+       -- as a root of this beta...
      F = (toRnew F) // Rnew_0^ell
      )
 
@@ -201,6 +201,7 @@ regularPart(RingElement, ZZ) := (F, nterms) -> (
 	  m := min apply(terms sub(F, {y => 0}), g -> (first exponents g)_0);
 	  c1 := coefficient(x^m, F);
 	  c2 := coefficient(y, F);
+	  << "inverting by " << c2 << " in ring " << describe ring c2 << endl << endl;
 	  time b := -c1/c2;
 	  ans := (1, 1, m, b);
 	  time F = sub(F, {y => x^m*(b+y)}) // x^m;
@@ -372,17 +373,23 @@ TEST ///
 -- XXXX
 restart
 load "development/Puiseux.m2"
+debug Puiseux
 -- This example is from Duval, 1989
 R = QQ[x,y]
 S = QQ[t]
 -- choose one of the F's from above
 F = y^4-y^2+x^3+x^4
 F = y^5+2*x*y^2+2*x*y^3+x^2*y-4*x^3*y+2*x^5
--- We expect 16 Puiseux expansions here.
+
 edges = polygon(F,t)
+
+sx = singularPart1(F)
+(t,ell,r) = sx_0
+G = transformPolynomial(F,t,ell)
+
 sx = singularParts(F,{})
 
-px = puiseux(F,10)
+px = puiseux(F,20)
 -- Now test to see if each one is essentially 
 --   a root of F(x,y).
 testPuiseux(px_1_0,F,20)
@@ -430,7 +437,7 @@ p = polygon(F,u)
 
 ///
 
-EST ///  -- singularParts -- NOT DONE
+TEST ///  -- singularParts -- NOT DONE
 restart
 load "development/Puiseux.m2"
 R = QQ[x,y]
