@@ -198,6 +198,7 @@ integralClosure1 = (F,G,J,nsteps,varname,strategies) -> (
      
      f := findSmallGen radJ; -- we assume that f is a non-zero divisor!!
      -- Compute Hom_S(radJ,radJ), using f as the common denominator.
+     if verbosity >= 3 then <<"      small gen of radJ: " << f << endl << endl;
 
      if verbosity >= 2 then <<"      idlizer1:  " << flush;
      t1 = timing((He,fe) := endomorphisms(radJ,f));
@@ -212,7 +213,7 @@ integralClosure1 = (F,G,J,nsteps,varname,strategies) -> (
 
      if verbosity >= 6 then (
 	  << "        about to add fractions" << endl;
-          << "        " << netList apply(flatten entries He, g -> G(g/f)) << endl;
+          << "        " << apply(flatten entries He, g -> G(g/f)) << endl;
 	  );
 
      if verbosity >= 2 then <<"      idlizer2:  " << flush;

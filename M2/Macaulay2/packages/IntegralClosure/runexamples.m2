@@ -7,20 +7,19 @@ readExampleFile1 = (filename) -> (
      G = select(G, s -> #s > 0);
      new HashTable from apply(#G, i -> (
 	       s := substring(2,G#i#0); -- remove the first two -- characters
-	       i+1 => s => () -> demark("\n",drop(G#i,1))))
+	       i+1 => s => demark("\n",drop(G#i,1))))
      )
-runExamples = method()
-runExamples (HashTable,ZZ) := (H,i) -> (
-     I := value H#i#1();
-     R := (ring I)/I;
-     t := timing (R' = integralClosure(R, Verbosity=>1));
+runExamples = method(Options=>{Verbosity=>0})
+runExamples (HashTable,ZZ) := o -> (H,i) -> (
+     I := value H#i#1;
+     A = (ring I)/I;
+     t := timing (A' = integralClosure(A, o));
      answer := {i, H#i#0, char ring I, numgens ring I, numgens I, t#0};
-     --print "answer";
      print answer;
      answer
      )
-runExamples (HashTable,List) := (H,L) -> apply(L,a -> runExamples(H,a))
-runExamples HashTable := (H) -> runExamples(H, sort keys H)
+runExamples (HashTable,List) := o -> (H,L) -> apply(L,a -> runExamples(H,a,o))
+runExamples HashTable := (H) -> o -> runExamples(H, sort keys H, o)
 
 viewResults = (L) -> print netList(L, Boxes=>false, HorizontalSpace=>2)
 
@@ -40,7 +39,7 @@ runSingularIC Ideal := (I) -> (
 
 runSingIC = method()
 runSingIC (HashTable,ZZ) := (H,i) -> (
-     I := value H#i#1();
+     I := value H#i#1;
      runSingularIC I;
      answer := {i, H#i#0};
      )
@@ -58,8 +57,8 @@ charPairs(ZZ,List,Ring) := (a,bs,kk) -> (
 H = readExampleFile1 "examples.m2"
 print netList(apply(keys H, h -> {h, H#h#0}), Boxes=>false, HorizontalSpace=>2)
 
-planecurves = select(keys H, i -> (I := value H#i#1(); numgens I == 1 and numgens ring I == 2))
-spacesurfaces = select(keys H, i -> (I := value H#i#1(); numgens I == 1 and numgens ring I == 3))
+planecurves = select(keys H, i -> (I := value H#i#1; numgens I == 1 and numgens ring I == 2))
+spacesurfaces = select(keys H, i -> (I := value H#i#1; numgens I == 1 and numgens ring I == 3))
 others = sort toList(set keys H - set planecurves - set spacesurfaces)
 
 level1 = {1,2,6,7,8,15,16,24,27,
@@ -79,7 +78,7 @@ end
 restart
 load "runexamples.m2"
 
-viewResults runExamples(H, level1)
+viewResults runExamples(H, level1, Verbosity=>2)
 viewResults runExamples(H, level2)
 viewResults runExamples(H, level3)
 viewResults runExamples(H, level4)
