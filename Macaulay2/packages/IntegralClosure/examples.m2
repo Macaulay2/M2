@@ -133,6 +133,7 @@ ideal F
 -- To be quasi-homog: check that sub(JJf:f, all vars to 0) is 0.  If not, then
 --     f is quasi-homogeneous.
 kk = ZZ/32003
+w = symbol w
 S = kk[x, w_0, w_1, w_2, a..c, 
      Degrees => {{1, 5}, 3:{1, 2}, 3:{0, 1}}, 
      --Heft => {-1, 1}, 
@@ -197,6 +198,7 @@ R = kk[x,y,z,Degrees=>{3,4,12}]
 ideal"z(y3-x4)+x8"
 ---------------------------------------------------------------------
 --singular-theo2a
+T = symbol T
 R = ZZ/32003[T_1..T_4, Degrees=>{3,4,12,17}]
 ideal(
      T_1^8-T_1^4*T_3+T_2^3*T_3,
@@ -332,3 +334,176 @@ S = kk[a,b,c]
 I=ideal(a^4+b^4+c^4+a^3+a^2*b+a^2*c)
 time R=reesAlgebra ideal jacobian I
 ideal (flattenRing R)_0
+---------------------------------------------------------------------
+--GLS1-char0
+kk = QQ -- from Greuel-Laplagne-Seelisch arXiv:0904.3561v1
+S = kk[x,y]
+I = ideal"(x-y)x(y+x2)3-y3(x3+xy-y2)"
+---------------------------------------------------------------------
+--GLS1-char2
+kk = ZZ/2  -- from Greuel-Laplagne-Seelisch arXiv:0904.3561v1
+S = kk[x,y]
+I = ideal"(x-y)x(y+x2)3-y3(x3+xy-y2)"
+---------------------------------------------------------------------
+--GLS1-char5
+kk = ZZ/5  -- from Greuel-Laplagne-Seelisch arXiv:0904.3561v1
+S = kk[x,y]
+I = ideal"(x-y)x(y+x2)3-y3(x3+xy-y2)"
+---------------------------------------------------------------------
+--GLS1-char11
+kk = ZZ/11  -- from Greuel-Laplagne-Seelisch arXiv:0904.3561v1
+S = kk[x,y]
+I = ideal"(x-y)x(y+x2)3-y3(x3+xy-y2)"
+---------------------------------------------------------------------
+--GLS1-char32003
+kk = ZZ/32003 -- from Greuel-Laplagne-Seelisch arXiv:0904.3561v1
+S = kk[x,y]
+I = ideal"(x-y)x(y+x2)3-y3(x3+xy-y2)"
+-------------------------------------------------------------------
+--GLS2-char0
+kk = QQ -- from Greuel-Laplagne-Seelisch arXiv:0904.3561v1
+S = kk[x,y]
+I = ideal"55x8+66y2x9+837x2y6-75y4x2-70y6-97y7x2"
+---------------------------------------------------------------------
+--GLS2-char3
+kk = ZZ/2  -- from Greuel-Laplagne-Seelisch arXiv:0904.3561v1
+S = kk[x,y]
+I = ideal"55x8+66y2x9+837x2y6-75y4x2-70y6-97y7x2"
+---------------------------------------------------------------------
+--GLS2-char13
+kk = ZZ/11  -- from Greuel-Laplagne-Seelisch arXiv:0904.3561v1
+S = kk[x,y]
+I = ideal"55x8+66y2x9+837x2y6-75y4x2-70y6-97y7x2"
+---------------------------------------------------------------------
+--GLS2-char32003
+kk = ZZ/32003 -- from Greuel-Laplagne-Seelisch arXiv:0904.3561v1
+S = kk[x,y]
+I = ideal"55x8+66y2x9+837x2y6-75y4x2-70y6-97y7x2"
+-------------------------------------------------------------------
+--GLS3-char0
+kk = QQ -- from Greuel-Laplagne-Seelisch arXiv:0904.3561v1
+S = kk[x,y]
+I = ideal"y9+y8x+y8+y5+y4x+y3x2+y2x3+yx8+x9"
+---------------------------------------------------------------------
+--GLS3-char2
+kk = ZZ/2  -- from Greuel-Laplagne-Seelisch arXiv:0904.3561v1
+S = kk[x,y]
+I = ideal"y9+y8x+y8+y5+y4x+y3x2+y2x3+yx8+x9"
+---------------------------------------------------------------------
+--GLS3-char5
+kk = ZZ/5  -- from Greuel-Laplagne-Seelisch arXiv:0904.3561v1
+S = kk[x,y]
+I = ideal"y9+y8x+y8+y5+y4x+y3x2+y2x3+yx8+x9"
+---------------------------------------------------------------------
+--GLS3-char11
+kk = ZZ/11  -- from Greuel-Laplagne-Seelisch arXiv:0904.3561v1
+S = kk[x,y]
+I = ideal"y9+y8x+y8+y5+y4x+y3x2+y2x3+yx8+x9"
+---------------------------------------------------------------------
+--GLS3-char32003
+kk = ZZ/32003 -- from Greuel-Laplagne-Seelisch arXiv:0904.3561v1
+S = kk[x,y]
+I = ideal"y9+y8x+y8+y5+y4x+y3x2+y2x3+yx8+x9"
+-------------------------------------------------------------------
+--GLS4-char0
+kk = QQ -- from Greuel-Laplagne-Seelisch arXiv:0904.3561v1
+S = kk[x,y]
+I = ideal"(x2+y2-1)3+27x2y2"
+---------------------------------------------------------------------
+--GLS4-char5
+kk = ZZ/5  -- from Greuel-Laplagne-Seelisch arXiv:0904.3561v1
+S = kk[x,y]
+I = ideal"(x2+y2-1)3+27x2y2"
+---------------------------------------------------------------------
+--GLS4-char11
+kk = ZZ/11  -- from Greuel-Laplagne-Seelisch arXiv:0904.3561v1
+S = kk[x,y]
+I = ideal"(x2+y2-1)3+27x2y2"
+---------------------------------------------------------------------
+--GLS4-char32003
+kk = ZZ/32003 -- from Greuel-Laplagne-Seelisch arXiv:0904.3561v1
+S = kk[x,y]
+I = ideal"(x2+y2-1)3+27x2y2"
+-------------------------------------------------------------------
+--GLS5-char0
+kk = QQ -- from Greuel-Laplagne-Seelisch arXiv:0904.3561v1
+S = kk[x,y]
+I = ideal"-x10+x8y2-x6y4-x2y8+2y10-x8+2x6y2+x4y4
+           -x2y6-y8+2x6-x4y2+x2y4+2x4+2x2y2-y4-x2+y2-1"
+---------------------------------------------------------------------
+--GLS5-char5
+kk = ZZ/5  -- from Greuel-Laplagne-Seelisch arXiv:0904.3561v1
+S = kk[x,y]
+I = ideal"-x10+x8y2-x6y4-x2y8+2y10-x8+2x6y2+x4y4
+           -x2y6-y8+2x6-x4y2+x2y4+2x4+2x2y2-y4-x2+y2-1"
+---------------------------------------------------------------------
+--GLS5-char11
+kk = ZZ/11  -- from Greuel-Laplagne-Seelisch arXiv:0904.3561v1
+S = kk[x,y]
+I = ideal"-x10+x8y2-x6y4-x2y8+2y10-x8+2x6y2+x4y4
+           -x2y6-y8+2x6-x4y2+x2y4+2x4+2x2y2-y4-x2+y2-1"
+---------------------------------------------------------------------
+--GLS5-char32003
+kk = ZZ/32003 -- from Greuel-Laplagne-Seelisch arXiv:0904.3561v1
+S = kk[x,y]
+I = ideal"-x10+x8y2-x6y4-x2y8+2y10-x8+2x6y2+x4y4
+           -x2y6-y8+2x6-x4y2+x2y4+2x4+2x2y2-y4-x2+y2-1"
+-------------------------------------------------------------------
+--GLS6-char0
+kk = QQ -- from Greuel-Laplagne-Seelisch arXiv:0904.3561v1
+S = kk[x,y,z,u,v]
+I = ideal"z3+zyx+y3x2+y2x3,
+  uyx+z2,
+  uz+z+y2x+yx2,
+  u2+u+zy+zx,
+  v3+vux+vz2+vzyx+vzx+uz3+uz2y+z3+z2yx2"
+---------------------------------------------------------------------
+--GLS6-char2
+kk = ZZ/2  -- from Greuel-Laplagne-Seelisch arXiv:0904.3561v1
+S = kk[x,y,z,u,v]
+I = ideal"z3+zyx+y3x2+y2x3,
+  uyx+z2,
+  uz+z+y2x+yx2,
+  u2+u+zy+zx,
+  v3+vux+vz2+vzyx+vzx+uz3+uz2y+z3+z2yx2"
+-------------------------------------------------------------------
+--GLS7-char0
+kk = QQ -- from Greuel-Laplagne-Seelisch arXiv:0904.3561v1
+S = kk[x,y,z,w,t]
+I = ideal"x2+zw,
+  y3+xwt,
+  xw3+z3t+ywt2,
+  y2w4-xy2z2t-w3t3"
+---------------------------------------------------------------------
+--GLS7-char2
+kk = ZZ/2  -- from Greuel-Laplagne-Seelisch arXiv:0904.3561v1
+S = kk[x,y,z,w,t]
+I = ideal"x2+zw,
+  y3+xwt,
+  xw3+z3t+ywt2,
+  y2w4-xy2z2t-w3t3"
+---------------------------------------------------------------------
+--GLS7-char5
+kk = ZZ/5  -- from Greuel-Laplagne-Seelisch arXiv:0904.3561v1
+S = kk[x,y,z,w,t]
+I = ideal"x2+zw,
+  y3+xwt,
+  xw3+z3t+ywt2,
+  y2w4-xy2z2t-w3t3"
+---------------------------------------------------------------------
+--GLS7-char11
+kk = ZZ/11  -- from Greuel-Laplagne-Seelisch arXiv:0904.3561v1
+S = kk[x,y,z,w,t]
+I = ideal"x2+zw,
+  y3+xwt,
+  xw3+z3t+ywt2,
+  y2w4-xy2z2t-w3t3"
+---------------------------------------------------------------------
+--GLS7-char32003
+kk = ZZ/32003 -- from Greuel-Laplagne-Seelisch arXiv:0904.3561v1
+S = kk[x,y,z,w,t]
+I = ideal"x2+zw,
+  y3+xwt,
+  xw3+z3t+ywt2,
+  y2w4-xy2z2t-w3t3"
+
