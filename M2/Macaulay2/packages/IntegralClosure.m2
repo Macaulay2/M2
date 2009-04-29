@@ -86,41 +86,50 @@ integralClosure Ring := Ring => o -> (R) -> (
      -- 1 argument: affine ring R.  We might be able to handle rings over ZZ
      --   if we choose J in the non-normal ideal some other way.
      -- 2 options: Limit, Variable
+     verbosity = o.Verbosity;
      strategies := o.Strategy;
      (S,F) := flattenRing R;
      G := map(frac R, frac S, substitute(F^-1 vars S, frac R));
      nsteps := 0;
 
-     if o.Verbosity >= 3 then (
-	  << "[jacobian time " << flush;
-	  );
+     if verbosity >= 1 then 
+     	  << "integral closure nvars " << numgens S << endl;
 
      -- Choose an ideal J here.  Allow option to start with a J?
      --    J = nonNormalLocus S;
      -- this one seems to be worse
      --    J := promote(minors(codim ideal S, jacobian presentation S), S);
 
+     if verbosity >= 1 then (
+	  << " [jacobian time " << flush;
+	  );
+
      t1 := timing (J := minors(codim ideal S, jacobian S));
 
-     if o.Verbosity >= 3 then (
-        << t1#0 " sec #minors " << numgens J << "]" << endl;
+     if verbosity >= 1 then (
+        << t1#0 << " sec #minors " << numgens J << "]" << endl;
 	);
 
      -- loop (note: F : R --> Rn, G : frac Rn --> frac R)
      while (
 	  F1 := F;
+
+	  if verbosity >= 1 then << " [step " << nsteps << ": " << flush;
+
 	  t1 = timing((F,G,J) = integralClosure1(F1,G,J,nsteps,o.Variable,strategies));
+
+          if verbosity >= 1 then (
+		 if verbosity >= 5 then (
+		      << "  time " << t1#0<< " sec  fractions " << first entries G.matrix << "]" << endl << endl;
+		      )
+		 else (
+		      << "  time " << t1#0<< " sec  #fractions " << numColumns G.matrix << "]" << endl;
+		      );
+		 );
+
 	  nsteps = nsteps + 1;
 	  nsteps < o.Limit and target F1 =!= target F
 	  ) do (
-	    if o.Verbosity > 0 then (
-		 if o.Verbosity >= 5 then (
-		      << "[step " << nsteps << ": time " << t1#0<< " sec  fractions " << first entries G.matrix << "]" << endl << endl;
-		      )
-		 else (
-		      << "[step " << nsteps << ": time " << t1#0<< " sec  #fractions " << numColumns G.matrix << "]" << endl;
-		      );
-		 );
 	  );
      R.icFractions = first entries G.matrix;
      R.icMap = F;
@@ -132,6 +141,25 @@ integralClosure Ring := Ring => o -> (R) -> (
 
 doingMinimalization = true;
 
+
+codim1radical = (J) -> (
+     -- input: J:Ideal, in a domain R
+     -- output: Ideal,  the intersection of all prime components 
+     --   of J which have codimension one in R.
+     --   If there are none, then return null.
+     Jup := trim (flattenRing J)_0;
+     Jup = trim ideal apply(Jup_*, f -> product apply(apply(toList factor f, toList), first));
+     << "." << flush;
+     C := decompose Jup;
+     << ". " << flush;
+     C = apply(C, L -> promote(L,ring J));
+
+     if verbosity >= 4 then << "       codim of comps of J: " << C/codim << endl;
+
+     C1 = select(C, L -> codim L == 1);
+     --time C1 := select(C, L -> ((a,b) := endomorphisms(L,L_0); a != 0));
+     if #C1 == 0 then null else trim intersect C1
+     )
 
 integralClosure1 = (F,G,J,nsteps,varname,strategies) -> (
      -- F : R -> R0, R0 is assumed to be a domain
@@ -158,30 +186,26 @@ integralClosure1 = (F,G,J,nsteps,varname,strategies) -> (
 	  );
        );
      if codim J > 1 then return (F,G,ideal(1_R0));
-     if verbosity >= 3 then <<"radical" << flush;
-     Jup := trim (flattenRing J)_0;
-     Jup = trim ideal apply(Jup_*, f -> product apply(apply(toList factor f, toList), first));
-     t1 := timing(C := decompose Jup);
-     C = apply(C, L -> promote(L,ring J));
-     if verbosity >= 4 then print (C/codim);
-     C1 = select(C, L -> codim L == 1);
-     --time C1 := select(C, L -> ((a,b) := endomorphisms(L,L_0); a != 0));
-     if #C1 == 0 then (
+
+     if verbosity >= 2 then << endl << "      radical " << flush;
+     t1 := timing(radJ = codim1radical J);
+     if verbosity >= 2 then << t1#0 << " seconds" << endl;
+
+     if radJ === null then (
 	  -- we are integrally closed
 	  return (F,G,ideal(1_R0))
 	  );
-     t1 = timing (radJ = trim intersect C1);
-     --error "look at C, C1, radJ";
-     --error "run: radJ = trim radical J;";
-     --time radJ = trim radical J;  -- ouch
+     
      f := findSmallGen radJ; -- we assume that f is a non-zero divisor!!
      -- Compute Hom_S(radJ,radJ), using f as the common denominator.
-     if verbosity >= 3 then <<"idlizer" << flush;
 
-     (He,fe) := endomorphisms(radJ,f);
+     if verbosity >= 2 then <<"      idlizer1:  " << flush;
+     t1 = timing((He,fe) := endomorphisms(radJ,f));
+     if verbosity >= 2 then << t1#0 << " seconds" << endl;
+
      if verbosity >= 5 then (
-	  << "fractions to be added now" << endl;
-          << netList apply(flatten entries He, g -> G(g/f)) << endl;
+	  << "      fractions to be added now" << endl;
+          << "      " << netList apply(flatten entries He, g -> G(g/f)) << endl;
 	  );
      
      -- here is where we improve or change our fractions
@@ -189,8 +213,10 @@ integralClosure1 = (F,G,J,nsteps,varname,strategies) -> (
 	  -- there are no new fractions to add, and this process will add no new fractions
 	  return (F,G,ideal(1_R0));
 	  );
-     (F0,G0) = ringFromFractions(He,fe,Variable=>varname,Index=>nsteps);
-     
+
+     if verbosity >= 2 then <<"      idlizer2:  " << flush;
+     t1 = timing((F0,G0) = ringFromFractions(He,fe,Variable=>varname,Index=>nsteps));
+     if verbosity >= 2 then << t1#0 << " seconds" << endl;
 {*
      time (F0,G0) = 
          idealizer(radJ, f, 
@@ -204,8 +230,9 @@ integralClosure1 = (F,G,J,nsteps,varname,strategies) -> (
      if R1temp === R0 then return(F,G,radJ);
 
      if doingMinimalization then (
-       if verbosity >= 5 then << "minpres" << flush;
+       if verbosity >= 2 then << "       minpres:  " << flush;
        t1 = timing(R1 := minimalPresentation R1temp);
+       if verbosity >= 2 then << t1#0 << " seconds" << endl;
        i := R1temp.minimalPresentationMap; -- R1temp --> R1
        iinv := R1temp.minimalPresentationMapInv.matrix; -- R1 --> R1temp
        iinvfrac := map(frac R1temp , frac R1, substitute(iinv,frac R1temp));
