@@ -13,7 +13,7 @@ runExamples = method()
 runExamples (HashTable,ZZ) := (H,i) -> (
      I := value H#i#1();
      R := (ring I)/I;
-     t := timing (R' = integralClosure R);
+     t := timing (R' = integralClosure(R, Verbosity=>1));
      answer := {i, H#i#0, char ring I, numgens ring I, numgens I, t#0};
      --print "answer";
      print answer;
@@ -71,9 +71,10 @@ level3 = {9,26,54,55} -- take 10-60 sec
 level4 = {10} -- take 60-600 sec
 level5 = {} -- finish, but take > 600 sec
 levelbig = {3,4,5,12,13,14,18,
-     20,21,25,40,42} -- these have not successfully completed, or just have not been done yet
+     20,21,25,40,42,61,62,65} -- these have not successfully completed, or just have not been done yet
 levelbuggy = {19,22,23,47,52} -- ones that crash (currently -- these will be 
   --moved out to one of the ones above when they start working)
+leveltofile = {56, 57, 58, 59, 60, 63, 64, 66, 67, 68, 69, 70, 71, 72, 73, 74, 75, 76, 77, 78, 79, 80, 81, 82, 83, 84, 85}
 end
 restart
 load "runexamples.m2"
@@ -82,7 +83,7 @@ viewResults runExamples(H, level1)
 viewResults runExamples(H, level2)
 viewResults runExamples(H, level3)
 viewResults runExamples(H, level4)
-
+runExamples(H, leveltofile)
 -- level1 examples, r8637, 4/28/09, MBP 10.5.6
 1   leonard1            0      2  1  .697777
 2   vanHoeij1           0      2  1  .323094
@@ -128,6 +129,35 @@ viewResults runExamples(H, level4)
 
 -- level4 examples, r8637
 10  boehm5  32003  2  1  66.2583
+
+-- leveltofile
+56  rees3-32003     32003  6  3  1.74736
+57  GLS1-char0      0      2  1  1.85116
+58  GLS1-char2      2      2  1  1.17564
+59  GLS1-char5      5      2  1  1.46076
+60  GLS1-char11     11     2  1  5.02699
+63  GLS2-char3      2      2  1  .016203
+64  GLS2-char13     11     2  1  .015343
+66  GLS3-char0      0      2  1  2.29969
+67  GLS3-char2      2      2  1  8.73575
+68  GLS3-char5      5      2  1  1.43884
+69  GLS3-char11     11     2  1  4.7698 
+70  GLS3-char32003  32003  2  1  1.43519
+71  GLS4-char0      0      2  1  .22013 
+72  GLS4-char5      5      2  1  .201446
+73  GLS4-char11     11     2  1  .233176
+74  GLS4-char32003  32003  2  1  .298445
+75  GLS5-char0      0      2  1  .21652 
+76  GLS5-char5      5      2  1  2.26651
+77  GLS5-char11     11     2  1  .1877  
+78  GLS5-char32003  32003  2  1  .144104
+79  GLS6-char0      0      5  5  .057449
+80  GLS6-char2      2      5  5  32.2038
+81  GLS7-char0      0      5  4  2.40954
+82  GLS7-char2      2      5  4  2.07434
+83  GLS7-char5      5      5  4  2.14836
+84  GLS7-char11     11     5  4  2.02895
+85  GLS7-char32003  32003  5  4  2.11497
 
 --------------------------------------------------
 

@@ -154,8 +154,8 @@ codim1radical = (J) -> (
      << ". " << flush;
      C = apply(C, L -> promote(L,ring J));
 
-     if verbosity >= 4 then << "       codim of comps of J: " << C/codim << endl;
-
+     if verbosity >= 4 then << "codim of comps of J: " << C/codim << endl << "                 ";
+     
      C1 = select(C, L -> codim L == 1);
      --time C1 := select(C, L -> ((a,b) := endomorphisms(L,L_0); a != 0));
      if #C1 == 0 then null else trim intersect C1
@@ -203,15 +203,16 @@ integralClosure1 = (F,G,J,nsteps,varname,strategies) -> (
      t1 = timing((He,fe) := endomorphisms(radJ,f));
      if verbosity >= 2 then << t1#0 << " seconds" << endl;
 
-     if verbosity >= 5 then (
-	  << "      fractions to be added now" << endl;
-          << "      " << netList apply(flatten entries He, g -> G(g/f)) << endl;
-	  );
      
      -- here is where we improve or change our fractions
      if He == 0 then (
 	  -- there are no new fractions to add, and this process will add no new fractions
 	  return (F,G,ideal(1_R0));
+	  );
+
+     if verbosity >= 6 then (
+	  << "        about to add fractions" << endl;
+          << "        " << netList apply(flatten entries He, g -> G(g/f)) << endl;
 	  );
 
      if verbosity >= 2 then <<"      idlizer2:  " << flush;
@@ -230,7 +231,7 @@ integralClosure1 = (F,G,J,nsteps,varname,strategies) -> (
      if R1temp === R0 then return(F,G,radJ);
 
      if doingMinimalization then (
-       if verbosity >= 2 then << "       minpres:  " << flush;
+       if verbosity >= 2 then << "      minpres:   " << flush;
        t1 = timing(R1 := minimalPresentation R1temp);
        if verbosity >= 2 then << t1#0 << " seconds" << endl;
        i := R1temp.minimalPresentationMap; -- R1temp --> R1
