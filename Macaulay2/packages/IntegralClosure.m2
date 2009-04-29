@@ -141,9 +141,10 @@ codim1radical = (J) -> (
      --   If there are none, then return null.
      Jup := trim (flattenRing J)_0;
      Jup = trim ideal apply(Jup_*, f -> product apply(apply(toList factor f, toList), first));
-     << "." << flush;
+     
+     if verbosity >= 2 then << "." << flush;
      C := decompose Jup;
-     << ". " << flush;
+     if verbosity >= 2 then << "." << flush;
      C = apply(C, L -> promote(L,ring J));
 
      if verbosity >= 4 then << "codim of comps of J: " << C/codim << endl << "                 ";
@@ -249,17 +250,18 @@ integralClosure1 = (F,G,J,nsteps,varname,strategies) -> (
      };
 *}
      Hef := apply(flatten entries He, h->h/f);
-     Henum := (Hef/numerator)/(h->h%f);
+     Henum := Hef/numerator;
      Heden := Hef/denominator;
+     Henumred := apply(#Hef, i-> Henum_i % Heden_i);
      fe1 := commonDenom Heden;
      multipliers := apply(Heden, H -> fe1//H);
      He1 := matrix{
-	       apply(#Hef, i -> (Henum#i * multipliers#i))
+	       apply(#Hef, i -> (Henumred#i * multipliers#i))
 	          };
 	     
-<<endl;
-<<"He= " << flatten entries He  << endl;
-<<"He1= " << flatten entries He1  << endl;
+--<<endl;
+--<<"He= " << flatten entries He  << endl;
+--<<"He1= " << flatten entries He1  << endl;
 
      if verbosity >= 6 then (
 	  << "        reduced fractions: " << endl;
@@ -267,7 +269,7 @@ integralClosure1 = (F,G,J,nsteps,varname,strategies) -> (
 	  );
 
 --error();     
-     t1 = timing((F0,G0) = ringFromFractions(He1,fe,Variable=>varname,Index=>nsteps));
+     t1 = timing((F0,G0) = ringFromFractions(He1,fe1,Variable=>varname,Index=>nsteps));
      
      if verbosity >= 2 then << t1#0 << " seconds" << endl;
 {*
