@@ -81,13 +81,24 @@ viewResults runExamples(H, {3}, Verbosity=>2, Strategy=>{SimplifyFractions})
 viewResults runExamples(H, {10}, Verbosity=>2)
 viewResults runExamples(H, {10}, Verbosity=>2, Strategy=>{SimplifyFractions})
 
-viewResults runExamples(H, level1, Verbosity=>2)
-viewResults runExamples(H, level2, Verbosity=>1)
+viewResults runExamples(H, level1, Verbosity=>2, Strategy=>{SimplifyFractions})
+viewResults runExamples(H, level2, Verbosity=>0, Strategy=>{SimplifyFractions, ExtraMinors1})
 viewResults runExamples(H, level3)
 viewResults runExamples(H, level4)
 runExamples(H, leveltofile)
+<<<<<<< .mine
+runExamples(H, 10, Verbosity => 3, Strategy =>{SimplifyFractions, ExtraMinors1})
+runExamples(H, 10, Verbosity => 6, Strategy =>{ReallySimplifyFractions})
+runExamples(H, 10, Verbosity => 3, Strategy =>{SimplifyFractionsInBase})
+runExamples(H, 10, Verbosity => 3, Strategy =>{SimplifyFractions, Jacobian1})
+runExamples(H, 57, Verbosity => 3, Strategy =>{SimplifyFractions})
+runExamples(H, 60, Verbosity => 3, Strategy =>{SimplifyFractions})
+runExamples(H, 60, Verbosity => 0, Strategy =>{SimplifyFractionsInBase})
+runExamples(H, 60, Verbosity => 0)
+=======
 
 
+>>>>>>> .r8646
 -- level1 examples, r8637, 4/28/09, MBP 10.5.6
 1   leonard1            0      2  1  .697777
 2   vanHoeij1           0      2  1  .323094
