@@ -66,6 +66,8 @@ gbTrace=3
 time G = gb(J, DegreeLimit=>10);
 time G = gb(J);
 time G = gb(J, MaxReductionCount => 1);
+debug Core
+time G = gb(J, Algorithm=>Homogeneous2);
 status G
 
 time selectInSubring(1,gens G)

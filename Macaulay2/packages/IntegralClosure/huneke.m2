@@ -19,7 +19,8 @@ netList (ideal R)_*
 
 (A,F) = flattenRing R
 codim A
---time B = integralClosure A;
+time B = integralClosure(A, Verbosity=>2, Strategy=>{SimplifyFractions});
+
 
 
 jacobian A

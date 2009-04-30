@@ -198,7 +198,8 @@ generators = method(
 	  minimalPresentation = method(o);
 	  prune = method(o);
 	  )) (
-     Options => { 
+     Options => {
+	  Exclude => {}
 	  -- as far as I can tell these options are unused (now)
 	  -- Variable => null, 
 	  -- Strategy => null

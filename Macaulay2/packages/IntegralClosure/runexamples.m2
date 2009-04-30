@@ -9,7 +9,7 @@ readExampleFile1 = (filename) -> (
 	       s := substring(2,G#i#0); -- remove the first two -- characters
 	       i+1 => s => demark("\n",drop(G#i,1))))
      )
-runExamples = method(Options=>{Verbosity=>0})
+runExamples = method(Options=>options integralClosure)
 runExamples (HashTable,ZZ) := o -> (H,i) -> (
      I := value H#i#1;
      A = (ring I)/I;
@@ -77,12 +77,17 @@ leveltofile = {56, 57, 58, 59, 60, 63, 64, 66, 67, 68, 69, 70, 71, 72, 73, 74, 7
 end
 restart
 load "runexamples.m2"
+viewResults runExamples(H, {3}, Verbosity=>2, Strategy=>{SimplifyFractions})
+viewResults runExamples(H, {10}, Verbosity=>2)
+viewResults runExamples(H, {10}, Verbosity=>2, Strategy=>{SimplifyFractions})
 
 viewResults runExamples(H, level1, Verbosity=>2)
-viewResults runExamples(H, level2)
+viewResults runExamples(H, level2, Verbosity=>1)
 viewResults runExamples(H, level3)
 viewResults runExamples(H, level4)
 runExamples(H, leveltofile)
+
+
 -- level1 examples, r8637, 4/28/09, MBP 10.5.6
 1   leonard1            0      2  1  .697777
 2   vanHoeij1           0      2  1  .323094
