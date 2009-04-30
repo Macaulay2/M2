@@ -60,3 +60,18 @@ assert( numgens C == 17 )
 assert( numgens V <= 12 )
 assert( numgens J == 33 )
 assert( numgens ideal V <= 28 )
+
+C=ZZ/101[x,y,z,u,w]/ideal(x-x^2-y,z+x*y,w^2-u^2)
+V= time minimalPresentation(C,Exclude=>{y})
+describe V
+use V
+assert(gens V === {x,y,u,w})
+
+V= time minimalPresentation(ideal C,Exclude=>{y})
+use ring V
+assert(gens ring V === {x,y,u,w})
+
+A = QQ[t]
+assert try V = minimalPresentation(ideal C,Exclude=>{a}) else true
+assert try V = minimalPresentation(ideal C,Exclude=>{t}) else true
+assert try V = minimalPresentation(ideal C,Exclude=>{1}) else true

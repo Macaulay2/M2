@@ -21,7 +21,7 @@ document {
      Key => {(minimalPresentation,Ring),(prune,Ring),minimalPresentationMap, minimalPresentationMapInv},
      Headline => "compute a minimal presentation of a quotient ring",
      Usage => "S = minimalPresentation R\nS = prune R",
-     Inputs => { "R" => { "a quotient ring" } },
+     Inputs => { "R" => { "a quotient ring" }},
      Outputs => { "S" => { "a quotient ring, minimally presented if ", TT "R", " is homogeneous, isomorphic to ", TT "R" } },
      Consequences => {
 	  { "the isomorphism from ", TT "R", " to ", TT "S", " is stored as ", TT "R.minimalPresentationMap", 
@@ -34,12 +34,17 @@ document {
      set for the resulting defining ideal is then computed and the new quotient ring is returned.
      If ", TT "R", " is not homogeneous, then an attempt is made to improve the
      presentation.",
-     EXAMPLE {
-	  "R = ZZ/101[x,y,z,u,w]/ideal(x-x^2-y,z+x*y,w^2-u^2);",
-	  "minimalPresentation(R)",
-	  "R.minimalPresentationMap",
-	  "R.minimalPresentationMapInv"
-	  },
+     EXAMPLE lines ///
+	  R = ZZ/101[x,y,z,u,w]/ideal(x-x^2-y,z+x*y,w^2-u^2);
+	  minimalPresentation(R)
+	  R.minimalPresentationMap
+	  R.minimalPresentationMapInv
+	  ///,
+     "If the Exclude option is present, then those variables are not simplified away.",
+     EXAMPLE lines ///
+	  R = ZZ/101[x,y,z,u,w]/ideal(x-x^2-y,z+x*y,w^2-u^2);
+	  minimalPresentation(R, Exclude=>{y})
+          ///,
      SeeAlso => {(minimalPresentation, Ideal), (prune, Ideal), (trim, Ring), (trim, QuotientRing)}     
      }
 document { 
@@ -75,6 +80,12 @@ document {
 	  "I.cache.minimalPresentationMap",
 	  "I.cache.minimalPresentationMapInv"
 	  },
+     "If the Exclude option is present, then those variables are not simplified away.",
+     EXAMPLE lines ///
+	  R = ZZ/101[x,y,z,u,w];
+	  I = ideal(x-x^2-y,z+x*y,w^2-u^2);
+	  minimalPresentation(I, Exclude=>{y})
+          ///,
      SeeAlso => {(minimalPresentation,Ring), (trim, Ideal)}
      }
 

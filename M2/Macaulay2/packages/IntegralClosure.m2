@@ -26,7 +26,14 @@ export{"integralClosure", "idealizer", "ringFromFractions", "nonNormalLocus", "I
   "S2ification",
   "endomorphisms",
   "vasconcelos",
-  "Verbosity"
+  "Verbosity",
+  
+  "SimplifyFractions", -- simplify fractions
+  "StartWithS2", -- compute S2-ification first
+  "Endomorphisms", -- compute end(I)
+  "Vasconcelos", -- compute end(I^-1).  If both this and Endomorphisms are set:
+                 -- compare them.
+  "RecomputeJacobian"
 } 
 
 verbosity = 0
@@ -79,7 +86,7 @@ integralClosure Ring := Ring => o -> (R) -> (
      --   if we choose J in the non-normal ideal some other way.
      -- 2 options: Limit, Variable
      verbosity = o.Verbosity;
-     strategies := o.Strategy;
+     strategies := set o.Strategy;
      (S,F) := flattenRing R;
      G := map(frac R, frac S, substitute(F^-1 vars S, frac R));
      nsteps := 0;
@@ -249,15 +256,19 @@ integralClosure1 = (F,G,J,nsteps,varname,strategies) -> (
 	       (numerator(fr) % fe) *(fe//denominator fr)))
      };
 *}
-     Hef := apply(flatten entries He, h->h/f);
-     Henum := Hef/numerator;
-     Heden := Hef/denominator;
-     Henumred := apply(#Hef, i-> Henum_i % Heden_i);
-     fe1 := commonDenom Heden;
-     multipliers := apply(Heden, H -> fe1//H);
-     He1 := matrix{
-	       apply(#Hef, i -> (Henumred#i * multipliers#i))
-	          };
+
+       if member(SimplifyFractions, strategies)
+       then (He,fe) = (
+     	    Hef := apply(flatten entries He, h->h/f);
+     	    Henum := Hef/numerator;
+     	    Heden := Hef/denominator;
+     	    Henumred := apply(#Hef, i-> Henum_i % Heden_i);
+     	    fe1 := commonDenom Heden;
+     	    multipliers := apply(Heden, H -> fe1//H);
+     	    He1 := matrix{
+	       	 apply(#Hef, i -> (Henumred#i * multipliers#i))
+		 };
+	    (He1,fe1));
 	     
 --<<endl;
 --<<"He= " << flatten entries He  << endl;
@@ -265,11 +276,11 @@ integralClosure1 = (F,G,J,nsteps,varname,strategies) -> (
 
      if verbosity >= 6 then (
 	  << "        reduced fractions: " << endl;
-          << "        " << apply(flatten entries He1, g -> G(g/fe1)) << endl;
+          << "        " << apply(flatten entries He, g -> G(g/fe)) << endl;
 	  );
 
 --error();     
-     t1 = timing((F0,G0) = ringFromFractions(He1,fe1,Variable=>varname,Index=>nsteps));
+     t1 = timing((F0,G0) = ringFromFractions(He,fe,Variable=>varname,Index=>nsteps));
      
      if verbosity >= 2 then << t1#0 << " seconds" << endl;
 {*

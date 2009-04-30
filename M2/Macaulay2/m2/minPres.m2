@@ -232,20 +232,23 @@ reduceLinears Ideal := o -> (I) -> (
      )
 *}
 
-reductorVariable = (f) -> (
-     -- assumes all variables in ring have degree 1.
-     -- 1 argument: a polynomial.
-     -- return: a list of two elements.  The first element is a number
-     -- and the second a monomial, that form a linear term in f such
-     -- that the variable does not occur in any other term of f.  If
-     -- no such term exists in f, it returns {}.
+reductorVariable = (f,excludes) -> (
+     -- inputs:
+     --     f: a polynomial
+     --     excludes: a (possibly empty) set of variables to NOT reduce
+     -- output:
+     --     a list of two elements {c,x}, where c*x appears as a term in f
+     --     such that the variable x does not appear elsewhere in f.
+     --     x will be a variable NOT in the excludes list.
+     --     If no such term exists, {} is returned.
+     -- assumption: all variables in the ring have degree 1.
      inf := part(1,f);
      restf := set support(f-inf);
      supInf := set support(inf);
-     varList := toList (supInf-restf);
+     varList := toList (supInf-restf-excludes);
      -- either varList = {} and there are no linear terms whose
      -- variables don't occur elsewhere, otherwise we found such
-     -- linear terms. 
+     -- a linear term.
      if varList === {} then varList
      else (
      	  termf := terms f;
@@ -259,27 +262,28 @@ reductorVariable = (f) -> (
      	  )
      )
      
-findReductor = (L) -> (
-     -- 1 argument: A list of polynomials, generally formed from
-     -- generators of an ideal. 
-     -- Returns: a pair consisting of a variable x and x - 1/c f where
-     -- cx is a linear term of f such that x does not occur in any
-     -- other term of f. 
-     --
-     -- Sorts through polynomials in the list to find the smallest one
-     -- to use first to find a variable to use to find a "smaller
-     -- ring" in minimalPresentation. 
+findReductor = (L,excludes) -> (
+     -- Inputs:
+     --    L:List, of polynomials in a ring R
+     --    excludes, a (possibly empty) set of variables
+     -- Output:
+     --    (x, x - 1/c f), where c*x is a term in f such that
+     --      x does not appear in x - 1/c f, where f is some
+     --      element of L.  x is restricted to be a variables not
+     --      in the excludes set.
+     --    null, if none exists.
+     -- assumption: all variables in R have degree 1.
      L1 := sort apply(L, f -> (size f,f));
      redVar := {};
      L2 := select(1, L1, p -> (
-	       redVar = reductorVariable(p#1);
+	       redVar = reductorVariable(p#1, excludes);
 	       redVar =!= {})
 	  );
      if redVar =!= {} then (redVar#1, redVar#1 - (1/(redVar#0))*L2#0#1)
      )
 
 reduceLinears = method(Options => {Limit=>infinity})
-reduceLinears Ideal := o -> (I) -> (
+reduceLinears(Ideal,Set) := o -> (I,excludes) -> (
      -- 1 argument: an ideal
      -- 1 optional argument: a limit on the recursion through the
      -- generators of the ideal.  
@@ -291,7 +295,7 @@ reduceLinears Ideal := o -> (I) -> (
      count := o.Limit;
      M := while count > 0 list (
        count = count - 1;
-       g := findReductor L;
+       g := findReductor(L, excludes);
        if g === null then break;
 --       << "---------------------------------" << endl;
 --       << "reducing using " << g#0 << endl << endl;
@@ -336,7 +340,7 @@ backSubstitute = (M) -> (
          pairs H)
      )
 
-minPressy = (I) -> (
+minPressy = (I,excludes) -> (
      --  Returns: an ideal J in a polynomial ring over ZZ or a base field
      --  such that (ring I)/I is isomorphic to  (ring J)/J.
      --  Approach: look at generators of I, find those with linear
@@ -348,6 +352,7 @@ minPressy = (I) -> (
      --  if the ring I is a tower, flatten it first, and if the ring has quotient
      -- elements, add them to flatI
      R := ring I;
+     excludes = excludes/index;
      (flatI,F) := flattenRing I;
      flatR := ring flatI;
      (S,IS) := (flatR, flatI);
@@ -356,7 +361,8 @@ minPressy = (I) -> (
 	  S = newRing(flatR, Degrees=>{(numgens flatR : 1)});
 	  IS = substitute(IS, vars S);
 	  );
-     (J,H) := reduceLinears IS;
+     excludes = set (generators S)_excludes;
+     (J,H) := reduceLinears(IS,excludes);
      StoFlatR := map(flatR,S,vars flatR);
      J = ideal compress generators StoFlatR J; -- now in flatR
      H = apply(H, (a,b) -> (StoFlatR a, StoFlatR b)); -- everything in flatR now
@@ -374,15 +380,13 @@ minPressy = (I) -> (
      I.cache.minimalPresentationMap = map(newS, R, toList X);
      trivialToNewS J)
 
-minimalPresentation Ideal := prune Ideal := opts -> (I) -> minPressy I
-
-minimalPresentation Ring := prune Ring := Ring => opts -> (R) -> (
+minPressyRing = (R, excludes) -> (
      -- 1 argument: A ring R (most often a quotient ring).
      -- Return:  A ring isomorphic to R using minimalPresentation on
      -- the presentation ideal of R.  For more information see
      -- minimalPresentation Ideal.
      I := ideal R;
-     result := minPressy I;
+     result := minPressy(I, excludes);
      finalRing := (ring result)/result;
      -- put the maps cached on I in the right place for the ring. 
      f := substitute(matrix I.cache.minimalPresentationMap, finalRing);
@@ -392,6 +396,24 @@ minimalPresentation Ring := prune Ring := Ring => opts -> (R) -> (
      finalRing
      )
 
+checkExcludes = (R,excludes) -> (
+     if instance(excludes,RingElement)
+     then excludes = {excludes};
+     if not instance(excludes,BasicList) 
+     then error"expected a variable or list of variables in a ring";
+     if any(excludes, e -> not instance(e,RingElement))
+        or any(excludes, e -> index e === null)
+     then error "the Exclude list must consist of variables in the ring";
+     if any(excludes, e -> not instance(e,R) and index substitute(e,R) === null)
+     then error "the Exclude list must consist of variables in the ring";
+     )
+minimalPresentation Ideal := prune Ideal := Ideal => opts -> (I) -> (
+     checkExcludes(ring I,opts.Exclude);
+     minPressy(I,opts.Exclude))
+
+minimalPresentation Ring := prune Ring := Ring => opts -> (R) -> (
+     checkExcludes(R,opts.Exclude);
+     minPressyRing(R,opts.Exclude))
 
 -- Local Variables:
 -- compile-command: "make -C $M2BUILDDIR/Macaulay2/m2 "
