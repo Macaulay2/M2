@@ -28,3 +28,18 @@ To do for our package:
 understand:
 S2-ification: is this worth doing?
 why does Hom(I^-1,I^-1) seem so hard to compute?
+
+talking 4/30/09 before I leave MSRI:
+
+a. ringFromFractions(H,fs,F,mus) could use fractions not expressed over a common denominator.
+  This might produce higher quality fractions
+  
+  What others ways can we do produce better fractions?
+  e.g. gens gb syz matrix{{h,f}}.
+
+b. Don't take entire Jacobian ideal.  Lots of choices here.
+  n at the beginning
+  add some new ones in each step
+  discriminant
+  
+c. rewrite ringFromFractions to do the computation in the base somehow. (as in GLS?)
