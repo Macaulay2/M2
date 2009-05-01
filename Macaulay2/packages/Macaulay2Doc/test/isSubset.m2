@@ -39,4 +39,12 @@ a6b-5a4b2-a5c+6a2b3+8a3bc-b4-9ab2c+a4d2-3a2c2-a4c-6a2bd2+3bc2-a6+6a2bc+3b2d2+3a4
 a7d-6a5bd+10a3b2d+5a4cd-4ab3d-a6d-12a2bcd+5a4bd+3b2cd-4a3d3-6a2b2d+3ac2d+6abd3+b3d+4a3bd-2cd3+6a2d3-6ab2d+c2d-6a2cd-4bd3+4a4d+6bcd-12a2bd-2ad3+4b2d+2acd-2a3d+3cd-4a2d+5bd+2ad1,
 a8-7a6b+15a4b2+6a5c-10a2b3-20a3bc+b4+12ab2c-5a4d2+6a2c2+5a4c+12a2bd2-3bc2-a6-12a2bc-3b2d2+10a4b-6acd2+3b2c+4a3d2-18a2b2+6ac2-8a3c-6abd2+4b3+5a5+18abc+d4-16a3b+3a2d2+9ab2-2c2-4bd2+a4+4bc-9a2b-4ad2+6b2+8ac-7a3+14ab-2d2+c+4b+3a+1
 ";
-assert isSubset(J,I+J)
+K = I+J
+f = J_(numgens J - 1);
+m = a*b*c^6
+assert( m % leadTerm K == 0 )
+assert( m % K != m )
+s = select( flatten entries leadTerm K, n -> m % leadMonomial n == 0 )
+assert( m % ideal s == 0 )
+assert( f % K == 0 )
+assert isSubset(J,K)
