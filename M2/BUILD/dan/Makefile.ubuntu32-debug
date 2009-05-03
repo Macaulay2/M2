@@ -1,5 +1,6 @@
 # -*- Makefile -*-
 DIRECTORY = ubuntu32-debug
+CONFIGOPTIONS += --enable-build-libraries="mpfr"
 CONFIGOPTIONS += --enable-debug --disable-pthreads
 # CONFIGOPTIONS += --enable-python
 CONFIGOPTIONS += --disable-tarfile
