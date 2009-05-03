@@ -4,6 +4,10 @@
 #BUILDOPTIONS += IgnoreExampleErrors=true
 #BUILDOPTIONS += -s
 #INSTALLOPTIONS += -s
+
+# this is needed for e/NAG.cc
+CONFIGOPTIONS += LIBS="-ldl"
+
 CONFIGOPTIONS += --enable-rpm
 PRE = $(HOME)/local.Linux/encap
 CONFIGOPTIONS += --build=i486-pc-linux-gnu
