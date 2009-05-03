@@ -1,0 +1,3 @@
+installPackage, using M2 as built in the build tree (with a split layout),
+screws up the html links inside the installed package, since they are based on
+a split layout, but the files are install in a combined layout.
