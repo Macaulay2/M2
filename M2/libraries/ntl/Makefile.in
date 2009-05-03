@@ -1,7 +1,7 @@
 # @configure_input@
 # http://www.shoup.net
 # a library for doing number theory
-VERSION = 5.4.2
+VERSION = 5.5
 TARDIR = ntl-$(VERSION)
 BUILDDIR = $(UNTARDIR)/$(TARDIR)/src
 TARFILE = ntl-$(VERSION).tar.gz
