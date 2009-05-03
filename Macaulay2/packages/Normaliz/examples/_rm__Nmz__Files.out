@@ -1,6 +1,29 @@
--- -*- M2-comint -*- {* hash: -1953955716 *}
---warning: function parametersInIdeal redefined
+-- -*- M2-comint -*- {* hash: -1226666154 *}
 
-i1 : rmNmzFiles();
+i1 : setNmzFilename("VeryInteresting");
 
-i2 : 
+i2 : R=ZZ/37[x,y,z];
+
+i3 : I=ideal(x^2*y, y^3);
+
+o3 : Ideal of R
+
+i4 : normalToricRing(I);
+
+o4 : Ideal of R
+
+i5 : get (setNmzFile()|".typ")
+
+o5 = 2
+     2
+     1 0 
+     0 1 
+
+
+i6 : rmNmzFiles();
+
+i7 : getNmzFilename()
+
+o7 = 
+
+i8 : 

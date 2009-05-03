@@ -1,5 +1,4 @@
--- -*- M2-comint -*- {* hash: -1745397153 *}
---warning: function parametersInIdeal redefined
+-- -*- M2-comint -*- {* hash: -1847732136 *}
 
 i1 : getNmzFilename()
 
@@ -11,4 +10,10 @@ i3 : getNmzFilename()
 
 o3 = VeryInteresting
 
-i4 : 
+i4 : setNmzFilename(""); 
+
+i5 : getNmzFilename() 
+
+o5 = 
+
+i6 : 

@@ -1,22 +1,19 @@
--- -*- M2-comint -*- {* hash: 569070133 *}
---warning: function parametersInIdeal redefined
+-- -*- M2-comint -*- {* hash: 793307396 *}
 
-i1 : sgr=matrix({{1,2,3},{4,5,6},{7,8,10}})
+i1 : setNmzFilename("example"); -- to keep the files
 
-o1 = | 1 2 3  |
+i2 : sgr=matrix({{1,2,3},{4,5,6},{7,8,10}})
+
+o2 = | 1 2 3  |
      | 4 5 6  |
      | 7 8 10 |
 
               3        3
-o1 : Matrix ZZ  <--- ZZ
+o2 : Matrix ZZ  <--- ZZ
 
-i2 : writeNmzData(sgr,1)
+i3 : writeNmzData(sgr,1)
 
-i3 : nmzFile=setNmzFile()
-
-o3 = nmzM2_28070
-
-i4 : get(nmzFile|".in")
+i4 : get(setNmzFile()|".in")
 
 o4 = 3
      3

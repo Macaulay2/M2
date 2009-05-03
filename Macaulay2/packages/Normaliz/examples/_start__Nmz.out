@@ -1,8 +1,9 @@
--- -*- M2-comint -*- {* hash: 885559898 *}
---warning: function parametersInIdeal redefined
+-- -*- M2-comint -*- {* hash: 1517751202 *}
 
-i1 : startNmz();
+i1 : writeNmzPaths();
+
+i2 : startNmz();
 nmzExecPath not set
 nmzDataPath not set
 
-i2 : 
+i3 : 
