@@ -5,34 +5,34 @@ $(TARGETS): banner
 banner:; @echo "-*- mode: compilation; default-directory: \"`pwd`/\" -*-"
 DIRECTORY ?= none
 ifneq ($(DIRECTORY),none)
-include builds/$(DIRECTORY)/include/configuration
+include builds.tmp/$(DIRECTORY)/include/configuration
 else
 $(warning DIRECTORY variable unset)
 endif
-all:; $(MAKE) -C builds/$(DIRECTORY) $@ $(BUILDOPTIONS)
-clean:; $(MAKE) -C builds/$(DIRECTORY) $@
+all:; $(MAKE) -C builds.tmp/$(DIRECTORY) $@ $(BUILDOPTIONS)
+clean:; $(MAKE) -C builds.tmp/$(DIRECTORY) $@
 arch-chk:
-everything:; $(MAKE) -C builds/$(DIRECTORY) all RemakeAllDocumentation=true RemakePackages=true
-check-links:; $(MAKE) -C builds/$(DIRECTORY)/Macaulay2/html-check-links check
-check:; $(MAKE) -C builds/$(DIRECTORY) -k check
-big-check:; $(MAKE) -C builds/$(DIRECTORY) -k big-check
-configure builds/$(DIRECTORY)/include/configuration:../../configure; mkdir -p builds/$(DIRECTORY) && (D=`pwd`; cd builds/$(DIRECTORY) && $$D/../../configure $(CONFIGOPTIONS))
+everything:; $(MAKE) -C builds.tmp/$(DIRECTORY) all RemakeAllDocumentation=true RemakePackages=true
+check-links:; $(MAKE) -C builds.tmp/$(DIRECTORY)/Macaulay2/html-check-links check
+check:; $(MAKE) -C builds.tmp/$(DIRECTORY) -k check
+big-check:; $(MAKE) -C builds.tmp/$(DIRECTORY) -k big-check
+configure builds.tmp/$(DIRECTORY)/include/configuration:../../configure; mkdir -p builds.tmp/$(DIRECTORY) && (D=`pwd`; cd builds.tmp/$(DIRECTORY) && $$D/../../configure $(CONFIGOPTIONS))
 default: arch-chk all
 default: check-links
 distclean: distclean1 distclean2
-distclean1:; $(MAKE) -C builds/$(DIRECTORY) distclean
-distclean2:; find builds/$(DIRECTORY) -type f | sed 's/^/=== /'
-install-it:; $(MAKE) -C builds/$(DIRECTORY) install -o all $(INSTALLOPTIONS)
+distclean1:; $(MAKE) -C builds.tmp/$(DIRECTORY) distclean
+distclean2:; find builds.tmp/$(DIRECTORY) -type f | sed 's/^/=== /'
+install-it:; $(MAKE) -C builds.tmp/$(DIRECTORY) install -o all $(INSTALLOPTIONS)
 install:pre-install install-it post-install
 pre-install post-install:
 rebuild-world: arch-chk distclean configure everything install check
 world: arch-chk configure all install check
-check-info:; $(MAKE) -C builds/$(DIRECTORY)/Macaulay2/packages $@
+check-info:; $(MAKE) -C builds.tmp/$(DIRECTORY)/Macaulay2/packages $@
 ../../configure :; $(MAKE) -C ../..
-rm-dep:; find builds/$(DIRECTORY) -name \*.dep -delete
+rm-dep:; find builds.tmp/$(DIRECTORY) -name \*.dep -delete
 find-M2:
 	: : : : : : : : : : : : : : : : : : M2s : : : : : : : : : : : : : : 
-	@for i in `pwd`/builds/*/StagingArea/*/bin/M2 ; do echo $$i ; done
+	@for i in `pwd`/builds.tmp/*/StagingArea/*/bin/M2 ; do echo $$i ; done
 	: : : : : : : : : : : : : : : : : : : : : : : : : : : : : : : : : : 
 CONFIGOPTIONS += --enable-encap
 CONFIGOPTIONS += --enable-download
