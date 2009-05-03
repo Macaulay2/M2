@@ -1,14 +1,13 @@
--- -*- M2-comint -*- {* hash: -852737203 *}
---warning: function parametersInIdeal redefined
+-- -*- M2-comint -*- {* hash: -408275873 *}
 
 i1 : getNmzDataPath()
 
 o1 = 
 
-i2 : setNmzDataPath("d:/normaliz/example");
+i2 : setNmzDataPath("d:/Normaliz2.1Windows/example");
 
 i3 : getNmzDataPath()
 
-o3 = d:/normaliz/example/
+o3 = d:/Normaliz2.1Windows/example/
 
 i4 : 

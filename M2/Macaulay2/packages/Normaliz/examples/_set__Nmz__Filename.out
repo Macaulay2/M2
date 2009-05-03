@@ -1,10 +1,27 @@
--- -*- M2-comint -*- {* hash: 1675212992 *}
---warning: function parametersInIdeal redefined
+-- -*- M2-comint -*- {* hash: -1356211964 *}
 
-i1 : setNmzFilename("VeryInteresting"); 
+i1 : getNmzFilename()
 
-i2 : getNmzFilename() 
+o1 = 
 
-o2 = VeryInteresting
+i2 : setNmzFilename("VeryInteresting");
 
-i3 : 
+i3 : getNmzFilename()
+
+o3 = VeryInteresting
+
+i4 : setNmzFile()
+
+o4 = VeryInteresting
+
+i5 : setNmzFilename(""); 
+
+i6 : getNmzFilename() 
+
+o6 = 
+
+i7 : setNmzFile()
+
+o7 = /tmp/M2-13392-2
+
+i8 : 
