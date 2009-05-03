@@ -35,7 +35,7 @@ arch-chk:; [ `hostname` = gentoo32 ]
 # VirtualBox settings:
 #  VBoxManage setextradata "debian 32" VBoxInternal/Devices/pcnet/0/LUN#0/Config/guestssh/Protocol  TCP
 #  VBoxManage setextradata "debian 32" VBoxInternal/Devices/pcnet/0/LUN#0/Config/guestssh/GuestPort 22
-#  VBoxManage setextradata "debian 32" VBoxInternal/Devices/pcnet/0/LUN#0/Config/guestssh/HostPort  2224
+#  VBoxManage setextradata "debian 32" VBoxInternal/Devices/pcnet/0/LUN#0/Config/guestssh/HostPort  2227 # was 2224
 # .ssh/config settings:
 #   Host debian32
 #     Hostname localhost
