@@ -1,0 +1,49 @@
+Date: Mon, 4 May 2009 11:48:01 -0500
+From: "Daniel R. Grayson" <dan@math.uiuc.edu>
+To: Thomas Kahle <kahle@mis.mpg.de>
+CC: dan@math.uiuc.edu
+In-reply-to: <49FF1A77.6090504@mis.mpg.de> (message from Thomas Kahle on Mon,
+	04 May 2009 18:40:23 +0200)
+Subject: Re: Macaulay Install for Gentoo
+Reply-to: dan@math.uiuc.edu
+
+
+Well, that's certainly a bug, which I will fix, perhaps by ensuring the file is
+present in the install tree, but I wonder what accounts for me not ever seeing
+it before.  There still must be something different ...
+
+> Date: Mon, 04 May 2009 18:40:23 +0200
+> From: Thomas Kahle <kahle@mis.mpg.de>
+> To: dan@math.uiuc.edu
+> Subject: Re: Macaulay Install for Gentoo
+> 
+> Daniel R. Grayson wrote:
+> > Try removing the line 
+> > 
+> >          SourceCode => applicationDirectory,
+> 
+> That did not work, but taking into account the line number given in the
+> error message I tried to also remove
+> 
+> SourceCode => applicationDirectorySuffix
+> 
+> in doc13.m2 and that did it. So to be precise, removing both lines made
+> it work. If one is present the error will occur.
+> 
+> > 
+> > from the file 
+> > 
+> >      /usr/share/Macaulay2/Macaulay2Doc/doc13.m2
+> 
+> 
+> -- 
+> ---------------------------------------------------------------------
+> Thomas Kahle
+> Max Planck Institute for Mathematics in the Sciences
+> Inselstr. 22-26, 04103 Leipzig
+> Tel: +49(0) 341-9959-545
+> kahle@mis.mpg.de, http://personal-homepages.mis.mpg.de/kahle/
+> ---------------------------------------------------------------------
+> 
+> 
+
