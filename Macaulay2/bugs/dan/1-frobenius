@@ -1,0 +1,110 @@
+implement this:
+
+Cc: mike.stillman@mac.com
+From: David Eisenbud <de@msri.org>
+To: dan@math.uiuc.edu
+In-Reply-To: <200905041252.n44CqRm7031713@u123.math.uiuc.edu>
+Subject: Re: some code I use all the time...
+Date: Mon, 4 May 2009 06:19:38 -0700
+
+Dear Dan,
+
+Mostly I (for one) use this function when when the exponent
+is NOT a power of the characteristic! And I usually use it for
+ideals, not matrices, so I could live with (ideal)^[a]. But people
+do talk of "Frobenius in characteristic zero" for this, so using
+frobenius(ZZ, XXX) for XXX^[ZZ]  in my old sense would be ok.
+(In the most mathematical sense, it's mostly useful in char p
+OR in the toric case in any char; but as a constructor of examples
+it's useful much more broadly.)
+
+David
+--
+David Eisenbud
+Professor of Mathematics,
+University of California, Berkeley
+www.msri.org/~de
+
+
+On May 4, 2009, at 5:52 AM, Daniel R. Grayson wrote:
+
+>
+> What if, instead, we design a function called "frobenius" that does  
+> various
+> things like that?
+>
+>       frobenius(ZZ,Matrix) => Matrix
+>       frobenius(ZZ,Ideal)  => Ideal
+>       frobenius(ZZ,Module) => Module
+>       frobenius(ZZ,Ring) => RingMap
+>       frobenius(Matrix) => Matrix
+>       frobenius(Ideal)  => Ideal
+>       frobenius(Module) => Module
+>       frobenius(Ring) => RingMap
+>
+> The ZZ would be the exponent in the power of p.  Without it, it's  
+> assumed to be 1.
+>
+>> Date: Sun, 3 May 2009 08:21:26 -0500
+>> From: "Daniel R. Grayson" <dan@math.uiuc.edu>
+>> To: David Eisenbud <de@msri.org>
+>> CC: mike@math.cornell.edu, dan@math.uiuc.edu
+>> Subject: Re: some code I use all the time...
+>> Reply-to: dan@math.uiuc.edu
+>>
+>>
+>> The one for matrix has already been appropriated, but the one for  
+>> ideal is
+>> available:
+>>
+>>    i1 : (matrix {{2}})^[5]
+>>    stdio:1:15:(1):[0]: error: expected a direct sum module
+>>
+>>    i2 : (ideal 2)^[5]
+>>    stdio:2:10:(1):[0]: error: no method for binary operator ^  
+>> applied to objects:
+>>    --            ideal 2 (of class Ideal)
+>>    --      ^     [5] (of class Array)
+>>
+>> Isn't that useful only for powers of the characteristic?
+>>
+>>> X-Spam-Status: No, score=-96.2 required=5.0  
+>>> tests=BAYES_60,RCVD_IN_PBL,
+>>> 	RCVD_IN_SORBS_DUL,RDNS_DYNAMIC,USER_IN_WHITELIST autolearn=no  
+>>> version=3.2.4
+>>> From: David Eisenbud <de@msri.org>
+>>> To: Dan Grayson <dan@math.uiuc.edu>, Michael Stillman <mike@math.cornell.edu 
+>>> >
+>>> Subject: some code I use all the time...
+>>> Date: Sun, 3 May 2009 01:57:35 -0700
+>>>
+>>> ...that I think would be nice to have in the next release...
+>>> wasn't there once something like this in the program??
+>>>
+>>> Ideal ^ Array := (I,a) -> (
+>>>      if #a =!= 1 then error "expected an integer";
+>>>      if not instance(a#0,ZZ) then error "expected an integer";
+>>>      r := a#0;
+>>>      ideal(apply(numgens I, i -> I_i^r)))
+>>>
+>>>
+>>> Matrix ^ Array := (m,a) -> (
+>>>      if #a =!= 1 then error "expected an integer";
+>>>      if not instance(a#0,ZZ) then error "expected an integer";
+>>>      r := a#0;
+>>>      dm:= r*flatten degrees target m;
+>>>      em:= r*flatten degrees source m;
+>>>      map((ring m)^(-dm),(ring m)^(-em),(u,v)->(m_(u,v)^r)))
+>>>
+>>> Regards,
+>>>
+>>> David
+>>> --
+>>> David Eisenbud
+>>> Professor of Mathematics,
+>>> University of California, Berkeley
+>>> www.msri.org/~de
+>>>
+>>>
+>>>
+>>
