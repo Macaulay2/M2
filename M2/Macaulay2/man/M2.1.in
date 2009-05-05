@@ -97,7 +97,7 @@ example prompts, don't use readline
 The documentation for \fIMacaulay 2\fP is available locally starting in
 @docdir@/Macaulay2Doc/html/index.html, where ${prefix} is replaced by the directory prefix used when
 the package was installed.  The directory is available as the value of the \fIMacaulay 2\fP variable
-prefixDirectory, but the best way to get to it is to viewHelp in \fIMacaulay 2\fP.
+prefixDirectory, but the best way to get to it is to run the command \fIviewHelp\fP in \fIMacaulay 2\fP.
 
 The home page for \fIMacaulay 2\fP is \fBhttp://www.math.uiuc.edu/Macaulay2/\fR.
 
