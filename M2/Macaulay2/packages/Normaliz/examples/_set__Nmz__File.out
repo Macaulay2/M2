@@ -10,6 +10,6 @@ i3 : setNmzFilename("");
 
 i4 : nmzFile=setNmzFile()
 
-o4 = /tmp/M2-14439-2
+o4 = /tmp/M2-13422-2
 
 i5 : 

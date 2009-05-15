@@ -1,4 +1,5 @@
 -- -*- M2-comint -*- {* hash: -48145537 *}
+--warning: function parametersInIdeal redefined
 
 i1 : A = matrix "1,1,1,1; 1,2,3,4"
 
