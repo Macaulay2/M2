@@ -1,4 +1,5 @@
 -- -*- M2-comint -*- {* hash: 1339706722 *}
+--warning: function parametersInIdeal redefined
 
 i1 : R = ZZ/32003[symbol a..symbol d];
 
@@ -10,8 +11,8 @@ o2 = ideal (b*c - a*d, c  - b*d , a*c  - b d, b  - a c)
 o2 : Ideal of R
 
 i3 : time (M,L) = gfan I;
-using temporary file /tmp/M2-14304-1
-     -- used 0.002549 seconds
+using temporary file /tmp/M2-27843-1
+     -- used 0. seconds
 
 i4 : M/toString/print;
 {b*d^2, a*d, a*c^2, a^2*c}
@@ -50,14 +51,14 @@ o7 = ideal (a + b + c + d, a*b + b*c + a*d + c*d, a*b*c + a*b*d + a*c*d +
 o7 : Ideal of S
 
 i8 : (inL,L) = gfan I;
-using temporary file /tmp/M2-14304-2
+using temporary file /tmp/M2-27843-2
 
 i9 : #inL
 
 o9 = 96
 
 i10 : (inL1, L1) = gfan(I, Symmetries=>{(b,c,d,a,e)});
-using temporary file /tmp/M2-14304-3
+using temporary file /tmp/M2-27843-3
 
 i11 : #inL1
 

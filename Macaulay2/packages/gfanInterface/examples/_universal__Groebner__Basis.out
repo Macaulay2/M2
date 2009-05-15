@@ -1,4 +1,5 @@
 -- -*- M2-comint -*- {* hash: -509871890 *}
+--warning: function parametersInIdeal redefined
 
 i1 : R = QQ[symbol x, symbol y, symbol z]
 
@@ -13,7 +14,7 @@ o2 = ideal (x + y, y + z)
 o2 : Ideal of R
 
 i3 : universalGroebnerBasis(I)
-using temporary file /tmp/M2-14269-1
+using temporary file /tmp/M2-27680-1
 
 o3 = {x + y, x - z, y + z}
 

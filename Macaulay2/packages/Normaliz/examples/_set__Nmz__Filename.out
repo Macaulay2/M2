@@ -22,6 +22,6 @@ o6 =
 
 i7 : setNmzFile()
 
-o7 = /tmp/M2-14364-2
+o7 = /tmp/M2-13392-2
 
 i8 : 

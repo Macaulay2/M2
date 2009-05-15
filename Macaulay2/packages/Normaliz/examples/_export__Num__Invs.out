@@ -1,4 +1,5 @@
 -- -*- M2-comint -*- {* hash: 1244568787 *}
+--warning: function parametersInIdeal redefined
 
 i1 : R=ZZ/37[x,y,t];
 
@@ -9,7 +10,7 @@ o2 : Ideal of R
 i3 : setNmzOption("hilb",true);
 
 i4 : intclMonIdeal(I);
-done.
+done.done.
 i5 : exportNumInvs()
 
 i6 : nmzHilbertBasisElements
