@@ -1,5 +1,4 @@
 -- -*- M2-comint -*- {* hash: 982502408 *}
---warning: function parametersInIdeal redefined
 
 i1 : R = QQ[a..d];
 
@@ -8,6 +7,10 @@ i2 : I = ideal(a*c-b^2,a*d-b*c,b*d-c^2);
 o2 : Ideal of R
 
 i3 : statePolytope(I) 
+polymake: WARNING: rule cdd.convex_hull.redund: VERTICES, VERTEX_NORMALS : POINTS failed: client cdd_redund_client killed by signal 10
+polymake: WARNING: rule cdd.convex_hull.primal: FACETS, AFFINE_HULL : VERTICES | POINTS failed: client cdd_ch_client killed by signal 10
+polymake: WARNING: rule VERTICES_IN_FACETS, VERTICES : POINTS_IN_FACETS, POINTS failed: client compress_incidence killed by signal 10
+polymake: WARNING: rule cdd.convex_hull.dual: VERTICES, POINTED, FEASIBLE : FACETS | INEQUALITIES failed: client cdd_ch_client killed by signal 10
 VERTICES
 1 11 7 7 11
 1 11 3 15 7

@@ -14,12 +14,25 @@ J1
 --random5556
 kk = ZZ/101;
 R1 = kk[a..g, MonomialSize=>8];
-J1 = ideal random(R^1, R^{-5,-5,-5,-6});
+J1 = ideal random(R1^1, R1^{-5,-5,-5,-6});
 J1
 {*     
   gbTrace=1
   time gb(J1, Algorithm=>LinearAlgebra); -- 54.1 sec
   time gb(J1, Algorithm=>Sugarless, Strategy=>LongPolynomial); -- > 120 sec
+  time gb(J1, MaxReductionCount=>3000);
+*}
+----------------------------------------------
+--random5555
+kk = ZZ/101;
+R1 = kk[a..g, MonomialSize=>8];
+J1 = ideal random(R1^1, R1^{-5,-5,-5,-5});
+J1
+{*     
+  gbTrace=1
+  time gb(J1, Algorithm=>LinearAlgebra); -- 54.1 sec
+  time gb(J1, Algorithm=>Sugarless, Strategy=>LongPolynomial); -- > 120 sec
+  time gb(J1, MaxReductionCount=>3000);
 *}
 ----------------------------------------------
 --what was this one?
@@ -30,10 +43,10 @@ J1 = ideal"b2de+bd2f+a2dg+abdh+ad2i+b2cj+bc2k+bcdl+a2cm+abcn+ac2o+acdp,
 J1
 {*
   gbTrace=1
-  time gb(J, Algorithm=>LinearAlgebra); -- 6.78 sec
-  time gb(J, Algorithm=>Sugarless, Strategy=>LongPolynomial); -- 2.03 sec
-  time gb(J, Algorithm=>Homogeneous2, Strategy=>LongPolynomial); -- 2.3 sec
-  time gb(J, MaxReductionCount=>3000); -- 62.7 sec
+  time gb(J1, Algorithm=>LinearAlgebra); -- 6.78 sec
+  time gb(J1, Algorithm=>Sugarless, Strategy=>LongPolynomial); -- 2.03 sec
+  time gb(J1, Algorithm=>Homogeneous2, Strategy=>LongPolynomial); -- 2.3 sec
+  time gb(J1, MaxReductionCount=>3000); -- 62.7 sec
 *}
 ----------------------------------------------
 --gbB148
@@ -86,9 +99,9 @@ J1 = ideal(
 J1
 {*
   gbTrace=1
-  time gb(J, Algorithm=>LinearAlgebra); -- 58.6 sec
-  time gb(J, MaxReductionCount=>3000); -- 18.3 sec
-  time gb(J, Algorithm=>Sugarless, Strategy=>LongPolynomial); -- 32.9 sec
+  time gb(J1, Algorithm=>LinearAlgebra); -- 58.6 sec
+  time gb(J1, MaxReductionCount=>3000); -- 18.3 sec
+  time gb(J1, Algorithm=>Sugarless, Strategy=>LongPolynomial); -- 32.9 sec
 *}
 ----------------------------------------------
 --hilbert-kunz-2
@@ -111,11 +124,11 @@ J1 = ideal{a^3-2*a^2*b-a*b^2-2*b^3+a*b*c-2*b^2*c+2*a*c^2-2*b*c^2-c^3+2*a*b*d
 J1
 {*
   gbTrace=3
-  time gb(I, Algorithm=>LinearAlgebra); -- 76.27 sec
-  time gb(I, MaxReductionCount=>3000); -- 70.49 sec
-  time gb(I, Algorithm=>Homogeneous2); -- > 130 sec
-  time gb(I, Algorithm=>Homogeneous2, Strategy=>LongPolynomial); -- much much faster at the initial reduction, still > 140 sec
-  time gb(I, Algorithm=>Sugarless, Strategy=>LongPolynomial); -- 27.3 seconds!
+  time gb(J1, Algorithm=>LinearAlgebra); -- 76.27 sec
+  time gb(J1, MaxReductionCount=>3000); -- 70.49 sec
+  time gb(J1, Algorithm=>Homogeneous2); -- > 130 sec
+  time gb(J1, Algorithm=>Homogeneous2, Strategy=>LongPolynomial); -- much much faster at the initial reduction, still > 140 sec
+  time gb(J1, Algorithm=>Sugarless, Strategy=>LongPolynomial); -- 27.3 seconds!
 *}
 ----------------------------------------------
 --4by4 commuting matrices, grevlex
@@ -123,7 +136,9 @@ needsPackage "ExampleIdeals"
 J1 = commuting4by4grevlex (ZZ/101)
 {*
   gbTrace=1
-  
+  time gb(J1, DegreeLimit=>9, MaxReductionCount=>3000); 
+  time gb(J1, Algorithm=>Homogeneous2, Strategy=>LongPolynomial) -- 350.25 sec, 467 gens
+  time gb(J1, Algorithm=>Sugarless, Strategy=>LongPolynomial) -- 358.4 sec, 467 gens
 *}
 ----------------------------------------------
 --malkin CGU3
