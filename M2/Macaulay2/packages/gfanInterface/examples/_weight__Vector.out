@@ -1,5 +1,4 @@
 -- -*- M2-comint -*- {* hash: 696316334 *}
---warning: function parametersInIdeal redefined
 
 i1 : R = ZZ/32003[symbol a..symbol d]
 
@@ -44,8 +43,8 @@ o6 = ideal (b*c - a*d, c  - b*d , a*c  - b d, b  - a c)
 o6 : Ideal of R
 
 i7 : time (inLs,Ls) = gfan I
-using temporary file /tmp/M2-27830-1
-     -- used 0.004001 seconds
+using temporary file /tmp/M2-14298-1
+     -- used 0.002412 seconds
 
            2          2   2      3          2   2      3          2   2  
 o7 = ({{b*d , a*d, a*c , a c}, {c , a*d, a*c , a c}, {c , b*c, a*c , a c,

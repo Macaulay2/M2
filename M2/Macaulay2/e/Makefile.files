@@ -45,7 +45,6 @@ INTERFACE = \
 	montable \
 	montableZZ \
 	schorder \
-	monorder \
 	GF \
 	ZZ \
 	QQ \

@@ -1,5 +1,4 @@
 -- -*- M2-comint -*- {* hash: 2036638504 *}
---warning: function parametersInIdeal redefined
 
 i1 : R=ZZ/37[x,y,t];
 

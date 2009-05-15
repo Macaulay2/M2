@@ -361,8 +361,7 @@ void Monoid::decode(const_monomial m, exponents result) const
 
 void Monoid::from_expvector(const_exponents exp, monomial result) const
 {
-  monomialOrderFromActualExponents(monorder_, exp, MONlocal_);
-  encode(MONlocal_, result);
+  monomialOrderEncodeFromActualExponents(monorder_, exp, result);
 }
 
 M2_arrayint Monoid::to_arrayint(const_monomial monom) const
@@ -374,9 +373,7 @@ M2_arrayint Monoid::to_arrayint(const_monomial monom) const
 
 void Monoid::to_expvector(const_monomial m, exponents result_exp) const
 {
-  // MONlocal_ has enough space for either monomials or exponent vectors.
-  decode(m, MONlocal_);
-  monomialOrderToActualExponents(monorder_, MONlocal_, result_exp);
+  monomialOrderDecodeToActualExponents(monorder_, m, result_exp);
 }
 
 void Monoid::mult(const_monomial m, const_monomial n, monomial result) const

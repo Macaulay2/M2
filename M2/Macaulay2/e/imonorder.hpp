@@ -49,10 +49,13 @@ typedef struct MonomialOrder_rec MonomialOrder;
 MonomialOrder *monomialOrderMake(const MonomialOrdering *mo);
 void monomialOrderFree(MonomialOrder *mo);
 void monomialOrderEncode(const MonomialOrder *mo, const_exponents a, monomial b);
+void monomialOrderEncodeFromActualExponents(const MonomialOrder *mo, const_exponents a, monomial b);
 void monomialOrderDecode(const MonomialOrder *mo, const_monomial a, exponents b);
-int monomialOrderFromActualExponents(const MonomialOrder *mo, const_exponents expon, exponents result_exp);
+void monomialOrderDecodeToActualExponents(const MonomialOrder *mo, const_monomial a, exponents b);
 
 #include <assert.h>
+
+int monomialOrderFromActualExponents(const MonomialOrder *mo, const_exponents expon, exponents result_exp);
 
 static inline void monomialOrderToActualExponents(const MonomialOrder *mo, const_exponents expon, exponents result_exp)
 {

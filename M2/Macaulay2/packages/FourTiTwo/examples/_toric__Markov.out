@@ -1,5 +1,4 @@
 -- -*- M2-comint -*- {* hash: 1442801673 *}
---warning: function parametersInIdeal redefined
 
 i1 : A = matrix"1,1,1,1;0,1,2,3"
 
@@ -24,8 +23,8 @@ to redistribute it under certain conditions.
 For details, see the file COPYING.
 -------------------------------------------------
 Using 64 bit integers.
-4ti2 Total Time:  0.00 secs.
-using temporary file name /tmp/M2-25531-1
+4ti2 Total Time:  0.03 secs.
+using temporary file name /tmp/M2-13885-1
 
 o3 = | 0 1  -2 1 |
      | 1 -2 1  0 |
@@ -60,8 +59,8 @@ to redistribute it under certain conditions.
 For details, see the file COPYING.
 -------------------------------------------------
 Using 64 bit integers.
-4ti2 Total Time:  0.00 secs.
-using temporary file name /tmp/M2-25531-2
+4ti2 Total Time:  0.01 secs.
+using temporary file name /tmp/M2-13885-2
 
 o6 = | 0 1  -2 1 |
      | 1 -2 1  0 |
@@ -90,8 +89,8 @@ to redistribute it under certain conditions.
 For details, see the file COPYING.
 -------------------------------------------------
 Using 64 bit integers.
-4ti2 Total Time:  0.00 secs.
-using temporary file name /tmp/M2-25531-3
+4ti2 Total Time:  0.01 secs.
+using temporary file name /tmp/M2-13885-3
 
                2           2
 o9 = ideal (- c  + b*d, - b  + a*c, - b*c + a*d)

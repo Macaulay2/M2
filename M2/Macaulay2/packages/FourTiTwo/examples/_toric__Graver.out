@@ -1,5 +1,4 @@
 -- -*- M2-comint -*- {* hash: 706660099 *}
---warning: function parametersInIdeal redefined
 
 i1 : A = matrix "1,1,1,1; 1,2,3,4"
 
@@ -22,8 +21,8 @@ For details, see the file COPYING.
 Final basis has 1 inhomogeneous, 10 homogeneous and 0 free elements.
 Writing 5 vectors to graver file, with respect to symmetry.
 
-4ti2 Total Time: 0.00 secs
-using temporary file name /tmp/M2-25925-1
+4ti2 Total Time: 0.01 secs
+using temporary file name /tmp/M2-14096-1
 
 o2 = | 1 -2 1  0 |
      | 2 -3 0  1 |
@@ -53,8 +52,8 @@ For details, see the file COPYING.
 Final basis has 1 inhomogeneous, 10 homogeneous and 0 free elements.
 Writing 5 vectors to graver file, with respect to symmetry.
 
-4ti2 Total Time: 0.00 secs
-using temporary file name /tmp/M2-25925-2
+4ti2 Total Time: 0.01 secs
+using temporary file name /tmp/M2-14096-2
 
                2           3    2                   2           3      2
 o4 = ideal (- b  + a*c, - b  + a d, - b*c + a*d, - c  + b*d, - c  + a*d )
