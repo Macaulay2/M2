@@ -47,4 +47,5 @@ I = ideal(
     x4 + s^31 * x1 * x2 * x3 * x4
     )
 gbTrace = 3
-g = gb I
+time g = gb I;
+
