@@ -12,7 +12,7 @@ algs = { (Faugere,both) } -- 6/19/06: these do not sort or auto reduce, so answe
 
 algs = { (Inhomogeneous,both), (Homogeneous,homog), (Sugarless,both), (Homogeneous2,homog) }
 
-scan(algs, (a,c) -> (
+time scan(algs, (a,c) -> (
 	  alg = a;
 	  crit = c;
 	  gbi = m -> gb(m, Algorithm=>alg);
