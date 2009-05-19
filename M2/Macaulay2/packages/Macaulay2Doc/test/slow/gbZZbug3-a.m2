@@ -12,4 +12,4 @@ k=2
 ff=((f1*g1)^p+(f2*g2)^p+(f3*g3)^p) // p;
 f0=ff*((f1*f2*f3)^k);
 
-assert( f0 % ideal((f1)^(p+k),(f2)^(p+k),(f3)^(p+k)) == 0 )
+time assert( f0 % ideal((f1)^(p+k),(f2)^(p+k),(f3)^(p+k)) == 0 )
