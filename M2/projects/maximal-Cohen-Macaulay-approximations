@@ -1,0 +1,37 @@
+--*- M2 -*-
+
+Title: Maximal Cohen-Macaulay Approximations
+
+Description: Given a Gorenstein ring A and finitely generated A-module
+M, Auslander-Buchweitz show that there is a short exact sequence 
+0 -> M -> Q -> L -> 0 such that Q has finite projective dimension and L 
+is maximal Cohen-Macaulay.
+
+Using a couple results of Dutta, the modules Q and L and the map M ->
+Q may be explicitly computed using graded duality and a mapping cone
+construction.
+
+See:
+
+"On Negativity of Higher Euler Characteristics" by S.P. Dutta,
+American Journal of Mathematics, 126 (2004), 1341-1354.
+
+=============================================================================
+
+Proposed by: Jason McCullough 
+Potential Advisor: Dan Grayson 
+Project assigned to: Jason McCullough 
+Current status: Some working code for the Gorenstein case is done.  It needs 
+to be cleaned up and put into a package.  
+
+The corresponding exact sequence of Auslander-Bridger could also be
+computed and returned.
+
+Are there algorithms for doing this outside of the
+Gorenstein case?
+
+
+=============================================================================
+
+Progress log:
+
