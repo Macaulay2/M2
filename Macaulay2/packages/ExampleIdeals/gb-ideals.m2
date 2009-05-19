@@ -36,7 +36,8 @@ J1
 *}
 ----------------------------------------------
 --what was this one?
-R1 = ZZ/32003[vars(0..39),MonomialSize=>8];
+kk = ZZ/32003
+R1 = kk[vars(0..39),MonomialSize=>8];
 J1 = ideal"b2de+bd2f+a2dg+abdh+ad2i+b2cj+bc2k+bcdl+a2cm+abcn+ac2o+acdp,
        b2dq+bd2r+a2ds+abdt+ad2u+b2cv+bc2w+bcdx+a2cy+abcz+ac2A+acdB,
        b2dC+bd2D+a2dE+abdF+ad2G+b2cH+bc2I+bcdJ+a2cK+abcL+ac2M+acdN";
