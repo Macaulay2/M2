@@ -1281,6 +1281,10 @@ bool gbA::reduce(spair *p)
       o << " : ";
       emit_line(o.str());
     }
+  if (n_gb == 144)
+    {
+      printf("we are at the right spot\n");
+    }
   compute_s_pair(p); /* Changes the type, possibly */
 
   while (!R->gbvector_is_zero(p->f()))
@@ -1330,13 +1334,7 @@ bool gbA::reduce(spair *p)
 		if (gbTrace >= 10)
 		  {
 		    buffer o;
-		    o << "swapping GB element\n    ";
-		    R->gbvector_text_out(o, _F, p->f());
-		    emit_line(o.str()); o.reset();
-		    o << "    and ";
-		    R->gbvector_text_out(o, _F, g->g.f);
-		    emit_line(o.str()); o.reset();
-		    o << "  giving";
+		    o << "  swapping with GB element " << t->_val;
 		    emit_line(o.str());
 		  }
 		R->gbvector_replace_2by2_ZZ(_F, _Fsyz, p->f(), p->fsyz(), g->g.f, g->g.fsyz);
@@ -1355,10 +1353,13 @@ bool gbA::reduce(spair *p)
 		if (gbTrace >= 10)
 		  {
 		    buffer o;
-		    R->gbvector_text_out(o, _F, p->f());
+		    o << "  swap yielded";
 		    emit_line(o.str()); o.reset();
-		    o << "    and ";
-		    R->gbvector_text_out(o, _F, g->g.f);
+		    o << "      ";
+		    R->gbvector_text_out(o, _F, p->f(), 3);
+		    emit_line(o.str()); o.reset();
+		    o << "      ";
+		    R->gbvector_text_out(o, _F, g->g.f, 3);
 		    emit_line(o.str());
 		  }
 		continue;
@@ -1700,7 +1701,6 @@ void gbA::remainder_ZZ(POLY &f, int degf, bool use_denom, ring_elem &denom)
       R->gbvector_get_lead_exponents(_F, h.f, EXP_);
       int x = h.f->comp;
       int w = find_good_monomial_divisor_ZZ(h.f->coeff.get_mpz(),EXP_,x,degf,  gap);
-        // replaced gap, g.
       if (w < 0 || gap > 0)
 	{
 	  frem->next = h.f;
@@ -1722,17 +1722,14 @@ void gbA::remainder_ZZ(POLY &f, int degf, bool use_denom, ring_elem &denom)
 	      frem->next = 0;
 	    }
 	  count++;
-	  //	  stats_ntail++;
-	  if (gbTrace >= 10)
+	  if (gbTrace == 15)
 	    {
 	      buffer o;
-	      o << "  tail reducing by ";
-	      R->gbvector_text_out(o,_F,g.f);
-	      o << "\n    giving ";
-	      R->gbvector_text_out(o,_F,h.f);
+	      o << "    tail rem by g" << w;
+	      o << ", yielding ";
+	      R->gbvector_text_out(o, _F, h.f, 3);
 	      emit_line(o.str());
 	    }
-	  
 	}
     }
   h.f = head.next;
@@ -1750,7 +1747,7 @@ void gbA::remainder_ZZ(POLY &f, int degf, bool use_denom, ring_elem &denom)
       o << "number of reduction steps was " << count;
       emit_line(o.str());
     }
-  else if (gbTrace >= 4)
+  else if (gbTrace >= 4 && gbTrace != 15)
     {
       buffer o;
       o << "," << count;
@@ -1799,16 +1796,14 @@ void gbA::tail_remainder_ZZ(POLY &f, int degf)
 	    }
 	  count++;
 	  //	  stats_ntail++;
-	  if (gbTrace >= 10)
+	  if (gbTrace == 15)
 	    {
 	      buffer o;
-	      o << "  tail reducing by ";
-	      R->gbvector_text_out(o,_F,g.f);
-	      o << "\n    giving ";
-	      R->gbvector_text_out(o,_F,h.f);
+	      o << "    tail red by g" << w;
+	      o << ", yielding ";
+	      R->gbvector_text_out(o, _F, h.f, 3);
 	      emit_line(o.str());
 	    }
-	  
 	}
     }
   h.f = head.next;
@@ -1826,7 +1821,7 @@ void gbA::tail_remainder_ZZ(POLY &f, int degf)
       o << "number of reduction steps was " << count;
       emit_line(o.str());
     }
-  else if (gbTrace >= 4)
+  else if (gbTrace >= 4 && gbTrace != 15)
     {
       buffer o;
       o << "," << count;
@@ -1893,9 +1888,9 @@ void gbA::remainder_non_ZZ(POLY &f, int degf, bool use_denom, ring_elem &denom)
 	    {
 	      buffer o;
 	      o << "  tail reducing by ";
-	      R->gbvector_text_out(o,_F,g.f);
+	      R->gbvector_text_out(o,_F,g.f, 2);
 	      o << "\n    giving ";
-	      R->gbvector_text_out(o,_F,h.f);
+	      R->gbvector_text_out(o,_F,h.f, 3);
 	      emit_line(o.str());
 	    }
 	  
@@ -1911,7 +1906,7 @@ void gbA::remainder_non_ZZ(POLY &f, int degf, bool use_denom, ring_elem &denom)
       o << "number of reduction steps was " << count;
       emit_line(o.str());
     }
-  else if (gbTrace >= 4)
+  else if (gbTrace >= 4 && gbTrace != 15)
     {
       buffer o;
       o << "," << count;
@@ -1940,7 +1935,7 @@ void gbA::auto_reduce_by(int id)
       if (gbTrace >= 10)
 	{
 	  buffer o;
-	  o << "auto reduce " << id << " by " << i;
+	  o << "  auto reduce " << i << " by " << id;
 	  emit_line(o.str());
 	}
       if (over_ZZ())
@@ -1967,7 +1962,7 @@ void gbA::collect_syzygy(gbvector *f)
     {
       buffer o;
       o << " new syzygy : ";
-      R->gbvector_text_out(o,_Fsyz,f);
+      R->gbvector_text_out(o,_Fsyz,f,3);
       emit_line(o.str());
     }
 }
