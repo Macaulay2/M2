@@ -1,0 +1,48 @@
+--*- M2 -*-
+
+Title: Frobenius Multiplicities
+
+Description: For rings of characteristic p > 0, the Frobenius morphism x |-> x^p provides an
+honest ring endomorphism with surprising utility.  One application is the study
+of Hilbert-Kunz and related multiplicities.  
+
+Implement the Frobenius and its action on complexes of free modules as a way to 
+quickly compute approximations of Hilbert-Kunz and higher derived multiplicities of a ring.
+
+
+See:
+1. Huneke, Craig
+   Tight closure and its applications.
+   With an appendix by Melvin Hochster.
+   CBMS Regional Conference Series in Mathematics, 88.
+   Published for the Conference Board of the Mathematical Sciences, Washington, DC; by the
+   American Mathematical Society, Providence, RI, 1996.
+   
+2. Watanabe, Kei-ichi; Yoshida, Ken-ichi
+   Hilbert-Kunz multiplicity and an inequality between multiplicity and colength.
+   J. Algebra 230 (2000), no. 1, 295--317. 
+   
+3. Monsky, P.
+   The Hilbert\mhy Kunz function.
+   Math. Ann. 263 (1983), no. 1, 43--49. 
+   
+4. Li, Jinjia
+   Characterizations of regular local rings in positive characteristics.
+   Proc. Amer. Math. Soc. 136 (2008), no. 5, 1553--1558.
+
+=============================================================================
+
+Proposed by: Jason McCullough
+Potential Advisor: Dan Grayson
+Project assigned to: Jason McCullough
+Current status: A working project file is completed.  It needs documentation and
+   error checking.  Extensions to computing Hilbert-Kunz multiplicities of m-primary
+   ideals are possible.  
+
+   As of now the ring in question much be a quotient of a polynomial ring by a 
+   homogeneous ideal.
+
+=============================================================================
+
+Progress log: 
+
