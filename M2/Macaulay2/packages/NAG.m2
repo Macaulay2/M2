@@ -1699,6 +1699,105 @@ void complex::sprint(char* s)
       f << "}" << endl << close; 	              
       )
 
+-- create a file <fn>.c with C code for the function named fn that evaluates a preSLP S
+-- format:
+--   void fn(const complex* a, complex* b)
+-- here: input array a
+--       output array b 
+preSLPtoC = method(TypicalValue=>Nothing, Options=>{System=>MacOsX})
+preSLPtoC (Sequence,String) := o-> (S,filename)-> (
+     constants := S#0;
+     slp := S#1;
+     fn := "slpFN"; -- function name
+     f := openOut(filename);
+     f << ///
+#include<stdio.h>
+#include<math.h>
+
+typedef struct 
+{
+  double re;  
+  double im;  
+} complex;
+
+inline void init_complex(complex* c, double r, double i) 
+{ c->re = r; c->im = i; }
+
+/* register */ 
+static double r_re, r_im; 
+
+inline set_r(complex c)
+{ r_re = c.re; r_im = c.im; }
+
+inline copy_r_to(complex* c)
+{ c->re = r_re; c->im = r_im; }
+
+inline add(complex c)
+{ r_re += c.re; r_im += c.im; }
+
+inline mul(complex c)
+{ 
+  double t_re = r_re*c.re - r_im*c.im;
+  r_im = r_re*c.im + r_im*c.re;
+  r_re = t_re;
+}   
+
+
+/// << endl;
+     -- if o.System === MacOsX then f << ///#define EXPORT __attribute__((visibility("default")))/// <<endl;
+     -- if o.System === MacOsX then f << /// extern "C" EXPORT ///;
+     f << "void " << fn << "(complex* a, complex* b)" << endl  
+     << "{" << endl 
+     << "  complex c[" << #constants << "]; " << endl
+     << "  complex node[" << #slp << "];" << endl
+     << "  complex* cp = c;" << endl
+     << "  complex* n = node;" << endl; -- current node      
+     -- hardcode the constants
+     scan(#constants, i-> f <<  "init_complex(cp," <<
+	  realPart constants#i << "," << imaginaryPart constants#i << "); cp++;" << endl);
+     scan(#slp, i->(
+	   n := slp#i;
+	   k := first n;
+	   if k === slpCOPY then (
+	   	if class n#1 === Option and n#1#0 == "const" 
+		then f << "  *n = c[" << n#1#1 << "];" 
+		else error "unknown node type"; 
+		)  
+	   else if k === slpMULTIsum then (
+		scan(2..1+n#1, j->(
+			  if class n#j === Option and n#j#0 == "const" 
+			  then f << (if j>2 then "add" else "set_r") << "(c[" << n#j#1 << "]); "
+			  else if class n#j === ZZ 
+			  then f << (if j>2 then "add" else "set_r") << "(node[" << i+n#j << "]); "
+		     	  else error "unknown node type";
+		     	  ));
+		f << "copy_r_to(n);";
+		)
+	   else if k === slpPRODUCT then (
+		scan(1..2, j->(
+			  if class n#j === Option then (
+			       if n#j#0 == "in" 
+			       then f << (if j>1 then "mul" else "set_r") << "(a[" << n#j#1 << "]); "
+			       else if n#j#0 == "const"
+			       then f << (if j>1 then "mul" else "set_r") << "(c[" << n#j#1 << "]); "
+			       else error "unknown node type"
+			       ) 
+			  else if class n#j === ZZ 
+			  then f << (if j>1 then "mul" else "set_r") << "(node[" << i+n#j << "]); "
+			  else error "unknown node type";
+			  ));
+		f << "copy_r_to(n);";
+	   	)
+	   else error "unknown SLP node key";   
+	   f << " n++;" << endl
+	   ));
+      f << "  // creating output" << endl << "  n = b;" << endl;
+      scan(flatten entries S#2, e->(
+	   	f << "  *(n++) = node[" << e << "];" << endl 		
+		));
+      f << "}" << endl << close; 	              
+      )
+
 ///
 restart
 loadPackage "NAG"; debug NAG;
@@ -1782,7 +1881,7 @@ preSLPinterpretedSLP (ZZ,Sequence) := (nIns,S) -> (
      (map(CC^1,CC^(#consts), {consts}), p)
      )
 
-preSLPcompiledSLP = method(TypicalValue=>Nothing, Options=>{System=>MacOsX})
+preSLPcompiledSLP = method(TypicalValue=>Nothing, Options=>{System=>MacOsX, Language=>LanguageC})
 preSLPcompiledSLP (ZZ,Sequence) := o -> (nIns,S) -> (
 -- makes input for rawSLP from pre-slp
      consts := S#0;
@@ -1793,12 +1892,13 @@ preSLPcompiledSLP (ZZ,Sequence) := o -> (nIns,S) -> (
      curNode = #consts+nIns;
      p = {#consts,nIns,numgens target out, numgens source out} | {slpCOMPILED}
           | { fname }; -- "lib_name" 
-     cppName := libPREFIX | toString fname | ".cpp";
+     cppName := libPREFIX | toString fname | if o.Language === LanguageCPP then ".cpp" else ".c";
      libName := libPREFIX | toString fname | if o.System === Linux then ".so" else  ".dylib";
-     preSLPtoCPP(S, cppName, System=>o.System);
-     compileCommand := if o.System === Linux then"gcc -shared -Wl,-soname," | libName | " -o " | libName | " " | cppName | " -lc -fPIC"
+     (if o.Language === LanguageCPP then preSLPtoCPP else preSLPtoC) (S, cppName, System=>o.System);
+     compileCommand := if o.System === Linux then "gcc -shared -Wl,-soname," | libName | " -o " | libName | " " | cppName | " -lc -fPIC"
      else if o.System === MacOsX and version#"pointer size" === 8 then "g++ -m64 -dynamiclib -O2 -o " | libName | " " | cppName
-     else if o.System === MacOsX then "gcc -dynamiclib -O3 -o " | libName | " " | cppName
+     else if o.System === MacOsX then 
+     "gcc -dynamiclib -O0 -finline-functions -funswitch-loops -fgcse-after-reload -o " | libName | " " | cppName
      else error "unknown OS";
      print compileCommand;
      run compileCommand;      

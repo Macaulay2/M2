@@ -33,15 +33,16 @@ AnnFs List := Ideal => F -> (
      error "expected no central variables in Weyl algebra";
      if any(F, f->any(listForm f, m -> any(dpI#1, i -> m#0#i != 0))) then
      error "expected no differentials in f";
-
+     --
      n := #dpV#0; -- number of x_i
-     r := #F;	          -- number of t_i     
+     r := #F;     -- number of t_i     
      t := symbol t;
      dt := symbol dt;
      WAopts := W.monoid.Options.WeylAlgebra | apply(r, i->t_i=>dt_i);
      WT := (coefficientRing W) ( monoid [ 
 	       dpV#0, apply(r, i->t_i), dpV#1, apply(r, i->dt_i),  
-	       WeylAlgebra => WAopts
+	       WeylAlgebra => WAopts,
+	       Degrees=>toList(n:0)|toList(r:-1)|toList(n:0)|toList(r:1)
 	       ] );
      ideal apply(r, 
 	  i->WT_(n+i) - sub(F#i,WT) -- t_i - f_i

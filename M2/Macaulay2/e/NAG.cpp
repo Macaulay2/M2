@@ -604,6 +604,35 @@ void StraightLineProgram::corrector()
   deletearray(RHS);
 }
 
+////////////////// PathTracker //////////////////////////////////////////////////////////////////////////////////////////////
+
+int PathTracker::num_path_trackers = 0;
+PathTracker* PathTracker::catalog[MAX_NUM_PATH_TRACKERS];
+
+PathTracker::PathTracker(){}
+
+PathTracker::~PathTracker()
+{ 
+}
+
+// a function that creates a PathTracker object, builds the homotopy, slps for predictor and corrector given a target system
+// input: a (1-row) matrix of polynomials 
+// out: the number of PathTracker
+int PathTracker::makeFromHomotopy(Matrix *H) 
+{
+  if (num_path_trackers>MAX_NUM_PATH_TRACKERS) {
+    ERROR("max number of path trackers exceeded");
+    return -1;
+  };
+  PathTracker* p = catalog[num_path_trackers] = new PathTracker;
+  p->number = num_path_trackers++;
+  if (H->n_rows()!=1) { 
+    ERROR("1-row matrix expected");
+    return -1;
+  };
+  return p->number;
+}
+
 // this is an engine function
 const MatrixOrNull * rawTrackPaths(StraightLineProgram* slp_pred, StraightLineProgram* slp_corr, const Matrix* start_sols, 
 				   M2_bool is_projective,
@@ -611,6 +640,25 @@ const MatrixOrNull * rawTrackPaths(StraightLineProgram* slp_pred, StraightLinePr
 				   M2_RRR dt_increase_factor, M2_RRR dt_decrease_factor, int num_successes_before_increase, 
 				   M2_RRR epsilon, int max_corr_steps,
 				   int pred_type)
+{
+  PathTracker P;
+  P.slpHxt = P.slpHxtH = slp_pred;
+  P.slpHxH = slp_corr;
+  P.is_projective = is_projective;
+  P.init_dt = init_dt;
+  P.min_dt = min_dt;
+  P.max_dt = max_dt;
+  P.dt_increase_factor = dt_increase_factor; 
+  P.dt_decrease_factor = dt_decrease_factor;
+  P.num_successes_before_increase = num_successes_before_increase;
+  P.epsilon = epsilon;
+  P.max_corr_steps = max_corr_steps;
+  P.pred_type = pred_type;
+  P.track(start_sols);
+  return P.getAllSolutions();
+}
+
+int PathTracker::track(const Matrix* start_sols)
 {
   double the_smallest_number = 1e-13;
   double epsilon2 = mpfr_get_d(epsilon,GMP_RNDN); epsilon2 *= epsilon2; //epsilon^2
@@ -633,8 +681,8 @@ const MatrixOrNull * rawTrackPaths(StraightLineProgram* slp_pred, StraightLinePr
     complex* x0 =  x0t0;
     complex* t0 = x0t0+n;
   complex* x1t1 = newarray(complex,n+1); 
-    complex* x1 =  x1t1;
-    complex* t1 = x1t1+n;
+  //  complex* x1 =  x1t1;
+  //  complex* t1 = x1t1+n;
   complex* dxdt = newarray(complex,n+1); 
     complex* dx =  dxdt;
     complex* dt = dxdt+n;
@@ -678,14 +726,14 @@ const MatrixOrNull * rawTrackPaths(StraightLineProgram* slp_pred, StraightLinePr
       //           out: dx
       switch(pred_type) {
       case TANGENT: {
-	slp_pred->evaluate(n+1,x0t0, Hxt);
+	slpHxt->evaluate(n+1,x0t0, Hxt);
 	LHS = Hxt; 	
 	RHS = Hxt+n*n; 
 	multiply_complex_array_scalar(n,RHS,-*dt);
 	solve_via_lapack_without_transposition(n,LHS,1,RHS,dx);
       } break;
       case EULER: {
-	slp_pred->evaluate(n+1,x0t0, HxtH); // for Euler "H" is attached
+	slpHxtH->evaluate(n+1,x0t0, HxtH); // for Euler "H" is attached
         LHS = HxtH;
         RHS = HxtH+n*(n+1); // H
 	complex* Ht = RHS-n; 
@@ -698,7 +746,7 @@ const MatrixOrNull * rawTrackPaths(StraightLineProgram* slp_pred, StraightLinePr
 	copy_complex_array(n+1,x0t0,xt);
 	
 	// dx1
-	slp_pred->evaluate(n+1,xt, Hxt);
+	slpHxt->evaluate(n+1,xt, Hxt);
 	LHS = Hxt; 	
 	RHS = Hxt+n*n; 
 	//
@@ -710,7 +758,7 @@ const MatrixOrNull * rawTrackPaths(StraightLineProgram* slp_pred, StraightLinePr
 	add_to_complex_array(n,xt,dx1); // x0+.5dx1*dt
 	xt[n] += one_half*(*dt); // t0+.5dt
 	//
-	slp_pred->evaluate(n+1,xt, Hxt);
+	slpHxt->evaluate(n+1,xt, Hxt);
 	LHS = Hxt; 	
 	RHS = Hxt+n*n; 
 	//
@@ -723,7 +771,7 @@ const MatrixOrNull * rawTrackPaths(StraightLineProgram* slp_pred, StraightLinePr
 	add_to_complex_array(n,xt,dx2); // x0+.5dx2*dt
 	// xt[n] += one_half*(*dt); // t0+.5dt (SAME)
 	//
-	slp_pred->evaluate(n+1,xt, Hxt);
+	slpHxt->evaluate(n+1,xt, Hxt);
 	LHS = Hxt; 	
 	RHS = Hxt+n*n; 
 	//
@@ -736,7 +784,7 @@ const MatrixOrNull * rawTrackPaths(StraightLineProgram* slp_pred, StraightLinePr
 	add_to_complex_array(n,xt,dx3); // x0+dx3*dt
 	xt[n] += *dt; // t0+dt
 	//
-	slp_pred->evaluate(n+1,xt, Hxt);
+	slpHxt->evaluate(n+1,xt, Hxt);
 	LHS = Hxt; 	
 	RHS = Hxt+n*n; 
 	//
@@ -766,7 +814,7 @@ const MatrixOrNull * rawTrackPaths(StraightLineProgram* slp_pred, StraightLinePr
       do {
 	n_corr_steps++;
 	//
-	slp_corr->evaluate(n+1,x1t1, HxH);
+	slpHxH->evaluate(n+1,x1t1, HxH);
 	LHS = HxH; 	
 	RHS = HxH+n*n; // i.e., H
 	//
@@ -828,10 +876,12 @@ const MatrixOrNull * rawTrackPaths(StraightLineProgram* slp_pred, StraightLinePr
   deletearray(HxtH);
   deletearray(HxH);
 
-
-  return mat.to_matrix();
+  solutions = mat.to_matrix();
+  return n_sols;
 }
 
+MatrixOrNull* PathTracker::getAllSolutions() { return solutions; }
+ 
 // Local Variables:
 // compile-command: "make -C $M2BUILDDIR/Macaulay2/e "
 // End:

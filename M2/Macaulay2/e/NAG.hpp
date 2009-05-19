@@ -189,6 +189,7 @@ void multiply_complex_array_scalar(int n, complex* a, const complex b);
 #define EULER 3
 
 #define MAX_NUM_SLPs 100
+#define MAX_NUM_PATH_TRACKERS 10
 
 class StraightLineProgram : public object
 {
@@ -217,6 +218,40 @@ public:
   Matrix *evaluate(const Matrix *vals);
 };
 
+class PathTracker : public object
+{
+  static PathTracker* catalog[MAX_NUM_PATH_TRACKERS];
+  static int num_path_trackers;
+
+  int number; // trackers are enumerated
+
+public:
+  Matrix *target;
+  Matrix *H; // homotopy
+  StraightLineProgram *slpHxt, *slpHxtH, *slpHxH; // slps for evaluating H_{x,t}, H_{x,t}|H, H_{x}|H 
+  
+  Matrix *solutions;
+
+  // parameters
+  M2_bool is_projective;
+  M2_RRR init_dt, min_dt, max_dt;
+  M2_RRR dt_increase_factor, dt_decrease_factor;
+  int num_successes_before_increase;
+  M2_RRR epsilon;
+  int max_corr_steps;
+  int pred_type;
+
+  void make_slps(); // creates slpHxt and alpHxH
+
+  PathTracker();
+public:
+  virtual ~PathTracker();
+
+  int makeFromHomotopy(Matrix*);
+  MatrixOrNull* getAllSolutions();
+  int track(const Matrix*); 
+  
+};
 
 #endif
 

@@ -246,7 +246,8 @@ document {
 	       " by taking the intersection of ",
 	       EM "J(s)+D[s](f,df/dx1,...,df/dxn)", " with ", EM "K[s]",
 	       ", then multiplies by ", EM "s+1", "."},
-	  {"Default: ", BOLD "ReducedB"}
+	  {BOLD "GeneralBernsteinSato", " -- calls ", TO "generalB", "{f}."},
+	  {"Default: ", BOLD "GeneralBernsteinSato"}
 	  }
      }
 
@@ -266,8 +267,7 @@ document {
      Headline => "global b-function (else known as the Bernstein-Sato polynomial)",
      Usage => "b = globalBFunction f",
      Inputs => {
-	  "f" => {"a polynomial in a Weyl algebra, that
-	       does not contain differential variables"}
+	  "f" => {"a polynomial"}
 	  },
      Outputs => {
 	  "b" => RingElement => {"the b-function ", EM "b(s)",  " in ", EM "Q[s]"}
@@ -289,25 +289,21 @@ document {
 	  " where 1 in the weight that corresponds to ", EM "dt. ", 
 	  "Then the global b-function is ", EM "b_f = B(-s-1)"},
      EXAMPLE lines ///
-	  R = QQ[x, dx, WeylAlgebra => {x=>dx}]
+	  R = QQ[x]
      	  f = x^10
     	  b = globalBFunction f
-	  factor b
+	  factorBFunction b
      	  ///,
-     Caveat => {
-	  "The Weyl algebra should not have any parameters. 
-     	  Similarly, it should not be a homogeneous Weyl algebra"
-	  },
-     SeeAlso => { "bFunction" }
+     SeeAlso => { "bFunction", "factorBFunction", "generalB", "globalB" }
      }
 
 document { 
-     Key => {(generalB,List,RingElement), generalB},
+     Key => {(generalB,List,RingElement), (generalB,List), generalB},
      Headline => "global general Bernstein-Sato polynomial",
-     Usage => "b = generalB f",
+     Usage => "b = generalB(F,g), b = generalB F",
      Inputs => {
-	  "F" => {"a list of polynomials (should live in the Weyl algebra)"},
-	  "g" => {"a polynomial (should live in the Weyl algebra)"}
+	  "F" => {"a list of polynomials"},
+	  "g" => {"a polynomial"}
 	  },
      Outputs => {
 	  "b" => RingElement => {"the general Bernstein-Sato polynomial ", 
@@ -364,8 +360,8 @@ document {
      }
 document {
      Key => GeneralBernsteinSato,
-     Headline => "a strategy option for lct",
-     "see ", TO "lct"
+     Headline => "a strategy option for lct, globalBFunction",
+     "see ", TO "lct", TO "globalBFunction", "."
      }
 document {
      Key => ViaBFunction,
@@ -2720,3 +2716,4 @@ end
 ------------------------------------------------------------------------------------------------------------
 THE END
 
+installPackage("Dmodules", FileName=>"../Dmodules.m2", SeparateExec=>true, AbsoluteLinks=>false, RerunExamples=>true)
