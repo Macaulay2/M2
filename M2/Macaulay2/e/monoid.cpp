@@ -40,8 +40,7 @@ Monoid::Monoid()
      local_vars(0),
      EXP1_(0),
      EXP2_(0),
-     EXP3_(0),
-     MONlocal_(0)
+     EXP3_(0)
 {
 }
 
@@ -50,7 +49,6 @@ Monoid::~Monoid()
   deletearray(EXP1_);
   deletearray(EXP2_);
   deletearray(EXP3_);
-  deletearray(MONlocal_);
 }
 
 Monoid *Monoid::get_trivial_monoid()
@@ -144,7 +142,6 @@ Monoid::Monoid(MonomialOrdering *mo,
   EXP1_ = newarray_atomic(int,nvars_);
   EXP2_ = newarray_atomic(int,nvars_);
   EXP3_ = newarray_atomic(int,nvars_);
-  MONlocal_ = newarray_atomic(int,nvars_ + monomial_size()); // MES: should be total number of words of result...
 
   n_invertible_vars_ = rawNumberOfInvertibleVariables(mo_);
 
@@ -347,16 +344,6 @@ void Monoid::text_out(buffer &o) const
     }
 
   o << newline << "  ]";
-}
-
-void Monoid::encode(const_exponents exp, monomial result) const
-{
-  monomialOrderEncode(monorder_, exp, result);
-}
-
-void Monoid::decode(const_monomial m, exponents result) const
-{
-  monomialOrderDecode(monorder_, m, result);
 }
 
 void Monoid::from_expvector(const_exponents exp, monomial result) const

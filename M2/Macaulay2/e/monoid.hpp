@@ -64,8 +64,6 @@ class Monoid : public mutable_object
 				// A local routine may use these ONLY if
 				// they call no other monoid routine, except
 				// to/from expvector.
-  monomial MONlocal_;		// To be used ONLY by to/from expvector.
-
 
   static Monoid *trivial_monoid;
 
@@ -77,9 +75,6 @@ class Monoid : public mutable_object
 	 M2_arrayint degs,
 	 M2_arrayint hefts);
   
-  void decode(const_monomial m, exponents result) const;
-  void encode(const_exponents exp, monomial esult) const;
-
 public:
   static Monoid *create(MonomialOrdering *mo,
 			M2_stringarray names,

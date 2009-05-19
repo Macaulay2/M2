@@ -117,6 +117,18 @@ int MonomialTableZZ::find_term_divisors(int max,
 	    if (max >= 0 && nmatches >= max) break;
 	  }
       }
+  if (gbTrace == 15 && nmatches >= 2)
+    {
+      char s[100000];
+      mpz_get_str(s,10,coeff);
+      fprintf(stderr, "find_term_divisors called with %s[",s);
+      for (int i=0; i<_nvars; i++) fprintf(stderr, "%d ",exp[i]);
+      fprintf(stderr, "]%d\n", comp);
+      fprintf(stderr, "  %d matches: \n",nmatches);
+      if (result != 0)
+	for (int i=0; i<result->size(); i++)
+	  show_mon_term(stderr, (*result)[i]);
+    }
   return nmatches;
 }
 
@@ -240,7 +252,7 @@ int MonomialTableZZ::find_monomial_divisors(int max,
 	  }
       }
 
-  if (false)
+  if (gbTrace == 15 && nmatches >= 2)
     {
       fprintf(stderr, "find_monomial_divisors called with [");
       for (int i=0; i<_nvars; i++) fprintf(stderr, "%d ",exp[i]);
