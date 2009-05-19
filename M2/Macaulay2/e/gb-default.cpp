@@ -1281,10 +1281,6 @@ bool gbA::reduce(spair *p)
       o << " : ";
       emit_line(o.str());
     }
-  if (n_gb == 144)
-    {
-      printf("we are at the right spot\n");
-    }
   compute_s_pair(p); /* Changes the type, possibly */
 
   while (!R->gbvector_is_zero(p->f()))
