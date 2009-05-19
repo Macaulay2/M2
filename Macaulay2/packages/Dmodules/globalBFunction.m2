@@ -10,7 +10,7 @@
 -- (method: definition 5.3.10 in Saito-Strumfels-Takayama)
 -----------------------------------------------------------------------
 
-globalBFunction = method(Options => {Strategy => ReducedB})
+globalBFunction = method(Options => {Strategy => GeneralBernsteinSato})
 
 -- makes polynomial f monic (internal) 
 makeMonic := f -> ( if coefficientRing ring f === QQ 
@@ -137,6 +137,11 @@ globalBoperator(RingElement) := RingElement => (f) -> (
 -- MAIN function
 -------------------------------------------------------------
 globalBFunction RingElement := RingElement => o -> f -> (
+     if #(options (ring f).monoid)#WeylAlgebra == 0 -- not WA 
+     then (
+	  D := makeWeylAlgebra(ring f,SetVariables=>false);
+	  f = sub(f,D);
+	  );
      result := (
 	  if o.Strategy == IntRing 
 	  or o.Strategy == TryGeneric 
@@ -146,6 +151,8 @@ globalBFunction RingElement := RingElement => o -> f -> (
 	  then globalRB (f,true)
 	  else if o.Strategy == ViaAnnFs
 	  then globalRB (f,false)
+	  else if o.Strategy == GeneralBernsteinSato
+	  then generalB {f}
 	  else error "wrong Strategy option"
 	  );
      result
@@ -157,11 +164,19 @@ generalB = method(Options => {
 	  -- GuessedRoots => null, -- should this be removed?
 	  Strategy => ViaLinearAlgebra
 	  })
+generalB List := RingElement => o-> F -> generalB(F, 1_(ring first F), o)     
 generalB (List, RingElement) := RingElement => o->(F,g) -> (
 -- Input:   F = {f_1,...,f_r}, a list of polynomials in n variables                                                                                                                                       
 --                             (f_i has to be an element of A_n, the Weyl algebra).                                                                                                                       
 --          g, a polynomial
 -- Output:  a generalized B-S polynomial, an element of QQ[s]
+     if #F == 0 then error "the list is empty";
+     if #(options (ring first F).monoid)#WeylAlgebra == 0 -- not WA 
+     then (
+	  D := makeWA(ring f,SetVariables=>false);
+	  F = apply(F, f->sub(f,D));
+	  g = sub(g,D);
+	  );
      r := #F; 
      AnnI := AnnFs F;
      DY := ring AnnI;
@@ -220,10 +235,11 @@ generalBideal (List, RingElement) := RingElement => o->(F,g) -> (
      DY := ring AnnI;
      K := coefficientRing DY;
      n := numgens DY // 2 - r; -- DY = k[x_1,...,x_n,t_1,...,t_r,dx_1,...,dx_n,dt_1,...,dt_r]
-     I0 := if g==1 then AnnI else intersect(AnnI, ideal sub(g, DY));
+     I0 := --if g==1 then 
+     AnnI; --else intersect(AnnI, ideal sub(g, DY));
      w := toList(n:0) | toList(r:1);
-     --I1 := inw(I0, -w|w);
-     I1 := I0 + ideal sub(product F,DY);
+     I1 := inw(I0, -w|w);
+     --I1 := I0; -- + ideal sub(product F,DY);
      s := symbol s; 
      SDY := K (monoid [s_1..s_r, gens DY, 
 	       WeylAlgebra => DY.monoid.Options.WeylAlgebra, MonomialOrder=>{Weights=>toList(n+r:0)|toList(n+2*r:1)}]);
