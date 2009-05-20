@@ -987,6 +987,7 @@ tostringfun(e:Expr):Expr := (
      is x:RawMatrix do Expr(Ccode(string, "(string)IM2_Matrix_to_string((Matrix*)",x,")" ))
      is x:RawMutableMatrix do Expr(Ccode(string, "(string)IM2_MutableMatrix_to_string((MutableMatrix*)",x,")" ))
      is x:RawStraightLineProgram do Expr(Ccode(string, "(string)rawStraightLineProgramToString((StraightLineProgram*)",x,")" ))
+     is x:RawPathTracker do Expr(Ccode(string, "(string)rawPathTrackerToString((PathTracker*)",x,")" ))
      is x:RawRingMap do Expr(Ccode(string, "(string)IM2_RingMap_to_string((RingMap*)",x,")" ))
      is x:RawMonomialOrdering do Expr(Ccode(string, "(string)IM2_MonomialOrdering_to_string((MonomialOrdering*)",x,")" ))
      is x:RawMonoid do Expr(Ccode(string, "(string)IM2_Monoid_to_string((Monoid*)",x,")" ))

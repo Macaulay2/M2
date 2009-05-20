@@ -800,6 +800,16 @@ unsigned long rawStraightLineProgramHash(const StraightLineProgram *slp) {
   return slp->get_hash_value();
 }
 
+M2_string rawPathTrackerToString(const PathTracker *p) {
+  buffer o;
+  p->text_out(o);
+  return o.to_string();
+}
+
+unsigned long rawPathTrackerHash(const PathTracker *p) {
+  return p->get_hash_value();
+}
+
 
 // Local Variables:
 // compile-command: "make -C $M2BUILDDIR/Macaulay2/e "

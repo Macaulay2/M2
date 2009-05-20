@@ -295,6 +295,7 @@ export equal(lhs:Expr,rhs:Expr):Expr := (
      is MysqlResultWrapper do False
      is RawMutableMatrix do False			    -- mutable matrices may not stay equal, so they aren't equal
      is RawStraightLineProgram do False
+     is RawPathTracker do False
      is x:RawComputation do (
 	  when rhs
 	  is y:RawComputation do (
@@ -484,6 +485,7 @@ export Class(e:Expr):HashTable := (
      is RawMatrix do rawMatrixClass
      is RawMutableMatrix do rawMutableMatrixClass
      is RawStraightLineProgram do rawStraightLineProgramClass
+     is RawPathTracker do rawPathTrackerClass
      );
 classfun(e:Expr):Expr := Expr(Class(e));
 setupfun("class",classfun);
@@ -528,6 +530,7 @@ setupconst("RawFreeModule",Expr(rawFreeModuleClass));
 setupconst("RawMatrix",Expr(rawMatrixClass));
 setupconst("RawMutableMatrix",Expr(rawMutableMatrixClass));
 setupconst("RawStraightLineProgram",Expr(rawStraightLineProgramClass));
+setupconst("RawPathTracker",Expr(rawPathTrackerClass));
 setupconst("RawComputation",Expr(rawComputationClass));
 setupconst("RawRingElement",Expr(rawRingElementClass));
 setupconst("RawRingMap",Expr(rawRingMapClass));
