@@ -14,7 +14,7 @@
   f7 = (((((x8 ^ 2) + ((x6 * (x11 * x8)) + (x7 * x8))) - ((x11 ^ 3) + ((x9 * (x11 ^ 2)) + ((x10 * x11) + x12)))) * x13) - (1))
   I = ideal(f0,f1,f2,f3,f4,f5,f6,f7)
 
-time gens gb I
+time gens gb I;
 assert(1 % I == 0)
 gbTrace = 3
 time(h = 1 // (gens I))
