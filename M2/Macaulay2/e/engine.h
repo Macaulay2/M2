@@ -1887,6 +1887,10 @@ enum gbTraceValues
 				    M2_RRR dt_increase_factor, M2_RRR dt_decrease_factor, int num_successes_before_increase,
 				    M2_RRR epsilon, int max_corr_steps,
 				    int pred_type);  
+
+  M2_string rawPathTrackerToString(const PathTracker *); /* connected */
+  unsigned long rawPathTrackerHash(const PathTracker *); /* connected */
+
 #if defined(__cplusplus)
 }
 #endif
