@@ -881,6 +881,11 @@ int PathTracker::track(const Matrix* start_sols)
 }
 
 MatrixOrNull* PathTracker::getAllSolutions() { return solutions; }
+
+void PathTracker::text_out(buffer& o) const
+{
+  o << "I am a path tracker!" << newline;   
+}
  
 // Local Variables:
 // compile-command: "make -C $M2BUILDDIR/Macaulay2/e "
