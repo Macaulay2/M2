@@ -39,6 +39,7 @@ class RingMap;
 class Computation;
 class EngineComputation;
 class StraightLineProgram;
+class PathTracker;
 
 typedef struct MonomialOrdering MonomialOrdering;
 #else
@@ -63,6 +64,7 @@ typedef struct Matrix_int_pair Matrix_int_pair;
 typedef struct M2_Integer_pair M2_Integer_pair;
 
 typedef struct StraightLineProgram StraightLineProgram;
+typedef struct PathTracker PathTracker;
 #endif
 
 #ifdef __cplusplus
@@ -141,6 +143,7 @@ typedef Matrix_array Matrix_array_OrNull;
 typedef RingElement_array RingElement_array_OrNull;
 
 typedef StraightLineProgram StraightLineProgram_OrNull;
+typedef PathTracker PathTracker_OrNull;
 #if defined(__cplusplus)
 extern "C" {
 #endif
