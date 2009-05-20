@@ -247,6 +247,7 @@ public:
 public:
   virtual ~PathTracker();
 
+  void text_out(buffer& o) const;
   int makeFromHomotopy(Matrix*);
   MatrixOrNull* getAllSolutions();
   int track(const Matrix*); 
