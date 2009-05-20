@@ -618,7 +618,7 @@ PathTracker::~PathTracker()
 // a function that creates a PathTracker object, builds the homotopy, slps for predictor and corrector given a target system
 // input: a (1-row) matrix of polynomials 
 // out: the number of PathTracker
-int PathTracker::makeFromHomotopy(Matrix *H) 
+int PathTracker::makeFromHomotopy(Matrix *HH) 
 {
   if (num_path_trackers>MAX_NUM_PATH_TRACKERS) {
     ERROR("max number of path trackers exceeded");
@@ -626,7 +626,7 @@ int PathTracker::makeFromHomotopy(Matrix *H)
   };
   PathTracker* p = catalog[num_path_trackers] = new PathTracker;
   p->number = num_path_trackers++;
-  if (H->n_rows()!=1) { 
+  if (HH->n_rows()!=1) { 
     ERROR("1-row matrix expected");
     return -1;
   };
@@ -853,7 +853,7 @@ int PathTracker::track(const Matrix* start_sols)
   mpfr_init(re); mpfr_init(im);
   c = t_sols;
   for(i=0; i<n_sols; i++) 
-    for(int j=0; j<n; j++,c++) {
+    for(j=0; j<n; j++,c++) {
       mpfr_set_d(re, c->getreal(), GMP_RNDN);
       mpfr_set_d(im, c->getimaginary(), GMP_RNDN);
       ring_elem e = R->from_BigReals(re,im);
