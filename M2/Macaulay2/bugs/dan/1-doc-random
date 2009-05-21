@@ -1,0 +1,7 @@
+Document that there is no automatic randomization of the starting seed
+
+Suggest 
+
+	setRandomSeed currentTime()
+
+as a substitute, for programs that don't start up more than once per second
