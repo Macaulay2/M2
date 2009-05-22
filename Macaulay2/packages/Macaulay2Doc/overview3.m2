@@ -119,7 +119,8 @@ document {
      Key => "frobby",
      PARA {
 	  "Starting with version 1.2, Macaulay 2 incorporates ", TT "frobby", ", a free library of routines for computing
-	  the Alexander dual of a monomial ideal (see ", TO (dual,MonomialIdeal), "), written
+	  the Alexander dual of a monomial ideal (see ", TO (dual,MonomialIdeal), ", a method used internally
+	       by many routines), written
 	  by Bjarke Hammersholt Roune, and available at ", HREF "http://www.broune.com/frobby/", ".
 	  It is distributed under the terms of the GNU General Public License, version 2 (or later), see ", TO "COPYING", "."
 	  }
