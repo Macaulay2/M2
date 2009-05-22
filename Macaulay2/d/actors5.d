@@ -1995,6 +1995,15 @@ fileMode(e:Expr):Expr := (
      else WrongArg("string, integer and string or file"));
 setupfun("fileMode",fileMode);
 
+rawRandomInitializeFun(e:Expr):Expr := (
+     when e is s:Sequence do if length(s) == 0 then (
+	  Ccode(void, "rawRandomInitialize()");
+	  nullE
+	  )
+     else WrongNumArgs(0)
+     else WrongNumArgs(0));
+setupfun("rawRandomInitialize",rawRandomInitializeFun);
+
 recursionDepthFun(e:Expr):Expr := (
      when e is s:Sequence do if length(s) == 0 then Expr(toInteger(recursionDepth))
      else WrongNumArgs(0)

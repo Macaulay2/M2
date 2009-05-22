@@ -17,6 +17,7 @@ static int32_t RandomSeed = MASK;
 
 void rawRandomInitialize()
 {
+  RandomSeed = MASK;
   mpz_init_set_si(maxHeight, INITIALMAXINT);
   gmp_randinit_default(state);
 }

@@ -587,6 +587,19 @@ document {
      }
 
 document {
+     Key => 1 : setRandomSeed,
+     Usage => "setRandomSeed()",
+     Consequences => {
+	  {"Initializes the random number generator to its initial state. "}
+	  },
+     EXAMPLE lines ///
+     random 2^100
+     setRandomSeed()
+     random 2^100
+     ///
+     }
+
+document {
      Key => (setRandomSeed, ZZ),
      Usage => "setRandomSeed i",
      Inputs => {"i"},

@@ -16,6 +16,7 @@ restart = Command (
      )
 
 setRandomSeed = method()
+installMethod(setRandomSeed, () -> rawRandomInitialize())
 setRandomSeed ZZ := seed -> randomSeed = seed		    -- magic assignment, calls rawSetRandomSeed internally
 setRandomSeed String := seed -> setRandomSeed fold((i,j) -> 101*i + j, 0, ascii seed)
 
