@@ -80,6 +80,7 @@ verifyKey Sequence := s -> (				    -- e.g., (res,Module) or (symbol **, Module,
 	       t := youngest drop(s,1);	                    -- this will all get screwed up with immutable types present
 	       t#?s and instance(t#s, Function) )
 	  else if #s == 2 then ( instance(s#1,HashTable) and s#1#?(s#0) and instance(s#1#(s#0), Function) )
+	  else if #s == 1 then ( nullaryMethods#?s and instance(nullaryMethods#s, Function) )
 	  else false
 	  )
      then null
@@ -168,7 +169,7 @@ String ? DocumentTag := (x,y) -> x ? y#1
 toString DocumentTag := net DocumentTag := x -> concatenate ( DocumentTag.Title x, " :: ", DocumentTag.FormattedKey x )
 package DocumentTag := DocumentTag.Package
 hasDocumentation = key -> (
-     tag := makeDocumentTag key;
+     tag := makeDocumentTag(key,Package=>null);
      if DocumentTag.Title tag === "" then error("key to be documented is exported by no package: ", DocumentTag.FormattedKey tag);
      pkg := getpkg DocumentTag.Title tag;
      fkey := DocumentTag.FormattedKey tag;
@@ -394,7 +395,8 @@ fSeqInitialize := (toString,toString) -> new HashTable from {
 	  t := if methodOptions s#0 =!= null then (methodOptions s#0).Dispatch else {Thing,Thing};
 	  (toString s#0, "(", 
 	       if t===Type or instance(t,List) and t#?0 and t#0===Type then "type of ", toString s#1,
-	       ")"))
+	       ")")),
+     1 => s -> (toString s#0, "()")
      }
 
 fSeq := fSeqInitialize(toString,toString)
@@ -695,7 +697,7 @@ examples = method(Dispatch => Thing)
 examples Hypertext := x -> stack deepSplice getExampleInputs x
 examples Thing := x -> (
      checkLoadDocumentation();
-     d := fetchRawDocumentation makeDocumentTag x;
+     d := fetchRawDocumentation makeDocumentTag(x,Package=>null);
      if d =!= null then (stack deepSplice getExampleInputs d.Description)^-1)
 apropos = method()
 apropos String := (pattern) -> (
@@ -738,7 +740,7 @@ isSecondary = tag -> (
 counter := 0
 next := () -> counter = counter + 1
 optTO = i -> (
-     i = makeDocumentTag i;
+     i = makeDocumentTag(i,Package=>null);
      fkey := DocumentTag.FormattedKey i;
      if not isUndocumented i then 
      if isSecondary i 
@@ -793,7 +795,7 @@ externalPath = (() -> (
 
 makeDocBody := method(Dispatch => Thing)
 makeDocBody Thing := key -> (
-     tag := makeDocumentTag key;
+     tag := makeDocumentTag(key,Package=>null);
      pkg := getpkg DocumentTag.Title tag;
      ptag := getPrimary tag;
      rec := fetchRawDocumentation ptag;
@@ -952,13 +954,13 @@ document List := opts -> args -> (
 	  rest = drop(key,1);
 	  o.Key = key = first key;
 	  );
-     o.DocumentTag = tag := makeDocumentTag key;
+     o.DocumentTag = tag := makeDocumentTag(key,Package=>null);
      verfy := (key,tag) -> (
      	  if DocumentTag.Title tag =!= currentPackage#"title" 
 	  then error("item to be documented comes from another package: ", DocumentTag.Title tag, " :: ", toString key));
      verfy(key,tag);
      scan(rest, secondary -> (
-	       tag2 := makeDocumentTag secondary;
+	       tag2 := makeDocumentTag(secondary,Package=>null);
 	       verfy(secondary,tag2);
 	       storeRawDocumentation(tag2, new HashTable from { 
 			 PrimaryTag => tag,
@@ -1247,7 +1249,7 @@ help Symbol := S -> (
      checkLoadDocumentation();
      -- s := value S;
      if package S === Core then checkLoadDocumentation();
-     currentHelpTag = makeDocumentTag S;
+     currentHelpTag = makeDocumentTag(S,Package=>null);
      a := smenu apply(select(optionFor S,f -> isDocumentableMethod f), f -> [f,S]);
      -- b := smenu documentableMethods s;
      ret := fixup DIV { topheader S, synopsis S, makeDocBody S,
@@ -1287,7 +1289,7 @@ help Sequence := key -> (						    -- method key
      checkLoadDocumentation();
      if key === () then return if inDebugger then debuggerUsageMessage else help "initial help" ;
      if null === lookup key then error("expected ", toString key, " to be a method");
-     currentHelpTag = makeDocumentTag key;
+     currentHelpTag = makeDocumentTag(key,Package=>null);
      ret := fixup DIV { topheader key, synopsis key, makeDocBody key, caveat key, sourcecode key, seealso key, theMenu key };
      currentHelpTag = null;
      ret)
@@ -1306,7 +1308,7 @@ pager = x -> (
      else << x << endl ;)
 
 infoHelp = key -> (
-     tag := makeDocumentTag key;
+     tag := makeDocumentTag(key,Package=>null);
      t := infoTagConvert tag;
      run ("info "|format t);)
 
