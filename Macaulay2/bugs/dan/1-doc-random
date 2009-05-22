@@ -5,3 +5,8 @@ Suggest
 	setRandomSeed currentTime()
 
 as a substitute, for programs that don't start up more than once per second
+
+Also suggest
+
+     	setRandomSeed ( (currentTime() << 16) + processID() )
+
