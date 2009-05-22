@@ -50,24 +50,37 @@ document {
      Outputs => {
 	  List => {" of the same length as ", TT "v", " sorted in ascending order"}
 	  },
-     "The sort function uses ", TO symbol<=, " to compare elements of the
-     list, which in turn calls upon ", TO symbol?, ".",
+     PARA {
+	  "The sort function uses ", TO symbol<=, " to compare elements of the
+	  list, which in turn calls upon the comparison operator ", TO symbol?, ", so, to determine how the elements are sorted,
+	  refer to its documentation.  Methods for new user defined types of objects
+	  can be installed for it, too, to obtain the desired sorting behavior."
+	  },
      EXAMPLE {
 	  "sort {c,e,a,f,b,f}",
 	  "sort {4,2,6,3,8,2}"
 	  },
-     "Note: we have modified the sort order for strings so that symbols come
-     before alphanumeric characters, and upper and lower case characters are
-     sorted together.",
-     PARA{},
-     "If the elements of the list are polynomials, then the monomial order
-     is used to sort the elements according to their lead terms.",
+     PARA {
+	  "Comparison of strings is implemented so that symbols come
+	  before alphanumeric characters, upper and lower case characters are
+	  sorted together, and strings of digits are sorted by size of the implied number."
+	  },
+     EXAMPLE ///sort {"a11","a1","a2","A11","A1","A2","B2"}///,
+     PARA {
+	  "Visible lists (lists, sequences, and arrays) are compared lexicographically."
+	  },
+     EXAMPLE ///sort {(1,1),(2,1),(3,1),(1,2),(3,2)}///,
+     PARA{
+	  "If the elements of the list are polynomials, then the monomial order
+	  is used to sort the elements according to their lead terms."
+	  },
      EXAMPLE {
 	  "R = ZZ[a..d,MonomialOrder=>Lex];",
 	  "sort{a*d, b^100, c^3*d}"
 	  },
-     PARA{},
-     "The optional arguments are not used in this version of sort.",
+     PARA{
+	  "The optional arguments are not used in this version of sort."
+	  },
      Caveat => {
 	  "If a list contains elements of different types, the sorting still
 	  occurs, but might not be particularly intuitive."
