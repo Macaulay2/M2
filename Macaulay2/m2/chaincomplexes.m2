@@ -623,7 +623,10 @@ regularity ChainComplex := opts -> C -> regularity betti(C,opts)
 regularity Module := opts -> (M) -> (
      if not isHomogeneous M then error "regularity: expected homogeneous module";
      regularity betti(resolution minimalPresentation M,opts))
-regularity Ideal := opts -> (I) -> 1 + regularity betti(resolution cokernel generators I,opts)
+regularity Ideal := opts -> (I) -> (
+     if I == 0 then -infinity
+     else if I == 1 then 0
+     else 1 + regularity betti(resolution cokernel generators I,opts))
 
 BettiTally = new Type of VirtualTally
 BettiTally.synonym = "Betti tally"
