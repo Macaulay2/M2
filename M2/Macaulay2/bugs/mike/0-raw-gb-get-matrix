@@ -1,0 +1,98 @@
+Mike:
+
+      1) make rawGBGetMatrix interruptable
+      2) determine whether it should be so much slower than gb in the example below
+      3) decide who should be caching the result so it's immediate the second time,
+         and let me know if it's to be done at top level
+
+
+    i1 : gbTrace = 3;errorDepth=0;
+
+    i3 : R=QQ[x,y,a,b,c,d,e,f,g,h,i,j,k,l,MonomialOrder=>Eliminate 2]
+
+       -- registering polynomial ring 4 at 0x8864630
+
+    o3 = R
+
+    o3 : PolynomialRing
+
+    i4 : p=a*x^2+b*x*y+c*y^2+d*x+e*y+f
+
+	  2             2
+    o4 = x a + x*y*b + y c + x*d + y*e + f
+
+    o4 : R
+
+    i5 : q=g*x^2+h*x*y+i*y^2+j*x+k*y+l
+
+	  2             2
+    o5 = x g + x*y*h + y i + x*j + y*k + l
+
+    o5 : R
+
+    i6 : M=matrix{{diff(x,p),diff(y,p)},{diff(x,q),diff(y,q)}}
+
+    o6 = | 2xa+yb+d xb+2yc+e |
+	 | 2xg+yh+j xh+2yi+k |
+
+		 2       2
+    o6 : Matrix R  <--- R
+
+    i7 : D=determinant M
+
+       -- .
+	     2                   2        2                   2
+    o7 = - 2x b*g - 4x*y*c*g + 2x a*h - 2y c*h + 4x*y*a*i + 2y b*i - 2x*e*g + x*d*h - y*e*h + 2y*d*i - x*b*j - 2y*c*j + 2x*a*k +
+	 ------------------------------------------------------------------------------------------------------------------------
+	 y*b*k - e*j + d*k
+
+    o7 : R
+
+    i8 : I=ideal(p,q,D)
+
+		 2             2                    2             2                       2                   2        2     
+    o8 = ideal (x a + x*y*b + y c + x*d + y*e + f, x g + x*y*h + y i + x*j + y*k + l, - 2x b*g - 4x*y*c*g + 2x a*h - 2y c*h +
+	 ------------------------------------------------------------------------------------------------------------------------
+		      2
+	 4x*y*a*i + 2y b*i - 2x*e*g + x*d*h - y*e*h + 2y*d*i - x*b*j - 2y*c*j + 2x*a*k + y*b*k - e*j + d*k)
+
+    o8 : Ideal of R
+
+    i9 : time G = gb I;
+
+       -- registering gb 1 at 0x8ac45f0
+
+       -- [gb]{3}(2)mm{4}(2)mm{5}(3)mmm{6}(6)mmmmoo{7}(10)mmmomooooo{8}(10)mmoomooooo
+       -- {9}(8)mooooooo{10}(3)moo{11}(3)moo{12}(4)mmoo{13}(7)mmooooo{14}(6)mooooo{15}(3)m
+       -- oo{16}(3)moo{17}(2)oo
+       -- number of (nonminimal) gb elements = 28
+       -- number of monomials                = 16241
+       -- ncalls = 63
+       -- nloop = 195
+       -- nsaved = 3
+       --      -- used 3.49 seconds
+
+    i10 : time S = gens G;
+	 -- used 18.06 seconds
+
+		  1       28
+    o10 : Matrix R  <--- R
+
+    i11 : time S = gens G;
+	 -- used 15.94 seconds
+
+		  1       28
+    o11 : Matrix R  <--- R
+
+    i12 : time S = gens G;
+      C-c C-c../../local.Linux/share/Macaulay2/Core/option.m2:8:8:(0):[4]: error: interrupted
+    ../../local.Linux/share/Macaulay2/Core/option.m2:8:8:(0):[4]: --entering debugger (type help to see debugger commands)
+    ../../local.Linux/share/Macaulay2/Core/option.m2:8:8-10:34: --source code:
+	   uncurry(f, override (opts,args))
+	   )
+      )
+
+    ii13 : 
+    ../../local.Linux/share/Macaulay2/Core/gb.m2:250:59:(0):[3]: --entering debugger (type help to see debugger commands)
+    ../../local.Linux/share/Macaulay2/Core/gb.m2:250:59-250:103: --source code:
+    generators      GroebnerBasis := Matrix => opts -> (G) -> map(target unbag G.matrix,,rawGBGetMatrix G.RawComputation)
