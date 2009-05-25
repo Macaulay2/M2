@@ -1720,28 +1720,42 @@ typedef struct
   double im;  
 } complex;
 
-inline void init_complex(complex* c, double r, double i) 
+/* inline void init_complex(complex* c, double r, double i) __attribute__((always_inline));
+void init_complex(complex* c, double r, double i)
 { c->re = r; c->im = i; }
+*/
+#define init_complex(c,r,i) { c->re = r; c->im = i; }
 
 /* register */ 
 static double r_re, r_im; 
 
-inline set_r(complex c)
+/* inline set_r(complex c) __attribute__((always_inline));
+inline set_r(complex c) 
 { r_re = c.re; r_im = c.im; }
+*/
+#define set_r(c) { r_re = c.re; r_im = c.im; }
 
-inline copy_r_to(complex* c)
+/* inline copy_r_to(complex* c) __attribute__((always_inline));
+inline copy_r_to(complex* c) 
 { c->re = r_re; c->im = r_im; }
+*/
+#define copy_r_to(c) { c->re = r_re; c->im = r_im; }
 
+/* inline add(complex c) __attribute__((always_inline));
 inline add(complex c)
 { r_re += c.re; r_im += c.im; }
+*/
+#define add(c) { r_re += c.re; r_im += c.im; }
 
+/* inline mul(complex c) __attribute__((always_inline));
 inline mul(complex c)
 { 
   double t_re = r_re*c.re - r_im*c.im;
   r_im = r_re*c.im + r_im*c.re;
   r_re = t_re;
-}   
-
+}
+*/
+#define mul(c) { double t_re = r_re*c.re - r_im*c.im; r_im = r_re*c.im + r_im*c.re; r_re = t_re; }   
 
 /// << endl;
      -- if o.System === MacOsX then f << ///#define EXPORT __attribute__((visibility("default")))/// <<endl;
@@ -1897,8 +1911,14 @@ preSLPcompiledSLP (ZZ,Sequence) := o -> (nIns,S) -> (
      (if o.Language === LanguageCPP then preSLPtoCPP else preSLPtoC) (S, cppName, System=>o.System);
      compileCommand := if o.System === Linux then "gcc -shared -Wl,-soname," | libName | " -o " | libName | " " | cppName | " -lc -fPIC"
      else if o.System === MacOsX and version#"pointer size" === 8 then "g++ -m64 -dynamiclib -O2 -o " | libName | " " | cppName
-     else if o.System === MacOsX then 
-     "gcc -dynamiclib -O0 -finline-functions -funswitch-loops -fgcse-after-reload -o " | libName | " " | cppName
+     else if o.System === MacOsX then (
+	  ///
+     -fauto-inc-dec
+     -fcprop-registers
+     -finline-small-functions
+     	  ///;
+     	  "gcc -dynamiclib -O1 -o " | libName | " " | cppName
+	  )
      else error "unknown OS";
      print compileCommand;
      run compileCommand;      

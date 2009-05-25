@@ -1888,6 +1888,7 @@ enum gbTraceValues
 				    M2_RRR epsilon, int max_corr_steps,
 				    int pred_type);  
 
+  const PathTracker_OrNull *rawPathTracker(Matrix *);
   M2_string rawPathTrackerToString(const PathTracker *); /* connected */
   unsigned long rawPathTrackerHash(const PathTracker *); /* connected */
 
