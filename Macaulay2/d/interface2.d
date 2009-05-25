@@ -111,3 +111,13 @@ export rawTrackPaths(e:Expr):Expr := (
      );
 setupfun("rawTrackPaths",rawTrackPaths);
 
+export rawPathTracker(e:Expr):Expr := (
+     when e is HH:RawMatrix do (
+		toExpr(Ccode(RawPathTrackerOrNull,
+		    "(engine_RawPathTrackerOrNull)rawPathTracker(",
+		    "(Matrix *)", HH, 
+		    ")"
+		    )))
+     else WrongArgMatrix()
+     );
+setupfun("rawPathTracker",rawPathTracker);

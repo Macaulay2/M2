@@ -800,6 +800,13 @@ unsigned long rawStraightLineProgramHash(const StraightLineProgram *slp) {
   return slp->get_hash_value();
 }
 
+/// PathTracker /////////////////////////////////////////////////////
+
+const PathTracker_OrNull *rawPathTracker(Matrix *HH)
+{
+  return PathTracker::make(HH);
+}
+
 M2_string rawPathTrackerToString(const PathTracker *p) {
   buffer o;
   p->text_out(o);

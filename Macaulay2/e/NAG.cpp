@@ -441,7 +441,7 @@ bool solve_via_lapack_without_transposition(
   int info;
 
   int *permutation = newarray_atomic(int, size);
-  int i,j;
+  // int i,j;
   double *copyA = (double*) A; 
   copy_complex_array(size,b,x);
   double *copyb = (double*) x; // result is stored in copyb
@@ -491,7 +491,7 @@ void StraightLineProgram::predictor()
   int predictor_type = program->array[5];
   StraightLineProgram* Hx = catalog[program->array[6]];
   StraightLineProgram* Ht = catalog[program->array[7]];
-  StraightLineProgram* H = catalog[program->array[8]];
+  //StraightLineProgram* H = catalog[program->array[8]];
 
   complex* RHS = newarray_atomic(complex, n);
   complex* LHS = newarray_atomic(complex, n*n);
@@ -618,6 +618,17 @@ PathTracker::~PathTracker()
 // a function that creates a PathTracker object, builds the homotopy, slps for predictor and corrector given a target system
 // input: a (1-row) matrix of polynomials 
 // out: the number of PathTracker
+PathTracker_OrNull* PathTracker::make(Matrix *HH) 
+{
+  if (HH->n_rows()!=1) { 
+    ERROR("1-row matrix expected");
+    return NULL;
+  };
+  PathTracker *p = new PathTracker;
+  p->H = HH;
+  return p;
+}
+
 int PathTracker::makeFromHomotopy(Matrix *HH) 
 {
   if (num_path_trackers>MAX_NUM_PATH_TRACKERS) {
@@ -632,6 +643,8 @@ int PathTracker::makeFromHomotopy(Matrix *HH)
   };
   return p->number;
 }
+  
+
 
 // this is an engine function
 const MatrixOrNull * rawTrackPaths(StraightLineProgram* slp_pred, StraightLineProgram* slp_corr, const Matrix* start_sols, 
@@ -884,7 +897,8 @@ MatrixOrNull* PathTracker::getAllSolutions() { return solutions; }
 
 void PathTracker::text_out(buffer& o) const
 {
-  o << "I am a path tracker!" << newline;   
+  o << "H:" << newline;
+  H->text_out(o);
 }
  
 // Local Variables:

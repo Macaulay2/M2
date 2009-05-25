@@ -207,6 +207,8 @@ class StraightLineProgram : public object
   int n_calls; // number of times called   
 
   StraightLineProgram();
+  //static StraightLineProgram_OrNull *make(const RingElement*);
+
   void predictor(); // evaluates a predictor
   void corrector(); // evaluates a corrector
 public:
@@ -245,6 +247,7 @@ public:
 
   PathTracker();
 public:
+  static PathTracker_OrNull *make(Matrix*); // from homotopy
   virtual ~PathTracker();
 
   void text_out(buffer& o) const;
