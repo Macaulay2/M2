@@ -1,0 +1,2 @@
+Document the way m2 detects whether the shared files are in a separate place.  Indicate that in the error message
+if they aren't found.
