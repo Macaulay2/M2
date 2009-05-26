@@ -1,0 +1,57 @@
+Date: Tue, 26 May 2009 04:23:29 -0700 (PDT)
+Subject: [Macaulay2] Bug report for independentSets
+From: Bjarke Hammersholt Roune <bjarke.roune@gmail.com>
+To: Macaulay2 <macaulay2@googlegroups.com>
+Reply-To: macaulay2@googlegroups.com
+
+
+I found an issue where independentSets will give incorrect output on
+monomial ideals. The bug seems to happen at random - sometimes it
+happens quickly, while other times you have to call independentSets
+many times on the same ideal before it happens. Here is an example
+where the ideal I is from the attached file. Note what happens at
+input line 51 in the listing below, where the output is suddenly
+different.
+
+i48 : time #independentSets I
+    -- used 0.015 seconds
+o48 = 3
+i49 : time #independentSets I
+    -- used 0.016 seconds
+o49 = 3
+i50 : time #independentSets I
+    -- used 0.015 seconds
+o50 = 3
+i51 : time #independentSets I
+    -- used 8.173 seconds
+o51 = 49822
+i52 : time #independentSets I
+    -- used 0. seconds
+o52 = 3
+i53 : time #independentSets I
+    -- used 0.015 seconds
+o53 = 3
+i54 : time #independentSets I
+    -- used 0.016 seconds
+o54 = 3
+
+A different issue is that the name is confusing, in that one might as
+well expect to get the inclusion-maximal independent sets as to get
+the size-maximal independent sets. Perhaps the title in the
+documentation at
+
+ http://www.math.uiuc.edu/Macaulay2/doc/Macaulay2-1.2/share/doc/Macaulay2/Macaulay2Doc/html/_independent__Sets.html
+
+could be changed from
+
+ "independentSets -- some maximal independent subsets of variables
+modulo an ideal"
+
+to something like
+
+ "independentSets -- the size-maximal independent subsets of variables
+modulo an ideal"
+
+
+I'm curious what algorithm independentSets uses for monomial ideals -
+does anyone on here know? Simple backtracking?
