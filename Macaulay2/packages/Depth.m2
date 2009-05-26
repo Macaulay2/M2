@@ -377,8 +377,8 @@ document {
      A = ZZ/101[x_(1,1)..x_(n,n),y_(1,1)..y_(n,n)];
      X = transpose genericMatrix(A,n,n);
      Y = transpose genericMatrix(A,y_(1,1),n,n);
-     bracket = ideal flatten (X*Y - Y*X);
-     B = A/bracket;
+     b = ideal(X*Y - Y*X);
+     B = A/b;
      regularSequence(B,Attempts=>1,Maximal=>false)
      ///,
      PARA {
