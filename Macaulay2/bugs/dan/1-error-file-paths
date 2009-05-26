@@ -1,0 +1,2 @@
+for some users it's better to give the absolute path of a file in an error
+message, because the notion of current directory is not prominent for them
