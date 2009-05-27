@@ -5,7 +5,7 @@
 
 newPackage(
      "Depth",
-     Version => "0.5", 
+     Version => "0.5.1", 
      Date => "May 2009",
      Authors => {
 	  {Name => "Bart Snapp", Email => "snapp@coastal.edu", HomePage => "http://ww2.coastal.edu/snapp/"}
@@ -93,9 +93,8 @@ regularSequenceCheck(List, Module) := ZZ => (X,M) -> (
 -----------------------------------------------------------------------------
 
 TEST /// 
-clearAll
 A = ZZ/101[x_1..x_4]
-regularSequenceCheck({x_1..x_4},A^1)
+assert(regularSequenceCheck({x_1..x_4},A^1)==4)
 ///
 
 -----------------------------------------------------------------------------
@@ -156,6 +155,18 @@ isRegularSequence(Sequence, Ring) := Boolean => (X,A) -> isRegularSequence(toLis
 -----------------------------------------------------------------------------
 
 isRegularSequence(Matrix, Ring) := Boolean => (X,A) -> isRegularSequence(X,A^1)
+
+-----------------------------------------------------------------------------
+
+isRegularSequence(List) := Boolean => X -> isRegularSequence(X,ring(X_0))
+
+-----------------------------------------------------------------------------
+
+isRegularSequence(Sequence) := Boolean => X -> isRegularSequence(toList X, ring(X_0))
+
+-----------------------------------------------------------------------------
+
+isRegularSequence(Matrix) := Boolean => X -> isRegularSequence(X,ring X)
 
 --=========================================================================--
 
@@ -299,9 +310,12 @@ document {
 	  (isRegularSequence,List,Module),
 	  (isRegularSequence,Sequence,Module),
   	  (isRegularSequence,Sequence,Ring),
-  	  (isRegularSequence,Matrix,Ring)},
+  	  (isRegularSequence,Matrix,Ring),
+       	  (isRegularSequence,Matrix),
+       	  (isRegularSequence,List),
+       	  (isRegularSequence,Sequence)},
      Headline => "whether a list is regular over a ring or module",
-     Usage => "isRegularSequence(X,A)",
+     Usage => "isRegularSequence(X,A) or isRegularSequence(X) ",
      Inputs => {
 	  "X" => {"a ", TO "List", " or ", TO "Matrix"},
 	  "A" => {"a ", TO "Ring", " or ", TO "Module"}
@@ -318,11 +332,11 @@ document {
         EXAMPLE lines ///
 	A = ZZ/2[x, y, z];
 	X1 = {x, y*(x-1), z*(x-1)};
-	isRegularSequence(X1, A)
+	isRegularSequence X1
 	X2 = {z*(x-1), y*(x-1), x};
-	isRegularSequence(X2, A)
-	X3 = {1, x, y};
-	isRegularSequence(X3, A)
+	isRegularSequence X2
+	X3 = {1_A, x, y};
+	isRegularSequence X3
 	///,
       	PARA {
      	     "This symbol is provided by the package ", TO Depth, "."
