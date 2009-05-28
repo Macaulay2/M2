@@ -138,7 +138,7 @@ isRegularSequence(List, Module) := Boolean => (X,M) -> (
 
 -----------------------------------------------------------------------------
 
-isRegularSequence(Sequence, Module) := Boolean => (X,M) -> isRegularSequence(toList X,M)
+--isRegularSequence(Sequence, Module) := Boolean => (X,M) -> isRegularSequence(toList X,M)
 
 -----------------------------------------------------------------------------
 
@@ -150,7 +150,7 @@ isRegularSequence(List, Ring) := Boolean => (X,A) -> isRegularSequence(X,A^1)
 
 -----------------------------------------------------------------------------
 
-isRegularSequence(Sequence, Ring) := Boolean => (X,A) -> isRegularSequence(toList X,A^1)
+--isRegularSequence(Sequence, Ring) := Boolean => (X,A) -> isRegularSequence(toList X,A^1)
 
 -----------------------------------------------------------------------------
 
@@ -159,10 +159,6 @@ isRegularSequence(Matrix, Ring) := Boolean => (X,A) -> isRegularSequence(X,A^1)
 -----------------------------------------------------------------------------
 
 isRegularSequence(List) := Boolean => X -> isRegularSequence(X,ring(X_0))
-
------------------------------------------------------------------------------
-
-isRegularSequence(Sequence) := Boolean => X -> isRegularSequence(toList X, ring(X_0))
 
 -----------------------------------------------------------------------------
 
@@ -308,12 +304,9 @@ document {
 	  (isRegularSequence,List,Ring),
   	  (isRegularSequence,Matrix,Module),
 	  (isRegularSequence,List,Module),
-	  (isRegularSequence,Sequence,Module),
-  	  (isRegularSequence,Sequence,Ring),
-  	  (isRegularSequence,Matrix,Ring),
+	  (isRegularSequence,Matrix,Ring),
        	  (isRegularSequence,Matrix),
-       	  (isRegularSequence,List),
-       	  (isRegularSequence,Sequence)},
+       	  (isRegularSequence,List)},
      Headline => "whether a list is regular over a ring or module",
      Usage => "isRegularSequence(X,A) or isRegularSequence(X) ",
      Inputs => {
