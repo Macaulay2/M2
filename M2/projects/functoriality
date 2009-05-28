@@ -1,0 +1,34 @@
+Title: functoriality / change of rings
+Description: Proposed new functions:
+
+    Tor_i(f:M -> N, M, N, P) - returns the map Tor_i(M,P) -> Tor_i(N,P)
+
+    Tor_connecting_i(injective/surjective f:M -> N, P) - returns the map
+	    Tor_i(coker f / N, P) -> Tor_(i-1)(M / ker f, P)
+
+    Tor_i^R(R_M, S_N, ring map f:R -> S) - returns the R-module Tor_i(M,N)
+				       - (R_M denotes that M is an R-module)
+
+    Tor_i^S(R_M, S_N, ring map f:R -> S) - returns the S-module Tor_i(M,N)
+				       - (R_M denotes that M is an R-module)
+
+    Tor_i^R(S_M, S_N, ring map f:R -> S) - returns the R-module Tor_i(M,N)
+
+    Tor_i^S(S_M, S_N, ring map f:R -> S) - returns the S-module Tor_i(M,N)
+
+         same for other slot, Ext, etc.
+
+	 do something for the long exact sequence
+
+=============================================================================
+
+Proposed by: Jason McCullough <jason.g.mccullough@gmail.com>
+Potential Advisor: Dan Grayson
+Project assigned to: Jason McCullough <jason.g.mccullough@gmail.com>
+Current status:
+
+=============================================================================
+
+Progress log:
+
+
