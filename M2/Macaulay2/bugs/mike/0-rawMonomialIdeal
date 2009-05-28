@@ -1,0 +1,10 @@
+Mike, this answer appears wrong, because of the appearance of the extra constant:
+
+i43 : R = (QQ[w]/(w^4+w^3+w^2+w+1))[x,y];
+
+i44 : newMonomialIdeal(R,rawMonomialIdeal(raw matrix {{x}}, 0))
+
+                           3    2
+o44 = monomialIdeal (x, - w  - w  - w - 1)
+
+o44 : MonomialIdeal of R
