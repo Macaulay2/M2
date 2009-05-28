@@ -1,0 +1,14 @@
+> Date: Wed, 27 May 2009 13:28:55 -0400
+> Subject: Sequences and ambient in M2
+> From: Bart Snapp <bart.snapp@gmail.com>
+  ...
+> Also - I was running into difficulty with the command ambient
+> 
+> ambient ZZ  -- would it cause a problem if this just returned ZZ?
+
+A little problem: If we make "ambient R" return R when R is not a quotient
+ring, then I think it might break some code internally, which, from a ring like
+R/I/J/K will return R, and operates by applying "ambient" until an error
+occurs.  Still, that internal code is stupid, and your suggestion sounds like a
+good one ...
+
