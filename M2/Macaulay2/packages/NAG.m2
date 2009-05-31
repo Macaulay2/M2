@@ -1838,11 +1838,13 @@ sub(g, params) - (map(K,result))_(0,0)
 -- SLP = (constants, array of ints)
 -- constants = one-row matrix
 -- array of ints = 
---0   #constants
---1   #inputs 
---2   #rows in output
---3   #columns in output
---4   #type of program (slpCOMPILED,slpINTERPRETED,slpPREDICTOR)
+--0  #constants
+--1  #inputs 
+--2  #rows in output
+--3  #columns in output
+--4  type of program (slpCOMPILED,slpINTERPRETED,slpPREDICTOR) 
+--   OR the beginning of slp operations list
+--
 --   if COMPILED then {
 --5     integer -> used to create the dynamic library filename
 --   }

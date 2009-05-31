@@ -183,22 +183,36 @@ void multiply_complex_array_scalar(int n, complex* a, const complex b);
 #define slpMULTIsum 2
 #define slpPRODUCT 3
 
+#define ZERO_CONST -1
+#define ONE_CONST -2
+
 // types of predictors
 #define RUNGE_KUTTA 1
 #define TANGENT 2
 #define EULER 3
 
 #define MAX_NUM_SLPs 100
+#define CONST_OFFSET 0x1000
+#define SLP_HEADER_LEN 4
+
 #define MAX_NUM_PATH_TRACKERS 10
 
+/* Conventions in relative_position SLPs:
+   nodes are refered via negative integers;
+   i-th input --> i;
+   i-th constant --> i + CONST_OFFSET. */
 class StraightLineProgram : public object
 {
+  friend class PathTracker;
+
   static StraightLineProgram* catalog[MAX_NUM_SLPs];
   static int num_slps;
 
+  bool is_relative_position; // can use relative or absolute addressing
   M2_arrayint program;
   complex* nodes; // array of CCs
-  int num_consts, num_inputs, rows_out, cols_out;
+  intarray node_index; // points to position in program (rel. to start) of operation correspoding to a node
+  int num_consts, num_inputs, num_operations, rows_out, cols_out;
 
   void *handle; //dynamic library handle
   void (*compiled_fn)(complex*,complex*);
@@ -207,10 +221,26 @@ class StraightLineProgram : public object
   int n_calls; // number of times called   
 
   StraightLineProgram();
-  //static StraightLineProgram_OrNull *make(const RingElement*);
+
+  static StraightLineProgram_OrNull *make(const PolyRing*, ring_elem);
+  int poly_to_horner_slp(int n, intarray& prog, array<complex>& consts, Nterm *&f); // used by make
+
+  StraightLineProgram_OrNull *concatenate(const StraightLineProgram* slp);
+
+  StraightLineProgram_OrNull *jacobian(bool replace_last_row); 
+  int diffNodeInput(int n, int v, intarray& prog); // used by jacobian
+  int diffPartReference(int n, int ref, int v, intarray& prog); // used by diffNodeInput
 
   void predictor(); // evaluates a predictor
   void corrector(); // evaluates a corrector
+
+  void relative_to_absolute(int& aa, int cur_node) // used by convert_to_absolute_position     
+  { 
+    if (aa<0) aa = cur_node + aa;
+    else if (aa<CONST_OFFSET) aa = num_consts+aa; // an input
+    else aa -= CONST_OFFSET; // a constant
+  }
+  void convert_to_absolute_position();
 public:
   static StraightLineProgram_OrNull *make(Matrix *consts, M2_arrayint program);
   virtual ~StraightLineProgram();
@@ -230,7 +260,7 @@ class PathTracker : public object
 public:
   Matrix *target;
   Matrix *H; // homotopy
-  StraightLineProgram *slpHxt, *slpHxtH, *slpHxH; // slps for evaluating H_{x,t}, H_{x,t}|H, H_{x}|H 
+  StraightLineProgram *slpH, *slpHxt, *slpHxtH, *slpHxH; // slps for evaluating H, H_{x,t}, H_{x,t}|H, H_{x}|H 
   
   Matrix *solutions;
 
