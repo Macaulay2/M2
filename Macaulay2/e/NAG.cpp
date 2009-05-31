@@ -41,6 +41,7 @@ StraightLineProgram_OrNull *StraightLineProgram::make(Matrix *m_consts, M2_array
   } else {
     res = new StraightLineProgram;
     catalog[num_slps++] = res;
+    res->is_relative_position = false;
     res->num_consts = program->array[0];
     if (m_consts->n_cols() != res->num_consts) 
       ERROR("different number of constants expected");
@@ -75,6 +76,396 @@ StraightLineProgram_OrNull *StraightLineProgram::make(Matrix *m_consts, M2_array
   return res;
 }
 
+Nterm * extract_divisible_by_x(Nterm *&ff, int i) // auxiliary
+{
+  /* Extracts into fx the terms divisible by the (n-1-i)-th variable "x"
+     and divides them by x. (exponent vectors are assumed to be reversed)
+     Note: terms in fx may not be in monomial order. */
+  Nterm *fx = NULL;
+  Nterm *f = ff;
+  Nterm *prev_f = NULL; 
+  while (f != NULL) {
+    if (f->monom[i] == 0) {
+	  prev_f = f;
+	  f = f->next;
+    } else {
+      f->monom[i]--; // divide by x
+      if (prev_f != NULL) {
+	prev_f->next = f->next; // extract
+      } else {
+	ff = f->next; // ... or cut
+      }
+      f->next = fx; // prepend to fx
+      fx = f;
+      f = (prev_f==NULL)?ff:prev_f->next; 
+    }
+  }
+  return fx;
+}
+
+int add_constant_get_position(array<complex>& consts, complex c) //auxiliary
+{
+  //!!! smarter implementation coming !!!
+  consts.append(c);
+  return consts.length()-1;
+}
+
+/* create the part of slp computing f, return the position of the final operation */
+int StraightLineProgram::poly_to_horner_slp(int n, intarray& prog, array<complex>& consts, Nterm *&f) // auxiliary
+{
+  int part_pos[n]; // absolute positions of the parts
+  for (int i=0; i<n; i++) {
+    Nterm* fx = extract_divisible_by_x(f,i);
+    if (fx==NULL) 
+      part_pos[i] = -1;
+    else {  
+      int p = poly_to_horner_slp(n,prog,consts,fx);
+      part_pos[i] = num_operations++;
+      node_index.append(prog.length());
+      prog.append(slpPRODUCT);
+      prog.append(n-1-i); // reference to (n-1-i)-th input (recall: the order of vars is reversed in monomials)
+      prog.append(p - part_pos[i]); // relative position of p  
+    }
+  }
+  int c = 0; // count nonzeros
+  if (f!=NULL) 
+    c++;
+  for (int i=0; i<n; i++) 
+    if (part_pos[i] != -1) 
+      c++;
+  int cur_p = num_operations++; 
+  node_index.append(prog.length());
+  prog.append(slpMULTIsum);
+  prog.append(c); // can be smarter here for c=0,1,2
+  if (f!=NULL) 
+    prog.append(CONST_OFFSET + add_constant_get_position(consts,complex(BIGCC_VAL(f->coeff))));
+  for (int i=0; i<n; i++) 
+    if (part_pos[i] != -1) 
+      prog.append(part_pos[i] - cur_p); // relative position of the i-th part
+  return cur_p;
+}
+
+void monomials_to_conventional_exponent_vectors(int n, Nterm *f) //auxiliary
+/* "unpack" monomials */ 
+{
+  for (; f!=NULL; f=f->next)
+    for (int i=0; i<n-1; i++)
+      f->monom[i] -= f->monom[i+1];
+}
+
+
+StraightLineProgram_OrNull *StraightLineProgram::make(const PolyRing *R, ring_elem e)
+{
+  // todo: move some of these lines to rawSLP
+  StraightLineProgram* res;
+  if (num_slps>MAX_NUM_SLPs) {
+    ERROR("max number of slps exceeded");
+    res = NULL;
+  } else {
+    res = new StraightLineProgram;
+    res->is_relative_position = true;
+    int n = res->num_inputs = R->n_vars();
+    res->num_operations = 0;
+    res->rows_out = 1;
+    res->cols_out = 1;
+    intarray prog;
+    array<complex> consts;
+ 
+    // make prog and node
+    e = R->copy(e); /* a copy of "e" will be decomposed; 
+		       how to remove the pieces afterwards? 
+		       R->remove(...) is an empty function */
+    Nterm* f = e.get_poly();
+    monomials_to_conventional_exponent_vectors(n,f);
+    int out = res->poly_to_horner_slp(n, prog, consts, f);
+
+    // make program
+    res->program = makearrayint(prog.length() + 2/* accounts for lines +2,+3 */ + SLP_HEADER_LEN);
+    res->program->array[0] = res->num_consts = consts.length();
+    prog.append(slpEND);
+    prog.append(out+res->num_consts+res->num_inputs); // position of the output
+
+    res->program->array[1] = res->num_inputs;
+    res->program->array[2] = res->rows_out;
+    res->program->array[3] = res->cols_out;
+    memcpy(res->program->array+SLP_HEADER_LEN, prog.raw(), sizeof(int)*prog.length());
+    
+    // make nodes: [constants, inputs, operations]
+    res->nodes = newarray_atomic(complex, res->num_consts+res->num_inputs+res->num_operations);
+    for(int i=0; i<res->num_consts; i++)
+      res->nodes[i] = consts[i];
+  }
+  return res;
+}
+
+StraightLineProgram_OrNull *StraightLineProgram::concatenate(const StraightLineProgram* slp)
+{
+  if (!is_relative_position || !slp->is_relative_position  
+      || num_inputs!=slp->num_inputs || rows_out!=slp->rows_out) 
+    {
+      ERROR("slps unstackable");
+      return NULL;
+    }
+  int num_outputs = rows_out*cols_out;
+  int *end_program = program->array+program->len - num_outputs;
+  int *slp_start_program = slp->program->array+SLP_HEADER_LEN;
+  int slp_num_outputs = slp->rows_out*slp->cols_out;
+
+  int slp_len = slp->program->len - SLP_HEADER_LEN - slp_num_outputs; 
+  // length of the part containing operations and slpEND
+  
+  StraightLineProgram* res = new StraightLineProgram;
+  res->is_relative_position = true;
+  res->num_inputs = num_inputs;
+  res->num_operations = num_operations + slp->num_operations;
+  res->rows_out = rows_out;
+  res->cols_out = cols_out + slp->cols_out;
+  
+  //  array<complex> consts; // !!! use to optimize constants
+  
+  // make program
+  res->program = makearrayint(program->len + slp_len - 1 + slp_num_outputs);
+  res->program->array[1] = res->num_inputs;
+  res->program->array[2] = res->rows_out;
+  res->program->array[3] = res->cols_out;
+  
+  int* res_start_program = res->program->array + SLP_HEADER_LEN; 
+  int* res_end_program = res->program->array + res->program->len - slp_num_outputs - num_outputs; 
+
+  // copy "this"
+  memcpy(res_start_program, program->array + SLP_HEADER_LEN, program->len*sizeof(int));
+  memcpy(res_end_program, end_program, num_outputs*sizeof(int));
+  for (int *a = res_end_program, i=0; i<num_outputs; i++, a++)  
+    *a += slp->num_consts;  //!!! assume: appending constants
+  res->node_index = node_index;
+
+  // copy "slp"
+  memcpy(res_end_program-slp_len, slp_start_program, slp_len*sizeof(int));    
+  for (int *a = res_end_program-slp_len, i=0; i<slp_len - 1/* for slpEND */; i++, a++)  
+    if (*a >= CONST_OFFSET) // if refers to a constant
+      *a += num_consts; //!!! assume: appending constants
+  memcpy(res_end_program+num_outputs, slp_start_program+slp_len, slp_num_outputs*sizeof(int));
+  for (int *a = res_end_program+num_outputs, i=0; i<slp_num_outputs; i++, a++)  
+    *a += num_consts+num_operations;  //!!! assume: appending constants
+  for (int i=0; i<slp->num_operations; i++)
+    // shift by the size of "operations" part of this->program
+    res->node_index.append(slp->node_index[i] +  program->len - SLP_HEADER_LEN - num_outputs - 1);
+
+  res->program->array[0] = res->num_consts = num_consts + slp->num_consts; //!!! assume: appending constants
+  
+  // make nodes: [constants, inputs, operations]
+  res->nodes = newarray_atomic(complex, res->num_consts+res->num_inputs+res->num_operations);
+  memcpy(res->nodes, nodes, num_consts*sizeof(complex)); //!!! assume: appending constants
+  memcpy(res->nodes+num_consts, slp->nodes, slp->num_consts*sizeof(complex)); //!!! assume: appending constants
+  return res;
+}
+
+/* ref = reference to a node rel. n */
+int StraightLineProgram::diffPartReference(int n, int ref, int v, intarray& prog)
+{
+  if (ref<0) 
+    return diffNodeInput(n+ref, v, prog);
+  else if (ref<CONST_OFFSET) { // an input                                                                                                                              
+    if (ref == v) return ONE_CONST; 
+    else return ZERO_CONST;
+  }
+  else return ZERO_CONST; // a constant
+}
+
+int StraightLineProgram::diffNodeInput(int n, int v, intarray& prog) // used by jacobian
+{
+  int i = node_index[n];
+  switch (prog[i]) {
+    /* case slpCOPY:
+       break;*/
+  case slpMULTIsum: 
+    {	
+      int n_summands = prog[(++i)++];
+      int part_pos[n_summands];
+      int c = 0; // count nonzeroes
+      int last_non_zero;
+      for(int j=0; j<n_summands; j++) {
+	part_pos[j] = diffPartReference(n,prog[i++], v, prog);
+	if (part_pos[j] != ZERO_CONST) {
+	  c++;
+	  last_non_zero = part_pos[j];
+	}
+      }
+      if (c == 0) 
+	return ZERO_CONST;
+      if (c == 1) 
+	return last_non_zero;
+      int cur_p = num_operations++;
+      node_index.append(prog.length());
+      prog.append(slpMULTIsum);
+      prog.append(c);
+      for(int j=0; j<n_summands; j++) {
+	if (part_pos[j] != ZERO_CONST)
+	  prog.append(part_pos[j] - cur_p); // relative position of the j-th part   
+      }
+      return cur_p;
+    }
+  case slpPRODUCT: 
+    {
+      int a = prog[(++i)++];
+      int b = prog[i++];
+      int da = diffPartReference(n, a, v, prog);
+      int db = diffPartReference(n, b, v, prog);
+      if (db == ZERO_CONST) {
+	if (da == ZERO_CONST) return ZERO_CONST;
+	if (da == ONE_CONST) {
+	  if (b < 0) // if refers to operation node
+	    return n+b; 
+	  else if (b >= CONST_OFFSET) { // ... constant
+	    int cur_p = num_operations++;
+	    node_index.append(prog.length());
+	    prog.append(slpCOPY); // is there better way?
+	    prog.append(b);
+	    return cur_p;
+	  } else { // ... input
+	    ERROR("input node not expected");
+	    return ZERO_CONST;
+	  };
+      	} else {
+	  int cur_p = num_operations++;
+	  node_index.append(prog.length());
+	  prog.append(slpPRODUCT);
+	  prog.append(da - cur_p);
+	  if (b < 0) // if refers to an operation node
+	    b = n + b - cur_p; // recalculate wrt cur_p
+	  prog.append(b);
+	  return cur_p;
+	}
+      } else if (da == ZERO_CONST) { // ... and db != 0
+	if (db == ONE_CONST) {
+	  if (a < 0) // if refers to an operation node
+	    return n+a; 
+	  else if (a >= CONST_OFFSET) { // ... constant
+	    int cur_p = num_operations++;
+	    node_index.append(prog.length());
+	    prog.append(slpCOPY); // is there a better way ?
+	    if (a < 0) // if refers to an operation node
+	      a = n + a - cur_p; // recalculate wrt cur_p
+	    prog.append(a);
+	    return cur_p;
+	  } else { // ... input
+	    ERROR("input node not expected");
+	    return ZERO_CONST;
+	  };
+	} else { // db!=0 and db!=1
+	  int cur_p = num_operations++;
+	  node_index.append(prog.length());
+	  prog.append(slpPRODUCT);
+	  prog.append(db - cur_p);
+	    if (a < 0) // if refers to an operation node
+	      a = n + a - cur_p; // recalculate wrt cur_p
+	  prog.append(a);
+	  return cur_p;
+	}
+      } else { // da |=0 and db !=0
+	int part1;
+	int is_part1_created = (da != ONE_CONST);
+	if (is_part1_created) {
+	  int cur_p = num_operations++;
+	  node_index.append(prog.length());
+	  prog.append(slpPRODUCT);
+	  prog.append(da - cur_p);
+	  if (b < 0) // if refers to an operation node
+	    b = n + b - cur_p; // recalculate wrt cur_p
+	  prog.append(b);
+	  part1 = cur_p;
+	}
+	int part2;
+	int is_part2_created = (db != ONE_CONST);
+	if (is_part2_created) {
+	  int cur_p = num_operations++;
+	  node_index.append(prog.length());
+	  prog.append(slpPRODUCT);
+	  prog.append(db - cur_p);
+	  if (a < 0) // if refers to an operation node
+	    a = n + a - cur_p; // recalculate wrt cur_p
+	  prog.append(a);
+	  part2 = cur_p;
+	}
+	int cur_p = num_operations++;
+	node_index.append(prog.length());
+	prog.append(slpMULTIsum);
+	prog.append(2);
+	if (is_part1_created) 
+	  prog.append(part1 - cur_p);
+	else prog.append((b<0)? b + n - cur_p : b);
+	if (is_part2_created) 
+	  prog.append(part2 - cur_p);
+	else prog.append((a<0)? a + n - cur_p : a);
+	return cur_p;
+      }
+    }
+  default:
+    ERROR("unknown SLP operation");
+    printf("i = %d, a[i] = %d\n", i, prog[i]);
+    return 0;
+  }
+}
+
+StraightLineProgram_OrNull *StraightLineProgram::jacobian(bool replace_last_row)
+  /* Produces a jacobian of the slp H: (i,j)-th output = dH_j/dx_i
+   If relplace_last_row == true then the last row (the derivatives wrt the last var)
+   is replaced with H itself. */ 
+{
+ 
+  if (rows_out!=1) { 
+    ERROR("1-row slp expected");
+    return NULL;
+  };
+
+  int num_outputs = rows_out*cols_out;
+  int *end_program = program->array+program->len - num_outputs;
+  
+  StraightLineProgram* res = new StraightLineProgram;
+  res->is_relative_position = true;
+  res->num_inputs = num_inputs;
+  res->num_operations = num_operations;
+  res->rows_out = cols_out;
+  res->cols_out = num_inputs;
+  
+  //  array<complex> consts; // !!! use to optimize constants
+  intarray prog(program->len);
+  for (int i=SLP_HEADER_LEN; i < program->len-num_outputs - 1/*for slpEND*/; i++)
+    prog.append(program->array[i]);
+  res->node_index = node_index;
+ 
+ int out_pos[res->rows_out*res->cols_out]; // records absolute position of output entries
+  
+  for (int j=0; j<num_outputs; j++)
+    for (int i=0; i<num_inputs - replace_last_row/*-1 if true*/; i++) 
+      out_pos[i*res->cols_out+j] = res->diffNodeInput(end_program[j]-num_consts-num_inputs/*position of j-th output in prog*/,
+						      i,prog); //uses res->num_operations
+  if (replace_last_row) 
+    for (int j=0; j<num_outputs; j++)
+      out_pos[(num_outputs-1)*res->cols_out+j] = end_program[j]-num_consts-num_inputs; /*this->output[j] position in prog*/
+
+  // make program
+  res->program = makearrayint(SLP_HEADER_LEN + prog.length() + 1 + res->rows_out*res->cols_out);
+  res->program->array[0] = res->num_consts = num_consts + 1; //!!! assume: appending ZERO
+  res->program->array[1] = res->num_inputs;
+  res->program->array[2] = res->rows_out;
+  res->program->array[3] = res->cols_out;
+  prog.append(slpEND);
+  for (int j=0; j<num_outputs; j++)
+    for (int i=0; i<num_inputs; i++) {
+      int t = out_pos[i*res->cols_out+j];
+      prog.append((t==ZERO_CONST)? num_consts/*ref to ZERO*/ : t+res->num_consts+num_inputs); // position of the output
+    }
+  memcpy(res->program->array+SLP_HEADER_LEN, prog.raw(), sizeof(int)*prog.length());
+
+  // make nodes: [constants, inputs, operations]
+  res->nodes = newarray_atomic(complex, res->num_consts+res->num_inputs+res->num_operations);
+  memcpy(res->nodes, nodes, num_consts*sizeof(complex)); // old constants
+  res->nodes[num_consts] = complex(0,0); // ... plus ZERO
+
+  return res;
+}
+
 void StraightLineProgram::evaluate(int n, const complex* values, complex* ret)
 {
   if (n != num_inputs) ERROR("wrong number of inputs");
@@ -106,7 +497,8 @@ void StraightLineProgram::evaluate(int n, const complex* values, complex* ret)
     compiled_fn(nodes+num_consts,out);
     break;
   default: // evaluation by interpretation 
-    i=4;
+    convert_to_absolute_position();
+    i = SLP_HEADER_LEN;
     for(; program->array[i] != slpEND; cur_node++) {
       switch (program->array[i]) {
       case slpCOPY: 
@@ -128,6 +520,7 @@ void StraightLineProgram::evaluate(int n, const complex* values, complex* ret)
 	break;
       default:
 	ERROR("unknown SLP operation");
+	return;
       }
     }
     out_entries_shift = i+1;
@@ -147,10 +540,8 @@ void StraightLineProgram::evaluate(int n, const complex* values, complex* ret)
     //interptretation
     complex* c = ret;
     for(i=0; i<rows_out; i++)
-      for(int j=0; j<cols_out; j++) { 
+      for(int j=0; j<cols_out; j++,c++)  
 	*c = nodes[program->array[i*cols_out+j+out_entries_shift]];
-	c++;
-      }
     //end: interpretation
   }
 }
@@ -187,7 +578,8 @@ Matrix *StraightLineProgram::evaluate(const Matrix *values)
     compiled_fn(nodes+num_consts,out);
     break;
   default: // evaluation by interpretation 
-    i=4;
+    convert_to_absolute_position();
+    i = SLP_HEADER_LEN;
     for(; program->array[i] != slpEND; cur_node++) {
       switch (program->array[i]) {
       case slpCOPY: 
@@ -209,6 +601,7 @@ Matrix *StraightLineProgram::evaluate(const Matrix *values)
 	break;
       default:
 	ERROR("unknown SLP operation");
+	return NULL;
       }
     }
     out_entries_shift = i+1;
@@ -255,15 +648,50 @@ Matrix *StraightLineProgram::evaluate(const Matrix *values)
   return mat.to_matrix(); 
 }
 
+
+void StraightLineProgram::convert_to_absolute_position()
+{
+  if (is_relative_position) 
+    is_relative_position = false;
+  else return;
+
+  int cur_node = num_consts + num_inputs;
+  int *a = program->array;
+  for(int i = SLP_HEADER_LEN; a[i] != slpEND; cur_node++) {
+    switch (a[i]) {
+    case slpCOPY:
+      relative_to_absolute(a[(++i)++], cur_node); 
+      break;
+    case slpMULTIsum: 
+      {	
+	int n_summands = a[(++i)++];
+	for(int j=0; j<n_summands; j++)
+	  relative_to_absolute(a[i++], cur_node);
+      }
+      break;
+    case slpPRODUCT:
+      relative_to_absolute(a[(++i)++], cur_node);
+      relative_to_absolute(a[i++],cur_node);
+      break;
+    default:
+      ERROR("unknown SLP operation");
+      printf("i = %d, a[i] = %d\n", i, a[i]);
+      return;
+    }
+  }
+}
+
 void StraightLineProgram::text_out(buffer& o) const
 {
-  if (program->array[4]==slpCOMPILED) {
-    o << "(SLP is precompiled) " << newline;
+  if (!is_relative_position) {
+    if (program->array[4]==slpCOMPILED) {
+      o << "(SLP is precompiled) " << newline;
+    }
+    if (program->array[4]!=slpPREDICTOR && program->array[4]!=slpCORRECTOR){
+      o << "Called " << n_calls << " times, total evaluation time = " << (eval_time / CLOCKS_PER_SEC) << "." << (eval_time%CLOCKS_PER_SEC) << " sec" << newline;
+    }
   }
-  if (program->array[4]!=slpPREDICTOR && program->array[4]!=slpCORRECTOR){
-    o << "Called " << n_calls << " times, total evaluation time = " << (eval_time / CLOCKS_PER_SEC) << "." << (eval_time%CLOCKS_PER_SEC) << " sec" << newline;
-    return;
-  }
+
   o<<"CONSTANT (count = "<< num_consts;
   o<<") nodes:\n";
   int cur_node = 0;
@@ -279,12 +707,14 @@ void StraightLineProgram::text_out(buffer& o) const
     o << cur_node << " ";
   o<<newline;   
 
-  switch (program->array[4]) {
+
+  switch (program->array[SLP_HEADER_LEN]) {
   case slpPREDICTOR:
     o << "Predictor: type "  << program->array[5] << newline;
     o << "SLPs: " << program->array[6] << "," << program->array[7] << "," << program->array[8] << newline;
+    break;
   default:
-    for(i=4; program->array[i] != slpEND; cur_node++) {
+    for(i = SLP_HEADER_LEN; program->array[i] != slpEND; cur_node++) {
       o<<cur_node<<" => ";
       switch (program->array[i]) {
       case slpCOPY: 
@@ -620,12 +1050,34 @@ PathTracker::~PathTracker()
 // out: the number of PathTracker
 PathTracker_OrNull* PathTracker::make(Matrix *HH) 
 {
+  /* 
   if (HH->n_rows()!=1) { 
     ERROR("1-row matrix expected");
     return NULL;
   };
+  */
+
+  const PolyRing* R = HH->get_ring()->cast_to_PolyRing();
+  if (R==NULL) {
+    ERROR("polynomial ring expected");
+    return NULL;
+  }
+
   PathTracker *p = new PathTracker;
   p->H = HH;
+  p->slpH = NULL;
+  for (int i=0; i<HH->n_cols(); i++) {
+    StraightLineProgram* slp = StraightLineProgram::make(R, HH->elem(0,i));
+    if (p->slpH == NULL) p->slpH = slp;
+    else {
+      StraightLineProgram* t = p->slpH->concatenate(slp);
+      delete slp;
+      delete p->slpH;
+      p->slpH = t;
+    }
+  }
+  p->slpHxH = p->slpH->jacobian(true);
+  p->slpHxt = p->slpH->jacobian(false);
   return p;
 }
 
@@ -897,8 +1349,26 @@ MatrixOrNull* PathTracker::getAllSolutions() { return solutions; }
 
 void PathTracker::text_out(buffer& o) const
 {
-  o << "H:" << newline;
-  H->text_out(o);
+  int n = slpHxH->num_inputs;
+  char buf[1000];
+  complex input[n], output[n*n];
+  for(int i=0; i<n; i++) {
+    Nterm* t = H->elem(1,i).get_poly();
+    input[i] = complex(BIGCC_VAL(t->coeff));
+  }
+
+  slpHxH->evaluate(n, input, output);
+  for(int i=0; i<n*n; i++) {
+    output[i].sprint(buf);
+    o << "HxH[" << i << "] = " << buf << newline;
+  }
+  slpHxt->evaluate(n, input, output);
+  for(int i=0; i<n*n; i++) {
+    output[i].sprint(buf);
+    o << "Hxt[" << i << "] = " << buf << newline;
+  }
+  //slpH->text_out(o);
+  //slpHxH->text_out(o);
 }
  
 // Local Variables:
