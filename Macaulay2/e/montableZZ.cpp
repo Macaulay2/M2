@@ -81,6 +81,71 @@ MonomialTableZZ::~MonomialTableZZ()
   // it all out.
 }
 
+#if 0
+// NEW FUNCTION, 5/21/09.  If not functional in a few days, remove it!
+int MonomialTableZZ::find_divisors(int max,
+				   mpz_t coeff,
+				   exponents exp, 
+				   int comp,
+				   VECTOR(int) *result_term_divisors,
+				   VECTOR(int) *result_mon_divisors) const,
+  /* max: the max number of divisors to find. 
+     exp: the monomial whose divisors we seek.
+     result: an array of mon_term's.
+     return value: length of this array, i.e. the number of matches found */
+{
+  assert(comp >= 1);
+  if (comp >= static_cast<int>(_head.size())) return 0;
+  mon_term *head = _head[comp];
+  mon_term *t;
+  int i;
+
+  int nmatches = 0;
+  unsigned long expmask = ~(monomial_mask(_nvars, exp));
+
+  for (t = head->_next; t != head; t = t->_next)
+    if ((expmask & t->_mask) == 0)
+      {
+	bool is_div = 1;
+	for (i=0; i<_nvars; i++)
+	  if (exp[i] < t->_lead[i])
+	    {
+	      is_div = 0;
+	      break;
+	    }
+	if (is_div)
+	  {
+	    if (mpz_divisible_p(coeff, t->_coeff))
+	      {
+		n_term_matches++;
+		if (result_term_divisors != 0) result_term_divisors->push_back(t->_val);
+	      }
+	      else if (result_mon_divisors != 0) result_mon_divisors->push_back(t->_val);
+					       
+	  }
+	if (is_div && mpz_divisible_p(coeff,t->_coeff))
+	  {
+	    nmatches++;
+	    if (result != 0) result->push_back(t);
+	    if (max >= 0 && nmatches >= max) break;
+	  }
+      }
+  if (gbTrace == 15 && nmatches >= 2)
+    {
+      char s[100000];
+      mpz_get_str(s,10,coeff);
+      fprintf(stderr, "find_term_divisors called with %s[",s);
+      for (int i=0; i<_nvars; i++) fprintf(stderr, "%d ",exp[i]);
+      fprintf(stderr, "]%d\n", comp);
+      fprintf(stderr, "  %d matches: \n",nmatches);
+      if (result != 0)
+	for (int i=0; i<result->size(); i++)
+	  show_mon_term(stderr, (*result)[i]);
+    }
+  return nmatches;
+}
+#endif
+
 int MonomialTableZZ::find_term_divisors(int max,
 					mpz_t coeff,
 					exponents exp, 
@@ -301,6 +366,9 @@ MonomialTableZZ::mon_term *MonomialTableZZ::find_exact_monomial(exponents exp,
   mon_term *t;
   int i;
 
+  mon_term *result = 0;
+  int neqs = 0;
+
   unsigned long expmask = monomial_mask(_nvars, exp);
 
   for (t = head->_next; t != head; t = t->_next)
@@ -315,10 +383,17 @@ MonomialTableZZ::mon_term *MonomialTableZZ::find_exact_monomial(exponents exp,
 		is_eq = 0;
 		break;
 	      }
-	  if (is_eq) return t;
+	  if (is_eq) {
+	    if (result == 0) result = t;
+	    neqs++;
+	  }
 	}
     }
-  return 0;
+  if (neqs > 1)
+    {
+      printf("number of exact matches: %d\n", neqs);
+    }
+  return result;
 }
 
 void MonomialTableZZ::change_coefficient(mon_term *t, mpz_ptr new_coeff)
