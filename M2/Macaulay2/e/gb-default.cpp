@@ -1424,6 +1424,142 @@ bool gbA::reduce(spair *p)
   return true;
 }
 
+bool gbA::reduce_ZZ(spair *p)
+// UNDER CONSTRUCTION: 5/19/09 MES
+{
+  /* Returns false iff we defer computing this spair. */
+  /* If false is returned, this routine has grabbed the spair 'p'. */
+  int tmf, wt;
+  int count = -1;
+  if (gbTrace == 15)
+    {
+      buffer o;
+      o << "considering ";
+      spair_text_out(o,p);
+      o << " : ";
+      emit_line(o.str());
+    }
+  compute_s_pair(p); /* Changes the type, possibly */
+
+  while (!R->gbvector_is_zero(p->f()))
+    {
+      if (count++ > max_reduction_count)
+      	{
+      	  spair_set_defer(p);
+      	  return false;
+      	}
+      if (gbTrace >= 5)
+	{
+	  if ((wt = weightInfo_->gbvector_weight(p->f(), tmf)) > this_degree)
+	    {
+	      buffer o;
+	      o << "ERROR: degree of polynomial is too high: deg " <<  wt 
+		<< " termwt " << tmf 
+		<< " expectedeg " << this_degree
+		<< newline;
+	      emit(o.str());
+	    }
+	}
+
+      int gap,w;
+      R->gbvector_get_lead_exponents(_F, p->f(), EXP_);
+      int x = p->f()->comp;
+      mpz_ptr c = p->f()->coeff.get_mpz();
+
+      w = find_good_term_divisor_ZZ(c,EXP_,x,this_degree,gap);
+      
+      // If w < 0, then no divisor was found.  Is there a GB element of
+      // the same degree as this one, and with the same exponent vector?
+      // If so, use gcdextended to find (g,u,v), 
+      if (w < 0 || gap > 0)
+	{
+	  MonomialTableZZ::mon_term *t = lookupZZ->find_exact_monomial(EXP_,
+								       x,
+								       first_in_degree);
+	  if (t != 0)
+	    {
+	      // f <-- u*p+v*f (same with syz versions), need to change lookupZZ too?
+	      // p <-- c*p-d*f
+	      gbelem *g = gb[t->_val];
+	      if (gbTrace >= 10)
+		{
+		  buffer o;
+		  o << "  swapping with GB element " << t->_val;
+		  emit_line(o.str());
+		}
+	      R->gbvector_replace_2by2_ZZ(_F, _Fsyz, p->f(), p->fsyz(), g->g.f, g->g.fsyz);
+	      // Before continuing, do remainder of g->g
+	      tail_remainder_ZZ(g->g, this_degree);
+	      lookupZZ->change_coefficient(t, g->g.f->coeff.get_mpz());
+	      
+	      // If the element p is a generator, then we must assume that now the
+	      // swapped g is a minimal generator.
+	      if (p->type == SPAIR_GEN)
+		g->minlevel = ELEM_POSSIBLE_MINGEN;
+	      else if (g->minlevel = ELEM_POSSIBLE_MINGEN)
+		p->type = SPAIR_GEN;
+	      
+	      auto_reduce_by(t->_val);
+	      if (gbTrace >= 10)
+		{
+		  buffer o;
+		  o << "  swap yielded";
+		  emit_line(o.str()); o.reset();
+		  o << "      ";
+		  R->gbvector_text_out(o, _F, p->f(), 3);
+		  emit_line(o.str()); o.reset();
+		  o << "      ";
+		  R->gbvector_text_out(o, _F, g->g.f, 3);
+		  emit_line(o.str());
+		}
+	      continue;
+	    }
+	}
+  
+      if (w < 0) break;
+      if (gap > 0)
+	{
+	  POLY h;
+	  h.f = R->gbvector_copy(p->x.f.f);
+	  h.fsyz = R->gbvector_copy(p->x.f.fsyz);
+	  new_insert(h,ELEM_MIN_GB);
+	}
+      POLY g = gb[w]->g;
+
+      R->gbvector_reduce_lead_term_ZZ(_F,_Fsyz,p->f(), p->fsyz(),
+					  g.f, g.fsyz);
+      stats_nreductions++;
+      if (gbTrace == 15)
+	{
+	  buffer o;
+	  o << "    reducing by g" << w;
+	  o << ", yielding ";
+	  R->gbvector_text_out(o, _F, p->f(), 3);
+	  emit_line(o.str());
+	}
+      if (R->gbvector_is_zero(p->f())) break;
+      if (gap > 0)
+	{
+	  p->deg += gap;
+	  if (gbTrace == 15)
+	    {
+	      buffer o;
+	      o << "    deferring to degree " << p->deg;
+	      emit_line(o.str());
+	    }
+	  spair_set_insert(p);
+	  return false;
+	}
+    }
+  if (gbTrace >= 4 && gbTrace != 15) 
+    {
+      buffer o;
+      o << "." << count;
+      emit_wrapped(o.str());
+    }
+  return true;
+}
+
 /***********************
  * gbasis routines *****
  ***********************/
@@ -1996,7 +2132,10 @@ bool gbA::s_pair_step()
 
   stats_npairs++;
 
-  if (reduce(p)) /* i.e. if the reduction is not deferred */
+  bool not_deferred = (over_ZZ() ? reduce_ZZ(p) : reduce(p));
+
+  if (not_deferred)
+    //  if (reduce(p)) /* i.e. if the reduction is not deferred */
     {
       gbelem_type minlevel = (p->type == SPAIR_GEN ? ELEM_POSSIBLE_MINGEN : ELEM_MIN_GB);
       if (p->type == SPAIR_GEN)
@@ -2103,7 +2242,11 @@ bool gbA::process_spair(spair *p)
 {
   stats_npairs++;
 
-  if (!reduce(p)) return true;
+  bool not_deferred = (over_ZZ() ? reduce_ZZ(p) : reduce(p));
+
+  if (!not_deferred) return true;
+
+  //  if (!reduce(p)) return true;
 
   gbelem_type minlevel = (p->type == SPAIR_GEN ? ELEM_POSSIBLE_MINGEN : ELEM_MIN_GB);
   if (p->type == SPAIR_GEN) n_gens_left--;

@@ -274,6 +274,8 @@ private:
 
   /* Making the minimal GB */
 
+  bool reduce_ZZ(spair *p);
+
   void poly_auto_reduce(VECTOR(POLY) &mat);
   void poly_auto_reduce_ZZ(VECTOR(POLY) &mat);
 
