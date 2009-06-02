@@ -1,0 +1,8 @@
+
+    {* We ought to allow "sheaf" to take a graded ideal as argument too!
+    --and then we could add the example HH^1(sheaf IX)
+    *}
+
+    	the result should be a sheaf of ideals, not a sheaf of modules;
+	and it seems sort of silly to invent the whole class of sheaves of ideals
+	just so "sheaf I" will do something.  But, why not?
