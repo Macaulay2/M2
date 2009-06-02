@@ -1,0 +1,23 @@
+viewHelp can't seem to do its job without loading the package, which may not be what the user wanted:
+
+i1 : notify=true;
+
+i2 : viewHelp "EdgeIdeals::EdgeIdeals"
+--opened database: /usr/local/lib/Macaulay2/Macaulay2Doc/cache/rawdocumentation-dcba-4.db
+--beginDocumentation: using documentation database, skipping the rest of /usr/local/share/Macaulay2/Macaulay2Doc.m2
+--package "Macaulay2Doc" loaded
+--loaded /usr/local/share/Macaulay2/Macaulay2Doc.m2
+--opened database: /usr/local/lib/Macaulay2/SimplicialComplexes/cache/rawdocumentation-dcba-4.db
+--beginDocumentation: using documentation database, skipping the rest of /usr/local/share/Macaulay2/SimplicialComplexes.m2
+--package "SimplicialComplexes" loaded
+--loaded /usr/local/share/Macaulay2/SimplicialComplexes.m2
+--opened database: /usr/local/lib/Macaulay2/EdgeIdeals/cache/rawdocumentation-dcba-4.db
+--opened database: /usr/local/lib/Macaulay2/GenericInitialIdeal/cache/rawdocumentation-dcba-4.db
+--beginDocumentation: using documentation database, skipping the rest of /usr/local/share/Macaulay2/GenericInitialIdeal.m2
+--package "GenericInitialIdeal" loaded
+--loaded /usr/local/share/Macaulay2/GenericInitialIdeal.m2
+--beginDocumentation: reading the rest of /usr/local/share/Macaulay2/EdgeIdeals.m2
+--warning: symbol 'graph' in User#"private dictionary" is shadowed by a symbol in EdgeIdeals.Dictionary
+--  use the synonym graph$0
+--package "EdgeIdeals" loaded
+--loaded /usr/local/share/Macaulay2/EdgeIdeals.m2
