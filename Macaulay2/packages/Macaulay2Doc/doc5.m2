@@ -107,11 +107,13 @@ document {
 document {
      Key => restart,
      Headline => "restart Macaulay 2",
-	Usage => "restart",
-     TT "restart", " restarts Macaulay 2 from the beginning.",
-     PARA{},
-     "Functions previously registered with ", TO "addEndFunction", " will
-     be called first."
+     Usage => "restart",
+     Consequences => { {"the program will be restarted from the beginning"} },
+     PARA{
+     	  "Functions previously registered with ", TO "addEndFunction", " will
+     	  be called before the current instance of the program terminates.  Then the program will be invoked
+	  afresh, as described in ", TO "Invoking the program", "."
+	  }
      }
 
 document {
