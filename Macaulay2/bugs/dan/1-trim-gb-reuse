@@ -1,0 +1,9 @@
+from matrix2.m2:
+
+						  k' := new GroebnerBasisOptions from {
+						       HardDegreeLimit => k.HardDegreeLimit,
+						       Syzygies => false,
+						       SyzygyRows => 0
+						       };
+
+It may be a mistake to accept a gb with a hard degree limit
