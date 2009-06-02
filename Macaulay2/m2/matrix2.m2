@@ -185,7 +185,7 @@ trim Module := Module => opts -> (cacheValue symbol trim) ((M) -> (
 					     if not k.Syzygies then M'gc#k = v
 					     else (
 						  k' := new GroebnerBasisOptions from {
-						       HardDegreeLimit => Mgc.HardDegreeLimit,
+						       HardDegreeLimit => k.HardDegreeLimit,
 						       Syzygies => false,
 						       SyzygyRows => 0
 						       };
