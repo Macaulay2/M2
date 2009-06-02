@@ -1,0 +1,23 @@
+improve the documentation of hilbertSeries:
+
+R = kk[a..d]
+phi = map(kk[s,t],R,{s^4, s^3*t, s*t^3, t^4})
+I = ker phi
+I = monomialCurveIdeal(R,{1,3,4})
+dim I
+codim I
+degree I
+hilbertPolynomial(R/I)
+hilbertPolynomial(R/I, Projective => false)
+hilbertPolynomial(R/I, Projective => true)
+hilbertSeries (R/I)
+reduceHilbert hilbertSeries (R/I)
+-- It's possible to manipulate the numerator and denominator of this
+-- expression; see
+viewHelp hilbertSeries 
+
+{*
+ This is NOT in the documentation for hilbertSeries yet. Need to 
+ add references to
+"numerator", value denominator, etc.
+*}
