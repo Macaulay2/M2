@@ -1,0 +1,9 @@
+no need to deprecate this any longer:
+
+o63 = x
+
+o63 : kk[x, y, z, w]
+
+i64 : x_3
+stdio:169:2:(1):[0]: error: method for 'RingElement _ ZZ' has been replaced: use 'part(n,f)' instead
+
