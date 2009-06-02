@@ -543,19 +543,25 @@ document {
      Key => "initialization file",
      "The file ", TT "init.m2", " is loaded automatically when the
      program is started, if it exists.",
-     PARA{},
-     "On most systems the file is sought in the directory ", TT "$HOME/.Macaulay2/", ",
-     where ", TT "$HOME", " is replaced by the path to the user's home
-     directory.",
-     PARA{},
-     "Under Mac OS X, the file is sought instead in the
-     directory ", TT "$HOME/Library/Application Support/Macaulay2/", ".",
-     PARA{},
-     "If the user wants a file called, say, ", TT "start.m2", " in the current
-     directory to be loaded automatically when the program is started, then the
-     following line of code can be placed in the file ", TT "init.m2", ".",
+     PARA{
+	  "On most systems the file is sought in the directory ", TT "$HOME/.Macaulay2/", ",
+	  where ", TT "$HOME", " is replaced by the path to the user's home
+	  directory."
+	  },
+     PARA{
+	  "Under Mac OS X, the file is sought instead in the
+	  directory ", TT "$HOME/Library/Application Support/Macaulay2/", "."
+	  },
+     PARA{
+	  "If the user wants a file called, say, ", TT "start.m2", " in the current
+	  directory to be loaded automatically when the program is started, then the
+	  following line of code can be placed in the file ", TT "init.m2", "."
+	  },
      PRE {
 	  ///if fileExists "start.m2" then load(currentDirectory|"start.m2")///
+	  },
+     PARA {
+	  "Warning: former versions of the program would also load a file named ", TT "init.m2", " found in the current directory."
 	  }
      }
 

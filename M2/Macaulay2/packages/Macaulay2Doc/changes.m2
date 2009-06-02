@@ -14,7 +14,9 @@ document {
      UL {
 	  LI { "Very long lists can now be parsed without overflowing the stack and causing the program to crash.
 	       This was a problem for MacOS with lists of length greater than about 90000.  In a future version
-	       we will reduce the amount of memory required to parse, translate, and then evaluate the list." }
+	       we will reduce the amount of memory required to parse, translate, and then evaluate the list." },
+     	  LI { "The expression 'setRandomSeed()' can now be used to re-initialize the random number generator." },
+	  LI { "The initialization file 'init.m2' is now sought only in the user's application directory, and not also in the current directory." }
 	  }
      }
 
