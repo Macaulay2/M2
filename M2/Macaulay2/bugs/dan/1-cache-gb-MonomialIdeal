@@ -1,0 +1,24 @@
+gb's of monomial ideals are not cached, perhaps because the module is not:
+
+i12 : code (gb, MonomialIdeal)
+
+o12 = -- code for method: gb(MonomialIdeal)
+      local.Linux/share/Macaulay2/Core/gb.m2:115:38-115:63: --source code:
+      gb Ideal := GroebnerBasis => options -> (I) -> gb ( module I, options )
+
+i13 : peek I.cache
+
+o13 = CacheTable{generators => | ab bc |}
+
+i14 : gens o11
+
+o14 = | bc ab |
+
+              1       2
+o14 : Matrix R  <--- R
+
+i15 : code(module, MonomialIdeal)
+
+o15 = -- code for method: module(MonomialIdeal)
+      local.Linux/share/Macaulay2/Core/monideal.m2:186:39-186:59: --source code:
+      module MonomialIdeal := Module => (I) -> image generators I
