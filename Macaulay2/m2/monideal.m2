@@ -58,12 +58,13 @@ monomialIdeal Matrix := MonomialIdeal => f -> (
 monomialIdeal List := MonomialIdeal => v -> monomialIdeal matrix {splice v}
 monomialIdeal Sequence := v -> monomialIdeal toList v
 
-MonomialIdeal == MonomialIdeal := (m,n) -> m === n
+MonomialIdeal == MonomialIdeal := (I,J) -> I === J
 
-MonomialIdeal == ZZ := (m,i) -> (
-     if i === 0 then numgens m == 0
+MonomialIdeal == ZZ := (I,i) -> (
+     if i === 0 then numgens I == 0
+     else if i === 1 then 1 % I == 0
      else error "asked to compare monomial ideal to nonzero integer")
-ZZ == MonomialIdeal := (i,m) -> m == i
+ZZ == MonomialIdeal := (i,I) -> I == i
 
 MonomialIdeal + MonomialIdeal := MonomialIdeal => (I,J) -> (
      if ring I =!= ring J then error "expected monomial ideals in the same ring";
