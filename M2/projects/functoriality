@@ -20,6 +20,12 @@ Description: Proposed new functions:
 
 	 do something for the long exact sequence
 
+    cohomology of coherent sheafs
+    global Ext
+    sheaf Ext
+    global Tor
+    sheaf Tor
+
 =============================================================================
 
 Proposed by: Jason McCullough <jason.g.mccullough@gmail.com>
