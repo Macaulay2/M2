@@ -29,20 +29,19 @@ See:
 4. Li, Jinjia
    Characterizations of regular local rings in positive characteristics.
    Proc. Amer. Math. Soc. 136 (2008), no. 5, 1553--1558.
-
 =============================================================================
 
 Proposed by: Jason McCullough
 Potential Advisor: Dan Grayson
 Project assigned to: Jason McCullough
 Current status: A working project file is completed.  It needs documentation and
-   error checking.  Extensions to computing Hilbert-Kunz multiplicities of m-primary
-   ideals are possible.  
+error checking.  Extensions to computing Hilbert-Kunz multiplicities of m-primary
+ideals are possible.  
 
-   As of now the ring in question much be a quotient of a polynomial ring by a 
-   homogeneous ideal.
+As of now the ring in question much be a quotient of a polynomial ring by a 
+homogeneous ideal.
 
 =============================================================================
 
-Progress log: 
+Progress log: 6/4/09 - Package is fully documented and will be uploaded shortly.
 

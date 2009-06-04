@@ -1,11 +1,15 @@
---*- M2 -*-
+--*- M2; coding: utf-8 -*- 
 
-Title: Maximal Cohen-Macaulay Approximations
+Title: Hulls of Finite Projective Dimension
 
 Description: Given a Gorenstein ring A and finitely generated A-module
-M, Auslander-Buchweitz show that there is a short exact sequence 
-0 -> M -> Q -> L -> 0 such that Q has finite projective dimension and L 
-is maximal Cohen-Macaulay.
+M, Auslander-Buchweitz show that there is a short exact sequence 0 ->
+M -> Q -> L -> 0 such that Q has finite projective dimension and L is
+maximal Cohen-Macaulay.  We shall call such a short exact sequence a
+hull of M of finite projective dimension.  The existence of such exact
+sequences for all finitely generated M characterizes Gorenstein rings.
+In the Gorenstein case, this is dual, in some sense, to maximal
+Cohen-Macaulay approximations.
 
 Using a couple results of Dutta, the modules Q and L and the map M ->
 Q may be explicitly computed using graded duality and a mapping cone
@@ -13,8 +17,13 @@ construction.
 
 See:
 
-"On Negativity of Higher Euler Characteristics" by S.P. Dutta,
+Dutta, S.P.
+On Negativity of Higher Euler Characteristics.
 American Journal of Mathematics, 126 (2004), 1341-1354.
+
+Foxby, Hans-Bjorn
+Embedding of modules over Gorenstein rings.
+Proc. Amer. Math. Soc. 36 (1972), 336--340. 
 
 =============================================================================
 
@@ -27,11 +36,8 @@ to be cleaned up and put into a package.
 The corresponding exact sequence of Auslander-Bridger could also be
 computed and returned.
 
-Are there algorithms for doing this outside of the
-Gorenstein case?
-
-
 =============================================================================
 
-Progress log:
+Progress log: 6/4/09 - A minor bug for the finite pd case still needs
+to be fixed.
 
