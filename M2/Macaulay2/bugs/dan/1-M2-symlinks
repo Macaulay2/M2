@@ -1,0 +1,1 @@
+if the executable M2 is accessed via a chain of symbolic links, then setup.m2 doesn't find the files.
