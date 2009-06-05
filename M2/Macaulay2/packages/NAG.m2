@@ -176,7 +176,7 @@ track (List,List,List) := List => o -> (S,T,solsS) -> (
      if o.tStep <= 0 then error "expected positive tStep";  
      if (o.Projectivize or o.SLP===null) and (o.SLPpredictor or o.SLPcorrector) 
      then error "SLPpredictor amd SLPcorrector can be used only with Projectize=false and SLP=!=null"; 
-     if o.Software===M2engine and (o.Projectivize or o.SLP===null) 
+     if (o.Software===M2engine or o.Software===M2enginePrecookedSLPs) and (o.Projectivize or o.SLP===null) 
      then error "M2engine is implemented for Projectivize=>false and SLP != null";
 
      -- PHCpack -------------------------------------------------------
@@ -328,7 +328,7 @@ track (List,List,List) := List => o -> (S,T,solsS) -> (
      etHx := 0; 
      etHt := 0;
      -- evaluation functions
-     if o.SLP =!= null then (
+     if o.SLP =!= null and o.Software =!= M2engine then (
 	  toSLP := pre -> (
 	       (constMAT, prog) = (if o.SLP === HornerForm 
 		    then preSLPinterpretedSLP 
@@ -336,12 +336,12 @@ track (List,List,List) := List => o -> (S,T,solsS) -> (
 	       rawSLP(raw constMAT, prog)
 	       );  
 	  preH := prunePreSLP stackPreSLPs apply(entries H, row -> concatPreSLPs apply(row, poly2preSLP));
-	  if o.Software=!=M2engine then (
+	  if o.Software==M2 then (
 	       slpHno := SLPcounter; slpH := toSLP preH; 
 	       slpHxno := SLPcounter; slpHx := toSLP prunePreSLP transposePreSLP jacobianPreSLP(preH,toList (0..n-1));
 	       slpHtno := SLPcounter; slpHt := toSLP prunePreSLP transposePreSLP jacobianPreSLP(preH,{n}); 
 	       ) 
-	  else (
+	  else if o.Software==M2enginePrecookedSLPs then (
 	       -- take jacobian dH/(dx,dt) and DO NOT transpose
 	       preHxt := jacobianPreSLP(preH,toList (0..n));
 	       slpHxtno := SLPcounter;  
@@ -358,6 +358,8 @@ track (List,List,List) := List => o -> (S,T,solsS) -> (
 	       lift(map(K, result),K)
 	       );
 	  );
+     if o.Software==M2 then ( --------------- M2 section -------------------------------------------------------
+	
      evalH := (x0,t0)-> (
 	  tr := timing (
 	       if o.SLP =!= null then r := transpose fromSlpMatrix(slpH, transpose x0 | matrix {{t0}})
@@ -424,7 +426,7 @@ track (List,List,List) := List => o -> (S,T,solsS) -> (
 		    });
 	  SLPcounter = SLPcounter + 1;
 	  );
-          
+     ); ----------------- end ----------- M2 section -------------------------------------          
 
      -- threshholds and other tuning parameters (should include most of them as options)
      divThresh := 1e7; 
@@ -434,8 +436,8 @@ track (List,List,List) := List => o -> (S,T,solsS) -> (
 
      compStartTime = currentTime();      
      
-     rawSols := if o.Software===M2engine then (
-     	  entries map(K,rawTrackPaths(slpHxt, slpHxH, raw matrix apply(solsS,s->first entries transpose s), -- !!! this is counterproductive: have to convert back to list
+     rawSols := if o.Software===M2enginePrecookedSLPs then (
+	  entries map(K,rawTrackPaths(slpHxt, slpHxH, raw matrix apply(solsS,s->first entries transpose s), -- !!! this is counterproductive: have to convert back to list
 	       	    false,
 	       	    o.tStep, o.tStepMin, o.tStepMax, 
 		    toRR(o.stepIncreaseFactor), toRR(stepDecreaseFactor), o.numberSuccessesBeforeIncrease,
@@ -445,8 +447,27 @@ track (List,List,List) := List => o -> (S,T,solsS) -> (
 		    	 else if o.Predictor === RungeKutta4 then predRUNGEKUTTA
 		    	 else if o.Predictor === Euler then predEULER
 		    	 else error "no slp for the predictor")
-		    ))     
-     ) else apply(#solsS, sN->(
+		    ))
+	  ) 
+     else if o.Software===M2engine then (
+	  if DBG > 0 then << "Running the engine version..." << endl;
+	  PT := rawPathTracker(raw H);
+	  rawSetParameters(PT, 
+	       false,
+	       o.tStep, o.tStepMin, o.tStepMax, 
+	       toRR(o.stepIncreaseFactor), toRR(stepDecreaseFactor), o.numberSuccessesBeforeIncrease,
+	       o.CorrectorTolerance, o.maxCorSteps,
+	       ( -- pred_type:
+		    if o.Predictor === Tangent then predTANGENT
+		    else if o.Predictor === RungeKutta4 then predRUNGEKUTTA
+		    else if o.Predictor === Euler then predEULER
+		    else error "no slp for the predictor")
+	       );
+	  rawLaunchPT(PT, raw matrix apply(solsS,s->first entries transpose s));
+	  entries map(K,rawGetAllSolutions(PT))
+     	  )
+     else if o.Software===M2 then (
+     	  apply(#solsS, sN->(
 	       s := solsS#sN;
 	       if DBG > 0 then << "." << if (sN+1)%100 == 0 then endl else flush;
 	       if DBG > 2 then << "tracking solution " << toString s << endl;
@@ -636,7 +657,8 @@ track (List,List,List) := List => o -> (S,T,solsS) -> (
 			 );
 		    );        	    
 	       (x0,symbol nSteps=>count, if DBG>1 then new HashTable from history else "no history")
-	       ));
+	       ))
+     );
      
      ret := if o.Projectivize then (
 	  if DBG>3 then print rawSols;
@@ -648,17 +670,17 @@ track (List,List,List) := List => o -> (S,T,solsS) -> (
 	       	    ))
 	  )
      else (
-	  if o.Software===M2engine then rawSols/(s->{s}) 
+	  if o.Software===M2engine or o.Software===M2enginePrecookedSLPs then rawSols/(s->{s}) 
 	  else select(rawSols,s -> first s =!= infinity)/(s->{flatten entries first s} | drop(toList s,1))
 	  );
      if DBG>0 then (
-	  if o.Software=!=M2engine then (
+	  if o.Software==M2 then (
 	       << "Number of solutions = " << #ret << endl << "Average number of steps per path = " << toRR sum(ret,s->s#1#1)/#ret << endl
      	       << "Evaluation time (M2 measured): Hx = " << etHx << " , Ht = " << etHt << " , H = " << etH << endl;
 	       if o.SLP =!= null
 	       then << "Hx SLP: " << slpHx << endl << "Ht SLP: " << slpHt << endl << "H SLP: " << slpH << endl;  
 	       )
-	  else (
+	  else if o.Software==M2enginePrecookedLSLPs then (
 	       << "Hxt SLP: " << slpHxt << endl << "HxH SLP: " << slpHxH << endl;  
 	       );
 	  << "Setup time: " << compStartTime - setupStartTime << endl;

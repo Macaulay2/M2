@@ -1,6 +1,6 @@
 restart
 loadPackage ("NAG", FileName=>"../NAG.m2",
-          Configuration=>{"PHCpack"=>"phc", "Bertini"=>"bertini", "HOM4PS2"=>"./hom4ps2_in_out"})
+          Configuration=>{"PHCpack"=>"./phc", "Bertini"=>"./bertini", "HOM4PS2"=>"./hom4ps2_in_out"})
 debug NAG; DBG = 2; printingPrecision = 20; 
 load "benchmarks.m2"
 
@@ -31,6 +31,14 @@ M = track(S,T,solsS, gamma=>1+ii,
      SLP=>HornerForm
      ); 
 
+-- another run
+P = track(S,T,solsS, gamma=>1+ii,
+     --gamma =>0.6+0.8*ii, tDegree=>2,
+     Software=>M2enginePrecookedSLPs,
+     Projectivize=>false,
+     SLP=>HornerForm
+     ); 
+
 -- another run (CompiledHornerForm needs Mac Os X with gcc) 
 P = track(S,T,solsS, gamma=>1+ii,
      Software=>M2engine,
@@ -51,3 +59,4 @@ Ps = sortSolutions P;
 << "Solutions that differ: " << (dif = diffSolutions(Ms/first, Ps/first)) << endl;
 << "Multiple solutions: " << select(toList(0..#Ms-2), i->areEqual(first Ms#i,first Ms#(i+1))) << endl;
 << "Large solutions: " << select(toList(0..#Ms-1),i->norm(matrix{first Ms#i})>100) << endl;
+
