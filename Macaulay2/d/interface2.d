@@ -112,12 +112,88 @@ export rawTrackPaths(e:Expr):Expr := (
 setupfun("rawTrackPaths",rawTrackPaths);
 
 export rawPathTracker(e:Expr):Expr := (
-     when e is HH:RawMatrix do (
+     when e is HH:RawMatrix do 
 		toExpr(Ccode(RawPathTrackerOrNull,
 		    "(engine_RawPathTrackerOrNull)rawPathTracker(",
 		    "(Matrix *)", HH, 
 		    ")"
-		    )))
+		    ))
      else WrongArgMatrix()
      );
 setupfun("rawPathTracker",rawPathTracker);
+
+export rawSetParameters(e:Expr):Expr := (
+     when e is s:Sequence do
+     if length(s) != 11 then WrongNumArgs(11)
+     else when s.0 is PT:RawPathTracker do 
+	  when s.1 is isProj:Boolean do
+	  when s.2 is initDt:RR do
+	  when s.3 is minDt:RR do
+	  when s.4 is maxDt:RR do
+	  when s.5 is dtIncreaseFactor:RR do 
+	  when s.6 is dtDecreeaseFactor:RR do
+	  when s.7 is numSuccessesBeforeIncrease:ZZ do
+	  when s.8 is epsilon:RR do 
+	  when s.9 is maxCorrSteps:ZZ do
+	  when s.10 is predType:ZZ do (
+	       Ccode(void,
+		    	 "rawSetParameters(",
+		    	 "(PathTracker *)", PT, ",",
+			 toBoolean(s.1),",",
+			 "(M2_RRR)", initDt,",",
+			 "(M2_RRR)", minDt,",",
+			 "(M2_RRR)", maxDt,",",
+			 "(M2_RRR)", dtIncreaseFactor,",",
+			 "(M2_RRR)", dtDecreeaseFactor,",",
+			 toInt(s.7),",",
+			 "(M2_RRR)", epsilon,",",
+			 toInt(s.9),",",
+			 toInt(s.10),
+		    	 ")"
+		    	 );
+	       nullE)
+	  else WrongArgZZ(11)
+	  else WrongArgRR(10)
+	  else WrongArgRR(9)
+	  else WrongArgZZ(8)
+	  else WrongArgRR(7)
+	  else WrongArgRR(6)
+	  else WrongArgRR(5)
+	  else WrongArgRR(4)
+	  else WrongArgRR(3)
+	  else WrongArgBoolean(2)
+     	  else WrongArg(1,"a path tracker")
+     else WrongNumArgs(11)
+     );
+setupfun("rawSetParameters",rawSetParameters);
+
+export rawLaunchPT(e:Expr):Expr := (
+     when e is s:Sequence do
+     if length(s) != 2 then WrongNumArgs(2)
+     else when s.0 is PT:RawPathTracker do 
+	  when s.1 is startSols:RawMatrix do (
+	       Ccode(void,
+		    	 "rawLaunchPT(",
+		    	 "(PathTracker *)", PT, ",",
+	                 "(Matrix *)", startSols, 
+		    	 ")"
+	       );
+	       nullE)
+	  else WrongArgMatrix(2)
+     	  else WrongArg(1,"a path tracker")
+     else WrongNumArgs(2)
+     );
+setupfun("rawLaunchPT",rawLaunchPT);
+
+export rawGetAllSolutions(e:Expr):Expr := (
+     when e is PT:RawPathTracker  do 
+		toExpr(Ccode(RawMatrixOrNull,
+		    "(engine_RawMatrixOrNull)rawGetAllSolutions(",
+		    "(PathTracker *)", PT, 
+		    ")"
+		    ))
+     else WrongArg("a path tracker")
+     );
+setupfun("rawGetAllSolutions",rawGetAllSolutions);
+
+

@@ -246,6 +246,7 @@ public:
   virtual ~StraightLineProgram();
 
   void text_out(buffer& o) const;
+  void stats_out(buffer& o) const;
   void evaluate(int n, const complex* values, complex* out);
   Matrix *evaluate(const Matrix *vals);
 };

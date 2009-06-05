@@ -1891,7 +1891,13 @@ enum gbTraceValues
   const PathTracker_OrNull *rawPathTracker(Matrix *);
   M2_string rawPathTrackerToString(const PathTracker *); /* connected */
   unsigned long rawPathTrackerHash(const PathTracker *); /* connected */
-
+  void rawSetParameters(PathTracker* PT, M2_bool is_projective,
+				    M2_RRR init_dt, M2_RRR min_dt, M2_RRR max_dt, 
+				    M2_RRR dt_increase_factor, M2_RRR dt_decrease_factor, int num_successes_before_increase,
+				    M2_RRR epsilon, int max_corr_steps,
+				    int pred_type);  
+  void rawLaunchPT(PathTracker* PT, const Matrix* start_sols);
+  const MatrixOrNull *rawGetAllSolutions(PathTracker* PT);
 #if defined(__cplusplus)
 }
 #endif

@@ -283,7 +283,7 @@ int StraightLineProgram::diffNodeInput(int n, int v, intarray& prog) // used by 
       int n_summands = prog[(++i)++];
       int part_pos[n_summands];
       int c = 0; // count nonzeroes
-      int last_non_zero;
+      int last_non_zero = ZERO_CONST;
       for(int j=0; j<n_summands; j++) {
 	part_pos[j] = diffPartReference(n,prog[i++], v, prog);
 	if (part_pos[j] != ZERO_CONST) {
@@ -363,7 +363,7 @@ int StraightLineProgram::diffNodeInput(int n, int v, intarray& prog) // used by 
 	  return cur_p;
 	}
       } else { // da |=0 and db !=0
-	int part1;
+	int part1 = ZERO_CONST;
 	int is_part1_created = (da != ONE_CONST);
 	if (is_part1_created) {
 	  int cur_p = num_operations++;
@@ -375,7 +375,7 @@ int StraightLineProgram::diffNodeInput(int n, int v, intarray& prog) // used by 
 	  prog.append(b);
 	  part1 = cur_p;
 	}
-	int part2;
+	int part2 = ZERO_CONST;
 	int is_part2_created = (db != ONE_CONST);
 	if (is_part2_created) {
 	  int cur_p = num_operations++;
@@ -425,8 +425,8 @@ StraightLineProgram_OrNull *StraightLineProgram::jacobian(bool replace_last_row)
   res->is_relative_position = true;
   res->num_inputs = num_inputs;
   res->num_operations = num_operations;
-  res->rows_out = cols_out;
-  res->cols_out = num_inputs;
+  res->rows_out = num_inputs;
+  res->cols_out = cols_out;
   
   //  array<complex> consts; // !!! use to optimize constants
   intarray prog(program->len);
@@ -442,7 +442,7 @@ StraightLineProgram_OrNull *StraightLineProgram::jacobian(bool replace_last_row)
 						      i,prog); //uses res->num_operations
   if (replace_last_row) 
     for (int j=0; j<num_outputs; j++)
-      out_pos[(num_outputs-1)*res->cols_out+j] = end_program[j]-num_consts-num_inputs; /*this->output[j] position in prog*/
+      out_pos[(num_inputs-1)*res->cols_out+j] = end_program[j]-num_consts-num_inputs; /*this->output[j] position in prog*/
 
   // make program
   res->program = makearrayint(SLP_HEADER_LEN + prog.length() + 1 + res->rows_out*res->cols_out);
@@ -451,8 +451,8 @@ StraightLineProgram_OrNull *StraightLineProgram::jacobian(bool replace_last_row)
   res->program->array[2] = res->rows_out;
   res->program->array[3] = res->cols_out;
   prog.append(slpEND);
-  for (int j=0; j<num_outputs; j++)
-    for (int i=0; i<num_inputs; i++) {
+  for (int i=0; i<num_inputs; i++) 
+    for (int j=0; j<num_outputs; j++) {
       int t = out_pos[i*res->cols_out+j];
       prog.append((t==ZERO_CONST)? num_consts/*ref to ZERO*/ : t+res->num_consts+num_inputs); // position of the output
     }
@@ -681,14 +681,21 @@ void StraightLineProgram::convert_to_absolute_position()
   }
 }
 
+void StraightLineProgram::stats_out(buffer& o) const
+{
+  o << "Called " << n_calls << " times, total evaluation time = " 
+    << (eval_time / CLOCKS_PER_SEC) << "." << (eval_time%CLOCKS_PER_SEC) << " sec" << newline;
+}
+
 void StraightLineProgram::text_out(buffer& o) const
 {
   if (!is_relative_position) {
     if (program->array[4]==slpCOMPILED) {
       o << "(SLP is precompiled) " << newline;
     }
-    if (program->array[4]!=slpPREDICTOR && program->array[4]!=slpCORRECTOR){
-      o << "Called " << n_calls << " times, total evaluation time = " << (eval_time / CLOCKS_PER_SEC) << "." << (eval_time%CLOCKS_PER_SEC) << " sec" << newline;
+    if (program->array[4]!=slpPREDICTOR && program->array[4]!=slpCORRECTOR) {
+      stats_out(o);
+      return; //!!!
     }
   }
 
@@ -1109,18 +1116,41 @@ const MatrixOrNull * rawTrackPaths(StraightLineProgram* slp_pred, StraightLinePr
   PathTracker P;
   P.slpHxt = P.slpHxtH = slp_pred;
   P.slpHxH = slp_corr;
-  P.is_projective = is_projective;
-  P.init_dt = init_dt;
-  P.min_dt = min_dt;
-  P.max_dt = max_dt;
-  P.dt_increase_factor = dt_increase_factor; 
-  P.dt_decrease_factor = dt_decrease_factor;
-  P.num_successes_before_increase = num_successes_before_increase;
-  P.epsilon = epsilon;
-  P.max_corr_steps = max_corr_steps;
-  P.pred_type = pred_type;
-  P.track(start_sols);
+  rawSetParameters(&P, is_projective,
+		   init_dt, min_dt, max_dt, 
+		   dt_increase_factor, dt_decrease_factor, num_successes_before_increase,
+		   epsilon, max_corr_steps,
+		   pred_type);
+  rawLaunchPT(&P, start_sols);
   return P.getAllSolutions();
+}
+
+void rawSetParameters(PathTracker* PT, M2_bool is_projective,
+				    M2_RRR init_dt, M2_RRR min_dt, M2_RRR max_dt, 
+				    M2_RRR dt_increase_factor, M2_RRR dt_decrease_factor, int num_successes_before_increase,
+				    M2_RRR epsilon, int max_corr_steps,
+		      int pred_type)
+{
+  PT->is_projective = is_projective;
+  PT->init_dt = init_dt;
+  PT->min_dt = min_dt;
+  PT->max_dt = max_dt;
+  PT->dt_increase_factor = dt_increase_factor; 
+  PT->dt_decrease_factor = dt_decrease_factor;
+  PT->num_successes_before_increase = num_successes_before_increase;
+  PT->epsilon = epsilon;
+  PT->max_corr_steps = max_corr_steps;
+  PT->pred_type = pred_type;
+}
+
+void rawLaunchPT(PathTracker* PT, const Matrix* start_sols)
+{
+  PT->track(start_sols);
+}
+
+const MatrixOrNull *rawGetAllSolutions(PathTracker* PT)
+{
+  return PT->getAllSolutions();
 }
 
 int PathTracker::track(const Matrix* start_sols)
@@ -1349,6 +1379,9 @@ MatrixOrNull* PathTracker::getAllSolutions() { return solutions; }
 
 void PathTracker::text_out(buffer& o) const
 {
+  slpHxt->text_out(o);
+  slpHxH->text_out(o);
+  /*
   int n = slpHxH->num_inputs;
   char buf[1000];
   complex input[n], output[n*n];
@@ -1356,7 +1389,7 @@ void PathTracker::text_out(buffer& o) const
     Nterm* t = H->elem(1,i).get_poly();
     input[i] = complex(BIGCC_VAL(t->coeff));
   }
-
+  
   slpHxH->evaluate(n, input, output);
   for(int i=0; i<n*n; i++) {
     output[i].sprint(buf);
@@ -1369,6 +1402,7 @@ void PathTracker::text_out(buffer& o) const
   }
   //slpH->text_out(o);
   //slpHxH->text_out(o);
+  */
 }
  
 // Local Variables:
