@@ -598,7 +598,7 @@ AC_ARG_ENABLE(download, AS_HELP_STRING(--enable-download,enable automatic downlo
 
 # the order of these segments also reflects dependencies
 AC_LANG(C)
-AC_SEARCH_LIBS(tgoto,ncurses curses)
+AC_SEARCH_LIBS(tgoto,ncurses curses,,AC_MSG_ERROR(libcurses and libncurses not found))
 if test $BUILD_readline = no
 then AC_SEARCH_LIBS(add_history,history,,BUILD_readline=yes)
      AC_SEARCH_LIBS(readline,readline,,BUILD_readline=yes)
