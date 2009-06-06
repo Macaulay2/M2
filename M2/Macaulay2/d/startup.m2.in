@@ -362,7 +362,6 @@ usage := arg -> (
      << "    --copyright        display full copyright messasge" << newline
      << "    --no-debug         do not enter debugger upon error" << newline
      << "    --dumpdata         read source code, dump data if so configured, exit (no init.m2)" << newline
-     << "    --fullbacktrace    print full backtrace after error" << newline
      << "    --no-loaddata      don't try to load the dumpdata file" << newline
      << "    --int              don't handle interrupts" << newline -- handled by M2lib.c
      << "    --notify           notify when loading files during initialization" << newline
