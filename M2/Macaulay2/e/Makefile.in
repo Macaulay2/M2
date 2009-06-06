@@ -16,7 +16,7 @@ CPPFLAGS := -I. $(CPPFLAGS)
 ## Targets ##
 #############
 
-all: initialize tags
+all: initialize
 
 ifneq (@ETAGS@,)
 all: tags
