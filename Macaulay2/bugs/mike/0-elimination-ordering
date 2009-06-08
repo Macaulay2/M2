@@ -1,0 +1,50 @@
+Date: Sat, 23 May 2009 10:38:48 -0500
+From: "Daniel R. Grayson" <dan@math.uiuc.edu>
+To: mike.stillman@mac.com
+CC: dan@math.uiuc.edu
+Subject: [aboocher@gmail.com: Eliminate Command in M2]
+Reply-to: dan@math.uiuc.edu
+
+
+It seems that our eliminate command is slower than it has to be.  In the
+exmaple below it uses the monomial ordering
+
+	R=QQ[x,y,a,b,c,d,e,f,g,h,i,j,k,l,MonomialOrder=>{GRevLex => 2, GRevLex => 12}]
+
+but
+
+	R=QQ[x,y,a,b,c,d,e,f,g,h,i,j,k,l,MonomialOrder=>Eliminate 2]
+
+is faster.  Is that generally to be expected?  Shall I change it?
+
+------- Start of forwarded message -------
+To: dan@math.uiuc.edu
+From: Adam Boocher <aboocher@gmail.com>
+Subject: Eliminate Command in M2
+Date: Fri, 22 May 2009 19:38:30 -0700
+
+Hi again,
+
+I noticed that the eliminate command was behaving strangely a few  
+months ago.  I wrote to Prof. Stillman about it, but David suggested  
+I write to you as well.  For this example, (at least on my machine) I  
+can compute an entire Grobner basis in a few seconds (and thus  
+compute the elimination ideal that way) but the eliminate({x,y},I)  
+command hangs.
+
+Here's the example I was trying to do:
+
+R=QQ[x,y,a,b,c,d,e,f,g,h,i,j,k,l,MonomialOrder=>Eliminate 2]
+p=a*x^2+b*x*y+c*y^2+d*x+e*y+f
+q=g*x^2+h*x*y+i*y^2+j*x+k*y+l
+M=matrix{{diff(x,p),diff(y,p)},{diff(x,q),diff(y,q)}}
+D=determinant M
+I=ideal(p,q,D)
+- --it will compute the Grobner basis in a few seconds
+time G = gb I;				        -- used 3.49 seconds
+time S = gens G;				-- used 18.06 seconds
+- --but the eliminate command hangs
+eliminate({x,y},I)
+
+- -Adam 
+
