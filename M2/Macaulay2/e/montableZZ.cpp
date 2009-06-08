@@ -160,7 +160,6 @@ int MonomialTableZZ::find_term_divisors(int max,
   if (comp >= static_cast<int>(_head.size())) return 0;
   mon_term *head = _head[comp];
   mon_term *t;
-  int i;
 
   int nmatches = 0;
   unsigned long expmask = ~(monomial_mask(_nvars, exp));
@@ -169,7 +168,7 @@ int MonomialTableZZ::find_term_divisors(int max,
     if ((expmask & t->_mask) == 0)
       {
 	bool is_div = 1;
-	for (i=0; i<_nvars; i++)
+	for (int i=0; i<_nvars; i++)
 	  if (exp[i] < t->_lead[i])
 	    {
 	      is_div = 0;
