@@ -16,7 +16,9 @@ document {
 	       This was a problem for MacOS with lists of length greater than about 90000.  In a future version
 	       we will reduce the amount of memory required to parse, translate, and then evaluate the list." },
      	  LI { "The expression 'setRandomSeed()' can now be used to re-initialize the random number generator." },
-	  LI { "The initialization file 'init.m2' is now sought only in the user's application directory, and not also in the current directory." }
+	  LI { "The initialization file 'init.m2' is now sought only in the user's application directory, and not also in the current directory." },
+	  LI { "When the program starts, the random number seed is now initialized to a value that depends on the date, time in seconds,
+	       and the process id.  The former initial state can be obtained with ", TT "setRandomSeed()", "." }
 	  }
      }
 

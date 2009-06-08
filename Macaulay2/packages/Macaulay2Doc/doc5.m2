@@ -592,9 +592,12 @@ document {
      Key => 1 : setRandomSeed,
      Usage => "setRandomSeed()",
      Consequences => {
-	  {"Initializes the random number generator to its initial state. "}
+	  {"Initializes the random number generator to a fixed state, identical to the
+	       initial state in version 1.2 and earlier of Macaulay 2.  After version 1.2,
+	       the random number seed is initially set to a number that depends on the current date, time (in seconds), and process id."}
 	  },
      EXAMPLE lines ///
+     setRandomSeed()
      random 2^100
      setRandomSeed()
      random 2^100

@@ -4,6 +4,7 @@
 
 recursionLimit = 300
 
+addStartFunction(() -> setRandomSeed((currentTime() << 16) + processID()))
 addStartFunction(() -> path = unique apply( path, minimizeFilename))
 addEndFunction(() -> scan(openFiles(), f -> if isOutputFile f then flush f))
 addEndFunction(() -> path = {})
