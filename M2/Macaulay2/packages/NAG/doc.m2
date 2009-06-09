@@ -41,6 +41,7 @@ document {
 	     {"solsS", ", start solutions"}
 	     },
 	Outputs => {{ TT "solsT", ", solutions of ", TT "T=0", " obtained by continuing ", TT "solsS" }},
+	"Polynomial homotopy continuation techniques are used to obtain solutions of the target system given a start system.",  
 	EXAMPLE lines ///
 R = CC[x,y];
 S = {x^2-1,y^2-1};
@@ -50,13 +51,53 @@ track(S,T,solsS) / first
      	///
 	}
 
-					
 document {
-     Key => {[solveSystem,Software],[track,Software],"Software","M2","M2engine"},
+	Key => {(refine, List, List), refine, [refine,Tolerance], [refine, maxCorrSteps], [refine, Software]},
+	Headline => "refine numerical solutions to a system of polynomial equations",
+	Usage => "solsR = track(T,sols)",
+	Inputs => { 
+	     {"T", ", polynomials of the system"},
+	     {"sols", ", solutions (lists of coordinates)"}
+	     },
+	Outputs => {{ TT "solsR", ", refined solutions" }},
+	"Uses Newton's method to correct the given solutions so that the resluting approximation 
+	has its estimated relative error bound by ", TT "Tolerance", 
+	"; the number of iterations is at most ", TT "maxCorrSteps", ".",
+	Caveat => {"If option ", TT "Software=>M2engine", " is specified, then the refinement happens in the M2 engine and it is assumed that the last path tracking procedure 
+	     took place with the same option and was given the same target system. Any other value of this option would launch an M2-language procedure."},
+	EXAMPLE lines ///
+R = CC[x,y];
+S = {x^2-1,y^2-1};
+T = {x^2+y^2-1, x*y};
+sols = { {1.1_CC,0.1}, {-0.1,1.2} };
+refine(T, sols, Tolerance=>.001, maxCorrSteps=>10)
+     	///
+	}
+
+document {
+	Key => {(totalDegreeStartSystem, List), totalDegreeStartSystem},
+	Headline => "construct a start system for the total degree homotopy",
+	Usage => "(S,solsS) = totalDegreeStartSystem T",
+	Inputs => { 
+	     {"T", ", polynomials of the target system"},
+	     },
+	Outputs => {{ TT "(S,solsS)", ", where ", TT "S", " is the list of polynomials in the start system and ", TT "solsS", " the list of start solutions"}},
+     	"Given a square target system, constructs a start system 
+	for a total degree homotopy together with the total degree many start solutions.",
+	EXAMPLE lines ///
+R = CC[x,y];
+T = {x^2+y^2-1, x*y};
+totalDegreeStartSystem T
+     	///
+	}
+
+document {
+     Key => {[solveSystem,Software],[track,Software], "Software","M2","M2engine","M2enginePrecookedSLPs"},
      Headline => "specify software for the solver",
      UL{
 	  {"M2", " -- use top-level Macaulay2 homotopy continuation routines"},
 	  {"M2engine", " -- use subroutines implemented in Macaulay2 engine"},
+	  {"M2enginePrecookedSLPs", " -- (obsolete)"},
 	  TO "PHCpack",
 	  TO "Bertini",
 	  TO "HOM4PS2"

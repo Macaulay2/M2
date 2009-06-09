@@ -216,7 +216,6 @@ class StraightLineProgram : public object
 
   void *handle; //dynamic library handle
   void (*compiled_fn)(complex*,complex*);
-  long precision;
   clock_t eval_time; // accumulates time spent in evaluation 
   int n_calls; // number of times called   
 
@@ -227,7 +226,7 @@ class StraightLineProgram : public object
 
   StraightLineProgram_OrNull *concatenate(const StraightLineProgram* slp);
 
-  StraightLineProgram_OrNull *jacobian(bool replace_last_row); 
+  StraightLineProgram_OrNull *jacobian(bool makeHxH, StraightLineProgram *&slpHxH, bool makeHxtH, StraightLineProgram *&slpHxtH);
   int diffNodeInput(int n, int v, intarray& prog); // used by jacobian
   int diffPartReference(int n, int ref, int v, intarray& prog); // used by diffNodeInput
 
@@ -241,6 +240,8 @@ class StraightLineProgram : public object
     else aa -= CONST_OFFSET; // a constant
   }
   void convert_to_absolute_position();
+
+  StraightLineProgram_OrNull *copy();
 public:
   static StraightLineProgram_OrNull *make(Matrix *consts, M2_arrayint program);
   virtual ~StraightLineProgram();
@@ -258,11 +259,15 @@ class PathTracker : public object
 
   int number; // trackers are enumerated
 
-public:
   Matrix *target;
   Matrix *H; // homotopy
   StraightLineProgram *slpH, *slpHxt, *slpHxtH, *slpHxH; // slps for evaluating H, H_{x,t}, H_{x,t}|H, H_{x}|H 
-  
+
+  const CCC *C; // coefficient field (complex numbers)
+  const PolyRing *homotopy_R; // polynomial ring where homotopy lives
+  int n_coords;
+  int n_sols;
+  complex* raw_solutions;
   Matrix *solutions;
 
   // parameters
@@ -285,7 +290,20 @@ public:
   int makeFromHomotopy(Matrix*);
   MatrixOrNull* getAllSolutions();
   int track(const Matrix*); 
-  
+  MatrixOrNull* refine(const Matrix *sols, M2_RRR tolerance, int max_corr_steps_refine = 100); // refine solutions such that (error estimate)/norm(solution) < tolerance
+
+  // raw "friends"
+  friend void rawSetParametersPT(PathTracker* PT, M2_bool is_projective,
+				    M2_RRR init_dt, M2_RRR min_dt, M2_RRR max_dt, 
+				    M2_RRR dt_increase_factor, M2_RRR dt_decrease_factor, int num_successes_before_increase,
+				    M2_RRR epsilon, int max_corr_steps,
+				    int pred_type);    
+  friend const MatrixOrNull *rawTrackPaths(StraightLineProgram* slp_pred, StraightLineProgram* slp_corr, const Matrix* start_sols , 
+				    M2_bool is_projective,
+				    M2_RRR init_dt, M2_RRR min_dt, M2_RRR max_dt, 
+				    M2_RRR dt_increase_factor, M2_RRR dt_decrease_factor, int num_successes_before_increase,
+				    M2_RRR epsilon, int max_corr_steps,
+				    int pred_type);  
 };
 
 #endif

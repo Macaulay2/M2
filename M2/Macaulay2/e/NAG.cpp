@@ -76,6 +76,28 @@ StraightLineProgram_OrNull *StraightLineProgram::make(Matrix *m_consts, M2_array
   return res;
 }
 
+StraightLineProgram_OrNull *StraightLineProgram::copy()
+{
+  StraightLineProgram* res = new StraightLineProgram;
+  res->is_relative_position = is_relative_position;
+  res->program = makearrayint(program->len);
+  memcpy(res->program->array, program->array, program->len*sizeof(int));
+  res->nodes = newarray_atomic(complex, num_consts+num_inputs+num_operations);
+  for(int i=0; i<num_consts; i++)
+      res->nodes[i] = nodes[i];
+  res->node_index = node_index; // points to position in program (rel. to start) of operation correspoding to a node
+  res->num_consts = num_consts;
+  res->num_inputs = num_inputs;
+  res->num_operations = num_operations;
+  res->rows_out = rows_out;
+  res->cols_out = cols_out;
+  res->handle = handle;
+  res->compiled_fn = compiled_fn;
+  res->eval_time = eval_time;
+  res->n_calls = n_calls;
+  return res;
+}
+
 Nterm * extract_divisible_by_x(Nterm *&ff, int i) // auxiliary
 {
   /* Extracts into fx the terms divisible by the (n-1-i)-th variable "x"
@@ -114,13 +136,14 @@ int add_constant_get_position(array<complex>& consts, complex c) //auxiliary
 int StraightLineProgram::poly_to_horner_slp(int n, intarray& prog, array<complex>& consts, Nterm *&f) // auxiliary
 {
   int part_pos[n]; // absolute positions of the parts
+  int last_nonzero_part_pos = ZERO_CONST;
   for (int i=0; i<n; i++) {
     Nterm* fx = extract_divisible_by_x(f,i);
     if (fx==NULL) 
-      part_pos[i] = -1;
+      part_pos[i] = ZERO_CONST;
     else {  
       int p = poly_to_horner_slp(n,prog,consts,fx);
-      part_pos[i] = num_operations++;
+      last_nonzero_part_pos = part_pos[i] = num_operations++;
       node_index.append(prog.length());
       prog.append(slpPRODUCT);
       prog.append(n-1-i); // reference to (n-1-i)-th input (recall: the order of vars is reversed in monomials)
@@ -131,16 +154,20 @@ int StraightLineProgram::poly_to_horner_slp(int n, intarray& prog, array<complex
   if (f!=NULL) 
     c++;
   for (int i=0; i<n; i++) 
-    if (part_pos[i] != -1) 
+    if (part_pos[i] != ZERO_CONST) 
       c++;
+  if (c==0) 
+    return ZERO_CONST;
+  if (c==1 && last_nonzero_part_pos != ZERO_CONST) 
+    return last_nonzero_part_pos;
   int cur_p = num_operations++; 
   node_index.append(prog.length());
   prog.append(slpMULTIsum);
-  prog.append(c); // can be smarter here for c=0,1,2
+  prog.append(c); 
   if (f!=NULL) 
     prog.append(CONST_OFFSET + add_constant_get_position(consts,complex(BIGCC_VAL(f->coeff))));
   for (int i=0; i<n; i++) 
-    if (part_pos[i] != -1) 
+    if (part_pos[i] != ZERO_CONST) 
       prog.append(part_pos[i] - cur_p); // relative position of the i-th part
   return cur_p;
 }
@@ -178,6 +205,12 @@ StraightLineProgram_OrNull *StraightLineProgram::make(const PolyRing *R, ring_el
     Nterm* f = e.get_poly();
     monomials_to_conventional_exponent_vectors(n,f);
     int out = res->poly_to_horner_slp(n, prog, consts, f);
+    if (out==ZERO_CONST) {
+      out = res->num_operations++; 
+      res->node_index.append(prog.length());
+      prog.append(slpMULTIsum);
+      prog.append(0); // sum with zero summands
+    }
 
     // make program
     res->program = makearrayint(prog.length() + 2/* accounts for lines +2,+3 */ + SLP_HEADER_LEN);
@@ -407,10 +440,9 @@ int StraightLineProgram::diffNodeInput(int n, int v, intarray& prog) // used by 
   }
 }
 
-StraightLineProgram_OrNull *StraightLineProgram::jacobian(bool replace_last_row)
+StraightLineProgram_OrNull *StraightLineProgram::jacobian(bool makeHxH, StraightLineProgram *&slpHxH, bool makeHxtH, StraightLineProgram *&slpHxtH)
   /* Produces a jacobian of the slp H: (i,j)-th output = dH_j/dx_i
-   If relplace_last_row == true then the last row (the derivatives wrt the last var)
-   is replaced with H itself. */ 
+     Constructs also HxH and HxtH. */ 
 {
  
   if (rows_out!=1) { 
@@ -437,13 +469,9 @@ StraightLineProgram_OrNull *StraightLineProgram::jacobian(bool replace_last_row)
  int out_pos[res->rows_out*res->cols_out]; // records absolute position of output entries
   
   for (int j=0; j<num_outputs; j++)
-    for (int i=0; i<num_inputs - replace_last_row/*-1 if true*/; i++) 
+    for (int i=0; i<num_inputs; i++) 
       out_pos[i*res->cols_out+j] = res->diffNodeInput(end_program[j]-num_consts-num_inputs/*position of j-th output in prog*/,
 						      i,prog); //uses res->num_operations
-  if (replace_last_row) 
-    for (int j=0; j<num_outputs; j++)
-      out_pos[(num_inputs-1)*res->cols_out+j] = end_program[j]-num_consts-num_inputs; /*this->output[j] position in prog*/
-
   // make program
   res->program = makearrayint(SLP_HEADER_LEN + prog.length() + 1 + res->rows_out*res->cols_out);
   res->program->array[0] = res->num_consts = num_consts + 1; //!!! assume: appending ZERO
@@ -463,6 +491,22 @@ StraightLineProgram_OrNull *StraightLineProgram::jacobian(bool replace_last_row)
   memcpy(res->nodes, nodes, num_consts*sizeof(complex)); // old constants
   res->nodes[num_consts] = complex(0,0); // ... plus ZERO
 
+  if (makeHxH) {
+    slpHxH = res->copy();
+    int *c = slpHxH->program->array + slpHxH->program->len - slpHxH->cols_out;
+    for (int j=0; j<num_outputs; j++,c++)
+      *c = end_program[j]-num_consts+res->num_consts;
+  }
+  if (makeHxtH) {
+    slpHxtH = res->copy();
+    slpHxtH->rows_out++;
+    // how to kill M2_arrayint ???
+    slpHxtH->program = makearrayint(slpHxtH->program->len + cols_out);
+    memcpy(slpHxtH->program->array, res->program->array, sizeof(int)*res->program->len);
+    int *c = slpHxtH->program->array + res->program->len;
+    for (int j=0; j<num_outputs; j++,c++)
+      *c = end_program[j]-num_consts+res->num_consts;
+  }
   return res;
 }
 
@@ -693,9 +737,8 @@ void StraightLineProgram::text_out(buffer& o) const
     if (program->array[4]==slpCOMPILED) {
       o << "(SLP is precompiled) " << newline;
     }
-    if (program->array[4]!=slpPREDICTOR && program->array[4]!=slpCORRECTOR) {
-      stats_out(o);
-      return; //!!!
+    if (program->array[4]==slpPREDICTOR || program->array[4]==slpCORRECTOR) {
+      return;
     }
   }
 
@@ -1046,10 +1089,15 @@ void StraightLineProgram::corrector()
 int PathTracker::num_path_trackers = 0;
 PathTracker* PathTracker::catalog[MAX_NUM_PATH_TRACKERS];
 
-PathTracker::PathTracker(){}
+PathTracker::PathTracker()
+{
+  raw_solutions = NULL;
+  solutions = NULL;
+}
 
 PathTracker::~PathTracker()
 { 
+  deletearray(raw_solutions);
 }
 
 // a function that creates a PathTracker object, builds the homotopy, slps for predictor and corrector given a target system
@@ -1064,13 +1112,20 @@ PathTracker_OrNull* PathTracker::make(Matrix *HH)
   };
   */
 
-  const PolyRing* R = HH->get_ring()->cast_to_PolyRing();
+  PathTracker *p = new PathTracker;
+  const PolyRing* R = p->homotopy_R = HH->get_ring()->cast_to_PolyRing();
   if (R==NULL) {
     ERROR("polynomial ring expected");
     return NULL;
   }
+  const Ring* K = R->getCoefficients();
+  if (K->is_CCC())
+    p->C = K->cast_to_CCC();
+  else {
+    ERROR("complex coefficients expected");
+    return NULL;
+  }
 
-  PathTracker *p = new PathTracker;
   p->H = HH;
   p->slpH = NULL;
   for (int i=0; i<HH->n_cols(); i++) {
@@ -1083,8 +1138,7 @@ PathTracker_OrNull* PathTracker::make(Matrix *HH)
       p->slpH = t;
     }
   }
-  p->slpHxH = p->slpH->jacobian(true);
-  p->slpHxt = p->slpH->jacobian(false);
+  p->slpHxt = p->slpH->jacobian(true, p->slpHxH, true, p->slpHxtH);
   return p;
 }
 
@@ -1116,16 +1170,17 @@ const MatrixOrNull * rawTrackPaths(StraightLineProgram* slp_pred, StraightLinePr
   PathTracker P;
   P.slpHxt = P.slpHxtH = slp_pred;
   P.slpHxH = slp_corr;
-  rawSetParameters(&P, is_projective,
-		   init_dt, min_dt, max_dt, 
-		   dt_increase_factor, dt_decrease_factor, num_successes_before_increase,
-		   epsilon, max_corr_steps,
-		   pred_type);
+  P.C = start_sols->get_ring()->cast_to_CCC();
+  rawSetParametersPT(&P, is_projective,
+		     init_dt, min_dt, max_dt, 
+		     dt_increase_factor, dt_decrease_factor, num_successes_before_increase,
+		     epsilon, max_corr_steps,
+		     pred_type);
   rawLaunchPT(&P, start_sols);
   return P.getAllSolutions();
 }
 
-void rawSetParameters(PathTracker* PT, M2_bool is_projective,
+void rawSetParametersPT(PathTracker* PT, M2_bool is_projective,
 				    M2_RRR init_dt, M2_RRR min_dt, M2_RRR max_dt, 
 				    M2_RRR dt_increase_factor, M2_RRR dt_decrease_factor, int num_successes_before_increase,
 				    M2_RRR epsilon, int max_corr_steps,
@@ -1148,9 +1203,14 @@ void rawLaunchPT(PathTracker* PT, const Matrix* start_sols)
   PT->track(start_sols);
 }
 
-const MatrixOrNull *rawGetAllSolutions(PathTracker* PT)
+const MatrixOrNull *rawGetAllSolutionsPT(PathTracker* PT)
 {
   return PT->getAllSolutions();
+}
+
+const MatrixOrNull *rawRefinePT(PathTracker* PT, const Matrix* sols, M2_RRR tolerance, int max_corr_steps_refine)
+{
+  return PT->refine(sols, tolerance, max_corr_steps_refine);
 }
 
 int PathTracker::track(const Matrix* start_sols)
@@ -1163,15 +1223,15 @@ int PathTracker::track(const Matrix* start_sols)
   double dt_decrease_factor_dbl = mpfr_get_d(dt_decrease_factor,GMP_RNDN);
   
   const CCC* R = start_sols->get_ring()->cast_to_CCC(); 
-  int n= start_sols->n_cols();  
-  int n_sols = start_sols->n_rows();
+  int n = n_coords = start_sols->n_cols();  
+  n_sols = start_sols->n_rows();
 
   printf("epsilon2 = %e, t_step = %lf, dt_min_dbl = %lf, dt_increase_factor_dbl = %lf, dt_decrease_factor_dbl = %lf\n", 
 	 epsilon2, t_step, dt_min_dbl, dt_increase_factor_dbl, dt_decrease_factor_dbl);
 
   // memory distribution for arrays
   complex* s_sols = newarray(complex,n*n_sols);
-  complex* t_sols = newarray(complex,n*n_sols);
+  complex* t_sols = raw_solutions = newarray(complex,n*n_sols);
   complex* x0t0 = newarray(complex,n+1); 
     complex* x0 =  x0t0;
     complex* t0 = x0t0+n;
@@ -1340,24 +1400,9 @@ int PathTracker::track(const Matrix* start_sols)
     //printf("(%d)", count); fflush(stdout);
   }
   
-  // construct output 
-  FreeModule* S = R->make_FreeModule(n); 
-  FreeModule* T = R->make_FreeModule(n_sols);
-  MatrixConstructor mat(T,S);
-  mpfr_t re, im;
-  mpfr_init(re); mpfr_init(im);
-  c = t_sols;
-  for(i=0; i<n_sols; i++) 
-    for(j=0; j<n; j++,c++) {
-      mpfr_set_d(re, c->getreal(), GMP_RNDN);
-      mpfr_set_d(im, c->getimaginary(), GMP_RNDN);
-      ring_elem e = R->from_BigReals(re,im);
-      mat.set_entry(i,j,e);
-    }
-  mpfr_clear(re); mpfr_clear(im);
-  
+
   // clear arrays
-  deletearray(t_sols);
+  // deletearray(t_sols); // do not delete (same as raw_solutions) 
   deletearray(s_sols);
   deletearray(x0t0);
   deletearray(x1t1);
@@ -1371,17 +1416,113 @@ int PathTracker::track(const Matrix* start_sols)
   deletearray(HxtH);
   deletearray(HxH);
 
-  solutions = mat.to_matrix();
   return n_sols;
 }
 
-MatrixOrNull* PathTracker::getAllSolutions() { return solutions; }
+MatrixOrNull* PathTracker::refine(const Matrix *sols, M2_RRR tolerance, int max_corr_steps_refine)
+{
+  double epsilon2 = mpfr_get_d(tolerance,GMP_RNDN); epsilon2 *= epsilon2;
+  int n = n_coords; 
+  if (! sols->get_ring()->is_CCC()) {
+    ERROR("complex coordinates expected");
+    return NULL;
+  }  
+  if (sols->n_cols() != n) {
+    ERROR("incorrect number of coordinates");
+    return NULL;
+  }  
+  n_sols = sols->n_rows();
+
+  // memory distribution for arrays
+  complex* s_sols = newarray(complex,n*n_sols);
+  complex* dx = newarray(complex,n); 
+  complex* x1t1 = newarray(complex,n+1); 
+    complex* x1 =  x1t1;
+    complex* t1 = x1t1+n;
+  complex* HxH = newarray_atomic(complex, n*(n+1));
+    complex *LHS, *RHS;
+
+  // read solutions: rows are solutions
+  int i,j;
+  complex* c = s_sols;
+  for(i=0; i<n_sols; i++) 
+    for(j=0; j<n; j++,c++) 
+      *c = complex(BIGCC_VAL(sols->elem(i,j)));
+
+  complex* s_s = s_sols; //current solution 
+  for(int sol_n =0; sol_n<n_sols; sol_n++, s_s+=n) {
+    copy_complex_array(n,s_s,x1);
+    *t1 = complex(1,0);
+    // CORRECTOR
+    bool is_successful; 
+    int n_corr_steps=0; 
+    do {
+      n_corr_steps++;
+      //
+      slpHxH->evaluate(n+1,x1t1, HxH);
+      LHS = HxH; 	
+      RHS = HxH+n*n; // i.e., H
+      //
+      negate_complex_array(n,RHS);
+      solve_via_lapack_without_transposition(n,LHS,1,RHS,dx);
+      add_to_complex_array(n,x1t1,dx);
+      is_successful = norm2_complex_array(n,dx) < epsilon2*norm2_complex_array(n,x1t1);
+    } while (!is_successful and n_corr_steps<max_corr_steps_refine);
+    if (!is_successful) 
+      printf("max number of corrector steps exceeded for solution %d", sol_n);
+    copy_complex_array(n,x1,s_s);
+  }
+  
+  // make the output matrix
+  FreeModule* S = C->make_FreeModule(n); 
+  FreeModule* T = C->make_FreeModule(n_sols);
+  MatrixConstructor mat(T,S);
+  mpfr_t re, im;
+  mpfr_init(re); mpfr_init(im);
+  c = s_sols;
+  for(int i=0; i<n_sols; i++) 
+    for(int j=0; j<n; j++,c++) {
+      mpfr_set_d(re, c->getreal(), GMP_RNDN);
+      mpfr_set_d(im, c->getimaginary(), GMP_RNDN);
+      ring_elem e = C->from_BigReals(re,im);
+      mat.set_entry(i,j,e);
+    }
+  mpfr_clear(re); mpfr_clear(im);
+
+  // clear arrays
+  deletearray(s_sols);
+  deletearray(dx);
+  deletearray(x1t1);
+  deletearray(HxH);
+
+  return mat.to_matrix();
+}
+
+MatrixOrNull* PathTracker::getAllSolutions()
+{
+  // construct output 
+  FreeModule* S = C->make_FreeModule(n_coords); 
+  FreeModule* T = C->make_FreeModule(n_sols);
+  MatrixConstructor mat(T,S);
+  mpfr_t re, im;
+  mpfr_init(re); mpfr_init(im);
+  complex* c = raw_solutions;
+  for(int i=0; i<n_sols; i++) 
+    for(int j=0; j<n_coords; j++,c++) {
+      mpfr_set_d(re, c->getreal(), GMP_RNDN);
+      mpfr_set_d(im, c->getimaginary(), GMP_RNDN);
+      ring_elem e = C->from_BigReals(re,im);
+      mat.set_entry(i,j,e);
+    }
+  mpfr_clear(re); mpfr_clear(im);
+  return (solutions = mat.to_matrix());
+}
 
 void PathTracker::text_out(buffer& o) const
 {
-  slpHxt->text_out(o);
-  slpHxH->text_out(o);
-  /*
+  slpHxt->stats_out(o);
+  slpHxH->stats_out(o);
+
   int n = slpHxH->num_inputs;
   char buf[1000];
   complex input[n], output[n*n];
@@ -1400,9 +1541,9 @@ void PathTracker::text_out(buffer& o) const
     output[i].sprint(buf);
     o << "Hxt[" << i << "] = " << buf << newline;
   }
-  //slpH->text_out(o);
-  //slpHxH->text_out(o);
-  */
+  slpH->text_out(o);
+  slpHxH->text_out(o);
+
 }
  
 // Local Variables:

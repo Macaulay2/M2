@@ -122,7 +122,7 @@ export rawPathTracker(e:Expr):Expr := (
      );
 setupfun("rawPathTracker",rawPathTracker);
 
-export rawSetParameters(e:Expr):Expr := (
+export rawSetParametersPT(e:Expr):Expr := (
      when e is s:Sequence do
      if length(s) != 11 then WrongNumArgs(11)
      else when s.0 is PT:RawPathTracker do 
@@ -137,7 +137,7 @@ export rawSetParameters(e:Expr):Expr := (
 	  when s.9 is maxCorrSteps:ZZ do
 	  when s.10 is predType:ZZ do (
 	       Ccode(void,
-		    	 "rawSetParameters(",
+		    	 "rawSetParametersPT(",
 		    	 "(PathTracker *)", PT, ",",
 			 toBoolean(s.1),",",
 			 "(M2_RRR)", initDt,",",
@@ -165,7 +165,7 @@ export rawSetParameters(e:Expr):Expr := (
      	  else WrongArg(1,"a path tracker")
      else WrongNumArgs(11)
      );
-setupfun("rawSetParameters",rawSetParameters);
+setupfun("rawSetParametersPT",rawSetParametersPT);
 
 export rawLaunchPT(e:Expr):Expr := (
      when e is s:Sequence do
@@ -185,15 +185,37 @@ export rawLaunchPT(e:Expr):Expr := (
      );
 setupfun("rawLaunchPT",rawLaunchPT);
 
-export rawGetAllSolutions(e:Expr):Expr := (
+export rawGetAllSolutionsPT(e:Expr):Expr := (
      when e is PT:RawPathTracker  do 
 		toExpr(Ccode(RawMatrixOrNull,
-		    "(engine_RawMatrixOrNull)rawGetAllSolutions(",
+		    "(engine_RawMatrixOrNull)rawGetAllSolutionsPT(",
 		    "(PathTracker *)", PT, 
 		    ")"
 		    ))
      else WrongArg("a path tracker")
      );
-setupfun("rawGetAllSolutions",rawGetAllSolutions);
+setupfun("rawGetAllSolutionsPT",rawGetAllSolutionsPT);
 
+export rawRefinePT(e:Expr):Expr := (
+     when e is s:Sequence do
+     if length(s) != 4 then WrongNumArgs(4)
+     else when s.0 is PT:RawPathTracker do 
+	  when s.1 is sols:RawMatrix do 
+	  when s.2 is tolerance:RR do
+          when s.3 is maxSteps:ZZ do 
+	       toExpr(Ccode(RawMatrixOrNull,
+		    "(engine_RawMatrixOrNull)rawRefinePT(",
+		    	 "(PathTracker *)", PT, ",",
+	                 "(Matrix *)", sols, ",",
+			 "(M2_RRR)", tolerance,",",
+                         toInt(s.3),
+		    	 ")"
+	       ))
+          else WrongArgZZ(4)
+          else WrongArgRR(3)
+	  else WrongArgMatrix(2)
+     	  else WrongArg(1,"a path tracker")
+     else WrongNumArgs(4)
+     );
+setupfun("rawRefinePT",rawRefinePT);
 
