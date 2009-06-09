@@ -1,8 +1,8 @@
 -- -*- coding: utf-8 -*-
 newPackage(
      "NAG",
-     Version => "1.0",
-     Date => "10/01/2008",
+     Version => "1.2.1",
+     Date => "8 Jun 2009",
      Headline => "Numerical Algebraic Geometry",
      HomePage => "http://www.math.uic.edu/~leykin/NAG4M2",
      AuxiliaryFiles => true,
@@ -20,14 +20,15 @@ newPackage(
 export {
      "solveSystem", "track", "refine", "totalDegreeStartSystem",
      "areEqual", "sortSolutions", "multistepPredictor", "multistepPredictorLooseEnd",
-     "Software","PHCpack","Bertini","HOM4PS2","M2",
+     "Software","PHCpack","Bertini","HOM4PS2","M2","M2engine","M2enginePrecookedSLPs",
      "gamma","tDegree","tStep","tStepMin","tStepMax","stepIncreaseFactor","numberSuccessesBeforeIncrease",
      "Predictor","RungeKutta4","Multistep","Tangent","Euler","Secant","MultistepDegree",
-     "finalMaxCorSteps", "maxCorSteps", 
+     "finalMaxCorrSteps", "maxCorrSteps", 
      "Projectivize",
      "AffinePatches", "DynamicPatch",
      "RandomSeed",
-     "SLP", "HornerForm", "CompiledHornerForm", "CorrectorTolerance", "SLPcorrector", "SLPpredictor"
+     "SLP", "HornerForm", "CompiledHornerForm", "CorrectorTolerance", "SLPcorrector", "SLPpredictor",
+     "Tolerance"
      }
 exportMutable {
      }
@@ -42,6 +43,7 @@ HOM4PS2exe = NAG#Options#Configuration#"HOM4PS2";
 
 DBG = 0; -- debug level (10=keep temp files)
 SLPcounter = 0; -- the number of compiled SLPs (used in naming dynamic libraries)
+lastPathTracker = null; -- path tracker object used last
 
 -- CONVENTIONS ---------------------------------------
 
@@ -150,8 +152,8 @@ track = method(TypicalValue => List, Options =>{
 	  MultistepDegree => 3, -- used only for Predictor=>Multistep
 	  -- corrector 
 	  SLPcorrector=>false, --temp!!!
-	  finalMaxCorSteps => 11,
-	  maxCorSteps => 3,
+	  finalMaxCorrSteps => 11,
+	  maxCorrSteps => 3,
      	  CorrectorTolerance => 5e-6, -- tracking tolerance (universal)
 	  -- projectivization
 	  Projectivize => true, 
@@ -421,8 +423,8 @@ track (List,List,List) := List => o -> (S,T,solsS) -> (
 		    slpCORRECTOR,
 		    slpHxno,
 		    slpHno, 
-		    o.maxCorSteps,
-		    o.finalMaxCorSteps
+		    o.maxCorrSteps,
+		    o.finalMaxCorrSteps
 		    });
 	  SLPcounter = SLPcounter + 1;
 	  );
@@ -441,7 +443,7 @@ track (List,List,List) := List => o -> (S,T,solsS) -> (
 	       	    false,
 	       	    o.tStep, o.tStepMin, o.tStepMax, 
 		    toRR(o.stepIncreaseFactor), toRR(stepDecreaseFactor), o.numberSuccessesBeforeIncrease,
-	       	    o.CorrectorTolerance, o.maxCorSteps,
+	       	    o.CorrectorTolerance, o.maxCorrSteps,
 		    ( -- pred_type:
 			 if o.Predictor === Tangent then predTANGENT
 		    	 else if o.Predictor === RungeKutta4 then predRUNGEKUTTA
@@ -452,11 +454,12 @@ track (List,List,List) := List => o -> (S,T,solsS) -> (
      else if o.Software===M2engine then (
 	  if DBG > 0 then << "Running the engine version..." << endl;
 	  PT := rawPathTracker(raw H);
-	  rawSetParameters(PT, 
+	  lastPathTracker = PT;
+	  rawSetParametersPT(PT, 
 	       false,
 	       o.tStep, o.tStepMin, o.tStepMax, 
 	       toRR(o.stepIncreaseFactor), toRR(stepDecreaseFactor), o.numberSuccessesBeforeIncrease,
-	       o.CorrectorTolerance, o.maxCorSteps,
+	       o.CorrectorTolerance, o.maxCorrSteps,
 	       ( -- pred_type:
 		    if o.Predictor === Tangent then predTANGENT
 		    else if o.Predictor === RungeKutta4 then predRUNGEKUTTA
@@ -464,7 +467,7 @@ track (List,List,List) := List => o -> (S,T,solsS) -> (
 		    else error "no slp for the predictor")
 	       );
 	  rawLaunchPT(PT, raw matrix apply(solsS,s->first entries transpose s));
-	  entries map(K,rawGetAllSolutions(PT))
+	  entries map(K,rawGetAllSolutionsPT(PT))
      	  )
      else if o.Software===M2 then (
      	  apply(#solsS, sN->(
@@ -605,7 +608,7 @@ track (List,List,List) := List => o -> (S,T,solsS) -> (
 		    -- corrector step
 		    if DBG>9 then << ">>> corrector" << endl;
 		    dx = 1; -- dx = + infinity
-		    nCorSteps := 0;
+		    nCorrSteps := 0;
 		    if o.SLPcorrector then (
 			 corr'error := rawEvaluateSLP(slpCorr, raw (transpose x1 | matrix {{t1,dt}}));
 			 corr'error = transpose lift(map(K,corr'error),K);
@@ -615,15 +618,15 @@ track (List,List,List) := List => o -> (S,T,solsS) -> (
 			 )
 		    else(
 		    	 while norm dx > o.CorrectorTolerance*norm x1 
-			 and nCorSteps < (if 1-t1 < theSmallestNumber and dt <= o.tStepMin 
-			      then o.finalMaxCorSteps -- infinity
-			      else o.maxCorSteps) 
+			 and nCorrSteps < (if 1-t1 < theSmallestNumber and dt <= o.tStepMin 
+			      then o.finalMaxCorrSteps -- infinity
+			      else o.maxCorrSteps) 
 		    	 do ( 
 			      if norm x1 > divThresh then (error "infinity"; x1 = infinity; break);
 			      dx = solve(evalHx(x1,t1), -evalH(x1,t1));
 			      x1 = x1 + dx;
-			      nCorSteps = nCorSteps + 1;
-			      if DBG > 4 then <<"corrector step " << nCorSteps << endl <<"x=" << toString x1 << " res=" <<  toString evalH(x1,t1) 
+			      nCorrSteps = nCorrSteps + 1;
+			      if DBG > 4 then <<"corrector step " << nCorrSteps << endl <<"x=" << toString x1 << " res=" <<  toString evalH(x1,t1) 
 			      << endl << " dx=" << dx << endl;
 			      );
 			 );
@@ -645,7 +648,7 @@ track (List,List,List) := List => o -> (S,T,solsS) -> (
 		         t0 = t1;
 			 count = count + 1;
 		         if DBG>1 then history#count = new MutableHashTable from {"t"=>t0,"x"=>x0,"stepAdj"=>stepAdj};
-			 if nCorSteps <= o.maxCorSteps - 1 -- over 2 / minus 2 ???
+			 if nCorrSteps <= o.maxCorrSteps - 1 -- over 2 / minus 2 ???
               		    and predictorSuccesses >= o.numberSuccessesBeforeIncrease 
 			 then (			      
 			      predictorSuccesses = 0;
@@ -689,12 +692,17 @@ track (List,List,List) := List => o -> (S,T,solsS) -> (
      ret
      )
 
-refine = method(TypicalValue => List, Options =>{epsilon=>1e-8, maxCorSteps=>30})
+refine = method(TypicalValue => List, Options =>{Software=>M2, Tolerance=>1e-8, maxCorrSteps=>30})
 refine (List,List) := List => o -> (T,solsT) -> (
 -- tracks solutions from start system to target system
 -- IN:  T = list of polynomials in target system
 --      solsT = list of solutions to T
 -- OUT: solsR = list of refined solutions 
+     if o.Software === M2engine then (
+	  if lastPathTracker === null 
+	  then error "path tracker is not set up"
+	  else return entries map(CC_53, rawRefinePT(lastPathTracker, raw matrix solsT, o.Tolerance, o.maxCorrSteps));
+     	  );
      n := #T; 
      if n > 0 then R := ring first T else error "expected nonempty target system";
      if n != numgens R then error "expected a square system";
@@ -705,19 +713,19 @@ refine (List,List) := List => o -> (T,solsT) -> (
      evalJ := x0 -> lift(sub(J, transpose x0), CC);
      
      solsR := apply(solsT, s->(
-	       x1 := sub(transpose matrix {first s}, CC); -- convert to vector 
+	       x1 := sub(transpose matrix {s}, CC); -- convert to vector 
 	       -- corrector step
 	       dx = 1; -- dx = + infinity
-	       nCorSteps := 0;
-	       while norm dx > o.epsilon and nCorSteps < o.maxCorSteps do ( 
+	       nCorrSteps := 0;
+	       while norm dx > o.Tolerance * norm x1 and nCorrSteps < o.maxCorrSteps do ( 
 		    if DBG > 3 then << "x=" << toString x1 << " res=" <<  toString evalT(x1) << " dx=" << dx << endl;
-		    dx = - (inverse evalJ(x1))*evalT(x1);
+		    dx = solve(evalJ(x1), -evalT(x1));
 		    x1 = x1 + dx;
-		    nCorSteps = nCorSteps + 1;
+		    nCorrSteps = nCorrSteps + 1;
 		    );
 	       x1
 	       ));
-     apply(#solsT, i-> {flatten entries solsR#i, last solsT#i})      
+     apply(#solsT, i-> flatten entries solsR#i)      
      )     
 
 totalDegreeStartSystem = method(TypicalValue => Sequence)
@@ -1083,7 +1091,7 @@ W2 = moveSlice(W1, sub(matrix "0,1,0,0;0,0,1,0",R)
      )
 ///
 
-splitWitness = method(TypicalValue=>Sequence, Options =>{Software=>M2, epsilon=>1e-6})
+splitWitness = method(TypicalValue=>Sequence, Options =>{Software=>M2, Tolerance=>1e-6})
 splitWitness (HashTable,RingElement) := Sequence => o -> (w,f) -> (
 -- splits the witness set into two parts: one contained in {f=0}, the other not
 -- IN:  comp = a witness set
@@ -1091,7 +1099,7 @@ splitWitness (HashTable,RingElement) := Sequence => o -> (w,f) -> (
 -- OUT: (w1,w2) = two witness sets   
      w1 := {}; w2 := {};
      for x in w#points do 
-	 if norm evalPoly(f,x) < o.epsilon 
+	 if norm evalPoly(f,x) < o.Tolerance 
 	 then w1 = w1 | {x}
 	 else w2 = w2 | {x};   
      ( if #w1===0 then null 
@@ -1136,7 +1144,7 @@ regeneration List := HashTable => o -> F -> (
 	       	    | sliceEquations( submatrix'(comp#slice,{0},{}), R );
 	       	    targetPoints := track(S,T,flatten apply(dWS,w->w#points), 
 			 gamma=>exp(random(0.,2*pi)*ii), Software=>o.Software);
-		    --if o.Software == M2 then targetPoints = refine(T, targetPoints, epsilon=>1e-10);
+		    --if o.Software == M2 then targetPoints = refine(T, targetPoints, Tolerance=>1e-10);
 		    if #targetPoints>0 
 		    then c2 = c2 | { new HashTable from {
 			      equations => cOut#equations | {f}, 
@@ -1173,35 +1181,35 @@ regeneration({x^2+y^2+z^2-1,x*y,y*z}
 -----------------------------------------------------------------------
 -- AUXILIARY FUNCTIONS
 
-areEqual = method(TypicalValue=>Boolean, Options=>{epsilon=>1e-6})
+areEqual = method(TypicalValue=>Boolean, Options=>{Tolerance=>1e-6})
 areEqual (List,List) := o -> (a,b) -> (
      if class last a === List then (
-	  #a == #b and all(#a, i->areEqual(a#i,b#i, epsilon=>o.epsilon))
+	  #a == #b and all(#a, i->areEqual(a#i,b#i, Tolerance=>o.Tolerance))
 	  ) else (
-     	  #a == #b and norm matrix {a-b} < o.epsilon
+     	  #a == #b and norm matrix {a-b} < o.Tolerance
 	  )
      ) 
 areEqual (CC,CC) := o -> (a,b) -> (
-     abs(a-b) < o.epsilon
+     abs(a-b) < o.Tolerance
      ) 
 areEqual (Matrix,Matrix) := o -> (a,b) -> (
-     areEqual(flatten entries a, flatten entries b, epsilon=>o.epsilon)
+     areEqual(flatten entries a, flatten entries b, Tolerance=>o.Tolerance)
      ) 
 
-isGEQ := method(TypicalValue=>Boolean, Options=>{epsilon=>1e-6})
+isGEQ := method(TypicalValue=>Boolean, Options=>{Tolerance=>1e-6})
 isGEQ(List,List) := o->(t,s)-> (
      n := #t;
      for i from 0 to n-1 do ( 
-	  if not areEqual(t#i,s#i, epsilon=>o.epsilon) 
+	  if not areEqual(t#i,s#i, Tolerance=>o.Tolerance) 
 	  then 
-	  if abs(realPart t#i - realPart s#i) < o.epsilon then 
+	  if abs(realPart t#i - realPart s#i) < o.Tolerance then 
 	  return imaginaryPart t#i > imaginaryPart s#i
 	  else return realPart t#i > realPart s#i
 	  ); 
      true -- if approx. equal 
      )
 
-sortSolutions = method(TypicalValue=>List, Options=>{epsilon=>1e-6})
+sortSolutions = method(TypicalValue=>List, Options=>{Tolerance=>1e-6})
 sortSolutions List := o -> sols -> (
 -- sorts numerical solutions     
      if #sols == 0 then sols
@@ -1235,7 +1243,7 @@ evalPoly (RingElement, List) := (f,x) -> (
      sub(sub(f, sub(matrix{x},ring f)), coefficientRing ring f)
      )
 
-diffSolutions = method(TypicalValue=>Sequence, Options=>{epsilon=>1e-6})
+diffSolutions = method(TypicalValue=>Sequence, Options=>{Tolerance=>1e-6})
 -- in:  A, B (presumably sorted)
 -- out: (a,b), where a and b are lists of indices where A and B differ
 diffSolutions (List,List) := o -> (A,B) -> (
@@ -1742,42 +1750,42 @@ typedef struct
   double im;  
 } complex;
 
-/* inline void init_complex(complex* c, double r, double i) __attribute__((always_inline));
+inline void init_complex(complex* c, double r, double i) __attribute__((always_inline));
 void init_complex(complex* c, double r, double i)
 { c->re = r; c->im = i; }
-*/
-#define init_complex(c,r,i) { c->re = r; c->im = i; }
+
+/* #define init_complex(c,r,i) { c->re = r; c->im = i; } */
 
 /* register */ 
 static double r_re, r_im; 
 
-/* inline set_r(complex c) __attribute__((always_inline));
+inline set_r(complex c) __attribute__((always_inline));
 inline set_r(complex c) 
 { r_re = c.re; r_im = c.im; }
-*/
-#define set_r(c) { r_re = c.re; r_im = c.im; }
 
-/* inline copy_r_to(complex* c) __attribute__((always_inline));
+/* #define set_r(c) { r_re = c.re; r_im = c.im; } */
+
+inline copy_r_to(complex* c) __attribute__((always_inline));
 inline copy_r_to(complex* c) 
 { c->re = r_re; c->im = r_im; }
-*/
-#define copy_r_to(c) { c->re = r_re; c->im = r_im; }
 
-/* inline add(complex c) __attribute__((always_inline));
+/* #define copy_r_to(c) { c->re = r_re; c->im = r_im; } */
+
+inline add(complex c) __attribute__((always_inline));
 inline add(complex c)
 { r_re += c.re; r_im += c.im; }
-*/
-#define add(c) { r_re += c.re; r_im += c.im; }
 
-/* inline mul(complex c) __attribute__((always_inline));
+/* #define add(c) { r_re += c.re; r_im += c.im; } */
+
+inline mul(complex c) __attribute__((always_inline));
 inline mul(complex c)
 { 
   double t_re = r_re*c.re - r_im*c.im;
   r_im = r_re*c.im + r_im*c.re;
   r_re = t_re;
 }
-*/
-#define mul(c) { double t_re = r_re*c.re - r_im*c.im; r_im = r_re*c.im + r_im*c.re; r_re = t_re; }   
+
+/*#define mul(c) { double t_re = r_re*c.re - r_im*c.im; r_im = r_re*c.im + r_im*c.re; r_re = t_re; } */
 
 /// << endl;
      -- if o.System === MacOsX then f << ///#define EXPORT __attribute__((visibility("default")))/// <<endl;
@@ -1936,11 +1944,6 @@ preSLPcompiledSLP (ZZ,Sequence) := o -> (nIns,S) -> (
      compileCommand := if o.System === Linux then "gcc -shared -Wl,-soname," | libName | " -o " | libName | " " | cppName | " -lc -fPIC"
      else if o.System === MacOsX and version#"pointer size" === 8 then "g++ -m64 -dynamiclib -O2 -o " | libName | " " | cppName
      else if o.System === MacOsX then (
-	  ///
-     -fauto-inc-dec
-     -fcprop-registers
-     -finline-small-functions
-     	  ///;
      	  "gcc -dynamiclib -O1 -o " | libName | " " | cppName
 	  )
      else error "unknown OS";

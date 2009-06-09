@@ -1,7 +1,7 @@
 restart
-loadPackage ("NAG", FileName=>"../NAG.m2", 
-     Configuration=>{"PHCpack"=>"./phc", "Bertini"=>"./bertini", "HOM4PS2"=>"./hom4ps2_in_out"})
---loadPackage "NAG";
+--loadPackage ("NAG", FileName=>"../NAG.m2", 
+--     Configuration=>{"PHCpack"=>"./phc", "Bertini"=>"./bertini", "HOM4PS2"=>"./hom4ps2_in_out"})
+loadPackage "NAG";
 debug NAG; DBG = 2; printingPrecision = 20; 
 load "benchmarks.m2"
 
@@ -15,10 +15,11 @@ solsT = track(S,T,solsS, gamma=>1+ii,
      --Software=>M2enginePrecookedSLPs,
      Projectivize=>false,
      --Predictor=>Tangent,
-     --Predictor=>Euler,
+     Predictor=>Euler,
      --SLP=>CompiledHornerForm 
      SLP=>HornerForm
      )
+norm matrix refine(T, {{1.2_CC,0.2}},  epsilon=>1e-3)
 sortSolutions solsT/(s->s#0/round)
 
 -- cyclic roots -------------------------------------------------------------
