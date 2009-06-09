@@ -1,16 +1,13 @@
--- -*- coding: utf-8 -*-
 newPackage(
      "SymmetricPolynomials",
-     Version => "0.1",
-     Date => "June 2008",
-     Authors => {
-	  {Name => "Alexandra Seceleanu", HomePage => "http://www.math.uiuc.edu/~asecele2/"}
-	  	  },
+     Version => "1.0",
+     Date => "May 20 2009",
+    Authors => {{Name => "Alexandra Seceleanu", HomePage => "http://www.math.uiuc.edu/~asecele2/"}},
      Headline => "symmetric polynomials",
      DebuggingMode => true
      )
 
-export {elementarySymmetric}
+export {buildSymmetricGB,elementalSymm}
 
 mons = (X,i)-> (
     n := #X;
@@ -19,7 +16,7 @@ mons = (X,i)-> (
     )
 
 
-s := local s;
+x:= local x;
 
 
 symring= R->(
@@ -32,73 +29,134 @@ symring= R->(
  
 elementarySymmetricPolynomialRing =(cacheValue symbol  elementarySymmetricRing)symring
  
-elementarySymmetric = method();
-elementarySymmetric (RingElement):=  f -> (
+buildSymmetricGB =method();
+buildSymmetricGB (PolynomialRing) := R -> (
+	n := # flatten entries vars R; 
+	S := elementarySymmetricPolynomialRing R;
+     	xvars := select(n,gens S,i->true);
+	svars :=select(2*n,gens S,i->true)-set xvars;
+	A :=coefficientRing(R)[svars,xvars][x];
+ 	svars =apply(svars,i->(map(A,S))(i));
+	xvars =apply(xvars,i->(map(A,S))(i));
+	g :=x^n+sum for i to n-1 list svars_i*x^(n-i-1);
+	l= {};
+	for i to n-1 do (
+	     f :=sub(g,x=>-xvars_(n-i-1));
+	     l = append(l,f);
+	     g=g//(x+xvars_(n-i-1));
+		);
+	F := map(S,A);
+	l= apply(l,i-> F i);
+	use R;
+	  return l
+)
+
+
+     
+elementalSymm = method();
+elementalSymm (RingElement):=  f -> (
      R := ring f;
      n := # flatten entries vars R; 
      if n<2 then return f;
-     S := elementarySymmetricPolynomialRing R;
-     X= select(n,gens S,i->true);
-     use S;--
-     I :=ideal for i from 1 to n list ( s_i-sum apply(subsets(n,i),l->product(apply(l,u->S_(u)))));
-     l := for i from 1 to n list (
-	mons(X,i)
-	  );
-
-     l1 := for i from 1 to n-1 list (
-	  flatten (for j from 1 to i list ((-1)^j*s_j*l_(i-j))|l_i|{(-1)^(i+1)*s_(i+1)})
-	  );
-     l = {l_0|{-s_1}}|l1;
-     grob:= for i from 1 to #l list ({sum select(l_(i-1), j->j<=S_(i-1)^i )});
-     m := matrix grob; 
-     forceGB m;
+     l=buildSymmetricGB(R);
+     I=ideal l;
+     S := ring I;
+     forceGB matrix {l};
      F := map(S,R);
      answer := F(f)%I;
-     use ring f;
----------New line: it creates a new ring whose variables are the elementary symmetric polynomials
-     F=QQ[s_1..s_n];
-     answer=substitute(answer,F);
-     E:=QQ[e_1..e_n];
-     MAP=map(E,F,vars E);
-     answer=MAP(answer);
-     return answer;
+     if isSubset(support(answer),gens R) then (use R; return answer)
+     else (use R; print "your input is not a symmetric polynomial")
      )
      
 
-elementarySymmetric (PolynomialRing):=  R->(
-     return map(R,elementarySymmetricPolynomialRing R)
+elementalSymm (PolynomialRing):=  R->(
+     forceGB matrix{buildSymmetricGB R};
+     return map(elementarySymmetricPolynomialRing R,R)
      )
+
+
 
 beginDocumentation()
 
-doc ///
-  Key
-    SymmetricPolynomials
-  Headline
-    elementary symmetric functions
-///
+document {
+	Key =>SymmetricPolynomials,
+	Headline => "the algebra of symmetric polynomials",
+	PARA{"This package uses an explicit description of the Groebner basis of the ideal of obvious relations in this algebra based on:"},
+	PARA{"Grayson, Stillmann - Computations in the intersection theory of flad varieties, preprint, 2009"},
+	PARA{"Sturmfels - Algorithms in Invariant Theory, Springer Verlag, Vienna, 1993"}
+}
 
-doc ///
-  Key
-    elementarySymmetric
-    (elementarySymmetric, RingElement)
-  Headline
-    Expresses a symmetric polynomial as a polynomial in the elementary symmetric functions
-  Usage
-    elementarySymmetric(f)
-  Inputs
-    f:RingElement
-      a symmetric polynomial in n variables  
-  Outputs 
-    G:RingElement
-      the representation of f as a polynomial in the elementary symmetric functions.
-  Description
-    Text    
-      Expresses a symmetric polynomial as a polynomial in the elementary symmetric functions
-    
-    Example
-      R=QQ[x_0,x_1,x_2,x_3]
-      q=x_0^2*x_1^2*x_2^2+x_0^2*x_1^2*x_2*x_3+x_0^2*x_1*x_2^2*x_3+x_0*x_1^2*x_2^2*x_3+x_0^2*x_1^2*x_3^2+x_0^2*x_1*x_2*x_3^2+x_0*x_1^2*x_2*x_3^2+x_0^2*x_2^2*x_3^2+x_0*x_1*x_2^2*x_3^2+x_1^2*x_2^2*x_3^2
-      elementarySymmetric(q)
-///
+document {
+	Key =>elementalSymm,
+	Headline => "expression in terms of elementary symmetric polynomials",
+	Inputs => {"f, a symmetric", TO RingElement},
+	Outputs =>{"the epression of f in terms of the elementary symmetric functions s_i"},
+	Usage => "elementalSymm f",
+	Caveat => {"if the input is not symmetric the function will announce this"},
+EXAMPLE lines \\\
+	n=5;
+	R=QQ[x_1..x_n];
+	f=(product gens R)*(sum gens R);
+	elementalSymm f
+\\\
+	PARA{"This function should work up to a size of 15 variables in the base ring"}
+}
 
+document {
+	Key =>(elementalSymm,RingElement),
+	Headline => "expression in terms of elementary symmetric polynomials",
+	Inputs => {"f"=> {"a symmetric", TO RingElement}},
+	Outputs =>{"the epression of f in terms of the elementary symmetric functions s_i"},
+	Usage => "elementalSymm f",
+	Caveat => {"if the input is not symmetric the function will announce this"},
+EXAMPLE lines \\\
+	n=5;
+	R=QQ[x_1..x_n];
+	f=(product gens R)*(sum gens R);
+	elementalSymm f
+\\\
+	PARA{"This function should work up to a size of 15 variables in the base ring"}
+}
+
+document {
+	Key =>(elementalSymm,PolynomialRing),
+	Headline => "elementary symmetric polynomials algebra",
+	Inputs => {"R"=>{ "a", TO PolynomialRing}},
+	Outputs =>{"a map from R adjoin the elementary symmetric functions s_i to R"},
+	Usage => "elementalSymm R",
+EXAMPLE lines \\\
+	n=5;
+	R=QQ[x_1..x_n];
+	elementalSymm R
+\\\
+	PARA{"This function should work up to a size of 15 variables in the base ring"}
+}
+
+document {
+	Key =>buildSymmetricGB,
+	Headline => "Groebner basis of elementary symmetric polynomials algebra",
+	Inputs => {"R"=>{ "a", TO Ring}},
+	Outputs =>{"the Groebner basis of the elementary symmetric algebra"},
+	Usage => "buildSymmetricGB R",
+	EXAMPLE lines \\\
+	n=5;
+	R=QQ[x_1..x_n];
+	buildSymmetricGB R
+\\\
+	PARA{"This function should work up to a size of 15 variables in the base ring"}
+}
+
+document {
+	Key =>(buildSymmetricGB,PolynomialRing),
+	Headline => "Groebner basis of elementary symmetric polynomials algebra",
+	Inputs => {"R"=>{ "a", TO PolynomialRing}},
+	Outputs =>{"the Groebner basis of the elementary symmetric algebra"},
+	Usage => "buildSymmetricGB R",
+	EXAMPLE lines \\\
+	n=5;
+	R=QQ[x_1..x_n];
+	buildSymmetricGB R
+\\\
+	PARA{"This function should work up to a size of 15 variables in the base ring"}
+}
+end
