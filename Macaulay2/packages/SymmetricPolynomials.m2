@@ -93,12 +93,12 @@ document {
 	Outputs =>{"the epression of f in terms of the elementary symmetric functions s_i"},
 	Usage => "elementalSymm f",
 	Caveat => {"if the input is not symmetric the function will announce this"},
-EXAMPLE lines \\\
+EXAMPLE lines ///
 	n=5;
 	R=QQ[x_1..x_n];
 	f=(product gens R)*(sum gens R);
 	elementalSymm f
-\\\
+///,
 	PARA{"This function should work up to a size of 15 variables in the base ring"}
 }
 
@@ -109,12 +109,12 @@ document {
 	Outputs =>{"the epression of f in terms of the elementary symmetric functions s_i"},
 	Usage => "elementalSymm f",
 	Caveat => {"if the input is not symmetric the function will announce this"},
-EXAMPLE lines \\\
+EXAMPLE lines ///
 	n=5;
 	R=QQ[x_1..x_n];
 	f=(product gens R)*(sum gens R);
 	elementalSymm f
-\\\
+///,
 	PARA{"This function should work up to a size of 15 variables in the base ring"}
 }
 
@@ -124,11 +124,11 @@ document {
 	Inputs => {"R"=>{ "a", TO PolynomialRing}},
 	Outputs =>{"a map from R adjoin the elementary symmetric functions s_i to R"},
 	Usage => "elementalSymm R",
-EXAMPLE lines \\\
+EXAMPLE lines ///
 	n=5;
 	R=QQ[x_1..x_n];
 	elementalSymm R
-\\\
+///,
 	PARA{"This function should work up to a size of 15 variables in the base ring"}
 }
 
@@ -138,11 +138,11 @@ document {
 	Inputs => {"R"=>{ "a", TO Ring}},
 	Outputs =>{"the Groebner basis of the elementary symmetric algebra"},
 	Usage => "buildSymmetricGB R",
-	EXAMPLE lines \\\
+	EXAMPLE lines ///
 	n=5;
 	R=QQ[x_1..x_n];
 	buildSymmetricGB R
-\\\
+///,
 	PARA{"This function should work up to a size of 15 variables in the base ring"}
 }
 
@@ -152,11 +152,11 @@ document {
 	Inputs => {"R"=>{ "a", TO PolynomialRing}},
 	Outputs =>{"the Groebner basis of the elementary symmetric algebra"},
 	Usage => "buildSymmetricGB R",
-	EXAMPLE lines \\\
+	EXAMPLE lines ///
 	n=5;
 	R=QQ[x_1..x_n];
 	buildSymmetricGB R
-\\\
+///,
 	PARA{"This function should work up to a size of 15 variables in the base ring"}
 }
 end
