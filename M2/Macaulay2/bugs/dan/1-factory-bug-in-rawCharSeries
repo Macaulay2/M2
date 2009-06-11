@@ -21,3 +21,19 @@ G=e^3+f^3+27/4*g^2+3/4*e*f*h^2-5/8*g*h^3-1/864*h^6;
 dis=ideal (4*F^3+27*G^2);
 sindis=ideal jacobian dis;
 primaryDecomposition sindis
+
+> Date: Thu, 11 Jun 2009 10:49:02 -0400
+> Subject: Re: yet another Macaulay2 question...
+> From: Mike Stillman <mike@math.cornell.edu>
+> To: Paolo Aluffi <aluffi@mail.math.fsu.edu>
+> Cc: dan@math.uiuc.edu
+> 
+> I think the problem is that there are fractions.  Here is a
+> workaround.  We'lll have to find the best way to fix this in M2
+> itself.
+> 
+> Before doing the primary decomposition, do:                                                                                   
+>                                                                                                                               
+> sindis = trim sindis                                                                                                          
+>                                                                                                                               
+> then the primary decomp works fine, I think.                                                                                  
