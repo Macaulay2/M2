@@ -18,7 +18,7 @@ Tally ** Tally := Tally => (x,y) -> combine(x,y,identity,times,)
 Tally ^** ZZ := Tally => (x,n) -> (
      if n < 0 then error "expected non-negative integer";
      if n == 0 then return if class x === Set then set {()} else tally {()},
-     if n == 1 then return x;
+     if n == 1 then return applyKeys(x,i -> 1:i);
      y := x ** x;
      scan(n-2, i -> y = combine(y,x,append,times,));
      y)
