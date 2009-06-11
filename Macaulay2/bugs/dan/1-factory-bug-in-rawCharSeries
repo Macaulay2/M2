@@ -1,0 +1,23 @@
+-- run this in the debug version to get:
+--  error: illegal exponent
+--  canonicalform.cc:1703: In function `CanonicalForm power(const CanonicalForm&, int)':
+--  failed assertion `n >= 0'
+
+R = QQ[g, e, f, h, MonomialOrder => Lex]
+mm = map(R^1,R^{{-9},{-9},{-9},{-9}}, {{
+	(2187/2)*g^2*e^2-(3645/8)*g^2*f*h^2-(405/4)*g*e^2*h^3+972*g*e*f^2*h-(297/16)*g*f*h^5+162*e^5+162*e^3*f*h^2-162*e^2*f^3-(3/16)*e^2*h^6+(207/8)*e*f^2*h^4+(81/2)*f^4*h^2-(1/16)*f*h^8,
+	-(3645/8)*g^2*e*h^2+(2187/2)*g^2*f^2+972*g*e^2*f*h-(297/16)*g*e*h^5-(405/4)*g*f^2*h^3+(81/2)*e^4*h^2-162*e^3*f^2+(207/8)*e^2*f*h^4+162*e*f^3*h^2-(1/16)*e*h^8+162*f^5-(3/16)*f^2*h^6,
+	(19683/4)*g^3+(6561/16)*g^2*h^3+729*g*e^3-(3645/4)*g*e*f*h^2+729*g*f^3+(81/8)*g*h^6-(135/4)*e^3*h^3+486*e^2*f^2*h-(297/16)*e*f*h^5-(135/4)*f^3*h^3+(1/16)*h^9,
+	(6561/16)*g^3*h^2-(3645/4)*g^2*e*f*h+(243/8)*g^2*h^5-(405/4)*g*e^3*h^2+486*g*e^2*f^2-(1485/16)*g*e*f*h^4-(405/4)*g*f^3*h^2+(9/16)*g*h^8+81*e^4*f*h-(3/8)*e^3*h^5+(207/4)*e^2*f^2*h^3+81*e*f^4*h-(1/2)*e*f*h^7-(3/8)*f^3*h^5
+	}})
+debug Core
+rawCharSeries raw mm
+
+exit
+
+QQ[e,f,g,h];
+F=-3*e*f+9/2*g*h-1/48*h^4;
+G=e^3+f^3+27/4*g^2+3/4*e*f*h^2-5/8*g*h^3-1/864*h^6;
+dis=ideal (4*F^3+27*G^2);
+sindis=ideal jacobian dis;
+primaryDecomposition sindis
