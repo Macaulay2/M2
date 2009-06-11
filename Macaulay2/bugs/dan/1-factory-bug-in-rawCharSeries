@@ -11,7 +11,8 @@ mm = map(R^1,R^{{-9},{-9},{-9},{-9}}, {{
 	(6561/16)*g^3*h^2-(3645/4)*g^2*e*f*h+(243/8)*g^2*h^5-(405/4)*g*e^3*h^2+486*g*e^2*f^2-(1485/16)*g*e*f*h^4-(405/4)*g*f^3*h^2+(9/16)*g*h^8+81*e^4*f*h-(3/8)*e^3*h^5+(207/4)*e^2*f^2*h^3+81*e*f^4*h-(1/2)*e*f*h^7-(3/8)*f^3*h^5
 	}})
 debug Core
-rawCharSeries raw mm
+rawCharSeries raw (16 * mm)                                 -- this one works
+rawCharSeries raw mm                                        -- this one doesn't
 
 exit
 
