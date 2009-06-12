@@ -1,0 +1,17 @@
+perhaps rawAlexanderDual is giving bad data to frobby that makes it crash:
+
+    i2 : R=QQ[x][y];
+
+    i3 : I=monomialIdeal(x*y);
+
+    i4 : dual I
+
+    Program received signal SIGSEGV, Segmentation fault.
+    0x40adb9ac in __gmpz_set () from /usr/lib/libgmp.so.3
+
+    (gdb) up
+    #1  0x0843c11b in Frobby::alexanderDual (ideal=@0xbfffd9b8, exponentVector=0xb8a75d8, consumer=@0xbfffd9a0) at src/frobby.cpp:225
+    Current language:  auto; currently c++
+
+    (gdb) 
+    #2  0x0821dad1 in rawAlexanderDual (I=0x9a31ea8, top=0x9ea2ce0, strategy=0) at /home/dan/src/M2/trunk/BUILD/dan/../../Macaulay2/e/x-monideal.cpp:380
