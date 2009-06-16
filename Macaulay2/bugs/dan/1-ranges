@@ -1,0 +1,10 @@
+Date: Tue, 16 Jun 2009 11:28:11 -0400
+Subject: syntax for [a,b)
+From: Mike Stillman <mike@math.cornell.edu>
+To: dan@math.uiuc.edu
+
+Groovy (a Java thing) uses the following notation for ranges:
+
+1..<6
+
+interesting?
