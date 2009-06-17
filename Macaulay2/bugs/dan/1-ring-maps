@@ -1,0 +1,6 @@
+sigh:
+
+    i11 : R = F()[x,y];I=ideal(x-R_2); S = F()[x,y]; I, sub(I,{R_2=>S_2})
+
+    o12 : Ideal of R
+    stdio:5:47:(1):[0]: error: expected ww to be a generator of R
