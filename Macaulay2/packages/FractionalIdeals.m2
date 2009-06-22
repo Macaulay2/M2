@@ -14,6 +14,7 @@ newPackage(
 export {FractionalIdeal, 
      fractionalIdeal,
      disc, -- this name will change!
+     newDenominator,
      simplify}
 
 if instance(FractionalIdeal, Symbol) then
@@ -85,12 +86,13 @@ fractionalIdeal Ideal := (I) -> (
 fractionalIdeal(RingElement, Ideal) := (F,I) -> (
      R := ring I;
      if ring F =!= R then error "expected denominator in the same ring as ideal";
-     simplify new FractionalIdeal from {F, I};
+     simplify new FractionalIdeal from {F, I}
      )
 
 ringFromFractions FractionalIdeal := opts -> (F) -> (
      -- assuming that F is a subring of K(R), this computes the quotient ring presenting F
      -- if it is not a ring, then what kind of error will it return?
+     -- ASSUMPTION (possibly a bad one): F#0 is the first element of F#1
      f := F#0;
      I := F#1;
      H := submatrix(gens I, 1..numgens I - 1);
@@ -104,24 +106,37 @@ isIdeal(FractionalIdeal,FractionalIdeal) := (F,R1) -> (
      --  (1) it is contained in R1
      --  (2) R1*F is contained in F  1/fg * LJ \subset 1/g J
      --       i.e.: L*J \subset (f)J
+     -- MES: not yet correct
+     << "isIdeal: not correct" << endl;
      (gens (R1#1 * F#1)) % (R1#0 * F#1) == 0
      )
 
 isSubset(FractionalIdeal,FractionalIdeal) := (F,G) -> (
-     error "not implemented yet"
+     (gens (G#1 * F#1)) % (F#0 * G#1) == 0
      )
 
 FractionalIdeal * FractionalIdeal := (F,G) -> (
-     simplify new FractionalIdeal from {F#0 * G#0, trim(F#1*G#1)}
+     FG := simplify new FractionalIdeal from {F#0 * G#0, trim(F#1*G#1)};
+     new FractionalIdeal from {FG#0, trim FG#1}
      )
 
 FractionalIdeal == FractionalIdeal := (F,G) -> F#0 * G#1 == G#0 * F#1
+
+newDenominator = method()
+newDenominator(FractionalIdeal, RingElement) := (F,g) -> (
+     R := ring F;
+     S := ring ideal R;
+     a := lift(F#0, S);
+     b := lift(g, S);
+     if b % a != 0 then error "cannot change to desired denominator";
+     new FractionalIdeal from {b, promote(b//a,R) * F#1}
+     )
 
 radical(FractionalIdeal, FractionalIdeal) := opts -> (F,R1) -> (
      -- Assumption: R1 is a ring
      -- F is an ideal of R1
      -- compute a presentation A of R1
-     R1' := ringFromFractions R1; -- the generators correspond to elements of R1#1 (except the first, which 
+     R1' := ringFromFractions(R1, Variable=>symbol w); -- the generators correspond to elements of R1#1 (except the first, which 
           -- corresponds to the unit).
      -- map F into A.  We need to know how to represent elements of F as elements in R1
      -- we assume: F = 1/g J \subset R1 = 1/f L
@@ -138,7 +153,7 @@ radical(FractionalIdeal, FractionalIdeal) := opts -> (F,R1) -> (
      Jrad = lift(gens Jrad, S');
      (mn,cf) := coefficients(Jrad, Monomials => vS', Variables=>flatten entries newvars);
      Jid := (gens R1#1) * sub(cf,R);
-     (Jrad, new FractionalIdeal from {R1#0, ideal Jid})
+     (Jrad, R1 * new FractionalIdeal from {R1#0, ideal Jid})
      )
 
 disc = method()
@@ -199,9 +214,53 @@ S = QQ[u,v, MonomialOrder=>{1,1}]
 F = 5*v^6+7*v^2*u^4+6*u^6+21*v^2*u^3+12*u^5+21*v^2*u^2+6*u^4+7*v^2*u
 R = S/F
 
+-- working on this bug:
+rj3 = fractionalIdeal(v^3, ideal(v^4,u^2*v^3+u*v^3,u^3*v^2+u^2*v^2,u^5*v+u^4*v))
+r3 = fractionalIdeal(v^3, ideal(v^3,u^3*v^2+u^2*v^2,u^4*v+u^3*v,6*u^5+6*u^4+7*u^2*v^2+7*u*v^2))
+rj3/ring
+r3/ring
+r3*r3 == r3 -- true 
+isSubset(rj3,r3) -- true
+rj3*r3 == rj3 -- true
+(k4,j4) = radical(rj3,r3)
+isSubset(rj3,j4) -- true
+
+A = ringFromFractions(r3)
+see ideal A
+gens A
+J = ideal(v, u^2+u, w_(0,0), u*w_(0,1))
+Jrad = trim radical  J
+isSubset(J, Jrad)
+
+
 D = first first disc R
+r1 = fractionalIdeal ideal(1_R)
 j1 = fractionalIdeal trim radical ideal sub(D,R)
 e1 = End j1
-A = ringFromFractions(End j1, Variable=>t)
-see ideal A
-radical(j1*e1, e1)
+(k2,j2) = radical(j1, e1)
+r2 = End j2
+isSubset(r1,r2)
+(k3,j3) = radical(j2,r2)
+r3 = End j3
+isSubset(r2,r3)
+isSubset(j3,r3)
+r3*j3 == j3
+rj3 = newDenominator(j3, r3#0)
+(k4,j4) = radical(rj3,r3)
+
+isSubset(rj3,j4) -- true
+isSubset(j3,j4) -- true
+
+r4 = End j4
+isSubset(j1,j2)
+isSubset(j2,j3)
+isSubset(j3,j4)
+isSubset(j3,r3)
+isSubset(r3,r4)
+(k5,j5) = radical(newDenominator(j4, r4#0), r4)
+r5 = End j5
+r4 == r5 -- true
+A = ringFromFractions r4
+see ideal gens gb ideal A
+u
+fractionalIdeal
