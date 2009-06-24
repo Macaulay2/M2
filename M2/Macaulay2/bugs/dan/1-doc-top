@@ -1,0 +1,13 @@
+Date: Wed, 24 Jun 2009 09:29:13 -0400
+Subject: doc bug
+From: Mike Stillman <mike@math.cornell.edu>
+To: dan@math.uiuc.edu
+
+Here is a little documentation bug:
+
+I installed EdgeIdeals (there is also one in the version included with
+M2), and go to its documentation.  I get to one of its pages, and then
+click "top" to get to the top of its tree.  It lands me at the
+EdgeIdeal doc page, but for the version originally coming with M2,
+instead of the top page for itself...
+
