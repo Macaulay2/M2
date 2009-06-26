@@ -1399,7 +1399,31 @@ document {
      Outputs => {
 	  "D" => {"a new chain complex ", TT "D", " in which ", TT "D_j", " is ", TT "C_(i+j)", ".  The signs of the
 	       differentials are reversed if ", TT "i", " is odd."}
-	  }
+	  },
+     EXAMPLE lines ///
+     R = QQ[x..z];
+     C = res coker vars R
+     C[3]
+     ///
+     }
+
+document {
+     Key => (symbol SPACE, ChainComplexMap, Array),
+     Headline => "degree shift",
+     Usage => "g = f[i]",
+     Inputs => {
+	  "f" => {},
+	  "i" => Array => {"an array ", TT "[i]", " containing an integer ", TT "i"}
+	  },
+     Outputs => {
+	  "g" => {"a new chain complex map ", TT "g", " in which ", TT "g_j", " is ", TT "f_(i+j)", "."}
+	  },
+     EXAMPLE lines ///
+     R = QQ[x..z];
+     C = res coker vars R;
+     f = id_C
+     f[3]
+     ///
      }
 
 document {
