@@ -555,6 +555,7 @@ components ChainComplex := C -> if C.cache.?components then C.cache.components e
 ChainComplex Array := ChainComplex => (C,A) -> (
      if # A =!= 1 then error "expected array of length 1";
      n := A#0;
+     if not instance(n,ZZ) then error "expected an integer";
      D := new ChainComplex;
      b := D.dd;
      D.ring = ring C;
@@ -565,6 +566,19 @@ ChainComplex Array := ChainComplex => (C,A) -> (
      then scan(pairs C.dd, (i,f) -> if class i === ZZ then b#(i-n) = f)
      else scan(pairs C.dd, (i,f) -> if class i === ZZ then b#(i-n) = -f);
      D)
+
+ChainComplexMap Array := ChainComplexMap => (f,A) -> (
+     if # A =!= 1 then error "expected array of length 1";
+     n := A#0;
+     if not instance(n,ZZ) then error "expected an integer";
+     complete f;
+     g := new ChainComplexMap;
+     g.cache = new CacheTable;
+     g.source = f.source A;
+     g.target = f.target A;
+     g.degree = f.degree;
+     scan(spots f, i -> g#(i-n) = f_i);
+     g)
 
 Hom(ChainComplex, Module) := ChainComplex => (C,N) -> (
      c := C.dd;
