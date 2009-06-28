@@ -1222,7 +1222,7 @@ int PathTracker::track(const Matrix* start_sols)
   double dt_increase_factor_dbl = mpfr_get_d(dt_increase_factor,GMP_RNDN);
   double dt_decrease_factor_dbl = mpfr_get_d(dt_decrease_factor,GMP_RNDN);
   
-  const CCC* R = start_sols->get_ring()->cast_to_CCC(); 
+  // const CCC* R = start_sols->get_ring()->cast_to_CCC(); 
   int n = n_coords = start_sols->n_cols();  
   n_sols = start_sols->n_rows();
 
@@ -1480,8 +1480,8 @@ MatrixOrNull* PathTracker::refine(const Matrix *sols, M2_RRR tolerance, int max_
   mpfr_t re, im;
   mpfr_init(re); mpfr_init(im);
   c = s_sols;
-  for(int i=0; i<n_sols; i++) 
-    for(int j=0; j<n; j++,c++) {
+  for(i=0; i<n_sols; i++) 
+    for(j=0; j<n; j++,c++) {
       mpfr_set_d(re, c->getreal(), GMP_RNDN);
       mpfr_set_d(im, c->getimaginary(), GMP_RNDN);
       ring_elem e = C->from_BigReals(re,im);

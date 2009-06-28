@@ -1,6 +1,6 @@
 ---------------------------- EXAMPLES for globalBFunction
 restart
-load "Dloadfile.m2"
+loadPackage "Dmodules"
 
 --choose a strategy
 Str = ReducedB
@@ -146,6 +146,11 @@ primaryDecomposition b
 sR = QQ[s,gens ring b]
 eliminate(sub(b,sR) + ideal(s-sub(sum gens ring b,sR)), drop(gens sR,1))
 
-
+-- Singular MEGA 2009 talk
+restart
+loadPackage( "Dmodules", FileName=>"../../Dmodules.m2")
+makeWA(QQ[x,y,z]);
+f = (x*y + z)*(y^4 + z^5 + y*z^4)
+time globalBFunction(f, Strategy=>GeneralBernsteinSato)
 
 
