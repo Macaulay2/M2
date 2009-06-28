@@ -15,6 +15,7 @@ needsPackage "Markov"
 
 export {
      readExampleFile,
+     getExampleFile,
      ExampleTable,
      box,
      example,
@@ -77,15 +78,37 @@ example(ExampleTable, String) := opts -> (H,x) -> (
 	  )
      else I)
 
-readExampleFile = (filename, coeffring) -> (
+readExampleFile = method()
+readExampleFile(String,Ring) := (filename, coeffring) -> (
      G := separateRegexp("---+", get (ExampleIdeals#"source directory"|filename));
      G = apply(G, s -> select(lines s, t -> #t > 0));
      -- now for each example, find its name/number and make the string
      G = select(G, s -> #s > 0);
      new ExampleTable from apply(#G, i -> (
 	       s := substring(2,G#i#0); -- remove the first two -- characters
-	       i+1 => s => () -> replace("kk", toString coeffring, demark("\n",drop(G#i,1)))))
+	       i+1 => s => replace("kk", toString coeffring, demark("\n",drop(G#i,1)))))
      )
+readExampleFile(String) := (filename) -> (
+     G := separateRegexp("---+", get (ExampleIdeals#"source directory"|filename));
+     G = apply(G, s -> select(lines s, t -> #t > 0));
+     -- now for each example, find its name/number and make the string
+     G = select(G, s -> #s > 0);
+     new ExampleTable from apply(#G, i -> (
+	       s := substring(2,G#i#0); -- remove the first two -- characters
+	       i+1 => s => demark("\n",drop(G#i,1))))
+     )
+
+getExampleFile = method()
+getExampleFile(String,String) := (filename,kkstring) -> (
+     G := separateRegexp("---+", get filename);
+     G = apply(G, s -> select(lines s, t -> #t > 0));
+     -- now for each example, find its name/number and make the string
+     G = select(G, s -> #s > 0);
+     new ExampleTable from apply(#G, i -> (
+	       s := substring(2,G#i#0); -- remove the first two -- characters
+	       i+1 => s => replace("kk", kkstring, demark("\n",drop(G#i,1)))))
+     )
+getExampleFile(String) := (filename) -> getExampleFile(filename,"")
 
 examplesDGP = method()
 examplesDGP Ring := (kk) -> readExampleFile("ExampleIdeals/DGP.m2", kk)
@@ -99,7 +122,7 @@ examplesStdSingular Ring := (kk) -> readExampleFile("ExampleIdeals/stdSingular.m
 examplesBayes = () -> (
      oldlimit := recursionLimit;
      recursionLimit = 304; 
-     H := readExampleFile("ExampleIdeals/bayes5.m2", null);
+     H := readExampleFile("ExampleIdeals/bayes5.m2");
      recursionLimit = oldlimit;
      H)
 
