@@ -15,7 +15,9 @@ export {FractionalIdeal,
      fractionalIdeal,
      disc, -- this name will change!
      newDenominator,
-     simplify}
+     simplify,
+     integralClosureHypersurface
+     }
 
 if instance(FractionalIdeal, Symbol) then
 FractionalIdeal = new Type of List
@@ -149,6 +151,9 @@ radical(FractionalIdeal, FractionalIdeal) := opts -> (F,R1) -> (
      vS' := matrix{{1_S'}} | newvars;
      J := ideal(v * sub(M, R1'));
      -- do the radical
+     Jcomps := decompose J;
+     << " rad components codims " << (Jcomps/codim) << endl;
+     << " rad components " << netList Jcomps << endl;
      Jrad := trim radical J; -- note: these are all linear in the new vars
      Jrad = lift(gens Jrad, S');
      (mn,cf) := coefficients(Jrad, Monomials => vS', Variables=>flatten entries newvars);
@@ -169,6 +174,21 @@ disc QuotientRing := (R) -> (
      dfactors := select((toList ds)/toList, m -> m#1 > 1);
      dfactors/(f -> {f#0, f#1//2})
      )
+
+integralClosureHypersurface = method()
+integralClosureHypersurface Ring := (R) -> (
+     -- assumption: R is in Noether normal position
+     -- as required above.
+     D := (disc R)/first//product;
+     e1 := fractionalIdeal ideal 1_R;
+     time j := fractionalIdeal trim radical ideal promote(D,R);
+     time e := End j;
+     while e != e1 do (
+	  e1 = e;
+	  time (k,j) = radical(j,e1);
+	  time e = End j;
+	  );
+     simplify e)
 
 -- need: a similar routine for non-hypersurfaces
 
@@ -264,3 +284,30 @@ A = ringFromFractions r4
 see ideal gens gb ideal A
 u
 fractionalIdeal
+
+-- example of Doug Leonard
+-- NOT WORKING YET: I have to remember how this code works! (6/27/09)
+R=ZZ/2[x,y,z, MonomialOrder=>{1,2}]
+I=ideal(x^6+x^3*z-y^3*z^2)
+S=R/I
+time integralClosureHypersurface S
+F = I_0
+
+D = disc(S)
+D = D/first//product
+j1 = fractionalIdeal trim radical ideal sub(D,S)
+e1 = End j1
+(k2,j2) = radical(j1,e1)
+e2 = End j2
+(k3,j3) = radical(j2,e2)
+e3 = End j3
+(k4,j4) = radical(j3,e3)
+e4 = End j4 -- this is the answer
+A = ringFromFractions e4
+prune A
+e4
+
+gens gb ideal oo
+transpose oo
+time P=presentation(integralClosure(S))
+icFractions S
