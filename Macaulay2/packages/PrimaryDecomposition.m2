@@ -147,6 +147,7 @@ irreducibleDecomposition MonomialIdeal := List => (I) -> (
      M := first entries generators dual I;
      apply(M, m -> (
 	       s := first keys standardForm leadMonomial m;
+	       if #s === 0 then return monomialIdeal 0_R;
 	       monomialIdeal apply(keys s, v -> R_v^(aI#v + 1 - s#v))))
      )
 
