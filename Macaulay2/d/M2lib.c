@@ -50,6 +50,20 @@ extern long personality(unsigned long persona);
 const char *get_libfac_version();	/* in version.cc */
 const char *get_frobby_version();	/* in version.cc */
 
+#ifdef HAVE_SCSCP
+ #include <scscp.h>
+ void scscp_dummy() { SCSCP_sc_init(NULL,NULL); /* just to force linking with the library */ }
+ static const char *get_scscp_version() {
+    static char buf[20];
+    sprintf(buf,"%d.%d.%d", SCSCP_VERSION_MAJOR, SCSCP_VERSION_MINOR, SCSCP_VERSION_PATCH);
+    return buf;
+ }
+#else
+ static const char *get_scscp_version() {
+    return "not present"; 
+ }
+#endif
+
 #ifdef HAVE_PARI
 
   #include <pari/pari.h>
@@ -59,7 +73,7 @@ const char *get_frobby_version();	/* in version.cc */
       /usr/include/pari/paricfg.h:#define PARI_VERSION(a,b,c) (((a) << 16) + ((b) << 8) + (c))
       It's disappointing that the version number of libpari.so is not available at run time.
     */
-    static char buf[100];
+    static char buf[20];
     sprintf(buf,"%d.%d.%d",
 	    0xff & (PARI_VERSION_CODE >> 16),
 	    0xff & (PARI_VERSION_CODE >> 8),
@@ -330,6 +344,7 @@ M2_string actors5_NTLVERSION;
 M2_string actors5_LIBFACVERSION;
 M2_string actors5_FROBBYVERSION;
 M2_string actors5_PARIVERSION;
+M2_string actors5_SCSCPVERSION;
 M2_string actors5_FACTORYVERSION;
 M2_string actors5_READLINEVERSION;
 M2_string actors5_MPFRVERSION;
@@ -658,6 +673,7 @@ char **argv;
      actors5_LIBFACVERSION = tostring(get_libfac_version());
      actors5_FROBBYVERSION = tostring(get_frobby_version());
      actors5_PARIVERSION = tostring(get_pari_version());
+     actors5_SCSCPVERSION = tostring(get_scscp_version());
      sprintf(READLINEVERSION,"%d.%d",(rl_readline_version>>8)&0xff,rl_readline_version&0xff);
      actors5_READLINEVERSION = tostring(READLINEVERSION);
      actors5_MPFRVERSION = tostring(mpfr_version);

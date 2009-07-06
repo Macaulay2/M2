@@ -41,6 +41,7 @@ libraries/gdbm/Makefile
 libraries/gmp/Makefile
 libraries/mpfr/Makefile
 libraries/pari/Makefile
+libraries/scscp/Makefile
 libraries/readline/Makefile
 libraries/ntl/Makefile
 libraries/libtool/Makefile

@@ -4,12 +4,12 @@ echo -- loading .gdbinit\n
 # so we send a message to the loaddata routine to ignore that
 set environment LOADDATA_IGNORE_CHECKSUMS yes
 
-directory ../../libraries/gc/gc-7.1/
-directory ../../libraries/ntl/ntl-5.4.2/src/
-directory ../../libraries/factory/factory/
-directory ../../libraries/libfac/libfac/
-directory ../../libraries/libfac/libfac/factor/
-directory ../../libraries/libfac/libfac/charset/
+directory ../../libraries/gc/build/gc-7.1/
+directory ../../libraries/ntl/build/ntl-5.5/src/
+directory ../../libraries/factory/build/factory/
+directory ../../libraries/libfac/build/libfac/
+directory ../../libraries/libfac/build/libfac/factor/
+directory ../../libraries/libfac/build/libfac/charset/
 source .gdb-files
 b fatalarrayindex
 # b GC_default_warn_proc
@@ -18,9 +18,9 @@ b fatalarrayindex
 # b main
 b ERROR
 b outofmem
-b abort
+# b abort
 b GC_err_printf
-source .gdb-run-it
+# source .gdb-run-it
 # Local Variables:
 # compile-command: "make -C $M2BUILDDIR/Macaulay2/m2 "
 # End:

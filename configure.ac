@@ -320,6 +320,12 @@ if test "$PARI" = yes
 then AC_DEFINE(HAVE_PARI,1,[whether we are linking with the pari library])
 fi
 
+AC_SUBST(SCSCP,no)
+AC_ARG_ENABLE(scscp, AS_HELP_STRING(--enable-scscp,[download, compile, and link with scscp library]), SCSCP=$enableval)
+if test "$SCSCP" = yes
+then AC_DEFINE(HAVE_SCSCP,1,[whether we are linking with the scscp library])
+fi
+
 AC_SUBST(PYTHON,no)
 AC_ARG_ENABLE(python, AS_HELP_STRING(--enable-python,[link with libpython]), PYTHON=$enableval)
 if test "$PYTHON" = yes
@@ -578,14 +584,14 @@ AC_SUBST(BUILTLIBS,)
 #  factory needs ntl and gmp, libfac needs factory
 #  lapack includes blas, makes both libblas and liblapack
 #  mpfr needs gmp
-AC_SUBST(LIBLIST, "gc    gdbm    gmp    mpfr    pari    readline    ntl    factory        libfac         lapack    frobby")
-AC_SUBST(LIBFILES,"libgc libgdbm libgmp libmpfr libpari libreadline libntl libcf libcfmem libfac libblas liblapack libfrobby")
+AC_SUBST(LIBLIST, "gc    gdbm    gmp    mpfr    pari    readline    ntl    factory        libfac         lapack    frobby    scscp")
+AC_SUBST(LIBFILES,"libgc libgdbm libgmp libmpfr libpari libreadline libntl libcf libcfmem libfac libblas liblapack libfrobby libscscp")
 for i in $LIBLIST
 do eval BUILD_$i=no
 done
 
 LIBLIST=" $LIBLIST "
-AC_ARG_ENABLE(build-libraries, AS_HELP_STRING(--enable-build-libraries=...,list of libraries to build from downloaded source code (e.g., gc gdbm gmp mpfr readline pari ntl factory libfac lapack)),
+AC_ARG_ENABLE(build-libraries, AS_HELP_STRING(--enable-build-libraries=...,list of libraries to build from downloaded source code (e.g., gc gdbm gmp mpfr readline pari ntl factory libfac lapack frobby scscp)),
     [for i in $enableval
     do case $LIBLIST in
 	    *" $i "*) eval BUILD_$i=yes ;;
@@ -648,6 +654,15 @@ then if test $BUILD_pari = no
 	  AC_CHECK_HEADER(pari/pari.h,,BUILD_pari=yes)
      fi
      test $BUILD_pari = yes && BUILTLIBS="-lpari $BUILTLIBS"
+fi
+
+if test "$SCSCP" = yes
+then if test $BUILD_scscp = no
+     then AC_LANG(C)
+	  AC_SEARCH_LIBS(SCSCP_sc_init,scscp,,BUILD_scscp=yes,-lxml2)
+	  AC_CHECK_HEADER(scscp.h,,BUILD_scscp=yes)
+     fi
+     test $BUILD_scscp = yes && BUILTLIBS="-lscscp -lxml2 $BUILTLIBS"
 fi
 
 if test "$PYTHON" = yes
