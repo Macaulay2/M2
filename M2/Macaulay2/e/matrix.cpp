@@ -1778,7 +1778,7 @@ MonomialIdeal *Matrix::make_monideal(int n, bool use_only_monomials_with_unit_co
 }
 
 
-int Matrix::dimension() const
+int Matrix::dimension1() const
 {
   const PolynomialRing *P = get_ring()->cast_to_PolynomialRing();
   const Ring *K = (P != 0 ? P->Ncoeffs() : get_ring());

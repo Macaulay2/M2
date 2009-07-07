@@ -190,6 +190,9 @@ integralClosureHypersurface Ring := (R) -> (
 	  );
      simplify e)
 
+step1 = (j) -> (e := End j; (e*j, e))
+step2 = (j,e) -> (radical(j,e))_1
+
 -- need: a similar routine for non-hypersurfaces
 
 beginDocumentation()
