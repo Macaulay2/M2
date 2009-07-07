@@ -4,10 +4,10 @@ newPackage(
      Date => "May 20 2009",
     Authors => {{Name => "Alexandra Seceleanu", HomePage => "http://www.math.uiuc.edu/~asecele2/"}},
      Headline => "symmetric polynomials",
-     DebuggingMode => true
+     DebuggingMode => false
      )
 
-export {buildSymmetricGB,elementalSymm}
+export {buildSymmetricGB,elementarySymmetric}
 
 mons = (X,i)-> (
     n := #X;
@@ -53,8 +53,8 @@ buildSymmetricGB (PolynomialRing) := R -> (
 
 
      
-elementalSymm = method();
-elementalSymm (RingElement):=  f -> (
+elementarySymmetric = method();
+elementarySymmetric (RingElement):=  f -> (
      R := ring f;
      n := # flatten entries vars R; 
      if n<2 then return f;
@@ -64,12 +64,14 @@ elementalSymm (RingElement):=  f -> (
      forceGB matrix {l};
      F := map(S,R);
      answer := F(f)%I;
-     if isSubset(support(answer),gens R) then (use R; return answer)
+     xvars := select(n,gens S,i->true);
+     svars := gens S -set xvars;
+     if isSubset(support(answer),svars) then (use R; return answer)
      else (use R; print "your input is not a symmetric polynomial")
      )
      
 
-elementalSymm (PolynomialRing):=  R->(
+elementarySymmetric (PolynomialRing):=  R->(
      forceGB matrix{buildSymmetricGB R};
      return map(elementarySymmetricPolynomialRing R,R)
      )
@@ -87,7 +89,7 @@ document {
 }
 
 document {
-	Key =>elementalSymm,
+	Key =>elementarySymmetric,
 	Headline => "expression in terms of elementary symmetric polynomials",
 	Inputs => {"f, a symmetric", TO RingElement},
 	Outputs =>{"the epression of f in terms of the elementary symmetric functions s_i"},
@@ -97,13 +99,14 @@ EXAMPLE lines ///
 	n=5;
 	R=QQ[x_1..x_n];
 	f=(product gens R)*(sum gens R);
-	elementalSymm f
+	elementarySymmetric f
 ///,
-	PARA{"This function should work up to a size of 15 variables in the base ring"}
+	PARA{"This function should work up to a size of 15 variables in the base ring."},
+	PARA{"This function is part of the package SymmetricPolynomials."}
 }
 
 document {
-	Key =>(elementalSymm,RingElement),
+	Key =>(elementarySymmetric,RingElement),
 	Headline => "expression in terms of elementary symmetric polynomials",
 	Inputs => {"f"=> {"a symmetric", TO RingElement}},
 	Outputs =>{"the epression of f in terms of the elementary symmetric functions s_i"},
@@ -113,13 +116,14 @@ EXAMPLE lines ///
 	n=5;
 	R=QQ[x_1..x_n];
 	f=(product gens R)*(sum gens R);
-	elementalSymm f
+	elementarySymmetric f
 ///,
-	PARA{"This function should work up to a size of 15 variables in the base ring"}
+	PARA{"This function should work up to a size of 15 variables in the base ring"},
+	PARA{"This function is part of the package SymmetricPolynomials."}
 }
 
 document {
-	Key =>(elementalSymm,PolynomialRing),
+	Key =>(elementarySymmetric,PolynomialRing),
 	Headline => "elementary symmetric polynomials algebra",
 	Inputs => {"R"=>{ "a", TO PolynomialRing}},
 	Outputs =>{"a map from R adjoin the elementary symmetric functions s_i to R"},
@@ -127,9 +131,10 @@ document {
 EXAMPLE lines ///
 	n=5;
 	R=QQ[x_1..x_n];
-	elementalSymm R
+	elementarySymmetric R
 ///,
-	PARA{"This function should work up to a size of 15 variables in the base ring"}
+	PARA{"This function should work up to a size of 15 variables in the base ring"},
+	PARA{"This function is part of the package SymmetricPolynomials."}
 }
 
 document {
@@ -143,7 +148,8 @@ document {
 	R=QQ[x_1..x_n];
 	buildSymmetricGB R
 ///,
-	PARA{"This function should work up to a size of 15 variables in the base ring"}
+	PARA{"This function should work up to a size of 15 variables in the base ring"},
+	PARA{"This function is part of the package SymmetricPolynomials."}
 }
 
 document {
@@ -157,6 +163,7 @@ document {
 	R=QQ[x_1..x_n];
 	buildSymmetricGB R
 ///,
-	PARA{"This function should work up to a size of 15 variables in the base ring"}
+	PARA{"This function should work up to a size of 15 variables in the base ring"},
+	PARA{"This function is part of the package SymmetricPolynomials."}
 }
 end
