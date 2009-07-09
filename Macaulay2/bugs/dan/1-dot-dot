@@ -1,0 +1,33 @@
+Below, o4 should be an ideal of R to coincide with the expectation of the user.
+
+> From: Ben Richert <brichert@calpoly.edu>
+> Date: Thu, Jul 9, 2009 at 2:20 PM
+> Subject: macaulay 2 question
+> To: Mike@math.cornell.edu
+> 
+> 
+> i1 : R=ZZ/101[x_1, x_2,x_3]
+> 
+> o1 = R
+> 
+> o1 : PolynomialRing
+> 
+> i2 : S=ZZ/101[x_1,x_2,x_3,x_4]
+> 
+> o2 = S
+> 
+> o2 : PolynomialRing
+> 
+> i3 : I=ideal(x_1_R, x_2_R, x_3_R)
+> 
+> o3 = ideal (x , x , x )
+>             1   2   3
+> 
+> o3 : Ideal of R
+> 
+> i4 : I=ideal(x_1_R .. x_3_R)
+> 
+> o4 = ideal (x , x , x )
+>             1   2   3
+> 
+> o4 : Ideal of S
