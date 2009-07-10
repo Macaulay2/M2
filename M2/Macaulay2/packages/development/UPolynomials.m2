@@ -11,15 +11,6 @@ newPackage(
         DebuggingMode => true
         )
 
--- We consider univariate polynomials over:
--- (a) finite fields
--- (b) ZZ or QQ
--- (c) number fields (given as a polynomial ring in a lex order)
-
-
--- For now: assume the ring is of the form K[x]
--- where K is a field.
-
 export {
      myIsDivisibleBy,
      myExactDivision,
@@ -32,15 +23,11 @@ export {
      myResultant,
      primitivePolynomialGCD,
      subresultantGCD,
+     mySquareFreeDecomposition,
      setUFD,
      makeTower,
      deg,
-     squarefree, 
      adjoinRoot}
-
--- polynomials.m2
--- This package consists of routines for computing
--- division, gcd's, resultants, and factorization.
 
 myIsDivisibleBy = (f,g) -> (ring f).myIsDivisibleBy(f,g)
 
@@ -63,15 +50,6 @@ QQ.myIsDivisibleBy = (f,g) -> g != 0 or f == 0
 QQ.myExactDivision = (f,g) -> f // g;
 QQ.myGCD = (f,g) -> if f != 0 or g != 0 then 1_QQ else 0_QQ;
 
-TEST ///
-loadPackage "UPolynomials"
-assert not myIsDivisibleBy(13,3) 
-assert(myGCD(12,15,21) == 3)
-assert(myExactDivision(137*23213123200,137*10) == 2321312320)
-///
-
-GCD = (f,g) -> (gens gb ideal(f,g))_(0,0)
-
 deg = (f) -> if f == 0 then -1 else (degree f)#0
 
 myCoefficients = (f) -> (
@@ -81,6 +59,10 @@ myCoefficients = (f) -> (
      	  apply(d+1, i -> f_(x^i))))
 
 myContent = (f) -> if f == 0 or isField ring f then 1_(coefficientRing ring f) else myGCD myCoefficients f
+myContent = (f) -> (if f == 0 or isField ring f then 1_(coefficientRing ring f) 
+  else if isField coefficientRing ring f then leadCoefficient f
+  else myGCD myCoefficients f
+  )
 
 myPrimitivePart = (f) -> (
      c := myContent f;
@@ -133,33 +115,6 @@ makeTower = (R) -> (
 	       A = B));
      A)
 
-TEST ///
-restart
-loadPackage "UPolynomials"
-R = ZZ[x]
-setUFD R
-g = (5*x-2)*(3*x^2-13)
-f = (2*x^2+3*x+17)*g
-assert(myExactDivision(f,g) == 2*x^2+3*x+17)
-S = R[y]
-setUFD S
-h = (y^3-x*y-13)^2 * (y-x) * f
-assert(myExactDivision(h,y-x) == (y^3-x*y-13)^2 *  f)
-assert(myExactDivision(h,f*1_S) == (y^3-x*y-13)^2 * (y-x))
-assert(myExactDivision(h,f) == (y^3-x*y-13)^2 * (y-x))
-assert(not myIsDivisibleBy(h+1_S,f*1_S))
-assert(myIsDivisibleBy(h,f))
-assert(not myIsDivisibleBy(h+1_S,f))
-
-R = ZZ[x,y,z,w]
-Rlex = makeTower R
-f = (x^2+103467*x*y+z)*(x+y+w)
-g = (x^2+103467*x*y+z)^2*(x-y+w)
-
-time subresultantGCD(f,g)
-time myGCD(f,g)
-substitute(oo,R)  -- This should work...
-///
 
 ---------------------
 -- Pseudo division --
@@ -220,22 +175,6 @@ testPseudoDivision = (f,g) -> (
      m := deg g;
      c := leadCoefficient g;
      assert(ans#1 * g + ans#0 == c^(n-m+1) * f))
-
-TEST ///
-restart
-loadPackage "UPolynomials"
-R = ZZ[x]
-S = R[y]
-setUFD S
-setUFD R
-debug UPolynomials
-(a1,a2) = myPseudoDivision(x*y^3-2, (x+1)*y - 3)
-assert(a1 == myPseudoRemainder(x*y^3-2, (x+1)*y - 3))
-testPseudoDivision(x*y^3-2, (x+1)*y - 3)
-(a1,a2) = myPseudoDivision(3*x^5-17*x^4+23*x^2-41*x-13, 7*x^3-x-120)
-assert(a1 == myPseudoRemainder(3*x^5-17*x^4+23*x^2-41*x-13, 7*x^3-x-120))
-testPseudoDivision(3*x^5-17*x^4+23*x^2-41*x-13, 7*x^3-x-120)
-///
 
 -------------------------------
 -- GCD algorithms over UFD's --
@@ -332,33 +271,9 @@ subresultantGCD = (F,G) -> (
 	  )
      )
 
-TEST ///
-restart
-loadPackage "UPolynomials"
 
-R = ZZ[x]
-setUFD R
-g = (5*x-2)*(3*x^2-13)
-f = (2*x^2+3*x+17)*g
-h = (3*x^3-x^2-12)*g
-time primitivePolynomialGCD(f,h) == g
-time subresultantGCD(f,h) == g
-
-use R
-S = R[y]
-setUFD S
-F = (3*x^2-y^2-13*x*y)^5*(x+y-1)^3
-G = (3*x^2+y^2-13*x*y)^5*(x+y-1)^5
-time subresultantGCD(F,G)
-time primitivePolynomialGCD(F,G)
-S1 = flattenRing S
-S1 = S1_0
-F = sub(F,S1)
-G = sub(G,S1)
-time gcd(F,G) -- still much faster...
-///
-
-myResultant = (F,G) -> (
+myResultant = method()
+myResultant(RingElement,RingElement) := (F,G) -> (
      -- F and G should be polynomials in R[x], R a UFD.
      if F == 0 or G == 0 then return F;
      A := ring F;
@@ -406,25 +321,27 @@ myResultant = (F,G) -> (
      s*t*h
      )
 
-squarefree = (f) -> (
+mySquareFreeDecomposition = method()
+mySquareFreeDecomposition RingElement := (f) -> (
      R := ring f;
      p := char R;
      x := R_0;
      result := {};
-     T := GCD(f,diff(x,f));
-     V := f//T;
+     T := myGCD(f,diff(x,f));
+     V := myExactDivision(f,T);
      k := 0;
      while deg(V) =!= 0 do (
 	  k = k+1;
-	  W := GCD(T,V);
-	  Ak := V//W;
+	  W := myGCD(T,V);
+	  Ak := myExactDivision(V,W);
 	  V = W;
-	  T = T//V;
+	  T = myExactDivision(T,V);
 	  if deg(Ak) =!= 0 then 
-	      result = append(result,(k,Ak));
+	      result = append(result,(k,myPrimitivePart Ak));
 	  );
      if deg T != 0 then (
 	  -- we have a polynomial in x^p
+	  error "char p square free decomposition is not yet implemented";
 	  result2 := squarefree lowerP(T);
 	  result2 = apply(result2, a -> (p*a#0, a#1));
 	  result = join(result,result2);
@@ -460,6 +377,7 @@ adjoinRoot RingElement := (f) -> (
 	       K1top = K[vars 0];
 	       K1 = K1top/sub(f, t => K1top_0);
 	       toField K1;
+	       setUFD K1;
 	       K1_0
 	       )
 	  else (
@@ -469,6 +387,7 @@ adjoinRoot RingElement := (f) -> (
 	    J := ideal to2 f + to1 I;
 	    K1 = K1top/J;
 	    toField K1;
+	    setUFD K1;
 	    K1_0
 	  )
      ))
@@ -488,6 +407,103 @@ Caveat
 SeeAlso
 ///
 
+TEST ///
+R = ZZ[x]
+setUFD R
+g = (5*x-2)*(3*x^2-13)
+f = (2*x^2+3*x+17)*g
+assert(myExactDivision(f,g) == 2*x^2+3*x+17)
+S = R[y]
+setUFD S
+h = (y^3-x*y-13)^2 * (y-x) * f
+assert(myExactDivision(h,y-x) == (y^3-x*y-13)^2 *  f)
+assert(myExactDivision(h,f*1_S) == (y^3-x*y-13)^2 * (y-x))
+assert(myExactDivision(h,f) == (y^3-x*y-13)^2 * (y-x))
+assert(not myIsDivisibleBy(h+1_S,f*1_S))
+assert(myIsDivisibleBy(h,f))
+assert(not myIsDivisibleBy(h+1_S,f))
+
+R = ZZ[x,y,z,w]
+Rlex = makeTower R
+f = (x^2+103467*x*y+z)*(x+y+w)
+g = (x^2+103467*x*y+z)^2*(x-y+w)
+time ans = subresultantGCD(f,g)
+time assert(ans == x^2+103467*x*y+z)
+time assert((ans = myGCD(f,g)) == x^2+103467*x*y+z)
+use R
+substitute(ans,R) == x^2+103467*x*y+z
+///
+
+TEST ///
+assert not myIsDivisibleBy(13,3) 
+assert(myGCD(12,15,21) == 3)
+assert(myExactDivision(137*23213123200,137*10) == 2321312320)
+///
+
+TEST ///
+R = ZZ[x]
+S = R[y]
+setUFD S
+setUFD R
+debug UPolynomials
+(a1,a2) = myPseudoDivision(x*y^3-2, (x+1)*y - 3)
+assert(a1 == myPseudoRemainder(x*y^3-2, (x+1)*y - 3))
+testPseudoDivision(x*y^3-2, (x+1)*y - 3)
+(a1,a2) = myPseudoDivision(3*x^5-17*x^4+23*x^2-41*x-13, 7*x^3-x-120)
+assert(a1 == myPseudoRemainder(3*x^5-17*x^4+23*x^2-41*x-13, 7*x^3-x-120))
+testPseudoDivision(3*x^5-17*x^4+23*x^2-41*x-13, 7*x^3-x-120)
+///
+
+TEST ///
+R = ZZ[x]
+setUFD R
+g = (5*x-2)*(3*x^2-13)
+f = (2*x^2+3*x+17)*g
+h = (3*x^3-x^2-12)*g
+time assert(primitivePolynomialGCD(f,h) == g)
+time assert(subresultantGCD(f,h) == g)
+
+use R
+S = R[y]
+setUFD S
+F = (3*x^2-y^2-13*x*y)^5*(x+y-1)^3
+G = (3*x^2+y^2-13*x*y)^5*(x+y-1)^5
+time assert(subresultantGCD(F,G) == (x+y-1)^3)
+time assert(primitivePolynomialGCD(F,G) == (x+y-1)^3)
+S1 = flattenRing S
+S1 = S1_0
+F = sub(F,S1)
+G = sub(G,S1)
+use S1
+time assert(gcd(F,G) == (x+y-1)^3) -- much faster
+///
+
+TEST ///
+R = QQ[x]
+setUFD R
+F = (3*x^3-1)^2*(13*x^4-x^2-53)^3*(x-4)
+time D = mySquareFreeDecomposition F
+assert(F == leadCoefficient F * product apply(D, v -> (v#1)^(v#0)))
+///
+
+TEST ///
+R = QQ[t];
+a = adjoinRoot(t^2+t+1)
+A = ring a
+assert(a^2+a+1 == 0)
+S = A[t];
+b = adjoinRoot(t^3-a)
+b^6
+b^-1
+assert(b * b^-1 == 1)
+
+B = ring b
+S = B[t]
+setUFD S
+F = (b*t^4-a*t-1)*(a*t^3-b*t-1)
+myExactDivision(F, a*t^3-b*t-1)
+///
+
 end
 
 doc ///
@@ -503,47 +519,11 @@ Caveat
 SeeAlso
 ///
 
-TEST ///
--- test code and assertions here
--- may have as many TEST sections as needed
-R = ZZ[x]
-g = (5*x-2)*(3*x^2-13)
-f = (2*x^2+3*x+17)*g
-assert(myExactDivision(f,g) == 2*x^2+3*x+17)
-S = R[y]
-setUFD S
-h = (y^3-x*y-13)^2 * (y-x) * f
-assert(myPolynomialExactDivision(h,y-x) == (y^3-x*y-13)^2 *  f)
-assert(myPolynomialExactDivision(h,f*1_S) == (y^3-x*y-13)^2 * (y-x))
-assert(myPolynomialExactDivision(h,f) == (y^3-x*y-13)^2 * (y-x))
-assert(not myPolynomialIsDivBy(h+1_S,f*1_S))
-assert(myPolynomialIsDivBy(h,f))
-assert(not myPolynomialIsDivBy(h+1_S,f))
-
-///
-
 end
+
 restart
-path = prepend("~/src/M2/Macaulay2/packages/development", path)
 loadPackage "UPolynomials"
+installPackage oo
+check UPolynomials
+uninstallPackage "UPolynomials"
 
-R = QQ[t];
-a = adjoinRoot(t^2+t+1)
-A = ring a
-a^2+a+1
-S = A[t];
-b = adjoinRoot(t^3-a)
-b^6
-b^-1
-b * b^-1 == 1
-
-B = ring b
-S = B[t]
-F = (b*t^4-a*t-1)*(a*t^3-b*t-1)
-myPolynomialExactDivision(F, a*t^3-b*t-1)
-
--- division over this ring
--- gcd over this ring
--- evaluation
--- norm
--- would like multivariate factorization too...!
