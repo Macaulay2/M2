@@ -24,6 +24,7 @@ export {
      primitivePolynomialGCD,
      subresultantGCD,
      mySquareFreeDecomposition,
+     myFactorization,
      setUFD,
      makeTower,
      deg,
@@ -59,7 +60,7 @@ myCoefficients = (f) -> (
      	  apply(d+1, i -> f_(x^i))))
 
 myContent = (f) -> if f == 0 or isField ring f then 1_(coefficientRing ring f) else myGCD myCoefficients f
-myContent = (f) -> (if f == 0 or isField ring f then 1_(coefficientRing ring f) 
+myContent = (f) -> (if f == 0 or isField ring f then 1_(ring f) 
   else if isField coefficientRing ring f then leadCoefficient f
   else myGCD myCoefficients f
   )
@@ -349,6 +350,45 @@ mySquareFreeDecomposition RingElement := (f) -> (
      result
      );
 
+myfac0 = (F, S, G, phis) -> (
+     for k from 0 to #phis do (
+	  -- we will return on the first one that works
+	  (f,g) := phis#k;
+	  H := myResultant(G, f F);
+	  --H := resultant(G, f F, S_0);
+	  if H != 1 and myGCD(diff((ring H)_0,H),H) == 1 then (
+	       -- yes! we are almost there...
+	       facsH := factor H;
+	       facsH = (toList facsH)/toList/first;
+	       << "k = " << k << " gives factorization" << endl;
+	       return apply(facsH, h -> myGCD(F, g h))
+	       )
+	  );
+     error "wow -- the first 9 tries failed!";
+     )
+
+myFactorization = method()
+myFactorization RingElement := (F) -> (
+     R := ring F;
+     S1 := QQ[t]; setUFD S1;
+     S := S1[a]; setUFD S;
+     phi0 := map(S,R,{S_1,S_0});
+     phi0' := map(R,S,{R_1,R_0});
+     IR := (ideal coefficientRing R)_0;
+     i0 := map(S,ring IR,{S_0});
+     G := i0 IR;
+     phis := apply(0..8, k -> (
+	       (map(S,R,{S_1-k*S_0,S_0}),
+     		map(R,S,{R_1,R_0+k*R_1})
+	       )));
+     sqfree := mySquareFreeDecomposition F;
+     -- set up S, G, and the various maps: R --> S, inverses S --> R.
+     product flatten  apply(sqfree, (d,Fi) -> (
+	       facs := myfac0(Fi,S,G, phis);
+	       apply(facs, f -> (hold f)^d)
+	       ))
+     )
+
 ----------------------------------------------
 -- adjoining a root of a polynomial ----------
 -- this likely will change interface, and ----
@@ -502,6 +542,61 @@ S = B[t]
 setUFD S
 F = (b*t^4-a*t-1)*(a*t^3-b*t-1)
 myExactDivision(F, a*t^3-b*t-1)
+///
+
+TEST ///
+-- Here we test gcd's and square free decomposition over algebraic number fields
+R = QQ[t];
+a = adjoinRoot(t^2+t+1)
+A = ring a
+S = A[t];
+b = adjoinRoot(t^3-a)
+B = ring b
+eliminate(a,ideal B)
+
+A = QQ[b]/(b^6+b^3+1)
+toField A
+setUFD A
+
+R = A[t]
+setUFD R
+F = myExactDivision(t^6+t^3+1, t-b)
+
+use A
+use ring F
+sub(F, {t => t - b})
+
+R' = QQ[b,t]
+F' = sub(F, R')
+use R'
+phi = map(R',R,{t-2*b,b})
+F' =  phi F
+G' = sub((ideal A)_0, R')
+resultant(F',G',b)
+factor oo
+facs = oo//toList/toList/first
+phi1 = map(R,R',{R_1, R_0 + 2*R_1})
+apply(facs, f -> myGCD(phi1 f, F))
+
+G' = sub((ideal A)_0, R')
+
+resultant(F',G',t)
+-- We want to factor F...
+
+
+///
+
+TEST ///
+-- test of factorization over algebraic extensions of QQ
+A = QQ[b]/(b^6+b^3+1)
+toField A
+setUFD A
+
+R = A[t]
+setUFD R
+F = t^6+t^3+1
+time myFactorization F
+
 ///
 
 end
