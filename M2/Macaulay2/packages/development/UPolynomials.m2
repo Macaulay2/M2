@@ -356,11 +356,12 @@ myfac0 = (F, S, G, phis) -> (
 	  (f,g) := phis#k;
 	  H := myResultant(G, f F);
 	  --H := resultant(G, f F, S_0);
-	  if H != 1 and myGCD(diff((ring H)_0,H),H) == 1 then (
+	  --<< H << endl << endl;
+	  if H != 1 and gcd(diff((ring H)_0,H),H) == 1 then (
 	       -- yes! we are almost there...
 	       facsH := factor H;
 	       facsH = (toList facsH)/toList/first;
-	       << "k = " << k << " gives factorization" << endl;
+	       --<< "k = " << k << " gives factorization" << endl;
 	       return apply(facsH, h -> myGCD(F, g h))
 	       )
 	  );
@@ -377,7 +378,7 @@ myFactorization RingElement := (F) -> (
      IR := (ideal coefficientRing R)_0;
      i0 := map(S,ring IR,{S_0});
      G := i0 IR;
-     phis := apply(0..8, k -> (
+     phis := apply(1..8, k -> (
 	       (map(S,R,{S_1-k*S_0,S_0}),
      		map(R,S,{R_1,R_0+k*R_1})
 	       )));
@@ -588,18 +589,45 @@ resultant(F',G',t)
 
 TEST ///
 -- test of factorization over algebraic extensions of QQ
-A = QQ[b]/(b^6+b^3+1)
+A = QQ[b]/(b^6+b^3+1); toField A; setUFD A
+R = A[t]; setUFD R
+F = t^6+t^3+1
+time myFactorization F
+
+
+A = QQ[b]/(b^8+b^3+1)
 toField A
 setUFD A
 
 R = A[t]
 setUFD R
-F = t^6+t^3+1
-time myFactorization F
+F = t^8+t^3+1
+time fac = myFactorization F
+use A; use R
+myExactDivision(F,t-b)
+-- TODO: adjoin a root of this, and factor over that ring.
 
+restart
+loadPackage "UPolynomials"
+R1 = QQ[t]
+a = adjoinRoot(t^8+t^3+1)
+A = ring a;
+B = A[t]; setUFD B
+facs = myFactorization(t^8+t^3+1)
+b = adjoinRoot(facs#1)
+B = ring b
+describe B
+
+use B
+ker map(B, QQ[t], {2*a+b})
+ker map(B, QQ[t], {a+2*b})
 ///
-
 end
+
+-- minimal polynomial
+-- primitive element
+-- or better: find norm in this non-primitive extension field...
+
 
 doc ///
 Key
