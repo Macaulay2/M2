@@ -6,12 +6,16 @@ DIRECTORY = debian32
 include Makefile.include
 default: install check
 pre-install:; rm -rf /usr/local/encap/Macaulay2-$(PACKAGE_VERSION)
-arch-chk:; [ `hostname` = debian32 ]
+arch-chk:; [ `hostname` = debian32 -o `hostname` = debian ]
 
-# using a 33MB iso image: debian-40r6-i386-businesscard.iso
-#   apt-get update
-#  find available packages in /var/lib/apt/lists
-#   apt-get -y install ... :
+# using a 33MB iso image: debian-40r6-i386-businesscard.iso (etch)
+#        157MB iso image: debian-502-i386-netinst.iso (lenny)
+#     apt-get update
+#     apt-get -y install packagename ... :
+#  list of packages available:
+#        locally: /var/lib/apt/lists
+#	remotely: ftp://ftp.us.debian.org/debian/dists/lenny/main/binary-i386/Packages.bz2
+#  install these packages:
 #     openssh-server (sshd, with X11forwarding already on)
 #     xbase-clients (xauth)
 #     emacs
@@ -21,8 +25,10 @@ arch-chk:; [ `hostname` = debian32 ]
 #     gcc
 #     libc6-dev (crt1.o)
 #     g++
+#     gfortran
+#     flex
 #     bison
-#     lapack3-dev
+#     liblapack-dev (replaced older lapack3-dev with debian version >= 5.0)
 #     libgdbm-dev
 #     libgc-dev
 #     libgmp3-dev (4.2.1)
@@ -34,10 +40,16 @@ arch-chk:; [ `hostname` = debian32 ]
 #  VBoxManage setextradata "debian 32" VBoxInternal/Devices/pcnet/0/LUN#0/Config/guestssh/Protocol  TCP
 #  VBoxManage setextradata "debian 32" VBoxInternal/Devices/pcnet/0/LUN#0/Config/guestssh/GuestPort 22
 #  VBoxManage setextradata "debian 32" VBoxInternal/Devices/pcnet/0/LUN#0/Config/guestssh/HostPort  2224
+
 # .ssh/config settings:
+
 #   Host debian32
 #     Hostname localhost
 #     Port 2224
+
+#   Host debian3250
+#     Hostname localhost
+#     Port 2229
 
 # test *.deb files this way;
 #   dpkg --install Macaulay2-1.2-common.deb 
