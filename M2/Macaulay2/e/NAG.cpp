@@ -844,8 +844,8 @@ double norm2_complex_array(int n, complex* a) // square of 2-norm
 // lapack solve routine (direct call) 
 // matrix A is transposed
 bool solve_via_lapack(
-		   int size, const complex* A, // size-by-size matrix of complex #s
-		   int bsize, const complex* b, // bsize-by-size RHS of Ax=b 
+		   int size, complex* A, // size-by-size matrix of complex #s
+		   int bsize, complex* b, // bsize-by-size RHS of Ax=b 
 		   complex* x //solution
 		   )
 {
@@ -906,8 +906,8 @@ bool solve_via_lapack(
 
 // lapack solve routine (direct call) 
 bool solve_via_lapack_without_transposition(
-		   int size, const complex* A, // size-by-size matrix of complex #s
-		   int bsize, const complex* b, // bsize-by-size RHS of Ax=b 
+		   int size, complex* A, // size-by-size matrix of complex #s
+		   int bsize, complex* b, // bsize-by-size RHS of Ax=b 
 		   complex* x //solution
 		   )
 {
