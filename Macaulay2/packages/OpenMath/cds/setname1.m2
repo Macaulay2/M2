@@ -12,7 +12,8 @@ toOpenMath InexactFieldFamily := R -> (
 )
 
 --- From OpenMath ---
-OMSParsers#"setname1.Z" = ZZ;
-OMSParsers#"setname1.Q" = QQ;
-OMSParsers#"setname1.C" = CC;
-OMSParsers#"setname1.R" = RR;
+OMSEvaluators#"setname1" = new MutableHashTable;
+OMSEvaluators#"setname1"#"Z" = ZZ;
+OMSEvaluators#"setname1"#"Q" = QQ;
+OMSEvaluators#"setname1"#"C" = CC;
+OMSEvaluators#"setname1"#"R" = RR;
