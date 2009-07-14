@@ -235,8 +235,8 @@ partialCharacter Ideal := Ideal => o -> I -> (
 	  );
      
      -- So, II is not zero:
-     -- Let ts be the list of generators
-     ts := entries gens II;
+     -- Let ts be the list of minimal generators
+     ts := entries mingens II;
      -- print ts;
      -- for each term, find the exponent vector
      oldmat := matrix "0";
@@ -306,23 +306,28 @@ cellVars = I -> (
      )
 
 nonCellstdm = {cellVariables=>null} >> o -> I -> (
+     R := ring I;
+     scan (gens R, (v -> v = local v));     
+
      cv2 := {};
      if o#cellVariables === null then (
 	  print "CellVariables not given, Please consider precomputing them";
 	  cv2 = cellVars I;
 	  )
-     else cv2 = o#cellVariables;
+     else (
+	  cv2 = baseName \ o#cellVariables;
+	  -- if the cell variables changed their identities by field extension:
+	  );
+     
      -- Extracts the monomials in the non-Cell variables.
-     R := ring I;
-     scan (gens R, (v -> v = local v));     
      cv := set cv2; 
      -- Here go the non-cell variables
-     ncv := toList (set gens R - cv);
+     ncv := toList (set (baseName \ (gens R)) - cv);
      -- We map I to the subring: k[ncv]
      CoeffR := coefficientRing R;
      S := CoeffR[ncv];
      J := kernel map (R/I,S); -- image of I in the subring S
-     Q = S/J; 
+     Q := S/J; 
      slist = flatten entries flatten basis Q;
      use R;
      return slist;
@@ -541,12 +546,10 @@ binomialIsPrimary Ideal := Ideal => o -> I -> (
      noncellvars := toList(set (gens R) - cv);
      
      M := sub (ideal (noncellvars),R);
-     -- print ("The monomial ideal M: " | toString M);
      
-     -- We intersect I with the ring k[E]
-     -- The the radical missing the monomials:
+     -- We intersect I with the ring k[E] to get the associated lattice ideal
      prerad := projectToSubRing (I,cv);
-     
+          
      rad := prerad + M;
      
      -- If the partial character is not saturated, the radical is not prime
@@ -1062,6 +1065,8 @@ BPD = I -> binomialPrimaryDecomposition I
 binomialPrimaryDecomposition = I -> (
      -- The full binomial primary decomposition 
      -- starting from a not necessarily cellular binomial ideal
+     
+     -- TODO: Improve this! The first cellular component should always be prime. Are other too ??
      
      if not isBinomial I then error "Input was not binomial !";
      
