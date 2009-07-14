@@ -14,7 +14,7 @@ newPackage("XML",
     	Authors => {{Name => "Dan Grayson", Email => "dan@math.uiuc.edu", HomePage => "http://www.math.uiuc.edu/~dan/"}},
     	Headline => "an XML parser",
     	DebuggingMode => true)
-export {"xmlParse", "XMLnode", "name", "children"}
+export {"xmlParse", "XMLnode", "tag", "children"}
 XMLnode = new Type of HashTable
 needsPackage "Parsing"
 returns = t -> s -> t
