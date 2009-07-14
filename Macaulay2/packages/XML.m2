@@ -13,7 +13,7 @@ newPackage("XML",
     	Date => "July 13, 2009",
     	Authors => {{Name => "Dan Grayson", Email => "dan@math.uiuc.edu", HomePage => "http://www.math.uiuc.edu/~dan/"}},
     	Headline => "an XML parser",
-    	DebuggingMode => true)
+    	DebuggingMode => false)
 export {"xmlParse", "XMLnode", "tag", "children"}
 XMLnode = new Type of HashTable
 needsPackage "Parsing"
@@ -24,13 +24,15 @@ ampP = returns "&" % constParser "amp"
 ltP = returns "<" % constParser "lt"
 gtP = returns ">" % constParser "gt"
 aposP = returns "'" % constParser "apos"
+whitespace = * orP(" ","\t","\n","\r")
 quotP = returns "\"" % constParser "quot"
 entityP = second % andP("&",orP(ampP,ltP,gtP,aposP,quotP),";")
 nonquoteP = new Parser from (c -> if c =!= "\"" and c =!= null then new Parser from (b -> if b === null then c))
 stringP = concatenate % * orP(entityP, nonquoteP)
 quotedstringP = (s -> s#1) % andP("\"",stringP,"\"")
 pairP = (s -> s#0 => s#2) % andP(idP,"=",quotedstringP)
-pairsP = * (last % andP(+ constParser " ",pairP))
-tagstartP = andP("<",idP,pairsP)
-xmlParse = tagstartP : charAnalyzer
-print xmlParse ///<foo bar="5" foo="asdf &amp; asdf "///
+pairsP = * (first % andP(pairP,whitespace))
+tagstartP = (s -> prepend(s#1,s#3)) % andP("<",(s -> symbol tag => s) % idP,whitespace,pairsP)
+tagP = (s -> s#0) % andP(tagstartP, "/>")
+xmlParse = tagP : charAnalyzer
+print xmlParse ///<foo bar="5" foo="asdf &amp; asdf" />///
