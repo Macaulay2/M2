@@ -14,6 +14,10 @@ gtP = (s -> ">") % constParser "gt"
 aposP = (s -> "'") % constParser "apos"
 quotP = (s -> "\"") % constParser "quot"
 entityP = (s -> s#1) % andP("&",orP(ampP,ltP,gtP,aposP,quotP),";")
-nonquoteP = new Parser from (c -> if c =!= "\"" then new Parser from (b -> if b === null then c))
+nonquoteP = new Parser from (c -> if c =!= "\"" and c =!= null then new Parser from (b -> if b === null then c))
 stringP = concatenate % * orP(entityP, nonquoteP)
-xmlParse = idP : charAnalyzer
+quotedstringP = (s -> s#1) % andP("\"",stringP,"\"")
+pairP = (s -> s#0 => s#2) % andP(idP,"=",quotedstringP)
+pairsP = * (last % andP(+ constParser " ",pairP))
+xmlParse = pairsP : charAnalyzer
+xmlParse /// bar="5" foo="asdf &amp; asdf "///
