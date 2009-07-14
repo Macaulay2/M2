@@ -442,13 +442,9 @@ fixup TO         := identity
 fixup TO2        := identity
 fixup TOH        := identity
 fixup HREF       := x -> if #x == 2 then HREF{x#0, fixup x#1} else x
--- phase this out -- each PARA has to have a scope
-doneit := false;
-deprecated := z -> if not doneit then (
-     doneit = true;
-     stderr << "--warning: using '" << z << "' alone in documentation is deprecated, use '" << z << "{}' instead" << endl;
-     if z === PARA then stderr << "--        and use PARA{...} around entire paragraphs" << endl;
-     )
+deprecated := z -> error (
+     if z === PARA then ( "using '", toString z, "' alone in documentation is no longer supported, use 'PARA{...}' around a paragraph" )
+     else ("using '", toString z, "' alone in documentation is no longer supported, use '", toString z, "{}' instead" ) )
 fixup MarkUpType := z -> (
      if z === PARA or z === BR or z === HR
      then (
