@@ -8,5 +8,12 @@ newPackage("XML",
 export {"xmlParse", "XMLnode"}
 needsPackage "Parsing"
 idP = concatenate % *letterParser
-stringP = concatenate % ...
+ampP = (s -> "&") % constParser "amp"
+ltP = (s -> "<") % constParser "lt"
+gtP = (s -> ">") % constParser "gt"
+aposP = (s -> "'") % constParser "apos"
+quotP = (s -> "\"") % constParser "quot"
+entityP = (s -> s#1) % andP("&",orP(ampP,ltP,gtP,aposP,quotP),";")
+nonquoteP = new Parser from (c -> if c =!= "\"" then new Parser from (b -> if b === null then c))
+stringP = concatenate % * orP(entityP, nonquoteP)
 xmlParse = idP : charAnalyzer
