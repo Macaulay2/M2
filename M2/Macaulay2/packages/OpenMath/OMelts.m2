@@ -1,4 +1,5 @@
 -- Convenience constructors of OpenMath elements
+-- These are then used in base.m2.
 
 -- OK OMApply
 --    OMBinary
@@ -14,7 +15,7 @@
 -- OK OMVariable
 
 
-
+--- Constructing OpenMath via XMLnode's ---
 OMI = method()
 OMI String := x -> new XMLnode from {symbol tag => "OMI", children => x }
 OMI ZZ := x -> OMI(toString x)
@@ -48,4 +49,5 @@ OMOBJ HashTable := x -> new XMLnode from {symbol tag => "OMOBJ", children => x}
 
 OMF = method()
 OMF String := x -> new XMLnode from {symbol tag => "OMF", "dec" => x}
+
 
