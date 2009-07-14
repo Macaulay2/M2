@@ -963,15 +963,16 @@ document {
      (1998) 26, 273-277.  This implementation is written and maintained 
      by Amelia Taylor, ", HREF {"mailto:amelia.taylor@coloradocollege.edu", 
      "<amelia.taylor@coloradocollege.edu>"}, ".",
-     PARA{},
-     "A domain example.",
+     PARA{
+     	  "A domain example."
+	  },
       EXAMPLE {
 	  "R = QQ[x,y,z]/ideal(x^6-z^6-y^2*z^4);",
       	  "integralClosure R"},
      "In the case that the input ring ", TT "R", " is reduced, but not a domain, 
      the direct sum of the rings returned is isomporphic to the integral closure 
      of ", TT "R", ", but the rings returned are not necessarily all domains.",
-     PARA,
+     PARA{},
      "Currently, the algorithm requires the ring to be a domain.  To find the 
      integral closure of a reduced non-domain, do it for each component.",
      EXAMPLE lines ///
