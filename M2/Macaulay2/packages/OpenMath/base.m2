@@ -21,7 +21,7 @@ toOpenMath RR     := x -> (
 )
 
 -- From OpenMath ---
---    OMApply
+-- OK OMApply
 --    OMBinary
 --    OMBind
 --    OMError
@@ -31,10 +31,10 @@ toOpenMath RR     := x -> (
 -- OK OMObject
 --    OMReference
 -- OK OMString
---    OMSymbol
---    OMVariable
+-- OK OMSymbol
+-- OK OMVariable
 
-OMSParsers = new MutableHashTable;
+OMSEvaluators = new MutableHashTable;
 
 fromOpenMathOMI = x->(
 	s := x.children;
@@ -64,11 +64,10 @@ fromOpenMathOMOBJ = x->(
 fromOpenMathOMS = x->(
 	if not x#?"cd" then error("OMS has no cd");
 	if not x#?"name" then error("OMS has no name");
-	s := concatenate(x#"cd", ".", x#"name");
 	
-	if OMSParsers#?s then
+	if OMSEvaluators#?(x#"cd") and OMSEvaluators#(x#"cd")#?(x#"name") then
 		-- We can parse it!
-		OMSParsers#s
+		OMSEvaluators#(x#"cd")#(x#"name")
 	else
 		-- We cannot parse it -- leave as is.
 		x
@@ -86,7 +85,11 @@ fromOpenMathOMA = x->(
 		x
 	) else
 		-- We can parse it!
-		hd(take(c, {1,#x}))
+		hd(take(c, {1,#c-1}))
+)
+fromOpenMathOMV = x->(
+	if not x#?"name" then error("Illegal OMV: no \"name\"");
+	x
 )
 
 
@@ -100,8 +103,11 @@ fromOpenMath XMLnode := x->(
 	else if t === "OMOBJ" then  fromOpenMathOMOBJ(x)
 	else if t === "OMA"   then  fromOpenMathOMA(x)
 	else if t === "OMS"   then  fromOpenMathOMS(x)
-	else
-		error(concatenate("Cannot handle XMLnode with tag ", t))
+	else if t === "OMV"   then  fromOpenMathOMV(x)
+	else (
+		print concatenate("WARNING -- Could not parse XMLnode with tag ", t);
+		x
+	)
 )
 
 fromOpenMath Thing := x -> x;
