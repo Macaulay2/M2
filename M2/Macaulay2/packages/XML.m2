@@ -33,6 +33,6 @@ quotedstringP = (s -> s#1) % andP("\"",stringP,"\"")
 pairP = (s -> s#0 => s#2) % andP(idP,"=",quotedstringP)
 pairsP = * (first % andP(pairP,whitespace))
 tagstartP = (s -> prepend(s#1,s#3)) % andP("<",(s -> symbol tag => s) % idP,whitespace,pairsP)
-tagP = (s -> s#0) % andP(tagstartP, "/>")
+tagP = (s -> s) % andP(tagstartP, orP("/>",* futureParser tagP, "</", idP, ">"))
 xmlParse = tagP : charAnalyzer
-print xmlParse ///<foo bar="5" foo="asdf &amp; asdf" />///
+print xmlParse ///<foo bar="5" foo="asdf &amp; asdf"></foo>///
