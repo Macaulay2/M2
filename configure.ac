@@ -320,6 +320,12 @@ if test "$PARI" = yes
 then AC_DEFINE(HAVE_PARI,1,[whether we are linking with the pari library])
 fi
 
+AC_SUBST(XML,yes)
+AC_ARG_ENABLE(xml, AS_HELP_STRING(--disable-xml,[do not link with xml library]), XML=$enableval)
+if test "$XML" = yes
+then AC_DEFINE(HAVE_XML,1,[whether we are linking with the xml library])
+fi
+
 AC_SUBST(SCSCP,no)
 AC_ARG_ENABLE(scscp, AS_HELP_STRING(--enable-scscp,[download, compile, and link with scscp library]), SCSCP=$enableval)
 if test "$SCSCP" = yes
