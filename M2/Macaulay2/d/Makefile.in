@@ -97,10 +97,17 @@ DFILES :=
 DFILES += interp.d
 DFILES += texmacs.d
 DFILES += interface2.d interface.d
+
+ifeq (@XML@,yes)
+CFILES += xml-c.c
+DFILES += xml.d
+endif
+
 ifeq (@PYTHON@,yes)
 DFILES += python.d
 CFILES += python-c.c
 endif
+
 ifeq (@PARI@,yes)
 DFILES += pari.d
 pari.oo: CPPFLAGS += -DINCLUDE_PARI_H
@@ -111,12 +118,15 @@ pari-c.o: ../../include/M2/config.h ../../config.status
 CFILES += pari-c.c
 HFILES += pari-c.h
 endif
+
 DFILES += actors5.d actors4.d actors3.d actors2.d actors.d
+
 ifeq (@MYSQL@,yes)
 DFILES += mysql.d
 else
 DFILES += mysqldummy.d
 endif
+
 DFILES += evaluate.d libfac.d
 DFILES += objects.d
 DFILES += struct.d
@@ -177,7 +187,11 @@ ifeq (@OS@,SunOS)
 TOSTATIC = -Wl,-Bstatic
 UNSTATIC = -Wl,-Bdynamic
 else
+ifeq (@OS@,MacOS)
+# we know about it
+else
 $(warning no static linking method configured for this OS or linker)
+endif
 endif
 endif
 endif
@@ -232,6 +246,9 @@ M2INCLUDES += -I.
 M2INCLUDES += -I../util
 M2INCLUDES += -I../e
 M2INCLUDES += -I@srcdir@/../regex
+ifeq (@XML@,yes)
+M2INCLUDES += -I/usr/include/libxml2
+endif
 
 # it's important that *our* directories get searched first:
 CPPFLAGS := $(M2INCLUDES) $(CPPFLAGS) $(M2_CPPFLAGS)
@@ -344,6 +361,10 @@ M2_LIBRARIES += @FCLIBS_FLAGS@ $(TOSTATIC) @FCLIBS_STATIC@ $(UNSTATIC) @FCLIBS_D
 
 ifeq (@MYSQL@,yes)
 M2_LIBRARIES += -L/usr/lib/mysql -lmysqlclient
+endif
+
+ifeq (@XML@,yes)
+M2_LIBRARIES += -lxml2
 endif
 
 LINK_OUTPUT_OPTION = $(OUTPUT_OPTION)

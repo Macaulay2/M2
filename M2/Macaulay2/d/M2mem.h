@@ -13,6 +13,7 @@ extern "C" {
   extern char *getmem_malloc(size_t);
   extern char *getmem_atomic_clear(size_t);
   extern char *getmoremem(char *, size_t oldsize, size_t newsize);
+  extern char *getmoremem1(char *, size_t newsize);
   extern char *getmoremem_atomic(char *, size_t oldsize, size_t newsize);
 #if defined(__cplusplus)
 }

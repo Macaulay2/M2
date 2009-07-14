@@ -65,15 +65,12 @@ void freememlen(void *s, size_t old) {
      GC_FREE(s);
 }
 
-#if 0
-// currently unused
 void freemem(void *s) {
 #    ifdef DEBUG
      trapchk(s);
 #    endif
      GC_FREE(s);
 }
-#endif
 
 char *getmem_clear(size_t n)
 {
@@ -128,6 +125,15 @@ char *getmem_atomic_clear(size_t n)
 }
 
 char *getmoremem (char *s, size_t old, size_t new) {
+     void *p = GC_REALLOC(s,new);
+     if (p == NULL) outofmem2(new);
+#    ifdef DEBUG
+     trapchk(p);
+#    endif
+     return p;
+     }
+
+char *getmoremem1 (char *s, size_t new) {
      void *p = GC_REALLOC(s,new);
      if (p == NULL) outofmem2(new);
 #    ifdef DEBUG
