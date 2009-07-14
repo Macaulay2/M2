@@ -34,13 +34,6 @@ to do:
 
   Dan G:
        install GAP kernel and packages
-       use Parsing package to write an XML parser at top level (handle entities)
-       	    result:
-	    	 each node is a hash table
-		 some keys are strings, representing attributes
-		 a special non-string key will provide the list of children (hashtables) and content pieces (strings), if there are any
-		 a special non-string key for the name of the node
-     	    these print easily, with < & > " &quot; ' &apos;
   
   Dan R:
   
