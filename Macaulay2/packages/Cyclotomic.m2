@@ -41,8 +41,7 @@ export {cyclotomicField,
 -- We use memoize to get physically the same cyclotomic field again and again!
 cf = (i) -> (
      -- Todo: How to do this properly ??
-     nam := ("ww" | toString(i));
-     Q := QQ[value nam];
+     Q := QQ[symbol ww_i];
      return toField ((Q) / cyclotomicPoly (i, Q_0));
      )
 
