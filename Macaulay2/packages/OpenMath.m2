@@ -14,6 +14,7 @@ newPackage(
 needsPackage "XML"
 load "./OpenMath/OMattr.m2"
 load "./OpenMath/OMelts.m2"
+load "./OpenMath/OMrefs.m2"
 load "./OpenMath/base.m2"
 load "./OpenMath/cds/arith1.m2"
 load "./OpenMath/cds/field3.m2"
@@ -32,6 +33,7 @@ load "./OpenMath/cds/polyd2.m2"
 load "./OpenMath/cds/polynomial4.m2"
 load "./OpenMath/cds/relation1.m2"
 load "./OpenMath/cds/scscp1.m2"
+load "./OpenMath/cds/scscp2.m2"
 load "./OpenMath/cds/set1.m2"
 load "./OpenMath/cds/setname1.m2"
 
@@ -39,21 +41,25 @@ export { "toOpenMath", "fromOpenMath",
 	"OMattributes",
 	"setOMAttr", "clearOMAttr",
 	"OMI", "OMSTR", "OMA", "OMF", "OME", "OMOBJ", "OMV", "OMR", "OMS", "OMBIND", "OMATTR",
-	"renderXML"
+	"renderXML",
+	"existsOMref", "getOMref", "setOMref", "removeOMref", "hasOMid", "getOMid"
 }
 
 renderXML = (x,t) -> (
 	for i in 1..t do << " ";
 	
+	if class(x) =!= XMLnode then (
+		<< "Whoops! Not an XMLnode: '" << x << endl;
+		return;
+	);
+	
 	<< x.tag;
 	if (x.tag === "OMS") then
 		<< "(cd = " << x#"cd" << ", name = " << x#"name" << ")";
-	if (x.tag === "OMV") then
-		<< "(" << x#"name" << ")";
-	if (x.tag === "OMI") then
-		<< "(" << x.children << ")";
-	if (x.tag === "OMSTR") then
-		<< "(" << x.children << ")";
+	if (x.tag === "OMV") then << "(" << x#"name" << ")";
+	if (x.tag === "OMI") then << "(" << x.children << ")";
+	if (x.tag === "OMSTR") then << "(" << x.children << ")";
+	if (x.tag === "OMR") then << "(" << x#"href" << ")";
 	<< endl;
 
 	if x.?children then
@@ -90,8 +96,8 @@ renderXML = (x,t) -> (
 -- print "s2 = \n"; print s2;
 
 
--- s = OMA("scscp1", "procedure_call", { OMA("arith1", "plus", {OMI(1), OMI(2) }) });
--- pc = OMATTR(s, hashTable{ OMS("scscp1", "call_id") => OMSTR("baz"), OMS("scscp1", "option_return_object") => OMSTR("") } );
+-- s = OMA("scscp1", "procedure_call", { OMA("arith1", "plus", {OMI(1), OMI(5) }) });
+-- pc = OMATTR(s, hashTable{ OMS("scscp1", "call_id") => OMSTR("baz"), OMS("scscp1", "option_return_cookie") => OMSTR("") } );
 -- --pc = OMATTR(s, hashTable{ OMS("scscp1", "call_id") => OMSTR("baz") } );
 -- renderXML(pc, 0);
 -- 
@@ -99,6 +105,22 @@ renderXML = (x,t) -> (
 -- fpc = fromOpenMath pc;
 -- print fpc;
 -- renderXML(toOpenMath fpc, 0);
+-- 
+-- << "trying to resolve OMR: " << endl;
+-- s = OMA("scscp1", "procedure_call", { OMA("scscp2", "retrieve", {OMR("#r0")})});
+-- pc = OMATTR(s, hashTable{ OMS("scscp1", "call_id") => OMSTR("baz"), OMS("scscp1", "option_return_object") => OMSTR("") } );
+-- print fromOpenMath pc;
+
+
+s = OMA("scscp1", "procedure_call", { OMA("scscp2", "store_session", {OMI(42)})});
+pc = OMATTR(s, hashTable{ OMS("scscp1", "call_id") => OMSTR("baz"), OMS("scscp1", "option_return_object") => OMSTR("") } );
+print fromOpenMath pc;
+
+s = OMA("scscp1", "procedure_call", { OMA("scscp2", "unbind", {OMR("#r0")})});
+pc = OMATTR(s, hashTable{ OMS("scscp1", "call_id") => OMSTR("baz"), OMS("scscp1", "option_return_object") => OMSTR("") } );
+print fromOpenMath pc;
+print fromOpenMath pc;
+
 
 -- l = toOpenMath(set{1,3,7});
 -- b = OMBIND("fns1", "lambda", { x }, { OMA("arith1", "power", { OMV("x"), OMI(2) }) });
@@ -111,14 +133,14 @@ renderXML = (x,t) -> (
 -- renderXML(toOpenMath t, 0)
 -- << "from to t = " << fromOpenMath toOpenMath t << endl;
 
-R = GF(2);
-R[x]; p = x^2+x+1;
-s = OMA("field3", "field_by_poly", {
-	toOpenMath R,
-	toOpenMath p
-} )
-renderXML(s, 0);
-<< "from(s) = " << fromOpenMath s << endl;
+-- R = GF(2);
+-- R[x]; p = x^2+x+1;
+-- s = OMA("field3", "field_by_poly", {
+-- 	toOpenMath R,
+-- 	toOpenMath p
+-- } )
+-- renderXML(s, 0);
+-- << "from(s) = " << fromOpenMath s << endl;
 
 ------------------------
 ----(NO) DOCUMENTATION--

@@ -1,3 +1,4 @@
+-- See http://www.win.tue.nl/SCIEnce/cds/scscp1.html
 -- done (at least sort of)
 --  * call_id, 
 --  * error_system_specific, 
@@ -17,14 +18,24 @@ constructProcTerm (XMLnode, XMLnode) := (omenode, callid) -> (
 );
 constructProcTerm (String, XMLnode) := (errmsg, callid) -> (
 	constructProcTerm(
-		OME("scscp1", "error_system_specific", {OMSTR(errmsg)}),
+		OME(errmsg),
 		callid
 	)
 );
 
-constructProcCompl = method()
-constructProcCompl (XMLnode, XMLnode) := (x, callid) -> (
+constructProcComplObj = (x, callid) -> (
 	e := OMA("scscp1", "procedure_completed", {x});
+	e = setOMAttr(e, OMS("scscp1", "call_id"), callid);
+	e
+);
+constructProcComplNothing = (callid) -> (
+	e := OMA("scscp1", "procedure_completed", {});
+	e = setOMAttr(e, OMS("scscp1", "call_id"), callid);
+	e
+);
+constructProcComplCookie = (x, callid) -> (
+	r := OMR(addOMref(x));
+	e := OMA("scscp1", "procedure_completed", {r});
 	e = setOMAttr(e, OMS("scscp1", "call_id"), callid);
 	e
 );
@@ -45,7 +56,6 @@ OMSEvaluators#"scscp1"#"procedure_call" = (args, attrs) -> (
 		ret = "nothing";
 	) else if attrs#?(OMS("scscp1", "option_return_cookie")) then (
 		ret = "cookie";
-		return constructProcTerm("scscp1.procedure_call: No support for option_return_cookie (yet)", callid);
 	) else (
 		return constructProcTerm("scscp1.procedure_call: No suitable option_return_ found", callid);
 	);
@@ -53,12 +63,21 @@ OMSEvaluators#"scscp1"#"procedure_call" = (args, attrs) -> (
 	-- Get the object, and evaluate
 	if (#args =!= 1) or ((args#0).tag =!= "OMA") then
 		return constructProcTerm("scscp1.procedure_call: 1st and only argument of pc should be an OMA.", callid);
-	-- Try to convert back
+	-- Try to evaluate
 	try (
-		e = toOpenMath(fromOpenMath(args#0))
+		evld = fromOpenMath(args#0)
 	) else (
 		return constructProcTerm("Something unspecified went wrong.", callid);
 	);
+	
+	-- If we want to return nothing or a cookie, we are pretty much done!
+	if ret === "nothing" then
+		return constructProcComplNothing(callid)
+	else if ret === "cookie" then
+		return constructProcComplCookie(evld, callid);
+
+	-- try to convert back to OpenMath otherwise
+	e = toOpenMath(evld);
 
 	-- If the result is wrong...
 	if (class(e) === XMLnode) and (e.tag == "OME") then (
@@ -68,5 +87,8 @@ OMSEvaluators#"scscp1"#"procedure_call" = (args, attrs) -> (
 	
 	
 	-- If the result is right...
-	return constructProcCompl(e, callid);
+	if ret === "object" then
+		constructProcComplObj(e, callid)
+	else
+		null
 )
