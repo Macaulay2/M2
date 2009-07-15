@@ -1,5 +1,5 @@
--- done:
--- todo: automorphism_group, field_by_poly_map, field_by_poly_vector, homomorphism_by_generators
+-- done:field_by_poly_vector, 
+-- todo: automorphism_group, field_by_poly_map, homomorphism_by_generators
 
 --- From OpenMath ---
 OMSEvaluators#"field4" = new MutableHashTable;

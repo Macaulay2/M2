@@ -105,19 +105,20 @@ renderXML = (x,t) -> (
 -- m = OMA("set1", "map", {b, l});
 -- print fromOpenMath m;
 
-R = GF(2,5);
-t = random(R);
-<< "t = " << t << endl;
-renderXML(toOpenMath t, 0)
-<< "from to t = " << fromOpenMath toOpenMath t << endl;
+-- R = GF(2,5);
+-- t = random(R);
+-- << "t = " << t << endl;
+-- renderXML(toOpenMath t, 0)
+-- << "from to t = " << fromOpenMath toOpenMath t << endl;
 
--- R = GF(2);
--- R[x]; p = x^2+x+1;
--- s = OMA("field3", "field_by_poly", {
--- 	toOpenMath R,
--- 	toOpenMath p
--- } )
--- renderXML(s, 0);
+R = GF(2);
+R[x]; p = x^2+x+1;
+s = OMA("field3", "field_by_poly", {
+	toOpenMath R,
+	toOpenMath p
+} )
+renderXML(s, 0);
+<< "from(s) = " << fromOpenMath s << endl;
 
 ------------------------
 ----(NO) DOCUMENTATION--
