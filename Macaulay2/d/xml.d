@@ -13,6 +13,7 @@ import Parse(text:string):xmlNodeOrNull;
 import examine(x:xmlNode):void;
 import getAttrChildren(node:xmlAttr):xmlNodeOrNull;
 import getElementName(node:xmlNode):(string or null);
+import getAttrName(attr:xmlAttr):(string or null);
 import getContent(node:xmlNode):(string or null);
 import getNextAttr(attr:xmlAttr):xmlAttrOrNull;
 import getNextNode(node:xmlNode):xmlNodeOrNull;

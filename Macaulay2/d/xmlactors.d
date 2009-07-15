@@ -29,12 +29,13 @@ setupfun("xmlGetChildren",xmlGetChildren);
 xmlGetName(e:Expr):Expr := (
      when e
      is node:xmlNode do if isElement(node) then when getElementName(node) is s:string do Expr(s) else nullE else nullE
-     else WrongArg("an XML node or attribute"));
+     is attr:xmlAttr do when getAttrName(attr) is s:string do Expr(s) else nullE
+     else WrongArg("an XML node"));
 setupfun("xmlGetName",xmlGetName);
 xmlGetContent(e:Expr):Expr := (
      when e
      is node:xmlNode do if isText(node) then when getContent(node) is s:string do Expr(s) else nullE else nullE
-     else WrongArg("an XML node or attribute"));
+     else WrongArg("an XML node"));
 setupfun("xmlGetContent",xmlGetContent);
 xmlGetNext(e:Expr):Expr := (
      when e
@@ -42,6 +43,17 @@ xmlGetNext(e:Expr):Expr := (
      is attr:xmlAttr do when getNextAttr(attr) is next:xmlAttr do Expr(next) else nullE
      else WrongArg("an XML node or attribute"));
 setupfun("xmlGetNext",xmlGetNext);
+xmlIsElement(e:Expr):Expr := (
+     when e
+     is node:xmlNode do toExpr(isElement(node))
+     else WrongArg("an XML node"));
+setupfun("xmlIsElement",xmlIsElement);
+xmlIsText(e:Expr):Expr := (
+     when e
+     is node:xmlNode do toExpr(isText(node))
+     else WrongArg("an XML node"));
+setupfun("xmlIsText",xmlIsText);
+
 
 -- Local Variables:
 -- compile-command: "make -C $M2BUILDDIR/Macaulay2/d "

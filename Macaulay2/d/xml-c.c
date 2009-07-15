@@ -139,9 +139,14 @@ M2_string xml_getElementName(struct xml_node *n){
   return tostring((char const *)n->node->name);
 }
 
+M2_string xml_getAttrName(struct xml_attr *a){
+  if (a->attr->name == NULL) return NULL;
+  return tostring((char const *)a->attr->name);
+}
+
 M2_string xml_getContent(struct xml_node *n){
-  if (n->node->name == NULL) return NULL;
-  return tostring((char const *)n->node->name);
+  if (n->node->content == NULL) return NULL;
+  return tostring((char const *)n->node->content);
 }
 
 struct xml_node *xml_getNextNode(struct xml_node *n){
