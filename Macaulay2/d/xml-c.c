@@ -16,11 +16,16 @@ void initxml() {
   xmlGcMemSetup(freemem,(void *(*)(size_t))getmem,(void *(*)(size_t))getmem_atomic,(void *(*)(void *,size_t))getmoremem1,copystring);
 }
 
-static void display(xmlNode *u) {
-  xmlNode *t = u;
+static void display(xmlDocPtr doc,xmlNodePtr u) {
+  xmlNodePtr t = u;
   if (t == NULL) return;
-  for (; t; t = t->next) if (t->type == XML_ELEMENT_NODE) printf("%s\n", t->name);
-  display(u->children);
+  for (; t; t = t->next) 
+    if (t->type == XML_ELEMENT_NODE) {
+      printf("%s: ", t->name);
+      xmlElemDump(stdout,doc,t);
+      printf("\n");
+    }
+  display(doc,u->children);
 }
 
 void xml_parse(M2_string p) {
@@ -29,7 +34,7 @@ void xml_parse(M2_string p) {
     printf("xml syntax error\n");
   }
   else {
-    display(xmlDocGetRootElement(doc));
+    display(doc,xmlDocGetRootElement(doc));
     printf("\n");
     xmlFreeDoc(doc);
   }
@@ -37,6 +42,6 @@ void xml_parse(M2_string p) {
 
 /*
  Local Variables:
- compile-command: "make -C $M2BUILDDIR/Macaulay2/d xml-c.o "
+ compile-command: "make -C $M2BUILDDIR/Macaulay2/d "
  End:
 */
