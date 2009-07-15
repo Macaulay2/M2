@@ -30,7 +30,8 @@ load "./OpenMath/cds/relation1.m2"
 load "./OpenMath/cds/setname1.m2"
 
 export { "toOpenMath", "fromOpenMath", 
-	"OMI", "OMSTR", "OMA", "OMF", "OME", "OMOBJ", "OMV", "OMR", "OMS", "OMBIND"
+	"OMI", "OMSTR", "OMA", "OMF", "OME", "OMOBJ", "OMV", "OMR", "OMS", "OMBIND", "OMATTR",
+	"attributes"
 }
 
 renderXML = (x,t) -> (
@@ -55,6 +56,7 @@ renderXML = (x,t) -> (
 ------------------------
 --------TESTS-----------
 ------------------------
+
 -- R = QQ[x];
 -- p = x^2 - 1;
 -- s = toOpenMath(p);
@@ -66,17 +68,28 @@ renderXML = (x,t) -> (
 -- tfs = toOpenMath fs;
 -- renderXML(tfs, 0);
 
--- (lambda.x.(x^2)) ((lambda.x.x+3)(1)) = 16 (I think)
-x = symbol x;
-b1 = OMBIND("fns1", "lambda", { x }, { OMA("arith1", "power", { OMV("x"), OMI(2) }) });
-b2 = OMBIND("fns1", "lambda", { x }, { OMA("arith1", "plus", { OMV("x"), OMI(3) }) });
-s = OMA(b1, {OMA(b2, {OMI(1)})});
+-- -- (lambda.x.(x^2)) ((lambda.x.x+3)(1)) = 16 (I think)
+-- x = symbol x;
+-- b1 = OMBIND("fns1", "lambda", { x }, { OMA("arith1", "power", { OMV("x"), OMI(2) }) });
+-- b2 = OMBIND("fns1", "lambda", { x }, { OMA("arith1", "plus", { OMV("x"), OMI(3) }) });
+-- s = OMA(b1, {OMA(b2, {OMI(1)})});
+-- renderXML(s, 0);
+-- 
+-- s2 = fromOpenMath s;
+-- print "s2 = \n"; print s2;
+-- 
+
+s = OMATTR( OMI(17), hashTable{ OMS("foo", "bar") => OMSTR("baz") } );
 renderXML(s, 0);
 
-s2 = fromOpenMath s;
-print "s2 = \n"; print s2;
+<< "s becomes " << fromOpenMath s;
 
 
+
+
+------------------------
+----(NO) DOCUMENTATION--
+------------------------
 -- beginDocumentation()
 -- document { 
 -- 	Key => FirstPackage,

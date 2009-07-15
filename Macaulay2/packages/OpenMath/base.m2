@@ -3,8 +3,8 @@
 ------------------------
 -- From To --
 -- OK  OK  OMA       (apply)
---         OMATP     (attribute pair)
---         OMATTR    (attributes)
+-- OK      OMATP     (attribute pair)
+-- OK      OMATTR    (attributes)
 --         OMB       (Binary data)
 -- OK      OMBIND    (Binding)
 -- OK      OMBVAR    (Binding variables)
@@ -196,6 +196,31 @@ fromOpenMathOMBIND := x -> (
 	vals -> evalBind(hd, vars, expr, vals)
 )
 
+fromOpenMathOMATTR := x -> (
+	--we simply put the attributes as a hashtable into the child node, 
+	--possibly to be looked at later.
+	if #(x.children) =!= 2 then
+		return OME("OMATTR should have exactly two children");
+	
+	--OMATP
+	omatp := (x.children)#0;
+	if omatp.tag =!= "OMATP" or (#(omatp.children) % 2 =!= 0) then
+		return OME("1st argument of OMATTR should be an OMATP with an even number of children");
+	chd := omatp.children;
+	attrs := {};
+	for i in 0..((#chd // 2)-1) do (
+		attrs = append(attrs, chd#(2*i) => chd#(2*i + 1) )
+	);
+	attrs = new HashTable from attrs;
+	
+	--The child.
+	child := (x.children)#1;
+	child = new MutableHashTable from child;
+	child.attributes = attrs;
+	child = new XMLnode from child;
+	fromOpenMath(child)
+)
+
 
 
 fromOpenMath = method()
@@ -209,6 +234,7 @@ fromOpenMath XMLnode := x->(
 	else if t === "OMS"   then  fromOpenMathOMS(x)
 	else if t === "OMV"   then  fromOpenMathOMV(x)
 	else if t === "OMBIND"   then  fromOpenMathOMBIND(x)
+	else if t === "OMATTR"   then  fromOpenMathOMATTR(x)
 	else (
 		print concatenate("WARNING -- Could not parse XMLnode with tag ", t);
 		x
