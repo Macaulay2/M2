@@ -1,26 +1,23 @@
 -- -*- coding: utf-8 -*-
 
-   -- use Parsing package to write an XML parser at top level (handle entities)
-   -- 	    result:
-   -- 	    	 each node is a hash table
-   -- 		 some keys are strings, representing attributes
-   -- 		 a special non-string key (symbol children) will provide the list of children (hashtables) and content pieces (strings), if there are any
-   -- 		 a special non-string key (symbol name) for the name of the node
-   -- 	    these print easily, with < & > " &quot; ' &apos;
-
 newPackage("XML",
     	Version => "1.0", 
     	Date => "July 13, 2009",
     	Authors => {{Name => "Dan Grayson", Email => "dan@math.uiuc.edu", HomePage => "http://www.math.uiuc.edu/~dan/"}},
     	Headline => "an XML parser",
     	DebuggingMode => false)
-export {"XMLnode", "tag", "children","parse", "xmlConvert"}
+export {"XMLnode", "tag", "children","parse", "xmlConvert", "Trim"}
 scan(pairs Core#"private dictionary", (k,v) -> if match("^xml[A-Z]",k) then (
 	  XML#"private dictionary"#k = v;
 	  export {v}))
 
 XMLnode = new Type of HashTable
 nonnull = x -> select(x, i -> i =!= null)
+trimwhite = s -> (
+     s = replace("^[[:space:]]+","",s);
+     s = replace("[[:space:]]+$","",s);
+     if s =!= "" then s)
+trimopt := identity
 xmlConvert = node -> (
      if xmlIsElement node then (
 	  attr := xmlAttributes node;
@@ -29,27 +26,22 @@ xmlConvert = node -> (
 	       symbol tag => xmlGetName node,
 	       if attr =!= null then toSequence (
 		    while attr =!= null list first(
-		    	 xmlGetName attr => (
-			      c := xmlGetChildren attr;
-			      concatenate while null =!= c list first(
-				   xmlGetContent c, 
-				   c = xmlGetNext c)),
+		    	 xmlGetName attr => ( c := xmlGetChildren attr; concatenate while null =!= c list first( xmlGetContent c, c = xmlGetNext c)),
 		    	 attr = xmlGetNext attr)),
-	       if child =!= null then (
-		    symbol children => (
-			 while child =!= null list first(
-			      xmlConvert child, 
-			      child = xmlGetNext child))
-		    )
+	       if child =!= null then symbol children => nonnull while child =!= null list first(xmlConvert child, child = xmlGetNext child)
 	       }
 	  )
-     else if xmlIsText node then (
-	  xmlGetContent node
-	  )
-     )
+     else if xmlIsText node then trimopt xmlGetContent node)
+parse = method(Options => { Trim => true })
+parse String := opts -> s -> (
+     trimopt = if opts.Trim then trimwhite else identity;
+     xmlConvert xmlParse s)
+     -- 	    result:
+     -- 	    	 each node is a hash table of type XMLnode
+     -- 		 some keys are strings, representing attributes
+     -- 		 a special non-string key (symbol children) will provide the list of children (hashtables) and content pieces (strings), if there are any
+     -- 		 a special non-string key (symbol name) for the name of the node
 
-parse = method()
-parse String := s -> xmlConvert xmlParse s
 
 end
 
