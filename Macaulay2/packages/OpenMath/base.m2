@@ -148,7 +148,7 @@ fromOpenMathOMV = x->(
 	value(concatenate("symbol ", vname))
 )
 
-evalBind = (hd, ombvars, expr, vals) -> (
+evalBind = (hd, ombvars, expr, vals, attrs) -> (
 	-- Check that we can evaluate the OMBIND
 	fhd := null;
 	try 
@@ -157,7 +157,6 @@ evalBind = (hd, ombvars, expr, vals) -> (
 		return OME(concatenate("Cannot evaluate OMBIND with head '", toString hd , "'"));
 	if class(fhd) === XMLnode then
 		return OME(concatenate("Cannot evaluate OMBIND with head '", toString hd , "'"));
-
 
 	-- We assume vars is an OMBVAR
 	-- Store the values (as a stack)
@@ -177,8 +176,8 @@ evalBind = (hd, ombvars, expr, vals) -> (
 			storedOMVvals#vname = fromOpenMath(vals#i);
 	);
 	
-	-- Evaluate the bind...
-	r := fhd(expr);
+	-- Evaluate the bind
+	r := fhd(expr, attrs);
 		
 	-- Delete the values again.
 	for v in vars do (
@@ -202,7 +201,7 @@ fromOpenMathOMBIND := x -> (
 	expr := take(x.children, {2,(#(x.children)-1)});
 	
 	--We return a function that can be applied to things.
-	vals -> evalBind(hd, vars, expr, vals)
+	(vals, attrs) -> evalBind(hd, vars, expr, vals, attrs)
 )
 
 
