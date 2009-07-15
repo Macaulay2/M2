@@ -51,6 +51,22 @@ OMOBJ XMLnode := x -> new XMLnode from {symbol tag => "OMOBJ", children => x}
 OMF = method()
 OMF String := x -> new XMLnode from {symbol tag => "OMF", "dec" => x}
 
+OMBIND = method()
+OMBIND (XMLnode, List, List) := (hd, vars, exprs) -> (
+	vvars := new XMLnode from {
+		symbol tag => "OMBVAR",
+		symbol children => apply(vars, toOpenMath)
+	};
+	
+	new XMLnode from { 
+		symbol tag => "OMBIND", 
+		symbol children => prepend(hd, prepend(vvars, exprs))
+	}
+)
+OMBIND (String, String, List, List) := (cd, name, vars, exprs) -> OMBIND(OMS(cd, name), vars, exprs);
+OMBIND (String, String, List, XMLnode) := (cd, name, vars, expr) -> OMBIND(OMS(cd, name), vars, {expr});
+OMBIND (XMLnode, List, XMLnode) := (hd, vars, expr) -> OMBIND(hd, vars, {expr});
+
 
 --- And some helper functions ---
 isOMAOf = (x, cd, nm) -> (
