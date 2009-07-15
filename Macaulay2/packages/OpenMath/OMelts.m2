@@ -19,11 +19,11 @@
 
 --- Constructing OpenMath via XMLnode's ---
 OMI = method()
-OMI String := x -> new XMLnode from {symbol tag => "OMI", children => x }
+OMI String := x -> new XMLnode from {symbol tag => "OMI", children => {x} }
 OMI ZZ := x -> OMI(toString x)
 
 OMSTR = method()
-OMSTR String := x -> new XMLnode from {symbol tag => "OMSTR", children => x }
+OMSTR String := x -> new XMLnode from {symbol tag => "OMSTR", children => {x} }
 
 OMS = method()
 OMS (String, String) := (x,y) -> new XMLnode from {symbol tag => "OMS", "cd" => x, "name" => y}
@@ -48,7 +48,7 @@ OMR = method()
 OMR (String) := x -> new XMLnode from {symbol tag => "OMR", "href" => x}
 
 OMOBJ = method()
-OMOBJ XMLnode := x -> new XMLnode from {symbol tag => "OMOBJ", children => x}
+OMOBJ XMLnode := x -> new XMLnode from {symbol tag => "OMOBJ", children => {x}}
 
 OMF = method()
 OMF String := x -> new XMLnode from {symbol tag => "OMF", "dec" => x}

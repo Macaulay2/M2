@@ -1,4 +1,5 @@
 -- -*- coding: utf-8 -*-
+needsPackage "XML"
 newPackage(
 	"OpenMath",
     	Version => "0.1", 
@@ -10,8 +11,8 @@ newPackage(
     	DebuggingMode => true,
 		AuxiliaryFiles => true
     	)
-
 needsPackage "XML"
+
 load "./OpenMath/OMattr.m2"
 load "./OpenMath/OMelts.m2"
 load "./OpenMath/OMrefs.m2"
@@ -73,6 +74,12 @@ renderXML = (x,t) -> (
 --------TESTS-----------
 ------------------------
 
+t = parse ///<OMA><OMS cd="arith1" name="plus"/><OMI>1</OMI><OMI>17</OMI></OMA>///
+<< "t = " << t << endl;
+
+<< "fromOpenMath t = " << fromOpenMath t << endl;
+
+
 -- R = QQ[x];
 -- p = x^2 - 1;
 -- s = toOpenMath(p);
@@ -112,14 +119,18 @@ renderXML = (x,t) -> (
 -- print fromOpenMath pc;
 
 
-s = OMA("scscp1", "procedure_call", { OMA("scscp2", "store_session", {OMI(42)})});
-pc = OMATTR(s, hashTable{ OMS("scscp1", "call_id") => OMSTR("baz"), OMS("scscp1", "option_return_object") => OMSTR("") } );
-print fromOpenMath pc;
-
-s = OMA("scscp1", "procedure_call", { OMA("scscp2", "unbind", {OMR("#r0")})});
-pc = OMATTR(s, hashTable{ OMS("scscp1", "call_id") => OMSTR("baz"), OMS("scscp1", "option_return_object") => OMSTR("") } );
-print fromOpenMath pc;
-print fromOpenMath pc;
+-- s = OMA("scscp1", "procedure_call", { OMA("scscp2", "store_session", {OMI(42)})});
+-- pc = OMATTR(s, hashTable{ OMS("scscp1", "call_id") => OMSTR("baz"), OMS("scscp1", "option_return_object") => OMSTR("") } );
+-- print fromOpenMath pc;
+-- 
+-- s = OMA("scscp1", "procedure_call", { OMA("scscp2", "unbind", {OMR("#r0")})});
+-- pc = OMATTR(s, hashTable{ OMS("scscp1", "call_id") => OMSTR("baz"), OMS("scscp1", "option_return_object") => OMSTR("") } );
+-- print fromOpenMath pc;
+-- print fromOpenMath pc;
+-- 
+-- s = OMA("scscp1", "procedure_call", { OMA("scscp2", "get_service_description", {})});
+-- pc = OMATTR(s, hashTable{ OMS("scscp1", "call_id") => OMSTR("baz"), OMS("scscp1", "option_return_object") => OMSTR("") } );
+-- print fromOpenMath pc;
 
 
 -- l = toOpenMath(set{1,3,7});

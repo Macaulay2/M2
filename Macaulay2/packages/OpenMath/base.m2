@@ -87,7 +87,7 @@ toOpenMath Symbol := x->OMV(toString x);
 OMSEvaluators = new MutableHashTable;
 
 fromOpenMathOMI = x->(
-	s := x.children;
+	s := (x.children)#0;
 	if class(s) =!= String then return OME(concatenate("Illegal OMI: Children has type ", toString(class(s)), "."));
 	m := regex("^(\\-)?[0-9]+$", s);
 	if m === null then return OME(concatenate("Illegal OMI: '", s, "'"));
@@ -102,12 +102,12 @@ fromOpenMathOMF = x->(
 	value(s)
 )
 fromOpenMathOMSTR = x->(
-	s := x.children;
+	s := (x.children)#0;
 	if class(s) =!= String then return OME(concatenate("Illegal OMSTR: children has type ", toString(class(s)), "."));
 	s
 )
 fromOpenMathOMOBJ = x->(
-	s := x.children;
+	s := (x.children)#0;
 	if class(s) =!= HashTable then return OME(concatenate("Illegal OMOBJ: children has type ", toString(class(s)), "."));
 	fromOpenMath(s)
 )
