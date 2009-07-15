@@ -35,4 +35,5 @@ pairsP = * (first % andP(pairP,whitespace))
 tagstartP = (s -> prepend(s#1,s#3)) % andP("<",(s -> symbol tag => s) % idP,whitespace,pairsP)
 tagP = (s -> s) % andP(tagstartP, orP("/>",* futureParser tagP, "</", idP, ">"))
 xmlParse = tagP : charAnalyzer
+end
 print xmlParse ///<foo bar="5" foo="asdf &amp; asdf"></foo>///
