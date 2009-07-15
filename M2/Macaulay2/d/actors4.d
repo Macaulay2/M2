@@ -9,6 +9,7 @@ use binding;
 use parser;
 use lex;
 use gmp;
+use xml;
 use engine;
 use nets;
 use varnets;
@@ -1004,6 +1005,8 @@ tostringfun(e:Expr):Expr := (
 	  r := Expr(Ccode(string,"tostring2(PyString_AS_STRING(",str,"))"));
 	  Ccode(void,"Py_DECREF((PyObject*)",str,")");
 	  r)
+     is x:xmlNode do Expr("<<xml node>>")
+     is x:xmlAttr do Expr("<<xml attr>>")
      );
 setupfun("simpleToString",tostringfun);
 

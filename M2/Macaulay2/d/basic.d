@@ -3,6 +3,7 @@ use C;
 use system;
 use stdio;
 use stdiop;
+use xml;
 use engine;
 use binding;
 use strings;
@@ -70,6 +71,8 @@ export hash(e:Expr):int := (
      is x:CompiledFunctionClosure do x.hash
      is f:CompiledFunctionBody do 12347
      is po:pythonObject do int(Ccode(long, "PyObject_Hash((PyObject *)",po,")"))
+     is xmlNode do int(123456)
+     is xmlAttr do int(123457)
      );
 export hash(x:List):int := (
      h := x.class.hash + 23407;
