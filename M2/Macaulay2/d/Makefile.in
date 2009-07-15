@@ -114,7 +114,13 @@ CFILES += pari-c.c
 HFILES += pari-c.h
 endif
 
-DFILES += actors5.d actors4.d actors3.d actors2.d actors.d
+DFILES += actors5.d
+
+ifeq (@XML@,yes)
+DFILES += xmlactors.d
+endif
+
+DFILES +=  actors4.d actors3.d actors2.d actors.d
 
 ifeq (@MYSQL@,yes)
 DFILES += mysql.d

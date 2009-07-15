@@ -91,7 +91,7 @@ static void show(xmlDocPtr doc,xmlNodePtr t) {
   }
 }
 
-void xml_parse(M2_string p) {
+void xmlactors_parse(M2_string p) {
   xmlDocPtr doc = xmlReadMemory(p->array,p->len,"a string", NULL, 0);
   if (doc == NULL) {
     printf("xml syntax error\n");
@@ -104,6 +104,10 @@ void xml_parse(M2_string p) {
     printf("\n");
     xmlFreeDoc(doc);
   }
+}
+
+void xmlactors_examine(struct xml_node *n) {
+  xmlElemDump(stdout,n->doc,n->node);
 }
 
 struct xml_node *xml_Parse(M2_string p) {
