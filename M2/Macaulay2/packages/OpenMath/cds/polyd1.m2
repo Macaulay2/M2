@@ -89,7 +89,7 @@ evalSDMP = (obj, R) -> (
 		if isOMAOf(t, "polyd1", "term") then
 			r = r + evalterm(t, R)
 		else
-			return OME concatenate("Cannot handle argument to SDMP: " + toString(r));
+			return OME concatenate("Cannot handle argument to SDMP: ", toString(r));
 	);
 
 	r
