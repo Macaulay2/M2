@@ -16,6 +16,9 @@ load "./OpenMath/OMattr.m2"
 load "./OpenMath/OMelts.m2"
 load "./OpenMath/base.m2"
 load "./OpenMath/cds/arith1.m2"
+load "./OpenMath/cds/field3.m2"
+load "./OpenMath/cds/field4.m2"
+load "./OpenMath/cds/finfield1.m2"
 load "./OpenMath/cds/fns1.m2"
 load "./OpenMath/cds/integer1.m2"
 load "./OpenMath/cds/integer2.m2"
@@ -97,10 +100,24 @@ renderXML = (x,t) -> (
 -- print fpc;
 -- renderXML(toOpenMath fpc, 0);
 
-l = toOpenMath(set{1,3,7});
-b = OMBIND("fns1", "lambda", { x }, { OMA("arith1", "power", { OMV("x"), OMI(2) }) });
-m = OMA("set1", "map", {b, l});
-print fromOpenMath m;
+-- l = toOpenMath(set{1,3,7});
+-- b = OMBIND("fns1", "lambda", { x }, { OMA("arith1", "power", { OMV("x"), OMI(2) }) });
+-- m = OMA("set1", "map", {b, l});
+-- print fromOpenMath m;
+
+R = GF(2,5);
+t = random(R);
+<< "t = " << t << endl;
+renderXML(toOpenMath t, 0)
+<< "from to t = " << fromOpenMath toOpenMath t << endl;
+
+-- R = GF(2);
+-- R[x]; p = x^2+x+1;
+-- s = OMA("field3", "field_by_poly", {
+-- 	toOpenMath R,
+-- 	toOpenMath p
+-- } )
+-- renderXML(s, 0);
 
 ------------------------
 ----(NO) DOCUMENTATION--
