@@ -18,7 +18,7 @@ toOpenMathSDMP = p -> (
 		apply(listForm(p), i->OMA("polyd1", "term", toOpenMathTerm(i)))
 	)
 )
-toOpenMath RingElement := p -> (
+toOpenMathPoly = p -> (
 	ring := toOpenMath(class(p));
 	terms := toOpenMathSDMP(p);
 

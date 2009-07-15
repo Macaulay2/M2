@@ -42,6 +42,20 @@ toOpenMath RR     := x -> (
 	})
 )
 
+toOpenMath RingElement := p -> (
+	R := class(p);
+	if isPolynomialRing(R) then (
+		toOpenMathPoly(p)
+	) else if (class(R) === QuotientRing) and (ambient(R) === ZZ) then (
+		OMI(toString p)
+	) else if (class(R) === GaloisField) then (
+		toOpenMathFFelt(p)
+	) else (
+		OME(concatenate("Cannot handle ring element '", toString(p), "'"))
+	)
+)
+
+
 -- toOpenMath of an XMLnode will be just toOpenMath of that XMLnode,
 -- unless it has attributes, because then it will be wrapped in an OMATTR
 toOpenMath XMLnode := x -> (
