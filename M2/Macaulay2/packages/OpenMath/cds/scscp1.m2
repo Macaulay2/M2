@@ -12,10 +12,8 @@
 constructProcTerm = method()
 constructProcTerm (XMLnode, XMLnode) := (omenode, callid) -> (
 	e := OMA("scscp1", "procedure_terminated", {omenode});
-	enw := new MutableHashTable from e;
-	enw.attributes = { OMS("scscp1", "call_id") => callid };
-	enw = new XMLnode from enw;
-	enw
+	e = setOMAttr(e, OMS("scscp1", "call_id"), callid);
+	e
 );
 constructProcTerm (String, XMLnode) := (errmsg, callid) -> (
 	constructProcTerm(
@@ -27,10 +25,8 @@ constructProcTerm (String, XMLnode) := (errmsg, callid) -> (
 constructProcCompl = method()
 constructProcCompl (XMLnode, XMLnode) := (x, callid) -> (
 	e := OMA("scscp1", "procedure_completed", {x});
-	enw := new MutableHashTable from e;
-	enw.attributes = { OMS("scscp1", "call_id") => callid };
-	enw = new XMLnode from enw;
-	enw
+	e = setOMAttr(e, OMS("scscp1", "call_id"), callid);
+	e
 );
 
 
@@ -42,12 +38,13 @@ OMSEvaluators#"scscp1"#"procedure_call" = (args, attrs) -> (
 	callid := attrs#(OMS("scscp1", "call_id"));
 	
 	-- Get option_return_ ..
+	ret := null;
 	if attrs#?(OMS("scscp1", "option_return_object")) then (
-		ret := "object";
+		ret = "object";
 	) else if attrs#?(OMS("scscp1", "option_return_nothing")) then (
-		ret := "nothing";
+		ret = "nothing";
 	) else if attrs#?(OMS("scscp1", "option_return_cookie")) then (
-		ret := "cookie";
+		ret = "cookie";
 		return constructProcTerm("scscp1.procedure_call: No support for option_return_cookie (yet)", callid);
 	) else (
 		return constructProcTerm("scscp1.procedure_call: No suitable option_return_ found", callid);

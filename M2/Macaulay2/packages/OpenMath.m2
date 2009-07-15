@@ -12,6 +12,7 @@ newPackage(
     	)
 
 needsPackage "XML"
+load "./OpenMath/OMattr.m2"
 load "./OpenMath/OMelts.m2"
 load "./OpenMath/base.m2"
 load "./OpenMath/cds/arith1.m2"
@@ -31,8 +32,10 @@ load "./OpenMath/cds/scscp1.m2"
 load "./OpenMath/cds/setname1.m2"
 
 export { "toOpenMath", "fromOpenMath", 
+	"OMattributes",
+	"setOMAttr", "clearOMAttr",
 	"OMI", "OMSTR", "OMA", "OMF", "OME", "OMOBJ", "OMV", "OMR", "OMS", "OMBIND", "OMATTR",
-	"attributes"
+	"renderXML"
 }
 
 renderXML = (x,t) -> (
@@ -87,11 +90,10 @@ pc = OMATTR(s, hashTable{ OMS("scscp1", "call_id") => OMSTR("baz"), OMS("scscp1"
 --pc = OMATTR(s, hashTable{ OMS("scscp1", "call_id") => OMSTR("baz") } );
 renderXML(pc, 0);
 
-
 << "pc becomes " ;
 fpc = fromOpenMath pc;
 print fpc;
-renderXML(fpc, 0);
+renderXML(toOpenMath fpc, 0);
 
 
 

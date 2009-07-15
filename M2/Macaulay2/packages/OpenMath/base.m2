@@ -42,8 +42,16 @@ toOpenMath RR     := x -> (
 	})
 )
 
--- toOpenMath of an XMLnode will be just toOpenMath of that XMLnode
-toOpenMath XMLnode := x -> x;
+-- toOpenMath of an XMLnode will be just toOpenMath of that XMLnode,
+-- unless it has attributes, because then it will be wrapped in an OMATTR
+toOpenMath XMLnode := x -> (
+	if x.?OMattributes and #(x.OMattributes) > 0 then (
+		attrs := x.OMattributes;
+		xnw := clearOMAttr(x);
+		OMATTR(xnw, attrs)
+	) else
+		x
+)
 
 -- product will have to branch to different things...
 toOpenMath Product := x -> (
@@ -106,7 +114,7 @@ fromOpenMathOMA = x->(
 	if class(c) =!= List then return OME(concatenate("Illegal OMA: children has type ", toString(class(c)), "."));
 	if #c === 0 then return OME("Illegal OMA: has no children.");
 	hd := fromOpenMath(c#0);
-	attrs := if x.?attributes then x.attributes else null;
+	attrs := if x.?OMattributes then x.OMattributes else null;
 
 	if class(hd) === XMLnode then (
 		-- We cannot parse it -- leave as is.
@@ -197,6 +205,7 @@ fromOpenMathOMBIND := x -> (
 	vals -> evalBind(hd, vars, expr, vals)
 )
 
+
 fromOpenMathOMATTR := x -> (
 	--we simply put the attributes as a hashtable into the child node, 
 	--possibly to be looked at later.
@@ -212,19 +221,18 @@ fromOpenMathOMATTR := x -> (
 	for i in 0..((#chd // 2)-1) do (
 		attrs = append(attrs, chd#(2*i) => chd#(2*i + 1) )
 	);
-	attrs = new HashTable from attrs;
+	attrs = new MutableHashTable from attrs;
 	
 	--The child.
 	child := (x.children)#1;
-	child = new MutableHashTable from child;
-	child.attributes = attrs;
-	child = new XMLnode from child;
+	child = setOMAttr(child, attrs);
 	fromOpenMath(child)
 )
 
 
 
 fromOpenMath = method()
+
 fromOpenMath XMLnode := x->(
 	t := x.tag;
 	if      t === "OMI"   then  fromOpenMathOMI(x)

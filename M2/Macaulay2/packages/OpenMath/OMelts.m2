@@ -76,6 +76,9 @@ OMATTR (XMLnode, HashTable) := (child, attrs) -> (
 	for k in keys(attrs) do (
 		attrsflat = join(attrsflat, {k, attrs#k})
 	);
+	
+	--clean out the attributes from the child
+	child = clearOMAttr(child);
 
 	--construct the OMATTR
 	new XMLnode from {
@@ -89,6 +92,8 @@ OMATTR (XMLnode, HashTable) := (child, attrs) -> (
 		} 
 	}
 )
+
+
 
 
 --- And some helper functions ---
