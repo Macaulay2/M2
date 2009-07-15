@@ -91,22 +91,22 @@ static void show(xmlDocPtr doc,xmlNodePtr t) {
   }
 }
 
-void xmlactors_parse(M2_string p) {
-  xmlDocPtr doc = xmlReadMemory(p->array,p->len,"a string", NULL, 0);
-  if (doc == NULL) {
-    printf("xml syntax error\n");
-  }
-  else {
-    printf("document: ");
-    xmlDocDump(stdout,doc);
-    printf("\n");
-    show(doc,xmlDocGetRootElement(doc));
-    printf("\n");
-    xmlFreeDoc(doc);
-  }
-}
+/* void xml_parse(M2_string p) { */
+/*   xmlDocPtr doc = xmlReadMemory(p->array,p->len,"a string", NULL, 0); */
+/*   if (doc == NULL) { */
+/*     printf("xml syntax error\n"); */
+/*   } */
+/*   else { */
+/*     printf("document: "); */
+/*     xmlDocDump(stdout,doc); */
+/*     printf("\n"); */
+/*     show(doc,xmlDocGetRootElement(doc)); */
+/*     printf("\n"); */
+/*     xmlFreeDoc(doc); */
+/*   } */
+/* } */
 
-void xmlactors_examine(struct xml_node *n) {
+void xml_examine(struct xml_node *n) {
   xmlElemDump(stdout,n->doc,n->node);
 }
 
@@ -135,10 +135,16 @@ int xml_isText(struct xml_node *n){
 }
 
 M2_string xml_getElementName(struct xml_node *n){
+  if (n->node->name == NULL) return NULL;
   return tostring((char const *)n->node->name);
 }
 
-struct xml_node *nxml_getNextNode(struct xml_node *n){
+M2_string xml_getContent(struct xml_node *n){
+  if (n->node->name == NULL) return NULL;
+  return tostring((char const *)n->node->name);
+}
+
+struct xml_node *xml_getNextNode(struct xml_node *n){
   struct xml_node *r;
   if (n->node->next == NULL) return NULL;
   r = (struct xml_node *)getmem(sizeof(*r));
@@ -147,7 +153,7 @@ struct xml_node *nxml_getNextNode(struct xml_node *n){
   return r;
 }
 
-struct xml_attr *axml_getNextAttr(struct xml_attr *a){
+struct xml_attr *xml_getNextAttr(struct xml_attr *a){
   struct xml_attr *r;
   if (a->attr->next == NULL) return NULL;
   r = (struct xml_attr *)getmem(sizeof(*r));
@@ -156,7 +162,7 @@ struct xml_attr *axml_getNextAttr(struct xml_attr *a){
   return r;
 }
 
-struct xml_node *nxml_getNodeChildren(struct xml_node *n){
+struct xml_node *xml_getNodeChildren(struct xml_node *n){
   struct xml_node *r;
   if (n->node->children == NULL) return NULL;
   r = (struct xml_node *)getmem(sizeof(*r));
@@ -165,7 +171,7 @@ struct xml_node *nxml_getNodeChildren(struct xml_node *n){
   return r;
 }
 
-struct xml_node *nxml_getAttrChildren(struct xml_attr *a){
+struct xml_node *xml_getAttrChildren(struct xml_attr *a){
   struct xml_node *r;
   if (a->attr->children == NULL) return NULL;
   r = (struct xml_node *)getmem(sizeof(*r));
