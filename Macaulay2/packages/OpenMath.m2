@@ -15,6 +15,7 @@ needsPackage "XML"
 load "./OpenMath/OMelts.m2"
 load "./OpenMath/base.m2"
 load "./OpenMath/cds/arith1.m2"
+load "./OpenMath/cds/fns1.m2"
 load "./OpenMath/cds/integer1.m2"
 load "./OpenMath/cds/integer2.m2"
 load "./OpenMath/cds/list1.m2"
@@ -51,19 +52,34 @@ renderXML = (x,t) -> (
 			
 )
 
----TESTS
-R = QQ[x];
-p = x^2 - 1;
-s = toOpenMath(p);
+------------------------
+--------TESTS-----------
+------------------------
+-- R = QQ[x];
+-- p = x^2 - 1;
+-- s = toOpenMath(p);
+-- renderXML(s, 0);
+-- 
+-- s = OMA("polynomial4", "factorise", {s} );
+-- fs = fromOpenMath s;
+-- print fs;
+-- tfs = toOpenMath fs;
+-- renderXML(tfs, 0);
+
+x = symbol x;
+s = OMBIND("fns1", "lambda", { x }, {
+	OMA("arith1", "plus", { 
+		OMI(3),
+		OMA("arith1", "power", {OMV("x"), OMI(2)})
+	})
+});
 renderXML(s, 0);
 
-s = OMA("polynomial4", "factorise", {s} );
-fs = fromOpenMath s;
-print fs;
-tfs = toOpenMath fs;
-renderXML(tfs, 0);
+s2 = fromOpenMath s;
+print "s2 = \n"; print s2;
 
-
+s3 = s2({OMI(1)});
+print "s3 = \n"; print s3;
 
 
 

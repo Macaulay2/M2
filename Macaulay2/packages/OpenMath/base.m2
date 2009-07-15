@@ -100,20 +100,78 @@ fromOpenMathOMA = x->(
 		-- We cannot parse it -- leave as is.
 		print concatenate("WARNING -- Could not parse application of ", toString(hd));
 		x
-	) else
+	) else (
 		-- We can parse it!
 		hd(take(c, {1,#c-1}))
+	)
 )
+
+--The implementation of OMBind is sort of hacky and bad.
+storedOMVvals = new MutableHashTable;
 fromOpenMathOMV = x->(
 	if not x#?"name" then 
 		return OME("Illegal OMV: no \"name\"");
 	
 	vname := x#"name";
+	
+	--If we stored the value of the variable in storedOMVvals
+	-- (i.e. if we're evaluating an OMBIND) then we return that
+	if storedOMVvals#?vname then (
+		return storedOMVvals#vname;
+	);
+		
+	--Otherwise we turn it into a symbol.
 	vname = replace("_", "$", toString(vname));
 	if regex("^[a-zA-Z][a-zA-Z0-9\\$]*$", vname) === null then 
 		return OME(concatenate("Illegal variable name: '", x#"name", "'"));
 
 	value(concatenate("symbol ", vname))
+)
+
+evalBind = (hd, ombvars, expr, vals) -> (
+	-- Check that we can evaluate the OMBIND
+	fhd := null;
+	try 
+		fhd = fromOpenMath(hd)
+	else
+		return OME(concatenate("Cannot evaluate OMBIND with head '", toString hd , "'"));
+	if class(fhd) === XMLnode then
+		return OME(concatenate("Cannot evaluate OMBIND with head '", toString hd , "'"));
+
+	-- We assume vars is an OMBVAR
+	-- Store the values...
+	if class(ombvars) =!= XMLnode or ombvars.tag =!= "OMBVAR" then
+		return OME("evalBind: ombvars should be an XMLnode of type OMBVAR");
+	vars := ombvars.children;
+	for i in 0..(#vars-1) do (
+		v := vars#i;
+		if class(v) =!= XMLnode or v.tag =!= "OMV" then 
+			return OME("evalBind: vars are not all OMVs");
+		
+		storedOMVvals#(v#"name") = fromOpenMath(vals#i);
+	);
+	
+	-- Evaluate the bind...
+	r := fhd(expr);
+	
+	-- Delete the values again.
+	for v in vars do 
+		if storedOMVvals#?(v#"name") then
+			remove(storedOMVvals, v#"name");
+		
+	-- Done.
+	r
+)
+fromOpenMathOMBIND := x -> (
+	if #(x.children) < 3 then
+		return OME("Cannot evaluate an OMBIND with less than 3 children");
+		
+	hd := (x.children)#0;
+	vars := (x.children)#1;
+	expr := take(x.children, {2,(#(x.children)-1)});
+	
+	--We return a function that can be applied to things.
+	vals -> evalBind(hd, vars, expr, vals)
 )
 
 
@@ -128,6 +186,7 @@ fromOpenMath XMLnode := x->(
 	else if t === "OMA"   then  fromOpenMathOMA(x)
 	else if t === "OMS"   then  fromOpenMathOMS(x)
 	else if t === "OMV"   then  fromOpenMathOMV(x)
+	else if t === "OMBIND"   then  fromOpenMathOMBIND(x)
 	else (
 		print concatenate("WARNING -- Could not parse XMLnode with tag ", t);
 		x
