@@ -69,6 +69,27 @@ OMBIND (String, String, List, List) := (cd, name, vars, exprs) -> OMBIND(OMS(cd,
 OMBIND (String, String, List, XMLnode) := (cd, name, vars, expr) -> OMBIND(OMS(cd, name), vars, {expr});
 OMBIND (XMLnode, List, XMLnode) := (hd, vars, expr) -> OMBIND(hd, vars, {expr});
 
+OMATTR = method()
+OMATTR (XMLnode, HashTable) := (child, attrs) -> (
+	--construct the key,value,key,value, ... that will appear inside the OMATP
+	attrsflat := {};
+	for k in keys(attrs) do (
+		attrsflat = join(attrsflat, {k, attrs#k})
+	);
+
+	--construct the OMATTR
+	new XMLnode from {
+		symbol tag => "OMATTR",
+		symbol children => {
+			new XMLnode from {
+				symbol tag => "OMATP",
+				symbol children => attrsflat
+			},
+			child
+		} 
+	}
+)
+
 
 --- And some helper functions ---
 isOMAOf = (x, cd, nm) -> (
