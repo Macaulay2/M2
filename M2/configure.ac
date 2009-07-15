@@ -156,11 +156,11 @@ AC_MSG_NOTICE([issue to be used in distribution file names: $ISSUE])
 
 case $OS in
   MacOS) 
-	AC_MSG_NOTICE([[*** This is MacOS, but we are not adding -lgcc_s.10.5 to LIBS for you, 
-because there might be a better way.  See the discussion in emacs info about -static-libgcc
-and -shared-libgcc, try both of those in LDFLAGS, and also try -lgcc and -lgcc_eh in LIBS.
-If all else fails, add "LIBS=-lgcc_s.10.5" to the configure command line.  Check whether the 
-binary ends up requiring a sharable library with a similar name. ***]])
+dnl 	AC_MSG_NOTICE([[*** This is MacOS, but we are not adding -lgcc_s.10.5 to LIBS for you, 
+dnl because there might be a better way.  See the discussion in emacs info about -static-libgcc
+dnl and -shared-libgcc, try both of those in LDFLAGS, and also try -lgcc and -lgcc_eh in LIBS.
+dnl If all else fails, add "LIBS=-lgcc_s.10.5" to the configure command line.  Check whether the 
+dnl binary ends up requiring a sharable library with a similar name. ***]])
 	# LIBS="$LIBS -lgcc_s.10.5" # what kind of crock is this??
 	;;
 esac
@@ -1022,7 +1022,8 @@ IS_DECLARED(char **,h_errlist, [
 AC_SUBST(DUMPDATAFILE,Macaulay2-$ARCH-data)
 
 if test "$DEBUG" = yes
-then M2_CPPFLAGS="$M2_CPPFLAGS -DDEBUG"
+then LDFLAGS="$LDFLAGS -g"
+     M2_CPPFLAGS="$M2_CPPFLAGS -DDEBUG"
 else M2_CPPFLAGS="$M2_CPPFLAGS -DNDEBUG"
 fi
 
