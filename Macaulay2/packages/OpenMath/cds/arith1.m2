@@ -1,4 +1,5 @@
--- symbols defined here: abs, divide, gcd, lcm, minus, plus, power, product, root, sum, times, unary_minus
+-- done: abs, divide, gcd, lcm, minus, plus, power, times, unary_minus
+-- not done / maybe todo: product, root, sum
 
 --- From OpenMath ---
 OMSEvaluators#"arith1" = new MutableHashTable;

@@ -51,3 +51,14 @@ OMF = method()
 OMF String := x -> new XMLnode from {symbol tag => "OMF", "dec" => x}
 
 
+--- And some helper functions ---
+isOMAOf = (x, cd, nm) -> (
+	if not class(x) === XMLnode then return false; 
+	if x.tag =!= "OMA" then return false;
+	if #(x.children) === 0 then return false;
+	if ((x.children)#0).tag =!= "OMS" then return false;
+	if ((x.children)#0)#"cd" =!= cd then return false;
+	if ((x.children)#0)#"name" =!= nm then return false;
+	return true
+)
+

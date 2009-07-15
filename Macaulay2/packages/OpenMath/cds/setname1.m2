@@ -1,3 +1,6 @@
+-- done: Z,Q,C,R
+-- not done: N, P
+
 --- To OpenMath ---
 toOpenMath Ring := R -> (
 	if 		R === ZZ then OMS("setname1", "Z")
