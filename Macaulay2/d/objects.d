@@ -542,6 +542,8 @@ setupconst("RawRingMap",Expr(rawRingMapClass));
 setupconst("RawMonomialIdeal",Expr(rawMonomialIdealClass));
 setupconst("MysqlConnection",Expr(mysqlConnectionClass));
 setupconst("PythonObject",Expr(pythonObjectClass));
+setupconst("LibxmlNode",Expr(xmlNodeClass));
+setupconst("LibxmlAttribute",Expr(xmlAttrClass));
 setupconst("MysqlField",Expr(mysqlFieldClass));
 setupconst("MysqlResult",Expr(mysqlResultClass));
 setupconst("File",Expr(fileClass));

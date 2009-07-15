@@ -12,6 +12,7 @@ use nets;
 use varnets;
 use parser;
 use lex;
+use xml;
 use gmp;
 use tokens;
 use err;
@@ -26,6 +27,7 @@ use basic;
 use struct;
 use objects;
 use actors4;
+use xmlactors;
 use engine;
 
 --let's see whether this is obsolete, so we can lookup up a method for assignment instead!
@@ -582,6 +584,7 @@ examine(e:Expr):Expr := (
 	  << "special expr:" << endl;
 	  examine(s.e);
 	  nullE)
+     is x:xmlNode do (examine(x); nullE)
      else WrongArg("(), a function, a symbol, or a basic list"));
 setupfun("examine",examine);
 

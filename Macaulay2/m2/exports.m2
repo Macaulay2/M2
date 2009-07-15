@@ -1136,6 +1136,8 @@ export {
 	symbol while,
 	symbol width,
 	symbol wrap,
+	symbol xmlNode,
+	symbol xmlAttr,
 	symbol xor,
 	symbol youngest,
 	symbol zero,
