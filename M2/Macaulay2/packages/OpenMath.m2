@@ -27,6 +27,7 @@ load "./OpenMath/cds/polyd1.m2"
 load "./OpenMath/cds/polyd2.m2"
 load "./OpenMath/cds/polynomial4.m2"
 load "./OpenMath/cds/relation1.m2"
+load "./OpenMath/cds/scscp1.m2"
 load "./OpenMath/cds/setname1.m2"
 
 export { "toOpenMath", "fromOpenMath", 
@@ -79,10 +80,11 @@ renderXML = (x,t) -> (
 -- print "s2 = \n"; print s2;
 -- 
 
-s = OMATTR( OMI(17), hashTable{ OMS("foo", "bar") => OMSTR("baz") } );
-renderXML(s, 0);
+s = OMA("scscp1", "procedure_call", { OMA("arith1", "plus", {OMI(1), OMI(2) }) });
+pc = OMATTR(s, hashTable{ OMS("scscp1", "call_id") => OMSTR("baz") } );
+renderXML(pc, 0);
 
-<< "s becomes " << fromOpenMath s;
+<< "pc becomes " << fromOpenMath pc;
 
 
 

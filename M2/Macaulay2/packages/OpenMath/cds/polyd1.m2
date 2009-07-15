@@ -37,7 +37,7 @@ toOpenMathDMPL = l -> (
 --- From OpenMath ---
 
 OMSEvaluators#"polyd1" = new MutableHashTable;
-OMSEvaluators#"polyd1"#"poly_ring_d_named" = args -> ( 
+OMSEvaluators#"polyd1"#"poly_ring_d_named" = (args, attrs) -> ( 
 	a := apply(args, fromOpenMath); 
 
 	--First argument is the coefficient ring
@@ -48,7 +48,7 @@ OMSEvaluators#"polyd1"#"poly_ring_d_named" = args -> (
 	--Done!
 	CR(new Array from vars)
 )
-OMSEvaluators#"polyd1"#"poly_ring_d" = args -> ( 
+OMSEvaluators#"polyd1"#"poly_ring_d" = (args, attrs) -> ( 
 	if #args =!= 2 then return OME("Wrong number of arguments to polyd1.poly_ring_d: Should be 2");
 	if (args#1).tag =!= "OMI" then return OME("2nd argument to polyd1.poly_ring_d should be an OMI");
 	numvars := fromOpenMath(args#1);
@@ -87,7 +87,7 @@ evalSDMP = (obj, R) -> (
 	r
 )
 
-OMSEvaluators#"polyd1"#"DMP" = args -> ( 
+OMSEvaluators#"polyd1"#"DMP" = (args, attrs) -> ( 
 	--First argument is polynomial ring, 
 	--second is list of expressions
 	R := fromOpenMath(args#0);
@@ -102,7 +102,7 @@ OMSEvaluators#"polyd1"#"DMP" = args -> (
 	r
 )
 
-OMSEvaluators#"polyd1"#"DMPL" = args -> (
+OMSEvaluators#"polyd1"#"DMPL" = (args, attrs) -> (
 	--First argument is polynomial ring
 	--Rest should be SDMP's
 	R := fromOpenMath(args#0);
@@ -117,9 +117,9 @@ OMSEvaluators#"polyd1"#"DMPL" = args -> (
 )
 
 
-OMSEvaluators#"polyd1"#"ambient_ring" = args -> class(fromOpenMath(args#0));
-OMSEvaluators#"polyd1"#"variables" = args -> gens(fromOpenMath(args#0))
-OMSEvaluators#"polyd1"#"rank" = args -> (
+OMSEvaluators#"polyd1"#"ambient_ring" = (args, attrs) -> class(fromOpenMath(args#0));
+OMSEvaluators#"polyd1"#"variables" = (args, attrs) -> gens(fromOpenMath(args#0))
+OMSEvaluators#"polyd1"#"rank" = (args, attrs) -> (
 	a := args#0;
 	if (isOMAOf(a, "polyd1", "poly_ring_d_named")) then
 		#(gens(fromOpenMath(a)))
@@ -132,14 +132,14 @@ OMSEvaluators#"polyd1"#"rank" = args -> (
 )
 
 
-OMSEvaluators#"polyd1"#"plus" = args -> (
+OMSEvaluators#"polyd1"#"plus" = (args, attrs) -> (
 	a := args#0;
 	if not isOMAOf(a, "polyd1", "DMPL") then 
 		return OME "Argument to polyd1.plus should be a DMPL";
 	
 	sum(fromOpenMath(a))
 )
-OMSEvaluators#"polyd1"#"minus" = args -> (
+OMSEvaluators#"polyd1"#"minus" = (args, attrs) -> (
 	a := args#0;
 	if not isOMAOf(a, "polyd1", "DMPL") then 
 		return OME "Argument to polyd1.minus should be a DMPL";
@@ -150,14 +150,14 @@ OMSEvaluators#"polyd1"#"minus" = args -> (
 		
 	l#0 - l#1
 )	
-OMSEvaluators#"polyd1"#"times" = args -> (
+OMSEvaluators#"polyd1"#"times" = (args, attrs) -> (
 	a := args#0;
 	if not isOMAOf(a, "polyd1", "DMPL") then 
 		return OME "Argument to polyd1.times should be a DMPL";
 	
 	product(fromOpenMath(a))
 )
-OMSEvaluators#"polyd1"#"power" = args -> (
+OMSEvaluators#"polyd1"#"power" = (args, attrs) -> (
 	if not isOMAOf(args#0, "polyd1", "DMP") then 
 		return OME "1st argument to polyd1.power should be a DMP";
 	if not (args#1).tag === "OMI" then

@@ -92,7 +92,7 @@ fromOpenMathOMOBJ = x->(
 fromOpenMathOMS = x->(
 	if not x#?"cd" then return OME("OMS has no cd");
 	if not x#?"name" then return OME("OMS has no name");
-	
+		
 	if OMSEvaluators#?(x#"cd") and OMSEvaluators#(x#"cd")#?(x#"name") then
 		-- We can parse it!
 		OMSEvaluators#(x#"cd")#(x#"name")
@@ -106,6 +106,7 @@ fromOpenMathOMA = x->(
 	if class(c) =!= List then return OME(concatenate("Illegal OMA: children has type ", toString(class(c)), "."));
 	if #c === 0 then return OME("Illegal OMA: has no children.");
 	hd := fromOpenMath(c#0);
+	attrs := if x.?attributes then x.attributes else null;
 
 	if class(hd) === XMLnode then (
 		-- We cannot parse it -- leave as is.
@@ -113,7 +114,7 @@ fromOpenMathOMA = x->(
 		x
 	) else (
 		-- We can parse it!
-		hd(take(c, {1,#c-1}))
+		hd(take(c, {1,#c-1}), attrs)
 	)
 )
 
