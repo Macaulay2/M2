@@ -1,0 +1,15 @@
+get this to work:
+
+A = GF(3,20, Variable => a)
+R = A[x]
+F = (a*x^3-2*a*x^2-x-1)*(x-a)
+G = (a*x^3-2*a*x^2-x-1)*(x-a^2)
+gcd(F,G) -- gives ERROR
+
+It should be possible to do it the same way this works:
+
+A = toField(ZZ/3[a]/(a^4-a^3-1))
+R = A[x]
+F = (a*x^3-2*a*x^2-x-1)*(x-a)
+G = (a*x^3-2*a*x^2-x-1)*(x-a^2)
+assert(gcd(F,G) == a^-1 * (a*x^3-2*a*x^2-x-1))
