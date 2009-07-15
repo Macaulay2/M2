@@ -149,8 +149,9 @@ evalBind = (hd, ombvars, expr, vals) -> (
 	if class(fhd) === XMLnode then
 		return OME(concatenate("Cannot evaluate OMBIND with head '", toString hd , "'"));
 
+
 	-- We assume vars is an OMBVAR
-	-- Store the values...
+	-- Store the values (as a stack)
 	if class(ombvars) =!= XMLnode or ombvars.tag =!= "OMBVAR" then
 		return OME("evalBind: ombvars should be an XMLnode of type OMBVAR");
 	vars := ombvars.children;
@@ -159,17 +160,27 @@ evalBind = (hd, ombvars, expr, vals) -> (
 		if class(v) =!= XMLnode or v.tag =!= "OMV" then 
 			return OME("evalBind: vars are not all OMVs");
 		
-		storedOMVvals#(v#"name") = fromOpenMath(vals#i);
+		--"Push"
+		vname := v#"name";
+		if storedOMVvals#?vname then
+			storedOMVvals#vname = (fromOpenMath(vals#i), storedOMVvals#vname)
+		else
+			storedOMVvals#vname = fromOpenMath(vals#i);
 	);
 	
 	-- Evaluate the bind...
 	r := fhd(expr);
-	
-	-- Delete the values again.
-	for v in vars do 
-		if storedOMVvals#?(v#"name") then
-			remove(storedOMVvals, v#"name");
 		
+	-- Delete the values again.
+	for v in vars do (
+		--"Pop"
+		vname := v#"name";
+		if class(storedOMVvals#vname) === Sequence then
+			storedOMVvals#vname = (storedOMVvals#vname)#1
+		else
+			remove(storedOMVvals, vname);
+	);
+
 	-- Done.
 	r
 )

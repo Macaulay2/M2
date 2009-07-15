@@ -30,7 +30,7 @@ load "./OpenMath/cds/relation1.m2"
 load "./OpenMath/cds/setname1.m2"
 
 export { "toOpenMath", "fromOpenMath", 
-	"OMI", "OMSTR", "OMA", "OMF", "OME", "OMOBJ", "OMV", "OMR", "OMS"
+	"OMI", "OMSTR", "OMA", "OMF", "OME", "OMOBJ", "OMV", "OMR", "OMS", "OMBIND"
 }
 
 renderXML = (x,t) -> (
@@ -66,21 +66,15 @@ renderXML = (x,t) -> (
 -- tfs = toOpenMath fs;
 -- renderXML(tfs, 0);
 
+-- (lambda.x.(x^2)) ((lambda.x.x+3)(1)) = 16 (I think)
 x = symbol x;
-s = OMBIND("fns1", "lambda", { x }, {
-	OMA("arith1", "plus", { 
-		OMI(3),
-		OMA("arith1", "power", {OMV("x"), OMI(2)})
-	})
-});
+b1 = OMBIND("fns1", "lambda", { x }, { OMA("arith1", "power", { OMV("x"), OMI(2) }) });
+b2 = OMBIND("fns1", "lambda", { x }, { OMA("arith1", "plus", { OMV("x"), OMI(3) }) });
+s = OMA(b1, {OMA(b2, {OMI(1)})});
 renderXML(s, 0);
 
 s2 = fromOpenMath s;
 print "s2 = \n"; print s2;
-
-s3 = s2({OMI(1)});
-print "s3 = \n"; print s3;
-
 
 
 -- beginDocumentation()
