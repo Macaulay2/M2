@@ -23,6 +23,15 @@ toOpenMath RR     := x -> (
 -- toOpenMath of an XMLnode will be just toOpenMath of that XMLnode
 toOpenMath XMLnode := x -> x;
 
+-- product will have to branch to different things...
+toOpenMath Product := x -> (
+	vx := value(x);
+	if class(class(vx)) === PolynomialRing then
+		--defined in polyd1
+		toOpenMathFactoredPol(x)
+	else
+		OME(concatenate("Cannot handle product whose class is ", toString(class(vx))))
+)
 
 
 --- From OpenMath ---
