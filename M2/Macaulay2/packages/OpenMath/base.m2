@@ -242,6 +242,14 @@ fromOpenMathOMATTR := x -> (
 	fromOpenMath(child)
 )
 
+fromOpenMathOMR := x -> (
+	r := x#"href";
+	if existsOMref(r) then
+		getOMref(r)
+	else
+		OME(concatenate("Could not resolve reference '", r, "'"))
+)
+
 
 
 fromOpenMath = method()
@@ -257,6 +265,7 @@ fromOpenMath XMLnode := x->(
 	else if t === "OMV"   then  fromOpenMathOMV(x)
 	else if t === "OMBIND"   then  fromOpenMathOMBIND(x)
 	else if t === "OMATTR"   then  fromOpenMathOMATTR(x)
+	else if t === "OMR"   then  fromOpenMathOMR(x)
 	else (
 		print concatenate("WARNING -- Could not parse XMLnode with tag ", t);
 		x
