@@ -1,12 +1,13 @@
--- done: 
--- not done: elimination, graded_lexicographic, graded_reverse_lexicographic, lexicographic, matrix_ordering, 
---       ordering, reverse_lexicographic, weighted, weighted_degree
+-- done:  elimination, graded_lexicographic, graded_reverse_lexicographic, lexicographic, 
+--        reverse_lexicographic, weighted, weighted_degree
+-- not done: matrix_ordering, 
+-- don't know if I should right here: ordering
 
 OMSEvaluators#"polyd2" = new MutableHashTable;
 OMSEvaluators#"polyd2"#"weighted_degree" = args -> (
 	r := degree(fromOpenMath(args));
 	if #r =!= 1 then 
-		error "polyd2.weighted_degree: result of degree has length different from 1";
+		return OME "polyd2.weighted_degree: result of degree has length different from 1";
 		
 	r#0
 )
@@ -23,7 +24,7 @@ OMSEvaluators#"polyd2"#"weighted" = args -> (
 	--So should do something special here.
 	
 	if not isOMAOf(args#0, "list1", "list") then
-		error "1st argument of polyd2.weighted should be a list of integers";
+		return OME "1st argument of polyd2.weighted should be a list of integers";
 	
 	wts := fromOpenMath(args#0);
 	ord := fromOpenMath(args#1);
@@ -41,16 +42,17 @@ OMSEvaluators#"polyd2"#"elimination" = args -> (
 	
 	n := fromOpenMath(args#0);
 	if class(n) =!= ZZ then
-		error "1st argument of polyd2.elimination should be an integer";
+		return OME "1st argument of polyd2.elimination should be an integer";
 	
 	o1 := fromOpenMath(args#1);
 	if o1 =!= GRevLex then
-		error "Macaulay2 assumes GRevLex within the variables to be eliminated";
+		return OME "Macaulay2 assumes GRevLex within the variables to be eliminated";
 	
 	o2 := fromOpenMath(args#2);
 	
 	{ Weights => {n:1} , o2 }
 )
+
 OMSEvaluators#"polyd2"#"matrix_ordering" = args -> (
     -- "The argument is a matrix with as many columns as indeterminates
     -- (= rank). Each row in turm is multiplied by the column vector of
