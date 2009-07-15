@@ -12,10 +12,10 @@ toOpenMath PolynomialRing := R -> (
 	vars := apply(gens R, i->OMV(replace("\\$", "_", toString(i))));
 	OMA("polyd1", "poly_ring_d_named", prepend(toOpenMath(coefficientRing(R)), vars))
 )
-
+toOpenMathTerm = p -> prepend(toOpenMath(p#1), apply(p#0,i->toOpenMath(i)))
 toOpenMathSDMP = p -> (
 	OMA("polyd1", "SDMP", 
-		apply(listForm(p), i->OMA("polyd1", "term", { i#0, i#1 }))
+		apply(listForm(p), i->OMA("polyd1", "term", toOpenMathTerm(i)))
 	)
 )
 toOpenMath RingElement := p -> (
@@ -71,9 +71,9 @@ evalterm = (obj, R) -> (
 	gensR := gens(R);
 	if #args =!= (1 + #gensR) then
 		return OME("polyd1.term should have 1+#gensR arguments");
-	
+
 	for i in take(args, {1,#args-1}) do (
-		if i#tag =!= "OMI" then 
+		if i.tag =!= "OMI" then 
 			return OME("polyd1.term should have integer powers of the generators of the poly ring")
 	);
 	
