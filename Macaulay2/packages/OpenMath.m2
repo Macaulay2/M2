@@ -56,7 +56,11 @@ s = toOpenMath(p);
 renderXML(s, 0);
 
 s = OMA("polynomial4", "factorise", {s} );
-print fromOpenMath s;
+fs = fromOpenMath s;
+print fs;
+tfs = toOpenMath fs;
+renderXML(tfs, 0);
+
 
 
 
