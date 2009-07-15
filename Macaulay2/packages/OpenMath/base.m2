@@ -24,7 +24,8 @@ toOpenMath RR     := x -> (
 toOpenMath XMLnode := x -> x;
 
 
--- From OpenMath ---
+
+--- From OpenMath ---
 -- OK OMApply
 --    OMBinary
 --    OMBind

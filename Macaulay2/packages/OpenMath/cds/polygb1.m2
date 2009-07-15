@@ -1,5 +1,5 @@
--- "done":  groebner, groebner_basis
--- not done: completely_reduced, , groebnered, reduce
+-- "done":  groebner, groebner_basis, reduce
+-- not done: completely_reduced, , groebnered, 
 
 ----- From the Content Dictionary on "groebner":
 -- The groebner basis (reduced, minimal) of a set of polynomials, with
@@ -14,7 +14,7 @@
 -- rooz: Similarly, for "reduce" I'm looking for a 1st argument that's a polynomial, and a 2nd argument
 
 
---- To OpenMath ---
+--- From OpenMath ---
 OMSEvaluators#"polygb1" = new MutableHashTable;
 OMSEvaluators#"polygb1"#"groebner" = args -> (
 	if #args === 3 then
@@ -29,10 +29,29 @@ OMSEvaluators#"polygb1"#"groebner" = args -> (
 	pols := fromOpenMath(args#0);
 	gb(ideal(pols))
 )
+OMSEvaluators#"polygb1"#"reduce" = args -> (
+	if #args === 4 then
+		--The proper variant
+		return OME("I strongly dislike polygb1.reduce as defined in the CD. 
+			Please give me a polynomial as 1st argument and a DMPL as 2nd argument, that'd much better.");
+	
+	if #args =!= 2 then
+		return OME("Expecting number of arguments to polygb1.reduce to be 2 or 4.");
+
+	--The second one will be a DMP, but we're only interested in the SDMP.
+	--
+	pols := fromOpenMath(args#1);
+	R := class(pols#0);
+	if not isOMAOf(args#0, "polyd1", "DMP") then
+		return OME("Expecting 1st argument of polygb1.reduce to be an OMA of polyd1.DMP");
+		
+	pol := evalSDMP(((args#0).children)#2, R);
+	pol % ideal(pols)
+)
 
 
 
---- From OpenMath ---
+--- To OpenMath ---
 toOpenMath GroebnerBasis := x -> (
 	m := entries(gens(x));
 	m = m#0;
