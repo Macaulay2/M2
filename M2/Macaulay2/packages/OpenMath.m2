@@ -40,10 +40,12 @@ renderXML = (x,t) -> (
 	
 	<< x.tag;
 	if (x.tag === "OMS") then
-		<< "(" << x#"cd" << "." << x#"name" << ")";
+		<< "(cd = " << x#"cd" << ", name = " << x#"name" << ")";
 	if (x.tag === "OMV") then
 		<< "(" << x#"name" << ")";
 	if (x.tag === "OMI") then
+		<< "(" << x.children << ")";
+	if (x.tag === "OMSTR") then
 		<< "(" << x.children << ")";
 	<< endl;
 
@@ -81,11 +83,15 @@ renderXML = (x,t) -> (
 -- 
 
 s = OMA("scscp1", "procedure_call", { OMA("arith1", "plus", {OMI(1), OMI(2) }) });
-pc = OMATTR(s, hashTable{ OMS("scscp1", "call_id") => OMSTR("baz") } );
+pc = OMATTR(s, hashTable{ OMS("scscp1", "call_id") => OMSTR("baz"), OMS("scscp1", "option_return_object") => OMSTR("") } );
+--pc = OMATTR(s, hashTable{ OMS("scscp1", "call_id") => OMSTR("baz") } );
 renderXML(pc, 0);
 
-<< "pc becomes " << fromOpenMath pc;
 
+<< "pc becomes " ;
+fpc = fromOpenMath pc;
+print fpc;
+renderXML(fpc, 0);
 
 
 
