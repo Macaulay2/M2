@@ -98,11 +98,6 @@ DFILES += interp.d
 DFILES += texmacs.d
 DFILES += interface2.d interface.d
 
-ifeq (@XML@,yes)
-CFILES += xml-c.c
-DFILES += xml.d
-endif
-
 ifeq (@PYTHON@,yes)
 DFILES += python.d
 CFILES += python-c.c
@@ -136,6 +131,13 @@ DFILES += common.d
 DFILES += convertr.d basic.d binding.d
 DFILES += parser.d lex.d tokens.d
 DFILES += engine.d
+
+ifeq (@XML@,yes)
+xml-c.o: xml-c.h
+CFILES += xml-c.c
+DFILES += xml.d
+endif
+
 DFILES += gmp.d
 DFILES += err.d
 DFILES += stdiop.d

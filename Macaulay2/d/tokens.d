@@ -10,6 +10,7 @@ use strings;
 use nets;
 use varnets;
 use gmp;
+use xml;
 use engine;
 
 export debugLevel := 0;
@@ -346,7 +347,8 @@ export Expr := (
      SymbolClosure or
      file or
      string or
-     pythonObject
+     pythonObject or
+     xmlNode or xmlAttr
      );
 export fun := function(Expr):Expr;
 
@@ -579,6 +581,8 @@ export mysqlConnectionClass := newbasictype();
 export mysqlFieldClass := newbasictype();
 export mysqlResultClass := newbasictype();
 export pythonObjectClass := newbasictype();
+export xmlNodeClass := newbasictype();
+export xmlAttrClass := newbasictype();
 export functionBodyClass := newbasictype();
 export compiledFunctionBodyClass := newbasictype();
 export errorClass := newbasictype();

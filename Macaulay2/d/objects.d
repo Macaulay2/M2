@@ -8,6 +8,7 @@ use gmp;
 use nets;
 use varnets;
 use engine;
+use xml;
 use err;
 use tokens;
 use basic;
@@ -314,6 +315,8 @@ export equal(lhs:Expr,rhs:Expr):Expr := (
 	  )
      is Database do False
      is pythonObject do False
+     is xmlNode do False				    -- unimplemented
+     is xmlAttr do False				    -- unimplemented
      );
 export remove(x:HashTable,key:Expr):Expr := (
      if !x.mutable then (
@@ -450,6 +453,8 @@ export Class(e:Expr):HashTable := (
      is ZZ do ZZClass
      is CodeClosure do codeClass
      is pythonObject do pythonObjectClass
+     is xmlNode do xmlNodeClass
+     is xmlAttr do xmlAttrClass
      is MysqlConnectionWrapper do mysqlConnectionClass
      is MysqlResultWrapper do mysqlResultClass
      is MysqlFieldWrapper do mysqlFieldClass
