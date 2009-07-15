@@ -27,6 +27,6 @@ inOrInRad := (args, rad) -> (
 )
 
 OMSEvaluators#"polygb2" = new MutableHashTable;
-OMSEvaluators#"polygb2"#"in" = args -> inOrInRad(args, false);
-OMSEvaluators#"polygb2"#"in_radical" = args -> inOrInRad(args, true);
+OMSEvaluators#"polygb2"#"in" = (args, attrs) -> inOrInRad(args, false);
+OMSEvaluators#"polygb2"#"in_radical" = (args, attrs) -> inOrInRad(args, true);
 

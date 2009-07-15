@@ -13,12 +13,12 @@ ord := (p,n) -> (
 )
 
 OMSEvaluators#"integer2" = new MutableHashTable;
-OMSEvaluators#"integer2"#"euler" = args -> ( a := apply(args, fromOpenMath); eulerphi(a#0) )
-OMSEvaluators#"integer2"#"divides" = args -> ( a := apply(args, fromOpenMath); 0 == (a#1) % (a#0) )
-OMSEvaluators#"integer2"#"eqmod" = args -> ( a := apply(args, fromOpenMath); mod(a#0, a#2) == mod(a#1, a#2) )
-OMSEvaluators#"integer2"#"neqmod" = args -> ( a := apply(args, fromOpenMath); mod(a#0, a#2) != mod(a#1, a#2) )
-OMSEvaluators#"integer2"#"class" = args -> ( a := apply(args, fromOpenMath); mod(a#0, a#1)  )
-OMSEvaluators#"integer2"#"modulo_relation" = args -> ( 
+OMSEvaluators#"integer2"#"euler" = (args, attrs) -> ( a := apply(args, fromOpenMath); eulerphi(a#0) )
+OMSEvaluators#"integer2"#"divides" = (args, attrs) -> ( a := apply(args, fromOpenMath); 0 == (a#1) % (a#0) )
+OMSEvaluators#"integer2"#"eqmod" = (args, attrs) -> ( a := apply(args, fromOpenMath); mod(a#0, a#2) == mod(a#1, a#2) )
+OMSEvaluators#"integer2"#"neqmod" = (args, attrs) -> ( a := apply(args, fromOpenMath); mod(a#0, a#2) != mod(a#1, a#2) )
+OMSEvaluators#"integer2"#"class" = (args, attrs) -> ( a := apply(args, fromOpenMath); mod(a#0, a#1)  )
+OMSEvaluators#"integer2"#"modulo_relation" = (args, attrs) -> ( 
 	-- This symbol represents a univariate function, whose argument should be an integer.
 	-- When applied to an integer m, it denotes the equivalence relation of being
 	-- equal modulo m on Z.
@@ -27,7 +27,7 @@ OMSEvaluators#"integer2"#"modulo_relation" = args -> (
 	m := a#0;
 	(x,y) -> (mod(x, m) == mod(y,m))
 )
-OMSEvaluators#"integer2"#"ord" = args -> ( 
+OMSEvaluators#"integer2"#"ord" = (args, attrs) -> ( 
 	-- This symbol  denotes a binary function. Its first argument shoud be a prime
 	-- number p, the second an integer n.
 	-- When applied to p and n, it represents the highest power of p occurring in a

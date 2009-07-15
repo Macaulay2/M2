@@ -4,7 +4,7 @@
 -- don't know if I should right here: ordering
 
 OMSEvaluators#"polyd2" = new MutableHashTable;
-OMSEvaluators#"polyd2"#"weighted_degree" = args -> (
+OMSEvaluators#"polyd2"#"weighted_degree" = (args, attrs) -> (
 	r := degree(fromOpenMath(args));
 	if #r =!= 1 then 
 		return OME "polyd2.weighted_degree: result of degree has length different from 1";
@@ -16,7 +16,7 @@ OMSEvaluators#"polyd2"#"graded_reverse_lexicographic" = GRevLex;
 OMSEvaluators#"polyd2"#"lexicographic" = Lex;
 OMSEvaluators#"polyd2"#"reverse_lexicographic" = RevLex;
 
-OMSEvaluators#"polyd2"#"weighted" = args -> (
+OMSEvaluators#"polyd2"#"weighted" = (args, attrs) -> (
 	--"The first argument is a list of integers to act as variable weights,and the second is an ordering. "
 	--
 	--Must remember! e.g. weighted([-1,2,3,4], graded_lexicographic) should imply:
@@ -32,7 +32,7 @@ OMSEvaluators#"polyd2"#"weighted" = args -> (
 )
 
 
-OMSEvaluators#"polyd2"#"elimination" = args -> (
+OMSEvaluators#"polyd2"#"elimination" = (args, attrs) -> (
 	--"This is an ordering, which is partially in terms of one
 	--        ordering, and partially in terms of another.
 	--        First argument is a number of variables.
@@ -53,7 +53,7 @@ OMSEvaluators#"polyd2"#"elimination" = args -> (
 	{ Weights => {n:1} , o2 }
 )
 
-OMSEvaluators#"polyd2"#"matrix_ordering" = args -> (
+OMSEvaluators#"polyd2"#"matrix_ordering" = (args, attrs) -> (
     -- "The argument is a matrix with as many columns as indeterminates
     -- (= rank). Each row in turm is multiplied by the column vector of
     -- exponents to produce a weighting for comparison purposes."

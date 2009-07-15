@@ -3,7 +3,7 @@
 
 --- From OpenMath ---
 OMSEvaluators#"nums1" = new MutableHashTable;
-OMSEvaluators#"nums1"#"rational" = args -> ( a := apply(args, fromOpenMath); a#0/a#1 )
+OMSEvaluators#"nums1"#"rational" = (args, attrs) -> ( a := apply(args, fromOpenMath); a#0/a#1 )
 OMSEvaluators#"nums1"#"pi" = pi
 OMSEvaluators#"nums1"#"e" = exp(1)
 OMSEvaluators#"nums1"#"infinity" = infinity

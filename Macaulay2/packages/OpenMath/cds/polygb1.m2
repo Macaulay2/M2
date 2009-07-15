@@ -16,7 +16,7 @@
 
 --- From OpenMath ---
 OMSEvaluators#"polygb1" = new MutableHashTable;
-OMSEvaluators#"polygb1"#"groebner" = args -> (
+OMSEvaluators#"polygb1"#"groebner" = (args, attrs) -> (
 	if #args === 3 then
 		--The proper variant
 		return OME("I strongly dislike polygb1.groebner as defined in the CD. 
@@ -29,7 +29,7 @@ OMSEvaluators#"polygb1"#"groebner" = args -> (
 	pols := fromOpenMath(args#0);
 	gb(ideal(pols))
 )
-OMSEvaluators#"polygb1"#"reduce" = args -> (
+OMSEvaluators#"polygb1"#"reduce" = (args, attrs) -> (
 	if #args === 4 then
 		--The proper variant
 		return OME("I strongly dislike polygb1.reduce as defined in the CD. 
