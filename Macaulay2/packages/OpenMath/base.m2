@@ -1,4 +1,26 @@
---- To OpenMath ---
+------------------------
+-------- Status --------
+------------------------
+-- From To --
+-- OK  OK  OMA       (apply)
+--         OMATP     (attribute pair)
+--         OMATTR    (attributes)
+--         OMB       (Binary data)
+-- OK      OMBIND    (Binding)
+-- OK      OMBVAR    (Binding variables)
+--     1/2 OME       (Error)
+-- OK  OK  OMF       (Float)
+--         OMFOREIGN (Foreign XML)
+-- OK  OK  OMI       (Integers)
+-- OK      OMOBJ     ("Object": the root node)
+--         OMR       (References)
+-- OK  OK  OMSTR     (String)
+-- OK  OK  OMS       (Symbol)
+-- OK  OK  OMV       (Variable)
+
+------------------------
+-------- To OM ---------
+------------------------
 toOpenMath = method()
 
 toOpenMath String := x -> OMSTR(x)
@@ -37,20 +59,9 @@ toOpenMath Product := x -> (
 toOpenMath Symbol := x->OMV(toString x);
 
 
---- From OpenMath ---
--- OK OMApply
---    OMBinary
---    OMBind
---    OMError
--- OK OMFloat
---    OMForeign
--- OK OMInteger
--- OK OMObject
---    OMReference
--- OK OMString
--- OK OMSymbol
--- OK OMVariable
-
+------------------------
+-------- From OM -------
+------------------------
 OMSEvaluators = new MutableHashTable;
 
 fromOpenMathOMI = x->(

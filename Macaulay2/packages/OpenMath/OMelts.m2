@@ -1,18 +1,20 @@
 -- Convenience constructors of OpenMath elements
 -- These are then used in base.m2.
-
--- OK OMApply
---    OMBinary
---    OMBind
--- OK OMError
--- OK OMFloat
---    OMForeign
--- OK OMInteger
--- OK OMObject
--- OK OMReference
--- OK OMString
--- OK OMSymbol
--- OK OMVariable
+-- OK OMA       (apply)
+--    OMATP     (attribute pair)
+--    OMATTR    (attributes)
+--    OMB       (Binary data)
+-- OK OMBIND    (Binding)
+-- OK OMBVAR    (Binding variables)
+-- OK OME       (Error)
+-- OK OMF       (Float)
+--    OMFOREIGN (Foreign XML)
+-- OK OMI       (Integers)
+-- OK OMOBJ     ("Object": the root node)
+-- OK OMR       (References)
+-- OK OMSTR     (String)
+-- OK OMS       (Symbol)
+-- OK OMV       (Variable)
 
 
 --- Constructing OpenMath via XMLnode's ---
@@ -51,12 +53,12 @@ OMOBJ XMLnode := x -> new XMLnode from {symbol tag => "OMOBJ", children => x}
 OMF = method()
 OMF String := x -> new XMLnode from {symbol tag => "OMF", "dec" => x}
 
+OMBVAR = method()
+OMBVAR List := x-> new XMLnode from {symbol tag => "OMBVAR", symbol children => apply(x, toOpenMath) };
+
 OMBIND = method()
 OMBIND (XMLnode, List, List) := (hd, vars, exprs) -> (
-	vvars := new XMLnode from {
-		symbol tag => "OMBVAR",
-		symbol children => apply(vars, toOpenMath)
-	};
+	vvars := OMBVAR(vars);
 	
 	new XMLnode from { 
 		symbol tag => "OMBIND", 
