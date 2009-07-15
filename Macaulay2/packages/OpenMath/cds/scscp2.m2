@@ -1,8 +1,8 @@
 -- See -- See http://www.win.tue.nl/SCIEnce/cds/scscp2.html
--- done: retrieve, store_session, unbind
+-- done: retrieve, store_session, unbind, get_service_description, service_description
 -- todo/not done: 
--- * get_allowed_heads, get_service_description, get_signature, get_transient_cd, is_allowed_head, no_such_transient_cd, 
--- * service_description, signature, store_persistent, symbol_set, symbol_set_all
+-- * get_allowed_heads, get_signature, get_transient_cd, is_allowed_head, no_such_transient_cd, 
+-- * signature, store_persistent, symbol_set, symbol_set_all
 
 OMSEvaluators#"scscp2" = new MutableHashTable;
 OMSEvaluators#"scscp2"#"retrieve" = (args, attrs) -> ( 
@@ -30,4 +30,11 @@ OMSEvaluators#"scscp2"#"unbind" = (args, attrs) -> (
 		return OME(concatenate("Unknown reference: '", s, "'"));
 
 	removeOMref(s)
+)
+OMSEvaluators#"scscp2"#"get_service_description" = (args, attrs) -> ( 
+	OMA("scscp2", "service_description", {
+		OMSTR("Macaulay2"),
+		OMSTR(toString OpenMath.Options.Version),
+		OMSTR("SCSCP interface to Macaulay2")
+	})
 )
