@@ -7,15 +7,19 @@ export xmlNode := { xmlNode:void };
 export xmlAttr := { xmlAttr:void };
 export xmlNodeOrNull := xmlNode or null;
 export xmlAttrOrNull := xmlAttr or null;
-import Parse(text:string):xmlNodeOrNull;
+-- these routines are implemented in xml-c.c
 import Attributes(node:xmlNode):xmlAttrOrNull;
+import Parse(text:string):xmlNodeOrNull;
+import examine(x:xmlNode):void;
+import getAttrChildren(node:xmlAttr):xmlNodeOrNull;
+import getElementName(node:xmlNode):(string or null);
+import getContent(node:xmlNode):(string or null);
+import getNextAttr(attr:xmlAttr):xmlAttrOrNull;
+import getNextNode(node:xmlNode):xmlNodeOrNull;
+import getNodeChildren(node:xmlNode):xmlNodeOrNull;
 import isElement(node:xmlNode):bool;
 import isText(node:xmlNode):bool;
-import getElementName(node:xmlNode):string;
-import getNextNode(node:xmlNode):xmlNodeOrNull;
-import getNextAttr(attr:xmlAttr):xmlAttrOrNull;
-import getNodeChildren(node:xmlNode):xmlNodeOrNull;
-import getAttrChildren(node:xmlAttr):xmlNodeOrNull;
+-- import parse(s:string):void;
 
 -- Local Variables:
 -- compile-command: "make -C $M2BUILDDIR/Macaulay2/d "

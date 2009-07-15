@@ -15,6 +15,10 @@ newPackage("XML",
     	Headline => "an XML parser",
     	DebuggingMode => false)
 export {"xmlParse", "XMLnode", "tag", "children"}
+scan(pairs Core#"private dictionary", (k,v) -> if match("^xml[A-Z]",k) then (
+	  XML#"private dictionary"#k = v;
+	  export {v}))
+
 XMLnode = new Type of HashTable
 needsPackage "Parsing"
 returns = t -> s -> t
