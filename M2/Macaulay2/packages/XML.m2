@@ -14,12 +14,48 @@ newPackage("XML",
     	Authors => {{Name => "Dan Grayson", Email => "dan@math.uiuc.edu", HomePage => "http://www.math.uiuc.edu/~dan/"}},
     	Headline => "an XML parser",
     	DebuggingMode => false)
-export {"xmlParse", "XMLnode", "tag", "children"}
+export {"XMLnode", "tag", "children","parse", "xmlConvert"}
 scan(pairs Core#"private dictionary", (k,v) -> if match("^xml[A-Z]",k) then (
 	  XML#"private dictionary"#k = v;
 	  export {v}))
 
 XMLnode = new Type of HashTable
+nonnull = x -> select(x, i -> i =!= null)
+xmlConvert = node -> (
+     if xmlIsElement node then (
+	  attr := xmlAttributes node;
+	  child := xmlGetChildren node;
+	  new XMLnode from splice nonnull {
+	       symbol tag => xmlGetName node,
+	       if attr =!= null then toSequence (
+		    while attr =!= null list first(
+		    	 xmlGetName attr => (
+			      c := xmlGetChildren attr;
+			      concatenate while null =!= c list first(
+				   xmlGetContent c, 
+				   c = xmlGetNext c)),
+		    	 attr = xmlGetNext attr)),
+	       if child =!= null then (
+		    symbol children => (
+			 while child =!= null list first(
+			      xmlConvert child, 
+			      child = xmlGetNext child))
+		    )
+	       }
+	  )
+     else if xmlIsText node then (
+	  xmlGetContent node
+	  )
+     )
+
+parse = method()
+parse String := s -> xmlConvert xmlParse s
+
+end
+
+{*
+this parser is a failure because Parsing doesn't provide lookahead at all!
+
 needsPackage "Parsing"
 returns = t -> s -> t
 second = s -> s#1
@@ -39,5 +75,5 @@ pairsP = * (first % andP(pairP,whitespace))
 tagstartP = (s -> prepend(s#1,s#3)) % andP("<",(s -> symbol tag => s) % idP,whitespace,pairsP)
 tagP = (s -> s) % andP(tagstartP, orP("/>",* futureParser tagP, "</", idP, ">"))
 xmlParse = tagP : charAnalyzer
-end
 print xmlParse ///<foo bar="5" foo="asdf &amp; asdf"></foo>///
+*}
