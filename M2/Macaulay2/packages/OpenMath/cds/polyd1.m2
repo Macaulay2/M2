@@ -43,17 +43,7 @@ OMSEvaluators#"polyd1"#"poly_ring_d_named" = args -> (
 	--First argument is the coefficient ring
 	CR := a#0;
 	--Rest of the arguments is the variables
-	vars := {};
-	for v in take(a, {1,#a-1}) do (
-		if v#tag =!= "OMV" then return OME("poly_ring_d_named should have variables.");
-		
-		vname := v#"name";
-		vname = replace("_", "$", toString(vname));
-		if regex("^[a-zA-Z][a-zA-Z0-9\\$]*$", vname) === null then 
-			return OME(concatenate("Illegal variable name: '", v#"name", "'"));
-
-		vars = append(vars, value(concatenate("symbol ", vname)));
-	);
+	vars := take(a, {1, #a-1});
 
 	--Done!
 	CR(new Array from vars)
