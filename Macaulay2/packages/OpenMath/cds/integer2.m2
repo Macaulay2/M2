@@ -2,8 +2,8 @@
 -- done: class, euler, divides, eqmod, neqmod, modulo_relation
 
 
-eulerphi = n -> value(apply(factor n, i-> (i#0-1)*((i#0)^(i#1-1))))
-ord = (p,n) -> (
+eulerphi := n -> value(apply(factor n, i-> (i#0-1)*((i#0)^(i#1-1))))
+ord := (p,n) -> (
 	c := 0;
 	while (0 == (n % p)) do (
 		c = c + 1;

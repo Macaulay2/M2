@@ -33,6 +33,9 @@ toOpenMath Product := x -> (
 		OME(concatenate("Cannot handle product whose class is ", toString(class(vx))))
 )
 
+-- Symbols will be mapped to variables
+toOpenMath Symbol := x->OMV(toString x);
+
 
 --- From OpenMath ---
 -- OK OMApply
@@ -102,8 +105,15 @@ fromOpenMathOMA = x->(
 		hd(take(c, {1,#c-1}))
 )
 fromOpenMathOMV = x->(
-	if not x#?"name" then return OME("Illegal OMV: no \"name\"");
-	x
+	if not x#?"name" then 
+		return OME("Illegal OMV: no \"name\"");
+	
+	vname := x#"name";
+	vname = replace("_", "$", toString(vname));
+	if regex("^[a-zA-Z][a-zA-Z0-9\\$]*$", vname) === null then 
+		return OME(concatenate("Illegal variable name: '", x#"name", "'"));
+
+	value(concatenate("symbol ", vname))
 )
 
 
@@ -124,5 +134,8 @@ fromOpenMath XMLnode := x->(
 	)
 )
 
-fromOpenMath Thing := x -> x;
+fromOpenMath Thing := x -> (
+	print concatenate("fromOpenMath Thing on ", toString class x);
+	x
+)
 
