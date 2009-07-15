@@ -27,16 +27,17 @@ OMS = method()
 OMS (String, String) := (x,y) -> new XMLnode from {symbol tag => "OMS", "cd" => x, "name" => y}
 
 OMA = method()
-OMA (HashTable, List) := (s, l) -> new XMLnode from {symbol tag => "OMA",
+OMA (XMLnode, List) := (s, l) -> new XMLnode from {symbol tag => "OMA",
 	children => prepend(s, l)
 }
 OMA (String, String, List) := (a,b,l) -> OMA(OMS(a,b), l)
 
 OME = method()
-OME (HashTable, List) := (s, l) -> new XMLnode from {symbol tag => "OME",
+OME (XMLnode, List) := (s, l) -> new XMLnode from {symbol tag => "OME",
 	children => prepend(s, l)
 }
 OME (String, String, List) := (a,b,l) -> OME(OMS(a,b), l)
+OME (String) := s -> OME(OMS("scscp1", "error_system_specific"), {s})
 
 OMV = method()
 OMV (String) := x -> new XMLnode from {symbol tag => "OMV", "name" => x}
@@ -45,7 +46,7 @@ OMR = method()
 OMR (String) := x -> new XMLnode from {symbol tag => "OMR", "href" => x}
 
 OMOBJ = method()
-OMOBJ HashTable := x -> new XMLnode from {symbol tag => "OMOBJ", children => x}
+OMOBJ XMLnode := x -> new XMLnode from {symbol tag => "OMOBJ", children => x}
 
 OMF = method()
 OMF String := x -> new XMLnode from {symbol tag => "OMF", "dec" => x}
