@@ -14,9 +14,51 @@ newPackage(
 needsPackage "XML"
 load "./OpenMath/OMelts.m2"
 load "./OpenMath/base.m2"
-load "./OpenMath/rings.m2"
+load "./OpenMath/cds/arith1.m2"
+load "./OpenMath/cds/list1.m2"
+load "./OpenMath/cds/logic1.m2"
+load "./OpenMath/cds/nums1.m2"
+load "./OpenMath/cds/polygb1.m2"
+load "./OpenMath/cds/polygb2.m2"
+load "./OpenMath/cds/polyd1.m2"
+load "./OpenMath/cds/polyd2.m2"
+load "./OpenMath/cds/polynomial4.m2"
+load "./OpenMath/cds/relation1.m2"
+load "./OpenMath/cds/setname1.m2"
 
-export { "toOpenMath" }
+export { "toOpenMath", "fromOpenMath", 
+	"OMI", "OMSTR", "OMA", "OMF", "OME", "OMOBJ", "OMV", "OMR", "OMS"
+}
+
+renderXML = (x,t) -> (
+	for i in 1..t do << " ";
+	
+	<< x.tag;
+	if (x.tag === "OMS") then
+		<< "(" << x#"cd" << "." << x#"name" << ")";
+	if (x.tag === "OMV") then
+		<< "(" << x#"name" << ")";
+	if (x.tag === "OMI") then
+		<< "(" << x.children << ")";
+	<< endl;
+
+	if x.?children then
+		if class(x.children) === List then 
+			for c in x.children do
+				renderXML(c, t+2);
+			
+)
+
+---TESTS
+R = QQ[x];
+p = x^2 - 1;
+s = toOpenMath(p);
+renderXML(s, 0);
+
+s = OMA("polynomial4", "factorise", {s} );
+print fromOpenMath s;
+
+
 
 
 -- beginDocumentation()
