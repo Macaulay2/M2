@@ -6,12 +6,12 @@
 -- todo/not done: definitely_irreducible, possibly_reducible, ground_ring_injected, , 
 --                divide, quotient, quotient_remainder, remainder
 
-FactoredPolynomial = new Type of Product
+FactoredPolynomial = new Type of BasicList
 
 --- To OpenMath ---
+ring FactoredPolynomial := f -> f#0#0
 toOpenMath FactoredPolynomial := x -> (	
-	--First, construct the (unique) factorisation, in l.
-	R := class(value(x));
+	R := ring x;
 	
 	l := {  };
 	l = append(l, toOpenMath(R));
