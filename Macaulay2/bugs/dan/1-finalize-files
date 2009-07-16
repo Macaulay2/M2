@@ -1,0 +1,1 @@
+we should make sure that file objects are finalized and flushed and closed just before garbage collection
