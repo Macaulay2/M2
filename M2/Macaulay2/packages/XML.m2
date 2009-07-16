@@ -6,7 +6,7 @@ newPackage("XML",
     	Authors => {{Name => "Dan Grayson", Email => "dan@math.uiuc.edu", HomePage => "http://www.math.uiuc.edu/~dan/"}},
     	Headline => "an XML parser",
     	DebuggingMode => false)
-export {"XMLnode", "tag", "children","parse", "toXMLnode", "Trim","toLIBXMLnode"}
+export {"XMLnode", "tag", "children","parse", "toXMLnode", "Trim","toLibxmlNode"}
 scan(pairs Core#"private dictionary", (k,v) -> if match("^xml[A-Z]",k) then (
 	  XML#"private dictionary"#k = v;
 	  export {v}))
@@ -52,7 +52,7 @@ toXMLnode LibxmlNode := opts -> node -> (
      settrim opts;
      toXMLnode0 node)
 
-toLIBXMLnode = method()
+toLibxmlNode = method()
 populate = (d,x) -> (
      scanPairs(x, (k,v) -> if instance(k,String) then xmlNewProp(d,k,v));
      if x.?children then scan(x.children, child -> (
@@ -60,12 +60,30 @@ populate = (d,x) -> (
 	       else if instance(child,XMLnode) then populate(xmlNewChild(d,child.tag),child)
 	       else error "unrecognized child type"));
      d)
-toLIBXMLnode XMLnode := x -> populate(xmlNewDoc x.tag,x)
+toLibxmlNode XMLnode := x -> populate(xmlNewDoc x.tag,x)
 parse = method(Options => { Trim => true })
-parse String := opts -> s -> (
+parse String := xmlNode => opts -> s -> (
      settrim opts;
      toXMLnode xmlParse s)
 
+beginDocumentation()
+
+end
+
+doc ///
+  Key
+    (parse,String)
+    parse
+  Headline
+    parse XML
+  Usage
+    parse s
+  Inputs
+    s:
+  Outputs
+    :
+      the tree resulting from parsing {\tt s}
+///
 
 end
 
@@ -97,5 +115,5 @@ print xmlParse ///<foo bar="5" foo="asdf &amp; asdf"></foo>///
 restart
 p = xmlParse ///<foo> aabc <bar id="foo" name="too"> asdf </bar> <coo/><coo>hi</coo><coo a="b">hi</coo> </foo>///
 x = toXMLnode p
-q = toLIBXMLnode x
+q = toLibxmlNode x
 

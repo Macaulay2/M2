@@ -205,7 +205,7 @@ xml_attr *xml_NewProp(xml_node *n, M2_string name, M2_string value){
   char *nam = tocharstar(name), *val = tocharstar(value);
   r->doc = n->doc;
   r->attr = xmlNewProp(n->node,(unsigned const char*)nam,(unsigned const char*)val);
-  GC_FREE(nam), GC_FREE(value);
+  GC_FREE(nam), GC_FREE(val);
   return r;
 }
 

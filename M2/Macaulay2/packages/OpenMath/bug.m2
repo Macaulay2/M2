@@ -1,12 +1,12 @@
 loadPackage "OpenMath"
-toLIBXMLnode openMathValue value parse///<OMOBJ>
+toLibxmlNode openMathValue value parse///<OMOBJ>
 		<OMA>
 			<OMS cd="polyd1" name="poly_ring_d"/>
 			<OMS cd="setname1" name="Q"/>
 			<OMI>2</OMI>
 		</OMA>
 </OMOBJ>///
-toLIBXMLnode openMathValue value parse///<OMOBJ>
+toLibxmlNode openMathValue value parse///<OMOBJ>
 	<OMA>
 		<OMS cd="polyd1" name="DMP"/>
 		<OMA id="polyringSJk3jJX4oVxJWsOb" >
