@@ -106,87 +106,90 @@ static void show(xmlDocPtr doc,xmlNodePtr t) {
 /*   } */
 /* } */
 
-void xml_examine(struct xml_node *n) {
+void xml_examine(xml_node *n) {
   xmlElemDump(stdout,n->doc,n->node);
 }
 
-struct xml_node *xml_Parse(M2_string p) {
-  struct xml_node *r = (struct xml_node *)getmem(sizeof(*r));
-  r->doc = xmlReadMemory(p->array,p->len,"a string", NULL, 0);
+xml_node *xml_Parse(M2_string p) {
+  xmlDoc *d = xmlReadMemory(p->array,p->len,"a string", NULL, 0);
+  xml_node *r;
+  if (d == NULL) return NULL;
+  r = (xml_node *)getmem(sizeof(*r));
+  r->doc = d;
   r->node = xmlDocGetRootElement(r->doc);
   return r;
 }
 
-struct xml_attr *xml_Attributes(struct xml_node *n) {
-  struct xml_attr *r;
+xml_attr *xml_Attributes(xml_node *n) {
+  xml_attr *r;
   if (n->node->type != XML_ELEMENT_NODE || n->node->properties == NULL) return NULL;
-  r = (struct xml_attr *)getmem(sizeof(*r));
+  r = (xml_attr *)getmem(sizeof(*r));
   r->doc = n->doc;
   r->attr = n->node->properties;
   return r;
 }
 
-int xml_isElement(struct xml_node *n){
+int xml_isElement(xml_node *n){
   return n->node->type == XML_ELEMENT_NODE;
 }
 
-int xml_isText(struct xml_node *n){
+int xml_isText(xml_node *n){
   return n->node->type == XML_TEXT_NODE;
 }
 
-M2_string xml_getElementName(struct xml_node *n){
+M2_string xml_getElementName(xml_node *n){
   if (n->node->name == NULL) return NULL;
   return tostring((char const *)n->node->name);
 }
 
-M2_string xml_getAttrName(struct xml_attr *a){
+M2_string xml_getAttrName(xml_attr *a){
   if (a->attr->name == NULL) return NULL;
   return tostring((char const *)a->attr->name);
 }
 
-M2_string xml_getContent(struct xml_node *n){
+M2_string xml_getContent(xml_node *n){
   if (n->node->content == NULL) return NULL;
   return tostring((char const *)n->node->content);
 }
 
-struct xml_node *xml_getNextNode(struct xml_node *n){
-  struct xml_node *r;
+xml_node *xml_getNextNode(xml_node *n){
+  xml_node *r;
   if (n->node->next == NULL) return NULL;
-  r = (struct xml_node *)getmem(sizeof(*r));
+  r = (xml_node *)getmem(sizeof(*r));
   r->doc = n->doc;
   r->node = n->node->next;
   return r;
 }
 
-struct xml_attr *xml_getNextAttr(struct xml_attr *a){
-  struct xml_attr *r;
+xml_attr *xml_getNextAttr(xml_attr *a){
+  xml_attr *r;
   if (a->attr->next == NULL) return NULL;
-  r = (struct xml_attr *)getmem(sizeof(*r));
+  r = (xml_attr *)getmem(sizeof(*r));
   r->doc = a->doc;
   r->attr = a->attr->next;
   return r;
 }
 
-struct xml_node *xml_getNodeChildren(struct xml_node *n){
-  struct xml_node *r;
+xml_node *xml_getNodeChildren(xml_node *n){
+  xml_node *r;
   if (n->node->children == NULL) return NULL;
-  r = (struct xml_node *)getmem(sizeof(*r));
+  r = (xml_node *)getmem(sizeof(*r));
   r->doc = n->doc;
   r->node = n->node->children;
   return r;
 }
 
-struct xml_node *xml_getAttrChildren(struct xml_attr *a){
-  struct xml_node *r;
+xml_node *xml_getAttrChildren(xml_attr *a){
+  xml_node *r;
   if (a->attr->children == NULL) return NULL;
-  r = (struct xml_node *)getmem(sizeof(*r));
+  r = (xml_node *)getmem(sizeof(*r));
   r->doc = a->doc;
   r->node = a->attr->children;
   return r;
 }
 
 xml_node *xml_NewDoc(M2_string version, M2_string name) {
-  struct xml_node *r = (struct xml_node *)getmem(sizeof(*r));
+  xml_node *r = (xml_node *)getmem(sizeof(*r));
   char *s = tocharstar(name);
   r->doc = xmlNewDoc((unsigned const char*)"1.0");
   r->node = xmlNewNode(NULL,(unsigned const char*)s);
@@ -196,7 +199,7 @@ xml_node *xml_NewDoc(M2_string version, M2_string name) {
 }
 
 xml_attr *xml_NewProp(xml_node *n, M2_string name, M2_string value){
-  struct xml_attr *r = (struct xml_attr *)getmem(sizeof(*r));
+  xml_attr *r = (xml_attr *)getmem(sizeof(*r));
   char *nam = tocharstar(name), *val = tocharstar(value);
   r->doc = n->doc;
   r->attr = xmlNewProp(n->node,(unsigned const char*)nam,(unsigned const char*)val);
@@ -210,7 +213,7 @@ xml_attr *xml_NewProp(xml_node *n, M2_string name, M2_string value){
 
 /* xml_node *xml_NewNode(xml_node n,M2_string name){ /\* n is any node in the document to which we will attach the new node *\/ */
 /*   char *nam = tocharstar(name); */
-/*   struct xml_node *r = (struct xml_node *)getmem(sizeof(*r)); */
+/*   xml_node *r = (xml_node *)getmem(sizeof(*r)); */
 /*   r->doc = n->doc; */
 /*   r->node = xmlNewNode(NULL,(unsigned const char*)nam); */
 /*   GC_FREE(nam); */
@@ -219,7 +222,7 @@ xml_attr *xml_NewProp(xml_node *n, M2_string name, M2_string value){
 
 xml_node *xml_NewChild(xml_node *parent, M2_string name){
   char *nam = tocharstar(name);
-  struct xml_node *r = (struct xml_node *)getmem(sizeof(*r));
+  xml_node *r = (xml_node *)getmem(sizeof(*r));
   r->doc = parent->doc;
   r->node = xmlNewChild(parent->node,NULL,(unsigned const char*)nam,NULL);
   GC_FREE(nam);
@@ -228,7 +231,7 @@ xml_node *xml_NewChild(xml_node *parent, M2_string name){
 
 xml_node *xml_NewText(xml_node *parent, M2_string content){
   char *cont = tocharstar(content);
-  struct xml_node *r = (struct xml_node *)getmem(sizeof(*r));
+  xml_node *r = (xml_node *)getmem(sizeof(*r));
   r->doc = parent->doc;
   r->node = xmlNewText((unsigned const char*)cont);
   xmlAddChild(parent->node,r->node);
