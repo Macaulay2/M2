@@ -121,7 +121,7 @@ html TO   := x -> (
 	  )
      else if d === null					    -- isMissingDoc
      then (
-	  warning "missing documentation";
+	  warning("missing documentation: "|toString tag);
 	  concatenate( "<tt>", r, "</tt>", if x#?1 then x#1, " (missing documentation<!-- tag: ",toString DocumentTag.Key tag," -->)")
 	  )
      else concatenate( "<a href=\"", toURL htmlFilename toFinalDocumentTag getPrimary x#0, "\" title=\"", fixtitle headline x#0, "\">", r, "</a>", if x#?1 then x#1))
@@ -138,7 +138,7 @@ html TO2  := x -> (
 	  )
      else if d === null					    -- isMissingDoc
      then (
-	  warning "missing documentation";
+	  warning("missing documentation: "|toString tag);
 	  concatenate("<tt>", htmlLiteral x#1, "</tt> (missing documentation<!-- tag: ",DocumentTag.FormattedKey tag," -->)"))
      else concatenate("<a href=\"", toURL htmlFilename toFinalDocumentTag getPrimary x#0, "\">", htmlLiteral x#1, "</a>"))
 
@@ -1104,6 +1104,7 @@ makePackageIndex List := path -> (
      htmlDirectory = applicationDirectory();
      fn := htmlDirectory | "index.html";
      if notify then stderr << "--making index of installed packages in " << fn << endl;
+     if debugLevel > 10 then stderr << "--path = " << stack path << endl;
      fn << html HTML { 
 	  HEAD splice {
 	       TITLE {key, commentize headline key},
@@ -1120,21 +1121,27 @@ makePackageIndex List := path -> (
 	       ul splice {
                	    if prefixDirectory =!= null 
 		    then HREF { prefixDirectory | replace("PKG","Macaulay2Doc",currentLayout#"packagehtml") | "index.html", "Macaulay 2" },
-		    apply(toSequence unique path, pkgdir -> (
-			      prefixDirectory := minimizeFilename(pkgdir | relativizeFilename(currentLayout#"packages",""));
-			      p := prefixDirectory | currentLayout#"docdir";
-			      if isDirectory p then (
-				   r := readDirectory p;
-				   r = select(r, fn -> fn != "." and fn != ".." );
-				   r = select(r, pkg -> fileExists (prefixDirectory | replace("PKG",pkg,currentLayout#"packagehtml") | "index.html"));
-				   r = sort r;
-				   DIV {
-					HEADER3 {"Packages in ", toAbsolutePath prefixDirectory},
-					if #r > 0 then UL apply(r, pkg -> HREF { prefixDirectory | replace("PKG",pkg,currentLayout#"packagehtml") | "index.html", pkg }) 
-					}
-				   )
-			      )
-			 )
+		    splice apply(toSequence unique path, pkgdir -> (
+			      pkgdir = toAbsolutePath pkgdir;
+			      apply(toSequence values Layout, layout -> (
+				   packagelayout := layout#"packages";
+				   if substring(pkgdir, -#packagelayout) != packagelayout then return;
+				   prefixDirectory := minimizeFilename substring(pkgdir,0,#pkgdir-#packagelayout);
+				   p := prefixDirectory | layout#"docdir";
+				   if isDirectory p then (
+					if debugLevel > 10 then stderr << "--checking directory " << p << endl;
+					r := readDirectory p;
+					r = select(r, fn -> fn != "." and fn != ".." );
+					r = select(r, pkg -> fileExists (prefixDirectory | replace("PKG",pkg,layout#"packagehtml") | "index.html"));
+					r = sort r;
+					DIV {
+					     HEADER3 {"Packages in ", toAbsolutePath prefixDirectory},
+					     if #r > 0 then UL apply(r, pkg -> HREF { prefixDirectory | replace("PKG",pkg,layout#"packagehtml") | "index.html", pkg }) 
+					     }
+					)
+				   else (
+					if debugLevel > 10 then stderr << "--directory does not exist: " << p << endl;
+					)))))
 		    }
 	       }
 	  } << endl

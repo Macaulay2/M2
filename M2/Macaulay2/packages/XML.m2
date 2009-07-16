@@ -73,7 +73,6 @@ end
 doc ///
   Key
     (parse,String)
-    parse
   Headline
     parse XML
   Usage
