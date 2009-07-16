@@ -25,7 +25,7 @@ OMSEvaluators#"field4"#"field_by_poly_vector" = (args, attrs) -> (
 
 
 --- To OpenMath ---
-toOpenMathFFelt = p -> (
+toOpenMathFFelt = idCheck(p -> (
 	R := class t;
 	
 	--Get the polynomial (coefficients) for the element
@@ -40,4 +40,4 @@ toOpenMathFFelt = p -> (
 	
 	--Done!
 	OMA("field4", "field_by_poly_vector", {omR, r})
-)
+))

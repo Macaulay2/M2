@@ -21,12 +21,13 @@
 ------------------------
 -------- To OM ---------
 ------------------------
-toOpenMath = method()
+idCheck = f -> x -> if hasOMid(x) then OMR(getOMid(x)) else f x
 
+toOpenMath = method()
 toOpenMath String := x -> OMSTR(x)
 toOpenMath ZZ     := x -> OMI(x)
 
-toOpenMath RR     := x -> (
+toOpenMath RR     := idCheck(x -> (
 	sx := toExternalString x;
 	m := regex("^([0-9\\.\\-]+)p([0-9]+)e([0-9\\-]+)$", sx);
 	if m === null then (theOMerror = "RR elt does not match regex"; error("whoops"));
@@ -40,7 +41,7 @@ toOpenMath RR     := x -> (
 		OMI(2),
 		OMI(substring(m#2, sx))
 	})
-)
+))
 
 toOpenMath RingElement := p -> (
 	R := class(p);
@@ -68,14 +69,14 @@ toOpenMath XMLnode := x -> (
 )
 
 -- product will have to branch to different things...
-toOpenMath Product := x -> (
+toOpenMath Product := idCheck(x -> (
 	vx := value(x);
 	if class(class(vx)) === PolynomialRing then
 		--defined in polyd1
 		toOpenMathFactoredPol(x)
 	else
 		(theOMerror = concatenate("Cannot handle product whose class is ", toString(class(vx))); error("whoops"))
-)
+))
 
 -- Symbols will be mapped to variables
 toOpenMath Symbol := x->OMV(toString x);
@@ -289,7 +290,15 @@ fromOpenMath XMLnode := x->(
 		print concatenate("WARNING -- Could not parse XMLnode with tag ", t);
 		r = x
 	);
-	
+
+	--Store the id if it was set
+	if x#?"id" then (
+		if (class(x#"id") =!= String) then (
+			theOMerror = "id was not a string"; error("whoops");
+		);
+		addOMref(x#"id", r);
+	);
+		
 	r
 )
 
@@ -306,20 +315,7 @@ fromOpenMath Thing := x -> (
 value XMLnode := x -> (
 	try (
 		theOMerror = null;
-		
-		--Do the actual conversion
-		r := fromOpenMath x;
-		
-		--Store the id if it was set
-		if x#?"id" then (
-			if (class(x#"id") =!= String) then (
-				theOMerror = "id was not a string"; error("whoops");
-			);
-			addOMref(x#"id", r);
-		);
-		
-		--Done!
-		return r;
+		return fromOpenMath x;
 	) else ( );
 
 	if theOMerror === null then
@@ -331,13 +327,6 @@ openMathValue = method();
 openMathValue Thing := x -> (
 	try (
 		theOMerror = null;
-		
-		--First, try to see if we perhaps have an id for this object, 
-		-- and return that as a reference.
-		if hasOMid(x) then (
-			return OMR(getOMid(x));
-		);
-		
 		return toOpenMath x;
 	) else ( );
 		if theOMerror === null then

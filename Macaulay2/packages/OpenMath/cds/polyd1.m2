@@ -8,10 +8,10 @@
 -- Maybe we should do something else. Not sure.
 
 --- To OpenMath ---
-toOpenMath PolynomialRing := R -> (
+toOpenMath PolynomialRing := idCheck(R -> (
 	vars := apply(gens R, i->OMV(replace("\\$", "_", toString(i))));
 	OMA("polyd1", "poly_ring_d_named", prepend(toOpenMath(coefficientRing(R)), vars))
-)
+))
 toOpenMathTerm = p -> prepend(toOpenMath(p#1), apply(p#0,i->toOpenMath(i)))
 toOpenMathSDMP = p -> (
 	OMA("polyd1", "SDMP", 

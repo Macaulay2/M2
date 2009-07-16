@@ -112,7 +112,6 @@ t = parse///<OMOBJ>
 		</OMA>
 	</OMA>
 </OMOBJ>///
-value t
 
 
 
