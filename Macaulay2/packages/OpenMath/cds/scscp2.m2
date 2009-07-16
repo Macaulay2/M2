@@ -8,11 +8,11 @@ OMSEvaluators#"scscp2" = new MutableHashTable;
 OMSEvaluators#"scscp2"#"retrieve" = (args, attrs) -> ( 
 	a := args#0;
 	if a.tag =!= "OMR" then
-		return OME("1st argument to scscp2.retrieve should be an OMR");
+		(theOMerror = "1st argument to scscp2.retrieve should be an OMR"; error("whoops"));
 
 	s := a#"href";
 	if not existsOMref(s) then
-		return OME(concatenate("Unknown reference: '", s, "'"));
+		(theOMerror = concatenate("Unknown reference: '", s, "'"); error("whoops"));
 	
 	getOMref(s)
 )
@@ -23,11 +23,11 @@ OMSEvaluators#"scscp2"#"store_session" = (args, attrs) -> (
 OMSEvaluators#"scscp2"#"unbind" = (args, attrs) -> ( 
 	a := args#0;
 	if a.tag =!= "OMR" then
-		return OME("1st argument to scscp2.unbind should be an OMR");
+		(theOMerror = "1st argument to scscp2.unbind should be an OMR"; error("whoops"));
 
 	s := a#"href";
 	if not existsOMref(s) then
-		return OME(concatenate("Unknown reference: '", s, "'"));
+		(theOMerror = concatenate("Unknown reference: '", s, "'"); error("whoops"));
 
 	removeOMref(s)
 )

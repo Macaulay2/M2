@@ -5,8 +5,10 @@
 OMSEvaluators#"field4" = new MutableHashTable;
 OMSEvaluators#"field4"#"field_by_poly_vector" = (args, attrs) -> (
 	a := apply(args, fromOpenMath);
-	if #a =!= 2 then
-		OME("field4.field_by_poly_vector comes with 2 arguments.");
+	if #a =!= 2 then (
+		theOMerror = "field4.field_by_poly_vector comes with 2 arguments.";
+		error("whoops");
+	);
 		
 	--The field and its generator
 	R := a#0;

@@ -13,6 +13,8 @@ newPackage(
     	)
 needsPackage "XML"
 
+theOMerror = null;
+
 load "./OpenMath/OMattr.m2"
 load "./OpenMath/OMelts.m2"
 load "./OpenMath/OMrefs.m2"
@@ -38,7 +40,9 @@ load "./OpenMath/cds/scscp2.m2"
 load "./OpenMath/cds/set1.m2"
 load "./OpenMath/cds/setname1.m2"
 
-export { "toOpenMath", "fromOpenMath", 
+--Should actually need to export little else than openMathValue
+export { "openMathValue",
+	"toOpenMath", "fromOpenMath", 
 	"OMattributes",
 	"setOMAttr", "clearOMAttr",
 	"OMI", "OMSTR", "OMA", "OMF", "OME", "OMOBJ", "OMV", "OMR", "OMS", "OMBIND", "OMATTR",

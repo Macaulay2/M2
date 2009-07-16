@@ -63,13 +63,13 @@ OMSEvaluators#"scscp1"#"procedure_call" = (args, attrs) -> (
 	-- Get the object, and evaluate
 	if (#args =!= 1) or ((args#0).tag =!= "OMA") then
 		return constructProcTerm("scscp1.procedure_call: 1st and only argument of pc should be an OMA.", callid);
-	-- Try to evaluate
-	try (
-		evld = fromOpenMath(args#0)
-	) else (
-		return constructProcTerm("Something unspecified went wrong.", callid);
+	-- Try to evaluate: value will always exit, albeit sometimes with an OME
+	evld = value(args#0);
+	if (class(e) === XMLnode) and (e.tag == "OME") then (
+		--Something went wrong :(
+		return constructProcTerm(e, callid);
 	);
-	
+		
 	-- If we want to return nothing or a cookie, we are pretty much done!
 	if ret === "nothing" then
 		return constructProcComplNothing(callid)

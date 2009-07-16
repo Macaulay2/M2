@@ -16,7 +16,7 @@ toOpenMath QuotientRing := R -> (
 	if isField(R) and (ambient(R) === ZZ) then
 		OMA("finfield1", "field_by_conway", { OMI(char(R)), OMI(1) })
 	else
-		OME(concatenate("Cannot convert quotient ring ", toString(R), " to OpenMath"))
+		(theOMerror = concatenate("Cannot convert quotient ring ", toString(R), " to OpenMath"); error("whoops"));
 )
 toOpenMath GaloisField := F -> (
 	OMA("finfield1", "field_by_conway", { OMI(F.char), OMI(F.degree) })
