@@ -75,11 +75,21 @@ renderXML = (x,t) -> (
 -- << "t = " << t << endl;
 -- << "fromOpenMath t = " << fromOpenMath t << endl;
 
-t = parse ///<OMA id="d1"><OMS cd="polyd1" name="poly_ring_d"/><OMS cd="setname1" name="Q"/><OMI>2</OMI></OMA>/// ;
-vt := value t;
-<< "value t = " << vt << endl;
-ovt := openMathValue vt;
-<< "openMathValue value t = " << ovt << endl;
+-- t = parse ///<OMA><OMS cd="polyd1" name="poly_ring_d"/><OMS cd="setname1" name="Q"/><OMI>2</OMI></OMA>/// ;
+-- vt := value t;
+-- << "value t = " << vt << endl;
+-- ovt := openMathValue vt;
+-- << "openMathValue value t = " << ovt << endl;
+-- ovt = openMathValue vt;
+-- << "openMathValue value t = " << ovt << endl;
+-- resetDeclaredIDs()
+-- ovt = openMathValue vt;
+-- << "openMathValue value t = " << ovt << endl;
+-- ovt = openMathValue vt;
+-- << "openMathValue value t = " << ovt << endl;
+
+<< "toOpenMath (hold 2*3) = " << toOpenMath (hold 2*3) << endl;
+<< "theOMerror" << theOMerror << endl;
 
 -------------------------------
 ----(LITTLE) DOCUMENTATION-----
@@ -110,8 +120,14 @@ document {
 	Inputs => { "x" },
 	Outputs => {{ "an XMLnode describing x" }},
     SourceCode => {openMathValue},
+	"We show how to convert a random integer to OpenMath and print it as XML",
 	EXAMPLE lines ///
 		v = openMathValue 42
+		toLibxmlNode v
+     	///
+	"We show how to represent 2*3 in OpenMath",
+	EXAMPLE lines ///
+		v = openMathValue (hold 2*3)
 		toLibxmlNode v
      	///
 	}

@@ -98,7 +98,6 @@ OMATTR (XMLnode, HashTable) := (child, attrs) -> (
 
 
 
-
 --- And some helper functions ---
 isOMAOf = (x, cd, nm) -> (
 	if not class(x) === XMLnode then return false; 

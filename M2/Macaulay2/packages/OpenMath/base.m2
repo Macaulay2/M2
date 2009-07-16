@@ -66,16 +66,6 @@ toOpenMath XMLnode := x -> (
 		x
 )
 
--- product will have to branch to different things...
-toOpenMath Product := idCheck(x -> (
-	vx := value(x);
-	if class(class(vx)) === PolynomialRing then
-		--defined in polyd1
-		toOpenMathFactoredPol(x)
-	else
-		(theOMerror = concatenate("Cannot handle product whose class is ", toString(class(vx))); error("whoops"))
-))
-
 -- Symbols will be mapped to variables
 toOpenMath Symbol := x->OMV(toString x);
 

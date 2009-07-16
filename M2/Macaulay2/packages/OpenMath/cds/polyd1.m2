@@ -8,7 +8,7 @@
 -- Maybe we should do something else. Not sure.
 
 --- To OpenMath ---
-toOpenMath PolynomialRing := idCheck(R -> (
+toOpenMath PolynomialRing := autoCreateIDCheck(R -> (
 	vars := apply(gens R, i->OMV(replace("\\$", "_", toString(i))));
 	OMA("polyd1", "poly_ring_d_named", prepend(toOpenMath(coefficientRing(R)), vars))
 ))

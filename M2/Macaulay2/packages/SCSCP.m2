@@ -1,30 +1,36 @@
+needsPackage "OpenMath"
+needsPackage "XML"
 newPackage("SCSCP")
+
+debug needsPackage "OpenMath" -- so that we have all global symbols of OpenMath in here.
+needsPackage "XML"
 
 SCSCPConnection = new Type of MutableHashTable
 SCSCPVersion = "1.3"
+callIDCounter = 0;
 
 newSCSCPConnection = hostport -> (
 	s := new SCSCPConnection;
-	s.fd = openInOut ("$"|hostport);
+	s#"fd" = openInOut ("$"|hostport);
 
 	stderr << "Connecting..." << endl;
 	ans := "";
 	while #ans == 0 or ans#-1 =!= "\n" do (
-		while not isReady s.fd do nothing; 
-		ans = ans|(read s.fd);
+		while not isReady s#"fd" do nothing; 
+		ans = ans|(read s#"fd");
 	);
 
 	stderr << "Received: '" << ans << "'" << endl;
 
 	versionstr := ///<?scscp version="/// | SCSCPVersion | ///" ?>///;
 	stderr << "Requesting '" << versionstr << "'" << endl;
-	s.fd << versionstr << endl << flush;
+	s#"fd" << versionstr << endl << flush;
 	
 	stderr << "Waiting for response to version request..." << endl;
 	ans = "";
 	while #ans == 0 or ans#-1 =!= "\n" do (
-		while not isReady s.fd do nothing; 
-		ans = ans|(read s.fd);
+		while not isReady s#"fd" do nothing; 
+		ans = ans|(read s#"fd");
 	);
 	
 	stderr << "Received: '" << ans << "'" << endl;
@@ -37,10 +43,76 @@ newSCSCPConnection = hostport -> (
 	s	
 );
 
---closeSCSCPConnection = s -> close s.fd;
+closeSCSCPConnection = s -> (close s#"fd";)
+
+computeSCSCP = method()
+computeSCSCP (SCSCPConnection, XMLnode) := (s,x) -> (
+
+	stderr << "Constructing procedure call..." << endl;
+	if x.tag =!= "OMA" then x = OMA("fns1", "identity", {x});
+	pc := OMA("scscp1", "procedure_call", { x });
+	pc = setOMAttr(pc, OMS("scscp1", "call_id"), OMSTR(toString (callIDCounter = callIDCounter+1)));
+	pc = setOMAttr(pc, OMS("scscp1", "option_return_object"), OMSTR(""));
+	pc = OMOBJ(pc);
+	pc = createOMATTRObj(pc);
+
+	stderr << "Sending procedure call..." << endl;
+	s#"fd" << "<?scscp start ?>" << endl << flush;
+	s#"fd" << endl << toString toLibxmlNode pc << endl;
+	s#"fd" << "<?scscp end ?>" << endl << flush;
+
+	stderr << "Waiting for response..." << endl;
+	ans := "";
+	waitfor := "(.*)<\\?scscp end \\?>\n$";
+	while not match(waitfor, ans) do (
+		while not isReady s#"fd" do nothing; 
+		ans = ans|(read s#"fd");
+	);
+	
+	stderr << "Answer received..." << endl;
+	<< ans << endl;
+	
+	stderr << "Parsing answer..." << endl;
+	y := parse ans;
+	if class(y) =!= XMLnode then
+		error "Parsing failed.";
+	stderr << y << endl;
+		
+	y
+)
+computeSCSCP (SCSCPConnection, Thing) := (s,x) -> (
+
+	stderr << "Constructing OpenMath object..." << endl;
+	o := openMathValue x;
+	
+	a := computeSCSCP(s, o);
+	
+	stderr << "Evaluating answer..." << endl;
+	t = value a;
+
+	t
+)
+
+SCSCPConnection Thing := computeSCSCP
 
 
---computeSCSCP = (s, q)
+------------------------
+----For Debugging-------
+------------------------
+endPackage("SCSCP");
+debug SCSCP
+
+------------------------
+-------Testing----------
+------------------------
+{*
+loadPackage "SCSCP"
+s = newSCSCPConnection("127.0.0.1:26133")
+s(OMA("arith1", "plus", {OMI(3), OMI(4)}))
+s(17)
+*}
+
+
 
 -- f = openInOut "$192.168.1.9:26133"
 -- while not isReady f do nothing
@@ -81,4 +153,6 @@ newSCSCPConnection = hostport -> (
 --   
 --   Dan R:
   
+
+
   

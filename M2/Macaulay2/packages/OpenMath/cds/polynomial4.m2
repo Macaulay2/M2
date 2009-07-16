@@ -6,9 +6,10 @@
 -- todo/not done: definitely_irreducible, possibly_reducible, ground_ring_injected, , 
 --                divide, quotient, quotient_remainder, remainder
 
+FactoredPolynomial = new Type of Product
+
 --- To OpenMath ---
-toOpenMathFactoredPol = x -> (
-	
+toOpenMath FactoredPolynomial := x -> (	
 	--First, construct the (unique) factorisation, in l.
 	R := class(value(x));
 	
@@ -22,7 +23,6 @@ toOpenMathFactoredPol = x -> (
 			OMA("polynomial4", "multiplicity", {toOpenMath(i#1)})
 		}));
 	
-	
 	--Then, wrap l in some thing that people care about
 	OMA("polynomial4", "factorisations", {
 		OMS("polynomial4", "factorisations_complete"),
@@ -35,5 +35,5 @@ OMSEvaluators#"polynomial4" = new MutableHashTable;
 OMSEvaluators#"polynomial4"#"factorise" = (args, expr) -> (
 	pol := fromOpenMath(args#0);
 	<< "pol = " << pol << endl;
-	factor(pol)
+	new FactoredPolynomial from factor(pol)
 )
