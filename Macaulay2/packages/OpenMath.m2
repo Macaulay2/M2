@@ -41,14 +41,7 @@ load "./OpenMath/cds/set1.m2"
 load "./OpenMath/cds/setname1.m2"
 
 --Should actually need to export little else than openMathValue
-export { "openMathValue",
-	"toOpenMath", "fromOpenMath", 
-	"OMattributes",
-	"setOMAttr", "clearOMAttr",
-	"OMI", "OMSTR", "OMA", "OMF", "OME", "OMOBJ", "OMV", "OMR", "OMS", "OMBIND", "OMATTR",
-	"renderXML",
-	"existsOMref", "getOMref", "setOMref", "removeOMref", "hasOMid", "getOMid"
-}
+export { "openMathValue" }
 
 renderXML = (x,t) -> (
 	for i in 1..t do << " ";
@@ -116,3 +109,9 @@ ovt := openMathValue vt;
 --     assert ( firstFunction 2 == "D'oh!" )
 -- ///
 -- 
+
+------------------------
+----For Debugging-------
+------------------------
+endPackage("OpenMath");
+debug OpenMath
