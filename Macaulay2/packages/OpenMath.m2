@@ -78,10 +78,16 @@ renderXML = (x,t) -> (
 --------TESTS-----------
 ------------------------
 
-t = parse ///<OMA><OMS cd="arith1" name="plus"/><OMI>1</OMI><OMI>17</OMI></OMA>///
-<< "t = " << t << endl;
+-- t = parse ///<OMA><OMS cd="arith1" name="plus"/><OMI>1</OMI><OMI>17</OMI></OMA>///
+-- << "t = " << t << endl;
+-- << "fromOpenMath t = " << fromOpenMath t << endl;
 
-<< "fromOpenMath t = " << fromOpenMath t << endl;
+t = parse ///<OMA id="d1"><OMS cd="polyd1" name="poly_ring_d"/><OMS cd="setname1" name="Q"/><OMI>2</OMI></OMA>/// ;
+vt := value t;
+<< "value t = " << vt << endl;
+ovt := openMathValue vt;
+<< "openMathValue value t = " << ovt << endl;
+
 
 
 ------------------------
