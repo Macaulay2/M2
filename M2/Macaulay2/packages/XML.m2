@@ -12,9 +12,14 @@ scan(pairs Core#"private dictionary", (k,v) -> if match("^xml[A-Z]",k) then (
 	  export {v}))
 
 XMLnode = new Type of HashTable
-net XMLnode := n -> stack(
-     "<" | n.tag | concatenate apply(pairs n, (k,v) -> if instance(k,String) then (" ",k,"=",format v) else ""),
-     if n.?children then "  " | stack apply(n.children,c -> if instance(c,String) then format c else net c))
+net XMLnode := n -> (
+     attributes := concatenate apply(pairs n, (k,v) -> if instance(k,String) then (" ",k,"=",format v) else "");
+     top := "<" | n.tag | attributes;
+     if n.?children then (
+	  cn := apply(n.children,c -> if instance(c,String) then format c else net c);
+	  if #attributes === 0 and all(n.children,c -> instance(c,String)) then concatenate(top," ",between(" ",cn))
+	  else stack(top,"  " | stack cn))
+     else top)
 
 nonnull = x -> select(x, i -> i =!= null)
 trimwhite = s -> (
@@ -90,7 +95,7 @@ print xmlParse ///<foo bar="5" foo="asdf &amp; asdf"></foo>///
 *}
 
 restart
-p = xmlParse ///<foo> aabc <bar id="foo" name="too"> asdf </bar> <coo/> </foo>///
+p = xmlParse ///<foo> aabc <bar id="foo" name="too"> asdf </bar> <coo/><coo>hi</coo><coo a="b">hi</coo> </foo>///
 x = toXMLnode p
 q = toLIBXMLnode x
 
