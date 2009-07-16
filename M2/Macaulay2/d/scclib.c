@@ -374,10 +374,17 @@ int system_chdir(M2_string filename) {
   return ret;
 }
 
+static bool isDirectory(const char *cname) {
+  struct stat buf;
+  int r = lstat(cname,&buf);
+  return r != ERROR && S_ISDIR(buf.st_mode);
+}
+
 M2_string system_realpath(M2_string filename) {
   char *fn = tocharstar(filename);
-  char buf[PATH_MAX];
+  char buf[PATH_MAX+1];
   char *r = realpath(fn,buf);
+  if (isDirectory(r)) strcat(r,"/");
   GC_FREE(fn);
   return r == NULL ? NULL : tostring(buf);
 }
@@ -547,10 +554,9 @@ int system_chmod(M2_string name,int mode) {
 
 int system_isDirectory(M2_string name) {
   char *cname = tocharstar(name);
-  struct stat buf;
-  int r = lstat(cname,&buf);
+  int r = isDirectory(cname);
   GC_FREE(cname);
-  return r == ERROR ? -1 : S_ISDIR(buf.st_mode);
+  return r;
 }
 
 int system_isRegularFile(M2_string name) {

@@ -1121,15 +1121,18 @@ makePackageIndex List := path -> (
 	       ul splice {
                	    if prefixDirectory =!= null 
 		    then HREF { prefixDirectory | replace("PKG","Macaulay2Doc",currentLayout#"packagehtml") | "index.html", "Macaulay 2" },
-		    splice apply(toSequence unique path, pkgdir -> (
-			      pkgdir = toAbsolutePath pkgdir;
+		    splice apply(toSequence unique apply(select(path,isDirectory),toAbsolutePath @@ realpath), pkgdir -> (
+			      if debugLevel > 10 then stderr << "--checking package directory " << pkgdir << endl;
 			      apply(toSequence values Layout, layout -> (
 				   packagelayout := layout#"packages";
-				   if substring(pkgdir, -#packagelayout) != packagelayout then return;
+				   if substring(pkgdir, -#packagelayout) != packagelayout then (
+					if debugLevel > 10 then stderr << "--package directory " << format pkgdir << " does not end with " << format packagelayout << endl;
+					return;
+					);
 				   prefixDirectory := minimizeFilename substring(pkgdir,0,#pkgdir-#packagelayout);
 				   p := prefixDirectory | layout#"docdir";
 				   if isDirectory p then (
-					if debugLevel > 10 then stderr << "--checking directory " << p << endl;
+					if debugLevel > 10 then stderr << "--checking documentation directory " << p << endl;
 					r := readDirectory p;
 					r = select(r, fn -> fn != "." and fn != ".." );
 					r = select(r, pkg -> fileExists (prefixDirectory | replace("PKG",pkg,layout#"packagehtml") | "index.html"));
@@ -1140,7 +1143,7 @@ makePackageIndex List := path -> (
 					     }
 					)
 				   else (
-					if debugLevel > 10 then stderr << "--directory does not exist: " << p << endl;
+					if debugLevel > 10 then stderr << "--documentation directory does not exist: " << p << endl;
 					)))))
 		    }
 	       }
