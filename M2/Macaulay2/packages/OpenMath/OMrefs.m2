@@ -55,4 +55,17 @@ hasOMid Thing := t -> storedOMids#?t
 getOMid = method()
 getOMid Thing := t -> storedOMids#t
 
+removeOMid = method()
+removeOMid Thing := t -> (
+	if not (hasOMid t) then return false;
+	
+	removeOMref getOMid t;
+	true
+)
+
+--- Function used when converting to OpenMath: Automatically checks whether
+--- an object has a stored ID and, if so, returns a reference instead of creating
+--- the full object.
+idCheck = f -> x -> if hasOMid(x) then OMR(getOMid(x)) else f x
+--autoID = f -> x -> 
 

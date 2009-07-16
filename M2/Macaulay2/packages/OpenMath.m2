@@ -5,7 +5,7 @@ newPackage(
     	Version => "0.1", 
     	Date => "July 14, 2009",
     	Authors => {
-			{Name => "Dan Roozemond", Email => "dan@banaan.org", HomePage => "http://www.danroozemond.nl/"}
+			{Name => "Dan Roozemond", Email => "d.a.roozemond@tue.nl", HomePage => "http://www.win.tue.nl/~droozemo/"}
 		},
     	Headline => "OpenMath for Macaulay2",
     	DebuggingMode => true,
