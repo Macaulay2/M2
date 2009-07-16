@@ -273,23 +273,24 @@ fromOpenMathOMR := x -> (
 fromOpenMath = method()
 
 fromOpenMath XMLnode := x->(
-
+	r := null;
 	t := x.tag;
-	if      t === "OMI"   then  fromOpenMathOMI(x)
-	else if t === "OMF"   then  fromOpenMathOMF(x)
-	else if t === "OMSTR" then  fromOpenMathOMSTR(x)
-	else if t === "OMOBJ" then  fromOpenMathOMOBJ(x)
-	else if t === "OMA"   then  fromOpenMathOMA(x)
-	else if t === "OMS"   then  fromOpenMathOMS(x)
-	else if t === "OMV"   then  fromOpenMathOMV(x)
-	else if t === "OMBIND"   then  fromOpenMathOMBIND(x)
-	else if t === "OMATTR"   then  fromOpenMathOMATTR(x)
-	else if t === "OMR"   then  fromOpenMathOMR(x)
+	if      t === "OMI"      then  r = fromOpenMathOMI(x)
+	else if t === "OMF"      then  r = fromOpenMathOMF(x)
+	else if t === "OMSTR"    then  r = fromOpenMathOMSTR(x)
+	else if t === "OMOBJ"    then  r = fromOpenMathOMOBJ(x)
+	else if t === "OMA"      then  r = fromOpenMathOMA(x)
+	else if t === "OMS"      then  r = fromOpenMathOMS(x)
+	else if t === "OMV"      then  r = fromOpenMathOMV(x)
+	else if t === "OMBIND"   then  r = fromOpenMathOMBIND(x)
+	else if t === "OMATTR"   then  r = fromOpenMathOMATTR(x)
+	else if t === "OMR"      then  r = fromOpenMathOMR(x)
 	else (
 		print concatenate("WARNING -- Could not parse XMLnode with tag ", t);
-		x
-	)
-
+		r = x
+	);
+	
+	r
 )
 
 fromOpenMath Thing := x -> (
@@ -299,13 +300,26 @@ fromOpenMath Thing := x -> (
 
 ------------------------------------------------------------------------
 -------- The actual conversions, to be used by the user ----------------
--------- With error handling.... ---------------------------------------
+-------- With error handling, and automatic reference thing ------------
 ------------------------------------------------------------------------
 
 value XMLnode := x -> (
 	try (
 		theOMerror = null;
-		return fromOpenMath x;
+		
+		--Do the actual conversion
+		r := fromOpenMath x;
+		
+		--Store the id if it was set
+		if x#?"id" then (
+			if (class(x#"id") =!= String) then (
+				theOMerror = "id was not a string"; error("whoops");
+			);
+			addOMref(x#"id", r);
+		);
+		
+		--Done!
+		return r;
 	) else ( );
 
 	if theOMerror === null then
@@ -317,6 +331,13 @@ openMathValue = method();
 openMathValue Thing := x -> (
 	try (
 		theOMerror = null;
+		
+		--First, try to see if we perhaps have an id for this object, 
+		-- and return that as a reference.
+		if hasOMid(x) then (
+			return OMR(getOMid(x));
+		);
+		
 		return toOpenMath x;
 	) else ( );
 		if theOMerror === null then
