@@ -274,7 +274,15 @@ From source:
      Install required packages (via the command line, as here, or via the
      synaptic package manager):
 
-     	     sudo apt-get install ...
+     On Ubuntu 9.04, here is what I think is the complete set needed:
+
+     	     sudo apt-get install subversion
+     	     sudo apt-get install build-essential
+	     sudo apt-get install autoconf
+	     sudo apt-get install libncurses5-dev
+	     sudo apt-get install gfortran
+	     sudo apt-get install bison
+	     sudo apt-get install flex
 
      Now grab, configure, compile and install Macaulay2:
 
