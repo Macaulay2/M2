@@ -77,7 +77,7 @@ renderXML(s, 0);
 
 
 -- Long (GAP) input test: --
-t = parse///<OMOBJ>
+toLibxmlNode openMathValue value parse///<OMOBJ>
 	<OMA>
 		<OMS cd="polyd1" name="DMP"/>
 		<OMA id="polyringSJk3jJX4oVxJWsOb" >
@@ -112,6 +112,4 @@ t = parse///<OMOBJ>
 		</OMA>
 	</OMA>
 </OMOBJ>///
-
-
 
