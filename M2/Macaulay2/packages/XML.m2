@@ -12,14 +12,18 @@ scan(pairs Core#"private dictionary", (k,v) -> if match("^xml[A-Z]",k) then (
 	  export {v}))
 
 XMLnode = new Type of HashTable
+net XMLnode := n -> stack(
+     n.tag | concatenate apply(pairs n, (k,v) -> if instance(k,String) then (" ",k,"=",format v) else ""),
+     if n.?children then "  " | stack apply(n.children,c -> if instance(c,String) then format c else net c))
+
 nonnull = x -> select(x, i -> i =!= null)
 trimwhite = s -> (
      s = replace("^[[:space:]]+","",s);
      s = replace("[[:space:]]+$","",s);
      if s =!= "" then s)
 trimopt := identity
-toXMLnode = method()
-toXMLnode LibxmlNode := node -> (
+settrim = opts -> trimopt = if opts.Trim then trimwhite else identity
+toXMLnode0 = node -> (
      --  result:
      --    each node is a hash table of type XMLnode
      --    some keys are strings, representing attributes
@@ -38,6 +42,11 @@ toXMLnode LibxmlNode := node -> (
 	       }
 	  )
      else if xmlIsText node then trimopt xmlGetContent node)
+toXMLnode = method(Options => { Trim => true })
+toXMLnode LibxmlNode := opts -> node -> (
+     settrim opts;
+     toXMLnode0 node)
+
 toLIBXMLnode = method()
 populate = (d,x) -> (
      scanPairs(x, (k,v) -> if instance(k,String) then xmlNewProp(d,k,v));
@@ -49,7 +58,7 @@ populate = (d,x) -> (
 toLIBXMLnode XMLnode := x -> populate(xmlNewDoc x.tag,x)
 parse = method(Options => { Trim => true })
 parse String := opts -> s -> (
-     trimopt = if opts.Trim then trimwhite else identity;
+     settrim opts;
      toXMLnode xmlParse s)
 
 
@@ -79,3 +88,11 @@ tagP = (s -> s) % andP(tagstartP, orP("/>",* futureParser tagP, "</", idP, ">"))
 xmlParse = tagP : charAnalyzer
 print xmlParse ///<foo bar="5" foo="asdf &amp; asdf"></foo>///
 *}
+
+restart
+debug Core
+p = xmlParse ///<foo> aabc <bar id="foo" name="too"> asdf </bar> <coo/> </foo>///
+examine p
+x = toXMLnode p
+q = toLIBXMLnode x
+examine q
