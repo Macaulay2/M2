@@ -81,27 +81,40 @@ vt := value t;
 ovt := openMathValue vt;
 << "openMathValue value t = " << ovt << endl;
 
-------------------------
-----(NO) DOCUMENTATION--
-------------------------
--- beginDocumentation()
--- document { 
--- 	Key => FirstPackage,
--- 	Headline => "an example Macaulay 2 package",
--- 	EM "FirstPackage", " is a basic package to be used as an example."
--- 	}
--- document {
--- 	Key => {(firstFunction,ZZ),firstFunction},
--- 	Headline => "a silly first function",
--- 	Usage => "firstFunction n",
--- 	Inputs => { "n" },
--- 	Outputs => {{ "a silly string, depending on the value of ", TT "n" }},
---         SourceCode => {(firstFunction,ZZ)},
--- 	EXAMPLE lines ///
--- 	   firstFunction 1
--- 	   firstFunction 0
---      	///
--- 	}
+-------------------------------
+----(LITTLE) DOCUMENTATION-----
+-------------------------------
+beginDocumentation()
+document { 
+	Key => OpenMath,
+	Headline => "OpenMath for Macaulay2"
+	}
+document {
+	Key => {(value,XMLnode)},
+	Headline => "Evaluate an XMLnode",
+	Usage => "value x",
+	Inputs => { "x" },
+	Outputs => {{ "the value of the OpenMath object described by x" }},
+    SourceCode => {(value,XMLnode)},
+	EXAMPLE lines ///
+		t = parse ////<OMA><OMS cd="arith1" name="plus"/><OMI>1</OMI><OMI>2</OMI></OMA>////
+     	///
+	}
+document {
+	Key => {openMathValue},
+	Headline => "Turn an arbitrary Macaulay2 object into OpenMath (if possible)",
+	Usage => "value x",
+	Inputs => { "x" },
+	Outputs => {{ "an XMLnode describing x" }},
+    SourceCode => {openMathValue},
+	EXAMPLE lines ///
+		v = openMathValue 42
+		toLibxmlNode v
+     	///
+	}
+-------------------------------
+----- (NO) ACTUAL TESTS -------
+-------------------------------
 
 -- TEST ///
 --     assert ( firstFunction 2 == "D'oh!" )
