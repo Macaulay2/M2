@@ -84,11 +84,13 @@ ovt := openMathValue vt;
 -------------------------------
 ----(LITTLE) DOCUMENTATION-----
 -------------------------------
+
 beginDocumentation()
 document { 
 	Key => OpenMath,
 	Headline => "OpenMath for Macaulay2"
 	}
+
 document {
 	Key => {(value,XMLnode)},
 	Headline => "Evaluate an XMLnode",
@@ -100,6 +102,7 @@ document {
 		t = parse ////<OMA><OMS cd="arith1" name="plus"/><OMI>1</OMI><OMI>2</OMI></OMA>////
      	///
 	}
+
 document {
 	Key => {openMathValue},
 	Headline => "Turn an arbitrary Macaulay2 object into OpenMath (if possible)",
