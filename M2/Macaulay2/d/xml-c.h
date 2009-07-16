@@ -23,3 +23,4 @@ extern xml_attr *xml_NewProp(xml_node *, M2_string name, M2_string value);
 /* extern xml_node *xml_NewNode(M2_string name); */
 extern xml_node *xml_NewChild(xml_node *parent, M2_string name);
 extern xml_node *xml_NewText(xml_node *parent, M2_string content);
+M2_string xml_toString(xml_node *);

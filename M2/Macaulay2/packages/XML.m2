@@ -90,9 +90,7 @@ print xmlParse ///<foo bar="5" foo="asdf &amp; asdf"></foo>///
 *}
 
 restart
-debug Core
 p = xmlParse ///<foo> aabc <bar id="foo" name="too"> asdf </bar> <coo/> </foo>///
-examine p
 x = toXMLnode p
 q = toLIBXMLnode x
-examine q
+
