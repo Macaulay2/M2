@@ -69,6 +69,9 @@ toOpenMath XMLnode := x -> (
 -- Symbols will be mapped to variables
 toOpenMath Symbol := x->OMV(toString x);
 
+-- Holders are silly
+toOpenMath Holder := x -> toOpenMath x#0
+
 
 ------------------------
 -------- From OM -------

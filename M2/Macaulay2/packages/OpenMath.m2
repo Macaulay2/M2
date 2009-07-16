@@ -88,9 +88,6 @@ renderXML = (x,t) -> (
 -- ovt = openMathValue vt;
 -- << "openMathValue value t = " << ovt << endl;
 
-<< "toOpenMath (hold 2*3) = " << toOpenMath (hold 2*3) << endl;
-<< "theOMerror" << theOMerror << endl;
-
 -------------------------------
 ----(LITTLE) DOCUMENTATION-----
 -------------------------------

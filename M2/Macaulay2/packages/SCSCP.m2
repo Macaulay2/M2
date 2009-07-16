@@ -84,6 +84,10 @@ computeSCSCP (SCSCPConnection, Thing) := (s,x) -> (
 
 	stderr << "Constructing OpenMath object..." << endl;
 	o := openMathValue x;
+	if class(o) === XMLnode and o.tag === "OME" then (
+		stderr << o << endl;
+		error(concatenate("Could not convert '", toString x, "' of type '",toString class x,"'to OpenMath"));
+	);
 	
 	a := computeSCSCP(s, o);
 	
