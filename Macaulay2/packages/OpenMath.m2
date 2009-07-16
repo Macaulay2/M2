@@ -124,7 +124,7 @@ document {
 	EXAMPLE lines ///
 		v = openMathValue 42
 		toLibxmlNode v
-     	///
+     	///,
 	"We show how to represent 2*3 in OpenMath",
 	EXAMPLE lines ///
 		v = openMathValue (hold 2*3)
