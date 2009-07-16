@@ -11,7 +11,7 @@ scan(pairs Core#"private dictionary", (k,v) -> if match("^xml[A-Z]",k) then (
 	  XML#"private dictionary"#k = v;
 	  export {v}))
 
-XMLnode = new Type of HashTable
+XMLnode = new Type of MutableHashTable
 net XMLnode := n -> (
      attributes := concatenate apply(pairs n, (k,v) -> if instance(k,String) then (" ",k,"=",format v) else "");
      top := "<" | n.tag | attributes;
@@ -54,7 +54,7 @@ toXMLnode LibxmlNode := opts -> node -> (
 
 toLibxmlNode = method()
 populate = (d,x) -> (
-     scanPairs(x, (k,v) -> if instance(k,String) then xmlNewProp(d,k,v));
+     scan(pairs x, (k,v) -> if instance(k,String) then xmlNewProp(d,k,v));
      if x.?children then scan(x.children, child -> (
 	       if instance(child,String) then xmlNewText(d,child)
 	       else if instance(child,XMLnode) then populate(xmlNewChild(d,child.tag),child)

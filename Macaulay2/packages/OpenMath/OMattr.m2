@@ -28,6 +28,15 @@ clearOMAttr (XMLnode) := x -> (
 	)
 )
 
+createOMATTRObj = method()
+createOMATTRObj (XMLnode) := x -> (
+	xnw := if not x.?OMattributes then x else OMATTR(x, x.OMattributes);
+	if xnw.?children then
+		xnw.children = apply(xnw.children, createOMATTRObj);
+	xnw
+);
+createOMATTRObj (Thing) := x -> x;
+
 --Don't think I actually need these
 -- hasOMAttr = method()
 -- hasOMAttr (XMLnode, XMLnode) := (x, k) -> (

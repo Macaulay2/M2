@@ -92,3 +92,6 @@ OMSEvaluators#"scscp1"#"procedure_call" = (args, attrs) -> (
 	else
 		null
 )
+OMSEvaluators#"scscp1"#"procedure_completed" = (args, attrs) -> fromOpenMath(args#0);
+OMSEvaluators#"scscp1"#"procedure_terminated" = (args, attrs) -> fromOpenMath(args#0);
+
