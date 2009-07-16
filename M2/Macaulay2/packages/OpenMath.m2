@@ -81,8 +81,6 @@ vt := value t;
 ovt := openMathValue vt;
 << "openMathValue value t = " << ovt << endl;
 
-
-
 ------------------------
 ----(NO) DOCUMENTATION--
 ------------------------
