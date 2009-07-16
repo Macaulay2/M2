@@ -185,6 +185,56 @@ struct xml_node *xml_getAttrChildren(struct xml_attr *a){
   return r;
 }
 
+xml_node *xml_NewDoc(M2_string version, M2_string name) {
+  struct xml_node *r = (struct xml_node *)getmem(sizeof(*r));
+  char *s = tocharstar(name);
+  r->doc = xmlNewDoc((unsigned const char*)"1.0");
+  r->node = xmlNewNode(NULL,(unsigned const char*)s);
+  xmlDocSetRootElement(r->doc, r->node);
+  GC_FREE(s);
+  return r;
+}
+
+xml_attr *xml_NewProp(xml_node *n, M2_string name, M2_string value){
+  struct xml_attr *r = (struct xml_attr *)getmem(sizeof(*r));
+  char *nam = tocharstar(name), *val = tocharstar(value);
+  r->doc = n->doc;
+  r->attr = xmlNewProp(n->node,(unsigned const char*)nam,(unsigned const char*)val);
+  GC_FREE(nam), GC_FREE(value);
+  return r;
+}
+
+/* void xml_AddChild(xml_node *parent, xml_node *cur){ */
+/*   xmlAddChild(parent->node,cur->node); */
+/* } */
+
+/* xml_node *xml_NewNode(xml_node n,M2_string name){ /\* n is any node in the document to which we will attach the new node *\/ */
+/*   char *nam = tocharstar(name); */
+/*   struct xml_node *r = (struct xml_node *)getmem(sizeof(*r)); */
+/*   r->doc = n->doc; */
+/*   r->node = xmlNewNode(NULL,(unsigned const char*)nam); */
+/*   GC_FREE(nam); */
+/*   return r; */
+/* } */
+
+xml_node *xml_NewChild(xml_node *parent, M2_string name){
+  char *nam = tocharstar(name);
+  struct xml_node *r = (struct xml_node *)getmem(sizeof(*r));
+  r->doc = parent->doc;
+  r->node = xmlNewChild(parent->node,NULL,(unsigned const char*)nam,NULL);
+  GC_FREE(nam);
+  return r;
+}
+
+xml_node *xml_NewText(xml_node *parent, M2_string content){
+  char *cont = tocharstar(content);
+  struct xml_node *r = (struct xml_node *)getmem(sizeof(*r));
+  r->doc = parent->doc;
+  r->node = xmlNewText((unsigned const char*)cont);
+  xmlAddChild(parent->node,r->node);
+  GC_FREE(cont);
+  return r;
+}
 
 /*
  Local Variables:
