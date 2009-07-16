@@ -6,14 +6,14 @@ toOpenMath Ring := R -> (
 	if 		R === ZZ then OMS("setname1", "Z")
 	else if R === QQ then OMS("setname1", "Q")
 	else 
-		OME(concatenate("Cannot handle ring :", toString(R)))
+		(theOMerror = concatenate("Cannot handle ring :", toString(R)); error("whoops"));
 )
 
 toOpenMath InexactFieldFamily := R -> (
 	if 		R === CC then OMS("setname1", "C")
 	else if R === RR then OMS("setname1", "R")
 	else 
-		OME(concatenate("Cannot handle ring :", toString(R)))
+		(theOMerror = concatenate("Cannot handle ring :", toString(R)); error("whoops"));
 )
 
 --- From OpenMath ---

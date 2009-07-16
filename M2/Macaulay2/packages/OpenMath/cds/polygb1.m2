@@ -17,13 +17,15 @@
 --- From OpenMath ---
 OMSEvaluators#"polygb1" = new MutableHashTable;
 OMSEvaluators#"polygb1"#"groebner" = (args, attrs) -> (
-	if #args === 3 then
+	if #args === 3 then (
 		--The proper variant
-		return OME("I strongly dislike polygb1.groebner as defined in the CD. 
-			Please give me a DMPL as argument, that's much better.");
+		theOMerror = "I strongly dislike polygb1.groebner as defined in the CD. 
+			Please give me a DMPL as argument, that's much better.";
+		error("whoops");
+	);
 	
 	if #args =!= 1 then
-		return OME("Expecting number of arguments to polygb1.groebner to be 1 or 3.");
+		(theOMerror = "Expecting number of arguments to polygb1.groebner to be 1 or 3."; error("whoops"));
 
 	--The proper variant.
 	pols := fromOpenMath(args#0);
@@ -36,14 +38,14 @@ OMSEvaluators#"polygb1"#"reduce" = (args, attrs) -> (
 			Please give me a polynomial as 1st argument and a DMPL as 2nd argument, that'd much better.");
 	
 	if #args =!= 2 then
-		return OME("Expecting number of arguments to polygb1.reduce to be 2 or 4.");
+		(theOMerror = "Expecting number of arguments to polygb1.reduce to be 2 or 4."; error("whoops"));
 
 	--The second one will be a DMP, but we're only interested in the SDMP.
 	--
 	pols := fromOpenMath(args#1);
 	R := class(pols#0);
 	if not isOMAOf(args#0, "polyd1", "DMP") then
-		return OME("Expecting 1st argument of polygb1.reduce to be an OMA of polyd1.DMP");
+		(theOMerror = "Expecting 1st argument of polygb1.reduce to be an OMA of polyd1.DMP"; error("whoops"));
 		
 	pol := evalSDMP(((args#0).children)#2, R);
 	pol % ideal(pols)

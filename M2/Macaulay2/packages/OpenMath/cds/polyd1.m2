@@ -49,10 +49,10 @@ OMSEvaluators#"polyd1"#"poly_ring_d_named" = (args, attrs) -> (
 	CR(new Array from vars)
 )
 OMSEvaluators#"polyd1"#"poly_ring_d" = (args, attrs) -> ( 
-	if #args =!= 2 then return OME("Wrong number of arguments to polyd1.poly_ring_d: Should be 2");
-	if (args#1).tag =!= "OMI" then return OME("2nd argument to polyd1.poly_ring_d should be an OMI");
+	if #args =!= 2 then (theOMerror = "Wrong number of arguments to polyd1.poly_ring_d: Should be 2"; error("whoops"));
+	if (args#1).tag =!= "OMI" then (theOMerror = "2nd argument to polyd1.poly_ring_d should be an OMI"; error("whoops"));
 	numvars := fromOpenMath(args#1);
-	vars := apply( new List from 1..3, i->OMV(concatenate("x", toString(i))));
+	vars := apply( new List from 1..numvars, i->OMV(concatenate("x", toString(i))));
 	fromOpenMath(OMA("polyd1", "poly_ring_d_named", prepend(args#0, vars)))
 )
 
@@ -62,11 +62,11 @@ evalterm = (obj, R) -> (
 
 	gensR := gens(R);
 	if #args =!= (1 + #gensR) then
-		return OME("polyd1.term should have 1+#gensR arguments");
+		(theOMerror = "polyd1.term should have 1+#gensR arguments"; error("whoops"));
 
 	for i in take(args, {1,#args-1}) do (
 		if i.tag =!= "OMI" then 
-			return OME("polyd1.term should have integer powers of the generators of the poly ring")
+			return (theOMerror = "polyd1.term should have integer powers of the generators of the poly ring"; error("whoops"));
 	);
 	
 	fromOpenMath(args#0)*product(

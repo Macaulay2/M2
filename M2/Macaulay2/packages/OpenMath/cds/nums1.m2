@@ -19,7 +19,7 @@ toOpenMath Constant := x -> (
 	else if x === ii then
 		OMS("nums1", "pi")
 	else
-		OME(concatenate("Cannot handle constant ", toString(x)))
+		(theOMerror = concatenate("Cannot handle constant ", toString(x)); error("whoops"));
 )
 toOpenMath InfiniteNumber := x -> (
 	if x === infinity then
