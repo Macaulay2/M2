@@ -6,7 +6,7 @@ newPackage("XML",
     	Authors => {{Name => "Dan Grayson", Email => "dan@math.uiuc.edu", HomePage => "http://www.math.uiuc.edu/~dan/"}},
     	Headline => "an XML parser",
     	DebuggingMode => false)
-export {"XMLnode", "tag", "children","parse", "xmlConvert", "Trim"}
+export {"XMLnode", "tag", "children","parse", "toXMLnode", "Trim","toLIBXMLnode"}
 scan(pairs Core#"private dictionary", (k,v) -> if match("^xml[A-Z]",k) then (
 	  XML#"private dictionary"#k = v;
 	  export {v}))
@@ -18,7 +18,13 @@ trimwhite = s -> (
      s = replace("[[:space:]]+$","",s);
      if s =!= "" then s)
 trimopt := identity
-xmlConvert = node -> (
+toXMLnode = method()
+toXMLnode LibxmlNode := node -> (
+     --  result:
+     --    each node is a hash table of type XMLnode
+     --    some keys are strings, representing attributes
+     --    a special non-string key (symbol children) will provide the list of children (hashtables) and content pieces (strings), if there are any
+     --    a special non-string key (symbol name) for the name of the node
      if xmlIsElement node then (
 	  attr := xmlAttributes node;
 	  child := xmlGetChildren node;
@@ -28,19 +34,23 @@ xmlConvert = node -> (
 		    while attr =!= null list first(
 		    	 xmlGetName attr => ( c := xmlGetChildren attr; concatenate while null =!= c list first( xmlGetContent c, c = xmlGetNext c)),
 		    	 attr = xmlGetNext attr)),
-	       if child =!= null then symbol children => nonnull while child =!= null list first(xmlConvert child, child = xmlGetNext child)
+	       if child =!= null then symbol children => nonnull while child =!= null list first(toXMLnode child, child = xmlGetNext child)
 	       }
 	  )
      else if xmlIsText node then trimopt xmlGetContent node)
+toLIBXMLnode = method()
+populate = (d,x) -> (
+     scanPairs(x, (k,v) -> if instance(k,String) then xmlNewProp(d,k,v));
+     if x.?children then scan(x.children, child -> (
+	       if instance(child,String) then xmlNewText(d,child)
+	       else if instance(child,XMLnode) then populate(xmlNewChild(d,child.tag),child)
+	       else error "unrecognized child type"));
+     d)
+toLIBXMLnode XMLnode := x -> populate(xmlNewDoc x.tag,x)
 parse = method(Options => { Trim => true })
 parse String := opts -> s -> (
      trimopt = if opts.Trim then trimwhite else identity;
-     xmlConvert xmlParse s)
-     -- 	    result:
-     -- 	    	 each node is a hash table of type XMLnode
-     -- 		 some keys are strings, representing attributes
-     -- 		 a special non-string key (symbol children) will provide the list of children (hashtables) and content pieces (strings), if there are any
-     -- 		 a special non-string key (symbol name) for the name of the node
+     toXMLnode xmlParse s)
 
 
 end
