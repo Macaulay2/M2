@@ -13,7 +13,7 @@ scan(pairs Core#"private dictionary", (k,v) -> if match("^xml[A-Z]",k) then (
 
 XMLnode = new Type of HashTable
 net XMLnode := n -> stack(
-     n.tag | concatenate apply(pairs n, (k,v) -> if instance(k,String) then (" ",k,"=",format v) else ""),
+     "<" | n.tag | concatenate apply(pairs n, (k,v) -> if instance(k,String) then (" ",k,"=",format v) else ""),
      if n.?children then "  " | stack apply(n.children,c -> if instance(c,String) then format c else net c))
 
 nonnull = x -> select(x, i -> i =!= null)
