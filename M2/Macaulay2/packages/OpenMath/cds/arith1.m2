@@ -18,15 +18,13 @@ OMSEvaluators#"arith1"#"unary_minus" = (args, attrs) -> ( a := apply(args, fromO
 -- OMSEvaluators#"arith1.sum" = (args, attrs) -> 
 
 --- To OpenMath ---
--- toOpenMath Product := idCheck(x -> (
--- 	vx := value(x);
--- 	if class(class(vx)) === PolynomialRing then
--- 		--defined in polyd1
--- 		toOpenMathFactoredPol(x)
--- 	else if class(vx) === ZZ then (
--- 		<< "x = '" << x << "'" << endl;
--- 		42
--- 	) else
--- 		(theOMerror = concatenate("Cannot handle product whose class is ", toString(class(vx))); error("whoops"))
--- ))
+toOpenMath Product := x -> (
+	OMA("arith1", "times", apply(toList(x), toOpenMath))
+)
+toOpenMath Sum := x -> (
+	OMA("arith1", "plus", apply(toList(x), toOpenMath))
+)
+toOpenMath Power := x -> (
+	OMA("arith1", "power", apply(toList(x), toOpenMath))
+)
 
