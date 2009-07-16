@@ -48,7 +48,10 @@ OMR = method()
 OMR (String) := x -> new XMLnode from {symbol tag => "OMR", "href" => x}
 
 OMOBJ = method()
-OMOBJ XMLnode := x -> new XMLnode from {symbol tag => "OMOBJ", children => {x}}
+OMOBJ XMLnode := x -> if x.tag === "OMOBJ" then x else new XMLnode from {symbol tag => "OMOBJ", children => {x}}
+
+deOMOBJ = method()
+deOMOBJ XMLnode := x -> if x.tag === "OMOBJ" then (x.children)#0 else x
 
 OMF = method()
 OMF String := x -> new XMLnode from {symbol tag => "OMF", "dec" => x}
