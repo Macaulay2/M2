@@ -74,7 +74,7 @@ toOpenMath Product := x -> (
 		--defined in polyd1
 		toOpenMathFactoredPol(x)
 	else
-		(theOMerror = concatenate("Cannot handle product whose class is ", toString(class(vx))); error("whoops"));
+		(theOMerror = concatenate("Cannot handle product whose class is ", toString(class(vx))); error("whoops"))
 )
 
 -- Symbols will be mapped to variables

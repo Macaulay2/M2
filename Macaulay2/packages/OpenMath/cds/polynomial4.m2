@@ -32,7 +32,8 @@ toOpenMathFactoredPol = x -> (
 
 --- From OpenMath ---
 OMSEvaluators#"polynomial4" = new MutableHashTable;
-OMSEvaluators#"polynomial4"#"factorise" = args -> (
+OMSEvaluators#"polynomial4"#"factorise" = (args, expr) -> (
 	pol := fromOpenMath(args#0);
+	<< "pol = " << pol << endl;
 	factor(pol)
 )
