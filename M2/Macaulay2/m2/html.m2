@@ -1092,6 +1092,8 @@ userMacaulay2Directory = () -> (
      f("README", readmeFile);
      )
 
+endswith = (suff,str) -> substring(str,-#suff) == suff
+
 makePackageIndex = method(Dispatch => Thing)
 makePackageIndex Sequence := x -> (
      if #x > 0 then error "expected 0 arguments";
@@ -1105,6 +1107,7 @@ makePackageIndex List := path -> (
      fn := htmlDirectory | "index.html";
      if notify then stderr << "--making index of installed packages in " << fn << endl;
      if debugLevel > 10 then stderr << "--path = " << stack path << endl;
+     docdirdone := new MutableHashTable;
      fn << html HTML { 
 	  HEAD splice {
 	       TITLE {key, commentize headline key},
@@ -1125,13 +1128,17 @@ makePackageIndex List := path -> (
 			      if debugLevel > 10 then stderr << "--checking package directory " << pkgdir << endl;
 			      apply(toSequence values Layout, layout -> (
 				   packagelayout := layout#"packages";
-				   if substring(pkgdir, -#packagelayout) != packagelayout then (
+				   if not endswith(packagelayout,pkgdir) then (
 					if debugLevel > 10 then stderr << "--package directory " << format pkgdir << " does not end with " << format packagelayout << endl;
 					return;
 					);
 				   prefixDirectory := minimizeFilename substring(pkgdir,0,#pkgdir-#packagelayout);
 				   p := prefixDirectory | layout#"docdir";
-				   if isDirectory p then (
+				   if docdirdone#?p then (
+					if debugLevel > 10 then stderr << "--documentation directory already checked: " << p << endl;
+					)
+				   else if isDirectory p then (
+					docdirdone#p = true;
 					if debugLevel > 10 then stderr << "--checking documentation directory " << p << endl;
 					r := readDirectory p;
 					r = select(r, fn -> fn != "." and fn != ".." );
