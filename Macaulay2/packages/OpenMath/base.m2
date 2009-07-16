@@ -21,8 +21,6 @@
 ------------------------
 -------- To OM ---------
 ------------------------
-idCheck = f -> x -> if hasOMid(x) then OMR(getOMid(x)) else f x
-
 toOpenMath = method()
 toOpenMath String := x -> OMSTR(x)
 toOpenMath ZZ     := x -> OMI(x)
@@ -323,8 +321,7 @@ value XMLnode := x -> (
 	else
 		return OME(theOMerror)
 )
-openMathValue = method();
-openMathValue Thing := x -> (
+openMathValue = x -> (
 	try (
 		theOMerror = null;
 		return toOpenMath x;
