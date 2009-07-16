@@ -3,6 +3,8 @@
 #include "M2mem.h"
 #include "M2types.h"
 #include "xml-c.h"
+#define TRUE 1
+#define FALSE 0
 
 static char *copystring(const char *s) {
   char *p = (char *)getmem(strlen(s)+1);
@@ -237,6 +239,16 @@ xml_node *xml_NewText(xml_node *parent, M2_string content){
   xmlAddChild(parent->node,r->node);
   GC_FREE(cont);
   return r;
+}
+
+M2_string xml_toString(xml_node *n) {
+  M2_string s;
+  xmlBuffer *buf = xmlBufferCreate();
+  int len = xmlNodeDump(buf,n->doc,n->node,2,TRUE);
+  if (len == 0) return NULL;
+  s = tostringn((const char*)buf->content,len);
+  xmlBufferFree(buf);
+  return s;
 }
 
 /*

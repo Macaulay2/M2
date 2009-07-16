@@ -1005,7 +1005,7 @@ tostringfun(e:Expr):Expr := (
 	  r := Expr(Ccode(string,"tostring2(PyString_AS_STRING(",str,"))"));
 	  Ccode(void,"Py_DECREF((PyObject*)",str,")");
 	  r)
-     is x:xmlNode do Expr("<<libxml node>>")
+     is x:xmlNode do Expr(toString(x))
      is x:xmlAttr do Expr("<<libxml attribute>>")
      );
 setupfun("simpleToString",tostringfun);

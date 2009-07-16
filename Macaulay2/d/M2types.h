@@ -52,8 +52,8 @@ typedef struct M2_CCC_struct { __mpfr_struct *re, *im; } *M2_CCC; /* must agree 
   /* The C code produced from the D language has its own declarations for these things */
   extern M2_string system_newline;
 
-  extern M2_string tostring(char const *);
-  extern M2_string tostringn(char *s,int n);
+  extern M2_string tostring(const char *);
+  extern M2_string tostringn(const char *s,int n);
   extern M2_string strings_substr(M2_string x, int start, int len);
   extern M2_string strings_substr_1(M2_string x, int start);
   extern M2_string strings_join(M2_string x,M2_string y);
@@ -65,7 +65,7 @@ typedef struct M2_CCC_struct { __mpfr_struct *re, *im; } *M2_CCC; /* must agree 
 
   extern char **tocharstarstar(M2_stringarray);
   extern char **tocharstarstar_malloc(M2_stringarray);
-  extern M2_stringarray tostrings(int,char **);
+  extern M2_stringarray tostrings(int,const char **);
 
   extern M2_string gmp_tostringRR(M2_RRR);
   extern M2_string gmp_tostringCC(M2_CCC);

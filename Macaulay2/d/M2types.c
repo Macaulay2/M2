@@ -87,7 +87,7 @@ M2_string tostring(char const *s)
   return p;
 }
 
-M2_string tostring2(char const *s) /* identical to tostring! */
+M2_string tostring2(const char const *s) /* identical to tostring! */
 {
   int n = s ? strlen(s) : 0;
   M2_string p = (M2_string)getmem_atomic(sizeofarray(p,n));
@@ -96,7 +96,7 @@ M2_string tostring2(char const *s) /* identical to tostring! */
   return p;
 }
 
-M2_string tostringn(char *s,int n)
+M2_string tostringn(const char *s,int n)
 {
   M2_string p = (M2_string)getmem_atomic(sizeofarray(p,n));
   p->len = n;
@@ -119,7 +119,7 @@ M2_arrayint makearrayint(int n)
   return z; /* Note that getmem_atomic returns zeroed memory */
 }
 
-M2_stringarray tostrings(int n,char **s)
+M2_stringarray tostrings(int n,const char **s)
 {
   int i;
   M2_stringarray a;
