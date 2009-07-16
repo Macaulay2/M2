@@ -21,6 +21,10 @@ import getNodeChildren(node:xmlNode):xmlNodeOrNull;
 import isElement(node:xmlNode):bool;
 import isText(node:xmlNode):bool;
 -- import parse(s:string):void;
+import NewDoc(version:string,name:string):xmlNode;
+import NewProp(parent:xmlNode,name:string,value:string):xmlNode;
+import NewChild(parent:xmlNode,name:string):xmlNode;
+import NewText(parent:xmlNode,content:string):xmlNode;
 
 -- Local Variables:
 -- compile-command: "make -C $M2BUILDDIR/Macaulay2/d "
