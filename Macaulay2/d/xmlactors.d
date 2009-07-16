@@ -54,6 +54,42 @@ xmlIsText(e:Expr):Expr := (
      else WrongArg("an XML node"));
 setupfun("xmlIsText",xmlIsText);
 
+xmlNewDoc(e:Expr):Expr := (
+     when e is s:string do Expr(NewDoc("1.0",s))
+     else WrongArgString());
+setupfun("xmlNewDoc",xmlNewDoc);
+
+xmlNewProp(e:Expr):Expr := (
+     when e is args:Sequence do if length(args) != 3 then WrongNumArgs(3) else
+     when args.0 is parent:xmlNode do
+     when args.1 is name:string do
+     when args.2 is value:string do
+     Expr(NewProp(parent,name,value))
+     else WrongArgString(3)
+     else WrongArgString(2)
+     else WrongArg(1,"an xml node")
+     else WrongNumArgs(3));
+setupfun("xmlNewProp",xmlNewProp);
+
+xmlNewChild(e:Expr):Expr := (
+     when e is args:Sequence do if length(args) != 2 then WrongNumArgs(3) else
+     when args.0 is parent:xmlNode do
+     when args.1 is name:string do
+     Expr(NewChild(parent,name))
+     else WrongArgString(2)
+     else WrongArg(1,"an xml node")
+     else WrongNumArgs(2));
+setupfun("xmlNewChild",xmlNewChild);
+
+xmlNewText(e:Expr):Expr := (
+     when e is args:Sequence do if length(args) != 2 then WrongNumArgs(3) else
+     when args.0 is parent:xmlNode do
+     when args.1 is content:string do
+     Expr(NewText(parent,content))
+     else WrongArgString(2)
+     else WrongArg(1,"an xml node")
+     else WrongNumArgs(2));
+setupfun("xmlNewText",xmlNewText);
 
 -- Local Variables:
 -- compile-command: "make -C $M2BUILDDIR/Macaulay2/d "
