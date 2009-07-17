@@ -290,7 +290,7 @@ initcurrentlayout := () -> (
 	  );
      prefixDirectory = if currentLayout =!= null then substring(bindir,0,#bindir-#currentLayout#"bin");
      if readlink exe =!= null then (
-	  exe2 := concatPath(realpath dir exe | "/", readlink exe);
+	  exe2 := concatPath(realpath dir exe, readlink exe);
 	  bindir2 := dir exe2 | "/";
 	  currentLayout2 := (
 	       if issuffix(Layout#2#"bin",bindir2) then Layout#2 else
@@ -539,7 +539,7 @@ exe = minimizeFilename (
      if isStablePath commandLine#0 then concatenate(currentDirectory|commandLine#0)
      else pathsearch commandLine#0)
 if not isAbsolutePath exe then exe = currentDirectory | exe ;
-exe = concatenate(realpath dir exe, "/", base exe)
+exe = concatenate(realpath dir exe, base exe)
 
 describePath := () -> (
      if #path == 0 then stderr << "--file search path empty" << endl
