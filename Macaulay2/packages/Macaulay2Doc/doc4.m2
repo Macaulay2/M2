@@ -720,6 +720,20 @@ document {
      SeeAlso => { installPackage }
      }
 
+document {
+     Key => obeyInterrupts,
+     Usage => "obeyInterrupts()",
+     Consequences => {
+	  {
+	       "the default actions for the signals SIGSEGV, SIGINT, and SIGALRM are restored, and thus
+	       typing CTRL-C will result in the Macaulay2 process terminating immediately."
+	       }
+	  },
+     PARA {
+	  "The command line option ", TT "--int", " has the same effect."
+	  }
+     }     
+
 -- Local Variables:
 -- compile-command: "make -C $M2BUILDDIR/Macaulay2/m2 "
 -- End:

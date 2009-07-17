@@ -88,6 +88,7 @@ import readDirectory(name:string):(null or array(string));
 import strncmp(s:string,t:string,n:int):int;
 import history():array(string);
 import chdir(name:string):int;
+import nohandlers():void;
 
 everytimeCell := { f:function():void, next:everytimeCell };
 dummyfun():void := nothing;
