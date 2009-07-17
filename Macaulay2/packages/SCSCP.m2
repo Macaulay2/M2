@@ -27,12 +27,14 @@ incomingConnCounter = 0;
 ----------------------------------
 ---------- CLIENT CODE -----------
 ----------------------------------
+newConnection = method();
+newConnection (String, String) := (host, port) -> (
+	hostport := host|":"|port;
+	stderr << "[SCSCP][Client] Connecting to " << hostport << endl;
 
-newConnection = hostport -> (
 	s := new SCSCPConnection;
 	s#"fd" = openInOut ("$"|hostport);
 
-	stderr << "[SCSCP][Client] Connecting to " << hostport << endl;
 	ans := ""; buf := "";
 	while #ans == 0 or ans#-1 =!= "\n" do (
 		buf = read s#"fd";
@@ -65,6 +67,15 @@ newConnection = hostport -> (
 	
 	s	
 );
+newConnection (String, ZZ) := (host, port) -> newConnection(host, toString port);
+newConnection (String) := s -> (
+	mtch := regex("^(.*)\\:(.*)$", s);
+	if mtch === null then 
+		newConnection(s, "26133")
+	else
+		newConnection(substring(s, mtch#1#0, mtch#1#1),substring(s, mtch#2#0, mtch#2#1))
+)
+
 
 Manipulator SCSCPConnection := (m, s) -> (
 	if m === close then close s#"fd"
@@ -136,13 +147,23 @@ SCSCPConnection Thing := compute
 ----------------------------------
 ---------- SERVER CODE -----------
 ----------------------------------
-startServer = hostport -> (
+serverSocket = null;
+startServer = method();
+startServer (String) := hostport -> (
+	--Maybe we should cleanup the old socket?
+	if serverSocket =!= null and class(serverSocket) === File then (
+		stderr << "[SCSCP][Server] Cleaning up old socket." << endl;
+		close serverSocket;
+	);
+
+	--Here we go...
+	if match("[0-9]+", hostport) then hostport = ":"|hostport;
 	stderr << "[SCSCP][Server] Listening on " << hostport << endl;
 
-	f := openListener("$"|hostport);
+	serverSocket = openListener("$"|hostport);
 	while true do (
 		stderr << "[SCSCP][Server] Waiting for incoming connection "  << endl;
-		g := openInOut f;
+		g := openInOut serverSocket;
 		stderr << "[SCSCP][Server] Incoming connection. Forking. " << endl;
 		
 		--Once we are here an incoming connection arrived, since openInOut blocks.
@@ -182,8 +203,10 @@ startServer = hostport -> (
 		
 	);
 
-	close f;
+	close serverSocket;
 )
+startServer (ZZ) := port -> startServer toString port;
+installMethod(startServer, () -> startServer("26133"));
 
 handleIncomingConnection = sock -> (
 	cid := incomingConnCounter;
