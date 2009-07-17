@@ -383,7 +383,7 @@ static bool isDirectory(const char *cname) {
 M2_string system_realpath(M2_string filename) {
   char *fn = tocharstar(filename);
   char buf[PATH_MAX+1];
-  char *r = realpath(fn,buf);
+  char *r = realpath(*fn ? fn : ".",buf);
   if (isDirectory(r)) strcat(r,"/");
   GC_FREE(fn);
   return r == NULL ? NULL : tostring(buf);
