@@ -2054,6 +2054,13 @@ toExternalString(e:Expr):Expr := (
      );
 setupfun("toExternalString0",toExternalString);
 
+obeyInterrupts(e:Expr):Expr := (
+     when e is s:Sequence do if length(s) == 0 then (nohandlers(); nullE)
+     else WrongNumArgs(0)
+     else WrongNumArgs(0)
+     );
+setupfun("obeyInterrupts",obeyInterrupts);
+
 -- Local Variables:
 -- compile-command: "make -C $M2BUILDDIR/Macaulay2/d "
 -- End:

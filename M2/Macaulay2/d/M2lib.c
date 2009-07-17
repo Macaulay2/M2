@@ -893,6 +893,13 @@ int system_randomint(void) {
 #endif
      }
 
+void system_nohandlers() {
+  signal(SIGSEGV,SIG_DFL);
+  signal(SIGINT,SIG_DFL);
+#      ifdef SIGALRM
+  signal(SIGALRM,SIG_DFL);
+#      endif
+}
 
 /*
 // Local Variables:
