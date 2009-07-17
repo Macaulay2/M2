@@ -32,7 +32,7 @@ newConnection = hostport -> (
 	s := new SCSCPConnection;
 	s#"fd" = openInOut ("$"|hostport);
 
-	stderr << "[SCSCP][Client] Connecting..." << endl;
+	stderr << "[SCSCP][Client] Connecting to " << hostport << endl;
 	ans := ""; buf := "";
 	while #ans == 0 or ans#-1 =!= "\n" do (
 		buf = read s#"fd";
@@ -137,7 +137,7 @@ SCSCPConnection Thing := compute
 ---------- SERVER CODE -----------
 ----------------------------------
 startServer = hostport -> (
-	stderr << "[SCSCP][Server] Listening on hostport " << hostport << endl;
+	stderr << "[SCSCP][Server] Listening on " << hostport << endl;
 
 	f := openListener("$"|hostport);
 	while true do (

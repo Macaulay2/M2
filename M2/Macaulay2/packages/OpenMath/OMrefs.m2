@@ -31,7 +31,8 @@ getNextFreeRef = x -> (
 
 addOMref = method()
 addOMref (String, Thing, XMLnode) := (s,t,x) -> ( 
-	if not x#?"id" then	x#"id" = s;
+	-- (a reference to "#x" will yield an id of "x")
+	if not x#?"id" then	x#"id" = (select("^#?(.*)$", "\\1", s))#0;
 	storedOMrefs#s = (t, x);
 	storedOMids#t = s;
 	s
@@ -79,10 +80,6 @@ removeOMid Thing := t -> (
 --   to return the reference. This allows to be reset by resetPrintedIDs, so that
 --   you can be sure to print the actual object at least once on output.
 
-----OLD----
---idCheck = f -> x -> if hasOMid(x) then OMR(getOMid(x)) else f x
---autoCreateIDCheck = idCheck
-
 declaredIDs = new MutableHashTable
 resetDeclaredIDs = x -> (declaredIDs = new MutableHashTable)
 
@@ -104,7 +101,7 @@ autoCreateIDCheck = f -> x -> (
 	r := (idCheck(f))(x);
 	if class(r) === XMLnode and r.tag === "OMR" then return r;
 	
-	--Otherwise we assign it, and return the original object with that ID set;
+	--Otherwise we assign it, and return the original object with that ID set
 	-- and record that we printed it now.
 	s := addOMref(x, r);
 	declaredIDs#s = 1;
