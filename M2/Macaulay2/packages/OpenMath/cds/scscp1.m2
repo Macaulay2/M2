@@ -44,17 +44,17 @@ constructProcComplCookie = (x, callid) -> (
 OMSEvaluators#"scscp1" = new MutableHashTable;
 OMSEvaluators#"scscp1"#"procedure_call" = (args, attrs) -> ( 
 	-- Get call_id 
-	if not attrs#?(OMS("scscp1", "call_id")) then
+	if not attrs#?("scscp1.call_id") then
 		return constructProcTerm("scscp1.procedure_call should have a call_id", OMSTR("0"));
-	callid := attrs#(OMS("scscp1", "call_id"));
+	callid := attrs#("scscp1.call_id")#1;
 	
 	-- Get option_return_ ..
 	ret := null;
-	if attrs#?(OMS("scscp1", "option_return_object")) then (
+	if attrs#?("scscp1.option_return_object") then (
 		ret = "object";
-	) else if attrs#?(OMS("scscp1", "option_return_nothing")) then (
+	) else if attrs#?("scscp1.option_return_nothing") then (
 		ret = "nothing";
-	) else if attrs#?(OMS("scscp1", "option_return_cookie")) then (
+	) else if attrs#?("scscp1.option_return_cookie") then (
 		ret = "cookie";
 	) else (
 		return constructProcTerm("scscp1.procedure_call: No suitable option_return_ found", callid);

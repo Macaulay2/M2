@@ -76,8 +76,8 @@ OMATTR = method()
 OMATTR (XMLnode, HashTable) := (child, attrs) -> (
 	--construct the key,value,key,value, ... that will appear inside the OMATP
 	attrsflat := {};
-	for k in keys(attrs) do (
-		attrsflat = join(attrsflat, {k, attrs#k})
+	for k in values(attrs) do (
+		attrsflat = join(attrsflat, {k#0, k#1})
 	);
 	
 	--clean out the attributes from the child
