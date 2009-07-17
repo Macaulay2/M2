@@ -718,7 +718,7 @@ static const char *hostname_error_message;
 #if HAVE_GETADDRINFO && GETADDRINFO_WORKS
 static int set_addrinfo(struct addrinfo **addr, struct addrinfo *hints, char *hostname, char *service) {
      int ret;
-     ret = getaddrinfo(hostname, service, NULL, addr);
+     ret = getaddrinfo(hostname, service, hints /* thanks to Dan Roozemond for pointing out this was NULL before, causing problems */, addr);
      hostname_error_message = ret != 0 ? gai_strerror(ret) : NULL;
      return ret;
 }
