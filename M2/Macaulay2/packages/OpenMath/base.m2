@@ -266,6 +266,13 @@ fromOpenMath = method()
 
 fromOpenMath XMLnode := x->(
 	r := null;
+	
+	--If we know what it is (by the id) then when just use that!
+	if x#?"id" and (class(x#"id") === String) and (existsOMref(x#"id")) then (
+		r = (getOMref(x#"id"))#0;
+		if r =!= null then return r;
+	);
+
 	t := x.tag;
 	if      t === "OMI"      then  r = fromOpenMathOMI(x)
 	else if t === "OMF"      then  r = fromOpenMathOMF(x)
@@ -277,6 +284,7 @@ fromOpenMath XMLnode := x->(
 	else if t === "OMBIND"   then  r = fromOpenMathOMBIND(x)
 	else if t === "OMATTR"   then  r = fromOpenMathOMATTR(x)
 	else if t === "OMR"      then  r = fromOpenMathOMR(x)
+	else if t === "OME"      then  r = r
 	else (
 		print concatenate("WARNING -- Could not parse XMLnode with tag ", t);
 		r = x
@@ -287,7 +295,7 @@ fromOpenMath XMLnode := x->(
 		if (class(x#"id") =!= String) then (
 			theOMerror = "id was not a string"; error("whoops");
 		);
-		addOMref(x#"id", r);
+		addOMref(x#"id", r, x);
 	);
 		
 	r

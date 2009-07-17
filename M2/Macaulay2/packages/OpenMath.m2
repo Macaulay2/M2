@@ -88,6 +88,16 @@ renderXML = (x,t) -> (
 -- ovt = openMathValue vt;
 -- << "openMathValue value t = " << ovt << endl;
 
+{*
+-- I want this to work, and show up as something with an ID
+R = QQ[y]
+f = hold(y^2)*hold(y+1)
+
+-- Then, this should work with Magma:
+s = newSCSCPConnection("127.0.0.1:26136")
+s(f)
+*}
+
 -------------------------------
 ----(LITTLE) DOCUMENTATION-----
 -------------------------------

@@ -81,6 +81,9 @@ computeSCSCP (SCSCPConnection, XMLnode) := (s,x) -> (
 	y
 )
 computeSCSCP (SCSCPConnection, Thing) := (s,x) -> (
+	--When constructin an OpenMath object, we first make sure that we do not throw undeclared
+	--  and possibly automatically generated ids around. I consider this a good idea, I think.
+	resetDeclaredIDs();
 
 	stderr << "Constructing OpenMath object..." << endl;
 	o := openMathValue x;
@@ -97,6 +100,7 @@ computeSCSCP (SCSCPConnection, Thing) := (s,x) -> (
 	t
 )
 
+-- This allows for s( .. something .. )
 SCSCPConnection Thing := computeSCSCP
 
 

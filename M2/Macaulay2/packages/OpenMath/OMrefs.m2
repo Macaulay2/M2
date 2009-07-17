@@ -2,8 +2,12 @@
 
 -- storedOMrefs is a hash table, whose 
 -- * keys are the references (as strings)
--- * the values are the values (Macaulay2 objects)
--- storedOMids is the other way around
+-- * the values are pairs (the values (as Macaulay2 objects), openMathObj)
+-- addOMref ensures that the openMathObj in storedOMrefs have proper"id"s attached.
+
+-- storedOMids is the other way around:
+-- * keys are the Macaulay2 objects
+-- * values are the ids as strings.
 -- storedOMrefCounter is used to get serials for objects
 
 storedOMrefs = new MutableHashTable;
@@ -26,23 +30,24 @@ getNextFreeRef = x -> (
 )
 
 addOMref = method()
-addOMref (String, Thing) := (s,t) -> ( 
-	storedOMrefs#s = t;
+addOMref (String, Thing, XMLnode) := (s,t,x) -> ( 
+	if not x#?"id" then	x#"id" = s;
+	storedOMrefs#s = (t, x);
 	storedOMids#t = s;
 	s
 )
-addOMref Thing := t -> (
+addOMref (Thing, XMLnode) := (t, x) -> (
 	if hasOMid(t) then
 		getOMid(t)
 	else
-		addOMref(getNextFreeRef(), t)
+		addOMref(getNextFreeRef(), t, x)
 );
 
 removeOMref = method()
 removeOMref String := s -> (
 	if not storedOMrefs#?s then return false;
 	
-	v := storedOMrefs#s;
+	v := (storedOMrefs#s)#0;
 	
 	remove(storedOMrefs, s);
 	remove(storedOMids, v);
@@ -73,35 +78,37 @@ removeOMid Thing := t -> (
 -- printedIDs is used to determine whether idCheck and autoIDcheck are allowed
 --   to return the reference. This allows to be reset by resetPrintedIDs, so that
 --   you can be sure to print the actual object at least once on output.
-----TO FIX ----
-idCheck = f -> x -> if hasOMid(x) then OMR(getOMid(x)) else f x
-autoCreateIDCheck = idCheck
 
--- declaredIDs = set{}
--- 
--- idCheck = f -> x -> (
--- 	--Doesn't have an id
--- 	if (not hasOMid(x)) then return f x; 
--- 
--- 	--Does have an id, and it was declared, so we are allowed to OMR it
--- 	s := getOMid(x);
--- 	if printedIDs#?s then return OMR(s);
--- 	
--- 	--ID wasn't declared yet, so we should.
--- 	
--- 	or (printedIDs#?(s := getOMid(x))) then f x else OMR(s)
--- autoCreateIDCheck = f -> x -> (
--- 	--If it exists, we use it
--- 	r := (idCheck(f))(x);
--- 	if class(r) === XMLnode and r.tag === "OMR" then return r;
--- 	
--- 	--Otherwise we assign it, and return the original object with that ID set.
--- 	<< "r = " << r << endl;
--- 	s := addOMref(x);
--- 	r = new MutableHashTable from r;
--- 	r#"id" = s;
--- 	r = new HashTable from r;
--- 	r
--- )
--- resetDeclaredIDs = x -> (declaredIDs = set{})
+----OLD----
+--idCheck = f -> x -> if hasOMid(x) then OMR(getOMid(x)) else f x
+--autoCreateIDCheck = idCheck
+
+declaredIDs = new MutableHashTable
+resetDeclaredIDs = x -> (declaredIDs = new MutableHashTable)
+
+idCheck = f -> x -> (
+	--Doesn't have an id
+	if (not hasOMid(x)) then return f x; 
+
+	--Does have an id and it was declared, so we are allowed to OMR it
+	s := getOMid(x);
+	if declaredIDs#?s then return OMR(s);
+	
+	--id wasn't declared yet, so we should -> get the OM object.
+	--And we printed it now.
+	declaredIDs#s = 1;
+	return (getOMref(s))#1;
+)	
+autoCreateIDCheck = f -> x -> (
+	--If it exists, we use it
+	r := (idCheck(f))(x);
+	if class(r) === XMLnode and r.tag === "OMR" then return r;
+	
+	--Otherwise we assign it, and return the original object with that ID set;
+	-- and record that we printed it now.
+	s := addOMref(x, r);
+	declaredIDs#s = 1;
+	(getOMref(s))#1
+)
+
 
