@@ -1,3 +1,9 @@
+this requires thought, since we might be using the build M2 to install to the user application directory!
+     -- this one is used for creating links to the file, hence "currentLayout", since the bifurcation of the layout
+     -- into common and exec halves is not retained in the final installation; it's just a convenience while assembling
+     -- the distribution, so common files can be shared among build trees
+probably installationLayout should be used instead of currentLayout, and we should make sure installationLayout has the right value
+
 With this command
 
   installPackage("NAG", RemakeAllDocumentation=>true, MakeLinks=>true, AbsoluteLinks=>true, RerunExamples=>true, SeparateExec=>false, IgnoreExampleErrors=>true)

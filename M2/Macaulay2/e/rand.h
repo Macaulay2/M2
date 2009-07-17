@@ -35,10 +35,10 @@ extern "C" {
   /* returns random a/b, where 1 <= b <= height, 1 <= a <= height */
   /* if height is the null pointer, use the default height */
   
-  M2_RRR rawRandomRR(unsigned long precision0);
+  M2_RRR rawRandomRR(unsigned long prec);
   /* returns a uniformly distributed random real with the given precision, in range [0.0,1.0] */
   
-  M2_CCC rawRandomCC(unsigned long precision0);
+  M2_CCC rawRandomCC(unsigned long prec);
 
 #if defined(__cplusplus)
 }
