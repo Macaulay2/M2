@@ -57,6 +57,12 @@ initInstallDirectory := o -> installDirectory = minimizeFilename(runfun o.Instal
 -----------------------------------------------------------------------------
 
 absoluteLinks := false
+withAbsolutelinks := f -> (
+     t := absoluteLinks;
+     absoluteLinks = true;
+     r := f();
+     absoluteLinks = t;
+     r)
 
 isAbsoluteURL := url -> match( "^(#|mailto:|[a-z]+://)", url )
 
@@ -178,8 +184,8 @@ links := tag -> (
 	       LINK { "href" => toURL htmlFilename FIRST tag, "rel" => "First", linkTitleTag FIRST tag},
 	       ),
 	  if UP#?tag then LINK { "href" => toURL htmlFilename UP#tag, "rel" => "Up", linkTitleTag UP#tag},
-	  LINK { "href" => toURL (replace("PKG","Style",currentLayout#"package") | "doc.css"), "rel" => "stylesheet", "type" => "text/css" },
-	  LINK { "href" => toURL (replace("PKG","Style",currentLayout#"package") | "doc-no-buttons.css"), "rel" => "alternate stylesheet", "title" => "no buttons", "type" => "text/css" },
+	  LINK { "href" => withAbsolutelinks (() -> toURL (replace("PKG","Style",installationLayout#"package") | "doc.css")), "rel" => "stylesheet", "type" => "text/css" },
+	  LINK { "href" => withAbsolutelinks (() -> toURL (replace("PKG","Style",installationLayout#"package") | "doc-no-buttons.css")), "rel" => "alternate stylesheet", "title" => "no buttons", "type" => "text/css" },
 	  if SRC#?tag then (
      	       LINK { 
 		    "href" => concatenate("file://",externalPath, toAbsolutePath SRC#tag#0), 
