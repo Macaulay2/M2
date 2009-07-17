@@ -15,6 +15,9 @@ newPackage(
 debug needsPackage "OpenMath" -- so that we have all global symbols of OpenMath in here.
 needsPackage "XML"
 
+----------------------------------
+---------- SETTINGS --------------
+----------------------------------
 SCSCPConnection = new Type of MutableHashTable
 ProtVersion = "1.3"
 ProtCompatibleVersions = { "1.2", "1.3" }
@@ -25,12 +28,27 @@ callIDCounter = 0;
 incomingConnCounter = 0;
 
 ----------------------------------
+-- CONVENIENT DEBUGGING OUTPUT ---
+----------------------------------
+dbgout = l -> (
+	if debugLevel >= l then
+		stderr << "[SCSCP]"
+	else
+		null
+)
+--Convention:
+-- 0: really critical stuff.
+-- 1: main messages
+-- 2: other info
+-- 5: things you almost certainly never want to read
+
+----------------------------------
 ---------- CLIENT CODE -----------
 ----------------------------------
 newConnection = method();
 newConnection (String, String) := (host, port) -> (
 	hostport := host|":"|port;
-	stderr << "[SCSCP][Client] Connecting to " << hostport << endl;
+	dbgout(1) << "[Client] Connecting to " << hostport << endl;
 
 	s := new SCSCPConnection;
 	s#"fd" = openInOut ("$"|hostport);
@@ -38,30 +56,36 @@ newConnection (String, String) := (host, port) -> (
 	ans := ""; buf := "";
 	while #ans == 0 or ans#-1 =!= "\n" do (
 		buf = read s#"fd";
-		if atEndOfFile s#"fd" then ( stderr << "[SCSCP][Client]  atEndOFFile" << endl; return; );
+		if atEndOfFile s#"fd" then ( 
+			dbgout(0) << "[Client]  atEndOFFile" << endl; 
+			error("atEndOfFile during connection"); 
+		);
 
 		ans = ans|buf;
 	);
 
-	stderr << "[SCSCP][Client] Received: '" << ans << "'" << endl;
+	dbgout(2) << "[Client] Received: '" << ans << "'" << endl;
 
 	versionstr := ///<?scscp version="/// | ProtVersion | ///" ?>///;
-	stderr << "[SCSCP][Client] Requesting '" << versionstr << "'" << endl;
+	dbgout(2) << "[Client] Requesting '" << versionstr << "'" << endl;
 	s#"fd" << versionstr << endl << flush;
 	
-	stderr << "[SCSCP][Client] Waiting for response to version request..." << endl;
+	dbgout(2) << "[Client] Waiting for response to version request..." << endl;
 	ans = "";
 	while #ans == 0 or ans#-1 =!= "\n" do (
 		buf = read s#"fd";
-		if atEndOfFile s#"fd" then ( stderr << "[SCSCP][Client]  atEndOFFile" << endl; return; );
+		if atEndOfFile s#"fd" then ( 
+			dbgout(0) << "[Client]  atEndOFFile" << endl; 
+			error("atEndOfFile during version negotiation"); 
+		);
 
 		ans = ans|buf;
 	);
 	
-	stderr << "[SCSCP][Client] Received: '" << ans << "'" << endl;
+	dbgout(2) << "[Client] Received: '" << ans << "'" << endl;
 	
 	if ans =!= versionstr|"\n" then (
-		stderr << "[SCSCP][Client] Incompatible." << endl;
+		dbgout(0) << "[Client] Incompatible." << endl;
 		error("SCSCP connection failed.");
 	);
 	
@@ -85,7 +109,7 @@ Manipulator SCSCPConnection := (m, s) -> (
 compute = method()
 compute (SCSCPConnection, XMLnode) := (s,x) -> (
 
-	stderr << "[SCSCP][Compute] Constructing procedure call..." << endl;
+	dbgout(2) << "[Compute] Constructing procedure call..." << endl;
 	if x.tag =!= "OMA" then x = OMA("fns1", "identity", {x});
 	pc := OMA("scscp1", "procedure_call", { x });
 	pc = setOMAttr(pc, OMS("scscp1", "call_id"), OMSTR(toString (callIDCounter = callIDCounter+1)));
@@ -93,27 +117,27 @@ compute (SCSCPConnection, XMLnode) := (s,x) -> (
 	pc = OMOBJ(pc);
 	pc = createOMATTRObj(pc);
 
-	stderr << "[SCSCP][Compute] Sending procedure call..." << endl;
+	dbgout(2) << "[Compute] Sending procedure call..." << endl;
 	tspc := toString toLibxmlNode pc;
-	stderr << endl << tspc << endl;
+	dbgout(5) << endl << tspc << endl;
 	s#"fd" << "<?scscp start ?>" << endl << flush;
 	s#"fd" << tspc << endl;
 	s#"fd" << "<?scscp end ?>" << endl << flush;
 
-	stderr << "[SCSCP][Compute] Waiting for response..." << endl;
+	dbgout(2) << "[Compute] Waiting for response..." << endl;
 	ans := "";
 	waitfor := "(.*)<\\?scscp end \\?>\n$";
 	while not match(waitfor, ans) do (
 		buf = read s#"fd";
-		if atEndOfFile s#"fd" then ( stderr << "[SCSCP][Client]  atEndOFFile" << endl; return null; );
+		if atEndOfFile s#"fd" then ( dbgout(0) << "[Client]  atEndOFFile" << endl; return null; );
 
 		ans = ans|buf;
 	);
 	
-	stderr << "[SCSCP][Client] Answer received..." << endl;
-	<< ans << endl;
+	dbgout(2) << "[Client] Answer received..." << endl;
+	dbgout(5) << endl << ans << endl;
 	
-	stderr << "[SCSCP][Client] Parsing answer..." << endl;
+	dbgout(2) << "[Client] Parsing answer..." << endl;
 	y := parse ans;
 	if class(y) =!= XMLnode then
 		error "Parsing failed.";
@@ -125,7 +149,7 @@ compute (SCSCPConnection, Thing) := (s,x) -> (
 	--  and possibly automatically generated ids around. I consider this a good idea, I think.
 	resetDeclaredIDs();
 
-	stderr << "[SCSCP][Compute] Constructing OpenMath object..." << endl;
+	dbgout(2) << "[Compute] Constructing OpenMath object..." << endl;
 	o := openMathValue x;
 	if class(o) === XMLnode and o.tag === "OME" then (
 		stderr << o << endl;
@@ -134,7 +158,7 @@ compute (SCSCPConnection, Thing) := (s,x) -> (
 	
 	a := compute(s, o);
 	
-	stderr << "[SCSCP][Compute] Evaluating answer..." << endl;
+	dbgout(2) << "[Compute] Evaluating answer..." << endl;
 	t := value a;
 
 	t
@@ -152,19 +176,19 @@ startServer = method();
 startServer (String) := hostport -> (
 	--Maybe we should cleanup the old socket?
 	if serverSocket =!= null and class(serverSocket) === File then (
-		stderr << "[SCSCP][Server] Cleaning up old socket." << endl;
+		dbgout(1) << "[Server] Cleaning up old socket." << endl;
 		close serverSocket;
 	);
 
 	--Here we go...
 	if match("[0-9]+", hostport) then hostport = ":"|hostport;
-	stderr << "[SCSCP][Server] Listening on " << hostport << endl;
+	dbgout(0) << "[Server] Listening on " << hostport << endl;
 
 	serverSocket = openListener("$"|hostport);
 	while true do (
-		stderr << "[SCSCP][Server] Waiting for incoming connection "  << endl;
+		dbgout(2) << "[Server] Waiting for incoming connection "  << endl;
 		g := openInOut serverSocket;
-		stderr << "[SCSCP][Server] Incoming connection. Forking. " << endl;
+		dbgout(0) << "[Server] Incoming connection. Forking. " << endl;
 		
 		--Once we are here an incoming connection arrived, since openInOut blocks.
 		
@@ -179,7 +203,7 @@ startServer (String) := hostport -> (
 			close g;
 			r := wait pid;
 			if r =!= 0 then 
-				stderr << "[SCSCP][Server] Child exited with nonzero exit code." << endl;
+				dbgout(0) << "[Server] Child exited with nonzero exit code." << endl;
 		) else (
 			--child (can find out own pid with getpid)
 			--Close stdin in the child. We'll still be in the same process group, so that Ctrl-C
@@ -196,7 +220,7 @@ startServer (String) := hostport -> (
 			) else (
 				--in grandchild; do stuff
 				handleIncomingConnection(g);
-				stderr << "[SCSCP][Server] Child " << incomingConnCounter << " terminated" << endl;
+				dbgout(2) << "[Server] Child " << incomingConnCounter << " terminated" << endl;
 				exit(0); --this closes g automatically as well.
 			);
 		);
@@ -210,7 +234,7 @@ installMethod(startServer, () -> startServer("26133"));
 
 handleIncomingConnection = sock -> (
 	cid := incomingConnCounter;
-	stderr << "[SCSCP][handleIncoming " << cid << "] Handling new connection" << endl;
+	dbgout(2) << "[handleIncoming " << cid << "] Handling new connection" << endl;
 	
 	s := concatenate(
 		"<?scscp service_name=", format ServiceName, 
@@ -219,10 +243,10 @@ handleIncomingConnection = sock -> (
 		" scscp_versions=", format ProtVersion, 
 		" ?>");
 
-	stderr << "[SCSCP][handleIncoming " << cid << "] Sending announcement" << endl;
+	dbgout(2) << "[handleIncoming " << cid << "] Sending announcement" << endl;
 	sock << s << endl << flush;
 
-	stderr << "[SCSCP][handleIncoming " << cid << "] Waiting for version request..." << endl;
+	dbgout(2) << "[handleIncoming " << cid << "] Waiting for version request..." << endl;
 	ans := ""; buf := ""; mtch := null;
 	waitfor := "<\\?scscp version=\"(.*)\" \\?>"; 
 	while (mtch = regex(waitfor, ans)) === null do (
@@ -230,7 +254,7 @@ handleIncomingConnection = sock -> (
 
 		--Handle EOF
 		if atEndOfFile sock then (
-			stderr << "[SCSCP][handleIncoming " << cid << "]  atEndOFFile" << endl;
+			dbgout(1) << "[handleIncoming " << cid << "]  atEndOFFile" << endl;
 			return;
 		);
 
@@ -238,24 +262,24 @@ handleIncomingConnection = sock -> (
 	);
 	ver := substring(ans, mtch#1#0, mtch#1#1);
 	if not member(ver, ProtCompatibleVersions) then (
-		stderr << "[SCSCP][handleIncoming " << cid << "] Incompatible version: '" << ver << "'" << endl;
+		dbgout(1) << "[handleIncoming " << cid << "] Incompatible version: '" << ver << "'" << endl;
 		sock << "<?scscp quit reason=\"incompatible version " << ver << "\" ?>" << endl << flush;
 		return;
 	);
 	ans = substring(ans, mtch#0#0 + mtch#0#1);
 
-	stderr << "[SCSCP][handleIncoming " << cid << "] Great! Compatible version: '" << ver << "'" << endl;
+	dbgout(2) << "[handleIncoming " << cid << "] Great! Compatible version: '" << ver << "'" << endl;
 	sock << "<?scscp version=\"" << ver << "\" ?>" << endl << flush;
 	
 	while true do (
-		stderr << "[SCSCP][handleIncoming " << cid << "] Waiting for pc...'" << "'" << endl;
+		dbgout(5) << "[handleIncoming " << cid << "] Waiting for pc...'" << "'" << endl;
 		waitfor = "(.*)<\\?scscp ([a-z]+)( [^>]*)? \\?>";
 		while (mtch = regex(waitfor, ans)) === null do (
 			buf = read sock;
 
 			--Handle EOF
 			if atEndOfFile sock then (
-				stderr << "[SCSCP][handleIncoming " << cid << "]  atEndOFFile" << endl;
+				dbgout(1) << "[handleIncoming " << cid << "]  atEndOFFile" << endl;
 				return;
 			);
 
@@ -265,20 +289,20 @@ handleIncomingConnection = sock -> (
 
 		if keyw === "quit" then (
 			--<?scscp quit ?>
-			stderr << "[SCSCP][handleIncoming " << cid << "] 'quit' received" << endl;
+			dbgout(2) << "[handleIncoming " << cid << "] 'quit' received" << endl;
 			return;
 		) else if keyw === "cancel" then (
 			--<?scscp cancel ?>
-			stderr << "[SCSCP][handleIncoming " << cid << "] 'cancel' received" << endl;
+			dbgout(2) << "[handleIncoming " << cid << "] 'cancel' received" << endl;
 			ans = "";
 		) else if keyw === "start" then (
 			--<?scscp start ?>
-			stderr << "[SCSCP][handleIncoming " << cid << "] 'start' received" << endl;
+			dbgout(2) << "[handleIncoming " << cid << "] 'start' received" << endl;
 			--take off this bit, otherwise we'll end up in this case every time...
 			ans = substring(ans, mtch#0#0 + mtch#0#1);
 		) else if keyw === "end" then (
 			--<?scscp end ?>
-			stderr << "[SCSCP][handleIncoming " << cid << "] 'end' received" << endl;
+			dbgout(2) << "[handleIncoming " << cid << "] 'end' received" << endl;
 			
 			question := substring(ans, 0, mtch#1#0);
 			ans = substring(ans, mtch#0#0 + mtch#0#1);
@@ -287,7 +311,7 @@ handleIncomingConnection = sock -> (
 			sock << "<?scscp start ?>" << endl << resp << endl << "<?scscp end ?>" << endl << flush;
 		) else (
 			--Unknown keyword!!
-			stderr << "[SCSCP][handleIncoming " << cid << "] Unrecognized keyword: '" << keyw << "'" << endl;
+			dbgout(1) << "[handleIncoming " << cid << "] Unrecognized keyword: '" << keyw << "'" << endl;
 			--take off this bit, otherwise we'll end up in this case every time...
 			ans = substring(ans, mtch#0#0 + mtch#0#1);		
 		)
@@ -307,24 +331,25 @@ handleProcedureCall = str -> (
 	
 	cid := incomingConnCounter;
 	
-	stderr << "[SCSCP][handleProcedureCall " << cid << "] Disassembling procedure call..." << endl;
+	dbgout(5) << "[handleProcedureCall " << cid << "] Disassembling procedure call..." << endl;
+	dbgout(5) << endl << str << endl;
 	try (
 		t := parse str;
 	) else (
-		stderr << "[SCSCP][handleProcedureCall " << cid << "] Parsing failed...." << endl;
+		dbgout(1) << "[handleProcedureCall " << cid << "] Parsing failed...." << endl;
 		pt := constructProcTerm("Parsing your question failed.", OMSTR("0"));
 		return toString toLibxmlNode createOMATTRObj OMOBJ pt;
 	);
 
-	stderr << "[SCSCP][handleProcedureCall " << cid << "] Evaluating procedure call..." << endl;
+	dbgout(2) << "[handleProcedureCall " << cid << "] Evaluating procedure call..." << endl;
 	ret := value t;
 	
 	if class(ret) =!= XMLnode then (
-		stderr << "[SCSCP][handleProcedureCall " << cid << "] Hmz, response was no XMLnode. Ah well, we'll make one" << endl;
+		dbgout(2) << "[handleProcedureCall " << cid << "] Hmz, response was no XMLnode. Ah well, we'll make one" << endl;
 		ret = openMathValue ret;
 	);
 	
-	stderr << "[SCSCP][handleProcedureCall " << cid << "] Returning response..." << endl;
+	dbgout(5) << "[handleProcedureCall " << cid << "] Returning response..." << endl;
 	
 	return toString toLibxmlNode createOMATTRObj OMOBJ ret;
 )
