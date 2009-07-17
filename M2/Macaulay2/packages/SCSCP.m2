@@ -16,7 +16,6 @@ newSCSCPConnection = hostport -> (
 	stderr << "Connecting..." << endl;
 	ans := "";
 	while #ans == 0 or ans#-1 =!= "\n" do (
-		while not isReady s#"fd" do nothing; 
 		ans = ans|(read s#"fd");
 	);
 
@@ -29,7 +28,6 @@ newSCSCPConnection = hostport -> (
 	stderr << "Waiting for response to version request..." << endl;
 	ans = "";
 	while #ans == 0 or ans#-1 =!= "\n" do (
-		while not isReady s#"fd" do nothing; 
 		ans = ans|(read s#"fd");
 	);
 	
@@ -67,7 +65,6 @@ computeSCSCP (SCSCPConnection, XMLnode) := (s,x) -> (
 	ans := "";
 	waitfor := "(.*)<\\?scscp end \\?>\n$";
 	while not match(waitfor, ans) do (
-		while not isReady s#"fd" do nothing; 
 		ans = ans|(read s#"fd");
 	);
 	
@@ -97,7 +94,7 @@ computeSCSCP (SCSCPConnection, Thing) := (s,x) -> (
 	a := computeSCSCP(s, o);
 	
 	stderr << "Evaluating answer..." << endl;
-	t = value a;
+	t := value a;
 
 	t
 )
@@ -124,45 +121,3 @@ s(17)
 
 
 
--- f = openInOut "$192.168.1.9:26133"
--- while not isReady f do nothing
--- sleep 1
--- read f
--- f << ///<?scscp version="1.3" ?>/// << endl << flush
--- while not isReady f do nothing
--- sleep 1
--- read f
--- f << ///
---   <?scscp start ?>
---   <OMOBJ>
---   <OMATTR>
---   <OMATP>
---     <OMS cd="scscp1" name="call_id"/>
---     <OMSTR>hi there</OMSTR>
---     <OMS cd="scscp1" name="option_return_object"/>
---     <OMSTR></OMSTR>
---   </OMATP>
---     <OMA>
---       <OMS cd="scscp1" name="procedure_call"/>
---       <OMA>
--- 	<OMS cd="arith1" name="plus"/>
--- 	<OMI>1</OMI>
--- 	<OMI>2</OMI>
---       </OMA>
---     </OMA>
---   </OMATTR>
---   </OMOBJ>
---   <?scscp end ?>
---   /// << endl << flush
--- 
--- 
--- to do:
--- 
---   Dan G:
---        install GAP kernel and packages
---   
---   Dan R:
-  
-
-
-  
