@@ -17,10 +17,12 @@ needsPackage "XML"
 
 SCSCPConnection = new Type of MutableHashTable
 SCSCPProtVersion = "1.3"
+SCSCPProtCompatibleVersions = { "1.2", "1.3" }
 SCSCPServiceName = "Macaulay2"
 SCSCPServiceVersion = (options SCSCP).Version
 
 callIDCounter = 0;
+incomingCounter = 0;
 
 ----------------------------------
 ---------- CLIENT CODE -----------
@@ -126,7 +128,8 @@ SCSCPConnection Thing := computeSCSCP
 
 
 handleIncomingSCSCPConnection = sock -> (
-	stderr << "Handling new connection to " << "??" << endl;
+	cid := (incomingCounter = incomingCounter + 1);
+	stderr << "[handleIncomingSCSCP" << cid << "] Handling new connection" << endl;
 	
 	s := concatenate(
 		"<?scscp service_name=", format SCSCPServiceName, 
@@ -134,16 +137,34 @@ handleIncomingSCSCPConnection = sock -> (
 		" service_id=", format "0",
 		" scscp_versions=", format SCSCPProtVersion, 
 		" ?>");
-		
-	stderr << "Handling new connection to " << "??" << endl;
+
+	stderr << "[handleIncomingSCSCP" << cid << "] Sending announcement" << endl;
+	sock << s << endl << flush;
+
+	stderr << "[handleIncomingSCSCP" << cid << "] Waiting for version request..." << endl;
+	ans := "";
+	waitfor := "<\\?scscp version=\"(.*)\" \\?>"; 
+	while not match(waitfor, ans) do (
+		ans = ans|(read sock);
+	);
+	hits := select(waitfor, "\\1", ans);
+	if not member(hits#0, SCSCPProtCompatibleVersions) then (
+		stderr << "[handleIncomingSCSCP" << cid << "] Incompatible version: '" << hits#0 << "'" << endl;
+		sock << "<?scscp quit reason=\"incompatible version " << hits#0 << "\" ?>" << endl << flush;
+		return;
+	);
+
+	stderr << "[handleIncomingSCSCP" << cid << "] Great! Compatible version: '" << hits#0 << "'" << endl;
 	
 )
 startSCSCPServer = hostport -> (
 	stderr << "[SCSCPServer] Listening on hostport " << hostport << endl;
 
 	f := openListener("$"|hostport);
-	while true do (
+	--while true do (
+		stderr << "[SCSCPServer] Waiting for incoming connection "  << endl;
 		g := openInOut f;
+		stderr << "[SCSCPServer] Incoming connection. Forking. " << endl;
 		
 		--Once we are here an incoming connection arrived, since openInOut blocks.
 		
@@ -164,8 +185,7 @@ startSCSCPServer = hostport -> (
 			
 			stopIfError = true;
 			debuggingMode = false;
-			--closeInput stdio;
-			close stdin;
+			closeIn stdio;
 			
 			pid2 := fork();
 			if pid2 =!= 0 then (
@@ -174,12 +194,13 @@ startSCSCPServer = hostport -> (
 			) else (
 				--in grandchild; do stuff
 				handleIncomingSCSCPConnection(g);
-				exit(0);
+				exit(0); --this closes g automatically as well.
 			);
 		);
 		
-	);
+	--);
 
+	close f;
 )
 
 
