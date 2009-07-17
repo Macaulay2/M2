@@ -234,21 +234,20 @@ fromOpenMathOMATTR := x -> (
 	--possibly to be looked at later.
 	if #(x.children) =!= 2 then
 		(theOMerror = "OMATTR should have exactly two children"; error("whoops"));
+
+	--The child.
+	child := (x.children)#1;
 	
 	--OMATP
 	omatp := (x.children)#0;
 	if omatp.tag =!= "OMATP" or (#(omatp.children) % 2 =!= 0) then
 		(theOMerror = "1st argument of OMATTR should be an OMATP with an even number of children"; error("whoops"));
 	chd := omatp.children;
-	attrs := {};
 	for i in 0..((#chd // 2)-1) do (
-		attrs = append(attrs, chd#(2*i) => chd#(2*i + 1) )
+		child = setOMAttr(child, chd#(2*i), chd#(2*i + 1))
 	);
-	attrs = new MutableHashTable from attrs;
 	
-	--The child.
-	child := (x.children)#1;
-	child = setOMAttr(child, attrs);
+	--Done! recurse into the child.
 	fromOpenMath(child)
 )
 
