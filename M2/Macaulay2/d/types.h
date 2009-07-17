@@ -178,6 +178,7 @@ extern char *gnu_get_libc_version();
 
 extern int libfac_interruptflag;
 extern M2_bool tokens_stopIfError;
+extern M2_bool tokens_handleInterrupts;
 
 extern sigjmp_buf interrupt_jump; /* set this jump and the flag below if the handler should always jump; e.g., for interrupting a slow 3rd party or system library routine */
 extern bool interrupt_jump_set;

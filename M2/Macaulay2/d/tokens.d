@@ -527,8 +527,11 @@ export buildErrorPacket(message:string):Expr := Expr(Error(dummyPosition,message
 
 dummyDebuggerFun(f:Frame,c:Code):Expr := nullE;
 export debuggerFun := dummyDebuggerFun;
+export handleInterrupts := true;
 export stopIfError := false;
-foreach s in argv do if s === "--stop" then stopIfError = true;
+foreach s in argv do
+  if s === "--stop" then stopIfError = true else
+  if s === "--int" then (handleInterrupts = false; handleInterruptsSetup(handleInterrupts););
 export debuggingMode := true;
 export printError(err:Error):Error := (
      if !(err.printed && err.position.filename === "stdio")

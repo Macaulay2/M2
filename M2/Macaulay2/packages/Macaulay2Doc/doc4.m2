@@ -721,16 +721,20 @@ document {
      }
 
 document {
-     Key => obeyInterrupts,
-     Usage => "obeyInterrupts()",
+     Key => "handleInterrupts",
+     Usage => "handleInterrupts = b",
+     Inputs => { "b" => Boolean },
+     Outputs => { Boolean => { "the value of ", TT "b" }},
      Consequences => {
 	  {
-	       "the default actions for the signals SIGSEGV, SIGINT, and SIGALRM are restored, and thus
-	       typing CTRL-C will result in the Macaulay2 process terminating immediately."
+	       "If ", TT "b", " is ", TO "false", ", then the default operating system actions for the signals ", TT "SIGINT", ", and ", TT "SIGALRM", " are restored, 
+	       and thus typing CTRL-C or the triggering of an ", TO "alarm", " will result in the Macaulay2 process terminating immediately.
+	       If ", TT "b", " is ", TO "true", ", then the default Macaulay2 signal handlers are installed,
+	       and thus control will be returned to top level after the code currently executing notices that the interrupt flag has been set."
 	       }
 	  },
      PARA {
-	  "The command line option ", TT "--int", " has the same effect."
+	  "The command line option ", TT "--int", " has the same effect as ", TT "handleInterrupts=false", "."
 	  }
      }     
 

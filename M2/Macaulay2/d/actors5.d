@@ -1826,6 +1826,7 @@ defaultPrecisionS := dummySymbol;
 recursionLimitS := dummySymbol;
 nLimitS := dummySymbol;
 stopIfErrorS := dummySymbol;
+handleInterruptsS := dummySymbol;
 printWidthS := dummySymbol;
 notifyS := dummySymbol;
 
@@ -1860,6 +1861,7 @@ syms := SymbolSequence(
      (  randomHeightS = setupvar("randomHeight",Expr(initialRandomHeight));  randomHeightS  ),
      (  recursionLimitS = setupvar("recursionLimit",toExpr(recursionLimit));  recursionLimitS  ),
      (  stopIfErrorS = setupvar("stopIfError",toExpr(stopIfError));  stopIfErrorS  ),
+     (  handleInterruptsS = setupvar("handleInterrupts",toExpr(handleInterrupts));  handleInterruptsS  ),
      (  printWidthS = setupvar("printWidth",toExpr(printWidth));  printWidthS  ),
      (  notifyS = setupvar("notify",toExpr(notify));  notifyS  ),
      (  topLevelModeS = setupvar("topLevelMode",topLevelMode); topLevelModeS  )
@@ -1885,6 +1887,11 @@ export setstopIfError(b:bool):void := (
      stopIfError = b;
      setGlobalVariable(stopIfErrorS,toExpr(b));
      );
+export sethandleInterrupts(b:bool):void := (
+     handleInterrupts = b;
+     handleInterruptsSetup(b);
+     setGlobalVariable(handleInterruptsS,toExpr(b));
+     );
 msg := "internal assignment hook encountered unknown symbol/value combination";
 store(e:Expr):Expr := (			    -- called with (symbol,newvalue)
      when e
@@ -1902,6 +1909,7 @@ store(e:Expr):Expr := (			    -- called with (symbol,newvalue)
 	       n := b.v;
 	       if sym === debuggingModeS then (debuggingMode = n; e)
 	       else if sym === stopIfErrorS then (stopIfError = n; e)
+	       else if sym === handleInterruptsS then (handleInterrupts = n; handleInterruptsSetup(n); e)
 	       else if sym === backtraceS then (backtrace = n; e)
 	       else if sym === notifyS then (notify = n; e)
 	       else buildErrorPacket(msg))
@@ -2053,13 +2061,6 @@ toExternalString(e:Expr):Expr := (
      else WrongArg("a real or complex number")
      );
 setupfun("toExternalString0",toExternalString);
-
-obeyInterrupts(e:Expr):Expr := (
-     when e is s:Sequence do if length(s) == 0 then (nohandlers(); nullE)
-     else WrongNumArgs(0)
-     else WrongNumArgs(0)
-     );
-setupfun("obeyInterrupts",obeyInterrupts);
 
 -- Local Variables:
 -- compile-command: "make -C $M2BUILDDIR/Macaulay2/d "

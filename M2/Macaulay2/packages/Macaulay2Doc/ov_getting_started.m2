@@ -85,7 +85,7 @@ document {
      }
 
 document {
-     Key => setup,
+     Key => {setup,1:setup},
      Usage => "setup()",
      Consequences => {
 	  {"Initialization files for emacs and the standard command shells will have lines added to them to allow the 
@@ -132,7 +132,7 @@ document {
      }
 
 document {
-     Key => setupEmacs,
+     Key => {setupEmacs,1:setupEmacs},
      Usage => "setupEmacs()",
      Consequences => {
 	  {"The initialization file for emacs (.emacs in your home directory) will have lines added to allow the Macaulay 2 emacs mode to operate.
