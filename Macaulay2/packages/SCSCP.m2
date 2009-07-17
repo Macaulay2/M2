@@ -22,7 +22,7 @@ SCSCPServiceName = "Macaulay2"
 SCSCPServiceVersion = (options SCSCP).Version
 
 callIDCounter = 0;
-incomingCounter = 0;
+incomingConnCounter = 0;
 
 ----------------------------------
 ---------- CLIENT CODE -----------
@@ -125,38 +125,6 @@ SCSCPConnection Thing := computeSCSCP
 ----------------------------------
 ---------- SERVER CODE -----------
 ----------------------------------
-
-
-handleIncomingSCSCPConnection = sock -> (
-	cid := (incomingCounter = incomingCounter + 1);
-	stderr << "[handleIncomingSCSCP" << cid << "] Handling new connection" << endl;
-	
-	s := concatenate(
-		"<?scscp service_name=", format SCSCPServiceName, 
-		" service_version=", format SCSCPServiceVersion, 
-		" service_id=", format "0",
-		" scscp_versions=", format SCSCPProtVersion, 
-		" ?>");
-
-	stderr << "[handleIncomingSCSCP" << cid << "] Sending announcement" << endl;
-	sock << s << endl << flush;
-
-	stderr << "[handleIncomingSCSCP" << cid << "] Waiting for version request..." << endl;
-	ans := "";
-	waitfor := "<\\?scscp version=\"(.*)\" \\?>"; 
-	while not match(waitfor, ans) do (
-		ans = ans|(read sock);
-	);
-	hits := select(waitfor, "\\1", ans);
-	if not member(hits#0, SCSCPProtCompatibleVersions) then (
-		stderr << "[handleIncomingSCSCP" << cid << "] Incompatible version: '" << hits#0 << "'" << endl;
-		sock << "<?scscp quit reason=\"incompatible version " << hits#0 << "\" ?>" << endl << flush;
-		return;
-	);
-
-	stderr << "[handleIncomingSCSCP" << cid << "] Great! Compatible version: '" << hits#0 << "'" << endl;
-	
-)
 startSCSCPServer = hostport -> (
 	stderr << "[SCSCPServer] Listening on hostport " << hostport << endl;
 
@@ -171,6 +139,7 @@ startSCSCPServer = hostport -> (
 		--So we fork. Furthermore, to avoid zombie processes, we create children, and
 		--have them create a "grandchild" immediately, and terminate. In the parent, 
 		--we then wait (hopefully for a short time) for the child to terminate. Yay.
+		collectGarbage();
 		pid := fork();
 		if pid =!= 0 then (
 			--parent; pid is the pid of the child.
@@ -193,7 +162,9 @@ startSCSCPServer = hostport -> (
 				exit(0);
 			) else (
 				--in grandchild; do stuff
+				incomingConnCounter = incomingConnCounter+1;
 				handleIncomingSCSCPConnection(g);
+				stderr << "[SCSCPServer] Child terminated" << endl;
 				exit(0); --this closes g automatically as well.
 			);
 		);
@@ -203,6 +174,93 @@ startSCSCPServer = hostport -> (
 	close f;
 )
 
+handleIncomingSCSCPConnection = sock -> (
+	cid := incomingConnCounter;
+	stderr << "[handleIncomingSCSCP " << cid << "] Handling new connection" << endl;
+	
+	s := concatenate(
+		"<?scscp service_name=", format SCSCPServiceName, 
+		" service_version=", format SCSCPServiceVersion, 
+		" service_id=", format "0",
+		" scscp_versions=", format SCSCPProtVersion, 
+		" ?>");
+
+	stderr << "[handleIncomingSCSCP " << cid << "] Sending announcement" << endl;
+	sock << s << endl << flush;
+
+	stderr << "[handleIncomingSCSCP " << cid << "] Waiting for version request..." << endl;
+	ans := ""; mtch := null;
+	waitfor := "<\\?scscp version=\"(.*)\" \\?>"; 
+	while (mtch = regex(waitfor, ans)) === null do (
+		ans = ans|(read sock);
+	);
+	ver := substring(ans, mtch#1#0, mtch#1#1);
+	if not member(ver, SCSCPProtCompatibleVersions) then (
+		stderr << "[handleIncomingSCSCP " << cid << "] Incompatible version: '" << ver << "'" << endl;
+		sock << "<?scscp quit reason=\"incompatible version " << ver << "\" ?>" << endl << flush;
+		return;
+	);
+	ans = substring(ans, mtch#0#0 + mtch#0#1);
+
+	stderr << "[handleIncomingSCSCP " << cid << "] Great! Compatible version: '" << ver << "'" << endl;
+	while true do (
+		stderr << "[handleIncomingSCSCP " << cid << "] Waiting for pc...'" << "'" << endl;
+		buf := "";
+		waitfor = "(.*)<\\?scscp ([a-z]+)( [^>]*)? \\?>";
+		stderr << "regex(waitfor, ans) = '" << regex(waitfor, ans) << "'" << endl;
+		while (mtch = regex(waitfor, ans)) === null do (
+			buf = read sock;
+
+			--Handle EOF
+			if atEndOfFile sock then (
+				stderr << "[handleIncomingSCSCP " << cid << "]  atEndOFFile" << endl;
+				return;
+			);
+
+			ans = ans|buf;
+			stderr << "ans = '" << ans << "'" << endl;
+		);
+		keyw := substring(ans, mtch#2#0, mtch#2#1);
+
+		if keyw === "quit" then (
+			--<?scscp quit ?>
+			stderr << "[handleIncomingSCSCP " << cid << "] 'quit' received" << endl;
+			return;
+		) else if keyw === "cancel" then (
+			--<?scscp cancel ?>
+			stderr << "[handleIncomingSCSCP " << cid << "] 'cancel' received" << endl;
+			ans = "";
+		) else if keyw === "start" then (
+			--<?scscp start ?>
+			stderr << "[handleIncomingSCSCP " << cid << "] 'start' received" << endl;
+			--take off this bit, otherwise we'll end up in this case every time...
+			ans = substring(ans, mtch#0#0 + mtch#0#1);
+		) else if keyw === "end" then (
+			--<?scscp end ?>
+			stderr << "[handleIncomingSCSCP " << cid << "] 'end' received" << endl;
+			
+			question := substring(ans, mtch#1#0, mtch#1#1);
+			ans = substring(ans, mtch#0#0 + mtch#0#1);
+			resp := handleSCSCPProcedureCall(question);
+			
+			sock << "<?scscp start ?>" << endl << resp << endl << "<?scscp end ?>" << endl << flush;
+		) else (
+			--Unknown keyword!!
+			stderr << "[handleIncomingSCSCP " << cid << "] Unrecognized keyword: '" << keyw << "'" << endl;
+			--take off this bit, otherwise we'll end up in this case every time...
+			ans = substring(ans, mtch#0#0 + mtch#0#1);		
+		)
+	
+	)
+
+	
+)
+
+handleSCSCPProcedureCall = str -> (
+	--input will be a string, output will be a string.
+	--don't need to do <?scscp start ?> and -end nonsense, though.
+	"42"
+)
 
 
 
