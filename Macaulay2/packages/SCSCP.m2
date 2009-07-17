@@ -129,7 +129,7 @@ startSCSCPServer = hostport -> (
 	stderr << "[SCSCPServer] Listening on hostport " << hostport << endl;
 
 	f := openListener("$"|hostport);
-	--while true do (
+	while true do (
 		stderr << "[SCSCPServer] Waiting for incoming connection "  << endl;
 		g := openInOut f;
 		stderr << "[SCSCPServer] Incoming connection. Forking. " << endl;
@@ -169,7 +169,7 @@ startSCSCPServer = hostport -> (
 			);
 		);
 		
-	--);
+	);
 
 	close f;
 )
@@ -189,10 +189,18 @@ handleIncomingSCSCPConnection = sock -> (
 	sock << s << endl << flush;
 
 	stderr << "[handleIncomingSCSCP " << cid << "] Waiting for version request..." << endl;
-	ans := ""; mtch := null;
+	ans := ""; buf := ""; mtch := null;
 	waitfor := "<\\?scscp version=\"(.*)\" \\?>"; 
 	while (mtch = regex(waitfor, ans)) === null do (
-		ans = ans|(read sock);
+		buf = read sock;
+
+		--Handle EOF
+		if atEndOfFile sock then (
+			stderr << "[handleIncomingSCSCP " << cid << "]  atEndOFFile" << endl;
+			return;
+		);
+
+		ans = ans|buf;
 	);
 	ver := substring(ans, mtch#1#0, mtch#1#1);
 	if not member(ver, SCSCPProtCompatibleVersions) then (
@@ -205,7 +213,6 @@ handleIncomingSCSCPConnection = sock -> (
 	stderr << "[handleIncomingSCSCP " << cid << "] Great! Compatible version: '" << ver << "'" << endl;
 	while true do (
 		stderr << "[handleIncomingSCSCP " << cid << "] Waiting for pc...'" << "'" << endl;
-		buf := "";
 		waitfor = "(.*)<\\?scscp ([a-z]+)( [^>]*)? \\?>";
 		stderr << "regex(waitfor, ans) = '" << regex(waitfor, ans) << "'" << endl;
 		while (mtch = regex(waitfor, ans)) === null do (
@@ -239,7 +246,10 @@ handleIncomingSCSCPConnection = sock -> (
 			--<?scscp end ?>
 			stderr << "[handleIncomingSCSCP " << cid << "] 'end' received" << endl;
 			
-			question := substring(ans, mtch#1#0, mtch#1#1);
+			stderr << "ans = '" << ans << "'" << endl;
+			stderr << "mtch = '" << mtch << "'" << endl;
+			
+			question := substring(ans, 0, mtch#1#0);
 			ans = substring(ans, mtch#0#0 + mtch#0#1);
 			resp := handleSCSCPProcedureCall(question);
 			
@@ -259,7 +269,34 @@ handleIncomingSCSCPConnection = sock -> (
 handleSCSCPProcedureCall = str -> (
 	--input will be a string, output will be a string.
 	--don't need to do <?scscp start ?> and -end nonsense, though.
-	"42"
+
+	--note that the toOpenMath of a procedure call is somewhat special, since it returns an 
+	--  XMLnode automatically. To allow for people to do somewhat different things (like typing
+	--  OpenMath without a procedure call), we try an openMathValue x if necessary.
+	
+	cid := incomingConnCounter;
+	
+	stderr << "[handleSCSCPProcedureCall " << cid << "] Disassembling procedure call..." << endl;
+	try (
+		<< "str = '" << str << "'" << endl;
+		t := parse str;
+	) else (
+		stderr << "[handleSCSCPProcedureCall " << cid << "] Parsing failed...." << endl;
+		pt := constructProcTerm("Parsing your question failed.", OMSTR("0"));
+		return toString toLibxmlNode createOMATTRObj OMOBJ pt;
+	);
+
+	stderr << "[handleSCSCPProcedureCall " << cid << "] Evaluating procedure call..." << endl;
+	ret := value t;
+	
+	if class(ret) =!= XMLnode then (
+		stderr << "[handleSCSCPProcedureCall " << cid << "] Hmz, response was no XMLnode. Ah well, we'll make one" << endl;
+		ret = openMathValue ret;
+	);
+	
+	stderr << "[handleSCSCPProcedureCall " << cid << "] Returning response..." << endl;
+	
+	return toString toLibxmlNode createOMATTRObj OMOBJ ret;
 )
 
 
