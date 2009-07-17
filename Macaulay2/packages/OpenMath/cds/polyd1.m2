@@ -92,7 +92,7 @@ OMSEvaluators#"polyd1"#"DMP" = (args, attrs) -> (
 	--second is list of expressions
 	R := fromOpenMath(args#0);
 	if class(R) =!= PolynomialRing then 
-		return OME "1st argument of polyd1.DMP should be a polynomial ring.";
+		return OME concatenate("1st argument of polyd1.DMP should be a polynomial ring (is a ",toString class R,").");
 
 	if isOMAOf(args#1, "polyd1", "SDMP") then
 		r := evalSDMP(args#1, R)

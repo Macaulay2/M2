@@ -14,11 +14,11 @@ OMSEvaluators#"scscp2"#"retrieve" = (args, attrs) -> (
 	if not existsOMref(s) then
 		(theOMerror = concatenate("Unknown reference: '", s, "'"); error("whoops"));
 	
-	getOMref(s)
+	(getOMref(s))#1
 )
 OMSEvaluators#"scscp2"#"store_session" = (args, attrs) -> ( 
 	a := fromOpenMath args#0;
-	OMR(addOMref(a))
+	OMR(addOMref(a, args#0))
 )
 OMSEvaluators#"scscp2"#"unbind" = (args, attrs) -> ( 
 	a := args#0;
