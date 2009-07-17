@@ -220,7 +220,7 @@ static void alarm_handler(int sig)
      extern void evaluate_setAlarmedFlag();
      evaluate_setAlarmedFlag();
 #ifdef SIGALRM
-     signal(SIGALRM,alarm_handler);
+     /* signal(SIGALRM,alarm_handler); */
 #endif
      }
 
@@ -301,7 +301,7 @@ static void interrupt_handler(int sig)
 	       if (interrupt_jump_set) siglongjmp(interrupt_jump,1);
 	       }
 	  }
-     signal(SIGINT,interrupt_handler);
+     /* signal(SIGINT,interrupt_handler); */
      }
 
 static struct COUNTER { 
@@ -641,17 +641,29 @@ char **argv;
 	  enterM2();
      }
 
-     if (!gotArg("--int", saveargv))
      {
-       signal(SIGINT,interrupt_handler);
-#      ifdef SIGPIPE
-       signal(SIGPIPE, SIG_IGN);
-#      endif
-     }
+       struct sigaction act;
+       act.sa_flags = 0;	/* no SA_RESTART */
+
+       if (!gotArg("--int", saveargv)) {
+	 act.sa_handler = interrupt_handler;
+	 sigemptyset(&act.sa_mask);
+	 sigaddset(&act.sa_mask,SIGINT);
+	 sigaction(SIGINT,&act,NULL); /* old way: signal(SIGINT,interrupt_handler); */
+
+#        ifdef SIGPIPE
+	 signal(SIGPIPE, SIG_IGN);
+#        endif
+       }
 
 #      ifdef SIGALRM
-       signal(SIGALRM,alarm_handler);
+       act.sa_handler = alarm_handler;
+       sigemptyset(&act.sa_mask);
+       sigaddset(&act.sa_mask,SIGALRM);
+       sigaction(SIGALRM,&act,NULL); /* old way: signal(SIGALRM,alarm_handler); */
 #      endif
+
+     }
 
      arginits(argc,saveargv);
 

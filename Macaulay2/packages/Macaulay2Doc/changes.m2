@@ -18,7 +18,11 @@ document {
      	  LI { "The expression 'setRandomSeed()' can now be used to re-initialize the random number generator." },
 	  LI { "The initialization file 'init.m2' is now sought only in the user's application directory, and not also in the current directory." },
 	  LI { "When the program starts, the random number seed is now initialized to a value that depends on the date, time in seconds,
-	       and the process id.  The former initial state can be obtained with ", TT "setRandomSeed()", "." }
+	       and the process id.  The former initial state can be obtained with ", TT "setRandomSeed()", "." },
+	  LI { "A new function, 'obeyInterrupts()', removes the interrupt handler."},
+	  LI { "The CTRL-C interrupt signal SIGINT will now interrupt system calls; formerly, they were restarted after the handler set a flag." },
+	  LI { "New packages (OpenMath, SCSCP, and XML) for communicating via SCSCP with OpenMath to programs such as GAP and Maple have been developed, 
+	       thanks to Dan Roozemond." }
 	  }
      }
 
