@@ -569,6 +569,7 @@ export (lhs:Expr) ^ (rhs:Expr) : Expr := (
 		    if int(y%ushort(2)) == 0
 		    then Expr(toInteger(1))
 		    else Expr(toInteger(-1)))
+	       else if isZero(x) then buildErrorPacket("division by zero")
 	       else Expr(newRationalCanonical(toInteger(1),x^-y)))
 	  is y:QQ do (
 	       d := denominator(y);
