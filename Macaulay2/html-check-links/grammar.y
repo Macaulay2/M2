@@ -150,10 +150,11 @@ static void checkURL(char *s) {
   char *t, *u;
   if (s[0] == '"' && s[strlen(s)-1] == '"') s++, s[strlen(s)-1]=0;
   else if (s[0] == '\'' && s[strlen(s)-1] == '\'') s++, s[strlen(s)-1]=0;
-  if (strseg(s,"mailto:") || strseg(s,"http://") || strseg(s,"ftp://") || strseg(s,"file://")) {
+  if (strseg(s,"mailto:") || strseg(s,"http://") || strseg(s,"ftp://")) {
     /* warning("unchecked external link: %s",s); */
     return;
   }
+  if (strseg(s,"file://")) s += 7;
   t = strrchr(s,'#'); if (t != NULL) *t = 0;
   if (*s == 0) return;
   s = concat(s[0] == '/' ? rootname : Dirname,s);
