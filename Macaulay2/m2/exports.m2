@@ -879,6 +879,7 @@ export {
 	symbol numerator,
 	symbol numeric,
 	symbol numgens,
+	symbol obeyInterrupts,
 	symbol odd,
 	symbol of,
 	symbol ofClass,
