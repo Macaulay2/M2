@@ -1,30 +1,22 @@
 --- Manipulation of "attributes" of XMLnode's ---
 setOMAttr = method()
 setOMAttr (XMLnode, XMLnode, XMLnode) := (x,k,v) -> (
-	if not x.?OMattributes then (
-		xnw := new MutableHashTable from x;
-		xnw.OMattributes = new MutableHashTable;
-		(xnw.OMattributes)#k = v;
-		new XMLnode from (new HashTable from xnw)
-	) else (
-		(x.OMattributes)#k = v;
-		x
-	)
+	if not x.?OMattributes then x.OMattributes = new MutableHashTable;
+	(x.OMattributes)#k = v;
+	x
 )
 setOMAttr (XMLnode, MutableHashTable) := (x,t) -> (
-	xnw := new MutableHashTable from x;
-	xnw.OMattributes = t;
-	new XMLnode from (new HashTable from xnw)
+	x.OMattributes = t;
+	x
 )
 
 clearOMAttr = method()
 clearOMAttr (XMLnode) := x -> (
-	if not x.?OMattributes then (
+	if not x.?OMattributes then 
 		x
-	) else (
-		xnw := new MutableHashTable from x;
-		remove(xnw, OMattributes);
-		new XMLnode from (new HashTable from xnw)
+	else (
+		remove(x, OMattributes);
+		x
 	)
 )
 
