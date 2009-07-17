@@ -638,7 +638,7 @@ installPackage Package := opts -> pkg -> (
      	  
 	  -- copy package source subdirectory
 	  srcDirectory := replace("PKG",pkg#"title",installationLayout#"package");
-	  dn := realpath currentSourceDir | "/" | buildPackage;
+	  dn := realpath currentSourceDir | buildPackage;
 	  if isDirectory dn
 	  then (
 	       if not (options pkg).AuxiliaryFiles
@@ -729,7 +729,7 @@ installPackage Package := opts -> pkg -> (
 		    ));
 
 	  -- make example output files, or else copy them from old package directory tree
-	  exampleDir' := realpath currentSourceDir | "/" | buildPackage | "/examples" | "/";
+	  exampleDir' := realpath currentSourceDir | buildPackage | "/examples" | "/";
 	  outfn' := fkey -> exampleDir'|toFilename fkey|".out";
 	  gethash := outf -> (
 	       f := get outf;
@@ -1130,7 +1130,7 @@ makePackageIndex List := path -> (
 	       ul splice {
                	    if prefixDirectory =!= null 
 		    then HREF { prefixDirectory | replace("PKG","Macaulay2Doc",currentLayout#"packagehtml") | "index.html", "Macaulay 2" },
-		    splice apply(toSequence unique apply(select(path,isDirectory),toAbsolutePath @@ realpath), pkgdir -> (
+		    splice apply(toSequence unique apply(select(path,isDirectory),realpath), pkgdir -> (
 			      if debugLevel > 10 then stderr << "--checking package directory " << pkgdir << endl;
 			      apply(toSequence values Layout, layout -> (
 				   packagelayout := layout#"packages";
