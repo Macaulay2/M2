@@ -33,9 +33,12 @@ newSCSCPConnection = hostport -> (
 	s#"fd" = openInOut ("$"|hostport);
 
 	stderr << "[SCSCPClient] Connecting..." << endl;
-	ans := "";
+	ans := ""; buf := "";
 	while #ans == 0 or ans#-1 =!= "\n" do (
-		ans = ans|(read s#"fd");
+		buf = read s#"fd";
+		if atEndOfFile s#"fd" then ( stderr << "[SCSCPClient]  atEndOFFile" << endl; return; );
+
+		ans = ans|buf;
 	);
 
 	stderr << "[SCSCPClient] Received: '" << ans << "'" << endl;
@@ -47,7 +50,10 @@ newSCSCPConnection = hostport -> (
 	stderr << "[SCSCPClient] Waiting for response to version request..." << endl;
 	ans = "";
 	while #ans == 0 or ans#-1 =!= "\n" do (
-		ans = ans|(read s#"fd");
+		buf = read s#"fd";
+		if atEndOfFile s#"fd" then ( stderr << "[SCSCPClient]  atEndOFFile" << endl; return; );
+
+		ans = ans|buf;
 	);
 	
 	stderr << "[SCSCPClient] Received: '" << ans << "'" << endl;
@@ -84,7 +90,10 @@ computeSCSCP (SCSCPConnection, XMLnode) := (s,x) -> (
 	ans := "";
 	waitfor := "(.*)<\\?scscp end \\?>\n$";
 	while not match(waitfor, ans) do (
-		ans = ans|(read s#"fd");
+		buf = read s#"fd";
+		if atEndOfFile s#"fd" then ( stderr << "[SCSCPClient]  atEndOFFile" << endl; return null; );
+
+		ans = ans|buf;
 	);
 	
 	stderr << "[computeSCSCP] Answer received..." << endl;
@@ -94,7 +103,6 @@ computeSCSCP (SCSCPConnection, XMLnode) := (s,x) -> (
 	y := parse ans;
 	if class(y) =!= XMLnode then
 		error "Parsing failed.";
-	stderr << y << endl;
 		
 	y
 )
@@ -139,6 +147,7 @@ startSCSCPServer = hostport -> (
 		--So we fork. Furthermore, to avoid zombie processes, we create children, and
 		--have them create a "grandchild" immediately, and terminate. In the parent, 
 		--we then wait (hopefully for a short time) for the child to terminate. Yay.
+		incomingConnCounter = incomingConnCounter+1;
 		collectGarbage();
 		pid := fork();
 		if pid =!= 0 then (
@@ -162,9 +171,8 @@ startSCSCPServer = hostport -> (
 				exit(0);
 			) else (
 				--in grandchild; do stuff
-				incomingConnCounter = incomingConnCounter+1;
 				handleIncomingSCSCPConnection(g);
-				stderr << "[SCSCPServer] Child terminated" << endl;
+				stderr << "[SCSCPServer] Child " << incomingConnCounter << " terminated" << endl;
 				exit(0); --this closes g automatically as well.
 			);
 		);
@@ -225,7 +233,6 @@ handleIncomingSCSCPConnection = sock -> (
 			);
 
 			ans = ans|buf;
-			stderr << "ans = '" << ans << "'" << endl;
 		);
 		keyw := substring(ans, mtch#2#0, mtch#2#1);
 
@@ -245,9 +252,6 @@ handleIncomingSCSCPConnection = sock -> (
 		) else if keyw === "end" then (
 			--<?scscp end ?>
 			stderr << "[handleIncomingSCSCP " << cid << "] 'end' received" << endl;
-			
-			stderr << "ans = '" << ans << "'" << endl;
-			stderr << "mtch = '" << mtch << "'" << endl;
 			
 			question := substring(ans, 0, mtch#1#0);
 			ans = substring(ans, mtch#0#0 + mtch#0#1);
