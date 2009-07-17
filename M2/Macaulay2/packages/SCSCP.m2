@@ -66,7 +66,10 @@ newSCSCPConnection = hostport -> (
 	s	
 );
 
-closeSCSCPConnection = s -> (close s#"fd";)
+Manipulator SCSCPConnection := (m, s) -> (
+	if m === close then close s#"fd"
+	else error "Cannot apply this Manipulator to SCSCPConnection";
+)
 
 computeSCSCP = method()
 computeSCSCP (SCSCPConnection, XMLnode) := (s,x) -> (
