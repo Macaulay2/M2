@@ -57,8 +57,10 @@ computeSCSCP (SCSCPConnection, XMLnode) := (s,x) -> (
 	pc = createOMATTRObj(pc);
 
 	stderr << "Sending procedure call..." << endl;
+	tspc := toString toLibxmlNode pc;
+	stderr << endl << tspc << endl;
 	s#"fd" << "<?scscp start ?>" << endl << flush;
-	s#"fd" << endl << toString toLibxmlNode pc << endl;
+	s#"fd" << tspc << endl;
 	s#"fd" << "<?scscp end ?>" << endl << flush;
 
 	stderr << "Waiting for response..." << endl;
