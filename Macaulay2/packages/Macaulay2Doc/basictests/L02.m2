@@ -15,3 +15,6 @@ assert( floor 10000.1 == 10000 )
 assert( floor (-10000.1) == -10001 )
 assert( floor ( 2.^33 + .4 ) == 2^33 )
 assert( floor ( -2.^33 + .4 ) == -2^33 )
+
+assert( #environment > 0 )
+assert( #commandLine > 0 )

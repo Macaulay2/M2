@@ -125,6 +125,34 @@ M2_bool system_interruptPending = FALSE;
 M2_bool system_interruptShield = FALSE;
 M2_bool system_alarmedFlag = FALSE;
 
+static void alarm_handler(int sig), interrupt_handler(int sig);
+static void oursignal(int sig, void (*handler)(int)) {
+  struct sigaction act;
+  act.sa_flags = 0;	/* no SA_RESTART */
+  act.sa_handler = handler;
+  sigemptyset(&act.sa_mask);
+  sigfillset(&act.sa_mask);
+  sigaction(sig,&act,NULL); /* old way: signal(sig,interrupt_handler); */
+}
+void system_handleInterruptsSetup(int handleInterrupts) {
+  oursignal(SIGALRM,handleInterrupts ? alarm_handler : SIG_DFL);
+  oursignal(SIGINT,handleInterrupts ? interrupt_handler : SIG_DFL);
+}
+
+static void unblock(int sig) {
+  sicset_t s;
+  sigemptyset(&s);
+  sigprocmask(0,NULL,&s);
+  sigaddset(&s,sig);
+  sigpr
+}
+
+static void alarm_handler(int sig) {
+     extern void evaluate_setAlarmedFlag();
+     evaluate_setAlarmedFlag();
+     oursignal(SIGALRM,alarm_handler);
+     }
+
 #if __GNUC__
 
 static sigjmp_buf stack_trace_jump;
@@ -210,19 +238,10 @@ void stack_trace() {
 void segv_handler(int sig) {
      fprintf(stderr,"-- SIGSEGV\n");
      stack_trace();
-     abort();
+     _exit(1);
 }
 
 #endif
-
-static void alarm_handler(int sig)
-{
-     extern void evaluate_setAlarmedFlag();
-     evaluate_setAlarmedFlag();
-#ifdef SIGALRM
-     /* signal(SIGALRM,alarm_handler); */
-#endif
-     }
 
 #if DUMPDATA
 static sigjmp_buf loaddata_jump;
@@ -301,7 +320,7 @@ static void interrupt_handler(int sig)
 	       if (interrupt_jump_set) siglongjmp(interrupt_jump,1);
 	       }
 	  }
-     /* signal(SIGINT,interrupt_handler); */
+     oursignal(SIGINT,interrupt_handler);
      }
 
 static struct COUNTER { 
@@ -400,7 +419,7 @@ double system_etime(void) {
 #endif
 #endif
 
-extern char **__environ;
+extern const char **__environ;
 
 extern char timestamp[];
 static void clean_up();
@@ -418,7 +437,7 @@ char CCVERSION[] = "unknown" ;
 
 extern void init_readline_variables();
 extern char *GC_stackbottom;
-extern void arginits(int, char **);
+extern void arginits(int, const char **);
 
 extern bool gotArg(const char *arg, char ** volatile argv);
 
@@ -499,7 +518,7 @@ static void call_shared_library() {
 
 int Macaulay2_main(argc,argv)
 int argc; 
-char **argv;
+const char **argv;
 {
      char READLINEVERSION[8];	/* big enough for "255.255" */
      char dummy;
@@ -507,8 +526,8 @@ char **argv;
      int volatile envc = 0;
 #if DUMPDATA
      static int old_collections = 0;
-     char ** volatile saveenvp = NULL;
-     char ** volatile saveargv;
+     const char ** volatile saveenvp = NULL;
+     const char ** volatile saveargv;
      int volatile savepid = 0;
 #else
 #define saveenvp __environ
@@ -519,6 +538,9 @@ char **argv;
      extern void actors4_setupargv();
      extern void interp_process(), interp_process2();
      extern int interp_topLevel();
+
+     const char **x = __environ; 
+     while (*x) envc++, x++;
 
      call_shared_library();
 
@@ -573,7 +595,6 @@ char **argv;
 #if DUMPDATA
      {
 	  int i;
-	  char **x;
 
 	  /* save arguments on stack in case they're on the heap */
 	  saveargv = (char **)alloca((argc + 1)*sizeof(char *));
@@ -584,7 +605,6 @@ char **argv;
 	  saveargv[i] = NULL;
 
 	  /* save environment on stack in case it's on the heap */
-	  for (envc=0, x=__environ; *x; x++) envc++;
 	  saveenvp = (char **)alloca((envc + 1)*sizeof(char *));
 	  for (i=0; i<envc; i++) {
 	       saveenvp[i] = alloca(strlen(__environ[i]) + 1);
@@ -641,30 +661,8 @@ char **argv;
 	  enterM2();
      }
 
-     {
-       struct sigaction act;
-       act.sa_flags = 0;	/* no SA_RESTART */
-
-       if (!gotArg("--int", saveargv)) {
-	 act.sa_handler = interrupt_handler;
-	 sigemptyset(&act.sa_mask);
-	 sigaddset(&act.sa_mask,SIGINT);
-	 sigaction(SIGINT,&act,NULL); /* old way: signal(SIGINT,interrupt_handler); */
-
-#        ifdef SIGPIPE
-	 signal(SIGPIPE, SIG_IGN);
-#        endif
-       }
-
-#      ifdef SIGALRM
-       act.sa_handler = alarm_handler;
-       sigemptyset(&act.sa_mask);
-       sigaddset(&act.sa_mask,SIGALRM);
-       sigaction(SIGALRM,&act,NULL); /* old way: signal(SIGALRM,alarm_handler); */
-#      endif
-
-     }
-
+     signal(SIGPIPE,SIG_IGN);
+     system_handleInterruptsSetup(true);
      arginits(argc,saveargv);
 
      if (GC_stackbottom == NULL) GC_stackbottom = &dummy;
@@ -904,14 +902,6 @@ int system_randomint(void) {
      return rawRandomInt(2<<31-1);
 #endif
      }
-
-void system_nohandlers() {
-  signal(SIGSEGV,SIG_DFL);
-  signal(SIGINT,SIG_DFL);
-#      ifdef SIGALRM
-  signal(SIGALRM,SIG_DFL);
-#      endif
-}
 
 /*
 // Local Variables:
