@@ -222,10 +222,11 @@ handleIncomingSCSCPConnection = sock -> (
 	ans = substring(ans, mtch#0#0 + mtch#0#1);
 
 	stderr << "[handleIncomingSCSCP " << cid << "] Great! Compatible version: '" << ver << "'" << endl;
+	sock << "<?scscp version=\"" << ver << "\" ?>" << endl << flush;
+	
 	while true do (
 		stderr << "[handleIncomingSCSCP " << cid << "] Waiting for pc...'" << "'" << endl;
 		waitfor = "(.*)<\\?scscp ([a-z]+)( [^>]*)? \\?>";
-		stderr << "regex(waitfor, ans) = '" << regex(waitfor, ans) << "'" << endl;
 		while (mtch = regex(waitfor, ans)) === null do (
 			buf = read sock;
 
@@ -285,7 +286,6 @@ handleSCSCPProcedureCall = str -> (
 	
 	stderr << "[handleSCSCPProcedureCall " << cid << "] Disassembling procedure call..." << endl;
 	try (
-		<< "str = '" << str << "'" << endl;
 		t := parse str;
 	) else (
 		stderr << "[handleSCSCPProcedureCall " << cid << "] Parsing failed...." << endl;
