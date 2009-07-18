@@ -107,7 +107,7 @@ ifeq (@PARI@,yes)
 DFILES += pari.d
 pari.oo: CPPFLAGS += -DINCLUDE_PARI_H
 pari.oo: CFLAGS += -Wno-shadow
-pari-c.o: CFLAGS += -Wall -Wno-unused -UNDEBUG
+pari-c.o: CFLAGS += -Wall -Wno-unused -UNDEBUG -Wno-shadow
 # see REVERSE_PARI
 pari-c.o: ../../include/M2/config.h ../../config.status
 CFILES += pari-c.c

@@ -9,6 +9,22 @@
 #define FALSE 0
 #define TRUE 1
 
+const char *get_pari_version() {
+  /*
+    /usr/include/pari/paricfg.h:#define PARI_VERSION_CODE 131843
+    /usr/include/pari/paricfg.h:#define PARI_VERSION(a,b,c) (((a) << 16) + ((b) << 8) + (c))
+    It's disappointing that the version number of libpari.so is not available at run time.
+  */
+  static char buf[20];
+  sprintf(buf,"%d.%d.%d",
+	  0xff & (PARI_VERSION_CODE >> 16),
+	  0xff & (PARI_VERSION_CODE >> 8),
+	  0xff & (PARI_VERSION_CODE >> 0)
+	  );
+  return buf;
+}
+
+
 #ifdef HAVE_PYTHON
 /* but a related issue is that when linking with python and running sage, it will tend to initialize
    the pari library itself, and we don't want to interfere with that */
