@@ -10,43 +10,47 @@
 --  * info_memory, info_message, info_runtime, 
 --  * option_debuglevel, option_max_memory, option_min_memory, option_runtime,
 
-constructProcTerm = method()
-constructProcTerm (XMLnode, XMLnode) := (omenode, callid) -> (
-	e := OMA("scscp1", "procedure_terminated", {omenode});
-	setOMAttr(e, OMS("scscp1", "call_id"), callid);
-	e
-);
-constructProcTerm (String, XMLnode) := (errmsg, callid) -> (
-	constructProcTerm(
-		OME(errmsg),
-		callid
-	)
-);
+doAttrs := (e, retopts) -> (
+	setOMAttr(e, OMS("scscp1", "call_id"), retopts.callid);
+	if (retopts.?tstart) then
+		setOMAttr(e, OMS("scscp1", "info_runtime"), OMI floor(1000000*(cpuTime() - retopts.tstart)));
+)
 
-constructProcComplObj = (x, callid) -> (
+constructProcTerm = method()
+constructProcTerm (XMLnode, XMLnode) := (omenode, retopts) -> (
+	e := OMA("scscp1", "procedure_terminated", {omenode});
+	doAttrs(e, retopts);
+	e
+);
+constructProcTerm (String, XMLnode) := (errmsg, retopts) -> constructProcTerm( OME(errmsg), retopts )
+constructProcComplObj = (x, retopts) -> (
 	e := OMA("scscp1", "procedure_completed", {x});
-	setOMAttr(e, OMS("scscp1", "call_id"), callid);
+	doAttrs(e, retopts);
 	e
 );
-constructProcComplNothing = (callid) -> (
+constructProcComplNothing = (retopts) -> (
 	e := OMA("scscp1", "procedure_completed", {});
-	setOMAttr(e, OMS("scscp1", "call_id"), callid);
+	doAttrs(e, retopts);
 	e
 );
-constructProcComplCookie = (x, callid) -> (
+constructProcComplCookie = (x, retopts) -> (
 	r := OMR(addOMref(getNewForRemoteRef(), x, null));
 	e := OMA("scscp1", "procedure_completed", {r});
-	setOMAttr(e, OMS("scscp1", "call_id"), callid);
+	doAttrs(e, retopts);
 	e
 );
 
 
 OMSEvaluators#"scscp1" = new MutableHashTable;
 OMSEvaluators#"scscp1"#"procedure_call" = (args, attrs) -> ( 
+	retopts := new MutableHashTable;
+	retopts.callid = OMSTR("0");
+	retopts.tstart = cpuTime();
+
 	-- Get call_id 
 	if not attrs#?("scscp1.call_id") then
-		return constructProcTerm("scscp1.procedure_call should have a call_id", OMSTR("0"));
-	callid := attrs#("scscp1.call_id")#1;
+		return constructProcTerm("scscp1.procedure_call should have a call_id", retopts);
+	retopts.callid = attrs#("scscp1.call_id")#1;
 	
 	-- Get option_return_ ..
 	ret := null;
@@ -57,24 +61,25 @@ OMSEvaluators#"scscp1"#"procedure_call" = (args, attrs) -> (
 	) else if attrs#?("scscp1.option_return_cookie") then (
 		ret = "cookie";
 	) else (
-		return constructProcTerm("scscp1.procedure_call: No suitable option_return_ found", callid);
+		return constructProcTerm("scscp1.procedure_call: No suitable option_return_ found", retopts);
 	);
 	
 	-- Get the object, and evaluate
 	if (#args =!= 1) or ((args#0).tag =!= "OMA") then
-		return constructProcTerm("scscp1.procedure_call: 1st and only argument of pc should be an OMA.", callid);
+		return constructProcTerm("scscp1.procedure_call: 1st and only argument of pc should be an OMA.", retopts);
+
 	-- Try to evaluate: value will always exit, albeit sometimes with an OME
 	evld = value(args#0);
 	if (class(e) === XMLnode) and (e.tag == "OME") then (
 		--Something went wrong :(
-		return constructProcTerm(e, callid);
+		return constructProcTerm(e, retopts);
 	);
 		
 	-- If we want to return nothing or a cookie, we are pretty much done!
 	if ret === "nothing" then
-		return constructProcComplNothing(callid)
+		return constructProcComplNothing(callid, retopts)
 	else if ret === "cookie" then
-		return constructProcComplCookie(evld, callid);
+		return constructProcComplCookie(evld, retopts);
 
 	-- try to convert back to OpenMath otherwise
 	e = toOpenMath(evld);
@@ -82,13 +87,13 @@ OMSEvaluators#"scscp1"#"procedure_call" = (args, attrs) -> (
 	-- If the result is wrong...
 	if (class(e) === XMLnode) and (e.tag == "OME") then (
 		--Something went wrong :(
-		return constructProcTerm(e, callid);
+		return constructProcTerm(e, retopts);
 	);
 	
 	
 	-- If the result is right...
 	if ret === "object" then
-		constructProcComplObj(e, callid)
+		constructProcComplObj(e, retopts)
 	else
 		null
 )
