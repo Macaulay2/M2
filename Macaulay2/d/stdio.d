@@ -189,8 +189,8 @@ opensocket(filename:string,input:bool,output:bool,listener:bool):(file or errmsg
 	  );
      so := NOFD;
      sd := NOFD;
-     if length(host) == 0 then (
-	  so = openlistener(serv);
+     if length(host) == 0 || listener then (
+	  so = openlistener(host,serv);
      	  if so == ERROR then return (file or errmsg)(errmsg("can't open listener : "+syserrmsg()));
 	  if input || output then (
 	       sd = acceptBlocking(so);
@@ -338,7 +338,7 @@ export openInOut(filename:string):(file or errmsg) := (
 export openListener(filename:string):(file or errmsg) := (
      if length(filename) > 0 && filename . 0 == '$'
      then opensocket(filename,false,false,true)
-     else (file or errmsg)(errmsg("can't open file "+filename+" as listener")));
+     else (file or errmsg)(errmsg("openListener: expected file name starting with '$'")));
 export flushinput(o:file):void := (
      o.inindex = 0;
      o.insize = 0;
