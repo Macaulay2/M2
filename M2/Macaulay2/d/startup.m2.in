@@ -242,7 +242,7 @@ if firstTime then (
 	  if regex(".*/","/aa/bb") =!= {(0, 4)}
 	  or regex("a|b","a") =!= {(0,1)}
 	  or regex("^a+$"," \naaa\n ") =!= {(2,3)}
-	  or replace("a","b","-a-a-") =!= "-b-b-"
+	  or replaceStrings("a","b","-a-a-") =!= "-b-b-"
 	  or regex("$a","$a") =!= null
 	  or regex(".*","a\nb") =!= {(0, 1)}
 	  or select("a+","aaa aaaa") =!= {"aaa","aaaa"}
@@ -270,10 +270,10 @@ if firstTime then (
 	       "packageexampleoutput" => "@docdir@/PKG/example-output/"
 	       };
 	  Layout = hashTable {
-	       1 => applyValues( t, x -> replace("^\\$\\{(pre_)?(exec_)?prefix\\}/","",x)),
+	       1 => applyValues( t, x -> replaceStrings("^\\$\\{(pre_)?(exec_)?prefix\\}/","",x)),
 	       2 => applyValues( t, x -> 
-		    replace("^\\$\\{(pre_)?prefix\\}","common",	    -- as in configure.ac
-			 replace("^\\$\\{(pre_)?exec_prefix\\}",version#"machine", -- as in configure.ac
+		    replaceStrings("^\\$\\{(pre_)?prefix\\}","common",	    -- as in configure.ac
+			 replaceStrings("^\\$\\{(pre_)?exec_prefix\\}",version#"machine", -- as in configure.ac
 			      x)))};
 	  );
      initlayout();
@@ -567,7 +567,7 @@ dump = () -> (
 	  );
      arch := if getenv "M2ARCH" =!= "" then getenv "M2ARCH" else version#"architecture";
      fn := (
-	  if prefixDirectory =!= null then concatenate(prefixDirectory, replace("PKG","Core",currentLayout#"packagecache"), "Macaulay2-", arch, "-data")	  
+	  if prefixDirectory =!= null then concatenate(prefixDirectory, replaceStrings("PKG","Core",currentLayout#"packagecache"), "Macaulay2-", arch, "-data")	  
 	  );
      if fn === null then error "can't find cache directory for dumpdata file";
      fntmp := fn | ".tmp";
@@ -592,7 +592,7 @@ if firstTime and not noloaddata and version#"dumpdata" then (
      -- try to load dumped data
      arch := if getenv "M2ARCH" =!= "" then getenv "M2ARCH" else version#"architecture";
      datafile := minimizeFilename (
-	  if prefixDirectory =!= null then concatenate(prefixDirectory, replace("PKG","Core",currentLayout#"packagecache"), "Macaulay2-", arch, "-data")
+	  if prefixDirectory =!= null then concatenate(prefixDirectory, replaceStrings("PKG","Core",currentLayout#"packagecache"), "Macaulay2-", arch, "-data")
 	  else concatenate("Macaulay2-", arch, "-data")
 	  );
      if fileExists datafile then (
@@ -614,7 +614,7 @@ path = (x -> select(x, i -> i =!= null)) deepSplice {
 		    topBuilddir|"Macaulay2/m2/",
 		    topBuilddir|"Macaulay2/packages/"
 		    ),
-	       prefixDirectory | replace("PKG","Core",currentLayout#"package"),
+	       prefixDirectory | replaceStrings("PKG","Core",currentLayout#"package"),
 	       prefixDirectory | currentLayout#"packages"
 	       )
 	  }

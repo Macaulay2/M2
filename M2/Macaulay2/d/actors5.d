@@ -1694,7 +1694,7 @@ replace(e:Expr):Expr := (
      else WrongArgString(1)
      else WrongNumArgs(3)
      else WrongNumArgs(3));
-setupfun("replace",replace);
+setupfun("replaceStrings",replace);
      
 listFrame(s:Sequence):Expr := Expr(List(mutableListClass, s, nextHash(), true));	  
 listFrame(f:Frame):Expr := if f.frameID == 0 then listFrame(emptySequence) else listFrame(f.values); -- refuse to defeat the protection of global variables

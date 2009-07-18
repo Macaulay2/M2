@@ -425,7 +425,7 @@ document {
 document {
      Key => {(insert,ZZ,Thing,VisibleList), insert},
      Headline => "copy a list, inserting an element",
-     Usage => "insert(i,a,x)",
+     Usage => "insert(i,t,x)",
      Inputs => {"i","t","x"},
      Outputs => {{"a copy of the list ", TT "x", " in which ", TT "t", " has been inserted
 	       into position ", TT "i", " of the result.  A negative value of ", TT "i", " 

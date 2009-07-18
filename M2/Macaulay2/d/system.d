@@ -89,6 +89,7 @@ import strncmp(s:string,t:string,n:int):int;
 import history():array(string);
 import chdir(name:string):int;
 import handleInterruptsSetup(handleInterrupts:bool):void;
+import segmentationFault():void;
 
 everytimeCell := { f:function():void, next:everytimeCell };
 dummyfun():void := nothing;

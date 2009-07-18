@@ -1489,6 +1489,9 @@ partsRR(x:Expr):Expr := (
      else WrongArg("a real number"));
 setupfun("partsRR",partsRR);
 
+segmentationFault(e:Expr):Expr := (segmentationFault();e);
+setupfun("segmentationFault",segmentationFault);
+
 -- Local Variables:
 -- compile-command: "make -C $M2BUILDDIR/Macaulay2/d "
 -- End:

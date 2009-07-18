@@ -16,4 +16,4 @@ assert match("a\\>","a b")
 assert match("a\\>","a")
 assert not match("a\\>"," ab")
 
-assert( replace("^a","x","a \na \naaa a") === "x \nx \nxaa a" )
+assert( replaceStrings("^a","x","a \na \naaa a") === "x \nx \nxaa a" )
