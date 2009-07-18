@@ -184,7 +184,7 @@ opensocket(filename:string,input:bool,output:bool,listener:bool):(file or errmsg
      serv := "2500";		  -- Macaulay 2 default port
      foreach c at j in filename do if c == ':' then (
 	  host = substr(filename,1,j-1);
-	  serv = substr(filename,j+1);
+	  if j+1 < length(filename) then serv = substr(filename,j+1);
 	  break;
 	  );
      so := NOFD;
