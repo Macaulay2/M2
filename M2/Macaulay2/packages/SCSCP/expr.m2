@@ -10,13 +10,11 @@
 Thing ==> SCSCPConnection := (x,s) -> ( value s(toOpenMath x, "object") )
 Thing ===> SCSCPConnection := (x,s) -> ( value s(toOpenMath x, "cookie") )
 
---^^ that makes this work:
--- i3 : a = 7 ===> gap
--- i4 : b = 7 ===> gap
--- i5 : a+b
--- i6 : a+b ==> gap
+SCSCPConnection <== Thing := (s,x) -> ( value s(toOpenMath x, "object") )
+SCSCPConnection <=== Thing := (s,x) -> ( value s(toOpenMath x, "cookie") )
 
-
+<== remoteObject := r -> (r.connection <== r)
+<=== remoteObject := r -> (r.connection <=== r)
 
 
 --------------------------
