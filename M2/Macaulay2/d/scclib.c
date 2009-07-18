@@ -825,15 +825,16 @@ int system_acceptNonblocking(int so) {
 int openlistener(char *interface, char *service) {
 #if HAVE_SOCKET
 #if HAVE_GETADDRINFO && GETADDRINFO_WORKS
-  struct addrinfo *addr;
-  static struct addrinfo hints;
+  struct addrinfo *addr = NULL;
+  static struct addrinfo hints;	/* static so all parts get initialized to zero */
   int so;
   hints.ai_family = PF_UNSPEC;
   hints.ai_flags = AI_PASSIVE;
   if (0 != set_addrinfo(&addr,&hints,interface,service)) return ERROR;
   so = socket(addr->ai_family,SOCK_STREAM,0);
-  if (ERROR == so) return ERROR;
-  if (ERROR == bind(so,addr->ai_addr,addr->ai_addrlen) || ERROR == listen(so, INCOMING_QUEUE_LEN)) { close(so); return ERROR; }
+  if (ERROR == so) { freeaddrinfo(addr); return ERROR; }
+  if (ERROR == bind(so,addr->ai_addr,addr->ai_addrlen) || ERROR == listen(so, INCOMING_QUEUE_LEN)) { freeaddrinfo(addr); close(so); return ERROR; }
+  freeaddrinfo(addr); 
   return so;
 #else
   int sa = serv_address(service);
@@ -865,9 +866,10 @@ int opensocket(char *host, char *service) {
   else interrupt_jump_set = TRUE;
   if (0 != set_addrinfo(&addr,NULL,host,service)) return ERROR;
   so = socket(addr->ai_family,SOCK_STREAM,0);
-  if (ERROR == so) return ERROR;
-  if (ERROR == connect(so,addr->ai_addr,addr->ai_addrlen)) { close(so); return ERROR; }
+  if (ERROR == so) { freeaddrinfo(addr); return ERROR; }
+  if (ERROR == connect(so,addr->ai_addr,addr->ai_addrlen)) { freeaddrinfo(addr); close(so); return ERROR; }
   interrupt_jump_set = FALSE;
+  freeaddrinfo(addr);
   return so;
 #else
   int sd = socket(AF_INET,SOCK_STREAM,0);
