@@ -1205,6 +1205,8 @@ int system_fchmod(int fd, int mode) {
   return fchmod(fd,mode);
 }
 
+void system_segmentationFault() { *((int*)1)=0; } /* for debugging our handling of segmentation faults */
+
 /*
 // Local Variables:
 // compile-command: "make -C $M2BUILDDIR/Macaulay2/d "

@@ -4,12 +4,12 @@
 
 document {
      Key => replace, 
-     Headline => "regular expression replacement",
-     Subnodes => {TO (replace,String,String,String)}
+     Headline => "replacement in strings and lists"
      }
 
 document { 
      Key => (replace,String,String,String),
+     Headline => "regular expression replacement of substrings",
      Usage => "replace(p,r,s)",
      Inputs => {
 	  "p" => "a regular expression describing a pattern",
@@ -27,4 +27,21 @@ document {
 	  ///replace ("([a-z]+)", "(\\1)", "Dog cat cat.")///,
 	  },
      SeeAlso => {"regular expressions", "regex", "replace"}
+     }
+
+document {
+     Key => {(replace,ZZ,Thing,VisibleList)},
+     Headline => "copy a list, replacing an element",
+     Usage => "replace(i,t,x)",
+     Inputs => {"i","t","x"},
+     Outputs => {{"a copy of the list ", TT "x", " in which ", TT "t", " has replaced the element at position ", TT "i", ".
+	       A negative value of ", TT "i", " is taken relative to the end of the list."
+	       }},
+     EXAMPLE lines ///
+     replace(4,t,0..10)
+     replace(0,t,0..10)
+     replace(10,t,0..10)
+     replace(-1,t,0..10)
+     replace(-11,t,0..10)
+     ///
      }

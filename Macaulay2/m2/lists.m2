@@ -168,17 +168,25 @@ commonest Tally := t -> (
 
 -- suggested by Allen Knutson:
 insert = method()
-insert(ZZ,Thing,VisibleList) := (i,x,s) -> (
+insert(ZZ,Thing,VisibleList) := VisibleList => (i,x,s) -> (
      j := i;
      if j < 0 then j = j + #s + 1;
      if j < 0 or j > #s then error("insert: index ", toString i, " out of bounds: 0..", toString length s);
      join(take(s,{0,j-1}),{x},take(s,{j,#s-1})))
 switch = method()
-switch(ZZ,ZZ,VisibleList) := (i,j,s) -> (
+switch(ZZ,ZZ,VisibleList) := VisibleList => (i,j,s) -> (
      t := new MutableList from s;
      t#i = s#j;
      t#j = s#i;
      new class s from t)
+--
+
+replace(ZZ,Thing,VisibleList) := VisibleList => (i,x,s) -> (
+     j := i;
+     if j < 0 then j = j + #s;
+     if j < 0 or j >= #s then error("replace: index ", toString i, " out of bounds: 0..", toString (length s - 1));
+     join(take(s,{0,j-1}),{x},take(s,{j+1,#s-1})))
+
 isSorted = method(Dispatch => Thing)
 isSorted VisibleList := s -> all(#s-1, i -> s#i <= s#(i+1))
 

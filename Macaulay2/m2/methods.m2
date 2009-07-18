@@ -152,7 +152,7 @@ setupMethods := (args, symbols) -> (
 	  )))
 
 setupMethods((), { 
-	  entries, borel, gcdCoefficients, singularLocus,
+	  entries, borel, gcdCoefficients, singularLocus, replace,
 	  Hom, diff, diff', contract, contract', subsets, partitions, member,
 	  koszul, symmetricPower, coefficientRing, trace, target, source,
 	  getChangeMatrix, poincare, cover, coverMap, super, poincareN, terms,
@@ -556,6 +556,9 @@ storefuns #toString = (x,e) -> (
 Function Thing = (f,x,e) -> (
      if not storefuns#?f then error("no method for storing values of function ", toString f);
      storefuns#f (x,e))
+
+-- replace
+replace(String,String,String) := String => replaceStrings
 
 -- Local Variables:
 -- compile-command: "make -C $M2BUILDDIR/Macaulay2/m2 "
