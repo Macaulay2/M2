@@ -1,4 +1,3 @@
-
 ----------------------------------
 ---------- CLIENT CODE -----------
 ----------------------------------
@@ -8,10 +7,11 @@ newConnection (String, String) := (host, port) -> (
 	dbgout(1) << "[Client] Connecting to " << hostport << endl;
 
 	s := new SCSCPConnection;
+	s#"nicedesc" = "Uninitialized SCSCP connection to " | hostport;
 	s#"fd" = openInOut ("$"|hostport);
 
 	ans := ""; buf := "";
-	while #ans == 0 or ans#-1 =!= "\n" do (
+	while #ans === 0 or ans#-1 =!= "\n" do (
 		buf = read s#"fd";
 		if atEndOfFile s#"fd" then ( 
 			dbgout(0) << "[Client]  atEndOFFile" << endl; 
@@ -22,6 +22,14 @@ newConnection (String, String) := (host, port) -> (
 	);
 
 	dbgout(2) << "[Client] Received: '" << ans << "'" << endl;
+	re := "<\\?scscp (service_name)=\"([^\"]+)\" (service_version)=\"([^\"]+)\" (service_id)=\"([^\"]+)\" (scscp_versions)=\"([^\"]+)\" \\?>";
+	if (mtch := regex(re, ans)) === null then (
+		dbgout(1) << "[Client] Received invalid HELO" << endl;
+		s#"nicedesc" = "SCSCP Connection to " | hostport;
+	) else (
+		for i in 1..4 do s#(substring(ans, mtch#(2*i-1)#0, mtch#(2*i-1)#1)) = substring(ans, mtch#(2*i)#0, mtch#(2*i)#1);
+		s#"nicedesc" = "SCSCP Connection to " | s#"service_name" | " (" | s#"service_version" | ") on " | hostport;
+	);
 
 	versionstr := ///<?scscp version="/// | ProtVersion | ///" ?>///;
 	dbgout(2) << "[Client] Requesting '" << versionstr << "'" << endl;
@@ -57,19 +65,26 @@ newConnection (String) := s -> (
 		newConnection(substring(s, mtch#1#0, mtch#1#1),substring(s, mtch#2#0, mtch#2#1))
 )
 
+net SCSCPConnection := x -> x#"nicedesc";
+
 Manipulator SCSCPConnection := (m, s) -> (
-	if m === close then close s#"fd"
+	if m === close then (
+		s#"nicedesc" = "Closed SCSCP connection";
+		close s#"fd";
+	)
 	else error "Cannot apply this Manipulator to SCSCPConnection";
 )
 
 compute := method()
 compute (SCSCPConnection, XMLnode) := (s,x) -> (
 
+	if not isOpen s#"fd" then error("Connection is closed.");
+
 	dbgout(2) << "[Compute] Constructing procedure call..." << endl;
 	if x.tag =!= "OMA" then x = OMA("fns1", "identity", {x});
 	pc := OMA("scscp1", "procedure_call", { x });
-	pc = setOMAttr(pc, OMS("scscp1", "call_id"), OMSTR(toString (callIDCounter = callIDCounter+1)));
-	pc = setOMAttr(pc, OMS("scscp1", "option_return_object"), OMSTR(""));
+	setOMAttr(pc, OMS("scscp1", "call_id"), OMSTR(toString (callIDCounter = callIDCounter+1)));
+	setOMAttr(pc, OMS("scscp1", "option_return_object"), OMSTR(""));
 	pc = OMOBJ(pc);
 	pc = createOMATTRObj(pc);
 
@@ -101,8 +116,10 @@ compute (SCSCPConnection, XMLnode) := (s,x) -> (
 	y
 )
 compute (SCSCPConnection, Thing) := (s,x) -> (
-	--When constructin an OpenMath object, we first make sure that we do not throw undeclared
-	--  and possibly automatically generated ids around. I consider this a good idea, I think.
+	if not isOpen s#"fd" then error("Connection is closed.");
+
+	--When constructin an OpenMath object, we first make sure that we do not just use undeclared
+	--  and possibly automatically generated ids. I consider this a good idea, I think.
 	resetDeclaredIDs();
 
 	dbgout(2) << "[Compute] Constructing OpenMath object..." << endl;

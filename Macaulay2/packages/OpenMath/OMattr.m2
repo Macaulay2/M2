@@ -4,12 +4,8 @@ setOMAttr (XMLnode, XMLnode, XMLnode) := (x,k,v) -> (
 	if k.tag =!= "OMS" then error "setOMAttr: keys must be OMSymbols";
 	if not x.?OMattributes then x.OMattributes = new MutableHashTable;
 	(x.OMattributes)#(k#"cd"|"."|k#"name") = (k,v);
-	x
 )
-setOMAttr (XMLnode, MutableHashTable) := (x,t) -> (
-	x.OMattributes = t;
-	x
-)
+setOMAttr (XMLnode, MutableHashTable) := (x,t) -> (x.OMattributes = t);
 
 hasOMAttr = method()
 hasOMAttr (XMLnode, String, String) := (x, cd, name) -> (
@@ -30,14 +26,7 @@ getOMAttr (XMLnode, XMLnode) := (x, k) -> (
 
 
 clearOMAttr = method()
-clearOMAttr (XMLnode) := x -> (
-	if not x.?OMattributes then 
-		x
-	else (
-		remove(x, OMattributes);
-		x
-	)
-)
+clearOMAttr (XMLnode) := x -> if x.?OMattributes then remove(x, OMattributes);
 
 createOMATTRObj = method()
 createOMATTRObj (XMLnode) := x -> (
