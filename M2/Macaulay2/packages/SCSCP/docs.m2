@@ -1,7 +1,4 @@
--- TODO
--- * Write documentation and nice examples about all the fun we can have with remoteObject
-
-------------------------
+	------------------------
 ----DOCUMENTATION-------
 ------------------------
 export { "SCSCPConnection", "newConnection", "startServer", "remoteObject" }
@@ -39,7 +36,7 @@ document {
 
 
 document {
-	Key => { SCSCPConnection, (symbol SPACE, SCSCPConnection, Thing) },
+	Key => { SCSCPConnection, (symbol SPACE, SCSCPConnection, Thing), (symbol <==,SCSCPConnection,Thing), (symbol <===,SCSCPConnection,Thing) },
 	Headline => "Execute computations using SCSCP",
 	Usage => "s x",
 	Inputs => { 
@@ -49,35 +46,33 @@ document {
 	Outputs => { Thing => "The result of the computation" },
 	"As an example, we connect to a locally running SCSCP server: ",
 	EXAMPLE { PRE ///
-i2 : s = newConnection("127.0.0.1", 26133);
+i1 : s = newConnection("127.0.0.1", 26135)
 
-i3 : s(hold(2)+3)
+o1 = SCSCP Connection to GAP (4.dev) on 127.0.0.1:26135
 
-o3 = 5
+o1 : SCSCPConnection
 
-i4 : close s
+i2 : s(hold(2)+3)
+
+o2 = 5
+
+i3 : close s
 /// },
 
 	"We could also explicitly have a look at the openMath that's being passed around",
 	EXAMPLE { PRE ///
-i2 : s = newConnection "127.0.0.1"
+i2 : o = openMath (hold(2)+3)
 
-o2 = SCSCPConnection{...1...}
-
-o2 : SCSCPConnection
-
-i3 : o = openMath (hold(2)+3)
-
-o3 = <OMA
+o2 = <OMA
        <OMS cd="arith1" name="plus"
        <OMI "2"
        <OMI "3"
 
-o3 : XMLnode
+o2 : XMLnode
 
-i4 : s(o)
+i3 : s(o)
 
-o4 = <OMOBJ
+o3 = <OMOBJ
        <OMATTR
          <OMATP
            <OMS cd="scscp1" name="call_id"
@@ -86,15 +81,45 @@ o4 = <OMOBJ
            <OMS cd="scscp1" name="procedure_completed"
            <OMI "5"
 
-o4 : XMLnode
+o3 : XMLnode
 
-i5 : value oo
+i4 : value oo
 
-o5 = 5
+o4 = 5
 
-/// },
+	/// },
 
-	SeeAlso => { newConnection, (symbol SPACE, Manipulator, SCSCPConnection) }	
+	"Another syntax offered is using the <== and <=== operators. The first of these denotes
+	a computation that returns the computed object, whereas the second denotes a computation
+	that returns a reference (i.e. a remote object)",
+	EXAMPLE { PRE ///
+i1 : s = newConnection("127.0.0.1", 26136)
+ 
+o1 = SCSCP Connection to Magma (0.3.0) on 127.0.0.1:26136
+ 
+o1 : SCSCPConnection
+  
+i2 : s <== hold(2)^32
+ 
+o2 = 4294967296
+ 
+i3 : s <=== hold(2)^333
+ 
+o3 = << Remote Magma object >>
+ 
+o3 : remoteObject
+ 
+i4 : 2^301
+ 
+o4 = 4074071952668972172536891376818756322102936787331872501272280898708762599526673412366794752
+ 
+i5 : s <== oo44/oo45
+ 
+o5 = 4294967296
+ 
+o5 : QQ
+	/// },
+	SeeAlso => { newConnection, (symbol SPACE, Manipulator, SCSCPConnection), remoteObject }	
  	}
 
 
@@ -129,4 +154,129 @@ i3 : startServer(26137)
 	}
 	}
 
+document {
+	Key => { remoteObject },
+	Headline => "The class of all remote SCSCP objects",
+	"As an example, we store three polynomials on a remote server, compute their product both locally and
+	remotely, and then ask the remote server whether the results are equal. Note that <== and <=== may be
+	used without their first argument if no confusion can arise about the SCSCP server where the 
+	computation should take place.",
+	EXAMPLE { PRE ///
+i1 : loadPackage "SCSCP";
 
+i2 : QQ[x];
+
+i3 : p1 = x^2+1; p2 = x^3-1; p3 = x+17;
+
+i4 : GAP = newConnection "127.0.0.1:26135";
+
+i5 : gp1 = GAP <=== p1
+
+o5 = << Remote GAP object >>
+
+o5 : remoteObject
+
+i6 : gp2 = GAP <=== p2; gp3 = GAP <=== p3;
+
+i7 : gp = (gp1*gp2*gp3)
+
+o7 = << Remote GAP object >>
+
+o7 : remoteObject
+
+i8 : p = p1*p2*p3;
+
+i9 : <== (gp == p)
+
+o9 = true
+	///
+	},
+    "We create matrices in Macaulay2 and compute the order of the group they generate in GAP",
+    EXAMPLE { PRE ///
+i1 : loadPackage "SCSCP";
+
+i2 : m1 = id_(QQ^10)^{1,6,2,7,3,8,4,9,5,0}
+
+o2 = | 0 1 0 0 0 0 0 0 0 0 |
+     | 0 0 0 0 0 0 1 0 0 0 |
+     | 0 0 1 0 0 0 0 0 0 0 |
+     | 0 0 0 0 0 0 0 1 0 0 |
+     | 0 0 0 1 0 0 0 0 0 0 |
+     | 0 0 0 0 0 0 0 0 1 0 |
+     | 0 0 0 0 1 0 0 0 0 0 |
+     | 0 0 0 0 0 0 0 0 0 1 |
+     | 0 0 0 0 0 1 0 0 0 0 |
+     | 1 0 0 0 0 0 0 0 0 0 |
+
+              10        10
+o2 : Matrix QQ   <--- QQ
+
+i3 : m2 = id_(QQ^10)^{1,0,2,3,4,5,6,7,8,9}
+
+o3 = | 0 1 0 0 0 0 0 0 0 0 |
+     | 1 0 0 0 0 0 0 0 0 0 |
+     | 0 0 1 0 0 0 0 0 0 0 |
+     | 0 0 0 1 0 0 0 0 0 0 |
+     | 0 0 0 0 1 0 0 0 0 0 |
+     | 0 0 0 0 0 1 0 0 0 0 |
+     | 0 0 0 0 0 0 1 0 0 0 |
+     | 0 0 0 0 0 0 0 1 0 0 |
+     | 0 0 0 0 0 0 0 0 1 0 |
+     | 0 0 0 0 0 0 0 0 0 1 |
+
+              10        10
+o3 : Matrix QQ   <--- QQ
+
+i4 : GAP = newConnection "127.0.0.1:26135"
+
+o4 = SCSCP Connection to GAP (4.dev) on 127.0.0.1:26135
+
+o4 : SCSCPConnection
+
+i5 : G = GAP <=== matrixGroup({m1,m2})
+
+o5 = << Remote GAP object >>
+
+o5 : remoteObject
+
+i6 : <== size G
+
+o6 = 10080
+    ///
+    },
+	SeeAlso => { newConnection, (symbol SPACE, Manipulator, SCSCPConnection), (symbol SPACE, SCSCPConnection, Thing) }	
+
+}
+ 
+
+undocumented { (identifyRemoteObjects, SCSCPConnection, XMLnode) }
+undocumented{ (symbol *,remoteObject,remoteObject) }
+undocumented{ (symbol *,remoteObject,Thing) }
+undocumented{ (symbol +,remoteObject,remoteObject) }
+undocumented{ (symbol +,remoteObject,Thing) }
+undocumented{ (symbol -,remoteObject,remoteObject) }
+undocumented{ (symbol -,remoteObject,Thing) }
+undocumented{ (symbol /,remoteObject,remoteObject) }
+undocumented{ (symbol /,remoteObject,Thing) }
+undocumented{ (symbol ==,remoteObject,remoteObject) }
+undocumented{ (symbol ==,remoteObject,Thing) }
+undocumented{ (symbol and,remoteObject,remoteObject) }
+undocumented{ (symbol and,remoteObject,Thing) }
+undocumented{ (symbol or,remoteObject,remoteObject) }
+undocumented{ (symbol or,remoteObject,Thing) }
+undocumented{ (symbol *,Thing,remoteObject) }
+undocumented{ (symbol +,Thing,remoteObject) }
+undocumented{ (symbol -,Thing,remoteObject) }
+undocumented{ (symbol /,Thing,remoteObject) }
+undocumented{ (symbol ==,Thing,remoteObject) }
+undocumented{ (symbol and,Thing,remoteObject) }
+undocumented{ (symbol or,Thing,remoteObject) }
+undocumented{ (openMath,remoteObject) }
+undocumented{ (size,remoteObject) }
+
+undocumented{ (net,SCSCPConnection) }
+undocumented{ (symbol ===>,Thing,SCSCPConnection) } 
+undocumented{ (symbol ==>,Thing,SCSCPConnection) } 
+undocumented{ (symbol <==,remoteObject) } 
+undocumented{ (symbol <===,remoteObject) } 
+undocumented{ (net,remoteObject) }

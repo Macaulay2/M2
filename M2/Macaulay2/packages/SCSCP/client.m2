@@ -122,8 +122,8 @@ compute (SCSCPConnection, XMLnode, String) := (s,x, ret) -> (
 compute (SCSCPConnection, Thing, String) := (s,x, ret) -> (
 	if not isOpen s#"fd" then error("Connection is closed.");
 
-	--When constructin an OpenMath object, we first make sure that we do not just use undeclared
-	--  and possibly automatically generated ids. I consider this a good idea, I think.
+	--When constructing an OpenMath object, we first make sure that we do not just use undeclared
+	--  and possibly automatically generated ids. 
 	resetDeclaredIDs();
 
 	dbgout(2) << "[Compute] Constructing OpenMath object..." << endl;
