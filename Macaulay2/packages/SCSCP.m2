@@ -210,7 +210,7 @@ startServer (String) := hostport -> (
 			
 			stopIfError = true;
 			debuggingMode = false;
-			--handleInterrupts = false; --so that, on Ctrl-C, all children get eliminated.
+			handleInterrupts = false; --so that, on Ctrl-C, all children get eliminated.
 			closeIn stdio;
 			
 			pid2 := fork();
