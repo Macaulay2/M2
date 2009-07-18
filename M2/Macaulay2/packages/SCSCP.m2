@@ -46,10 +46,10 @@ dbgout = l -> (
 ---------- THE FILES -------------
 ----------------------------------
 
+load "./SCSCP/remobjs.m2"
 load "./SCSCP/client.m2"
 load "./SCSCP/server.m2"
 load "./SCSCP/docs.m2"
-
 
 ------------------------
 ----FOR DEBUGGING-------
