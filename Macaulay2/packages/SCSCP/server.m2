@@ -187,6 +187,10 @@ handleProcedureCall = str -> (
 	);
 	
 	dbgout(2) << "[handleProcedureCall " << cid << "] Returning response..." << endl;
+	ret = createOMATTRObj OMOBJ ret;
+	dbgout(5) << "[handleProcedureCall " << cid << "] " << ret << endl;
+	ret = toString toLibxmlNode ret;
+	dbgout(5) << "[handleProcedureCall " << cid << "] " << ret << endl;
 	
-	return toString toLibxmlNode createOMATTRObj OMOBJ ret;
+	ret
 )
