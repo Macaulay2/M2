@@ -132,6 +132,7 @@ compute (SCSCPConnection, Thing) := (s,x) -> (
 	a := compute(s, o);
 	
 	dbgout(2) << "[Compute] Evaluating answer..." << endl;
+	dbgout(5) << endl << a << endl;
 	t := value a;
 
 	t

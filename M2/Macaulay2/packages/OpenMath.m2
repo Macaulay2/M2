@@ -41,30 +41,6 @@ load "./OpenMath/cds/scscp2.m2"
 load "./OpenMath/cds/set1.m2"
 load "./OpenMath/cds/setname1.m2"
 
-renderXML = (x,t) -> (
-	for i in 1..t do << " ";
-	
-	if class(x) =!= XMLnode then (
-		<< "Whoops! Not an XMLnode: '" << x << endl;
-		return;
-	);
-	
-	<< x.tag;
-	if (x.tag === "OMS") then
-		<< "(cd = " << x#"cd" << ", name = " << x#"name" << ")";
-	if (x.tag === "OMV") then << "(" << x#"name" << ")";
-	if (x.tag === "OMI") then << "(" << (x.children)#0 << ")";
-	if (x.tag === "OMSTR") then << "(" << (x.children)#0 << ")";
-	if (x.tag === "OMR") then << "(" << x#"href" << ")";
-	<< endl;
-
-	if x.?children and x.tag =!= "OMI" and x.tag =!= "OMSTR" then
-		if class(x.children) === List then 
-			for c in x.children do
-				renderXML(c, t+2);
-			
-)
-
 ------------------------
 --------TESTS-----------
 ------------------------
@@ -85,16 +61,6 @@ renderXML = (x,t) -> (
 -- << "openMath value t = " << ovt << endl;
 -- ovt = openMath vt;
 -- << "openMath value t = " << ovt << endl;
-
-{*
--- I want this to work, and show up as something with an ID
-R = QQ[y]
-f = hold(y^2)*hold(y+1)
-
--- Then, this should work with Magma:
-s = newSCSCPConnection("127.0.0.1:26136")
-s(f)
-*}
 
 -------------------------------
 ----(LITTLE) DOCUMENTATION-----

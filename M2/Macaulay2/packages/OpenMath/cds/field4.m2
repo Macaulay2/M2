@@ -25,7 +25,7 @@ OMSEvaluators#"field4"#"field_by_poly_vector" = (args, attrs) -> (
 
 
 --- To OpenMath ---
-toOpenMathFFelt = idCheck(p -> (
+toOpenMathFFelt = idCheck(t -> (
 	R := class t;
 	
 	--Get the polynomial (coefficients) for the element

@@ -281,7 +281,7 @@ fromOpenMath XMLnode := x->(
 	else if t === "OMBIND"   then  r = fromOpenMathOMBIND(x)
 	else if t === "OMATTR"   then  r = fromOpenMathOMATTR(x)
 	else if t === "OMR"      then  r = fromOpenMathOMR(x)
-	else if t === "OME"      then  r = r
+	else if t === "OME"      then  r = x
 	else (
 		print concatenate("WARNING -- Could not parse XMLnode with tag ", t);
 		r = x

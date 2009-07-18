@@ -113,3 +113,13 @@ toOpenMath BinaryOperation := a -> (
 		error concatenate("Cannot handle binary operator '", toString symb, "'")
 )
 
+--Dan Grayson may implement this some day:
+-- toOpenMath UnaryOperation := a -> (
+-- 	symb := a#0;
+-- 	if      symb === (symbol -)   then OMA("arith1", "unary_minus",  { toOpenMath a#1 })
+-- 	else if symb === (symbol not) then OMA("logic1", "not",  { toOpenMath a#1 })
+-- 	else
+-- 		error concatenate("Cannot handle unary operator '", toString symb, "'")
+-- )
+
+
