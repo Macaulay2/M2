@@ -106,11 +106,19 @@ loaddatafun(e:Expr):Expr := (
      );
 setupfun("loaddata",loaddatafun);
 
-LongDoubleArrowFun(lhs:Code,rhs:Code):Expr := binarymethod(lhs,rhs,LongDoubleArrowS);
-setup(LongDoubleArrowS,LongDoubleArrowFun);
+LongDoubleRightArrowFun(lhs:Code,rhs:Code):Expr := binarymethod(lhs,rhs,LongDoubleRightArrowS);
+setup(LongDoubleRightArrowS,LongDoubleRightArrowFun);
 
-LongLongDoubleArrowFun(lhs:Code,rhs:Code):Expr := binarymethod(lhs,rhs,LongLongDoubleArrowS);
-setup(LongLongDoubleArrowS,LongLongDoubleArrowFun);
+LongLongDoubleRightArrowFun(lhs:Code,rhs:Code):Expr := binarymethod(lhs,rhs,LongLongDoubleRightArrowS);
+setup(LongLongDoubleRightArrowS,LongLongDoubleRightArrowFun);
+
+LongDoubleLeftArrowFun1(rhs:Code):Expr := unarymethod(rhs,LongDoubleLeftArrowS);
+LongDoubleLeftArrowFun2(lhs:Code,rhs:Code):Expr := binarymethod(lhs,rhs,LongDoubleLeftArrowS);
+setup(LongDoubleLeftArrowS,LongDoubleLeftArrowFun1,LongDoubleLeftArrowFun2);
+
+LongLongDoubleLeftArrowFun1(rhs:Code):Expr := unarymethod(rhs,LongLongDoubleLeftArrowS);
+LongLongDoubleLeftArrowFun2(lhs:Code,rhs:Code):Expr := binarymethod(lhs,rhs,LongLongDoubleLeftArrowS);
+setup(LongLongDoubleLeftArrowS,LongLongDoubleLeftArrowFun1,LongLongDoubleLeftArrowFun2);
 
 LongBiDoubleArrowFun(lhs:Code,rhs:Code):Expr := binarymethod(lhs,rhs,LongBiDoubleArrowS);
 setup(LongBiDoubleArrowS,LongBiDoubleArrowFun);

@@ -131,14 +131,14 @@ unary(s:string)         :Word := install(s,makeUniqueWord(s, parseinfo(prec,nopr
 unaryword(s:string)     :Word :=           makeUniqueWord(s, parseinfo(prec,nopr  ,prec,parsefuns(unaryop   ,defaultbinary)));
 biunary(s:string)       :Word := install(s,makeUniqueWord(s, parseinfo(prec,nopr  ,prec,parsefuns(unaryop   ,postfixop))));
 postfix(s:string)       :Word := install(s,makeUniqueWord(s, parseinfo(prec,nopr  ,nopr,parsefuns(errorunary,postfixop))));
-unaryleft(s:string)     :Word := install(s,makeUniqueWord(s, parseinfo(prec,prec  ,prec,parsefuns(unaryop   ,binaryop))));
-unaryright(s:string)    :Word := install(s,makeUniqueWord(s, parseinfo(prec,prec-1,prec,parsefuns(unaryop   ,binaryop))));
+unarybinaryleft(s:string)     :Word := install(s,makeUniqueWord(s, parseinfo(prec,prec  ,prec,parsefuns(unaryop   ,binaryop))));
+unarybinaryright(s:string)    :Word := install(s,makeUniqueWord(s, parseinfo(prec,prec-1,prec,parsefuns(unaryop   ,binaryop))));
 binaryleft(s:string)    :Word := install(s,makeUniqueWord(s, parseinfo(prec,prec  ,nopr,parsefuns(errorunary,binaryop))));
 binaryleftword(s:string):Word :=           makeUniqueWord(s, parseinfo(prec,prec  ,nopr,parsefuns(errorunary,binaryop)));
 nleft (s:string)        :Word := install(s,makeUniqueWord(s, parseinfo(prec,prec  ,nopr,parsefuns(errorunary,nbinaryop))));
 nright(s:string)        :Word := install(s,makeUniqueWord(s, parseinfo(prec,prec-1,nopr,parsefuns(errorunary,nbinaryop))));
 nleftword(s:string)     :Word :=           makeUniqueWord(s, parseinfo(prec,prec  ,nopr,parsefuns(errorunary,nbinaryop)));
-nunaryleft(s:string)    :Word := install(s,makeUniqueWord(s, parseinfo(prec,prec  ,prec,parsefuns(nnunaryop ,nbinaryop))));
+nunarybinaryleft(s:string)    :Word := install(s,makeUniqueWord(s, parseinfo(prec,prec  ,prec,parsefuns(nnunaryop ,nbinaryop))));
 token(s:string)         :Word :=           makeUniqueWord(s, parseinfo(prec,nopr  ,prec,parsefuns(errorunary,errorbinary)));
 binaryright(s:string,binary:function(ParseTree,Token,TokenFile,int,bool):ParseTree):Word
                               := install(s,makeUniqueWord(s, parseinfo(prec,prec-1,nopr,parsefuns(errorunary,binary))));
@@ -180,7 +180,7 @@ bump();
      export SemicolonS := makeKeyword(SemicolonW);
      NewlineW = nleftword("{*newline*}");
 bump();
-     export CommaW := nunaryleft(","); export commaS := makeKeyword(CommaW);
+     export CommaW := nunarybinaryleft(","); export commaS := makeKeyword(CommaW);
 bump();
      wide := prec;
      elseW = token("else"); makeKeyword(elseW);
@@ -201,18 +201,18 @@ bump();
      fromW = token("from"); makeKeyword(fromW);
      toW = token("to"); makeKeyword(toW);
      narrow := prec;
--- input/output:
 bump();
-     export LessLessS := makeKeyword(unaryleft("<<"));	    -- also binary
--- logic:
+     export LessLessS := makeKeyword(unarybinaryleft("<<"));	    -- also binary
 bump();
-     export LongLongDoubleArrowS := makeKeyword(binaryright("===>"));
+     export DeductionS := makeKeyword(unarybinaryright("|-"));	    -- also binary
 bump();
-     export DeductionS := makeKeyword(unaryright("|-"));	    -- also binary
+     export LongLongDoubleRightArrowS := makeKeyword(binaryright("===>"));
+     export LongLongDoubleLeftArrowS := makeKeyword(unarybinaryright("<==="));
 bump();
      export LongBiDoubleArrowS := makeKeyword(binaryright("<==>"));
 bump();
-     export LongDoubleArrowS := makeKeyword(binaryright("==>"));
+     export LongDoubleRightArrowS := makeKeyword(binaryright("==>"));
+     export LongDoubleLeftArrowS := makeKeyword(unarybinaryright("<==")); -- also binary
 bump();
      export orS := makeKeyword(binaryrightword("or"));
 bump();
@@ -222,13 +222,13 @@ bump();
 -- binary predicates on terms:
 bump();
      export incomparableS := makeProtectedSymbolClosure("incomparable");
-     export LessS := makeKeyword(unaryright("<"));
-     export GreaterS := makeKeyword(unaryright(">"));
-     export LessEqualS := makeKeyword(unaryright("<="));
-     export GreaterEqualS := makeKeyword(unaryright(">="));
+     export LessS := makeKeyword(unarybinaryright("<"));
+     export GreaterS := makeKeyword(unarybinaryright(">"));
+     export LessEqualS := makeKeyword(unarybinaryright("<="));
+     export GreaterEqualS := makeKeyword(unarybinaryright(">="));
      export EqualEqualEqualS := makeKeyword(binaryright("==="));
      export EqualEqualS := makeKeyword(binaryright("=="));
-     export QuestionS := makeKeyword(unaryright("?"));
+     export QuestionS := makeKeyword(unarybinaryright("?"));
      export NotEqualEqualEqualS := makeKeyword(binaryright("=!="));
      export NotEqualS := makeKeyword(binaryright("!="));
 -- operations on terms that yield terms:
@@ -245,8 +245,8 @@ bump();
 bump();
      export DotDotS := makeKeyword(binaryleft(".."));
 bump();
-     export MinusS := makeKeyword(unaryleft("-"));	    -- also binary
-     export PlusS := makeKeyword(unaryleft("+"));	    -- also binary
+     export MinusS := makeKeyword(unarybinaryleft("-"));	    -- also binary
+     export PlusS := makeKeyword(unarybinaryleft("+"));	    -- also binary
      export PlusPlusS := makeKeyword(binaryleft("++"));
 bump();
      export StarStarS := makeKeyword(binaryleft("**"));
@@ -255,7 +255,7 @@ bump();
      export leftbracket := parens("[","]",precBracket, precRightParen, precRightParen);
 bump();
      export BackslashBackslashS := makeKeyword(binaryright("\\\\"));
-     export StarS := makeKeyword(unaryleft("*"));	    -- also binary
+     export StarS := makeKeyword(unarybinaryleft("*"));	    -- also binary
      export DivideS := makeKeyword(binaryleft("/"));
      export LeftDivideS := makeKeyword(binaryright("\\"));
      export PercentS := makeKeyword(binaryleft("%"));
@@ -295,7 +295,7 @@ bump();
      export PowerS := makeKeyword(binaryleft("^"));
      export PowerStarStarS := makeKeyword(binaryleft("^**"));
      export UnderscoreS := makeKeyword(binaryleft("_"));
-     export SharpS := makeKeyword(unaryleft("#")); SharpS.symbol.word.parse.unaryStrength = precSpace-1;
+     export SharpS := makeKeyword(unarybinaryleft("#")); SharpS.symbol.word.parse.unaryStrength = precSpace-1;
      export SharpQuestionS := makeKeyword(binaryleft("#?"));
      export DotS := makeKeyword(binaryleft("."));
      export DotQuestionS := makeKeyword(binaryleft(".?"));
@@ -415,10 +415,16 @@ lookup(token:Token):void := lookup(token,true);
 lookuponly(token:Token):void := lookup(token,false);
 -----------------------------------------------------------------------------
 export opsWithBinaryMethod := array(SymbolClosure)(
-     LessLessS, GreaterGreaterS, EqualEqualS, QuestionS, BarBarS, LongDoubleArrowS, LongLongDoubleArrowS, LongBiDoubleArrowS, DeductionS,
+     LessLessS, GreaterGreaterS, EqualEqualS, QuestionS, BarBarS, 
+     LongBiDoubleArrowS, DeductionS,
+     LongDoubleRightArrowS, LongLongDoubleRightArrowS,
+     LongDoubleLeftArrowS, LongLongDoubleLeftArrowS,
      ColonS, BarS, HatHatS, AmpersandS, DotDotS, MinusS, PlusS, PlusPlusS, StarStarS, StarS, BackslashBackslashS, DivideS, LeftDivideS, PercentS, SlashSlashS, AtS, 
      AdjacentS, AtAtS, PowerS, UnderscoreS, PowerStarStarS, orS, andS);
-export opsWithUnaryMethod := array(SymbolClosure)( StarS, MinusS, PlusS, LessLessS, notS, DeductionS, QuestionS,LessS,GreaterS,LessEqualS,GreaterEqualS);
+export opsWithUnaryMethod := array(SymbolClosure)(
+     StarS, MinusS, PlusS, LessLessS, 
+     LongDoubleLeftArrowS, LongLongDoubleLeftArrowS, 
+     notS, DeductionS, QuestionS,LessS,GreaterS,LessEqualS,GreaterEqualS);
 export opsWithPostfixMethod := array(SymbolClosure)( TildeS, ParenStarParenS, UnderscoreStarS, PowerStarS ,ExclamationS );
 
 -- ":=" "=" "<-" "->"  "=>" "===" "=!=" "!=" "#" "#?" "." ".?" ";" "," "<" ">" "<=" ">="

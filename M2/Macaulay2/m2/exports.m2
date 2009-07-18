@@ -78,6 +78,8 @@ export {
 	symbol ===,
 	symbol ===>,
 	symbol ==>,
+	symbol <===,
+	symbol <==,
 	symbol =>,
 	symbol >,
 	symbol >=,
