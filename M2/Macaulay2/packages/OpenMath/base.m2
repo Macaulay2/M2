@@ -60,8 +60,8 @@ toOpenMath RingElement := p -> (
 toOpenMath XMLnode := x -> (
 	if x.?OMattributes and #(x.OMattributes) > 0 then (
 		attrs := x.OMattributes;
-		xnw := clearOMAttr(x);
-		OMATTR(xnw, attrs)
+		clearOMAttr(x);
+		OMATTR(x, attrs)
 	) else
 		x
 )
@@ -243,9 +243,7 @@ fromOpenMathOMATTR := x -> (
 	if omatp.tag =!= "OMATP" or (#(omatp.children) % 2 =!= 0) then
 		(theOMerror = "1st argument of OMATTR should be an OMATP with an even number of children"; error("whoops"));
 	chd := omatp.children;
-	for i in 0..((#chd // 2)-1) do (
-		child = setOMAttr(child, chd#(2*i), chd#(2*i + 1))
-	);
+	for i in 0..((#chd // 2)-1) do setOMAttr(child, chd#(2*i), chd#(2*i + 1));
 	
 	--Done! recurse into the child.
 	fromOpenMath(child)

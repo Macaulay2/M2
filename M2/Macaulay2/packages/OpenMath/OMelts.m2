@@ -81,7 +81,7 @@ OMATTR (XMLnode, HashTable) := (child, attrs) -> (
 	);
 	
 	--clean out the attributes from the child
-	child = clearOMAttr(child);
+	clearOMAttr(child);
 
 	--construct the OMATTR
 	new XMLnode from {

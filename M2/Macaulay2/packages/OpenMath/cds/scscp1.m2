@@ -13,7 +13,7 @@
 constructProcTerm = method()
 constructProcTerm (XMLnode, XMLnode) := (omenode, callid) -> (
 	e := OMA("scscp1", "procedure_terminated", {omenode});
-	e = setOMAttr(e, OMS("scscp1", "call_id"), callid);
+	setOMAttr(e, OMS("scscp1", "call_id"), callid);
 	e
 );
 constructProcTerm (String, XMLnode) := (errmsg, callid) -> (
@@ -25,18 +25,18 @@ constructProcTerm (String, XMLnode) := (errmsg, callid) -> (
 
 constructProcComplObj = (x, callid) -> (
 	e := OMA("scscp1", "procedure_completed", {x});
-	e = setOMAttr(e, OMS("scscp1", "call_id"), callid);
+	setOMAttr(e, OMS("scscp1", "call_id"), callid);
 	e
 );
 constructProcComplNothing = (callid) -> (
 	e := OMA("scscp1", "procedure_completed", {});
-	e = setOMAttr(e, OMS("scscp1", "call_id"), callid);
+	setOMAttr(e, OMS("scscp1", "call_id"), callid);
 	e
 );
 constructProcComplCookie = (x, callid) -> (
 	r := OMR(addOMref(x, null));
 	e := OMA("scscp1", "procedure_completed", {r});
-	e = setOMAttr(e, OMS("scscp1", "call_id"), callid);
+	setOMAttr(e, OMS("scscp1", "call_id"), callid);
 	e
 );
 

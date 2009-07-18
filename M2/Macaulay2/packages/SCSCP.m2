@@ -28,14 +28,6 @@ callIDCounter = 0;
 incomingConnCounter = 0;
 
 ----------------------------------
----------- THE FILES -------------
-----------------------------------
-
-load "./SCSCP/client.m2"
-load "./SCSCP/server.m2"
-load "./SCSCP/docs.m2"
-
-----------------------------------
 -- CONVENIENT DEBUGGING OUTPUT ---
 ----------------------------------
 dbgout = l -> (
@@ -49,6 +41,14 @@ dbgout = l -> (
 -- 1: main messages
 -- 2: other info
 -- 5: things you almost certainly never want to read
+
+----------------------------------
+---------- THE FILES -------------
+----------------------------------
+
+load "./SCSCP/client.m2"
+load "./SCSCP/server.m2"
+load "./SCSCP/docs.m2"
 
 
 ------------------------
