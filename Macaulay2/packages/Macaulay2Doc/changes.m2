@@ -23,8 +23,9 @@ document {
 	  LI { "The CTRL-C interrupt signal SIGINT will now interrupt system calls; formerly, they were restarted after the handler set a flag." },
 	  LI { "New packages (OpenMath, SCSCP, and XML) for communicating via SCSCP with OpenMath to programs such as GAP and Maple have been developed, 
 	       thanks to Dan Roozemond." },
-	  LI { "The function 'realpath' now returns a string ending in '/' if the path leads to a directory, for consistency with the convention
-	       elsewhere in Macaulay2 that directory names end in '/'." }
+	  LI { "The function ", TO "realpath", " now returns a string ending in '/' if the path leads to a directory, for consistency with the convention
+	       elsewhere in Macaulay2 that directory names end in '/'." },
+	  LI { "The function ", TO "EXAMPLE", " will now accept objects of type ", TO "PRE", " to be interpreted as preformatted example output." }
 	  }
      }
 

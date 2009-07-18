@@ -1,9 +1,11 @@
 --		Copyright 2006 by Daniel R. Grayson
 
-noqname := p -> (
-     if instance(p,IntermediateMarkUpType)
-     then stderr << "--warning: " << format toString p << " is an intermediate mark-up type with no qname" << endl
-     else error("error: ", format toString p, " is an unrecognized type, appearing in hypertext, with no qname")
+warning := x -> stderr << "--warning: " << concatenate x << endl
+
+noqname := (x,c) -> (
+     if instance(c,IntermediateMarkUpType)
+     then warning(format toString x," is an instance of an intermediate mark-up type ", format toString c, " with no qname, appearing in hypertext during validation")
+     else error (format toString x," is of an unrecognized type ", format toString c, " with no qname, appearing in hypertext during validation")
      )
 
 haderror := false
@@ -50,27 +52,27 @@ validate LITERAL := validate TEX := x -> (
      -- don't know what to do here yet...
      )
 validate Hypertext := x -> (
-     p := class x;
-     if p.?qname then (
-	  n := p.qname;
-	  if validContent#?n then validate(p,validContent#n,x)
+     c := class x;
+     if c.?qname then (
+	  n := c.qname;
+	  if validContent#?n then validate(c,validContent#n,x)
 	  else error("--internal error: valid content for qname ", format n, " not recorded yet");
 	  scan(x,validate))
-     else noqname p;
+     else noqname(x,c);
      validate2 x;
      x)
-chk := (valid,p,c) -> (
-     if not c.?qname then noqname c
+chk := (valid,p,c,x) -> (
+     if not c.?qname then noqname(x,c)
      else if not valid#?(c.qname) and c.qname =!= "comment"
      then oops stderr << "--warning: element of type " << format toString p << " can't contain an element of type " << format toString c << endl
      )
 validate(Type, Set, BasicList) := (p,valid,x) -> (
      haderror = false;
-     scan(x, e -> chk(valid,p,class e));
+     scan(x, e -> chk(valid,p,class e,e));
      if haderror then error "validation failed")
 validate(MarkUpTypeWithOptions, Set, BasicList) := (p,valid,x) -> ( 
      haderror = false;
-     scan(x, e -> if class e =!= Option then chk(valid,p,class e)); 
+     scan(x, e -> if class e =!= Option then chk(valid,p,class e,e)); 
      if haderror then error "validation failed")
 
 -- Local Variables:

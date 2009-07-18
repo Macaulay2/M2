@@ -17,20 +17,14 @@ document {
 document {
      Key => {EXAMPLE,(EXAMPLE, VisibleList),(EXAMPLE, String)},
      Headline => "hypertext EXAMPLE item",
-	Usage => "EXAMPLE x",
-	Inputs => {"x" => {}},
-	Outputs => {TABLE => {}},
-     TT "EXAMPLE x", " evaluates the string or list of strings
-     ", TT "x", " as Macaulay 2 code, inserting the results in
-     hypertext preformatted ", TO "PRE", " items.",
-     PARA{},
-     "The evaluation is done by the Makefile at a separate time, and the
-     results are left where they can be found the next time the same
-     EXAMPLE is encountered.",
-     PARA{},
-	"For example, the code",
-	PRE "EXAMPLE { \"1+1\"}",
-     " produces ",
+     Usage => "EXAMPLE x",
+     Inputs => {"x" => {"a string or list of strings or objects of class ", TO "PRE", "."}},
+     Outputs => {TABLE => {"a table containing the examples.  Each string
+	       will be interpreted by ", TO "installPackage", ", if the table is included in the input provided to ", TO "document", ",
+	       as example input to be evaluated so the result can be displayed
+	       in the documentation.  Each object of class ", TO "PRE", " will be inserted unchanged into the documentation
+	       as example output."}},
+     "For example, the code", PRE ///EXAMPLE { "1+1"}///, "produces a display that looks like this:",
      EXAMPLE {"1+1"},
      SeeAlso => "hypertext"
      }
