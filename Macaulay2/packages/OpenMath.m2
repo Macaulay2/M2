@@ -97,7 +97,7 @@ document {
 document {
 	Key => {openMath},
 	Headline => "Turn an arbitrary Macaulay2 object into OpenMath (if possible)",
-	Usage => "value x",
+	Usage => "openMath x",
 	Inputs => { "x" },
 	Outputs => {{ "an XMLnode describing x" }},
 	"We show how to convert a random integer to OpenMath and print it as XML",

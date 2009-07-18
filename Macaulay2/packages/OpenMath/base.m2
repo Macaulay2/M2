@@ -330,15 +330,8 @@ value XMLnode := x -> (
 		return OME(theOMerror)
 )
 openMath = method();
-openMath (Thing) := x -> (
-
-	try (
-		theOMerror = null;
-		return toOpenMath x;
-	) else ( );
-		if theOMerror === null then
-			return OME("An unexpected error occurred")
-		else
-			return OME(theOMerror)
+openMath Thing := x -> (
+        theOMerror = null;
+	try toOpenMath x
+	else OME if theOMerror === null then "internal error: unidentified error" else theOMerror
 )
-
