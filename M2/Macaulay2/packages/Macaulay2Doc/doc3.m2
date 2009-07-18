@@ -119,6 +119,16 @@ document {
      }
 
 document {
+     Key => symbol <===,
+     Headline => "a unary and binary operator"
+     }
+
+document {
+     Key => symbol <==,
+     Headline => "a unary and binary operator"
+     }
+
+document {
      Key => symbol @@,
      Headline => "a binary operator"
      }
