@@ -17,15 +17,25 @@ storedOMrefCounter = 0;
 existsOMref = method()
 existsOMref String := x -> storedOMrefs#?x
 
+--Careful! getOMref returns a pair of "thing" and "XMLnode" ;
+--  the second one of these could be null
 getOMref = method()
 getOMref String := x -> storedOMrefs#x
 
-getNextFreeRef = x -> (
-	r := concatenate("#r", toString(storedOMrefCounter));
-	while existsOMref(r) do (
+getNewLocalRef = x -> (
+	while (
 		storedOMrefCounter = storedOMrefCounter + 1;
-		r = concatenate("#r", toString(storedOMrefCounter));
-	);
+		r := concatenate("#r", toString(storedOMrefCounter));
+		existsOMref(r)
+	) do ();
+	r
+)
+getNewForRemoteRef = x -> (
+	while (
+		i := random(10^11, 10^12);
+		r := concatenate("scscp://macaulay2/", toString i);
+		existsOMref(r)
+	) do ();
 	r
 )
 
@@ -36,12 +46,24 @@ addOMref (String, Thing, XMLnode) := (s,t,x) -> (
 	storedOMrefs#s = (t, x);
 	storedOMids#t = s;
 	s
-)
+);
+addOMref (String, Thing, Nothing) := (s,t,x) -> ( 
+	storedOMrefs#s = (t, null);
+	storedOMids#t = s;
+	s
+);
+
 addOMref (Thing, XMLnode) := (t, x) -> (
 	if hasOMid(t) then
 		getOMid(t)
 	else
-		addOMref(getNextFreeRef(), t, x)
+		addOMref(getNewLocalRef(), t, x)
+);
+addOMref (Thing, Nothing) := (t,x) -> (
+	if hasOMid(t) then
+		getOMid(t)
+	else
+		addOMref(getNewLocalRef(), t, x)
 );
 
 removeOMref = method()
@@ -91,9 +113,12 @@ idCheck = f -> x -> (
 	s := getOMid(x);
 	if declaredIDs#?s then return OMR(s);
 	
-	--id wasn't declared yet, so we should -> get the OM object.
+	--ID wasn't declared yet, so we should. So get the OM object.
 	--And we printed it now.
 	declaredIDs#s = 1;
+	
+	--careful: we assume the OpenMath object is known and stored along with the reference...
+	-- I think that's fine in this case, but am not entirely sure
 	return (getOMref(s))#1;
 )	
 autoCreateIDCheck = f -> x -> (

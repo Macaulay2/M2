@@ -34,7 +34,7 @@ constructProcComplNothing = (callid) -> (
 	e
 );
 constructProcComplCookie = (x, callid) -> (
-	r := OMR(addOMref(x, null));
+	r := OMR(addOMref(getNewForRemoteRef(), x, null));
 	e := OMA("scscp1", "procedure_completed", {r});
 	setOMAttr(e, OMS("scscp1", "call_id"), callid);
 	e
