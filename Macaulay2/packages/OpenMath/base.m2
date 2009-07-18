@@ -333,5 +333,5 @@ openMath = method();
 openMath Thing := x -> (
         theOMerror = null;
 	try toOpenMath x
-	else OME if theOMerror === null then "internal error: unidentified error" else theOMerror
+	else OME if theOMerror === null then "openMath: internal error: unidentified error" else theOMerror
 )
