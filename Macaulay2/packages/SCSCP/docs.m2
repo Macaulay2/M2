@@ -125,11 +125,12 @@ o5 : QQ
 
 
 document {
-	Key => { startServer, 1:startServer, (startServer, String), (startServer, ZZ) },
+	Key => { startServer, 1:startServer, (startServer, String), (startServer, ZZ), (startServer, String, String) },
 	Headline => "Start an SCSCP server",
-	Usage => "startServer port",
+	Usage => "startServer (host, port)",
 	Inputs => { 
-		"port" => {ofClass{String, ZZ}, ", providing the port number (defaults to 26133)"}
+		"host" => String => {"The IP address of the interface to bind to (may be omitted, and defaults to binding to all interfaces) "}, 
+		"port" => {ofClass{String, ZZ}, ", providing the port number (defaults to 26133) "}
 	},
 	"The server will keep running indefinitely; it may be stoppend by sending a Ctrl-C. Furthermore,
 	the server forks for every new incoming connection, so that it can serve many clients simultaneously.

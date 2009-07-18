@@ -4,7 +4,7 @@
 ----------------------------------
 serverSocket = null;
 startServer = method();
-startServer (String) := hostport -> (
+startServer (String, String) := (host, port) -> (
 	--Maybe we should cleanup the old socket?
 	if serverSocket =!= null and class(serverSocket) === File then (
 		dbgout(1) << "[Server] Cleaning up old socket." << endl;
@@ -12,7 +12,7 @@ startServer (String) := hostport -> (
 	);
 
 	--Here we go...
-	if match("[0-9]+", hostport) then hostport = ":"|hostport;
+	hostport := host|":"|port;
 	dbgout(0) << "[Server] Listening on " << hostport << endl;
 
 	serverSocket = openListener("$"|hostport);
@@ -61,8 +61,13 @@ startServer (String) := hostport -> (
 
 	close serverSocket;
 )
-startServer (ZZ) := port -> startServer toString port;
-installMethod(startServer, () -> startServer("26133"));
+startServer (ZZ) := port -> startServer ("", toString port)
+startServer (String) := s -> (
+	mtch := regex("^(.*)\\:(.*)$", s);
+	if mtch === null then startServer(s, "26133")
+	else startServer(substring(s, mtch#1#0, mtch#1#1),substring(s, mtch#2#0, mtch#2#1))
+)
+installMethod(startServer, () -> startServer("", "26133"));
 
 handleIncomingConnection = sock -> (
 	cid := incomingConnCounter;
