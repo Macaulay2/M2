@@ -19,7 +19,7 @@
 extern void IM2_initialize();
 
 char *progname;
-void arginits(int argc, const char **argv) { progname = argv[0]; }
+void arginits(int argc, char **argv) { progname = argv[0]; }
 
 static void init_gc(void) {
 #include "gc_fixes.h"
