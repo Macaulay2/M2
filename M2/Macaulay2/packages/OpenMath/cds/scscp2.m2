@@ -14,11 +14,16 @@ OMSEvaluators#"scscp2"#"retrieve" = (args, attrs) -> (
 	if not existsOMref(s) then
 		(theOMerror = concatenate("Unknown reference: '", s, "'"); error("whoops"));
 	
-	(getOMref(s))#1
+	o := (getOMref(s))#1;
+	if o === null then (
+		--Apparently, we had stored an object, but had not yet openMath-ed it
+		o = openMath (getOMref(s))#0;
+	);
+	o
 )
 OMSEvaluators#"scscp2"#"store_session" = (args, attrs) -> ( 
 	a := fromOpenMath args#0;
-	OMR(addOMref(a, args#0))
+	OMR(addOMref(getNewForRemoteRef(), a, args#0))
 )
 OMSEvaluators#"scscp2"#"unbind" = (args, attrs) -> ( 
 	a := args#0;
