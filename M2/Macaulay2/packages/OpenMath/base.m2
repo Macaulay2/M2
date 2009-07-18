@@ -250,11 +250,18 @@ fromOpenMathOMATTR := x -> (
 )
 
 fromOpenMathOMR := x -> (
-	r := x#"href";
+	r := null;
+	if      x#?"href" then r = x#"href"
+	else if x#?"xref" then r = x#"xref"
+	else error "OMR without href, without xref";
+		
 	if existsOMref(r) then
 		getOMref(r)
-	else
-		(theOMerror = concatenate("Could not resolve reference '", r, "'"); error("whoops"));
+	else (
+		--(theOMerror = concatenate("Could not resolve reference '", r, "'"); error("whoops"));
+		--Keep the reference around!
+		x
+	)
 )
 
 
