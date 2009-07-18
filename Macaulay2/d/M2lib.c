@@ -418,15 +418,25 @@ double system_etime(void) {
      }
 #endif
 
-#if !HAVE___ENVIRON
-#if HAVE__ENVIRON
-#define __environ _environ
+#if HAVE___ENVIRON
+    #define our_environ __environ
+    #if !HAVE_DECL___ENVIRON
+    extern char **__environ;
+    #endif
+#elif HAVE__ENVIRON
+    #define our_environ _environ
+    #if !HAVE_DECL__ENVIRON
+    extern char **_environ;
+    #endif
 #elif HAVE_ENVIRON
-#define __environ environ
-#endif
+    #define our_environ environ
+    #if !HAVE_DECL_ENVIRON
+    extern char **environ;
+    #endif
+#else
+    #error "no environment variable available"
 #endif
 
-extern char **__environ;
 
 extern char timestamp[];
 static void clean_up();
@@ -525,7 +535,7 @@ static void call_shared_library() {
 
 int Macaulay2_main(argc,argv)
 int argc; 
-const char **argv;
+char **argv;
 {
      char READLINEVERSION[8];	/* big enough for "255.255" */
      char dummy;
@@ -537,7 +547,7 @@ const char **argv;
      const char ** volatile saveargv;
      int volatile savepid = 0;
 #else
-#define saveenvp __environ
+#define saveenvp our_environ
 #define saveargv argv
 #endif
      void main_inits();
@@ -546,7 +556,7 @@ const char **argv;
      extern void interp_process(), interp_process2();
      extern int interp_topLevel();
 
-     char **x = __environ; 
+     char **x = our_environ; 
      while (*x) envc++, x++;
 
      call_shared_library();
@@ -557,7 +567,7 @@ const char **argv;
 #endif
 
 #if HAVE_PERSONALITY && !PROFILING
-     if (!gotArg("--no-personality", argv)) {
+     if (!gotArg("--no-personality", (const char **)argv)) {
 	  /* this avoids mmap() calls resulting in address randomization */
 	  int oldpersonality = personality(-1);
 	  if ((oldpersonality & ADDR_NO_RANDOMIZE) == 0) {
@@ -614,8 +624,8 @@ const char **argv;
 	  /* save environment on stack in case it's on the heap */
 	  saveenvp = (char **)alloca((envc + 1)*sizeof(char *));
 	  for (i=0; i<envc; i++) {
-	       saveenvp[i] = alloca(strlen(__environ[i]) + 1);
-	       strcpy(saveenvp[i],__environ[i]);
+	       saveenvp[i] = alloca(strlen(our_environ[i]) + 1);
+	       strcpy(saveenvp[i],our_environ[i]);
 	  }
 	  saveenvp[i] = NULL;
      }
@@ -636,17 +646,17 @@ const char **argv;
           {
 	       char **environ0;
 	       int i;
-	       __environ = saveenvp;	/* __environ is a static variable that points
+	       our_environ = saveenvp;	/* our_environ is a static variable that points
 					to the heap and has been overwritten by
 					loaddata(), thereby pointing to a previous
 					incarnation of the heap. */
-	       /* Make a copy of the environment on the heap for '__environ'. */
+	       /* Make a copy of the environment on the heap for 'our_environ'. */
 	       /* In some systems, putenv() calls free() on the old item,
 		  so we are careful to use malloc here, and not GC_malloc. */
 	       environ0 = (char **)malloc((envc + 1)*sizeof(char *));
 	       /* amazing but true:
 		  On linux, malloc calls getenv to get values for tunable
-		  parameters, so don't trash __environ yet.
+		  parameters, so don't trash our_environ yet.
 		  */
 	       if (environ0 == NULL) fatal("out of memory");
 	       for (i=0; i<envc; i++) {
@@ -655,7 +665,7 @@ const char **argv;
 		    strcpy(environ0[i],saveenvp[i]);
 	       }
 	       environ0[i] = NULL;
-	       __environ = environ0;
+	       our_environ = environ0;
                }
 	  }
 #endif
@@ -670,7 +680,7 @@ const char **argv;
 
      signal(SIGPIPE,SIG_IGN);
      system_handleInterruptsSetup(TRUE);
-     arginits(argc,saveargv);
+     arginits(argc,(const char **)saveargv);
 
      if (GC_stackbottom == NULL) GC_stackbottom = &dummy;
      system_newline = tostring(newline);
@@ -740,9 +750,9 @@ const char **argv;
 #endif
          );
      actors5_NTLVERSION = tostring(NTL_VERSION);
-     system_envp = tostrings(envc,saveenvp);
-     system_argv = tostrings(argc,saveargv);
-     system_args = tostrings(argc == 0 ? 0 : argc - 1, saveargv + 1);
+     system_envp = tostrings(envc,(const char **)saveenvp);
+     system_argv = tostrings(argc,(const char **)saveargv);
+     system_args = tostrings(argc == 0 ? 0 : argc - 1, (const char **)saveargv + 1);
      /*     actors5_configargs = tostrings(sizeof(config_args)/sizeof(char *) - 1, config_args); */
      actors5_configargs = tostring(config_args);
 

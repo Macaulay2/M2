@@ -285,6 +285,7 @@ AC_SEARCH_LIBS(hstrerror,resolv)
 AC_CHECK_FUNCS([somesillyfunction sys_errlist herror error socket gnu_get_libc_version __environ _environ environ _setmode getaddrinfo hstrerror])
 AC_CHECK_DECLS([ADDR_NO_RANDOMIZE],,,[#include <linux/personality.h>])
 AC_CHECK_DECLS([sys_errlist,sys_nerr,herror,gnu_get_libc_version])
+AC_CHECK_DECLS([__environ,_environ,environ],,,unistd.h)
 
 dnl this macro is available only in autoconf 2.60, but most systems have 2.59 as the default:
 dnl AC_TYPE_INT64_T()
