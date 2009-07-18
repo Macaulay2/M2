@@ -14,30 +14,35 @@ net RemoteObject := x -> (
 
 
 identifyRemoteObjects = method();
--- identifyRemoteObjects (SCSCPConnection, XMLnode) := (s,x)-> (
--- 	--I try to avoid copying here unless I have a choice
---  -- should use "drop" and "replace"
--- 	if x.tag === "OMR" then (
--- 		r := new RemoteObject from x;
--- 		r.connection = s;
--- 		r
--- 	) else if x.?children then (
--- 		for i in 0..(#(x.children)-1) do
--- 			(x.children)#i = if class((x.children)#i) === XMLnode then identifyRemoteObjects(s,(x.children)#i) else (x.children)#i;
--- 		x
--- 	) else (
--- 		x
--- 	)
--- )
 identifyRemoteObjects (SCSCPConnection, XMLnode) := (s,x)-> (
+	--I try to avoid copying here unless I have a choice
 	if x.tag === "OMR" then (
 		r := new RemoteObject from x;
 		r.connection = s;
 		r
 	) else if x.?children then (
-		x.children = apply(x.children, i -> if class(i) === XMLnode then identifyRemoteObjects(s,i) else i);
+		for i in 0..(#(x.children)-1) do (
+			nw := if class((x.children)#i) === XMLnode then identifyRemoteObjects(s,(x.children)#i) else (x.children)#i;
+			if (nw =!= (x.children)#i) then (
+				<< "Replacing..." << endl;
+				x.children = replace(i, nw, x.children);
+			);
+		);
 		x
 	) else (
 		x
 	)
 )
+--Old version, I think less efficient
+-- identifyRemoteObjects (SCSCPConnection, XMLnode) := (s,x)-> (
+-- 	if x.tag === "OMR" then (
+-- 		r := new RemoteObject from x;
+-- 		r.connection = s;
+-- 		r
+-- 	) else if x.?children then (
+-- 		x.children = apply(x.children, i -> if class(i) === XMLnode then identifyRemoteObjects(s,i) else i);
+-- 		x
+-- 	) else (
+-- 		x
+-- 	)
+-- )
