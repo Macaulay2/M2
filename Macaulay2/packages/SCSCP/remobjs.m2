@@ -23,10 +23,7 @@ identifyRemoteObjects (SCSCPConnection, XMLnode) := (s,x)-> (
 	) else if x.?children then (
 		for i in 0..(#(x.children)-1) do (
 			nw := if class((x.children)#i) === XMLnode then identifyRemoteObjects(s,(x.children)#i) else (x.children)#i;
-			if (nw =!= (x.children)#i) then (
-				<< "Replacing..." << endl;
-				x.children = replace(i, nw, x.children);
-			);
+			if (nw =!= (x.children)#i) then x.children = replace(i, nw, x.children);
 		);
 		x
 	) else (
