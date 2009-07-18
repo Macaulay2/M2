@@ -259,7 +259,7 @@ fromOpenMathOMR := x -> (
 	else error "OMR without href, without xref";
 		
 	if existsOMref(r) then
-		getOMref(r)
+		(getOMref(r))#0
 	else (
 		--(theOMerror = concatenate("Could not resolve reference '", r, "'"); error("whoops"));
 		--Keep the reference around!
