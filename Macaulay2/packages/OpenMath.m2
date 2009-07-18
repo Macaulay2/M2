@@ -40,9 +40,6 @@ load "./OpenMath/cds/scscp2.m2"
 load "./OpenMath/cds/set1.m2"
 load "./OpenMath/cds/setname1.m2"
 
---Should actually need to export little else than openMathValue
-export { "openMathValue" }
-
 renderXML = (x,t) -> (
 	for i in 1..t do << " ";
 	
@@ -102,22 +99,27 @@ s(f)
 ----(LITTLE) DOCUMENTATION-----
 -------------------------------
 
+--Should actually need to export little else than openMathValue
+-- (and value XMLnode, obviously)
+export { "openMathValue" }
 beginDocumentation()
 document { 
 	Key => OpenMath,
-	Headline => "OpenMath for Macaulay2"
+	Headline => "OpenMath support",
+	SeeAlso => {(value, XMLnode)}
 	}
 
 document {
 	Key => {(value,XMLnode)},
-	Headline => "Evaluate an XMLnode",
+	Headline => "Evaluate an XMLnode containing OpenMath",
 	Usage => "value x",
 	Inputs => { "x" },
 	Outputs => {{ "the value of the OpenMath object described by x" }},
-    SourceCode => {(value,XMLnode)},
 	EXAMPLE lines ///
 		t = parse ////<OMA><OMS cd="arith1" name="plus"/><OMI>1</OMI><OMI>2</OMI></OMA>////
-     	///
+		value t
+     	///,
+	SeeAlso => {openMathValue}
 	}
 
 document {
@@ -126,7 +128,6 @@ document {
 	Usage => "value x",
 	Inputs => { "x" },
 	Outputs => {{ "an XMLnode describing x" }},
-    SourceCode => {openMathValue},
 	"We show how to convert a random integer to OpenMath and print it as XML",
 	EXAMPLE lines ///
 		v = openMathValue 42
@@ -136,7 +137,8 @@ document {
 	EXAMPLE lines ///
 		v = openMathValue (hold 2*3)
 		toLibxmlNode v
-     	///
+     	///,
+	SeeAlso => {(value, XMLnode)}
 	}
 -------------------------------
 ----- (NO) ACTUAL TESTS -------
