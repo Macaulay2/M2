@@ -48,7 +48,10 @@ forkfun(e:Expr):Expr := (
      when e
      is a:Sequence do (
 	  if length(a) == 0
-	  then Expr(toInteger(fork()))
+	  then (
+	       pid := fork();
+	       stime();					    -- start the timer for the new process
+	       Expr(toInteger(pid)))
 	  else WrongNumArgs(0))
      else WrongNumArgs(0));
 setupfun("fork",forkfun);
