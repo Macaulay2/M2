@@ -318,20 +318,10 @@ fromOpenMath Thing := x -> (
 -------- With error handling, and automatic reference thing ------------
 ------------------------------------------------------------------------
 
-value XMLnode := x -> (
-	try (
-		theOMerror = null;
-		return fromOpenMath x;
-	) else ( );
-
-	if theOMerror === null then
-		return OME("An unexpected error occurred")
-	else
-		return OME(theOMerror)
-)
+guard = f -> x -> (
+     theOMerror = null;
+     try f x else OME if theOMerror === null then "internal error: unidentified error" else theOMerror)
 openMath = method();
-openMath Thing := x -> (
-        theOMerror = null;
-	try toOpenMath x
-	else OME if theOMerror === null then "openMath: internal error: unidentified error" else theOMerror
-)
+openMath Thing := guard toOpenMath 
+value XMLnode := guard fromOpenMath 
+
