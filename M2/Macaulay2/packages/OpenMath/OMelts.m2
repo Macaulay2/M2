@@ -29,15 +29,17 @@ OMS = method()
 OMS (String, String) := (x,y) -> new XMLnode from {symbol tag => "OMS", "cd" => x, "name" => y}
 
 OMA = method()
-OMA (XMLnode, List) := (s, l) -> new XMLnode from {symbol tag => "OMA",
-	children => prepend(s, l)
-}
+OMA (XMLnode, List) := (s, l) -> (
+	if #l > 0 and class(l#0) =!= XMLnode then l = apply(l, toOpenMath);
+	new XMLnode from {symbol tag => "OMA", children => prepend(s, l) }
+)
 OMA (String, String, List) := (a,b,l) -> OMA(OMS(a,b), l)
 
 OME = method()
-OME (XMLnode, List) := (s, l) -> new XMLnode from {symbol tag => "OME",
-	children => prepend(s, l)
-}
+OME (XMLnode, List) := (s, l) -> (
+	if #l > 0 and class(l#0) =!= XMLnode then l = apply(l, toOpenMath);
+	new XMLnode from {symbol tag => "OME", children => prepend(s, l) }
+)
 OME (String, String, List) := (a,b,l) -> (theOMerror = OMS(a,b), l; error("whoops"));
 OME (String) := s -> OME(OMS("scscp1", "error_system_specific"), {OMSTR(s)});
 

@@ -59,6 +59,8 @@ XMLnode or XMLnode := (a,b) -> OMA("logic1", "or", {a,b})
 XMLnode or Thing   := (a,b) -> OMA("logic1", "or", {a,openMath b})
 Thing   or XMLnode := (a,b) -> OMA("logic1", "or", {openMath a,b})
 
+size XMLnode := x -> ( OMA("set1", "size", { x }) )
+
 
 -----------------------
 ----- To OpenMath -----
