@@ -1194,7 +1194,7 @@ M2_stringarray system_regexselect(M2_string pattern, M2_string replacement, M2_s
   }
 }
 
-bool gotArg(const char *arg, char **argv) {
+bool gotArg(const char *arg, const char **argv) {
   /* used in M2lib.c, but we put them here to prevent it from being optimized away: */
   for (; *argv; argv++) if (0 == strcmp(arg,*argv)) return TRUE;
   return FALSE;
