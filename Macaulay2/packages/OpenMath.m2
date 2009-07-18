@@ -43,6 +43,9 @@ load "./OpenMath/cds/scscp2.m2"
 load "./OpenMath/cds/set1.m2"
 load "./OpenMath/cds/setname1.m2"
 
+load "./OpenMath/cds/scscp_transient_1.m2"
+
+
 ------------------------
 --------TESTS-----------
 ------------------------

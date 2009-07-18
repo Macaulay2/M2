@@ -1,6 +1,8 @@
 ----------------------------------
 ---------- CLIENT CODE -----------
 ----------------------------------
+net SCSCPConnection := x -> x#"nicedesc";
+
 newConnection = method();
 newConnection (String, String) := (host, port) -> (
 	hostport := host|":"|port;
@@ -65,8 +67,6 @@ newConnection (String) := s -> (
 		newConnection(substring(s, mtch#1#0, mtch#1#1),substring(s, mtch#2#0, mtch#2#1))
 )
 
-net SCSCPConnection := x -> x#"nicedesc";
-
 Manipulator SCSCPConnection := (m, s) -> (
 	if m === close then (
 		s#"nicedesc" = "Closed SCSCP connection";
@@ -87,6 +87,7 @@ compute (SCSCPConnection, XMLnode, String) := (s,x, ret) -> (
 	setOMAttr(pc, OMS("scscp1", "option_return_"|ret), OMSTR(""));
 	pc = OMOBJ(pc);
 	pc = createOMATTRObj(pc);
+	dbgout(5) << endl << pc << endl;
 
 	dbgout(2) << "[Compute] Sending procedure call..." << endl;
 	tspc := toString toLibxmlNode pc;
@@ -112,6 +113,9 @@ compute (SCSCPConnection, XMLnode, String) := (s,x, ret) -> (
 	y := parse ans;
 	if class(y) =!= XMLnode then
 		error "Parsing failed.";
+
+	dbgout(2) << "[Client] Identifying remote objects..." << endl;
+	y = identifyRemoteObjects(s, y);
 		
 	y
 )

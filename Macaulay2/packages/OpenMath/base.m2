@@ -142,7 +142,10 @@ fromOpenMathOMA = x->(
 
 	if class(hd) === XMLnode then (
 		-- We cannot parse it -- leave as is.
-		print concatenate("WARNING -- Could not parse application of ", toString(hd));
+		if hd.tag === "OMS" then
+			print concatenate("WARNING -- Could not parse application of ", hd#"cd", ".", hd#"name")
+		else
+			print concatenate("WARNING -- Could not parse application of this ", hd.tag);
 		x
 	) else (
 		-- We can parse it!
