@@ -94,7 +94,7 @@ withQname   := (q,x) -> (x.qname = q; x)
 trimfront := x -> apply(x, line -> if not instance(line,String) then line else (
 	  s := lines line;
 	  r := if not s#?0 then line else concatenate between(newline, prepend(replace("^[[:space:]]+","",s#0), drop(s,1)));
-	  if #line =!= 0 then line))
+	  if #r =!= 0 then r))
 
 new MarkUpType := x -> error "obsolete 'new' method called"
 
