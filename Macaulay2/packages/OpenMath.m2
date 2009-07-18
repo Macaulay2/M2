@@ -75,15 +75,15 @@ renderXML = (x,t) -> (
 -- t = parse ///<OMA><OMS cd="polyd1" name="poly_ring_d"/><OMS cd="setname1" name="Q"/><OMI>2</OMI></OMA>/// ;
 -- vt := value t;
 -- << "value t = " << vt << endl;
--- ovt := openMathValue vt;
--- << "openMathValue value t = " << ovt << endl;
--- ovt = openMathValue vt;
--- << "openMathValue value t = " << ovt << endl;
+-- ovt := openMath vt;
+-- << "openMath value t = " << ovt << endl;
+-- ovt = openMath vt;
+-- << "openMath value t = " << ovt << endl;
 -- resetDeclaredIDs()
--- ovt = openMathValue vt;
--- << "openMathValue value t = " << ovt << endl;
--- ovt = openMathValue vt;
--- << "openMathValue value t = " << ovt << endl;
+-- ovt = openMath vt;
+-- << "openMath value t = " << ovt << endl;
+-- ovt = openMath vt;
+-- << "openMath value t = " << ovt << endl;
 
 {*
 -- I want this to work, and show up as something with an ID
@@ -99,9 +99,9 @@ s(f)
 ----(LITTLE) DOCUMENTATION-----
 -------------------------------
 
---Should actually need to export little else than openMathValue
+--Should actually need to export little else than openMath
 -- (and value XMLnode, obviously)
-export { "openMathValue" }
+export { "openMath" }
 beginDocumentation()
 document { 
 	Key => OpenMath,
@@ -119,23 +119,23 @@ document {
 		t = parse ////<OMA><OMS cd="arith1" name="plus"/><OMI>1</OMI><OMI>2</OMI></OMA>////
 		value t
      	///,
-	SeeAlso => {openMathValue}
+	SeeAlso => {openMath}
 	}
 
 document {
-	Key => {openMathValue},
+	Key => {openMath},
 	Headline => "Turn an arbitrary Macaulay2 object into OpenMath (if possible)",
 	Usage => "value x",
 	Inputs => { "x" },
 	Outputs => {{ "an XMLnode describing x" }},
 	"We show how to convert a random integer to OpenMath and print it as XML",
 	EXAMPLE lines ///
-		v = openMathValue 42
+		v = openMath 42
 		toLibxmlNode v
      	///,
 	"We show how to represent 2*3 in OpenMath",
 	EXAMPLE lines ///
-		v = openMathValue (hold 2*3)
+		v = openMath (hold 2*3)
 		toLibxmlNode v
      	///,
 	SeeAlso => {(value, XMLnode)}

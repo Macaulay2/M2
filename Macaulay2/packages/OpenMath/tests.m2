@@ -6,13 +6,13 @@
 
 R = QQ[x];
 p = x^2 - 1;
-s = openMathValue p;
+s = openMath p;
 renderXML(s, 0);
 
 s = OMA("polynomial4", "factorise", {s} );
 fs = value s;
 print fs;
-tfs = openMathValue fs;
+tfs = openMath fs;
 renderXML(tfs, 0);
 
 -- (lambda.x.(x^2)) ((lambda.x.x+3)(1)) = 16 (I think)
@@ -33,7 +33,7 @@ renderXML(pc, 0);
 << "pc becomes " ;
 fpc = value pc;
 print fpc;
-renderXML(openMathValue fpc, 0);
+renderXML(openMath fpc, 0);
 
 << "trying to resolve OMR: " << endl;
 s = OMA("scscp1", "procedure_call", { OMA("scscp2", "retrieve", {OMR("#r0")})});
@@ -55,7 +55,7 @@ pc = OMATTR(s, hashTable{ OMS("scscp1", "call_id") => OMSTR("baz"), OMS("scscp1"
 print value pc;
 
 
-l = openMathValue(set{1,3,7});
+l = openMath(set{1,3,7});
 b = OMBIND("fns1", "lambda", { x }, { OMA("arith1", "power", { OMV("x"), OMI(2) }) });
 m = OMA("set1", "map", {b, l});
 print value m;
@@ -63,21 +63,21 @@ print value m;
 R = GF(2,5);
 t = random(R);
 << "t = " << t << endl;
-renderXML(openMathValue t, 0)
-<< "from to t = " << value openMathValue t << endl;
+renderXML(openMath t, 0)
+<< "from to t = " << value openMath t << endl;
 
 R = GF(2);
 R[x]; p = x^2+x+1;
 s = OMA("field3", "field_by_poly", {
-	openMathValue R,
-	openMathValue p
+	openMath R,
+	openMath p
 } )
 renderXML(s, 0);
 << "from(s) = " << value s << endl;
 
 
 -- Long (GAP) input test: --
-toLibxmlNode openMathValue value parse///<OMOBJ>
+toLibxmlNode openMath value parse///<OMOBJ>
 	<OMA>
 		<OMS cd="polyd1" name="DMP"/>
 		<OMA id="polyringSJk3jJX4oVxJWsOb" >
