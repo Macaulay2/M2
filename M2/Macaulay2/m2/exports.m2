@@ -686,7 +686,6 @@ export {
 	symbol graphIdeal,
 	symbol graphRing,
 	symbol groupID,
-	symbol handleInterrupts,
 	symbol hash,
 	symbol hashTable,
 	symbol heft,
@@ -1192,6 +1191,7 @@ exportMutable {
 	symbol recursionLimit,
         symbol scriptCommandLine,
 	symbol stopIfError,
+	symbol handleInterrupts,
 	symbol topLevelMode
 	}
 
