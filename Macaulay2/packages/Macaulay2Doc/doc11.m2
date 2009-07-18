@@ -604,6 +604,22 @@ document {
      ///
      }
 
+doc ///
+     Key
+     	  (matrix,Vector)
+     Usage
+     	  matrix v
+     Inputs
+     	  v:
+     Outputs
+     	  :Vector
+	  the matrix with a single column containing the vector {\tt v}
+     Description
+     	  Example
+	       v = vector {1,2,3}
+	       matrix v
+///
+
 -- Local Variables:
 -- compile-command: "make -C $M2BUILDDIR/Macaulay2/m2 "
 -- End:
