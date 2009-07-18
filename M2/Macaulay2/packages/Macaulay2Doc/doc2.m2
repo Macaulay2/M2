@@ -226,12 +226,12 @@ document {
      Key => {(openListener, String),openListener},
      Headline => "open a port for listening",
      Usage => "f = openListener s",
-     Inputs => {"s" => {"of the form ", TT format "$:service", ", where ", TT "service", " is
-	       replaced by the name or number of a service port, or of the form ", TT format "$"}},
+     Inputs => {"s" => {"of the form ", TT format "$interface:port", ".  Both parts are optional.  If the port is omitted, the colon is optional." }},
      Outputs => {
 	  "f" => {
-	       "an open listener on the local host at the specified service port, which is taken to be
-	       port 2500 when ", TT "s", " has the second form"
+	       "an open listener on the specified interface of the local host at the specified service port.
+	       If the port is omitted, it is taken to be port 2500.  If the interface is omitted, the listener
+	       accepts connections on all interfaces."
 	       }
 	  },
      PARA{

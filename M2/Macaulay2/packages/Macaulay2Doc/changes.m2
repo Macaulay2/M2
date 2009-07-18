@@ -25,7 +25,8 @@ document {
 	       thanks to Dan Roozemond." },
 	  LI { "The function ", TO "realpath", " now returns a string ending in '/' if the path leads to a directory, for consistency with the convention
 	       elsewhere in Macaulay2 that directory names end in '/'." },
-	  LI { "The function ", TO "EXAMPLE", " will now accept objects of type ", TO "PRE", " to be interpreted as preformatted example output." }
+	  LI { "The function ", TO "EXAMPLE", " will now accept objects of type ", TO "PRE", " to be interpreted as preformatted example output." },
+	  LI { "The function ", TO "openListener", " can now open a socket on a specified interface." },
 	  }
      }
 
