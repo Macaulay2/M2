@@ -9,7 +9,7 @@ newPackage(
 	},
 	Headline => "SCSCP for Macaulay2",
 	DebuggingMode => true,
-	AuxiliaryFiles => false
+	AuxiliaryFiles => true
 )
 
 debug needsPackage "OpenMath" -- so that we have all global symbols of OpenMath in here.
