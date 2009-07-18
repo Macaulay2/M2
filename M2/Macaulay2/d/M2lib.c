@@ -426,7 +426,7 @@ double system_etime(void) {
 #endif
 #endif
 
-extern const char **__environ;
+extern char **__environ;
 
 extern char timestamp[];
 static void clean_up();
@@ -546,7 +546,7 @@ const char **argv;
      extern void interp_process(), interp_process2();
      extern int interp_topLevel();
 
-     const char **x = __environ; 
+     char **x = __environ; 
      while (*x) envc++, x++;
 
      call_shared_library();
