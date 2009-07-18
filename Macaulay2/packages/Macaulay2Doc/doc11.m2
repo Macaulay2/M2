@@ -613,7 +613,7 @@ doc ///
      	  v:
      Outputs
      	  :Vector
-	  the matrix with a single column containing the vector {\tt v}
+	   the matrix with a single column containing the vector {\tt v}
      Description
      	  Example
 	       v = vector {1,2,3}
