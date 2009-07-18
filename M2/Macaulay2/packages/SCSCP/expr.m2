@@ -22,36 +22,43 @@ Thing ===> SCSCPConnection := (x,s) -> ( value s(toOpenMath x, "cookie") )
 --------------------------
 -- Building Expressions --
 --------------------------
-remoteObject + remoteObject := (a,b) -> ( value a.connection((toOpenMath a) + (toOpenMath b), "cookie") )
-remoteObject + Thing        := (a,b) -> ( value a.connection((toOpenMath a) + (toOpenMath b), "cookie") )
-Thing        + remoteObject := (a,b) -> ( value a.connection((toOpenMath a) + (toOpenMath b), "cookie") )
+copyConnection := method();
+copyConnection (remoteObject, remoteObject, XMLnode) := (a,b,o) -> (
+	if a.connection === b.connection then (
+		r := new remoteObject from o;
+		r.connection = a.connection;
+		r
+	) else
+		o
+)
+copyConnection (remoteObject, XMLnode) := (a,o) -> (r := new remoteObject from o; r.connection = a.connection; r)
 
-remoteObject - remoteObject := (a,b) -> ( value a.connection((toOpenMath a) - (toOpenMath b), "cookie") )
-remoteObject - Thing        := (a,b) -> ( value a.connection((toOpenMath a) - (toOpenMath b), "cookie") )
-Thing        - remoteObject := (a,b) -> ( value a.connection((toOpenMath a) - (toOpenMath b), "cookie") )
+remoteObject + remoteObject := (a,b) -> copyConnection(a,b, (toOpenMath a) + (toOpenMath b))
+remoteObject + Thing        := (a,b) -> copyConnection(a,   (toOpenMath a) + (toOpenMath b))
+Thing        + remoteObject := (a,b) -> copyConnection(b,   (toOpenMath a) + (toOpenMath b))
 
-remoteObject * remoteObject := (a,b) -> ( value a.connection((toOpenMath a) * (toOpenMath b), "cookie") )
-remoteObject * Thing        := (a,b) -> ( value a.connection((toOpenMath a) * (toOpenMath b), "cookie") )
-Thing        * remoteObject := (a,b) -> ( value a.connection((toOpenMath a) * (toOpenMath b), "cookie") )
+remoteObject - remoteObject := (a,b) -> copyConnection(a,b, (toOpenMath a) - (toOpenMath b))
+remoteObject - Thing        := (a,b) -> copyConnection(a,   (toOpenMath a) - (toOpenMath b))
+Thing        - remoteObject := (a,b) -> copyConnection(b,   (toOpenMath a) - (toOpenMath b))
 
-remoteObject / remoteObject := (a,b) -> ( value a.connection((toOpenMath a) / (toOpenMath b), "cookie") )
-remoteObject / Thing        := (a,b) -> ( value a.connection((toOpenMath a) / (toOpenMath b), "cookie") )
-Thing        / remoteObject := (a,b) -> ( value a.connection((toOpenMath a) / (toOpenMath b), "cookie") )
+remoteObject / remoteObject := (a,b) -> copyConnection(a,b, (toOpenMath a) / (toOpenMath b))
+remoteObject / Thing        := (a,b) -> copyConnection(a,   (toOpenMath a) / (toOpenMath b))
+Thing        / remoteObject := (a,b) -> copyConnection(b,   (toOpenMath a) / (toOpenMath b))
 
-remoteObject ^ remoteObject := (a,b) -> ( value a.connection((toOpenMath a) ^ (toOpenMath b), "cookie") )
-remoteObject ^ Thing        := (a,b) -> ( value a.connection((toOpenMath a) ^ (toOpenMath b), "cookie") )
-Thing        ^ remoteObject := (a,b) -> ( value a.connection((toOpenMath a) ^ (toOpenMath b), "cookie") )
+remoteObject * remoteObject := (a,b) -> copyConnection(a,b, (toOpenMath a) * (toOpenMath b))
+remoteObject * Thing        := (a,b) -> copyConnection(a,   (toOpenMath a) * (toOpenMath b))
+Thing        * remoteObject := (a,b) -> copyConnection(b,   (toOpenMath a) * (toOpenMath b))
 
-remoteObject == remoteObject := (a,b) -> ( value a.connection((toOpenMath a) == (toOpenMath b), "cookie") )
-remoteObject == Thing        := (a,b) -> ( value a.connection((toOpenMath a) == (toOpenMath b), "cookie") )
-Thing        == remoteObject := (a,b) -> ( value a.connection((toOpenMath a) == (toOpenMath b), "cookie") )
+remoteObject == remoteObject := (a,b) -> copyConnection(a,b, (toOpenMath a) == (toOpenMath b))
+remoteObject == Thing        := (a,b) -> copyConnection(a,   (toOpenMath a) == (toOpenMath b))
+Thing        == remoteObject := (a,b) -> copyConnection(b,   (toOpenMath a) == (toOpenMath b))
 
-remoteObject and remoteObject := (a,b) -> ( value a.connection((toOpenMath a) and (toOpenMath b), "cookie") )
-remoteObject and Thing        := (a,b) -> ( value a.connection((toOpenMath a) and (toOpenMath b), "cookie") )
-Thing        and remoteObject := (a,b) -> ( value a.connection((toOpenMath a) and (toOpenMath b), "cookie") )
+remoteObject and remoteObject := (a,b) -> copyConnection(a,b, (toOpenMath a) and (toOpenMath b))
+remoteObject and Thing        := (a,b) -> copyConnection(a,   (toOpenMath a) and (toOpenMath b))
+Thing        and remoteObject := (a,b) -> copyConnection(b,   (toOpenMath a) and (toOpenMath b))
 
-remoteObject or remoteObject := (a,b) -> ( value a.connection((toOpenMath a) or (toOpenMath b), "cookie") )
-remoteObject or Thing        := (a,b) -> ( value a.connection((toOpenMath a) or (toOpenMath b), "cookie") )
-Thing        or remoteObject := (a,b) -> ( value a.connection((toOpenMath a) or (toOpenMath b), "cookie") )
+remoteObject or remoteObject := (a,b) -> copyConnection(a,b, (toOpenMath a) or (toOpenMath b))
+remoteObject or Thing        := (a,b) -> copyConnection(a,   (toOpenMath a) or (toOpenMath b))
+Thing        or remoteObject := (a,b) -> copyConnection(b,   (toOpenMath a) or (toOpenMath b))
 
-size remoteObject := x -> ( assert x.?connection; value x.connection(size toOpenMath x) )
+size remoteObject := x -> copyConnection(x, size toOpenMath x) 
