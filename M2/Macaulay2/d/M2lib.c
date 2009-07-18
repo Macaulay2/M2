@@ -64,27 +64,13 @@ const char *get_frobby_version();	/* in version.cc */
  }
 #endif
 
-#ifdef HAVE_PARI
-
-  #include <pari/pari.h>
-  static const char *get_pari_version() {
-    /*
-      /usr/include/pari/paricfg.h:#define PARI_VERSION_CODE 131843
-      /usr/include/pari/paricfg.h:#define PARI_VERSION(a,b,c) (((a) << 16) + ((b) << 8) + (c))
-      It's disappointing that the version number of libpari.so is not available at run time.
-    */
-    static char buf[20];
-    sprintf(buf,"%d.%d.%d",
-	    0xff & (PARI_VERSION_CODE >> 16),
-	    0xff & (PARI_VERSION_CODE >> 8),
-	    0xff & (PARI_VERSION_CODE >> 0)
-	    );
-    return buf;
-  }
+extern const char *get_pari_version();
+#if !HAVE_PARI
+const char *get_pari_version() { 
+  return "not present"; 
+}
 #else
-  static const char *get_pari_version() { 
-    return "not present"; 
-  }
+/* it's in pari-c.c */
 #endif
 
 static const char *get_cc_version(void) {
