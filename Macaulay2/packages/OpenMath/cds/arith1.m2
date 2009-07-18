@@ -17,14 +17,3 @@ OMSEvaluators#"arith1"#"unary_minus" = (args, attrs) -> ( a := apply(args, fromO
 -- OMSEvaluators#"arith1.root" = (args, attrs) -> 
 -- OMSEvaluators#"arith1.sum" = (args, attrs) -> 
 
---- To OpenMath ---
-toOpenMath Product := x -> (
-	OMA("arith1", "times", apply(toList(x), toOpenMath))
-)
-toOpenMath Sum := x -> (
-	OMA("arith1", "plus", apply(toList(x), toOpenMath))
-)
-toOpenMath Power := x -> (
-	OMA("arith1", "power", apply(toList(x), toOpenMath))
-)
-
