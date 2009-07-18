@@ -44,7 +44,7 @@ OMSEvaluators#"polyd1"#"poly_ring_d_named" = (args, attrs) -> (
 	CR := a#0;
 	--Rest of the arguments is the variables
 	vars := take(a, {1, #a-1});
-
+	
 	--Done!
 	CR(new Array from vars)
 )
