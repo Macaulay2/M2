@@ -1,7 +1,8 @@
-remoteObject = new Type of XMLnode;
+RemoteObject = new Type of XMLnode
+RemoteObject.synonym = "remote object"
 
 getGlobalSymbol(SCSCP#"private dictionary", "connection")
-net remoteObject := x -> (
+net RemoteObject := x -> (
 	if x.?connection and x.connection#?"service_name" then 
 		concatenate("<< Remote ", x.connection#"service_name", " object >>")
 	else if x.?connection and x.connection#?"nicedesc" then
@@ -17,7 +18,7 @@ identifyRemoteObjects = method();
 -- 	--I try to avoid copying here unless I have a choice
 --  -- should use "drop" and "replace"
 -- 	if x.tag === "OMR" then (
--- 		r := new remoteObject from x;
+-- 		r := new RemoteObject from x;
 -- 		r.connection = s;
 -- 		r
 -- 	) else if x.?children then (
@@ -30,7 +31,7 @@ identifyRemoteObjects = method();
 -- )
 identifyRemoteObjects (SCSCPConnection, XMLnode) := (s,x)-> (
 	if x.tag === "OMR" then (
-		r := new remoteObject from x;
+		r := new RemoteObject from x;
 		r.connection = s;
 		r
 	) else if x.?children then (

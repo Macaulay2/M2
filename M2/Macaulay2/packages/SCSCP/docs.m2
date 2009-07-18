@@ -1,7 +1,7 @@
 	------------------------
 ----DOCUMENTATION-------
 ------------------------
-export { "SCSCPConnection", "newConnection", "startServer", "remoteObject" }
+export { "SCSCPConnection", "newConnection", "startServer", "RemoteObject" }
 
 beginDocumentation()
 document { 
@@ -91,7 +91,8 @@ o4 = 5
 
 	"Another syntax offered is using the <== and <=== operators. The first of these denotes
 	a computation that returns the computed object, whereas the second denotes a computation
-	that returns a reference (i.e. a remote object)",
+	that returns a reference (i.e. a remote object). Fortunately, these operators have lower
+	parsing precedence than most others, so few parentheses will be required.",
 	EXAMPLE { PRE ///
 i1 : s = newConnection("127.0.0.1", 26136)
  
@@ -107,19 +108,19 @@ i3 : s <=== hold(2)^333
  
 o3 = << Remote Magma object >>
  
-o3 : remoteObject
+o3 : RemoteObject
  
 i4 : 2^301
  
 o4 = 4074071952668972172536891376818756322102936787331872501272280898708762599526673412366794752
  
-i5 : s <== oo44/oo45
+i5 : s <== o4/o5
  
 o5 = 4294967296
  
 o5 : QQ
 	/// },
-	SeeAlso => { newConnection, (symbol SPACE, Manipulator, SCSCPConnection), remoteObject }	
+	SeeAlso => { newConnection, (symbol SPACE, Manipulator, SCSCPConnection), RemoteObject }	
  	}
 
 
@@ -155,7 +156,7 @@ i3 : startServer(26137)
 	}
 
 document {
-	Key => { remoteObject },
+	Key => { RemoteObject },
 	Headline => "The class of all remote SCSCP objects",
 	"As an example, we store three polynomials on a remote server, compute their product both locally and
 	remotely, and then ask the remote server whether the results are equal. Note that <== and <=== may be
@@ -174,15 +175,15 @@ i5 : gp1 = GAP <=== p1
 
 o5 = << Remote GAP object >>
 
-o5 : remoteObject
+o5 : RemoteObject
 
 i6 : gp2 = GAP <=== p2; gp3 = GAP <=== p3;
 
-i7 : gp = (gp1*gp2*gp3)
+i7 : gp = gp1*gp2*gp3
 
 o7 = << Remote GAP object >>
 
-o7 : remoteObject
+o7 : RemoteObject
 
 i8 : p = p1*p2*p3;
 
@@ -237,7 +238,7 @@ i5 : G = GAP <=== matrixGroup({m1,m2})
 
 o5 = << Remote GAP object >>
 
-o5 : remoteObject
+o5 : RemoteObject
 
 i6 : <== size G
 
@@ -250,33 +251,33 @@ o6 = 10080
  
 
 undocumented { (identifyRemoteObjects, SCSCPConnection, XMLnode) }
-undocumented{ (symbol *,remoteObject,remoteObject) }
-undocumented{ (symbol *,remoteObject,Thing) }
-undocumented{ (symbol +,remoteObject,remoteObject) }
-undocumented{ (symbol +,remoteObject,Thing) }
-undocumented{ (symbol -,remoteObject,remoteObject) }
-undocumented{ (symbol -,remoteObject,Thing) }
-undocumented{ (symbol /,remoteObject,remoteObject) }
-undocumented{ (symbol /,remoteObject,Thing) }
-undocumented{ (symbol ==,remoteObject,remoteObject) }
-undocumented{ (symbol ==,remoteObject,Thing) }
-undocumented{ (symbol and,remoteObject,remoteObject) }
-undocumented{ (symbol and,remoteObject,Thing) }
-undocumented{ (symbol or,remoteObject,remoteObject) }
-undocumented{ (symbol or,remoteObject,Thing) }
-undocumented{ (symbol *,Thing,remoteObject) }
-undocumented{ (symbol +,Thing,remoteObject) }
-undocumented{ (symbol -,Thing,remoteObject) }
-undocumented{ (symbol /,Thing,remoteObject) }
-undocumented{ (symbol ==,Thing,remoteObject) }
-undocumented{ (symbol and,Thing,remoteObject) }
-undocumented{ (symbol or,Thing,remoteObject) }
-undocumented{ (openMath,remoteObject) }
-undocumented{ (size,remoteObject) }
+undocumented{ (symbol *,RemoteObject,RemoteObject) }
+undocumented{ (symbol *,RemoteObject,Thing) }
+undocumented{ (symbol +,RemoteObject,RemoteObject) }
+undocumented{ (symbol +,RemoteObject,Thing) }
+undocumented{ (symbol -,RemoteObject,RemoteObject) }
+undocumented{ (symbol -,RemoteObject,Thing) }
+undocumented{ (symbol /,RemoteObject,RemoteObject) }
+undocumented{ (symbol /,RemoteObject,Thing) }
+undocumented{ (symbol ==,RemoteObject,RemoteObject) }
+undocumented{ (symbol ==,RemoteObject,Thing) }
+undocumented{ (symbol and,RemoteObject,RemoteObject) }
+undocumented{ (symbol and,RemoteObject,Thing) }
+undocumented{ (symbol or,RemoteObject,RemoteObject) }
+undocumented{ (symbol or,RemoteObject,Thing) }
+undocumented{ (symbol *,Thing,RemoteObject) }
+undocumented{ (symbol +,Thing,RemoteObject) }
+undocumented{ (symbol -,Thing,RemoteObject) }
+undocumented{ (symbol /,Thing,RemoteObject) }
+undocumented{ (symbol ==,Thing,RemoteObject) }
+undocumented{ (symbol and,Thing,RemoteObject) }
+undocumented{ (symbol or,Thing,RemoteObject) }
+undocumented{ (openMath,RemoteObject) }
+undocumented{ (size,RemoteObject) }
 
 undocumented{ (net,SCSCPConnection) }
 undocumented{ (symbol ===>,Thing,SCSCPConnection) } 
 undocumented{ (symbol ==>,Thing,SCSCPConnection) } 
-undocumented{ (symbol <==,remoteObject) } 
-undocumented{ (symbol <===,remoteObject) } 
-undocumented{ (net,remoteObject) }
+undocumented{ (symbol <==,RemoteObject) } 
+undocumented{ (symbol <===,RemoteObject) } 
+undocumented{ (net,RemoteObject) }
