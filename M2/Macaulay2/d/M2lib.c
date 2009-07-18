@@ -140,11 +140,10 @@ void system_handleInterruptsSetup(int handleInterrupts) {
 }
 
 static void unblock(int sig) {
-  sicset_t s;
+  sigset_t s;
   sigemptyset(&s);
-  sigprocmask(0,NULL,&s);
   sigaddset(&s,sig);
-  sigpr
+  sigprocmask(SIG_UNBLOCK,&s,NULL);
 }
 
 static void alarm_handler(int sig) {
@@ -164,6 +163,7 @@ void segv_handler2(int sig) {
 
 void stack_trace() {
      void (*old)(int) = signal(SIGSEGV,segv_handler2); /* in case traversing the stack below causes a segmentation fault */
+     unblock(SIGSEGV);
      fprintf(stderr,"-- stack trace:\n");
      if (0 == sigsetjmp(stack_trace_jump,TRUE)) {
 #	  define D fprintf(stderr,"level %d -- return addr: 0x%08lx -- frame: 0x%08lx\n",i,(long)__builtin_return_address(i),(long)__builtin_frame_address(i))
@@ -236,9 +236,16 @@ void stack_trace() {
 }
 
 void segv_handler(int sig) {
-     fprintf(stderr,"-- SIGSEGV\n");
-     stack_trace();
-     _exit(1);
+  static int level;
+  fprintf(stderr,"-- SIGSEGV\n");
+  level ++;
+  if (level > 1) {
+    fprintf(stderr,"-- SIGSEGV handler called a second time, aborting\n");
+    _exit(2);
+  }
+  stack_trace();
+  level --;
+  _exit(1);
 }
 
 #endif
