@@ -49,6 +49,7 @@ dbgout = l -> (
 load "./SCSCP/remobjs.m2"
 load "./SCSCP/client.m2"
 load "./SCSCP/server.m2"
+load "./SCSCP/expr.m2"
 load "./SCSCP/docs.m2"
 
 ------------------------

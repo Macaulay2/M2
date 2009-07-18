@@ -10,6 +10,8 @@ net remoteObject := x -> (
 		concatenate("<< Some remote object >>")
 )
 
+toOpenMath remoteObject := x -> new XMLnode from x;
+
 
 identifyRemoteObjects = method();
 -- identifyRemoteObjects (SCSCPConnection, XMLnode) := (s,x)-> (
