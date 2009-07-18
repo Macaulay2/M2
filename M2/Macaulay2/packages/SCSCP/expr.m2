@@ -2,11 +2,22 @@
 --- Conveniently handling remote objects ---
 --------------------------------------------
 
-retrieve = method();
-retrieve remoteObject := x -> ( value x.connection(OMA("scscp2", "retrieve", {toOpenMath x})) )
+--"retrieve" is not really needed: it is more or less equivalent to just giving the reference
+--with option_return_object. I suppose.
+--  retrieve = method();
+--  retrieve remoteObject := x -> ( value x.connection(OMA("scscp2", "retrieve", {toOpenMath x})) )
 
-store = method();
-store (SCSCPConnection, Thing) := (s,x) -> ( value s(toOpenMath x, "cookie") )
+Thing ==> SCSCPConnection := (x,s) -> ( value s(toOpenMath x, "object") )
+Thing ===> SCSCPConnection := (x,s) -> ( value s(toOpenMath x, "cookie") )
+
+--^^ that makes this work:
+-- i3 : a = 7 ===> gap
+-- i4 : b = 7 ===> gap
+-- i5 : a+b
+-- i6 : a+b ==> gap
+
+
+
 
 --------------------------
 -- Building Expressions --
