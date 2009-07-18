@@ -91,12 +91,11 @@ MarkUpTypeWithOptions.GlobalAssignHook = (X,x) -> (
 
 withOptions := (v,x) -> (x.Options = new OptionTable from apply(v,val -> if class val === Option then val else val=>null); x)
 withQname   := (q,x) -> (x.qname = q; x)
-requirestrings := x -> ( scan(x, line -> if class line =!= String then error ("expected a string, but encountered ", toString line)); x)
-trimfront := x -> apply(x, line -> (
+trimfront := line -> (
 	  s := lines line;
 	  if s#?0 
 	  then concatenate between(newline, prepend(replace("^[[:space:]]+","",s#0), drop(s,1)))
-	  else line))
+	  else line)
 
 new MarkUpType := x -> error "obsolete 'new' method called"
 
@@ -112,11 +111,12 @@ new BR from List := (X,x) -> if #x>0 then error "expected empty list" else x
 PARA       = withQname_"p" new MarkUpType of HypertextParagraph	    -- double spacing inside
 
 ExampleItem = withQname_"code" new MarkUpType of Hypertext
+makeExampleItem = method()
+makeExampleItem String := s -> ExampleItem {trimfront s}
+makeExampleItem Thing := s -> error ("EXAMPLE expected a string or a PRE item, but encountered ", toString s)
+
 EXAMPLE = method(Dispatch => Thing)
-EXAMPLE VisibleList := x -> (
-     TABLE splice {
-     	  "class" => "examples", apply(nonempty trimfront requirestrings nonnull toSequence x, item -> TR TD ExampleItem item) }
-     )
+EXAMPLE VisibleList := x -> TABLE splice { "class" => "examples", apply(nonempty nonnull toSequence x, item -> TR TD makeExampleItem item) }
 EXAMPLE String := x -> (
      if #x == 0 then error "empty example string";
      if x#0 == newline then error "empty first line in example";
@@ -124,6 +124,8 @@ EXAMPLE String := x -> (
      )
 
 PRE        = new MarkUpType of HypertextParagraph
+makeExampleItem PRE := identity				    -- this will allow precomputed example text
+
 TITLE      = new MarkUpType of HypertextParagraph
 HEAD       = new MarkUpType of HypertextParagraph
 BODY       = new MarkUpType of HypertextContainer
