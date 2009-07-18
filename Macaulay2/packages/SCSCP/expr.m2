@@ -7,11 +7,11 @@
 --  retrieve = method();
 --  retrieve remoteObject := x -> ( value x.connection(OMA("scscp2", "retrieve", {toOpenMath x})) )
 
-Thing ==> SCSCPConnection := (x,s) -> ( value s(toOpenMath x, "object") )
-Thing ===> SCSCPConnection := (x,s) -> ( value s(toOpenMath x, "cookie") )
+Thing ==> SCSCPConnection := (x,s) ->  ( resetDeclaredIDs(); value s(toOpenMath x, "object") )
+Thing ===> SCSCPConnection := (x,s) -> ( resetDeclaredIDs(); value s(toOpenMath x, "cookie") )
 
-SCSCPConnection <== Thing := (s,x) -> ( value s(toOpenMath x, "object") )
-SCSCPConnection <=== Thing := (s,x) -> ( value s(toOpenMath x, "cookie") )
+SCSCPConnection <== Thing := (s,x) ->  ( resetDeclaredIDs(); value s(toOpenMath x, "object") )
+SCSCPConnection <=== Thing := (s,x) -> ( resetDeclaredIDs(); value s(toOpenMath x, "cookie") )
 
 <== remoteObject := r -> (r.connection <== r)
 <=== remoteObject := r -> (r.connection <=== r)

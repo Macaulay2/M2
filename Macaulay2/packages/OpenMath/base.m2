@@ -331,6 +331,7 @@ value XMLnode := x -> (
 )
 openMath = method();
 openMath (Thing) := x -> (
+
 	try (
 		theOMerror = null;
 		return toOpenMath x;
