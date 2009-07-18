@@ -47,51 +47,51 @@ document {
 	},
 	Outputs => { Thing => "The result of the computation" },
 	"As an example, we connect to a locally running SCSCP server: ",
-	PRE ///
-		i2 : s = newConnection("127.0.0.1", 26133);
+	EXAMPLE { PRE ///
+i2 : s = newConnection("127.0.0.1", 26133);
 
-		i3 : s(hold(2)+3)
+i3 : s(hold(2)+3)
 
-		o3 = 5
+o3 = 5
 
-		i4 : close s
-	 	///,
+i4 : close s
+/// },
 
 	"We could also explicitly have a look at the openMath that's being passed around",
-	PRE ///
-		i2 : s = newConnection "127.0.0.1"
+	EXAMPLE { PRE ///
+i2 : s = newConnection "127.0.0.1"
 
-		o2 = SCSCPConnection{...1...}
+o2 = SCSCPConnection{...1...}
 
-		o2 : SCSCPConnection
+o2 : SCSCPConnection
 
-		i3 : o = openMath (hold(2)+3)
+i3 : o = openMath (hold(2)+3)
 
-		o3 = <OMA
-		       <OMS cd="arith1" name="plus"
-		       <OMI "2"
-		       <OMI "3"
+o3 = <OMA
+       <OMS cd="arith1" name="plus"
+       <OMI "2"
+       <OMI "3"
 
-		o3 : XMLnode
+o3 : XMLnode
 
-		i4 : s(o)
+i4 : s(o)
 
-		o4 = <OMOBJ
-		       <OMATTR
-		         <OMATP
-		           <OMS cd="scscp1" name="call_id"
-		           <OMSTR "1"
-		         <OMA
-		           <OMS cd="scscp1" name="procedure_completed"
-		           <OMI "5"
+o4 = <OMOBJ
+       <OMATTR
+         <OMATP
+           <OMS cd="scscp1" name="call_id"
+           <OMSTR "1"
+         <OMA
+           <OMS cd="scscp1" name="procedure_completed"
+           <OMI "5"
 
-		o4 : XMLnode
+o4 : XMLnode
 
-		i5 : value oo
+i5 : value oo
 
-		o5 = 5
+o5 = 5
 
-	 	///,
+/// },
 
 	SeeAlso => { newConnection, (symbol SPACE, Manipulator, SCSCPConnection) }	
  	}
@@ -107,24 +107,25 @@ document {
 	"The server will keep running indefinitely; it may be stoppend by sending a Ctrl-C. Furthermore,
 	the server forks for every new incoming connection, so that it can serve many clients simultaneously.
 	The amount of output printed to the screen is determined by the vaule of debugLevel.",
-	PRE ///
-		i2 : debugLevel = 2;
+	EXAMPLE { PRE ///
+i2 : debugLevel = 2;
 
-		i3 : startServer(26137)
-		[SCSCP][Server] Listening on :26137
-		[SCSCP][Server] Waiting for incoming connection 
-		[SCSCP][Server] Incoming connection. Forking. 
-		[SCSCP][handleIncoming 1] Handling new connection
-		[SCSCP][handleIncoming 1] Sending announcement
-		[SCSCP][handleIncoming 1] Waiting for version request...
-		[SCSCP][handleIncoming 1] Great! Compatible version: '1.3'
-		[SCSCP][Server] Waiting for incoming connection 
-		[SCSCP][handleIncoming 1] 'start' received
-		[SCSCP][handleProcedureCall 1] Evaluating procedure call...
-		[SCSCP][handleProcedureCall 1] Returning response...
-		[SCSCP][handleIncoming 1]  atEndOFFile
-		[SCSCP][Server] Child 1 terminated
-	 	///
+i3 : startServer(26137)
+[SCSCP][Server] Listening on :26137
+[SCSCP][Server] Waiting for incoming connection 
+[SCSCP][Server] Incoming connection. Forking. 
+[SCSCP][handleIncoming 1] Handling new connection
+[SCSCP][handleIncoming 1] Sending announcement
+[SCSCP][handleIncoming 1] Waiting for version request...
+[SCSCP][handleIncoming 1] Great! Compatible version: '1.3'
+[SCSCP][Server] Waiting for incoming connection 
+[SCSCP][handleIncoming 1] 'start' received
+[SCSCP][handleProcedureCall 1] Evaluating procedure call...
+[SCSCP][handleProcedureCall 1] Returning response...
+[SCSCP][handleIncoming 1]  atEndOFFile
+[SCSCP][Server] Child 1 terminated
+ 	///
+	}
 	}
 
 
