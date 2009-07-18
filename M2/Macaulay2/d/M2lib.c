@@ -446,7 +446,7 @@ extern void init_readline_variables();
 extern char *GC_stackbottom;
 extern void arginits(int, const char **);
 
-extern bool gotArg(const char *arg, char ** volatile argv);
+extern bool gotArg(const char *arg, const char ** argv);
 
 int pid;			/* initialized below */
 int system_getpid(void) {
@@ -669,7 +669,7 @@ const char **argv;
      }
 
      signal(SIGPIPE,SIG_IGN);
-     system_handleInterruptsSetup(true);
+     system_handleInterruptsSetup(TRUE);
      arginits(argc,saveargv);
 
      if (GC_stackbottom == NULL) GC_stackbottom = &dummy;
