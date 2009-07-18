@@ -329,7 +329,8 @@ value XMLnode := x -> (
 	else
 		return OME(theOMerror)
 )
-openMath = x -> (
+openMath = method();
+openMath (Thing) := x -> (
 	try (
 		theOMerror = null;
 		return toOpenMath x;

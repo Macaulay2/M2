@@ -1,9 +1,10 @@
-
+-- TODO
+-- * Write documentation and nice examples about all the fun we can have with remoteObject
 
 ------------------------
 ----DOCUMENTATION-------
 ------------------------
-export { "SCSCPConnection", "newConnection", "startServer" }
+export { "SCSCPConnection", "newConnection", "startServer", "remoteObject" }
 
 beginDocumentation()
 document { 

@@ -22,6 +22,8 @@ Thing ===> SCSCPConnection := (x,s) -> ( value s(toOpenMath x, "cookie") )
 --------------------------
 -- Building Expressions --
 --------------------------
+openMath remoteObject := x -> new XMLnode from x;
+
 copyConnection := method();
 copyConnection (remoteObject, remoteObject, XMLnode) := (a,b,o) -> (
 	if a.connection === b.connection then (
@@ -33,32 +35,32 @@ copyConnection (remoteObject, remoteObject, XMLnode) := (a,b,o) -> (
 )
 copyConnection (remoteObject, XMLnode) := (a,o) -> (r := new remoteObject from o; r.connection = a.connection; r)
 
-remoteObject + remoteObject := (a,b) -> copyConnection(a,b, (toOpenMath a) + (toOpenMath b))
-remoteObject + Thing        := (a,b) -> copyConnection(a,   (toOpenMath a) + (toOpenMath b))
-Thing        + remoteObject := (a,b) -> copyConnection(b,   (toOpenMath a) + (toOpenMath b))
+remoteObject + remoteObject := (a,b) -> copyConnection(a,b, (lookup(symbol +, XMLnode, XMLnode))(a,b))
+remoteObject + Thing        := (a,b) -> copyConnection(a,   (lookup(symbol +, XMLnode, XMLnode))(a,b))
+Thing        + remoteObject := (a,b) -> copyConnection(b,   (lookup(symbol +, XMLnode, XMLnode))(a,b))
 
-remoteObject - remoteObject := (a,b) -> copyConnection(a,b, (toOpenMath a) - (toOpenMath b))
-remoteObject - Thing        := (a,b) -> copyConnection(a,   (toOpenMath a) - (toOpenMath b))
-Thing        - remoteObject := (a,b) -> copyConnection(b,   (toOpenMath a) - (toOpenMath b))
+remoteObject - remoteObject := (a,b) -> copyConnection(a,b, (lookup(symbol -, XMLnode, XMLnode))(a,b))
+remoteObject - Thing        := (a,b) -> copyConnection(a,   (lookup(symbol -, XMLnode, XMLnode))(a,b))
+Thing        - remoteObject := (a,b) -> copyConnection(b,   (lookup(symbol -, XMLnode, XMLnode))(a,b))
 
-remoteObject / remoteObject := (a,b) -> copyConnection(a,b, (toOpenMath a) / (toOpenMath b))
-remoteObject / Thing        := (a,b) -> copyConnection(a,   (toOpenMath a) / (toOpenMath b))
-Thing        / remoteObject := (a,b) -> copyConnection(b,   (toOpenMath a) / (toOpenMath b))
+remoteObject / remoteObject := (a,b) -> copyConnection(a,b, (lookup(symbol /, XMLnode, XMLnode))(a,b))
+remoteObject / Thing        := (a,b) -> copyConnection(a,   (lookup(symbol /, XMLnode, XMLnode))(a,b))
+Thing        / remoteObject := (a,b) -> copyConnection(b,   (lookup(symbol /, XMLnode, XMLnode))(a,b))
 
-remoteObject * remoteObject := (a,b) -> copyConnection(a,b, (toOpenMath a) * (toOpenMath b))
-remoteObject * Thing        := (a,b) -> copyConnection(a,   (toOpenMath a) * (toOpenMath b))
-Thing        * remoteObject := (a,b) -> copyConnection(b,   (toOpenMath a) * (toOpenMath b))
+remoteObject * remoteObject := (a,b) -> copyConnection(a,b, (lookup(symbol *, XMLnode, XMLnode))(a,b))
+remoteObject * Thing        := (a,b) -> copyConnection(a,   (lookup(symbol *, XMLnode, XMLnode))(a,b))
+Thing        * remoteObject := (a,b) -> copyConnection(b,   (lookup(symbol *, XMLnode, XMLnode))(a,b))
 
-remoteObject == remoteObject := (a,b) -> copyConnection(a,b, (toOpenMath a) == (toOpenMath b))
-remoteObject == Thing        := (a,b) -> copyConnection(a,   (toOpenMath a) == (toOpenMath b))
-Thing        == remoteObject := (a,b) -> copyConnection(b,   (toOpenMath a) == (toOpenMath b))
+remoteObject == remoteObject := (a,b) -> copyConnection(a,b, (lookup(symbol ==, XMLnode, XMLnode))(a,b))
+remoteObject == Thing        := (a,b) -> copyConnection(a,   (lookup(symbol ==, XMLnode, XMLnode))(a,b))
+Thing        == remoteObject := (a,b) -> copyConnection(b,   (lookup(symbol ==, XMLnode, XMLnode))(a,b))
 
-remoteObject and remoteObject := (a,b) -> copyConnection(a,b, (toOpenMath a) and (toOpenMath b))
-remoteObject and Thing        := (a,b) -> copyConnection(a,   (toOpenMath a) and (toOpenMath b))
-Thing        and remoteObject := (a,b) -> copyConnection(b,   (toOpenMath a) and (toOpenMath b))
+remoteObject and remoteObject := (a,b) -> copyConnection(a,b, (lookup(symbol and, XMLnode, XMLnode))(a,b))
+remoteObject and Thing        := (a,b) -> copyConnection(a,   (lookup(symbol and, XMLnode, XMLnode))(a,b))
+Thing        and remoteObject := (a,b) -> copyConnection(b,   (lookup(symbol and, XMLnode, XMLnode))(a,b))
 
-remoteObject or remoteObject := (a,b) -> copyConnection(a,b, (toOpenMath a) or (toOpenMath b))
-remoteObject or Thing        := (a,b) -> copyConnection(a,   (toOpenMath a) or (toOpenMath b))
-Thing        or remoteObject := (a,b) -> copyConnection(b,   (toOpenMath a) or (toOpenMath b))
+remoteObject or remoteObject := (a,b) -> copyConnection(a,b, (lookup(symbol or, XMLnode, XMLnode))(a,b))
+remoteObject or Thing        := (a,b) -> copyConnection(a,   (lookup(symbol or, XMLnode, XMLnode))(a,b))
+Thing        or remoteObject := (a,b) -> copyConnection(b,   (lookup(symbol or, XMLnode, XMLnode))(a,b))
 
-size remoteObject := x -> copyConnection(x, size toOpenMath x) 
+size remoteObject := x -> copyConnection(x, (lookup(size, XMLnode))(x))
