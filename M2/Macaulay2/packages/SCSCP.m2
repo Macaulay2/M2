@@ -149,7 +149,7 @@ compute (SCSCPConnection, Thing) := (s,x) -> (
 	resetDeclaredIDs();
 
 	dbgout(2) << "[Compute] Constructing OpenMath object..." << endl;
-	o := openMathValue x;
+	o := openMath x;
 	if class(o) === XMLnode and o.tag === "OME" then (
 		stderr << o << endl;
 		error(concatenate("Could not convert '", toString x, "' of type '",toString class x,"'to OpenMath"));
@@ -332,7 +332,7 @@ handleProcedureCall = str -> (
 
 	--note that the toOpenMath of a procedure call is somewhat special, since it returns an 
 	--  XMLnode automatically. To allow for people to do somewhat different things (like typing
-	--  OpenMath without a procedure call), we try an openMathValue x if necessary.
+	--  OpenMath without a procedure call), we try an openMath x if necessary.
 	
 	cid := incomingConnCounter;
 	
@@ -351,7 +351,7 @@ handleProcedureCall = str -> (
 	
 	if class(ret) =!= XMLnode then (
 		dbgout(2) << "[handleProcedureCall " << cid << "] Hmz, response was no XMLnode. Ah well, we'll make one" << endl;
-		ret = openMathValue ret;
+		ret = openMath ret;
 	);
 	
 	dbgout(2) << "[handleProcedureCall " << cid << "] Returning response..." << endl;
@@ -425,7 +425,7 @@ document {
 
 		o2 : SCSCPConnection
 
-		i3 : o = openMathValue (hold(2)+3)
+		i3 : o = openMath (hold(2)+3)
 
 		o3 = <OMA
 		       <OMS cd="arith1" name="plus"
