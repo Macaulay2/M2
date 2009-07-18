@@ -822,14 +822,14 @@ int system_acceptNonblocking(int so) {
 
 #define INCOMING_QUEUE_LEN 10
 
-int openlistener(char *service) {
+int openlistener(char *interface, char *service) {
 #if HAVE_SOCKET
 #if HAVE_GETADDRINFO && GETADDRINFO_WORKS
   struct addrinfo *addr;
   static struct addrinfo hints;
   int so;
   hints.ai_flags = AI_PASSIVE;
-  if (0 != set_addrinfo(&addr,&hints,NULL,service)) return ERROR;
+  if (0 != set_addrinfo(&addr,&hints,interface,service)) return ERROR;
   so = socket(addr->ai_family,SOCK_STREAM,0);
   if (ERROR == so) return ERROR;
   if (ERROR == bind(so,addr->ai_addr,addr->ai_addrlen) || ERROR == listen(so, INCOMING_QUEUE_LEN)) { close(so); return ERROR; }
@@ -895,23 +895,21 @@ int opensocket(char *host, char *service) {
 #endif
 }
 
-int system_opensocket(host,serv)
-M2_string host,serv;
-{
-     char *Host = tocharstar(host);
-     char *Serv = tocharstar(serv);
-     int sd = opensocket(Host,Serv);
-     GC_FREE(Host);
-     GC_FREE(Serv);
+int system_opensocket(M2_string host,M2_string serv) {
+     char *tmphost = tocharstar(host);
+     char *tmpserv = tocharstar(serv);
+     int sd = opensocket(tmphost,tmpserv);
+     GC_FREE(tmphost);
+     GC_FREE(tmpserv);
      return sd;
      }
 
-int system_openlistener(serv)
-M2_string serv;
-{
-     char *Serv = tocharstar(serv);
-     int sd = openlistener(Serv);
-     GC_FREE(Serv);
+int system_openlistener(M2_string interface,M2_string serv) {
+     char *tmpinterface = tocharstar(interface);
+     char *tmpserv = tocharstar(serv);
+     int sd = openlistener(*tmpinterface ? tmpinterface : NULL,tmpserv);
+     GC_FREE(tmpinterface);
+     GC_FREE(tmpserv);
      return sd;
      }
 

@@ -23,7 +23,7 @@ import openin(filename:string):int;
 import openout(filename:string):int;
 import openoutappend(filename:string):int;
 import opensocket(host:string,serv:string):int;
-import openlistener(serv:string):int;
+import openlistener(interface:string,serv:string):int;
 import acceptBlocking(sd:int):int;
 import acceptNonblocking(sd:int):int;
 import newline:string;
