@@ -1,0 +1,33 @@
+-*- coding: utf-8 -*-
+
+add a function "sandbox()" that forks into a sandbox following the advice in
+    Daniel J. Bernstein. "Some thoughts on security after ten years of qmail 1.0"
+    http://cr.yp.to/qmail/qmailsec-20071101.pdf
+
+if not running as root, make the sandbox not quite as "extreme" in his sense,
+or optionally, give an error.
+
+namely:
+
+ if (0==fork()) {
+    • Prohibit new ﬁles, new sockets, etc., by setting the 
+      current and maximum RLIMIT_NOFILE limits to 0. 
+      (with setrlimit(2))
+    • Prohibit ﬁlesystem access: chdir and chroot to an 
+      empty directory. 
+    • Choose a uid dedicated to this process ID. This can 
+      be as simple as adding the process ID to a base uid, 
+      as long as other system-administration tools stay away 
+      from the same uid range. 
+    • Ensure that nothing is running under the uid: fork a 
+      child to run setuid(targetuid), kill(-1,SIGKILL), 
+      and _exit(0), and then check that the child exited 
+      normally. 
+    • Prohibit kill(), ptrace(), etc., by setting gid and uid 
+      to the target uid. 
+    • Prohibit fork(), by setting the current and maximum 
+      RLIMIT_NPROC limits to 0. 
+    • Set the desired limits on memory allocation and other 
+      resource allocation. 
+    • Run the rest of the program. 
+  }
