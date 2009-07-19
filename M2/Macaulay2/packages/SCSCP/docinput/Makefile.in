@@ -1,5 +1,5 @@
 #After changing this file, run ./config.status Macaulay2/packages/SCSCP/docinput/Makefile
-#  in the toplevel source tree. Then, to recreate the examples, run "make" in 
+#  in the toplevel build tree. Then, to recreate the examples, run "make" in 
 #  BUILD/normal/Macaulay2/packages/SCSCP/docinput.
 
 M2=@pre_bindir@/M2@EXE@
@@ -7,7 +7,7 @@ VPATH = @srcdir@
 
 M2=M2  #delete this later
 
-files = gap1 gap2
+files = gap1 gap2 gapmats gappol magmaremobj
 outfiles = $(files:%=@srcdir@/%.out)
 
 all: checkservers $(outfiles)
@@ -16,9 +16,9 @@ Makefile: Makefile.in; cd ../../../..; ./config.status Macaulay2/packages/SCSCP/
 
 checkservers: checkgap checkmagma
 checkgap: 
-	blablabla (return 0)
+	nc -z 127.0.0.1 26135
 checkmagma: 
-	blablabla (return 0)
+	nc -z 127.0.0.1 26136
 
 %.out: %.m2; 
 	$(M2) -q --stop -e 'loadPackage "SCSCP"' < $^ > out.tmp

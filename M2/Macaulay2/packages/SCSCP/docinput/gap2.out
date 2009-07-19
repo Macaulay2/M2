@@ -1,6 +1,36 @@
 
-i1 : 1+1
+i1 : s = newConnection("127.0.0.1", 26135)
 
-o1 = 2
+o1 = SCSCP Connection to GAP (4.dev) on 127.0.0.1:26135
 
-i2 : 
+o1 : SCSCPConnection
+
+i2 : o = openMath (hold(2)+3)
+
+o2 = <OMA
+       <OMS cd="arith1" name="plus"
+       <OMI "2"
+       <OMI "3"
+
+o2 : XMLnode
+
+i3 : s(o)
+
+o3 = <OMOBJ
+       <OMATTR
+         <OMATP
+           <OMS cd="scscp1" name="call_id"
+           <OMSTR "1"
+         <OMA
+           <OMS cd="scscp1" name="procedure_completed"
+           <OMI "5"
+
+o3 : XMLnode
+
+i4 : value oo
+
+o4 = 5
+
+i5 : close s
+
+i6 : 
