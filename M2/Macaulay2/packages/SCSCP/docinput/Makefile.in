@@ -1,1 +1,15 @@
 M2=@pre_bindir@/M2@EXE@
+VPATH = @srcdir@
+
+M2=M2  #delete this later
+
+all: @srcdir@/gap1.out
+
+@srcdir@/gap1.out: gap1.m2
+
+Makefile: Makefile.in; cd ../../../..; ./config.status Macaulay2/packages/SCSCP/docinput/Makefile
+
+
+%.out: %.m2; 
+	$(M2) -q --stop -e 'loadPackage "SCSCP"' < $^ > out.tmp
+	mv out.tmp $@
