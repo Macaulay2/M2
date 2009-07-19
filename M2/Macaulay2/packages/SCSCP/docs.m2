@@ -34,9 +34,13 @@ document {
 	SeeAlso => { (symbol SPACE, SCSCPConnection, Thing), newConnection }
  	}
 
+document {
+	Key => { SCSCPConnection },
+	Headline => "The class of all SCSCP connections"
+}
 
 document {
-	Key => { SCSCPConnection, (symbol SPACE, SCSCPConnection, Thing), (symbol <==,SCSCPConnection,Thing), (symbol <===,SCSCPConnection,Thing) },
+	Key => { (symbol <==,SCSCPConnection,Thing), (symbol <===,SCSCPConnection,Thing), (symbol SPACE, SCSCPConnection, Thing) },
 	Headline => "Execute computations using SCSCP",
 	Usage => "s x",
 	Inputs => { 
