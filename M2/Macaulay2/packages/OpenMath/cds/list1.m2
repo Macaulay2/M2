@@ -13,10 +13,7 @@ OMSEvaluators#"list1"#"map" = (args, attrs) -> (
 )
 
 --- To OpenMath ---
-toOpenMath List := l -> (
-	OMA("list1", "list", apply(l, toOpenMath))
-)
-toOpenMath MutableList := l -> (
+toOpenMath BasicList := l -> (
 	OMA("list1", "list", apply(toList l, toOpenMath))
 )
 
