@@ -1,4 +1,4 @@
-	------------------------
+------------------------
 ----DOCUMENTATION-------
 ------------------------
 export { "SCSCPConnection", "newConnection", "startServer", "RemoteObject" }
@@ -49,19 +49,7 @@ document {
 	},
 	Outputs => { Thing => "The result of the computation" },
 	"As an example, we connect to a locally running SCSCP server: ",
-	EXAMPLE { PRE ///
-i1 : s = newConnection("127.0.0.1", 26135)
-
-o1 = SCSCP Connection to GAP (4.dev) on 127.0.0.1:26135
-
-o1 : SCSCPConnection
-
-i2 : s(hold(2)+3)
-
-o2 = 5
-
-i3 : close s
-/// },
+	EXAMPLE { PRE get (currentFileDirectory|"docinput/gap1.out") },
 
 	"We could also explicitly have a look at the openMath that's being passed around",
 	EXAMPLE { PRE ///
