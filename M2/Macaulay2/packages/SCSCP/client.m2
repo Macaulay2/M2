@@ -17,6 +17,7 @@ newConnection (String, String) := (host, port) -> (
 		buf = read s#"fd";
 		if atEndOfFile s#"fd" then ( 
 			dbgout(0) << "[Client]  atEndOFFile" << endl; 
+			closeConnection s;		
 			error("atEndOfFile during connection"); 
 		);
 
@@ -43,6 +44,7 @@ newConnection (String, String) := (host, port) -> (
 		buf = read s#"fd";
 		if atEndOfFile s#"fd" then ( 
 			dbgout(0) << "[Client]  atEndOFFile" << endl; 
+			closeConnection s;		
 			error("atEndOfFile during version negotiation"); 
 		);
 
@@ -53,6 +55,7 @@ newConnection (String, String) := (host, port) -> (
 	
 	if ans =!= versionstr|"\n" then (
 		dbgout(0) << "[Client] Incompatible." << endl;
+		closeConnection s;
 		error("SCSCP connection failed.");
 	);
 	
@@ -67,12 +70,14 @@ newConnection (String) := s -> (
 		newConnection(substring(s, mtch#1#0, mtch#1#1),substring(s, mtch#2#0, mtch#2#1))
 )
 
+closeConnection := s -> (
+	s#"nicedesc" = "Closed SCSCP connection";
+	try close s#"fd";
+)
+
 Manipulator SCSCPConnection := (m, s) -> (
-	if m === close then (
-		s#"nicedesc" = "Closed SCSCP connection";
-		close s#"fd";
-	)
-	else error "Cannot apply this Manipulator to SCSCPConnection";
+	if m === close then closeConnection s
+	else error concatenate("Cannot apply Manipulator ", toString m, " to SCSCPConnection");
 )
 
 compute := method()
