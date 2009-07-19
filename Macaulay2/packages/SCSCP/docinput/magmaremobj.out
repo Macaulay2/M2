@@ -1,0 +1,30 @@
+
+i1 : s = newConnection("127.0.0.1", 26136)
+
+o1 = SCSCP Connection to Magma (0.3.0) on 127.0.0.1:26136
+
+o1 : SCSCPConnection
+
+i2 : s <== hold(2)^32
+
+o2 = 4294967296
+
+i3 : s <=== hold(2)^333
+
+o3 = << Remote Magma object >>
+
+o3 : RemoteObject
+
+i4 : 2^301
+
+o4 = 4074071952668972172536891376818756322102936787331872501272280898708762599526673412366794752
+
+i5 : s <== o3/o4
+
+o5 = 4294967296
+
+o5 : QQ
+
+i6 : close s
+
+i7 : 

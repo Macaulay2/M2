@@ -1,0 +1,28 @@
+
+i1 : QQ[x];
+
+i2 : p1 = x^2+1; p2 = x^3-1; p3 = x+17;
+
+i5 : GAP = newConnection "127.0.0.1:26135";
+
+i6 : gp1 = GAP <=== p1
+
+o6 = << Remote GAP object >>
+
+o6 : RemoteObject
+
+i7 : gp2 = GAP <=== p2; gp3 = GAP <=== p3;
+
+i9 : gp = gp1*gp2*gp3
+
+o9 = << Remote GAP object >>
+
+o9 : RemoteObject
+
+i10 : p = p1*p2*p3;
+
+i11 : <== (gp == p)
+
+i12 : close GAP
+
+i13 : 
