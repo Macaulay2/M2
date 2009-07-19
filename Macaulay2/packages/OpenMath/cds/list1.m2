@@ -16,6 +16,9 @@ OMSEvaluators#"list1"#"map" = (args, attrs) -> (
 toOpenMath List := l -> (
 	OMA("list1", "list", apply(l, toOpenMath))
 )
+toOpenMath MutableList := l -> (
+	OMA("list1", "list", apply(toList l, toOpenMath))
+)
 
 --Doesn't work since sequences are special.
 --toOpenMath Sequence := l -> (
