@@ -30,16 +30,3 @@ identifyRemoteObjects (SCSCPConnection, XMLnode) := (s,x)-> (
 		x
 	)
 )
---Old version, I think less efficient
--- identifyRemoteObjects (SCSCPConnection, XMLnode) := (s,x)-> (
--- 	if x.tag === "OMR" then (
--- 		r := new RemoteObject from x;
--- 		r.connection = s;
--- 		r
--- 	) else if x.?children then (
--- 		x.children = apply(x.children, i -> if class(i) === XMLnode then identifyRemoteObjects(s,i) else i);
--- 		x
--- 	) else (
--- 		x
--- 	)
--- )

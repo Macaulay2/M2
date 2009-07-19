@@ -85,6 +85,9 @@ compute (SCSCPConnection, XMLnode, String) := (s,x, ret) -> (
 
 	if not isOpen s#"fd" then error("Connection is closed.");
 
+	dbgout(5) << "[Compute] replaceMultipleIDs..." << endl;
+	x = replaceMultipleIDs x;
+
 	dbgout(2) << "[Compute] Constructing procedure call..." << endl;
 	if x.tag =!= "OMA" then x = OMA("fns1", "identity", {x});
 	pc := OMA("scscp1", "procedure_call", { x });
@@ -126,10 +129,6 @@ compute (SCSCPConnection, XMLnode, String) := (s,x, ret) -> (
 )
 compute (SCSCPConnection, Thing, String) := (s,x, ret) -> (
 	if not isOpen s#"fd" then error("Connection is closed.");
-
-	--When constructing an OpenMath object, we first make sure that we do not just use undeclared
-	--  and possibly automatically generated ids. 
-	resetDeclaredIDs();
 
 	dbgout(2) << "[Compute] Constructing OpenMath object..." << endl;
 	o := openMath x;

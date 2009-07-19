@@ -23,6 +23,8 @@ i10 : p = p1*p2*p3;
 
 i11 : <== (gp == p)
 
+o11 = true
+
 i12 : close GAP
 
 i13 : 

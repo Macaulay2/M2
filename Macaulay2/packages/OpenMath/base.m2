@@ -322,6 +322,6 @@ guard = f -> x -> (
      theOMerror = null;
      try f x else OME if theOMerror === null then "internal error: unidentified error" else theOMerror)
 openMath = method();
-openMath Thing := guard toOpenMath 
+openMath Thing := guard (x -> replaceMultipleIDs toOpenMath x)
 value XMLnode := guard fromOpenMath 
 
