@@ -46,27 +46,6 @@ load "./OpenMath/cds/setname1.m2"
 load "./OpenMath/cds/scscp_transient_1.m2"
 
 
-------------------------
---------TESTS-----------
-------------------------
-
--- t = parse ///<OMA><OMS cd="arith1" name="plus"/><OMI>1</OMI><OMI>17</OMI></OMA>///
--- << "t = " << t << endl;
--- << "fromOpenMath t = " << fromOpenMath t << endl;
-
--- t = parse ///<OMA><OMS cd="polyd1" name="poly_ring_d"/><OMS cd="setname1" name="Q"/><OMI>2</OMI></OMA>/// ;
--- vt := value t;
--- << "value t = " << vt << endl;
--- ovt := openMath vt;
--- << "openMath value t = " << ovt << endl;
--- ovt = openMath vt;
--- << "openMath value t = " << ovt << endl;
--- resetDeclaredIDs()
--- ovt = openMath vt;
--- << "openMath value t = " << ovt << endl;
--- ovt = openMath vt;
--- << "openMath value t = " << ovt << endl;
-
 -------------------------------
 ----(LITTLE) DOCUMENTATION-----
 -------------------------------

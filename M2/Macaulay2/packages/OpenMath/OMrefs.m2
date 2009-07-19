@@ -98,39 +98,40 @@ removeOMid Thing := t -> (
 -- the full object.
 -- Similarly, autoIDCheck automagically creates such things.
 
--- printedIDs is used to determine whether idCheck and autoIDcheck are allowed
---   to return the reference. This allows to be reset by resetPrintedIDs, so that
---   you can be sure to print the actual object at least once on output.
-
-declaredIDs = new MutableHashTable
-resetDeclaredIDs = x -> (declaredIDs = new MutableHashTable)
-
-idCheck = f -> x -> (
-	--Doesn't have an id
-	if (not hasOMid(x)) then return f x; 
-
-	--Does have an id and it was declared, so we are allowed to OMR it
-	s := getOMid(x);
-	if declaredIDs#?s then return OMR(s);
-	
-	--ID wasn't declared yet, so we should. So get the OM object.
-	--And we printed it now.
-	declaredIDs#s = 1;
-	
-	--careful: we assume the OpenMath object is known and stored along with the reference...
-	-- I think that's fine in this case, but am not entirely sure
-	return (getOMref(s))#1;
-)	
+idCheck = f -> x -> if (not hasOMid(x)) then f x else (getOMref(getOMid(x)))#1;
 autoCreateIDCheck = f -> x -> (
 	--If it exists, we use it
 	r := (idCheck(f))(x);
 	if class(r) === XMLnode and r.tag === "OMR" then return r;
 	
-	--Otherwise we assign it, and return the original object with that ID set
-	-- and record that we printed it now.
+	--Otherwise we assign it
 	s := addOMref(x, r);
-	declaredIDs#s = 1;
 	(getOMref(s))#1
 )
 
+-- This function will ensure that, when an object occurs more than once inside
+-- an OpenMath object, only one actual instance remains, and the rest be changed to
+-- references.
+replaceMultipleIDs = x -> ( found = new MutableHashTable; replaceMultipleIDsRec(found, x) )
+replaceMultipleIDsRec = (found, x) -> (
+	if x#?"id" and x#"id" =!= null then (
+		if not found#?(x#"id") then (
+			--First time around
+			found#(x#"id") = 1
+		) else (
+			--Second (or more) time around
+			return OMR("#"|x#"id")
+		)
+	);
+
+	if x.?children then (
+		for i in 0..(#(x.children)-1) do (
+			nw := if class((x.children)#i) === XMLnode then replaceMultipleIDsRec(found, (x.children)#i) else (x.children)#i;
+			if (nw =!= (x.children)#i) then x.children = replace(i, nw, x.children);
+		);
+		x
+	) else (
+		x
+	)	
+)
 
