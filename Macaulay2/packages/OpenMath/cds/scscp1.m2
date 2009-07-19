@@ -13,7 +13,7 @@
 doAttrs := (e, retopts) -> (
 	setOMAttr(e, OMS("scscp1", "call_id"), retopts.callid);
 	if (retopts.?tstart) then
-		setOMAttr(e, OMS("scscp1", "info_runtime"), OMI floor(1000000*(cpuTime() - retopts.tstart)));
+		setOMAttr(e, OMS("scscp1", "info_runtime"), OMI floor(1000*(cpuTime() - retopts.tstart)));
 )
 
 constructProcTerm = method()
