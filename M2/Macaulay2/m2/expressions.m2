@@ -465,6 +465,19 @@ Expression     .. Expression     :=
 Thing          .. Expression     :=
 Expression     .. Thing          := (x,y) -> BinaryOperation{symbol ..,x,y}
 
+Holder     ..< Expression := (x,y) -> BinaryOperation{symbol ..<,x#0,y}
+Expression     ..< Holder := (x,y) -> BinaryOperation{symbol ..<,x,y#0}
+Holder         ..< Holder := (x,y) -> BinaryOperation{symbol ..<,x#0,y#0}
+InfiniteNumber ..< InfiniteNumber :=
+InfiniteNumber ..< ZZ             :=
+ZZ             ..< InfiniteNumber := (x,y) -> if x < y then (
+     error "infinite range requested";
+     -- BinaryOperation{symbol ..<,x,y}
+     ) else ()
+Expression     ..< Expression     :=
+Thing          ..< Expression     :=
+Expression     ..< Thing          := (x,y) -> BinaryOperation{symbol ..<,x,y}
+
 -----------------------------------------------------------------------------
 --value' Holder2 := x -> x#1
 --value' Holder := x -> x#1
@@ -511,7 +524,7 @@ toString'(Function, Table) := (fmt,m) -> concatenate(
      "}" )
 -----------------------------------------------------------------------------
 
-binary := new HashTable from {
+binaryOperatorFunctions := new HashTable from {
      symbol * => ((x,y) -> x*y),
      symbol + => ((x,y) -> x+y),
      symbol - => ((x,y) -> x-y),
@@ -520,9 +533,13 @@ binary := new HashTable from {
      symbol ^ => ((x,y) -> x^y),
      symbol == => ((x,y) -> x==y),
      symbol .. => ((x,y) -> x..y),
+     symbol ..< => ((x,y) -> x..<y),
      symbol % => ((x,y) -> x%y),
      symbol @ => ((x,y) -> x@y),
      symbol ==> => ((x,y) -> x==>y),
+     symbol ===> => ((x,y) -> x===>y),
+     symbol <== => ((x,y) -> x<==y),
+     symbol <=== => ((x,y) -> x<===y),
      symbol <==> => ((x,y) -> x<==>y),
      symbol |- => ((x,y) -> x|-y),
      symbol \ => ((x,y) -> x\y),
@@ -544,10 +561,11 @@ binary := new HashTable from {
      symbol not => ((x,y) -> x not y),
      symbol or => ((x,y) -> x or y)
      }
+
 BinaryOperation = new HeaderType of Expression -- {op,left,right}
 BinaryOperation.synonym = "binary operation expression"
 value' BinaryOperation := (m) -> (
-     if binary#?(m#0) then binary#(m#0) (value' m#1,value' m#2) else m
+     if binaryOperatorFunctions#?(m#0) then binaryOperatorFunctions#(m#0) (value' m#1,value' m#2) else m
      )
 net BinaryOperation := m -> (
      x := net m#1;

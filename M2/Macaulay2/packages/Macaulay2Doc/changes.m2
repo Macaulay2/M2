@@ -27,9 +27,17 @@ document {
 	       elsewhere in Macaulay2 that directory names end in '/'." },
 	  LI { "The function ", TO "EXAMPLE", " will now accept objects of type ", TO "PRE", " to be interpreted as preformatted example output." },
 	  LI { "The function ", TO "openListener", " can now open a socket on a specified interface." },
+	  LI { "The operator ", TO "..", " can now be used to generate sequences of consecutive strings." },
+	  LI { "A new binary operator ", TO "..<", " provides for the generation of sequences that stop one short of those provided by ", TO "..", " ." },
+	  LI { "The operator ", TO "..", ", when applied to two generators a polynomial ring, will now give a sequence of
+	       consecutive generators abstracted from the list of all generators.  The old error-prone behavior involved looking at the names
+	       of the generators, and generating a sequence of consecutive names, which were then evaluated." },
+	  LI { "The operator ", TO "..", ", will now deliver rectangular sequence of consecutive indexed variables, e.g., ", TT "x_1 .. y_2", "
+	       will have the value ", TT "(x_1,x_2,y_1,y_2)", "."},	       
+	  LI { "New binary operators ", TO "<==", " and ", TO "<===", " have been introduced.  The operators are flexible, i.e., the 
+	       user can install methods for them." }
 	  }
      }
-
 
 document {
      Key => "changes, 1.2",

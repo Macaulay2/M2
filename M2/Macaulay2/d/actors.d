@@ -775,6 +775,38 @@ DotDotfun(lhs:Code,rhs:Code):Expr := (
      else binarymethod(left,rhs,DotDotS));
 setup(DotDotS,DotDotfun);
 
+DotDotLessFun(lhs:Code,rhs:Code):Expr := (
+     left := eval(lhs);
+     when left
+     is Error do left
+     is x:ZZ do (
+	  right := eval(rhs);
+	  when right
+	  is Error do right
+	  is y:ZZ do (
+	       if isInt(x) && isInt(y) then (
+	  	    i := toInt(x);
+		    j := toInt(y) - 1;
+		    if i>j then emptySequenceE
+		    else if i==0 && j<length(smallintarrays0)
+		    then smallintarrays0.j
+		    else if i==1 && j<length(smallintarrays1)
+		    then smallintarrays1.j
+		    else (
+			 if j-i+1 > 100000
+			 then buildErrorPacket("ZZ .. ZZ: very long sequence requested")
+			 else Expr(new Sequence len j-i+1 at k do provide toInteger(i+k))))
+	       else (
+		    z := y-x;
+		    if z <= 0 then emptySequenceE
+		    else if isInt(z) then (
+			 m := toInt(z)-1;
+			 Expr(new Sequence len m+1 at k do provide x+k))
+		    else printErrorMessageE(rhs,"range too large")))
+	  else binarymethod(left,right,DotDotLessS))
+     else binarymethod(left,rhs,DotDotLessS));
+setup(DotDotLessS,DotDotLessFun);
+
 assignNewFun(newclass:Code,rhs:Code):Expr := (
      c := eval(newclass);
      when c

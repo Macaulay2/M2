@@ -90,6 +90,8 @@ import history():array(string);
 import chdir(name:string):int;
 import handleInterruptsSetup(handleInterrupts:bool):void;
 import segmentationFault():void;
+import isReady(fd:int):int;
+import hasException(fd:int):int;
 
 everytimeCell := { f:function():void, next:everytimeCell };
 dummyfun():void := nothing;

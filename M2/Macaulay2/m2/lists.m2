@@ -21,6 +21,47 @@ List / Thing := List => (v,b) -> apply(v,x->x / b)	    -- slight conflict with L
 
 VisibleList _ List := VisibleList => (x,y) -> apply(splice y, i -> x#i)
 
+Sequence .. Sequence := Sequence => (v,w) -> (
+     n := #v;
+     if n =!= #w then error "expected sequences of equal length";
+     if n === 0 
+     then 1 : v
+     else if n === 1 
+     then apply(first v .. first w, t -> 1:t)
+     else splice table(first v .. first w, drop(v,1) .. drop(w,1), prepend))
+Sequence ..< Sequence := Sequence => (v,w) -> (
+     n := #v;
+     if n =!= #w then error "expected sequences of equal length";
+     if n === 0 
+     then 1 : v
+     else if n === 1 
+     then apply(first v ..< first w, t -> 1:t)
+     else splice table(first v ..< first w, drop(v,1) ..< drop(w,1), prepend))
+
+chk := (v,w) -> (
+     if #v =!= #w then error "expected lists of equal length";
+     if class v =!= class w then error "expected lists of the same class";
+     )
+List .. List := Sequence => (v,w) -> (
+     chk(v,w);
+     L := class v;
+     apply(toSequence v .. toSequence w, x -> new L from x))
+List ..< List := Sequence => (v,w) -> (
+     chk(v,w);
+     L := class v;
+     apply(toSequence v ..< toSequence w, x -> new L from x))
+
+String .. String := Sequence => (s,t) -> (
+     s = toSequence utf8 s;
+     t = toSequence utf8 t;
+     if #s =!= #t then error "expected strings of equal length (in utf8 encoding)";
+     utf8 \ ( s .. t ))
+String ..< String := Sequence => (s,t) -> (
+     s = toSequence utf8 s;
+     t = toSequence utf8 t;
+     if #s =!= #t then error "expected strings of equal length (in utf8 encoding)";
+     utf8 \ ( s ..< t ))
+
 maxPosition = method(Dispatch => Thing)
 minPosition = method(Dispatch => Thing)
 

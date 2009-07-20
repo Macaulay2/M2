@@ -167,6 +167,17 @@ special(s:string,f:function(Token,TokenFile,int,bool):ParseTree,lprec:int,rprec:
 -- with a binding done in a particular way depending on the current dictionary.  The symbols
 -- created below are all in the global dictionary.
 
+-- new operators must be:
+--   set up as an "actor" with "setup()"
+--   added to the export list in ../m2/exports.m2
+--   added to the table binaryOperatorFunctions in ../m2/expressions.m2
+--   added to the list of operators in the documentation node "operators" in ../packages/Macaulay2Doc/ov_language.m2
+--   documented with a suitable headline, such as:
+--     	    "a unary operator"
+--     	    "a binary operator"
+--     	    "a unary and binary operator"
+--     	    "a unary postfix operator"
+
 bump();
      wordEOF = nleftword("{*end of file*}");
      makeKeyword(wordEOF);
@@ -244,6 +255,7 @@ bump();
      export AmpersandS := makeKeyword(binaryleft("&"));
 bump();
      export DotDotS := makeKeyword(binaryleft(".."));
+     export DotDotLessS := makeKeyword(binaryleft("..<"));
 bump();
      export MinusS := makeKeyword(unarybinaryleft("-"));	    -- also binary
      export PlusS := makeKeyword(unarybinaryleft("+"));	    -- also binary
@@ -419,7 +431,7 @@ export opsWithBinaryMethod := array(SymbolClosure)(
      LongBiDoubleArrowS, DeductionS,
      LongDoubleRightArrowS, LongLongDoubleRightArrowS,
      LongDoubleLeftArrowS, LongLongDoubleLeftArrowS,
-     ColonS, BarS, HatHatS, AmpersandS, DotDotS, MinusS, PlusS, PlusPlusS, StarStarS, StarS, BackslashBackslashS, DivideS, LeftDivideS, PercentS, SlashSlashS, AtS, 
+     ColonS, BarS, HatHatS, AmpersandS, DotDotS, DotDotLessS, MinusS, PlusS, PlusPlusS, StarStarS, StarS, BackslashBackslashS, DivideS, LeftDivideS, PercentS, SlashSlashS, AtS, 
      AdjacentS, AtAtS, PowerS, UnderscoreS, PowerStarStarS, orS, andS);
 export opsWithUnaryMethod := array(SymbolClosure)(
      StarS, MinusS, PlusS, LessLessS, 
