@@ -242,8 +242,8 @@ newPackage(String) := opts -> (title) -> (
      loadedPackages = {Core};
      dictionaryPath = join( {newpkg#"private dictionary"}, {Core.Dictionary, OutputDictionary, PackageDictionary});
      if Core#?"base packages" then (
-	  if member(title,Core#"base packages") then (
-	       if title =!= "Macaulay2" and member("Macaulay2",Core#"base packages") then needsPackage "Macaulay2Doc";
+	  if member(title,Core#"base packages") and title =!= "Macaulay2Doc" then (
+	       if member("Macaulay2Doc",Core#"base packages") then needsPackage "Macaulay2Doc";
 	       )
 	  else scan(reverse Core#"base packages", needsPackage)
 	  );
@@ -320,7 +320,7 @@ findSynonyms Symbol := x -> (
 warn0 := (sym,front,behind,syns) -> (
      -- just for debugging:
      -- error("symbol '",sym,"' in ",toString behind," is shadowed by a symbol in ",toString front);
-     stderr << "--warning: symbol '" << sym << "' in " << behind << " is shadowed by a symbol in " << front << endl;
+     stderr << "--warning: symbol " << format toString sym << " in " << behind << " is shadowed by a symbol in " << front << endl;
      if #syns > 0
      then if #syns > 1
      then stderr << "--  use one of the synonyms " << demark(", ",syns) << endl
