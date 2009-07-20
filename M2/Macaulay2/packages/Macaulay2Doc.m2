@@ -10,7 +10,8 @@ newPackage ("Macaulay2Doc",
      HomePage => "http://www.math.uiuc.edu/Macaulay2/",
      Version => version#"VERSION")
 
-Core#"base packages" = prepend("Macaulay2Doc",Core#"base packages")
+if not member("Macaulay2Doc",Core#"base packages") 
+then Core#"base packages" = prepend("Macaulay2Doc",Core#"base packages")
 
 beginDocumentation()
 
