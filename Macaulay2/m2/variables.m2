@@ -1,18 +1,5 @@
 --		Copyright 1993-1999 by Daniel R. Grayson
 
--- sequences of variables
-
-Sequence .. Sequence := Sequence => (v,w) -> (
-     n := #v;
-     if n =!= #w then error "expected sequences of equal length";
-     if n === 0 
-     then 1 : v
-     else if n === 1 
-     then apply(first v .. first w, t -> 1:t)
-     else splice table(first v .. first w, drop(v,1) .. drop(w,1), prepend))
-
-List .. List := Sequence => (v,w) -> apply(toSequence v .. toSequence w, toList)
-
 -- indexed variables
 
 IndexedVariable = new Type of BasicList
@@ -74,9 +61,8 @@ installMethod(symbol <-, Sequence, (x,y) -> (
 	  scan(x,y,(i,j) -> i <- j);
 	  y))
 
-IndexedVariable .. IndexedVariable := Sequence => (v,w) -> (
-     if v#0 =!= w#0 then error("unmatching base names in ", toString v, " .. ", toString w);
-     apply(v#1 .. w#1, s -> v#0_s))	  
+IndexedVariable .. IndexedVariable := Sequence => (v,w) -> apply(toSequence v .. toSequence w, xi -> new IndexedVariable from xi)
+IndexedVariable ..< IndexedVariable := Sequence => (v,w) -> apply(toSequence v ..< toSequence w, xi -> new IndexedVariable from xi)
 
 baseName IndexedVariable := identity
 baseName IndexedVariableTable := x -> if x#?symbol$ then x#symbol$ else error "indexed variable table no associated to a symbol"

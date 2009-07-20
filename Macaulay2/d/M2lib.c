@@ -856,10 +856,7 @@ int system_loaddata(int notify, M2_string datafilename){
 
 void C__prepare(void) {}
 
-int actors4_isReady(int fd) {
-#if defined(_WIN32)
-     return 1;
-#else
+int system_isReady(int fd) {
   int ret;
   static fd_set r, w, e;
   struct timeval timeout;
@@ -868,27 +865,29 @@ int actors4_isReady(int fd) {
   ret = select(fd+1,&r,&w,&e,&timeout);
   FD_CLR(fd,&r);
   return ret;
-#endif
+}
+
+int system_hasException(int fd) {
+  int ret;
+  static fd_set r, w, e;
+  struct timeval timeout;
+  FD_SET(fd,&e);
+  timerclear(&timeout);
+  ret = select(fd+1,&r,&w,&e,&timeout);
+  FD_CLR(fd,&e);
+  return ret;
 }
 
 int actors5_WindowWidth(int fd) {
-#if defined(__alpha) || defined(_WIN32)
-     return 0;
-#else
      struct winsize x;
      ioctl(1,TIOCGWINSZ,&x);	/* see /usr/include/$SYSTEM/termios.h */
      return x.ws_col;
-#endif
      }
 
 int actors5_WindowHeight(int fd) {
-#if defined(__alpha) || defined(_WIN32)
-     return 0;
-#else
      struct winsize x;
      ioctl(1,TIOCGWINSZ,&x);	/* see /usr/include/$SYSTEM/termios.h */
      return x.ws_row;
-#endif
      }
 
 

@@ -35,6 +35,7 @@ reverseVars := a -> (
      )
 
 Symbol .. Symbol := (a,z) -> vars( reverseVars a .. reverseVars z )
+Symbol ..< Symbol := (a,z) -> vars( reverseVars a ..< reverseVars z )
 
 nometh2 := (n,x,y) -> error (
      "no method '", toString n, "' found for ", toString x,
@@ -42,21 +43,14 @@ nometh2 := (n,x,y) -> error (
      " (of class ", toString class y, ")"
      )
 
-Thing .. Thing := (a,z) -> (
-     aa := null;
-     zz := null;
-     try (
-	  aa = baseName a;
-	  zz = baseName z;
-	  )
-     else nometh2(symbol .., a,z);
-     if a === aa and z === zz then nometh2(symbol .., a,z);
-     if instance(aa,Symbol) and instance(zz,Symbol)
-     or instance(aa,IndexedVariable) and instance(zz,IndexedVariable)
-     then value \ (aa .. zz)
-     else aa .. zz
-     )
-
+RingElement .. RingElement := (a,z) -> (
+     R := ring a;
+     if R =!= ring z then nometh2(symbol .., a,z);
+     apply(index a .. index z, i -> R_i))
+RingElement ..< RingElement := (a,z) -> (
+     R := ring a;
+     if R =!= ring z then nometh2(symbol ..<, a,z);
+     apply(index a ..< index z, i -> R_i))
 
 succS = new MutableHashTable;
 for i from 0 to 50 do succS#(vars i) = vars(i+1)
