@@ -1,18 +1,19 @@
 -- -*- coding: utf-8 -*-
 newPackage(
     	  "PieriMaps",
-   	  Version => "0.5.0",
-	  Date => "July 2, 2008",
+   	  Version => "1.0",
+	  Date => "July 3, 2009",
 	  Authors => {{
 		    Name => "Steven V Sam",
-		    Email => "ssam@mit.edu",
-		    HomePage => "http://www.mit.edu/~ssam/"
+		    Email => "ssam@math.mit.edu",
+		    HomePage => "http://math.mit.edu/~ssam/"
 		    }},
-	  Headline => "computations of matrices based on the Pieri formulas",
+	  Headline => "computations of matrices between representations of 
+	  the general linear group based on the Pieri formulas",
 	  DebuggingMode => false
 	  )
 
-export({straighten, standardTableaux, pieri, saturatePieri, pureFree, schurRank})
+export({straighten, standardTableaux, pieri, pureFree, schurRank})
 
 --------------------------------
 -- subroutines (not exported) --
@@ -20,6 +21,24 @@ export({straighten, standardTableaux, pieri, saturatePieri, pureFree, schurRank}
 
 -- All matrices computed are in terms of the ordered bases given by 
 -- standardTableaux
+
+-- Input:
+-- List L
+-- Output:
+-- True if L is weakly decreasing, false otherwise
+isDecreasing = L -> (
+     for i from 0 to #L-2 do if L#i < L#(i+1) then return false;
+     true
+     )
+
+-- Input:
+-- List L
+-- Output:
+-- True if L is strictly increasing, false otherwise
+isIncreasing = L -> (
+     for i from 0 to #L-2 do if L#i >= L#(i+1) then return false;
+     true
+     )
 
 -- Input: 
 -- List T: a tableau, e.g., {{0,1,2},{2,3}}
@@ -162,6 +181,13 @@ standardTableaux(ZZ, List) := (dim, mu) -> (
 -- MutableHashTable h: a hash table which memoizes recursive calls and 
 -- stores the coefficients of the straightening of t into standard tableaux
 straighten = method()
+straighten(List) := t -> (
+     t = apply(t, i->sort(i));
+     h := new MutableHashTable from {};
+     straighten(t, h);
+     h#t
+     )
+
 straighten(List, MutableHashTable) := (t, h) -> (
      t = apply(t, i -> sort i);
      if h #? t then return null;
@@ -187,14 +213,15 @@ straighten(List, MutableHashTable) := (t, h) -> (
 -- Input:
 -- List mu: A partition
 -- ZZ k: a number specifying which row to remove a box from mu
--- Ring P: a polynomial ring k[x_0, ..., x_(n-1)], k a field
+-- PolynomialRing P: the coefficient ring for the Pieri map over a field K
 -- Output:
--- An GL(n,k)-equivariant map P \otimes S_mu k^n -> P \otimes S_lambda k^n 
+-- An GL(n,K)-equivariant map P \otimes S_mu K^n -> P \otimes S_lambda K^n 
 -- where lambda is mu with a box removed from the kth row, and S_mu denotes 
 -- the Schur functor associated to mu
 pieriHelper = method()
-pieriHelper(List, ZZ, Ring) := (mu, k, P) -> (
+pieriHelper(List, ZZ, PolynomialRing) := (mu, k, P) -> (
      d := numgens P;
+     X := gens P;
      output := {};
      Sbasis := standardTableaux(d, mu);
      Tbasis := standardTableaux(d, subtractOne(mu, k));
@@ -230,8 +257,8 @@ pieriHelper(List, ZZ, Ring) := (mu, k, P) -> (
 	       remove(H, T);
 	       straighten(U, memo);
 	       for i in keys memo#U do 
-	       if H #? i then H#i = H#i + coeff * (memo#U)#i * x_((T_0)_0)
-	       else H#i = coeff * (memo#U)#i * x_((T_0)_0);
+	       if H #? i then H#i = H#i + coeff * (memo#U)#i * X_((T_0)_0)
+	       else H#i = coeff * (memo#U)#i * X_((T_0)_0);
 	       );
      	  for t in Tbasis do if H #? t then row = append(row, H#t) else row = append(row, 0);
 	  output = append(output, row);
@@ -243,17 +270,33 @@ pieriHelper(List, ZZ, Ring) := (mu, k, P) -> (
 -- List mu: A partition
 -- List boxes: A list of numbers which specifies the rows that boxes are to be 
 -- removed from mu
--- Module V: An n-dimensional vector space over a field k of characteristic 0
+-- PolynomialRing P: a polynomial ring over a field K with n generators
 -- Output:
--- A GL(V)-equivariant map P \otimes S_mu V -> P \otimes S_lambda V where
--- P = k[x_0, ..., x_(n-1)], S_mu denotes the Schur functor associated to mu, 
--- and lambda is the partition obtained from mu by deleting boxes_0, boxes_1,
--- ..., in order.
+-- A GL(V)-equivariant map P \otimes S_mu V -> P \otimes S_lambda V, where
+-- S_mu denotes the Schur functor associated to mu, and lambda is the 
+-- partition obtained from mu by deleting boxes_0, boxes_1, ..., in order.
 pieri = method()
-pieri(List, List, Module) := (mu, boxes, V) -> (
-     R := ring V;
-     d := rank V;
-     P := R[x_0 .. x_(d-1)];
+pieri(List, List, PolynomialRing) := (mu, boxes, P) -> (
+     -- check if row indices are okay
+     for i in boxes do if i < 1 or i > #mu then error "The second argument must specify row indices of the partition in the first argument.";
+     -- check if removal of boxes gives a partition
+     lambda := mu;
+     for i in boxes do (
+	  lambda = subtractOne(lambda, i);
+	  if not isDecreasing(lambda) then error "The second argument needs to specify a horizontal strip in the first argument.";
+	  );
+     -- check if mu/lambda is a horizontal strip
+     for i from 0 to #mu-2 do 
+     if lambda#i < mu#(i+1) then error "The second argument needs to specify a horizontal strip in the first argument.";
+     -- error checking done
+     if char P == 0 then pierizero(mu, boxes, P)
+     else pierip(mu, boxes, P)
+     )
+
+pierizero = method()
+pierizero(List, List, PolynomialRing) := (mu, boxes, P) -> (
+     R := coefficientRing(P);
+     d := numgens(P);
      result := pieriHelper(mu, boxes#0, P);
      for b from 1 to #boxes-1 do (
 	  mu = subtractOne(mu, boxes#(b-1));
@@ -262,50 +305,13 @@ pieri(List, List, Module) := (mu, boxes, V) -> (
      return result;
      )
 
--- Input:
--- List d: a degree sequence
--- Module V: A vector space over a field k of characteristic 0
--- Output:
--- An inclusion of GL(V)-representations whose graded minimal resolution is pure 
--- with degree sequence d
-pureFree = method()
-pureFree(List, Module) := (d, V) -> (
-     e := {};
-     for i from 1 to #d-1 do e = append(e, d#i - d#(i-1));
-     counter := -#e + 1;
-     for i in e do counter = counter + i;
-     lambda := {counter - e#0};
-     for i from 1 to #e-1 do
-     lambda = append(lambda, lambda#(i-1) - e#i + 1);
-     lambda = prepend(counter, remove(lambda, 0));
-     pieri(lambda, toList(e#0 : 1), V)
-     )
-
--- Same as above, except the resulting map is between modules over 
--- ZZ/p[x_0, ..., x_(n-1)] where n = dim V instead of QQ[x_0, ..., x_(n-1)]
--- The map is saturated so that the cokernel does not contain torsion
-pureFree(List, Module, ZZ) := (d, V, p) -> (
-     e := {};
-     for i from 1 to #d-1 do e = append(e, d#i - d#(i-1));
-     counter := -#e + 1;
-     for i in e do counter = counter + i;
-     lambda := {counter - e#0};
-     for i from 1 to #e-1 do
-     lambda = append(lambda, lambda#(i-1) - e#i + 1);
-     lambda = prepend(counter, remove(lambda, 0));
-     saturatePieri(lambda, toList(e#0 : 1), V, p)
-     )
-
--- Produces a Pieri inclusion like the method pieri, except that we lift 
--- the map to ZZ from QQ, remove torsion from the cokernel, and then 
--- reduce modulo p
-saturatePieri = method()
-saturatePieri(List, List, Module, ZZ) := (mu, boxes, V, p) -> (
-     d := rank V;
-     f := pieri(mu, boxes, V ** QQ);
-     R := ring f;
-     RZ := ZZ/p[x_0 .. x_(d-1)];
-     mon := apply(compositions(d, #boxes), i-> (output := 1; for j from 0 to #i-1 do output = output * x_j^(i#j); output));
+pierip = method()
+pierip(List, List, PolynomialRing) := (mu, boxes, P) -> (
+     X := gens(P);
+     d := numgens(P);
+     R := QQ[X];
+     f := pierizero(mu, boxes, R);
+     mon := apply(compositions(d, #boxes), i-> (output := 1; for j from 0 to #i-1 do output = output * X_j^(i#j); output));
      result := {};
      denom := 1;
      for i from 0 to (rank source f)-1 do (
@@ -324,9 +330,29 @@ saturatePieri(List, List, Module, ZZ) := (mu, boxes, V, p) -> (
      for i in result do 
      result2 = append(result2, apply(i, j -> round(j*denom)));
      intmat := map(ZZ^((rank target f) * #mon), ZZ^(rank source f), transpose(result2));
-     (D, P, Q) := smithNormalForm(intmat);
-     P' := (P^(-1))_{0..(rank source D)-1};
-     ((id_(RZ^((rank target P') // #mon))) ** matrix {mon}) * (RZ ** P')
+     (D, S, T) := smithNormalForm(intmat);
+     S' := (S^(-1))_{0..(rank source D)-1};
+     ((id_(P^((rank target S') // #mon))) ** matrix {mon}) * (P ** S')
+     )
+
+-- Input:
+-- List d: a degree sequence
+-- Module V: A vector space over a field k of characteristic 0
+-- Output:
+-- An inclusion of GL(V)-representations whose graded minimal resolution is pure 
+-- with degree sequence d
+pureFree = method()
+pureFree(List, PolynomialRing) := (d, P) -> (
+     if not isIncreasing(d) then error "The first argument needs to be a strictly increasing list of degrees.";
+     e := {};
+     for i from 1 to #d-1 do e = append(e, d#i - d#(i-1));
+     counter := -#e + 1;
+     for i in e do counter = counter + i;
+     lambda := {counter - e#0};
+     for i from 1 to #e-1 do
+     lambda = append(lambda, lambda#(i-1) - e#i + 1);
+     lambda = prepend(counter, remove(lambda, 0));
+     pieri(lambda, toList(e#0 : 1), P) ** P^{-d#0}
      )
 
 -------------------
@@ -337,15 +363,104 @@ beginDocumentation()
 document {
      Key => PieriMaps,
      Headline => "Methods for computing Pieri inclusions",
-     PARA {
-	  "Some references:"
-	  },
-     UL {
-	  TEX "Andrzej Daszkiewicz, On the Invariant Ideals of the Symmetric Algebra $S.(V \\oplus \\wedge^2 V)$, J. Algebra 125, 1989, 444-473.",
-	  "William Fulton, Young Tableaux: With Applications to Representation Theory and Geometry, London Math. Society Student Texts 35, 1997.",
-	  "Jerzy Weyman, Cohomology of Vector Bundles and Syzygies, Cambridge University Press, 2002."
-	  }
-     }
+     "For mathematical background of this package and some examples of use, see:",
+     BR{},
+     "Steven V Sam, Computing inclusions of Schur modules, arXiv:0810.4666",
+     BR{},
+     "Some other references:",
+     BR{},
+     "Andrzej Daszkiewicz, On the Invariant Ideals of the Symmetric Algebra $S.(V \\oplus \\wedge^2 V)$, J. Algebra 125, 1989, 444-473.",
+     BR{},
+     "David Eisenbud, Gunnar Fl\\o ystad, and Jerzy Weyman, The existence of pure free resolutions, arXiv:0709.1529.",
+     BR{},
+     "William Fulton, Young Tableaux: With Applications to Representation Theory and Geometry, London Math. Society Student Texts 35, 1997.",
+     BR{},
+     "Jerzy Weyman, Cohomology of Vector Bundles and Syzygies, Cambridge University Press, 2002.",
+     BR{},
+     BR{},     
+     "Let V be a vector space over K. If K has characteristic 0, then
+     given the partition mu and the partition mu' obtained from mu by
+     removing a single box, there is a unique (up to nonzero scalar)
+     GL(V)-equivariant inclusion S_mu V -> V otimes S_mu' V, where
+     S_mu refers to the irreducible representation of GL(V) with
+     highest weight mu. This can be extended uniquely to a map of P =
+     Sym(V)-modules P otimes S_mu V -> P otimes S_mu' V. The purpose
+     of this package is to write down matrix representatives for these
+     maps. The main function for doing so is ",
+     TO pieri,
+     ". Here is an example of the use of the package PieriMaps, which is also
+     designed to check whether the maps are being constructed correctly
+     (important, since it is notoriously difficult to get the signs and
+     coefficients right.) ",
+     "We will construct by hand the free resolution in 3 variables corresponding
+     to the degree sequence (0,2,3,6). Let's start with the packaged code:",
+     EXAMPLE lines ///
+     R = QQ[a,b,c];
+     f = pureFree({0,2,3,6}, R)
+     betti res coker f
+     ///,
+     "By the general theory from Eisenbud-Fl\\o ystad-Weyman, each of these free
+     modules should be essentially Schur functors corresponding to the
+     following partitions.",
+     EXAMPLE lines ///
+     schurRing(s,3)
+     dim s_{2,2}
+     dim s_{4,2}
+     dim s_{4,3}
+     dim s_{4,3,3}
+     ///,
+     "This package also provides a routine ",
+     TO schurRank,
+     " for computing this dimension:",
+     EXAMPLE lines ///
+     schurRank(3, {2,2})
+     schurRank(3, {4,2})
+     schurRank(3, {4,3})
+     schurRank(3, {4,3,3})
+     ///,
+     "We now use ",
+     TO pieri, 
+     " to construct each of the maps of the resolution separately.",
+     EXAMPLE lines ///
+     f1 = pieri({4,2,0},{1,1}, R)
+     f2 = pieri({4,3,0},{2}, R)
+     f3 = pieri({4,3,3},{3,3,3}, R)
+     ///,
+     "Fix the degrees (i.e. make sure that the target of f2 is the source of f1,
+     etc). Otherwise the test of exactness below would fail.",
+     EXAMPLE lines ///
+     f1
+     f2 = map(source f1,,f2)
+     f3 = map(source f2,,f3)
+     f1 * f2
+     f2 * f3
+     ///,
+     "Check that the complex is exact.",
+     EXAMPLE lines ///
+     ker f1 == image f2
+     ker f2 == image f3
+     ///,
+     "Looks great! Now let's try it modulo some prime numbers and see if we get exactness.",
+     EXAMPLE lines ///
+     p = 32003
+     R = ZZ/p[a,b,c];
+     f1 = pieri({4,2,0},{1,1},R)
+     betti res coker f1
+     f2 = pieri({4,3,0},{2},R)
+     f3 = pieri({4,3,3},{3,3,3},R)
+     f2 = map(source f1,,f2)
+     f3 = map(source f2,,f3)
+     f1 * f2
+     f2 * f3
+     ker f1 == image f2
+     ker f2 == image f3
+     ///,
+     "These do not piece together well. The reason is that ",
+     TO pieri,
+     " changes the bases of the free modules in a way which is not invertible
+     (over ZZ) when the ground field has positive characteristic.",
+  SeeAlso => {pieri, pureFree, schurRank}
+  }     
 
 document {
      Key => {standardTableaux, (standardTableaux, ZZ, List)},
@@ -357,87 +472,85 @@ document {
 	  "mu" => {ofClass List, ", a partition which gives the shape"}
 	  },
      Outputs => {
-	  List => {"list of all standard tableaux"}
+	  List => {"list of all standard tableaux of shape mu with labels 0,...,dim-1"}
 	  },
      EXAMPLE lines ///
-     	  standardTableaux(3, {2,2}) -- lists all standard tableaux on the square with entries 0,1,2
+     	  standardTableaux(3, {2,2}) -- lists all standard tableaux on the 2x2 square with entries 0,1,2
 	  ///
      }
 
 document {
-     Key => {straighten, (straighten, List, MutableHashTable)},
+     Key => {straighten, (straighten, List), (straighten, List, MutableHashTable)},
      Headline => "computes straightening of a tableau",
-     Usage => "straighten(List, MutableHashTable)",
+     Usage => concatenate("straighten(t)", "straighten(t, h)"),
      Inputs => {
 	  "t" => {ofClass List, ", a tableau to straighten; a tableau looks like {{3,4}, {1,2}} for example, where we list the entries from left to right, top to bottom"},
 	  "h" => {ofClass MutableHashTable, ", where the answers should be stored"}
 	  },
-     "Outputs nothing, just modifies h. When looking up values, remember that the keys are stored with rows weakly increasing.",
+     Consequences => { "If provided, the hashtable h is updated with any calculations which are performed as a result of calling this function. " },
+     "If a hashtable h is provided, then this outputs nothing, it simply just modifies h. When looking up values, remember that the keys are stored with rows weakly increasing. ",
+     "If no hashtable is provided, then the user is simply given the straightening of the tableau in terms of semistandard tableaux. ",
+     "The answer is in the form a hashtable: each key is a semistandard tableaux, and the value of the key is the coefficient of that semistandard tableaux used to write the input t as a linear combination. ",
      EXAMPLE lines ///
      	  h = new MutableHashTable from {}
 	  straighten({{3,4}, {1,2}}, h)
 	  h#{{3,4}, {1,2}} -- get the coefficients
+	  straighten({{3,4}, {1,2}}) -- just get the answer instead
 	  ///
      }
 
 document {
-     Key => {pieri, (pieri, List, List, Module)},
+     Key => {pieri, (pieri, List, List, PolynomialRing)},
      Headline => "computes a matrix representation for a Pieri inclusion of representations of a general linear group",
-     SeeAlso => {saturatePieri, pureFree},
-     Usage => "pieri(List, List, Module)",
+     SeeAlso => {pureFree},
+     Usage => "pieri(mu, boxes, P)",
      Inputs => {
-	  "mu" => {ofClass List, ", a partition (mu_1, ..., m_r) where mu_i is the number of boxes in the ith row"},
-	  "boxes" => {ofClass List, ", a list of rows from which to remove boxes (specifies which map of GL(V) representations we want"},
-	  "V" => {ofClass Module, ", an n-dimensional vector space over a field k of characteristic 0" }
+	  "mu" => {ofClass List, ", a partition (mu_1, ..., mu_r) where mu_i is the number of boxes in the ith row"},
+	  "boxes" => {ofClass List, ", a list of rows from which to remove boxes (boxes are always removed from the end of the row). This specifies which map of GL(V) representations we want. The row indices start from 1 and not 0, and this must specify a horizontal strip in mu (see description below). "},
+	  "P" => {ofClass PolynomialRing, ", a polynomial ring over a field K in n variables" }
 	  },
      Outputs => {
-	  Matrix => {"A GL(V)-equivariant map P otimes S_mu V -> P otimes S_lambda V where P = k[x_0, ..., x_(n-1)], S_mu denotes the Schur functor associated to mu, and lambda is the partition obtained from mu by deleting boxes_0, boxes_1, ..., in order."}
+	  Matrix => {"If K has characteristic 0, then given the partition mu and the partition mu' obtained from mu by removing a single box, 
+	       there is a unique (up to nonzero scalar) GL(V)-equivariant inclusion S_mu V -> V otimes S_mu' V, where S_mu refers to the 
+	       irreducible representation of GL(V) with highest weight mu. This can be extended uniquely to a map of P = Sym(V)-modules 
+	       P otimes S_mu V -> P otimes S_mu' V. This method computes the matrix representation for the composition of maps that one obtains by 
+	       iterating this procedure of removing boxes, i.e., the final output is a GL(V)-equivariant map P otimes S_mu V -> P otimes S_lambda V 
+	       where lambda is the partition obtained from mu by deleting a box from row boxes_0, a box from row boxes_1, etc.
+	       If K has positive characteristic, then the corresponding map is calculated over QQ, lifted to a ZZ-form of the representation which has 
+	       the property that the map has a torsion-free cokernel over ZZ, and then the coefficients are reduced to K."
+	       }
 	  },
+     "Convention: the partition (d) represents the dth symmetric power, while the partition (1,...,1) represents the dth exterior power. ",
+     "Using the notation from the output, mu/lambda must be a horizontal strip. Precisely, this means that lambda_i >= mu_(i+1) for all i. 
+     If this condition is not satisfied, the program throws an error because a nonzero equivariant map of the desired form will not exist. ",
      EXAMPLE lines ///
-     	  pieri({3,1}, {1}, QQ^3) -- removes the first box from the partition {3,1}
+     	  pieri({3,1}, {1}, QQ[a,b,c]) -- removes the last box from row 1 of the partition {3,1}
 	  res coker oo -- resolve this map
 	  betti oo -- check that the resolution is pure
 	  ///
      }
 
 document {
-     Key => {saturatePieri, (saturatePieri, List, List, Module, ZZ)},
-     Headline => "computes a matrix representation for a Pieri inclusion modulo p of representations of a general linear group",
-     SeeAlso => {pureFree, pieri},
-     Usage => "pieri(List, List, Module, ZZ)",
-     Inputs => {
-	  "mu" => {ofClass List, ", a partition (mu_1, ..., m_r) where mu_i is the number of boxes in the ith row"},
-	  "boxes" => {ofClass List, ", a list of rows from which to remove boxes (specifies which map of GL(V) representations we want"},
-	  "V" => {ofClass Module, ", an n-dimensional vector space over a field k of characteristic 0" },
-	  "p" => {ofClass ZZ, ", a characteristic, the output is over the field ZZ/p"}
-	  },
-     Outputs => {
-	  Matrix => {"A GL(V)-equivariant map P otimes S_mu V -> P otimes S_lambda V modulo p where P = k[x_0, ..., x_(n-1)], S_mu denotes the Schur functor associated to mu, and lambda is the partition obtained from mu by deleting boxes_0, boxes_1, ..., in order. The modulo p means that the pieri map is lifted to a map over ZZ, the torsion is removed from the cokernel, and the resulting map is reduced mod p."}
-	  },
-     EXAMPLE lines ///
-     	  saturatePieri({3,1}, {1}, QQ^3, 5) -- removes the first box from the partition {3,1}, then reduces mod 5
-	  res coker oo -- resolve this map
-	  betti oo -- check that the resolution is pure (will not be pure for all characteristics)
-	  ///
-     }
-
-document {
-     Key => {pureFree, (pureFree, List, Module), (pureFree, List, Module, ZZ)},
-     Headline => "computes an GL(V)-equivariant map whose resolution is pure, or the reduction mod p of such a map",
-     SeeAlso => {pieri, saturatePieri},
-     Usage => concatenate("pieri(List, Module)\n",
-	  "pieri(List, Module, ZZ)"),
+     Key => {pureFree, (pureFree, List, PolynomialRing)},
+     Headline => "computes a GL(V)-equivariant map whose resolution is pure, or the reduction mod p of such a map",
+     SeeAlso => {pieri},
+     Usage => "pureFree(d, P)",
      Inputs => {
 	  "d" => {ofClass List, ", a list of degrees (increasing numbers)"},
-	  "V" => {ofClass Module, ", an n-dimensional vector space over a field of char 0"},
-	  "p" => {ofClass ZZ, ", a characteristic, the output is over the field ZZ/p"}
+	  "P" => {ofClass PolynomialRing, ", a polynomial ring over a field K in n variables" }
 	  },
      Outputs => {
-	  Matrix => {"Either calls pieri or saturatePieri depending on if the argument p is given. The result is a map whose cokernel has Betti diagram with degree sequence d if p is not given, and is the same map reduced mod p if it is given."}
+	  Matrix => {"A map whose cokernel has Betti diagram with degree sequence d if K has characteristic 0. 
+	       If K has positive characteristic p, then the corresponding map is calculated over QQ and is lifted to a ZZ-form which is then reduced mod p." }
 	  },
+     "The function translates the data of a degree sequence d for a desired pure free resolution into the data of a Pieri map 
+     according to the formula of Eisenbud-Fl\\o ystad-Weyman and then applies the function ",
+     TO pieri,
+     ".",
      EXAMPLE lines ///
-     	  betti res coker pureFree({0,1,2,4},QQ^3) -- degree sequence {0,1,2,4}
-	  betti res coker pureFree({0,1,2,4},QQ^3,2) -- same map, but reduced mod 2
+     	  betti res coker pureFree({0,1,2,4}, QQ[a,b,c]) -- degree sequence {0,1,2,4}
+	  betti res coker pureFree({0,1,2,4}, ZZ/2[a,b,c]) -- same map, but reduced mod 2
+	  betti res coker pureFree({0,1,2,4}, GF(4)[a,b,c]) -- can also use non prime fields
      	  ///
      }
 
@@ -445,42 +558,29 @@ document {
      Key => {schurRank, (schurRank, ZZ, List)},
      Headline => "computes the dimension of the irreducible GL(QQ^n) representation associated to a partition",
      SeeAlso => standardTableaux,
-     Usage => "schurRank(ZZ, List)",
+     Usage => "schurRank(n, mu)",
      Inputs => {
-	  "n" => {ofClass ZZ, ", the dimension of a vector space V"},
+	  "n" => {ofClass ZZ, ", the size of the matrix group GL(QQ^n)"},
 	  "mu" => {ofClass List, ", a partition (mu_1, ..., m_r) where mu_i is the number of boxes in the ith row"}
 	  },
      Outputs => {
-	  ZZ => {"The dimension of the irreducible GL(V) representation associated to mu, uses determinantal formula."}
+	  ZZ => {"The dimension of the irreducible GL(QQ^n) representation associated to mu"}
 	  },
+     "The dimension is computed using the determinantal formula given by the Weyl character formula.",
      EXAMPLE lines ///
      	  schurRank(5, {4,3}) -- should be 560
      	  ///
      }     	  
      
-end
-loadPackage "PieriMaps"
-installPackage PieriMaps
-
-TEST ///
-standardTableaux(3,{3,2})
-///
-
-TEST ///
-h = new MutableHashTable from {}
-straighten({{1,2,3},{1,1}},h)
-h = new MutableHashTable from {}
-straighten({{3,4},{1,2}},h)
-h = new MutableHashTable from {}
-straighten({{1,4},{2,3}},h)
-///
-
 TEST ///
 t = new BettiTally from {(0,{0},0)=>8, (1,{1},1) =>15, (2,{3},3)=>10, (3,{5},5)=>3};
-assert t == (betti res coker pieri({3,1},{1},QQ^3))
+assert t == (betti res coker pieri({3,1},{1},QQ[a,b,c]))
 t = new BettiTally from {(0,{0},0)=>15, (1,{1},1) =>24, (2,{4},4)=>15, (3,{6},6)=>6};
-assert t == (betti res coker pieri({4,1},{1},QQ^3))
+assert t == (betti res coker pieri({4,1},{1},QQ[a,b,c]))
 t = new BettiTally from {(0,{0},0)=>20, (1,{2},2) =>60, (2,{3},3)=>64, (3,{4},4)=>20};
-assert t == (betti res coker pieri({3,2},{2,2},QQ^4))
+assert t == (betti res coker pieri({3,2},{2,2},QQ[a,b,c,d]))
 ///
 
+end     
+loadPackage "PieriMaps"
+installPackage PieriMaps
