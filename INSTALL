@@ -23,58 +23,34 @@ distribution.
 Compiling on multiple machine architectures
 -------------------------------------------
 
-If multiple machine architectures are supported by your hardware and
-operating system, a good way to specify which one to use is to use the
-build option to autoconf's configure script with an architecture in
-config.guess format.  This will work with gmp, for example, as it
-knows how to produce the additional options to the compilers.
+If multiple machine architectures are supported by your hardware and operating
+system, a good way to specify which one to use is to use the build option to
+autoconf's configure script with an architecture in config.guess format, as
+well as to specify names for the compilers that include the additional options
+for the architecture to be used.  This will work with gmp, for example, as it
+knows how to produce the additional options to the compilers:
 
-Example:
+   ../configure --build=x86_64-apple-darwin CC="gcc -m64" CXX="g++ -m64"
 
-   ../configure --build=x86_64-apple-darwin
-
-Another way to do it is to specify names for the compilers that
-include the additional options for the architecture to be used.  That
-will almost always work.
-
-Example:
-
-   ../configure CC="gcc -m64" CXX="g++ -m64"
-
-Yet another way to do it is to add the architecture option to CFLAGS
-and to CXXFLAGS.  The disadvantage of that approach is that the
-package might have its own idea about what other options to use, which
-would be ignored.
-
-Example:
+Another way to do it is to add the architecture option to CFLAGS and to
+CXXFLAGS.  The disadvantage of that approach is that the package might have its
+own idea about what values to use for those options and ignore these settings:
 
    ../configure CFLAGS="-O2 -m64" CXXFLAGS="-O2 -m64"
 
-When using "capybara", you can take advantage of both good ways of
-doing it, by putting something like the following code into the file
-include/capybara/local-overrides.
-
-    ARCHOPT = -m64
-    ARCHITECTURE = x86_64-apple-darwin
-    CONFIGOPTIONS += --build=$(ARCHITECTURE) CC="gcc $(ARCHOPT)" CXX="g++ $(ARCHOPT)"
-
-Even that doesn't quite work when compiling a package, such as "gc",
-that uses "libtool".  Unfortunately, libtool doesn't understand the
--m64 option, so it drops it.  The work-around is to create shell
-scripts on your path called gcc-m64 and g++-m64 that can be used as
-the compilers, and to use this instead:
-
-    ARCHOPT = -m64
-    ARCHITECTURE = x86_64-apple-darwin
-    CONFIGOPTIONS += --build=$(ARCHITECTURE) CC="gcc$(ARCHOPT)" CXX="g++$(ARCHOPT)"
-
-In the shell script gcc-m64 put this single line:
+Sometimes a library will get confused by values for CC and CXX with spaces in
+them, or will try to parse the options, and get confused by the "-m64" option.
+In that case, the work-around is to create shell scripts on your path called
+something like gcc-m64 and g++-m64 that can be used as the compilers, and to
+use this instead.  In the shell script gcc-m64 put this single line:
 
      exec gcc -m64 "$@"
 
 In the shell script g++-m64 put this single line:
 
      exec g++ -m64 "$@"
+
+Mark both shell scripts executable.
 
 ---------
 Programs
