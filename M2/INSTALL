@@ -78,7 +78,7 @@ version.
    library: libxml2
      notes: if absent, there will be an error message about the file
      	    libxml/tree.h not being found     
-    get at: Mac OS X : already present
+    get at: Mac OS X : already present, if you've installed Xcode
     	    ubuntu, debian : install the package libxml2-dev
 
 ----------------------
