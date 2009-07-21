@@ -1,0 +1,5 @@
+add a function for the user to use to separate input/output pairs in unevaluated example text
+
+
+    EXAMPLE { separateExampleOutput /// ... /// }
+
