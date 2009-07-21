@@ -18,8 +18,15 @@ export {NegativeSlopeOnly, polygon, adjoinRoot, puiseux,
      termsToSeries,
      regularPart,
      squarefree,
-     testPuiseux
+     testPuiseux,
+     newtonEdges,
+     NewtonEdge,
+     factorization
      }
+
+factorization = (F) -> (
+     fs := factor F;
+     select(fs//toList/toList/reverse/toSequence, f -> first degree f#1 > 0))
 
 ----------------------------------------------
 -- Internal routines for the package ---------
@@ -137,14 +144,37 @@ edgesToInfo(List, RingElement, RingElement) := (elist,F,x) -> (
 	    x0 := e#1#1 - e#0#1;
 	    g := gcd(y0,x0);
 	    q := -x0//g;
-	    m := y0//g;
-	    ell := q * e#0#0 + m * e#0#1;
+	    p := y0//g;
+	    ell := q * e#0#0 + p * e#0#1;
 	    i0 := e#0#1;
 	    G = sum (L=apply(e, ji -> (
-		      d := (i0-ji#1)//q; -- // q; -- dvide by q when we adjoin a q-th root
+		      d := (i0-ji#1); -- // q; -- dvide by q when we adjoin a q-th root
 		      coefficient(R_{ji#1,ji#0},F) * x^d
 		      )));
-	    (m, q, ell, G)
+	    (p, q, ell, G)
+	    ))
+  )
+
+-- attempting to fix the bugs in this function:
+edgesToInfo(List, RingElement, RingElement) := (elist,F,x) -> (
+     -- elist should be the output of 'polygon'
+     -- x should be a variable in a ring, this will be the variable used
+     --  to create the edge polynomials
+     R := ring F;
+     S := ring x;
+     apply(elist, e -> (
+	    y0 := e#1#0 - e#0#0;
+	    x0 := e#1#1 - e#0#1;
+	    g := gcd(y0,x0);
+	    q := -x0//g;
+	    p := y0//g;
+	    ell := q * e#0#0 + p * e#0#1;
+	    j0 := e#0#0;
+	    G = sum (L=apply(e, ji -> (
+		      d := (ji#0-j0); -- // q; -- dvide by q when we adjoin a q-th root
+		      coefficient(R_{ji#1,ji#0},F) * x^d
+		      )));
+	    (p, q, ell, G)
 	    ))
   )
 
@@ -177,7 +207,7 @@ transformPolynomial = (F, tm, ell) -> (
 termsToSeries = (tms) -> (
      -- result is a pair (x(t),y(t)) of elements in St
      K1 := ring(tms_0_3);
-     St := K1[t, MonomialOrder=>RevLex, Global=>false];
+     St := K1[symbol t, MonomialOrder=>RevLex, Global=>false];
      t := St_0;     
      xdegree := product apply(tms, first);
      xt := t^xdegree;
@@ -214,7 +244,7 @@ singularPart1 = (F) -> (
      -- Return: a set of ((q,mu,m,beta),ell,r)
      --   the mu and beta are in either K = coefficientRing ring F, or in an extension field of K.
      K := coefficientRing ring F;
-     Kt := K[t];
+     Kt := K[symbol t];
      E := polygon(F,Kt_0);
      flatten apply(E, e -> (
 	       (q,m,ell,g) := e;
@@ -223,7 +253,7 @@ singularPart1 = (F) -> (
      	       << "e = " << e << endl;
 	       apply(sq, (r, f) -> (
 		 a := adjoinRoot f; -- doesn't adjoin a root if f is linear
-		 if ring a =!= K then A = (ring a)[t] else A = Kt;
+		 if ring a =!= K then A = (ring a)[symbol t] else A = Kt;
 		 b := if q == 1 then a else adjoinRoot(A_0^q-a);
 		 K1 := ring b;
 	         ((q,1_K1,m,b), ell, r)
@@ -255,12 +285,140 @@ puiseux(RingElement, ZZ) := (F, deglimit) -> (
      (px, apply(px, termsToSeries))
      )
 
+--------------------------------------------------------
+-- Code below this is currently under construction -----
+--------------------------------------------------------
+NewtonEdge = new Type of List;  -- {p,q,ell,g(t)}
+  -- p and q are positive integers.
+  -- ell is too
+  -- g(t) is a univariate polynomial over some base ring encoding the poly on the edge.
+NewtonTerm = new Type of List -- {p,q,ell, alpha, r} 
+  -- r is the power to which the minimal poly of alpha occurs in the lead poly
+NewtonBranch = new Type of List -- {{t:NewtonTerm}, F1(x,y)}
+
+newtonEdges = method()
+newtonEdges(RingElement, RingElement) := (F,t) -> apply(polygon(F,t), e -> new NewtonEdge from toList e)
+newtonEdges RingElement := (F) -> (
+     R1 := (coefficientRing ring F)[symbol t];
+     newtonEdges(F,R1_0)
+     )
+
+newtonTerms = method()
+newtonTerms(NewtonEdge) := (E) -> (
+     -- find the squarefree decomp of g(t)
+     -- for each irred polynomial, make a new term by 
+     -- adding its root to the field.
+     -- result: a list of NewtonTerm's
+     (p,q,ell,g) := toSequence E;
+     gs := factorization g; -- TODO: use UPolynomials.m2
+     apply(gs, (i,gi) -> new NewtonTerm from {p,q,ell,adjoinRoot gi,i})
+     )
+
+applyTerm = method()
+applyTerm(NewtonTerm, RingElement) := (tm, F) -> (
+     -- return F_1(x,y)
+     R := ring F;
+     Rnew := R;
+     (p,q,ell,alpha,r) := toSequence tm;
+     if ring alpha =!= coefficientRing R then
+     	  Rnew = (ring alpha)(monoid R);
+     coeffvars := drop(gens ring alpha, numgens coefficientRing Rnew - numgens coefficientRing R);
+     toRnew := map(Rnew,R,join({Rnew_0^p,Rnew_0^q*(alpha+Rnew_1)},coeffvars));
+     (toRnew F) // Rnew_0^ell
+     )
+
+series = method()
+series(List) := (tms) -> (
+     -- return the parametrization (t^m, h(t)) corresponding to the list of terms L.
+     -- each term is (p,q,ell,alpha)
+     K1 := ring(tms#-1#3);
+     St := K1[symbol t, MonomialOrder=>RevLex, Global=>false];
+     t := St_0;     
+     xdegree := product apply(tms, first);
+     xt := t^xdegree;
+     lastp := xdegree;
+     lastq := 0;
+     ps := apply(#tms, i -> lastp = lastp / tms#i#0);
+     qs := apply(#tms, i -> lastq = lastq + ps#i * tms#i#1);
+     alphas := apply(#tms, i -> sub(tms#i#3, K1));
+     yt := sum apply(#tms, i -> alphas#i * t^(qs#i));
+     (xt,yt)
+     )
+
+extend(NewtonBranch,ZZ) := opts -> (B,ord) -> (
+     F := B#1;
+     ord = ord - sum apply(B#0, tm -> tm#1);
+     if ord <= 0 then return B#0;
+     R := ring F;
+     x := R_0;
+     y := R_1;
+     c := coefficient(y, F);
+     cinv := 1/c;
+     m := min apply(terms sub(F, {y => 0}), g -> (first exponents g)_0);
+     -- we want to mod out by the ideal 
+     ytop := ceiling(ord / m);
+     J = ideal apply(0..ytop, i -> y^i * x^(ord - m*i));
+     Rtrunc := R/J;
+     G := sub(F,Rtrunc);
+     prev'm = 0;
+     newtms := for i from 0 to ord list (
+	  if G == 0 then break;
+	  G0 := sub(G, {Rtrunc_1 => 0});
+	  if G0 == 0 then break;
+          m := min apply(terms G0, g -> (first exponents g)_0);
+	  cm := coefficient(x^m, G);
+	  b := -cm * cinv;
+	  ans := new NewtonTerm from {1, m-prev'm, m-prev'm, b};
+	  prev'm = m;
+	  G = sub(G, {Rtrunc_1 => x^m*b+y});
+	  ans
+	  );
+     join(B#0, newtms)
+     )
+
+branches1 = (F) -> (
+     K := coefficientRing ring F;
+     Kt := K[symbol t];
+     E := newtonEdges(F,Kt_0);
+     tms := flatten apply(E, newtonTerms);
+     apply(tms, tm -> new NewtonBranch from {{tm}, applyTerm(tm,F)})
+     )
+
+branches = method()
+branches(RingElement) := (F) -> branches(new NewtonBranch from {{}, F})
+branches NewtonBranch := (B) -> (
+     -- calls branches1, and branches recursively 
+     (tms,F) := toSequence B;
+     B1 := branches1 F;
+     flatten apply(B1, b -> (
+	       (tms1,F1) := toSequence b;
+	       (p,q,ell,alpha,r) := toSequence tms1#0;
+	       tmsall := join(tms,tms1);
+	       b1 := new NewtonBranch from {tmsall, F1};
+	       if r === 1 then 
+	         {b1}
+	       else
+	         branches b1
+	       ))
+     )
+
+puiseux = method()
+puiseux(RingElement, ZZ) := (F, ord) -> (
+     P := (branches F)/(b -> extend(b,ord));
+     P/series
+     )
+
 testPuiseux = (parametrization, F, trunclimit) -> (
      R := ring F;
      S1 := ring (parametrization_0);
      Strunc := S1/S1_0^trunclimit;
      sub(F, {R_0=>sub(parametrization_0,Strunc), R_1=>sub(parametrization_1,Strunc)})
      )
+
+--<< "TODO:
+--  1. factorization should work over extension fields
+--  2. towers of extension fields needs to be set up.
+--"
 
 beginDocumentation()
 
@@ -334,7 +492,51 @@ doc ///
      a term $x^i y^j is placed at the $(j,i)$ spot), on the line $i + 6j = 15.  There are two terms
      of F which are non-zero, giving the polynomial $3t^2+5$.
   Caveat
+    Currently, only negative slopes are considered, and it is expected that there is a monomial
+    not involving x.
   SeeAlso
+///
+
+doc ///
+  Key
+    newtonEdges
+    (newtonEdges,RingElement)
+    (newtonEdges,RingElement,RingElement)
+  Headline
+    find the supporting lines and polynomials of the lower Newton polygon
+  Usage
+    e = newtonEdges F
+    e = newtonEdges(F,t)
+  Inputs
+    F:RingElement
+      in a polynomial ring A[x,y] in two variables over a field (the names
+      can be different)
+    t:RingElement
+      usually a variable in A[t].  If not present, then a new ring A[t] is created.
+  Outputs
+    e:List
+      Each element is a NewtonEdge, i.e. a list of four elements: (a,b,m,g(t)).  The first three describe the 
+      equation $ai + bj = m$ of one of the edges of the Newton polygon.  g(t) is the polynomial
+      in t corresponding to this edge.
+  Description
+   Text
+     The Newton polygon of $F(x,y)$ is the convex hull of the sets $(j,i) + N^2$, where $x^i y^j$
+     occurs in $F$.  If $F(0,y)$ is non-zero, then the slopes of all of the edges
+     of the Newton polygon are all non-positive.
+   Example
+     R = QQ[x,y];
+     F = 5*x^3*y^2 - 7*x*y^4 + 2*x^2*y^4 - y^7 + 4*x^12*y + 3*x^15
+     e = newtonEdges F
+     netList e
+   Text
+     This Newton polygon has three edges.  The first edge lies, in the (j,i) plane (where
+     a term $x^i y^j is placed at the $(j,i)$ spot), on the line $i + 6j = 15.  There are two terms
+     of F which are non-zero, giving the polynomial $3t^2+5$.
+  Caveat
+    Currently, only negative slopes are considered, and it is expected that there is a monomial in F
+    not involving x.
+  SeeAlso
+    NewtonEdge
 ///
 
 -- also doc: puiseux, possibly: singularParts, regularPart, termsToSeries
@@ -378,6 +580,8 @@ debug Puiseux
 R = QQ[x,y]
 S = QQ[t]
 -- choose one of the F's from above
+F = y^2-x^3-x^4
+polygon(F,t)
 F = y^4-y^2+x^3+x^4
 F = y^5+2*x*y^2+2*x*y^3+x^2*y-4*x^3*y+2*x^5
 
@@ -387,7 +591,7 @@ sx = singularPart1(F)
 (t,ell,r) = sx_0
 G = transformPolynomial(F,t,ell)
 
-sx = singularParts(F,{})
+sx = singularParts(F,{}) 
 
 px = puiseux(F,20)
 -- Now test to see if each one is essentially 
@@ -661,10 +865,90 @@ puiseux(F,10)
 ///
 -------------------------------------------
 
+-- 7/15/09, trying out some things by hand:
+restart
+load "development/Puiseux.m2"
+debug Puiseux
+R = QQ[x,y]
+F = poly"y4+y3x2+y2x5+yx9+x14"
+E = newtonEdges F
+apply(E, e -> factorization e#3)
+F = poly"y4+y3x2+y2x15+yx19+x24"
+sub(F, {y => x^2*(-1+y)})
+oo//x^8
+
+TEST ///
+-- test applyTerm
+restart
+load "development/Puiseux.m2"
+debug Puiseux
+R = QQ[x,y]
+F = y^4-y^2+x^3+x^4
+tm = new NewtonTerm from append(drop(first newtonEdges F,-1), 1_QQ)
+applyTerm(tm, F)
+///
+
+TEST ///
+-- test applyTerm
+restart
+load "development/Puiseux.m2"
+debug Puiseux
+R = QQ[x,y]
+S = QQ[t]
+R = ZZ/32003[x,y]
+F = y^5+2*x*y^2+2*x*y^3+x^2*y-4*x^3*y+2*x^5
+
+polygon(F,t)
+F = poly"y16-4y12x6-4y11x8+y10x10+6y8x12+8y7x14+14y6x16+4y5x18+y4(x20-4x18)-4y3x20+y2x22+x24"
+F = y^2-x^3
+
+F = y^4-y^2+x^3+x^4
+
+netList branches F
+(branches F)/(b -> extend(b,10))
+P = oo/(b -> series(b#0))
+P/(p -> testPuiseux(p, F, 40)) -- doesn't look good yet!
+P#2
+
+
+netList branches F
 
 
 
+P = apply(branches F, B -> series B#0)
+
+singularPart1 F
+(newtonEdges F)/newtonTerms
+apply(flatten((newtonEdges F)/newtonTerms), tm -> applyTerm(tm,F))
+newtonTerms first newtonEdges F
 
 
+restart
+load "development/Puiseux.m2"
+debug Puiseux
+R = QQ[x,y]
+S = QQ[t]
+F = y^5+2*x*y^2+2*x*y^3+x^2*y-4*x^3*y+2*x^6
+polygon1(F,true)
+polygon(F,t)
+P = branches F
+extend(P#0,10)
+netList oo
+series ooo
+time P = puiseux(F,10)
+netList oo
+testPuiseux(P#0, F, 12)
+testPuiseux(P#1, F, 12)
+testPuiseux(P#2, F, 12)
+time P = puiseux(F,20)
+netList P
+testPuiseux(P#0, F, 22)
+testPuiseux(P#1, F, 22)
+testPuiseux(P#2, F, 22)
+time P = puiseux(F,30)
+testPuiseux(P#0, F, 32)
+testPuiseux(P#1, F, 32)
+testPuiseux(P#2, F, 32)
+///
 
 

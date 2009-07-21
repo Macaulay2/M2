@@ -37,6 +37,7 @@ myExactDivision = (f,g) -> (ring f).myExactDivision(f,g)
 -- Only keep one of these two versions...
 myGCD = args -> (
      R := ring (args#0);
+     if not R.?myGCD then (if isField R then setUFD R else error ("myGCD: expected " | toString R | " to be a UFD"));
      result := args#0;
      for i from 1 to #args-1 when result != 1_R do 
          result = R.myGCD(result, args#i);
@@ -588,6 +589,8 @@ resultant(F',G',t)
 ///
 
 TEST ///
+path = prepend("~/src/M2/Macaulay2/packages/development/", path)
+loadPackage "UPolynomials"
 -- test of factorization over algebraic extensions of QQ
 A = QQ[b]/(b^6+b^3+1); toField A; setUFD A
 R = A[t]; setUFD R
@@ -607,7 +610,16 @@ use A; use R
 myExactDivision(F,t-b)
 -- TODO: adjoin a root of this, and factor over that ring.
 
+F1 = sub(oo, {t => t-2*b})
+D = myResultant(diff(t,F1), F1)
+     
+use A
+use R
+time gcd(F, t+b^5+b^2)
+
+
 restart
+path = prepend("~/src/M2/Macaulay2/packages/development/", path)
 loadPackage "UPolynomials"
 R1 = QQ[t]
 a = adjoinRoot(t^8+t^3+1)
@@ -619,8 +631,46 @@ B = ring b
 describe B
 
 use B
+C = B[t]; setUFD C
+F = sub(t^8+t^3+1, t => t-2*b-3*a)
+myResultant(F, diff(t,F))
+use B
 ker map(B, QQ[t], {2*a+b})
 ker map(B, QQ[t], {a+2*b})
+
+restart
+R1 = QQ[t,b,a]
+I = ideal"a8+a3+1,b8+b3+1"
+time primaryDecomposition I
+J = trim(I + oo_1)
+J = J + ideal"t8+t3+1"
+L = trim sub(J, {t=>t-3*a-7*b})
+gbTrace=3
+L_0
+L_1
+L_2
+resultant(L_0,L_2,b)
+eliminate(L, {b})
+
+--time primaryDecomposition J
+
+gens gb L;
+see ideal oo
+
+R2 = ZZ/32003[a,b,t,MonomialOrder=>{2,1}]
+L2 = sub(L,R2)
+gbTrace=3
+g2 = ideal gens gb L2
+see g2
+g2_0
+factor g2_0 
+F = (selectInSubring(1,gens gb L2))_(0,0)
+factor F
+--time decompose L
+
+Rrevlex = ZZ/32003[a,b,t]
+La = ideal gens gb sub(trim(L2 + ideal o31_2),Rrevlex)
+ideal gens gb sub(La,R1)
 ///
 end
 
