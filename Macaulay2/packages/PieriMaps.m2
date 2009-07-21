@@ -574,11 +574,11 @@ document {
      
 TEST ///
 t = new BettiTally from {(0,{0},0)=>8, (1,{1},1) =>15, (2,{3},3)=>10, (3,{5},5)=>3};
-assert t == (betti res coker pieri({3,1},{1},QQ[a,b,c]))
+assert (t == betti res coker pieri({3,1},{1},QQ[a,b,c]))
 t = new BettiTally from {(0,{0},0)=>15, (1,{1},1) =>24, (2,{4},4)=>15, (3,{6},6)=>6};
-assert t == (betti res coker pieri({4,1},{1},QQ[a,b,c]))
+assert (t == betti res coker pieri({4,1},{1},QQ[a,b,c]))
 t = new BettiTally from {(0,{0},0)=>20, (1,{2},2) =>60, (2,{3},3)=>64, (3,{4},4)=>20};
-assert t == (betti res coker pieri({3,2},{2,2},QQ[a,b,c,d]))
+assert (t == betti res coker pieri({3,2},{2,2},QQ[a,b,c,d]))
 ///
 
 end     
