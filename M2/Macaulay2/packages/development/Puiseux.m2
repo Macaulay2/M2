@@ -869,3 +869,8 @@ testPuiseux(P#2, F, 32)
 ///
 
 
+restart
+load "development/Puiseux.m2"
+uninstallPackage "Puiseux"
+installPackage "Puiseux"
+viewHelp
