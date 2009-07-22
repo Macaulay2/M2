@@ -475,15 +475,123 @@ TEST ///
   debug Puiseux
   test'puiseux(F,10)
   test'puiseux(F,20)
+
+  R = ZZ/101[x,y]
+  F = sub(F,R)
+  P = puiseux(F,10)
+  test'puiseux(F,10)
+  test'puiseux(F,20)
 ///
 
 TEST ///
+  R = QQ[x,y]
+  F = x^3*y^2 + x*y^4 + x^2*y^4 + y^7 + x^12*y + x^15 + y^9
+  P = puiseux(F,10)
+  assert(#P == 4)
+  debug Puiseux
+  test'puiseux(F,10)
+  test'puiseux(F,20)
+
   R = ZZ/101[x,y]
-  F = y^4-y^2+x^3+x^4
+  F = sub(F,R)
+  P = puiseux(F,10)
+  test'puiseux(F,10)
+  test'puiseux(F,20)
+///
+
+TEST ///
+  -- Duval example
+  R = QQ[x,y]
+  F = poly"y16-4y12x6-4y11x8+y10x10+6y8x12+8y7x14+14y6x16+4y5x18+y4(x20-4x18)-4y3x20+y2x22+x24"
+  P = puiseux(F,10)
+  assert(#P == 4)
+  debug Puiseux
+  test'puiseux(F,10)
+  test'puiseux(F,20)
+
+  R = ZZ/101[x,y]
+  F = sub(F,R)
+  P = puiseux(F,10)
+  test'puiseux(F,10)
+  test'puiseux(F,20)
+///
+
+TEST ///
+  -- Leonard example
+  R = QQ[x,y]
+  F = (y^2-y-x/3)^3-y*x^4*(y^2-y-x/3)-x^11
   P = puiseux(F,10)
   debug Puiseux
   test'puiseux(F,10)
   test'puiseux(F,20)
+
+  R = ZZ/101[x,y]
+  F = sub(F,R)
+  P = puiseux(F,10)
+  test'puiseux(F,10)
+  test'puiseux(F,20)
+///
+
+TEST ///
+  R = QQ[x,y]
+  --vanHoeij2
+  F = poly"y20+y13x+x4y5+x3(x+1)2"
+
+  P = puiseux(F,10)
+  debug Puiseux
+  test'puiseux(F,10)
+  test'puiseux(F,20)
+
+  R = ZZ/101[x,y]
+  F = sub(F,R)
+  P = puiseux(F,10)
+  test'puiseux(F,10)
+  test'puiseux(F,20)
+///
+
+TEST ///
+  R = QQ[x,y]
+  --vanHoeij3
+  F = poly"y30+y13x+x4y5+x3(x+1)2"
+
+  P = puiseux(F,40)
+  debug Puiseux
+  test'puiseux(F,40)
+
+  R = ZZ/101[x,y]
+  F = sub(F,R)
+  P = puiseux(F,40)
+  test'puiseux(F,40)
+///
+
+TEST ///
+  R = QQ[x,y]
+  --vanHoeij4
+  F = poly"y40+y13x+x4y5+x3(x+1)2"
+
+  P = puiseux(F,40)
+  debug Puiseux
+  test'puiseux(F,40)
+
+  R = ZZ/101[x,y]
+  F = sub(F,R)
+  P = puiseux(F,40)
+  test'puiseux(F,40)
+///
+
+TEST ///
+  R = QQ[x,y]
+  --boehm3
+  F = y^5+2*x*y^2+2*x*y^3+x^2*y-4*x^3*y+2*x^5
+
+  P = puiseux(F,40)
+  debug Puiseux
+  test'puiseux(F,40)
+
+  R = ZZ/101[x,y]
+  F = sub(F,R)
+  P = puiseux(F,40)
+  test'puiseux(F,40)
 ///
 
 -- also doc: puiseux, possibly: singularParts, regularPart, termsToSeries
@@ -491,9 +599,9 @@ TEST ///
 -- Some example polynomials to consider
 {*
 
-F = y^4-y^2+x^3+x^4
+--F = y^4-y^2+x^3+x^4
 F = x^3*y^2 + x*y^4 + x^2*y^4 + y^7 + x^12*y + x^15
-F = x^3*y^2 + x*y^4 + x^2*y^4 + y^7 + x^12*y + x^15 + y^9
+--F = x^3*y^2 + x*y^4 + x^2*y^4 + y^7 + x^12*y + x^15 + y^9
 
 --duval
 F = poly"y16-4y12x6-4y11x8+y10x10+6y8x12+8y7x14+14y6x16+4y5x18+y4(x20-4x18)-4y3x20+y2x22+x24"
