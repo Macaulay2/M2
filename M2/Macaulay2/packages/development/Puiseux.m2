@@ -11,17 +11,17 @@ newPackage(
 -- code is based in large part on the paper of Duval, Compositio Math 1989
 -- this code is still buggy, rough, and lacking features!
 
+--     squarefree,
+--     factorization,
+--     test'puiseux,
+--      NewtonEdge
+-- NegativeSlopeOnly
 
-export {NegativeSlopeOnly, 
+export {
      adjoinRoot, 
-     squarefree,
-     factorization,
-     
-     puiseux, 
-     testPuiseux,
-     test'puiseux,
      newtonEdges,
-     NewtonEdge
+     puiseux, 
+     testPuiseux
      }
 
 factorization = (F) -> (
@@ -239,7 +239,7 @@ extend(NewtonBranch,ZZ) := opts -> (B,ord) -> (
      cinv := 1/c;
      m := min apply(terms sub(F, {y => 0}), g -> (first exponents g)_0);
      -- we want to mod out by the ideal 
-     ytop := ceiling(ord / m);
+     ytop := floor(ord / m);
      J = ideal apply(0..ytop, i -> y^i * x^(ord - m*i));
      Rtrunc := R/J;
      G := sub(F,Rtrunc);
@@ -291,7 +291,8 @@ puiseux(RingElement, ZZ) := (F, trunclimit) -> (
      P/series
      )
 
-testPuiseux = (parametrization, F, trunclimit) -> (
+testPuiseux = method()
+testPuiseux(Sequence,RingElement,ZZ) := (parametrization, F, trunclimit) -> (
      R := ring F;
      S1 := ring (parametrization_0);
      Strunc := S1/S1_0^trunclimit;
@@ -385,7 +386,6 @@ doc ///
     Currently, only negative slopes are considered, and it is expected that there is a monomial in F
     not involving x.
   SeeAlso
-    NewtonEdge
     puiseux
 ///
 
@@ -408,8 +408,8 @@ doc ///
   Description 
    Text
      Each parametrization $p = (x(t), y(t)$ satisfies that x(t), y(t) are in B[t], for some
-     extension field B of A, and that F(x(t),y(t)) == 0 mod (t^trunclimit)..Usually (and currently)
-     x(t) = t^q, for some q.
+     extension field B of A, and that $F(x(t),y(t)) == 0 mod t^{trunclimit}$.  Currently,
+     $x(t) = t^q$, for some q.
    Example
      R = QQ[x,y]
      F = y^5+2*x*y^2+2*x*y^3+x^2*y-4*x^3*y+2*x^6
@@ -432,6 +432,59 @@ doc ///
     newtonEdges
 ///
 
+doc ///
+  Key
+    testPuiseux
+    (testPuiseux,Sequence,RingElement,ZZ)
+  Headline
+    apply a (truncated) parametrization to a polynomial
+  Usage
+    testPuiseux(p,F,trunclimit)
+  Inputs
+    p:Sequence
+      $(x(t),y(t))$, in some ring B[t]
+    F:RingElement
+      F(x,y), in some ring A[x,y]
+    trunclimit:ZZ
+      power at which to truncate power series
+  Outputs
+    :RingElement
+      $F(x(t),y(t))$ mod $t^{trunclimit}$
+  Description
+   Text
+     Substitute x(t) for x and y(t) for y, truncating the results.  If A is a field
+     with variables, then these variables should be the first variables of B (as will
+     happen in the parametrizations returned by @TO puiseux@).
+   Example
+     R = QQ[x,y]
+     F = y^5+2*x*y^2+2*x*y^3+x^2*y-4*x^3*y+2*x^6
+     P = puiseux(F,10);
+     netList P
+     testPuiseux(P_0, F, 16)
+     testPuiseux(P_1, F, 16)
+     testPuiseux(P_2, F, 16)
+  SeeAlso
+    puiseux
+///
+
+TEST ///
+  R = QQ[x,y]
+  F = y^4-y^2+x^3+x^4
+  P = puiseux(F,10)
+  assert(#P == 2)
+  debug Puiseux
+  test'puiseux(F,10)
+  test'puiseux(F,20)
+///
+
+TEST ///
+  R = ZZ/101[x,y]
+  F = y^4-y^2+x^3+x^4
+  P = puiseux(F,10)
+  debug Puiseux
+  test'puiseux(F,10)
+  test'puiseux(F,20)
+///
 
 -- also doc: puiseux, possibly: singularParts, regularPart, termsToSeries
 
@@ -464,28 +517,6 @@ F = y^5+2*x*y^2+2*x*y^3+x^2*y-4*x^3*y+2*x^5
 *}
 
 end
-
-doc ///
-  Key
-  Headline
-
-  Usage
-
-  Inputs
-
-  Outputs
-
-  Consequences
-
-  Description
-   Text
-   Text
-   Example
-   Text
-   Example
-  Caveat
-  SeeAlso
-///
 
 
 TEST ///
@@ -873,4 +904,5 @@ restart
 load "development/Puiseux.m2"
 uninstallPackage "Puiseux"
 installPackage "Puiseux"
+check Puiseux
 viewHelp
