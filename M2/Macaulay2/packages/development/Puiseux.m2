@@ -12,16 +12,16 @@ newPackage(
 -- this code is still buggy, rough, and lacking features!
 
 
-export {NegativeSlopeOnly, polygon, adjoinRoot, puiseux, 
-     -- The following might be made private
-     singularParts,
-     termsToSeries,
-     regularPart,
+export {NegativeSlopeOnly, 
+     adjoinRoot, 
      squarefree,
+     factorization,
+     
+     puiseux, 
      testPuiseux,
+     test'puiseux,
      newtonEdges,
-     NewtonEdge,
-     factorization
+     NewtonEdge
      }
 
 factorization = (F) -> (
@@ -105,8 +105,17 @@ adjoinRoot RingElement := (f) -> (
      ))
 
 ----------------------------------------
--- Newton polygon information ----------
+-- Puiseux construction ----------------
 ----------------------------------------
+NewtonEdge = new Type of List;  -- {p,q,ell,g(t)}
+  -- p and q are positive integers.
+  -- ell is too
+  -- g(t) is a univariate polynomial over some base ring encoding the poly on the edge.
+NewtonTerm = new Type of List -- {p,q,ell, alpha, r} 
+  -- r is the power to which the minimal poly of alpha occurs in the lead poly
+NewtonBranch = new Type of List -- {{t:NewtonTerm}, F1(x,y)}
+
+
 polygon1 = method()
 polygon1(RingElement,Boolean) := (F,negativeSlopeOnly) -> (
      -- MES: Doesn't handle 0 slope.
@@ -132,30 +141,8 @@ polygon1(RingElement,Boolean) := (F,negativeSlopeOnly) -> (
        result)
   )
 
-edgesToInfo = method()
-edgesToInfo(List, RingElement, RingElement) := (elist,F,x) -> (
-     -- elist should be the output of 'polygon'
-     -- x should be a variable in a ring, this will be the variable used
-     --  to create the edge polynomials
-     R := ring F;
-     S := ring x;
-     apply(elist, e -> (
-	    y0 := e#1#0 - e#0#0;
-	    x0 := e#1#1 - e#0#1;
-	    g := gcd(y0,x0);
-	    q := -x0//g;
-	    p := y0//g;
-	    ell := q * e#0#0 + p * e#0#1;
-	    i0 := e#0#1;
-	    G = sum (L=apply(e, ji -> (
-		      d := (i0-ji#1); -- // q; -- dvide by q when we adjoin a q-th root
-		      coefficient(R_{ji#1,ji#0},F) * x^d
-		      )));
-	    (p, q, ell, G)
-	    ))
-  )
-
 -- attempting to fix the bugs in this function:
+edgesToInfo = method()
 edgesToInfo(List, RingElement, RingElement) := (elist,F,x) -> (
      -- elist should be the output of 'polygon'
      -- x should be a variable in a ring, this will be the variable used
@@ -191,110 +178,6 @@ polygon(RingElement,RingElement) := opts -> (F,t) -> (
      p := polygon1(F, opts.NegativeSlopeOnly);
      edgesToInfo(p, F, t)     
      )
-
-transformPolynomial = (F, tm, ell) -> (
-     R := ring F;
-     Rnew := R;
-     (q,mu,m,beta) := tm;
-     if ring beta =!= coefficientRing R then
-	  Rnew = (ring beta)[x,y];
-     coeffvars := drop(gens ring beta, numgens coefficientRing Rnew - numgens coefficientRing R);
-     toRnew = map(Rnew,R,join({Rnew_0^q,Rnew_0^m*(beta^q+Rnew_1)},coeffvars));
-       -- as a root of this beta...
-     F = (toRnew F) // Rnew_0^ell
-     )
-
-termsToSeries = (tms) -> (
-     -- result is a pair (x(t),y(t)) of elements in St
-     K1 := ring(tms_0_3);
-     St := K1[symbol t, MonomialOrder=>RevLex, Global=>false];
-     t := St_0;     
-     xdegree := product apply(tms, first);
-     xt := t^xdegree;
-     -- tms is a list of (q,u,m,b)
-     -- where t^q = x
-     lastq := xdegree;
-     lastm := 0;
-     qs := apply(#tms, i -> lastq = lastq / tms_i_0);
-     ms := apply(#tms, i -> lastm = lastm + qs#i * tms#i#2);
-     yt := sum apply(#tms, i -> tms#i#3 * t^(ms#i)); -- possible issue: if the ring keeps getting bigger, will the * work?
-     (xt,yt))
-
-regularPart = method()
-regularPart(RingElement, ZZ) := (F, nterms) -> (
-     -- MES: THIS ONE IS REALLY SLOW!!
-     --      also: nterms is not quite what we want...
-     R := ring F;
-     x := R_0;
-     y := R_1;
-     for i from 0 to nterms list (
-	  m := min apply(terms sub(F, {y => 0}), g -> (first exponents g)_0);
-	  c1 := coefficient(x^m, F);
-	  c2 := coefficient(y, F);
-	  << "inverting by " << c2 << " in ring " << describe ring c2 << endl << endl;
-	  time b := -c1/c2;
-	  ans := (1, 1, m, b);
-	  time F = sub(F, {y => x^m*(b+y)}) // x^m;
-	  --<< "new F = " << F << endl << endl;
-	  ans
-	  )
-     )
-
-singularPart1 = (F) -> (
-     -- Return: a set of ((q,mu,m,beta),ell,r)
-     --   the mu and beta are in either K = coefficientRing ring F, or in an extension field of K.
-     K := coefficientRing ring F;
-     Kt := K[symbol t];
-     E := polygon(F,Kt_0);
-     flatten apply(E, e -> (
-	       (q,m,ell,g) := e;
-	       sq := squarefree g; -- squarefree decomp of g(t)
-	       -- we now need to add in a root for each poly in sq (if the degree is > 1)
-     	       << "e = " << e << endl;
-	       apply(sq, (r, f) -> (
-		 a := adjoinRoot f; -- doesn't adjoin a root if f is linear
-		 if ring a =!= K then A = (ring a)[symbol t] else A = Kt;
-		 b := if q == 1 then a else adjoinRoot(A_0^q-a);
-		 K1 := ring b;
-	         ((q,1_K1,m,b), ell, r)
-	       ))))
-     )
-
-singularParts = method()
-singularParts(RingElement, List) := (F,L) -> (
-     -- L is a list of quadruples (q,mu,m,beta), which tell how to reconstruct the Puiseux series so far
-     --   On the first call, L is usually {}.
-     -- F is the result of having applied these to the original F.
-     L1 := singularPart1 F;
-     splice \ join apply(L1, v -> (
-	       (t,ell,r) := v;
-	       L' := append(L,t);
-	       F1 := transformPolynomial(F,t,ell);
-	       if r == 1 then {(L',F1)}
-	       else singularParts(F1,L')
-	       ))
-     )
-
-puiseux = method()
-puiseux(RingElement, ZZ) := (F, deglimit) -> (
-     -- first find the singular parts.  Each knows what denominator is being used.
-     -- then compute the regular part of each, up to the degree bound.
-     -- NOTE: for integral bases, we will, from the singular parts, compute the bounds needed.
-     L := singularParts(F,{});
-     px := apply(L, s -> (tms := regularPart(s_1,deglimit); join(s_0,tms)));
-     (px, apply(px, termsToSeries))
-     )
-
---------------------------------------------------------
--- Code below this is currently under construction -----
---------------------------------------------------------
-NewtonEdge = new Type of List;  -- {p,q,ell,g(t)}
-  -- p and q are positive integers.
-  -- ell is too
-  -- g(t) is a univariate polynomial over some base ring encoding the poly on the edge.
-NewtonTerm = new Type of List -- {p,q,ell, alpha, r} 
-  -- r is the power to which the minimal poly of alpha occurs in the lead poly
-NewtonBranch = new Type of List -- {{t:NewtonTerm}, F1(x,y)}
 
 newtonEdges = method()
 newtonEdges(RingElement, RingElement) := (F,t) -> apply(polygon(F,t), e -> new NewtonEdge from toList e)
@@ -403,8 +286,8 @@ branches NewtonBranch := (B) -> (
      )
 
 puiseux = method()
-puiseux(RingElement, ZZ) := (F, ord) -> (
-     P := (branches F)/(b -> extend(b,ord));
+puiseux(RingElement, ZZ) := (F, trunclimit) -> (
+     P := (branches F)/(b -> extend(b,trunclimit));
      P/series
      )
 
@@ -413,6 +296,12 @@ testPuiseux = (parametrization, F, trunclimit) -> (
      S1 := ring (parametrization_0);
      Strunc := S1/S1_0^trunclimit;
      sub(F, {R_0=>sub(parametrization_0,Strunc), R_1=>sub(parametrization_1,Strunc)})
+     )
+
+test'puiseux = (F,trunclimit) -> (
+     P := puiseux(F,trunclimit);
+     Q := apply(P, p -> testPuiseux(p,F,trunclimit));
+     assert all(Q, q -> q == 0)
      )
 
 --<< "TODO:
@@ -459,46 +348,6 @@ doc ///
 
 doc ///
   Key
-    polygon
-    (polygon,RingElement,RingElement)
-  Headline
-    find the supporting planes and polynomials of the lower Newton polygon
-  Usage
-    e = polygon(F,t)
-  Inputs
-    F:RingElement
-      in a polynomial ring A[x,y] in two variables over a field (the names
-      can be different)
-    t:RingElement
-      usually a variable in A[t]
-  Outputs
-    e:List
-      Each element os a list of four elements: (a,b,m,g(t)).  The first three describe the 
-      equation $ai + bj = m$ of one of the edges of the Newton polygon.  g(t) is the polynomial
-      in t corresponding to this edge.
-  Description
-   Text
-     The Newton polygon of $F(x,y)$ is the convex hull of the sets $(j,i) + N^2$, where $x^i y^j$
-     occurs in $F$.  If $F(0,y)$ is non-zero, then the slopes of all of the edges
-     of the Newton polygon are all non-positive.
-   Example
-     R = QQ[x,y];
-     S = QQ[t];
-     F = 5*x^3*y^2 - 7*x*y^4 + 2*x^2*y^4 - y^7 + 4*x^12*y + 3*x^15
-     e = polygon(F,t)
-     netList e
-   Text
-     This Newton polygon has three edges.  The first edge lies, in the (j,i) plane (where
-     a term $x^i y^j is placed at the $(j,i)$ spot), on the line $i + 6j = 15.  There are two terms
-     of F which are non-zero, giving the polynomial $3t^2+5$.
-  Caveat
-    Currently, only negative slopes are considered, and it is expected that there is a monomial
-    not involving x.
-  SeeAlso
-///
-
-doc ///
-  Key
     newtonEdges
     (newtonEdges,RingElement)
     (newtonEdges,RingElement,RingElement)
@@ -516,28 +365,73 @@ doc ///
   Outputs
     e:List
       Each element is a NewtonEdge, i.e. a list of four elements: (a,b,m,g(t)).  The first three describe the 
-      equation $ai + bj = m$ of one of the edges of the Newton polygon.  g(t) is the polynomial
+      equation $aj + bi = m$ of one of the edges of the Newton polygon.  g(t) is the polynomial
       in t corresponding to this edge.
   Description
    Text
-     The Newton polygon of $F(x,y)$ is the convex hull of the sets $(j,i) + N^2$, where $x^i y^j$
+     The Newton polygon of $F(x,y)$ is the convex hull of the sets $(i,j) + N^2$, where $y^i x^j$
      occurs in $F$.  If $F(0,y)$ is non-zero, then the slopes of all of the edges
-     of the Newton polygon are all non-positive.
+     of the Newton polygon are all non-positive.  We ignore the edges of slope infinity and zero.
    Example
      R = QQ[x,y];
      F = 5*x^3*y^2 - 7*x*y^4 + 2*x^2*y^4 - y^7 + 4*x^12*y + 3*x^15
      e = newtonEdges F
      netList e
    Text
-     This Newton polygon has three edges.  The first edge lies, in the (j,i) plane (where
-     a term $x^i y^j is placed at the $(j,i)$ spot), on the line $i + 6j = 15.  There are two terms
-     of F which are non-zero, giving the polynomial $3t^2+5$.
+     This Newton polygon has three edges.  The first edge lies, in the (i,j) plane (where
+     a term $y^i x^j is placed at the $(i,j)$ spot), on the line $j + 6i = 15.  There are two terms
+     of F which are non-zero, giving the polynomial $5t^2+3$.
   Caveat
     Currently, only negative slopes are considered, and it is expected that there is a monomial in F
     not involving x.
   SeeAlso
     NewtonEdge
+    puiseux
 ///
+
+doc ///
+  Key
+    puiseux
+    (puiseux,RingElement,ZZ)
+  Headline
+    compute Puiseux parametrizations of a polynomial F(x,y) monic in y
+  Usage
+    P = puiseux(F,trunclimit)
+  Inputs
+    F:RingElement
+      F = F(x,y) should be a squarefree polynomial in a ring A[x,y], where A is a field
+    trunclimit:ZZ
+      power of t at which to truncate power series
+  Outputs
+    P:List
+      a list of parametrizations (x(t), y(t))
+  Description 
+   Text
+     Each parametrization $p = (x(t), y(t)$ satisfies that x(t), y(t) are in B[t], for some
+     extension field B of A, and that F(x(t),y(t)) == 0 mod (t^trunclimit)..Usually (and currently)
+     x(t) = t^q, for some q.
+   Example
+     R = QQ[x,y]
+     F = y^5+2*x*y^2+2*x*y^3+x^2*y-4*x^3*y+2*x^6
+     P = puiseux(F,10);
+     netList P
+   Text
+     Use @TO testPuiseux@ to see how good each parametrization is.
+   Example
+     testPuiseux(P_0, F, 14)
+     testPuiseux(P_1, F, 14)
+     testPuiseux(P_2, F, 14)
+  Caveat
+    Currently, the polynomial F(x,y) should have no monomial factors.
+    The package needs to factor polynomials arising from the edges of the
+    Newton polygon.  If it cannot do so in the given field, then a somewhat
+    cryptic error message is given.  As factorization over extension fields
+    improves, this problem should abate.
+  SeeAlso
+    testPuiseux
+    newtonEdges
+///
+
 
 -- also doc: puiseux, possibly: singularParts, regularPart, termsToSeries
 
@@ -570,6 +464,29 @@ F = y^5+2*x*y^2+2*x*y^3+x^2*y-4*x^3*y+2*x^5
 *}
 
 end
+
+doc ///
+  Key
+  Headline
+
+  Usage
+
+  Inputs
+
+  Outputs
+
+  Consequences
+
+  Description
+   Text
+   Text
+   Example
+   Text
+   Example
+  Caveat
+  SeeAlso
+///
+
 
 TEST ///
 -- XXXX
