@@ -23,8 +23,8 @@
 
 newPackage(
 	"Cyclotomic",
-    	Version => "0.3", 
-    	Date => "June 2009",
+    	Version => "0.3.1", 
+    	Date => "July 2009",
     	Authors => {{Name => "Thomas Kahle", 
 		  Email => "kahle@mis.mpg.de", 
 		  HomePage => "http://personal-homepages.mis.mpg.de/kahle/"}},
@@ -168,15 +168,15 @@ document {
      Outputs => {
           "S" => {"A cyclotomic field with $1^(1/i)$ adjoined"} },
      EXAMPLE {
-          "R = QQ[ww]",
           "S = cyclotomicField (5)",
 	  "isField S",
-	  "(ww5^9, ww5^10, ww5^11)",
+	  "r = S_0",
+	  "(r^9, r^10, r^11)",
           "T = S[x,y]",
-     	  "I = ideal (x-ww5)",
+     	  "I = ideal (x-r)",
 	  "dim I"
           },
-     Caveat => {"Strange things can happen with the reduction of the coefficients."},
+     Caveat => {"Strange things can happen with the reduction of the coefficients.", " In M2 v <= 1.2 dimension is off by one."},
      SeeAlso => cyclotomicPoly
      }
 
@@ -203,10 +203,9 @@ document {
      Inputs => {
           "R" => { "a polynomial ring over a cyclotomic field"}},
      Outputs => {
-          "i" => {"The order of the adjoined root of unity."} },
+          "i" => {"The order of the adjoined root of unity, or 2 if the coefficient field is QQ"} },
      EXAMPLE {
-	  "R = QQ[ww]",
-          "S = cyclotomicField (5,R)",
+          "S = cyclotomicField 5",
           "T = S[x,y]",
      	  "findRootPower T"
           },
@@ -223,8 +222,8 @@ document {
           "li2" => {"The list of ideals in common ring."} },
      EXAMPLE {
 	  "F = cyclotomicField 3; G = cyclotomicField 4;",
-          "R = F[t]; I = ideal (t-ww3^2)",
-          "S = G[t]; J = ideal (t^2-ww4)",
+          "R = F[t]; I = ideal (t-F_0^2)",
+          "S = G[t]; J = ideal (t^2-G_0)",
      	  "joinCyclotomic {I,J}"
           },
      SeeAlso => cyclotomicField
