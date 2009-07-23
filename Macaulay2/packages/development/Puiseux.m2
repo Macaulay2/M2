@@ -237,7 +237,9 @@ extend(NewtonBranch,ZZ) := opts -> (B,ord) -> (
      y := R_1;
      c := coefficient(y, F);
      cinv := 1/c;
-     m := min apply(terms sub(F, {y => 0}), g -> (first exponents g)_0);
+     F0 := sub(F, {y=>0});
+     if F0 == 0 then return B#0;
+     m := min apply(terms F0, g -> (first exponents g)_0);
      -- we want to mod out by the ideal 
      ytop := floor(ord / m);
      J = ideal apply(0..ytop, i -> y^i * x^(ord - m*i));
@@ -415,6 +417,17 @@ doc ///
      F = y^5+2*x*y^2+2*x*y^3+x^2*y-4*x^3*y+2*x^6
      P = puiseux(F,10);
      netList P
+   Text
+     How do we determine what extension field is used for each series?
+   Example
+     ring P_1_0
+     ring P_0_1
+     ring P_2_1
+   Text
+     The first two Puiseux series are defined over QQ, and each represents a single series,
+     while the third Puiseux series is defined over an extension of QQ of degree 3.  This
+     series represents 3 different Puiseux series of F.
+     
    Text
      Use @TO testPuiseux@ to see how good each parametrization is.
    Example
@@ -1007,6 +1020,15 @@ testPuiseux(P#1, F, 32)
 testPuiseux(P#2, F, 32)
 ///
 
+
+R = QQ[x,y]
+F = poly"y4-2x3y2-4x5y+x6-x7"
+puiseux(F,5) -- gives error msg
+puiseux(F,3) -- seems to work
+
+F = y^3-x^5
+puiseux(F,5) -- seems to work
+puiseux(F,10) -- gives error
 
 restart
 load "development/Puiseux.m2"
