@@ -111,7 +111,7 @@ NewtonEdge = new Type of List;  -- {p,q,ell,g(t)}
   -- p and q are positive integers.
   -- ell is too
   -- g(t) is a univariate polynomial over some base ring encoding the poly on the edge.
-NewtonTerm = new Type of List -- {p,q,ell, alpha, r} 
+NewtonTerm = new Type of List -- {p,q,ell, mu, alpha, r} 
   -- r is the power to which the minimal poly of alpha occurs in the lead poly
 NewtonBranch = new Type of List -- {{t:NewtonTerm}, F1(x,y)}
 
@@ -195,7 +195,9 @@ newtonTerms(NewtonEdge) := (E) -> (
      -- result: a list of NewtonTerm's
      (p,q,ell,g) := toSequence E;
      gs := factorization g; -- TODO: use UPolynomials.m2
-     apply(gs, (i,gi) -> new NewtonTerm from {p,q,ell,adjoinRoot gi,i})
+     apply(gs, (i,gi) -> (
+     	       alpha := adjoinRoot gi;
+	       new NewtonTerm from {p,q,ell,1_(ring alpha),alpha,i}))
      )
 
 applyTerm = method()
@@ -203,20 +205,20 @@ applyTerm(NewtonTerm, RingElement) := (tm, F) -> (
      -- return F_1(x,y)
      R := ring F;
      Rnew := R;
-     (p,q,ell,alpha,r) := toSequence tm;
+     (p,q,ell,mu,alpha,r) := toSequence tm;
      if ring alpha =!= coefficientRing R then
      	  Rnew = (ring alpha)(monoid R);
      coeffvars := drop(gens ring alpha, numgens coefficientRing Rnew - numgens coefficientRing R);
      ---RATIONAL CHANGE:
-     toRnew := map(Rnew,R,join({Rnew_0^p,Rnew_0^q*(alpha+Rnew_1)},coeffvars));
+     toRnew := map(Rnew,R,join({mu*Rnew_0^p,Rnew_0^q*(alpha+Rnew_1)},coeffvars));
      (toRnew F) // Rnew_0^ell
      )
 
 series = method()
 series(List) := (tms) -> (
      -- return the parametrization (t^m, h(t)) corresponding to the list of terms L.
-     -- each term is (p,q,ell,alpha)
-     K1 := ring(tms#-1#3);
+     -- each term is (p,q,mu,ell,alpha,r)  (here r is not used).
+     K1 := ring(tms#-1#4);
      St := K1[symbol t, MonomialOrder=>RevLex, Global=>false];
      t := St_0;     
      xdegree := product apply(tms, first);
@@ -225,7 +227,7 @@ series(List) := (tms) -> (
      lastq := 0;
      ps := apply(#tms, i -> lastp = lastp / tms#i#0);
      qs := apply(#tms, i -> lastq = lastq + ps#i * tms#i#1);
-     alphas := apply(#tms, i -> sub(tms#i#3, K1));
+     alphas := apply(#tms, i -> sub(tms#i#4, K1));
      yt := sum apply(#tms, i -> alphas#i * t^(qs#i));
      (xt,yt)
      )
@@ -255,7 +257,7 @@ extend(NewtonBranch,ZZ) := opts -> (B,ord) -> (
           m := min apply(terms G0, g -> (first exponents g)_0);
 	  cm := coefficient(x^m, G);
 	  b := -cm * cinv;
-	  ans := new NewtonTerm from {1, m-prev'm, m-prev'm, b};
+	  ans := new NewtonTerm from {1, m-prev'm, m-prev'm, 1_(ring b), b, 1};
 	  prev'm = m;
 	  G = sub(G, {Rtrunc_1 => x^m*b+y});
 	  ans
@@ -279,7 +281,7 @@ branches NewtonBranch := (B) -> (
      B1 := branches1 F;
      flatten apply(B1, b -> (
 	       (tms1,F1) := toSequence b;
-	       (p,q,ell,alpha,r) := toSequence tms1#0;
+	       (p,q,ell,mu,alpha,r) := toSequence tms1#0;
 	       tmsall := join(tms,tms1);
 	       b1 := new NewtonBranch from {tmsall, F1};
 	       if r === 1 then 
