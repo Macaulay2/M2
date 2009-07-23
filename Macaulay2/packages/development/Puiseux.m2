@@ -158,6 +158,7 @@ edgesToInfo(List, RingElement, RingElement) := (elist,F,x) -> (
 	    ell := q * e#0#0 + p * e#0#1;
 	    j0 := e#0#0;
 	    G = sum (L=apply(e, ji -> (
+		      ---RATIONAL CHANGE
 		      d := (ji#0-j0); -- // q; -- dvide by q when we adjoin a q-th root
 		      coefficient(R_{ji#1,ji#0},F) * x^d
 		      )));
@@ -206,6 +207,7 @@ applyTerm(NewtonTerm, RingElement) := (tm, F) -> (
      if ring alpha =!= coefficientRing R then
      	  Rnew = (ring alpha)(monoid R);
      coeffvars := drop(gens ring alpha, numgens coefficientRing Rnew - numgens coefficientRing R);
+     ---RATIONAL CHANGE:
      toRnew := map(Rnew,R,join({Rnew_0^p,Rnew_0^q*(alpha+Rnew_1)},coeffvars));
      (toRnew F) // Rnew_0^ell
      )
