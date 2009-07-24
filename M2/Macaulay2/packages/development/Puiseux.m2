@@ -199,11 +199,15 @@ newtonTerms(NewtonEdge) := (E) -> (
      (p,q,ell,g) := toSequence E;
      gs := factorization g; -- TODO: use UPolynomials.m2
      if DoingRationalPuiseux
-     then
+     then (
        -- RATIONAL CASE:
+       (g0,u0,v0) := toSequence gcdCoefficients(p,q);
        apply(gs, (i,gi) -> (
-     	       alpha := adjoinRoot gi;
-	       new NewtonTerm from {p,q,ell,1_(ring alpha),alpha,i}))
+     	       beta := adjoinRoot gi;
+	       mu := beta^(-v0);
+	       alpha := beta^u0;
+	       new NewtonTerm from {p,q,ell,mu,alpha,i}))
+       )
      else
        apply(gs, (i,gi) -> (
      	       alpha := adjoinRoot gi;
@@ -223,13 +227,9 @@ applyTerm(NewtonTerm, RingElement) := (tm, F) -> (
      (toRnew F) // Rnew_0^ell
      )
 
-series = method()
-series(List) := (tms) -> (
+seriesClassical = (tms, t, K1) -> (
      -- return the parametrization (t^m, h(t)) corresponding to the list of terms L.
      -- each term is (p,q,mu,ell,alpha,r)  (here r is not used).
-     K1 := ring(tms#-1#4);
-     St := K1[symbol t, MonomialOrder=>RevLex, Global=>false];
-     t := St_0;     
      xdegree := product apply(tms, first);
      xt := t^xdegree;
      lastp := xdegree;
@@ -239,6 +239,93 @@ series(List) := (tms) -> (
      alphas := apply(#tms, i -> sub(tms#i#4, K1));
      yt := sum apply(#tms, i -> alphas#i * t^(qs#i));
      (xt,yt)
+     )
+seriesRational = (tms, t, K1) -> (
+     -- each tms element is {p, q, xxx, u, a, xxx}
+     -- recall notation here:
+     -- y = x0^q0(a0 + y0)   x = u0 x0^p0
+     -- y0 = x1^q1(a1+ y1)   x0 = u1 x1^p1
+     -- ...
+     -- y(n-2) = x(n-1)^q(n-1) (a(n-1) + y(n-1),   x(n-2) = u(n-1) x(n-1)^p(n-1)
+     -- and x(n-1) = t,  y(n-1) is set to zero.
+     -- the i-th term is ai s0^q0 s1^q1 ... si^qi t^ei
+     -- where for 0 <= i <= n-1
+     --  ri = exponent of t in xi
+     --  si = sub(xi, t=>1)
+     --  ei = exponent of the i-th term of y
+     -- we compute in order
+     --  ri, ei, si, then each term
+     n := # tms;
+     alphas := apply(#tms, i -> sub(tms#i#4, K1));
+     us := apply(#tms, i -> sub(tms#i#3, K1));
+
+     rs := new MutableList from toList(n : 1_K1);
+     for i from 1 to n do rs#(n-i-1) = tms#(n-i)#0 * rs#(n-i);
+
+     ss := new MutableList from toList(n : 1_K1);
+     for i from 0 to n-2 do ss#(n-i-2) = us#(n-i-1) * (ss#(n-i-1))^(tms#(n-i-1)#0);
+
+     xt := us#0 * ss#0^(tms#0#0) * t^(rs#0);
+     
+     -- Now let's make the terms
+     this'coeff := 1_K1;
+     this'exp := 0;
+     yt := sum for i from 0 to n-1 list (
+     	  this'exp = this'exp + rs#i * tms#i#1;
+	  this'coeff = this'coeff * ss#i^(tms#i#1);	  
+	  alphas#i * this'coeff * t^this'exp
+	  );
+     (xt,yt)     
+     )
+
+-- Let's try this again!!
+seriesRational = (tms, t, K1) -> (
+     -- each tms element is {p, q, xxx, u, a, xxx}
+     -- recall notation here:
+     -- y0 = x1^q0(a0 + y1)   x0 = u0 x1^p0
+     -- y1 = x2^q1(a1 + y2)   x1 = u1 x2^p1
+     -- ...
+     -- y(n-2) = x(n-1)^q(n-2) (a(n-2) + y(n-1)),   x(n-2) = u(n-2) x(n-1)^p(n-2)
+     -- y(n-1) = x(n)^q(n-1) (a(n-1) + y(n)),       x(n-1) = u(n-1) x(n)^p(n-2)     
+     -- and x(n) = t,  y(n) is set to zero.
+     -- the i-th term is ai s0^q0 s1^q1 ... si^qi t^ei
+     -- where for 0 <= i <= n-1
+     --  ri = exponent of t in xi
+     --  si = sub(xi, t=>1)
+     --  ei = exponent of the i-th term of y
+     -- we compute in order
+     --  ri, si, then each term
+     n := # tms;
+     alphas := apply(#tms, i -> sub(tms#i#4, K1));
+     us := apply(#tms, i -> sub(tms#i#3, K1));
+
+     rs := new MutableList from toList((n+1) : 1);
+     for i from 1 to n do rs#(n-i) = tms#(n-i)#0 * rs#(n-i+1);
+
+     ss := new MutableList from toList((n+1) : 1_K1);
+     for i from 1 to n do ss#(n-i) = us#(n-i) * (ss#(n-i+1))^(tms#(n-i)#0);
+
+     xt := ss#0 * t^(rs#0);
+     
+     -- Now let's make the terms
+     this'coeff := 1_K1;
+     this'exp := 0;
+     yt := sum for i from 0 to n-1 list (
+     	  this'exp = this'exp + rs#(i+1) * tms#i#1;
+	  this'coeff = this'coeff * ss#(i+1)^(tms#i#1);	  
+	  alphas#i * this'coeff * t^this'exp
+	  );
+     (xt,yt)     
+     )
+     
+series = method()
+series List := (tms) -> (
+     K1 := ring(tms#-1#4);
+     St := K1[symbol t, MonomialOrder=>RevLex, Global=>false];
+     t := St_0;     
+     if DoingRationalPuiseux 
+       then seriesRational(tms, t, K1)
+       else seriesClassical(tms, t, K1)
      )
 
 extend(NewtonBranch,ZZ) := opts -> (B,ord) -> (
@@ -1034,17 +1121,25 @@ testPuiseux(P#2, F, 32)
 ///
 
 
+restart
+load "development/Puiseux.m2"
+debug Puiseux
+DoingRationalPuiseux = true
 R = QQ[x,y]
 F = poly"y4-2x3y2-4x5y+x6-x7"
+branches F
+
 puiseux(F,5) -- gives error msg
 puiseux(F,3) -- seems to work
 
-F = y^3-x^5
+F = y^3-7*x^5
+branches F
+extend(oo_0, 10)
 puiseux(F,5) -- seems to work
 puiseux(F,10) -- gives error
-
 restart
 load "development/Puiseux.m2"
+debug Puiseux
 uninstallPackage "Puiseux"
 installPackage "Puiseux"
 check Puiseux
