@@ -24,6 +24,8 @@ export {
      testPuiseux
      }
 
+DoingRationalPuiseux = true
+
 factorization = (F) -> (
      fs := factor F;
      select(fs//toList/toList/reverse/toSequence, f -> first degree f#1 > 0))
@@ -158,8 +160,9 @@ edgesToInfo(List, RingElement, RingElement) := (elist,F,x) -> (
 	    ell := q * e#0#0 + p * e#0#1;
 	    j0 := e#0#0;
 	    G = sum (L=apply(e, ji -> (
-		      ---RATIONAL CHANGE
 		      d := (ji#0-j0); -- // q; -- dvide by q when we adjoin a q-th root
+		      if DoingRationalPuiseux then
+		        d = d//p; ---RATIONAL CHANGE
 		      coefficient(R_{ji#1,ji#0},F) * x^d
 		      )));
 	    (p, q, ell, G)
@@ -195,7 +198,14 @@ newtonTerms(NewtonEdge) := (E) -> (
      -- result: a list of NewtonTerm's
      (p,q,ell,g) := toSequence E;
      gs := factorization g; -- TODO: use UPolynomials.m2
-     apply(gs, (i,gi) -> (
+     if DoingRationalPuiseux
+     then
+       -- RATIONAL CASE:
+       apply(gs, (i,gi) -> (
+     	       alpha := adjoinRoot gi;
+	       new NewtonTerm from {p,q,ell,1_(ring alpha),alpha,i}))
+     else
+       apply(gs, (i,gi) -> (
      	       alpha := adjoinRoot gi;
 	       new NewtonTerm from {p,q,ell,1_(ring alpha),alpha,i}))
      )
@@ -209,7 +219,6 @@ applyTerm(NewtonTerm, RingElement) := (tm, F) -> (
      if ring alpha =!= coefficientRing R then
      	  Rnew = (ring alpha)(monoid R);
      coeffvars := drop(gens ring alpha, numgens coefficientRing Rnew - numgens coefficientRing R);
-     ---RATIONAL CHANGE:
      toRnew := map(Rnew,R,join({mu*Rnew_0^p,Rnew_0^q*(alpha+Rnew_1)},coeffvars));
      (toRnew F) // Rnew_0^ell
      )
@@ -281,7 +290,7 @@ branches NewtonBranch := (B) -> (
      B1 := branches1 F;
      flatten apply(B1, b -> (
 	       (tms1,F1) := toSequence b;
-	       (p,q,ell,mu,alpha,r) := toSequence tms1#0;
+	       r := tms1#0#5; -- if > 1, then we must recurse
 	       tmsall := join(tms,tms1);
 	       b1 := new NewtonBranch from {tmsall, F1};
 	       if r === 1 then 
