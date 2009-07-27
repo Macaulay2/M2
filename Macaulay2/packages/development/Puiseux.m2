@@ -22,6 +22,8 @@ export {
      newtonEdges,
      puiseux, 
      testPuiseux,
+     test'puiseux,
+     series,
      OriginOnly
      }
 exportMutable {
@@ -368,8 +370,9 @@ testPuiseux(Sequence,RingElement,ZZ) := (parametrization, F, trunclimit) -> (
      sub(F, {R_0=>sub(parametrization_0,Strunc), R_1=>sub(parametrization_1,Strunc)})
      )
 
-test'puiseux = (F,trunclimit) -> (
-     P := puiseux(F,trunclimit);
+test'puiseux = method(Options => options puiseux)
+test'puiseux(RingElement,ZZ) := opts -> (F,trunclimit) -> (
+     P := puiseux(F,trunclimit,opts);
      Q := apply(P, p -> testPuiseux(p,F,trunclimit));
      assert all(Q, q -> q == 0)
      )
@@ -609,7 +612,7 @@ TEST ///
   R = QQ[x,y]
   F = poly"y16-4y12x6-4y11x8+y10x10+6y8x12+8y7x14+14y6x16+4y5x18+y4(x20-4x18)-4y3x20+y2x22+x24"
   time P = puiseux(F,10)
-  assert(#P == 4)
+  assert(#P == 2)
   debug Puiseux
   time test'puiseux(F,10)
   time test'puiseux(F,20)
@@ -700,17 +703,69 @@ TEST ///
 ///
 
 TEST ///
-restart
-load "development/Puiseux.m2"
-debug Puiseux
 R = QQ[x,y]
 F = x^2 + y^3 + y^5
-puiseux(F,30)
-F = x^2 + y*x^3+y^4*x + 3
-polygon1(F,false)
-YYY
-minpairs
+P = puiseux(F,30)
+test'puiseux(F,30)
+test'puiseux(F,30, OriginOnly => true)
+puiseux(F,30,OriginOnly => true)
 ///
+
+TEST ///
+F = x^2 + y*x^3+y^4*x + 3
+puiseux(F,30) -- gives an error.  We should catch this error higher up
+///
+
+TEST ///
+debug Puiseux
+R = QQ[x,y]
+-- the degree of F in y is 8.
+F = x^8+14*x^7*y+84*x^6*y^2+282*x^5*y^3+576*x^4*y^4+720*x^3*y^5+518*x^2*y^6+184*x*y^7+25*y^8+8*x^7+102*x^6*y+546*x^5*y^2+1590*x^4*y^3+2706*x^3*y^4+2646*x^2*y^5+1326*x*y^6+244*y^7+28*x^6+318*x^5*y+1476*x^4*y^2+3582*x^3*y^3+4770*x^2*y^4+3252*x*y^5+854*y^6+56*x^5+550*x^4*y+2124*x^3*y^2+4030*x^2*y^3+3740*x*y^4+1338*y^5+70*x^4+570*x^3*y+1716*x^2*y^2+2264*x*y^3+1101*y^4+56*x^3+354*x^2*y+738*x*y^2+508*y^3+28*x^2+122*x*y+132*y^2+8*x+18*y+1
+netList factorization discriminant(F,y)
+-- factors are: x=1, x=-1, x=-3
+-- Firt let's do x=1:
+
+F1 = sub(F, {x => x+1})
+test'puiseux(F1, 10)
+puiseux(F1,10)
+netList branches(F1)
+apply(branches F1, t -> series(t_0, F1, 100))
+
+G1 = sub(G, {x => x+1, y=>y-1})
+sub(G1, {x => 0, y=>y-1})
+///
+
+
+-- Some example polynomials to consider
+{*
+
+--F = y^4-y^2+x^3+x^4
+F = x^3*y^2 + x*y^4 + x^2*y^4 + y^7 + x^12*y + x^15
+--F = x^3*y^2 + x*y^4 + x^2*y^4 + y^7 + x^12*y + x^15 + y^9
+
+--duval
+F = poly"y16-4y12x6-4y11x8+y10x10+6y8x12+8y7x14+14y6x16+4y5x18+y4(x20-4x18)-4y3x20+y2x22+x24"
+--leonard1
+F = (y^2-y-x/3)^3-y*x^4*(y^2-y-x/3)-x^11
+
+-- vanHoeij1
+F = poly"y10+(-2494x2+474)y8+(84366+2042158x4-660492x2)y6
+           +(128361096x4-4790216x2+6697080-761328152x6)y4
+	   +(-12024807786x4-506101284x2+15052058268x6+202172841+134266087241x8)y2
+	   +34263110700x4-228715574724x6+5431439286x2+201803238-9127158539954x10-3212722859346x8"
+--vanHoeij2
+F = poly"y20+y13x+x4y5+x3(x+1)2"
+--vanHoeij3
+F = poly"y30+y13x+x4y5+x3(x+1)2"
+--vanHoeij4
+F = poly"y40+y13x+x4y5+x3(x+1)2"
+--boehm3
+F = y^5+2*x*y^2+2*x*y^3+x^2*y-4*x^3*y+2*x^5
+
+*}
+
+end
+
 
 TEST ///
 restart
@@ -757,52 +812,6 @@ use R
 sub(F, {x => 0}) -- hmmm, x is a factor....!
 describe R
 ///
-
-TEST ///
-R = QQ[x,y]
--- the degree of F in y is 8.
-F = x^8+14*x^7*y+84*x^6*y^2+282*x^5*y^3+576*x^4*y^4+720*x^3*y^5+518*x^2*y^6+184*x*y^7+25*y^8+8*x^7+102*x^6*y+546*x^5*y^2+1590*x^4*y^3+2706*x^3*y^4+2646*x^2*y^5+1326*x*y^6+244*y^7+28*x^6+318*x^5*y+1476*x^4*y^2+3582*x^3*y^3+4770*x^2*y^4+3252*x*y^5+854*y^6+56*x^5+550*x^4*y+2124*x^3*y^2+4030*x^2*y^3+3740*x*y^4+1338*y^5+70*x^4+570*x^3*y+1716*x^2*y^2+2264*x*y^3+1101*y^4+56*x^3+354*x^2*y+738*x*y^2+508*y^3+28*x^2+122*x*y+132*y^2+8*x+18*y+1
-netList factorization discriminant(F,y)
--- factors are: x=1, x=-1, x=-3
--- Firt let's do x=1:
-
-F1 = sub(F, {x => x+1})
-puiseux(F1,10)
-polygon1(G,false)
-G1 = sub(G, {x => x+1, y=>y-1})
-sub(G1, {x => 0, y=>y-1})
-///
-
-
--- Some example polynomials to consider
-{*
-
---F = y^4-y^2+x^3+x^4
-F = x^3*y^2 + x*y^4 + x^2*y^4 + y^7 + x^12*y + x^15
---F = x^3*y^2 + x*y^4 + x^2*y^4 + y^7 + x^12*y + x^15 + y^9
-
---duval
-F = poly"y16-4y12x6-4y11x8+y10x10+6y8x12+8y7x14+14y6x16+4y5x18+y4(x20-4x18)-4y3x20+y2x22+x24"
---leonard1
-F = (y^2-y-x/3)^3-y*x^4*(y^2-y-x/3)-x^11
-
--- vanHoeij1
-F = poly"y10+(-2494x2+474)y8+(84366+2042158x4-660492x2)y6
-           +(128361096x4-4790216x2+6697080-761328152x6)y4
-	   +(-12024807786x4-506101284x2+15052058268x6+202172841+134266087241x8)y2
-	   +34263110700x4-228715574724x6+5431439286x2+201803238-9127158539954x10-3212722859346x8"
---vanHoeij2
-F = poly"y20+y13x+x4y5+x3(x+1)2"
---vanHoeij3
-F = poly"y30+y13x+x4y5+x3(x+1)2"
---vanHoeij4
-F = poly"y40+y13x+x4y5+x3(x+1)2"
---boehm3
-F = y^5+2*x*y^2+2*x*y^3+x^2*y-4*x^3*y+2*x^5
-
-*}
-
-end
 
 
 TEST ///
