@@ -15,13 +15,17 @@ newPackage(
 --     factorization,
 --     test'puiseux,
 --      NewtonEdge
--- NegativeSlopeOnly
+
 
 export {
      adjoinRoot, 
      newtonEdges,
      puiseux, 
-     testPuiseux
+     testPuiseux,
+     NegativeSlopeOnly       
+     }
+exportMutable {
+     DoingRationalPuiseux
      }
 
 DoingRationalPuiseux = true
@@ -134,6 +138,8 @@ polygon1(RingElement,Boolean) := (F,negativeSlopeOnly) -> (
      minpairs = sort apply(pairs partition(x -> x#1, exponents F), (k,v) -> (k, min apply(v, first)));
      lastpoint = 0;     
      ylo = (position(minpairs, x -> x#1 == 0));
+     if ylo === null then error ("expected a polynomial not divisible by ", (ring F)_0);
+     if not negativeSlopeOnly then ylo = #minpairs-1;
      while lastpoint < ylo list (
        slopes = for i from lastpoint+1 to ylo list slope(minpairs,lastpoint,i);
        m := min slopes;
@@ -159,7 +165,7 @@ edgesToInfo(List, RingElement, RingElement) := (elist,F,x) -> (
 	    p := y0//g;
 	    ell := q * e#0#0 + p * e#0#1;
 	    j0 := e#0#0;
-	    G = sum (L=apply(e, ji -> (
+	    G := sum (L=apply(e, ji -> (
 		      d := (ji#0-j0); -- // q; -- dvide by q when we adjoin a q-th root
 		      if DoingRationalPuiseux then
 		        d = d//p; ---RATIONAL CHANGE
@@ -183,11 +189,11 @@ polygon(RingElement,RingElement) := opts -> (F,t) -> (
      edgesToInfo(p, F, t)     
      )
 
-newtonEdges = method()
-newtonEdges(RingElement, RingElement) := (F,t) -> apply(polygon(F,t), e -> new NewtonEdge from toList e)
-newtonEdges RingElement := (F) -> (
+newtonEdges = method(Options => {NegativeSlopeOnly=>false})
+newtonEdges(RingElement, RingElement) := opts -> (F,t) -> apply(polygon(F,t,opts), e -> new NewtonEdge from toList e)
+newtonEdges RingElement := opts -> (F) -> (
      R1 := (coefficientRing ring F)[symbol t];
-     newtonEdges(F,R1_0)
+     newtonEdges(F,R1_0,opts)
      )
 
 newtonTerms = method()
@@ -240,45 +246,6 @@ seriesClassical = (tms, t, K1) -> (
      yt := sum apply(#tms, i -> alphas#i * t^(qs#i));
      (xt,yt)
      )
-seriesRational = (tms, t, K1) -> (
-     -- each tms element is {p, q, xxx, u, a, xxx}
-     -- recall notation here:
-     -- y = x0^q0(a0 + y0)   x = u0 x0^p0
-     -- y0 = x1^q1(a1+ y1)   x0 = u1 x1^p1
-     -- ...
-     -- y(n-2) = x(n-1)^q(n-1) (a(n-1) + y(n-1),   x(n-2) = u(n-1) x(n-1)^p(n-1)
-     -- and x(n-1) = t,  y(n-1) is set to zero.
-     -- the i-th term is ai s0^q0 s1^q1 ... si^qi t^ei
-     -- where for 0 <= i <= n-1
-     --  ri = exponent of t in xi
-     --  si = sub(xi, t=>1)
-     --  ei = exponent of the i-th term of y
-     -- we compute in order
-     --  ri, ei, si, then each term
-     n := # tms;
-     alphas := apply(#tms, i -> sub(tms#i#4, K1));
-     us := apply(#tms, i -> sub(tms#i#3, K1));
-
-     rs := new MutableList from toList(n : 1_K1);
-     for i from 1 to n do rs#(n-i-1) = tms#(n-i)#0 * rs#(n-i);
-
-     ss := new MutableList from toList(n : 1_K1);
-     for i from 0 to n-2 do ss#(n-i-2) = us#(n-i-1) * (ss#(n-i-1))^(tms#(n-i-1)#0);
-
-     xt := us#0 * ss#0^(tms#0#0) * t^(rs#0);
-     
-     -- Now let's make the terms
-     this'coeff := 1_K1;
-     this'exp := 0;
-     yt := sum for i from 0 to n-1 list (
-     	  this'exp = this'exp + rs#i * tms#i#1;
-	  this'coeff = this'coeff * ss#i^(tms#i#1);	  
-	  alphas#i * this'coeff * t^this'exp
-	  );
-     (xt,yt)     
-     )
-
--- Let's try this again!!
 seriesRational = (tms, t, K1) -> (
      -- each tms element is {p, q, xxx, u, a, xxx}
      -- recall notation here:
@@ -361,10 +328,10 @@ extend(NewtonBranch,ZZ) := opts -> (B,ord) -> (
      join(B#0, newtms)
      )
 
-branches1 = (F) -> (
+branches1 = (F,negativeSlopeOnly) -> (
      K := coefficientRing ring F;
      Kt := K[symbol t];
-     E := newtonEdges(F,Kt_0);
+     E := newtonEdges(F,Kt_0, NegativeSlopeOnly => negativeSlopeOnly);
      tms := flatten apply(E, newtonTerms);
      apply(tms, tm -> new NewtonBranch from {{tm}, applyTerm(tm,F)})
      )
@@ -374,7 +341,7 @@ branches(RingElement) := (F) -> branches(new NewtonBranch from {{}, F})
 branches NewtonBranch := (B) -> (
      -- calls branches1, and branches recursively 
      (tms,F) := toSequence B;
-     B1 := branches1 F;
+     B1 := branches1(F,tms =!= {});
      flatten apply(B1, b -> (
 	       (tms1,F1) := toSequence b;
 	       r := tms1#0#5; -- if > 1, then we must recurse
@@ -407,10 +374,32 @@ test'puiseux = (F,trunclimit) -> (
      assert all(Q, q -> q == 0)
      )
 
---<< "TODO:
---  1. factorization should work over extension fields
---  2. towers of extension fields needs to be set up.
---"
+makePuiseuxExample = (R, n, L, K, coeffs) ->(
+     --R is the base ring QQ[x,y] (or any polynomial ring in 2 vars)
+     --n is an integer, the lcm of the a,b,c
+     --L is the list of "puiseux exponents" m0,m1,..,ms, positive integers.
+     --K is an extension field of QQ
+     --coeffs is a list of elements of K
+     --The routine constructs the generator of the kernel of
+     --QQ[x,y] --> K[t]
+     --sending x to t^n and y to a1 t^m1(1+a2 t^m2(1+...))
+     S = K[t];
+     p :=0_S;
+     s := #L-1;
+     for j from 0 to s do p = coeffs_(s-j)*t^(L_(s-j))*(1+p);     
+     print {t^n, p};
+     I := ker map(S,R, {t^n, p});
+     (entries gens I)#0#0
+     )
+
+{*
+<< "TODO:
+  1. factorization should work over extension fields
+  2. towers of extension fields needs to be set up.
+  3. makePuiseuxExample: speed it up, document it
+  4. DONE Puiseux should handle slope 0 too
+"
+*}
 
 beginDocumentation()
 
@@ -584,7 +573,7 @@ TEST ///
   R = QQ[x,y]
   F = y^4-y^2+x^3+x^4
   P = puiseux(F,10)
-  assert(#P == 2)
+  assert(#P == 3)
   debug Puiseux
   test'puiseux(F,10)
   test'puiseux(F,20)
@@ -616,11 +605,11 @@ TEST ///
   -- Duval example
   R = QQ[x,y]
   F = poly"y16-4y12x6-4y11x8+y10x10+6y8x12+8y7x14+14y6x16+4y5x18+y4(x20-4x18)-4y3x20+y2x22+x24"
-  P = puiseux(F,10)
+  time P = puiseux(F,10)
   assert(#P == 4)
   debug Puiseux
-  test'puiseux(F,10)
-  test'puiseux(F,20)
+  time test'puiseux(F,10)
+  time test'puiseux(F,20)
 
   R = ZZ/101[x,y]
   F = sub(F,R)
@@ -707,7 +696,80 @@ TEST ///
   test'puiseux(F,40)
 ///
 
--- also doc: puiseux, possibly: singularParts, regularPart, termsToSeries
+TEST ///
+restart
+load "development/Puiseux.m2"
+debug Puiseux
+R = QQ[x,y]
+F = x^2 + y^3 + y^5
+puiseux(F,30)
+F = x^2 + y*x^3+y^4*x + 3
+polygon1(F,false)
+YYY
+minpairs
+///
+
+TEST ///
+restart
+load "development/Puiseux.m2"
+debug Puiseux
+R = QQ[x,y]
+K = toField QQ[z,w]/ideal(z^3-1,w^2-2);
+F = makePuiseuxExample(R,4,{1,2},K,{z,w})
+
+R1 = QQ[t,z,w,x,y,MonomialOrder=>{3,2}]
+p = sub(p,R1)
+I = ideal(x-t^4,y-p,z^3-1,w^2-2)
+selectInSubring(1,gens gb I)
+K = toField QQ[z,w]/ideal(z^3-1,w^2-2);
+time F2 = makePuiseuxExample(R,4,{1,2,1},K,{z,w,1});
+
+G = F*F2;
+pF = puiseux(G, 30);
+newtonEdges G
+
+G1 = sub(G, {x=>y,y=>x})
+time factor G1
+time factor G
+
+time F = makePuiseuxExample(R,4,{1,2,1},K,{z,w,z+w}) -- this takes 97 seconds!
+
+restart
+load "development/Puiseux.m2"
+debug Puiseux
+kk = QQ
+R = kk[x,y]
+K = toField (kk[z,w]/ideal(z^3-1,w^2-2))
+K = toField (kk[z,w]/ideal(z^2+z+1,w^2-2))
+R1 = kk[t,z,w,x,y,MonomialOrder=>{3,2}]
+R1 = kk[t,z,w,x,y]
+J = ideal((y-z^2*w+2*z)*t^4+z*w*t^3+z*t,x-t^4) + sub(ideal K, R1)
+Jsat = saturate(J,t)
+eliminate(Jsat, {t,z,w})
+gbTrace=3
+time gens gb J;
+F = (selectInSubring(1,gens gb J))_(0,0)
+F = sub(F,R)
+use R
+sub(F, {x => 0}) -- hmmm, x is a factor....!
+describe R
+///
+
+TEST ///
+R = QQ[x,y]
+-- the degree of F in y is 8.
+F = x^8+14*x^7*y+84*x^6*y^2+282*x^5*y^3+576*x^4*y^4+720*x^3*y^5+518*x^2*y^6+184*x*y^7+25*y^8+8*x^7+102*x^6*y+546*x^5*y^2+1590*x^4*y^3+2706*x^3*y^4+2646*x^2*y^5+1326*x*y^6+244*y^7+28*x^6+318*x^5*y+1476*x^4*y^2+3582*x^3*y^3+4770*x^2*y^4+3252*x*y^5+854*y^6+56*x^5+550*x^4*y+2124*x^3*y^2+4030*x^2*y^3+3740*x*y^4+1338*y^5+70*x^4+570*x^3*y+1716*x^2*y^2+2264*x*y^3+1101*y^4+56*x^3+354*x^2*y+738*x*y^2+508*y^3+28*x^2+122*x*y+132*y^2+8*x+18*y+1
+netList factorization discriminant(F,y)
+-- factors are: x=1, x=-1, x=-3
+-- Firt let's do x=1:
+
+F1 = sub(F, {x => x+1})
+puiseux(F1,10)
+polygon1(G,false)
+G1 = sub(G, {x => x+1, y=>y-1})
+sub(G1, {x => 0, y=>y-1})
+///
+
 
 -- Some example polynomials to consider
 {*
@@ -1132,7 +1194,7 @@ branches F
 puiseux(F,5) -- gives error msg
 puiseux(F,3) -- seems to work
 
-F = y^3-7*x^5
+F = y^3-7*x^5-8*x^7
 branches F
 extend(oo_0, 10)
 puiseux(F,5) -- seems to work
