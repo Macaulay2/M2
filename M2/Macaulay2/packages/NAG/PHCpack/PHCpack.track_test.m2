@@ -1,6 +1,6 @@
 restart
-loadPackage ("NAG", FileName=>"../NAG.m2", 
-     Configuration=>{"PHCpack"=>"./phc", "Bertini"=>"./bertini", "HOM4PS2"=>"./hom4ps2_in_out"})
+loadPackage ("NAG", FileName=>"../../NAG.m2", 
+     Configuration=>{"PHCpack"=>"../phc"})
 debug NAG; DBG = 2; printingPrecision = 20; 
 removeFile "PHCstart"; removeFile "PHCtarget"; removeFile "PHCoutput"; 
 removeFile "PHCstartsols"; removeFile "PHCtargetsols"; removeFile "PHCbat"; 
