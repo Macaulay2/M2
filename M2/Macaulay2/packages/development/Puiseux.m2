@@ -22,7 +22,7 @@ export {
      newtonEdges,
      puiseux, 
      testPuiseux,
-     NegativeSlopeOnly       
+     OriginOnly
      }
 exportMutable {
      DoingRationalPuiseux
@@ -175,7 +175,7 @@ edgesToInfo(List, RingElement, RingElement) := (elist,F,x) -> (
 	    ))
   )
 
-polygon = method(Options=>{NegativeSlopeOnly => false})
+polygon = method(Options=>{OriginOnly => false})
 polygon(RingElement,RingElement) := opts -> (F,t) -> (
      -- input: F(x,y) in a polynomial ring A[x,y] (names can be different).
      --          assumption: F(0,y) != 0.
@@ -185,11 +185,11 @@ polygon(RingElement,RingElement) := opts -> (F,t) -> (
      --        and G(t) in A[t] consists of the extremal terms of F(x,y), except that
      --        a term x^?? y^?? has been replaced by t^c.
      -- Note: the denominator of the 
-     p := polygon1(F, opts.NegativeSlopeOnly);
+     p := polygon1(F, opts.OriginOnly);
      edgesToInfo(p, F, t)     
      )
 
-newtonEdges = method(Options => {NegativeSlopeOnly=>false})
+newtonEdges = method(Options => {OriginOnly=>false})
 newtonEdges(RingElement, RingElement) := opts -> (F,t) -> apply(polygon(F,t,opts), e -> new NewtonEdge from toList e)
 newtonEdges RingElement := opts -> (F) -> (
      R1 := (coefficientRing ring F)[symbol t];
@@ -331,17 +331,17 @@ extend(NewtonBranch,ZZ) := opts -> (B,ord) -> (
 branches1 = (F,negativeSlopeOnly) -> (
      K := coefficientRing ring F;
      Kt := K[symbol t];
-     E := newtonEdges(F,Kt_0, NegativeSlopeOnly => negativeSlopeOnly);
+     E := newtonEdges(F,Kt_0, OriginOnly => negativeSlopeOnly);
      tms := flatten apply(E, newtonTerms);
      apply(tms, tm -> new NewtonBranch from {{tm}, applyTerm(tm,F)})
      )
 
-branches = method()
-branches(RingElement) := (F) -> branches(new NewtonBranch from {{}, F})
-branches NewtonBranch := (B) -> (
+branches = method(Options => {OriginOnly=>false})
+branches(RingElement) := opts -> (F) -> branches(new NewtonBranch from {{}, F}, opts)
+branches NewtonBranch := opts -> (B) -> (
      -- calls branches1, and branches recursively 
      (tms,F) := toSequence B;
-     B1 := branches1(F,tms =!= {});
+     B1 := branches1(F,opts.OriginOnly);
      flatten apply(B1, b -> (
 	       (tms1,F1) := toSequence b;
 	       r := tms1#0#5; -- if > 1, then we must recurse
@@ -350,13 +350,13 @@ branches NewtonBranch := (B) -> (
 	       if r === 1 then 
 	         {b1}
 	       else
-	         branches b1
+	         branches(b1, OriginOnly => true)
 	       ))
      )
 
-puiseux = method()
-puiseux(RingElement, ZZ) := (F, trunclimit) -> (
-     P := (branches F)/(b -> extend(b,trunclimit));
+puiseux = method(Options => {OriginOnly => false})
+puiseux(RingElement, ZZ) := opts -> (F, trunclimit) -> (
+     P := (branches(F,opts))/(b -> extend(b,trunclimit));
      P/series
      )
 
@@ -577,6 +577,9 @@ TEST ///
   debug Puiseux
   test'puiseux(F,10)
   test'puiseux(F,20)
+
+  P = puiseux(F,10,OriginOnly=>true)
+  netList P
 
   R = ZZ/101[x,y]
   F = sub(F,R)
