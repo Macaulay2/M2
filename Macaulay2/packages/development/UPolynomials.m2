@@ -25,6 +25,7 @@ export {
      subresultantGCD,
      mySquareFreeDecomposition,
      myFactorization,
+     myFactor,
      setUFD,
      makeTower,
      deg,
@@ -372,7 +373,16 @@ myfac0 = (F, S, G, phis) -> (
 myFactorization = method()
 myFactorization RingElement := (F) -> (
      R := ring F;
-     S1 := QQ[t]; setUFD S1;
+     K := coefficientRing R;
+     -- check: if R is a tower of form kk[a]/(g(a))[t], then keep it
+     --        if not, is R a ring of this form? if so, do setUFD's.
+     --        if not: error
+     if numgens R =!= 1 then error "expected univariate polynomial";
+     if not isField K then error "expected coefficient ring to be a field";
+     if numgens K >= 2 then error "expected prime field or singly generated extension field";
+     if not K.?myGCD then setUFD K;
+     if not R.?myGCD then setUFD R;
+     S1 := K[t]; setUFD S1;
      S := S1[a]; setUFD S;
      phi0 := map(S,R,{S_1,S_0});
      phi0' := map(R,S,{R_1,R_0});
@@ -385,11 +395,16 @@ myFactorization RingElement := (F) -> (
 	       )));
      sqfree := mySquareFreeDecomposition F;
      -- set up S, G, and the various maps: R --> S, inverses S --> R.
-     product flatten  apply(sqfree, (d,Fi) -> (
+     flatten  apply(sqfree, (d,Fi) -> (
 	       facs := myfac0(Fi,S,G, phis);
-	       apply(facs, f -> (hold f)^d)
+	       apply(facs, f -> (d,f))
 	       ))
      )
+
+myFactor = method()
+myFactor RingElement := (F) -> (
+     facs := myFactorization F;
+     product apply(facs, (i,g) -> (hold g)^(hold i)))
 
 ----------------------------------------------
 -- adjoining a root of a polynomial ----------
@@ -589,14 +604,20 @@ resultant(F',G',t)
 ///
 
 TEST ///
-path = prepend("~/src/M2/Macaulay2/packages/development/", path)
 loadPackage "UPolynomials"
 -- test of factorization over algebraic extensions of QQ
 A = QQ[b]/(b^6+b^3+1); toField A; setUFD A
 R = A[t]; setUFD R
 F = t^6+t^3+1
 time myFactorization F
+time myFactor F
 
+A = QQ[b]/(b^6+b^3+1); toField A;
+R = A[t];
+F = t^6+t^3+1
+time myFactorization F
+time myFactor F
+value oo
 
 A = QQ[b]/(b^8+b^3+1)
 toField A
@@ -626,7 +647,7 @@ a = adjoinRoot(t^8+t^3+1)
 A = ring a;
 B = A[t]; setUFD B
 facs = myFactorization(t^8+t^3+1)
-b = adjoinRoot(facs#1)
+b = adjoinRoot(facs#1#1)
 B = ring b
 describe B
 
@@ -678,6 +699,14 @@ end
 -- primitive element
 -- or better: find norm in this non-primitive extension field...
 
+A = toField(QQ[a]/(a^2-a+1))
+B = A[t]
+F = t^5+2*a*t^3+2*a*t^2+(a+3)*t-2*a+2
+myFactorization F
+factor F -- wrong
+C = makeTower B
+G = sub(F,C)
+myFactorization G
 
 doc ///
 Key
