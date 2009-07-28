@@ -55,18 +55,35 @@ clearDenominators(Ring, Ideal) := (R,I) ->
    ideal numerators
 )
 
+debtimes = 0;
 zeroDimGenPos = method(Options => {Verbosity => 0,ChangeCoords => false})
 zeroDimGenPos(Ideal, Ideal) := opts -> (I, resultSoFar) ->
 (
    local compList;
 
+   debtimes = debtimes + 1;
+   if debtimes == 2 then gbTrace=3;   
+{*
+   I1 = I;
+   I2 = trim I1;
+
+   if debtimes == 2 then error "look at this!";
+   << " about to test equality of ideals" << endl;
+   if I1 != I2 then error "flummox me";
+   I = I2;
+*}
+
+   << " about to eliminate" << endl << flush;
+   prevI = I;
+   I = ideal I_*;
    oldI = I;
    I = trim I;
-   if (oldI != I) then error "Trim changed the input ideal!";
+--   if (oldI != I) then error "Trim changed the input ideal!";
+
    -- independentSets oldI: {1}
    -- independentSets I   : {d}
    -- doing the trim creates a nontrivial independent set!
-   
+
    myNewVars := gens ring I;
    n := #myNewVars - 1;
    
@@ -75,6 +92,8 @@ zeroDimGenPos(Ideal, Ideal) := opts -> (I, resultSoFar) ->
    f := first select(gbI, i -> support(i) == {myNewVars_n});
    --elimI := trim eliminate(I, take(myNewVars,n));
    --f := first flatten entries gens elimI;
+
+   << " done with gb" << endl << flush;
 
    factorList := newFactor f;
    -- only look at those that matter to the decomposition

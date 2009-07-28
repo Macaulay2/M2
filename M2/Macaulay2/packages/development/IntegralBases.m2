@@ -88,10 +88,11 @@ as = apply(ds, adjoinRoot)
 Rs = apply(as, a -> if ring a === coefficientRing R then R else (ring a)[gens R])
 Fs = apply(#ds, i -> (S := Rs#i; sub(F, {R_0 => S_0 + as#i, R_1 => S_1})))
 netList puiseux(Fs#0,10)
-netList puiseux(Fs#1,10) -- seems nasty, this one does.
+netList (P = puiseux(Fs#1,10)) -- seems nasty, this one does.
+P/(x -> ring x_1)
 puiseux(Fs#2,10) -- doesn't work
 
--- how does fractional ideals do on this one?
+-- how does Fractional Ideals do on this one?
 S = kk[y,x,MonomialOrder=>{1,1}]
 A = S/(sub(F,S))
 integralClosureHypersurface A

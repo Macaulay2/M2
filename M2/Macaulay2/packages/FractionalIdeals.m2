@@ -174,6 +174,15 @@ disc QuotientRing := (R) -> (
      dfactors := select((toList ds)/toList, m -> m#1 > 1);
      dfactors/(f -> {f#0, f#1//2})
      )
+disc(RingElement,RingElement) := (F,x) -> (
+     if ring F =!= ring x then error "expected variable and polynomial to be in the same ring";
+     if index x === null then error "expected indeterminate in ring";
+     d := degree_x F;
+     if first degree contract(x^d, F) > 0 then error "expected monic polynomial";
+     ds := factor discriminant(F, x);
+     dfactors := select((toList ds)/toList, m -> m#1 > 1);
+     dfactors/(f -> {f#0, f#1//2})
+     )
 
 integralClosureHypersurface = method()
 integralClosureHypersurface Ring := (R) -> (

@@ -18,7 +18,7 @@ J1 = ideal random(R1^1, R1^{-5,-5,-5,-6});
 J1
 {*     
   gbTrace=1
-  time gb(J1, Algorithm=>LinearAlgebra); -- 54.1 sec
+  time gb(J1, Algorithm=>LinearAlgebra); -- 54.1 sec (53.25 sec, 58.7 sec, MBP 7/17/09)
   time gb(J1, Algorithm=>Sugarless, Strategy=>LongPolynomial); -- > 120 sec
   time gb(J1, MaxReductionCount=>3000);
 *}
@@ -30,8 +30,8 @@ J1 = ideal random(R1^1, R1^{-5,-5,-5,-5});
 J1
 {*     
   gbTrace=1
-  time gb(J1, Algorithm=>LinearAlgebra); -- 54.1 sec
-  time gb(J1, Algorithm=>Sugarless, Strategy=>LongPolynomial); -- > 120 sec
+  time gb(J1, Algorithm=>LinearAlgebra); -- 42.1 sec
+  time gb(J1, Algorithm=>Sugarless, Strategy=>LongPolynomial); -- > 
   time gb(J1, MaxReductionCount=>3000);
 *}
 ----------------------------------------------
@@ -431,6 +431,11 @@ x_49^2+x_49*x_53+x_53^2
 needsPackage "ExampleIdeals"
 J1 = mayr(4,2,ZZ/101)
 {*
+  gbTrace=1
+  time gb(J1, Algorithm=>LinearAlgebra); --  91.0 sec
+  time gb(J1, MaxReductionCount=>3000); --  127.3 sec
+  time gb(J1, Algorithm=>Sugarless); --  sec, start: 9:18:15
+  time gb(J1, Algorithm=>Homogeneous2); -- sec
 *}
 ----------------------------------------------
 --
