@@ -1,0 +1,2 @@
+By the way, the doc node for "select" actually points to "partition"  
+-- which is not explained there. I think something (minor) is wrong.
