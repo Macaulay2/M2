@@ -1,7 +1,7 @@
 restart
 loadPackage ("NAG", FileName=>"../../NAG.m2", 
      Configuration=>{"PHCpack"=>"../phc"})
-debug NAG; DBG = 2; printingPrecision = 20; 
+debug NAG; DBG = 1; printingPrecision = 20; 
 scan({"PHCstart", "PHCtarget", "PHCoutput", 
      "PHCstartsols", "PHCtargetsols", "PHCbat", "phc_session.log"}, try removeFile);
  
