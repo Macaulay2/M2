@@ -23,7 +23,8 @@ export {
      Trager,
      principalPart,
      makeEquations,
-     findPuiseuxSeries
+     findPuiseuxSeries,
+     findBranches
      }
 
 principalPart = (P, f, truncdegree) -> (
@@ -72,6 +73,22 @@ findPuiseuxSeries(RingElement) := (F) -> (
      hashTable apply(#Fs, i -> (ds#i,as#i) => (
 	  P := puiseux(Fs#i,10);
 	  join apply(P, (xt,yt) -> (xt+sub(as#i,ring xt),yt))
+	  ))
+     )
+
+findBranches = method()
+findBranches(RingElement) := (F) -> (
+     R := ring F;
+     Px := (coefficientRing R)[(gens R)_0];
+     ds := disc(F, R_1);
+     ds = apply(ds, d -> sub(d#0,Px));
+     as := apply(ds, adjoinRoot);
+     Rs := apply(as, a -> if ring a === coefficientRing R then R else (ring a)[gens R]);
+     Fs := apply(#ds, i -> (S := Rs#i; sub(F, {R_0 => S_0 + as#i, R_1 => S_1})));
+     hashTable apply(#Fs, i -> (ds#i,as#i) => (
+	  P := branches(Fs#i);
+	  << netList P << endl;
+	  apply(P, p -> (series p#0, p#1))
 	  ))
      )
 
@@ -180,6 +197,10 @@ restart
 needsPackage "IntegralBases"
 R = QQ[x,y]
 F = y^4-y^2+x^3+x^4
+Ps = findBranches F
+series (values Ps)_0_0_0
+series (values Ps)_1_0_0
+
 Ps = findPuiseuxSeries F
 keys Ps
 syz matrix makeEquations(Ps#((keys Ps)_0), {1_R,y,y^2,y^3}, 1)
