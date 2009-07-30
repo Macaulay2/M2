@@ -20,6 +20,8 @@ newPackage(
 export {
      adjoinRoot, 
      newtonEdges,
+     branches,
+     puiseuxTree,
      puiseux, 
      testPuiseux,
      test'puiseux,
@@ -356,6 +358,74 @@ branches NewtonBranch := opts -> (B) -> (
 	       ))
      )
 
+Info = new Type of HashTable
+makeinfo = (parentnode,p,q,nroots,extensiondegree,mu,alpha) -> (
+     denom := p*parentnode#"Multiplicity";
+     new Info from {
+       "P" => p,
+       "Q" => q,
+       "Multiplicity" => denom,
+       "Weight" => parentnode#"Weight" + q / denom,
+       "NRoots" => nroots,
+       "ExtensionDegree" => extensiondegree,
+       "Coefficients" => (mu,alpha)
+       }
+     )
+
+Node = new Type of HashTable
+makeinfofromnode = (parent, tm) -> (
+     
+     )
+     
+nodeFromBranch = (parent,b) -> (
+     
+     )
+
+makenode = (tm,children) -> new HashTable from {
+     "Info" => tm,
+     --"XCache" => new CacheTable,
+     "XChildren" => new VerticalList from children
+     }
+
+makeleaf = (tm,F) -> new HashTable from {
+     "Info" => tm
+     --"XCache" => new CacheTable
+     --"Rest" => F
+     }
+
+termToInfo = (parent'info, tm) -> (
+     (p,q,ell,mu,alpha,r) := toSequence tm;
+     makeinfo(parent'info,p,q,"?","?",mu,alpha)
+     )
+
+puiseux'tree = (parent'info, F, originOnly) -> (
+     K := coefficientRing ring F;
+     Kt := K[symbol t];
+     E := newtonEdges(F,Kt_0, OriginOnly => originOnly);
+     tms := flatten apply(E, newtonTerms);
+     -- Now make the info node, call self recursively
+     -- at the end, make the node and return it
+     makenode(parent'info,apply(tms, tm -> (
+	    info := termToInfo(parent'info,tm);
+	    F1 := applyTerm(tm,F);
+	    if tm#-1 >= 2 then
+	       puiseux'tree(info,F1,true)
+	    else
+	       makeleaf(info,F1)
+	  )))
+     )
+
+puiseuxTree = method(Options => {OriginOnly=>false})
+puiseuxTree(RingElement) := opts -> (F) -> (
+     R := ring F;
+     y := R_1;
+     puiseux'tree(
+       new Info from {
+	  "NRoots" => degree_y F,
+	  "Multiplicity" => 1, 
+	  "Weight" => 0_QQ},
+       F, false))
+
 puiseux = method(Options => {OriginOnly => false})
 puiseux(RingElement, ZZ) := opts -> (F, trunclimit) -> (
      P := (branches(F,opts))/(b -> extend(b,trunclimit));
@@ -612,6 +682,7 @@ TEST ///
   R = QQ[x,y]
   F = poly"y16-4y12x6-4y11x8+y10x10+6y8x12+8y7x14+14y6x16+4y5x18+y4(x20-4x18)-4y3x20+y2x22+x24"
   time P = puiseux(F,10)
+  puiseuxTree F
   assert(#P == 2)
   debug Puiseux
   time test'puiseux(F,10)
@@ -1198,7 +1269,6 @@ testPuiseux(P#2, F, 32)
 restart
 load "development/Puiseux.m2"
 debug Puiseux
-DoingRationalPuiseux = true
 R = QQ[x,y]
 F = poly"y4-2x3y2-4x5y+x6-x7"
 branches F
@@ -1218,3 +1288,40 @@ uninstallPackage "Puiseux"
 installPackage "Puiseux"
 check Puiseux
 viewHelp
+
+-- Testing tree creation
+restart
+load "development/Puiseux.m2"
+debug Puiseux
+  R = QQ[x,y]
+  F = (y^2-y-x/3)^3-y*x^4*(y^2-y-x/3)-x^11
+puiseuxTree F
+puiseux'tree(null, F, false)
+netList puiseux(F,10)  
+netList branches F
+
+netList branches1(F,false)
+
+N1 = newtonEdges F
+N11 = N1_0
+B11 = newtonTerms N11
+N12 = N1_1
+B12 = newtonTerms N12
+
+F11 = applyTerm(B11_0,F)
+E11 = newtonEdges(F11, OriginOnly=>true)
+B111 = newtonTerms E11_0
+F111 = applyTerm(B111_0,F11)
+newtonEdges(F111, OriginOnly=>true)
+apply(oo, newtonTerms)
+
+F12 = applyTerm(B12_0, F)
+E12 = newtonEdges(F12, OriginOnly=>true)
+B121 = newtonTerms E12_0
+F121 = applyTerm(B121_0,F12)
+newtonEdges(F121, OriginOnly=>true)
+apply(oo, newtonTerms)
+
+loadPackage "IntegralBases"
+disc(F,y)
+makenode(1,2,1,2/1,4,13,x,y)
