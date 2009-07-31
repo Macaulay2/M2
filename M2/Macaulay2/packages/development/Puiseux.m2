@@ -121,7 +121,7 @@ NewtonEdge = new Type of List;  -- {p,q,ell,g(t)}
   -- p and q are positive integers.
   -- ell is too
   -- g(t) is a univariate polynomial over some base ring encoding the poly on the edge.
-NewtonTerm = new Type of List -- {p,q,ell, mu, alpha, r} 
+NewtonTerm = new Type of List -- {p,q,ell, mu, alpha, deg(alpha),r} 
   -- r is the power to which the minimal poly of alpha occurs in the lead poly
 NewtonBranch = new Type of List -- {{t:NewtonTerm}, F1(x,y)}
 
@@ -213,15 +213,17 @@ newtonTerms(NewtonEdge) := (E) -> (
        -- RATIONAL CASE:
        (g0,u0,v0) := toSequence gcdCoefficients(p,q);
        apply(gs, (i,gi) -> (
+	       d := first degree gi;
      	       beta := adjoinRoot gi;
 	       mu := beta^(-v0);
 	       alpha := beta^u0;
-	       new NewtonTerm from {p,q,ell,mu,alpha,i}))
+	       new NewtonTerm from {p,q,ell,mu,alpha,d,i}))
        )
      else
        apply(gs, (i,gi) -> (
+	       d := first degree gi;
      	       alpha := adjoinRoot gi;
-	       new NewtonTerm from {p,q,ell,1_(ring alpha),alpha,i}))
+	       new NewtonTerm from {p,q,ell,1_(ring alpha),alpha,d,i}))
      )
 
 applyTerm = method()
@@ -229,7 +231,7 @@ applyTerm(NewtonTerm, RingElement) := (tm, F) -> (
      -- return F_1(x,y)
      R := ring F;
      Rnew := R;
-     (p,q,ell,mu,alpha,r) := toSequence tm;
+     (p,q,ell,mu,alpha,d,r) := toSequence tm;
      if ring alpha =!= coefficientRing R then
      	  Rnew = (ring alpha)(monoid R);
      coeffvars := drop(gens ring alpha, numgens coefficientRing Rnew - numgens coefficientRing R);
@@ -348,7 +350,7 @@ branches NewtonBranch := opts -> (B) -> (
      B1 := branches1(F,opts.OriginOnly);
      flatten apply(B1, b -> (
 	       (tms1,F1) := toSequence b;
-	       r := tms1#0#5; -- if > 1, then we must recurse
+	       r := tms1#0#6; -- if > 1, then we must recurse
 	       tmsall := join(tms,tms1);
 	       b1 := new NewtonBranch from {tmsall, F1};
 	       if r === 1 then 
@@ -359,27 +361,6 @@ branches NewtonBranch := opts -> (B) -> (
      )
 
 Info = new Type of HashTable
-makeinfo = (parentnode,p,q,nroots,extensiondegree,mu,alpha) -> (
-     denom := p*parentnode#"Multiplicity";
-     new Info from {
-       "P" => p,
-       "Q" => q,
-       "Multiplicity" => denom,
-       "Weight" => parentnode#"Weight" + q / denom,
-       "NRoots" => nroots,
-       "ExtensionDegree" => extensiondegree,
-       "Coefficients" => (mu,alpha)
-       }
-     )
-
-Node = new Type of HashTable
-makeinfofromnode = (parent, tm) -> (
-     
-     )
-     
-nodeFromBranch = (parent,b) -> (
-     
-     )
 
 makenode = (tm,children) -> new HashTable from {
      "Info" => tm,
@@ -394,26 +375,34 @@ makeleaf = (tm,F) -> new HashTable from {
      }
 
 termToInfo = (parent'info, tm) -> (
-     (p,q,ell,mu,alpha,r) := toSequence tm;
-     makeinfo(parent'info,p,q,"?","?",mu,alpha)
+     (p,q,ell,mu,alpha,d,r) := toSequence tm;
+     deg := d*r;
+     denom := parent'info#"Multiplicity" * p;
+     new Info from {
+       "P" => p,
+       "Q" => q,
+       "Multiplicity" => denom,
+       "Weight" => parent'info#"Weight" + q / denom,
+       "NRoots" =>  denom * deg,
+       "Coefficients" => (mu,alpha)
+       }
      )
 
 puiseux'tree = (parent'info, F, originOnly) -> (
      K := coefficientRing ring F;
      Kt := K[symbol t];
      E := newtonEdges(F,Kt_0, OriginOnly => originOnly);
-     tms := flatten apply(E, newtonTerms);
-     -- Now make the info node, call self recursively
-     -- at the end, make the node and return it
-     makenode(parent'info,apply(tms, tm -> (
+     makenode(parent'info, flatten apply(E, e -> (
+	  tms := newtonTerms e;
+	  apply(tms, tm -> (
 	    info := termToInfo(parent'info,tm);
 	    F1 := applyTerm(tm,F);
 	    if tm#-1 >= 2 then
 	       puiseux'tree(info,F1,true)
 	    else
 	       makeleaf(info,F1)
-	  )))
-     )
+	  ))
+     ))))
 
 puiseuxTree = method(Options => {OriginOnly=>false})
 puiseuxTree(RingElement) := opts -> (F) -> (
@@ -1296,7 +1285,6 @@ debug Puiseux
   R = QQ[x,y]
   F = (y^2-y-x/3)^3-y*x^4*(y^2-y-x/3)-x^11
 puiseuxTree F
-puiseux'tree(null, F, false)
 netList puiseux(F,10)  
 netList branches F
 
