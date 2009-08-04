@@ -22,7 +22,7 @@ export {
      "areEqual", "sortSolutions", "multistepPredictor", "multistepPredictorLooseEnd",
      "Software","PHCpack","Bertini","HOM4PS2","M2","M2engine","M2enginePrecookedSLPs",
      "gamma","tDegree","tStep","tStepMin","tStepMax","stepIncreaseFactor","numberSuccessesBeforeIncrease",
-     "Predictor","RungeKutta4","Multistep","Tangent","Euler","Secant","MultistepDegree",
+     "Predictor","RungeKutta4","Multistep","Tangent","Euler","Secant","MultistepDegree","ProjectiveNewton",
      "finalMaxCorrSteps", "maxCorrSteps", 
      "Projectivize",
      "AffinePatches", "DynamicPatch",
@@ -34,7 +34,7 @@ exportMutable {
      }
 
 -- DEBUG CORE ----------------------------------------
-debug Core; -- to enable SLPs
+debug Core; -- to enable engine routines
 
 -- GLOBAL VARIABLES ----------------------------------
 PHCexe = NAG#Options#Configuration#"PHCpack";
@@ -44,6 +44,9 @@ HOM4PS2exe = NAG#Options#Configuration#"HOM4PS2";
 DBG = 0; -- debug level (10=keep temp files)
 SLPcounter = 0; -- the number of compiled SLPs (used in naming dynamic libraries)
 lastPathTracker = null; -- path tracker object used last
+
+-- ./NAG/ FILES -------------------------------------
+load "NAG/PHCpack/PHCpack.interface.m2" 
 
 -- CONVENTIONS ---------------------------------------
 
@@ -130,11 +133,14 @@ multistepPredictorLooseEnd (QQ,List) := List => (c,s) -> (
 	       ))
      )
 ------------------------------------------------------
+norm2 = method(TypicalValue=>RR)
+-- 2-norm of a column vector with CC entries
+norm2 Matrix := v -> sqrt(sum(flatten entries v, x->x*conjugate x));
+     
+
 normalize = method(TypicalValue => Matrix)
-normalize Matrix := v->(
 -- normalizes a column vector with CC entries
-     (1/sqrt(sum(flatten entries v, x->x*conjugate x)))*v
-     )
+normalize Matrix := v -> (1/norm2 v)*v;
 ------------------------------------------------------
 track = method(TypicalValue => List, Options =>{
 	  Software=>M2,
@@ -182,82 +188,7 @@ track (List,List,List) := List => o -> (S,T,solsS) -> (
      then error "M2engine is implemented for Projectivize=>false and SLP != null";
 
      -- PHCpack -------------------------------------------------------
-     if o.Software == PHCpack then ( 
-	  targetfile := -- temporaryFileName() | 
-	             "PHCtarget";
-	  startfile := -- temporaryFileName() | 
-	             "PHCstart";
-	  outfile := -- temporaryFileName() | 
-	             "PHCoutput";
-	  solsSfile := -- temporaryFileName() | 
-	             "PHCstartsols";
-	  solsTfile := -- temporaryFileName() | 
-	             "PHCtargetsols";
-	  batchfile := -- temporaryFileName() | 
-	             "PHCbat";
-          {targetfile, startfile, outfile,
-	       solsSfile, solsTfile, batchfile } / (f->if fileExists f then removeFile f);
-	  -- writing data to the corresponding files                                                                                                                                                                           
-     	  if n < numgens R then error "the system is underdetermined";
-	  if n > numgens R then (
-	       nSlacks := n - numgens R;
-	       slackVars := apply(nSlacks, i->getSymbol("S"|toString i));
-	       newR := CC[gens R, slackVars];
-	       rM := random(CC^n,CC^nSlacks);
-	       S = apply(#S, i->sub(S#i,newR)+(rM^{i}*transpose submatrix'(vars newR,toList(0..numgens R - 1)))_(0,0));
-	       rM = random(CC^n,CC^nSlacks);
-	       T = apply(#T, i->sub(T#i,newR)+(rM^{i}*transpose submatrix'(vars newR,toList(0..numgens R - 1)))_(0,0));
-	       solsS = apply(solsS, s->s|toList(nSlacks:0_CC)); 
-	       ) else newR = R;
-	  systemToFile(T,targetfile);
-	  systemToFile(S,startfile);
-     	  solutionsToFile(solsS,newR,solsSfile);	  
-	  -- making batch file
-	  bat := openOut batchfile;
-	    bat << targetfile << endl << outfile << endl <<"n"<< endl 
-	    << startfile << endl << solsSfile << endl;
-	    -- first menu
-	    bat << "k" << endl << o.tDegree << endl; 
-	    bat << "a" << endl << realPart o.gamma << endl << imaginaryPart o.gamma << endl;
-	    bat << "0" << endl;
-	    -- second menu 
-	    bat << "0" << endl; -- exit for now
-   	    -- third menu
-	    bat << "0" << endl; -- exit for now
-   	    -- fourth menu
-	    bat << "0" << endl; -- exit for now
-	  close bat;
-     	  compStartTime := currentTime();      
-	  run(PHCexe|" -p <"|batchfile|" >phc_session.log");
-	  if DBG>0 then << "PHCpack computation time: " << currentTime()-compStartTime << endl;
-  	  run(PHCexe|" -z "|outfile|" "|solsTfile);
-	  -- parse and output the solutions                                                                                                                                                                                    
-	  result := parseSolutions(solsTfile, newR);
-	  if n > numgens R then (
-	       result = apply(result, s->(
-			 if any(drop(first s, numgens R), x->abs x > 0.01) 
-			 then error "slack value is nonzero";
-			 {take(first s, numgens R)}|drop(s,1)
-			 ));
-     	       totalN := #result;
-	       scan(result, s->(
-			 if s#1#"mult">1 then error "mutiple root encountered";
-			 if s#1#"mult"<0 then error "negative mutiplicity";
-     	       		 ));			 
-	       result = select(result, 
-		    s->--s#1#"mult">0 and 
-		    max(s#0/abs)<10000 -- path failed and/or diverged
-		    );
-	       if DBG>0 and #result < totalN 
-	       then  -- error "discarded!" 
-	          << "track[PHCpack]: discarded "<< 
-	          totalN-#result << " out of " << totalN << " solutions" << endl;
-	       );
-	  -- clean up                                                                                                                                                                                                          
-	  if DBG<10 then {targetfile, startfile, outfile,
-	       solsSfile, solsTfile, batchfile } / removeFile ;
-	  return result;
-	  ) 
+     if o.Software == PHCpack then return trackPHCpack(S,T,solsS,o)
      else if o.Software == Bertini then (
 	  -- tempdir := temporaryFileName() | "NAG-bertini";
 	  -- mkdir tempdir; 	  
@@ -265,7 +196,7 @@ track (List,List,List) := List => o -> (S,T,solsS) -> (
      	  compStartTime = currentTime();      
   	  run(BERTINIexe);
 	  if DBG>0 then << "Bertini's computation time: " << currentTime()-compStartTime << endl;
-	  result = readSolutionsBertini("raw_solutions");
+	  result := readSolutionsBertini("raw_solutions");
 	  -- remove Bertini input/output files
     	  for f in {"failed_paths", "nonsingular_solutions",
                "raw_data", "start", "input", "output", "raw_solutions",
@@ -296,7 +227,7 @@ track (List,List,List) := List => o -> (S,T,solsS) -> (
      	  pointToPatch := (x0,p)-> (1/(p*x0)_(0,0))*x0; -- representative for point x0 in patch p
 	  patchEquation := p -> p * transpose vars R - 1;
 
- 	  if o.AffinePatches === DynamicPatch then (
+ 	  if o.Predictor === ProjectiveNewton or o.AffinePatches === DynamicPatch then (
 	       solsS = solsS/normalize;
 	       dPatch := true; -- not null        
 	       )
@@ -319,12 +250,25 @@ track (List,List,List) := List => o -> (S,T,solsS) -> (
      
      -- create homotopy
      t := symbol t;
-     Rt := K[gens R, t]; -- how do you cleanly extend the generators list: e.g., what if "n" is a var name?
+     Kt := K[t];
+     Rt := K[gens R, t]; -- how do you cleanly extend the generators list: e.g., what if "t" is a var name?
      H := matrix {apply(#S, i->o.gamma*(1-t)^(o.tDegree)*sub(S#i,Rt)+t^(o.tDegree)*sub(T#i,Rt))};
      JH := transpose jacobian H; 
      Hx := JH_(toList(0..n-1));
      Ht := JH_{n};
-     
+
+     -- compute Bombieri-Weyl norm of the homotopy, define normalizing factor, supporting constants
+     if o.Predictor === ProjectiveNewton then (
+     	  BWnormSquare := sum(flatten entries sub(H,Kt[gens R]), h->sum(listForm h, a->(
+			 imc := product(a#0, d->d!) / (sum(a#0))!; -- inverse of multinomial coeff
+			 imc*a#1*sum(listForm a#1, b->(conjugate b#1) * Kt_(b#0))
+			 ))); -- this is a polynomial in K[t]
+	  normalizer := t -> 1 / sqrt sub(BWnormSquare, matrix{{t}}); -- normalizing factor
+	  normalizer' := t -> - (1/2) * (normalizer t)^3 * sub(diff(Kt_0,BWnormSquare), matrix{{t}}); -- its derivative 	  
+	  DMforPN := diagonalMatrix append(T/(f->1/sqrt first degree f),1);
+	  maxDegreeTo3halves := power(max(T/first@@degree),3/2);
+     	  );
+
      -- evaluation times
      etH := 0;
      etHx := 0; 
@@ -366,15 +310,27 @@ track (List,List,List) := List => o -> (S,T,solsS) -> (
 	  tr := timing (
 	       if o.SLP =!= null then r := transpose fromSlpMatrix(slpH, transpose x0 | matrix {{t0}})
      	       else r = lift(sub(transpose H, transpose x0 | matrix {{t0}}), K);
-	       if dPatch === null then r
+	       if o.Predictor === ProjectiveNewton then ((normalizer t0)*r) || matrix{{0_K}}  
+	       else if dPatch === null then r
 	       else r || matrix{{(dPatch*x0)_(0,0)-1}} -- patch equation evaluated  
 	       );
 	  etH = etH + tr#0;
 	  tr#1
 	  );
+     evalHNoPatchNoNormalizer := (x0,t0)-> (
+	  tr := timing (
+	       if o.SLP =!= null then r := transpose fromSlpMatrix(slpH, transpose x0 | matrix {{t0}})
+     	       else r = lift(sub(transpose H, transpose x0 | matrix {{t0}}), K);
+	       r
+	       );
+	  etH = etH + tr#0;
+	  tr#1
+	  );
      evalHxNoPatch := (x0,t0)-> (
-	  if o.SLP =!= null then fromSlpMatrix(slpHx, transpose x0 | matrix {{t0}})
-     	  else lift(sub(Hx, transpose x0 | matrix {{t0}}), K)
+	  r := if o.SLP =!= null then fromSlpMatrix(slpHx, transpose x0 | matrix {{t0}})
+     	  else lift(sub(Hx, transpose x0 | matrix {{t0}}), K);
+	  if o.Predictor === ProjectiveNewton then r = r * normalizer t0;
+	  r
 	  );  
      evalHx := (x0,t0)->( 
 	  tr := timing (
@@ -388,7 +344,8 @@ track (List,List,List) := List => o -> (S,T,solsS) -> (
      evalHt := (x0,t0)->(
 	  tr := timing (
 	       if o.SLP =!= null then r := fromSlpMatrix(slpHt, transpose x0 | matrix {{t0}})
-     	       else r= lift(sub(Ht, transpose x0 | matrix {{t0}}), K);
+     	       else r = lift(sub(Ht, transpose x0 | matrix {{t0}}), K);
+	       if o.Predictor === ProjectiveNewton then r = r * (normalizer t0) + evalHNoPatchNoNormalizer(x0,t0) * (normalizer' t0);
 	       if dPatch === null then r
 	       else r || matrix {{0_K}}
 	       );
@@ -496,7 +453,10 @@ track (List,List,List) := List => o -> (S,T,solsS) -> (
 		    -- predictor step
 		    if DBG>9 then << ">>> predictor" << endl;
 		    local dx; local dt;
-     	       	    if dPatch =!= null then ( -- generate dynamic patch
+		    if o.Predictor == ProjectiveNewton then (
+			 dPatch = matrix{ flatten entries x0 / conjugate};
+			 )
+		    else if dPatch =!= null then ( -- generate dynamic patch
 			 if DBG>9 then << "dynamic patch... ";
 			 HxNoPatch := evalHxNoPatch(x0,t0);
 			 -- patch = conjugate of the normalized kernel vector 
@@ -597,8 +557,18 @@ track (List,List,List) := List => o -> (S,T,solsS) -> (
 			 dx = delta*sum(nPoints, i->MScoeffs#i*history#(count-nPoints+1+i)#"rhsODE");
 			 if DBG > 3 then << "delta = " << delta << "   MScoeffs = " << MScoeffs << endl;
 			 )
+		    else if o.Predictor == ProjectiveNewton then (
+			 Hx0 = evalHx(x0,t0);
+			 Ht0 = evalHt(x0,t0);
+			 dt = sqrt(1 + (norm2 solve(Hx0, Ht0))^2);
+			 dt = dt/min first SVD(DMforPN*Hx0);
+			 dt = 0.05/(maxDegreeTo3halves*dt);
+			 if dt<o.tStepMin then error "step is smaller than minimal step"; 
+			 dx = 0;
+			 )
 		    else error "unknown Predictor";
-		    
+
+
 		    if DBG > 3 then << "  dt = " << dt << "  dx = " << toString dx << endl;
 		    if DBG > 1 then history#count#"dx" = dx;
 
@@ -609,14 +579,19 @@ track (List,List,List) := List => o -> (S,T,solsS) -> (
 		    if DBG>9 then << ">>> corrector" << endl;
 		    dx = 1; -- dx = + infinity
 		    nCorrSteps := 0;
-		    if o.SLPcorrector then (
+		    if o.Predictor === ProjectiveNewton then (
+			 nCorrSteps = 1;
+			 dx = solve(evalHx(x1,t1), -evalH(x1,t1));
+			 x1 = x1 + dx;
+			 )
+		    else if o.SLPcorrector then (
 			 corr'error := rawEvaluateSLP(slpCorr, raw (transpose x1 | matrix {{t1,dt}}));
 			 corr'error = transpose lift(map(K,corr'error),K);
 			 x1 = corr'error_{0};
 			 dx = corr'error_{1};
 			 if DBG > 4 then << "x=" << toString x1 << " res=" <<  toString evalH(x1,t1) << endl << " dx=" << dx << endl;
 			 )
-		    else(
+		    else (
 		    	 while norm dx > o.CorrectorTolerance*norm x1 
 			 and nCorrSteps < (if 1-t1 < theSmallestNumber and dt <= o.tStepMin 
 			      then o.finalMaxCorrSteps -- infinity
@@ -631,7 +606,7 @@ track (List,List,List) := List => o -> (S,T,solsS) -> (
 			      );
 			 );
 		    if DBG>9 then << ">>> step adjusting" << endl;
-		    if dt > o.tStepMin and norm dx > o.CorrectorTolerance * norm x1 then ( -- predictor failure 
+		    if o.Predictor =!= ProjectiveNewton and dt > o.tStepMin and norm dx > o.CorrectorTolerance * norm x1 then ( -- predictor failure 
 			 predictorSuccesses = 0;
 			 stepAdj = stepAdj - 1;
 	 	 	 tStep = stepDecreaseFactor*tStep;
@@ -777,29 +752,7 @@ solveSystem List := List => o -> F -> (
 	       track(S,F,solsS,gamma=>exp(random(0.,2*pi)*ii))
 	       )
 	  )
-     else if o.Software == PHCpack then ( 
-	  -- assume the ideal is 0-dim. 
-	  -- !!! problem with temporaryFileName: cygwin's /tmp is different from Windows' /tmp 
-	  tarsolfile := -- temporaryFileName() | 
-	                "PHCtasols";
-	  targetfile := -- temporaryFileName() | 
-	             "PHCtarget";
-	  outfile := -- temporaryFileName() | 
-	             "PHCoutput";
-	  -- writing data to the corresponding files                                                                                                                                                                           
-	  systemToFile(F,targetfile);
-	  -- launching blackbox solver; converting the solutions to the Maple format                                                                                                                                           
-	  run(PHCexe|" -b "|targetfile|" "|outfile);
-	  run(PHCexe|" -z "|targetfile|" "|tarsolfile);
-	  -- parse and output the solutions                                                                                                                                                                                    
-	  result = parseSolutions(tarsolfile, R);
-	  -- clean up                                                                                                                                                                                                          
-	  if DBG<10 then (
-	       removeFile targetfile;
-	       removeFile tarsolfile; 
-	       removeFile outfile;
-	       )
-	  )
+     else if o.Software == PHCpack then result = solvePHCpack(F,o)
      else if o.Software == Bertini then (
 	  -- tempdir := temporaryFileName() | "NAG-bertini";
 	  -- mkdir tempdir; 	  
@@ -831,67 +784,6 @@ solveSystem List := List => o -> F -> (
 	  )
      else error "invalid Software option";  		
      result
-     )
-
--- PHC part ------------------------------------------
-systemToFile = method(TypicalValue => Nothing)
-systemToFile (List,String) := (F,name) -> (
-     file := openOut name;
-     file << #F << endl;
-     scan(F, f->( 
-     	       L := toExternalString f;
-     	       L = replace("ii", "I", L);
-     	       L = replace("e", "E", L);
-	       L = replace("p53","",L);
-	       file << L << ";" << endl;
-	       ));
-     close file;
-     ) 
-
-solutionsToFile = method(TypicalValue => Nothing)
-solutionsToFile (List,Ring,String) := (S,R,name) -> (
-     file := openOut name;
-     file << #S << " " << numgens R << endl << 
-     "===========================================================" << endl;
-     scan(#S, i->( 
-     	       file << "solution " << i << " :" << endl <<
-	       "t :  0.00000000000000E+00   0.00000000000000E+00" << endl <<
-	       "m :  1" << endl <<
-	       "the solution for t :" << endl;
-	       scan(numgens R, v->(
-      	       		 L := " "|toString R_v|" :  "|
-			 format(0,-1,9,9,realPart toCC S#i#v)|"  "|
-			 format(0,-1,9,9,imaginaryPart toCC S#i#v);
-			 file << L << endl; 
-			 ));
-	       file <<  "== err :  0 = rco :  1 = res :  0 ==" << endl;
-	       ));
-     close file;
-     ) 
-///
-restart
-loadPackage "NAG"; debug NAG;
-R = CC[x,y,z]
-solutionsToFile( {(0,0,1),(0,0,-1)}, R, "PHCsols" )
-///
-
-parseSolutions = method(TypicalValue => Sequence)
-parseSolutions (String,Ring) := (s,R) -> (
--- parses solutions in PHCpack format 
--- IN:  s = string of solutions in PHCmaple format 
---      V = list of variable names
--- OUT: {list of solutions, list of multiplicities}
-     L := get s;
-     L = replace("=", "=>", L);
-     L = replace("I", "ii", L);
-     L = replace("E", "e", L);
-     L = replace("e\\+","e",L);
-     L = replace("time", "\"time\"", L);
-     L = replace("multiplicity", "\"mult\"", L);
-     
-     use R; 	  
-     sols := toList apply(value L, x->new HashTable from toList x);
-     sols/(x->{apply(gens R, v->x#v), x})
      )
 
 -- HOM4PS2 part -----------------------------------------------------------
