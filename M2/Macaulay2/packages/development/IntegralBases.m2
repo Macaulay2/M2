@@ -5,7 +5,7 @@ needsPackage "Puiseux"
 newPackage(
         "IntegralBases",
         Version => "0.1", 
-        Date => "27 July 2009",
+        Date => "7 Aug 2009",
         Authors => {{Name => "Mike Stillman", 
                   Email => "mike@math.cornell.edu", 
                   HomePage => "http://www.math.cornell.edu/~mike"}},
@@ -24,6 +24,7 @@ export {
      principalPart,
      makeEquations,
      findPuiseuxSeries,
+     puiseuxTruncations,
      findBranches
      }
 
@@ -74,6 +75,25 @@ findPuiseuxSeries(RingElement) := (F) -> (
 	  P := puiseux(Fs#i,10);
 	  join apply(P, (xt,yt) -> (xt+sub(as#i,ring xt),yt))
 	  ))
+     )
+
+puiseuxTruncations = method()
+puiseuxTruncations RingElement := (F) -> (
+     -- Compute the Puiseux tree
+     -- and the degrees
+     -- and then make the Puiseux series to that degree
+     -- returns a list of {(x(t),y(t)), Ni, Inti}
+     PT := puiseuxTree F;
+     L := findVanHoeijWeights PT;
+     B := branches F; -- TODO: compute this from PT!! -- but: these are in the same order as L
+       -- and should have the same length as L
+     if #L =!= #B then error "my logic is somehow wrong";
+     truncationDegrees := apply(L, f -> floor(f#"Info"#"Multiplicity" * f.cache#"Ni")+1);
+     apply(#B, i -> (
+	       b := B#i;
+	       f := L#i;
+	       {f.cache#"Ni", f.cache#"Int", truncationDegrees#i, series extend(b, truncationDegrees#i)}
+	       ))
      )
 
 findBranches = method()
@@ -141,6 +161,7 @@ loadPackage "IntegralBases"
 
 -- ZZZ
 kk = ZZ/32003
+kk = QQ
 P = kk[x]
 R = kk[x,y]
 F = y^5+2*x*y^2+2*x*y^3+x^2*y-4*x^3*y+2*x^5
@@ -155,6 +176,11 @@ netList (P = puiseux(Fs#1,10)) -- seems nasty, this one does.
 P/(x -> ring x_1)
 puiseux(Fs#2,10) -- doesn't work
 
+puiseuxTruncations F
+Ps = oo/last
+syz matrix makeEquations(Ps, {1_R,y,y^2,y^3}, 1)
+syz matrix makeEquations(Ps, {x*1_R,x*y,x*y^2,y^3,y^4}, 2)
+syz matrix makeEquations(Ps, {1_R,y,y^2,y^3}, 1)
 
 -- how does Fractional Ideals do on this one?
 S = kk[y,x,MonomialOrder=>{1,1}]
@@ -197,6 +223,10 @@ restart
 needsPackage "IntegralBases"
 R = QQ[x,y]
 F = y^4-y^2+x^3+x^4
+puiseuxTruncations F
+Ps = oo/last
+syz matrix makeEquations(Ps, {1_R,y,y^2,y^3}, 1)
+
 Ps = findBranches F
 series (values Ps)_0_0_0
 series (values Ps)_1_0_0
@@ -222,3 +252,31 @@ S = QQ[y,x,MonomialOrder=>{1,1}]
 A = S/(sub(F,S))
 integralClosureHypersurface A
 
+-- Example for M2 meeting, Aug 2009, MSRI
+restart
+loadPackage "IntegralBases"
+kk = QQ
+R = kk[x,y]
+F = y^5+2*x*y^2+2*x*y^3+x^2*y-4*x^3*y+2*x^5
+disc(F,y)
+
+S = QQ[y,x,MonomialOrder=>{1,1}]
+A = S/(sub(F,S))
+integralClosureHypersurface A -- generated over A by one fraction with denom. x^2(x^3+1).
+
+kk = QQ
+R = kk[x,y,z]
+F = z*(x^2+y^2)-x^2+y^2
+F = (z+x+y)*(x^2+y^2)-x^2+y^2
+F = (z+x+y)*(x^2+y^2)^2-x^2+y^2
+F = (z+x+y)*(x^3+y^3)^2-x^3+y^3
+A = R/F
+integralClosure A
+icFractions A
+
+R = kk[y,x,z,MonomialOrder=>{1,2}]
+F = sub(F,R)
+F = sub(F, {y => x+y, z => z-x})
+A = R/F
+integralClosureHypersurface A
+disc(F,y)

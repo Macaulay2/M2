@@ -2,12 +2,12 @@
 
 newPackage(
         "UPolynomials",
-        Version => "0.1", 
-        Date => "",
-        Authors => {{Name => "", 
-                  Email => "", 
-                  HomePage => ""}},
-        Headline => "",
+    	Version => "0.1", 
+    	Date => "7 Aug 2009",
+        Authors => {{Name => "Mike Stillman", 
+                  Email => "mike@math.cornell.edu", 
+                  HomePage => "http://www.math.cornell.edu/~mike"}},
+        Headline => "gcds and factorization of univariate polynomials",
         DebuggingMode => true
         )
 
@@ -353,7 +353,7 @@ mySquareFreeDecomposition RingElement := (f) -> (
      );
 
 myfac0 = (F, S, G, phis) -> (
-     for k from 0 to #phis do (
+     for k from 0 to #phis-1 do (
 	  -- we will return on the first one that works
 	  (f,g) := phis#k;
 	  H := myResultant(G, f F);
@@ -362,9 +362,14 @@ myfac0 = (F, S, G, phis) -> (
 	  if H != 1 and gcd(diff((ring H)_0,H),H) == 1 then (
 	       -- yes! we are almost there...
 	       facsH := factor H;
+	       pows := (toList facsH)/toList/last;
 	       facsH = (toList facsH)/toList/first;
-	       --<< "k = " << k << " gives factorization" << endl;
-	       return apply(facsH, h -> myGCD(F, g h))
+	       if any(pows, x -> x > 1) then << "powers of irred factors of resultant are " << pows << endl;
+	       facsH = select(facsH, f -> first degree f > 0);
+	       result := apply(facsH, h -> myGCD(F, g h));
+	       result = select(result, f -> first degree f > 0);
+	       << "myfac0: result is " << netList result << endl;
+	       return result
 	       )
 	  );
      error "wow -- the first 9 tries failed!";
@@ -729,3 +734,10 @@ installPackage oo
 check UPolynomials
 uninstallPackage "UPolynomials"
 
+KK = toField(QQ[a]/(a^2-a+1))
+R = KK[t]
+F = t^5+2*a*t^3+2*a*t^2+(a+3)*t-2*a+2
+myFactorization F
+
+G = (2*a+4)*t^2+(-12*a+8)*t+a-9
+myFactorization G

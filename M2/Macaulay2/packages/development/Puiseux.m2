@@ -2,8 +2,10 @@
 newPackage(
 	"Puiseux",
     	Version => "0.1", 
-    	Date => "April 24, 2009",
-    	Authors => {},
+    	Date => "7 Aug 2009",
+        Authors => {{Name => "Mike Stillman", 
+                  Email => "mike@math.cornell.edu", 
+                  HomePage => "http://www.math.cornell.edu/~mike"}},
     	Headline => "Computing Puiseux expansions of plane curves",
     	DebuggingMode => true
     	)
@@ -18,7 +20,7 @@ newPackage(
 
 
 export {
-     adjoinRoot, 
+     "adjoinRoot",
      newtonEdges,
      branches,
      puiseuxTree,
@@ -26,6 +28,7 @@ export {
      testPuiseux,
      test'puiseux,
      series,
+     findVanHoeijWeights,
      OriginOnly
      }
 exportMutable {
@@ -33,10 +36,6 @@ exportMutable {
      }
 
 DoingRationalPuiseux = true
-
-factorization = (F) -> (
-     fs := factor F;
-     select(fs//toList/toList/reverse/toSequence, f -> first degree f#1 > 0))
 
 ----------------------------------------------
 -- Internal routines for the package ---------
@@ -364,13 +363,13 @@ Info = new Type of HashTable
 
 makenode = (tm,children) -> new HashTable from {
      "Info" => tm,
-     --"XCache" => new CacheTable,
+     cache => new CacheTable,
      "XChildren" => new VerticalList from children
      }
 
 makeleaf = (tm,F) -> new HashTable from {
-     "Info" => tm
-     --"XCache" => new CacheTable
+     "Info" => tm,
+     cache => new CacheTable
      --"Rest" => F
      }
 
@@ -415,6 +414,50 @@ puiseuxTree(RingElement) := opts -> (F) -> (
 	  "Weight" => 0_QQ},
        F, false))
 
+setParents = (PT) -> (
+     if not PT#?"XChildren" then 
+       {PT}
+     else (
+	  flatten apply(PT#"XChildren", pt -> (
+		    pt.cache#"Parent" = PT;
+		    setParents pt
+		    ))
+	  )
+     )
+
+setVanHoeijWeights = (leaf) -> (
+     nroots := leaf#"Info"#"NRoots";
+     myweight := leaf#"Info"#"Weight";
+     maxval := if nroots > 1 then myweight else 0;
+     sumvals := (nroots-1) * myweight;
+     pt := leaf;
+     while pt.cache#?"Parent" do (
+	  mynode := pt;
+	  pt = pt.cache#"Parent";
+  	  scan(pt#"XChildren", other -> (
+		    if other =!= mynode then (
+		      w := min(myweight, other#"Info"#"Weight");
+		      if w > maxval then maxval = w;
+		      sumvals = sumvals + other#"Info"#"NRoots" * w;
+		    )));
+     	  myweight = pt#"Info"#"Weight";
+	  );
+     leaf.cache#"Int" = sumvals;
+     leaf.cache#"MaxValuation" = maxval;
+     )
+
+findVanHoeijWeights = (PT) -> (
+     -- PT should be a puiseux tree
+     -- First, leaves are found, and parent pointers are placed into the cache
+     -- Second, for each leaf, we compute the max v(pi-pj), and sum v(pi-pj),
+     --   and these are placed into the cache for the leaf.
+     leaves := setParents PT;
+     scan(leaves, f -> setVanHoeijWeights f);
+     maxinti := max apply(leaves, f -> f.cache#"Int");
+     scan(leaves, f -> f.cache#"Ni" = f.cache#"MaxValuation" + maxinti - f.cache#"Int");
+     leaves
+     )
+     
 puiseux = method(Options => {OriginOnly => false})
 puiseux(RingElement, ZZ) := opts -> (F, trunclimit) -> (
      P := (branches(F,opts))/(b -> extend(b,trunclimit));
@@ -462,6 +505,30 @@ makePuiseuxExample = (R, n, L, K, coeffs) ->(
   4. DONE Puiseux should handle slope 0 too
 "
 *}
+
+needsPackage "UPolynomials"
+
+factorization = (F) -> (
+     << "factoring " << F << " over " << describe ring F << endl;
+     result := if coefficientRing ring F =!= QQ then
+       myFactorization F
+     else (
+       select(factor F//toList/toSequence/reverse, f -> first degree f#1 > 0));
+     result
+     )
+
+factorization = (F) -> (
+     << "factoring " << F << " over " << describe ring F << endl;
+     result := if coefficientRing ring F === QQ then
+       --select(factor F//toList/toSequence/reverse, f -> first degree f#1 > 0)
+       select(VerticalList factor F, f -> first degree f#0 > 0)/toSequence/reverse
+     else
+       myFactorization F;
+     << "  result: " << netList result << endl;
+     result
+     )
+
+dismiss UPolynomials
 
 beginDocumentation()
 
@@ -1284,32 +1351,22 @@ load "development/Puiseux.m2"
 debug Puiseux
   R = QQ[x,y]
   F = (y^2-y-x/3)^3-y*x^4*(y^2-y-x/3)-x^11
-puiseuxTree F
+PT = puiseuxTree F
+L = findVanHoeijWeights PT
+apply(L, lf -> {lf.cache#"Int", lf.cache#"MaxValuation", lf.cache#"Ni"})
+loadPackage "IntegralBases"
+puiseuxTruncations F
+Ps = oo/last
+syz matrix makeEquations(Ps, {1_R,y,y^2}, 1)  -- (y^2-y)/x
+syz matrix makeEquations(Ps, {x*1_R,x*y,y^2-y,y^3-y^2}, 2)
+syz matrix makeEquations(Ps, {1_R,y,y^2,y^3}, 1)
+
+syz matrix makeEquations(Ps, {1_R,y,y^2,y^3,y^4}, 1)
+syz matrix makeEquations(Ps, {1_R,y,y^2,y^3,y^4}, 2)
+syz matrix makeEquations(Ps, {1_R,y,y^2,y^3,y^4}, 3)
+syz matrix makeEquations(Ps, {1_R,y,y^2,y^3,y^4,y^5}, 2)
+syz matrix makeEquations(Ps, {1_R,y,y^2,y^3,y^4,y^5}, 3)
+
 netList puiseux(F,10)  
 netList branches F
 
-netList branches1(F,false)
-
-N1 = newtonEdges F
-N11 = N1_0
-B11 = newtonTerms N11
-N12 = N1_1
-B12 = newtonTerms N12
-
-F11 = applyTerm(B11_0,F)
-E11 = newtonEdges(F11, OriginOnly=>true)
-B111 = newtonTerms E11_0
-F111 = applyTerm(B111_0,F11)
-newtonEdges(F111, OriginOnly=>true)
-apply(oo, newtonTerms)
-
-F12 = applyTerm(B12_0, F)
-E12 = newtonEdges(F12, OriginOnly=>true)
-B121 = newtonTerms E12_0
-F121 = applyTerm(B121_0,F12)
-newtonEdges(F121, OriginOnly=>true)
-apply(oo, newtonTerms)
-
-loadPackage "IntegralBases"
-disc(F,y)
-makenode(1,2,1,2/1,4,13,x,y)
