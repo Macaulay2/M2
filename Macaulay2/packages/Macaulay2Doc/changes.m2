@@ -35,7 +35,11 @@ document {
 	  LI { "The operator ", TO "..", ", will now deliver rectangular sequence of consecutive indexed variables, e.g., ", TT "x_1 .. y_2", "
 	       will have the value ", TT "(x_1,x_2,y_1,y_2)", "."},	       
 	  LI { "New binary operators ", TO "<==", " and ", TO "<===", " have been introduced.  The operators are flexible, i.e., the 
-	       user can install methods for them." }
+	       user can install methods for them." },
+	  LI {
+	       "The function \"SimpleDoc :: doc\" will now handle example expressions that span multiple lines: within in each expression, indent lines
+	       after the first one more than the first."
+	       }
 	  }
      }
 

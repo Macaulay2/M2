@@ -62,15 +62,13 @@
     subsection can be separated into paragraphs with blank lines.  Each
     paragraph can contain markup as described above.  The text in an {\tt
     Example} subsection consists of lines of code to be used as examples in the
-    documentation node.
-
-    The following example is not complete yet, as we are writing this
-    documentation node using ", TO "doc", ", and multi-line example code
-    is not yet implemented to allow writing a better example.
+    documentation node.  Within in each complete expression, indent lines
+    after the first one more than the first.
 
    Example
      ourfcn = method()
-     ourfcn ZZ := (n) -> n+1;
+     ourfcn ZZ := (n) -> (
+         n+1)
      ourfcn 3
 
   SeeAlso
