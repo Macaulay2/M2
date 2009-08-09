@@ -26,11 +26,11 @@ doc = method()
 doc String := (s) -> document toDoc s
 
 splitByIndent = (text, indents) -> (
-     m := min indents;
-     keypos := positions(indents, x -> x === m);
-     keypos = append(keypos,#text);
-     for i from 0 to #keypos-2 list (keypos#i,keypos#(i+1)-1)
-     )
+     m := infinity;
+     indents = append(indents,infinity);
+     r := for i from 0 to #indents-1 list if indents#i >= m+1 then continue else (m = indents#i; i);
+     r = append(r, #indents-1);
+     apply(#r - 1, i -> (r#i,r#(i+1)-1)))
 
 indentationLevel = (s) -> (
      lev := 0;
@@ -92,7 +92,9 @@ items = (text, indents) -> (
      )
 
 DescriptionFcns = new HashTable from {
-     "Example" => (text,indents) -> ("print (text, indents)"; EXAMPLE text),
+     "Example" => (text,indents) -> EXAMPLE apply(
+	  splitByIndent(text,indents),
+	  (i,j) -> concatenate between(newline,apply(i .. j, k -> (if indents#k =!= infinity then indents#k - indents#0 : " ", text#k)))),
      "Text" => markup
      }
 
