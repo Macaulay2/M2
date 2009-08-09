@@ -33,7 +33,8 @@ export{"integralClosure", "idealizer", "ringFromFractions", "nonNormalLocus", "I
   "Endomorphisms", -- compute end(I)
   "Vasconcelos", -- compute end(I^-1).  If both this and Endomorphisms are set:
                  -- compare them.
-  "RecomputeJacobian"
+  "RecomputeJacobian",
+  "StartWithOneMinor"
 } 
 
 verbosity = 0
@@ -88,6 +89,9 @@ integralClosure Ring := Ring => o -> (R) -> (
      verbosity = o.Verbosity;
      strategies := set o.Strategy;
      (S,F) := flattenRing R;
+     P := ideal S;
+     startingCodim := codim P;
+     isCompleteIntersection := (startingCodim == numgens P);
      G := map(frac R, frac S, substitute(F^-1 vars S, frac R));
      nsteps := 0;
 
@@ -102,8 +106,10 @@ integralClosure Ring := Ring => o -> (R) -> (
      if verbosity >= 1 then (
 	  << " [jacobian time " << flush;
 	  );
-
-     t1 := timing (J := minors(codim ideal S, jacobian S));
+     if member(StartWithOneMinor, strategies) then 
+          t1 := timing (J := ideal nonzeroMinor(codim ideal S, jacobian S))
+     else
+          t1 = timing (J = minors(codim ideal S, jacobian S));
 
      if verbosity >= 1 then (
         << t1#0 << " sec #minors " << numgens J << "]" << endl;
@@ -132,7 +138,12 @@ integralClosure Ring := Ring => o -> (R) -> (
 	  );
      R.icFractions = first entries G.matrix;
      R.icMap = F;
-     target F
+     if not isCompleteIntersection then (
+	  (F', G') := S2ification target F;
+           R.icMap = F'*F;
+           R.icFractions = first entries((G*G').matrix)
+	   );
+     target R.icMap
      )
 
 -- integralClosure1(f : R --> R1, g : frac R1 --> frac R, J (radical) ideal in R1)
@@ -344,6 +355,26 @@ randomMinors(ZZ,ZZ,Matrix) := (n,d,M) -> (
        dets = dets | {det (M^rows_cols)}
        );
      dets
+     )
+
+nonzeroMinor = method(Options => {Limit => 100})
+nonzeroMinor(ZZ,Matrix) :=  opts -> (d,M) -> (
+     --produces one d x d nonzero minor, making up to 100 random tries.
+     r := numrows M;
+     c := numcols M;
+     if d > min(r,c) then return null;
+     candidate := 0_(ring M);
+     rowlist := toList(0..r-1);
+     collist := toList(0..c-1);
+     ds := toList(0..d-1);
+     for i from 1 to opts.Limit do(
+      -- choose a random set of rows and of columns, test the determinant.
+         rows := sort (random rowlist)_ds ;
+         cols := sort (random collist)_ds ;
+         candidate = det (M^rows_cols);
+	 if candidate != 0 then return(candidate);
+       );
+     error("no nonzero minors found");
      )
 
 -------------------------------------------
@@ -1465,10 +1496,29 @@ icFractions Q == substitute(matrix{{d/a^2,a,b,c}},frac Q)
 
 --Ex from Wolmer's book - tests longer example and published result.
 TEST ///
-R = QQ[symbol a..symbol e]
+restart
+load "IntegralClosure.m2"
+R = ZZ/101[symbol a..symbol e]
 I = ideal(a^2*b*c^2+b^2*c*d^2+a^2*d^2*e+a*b^2*e^2+c^2*d*e^2,a*b^3*c+b*c^3*d+a^3*b*e+c*d^3*e+a*d*e^3,a^5+b^5+c^5+d^5-5*a*b*c*d*e+e^5,a^3*b^2*c*d-b*c^2*d^4+a*b^2*c^3*e-b^5*d*e-d^6*e+3*a*b*c*d^2*e^2-a^2*b*e^4-d*e^6,a*b*c^5-b^4*c^2*d-2*a^2*b^2*c*d*e+a*c^3*d^2*e-a^4*d*e^2+b*c*d^2*e^3+a*b*e^5,a*b^2*c^4-b^5*c*d-a^2*b^3*d*e+2*a*b*c^2*d^2*e+a*d^4*e^2-a^2*b*c*e^3-c*d*e^5,b^6*c+b*c^6+a^2*b^4*e-3*a*b^2*c^2*d*e+c^4*d^2*e-a^3*c*d*e^2-a*b*d^3*e^2+b*c*e^5,a^4*b^2*c-a*b*c^2*d^3-a*b^5*e-b^3*c^2*d*e-a*d^5*e+2*a^2*b*c*d*e^2+c*d^2*e^4)
 S = R/I
+icFractions S
+time Sbar = integralClosure S
+M:=pushForward (icMap S, Sbar^1);
+assert(degree (M/(M_0)) == 2)
+
+
+time integralClosure (target((S2ification(S))_0), Verbosity => 3)
+StoSbar = (S2ification(S))_0;
+M:=pushForward (StoSbar, (target StoSbar)^1);
+gens M
+N=prune(M/M_0)
+assert(degree N == 2)
+
+
+integralClosure(S)
 time V = integralClosure (S, Variable => X)
+degree S
+codim singularLocus S
 use ring ideal V
 
 oldanswer = ideal(a^2*b*c^2+b^2*c*d^2+a^2*d^2*e+a*b^2*e^2+c^2*d*e^2,
@@ -2029,6 +2079,8 @@ time A = icFracP R
 time A = integralClosure R;
 icFractions R
 ----------------------------------------------
+restart
+load "IntegralClosure.m2"
 S = ZZ/32003[x,y];
 F = (y^2-3/4*y-15/17)^3-9*y*(y^2-3/4*y-15/17*x)-27*x^11
 R = S/F
@@ -2036,15 +2088,19 @@ time R' = integralClosure R
 factor discriminant(F,y)
 factor discriminant(F,x)
 
--- bug: 
 R = ZZ/32003[a,b,c]/(a^2-b*c)
 radical ideal(1_R)
 ----------------------------------------------
 
+restart
+load "IntegralClosure.m2"
+
 S=ZZ/2[x,y,Weights=>{{8,9},{0,1}}]
 I=ideal(y^8+y^2*x^3+x^9) -- eliminates x and y at some point. 
 R=S/I
-time R'=integralClosure(R)
+time R'=integralClosure(R, Strategy => {StartWithOneMinor})--, Verbosity =>3 )
+time R'=integralClosure(R)--, Verbosity =>3)
+icFractions R
 
 S=ZZ/2[x,y,Weights=>{{31,12},{0,1}}]
 I=ideal"y12+y11+y10x2+y8x9+x31" 
@@ -2059,4 +2115,31 @@ time R'=integralClosure(R) -- really long?
 transpose gens ideal S
 icFracP R -- very much faster!
 ----------------------------------------------
+restart
+loadPackage "IntegralClosure"
 loadPackage "ReesAlgebra"
+
+--huneke2
+kk = ZZ/32003
+S = kk[a,b,c]
+F = a^2*b^2*c+a^4+b^4+c^4
+J = ideal jacobian ideal F
+substitute(J:F, kk) -- check local quasi-homogeneity!
+I=ideal first (flattenRing first reesAlgebra J)
+betti I
+R = (ring I)/I
+--time R'=integralClosure(R, Strategy => {StartWithOneMinor}, Verbosity =>3 ) -- this is bad in the first step!
+time R'=integralClosure(R, Verbosity =>3)
+icFractions R
+
+---------------------------------------------
+
+--rational quartic
+restart
+load "IntegralClosure.m2"
+S=kk[x_0..x_3]
+I = monomialCurveIdeal(S,{1,3,4})
+A=S/I
+integralClosure(A)
+icFractions A
+
