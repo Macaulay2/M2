@@ -34,8 +34,8 @@ reverseVars := a -> (
      	  )
      )
 
-Symbol .. Symbol := (a,z) -> vars( reverseVars a .. reverseVars z )
-Symbol ..< Symbol := (a,z) -> vars( reverseVars a ..< reverseVars z )
+Symbol .. Symbol := (a,z) -> if a === z then 1:a else vars( reverseVars a .. reverseVars z )
+Symbol ..< Symbol := (a,z) -> if a === z then () else vars( reverseVars a ..< reverseVars z )
 
 succS = new MutableHashTable;
 for i from 0 to 50 do succS#(vars i) = vars(i+1)
