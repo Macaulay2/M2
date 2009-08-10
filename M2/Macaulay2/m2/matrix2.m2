@@ -552,13 +552,17 @@ divideByVariable = method()
 divideByVariable(Matrix, RingElement) := Matrix => (m,v) -> (
      if ring v =!= ring m then 
          error("must divide by a variable in the ring ", ring m);
-     (m1,topdegree) := rawDivideByVariable(m.RawMatrix, index v, -1);
+     i := index v;
+     if i === null then error "expected a generator of the ring";
+     (m1,topdegree) := rawDivideByVariable(m.RawMatrix, i, -1);
      (map(ring m, m1), topdegree))
 
 divideByVariable(Matrix, RingElement, ZZ) := Matrix => (m,v,d) -> (
      if ring v =!= ring m then 
          error("must divide by a variable in the ring ", ring m);
-     (m1,topdegree) := rawDivideByVariable(m.RawMatrix, index v, d);
+     i := index v;
+     if i === null then error "expected a generator of the ring";
+     (m1,topdegree) := rawDivideByVariable(m.RawMatrix, i, d);
      (map(ring m, m1), topdegree))
 
 compress = method()
