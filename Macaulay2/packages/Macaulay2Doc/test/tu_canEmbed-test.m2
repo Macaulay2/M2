@@ -1,3 +1,4 @@
+setRandomSeed()
 R = ZZ/31991[a,b,c]
 assert( (ipoint1 = ideal matrix({{a,b}})) === ideal(a,b) )
 assert( (ipoint1 = ideal(a,b)) === ideal(a,b) )

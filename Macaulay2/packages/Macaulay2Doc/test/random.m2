@@ -1,4 +1,9 @@
 -- let's make sure the random number generator doesn't change
+
+setRandomSeed()
+-- starting with 1.2.1, we initialize the random number seed "randomly", 
+-- and the way to get it the way it was before is with setRandomSeed()
+
 f = result -> assert( apply(20, i -> random 20) === result )
 f {11, 15, 3, 8, 1, 3, 9, 11, 15, 15, 14, 7, 16, 3, 9, 2, 6, 3, 5, 16}
 -- before 1.1 it was:

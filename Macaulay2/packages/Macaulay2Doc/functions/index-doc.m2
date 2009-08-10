@@ -13,7 +13,7 @@ document {
 	  ZZ => {"the integer index, starting at 0, of v, if it is a variable.
 	  If v is not a variable, then ", TO null, " is returned"}
 	  },
-     "Variabeles are indexed in the following way: the first variable has index 0,
+     "Variables are indexed in the following way: the first variable has index 0,
      the second index 1, and so on, until n-1, where n is the number of generators of R,
      the ring of v.  Then, if the coefficient ring is a polynomial ring, those variables
      are numbered starting at n, and so on.",
