@@ -1,3 +1,4 @@
+setRandomSeed()
 K = ZZ/103; 
 A = K[x,y,z];
 J = ideal(x^3,y^4,z^5)

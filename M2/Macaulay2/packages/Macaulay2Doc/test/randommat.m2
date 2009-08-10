@@ -1,5 +1,7 @@
 -- let's make sure the random number generator doesn't change
 
+setRandomSeed()
+
 assert( random (ZZ^3, ZZ^3) == matrix {{4, 1, 6}, {3, 3, 5}, {8, 9, 6}} )
 -- assert( random (ZZ^3, ZZ^3) == matrix {{0, 2, 0}, {1, -9, 7}, {5, -9, 8}} )
 
