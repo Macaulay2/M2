@@ -35,6 +35,7 @@ check: check-once
 check-once: .installed-$(VERSION)
 	$(MAKE) -C $(BUILDDIR) check
 	touch $@
+clean ::; rm -f check-once
 Makefile: @srcdir@/Makefile.in ; cd ../.. && ./config.status libraries/ntl/Makefile
 clean uninstall ::
 	if [ -d $(LIBRARIESDIR) ] ;\

@@ -39,7 +39,8 @@ BUILDDIR      ?= $(UNTARDIR)/$(TARDIR)
 UNTARCMD      ?= @TAR@ xzf $(TARFILE_DIR)/$(TARFILE)
 %.E: %.c; $(COMPILE.c) -E $(OUTPUT_OPTION) $<
 export PATH := @abs_top_srcdir@/autoconf/final/bin:$(PATH)
-all:install post-install
+all:prereq install post-install
+prereq:
 post-install:
 show-flags:; $(CONFIGENV) :
 install: .installed-$(VERSION) config-chk
