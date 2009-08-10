@@ -46,6 +46,7 @@ testgc:
 check-gc: testgc.okay
 testgc.okay : testgc ; ./testgc && touch $@
 clean::; rm -f testgc
+clean::; rm -rf *.dSYM
 Makefile : Makefile.in ; cd $(DOTS)/.. && ./config.status Macaulay2/packages/Macaulay2Doc/basictests/Makefile
 distclean :clean; rm -f Makefile
 check: check-return-code

@@ -4,6 +4,22 @@
 
 recursionLimit = 300
 
+scan(methods baseName, (baseName, BType) -> if BType =!= Symbol and BType =!= IndexedVariable then (
+	  v := value;
+     	  bn := a -> (
+	       r := baseName a;
+	       if value r =!= a then v = identity;	-- don't take values afterwards if either endpoint is not assigned to its base name
+	       r);
+	  (s,err) := (symbol .., lookup(symbol .., Thing, Thing));
+	  BType .. Thing := (a,z) -> v \ (( try bn a else err(a,z) ) .. z);
+	  Thing .. BType := (a,z) -> v \ (a .. (try bn z else err(a,z) ));
+	  BType .. BType := (a,z) -> v \ (( try bn a else err(a,z) ) .. (try bn z else err(a,z) ));
+	  (s,err) = (symbol ..<, lookup(symbol ..<, Thing, Thing));
+	  BType ..< Thing := (a,z) -> v \ (( try bn a else err(a,z) ) ..< z);
+	  Thing ..< BType := (a,z) -> v \ (a ..< (try bn z else err(a,z) ));
+	  BType ..< BType := (a,z) -> v \ (( try bn a else err(a,z) ) ..< (try bn z else err(a,z) ));
+	  ))
+
 addStartFunction(() -> setRandomSeed((currentTime() << 16) + processID()))
 addStartFunction(() -> path = unique apply( path, minimizeFilename))
 addEndFunction(() -> scan(openFiles(), f -> if isOutputFile f then flush f))

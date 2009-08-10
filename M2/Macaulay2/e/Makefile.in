@@ -125,6 +125,7 @@ pi-masks.h : pi-genmask
 pm-test.o : pm.hpp
 
 clean :: ; rm -f pi-demangled.s pi-test.s pi-test.o pi.s pi.E pi.o pi-test pi-test-run pi-masks.h
+clean :: ; rm -rf *.dSYM
 
 # Local Variables:
 # compile-command: "make -C $M2BUILDDIR/Macaulay2/e "

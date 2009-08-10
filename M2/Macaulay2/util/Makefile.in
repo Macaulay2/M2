@@ -21,7 +21,9 @@ all: $(EXES)
 #  it's replaced by stdint.h
 #  and it makes cross-compiling not work
 # targettypes.h : targettypes ; ./$^ >$@
-clean:; rm -f overlay.h overlay gmon.out $(EXES) *.o $(EXES:=.exe) $(EXES:=.obj) targettypes.h gc_tested gc_test
+clean:
+	rm -f overlay.h overlay gmon.out $(EXES) *.o $(EXES:=.exe) $(EXES:=.obj) targettypes.h gc_tested gc_test
+	rm -rf *.dSYM
 updat.o : restart.h
 ../bin/linkexec : linkexec ; cp -a $< $@
 ifeq "@OS@" "Windows-95-98-NT"
