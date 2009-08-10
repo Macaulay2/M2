@@ -15,9 +15,6 @@ endif
 ifeq (@FC@,f95)
 BUILDOPTIONS += TIMER=INT_ETIME 
 endif
-ifeq (@FC@,)
-$(error no fortran compiler provided)
-endif
 BUILDTARGET = blaslib lapack_install lib
 ifeq (@SHARED@,yes)
 BUILDTARGET += ../liblapack.so
@@ -27,6 +24,9 @@ INSTALLCMD = \
 	&& install lapack.a $(LIBRARIESDIR)/lib/liblapack.a \
 	&& install blas.a $(LIBRARIESDIR)/lib/libblas.a
 CHECKTARGET = lapack_testing blas_testing
+ifeq (@FC@,)
+prereq:;: $(error no fortran compiler provided)
+endif
 include ../Makefile.library
 Makefile: @srcdir@/Makefile.in ; cd ../.. && ./config.status libraries/lapack/Makefile
 # Local Variables:
