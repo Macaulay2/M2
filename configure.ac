@@ -772,7 +772,7 @@ then AC_LANG(C++)
      AC_MSG_CHECKING(for ntl library)
      FOUND=
      SAVELIBS=$LIBS
-     for lib in "" "-lntl"
+     for lib in "" "-lntl" "-lntl -lgf2x"
      do  test "$lib" && LIBS="$lib $LIBS"
 	 AC_LINK_IFELSE( [
 		 #include <NTL/tools.h>
