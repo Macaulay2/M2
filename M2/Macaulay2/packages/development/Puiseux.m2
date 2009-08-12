@@ -18,9 +18,9 @@ newPackage(
 --     test'puiseux,
 --      NewtonEdge
 
+needsPackage "UPolynomials"
 
 export {
-     "adjoinRoot",
      newtonEdges,
      branches,
      puiseuxTree,
@@ -41,77 +41,6 @@ DoingRationalPuiseux = true
 -- Internal routines for the package ---------
 ----------------------------------------------
 slope = (pts,i,j) -> (pts#j#1 - pts#i#1)/(pts#j#0 - pts#i#0)
-
-polynomialGCD = (f,g) -> (gens gb ideal(f,g))_(0,0)
-
-deg = (f) -> if f == 0 then -1 else (degree f)#0
-
-squarefree = (f) -> (
-     R := ring f;
-     p := char R;
-     x := R_0;
-     result := {};
-     T := polynomialGCD(f,diff(x,f));
-     V := f//T;
-     k := 0;
-     while deg(V) =!= 0 do (
-	  k = k+1;
-	  W := polynomialGCD(T,V);
-	  Ak := V//W;
-	  V = W;
-	  T = T//V;
-	  if deg(Ak) =!= 0 then 
-	      result = append(result,(k,Ak));
-	  );
-     if deg T != 0 then (
-	  -- we have a polynomial in x^p
-	  result2 := squarefree lowerP(T);
-	  result2 = apply(result2, a -> (p*a#0, a#1));
-	  result = join(result,result2);
-	  );
-     result
-     );
-
-----------------------------------------------
--- adjoining a root of a polynomial ----------
--- this likely will change interface, and ----
--- leave this file! --------------------------
-----------------------------------------------
-adjoinRoot = method()
-adjoinRoot RingElement := (f) -> (
-     K1top := null;
-     K1 := null;
-     R := ring f;
-     t := R_0;
-     K := coefficientRing R;
-     I := ideal K;
-     n := numgens K;
-     if deg f == 1 then (
-	  -- we need to solve for the root
-	  a := coefficient(t, f);
-	  b := coefficient(1_R, f);
-	  if a == 1 then -b else -b/a
-	  )
-     else (
-	  -- We need to create a new ring
-	  -- The default will be to make one non-tower ring out of all of this
-	  -- Assuming that f is monic?
-	  if numgens K == 0 then (
-	       K1top = K[vars 0];
-	       K1 = K1top/sub(f, t => K1top_0);
-	       toField K1;
-	       K1_0
-	       )
-	  else (
-	    K1top = (coefficientRing K)[vars n, gens K, MonomialOrder=>Lex];
-	    to1 := map(K1top, ring I, drop(gens K1top,1));
-	    to2 := map(K1top, R, gens K1top);
-	    J := ideal to2 f + to1 I;
-	    K1 = K1top/J;
-	    toField K1;
-	    K1_0
-	  )
-     ))
 
 ----------------------------------------
 -- Puiseux construction ----------------
@@ -506,66 +435,7 @@ makePuiseuxExample = (R, n, L, K, coeffs) ->(
 "
 *}
 
-needsPackage "UPolynomials"
-
-factorization = (F) -> (
-     << "factoring " << F << " over " << describe ring F << endl;
-     result := if coefficientRing ring F =!= QQ then
-       myFactorization F
-     else (
-       select(factor F//toList/toSequence/reverse, f -> first degree f#1 > 0));
-     result
-     )
-
-factorization = (F) -> (
-     << "factoring " << F << " over " << describe ring F << endl;
-     result := if coefficientRing ring F === QQ then
-       --select(factor F//toList/toSequence/reverse, f -> first degree f#1 > 0)
-       select(VerticalList factor F, f -> first degree f#0 > 0)/toSequence/reverse
-     else
-       myFactorization F;
-     << "  result: " << netList result << endl;
-     result
-     )
-
-dismiss UPolynomials
-
 beginDocumentation()
-
-doc ///
-  Key
-    adjoinRoot
-    (adjoinRoot,RingElement)
-  Headline
-    adjoin an algebraic element to a field
-  Usage
-    a = adjoinRoot f
-  Inputs
-    f:RingElement
-      An element of a ring A[t] (t can be any name), where A is a field
-  Outputs
-    a:RingElement
-      An element in an extension field B of A, whose minimal polynomial is f(t)
-  Description
-   Text
-     The variables are currently named a,b,c,...  In the future, more flexible names
-     might be allowed.  The way this works is to take all of the variables in A, if any,
-     and the new variable, and make one quotient ring out of it.  @TO toField@ is called
-     to make the ring usable as a field, and for Groebner basis coefficient fields.
-   Example
-     R = QQ[t];
-     a = adjoinRoot(t^2+t+1)
-     A = ring a
-     a^2+a+1
-     S = A[t];
-     b = adjoinRoot(t^3-a)
-     b^6
-  Caveat
-    The polynomial does not have to be irreducible, but if it is not,
-    then it is possible for some operations to give errors
-  SeeAlso
-    toField
-///
 
 doc ///
   Key

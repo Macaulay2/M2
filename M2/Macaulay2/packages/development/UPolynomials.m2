@@ -26,6 +26,7 @@ export {
      mySquareFreeDecomposition,
      myFactorization,
      myFactor,
+     factorization,
      setUFD,
      makeTower,
      deg,
@@ -368,7 +369,6 @@ myfac0 = (F, S, G, phis) -> (
 	       facsH = select(facsH, f -> first degree f > 0);
 	       result := apply(facsH, h -> myGCD(F, g h));
 	       result = select(result, f -> first degree f > 0);
-	       << "myfac0: result is " << netList result << endl;
 	       return result
 	       )
 	  );
@@ -387,8 +387,8 @@ myFactorization RingElement := (F) -> (
      if numgens K >= 2 then error "expected prime field or singly generated extension field";
      if not K.?myGCD then setUFD K;
      if not R.?myGCD then setUFD R;
-     S1 := K[t]; setUFD S1;
-     S := S1[a]; setUFD S;
+     S1 := K (monoid [t]); setUFD S1;
+     S := S1 (monoid [a]); setUFD S;
      phi0 := map(S,R,{S_1,S_0});
      phi0' := map(R,S,{R_1,R_0});
      IR := (ideal coefficientRing R)_0;
@@ -410,6 +410,26 @@ myFactor = method()
 myFactor RingElement := (F) -> (
      facs := myFactorization F;
      product apply(facs, (i,g) -> (hold g)^(hold i)))
+
+factorization = (F) -> (
+     << "factoring " << F << " over " << describe ring F << endl;
+     result := if coefficientRing ring F =!= QQ then
+       myFactorization F
+     else (
+       select(factor F//toList/toSequence/reverse, f -> first degree f#1 > 0));
+     result
+     )
+
+factorization = (F) -> (
+     << "factoring " << F << " over " << describe ring F << endl;
+     result := if coefficientRing ring F === QQ then
+       --select(factor F//toList/toSequence/reverse, f -> first degree f#1 > 0)
+       select(VerticalList factor F, f -> first degree f#0 > 0)/toSequence/reverse
+     else
+       myFactorization F;
+     << "  result: " << netList result << endl;
+     result
+     )
 
 ----------------------------------------------
 -- adjoining a root of a polynomial ----------
@@ -468,6 +488,42 @@ Description
 Caveat
 SeeAlso
 ///
+
+doc ///
+  Key
+    adjoinRoot
+    (adjoinRoot,RingElement)
+  Headline
+    adjoin an algebraic element to a field
+  Usage
+    a = adjoinRoot f
+  Inputs
+    f:RingElement
+      An element of a ring A[t] (t can be any name), where A is a field
+  Outputs
+    a:RingElement
+      An element in an extension field B of A, whose minimal polynomial is f(t)
+  Description
+   Text
+     The variables are currently named a,b,c,...  In the future, more flexible names
+     might be allowed.  The way this works is to take all of the variables in A, if any,
+     and the new variable, and make one quotient ring out of it.  @TO toField@ is called
+     to make the ring usable as a field, and for Groebner basis coefficient fields.
+   Example
+     R = QQ[t];
+     a = adjoinRoot(t^2+t+1)
+     A = ring a
+     a^2+a+1
+     S = A[t];
+     b = adjoinRoot(t^3-a)
+     b^6
+  Caveat
+    The polynomial does not have to be irreducible, but if it is not,
+    then it is possible for some operations to give errors
+  SeeAlso
+    toField
+///
+
 
 TEST ///
 R = ZZ[x]
@@ -738,6 +794,10 @@ KK = toField(QQ[a]/(a^2-a+1))
 R = KK[t]
 F = t^5+2*a*t^3+2*a*t^2+(a+3)*t-2*a+2
 myFactorization F
-
+factorization F
+myFactor F
 G = (2*a+4)*t^2+(-12*a+8)*t+a-9
-myFactorization G
+factorization G
+myFactor G
+myFactor F
+myFactor (13*G) -- BUG!!  misses the 13...!

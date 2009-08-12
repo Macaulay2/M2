@@ -199,6 +199,20 @@ integralClosureHypersurface Ring := (R) -> (
 	  );
      simplify e)
 
+integralClosureDenominator = method()
+integralClosureDenominator(Ring,RingElement) := (R,D) -> (
+     -- assumption: R is in Noether normal position
+     -- as required above.
+     e1 := fractionalIdeal ideal 1_R;
+     time j := fractionalIdeal trim radical ideal D;
+     time e := End j;
+     while e != e1 do (
+	  e1 = e;
+	  time (k,j) = radical(j,e1);
+	  time e = End j;
+	  );
+     simplify e)
+
 step1 = (j) -> (e := End j; (e*j, e))
 step2 = (j,e) -> (radical(j,e))_1
 
