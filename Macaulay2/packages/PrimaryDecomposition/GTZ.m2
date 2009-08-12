@@ -195,7 +195,14 @@ getSeparablePart = method()
 getSeparablePart(RingElement,RingElement,RingElement) := (f,u,x) -> (
      g := factors f;
      product select(g, g1 -> degree(x,g1) > 0))
-     
+
+-- MES: I grabbed this code from another file
+zerodimRadical = (I) -> (
+     -- assumption: dim I is 0
+     if dim I != 0 then error "expected zero dimensional ideal";
+     X := gens ring I;
+     trim ideal gens gb(I + sum apply(#X, i -> eliminate(drop(X,{i,i}), I)))
+     )
 
 radical00 = method()     
 radical00(Ideal,RingElement) := (I,u) -> (
