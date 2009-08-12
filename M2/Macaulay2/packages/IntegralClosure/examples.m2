@@ -506,4 +506,15 @@ I = ideal"x2+zw,
   y3+xwt,
   xw3+z3t+ywt2,
   y2w4-xy2z2t-w3t3"
+--------------------------------------------------------------------
+--triple-points
+kk = ZZ/32003 -- one used for debugging early on in M2
+R = kk[x,y]
+I1 = ideal"x,y"
+I2 = ideal"x,y-1"
+I3 = ideal"x-1,y"
+I4 = ideal"x-2,y-3"
+I5 = ideal"x-7,y-13"
+J = trim intersect(I1^3,I2^3,I3^3,I4^3,I5^3)
+I = ideal sum flatten entries gens J
 
