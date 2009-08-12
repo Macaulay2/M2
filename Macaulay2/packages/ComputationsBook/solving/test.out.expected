@@ -1,65 +1,67 @@
 
-i1 : R = ZZ/101[y11, y12, y21, y22];
+i1 : setRandomSeed();
 
-i2 : PolynomialSystem = apply(1..4, i -> 
+i2 : R = ZZ/101[y11, y12, y21, y22];
+
+i3 : PolynomialSystem = apply(1..4, i -> 
                      random(0, R) + random(1, R) + random(2, R));
 
-i3 : I = ideal PolynomialSystem;
+i4 : I = ideal PolynomialSystem;
 
-o3 : Ideal of R
+o4 : Ideal of R
 
-i4 : dim I, degree I
+i5 : dim I, degree I
 
-o4 = (0, 16)
+o5 = (0, 16)
 
-o4 : Sequence
+o5 : Sequence
 
-i5 : J = ideal (random(R^4, R^7) *  transpose(
+i6 : J = ideal (random(R^4, R^7) *  transpose(
              matrix{{1, y11, y12, y21, y22, y11*y22, y12*y21}}));
 
-o5 : Ideal of R
+o6 : Ideal of R
 
-i6 : dim J, degree J
+i7 : dim J, degree J
 
-o6 = (0, 4)
+o7 = (0, 4)
 
-o6 : Sequence
+o7 : Sequence
 
-i7 : K = ideal (random(R^4, R^6) * transpose( 
+i8 : K = ideal (random(R^4, R^6) * transpose( 
              matrix{{1, y11, y12, y21, y22, y11*y22 - y12*y21}}));
 
-o7 : Ideal of R
+o8 : Ideal of R
 
-i8 : dim K, degree K
+i9 : dim K, degree K
 
-o8 = (0, 2)
+o9 = (0, 2)
 
-o8 : Sequence
+o9 : Sequence
 
-i9 : R = ZZ/7[y, x, MonomialOrder=>Lex];
+i10 : R = ZZ/7[y, x, MonomialOrder=>Lex];
 
-i10 : I = ideal (y^3*x^2 + 2*y^2*x + 3*x*y,  3*y^2 + x*y - 3*y);
-
-o10 : Ideal of R
-
-i11 : J = saturate(I, ideal(y))
-
-                          4    3     2
-o11 = ideal (y - 2x - 1, x  + x  + 3x  + 3x)
+i11 : I = ideal (y^3*x^2 + 2*y^2*x + 3*x*y,  3*y^2 + x*y - 3*y);
 
 o11 : Ideal of R
 
-i12 : factor(J_1)
+i12 : J = saturate(I, ideal(y))
 
-o12 = (x)(x + 1)(x + 2)(x - 2)
+                          4    3     2
+o12 = ideal (y - 2x - 1, x  + x  + 3x  + 3x)
 
-o12 : Expression of class Product
+o12 : Ideal of R
 
-i13 : load "realroots.m2"
+i13 : factor(J_1)
 
-i14 : code eliminant
+o13 = (x)(x + 1)(x + 2)(x - 2)
 
-o14 = /home/dan/src/M2/1.2/Macaulay2/packages/ComputationsBook/solving/realroots.m2:65:20-80:32: --source code:
+o13 : Expression of class Product
+
+i14 : load "realroots.m2"
+
+i15 : code eliminant
+
+o15 = /Users/dan/src/M2/Macaulay2/packages/ComputationsBook/solving/realroots.m2:65:20-80:32: --source code:
       eliminant = (h, C) -> (
            Z := C_0;
            A := ring h;
@@ -77,18 +79,18 @@ o14 = /home/dan/src/M2/1.2/Macaulay2/packages/ComputationsBook/solving/realroots
            P := matrix {toList apply(0..d, i -> Z^i)} * N;
                 (flatten entries(P))_0)
 
-i15 : code regularRep
+i16 : code regularRep
 
-o15 = /home/dan/src/M2/1.2/Macaulay2/packages/ComputationsBook/solving/realroots.m2:96:16-100:45: --source code:
+o16 = /Users/dan/src/M2/Macaulay2/packages/ComputationsBook/solving/realroots.m2:96:16-100:45: --source code:
       regularRep = f -> (
            assert( dim ring f == 0 );
            b := basis ring f;
            k := coefficientRing ring f;
            substitute(contract(transpose b, f*b), k))
 
-i16 : code charPoly
+i17 : code charPoly
 
-o16 = /home/dan/src/M2/1.2/Macaulay2/packages/ComputationsBook/solving/realroots.m2:106:19-113:16: --source code:
+o17 = /Users/dan/src/M2/Macaulay2/packages/ComputationsBook/solving/realroots.m2:106:19-113:16: --source code:
       charPoly = (h, Z) -> (
            A := ring h;
            F := coefficientRing A;
@@ -98,9 +100,9 @@ o16 = /home/dan/src/M2/1.2/Macaulay2/packages/ComputationsBook/solving/realroots
            Idz := S_0 * id_(S^(numgens source mh));
            det(Idz - mh))
 
-i17 : code SturmSequence
+i18 : code SturmSequence
 
-o17 = /home/dan/src/M2/1.2/Macaulay2/packages/ComputationsBook/solving/realroots.m2:117:19-131:13: --source code:
+o18 = /Users/dan/src/M2/Macaulay2/packages/ComputationsBook/solving/realroots.m2:117:19-131:13: --source code:
       SturmSequence = f -> (
            assert( isPolynomialRing ring f );
            assert( numgens ring f === 1 );
@@ -117,25 +119,25 @@ o17 = /home/dan/src/M2/1.2/Macaulay2/packages/ComputationsBook/solving/realroots
                      ));
            toList c)
 
-i18 : code numRealSturm
+i19 : code numRealSturm
 
-o18 = /home/dan/src/M2/1.2/Macaulay2/packages/ComputationsBook/solving/realroots.m2:160:18-163:41: --source code:
+o19 = /Users/dan/src/M2/Macaulay2/packages/ComputationsBook/solving/realroots.m2:160:18-163:41: --source code:
       numRealSturm = f -> (
            c := SturmSequence f;
            variations (signAtMinusInfinity \ c) 
                - variations (signAtInfinity \ c))
 
-i19 : code numPosRoots
+i20 : code numPosRoots
 
-o19 = /home/dan/src/M2/1.2/Macaulay2/packages/ComputationsBook/solving/realroots.m2:168:17-171:41: --source code:
+o20 = /Users/dan/src/M2/Macaulay2/packages/ComputationsBook/solving/realroots.m2:168:17-171:41: --source code:
       numPosRoots = f -> (  
            c := SturmSequence f;
            variations (signAtZero \ c) 
                - variations (signAtInfinity \ c))
 
-i20 : code variations
+i21 : code variations
 
-o20 = /home/dan/src/M2/1.2/Macaulay2/packages/ComputationsBook/solving/realroots.m2:183:16-191:6: --source code:
+o21 = /Users/dan/src/M2/Macaulay2/packages/ComputationsBook/solving/realroots.m2:183:16-191:6: --source code:
       variations = c -> (
            n := 0;
            last := 0;
@@ -146,9 +148,9 @@ o20 = /home/dan/src/M2/1.2/Macaulay2/packages/ComputationsBook/solving/realroots
                      ));
            n)
 
-i21 : code traceForm
+i22 : code traceForm
 
-o21 = /home/dan/src/M2/1.2/Macaulay2/packages/ComputationsBook/solving/realroots.m2:196:15-203:41: --source code:
+o22 = /Users/dan/src/M2/Macaulay2/packages/ComputationsBook/solving/realroots.m2:196:15-203:41: --source code:
       traceForm = h -> (
            assert( dim ring h == 0 );
            b  := basis ring h;
@@ -158,9 +160,9 @@ o21 = /home/dan/src/M2/1.2/Macaulay2/packages/ComputationsBook/solving/realroots
                      trace regularRep x)};
            adjoint(tr * mm, source tr, source tr))
 
-i22 : code traceFormSignature
+i23 : code traceFormSignature
 
-o22 = /home/dan/src/M2/1.2/Macaulay2/packages/ComputationsBook/solving/realroots.m2:208:24-218:43: --source code:
+o23 = /Users/dan/src/M2/Macaulay2/packages/ComputationsBook/solving/realroots.m2:208:24-218:43: --source code:
       traceFormSignature = h -> (
            A := ring h;
            assert( dim A == 0 );
@@ -173,9 +175,9 @@ o22 = /home/dan/src/M2/1.2/Macaulay2/packages/ComputationsBook/solving/realroots
              " has rank " << rank(TrF) << " and signature " << 
              numPosRoots(f) - numNegRoots(f) << endl; )
 
-i23 : code numRealTrace
+i24 : code numRealTrace
 
-o23 = /home/dan/src/M2/1.2/Macaulay2/packages/ComputationsBook/solving/realroots.m2:223:18-230:33: --source code:
+o24 = /Users/dan/src/M2/Macaulay2/packages/ComputationsBook/solving/realroots.m2:223:18-230:33: --source code:
       numRealTrace = A -> (
            assert( dim A == 0 );
            assert( char A == 0 );
@@ -185,141 +187,141 @@ o23 = /home/dan/src/M2/1.2/Macaulay2/packages/ComputationsBook/solving/realroots
            f := det(TrF - IdZ);
            numPosRoots(f)-numNegRoots(f))
 
-i24 : R = QQ[x, y];
+i25 : R = QQ[x, y];
 
-i25 : I = ideal (1 - x^2*y + 2*x*y^2,  y - 2*x - x*y + x^2);
+i26 : I = ideal (1 - x^2*y + 2*x*y^2,  y - 2*x - x*y + x^2);
 
-o25 : Ideal of R
+o26 : Ideal of R
 
-i26 : dim I, degree I
+i27 : dim I, degree I
 
-o26 = (0, 5)
+o27 = (0, 5)
 
-o26 : Sequence
+o27 : Sequence
 
-i27 : A = R/I;
+i28 : A = R/I;
 
-i28 : time g = eliminant(x, QQ[Z])
-     -- used 0.016001 seconds
-
-       5     4     3    2
-o28 = Z  - 5Z  + 6Z  + Z  - 2Z + 1
-
-o28 : QQ[Z]
-
-i29 : time g = charPoly(x, Z)
-     -- used 0.004 seconds
+i29 : time g = eliminant(x, QQ[Z])
+     -- used 0.016091 seconds
 
        5     4     3    2
 o29 = Z  - 5Z  + 6Z  + Z  - 2Z + 1
 
 o29 : QQ[Z]
 
-i30 : numRealSturm(g), numRealTrace(A)
+i30 : time g = charPoly(x, Z)
+     -- used 0.003583 seconds
 
-o30 = (3, 3)
+       5     4     3    2
+o30 = Z  - 5Z  + 6Z  + Z  - 2Z + 1
 
-o30 : Sequence
+o30 : QQ[Z]
 
-i31 : traceFormSignature(x*y);
+i31 : numRealSturm(g), numRealTrace(A)
+
+o31 = (3, 3)
+
+o31 : Sequence
+
+i32 : traceFormSignature(x*y);
 The trace form S_h with h = x*y has rank 5 and signature 3
 
-i32 : traceFormSignature(x - 2);
+i33 : traceFormSignature(x - 2);
 The trace form S_h with h = x - 2 has rank 5 and signature 1
 
-i33 : traceFormSignature(x + y - 3);
+i34 : traceFormSignature(x + y - 3);
 The trace form S_h with h = x + y - 3 has rank 5 and signature -1
 
-i34 : Points = {{2, 2,  0 }, {1, -2,  0}, {-3, 0, 0}, 
+i35 : Points = {{2, 2,  0 }, {1, -2,  0}, {-3, 0, 0}, 
                 {0, 0, 5/2}, {0,  0, -3}};
 
-i35 : R = QQ[r, y11, y12, y21, y22];
+i36 : R = QQ[r, y11, y12, y21, y22];
 
-i36 : P = matrix{{0, y11, y12}};
-
-              1       3
-o36 : Matrix R  <--- R
-
-i37 : V = matrix{{1, y21, y22}};
+i37 : P = matrix{{0, y11, y12}};
 
               1       3
 o37 : Matrix R  <--- R
 
-i38 : Points = matrix Points ** R;
+i38 : V = matrix{{1, y21, y22}};
 
-              5       3
+              1       3
 o38 : Matrix R  <--- R
 
-i39 : I = ideal apply(0..4, i -> (
+i39 : Points = matrix Points ** R;
+
+              5       3
+o39 : Matrix R  <--- R
+
+i40 : I = ideal apply(0..4, i -> (
                 X := Points^{i};
                 r * (V * transpose V)  +
                  ((X - P) * transpose V)^2) -
                  ((X - P) * transpose(X - P)) * (V * transpose V)
                 );
 
-o39 : Ideal of R
+o40 : Ideal of R
 
-i40 : dim I, degree I
+i41 : dim I, degree I
 
-o40 = (0, 6)
+o41 = (0, 6)
 
-o40 : Sequence
+o41 : Sequence
 
-i41 : A = R/I; numPosRoots(charPoly(r, Z))
+i42 : A = R/I; numPosRoots(charPoly(r, Z))
 
-o42 = 6
+o43 = 6
 
-i43 : Sphere = (a, b, c, r) -> (
+i44 : Sphere = (a, b, c, r) -> (
               matrix{{a^2 + b^2 + c^2 - r ,-a ,-b ,-c },
                      {         -a         , 1 , 0 , 0 },
                      {         -b         , 0 , 1 , 0 },
                      {         -c         , 0 , 0 , 1 }}
               );
 
-i44 : R = QQ[y11, y12, y21, y22];
+i45 : R = QQ[y11, y12, y21, y22];
 
-i45 : tangentTo = (M) -> (
+i46 : tangentTo = (M) -> (
            P := matrix{{1, 0, y11, y12}};
            V := matrix{{0, 1, y21, y22}};
            (P * M * transpose V)^2 - 
              (P * M * transpose P) * (V * M * transpose V)
            );
 
-i46 : I = ideal (tangentTo(Sphere(0,0,0,5)), 
+i47 : I = ideal (tangentTo(Sphere(0,0,0,5)), 
                  tangentTo(Sphere(4,1,1,5)), 
                  tangentTo(Sphere(1,4,1,5)), 
                  tangentTo(Sphere(1,1,4,5)));
 
-o46 : Ideal of R
+o47 : Ideal of R
 
-i47 : dim I, degree I
+i48 : dim I, degree I
 
-o47 = (0, 12)
+o48 = (0, 12)
 
-o47 : Sequence
+o48 : Sequence
 
-i48 : A = R/I;
+i49 : A = R/I;
 
-i49 : numRealSturm(eliminant(y11 - y12 + y21 + y22, QQ[Z]))
+i50 : numRealSturm(eliminant(y11 - y12 + y21 + y22, QQ[Z]))
 
-o49 = 12
+o50 = 12
 
-i50 : R = ZZ/101[apply(subsets(5,2), i -> p_i )];
+i51 : R = ZZ/101[apply(subsets(5,2), i -> p_i )];
 
-i51 : I = Grassmannian(1, 4, R)
+i52 : I = Grassmannian(1, 4, R)
 
-o51 = ideal (p      p       - p      p       + p      p      , p      p       - p      p       + p      p      , p      p       - p      p       + p      p      , p      p       - p      p       + p      p      , p      p       - p      p       + p      p      )
+o52 = ideal (p      p       - p      p       + p      p      , p      p       - p      p       + p      p      , p      p       - p      p       + p      p      , p      p       - p      p       + p      p      , p      p       - p      p       + p      p      )
               {2, 3} {1, 4}    {1, 3} {2, 4}    {1, 2} {3, 4}   {2, 3} {0, 4}    {0, 3} {2, 4}    {0, 2} {3, 4}   {1, 3} {0, 4}    {0, 3} {1, 4}    {0, 1} {3, 4}   {1, 2} {0, 4}    {0, 2} {1, 4}    {0, 1} {2, 4}   {1, 2} {0, 3}    {0, 2} {1, 3}    {0, 1} {2, 3}
 
-o51 : Ideal of R
+o52 : Ideal of R
 
-i52 : dim(Proj(R/I)), degree(I)
+i53 : dim(Proj(R/I)), degree(I)
 
-o52 = (6, 5)
+o53 = (6, 5)
 
-o52 : Sequence
+o53 : Sequence
 
-i53 : oscPlane = (i, n, s) -> (
+i54 : oscPlane = (i, n, s) -> (
            gamma := matrix {toList apply(1..n, i -> s^(i-1))};
            L := gamma;
            j := 0;
@@ -328,16 +330,16 @@ i53 : oscPlane = (i, n, s) -> (
                 j = j+1);
            L);
 
-i54 : QQ[s]; oscPlane(3, 6, s)
+i55 : QQ[s]; oscPlane(3, 6, s)
 
-o55 = | 1 s s2 s3  s4   s5   |
+o56 = | 1 s s2 s3  s4   s5   |
       | 0 1 2s 3s2 4s3  5s4  |
       | 0 0 2  6s  12s2 20s3 |
 
                     3             6
-o55 : Matrix (QQ[s])  <--- (QQ[s])
+o56 : Matrix (QQ[s])  <--- (QQ[s])
 
-i56 : spSchub = (r, L, P) -> (
+i57 : spSchub = (r, L, P) -> (
            I := ideal apply(subsets(numgens source L, 
                             r + numgens target L), S -> 
                 fold((sum, U) -> sum +
@@ -345,30 +347,30 @@ i56 : spSchub = (r, L, P) -> (
                   submatrix(L, sort toList(set(S) - set(S_U)))), U), 
                      0, subsets(#S, r))));
 
-i57 : R = QQ[apply(subsets(6,3), i -> p_i )];
+i58 : R = QQ[apply(subsets(6,3), i -> p_i )];
 
-i58 : I = fold((J, i) -> J +
+i59 : I = fold((J, i) -> J +
             spSchub(3, substitute(oscPlane(3, 6, s), {s=> 1+i}), p) +
             spSchub(3, substitute(oscPlane(2, 6, s), {s=> 4+i}), p), 
             Grassmannian(2, 5, R), {0,1,2}) + 
            ideal (p_{0,1,5} - 1);
 
-o58 : Ideal of R
+o59 : Ideal of R
 
-i59 : dim I, degree I
+i60 : dim I, degree I
 
-o59 = (0, 6)
+o60 = (0, 6)
 
-o59 : Sequence
+o60 : Sequence
 
-i60 : A = R/I; numRealSturm(eliminant(p_{2,3,4}, QQ[Z]))
+i61 : A = R/I; numRealSturm(eliminant(p_{2,3,4}, QQ[Z]))
 
-o61 = 6
+o62 = 6
 
-i62 : randL = (R, n, r, l) -> 
+i63 : randL = (R, n, r, l) -> 
                 matrix table(n-r+1-l, n, (i, j) -> random(0, R));
 
-i63 : testTransverse = F -> (
+i64 : testTransverse = F -> (
             R := F[apply(subsets(6, 3), i -> q_i )];
             Continue := true;
             j := 0;  
@@ -392,16 +394,16 @@ i63 : testTransverse = F -> (
                 char F << " in " << j << " iteration(s)" << endl;
             );
 
-i64 : testTransverse(ZZ/2);
+i65 : testTransverse(ZZ/2);
 Failed for the prime 2 with 5 iterations
 
-i65 : (random 10;testTransverse(GF 4);)
+i66 : (random 10;testTransverse(GF 4);)
 Succeeded for the prime 2 in 2 iteration(s)
 
-i66 : testTransverse(ZZ/7);
+i67 : testTransverse(ZZ/7);
 Succeeded for the prime 7 in 1 iteration(s)
 
-i67 : randomSymmetricMatrix = (R, n) -> (
+i68 : randomSymmetricMatrix = (R, n) -> (
           entries := new MutableHashTable;
           scan(0..n-1, i -> scan(i..n-1, j -> 
                        entries#(i, j) = random(0, R)));
@@ -409,174 +411,174 @@ i67 : randomSymmetricMatrix = (R, n) -> (
                        entries#(j, i) else entries#(i, j))
           );
 
-i68 : tangentEquation = (r, R, M) -> (
+i69 : tangentEquation = (r, R, M) -> (
            g := matrix {gens(R)};
            (entries(g * exteriorPower(r, M) * transpose g))_0_0
            );
 
-i69 : R = QQ[apply(subsets(4, 2), i -> p_i )];
+i70 : R = QQ[apply(subsets(4, 2), i -> p_i )];
 
-i70 : I = Grassmannian(1, 3, R) + ideal apply(0..3, i -> 
+i71 : I = Grassmannian(1, 3, R) + ideal apply(0..3, i -> 
            tangentEquation(2, R, randomSymmetricMatrix(R, 4)));
 
-o70 : Ideal of R
+o71 : Ideal of R
 
-i71 : dim Proj(R/I), degree I
+i72 : dim Proj(R/I), degree I
 
-o71 = (0, 32)
+o72 = (0, 32)
 
-o71 : Sequence
+o72 : Sequence
 
-i72 : I = Grassmannian(1, 3, R) + 
+i73 : I = Grassmannian(1, 3, R) + 
               ideal (tangentEquation(2, R, Sphere(0,0,0,5)),
                      tangentEquation(2, R, Sphere(4,1,1,5)),
                      tangentEquation(2, R, Sphere(1,4,1,5)),
                      tangentEquation(2, R, Sphere(1,1,4,5)));
 
-o72 : Ideal of R
+o73 : Ideal of R
 
-i73 : dim Proj(R/I), degree I
+i74 : dim Proj(R/I), degree I
 
-o73 = (1, 4)
+o74 = (1, 4)
 
-o73 : Sequence
+o74 : Sequence
 
-i74 : Lines = saturate(I, ideal (p_{0,1}));
+i75 : Lines = saturate(I, ideal (p_{0,1}));
 
-o74 : Ideal of R
+o75 : Ideal of R
 
-i75 : dim Proj(R/Lines), degree(Lines)
+i76 : dim Proj(R/Lines), degree(Lines)
 
-o75 = (0, 12)
+o76 = (0, 12)
 
-o75 : Sequence
+o76 : Sequence
 
-i76 : Junk = I : Lines;
+i77 : Junk = I : Lines;
 
-o76 : Ideal of R
+o77 : Ideal of R
 
-i77 : dim Proj(R/Junk), degree Junk
+i78 : dim Proj(R/Junk), degree Junk
 
-o77 = (1, 4)
+o78 = (1, 4)
 
-o77 : Sequence
+o78 : Sequence
 
-i78 : radical(Junk)
+i79 : radical(Junk)
 
                                          2         2         2
-o78 = ideal (p      , p      , p      , p       + p       + p      )
+o79 = ideal (p      , p      , p      , p       + p       + p      )
               {0, 3}   {0, 2}   {0, 1}   {1, 2}    {1, 3}    {2, 3}
 
-o78 : Ideal of R
+o79 : Ideal of R
 
-i79 : Two = (a, b, c, r) -> (
+i80 : Two = (a, b, c, r) -> (
            matrix{{a^2 + b^2 - c^2 + r ,-a ,-b , c },
                   {         -a         , 1 , 0 , 0 },
                   {         -b         , 0 , 1 , 0 },
                   {          c         , 0 , 0 ,-1 }}
            );
 
-i80 : One = (a, b, c, r) -> (
+i81 : One = (a, b, c, r) -> (
            matrix{{a^2 + b^2 - c^2 - r ,-a ,-b , c },
                   {         -a         , 1 , 0 , 0 },
                   {         -b         , 0 , 1 , 0 },
                   {          c         , 0 , 0 ,-1 }}
            );
 
-i81 : R = QQ[y11, y12, y21, y22];
+i82 : R = QQ[y11, y12, y21, y22];
 
-i82 : I = ideal (tangentTo(One( 5, 3, 3,16)), 
+i83 : I = ideal (tangentTo(One( 5, 3, 3,16)), 
                  tangentTo(One( 5,-4, 2, 1)),  
                  tangentTo(One(-3,-1, 1, 1)), 
                  tangentTo(One( 2,-7, 0, 1)));
 
-o82 : Ideal of R
+o83 : Ideal of R
 
-i83 : numRealSturm(charPoly(promote(y22, R/I), Z))
+i84 : numRealSturm(charPoly(promote(y22, R/I), Z))
 
-o83 = 12
+o84 = 12
 
-i84 : I = ideal (tangentTo(One( 3,-2,-3, 6)), 
+i85 : I = ideal (tangentTo(One( 3,-2,-3, 6)), 
                  tangentTo(One(-3,-7,-6, 7)),  
                  tangentTo(One(-6, 3,-5, 2)), 
                  tangentTo(Two( 1, 6,-2, 5)));
 
-o84 : Ideal of R
+o85 : Ideal of R
 
-i85 : numRealSturm(charPoly(promote(y22, R/I), Z))
+i86 : numRealSturm(charPoly(promote(y22, R/I), Z))
 
-o85 = 12
+o86 = 12
 
-i86 : I = ideal (tangentTo(One( 6, 4, 6, 4)),  
+i87 : I = ideal (tangentTo(One( 6, 4, 6, 4)),  
                  tangentTo(One(-1, 3, 3, 6)), 
                  tangentTo(Two(-7,-2, 3, 3)), 
                  tangentTo(Two(-6, 7,-2, 5)));
 
-o86 : Ideal of R
+o87 : Ideal of R
 
-i87 : numRealSturm(charPoly(promote(y22, R/I), Z))
+i88 : numRealSturm(charPoly(promote(y22, R/I), Z))
 
-o87 = 12
+o88 = 12
 
-i88 : I = ideal (tangentTo(One(-1,-4,-1, 1)),
+i89 : I = ideal (tangentTo(One(-1,-4,-1, 1)),
                  tangentTo(Two(-3, 3,-1, 1)),  
                  tangentTo(Two(-7, 6, 2, 9)), 
                  tangentTo(Two( 5, 6,-1,12)));
 
-o88 : Ideal of R
+o89 : Ideal of R
 
-i89 : numRealSturm(charPoly(promote(y22, R/I), Z))
+i90 : numRealSturm(charPoly(promote(y22, R/I), Z))
 
-o89 = 12
+o90 = 12
 
-i90 : I = ideal (tangentTo(Two( 5, 2,-1,25)), 
+i91 : I = ideal (tangentTo(Two( 5, 2,-1,25)), 
                  tangentTo(Two( 6,-6, 2,25)), 
                  tangentTo(Two(-7, 1, 6, 1)), 
                  tangentTo(Two( 3, 1, 0, 1)));
 
-o90 : Ideal of R
+o91 : Ideal of R
 
-i91 : numRealSturm(charPoly(promote(y22, R/I), Z))
+i92 : numRealSturm(charPoly(promote(y22, R/I), Z))
 
-o91 = 12
+o92 = 12
 
-i92 : tanQuad = (M, X) -> (
+i93 : tanQuad = (M, X) -> (
            u := X^{0};
            v := X^{1};
            (u * M * transpose v)^2 - 
            (u * M * transpose u) * (v * M * transpose v)
            );
 
-i93 : nSphere = (V, r) -> 
+i94 : nSphere = (V, r) -> 
                (matrix {{r + V * transpose V}} || transpose V ) |
                ( V || id_((ring r)^n)
                );
 
-i94 : V = () -> matrix table(1, n, (i,j) -> random(0, R));
+i95 : V = () -> matrix table(1, n, (i,j) -> random(0, R));
 
-i95 : r = () -> random(0, R);
+i96 : r = () -> random(0, R);
 
-i96 : n = 4;
+i97 : n = 4;
 
-i97 : R = ZZ/1009[flatten(table(2, n-1, (i,j) -> z_(i,j)))];
+i98 : R = ZZ/1009[flatten(table(2, n-1, (i,j) -> z_(i,j)))];
 
-i98 : X = 1 | matrix table(2, n-1, (i,j) -> z_(i,j))
+i99 : X = 1 | matrix table(2, n-1, (i,j) -> z_(i,j))
 
-o98 = | 1 0 z_(0,0) z_(0,1) z_(0,2) |
+o99 = | 1 0 z_(0,0) z_(0,1) z_(0,2) |
       | 0 1 z_(1,0) z_(1,1) z_(1,2) |
 
               2       5
-o98 : Matrix R  <--- R
+o99 : Matrix R  <--- R
 
-i99 : I = ideal (apply(1..(2*n-2), 
-                     i -> tanQuad(nSphere(V(), r()), X)));
+i100 : I = ideal (apply(1..(2*n-2), 
+                      i -> tanQuad(nSphere(V(), r()), X)));
 
-o99 : Ideal of R
+o100 : Ideal of R
 
-i100 : dim I, degree I
+i101 : dim I, degree I
 
-o100 = (0, 24)
+o101 = (0, 24)
 
-o100 : Sequence
+o101 : Sequence
 
-i101 : 
+i102 : 

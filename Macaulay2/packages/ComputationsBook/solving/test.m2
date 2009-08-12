@@ -1,3 +1,4 @@
+setRandomSeed();
 R = ZZ/101[y11, y12, y21, y22];
 PolynomialSystem = apply(1..4, i -> 
                 random(0, R) + random(1, R) + random(2, R));

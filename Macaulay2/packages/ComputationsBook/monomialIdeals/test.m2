@@ -1,4 +1,5 @@
-S = QQ[a, b, c, d]; 
+setRandomSeed();
+S = QQ[a, b, c, d];
 I = monomialIdeal(a^2, a*b, b^3, a*c)
 J = monomialIdeal{a^2, a*b, b^2}
 monomialIdeal(a^2+a*b, a*b+3, b^2+d)
