@@ -1,3 +1,10 @@
+load "~/src/M2/Macaulay2/packages/Macaulay2Doc/test/saturate3.m2"
+
+-- bug reported by Paolo Aluffi <aluffi@mail.math.fsu.edu>, april 2009
+
+end
+-- Below is playing witht his example
+
 restart
 kk = QQ
 kk = ZZ/32003 -- original problem is for over QQ
