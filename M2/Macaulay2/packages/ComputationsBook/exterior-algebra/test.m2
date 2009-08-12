@@ -1,3 +1,4 @@
+setRandomSeed();
 symExt = (m,E) ->(
      ev := map(E,ring m,vars E);
      mt := transpose jacobian m;
