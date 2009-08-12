@@ -1,0 +1,74 @@
+Status of packages from Snowbird and elsewhere
+
+possible status:
+A - snowbird package needs to be merged in, or checked with version in packages
+B - snowbird package is the one to use, but has not been placed into packages
+C - snowbird package has already been placed into packages
+D - is not ready for prime time
+E - not ready, but we want it anyway
+x - means handled.  Don't worry about it anymore.
+
+status	package	      	   comments
+B	BGG		   copied to packages.
+B	BoijSoderberg	   in packages already
+C	Bruns		   example needs to be fixed
+?	DirectImages	   probably for 1.3
+?	EdgeIdeals	   I think version in packages is current, but we need to check this
+?	FourTiTwo	   ditto
+?	GenericInitialIdeal	ditto
+B	IntegralClosure		wait for Amelia on this one
+LocalRings		?
+NoetherNormalization	?
+Points			?
+Polymake		?
+Posets,Posets2		leave out?
+PrimaryDecomposition	?
+ReesAlgebra		?
+Regularity		?
+Schubert2
+SchurFunctors
+SchurRings
+SymmetricPolynomials
+gfanInterface
+
+Other packages to check on:
+Markov
+most recent:
+packages		BGG.m2				
+same			BoijSoederberg.m2		
+same			Bruns.m2
+same			EdgeIdeals.m2			snowbird changed
+packages		FourTiTwo.m2			snowbird out of date, note that there are aux files now.
+							I need to install this so I can test it, and build doc for it!
+same			GenericInitialIdeal.m2		snowbird is basically the correct one, although some use of rings is not optimal
+							tell Alexandra of the small changes I made.
+same			LocalRings.m2			one in snowbird was changed alot at snowbird.  Using it.
+same			NoetherNormalization.m2		I made small changes: email authors
+same			PrimaryDecomposition		snowbird had some good doc and code changes in it
+packages		PrimaryDecomposition.m2		DOC is pretty bad still
+                                                        bugs to fix: pd over tower rings
+							snowbird was the same until I started to fix this bug
+same			primaryDecomposition-doc.m2
+same			Regularity.m2			some code added at snowbird.  Using that.
+same			Points.m2			
+x			ReesAlgebra.m2			this one is now not current
+snowbird		ReesAlgebra2.m2			this has the latest code and doc in it
+same			SchurFunctors			doc needs work
+same			SchurFunctors.m2
+same			SchurRings.m2			needs doc, 
+same			SymmetricPolynomials.m2		email Alexandra that it has changed in snowbird
+
+			IntegralClosure.m2		later: Amelia is working on this now
+			Polymake.m2			waiting for Andrew Hoefl
+			gfanInterface.m2		waiting for Andrew Hoefl
+
+			Schubert2			snowbird doc.m2: check that it has been added
+packages		Schubert2.m2			the snowbird version should be updated or removed
+
+
+Should we include the following, or are they for later?
+			DirectImages.m2
+			Posets.m2
+			Posets2.m2
+			GroebnerWalk.m2
+			points-de+sp.m2
