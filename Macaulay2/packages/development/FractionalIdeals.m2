@@ -16,8 +16,11 @@ export {FractionalIdeal,
      disc, -- this name will change!
      newDenominator,
      simplify,
-     integralClosureHypersurface
+     integralClosureHypersurface,
+     integralClosureDenominator
      }
+
+TraceLevel = 2
 
 if instance(FractionalIdeal, Symbol) then
 FractionalIdeal = new Type of List
@@ -134,11 +137,16 @@ newDenominator(FractionalIdeal, RingElement) := (F,g) -> (
      new FractionalIdeal from {b, promote(b//a,R) * F#1}
      )
 
+debug PrimaryDecomposition
+
 radical(FractionalIdeal, FractionalIdeal) := opts -> (F,R1) -> (
      -- Assumption: R1 is a ring
      -- F is an ideal of R1
      -- compute a presentation A of R1
-     R1' := ringFromFractions(R1, Variable=>symbol w); -- the generators correspond to elements of R1#1 (except the first, which 
+     -- MES MES TODO TODO !!!! Not functional if R1' == R (8-16-09)
+     R1' := time if R1#0 == 1 and R1#1 == 1 
+       then R
+       else ringFromFractions(R1, Variable=>symbol w); -- the generators correspond to elements of R1#1 (except the first, which 
           -- corresponds to the unit).
      -- map F into A.  We need to know how to represent elements of F as elements in R1
      -- we assume: F = 1/g J \subset R1 = 1/f L
@@ -150,13 +158,23 @@ radical(FractionalIdeal, FractionalIdeal) := opts -> (F,R1) -> (
      v := matrix{{1_R1'}} | promote(newvars,R1');
      vS' := matrix{{1_S'}} | newvars;
      J := ideal(v * sub(M, R1'));
+     -- New computation of radical:
+     J0 := first flattenRing J;
+     time Jrad := rad J0;
+{*
      -- do the radical
-     Jcomps := decompose J;
+     J0 := first flattenRing J;
+     << "R0 = " << toExternalString ring J0 << endl;
+     << "J0 = " << toString J0 << endl;
+     time Jcomps := decompose J;
      << " rad components codims " << (Jcomps/codim) << endl;
      << " rad components " << netList Jcomps << endl;
-     Jrad := trim radical J; -- note: these are all linear in the new vars
+     time Jrad := trim radical J; -- note: these are all linear in the new vars
      Jrad = lift(gens Jrad, S');
-     (mn,cf) := coefficients(Jrad, Monomials => vS', Variables=>flatten entries newvars);
+*}
+     wt := splice{numgens source newvars : 1, numgens S' - numgens source newvars : 0};
+     Jrad1 := matrix{select(flatten entries gens gb Jrad, f -> ((lo,hi) := weightRange(wt,leadTerm f); hi <= 1))};
+     (mn,cf) := coefficients(Jrad1, Monomials => vS', Variables=>flatten entries newvars);
      Jid := (gens R1#1) * sub(cf,R);
      (Jrad, R1 * new FractionalIdeal from {R1#0, ideal Jid})
      )
@@ -190,11 +208,13 @@ integralClosureHypersurface Ring := (R) -> (
      -- as required above.
      D := (disc R)/first//product;
      e1 := fractionalIdeal ideal 1_R;
-     time j := fractionalIdeal trim radical ideal promote(D,R);
+     time j := fractionalIdeal trim rad ideal promote(D,R);
      time e := End j;
      while e != e1 do (
 	  e1 = e;
+     	  if TraceLevel > 1 then << "radical:" << endl;
 	  time (k,j) = radical(j,e1);
+     	  if TraceLevel > 1 then << "end:" << endl;
 	  time e = End j;
 	  );
      simplify e)
@@ -208,8 +228,25 @@ integralClosureDenominator(Ring,RingElement) := (R,D) -> (
      time e := End j;
      while e != e1 do (
 	  e1 = e;
+     	  if TraceLevel > 1 then << "radical:" << endl;
 	  time (k,j) = radical(j,e1);
+     	  if TraceLevel > 1 then << "end:" << endl;
 	  time e = End j;
+	  );
+     simplify e)
+
+integralClosureDenominator(Ring,RingElement) := (R,D) -> (
+     -- assumption: R is in Noether normal position
+     -- as required above.
+     e := fractionalIdeal ideal 1_R;
+     j := fractionalIdeal ideal D;
+     while (
+	  e1 := e;
+     	  if TraceLevel > 1 then << "radical:" << endl;
+	  time (k,j) = radical(j,e1);
+     	  if TraceLevel > 1 then << "end:" << endl;
+	  time e = End j;
+	  e1 != e) do (
 	  );
      simplify e)
 
@@ -337,3 +374,50 @@ gens gb ideal oo
 transpose oo
 time P=presentation(integralClosure(S))
 icFractions S
+
+-------------------------
+restart
+load "runexamples.m2"
+loadPackage "PrimaryDecomposition"
+loadPackage "FractionalIdeals"
+I = value H#10#1
+R = (ring I)/I
+S = (coefficientRing ring I)[u,v,MonomialOrder=>{1,1}]
+R = S/sub(I,S)
+F = sub(I_0,S)
+use ring F
+disc(F,u)
+disc(F,v)
+use R
+integralClosureDenominator(R, v-1)
+integralClosureDenominator(R, v+3)
+time integralClosureDenominator(R, v+1)
+
+restart
+load "runexamples.m2"
+loadPackage "PrimaryDecomposition"
+loadPackage "FractionalIdeals"
+I = value H#3#1
+R = (ring I)/I
+S = (coefficientRing ring I)[x,y,MonomialOrder=>{1,1}]
+R = S/sub(I,S)
+F = sub(I_0,S)
+use ring F
+disc(F,x)
+disc(F,y)
+use R
+time integralClosureDenominator(R, y)
+errorDepth=0
+
+I = value H#12#1
+R = (ring I)/I
+S = (coefficientRing ring I)[v,u,z,MonomialOrder=>{1,2}]
+R = S/sub(I,S)
+F = sub(I_0,S)
+use ring F
+disc(F,v)
+
+use R
+time integralClosureDenominator(R, z)
+time integralClosureHypersurface(R)
+

@@ -19,6 +19,7 @@ gcd(RingElement,RingElement) := RingElement => (r,s) -> (
      else if instance(R,PolynomialRing) and numgens R == 1 and isField coefficientRing R then monic (
 	  -- does this depend on the monomial order in R, too?
 	  -- would this code work for more than one variable?
+	  if gbTrace >= 3 then << "gcd via syzygies" << endl;
 	  if r == 0 then s
 	  else if s == 0 then r
 	  else (

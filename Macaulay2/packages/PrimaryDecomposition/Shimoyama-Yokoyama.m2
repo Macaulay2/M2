@@ -157,7 +157,7 @@ flattener(I,F1)
 factors = (F) -> (
      facs := factor F;
      facs = apply(#facs, i -> facs#i#0);
-     select(facs, f -> degree f =!= {0}))
+     select(facs, f -> # support f =!= 0))
 
 -- find, if any, an element of the GB of I which is NOT in the ideal J.
 findNonMember = (I,J) -> (
