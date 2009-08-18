@@ -215,8 +215,8 @@ radical00(Ideal,RingElement) := (I,u) -> (
 	       -- (a) use linear algebra
 	       -- (b) char p
 	       -- (c) f might not be the smallest eqn in var v_i.
-	       << "about to get minpoly " << toString I << " u = " << toString u << " x = " << toString x << endl;
-	       time f := getMinimalPoly(I,u,x);
+	       --<< "about to get minpoly " << toString I << " u = " << toString u << " x = " << toString x << endl;
+	       f := getMinimalPoly(I,u,x);
 	       g := getSeparablePart(f,u,x);
 	       if f != g then newelems = append(newelems,g)));
      --error "in radical00";

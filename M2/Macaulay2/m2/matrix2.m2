@@ -343,8 +343,11 @@ index = method()
 index RingElement := f -> rawIndexIfVariable raw f
 
 degree (RingElement, RingElement) := (x,f) -> (
-     if index x === null then error "expected a variable";
-     first max degrees source first coefficients(f,Variables=>x)
+     i := index x;
+     if i === null then error "expected a variable";
+     wt := splice {i:0,1};
+     (lo,hi) := weightRange(wt,f);
+     hi
      )
 
 indices RingElement := (f) -> rawIndices raw f

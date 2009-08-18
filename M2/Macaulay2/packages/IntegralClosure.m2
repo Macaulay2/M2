@@ -159,7 +159,11 @@ codim1radical = (J) -> (
      --   If there are none, then return null.
      Jup := trim (flattenRing J)_0;
      Jup = trim ideal apply(Jup_*, f -> product apply(apply(toList factor f, toList), first));
-     
+
+
+     << "R0 = " << toExternalString ring Jup << endl;
+     << "J0 = " << toString Jup << endl;
+
      if verbosity >= 2 then << "." << flush;
      C := decompose Jup;
      if verbosity >= 2 then << "." << flush;
@@ -2119,6 +2123,14 @@ restart
 loadPackage "IntegralClosure"
 loadPackage "ReesAlgebra"
 
+---------------------------------
+-- making a set of examples for improving radical computation
+---------------------------------
+restart
+-- in IntegralClosure dir:
+load "runexamples.m2"
+runExamples(H,10,Verbosity=>3)
+
 --huneke2
 kk = ZZ/32003
 S = kk[a,b,c]
@@ -2142,4 +2154,5 @@ I = monomialCurveIdeal(S,{1,3,4})
 A=S/I
 integralClosure(A)
 icFractions A
+
 
