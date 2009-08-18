@@ -38,7 +38,7 @@ document {
 	  LI {
 	       "The function \"SimpleDoc :: doc\" will now handle example expressions that span multiple lines: within in each expression, indent lines
 	       after the first one more than the first."
-	       }
+	       },
 	  LI { "fixed a bug in degree(x,f) where the degrees of the grading were used instead of the actual exponents." }
 	  }
      }
