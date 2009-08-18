@@ -14,7 +14,6 @@ newPackage("Polyhedra",
 	  HomePage => "http://page.mi.fu-berlin.de/rbirkner/index.htm",
 	  Email => "rbirkner@mi.fu-berlin.de"}},
     DebuggingMode => true,
-    AuxiliaryFiles=>true,
     Configuration => {}
     )
 
