@@ -8,7 +8,7 @@
 newPackage("Polyhedra",
     Headline => "A package for computations with convex polyhedra",
     Version => "1.0.1",
-    Date => "July 14, 2009",
+    Date => "July 30, 2009",
     Authors => {
          {Name => "René Birkner",
 	  HomePage => "http://page.mi.fu-berlin.de/rbirkner/index.htm",
@@ -1330,14 +1330,20 @@ contains(Fan,Cone) := (F,C) -> (
 --  OUTPUT : 'true' or 'false'
 equals = method(TypicalValue => Boolean)
 equals(Polyhedron,Polyhedron) := (P,Q) -> (
-     contains(P,Q) and contains(Q,P))      
+     if (ambDim(P) == ambDim(Q)) then (
+	  contains(P,Q) and contains(Q,P))
+     else (
+	  false))
 
 
 
 -- PURPOSE : Check if 'C1' equals 'C2'
 --   INPUT : '(C1,C2)'  two Cones
 equals(Cone,Cone) := (C1,C2) -> (
-     contains(C1,C2) and contains(C2,C1))      
+     if (ambDim(C1) == ambDim(C2)) then (
+	  contains(C1,C2) and contains(C2,C1))
+     else (
+	  false))
 
 
 -- PURPOSE : Check if 'F1' equals 'F2'
@@ -1400,12 +1406,16 @@ isFace(Polyhedron,Polyhedron) := (P,Q) -> (
      if ((P#"ambientDimension") == (Q#"ambientDimension")) then (
 	  c := (Q#"polyhedronDimension")-(P#"polyhedronDimension");
 	  if (c >= 0) then (
-	       -- Checking if one of the codim 'c' faces of Q is P
-	       L := faces(c,Q);
-	       i := 0;
-	       while ((not test) and (i < #L)) do (
-		    test = equals(P,L#i);
-		    i = i+1)));
+	       -- Checking if P is the empty polyhedron
+	       if (c > (Q#"polyhedronDimension")) then (
+		    test = true)
+	       else (
+		    -- Checking if one of the codim 'c' faces of Q is P
+		    L := faces(c,Q);
+		    i := 0;
+		    while ((not test) and (i < #L)) do (
+			 test = equals(P,L#i);
+			 i = i+1))));
      test)
 
 --   INPUT : '(C1,C2)'  two Cones
@@ -1650,47 +1660,6 @@ faces(ZZ,Polyhedron) := (k,P) -> (
 	  L))
 
 
---   INPUT : 'k'  an integer between 0 and the dimension of
---     	     'C'  a polyhedron
---  OUTPUT : a List, containing the faces as cones
---faces(ZZ,Cone) := (k,C) -> (
---     -- checking for input errors
---     if ((k < 0) or (k > (C#"coneDimension"))) then (
---	  error ("invalid dimension"));
---     -- defining recursive face builder, that memorizes which halfspaces have already been choosen ('p')
---     -- how many halfspaces have already been choosen ('c')
---     -- chooses in each step one of the remaining halfspaces (each of them for a new recursion) and
---     -- and adds the equation to the hyperplane equations
---     -- if the counter 'c' reaches 0 then it checks if the resulting cone has the correct dimension ('d')
---     -- and adds it to L
---     facerecursion := (p,c,HS,HP,L,d) -> (
---	  if (c == 0) then (
---	       test := false;
---	       Q := intersection(HS,HP);
---	       if ((Q#"coneDimension") == d) then (
---		    scan(L, F -> ( test = test or (equals(F,Q))));
---		    if (not test) then L = join(L,{Q})))
---	  else ( c = c-1;
---	       scan(p..(numgens target HS)-1, i -> (
---			 HPnew := HP||(HS^{i});
---			 L = facerecursion(i+1,c,HS,HPnew,L,d))));
---	  L);
---     -- Saving the dimension of the faces
---     d :=  (C#"coneDimension")-k;
---     counter := k;
---     pos := 0;
---     HS := halfspaces C;
---     HP := hyperplanes C;
---     L := {};
---     if (d == 0) then ( M := map(QQ^(C#"ambientDimension"),QQ^1,0);
---	  L = {posHull(M)})
---     else if (d == 1) then (
---	  R := rays C;
---	  L = apply(numColumns R, i -> ( posHull(R_{i}))))
---     else ( L = facerecursion(pos,counter,HS,HP,L,d));
---     L)
-
-
 
 --   INPUT : 'k'  an integer between 0 and the dimension of
 --     	     'C'  a polyhedron
@@ -1738,51 +1707,9 @@ faces(ZZ,Cone) := (k,C) -> (
 		    Rs := l#0;
 		    scan(drop(l,1), m -> (Rs = Rs | m));
 		    posHull(Rs,LS)));
-	  L))
-	  
-     
-     
+	  L))     
 
      
---faces = method(TypicalValue => List)
---faces(ZZ,Polyhedron) := (k,P) -> (
---     -- checking for input errors
---     if ((k < 0) or (k > (P#"polyhedronDimension"))) then (
---	  error ("invalid dimension"));
---     -- defining recursive face builder, that memorizes which halfspaces have already been choosen ('p')
---     -- how many halfspaces have already been choosen ('c')
---     -- chooses in each step one of the remaining halfspaces (each of them for a new recursion) and
---     -- and adds the equation to the hyperplane equations
---     -- if the counter 'c' reaches 0 then it checks if the polyhedron has the correct dimension ('d')
---     -- and adds it to L
---     facerecursion := (p,c,HS,v,HP,w,L,d) -> (
---	  if (c == 0) then (
---	       test := false;
---	       Q := intersection(HS,v,HP,w);
---	       if ((Q#"polyhedronDimension") == d) then (
---		    scan(L, F -> ( test = test or (equals(F,Q))));
---		    if (not test) then L=join(L,{Q})))
---	  else ( c = c-1;
---	       scan(p..(numgens target HS)-1, i -> (
---			 HPnew := HP||(HS^{i});
---			 wnew := w||(v^{i});
---			 L = facerecursion(i+1,c,HS,v,HPnew,wnew,L,d))));
---	  L);
---     -- Saving the dimension of the faces
---     d :=  (P#"polyhedronDimension")-k;
---     counter := k;
---     pos := 0;
---     (HS,v) := halfspaces P;
---     (HP,w) := hyperplanes P;
---     L := {};
---     if (d == 0) then ( V := vertices P;
---	  scan(numgens source V, i -> (L = join(L,{convexHull(V_{i})}))))
---     else ( L = facerecursion(pos,counter,HS,v,HP,w,L,d));
---     L)
-
-
-
-
 -- PURPOSE : Computing the f-vector of a polyhedron
 --   INPUT : 'P'  a Polyhedron
 --  OUTPUT : a List of integers, starting with the number of vertices and going up in dimension
@@ -2167,140 +2094,6 @@ minkSummandCone Polyhedron := P -> (
 		     zerovec := matrix toList(numgens source R: {0_QQ});
 		     Q := intersection(negId,zerovec,R,onevec);
 		     (C,summList,vertices(Q))))))
-     
-     
-
-
---oldminkSummandCone = method()
---oldminkSummandCone Polyhedron := P -> (
---     d := P#"ambientDimension";
---     dP := P#"polyhedronDimension";
---     -- Saving the compact edges of 'P' in the list 'edges' and the "normed" pair of vertices in the list 'Kanten'
---     edges := {};
---     scan(faces(dP-1,P), e -> (
---	       if (isCompact(e)) then (edges=append(edges,e))));
---     -- Subfunction to save the two vertices of a compact edge in a matrix where the vertex with the smaller entries comes first
---     -- by comparing the two vertices entry-wise
---     normvert := M -> ( v:= M_{0}-M_{1};
---         normrec := w -> ( local i; if ((entries(w))#0#0 > 0) then (i=0) else if ((entries(w))#0#0 < 0) then (i=1) else (w=w^{1..(numgens target w)-1}; i=normrec(w)); i);
---          i=normrec(v);
---        if (i==1) then (M=M_{1}|M_{0});
---        M);
---     Kanten = apply(edges, k -> (normvert(vertices(k))));
---     -- Saving the compact two dimensional faces of P in the list twofaces
---     twofaces = {};
---     scan(faces(dP-2,P), f -> (
---	       if (isCompact(f)) then (twofaces=append(twofaces,f))));
---     m:=0;
---     -- Generating a hashTable that enumerates the edges in Kanten
---     KantenNr:={};
---     scan(Kanten, k -> (KantenNr = append(KantenNr, k => m); m=m+1));
---     KantenNr = hashTable KantenNr;
---     n := #Kanten;
---     zeromap := map(QQ^d,QQ^1,0);
---     Nfertig := map(QQ^0,QQ^n,0);
---     -- Determining the equations on the variables for the edges given by the two 
---     -- dimensional faces
---     scan(twofaces, f -> (
---	       j := 0;
---	       ordering := {};
---               -- Saving the edges of the active twoface
---	       edgesf := faces(1,f);
---               -- Selecting the first edge and removing it from the list
---	       k := edgesf#0;
---               edgesf = edgesf_{1..(#edgesf)-1};
---               -- Saving the the number of the selected edge from the hashTable KantenNr in a
---	       -- list to order the edges of the active twoface
---	       ordering = append(ordering, KantenNr#(normvert(vertices(k))) => j);
---	       j = j+1;
---	       -- Saving the two vertices of the edge
---	       M := (vertices(k))_{0};
---	       v := (vertices(k))_{1};
---	       -- Scanning through the remaining edges to find the order in which they appear in the active twoface
---	       scan(#edgesf, i -> (nedges := {};
---			 scan(edgesf, e -> (
---				   if contains(e,convexHull(v)) then (
---					k = e;
---					ordering = append(ordering, KantenNr#(normvert(vertices(k))) => j);
---					j = j+1)
---				   else (nedges =append(nedges,e))));
---			 edgesf = nedges;
---			 M = M|v;
---			 vnew := v;
---			 scan(numgens(source(vertices(k))), l -> ( c := (vertices(k))_{l}; 
---				   if (c =!= v) then (vnew = c)));
---			 v = vnew));
---	       -- The matrix M contains all vertices of the active twoface ordered in a "circle"
---	       -- now we take the differences from one colummn with the previous to get edges of 
---	       -- the active two face ordered in a "circle" which gives the equations for the 
---	       -- variables corresponding to these edges
---	       M = (M_{1..(numgens source M)-1} | M_{0}) - M;
---	       -- Turn ordering into a hashTable to find out to which edges the columns in M
---	       -- correspond 
---	       ordering = hashTable ordering;
---	       -- Generating a new set of rows for the final equationmatrix for the cone 
---	       -- by adding zerocolumns into M for those edges not appearing in the 
---	       -- active twoface
---	       L := {};
---	       scan(#Kanten, i -> (
---			 column := zeromap;
---			 scan(keys ordering, ko -> (
---				   if (ko == i) then (column = M_{ordering#ko})));
---			 L = append(L, i => column)));
---	       L = hashTable L;
---	       N := map(QQ^d,QQ^0,0);
---	       scan(#Kanten, l -> ( N = N |(L#l)));
---	       Nfertig = Nfertig || N));
---     -- constructing the Cone by intersecting the equations with the positive orthant
---     Id := map(QQ^n,QQ^n,1);
---     C := intersection(Id,Nfertig);
---     -- Selecting a vertex of P
---     v := (vertices(P))_{0};
---     -- Saving the generators of the cone
---     M := rays C;
---     -- Saving the generators of the tailcone in a matrix
---     TC := (map(QQ^(P#"ambientDimension"),QQ^1,0)) | (P#"rays") | (P#"linealitySpace") | ((-1)*(P#"linealitySpace"));
---     summList := {};
---     -- Computing for each generator of the cone the corresponding summand polyhedron, where the first vertex 
---     -- is the origin
---     scan(numgens source M, i -> (
---	       remedges := edges;
---	       -- recursive function which takes 'L' the already computed vertices of the summandpolyhedron,
---	       -- the set of remaining edges, the current vertex of the original polyhedron, the current 
---	       -- vertex of the summandpolyhedron, and the ray of the minkSummandCone. It computes the
---	       -- edges emanating from the vertex, scales these edges by the corresponding factor in mi, 
---	       -- computes the vertices at the end of those edges (for the original and for the 
---	       -- summandpolyhedron) and calls itself with each of the new vertices, if there are edges 
---	       -- left in the list
---	       edgesearch := (L,v,v0,mi) -> (
---		    nedges := {};
---		    Lnew := {};
---		    scan(remedges, e -> (
---			      j := KantenNr#(normvert(vertices(e)));
---			      if (contains(e,v)) then (
---				   ve := vertices(e);
---				   edir := (ve*(matrix{{1_QQ},{1_QQ}})) - 2*v;
---				   vnew := v0 + (((entries(mi))#j#0)*edir);
---				   L = L | vnew;
---				   Lnew = append(Lnew,(v+edir,vnew)))
---			      else (nedges = append(nedges,e))));
---		     remedges = nedges;
---		     scan(Lnew, (u,w) -> (
---			       if (remedges =!= {}) then (
---				    L = edgesearch(L,u,w,mi))));
---		     L);
---		mi := M_{i};
---		v0 := map(QQ^d,QQ^1,0);
---		L := v0;
---		-- Calling the edgesearch function to get the vertices of the summand
---		L = edgesearch(L,v,v0,mi);
---		summList = append(summList, i => convexHull(L,TC))));
---      summList = hashTable summList;
---      onevec := matrix toList(numgens target M: {1_QQ});
---      negId := map(QQ^(numgens source M),QQ^(numgens source M),-1);
---      zerovec := matrix toList(numgens source M: {0_QQ});
---      Q := intersection(negId,zerovec,M,onevec);
---      (C,summList,vertices(Q)))
  
 
 
@@ -3013,7 +2806,7 @@ emptyPolyhedron ZZ := n -> (
      -- Checking for input errors
      if (n < 1) then (
 	  error ("The ambient dimension must be positive"));
-     zeromap := map(QQ^n,QQ^0,0);
+     zeromap := map(QQ^(n+1),QQ^0,0);
      verticesA := (zeromap,zeromap);
      hyperA := fourierMotzkin verticesA;
      polyhedronBuilder(hyperA,verticesA));
@@ -4518,6 +4311,31 @@ document {
 	  " C1 = intersection {C, (matrix {{0,1,-1}}, matrix {{0}})};",
 	  " C2 = intersection {C, (matrix {{0,-1,1}}, matrix {{0}})};",
 	  " F = addCone({C1,C2},F)"
+	  }
+     
+     }
+
+document {
+     Key => {equalLists, (equalLists,List,List)},
+     Headline => "checks if two lists contain the same elements",
+     Usage => " b = equalLists(L1,L2)",
+     Inputs => {
+	  "L1" => List,
+	  "L2" => List
+	  },
+     Outputs => {
+	  "b" => Boolean
+	  },
+     
+     PARA{}, TT "equalLists", " is an auxiliary function to check if  two lists 
+     contain the same elements. This is useful for Lists containing convex polyhedral 
+     objects, since Macaulay 2 can not properly compare two sets of them. Also one does 
+     not need to turn the lists into sets.",
+     
+     EXAMPLE {
+	  " L1 = {posOrthant 3,hypercube 2};",
+	  " L2 = {hypercube 2,posOrthant 3};",
+	  " equalLists(L1,L2)"
 	  }
      
      }
@@ -6435,6 +6253,22 @@ document {
      }
 
 document {
+     Key => {(symbol ==,Cone,Thing),(symbol ==,Fan,Thing),(symbol ==,Polyhedron,Thing),(symbol ==,Thing,Cone),(symbol ==,Thing,Fan),(symbol ==,Thing,Polyhedron)},
+     Headline => "equality for polyhedral objects and all other objects",
+     Usage => " X == Y",
+     Inputs => {
+	  "X" => {TO Cone,", ",TO Fan," or ",TO Polyhedron,", or any other object"},
+	  "Y" => {TO Cone,", ",TO Fan," or ",TO Polyhedron,", or any other object"}
+	  },
+     
+     PARA{}, "Defined to be able to compare convex polyhedral objects with all other objects in Macaulay 2, 
+     allthough they are only equal if it is the same convex polyhedral object."
+     
+     }
+
+
+
+document {
      Key => (dim,Cone),
      Headline => "computes the dimension of a cone",
      Usage => " d = dim C",
@@ -6579,9 +6413,9 @@ document {
      }
 
 
-
+-- Test 0
+-- Checking convexHull basics
 TEST ///
-
 P = convexHull matrix {{3,1,0,2},{0,2,2,1},{1,-1,2,0}};
 assert(P#"numVertices" == 3)
 assert(dim(P) == 2)
@@ -6593,6 +6427,8 @@ v = matrix {{10_QQ}};
 assert((hyperplanes(P) == (M,v)) or (hyperplanes(P) == (-M,-v)))
 ///
 
+-- Test 1
+-- Checking convexHull basics
 TEST ///
 P = convexHull matrix {{3,1,0,2},{0,2,2,1},{1,-1,2,0}};
 P = convexHull {P,(matrix{{4},{0},{-2}},matrix{{1,0,0},{0,1,-1},{0,0,0}})};
@@ -6601,6 +6437,8 @@ assert(image(linSpace(P)) == image(matrix {{0},{1_QQ},{0}}))
 assert(hyperplanes(P) == (0,0))
 ///
 
+-- Test 2
+-- Checking convexHull halfspaces
 TEST ///
 P = convexHull (matrix{{1},{1}},matrix{{1,0},{0,1}});
 M1 = matrix {{-1,0_QQ},{0,-1}};
@@ -6609,6 +6447,8 @@ v = matrix {{-1},{-1_QQ}};
 assert((halfspaces(P) == (M1,v)) or (halfspaces(P) == (M2,v)))
 ///
 
+-- Test 3
+-- Checking convexHull and intersection
 TEST ///
 P2 =  convexHull matrix {{1,-2,-1,2},{2,1,-2,-1}};
 M = matrix{{3,1},{-3,-1},{1,-3},{-1,3}};
@@ -6616,6 +6456,8 @@ v = matrix{{5},{5},{5},{5}};
 assert(intersection(M,v) == P2)
 ///
 
+-- Test 4
+-- Checking intersection
 TEST ///
 P = intersection (matrix{{1,0},{0,1},{-1,0},{0,-1}},matrix{{1},{2},{3},{4}});
 V1 = vertices(P);
@@ -6624,6 +6466,21 @@ V2 = set {matrix{{1_QQ},{2}},matrix{{1_QQ},{-4}},matrix{{-3_QQ},{2}},matrix{{-3_
 assert(isSubset(V1,V2) and isSubset(V2,V1))
 ///
 
+-- Test 5
+-- Checking polar
+TEST ///
+P = convexHull matrix {{1,1,-1,-1},{1,-1,1,-1}};
+Q = convexHull matrix {{1,-1,0,0},{0,0,1,-1}};
+P = polar P;
+assert(P == Q)
+P = convexHull(matrix {{1,-1,1,-1},{1,1,-1,-1},{1,2,3,4}},matrix {{0,0},{0,0},{1,-1}});
+Q = convexHull matrix {{1,-1,0,0},{0,0,1,-1},{0,0,0,0}};
+P = polar P;
+assert(P == Q)
+///
+
+-- Test 6
+-- Checking intersections that give cones
 TEST ///
 C = intersection matrix {{1,2},{2,1}};
 R1 = rays C;
@@ -6635,18 +6492,73 @@ assert(dim(C) == 2)
 assert(ambDim(C) == 2)
 ///
 
+-- Test 7
+-- Checking intersection that give a not pointed cone
 TEST ///
 C = intersection matrix {{1,2,1},{2,1,1}};
 assert(image(linSpace(C)) == image(matrix{{1_QQ},{1_QQ},{-3}}))
 assert(ambDim(C) == 3)
 ///
 
+-- Test 8
+-- Checking posHull
 TEST ///
 C = posHull (matrix{{1,0},{0,1},{0,0}},matrix{{0},{0},{1}});
 assert((halfspaces(C) == matrix{{1_QQ,0,0},{0,1,0}}) or (halfspaces(C) == matrix{{0_QQ,1,0},{1,0,0}}))
 assert(C#"numRays" == 2)
 ///
 
+-- Test 9
+-- Checking contains for polyhedra
+TEST ///
+P1 = convexHull matrix {{0,1,1,0},{0,0,1,1}};
+P2 = convexHull matrix {{0,2,0},{0,0,2}};
+assert(contains(P2,P1))
+assert(not contains(P1,P2))
+P1 = convexHull(matrix {{0,1,1,0},{0,0,1,1},{0,0,0,0}},matrix {{0},{0},{1}});
+P2 = convexHull matrix {{0,1,1,0},{0,0,1,1},{1,2,3,4}};
+assert(not contains(P2,P1))
+assert(contains(P1,P2))
+///
+
+-- Test 10
+-- Checking contains for cones
+TEST ///
+C1 = posHull matrix {{1,0,0},{0,1,0},{0,0,1}};
+C2 = posHull matrix {{1},{1},{1}};
+assert(contains(C1,C2))
+assert(not contains(C2,C1))
+C2 = posHull {C2, matrix {{1,-1,0,0},{0,0,1,-1},{0,0,0,0}}};
+assert(contains(C2,C1))
+assert(not contains(C1,C2))
+///
+
+-- Test 11
+-- Checking equals for polyhedra and cones
+TEST ///
+P = convexHull matrix {{1,1,-1,-1},{1,-1,1,-1}};
+Q = intersection(matrix{{1,0},{-1,0},{0,1},{0,-1}},matrix{{1},{1},{1},{1}});
+assert(equals(P,Q))
+C1 = posHull matrix {{1,2},{2,1}};
+C2 =intersection matrix {{2,-1},{-1,2}};
+assert(equals(C1,C2))
+///
+
+-- Test 12
+-- Checking dualCone
+TEST ///
+C1 = posHull matrix {{1,2,3},{2,3,1},{3,1,2}};
+C2 = posHull matrix {{-5,7,1},{1,-5,7},{7,1,-5}};
+C1 = dualCone C1;
+assert(C1 == C2)
+C1 = intersection matrix {{0,1,2,3},{1,2,3,0},{2,3,0,1}};
+C2 = intersection matrix {{7,-5,1,1},{0,1,4,-3},{0,9,-6,1},{0,-3,2,9},{-7,5,-1,-1}};
+C1 = dualCone C1;
+assert(C1 == C2)
+///
+
+-- Test 13
+-- Checking faces and minkSummandCone
 TEST ///
 P = convexHull matrix {{0,-1,1,0,0,1,-1},{0,0,0,1,-1,-1,1}};
 F1 = faces(1,P);
@@ -6658,6 +6570,8 @@ L1 = {convexHull matrix{{0,1},{0,0}},convexHull matrix{{0,0},{0,1}},convexHull m
 assert(equalLists(values L,L1))
 ///
 
+-- Test 14
+-- Checking bipyramid, faces and fVector
 TEST ///
 P = convexHull matrix {{0,-1,1,0,0,1,-1},{0,0,0,1,-1,-1,1}};
 P = bipyramid(P);
@@ -6666,5 +6580,514 @@ F2 = set {matrix{{-1_QQ},{0},{0}},matrix{{1_QQ},{0},{0}},matrix{{0_QQ},{1},{0}},
 assert(isSubset(F1,F2) and isSubset(F2,F1))
 assert(fVector(P) == {8,18,12,1})
 ///
+
+-- Test 15
+-- Checking isEmpty
+TEST ///
+P = intersection(matrix{{1,1,1},{-1,0,0},{0,-1,0},{0,0,-1}},matrix{{1},{0},{0},{0}});
+assert(not isEmpty(P))
+P = intersection {P,(matrix{{-1,-1,-1}},matrix{{-2}})};
+assert(isEmpty(P))
+///
+
+-- Test 16
+-- Checking isPointed
+TEST ///
+C = posHull matrix {{1,1,1,1},{1,-1,1,-1},{1,1,-1,-1}};
+assert(isPointed(C))
+C = posHull {C,matrix{{-1},{0},{-1}}};
+assert(not isPointed(C))
+///
+
+-- Test 17
+-- Checking isSmooth
+TEST ///
+C = posHull matrix {{1,0,0},{-1,2,3},{1,1,2}};
+assert(isSmooth(C))
+C = posHull {C,matrix{{1},{0},{2}}};
+assert(not isSmooth(C))
+C = posHull matrix {{1,2},{2,1},{1,2}};
+assert(not isSmooth(C))
+C = posHull matrix {{1,1,-1,-1},{1,2,1,-1},{1,3,0,-1}};
+assert(not isSmooth(C))
+C = posHull {C,matrix{{1},{0},{1}}};
+assert(isSmooth(C))
+///
+
+-- Test 18
+-- Checking is Face
+TEST ///
+C1 = posHull matrix {{1,1,1,1},{1,-1,0,0},{0,0,1,-1}};
+C2 = posHull matrix {{1,1},{1,-1},{0,0}};
+assert(not isFace(C2,C1))
+C2 = posHull matrix {{1},{1},{1}};
+assert(not isFace(C2,C1))
+C2 = posHull matrix {{1},{0},{-1}};
+assert(isFace(C2,C1))
+C2 = posHull matrix {{0},{0},{0}};
+assert(isFace(C2,C1))
+///
+
+-- Test 19
+-- Checking isFace
+TEST ///
+P1 = convexHull matrix {{1,1,1,1,-1,-1,-1,-1},{1,1,-1,-1,1,1,-1,-1},{1,-1,1,-1,1,-1,1,-1}};
+P2 = intersection(matrix {{1,0,0},{-1,0,0}},matrix {{-1},{-1}});
+assert(isFace(P2,P1))
+P2 = convexHull matrix {{1,1,1},{1,1,-1},{1,-1,1}};
+assert(not isFace(P2,P1))
+P2 = intersection {P2,{matrix{{0,1,0}},matrix{{1}}}};
+assert(isFace(P2,P1))
+///
+
+-- Test 20
+-- Checking isCompact
+TEST ///
+P = intersection(matrix {{1,0,0},{-1,0,0},{0,1,0},{0,-1,0},{0,0,1}},matrix {{1},{2},{3},{4},{5}});
+assert(not isCompact(P))
+P = intersection {P, (matrix {{0,0,-1}},matrix {{6}})};
+assert(isCompact(P))
+P = intersection {P, {matrix {{1,1,1}},matrix {{0}}}};
+assert(isCompact(P))
+///
+
+-- Test 21
+-- Checking tailCone
+TEST ///
+P = intersection(matrix {{1,0},{-1,0},{0,1}},matrix {{1},{2},{3}});
+C = posHull matrix {{0},{-1}};
+assert(tailCone(P) == C)
+P = intersection (matrix{{2,1,1},{1,2,1},{1,1,2}},matrix{{2},{2},{2}});
+C = posHull matrix{{1,1,-3},{1,-3,1},{-3,1,1}};
+assert(tailCone(P) == C)
+///
+
+-- Test 22
+-- Checking smallestFace for polyhedra
+TEST ///
+P = convexHull matrix {{1,1,1,1,-1,-1,-1,-1},{1,1,-1,-1,1,1,-1,-1},{1,-1,1,-1,1,-1,1,-1}};
+F1 = convexHull matrix {{1,1,-1,-1},{1,-1,1,-1},{1,1,1,1}};
+F2 = convexHull matrix {{1,1},{1,1},{-1,1}};
+assert(smallestFace(matrix{{0},{0},{0}},P) == P)
+assert(smallestFace(matrix{{1/2},{1/3},{1}},P) == F1)
+assert(smallestFace(matrix{{1},{1},{3/4}},P) == F2)
+///
+
+-- Test 23
+-- Checking smallestFace for cones
+TEST ///
+C = posHull matrix {{1,0,0},{0,1,0},{0,0,1}};
+F1 = posHull matrix {{1,0},{0,1},{0,0}};
+F2 = posHull matrix {{0},{0},{1}};
+assert(smallestFace(matrix{{1},{2},{3}},C) == C)
+assert(smallestFace(matrix{{2},{3},{0}},C) == F1)
+assert(smallestFace(matrix{{0},{0},{5}},C) == F2)
+///
+
+-- Test 24
+-- Checking inInterior for polyhedra and cones
+TEST ///
+P = convexHull matrix {{1,1,-1,-1},{1,-1,1,-1}};
+assert(not inInterior(matrix{{2},{1}},P))
+assert(not inInterior(matrix{{1},{0}},P))
+assert(inInterior(matrix{{0},{0}},P))
+C = posHull matrix {{1,0,0},{0,1,0},{0,0,1}};
+assert(not inInterior(matrix{{0},{0},{0}},C))
+assert(not inInterior(matrix{{-1},{0},{0}},C))
+assert(inInterior(matrix{{1},{2},{3}},C))
+///
+
+-- Test 25
+-- Checking interiorPoint
+TEST ///
+P = convexHull matrix {{1,-1,0,0},{0,0,1,-1}};
+p = matrix {{0_QQ},{0}};
+assert(interiorPoint(P) == p)
+///
+
+-- Test 26
+-- Checking interiorVector
+TEST ///
+C = posHull matrix {{1,2,3},{2,3,1},{3,1,2}};
+p = matrix {{1_QQ},{1},{1}};
+assert(interiorVector(C) == p)
+///
+
+-- Test 27
+-- Checking commonFace for polyhedra
+TEST ///
+P1 = convexHull matrix {{1,1,1,1,-1},{1,1,-1,-1,0},{1,-1,1,-1,0}};
+P2 = intersection (matrix {{-1,0,0},{0,1,0},{0,-1,0},{0,0,1}},matrix {{-1},{1},{1},{1}});
+assert(not commonFace(P1,P2))
+P2 = intersection {P2,(matrix {{0,0,-1}},matrix {{1}})};
+assert(commonFace(P1,P2))
+///
+
+-- Test 28
+-- Checking commonFace for cones
+TEST ///
+C1 = posHull matrix {{1,2},{2,1}};
+C2 = posHull matrix {{1,1},{1,0}};
+assert(not commonFace(C1,C2))
+C1 = posHull matrix {{1,1},{2,1}};
+assert(commonFace(C1,C2))
+///
+
+-- Test 29
+-- Checking areCompatible
+TEST ///
+C1 = posHull matrix {{1,0,0},{0,1,0},{0,0,1}};
+C2 = posHull matrix {{1,1,0},{1,0,1},{0,-1,-1}};
+assert(not (areCompatible(C1,C2))#0)
+C2 = posHull {matrix {{1,0},{0,1},{0,0}}, C2};
+assert((areCompatible(C1,C2))#0)
+///
+
+-- Test 30
+-- Checking makeFan and Fan basics
+TEST ///
+C = posHull matrix {{1,0,0},{0,1,0},{0,0,1}};
+F = makeFan C;
+assert(F#"generatingCones" == {C})
+assert(F#"ambientDimension" == 3)
+assert(F#"topDimension" == 3)
+assert(F#"numGeneratingCones" == 1)
+assert(not (F#"isComplete"))
+C1 = posHull matrix {{1},{1},{1}};
+F = makeFan {C,C1};
+assert(F#"comperror" == {C,C1})
+///
+
+-- Test 31
+-- Checking makeFan and addCone
+TEST ///
+C = posHull matrix {{1,0,0},{0,1,0},{0,0,1}};
+C1 = posHull matrix {{1,0,0},{0,-1,0},{0,0,1}};
+C2 = posHull matrix {{-1,0,0},{0,1,0},{0,0,1}};
+C3 = posHull matrix {{1,0,0},{0,1,0},{0,0,-1}};
+F = makeFan {C,C1,C2,C3};
+assert(F#"generatingCones" == {C,C1,C2,C3})
+assert(F#"ambientDimension" == 3)
+assert(F#"numGeneratingCones" == 4)
+assert(F#"isPure")
+L = {posHull matrix {{1,0},{0,-1},{0,0}},posHull matrix {{0,0},{0,-1},{1,0}},posHull matrix {{-1,0},{0,1},{0,0}},posHull matrix {{-1,0},{0,0},{0,1}},posHull matrix {{1,0},{0,0},{0,-1}},posHull matrix {{0,0},{1,0},{0,-1}}};
+assert(equalLists(L,F#"faces"))
+L = {matrix {{1_QQ},{0},{0}},matrix {{-1_QQ},{0},{0}},matrix {{0_QQ},{1},{0}},matrix {{0_QQ},{-1},{0}},matrix {{0_QQ},{0},{1}},matrix {{0_QQ},{0},{-1}}};
+assert(equalLists(L,F#"rays"))
+C = posHull matrix {{-1,0},{0,1},{0,0}};
+F1 = addCone(C,F);
+assert(F == F1)
+///
+
+-- Test 32
+-- Checking makeFan, skeleton, isComplete, isPure, addCone
+TEST ///
+C = posHull matrix {{1,0,0},{0,1,0},{0,0,1}};
+C1 = posHull matrix {{1,0,0},{0,-1,0},{0,0,1}};
+C2 = posHull matrix {{-1,0,0},{0,1,0},{0,0,1}};
+C3 = posHull matrix {{1,0,0},{0,1,0},{0,0,-1}};
+F = makeFan {C,C1,C2,C3};
+L = {posHull matrix {{1,0},{0,-1},{0,0}},posHull matrix {{0,0},{0,-1},{1,0}},posHull matrix {{-1,0},{0,1},{0,0}},posHull matrix {{-1,0},{0,0},{0,1}},posHull matrix {{1,0},{0,0},{0,-1}},posHull matrix {{0,0},{1,0},{0,-1}},posHull matrix {{1,0},{0,1},{0,0}},posHull matrix {{1,0},{0,0},{0,1}},posHull matrix {{0,0},{1,0},{0,1}}};
+assert(equalLists(L,cones(2,F)))
+F1 = makeFan {posHull matrix {{1},{0},{0}},posHull matrix {{-1},{0},{0}},posHull matrix {{0},{1},{0}},posHull matrix {{0},{-1},{0}},posHull matrix {{0},{0},{1}},posHull matrix {{0},{0},{-1}}};
+assert(skeleton(1,F) == F1)
+assert(not isComplete(F))
+assert(isPure(F))
+C = posHull matrix {{-1,0,0},{0,-1,0},{0,0,-1}};
+C1 = posHull matrix {{-1,0,0},{0,1,0},{0,0,-1}};
+C2 = posHull matrix {{1,0,0},{0,-1,0},{0,0,-1}};
+C3 = posHull matrix {{-1,0,0},{0,-1,0},{0,0,1}};
+F = addCone({C,C1,C2,C3},F);
+assert(F#"numGeneratingCones" == 8)
+assert(isPure(F))
+assert(isComplete(F))
+assert(isSmooth(F))
+P = convexHull matrix {{0,0,0,0,1,1,1,1},{0,0,1,1,0,0,1,1},{0,1,0,1,0,1,0,1}};
+assert(isProjective(F) == P)
+assert(normalFan(P) == F)
+///
+
+-- Test 33
+-- Checking isSmooth and smoothSubfan
+TEST ///
+C1 = posHull matrix {{1,2},{2,1}};
+C2 = posHull matrix {{1,0},{2,1}};
+C3 = posHull matrix {{1,2},{0,1}};
+F = makeFan {C1,C2,C3};
+assert(not isSmooth(F))
+C4 = posHull matrix {{1,1},{0,1}};
+C5 = posHull matrix {{1,0},{1,1}};
+F1 = makeFan {C2,C3,C4,C5};
+assert(smoothSubfan(F) == F1)
+///
+
+-- Test 34
+-- Checking normalFan
+TEST ///
+P = convexHull matrix {{1,0,0},{0,1,0}};
+F = normalFan P;
+L = {posHull matrix {{1,0},{0,1}},posHull matrix {{1,-1},{0,-1}},posHull matrix {{0,-1},{1,-1}}};
+assert(F == makeFan L)
+P =  convexHull (matrix {{1,0,0},{0,1,0}},matrix {{1},{1}});
+F = normalFan P;
+L = {posHull matrix {{1,0},{0,1}},posHull matrix {{1,1},{0,-1}},posHull matrix {{0,-1},{1,1}}};
+assert(F == makeFan L)
+///
+
+-- Test 35
+--Checking ccRefinement
+TEST ///
+M = matrix {{1,-1,0,0},{0,0,1,-1},{1,1,1,1}};
+F = ccRefinement M;
+F1 = makeFan {posHull matrix {{1,0,0},{0,1,0},{1,1,1}},posHull matrix {{-1,0,0},{0,1,0},{1,1,1}},posHull matrix {{-1,0,0},{0,-1,0},{1,1,1}},posHull matrix {{1,0,0},{0,-1,0},{1,1,1}}};
+assert(F == F1)
+///
+
+-- Test 36
+-- Checking imageFan
+TEST ///
+C = posHull matrix {{1,1,-1,-1},{1,-1,1,-1},{1,1,1,1}};
+F = imageFan(matrix {{1,0,0},{0,1,0}},C);
+F1 = makeFan {posHull matrix {{1,1},{1,-1}},posHull matrix {{1,-1},{1,1}},posHull matrix {{-1,-1},{1,-1}},posHull matrix {{1,-1},{-1,-1}}};
+assert(F == F1)
+F = imageFan(matrix {{1,2,0},{0,0,1}},C);
+F1 = makeFan {posHull matrix {{-3,-1},{1,1}},posHull matrix {{-1,1},{1,1}},posHull matrix {{1,3},{1,1}}};
+assert(F == F1)
+///
+
+-- Test 37
+-- Checking hilbertBasis
+TEST ///
+C = posHull matrix {{1,2},{2,1}};
+H = hilbertBasis C;
+L = {matrix {{1},{1}},matrix {{2},{1}},matrix {{1},{2}}};
+assert(equalLists(H,L))
+C = posHull matrix {{1,1,0},{0,3,0},{0,0,1}};
+H = hilbertBasis C;
+L = {matrix {{1},{0},{0}},matrix {{1},{1},{0}},matrix {{1},{2},{0}},matrix {{1},{3},{0}},matrix {{0},{0},{1}}};
+assert(equalLists(H,L))
+///
+
+-- Test 38
+-- Checking latticePoints
+TEST ///
+P = convexHull matrix {{1,-1,0,0},{0,0,1,-1}};
+LP = latticePoints P;
+LP1 = {matrix {{1},{0}},matrix {{-1},{0}},matrix {{0},{1}},matrix {{0},{-1}},matrix {{0},{0}}};
+assert(equalLists(LP,LP1))
+P = intersection(matrix {{-6,0,0},{0,-6,0},{0,0,-6},{1,1,1}},matrix{{-1},{-1},{-1},{1}});
+assert(latticePoints(P) == {})
+///
+
+-- Test 39
+-- Checking minkowskiSum
+TEST ///
+P1 = convexHull matrix {{1,0,0},{0,1,0}};
+P2 = convexHull matrix {{-1,0,0},{0,-1,0}};
+P1 = minkowskiSum(P1,P2);
+P2 = convexHull matrix {{1,1,0,0,-1,-1},{-1,0,-1,1,0,1}};
+assert(P1 == P2)
+P1 = convexHull matrix {{1,1,-1,-1},{1,-1,1,-1},{0,0,0,0}};
+P2 = convexHull matrix {{0,0},{0,0},{1,-1}};
+P1 = minkowskiSum(P1,P2);
+P2 = convexHull matrix {{1,1,1,1,-1,-1,-1,-1},{1,1,-1,-1,1,1,-1,-1},{1,-1,1,-1,1,-1,1,-1}};
+assert(P1 == P2)
+///
+
+-- Test 40
+-- Checking directProduct
+TEST ///
+P1 = convexHull matrix {{1,-1}};
+P2 = convexHull matrix {{1,1,-1,-1},{1,-1,1,-1}};
+P1 = directProduct(P1,P2);
+P2 = convexHull matrix {{1,1,1,1,-1,-1,-1,-1},{1,1,-1,-1,1,1,-1,-1},{1,-1,1,-1,1,-1,1,-1}};
+assert(P1 == P2)
+C1 = posHull matrix {{1,2},{2,1}};
+C2 = posHull matrix {{1,0},{0,1}};
+C1 = directProduct(C1,C2);
+C2 = posHull matrix {{1,2,0,0},{2,1,0,0},{0,0,1,0},{0,0,0,1}};
+assert(C1 == C2)
+///
+
+-- Test 41
+-- Checking affineImage for polyhedra
+TEST ///
+P = convexHull matrix {{1,1,-1,-1},{1,-1,1,-1}};
+A = matrix {{1,2},{3,4}};
+v = matrix {{-1},{1}};
+P = affineImage(A,P,v);
+Q = convexHull matrix {{2,-2,0,-4},{8,0,2,-6}};
+assert(P == Q)
+P = intersection(matrix{{-1,0,0},{0,-1,0},{0,0,-1}},matrix{{1},{1},{1}});
+A = matrix {{0,2,0},{1,0,1},{0,0,2}};
+v = matrix {{1},{1},{1}};
+P = affineImage(A,P,v);
+Q = convexHull(matrix{{-1},{-1},{-1}},matrix{{0,2,0},{1,0,1},{0,0,2}});
+assert(P == Q)
+///
+
+-- Test 42
+-- Checking affineImage for cones
+TEST ///
+C = posHull matrix {{1,1,2},{1,2,1},{2,1,1}};
+A = matrix {{1,-1,0},{0,1,-1},{-1,0,1}};
+C = affineImage(A,C);
+C1 = posHull matrix {{0,-1,1},{-1,1,0},{1,0,-1}};
+assert(C == C1)
+///
+
+-- Test 43
+-- Checking affinePreimage for polyhedra
+TEST ///
+P = convexHull matrix {{1,1,-1,-1},{1,-1,1,-1}};
+A = matrix {{1,2},{3,4}};
+v = matrix {{-1},{1}};
+P = affinePreimage(A,P,v);
+Q = convexHull matrix {{0,-2,-4,-6},{0,1,3,4}};
+assert(P == Q)
+P = intersection(matrix{{-1,0,0},{0,-1,0},{0,0,-1}},matrix{{1},{1},{1}});
+A = matrix {{0,2,0},{1,0,1},{0,0,2}};
+v = matrix {{1},{1},{1}};
+P = affinePreimage(A,P,v);
+Q = convexHull(matrix{{-1},{-1},{-1}},matrix{{1,0,-1},{0,1,0},{0,0,1}});
+assert(P == Q)
+///
+
+-- Test 44
+-- Checking affinePreimage for cones
+TEST ///
+C = posHull matrix {{1,1,2},{1,2,1},{2,1,1}};
+A = matrix {{1,-1,0},{0,1,-1},{-1,0,0}};
+C = affinePreimage(A,C);
+C1 = posHull matrix {{-2,-1,-1},{-3,-3,-2},{-4,-4,-4}};
+assert(C == C1)
+///
+
+-- Test 45
+-- Checking pyramid
+TEST ///
+P = intersection(matrix {{1,0},{-1,0},{0,1},{0,-1}},matrix {{1},{1},{1},{1}});
+P = pyramid P;
+Q = convexHull matrix {{1,1,-1,-1,0},{1,-1,1,-1,0},{0,0,0,0,1}};
+assert(P == Q)
+///
+
+-- Test 46
+-- Checking crossPolytope
+TEST ///
+P = crossPolytope(3,2);
+Q = convexHull matrix {{2,-2,0,0,0,0},{0,0,2,-2,0,0},{0,0,0,0,2,-2}};
+assert(P == Q)
+///
+
+-- Test 47
+-- Checking cyclicPolytope
+TEST ///
+P = cyclicPolytope(3,5);
+Q = convexHull matrix {{0,1,2,3,4},{0,1,4,9,16},{0,1,8,27,64}};
+assert(P == Q)
+///
+
+-- Test 48
+-- Checking emptyPolyhedron
+TEST ///
+P = emptyPolyhedron 2;
+assert(dim(P) == -1)
+assert(ambDim(P) == 2)
+///
+
+-- Test 49
+-- Checking hypercube
+TEST ///
+P = hypercube (3,3);
+Q = convexHull matrix {{3,3,3,3,-3,-3,-3,-3},{3,3,-3,-3,3,3,-3,-3},{3,-3,3,-3,3,-3,3,-3}};
+assert(P == Q)
+///
+
+-- Test 50
+-- Checking hirzebruch
+TEST ///
+F = hirzebruch 3;
+F1 = makeFan {posHull matrix{{1,0},{0,1}},posHull matrix{{1,0},{0,-1}},posHull matrix{{0,-1},{1,3}},posHull matrix{{0,-1},{-1,3}}};
+assert(F == F1)
+///
+
+-- Test 51
+-- Checking newtonPolytope
+TEST ///
+R = QQ[a,b,c];
+f = a^2*b+b^3*c^2+c^4*a^3+a*b*c+a^5*c^6;
+P =newtonPolytope f;
+Q = convexHull matrix {{2,0,3,1,5},{1,3,0,1,0},{0,2,4,1,6}};
+assert(P == Q)
+///
+
+-- Test 52
+-- Checking posOrthant
+TEST ///
+C1 = posOrthant 3;
+C2 = intersection matrix {{1,0,0},{0,1,0},{0,0,1}};
+assert(C1 == C2)
+///
+
+-- Test 53
+-- Checking statePolytope
+TEST ///
+R = QQ[a,b,c];
+I = ideal(a^2-b,a*b-c);
+(L,P) = statePolytope(I);
+Q = convexHull matrix {{21,3,1,1,6,2},{0,9,7,4,0,2},{0,0,2,4,5,5}};
+L1 = { {{b^2,a*b,a^2}}, {{b^3,a*c,a*b,a^2}}, {{a^3,b}}, {{c^2,a*c,a*b,a^2}}, {{c,b}}, {{c,a^2}}};
+L = apply(L,entries);
+assert(P == Q)
+assert(equalLists(L,L1))
+///
+
+-- Test 54
+-- Checking stdSimplex
+TEST ///
+P = stdSimplex 2;
+Q = intersection(matrix{{-1,0,0},{0,-1,0},{0,0,-1}},matrix{{0},{0},{0}},matrix{{1,1,1}},matrix{{1}});
+assert(P == Q)
+///
+
+-- Test 55
+-- Checking union
+TEST ///
+L1 = {1,3,4,5,7,8,9};
+L2 = {2,3,4,6,7,8,10};
+L1 = sort union(L1,L2);
+L2 = {1,2,3,4,5,6,7,8,9,10};
+assert(L1 == L2)
+///
+
+-- Test 56
+-- Checking symmDiff
+TEST ///
+L1 = {1,3,4,5,7,8,9};
+L2 = {2,3,4,6,7,8,10};
+L1 = sort symmDiff(L1,L2);
+L2 = {1,2,5,6,9,10};
+assert(L1 == L2)
+///
+
+-- Test 57
+-- Checking equalLists
+TEST ///
+L1 = {posOrthant 3, hypercube 2, crossPolytope 4, hirzebruch 5};
+L2 = {hirzebruch 5, posOrthant 3, hypercube 2, crossPolytope 4};
+assert(equalLists(L1,L2))
+///
+
+-- Test 58
+-- Checking vertexEdgeMatrix and vertexFacetMatrix
+TEST ///
+P = convexHull matrix {{0,-1,1,-1,1},{0,-1,-1,1,1},{-1,1,1,1,1}};
+M = matrix {{0,1,2,3,4,5,6,7,8},{1,1,1,0,1,1,0,0,0},{2,1,0,1,0,0,0,1,0},{3,0,0,0,1,0,1,1,0},{4,0,1,1,0,0,0,0,1},{5,0,0,0,0,1,1,0,1}};
+N = matrix {{0,1,2,3,4,5},{1,1,1,1,1,0},{2,1,0,1,0,1},{3,0,1,1,0,1},{4,1,0,0,1,1},{5,0,1,0,1,1}};
+assert(vertexEdgeMatrix(P) == M)
+assert(vertexFacetMatrix(P) == N)
+///
+
 
 end
