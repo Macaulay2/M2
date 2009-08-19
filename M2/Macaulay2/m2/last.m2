@@ -4,7 +4,7 @@
 
 recursionLimit = 300
 
-scan(methods baseName, (baseName, BType) -> if BType =!= Symbol and BType =!= IndexedVariable and BType =!= Holder then (
+scan(join(apply(methods baseName,last),{MonoidElement}), BType -> if BType =!= Symbol and BType =!= IndexedVariable and BType =!= Holder then (
 	  v := value;
      	  bn := a -> (
 	       r := baseName a;
