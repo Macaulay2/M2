@@ -1,3 +1,6 @@
+-- THIS IS BEING DEVELOPED NOW!! --
+-- This is not meant for general use yet.
+
 newPackage(
 	"newGTZ",
     	Version => "0.5", 
@@ -18,7 +21,9 @@ newPackage(
     	DebuggingMode => true
     	)
 
-export {newPD,GeneralPosition,BasicPD,getSeparator}
+export {
+     getSaturation,
+     newPD,GeneralPosition,BasicPD,getSeparator}
 
 needs "newGTZGenPos.m2"
 
@@ -38,6 +43,7 @@ getHighestDegree(List, RingElement) := (gs, x) ->
 TEST ///
 restart
 load "newGTZ.m2"
+debug newGTZ
 R = QQ[x,y,z]
 myList = {x^2*y+2*x*y, z^3+x^2*y+x*y*z}
 assert(getHighestDegree(myList, x) == x^2*y+2*x*y)
@@ -65,6 +71,7 @@ getPCoeff(RingElement, RingElement) := (g,p) ->
 TEST ///
 restart
 load "newGTZ.m2"
+debug newGTZ
 R = ZZ[x,y]
 f = 125*x*y+25*x^2
 assert(getPCoeff(f,5_R) == (2,x^2+5*x*y))
@@ -88,11 +95,11 @@ getSaturation(Ideal, RingElement) := (I,s) ->
    (satI,n)
 )
 TEST ///
+restart
 load "newGTZ.m2"
 R = ZZ/32003[a..d]
 I = (ideal vars R)^3
 assert (getSaturation(I,a) == (ideal 1_R,3))
-assert (getSatIndex(I,a) == 3)
 assert (getSaturation(I,a*b) == (ideal 1_R,2))
 J = (ideal (a,b,c-d))*I
 assert (getSaturation(J,a) == (ideal 1_R, 4))
@@ -121,6 +128,7 @@ getProductOrderLeadTerms(Ideal, List) := (I, myVars) ->
 TEST ///
 restart
 load "newGTZ.m2"
+debug newGTZ
 R = ZZ/32003[x,y,z]
 I = ideal (y^2*z-15*x*z^2,5*x^2*y^3-25*x*y*z^3)
 independentSets(I)
@@ -203,8 +211,9 @@ getSeparator(Ideal, List) := (I, myVars) ->
 TEST ///
 restart
 load "newGTZ.m2"
+debug newGTZ
 path = prepend("~/Mac2SVN/M2/Macaulay2/packages", path)
-load "~/Mac2SVN/M2/Macaulay2/packages/ExampleIdeals.m2"
+loadPackage "ExampleIdeals"
 R = ZZ[vars(0..8)];
 I = permanents(2, genericMatrix(R,3,3))
 getSeparatorZZ(I,{a,b,c},2_(ring I))
@@ -359,7 +368,7 @@ PDWorker(Ideal, Ideal, ZZ) := opts -> (I, resultSoFar, callDepth) ->
       local Isat;
       local satIndex;
       local t2;
-      if (mySep == 1_R) then (t2 = timing Isat = I; satIndex = 0;) else
+      if (mySep == 1) then (t2 = timing Isat = I; satIndex = 0;) else
       (
 	 -- this section includes code from the PrimaryDecomposition package  
          t2 = timing (ret := minSatPPD(I,factors mySep));
@@ -488,9 +497,9 @@ R = QQ[a,b,c]
 I = ideal apply(1 .. 3, i -> random(3,R))
 time ourPD3 = newPD(I,Verbosity=>2,Strategy=>{GeneralPosition});
 I = ideal flatten gens I
-time ourPD = newPD(I,Verbosity=>2);
+time ourPD = newPD(I,Verbosity=>2); -- CRASHES M2
 I = ideal flatten gens I
-time m2PD = primaryDecomposition I
+time m2PD = primaryDecomposition I -- CRASHES M2, but only after running the first newPD above!
 ///
 
 TEST ///
@@ -575,7 +584,7 @@ I = ideal(
 	 b*c*d*e+a*c*d*e+a*b*d*e+a*b*c*e+a*b*c*d,
 	 a*b*c*d*e-h^5)
 -- 78 seconds
-time ourPD3 = newPD(I,Verbosity=>2,Strategy=>{GeneralPosition});
+time ourPD3 = newPD(I,Verbosity=>2,Strategy=>{GeneralPosition}); -- CRASH on Ubuntu
 I = ideal flatten gens I
 time ourPD = newPD(I,Verbosity=>2);
 I = ideal flatten gens I
@@ -610,6 +619,7 @@ load "newGTZ.m2"
 debug newGTZ
 path = prepend("/Mac2SVN/M2/Macaulay2/packages", path)
 load "/Mac2SVN/M2/Macaulay2/packages/ExampleIdeals.m2"
+loadPackage "ExampleIdeals"
 R = QQ[vars(0..8)];
 I = permanents(2, genericMatrix(R,3,3))
 time ourPD3 = newPD(I,Verbosity=>2,Strategy=>{GeneralPosition});
@@ -626,6 +636,7 @@ load "newGTZ.m2"
 debug newGTZ
 path = prepend("/Mac2SVN/M2/Macaulay2/packages", path)
 load "/Mac2SVN/M2/Macaulay2/packages/ExampleIdeals.m2"
+loadPackage "ExampleIdeals"
 R = ZZ/32003[vars(0..8)];
 I = permanents(2, genericMatrix(R,3,3))
 time ourPD3 = newPD(I,Verbosity=>2,Strategy=>{GeneralPosition});
@@ -740,3 +751,5 @@ I = bayes({{},{1},{2},{2,3}}, (2,2,2,2))
 time ourPD3 = newPD(I,Verbosity=>2,Strategy=>{GeneralPosition});
 I = ideal flatten entries gens I
 time ourPD = newPD(I,Verbosity=>2);
+
+time primaryDecomposition(ideal I_*)
