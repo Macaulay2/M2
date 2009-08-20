@@ -153,7 +153,8 @@ splitZeroDimensionalIdeal(Ideal,List,RingElement,RingElement) := (I, us, x, y) -
    factorList = select(factorList, fac -> first degree fac#0 > 0);
    << netList factorList << endl;
    idealList := apply(factorList, fac -> ideal (myMapInverse fac#0)^(fac#1) + I);
-   apply(idealList, J -> time sepAndSat(J,us))
+   idealList = apply(idealList, J -> time sepAndSat(J,us));
+   apply(idealList, J -> trim ideal gens gb J)
 )
 splitZeroDimensionalIdeal(Ideal,List) := (I,us) ->
 (
