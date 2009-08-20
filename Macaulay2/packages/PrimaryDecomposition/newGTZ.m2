@@ -18,7 +18,7 @@ newPackage(
     	DebuggingMode => true
     	)
 
-export {newPD,GeneralPosition,Basic,ChangeCoords}
+export {newPD,GeneralPosition,BasicPD,getSeparator}
 
 needs "newGTZGenPos.m2"
 
@@ -306,25 +306,13 @@ getComponentSep(List,ZZ) := (compList,i) -> (
    product seps
 )
 
-TEST ///
-restart
-load "newGTZ.m2"
-R = ZZ/32003[a,b,c,h]
-I = ideal (a+b+c,a*b+b*c+c*a,a*b*c-h^3)
-decompose I
-seps=getComponentSep(decompose I, 0)
-///
-
---- temporary code: just use normal M2 primaryDecomposition for zero dimensional case
 debug PrimaryDecomposition
-PDZD = method(Options => {Verbosity => 0, Strategy=> {}})
-PDZD(Ideal, List, Ideal) := opts -> (I, variables, resultSoFar) ->
+primDecZeroDim = method(Options => {Verbosity => 0, Strategy=> {}})
+primDecZeroDim(Ideal, List, Ideal) := opts -> (I, variables, resultSoFar) ->
 (
-   -- use my PDZDF code instead?
-   pdList := time if member(Basic,set opts.Strategy) then primaryDecomposition I
-             else if member(GeneralPosition, set opts.Strategy) then
-	        apply((PDZDF(I,variables,resultSoFar,Verbosity => opts.Verbosity, ChangeCoords => true)), i -> trim first i)
-	     else
+   pdList := time if member(BasicPD,set opts.Strategy) then primaryDecomposition I
+             else if member(GeneralPosition, set opts.Strategy) then primDecZeroDimField(I,variables,resultSoFar,Verbosity => opts.Verbosity)
+	     else 
              (
                 compList := decompose I;
 		if (#compList == 1) then {I}
@@ -358,7 +346,7 @@ PDWorker(Ideal, Ideal, ZZ) := opts -> (I, resultSoFar, callDepth) ->
    --printSkip := concatenate (callDepth : ".");
    indSetI := independentSets(I, Limit => 1);
    if (indSetI == {1_(ring I)}) then (
-	retVal = PDZD(I,{},resultSoFar,opts);
+	retVal = primDecZeroDim(I,{},resultSoFar,opts);
       if opts.Verbosity >= 2 then (
          << "ZD Components Found : " << netList retVal#0 << endl
       );
@@ -386,7 +374,7 @@ PDWorker(Ideal, Ideal, ZZ) := opts -> (I, resultSoFar, callDepth) ->
       );
       if (not isSubset(resultSoFar,Isat)) then
       (
-	 (comps,newResultSoFar) = PDZD(Isat, variables, resultSoFar,opts);
+	 (comps,newResultSoFar) = primDecZeroDim(Isat, variables, resultSoFar,opts);
 	 if opts.Verbosity >= 2 then (
             << "Components Found : " << netList comps << endl;
 	 );
@@ -409,6 +397,7 @@ PDWorker(Ideal, Ideal, ZZ) := opts -> (I, resultSoFar, callDepth) ->
 )
 
 beginDocumentation()
+
 doc ///
   Key
     newGTZ
@@ -423,20 +412,83 @@ doc ///
      newPD(I, Strategy=>{GeneralPosition})
 ///
 
+doc ///
+  Key
+    newPD
+  Headline
+    Computes a primary decomposition of the input ideal I
+  Usage
+    newPD(I)
+  Inputs
+    I : Ideal
+  Outputs
+    pdList : List 
+  Description
+   Text
+     Below is a brief example.
+   Example
+     R = ZZ/32003[a,b,c,h]
+     I = ideal(a+b+c,a*b+b*c+a*c,a*b*c-h^3)
+     newPD(I, Strategy=>{GeneralPosition})
+     I = ideal I_*
+     newPD(I, Strategy=>{BasicPD})
+     I = ideal I_*
+     newPD(I)
+     I = ideal I_*
+     newPD(I, Verbosity=>2)
+///
+
+doc ///
+  Key
+    BasicPD
+  Headline
+    newPD primary decomposition option.
+  Usage
+    newPD(I, Strategy=>{BasicPD})
+  Description
+   Text
+     Uses the basic primaryDecomposition code (modulo some small reductions) to find the PD.
+///
+
+doc ///
+  Key
+    GeneralPosition
+  Headline
+    Option for using a general change of coordinates in newPD
+  Usage
+    newPD(I, Strategy=>{GeneralPosition})
+  Description
+   Text
+     Uses the general position algorithm to perform the bulk of the primary decomposition work.
+///
+
+doc ///
+  Key
+    getSeparator
+  Headline
+    Blah
+  Usage
+    getSeparator(I,variables)
+  Inputs
+    I : Ideal
+    variables : List
+  Outputs
+    f : RingElement
+  Description
+   Text
+     Returns an element $f$ such that $I = (I,\ f)\ \cap\ (I\ :\ f^\infty)$.  Some effort is made to find an $\ f\ $ that is
+     better for the subsequent primary decomposition computations (i.e. low degree).  
+///
+
 TEST ///
 -- CORRECT
 restart
 load "newGTZ.m2"
 R = QQ[a,b,c]
 I = ideal apply(1 .. 3, i -> random(3,R))
-independentSets I
--- seg fault!
-time ourPD = newPD(I,Verbosity=>2);
-I = ideal flatten gens I
-time ourPD2 = newPD(I,Verbosity=>2,Strategy=>{Basic});
-I = ideal flatten gens I
 time ourPD3 = newPD(I,Verbosity=>2,Strategy=>{GeneralPosition});
-ourPD3 == makeIrredundant(ourPD3)
+I = ideal flatten gens I
+time ourPD = newPD(I,Verbosity=>2);
 I = ideal flatten gens I
 time m2PD = primaryDecomposition I
 ///
@@ -447,17 +499,12 @@ restart
 load "newGTZ.m2"
 R = ZZ/32003[a,b,c,d]
 I = ideal apply(1 .. 3, i -> random(3,R))
-independentSets I
--- takes > 10 minutes, hangs in Singular's decompose routine
+-- takes > 10 minutes, hangs in decompose routine
 time ourPD = newPD(I,Verbosity=>2);
 I = ideal flatten gens I
-time ourPD2 = newPD(I,Verbosity=>2,Strategy=>{Basic});
-I = ideal flatten gens I
 time ourPD3 = newPD(I,Verbosity=>2,Strategy=>{GeneralPosition});
--- return 4 components, all primary according to existing m2 code, and intersect to I
--- also only takes 3.5 seconds on my MBP
-ourPD3 == makeIrredundant(ourPD3)
-I = ideal flatten gens I
+-- return 3 components, all primary according to existing m2 code, and intersect to I
+-- also only takes 1.4 seconds on my MBP
 time m2PD = primaryDecomposition I
 ///
 
@@ -469,15 +516,9 @@ R = ZZ/32003[a,b,c,h]
 I = ideal(a+b+c,a*b+b*c+a*c,a*b*c-h^3)
 time ourPD = newPD(I,Verbosity=>2);
 I = ideal flatten gens I
-time ourPD2 = newPD(I,Verbosity=>2,Strategy=>{Basic});
-I = ideal flatten gens I
 time ourPD3 = newPD(I,Verbosity=>2,Strategy=>{GeneralPosition});
 I = ideal flatten gens I
 time m2PD = primaryDecomposition I;
-intersect ourPD_0 == I
-apply (ourPD_0, i -> isPrimary i)
-#ourPD_0
-#m2PD
 
 -- CORRECT
 restart
@@ -487,8 +528,6 @@ I = ideal(a+b+c+d,a*b+b*c+c*d+d*a,a*b*c+b*c*d+c*d*a+d*a*b,a*b*c*d-h^4)
 time ourPD3 = newPD(I,Verbosity=>2,Strategy=>{GeneralPosition});
 I = ideal flatten gens I
 time ourPD = newPD(I,Verbosity=>2);
-I = ideal flatten gens I
-time ourPD2 = newPD(I,Verbosity=>2,Strategy=>{Basic});
 I = ideal flatten gens I
 time m2PD = primaryDecomposition I;
 
@@ -502,16 +541,14 @@ time ourPD3 = newPD(I,Verbosity=>2,Strategy=>{GeneralPosition});
 I = ideal flatten gens I
 time ourPD = newPD(I,Verbosity=>2);
 I = ideal flatten gens I
-time ourPD2 = newPD(I,Verbosity=>2,Strategy=>{Basic});
-I = ideal flatten gens I
 time m2PD = primaryDecomposition I;
 
 -- CORRECT
 -- *much* speedier on other examples with trim in the zeroDimGenPos code, but putting it in causes a bug -- namely
 -- the independent sets change after a random change of coordinates (in this example)
--- BUG
 restart
 load "newGTZ.m2"
+debug newGTZ
 R = ZZ/32003[a,b,c,d,e,h]
 I = ideal(
          a+b+c+d+e,
@@ -519,13 +556,28 @@ I = ideal(
 	 c*d*e+b*c*d+a*d*e+a*b*e+a*b*c,
 	 b*c*d*e+a*c*d*e+a*b*d*e+a*b*c*e+a*b*c*d,
 	 a*b*c*d*e-h^5)
+time ourPD3 = newPD(I,Verbosity=>2,Strategy=>{GeneralPosition});
+I = ideal flatten gens I
 time ourPD = newPD(I,Verbosity=>2);
 I = ideal flatten gens I
-time ourPD = newPD(I);
-I = ideal flatten gens I
-time ourPD2 = newPD(I,Verbosity=>2,Strategy=>{Basic});
-I = ideal flatten gens I
+time m2PD = primaryDecomposition I;
+
+-- CORRECT
+-- BIG time difference...
+restart
+load "newGTZ.m2"
+debug newGTZ
+R = QQ[a,b,c,d,e,h]
+I = ideal(
+         a+b+c+d+e,
+	 d*e+c*d+b*c+a*e+a*b,
+	 c*d*e+b*c*d+a*d*e+a*b*e+a*b*c,
+	 b*c*d*e+a*c*d*e+a*b*d*e+a*b*c*e+a*b*c*d,
+	 a*b*c*d*e-h^5)
+-- 78 seconds
 time ourPD3 = newPD(I,Verbosity=>2,Strategy=>{GeneralPosition});
+I = ideal flatten gens I
+time ourPD = newPD(I,Verbosity=>2);
 I = ideal flatten gens I
 time m2PD = primaryDecomposition I;
 
@@ -544,7 +596,7 @@ time ourPD = newPD(I,Verbosity=>2);
 I = ideal flatten gens I
 time ourPD = newPD(I);
 I = ideal flatten gens I
-time ourPD2 = newPD(I,Verbosity=>2,Strategy=>{Basic});
+time ourPD2 = newPD(I,Verbosity=>2,Strategy=>{BasicPD});
 I = ideal flatten gens I
 time ourPD3 = newPD(I,Verbosity=>2,Strategy=>{GeneralPosition});
 I = ideal flatten gens I
@@ -555,6 +607,7 @@ time m2PD = primaryDecomposition I;
 -- before it at last reaches the zero dimensional primary component.  Maybe nothing can be done about it.
 restart
 load "newGTZ.m2"
+debug newGTZ
 path = prepend("/Mac2SVN/M2/Macaulay2/packages", path)
 load "/Mac2SVN/M2/Macaulay2/packages/ExampleIdeals.m2"
 R = QQ[vars(0..8)];
@@ -563,8 +616,6 @@ time ourPD3 = newPD(I,Verbosity=>2,Strategy=>{GeneralPosition});
 I = ideal flatten entries gens I
 time ourPD = newPD(I,Verbosity=>2);
 I = ideal flatten entries gens I
-time ourPD2 = newPD(I,Strategy => {Basic});t
-I = ideal flatten entries gens I
 time m2PD = primaryDecomposition I;
 
 -- CORRECT
@@ -572,15 +623,14 @@ time m2PD = primaryDecomposition I;
 -- before it at last reaches the zero dimensional primary component.  Maybe nothing can be done about it.
 restart
 load "newGTZ.m2"
-path = prepend("~/Mac2SVN/M2/Macaulay2/packages", path)
-load "~/Mac2SVN/M2/Macaulay2/packages/ExampleIdeals.m2"
+debug newGTZ
+path = prepend("/Mac2SVN/M2/Macaulay2/packages", path)
+load "/Mac2SVN/M2/Macaulay2/packages/ExampleIdeals.m2"
 R = ZZ/32003[vars(0..8)];
 I = permanents(2, genericMatrix(R,3,3))
 time ourPD3 = newPD(I,Verbosity=>2,Strategy=>{GeneralPosition});
 I = ideal flatten entries gens I
 time ourPD = newPD(I,Verbosity=>2);
-I = ideal flatten entries gens I
-time ourPD2 = newPD(I,Strategy => {Basic});t
 I = ideal flatten entries gens I
 time m2PD = primaryDecomposition I;
 
@@ -593,8 +643,6 @@ time ourPD3 = newPD(I,Verbosity=>2,Strategy=>{GeneralPosition});
 I = ideal flatten entries gens I
 time ourPD = newPD(I,Verbosity=>2);
 I = ideal flatten entries gens I
-time ourPD2 = newPD(I,Verbosity=>2,Strategy=>{Basic});
-I = ideal flatten entries gens I
 time m2PD = primaryDecomposition I;
 
 -- CORRECT
@@ -605,16 +653,14 @@ I = ideal"
   x2yz + xy2z + xyz2 + xyz + xy + xz + yz,
   x2y2z + xy2z2 + x2yz + xyz + yz + x + z,
   x2y2z2 + x2y2z + xy2z + xyz + xz + z + 1"
-codim I
 time ourPD3 = newPD(I,Verbosity=>2,Strategy=>{GeneralPosition});
 I = ideal flatten entries gens I
 time ourPD = newPD(I,Verbosity=>2);
 I = ideal flatten entries gens I
-time ourPD2 = newPD(I,Verbosity=>2,Strategy=>{Basic});
-I = ideal flatten entries gens I
 time m2PD = primaryDecomposition I;
 
--- CORRECT
+-- INCORRECT
+-- Must the GB really be calculated after going to the fraction field?  This example seems to say yes.
 restart
 load "newGTZ.m2"
 R = ZZ/32003[x,y,z,t]
@@ -622,16 +668,12 @@ I = ideal(
     t^10-x,
     t^31-t^6-t-y,
     t^8-z)
-codim I
 time ourPD3 = newPD(I,Verbosity=>2,Strategy=>{GeneralPosition});
 I = ideal flatten entries gens I
 time ourPD = newPD(I,Verbosity=>2);
 I = ideal flatten entries gens I
-time ourPD2 = newPD(I,Verbosity=>2,Strategy=>{Basic});
-I = ideal flatten entries gens I
 time m2PD = primaryDecomposition I;
 
---- get squarefree part function later?
 -- UNKNOWN - Runs for a very long time on built in version, as well as the 'decompose' version.
 -- The GeneralPosition one does indeed run a lot faster though
 restart
@@ -646,8 +688,6 @@ I = ideal "-2hjk + 4ef + bj + ak,
 -- should try on laptop and let run for a while
 -- gets much closer with GP algorithm
 time ourPD3 = newPD(I,Verbosity=>2,Strategy=>{GeneralPosition});
-I = ideal flatten entries gens I
-time ourPD = newPD(I,Verbosity => 2);
 I = ideal flatten entries gens I
 time ourPD = newPD(I,Verbosity => 2);
 I = ideal flatten entries gens I
@@ -677,8 +717,9 @@ end
 restart
 loadPackage "newGTZ"
 installPackage "newGTZ"
-path = prepend("~/Mac2SVN/M2/Macaulay2/packages", path)
-load "~/Mac2SVN/M2/Macaulay2/packages/ExampleIdeals.m2"
+viewHelp newGTZ
+path = prepend("/Mac2SVN/M2/Macaulay2/packages", path)
+load "/Mac2SVN/M2/Macaulay2/packages/ExampleIdeals.m2"
 R = ZZ/32003[vars(0..8)];
 I = permanents(2, genericMatrix(R,3,3))
 time ourPD3 = newPD(I,Verbosity=>2,Strategy=>{GeneralPosition});
@@ -686,7 +727,7 @@ I = ideal flatten entries gens I
 time ourPD = newPD(I,Verbosity=>2);
 
 restart
-path = prepend("~/Mac2SVN/M2/Macaulay2/packages", path)
+path = prepend("/Mac2SVN/M2/Macaulay2/packages", path)
 loadPackage "ExampleIdeals"
 loadPackage "newGTZ"
 I = bayes({{},{1},{1},{2},{3,4}}, (2,2,2,2,2))
