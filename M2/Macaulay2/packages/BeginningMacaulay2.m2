@@ -1,3 +1,5 @@
+-- -*- coding: utf-8 -*-
+
 newPackage(
      "BeginningMacaulay2",
      Version => "0.1", 
@@ -144,7 +146,7 @@ R=kernel matrix"a,b,0;0,a,b"
 -- A.  First steps; example with a monomial curve
 --------------------
 
--- To compute the Groebner basis of an ideal
+-- To compute the Gröbner basis of an ideal
 -- $(x^2y,xy^2+x^3)$ in the polynomial ring in
 -- four variables we proceed as follows:
 -- Our favorite field
@@ -153,11 +155,11 @@ kk = ZZ/32003
 R = kk[x,y,z,w]
 -- and the ideal
 I = ideal(x^2*y,x*y^2+x^3)
--- now the punch line: we can compute the Groebner basis with
+-- now the punch line: we can compute the Gröbner basis with
 J = gens gb I
 -- (here gb I is an object with lots of information in it; gens gb I
--- extracts just what we want, the generators in a Groebner basis.)
--- Note that Groebner bases are always computed with respect to a particular
+-- extracts just what we want, the generators in a Gröbner basis.)
+-- Note that Gröbner bases are always computed with respect to a particular
 -- monomial order on the ring. In fact, the ring we defined above has
 -- a default monomial order, the graded reverse lex order. For many
 -- other possibilities see
@@ -176,7 +178,7 @@ primaryDecomposition I
 -- For larger examples, this can be computationally challenging!
 -- Somewhat easier is to find just the minimal primes. We use:
 decompose I
--- From Groebner bases we can also compute the
+-- From Gröbner bases we can also compute the
 -- codimension, dimension,
 -- degree, and the whole Hilbert
 -- function and polynomial.  
@@ -272,7 +274,7 @@ regularity M
 ------------------------------------------------
 -- B. Division With Remainder
 -----------------------------------------------
--- A major application of GrÃ¶bner bases is
+-- A major application of Gröbner bases is
 -- to give a normal form for an element modulo an
 -- ideal, allowing one, for example, to decide whether
 -- it is zero (that is, in the ideal).
@@ -289,7 +291,7 @@ I = ideal M^3
 Tr = trace M 
 for p from 1 to 10 do print (Tr^p % I)
 -- The expression Tr^p % I is the normal form for the p-th power
--- of the trace Tr with respect to the Groebner basis of I computed
+-- of the trace Tr with respect to the Gröbner basis of I computed
 -- in R. The expression "for p from 1 to 10 do" specifies a 
 -- "for loop" that executes the following "print (Tr^p % I)"
 -- with 10 consecutive values of p. For more information on such loops see
