@@ -42,6 +42,7 @@ primaryDecomposition = method( TypicalValue => List, Options => { Strategy => nu
 load "./PrimaryDecomposition/GTZ.m2"
 load "./PrimaryDecomposition/Shimoyama-Yokoyama.m2"
 load "./PrimaryDecomposition/Eisenbud-Huneke-Vasconcelos.m2"
+load "./PrimaryDecomposition/radical.m2"
 
 binomialCD = (I) -> error "Binomial strategy not implemented yet"
 
