@@ -63,7 +63,7 @@ kk=toField (QQ[i]/(i^2+1))
 -- memory when performed over finite prime fields, and when
 -- these are large they look a lot like the rational numbers,
 -- so we mostly use fields of the form ZZ/p. The prime p
---can range up to 32003.
+--can range up to 32749.
 --
 -- To make a polynomial ring in 5 variables over ZZ/101
 kk=ZZ/101
