@@ -144,9 +144,13 @@ radical(FractionalIdeal, FractionalIdeal) := opts -> (F,R1) -> (
      -- F is an ideal of R1
      -- compute a presentation A of R1
      -- MES MES TODO TODO !!!! Not functional if R1' == R (8-16-09)
-     R1' := time if R1#0 == 1 and R1#1 == 1 
-       then R
-       else ringFromFractions(R1, Variable=>symbol w); -- the generators correspond to elements of R1#1 (except the first, which 
+     time if R1#0 == 1 and R1#1 == 1 
+       then (
+	    J0 := first flattenRing F#1;  -- assumes F#0 is 1 ??
+	    radJ0 := rad J0;
+	    return fractionalIdeal trim promote(radJ0,ring F)
+	    );
+     R1' := ringFromFractions(R1, Variable=>symbol w); -- the generators correspond to elements of R1#1 (except the first, which 
           -- corresponds to the unit).
      -- map F into A.  We need to know how to represent elements of F as elements in R1
      -- we assume: F = 1/g J \subset R1 = 1/f L

@@ -1,6 +1,12 @@
 -- Copyright 1995.  Michael E. Stillman
 
-fromDual = (f) -> (
+fromDual = method()
+toDual = method()
+fromDualChar0 = method()
+dividedMultiply = method()
+dividedPower = method()
+
+fromDual Matrix := (f) -> (
     R := ring f;
     d := first max degrees source f;
     g := product apply(generators R, v -> v^d);
@@ -12,7 +18,7 @@ fromDual = (f) -> (
 	 )
     )
 
-toDual = (d, f) -> (
+toDual(ZZ, Matrix) := (d,f) -> (
     R := ring f;
     g := product apply(generators R, v -> v^d);
     box := matrix table (1, numgens R, (i,j) -> R_j^(d+1));

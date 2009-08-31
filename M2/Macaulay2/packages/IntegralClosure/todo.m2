@@ -1,3 +1,20 @@
+------------------------------
+todo MES, 8-19-09
+
+- change names of variables of the output
+
+- remove use of frac R, in the case when we don't have a Noether normalization?
+-  or change frac code to not do automatic simplification in this case?
+-  perhaps the code should only reduce if the given polynomials have a common factor
+-  over the actual poly ring?
+
+- write and rewrite doc
+- use good fractions
+- choice of NNL ideal to start
+- maybe ALWAYS use fractional ideal code?  Even in the non-Noether normal case
+
+-------------------------------
+
 To do for our package:
 
 1. quick tests for being integrally closed

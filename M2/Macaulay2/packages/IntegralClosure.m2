@@ -16,6 +16,8 @@ newPackage(
 	AuxiliaryFiles => true
     	)
 --
+
+debug PrimaryDecomposition
    
 export{"integralClosure", "idealizer", "ringFromFractions", "nonNormalLocus", "Index",
 "isNormal", "conductor", "icFractions", "icMap", "icFracP", "conductorElement",
@@ -138,8 +140,12 @@ integralClosure Ring := Ring => o -> (R) -> (
 	  );
      R.icFractions = first entries G.matrix;
      R.icMap = F;
-     if not isCompleteIntersection then (
-	  (F', G') := S2ification target F;
+     if false and not isCompleteIntersection then (
+	  if verbosity >= 2 then 
+	  << "   S2-ification " << flush;
+	   t1 = (timing (F', G') := S2ification target F);
+	   if verbosity >= 1 then
+		<< t1#0 << " seconds" << endl;
            R.icMap = F'*F;
            R.icFractions = first entries((G*G').matrix)
 	   );
@@ -154,12 +160,12 @@ doingMinimalization = true;
 
 codim1radical = (J) -> (
      -- input: J:Ideal, in a domain R
+     --   keepOnlyCodim1:Boolean
      -- output: Ideal,  the intersection of all prime components 
      --   of J which have codimension one in R.
      --   If there are none, then return null.
      Jup := trim (flattenRing J)_0;
      Jup = trim ideal apply(Jup_*, f -> product apply(apply(toList factor f, toList), first));
-
 
      << "R0 = " << toExternalString ring Jup << endl;
      << "J0 = " << toString Jup << endl;
@@ -169,7 +175,9 @@ codim1radical = (J) -> (
      if verbosity >= 2 then << "." << flush;
      C = apply(C, L -> promote(L,ring J));
 
-     if verbosity >= 4 then << "codim of comps of J: " << C/codim << endl << "                 ";
+     codims := C/codim;
+     if verbosity >= 1 and any(codims, c -> c > 1)
+     then << "codim of comps of J: " << codims << endl << "                 ";
      
      C1 = select(C, L -> codim L == 1);
      --time C1 := select(C, L -> ((a,b) := endomorphisms(L,L_0); a != 0));
@@ -207,7 +215,14 @@ integralClosure1 = (F,G,J,nsteps,varname,strategies) -> (
      if codim J > 1 then return (F,G,ideal(1_R0));
 
      if verbosity >= 2 then << endl << "      radical " << flush;
-     t1 := timing(radJ = codim1radical J);
+     if nsteps == 0 then (
+       t1 := timing(radJ = trim codim1radical J);
+       )
+     else (
+     	  Jup := trim (flattenRing J)_0;
+	  t1 = timing(radJup := rad Jup);
+	  radJ = trim promote(radJup, ring J);
+	  );
      if verbosity >= 2 then << t1#0 << " seconds" << endl;
 
      if radJ === null then (
@@ -777,6 +792,7 @@ extendIdeal = (I,f) -> (
      trim ideal(psi*beta))
 
 TEST ///
+debug IntegralClosure
 kk=ZZ/101
 S=kk[a,b,c]
 I =ideal"a3,ac2"
@@ -2149,6 +2165,7 @@ icFractions R
 --rational quartic
 restart
 load "IntegralClosure.m2"
+kk = QQ
 S=kk[x_0..x_3]
 I = monomialCurveIdeal(S,{1,3,4})
 A=S/I
@@ -2156,3 +2173,43 @@ integralClosure(A)
 icFractions A
 
 
+installPackage "IntegralClosure"
+check IntegralClosure
+viewHelp
+
+----------------------------------------------
+restart
+load "IntegralClosure.m2"
+kk = QQ
+S = kk[x,y,u]
+R = S/(u^2-x^3*y^3)
+J = trim radical ideal jacobian R
+Ja = ideal(x,u)
+-- Let's keep computing Hom(rad Ja, rad Ja) until it stabilizes
+E1 = (x*Ja):Ja -- one new fraction u/x
+
+T1 = kk[x,y,u,v]
+I1 = saturate(ideal(u^2-x^3*y^3, v*x-u) ,x)
+R1 = T1/I1
+J2 = sub(Ja,R1)
+J2 = trim radical J2
+
+Jb = ideal(y,u)
+Jb = sub(Jb,R1)
+Jb = trim radical Jb
+
+(y*Jb):Jb  -- two new fractions?  u/y, v/y.  v/y = u/(x*y).
+
+E2 = (x*J2):J2 -- one new fraction v^2/x, actually it is already y^3
+T2 = kk[x,y,u,v,w]
+I2 = trim saturate(sub(I1,T2) + ideal(w*x-v^2),x)
+eliminate(
+
+I1 = eliminate(I1,u)
+
+
+J1 = trim(I1 + ideal jacobian I1)
+J1 = radical J1
+R1 = T1/I1
+J1 = sub(J1,R1)
+(y*J1):J1  -- add in v/y
