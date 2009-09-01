@@ -9,7 +9,7 @@ newPackage(
 		  Email => "dan@math.uiuc.edu", 
 		  HomePage => "http://www.math.uiuc.edu/~grayson/"},
 	     {Name => "Mike Stillman", 
-		  Email => "math@math.cornell.edu", 
+		  Email => "mike@math.cornell.edu", 
 		  HomePage => "http://www.math.cornell.edu/~mike/"}},
     	Headline => "a simple documentation function",
     	DebuggingMode => false
