@@ -15,7 +15,7 @@ newPackage("EdgeIdeals",
                         HomePage => "http://andrew.infinitepigeons.org/"
                        },
 		       {Name => "Adam Van Tuyl", 
-                        Email => "avantuyl@sleet.lakeheadu.ca",
+                        Email => "avantuyl@lakeheadu.ca",
                         HomePage => "http://flash.lakeheadu.ca/~avantuyl/"
                        }
                       },
