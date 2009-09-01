@@ -1,4 +1,4 @@
-/* Copyright 2003-2006, Michael E. Stillman */
+/* Copyright 2003-2009, Michael E. Stillman */
 
 #include "gb-default.hpp"
 #include "text-io.hpp"
@@ -1375,7 +1375,7 @@ bool gbA::reduce(spair *p)
 	  POLY h;
 	  h.f = R->gbvector_copy(p->x.f.f);
 	  h.fsyz = R->gbvector_copy(p->x.f.fsyz);
-	  new_insert(h,ELEM_NON_MIN_GB);
+	  insert_gb(h,ELEM_NON_MIN_GB);
 	}
       POLY g = gb[w]->g;
 
@@ -1522,7 +1522,7 @@ bool gbA::reduce_ZZ(spair *p)
 	  POLY h;
 	  h.f = R->gbvector_copy(p->x.f.f);
 	  h.fsyz = R->gbvector_copy(p->x.f.fsyz);
-	  new_insert(h,ELEM_MIN_GB);
+	  insert_gb(h,ELEM_MIN_GB);
 	}
       POLY g = gb[w]->g;
 
@@ -2103,7 +2103,7 @@ void gbA::handle_elem(POLY f, gbelem_type minlevel)
 {
   if (!R->gbvector_is_zero(f.f))
     {
-      new_insert(f,minlevel);
+      insert_gb(f,minlevel);
       if (gbTrace == 3)
 	emit_wrapped("m");
     }
@@ -2152,7 +2152,7 @@ bool gbA::s_pair_step()
 
 // new version
 
-void gbA::new_insert(POLY f, gbelem_type minlevel)
+void gbA::insert_gb(POLY f, gbelem_type minlevel)
 {
   /* Reduce this element as far as possible.  This either removes content, 
      makes it monic, or at least negates it so the lead coeff is positive. */
@@ -2246,8 +2246,6 @@ bool gbA::process_spair(spair *p)
 
   if (!not_deferred) return true;
 
-  //  if (!reduce(p)) return true;
-
   gbelem_type minlevel = (p->type == SPAIR_GEN ? ELEM_POSSIBLE_MINGEN : ELEM_MIN_GB);
   if (p->type == SPAIR_GEN) n_gens_left--;
   POLY f = p->x.f;
@@ -2258,7 +2256,7 @@ bool gbA::process_spair(spair *p)
 
   if (!R->gbvector_is_zero(f.f))
     {
-      new_insert(f,minlevel);
+      insert_gb(f,minlevel);
       if (gbTrace == 3)	emit_wrapped("m");
     }
   else 

@@ -17,6 +17,7 @@ newPackage(
     	)
 --
 
+needsPackage "PrimaryDecomposition"
 debug PrimaryDecomposition
    
 export{"integralClosure", "idealizer", "ringFromFractions", "nonNormalLocus", "Index",

@@ -103,3 +103,12 @@ g1 == g2 -- true...
 -- Now try this:
 gens gb g0
 -- I think: the trim'ed gens do NOT generate here...
+
+-- hypothesis: while computing the gb of g0, the 'trimmed' generators do not generate the ideal.
+
+restart
+gbTrace=15
+R = (ZZ/32003)[y, x, z, MonomialOrder=>Lex]
+I = ideal(y*x-x^3, y^2*x-z)
+gens gb I
+trim I
