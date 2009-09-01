@@ -195,7 +195,7 @@ private:
   }
 
   /* new state machine routines */
-  void new_insert(POLY f, gbelem_type minlevel);
+  void insert_gb(POLY f, gbelem_type minlevel);
   bool process_spair(spair *p);
   void do_computation();
 
@@ -260,7 +260,6 @@ private:
   bool reduce(spair *p);
   void collect_syzygy(gbvector *fsyz);
 
-  void insert(POLY f, gbelem_type minlevel);
   void handle_elem(POLY f, gbelem_type minlevel);
   bool s_pair_step();
   enum ComputationStatusCode computation_is_complete();
@@ -269,8 +268,6 @@ private:
   virtual bool stop_conditions_ok() { return true; }
 
 private:
-  int insert(gbvector *f, gbvector *fsyz, gbelem_type minlevel, int deg);
-    // returns integer index of this inserted element
 
   /* Making the minimal GB */
 
