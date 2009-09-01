@@ -22,10 +22,11 @@ export {Polyhedron, Cone, Fan, polyhedronBuilder, coneBuilder, fanBuilder, conve
         ambDim, cones, genCones, halfspaces, hyperplanes, linSpace, rays, vertices,
         areCompatible, commonFace, contains, equals, isCompact, isComplete, isEmpty, isFace, isPointed, isProjective, 
 	isPure, isSmooth,
-	faces, fVector, hilbertBasis, incompCones, inInterior, interiorPoint, interiorVector, latticePoints, 
-	minkSummandCone, skeleton, smallestFace, smoothSubfan, tailCone, vertexEdgeMatrix, vertexFacetMatrix,
-	affineHull, affineImage, affinePreimage, bipyramid, ccRefinement, coneToPolyhedron, directProduct,  dualCone, imageFan,
-	minkowskiSum, normalFan, polar, pyramid,
+	faces, fVector, hilbertBasis, incompCones, inInterior, interiorPoint, interiorVector, latticePoints, maxFace, minFace, 
+	minkSummandCone, proximum, skeleton, smallestFace, smoothSubfan, tailCone, triangulate, volume, vertexEdgeMatrix, 
+	vertexFacetMatrix, 
+	affineHull, affineImage, affinePreimage, bipyramid, ccRefinement, coneToPolyhedron, directProduct, 
+	dualCone, imageFan, minkowskiSum, normalFan, polar, pyramid,
 	crossPolytope, cyclicPolytope, emptyPolyhedron, hirzebruch, hypercube, newtonPolytope, posOrthant, statePolytope, stdSimplex,
 	saveSession}
 
@@ -643,6 +644,20 @@ intersection(Cone,Cone) := (C1,C2) -> (
 	M := (halfspaces C1)||(halfspaces C2);
 	N := (hyperplanes C1)||(hyperplanes C2);
 	intersection(M,N))
+   
+   
+   
+--   INPUT : '(C,P)',  a Cone and a Polyhedron
+--  OUTPUT : 'Q', the Polyhedron which is the intersection of both
+intersection(Cone,Polyhedron) := (C,P) -> (
+     intersection {C,P})
+
+
+
+--   INPUT : '(P,C)',  a Polyhedron and a Cone
+--  OUTPUT : 'Q', the Polyhedron which is the intersection of both
+intersection(Polyhedron,Cone) := (P,C) -> (
+     intersection {P,C})
 
 
 
@@ -668,7 +683,7 @@ intersection List := L -> (
      -- Adding the inequalities and equalities to 'M,v,N,w', depending on the type of 'C'
      if instance(C,Cone) then (
 	  n = C#"ambientDimension";
-	  Ml = halfspaces C;
+	  Ml = (-1)*(halfspaces C);
 	  vl = map(QQ^(numgens target halfspaces C),QQ^1,0);
 	  Nl = hyperplanes C;
 	  wl = map(QQ^(numgens target hyperplanes C),QQ^1,0))
@@ -720,7 +735,7 @@ intersection List := L -> (
 	       if instance(C1,Cone) then (
 		    if ((ambDim C1) != n) then (
 			 error ("All Cones and Polyhedra must be in the same ambient space"));
-		    Ml = Ml || halfspaces C1;
+		    Ml = Ml || ((-1)*(halfspaces C1));
 		    vl = vl || map(QQ^(numgens target halfspaces C1),QQ^1,0);
 		    Nl = Nl || hyperplanes C1;
 		    wl = wl || map(QQ^(numgens target hyperplanes C1),QQ^1,0))
@@ -766,7 +781,7 @@ intersection List := L -> (
 			      error ("expected halfspaces over ZZ or QQ"));
 			 wl = wl || substitute(C1#1,QQ)))));
      if ((vl == 0*vl) and (wl == 0*wl)) then (
-	  C = intersection(Ml,Nl))
+	  C = intersection((-1)*Ml,Nl))
      else (
 	  C = intersection(Ml,vl,Nl,wl));
      C)
@@ -1928,7 +1943,7 @@ interiorVector Cone := C -> (
 
 
 -- PURPOSE : Computing the lattice points of a compact Polyhedron 
---   INPUT : 'P',  a Cone
+--   INPUT : 'P',  a Polyhedron
 --  OUTPUT : 'L',  a list containing the lattice points of 'P'
 latticePoints = method(TypicalValue => List)
 latticePoints Polyhedron := P -> (
@@ -1941,6 +1956,84 @@ latticePoints Polyhedron := P -> (
      -- The lattice points are those Hilbert Basis elements on height 1
      L = apply(select(L, l -> (last(flatten(entries(l))) == 1)), v -> (v^{0..(ambDim(P)-1)}));
      L)
+
+
+
+-- PURPOSE : Computing the face of a Polyhedron on which a given weight attains its maximum
+--   INPUT : '(v,P)',  a weight vector 'v' given by a one column matrix over ZZ or QQ and a 
+--     	     	       Polyhedron 'P'
+--  OUTPUT : a Polyhedron, the face of 'P' on which 'v' attains its maximum
+maxFace = method()
+maxFace (Matrix,Polyhedron) := (v,P) -> (
+     minFace((-1)*v,P))
+
+
+-- PURPOSE : Computing the face of a Cone on which a given weight attains its maximum
+--   INPUT : '(v,P)',  a weight vector 'v' given by a one column matrix over ZZ or QQ and a 
+--     	     	       Cone 'C'
+--  OUTPUT : a Cone, the face of 'P' on which 'v' attains its maximum
+maxFace (Matrix,Cone) := (v,C) -> (
+     maxFace((-1)*v,C))
+
+
+
+-- PURPOSE : Computing the face of a Polyhedron on which a given weight attains its minimum
+--   INPUT : '(v,P)',  a weight vector 'v' given by a one column matrix over ZZ or QQ and a 
+--     	     	       Polyhedron 'P'
+--  OUTPUT : a Polyhedron, the face of 'P' on which 'v' attains its minimum
+minFace = method()
+minFace (Matrix,Polyhedron) := (v,P) -> (
+     -- Checking for input errors
+     if ((numgens source v) =!= 1) or ((numgens target v) =!= (P#"ambientDimension")) then (
+	  error ("The vector must lie in the same space as the polyhedron"));
+     C := dualCone tailCone P;
+     V := vertices P;
+     R := rays P;
+     LS := linSpace P;
+     -- The weight must lie in the dual of the tailcone of the polyhedron, otherwise there is 
+     -- no minimum and the result is the empty polyhedron
+     if contains(C,v) then (
+	  -- Compute the values of 'v' on the vertices of 'V'
+	  Vind := flatten entries ((transpose v)*V);
+	  -- Take the minimal value(s)
+	  Vind = positions(Vind, e -> (e == min(Vind)));
+	  -- If 'v' is in the interior of the dual tailCone then the face is exactly spanned 
+	  -- by these vertices
+	  if inInterior(v,C) then (
+	       R = LS | ((-1)*LS);
+	       convexHull(V_Vind,R))
+	  else (
+	       -- Otherwise, one has to add the rays of the tail cone which are orthogonal to 'v'
+	       Rind := flatten entries ((transpose v)*R);
+	       Rind = positions(Rind, e -> (e == 0));
+	       R = (R_Rind) | LS | ((-1)*LS);
+	       convexHull(V_Vind,R)))
+     else (
+	  emptyPolyhedron ambDim P))
+
+
+
+-- PURPOSE : Computing the face of a Cone on which a given weight attains its minimum
+--   INPUT : '(v,P)',  a weight vector 'v' given by a one column matrix over ZZ or QQ and a 
+--     	     	       Cone 'C'
+--  OUTPUT : a Cone, the face of 'P' on which 'v' attains its minimum
+minFace (Matrix,Cone) := (v,C) -> (
+     -- Checking for input errors
+     if ((numgens source v) =!= 1) or ((numgens target v) =!= (C#"ambientDimension")) then (
+	  error ("The vector must lie in the same space as the polyhedron"));
+     R = rays C;
+     LS = linSpace C;
+     C = dualCone C;
+     -- The weight must lie in the dual of the cone, otherwise there is 
+     -- no minimum and the result is the empty polyhedron
+     if contains(C,v) then (
+	  -- Take the rays of the cone which are orthogonal to 'v'
+	  Rind := flatten entries ((transpose v)*R);
+	  Rind = positions(Rind, e -> (e == 0));
+	  posHull(R_Rind,LS))
+     else (
+	  emptyPolyhedron ambDim P))   
+
 
 
 -- PURPOSE : Computing the Cone of the Minkowskisummands of a Polyhedron 'P', the minimal 
@@ -2094,7 +2187,100 @@ minkSummandCone Polyhedron := P -> (
 		     zerovec := matrix toList(numgens source R: {0_QQ});
 		     Q := intersection(negId,zerovec,R,onevec);
 		     (C,summList,vertices(Q))))))
- 
+
+
+
+-- PURPOSE : Computing the closest point of a polyhedron to a given point
+--   INPUT : (p,P),  where 'p' is a point given by a one column matrix over ZZ or QQ and
+--                   'P' is a Polyhedron
+--  OUTPUT : the point in 'P' with the minimal euclidian distance to 'p'
+proximum = method(TypicalValue => Matrix)
+proximum (Matrix,Polyhedron) := (p,P) -> (
+     -- Checking for input errors
+     if ((numgens source p) =!= 1) or ((numgens target p) =!= (P#"ambientDimension")) then (
+	  error ("The point must lie in the same space"));
+     if isEmpty(P) then (
+	  error ("The polyhedron must not be empty"));
+     -- Defining local variables
+     local Flist,F,vL,bL,V,v,Q,b;
+     d := ambDim P;
+     c := 0;
+     prox := {};
+     -- Checking if 'p' is contained in 'P'
+     if contains(P,p) then (
+	  p)
+     else (
+	  -- Distinguish between full dimensional polyhedra and not full dimensional ones
+	  if (dim(P) == d) then (
+	       -- Continue as long as the proximum has not been found
+	       while (instance(prox,List)) do (
+		    -- Take the faces of next lower dimension of P
+		    c = c+1;
+		    Flist = faces(c,P);
+		    -- Search through the faces
+		    while (Flist != {}) do (
+			 F = Flist#0;
+			 Flist = drop(Flist,1);
+			 -- Take the inward pointing normal cone with respect to P
+			 (vL,bL) = hyperplanes F;
+			 V = vertices P;
+			 -- Check for each ray if it is pointing inward
+			 vL = apply(numRows(vL), i -> (
+				   v = vL^{i};
+				   b = first flatten entries (bL^{i});
+				   if all(flatten entries (v*V), e -> ( e >= b)) then (
+					v)
+				   else (
+					(-1)*v)));
+			 v = vL#0;
+			 vL = drop(vL,1);
+			 scan(vL, e -> (v = v||e));
+			 -- Take the polyhedron spanned by the inward pointing normal cone 
+			 -- and 'p' and intersect it with the face
+			 Q = intersection(F,convexHull(p,transpose v));
+			 -- If this intersection is not empty, it contains exactly one point, 
+			 -- the proximum
+			 if (not isEmpty(Q)) then (
+			      prox = vertices(Q);
+			      Flist = {})));
+	       prox)
+	  else (
+	       -- For not full dimensional polyhedra the hyperplanes of 'P' have to be considered also
+	       while (instance(prox,List)) do (
+		    Flist = faces(c,P);
+		    while (Flist != {}) do (
+			 F = Flist#0;
+			 Flist = drop(Flist,1);
+			 (vL,bL) = hyperplanes F;
+			 V = vertices P;
+			 vL = apply(numRows(vL), i -> (
+				   v = vL^{i};
+				   b = first flatten entries (bL^{i});
+				   entryList := flatten entries (v*V);
+				   -- the first two ifs find the vectors not in the hyperspace 
+				   -- of 'P'
+				   if any(entryList, e -> (e > b)) then (
+					v)
+				   else if any(entryList, e -> (e < b)) then (
+					(-1)*v)
+				   -- If it is an original hyperplane than take the direction from 
+				   -- 'p' to the polyhedron
+				   else (
+					bCheck := first flatten entries (v*p);
+					if (bCheck < b) then (
+					     v)
+					else (
+					     (-1)*v))));
+			 v = vL#0;
+			 vL = drop(vL,1);
+			 scan(vL, e -> (v = v||e));
+			 Q = intersection(F,convexHull(p,transpose v));
+			 if (not isEmpty(Q)) then (
+			      prox = vertices(Q);
+			      Flist = {}));
+		    c = c+1);
+	       prox)))
+
 
 
 -- PURPOSE : Computing the 'n'-skeleton of a fan
@@ -2203,6 +2389,106 @@ tailCone Polyhedron := P -> (
 
 
 
+-- PURPOSE : Triangulating a compact Polyhedron
+--   INPUT : 'P',  a Polyhedron
+--  OUTPUT : A list of the simplices of the triangulation. Each simplex is given by a list 
+--    	     of its vertices.
+--COMMENTS : The triangulation is build recursively, for each face that is not a simplex it takes 
+--     	     the weighted centre of the face. for each codim 1 face of this face it either takes the 
+--     	     convex hull with the centre if it is a simplex or triangulates this in the same way.
+triangulate = method()
+triangulate Polyhedron := P -> (
+     -- Defining the recursive face triangulation
+     -- This takes a polytope and computes all facets. For each facet that is not a simplex, it calls itself
+     -- again to replace this facet by a triangulation of it. then it has a list of simplices triangulating 
+     -- the facets. Then it computes for each of these simplices the convex hull with the weighted centre of 
+     -- the input polytope. The weighted centre is the sum of the vertices divided by the number of vertices.
+     -- It returns the resulting list of simplices in a list, where each simplex is given by a list of its 
+     -- vertices.
+     -- The function also needs the dimension of the Polyhedron 'd', the list of facets of the original 
+     -- polytope, the list 'L' of triangulations computed so far and the dimension of the original Polytope.
+     -- 'L' contains a hashTable for each dimension of faces of the original Polytope (i.e. from 0 to 'n').
+     -- If a face has been triangulated than the list of simplices is saved in the hashTable of the 
+     -- corresponding dimension with the weighted centre of the original face as key.
+     recursiveFaceTriangulation := (P,d,originalFacets,L,n) -> (
+	  -- Computing the facets of P, given as lists of their vertices
+	  F := intersectionwithFacets({(set P,set{})},originalFacets);
+	  F = apply(F, f -> (toList(f#0)));
+	  d = d-1;
+	  -- if the facets are at least 2 dimensional, then check if they are simplices, if not call this 
+	  -- function again
+	  if (d > 1) then (
+	       F = apply(F, f -> (
+			 -- Check if the face is a simplex
+			 if (#f != d+1) then (
+			      -- Computing the weighted centre
+			      p := (sum f)*(1/#f);
+			      -- Taking the hashTable of the corresponding dimension
+			      Ld := L#d;
+			      -- Checking if the triangulation has been computed already
+			      if (Ld#?p) then (
+				   f = Ld#p)
+			      else (
+				   -- if not, call this function again for 'f' and then save this in 'L'
+				   (f,L) = recursiveFaceTriangulation(f,d,originalFacets,L,n);
+				   Ld = hashTable(apply(pairs Ld, pLd -> (pLd#0 => pLd#1))|{p => f});
+				   L = take(L,{0,d-1})|{Ld}|take(L,{d+1,n})))
+			 else (
+			      f = {f});
+			 f));
+	       F = flatten F);
+	  -- Adding the weighted centre to each face simplex
+	  q := (sum P)*(1/#P);
+	  P = apply(F, f -> (f|{q}));
+	  (P,L));
+     -- Checking for input errors
+     if (not isCompact(P)) then (
+	  error ("The polytope must be compact!"));
+     n := dim(P);
+     -- Computing the facets of P as lists of their vertices
+     (HS,v) := halfspaces P;
+     (HP,w) := hyperplanes P;
+     originalFacets := apply(numRows HS, i -> (intersection(HS,v,(HP||HS^{i}),(w||v^{i}))));
+     originalFacets = apply(originalFacets, f -> (
+	       V := vertices(f);
+	       (set apply(numColumns(V), i -> V_{i}),set {})));
+     -- Making a list of the vertices of P
+     P = vertices P;
+     P = apply(numColumns P, i -> (P_{i}));
+     d := n;
+     -- Initiating the list of already computed triangulations
+     L = toList(n+1:(hashTable {}));
+     (P,L) = recursiveFaceTriangulation(P,d,originalFacets,L,n);
+     P)
+
+
+
+-- PURPOSE : Computing the volume of a full dimensional polytope
+--   INPUT : 'P',  a compact polyhedron
+--  OUTPUT : QQ, giving the volume of the polytope
+volume = method(TypicalValue => QQ)
+volume Polyhedron := P -> (
+     d := dim P;
+     -- Checking for input errors
+     if (d != ambDim(P)) then (
+	  error ("The polytope must be full dimensional."));
+     if (not isCompact(P)) then (
+	  error ("The polyhedron must be compact, i.e. a polytope."));
+     -- Computing the triangulation of P
+     P = triangulate P;
+     -- Computing the volume of each simplex without the dimension factor, by 
+     -- taking the absolute of the determinant of |v_1-v_0..v_d-v_0|
+     P = apply(P, p -> (
+	       v := p#0;
+	       M := map(QQ^(numRows(v)),QQ^0,0);
+	       scan(1..d, i -> ( M=M|((p#i)-v)));
+	       abs(det(M))));
+     -- Summing up the volumes and dividing out the dimension factor
+     (sum(P))/(d!))
+	       
+
+
+
 -- PURPOSE : Computing the vertex-edge-matrix of a polyhedron
 --   INPUT : 'P',  a polyhedron
 --  OUTPUT : a matrix, where the columns are indexed by the edges and the rows indexed by the vertices and has 1 as entry
@@ -2256,9 +2542,10 @@ vertexFacetMatrix Polyhedron := P -> (
 affineHull = method(TypicalValue => Polyhedron)
 affineHull Polyhedron := P -> (
      M := vertices P;
+     R := rays P;
      -- subtracting the first vertex from all other vertices
      N := (M+M_{0}*(matrix {toList(numgens source M:-1)}))_{1..(numgens source M)-1};
-     convexHull(M_{0},(N | (-1)*N)));
+     convexHull(M_{0},(N | (-1)*N | R | (-1)*R)));
 
 
 -- PURPOSE : Computing the affine image of a polyhedron
@@ -3893,7 +4180,14 @@ document {
 	  " F1 == F2"
 	  },
      
-     PARA{}, "Now we construct a new fan to show some other functions.",
+     PARA{}, "A bit more on fans can be found in part 2: ",TO "Working with fans - Part 2","."
+     
+     }
+
+document {
+     Key => "Working with fans - Part 2",
+     
+     "Now we construct a new fan to show some other functions.",
      
      EXAMPLE {
 	  " C1 = posHull matrix {{1,1,-1,-1},{1,-1,1,-1},{1,1,1,1}};",
@@ -4167,7 +4461,8 @@ document {
 
 document {
      Key => {intersection, (intersection,Cone,Cone), (intersection,List), (intersection,Matrix), 
-	  (intersection,Matrix,Matrix), (intersection,Matrix,Matrix,Matrix,Matrix), (intersection,Polyhedron,Polyhedron)},
+	  (intersection,Matrix,Matrix), (intersection,Matrix,Matrix,Matrix,Matrix), (intersection,Polyhedron,Polyhedron),
+	  (intersection,Cone,Polyhedron), (intersection,Polyhedron,Cone)},
      Headline => "computes the intersection of halfspaces, hyperplanes, cones, and polyhedra",
      Usage => " P = intersection L \nC = intersection M \nC = intersection(M,N) \nP = intersection(M,v) \nP = intersection(M,v,N,w) \nC = intersection(C1,C2) \nP = intersection(P1,P2)",
      Inputs => {
@@ -4687,7 +4982,7 @@ document {
      Key => {contains, (contains,Cone,Cone), (contains,Cone,Matrix), (contains,Cone,Polyhedron), 
 	  (contains,Fan,Cone), (contains,List,Cone), (contains,List,Polyhedron), (contains,Polyhedron,Cone), 
 	  (contains,Polyhedron,Matrix), (contains,Polyhedron,Polyhedron)},
-     Headline => "checks if the first argument is contained in the second",
+     Headline => "checks if the first argument contains the second argument",
      Usage => " b = contains(C,X) \nb = contains(P,X) \nb = contains(F,C) \nb = contains(L,C) \nb = contains(L,P)",
      Inputs => {
 	  "C" => Cone,
@@ -5190,6 +5485,60 @@ document {
      }
 
 document {
+     Key => {maxFace, (maxFace,Matrix,Polyhedron), (maxFace,Matrix,Cone)},
+     Headline => "computes the face of a Polyhedron or Cone on which a weight attains its maximum",
+     Usage => " F = maxFace(w,P) \nF = maxFace(w,C)",
+     Inputs => {
+	  "w" => Matrix => {" over ",TO ZZ," or ",TO QQ," with only one column representing a 
+	       weight vector"},
+	  "P" => Polyhedron,
+	  "C" => Cone
+	  },
+     Outputs => {
+	  "F" => {"Depending on the input, a Cone or a Polyhedron, the face on which ",TT "w"," attains 
+	       its maximum"}
+	  },
+     
+     PARA{}, TT "maxFace"," computes the face of the given Polyhedron ",TT "P"," or Cone ",TT "C"," on 
+     which ",TT "w"," attains its maximum.",
+     
+     EXAMPLE {
+	  " P = crossPolytope 3",
+	  " w = matrix {{1},{-1},{0}}",
+	  " F = maxFace(w,P)",
+	  " vertices F"
+	  }
+     }
+	  
+
+document {
+     Key => {minFace, (minFace,Matrix,Polyhedron), (minFace,Matrix,Cone)},
+     Headline => "computes the face of a Polyhedron or Cone on which a weight attains its minimum",
+     Usage => " F = minFace(w,P) \nF = minFace(w,C)",
+     Inputs => {
+	  "w" => Matrix => {" over ",TO ZZ," or ",TO QQ," with only one column representing a 
+	       weight vector"},
+	  "P" => Polyhedron,
+	  "C" => Cone
+	  },
+     Outputs => {
+	  "F" => {"Depending on the input, a Cone or a Polyhedron, the face on which ",TT "w"," attains 
+	       its minimum"}
+	  },
+     
+     PARA{}, TT "minFace"," computes the face of the given Polyhedron ",TT "P"," or Cone ",TT "C"," on 
+     which ",TT "w"," attains its minimum.",
+     
+     EXAMPLE {
+	  " P = hypercube 3",
+	  " w = matrix {{1},{2},{0}}",
+	  " F = minFace(w,P)",
+	  " vertices F"
+	  }
+     }
+	  
+
+document {
      Key => {minkSummandCone, (minkSummandCone,Polyhedron)},
      Headline => "computes the Cone of all Mikowski summands and the minimal decompositions",
      Usage => " (C,L,M) = minkSummandCone P",
@@ -5234,6 +5583,29 @@ document {
 	  " M"
 	  }
 	  
+     }
+
+document {
+     Key => {proximum, (proximum,Matrix,Polyhedron)},
+     Headline => "computes the proximum of the Polyhedron/Cone to a point in euclidian metric",
+     Usage => " q = proximum(p,P) \nq = proximum(p,C)",
+     Inputs => {
+	  "p" => Matrix => {" over ",TO ZZ," or ",TO QQ," with only one column representing a point"},
+	  "P" => Polyhedron,
+	  "C" => Cone
+	  },
+     Outputs => {
+	  "q" => Matrix => {" over ",TO QQ," with only one column representing the closest point"}
+	  },
+     
+     PARA{}, "For a point ",TT "p"," and a Polyhedron ",TT "P"," or a Cone ",TT "C",", ",TT "proximum"," 
+     computes the point in ",TT "P"," or ",TT "C"," with minimal euclidian distane to ",TT "p",".",
+     
+     EXAMPLE {
+	  " P = crossPolytope 3",
+	  " p = matrix {{1},{2},{3}}",
+	  " q = proximum(p,P)"
+	  }
      
      }
 
@@ -5349,6 +5721,51 @@ document {
 	  " P = intersection(matrix{{-1,0},{1,0},{0,-1},{-1,-1},{1,-1}},matrix{{2},{2},{-1},{0},{0}}) ",
 	  " C = tailCone P",
 	  " rays C"
+	  }
+     
+     }
+
+document {
+     Key => {triangulate, (triangulate,Polyhedron)},
+     Headline => "computes a triangulation of a polytope",
+     Usage => " L = triangulate P",
+     Inputs => {
+	  "P" => Polyhedron => {", which must be compact"}
+	  },
+     Outputs => {
+	  "L" => List => {" containing the simplices of the triangulation"}
+	  },
+     
+     PARA{}, TT "triangulate","  computes the triangulation of the polyhedron ",TT "P",", if it is compact, 
+     i.e. a polytope, recursively. For this, it takes all facets and checks if they are simplices. If so, then 
+     it takes the convex hull of these with the weighted centre of the polytope (the sum of the vertices divided 
+     by the number of vertices). For those which are not simplices, it takes all their facets and does the same 
+     for these.",
+     
+     EXAMPLE {
+	  " P = hypercube 2",
+	  " triangulate P"
+	  }
+     
+     }
+
+document {
+     Key => {volume, (volume,Polyhedron)},
+     Headline => "computes the volume of a polytope",
+     Usage => " v = volume P",
+     Inputs => {
+	  "P" => Polyhedron => {", which must be compact"}
+	  },
+     Outputs => {
+	  "v" => QQ
+	  },
+     
+     PARA{}, TT "volume"," computes the volume of a polytope. To do this, it triangulates the polytope first. The volume 
+     of a simplex is |det(v_1-v_0,..,v_n-v_0)|/n!, v_0,..,v_n are the vertices of the simplex.",
+     
+     EXAMPLE {
+	  " P = crossPolytope 3",
+	  " volume P"
 	  }
      
      }
@@ -7087,6 +7504,58 @@ M = matrix {{0,1,2,3,4,5,6,7,8},{1,1,1,0,1,1,0,0,0},{2,1,0,1,0,0,0,1,0},{3,0,0,0
 N = matrix {{0,1,2,3,4,5},{1,1,1,1,1,0},{2,1,0,1,0,1},{3,0,1,1,0,1},{4,1,0,0,1,1},{5,0,1,0,1,1}};
 assert(vertexEdgeMatrix(P) == M)
 assert(vertexFacetMatrix(P) == N)
+///
+
+-- Test 59
+-- Checking minFace and maxFace
+TEST ///
+P = hypercube 3;
+w = matrix {{1},{2},{1}};
+F1 = convexHull matrix {{1},{1},{1}};
+F2 = convexHull matrix {{-1},{-1},{-1}};
+assert(F1 == maxFace(w,P))
+assert(F2 == minFace(w,P))
+C = posHull matrix {{2,-1,1},{-1,1,1},{0,-1,1}};
+C1 = posHull matrix {{-1,2},{1,-1},{-1,0}};
+assert(C1 == minFace(w,C))
+///
+
+-- Test 60
+-- Checking proximum
+TEST ///
+P = crossPolytope 3;
+p = matrix {{1},{2},{3}};
+q = matrix {{0_QQ},{1},{0}};
+assert(q == proximum(p,P))
+p = matrix {{1},{1/2},{1}};
+q = matrix {{1/2},{0},{1/2}};
+assert(q == proximum(p,P))
+///
+
+-- Test 61
+-- Checking triangulate
+TEST ///
+P = crossPolytope 3;
+L = triangulate P;
+L = apply(L,convexHull);
+L1 = {convexHull{matrix{{1_QQ},{0},{0}},matrix{{0_QQ},{1},{0}},matrix{{0_QQ},{0},{1}},matrix{{0_QQ},{0},{0}}},
+     convexHull{matrix{{-1_QQ},{0},{0}},matrix{{0_QQ},{1},{0}},matrix{{0_QQ},{0},{1}},matrix{{0_QQ},{0},{0}}},
+     convexHull{matrix{{1_QQ},{0},{0}},matrix{{0_QQ},{-1},{0}},matrix{{0_QQ},{0},{1}},matrix{{0_QQ},{0},{0}}},
+     convexHull{matrix{{1_QQ},{0},{0}},matrix{{0_QQ},{1},{0}},matrix{{0_QQ},{0},{-1}},matrix{{0_QQ},{0},{0}}},
+     convexHull{matrix{{-1_QQ},{0},{0}},matrix{{0_QQ},{-1},{0}},matrix{{0_QQ},{0},{1}},matrix{{0_QQ},{0},{0}}},
+     convexHull{matrix{{-1_QQ},{0},{0}},matrix{{0_QQ},{1},{0}},matrix{{0_QQ},{0},{-1}},matrix{{0_QQ},{0},{0}}},
+     convexHull{matrix{{1_QQ},{0},{0}},matrix{{0_QQ},{-1},{0}},matrix{{0_QQ},{0},{-1}},matrix{{0_QQ},{0},{0}}},
+     convexHull{matrix{{-1_QQ},{0},{0}},matrix{{0_QQ},{-1},{0}},matrix{{0_QQ},{0},{-1}},matrix{{0_QQ},{0},{0}}}};
+assert(equalLists(L,L1))
+///
+
+-- Test 62
+-- Checking volume
+TEST ///
+P = hypercube 3;
+assert(volume(P) == 8)
+P = crossPolytope 3;
+assert(volume(P) == 4/3)
 ///
 
 
