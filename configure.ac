@@ -393,17 +393,23 @@ test "$MEMDEBUG" = "yes" && DEBUG=yes
 test "$DEBUG" = "yes" && STRIP=no
 test "$PROFILING" = "yes" && CFLAGS="$CFLAGS -pg" CXXFLAGS="$CXXFLAGS -pg" LDFLAGS="$LDFLAGS -pg" STRIP=no
 
-AC_SUBST(PACKAGES, dnl oldest first:
+AC_SUBST(PACKAGES, dnl the internal ones first, then after that, the oldest first:
 "
   Macaulay2Doc
+  FirstPackage
   Style
+  Parsing
   Classic
+  Browse
+  Benchmark
+  Text
+  SimpleDoc
+  PackageTemplate
   PrimaryDecomposition
   FourierMotzkin
   Dmodules
   Depth
   Elimination
-  FirstPackage
   GenericInitialIdeal
   IntegralClosure
   HyperplaneArrangements
@@ -411,7 +417,6 @@ AC_SUBST(PACKAGES, dnl oldest first:
   Markov
   NoetherNormalization
   Points
-  PackageTemplate
   ReesAlgebra
   Regularity
   SchurRings
@@ -419,24 +424,19 @@ AC_SUBST(PACKAGES, dnl oldest first:
   SchurFunctors
   SimplicialComplexes
   LLLBases
-  Parsing
   TangentCone
   ChainComplexExtras
-  Benchmark
   Schubert2
   LocalRings
   BoijSoederberg
   BGG
   Bruns
-  Browse
   InvolutiveBases
   ConwayPolynomials
-  SimpleDoc
   EdgeIdeals
   FourTiTwo
   StatePolytope
   Polyhedra
-  Text
   Polymake
   gfanInterface
   PieriMaps
