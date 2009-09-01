@@ -240,6 +240,7 @@ static void exponents_lcm(int nvars,
 			  exponents result, 
 			  M2_arrayint weights,
 			  int &result_degree)
+// can handle the case when a == result or b == result
 {
   int i;
   int deg = dega;
@@ -315,7 +316,6 @@ gbA::gbelem *gbA::gbelem_make(gbvector *f,  // grabs f
   R->gbvector_get_lead_exponents(_F, f, g->lead);
   g->deg = deg;
   f_wt = weightInfo_->gbvector_weight(f, f_leadweight);
-  //g->gap = f_wt - f_leadweight; // DOESN"T PRODUCE CORRECT DEGREES
   g->gap = deg - weightInfo_->gbvector_term_weight(f);
   g->size = R->gbvector_n_terms(f);
   g->minlevel = minlevel;
@@ -360,7 +360,6 @@ gbA::spair *gbA::spair_node()
 
 void gbA::spair_delete(spair *&p)
 {
-  // MES: delete the exponent first?
   if (p == 0) return;
   if (p->type == SPAIR_GEN || p->type == SPAIR_ELEM)
     {
@@ -430,8 +429,6 @@ gbA::spair *gbA::spair_make_skew(int i, int v)
   result->type = SPAIR_SKEW;
   result->lcm = exp2;
     exponents_lcm(_nvars, g1->deg, exp1, exp2, exp2, gb_weights, result->deg);
-    // note: result is being placed into exp2, from the input exp2.
-    // This is OK, I hope.
   result->x.pair.i = i;
   result->x.pair.j = v;
 
@@ -627,37 +624,6 @@ struct spair_sorter : public std::binary_function<gbA::spair *,gbA::spair *,bool
       return result;
     }
 
-};
-
-struct spoly_sorter : public std::binary_function<gbA::spair *,gbA::spair *,bool> {
-  const FreeModule *F;
-  GBRing *R;
-  int nvars;
-  spoly_sorter(GBRing *R0, const FreeModule *F0) : F(F0), R(R0) { nvars = R->n_vars();}
-  bool operator()(gbA::spair *a, gbA::spair *b)
-    {
-      /* Compare using degree, then type, then lead term of spoly */
-      bool result;
-      int cmp = a->deg - b->deg;
-      if (cmp < 0) result = true;
-      else if (cmp > 0) result = false;
-      else 
-	{
-	  gbvector *a1 = (a->type > gbA::SPAIR_SKEW ? a->f() : a->lead_of_spoly);
-	  gbvector *b1 = (b->type > gbA::SPAIR_SKEW ? b->f() : b->lead_of_spoly);
-	  if (a1 == 0)
-	    {
-	      if (b1 == 0) result = false;
-	      else result = true;
-	    }
-	  else
-	    {
-	      if (!b1) result = false;
-	      else result = (R->gbvector_compare(F,a1, b1) == -1);
-	    }
-	}
-      return result;
-    }
 };
 
 class SPolySorter
