@@ -2116,8 +2116,6 @@ bool gbA::s_pair_step()
   return true;
 }
 
-// new version
-
 void gbA::insert_gb(POLY f, gbelem_type minlevel)
 {
   /* Reduce this element as far as possible.  This either removes content, 
