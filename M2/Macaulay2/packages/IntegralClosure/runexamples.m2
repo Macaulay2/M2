@@ -19,7 +19,7 @@ runExamples (HashTable,ZZ) := o -> (H,i) -> (
      answer
      )
 runExamples (HashTable,List) := o -> (H,L) -> apply(L,a -> runExamples(H,a,o))
-runExamples HashTable := (H) -> o -> runExamples(H, sort keys H, o)
+runExamples HashTable := o -> (H) -> runExamples(H, sort keys H, o)
 
 viewResults = (L) -> print netList(L, Boxes=>false, HorizontalSpace=>2)
 

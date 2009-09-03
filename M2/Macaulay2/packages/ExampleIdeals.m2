@@ -270,7 +270,7 @@ Fabrice24 = (kk) -> (
   )
 
 Lichtblau = (kk) -> (
-     R = QQ[t,x,y,MonomialOrder=>Eliminate 1];
+     R = kk[t,x,y,MonomialOrder=>Eliminate 1];
      ideal"x-110t2+495t3-1320t4+2772t5-5082t6+7590t7-8085t8+5555t9-2189t10+374t11,
            y-22t+110t2-330t3+1848t5-3696t6+3300t7-1650t8+550t9-88t10-22t11"
      )
