@@ -165,4 +165,14 @@ I = ideal"-3x2+50x-156,  2y, -x3+25x2+y2-156x"
 R = ZZ[y,x, MonomialOrder=>Lex]
 answer'gb = matrix {{24336, 4*x-7800, x^2+2*x-3900, 2*y, y^2+2*x-3900}}
 I = ideal"-3x2+50x-156,  2y, -x3+25x2+y2-156x"
+-----------------------------------------------
+-- trim-32003
+R = (ZZ/32003)[y, x, MonomialOrder=>Lex]
+g0 = ideal(y^2+13992*y*x-5435*y-10903*x^2-3917*x-15812,-8493*y*x-1644*y+x^3-8548*x^2+9473*x-918,y*x^2+11875*y*x-11064*y-7229*x^2-15219*x+1509)
+g1 = trim g0
+g2 = ideal flatten entries gens g1 -- should be the same ideal as g0
+test'code = "assert(g0 == g2)"
+answer'gb = matrix"x5+3327x4-9718x3+406x2+1370x-3637, y+5509x4-304x3+8953x2+5975x+2376"
+I = g2
+
 
