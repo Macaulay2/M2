@@ -120,7 +120,7 @@ answer'gb = matrix {{7*a^2+a+1}}
 I = ideal((7*a^2+a+1)*(a^20+a^17+4*a^13+1)^7,
           (7*a^2+a+1)*(6*a^20-123*a^17+4*a^13+1)^6)
 -----------------------------------------------
--- simple19
+-- simple19-hf
 R = ZZ/101[x,y,z,w]
 test'code = "
   RT = degreesRing R
@@ -130,7 +130,7 @@ test'code = "
   "
 I = ideal((3*x+y+z+w)^4, (7*x+2*y+3*z)^4 + x*w^3, (x+y+z)^4)
 -----------------------------------------------
--- simple20
+-- simple20-hf
 R = ZZ/101[x,y,z,w, MonomialOrder=>Lex]
 test'code = "
   RT = degreesRing R
