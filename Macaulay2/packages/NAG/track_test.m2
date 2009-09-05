@@ -10,11 +10,18 @@ R = CC[x,y];
 S = {x^2-1,y^2-1};
 T = {x^2+y^2-1, x*y};
 solsS = {(1,-1),(1,1),(-1,1),(-1,-1)};
-solsT = track(S,T,solsS, gamma=>1+ii,
+isH = false;
+-- same, but projective
+R = CC[x,y,z];
+T = {x^2+y^2-z^2, x*y};
+(S,solsS) = oneRootStartSystem T;
+isH = true;
+
+M = track(S,T,solsS, gamma=>1+0.5*ii,
      Software=>M2,
                --M2engine,
      	       --M2enginePrecookedSLPs,
-     --Projectivize=>false,
+     Projectivize=>not isH,
      Predictor=>--Tangent,
 		--Euler,
 		ProjectiveNewton,
@@ -22,9 +29,9 @@ solsT = track(S,T,solsS, gamma=>1+ii,
           --CompiledHornerForm, 
           --SLP=>HornerForm,
      RandomSeed=>1
-     )
+     );
 norm matrix refine(T, {{1.2_CC,0.2}}, Tolerance=>1e-3)
-sortSolutions solsT/(s->s#0)
+sortSolutions M/(s->s#0)
 oo /(s->s/round)
 
 -- cyclic roots -------------------------------------------------------------
@@ -53,7 +60,9 @@ setRandomSeed 0; T = randomSystem(4,2,CC);
 T = katsuraBench 5
 
 DBG = 1;
-(S,solsS) = totalDegreeStartSystem T_*;
+(S,solsS) = totalDegreeStartSystem T_*; isH = false;
+T = ideal homogenizeSystem T_*; (S,solsS) = oneRootStartSystem T_*; isH = true;
+
 t = currentTime(); M = track(S,T_*,solsS, 
      --Software=>PHCpack,
      --gamma=>1, -- is in exceptional set
@@ -64,7 +73,7 @@ t = currentTime(); M = track(S,T_*,solsS,
                 --RungeKutta4,
 		--Multistep,
 		ProjectiveNewton,
-     --Projectivize=>false,
+     Projectivize=>not isH,
      MultistepDegree=>4,
      AffinePatches=>DynamicPatch,
      --AffinePatches=>{ matrix {{-.124234322572514-.992252907828921*ii, -.417519019676412+.908668183776921*ii, -.985089503023424-.172042643065792*ii, .33160728005355+.943417517229507*ii, -.810395490212434-.585883221677622*ii, .583357854599743-.812215250704384*ii}} }, -- RandomSeed=>0		

@@ -141,6 +141,14 @@ norm2 Matrix := v -> sqrt(sum(flatten entries v, x->x*conjugate x));
 normalize = method(TypicalValue => Matrix)
 -- normalizes a column vector with CC entries
 normalize Matrix := v -> (1/norm2 v)*v;
+
+BombieriWeylNormSquared = method(TypicalValue=>RingElement)
+BombieriWeylNormSquared RingElement := f -> sum(listForm f, a->(
+	       imc := product(a#0, d->d!) / (sum(a#0))!; -- inverse of multinomial coeff
+	       if isField coefficientRing ring f then imc*a#1*conjugate a#1 -- ring=CC[...]
+	       else imc*a#1*sum(listForm a#1, b->(conjugate b#1) * (coefficientRing ring f)_(b#0)) -- ring=CC[t][...]
+	       ))
+
 ------------------------------------------------------
 track = method(TypicalValue => List, Options =>{
 	  Software=>M2,
@@ -183,7 +191,7 @@ track (List,List,List) := List => o -> (S,T,solsS) -> (
      then error "expected all polynomials in the same ring";
      if o.tStep <= 0 then error "expected positive tStep";  
      if (o.Projectivize or o.SLP===null) and (o.SLPpredictor or o.SLPcorrector) 
-     then error "SLPpredictor amd SLPcorrector can be used only with Projectize=false and SLP=!=null"; 
+     then error "SLPpredictor amd SLPcorrector can be used only with Projectivize=false and SLP=!=null"; 
      if (o.Software===M2engine or o.Software===M2enginePrecookedSLPs) and (o.Projectivize or o.SLP===null) 
      then error "M2engine is implemented for Projectivize=>false and SLP != null";
 
@@ -210,8 +218,16 @@ track (List,List,List) := List => o -> (S,T,solsS) -> (
      -- M2 (main code)  --------------------------------------------------------     
      setupStartTime := currentTime();
      
-     if n != numgens R then error "expected a square system";
-     
+     isProjective := false;
+     if n != numgens R then (
+	  if numgens R == n+1 and all(S, isHomogeneous) and all(T, isHomogeneous) 
+	  then ( 
+	       isProjective = true; 
+	       n = n+1;
+	       if o.Projectivize then error "already projective"; 
+	       )  
+	  else error "expected a square system";
+     	  );
      K := CC_53; -- THE coefficient ring
      solsS = solsS / (s->sub(transpose matrix {toList s}, CC)); -- convert to vectors
      
@@ -222,7 +238,13 @@ track (List,List,List) := List => o -> (S,T,solsS) -> (
 	  T = apply(T, f->homogenize(sub(f,R), h)); 
 	  S = apply(S, f->homogenize(sub(f,R), h));
      	  solsS = solsS / (s->s||matrix{{1_K}});
+	  isProjective = true;
+	  );
 
+     if o.Predictor===ProjectiveNewton and not isProjective 
+	  then "projective expected: either homogeneous system or Projectivize=>true";
+     
+     if isProjective then (
      	  -- affine patch functions 
      	  pointToPatch := (x0,p)-> (1/(p*x0)_(0,0))*x0; -- representative for point x0 in patch p
 	  patchEquation := p -> p * transpose vars R - 1;
@@ -252,19 +274,20 @@ track (List,List,List) := List => o -> (S,T,solsS) -> (
      t := symbol t;
      Kt := K[t];
      Rt := K[gens R, t]; -- how do you cleanly extend the generators list: e.g., what if "t" is a var name?
-     H := matrix {apply(#S, i->o.gamma*(1-t)^(o.tDegree)*sub(S#i,Rt)+t^(o.tDegree)*sub(T#i,Rt))};
+     H := matrix {apply(#S, i->(
+		    nS := 1 / sqrt BombieriWeylNormSquared S#i;
+		    nT := 1 / sqrt BombieriWeylNormSquared T#i;
+		    o.gamma*(1-t)^(o.tDegree)*nS*sub(S#i,Rt)+t^(o.tDegree)*nT*sub(T#i,Rt)
+		    ))};
      JH := transpose jacobian H; 
      Hx := JH_(toList(0..n-1));
      Ht := JH_{n};
 
      -- compute Bombieri-Weyl norm of the homotopy, define normalizing factor, supporting constants
      if o.Predictor === ProjectiveNewton then (
-     	  BWnormSquare := sum(flatten entries sub(H,Kt[gens R]), h->sum(listForm h, a->(
-			 imc := product(a#0, d->d!) / (sum(a#0))!; -- inverse of multinomial coeff
-			 imc*a#1*sum(listForm a#1, b->(conjugate b#1) * Kt_(b#0))
-			 ))); -- this is a polynomial in K[t]
-	  normalizer := t -> 1 / sqrt sub(BWnormSquare, matrix{{t}}); -- normalizing factor
-	  normalizer' := t -> - (1/2) * (normalizer t)^3 * sub(diff(Kt_0,BWnormSquare), matrix{{t}}); -- its derivative 	  
+     	  BW2 := sum(flatten entries sub(H,Kt[gens R]), BombieriWeylNormSquared); -- this is a polynomial in K[t]
+	  normalizer := t -> 1 / sqrt sub(BW2, matrix{{t}}); -- normalizing factor
+	  normalizer' := t -> - (1/2) * (normalizer t)^3 * sub(diff(Kt_0,BW2), matrix{{t}}); -- its derivative 	  
 	  DMforPN := diagonalMatrix append(T/(f->1/sqrt first degree f),1);
 	  maxDegreeTo3halves := power(max(T/first@@degree),3/2);
      	  );
@@ -563,7 +586,11 @@ track (List,List,List) := List => o -> (S,T,solsS) -> (
 			 dt = sqrt(1 + (norm2 solve(Hx0, Ht0))^2);
 			 dt = dt/min first SVD(DMforPN*Hx0);
 			 dt = 0.05/(maxDegreeTo3halves*dt);
-			 if dt<o.tStepMin then error "step is smaller than minimal step"; 
+			 if dt<o.tStepMin then (
+			      << "norm2 solve(Hx0, Ht0) = " << norm2 solve(Hx0, Ht0) << endl;
+			      << "min first SVD(DMforPN*Hx0) = " << min first SVD(DMforPN*Hx0) << endl;
+			      error "step is smaller than minimal step"; 
+			      );
 			 dx = 0;
 			 )
 		    else error "unknown Predictor";
@@ -703,6 +730,14 @@ refine (List,List) := List => o -> (T,solsT) -> (
      apply(#solsT, i-> flatten entries solsR#i)      
      )     
 
+homogenizeSystem = method(TypicalValue => List)
+homogenizeSystem List := List => T -> (
+     R := ring first T;
+     h := symbol h;
+     Rh := (coefficientRing R)[gens R | {h}]; 
+     apply(T, f->homogenize(sub(f,Rh), h))
+     )
+
 totalDegreeStartSystem = method(TypicalValue => Sequence)
 totalDegreeStartSystem List := Sequence => T -> (
 -- contructs a total degree start system and its solutions 
@@ -724,6 +759,20 @@ totalDegreeStartSystem List := Sequence => T -> (
        solsS = toList solsS/(a -> 1:a)
      else
        solsS = toList solsS/deepSplice; 
+     (S, solsS)
+     ) 
+
+oneRootStartSystem = method(TypicalValue => Sequence)
+oneRootStartSystem List := Sequence => T -> (
+-- for a homogeneous system constructs a start system and one root 
+-- IN:  T = list of polynomials 
+-- OUT: (S,solsS}, where 
+--      S     = list of polynomials, 
+--      solsS = list of sequences
+     R := ring first T;
+     lastVar := last gens R;
+     S := apply(numgens R - 1, i->lastVar^(first degree T_i)*R_i);
+     solsS := {(numgens R - 1 : 0) | sequence 1};
      (S, solsS)
      )     
 
