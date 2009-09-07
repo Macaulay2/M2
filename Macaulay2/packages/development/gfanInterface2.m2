@@ -340,6 +340,12 @@ runGfanCommandCaptureError = (cmd, argStrs, args, data) -> (
 -- gfan
 --------------------------------------------------------
 
+-- NOT COMPLETE!!
+argStrs = hashTable{
+     "g" => "-g",
+     "symmetry" => "--symmetry"
+     }
+
 gfan = method(Options=>{
 	  "g"=>false, 
 	  "symmetry"=>false, 
@@ -391,6 +397,11 @@ gfan (List, List) := opts -> (L,S) -> (
     gfanParseMarkedIdeals(out)
 )
 
+--gfan Ideal := opts -> (I) -> gfan(markedPolynomialList I,opts)
+gfan MarkedPolynomialList := opts -> (L) -> (
+     -- NOT COMPLETE!!
+     inputString := gfanMPLToRingToString(L) | gfanMPLToString(L) | gfanSymmetriesToString(opts.Symmetries);
+     )
 --------------------------------------------------------
 -- gfan_buchberger
 --------------------------------------------------------
