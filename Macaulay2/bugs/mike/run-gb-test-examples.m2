@@ -36,12 +36,13 @@ H = getExampleFile("gb-test-examples.m2", "ZZ/32003")
 H = getExampleFile("gb-test-examples-2.m2", "ZZ/32003")
 H = getExampleFile("~/src/M2-refactoring-9088/Macaulay2/packages/ExampleIdeals/gb-ideals.m2","kk")
 
+-- Sottile examples: these are seemingly trivial in char p, but our use of char 0 might be able to be improved
+-- for these Sottile examples, see /Users/mike/local/people/Sottile-Frank/tests/MediumTest
+H = getExampleFile("gb-sottile-examples-char32003.m2", "ZZ/32003");
+H = getExampleFile("gb-sottile-examples-char0.m2", "ZZ/32003");
+
 L = runGBExamples H
 viewResults L
 
 L = runGBExamples(H, 1)
-
-egHaas (ZZ/101)
-debug ExampleIdeals
-I = Lichtblau (ZZ/32003)
-gens gb I
+viewResults L

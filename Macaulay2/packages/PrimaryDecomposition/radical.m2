@@ -47,8 +47,9 @@ radical00(Ideal,RingElement) := (I,u) -> time (
      )
 
 rad = method()
-rad Ideal := (I) -> (
-     -- returns the radical of I
+rad Ideal := (Iorig) -> (
+     -- returns the radical of Iorig
+     (I,F,G) := flattenRing(Iorig,Result=>(,,));
      R := ring I;
      n := numgens I;
      radI := ideal(1_R);
@@ -61,39 +62,14 @@ rad Ideal := (I) -> (
 	  h = (intersect values h)_0;
 	  radJ := saturate(J,h);
 	  radI = intersect(radI,radJ);
-	  h = flatt(I,u);
-	  h = (intersect values h)_0;
-	  if h != 1 then 
-	      h = product factors h;
-	  --error "what h is being added?";
-	  I = I + ideal(h);
-	  );
-     radI
-     )
-
-rad Ideal := (I) -> (
-     -- returns the radical of I
-     R := ring I;
-     n := numgens I;
-     radI := ideal(1_R);
-     while codim I <= n do (
-	  u := independentSets(I,Limit=>1);
-	  u = if #u === 0 then 1_R else first u;
-	  << " size(u) = " << # support u << endl;
-	  J := radical00(I,u);
-	  h := flatt(J,u);
-	  --error "debug me";
-	  h = (intersect values h)_0;
-	  radJ := saturate(J,h);
-	  radI = intersect(radI,radJ);
-	  if u === 1 then return radI;
+	  if u === 1 then break;
 	  h = flatt(I,u);
 	  h = (intersect values h)_0;
 	  if h != 1 then 
 	    h = product factors h;
-	    --error "what h is being added?";
           I = I + ideal(h);
 	  );
+     if ring I =!= ring Iorig then radI = trim(G radI);
      radI
      )
 
@@ -101,6 +77,10 @@ end
 restart
 loadPackage "PrimaryDecomposition"
 debug PrimaryDecomposition
+
+R = QQ[x,y,z]/(x^2+y^2+z^2)
+I = ideal"x,y"
+rad I
 
 R = ZZ/32003[b,s,t,u,v,w,x,y,z]
 I = ideal(

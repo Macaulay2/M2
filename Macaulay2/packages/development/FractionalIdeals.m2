@@ -148,7 +148,7 @@ radical(FractionalIdeal, FractionalIdeal) := opts -> (F,R1) -> (
        then (
 	    J0 := first flattenRing F#1;  -- assumes F#0 is 1 ??
 	    radJ0 := rad J0;
-	    return fractionalIdeal trim promote(radJ0,ring F)
+	    return (radJ0, fractionalIdeal trim promote(radJ0,ring F))
 	    );
      R1' := ringFromFractions(R1, Variable=>symbol w); -- the generators correspond to elements of R1#1 (except the first, which 
           -- corresponds to the unit).
@@ -163,7 +163,7 @@ radical(FractionalIdeal, FractionalIdeal) := opts -> (F,R1) -> (
      vS' := matrix{{1_S'}} | newvars;
      J := ideal(v * sub(M, R1'));
      -- New computation of radical:
-     J0 := first flattenRing J;
+     J0 = first flattenRing J;
      time Jrad := rad J0;
 {*
      -- do the radical
@@ -212,7 +212,7 @@ integralClosureHypersurface Ring := (R) -> (
      -- as required above.
      D := (disc R)/first//product;
      e1 := fractionalIdeal ideal 1_R;
-     time j := fractionalIdeal trim rad ideal promote(D,R);
+     time j := fractionalIdeal rad ideal promote(D,R);
      time e := End j;
      while e != e1 do (
 	  e1 = e;
@@ -228,7 +228,7 @@ integralClosureDenominator(Ring,RingElement) := (R,D) -> (
      -- assumption: R is in Noether normal position
      -- as required above.
      e1 := fractionalIdeal ideal 1_R;
-     time j := fractionalIdeal trim radical ideal D;
+     time j := fractionalIdeal rad ideal D;
      time e := End j;
      while e != e1 do (
 	  e1 = e;
@@ -293,13 +293,58 @@ TEST ///
 -- may have as many TEST sections as needed
 ///
 
+---- examples from IntegralClosure/examples.m2
+restart
+loadPackage "FractionalIdeals"
+S = QQ[y,x,MonomialOrder=>{1,1}]
+I = ideal((y^2-y-x/3)^3-y*x^4*(y^2-y-x/3)-x^11)
+R = S/I
+time R' = integralClosureHypersurface R
+ringFromFractions oo
+--------------------------------------------------
+--vanHoeij1
+S = QQ[y,x,MonomialOrder=>{1,1}]
+I = ideal"y10+(-2494x2+474)y8+(84366+2042158x4-660492x2)y6
+           +(128361096x4-4790216x2+6697080-761328152x6)y4
+	   +(-12024807786x4-506101284x2+15052058268x6+202172841+134266087241x8)y2
+	   +34263110700x4-228715574724x6+5431439286x2+201803238-9127158539954x10-3212722859346x8"
+R = S/I
+R' = integralClosureHypersurface R
+time R' = integralClosureDenominator(R,x)  -- NEED also: allow R to be a fractional ring
+ringFromFractions oo
+--------------------------------------------------
+--vanHoeij2
+S = QQ[x,y]
+ideal"y20+y13x+x4y5+x3(x+1)2"
+--------------------------------------------------
+--vanHoeij3
+S = QQ[x,y]
+ideal"y30+y13x+x4y5+x3(x+1)2"
+--------------------------------------------------
+--vanHoeij4
+S = QQ[x,y]
+ideal"y40+y13x+x4y5+x3(x+1)2"
+--------------------------------------------------
+--boehm1
+S = QQ[u,v,z]
+ideal(v^4-2*u^3*z+3*u^2*z^2-2*v^2*z^2)
+--------------------------------------------------
+--boehm2
+S = QQ[u,v,z]
+F = (v^2-u*z)^2-u^3*z
+F = sub(F,{z=>1})
+S = QQ[u,v]
+ideal(sub(F,S))
 
+----------------------------------------------------------
 --boehm19
 restart
 loadPackage "FractionalIdeals"
 S = QQ[u,v, MonomialOrder=>{1,1}]
 F = 5*v^6+7*v^2*u^4+6*u^6+21*v^2*u^3+12*u^5+21*v^2*u^2+6*u^4+7*v^2*u
 R = S/F
+
+time integralClosureHypersurface R
 
 -- working on this bug:
 rj3 = fractionalIdeal(v^3, ideal(v^4,u^2*v^3+u*v^3,u^3*v^2+u^2*v^2,u^5*v+u^4*v))
