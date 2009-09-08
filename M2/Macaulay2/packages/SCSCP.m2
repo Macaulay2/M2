@@ -1,8 +1,6 @@
-needsPackage "OpenMath"
-needsPackage "XML"
 newPackage(
 	"SCSCP",
-	Version => "0.9", 
+	Version => "0.1", 
 	Date => "July 17, 2009",
 	Authors => {
 		{Name => "Dan Roozemond", Email => "d.a.roozemond@tue.nl", HomePage => "http://www.win.tue.nl/~droozemo/"}
@@ -52,8 +50,7 @@ load "./SCSCP/server.m2"
 load "./SCSCP/expr.m2"
 load "./SCSCP/docs.m2"
 
-------------------------
-----FOR DEBUGGING-------
-------------------------
+---------------
+----THE END----
+---------------
 endPackage("SCSCP");
-debug SCSCP
