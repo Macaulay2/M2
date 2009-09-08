@@ -1,5 +1,4 @@
 -- -*- coding: utf-8 -*-
-needsPackage "XML"
 newPackage(
 	"OpenMath",
     	Version => "0.1", 
@@ -91,17 +90,5 @@ document {
      	///,
 	SeeAlso => {(value, XMLnode)}
 	}
--------------------------------
------ (NO) ACTUAL TESTS -------
--------------------------------
 
--- TEST ///
---     assert ( firstFunction 2 == "D'oh!" )
--- ///
--- 
-
-------------------------
-----For Debugging-------
-------------------------
 endPackage("OpenMath");
-debug OpenMath
