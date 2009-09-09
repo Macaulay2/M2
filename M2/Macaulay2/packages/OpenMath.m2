@@ -1,4 +1,5 @@
 -- -*- coding: utf-8 -*-
+needsPackage "XML"
 newPackage(
 	"OpenMath",
     	Version => "0.1", 
@@ -52,6 +53,7 @@ load "./OpenMath/cds/scscp_transient_1.m2"
 --Should actually need to export little else than openMath
 -- (and value XMLnode, obviously)
 export { "openMath" }
+
 beginDocumentation()
 document { 
 	Key => OpenMath,
