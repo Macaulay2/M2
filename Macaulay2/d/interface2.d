@@ -185,6 +185,23 @@ export rawLaunchPT(e:Expr):Expr := (
      );
 setupfun("rawLaunchPT",rawLaunchPT);
 
+export rawGetSolutionPT(e:Expr):Expr := (
+     when e is s:Sequence do
+     if length(s) != 2 then WrongNumArgs(2)
+     else when s.0 is PT:RawPathTracker do 
+          when s.1 is solN:ZZ do 
+		toExpr(Ccode(RawMatrixOrNull,
+		    "(engine_RawMatrixOrNull)rawGetSolutionPT(",
+		    "(PathTracker *)", PT, ",",
+		    toInt(s.1), 		    
+		    ")"
+		    ))
+          else WrongArgZZ(2) 
+          else WrongArg(1,"a path tracker")
+     else WrongNumArgs(2)
+     );
+setupfun("rawGetSolutionPT",rawGetSolutionPT);
+
 export rawGetAllSolutionsPT(e:Expr):Expr := (
      when e is PT:RawPathTracker  do 
 		toExpr(Ccode(RawMatrixOrNull,
@@ -195,6 +212,39 @@ export rawGetAllSolutionsPT(e:Expr):Expr := (
      else WrongArg("a path tracker")
      );
 setupfun("rawGetAllSolutionsPT",rawGetAllSolutionsPT);
+
+export rawGetSolutionStatusPT(e:Expr):Expr := (
+     when e is s:Sequence do
+     if length(s) != 2 then WrongNumArgs(2)
+     else when s.0 is PT:RawPathTracker do 
+          when s.1 is solN:ZZ do 
+		toExpr(Ccode(int,
+		    "rawGetSolutionStatusPT(",
+		    "(PathTracker *)", PT, ",",
+		    toInt(s.1), 		    
+		    ")"
+		    ))
+          else WrongArgZZ(2) 
+          else WrongArg(1,"a path tracker")
+     else WrongNumArgs(2)
+     );
+setupfun("rawGetSolutionStatusPT",rawGetSolutionStatusPT);
+
+export rawGetSolutionLastTvaluePT(e:Expr):Expr := (
+     when e is s:Sequence do
+     if length(s) != 2 then WrongNumArgs(2)
+     else when s.0 is PT:RawPathTracker do 
+          when s.1 is solN:ZZ do 
+		toExpr(Ccode(RRorNull, "(engine_RRorNull)rawGetSolutionLastTvaluePT(",
+		    "(PathTracker *)", PT, ",",
+		    toInt(s.1), 		    
+		    ")"
+		    ))
+          else WrongArgZZ(2) 
+          else WrongArg(1,"a path tracker")
+     else WrongNumArgs(2)
+     );
+setupfun("rawGetSolutionLastTvaluePT",rawGetSolutionLastTvaluePT);
 
 export rawRefinePT(e:Expr):Expr := (
      when e is s:Sequence do

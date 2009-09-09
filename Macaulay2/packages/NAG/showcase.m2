@@ -18,8 +18,6 @@ T = (katsuraBench 12)_*; (S,solsS) = totalDegreeStartSystem T; -- #sols=2048, M2
 -- random generalized eigenvalue problem
 setRandomSeed 0; (S,T,solsS) = randomGeneralizedEigenvalueProblem 35; -- #sols=35, M2:5, B:22, P:432 
 
-T = (sottileW())_*
-(S,solsS) = totalDegreeStartSystem T
 
 -- PICK WHAT TO RUN: ------------------------------------------------------
 -- 1st run

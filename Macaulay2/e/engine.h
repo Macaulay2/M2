@@ -1897,7 +1897,10 @@ enum gbTraceValues
 				    M2_RRR epsilon, int max_corr_steps,
 				    int pred_type);  
   void rawLaunchPT(PathTracker* PT, const Matrix* start_sols);
+  const MatrixOrNull *rawGetSolutionPT(PathTracker* PT, int solN);
   const MatrixOrNull *rawGetAllSolutionsPT(PathTracker* PT);
+  int rawGetSolutionStatusPT(PathTracker* PT, int solN);
+  M2_RRRorNull rawGetSolutionLastTvaluePT(PathTracker* PT, int solN);
   const MatrixOrNull *rawRefinePT(PathTracker* PT, const Matrix* sols, M2_RRR tolerance, int max_corr_steps_refine);
 #if defined(__cplusplus)
 }

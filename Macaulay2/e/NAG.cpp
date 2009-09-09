@@ -841,6 +841,8 @@ double norm2_complex_array(int n, complex* a) // square of 2-norm
   return t;
 }
 
+// BEGIN lapack-based routines
+
 // lapack solve routine (direct call) 
 // matrix A is transposed
 bool solve_via_lapack(
@@ -961,6 +963,74 @@ bool solve_via_lapack_without_transposition(
   return ret;
 #endif
 }
+
+// In: A, a square matrix of size "size"
+// Out: true if success, cond = condition number of A
+bool cond_number_via_svd(int size, complex* A, double& cond)
+{
+#if !LAPACK
+  ERROR("lapack not present");
+  return false;
+#else
+  bool ret = true;
+  char doit = 'A';  // other options are 'S' and 'O' for singular vectors only
+  int rows = size;
+  int cols = size;
+  int info;
+  int min = (rows <= cols) ? rows : cols;
+
+  if (min == 0)
+    {
+      ERROR("expected a matrix with positive dimensions");
+      return false;
+    }
+
+  int max = (rows >= cols) ? rows : cols;
+  int wsize = 4*min+2*max;
+  double *workspace = newarray_atomic(double,2*wsize);
+  double *rwork = newarray_atomic(double,5*max);
+
+  double *copyA = (double*) A;
+  double *u = newarray_atomic(double,2*rows*rows);
+  double *vt = newarray_atomic(double,2*cols*cols);
+  double *sigma = newarray_atomic(double,2*min);
+  
+  zgesvd_(&doit, &doit, &rows, &cols, 
+	  copyA, &rows,
+	  sigma, 
+	  u, &rows,
+	  vt, &cols,
+	  workspace, &wsize, 
+	  rwork, &info);
+
+  if (info < 0)
+    {
+      ERROR("argument passed to zgesvd had an illegal value");
+      ret = false;
+    }
+  else if (info > 0) 
+    {
+      ERROR("zgesvd did not converge");
+      ret = false;
+    }
+  else
+    {
+      cond = sigma[size-1]/sigma[0];  
+    }
+
+  deletearray(workspace);
+  deletearray(rwork);
+  //deletearray(copyA);
+  deletearray(u);
+  deletearray(vt);
+  deletearray(sigma);
+
+  return ret;
+#endif
+}
+
+
+// END lapack-based routines
 
 void StraightLineProgram::predictor()
 {
@@ -1097,7 +1167,9 @@ PathTracker::PathTracker()
 
 PathTracker::~PathTracker()
 { 
-  deletearray(raw_solutions);
+  for (int i=0; i<n_sols; i++)
+    raw_solutions[i].release();
+  deletearray(raw_solutions); 
 }
 
 // a function that creates a PathTracker object, builds the homotopy, slps for predictor and corrector given a target system
@@ -1203,9 +1275,24 @@ void rawLaunchPT(PathTracker* PT, const Matrix* start_sols)
   PT->track(start_sols);
 }
 
+const MatrixOrNull *rawGetSolutionPT(PathTracker* PT, int solN)
+{
+  return PT->getSolution(solN);
+}
+
 const MatrixOrNull *rawGetAllSolutionsPT(PathTracker* PT)
 {
   return PT->getAllSolutions();
+}
+
+int rawGetSolutionStatusPT(PathTracker* PT, int solN)
+{
+  return PT->getSolutionStatus(solN);
+}
+
+M2_RRRorNull rawGetSolutionLastTvaluePT(PathTracker* PT, int solN)
+{
+  return PT->getSolutionLastT(solN);
 }
 
 const MatrixOrNull *rawRefinePT(PathTracker* PT, const Matrix* sols, M2_RRR tolerance, int max_corr_steps_refine)
@@ -1219,6 +1306,7 @@ int PathTracker::track(const Matrix* start_sols)
   double epsilon2 = mpfr_get_d(epsilon,GMP_RNDN); epsilon2 *= epsilon2; //epsilon^2
   double t_step = mpfr_get_d(init_dt,GMP_RNDN); // initial step
   double dt_min_dbl = mpfr_get_d(min_dt,GMP_RNDN);
+  double dt_max_dbl = mpfr_get_d(max_dt,GMP_RNDN);
   double dt_increase_factor_dbl = mpfr_get_d(dt_increase_factor,GMP_RNDN);
   double dt_decrease_factor_dbl = mpfr_get_d(dt_decrease_factor,GMP_RNDN);
   
@@ -1231,7 +1319,7 @@ int PathTracker::track(const Matrix* start_sols)
 
   // memory distribution for arrays
   complex* s_sols = newarray(complex,n*n_sols);
-  complex* t_sols = raw_solutions = newarray(complex,n*n_sols);
+  raw_solutions = newarray(Solution,n_sols);
   complex* x0t0 = newarray(complex,n+1); 
     complex* x0 =  x0t0;
     complex* t0 = x0t0+n;
@@ -1259,19 +1347,19 @@ int PathTracker::track(const Matrix* start_sols)
     for(j=0; j<n; j++,c++) 
       *c = complex(BIGCC_VAL(start_sols->elem(i,j)));
 				
-  complex* t_s = t_sols; //current target solution
+  Solution* t_s = raw_solutions; //current target solution
   complex* s_s = s_sols; //current start solution
   				
-  for(int sol_n =0; sol_n<n_sols; sol_n++, s_s+=n, t_s+=n) {
-
+  for(int sol_n =0; sol_n<n_sols; sol_n++, s_s+=n, t_s++) {
+    t_s->make(n,s_s); // cook a Solution
+    t_s->status = PROCESSING;
     copy_complex_array(n,s_s,x0);
     *t0 = complex(0,0);
 
     *dt = complex(t_step);
     int predictor_successes = 0;
     int count = 0; // number of computed points
-    bool is_infinity = false;
-    while (!is_infinity && 1 - t0->getreal() > the_smallest_number) {
+    while (t_s->status == PROCESSING && 1 - t0->getreal() > the_smallest_number) {
       if ( dt->getreal() > 1 - t0->getreal() ) 
 	*dt = complex(1-t0->getreal());
       
@@ -1380,10 +1468,12 @@ int PathTracker::track(const Matrix* start_sols)
 	//printf("c: |dx|^2 = %lf\n", norm2_complex_array(n,dx));
       } while (!is_successful and n_corr_steps<max_corr_steps);
     
-      if (dt->getreal() > dt_min_dbl && !is_successful) { 
+      if (!is_successful) { 
 	// predictor failure 
 	predictor_successes = 0;
 	*dt = complex(dt_decrease_factor_dbl)*(*dt);
+	if (dt->getreal() < dt_min_dbl)
+	  t_s->status = MIN_STEP_FAILED;
       } else { 
 	// predictor success
 	predictor_successes = predictor_successes + 1;
@@ -1392,11 +1482,20 @@ int PathTracker::track(const Matrix* start_sols)
 	if (is_successful && predictor_successes >= num_successes_before_increase) { 
 	  predictor_successes = 0;
 	  *dt  = complex(dt_increase_factor_dbl)*(*dt);	
+	  if (dt->getreal() > dt_max_dbl) 
+	    *dt = complex(dt_max_dbl);
 	}
       }
+      if (epsilon2 * norm2_complex_array(n,x0) > 1)
+	t_s->status = INFINITY_FAILED;
     }
-    copy_complex_array(n,x0,t_s);
-    
+    // record the solution
+    copy_complex_array(n, x0, t_s->x);    
+    t_s->t = t0->getreal();
+    if (t_s->status == PROCESSING)
+      t_s->status = REGULAR;
+    slpHxH->evaluate(n+1,x0t0,HxH);
+    cond_number_via_svd(n, HxH/*Hx*/, t_s->rcond);
     //printf("(%d)", count); fflush(stdout);
   }
   
@@ -1498,6 +1597,27 @@ MatrixOrNull* PathTracker::refine(const Matrix *sols, M2_RRR tolerance, int max_
   return mat.to_matrix();
 }
 
+MatrixOrNull* PathTracker::getSolution(int solN)
+{
+  if (solN<0 || solN>=n_sols) return NULL;
+  // construct output 
+  FreeModule* S = C->make_FreeModule(n_coords); 
+  FreeModule* T = C->make_FreeModule(1);
+  MatrixConstructor mat(T,S);
+  mpfr_t re, im;
+  mpfr_init(re); mpfr_init(im);
+  Solution* s = raw_solutions+solN;
+  complex* c = s->x;
+  for(int j=0; j<n_coords; j++,c++) {
+    mpfr_set_d(re, c->getreal(), GMP_RNDN);
+    mpfr_set_d(im, c->getimaginary(), GMP_RNDN);
+    ring_elem e = C->from_BigReals(re,im);
+    mat.set_entry(0,j,e);
+  }
+  mpfr_clear(re); mpfr_clear(im);
+  return mat.to_matrix();
+}
+
 MatrixOrNull* PathTracker::getAllSolutions()
 {
   // construct output 
@@ -1506,16 +1626,33 @@ MatrixOrNull* PathTracker::getAllSolutions()
   MatrixConstructor mat(T,S);
   mpfr_t re, im;
   mpfr_init(re); mpfr_init(im);
-  complex* c = raw_solutions;
-  for(int i=0; i<n_sols; i++) 
+  Solution* s = raw_solutions;
+  for(int i=0; i<n_sols; i++,s++) {
+    complex* c = s->x;
     for(int j=0; j<n_coords; j++,c++) {
       mpfr_set_d(re, c->getreal(), GMP_RNDN);
       mpfr_set_d(im, c->getimaginary(), GMP_RNDN);
       ring_elem e = C->from_BigReals(re,im);
       mat.set_entry(i,j,e);
     }
+  }
   mpfr_clear(re); mpfr_clear(im);
   return (solutions = mat.to_matrix());
+}
+
+int PathTracker::getSolutionStatus(int solN)
+{
+  if (solN<0 || solN>=n_sols) return -1;
+  return raw_solutions[solN].status;
+}
+
+M2_RRRorNull PathTracker::getSolutionLastT(int solN)
+{
+  if (solN<0 || solN>=n_sols) return NULL;
+  M2_RRR result = (M2_RRR)getmem(sizeof(__mpfr_struct));
+  mpfr_init2(result, C->get_precision());
+  mpfr_set_d(result, raw_solutions[solN].t, GMP_RNDN);  
+  return result;
 }
 
 void PathTracker::text_out(buffer& o) const
@@ -1523,7 +1660,7 @@ void PathTracker::text_out(buffer& o) const
   slpHxt->stats_out(o);
   slpHxH->stats_out(o);
 
-  int n = slpHxH->num_inputs;
+  /* int n = slpHxH->num_inputs;
   char buf[1000];
   complex input[n], output[n*n];
   for(int i=0; i<n; i++) {
@@ -1543,6 +1680,7 @@ void PathTracker::text_out(buffer& o) const
   }
   slpH->text_out(o);
   slpHxH->text_out(o);
+  */
 
 }
  
