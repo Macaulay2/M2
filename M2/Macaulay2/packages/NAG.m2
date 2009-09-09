@@ -151,7 +151,7 @@ BombieriWeylNormSquared RingElement := f -> sum(listForm f, a->(
 
 ------------------------------------------------------
 track = method(TypicalValue => List, Options =>{
-	  Software=>M2,
+	  Software=>M2engine,
 	  gamma=>1, 
 	  tDegree=>1,
      	  -- step control
@@ -452,6 +452,7 @@ track (List,List,List) := List => o -> (S,T,solsS) -> (
      else if o.Software===M2 then (
      	  apply(#solsS, sN->(
 	       s := solsS#sN;
+	       s'status := PROCESSING;
 	       if DBG > 0 then << "." << if (sN+1)%100 == 0 then endl else flush;
 	       if DBG > 2 then << "tracking solution " << toString s << endl;
      	       tStep := o.tStep;
@@ -464,7 +465,7 @@ track (List,List,List) := List => o -> (S,T,solsS) -> (
 	       if DBG>1 then history := new MutableHashTable from{ count => new MutableHashTable from {
 			 "t"=>t0,"x"=>x0
 			 } };
-	       while x0 =!= infinity and 1-t0 > theSmallestNumber do (
+	       while s'status === PROCESSING and 1-t0 > theSmallestNumber do (
 		    if DBG > 4 then << "--- current t = " << t0 << endl;
                     -- monitor numerical stability: perhaps change patches if not stable ???
 		    -- Hx0 := evalHx(x0,t0);
@@ -484,6 +485,7 @@ track (List,List,List) := List => o -> (S,T,solsS) -> (
 			 HxNoPatch := evalHxNoPatch(x0,t0);
 			 -- patch = conjugate of the normalized kernel vector 
 			 dPatch = matrix{ flatten entries normalize transpose gens ker HxNoPatch / conjugate };
+			 --dPatch = matrix{ flatten entries x0 / conjugate};
 			 if DBG>9 then << "generated" << endl;
 			 );   
 		    if o.Predictor == Tangent then (
@@ -496,7 +498,6 @@ track (List,List,List) := List => o -> (S,T,solsS) -> (
 			 else (
 		    	      Hx0 := evalHx(x0,t0);
 			      Ht0 := evalHt(x0,t0);
-		    	      -- if norm invHx0timesHt0 > divThresh then (x0 = infinity; break);
 			      dx = solve(Hx0,-dt*Ht0);
 			      );
 			 ) 
@@ -620,16 +621,21 @@ track (List,List,List) := List => o -> (S,T,solsS) -> (
 			 )
 		    else (
 		    	 while norm dx > o.CorrectorTolerance*norm x1 
-			 and nCorrSteps < (if 1-t1 < theSmallestNumber and dt <= o.tStepMin 
-			      then o.finalMaxCorrSteps -- infinity
-			      else o.maxCorrSteps) 
+			 and nCorrSteps < --(if 1-t1 < theSmallestNumber and dt <= o.tStepMin 
+			      --then o.finalMaxCorrSteps 
+			      --else 
+			      o.maxCorrSteps--) 
 		    	 do ( 
-			      if norm x1 > divThresh then (error "infinity"; x1 = infinity; break);
-			      dx = solve(evalHx(x1,t1), -evalH(x1,t1));
-			      x1 = x1 + dx;
-			      nCorrSteps = nCorrSteps + 1;
-			      if DBG > 4 then <<"corrector step " << nCorrSteps << endl <<"x=" << toString x1 << " res=" <<  toString evalH(x1,t1) 
-			      << endl << " dx=" << dx << endl;
+			      if (not isProjective and norm x1 > divThresh) 
+			      or (o.Projectivize and x1_(n-1,0) < o.CorrectorTolerance)
+			      then ( s'status = INFINITY'FAILED; dx = 0 )
+			      else (
+				   dx = solve(evalHx(x1,t1), -evalH(x1,t1));
+			      	   x1 = x1 + dx;
+			      	   nCorrSteps = nCorrSteps + 1;
+			      	   if DBG > 4 then <<"corrector step " << nCorrSteps << endl <<"x=" << toString x1 << " res=" <<  toString evalH(x1,t1) 
+			      	   << endl << " dx=" << dx << endl;
+				   );
 			      );
 			 );
 		    if DBG>9 then << ">>> step adjusting" << endl;
@@ -638,6 +644,7 @@ track (List,List,List) := List => o -> (S,T,solsS) -> (
 			 stepAdj = stepAdj - 1;
 	 	 	 tStep = stepDecreaseFactor*tStep;
 			 if DBG > 2 then << "decreased tStep to "<< tStep << endl;	 
+			 if tStep < o.tStepMin then s'status = MIN'STEP'FAILED;
 			 ) 
 		    else ( -- predictor success
 			 predictorSuccesses = predictorSuccesses + 1;
@@ -661,23 +668,32 @@ track (List,List,List) := List => o -> (S,T,solsS) -> (
 			 else stepAdj = 0; -- keep the same step size
 			 );
 		    );        	    
-	       (x0,symbol nSteps=>count, if DBG>1 then new HashTable from history else "no history")
+	       if s'status===PROCESSING then s'status = REGULAR;
+	       -- create a solution record 
+	       (x0,
+		    "#steps"=>count, 
+		    "status "=>s'status, 
+		    "last t" => t0, 
+		    "cond#^{-1}" => (svd := sort first SVD evalHx(x0,t0); first svd / last svd )
+		    ) | ( if DBG>1 
+		    then sequence new HashTable from history 
+		    else sequence ())
 	       ))
      );
-     
-     ret := if o.Projectivize then (
-	  if DBG>3 then print rawSols;
-	  apply(rawSols, s->(
-		    s' = flatten entries first s;
-		    --if norm(last s) < o.CorrectorTolerance then infinity 
-		    --else 
-		    {apply(drop(s',-1),u->(1/last s')*u)} | drop(toList s, 1)
-	       	    ))
-	  )
-     else (
-	  if o.Software===M2engine or o.Software===M2enginePrecookedSLPs then rawSols/(s->{s}) 
-	  else select(rawSols,s -> first s =!= infinity)/(s->{flatten entries first s} | drop(toList s,1))
-	  );
+     if DBG>3 then print rawSols;
+     ret := if o.Software===M2engine or o.Software===M2enginePrecookedSLPs then rawSols/(s->{s}) 
+	  else (
+     	       if o.Projectivize then (
+	  	    rawSols = apply(rawSols, s->(
+		    	      s' = flatten entries first s;
+		    	      s'status = s#2#1;
+		    	      if norm(last s') < o.CorrectorTolerance then s'status = INFINITY'FAILED;
+		    	      {matrix {apply(drop(s',-1),u->(1/last s')*u)}} | {s#1} | {STATUS => s'status} | drop(toList s, 3) 
+	       	    	      ))
+	  	    );
+	       rawSols --, s->s#2#1===REGULAR or s#2===SINGULAR} )
+	       /(s->{flatten entries first s} | drop(toList s,1))
+	       );
      if DBG>0 then (
 	  if o.Software==M2 then (
 	       << "Number of solutions = " << #ret << endl << "Average number of steps per path = " << toRR sum(ret,s->s#1#1)/#ret << endl
@@ -694,7 +710,7 @@ track (List,List,List) := List => o -> (S,T,solsS) -> (
      ret
      )
 
-refine = method(TypicalValue => List, Options =>{Software=>M2, Tolerance=>1e-8, maxCorrSteps=>30})
+refine = method(TypicalValue => List, Options =>{Software=>M2engine, Tolerance=>1e-8, maxCorrSteps=>30})
 refine (List,List) := List => o -> (T,solsT) -> (
 -- tracks solutions from start system to target system
 -- IN:  T = list of polynomials in target system

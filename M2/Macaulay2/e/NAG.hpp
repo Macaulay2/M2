@@ -252,6 +252,23 @@ public:
   Matrix *evaluate(const Matrix *vals);
 };
 
+enum SolutionStatus {UNDETERMINED, PROCESSING, REGULAR, SINGULAR, INFINITY_FAILED, MIN_STEP_FAILED};
+struct Solution
+{
+  int n; // number of coordinates
+  complex* x; // array of n coordinates
+  double t; // last value of parameter t used
+  complex* start_x; // start of the path that produced x 
+  double rcond; // reverse condition number of Hx
+  SolutionStatus status;
+  
+  Solution() { status = UNDETERMINED; }
+  void make(int n, const complex* s_s) { this->n = n; x = newarray(complex,n); 
+    start_x = newarray(complex,n); copy_complex_array(n, s_s, start_x); }
+  ~Solution() { release(); }
+  void release() { deletearray(x); deletearray(start_x); } 
+};
+
 class PathTracker : public object
 {
   static PathTracker* catalog[MAX_NUM_PATH_TRACKERS];
@@ -267,8 +284,8 @@ class PathTracker : public object
   const PolyRing *homotopy_R; // polynomial ring where homotopy lives
   int n_coords;
   int n_sols;
-  complex* raw_solutions;
-  Matrix *solutions;
+  Solution* raw_solutions; // solutions + stats
+  Matrix *solutions; // Matrix of solutions passed to top level
 
   // parameters
   M2_bool is_projective;
@@ -288,7 +305,10 @@ public:
 
   void text_out(buffer& o) const;
   int makeFromHomotopy(Matrix*);
+  MatrixOrNull* getSolution(int);
   MatrixOrNull* getAllSolutions();
+  int getSolutionStatus(int);
+  M2_RRRorNull getSolutionLastT(int);
   int track(const Matrix*); 
   MatrixOrNull* refine(const Matrix *sols, M2_RRR tolerance, int max_corr_steps_refine = 100); // refine solutions such that (error estimate)/norm(solution) < tolerance
 
