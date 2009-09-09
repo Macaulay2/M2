@@ -326,4 +326,4 @@ openMath Thing := guard (x -> replaceMultipleIDs toOpenMath x)
 
 value XMLnode := guard fromOpenMath 
 val = method();
-val XMLnode := guard (x -> replaceMultipleIDs toOpenMath x)
+val XMLnode := guard fromOpenMath
