@@ -52,7 +52,7 @@ load "./OpenMath/cds/scscp_transient_1.m2"
 
 --Should actually need to export little else than openMath
 -- (and val XMLnode, obviously)
-export { "openMath", "val" }
+export { "openMath", "val", "matrixGroup" }
 
 beginDocumentation()
 document { 
@@ -92,5 +92,8 @@ document {
      	///,
 	SeeAlso => {(val, XMLnode)}
 	}
+	
+undocumented{ matrixGroup }
+
 
 endPackage("OpenMath");

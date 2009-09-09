@@ -1,3 +1,4 @@
+needsPackage "OpenMath"
 newPackage(
 	"SCSCP",
 	Version => "0.1", 
