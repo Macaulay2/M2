@@ -52,7 +52,7 @@ load "./OpenMath/cds/scscp_transient_1.m2"
 
 --Should actually need to export little else than openMath
 -- (and value XMLnode, obviously)
-export { "openMath" }
+export { "openMath", "convertXML" }
 
 beginDocumentation()
 document { 
@@ -62,7 +62,7 @@ document {
 	}
 
 document {
-	Key => {(value,XMLnode)},
+	Key => {convertXML, (convertXML, XMLnode), (value,XMLnode)},
 	Headline => "Evaluate an XMLnode containing OpenMath",
 	Usage => "value x",
 	Inputs => { "x" },
@@ -75,7 +75,7 @@ document {
 	}
 
 document {
-	Key => {openMath},
+	Key => {openMath, (openMath, Thing)},
 	Headline => "Turn an arbitrary Macaulay2 object into OpenMath (if possible)",
 	Usage => "openMath x",
 	Inputs => { "x" },
