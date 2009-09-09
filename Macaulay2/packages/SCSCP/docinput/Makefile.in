@@ -1,6 +1,6 @@
-#After changing this file, run ./config.status Macaulay2/packages/SCSCP/docinput/Makefile
-#  in the toplevel build tree. Then, to recreate the examples, run "make" in 
-#  BUILD/normal/Macaulay2/packages/SCSCP/docinput.
+#To recreate the examples, run "make" in BUILD/normal/Macaulay2/packages/SCSCP/docinput.
+#(After changing this file, run ./config.status Macaulay2/packages/SCSCP/docinput/Makefile
+#  in the toplevel build tree)
 
 M2=@pre_bindir@/M2@EXE@
 VPATH = @srcdir@
