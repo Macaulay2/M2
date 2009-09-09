@@ -51,25 +51,25 @@ load "./OpenMath/cds/scscp_transient_1.m2"
 -------------------------------
 
 --Should actually need to export little else than openMath
--- (and value XMLnode, obviously)
-export { "openMath", "convertXML" }
+-- (and val XMLnode, obviously)
+export { "openMath", "val" }
 
 beginDocumentation()
 document { 
 	Key => OpenMath,
 	Headline => "OpenMath support",
-	SeeAlso => {(value, XMLnode)}
+	SeeAlso => {(val, XMLnode)}
 	}
 
 document {
-	Key => {convertXML, (convertXML, XMLnode), (value,XMLnode)},
+	Key => {val, (val, XMLnode), (value,XMLnode)},
 	Headline => "Evaluate an XMLnode containing OpenMath",
-	Usage => "value x",
+	Usage => "val x",
 	Inputs => { "x" },
 	Outputs => {{ "the value of the OpenMath object described by x" }},
 	EXAMPLE lines ///
 		t = parse ////<OMA><OMS cd="arith1" name="plus"/><OMI>1</OMI><OMI>2</OMI></OMA>////
-		value t
+		val t
      	///,
 	SeeAlso => {openMath}
 	}
@@ -90,7 +90,7 @@ document {
 		v = openMath (hold 2*3)
 		toLibxmlNode v
      	///,
-	SeeAlso => {(value, XMLnode)}
+	SeeAlso => {(val, XMLnode)}
 	}
 
 endPackage("OpenMath");
