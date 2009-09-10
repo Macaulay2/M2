@@ -441,6 +441,7 @@ AC_SUBST(PACKAGES, dnl the internal ones first, then after that, the oldest firs
   gfanInterface
   PieriMaps
   Normaliz
+  Posets
 ")
 
 # convert the newlines in the list above to spaces
