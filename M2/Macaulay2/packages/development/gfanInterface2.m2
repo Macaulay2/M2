@@ -1,3 +1,4 @@
+
 -- THIS FILE IS UNDER CONSTRUCTION!!  It will replace gfanInterface in 1.3?
 
 --needsPackage "Polymake"
@@ -15,13 +16,13 @@ newPackage(
 		"path" => "",
 		"fig2devpath" => "",
 		--"keep files" => true,
-		"verbose" => false
+		"verbose" => true
 	},
 	DebuggingMode => false
 )
 
 export {
-        MarkedPolynomialList,
+	MarkedPolynomialList,
 	gfan, 
 	gfanBuchberger,
 	gfanDoesIdealContain,
@@ -48,7 +49,8 @@ export {
 	gfanTropicalLifting,
 	gfanTropicalMultiplicity,
 	gfanTropicalStartingCone,
-	gfanTropicalTraverse
+	gfanTropicalTraverse,
+	gfanFunctions -- for testing purposes
 }
 
 gfanPath = gfanInterface2#Options#Configuration#"path"
@@ -66,6 +68,22 @@ MarkedPolynomialList = new Type of List
   -- the monomial inL#i is the marked monomial, which
   -- should occur with the same coefficient in L#i.
 
+expression MarkedPolynomialList := L -> 
+	expression apply(transpose L, t -> (
+		m := t#0;
+		f := t#1;
+		out := "(" | toString m | ")";
+		if leadCoefficient(f-m) > 0 then 
+			out = out | " +";
+		if f-m != 0 then 
+			return out | " " | toString(f-m)
+			else
+			return out;
+		)
+	)
+
+net MarkedPolynomialList := L -> net expression L
+
 --------------------------------------------------------
 --------------------------------------------------------
 -- PARSING FUNCTIONS
@@ -75,38 +93,38 @@ MarkedPolynomialList = new Type of List
 gfanParseList = method();
 gfanParseList String := (S) -> (
 	S = replace("\n", "", S);
-        stack := {};
-        r := regex(///[\{,\}]///, S);
-        popstate := false;
-        while #r == 1 do (
-                startpos := first first r;
-                character := substring(startpos,1,S);
-                prestring := substring(0, startpos, S);
-                S = substring(startpos+1, #S,S);
-                if character == "," then (
-                        if not popstate then (
-                           stack = append(drop(stack,-1), append(last stack, prestring));
-                        );
-                        popstate = false;
-                ) else if character == "{" then (
-                        stack = append(stack, {});
-                ) else if #stack == 0 then (
-                        error "Parsing error";
-                ) else if #stack == 1 then (
-                        if not popstate then (
-                                stack = append(drop(stack,-1), append(last stack, prestring));
-                        );
-                        return first stack;
-                ) else (
-                        if not popstate then (
-                        stack = append(drop(stack,-1), append(last stack, prestring));
-                        );
-                        stack = append(drop(stack,-2), append(stack#(#stack -2), last stack));
-                        popstate = true;
-                );
-                r = regex(///[\{,\}]///, S);
-        );
-        error "Parsing error";
+	stack := {};
+	r := regex(///[\{,\}]///, S);
+	popstate := false;
+	while #r === 1 do (
+		startpos := first first r;
+		character := substring(startpos,1,S);
+		prestring := substring(0, startpos, S);
+		S = substring(startpos+1, #S,S);
+		if character == "," then (
+			if not popstate then (
+				stack = append(drop(stack,-1), append(last stack, prestring));
+			);
+			popstate = false;
+		) else if character == "{" then (
+			stack = append(stack, {});
+		) else if #stack == 0 then (
+			error "Parsing error";
+		) else if #stack == 1 then (
+			if not popstate then (
+				stack = append(drop(stack,-1), append(last stack, prestring));
+			);
+			return first stack;
+		) else (
+			if not popstate then (
+				stack = append(drop(stack,-1), append(last stack, prestring));
+			);
+			stack = append(drop(stack,-2), append(stack#(#stack -2), last stack));
+			popstate = true;
+		);
+		r = regex(///[\{,\}]///, S);
+	);
+	error "Parsing error";
 )
 
 gfanParseMarkedPoly = method();
@@ -154,6 +172,22 @@ gfanParseMarkedIdeals String := (s) -> (
 	apply(gfanParseList(concatenate G), L -> transpose apply(L, p -> gfanParseMarkedPoly(p)))
 )
 
+gfanParseMPL = method()
+gfanParseMPL String := (s) -> (
+	G := separate("]",s);
+	G = drop(G,1);
+	new MarkedPolynomialList from 
+		transpose apply(gfanParseList(concatenate G), p -> gfanParseMarkedPoly(p))
+)
+
+gfanParseLMPL = method()
+gfanParseLMPL String := (s) -> (
+	G := separate("]",s);
+	G = drop(G,1);
+	apply(gfanParseList(concatenate G), L -> 
+		new MarkedPolynomialList from transpose apply(L, p -> gfanParseMarkedPoly(p)))
+)
+
 gfanParseIdealPair = method()
 gfanParseIdealPair String := (s) -> (
 	G := separate("\n",s);
@@ -194,7 +228,6 @@ gfanIdealToString Ideal := (I) -> (
 	);
 	return out;
 )
-
 
 gfanPolynomialListToString = method()
 gfanPolynomialListToString List := (L) -> (
@@ -257,6 +290,7 @@ gfanLMPLToString := (L) -> (
 
 gfanSymmetriesToString = method()
 gfanSymmetriesToString := (L) -> (
+	if L === null then return "";
 	out := "{";
 	n := #L - 1;
 	for i from 0 to n do (
@@ -269,6 +303,7 @@ gfanSymmetriesToString := (L) -> (
 
 gfanSymmetryToString = method()
 gfanSymmetryToString List := (L) -> (
+	if L === null then return "";
 	out := "(";
 	n := #L - 1;
 	for i from 0 to n do (
@@ -280,7 +315,7 @@ gfanSymmetryToString List := (L) -> (
 )
 
 gfanIntegerListToString = method()
-gfanIntegerListToString List := (L) -> toString L
+gfanIntegerListToString := (L) -> if L === null then ""  else toString L
 
 gfanRingToString = method()
 gfanRingToString PolynomialRing := (R) -> (
@@ -304,10 +339,10 @@ gfanMPLToRingToString List := (L) -> (
 -- runGfanCommand
 --------------------------------------------------------
 
-runGfanCommand = (cmd, argStrs, args, data) -> (
+runGfanCommand = (cmd, opts, data) -> (
 	tmpName := temporaryFileName();
 	if gfanVerbose then << "using temporary file " << tmpName << endl;
-	args = concatenate toList apply(#argStrs, i-> if args#i then " " | argStrs#i else "");
+	args = concatenate apply(keys opts, k -> if opts#k =!= false and opts#k =!= null then " " | argStrs#k else "");
 	ex = gfanPath | cmd | args | " < " | tmpName | " > " | tmpName | ".out";
 	tmpFile := openOut tmpName;
 	tmpFile << data << close;
@@ -340,140 +375,156 @@ runGfanCommandCaptureError = (cmd, argStrs, args, data) -> (
 -- gfan
 --------------------------------------------------------
 
--- NOT COMPLETE!!
-argStrs = hashTable{
-     "g" => "-g",
-     "symmetry" => "--symmetry"
-     }
+-- Fix capitalization
+argFuncs = {
+	"d" => {gfanRenderStaircase, gfanTropicalStartingCone},
+	"e" => {gfan},
+	"g" => {gfan,gfanBuchberger,gfanTropicalStartingCone},
+	"h" => {gfanToLatex,gfanTropicalBasis},
+	"i" => {gfanHomogenize},
+	"m" => {gfanLeadingTerms,gfanRenderStaircase},
+	"L" => {gfanRender},
+	"r" => {gfanBuchberger},
+	"s" => {gfanPolynomialSetUnion},
+	"t" => {gfanTropicalIntersection},
+	"w" => {gfanBuchberger,gfanHomogenize,gfanRenderStaircase},
+	"W" => {gfanBuchberger},
+	"asfan" => {gfanGroebnerCone},
+	"disableSymmetryTest" => {gfan},
+	--missing help
+	"ideal" => {gfanInitialForms},
+	"noincidence" => {gfanTropicalTraverse},
+	"pair" => {gfanGroebnerCone, gfanInitialForms},
+	"polynomialset" => {gfanToLatex},
+	"polynomialsetlist" => {gfanToLatex},
+	"restrict" => {gfanGroebnerCone,gfanToPolyhedralFan},
+	"shiftVariables" => {gfanRender},
+	"subspace" => {gfan},
+	"symmetry" => {gfan,gfanTropicalTraverse,gfanToPolyhedralFan},
+	"tplane" => {gfanTropicalIntersection},
+}
 
-gfan = method(Options=>{
-	  "g"=>false, 
-	  "symmetry"=>false, 
-	  "e"=>false, 
-	  "subspace"=>false, 
-	  "disableSymmetryTest"=>false, 
-	  "help"=>false})
+-- Fix capitalization
+argStrs = hashTable {
+	"d" => "-d",
+	"e" => "-e",
+	"g" => "-g",
+	"h" => "-h",
+	"i" => "-i",
+	"L" => "-L",
+	"m" => "-m",
+	"r" => "-r",
+	"s" => "-s",
+	"t" => "-t",
+	"w" => "-w",
+	"W" => "-W",
+	"asfan" => "--asfan",
+	"disableSymmetryTest" => "--disablesymmetrytest",
+	"help" => "--help",
+	"ideal" => "--ideal",
+	"noincidence" => "--noincidence",
+	"pair" => "--pair",
+	"polynomialset" => "--polynomialset",
+	"polynomialsetlist" => "--polynomialsetlist",
+	"restrict" => "--restrict",
+	"symmetry" => "--symmetry",
+	"subspace" => "--subspace",
+	"shiftVariables" => "--shiftVariables",
+	"tplane" => "--tplane"
+};
+
+gfan = method( Options => {
+	"g" => false, 
+	"symmetry" => null, 
+	"e" => false, 
+	"subspace" => false, 
+	"disableSymmetryTest" => false
+	}
+)
+
 gfan Ideal := opts -> (I) -> (
-    argStrs := {"-g", "--symmetry", "-e", "--subspace", "--disableSymmetryTest", "--help"};
-    args := { opts#"g", opts#"symmetry", opts#"e", opts#"subspace", opts#"disableSymmetryTest", opts#"help"};
-    out := runGfanCommand("gfan",
-                          argStrs, args, 
-                          gfanRingToString(ring I) | gfanIdealToString(I));
-    if opts#"help" then return out;
-    gfanParseMarkedIdeals(out)
-    --gfanParseIdeals(out)
+	if opts#"g" then error "Polynomials must be marked for the -g option";
+	input := gfanRingToString(ring I) 
+		| gfanIdealToString(I) 
+		| gfanSymmetriesToString(opts#"symmetry");
+	gfanParseLMPL runGfanCommand("gfan", opts, input)
 )
 
-gfan (Ideal, List) := opts -> (I,S) -> (
-    argStrs := {"-g", "--symmetry", "-e", "--subspace", "--disableSymmetryTest", "--help"};
-    args := { opts#"g", opts#"symmetry", opts#"e", opts#"subspace", opts#"disableSymmetryTest", opts#"help"};
-    out := runGfanCommand("gfan",
-                          argStrs, args, 
-                          gfanRingToString(ring I) | gfanIdealToString(I) | gfanSymmetriesToString(S));
-    if opts#"help" then return out;
-    gfanParseMarkedIdeals(out)
-    --gfanParseIdeals(out)
-)
-
---L: Marked Poly  (available for the -g option)
-gfan List := opts -> (L) -> (
-    argStrs := {"-g", "--symmetry", "-e", "--subspace", "--disableSymmetryTest", "--help"};
-    args := { opts#"g", opts#"symmetry", opts#"e", opts#"subspace", opts#"disableSymmetryTest", opts#"help"};
-    out := runGfanCommand("gfan",
-                          argStrs, args, 
-                          gfanMPLToRingToString(L) | gfanMPLToString(L));
-    if opts#"help" then return out;
-    gfanParseMarkedIdeals(out)
-)
-
---L: Marked Poly  (available for the -g option)
-gfan (List, List) := opts -> (L,S) -> (
-    argStrs := {"-g", "--symmetry", "-e", "--subspace", "--disableSymmetryTest", "--help"};
-    args := { opts#"g", opts#"symmetry", opts#"e", opts#"subspace", opts#"disableSymmetryTest", opts#"help"};
-    out := runGfanCommand("gfan",
-                          argStrs, args, 
-                          gfanMPLToRingToString(L) | gfanMPLToString(L) | gfanSymmetriesToString(S));
-    if opts#"help" then return out;
-    gfanParseMarkedIdeals(out)
-)
-
---gfan Ideal := opts -> (I) -> gfan(markedPolynomialList I,opts)
 gfan MarkedPolynomialList := opts -> (L) -> (
-     -- NOT COMPLETE!!
-     inputString := gfanMPLToRingToString(L) | gfanMPLToString(L) | gfanSymmetriesToString(opts.Symmetries);
-     )
+	input := gfanMPLToRingToString(L)
+		| gfanMPLToString(L) 
+		| gfanSymmetriesToString(opts#"symmetry");
+	gfanParseLMPL runGfanCommand("gfan", opts, input)
+)
+
+gfan List := opts -> (L) -> (
+	if opts#"g" then error "Polynomials must be marked for the -g option";
+	input := gfanRingToString(ring first L)
+		| gfanPolynomialListToString(L) 
+		| gfanSymmetriesToString(opts#"symmetry");
+	gfanParseLMPL runGfanCommand("gfan", opts, input)
+)
+
 --------------------------------------------------------
 -- gfan_buchberger
 --------------------------------------------------------
 
-gfanBuchberger = method(Options=>{"w"=>false, "r"=>false, "W"=>false, "g"=>false, "help"=>false})
-gfanBuchberger Ideal := opts -> (I) -> (
-    argStrs := {"-w", "-r", "-W", "-g", "--help"};
-    args := { opts#"w", opts#"r", opts#"W", opts#"g", opts#"help"};
-    out := runGfanCommand("gfan_buchberger",
-                          argStrs, args, 
-                          gfanRingToString(ring I) | gfanIdealToString(I));
-    if opts#"help" then return out;
-    gfanParseMarkedIdeal(out)
-)
+gfanBuchberger = method( Options => {
+	"w"=>null, 
+	"r"=>false, 
+	"W"=>false, 
+	"g"=>false
+	})
 
-gfanBuchberger (Ideal,List) := opts -> (I,L) -> (
-    argStrs := {"-w", "-r", "-W", "-g", "--help"};
-    args := { opts#"w", opts#"r", opts#"W", opts#"g", opts#"help"};
-    out := runGfanCommand("gfan_buchberger",
-                          argStrs, args,
-                          gfanRingToString(ring I) | gfanIdealToString(I) | gfanIntegerListToString(L));
-    if opts#"help" then return out;
-    gfanParseMarkedIdeal(out)
+gfanBuchberger Ideal := opts -> (I) -> (
+	input := gfanRingToString(ring I) 
+		| gfanIdealToString(I) 
+		| gfanIntegerListToString(opts#"w");
+	gfanParseMPL runGfanCommand("gfan_buchberger", opts, input)
 )
 
 --------------------------------------------------------
 -- gfan_doesidealcontain
 --------------------------------------------------------
 
-gfanDoesIdealContain = method(Options=>{"help"=>false})
+gfanDoesIdealContain = method(Options=>{})
 gfanDoesIdealContain (List,List) := opts -> (I,J) -> (
-    argStrs := {"--help"};
-    args := {opts#"help"};
-    out := runGfanCommand("gfan_doesidealcontain",
-                          argStrs, args,
-                          gfanMPLToRingToString(I) | gfanMPLToString(I) | gfanPolynomialListToString(J));
-    if opts#"help" then return out;
-    gfanParseBoolInteger out 
+	input := gfanMPLToRingToString(I) 
+		| gfanMPLToString(I) 
+		| gfanPolynomialListToString(J);
+	gfanParseBoolInteger runGfanCommand("gfan_doesidealcontain", opts, input)
 )
 
 --------------------------------------------------------
 -- gfan_groebnercone
 --------------------------------------------------------
 
-gfanGroebnerCone = method(Options=>{"restrict"=>false, "pair"=>false, "asfan"=>false, "help"=>false})
+gfanGroebnerCone = method( Options => {
+	"restrict"=>false,
+	"pair"=>false,
+	"asfan"=>false
+	}
+)
+
 gfanGroebnerCone List := opts -> (L) -> (
-    argStrs := {"--restrict", "--pair", "--asfan", "--help"};
-    args := {opts#"restrict", opts#"pair", opts#"asfan", opts#"help"};
-    out := if opts#"pair" then
-		runGfanCommand("gfan_groebnercone",
-                          argStrs, args,
-                          gfanMPLToRingToString(first L) | gfanMPLToString(first L) | gfanMPLToString(last L))
-	   else runGfanCommand("gfan_groebnercone",
-                          argStrs, args,
-                          gfanMPLToRingToString(L) | gfanMPLToString(L));
-    if opts#"help" then return out;
-    out  --- PARSE AS POLYHEDRAL DATA
+	input := gfanMPLToRingToString(first L);
+	if opts#"pair" then (
+		input = input | gfanMPLToString(first L) | gfanMPLToString(last L);
+	) else (
+		input = input | gfanMPLToString(L);
+	);
+	runGfanCommand("gfan_groebnercone", opts, input) -- PARSE POLYNOMIAL DATA
 )
 
 --------------------------------------------------------
 -- gfan_homogeneityspace
 --------------------------------------------------------
 
-gfanHomogeneitySpace = method(Options=>{"help"=>false})
+gfanHomogeneitySpace = method(Options=>{})
+
 gfanHomogeneitySpace (List) := opts -> (L) -> (
-    argStrs := {"--help"};
-    args := {opts#"help"};
-    out := runGfanCommand("gfan_homogeneityspace",
-                          argStrs, args,
-                          gfanRingToString(ring first L) | gfanPolynomialListToString(L));
-    if opts#"help" then return out;
-    out --- should be parsed
+	input := gfanRingToString(ring first L) | gfanPolynomialListToString(L);
+	runGfanCommand("gfan_homogeneityspace", opts, input) -- should be parsed
 )
 
 --------------------------------------------------------
@@ -481,29 +532,31 @@ gfanHomogeneitySpace (List) := opts -> (L) -> (
 --------------------------------------------------------
 
 ---Not marked -- does it need to be?
-gfanHomogenize = method(Options=>{"i"=>false, "w"=>false, "help"=>false})
+gfanHomogenize = method( Options => {
+	"i"=>false,
+	"w"=>false
+	}
+)
+
 gfanHomogenize (List, Symbol) := opts -> (L,X) -> (
-    argStrs := {"-i", "-w", "--help"};
-    args := {opts#"i", opts#"w", opts#"help"};
-    out := runGfanCommand("gfan_homogenize",
-                          argStrs, args,
-                          gfanRingToString(ring first L) | gfanPolynomialListToString(L) | gfanSymbolToString(X));
-    if opts#"help" then return out;
-    R := ring first L;
-    S := R[X];
-    gfanParseIdeal(out)
+	input := gfanRingToString(ring first L) 
+		| gfanPolynomialListToString(L) 
+		| gfanSymbolToString(X);
+	out := runGfanCommand("gfan_homogenize", opts input);
+	R := ring first L;
+	S := R[X];
+	gfanParseIdeal(out)
 )
 
 gfanHomogenize (List, List, Symbol) := opts -> (L,W,X) -> (
-    argStrs := {"-i", "-w", "--help"};
-    args := {opts#"i", opts#"w", opts#"help"};
-    out := runGfanCommand("gfan_homogenize",
-                          argStrs, args,
-                          gfanRingToString(ring first L) | gfanPolynomialListToString(L) | gfanSymbolToString(X) | gfanIntegerListToString(W) );
-    if opts#"help" then return out;
-    R := ring first L;
-    S := R[X];
-    gfanParseIdeal(out)
+	input := gfanRingToString(ring first L) 
+		| gfanPolynomialListToString(L) 
+		| gfanSymbolToString(X) 
+		| gfanIntegerListToString(W);
+	out := runGfanCommand("gfan_homogenize", opts, input);
+	R := ring first L;
+	S := R[X];
+	gfanParseIdeal(out)
 )
 
 
@@ -512,45 +565,42 @@ gfanHomogenize (List, List, Symbol) := opts -> (L,W,X) -> (
 --------------------------------------------------------
 
 -- not marked -- should the output be?
-gfanInitialForms = method(Options=>{"ideal"=>false, "pair"=>false,"help"=>false})
+gfanInitialForms = method( Options => {
+	"ideal" => false,
+	"pair" => false
+	}
+)
+
 gfanInitialForms (List, List) := opts -> (L,W) -> (
-    argStrs := {"--ideal", "--pair", "--help"};
-    args := {opts#"ideal", opts#"pair", opts#"help"};
-    out := runGfanCommand("gfan_initialforms",
-                          argStrs, args,
-                          gfanRingToString(ring first L) | gfanPolynomialListToString(L) | gfanIntegerListToString(W));
-    if opts#"help" then return out;
-    if opts#"pair" then return gfanParseIdealPair(out);
-    gfanParseIdeal(out)
+	input := gfanRingToString(ring first L) 
+		| gfanPolynomialListToString(L) 
+		| gfanIntegerListToString(W);
+	if opts#"pair" then
+		gfanParseIdealPair runGfanCommand("gfan_initialforms", opts, input)
+	else 
+		gfanParseIdeal runGfanCommand("gfan_initialforms", opts, input)
 )
 
 --------------------------------------------------------
 -- gfan_interactive
 --------------------------------------------------------
 
-gfanInteractive = method(Options=>{"help"=>false})
+gfanInteractive = method( Options => {} )
+
 gfanInteractive := opts -> () -> (
-	argStrs := {"--help"};
-	args := {opts#"help"};
-	if opts@"help" then
-		runGfanCommand("gfan_interactive", argStrs, args, "")
-	else
-		error "Not implemented";
+	error "Not implemented";
 )
 
 --------------------------------------------------------
 -- gfan_ismarkedgroebnerbasis
 --------------------------------------------------------
 
-gfanIsMarkedGroebnerBasis = method(Options=>{"help"=>false})
+gfanIsMarkedGroebnerBasis = method( Options => {} )
+
 gfanIsMarkedGroebnerBasis (List) := opts -> (L) -> (
-    argStrs := {"--help"};
-    args := {opts#"help"};
-    out := runGfanCommand("gfan_ismarkedgroebnerbasis",
-                          argStrs, args,
-                          gfanMPLToRingToString(L) | gfanMPLToString(L));
-    if opts#"help" then return out;
-    gfanParseBool out 
+	input := gfanMPLToRingToString(L) 
+		| gfanMPLToString(L);
+	gfanParseBool runGfanCommand("gfan_ismarkedgroebnerbasis", opts, input)
 )
 
 
@@ -558,15 +608,12 @@ gfanIsMarkedGroebnerBasis (List) := opts -> (L) -> (
 -- gfan_krulldimension
 --------------------------------------------------------
 
-gfanKrullDimension = method(Options=>{"help"=>false})
+gfanKrullDimension = method( Options => {} )
+
 gfanKrullDimension (List) := opts -> (L) -> (
-    argStrs := {"--help"};
-    args := {opts#"help"};
-    out := runGfanCommand("gfan_krulldimension",
-                          argStrs, args,
-                          gfanMPLToRingToString(L) | gfanMPLToString(L));
-    if opts#"help" then return out;
-    gfanParseInteger out 
+	input := gfanMPLToRingToString(L) 
+		| gfanMPLToString(L);
+	gfanParseInteger runGfanCommand("gfan_krulldimension", opts, input)
 )
 
 
@@ -574,19 +621,16 @@ gfanKrullDimension (List) := opts -> (L) -> (
 -- gfan_leadingterms
 --------------------------------------------------------
 
-gfanLeadingTerms = method(Options=>{"m"=>false, "help"=>false})
+gfanLeadingTerms = method( Options => { "m" => false } )
+
 gfanLeadingTerms (List) := opts -> (L) -> (
-    argStrs := {"-m", "--help"};
-    args := {opts#"m", opts#"help"};
-    polys := if opts#"m" then 
-	gfanMPLToRingToString(first L) | gfanLMPLToString(L) 
-    else 
-	gfanMPLToRingToString(L) | gfanMPLToString(L);
-    out := runGfanCommand("gfan_leadingterms",
-                          argStrs, args, polys );
-    if opts#"help" then return out;
-    if opts#"m" then return gfanParseIdeals out;
-    gfanParseIdeal out 
+	if opts#"m" then (
+		input := gfanMPLToRingToString(first L) | gfanLMPLToString(L);
+		return gfanParseIdeals runGfanCommand("gfan_leadingterms", opts, input);
+	) else (
+		input := gfanMPLToRingToString(L) | gfanMPLToString(L);
+		return gfanParseIdeal runGfanCommand("gfan_leadingterms", opts, input);
+	)
 )
 
 
@@ -594,15 +638,13 @@ gfanLeadingTerms (List) := opts -> (L) -> (
 -- gfan_markpolynomialset
 --------------------------------------------------------
 
-gfanMarkPolynomialSet = method(Options=>{"help"=>false})
+gfanMarkPolynomialSet = method( Options => {} )
+
 gfanMarkPolynomialSet (List, List) := opts -> (L,W) -> (
-    argStrs := {"--help"};
-    args := {opts#"help"};
-    out := runGfanCommand("gfan_markpolynomialset",
-                          argStrs, args,
-                          gfanRingToString(ring first L) | gfanPolynomialListToString(L) | gfanIntegerListToString(W));
-    if opts#"help" then return out;
-    gfanParseMarkedIdeal out  
+	input := gfanRingToString(ring first L) 
+		| gfanPolynomialListToString(L) 
+		| gfanIntegerListToString(W);
+	gfanParseMarkedIdeal runGfanCommand("gfan_markpolynomialset", opts, input)
 )
 
 
@@ -611,15 +653,13 @@ gfanMarkPolynomialSet (List, List) := opts -> (L,W) -> (
 --------------------------------------------------------
 
 --Should this be marked?
-gfanPolynomialSetUnion = method(Options=>{"s"=>false,"help"=>false})
+--Check what option s does
+gfanPolynomialSetUnion = method( Options => { "s"=>false } )
+
 gfanPolynomialSetUnion (List,List) := opts -> (L,K) -> (
-    argStrs := {"--help"};
-    args := {opts#"help"};
-    out := runGfanCommand("gfan_polynomialsetunion",
-                          argStrs, args,
-                          gfanRingToString(ring first L) | gfanPairOfPolynomialListsToString(L,K));
-    if opts#"help" then return out;
-    gfanParseIdeal out 
+	input := gfanRingToString(ring first L) 
+		| gfanPairOfPolynomialListsToString(L,K);
+	gfanParseIdeal runGfanCommand("gfan_polynomialsetunion", opts, input)
 )
 
 
@@ -680,30 +720,23 @@ gfanRenderStaircase (List) := opts -> (L) -> (
 -- gfan_stats
 --------------------------------------------------------
 
-gfanStats = method(Options=>{"help"=>false})
+gfanStats = method( Options => {} )
+
 gfanStats (List) := opts -> (L) -> (
-    argStrs := {"--help"};
-    args := {opts#"help"};
-    out := runGfanCommand("gfan_stats",
-                          argStrs, args,
-                          gfanMPLToRingToString(first L) | gfanLMPLToString(L));
-    if opts#"help" then return out;
-    out  -- Parse this?
+	input := gfanMPLToRingToString(first L) 
+		| gfanLMPLToString(L);
+	runGfanCommand("gfan_stats", opts, input) -- Parse this?
 )
 
 --------------------------------------------------------
 -- gfan_substitute
 --------------------------------------------------------
 
-gfanSubstitute = method(Options=>{"help"=>false})
+gfanSubstitute = method( Options => {} )
+
 gfanSubstitute (List, PolynomialRing) := opts -> (L,R) -> (
-    argStrs := {"--help"};
-    args := {opts#"help"};
-    out := runGfanCommand("gfan_substitute",
-                          argStrs, args,
-                          gfanMPLToRingToString(L) | gfanMPLToString(L) | gfanRingToString(R));
-    if opts#"help" then return out;
-    gfanParseMarkedIdeal out 
+	input := gfanMPLToRingToString(L) | gfanMPLToString(L) | gfanRingToString(R);
+	gfanParseMarkedIdeal runGfanCommand("gfan_substitute", opts, input)
 )
 
 
@@ -711,66 +744,64 @@ gfanSubstitute (List, PolynomialRing) := opts -> (L,R) -> (
 -- gfan_tolatex
 --------------------------------------------------------
 
-gfanToLatex = method(Options=>{"h"=>false, "polynomialset"=>false, "polynomialsetlist"=>false, "help"=>false})
+gfanToLatex = method( Options => { 
+	"h" => false,
+	"polynomialset" => false,
+	"polynomialsetlist" => false
+	}
+)
+
 gfanToLatex (List) := opts -> (L) -> (
-    argStrs := {"-h", "--polynomialset_", "--polynomialsetlist_", "--help"};
-    args := {opts#"h", opts#"polynomialset", opts#"polynomialsetlist", opts#"help"};
-    
-    out := if opts#"polynomialsetlist" then
-		runGfanCommand("gfan_tolatex",
-                          argStrs, args,
-                          gfanLMPLToString(L))
-		else
-		runGfanCommand("gfan_tolatex",
-                          argStrs, args,
-                          gfanMPLToString(L));
-    if opts#"help" then return out;
-    out 
+	if opts#"polynomialsetlist" then (
+		return runGfanCommand("gfan_tolatex", opts, gfanLMPLToString(L));
+	) else (
+		return runGfanCommand("gfan_tolatex", opts,  gfanMPLToString(L));
+	);
 )
 
 --------------------------------------------------------
 -- gfan_tropicalbasis
 --------------------------------------------------------
 
-gfanTropicalBasis = method(Options=>{"h"=>false, "help"=>false})
+gfanTropicalBasis = method( Options => {
+	"h"=>false
+	}
+)
+
 gfanTropicalBasis (Ideal) := opts -> (I) -> (
-    argStrs := {"-h", "--help"};
-    args := {opts#"h", opts#"help"};
-    out := runGfanCommand("gfan_tropicalbasis",
-                          argStrs, args,
-                          gfanRingToString(ring I) | gfanIdealToString(I));
-    if opts#"help" then return out;
-    gfanParseIdeal out 
+	input := gfanRingToString(ring I) 
+		| gfanIdealToString(I);
+	gfanParseIdeal runGfanCommand("gfan_tropicalbasis", opts, input)
 )
 
 --------------------------------------------------------
 -- gfan_tropicalintersection
 --------------------------------------------------------
 
-gfanTropicalIntersection = method(Options=>{"t"=>false, "tplane"=>false, "help"=>false})
+gfanTropicalIntersection = method( Options => {
+	"t" => false,
+	"tplane" => false
+	}
+)
+
 gfanTropicalIntersection (List) := opts -> (L) -> (
-    argStrs := {"-t", "--tplane", "--help"};
-    args := {opts#"t", opts#"tplane", opts#"help"};
-    out := runGfanCommand("gfan_tropicalintersection",
-                          argStrs, args,
-                          gfanRingToString(ring first L) | gfanPolynomialListToString(L));
-    if opts#"help" then return out;
-    out 
+	input := gfanRingToString(ring first L) | gfanPolynomialListToString(L);
+	runGfanCommand("gfan_tropicalintersection", opts, input) -- should this be parsed?
 )
 
 --------------------------------------------------------
 -- gfan_tropicalstartingcone
 --------------------------------------------------------
 
-gfanTropicalStartingCone = method(Options=>{"g"=>false, "d"=>false, "help"=>false})
+gfanTropicalStartingCone = method( Options => {
+	"g" => false, 
+	"d" => false
+	}
+)
+
 gfanTropicalStartingCone (List) := opts -> (L) -> (
-    argStrs := {"-g", "-d", "--help"};
-    args := {opts#"g", opts#"d", opts#"help"};
-    out := runGfanCommand("gfan_tropicalstartingcone",
-                          argStrs, args,
-                          gfanRingToString(ring first L) | gfanPolynomialListToString(L));
-    if opts#"help" then return out;
-    gfanParseMarkedIdealPair out 
+	input := gfanRingToString(ring first L) | gfanPolynomialListToString(L);
+	gfanParseMarkedIdealPair runGfanCommand("gfan_tropicalstartingcone", opts, input)
 )
 
 
@@ -778,41 +809,29 @@ gfanTropicalStartingCone (List) := opts -> (L) -> (
 -- gfan_tropicaltraverse
 --------------------------------------------------------
 
-gfanTropicalTraverse = method(Options=>{"symmetry"=>false, "noincidence"=>false, "help"=>false})
+gfanTropicalTraverse = method( Options => {
+	"symmetry"=>false,
+	"noincidence"=>false
+	}
+)
+
 gfanTropicalTraverse (List) := opts -> (L) -> (
-    argStrs := {"--symmetry", "--noincidence", "--help"};
-    args := {opts#"symmetry", opts#"noincidence", opts#"help"};
-    out := runGfanCommand("gfan_tropicaltraverse",
-                          argStrs, args,
-                          gfanMPLToRingToString(first L) | gfanMPLToString(first L) | gfanMPLToString(last L));
-    if opts#"help" then return out;
-    out  --- PARSE POLYHEDRAL DATA
+	input := gfanMPLToRingToString(first L) 
+		| gfanMPLToString(first L) 
+		| gfanMPLToString(last L)
+		| gfanSymmetriesToString(S);
+	runGfanCommand("gfan_tropicaltraverse", opts, input) --- PARSE POLYHEDRAL DATA
 )
-
-gfanTropicalTraverse (List, List) := opts -> (L, S) -> (
-    argStrs := {"--symmetry", "--noincidence", "--help"};
-    args := {opts#"symmetry", opts#"noincidence", opts#"help"};
-    out := runGfanCommand("gfan_tropicaltraverse",
-                          argStrs, args,
-                          gfanMPLToRingToString(first L) | gfanMPLToString(first L) | gfanMPLToString(last L) | gfanSymmetriesToString(S));
-    if opts#"help" then return out;
-    out  --- PARSE POLYHEDRAL DATA
-)
-
 
 --------------------------------------------------------
 -- gfan_tropicalmultiplicity
 --------------------------------------------------------
 
-gfanTropicalMultiplicity = method(Options=>{"help"=>false})
+gfanTropicalMultiplicity = method( Options => {} )
+
 gfanTropicalMultiplicity (List) := opts -> (L) -> (
-    argStrs := {"--help"};
-    args := {opts#"help"};
-    out := runGfanCommand("gfan_tropicalmultiplicity",
-                          argStrs, args,
-                          gfanMPLToRingToString(L) | gfanMPLToString(L));
-    if opts#"help" then return out;
-    gfanParseInteger out 
+	input := gfanMPLToRingToString(L) | gfanMPLToString(L);
+	gfanParseInteger runGfanCommand("gfan_tropicalmultiplicity", opts, input)
 )
 
 
@@ -820,69 +839,49 @@ gfanTropicalMultiplicity (List) := opts -> (L) -> (
 -- gfan_saturation
 --------------------------------------------------------
 
-gfanSaturation = method(Options=>{"help"=>false})
+gfanSaturation = method( Options => {} )
+
 gfanSaturation (Ideal) := opts -> (I) -> (
-    argStrs := {"--help"};
-    args := {opts#"help"};
-    out := runGfanCommand("gfan_saturation",
-                          argStrs, args,
-                          gfanRingToString(ring I) | gfanIdealToString(I));
-    if opts#"help" then return out;
-    gfanParseIdeal out 
+	input := gfanRingToString(ring I) | gfanIdealToString(I);
+	gfanParseIdeal runGfanCommand("gfan_saturation", opts, input)
 )
 
 --------------------------------------------------------
 -- gfan_tropiciallifting
 --------------------------------------------------------
 
-gfanTropicalLifting = method(Options=>{"help"=>false})
+gfanTropicalLifting = method( Options => {} )
+
 gfanTropicalLifting := opts -> () -> (
-	argStrs := {"--help"};
-	args := {opts#"help"};
-	if opts@"help" then
-		runGfanCommand("gfan_tropicallifting", argStrs, args, "")
-	else
-		error "Not implemented";
+	error "Not implemented";
 )
 
 --------------------------------------------------------
 -- gfan_topolyhedralfan
 --------------------------------------------------------
 
-gfanToPolyhedralFan = method(Options=>{"restrict"=>false, "symmetry"=>false, "help"=>false})
-gfanToPolyhedralFan List := opts -> (L) -> (
-    argStrs := {"--restrict", "--symmetry", "--help"};
-    args := {opts#"restrict", opts#"symmetry", opts#"help"};
-    out := runGfanCommand("gfan_topolyhedralfan",
-                          argStrs, args,
-                          gfanMPLToRingToString(first L) | gfanLMPLToString(L));
-    if opts#"help" then return out;
-    out   ---- PARSE AS POLYHEDRAL DATA
+gfanToPolyhedralFan = method( Options => {
+	"restrict"=>false,
+	"symmetry"=>false
+	}
 )
 
-gfanToPolyhedralFan (List, List) := opts -> (L, S) -> (
-    argStrs := {"--restrict", "--symmetry", "--help"};
-    args := {opts#"restrict", opts#"symmetry", opts#"help"};
-    out := runGfanCommand("gfan_topolyhedralfan",
-                          argStrs, args,
-                          gfanMPLToRingToString(first L) |  gfanSymmetriesToString(S) | gfanLMPLToString(L));
-    if opts#"help" then return out;
-    out   ---- PARSE AS POLYHEDRAL DATA
+gfanToPolyhedralFan List := opts -> (L) -> (
+	input := gfanMPLToRingToString(first L) 
+		| gfanSymmetriesToString(S) 
+		| gfanLMPLToString(L);
+	runGfanCommand("gfan_topolyhedralfan", opts, input) --- PARSE AS POLYHEDRAL DATA
 )
 
 --------------------------------------------------------
 -- gfan_tropicalbruteforce
 --------------------------------------------------------
 
-gfanTropicalBruteForce = method(Options=>{"help"=>false})
+gfanTropicalBruteForce = method( Options => {} )
+
 gfanTropicalBruteForce List := opts -> (L) -> (
-    argStrs := {"--help"};
-    args := {opts#"help"};
-    out := runGfanCommand("gfan_tropicalbruteforce",
-                          argStrs, args,
-                          gfanMPLToRingToString(L) | gfanMPLToString(L));
-    if opts#"help" then return out;
-    out   ---- PARSE AS POLYHEDRAL DATA
+	input := gfanMPLToRingToString(L) | gfanMPLToString(L);
+	runGfanCommand("gfan_tropicalbruteforce", opts, input) ---- PARSE AS POLYHEDRAL DATA
 )
 
 beginDocumentation()
@@ -1020,7 +1019,7 @@ doc ///
 			the weight vector and then lexicographic order to break ties.
 
 		Example
-			gfanMarkPolynomialSet({x*y^3+z^4, x^2*z^2 + y^3*z}, {-1,2,5})
+			--gfanMarkPolynomialSet({x*y^3+z^4, x^2*z^2 + y^3*z}, {-1,2,5})
 ///
 
 doc ///
@@ -1076,16 +1075,13 @@ doc ///
 			symmetries of the ideal as input.
 
 			In {\tt gfanInterface2} we pass the optional argument {\tt "symmetry"} the
-			value {\tt true} and provide the ideal and symmetries as arguments.
+			symmetries and provide the ideal as an argument.
 
 		Example
 			QQ[x,y,z]; 
-			gfan(ideal(x^2*y -z, y^2*z - x, z^2*x - y), {{0,1,2}, {1,2,0}}, "symmetry"=>true)
+			gfan(ideal(x^2*y -z, y^2*z - x, z^2*x - y), "symmetry" => {{0,1,2}, {1,2,0}})
 
 		Text
-			If the symmetries are given as an argument, but the {\tt "symmetry"}
-			option is not set, the symmetries will not be used.
-
 			For each optional {\tt gfan} argument, the corresponding {\tt gfanInterface2}
 			argument is obtained by simply removing the dashes.
 
@@ -1098,37 +1094,39 @@ doc ///
 
 		Text
 			If we want to use a different order, the {\tt gfan} documentation tells us to
-			use the {\tt -w} argument. So, in Macaulay 2, we set the {\tt w} argument to be true.
+			use the {\tt -w} argument. So, in Macaulay 2, we set the {\tt w} argument 
+			to the desired weight vector.
 
 		Example
 			QQ[x,y,z];
-			gfanBuchberger(ideal(x,y+z),{1,2,3}, "w"=>true)
+			gfanBuchberger(ideal(x,y+z), "w" => {1,2,3})
+
+		Text
+			Many optional arguments to {\tt gfan} require no addition input. In this case,
+			we set the optional argument in Macaulay 2 to be {\tt true}.
 ///
 
 doc ///
 	Key
 		gfan
 		(gfan, Ideal)
-		(gfan, Ideal, List)
 		(gfan, List)
-		(gfan, List, List)
+		(gfan, MarkedPolynomialList)
 	Headline
 		all reduced Groebner bases of a polynomial ideal
 	Usage
 		G = gfan(I)
-		G = gfan(I,S)
 		G = gfan(L)
-		G = gfan(L,S)
+		G = gfan(M)
 	Inputs
 		I:Ideal
 			contained in a polynomial ring
-		S:List
-			symmetries of {\tt I}
 		L:List
-			a @TO2 {"Marked Groebner Basis Example", "marked Groebner basis"}@ (for use with option g)
+			of polynomials
+		M:MarkedPolynomialList
 	Outputs 
 		G:List
-			all @TO2 {"Marked Groebner Basis Example", "marked reduced Groebner bases"}@ of {\tt I} or {\tt L}
+			all @TO2 {"Marked Groebner Basis Example", "marked reduced Groebner bases"}@ of {\tt I}, {\tt L}, or {\tt M}
 	Description
 		Text
 			@STRONG "gfan Documentation"@
@@ -1139,17 +1137,13 @@ doc ///
 	Key
 		gfanBuchberger
 		(gfanBuchberger, Ideal)
-		(gfanBuchberger, Ideal, List)
 	Headline
 		reduced Groebner basis with respect to some monomial order
 	Usage
 		G = gfanBuchberger(I)
-		G = gfanBuchberger(I,W)
 	Inputs
 		I:Ideal
 			contained in a polynomial ring
-		W:List
-			a weight vector
 	Outputs
 		G:List
 			a @TO2 {"Marked Groebner Basis Example", "marked reduced Groebner basis"}@ of {\tt I}
@@ -1526,17 +1520,13 @@ doc ///
 	Key
 		gfanToPolyhedralFan
 		(gfanToPolyhedralFan, List)
-		(gfanToPolyhedralFan, List, List)
 	Headline
 		polyhedral data about the fan of a list of Groebner bases
 	Usage
 		gfanToPolyhedralFan(L)
-		gfanToPolyhedralFan(L,S)
 	Inputs
 		L:List
 			containing lists of @TO2 {"Marked Groebner Basis Example", "marked reduced Groebner bases"}@
-		S:List
-			symmetries of {\tt L}
 	Outputs
 		P:String
 			polymake data describing the fan of the Groebner basis in {\tt L}
@@ -1664,17 +1654,13 @@ doc ///
 	Key
 		gfanTropicalTraverse
 		(gfanTropicalTraverse, List)
-		(gfanTropicalTraverse, List, List)
 	Headline
 		polyhedral data describing a tropical variety
 	Usage
 		gfanTropicalTraverse(L)
-		gfanTropicalTraverse(L,S)
 	Inputs
 		L:List
 			a pair of @TO2 {"Marked Groebner Basis Example", "marked reduced Groebner bases"}@ 
-		S:List
-			symmetries of the second Groebner basis in {\tt L}
 	Outputs
 		P:String
 			polymake data describing the tropical variety of the given ideal
@@ -1693,17 +1679,19 @@ end
 restart
 uninstallPackage "gfanInterface2"
 installPackage("gfanInterface2", UserMode=>true, DebuggingMode=>true)
+
 loadPackage "gfanInterface2"
+
 viewHelp
 
 R = QQ[x,y,z]; 
 I = ideal(x,y+z); 
 L = transpose {{x,x},{z,y+z}};
 gfan(I)
-gfan(ideal(x^2*y -z, y^2*z - x, z^2*x - y), {{0,1,2}, {1,2,0}}, "symmetry"=>true)
-gfan(transpose{{x,x},{z,y+z}})
+gfan(ideal(x^2*y -z, y^2*z - x, z^2*x - y), "symmetry" => {{0,1,2}, {1,2,0}})
+gfan(new MarkedPolynomialList from transpose{{x,x},{z,y+z}})
 gfanBuchberger(I)
-gfanBuchberger(I,{3,2,1}, "w"=>true)
+gfanBuchberger(I, "w"=> {1,2,3})
 gfanDoesIdealContain(L, {x})
 gfanDoesIdealContain(L, {y})
 gfanGroebnerCone(transpose{{x,x},{y,y+z}})
