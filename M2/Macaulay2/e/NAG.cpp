@@ -1295,6 +1295,11 @@ M2_RRRorNull rawGetSolutionLastTvaluePT(PathTracker* PT, int solN)
   return PT->getSolutionLastT(solN);
 }
 
+M2_RRRorNull rawGetSolutionRcondPT(PathTracker* PT, int solN)
+{
+  return PT->getSolutionRcond(solN);
+}
+
 const MatrixOrNull *rawRefinePT(PathTracker* PT, const Matrix* sols, M2_RRR tolerance, int max_corr_steps_refine)
 {
   return PT->refine(sols, tolerance, max_corr_steps_refine);
@@ -1652,6 +1657,15 @@ M2_RRRorNull PathTracker::getSolutionLastT(int solN)
   M2_RRR result = (M2_RRR)getmem(sizeof(__mpfr_struct));
   mpfr_init2(result, C->get_precision());
   mpfr_set_d(result, raw_solutions[solN].t, GMP_RNDN);  
+  return result;
+}
+
+M2_RRRorNull PathTracker::getSolutionRcond(int solN)
+{
+  if (solN<0 || solN>=n_sols) return NULL;
+  M2_RRR result = (M2_RRR)getmem(sizeof(__mpfr_struct));
+  mpfr_init2(result, C->get_precision());
+  mpfr_set_d(result, raw_solutions[solN].rcond, GMP_RNDN);  
   return result;
 }
 

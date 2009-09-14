@@ -309,6 +309,7 @@ public:
   MatrixOrNull* getAllSolutions();
   int getSolutionStatus(int);
   M2_RRRorNull getSolutionLastT(int);
+  M2_RRRorNull getSolutionRcond(int);
   int track(const Matrix*); 
   MatrixOrNull* refine(const Matrix *sols, M2_RRR tolerance, int max_corr_steps_refine = 100); // refine solutions such that (error estimate)/norm(solution) < tolerance
 

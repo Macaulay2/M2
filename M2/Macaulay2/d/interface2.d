@@ -246,6 +246,22 @@ export rawGetSolutionLastTvaluePT(e:Expr):Expr := (
      );
 setupfun("rawGetSolutionLastTvaluePT",rawGetSolutionLastTvaluePT);
 
+export rawGetSolutionRcondPT(e:Expr):Expr := (
+     when e is s:Sequence do
+     if length(s) != 2 then WrongNumArgs(2)
+     else when s.0 is PT:RawPathTracker do 
+          when s.1 is solN:ZZ do 
+		toExpr(Ccode(RRorNull, "(engine_RRorNull)rawGetSolutionRcondPT(",
+		    "(PathTracker *)", PT, ",",
+		    toInt(s.1), 		    
+		    ")"
+		    ))
+          else WrongArgZZ(2) 
+          else WrongArg(1,"a path tracker")
+     else WrongNumArgs(2)
+     );
+setupfun("rawGetSolutionRcondPT",rawGetSolutionRcondPT);
+
 export rawRefinePT(e:Expr):Expr := (
      when e is s:Sequence do
      if length(s) != 4 then WrongNumArgs(4)

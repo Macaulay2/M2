@@ -54,7 +54,7 @@ track(S,T,solsS) / first
 document {
 	Key => {(refine, List, List), refine, [refine,Tolerance], [refine, maxCorrSteps], [refine, Software]},
 	Headline => "refine numerical solutions to a system of polynomial equations",
-	Usage => "solsR = track(T,sols)",
+	Usage => "solsR = refine(T,sols)",
 	Inputs => { 
 	     {"T", ", polynomials of the system"},
 	     {"sols", ", solutions (lists of coordinates)"}
@@ -63,14 +63,16 @@ document {
 	"Uses Newton's method to correct the given solutions so that the resluting approximation 
 	has its estimated relative error bound by ", TT "Tolerance", 
 	"; the number of iterations is at most ", TT "maxCorrSteps", ".",
-	Caveat => {"If option ", TT "Software=>M2engine", " is specified, then the refinement happens in the M2 engine and it is assumed that the last path tracking procedure 
-	     took place with the same option and was given the same target system. Any other value of this option would launch an M2-language procedure."},
+	Caveat => {"If option ", TT "Software=>M2engine", " is specified, 
+	     then the refinement happens in the M2 engine and it is assumed that the last path tracking procedure 
+	     took place with the same option and was given the same target system. 
+	     Any other value of this option would launch an M2-language procedure."},
 	EXAMPLE lines ///
 R = CC[x,y];
 S = {x^2-1,y^2-1};
 T = {x^2+y^2-1, x*y};
 sols = { {1.1_CC,0.1}, {-0.1,1.2} };
-refine(T, sols, Tolerance=>.001, maxCorrSteps=>10)
+refine(T, sols, Software=>M2, Tolerance=>.001, maxCorrSteps=>10)
      	///
 	}
 
@@ -119,3 +121,34 @@ document {
      "Available at ", TT "http://hom4ps.math.msu.edu/HOM4PS_soft.htm"
      }
 			      		    								 
+document {
+	Key => {(getSolution, ZZ), getSolution, [getSolution,SolutionAttributes], 
+	     Coordinates, SolutionStatus, LastT, RCondition},
+	Headline => "get various attributes of the specified solution",
+	Usage => "s = getSolution i, s = getSolution(i,SolutionAttributes=>...)",
+	Inputs => { 
+	     {"i", ", the number of the solution"}
+	     },
+	Outputs => {{ TT "s", ", (an) attributes of the solution"}},
+	"Returns attribute(s) of the ", TT "i", "-th solution specified in the option", TO "SolutionAttributes", 
+	", which could be either a sequence or a single attribute.", BR{}, 
+	"Attributes include:",
+	UL{
+	  {"Coordinates", " -- the list of coordinates"},
+	  {"SolutionStatus", " -- REGULAR, SINGULAR, FAILED, etc."},
+	  {"LastT", " -- the last value of the continuation parameter"},
+	  {"RCondintion", "-- the reverse condition number at the last step of Newton's method"}
+	  },
+  	Caveat => {"Requires a preceding run of " , TO "track", " or ", TO "solveSystem", 
+	     " with the (default) option ", TT "Software=>M2engine"},	
+        EXAMPLE lines ///
+R = CC[x,y];
+S = {x^2-1,y^2-1};
+T = {x^2+y^2-1, x*y};
+track(S,T,{(1,1),(1,-1)})
+getSolution 0
+getSolution(0, SolutionAttributes=>LastT)
+getSolution(1, SolutionAttributes=>(Coordinates, SolutionStatus, RCondition))
+     	///
+	}
+													 

@@ -28,7 +28,8 @@ export {
      "AffinePatches", "DynamicPatch",
      "RandomSeed",
      "SLP", "HornerForm", "CompiledHornerForm", "CorrectorTolerance", "SLPcorrector", "SLPpredictor",
-     "Tolerance"
+     "Tolerance",
+     "getSolution", "SolutionAttributes", "Coordinates", "SolutionStatus", "LastT", "RCondition"
      }
 exportMutable {
      }
@@ -170,11 +171,11 @@ track = method(TypicalValue => List, Options =>{
 	  maxCorrSteps => 3,
      	  CorrectorTolerance => 5e-6, -- tracking tolerance (universal)
 	  -- projectivization
-	  Projectivize => true, 
+	  Projectivize => false, 
 	  AffinePatches => DynamicPatch,
 	  RandomSeed => 0,
 	  -- slp's 
-	  SLP => null -- possible values: HornerForm, CompiledHornerForm 	  
+	  SLP => HornerForm -- possible values: null, HornerForm, CompiledHornerForm 	  
 	  } )
 track (List,List,List) := List => o -> (S,T,solsS) -> (
 -- tracks solutions from start system to target system
@@ -484,8 +485,8 @@ track (List,List,List) := List => o -> (S,T,solsS) -> (
 			 if DBG>9 then << "dynamic patch... ";
 			 HxNoPatch := evalHxNoPatch(x0,t0);
 			 -- patch = conjugate of the normalized kernel vector 
-			 dPatch = matrix{ flatten entries normalize transpose gens ker HxNoPatch / conjugate };
-			 --dPatch = matrix{ flatten entries x0 / conjugate};
+			 --dPatch = matrix{ flatten entries normalize transpose gens ker HxNoPatch / conjugate };
+			 dPatch = matrix{ flatten entries x0 / conjugate};
 			 if DBG>9 then << "generated" << endl;
 			 );   
 		    if o.Predictor == Tangent then (
@@ -746,6 +747,29 @@ refine (List,List) := List => o -> (T,solsT) -> (
      apply(#solsT, i-> flatten entries solsR#i)      
      )     
 
+getSolution = method(Options =>{SolutionAttributes=>Coordinates})
+getSolution ZZ := Thing => o -> i -> (
+-- gets specified solution from the engine
+-- IN:  the number of solution
+--      SolutionAttributes=> ... specifies various data attached to a solution ...
+-- OUT: whatever is requested by SolutionAttributes (either as a sequence of as a single element)
+     if lastPathTracker === null 
+     then error "path tracker is not set up";
+     p := o.SolutionAttributes; 
+     possible := set{Coordinates, SolutionStatus, LastT, RCondition};
+     if not isSubset(set{p}, possible) and 
+     not (class p === Sequence and isSubset(set p, set{Coordinates, SolutionStatus, LastT, RCondition}))
+     then error "wrong SolutionAttributes option";
+     pp := if class p === Sequence then p else {p};
+     ret := apply(pp, r->
+	  if r===Coordinates then flatten entries map(CC_53, rawGetSolutionPT(lastPathTracker, i))
+	  else if r===SolutionStatus then rawGetSolutionStatusPT(lastPathTracker, i)
+	  else if r===LastT then rawGetSolutionLastTvaluePT(lastPathTracker, i)
+	  else if r===RCondition then rawGetSolutionRcondPT(lastPathTracker, i)
+	  );
+     if class p === Sequence then ret else first ret
+     )
+
 homogenizeSystem = method(TypicalValue => List)
 homogenizeSystem List := List => T -> (
      R := ring first T;
@@ -787,9 +811,12 @@ oneRootStartSystem List := Sequence => T -> (
 --      solsS = list of sequences
      R := ring first T;
      lastVar := last gens R;
-     S := apply(numgens R - 1, i->lastVar^(first degree T_i)*R_i);
-     solsS := {(numgens R - 1 : 0) | sequence 1};
-     (S, solsS)
+     n := numgens R;
+     S := matrix{apply(n - 1, i->lastVar^(first degree T_i)*R_i)};
+     M := matrix fillMatrix(mutableMatrix(CC,n,n));
+     coordChange = map(R,R,(vars R) * M);
+     solsS = solve(M, transpose matrix{toList (numgens R - 1 : 0_CC) | {1}});
+     (flatten entries coordChange S, {flatten entries solsS})
      )     
 
 -- INTERFACE part ------------------------------------
@@ -1927,7 +1954,7 @@ end
 loadPackage "NAG"
 installPackage "NAG"
 restart
-installPackage("NAG", FileName=>"../NAG.m2", SeparateExec=>true, AbsoluteLinks=>false, RerunExamples=>true)
+installPackage("NAG", FileName=>"NAG.m2", SeparateExec=>true, AbsoluteLinks=>false, RerunExamples=>true)
 installPackage("NAG", SeparateExec=>true, AbsoluteLinks=>false, RerunExamples=>true)
 check "NAG"
 
