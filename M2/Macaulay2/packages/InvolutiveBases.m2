@@ -1,15 +1,14 @@
--- -*- coding: utf-8 -*-
 ---------------------------------------------------------------------------
 -- PURPOSE : Methods for Janet bases and Pommaret bases
 --           (as particular cases of involutive bases)
 -- PROGRAMMER : Daniel Robertz
--- UPDATE HISTORY : 02 October 2008
--- (tested with Macaulay 2, version 1.1)
+-- UPDATE HISTORY : 06 August 2009
+-- (tested with Macaulay 2, version 1.2)
 ---------------------------------------------------------------------------
 newPackage(
         "InvolutiveBases",
-        Version => "1.01",
-        Date => "October 02, 2008",
+        Version => "1.10",
+        Date => "August 06, 2009",
         Authors => {{Name => "Daniel Robertz",
                   Email => "daniel@momo.math.rwth-aachen.de",
                   HomePage => "http://wwwb.math.rwth-aachen.de/~daniel/"}},
@@ -17,6 +16,10 @@ newPackage(
         DebuggingMode => true
         )
 
+
+-- news in version 1.10:
+--      janetBasis accepts the zero ideal etc.
+--      new: invNoetherNormalization
 
 -- news in version 1.01:
 --      invSyzygies and janetResolution respect gradings
@@ -26,7 +29,7 @@ newPackage(
 
 export {basisElements, multVar, janetMultVar, pommaretMultVar, janetBasis, InvolutiveBasis,
      isPommaretBasis, invReduce, invSyzygies, janetResolution, Involutive, multVars,
-     FactorModuleBasis, factorModuleBasis}
+     FactorModuleBasis, factorModuleBasis, invNoetherNormalization, PermuteVariables}
 
 ----------------------------------------------------------------------
 -- type InvolutiveBasis
@@ -55,11 +58,11 @@ multVar(ChainComplex, ZZ) := (C, n) -> (
 
 FactorModuleBasis = new Type of HashTable
 
---basisElements = method()
+--basisElements = method()   has already been declared above
 
 basisElements FactorModuleBasis := F -> F#0
 
---multVar = method()
+--multVar = method()         has already been declared above
 
 multVar(FactorModuleBasis) := F -> (
      v := generators ring F#0;
@@ -71,11 +74,16 @@ multVar(FactorModuleBasis) := F -> (
 ----------------------------------------------------------------------
 
 involutiveBasisPrettyPrint = J -> (
-     if numgens target J#0 == 1 then
-          netList(transpose {first entries J#0, apply(multVar J, elements)})
-     else
-          netList(transpose { apply(toList(0..(numgens source J#0)-1), i->(J#0)_i),
-               apply(multVar J, elements)})
+     if numgens source J#0 == 0 then (
+	  netList(transpose {{0}, apply(multVar J, elements)})
+     )
+     else (
+	  if numgens target J#0 == 1 then
+	       netList(transpose {first entries J#0, apply(multVar J, elements)})
+	  else
+	       netList(transpose { apply(toList(0..(numgens source J#0)-1), i->(J#0)_i),
+		    apply(multVar J, elements)})
+     )
      -- alternatively,
      -- netList(transpose {transpose entries J#0, apply(multVar J, elements)})
      )
@@ -110,7 +118,7 @@ janetDivision = (exp1, exp2, mult1) -> (
      mult2)
 
 
--- determine multiplicative variables for list of exponents exp2 with
+-- determine multiplicative variables for list of exponents expon with
 -- respect to Pommaret division
 
 pommaretDivision = (expon) -> (
@@ -341,41 +349,28 @@ janetBasis(GroebnerBasis) := G -> (
      M := generators G;
      R := ring M;
      if not isPolynomialRing(R) then error "janetBasis is only defined for polynomial rings";
+     if not isField(coefficientRing R) then error "expecting the ground ring to be a field";
      v := generators R;
-     M = for i from 0 to (numgens target M)-1 list
-          submatrix(M, select(toList(0..(numgens source M)-1),
+     if zero M then (
+	  new InvolutiveBasis from hashTable {0 => M, 1 => { hashTable(for j in v list j => 1) }}
+     )
+     else (
+	  M = for i from 0 to (numgens target M)-1 list
+	       submatrix(M, select(toList(0..(numgens source M)-1),
 		    j -> leadComponent leadTerm M_j == i));
-     local J;
-     local N;
-     local P;
-     local Q;
-     M = for c from 0 to length(M)-1 list (
-	  N = M#c;
-	  if numgens source N == 0 then continue;
-	  -- leading monomials are all in c-th row
-	  J = janetMultVarMonomials for i in flatten entries N^{c} list leadMonomial i;
-	  P = flatten for i from 0 to length(J)-1 list (
-	       for j in v list (
-		    if J#i#j == 1 then continue;
-		    map(target N, R^{ -(degree(j) + (degrees source N_{i})_0)}, j * N_{i})
-		    )
-	       );
-	  P = for i in P list (
-	       if length(select(toList(0..length(J)-1),
-		    j -> involutiveDivisor(
-		    (exponents leadMonomial (entries N^{c}_j)#0)#0,
-		    (exponents leadMonomial (entries i^{c})#0#0)#0,
-		    for k in v list J#j#k))) > 0 then continue;
-	       i
-	       );
-	  while length(P) > 0 do (
-	       Q = fold((M1, M2) -> M1 | M2, P);
-	       N = N | (sort Q)_{0};
+	  local J;
+	  local N;
+	  local P;
+	  local Q;
+	  M = for c from 0 to length(M)-1 list (
+	       N = M#c;
+	       if numgens source N == 0 then continue;
+	       -- leading monomials are all in c-th row
 	       J = janetMultVarMonomials for i in flatten entries N^{c} list leadMonomial i;
 	       P = flatten for i from 0 to length(J)-1 list (
 		    for j in v list (
 			 if J#i#j == 1 then continue;
-	   	         map(target N, R^{ -(degree(j) + (degrees source N_{i})_0)}, j * N_{i})
+			 map(target N, R^{ -(degree(j) + (degrees source N_{i})_0)}, j * N_{i})
 			 )
 		    );
 	       P = for i in P list (
@@ -386,22 +381,43 @@ janetBasis(GroebnerBasis) := G -> (
 			 for k in v list J#j#k))) > 0 then continue;
 		    i
 		    );
+	       while length(P) > 0 do (
+		    Q = fold((M1, M2) -> M1 | M2, P);
+		    N = N | (sort Q)_{0};
+		    J = janetMultVarMonomials for i in flatten entries N^{c} list leadMonomial i;
+		    P = flatten for i from 0 to length(J)-1 list (
+			 for j in v list (
+			      if J#i#j == 1 then continue;
+			      map(target N, R^{ -(degree(j) + (degrees source N_{i})_0)}, j * N_{i})
+			      )
+			 );
+		    P = for i in P list (
+			 if length(select(toList(0..length(J)-1),
+			      j -> involutiveDivisor(
+			      (exponents leadMonomial (entries N^{c}_j)#0)#0,
+			      (exponents leadMonomial (entries i^{c})#0#0)#0,
+			      for k in v list J#j#k))) > 0 then continue;
+			 i
+			 );
+	       );
+	       (N, J)
 	  );
-          (N, J)
-     );
-     p := sortColumns M#0#0;
-     P = submatrix(M#0#0, p);
-     J = for j from 0 to length(p)-1 list M#0#1#(p#j);
-     for i from 1 to length(M)-1 do (
-	  p = sortColumns M#i#0;
-	  P = P | submatrix(M#i#0, p);
-	  J = J | for j from 0 to length(p)-1 list M#i#1#(p#j);
-     );
-     new InvolutiveBasis from hashTable {0 => P, 1 => J})
+	  p := sortColumns M#0#0;
+	  P = submatrix(M#0#0, p);
+	  J = for j from 0 to length(p)-1 list M#0#1#(p#j);
+	  for i from 1 to length(M)-1 do (
+	       p = sortColumns M#i#0;
+	       P = P | submatrix(M#i#0, p);
+	       J = J | for j from 0 to length(p)-1 list M#i#1#(p#j);
+	  );
+	  new InvolutiveBasis from hashTable {0 => P, 1 => J}
+     ))
 
 janetBasis(Matrix) := M -> janetBasis gb M
 
 janetBasis(Ideal) := I -> janetBasis gb I
+
+janetBasis(Module) := M -> janetBasis presentation M
 
 janetBasis(ChainComplex, ZZ) := (C, n) -> new InvolutiveBasis from hashTable {0 => C.dd#n, 1 => C.dd#n.cache.multVars}
 
@@ -413,46 +429,6 @@ janetBasis(ChainComplex, ZZ) := (C, n) -> new InvolutiveBasis from hashTable {0 
 isPommaretBasis = method(TypicalValue => Boolean)
 
 isPommaretBasis(InvolutiveBasis) := J -> pommaretMultVar(J#0) === multVar(J)
-
-
--- enumeration of a (monomial) vector space basis of R/I
--- in terms of monomial cones, where I is an ideal of R
--- with Janet basis J
-
-factorModuleBasis = method(TypicalValue => FactorModuleBasis)
-
-factorModuleBasis(InvolutiveBasis) := J -> (
-     R := ring J#0;
-     v := generators R;
-     n := length v;
-     e := for i from 0 to n-1 list 1;
-     z := for i from 0 to n-1 list 0;
-     r := numgens target J#0;
-     l := numgens source J#0;
-     G := gens target J#0;
-     L := leadTerm J#0;
-     L = for i from 0 to l-1 list
-          { leadMonomial sum entries L_i, leadComponent L_i };
-     L = for i from 0 to r-1 list (
-	  for j from 0 to l-1 list (
-	       if L#j#1 != i then continue;
-	       (exponents L#j#0)#0
-	  ));
-     L = apply(L, E->for i in decomposeComplement(sort E, e, z) list
-	  (product for j from 0 to n-1 list (v#j)^(i#0#j), i#1));
-     L = { for i from 0 to r-1 list (
-	       if length(L#i) == 0 then continue;
-	       matrix({ for j in L#i list j#0 }) ** G_{i}
-          ),
-          flatten for i from 0 to r-1 list
-	  for j in L#i list hashTable(for k from 0 to n-1 list v#k => j#1#k) };
-     if length(L#0) == 0 then
-	  new FactorModuleBasis from hashTable { 0 => matrix {{}}, 1 => {} }
-     else
-	  new FactorModuleBasis from hashTable {
-	       0 => fold((M1, M2) -> M1 | M2, L#0),
-	       1 => L#1 })
-
 
 
 -- given a Janet basis J for a submodule of a free module
@@ -477,58 +453,63 @@ invReduce(Matrix,InvolutiveBasis) := (p, J) -> (
           { leadMonomial sum entries L_i,
 	    leadComponent L_i,
 	    leadCoefficient sum entries L_i };
-     zl := 0*(target p)_0;
-     zr := 0*(R^(length L))_0;
-     local i;
-     local c;
-     local f;
-     local lc;
-     local lm;
-     local lt;
-     local m;
-     local q;
-     local r;
-     L = for j from 0 to (numgens source p)-1 list (
-	  q = p_j;
-	  r = zl;
-	  c = zr;
-	  f = (v#0)^0;  -- equals 1
-	  while matrix {q} != 0 do (
-	       lt = leadTerm q;
-	       m = leadComponent lt;
-	       lc = leadCoefficient sum flatten entries lt;
-	       lm = leadMonomial sum flatten entries lt;
-	       i = 0;
-	       while i < length(L) do (
-		    if (m == L#i#1) and involutiveDivisor(
-			 (exponents L#i#0)#0,
-			 (exponents lm)#0,
-			 for k in v list J#1#i#k) then break;
-		    i = i + 1;
+     if length(L) == 0 then (
+	  (p, matrix {{}})
+     )
+     else (
+	  zl := 0*(target p)_0;
+	  zr := 0*(R^(length L))_0;
+	  local i;
+	  local c;
+	  local f;
+	  local lc;
+	  local lm;
+	  local lt;
+	  local m;
+	  local q;
+	  local r;
+	  L = for j from 0 to (numgens source p)-1 list (
+	       q = p_j;
+	       r = zl;
+	       c = zr;
+	       f = (v#0)^0;  -- equals 1
+	       while matrix {q} != 0 do (
+		    lt = leadTerm q;
+		    m = leadComponent lt;
+		    lc = leadCoefficient sum flatten entries lt;
+		    lm = leadMonomial sum flatten entries lt;
+		    i = 0;
+		    while i < length(L) do (
+			 if (m == L#i#1) and involutiveDivisor(
+			      (exponents L#i#0)#0,
+			      (exponents lm)#0,
+			      for k in v list J#1#i#k) then break;
+			 i = i + 1;
+		    );
+		    if i < length(L) then (
+			 -- didn't work without "substitute" for coefficients in finite fields
+			 q = substitute(L#i#2, R) * q - lc * (lm // L#i#0) * J#0_i;
+			 c = c + lc * (lm // L#i#0) * (R^(length L))_i;
+			 r = substitute(L#i#2, R) * r;
+			 f = L#i#2 * f;
+		    )
+		    else (
+			 q = q - lt;
+			 r = r + lt;
+		    );
 	       );
-	       if i < length(L) then (
-		    -- didn't work without "substitute" for coefficients in finite fields
-		    q = substitute(L#i#2, R) * q - lc * (lm // L#i#0) * J#0_i;
-		    c = c + lc * (lm // L#i#0) * (R^(length L))_i;
-		    r = substitute(L#i#2, R) * r;
-		    f = L#i#2 * f;
-	       )
-	       else (
-		    q = q - lt;
-		    r = r + lt;
-	       );
+	       r = apply(r, i -> i // f);
+	       c = apply(c, i -> i // f);
+	       (r, c)
 	  );
-          r = apply(r, i -> i // f);
-          c = apply(c, i -> i // f);
-          (r, c)
-     );
-     N := matrix { L#0#0 };
-     C := matrix { L#0#1 };
-     for j from 1 to length(L)-1 do (
-	  N = N | matrix { L#j#0 };
-	  C = C | matrix { L#j#1 };
-     );
-     (N, C))
+	  N := matrix { L#0#0 };
+	  C := matrix { L#0#1 };
+	  for j from 1 to length(L)-1 do (
+	       N = N | matrix { L#j#0 };
+	       C = C | matrix { L#j#1 };
+	  );
+	  (N, C)
+     ))
 
 invReduce(RingElement,InvolutiveBasis) := (p, J) -> invReduce(matrix {{p}}, J)
 
@@ -607,6 +588,167 @@ janetResolution(Ideal) := I -> janetResolution janetBasis I
 janetResolution(Module) := M -> janetResolution janetBasis presentation M
 
 addHook(Module, symbol resolution, (opts,M) -> if opts.Strategy === Involutive then break janetResolution M)
+
+
+-- enumeration of a (monomial) vector space basis of R/I
+-- in terms of monomial cones, where I is an ideal of R
+-- with Janet basis J
+
+factorModuleBasis = method(TypicalValue => FactorModuleBasis)
+
+factorModuleBasis(InvolutiveBasis) := J -> (
+     R := ring J#0;
+     v := generators R;
+     n := length v;
+     e := for i from 0 to n-1 list 1;
+     z := for i from 0 to n-1 list 0;
+     r := numgens target J#0;
+     l := numgens source J#0;
+     G := gens target J#0;
+     L := leadTerm J#0;
+     L = for i from 0 to l-1 list
+          { leadMonomial sum entries L_i, leadComponent L_i };
+     L = for i from 0 to r-1 list (
+	  for j from 0 to l-1 list (
+	       if L#j#1 != i then continue;
+	       (exponents L#j#0)#0
+	  ));
+     L = apply(L, E->for i in decomposeComplement(sort E, e, z) list
+	  (product for j from 0 to n-1 list (v#j)^(i#0#j), i#1));
+     L = { for i from 0 to r-1 list (
+	       if length(L#i) == 0 then continue;
+	       matrix({ for j in L#i list j#0 }) ** G_{i}
+          ),
+          flatten for i from 0 to r-1 list
+	  for j in L#i list hashTable(for k from 0 to n-1 list v#k => j#1#k) };
+     if length(L#0) == 0 then
+	  new FactorModuleBasis from hashTable { 0 => matrix {{}}, 1 => {} }
+     else
+	  new FactorModuleBasis from hashTable {
+	       0 => fold((M1, M2) -> M1 | M2, L#0),
+	       1 => L#1 })
+
+
+-- compute a Noether normalization for the ideal generated by J
+-- using the corresponding factor module basis
+
+invNoetherNormalization = method(
+     Options => {
+	  PermuteVariables => false
+	  }
+     )
+
+invNoetherNormalization(InvolutiveBasis) := o -> (J) -> (
+     if (numgens target basisElements J != 1) then error "expecting an involutive basis for an ideal";
+
+     R := ring J#0;
+     Jnew := J;
+     F := factorModuleBasis(Jnew);
+     m := multVar F;
+     if length(m) == 0 then error "expecting an involutive basis for a proper ideal";
+     if length(toList(m#0)) == numgens(R) then error "expecting an involutive basis for a non-zero ideal";
+
+     -- union of multiplicative variables of all cones
+     nu := toList fold((S1, S2)->S1 + S2, m);
+     -- maximum number of multiplicative variables for one cone
+     d := max apply(m, i->length toList(i));
+     -- coordinate change to be determined
+     ch := {};
+
+     while length(nu) > d do (
+	  -- variable among the multiplicative ones which has
+	  -- highest priority
+	  z := max nu;
+	  lm := flatten entries leadTerm Jnew#0;
+	  -- only retain leading monomials involving variables in nu only
+	  l := select(toList(0..(length(lm)-1)),
+	       i->isSubset(support lm_i, nu));
+	  -- take a leading monomial involving the least number
+	  -- of variables (the smallest one w.r.t. the monomial ordering
+	  -- on R is chosen here)
+	  n := minPosition apply(l,
+	       i->length support substitute(lm_i, z => 1_R));
+	  lm = lm_(l_n);
+	  -- determine the list of variables to be altered by
+	  -- coordinate change
+	  w := support substitute(lm, z => 1_R);
+	  s := length w;
+	  local deg;
+	  local b;
+	  local k;
+
+          if char R == 0 then (
+	       deg = sum degree lm;
+	       -- get top degree part of polynomial in Janet basis
+	       -- that has lm as leading monomial
+	       head := sum select(terms (flatten entries Jnew#0)_(l_n),
+		    i->sum degree(i) == deg);
+	       b = for j from 0 to s-1 list 1_R;
+	       k = 0;
+	       -- change coefficients of coordinate change
+	       -- until monomial z^deg appears in transformed head
+	       while length select(terms substitute(head,
+		    for j from 0 to s-1 list w#j => w#j - b#j * z),
+		    i->support(i) == {z}) == 0 do (
+		    b = b_{0..(k-1)} | { b_k + 1 } | b_{(k+1)..(s-1)};
+		    k = (k + 1) % s;
+	       );
+               ch = append(ch, for j from 0 to s-1 list w#j => w#j - b#j * z);
+	  )
+          else (
+	       b = for j from 0 to s-1 list 1_ZZ;
+	       k = 0;
+	       p := substitute((flatten entries Jnew#0)_(l_n),
+		    for j from 0 to s-1 list w#j => w#j - z^(b#j));
+	       deg = sum degree p;
+	       -- change exponents in coordinate change
+	       -- until monomial z^deg appears in transformed generator
+	       while length select(terms p, i->i == z^deg) == 0 do (
+		    b = b_{0..(k-1)} | { b_k + 1 } | b_{(k+1)..(s-1)};
+		    k = (k + 1) % s;
+		    p = substitute((flatten entries Jnew#0)_(l_n),
+			 for j from 0 to s-1 list w#j => w#j - z^(b#j));
+	            deg = sum degree p;
+	       );
+               ch = append(ch, for j from 0 to s-1 list w#j => w#j - z^(b#j));
+	  );
+	  Jnew = janetBasis substitute(Jnew#0, ch_(-1));
+	  F = factorModuleBasis(Jnew);
+	  m = multVar F;
+	  nu = toList fold((S1, S2)->S1 + S2, m);
+	  d = max apply(m, i->length toList(i));
+     );
+     if o.PermuteVariables then (
+	  -- permute variables so that nu consists of the |nu| last variables
+	  v := sort generators R;
+	  g := set v_{0..(d-1)} * set nu;
+	  u := toList(set nu - g);
+	  if length u > 0 then (
+	       g = toList(set v_{0..(d-1)} - g);
+	       ch = append(ch,
+		    (for j from 0 to length(u)-1 list g#j => u#j) |
+		    (for j from 0 to length(u)-1 list u#j => g#j));
+	       nu = toList(set v_{0..(d-1)});
+	  );
+     );
+     -- compose all the above coordinate transformations
+     tr := vars R;
+     for i in ch do (
+	  tr = substitute(tr, i);
+     );
+     -- alternative output:
+     -- tr = flatten entries tr;
+     -- {for i from 0 to length(tr)-1 list R_i => tr_i, sort nu}
+     {flatten entries tr, sort nu})
+
+invNoetherNormalization(GroebnerBasis) := o -> (G) -> invNoetherNormalization(janetBasis G, o)
+
+invNoetherNormalization(Matrix) := o -> (M) -> invNoetherNormalization(janetBasis M, o)
+
+invNoetherNormalization(Ideal) := o -> (I) -> invNoetherNormalization(janetBasis I, o)
+
+invNoetherNormalization(Module) := o -> (M) -> invNoetherNormalization(janetBasis M, o)
+
 
 ----------------------------------------------------------------------
 -- documentation
@@ -871,6 +1013,99 @@ TEST ///
 ///
 
 document {
+        Key => {invNoetherNormalization,(invNoetherNormalization,InvolutiveBasis),(invNoetherNormalization,GroebnerBasis),(invNoetherNormalization,Matrix),(invNoetherNormalization,Ideal),(invNoetherNormalization,Module)},
+        Headline => "Noether normalization",
+        Usage => "N = invNoetherNormalization I",
+	Inputs => {
+	     "I" => InvolutiveBasis,
+	     "I" => GroebnerBasis,
+	     "I" => Ideal
+	     },
+        Outputs => {
+	   "N" => List => {"the first entry of which is a list defining an invertible coordinate transformation in terms of the images of the variables of the polynomial ring; the second entry is a list of variables whose residue classes modulo the ideal in the new coordinates are (maximally) algebraically independent"}
+	   },
+	PARA{ "invNoetherNormalization constructs an automorphism of the polynomial ring in which I defines an ideal, such that the image of I under this automorphism is in Noether normal position." },
+	PARA{ "The automorphism is defined by the first list returned: the i-th variable of the polynomial ring is mapped to the i-th entry of that list." },
+	PARA{ "In the new coordinates, the residue class ring is an integral ring extension of the polynomial ring in the variables given in the second list returned." },
+	PARA{ "If the option ", TO "PermuteVariables", " is set to true, the second list consists of the last d variables, where d is the Krull dimension of the residue class ring." },
+        PARA{
+             "Reference: D. Robertz, Noether normalization guided by monomial cone decompositions, Journal of Symbolic Computation 44, 2009, pp. 1359-1373."
+            },
+        EXAMPLE lines ///
+	  R = QQ[x,y,z];
+	  I = ideal(x*y*z);
+	  J = janetBasis I;
+	  N = invNoetherNormalization J
+        ///,
+        EXAMPLE lines ///
+	  R = QQ[w,x,y,z];
+	  I = ideal(y^2*z-w*x*y^2, x*y*z-w*z^2, y^2*z-w*x^2*y*z);
+	  J = janetBasis I;
+	  N = invNoetherNormalization J
+        ///,
+        SeeAlso => {janetBasis,factorModuleBasis}
+        }
+
+TEST ///
+     -- loadPackage "InvolutiveBases"
+     R = QQ[x,y,z]
+     I = ideal(x*y*z);
+     J = janetBasis I;
+     N = invNoetherNormalization J
+     assert (N == {{x, - x + y, - x + z}, {z, y}})
+///
+
+TEST ///
+     -- loadPackage "InvolutiveBases"
+     R = QQ[w,x,y,z];
+     I = ideal(y^2*z-w*x*y^2, x*y*z-w*z^2, y^2*z-w*x^2*y*z);
+     J = janetBasis I;
+     N = invNoetherNormalization J
+     assert (N == {{w, x, - x + y, - w - x + z}, {z, y}})
+///
+
+TEST ///
+     -- loadPackage "InvolutiveBases"
+     R = QQ[x,y,z];
+     I = ideal(x^2-1, y^2-z^2);
+     J = janetBasis I;
+     N = invNoetherNormalization J
+     assert (N == {{x, y, z}, {z}})
+///
+
+document {
+        Key => PermuteVariables,
+        Headline => "ensure that the last dim(I) var's are algebraically independent modulo I",
+	PARA{
+             "The symbol PermuteVariables is an option for ", TO "invNoetherNormalization", "."
+	    },
+	PARA{
+             "The default value for this option is false. If set to true, the second list of the result of ", TO "invNoetherNormalization", " consists of the last d variables in the new coordinates, where d is the Krull dimension of the ring under consideration."
+	    },
+	PARA{
+             "In the new coordinates defined by ", TO "invNoetherNormalization", " the residue class ring is an integral ring extension of the polynomial ring in the last d variables."
+	    },
+        EXAMPLE lines ///
+	  R = QQ[x,y,z];
+	  I = ideal(x*y^2+2*x^2*y, z^3);
+	  J = janetBasis I;
+	  N1 = invNoetherNormalization J
+	  N2 = invNoetherNormalization(J, PermuteVariables => true)
+        ///,
+        EXAMPLE lines ///
+          R = QQ[w,x,y,z];
+          I = ideal(w*x-y^2, y*z-x^2)
+          J = janetBasis I;
+          N1 = invNoetherNormalization J
+          J1 = janetBasis substitute(gens I, for i in toList(0..numgens(R)-1) list R_i => N1#0#i);
+          F1 = factorModuleBasis(J1)
+          N2 = invNoetherNormalization(J, PermuteVariables => true)
+          J2 = janetBasis substitute(gens I, for i in toList(0..numgens(R)-1) list R_i => N2#0#i);
+          F2 = factorModuleBasis(J2)
+        ///
+     }
+
+document {
         Key => {invReduce,(invReduce,Matrix,InvolutiveBasis),(invReduce,RingElement,InvolutiveBasis)},
         Headline => "compute normal form modulo involutive basis by involutive reduction",
         Usage => "(r,c) = invReduce(p,J)",
@@ -921,7 +1156,7 @@ document {
 
 document {
         Key => Involutive,
-        Headline => "name for an optional argument",
+        Headline => "compute a (usually non-minimal) resolution using involutive bases",
 	PARA{
              "The symbol Involutive is allowed as value for the optional argument ", TO "Strategy", " for ", TO "resolution", ". If provided, the resolution is constructed using ", TO "janetResolution", "."
 	    }
@@ -988,5 +1223,4 @@ TEST ///
      assert ( zero(S.dd_2 * S.dd_3) )
      assert ( zero(S.dd_3 * S.dd_4) )
 ///
-
 
