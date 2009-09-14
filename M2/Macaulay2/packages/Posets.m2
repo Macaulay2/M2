@@ -1,3 +1,5 @@
+-- this file is licenced for use under the GNU General Public Licence version 2
+
 newPackage(
 	"Posets",
     	Version => "0.1", 
