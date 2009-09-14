@@ -105,6 +105,11 @@ cyclic = (n,kk) -> (
      ideal apply(1..n-1, d-> sum(0..n-1, i -> product(d, k -> R_((i+k)%n)))) 
        + ideal(product gens R - 1))
 
+cyclicH = (n,kk) -> (
+     R = kk[vars(53..n+53)];
+     ideal apply(1..n-1, d-> sum(0..n-1, i -> product(d, k -> R_((i+k)%n)))) 
+       + ideal(product(n, i -> R_i) - R_n^n))
+
 katsuraBench = n -> (
      R := CC[vars(53..n+52)];
      I := katsura(n,CC);

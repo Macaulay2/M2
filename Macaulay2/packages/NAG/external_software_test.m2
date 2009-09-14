@@ -2,20 +2,26 @@ restart
 loadPackage ("NAG", FileName=>"../NAG.m2", 
      Configuration=>{"PHCpack"=>"./phc", "Bertini"=>"./bertini", "HOM4PS2"=>"./hom4ps2_in_out"})
 debug NAG
+DBG = 2;
 printingPrecision = 10;
 ------------------------------------------------------
 -- COMPARISON OF              -- PHCpack -- Bertini -- hom4ps2 --
 load "benchmarks.m2";
---I = katsura(8);	    	-- 26      -- 18      -- 4       --
---I = stewartGough40real();     -- 883     -- >>0     -- 31      --
-I = example2();
+I = katsura(8,CC);	    	-- 26      -- 18      -- 4       --
+I = stewartGough40real();     -- 883     -- >>0     -- 31      --
+--I = example2();
 
-t = currentTime(); P = solveSystem (I_*,Software=>PHCpack); currentTime()-t
-t = currentTime(); B = solveSystem (I_*,Software=>Bertini); currentTime()-t
-t = currentTime(); H = solveSystem (I_*,Software=>HOM4PS2); currentTime()-t
+P = solveSystem (I_*,Software=>PHCpack);
+B = solveSystem (I_*,Software=>Bertini);
+H = solveSystem (I_*,Software=>HOM4PS2); 
 
--- check if B and H approx. same 
-apply(sort(B#0/(c->c/realPart)) - sort(H#0/(c->c/realPart)), a->apply(a, abs)) 
+-- check if P, B, and H are approx. same 
+Bs = sortSolutions B;
+Ps = sortSolutions P;
+Hs = sortSolutions H;
+difBP = diffSolutions(Bs/first, Ps/first);
+difBH = diffSolutions(Bs/first, Hs/first);
+assert(#difBP#0+#difBP#1+#difBH#0+#difBH#1==0) 
 
 --remove temp files
 removeFile "tasols"; removeFile "target"; removeFile "output"; removeFile "input";
