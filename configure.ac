@@ -442,6 +442,9 @@ AC_SUBST(PACKAGES, dnl the internal ones first, then after that, the oldest firs
   PieriMaps
   Normaliz
   Posets
+  XML
+  OpenMath
+  SCSCP
 ")
 
 # convert the newlines in the list above to spaces
