@@ -61,55 +61,22 @@ export rawEvaluateSLP(e:Expr):Expr := (
      );
 setupfun("rawEvaluateSLP",rawEvaluateSLP);
 
-export rawTrackPaths(e:Expr):Expr := (
+export rawPathTrackerPrecookedSLPs(e:Expr):Expr := (
      when e is s:Sequence do
-     if length(s) != 13 then WrongNumArgs(13)
+     if length(s) != 2 then WrongNumArgs(2)
      else when s.0 is slp1:RawStraightLineProgram do 
      	  when s.1 is slp2:RawStraightLineProgram do
-	  when s.2 is startSols:RawMatrix do
-	  when s.3 is isProj:Boolean do
-	  when s.4 is initDt:RR do
-	  when s.5 is minDt:RR do
-	  when s.6 is maxDt:RR do
-	  when s.7 is dtIncreaseFactor:RR do 
-	  when s.8 is dtDecreeaseFactor:RR do
-	  when s.9 is numSuccessesBeforeIncrease:ZZ do
-	  when s.10 is epsilon:RR do 
-	  when s.11 is maxCorrSteps:ZZ do
-	  when s.12 is predType:ZZ do
-	       toExpr(Ccode(RawMatrixOrNull,
-		    	 "(engine_RawMatrixOrNull)rawTrackPaths(",
-		    	 "(StraightLineProgram *)", slp1, ",",
-		    	 "(StraightLineProgram *)", slp2, ",",
-		    	 "(Matrix *)", startSols,",",
-			 toBoolean(s.3),",",
-			 "(M2_RRR)", initDt,",",
-			 "(M2_RRR)", minDt,",",
-			 "(M2_RRR)", maxDt,",",
-			 "(M2_RRR)", dtIncreaseFactor,",",
-			 "(M2_RRR)", dtDecreeaseFactor,",",
-			 toInt(s.9),",",
-			 "(M2_RRR)", epsilon,",",
-			 toInt(s.11),",",
-			 toInt(s.12),
-		    	 ")"
-		    	 ))
-	  else WrongArgZZ(13)
-	  else WrongArgRR(12)
-	  else WrongArgRR(11)
-	  else WrongArgZZ(10)
-	  else WrongArgRR(9)
-	  else WrongArgRR(8)
-	  else WrongArgRR(7)
-	  else WrongArgRR(6)
-	  else WrongArgRR(5)
-	  else WrongArgBoolean(4)
-	  else WrongArgMatrix(3)
+	       toExpr(Ccode(RawPathTrackerOrNull,
+			"(engine_RawPathTrackerOrNull)rawPathTrackerPrecookedSLPs(",
+	       	   	"(StraightLineProgram *)", slp1, ",",
+		   	"(StraightLineProgram *)", slp2, 
+		   	")"
+		    ))
      	  else WrongArg(2,"a raw straight line program")
      	  else WrongArg(1,"a raw straight line program")
-     else WrongNumArgs(13)
+     else WrongNumArgs(2)
      );
-setupfun("rawTrackPaths",rawTrackPaths);
+setupfun("rawPathTrackerPrecookedSLPs",rawPathTrackerPrecookedSLPs);
 
 export rawPathTracker(e:Expr):Expr := (
      when e is HH:RawMatrix do 
@@ -124,46 +91,50 @@ setupfun("rawPathTracker",rawPathTracker);
 
 export rawSetParametersPT(e:Expr):Expr := (
      when e is s:Sequence do
-     if length(s) != 11 then WrongNumArgs(11)
+     if length(s) != 12 then WrongNumArgs(11)
      else when s.0 is PT:RawPathTracker do 
 	  when s.1 is isProj:Boolean do
 	  when s.2 is initDt:RR do
 	  when s.3 is minDt:RR do
-	  when s.4 is maxDt:RR do
-	  when s.5 is dtIncreaseFactor:RR do 
-	  when s.6 is dtDecreeaseFactor:RR do
-	  when s.7 is numSuccessesBeforeIncrease:ZZ do
-	  when s.8 is epsilon:RR do 
-	  when s.9 is maxCorrSteps:ZZ do
-	  when s.10 is predType:ZZ do (
+	  when s.4 is dtIncreaseFactor:RR do 
+	  when s.5 is dtDecreeaseFactor:RR do
+	  when s.6 is numSuccessesBeforeIncrease:ZZ do
+	  when s.7 is epsilon:RR do 
+	  when s.8 is maxCorrSteps:ZZ do
+	  when s.9 is endZoneFactor:RR do 
+	  when s.10 is infinityThreshold:RR do 
+	  when s.11 is predType:ZZ do 
+	  (
 	       Ccode(void,
 		    	 "rawSetParametersPT(",
 		    	 "(PathTracker *)", PT, ",",
 			 toBoolean(s.1),",",
 			 "(M2_RRR)", initDt,",",
 			 "(M2_RRR)", minDt,",",
-			 "(M2_RRR)", maxDt,",",
 			 "(M2_RRR)", dtIncreaseFactor,",",
 			 "(M2_RRR)", dtDecreeaseFactor,",",
-			 toInt(s.7),",",
+			 toInt(s.6),",",
 			 "(M2_RRR)", epsilon,",",
-			 toInt(s.9),",",
-			 toInt(s.10),
+			 toInt(s.8),",",
+			 "(M2_RRR)", endZoneFactor,",",
+			 "(M2_RRR)", infinityThreshold,",",
+			 toInt(s.11),
 		    	 ")"
 		    	 );
 	       nullE)
-	  else WrongArgZZ(11)
+	  else WrongArgZZ(12)
+	  else WrongArgRR(11)
 	  else WrongArgRR(10)
-	  else WrongArgRR(9)
-	  else WrongArgZZ(8)
-	  else WrongArgRR(7)
+	  else WrongArgZZ(9)
+	  else WrongArgRR(8)
+	  else WrongArgZZ(7)
 	  else WrongArgRR(6)
 	  else WrongArgRR(5)
 	  else WrongArgRR(4)
 	  else WrongArgRR(3)
 	  else WrongArgBoolean(2)
      	  else WrongArg(1,"a path tracker")
-     else WrongNumArgs(11)
+     else WrongNumArgs(12)
      );
 setupfun("rawSetParametersPT",rawSetParametersPT);
 

@@ -19,17 +19,18 @@ newPackage(
 -- must be placed in one of the following two lists
 export {
      "solveSystem", "track", "refine", "totalDegreeStartSystem",
-     "areEqual", "sortSolutions", "multistepPredictor", "multistepPredictorLooseEnd",
+     "areEqual", "sortSolutions", -- "multistepPredictor", "multistepPredictorLooseEnd",
      "Software","PHCpack","Bertini","HOM4PS2","M2","M2engine","M2enginePrecookedSLPs",
-     "gamma","tDegree","tStep","tStepMin","tStepMax","stepIncreaseFactor","numberSuccessesBeforeIncrease",
+     "gamma","tDegree","tStep","tStepMin","stepIncreaseFactor","numberSuccessesBeforeIncrease",
      "Predictor","RungeKutta4","Multistep","Tangent","Euler","Secant","MultistepDegree","ProjectiveNewton",
-     "finalMaxCorrSteps", "maxCorrSteps", 
+     "EndZoneFactor", "maxCorrSteps", "InfinityThreshold",
      "Projectivize",
      "AffinePatches", "DynamicPatch",
-     "RandomSeed",
      "SLP", "HornerForm", "CompiledHornerForm", "CorrectorTolerance", "SLPcorrector", "SLPpredictor",
+     "NoOutput",
      "Tolerance",
-     "getSolution", "SolutionAttributes", "Coordinates", "SolutionStatus", "LastT", "RCondition"
+     "getSolution", "SolutionAttributes", "Coordinates", "SolutionStatus", "LastT", "RCondition",
+     "NAGtrace"
      }
 exportMutable {
      }
@@ -47,7 +48,7 @@ SLPcounter = 0; -- the number of compiled SLPs (used in naming dynamic libraries
 lastPathTracker = null; -- path tracker object used last
 
 -- ./NAG/ FILES -------------------------------------
-load "NAG/PHCpack/PHCpack.interface.m2" 
+load "./NAG/PHCpack/PHCpack.interface.m2" 
 
 -- CONVENTIONS ---------------------------------------
 
@@ -152,13 +153,12 @@ BombieriWeylNormSquared RingElement := f -> sum(listForm f, a->(
 
 ------------------------------------------------------
 track = method(TypicalValue => List, Options =>{
-	  Software=>M2engine,
+	  Software=>M2engine, NoOutput=>false, 
 	  gamma=>1, 
 	  tDegree=>1,
      	  -- step control
 	  tStep => 0.05, -- initial
           tStepMin => 1e-6,
-	  tStepMax => 0.2,
 	  stepIncreaseFactor => 2_QQ,
 	  numberSuccessesBeforeIncrease => 4,
 	  -- predictor 
@@ -167,15 +167,16 @@ track = method(TypicalValue => List, Options =>{
 	  MultistepDegree => 3, -- used only for Predictor=>Multistep
 	  -- corrector 
 	  SLPcorrector=>false, --temp!!!
-	  finalMaxCorrSteps => 11,
 	  maxCorrSteps => 3,
-     	  CorrectorTolerance => 5e-6, -- tracking tolerance (universal)
+     	  CorrectorTolerance => 1e-6, -- tracking tolerance
+	  -- end of path
+	  EndZoneFactor => 0.05, -- EndZoneCorrectorTolerance = CorrectorTolerance*EndZoneFactor when 1-t<EndZoneFactor 
+	  InfinityThreshold => 100000, -- used to tell if the path is diverging
 	  -- projectivization
 	  Projectivize => false, 
 	  AffinePatches => DynamicPatch,
-	  RandomSeed => 0,
 	  -- slp's 
-	  SLP => HornerForm -- possible values: null, HornerForm, CompiledHornerForm 	  
+	  SLP => null -- possible values: null, HornerForm, CompiledHornerForm 	  
 	  } )
 track (List,List,List) := List => o -> (S,T,solsS) -> (
 -- tracks solutions from start system to target system
@@ -184,6 +185,7 @@ track (List,List,List) := List => o -> (S,T,solsS) -> (
 --      solsS = list of solutions to S
 -- 	gamma => nonzero complex number
 -- OUT: solsT = list of target solutions corresponding to solsS
+     HISTORY := DBG>1 or member(o.Predictor, {Multistep,Secant});
      n := #T; 
      if n > 0 then R := ring first T else error "expected nonempty target system";
      if #S != n then 
@@ -193,8 +195,10 @@ track (List,List,List) := List => o -> (S,T,solsS) -> (
      if o.tStep <= 0 then error "expected positive tStep";  
      if (o.Projectivize or o.SLP===null) and (o.SLPpredictor or o.SLPcorrector) 
      then error "SLPpredictor amd SLPcorrector can be used only with Projectivize=false and SLP=!=null"; 
-     if (o.Software===M2engine or o.Software===M2enginePrecookedSLPs) and (o.Projectivize or o.SLP===null) 
-     then error "M2engine is implemented for Projectivize=>false and SLP != null";
+     if o.Software===M2enginePrecookedSLPs and (o.Projectivize or o.SLP===null) 
+     then error "M2enginePrecookedSLPs is implemented for Projectivize=>false and SLP != null";
+     if o.Software===M2engine and o.Projectivize 
+     then error "M2engine is not implemented for Projectivize=>true";
 
      -- PHCpack -------------------------------------------------------
      if o.Software == PHCpack then return trackPHCpack(S,T,solsS,o)
@@ -260,7 +264,6 @@ track (List,List,List) := List => o -> (S,T,solsS) -> (
 	       	    promote(matrix{{append((n-1):0, 1)}},K), -- dehomogenizing patch
 	       	    if #o.AffinePatches > 0 then first o.AffinePatches -- either provided patch...
 	       	    else ( 
-		    	 setRandomSeed o.RandomSeed; 
 		    	 matrix{apply(n, i->exp(random(0.,2*pi)*ii))} ) -- ... or random patch
 	       	    };
 	       patches = patches | { o.gamma*patches#1 };
@@ -276,8 +279,9 @@ track (List,List,List) := List => o -> (S,T,solsS) -> (
      Kt := K[t];
      Rt := K[gens R, t]; -- how do you cleanly extend the generators list: e.g., what if "t" is a var name?
      H := matrix {apply(#S, i->(
-		    nS := 1 / sqrt BombieriWeylNormSquared S#i;
-		    nT := 1 / sqrt BombieriWeylNormSquared T#i;
+		    (nS,nT) := if o.Predictor===ProjectiveNewton 
+		    then (1 / sqrt BombieriWeylNormSquared S#i, 1 / sqrt BombieriWeylNormSquared T#i)
+		    else (1,1);
 		    o.gamma*(1-t)^(o.tDegree)*nS*sub(S#i,Rt)+t^(o.tDegree)*nT*sub(T#i,Rt)
 		    ))};
      JH := transpose jacobian H; 
@@ -405,42 +409,26 @@ track (List,List,List) := List => o -> (S,T,solsS) -> (
 		    slpHxno,
 		    slpHno, 
 		    o.maxCorrSteps,
-		    o.finalMaxCorrSteps
+		    o.EndZoneFactor
 		    });
 	  SLPcounter = SLPcounter + 1;
 	  );
      ); ----------------- end ----------- M2 section -------------------------------------          
 
      -- threshholds and other tuning parameters (should include most of them as options)
-     divThresh := 1e7; 
-     condNumberThresh := 1e3;
      stepDecreaseFactor := 1/o.stepIncreaseFactor;
      theSmallestNumber := 1e-12;
 
      compStartTime = currentTime();      
      
-     rawSols := if o.Software===M2enginePrecookedSLPs then (
-	  entries map(K,rawTrackPaths(slpHxt, slpHxH, raw matrix apply(solsS,s->first entries transpose s), -- !!! this is counterproductive: have to convert back to list
-	       	    false,
-	       	    o.tStep, o.tStepMin, o.tStepMax, 
-		    toRR(o.stepIncreaseFactor), toRR(stepDecreaseFactor), o.numberSuccessesBeforeIncrease,
-	       	    o.CorrectorTolerance, o.maxCorrSteps,
-		    ( -- pred_type:
-			 if o.Predictor === Tangent then predTANGENT
-		    	 else if o.Predictor === RungeKutta4 then predRUNGEKUTTA
-		    	 else if o.Predictor === Euler then predEULER
-		    	 else error "no slp for the predictor")
-		    ))
-	  ) 
-     else if o.Software===M2engine then (
-	  if DBG > 0 then << "Running the engine version..." << endl;
-	  PT := rawPathTracker(raw H);
+     rawSols := if member(o.Software,{M2enginePrecookedSLPs, M2engine}) then (
+	  PT := if o.Software===M2engine then rawPathTracker(raw H) else rawPathTrackerPrecookedSLPs(slpHxt, slpHxH);
 	  lastPathTracker = PT;
 	  rawSetParametersPT(PT, 
 	       false,
-	       o.tStep, o.tStepMin, o.tStepMax, 
-	       toRR(o.stepIncreaseFactor), toRR(stepDecreaseFactor), o.numberSuccessesBeforeIncrease,
-	       o.CorrectorTolerance, o.maxCorrSteps,
+	       o.tStep, o.tStepMin, 
+	       toRR o.stepIncreaseFactor, toRR stepDecreaseFactor, o.numberSuccessesBeforeIncrease,
+	       o.CorrectorTolerance, o.maxCorrSteps, o.EndZoneFactor, toRR o.InfinityThreshold,
 	       ( -- pred_type:
 		    if o.Predictor === Tangent then predTANGENT
 		    else if o.Predictor === RungeKutta4 then predRUNGEKUTTA
@@ -448,12 +436,14 @@ track (List,List,List) := List => o -> (S,T,solsS) -> (
 		    else error "no slp for the predictor")
 	       );
 	  rawLaunchPT(PT, raw matrix apply(solsS,s->first entries transpose s));
-	  entries map(K,rawGetAllSolutionsPT(PT))
+	  if o.NoOutput then null else entries map(K,rawGetAllSolutionsPT(PT))
      	  )
      else if o.Software===M2 then (
      	  apply(#solsS, sN->(
 	       s := solsS#sN;
-	       s'status := PROCESSING;
+	       s'status := "PROCESSING";
+	       endZone := false;
+	       CorrectorTolerance := ()->(if endZone then o.EndZoneFactor else 1)*o.CorrectorTolerance;
 	       if DBG > 0 then << "." << if (sN+1)%100 == 0 then endl else flush;
 	       if DBG > 2 then << "tracking solution " << toString s << endl;
      	       tStep := o.tStep;
@@ -463,10 +453,14 @@ track (List,List,List) := List => o -> (S,T,solsS) -> (
 	       count := 1; -- number of computed points
 	       stepAdj := 0; -- step adjustment number (wrt previous step): 
 	                     -- newstep = oldstep * stepIncreaseFactor^stepAdj  
-	       if DBG>1 then history := new MutableHashTable from{ count => new MutableHashTable from {
+	       if HISTORY then history := new MutableHashTable from{ count => new MutableHashTable from {
 			 "t"=>t0,"x"=>x0
 			 } };
-	       while s'status === PROCESSING and 1-t0 > theSmallestNumber do (
+	       while s'status === "PROCESSING" and 1-t0 > theSmallestNumber do (
+		    if 1-t0<=o.EndZoneFactor+theSmallestNumber and not endZone then (
+			 endZone = true;
+			 -- to do: see if this path coinsides with any other path
+			 );
 		    if DBG > 4 then << "--- current t = " << t0 << endl;
                     -- monitor numerical stability: perhaps change patches if not stable ???
 		    -- Hx0 := evalHx(x0,t0);
@@ -478,6 +472,10 @@ track (List,List,List) := List => o -> (S,T,solsS) -> (
 		    -- predictor step
 		    if DBG>9 then << ">>> predictor" << endl;
 		    local dx; local dt;
+		    -- default dt; ProjectiveNewton and Multistep modify dt
+		    dt = if endZone then min(tStep, 1-t0) else min(tStep, 1-o.EndZoneFactor-t0);
+
+     	       	    -- projective stuff
 		    if o.Predictor == ProjectiveNewton then (
 			 dPatch = matrix{ flatten entries x0 / conjugate};
 			 )
@@ -489,9 +487,8 @@ track (List,List,List) := List => o -> (S,T,solsS) -> (
 			 dPatch = matrix{ flatten entries x0 / conjugate};
 			 if DBG>9 then << "generated" << endl;
 			 );   
+		    
 		    if o.Predictor == Tangent then (
-			 tStepSafe := 1; -- 1/(norm(Hx0)*norm(invHx0)); -- what is a good heuristic?
-			 dt = min(min(tStep,tStepSafe), 1-t0);
 			 if o.SLP =!= null and o.SLPpredictor then (
 			      dxFromSLP := rawEvaluateSLP(slpPred, raw (transpose x0 | matrix {{t0,dt}}));
 			      dx = lift(map(K,dxFromSLP),K);
@@ -506,21 +503,20 @@ track (List,List,List) := List => o -> (S,T,solsS) -> (
 			 H0 := evalH(x0,t0);
 			 Hx0 = evalHx(x0,t0);
 			 Ht0 = evalHt(x0,t0);
-			 dt = min(tStep, 1-t0);
 			 dx = solve(Hx0, -H0-Ht0*dt);
 			 )
 		    else if o.Predictor == Secant then (
-			 dt = min(tStep, 1-t0);
 			 if count > 1 then ( -- if there is a preceding point
 			      u := x0 - history#(count-1)#"x";			      
 			      dx = dt*normalize u;
      			      )			      
 			 else ( -- use tangential predictor
-			      dx = dt*evalMinusInverseHxHt(x0,t0);
+			      Hx0 = evalHx(x0,t0);
+			      Ht0 = evalHt(x0,t0);
+			      dx = solve(Hx0,-dt*Ht0);
 			      );
 			 )
 		    else if o.Predictor == RungeKutta4 then (
-			 dt = min(tStep, 1-t0);
 			 --k1 := evalMinusInverseHxHt(x0,t0);
 			 --k2 := evalMinusInverseHxHt(x0+.5*k1,t0+.5*dt);
 			 --k3 := evalMinusInverseHxHt(x0+.5*k2,t0+.5*dt);
@@ -599,14 +595,13 @@ track (List,List,List) := List => o -> (S,T,solsS) -> (
 
 
 		    if DBG > 3 then << "  dt = " << dt << "  dx = " << toString dx << endl;
-		    if DBG > 1 then history#count#"dx" = dx;
+		    if HISTORY then history#count#"dx" = dx;
 
     	 	    t1 := t0 + dt;
 		    x1 := x0 + dx;
 		    
 		    -- corrector step
 		    if DBG>9 then << ">>> corrector" << endl;
-		    dx = 1; -- dx = + infinity
 		    nCorrSteps := 0;
 		    if o.Predictor === ProjectiveNewton then (
 			 nCorrSteps = 1;
@@ -621,43 +616,36 @@ track (List,List,List) := List => o -> (S,T,solsS) -> (
 			 if DBG > 4 then << "x=" << toString x1 << " res=" <<  toString evalH(x1,t1) << endl << " dx=" << dx << endl;
 			 )
 		    else (
-		    	 while norm dx > o.CorrectorTolerance*norm x1 
-			 and nCorrSteps < --(if 1-t1 < theSmallestNumber and dt <= o.tStepMin 
-			      --then o.finalMaxCorrSteps 
-			      --else 
-			      o.maxCorrSteps--) 
-		    	 do ( 
-			      if (not isProjective and norm x1 > divThresh) 
-			      or (o.Projectivize and x1_(n-1,0) < o.CorrectorTolerance)
-			      then ( s'status = INFINITY'FAILED; dx = 0 )
-			      else (
-				   dx = solve(evalHx(x1,t1), -evalH(x1,t1));
-			      	   x1 = x1 + dx;
-			      	   nCorrSteps = nCorrSteps + 1;
-			      	   if DBG > 4 then <<"corrector step " << nCorrSteps << endl <<"x=" << toString x1 << " res=" <<  toString evalH(x1,t1) 
-			      	   << endl << " dx=" << dx << endl;
-				   );
+		    	 dx = infinity;
+		    	 while dx === infinity or norm dx > CorrectorTolerance()*norm x1+theSmallestNumber 
+			 and nCorrSteps < o.maxCorrSteps
+		    	 do( 
+			      dx = solve(evalHx(x1,t1), -evalH(x1,t1));
+			      x1 = x1 + dx;
+			      nCorrSteps = nCorrSteps + 1;
+			      if DBG > 4 then <<"corrector step " << nCorrSteps << endl <<"x=" << toString x1 << " res=" <<  toString evalH(x1,t1) 
+			      << endl << " dx=" << dx << endl;
+			      if (not isProjective and norm x1 > o.InfinityThreshold) 
+			      or (o.Projectivize and x1_(n-1,0) < 1/o.InfinityThreshold)
+			      then ( s'status = "INFINITY (FAILURE)"; dx = 0 );
 			      );
 			 );
 		    if DBG>9 then << ">>> step adjusting" << endl;
-		    if o.Predictor =!= ProjectiveNewton and dt > o.tStepMin and norm dx > o.CorrectorTolerance * norm x1 then ( -- predictor failure 
+		    if o.Predictor =!= ProjectiveNewton and dt > o.tStepMin 
+		    and norm dx > CorrectorTolerance() * norm x1 then ( -- predictor failure 
 			 predictorSuccesses = 0;
 			 stepAdj = stepAdj - 1;
 	 	 	 tStep = stepDecreaseFactor*tStep;
 			 if DBG > 2 then << "decreased tStep to "<< tStep << endl;	 
-			 if tStep < o.tStepMin then s'status = MIN'STEP'FAILED;
+			 if tStep < o.tStepMin then s'status = "MIN STEP (FAILURE)";
 			 ) 
 		    else ( -- predictor success
 			 predictorSuccesses = predictorSuccesses + 1;
-		         -- make an extra corrector step
-			 --dx = solve(evalHx(x1,t1), -evalH(x1,t1));
-			 --x1 = x1 + dx;
-			 -- 
 			 x0 = x1;
 			 if dPatch =!= null then x0 = normalize x0;
 		         t0 = t1;
 			 count = count + 1;
-		         if DBG>1 then history#count = new MutableHashTable from {"t"=>t0,"x"=>x0,"stepAdj"=>stepAdj};
+		         if HISTORY then history#count = new MutableHashTable from {"t"=>t0,"x"=>x0,"stepAdj"=>stepAdj};
 			 if nCorrSteps <= o.maxCorrSteps - 1 -- over 2 / minus 2 ???
               		    and predictorSuccesses >= o.numberSuccessesBeforeIncrease 
 			 then (			      
@@ -669,30 +657,31 @@ track (List,List,List) := List => o -> (S,T,solsS) -> (
 			 else stepAdj = 0; -- keep the same step size
 			 );
 		    );        	    
-	       if s'status===PROCESSING then s'status = REGULAR;
+	       if s'status==="PROCESSING" then s'status = "REGULAR";
 	       -- create a solution record 
 	       (x0,
 		    "#steps"=>count, 
 		    "status "=>s'status, 
 		    "last t" => t0, 
 		    "cond#^{-1}" => (svd := sort first SVD evalHx(x0,t0); first svd / last svd )
-		    ) | ( if DBG>1 
+		    ) | ( if HISTORY
 		    then sequence new HashTable from history 
 		    else sequence ())
 	       ))
      );
      if DBG>3 then print rawSols;
-     ret := if o.Software===M2engine or o.Software===M2enginePrecookedSLPs then rawSols/(s->{s}) 
-	  else (
+     ret := if o.NoOutput then null 
+          else if o.Software===M2engine or o.Software===M2enginePrecookedSLPs then rawSols/(s->{s}) 
+          else (
      	       if o.Projectivize then (
 	  	    rawSols = apply(rawSols, s->(
 		    	      s' = flatten entries first s;
 		    	      s'status = s#2#1;
-		    	      if norm(last s') < o.CorrectorTolerance then s'status = INFINITY'FAILED;
+		    	      if norm(last s') < 1/o.InfinityThreshold then s'status = "INFINITY (FAILURE)";
 		    	      {matrix {apply(drop(s',-1),u->(1/last s')*u)}} | {s#1} | {STATUS => s'status} | drop(toList s, 3) 
 	       	    	      ))
 	  	    );
-	       rawSols --, s->s#2#1===REGULAR or s#2===SINGULAR} )
+	       rawSols --, s->s#2#1==="REGULAR" or s#2==="SINGULAR"} )
 	       /(s->{flatten entries first s} | drop(toList s,1))
 	       );
      if DBG>0 then (
@@ -747,6 +736,9 @@ refine (List,List) := List => o -> (T,solsT) -> (
      apply(#solsT, i-> flatten entries solsR#i)      
      )     
 
+-- possible solution statuses returned by engine
+solutionStatusLIST := {"UNDETERMINED", "PROCESSING", "REGULAR", "SINGULAR", "INFINITY (FAILURE)", "MIN STEP (FAILURE)"}
+
 getSolution = method(Options =>{SolutionAttributes=>Coordinates})
 getSolution ZZ := Thing => o -> i -> (
 -- gets specified solution from the engine
@@ -763,7 +755,7 @@ getSolution ZZ := Thing => o -> i -> (
      pp := if class p === Sequence then p else {p};
      ret := apply(pp, r->
 	  if r===Coordinates then flatten entries map(CC_53, rawGetSolutionPT(lastPathTracker, i))
-	  else if r===SolutionStatus then rawGetSolutionStatusPT(lastPathTracker, i)
+	  else if r===SolutionStatus then solutionStatusLIST#(rawGetSolutionStatusPT(lastPathTracker, i))
 	  else if r===LastT then rawGetSolutionLastTvaluePT(lastPathTracker, i)
 	  else if r===RCondition then rawGetSolutionRcondPT(lastPathTracker, i)
 	  );
@@ -820,7 +812,7 @@ oneRootStartSystem List := Sequence => T -> (
      )     
 
 -- INTERFACE part ------------------------------------
-solveSystem = method(TypicalValue => List, Options =>{Software=>M2})
+solveSystem = method(TypicalValue => List, Options =>{Software=>M2engine})
 solveSystem List := List => o -> F -> (
 -- solves a system of polynomial equations
 -- IN:  F = list of polynomials
@@ -831,7 +823,7 @@ solveSystem List := List => o -> F -> (
      local result;
      R := ring F#0;
      v := flatten entries vars R;
-     if o.Software == M2 then ( 
+     if member(o.Software, {M2,M2engine,M2enginePrecookedSLPs}) then ( 
 	  result = 
 	  if all(F, f -> first degree f <= 1)
      	  then ( 
@@ -841,7 +833,7 @@ solveSystem List := List => o -> F -> (
 	       )
 	  else (
 	       (S,solsS) := totalDegreeStartSystem F;
-	       track(S,F,solsS,gamma=>exp(random(0.,2*pi)*ii))
+	       track(S,F,solsS,gamma=>exp(random(0.,2*pi)*ii),o)
 	       )
 	  )
      else if o.Software == PHCpack then result = solvePHCpack(F,o)
@@ -1936,13 +1928,20 @@ preSLPcompiledSLP (ZZ,Sequence) := o -> (nIns,S) -> (
      (map(CC^1,CC^(#consts), {consts}), p)
      )
 
+NAGtrace = method()
+NAGtrace Sequence := (nullSequence) -> DBG;
+NAGtrace ZZ := l -> (gbTrace=l; oldDBG=DBG; DBG=l; oldDBG);
+
 beginDocumentation()
 load "./NAG/doc.m2"
 
 TEST ///
-     assert(multistepPredictor(2_QQ,{0,0,0}) === {-3/8, 37/24, -59/24, 55/24}) -- Wikipedia: Adams-Bashforth
-     assert(multistepPredictor(2_QQ,{-1}) === {-1/8, 5/8}) -- computed by hand
-     assert(flatten entries (coefficients first multistepPredictorLooseEnd(2_QQ,{0,0,0}))#1=={1/120, 1/16, 11/72, 1/8})
+     --assert(multistepPredictor(2_QQ,{0,0,0}) === {-3/8, 37/24, -59/24, 55/24}) -- Wikipedia: Adams-Bashforth
+     --assert(multistepPredictor(2_QQ,{-1}) === {-1/8, 5/8}) -- computed by hand
+     --assert(flatten entries (coefficients first multistepPredictorLooseEnd(2_QQ,{0,0,0}))#1=={1/120, 1/16, 11/72, 1/8})
+     load "./NAG/TST/SoftwareM2.tst.m2"
+     load "./NAG/TST/SoftwareM2engine.tst.m2"
+     load "./NAG/TST/SoftwareM2enginePrecookedSLPs.tst.m2"
 ///
        
 end
@@ -1951,10 +1950,9 @@ end
 -- package.  None of it will be executed when the file is loaded,
 -- because loading stops when the symbol "end" is encountered.
 
+restart
 loadPackage "NAG"
 installPackage "NAG"
-restart
-installPackage("NAG", FileName=>"NAG.m2", SeparateExec=>true, AbsoluteLinks=>false, RerunExamples=>true)
 installPackage("NAG", SeparateExec=>true, AbsoluteLinks=>false, RerunExamples=>true)
 check "NAG"
 

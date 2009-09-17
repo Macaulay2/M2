@@ -1214,6 +1214,18 @@ PathTracker_OrNull* PathTracker::make(Matrix *HH)
   return p;
 }
 
+// for SLPs constructed on the top level
+PathTracker_OrNull* PathTracker::make(StraightLineProgram* slp_pred, StraightLineProgram* slp_corr)
+{
+  PathTracker *p = new PathTracker;
+  p->H = NULL;
+  p->slpH = NULL;
+  p->slpHxt = p->slpHxtH = slp_pred;
+  p->slpHxH = slp_corr;
+  p->C = NULL;
+  return p;
+}
+
 int PathTracker::makeFromHomotopy(Matrix *HH) 
 {
   if (num_path_trackers>MAX_NUM_PATH_TRACKERS) {
@@ -1231,42 +1243,23 @@ int PathTracker::makeFromHomotopy(Matrix *HH)
   
 
 
-// this is an engine function
-const MatrixOrNull * rawTrackPaths(StraightLineProgram* slp_pred, StraightLineProgram* slp_corr, const Matrix* start_sols, 
-				   M2_bool is_projective,
-				   M2_RRR init_dt, M2_RRR min_dt, M2_RRR max_dt, 
-				   M2_RRR dt_increase_factor, M2_RRR dt_decrease_factor, int num_successes_before_increase, 
-				   M2_RRR epsilon, int max_corr_steps,
-				   int pred_type)
-{
-  PathTracker P;
-  P.slpHxt = P.slpHxtH = slp_pred;
-  P.slpHxH = slp_corr;
-  P.C = start_sols->get_ring()->cast_to_CCC();
-  rawSetParametersPT(&P, is_projective,
-		     init_dt, min_dt, max_dt, 
-		     dt_increase_factor, dt_decrease_factor, num_successes_before_increase,
-		     epsilon, max_corr_steps,
-		     pred_type);
-  rawLaunchPT(&P, start_sols);
-  return P.getAllSolutions();
-}
 
 void rawSetParametersPT(PathTracker* PT, M2_bool is_projective,
-				    M2_RRR init_dt, M2_RRR min_dt, M2_RRR max_dt, 
-				    M2_RRR dt_increase_factor, M2_RRR dt_decrease_factor, int num_successes_before_increase,
-				    M2_RRR epsilon, int max_corr_steps,
-		      int pred_type)
+			M2_RRR init_dt, M2_RRR min_dt, 
+			M2_RRR dt_increase_factor, M2_RRR dt_decrease_factor, int num_successes_before_increase,
+			M2_RRR epsilon, int max_corr_steps, M2_RRR end_zone_factor, M2_RRR infinity_threshold,
+			int pred_type)
 {
   PT->is_projective = is_projective;
   PT->init_dt = init_dt;
   PT->min_dt = min_dt;
-  PT->max_dt = max_dt;
   PT->dt_increase_factor = dt_increase_factor; 
   PT->dt_decrease_factor = dt_decrease_factor;
   PT->num_successes_before_increase = num_successes_before_increase;
   PT->epsilon = epsilon;
   PT->max_corr_steps = max_corr_steps;
+  PT->end_zone_factor = end_zone_factor;
+  PT->infinity_threshold = infinity_threshold;
   PT->pred_type = pred_type;
 }
 
@@ -1311,16 +1304,18 @@ int PathTracker::track(const Matrix* start_sols)
   double epsilon2 = mpfr_get_d(epsilon,GMP_RNDN); epsilon2 *= epsilon2; //epsilon^2
   double t_step = mpfr_get_d(init_dt,GMP_RNDN); // initial step
   double dt_min_dbl = mpfr_get_d(min_dt,GMP_RNDN);
-  double dt_max_dbl = mpfr_get_d(max_dt,GMP_RNDN);
   double dt_increase_factor_dbl = mpfr_get_d(dt_increase_factor,GMP_RNDN);
   double dt_decrease_factor_dbl = mpfr_get_d(dt_decrease_factor,GMP_RNDN);
+  double infinity_threshold2 = mpfr_get_d(infinity_threshold,GMP_RNDN); infinity_threshold2 *= infinity_threshold2;
+  double end_zone_factor_dbl = mpfr_get_d(end_zone_factor,GMP_RNDN);
   
-  // const CCC* R = start_sols->get_ring()->cast_to_CCC(); 
+  if (C==NULL) C = start_sols->get_ring()->cast_to_CCC(); //fixes the problem for PrecookedSLPs
+
   int n = n_coords = start_sols->n_cols();  
   n_sols = start_sols->n_rows();
 
-  printf("epsilon2 = %e, t_step = %lf, dt_min_dbl = %lf, dt_increase_factor_dbl = %lf, dt_decrease_factor_dbl = %lf\n", 
-	 epsilon2, t_step, dt_min_dbl, dt_increase_factor_dbl, dt_decrease_factor_dbl);
+  if (gbTrace>1) printf("epsilon2 = %e, t_step = %lf, dt_min_dbl = %lf, dt_increase_factor_dbl = %lf, dt_decrease_factor_dbl = %lf\n", 
+			epsilon2, t_step, dt_min_dbl, dt_increase_factor_dbl, dt_decrease_factor_dbl);
 
   // memory distribution for arrays
   complex* s_sols = newarray(complex,n*n_sols);
@@ -1358,6 +1353,8 @@ int PathTracker::track(const Matrix* start_sols)
   for(int sol_n =0; sol_n<n_sols; sol_n++, s_s+=n, t_s++) {
     t_s->make(n,s_s); // cook a Solution
     t_s->status = PROCESSING;
+    bool end_zone = false;
+    double tol2 = epsilon2; // current tolerance squared, will change in end zone
     copy_complex_array(n,s_s,x0);
     *t0 = complex(0,0);
 
@@ -1365,8 +1362,18 @@ int PathTracker::track(const Matrix* start_sols)
     int predictor_successes = 0;
     int count = 0; // number of computed points
     while (t_s->status == PROCESSING && 1 - t0->getreal() > the_smallest_number) {
-      if ( dt->getreal() > 1 - t0->getreal() ) 
-	*dt = complex(1-t0->getreal());
+      if (1 - t0->getreal() <= end_zone_factor_dbl+the_smallest_number && !end_zone) {
+	end_zone = true;
+	// to do: see if this path coinsides with any other path on entry to the end zone
+      }
+      if (end_zone) { 
+	  if ( dt->getreal() > 1 - t0->getreal() ) 
+	  *dt = complex(1-t0->getreal()); 
+	} 
+      else { 
+	  if ( dt->getreal() > 1 - end_zone_factor_dbl - t0->getreal() ) 
+	  *dt = complex(1 - end_zone_factor_dbl - t0->getreal()); 
+	}  
       
       //printf("p: dt = %lf\n", dt->getreal()); 
       
@@ -1469,7 +1476,7 @@ int PathTracker::track(const Matrix* start_sols)
 	negate_complex_array(n,RHS);
 	solve_via_lapack_without_transposition(n,LHS,1,RHS,dx);
 	add_to_complex_array(n,x1t1,dx);
-	is_successful = norm2_complex_array(n,dx) < epsilon2*norm2_complex_array(n,x1t1);
+	is_successful = norm2_complex_array(n,dx) < tol2*norm2_complex_array(n,x1t1);
 	//printf("c: |dx|^2 = %lf\n", norm2_complex_array(n,dx));
       } while (!is_successful and n_corr_steps<max_corr_steps);
     
@@ -1487,11 +1494,9 @@ int PathTracker::track(const Matrix* start_sols)
 	if (is_successful && predictor_successes >= num_successes_before_increase) { 
 	  predictor_successes = 0;
 	  *dt  = complex(dt_increase_factor_dbl)*(*dt);	
-	  if (dt->getreal() > dt_max_dbl) 
-	    *dt = complex(dt_max_dbl);
 	}
       }
-      if (epsilon2 * norm2_complex_array(n,x0) > 1)
+      if (norm2_complex_array(n,x0) > infinity_threshold2)
 	t_s->status = INFINITY_FAILED;
     }
     // record the solution
@@ -1501,8 +1506,18 @@ int PathTracker::track(const Matrix* start_sols)
       t_s->status = REGULAR;
     slpHxH->evaluate(n+1,x0t0,HxH);
     cond_number_via_svd(n, HxH/*Hx*/, t_s->rcond);
-    //printf("(%d)", count); fflush(stdout);
+    if (gbTrace>0) {
+      if (sol_n%50==0) printf("\n");
+      switch (t_s->status) {
+      case REGULAR: printf("."); break;
+      case INFINITY_FAILED: printf("I"); break;
+      case MIN_STEP_FAILED: printf("M"); break;
+      default: printf("-", count); 
+      }
+      fflush(stdout);
+    }
   }
+  if (gbTrace>0) printf("\n");
   
 
   // clear arrays

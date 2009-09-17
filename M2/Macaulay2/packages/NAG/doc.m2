@@ -32,7 +32,21 @@ solveSystem F / first
      	///
 	}
 document {
-	Key => {(track, List, List, List),track},
+	Key => { (track, List, List, List), track, 
+	     [track,gamma], [track,tDegree], [track,tStep], [track,tStepMin], 
+	     gamma, tDegree, tStep, tStepMin, 
+	     [track,stepIncreaseFactor], [track, numberSuccessesBeforeIncrease], 
+	     stepIncreaseFactor, numberSuccessesBeforeIncrease, 
+	     Predictor, [track,Predictor], RungeKutta4, Multistep, Tangent, Euler, Secant,
+	     MultistepDegree, [track,MultistepDegree], ProjectiveNewton,
+     	     [track,EndZoneFactor], [track,maxCorrSteps], [track,InfinityThreshold],
+     	     EndZoneFactor, maxCorrSteps, InfinityThreshold,
+     	     Projectivize, [track,Projectivize], AffinePatches, DynamicPatch, 
+	     SLP, [track,SLP], HornerForm, CompiledHornerForm, 
+	     CorrectorTolerance, [track,CorrectorTolerance], 
+     	     [track,SLPcorrector], [track,SLPpredictor], [track,NoOutput], 
+	     SLPcorrector, SLPpredictor, NoOutput
+	     },
 	Headline => "track a user homotopy",
 	Usage => "solsT = track(S,T,solsS)",
 	Inputs => { 
@@ -52,7 +66,7 @@ track(S,T,solsS) / first
 	}
 
 document {
-	Key => {(refine, List, List), refine, [refine,Tolerance], [refine, maxCorrSteps], [refine, Software]},
+	Key => {(refine, List, List), refine, Tolerance, [refine,Tolerance], [refine, maxCorrSteps], [refine, Software]},
 	Headline => "refine numerical solutions to a system of polynomial equations",
 	Usage => "solsR = refine(T,sols)",
 	Inputs => { 
@@ -122,7 +136,7 @@ document {
      }
 			      		    								 
 document {
-	Key => {(getSolution, ZZ), getSolution, [getSolution,SolutionAttributes], 
+	Key => {(getSolution, ZZ), getSolution, SolutionAttributes, [getSolution,SolutionAttributes], 
 	     Coordinates, SolutionStatus, LastT, RCondition},
 	Headline => "get various attributes of the specified solution",
 	Usage => "s = getSolution i, s = getSolution(i,SolutionAttributes=>...)",

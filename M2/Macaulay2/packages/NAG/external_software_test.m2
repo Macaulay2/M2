@@ -1,9 +1,6 @@
 restart
-loadPackage ("NAG", FileName=>"../NAG.m2", 
-     Configuration=>{"PHCpack"=>"./phc", "Bertini"=>"./bertini", "HOM4PS2"=>"./hom4ps2_in_out"})
-debug NAG
+loadPackage "NAG"
 DBG = 2;
-printingPrecision = 10;
 ------------------------------------------------------
 -- COMPARISON OF              -- PHCpack -- Bertini -- hom4ps2 --
 load "benchmarks.m2";
