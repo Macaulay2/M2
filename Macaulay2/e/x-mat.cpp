@@ -802,6 +802,11 @@ unsigned long rawStraightLineProgramHash(const StraightLineProgram *slp) {
 
 /// PathTracker /////////////////////////////////////////////////////
 
+const PathTracker_OrNull *rawPathTrackerPrecookedSLPs(StraightLineProgram* slp_pred, StraightLineProgram* slp_corr)
+{
+  return PathTracker::make(slp_pred, slp_corr);
+}
+
 const PathTracker_OrNull *rawPathTracker(Matrix *HH)
 {
   return PathTracker::make(HH);

@@ -1,6 +1,23 @@
 loadPackage "ExampleIdeals"
+
+smallExample = () -> (
+     R := CC[x,y];
+     S := {x^2-1,y^2-1};
+     T := {x^2+y^2-1, x*y};
+     solsS := {(1,-1),(1,1),(-1,1),(-1,-1)};
+     (S,T,solsS)
+     )
+
+smallInfinityExample = () -> (
+     R := CC[x,y];
+     S := {x^2-1,y^2-1};
+     T := {x^2+y^2-1, x-y};
+     solsS := {(1,-1),(1,1),(-1,1),(-1,-1)};
+     (S,T,solsS)
+     )
+
 example2 = () -> (
-     R = CC[s1,s2,g1,g2,C1,C2];
+     R := CC[s1,s2,g1,g2,C1,C2];
      ideal(
 	  s1^2+g1^2 - 1,
 	  s2^2+g2^2 - 1,
@@ -11,8 +28,8 @@ example2 = () -> (
 )
 
 example1 = () -> (
-     R = CC[s1,s2,g1,g2,C1,C2];
-     I = ideal( -- bertini is slow on this
+     R := CC[s1,s2,g1,g2,C1,C2];
+     ideal( -- bertini is slow on this
   	  s1^2+g1^2 - 1, 
   	  s2^2+g2^2 - 1,
   	  C1*g1^3+C2*g2^3 - 1.2,

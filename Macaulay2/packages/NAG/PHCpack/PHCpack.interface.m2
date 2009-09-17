@@ -5,19 +5,20 @@ solvePHCpack = method(TypicalValue => List)
 solvePHCpack (List,HashTable) := List => (F,o) -> (
      -- assume the ideal is 0-dim. 
      -- !!! problem with temporaryFileName: cygwin's /tmp is different from Windows' /tmp 
-     tarsolfile := -- temporaryFileName() | 
+     tarsolfile := temporaryFileName() | 
      "PHCtasols";
-     targetfile := -- temporaryFileName() | 
+     targetfile := temporaryFileName() | 
      "PHCtarget";
-     outfile := -- temporaryFileName() | 
+     outfile := temporaryFileName() | 
      "PHCoutput";
+     {tarsolfile, targetfile, outfile} / (f->if fileExists f then removeFile f);
      -- writing data to the corresponding files                                                                                                                                                                           
      systemToFile(F,targetfile);
      -- launching blackbox solver; converting the solutions to the Maple format                                                                                                                                           
      run(PHCexe|" -b "|targetfile|" "|outfile);
      run(PHCexe|" -z "|targetfile|" "|tarsolfile);
      -- parse and output the solutions                                                                                                                                                                                    
-     result = parseSolutions(tarsolfile, R);
+     result = parseSolutions(tarsolfile, ring first F);
      -- clean up                                                                                                                                                                                                          
      if DBG<10 then (
 	  removeFile targetfile;
@@ -30,17 +31,17 @@ solvePHCpack (List,HashTable) := List => (F,o) -> (
 trackPHCpack = method(TypicalValue => List)
 trackPHCpack (List,List,List,HashTable) := List => (S,T,solsS,o) -> (
      n := #T;
-     targetfile := -- temporaryFileName() | 
+     targetfile := temporaryFileName() | 
      "PHCtarget";
-     startfile := -- temporaryFileName() | 
+     startfile := temporaryFileName() | 
      "PHCstart";
-     outfile := -- temporaryFileName() | 
+     outfile := temporaryFileName() | 
      "PHCoutput";
-     solsSfile := -- temporaryFileName() | 
+     solsSfile := temporaryFileName() | 
      "PHCstartsols";
-     solsTfile := -- temporaryFileName() | 
+     solsTfile := temporaryFileName() | 
      "PHCtargetsols";
-     batchfile := -- temporaryFileName() | 
+     batchfile := temporaryFileName() | 
      "PHCbat";
      {targetfile, startfile, outfile,
 	  solsSfile, solsTfile, batchfile } / (f->if fileExists f then removeFile f);
@@ -157,8 +158,8 @@ parseSolutions (String,Ring) := (s,R) -> (
      L := get s;
      L = replace("=", "=>", L);
      L = replace("I", "ii", L);
+     L = replace("E\\+","e",L);
      L = replace("E", "e", L);
-     L = replace("e\\+","e",L);
      L = replace("time", "\"time\"", L);
      L = replace("multiplicity", "\"mult\"", L);
      

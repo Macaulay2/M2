@@ -289,11 +289,13 @@ class PathTracker : public object
 
   // parameters
   M2_bool is_projective;
-  M2_RRR init_dt, min_dt, max_dt;
+  M2_RRR init_dt, min_dt;
   M2_RRR dt_increase_factor, dt_decrease_factor;
   int num_successes_before_increase;
   M2_RRR epsilon;
   int max_corr_steps;
+  M2_RRR end_zone_factor;
+  M2_RRR infinity_threshold;
   int pred_type;
 
   void make_slps(); // creates slpHxt and alpHxH
@@ -301,6 +303,7 @@ class PathTracker : public object
   PathTracker();
 public:
   static PathTracker_OrNull *make(Matrix*); // from homotopy
+  static PathTracker_OrNull *make(StraightLineProgram* slp_pred, StraightLineProgram* slp_corr); // precookedSLPs
   virtual ~PathTracker();
 
   void text_out(buffer& o) const;
@@ -315,10 +318,10 @@ public:
 
   // raw "friends"
   friend void rawSetParametersPT(PathTracker* PT, M2_bool is_projective,
-				    M2_RRR init_dt, M2_RRR min_dt, M2_RRR max_dt, 
-				    M2_RRR dt_increase_factor, M2_RRR dt_decrease_factor, int num_successes_before_increase,
-				    M2_RRR epsilon, int max_corr_steps,
-				    int pred_type);    
+				 M2_RRR init_dt, M2_RRR min_dt, 
+				 M2_RRR dt_increase_factor, M2_RRR dt_decrease_factor, int num_successes_before_increase,
+				 M2_RRR epsilon, int max_corr_steps, M2_RRR end_zone_factor, M2_RRR infinity_threshold,
+				 int pred_type);    
   friend const MatrixOrNull *rawTrackPaths(StraightLineProgram* slp_pred, StraightLineProgram* slp_corr, const Matrix* start_sols , 
 				    M2_bool is_projective,
 				    M2_RRR init_dt, M2_RRR min_dt, M2_RRR max_dt, 

@@ -1888,14 +1888,15 @@ enum gbTraceValues
 				    M2_RRR epsilon, int max_corr_steps,
 				    int pred_type);  
 
+  const PathTracker_OrNull *rawPathTrackerPrecookedSLPs(StraightLineProgram* slp_pred, StraightLineProgram* slp_corr);
   const PathTracker_OrNull *rawPathTracker(Matrix *);
   M2_string rawPathTrackerToString(const PathTracker *); /* connected */
   unsigned long rawPathTrackerHash(const PathTracker *); /* connected */
   void rawSetParametersPT(PathTracker* PT, M2_bool is_projective,
-				    M2_RRR init_dt, M2_RRR min_dt, M2_RRR max_dt, 
-				    M2_RRR dt_increase_factor, M2_RRR dt_decrease_factor, int num_successes_before_increase,
-				    M2_RRR epsilon, int max_corr_steps,
-				    int pred_type);  
+			  M2_RRR init_dt, M2_RRR min_dt, 
+			  M2_RRR dt_increase_factor, M2_RRR dt_decrease_factor, int num_successes_before_increase,
+			  M2_RRR epsilon, int max_corr_steps, M2_RRR end_zone_factor, M2_RRR infinity_threshold,
+			  int pred_type);  
   void rawLaunchPT(PathTracker* PT, const Matrix* start_sols);
   const MatrixOrNull *rawGetSolutionPT(PathTracker* PT, int solN);
   const MatrixOrNull *rawGetAllSolutionsPT(PathTracker* PT);
