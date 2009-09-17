@@ -163,7 +163,7 @@ document {
 	  },
      HEADER3 "Real and complex numbers",
      "Real and complex numbers are approximate numbers, 
-     implemented using the ", EM "mpfr", " library.",
+     implemented using the ", TO "MPFR", " library.",
      EXAMPLE {
 	  "1.372489274987",
 	  "1.3454353 * 10^20",
