@@ -3,189 +3,88 @@
 --
 -- PURPOSE: Computations with convex polyhedra 
 -- PROGRAMMER : René Birkner 
--- UPDATE HISTORY : April 2008, December 2008, March 2009, Juli 2009
+-- UPDATE HISTORY : April 2008, December 2008, March 2009, Juli 2009,
+--     	    	    September 2009
 ---------------------------------------------------------------------------
 newPackage("Polyhedra",
     Headline => "A package for computations with convex polyhedra",
-    Version => "1.0.1",
-    Date => "July 30, 2009",
+    Version => "1.0.5",
+    Date => "September 20, 2009",
     Authors => {
          {Name => "René Birkner",
 	  HomePage => "http://page.mi.fu-berlin.de/rbirkner/index.htm",
 	  Email => "rbirkner@mi.fu-berlin.de"}},
-    DebuggingMode => true,
-    Configuration => {}
+    DebuggingMode => true
     )
 
-export {Polyhedron, Cone, Fan, polyhedronBuilder, coneBuilder, fanBuilder, convexHull, posHull, intersection, makeFan, addCone,
-        equalLists, symmDiff, union, 
+export {PolyhedralObject, Polyhedron, Cone, Fan, convexHull, posHull, intersection, makeFan, addCone, 
         ambDim, cones, genCones, halfspaces, hyperplanes, linSpace, rays, vertices,
-        areCompatible, commonFace, contains, equals, isCompact, isComplete, isEmpty, isFace, isPointed, isProjective, 
+        areCompatible, commonFace, contains, isCompact, isComplete, isEmpty, isFace, isPointed, isProjective, 
 	isPure, isSmooth,
 	faces, fVector, hilbertBasis, incompCones, inInterior, interiorPoint, interiorVector, latticePoints, maxFace, minFace, 
 	minkSummandCone, proximum, skeleton, smallestFace, smoothSubfan, tailCone, triangulate, volume, vertexEdgeMatrix, 
 	vertexFacetMatrix, 
 	affineHull, affineImage, affinePreimage, bipyramid, ccRefinement, coneToPolyhedron, directProduct, 
-	dualCone, imageFan, minkowskiSum, normalFan, polar, pyramid,
+	dualCone, imageFan, minkowskiSum, normalFan, polar, pyramid, sublatticeBasis, toSublattice,
 	crossPolytope, cyclicPolytope, emptyPolyhedron, hirzebruch, hypercube, newtonPolytope, posOrthant, statePolytope, stdSimplex,
 	saveSession}
 
 needsPackage "FourierMotzkin"
 
 
+-- Definind the new type PolyhedralObject
+PolyhedralObject = new Type of HashTable
+globalAssignment PolyhedralObject
+
 -- Defining the new type Polyhedron
-Polyhedron = new Type of MutableHashTable
+Polyhedron = new Type of PolyhedralObject
 Polyhedron.synonym = "convex polyhedron"
-Polyhedron.GlobalAssignHook = globalAssignFunction
-Polyhedron.GlobalReleaseHook = globalReleaseFunction
+globalAssignment Polyhedron
 
 -- Defining the new type Cone
-Cone = new Type of MutableHashTable
+Cone = new Type of PolyhedralObject
 Cone.synonym = "convex rational cone"
-Cone.GlobalAssignHook = globalAssignFunction
-Cone.GlobalReleaseHook = globalReleaseFunction
+globalAssignment Cone
 
 -- Defining the new type Fan
-Fan = new Type of MutableHashTable
-Fan.GlobalAssignHook = globalAssignFunction
-Fan.GlobalReleaseHook = globalReleaseFunction
+Fan = new Type of PolyhedralObject
+globalAssignment Fan
 
 
 -- Modifying the standard output for a polyhedron to give an overview of its characteristica
-net Polyhedron := P -> ( info:= hashTable{"ambient dimension" => P#"ambientDimension",
-							"dimension of polyhedron" => P#"polyhedronDimension",
-							"dimension of lineality space" => P#"linealitySpaceDimension",
-							"number of facets" => P#"numFacets", 
-							"number of vertices" => P#"numVertices",
-							"number of rays" => P#"numRays"};
-				horizontalJoin flatten ( 
-				"{", 
-	  			-- the first line prints the parts vertically, second: horizontally
-				stack (horizontalJoin \ sort apply(pairs info,(k,v) -> (net k, " => ", net v))),
-				-- between(", ", apply(pairs x,(k,v) -> net k | "=>" | net v)), 
-				"}" ))
+net Polyhedron := P -> ( horizontalJoin flatten (
+	  "{",
+	  -- prints the parts vertically
+	  stack (horizontalJoin \ sort apply({"ambient dimension", 
+			                      "dimension of polyhedron",
+					      "dimension of lineality space",
+					      "number of rays",
+					      "number of vertices", 
+					      "number of facets"}, key -> (net key, " => ", net P#key))),
+	  "}" ))
+				
+
+-- Modifying the standard output for a Cone to give an overview of its characteristica
+net Cone := C -> ( horizontalJoin flatten (
+	  "{",
+	  -- prints the parts vertically
+	  stack (horizontalJoin \ sort apply({"ambient dimension", 
+			                      "dimension of the cone",
+					      "dimension of lineality space",
+					      "number of rays",
+					      "number of facets"}, key -> (net key, " => ", net C#key))),
+	  "}" ))
 
 
 -- Modifying the standard output for a Cone to give an overview of its characteristica
-net Cone := C -> ( info:= hashTable{"ambient dimension" => C#"ambientDimension",
-							"dimension of the cone" => C#"coneDimension",
-							"dimension of lineality space" => C#"linealitySpaceDimension",
-							"number of facets" => C#"numFacets", 
-							"number of rays" => C#"numRays"};
-				horizontalJoin flatten ( 
-				"{", 
-	  			-- the first line prints the parts vertically, second: horizontally
-				stack (horizontalJoin \ sort apply(pairs info,(k,v) -> (net k, " => ", net v))),
-				-- between(", ", apply(pairs x,(k,v) -> net k | "=>" | net v)), 
-				"}" ))
-
-
--- Modifying the standard output for a Cone to give an overview of its characteristica
-net Fan := F -> ( info:= hashTable{"ambient dimension" => F#"ambientDimension",
-							"top dimension of the cones" => F#"topDimension",
-							"number of generating cones" => F#"numGeneratingCones",
-							"number of rays" => F#"numRays"};
-				horizontalJoin flatten ( 
-				"{", 
-	  			-- the first line prints the parts vertically, second: horizontally
-				stack (horizontalJoin \ sort apply(pairs info,(k,v) -> (net k, " => ", net v))),
-				-- between(", ", apply(pairs x,(k,v) -> net k | "=>" | net v)), 
-				"}" ))
-
-
-
--- PURPOSE : Building the polyhedron 'P'
---   INPUT : '(hyperA,verticesA)',  a pair of two matrices each describing the homogenization of P
---                                 directly ('verticesA') and in the dual description ('hyperA')
---  OUTPUT : The polyhedron 'P'
-polyhedronBuilder = method()
-polyhedronBuilder (Sequence,Sequence) := (hyperA,verticesA) -> (
-        -- Checking if the polyhedron is empty
-	test := matrix join({{1}},toList((numgens target verticesA#0)-1:{0_QQ}));
-	if  (((transpose(verticesA#0))*test == 0) and  ((transpose(verticesA#1))*test == 0)) then (
-	     zeromap := map(QQ^(numgens target verticesA#0),QQ^0,0);
-	     verticesA = (zeromap,zeromap);
-	     hyperA = fourierMotzkin verticesA);
-	-- Sorting into vertices and rays
-	VR := verticesA#0;
-	B := matrix toList(numgens target VR:{0_QQ});
-	C := B;
-	scan(numgens source VR, n -> (if (VR_n_0=!=0_QQ) then B=B|((1/VR_n_0)*VR_{n}) else C=C|(VR_{n})));
-	B = B_{1..(numgens source B)-1};
-	C = C_{1..(numgens source C)-1};
-	-- Elimination of the trivial halfspace
-	H := map(QQ^0, QQ^(numgens target (hyperA#0)),0);
-	test = matrix join({{-1}},toList((numgens target (hyperA#0))-1:{0_QQ}));
-	scan(numgens source (hyperA#0), i -> ( if (test=!=(hyperA#0)_{i}) then H=H || transpose((hyperA#0)_{i})));
-	-- Determine the lineality space
-	LS := verticesA#1;
-	LS = LS^{1..(numgens target LS)-1};
-	-- Determine the defining hyperplanes
-	HP := transpose(hyperA#1);
-	HP = (HP_{1..(numgens source HP)-1},(-1)*HP_{0});
-	-- Defining P
-	P := new Polyhedron;
-	P#"ambientDimension" = (numgens target B)-1;
-	P#"polyhedronDimension" =  ((numgens target B)-1)-(rank(hyperA#1));
-	P#"linealitySpaceDimension" = numgens source LS;
-	P#"linealitySpace" = LS;
-	P#"numVertices" = numgens source B;
-	P#"numRays" = numgens source C;
-	P#"vertices" = B^{1..(numgens target B)-1};
-	P#"rays" = C^{1..(numgens target C)-1};
-	P#"numFacets" = numgens target H;
-	P#"halfspaces" = (H_{1..(numgens source H)-1},(-1)*H_{0});
-	P#"hyperplanes" = HP;
-	P#"homogenizedVertices" = verticesA;
-	P#"homogenizedHalfspaces" = hyperA;
-	P)
-   
-   
--- PURPOSE : Building the Cone 'C'
---   INPUT : '(genrays,dualgens)',  a pair of two matrices each describing the cone C
---                                	directly  as generating rays ('genrays') and in the 
---						dual description as intersection of halfspaces through 
---						the origin ('dualgens')
---  OUTPUT : The Cone 'C'
-coneBuilder = method()
-coneBuilder (Sequence,Sequence) := (genrays,dualgens) -> (
-      -- Sorting into rays, lineality space generators, supporting halfspaces, and hyperplanes
-	RM := genrays#0;
-	LS := genrays#1;
-	HS := transpose((-1)*(dualgens#0));
-	HP := transpose(dualgens#1);
-	-- Defining C
-	C := new Cone;
-	C#"ambientDimension" = numgens target RM;
-	C#"coneDimension" = (numgens target RM)-(rank HP);
-	C#"linealitySpaceDimension" = numgens source LS;
-	C#"linealitySpace" = LS;
-	C#"numRays" = numgens source RM;
-	C#"rays" = RM;
-	C#"numFacets" = numgens target HS;
-	C#"halfspaces" = HS;
-	C#"hyperplanes" = HP;
-	C#"genrays" = genrays;
-	C#"dualgens" = dualgens;
-	C)
-   
-   
-   
-fanBuilder = method()
-fanBuilder (List,List,List,List) := (GC,rayList,Ffaces,compError) -> (
-     F := new Fan;
-     F#"generatingCones" = GC;
-     F#"ambientDimension" = ambDim(GC#0);
-     F#"topDimension" = dim(GC#0);
-     F#"numGeneratingCones" = #GC;
-     F#"rays" = rayList;
-     F#"numRays" = #rayList;
-     F#"isPure" = (dim(GC#0) == dim(last(GC)));
-     F#"faces" = Ffaces;
-     F#"isComplete" = (Ffaces == {});
-     if (compError != {}) then (
-	  F#"comperror" = compError);
-     F);
+net Fan := F -> ( horizontalJoin flatten (
+	  "{",
+	  -- prints the parts vertically
+	  stack (horizontalJoin \ sort apply({"ambient dimension", 
+			                      "top dimension of the cones",
+					      "number of generating cones",
+					      "number of rays"}, key -> (net key, " => ", net F#key))),
+	  "}" ))
 
 
 
@@ -197,37 +96,20 @@ convexHull = method(TypicalValue => Polyhedron)
 --		 'Mrays'  a Matrix containing the generating rays as column vectors
 --  OUTPUT : 'P'  a Polyhedron
 -- COMMENT : The description by vertices and rays is stored in P as well as the 
---           description by defining halfspaces and hyperplanes.
+--           description by defining half-spaces and hyperplanes.
 convexHull(Matrix,Matrix) := (Mvert,Mrays) -> (
 	-- checking for input errors
-     	if ((numgens target Mvert) =!= (numgens target Mrays)) then (
-	     error ("points and rays must lie in the same space"));
-	local Mv;
-	local Mr;
-	R := ring source Mvert;
-	if (R === ZZ) then (
-		Mv = substitute(Mvert, QQ))
-	else if (R === QQ) then (
-		Mv = Mvert)
-	else error ("expected points over ZZ or QQ");
-	R = ring source Mrays;
-	if (R === ZZ) then (
-		Mr = substitute(Mrays, QQ))
-	else if (R === QQ) then (
-		Mr = Mrays)
-	else error ("expected rays over ZZ or QQ");
-	if (numRows(Mv) == 0) then (
-	     Mv = matrix{{0}});
-	if (numColumns(Mv) == 0) then (
-	     Mv = map(QQ^(numRows(Mv)),QQ^1,0));
-	if (numRows(Mr) == 0) then (
-	     Mr = matrix{{0}});
-	if (numColumns(Mr) == 0) then (
-	     Mr = map(QQ^(numRows(Mr)),QQ^1,0));
+     	if numgens target Mvert =!= numgens target Mrays then error ("points and rays must lie in the same space");
+	Mvert = chkZZQQ(Mvert,"points");
+	Mrays = chkZZQQ(Mrays,"rays");
+	if numRows Mvert == 0 then Mvert = matrix{{0}};
+	if numColumns Mvert == 0 then Mvert = map(target Mvert,QQ^1,0);
+	if numRows Mrays == 0 then Mrays = matrix{{0}};
+	if numColumns Mrays == 0 then Mrays = map(target Mrays,QQ^1,0);
 	-- homogenization of M
-	Mv = (matrix {toList(numgens source Mv:1_QQ)})||Mv;
-	Mr = (matrix {toList(numgens source Mr:0_QQ)})||Mr;
-	M := Mv|Mr;
+	Mvert = map(QQ^1,source Mvert,(i,j)->1) || Mvert;
+	Mrays = map(QQ^1,source Mrays,0) || Mrays;
+	M := Mvert | Mrays;
 	-- Computing generators of the cone M and its dual cone
 	hyperA := fourierMotzkin M;
 	verticesA := fourierMotzkin hyperA;
@@ -235,22 +117,20 @@ convexHull(Matrix,Matrix) := (Mvert,Mrays) -> (
 
 
 --   INPUT : 'M'  a Matrix containing the generating points as column vectors
-convexHull(Matrix) := M -> (
+convexHull Matrix := M -> (
 	-- Checking for input errors
-	if (numRows(M) == 0) then (
-	     M = matrix{{0}});
-	if (numColumns(M) == 0) then (
-	     M = map(QQ^(numRows(M)),QQ^1,0));
+	M = chkZZQQ(M,"points");
+	if numRows M == 0 then M = matrix{{0}};
+	if numColumns M == 0 then M = map(target M,QQ^1,0);
 	-- Generating the zero ray R
-	R := matrix toList(numgens target M:{0_QQ});
+	R := map(target M,QQ^1,0);
 	convexHull(M,R))
 
 
 --   INPUT : '(P1,P2)'  two polyhedra
 convexHull(Polyhedron,Polyhedron) := (P1,P2) -> (
 	-- Checking for input errors
-	if ((P1#"ambientDimension") =!= (P2#"ambientDimension")) then (
-	     error ("Polyhedra must lie in the same ambientspace"));
+	if P1#"ambient dimension" =!= P2#"ambient dimension" then error("Polyhedra must lie in the same ambient space");
 	-- Combining the vertices/rays and the lineality spaces in one matrix each
 	M := (P1#"homogenizedVertices")#0 | (P2#"homogenizedVertices")#0;
 	LS := (P1#"homogenizedVertices")#1 | (P2#"homogenizedVertices")#1;
@@ -262,91 +142,62 @@ convexHull(Polyhedron,Polyhedron) := (P1,P2) -> (
 --     	    	    and (vertices,rays) given by '(V,R)'
 convexHull List := L -> (
      -- This function checks if the inserted pair is a pair of matrices that give valid vertices and rays
-     isValidPair := S -> (
-	  test := (#S == 2);
-	  if test then (
-	       if (S#1 == 0) then ( test = (instance(S#0,Matrix)))
-	       else ( test = (instance(S#1,Matrix));
-		    if test then ( test = (numRows(S#0) == numRows(S#1)))));
-	  test);
+     isValidPair := S -> #S == 2 and if S#1 == 0 then instance(S#0,Matrix) else instance(S#1,Matrix) and numRows S#0 == numRows S#1;
      -- Checking for input errors  
-     if (L=={}) then (error ("List of convex objects must not be empty"));   
+     if L == {} then error("List of convex objects must not be empty");   
      P := L#0;
      -- The first entry in the list determines the ambient dimension 'n'
      n := 0;
-     local V,R;
-     if ((not instance(P,Cone)) and (not instance(P,Polyhedron)) and (not instance(P,Sequence)) and (not instance(P,Matrix))) then (
-	  error ("The input must be cones, polyhedra, vertices, or (vertices,rays)."));
+     local V;
+     local R;
+     if (not instance(P,Cone)) and (not instance(P,Polyhedron)) and (not instance(P,Sequence)) and (not instance(P,Matrix)) then 
+	  error ("The input must be cones, polyhedra, vertices, or (vertices,rays).");
      -- Adding the vertices and rays to 'V,R', depending on the type of 'P'
      if instance(P,Cone) then (
-	  n = P#"ambientDimension";
+	  n = P#"ambient dimension";
 	  V = map(QQ^n,QQ^1,0);
-	  R = (rays P)|(linSpace P)|(-(linSpace P)))
+	  R = rays P | linSpace P | -(linSpace P))
      else if instance(P,Polyhedron) then (
-	  n = P#"ambientDimension";
+	  n = P#"ambient dimension";
 	  V = vertices P;
-	  R = (rays P)|(linSpace P)|(-(linSpace P)))
+	  R = rays P | linSpace P | -(linSpace P))
      else if instance(P,Sequence) then (
 	  -- Checking for input errors
-	  if (not isValidPair(P)) then (
-	       error ("Vertices and rays must be given as a sequence of two matrices with the same number of rows"));
-	  n = numRows(P#0);
-	  if ((ring(P#0) =!= ZZ) and (ring(P#0) =!= QQ)) then (
-	       error ("expected halfspaces over ZZ or QQ"));
-	  V = substitute(P#0,QQ);
-	  if (P#1 == 0) then (
-	       R = map(QQ^n,QQ^1,0))
-	  else (  
-	       if ((ring(P#1) =!= ZZ) and (ring(P#1) =!= QQ)) then (
-		    error ("expected halfspaces over ZZ or QQ"));
-	       R = substitute(P#1,QQ)))
+	  if not isValidPair(P) then error ("Vertices and rays must be given as a sequence of two matrices with the same number of rows");
+	  V = chkZZQQ(P#0,"vertices");
+	  n = numRows V;
+	  if P#1 == 0 then R = map(QQ^n,QQ^1,0)
+	  else R = chkZZQQ(P#1,"rays"))
      else (
-	  if ((ring(P) =!= ZZ) and (ring(P) =!= QQ)) then (
-	       error ("expected vertices over ZZ or QQ"));
+	  V = chkZZQQ(P,"vertices");
 	  n = numRows P;
-	  V = substitute(P,QQ);
 	  R = map(QQ^n,QQ^1,0));
-     L = drop(L,1);
      --  Adding the vertices and rays to 'V,R', for each remaining element in 'L', depending on the type of 'P'
-     scan(L, C1 -> (
+     L = apply(drop(L,1), C1 -> (
 	       -- Checking for further input errors
-	       if (not instance(C1,Cone) and (not instance(C1,Polyhedron)) and (not instance(C1,Sequence)) and 
-		    (not instance(C1,Matrix))) then (
-		    error ("The input must be cones, polyhedra, vertices, or (vertices,rays)."));
+	       if (not instance(C1,Cone)) and (not instance(C1,Polyhedron)) and (not instance(C1,Sequence)) and 
+		    (not instance(C1,Matrix)) then error("The input must be cones, polyhedra, vertices, or (vertices,rays).");
 	       if instance(C1,Cone) then (
-		    if ((ambDim C1) != n) then (
-			 error ("All Cones and Polyhedra must be in the same ambient space"));
-		    R = R | rays C1 | (linSpace C1) | (-(linSpace C1)))
+		    if ambDim C1 != n then error("All Cones and Polyhedra must be in the same ambient space");
+		    ({},rays C1 | linSpace C1 | -(linSpace C1)))
 	       else if instance(C1,Polyhedron) then (
-		    if ((ambDim C1) != n) then (
-			 error ("All Cones and Polyhedra must be in the same ambient space"));
-		    V = V | vertices C1;
-		    R = R | rays C1 | (linSpace C1) | (-(linSpace C1)))
+		    if ambDim C1 != n then error("All Cones and Polyhedra must be in the same ambient space");
+		    (vertices C1,rays C1 | linSpace C1 | -(linSpace C1)))
 	       else if instance(C1,Sequence) then (
 		    -- Checking for input errors
-		    if (not isValidPair(C1)) then (
-			 error ("(Vertices,rays) must be given as a sequence of two matrices with the same number of rows"));
-		    if (numRows(C1#0) != n) then (
-			 error ("(Vertices,rays) must be of the correct dimension."));
-		    if ((ring(C1#0) =!= ZZ) and (ring(C1#0) =!= QQ)) then (
-			 error ("expected (vertices,rays) over ZZ or QQ"));
-		    V = V | substitute(C1#0,QQ);
-		    if (C1#1 != 0) then (
-			 if ((ring(C1#1) =!= ZZ) and (ring(C1#1) =!= QQ)) then (
-			      error ("expected halfspaces over ZZ or QQ"));
-			 R = R | substitute(C1#1,QQ)))
+		    if not isValidPair(C1) then error("(Vertices,rays) must be given as a sequence of two matrices with the same number of rows");
+		    if numRows C1#0 != n then error("(Vertices,rays) must be of the correct dimension.");
+		    if C1#1 != 0 then (chkZZQQ(C1#0,"vertices"),chkZZQQ(C1#1,"rays"))
+		    else (chkZZQQ(C1#0,"vertices"),{}))
 	       else (
 		    -- Checking for input errors
-		    if (numRows(C1) != n) then (
-			 error ("Vertices must be of the correct dimension."));
-		    if ((ring(C1) =!= ZZ) and (ring(C1) =!= QQ)) then (
-			 error ("expected vertices over ZZ or QQ"));
-		    V = V | substitute(C1,QQ))));
-     if (R == 0) then (
-	  P = convexHull V)
-     else (
-	  P = convexHull(V,R));
-     P)
+		    if numRows C1 != n then error("Vertices must be of the correct dimension.");
+		    (chkZZQQ(C1,"vertices"),{}))));
+     LV := flatten apply(L, l -> l#0);
+     if LV != {} then V = V | matrix {LV};
+     L = flatten apply(L, l -> l#1);
+     if L != {} then R = R | matrix {L};
+     if R == 0 then convexHull V else convexHull(V,R))
 
 
 
@@ -359,54 +210,41 @@ posHull = method(TypicalValue => Cone)
 --				lineality space as column vectors
 --  OUTPUT : 'C'  a Cone
 -- COMMENT : The description by rays and lineality space is stored in C as well 
---		 as the description by defining halfspaces and hyperplanes.
+--		 as the description by defining half-spaces and hyperplanes.
 posHull(Matrix,Matrix) := (Mrays,LS) -> (
-	-- checking for input errors
-     	if ((numgens target Mrays) =!= (numgens target LS)) then (
-	     error ("rays and linSpace generators must lie in the same space"));
-	local Mr;
-	local Mls;
-	R := ring source Mrays;
-	if (R === ZZ) then (
-		Mr = substitute(Mrays, QQ))
-	else if (R === QQ) then (
-		Mr = Mrays)
-	else error ("expected rays over ZZ or QQ");
-	R = ring source LS;
-	if (R === ZZ) then (
-		Mls = substitute(LS, QQ))
-	else if (R === QQ) then (
-		Mls = LS)
-	else error ("expected rays over ZZ or QQ");
-	-- Computing generators of the cone and its dual cone
-	dualgens := fourierMotzkin(Mr,Mls);
-	genrays := fourierMotzkin dualgens;
-	coneBuilder(genrays,dualgens))
+     -- checking for input errors
+     if numRows Mrays =!= numRows LS then error("rays and linSpace generators must lie in the same space");
+     Mrays = chkZZQQ(Mrays,"rays");
+     LS = chkZZQQ(LS,"lineality space");
+     -- Computing generators of the cone and its dual cone
+     dualgens := fourierMotzkin(Mrays,LS);
+     genrays := fourierMotzkin dualgens;
+     coneBuilder(genrays,dualgens))
 
 
---   INPUT : 'M'  a Matrix containing the generating rays as column vectors
-posHull(Matrix) := M -> (
-	-- Generating the zero ray R
-	R := matrix toList(numgens target M:{0_QQ});
-	posHull(M,R))
+--   INPUT : 'R'  a Matrix containing the generating rays as column vectors
+posHull Matrix := R -> (
+     R = chkZZQQ(R,"rays");
+     -- Generating the zero lineality space LS
+     LS := map(target R,QQ^1,0);
+     posHull(R,LS))
 
 
 --   INPUT : '(C1,C2)'  two cones
 posHull(Cone,Cone) := (C1,C2) -> (
 	-- Checking for input errors
-	if ((C1#"ambientDimension") =!= (C2#"ambientDimension")) then (
-	     error ("Cones must lie in the same ambientspace"));
+	if C1#"ambient dimension" =!= C2#"ambient dimension" then error("Cones must lie in the same ambient space");
 	-- Combining the rays and the lineality spaces into one matrix each
-	M := (C1#"rays") | (C2#"rays");
-	LS := (C1#"linealitySpace") | (C2#"linealitySpace");
-	dualgens := fourierMotzkin(M,LS);
+	R := C1#"rays" | C2#"rays";
+	LS := C1#"linealitySpace" | C2#"linealitySpace";
+	dualgens := fourierMotzkin(R,LS);
 	genrays := fourierMotzkin dualgens;
 	coneBuilder(genrays,dualgens))
 
 
 --   INPUT : 'P'  a Polyhedron
-posHull(Polyhedron) := (P) -> (
-     Mrays := (P#"vertices") | (P#"rays");
+posHull Polyhedron := P -> (
+     Mrays := P#"vertices" | P#"rays";
      Mlinspace := P#"linealitySpace";
      posHull(Mrays,Mlinspace))
 
@@ -414,96 +252,66 @@ posHull(Polyhedron) := (P) -> (
 --   INPUT : 'L',   a list of Cones, Polyhedra, rays given by R, 
 --     	    	    and (rays,linSpace) given by '(R,LS)'
 posHull List := L -> (
-     -- This function checks if the inserted pair is a pair of matrices that give valid rays and linSpace
-     isValidPair := S -> (
-	  test := (#S == 2);
-	  if test then (
-	       if (S#1 == 0) then ( test = (instance(S#0,Matrix)))
-	       else ( test = (instance(S#1,Matrix));
-		    if test then ( test = (numRows(S#0) == numRows(S#1)))));
-	  test);
+     -- This function checks if the inserted pair is a pair of matrices that gives valid rays and linSpace
+     isValidPair := S -> #S == 2 and if S#1 == 0 then instance(S#0,Matrix) else instance(S#1,Matrix) and numRows S#0 == numRows S#1;
      -- Checking for input errors  
-     if (L == {}) then (error ("List of convex objects must not be empty"));   
+     if L == {} then error("List of convex objects must not be empty");
      C := L#0;
      -- The first entry in the list determines the ambient dimension 'n'
      n := 0;
-     local R,LS;
-     if ((not instance(C,Cone)) and (not instance(C,Polyhedron)) and (not instance(C,Sequence)) and (not instance(C,Matrix))) then (
-	  error ("The input must be cones, polyhedra, rays, or (rays,linSpace)."));
+     local R;
+     local LS;
+     if (not instance(C,Cone)) and (not instance(C,Polyhedron)) and (not instance(C,Sequence)) and (not instance(C,Matrix)) then 
+	  error ("The input must be cones, polyhedra, rays, or (rays,linSpace).");
      -- Adding the vertices and rays to 'R,LS', depending on the type of 'C'
      if instance(C,Cone) then (
-	  n = C#"ambientDimension";
+	  n = C#"ambient dimension";
 	  R = rays C;
 	  LS = linSpace C)
      else if instance(C,Polyhedron) then (
-	  n = C#"ambientDimension";
-	  R = (vertices C) | (rays C);
+	  n = C#"ambient dimension";
+	  R = vertices C | rays C;
 	  LS = linSpace C)
      else if instance(C,Sequence) then (
 	  -- Checking for input errors
-	  if (not isValidPair(C)) then (
-	       error ("Rays and lineality space must be given as a sequence of two matrices with the same number of rows"));
-	  n = numRows(C#0);
-	  if ((ring(C#0) =!= ZZ) and (ring(C#0) =!= QQ)) then (
-	       error ("expected rays over ZZ or QQ"));
-	  R = substitute(C#0,QQ);
-	  if (C#1 == 0) then (
-	       LS = map(QQ^n,QQ^1,0))
-	  else (  
-	       if ((ring(C#1) =!= ZZ) and (ring(C#1) =!= QQ)) then (
-		    error ("expected lineality space over ZZ or QQ"));
-	       LS = substitute(C#1,QQ)))
+	  if not isValidPair C then error("Rays and lineality space must be given as a sequence of two matrices with the same number of rows");
+	  R = chkZZQQ(C#0,"rays");
+	  n = numRows R;
+	  LS = if C#1 == 0 then map(QQ^n,QQ^1,0) else chkZZQQ(C#1,"lineality space"))
      else (
-	  if ((ring(C) =!= ZZ) and (ring(C) =!= QQ)) then (
-	       error ("expected rays over ZZ or QQ"));
-	  n = numRows C;
-	  R = substitute(C,QQ);
+	  R = chkZZQQ(C,"rays");
+	  n = numRows R;
 	  LS = map(QQ^n,QQ^1,0));
-     L = drop(L,1);
      --  Adding the rays and lineality spaces to 'R,LS' for each remaining element in 'L', depending on the type of 'C'
-     scan(L, C1 -> (
+     L = apply(drop(L,1), C1 -> (
 	       -- Checking for further input errors
-	       if (not instance(C1,Cone) and (not instance(C1,Polyhedron)) and (not instance(C1,Sequence)) and 
-		    (not instance(C1,Matrix))) then (
-		    error ("The input must be cones, polyhedra, rays, or (rays,lineality space)"));
+	       if (not instance(C1,Cone)) and (not instance(C1,Polyhedron)) and (not instance(C1,Sequence)) and 
+		    (not instance(C1,Matrix)) then 
+		    error ("The input must be cones, polyhedra, rays, or (rays,lineality space)");
 	       if instance(C1,Cone) then (
-		    if ((ambDim C1) != n) then (
-			 error ("All Cones and Polyhedra must be in the same ambient space"));
-		    R = R | (rays C1);
-		    LS = LS | (linSpace C1))
+		    if ambDim C1 != n then error("All Cones and Polyhedra must be in the same ambient space");
+		    (rays C1,linSpace C1))
 	       else if instance(C1,Polyhedron) then (
-		    if ((ambDim C1) != n) then (
-			 error ("All Cones and Polyhedra must be in the same ambient space"));
-		    R = R | (vertices C1) | (rays C1);
-		    LS = LS | (linSpace C1))
+		    if ambDim C1 != n then error("All Cones and Polyhedra must be in the same ambient space");
+		    (vertices C1 | rays C1,linSpace C1))
 	       else if instance(C1,Sequence) then (
 		    -- Checking for input errors
-		    if (not isValidPair(C1)) then (
-			 error ("(Rays,lineality space) must be given as a sequence of two matrices with the same number of rows"));
-		    if (numRows(C1#0) != n) then (
-			 error ("(Rays,lineality space) must be of the correct dimension."));
-		    if ((ring(C1#0) =!= ZZ) and (ring(C1#0) =!= QQ)) then (
-			 error ("expected rays over ZZ or QQ"));
-		    R = R | substitute(C1#0,QQ);
-		    if (C1#1 != 0) then (
-			 if ((ring(C1#1) =!= ZZ) and (ring(C1#1) =!= QQ)) then (
-			      error ("expected lineality space over ZZ or QQ"));
-			 LS = LS | substitute(C1#1,QQ)))
+		    if not isValidPair C1 then error("(Rays,lineality space) must be given as a sequence of two matrices with the same number of rows");
+		    if numRows C1#0 != n then error("(Rays,lineality space) must be of the correct dimension.");
+		    if C1#1 != 0 then (chkZZQQ(C1#0,"rays"),chkZZQQ(C1#1,"lineality space"))
+		    else (chkZZQQ(C1#0,"rays"),{}))
 	       else (
 		    -- Checking for input errors
-		    if (numRows(C1) != n) then (
-			 error ("Rays must be of the correct dimension."));
-		    if ((ring(C1) =!= ZZ) and (ring(C1) =!= QQ)) then (
-			 error ("expected rays over ZZ or QQ"));
-		    R = R | substitute(C1,QQ))));
-     if (LS == 0) then (
-	  C = posHull R)
-     else (
-	  C = posHull(R,LS));
-     C)
+		    if numRows C1 != n then error("Rays must be of the correct dimension.");
+		    (chkZZQQ(C1,"rays"),{}))));
+     LR := flatten apply(L, l -> l#0);
+     if LR != {} then R = R | matrix {LR};
+     L = flatten apply(L, l -> l#1);
+     if L != {} then LS = LS | matrix {L};
+     if LS == 0 then posHull R else posHull(R,LS))
 
 
--- PURPOSE : Computing a polyhedron as the intersection of affine halfspaces and hyperplanes
+-- PURPOSE : Computing a polyhedron as the intersection of affine half-spaces and hyperplanes
 intersection = method()
 
 --   INPUT : '(M,v,N,w)',  where all four are matrices (although v and w are only vectors), such
@@ -511,42 +319,15 @@ intersection = method()
 --  OUTPUT : 'P', the polyhedron
 intersection(Matrix,Matrix,Matrix,Matrix) := (M,v,N,w) -> (
 	-- checking for input errors
-	if ((numgens source M) =!= (numgens source N)) then (
-		error ("equations of halfspaces and hyperplanes must have the same dimension"));
-	if (((numgens target M) =!= (numgens target v)) or ((numgens source v) =!= 1)) then (
-		error ("invalid condition vector for halfspaces"));
-	if (((numgens target N) =!= (numgens target w)) or ((numgens source w) =!= 1)) then (
-		error ("invalid condition vector for hyperplanes"));
-	local HS;
-	local HP;
-	R := ring source M;
-	if (R === ZZ) then (
-		HS = substitute(M, QQ))
-	else if (R === QQ) then (
-		HS = M)
-	else error ("expected halfspaces over ZZ or QQ");
-	R = ring source v;
-	if (R === ZZ) then (
-		HS = ((-1)*(substitute(v, QQ)))|HS)
-	else if (R === QQ) then (
-		HS = ((-1)*v)|HS)
-	else error ("expected condition vector for halfspaces over ZZ or QQ");
-	R = ring source N;
-	if (R === ZZ) then (
-		HP = substitute(N, QQ))
-	else if (R === QQ) then (
-		HP = N)
-	else error ("expected hyperplanes over ZZ or QQ");
-	R = ring source w;
-	if (R === ZZ) then (
-		HP = ((-1)*(substitute(w, QQ)))|HP)
-	else if (R === QQ) then (
-		HP = ((-1)*w)|HP)
-	else error ("expected condition vector for halfspaces over ZZ or QQ");
+	if numColumns M =!= numColumns N then error("equations of half-spaces and hyperplanes must have the same dimension");
+	if numRows M =!= numRows v or numColumns v =!= 1 then error("invalid condition vector for half-spaces");
+	if numRows N =!= numRows w or numColumns w =!= 1 then error("invalid condition vector for hyperplanes");
+	M = -chkZZQQ(v,"condition vector for half-spaces") | chkZZQQ(M,"half-spaces");
+	N = -chkZZQQ(w,"condition vector for hyperplanes") | chkZZQQ(N,"hyperplanes");
 	-- Computing generators of the cone and its dual cone
-	HS = (transpose HS)|(matrix join({{-1}},toList((numgens source HS)-1:{0_QQ})));
-	HP = transpose HP;
-	verticesA := fourierMotzkin(HS,HP);
+	M = transpose M | map(source M,QQ^1,(i,j) -> if i == 0 then -1 else 0);
+	N = transpose N;
+	verticesA := fourierMotzkin(M,N);
 	hyperA := fourierMotzkin verticesA;
 	polyhedronBuilder(hyperA,verticesA))
 
@@ -556,235 +337,160 @@ intersection(Matrix,Matrix,Matrix,Matrix) := (M,v,N,w) -> (
 --  OUTPUT : 'P', the Cone or Polyhedron
 intersection(Matrix,Matrix) := (M,N) -> (
 	-- Checking for input errors
-	if (((((numgens source M) =!= (numgens source N)) and ((numgens source N) =!= 1)) or 
-		(((numgens source N) == 1) and ((numgens target M) =!= (numgens target N)))) and 
-		(N != (0*N))) then (
-		error ("invalid condition vector for halfspaces"));
-	local Ml;
-	local Nl;
-	local P;
+	if ((numColumns M =!= numColumns N and numColumns N =!= 1) or (numColumns N == 1 and numRows M =!= numRows N)) and N != 0*N then 
+		error("invalid condition vector for half-spaces");
 	local genrays;
 	local dualgens;
-	R := ring source M;
-	if (R === ZZ) then (
-		Ml = substitute(M, QQ))
-	else if (R === QQ) then (
-		Ml = M)
-	else error ("expected halfspaces over ZZ or QQ");
-	R = ring source N;
-	if (R === ZZ) then (
-		Nl = substitute(N, QQ))
-	else if (R === QQ) then (
-		Nl = N)
-	else error ("expected condition vector for halfspaces over ZZ or QQ");
+	M = chkZZQQ(M,"half-spaces");
+	N = chkZZQQ(N,"condition vector for half-spaces");
 	-- Decide whether 'M,N' gives the Cone C={p | M*p >= 0, N*p = 0}
-	if ((numgens source Ml) == (numgens source Nl)) and ((numgens source Nl) != 1) then (
-		Ml = (-1)*(transpose Ml);
-		Nl = transpose Nl;
-		genrays = fourierMotzkin(Ml,Nl);
+	if numColumns M == numColumns N and numColumns N != 1 then (
+		genrays = fourierMotzkin(-transpose M,transpose N);
 		dualgens = fourierMotzkin genrays;
-		P = coneBuilder(genrays, dualgens))
+		coneBuilder(genrays, dualgens))
 	-- or the Cone C={p | M*p >= N=0}
-	else if ( Nl == (0*Nl)) then (
-		Ml = (-1)*(transpose Ml);
-		genrays = fourierMotzkin Ml;
+	else if N == 0*N then (
+		genrays = fourierMotzkin (-transpose M);
 		dualgens = fourierMotzkin genrays;
-		P = coneBuilder(genrays,dualgens))
+		coneBuilder(genrays,dualgens))
 	-- or the Polyhedron P={p | M*p >= N != 0}
 	else (	-- Computing generators of the Polyhedron and its dual cone
-		Ml = ((-1)*Nl) | Ml;
-		Ml = (transpose Ml)|(matrix join({{-1}},toList((numgens source Ml)-1:{0_QQ})));
-		verticesA := fourierMotzkin Ml;
+		M = -N | M;
+		M = transpose M |  map(source M,QQ^1,(i,j) -> if i == 0 then -1 else 0);
+		verticesA := fourierMotzkin M;
 		hyperA := fourierMotzkin verticesA;
-		P = polyhedronBuilder(hyperA,verticesA));
-	P)
+		polyhedronBuilder(hyperA,verticesA)))
    
 
 
 
 --   INPUT : '(P1,P2)',  two polyhedra 
---  OUTPUT : 'P', the polyhedron which is the intersection of both
+--  OUTPUT : 'P', the polyhedron that is the intersection of both
 intersection(Polyhedron,Polyhedron) := (P1,P2) -> (
 	-- Checking if P1 and P2 lie in the same space
-	if ((P1#"ambientDimension") =!= (P2#"ambientDimension")) then (
-		error ("Polyhedra must lie in the same ambientspace"));
-	-- Combining the Halfspaces and the Hyperplanes
-	M := ((halfspaces P1)#0)||((halfspaces P2)#0);
-	v := ((halfspaces P1)#1)||((halfspaces P2)#1);
-	N := ((hyperplanes P1)#0)||((hyperplanes P2)#0);
-	w := ((hyperplanes P1)#1)||((hyperplanes P2)#1);
+	if P1#"ambient dimension" =!= P2#"ambient dimension" then error("Polyhedra must lie in the same ambient space");
+	-- Combining the Half-spaces and the Hyperplanes
+	M := (halfspaces P1)#0 || (halfspaces P2)#0;
+	v := (halfspaces P1)#1 || (halfspaces P2)#1;
+	N := (hyperplanes P1)#0 || (hyperplanes P2)#0;
+	w := (hyperplanes P1)#1 || (hyperplanes P2)#1;
 	intersection(M,v,N,w))
 
 
 --   INPUT : 'M',  a matrix, such that the Cone is given by C={x | Mx>=0} 
 --  OUTPUT : 'C', the Cone
-intersection(Matrix) := M -> (
+intersection Matrix := M -> (
 	-- Checking for input errors
-	local HS;
-	R := ring source M;
-	if (R === ZZ) then (
-		HS = substitute(M, QQ))
-	else if (R === QQ) then (
-		HS = M)
-	else error ("expected halfspaces over ZZ or QQ");
+	M = chkZZQQ(M,"half-spaces");
 	-- Computing generators of the cone and its dual cone
-	HS = (-1)*(transpose HS);
-	genrays := fourierMotzkin HS;
+	genrays := fourierMotzkin (-transpose M);
 	dualgens := fourierMotzkin genrays;
 	coneBuilder(genrays,dualgens))
 
 
 
 --   INPUT : '(C1,C2)',  two Cones
---  OUTPUT : 'C', the Cone which is the intersection of both
+--  OUTPUT : 'C', the Cone that is the intersection of both
 intersection(Cone,Cone) := (C1,C2) -> (
 	-- Checking if C1 and C2 lie in the same space
-	if ((C1#"ambientDimension") =!= (C2#"ambientDimension")) then (
-		error ("Cones must lie in the same ambientspace"));
-	M := (halfspaces C1)||(halfspaces C2);
-	N := (hyperplanes C1)||(hyperplanes C2);
+	if C1#"ambient dimension" =!= C2#"ambient dimension" then error("Cones must lie in the same ambient space");
+	M := halfspaces C1 || halfspaces C2;
+	N := hyperplanes C1 || hyperplanes C2;
 	intersection(M,N))
    
    
    
 --   INPUT : '(C,P)',  a Cone and a Polyhedron
---  OUTPUT : 'Q', the Polyhedron which is the intersection of both
-intersection(Cone,Polyhedron) := (C,P) -> (
-     intersection {C,P})
+--  OUTPUT : 'Q', the Polyhedron that is the intersection of both
+intersection(Cone,Polyhedron) := (C,P) -> intersection {C,P}
 
 
 
 --   INPUT : '(P,C)',  a Polyhedron and a Cone
---  OUTPUT : 'Q', the Polyhedron which is the intersection of both
-intersection(Polyhedron,Cone) := (P,C) -> (
-     intersection {P,C})
+--  OUTPUT : 'Q', the Polyhedron that is the intersection of both
+intersection(Polyhedron,Cone) := (P,C) -> intersection {P,C}
 
 
 
 --   INPUT : 'L',   a list of Cones, Polyhedra, inequalities given by (M,v), 
 --     	    	    and hyperplanes given by '{N,w}'
 intersection List := L -> (
-     -- This function checks if the inserted pair is a pair of matrices that give valid in/equalities
-     isValidPair := S -> (
-	  test := (#S == 2);
-	  if test then (
-	       if (S#1 == 0) then ( test = (instance(S#0,Matrix)))
-	       else ( test = (instance(S#1,Matrix));
-		    if test then ( test = ((numRows(S#0) == numRows(S#1)) and (numColumns(S#1) == 1)))));
-	  test);
+     -- This function checks if the inserted pair is a pair of matrices that gives valid in/equalities
+     isValidPair := S -> #S == 2 and if S#1 == 0 then instance(S#0,Matrix) else instance(S#1,Matrix) and numRows S#0 == numRows S#1 and numColumns S#1 == 1;
      -- Checking for input errors  
-     if (L=={}) then (error ("List of cones must not be empty"));   
+     if L == {} then error("List of cones must not be empty");   
      C := L#0;
      -- The first entry in the list determines the ambient dimension 'n'
      n := 0;
-     local Ml,vl,Nl,wl;
-     if ((not instance(C,Cone)) and (not instance(C,Polyhedron)) and (not instance(C,Sequence)) and (not instance(C,List))) then (
-	  error ("The input must be cones, polyhedra, inequalities, equalities."));
+     local Ml;
+     local vl;
+     local Nl;
+     local wl;
+     if (not instance(C,Cone)) and (not instance(C,Polyhedron)) and (not instance(C,Sequence)) and (not instance(C,List)) then 
+	  error ("The input must be cones, polyhedra, inequalities, equalities.");
      -- Adding the inequalities and equalities to 'M,v,N,w', depending on the type of 'C'
      if instance(C,Cone) then (
-	  n = C#"ambientDimension";
-	  Ml = (-1)*(halfspaces C);
-	  vl = map(QQ^(numgens target halfspaces C),QQ^1,0);
+	  n = C#"ambient dimension";
+	  Ml = -(halfspaces C);
+	  vl = map(target halfspaces C,QQ^1,0);
 	  Nl = hyperplanes C;
-	  wl = map(QQ^(numgens target hyperplanes C),QQ^1,0))
+	  wl = map(target hyperplanes C,QQ^1,0))
      else if instance(C,Polyhedron) then (
-	  n = C#"ambientDimension";
+	  n = C#"ambient dimension";
 	  Ml = (halfspaces C)#0;
 	  vl = (halfspaces C)#1;
 	  Nl = (hyperplanes C)#0;
 	  wl = (hyperplanes C)#1)
      else if instance(C,Sequence) then (
 	  -- Checking for input errors
-	  if (not isValidPair(C)) then (
-	       error ("Inequalities must be given as a sequence of a matrix and a column vector"));
-	  n = numColumns(C#0);
-	  if ((ring(C#0) =!= ZZ) and (ring(C#0) =!= QQ)) then (
-	       error ("expected halfspaces over ZZ or QQ"));
-	  Ml = substitute(C#0,QQ);
-	  if (C#1 ==0) then (
-	       vl = map(QQ^(numgens target(C#0)),QQ^1,0))
-	  else (  
-	       if ((ring(C#1) =!= ZZ) and (ring(C#1) =!= QQ)) then (
-		    error ("expected halfspaces over ZZ or QQ"));
-	       vl = substitute(C#1,QQ));
-	  Nl = map(QQ^1,QQ^(numgens source(C#0)),0);
+	  if not isValidPair C then error("Inequalities must be given as a sequence of a matrix and a column vector");
+	  Ml = chkZZQQ(C#0,"half-spaces");
+	  n = numColumns Ml;
+	  vl = if C#1 == 0 then map(target C#0,QQ^1,0) else chkZZQQ(C#1,"condition vector for half-spaces");
+	  Nl = map(QQ^1,source(C#0),0);
 	  wl = map(QQ^1,QQ^1,0))
      else (
 	  -- Checking for input errors
-	  if (not isValidPair(C)) then (
-	       error ("Equalities must be given as a list of a matrix and a column vector"));
-	  n = numColumns(C#0);
-	  Ml = map(QQ^1,QQ^(numgens source(C#0)),0);
+	  if not isValidPair C then error("Equalities must be given as a list of a matrix and a column vector");
+	  Nl = chkZZQQ(C#0,"hyperplanes");
+	  n = numColumns Nl;
+	  Ml = map(QQ^1,source C#0,0);
 	  vl = map(QQ^1,QQ^1,0);
-	  if ((ring(C#0) =!= ZZ) and (ring(C#0) =!= QQ)) then (
-	       error ("expected halfspaces over ZZ or QQ"));
-	  Nl = substitute(C#0,QQ);
-	  if (C#1 == 0) then (
-	       wl = map(QQ^(numgens target(C#0)),QQ^1,0))
-	  else (  
-	       if ((ring(C#1) =!= ZZ) and (ring(C#1) =!= QQ)) then (
-		    error ("expected halfspaces over ZZ or QQ"));
-	       wl = substitute(C#1,QQ)));
-     L = drop(L,1);
+	  wl = if C#1 == 0 then map(target C#0,QQ^1,0) else chkZZQQ(C#1,"condition vector for half-spaces"));
      --  Adding the inequalities and equalities to 'M,v,N,w', for each remaining element in 'L', depending on the type of 'C'
-     scan(L, C1 -> (
+     L = apply(drop(L,1), C1 -> (
 	       -- Checking for further input errors
-	       if (not instance(C1,Cone) and (not instance(C1,Polyhedron)) and (not instance(C1,Sequence)) and 
-		    (not instance(C1,List))) then (
-		    error ("The input must be cones, polyhedra, inequalities, equalities."));
+	       if (not instance(C1,Cone)) and (not instance(C1,Polyhedron)) and (not instance(C1,Sequence)) and (not instance(C1,List)) then 
+		    error("The input must be cones, polyhedra, inequalities, equalities.");
 	       if instance(C1,Cone) then (
-		    if ((ambDim C1) != n) then (
-			 error ("All Cones and Polyhedra must be in the same ambient space"));
-		    Ml = Ml || ((-1)*(halfspaces C1));
-		    vl = vl || map(QQ^(numgens target halfspaces C1),QQ^1,0);
-		    Nl = Nl || hyperplanes C1;
-		    wl = wl || map(QQ^(numgens target hyperplanes C1),QQ^1,0))
+		    if ambDim C1 != n then error("All Cones and Polyhedra must be in the same ambient space");
+		    (-(halfspaces C1),map(target halfspaces C1,QQ^1,0),hyperplanes C1,map(target hyperplanes C1,QQ^1,0)))
 	       else if instance(C1,Polyhedron) then (
-		    if ((ambDim C1) != n) then (
-			 error ("All Cones and Polyhedra must be in the same ambient space"));
-		    Ml = Ml || (halfspaces C1)#0;
-		    vl = vl || (halfspaces C1)#1;
-		    Nl = Nl || (hyperplanes C1)#0;
-		    wl = wl || (hyperplanes C1)#1)
+		    if ambDim C1 != n then error("All Cones and Polyhedra must be in the same ambient space");
+		    ((halfspaces C1)#0,(halfspaces C1)#1,(hyperplanes C1)#0,(hyperplanes C1)#1))
 	       else if instance(C1,Sequence) then (
 		    -- Checking for input errors
-		    if (not isValidPair(C1)) then (
-			 error ("Inequalities must be given as a sequence of a matrix and a column vector"));
-		    if (numColumns(C1#0) != n) then (
-			 error ("Inequalities must be for the same ambient space."));
-		    if ((ring(C1#0) =!= ZZ) and (ring(C1#0) =!= QQ)) then (
-			 error ("expected halfspaces over ZZ or QQ"));
-		    Ml = Ml || substitute(C1#0,QQ);
-		    if (C1#1 == 0) then (
-			 vl = vl || map(QQ^(numgens target(C1#0)),QQ^1,0))
-		    else ( 
-			 if ((ring(C1#1) =!= ZZ) and (ring(C1#1) =!= QQ)) then (
-			      error ("expected halfspaces over ZZ or QQ"));
-			 vl = vl || substitute(C1#1,QQ));
-		    Nl = Nl || map(QQ^1,QQ^(numgens source(C1#0)),0);
-		    wl = wl || map(QQ^1,QQ^1,0))
+		    if not isValidPair C1 then error("Inequalities must be given as a sequence of a matrix and a column vector");
+		    if numColumns C1#0 != n then error("Inequalities must be for the same ambient space.");
+		    C1 = (chkZZQQ(C1#0,"half-spaces"),chkZZQQ(C1#1,"condition vector for half-spaces"));
+		    if C1#1 == 0 then (C1#0,map(target C1#0,QQ^1,0),map(QQ^1,source C1#0,0),map(QQ^1,QQ^1,0))
+		    else (C1#0,C1#1,map(QQ^1,source C1#0,0),map(QQ^1,QQ^1,0)))
 	       else (
 		    -- Checking for input errors
-		    if (not isValidPair(C1)) then (
-			 error ("Equalities must be given as a list of a matrix and a column vector"));
-		    if (numColumns(C1#0) != n) then (
-			 error ("Inequalities must be for the same ambient space."));
-		    Ml = Ml || map(QQ^1,QQ^(numgens source(C1#0)),0);
-		    vl = vl || map(QQ^1,QQ^1,0);
-		    if ((ring(C1#0) =!= ZZ) and (ring(C1#0) =!= QQ)) then (
-			 error ("expected halfspaces over ZZ or QQ"));
-		    Nl = Nl || substitute(C1#0,QQ);
-		    if (C1#1 ==0) then (
-			 wl = wl || map(QQ^(numgens target(C1#0)),QQ^1,0))
-		    else ( 
-			 if ((ring(C1#1) =!= ZZ) and (ring(C1#1) =!= QQ)) then (
-			      error ("expected halfspaces over ZZ or QQ"));
-			 wl = wl || substitute(C1#1,QQ)))));
-     if ((vl == 0*vl) and (wl == 0*wl)) then (
-	  C = intersection((-1)*Ml,Nl))
-     else (
-	  C = intersection(Ml,vl,Nl,wl));
-     C)
+		    if not isValidPair C1 then error("Equalities must be given as a list of a matrix and a column vector");
+		    if numColumns C1#0 != n then error ("Inequalities must be for the same ambient space.");
+		    C1 = (chkZZQQ(C1#0,"hyperplanes"),chkZZQQ(C1#1,"condition vector for hyperplanes"));
+		    if C1#1 == 0 then (map(QQ^1,source C1#0,0),map(QQ^1,QQ^1,0),C1#0,map(target C1#0,QQ^1,0))
+		    else (map(QQ^1,source C1#0,0),map(QQ^1,QQ^1,0),C1#0,C1#1))));
+     LM := flatten apply(L, l -> entries(l#0));
+     if LM != {} then Ml = Ml || matrix LM;
+     LM = flatten apply(L, l -> entries(l#1));
+     if LM != {} then vl = vl || matrix LM;
+     LM = flatten apply(L, l -> entries(l#2));
+     if LM != {} then Nl = Nl || matrix LM;
+     LM = flatten apply(L, l -> entries(l#3));
+     if LM != {} then wl = wl || matrix LM;
+     if vl == 0*vl and wl == 0*wl then intersection(-Ml,Nl) else intersection(Ml,vl,Nl,wl));
      
 
 
@@ -794,251 +500,143 @@ intersection List := L -> (
 makeFan = method(TypicalValue => Fan)
 makeFan List := L -> (
      -- Checking for input errors
-     if (L == {}) then (error ("List of cones and fans must not be empty"));
-     if ((not instance(L#0,Cone)) and (not instance(L#0,Fan))) 
-        then (error ("Input must be a list of cones and fans"));
+     if L == {} then error("List of cones and fans must not be empty");
+     if (not instance(L#0,Cone)) and (not instance(L#0,Fan)) then error("Input must be a list of cones and fans");
      -- Starting with the first Cone in the list and extracting its information
      C := L#0;
      L = drop(L,1);
-     ad := C#"ambientDimension";
+     ad := C#"ambient dimension";
      local F;
-     if (instance(C,Fan)) then (
-	  F = C)
+     if instance(C,Fan) then F = C
      else (
-	  rm := rays C;
+	  rayList := rays C;
 	  -- Collecting the rays
-	  rayList := {};
-	  scan(numgens source rm, i -> (rayList = append(rayList,rm_{i})));
+	  rayList = apply(numColumns rayList, i-> rayList_{i});
+	  Ffaces := {};
+	  completeness := false;
+	  if ad == dim C then (
+	       Ffaces = faces(1,C);
+	       completeness = Ffaces == {});
 	  -- Generating the new fan
-	  F = new Fan;
-	  F#"generatingCones" = {C};
-	  F#"ambientDimension" = ad;
-	  F#"topDimension" = C#"coneDimension";
-	  F#"numGeneratingCones" = 1;
-	  F#"rays" = rayList;
-	  F#"numRays" = #rayList;
-	  F#"isPure" = true;
-	  F#"faces" = {};
-	  F#"isComplete" = false;
-	  -- Keeping track of the completeness of the fan (Checking if there are no outer codim 1 faces)
-	  if (ad == C#"coneDimension") then (
-	       F#"faces" = toList symmDiff(F#"faces",faces(1,C));
-	       if (F#"faces" == {}) then (F#"isComplete" = true)));
-     -- Adding the remaining cones of the list with 'addCone' 
-     while (L != {}) do (
-	  C = L#0;
-	  L = drop(L,1);
-	  if ((not instance(C,Cone)) and (not instance(C,Fan)))
-	     then (error ("Input must be a list of cones and fans"));
-	  if (instance(C,Fan)) then (
-	       L2 := C#"generatingCones";
-	       C = L2#0;
-	       L2 = drop(L2,1);
-	       L = L2 | L);
-	  F = addCone(C,F);
-	  if (F#?"comperror") then (
-	       L = {} ));
-     F)
+	  F = new Fan from {
+	  "generatingCones" => set {C},
+	  "ambient dimension" => ad,
+	  "top dimension of the cones" => C#"dimension of the cone",
+	  "number of generating cones" => 1,
+	  "rays" => set rayList,
+	  "number of rays" => #rayList,
+	  "isPure" => true,
+	  "faces" => set Ffaces,
+	  "isComplete" => completeness});
+     -- Checking the remaining list for input errors and reducing fans in the list
+     -- to their list of generating cones
+     L = flatten apply(L, C -> if instance(C,Cone) then C else if instance(C,Fan) then toList(C#"generatingCones") else 
+	  error ("Input must be a list of cones and fans"));       
+     -- Adding the remaining cones of the list with 'addCone'
+     scan(L, C -> F = addCone(C,F));
+     F);
 
 
 --   INPUT : 'C',  a Cone
 --  OUTPUT : The Fan given by 'C' and all of its faces
-makeFan Cone := C -> (
-     makeFan({C}));
+makeFan Cone := C -> makeFan {C};
 
 
 
 -- PURPOSE : Adding a Cone to an existing fan 
 --   INPUT : '(C,F)',  where 'C' is a Cone in the same ambient space as 'F'
 --  OUTPUT : The original fan 'F' together with 'C' if it is compatible with the already existing cones, 
---     	     if not the cone win 'F' with which 'C' is not compatible is saved under F#"comperror"
+--     	     if not there is an error
 addCone = method(TypicalValue => Fan)
 addCone (Cone,Fan) := (C,F) -> (
      -- Checking for input errors
-     if ((C#"ambientDimension") != (F#"ambientDimension")) then (error ("Cones must lie in the same ambient space"));
-     -- Removing compatability errors if existent
-     if (F#?"comperror") then (
-	  remove(F,"comperror"));
+     if C#"ambient dimension" != F#"ambient dimension" then error("Cones must lie in the same ambient space");
      --Extracting data
-     GC := F#"generatingCones";
-     d := C#"coneDimension";
+     GC := toList F#"generatingCones";
+     d := C#"dimension of the cone";
+     -- We need to memorize for later if 'C' has been inserted
      inserted := false;
-     stopper := false;
-     newGC := {};
-     i := 0;
      -- Cones in the list 'GC' are ordered by decreasing dimension so we start compatibility checks with 
-     -- the cones of highest dimension
-     while ((not stopper) and (i < #GC)) do (
-	  Cf := GC#i;
-	  dimCf := Cf#"coneDimension";
-	  --local a,b;
-	  -- Check if 'C' is still of smaller dimension
-	  if (dimCf >= d) then (
+     -- the cones of higher or equal dimension. For this we divide GC into two seperate lists
+     GC = partition(Cf -> (dim Cf) >= d,GC);
+     GC = {if GC#?true then GC#true else {},if GC#?false then GC#false else {}};
+     if all(GC#0, Cf ->  (
 	       (a,b) := areCompatible(Cf,C);
-	       -- if 'Cf' and 'C' are not compatible then 'C' is not added to 'F' and 
-	       -- comperror is given and no further checks are neccessary
-	       if (not a) then (
-		    newGC = GC;
-		    F#"comperror" = {Cf,C};
-		    stopper = true)
+	       -- if 'Cf' and 'C' are not compatible then there is an error
+	       if not a then error("The cones are not compatible");
 	       -- if they are compatible and 'C' is a face of 'Cf' then 'C' does not 
-	       -- need to be added to 'F' and no further checks are neccessary
-	       else if (equals(b,C)) then (
-		    newGC = GC;
-		    stopper = true)
-	       -- otherwise 'Cf' is still a generating Cone and has to be kept and the remaining cones 
-	       -- have to be checked
-	       else (newGC = append(newGC,Cf)))
-	  -- Otherwise the 'C' has higher dimension
-	  else (
-	       -- If we arrive at the first Cone of smaller dimension than 'C', 'C' has to be inserted here
-	       if (not inserted) then (
-		    newGC = append(newGC,C);
-		    inserted = true);
-	       -- Now we have to check for the remaining cones if they are compatible
-	       (a1,b1) = areCompatible(Cf,C);
-	       if (not a1) then (
-		    newGC = GC;
-		    F#"comperror" = {Cf,C};
-		    stopper = true)
-	       -- if one of the remaining cones is a face of 'C' this Cone can be dropped
-	       else if (not equals(b1,Cf)) then (
-		    newGC = append(newGC,Cf)));
-	  i = i+1);
-     -- If 'C' was compatible with every Cone, but not the face of any, and is of smaller dimension, 'C' is appended to GC
-     if ((not stopper) and (not inserted)) then (
-	  newGC = append(newGC,C);
-	  inserted = true);
+	       -- need to be added to 'F'
+	       b != C)) then (
+	  -- otherwise 'Cf' is still a generating Cone and has to be kept and the remaining cones
+	  -- have to be checked
+	  GC = GC#0 | {C} | select(GC#1, Cf -> (
+		    (a,b) := areCompatible(Cf,C);
+		    if not a then error("The cones are not compatible");
+		    -- if one of the remaining cones is a face of 'C' this Cone can be dropped
+		    b != Cf));
+	  inserted = true)     
+     -- Otherwise 'C' was already a face of one of the original cones and does not need to be added
+     else GC = flatten GC;
      -- If 'C' was added to the Fan as a generating cone then the codim 1 faces on the boundary have to changed to check for 
      -- completeness
+     Ffaces := toList F#"faces";
+     completeness := F#"isComplete";
+     rayList := toList F#"rays";
      if inserted then (
-	  if (d == C#"ambientDimension") then (
-	       F#"faces" = toList symmDiff(F#"faces",faces(1,C));
-	       if (F#"faces" == {}) then (F#"isComplete" = true));
+	  if d == C#"ambient dimension" then (
+	       facets := faces(1,C);
+	       (sFfaces,sfacets) := (set Ffaces,set facets);
+	       Ffaces = join(select(Ffaces,i->not sfacets#?i),select(facets,i->not sFfaces#?i));
+	       completeness = Ffaces == {});
 	  -- The rays of 'C' have to be added
-	  rayList := F#"rays";
 	  rm := rays C;
-	  scan(numgens source rm, i -> (rayList = append(rayList,rm_{i})));
-	  F#"rays" = unique rayList;
-	  F#"numRays" = #(F#"rays"));
+	  rm = apply(numColumns rm, i -> rm_{i});
+	  rayList = unique(rayList|rm));
      -- Saving the fan
-     F#"isPure" = (dim(first(newGC)) == dim(last(newGC)));
-     F#"generatingCones" = newGC;
-     F#"topDimension" = dim(newGC#0);
-     F#"numGeneratingCones" = #newGC;
-     if (F#?"comperror") then (
-	  print "One cone could not be added because it was not compatible.");
-     F)
+     new Fan from {
+	  "generatingCones" => set GC,
+	  "ambient dimension" => F#"ambient dimension",
+	  "top dimension of the cones" => dim GC#0,
+	  "number of generating cones" => #GC,
+	  "rays" => set rayList,
+	  "number of rays" => #rayList,
+	  "isPure" => true,
+	  "faces" => set Ffaces,
+	  "isComplete" => completeness})
 
 
 --   INPUT : '(L,F)',  where 'L' is a list of Cones in the same ambient space as the fan 'F'
 --  OUTPUT : The original fan 'F' together with cones in the list 'L'
 addCone (List,Fan) := (L,F) -> (     
     -- Checking for input errors
-    if (L == {}) then (
-	 error ("The list must not be empty"));
-    if ((not instance(L#0,Cone)) and (not instance(L#0,Fan))) then (
-	 error ("The list may only contain cones and fans"));
-    if (#L == 1) then (F = addCone(L#0,F))
-    else if (#L > 1) then ( 
-	 F = addCone(L#0,F);
-	 if (not F#?"comperror") then (
-	      F = addCone(drop(L,1),F)));
-    F)
+    if L == {} then error("The list must not be empty");
+    if (not instance(L#0,Cone)) and (not instance(L#0,Fan)) then error("The list may only contain cones and fans");
+    if #L == 1 then addCone(L#0,F) else addCone(drop(L,1),addCone(L#0,F)))
 
 
 --   INPUT : '(F1,F)',  where 'F1' is a fan in the same ambient space as the fan 'F'
 --  OUTPUT : The original fan 'F' together with cones of the fan 'F1'
 addCone (Fan,Fan) := (F1,F) -> (
      -- Checking for input errors
-     if (ambDim(F) != ambDim(F1)) then (
-	  error ("The fans must be in the same ambient space"));
-     L := F1#"generatingCones";
+     if ambDim F != ambDim F1 then error("The fans must be in the same ambient space");
+     L := toList F1#"generatingCones";
      addCone(L,F))
-
-
-equalLists = method(TypicalValue => Boolean)
-equalLists (List,List) := (L1,L2) -> (
-     L1 = uniquePO L1;
-     L2 = uniquePO L2;
-     equality := (#L1 == #L2);
-     if equality then (
-	  while ((L1 != {}) and equality) do (
-	       e := L1#0;
-	       L1 = drop(L1,1);
-	       p = position(L2, l -> (l == e));
-	       if (p === null) then (
-		    equality = false)
-	       else (
-		    L2 = drop(L2,{p,p}))));
-     equality)
-	       
-     
-
-
-
--- PURPOSE : Computing the symmetric difference of two lists
---   INPUT : '(S1,S2)',  two lists
---  OUTPUT : The symmetric difference of the two lists
-symmDiff = method(TypicalValue => List)
-symmDiff(List,List) := (S1,S2) -> (
-     L := {};
-     L2 := set {};
-     scan(S1, s -> (
-	       -- Check if 's' is contained in S2, if so remember the indices of its appearance in S2 
-	       insert := true;
-	       scan(#S2, i -> ( if (s == S2#i) then (
-			      insert = false;
-			      L2 = L2 + set{i})));
-	       -- If not then append it to 'L2'
-	       if insert then ( L = append(L,s))));
-     -- No add the remaining elements of 'S2' whose indeces have not been saved
-     scan(#S2, i -> (if (not member(i,L2)) then ( L = append(L,S2#i))));
-     L)
-
--- PURPOSE : Computing the union of two lists
---   INPUT : '(L1,L2)',  two lists
---  OUTPUT : The union of the two lists
-union = method(TypicalValue => List)
-union(List,List) := (L1,L2) -> (
-     L := {};
-     scan(L1, C -> (
-	       -- Scanning the elements of 'L1' if they are already in 'L2', those who are not,
-	       -- are saved in 'L' and in the end 'L' is appended to 'L2'
-	       insert := true;
-	       i := 0;
-	       while (insert and (i < #L2)) do (if (C == L2#i) then (insert = false); i=i+1);
-	       if insert then L = append(L,C)));
-     L2|L)
-
-
-uniquePO = method(TypicalValue => List)
-uniquePO List := L -> (
-     Lout := {};
-     while (L != {}) do (
-	  e := L#0;
-	  L = select(L, l -> (l != e));
-	  Lout = Lout | {e});
-     Lout)
 
 
 -- PURPOSE : Giving the defining affine hyperplanes
 ambDim = method(TypicalValue => ZZ)
 
 --   INPUT : 'P'  a Polyhedron 
---  OUTPUT : an integer, which is the dimension of the ambient space
-ambDim(Polyhedron) := P -> (
-	P#"ambientDimension")
+--  OUTPUT : an integer, the dimension of the ambient space
+ambDim Polyhedron := P -> P#"ambient dimension"
 
 --   INPUT : 'C'  a Cone 
---  OUTPUT : an integer, which is the dimension of the ambient space
-ambDim(Cone) := C -> (
-	C#"ambientDimension")
+--  OUTPUT : an integer, the dimension of the ambient space
+ambDim Cone := C -> C#"ambient dimension"
 
 --   INPUT : 'F'  a Fan 
---  OUTPUT : an integer, which is the dimension of the ambient space
-ambDim(Fan) := F -> (
-	F#"ambientDimension")
+--  OUTPUT : an integer, the dimension of the ambient space
+ambDim Fan := F -> F#"ambient dimension"
 
 
 
@@ -1048,77 +646,61 @@ ambDim(Fan) := F -> (
 cones = method(TypicalValue => List)
 cones(ZZ,Fan) := (k,F) -> (
 	-- Checking for input errors
-	if ((k < 0) or (dim(F) < k)) then (
-	     error ("k must be between 0 and the dimension of the fan."));
-	L := {};
-	i := 0;
-	stopper := false;
+	if k < 0 or dim F < k then error("k must be between 0 and the dimension of the fan.");
+	L := select(toList F#"generatingCones", C -> dim C >= k);
 	-- Collecting the 'k'-dim faces of all generating cones of dimension greater than 'k'
-	while (i < F#"numGeneratingCones") and (not stopper) do (
-	     C := (F#"generatingCones")#i;
-	     if (dim(C) >= k) then (L = union(L,faces(dim(C)-k,C)))
-	     else stopper = true;
-	     i=i+1);
-	L)
+	unique flatten apply(L, C -> faces(dim(C)-k,C)))
 
 
 	     
 --   INPUT : 'P'  a Polyhedron 
---  OUTPUT : an integer, which is the dimension of the polyhedron
-dim(Polyhedron) := P -> (
-	P#"polyhedronDimension")
+--  OUTPUT : an integer, the dimension of the polyhedron
+dim Polyhedron := P -> P#"dimension of polyhedron"
 
 
 --   INPUT : 'C'  a Cone 
---  OUTPUT : an integer, which is the dimension of the Cone
-dim(Cone) := C -> (
-	C#"coneDimension")
+--  OUTPUT : an integer, the dimension of the Cone
+dim Cone := C -> C#"dimension of the cone"
 
 
 --   INPUT : 'F'  a Fan 
---  OUTPUT : an integer, which is the highest dimension of Cones in 'F'
-dim(Fan) := F -> (
-	F#"topDimension")
+--  OUTPUT : an integer, the highest dimension of Cones in 'F'
+dim Fan := F -> F#"top dimension of the cones"
 
 
 -- PURPOSE : Giving the generating Cones of the Fan
 --   INPUT : 'F'  a Fan
 --  OUTPUT : a List of Cones
 genCones = method(TypicalValue => List)
-genCones(Fan) := F -> (
-	F#"generatingCones")
+genCones Fan := F -> toList F#"generatingCones"
 
 
 
--- PURPOSE : Giving the defining affine halfspaces
+-- PURPOSE : Giving the defining affine half-spaces
 --   INPUT : 'P'  a Polyhedron 
 --  OUTPUT : '(M,v)', where M and v are matrices and P={x in H | Mx<=v}, where 
 --		 H is the intersection of the defining affine hyperplanes
 halfspaces = method()
-halfspaces(Polyhedron) := P -> (
-	P#"halfspaces")
+halfspaces Polyhedron := P -> P#"halfspaces"
 
 
 --   INPUT : 'C'  a Cone
 --  OUTPUT : 'M', where M is a matrix and C={x in H | Mx>=0}, where 
 --		 H is the intersection of the defining hyperplanes
-halfspaces(Cone) := C -> (
-	C#"halfspaces")
+halfspaces Cone := C -> C#"halfspaces"
 
 
 
 -- PURPOSE : Giving the defining affine hyperplanes
 --   INPUT : 'P'  a Polyhedron 
 --  OUTPUT : '(N,w)', where M and v are matrices and P={x in HS | Nx=w}, where 
---		 HS is the intersection of the defining affine halfspaces
+--		 HS is the intersection of the defining affine half-spaces
 hyperplanes = method()
-hyperplanes(Polyhedron) := P -> (
-	P#"hyperplanes")
+hyperplanes Polyhedron := P -> P#"hyperplanes"
 
 
 --   INPUT : 'C'  a Cone
-hyperplanes(Cone) := C -> (
-	C#"hyperplanes")
+hyperplanes Cone := C -> C#"hyperplanes"
 
 
 
@@ -1127,39 +709,32 @@ linSpace = method(TypicalValue => Matrix)
 
 --   INPUT : 'P'  a Polyhedron 
 --  OUTPUT : a Matrix, where the column vectors are a basis of the lineality space
-linSpace(Polyhedron) := P -> (
-	P#"linealitySpace")
+linSpace Polyhedron := P -> P#"linealitySpace"
 
 
 --   INPUT : 'C'  a Cone
 --  OUTPUT : a Matrix, where the column vectors are a basis of the lineality space
-linSpace(Cone) := C -> (
-	C#"linealitySpace")
+linSpace Cone := C -> C#"linealitySpace"
 
 
 --   INPUT : 'F'  a Fan
 --  OUTPUT : a Matrix, where the column vectors are a basis of the lineality space
-linSpace(Fan) := F -> (
-	C:= (F#"generatingCones")#0;
-	C#"linealitySpace")
+linSpace Fan := F -> ((toList F#"generatingCones")#0)"linealitySpace"
 
 
 -- PURPOSE : Giving the rays
 --   INPUT : 'P'  a Polyhedron
 --  OUTPUT : a Matrix, containing the rays of P as column vectors
 rays = method(TypicalValue => Matrix)
-rays(Polyhedron) := P -> (
-	P#"rays")
+rays Polyhedron := P -> P#"rays"
 
 
 --   INPUT : 'C'  a Cone
-rays(Cone) := C -> (
-	C#"rays")
+rays Cone := C -> C#"rays"
 
 
 --   INPUT : 'F'  a Fan
-rays(Fan) := F -> (
-	F#"rays")
+rays Fan := F -> toList F#"rays"
 
 
    
@@ -1167,23 +742,22 @@ rays(Fan) := F -> (
 --   INPUT : 'P'  a Polyhedron
 --  OUTPUT : a Matrix, containing the vertices of P as column vectors
 vertices = method(TypicalValue => Matrix)
-vertices(Polyhedron) := P -> (
-	P#"vertices")
+vertices Polyhedron := P -> P#"vertices"
 
 
 
--- PURPOSE : Tests whether the intersection of two Polyhedra/Cones is a face of both
-areCompatible = method()
-
+-- PURPOSE : Tests whether the intersection of two Cones is a face of both
 --   INPUT : '(C1,C2)'  two Cones
---  OUTPUT : '(Boolean,Cone)'   (true,the intersection),if their intersection is a face of each and false otherwise
+--  OUTPUT : '(Boolean,Cone)'   (true,the intersection),if their intersection is a face of each and 
+--     	                        (false,the intersection) otherwise. If the two cones do not lie in 
+--     	    	      	   	the same ambient space it returns the empty polyhedron instead of 
+--     	    	      	   	the intersection
+areCompatible = method()
 areCompatible(Cone,Cone) := (C1,C2) -> (
-     test := false;
-	if ((C1#"ambientDimension") == (C2#"ambientDimension")) then (
-	     I := intersection(C1,C2);
-	     test = isFace(I,C1) and isFace(I,C2);
-	     test = (test,I));
-	test)
+     if C1#"ambient dimension" == C2#"ambient dimension" then (
+	  I := intersection(C1,C2);
+	  (isFace(I,C1) and isFace(I,C2),I))
+     else (false,emptyPolyhedron(C1#"ambient dimension")))
 
 
 -- PURPOSE : Tests whether the intersection of two Polyhedra/Cones is a face of both
@@ -1192,20 +766,36 @@ commonFace = method(TypicalValue => Boolean)
 --   INPUT : '(P,Q)'  two Polyhedra
 --  OUTPUT : 'true' or 'false'
 commonFace(Polyhedron,Polyhedron) := (P,Q) -> (
-	test := false;
-	if ((P#"ambientDimension") == (Q#"ambientDimension")) then (
+	if P#"ambient dimension" == Q#"ambient dimension" then (
 	     I := intersection(P,Q);
-	     test = isFace(I,P) and isFace(I,Q));
-	test)
+	     isFace(I,P) and isFace(I,Q))
+	else false)
 
 --   INPUT : '(C1,C2)'  two Cones
 --  OUTPUT : 'true' or 'false'
 commonFace(Cone,Cone) := (C1,C2) -> (
-	test := false;
-	if ((C1#"ambientDimension") == (C2#"ambientDimension")) then (
-	     I := intersection(C1,C2);
-	     test = isFace(I,C1) and isFace(I,C2));
-	test)
+     if C1#"ambient dimension" == C2#"ambient dimension" then (
+	  I := intersection(C1,C2);
+	  isFace(I,C1) and isFace(I,C2))
+     else false)
+
+
+--   INPUT : '(C,F)'  a Cone and a Fan
+--  OUTPUT : 'true' or 'false'
+-- COMMENT : For this it checks if the cone has a common face with every generating cone of the fan
+commonFace(Cone,Fan) := (C,F) -> if C#"ambient dimension" == F#"ambient dimension" then all(genCones F, C1 -> commonFace(C,C1)) else false
+
+
+--   INPUT : '(F,C)'  a Fan and a Cone
+--  OUTPUT : 'true' or 'false'
+-- COMMENT : For this it checks if the cone has a common face with every generating cone of the fan
+commonFace(Fan,Cone) := (F,C) -> commonFace(C,F)
+
+
+--   INPUT : '(F1,F2)'  two Fans
+--  OUTPUT : 'true' or 'false'
+-- COMMENT : For this it checks if all generating cones of 'F1' have a common face with every generating cone of 'F2'
+commonFace(Fan,Fan) := (F1,F2) -> all(genCones F1, C -> commonFace(C,F2))
 
 
 
@@ -1215,38 +805,30 @@ commonFace(Cone,Cone) := (C1,C2) -> (
 contains = method(TypicalValue => Boolean)
 contains(Polyhedron,Polyhedron) := (P,Q) -> (
       -- checking for input errors
-      if (P#"ambientDimension" =!= Q#"ambientDimension") then (
-	   error ("Polyhedra must lie in the same ambient space"));
+      if P#"ambient dimension" =!= Q#"ambient dimension" then error("Polyhedra must lie in the same ambient space");
       -- Saving the equations of P and vertices/rays of Q
       (A,B) := P#"homogenizedHalfspaces";
       (C,D) := Q#"homogenizedVertices";
       A = transpose A;
       B = transpose B;
       E := A*C;
-      test := true;
       -- Checking if vertices/rays of Q satisfy the equations of P
-      scan(flatten entries E, e -> (test = test and (e<=0)));
-      test = test and (A*D == 0*A*D) and (B*C == 0*B*C) and (B*D == 0*B*D);
-      test)
+      all(flatten entries E, e -> e <= 0) and A*D == 0*A*D and B*C == 0*B*C and B*D == 0*B*D)
 
 
 -- PURPOSE : Check if 'C1' contains 'C2'
 --   INPUT : '(C1,C2)'  two Cones
 contains(Cone,Cone) := (C1,C2) -> (
       -- checking for input errors
-      if (C1#"ambientDimension" =!= C2#"ambientDimension") then (
-	   error ("Cones must lie in the same ambient space"));
+      if C1#"ambient dimension" =!= C2#"ambient dimension" then error("Cones must lie in the same ambient space");
       -- Saving the equations of C1 and rays of C2
       (A,B) := C1#"dualgens";
       (C,D) := C2#"genrays";
       A = transpose A;
       B = transpose B;
       E := A*C;
-      test := true;
       -- Checking if the rays of C2 satisfy the equations of C1
-      scan(flatten entries E, e -> (test = test and (e<=0)));
-      test = test and (A*D == 0*A*D) and (B*C == 0*B*C) and (B*D == 0*B*D);
-      test)
+      all(flatten entries E, e -> e <= 0) and A*D == 0*A*D and B*C == 0*B*C and B*D == 0*B*D)
  
 
  
@@ -1254,11 +836,11 @@ contains(Cone,Cone) := (C1,C2) -> (
 --   INPUT : '(C,P)'  a Cone and a Polyhedron
 contains(Cone,Polyhedron) := (C,P) -> (
       -- checking for input errors
-      if (C#"ambientDimension" =!= P#"ambientDimension") then (
-	   error ("Cone and Polyhedron must lie in the same ambient space"));
+      if C#"ambient dimension" =!= P#"ambient dimension" then error("Cone and Polyhedron must lie in the same ambient space");
       -- Saving the equations of C and vertices/rays of P
-      M := (P#"vertices") | (P#"rays");
-      C1:= posHull M;
+      M := P#"vertices" | P#"rays";
+      LS := P#"linealitySpace";
+      C1 := posHull(M,LS);
       contains(C,C1))
 
 
@@ -1267,10 +849,9 @@ contains(Cone,Polyhedron) := (C,P) -> (
 --   INPUT : '(P,C)'  a Polyhedron and a Cone
 contains(Polyhedron,Cone) := (P,C) -> (
       -- checking for input errors
-      if (C#"ambientDimension" =!= P#"ambientDimension") then (
-	   error ("Polyhedron and Cone must lie in the same ambient space"));
+      if C#"ambient dimension" =!= P#"ambient dimension" then error("Polyhedron and Cone must lie in the same ambient space");
       -- Saving the cone 'C' as a polyhedron and using the function on two polyhedra
-      Q := coneToPolyhedron(C);
+      Q := coneToPolyhedron C;
       contains(P,Q))
 
 
@@ -1279,11 +860,9 @@ contains(Polyhedron,Cone) := (P,C) -> (
 --   INPUT : '(P,p)'  a Polyhedron 'P' and a point 'p' given as a matrix
 contains(Polyhedron,Matrix) := (P,p) -> (
       -- checking for input errors
-      if (P#"ambientDimension" =!= (numgens target p)) then (
-	   error ("Polyhedron and point must lie in the same ambient space"));
-       if ((numgens source p) =!= 1) then (
-	   error ("The point must be given as a one row matrix"));
-      contains(P,convexHull(p)))
+      if P#"ambient dimension" =!= numRows p then error("Polyhedron and point must lie in the same ambient space");
+      if numColumns p =!= 1 then error("The point must be given as a one row matrix");
+      contains(P,convexHull p))
 
 
 
@@ -1291,98 +870,38 @@ contains(Polyhedron,Matrix) := (P,p) -> (
 --   INPUT : '(C,p)'  a Cone 'C' and a point 'p' given as a matrix
 contains(Cone,Matrix) := (C,p) -> (
       -- checking for input errors
-      if (C#"ambientDimension" =!= (numgens target p)) then (
-	   error ("Polyhedron and point must lie in the same ambient space"));
-       if ((numgens source p) =!= 1) then (
-	   error ("The point must be given as a one row matrix"));
-      contains(C,convexHull(p)))
+      if C#"ambient dimension" =!= numRows p then error("Polyhedron and point must lie in the same ambient space");
+      if numColumns p =!= 1 then error("The point must be given as a one row matrix");
+      contains(C,convexHull p))
 
 
 
 -- PURPOSE : Check if a list of cones 'L' contains 'C'
 --   INPUT : '(L,C)'  a List of cones 'L' and a Cone 'C'
-contains(List,Cone) := (L,C) -> (
-      i := 0;
-      stopper := false;
-      while (not stopper) and (i < #L) do (
-	   C1 := L#i;
-	   -- checking for input errors
-	   if (instance(C1,Cone)) then (
-		if (ambDim(C) == ambDim(C1)) then (stopper = equals(C,C1)));
-	   i = i+1);
-      stopper)
+contains(List,Cone) := (L,C) -> any(L, C1 -> C1 == C)
  
  
 -- PURPOSE : Check if a list of cones 'L' contains 'C'
 --   INPUT : '(L,C)'  a List of cones 'L' and a Cone 'C'
-contains(List,Polyhedron) := (L,P) -> (
-      i := 0;
-      stopper := false;
-      while (not stopper) and (i < #L) do (
-	   P1 := L#i;
-	   -- checking for input errors
-	   if (instance(P1,Polyhedron)) then (
-		if (ambDim(P) == ambDim(P1)) then (stopper = equals(P,P1)));
-	   i = i+1);
-      stopper)
+contains(List,Polyhedron) := (L,P) -> any(L, Q -> Q == P)
  
  
 -- PURPOSE : Check if 'F' contains 'C'
 --   INPUT : '(F,C)'  a Fan 'F' and a Cone 'C'
 contains(Fan,Cone) := (F,C) -> (
       -- Checking for input errors
-      if (ambDim(F) != ambDim(C)) then (
-	   error ("Fan and Cone must lie in the same ambient space"));
+      if ambDim F != ambDim C then error("Fan and Cone must lie in the same ambient space");
       -- Making the list of cones of same dimension as 'C'
-      L := cones(dim(C),F);
+      L := cones(dim C,F);
       contains(L,C))
       
 
 
+Polyhedron == Polyhedron := (P,Q) -> P === Q
 
--- PURPOSE : Check if 'P' equals 'Q'
---   INPUT : '(P,Q)'  two Polyhedra
---  OUTPUT : 'true' or 'false'
-equals = method(TypicalValue => Boolean)
-equals(Polyhedron,Polyhedron) := (P,Q) -> (
-     if (ambDim(P) == ambDim(Q)) then (
-	  contains(P,Q) and contains(Q,P))
-     else (
-	  false))
+Cone == Cone := (C1,C2) -> C1 === C2
 
-
-
--- PURPOSE : Check if 'C1' equals 'C2'
---   INPUT : '(C1,C2)'  two Cones
-equals(Cone,Cone) := (C1,C2) -> (
-     if (ambDim(C1) == ambDim(C2)) then (
-	  contains(C1,C2) and contains(C2,C1))
-     else (
-	  false))
-
-
--- PURPOSE : Check if 'F1' equals 'F2'
---   INPUT : '(F1,F2)'  two Fans
-equals(Fan,Fan) := (F1,F2) -> (
-     (symmDiff(F1#"generatingCones",F2#"generatingCones") == {}))      
-
-Polyhedron == Polyhedron := (P,Q) -> (equals(P,Q))
-
-Polyhedron == Thing := (P,T) -> (false)
-
-Cone == Cone := (C1,C2) -> (equals(C1,C2))
-
-Cone == Thing := (C,T) -> (false)
-
-Fan == Fan := (F1,F2) -> (equals(F1,F2))
-
-Fan == Thing := (F,T) -> (false)
-
-Thing == Polyhedron := (T,P) -> (false)
-
-Thing == Cone := (T,C) -> (false)
-
-Thing == Fan := (T,F) -> (false)
+Fan == Fan := (F1,F2) -> F1 === F2
 
 
 
@@ -1391,22 +910,21 @@ Thing == Fan := (T,F) -> (false)
 --   INPUT : 'P'  a Polyhedron
 --  OUTPUT : 'true' or 'false'
 isCompact = method(TypicalValue => Boolean)
-isCompact(Polyhedron) := P -> (
-     ((P#"linealitySpace" == 0) and (P#"rays" == 0)))
+isCompact Polyhedron := P -> P#"linealitySpace" == 0 and P#"rays" == 0
 
 
 -- PURPOSE : Tests if a Fan is complete
 --   INPUT : 'F'  a Fan
 --  OUTPUT : 'true' or 'false'
 isComplete = method(TypicalValue => Boolean)
-isComplete(Fan) := F -> (
-     F#"isComplete")
+isComplete Fan := F -> F#"isComplete"
 
 
+-- PURPOSE : Tests if a Polyhedron is empty
+--   INPUT : 'P'  a Polyhedron
+--  OUTPUT : 'true' or 'false'
 isEmpty = method(TypicalValue => Boolean)
-isEmpty Polyhedron := P -> (
-     P#"polyhedronDimension" == -1)
-
+isEmpty Polyhedron := P -> P#"dimension of polyhedron" == -1
 
 
      
@@ -1416,132 +934,116 @@ isFace = method(TypicalValue => Boolean)
 --   INPUT : '(P,Q)'  two Polyhedra
 --  OUTPUT : 'true' or 'false'
 isFace(Polyhedron,Polyhedron) := (P,Q) -> (
-     test := false;
      -- Checking if the two polyhedra lie in the same space and computing the dimension difference
-     if ((P#"ambientDimension") == (Q#"ambientDimension")) then (
-	  c := (Q#"polyhedronDimension")-(P#"polyhedronDimension");
-	  if (c >= 0) then (
-	       -- Checking if P is the empty polyhedron
-	       if (c > (Q#"polyhedronDimension")) then (
-		    test = true)
-	       else (
-		    -- Checking if one of the codim 'c' faces of Q is P
-		    L := faces(c,Q);
-		    i := 0;
-		    while ((not test) and (i < #L)) do (
-			 test = equals(P,L#i);
-			 i = i+1))));
-     test)
+     c := Q#"dimension of polyhedron" - P#"dimension of polyhedron";
+     if P#"ambient dimension" == Q#"ambient dimension" and c >= 0 then (
+	  -- Checking if P is the empty polyhedron
+	  if c > Q#"dimension of polyhedron" then true
+	  -- Checking if one of the codim 'c' faces of Q is P
+	  else any(faces(c,Q), f -> f === P))
+     else false)
 
 --   INPUT : '(C1,C2)'  two Cones
 --  OUTPUT : 'true' or 'false'
 isFace(Cone,Cone) := (C1,C2) -> (
-     test := false;
-     -- Checking if the two cones lie in the same space and computing the dimension difference
-     if ((C1#"ambientDimension") == (C2#"ambientDimension")) then (
-	  c := (C2#"coneDimension")-(C1#"coneDimension");
-	  if (c >= 0) then (
-	       -- Checking if one of the codim 'c' faces of C2 is C1
-	       L := faces(c,C2);
-	       i := 0;
-	       while ((not test) and (i < #L)) do (
-		    test = equals(C1,L#i);
-		    i = i+1)));
-     test)
+     c := C2#"dimension of the cone" - C1#"dimension of the cone";
+     -- Checking if the two cones lie in the same space and the dimension difference is positive
+     if C1#"ambient dimension" == C2#"ambient dimension" and c >= 0 then (
+	  -- Checking if one of the codim 'c' faces of C2 is C1
+	  any(faces(c,C2), f -> f === C1))
+     else false)
+
+isNormal Polyhedron := P -> (
+     -- Checking for input errors
+     if not isCompact P then error ("The polyhedron must be compact");
+     -- Computing the Hilbert basis of the cone over 'P' on height 1
+     V := vertices P || map(QQ^1,source vertices P,(i,j) -> 1);
+     L := hilbertBasis posHull V;
+     n := ambDim P;
+     -- Do all lattice points lie in height one?
+     all(L,v -> v_(n,0) == 1))
      
 
 -- PURPOSE : Tests if a Cone is pointed
 --   INPUT : 'C'  a Cone
 --  OUTPUT : 'true' or 'false'
 isPointed = method(TypicalValue => Boolean)
-isPointed Cone := C -> (
-     (rank(C#"linealitySpace") == 0))
+isPointed Cone := C -> rank C#"linealitySpace" == 0
 
 
 --   INPUT : 'F',  a Fan
 --  OUTPUT : 'true' or 'false'
-isPointed Fan := F -> (
-     isPointed((F#"generatingCones")#0))
+isPointed Fan := F -> isPointed((toList F#"generatingCones")#0)
 
 
 
 -- PURPOSE : Tests if a Fan is projective
---   INPUT : 'P'  a Polyhedron
---  OUTPUT : 'true' or 'false'
-isProjective = method(TypicalValue => Boolean)
-isProjective(Fan) := F -> (
-     test := false;
+--   INPUT : 'F'  a Fan
+--  OUTPUT : a Polyhedron, which has 'F' as normal fan, if 'F' is projective or the empty polyhedron
+isProjective = method(TypicalValue => Polyhedron)
+isProjective Fan := F -> (
+     resultingPolytope := emptyPolyhedron ambDim F;
      -- First of all the fan must be complete
-     if (isComplete(F)) then (
+     if isComplete F then (
 	  -- Extracting the generating cones, the ambient dimension, the codim 1 
 	  -- cones (corresponding to the edges of the polytope if it exists)
 	  i := 0;
-	  L := hashTable apply(F#"generatingCones", l -> (i=i+1; i=>l));
-	  n := F#"ambientDimension";
+	  L := hashTable apply(toList F#"generatingCones", l -> (i=i+1; i=>l));
+	  n := F#"ambient dimension";
 	  edges := cones(n-1,F);
 	  -- Making a table that indicates in which generating cones each 'edge' is contained
-	  edgeTCTable := hashTable apply(edges, e -> ( select(1..(#L), j -> (contains(L#j,e))) => e));
+	  edgeTCTable := hashTable apply(edges, e -> select(1..#L, j -> contains(L#j,e)) => e);
 	  i = 0;
 	  -- Making a table of all the edges where each entry consists of the pair of top cones corr. to
 	  -- this edge, the codim 1 cone, an index number i, and the edge direction from the first to the
 	  -- second top Cone
 	  edgeTable := apply(pairs edgeTCTable, e -> (i=i+1; 
-		    v := transpose hyperplanes (e#1);
-		    if (not (contains(dualCone(L#((e#0)#0)),v))) then (v = (-1)*v);
+		    v := transpose hyperplanes e#1;
+		    if not contains(dualCone L#((e#0)#0),v) then v = -v;
 		    (e#0, e#1, i, v)));
-	  edgeTCNoTable := hashTable apply(edgeTable, e -> (e#0 => (e#2,e#3)));
-	  edgeTable = hashTable apply(edgeTable, e -> (e#1 => (e#2,e#3)));
-	  corrList := {};
+	  edgeTCNoTable := hashTable apply(edgeTable, e -> e#0 => (e#2,e#3));
+	  edgeTable = hashTable apply(edgeTable, e -> e#1 => (e#2,e#3));
 	  -- Computing the list of correspondencies, i.e. for each codim 2 cone ( corresponding to 2dim-faces of the polytope) save 
 	  -- the indeces of the top cones containing it
-	  scan(keys L, j -> (
-		    M := faces(2,L#j);
-		    scan(M, C -> (
-			      stopper := false;
-			      k := 0;
-			      while ((k < #corrList) and (not stopper)) do (
-				   if (C == corrList#k#0) then (
-					corrList = take(corrList,{0,k-1})|{{corrList#k#0,append(corrList#k#1,j)}}|take(corrList,{k+1,(#corrList)-1});
-					stopper = true); 
-				   k=k+1);
-			      if (not stopper) then corrList = append(corrList, {C,{j}})))));
+	  corrList := hashTable {};
+	  scan(keys L, j -> (corrList = merge(corrList,hashTable apply(faces(2,L#j), C -> C => {j}),join)));
+	  corrList = pairs corrList;
 	  --  Generating the 0 matrix for collecting the conditions on the edges
-	  m = #(keys edgeTable);
-	  HP = map(QQ^0,QQ^m,0);
-	  NM = map(QQ^n,QQ^m,0);
+	  m := #(keys edgeTable);
+	  NM := map(QQ^n,QQ^m,0);
 	  -- for each entry of corrlist another matrix is added to HP
-	  scan(#corrList, j -> (
+	  HP := flatten apply(#corrList, j -> (
 		    v := corrList#j#1;
 		    HPnew := NM;
 		    -- Scanning trough the top cones containing the active codim2 cone and order them in a circle by their 
 		    -- connecting edges
-		    v = apply(v, e -> (L#e));
+		    v = apply(v, e -> L#e);
 		    C := v#0;
 		    v = drop(v,1);
 		    C1 := C;
-		    while (v != {}) do (
-			 C2 := v#0;
-			 v = drop(v,1);
-			 C' := intersection(C1,C2);
-			 if (dim(C') == n-1) then (
-			      scan(keys edgeTable, k -> ( if (k == C') then (a,b)=edgeTable#k));
-			      if (not contains(dualCone(C2),b)) then ( b = (-1)*b);
-			      -- 'b' is the edge direction inserted in column 'a' which is the index of this edge
-			      HPnew = (HPnew_{0..a-2})|(b)|(HPnew_{a..m-1});
-			      C1 = C2)
-			 else (v = append(v,C2)));
-		    C'' := intersection(C,C1);
-		    scan(keys edgeTable, k -> ( if (k == C'') then (a,b)=edgeTable#k));
-		    if (not contains(dualCone(C),b)) then ( b = (-1)*b);
-		    -- 'b' is the edge direction inserted in column 'a' which is the index of this edge
-		    HPnew = (HPnew_{0..a-2})|(b)|(HPnew_{a..m-1});
- 		    -- the new restriction is that the edges around that codim2 Cone must add up to 0
-		    HP = HP || HPnew));
+		    nv := #v;
+		    scan(nv, i -> (
+			      i = position(v, e -> dim intersection(C1,e) == n-1);
+			      C2 := v#i;
+			      v = drop(v,{i,i});
+			      (a,b) := edgeTable#(intersection(C1,C2));
+			      if not contains(dualCone C2,b) then b = -b;
+			      -- 'b' is the edge direction inserted in column 'a', the index of this edge
+			      HPnew = HPnew_{0..a-2} | b | HPnew_{a..m-1};
+			      C1 = C2));
+		    C3 := intersection(C,C1);
+		    (a,b) := edgeTable#C3;
+		    if not contains(dualCone C,b) then b = -b;
+		    -- 'b' is the edge direction inserted in column 'a', the index of this edge
+		    -- the new restriction is that the edges ''around'' this codim2 Cone must add up to 0
+		    entries(HPnew_{0..a-2} | b | HPnew_{a..m-1})));
+	  if HP != {} then HP = matrix HP
+	  else HP = map(QQ^0,QQ^m,0);
 	  -- Find an interior vector in the cone of all positive vectors satisfying the restrictions
 	  v := flatten entries interiorVector intersection(id_(QQ^m),HP);
 	  M := {};
 	  -- If the vector is strictly positive then there is a polytope with 'F' as normalFan
-	  if (all(v, e -> (e > 0))) then (
+	  if all(v, e -> e > 0) then (
 	       -- Construct the polytope
 	       i = 1;
 	       -- Start with the origin
@@ -1549,31 +1051,31 @@ isProjective(Fan) := F -> (
 	       M = {p};
 	       Lyes := {};
 	       Lno := {};
-	       vlist := keys edgeTCTable;
-	       -- Walk alung all edges recursively
+	       vlist := apply(keys edgeTCTable,toList);
+	       -- Walk along all edges recursively
 	       edgerecursion := (i,p,vertexlist,Mvertices) -> (
 		    vLyes := {};
 		    vLno := {};
 		    -- Sorting those edges into 'vLyes' who emerge from vertex 'i' and the rest in 'vLno'
-		    scan(vertexlist, w -> (
-			      if (member(i,w)) then (vLyes = append(vLyes,w))
-			      else (vLno = append(vLno,w))));
+		    vertexlist = partition(w -> member(i,w),vertexlist);
+		    if vertexlist#?true then vLyes = vertexlist#true;
+		    if vertexlist#?false then vLno = vertexlist#false;
 		    -- Going along the edges in 'vLyes' with the length given in 'v' and calling edgerecursion again with the new index of the new 
 		    -- top Cone, the new computed vertex, the remaining edges in 'vLno' and the extended matrix of vertices
 		    scan(vLyes, w -> (
+			      w = toSequence w;
 			      j := edgeTCNoTable#w;
-			      if (w#0 == i) then (
+			      if w#0 == i then (
 				   (vLno,Mvertices) = edgerecursion(w#1,p+(j#1)*(v#((j#0)-1)),vLno,append(Mvertices,p+(j#1)*(v#((j#0)-1)))))
 			      else (
 				   (vLno,Mvertices) = edgerecursion(w#0,p-(j#1)*(v#((j#0)-1)),vLno,append(Mvertices,p-(j#1)*(v#((j#0)-1)))))));
 		    (vLno,Mvertices));
 	       -- Start the recursion with vertex '1', the origin, all edges and the vertexmatrix containing already the origin
 	       M = unique ((edgerecursion(i,p,vlist,M))#1);
-	       verts := M#0;
-	       scan(1..(#M-1), j -> (verts = verts | M#j));
+	       M = matrix transpose apply(M, m -> flatten entries m);
 	       -- Computing the convex hull
-	       test = convexHull verts));
-     test)
+	       resultingPolyhedron = convexHull M));
+     resultingPolyhedron)
 
 
 
@@ -1581,8 +1083,7 @@ isProjective(Fan) := F -> (
 --   INPUT : 'F'  a Fan
 --  OUTPUT : 'true' or 'false'
 isPure = method(TypicalValue => Boolean)
-isPure Fan := F -> (
-      F#"isPure")
+isPure Fan := F -> F#"isPure"
 
 
 -- PURPOSE : Checks if the input is smooth
@@ -1596,27 +1097,18 @@ isSmooth Cone := C -> (
       R := rays C;
       C = posHull R;
       -- if the cone is full dimensional then it is smooth iff its rays form a basis over ZZ
-      if (dim(C) == ambDim(C)) then (
-	   if ((numgens source R) == (numgens target R)) then ( smooth = (abs(det(R)) == 1)))
+      if dim C == ambDim C then numColumns R == numRows R and abs det R == 1
       -- otherwise the rays must be part of a basis over ZZ
       else (
-	   if ((numgens source R) == dim(C)) then (
-		A := (smithNormalForm(R))#0;
-		smooth = (det(A^{0..(numgens source A)-1}) == 1)));
-      smooth);
+	   if numColumns R == dim C then (
+		A := (smithNormalForm R)#0;
+		det(A^{0..(numColumns A)-1}) == 1)
+	   else false))
 	   
 
 --   INPUT : 'F'  a Fan
 --  OUTPUT : 'true' or 'false'
-isSmooth Fan := F -> (
-     -- Checking isSmooth for every generating cone of the fan
-     smooth := true;
-     i := 0;
-     while ((i < F#"numGeneratingCones") and (smooth)) do (
-	  C := (F#"generatingCones")#i;
-	  smooth = isSmooth(C);
-	  i = i+1);
-     smooth)
+isSmooth Fan := F -> all(toList F#"generatingCones",isSmooth)
 
 
 
@@ -1627,50 +1119,42 @@ isSmooth Fan := F -> (
 faces = method(TypicalValue => List)
 faces(ZZ,Polyhedron) := (k,P) -> (
      --Checking for input errors
-     if (k < 0) or (k > dim(P)) then (
-	  error ("the codimension must be between 0 and the dimension of the polyhedron"));
-     d := dim(P) - k;
-     dl := P#"linealitySpaceDimension";
+     if k < 0 or k > dim P then error("the codimension must be between 0 and the dimension of the polyhedron");
+     d := dim P - k;
+     dl := P#"dimension of lineality space";
+     -- Saving the lineality space of 'P', which is the also the lineality space of each face
      LS := P#"linealitySpace";
-     -- for d=dim(P) it is the polyhedron itself
-     if (d == dim(P)) then ({P})
+     -- for d = dim P it is the polyhedron itself
+     if d == dim P then {P}
      -- for k=dim(P) the faces are the vertices
-     else if (d == dl) then (V := vertices P;
+     else if d == dl then (
+	  V := vertices P;
 	  -- Generating the list of vertices with each vertex as a polyhedron
-	  Lf:={};
-	  scan(numgens source V, i -> (Lf = join(Lf,{convexHull(V_{i},LS)})));
-	  Lf)
-     else if (d < dl) then ({})
+	  apply(numColumns V, i -> convexHull(V_{i},LS)))
+     else if d < dl then {}
      else (
-	  -- Saving the halfspaces and hyperplanes
+	  -- Saving the half-spaces and hyperplanes
 	  (HS,v) := halfspaces P;
 	  (HP,w) := hyperplanes P;
 	  -- Generating the list of facets where each facet is given by a list of its vertices and a list of its rays
-	  F := apply(numRows HS, i -> (intersection(HS,v,(HP||HS^{i}),(w||v^{i}))));
+	  F := apply(numRows HS, i -> intersection(HS,v,HP || HS^{i},w || v^{i}));
 	  F = apply(F, f -> (
-		    V := vertices(f);
-		    R := rays(f);
-		    (set apply(numColumns(V), i -> V_{i}),set apply(numColumns(R), i -> R_{i}))));
-	  -- Saving the lineality space which is the also the lineality space of each face
+		    V := vertices f;
+		    R := rays f;
+		    (set apply(numColumns V, i -> V_{i}),set apply(numColumns R, i -> R_{i}))));
 	  -- Duplicating the list of facets
 	  L := F;
 	  i := 1;
 	  -- Intersecting L k-1 times with F and returning the maximal inclusion sets which are the faces of codim plus 1
-	  while (i<k) do (
-	       L = intersectionwithFacets(L,F);
+	  while i < k do (
+	       L = intersectionWithFacets(L,F);
 	       i = i+1);
 	  -- Generating the corresponding polytopes out of the lists of vertices, rays and the lineality space
 	  L = apply(L, l -> (
-		    l = (toList(l#0),toList(l#1));
-		    V := l#0#0;
-		    local R;
-		    scan(drop(l#0,1), m -> (V=V|m));
-		    if (l#1 != {}) then (
-			 R = l#1#0;
-			 scan(drop(l#1,1), m -> (R=R|m)))
-		    else (R = matrix toList(numgens target V:{0_QQ}));
-		    if (LS != 0) then (
-			 R = R | LS | ((-1)*LS));
+		    l = (toList l#0,toList l#1);
+		    V := matrix transpose apply(l#0, e -> flatten entries e);
+		    R := if l#1 != {} then matrix transpose apply(l#1, e -> flatten entries e) else map(target V,QQ^1,0);
+		    if LS != 0 then R = R | LS | -LS;
 		    convexHull(V,R)));
 	  L))
 
@@ -1680,184 +1164,84 @@ faces(ZZ,Polyhedron) := (k,P) -> (
 --     	     'C'  a polyhedron
 --  OUTPUT : a List, containing the faces as cones
 faces(ZZ,Cone) := (k,C) -> (
-     d := dim(C) - k;
-     dl := C#"linealitySpaceDimension";
+     d := dim C - k;
+     dl := C#"dimension of lineality space";
      LS := linSpace C;
      --Checking for input errors
-     if (d < 0) or (d > dim(C)) then (
-	  error ("the codimension must be between 0 and the dimension of the cone"))
-     -- for d=dim(C) it is the cone itself
-     else if (d == dim(C)) then ({C})
-     -- for d=dl it is the lineality space
-     else if (d == dl) then (
-	  {posHull(LS | (-LS))})
-     -- for d=dl+1 it is the lineality space plus one of the rays
-     else if (d == dl+1) then (
+     if d < 0 or d > dim C then error("the codimension must be between 0 and the dimension of the cone")
+     -- for d = dim C it is the cone itself
+     else if d == dim C then {C}
+     -- for d = dl it is the lineality space
+     else if d == dl then {posHull(LS | -LS)}
+     -- for d = dl+1 it is the lineality space plus one of the rays
+     else if d == dl+1 then (
 	  -- Generating the list of cones given by one ray and the lineality space
 	  R := rays C;
-	  Lf:={};
-	  scan(numgens source R, i -> (Lf = join(Lf,{posHull(R_{i},LS)})));
-	  Lf)
-     else if (0 <= d) and (d < dl) then (
-	  {})
+	  apply(numColumns R, i -> posHull(R_{i},LS)))
+     else if 0 <= d and d < dl then {}
      else (
-	  -- Saving the halfspaces and hyperplanes
+	  -- Saving the half-spaces and hyperplanes
 	  HS := halfspaces C;
 	  HP := hyperplanes C;
 	  -- Generating the list of facets where each facet is given by a list of its vertices and a list of its rays
-	  F := apply(numRows HS, i -> (intersection(HS,(HP||HS^{i}))));
+	  F := apply(numRows HS, i -> intersection(HS,HP || HS^{i}));
 	  F = apply(F, f -> (
-		    R := rays(f);
-		    (set apply(numColumns(R), i -> R_{i}))));
+		    R := rays f;
+		    (set apply(numColumns R, i -> R_{i}))));
 	  -- Duplicating the list of facets
 	  L := F;
 	  i := 1;
-	  -- Intersecting L k-1 times with F and returning the maximal inclusion sets which are the faces of codim plus 1
-	  while (i<k) do (
-	       L = intersectionwithFacetsCone(L,F);
+	  -- Intersecting L k-1 times with F and returning the maximal inclusion sets. These are the faces of codim plus 1
+	  while i < k do (
+	       L = intersectionWithFacetsCone(L,F);
 	       i = i+1);
 	  -- Generating the corresponding polytopes out of the lists of vertices, rays and the lineality space
-	  L = apply(L, l -> (
-		    l = toList(l);
-		    Rs := l#0;
-		    scan(drop(l,1), m -> (Rs = Rs | m));
-		    posHull(Rs,LS)));
-	  L))     
+	  apply(L, l -> posHull(matrix transpose apply(toList l, e -> flatten entries e),LS))))
 
      
 -- PURPOSE : Computing the f-vector of a polyhedron
 --   INPUT : 'P'  a Polyhedron
 --  OUTPUT : a List of integers, starting with the number of vertices and going up in dimension
 fVector = method(TypicalValue => List)
-fVector(Polyhedron) := P -> (
-     -- applying faces to P for every positive int up to the dimension
-     L := {};
-     scan((P#"polyhedronDimension")+1, d -> (L = join({#faces(d,P)},L)));
-     L)
-
+fVector Polyhedron := P -> apply(P#"dimension of polyhedron" + 1, d -> #faces(dim P - d,P))
 
 
 --   INPUT : 'C'  a Cone
 --  OUTPUT : a List of integers, starting with the number of vertices and going up in dimension
-fVector(Cone) := C -> (
-     -- applying faces to P for every positive int up to the dimension
-     L := {};
-     scan((C#"coneDimension")+1, d -> (L = join({#faces(d,C)},L)));
-     L)
-
--- AUXILIARY FUCTION for computing the Hilbert Basis of a Cone
-constructHilbertBasis := (A) -> (
-    -- Defining the function to determine if u is lower v
-    lowvec := (u,v) -> (
-	 test := true;
-	 i := 0;
-	 n := (numgens target u)-1;
-	 while (test and (i < n)) do (
-	      test = (flatten entries u)#i <= (flatten entries v)#i;
-	      i = i+1);
-	 test = test and (abs((flatten entries u)#n) <= abs((flatten entries v)#n)) and (((flatten entries u)#n)*((flatten entries v)#n) >= 0);
-	 test);
-    -- Collecting data
-    A = substitute(A,ZZ);
-    H := {A^{0}_{0}};
-    s := numgens target A;
-    n := numgens source A;
-    --doing the project and lift algorithm step by step with increasing dimensions
-    scan(n-1, i -> (
-	      -- the set 'F' will contain the lifted basis vectors, 'B' are the first i+2 columns of 'A' as a rowmatrix,
-	      -- the set 'H' contains the vectors from the last loop which are one dimension smaller
-	      F := {};
-	      B := transpose A_{0..(i+1)};
-	      -- Decide between lifting the existing vectors (i>s-1) or also adding the next column of 'B'
-	      if (i < (s-1)) then (
-		   -- Lifting the existing vectors from 'H'
-		   scan(H, h -> (
-			     j := 0;
-			     while ((numgens target h) == (i+1)) do (
-				  if (isSubset(image(h || matrix{{j}}), image B)) then (h = (h || matrix{{j}}));
-				  j=j+1);
-			     F = append(F,h)));
-		   -- Adding +- the next column of 'B'
-		   F = join(F,{B_{i+1}^{0..(i+1)},(-1)*B_{i+1}^{0..(i+1)}}))
-	      else (
-		   -- Lifting the existing vectors from 'H'
-		   nullmap := map(ZZ^1,ZZ^s,0);
-		   nullvec := map(ZZ^1,ZZ^1,0);
-		   scan(H, h -> (
-			     h = B*substitute(vertices intersection(nullmap,nullvec,B^{0..i},h),ZZ);
-			     F = append(F,h))));
-	      C := {};
-	      -- Computing the S-pairs from the elements of 'F' and saving them in 'C'
-	      scan(#F-1, k -> (
-			scan(#F-k-1, l -> (
-				  f := F#k;
-				  g := F#(k+l+1);
-				  if ((((entries f)#(i+1)#0)*((entries g)#(i+1)#0) < 0) and ((f+g) != 0*(f+g))) then (C=append(C,f+g))))));
-	      Cnew := {};
-	      -- The elements of 'F' are saved in 'G'
-	      G := F;
-	      j := 0;
-	      -- Adding those elements of 'C' to 'G' that satisfy the "normalform" condition by increasing last entry
-	      while (C != {}) do (
-		   f := C#0;
-		   C = drop(C,1);
-		   if ( (sum drop(flatten entries f,-1)) != j) then (
-			Cnew = append(Cnew,f))
-		   else (
-			test := true;
-			k := 0;
-			while (test and (k <= (#G-1))) do (
-			     test = not lowvec(G#k,f);
-			     k = k+1);
-			if test then (
-			     scan(G, g -> (
-				       if ((((entries f)#(i+1)#0)*((entries g)#(i+1)#0) < 0) and ((f+g) != 0*(f+g))) then (C=append(C,f+g))));
-			     G = append(G,f)));
-		   if (C == {}) then (
-			j = j+1;
-			C = Cnew;
-			Cnew = {}));
-	      -- saving those elements of 'G' with positive last entry into 'H'
-	      H = {};
-	      scan(G, g -> (
-			if ((entries g)#(i+1)#0 >= 0) then ( H=append(H,g))))));
-    H)
+fVector Cone := C -> apply(C#"dimension of the cone" + 1, d -> #faces(dim C - d,C))
 
 
 -- PURPOSE : Computing the Hilbert basis of a Cone 
 --   INPUT : 'C',  a Cone
 --  OUTPUT : 'L',  a list containing the Hilbert basis as one column matrices 
 hilbertBasis = method(TypicalValue => List)
-hilbertBasis Cone := (C) -> (
+hilbertBasis Cone := C -> (
      -- Computing the row echolon form of the matrix M
-     ref := (M) -> (
-	  n := numgens source M;
-	  s := numgens target M;
+     ref := M -> (
+	  n := numColumns M;
+	  s := numRows M;
 	  BC := map(ZZ^n,ZZ^n,1);
 	  m := min(n,s);
 	  -- Scan through the first square part of 'M'
 	  i := 0;
 	  stopper := 0;
-	  while ((i<m) and (stopper<n)) do (
-		    j := i;
-		    stop := false;
+	  while i < m and stopper < n do (
 		    -- Selecting the first non-zero entry after the i-th row in the i-th column
-		    while ((not stop) and (j < s)) do (
-			 if (M_i_j != 0) then (stop = true)
-			 else (j = j+1));
+		    j := select(1,toList(i..s-1),k -> M_i_k != 0);
 		    -- if there is a non-zero entry, scan the remaining entries and compute the reduced form for this column
-		    if stop then (
+		    if j != {} then (
+			 j = j#0;
 			 scan((j+1)..(s-1), k -> (
-				   if (M_i_k != 0) then (
+				   if M_i_k != 0 then (
 					a := M_i_j;
 					b := M_i_k;
 					L := gcdCoefficients(a,b);
 					a = substitute(a/(L#0),ZZ);
 					b = substitute(b/(L#0),ZZ);
-					M = (M^{0..j-1}) || ((L#1)*M^{j})+((L#2)*M^{k}) || (M^{j+1..k-1}) || ((-b)*M^{j})+(a*M^{k}) || (M^{k+1..s-1}))));
-			 if (i != j) then (
+					M = M^{0..j-1} || (L#1)*M^{j} + (L#2)*M^{k} || M^{j+1..k-1} || (-b)*M^{j} + a*M^{k} || M^{k+1..s-1})));
+			 if i != j then (
 			      M = M^{0..i-1} || M^{j} || M^{i+1..j-1} || M^{i} || M^{j+1..s-1});
-			 if (M_i_i < 0) then (M = M^{0..i-1} || (-1)*M^{i} || M^{i+1..s-1}))
+			 if M_i_i < 0 then M = M^{0..i-1} || -M^{i} || M^{i+1..s-1})
 		    else (
 			 M = M_{0..i-1} | M_{i+1..n-1} | M_{i};
 			 BC = BC_{0..i-1} | BC_{i+1..n-1} | BC_{i};
@@ -1869,29 +1253,46 @@ hilbertBasis Cone := (C) -> (
      preim := (h,A) -> (
 	  -- Take the generators of the kernel of '-h|A' and find an element with 1 as first entry -> the other entrys are a preimage
 	  -- vector
-	  N := gens(ker(-h|A));
-	  N = transpose((ref(transpose(N)))#0);
-	  N_{0}^{1..(numgens target N)-1});
+	  N := gens ker(-h|A);
+	  N = transpose (ref transpose N)#0;
+	  N_{0}^{1..(numRows N)-1});
      A := C#"halfspaces";
-     if (C#"hyperplanes" != 0) then ( A = A || (C#"hyperplanes") || ((-1)*(C#"hyperplanes")));
+     if C#"hyperplanes" != 0 then A = A || C#"hyperplanes" || -(C#"hyperplanes");
      A = substitute(A,ZZ);
      -- Use the project and lift algorithm to compute a basis of the space of vectors positive on 'A' whose preimages are the HilbertBasis
      (B,BC) := ref transpose A; 
      H := constructHilbertBasis B;
-     BC = inverse(transpose(BC));
+     BC = inverse transpose BC;
      apply(H,h -> preim(BC*h,A)))
 
 
--- PURPOSE : Get the pair of incompatible cones if they appear during a fan construction
---   INPUT : 'F',  a fan
---  OUTPUT : 'L',  a list, empty if there is no pair of incompatible cones, otherwise the 
---                 two cones starting with the one already in the fan
+-- PURPOSE : Get the pairs of incompatible cones in a list of cones
+--   INPUT : 'L',  a list of cones and fans
+--  OUTPUT : 'Lpairs',  a list, empty if there is no pair of incompatible cones, otherwise it contains the pairs of cones/fans that are  
+--                 	not compatible
 incompCones = method(TypicalValue => List)
-incompCones Fan := F -> (
-     L := {};
-     if (F#?"comperror") then (
-	  L = F#"comperror");
-     L)
+incompCones List := L -> (
+     if any(L, l -> (not instance(l,Cone)) and (not instance(l,Fan))) then error("The list may only contain cones and fans");
+     select(apply(subsets(L,2),toSequence), p -> not commonFace p))
+
+
+--   INPUT : '(C,F)',  a cone and a fan
+--  OUTPUT : 'Lpairs',  a list, empty if there is no pair of incompatible cones, otherwise it contains the pairs of 'C' with the cones of 
+--                 	'F' that are not compatible
+incompCones(Cone,Fan) := (C,F) -> select(apply(genCones F, f -> (C,f)), p -> not commonFace p)
+
+
+--   INPUT : '(F,C)',  a fan and a cone
+--  OUTPUT : 'Lpairs',  a list, empty if there is no pair of incompatible cones, otherwise it contains the pairs of 'C' with the cones of 
+--                 	'F' that are not compatible
+incompCones(Fan,Cone) := (F,C) -> select(apply(genCones F, f -> (f,C)), p -> not commonFace p)
+
+
+--   INPUT : '(F1,F2)',  two fans
+--  OUTPUT : 'Lpairs',  a list, empty if there is no pair of incompatible cones, otherwise it contains the pairs of cones of 'F1' and cones of 
+--                 	'F2' that are not compatible
+incompCones(Fan,Fan) := (F1,F2) -> flatten apply(genCones F1, C1 -> flatten apply(genCones F2, C2 -> if not commonFace(C1,C2) then (C1,C2) else {}))
+     
 
 
 -- PURPOSE : Checking if a point is an interior point of a Polyhedron or Cone 
@@ -1900,13 +1301,12 @@ inInterior = method(TypicalValue => Boolean)
 
 --   INPUT : '(p,P)',  where 'p' is a point given by a matrix and 'P' is a Polyhedron
 --  OUTPUT : 'true' or 'false'
-inInterior (Matrix,Polyhedron) := (p,P) -> (
-     smallestFace(p,P) == P)
+inInterior (Matrix,Polyhedron) := (p,P) -> smallestFace(p,P) === P
+
 
 --   INPUT : '(p,C)',  where 'p' is a point given by a matrix and 'C' is a Cone
 --  OUTPUT : 'true' or 'false'
-inInterior (Matrix,Cone) := (p,C) -> (
-     smallestFace(p,C) == C)
+inInterior (Matrix,Cone) := (p,C) -> smallestFace(p,C) === C
 
 
 -- PURPOSE : Computing a point in the relative interior of a cone or Polyhedron 
@@ -1917,10 +1317,9 @@ interiorPoint = method(TypicalValue => Matrix)
 --  OUTPUT : 'p',  a point given as a matrix
 interiorPoint Polyhedron := P -> (
      -- Checking for input errors
-     if (isEmpty(P)) then (
-	  error ("The polyhedron must not be empty"));
+     if isEmpty P then error("The polyhedron must not be empty");
      Vm := vertices P;
-     n := numgens source Vm;
+     n := numColumns Vm;
      ones := matrix toList(n:{1/n});
      -- Take the '1/n' weighted sum of the vertices
      Vm * ones)
@@ -1931,11 +1330,10 @@ interiorPoint Polyhedron := P -> (
 --  OUTPUT : 'p',  a point given as a matrix 
 interiorVector = method(TypicalValue => Matrix)
 interiorVector Cone := C -> (
-     if (dim(C) == 0) then (
-	  map(QQ^(ambDim(C)),QQ^1,0))
+     if dim C == 0 then map(QQ^(ambDim C),QQ^1,0)
      else (
 	  Rm := rays C;
-	  ones := matrix toList(numgens source Rm:{1_QQ});
+	  ones := matrix toList(numColumns Rm:{1_QQ});
 	  -- Take the sum of the rays
 	  iv := Rm * ones;
 	  d := abs gcd flatten entries iv;
@@ -1948,44 +1346,54 @@ interiorVector Cone := C -> (
 latticePoints = method(TypicalValue => List)
 latticePoints Polyhedron := P -> (
      -- Checking for input errors
-     if (not isCompact(P)) then (
-	  error ("The polyhedron must be compact"));
-     -- Computing the Hilbert basis of the cone over 'P' on height 1
-     V := (vertices(P)) || (matrix{toList((numgens source vertices(P)):1_QQ)});
-     L := hilbertBasis posHull V;
-     -- The lattice points are those Hilbert Basis elements on height 1
-     L = apply(select(L, l -> (last(flatten(entries(l))) == 1)), v -> (v^{0..(ambDim(P)-1)}));
-     L)
+     if  not isCompact P then error("The polyhedron must be compact");
+     -- Recursive function that intersects the polyhedron with paralell hyperplanes in the axis direction
+     -- in which P has its minimum extension
+     latticePointsRec := P -> (
+	  -- Finding the direction with minimum extension of P
+	  V := entries vertices P;
+	  n := ambDim P;
+	  minv := apply(V,min);
+	  maxv := apply(V,max);
+	  minmaxv := maxv-minv;
+	  pos := min minmaxv;
+	  pos = position(minmaxv,v -> v == pos);
+	  -- Determining the lattice heights in this direction
+	  L := toList({{ceiling minv_pos}}..{{floor maxv_pos}});
+	  -- If the dimension is one, than it is just a line and we take the lattice points
+	  if n == 1 then apply(L,matrix)
+	  -- Otherwise intersect with the hyperplanes and project into the hyperplane
+	  else flatten apply(L,p -> (
+		    NP := intersection {P,{map(QQ^1,QQ^n,(i,j) -> if j == pos then 1 else 0),matrix p}};
+		    A := matrix drop((entries id_(QQ^n)),{pos,pos});
+		    apply(latticePointsRec affineImage(A,NP),v -> v^{0..(pos-1)} || matrix p || v^{pos..(n-2)}))));
+     latticePointsRec P)
 
 
 
--- PURPOSE : Computing the face of a Polyhedron on which a given weight attains its maximum
+-- PURPOSE : Computing the face of a Polyhedron where a given weight attains its maximum
 --   INPUT : '(v,P)',  a weight vector 'v' given by a one column matrix over ZZ or QQ and a 
 --     	     	       Polyhedron 'P'
---  OUTPUT : a Polyhedron, the face of 'P' on which 'v' attains its maximum
+--  OUTPUT : a Polyhedron, the face of 'P' where 'v' attains its maximum
 maxFace = method()
-maxFace (Matrix,Polyhedron) := (v,P) -> (
-     minFace((-1)*v,P))
+maxFace (Matrix,Polyhedron) := (v,P) -> minFace(-v,P)
 
 
--- PURPOSE : Computing the face of a Cone on which a given weight attains its maximum
 --   INPUT : '(v,P)',  a weight vector 'v' given by a one column matrix over ZZ or QQ and a 
 --     	     	       Cone 'C'
---  OUTPUT : a Cone, the face of 'P' on which 'v' attains its maximum
-maxFace (Matrix,Cone) := (v,C) -> (
-     maxFace((-1)*v,C))
+--  OUTPUT : a Cone, the face of 'P' where 'v' attains its maximum
+maxFace (Matrix,Cone) := (v,C) -> minFace(-v,C)
 
 
 
--- PURPOSE : Computing the face of a Polyhedron on which a given weight attains its minimum
+-- PURPOSE : Computing the face of a Polyhedron where a given weight attains its minimum
 --   INPUT : '(v,P)',  a weight vector 'v' given by a one column matrix over ZZ or QQ and a 
 --     	     	       Polyhedron 'P'
---  OUTPUT : a Polyhedron, the face of 'P' on which 'v' attains its minimum
+--  OUTPUT : a Polyhedron, the face of 'P' where 'v' attains its minimum
 minFace = method()
 minFace (Matrix,Polyhedron) := (v,P) -> (
      -- Checking for input errors
-     if ((numgens source v) =!= 1) or ((numgens target v) =!= (P#"ambientDimension")) then (
-	  error ("The vector must lie in the same space as the polyhedron"));
+     if numColumns v =!= 1 or numRows v =!= P#"ambient dimension" then error("The vector must lie in the same space as the polyhedron");
      C := dualCone tailCone P;
      V := vertices P;
      R := rays P;
@@ -1996,43 +1404,38 @@ minFace (Matrix,Polyhedron) := (v,P) -> (
 	  -- Compute the values of 'v' on the vertices of 'V'
 	  Vind := flatten entries ((transpose v)*V);
 	  -- Take the minimal value(s)
-	  Vind = positions(Vind, e -> (e == min(Vind)));
+	  Vmin := min Vind;
+	  Vind = positions(Vind, e -> e == Vmin);
 	  -- If 'v' is in the interior of the dual tailCone then the face is exactly spanned 
 	  -- by these vertices
-	  if inInterior(v,C) then (
-	       R = LS | ((-1)*LS);
-	       convexHull(V_Vind,R))
+	  if inInterior(v,C) then convexHull(V_Vind,LS | -LS)
 	  else (
-	       -- Otherwise, one has to add the rays of the tail cone which are orthogonal to 'v'
+	       -- Otherwise, one has to add the rays of the tail cone that are orthogonal to 'v'
 	       Rind := flatten entries ((transpose v)*R);
-	       Rind = positions(Rind, e -> (e == 0));
-	       R = (R_Rind) | LS | ((-1)*LS);
-	       convexHull(V_Vind,R)))
-     else (
-	  emptyPolyhedron ambDim P))
+	       Rind = positions(Rind, e -> e == 0);
+	       convexHull(V_Vind,R_Rind | LS | -LS)))
+     else emptyPolyhedron ambDim P)
 
 
 
--- PURPOSE : Computing the face of a Cone on which a given weight attains its minimum
+-- PURPOSE : Computing the face of a Cone where a given weight attains its minimum
 --   INPUT : '(v,P)',  a weight vector 'v' given by a one column matrix over ZZ or QQ and a 
 --     	     	       Cone 'C'
---  OUTPUT : a Cone, the face of 'P' on which 'v' attains its minimum
+--  OUTPUT : a Cone, the face of 'P' where 'v' attains its minimum
 minFace (Matrix,Cone) := (v,C) -> (
      -- Checking for input errors
-     if ((numgens source v) =!= 1) or ((numgens target v) =!= (C#"ambientDimension")) then (
-	  error ("The vector must lie in the same space as the polyhedron"));
+     if numColumns v =!= 1 or numRows v =!= C#"ambient dimension" then error("The vector must lie in the same space as the polyhedron");
      R = rays C;
      LS = linSpace C;
      C = dualCone C;
      -- The weight must lie in the dual of the cone, otherwise there is 
      -- no minimum and the result is the empty polyhedron
      if contains(C,v) then (
-	  -- Take the rays of the cone which are orthogonal to 'v'
+	  -- Take the rays of the cone that are orthogonal to 'v'
 	  Rind := flatten entries ((transpose v)*R);
-	  Rind = positions(Rind, e -> (e == 0));
+	  Rind = positions(Rind, e -> e == 0);
 	  posHull(R_Rind,LS))
-     else (
-	  emptyPolyhedron ambDim P))   
+     else emptyPolyhedron ambDim P)   
 
 
 
@@ -2049,46 +1452,43 @@ minkSummandCone Polyhedron := P -> (
      normvert := M -> ( 
 	  M = toList M; 
 	  v := (M#0)-(M#1);
-	  normrec := w -> ( local i; if ((entries(w))#0#0 > 0) then (i=0) else if ((entries(w))#0#0 < 0) then (i=1) else (w=w^{1..(numgens target w)-1}; i=normrec(w)); i);
-          i = normrec(v);
-	  if (i == 1) then (M = {M#1,M#0});
+	  normrec := w -> if (entries w)#0#0 > 0 then 0 else if (entries w)#0#0 < 0 then 1 else (w = w^{1..(numRows w)-1}; normrec w);
+          i = normrec v;
+	  if i == 1 then M = {M#1,M#0};
 	  M);
      -- If the polyhedron is 0 or 1 dimensional itself is its only summand
-     if (dim(P) == 0) or (dim(P) == 1) then (
-	  (posHull matrix{{1}}, hashTable {0 => P},matrix{{1}}))
+     if dim P == 0 or dim P == 1 then (posHull matrix{{1}}, hashTable {0 => P},matrix{{1}})
      else (
 	  -- Extracting the data to compute the 2 dimensional faces and the edges
-	  d := P#"ambientDimension";
-          dP := P#"polyhedronDimension";
+	  d := P#"ambient dimension";
+          dP := P#"dimension of polyhedron";
           (HS,v) := halfspaces P;
           (HP,w) := hyperplanes P;
-	  F := apply(numRows HS, i -> (intersection(HS,v,(HP||HS^{i}),(w||v^{i}))));
+	  F := apply(numRows HS, i -> intersection(HS,v,HP || HS^{i},w || v^{i}));
 	  F = apply(F, f -> (
-		    V := vertices(f);
-		    R := rays(f);
-		    (set apply(numColumns(V), i -> V_{i}),set apply(numColumns(R), i -> R_{i}))));
+		    V := vertices f;
+		    R := rays f;
+		    (set apply(numColumns V, i -> V_{i}),set apply(numColumns R, i -> R_{i}))));
 	  LS := linSpace P;
 	  L := F;
 	  i := 1;
-	  while (i<(dP-2)) do (
-	       L = intersectionwithFacets(L,F);
+	  while i < dP-2 do (
+	       L = intersectionWithFacets(L,F);
 	       i = i+1);
 	  -- Collect the compact edges
-	  L1 = select(L, l -> ( l#1 === set{}));
+	  L1 = select(L, l -> l#1 === set{});
 	  -- if the polyhedron is 2 dimensional and not compact then every compact edge with the tailcone is a summand
-	  if (dim(P) == 2) and (not isCompact(P)) then (
-	       L1 = intersectionwithFacets(L,F);
-	       L1 = select(L, l -> ( l#1 === set{}));
-	       if (#L1 == 0) or (#L1 == 1) then (
-		    (posHull(matrix{{1}}),hashTable {0 => P},matrix{{1}}))
+	  if dim P == 2 and (not isCompact P) then (
+	       L1 = intersectionWithFacets(L,F);
+	       L1 = select(L, l -> l#1 === set{});
+	       if #L1 == 0 or #L1 == 1 then (posHull matrix{{1}},hashTable {0 => P},matrix{{1}})
 	       else (
-		    TailC := rays(P);
-		    if (linSpace(P) != 0) then ( TailC = TailC | linSpace(P) | (-1)*(linSpace(P)));
-		    (posHull map(QQ^(#L1),QQ^(#L1),1),hashTable apply(#L1, i -> (l := L1#i; i => convexHull((l#0|l#1),TailC))),matrix toList(#L1:{1_QQ}))))
+		    TailC := rays P;
+		    if linSpace P != 0 then TailC = TailC | linSpace P | -linSpace(P);
+		    (posHull map(QQ^(#L1),QQ^(#L1),1),hashTable apply(#L1, i -> i => convexHull((L1#i)#0 | (L1#i)#1,TailC)),matrix toList(#L1:{1_QQ}))))
 	  else (
 	       -- If the polyhedron is compact and 2 dimensional then there is only one 2 faces
-	       if (dim(P) == 2) then (
-		    L1 = {(set apply(numColumns vertices P, i -> ( ((vertices(P))_{i}))), set {})});
+	       if dim P == 2 then L1 = {(set apply(numColumns vertices P, i -> (vertices P)_{i}), set {})};
 	       edges := {};
 	       edgesTable := edges;
 	       condmatrix := map(QQ^0,QQ^0,0);
@@ -2096,58 +1496,52 @@ minkSummandCone Polyhedron := P -> (
 			 -- for every 2 face we get a couple of rows in the condition matrix for the edges of this 2 face
 			 -- for this the edges if set in a cyclic order must add up to 0. These conditions are added to 
 			 -- 'condmatrix' by using the indices in edges
-			 ledges := apply(intersectionwithFacets({l},F), e -> (normvert(e#0)));
-			 scan(ledges, e -> (
-				   newedgecounter := 0;
-				   -- adding e to edges if not yet a member
-				   if (not member(e,edges)) then (
-					newedgecounter = newedgecounter +1;
-					edges = append(edges,e));
-				   -- extending the condmatrix by a column of zeros for the new edge
-				   condmatrix = condmatrix | map(QQ^(numRows condmatrix),QQ^(newedgecounter),0)));
+			 ledges := apply(intersectionWithFacets({l},F), e -> normvert e#0);
+			 -- adding e to edges if not yet a member
+			 newedges := select(ledges, e -> not member(e,edges));
+			 -- extending the condmatrix by a column of zeros for the new edge
+			 condmatrix = condmatrix | map(target condmatrix,QQ^(#newedges),0);
+			 edges = edges | newedges;
 			 -- Bring the edges into cyclic order
 			 oedges := {(ledges#0,1)};
 			 v := ledges#0#1;
 			 ledges = drop(ledges,1);
-			 while (ledges != {}) do (
-			      w := v;
-			      e := ledges#0;
-			      ledges = drop(ledges,1);
-			      if (e#0 == v) then (
-				   w = e#1;
-				   oedges = append(oedges,(e,1)))
-			      else if (e#1 == v) then (
-				   w = e#0;
-				   oedges = append(oedges,(e,-1)))
-			      else (
-				   ledges = append(ledges,e));
-			      v = w);
-			 M := map(QQ^d,QQ^(numColumns condmatrix),0);
+			 nledges := #ledges;
+			 oedges = oedges | apply(nledges, i -> (
+				   i = position(ledges, e -> e#0 == v or e#1 == v);
+				   e := ledges#i;
+				   ledges = drop(ledges,{i,i});
+				   if e#0 == v then (
+					v = e#1;
+					(e,1))
+				   else (
+					v = e#0;
+					(e,-1))));
+			 M := map(QQ^d,source condmatrix,0);
 			 -- for the cyclic order in oedges add the corresponding edgedirections to condmatrix
 			 scan(oedges, e -> (
 				   ve := (e#0#1 - e#0#0)*(e#1);
-				   j := position(edges, edge -> (edge == e#0));
+				   j := position(edges, edge -> edge == e#0);
 				   M = M_{0..j-1} | ve | M_{j+1..(numColumns M)-1}));
 			 condmatrix = condmatrix || M));
 	       -- if there are no conditions then the polyhedron has no compact 2 faces
-	       if (condmatrix == map(QQ^0,QQ^0,0)) then (
+	       if condmatrix == map(QQ^0,QQ^0,0) then (
 		    -- collect the compact edges
-		    LL := select(faces(dim(P)-1,P), fLL ->(isCompact(fLL)));
+		    LL := select(faces(dim P - 1,P), fLL -> isCompact fLL);
 		    -- if there is only none or one compact edge then the only summand is the polyhedron itself
-		    if (#LL == 0) or (#LL == 1) then (
-			 (posHull matrix{{1}}, hashTable {0 => P},matrix{{1}}))
+		    if #LL == 0 or #LL == 1 then (posHull matrix{{1}}, hashTable {0 => P},matrix{{1}})
 		    -- otherwise we get a summand for each compact edge
 		    else (
-			 TailCLL := rays(P);
-			 if (linSpace(P) != 0) then ( TailCLL = TailCLL | linSpace(P) | (-1)*(linSpace(P)));
-			 (posHull map(QQ^(#LL),QQ^(#LL),1),hashTable apply(#LL, i -> (l := LL#i; i => convexHull(vertices(l),TailCLL))),matrix toList(#LL:{1_QQ}))))
+			 TailCLL := rays P;
+			 if linSpace P != 0 then TailCLL = TailCLL | linSpace P | -linSpace(P);
+			 (posHull map(QQ^(#LL),QQ^(#LL),1),hashTable apply(#LL, i -> i => convexHull(vertices LL#i,TailCLL)),matrix toList(#LL:{1_QQ}))))
 	       -- Otherwise we can compute the Minkowski summand cone
 	       else (
-		    Id := map(QQ^(numColumns condmatrix),QQ^(numColumns condmatrix),1);
+		    Id := map(source condmatrix,source condmatrix,1);
 		    C := intersection(Id,condmatrix);
-		    R := rays(C);
-		    TC := (map(QQ^(P#"ambientDimension"),QQ^1,0)) | (P#"rays") | (P#"linealitySpace") | ((-1)*(P#"linealitySpace"));
-		    v = (vertices(P))_{0};
+		    R := rays C;
+		    TC := map(QQ^(P#"ambient dimension"),QQ^1,0) | P#"rays" | P#"linealitySpace" | -(P#"linealitySpace");
+		    v = (vertices P)_{0};
 		    -- computing the actual summands
 		    summList := hashTable apply(numColumns R, i -> (
 			      remedges := edges;
@@ -2158,33 +1552,29 @@ minkSummandCone Polyhedron := P -> (
 			      -- computes the vertices at the end of those edges (for the original and for the 
 			      -- summandpolyhedron) and calls itself with each of the new vertices, if there are edges 
 			      -- left in the list
-			      edgesearch := (L,v,v0,mi) -> (
-				   nedges := {};
+			      edgesearch := (v,v0,mi) -> (
+				   remedges = partition(e -> member(v,e),remedges);
 				   Lnew := {};
-				   scan(remedges, e -> (
-					     j := position(edges, edge -> (edge == e));
-					     if member(v,e) then (
-						  ve := e#0 + e#1;
-						  edir := ve - 2*v;
-						  vnew := v0 + (((entries(mi))#j#0)*edir);
-						  if (vnew != v0) then (L = L | vnew);
-						  Lnew = append(Lnew,(v+edir,vnew)))
-					     else (nedges = append(nedges,e))));
-				   remedges = nedges;
-				   scan(Lnew, (u,w) -> (
-					     if (remedges =!= {}) then (
-						  L = edgesearch(L,u,w,mi))));
-				   L);
+				   if remedges#?true then Lnew = apply(remedges#true, e -> (
+					     j := position(edges, edge -> edge == e);
+					     edir := e#0 + e#1 - 2*v;
+					     vnew := v0 + (mi_(j,0))*edir;
+					     (v+edir,vnew,vnew != v0)));
+				   if remedges#?false then remedges = remedges#false else remedges = {};
+				   L := apply(select(Lnew, e -> e#2),e -> e#1);
+				   Lnew = apply(Lnew, e -> (e#0,e#1));
+				   L = L | apply(Lnew, (u,w) -> if remedges =!= {} then edgesearch(u,w,mi) else {});
+				   flatten L);
 			      mi := R_{i};
 			      v0 := map(QQ^d,QQ^1,0);
-			      L := v0;
 			      -- Calling the edgesearch function to get the vertices of the summand
-			      L = edgesearch(L,v,v0,mi);
+			      L := {v0} | edgesearch(v,v0,mi);
+			      L = matrix transpose apply(L, e -> flatten entries e);
 			      i => convexHull(L,TC)));
 		    -- computing the inclusion minimal decompositions
-		     onevec := matrix toList(numgens target R: {1_QQ});
-		     negId := map(QQ^(numgens source R),QQ^(numgens source R),-1);
-		     zerovec := matrix toList(numgens source R: {0_QQ});
+		     onevec := matrix toList(numRows R: {1_QQ});
+		     negId := map(source R,source R,-1);
+		     zerovec :=  map(source R,QQ^1,0);
 		     Q := intersection(negId,zerovec,R,onevec);
 		     (C,summList,vertices(Q))))))
 
@@ -2197,90 +1587,92 @@ minkSummandCone Polyhedron := P -> (
 proximum = method(TypicalValue => Matrix)
 proximum (Matrix,Polyhedron) := (p,P) -> (
      -- Checking for input errors
-     if ((numgens source p) =!= 1) or ((numgens target p) =!= (P#"ambientDimension")) then (
-	  error ("The point must lie in the same space"));
-     if isEmpty(P) then (
-	  error ("The polyhedron must not be empty"));
+     if numColumns p =!= 1 or numRows p =!= P#"ambient dimension" then error("The point must lie in the same space");
+     if isEmpty P then error("The polyhedron must not be empty");
      -- Defining local variables
-     local Flist,F,vL,bL,V,v,Q,b;
+     local Flist;
      d := ambDim P;
      c := 0;
      prox := {};
      -- Checking if 'p' is contained in 'P'
-     if contains(P,p) then (
-	  p)
+     if contains(P,p) then p
      else (
+	  V := vertices P;
+	  R := rays P;
 	  -- Distinguish between full dimensional polyhedra and not full dimensional ones
-	  if (dim(P) == d) then (
+	  if dim P == d then (
 	       -- Continue as long as the proximum has not been found
-	       while (instance(prox,List)) do (
+	       while instance(prox,List) do (
 		    -- Take the faces of next lower dimension of P
 		    c = c+1;
-		    Flist = faces(c,P);
-		    -- Search through the faces
-		    while (Flist != {}) do (
-			 F = Flist#0;
-			 Flist = drop(Flist,1);
-			 -- Take the inward pointing normal cone with respect to P
-			 (vL,bL) = hyperplanes F;
-			 V = vertices P;
-			 -- Check for each ray if it is pointing inward
-			 vL = apply(numRows(vL), i -> (
-				   v = vL^{i};
-				   b = first flatten entries (bL^{i});
-				   if all(flatten entries (v*V), e -> ( e >= b)) then (
-					v)
-				   else (
-					(-1)*v)));
-			 v = vL#0;
-			 vL = drop(vL,1);
-			 scan(vL, e -> (v = v||e));
-			 -- Take the polyhedron spanned by the inward pointing normal cone 
-			 -- and 'p' and intersect it with the face
-			 Q = intersection(F,convexHull(p,transpose v));
-			 -- If this intersection is not empty, it contains exactly one point, 
-			 -- the proximum
-			 if (not isEmpty(Q)) then (
-			      prox = vertices(Q);
-			      Flist = {})));
+		    if c == dim P then (
+			 Vdist := apply(numColumns V, j -> ((transpose(V_{j}-p))*(V_{j}-p))_(0,0));
+			 pos := min Vdist;
+			 pos = position(Vdist, j -> j == pos);
+			 prox = V_{pos})
+		    else (
+			 Flist = faces(c,P);
+			 -- Search through the faces
+			 any(Flist, F -> (
+				   -- Take the inward pointing normal cone with respect to P
+				   (vL,bL) := hyperplanes F;
+				   -- Check for each ray if it is pointing inward
+				   vL = matrix apply(numRows vL, i -> (
+					     v := vL^{i};
+					     b := first flatten entries bL^{i};
+					     if all(flatten entries (v*(V | R)), e -> e >= b) then flatten entries v
+					     else flatten entries(-v)));
+				   -- Take the polyhedron spanned by the inward pointing normal cone 
+				   -- and 'p' and intersect it with the face
+				   Q := intersection(F,convexHull(p,transpose vL));
+				   -- If this intersection is not empty, it contains exactly one point, 
+				   -- the proximum
+				   if not isEmpty Q then (
+					prox = vertices Q;
+					true)
+				   else false))));
 	       prox)
 	  else (
 	       -- For not full dimensional polyhedra the hyperplanes of 'P' have to be considered also
-	       while (instance(prox,List)) do (
-		    Flist = faces(c,P);
-		    while (Flist != {}) do (
-			 F = Flist#0;
-			 Flist = drop(Flist,1);
-			 (vL,bL) = hyperplanes F;
-			 V = vertices P;
-			 vL = apply(numRows(vL), i -> (
-				   v = vL^{i};
-				   b = first flatten entries (bL^{i});
-				   entryList := flatten entries (v*V);
-				   -- the first two ifs find the vectors not in the hyperspace 
-				   -- of 'P'
-				   if any(entryList, e -> (e > b)) then (
-					v)
-				   else if any(entryList, e -> (e < b)) then (
-					(-1)*v)
-				   -- If it is an original hyperplane than take the direction from 
-				   -- 'p' to the polyhedron
-				   else (
-					bCheck := first flatten entries (v*p);
-					if (bCheck < b) then (
-					     v)
-					else (
-					     (-1)*v))));
-			 v = vL#0;
-			 vL = drop(vL,1);
-			 scan(vL, e -> (v = v||e));
-			 Q = intersection(F,convexHull(p,transpose v));
-			 if (not isEmpty(Q)) then (
-			      prox = vertices(Q);
-			      Flist = {}));
+	       while instance(prox,List) do (
+		    if c == dim P then (
+			 Vdist1 := apply(numColumns V, j -> ((transpose(V_{j}-p))*(V_{j}-p))_(0,0));
+			 pos1 := min Vdist1;
+			 pos1 = position(Vdist1, j -> j == pos1);
+			 prox = V_{pos1})
+		    else (
+			 Flist = faces(c,P);
+			 -- Search through the faces
+			 any(Flist, F -> (
+				   -- Take the inward pointing normal cone with respect to P
+				   (vL,bL) := hyperplanes F;
+				   vL = matrix apply(numRows vL, i -> (
+					     v := vL^{i};
+					     b := first flatten entries bL^{i};
+					     entryList := flatten entries (v*(V | R));
+					     -- the first two ifs find the vectors not in the hyperspace
+					     -- of 'P'
+					     if any(entryList, e -> e > b) then flatten entries v
+					     else if any(entryList, e -> e < b) then flatten entries(-v)
+					     -- If it is an original hyperplane than take the direction from 
+					     -- 'p' to the polyhedron
+					     else (
+						  bCheck := first flatten entries (v*p);
+						  if bCheck < b then flatten entries v
+						  else flatten entries(-v))));
+				   Q = intersection(F,convexHull(p,transpose vL));
+				   if not isEmpty Q then (
+					prox = vertices Q;
+					true)
+				   else false)));
 		    c = c+1);
 	       prox)))
 
+
+--   INPUT : (p,C),  where 'p' is a point given by a one column matrix over ZZ or QQ and
+--                   'C' is a Cone
+--  OUTPUT : the point in 'C' with the minimal euclidian distance to 'p'
+proximum (Matrix,Cone) := (p,C) -> proximum(p,coneToPolyhedron C)
 
 
 -- PURPOSE : Computing the 'n'-skeleton of a fan
@@ -2290,8 +1682,7 @@ proximum (Matrix,Polyhedron) := (p,P) -> (
 skeleton = method(TypicalValue => Fan)
 skeleton(ZZ,Fan) := (n,F) -> (
      -- Checking for input errors
-     if (n < 0) or (dim(F) < n) then (
-	  error ("The integer must be between 0 and dim(F)"));
+     if n < 0 or dim F < n then error("The integer must be between 0 and dim F");
      makeFan(cones(n,F)))
 
 
@@ -2302,29 +1693,19 @@ skeleton(ZZ,Fan) := (n,F) -> (
 smallestFace = method()
 smallestFace(Matrix,Polyhedron) := (p,P) -> (
      -- Checking for input errors
-     if ((numgens source p) =!= 1) or ((numgens target p) =!= (P#"ambientDimension")) then (
-	  error ("The point must lie in the same space"));
-     local ploc;
-     R := ring source p;
-     if (R === ZZ) then (
-     	  ploc = substitute(p, QQ))
-     else if (R === QQ) then (
-	  ploc = p)
-	else error ("expected halfspaces over ZZ or QQ");
+     if numColumns p =!= 1 or numRows p =!= P#"ambient dimension" then error("The point must lie in the same space");
+     p = chkZZQQ(p,"point");
      -- Checking if 'P' contains 'p' at all
-     if (contains(P,convexHull(ploc))) then (
+     if contains(P,convexHull p) then (
 	  (M,v) := halfspaces P;
      	  (N,w) := hyperplanes P;
-     	  -- Selecting the halfspaces that fullfil equality for p
+     	  -- Selecting the half-spaces that fullfil equality for p
 	  -- and adding them to the hyperplanes
-	  scan(numgens target M, i -> (
-		    if ((M^{i})*ploc == v^{i}) then (
-			 N = N||(M^{i});
-			 w = w||(v^{i}))));
+	  pos := select(toList(0..(numRows M)-1), i -> (M^{i})*p == v^{i});
+	  N = N || M^pos;
+	  w = w || v^pos;
 	  intersection(M,v,N,w))
-     else (
-	  emptyPolyhedron(P#"ambientDimension"))
-     )
+     else emptyPolyhedron P#"ambient dimension")
 
 
 
@@ -2333,28 +1714,18 @@ smallestFace(Matrix,Polyhedron) := (p,P) -> (
 --  OUTPUT : The smallest face containing 'p' as a cone
 smallestFace(Matrix,Cone) := (p,C) -> (
      -- Checking for input errors
-     if ((numgens source p) =!= 1) or ((numgens target p) =!= (C#"ambientDimension")) then (
-	  error ("The point must lie in the same space"));
-     local ploc;
-     R := ring source p;
-     if (R === ZZ) then (
-     	  ploc = substitute(p, QQ))
-     else if (R === QQ) then (
-	  ploc = p)
-	else error ("expected halfspaces over ZZ or QQ");
+     if numColumns p =!= 1 or numRows p =!= C#"ambient dimension" then error("The point must lie in the same space");
+     p = chkZZQQ(p,"point");
      -- Checking if 'C' contains 'p' at all
-     if (contains(C,posHull(ploc))) then (
+     if contains(C,posHull p) then (
 	  M := halfspaces C;
      	  N := hyperplanes C;
-     	  -- Selecting the halfspaces that fullfil equality for p
+     	  -- Selecting the half-spaces that fullfil equality for p
 	  -- and adding them to the hyperplanes
-	  scan(numgens target M, i -> (
-		    if ((M^{i})*ploc == 0) then (
-			 N = N||(M^{i}))));
+	  pos := select(toList(0..(numRows M)-1), i -> (M^{i})*p == 0);
+	  N = N || M^pos;
 	  intersection(M,N))
-     else (
-	  emptyPolyhedron(C#"ambientDimension"))
-     )
+     else emptyPolyhedron C#"ambient dimension")
 
 
 
@@ -2365,18 +1736,9 @@ smoothSubfan = method(TypicalValue => Fan)
 smoothSubfan Fan := F -> (
      -- recursive function that adds the cones of the list 'L' to 'F' if they are smooth
      -- and calls itself with the faces of the cone if the cone is not smooth
-     facerecursion := (L,F) -> (
-	  scan(L, C -> (
-		    if (isSmooth(C)) then (
-			 F = unique append(F,C))
-		    else (
-			 L' := faces(1,C);
-			 F = facerecursion(L',F))));
-	  F);
-     L := F#"generatingCones";
-     F = {};
-     F = facerecursion(L,F);
-     makeFan F)
+     facerecursion := L -> flatten apply(L, C -> if isSmooth C then C else facerecursion faces(1,C));
+     L := toList F#"generatingCones";
+     makeFan facerecursion L)
 
 
 
@@ -2384,8 +1746,7 @@ smoothSubfan Fan := F -> (
 --   INPUT : 'P',  a Polyhedron
 --  OUTPUT : The Cone generated by the rays and the lineality space of 'P'
 tailCone = method(TypicalValue => Cone)
-tailCone Polyhedron := P -> (
-     posHull(P#"rays",P#"linealitySpace"))
+tailCone Polyhedron := P -> posHull(P#"rays",P#"linealitySpace")
 
 
 
@@ -2407,57 +1768,51 @@ triangulate Polyhedron := P -> (
      -- vertices.
      -- The function also needs the dimension of the Polyhedron 'd', the list of facets of the original 
      -- polytope, the list 'L' of triangulations computed so far and the dimension of the original Polytope.
-     -- 'L' contains a hashTable for each dimension of faces of the original Polytope (i.e. from 0 to 'n').
-     -- If a face has been triangulated than the list of simplices is saved in the hashTable of the 
+     -- 'L' contains a hash table for each dimension of faces of the original Polytope (i.e. from 0 to 'n').
+     -- If a face has been triangulated than the list of simplices is saved in the hash table of the 
      -- corresponding dimension with the weighted centre of the original face as key.
      recursiveFaceTriangulation := (P,d,originalFacets,L,n) -> (
 	  -- Computing the facets of P, given as lists of their vertices
-	  F := intersectionwithFacets({(set P,set{})},originalFacets);
-	  F = apply(F, f -> (toList(f#0)));
+	  F := intersectionWithFacets({(set P,set{})},originalFacets);
+	  F = apply(F, f -> toList(f#0));
 	  d = d-1;
 	  -- if the facets are at least 2 dimensional, then check if they are simplices, if not call this 
 	  -- function again
-	  if (d > 1) then (
-	       F = apply(F, f -> (
+	  if d > 1 then (
+	       F = flatten apply(F, f -> (
 			 -- Check if the face is a simplex
-			 if (#f != d+1) then (
+			 if #f != d+1 then (
 			      -- Computing the weighted centre
 			      p := (sum f)*(1/#f);
-			      -- Taking the hashTable of the corresponding dimension
-			      Ld := L#d;
+			      -- Taking the hash table of the corresponding dimension
 			      -- Checking if the triangulation has been computed already
-			      if (Ld#?p) then (
-				   f = Ld#p)
+			      if L#d#?p then L#d#p
 			      else (
 				   -- if not, call this function again for 'f' and then save this in 'L'
 				   (f,L) = recursiveFaceTriangulation(f,d,originalFacets,L,n);
-				   Ld = hashTable(apply(pairs Ld, pLd -> (pLd#0 => pLd#1))|{p => f});
-				   L = take(L,{0,d-1})|{Ld}|take(L,{d+1,n})))
-			 else (
-			      f = {f});
-			 f));
-	       F = flatten F);
+				   L = merge(L,hashTable {d => hashTable{p => f}},(x,y) -> merge(x,y,));
+				   f))
+			 else {f})));
 	  -- Adding the weighted centre to each face simplex
 	  q := (sum P)*(1/#P);
-	  P = apply(F, f -> (f|{q}));
+	  P = apply(F, f -> f | {q});
 	  (P,L));
      -- Checking for input errors
-     if (not isCompact(P)) then (
-	  error ("The polytope must be compact!"));
-     n := dim(P);
+     if not isCompact P then error("The polytope must be compact!");
+     n := dim P;
      -- Computing the facets of P as lists of their vertices
      (HS,v) := halfspaces P;
      (HP,w) := hyperplanes P;
-     originalFacets := apply(numRows HS, i -> (intersection(HS,v,(HP||HS^{i}),(w||v^{i}))));
+     originalFacets := apply(numRows HS, i -> intersection(HS,v, HP || HS^{i}, w || v^{i}));
      originalFacets = apply(originalFacets, f -> (
-	       V := vertices(f);
-	       (set apply(numColumns(V), i -> V_{i}),set {})));
+	       V := vertices f;
+	       (set apply(numColumns V, i -> V_{i}),set {})));
      -- Making a list of the vertices of P
      P = vertices P;
-     P = apply(numColumns P, i -> (P_{i}));
+     P = apply(numColumns P, i -> P_{i});
      d := n;
      -- Initiating the list of already computed triangulations
-     L = toList(n+1:(hashTable {}));
+     L := hashTable apply(n+1, i -> i => hashTable {});
      (P,L) = recursiveFaceTriangulation(P,d,originalFacets,L,n);
      P)
 
@@ -2470,21 +1825,15 @@ volume = method(TypicalValue => QQ)
 volume Polyhedron := P -> (
      d := dim P;
      -- Checking for input errors
-     if (d != ambDim(P)) then (
-	  error ("The polytope must be full dimensional."));
-     if (not isCompact(P)) then (
-	  error ("The polyhedron must be compact, i.e. a polytope."));
+     if d != ambDim P then error("The polytope must be full dimensional.");
+     if  not isCompact P then error("The polyhedron must be compact, i.e. a polytope.");
      -- Computing the triangulation of P
      P = triangulate P;
      -- Computing the volume of each simplex without the dimension factor, by 
      -- taking the absolute of the determinant of |v_1-v_0..v_d-v_0|
-     P = apply(P, p -> (
-	       v := p#0;
-	       M := map(QQ^(numRows(v)),QQ^0,0);
-	       scan(1..d, i -> ( M=M|((p#i)-v)));
-	       abs(det(M))));
+     P = apply(P, p -> abs det matrix transpose apply(toList(1..d), i -> flatten entries(p#i - p#0)));
      -- Summing up the volumes and dividing out the dimension factor
-     (sum(P))/(d!))
+     (sum P)/(d!))
 	       
 
 
@@ -2496,20 +1845,15 @@ volume Polyhedron := P -> (
 vertexEdgeMatrix = method(TypicalValue => Matrix)
 vertexEdgeMatrix Polyhedron := P -> (
      -- list the edges and the vertices
-     eP := apply(faces(dim(P)-1,P),vertices);
-     vp := vertices(P);
-     vList := hashTable apply(numgens source vp, i -> ( vp_{i} => i+1));
-     d := #vList;
+     eP := apply(faces(dim P -1,P),f -> (
+	       f = vertices f;
+	       set apply(numColumns f, i -> f_{i})));
+     vp := vertices P;
+     vp = apply(numColumns vp, i -> vp_{i});
+     d := #vp;
      n := #eP;
-     -- Generate the matrix with indeces in the first row and column
-     M := (transpose matrix {toList(0..d)}) | ( (matrix {toList(1..n)}) || (matrix toList(d:toList(n:0))));
-     -- For every edge add two 1's in the corresponding column
-     scan(#eP, i -> (
-	       j := vList#((eP#i)_{0});
-	       M = M_{0..i} | (M_{i+1}^{0..j-1} || matrix {{1}} || M_{i+1}^{j+1..d}) | M_{i+2..n};
-	       j = vList#((eP#i)_{1});
-	       M = M_{0..i} | (M_{i+1}^{0..j-1} || matrix {{1}} || M_{i+1}^{j+1..d}) | M_{i+2..n}));
-     M);
+     -- Generate the matrix with indeces in the first row and column and for every edge add two 1's in the corresponding column
+     transpose matrix {toList(0..d)} | ( matrix {toList(1..n)} || matrix apply(vp,v -> apply(eP,e -> if e#?v then 1 else 0))))
 
 
 
@@ -2520,19 +1864,16 @@ vertexEdgeMatrix Polyhedron := P -> (
 vertexFacetMatrix = method(TypicalValue => Matrix)
 vertexFacetMatrix Polyhedron := P -> (
      -- list the facets and the vertices
-     fP := apply(faces(1,P),vertices);
-     vp := vertices(P);
-     vList := hashTable apply(numgens source vp, i -> ( vp_{i} => i+1));
-     d := #vList;
+     fP := apply(faces(1,P),f -> (
+	       f = vertices f; 
+	       set apply(numColumns f, i -> f_{i})));
+     vp := vertices P;
+     vp = apply(numColumns vp, i -> vp_{i});
+     d := #vp;
      n := #fP;
-     -- Generate the matrix with indeces in the first row and column
-     M := (transpose matrix {toList(0..d)}) | ( (matrix {toList(1..n)}) || (matrix toList(d:toList(n:0))));
-     -- For every facet add 1's in the corresponding column
-     scan(#fP, i -> (
-	       scan(numgens source (fP#i), k -> (
-			 j := vList#((fP#i)_{k});
-			 M = M_{0..i} | (M_{i+1}^{0..j-1} || matrix {{1}} || M_{i+1}^{j+1..d}) | M_{i+2..n}))));
-     M);
+     -- Generate the matrix with indeces in the first row and column and for every facet add 1's in the corresponding column
+     transpose matrix {toList(0..d)} | ( matrix {toList(1..n)} || matrix apply(vp, v -> apply(fP,f -> if f#?v then 1 else 0))))
+
 
 
 
@@ -2544,8 +1885,8 @@ affineHull Polyhedron := P -> (
      M := vertices P;
      R := rays P;
      -- subtracting the first vertex from all other vertices
-     N := (M+M_{0}*(matrix {toList(numgens source M:-1)}))_{1..(numgens source M)-1};
-     convexHull(M_{0},(N | (-1)*N | R | (-1)*R)));
+     N := (M+M_{0}*(matrix {toList(numColumns M:-1)}))_{1..(numColumns M)-1};
+     convexHull(M_{0},N | -N | R | -R));
 
 
 -- PURPOSE : Computing the affine image of a polyhedron
@@ -2553,84 +1894,63 @@ affineImage = method(TypicalValue => Polyhedron)
 
 --   INPUT : '(A,P,v)',  where 'A' is a ZZ or QQ matrix from the ambient space of the 
 --     	    	      	 polyhedron 'P' to some other target space and 'v' is a matrix
---     	    	      	 that gives a vector in the target space of 'A'
---  OUTPUT : The polyhedron which is the affine image of 'P':
+--     	    	      	 defining a vector in the target space of 'A'
+--  OUTPUT : a polyhedron, the affine image of 'P':
 --                       A*P+v={A*p+v | p in P}
 affineImage(Matrix,Polyhedron,Matrix) := (A,P,v) -> (
      -- Checking for input errors
-     local Al,vl;
-     R := ring source A;
-     if (R === ZZ) then (
-	  Al = substitute(A, QQ))
-     else if (R === QQ) then (
-	  Al = A)
-     else error ("Expected matrix over ZZ or QQ");
-     R = ring source v;
-     if (R === ZZ) then (
-	  vl = substitute(v, QQ))
-     else if (R === QQ) then (
-	  vl = v)
-     else error ("expected translation vector over ZZ or QQ");
-     A = Al;
-     v = vl;
-     if (( P#"ambientDimension") =!= (numgens source A)) then (
-	  error ("Matrix source must be ambientspace"));
-     if ((numgens target A) =!= (numgens target v)) then (
-	  error ("Vector must lie in target space of matrix"));
-     if ((numgens source v) =!= 1) then (
-	  error ("Second argument must be a vector"));
+     A = chkZZQQ(A,"linear map");
+     v = chkZZQQ(v,"translation vector");
+     if P#"ambient dimension" =!= numColumns A then error("Matrix source must be ambient space");
+     if numRows A =!= numRows v then error("Vector must lie in target space of matrix");
+     if numColumns v =!= 1 then error("Second argument must be a vector");
      -- Generating nr of vertices many copies of v
-     v = v * (matrix {toList(P#"numVertices":1_QQ)});
-     Mv := (A*(vertices P)) + v;
+     v = v * (matrix {toList(P#"number of vertices":1_QQ)});
+     Mv := A*(vertices P) + v;
      Mr := A*(rays P);
-     if ((numgens source Mr) == 0) then (Mr = matrix toList(numgens target Mv:{0_QQ}));
+     if numColumns Mr == 0 then Mr = matrix toList(numRows Mv:{0_QQ});
      convexHull(Mv,Mr))
 
 
 --   INPUT : '(A,P)',  where 'A' is a ZZ or QQ matrix from the ambient space of the 
 --     	    	      	 polyhedron 'P' to some other target space
---  OUTPUT : a Polyhedron, which is the image of 'P' under 'A'
+--  OUTPUT : A Polyhedron, the image of 'P' under 'A'
 affineImage(Matrix,Polyhedron) := (A,P) -> (
      -- Generating the zero translation vector
-     v := map(QQ^(numgens target A),QQ^1,0);
+     A = chkZZQQ(A,"map");
+     v := map(target A,QQ^1,0);
      affineImage(A,P,v))
 
 
 --   INPUT : '(P,v)',  where 'v' is a ZZ or QQ one-column matrix describing a point in
 --                     the ambient space of the polyhedron 'P'
---  OUTPUT : a Polyhedron, which is the translation of 'P' by 'v', i.e. {p+v | p in P} 
+--  OUTPUT : A Polyhedron, the translation of 'P' by 'v', i.e. {p+v | p in P} 
 affineImage(Polyhedron,Matrix) := (P,v) -> (
      -- Generating the identity matrix
-     A := map(QQ^(P#"ambientDimension"),QQ^(P#"ambientDimension"),1);
+     A := map(QQ^(P#"ambient dimension"),QQ^(P#"ambient dimension"),1);
      affineImage(A,P,v))
 
 
 --   INPUT : '(M,C,v)',  where 'M' is a ZZ or QQ matrix from the ambient space of 
 --     	    	      	 the cone 'C' to some target space and 'v' is a matrix
---     	    	      	 that gives a vector in that target space
---  OUTPUT : The polyhedron which is the affine image of 'C':
+--     	    	      	 defining a vector in that target space
+--  OUTPUT : A polyhedron, the affine image of 'C':
 --                       (M*C)+v={(M*c)+v | c in C}
-affineImage(Matrix,Cone,Matrix) := (M,C,v) -> (
-     if (v == 0) then (
-	  affineImage(M,C))
-     else (
-	  affineImage(M,coneToPolyhedron(C),v)))
+affineImage(Matrix,Cone,Matrix) := (M,C,v) -> if v == 0 then affineImage(M,C) else affineImage(M,coneToPolyhedron C,v)
 
 
 --   INPUT : '(M,C)',  where 'M' is a ZZ or QQ matrix from the 
 --     	    	      	 ambient space of the cone 'C' to some target space
---  OUTPUT : The cone which is the affine image of 'C':
+--  OUTPUT : A cone, the affine image of 'C':
 --                       M*C={M*c | c in C}
-affineImage(Matrix,Cone) := (M,C) -> (
-     posHull(affineImage(M,coneToPolyhedron(C))))
+affineImage(Matrix,Cone) := (M,C) -> posHull affineImage(M,coneToPolyhedron C)
 
 
 --   INPUT : '(C,v)',  where 'C' is a cone and 'v' is a matrix
---     	    	      	 that gives a vector in the ambient space of 'C'
---  OUTPUT : The polyhedron which is the affine image of 'C':
+--     	    	      	 defining a vector in the ambient space of 'C'
+--  OUTPUT : A polyhedron, the affine image of 'C':
 --                       C+v={c+v | c in C}
-affineImage(Cone,Matrix) := (C,v) -> (
-     affineImage(coneToPolyhedron(C),v))
+affineImage(Cone,Matrix) := (C,v) -> affineImage(coneToPolyhedron C,v)
 
 
 -- PURPOSE : Computing the affine preimage of a cone or polyhedron
@@ -2638,33 +1958,17 @@ affinePreimage = method(TypicalValue => Polyhedron)
 
 --   INPUT : '(A,P,b)',  where 'A' is a ZZ or QQ matrix from some source space to the 
 --     	    	      	 ambient space of the polyhedron 'P' and 'b' is a matrix
---     	    	      	 that gives a vector in the ambient space of 'P'
---  OUTPUT : The polyhedron which is the affine preimage of 'P':
+--     	    	      	 defining a vector in the ambient space of 'P'
+--  OUTPUT : A polyhedron, the affine preimage of 'P':
 --                       {q | (A*q)+b in P}
 affinePreimage(Matrix,Polyhedron,Matrix) := (A,P,b) -> (
      -- Checking for input errors
-     local Al,bl;
-     R := ring source A;
-     if (R === ZZ) then (
-	  Al = substitute(A, QQ))
-     else if (R === QQ) then (
-	  Al = A)
-     else error ("Expected matrix over ZZ or QQ");
-     R = ring source b;
-     if (R === ZZ) then (
-	  bl = substitute(b, QQ))
-     else if (R === QQ) then (
-	  bl = b)
-     else error ("expected translation vector over ZZ or QQ");
-     A = Al;
-     b = bl;
-     if (( P#"ambientDimension") =!= (numgens target A)) then (
-	  error ("Matrix source must be ambientspace"));
-     if ((numgens target A) =!= (numgens target b)) then (
-	  error ("Vector must lie in target space of matrix"));
-     if ((numgens source b) =!= 1) then (
-	  error ("Second argument must be a vector"));
-     -- Constructing the new halfspaces and hyperplanes
+     A = chkZZQQ(A,"linear map");
+     b = chkZZQQ(b,"translation vector");
+     if P#"ambient dimension" =!= numRows A then error("Matrix source must be ambient space");
+     if numRows A =!= numRows b then error("Vector must lie in target space of matrix");
+     if numColumns b =!= 1 then error("Second argument must be a vector");
+     -- Constructing the new half-spaces and hyperplanes
      (M,v) := halfspaces P;
      (N,w) := hyperplanes P;
      v = v - (M * b);
@@ -2678,68 +1982,59 @@ affinePreimage(Matrix,Polyhedron,Matrix) := (A,P,b) -> (
 --     	    	       ambient space of the polyhedron 'P' 
 affinePreimage(Matrix,Polyhedron) := (A,P) -> (
      -- Generating the zero translation vector
-     b := map(QQ^(numgens target A),QQ^1,0);
-     affinePreimage(A,P,b))
+     A = chkZZQQ(A,"map");
+     affinePreimage(A,P,map(target A,QQ^1,0)))
 
 
 --   INPUT : '(P,b)',  where 'b' is a ZZ or QQ one-column matrix describing a point in
 --                     the ambient space of the polyhedron 'P'
---  OUTPUT : a Polyhedron, which is the negative translation of 'P' by 'b', i.e. {q | q+b in P} 
-affinePreimage(Polyhedron,Matrix) := (P,b) -> (
-     -- Generating the identity matrix
-     A := map(QQ^(P#"ambientDimension"),QQ^(P#"ambientDimension"),1);
-     affinePreimage(A,P,b))
+--  OUTPUT : A Polyhedron, the negative translation of 'P' by 'b', i.e. {q | q+b in P} 
+affinePreimage(Polyhedron,Matrix) := (P,b) -> affinePreimage(map(QQ^(P#"ambient dimension"),QQ^(P#"ambient dimension"),1),P,b)
+
 
 --   INPUT : '(A,C,b)',  where 'A' is a ZZ or QQ matrix from some source space to the 
 --     	    	      	 ambient space of the cone 'C' and 'b' is a matrix
---     	    	      	 that gives a vector in the ambient space of 'C'
---  OUTPUT : The polyhedron which is the affine preimage of 'C':
+--     	    	      	 defining a vector in the ambient space of 'C'
+--  OUTPUT : A polyhedron, the affine preimage of 'C':
 --                       {q | (A*q)+b in C}
---     	     or the cone which is the affine preimage of 'C' if 'b' is 0:
+--     	     or a cone, the affine preimage of 'C' if 'b' is 0:
 --     	    	         {q | (A*q) in C}
-affinePreimage(Matrix,Cone,Matrix) := (A,C,b) -> (
-     if (b == 0) then (
-	  affinePreimage(A,C))
-     else (
-	  affinePreimage(A,coneToPolyhedron(C),b)))
+affinePreimage(Matrix,Cone,Matrix) := (A,C,b) -> if b == 0 then affinePreimage(A,C) else affinePreimage(A,coneToPolyhedron C,b)
 
 
 --   INPUT : '(A,C)',  where 'A' is a ZZ or QQ matrix from some source space to the 
 --     	    	      	 ambient space of the cone 'C'
---  OUTPUT : The cone which is the affine preimage of 'C':
+--  OUTPUT : A cone, the affine preimage of 'C':
 --                       {q | (A*q) in C}
-affinePreimage(Matrix,Cone) := (A,C) -> (
-     posHull(affinePreimage(A,coneToPolyhedron(C))))
+affinePreimage(Matrix,Cone) := (A,C) -> posHull affinePreimage(A,coneToPolyhedron C)
 
 
 --   INPUT : '(C,b)',   where 'b' is a ZZ or QQ one-column matrix describing a point in
 --                     the ambient space of the cone 'C'
---  OUTPUT : The polyhedron which is the affine preimage of 'C':
+--  OUTPUT : A polyhedron, the affine preimage of 'C':
 --                       {q | q+b in C}
-affinePreimage(Cone,Matrix) := (C,b) -> (
-     affinePreimage(coneToPolyhedron(C),b))
+affinePreimage(Cone,Matrix) := (C,b) -> affinePreimage(coneToPolyhedron C,b)
 
 
 -- PURPOSE : Computing the bipyramid over the polyhedron 'P'
 --   INPUT : 'P',  a polyhedron 
---  OUTPUT : The polyhedron which is the convex hull of 'P', embedded into ambientdim+1 space and the 
+--  OUTPUT : A polyhedron, the convex hull of 'P', embedded into ambientdim+1 space and the 
 --     	         points (barycenter of 'P',+-1)
 bipyramid = method(TypicalValue => Polyhedron)
 bipyramid Polyhedron := P -> (
      -- Saving the vertices
      V := vertices P;
-     n := numgens source V;
-     if (n == 0) then (
-	  error ("P must not be empty"));
+     n := numColumns V;
+     if n == 0 then error("P must not be empty");
      -- Computing the barycenter of P
      v := matrix toList(n:{1_QQ,1_QQ});
      v = (1/n)*V*v;
      (M,LS) := P#"homogenizedVertices";
      -- Embedding into n+1 space and adding the two new vertices
-     zerorow := map(QQ^1,QQ^(numgens source M),0);
-     newvertices := (matrix {{1_QQ,1_QQ}}) || v || (matrix {{1_QQ,-(1_QQ)}});
+     zerorow := map(QQ^1,source M,0);
+     newvertices := matrix {{1_QQ,1_QQ}} || v || matrix {{1_QQ,-(1_QQ)}};
      M = (M || zerorow) | newvertices;
-     LS = LS || (map(QQ^1,QQ^(numgens source LS),0));
+     LS = LS || map(QQ^1,source LS,0);
      hyperA := fourierMotzkin(M,LS);
      verticesA := fourierMotzkin hyperA;
      polyhedronBuilder(hyperA,verticesA))
@@ -2747,143 +2042,115 @@ bipyramid Polyhedron := P -> (
 
 -- PURPOSE : Computes the coarsest common refinement of a given set of rays
 --   INPUT : 'M'  a Matrix
---  OUTPUT : 'F' the fan which is the coarsest common refinement
+--  OUTPUT : 'F'  a Fan, the coarsest common refinement of the rays in 'M'
 ccRefinement = method(TypicalValue => Fan)
 ccRefinement Matrix := M -> (
      -- Checking for input errors
-     local Ml;
-     R := ring source M;
-     if (R === ZZ) then (
-	  Ml = substitute(M, QQ))
-     else if (R === QQ) then (
-	  Ml = M)
-     else error ("Expected matrix over ZZ or QQ");
-     M = Ml;
+     M = chkZZQQ(M,"rays");
      -- Extracting data
      n := numRows M;
      m := numColumns M;
      -- Generating all cones generated by 'n' rays in 'M'
-     nCones := apply(subsets(m,n), e -> (posHull(M_e)));
-     -- Selecting those cones that 'n' dimensional and do not contain any 
+     nCones := apply(subsets(m,n), e -> posHull M_e);
+     -- Selecting those cones that are 'n' dimensional and do not contain any 
      -- of the others
-     nConesfd := select(nCones, C -> (dim(C) == n));
-     nConesfd = inclMinCones(nConesfd);
+     nConesfd := select(nCones, C -> dim C == n);
+     nConesfd = inclMinCones nConesfd;
      refCones := {};
-     added := true;
-     while added do (
-	  added = false;
+     while nConesfd != {} do (
 	  newCones := {};
 	  -- scan through the 'n' dimensional cones and check for each of the cones generated by
 	  -- 'n' rays if their intersection is 'n' dimensional and if the first one is not contained 
 	  -- in the latter. If true, then their intersection will be saved in the list 'newCones'.
 	  -- If false for every cone generated by 'n' rays, then the 'n' dimensional cone will be 
 	  -- appended to the list 'refCones'
-	  scan(#nConesfd, i -> (
-		    keep := true;
-		    scan(#nCones, j -> (
-			      C := intersection(nCones#j,nConesfd#i);
-			      if ((dim(C) == n) and (not contains(nCones#j,nConesfd#i))) then (
-				   added = true;
-				   keep = false;
-				   newCones = append(newCones,C))));
-		    if keep then (
-			 refCones = append(refCones,nConesfd#i))));
+	  refCones = refCones | (flatten apply(nConesfd, C1 -> (
+			 toBeAdded := flatten apply(nCones, C2 -> (
+				   C := intersection(C2,C1);
+				   if dim C == n and (not contains(C2,C1)) then C
+				   else {}));
+			 if toBeAdded == {} then C1
+			 else (
+			      newCones = newCones | toBeAdded;
+			      {}))));
 	  -- now, the new intersections will be the 'n' dimensional cones and the same procedure 
 	  -- starts over again if this list is not empty
-	  nConesfd = unique(newCones));
+	  nConesfd = unique newCones);
      -- Compute the fan generated by the 'refCones'
-     makeFan(refCones));
-      
-
+     makeFan refCones);
 
 
 -- PURPOSE : Converts the Cone 'C' into itself as a Polyhedron 'P'
 --   INPUT : 'C'  a Cone
---  OUTPUT : 'P' the cone saved as a polyhedron
+--  OUTPUT : 'P' the Cone saved as a polyhedron
 coneToPolyhedron = method(TypicalValue => Polyhedron)
-coneToPolyhedron(Cone) := C -> (
-     M := map(QQ^(C#"ambientDimension"),QQ^1,0);
-     N := rays(C);
+coneToPolyhedron Cone := C -> (
+     M := map(QQ^(C#"ambient dimension"),QQ^1,0);
+     N := rays C;
      convexHull(M,N))
-
 
 
 -- PURPOSE : Computing the direct product of two polyhedra in the direct product of their ambient spaces
 directProduct = method()
 
 --   INPUT : '(P,Q)',  two polyhedra
---  OUTPUT : A polyhedron which is the direct product
+--  OUTPUT : A polyhedron, the direct product
 directProduct (Polyhedron,Polyhedron) := (P,Q) -> (
-     -- Extracting halfspaces and hyperplanes of P and Q
-     (Mp,vp) := halfspaces(P);
-     (Np,wp) := hyperplanes(P);
-     (Mq,vq) := halfspaces(Q);
-     (Nq,wq) := hyperplanes(Q);
-     -- Constructing the new halfspaces matrix |Mp 0 | and vector |vp|
+     -- Extracting half-spaces and hyperplanes of P and Q
+     (Mp,vp) := halfspaces P;
+     (Np,wp) := hyperplanes P;
+     (Mq,vq) := halfspaces Q;
+     (Nq,wq) := hyperplanes Q;
+     -- Constructing the new half-spaces matrix |Mp 0 | and vector |vp|
      --                                        |0  Mq|            |vq|
-     M := Mp | ( map(QQ^(numgens target Mp),QQ^(numgens source Mq),0));
-     M = M || ( (map(QQ^(numgens target Mq),QQ^(numgens source Mp),0)) | Mq);
+     M := Mp ++ Mq;
      v := vp || vq;
      -- Constructing the new hyperplanes matrix |Np 0 | and vector |wp|
      --                                         |0  Nq|            |wq|
-     N := Np | ( map(QQ^(numgens target Np),QQ^(numgens source Nq),0));
-     N = N || ( (map(QQ^(numgens target Nq),QQ^(numgens source Np),0)) | Nq);
+     N := Np ++ Nq;
      w := wp || wq;
      intersection(M,v,N,w))
 
 
 --   INPUT : '(C1,C2)',  two cones
---  OUTPUT : A cone which is the direct product
+--  OUTPUT : A cone, the direct product
 directProduct (Cone,Cone) := (C1,C2) -> (
-     -- Extracting halfspaces and hyperplanes of P and Q
-     Mp := halfspaces(C1);
-     Np := hyperplanes(C1);
-     Mq := halfspaces(C2);
-     Nq := hyperplanes(C2);
-     -- Constructing the new halfspaces matrix |Mp 0 |
+     -- Extracting half-spaces and hyperplanes of P and Q
+     Mp := halfspaces C1;
+     Np := hyperplanes C1;
+     Mq := halfspaces C2;
+     Nq := hyperplanes C2;
+     -- Constructing the new half-spaces matrix |Mp 0 |
      --                                        |0  Mq|
-     M := Mp | ( map(QQ^(numgens target Mp),QQ^(numgens source Mq),0));
-     M = M || ( (map(QQ^(numgens target Mq),QQ^(numgens source Mp),0)) | Mq);
+     M := Mp ++Mq;
      -- Constructing the new hyperplanes matrix |Np 0 |
      --                                         |0  Nq|
-     N := Np | ( map(QQ^(numgens target Np),QQ^(numgens source Nq),0));
-     N = N || ( (map(QQ^(numgens target Nq),QQ^(numgens source Np),0)) | Nq);
+     N := Np ++ Nq;
      intersection(M,N))
 
 
 --   INPUT : '(C,P)',  a cone and a polyhedron
---  OUTPUT : A polyhedron which is the direct product
-directProduct (Cone,Polyhedron) := (C,P) -> (
-     -- Converting the Cone into a Polyhedron
-     Q := coneToPolyhedron C;
-     directProduct(Q,P))
+--  OUTPUT : A polyhedron, the direct product
+directProduct (Cone,Polyhedron) := (C,P) -> directProduct(coneToPolyhedron C,P)
 
 
 --   INPUT : '(P,C)',  a polyhedron and a cone
---  OUTPUT : A polyhedron which is the direct product
-directProduct (Polyhedron,Cone) := (P,C) -> (
-     -- Converting the Cone into a Polyhedron
-     Q := coneToPolyhedron C;
-     directProduct(P,Q))
+--  OUTPUT : A polyhedron, the direct product
+directProduct (Polyhedron,Cone) := (P,C) -> directProduct(P,coneToPolyhedron C)
 
 
 --   INPUT : '(F1,F2)',  two fans
---  OUTPUT : A fan which is the direct product
+--  OUTPUT : A fan, the direct product
 directProduct (Fan,Fan) := (F1,F2) -> (
      -- computing the direct products of all pairs of generating cones
-     L := {};
-     scan((F1#"generatingCones"), C1 -> (
-	       scan((F2#"generatingCones"), C2 -> (
-			 L = append(L,directProduct(C1,C2))))));
-     makeFan L)
+     makeFan flatten apply(toList F1#"generatingCones", C1 -> apply(toList F2#"generatingCones", C2 -> directProduct(C1,C2))))
 
 
-
-Polyhedron * Polyhedron := (P1,P2) -> directProduct(P1,P2)
-Polyhedron * Cone := (P,C) -> directProduct(P,C)
-Cone * Polyhedron := (C,P) -> directProduct(C,P)
-Cone * Cone := (C1,C2) -> directProduct(C1,C2)
-Fan * Fan := (F1,F2) -> directProduct(F1,F2)
+Polyhedron * Polyhedron := directProduct
+Polyhedron * Cone := directProduct
+Cone * Polyhedron := directProduct
+Cone * Cone := directProduct
+Fan * Fan := directProduct
 
 
 -- PURPOSE : Computing the dual cone
@@ -2891,58 +2158,45 @@ Fan * Fan := (F1,F2) -> directProduct(F1,F2)
 --  OUTPUT : The dual Cone, which is {v | v*c>=0 forall c in C}
 dualCone = method(TypicalValue => Cone)
 dualCone Cone := C -> (
-	genrays := (transpose(C#"halfspaces"),transpose(C#"hyperplanes"));
-	dualgens := ((-1)*(C#"rays"),C#"linealitySpace");
+	genrays := (sort transpose C#"halfspaces",sort transpose C#"hyperplanes");
+	dualgens := (sort (-(C#"rays")),sort C#"linealitySpace");
 	coneBuilder(genrays,dualgens))
    
    
 -- PURPOSE : Computing the image fan of a cone
 --   INPUT : '(M,C)',  a Matrix 'M' and a Cone 'C'
---  OUTPUT : The Fan which is the common refinement of the images of all faces of
+--  OUTPUT : A Fan, the common refinement of the images of all faces of
 --     	     'C' under 'M'
 imageFan = method(TypicalValue => Fan)
 imageFan (Matrix,Cone) := (M,C) -> (
-     local Ml;
-     R := ring source M;
-     if (R === ZZ) then (
-	  Ml = substitute(M, QQ))
-     else if (R === QQ) then (
-	  Ml = M)
-     else error ("Expected matrix over ZZ or QQ");
-     if (numColumns(M) != ambDim(C)) then (
-	  error ("The source space of the matrix must be the ambient space of the cone"));
-     M = Ml;
+     M = chkZZQQ(M,"map");
+     if numColumns M != ambDim C then error("The source space of the matrix must be the ambient space of the cone");
      -- Extracting data
      m := numRows M;
-     n := dim(C);
+     n := dim C;
      -- Compute the images of all 'm' dimensional faces and select those that are again 
      -- 'm' dimensional
-     L := apply(faces(n-m,C), e -> (affineImage(M,e)));
-     L = select(L, e -> (dim(e) == m));
-     print(L);
+     L := apply(faces(n-m,C), e -> affineImage(M,e));
+     L = select(L, e -> dim e == m);
      -- Compute their common refinement
-     refineCones(L));
-     
+     refineCones L)
 
 
--- PURPOSE : Computing the Minkowskisum of two polyhedra in the same ambientspace
+-- PURPOSE : Computing the Minkowskisum of two polyhedra in the same ambient space
 minkowskiSum = method(TypicalValue => Polyhedron)
 
 --   INPUT : '(P1,P2)',  two polyhedra
 --  OUTPUT : The Minkowskisum as a polyhedron
 minkowskiSum(Polyhedron,Polyhedron) := (P1,P2) -> (
      -- Checking for input errors
-     if (P1#"ambientDimension" =!= P2#"ambientDimension") then (
-	  error ("Polyhedra must lie in the same space"));
+     if P1#"ambient dimension" =!= P2#"ambient dimension" then error("Polyhedra must lie in the same space");
      -- Saving the vertices and rays
      V1 := vertices P1;
      V2 := vertices P2;
-     R := (rays P1)|(rays P2)|(matrix toList(numgens target V1:{0_QQ}));
-     Vnew := map(QQ^(numgens target V1),QQ^0,0);
+     R := rays P1 | rays P2 | map(target V1,QQ^1,0);
+     Vnew := map(target V1,QQ^0,0);
      -- Collecting all sums of vertices of P1 with vertices of P2
-     scan(numgens source V1, i -> ( 
-	       scan(numgens source V2, j -> (
-			 Vnew = Vnew | (V1_{i}+V2_{j})))));
+     Vnew = matrix transpose flatten apply(numColumns V1, i -> apply(numColumns V2, j -> flatten entries(V1_{i}+V2_{j})));
      convexHull(Vnew,R))
 
 
@@ -2950,11 +2204,10 @@ minkowskiSum(Polyhedron,Polyhedron) := (P1,P2) -> (
 --  OUTPUT : The Minkowskisum as a cone
 minkowskiSum(Cone,Cone) := (C1,C2) -> (
      -- Checking for input errors
-     if (C1#"ambientDimension" =!= C2#"ambientDimension") then (
-	  error ("Cones must lie in the same space"));
+     if C1#"ambient dimension" =!= C2#"ambient dimension" then error("Cones must lie in the same space");
      -- Saving the vertices and rays
-     R := (C1#"rays")|(C2#"rays");
-     LS := (C1#"linealitySpace")|(C2#"linealitySpace");
+     R := C1#"rays" | C2#"rays";
+     LS := C1#"linealitySpace" | C2#"linealitySpace";
      posHull(R,LS))
 
 
@@ -2962,11 +2215,10 @@ minkowskiSum(Cone,Cone) := (C1,C2) -> (
 --  OUTPUT : The Minkowskisum as a polyhedron
 minkowskiSum(Cone,Polyhedron) := (C,P) -> (
      -- Checking for input errors
-     if (C#"ambientDimension" =!= P#"ambientDimension") then (
-	  error ("Cone and polyhedron must lie in the same space"));
+     if C#"ambient dimension" =!= P#"ambient dimension" then error("Cone and polyhedron must lie in the same space");
      -- Saving the vertices and rays
      V := P#"vertices";
-     R := (P#"rays")|(C#"rays")|(C#"linealitySpace")|((-1)*(C#"linealitySpace"));
+     R := P#"rays" | C#"rays" | C#"linealitySpace" | -(C#"linealitySpace");
      convexHull(V,R))
 
 
@@ -2974,115 +2226,139 @@ minkowskiSum(Cone,Polyhedron) := (C,P) -> (
 --  OUTPUT : The Minkowskisum as a polyhedron
 minkowskiSum(Polyhedron,Cone) := (P,C) -> (
      -- Checking for input errors
-     if (C#"ambientDimension" =!= P#"ambientDimension") then (
-	  error ("Cone and polyhedron must lie in the same space"));
+     if C#"ambient dimension" =!= P#"ambient dimension" then error("Cone and polyhedron must lie in the same space");
      -- Saving the vertices and rays
      V := P#"vertices";
-     R := (P#"rays")|(C#"rays")|(C#"linealitySpace")|((-1)*(C#"linealitySpace"));
+     R := P#"rays" | C#"rays" | C#"linealitySpace" | -(C#"linealitySpace");
      convexHull(V,R))
 
 
-
-Polyhedron + Polyhedron := (P1,P2) -> minkowskiSum(P1,P2)
-Polyhedron + Cone := (P,C) -> minkowskiSum(P,C)
-Cone + Polyhedron := (C,P) -> minkowskiSum(P,C)
-Cone + Cone := (C1,C2) -> minkowskiSum(C1,C2)
+Polyhedron + Polyhedron := minkowskiSum
+Polyhedron + Cone := minkowskiSum
+Cone + Polyhedron := minkowskiSum
+Cone + Cone := minkowskiSum
 
 
 -- PURPOSE : Computing the inner normalFan of a polyhedron
 --   INPUT : 'P',  a Polyhedron
---  OUTPUT : 'F',  a Fan, which is the outer normalFan of 'P'
+--  OUTPUT : 'F',  a Fan, the inner normalFan of 'P'
 normalFan = method(TypicalValue => Fan)
 normalFan Polyhedron := P -> (
      -- Saving the vertices
      vm := vertices P;
-     L := {};
      -- For every vertex translate P by -this vertex and take the dual cone of the positive hull of it
-     scan(numgens source vm, i -> (
-	       Q := affineImage(P,(-1)*(vm_{i}));
-	       L = append(L,dualCone(posHull(Q)))));
-     makeFan(L))
-
+     makeFan apply(numColumns vm, i -> (dualCone posHull affineImage(P,-vm_{i}))))
 
 
 -- PURPOSE : Computing the polar of a given polyhedron
 --   INPUT : 'P',  a Polyhedron
---  OUTPUT : a Polyhedron, which is the set { v | v*p<=1 forall p in P}
+--  OUTPUT : A Polyhedron, the set { v | v*p<=1 forall p in P}
 polar = method(TypicalValue => Polyhedron)
 polar Polyhedron := P -> (
-     d := P#"ambientDimension";
+     d := P#"ambient dimension";
      -- Make the 'd'-dimensional identity
      M := map(QQ^d,QQ^d,-1);
      -- make the block matrix of -1 and the 'd'identity
      M = (matrix{{-1_QQ}} | map(QQ^1,QQ^d,0))||(map(QQ^d,QQ^1,0) | M);
      hyperA := P#"homogenizedVertices";
-     hyperA = (M*(hyperA#0),hyperA#1);
+     hyperA = (sort (M*(hyperA#0)),hyperA#1);
      verticesA := fourierMotzkin hyperA;
      polyhedronBuilder(hyperA,verticesA))
 
 
 -- PURPOSE : Computing the pyramid over the polyhedron 'P'
 --   INPUT : 'P',  a polyhedron 
---  OUTPUT : The polyhedron which is the convex hull of 'P', embedded into ambientdim+1 space and the 
+--  OUTPUT : A polyhedron, the convex hull of 'P', embedded into ambientdim+1 space, and the 
 --     	         point (0,...,0,1)
 pyramid = method(TypicalValue => Polyhedron)
 pyramid Polyhedron := P -> (
      (M,LS) := P#"homogenizedVertices";
      -- Embedding into n+1 space and adding the new vertex
-     zerorow := map(QQ^1,QQ^(numgens source M),0);
-     newvertex := (matrix {{1_QQ}}) || map(QQ^((numgens target M)-1),QQ^1,0) || (matrix {{1_QQ}});
+     zerorow := map(QQ^1,source M,0);
+     newvertex := 1 || map(QQ^((numRows M)-1),QQ^1,0) || 1;
      M = (M || zerorow) | newvertex;
-     LS = LS || (map(QQ^1,QQ^(numgens source LS),0));
+     LS = LS || map(QQ^1,source LS,0);
      hyperA := fourierMotzkin(M,LS);
      verticesA := fourierMotzkin hyperA;
      polyhedronBuilder(hyperA,verticesA))
 
 
+-- PURPOSE : Computing the sublattice basis for a given matrix of lattice points or for the lattice points
+--     	     of a given polytope
+sublatticeBasis = method(TypicalValue => Matrix)
+
+--   INPUT : 'M',  a Matrix
+--  OUTPUT : A matrix, a basis of the sublattice spanned by the lattice points in 'M'
+sublatticeBasis Matrix := M -> (
+     -- Checking for input errors
+     M = chkZZQQ(M,"lattice points");
+     M = if promote(substitute(M,ZZ),QQ) == M then substitute(M,ZZ) else error("The matrix must contain only lattice points.");
+     -- The sublattice is isomorphic to source mod kernel, i.e. A/K
+     A := source M; 
+     K := ker M;
+     -- Taking minimal generators and applying M gives a basis in target M
+     M*(mingens (A/K)))
+
+
+--   INPUT : 'P',  a polyhedron,
+--  OUTPUT : A matrix, a basis of the sublattice spanned by the lattice points of 'P'
+sublatticeBasis Polyhedron := P -> (
+     L := latticePoints P;
+     -- Checking for input errors
+     if L == {} then error("The polytope must contain lattice points.");
+     -- Translating 'P' so that it contains the origin if it did not already
+     if all(L,l -> l != 0) then L = apply(L, l -> l - L#0);
+     sublatticeBasis(matrix {L}))
+   
+   
+-- PURPOSE : Calculating the preimage of a polytope in the sublattice generated by its lattice points
+--   INPUT : 'P',  a polyhedron
+--  OUTPUT : A polyhedron, the projected polyhedron, which is now normal
+toSublattice = method()
+toSublattice Polyhedron := P -> (
+     L := latticePoints P;
+     -- Checking for input errors
+     if L == {} then error("The polytope must contain lattice points.");
+     b := L#0;
+     -- Translating 'P' so that it contains the origin if it did not already
+     if all(L,l -> l != 0) then L = apply(L, l -> l - L#0);     
+     affinePreimage(sublatticeBasis matrix {L},P,b))
+
+
 -- PURPOSE : Generating the 'd'-dimensional crosspolytope with edge length 2*'s'
 crossPolytope = method(TypicalValue => Polyhedron)
 
---   INPUT : '(d,s)',  where 'd' is a strictly positive integer which gives the dimension of the polytope and
---     	    	       's' is a strictly positive rational number which is the distance of the vertices to the
---     	    	       origin
+--   INPUT : '(d,s)',  where 'd' is a strictly positive integer, the dimension of the polytope, and 's' is
+--     	    	       a strictly positive rational number, the distance of the vertices to the origin
 --  OUTPUT : The 'd'-dimensional crosspolytope with vertex-origin distance 's'
 crossPolytope(ZZ,QQ) := (d,s) -> (
      -- Checking for input errors
-     if (d < 1) then (
-	  error ("dimension must at least be 1"));
-     if (s <= 0) then (
-	  error ("size of the crosspolytope must be positive"));
+     if d < 1 then error("dimension must at least be 1");
+     if s <= 0 then error("size of the crosspolytope must be positive");
      M := map(QQ^d,QQ^d,s) | map(QQ^d,QQ^d,-s);
      convexHull M)
 
 
---   INPUT : '(d,s)',  where 'd' is a strictly positive integer which gives the dimension of the polytope and
---     	    	       's' is a strictly positive integer which is the distance of the vertices to the origin
-crossPolytope(ZZ,ZZ) := (d,s) -> (
-     s = substitute(s,QQ);
-     crossPolytope(d,s))
+--   INPUT : '(d,s)',  where 'd' is a strictly positive integer, the dimension of the polytope, and 's' is a
+--     	    	        strictly positive integer, the distance of the vertices to the origin
+crossPolytope(ZZ,ZZ) := (d,s) -> crossPolytope(d,promote(s,QQ))
 
 
---   INPUT :  'd',  where 'd' is a strictly positive integer which gives the dimension of the polytope
-crossPolytope ZZ := d -> (
-     s := 1_QQ;
-     crossPolytope(d,s))
-
+--   INPUT :  'd',  where 'd' is a strictly positive integer, the dimension of the polytope
+crossPolytope ZZ := d -> crossPolytope(d,1_QQ)
 
 
 -- PURPOSE : Computing the cyclic polytope of n points in QQ^d
 --   INPUT : '(d,n)',  two positive integers
---  OUTPUT : The polyhedron which is the convex hull of 'n' points on the moment curve in 'd' space 
+--  OUTPUT : A polyhedron, the convex hull of 'n' points on the moment curve in 'd' space 
 -- COMMENT : The moment curve is defined by t -> (t,t^2,...,t^d) in QQ^d, if we say we take 'n' points 
 --            on the moment curve, we mean the images of 0,...,n-1
 cyclicPolytope = method(TypicalValue => Polyhedron)
 cyclicPolytope(ZZ,ZZ) := (d,n) -> (
      -- Checking for input errors
-     if (d < 1) then (
-	  error ("The dimension must be positiv"));
-     if (n < 1) then (
-	  error ("There must be a positive number of points"));
-     M := map(ZZ^d, ZZ^n, (i,j) -> j^(i+1));
-     convexHull M)
+     if d < 1 then error("The dimension must be positive");
+     if n < 1 then error("There must be a positive number of points");
+     convexHull map(ZZ^d, ZZ^n, (i,j) -> j^(i+1)))
 
 
 -- PURPOSE : Generating the empty polyhedron in n space
@@ -3091,10 +2367,8 @@ cyclicPolytope(ZZ,ZZ) := (d,n) -> (
 emptyPolyhedron = method(TypicalValue => Polyhedron)
 emptyPolyhedron ZZ := n -> (
      -- Checking for input errors
-     if (n < 1) then (
-	  error ("The ambient dimension must be positive"));
-     zeromap := map(QQ^(n+1),QQ^0,0);
-     verticesA := (zeromap,zeromap);
+     if n < 1 then error("The ambient dimension must be positive");
+     verticesA := 2:map(QQ^(n+1),QQ^0,0);
      hyperA := fourierMotzkin verticesA;
      polyhedronBuilder(hyperA,verticesA));
 
@@ -3104,10 +2378,9 @@ emptyPolyhedron ZZ := n -> (
 --   INPUT : 'r'  a positive integer
 --  OUTPUT : The Hirzebruch surface H_r
 hirzebruch = method(TypicalValue => Fan)
-hirzebruch ZZ := (r) -> (
+hirzebruch ZZ := r -> (
      -- Checking for input errors
-     if (r < 0) then (
-	  error ("Input must be a positive integer"));
+     if r < 0 then error ("Input must be a positive integer");
      normalFan convexHull matrix {{0,1,0,1+r},{0,0,1,1}})
 
 
@@ -3115,54 +2388,38 @@ hirzebruch ZZ := (r) -> (
 -- PURPOSE : Generating the 'd'-dimensional hypercube with edge length 2*'s'
 hypercube = method(TypicalValue => Polyhedron)
 
---   INPUT : '(d,s)',  where 'd' is a strictly positive integer which gives the dimension of the polytope and
---     	    	       's' is a positive rational number which is half of the edge length
+--   INPUT : '(d,s)',  where 'd' is a strictly positive integer, the dimension of the polytope, and
+--     	    	       's' is a positive rational number, half of the edge length
 --  OUTPUT : The 'd'-dimensional hypercube with edge length 2*'s' as a polyhedron
 hypercube(ZZ,QQ) := (d,s) -> (
      -- Checking for input errors
-     if (d < 1) then (
-	  error ("dimension must at least be 1"));
-     if (s <= 0) then (
-	  error ("size of the hypercube must be positive"));
-     -- Generating halfspaces matrix and vector
-     M := map(QQ^d,QQ^d,1);
-     M = M || (-M);
-     v :=  matrix toList(2*d:{s});
-     intersection(M,v))
+     if d < 1 then error("dimension must at least be 1");
+     if s <= 0 then error("size of the hypercube must be positive");
+     -- Generating half-spaces matrix and vector
+     intersection(map(QQ^d,QQ^d,1) || -map(QQ^d,QQ^d,1),matrix toList(2*d:{s})))
 
 
---   INPUT : '(d,s)',  where 'd' is a strictly positive integer which gives the dimension of the polytope and
---     	    	       's' is a positive integer which is half of the edge length
-hypercube(ZZ,ZZ) := (d,s) -> (
-     s = substitute(s,QQ);
-     hypercube(d,s))
+--   INPUT : '(d,s)',  where 'd' is a strictly positive integer, the dimension of the polytope, and
+--     	    	       's' is a positive integer, half of the edge length
+hypercube(ZZ,ZZ) := (d,s) -> hypercube(d,promote(s,QQ))
 
      
---   INPUT : 'd',  is a strictly positive integer which gives the dimension of the polytope 
-hypercube ZZ := d -> (
-     -- Setting the edge length 1
-     s := 1_QQ;
-     hypercube(d,s))
-
+--   INPUT : 'd',  is a strictly positive integer, the dimension of the polytope 
+hypercube ZZ := d -> hypercube(d,1_QQ)
 
 
 -- PURPOSE : Computing the Newton polytope for a given polynomial
 --   INPUT : 'p',  a RingElement
---  OUTPUT : A polyhedron which has the exponentvectors of the monomials of 'p' as vertices
+--  OUTPUT : The polyhedron that has the exponent vectors of the monomials of 'p' as vertices
 newtonPolytope = method(TypicalValue => Polyhedron)
-newtonPolytope RingElement := p -> (
-     M := transpose matrix exponents p;
-     convexHull M)
+newtonPolytope RingElement := p -> convexHull transpose matrix exponents p
 
 
 -- PURPOSE : Generating the positive orthant in n-space as a cone
 --   INPUT : 'n",  a strictly positive integer
---  OUTPUT : The cone which is the positive orthant in n-space
+--  OUTPUT : The cone that is the positive orthant in n-space
 posOrthant = method(TypicalValue => Cone)
-posOrthant ZZ := n -> (
-     M := map(QQ^n,QQ^n,1);
-     posHull M)
-
+posOrthant ZZ := n -> posHull map(QQ^n,QQ^n,1)
 
 
 -- PURPOSE : Computing the state polytope of the ideal 'I'
@@ -3170,13 +2427,6 @@ posOrthant ZZ := n -> (
 --  OUTPUT : The state polytope as a polyhedron
 statePolytope = method(TypicalValue => Polyhedron)
 statePolytope Ideal := I -> (
-     -- Compute an interior vector of the cone 'C'
-     intVec := C -> (
-	  local v;
-	  if ((numgens source rays C) == 0) then (v = map(QQ^(ambDim(C)),QQ^1,0))
-	  else (
-	       v=rays(C)*(matrix toList(numgens source rays C:{1})));
-	  v);
      -- Check if there exists a strictly positive grading such that 'I' is homogeneous with
      -- respect to this grading
      homogeneityCheck := I -> (
@@ -3184,79 +2434,41 @@ statePolytope Ideal := I -> (
 	  -- exponent vectors of the generators of 'I'
 	  L := flatten entries gens I;
 	  lt := apply(L, leadTerm);
-	  M := {};
-	  scan(#L, i -> ( scan(exponents(L#i), e -> (M = append(M,flatten(exponents(lt#i))-e)))));
-	  M = matrix M;
+	  M := matrix flatten apply(#L, i -> apply(exponents L#i, e -> (flatten exponents lt#i)-e));
 	  -- intersect the span of 'M' with the positive orthant
-	  C := intersection(map(QQ^(numgens source M),QQ^(numgens source M),1),M);
+	  C := intersection(map(source M,source M,1),M);
 	  -- Check if an interior vector is strictly positive
-	  v := intVec(C);
-	  homog := true;
-	  scan(flatten entries v, e -> (homog = (homog and (e>0))));
-	  (homog,v));
+	  v := interiorVector C;
+	  (all(flatten entries v, e -> e > 0),v));
      -- Compute the Groebner cone
      gCone := (g,lt) -> (
 	  -- for a given groebner basis compute the reduced Groebner basis
 	  -- note: might be obsolete, but until now (Jan2009) groebner bases appear to be not reduced
-	  reduceGB := g -> (
-	       gl = flatten entries gens g;
-	       L := {};
-	       scan(gl, l -> (L=append(L,((l-leadTerm(l))% g)+leadTerm(l))));
-	       L);
-	  L := {};
-	  g = reduceGB g;
+	  g = apply(flatten entries gens g, l -> ((l-leadTerm(l))% g)+leadTerm(l));
 	  -- collect the differences of the exponent vectors of the groebner basis
 	  lt = flatten entries lt;
-	  scan(#g, i -> ( scan(exponents(g#i), e -> (L = append(L,flatten(exponents(lt#i))-e)))));
+	  L := matrix flatten apply(#g, i -> apply(exponents g#i, e -> (flatten exponents lt#i)-e));
 	  -- intersect the differences
-	  intersection matrix L);
+	  intersection L);
      wLeadTerm := (w,I) -> (
 	  -- Compute the Groebner basis and their leading terms of 'I' with respect to the weight 'w'
-	  w = flatten entries w;
 	  R := ring I;
-	  --L := apply(gens R, degree);
-	  --posVec := (transpose L)#0;
-	  --m := min w;
-	  --if (m < 0) then (
-	  --     p := minPosition w;
-	  --     m = m/(posVec#p);
-	  --     w = w-(m*posVec));
-	  leastcm := 1;
 	  -- Resize w to a primitive vector in ZZ
-	  scan(w, e -> (if (e != 0) then leastcm = ((denominator e)/(gcd((denominator e),leastcm)))*leastcm));
-	  w = leastcm*w;
-	  w = apply(w, e -> (substitute(e,ZZ)));
-	  -- geneerate the new ring with weight 'w'
-	  S := (coefficientRing R)[(gens R), MonomialOrder => {Weights => w}, Global => false];
+	  w = flatten entries substitute((1 / gcd flatten entries w) * w,ZZ);
+	  -- generate the new ring with weight 'w'
+	  S := (coefficientRing R)[gens R, MonomialOrder => {Weights => w}, Global => false];
 	  f := map(S,R);
-	  --f' := map(R,S);
 	  -- map 'I' into 'S' and compute Groebner basis and leadterm
-	  I' := f I;
-	  g := gb I';
-	  lt := leadTerm I';
-	  gbRemove I';
-	  --g = f' g;
-	  --lt = f' lt;
+	  I1 := f I;
+	  g := gb I1;
+	  lt := leadTerm I1;
+	  gbRemove I1;
 	  (g,lt));
      -- computes the symmetric difference of the two lists
-     sortIn := (L1,L2) -> (
-	  L := L1;
-	  scan(L2, l -> (
-		    stopper := false;
-		    i := 0;
-		    while (not stopper) do (
-			 if (i >= #L) then (
-			      L = append(L,l);
-			      stopper = true)
-			 else if (((L#i)#0) == (l#0)) then (
-			      L = drop(L,{i,i});
-			      stopper = true)
-			 else i = i+1)));
-	  L);
+     sortIn := (L1,L2) -> ((a,b) := (set apply(L1,first),set apply(L2,first)); join(select(L1,i->not b#?(i#0)),select(L2,i->not a#?(i#0))));
      --Checking for homogeneity
-     (noError,posv) := homogeneityCheck(I);
-     if (not noError) then (
-	  error ("The ideal must be homogeneous w.r.t. some strictly positive grading"));
+     (noError,posv) := homogeneityCheck I;
+     if not noError then error("The ideal must be homogeneous w.r.t. some strictly positive grading");
      -- Compute a first Groebner basis to start with
      g := gb I;
      lt := leadTerm I;
@@ -3264,56 +2476,54 @@ statePolytope Ideal := I -> (
      C := gCone(g,lt);
      gbRemove I;
      -- Generate all facets of 'C'
-     facets := faces(1,C);
      -- Save each facet by an interior vector of it, the facet itself and the cone from 
      -- which it has been computed
-     facets = apply(facets, f -> (intVec(f),f,C));
+     facets := apply(faces(1,C), f -> (interiorVector f,f,C));
      --Save the leading terms as the first vertex
      verts := {lt};
      -- Scan the facets
-     while (facets != {}) do (
-	  local omega',f;
+     while facets != {} do (
+	  local omega';
+	  local f;
 	  (omega',f,C) = facets#0;
 	  -- compute an interior vector of the big cone 'C' and take a small 'eps'
-	  omega := intVec C;
+	  omega := interiorVector C;
 	  eps := 1/10;
-	  stopper := false;
+	  omega1 := omega'-(eps*omega);
+	  (g,lt) = wLeadTerm(omega1,I);
+	  C' := gCone(g,lt);
 	  -- reduce 'eps' until the Groebner cone generated by omega'-(eps*omega) is 
 	  -- adjacent to the big cone 'C'
-	  while (not stopper) do (
-	       omega1 := omega'-(eps*omega);
+	  while intersection(C,C') != f do (
+	       eps = eps * 1/10;
+	       omega1 = omega'-(eps*omega);
 	       (g,lt) = wLeadTerm(omega1,I);
-	       C' := gCone(g,lt);
-	       if (equals(intersection(C,C'),f)) then (
-		    C = C';
-		    stopper = true)
-	       else (eps = eps * 1/10));
+	       C' = gCone(g,lt));
+	  C = C';
 	  -- save the new leadterms as a new vertex
 	  verts = append(verts,lt);
 	  -- Compute the facets of the new Groebner cone and save them in the same way as before
 	  newfacets := faces(1,C);
-	  newfacets = apply(newfacets, f -> (intVec(f),f,C));
+	  newfacets = apply(newfacets, f -> (interiorVector f,f,C));
 	  -- Save the symmetric difference into 'facets'
 	  facets = sortIn(facets,newfacets));
      posv = substitute(posv,ZZ);
      R := ring I;
      -- generate a new ring with the strictly positive grading computed by the homogeneity check
-     S := QQ[(gens R), Degrees => (entries posv)];
+     S := QQ[gens R, Degrees => entries posv];
      -- map the vertices into the new ring 'S'
-     verts = apply(verts, el -> (T:=ring el; f := map(S,T); f el));
+     verts = apply(verts, el -> (map(S,ring el)) el);
      -- Compute the maximal degree of the vertices
-     L := flatten apply(verts, l -> (flatten entries l));
+     L := flatten apply(verts, l -> flatten entries l);
      d := (max apply(flatten L, degree))#0;
-     vertmatrix := {};
      -- compute the vertices of the state polytope
-     scan(verts, v -> (
+     vertmatrix := transpose matrix apply(verts, v -> (
 	       VI := ideal flatten entries v;
 	       SI := S/VI;
-	       v = {};
-	       scan(d, i -> ( v = join(v,flatten entries basis(i+1,SI))));
-	       vertmatrix = append(vertmatrix,flatten sum apply(v,exponents))));
+	       v = flatten apply(d, i -> flatten entries basis(i+1,SI));
+	       flatten sum apply(v,exponents)));
      -- Compute the state polytope
-     P := convexHull transpose matrix vertmatrix;
+     P := convexHull vertmatrix;
      (verts,P));
 	  
 	  
@@ -3323,11 +2533,9 @@ statePolytope Ideal := I -> (
 stdSimplex = method(TypicalValue => Polyhedron)
 stdSimplex ZZ := d -> (
      -- Checking for input errors
-     if (d < 0) then (
-	  error ("dimension must not be negative"));
+     if d < 0 then error("dimension must not be negative");
      -- Generating the standard basis
-     M := map(QQ^(d+1),QQ^(d+1),1);
-     convexHull M)
+     convexHull map(QQ^(d+1),QQ^(d+1),1))
 
 
 -- PURPOSE : Saving the actual Session of Polyhedra (and PPDivisor)
@@ -3345,7 +2553,7 @@ stdSimplex ZZ := d -> (
 saveSession = method()
 saveSession String := F -> (
      -- Creating and opening the output file
-     F = openOut(F);
+     F = openOut F;
      -- Make sure Polyhedra is loaded when the session is recovered
      F << "needsPackage \"Polyhedra\"" << endl;
      -- Check if PPDivisor has been loaded
@@ -3354,86 +2562,16 @@ saveSession String := F -> (
 	  -- if so, make sure it will also be loaded when the session is recovered
 	  F << "needsPackage \"PPDivisor\"" << endl);
      --Save all Matrices to the file
-     L := userSymbols Matrix;
-     scan(L, s -> (
-	       M := value(s);
-	       F << s << " = ";
-	       F << putMatrix(M);
-	       F << endl)); 
-     -- Save all Polyhedra to the file
-     L = userSymbols Polyhedron;
-     scan(L, s -> (
-	       P := value(s);
-	       F << s << " = ";
-	       F << putPolyhedron(P);
-	       F << endl));
-     -- Save all Cones to the file
-     L = userSymbols Cone;
-     scan(L, s -> (
-	       C := value(s);
-	       F << s << " = ";
-	       F << putCone(C);
-	       F << endl));
-     -- Save all Fans to the file
-     L = userSymbols Fan;
-     scan(L, s -> (
-	       Fa := value(s);
-	       F << s << " = ";
-	       F << putFan(Fa);
-	       F << endl));
-     -- if PPdivisor is loaded save all PolyhedralDivisors to the file
-     if PPDivisorPackageLoaded then (
-	  L = userSymbols ();
-	  L = select(L, e -> ((toString class value e) == "PolyhedralDivisor"));
-	  scan(L, s -> (
-		    PD := value(s);
-		    F << s << " = ";
-		    F << putPolyhedralDivisor(PD);
-		    F << endl)));
+     scan(userSymbols Matrix, s -> F << s << " = " << toExternalString value s << endl);
+     scan(userSymbols PolyhedralObject, s -> F << s << " = " << toExternalString value s << endl);
      -- Save all Lists and Sequences containing only convex polyhedral objects and/or lists of them to the file
-     L = (userSymbols Sequence) | (userSymbols List);
-     -- Auxiliary function to handle lists of lists
-     listrec := method();
-     listrec List := LS -> (
-	  S := "";
-	  i := 0;
-	  while (S != "stop") and (i < #LS) do (
-	       e := LS#i;
-	       if (i > 0) then (
-		    S = S | ",");
-	       if instance(e,List) then (
-		    S1 := listrec(toList e);
-		    if (S1 == "stop") then (S = S1)
-		    else (S = S | "{" | S1 | "}"))
-	       else if instance(e,Sequence) then (
-		    S2 := listrec(toList e);
-		    if (S2 == "stop") then (S = S2)
-		    else (S = S | "(" | S2 | ")"))
-	       else if instance(e,Matrix) then (
-		    S = S | putMatrix(e))
-	       else if ((toString class e) == "Polyhedron") then (
-		    S = S | putPolyhedron(e))
-	       else if ((toString class e) == "Cone") then (
-		    S = S | putCone(e))
-	       else if ((toString class e) == "Fan") then (
-		    S = S | putFan(e))
-	       else if ((toString class e) == "PolyhedralDivisor") then (
-		    S = S | putPolyhedralDivisor(e))
-	       else ( S = "stop");
-	       i = i+1);
-	  S);
-     listrec String := LS -> (
-	  listrec(toList LS));
-     scan(L, l -> (
-	       l1 := toList value(l);
-	       lstring := listrec(l1);
-	       if (lstring != "stop") then (
-		    if instance(value(l),List) then (
-			 F << l << " = {" << lstring << "}" << endl)
-		    else (
-			 F << l << " = (" << lstring << ")" << endl))));
-     -- close the file
-     close F);
+     scan(userSymbols List | userSymbols Sequence, s -> (
+	       L := value s;
+	       while L =!= flatten L do L = flatten L;
+	       if all(L, l -> (
+			 if instance(l,Sequence) then all(l, e -> instance(l,PolyhedalObject) or instance(l,Matrix)) 
+			 else instance(l,PolyhedralObject) or instance(l,Matrix))) then F << s << " = " << toExternalString value s << endl)))
+     
 
 
 
@@ -3442,34 +2580,171 @@ saveSession String := F -> (
 -- >> not public <<
 ---------------------------------------
 
--- PURPOSE : select those cones in a list that do not contain any other cone of that list
+-- PURPOSE : Building the polyhedron 'P'
+--   INPUT : '(hyperA,verticesA)',  a pair of two matrices each describing the homogenization of P
+--                                 directly ('verticesA') and in the dual description ('hyperA')
+--  OUTPUT : The polyhedron 'P'
+polyhedronBuilder = (hyperA,verticesA) -> (
+        -- Checking if the polyhedron is empty
+	test := matrix join({{1}},toList((numgens target verticesA#0)-1:{0_QQ}));
+	if  (((transpose(verticesA#0))*test == 0) and  ((transpose(verticesA#1))*test == 0)) then (
+	     zeromap := map(target verticesA#0,QQ^0,0);
+	     verticesA = (zeromap,zeromap);
+	     hyperA = fourierMotzkin verticesA);
+	-- Sorting into vertices and rays
+	VR := verticesA#0;
+	B := map(target VR,QQ^0,0);
+	C := B;
+	VRpart := partition(n -> VR_n_0 =!= 0_QQ,toList(0..(numColumns VR)-1));
+	if VRpart#?true then (
+	     B = VR_(VRpart#true);
+	     B = matrix transpose apply(numColumns B, j -> flatten entries((1/B_j_0)*B_{j})));
+	if VRpart#?false then C = VR_(VRpart#false);
+	--B = B_{1..(numgens source B)-1};
+	--C = C_{1..(numgens source C)-1};
+	-- Elimination of the trivial half-space
+	test = matrix join({{-1}},toList((numgens target (hyperA#0))-1:{0_QQ}));
+	H := transpose (hyperA#0)_(toList select(0..(numColumns hyperA#0)-1, i -> test =!= (hyperA#0)_{i}));
+	-- Determine the lineality space
+	LS := verticesA#1;
+	LS = LS^{1..(numgens target LS)-1};
+	-- Determine the defining hyperplanes
+	HP := transpose(hyperA#1);
+	HP = (HP_{1..(numgens source HP)-1},-HP_{0});
+	-- Defining the Polyhedron
+	new Polyhedron from {
+	     "ambient dimension" => (numgens target B)-1,
+	     "dimension of polyhedron" =>  ((numgens target B)-1)-(rank(hyperA#1)),
+	     "dimension of lineality space" => numgens source LS,
+	     "linealitySpace" => LS,
+	     "number of vertices" => numgens source B,
+	     "number of rays" => numgens source C,
+	     "vertices" => B^{1..(numgens target B)-1},
+	     "rays" => C^{1..(numgens target C)-1},
+	     "number of facets" => numgens target H,
+	     "halfspaces" => (H_{1..(numgens source H)-1},-H_{0}),
+	     "hyperplanes" => HP,
+	     "homogenizedVertices" => verticesA,
+	     "homogenizedHalfspaces" => hyperA})
+   
+   
+-- PURPOSE : Building the Cone 'C'
+--   INPUT : '(genrays,dualgens)',  a pair of two matrices each describing the cone C
+--                                	directly  as generating rays ('genrays') and in the 
+--						dual description as intersection of half-spaces through 
+--						the origin ('dualgens')
+--  OUTPUT : The Cone 'C'
+coneBuilder = (genrays,dualgens) -> (
+      -- Sorting into rays, lineality space generators, supporting half-spaces, and hyperplanes
+      RM := genrays#0;
+      LS := genrays#1;
+      HS := transpose(-dualgens#0);
+      HP := transpose(dualgens#1);
+      -- Defining C
+      new Cone from {
+	   "ambient dimension" => numgens target RM,
+	   "dimension of the cone" => (numgens target RM)-(rank HP),
+	   "dimension of lineality space" => numgens source LS,
+	   "linealitySpace" => LS,
+	   "number of rays" => numgens source RM,
+	   "rays" => RM,
+	   "number of facets" => numgens target HS,
+	   "halfspaces" => HS,
+	   "hyperplanes" => HP,
+	   "genrays" => genrays,
+	   "dualgens" => dualgens})
+   
+   
+-- PURPOSE : check whether a matrix os over ZZ or QQ
+--   INPUT : '(M,msg)', a matrix 'M' and a string 'msg'
+--  OUTPUT : the matrix 'M' promoted to QQ if it was over ZZ or QQ, otherwise an error
+chkZZQQ = (M,msg) -> (
+     R := ring M;
+     if R =!= ZZ and R =!= QQ then error("expected matrix of ",msg," to be over ZZ or QQ");
+     promote(M,QQ));
+
+
+-- PURPOSE : Compting the Hilbert basis of a standardised cone (project and lift algorithm
+--   INPUT : 'A' a matrix, the row echolon form of the defining half-spaces of the cone
+--  OUTPUT : a list of one column matrices, the generators of the cone over A intersected with 
+--     	     the positive orthant
+constructHilbertBasis = A -> (
+    -- Defining the function to determine if u is lower v
+    lowvec := (u,v) -> (
+	 n := (numRows u)-1;
+	 diffvec := flatten entries(u-v);
+	 if all(diffvec, i -> i <= 0) then abs(u_(n,0)) <= abs(v_(n,0)) and (u_(n,0))*(v_(n,0)) >= 0
+	 else false);
+    -- Collecting data
+    A = substitute(A,ZZ);
+    H := {A^{0}_{0}};
+    s := numRows A;
+    n := numColumns A;
+    --doing the project and lift algorithm step by step with increasing dimensions
+    scan(n-1, i -> (
+	      -- the set 'F' will contain the lifted basis vectors, 'B' are the first i+2 columns of 'A' as a rowmatrix,
+	      -- the set 'H' contains the vectors from the last loop that are one dimension smaller
+	      F := {};
+	      B := transpose A_{0..(i+1)};
+	      -- Decide between lifting the existing vectors (i > s-1) or also adding the next column of 'B'
+	      if i < s-1 then (
+		   -- Lifting the existing vectors from 'H'
+		   F = apply(H, h -> (
+			     j := 0;
+			     while numRows h == i+1 do (
+				  if isSubset(image(h || matrix{{j}}), image B) then h = (h || matrix{{j}});
+				  j = j+1);
+			     h));
+		   -- Adding +- times the next column of 'B'
+		   F = join(F,{B_{i+1}^{0..(i+1)},-B_{i+1}^{0..(i+1)}}))
+	      else (
+		   -- Lifting the existing vectors from 'H'
+		   nullmap := map(ZZ^1,ZZ^s,0);
+		   nullvec := map(ZZ^1,ZZ^1,0);
+		   F = apply(H, h -> B*substitute(vertices intersection(nullmap,nullvec,B^{0..i},h),ZZ)));
+	      -- Computing the S-pairs from the elements of 'F' and saving them in 'C'
+	      C := select(subsets(#F,2), j -> (
+			f := F#(j#0);
+			g := F#(j#1);
+			(f_(i+1,0))*(g_(i+1,0)) < 0 and f+g != 0*(f+g)));
+	      C = apply(C, j -> F#(j#0)+F#(j#1));
+	      -- The elements of 'F' are saved in 'G'
+	      G := F;
+	      j := 0;
+	      -- Adding those elements of 'C' to 'G' that satisfy the "normalform" condition by increasing last entry
+	      while C != {} do (
+		   Cnow := partition(e -> sum drop(flatten entries e,-1) == j,C);
+		   C = if Cnow#?false then Cnow#false else {};
+		   Cnow = if Cnow#?true then select(Cnow#true, f -> all(G, g -> not lowvec(g,f))) else {};
+		   Cnew := flatten apply(Cnow, f -> apply(select(G, g -> f_(i+1,0)*g_(i+1,0) < 0 and f+g != 0*(f+g)), g -> f+g));
+		   if all(Cnew, e -> sum drop(flatten entries e,-1) != j) then j = j+1;
+		   C = unique (C | Cnew);
+		   G = unique (G | Cnow));
+	      -- saving those elements of 'G' with positive last entry into 'H'
+	      H = select(G, g -> g_(i+1,0) >= 0)));
+    H)
+
+
+
+-- PURPOSE : select those cones in a list that do not contain any other cone of the list
 --   INPUT : 'L',  a list of cones
 --  OUTPUT : The list of cones that don't contain any of the other
 inclMinCones = L -> (
      newL := {};
      -- Scanning the list
-     while (L != {}) do (
+     while L != {} do (
 	  C := L#0;
 	  L = drop(L,1);
-	  keep := true;
-	  i := 0;
-	  -- check, if 'C' contains any cone remaining in 'L'
-	  while (keep and (i < #L)) do (
-	       keep = not contains(C,L#i);
-	       i = i+1);
-	  -- if not, then check if 'C' contains any of the cones already in the final list
-	  if keep then (
-	       i = 0;
-	       while (keep and (i < #newL)) do (
-		    keep = not contains(C,newL#i);
-		    i = i+1);
-	       -- if not again, then add 'C' to the final list.
-	       if keep then (
-		    newL = append(newL,C))));
+	  -- check, if 'C' contains any cone remaining in
+	  if all(L, C1 -> not contains(C,C1)) then (
+	       -- if not, then check if 'C' contains any of the cones already in the final list
+	       if all(newL, C1 -> not contains(C,C1)) then (
+		    -- if not again, then add 'C' to the final list.
+		    newL = newL | {C})));
      newL);
 
 
--- PURPOSE : intersect every face in L with every facet in F and return the inclusion maximal intersections which
+-- PURPOSE : intersect every face in L with every facet in F and return the inclusion maximal intersections that
 --     	     are not equal to one element in L
 --   INPUT : 'L',  a list of Sequences each containing a set of vertices and a set of rays giving the faces of a 
 --     	    	   certain dimension of a polyhedron
@@ -3477,50 +2752,32 @@ inclMinCones = L -> (
 --     	    	   of the same polyhedron
 --  OUTPUT : a list of Sequences each containing a set of vertices and a set of rays giving the faces 
 --     	    	   of the same polyhedron one dimension lower then the ones in 'L'
-intersectionwithFacets = (L,F) -> (
+intersectionWithFacets = (L,F) -> (
 	  -- Function to check if 'e' has at least one vertex and is not equal to 'l'
-	  isValid := (e,l) -> (
-	       valid := false;
-	       if (e#0 =!= set{}) then (
-		    valid = (e =!= l));
-	       valid);
-	  newL:={};
+	  isValid := (e,l) -> if e#0 =!= set{} then e =!= l else false;
+	  newL := {};
 	  -- Intersecting each element of 'L' with each element of 'F'
 	  scan(L, l -> (
 		    scan(F, f -> (
-			      e := ( (l#0)*(f#0),(l#1)*(f#1));
+			      e := ((l#0)*(f#0),(l#1)*(f#1));
 			      -- if the intersection is valid add it to newL if it is not contained in one of the elements 
 			      -- already in newL and remove those contained in 'e'
 			      if isValid(e,l) then (
-				   localL := {};
-				   i := 0;
-				   stopper := false;
-				   while (not stopper) and (i < #newL) do (
-					g := newL#i;
-					if (isSubset(e#0,g#0)) and (isSubset(e#1,g#1)) then (
-					     stopper = true)
-					else if not ((isSubset(g#0,e#0)) and (isSubset(g#1,e#1))) then (
-					     localL = append(localL,g));
-					i = i+1);
-				   if (not stopper) then (
-					newL = append(localL,e)))))));
+				   if not any(newL, g -> isSubset(e#0,g#0) and isSubset(e#1,g#1)) then (
+					newL = select(newL, g -> not (isSubset(g#0,e#0) and isSubset(g#1,e#1)))|{e}))))));
 	  newL);
 
 
--- PURPOSE : intersect every face in L with every facet in F and return the inclusion maximal intersections which
+-- PURPOSE : intersect every face in L with every facet in F and return the inclusion maximal intersections that
 --     	     are not equal to one element in L
 --   INPUT : 'L',  a list of sets each containing the rays of the faces of a certain dimension of a polyhedron
 --     	     'F', a list of sets each containing the rays of the facets of the same polyhedron
 --  OUTPUT : a list of sets each containing the rays of the faces of the same polyhedron one dimension lower 
 --     	     then the ones in 'L'
-intersectionwithFacetsCone = (L,F) -> (
+intersectionWithFacetsCone = (L,F) -> (
 	  -- Function to check if 'e' has at least one vertex and is not equal to 'l'
-	  isValid := (e,l) -> (
-	       valid := false;
-	       if (e =!= set{}) then (
-		    valid = (e =!= l));
-	       valid);
-	  newL:={};
+	  isValid := (e,l) -> if e =!= set{} then e =!= l else false;
+	  newL := {};
 	  -- Intersecting each element of 'L' with each element of 'F'
 	  scan(L, l -> (
 		    scan(F, f -> (
@@ -3528,144 +2785,30 @@ intersectionwithFacetsCone = (L,F) -> (
 			      -- if the intersection is valid add it to newL if it is not contained in one of the elements 
 			      -- already in newL and remove those contained in 'e'
 			     if isValid(e,l) then (
-				   localL := {};
-				   i := 0;
-				   stopper := false;
-				   while (not stopper) and (i < #newL) do (
-					g := newL#i;
-					if (isSubset(e,g)) then (
-					     stopper = true)
-					else if not (isSubset(g,e)) then (
-					     localL = append(localL,g));
-					i = i+1);
-				   if (not stopper) then (
-					newL = append(localL,e)))))));
+				  if not any(newL, g -> isSubset(e,g)) then (
+					newL = select(newL, g -> not isSubset(g,e))|{e}))))));
 	  newL);
 
 
 -- PURPOSE : Computes the common refinement of a list of cones
 --   INPUT : 'L',  a list of cones
---  OUTPUT : The fan which is the common refinement of the cones
+--  OUTPUT : A fan, the common refinement of the cones
 refineCones = L -> (
      -- Collecting the rays of all cones
-     R := rays(L#0);
-     n := numRows(R);
-     R = apply(numColumns(R), i -> (R_{i}));
+     R := rays L#0;
+     n := numRows R;
+     R = apply(numColumns R, i -> R_{i});
      L1 := drop(L,1);
-     scan(L1, C -> (
-	       RC := rays(C);
-	       R = unique(R | apply(numColumns(RC), i -> (RC_{i})))));
+     R = unique flatten (R | apply(L1, C -> apply(numColumns rays C, i -> (rays C)_{i})));
      -- Writing the rays into one matrix
-     M := map(QQ^n,QQ^0,0);
-     scan(R, r -> (M = M|r));
+     M := matrix transpose apply(R, r -> flatten entries r);
      -- Compute the coarsest common refinement of these rays
-     F := ccRefinement(M);
+     F := ccRefinement M;
      -- Collect for each cone of the ccRef the intersection of all original cones, that contain
      -- the interior of that cone
-     newCones := apply(genCones(F), C -> (
+     makeFan apply(genCones F, C -> (
 	       v := interiorVector(C);
-	       Lint := select(L, c -> (contains(c,v)));
-	       intersection(Lint)));
-     makeFan(newCones));
-
-
--- PURPOSE : Write the Cone to a string so that reading the string generates the cone without calculating it
---   INPUT : 'C',  a Cone
---  OUTPUT : 'S',  a String, the command to generate the cone from its generators and dual generators
-putCone = C -> (
-     local n,B;
-     genrays := C#"genrays";
-     dualgens := C#"dualgens";
-     S := "coneBuilder((";
-     S = S | putMatrix(genrays#0) | "," | putMatrix(genrays#1) | "),(" | putMatrix(dualgens#0) | "," | putMatrix(dualgens#1) | "))";
-     S);
-
-
--- PURPOSE : Write the Fan to a string so that reading the string generates the Fan without calculating it
---   INPUT : 'F',  a Fan
---  OUTPUT : 'S',  a String, the command to generate the Fan from its generating cones, rays, boundary faces and comperror
-putFan = F -> (
-     S := "fanBuilder({";
-     L := F#"generatingCones";
-     scan(#L, i -> (
-	       C := L#i;
-	       S = S | putCone(C);
-	       if (i < #L-1) then (
-		    S = S | ",")));
-     S = S | "},{";
-     L = F#"rays";
-     scan(#L, i -> (
-	       r := L#i;
-	       S = S | putMatrix(r);
-	       if (i < #L-1) then (
-		    S = S | ",")));
-     S = S | "},{";
-     Ffaces := F#"faces";
-     scan(#Ffaces, i -> (
-	       C := Ffaces#i;
-	       S = S | putCone(C);
-	       if (i < #Ffaces-1) then (
-		    S = S | ",")));
-     S = S | "},";
-     if (F#?"comperror") then (
-	  S = S | "{";
-     	  S = S | putCone((F#"comperror")#0);
-     	  S = S | ",";
-	  S = S | putCone((F#"comperror")#1);
-     	  S = S | "})")
-     else (
-	  S = S | "{})");
-     S);
-
-
--- PURPOSE : Write the Matrix to a string so that reading the string generates the Matrix again
---   INPUT : 'M',  a Matrix
---  OUTPUT : 'S',  a String, the command to generate the Matrix again over the same ring
-putMatrix = M -> (
-     local n;
-     if (numColumns(M) == 0) then (
-	  n = numRows(M);
-	  "map(" | toString(ring(M)) | "^" | toString(n) | "," | toString(ring(M)) | "^0,0)")
-     else if (numRows(M) == 0) then (
-	  n = numColumns(M);
-	  "map(" | toString(ring(M)) | "^0," | toString(ring(M)) | "^" | toString(n) | ",0)")
-     else (
-	  "substitute(matrix " | toString(entries(M)) | "," | toString(ring(M)) | ")"));
-
-
-
--- PURPOSE : Write the Polyhedron to a string so that reading the string generates the Polyhedron again without calculating it
---   INPUT : 'P',  a Polyhedron
---  OUTPUT : 'S',  a String, the command to generate the Polyhedron again from its homogenized halfspaces and vertices
-putPolyhedron = P -> (
-     local n,B;
-     hyperA := P#"homogenizedHalfspaces";
-     verticesA := P#"homogenizedVertices";
-     S := "polyhedronBuilder((" | putMatrix(hyperA#0) | "," | putMatrix(hyperA#1) | "),(" | putMatrix(verticesA#0) | "," | putMatrix(verticesA#1) | "))";
-     S);
-
-
-
--- PURPOSE : Write the PolyhedralDivisor to a string so that reading the string generates the Polyhedraldivisor again without calculations
---   INPUT : 'PD',  a PolyhedralDivisor
---  OUTPUT : 'S',  a String, the command to generate the PolyhedralDivisor again from its fan, ppcoefficients and tailcone
-putPolyhedralDivisor = PD -> (
-     S := "makePolDiv(";
-     S = S | putFan(PD#"fan");
-     S = S | ",{";
-     ppcoeff := PD#"polyhedralCoefficients";
-     scan(#ppcoeff, i -> (
-	       (M,P) := toSequence ppcoeff#i;
-	       S = S | "{" | putMatrix(M) | "," | putPolyhedron(P) | "}";
-	       if (i < #ppcoeff - 1) then (
-		    S = S | ",")));
-     S = S | "},";
-     S = S | putCone(PD#"tailCone");
-     S = S | ")";
-     S)
-
-
-
+	       intersection select(L, c -> contains(c,v)))))
 
 
 ---------------------------------------
@@ -3679,9 +2822,9 @@ document {
      	Key => Polyhedra,
 	Headline => "for computations with convex polyhedra, cones, and fans",
 	
-	"A rational convex ", TO Polyhedron, " is the intersection of finitely many affine halfspaces 
+	"A rational convex ", TO Polyhedron, " is the intersection of finitely many affine half-spaces 
 	over ", TO QQ, " or equivalently, the convex hull of a finite set of vertices and rays. 
-	A rational convex polyhedral ", TO Cone, " is the intersection of finitely many linear halfspaces 
+	A rational convex polyhedral ", TO Cone, " is the intersection of finitely many linear half-spaces 
 	over ", TO QQ, " or equivalently, the positive hull of a finite set of rays. A ", TO Fan, " is 
 	a finite collection of cones such that for each cone all its faces are in the fan and for two cones 
 	in the fan the intersection is a face of each.",
@@ -3700,14 +2843,17 @@ document {
 	PARA{}, "For an introduction to polyhedra and cones, we recommend ",
 	HREF("http://www.math.tu-berlin.de/~ziegler/", "Gunter
 	M. Ziegler's"), " ", EM "Lectures on Polytopes", ", Graduate
-	Texts in Mathematics 152, Springer-Verlag, New York, 1995."
+	Texts in Mathematics 152, Springer-Verlag, New York, 1995.",
+	
+	PARA{}, "The author would like to thank ",HREF("http://people.cs.uchicago.edu/~nilten/", "Nathan Ilten")," 
+	for contributing several functions to the package."
 	
 	}
    
 document {
      Key => "Working with polyhedra",
      
-     "We start with a polyhedron in 2-space which is the ",TO convexHull," of a given set of points",
+     "We start with a polyhedron in 2-space which is the ",TO convexHull," of a given set of points.",
      
      EXAMPLE {
 	  " V = matrix {{0,2,-2,0},{-1,1,1,1}}",
@@ -3715,33 +2861,34 @@ document {
 	  },
      
      PARA{}, "This gives an overview of the characteristics of the polyhedron. If we want to know 
-     more details, we can just ask for them",
+     more details, we can ask for them.",
      
      EXAMPLE {
 	  " vertices P"
 	  },
      
-     PARA{}, "and see that the point (0,1) is not a vertex and it is actually a triangle.",
+     PARA{}, "Here we see that the point (0,1) is not a vertex and ",TT "P"," is actually a triangle.",
      
      EXAMPLE {
 	  " (HS,v) = halfspaces P"
 	  },
      
-     PARA{}, "gives the defining affine halfspaces, i.e. ",TT "P"," is given by all ",TT "p"," such 
-     that ",TT "HS*p =< v"," and that lie in the defining affine hyperplanes. But since",
+     PARA{}, "This gives the defining affine half-spaces, i.e. ",TT "P"," is given by all ",TT "p"," such 
+     that ",TT "HS*p =< v"," and that lie in the defining affine hyperplanes. To get the hyperplanes we use:",
      
      EXAMPLE {
 	  " hyperplanes P"
 	  },
      
-     PARA{}, "there are none, so the polyhedron is of full dimension. It is also compact, since",
+     PARA{}, "There are none, so the polyhedron is of full dimension. It is also compact, since ",TT "P"," has 
+     no rays and the lineality space is of dimension zero.",
      
      EXAMPLE {
 	  " rays P",
 	  " linSpace P"
 	  },
      
-     PARA{}, "Furthermore, we can construct the convex hull of a set of points and a set of rays",
+     PARA{}, "Furthermore, we can construct the convex hull of a set of points and a set of rays.",
      
      EXAMPLE {
 	  " R = matrix {{1},{0},{0}}",
@@ -3750,7 +2897,7 @@ document {
 	  " vertices P1"
 	  },
      
-     PARA{}, "This polyhedron is not compact anymore and also not of full dimension",
+     PARA{}, "This polyhedron is not compact anymore and also not of full dimension.",
      
      EXAMPLE {
 	  " rays P1",
@@ -3758,7 +2905,7 @@ document {
 	  },
      
      PARA{}, "On the other hand we can construct a polyhedron as the ",TO intersection," of affine 
-     halfspaces and affine hyperplanes.",
+     half-spaces and affine hyperplanes.",
      
      EXAMPLE {
 	  " HS = transpose (V || matrix {{-1,2,0,1}})",
@@ -3768,13 +2915,13 @@ document {
 	  " P2 = intersection(HS,v,HP,w)"
 	  },
      
-     PARA{}, "This is a triangle in 3-space with",
+     PARA{}, "This is a triangle in 3-space with the following vertices.",
      
      EXAMPLE {
 	  " vertices P2"
 	  },
      
-     PARA{}, "If we don't intersect with the hyperplane we get",
+     PARA{}, "If we don't intersect with the hyperplane we get a full dimensional polyhedron.",
      
      EXAMPLE {
 	  " P3 = intersection(HS,v)",
@@ -3784,22 +2931,21 @@ document {
      
      PARA{}, "Note that the vertices are given modulo the lineality space. Besides constructing 
      polyhedra by hand, there are also some basic polyhedra implemented such as 
-     the ",TO hypercube," ",
+     the ",TO hypercube,", in this case with edge-length four.",
      
      EXAMPLE {
 	  " P4 = hypercube(3,2)",
 	  " vertices P4"
 	  },
      
-     PARA{}, "in this case with edge-length 4, the ",TO crossPolytope," ",
+     PARA{}, "Another on is the ",TO crossPolytope,", in this case with diameter six. ",
      
      EXAMPLE {
 	  " P5 = crossPolytope(3,3)",
 	  " vertices P5"
 	  },
      
-     PARA{}, "in this case with diameter 6, or the standard simplex 
-     (",TO stdSimplex,") ",
+     PARA{}, "Furthermore the standard simplex (",TO stdSimplex,").",
      
      EXAMPLE {
 	" P6 = stdSimplex 2",
@@ -3823,8 +2969,8 @@ document {
 	  },
      
      PARA{}, "Furthermore, both functions can be applied to a list containing any number 
-     of polyhedra and matrices defining vertices/rays or affine halfspaces/hyperplanes 
-     that are in the same ambient space. For example:",
+     of polyhedra and matrices defining vertices/rays or affine half-spaces/hyperplanes.
+     All of these must be in the same ambient space. For example:",
      
      EXAMPLE {
 	  " P9 = convexHull {(V1,R),P2,P6}",
@@ -3832,7 +2978,7 @@ document {
 	  },
      
      PARA{}, "Further functions are for example the Minkowski sum (",TO minkowskiSum,") of 
-     two polyhedra",
+     two polyhedra.",
      
      EXAMPLE {
 	  " Q = convexHull (-V)",
@@ -3848,45 +2994,44 @@ document {
 	  " apply(values L, vertices)"
 	  },
      
-     PARA{}, " Here the polyhedra in the hashTable ",TT "L"," are all possible Minkowski 
-     summands up to skalar multiplication and the columns of ",TT "M"," give the minimal 
-     decompositions. So the hexagon ",TT "P4"," is not only the sum of two triangles but also the sum 
-     of three lines. Furthermore, we can take the direct product of two polyhedra",
+     PARA{}, "Here the polyhedra in the hash table ",TT "L"," are all possible Minkowski 
+     summands up to scalar multiplication and the columns of ",TT "M"," give the minimal 
+     decompositions. So the hexagon ",TT "P10"," is not only the sum of two triangles but also the sum 
+     of three lines. Furthermore, we can take the direct product of two polyhedra.",
      
      EXAMPLE {
 	  " P11 = P * Q",
 	  " vertices P11"
 	  },
      
-     PARA{}, "which is in QQ^4",
+     PARA{}, "The result is in QQ^4.",
      
      EXAMPLE {
 	  "ambDim P11"
 	  },
      
-     PARA{}, "To find out more about this polyhedron use for example",
+     PARA{}, "To find out more about this polyhedron use for example.",
      
      EXAMPLE {
 	  " fVector P11"
 	  },
      
-     PARA{}, "which gives the number of faces of each dimension, so it has 9 
-     vertices, 18 edges , .. and so on. We can access the
-     faces of a certain codimension via",
+     PARA{}, "The function ",TO fVector," gives the number of faces of each dimension, so it has 9 
+     vertices, 18 edges and so on. We can access the faces of a certain codimension via:",
      
      EXAMPLE {
 	  " L = faces(1,P11)",
 	  " apply(L,vertices)"
 	  },
      
-     PARA{}, "and even compute all lattice points of the polyhedron",
+     PARA{}, "We can compute all lattice points of the polyhedron with ",TO latticePoints,".",
      
      EXAMPLE {
 	  " L = latticePoints P11",
 	  " #L"
 	  },
      
-     PARA{}, "and also the tail/recession cone of a polyhedron",
+     PARA{}, "Evenmore the tail/recession cone of a polyhedron with ",TO tailCone,".",
      
      EXAMPLE {
 	  " C = tailCone P1",
@@ -3906,7 +3051,7 @@ document {
 document {
      Key => "Working with cones",
      
-     "We start with a cone in 2-space which is the positive hull (",TO posHull,") of a given set of rays",
+     "We start with a cone in 2-space which is the positive hull (",TO posHull,") of a given set of rays.",
      
      EXAMPLE {
 	  " R = matrix {{1,1,2},{2,1,1}}",
@@ -3915,27 +3060,21 @@ document {
 	  },
      
      PARA{}, "This gives an overview of the characteristics of the cone. If we want to know 
-     more details, we can just ask for them",
+     more details, we can ask for them.",
      
      EXAMPLE {
 	  " rays C"
 	  },
      
-     PARA{}, "and see that (1,1) is not an extremal ray of the cone.",
+     PARA{}, "Using ",TO rays," we see that (1,1) is not an extremal ray of the cone.",
      
      EXAMPLE {
 	  " HS = halfspaces C"
 	  },
      
-     PARA{}, "gives the defining linear halfspaces, i.e. ",TT "C"," is given by all ",TT "p"," in 
-     the defining linear hyperplanes that satisfy ",TT "HS*p >= 0",". But since",
-     
-     EXAMPLE {
-	  " hyperplanes C"
-	  },
-     
-     PARA{}, "there are none, so the polyhedron is of full dimension. Furthermore, we can construct 
-     the positive hull of a set of rays and a linear subspace",
+     PARA{}, "The function ",TO halfspaces," gives the defining linear half-spaces, i.e. ",TT "C"," is given by all ",TT "p"," in 
+     the defining linear hyperplanes that satisfy ",TT "HS*p >= 0",". But in this case there are none, so the polyhedron is of full 
+     dimension. Furthermore, we can construct the positive hull of a set of rays and a linear subspace.",
      
      EXAMPLE {
 	  " R1 = R || matrix {{0,0,0}}",
@@ -3945,7 +3084,7 @@ document {
 	  },
      
      PARA{}, "Note that the rays are given modulo the lineality space. On the other hand we can 
-     construct cones as the ",TO intersection," of linear halfspaces and hyperplanes.",
+     construct cones as the ",TO intersection," of linear half-spaces and hyperplanes.",
      
      EXAMPLE {
 	  " HS = transpose R1",
@@ -3953,13 +3092,13 @@ document {
 	  " C2 = intersection(HS,HP)"
 	  },
      
-     PARA{}, "This is a two dimensional cone in 3-space with",
+     PARA{}, "This is a two dimensional cone in 3-space with the following rays:",
      
      EXAMPLE {
 	  " rays C2"
 	  },
      
-     PARA{}, "If we don't intersect with the hyperplane we get",
+     PARA{}, "If we don't intersect with the hyperplane we get a full dimensional cone.",
      
      EXAMPLE {
 	  " C3 = intersection HS",
@@ -3984,7 +3123,7 @@ document {
 	  " rays C5"
 	  },
      
-     PARA{}, "Or we can take their positive hull by using ",TO posHull,":",
+     PARA{}, "On the other hand, we can take their positive hull by using ",TO posHull,":",
      
      EXAMPLE {
 	  " C6 = posHull(C1,C2)",
@@ -3994,8 +3133,8 @@ document {
 
      PARA{}, "Furthermore, both functions (",TO intersection," and ",TO posHull,") can 
      be applied to a list containing any number of cones and matrices defining 
-     rays/linSpace or linear halfspaces/hyperplanes that are in the same ambient 
-     space. For example:",
+     rays and lineality space or linear half-spaces and hyperplanes. These must be in the 
+     same ambient space. For example:",
      
      EXAMPLE {
 	  " R2 = matrix {{2,-1},{-1,2},{-1,-1}}",
@@ -4004,7 +3143,7 @@ document {
 	  " linSpace C7"
 	  },
      
-     PARA{}, "But since they are all cones their positive hull is the same as their 
+     PARA{}, "Since they are all cones their positive hull is the same as their 
      Minkowski sum, so in fact:",
      
      EXAMPLE {
@@ -4022,7 +3161,7 @@ document {
 	  },
      
      PARA{}, "Furthermore, we can take the direct product (",TO directProduct,") of 
-     two cones",
+     two cones.",
      
      EXAMPLE {
 	  " C8 = C * C1",
@@ -4030,21 +3169,21 @@ document {
 	  " linSpace C8"
 	  },
      
-     PARA{}, "which is in QQ^5",
+     PARA{}, "The result is in QQ^5.",
      
      EXAMPLE {
 	  "ambDim C8"
 	  },
      
-     PARA{}, "To find out more about this cone use for example",
+     PARA{}, "To find out more about this cone use for example ",TO fVector,":",
      
      EXAMPLE {
 	  " fVector C8"
 	  },
      
-     PARA{}, "which gives the number of faces of each dimension, so it has 1 
-     vertex, the origin, 1 line, 4 two dimensional faces, .. and so on. We can access the
-     faces of a certain codimension via",
+     PARA{}, "This function gives the number of faces of each dimension, so it has 1 
+     vertex, the origin, 1 line, 4 two dimensional faces and so on. We can access the
+     faces of a certain codimension via ",TO faces,":",
      
      EXAMPLE {
 	  " L = faces(1,C8)",
@@ -4057,7 +3196,7 @@ document {
 	  " isSmooth C8"
 	  },
      
-     PARA{}, "or even compute the Hilbert basis of the cone",
+     PARA{}, "Evenmore we can compute the Hilbert basis of the cone with ",TO hilbertBasis,".",
      
      EXAMPLE {
 	  " L = hilbertBasis C8",
@@ -4077,7 +3216,7 @@ document {
 document {
      Key => "Working with fans",
      
-     "We start by constructing a fan that consists of a single cone and all of its 
+     "We start by constructing a fan, which consists of a single cone and all of its 
      faces:",
      
      EXAMPLE {
@@ -4087,24 +3226,22 @@ document {
      
      PARA{}, "By this, we have already constructed the fan consisting of the 
      positive orthant and all of its faces. The package saves the generating cones 
-     of the fan, that can be accessed by:",
+     of the fan, which can be accessed by:",
      
      EXAMPLE {
 	  "genCones F"
 	  },
      
-     PARA{}, "Now we can expand the fan by adding more cones:",
+     PARA{}, "Now we could expand the fan by adding more cones, for example the following:",
      
      EXAMPLE {
-	  " C1 = posHull matrix {{1,0,0},{1,1,0},{0,0,-1}}",
-	  " F = addCone(C1,F)"
+	  " C1 = posHull matrix {{1,0,0},{1,1,0},{0,0,-1}}"
 	  },
      
-     PARA{}, "Ok, in this case we can not, because the two cones are not compatible, 
+     PARA{}, "But in this case we can not, because the two cones are not compatible, 
      i.e. their intersection is not a face of each. So, when one tries to add a cone 
-     to a fan that is not compatible to one of the generating cones of the fan, the 
-     function ",TO addCone," prompts the above message and returns the fan as it was, 
-     before trying to add the new cone (see ",TO addCone,"). For two cones one can 
+     to a fan that is not compatible with one of the generating cones of the fan, the 
+     function ",TO addCone," gives an error. For two cones one can 
      check if their intersection is a common face by using ",TO commonFace,":",
      
      EXAMPLE {
@@ -4112,15 +3249,15 @@ document {
 	  },
      
      PARA{}, "Since the intersection of both is already computed in this function 
-     there is a different function that also returns the intersection, to save 
-     computation time when one needs the intersection afterwards anyway:",
+     there is a different function, which also returns the intersection, to save 
+     computation time when one needs the intersection afterward anyway:",
      
      EXAMPLE {
 	  " (b,C2) = areCompatible(C,C1)",
 	  " rays C2"
 	  },
      
-     PARA{}, "So let us correct the cone and add it to the fan.",
+     PARA{}, "So we can make the cone compatible and add it to the fan.",
      
      EXAMPLE {
 	  " C1 = posHull matrix {{1,0,0},{0,1,0},{0,0,-1}}",
@@ -4128,7 +3265,7 @@ document {
 	  },
      
      PARA{}, "Instead of creating a fan with one cone and then adding more cones, we 
-     can also just make a fan out of a list of cones:",
+     can also make a fan out of a list of cones:",
      
      EXAMPLE {
 	  " C2 = posHull matrix {{-1,0,0},{0,1,0},{0,0,1}};",
@@ -4138,7 +3275,7 @@ document {
 	  " F1 = makeFan {C2,C3,C4,C5}"
 	  },
      
-     PARA{}, "Or we could add a list of cones to an existing fan:",
+     PARA{}, "Furthermore, we could add a list of cones to an existing fan:",
      
      EXAMPLE {
 	  " C6 = posHull matrix {{1,0,0},{0,-1,0},{0,0,1}};",
@@ -4153,8 +3290,8 @@ document {
 	  },
      
      PARA{}, "So, ",TO makeFan," and ",TO addCone," are the methods to construct 
-     fans ''from scratch'', but there are 
-     also methods to get fans directly, for example ",TO normalFan,":",
+     fans ''from scratch'', but there are also methods to get fans directly, for example ",TO normalFan,", 
+     which constructs the inner normal fan of a polytope.",
      
      EXAMPLE {
 	  " P = hypercube 4",
@@ -4168,13 +3305,13 @@ document {
 	  " F3 = makeFan {posHull matrix {{1}},posHull matrix {{-1}}}",
 	  " F1 = F3 * F1"},
      
-     PARA{}, "in the direct product of the ambient spaces",
+     PARA{}, "The result is in the direct product of the ambient spaces.",
      
      EXAMPLE {
 	  " ambDim F1"
 	  },
      
-     PARA{}, " Of course, we can check if two fans are the same:",
+     PARA{}, "Of course, we can check if two fans are the same:",
      
      EXAMPLE {
 	  " F1 == F2"
@@ -4205,7 +3342,7 @@ document {
 	  " isPure F"
 	  },
      
-     PARA{}, "But if we make the fan complete,",
+     PARA{}, "If we add two more cones the fan becomes complete.",
      
      EXAMPLE {
 	  " C5 = posHull matrix {{1,-1,1,-1},{-1,-1,0,0},{1,1,-1,-1}};",
@@ -4214,15 +3351,29 @@ document {
 	  " isComplete F"
 	  },
      
-     PARA{}, "we can even check if the fan is projective:",
+     PARA{}, "For a complete fan we can check if it is projective:",
      
      EXAMPLE {
 	  " isProjective F"
 	  },
      
-     PARA{}, "If the fan is projective, the function returns a polyhedron of which 
-     the fan is the normalFan. This means our fan is projective."
+     PARA{}, "If the fan is projective, the function returns a polyhedron such that  
+     the fan is its  normal fan, otherwise it returns the empty polyhedron. This means 
+     our fan is projective."
      
+     }
+
+document {     
+     Key => PolyhedralObject,
+     Headline => "the class of all polyhedral objects in Polyhedra",
+          
+     TT "PolyhedralObject"," is the parent class of the three polyhedral objects in Polyhedra:",
+     
+     UL {
+	  {TO "Polyhedron"},
+	  {TO "Cone"},
+	  {TO "Fan"}
+	}
      }
         
 document {     
@@ -4231,9 +3382,9 @@ document {
           
      "A Polyhedron represents a rational polyhedron. It can be bounded or unbounded, 
      need not be full dimensional or may contain a proper affine subspace. It can 
-     be empty or zero dimensional. It is saved as a mutable hashtable which contains 
+     be empty or zero dimensional. It is saved as a hash table which contains 
      the vertices, generating rays, and the basis of the lineality space of the 
-     Polyhedron as well as the defining affine halfspaces and hyperplanes. The 
+     Polyhedron as well as the defining affine half-spaces and hyperplanes. The 
      output of a Polyhedron looks like this:",
      
      EXAMPLE {
@@ -4243,11 +3394,11 @@ document {
      PARA{}, "This table displays a short summary of the properties of the Polyhedron. 
      Note that the number of rays and vertices are modulo the lineality space. So 
      for example a line in QQ^2 has one vertex and no rays. However, one can not
-     access the above information directly, because this is just a virtual hashtable 
-     generated for the output. The informations of a Polyhedron are extracted 
+     access the above information directly, because this is just a virtual hash table 
+     generated for the output. The data defining a Polyhedron is extracted 
      by the functions included in this package. A Polyhedron can be constructed as 
-     the convex hull of a set of points and a set of rays or as the intersection of 
-     a set of affine halfspaces and affine hyperplanes.",
+     the convex hull (",TO convexHull,") of a set of points and a set of rays or as the 
+     intersection (",TO intersection,") of a set of affine half-spaces and affine hyperplanes.",
      
      PARA{}, "For example, consider the square and the square with an emerging ray 
      for the convex hull:",
@@ -4259,7 +3410,8 @@ document {
 	  " convexHull(V,R)"
 	  },
      
-     PARA{}, "Or the crosspolytope for the intersection:",
+     PARA{}, "If we take the intersection of the half-spaces defined by the directions of the 
+     vertices and 1 we get the crosspolytope:",
      
      EXAMPLE {
 	  " HS = transpose V",
@@ -4268,7 +3420,7 @@ document {
 	  " vertices P"
 	  },
      
-     PARA{}, "which we can for example embed in 3-space on height 1:",
+     PARA{}, "This can for example be embedded in 3-space on height 1:",
      
      EXAMPLE {
 	  " HS = HS | matrix {{0},{0},{0},{0}}",
@@ -4288,9 +3440,9 @@ document {
      
      "A Cone represents a rational convex polyhedral cone. It need not be full 
      dimensional or may contain a proper linear subspace. It can be zero 
-     dimensional, i.e. the origin. It is saved as a mutable hashtable which 
+     dimensional, i.e. the origin. It is saved as a hash table which 
      contains the generating rays and the basis of the lineality space of the 
-     cone as well as the defining halfspaces and hyperplanes. The output of a 
+     cone as well as the defining half-spaces and hyperplanes. The output of a 
      Cone looks like this:",
      
      EXAMPLE {
@@ -4299,10 +3451,10 @@ document {
      
      PARA{}, "This table displays a short summary of the properties of the Cone. The number 
      of rays is modulo the lineality space. However, one can not access the above information 
-     directly, because this is just a virtual hashtable generated for the output. The 
-     informations of a Cone are extracted by the functions included in this package. A Cone 
-     can be constructed as the positive hull of a set of rays or as the intersection of a set 
-     of linear halfspaces and linear hyperplanes.",
+     directly, because this is just a virtual hash table generated for the output. The data 
+     describing a Cone is extracted by the functions included in this package. A Cone 
+     can be constructed as the positive hull (",TO posHull,")of a set of rays or as the intersection 
+     (",TO intersection,") of a set of linear half-spaces and linear hyperplanes.",
      
      PARA{}, "As examples for the positive hull consider the following cones:",
      
@@ -4315,7 +3467,8 @@ document {
 	  " rays C"
 	  },
      
-     PARA{}, "Or for the intersection:",
+     PARA{}, "On the other hand, we can use these matrices as defining half-spaces and hyperplanes 
+     for the intersection:",
      
      EXAMPLE {
 	  " HS = transpose R",
@@ -4338,7 +3491,7 @@ document {
      such that for every cone in the fan all faces are in the fan and for every two cones in 
      the fan their intersection is a face of each (intersection condition). 
      It need not be full dimensional or pure, and the cones need not be pointed. It is saved 
-     as a mutable hashtable which contains a list of the generating cones of the fan starting 
+     as a hash table which contains a list of the generating cones of the fan starting 
      with those of maximal dimension. So for every cone in this list all faces are considered 
      to be in the fan. The output of a Fan looks like this:",
      
@@ -4348,9 +3501,9 @@ document {
      
      PARA{}, "This table displays a short summary of the properties of the Fan. 
      However, one can not access the above information directly, because this 
-     is just a virtual hashtable generated for the output. The informations of a Fan 
-     are extracted by the functions included in this package. A Fan can be constructed by 
-     collecting Cones satisfying the intersection condition. Every cone that is added to 
+     is just a virtual hash table generated for the output. The data defining a Fan 
+     is extracted by the functions included in this package. A Fan can be constructed by 
+     collecting Cones that satisfy the intersection condition. Every cone that is added to 
      a Fan is always considered as the collection of the Cone and all of its faces.",
      
      EXAMPLE {
@@ -4361,7 +3514,7 @@ document {
 	  " F = makeFan {C1,C2,C3,C4}"
 	  },
      
-     PARA{}, "is for example the normalFan of the flattened crosspolytope in 2-space.",
+     PARA{}, "This fan is for example the normal fan of a ''flattened'' crosspolytope in 2-space.",
      
      PARA{}, " See also ",TO "Working with fans","."
      
@@ -4386,9 +3539,9 @@ document {
      PARA{}, TT "convexHull", " computes the convex hull of the input. 
      In the first two cases it considers the columns of ", TT "M", " 
      as a set of points and the columns of ", TT "N", " (if given) as 
-     a set of rays and computes the polyhedron which is the convex hull 
+     a set of rays and computes the polyhedron that is the convex hull 
      of the points plus the rays. The two matrices must have the same 
-     number of rows, i.e. the colmuns must lie in the same ambient space. 
+     number of rows, i.e. the columns must lie in the same ambient space. 
      If ", TT "N", " is not given or equal to 0, then the resulting 
      polyhedron is compact and hence a polytope. The points need not 
      be the vertices of the polyhedron. In the third case it computes 
@@ -4408,7 +3561,7 @@ document {
      
      PARA{}, "Then ", TT "convexHull", " computes the convex hull of all 
      inserted objects, if they are in the same ambient space, i.e. all matrices 
-     must have the same number of rows which must equal the ambient dimension 
+     must have the same number of rows, which must equal the ambient dimension 
      of all cones and polyhedra."
      
      }
@@ -4433,7 +3586,7 @@ document {
      PARA{}, TT "posHull", " computes the positive hull of the input. In the 
      first two cases it considers the columns of ", TT "M", " as a set of rays 
      and the columns of ", TT "N", " (if given) as generators of the lineality 
-     space and computes the cone which is the positive hull of the rays plus 
+     space and computes the cone that is the positive hull of the rays plus 
      the lineality space. The two matrices must have the same number of rows, 
      i.e. the columns must lie in the same ambient space. If ", TT "N", " is 
      not given or equal to 0 then the resulting cone is pointed. The rays need 
@@ -4454,7 +3607,7 @@ document {
      
      PARA{}, "Then ", TT "posHull", " computes the positive hull of all 
      inserted objects, if they are in the same ambient space, i.e. all matrices 
-     must have the same number of rows which must equal the ambient dimension 
+     must have the same number of rows, which must equal the ambient dimension 
      of all cones and polyhedra."
      
      }
@@ -4463,7 +3616,7 @@ document {
      Key => {intersection, (intersection,Cone,Cone), (intersection,List), (intersection,Matrix), 
 	  (intersection,Matrix,Matrix), (intersection,Matrix,Matrix,Matrix,Matrix), (intersection,Polyhedron,Polyhedron),
 	  (intersection,Cone,Polyhedron), (intersection,Polyhedron,Cone)},
-     Headline => "computes the intersection of halfspaces, hyperplanes, cones, and polyhedra",
+     Headline => "computes the intersection of half-spaces, hyperplanes, cones, and polyhedra",
      Usage => " P = intersection L \nC = intersection M \nC = intersection(M,N) \nP = intersection(M,v) \nP = intersection(M,v,N,w) \nC = intersection(C1,C2) \nP = intersection(P1,P2)",
      Inputs => {
 	  "L" => List => {"containing any of the inputs below"},
@@ -4511,7 +3664,7 @@ document {
    
      PARA{}, "Then ", TT "intersection", " computes the intersection of all 
      inserted objects, if they are in the same ambient space, i.e. all matrices 
-     must have the same number of rows which must equal the ambient dimension 
+     must have the same number of rows, which must equal the ambient dimension 
      of all cones and polyhedra."
      
      }
@@ -4538,10 +3691,8 @@ document {
      (intersection condition).",
      
      PARA{}, "If one of the cones is in the wrong ambient space, there will be an 
-     error and no fan will be returned. If the intersection condition fails, the 
-     function will prompt that there are two incompatible cones and return the 
-     fan that has been constructed so far without adding the incompatible cone. 
-     The pair of incompatible cones can be accessed with the 
+     error and no fan will be returned. If the intersection condition fails, there 
+     will also be an error. The pairs of incompatible cones can be accessed with the 
      function ",TO incompCones,".",
           
      EXAMPLE {
@@ -4556,7 +3707,7 @@ document {
 
 document {
      Key => {addCone, (addCone,Cone,Fan), (addCone,List,Fan), (addCone,Fan,Fan)},
-     Headline => "adds a cones to a Fan",
+     Headline => "adds cones to a Fan",
      Usage => " F1 = addCone(C,F) \nF1 = addCone(L,F)",
      Inputs => {
 	  "C" => Cone,
@@ -4569,25 +3720,20 @@ document {
      
      PARA{}, "If ",TT "addCone", " is applied to a ", TO Cone, " and a ",TO Fan, " 
      it adds the Cone to the Fan if they are in the same ambient space, if the Cone is 
-     compatible to every generating Cone of ",TT "F", ", but is not a face of one 
-     of them. If the first condition fails, there will be an error and no fan will be
-     returned. If the second condition fails, the function will prompt that there are 
-     two incompatible cones and return the fan without adding the incompatible cone. 
-     The pair of incompatible cones can be accessed with the function ",TO incompCones,". 
-     If the last condition fails, then the cone is already in the fan as a face of one 
-     of the cones, so it does not have to be added. The conditions are checked in this 
-     order.",
+     compatible with every generating Cone of ",TT "F", ", but is not a face of one 
+     of them. If one of the first two conditions fails, there will be an error and no fan 
+     will be returned. The pairs of incompatible cones can be accessed with the 
+     function ",TO incompCones,". If the last condition fails, then the cone is already in 
+     the fan as a face of one of the cones, so it does not have to be added. The conditions 
+     are checked in this order.",
      
      PARA{}, "If ",TT "addCone"," is applied to a ",TO List," and a ",TO Fan,", then 
      the function adds the list cone by cone and stops if one of the three conditions 
-     fails for one of the cones. There is again an error for the first condition. If 
-     the second fails, then it prompts the incompatability and returns the fan 
-     constructed so far. The pair of incompatible cones can again be retrieved using ",
-     TO incompCones,".",
+     fails for one of the cones. There is again an error for the first two conditions. The 
+     pairs of incompatible cones can again be retrieved using ",TO incompCones,".",
      
-     PARA{}, "If applied to a pair of cones it adds the generating cones of the first 
-     fan to the second fan, again checking for the same conditions as above",
-     
+     PARA{}, "If applied to a pair of fans it adds the generating cones of the first 
+     fan to the second fan, again checking for the same conditions as above.",
      
      PARA{}, " As an example, we make a fan consisting of the following cone and 
      try to add an adjacent orthant.",
@@ -4596,82 +3742,17 @@ document {
 	  " C = posHull matrix {{1,0,0},{0,1,1},{0,0,1}};",
 	  " F = makeFan C",
 	  " C = posHull matrix {{-1,0,0},{0,1,0},{0,0,1}};",
-	  " addCone(C,F)"
+	  " incompCones(C,F)"
 	  },
      
      PARA{}, "This shows that the two cones do not intersect in a common face, but 
-     if we divide C up into two parts, we get a fan.",
+     if we divide C into two parts, we get a fan.",
      
      EXAMPLE {
 	  " C1 = intersection {C, (matrix {{0,1,-1}}, matrix {{0}})};",
 	  " C2 = intersection {C, (matrix {{0,-1,1}}, matrix {{0}})};",
 	  " F = addCone({C1,C2},F)"
 	  }
-     
-     }
-
-document {
-     Key => {equalLists, (equalLists,List,List)},
-     Headline => "checks if two lists contain the same elements",
-     Usage => " b = equalLists(L1,L2)",
-     Inputs => {
-	  "L1" => List,
-	  "L2" => List
-	  },
-     Outputs => {
-	  "b" => Boolean
-	  },
-     
-     PARA{}, TT "equalLists", " is an auxiliary function to check if  two lists 
-     contain the same elements. This is useful for Lists containing convex polyhedral 
-     objects, since Macaulay 2 can not properly compare two sets of them. Also one does 
-     not need to turn the lists into sets.",
-     
-     EXAMPLE {
-	  " L1 = {posOrthant 3,hypercube 2};",
-	  " L2 = {hypercube 2,posOrthant 3};",
-	  " equalLists(L1,L2)"
-	  }
-     
-     }
-
-document {
-     Key => {symmDiff, (symmDiff,List,List)},
-     Headline => "computes the symmetric difference",
-     Usage => " L = symmDiff(L1,L2)",
-     Inputs => {
-	  "L1" => List,
-	  "L2" => List
-	  },
-     Outputs => {
-	  "L" => List
-	  },
-     
-     PARA{}, TT "symmDiff", " is an auxiliary function to compute the symmetric 
-     difference of two lists, i.e. the list of all elements contained in either 
-     of the lists but not in both.",
-     
-     EXAMPLE {
-	  " L1 = {f,a,s,t}",
-	  " L2 = {s,t,n,c,y}",
-	  " symmDiff(L1,L2)"
-	  }
-     }
-
-document {
-     Key => {union, (union,List,List)},
-     Headline => "computes the union of two lists",
-     Usage => " L = union(L1,L2)",
-     Inputs => {
-	  "L1" => List,
-	  "L2" => List
-	  },
-     Outputs => {
-	  "L" => List
-	  },
-     
-     PARA{}, TT "union", " is an auxiliary function to compute the union 
-     of two lists."
      
      }
 
@@ -4685,7 +3766,7 @@ document {
 	  "F" => Fan
 	  },
      Outputs => {
-	  "d" => ZZ => {" which is the dimension of the ambient space"}
+	  "d" => ZZ => {", the dimension of the ambient space"}
 	  },
      
      PARA{}, TT "ambDim", " returns the dimension of the ambient space 
@@ -4719,7 +3800,7 @@ document {
 	  },
      
      PARA{}, "To actually see the cones of the fan we can look at their 
-     rays for example:",
+     rays, for example:",
      
      EXAMPLE {
 	  " apply(L,rays)"
@@ -4753,7 +3834,7 @@ document {
 
 document {
      Key => {halfspaces, (halfspaces,Cone), (halfspaces,Polyhedron)},
-     Headline => "computes the defining halfspaces of a Cone or a Polyhedron",
+     Headline => "computes the defining half-spaces of a Cone or a Polyhedron",
      Usage => " M = halfspaces C \n(M,v) = halfspaces P",
      Inputs => {
 	  "C" => Cone,
@@ -4764,15 +3845,15 @@ document {
 	  "v" => Matrix => {"with entries over ", TO QQ, " and only one column"}
 	  },
      
-     PARA{}, TT "halfspaces", " returns the defining affine halfspaces. For a 
+     PARA{}, TT "halfspaces", " returns the defining affine half-spaces. For a 
      polyhedron ", TT "P", " the output is ", TT "(M,v)", ", where the source 
      of ", TT "M", " has the dimension of the ambient space of ", TT "P", " 
      and ", TT "v", " is a one column matrix in the target space 
      of ", TT "M", " such that ",TT "P = {p in H | M*p =< v}", " where 
      ", TT "H", " is the intersection of the defining affine hyperplanes.",
      
-     PARA{}, " For a cone ", TT "C", " the output is ", TT "M", " which is the 
-     same matrix as before but ", TT "v", " is ommited since it is 0, 
+     PARA{}, " For a cone ", TT "C", " the output is the matrix", TT "M"," that is the 
+     same matrix as before but ", TT "v", " is omitted since it is 0, 
      so ", TT "C = {c in H | M*c =< 0}", " and ", TT "H", " is the intersection 
      of the defining linear hyperplanes.",
      
@@ -4810,12 +3891,12 @@ document {
      of ", TT "N", " has the dimension of the ambient space of ", TT "P", " 
      and ", TT "w", " is a one column matrix in the target space 
      of ", TT "N", " such that ",TT "P = {p in H | N*p = w}", " where 
-     ", TT "H", " is the intersection of the defining affine halfspaces.",
+     ", TT "H", " is the intersection of the defining affine half-spaces.",
      
-     PARA{}, " For a cone ", TT "C", " the output is ", TT "N", " which is the 
-     same matrix as before but ", TT "w", " is ommited since it is 0, 
+     PARA{}, " For a cone ", TT "C", " the output is the matrix ", TT "N", ", that 
+     is the same matrix as before but ", TT "w", " is omitted since it is 0, 
      so ", TT "C = {c in H | N*c = 0}", " and ", TT "H", " is the intersection 
-     of the defining linear halfspaces.",
+     of the defining linear half-spaces.",
      
      EXAMPLE {
 	  " P = stdSimplex 2",
@@ -4914,13 +3995,15 @@ document {
      Outputs => {
 	  "b" => Boolean => {TO true, " if the intersection is a face of each cone, 
 	       and ", TO false, " otherwise."},
-	  "C" => Cone => {" the intersection of both Cones."}
+	  "C" => Cone => {" the intersection of both Cones if they are compatible, otherwise 
+	       the empty polyhedron."}
 	  },
      
      PARA{}, TT "areCompatible", " is an extension of ", TO commonFace, " for Cones. It 
      also checks if the intersection ", TT "C", " of ", TT "C1", " and ", TT "C2", " is a 
-     face of each and the answer is given by ", TT "b", ". Furhtermore, the intersection 
-     is given for further calculations.",
+     face of each and the answer is given by ", TT "b", ". Furthermore, the intersection 
+     is given for further calculations if the two cones lie in the same ambient space. Otherwise,  
+     the empty polyhedron in the ambient space of ",TT "C1"," is given.",
      
      PARA{}, "For example, consider the following three cones",
      
@@ -4930,8 +4013,8 @@ document {
 	  " C3 = posHull matrix {{1,-1},{2,-1}};",
 	  },
      
-     PARA{}, "that might form a fan, but if we check if they are compatible, we see they 
-     don't:",
+     PARA{}, "These might form a fan, but if we check if they are compatible, we see they 
+     are not:",
      
      EXAMPLE {
 	  " areCompatible(C1,C2)",
@@ -4942,14 +4025,17 @@ document {
      }
 
 document {
-     Key => {commonFace, (commonFace,Cone,Cone), (commonFace,Polyhedron,Polyhedron)},
-     Headline => "checks if the intersection is a face of both Cones or Polyhedra",
-     Usage => " b = commonFace(C1,C2) \nb = commonFace(P1,P2)",
+     Key => {commonFace, (commonFace,Cone,Cone), (commonFace,Polyhedron,Polyhedron), 
+	  (commonFace,Cone,Fan), (commonFace,Fan,Cone), (commonFace,Fan,Fan)},
+     Headline => "checks if the intersection is a face of both Cones or Polyhedra, or of cones with fans",
+     Usage => " b = commonFace(C1,C2) \nb = commonFace(P1,P2) \nb = commonFace(X,F) \nb = commonface(F,X)",
      Inputs => {
 	  "C1" => Cone,
 	  "C2" => Cone,
 	  "P1" => Polyhedron,
-	  "P2" => Polyhedron
+	  "P2" => Polyhedron,
+	  "F" => Fan,
+	  "X" => {TO Cone," or ",TO Fan}
 	  },
      Outputs => {
 	  "b" => Boolean => {TO true, " if the intersection is a face both, 
@@ -4958,9 +4044,11 @@ document {
      
      PARA{}, TT "commonFace", " checks if the intersection of ", TT "C1", " 
      and ", TT "C2", " or the intersection of ", TT "P1", " and ", TT "P2", " is 
-     a face of both.",
+     a face of both. If it is applied to a pair of a cone ",TT "C"," and a fan ",TT "F"," then 
+     it checks if the intersection of ",TT "C"," with every generating cone of ",TT "F"," is 
+     a face of each. For two fans it checks this condition for every pair of generating cones. ",
      
-     PARA{}, "For example, consider the follwing three cones",
+     PARA{}, "For example, consider the following three cones:",
      
      EXAMPLE {
 	  " C1 = posHull matrix {{1,0},{0,1}};",
@@ -4968,7 +4056,7 @@ document {
 	  " C3 = posHull matrix {{1,-1},{2,-1}};",
 	  },
      
-     PARA{}, "and check if their intersection is a common face:",
+     PARA{}, "for each pair of two of them we can check if their intersection is a common face:",
      
      EXAMPLE {
 	  " commonFace(C1,C2)",
@@ -5002,7 +4090,7 @@ document {
     Polyhedron, it tests if the equations of the first argument are satisfied by the generating 
     points/rays of the second argument.",
     
-    PARA{}, "For example we can check if the 3 dimensional crosspolytope contains the hypercube 
+    PARA{}, "For example, we can check if the 3 dimensional crosspolytope contains the hypercube 
     or the other way around:",
     
     EXAMPLE {
@@ -5012,7 +4100,7 @@ document {
 	" contains(P,Q)"
 	},
     
-    PARA{}, "Or we can check if the hypercube lies in the positive orthant.",
+    PARA{}, "We can also check if the hypercube lies in the positive orthant.",
     
     EXAMPLE {
 	 " C = posHull matrix {{1,0,0},{0,1,0},{0,0,1}};",
@@ -5022,34 +4110,6 @@ document {
 	 }
         
     }
-
-document {
-     Key => {equals, (equals,Cone,Cone), (equals,Fan,Fan), (equals,Polyhedron,Polyhedron)},
-     Headline => "checks equality for convex objects",
-     Usage => " b = equals(X,Y)",
-     Inputs => {
-	  "X" => Cone => {TO Fan, " or ", TO Polyhedron},
-	  "Y" => {"an element of the same class as ", TT "X"}
-	  },
-     Outputs => {
-	  "b" => Boolean => { TO true, " if the arguments are equal, ",TO false, " otherwise"}
-	  },
-     
-     PARA{}, "The function ", TT "equals", " is necessary, because the hashTables by 
-     which the two objects are given cannot be compared and also the order of the columns 
-     for example in the vertices matrix is not unique. It uses the 
-     function ", TT "contains", " in both directions. Both objects must be contained in the 
-     same ambient space, so for example the positive orthant in ", TO QQ, "^2 and the cone 
-     in ", TO QQ, "^3 spanned by ", TT "e_1", " and ", TT "e_2", " are not considered to be 
-     equal in ", TT "Polyhedra", ".",
-     
-     EXAMPLE {
-	  " P = hypercube 3",
-	  " Q = crossPolytope 3",
-	  " equals(P,polar Q)"
-	  }
-     
-     }
 
 document {
      Key => {isCompact, (isCompact,Polyhedron)},
@@ -5083,11 +4143,11 @@ document {
 	  "b" => Boolean => { TO true, " if the ", TO Fan, " is complete, ", TO false, " otherwise"}
 	  },
      
-     PARA{}, TT "isComplete"," just calls an entry in the hashTable of the Fan. The check for completeness 
+     PARA{}, TT "isComplete"," just calls an entry in the hash table of the Fan. The check for completeness 
      is done while generating the fan. Whenever a full dimensional Cone is added (see ", TO makeFan," 
      or ", TO addCone,") the set of faces of codimension 1 that appear only in one full dimensional Cone 
-     is updated. The Fan is then complete if and only if this set is empty and there are full dimensional 
-     Cones.",
+     is updated. The Fan is then complete if and only if this set is empty and there is at least one 
+     full dimensional Cone.",
      
      EXAMPLE {
 	  " C1 = posHull matrix {{1,0},{0,1}};",
@@ -5097,7 +4157,7 @@ document {
 	  " isComplete F"
 	  },
      
-     PARA{}, "Hence this fan is not complete, but we can add the missing cone:",
+     PARA{}, "Hence the fan above is not complete, but we can add the missing cone:",
      
      EXAMPLE {
 	  " C4 = posHull matrix {{-1,-2},{-2,-1}};",
@@ -5148,7 +4208,7 @@ document {
 	  " isFace(Q,P)"
 	  },
      
-     PARA{}, "Thus, it is not a face, but we can extend it to a face.",
+     PARA{}, "Thus, ",TT "Q"," is not a face of ",TT "P",", but we can extend it to a face.",
      
      EXAMPLE {
 	  " v = matrix{{1},{-1},{-1}};",
@@ -5156,6 +4216,28 @@ document {
 	  " isFace(Q,P)"
 	  }
      
+     }
+
+document {
+     Key => (isNormal,Polyhedron),
+     Headline => "checks if a polytope is normal in the ambient lattice",
+     Usage => "b = isNormal P",
+     Inputs => {
+	  "P" => Polyhedron => {"which must be compact"}
+	  },
+     Outputs => {
+	  "b" => Boolean => {"true if P is normal in the ambient lattice"}
+	  },
+
+     PARA{}, TT "isNormal"," can only be applied to polytopes, i.e. compact polyhedra. It
+     embeds the polytope on height 1 in a space of dimension plus 1 and takes the Cone over
+     this polytope. Then it checks if all elements of the Hilbert basis lie in height 1.",
+
+     EXAMPLE {
+	  " P = convexHull transpose matrix {{0,0,0},{1,0,0},{0,1,0},{1,1,3}}",
+	  " isNormal P"
+	    }
+
      }
 
 document {
@@ -5171,7 +4253,7 @@ document {
 	  },
      
      PARA{}, "Tests if a Cone is pointed, i.e. the lineality space is 0. A Fan is pointed if one of its 
-     Cones is pointed which is equivalent to all Cones being pointed.",
+     Cones is pointed. This is equivalent to all Cones being pointed.",
      
      EXAMPLE {
 	  " C = intersection(matrix{{1,1,-1},{-1,-1,-1}})",
@@ -5190,13 +4272,13 @@ document {
 	  "F" => Fan
 	  },
      Outputs => {
-	  "b" => {TO false," if the ", TO Fan," is not projective and a ", TO Polyhedron," of which it is 
-	       the normalFan if it is projective"}
+	  "P" => Polyhedron => {TO emptyPolyhedron," if the ", TO Fan," is not projective and a ", TO Polyhedron," such 
+	       that 'F' is its normal fan if 'F' is projective"}
 	  },
      
      PARA{}, "If ",TT "F"," is projective, then there exists a polyhedron ",TT "P"," such that ",TT "F"," 
      is the normalFan of ",TT "P",". This means every codimension 1 cone of the Fan corresponds exactly to 
-     an edge of the polytope. So consider ", TO QQ," to the number of all edges. This can be consider as the 
+     an edge of the polytope. So consider ", TO QQ," to the number of all edges. This can be considered as the 
      space of all edge lengths. If we take arbitrary lengths now for every edge we do not get a polytope. But 
      every codimension 2 cone of the fan corresponds to a 2 dimensional face of the polytope and if the edges 
      belonging to this face add up to 0 zero, they form in fact a 2 dimensional face. This gives linear 
@@ -5231,7 +4313,7 @@ document {
      PARA{}, TT "isPure", " tests if the ", TO Fan," is pure by checking if the first and the last entry in 
      the list of generating Cones are of the same dimension.",
      
-     PARA{}, "Let us construct a fan consisting of the positive orthant and the ray ",TT "v"," which is the 
+     PARA{}, "Let us construct a fan consisting of the positive orthant and the ray ",TT "v"," that is the 
      negative sum of the canonical basis, which is obviously not pure:",
      
      EXAMPLE {
@@ -5241,8 +4323,8 @@ document {
 	  " isPure F",
 	  },
      
-     PARA{}, "But we can make the fan pure if we choose any two dimensional face of the positive 
-     orthant and takt the cone generated by this face and ",TT "v"," and add it to the cone:",
+     PARA{}, "But we can make a pure fan if we choose any two dimensional face of the positive 
+     orthant and take the cone generated by this face and ",TT "v"," and add it to the cone:",
      
      EXAMPLE {
 	  " C1 = posHull{(faces(1,C))#0,v}",
@@ -5292,7 +4374,7 @@ document {
      or ",TO Polyhedron,", where ",TT "k"," must be between 0 and the dimension of the second 
      argument. The faces will be of the same class as the original convex object.",
      
-     PARA{}, "For example, we look at the edges of the cyclicPolytope with 5 vertices in 3 space",
+     PARA{}, "For example, we can look at the edges of the cyclicPolytope with 5 vertices in 3 space",
      
      EXAMPLE {
 	  " P = cyclicPolytope(3,5)",
@@ -5343,13 +4425,13 @@ document {
      
      PARA{}, "The Hilbert basis of the cone ",TT "C"," is computed by the 
      Project-and-Lift-algorithm by Raymond Hemmecke (see below). It computes a Hilbert basis of 
-     the cone modulo the lineality space, so it returns a list of one column matrices which give 
+     the cone modulo the lineality space, so it returns the list of one column matrices that give 
      the Hilbert basis of the Cone if one adds the basis of the lineality space and its negative. 
      For the Project-and-Lift-algorithm see: ",
      
      PARA{}, HREF("http://www.hemmecke.de/raymond/", "Raymond Hemmecke's"), " ", EM "On the 
      computation of Hilbert bases of cones", ", in A. M. Cohen, X.-S. Gao, and N. Takayama, 
-     editors, Mathematical Software, ICMS 2002, pages 307317. World Scientic, 2002.",
+     editors, Mathematical Software, ICMS 2002, pages 307317. World Scientific, 2002.",
      
      EXAMPLE {
 	  " C = posHull matrix {{1,2},{2,1}}",
@@ -5359,30 +4441,34 @@ document {
      }
 
 document {
-     Key => {incompCones, (incompCones,Fan)},
-     Headline => "returns the pair of incompatible cones",
-     Usage => " L = incompCones F",
+     Key => {incompCones, (incompCones,List), (incompCones,Cone,Fan), (incompCones,Fan,Cone), (incompCones,Fan,Fan)},
+     Headline => "returns the pairs of incompatible cones",
+     Usage => " Lpairs = incompCones L \nLpairs = incompCones(X,F) \nLpairs = incompCones(F,X)",
      Inputs => {
-	  "F" => Fan
+	  "L" => List,
+	  "F" => Fan,
+	  "X" => {TO Cone," or ",TO Fan,}
 	  },
      Outputs => {
-	  "L" => List
+	  "Lpairs" => List
 	  },
      
-     PARA{}, "If the functions ",TO makeFan," or ",TO addCone," encounter a pair of incompatible 
-     cones during their construction of the fan, ",TT "incompCones"," retrieves the pair of 
-     incompatible cones from the last computation. The first cone is the cone that was already 
-     in the fan and the second cone is the one that should have been added. If there were no 
-     incompatible cones, then the ",TO List," is empty.",
+     PARA{}, "If ",TT "incompCones"," is applied to a list of cones and fans, then it returns the pairs of elements 
+     whose intersection is not a face of each. For a cone ",TT "C"," and a fan ",TT "F"," in the list this means there 
+     is at least one generating cone of ",TT "F"," whose intersection with ",TT "C"," is not a face of each. For two 
+     fans in the list this means there is at least one generating cone each such that their intersection is not a face
+     of each. If applied to a pair consisting of a cone and a fan or two fans, then it returns the pairs of cones that 
+     do not share a common face.",
      
      EXAMPLE {
-	  " C1 = posHull matrix {{1,0},{0,1}};",
-	  " C2 = posHull matrix {{-1,0},{0,1}};",
-	  " C3 = posHull matrix {{2,2},{1,-1}};",
-	  " C4 = posHull matrix {{-1,0},{0,-1}};",
-	  " F = makeFan {C1,C2,C3,C4}",
-	  " L = incompCones F",
-	  " L == {C1,C3}"
+	  " C1 = posHull matrix{{1,0},{1,1}};",
+	  " C2 = posHull matrix{{1,0},{0,-1}};",
+	  " C3 = posHull matrix{{-1,0},{0,1}};",
+	  " C4 = posHull matrix{{1,1},{0,1}};",
+	  " C5 = posHull matrix {{1,2},{2,1}};",
+	  " L = {C1,C2,C3,C4,C5};",
+	  " Lpairs = incompCones L",
+	  " Lpairs == {(C1,C4),(C1,C5)}",
 	  }
      
      }
@@ -5486,7 +4572,7 @@ document {
 
 document {
      Key => {maxFace, (maxFace,Matrix,Polyhedron), (maxFace,Matrix,Cone)},
-     Headline => "computes the face of a Polyhedron or Cone on which a weight attains its maximum",
+     Headline => "computes the face of a Polyhedron or Cone where a weight attains its maximum",
      Usage => " F = maxFace(w,P) \nF = maxFace(w,C)",
      Inputs => {
 	  "w" => Matrix => {" over ",TO ZZ," or ",TO QQ," with only one column representing a 
@@ -5495,12 +4581,12 @@ document {
 	  "C" => Cone
 	  },
      Outputs => {
-	  "F" => {"Depending on the input, a Cone or a Polyhedron, the face on which ",TT "w"," attains 
+	  "F" => {"Depending on the input, a Cone or a Polyhedron, the face where ",TT "w"," attains 
 	       its maximum"}
 	  },
      
-     PARA{}, TT "maxFace"," computes the face of the given Polyhedron ",TT "P"," or Cone ",TT "C"," on 
-     which ",TT "w"," attains its maximum.",
+     PARA{}, TT "maxFace"," computes the face of the given Polyhedron ",TT "P"," or Cone ",TT "C","  
+     where ",TT "w"," attains its maximum.",
      
      EXAMPLE {
 	  " P = crossPolytope 3",
@@ -5513,7 +4599,7 @@ document {
 
 document {
      Key => {minFace, (minFace,Matrix,Polyhedron), (minFace,Matrix,Cone)},
-     Headline => "computes the face of a Polyhedron or Cone on which a weight attains its minimum",
+     Headline => "computes the face of a Polyhedron or Cone where a weight attains its minimum",
      Usage => " F = minFace(w,P) \nF = minFace(w,C)",
      Inputs => {
 	  "w" => Matrix => {" over ",TO ZZ," or ",TO QQ," with only one column representing a 
@@ -5522,12 +4608,12 @@ document {
 	  "C" => Cone
 	  },
      Outputs => {
-	  "F" => {"Depending on the input, a Cone or a Polyhedron, the face on which ",TT "w"," attains 
+	  "F" => {"Depending on the input, a Cone or a Polyhedron, the face where ",TT "w"," attains 
 	       its minimum"}
 	  },
      
-     PARA{}, TT "minFace"," computes the face of the given Polyhedron ",TT "P"," or Cone ",TT "C"," on 
-     which ",TT "w"," attains its minimum.",
+     PARA{}, TT "minFace"," computes the face of the given Polyhedron ",TT "P"," or Cone ",TT "C"," 
+     where ",TT "w"," attains its minimum.",
      
      EXAMPLE {
 	  " P = hypercube 3",
@@ -5540,7 +4626,7 @@ document {
 
 document {
      Key => {minkSummandCone, (minkSummandCone,Polyhedron)},
-     Headline => "computes the Cone of all Mikowski summands and the minimal decompositions",
+     Headline => "computes the Cone of all Minkowski summands and the minimal decompositions",
      Usage => " (C,L,M) = minkSummandCone P",
      Inputs => {
 	  "P" => Polyhedron
@@ -5561,12 +4647,12 @@ document {
      polytope, i.e. the sum of the ordered rescaled edge directions is zero. Therefore, every 
      compact two dimensional face of ",TT "P"," gives a set of linear equalities on a part of 
      the variables in ",TO QQ,"^d. The Minkowski Summand Cone ",TT "C"," is the intersection 
-     of the positive orthant with these equations. Thus, every point in ",TT "C"," corrsponds 
-     to a Minkowski summand (probably with rescaling). The corresponding polyhedron to every 
-     minimal generator of ",TT "C"," is saved in the hashTable ",TT "L",". Finally, all possible 
+     of the positive orthant with these equations. Thus, every point in ",TT "C"," corresponds 
+     to a Minkowski summand (probably after rescaling). The corresponding polyhedron to every 
+     minimal generator of ",TT "C"," is saved in the hash table ",TT "L",". Finally, all possible 
      minimal decompositions of ",TT "P"," are saved as columns in the matrix ",TT "M",".",
      
-     PARA{}, "For example, consider the Minkowski summand cone of the hexagon",
+     PARA{}, "For example, consider the Minkowski summand cone of the hexagon.",
      
      EXAMPLE {
 	  " P = convexHull matrix{{2,1,-1,-2,-1,1},{0,1,1,0,-1,-1}}",
@@ -5599,7 +4685,7 @@ document {
 	  },
      
      PARA{}, "For a point ",TT "p"," and a Polyhedron ",TT "P"," or a Cone ",TT "C",", ",TT "proximum"," 
-     computes the point in ",TT "P"," or ",TT "C"," with minimal euclidian distane to ",TT "p",".",
+     computes the point in ",TT "P"," or ",TT "C"," with minimal euclidian distance to ",TT "p",".",
      
      EXAMPLE {
 	  " P = crossPolytope 3",
@@ -5654,7 +4740,7 @@ document {
      
      PARA{}, TT "p"," is considered to be a point in the ambient space of the second argument, so 
      the number of rows of ",TT "p"," must equal the dimension of the ambient space of the 
-     second argument. The function computes the smallest face of the second argument which 
+     second argument. The function computes the smallest face of the second argument that 
      contains ",TT "p",". If the second argument is a ",TO Polyhedron," the output is a 
      ",TO Polyhedron," and if it is a ",TO Cone," the output is a ",TO Cone,". In both cases, 
      if the point is not contained in the second argument then the output is the empty 
@@ -5690,7 +4776,7 @@ document {
 	  " F = makeFan C"
 	  },
      
-     PARA{}, "This cone is not smooth, so also the fan is not. But if we remove the interior and one 
+     PARA{}, "This cone is not smooth, therefore also the fan is not. But if we remove the interior and one 
      of the two dimensional faces the resulting subfan is smooth.",
      
      EXAMPLE {
@@ -5739,7 +4825,7 @@ document {
      PARA{}, TT "triangulate","  computes the triangulation of the polyhedron ",TT "P",", if it is compact, 
      i.e. a polytope, recursively. For this, it takes all facets and checks if they are simplices. If so, then 
      it takes the convex hull of these with the weighted centre of the polytope (the sum of the vertices divided 
-     by the number of vertices). For those which are not simplices, it takes all their facets and does the same 
+     by the number of vertices). For those that are not simplices it takes all their facets and does the same 
      for these.",
      
      EXAMPLE {
@@ -5761,7 +4847,7 @@ document {
 	  },
      
      PARA{}, TT "volume"," computes the volume of a polytope. To do this, it triangulates the polytope first. The volume 
-     of a simplex is |det(v_1-v_0,..,v_n-v_0)|/n!, v_0,..,v_n are the vertices of the simplex.",
+     of a simplex is |det(v_1-v_0,..,v_n-v_0)|/n!, where v_0,..,v_n are the vertices of the simplex.",
      
      EXAMPLE {
 	  " P = crossPolytope 3",
@@ -5825,7 +4911,7 @@ document {
 	  "Q" => Polyhedron
 	  },
      
-     PARA{}, "Computes the affine hull of a polyhedron which is the affine subspace with the same 
+     PARA{}, "Computes the affine hull of a polyhedron. This is the affine subspace with the same 
      dimension as the polyhedron, containing the polyhedron.",
      
      EXAMPLE {
@@ -5858,17 +4944,17 @@ document {
      PARA{}, TT "A"," must be a matrix from the ambient space of the cone ",TT "C"," to some 
      other target space and ",TT "b"," must be a vector in that target space, i.e. the number of 
      columns of ",TT "A"," must equal the ambient dimension of ",TT "C"," and ",TT "A"," and ",TT "b"," 
-     must have the same number of rows. ",TT "affineImage"," then computes the 
-     polyhedron ",TT "{(A*c)+b | c in C}"," and the cone ",TT "{A*c | c in C}"," when ",TT "b"," is 0 or omitted. 
-     If ",TT "A"," is the omitted then it is set to identity.",
+     must have the same number of rows. Then ",TT "affineImage"," computes the 
+     polyhedron ",TT "{(A*c)+b | c in C}"," and the cone ",TT "{A*c | c in C}"," if ",TT "b"," is 0 or omitted. 
+     If ",TT "A"," is omitted then it is set to identity.",
      
-     PARA{}, "For example, consider the following three dimensional cone",
+     PARA{}, "For example, consider the following three dimensional cone.",
      
      EXAMPLE {
 	  " C = posHull matrix {{1,2,3},{3,1,2},{2,3,1}}",
 	  },
      
-     PARA{}, "which can be send to the positive orthant:",
+     PARA{}, "This Cone can be mapped to the positive orthant:",
      
      EXAMPLE {
 	  " A = matrix  {{-5,7,1},{1,-5,7},{7,1,-5}}", 
@@ -5895,17 +4981,17 @@ document {
      PARA{}, TT "A"," must be a matrix from the ambient space of the polyhedron ",TT "P"," to some 
      other target space and ",TT "v"," must be a vector in that target space, i.e. the number of 
      columns of ",TT "A"," must equal the ambient dimension of ",TT "P"," and ",TT "A"," and ",TT "v"," 
-     must have the same number of rows. ",TT "affineImage"," then computes the 
+     must have the same number of rows. Then ",TT "affineImage"," computes the 
      polyhedron ",TT "{(A*p)+v | p in P}"," where ",TT "v"," is set to 0 if omitted and ",TT "A"," is the 
      identity if omitted.",
      
-     PARA{}, "For example, consider the following two dimensional polytope",
+     PARA{}, "For example, consider the following two dimensional polytope:",
      
      EXAMPLE {
 	  " P = convexHull matrix {{-2,0,2,4},{-8,-2,2,8}}",
 	  },
      
-     PARA{}, "which is of course nothing more than an affine image of the square:",
+     PARA{}, "This polytope is the affine image of the square:",
      
      EXAMPLE {
 	  " A = matrix {{-5,2},{3,-1}}",
@@ -5938,16 +5024,16 @@ document {
      PARA{}, TT "A"," must be a matrix from some source space to the ambient space of ",TT "C"," and ",TT "b"," must be 
      a vector in that ambient space, i.e. the number of rows of ",TT "A"," must equal the ambient dimension of ",TT "C"," 
      and the number of rows of ",TT "b",". ",TT "affinePreimage"," then computes the 
-     polyhedron ",TT "{q | (A*q)+b in C}"," and the cone ",TT "{q | (A*q) in C}"," when ",TT "b"," is 0 or omitted. 
-     If ",TT "A"," is the omitted then it is set to identity.",
+     polyhedron ",TT "{q | (A*q)+b in C}"," or the cone ",TT "{q | (A*q) in C}"," if ",TT "b"," is 0 or omitted. 
+     If ",TT "A"," is omitted then it is set to identity.",
      
-     PARA{}, "For example, consider the following three dimensional cone",
+     PARA{}, "For example, consider the following three dimensional cone:",
      
      EXAMPLE {
 	  " C = posHull matrix {{1,2,3},{3,1,2},{2,3,1}}",
 	  },
      
-     PARA{}, "and its preimage under the following map:",
+     PARA{}, "We can look at its preimage under the following map:",
      
      EXAMPLE {
 	  " A = matrix  {{-5,7,1},{1,-5,7},{7,1,-5}}", 
@@ -6010,7 +5096,7 @@ document {
      which is a point in the relative interior, and taking the convex hull of the embedded 
      Polyhedron and the barycentre ",TT "x {+/- 1}",".",
      
-     PARA{}, "As an example, we construct the octahedron as the bipyramide over the square 
+     PARA{}, "As an example, we construct the octahedron as the bipyramid over the square 
      (see ",TO hypercube,").",
      
      EXAMPLE {
@@ -6024,7 +5110,7 @@ document {
 document {
      Key => {ccRefinement, (ccRefinement,Matrix)},
      Headline => "computes the coarsest common refinement of a set of rays",
-     Usage => " F = ccRefinment R",
+     Usage => " F = ccRefinement R",
      Inputs => {
 	  "R" => Matrix
 	  },
@@ -6035,7 +5121,7 @@ document {
      PARA{}, "The coarsest common refinement of a set of rays ",TT "R"," is the common refinement 
      of all possible triangulations  of the rays.",
      
-     PARA{}, "for example, consider a three dimensional cone with four rays:",
+     PARA{}, "For example, consider a three dimensional cone with four rays:",
      
      EXAMPLE {
 	  " R = matrix {{1,1,-1,-1},{1,-1,1,-1},{1,1,1,1}}"
@@ -6188,9 +5274,9 @@ document {
 	  "Q" => {TO Cone," or ",TO Polyhedron}
 	  },
      
-     PARA{}, "The Minkowski sum of ",TT "X"," and ",TT "Y"," is the polyhdedron 
+     PARA{}, "The Minkowski sum of ",TT "X"," and ",TT "Y"," is the polyhedron 
      ",TT "X + Y = {x + y | x in X, y in Y}",". If ",TT "X"," and ",TT "Y"," are both 
-     cones, then their Minkowski sum is their positive hull which is a cone, so the 
+     cones, then their Minkowski sum is their positive hull, which is a cone, so the 
      output is a ",TO Cone,". Otherwise the output is a ",TO Polyhedron,". ",TT "X"," 
      and ",TT "Y"," have to lie in the same ambient space.",
      
@@ -6273,6 +5359,49 @@ document {
 	  " vertices Q"
 	  }
      
+     }
+
+document {
+     Key => {sublatticeBasis, (sublatticeBasis,Matrix), (sublatticeBasis,Polyhedron)},
+     Headline => "computes a basis for the sublattice generated by integral vectors or the lattice points of a polytope",
+     Usage => " B = sublatticeBasis M \nB = sublatticeBasis P",
+     Inputs => {
+	  "M" => Matrix => {" over ",TO ZZ," with each column representing a sublattice generator"},
+	  "P" => Polyhedron,
+	  },
+     Outputs => {
+	  "B" => {"A matrix over ", TO ZZ," containing a sublattice basis"}
+	  },
+
+     PARA{}, TT "sublatticeBasis"," computes a basis for the sublattice generated by the columns of",TT "M"," or 
+     by the lattice points of",TT "P",".",
+
+      EXAMPLE {
+	  " P = convexHull transpose matrix {{0,0,0},{1,0,0},{0,1,0},{1,1,3}}",
+	  " sublatticeBasis P"
+	    }
+     }
+
+document {
+     Key => {toSublattice, (toSublattice,Polyhedron)},
+     Headline => "calculates the preimage of a polytope in the sublattice generated by its lattice points",
+     Usage => "Q = toSublattice P",
+     Inputs => {
+	  "P" => Polyhedron => {"which must be compact"}
+	  },
+     Outputs => {
+	  "Q" => Polyhedron => {"preimage of P in the sublattice generated by its lattice points"}
+	  },
+
+     PARA{}, TT "toSublattice"," can only be applied to polytopes, i.e. compact polyhedra. It
+     calculates a basis of the sublattice generated by its lattice points, and then takes the affine 
+     preimage under the corresponding map.",
+
+     EXAMPLE {
+	  " P = convexHull transpose matrix {{0,0,0},{1,0,0},{0,1,0},{1,1,3}}",
+	  " toSublattice P"
+	    }
+
      }
 
 document {
@@ -6472,7 +5601,7 @@ document {
 	  "C" => Cone
 	  },
      
-     PARA{}, "Computes the direct product of ",TT "C1"," and ",TT "C2",", which is the cone 
+     PARA{}, "Computes the direct product of ",TT "C1"," and ",TT "C2",". This is the cone 
      ",TT "{(x,y) | x in C1, y in C2}",", in the direct product of the ambient spaces.",
      
      PARA{}, "See also ",TO directProduct,"."
@@ -6491,7 +5620,7 @@ document {
 	  "Q" => Polyhedron
 	  },
      
-     PARA{}, "Computes the direct product of ",TT "C"," and ",TT "P",", which is the 
+     PARA{}, "Computes the direct product of ",TT "C"," and ",TT "P",". This is the 
      polyhedron ",TT "{(c,p) | c in C, p in P}",", in the direct product of the ambient spaces.", 
      
      PARA{}, "See also ",TO directProduct,"."
@@ -6510,7 +5639,7 @@ document {
 	  "Q" => Polyhedron
 	  },
      
-     PARA{}, "Computes the direct product of ",TT "P"," and ",TT "C",", which is the polyhedron 
+     PARA{}, "Computes the direct product of ",TT "P"," and ",TT "C",". This is the polyhedron 
      ",TT "{(p,c) | p in P, x in C}",", in the direct product of the ambient spaces.", 
      
      PARA{}, "See also ",TO directProduct,"."
@@ -6529,7 +5658,7 @@ document {
 	  "Q" => Polyhedron
 	  },
      
-     PARA{}, "Computes the direct product of ",TT "P1"," and ",TT "P2",", which is the polyhedron 
+     PARA{}, "Computes the direct product of ",TT "P1"," and ",TT "P2",".This is the polyhedron 
      ",TT "{(x,y) | x in P1, y in P2}",", in the direct product of the ambient spaces.",
      
      PARA{}, "See also ",TO directProduct,"."
@@ -6548,7 +5677,7 @@ document {
 	  "F" => Fan
 	  },
      
-     PARA{}, "Computes the direct product of two fans, which is the fan given by ",TT "C=C1 x C2"," 
+     PARA{}, "Computes the direct product of two fans. This is the fan given by ",TT "C=C1 x C2"," 
      for all cones ",TT "C1 in F1"," and ",TT "C2 in F2",", in the direct product of the 
      ambient spaces.",
      
@@ -6568,7 +5697,7 @@ document {
 	  "C" => Cone
 	  },
      
-     PARA{}, "Computes the Minkowski sum of ",TT "C1"," and ",TT "C2",", which is the cone 
+     PARA{}, "Computes the Minkowski sum of ",TT "C1"," and ",TT "C2",". This is the cone 
      ",TT "C1 + C2 = {x + y | x in C1, y in C2}",". Note that ",TT "C1"," and ",TT "C2"," have 
      to lie in the same ambient space.", 
      
@@ -6588,7 +5717,7 @@ document {
 	  "Q" => Polyhedron
 	  },
      
-     PARA{}, "Computes the Minkowski sum of ",TT "C"," and ",TT "P",", which is the polyhedron 
+     PARA{}, "Computes the Minkowski sum of ",TT "C"," and ",TT "P",".This is the polyhedron 
      ",TT "C + P = {c + p | c in C, p in P}",". Note that ",TT "C"," and ",TT "P"," have 
      to lie in the same ambient space.", 
      
@@ -6608,7 +5737,7 @@ document {
 	  "Q" => Polyhedron
 	  },
      
-     PARA{}, "Computes the Minkowski sum of ",TT "P"," and ",TT "C",", which is the polyhdedron 
+     PARA{}, "Computes the Minkowski sum of ",TT "P"," and ",TT "C",". This is the polyhedron 
      ",TT "P + C = {p + c | p in P, c in C}",". Note that ",TT "P"," and ",TT "C"," have 
      to lie in the same ambient space.", 
      
@@ -6628,7 +5757,7 @@ document {
 	  "Q" => Polyhedron
 	  },
      
-     PARA{}, "Computes the Minkowski sum of ",TT "P1"," and ",TT "P2",", which is the polyhdedron 
+     PARA{}, "Computes the Minkowski sum of ",TT "P1"," and ",TT "P2",".This is the polyhedron 
      ",TT "P1 + P2 = {x + y | x in P1, y in P2}",". Note that ",TT "P1"," and ",TT "P2"," have 
      to lie in the same ambient space.", 
      
@@ -6670,22 +5799,6 @@ document {
      }
 
 document {
-     Key => {(symbol ==,Cone,Thing),(symbol ==,Fan,Thing),(symbol ==,Polyhedron,Thing),(symbol ==,Thing,Cone),(symbol ==,Thing,Fan),(symbol ==,Thing,Polyhedron)},
-     Headline => "equality for polyhedral objects and all other objects",
-     Usage => " X == Y",
-     Inputs => {
-	  "X" => {TO Cone,", ",TO Fan," or ",TO Polyhedron,", or any other object"},
-	  "Y" => {TO Cone,", ",TO Fan," or ",TO Polyhedron,", or any other object"}
-	  },
-     
-     PARA{}, "Defined to be able to compare convex polyhedral objects with all other objects in Macaulay 2, 
-     allthough they are only equal if it is the same convex polyhedral object."
-     
-     }
-
-
-
-document {
      Key => (dim,Cone),
      Headline => "computes the dimension of a cone",
      Usage => " d = dim C",
@@ -6712,7 +5825,7 @@ document {
 	  },
      
      PARA{}, "Returns the dimension of a fan. This 
-     is the maximal dimension of any of the cones of 
+     is the maximal dimension of all cones of 
      the fan."
      
      }
@@ -6801,31 +5914,13 @@ document {
 	  "F" => String
 	  },
      
-     PARA{}, "All convex polyhedral objects (",TO Cone,",",TO Fan,",",TO Polyhedron,") that have been assigned to
+     PARA{}, "All convex polyhedral objects (",TO Cone,",",TO Fan,",",TO Polyhedron,") that have been assigned 
      to a ",TO Symbol," will be saved into the file ",TT "F",". If the package ",TT "PPDivisor"," is loaded, then 
      also all ",TT "PolyhedralDivisors"," are saved into ",TT "F",". Also every ",TO List," or ",TO Sequence," 
-     containing any of the above types or lists and sequences of them in arbitrary nested depth is saved.",
+     containing any of the above types or lists and sequences of them in arbitrary nested depth of lists is saved.",
      
      PARA{}, "To recover the session simply call ",TT "load F",". It is not necessary that ",TT "Polyhedra"," is already 
      loaded (if not, it will be) and also ",TT "PPDivisor"," is loaded if it was loaded when the session had been saved."
-     
-     }
-
-document {
-     Key => {coneBuilder,(coneBuilder,Sequence,Sequence)},
-     Headline => "Internal function, not for public use",
-     
-     }
-
-document {
-     Key => {fanBuilder,(fanBuilder,List,List,List,List)},
-     Headline => "Internal function, not for public use",
-     
-     }
-
-document {
-     Key => {polyhedronBuilder,(polyhedronBuilder,Sequence,Sequence)},
-     Headline => "Internal function, not for public use",
      
      }
 
@@ -6834,14 +5929,14 @@ document {
 -- Checking convexHull basics
 TEST ///
 P = convexHull matrix {{3,1,0,2},{0,2,2,1},{1,-1,2,0}};
-assert(P#"numVertices" == 3)
-assert(dim(P) == 2)
-assert(ambDim(P) == 3)
-assert(rays(P) == 0)
-assert(linSpace(P) == 0)
+assert(P#"number of vertices" == 3)
+assert(dim P == 2)
+assert(ambDim P == 3)
+assert(rays P == 0)
+assert(linSpace P == 0)
 M = matrix {{3_QQ,4,1}};
 v = matrix {{10_QQ}};
-assert((hyperplanes(P) == (M,v)) or (hyperplanes(P) == (-M,-v)))
+assert(hyperplanes P == (M,v) or hyperplanes P == (-M,-v))
 ///
 
 -- Test 1
@@ -6849,9 +5944,9 @@ assert((hyperplanes(P) == (M,v)) or (hyperplanes(P) == (-M,-v)))
 TEST ///
 P = convexHull matrix {{3,1,0,2},{0,2,2,1},{1,-1,2,0}};
 P = convexHull {P,(matrix{{4},{0},{-2}},matrix{{1,0,0},{0,1,-1},{0,0,0}})};
-assert(dim(P) == 3)
-assert(image(linSpace(P)) == image(matrix {{0},{1_QQ},{0}}))
-assert(hyperplanes(P) == (0,0))
+assert(dim P == 3)
+assert(image linSpace P == image matrix {{0},{1_QQ},{0}})
+assert(hyperplanes P == (0,0))
 ///
 
 -- Test 2
@@ -6861,7 +5956,7 @@ P = convexHull (matrix{{1},{1}},matrix{{1,0},{0,1}});
 M1 = matrix {{-1,0_QQ},{0,-1}};
 M2 = matrix {{0,-1_QQ},{-1,0}};
 v = matrix {{-1},{-1_QQ}};
-assert((halfspaces(P) == (M1,v)) or (halfspaces(P) == (M2,v)))
+assert(halfspaces P == (M1,v) or halfspaces P == (M2,v))
 ///
 
 -- Test 3
@@ -6877,8 +5972,8 @@ assert(intersection(M,v) == P2)
 -- Checking intersection
 TEST ///
 P = intersection (matrix{{1,0},{0,1},{-1,0},{0,-1}},matrix{{1},{2},{3},{4}});
-V1 = vertices(P);
-V1 = set apply(numColumns V1, i -> (V1_{i}));
+V1 = vertices P;
+V1 = set apply(numColumns V1, i -> V1_{i});
 V2 = set {matrix{{1_QQ},{2}},matrix{{1_QQ},{-4}},matrix{{-3_QQ},{2}},matrix{{-3_QQ},{-4}}};
 assert(isSubset(V1,V2) and isSubset(V2,V1))
 ///
@@ -6901,28 +5996,31 @@ assert(P == Q)
 TEST ///
 C = intersection matrix {{1,2},{2,1}};
 R1 = rays C;
-R1 = set apply(numColumns R1, i -> (R1_{i}));
+R1 = set apply(numColumns R1, i -> R1_{i});
 R2 = set {matrix{{2_QQ},{-1}},matrix{{-1_QQ},{2}}};
 assert(isSubset(R1,R2) and isSubset(R2,R1))
-assert(linSpace(C) == 0)
-assert(dim(C) == 2)
-assert(ambDim(C) == 2)
+assert(linSpace C == 0)
+assert(dim C == 2)
+assert(ambDim C == 2)
 ///
 
 -- Test 7
--- Checking intersection that give a not pointed cone
+-- Checking intersection that give a not pointed cone and intersection for lists
 TEST ///
 C = intersection matrix {{1,2,1},{2,1,1}};
-assert(image(linSpace(C)) == image(matrix{{1_QQ},{1_QQ},{-3}}))
-assert(ambDim(C) == 3)
+assert(image linSpace C == image matrix{{1_QQ},{1_QQ},{-3}})
+assert(ambDim C == 3)
+P = intersection {hypercube 3,C,(matrix{{1,1,1}},matrix{{1}})};
+V = matrix {{1/3,1,0,1,1,-1,-1/3},{1/3,0,1,1,-1,1,-1/3},{-1,-1,-1,-1,1,1,1}};
+assert(vertices P == V);
 ///
 
 -- Test 8
 -- Checking posHull
 TEST ///
-C = posHull (matrix{{1,0},{0,1},{0,0}},matrix{{0},{0},{1}});
-assert((halfspaces(C) == matrix{{1_QQ,0,0},{0,1,0}}) or (halfspaces(C) == matrix{{0_QQ,1,0},{1,0,0}}))
-assert(C#"numRays" == 2)
+C = posHull(matrix{{1,0},{0,1},{0,0}},matrix{{0},{0},{1}});
+assert(halfspaces C == matrix{{1_QQ,0,0},{0,1,0}} or halfspaces C == matrix{{0_QQ,1,0},{1,0,0}})
+assert(C#"number of rays" == 2)
 ///
 
 -- Test 9
@@ -6930,12 +6028,12 @@ assert(C#"numRays" == 2)
 TEST ///
 P1 = convexHull matrix {{0,1,1,0},{0,0,1,1}};
 P2 = convexHull matrix {{0,2,0},{0,0,2}};
-assert(contains(P2,P1))
+assert contains(P2,P1)
 assert(not contains(P1,P2))
 P1 = convexHull(matrix {{0,1,1,0},{0,0,1,1},{0,0,0,0}},matrix {{0},{0},{1}});
 P2 = convexHull matrix {{0,1,1,0},{0,0,1,1},{1,2,3,4}};
 assert(not contains(P2,P1))
-assert(contains(P1,P2))
+assert contains(P1,P2)
 ///
 
 -- Test 10
@@ -6943,22 +6041,22 @@ assert(contains(P1,P2))
 TEST ///
 C1 = posHull matrix {{1,0,0},{0,1,0},{0,0,1}};
 C2 = posHull matrix {{1},{1},{1}};
-assert(contains(C1,C2))
+assert contains(C1,C2)
 assert(not contains(C2,C1))
 C2 = posHull {C2, matrix {{1,-1,0,0},{0,0,1,-1},{0,0,0,0}}};
-assert(contains(C2,C1))
+assert contains(C2,C1)
 assert(not contains(C1,C2))
 ///
 
 -- Test 11
--- Checking equals for polyhedra and cones
+-- Checking equality for polyhedra and cones
 TEST ///
 P = convexHull matrix {{1,1,-1,-1},{1,-1,1,-1}};
 Q = intersection(matrix{{1,0},{-1,0},{0,1},{0,-1}},matrix{{1},{1},{1},{1}});
-assert(equals(P,Q))
+assert(P == Q)
 C1 = posHull matrix {{1,2},{2,1}};
 C2 =intersection matrix {{2,-1},{-1,2}};
-assert(equals(C1,C2))
+assert(C1 == C2)
 ///
 
 -- Test 12
@@ -6980,55 +6078,55 @@ TEST ///
 P = convexHull matrix {{0,-1,1,0,0,1,-1},{0,0,0,1,-1,-1,1}};
 F1 = faces(1,P);
 F2 = {convexHull matrix{{-1,0},{1,1}},convexHull matrix{{0,1},{1,0}},convexHull matrix{{1,1},{0,-1}},convexHull matrix{{1,0},{-1,-1}},convexHull matrix{{0,-1},{-1,0}},convexHull matrix{{-1,-1},{0,1}}};
-assert(equalLists(F1,F2))
+assert(set F1 === set F2)
 (C,L,M) = minkSummandCone(P);
 assert(rays(C)*M == matrix{{1_QQ,1},{1,1},{1,1},{1,1},{1,1},{1,1}})
 L1 = {convexHull matrix{{0,1},{0,0}},convexHull matrix{{0,0},{0,1}},convexHull matrix{{0,1},{0,-1}},convexHull matrix{{0,0,1},{0,1,0}},convexHull matrix{{0,1,1},{0,0,-1}}};
-assert(equalLists(values L,L1))
+assert(set values L === set L1)
 ///
 
 -- Test 14
 -- Checking bipyramid, faces and fVector
 TEST ///
 P = convexHull matrix {{0,-1,1,0,0,1,-1},{0,0,0,1,-1,-1,1}};
-P = bipyramid(P);
-F1 = set apply(faces(3,P), f -> (vertices(f)));
+P = bipyramid P;
+F1 = set apply(faces(3,P), f -> vertices f);
 F2 = set {matrix{{-1_QQ},{0},{0}},matrix{{1_QQ},{0},{0}},matrix{{0_QQ},{1},{0}},matrix{{0_QQ},{-1},{0}},matrix{{1_QQ},{-1},{0}},matrix{{-1_QQ},{1},{0}},matrix{{0_QQ},{0},{1}},matrix{{0_QQ},{0},{-1}}};
 assert(isSubset(F1,F2) and isSubset(F2,F1))
-assert(fVector(P) == {8,18,12,1})
+assert(fVector P == {8,18,12,1})
 ///
 
 -- Test 15
 -- Checking isEmpty
 TEST ///
 P = intersection(matrix{{1,1,1},{-1,0,0},{0,-1,0},{0,0,-1}},matrix{{1},{0},{0},{0}});
-assert(not isEmpty(P))
+assert not isEmpty P
 P = intersection {P,(matrix{{-1,-1,-1}},matrix{{-2}})};
-assert(isEmpty(P))
+assert isEmpty P
 ///
 
 -- Test 16
 -- Checking isPointed
 TEST ///
 C = posHull matrix {{1,1,1,1},{1,-1,1,-1},{1,1,-1,-1}};
-assert(isPointed(C))
+assert isPointed C
 C = posHull {C,matrix{{-1},{0},{-1}}};
-assert(not isPointed(C))
+assert not isPointed C
 ///
 
 -- Test 17
 -- Checking isSmooth
 TEST ///
 C = posHull matrix {{1,0,0},{-1,2,3},{1,1,2}};
-assert(isSmooth(C))
+assert isSmooth C
 C = posHull {C,matrix{{1},{0},{2}}};
-assert(not isSmooth(C))
+assert not isSmooth C
 C = posHull matrix {{1,2},{2,1},{1,2}};
-assert(not isSmooth(C))
+assert not isSmooth C
 C = posHull matrix {{1,1,-1,-1},{1,2,1,-1},{1,3,0,-1}};
-assert(not isSmooth(C))
+assert not isSmooth C
 C = posHull {C,matrix{{1},{0},{1}}};
-assert(isSmooth(C))
+assert isSmooth C
 ///
 
 -- Test 18
@@ -7036,13 +6134,13 @@ assert(isSmooth(C))
 TEST ///
 C1 = posHull matrix {{1,1,1,1},{1,-1,0,0},{0,0,1,-1}};
 C2 = posHull matrix {{1,1},{1,-1},{0,0}};
-assert(not isFace(C2,C1))
+assert not isFace(C2,C1)
 C2 = posHull matrix {{1},{1},{1}};
-assert(not isFace(C2,C1))
+assert not isFace(C2,C1)
 C2 = posHull matrix {{1},{0},{-1}};
-assert(isFace(C2,C1))
+assert isFace(C2,C1)
 C2 = posHull matrix {{0},{0},{0}};
-assert(isFace(C2,C1))
+assert isFace(C2,C1)
 ///
 
 -- Test 19
@@ -7050,22 +6148,22 @@ assert(isFace(C2,C1))
 TEST ///
 P1 = convexHull matrix {{1,1,1,1,-1,-1,-1,-1},{1,1,-1,-1,1,1,-1,-1},{1,-1,1,-1,1,-1,1,-1}};
 P2 = intersection(matrix {{1,0,0},{-1,0,0}},matrix {{-1},{-1}});
-assert(isFace(P2,P1))
+assert isFace(P2,P1)
 P2 = convexHull matrix {{1,1,1},{1,1,-1},{1,-1,1}};
-assert(not isFace(P2,P1))
+assert not isFace(P2,P1)
 P2 = intersection {P2,{matrix{{0,1,0}},matrix{{1}}}};
-assert(isFace(P2,P1))
+assert isFace(P2,P1)
 ///
 
 -- Test 20
 -- Checking isCompact
 TEST ///
 P = intersection(matrix {{1,0,0},{-1,0,0},{0,1,0},{0,-1,0},{0,0,1}},matrix {{1},{2},{3},{4},{5}});
-assert(not isCompact(P))
+assert not isCompact P
 P = intersection {P, (matrix {{0,0,-1}},matrix {{6}})};
-assert(isCompact(P))
+assert isCompact P
 P = intersection {P, {matrix {{1,1,1}},matrix {{0}}}};
-assert(isCompact(P))
+assert isCompact P
 ///
 
 -- Test 21
@@ -7073,10 +6171,10 @@ assert(isCompact(P))
 TEST ///
 P = intersection(matrix {{1,0},{-1,0},{0,1}},matrix {{1},{2},{3}});
 C = posHull matrix {{0},{-1}};
-assert(tailCone(P) == C)
+assert(tailCone P == C)
 P = intersection (matrix{{2,1,1},{1,2,1},{1,1,2}},matrix{{2},{2},{2}});
 C = posHull matrix{{1,1,-3},{1,-3,1},{-3,1,1}};
-assert(tailCone(P) == C)
+assert(tailCone P == C)
 ///
 
 -- Test 22
@@ -7105,13 +6203,13 @@ assert(smallestFace(matrix{{0},{0},{5}},C) == F2)
 -- Checking inInterior for polyhedra and cones
 TEST ///
 P = convexHull matrix {{1,1,-1,-1},{1,-1,1,-1}};
-assert(not inInterior(matrix{{2},{1}},P))
-assert(not inInterior(matrix{{1},{0}},P))
-assert(inInterior(matrix{{0},{0}},P))
+assert not inInterior(matrix{{2},{1}},P)
+assert not inInterior(matrix{{1},{0}},P)
+assert inInterior(matrix{{0},{0}},P)
 C = posHull matrix {{1,0,0},{0,1,0},{0,0,1}};
-assert(not inInterior(matrix{{0},{0},{0}},C))
-assert(not inInterior(matrix{{-1},{0},{0}},C))
-assert(inInterior(matrix{{1},{2},{3}},C))
+assert not inInterior(matrix{{0},{0},{0}},C)
+assert not inInterior(matrix{{-1},{0},{0}},C)
+assert inInterior(matrix{{1},{2},{3}},C)
 ///
 
 -- Test 25
@@ -7119,7 +6217,7 @@ assert(inInterior(matrix{{1},{2},{3}},C))
 TEST ///
 P = convexHull matrix {{1,-1,0,0},{0,0,1,-1}};
 p = matrix {{0_QQ},{0}};
-assert(interiorPoint(P) == p)
+assert(interiorPoint P == p)
 ///
 
 -- Test 26
@@ -7127,7 +6225,7 @@ assert(interiorPoint(P) == p)
 TEST ///
 C = posHull matrix {{1,2,3},{2,3,1},{3,1,2}};
 p = matrix {{1_QQ},{1},{1}};
-assert(interiorVector(C) == p)
+assert(interiorVector C == p)
 ///
 
 -- Test 27
@@ -7135,9 +6233,9 @@ assert(interiorVector(C) == p)
 TEST ///
 P1 = convexHull matrix {{1,1,1,1,-1},{1,1,-1,-1,0},{1,-1,1,-1,0}};
 P2 = intersection (matrix {{-1,0,0},{0,1,0},{0,-1,0},{0,0,1}},matrix {{-1},{1},{1},{1}});
-assert(not commonFace(P1,P2))
+assert not commonFace(P1,P2)
 P2 = intersection {P2,(matrix {{0,0,-1}},matrix {{1}})};
-assert(commonFace(P1,P2))
+assert commonFace(P1,P2)
 ///
 
 -- Test 28
@@ -7145,9 +6243,9 @@ assert(commonFace(P1,P2))
 TEST ///
 C1 = posHull matrix {{1,2},{2,1}};
 C2 = posHull matrix {{1,1},{1,0}};
-assert(not commonFace(C1,C2))
+assert not commonFace(C1,C2)
 C1 = posHull matrix {{1,1},{2,1}};
-assert(commonFace(C1,C2))
+assert commonFace(C1,C2)
 ///
 
 -- Test 29
@@ -7155,9 +6253,9 @@ assert(commonFace(C1,C2))
 TEST ///
 C1 = posHull matrix {{1,0,0},{0,1,0},{0,0,1}};
 C2 = posHull matrix {{1,1,0},{1,0,1},{0,-1,-1}};
-assert(not (areCompatible(C1,C2))#0)
+assert not (areCompatible(C1,C2))#0
 C2 = posHull {matrix {{1,0},{0,1},{0,0}}, C2};
-assert((areCompatible(C1,C2))#0)
+assert (areCompatible(C1,C2))#0
 ///
 
 -- Test 30
@@ -7165,14 +6263,11 @@ assert((areCompatible(C1,C2))#0)
 TEST ///
 C = posHull matrix {{1,0,0},{0,1,0},{0,0,1}};
 F = makeFan C;
-assert(F#"generatingCones" == {C})
-assert(F#"ambientDimension" == 3)
-assert(F#"topDimension" == 3)
-assert(F#"numGeneratingCones" == 1)
-assert(not (F#"isComplete"))
-C1 = posHull matrix {{1},{1},{1}};
-F = makeFan {C,C1};
-assert(F#"comperror" == {C,C1})
+assert(F#"generatingCones" === set {C})
+assert(F#"ambient dimension" == 3)
+assert(F#"top dimension of the cones" == 3)
+assert(F#"number of generating cones" == 1)
+assert not F#"isComplete"
 ///
 
 -- Test 31
@@ -7183,21 +6278,21 @@ C1 = posHull matrix {{1,0,0},{0,-1,0},{0,0,1}};
 C2 = posHull matrix {{-1,0,0},{0,1,0},{0,0,1}};
 C3 = posHull matrix {{1,0,0},{0,1,0},{0,0,-1}};
 F = makeFan {C,C1,C2,C3};
-assert(F#"generatingCones" == {C,C1,C2,C3})
-assert(F#"ambientDimension" == 3)
-assert(F#"numGeneratingCones" == 4)
+assert(F#"generatingCones" === set {C,C1,C2,C3})
+assert(F#"ambient dimension" == 3)
+assert(F#"number of generating cones" == 4)
 assert(F#"isPure")
-L = {posHull matrix {{1,0},{0,-1},{0,0}},posHull matrix {{0,0},{0,-1},{1,0}},posHull matrix {{-1,0},{0,1},{0,0}},posHull matrix {{-1,0},{0,0},{0,1}},posHull matrix {{1,0},{0,0},{0,-1}},posHull matrix {{0,0},{1,0},{0,-1}}};
-assert(equalLists(L,F#"faces"))
-L = {matrix {{1_QQ},{0},{0}},matrix {{-1_QQ},{0},{0}},matrix {{0_QQ},{1},{0}},matrix {{0_QQ},{-1},{0}},matrix {{0_QQ},{0},{1}},matrix {{0_QQ},{0},{-1}}};
-assert(equalLists(L,F#"rays"))
+L = set {posHull matrix {{1,0},{0,-1},{0,0}},posHull matrix {{0,0},{0,-1},{1,0}},posHull matrix {{-1,0},{0,1},{0,0}},posHull matrix {{-1,0},{0,0},{0,1}},posHull matrix {{1,0},{0,0},{0,-1}},posHull matrix {{0,0},{1,0},{0,-1}}};
+assert(L === F#"faces")
+L = set {matrix {{1_QQ},{0},{0}},matrix {{-1_QQ},{0},{0}},matrix {{0_QQ},{1},{0}},matrix {{0_QQ},{-1},{0}},matrix {{0_QQ},{0},{1}},matrix {{0_QQ},{0},{-1}}};
+assert(L === F#"rays")
 C = posHull matrix {{-1,0},{0,1},{0,0}};
 F1 = addCone(C,F);
 assert(F == F1)
 ///
 
 -- Test 32
--- Checking makeFan, skeleton, isComplete, isPure, addCone
+-- Checking makeFan, skeleton, isComplete, isPure, addCone, isProjective
 TEST ///
 C = posHull matrix {{1,0,0},{0,1,0},{0,0,1}};
 C1 = posHull matrix {{1,0,0},{0,-1,0},{0,0,1}};
@@ -7205,23 +6300,22 @@ C2 = posHull matrix {{-1,0,0},{0,1,0},{0,0,1}};
 C3 = posHull matrix {{1,0,0},{0,1,0},{0,0,-1}};
 F = makeFan {C,C1,C2,C3};
 L = {posHull matrix {{1,0},{0,-1},{0,0}},posHull matrix {{0,0},{0,-1},{1,0}},posHull matrix {{-1,0},{0,1},{0,0}},posHull matrix {{-1,0},{0,0},{0,1}},posHull matrix {{1,0},{0,0},{0,-1}},posHull matrix {{0,0},{1,0},{0,-1}},posHull matrix {{1,0},{0,1},{0,0}},posHull matrix {{1,0},{0,0},{0,1}},posHull matrix {{0,0},{1,0},{0,1}}};
-assert(equalLists(L,cones(2,F)))
+assert(set L === set cones(2,F))
 F1 = makeFan {posHull matrix {{1},{0},{0}},posHull matrix {{-1},{0},{0}},posHull matrix {{0},{1},{0}},posHull matrix {{0},{-1},{0}},posHull matrix {{0},{0},{1}},posHull matrix {{0},{0},{-1}}};
 assert(skeleton(1,F) == F1)
-assert(not isComplete(F))
-assert(isPure(F))
+assert not isComplete F
+assert isPure F
 C = posHull matrix {{-1,0,0},{0,-1,0},{0,0,-1}};
 C1 = posHull matrix {{-1,0,0},{0,1,0},{0,0,-1}};
 C2 = posHull matrix {{1,0,0},{0,-1,0},{0,0,-1}};
 C3 = posHull matrix {{-1,0,0},{0,-1,0},{0,0,1}};
 F = addCone({C,C1,C2,C3},F);
-assert(F#"numGeneratingCones" == 8)
-assert(isPure(F))
-assert(isComplete(F))
-assert(isSmooth(F))
-P = convexHull matrix {{0,0,0,0,1,1,1,1},{0,0,1,1,0,0,1,1},{0,1,0,1,0,1,0,1}};
-assert(isProjective(F) == P)
-assert(normalFan(P) == F)
+assert(F#"number of generating cones" == 8)
+assert isPure F
+assert isComplete F
+assert isSmooth F
+P = isProjective F;
+assert(normalFan P == F)
 ///
 
 -- Test 33
@@ -7231,11 +6325,9 @@ C1 = posHull matrix {{1,2},{2,1}};
 C2 = posHull matrix {{1,0},{2,1}};
 C3 = posHull matrix {{1,2},{0,1}};
 F = makeFan {C1,C2,C3};
-assert(not isSmooth(F))
-C4 = posHull matrix {{1,1},{0,1}};
-C5 = posHull matrix {{1,0},{1,1}};
-F1 = makeFan {C2,C3,C4,C5};
-assert(smoothSubfan(F) == F1)
+assert not isSmooth F
+F1 = makeFan {C2,C3};
+assert(smoothSubfan F == F1)
 ///
 
 -- Test 34
@@ -7278,11 +6370,11 @@ TEST ///
 C = posHull matrix {{1,2},{2,1}};
 H = hilbertBasis C;
 L = {matrix {{1},{1}},matrix {{2},{1}},matrix {{1},{2}}};
-assert(equalLists(H,L))
+assert(set H === set L)
 C = posHull matrix {{1,1,0},{0,3,0},{0,0,1}};
 H = hilbertBasis C;
 L = {matrix {{1},{0},{0}},matrix {{1},{1},{0}},matrix {{1},{2},{0}},matrix {{1},{3},{0}},matrix {{0},{0},{1}}};
-assert(equalLists(H,L))
+assert(set H === set L)
 ///
 
 -- Test 38
@@ -7291,9 +6383,9 @@ TEST ///
 P = convexHull matrix {{1,-1,0,0},{0,0,1,-1}};
 LP = latticePoints P;
 LP1 = {matrix {{1},{0}},matrix {{-1},{0}},matrix {{0},{1}},matrix {{0},{-1}},matrix {{0},{0}}};
-assert(equalLists(LP,LP1))
+assert(set LP === set LP1)
 P = intersection(matrix {{-6,0,0},{0,-6,0},{0,0,-6},{1,1,1}},matrix{{-1},{-1},{-1},{1}});
-assert(latticePoints(P) == {})
+assert(latticePoints P == {})
 ///
 
 -- Test 39
@@ -7324,6 +6416,10 @@ C2 = posHull matrix {{1,0},{0,1}};
 C1 = directProduct(C1,C2);
 C2 = posHull matrix {{1,2,0,0},{2,1,0,0},{0,0,1,0},{0,0,0,1}};
 assert(C1 == C2)
+F1 = normalFan hypercube 1;
+F2 = normalFan hypercube 2;
+F3 = normalFan hypercube 3;
+assert(F3 == directProduct(F1,F2))
 ///
 
 -- Test 41
@@ -7409,8 +6505,8 @@ assert(P == Q)
 -- Checking emptyPolyhedron
 TEST ///
 P = emptyPolyhedron 2;
-assert(dim(P) == -1)
-assert(ambDim(P) == 2)
+assert(dim P == -1)
+assert(ambDim P == 2)
 ///
 
 -- Test 49
@@ -7452,12 +6548,12 @@ assert(C1 == C2)
 TEST ///
 R = QQ[a,b,c];
 I = ideal(a^2-b,a*b-c);
-(L,P) = statePolytope(I);
+(L,P) = statePolytope I;
 Q = convexHull matrix {{21,3,1,1,6,2},{0,9,7,4,0,2},{0,0,2,4,5,5}};
 L1 = { {{b^2,a*b,a^2}}, {{b^3,a*c,a*b,a^2}}, {{a^3,b}}, {{c^2,a*c,a*b,a^2}}, {{c,b}}, {{c,a^2}}};
 L = apply(L,entries);
 assert(P == Q)
-assert(equalLists(L,L1))
+assert(set L === set L1)
 ///
 
 -- Test 54
@@ -7469,44 +6565,24 @@ assert(P == Q)
 ///
 
 -- Test 55
--- Checking union
+-- Checking equality of polyhedral objects
 TEST ///
-L1 = {1,3,4,5,7,8,9};
-L2 = {2,3,4,6,7,8,10};
-L1 = sort union(L1,L2);
-L2 = {1,2,3,4,5,6,7,8,9,10};
-assert(L1 == L2)
+L1 = set {posOrthant 3, hypercube 2, crossPolytope 4, hirzebruch 5};
+L2 = set {hirzebruch 5, posOrthant 3, hypercube 2, crossPolytope 4};
+assert(L1 === L2)
 ///
 
 -- Test 56
--- Checking symmDiff
-TEST ///
-L1 = {1,3,4,5,7,8,9};
-L2 = {2,3,4,6,7,8,10};
-L1 = sort symmDiff(L1,L2);
-L2 = {1,2,5,6,9,10};
-assert(L1 == L2)
-///
-
--- Test 57
--- Checking equalLists
-TEST ///
-L1 = {posOrthant 3, hypercube 2, crossPolytope 4, hirzebruch 5};
-L2 = {hirzebruch 5, posOrthant 3, hypercube 2, crossPolytope 4};
-assert(equalLists(L1,L2))
-///
-
--- Test 58
 -- Checking vertexEdgeMatrix and vertexFacetMatrix
 TEST ///
 P = convexHull matrix {{0,-1,1,-1,1},{0,-1,-1,1,1},{-1,1,1,1,1}};
 M = matrix {{0,1,2,3,4,5,6,7,8},{1,1,1,0,1,1,0,0,0},{2,1,0,1,0,0,0,1,0},{3,0,0,0,1,0,1,1,0},{4,0,1,1,0,0,0,0,1},{5,0,0,0,0,1,1,0,1}};
 N = matrix {{0,1,2,3,4,5},{1,1,1,1,1,0},{2,1,0,1,0,1},{3,0,1,1,0,1},{4,1,0,0,1,1},{5,0,1,0,1,1}};
-assert(vertexEdgeMatrix(P) == M)
-assert(vertexFacetMatrix(P) == N)
+assert(vertexEdgeMatrix P == M)
+assert(vertexFacetMatrix P == N)
 ///
 
--- Test 59
+-- Test 57
 -- Checking minFace and maxFace
 TEST ///
 P = hypercube 3;
@@ -7520,7 +6596,7 @@ C1 = posHull matrix {{-1,2},{1,-1},{-1,0}};
 assert(C1 == minFace(w,C))
 ///
 
--- Test 60
+-- Test 58
 -- Checking proximum
 TEST ///
 P = crossPolytope 3;
@@ -7530,9 +6606,13 @@ assert(q == proximum(p,P))
 p = matrix {{1},{1/2},{1}};
 q = matrix {{1/2},{0},{1/2}};
 assert(q == proximum(p,P))
+P = convexHull map(QQ^3,QQ^3,1);
+p = matrix {{2},{2},{0}};
+q = matrix {{1/2},{1/2},{0}};
+assert(q == proximum(p,P))
 ///
 
--- Test 61
+-- Test 59
 -- Checking triangulate
 TEST ///
 P = crossPolytope 3;
@@ -7546,16 +6626,46 @@ L1 = {convexHull{matrix{{1_QQ},{0},{0}},matrix{{0_QQ},{1},{0}},matrix{{0_QQ},{0}
      convexHull{matrix{{-1_QQ},{0},{0}},matrix{{0_QQ},{1},{0}},matrix{{0_QQ},{0},{-1}},matrix{{0_QQ},{0},{0}}},
      convexHull{matrix{{1_QQ},{0},{0}},matrix{{0_QQ},{-1},{0}},matrix{{0_QQ},{0},{-1}},matrix{{0_QQ},{0},{0}}},
      convexHull{matrix{{-1_QQ},{0},{0}},matrix{{0_QQ},{-1},{0}},matrix{{0_QQ},{0},{-1}},matrix{{0_QQ},{0},{0}}}};
-assert(equalLists(L,L1))
+assert(set L === set L1)
 ///
 
--- Test 62
+-- Test 60
 -- Checking volume
 TEST ///
 P = hypercube 3;
-assert(volume(P) == 8)
+assert(volume P == 8)
 P = crossPolytope 3;
-assert(volume(P) == 4/3)
+assert(volume P == 4/3)
+///
+
+-- Test 61
+-- Checking incompCones
+TEST ///
+L = {posHull matrix{{1,0},{1,1}},posHull matrix{{1,0},{0,-1}},posHull matrix{{-1,0},{0,1}},posHull matrix{{1,1},{0,1}},posHull matrix {{1,2},{2,1}}};
+assert(incompCones L == {(L#0,L#4),(L#3,L#4)})
+L = L_{0..3}|{hirzebruch 3};
+assert(incompCones L == {(L#0,L#4),(L#2,L#4),(L#3,L#4)})
+assert(incompCones(L#2,L#4) == {(L#2,posHull matrix {{0,-1},{-1,3}}),(L#2,posHull matrix {{0,-1},{1,3}})})
+L = {posHull matrix {{-1,0},{0,1}},posHull matrix {{-1,0},{0,-1}},posHull matrix {{0,-1},{-1,3}},posHull matrix {{0,-1},{1,3}}};
+L = {(L#0,L#2),(L#0,L#3),(L#1,L#2)};
+assert(set incompCones(normalFan hypercube 2,hirzebruch 3) === set L)
+///
+
+-- Test 62
+-- Checking isNormal for Cones
+TEST ///
+P = convexHull transpose matrix {{0,0,0},{1,0,0},{0,1,0},{1,1,3}};
+Q = hypercube 2;
+assert not isNormal P
+assert isNormal Q
+///
+
+-- Test 63
+-- Checking sublatticeBasis and toSublattice
+TEST ///
+assert(sublatticeBasis matrix{{2,4,2,4},{1,2,2,3}} == matrix {{2,2},{1,2}})
+assert(sublatticeBasis convexHull matrix {{1,2,2},{0,-1,2}} == matrix {{-1,1},{1,0}})
+assert(toSublattice convexHull matrix {{2,0},{0,3}} == convexHull matrix {{0,1}})
 ///
 
 
