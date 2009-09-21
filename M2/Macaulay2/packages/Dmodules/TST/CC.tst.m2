@@ -1,4 +1,4 @@
-loadPackage "Dmodules"
+needsPackage "Dmodules"
 
 ------------------------------------
 -- Brianson-Maisonobe-Merle formula

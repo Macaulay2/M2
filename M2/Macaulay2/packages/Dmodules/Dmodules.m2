@@ -1,4 +1,5 @@
-export { generalBideal,
+export { 
+     localBFunction,
      bFunctionRoots, lct, GeneralBernsteinSato, ViaBFunction, generalB, 
      --GuessedRoots, 
      ViaLinearAlgebra,

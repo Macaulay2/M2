@@ -16,6 +16,7 @@ TEST /// input "Dmodules/TST/makeCyclic.tst.m2" ///
 TEST /// input "Dmodules/TST/paramBpoly.tst.m2" ///
 TEST /// input "Dmodules/TST/stafford.tst.m2" ///
 TEST /// input "Dmodules/TST/CC.tst.m2" ///
+TEST /// input "Dmodules/TST/localBFunction.tst.m2" ///
 
 document {
      Key => "Dmodules",
@@ -52,6 +53,7 @@ document {
 	  TO {"globalB", " -- global b-function and b-operator"},
 	  TO {"globalBoperator", " -- global b-operator"},
 	  TO {"generalB", " -- general Bernstein-Sato polynomial"},
+	  TO {"localBFunction", " -- local b-function"},
 	  TO {"paramBpoly", " -- Bernstein-Sato polynomials of a
 	       polynomial with parametric coefficients"},
 	  TO {"factorBFunction", " -- factors a univariate polynomial"},
@@ -2712,8 +2714,35 @@ document {
      "see ", TO "ExternalProduct"
      }
 
+document { 
+     Key => {(localBFunction,RingElement,Ideal), localBFunction},
+     Headline => "local b-function (a.k.a. the local Bernstein-Sato polynomial)",
+     Usage => "b = localBFunction(f,P)",
+     Inputs => {
+	  "f" => {"a polynomial"},
+	  "P" => {"a (prime) ideal"}
+	  },
+     Outputs => {
+	  "b" => RingElement => {"the local b-function ", EM "b_P(s)",  " in ", EM "Q[s]"}
+	  },
+     PARA {
+	  "Computes the local b-function of f at P, if P is a prime ideal."
+	  },
+     Caveat => {"(feature) If P is not prime, computes the 
+	  lcm of local b-functions over all primes containing P"},
+     	  EXAMPLE lines ///
+	  R = QQ[x,y]; f = x^2*(x+y+1); P = ideal(x,y);
+    	  b = localBFunction(f,P)
+	  factorBFunction b
+     	  ///,
+     SeeAlso => { "bFunction", "factorBFunction", "globalBFunction", "generalB", "globalB" }
+     }
+
 end
 ------------------------------------------------------------------------------------------------------------
 THE END
-
+restart
+loadPackage "Dmodules"
+uninstallPackage "Dmodules"
 installPackage("Dmodules", FileName=>"../Dmodules.m2", SeparateExec=>true, AbsoluteLinks=>false, RerunExamples=>true)
+check Dmodules

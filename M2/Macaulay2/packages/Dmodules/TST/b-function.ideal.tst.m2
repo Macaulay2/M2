@@ -1,10 +1,11 @@
--- Copyright 1999-2002 by Anton Leykin and Harrison Tsai
+-- Copyright 1999-2009 by Anton Leykin and Harrison Tsai
 
 needsPackage "Dmodules"
 Dtrace 1
 pInfo(1, "testing globalBFunction...")
 
-scan({IntRing, TryGeneric, NonGeneric}, str->(
+for str in {IntRing, TryGeneric, NonGeneric, GeneralBernsteinSato} do (
+     	  print str;
 	  x = symbol x; dx = symbol dx; 
 	  R = QQ[x, dx, WeylAlgebra => {x=>dx}];
 	  n = 10;
@@ -15,7 +16,7 @@ scan({IntRing, TryGeneric, NonGeneric}, str->(
 		    s := (ring b)_0;
 		    product(n, i -> n * (s + 1) - i)       
 		    ))
-	  ));
+	  );
 	  
 
 

@@ -1,12 +1,12 @@
 -- -*- coding: utf-8 -*-
 newPackage("Dmodules", 
-     Version => "1.1",
-     Date => "10/01/2008",
+     Version => "1.3",
+     Date => "09/21/2009",
      Headline => "functions for computations with D-modules",
-     HomePage => "http://www.math.uic.edu/~leykin/Dmodules",
+     HomePage => "http://people.math.gatech.edu/~aleykin3/Dmodules",
      AuxiliaryFiles => true,
      Authors => {
-	  {Name => "Anton Leykin", Email => "leykin@math.uic.edu"},
+	  {Name => "Anton Leykin", Email => "leykin@gatech.math.edu"},
 	  {Name => "Harrison Tsai"}
 	  },
      DebuggingMode => true				    -- temporary

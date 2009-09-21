@@ -1,4 +1,4 @@
--- Copyright 1999-2002 by Anton Leykin and Harrison Tsai
+-- Copyright 1999-2009 by Anton Leykin and Harrison Tsai
 
 -----------------------------------------------------------------------
 -- globalBFunction (f) -> bf
@@ -173,7 +173,7 @@ generalB (List, RingElement) := RingElement => o->(F,g) -> (
      if #F == 0 then error "the list is empty";
      if #(options (ring first F).monoid)#WeylAlgebra == 0 -- not WA 
      then (
-	  D := makeWA(ring f,SetVariables=>false);
+	  D := makeWeylAlgebra(ring f,SetVariables=>false);
 	  F = apply(F, f->sub(f,D));
 	  g = sub(g,D);
 	  );
