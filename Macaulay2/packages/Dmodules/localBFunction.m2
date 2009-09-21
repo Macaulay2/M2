@@ -16,7 +16,7 @@ computeJf RingElement := Ideal => f -> (
 	  )
      else ( 
      	  R = ring f;
-	  D = makeWA(R,SetVariables=>false);
+	  D = makeWeylAlgebra(R,SetVariables=>false);
      	  f = sub(f,D);
 	  );
      -- assume D = k<x_1..x_n,dx_1..dx_n>
@@ -68,7 +68,7 @@ exceptionalLocusB (RingElement,RingElement) := RingElement => o -> (f,b) -> (
 	  )
      else ( 
      	  R = ring f;
-	  D = makeWA(R,SetVariables=>false);
+	  D = makeWeylAlgebra(R,SetVariables=>false);
      	  f = sub(f,D);
 	  );
      I3 := computeJf f;
@@ -87,13 +87,17 @@ exceptionalLocusB (Ring,Ideal,RingElement) := RingElement => o -> (R,I3,b) -> (
      --
      if R === null then R = K (monoid [x]);
      --
-     if o.Strategy === Syzygies then (
-	  time gbI3 := gb I3; -- eliminate s
-     	  exceptionalLocusB(R,gbI3,b,o)	       	  
-	  )
-     else if o.Strategy === ColonIdeal then -- eliminate s from I3:b    
-     time sub(ideal selectInSubring(1, gens gb (I3 : b)),R)
-     else error "unknown Strategy"
+     (t,ret) := toSequence timing (
+     	  if o.Strategy === Syzygies then (
+	       gbI3 := gb I3; -- eliminate s
+     	       exceptionalLocusB(R,gbI3,b,o)	       	  
+	       )
+	  else if o.Strategy === ColonIdeal then -- eliminate s from I3:b    
+     	  sub(ideal selectInSubring(1, gens gb (I3 : b)),R)
+     	  else error "unknown Strategy"
+	  );
+     pInfo(2,"exceptionalLocusB: time = "|toString t);
+     ret
      ) 
 
 exceptionalLocusB (Ring,GroebnerBasis,RingElement) := RingElement => o -> (R,gbI3,b) -> (
@@ -109,7 +113,8 @@ exceptionalLocusB (Ring,GroebnerBasis,RingElement) := RingElement => o -> (R,gbI
 	  -- return time sub(ideal selectInSubring(1, gens gb (ideal select(G3,g->degree(s,g)<=d) : reducedB)),R);
 	  -- (2)
      	  syz1 := syz(matrix{{reducedB}|select(G3,g->degree(s,g)<=d)}, SyzygyRows=>1);		       	    
-	  retI := time sub(ideal first entries selectInSubring(1, gens gb syz1),R);
+	  retI := --time 
+	  sub(ideal first entries selectInSubring(1, gens gb syz1),R);
 	  if retI == 0 then error "zero"
 	  else return retI;
      	  --(3)
@@ -128,7 +133,7 @@ localBFunctionStrata RingElement := HashTable => f -> (
      then error "Weyl algebra not expected"
      else ( 
      	  R := ring f;
-	  D := makeWA(R,SetVariables=>false);
+	  D := makeWeylAlgebra(R,SetVariables=>false);
      	  f = sub(f,D);
 	  );
 
@@ -145,15 +150,13 @@ localBFunctionStrata RingElement := HashTable => f -> (
      	  b := gB;
      	  while b%(s-r) == 0 do (
 	       b = b//(s-r);
-	       print factorBFunction b; 
+	       pInfo(3, factorBFunction b); 
 	       myLocus := exceptionalLocusB(R,gbI3,b);
-	       print mingens myLocus;
-	       myLocus2 := exceptionalLocusB(R,I3,b,Strategy=>ColonIdeal);
-	       print mingens myLocus2;
-     	       assert(
-     	       	    myLocus
-     	       	    == 
-     	       	    myLocus2
+	       if getDtrace()>9 then (
+		    "exceptionalLocusB(...,Strategy=>Syzygies)" << myLocus << endl;
+	       	    myLocus2 := exceptionalLocusB(R,I3,b,Strategy=>ColonIdeal);
+		    "exceptionalLocusB(...,Strategy=>ColonIdeal)" << myLocus2 << endl;
+     	       	    assert(myLocus==myLocus2)
      	       	    );
 	       strata#b = myLocus;
 	       )
@@ -161,11 +164,11 @@ localBFunctionStrata RingElement := HashTable => f -> (
      strata
      )
 
-localBFunction = method(Options => {Strategy => Syzygies})
-localBFunction (RingElement,Ideal) := HashTable => o -> (f,P) -> (
+localBFunction = method(TypicalValue => RingElement)
+localBFunction (RingElement,Ideal) := RingElement => (f,P) -> (
      if ring f =!= ring P then error "same ring for polynomial and ideal expected";
      R := ring f;
-     D := makeWA(R,SetVariables=>false);
+     D := makeWeylAlgebra(R,SetVariables=>false);
      f = sub(f,D);
 
      I3 := computeJf f;
@@ -180,8 +183,7 @@ localBFunction (RingElement,Ideal) := HashTable => o -> (f,P) -> (
      for r in roots do (
      	  while b%(s-r) == 0 do (
 	       b' := b//(s-r);
-	       print factorBFunction b'; 
-	       locus := exceptionalLocusB(R,gbI3,b',Strategy=>o.Strategy);
+	       locus := exceptionalLocusB(R,gbI3,b');
      	       if isSubset(locus,P) -- if point P is in the locus
 	       then break
 	       else b = b';     	       
