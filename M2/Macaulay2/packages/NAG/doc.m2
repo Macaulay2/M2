@@ -41,7 +41,7 @@ document {
 	     MultistepDegree, [track,MultistepDegree], ProjectiveNewton,
      	     [track,EndZoneFactor], [track,maxCorrSteps], [track,InfinityThreshold],
      	     EndZoneFactor, maxCorrSteps, InfinityThreshold,
-     	     Projectivize, [track,Projectivize], AffinePatches, DynamicPatch, 
+     	     Projectivize, [track,Projectivize], AffinePatches, [track,AffinePatches], DynamicPatch, 
 	     SLP, [track,SLP], HornerForm, CompiledHornerForm, 
 	     CorrectorTolerance, [track,CorrectorTolerance], 
      	     [track,SLPcorrector], [track,SLPpredictor], [track,NoOutput], 
@@ -55,7 +55,25 @@ document {
 	     {"solsS", ", start solutions"}
 	     },
 	Outputs => {{ TT "solsT", ", solutions of ", TT "T=0", " obtained by continuing ", TT "solsS" }},
-	"Polynomial homotopy continuation techniques are used to obtain solutions of the target system given a start system.",  
+	"Polynomial homotopy continuation techniques are used to obtain solutions 
+	of the target system given a start system.", BR{},
+	"Main options:",
+	UL {
+	     {TT "gamma", " and ", TT "tDegree", " specify homotopy: H(t)=(1-t)^tDegree S + gamma t^tDegree T"}, 
+	     {TT "tStep", " -- initial step size"}, 
+	     {TT "tStepMin", " -- minimal step size"},
+	     {TT "stepIncreaseFactor", " and ", TT "numberSuccessesBeforeIncrease", 
+		  " determine how step size is adjusted"},
+	     {TT "Predictor", " -- choose between ", TO "RungeKutta4", ", ", TO "Tangent", ", ", 
+		  TO "Euler", ", ", TO "Secant", ", ", TO "ProjectiveNewton"},
+	     {TT "maxCorrSteps", " -- max number of steps corrector takes before a failure is declared"}, 
+	     {TT "CorrectorTolerance", " -- corrector succeeds if the relative error does not esceed this tolerance"},
+     	     {TT "EndZoneFactor", "  -- size of `end zone'"},  
+	     {TT "InfinityThreshold", 
+		  " -- paths are truncated if the norm of the approximation exceeds the threshold"},
+     	     {TT "Projectivize", " -- if true then the system is homogenized and projective tracker is executed"},
+	     {TT "NoOutput", " -- if true, no output is produced (useful in combination with ", TO "getSolution", ")"} 	     
+	     },
 	EXAMPLE lines ///
 R = CC[x,y];
 S = {x^2-1,y^2-1};
@@ -66,7 +84,7 @@ track(S,T,solsS) / first
 	}
 
 document {
-	Key => {(refine, List, List), refine, Tolerance, [refine,Tolerance], [refine, maxCorrSteps], [refine, Software]},
+	Key => {(refine, List, List), refine, [refine, maxCorrSteps], [refine, Software]},
 	Headline => "refine numerical solutions to a system of polynomial equations",
 	Usage => "solsR = refine(T,sols)",
 	Inputs => { 
@@ -89,6 +107,10 @@ sols = { {1.1_CC,0.1}, {-0.1,1.2} };
 refine(T, sols, Software=>M2, Tolerance=>.001, maxCorrSteps=>10)
      	///
 	}
+
+document { Key => {Tolerance, [refine,Tolerance], [sortSolutions,Tolerance], [areEqual,Tolerance]},
+     Headline => "specifies the tolerance of a numerical computation" 
+     }
 
 document {
 	Key => {(totalDegreeStartSystem, List), totalDegreeStartSystem},
@@ -137,7 +159,7 @@ document {
 			      		    								 
 document {
 	Key => {(getSolution, ZZ), getSolution, SolutionAttributes, [getSolution,SolutionAttributes], 
-	     Coordinates, SolutionStatus, LastT, RCondition},
+	     Coordinates, SolutionStatus, LastT, RCondition, NumberOfSteps},
 	Headline => "get various attributes of the specified solution",
 	Usage => "s = getSolution i, s = getSolution(i,SolutionAttributes=>...)",
 	Inputs => { 
@@ -150,6 +172,7 @@ document {
 	UL{
 	  {"Coordinates", " -- the list of coordinates"},
 	  {"SolutionStatus", " -- REGULAR, SINGULAR, FAILED, etc."},
+	  {"NumberOfSteps", " -- number of steps taken on the corresponding homotopy path"},
 	  {"LastT", " -- the last value of the continuation parameter"},
 	  {"RCondintion", "-- the reverse condition number at the last step of Newton's method"}
 	  },
@@ -163,6 +186,70 @@ track(S,T,{(1,1),(1,-1)})
 getSolution 0
 getSolution(0, SolutionAttributes=>LastT)
 getSolution(1, SolutionAttributes=>(Coordinates, SolutionStatus, RCondition))
+     	///
+	}
+
+document {
+	Key => {(NAGtrace, ZZ), NAGtrace},
+	Headline => "set the trace level in NAG package",
+	Usage => "a = NAGtrace b",
+	Inputs => { 
+	     {TT "b", ", new level"}
+	     },
+	Outputs => {{ TT "a", ", old level"}},
+	"Determines how talkative the procedures of NAG are. The most meaningful values are:", 
+	UL{
+	     {"0", " -- silent"},
+	     {"1", " -- progress and timings"},
+	     {"2", " -- more messages than 1"}
+	     },
+	"The progress is displayed as follows: ", 
+	UL{
+	     {"'.' = regular solution found"   },
+	     {"'I' = a homotopy path (most probably) diverged to infinity"},
+	     {"'M' = minimum step bound reached"}
+	     },
+     	     	
+        EXAMPLE lines ///
+R = CC[x,y];
+S = {x^2-1,y^2-1};
+T = {x^2+y^2-1, x+y};
+NAGtrace 1
+track(S,T,{(1,1),(1,-1),(-1,1),(-1,-1)})
+     	///
+	}
+
+document {
+	Key => {(sortSolutions,List), sortSolutions},
+	Headline => "sort the list of solutions",
+	Usage => "t = sortSolutions s",
+	Inputs => { 
+	     {TT "s", ", the list of solutions"}
+	     },
+	Outputs => {{ TT "t", ", sorted list"}},
+	"The sorting is done lexicographically regarding each complex n-vector as real 2n-vector. ",
+	"The output format of ", TO track, " and ", TO solveSystem, " is respected.", BR{}, 
+	"The parts of coordinates are considered equal if within ", TO Tolerance, 
+        EXAMPLE lines ///
+R = CC[x,y];
+s = solveSystem {x^2+y^2-1, x*y}
+sortSolutions s
+     	///
+	}
+
+document {
+	Key => {areEqual, (areEqual,CC,CC), (areEqual,List,List), (areEqual,Matrix,Matrix)},
+	Headline => "determine if solutions are equal",
+	Usage => "b = areEqual(x,y)",
+	Inputs => { 
+	     {TT "x",TT "y", " solutions or lists of solutions"}
+	     },
+	Outputs => {{ TT "b", ", true = approximately equal"}},
+	"Comparisons are done coordinatewise using ", TO Tolerance, " as the measure for closeness.",
+        EXAMPLE lines ///
+R = CC[x,y];
+s = solveSystem {x^2+y^2-1, x*y}
+areEqual(sortSolutions s, {{{-1, 0}}, {{0, -1}}, {{0, 1}}, {{1, 0}}})
      	///
 	}
 													 

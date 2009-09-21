@@ -261,6 +261,7 @@ struct Solution
   complex* start_x; // start of the path that produced x 
   double rcond; // reverse condition number of Hx
   SolutionStatus status;
+  int num_steps; // number of steps taken along the path
   
   Solution() { status = UNDETERMINED; }
   void make(int n, const complex* s_s) { this->n = n; x = newarray(complex,n); 
@@ -311,6 +312,7 @@ public:
   MatrixOrNull* getSolution(int);
   MatrixOrNull* getAllSolutions();
   int getSolutionStatus(int);
+  int getSolutionSteps(int);
   M2_RRRorNull getSolutionLastT(int);
   M2_RRRorNull getSolutionRcond(int);
   int track(const Matrix*); 
