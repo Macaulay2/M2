@@ -152,7 +152,7 @@ tangentBundle AbstractVarietyMap := f -> (
 AbstractSheaf QQ := AbstractSheaf ZZ := (F,n) -> (
      if n == 0 then return F;
      X := variety F;
-     if not X.?TautologicalLineBundle then error "expected a variety with a canonical line bundle";
+     if not X.?TautologicalLineBundle then error "expected a variety with a tautological line bundle";
      L := (
 	  if n == 1
 	  then X.TautologicalLineBundle
