@@ -1,5 +1,5 @@
 loadPackage "NAG"
-load "../benchmarks.m2"
+needs "../benchmarks.m2"
 NAGtrace 1
 for predictor in {RungeKutta4,Tangent,Euler} do (
      (S,T,solsS) = smallExample();

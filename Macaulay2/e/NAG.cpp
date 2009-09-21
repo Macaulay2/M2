@@ -1283,6 +1283,11 @@ int rawGetSolutionStatusPT(PathTracker* PT, int solN)
   return PT->getSolutionStatus(solN);
 }
 
+int rawGetSolutionStepsPT(PathTracker* PT, int solN)
+{
+  return PT->getSolutionSteps(solN);
+}
+
 M2_RRRorNull rawGetSolutionLastTvaluePT(PathTracker* PT, int solN)
 {
   return PT->getSolutionLastT(solN);
@@ -1360,7 +1365,7 @@ int PathTracker::track(const Matrix* start_sols)
 
     *dt = complex(t_step);
     int predictor_successes = 0;
-    int count = 0; // number of computed points
+    int count = 0; // number of steps
     while (t_s->status == PROCESSING && 1 - t0->getreal() > the_smallest_number) {
       if (1 - t0->getreal() <= end_zone_factor_dbl+the_smallest_number && !end_zone) {
 	end_zone = true;
@@ -1506,13 +1511,14 @@ int PathTracker::track(const Matrix* start_sols)
       t_s->status = REGULAR;
     slpHxH->evaluate(n+1,x0t0,HxH);
     cond_number_via_svd(n, HxH/*Hx*/, t_s->rcond);
+    t_s->num_steps = count;
     if (gbTrace>0) {
       if (sol_n%50==0) printf("\n");
       switch (t_s->status) {
       case REGULAR: printf("."); break;
       case INFINITY_FAILED: printf("I"); break;
       case MIN_STEP_FAILED: printf("M"); break;
-      default: printf("-", count); 
+      default: printf("-"); 
       }
       fflush(stdout);
     }
@@ -1665,6 +1671,13 @@ int PathTracker::getSolutionStatus(int solN)
   if (solN<0 || solN>=n_sols) return -1;
   return raw_solutions[solN].status;
 }
+
+int PathTracker::getSolutionSteps(int solN)
+{
+  if (solN<0 || solN>=n_sols) return -1;
+  return raw_solutions[solN].num_steps;
+}
+
 
 M2_RRRorNull PathTracker::getSolutionLastT(int solN)
 {

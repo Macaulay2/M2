@@ -29,7 +29,7 @@ export {
      "SLP", "HornerForm", "CompiledHornerForm", "CorrectorTolerance", "SLPcorrector", "SLPpredictor",
      "NoOutput",
      "Tolerance",
-     "getSolution", "SolutionAttributes", "Coordinates", "SolutionStatus", "LastT", "RCondition",
+     "getSolution", "SolutionAttributes", "Coordinates", "SolutionStatus", "LastT", "RCondition", "NumberOfSteps",
      "NAGtrace"
      }
 exportMutable {
@@ -276,8 +276,9 @@ track (List,List,List) := List => o -> (S,T,solsS) -> (
      
      -- create homotopy
      t := symbol t;
-     Kt := K[t];
-     Rt := K[gens R, t]; -- how do you cleanly extend the generators list: e.g., what if "t" is a var name?
+     Rt := K(monoid[gens R, t]); -- how do you cleanly extend the generators list: e.g., what if "t" is a var name?
+     t = last gens Rt; 
+     Kt := K(monoid[t]);
      H := matrix {apply(#S, i->(
 		    (nS,nT) := if o.Predictor===ProjectiveNewton 
 		    then (1 / sqrt BombieriWeylNormSquared S#i, 1 / sqrt BombieriWeylNormSquared T#i)
@@ -585,9 +586,11 @@ track (List,List,List) := List => o -> (S,T,solsS) -> (
 			 dt = dt/min first SVD(DMforPN*Hx0);
 			 dt = 0.05/(maxDegreeTo3halves*dt);
 			 if dt<o.tStepMin then (
-			      << "norm2 solve(Hx0, Ht0) = " << norm2 solve(Hx0, Ht0) << endl;
-			      << "min first SVD(DMforPN*Hx0) = " << min first SVD(DMforPN*Hx0) << endl;
-			      error "step is smaller than minimal step"; 
+			      if DBG > 2 then (
+				   << "norm2 solve(Hx0, Ht0) = " << norm2 solve(Hx0, Ht0) << endl;
+			      	   << "min first SVD(DMforPN*Hx0) = " << min first SVD(DMforPN*Hx0) << endl;
+				   );
+			      s'status = "MIN STEP (FAILURE)"; 
 			      );
 			 dx = 0;
 			 )
@@ -660,7 +663,7 @@ track (List,List,List) := List => o -> (S,T,solsS) -> (
 	       if s'status==="PROCESSING" then s'status = "REGULAR";
 	       -- create a solution record 
 	       (x0,
-		    "#steps"=>count, 
+		    "#steps"=>count-1, -- number of points - 1 
 		    "status "=>s'status, 
 		    "last t" => t0, 
 		    "cond#^{-1}" => (svd := sort first SVD evalHx(x0,t0); first svd / last svd )
@@ -748,9 +751,9 @@ getSolution ZZ := Thing => o -> i -> (
      if lastPathTracker === null 
      then error "path tracker is not set up";
      p := o.SolutionAttributes; 
-     possible := set{Coordinates, SolutionStatus, LastT, RCondition};
+     possible := set{Coordinates, SolutionStatus, LastT, RCondition, NumberOfSteps};
      if not isSubset(set{p}, possible) and 
-     not (class p === Sequence and isSubset(set p, set{Coordinates, SolutionStatus, LastT, RCondition}))
+     not (class p === Sequence and isSubset(set p, possible))
      then error "wrong SolutionAttributes option";
      pp := if class p === Sequence then p else {p};
      ret := apply(pp, r->
@@ -758,6 +761,7 @@ getSolution ZZ := Thing => o -> i -> (
 	  else if r===SolutionStatus then solutionStatusLIST#(rawGetSolutionStatusPT(lastPathTracker, i))
 	  else if r===LastT then rawGetSolutionLastTvaluePT(lastPathTracker, i)
 	  else if r===RCondition then rawGetSolutionRcondPT(lastPathTracker, i)
+	  else if r===NumberOfSteps then rawGetSolutionStepsPT(lastPathTracker, i)
 	  );
      if class p === Sequence then ret else first ret
      )
@@ -1929,7 +1933,6 @@ preSLPcompiledSLP (ZZ,Sequence) := o -> (nIns,S) -> (
      )
 
 NAGtrace = method()
-NAGtrace Sequence := (nullSequence) -> DBG;
 NAGtrace ZZ := l -> (gbTrace=l; oldDBG=DBG; DBG=l; oldDBG);
 
 beginDocumentation()
@@ -1952,6 +1955,7 @@ end
 
 restart
 loadPackage "NAG"
+uninstallPackage "NAG"
 installPackage "NAG"
 installPackage("NAG", SeparateExec=>true, AbsoluteLinks=>false, RerunExamples=>true)
 check "NAG"

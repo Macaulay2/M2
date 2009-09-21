@@ -1901,6 +1901,7 @@ enum gbTraceValues
   const MatrixOrNull *rawGetSolutionPT(PathTracker* PT, int solN);
   const MatrixOrNull *rawGetAllSolutionsPT(PathTracker* PT);
   int rawGetSolutionStatusPT(PathTracker* PT, int solN);
+  int rawGetSolutionStepsPT(PathTracker* PT, int solN);
   M2_RRRorNull rawGetSolutionLastTvaluePT(PathTracker* PT, int solN);
   M2_RRRorNull rawGetSolutionRcondPT(PathTracker* PT, int solN);
   const MatrixOrNull *rawRefinePT(PathTracker* PT, const Matrix* sols, M2_RRR tolerance, int max_corr_steps_refine);
