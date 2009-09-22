@@ -719,7 +719,7 @@ linSpace Cone := C -> C#"linealitySpace"
 
 --   INPUT : 'F'  a Fan
 --  OUTPUT : a Matrix, where the column vectors are a basis of the lineality space
-linSpace Fan := F -> ((toList F#"generatingCones")#0)"linealitySpace"
+linSpace Fan := F -> ((toList F#"generatingCones")#0)#"linealitySpace"
 
 
 -- PURPOSE : Giving the rays
