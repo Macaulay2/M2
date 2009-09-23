@@ -1,3 +1,14 @@
+kk=ZZ/32003
+S=kk[x,y,z,u]
+I = ideal(y,x,-u^7-u^6+2*z*u^4-u^5+2*z*u^3+2*z*u^2-3*z^2,9*u^8-7*z*u^6-6*z*u^5+4*z^2*u^3-5*z*u^4+3*z^2*u^2+2*z^2*u)
+J = first flattenRing ideal reesAlgebra I
+S1 = kk[a..d,x,y,z,u]
+J1 = sub(J,vars S1)
+trim J1
+R = S1/J1
+time R'= integralClosure(R, Verbosity=>3);
+
+
 loadPackage "IntegralClosure"
 kk=ZZ/32003
 S=kk[x,y,z,t]
