@@ -31,7 +31,7 @@ document {
 	  LI { "The operator ", TO "..", ", when applied to two generators a polynomial ring, will now give a sequence of
 	       consecutive generators abstracted from the list of all generators.  The old error-prone behavior involved looking at the names
 	       of the generators, and generating a sequence of consecutive names, which were then evaluated." },
-	  LI { "The operator ", TO "..", ", will now deliver rectangular sequence of consecutive indexed variables, e.g., ", TT "x_1 .. y_2", "
+	  LI { "The operator ", TO "..", ", will now deliver rectangular sequences of consecutive indexed variables, e.g., ", TT "x_1 .. y_2", "
 	       will have the value ", TT "(x_1,x_2,y_1,y_2)", "."},	       
 	  LI { "New binary operators ", TO "<==", " and ", TO "<===", " have been introduced.  The operators are flexible, i.e., the 
 	       user can install methods for them." },
