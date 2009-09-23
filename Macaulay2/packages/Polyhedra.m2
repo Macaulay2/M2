@@ -1365,8 +1365,12 @@ latticePoints Polyhedron := P -> (
 	  -- Otherwise intersect with the hyperplanes and project into the hyperplane
 	  else flatten apply(L,p -> (
 		    NP := intersection {P,{map(QQ^1,QQ^n,(i,j) -> if j == pos then 1 else 0),matrix p}};
-		    A := matrix drop((entries id_(QQ^n)),{pos,pos});
-		    apply(latticePointsRec affineImage(A,NP),v -> v^{0..(pos-1)} || matrix p || v^{pos..(n-2)}))));
+		    if NP#"number of vertices" == 1 then (
+			 v := vertices NP;
+			 if promote(substitute(v,ZZ),QQ) == v then substitute(v,ZZ) else {})
+		    else (
+			 A := matrix drop((entries id_(QQ^n)),{pos,pos});
+			 apply(latticePointsRec affineImage(A,NP),v -> v^{0..(pos-1)} || matrix p || v^{pos..(n-2)})))));
      latticePointsRec P)
 
 
@@ -3363,7 +3367,7 @@ document {
      
      }
 
-document {     
+document {
      Key => PolyhedralObject,
      Headline => "the class of all polyhedral objects in Polyhedra",
           
@@ -3373,7 +3377,14 @@ document {
 	  {TO "Polyhedron"},
 	  {TO "Cone"},
 	  {TO "Fan"}
-	}
+	},
+   
+     EXAMPLE {
+	  " convexHull matrix {{1,1,0,0},{1,0,1,0}}",
+	  " posHull matrix {{1,2},{2,1}}",
+	  " hirzebruch 3"
+	  }
+        
      }
         
 document {     
@@ -3562,8 +3573,44 @@ document {
      PARA{}, "Then ", TT "convexHull", " computes the convex hull of all 
      inserted objects, if they are in the same ambient space, i.e. all matrices 
      must have the same number of rows, which must equal the ambient dimension 
-     of all cones and polyhedra."
+     of all cones and polyhedra.",
      
+     PARA{}, "For example, consider the square in ",TO QQ,"^2:",
+     
+     EXAMPLE {
+	  " M = matrix {{1,1,-1,-1},{1,-1,1,-1}}",
+	  " P = convexHull M"
+	  },
+     
+     PARA{}, "If we add a ray, then it is not compact anymore:",
+     
+     EXAMPLE {
+	  " r = matrix {{1},{2}}",
+	  " P =convexHull(M,r)"
+	  },
+     
+     PARA{}, "If we add some more vertices to ",TT "M"," then we get a hexagon:",
+     
+     EXAMPLE {
+	  " N = matrix {{-2,-2,0},{0,-2,-2}}",
+	  " Q = convexHull(M|N)"
+	  },
+     
+     PARA{}, "Again if we add the ray ",TT "r"," then the polyhedron is not compact:",
+     
+     EXAMPLE {
+	  " Q1 = convexHull(M|N,r)"
+	  },
+     
+     PARA{}, "To get this polyhedron we could also have used the application of ",TT "convexHull"," 
+     to lists or pairs of polyhedra:",
+     
+     EXAMPLE {
+	  " P1 = convexHull {P,N}",
+	  " P1 == Q1",
+	  " P1 = convexHull(P,Q)",
+	  " P1 == Q1"
+	  }
      }
 
 document {
@@ -3608,7 +3655,45 @@ document {
      PARA{}, "Then ", TT "posHull", " computes the positive hull of all 
      inserted objects, if they are in the same ambient space, i.e. all matrices 
      must have the same number of rows, which must equal the ambient dimension 
-     of all cones and polyhedra."
+     of all cones and polyhedra.",
+     
+     PARA{}, "As a first example consider the following 2 dimensional cone in 3 space:",
+     
+     EXAMPLE {
+	  " R = matrix {{1,2},{2,1},{0,0}}",
+	  " C = posHull R"
+	  },
+     
+     PARA{}, "We can construct a full dimensional cone out of this one by adding a lineality 
+     space for example:",
+     
+     EXAMPLE {
+	  " LS = matrix {{0},{0},{1}}",
+	  " C1 = posHull (R,LS)"
+	  },
+     
+     PARA{}, "The resulting cone is not pointed anymore, because it contains the subspace spanned 
+     by (0,0,1). To get a full dimensional pointed cone we have to add another ray to C. For 
+     this we can apply ",TT "posHull"," to a list containing ",TT "C"," and the new ray:",
+     
+     EXAMPLE {
+	  " r = matrix {{0},{1},{2}}",
+	  " C2 = posHull {C,r}"
+	  },
+     
+     PARA{}, "Another way would be, if we would have ",TT "r"," not as a ray but already as 
+     a cone:",
+     
+     EXAMPLE {
+	  " r = posHull r"
+	  },
+     
+     PARA{}, "In this case we can just take the positive hull of the two cones:",
+     
+     EXAMPLE {
+	  " C3 = posHull(C,r)",
+	  " C3 == C2"
+	  }
      
      }
 
@@ -3665,8 +3750,44 @@ document {
      PARA{}, "Then ", TT "intersection", " computes the intersection of all 
      inserted objects, if they are in the same ambient space, i.e. all matrices 
      must have the same number of rows, which must equal the ambient dimension 
-     of all cones and polyhedra."
+     of all cones and polyhedra.",
      
+     PARA{}, "The first use of ",TT "intersection"," is to construct a cone:",
+     
+     EXAMPLE {
+	  " M = matrix {{1,2,3},{2,3,1},{3,1,2}}",
+	  " C = intersection M"
+	  },
+     
+     PARA{}, "This is the cone of all points that are positive on the rows of the 
+     matrix ",TT "M",". If we add another row to this matrix and enter a condition 
+     vector we get a polyhedron:",
+     
+     EXAMPLE {
+	  " M = M || matrix {{-1,-1,-1}}",
+	  " v = matrix {{1},{2},{3},{4}}",
+	  " P = intersection(M,v)"
+	  },
+     
+     PARA{}, " This polyhedron, a tetrahedron, consists of all points ",TT "p"," such 
+     that ",TT "M*p <= v",". If add a another pair of matrices, these conditions are 
+     evaluated as equalities. Thus we get a polyhedron which is not of full dimension. 
+     It is an intersection with an affine hyperplane.",
+     
+     EXAMPLE {
+	  " N = matrix {{1,2,0}}",
+	  " w = matrix {{2}}",
+	  " Q = intersection (M,v,N,w)"
+	  },
+     
+     PARA{}, "If we have another polyehdron or cone, we can also intersect them with the others.",
+     
+     EXAMPLE {
+	  " HC = intersection(matrix {{1,0,0},{-1,0,0},{0,1,0},{0,-1,0},{0,0,1},{0,0,-1}},matrix {{1},{1},{1},{1},{1},{1}})",
+	  " C1 = intersection(C,HC)",
+	  " Q1 = intersection(P,HC)"
+	  }     
+
      }
 
 document {
@@ -4672,7 +4793,7 @@ document {
      }
 
 document {
-     Key => {proximum, (proximum,Matrix,Polyhedron)},
+     Key => {proximum, (proximum,Matrix,Polyhedron), (proximum,Matrix,Cone)},
      Headline => "computes the proximum of the Polyhedron/Cone to a point in euclidian metric",
      Usage => " q = proximum(p,P) \nq = proximum(p,C)",
      Inputs => {
@@ -5148,8 +5269,27 @@ document {
 	  },
      
      PARA{}, "Every ",TO Cone," is in particular a ",TO Polyhedron,". ",TT "coneToPolyhedron"," 
-     converts the cone into the same cone but of class ",TO Polyhedron,"."
+     converts the cone into the same cone but of class ",TO Polyhedron,".",
      
+     PARA{}, "Consider the positive orthant in ",TO QQ,"^3:",
+     
+     EXAMPLE {
+	  " C = posHull matrix {{1,0,0},{0,1,0},{0,0,1}}"
+	  },
+     
+     PARA{}, "If we want to consider the positive orthant not as cone but as a polyhedron we 
+     apply ",TT "coneToPolyhedron",":",
+     
+     EXAMPLE {
+	  " P = coneToPolyhedron C"
+	  },
+     
+     PARA{}, "Although, they are the same geometric object but of different classes, Polyhedra 
+     considers them not as equal:",
+     
+     EXAMPLE {
+	  " P === C"
+	  }
      }
 
 document {
@@ -5528,6 +5668,19 @@ document {
      PARA{}, "The ",TT "newtonPolytope"," of ",TT "f"," is the convex hull of its 
      exponent vectors in n-space, where n is the number of variables in the ring.",
      
+     PARA{}, "Consider the Vandermond determinant in 3 variables:",
+     
+     EXAMPLE {
+	  " R = QQ[a,b,c]",
+	  " f = (a-b)*(a-c)*(b-c)"
+	  },
+     
+     PARA{}, "If we compute the Newton polytope we get a hexagon in ",TT "QQ","^3.",
+     
+     EXAMPLE {
+	  " P = newtonPolytope f"
+	  }
+     
      }
 
 document {
@@ -5564,7 +5717,23 @@ document {
      the Groebner fan of the ideal. We use the construction by Sturmfels, see Algorithm 3.2 in ", 
      HREF("http://math.berkeley.edu/~bernd/index.html", "Bernd Sturmfels'"), " ", EM "Groebner Bases and 
      Convex Polytopes", ", volume 8 of University Lecture Series. American Mathematical Society, 
-     first edition, 1995."
+     first edition, 1995.",
+     
+     PARA{}, "Consider the following ideal in a ring with 3 variables:",
+     
+     EXAMPLE {
+	  " R = QQ[a,b,c]",
+	  " I = ideal (a-b,a-c,b-c)"
+	  },
+     
+     PARA{}, "The state polytope of this ideal is a triangle in 3 space, because the ideal has three 
+     initial ideals:",
+     
+     EXAMPLE {
+	  " statePolytope I"
+	  },
+     
+     PARA{}, "The generators of the three initial ideals are given in the first part of the result."
      
      }
 
@@ -5604,7 +5773,14 @@ document {
      PARA{}, "Computes the direct product of ",TT "C1"," and ",TT "C2",". This is the cone 
      ",TT "{(x,y) | x in C1, y in C2}",", in the direct product of the ambient spaces.",
      
-     PARA{}, "See also ",TO directProduct,"."
+     PARA{}, "See also ",TO directProduct,".",
+     
+     EXAMPLE {
+	  " C1 = posHull matrix {{1,2},{2,1}}",
+	  " C2 = posHull matrix {{1}}",
+	  " C = C1 * C2",
+	  " rays C"
+	  }
      
      }
 
@@ -5623,7 +5799,14 @@ document {
      PARA{}, "Computes the direct product of ",TT "C"," and ",TT "P",". This is the 
      polyhedron ",TT "{(c,p) | c in C, p in P}",", in the direct product of the ambient spaces.", 
      
-     PARA{}, "See also ",TO directProduct,"."
+     PARA{}, "See also ",TO directProduct,".",
+     
+     EXAMPLE {
+	  " C = posHull matrix {{1,2},{2,1}}",
+	  " P =convexHull matrix {{1},{-1}}",
+	  " Q = C * P",
+	  " (vertices Q,rays Q)"
+	  }
      
      }
 
@@ -5642,7 +5825,14 @@ document {
      PARA{}, "Computes the direct product of ",TT "P"," and ",TT "C",". This is the polyhedron 
      ",TT "{(p,c) | p in P, x in C}",", in the direct product of the ambient spaces.", 
      
-     PARA{}, "See also ",TO directProduct,"."
+     PARA{}, "See also ",TO directProduct,".",
+     
+     EXAMPLE {
+	  " P =convexHull matrix {{1},{-1}}",
+	  " C = posHull matrix {{1,2},{2,1}}",
+	  " Q = P * C",
+	  " (vertices Q,rays Q)"
+	  }
      
      }
 
@@ -5661,7 +5851,14 @@ document {
      PARA{}, "Computes the direct product of ",TT "P1"," and ",TT "P2",".This is the polyhedron 
      ",TT "{(x,y) | x in P1, y in P2}",", in the direct product of the ambient spaces.",
      
-     PARA{}, "See also ",TO directProduct,"."
+     PARA{}, "See also ",TO directProduct,".",
+     
+     EXAMPLE {
+	  " P1 = convexHull matrix {{1,-1,0,0},{0,0,1,-1}}",
+	  " P2 = convexHull matrix {{1},{-1}}",
+	  " P = P1 * P2",
+	  " vertices P"
+	  }
      
      }
 
@@ -5681,7 +5878,14 @@ document {
      for all cones ",TT "C1 in F1"," and ",TT "C2 in F2",", in the direct product of the 
      ambient spaces.",
      
-     PARA{}, "See also ",TO (directProduct,Fan,Fan),"."
+     PARA{}, "See also ",TO (directProduct,Fan,Fan),".",
+     
+     EXAMPLE {
+	  " F1 = normalFan hypercube 1",
+	  " F2 = normalFan hypercube 2",
+	  " F = F1 * F2",
+	  " F == normalFan hypercube 3"
+	  }
           
      }
 
@@ -5701,7 +5905,14 @@ document {
      ",TT "C1 + C2 = {x + y | x in C1, y in C2}",". Note that ",TT "C1"," and ",TT "C2"," have 
      to lie in the same ambient space.", 
      
-     PARA{}, "See also ",TO minkowskiSum,"."
+     PARA{}, "See also ",TO minkowskiSum,".",
+     
+     EXAMPLE {
+	  " C1 = posHull matrix {{1,2,3},{2,3,1},{3,1,2}}",
+	  " C2 = posHull matrix {{1},{0},{0}}",
+	  " C = C1 + C2",
+	  " rays C"
+	  }
      
      }
 
@@ -5721,7 +5932,14 @@ document {
      ",TT "C + P = {c + p | c in C, p in P}",". Note that ",TT "C"," and ",TT "P"," have 
      to lie in the same ambient space.", 
      
-     PARA{}, "See also ",TO minkowskiSum,"."
+     PARA{}, "See also ",TO minkowskiSum,".",
+     
+     EXAMPLE {
+	  " C = posHull matrix {{1},{2},{0}}",
+	  " P = hypercube 3",
+	  " Q = C + P",
+	  " (vertices Q,rays Q)"
+	  }
      
      }
 
@@ -5741,7 +5959,14 @@ document {
      ",TT "P + C = {p + c | p in P, c in C}",". Note that ",TT "P"," and ",TT "C"," have 
      to lie in the same ambient space.", 
      
-     PARA{}, "See also ",TO minkowskiSum,"."
+     PARA{}, "See also ",TO minkowskiSum,".",
+     
+     EXAMPLE {
+	  " P = hypercube 2",
+	  " C = posHull matrix {{1},{2}}",
+	  " Q = P + C",
+	  " (vertices Q,rays Q)"
+	  }
      
      }
 
@@ -5761,7 +5986,14 @@ document {
      ",TT "P1 + P2 = {x + y | x in P1, y in P2}",". Note that ",TT "P1"," and ",TT "P2"," have 
      to lie in the same ambient space.", 
      
-     PARA{}, "See also ",TO minkowskiSum,"."
+     PARA{}, "See also ",TO minkowskiSum,".",
+     
+     EXAMPLE {
+	  " P1 = convexHull matrix {{1,0,0},{0,1,0}}",
+	  " P2 = convexHull matrix {{-1,0,0},{0,-1,0}}",
+	  " P = P1 + P2",
+	  " vertices P"
+	  }
           
      }
 
@@ -5809,7 +6041,12 @@ document {
 	  "d" => ZZ
 	  },
      
-     PARA{}, "Returns the dimension of a cone."
+     PARA{}, "Returns the dimension of a cone.",
+     
+     EXAMPLE {
+	  " C = posHull matrix {{2,3},{3,2}}",
+	  " dim C"
+	  }
      
      }
 
@@ -5826,7 +6063,12 @@ document {
      
      PARA{}, "Returns the dimension of a fan. This 
      is the maximal dimension of all cones of 
-     the fan."
+     the fan.",
+     
+     EXAMPLE {
+	  " F = hirzebruch 3",
+	  " dim F"
+	  }
      
      }
 
@@ -5841,7 +6083,12 @@ document {
 	  "d" => ZZ
 	  },
      
-     PARA{}, "Returns the dimension of a polyhedron."
+     PARA{}, "Returns the dimension of a polyhedron.",
+     
+     EXAMPLE {
+	  " P = convexHull matrix {{1,-1,0,0},{0,0,1,-1}}",
+	  " dim P"
+	  }
      
      }
 
