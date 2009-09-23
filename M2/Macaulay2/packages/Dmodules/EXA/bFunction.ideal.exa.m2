@@ -62,4 +62,17 @@ time lct ideal (x_1^3-x_2^2, x_2^3-x_3^2);
 QQ[x_1..x_3];
 time lct ideal (x_1^4-x_2^3, x_3^2-x_1*x_2^2); -- does not finish
 
+-- rlct
+restart
+loadPackage ("Dmodules", FileName => "../../Dmodules.m2")
+debug Dmodules
+QQ[x,y]
+f = x^2+y^3
+sort bFunctionRoots globalBFunction f
+sort bFunctionRoots localBFunction(f, ideal gens ring f)
+rlct f
 
+QQ[x,y,z]
+f = (x^2+y^2+z^2)^2+x^6
+isFsLocallyIntegrable(f,-17/24)
+isFsLocallyIntegrable(f,-19/24)

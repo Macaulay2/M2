@@ -272,14 +272,48 @@ lct Ideal := RingElement => o -> I -> (
      min bFunctionRoots b
      )   
 
-
-
-
-
-
-
-
-
-
-
-
+isFsLocallyIntegrable = method()
+isFsLocallyIntegrable (RingElement, QQ) := Boolean => (f,s) -> (
+     R := ring f;
+     makeWA R; -- a bug for Dan
+     n := numgens R;
+     F := sub(f,RR_100(monoid [gens R]));
+     num'steps := 100;
+     num'samples := 1000;
+     infinity'threshold := 1e20;
+     epsilon := 1e-6;
+     nbhd := 0.1^(n*first degree f); -- current size of the neighborhood
+     shrink'factor := 10;
+     integral := 0;
+     for i from 1 to num'steps do (
+     	  ave := 0; -- current average
+	  next'nbhd := nbhd/shrink'factor;
+     	  for j from 1 to num'samples do (
+	       x := matrix{apply(n, i->random(-nbhd,nbhd))}; -- random point
+	       if norm x > next'nbhd then ave = ave + abs(sub(F,x))^s;
+	       );
+     	  << "s = " << s << ", ave = " << (
+	       d'integral=ave*(2*nbhd)^n/num'samples
+	       ) << endl; 
+	  if d'integral < integral * epsilon then return true;
+	  nbhd = next'nbhd;
+	  integral = integral + d'integral;
+	  );
+     false
+     )
+ 
+-- real log canonical threshold 
+rlct = method()
+rlct RingElement := RingElement => I -> (
+-- IN:  f,  polynomial in QQ[x_1,...,x_n]
+-- OUT: rlct(f), an element of QQ
+     roots := reverse sort bFunctionRoots globalBFunction f;
+     left := isFsLocallyIntegrable(f, roots#0 / 2);
+     for i from 0 to #roots-2 do (
+	  right := isFsLocallyIntegrable(f, (roots#i+roots#(i+1))/2);
+	  print(left,right);
+	  if left and not right then return -roots#i
+	  else left = right;
+	  );
+     error "rlct not amongst the roots of the b-function, but it should be";
+     )
