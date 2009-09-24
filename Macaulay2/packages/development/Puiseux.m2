@@ -1240,3 +1240,15 @@ syz matrix makeEquations(Ps, {1_R,y,y^2,y^3,y^4,y^5}, 3)
 netList puiseux(F,10)  
 netList branches F
 
+restart
+load "development/Puiseux.m2"
+debug Puiseux
+  R = QQ[x,y]
+  F = x-y^2+x^2*y^2+y^4
+puiseux(F,10)
+
+  R = QQ[x,y,z]
+  F = x*z^3-y^2*z^2+x^2*y^2+y^4
+jacF = ideal F + ideal jacobian ideal F
+codim jacF
+decompose jacF
