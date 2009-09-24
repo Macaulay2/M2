@@ -66,6 +66,8 @@ time lct ideal (x_1^4-x_2^3, x_3^2-x_1*x_2^2); -- does not finish
 restart
 loadPackage ("Dmodules", FileName => "../../Dmodules.m2")
 debug Dmodules
+makeWA
+
 QQ[x,y]
 f = x^2+y^3
 sort bFunctionRoots globalBFunction f
