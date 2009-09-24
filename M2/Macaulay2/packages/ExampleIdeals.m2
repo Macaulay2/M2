@@ -19,6 +19,7 @@ export {
      ExampleTable,
      box,
      example,
+     findExamples,
 
      toSingular,
      singularGB,
@@ -53,14 +54,20 @@ box = method()
 example = method(Options=>{CoefficientRing => ZZ/32003,
 	                   Ring => null})
 
-show(ExampleTable, String) := (H,x) -> print H#x#1()
-show(ExampleTable, ZZ) := (H,x) -> print (("-- "|H#x#0) || H#x#1())
+findExamples  = method()
+findExamples(ExampleTable, String) := (E,regex) -> (
+     K := keys E;
+     select(K, k -> match(regex, K#k#0))
+     )
+
+show(ExampleTable, ZZ) := (H,x) -> print ("-------------------" || ("-- "|H#x#0) || H#x#1)
 show(ExampleTable, List) := (H,x) -> scan(x, x1 -> show(H,x1))
+show(ExampleTable, String) := (H,re) -> show(H,findExamples(H,re))
 show(ExampleTable) := (H) -> show(H, sort keys H)
 
 box(ExampleTable, ZZ) := (H,x) -> box(H,{x})
-box(ExampleTable, String) := (H,x) -> box(H,{x})
-box(ExampleTable, List) := (H,x) -> netList apply(x, x1 -> {x1, ("-- "|H#x1#0) || H#x1#1()})
+box(ExampleTable, List) := (H,x) -> netList apply(x, x1 -> {x1, ("-- "|H#x1#0) || H#x1#1})
+box(ExampleTable, String) := (H,re) -> box(H,findExamples(H,re))
 box(ExampleTable) := (H) -> box(H, sort keys H)
 
 example(ExampleTable, ZZ) :=
@@ -69,7 +76,7 @@ example(ExampleTable, String) := opts -> (H,x) -> (
      kk := if R1 === null 
              then opts.CoefficientRing 
 	     else coefficientRing R1; 
-     I := value replace("kk", toString kk, H#x#1());
+     I := value replace("kk", toString kk, H#x#1);
      if R1 =!= null then (
      	  nvars := numgens ring I;
 	  if numgens R1 < nvars then 
@@ -79,6 +86,7 @@ example(ExampleTable, String) := opts -> (H,x) -> (
      else I)
 
 readExampleFile = method()
+{* -- remove this code
 readExampleFile(String,Ring) := (filename, coeffring) -> (
      G := separateRegexp("---+", get (ExampleIdeals#"source directory"|filename));
      G = apply(G, s -> select(lines s, t -> #t > 0));
@@ -97,8 +105,10 @@ readExampleFile(String) := (filename) -> (
 	       s := substring(2,G#i#0); -- remove the first two -- characters
 	       i+1 => s => demark("\n",drop(G#i,1))))
      )
-
+*}
 getExampleFile = method()
+
+{* -- remove this code
 getExampleFile(String,String) := (filename,kkstring) -> (
      G := separateRegexp("---+", get filename);
      G = apply(G, s -> select(lines s, t -> #t > 0));
@@ -109,22 +119,43 @@ getExampleFile(String,String) := (filename,kkstring) -> (
 	       i+1 => s => replace("kk", kkstring, demark("\n",drop(G#i,1)))))
      )
 getExampleFile(String) := (filename) -> getExampleFile(filename,"")
+*}
+
+-- New code
+getExampleFile(String) := (filename) -> (
+     G := separateRegexp("---+", get filename);
+     G = apply(G, s -> select(lines s, t -> #t > 0));
+     -- now for each example, find its name/number and make the string
+     G = select(G, s -> #s > 0);
+     new ExampleTable from apply(#G, i -> (
+	       s := substring(2,G#i#0); -- remove the first two -- characters
+	       i+1 => s => demark("\n",drop(G#i,1))))
+     )
+readExampleFile(String) := (filename) -> 
+     getExampleFile(ExampleIdeals#"source directory"|"ExampleIdeals/"|filename)
+     
+replaceStrings = (L, str) -> (scan(L, v -> str = replace(v#0,v#1,str)); str)
+substitute(ExampleTable, List) := (E, L) -> (
+     -- L is a list of options: str => newstr, (or regex => newstr).
+     -- return a new ExampleTable where each final string has the given strings in L
+     -- replaced (in order).
+     new ExampleTable from apply(pairs E, (k,v) -> (
+	       k => (v#0 => replaceStrings(L, v#1))
+	       ))
+     )
+substitute(ExampleTable, Option) := (E,subs) -> substitute(E, {subs})
+
 
 examplesDGP = method()
-examplesDGP Ring := (kk) -> readExampleFile("ExampleIdeals/DGP.m2", kk)
+examplesDGP Ring := (kk) -> substitute(readExampleFile "DGP.m2", {"kk" => toString kk})
 
 examplesSIN = method()
-examplesSIN Ring := (kk) -> readExampleFile("ExampleIdeals/SIN.m2", kk)
+examplesSIN Ring := (kk) -> substitute(readExampleFile "SIN.m2", {"kk" => toString kk})
 
 examplesStdSingular = method()
-examplesStdSingular Ring := (kk) -> readExampleFile("ExampleIdeals/stdSingular.m2", kk)
+examplesStdSingular Ring := (kk) -> substitute(readExampleFile "SIN.m2", {"kk" => toString kk})
 
-examplesBayes = () -> (
-     oldlimit := recursionLimit;
-     recursionLimit = 304; 
-     H := readExampleFile("ExampleIdeals/bayes5.m2");
-     recursionLimit = oldlimit;
-     H)
+examplesBayes = () -> readExampleFile "bayes5.m2"
 
 -- This is a list of examples from several sources
 
@@ -358,6 +389,16 @@ runSingularGB Ideal := (I) -> (
      << "exit(0);\n" << close;
      run "/sw/bin/Singular <foo"
      )
+runSingularGB Ideal := (I) -> (
+     str := toSingular ring I | toSingular I | singularGB "I" | "\nexit(0);\n";
+     runSingular str
+     )
+
+runSingular = method()
+runSingular String := (str) -> (
+     "foo" << str << endl << close;
+     get "!/sw/bin/Singular <foo"
+     )
 
 -----------------------------------------------
 -- Translation to Magma -----------------------
@@ -392,7 +433,7 @@ runMagmaGB Ideal := (I) -> (
      << toMagma ring I << endl
      << toMagma I
      << "time J := GroebnerBasis(I);\n"
-     << "#Js;\n"
+     << "#J;\n"
      << "quit;\n" << close;
      run "magma <foo"
      )
@@ -407,6 +448,84 @@ runMagmaIntegralClosure Ideal := (I) -> (
      << "quit;\n" << close;
      run "magma <foo"
      )
+
+beginDocumentation()
+
+doc ///
+  Key
+    ExampleIdeals
+  Headline
+    a package containing examples for basic computations
+  Description
+   Text
+      This package allows one to collect examples into a single file, 
+      and conveniently run these examples, or computations based on these examples.
+
+      For example, an @TO ExampleTable@ can be read into Macaulay2, and/or computations
+      based on them can be executed.
+   Example
+      E = getM2ExampleFile("bayes", CoefficientRing => ZZ/32003);
+      keys E
+      E
+///
+
+doc ///
+  Key
+    ExampleTable
+  Headline
+    hash table containing example ideals, computations, or other M2 constructions
+  Description
+   Text
+      The format of an {\tt ExampleTable}, E: the keys should be integers, starting at 1, 
+      and the value E#i is a pair (strname => str), where strname is a very short description
+      of the example, and {\tt str} is M2 code which generates the example.
+   Example
+     E = new ExampleTable from {
+	  1 => "eg1" => "R = QQ[a..d];\nI = ideal(a^2,b*c,c*d,b^3-c^2*d)"
+	  }
+   Example
+     E#1#1
+     example(E,1)   
+     box(E)
+   Text
+      Normally, one does not create such a table directly, one reads one from a file, using
+      @TO getExampleFile@ or @TO readExampleFile@.
+  SeeAlso
+     getExampleFile
+     readExampleFile
+     example
+     box
+///
+
+doc ///
+  Key
+    readExampleFile
+  Headline
+    read an example file which is packaged with ExampleIdeals
+  Usage
+    readExampleFile(filename)
+  Inputs
+    filename:String
+  Outputs
+    :ExampleTable
+  Description
+   Text
+     read in a predefined example file.  Possible names include:
+     DGP, SIN, bayes5, gb-examples, local, pd-run-examples, stdSingular, and symbolicdata.
+     (DGP stands for Decker-Greuel-Pfister, SIN for Singular, and symbolicdata 
+     for some of the examples at
+     symbolicdata.org, which doesn't appear to exist anymore)
+   Example
+     H = readExampleFile "ExampleIdeals/bayes5.m2";
+     keys H
+     H#200#0
+     H#200#1
+     value H#200#1
+     apply(10..20, i -> codim value H#i#1)
+  SeeAlso
+     getExampleFile
+///
+
 end
 
 restart
@@ -431,7 +550,7 @@ I = ideal random(R^1, R^{-2,-2})
 
 s = concatenate between("\n",{toSingular ring I,
      toSingular I,
-     replace(singularGB, "@I@", "I"})
+     replace(singularGB, "@I@", "I")})
 
 "!/sw/bin/Singular" << s << close
 

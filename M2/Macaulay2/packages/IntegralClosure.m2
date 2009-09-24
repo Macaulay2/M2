@@ -234,11 +234,11 @@ integralClosure1 = (F,G,J,nsteps,varname,strategies) -> (
      f := findSmallGen radJ; -- we assume that f is a non-zero divisor!!
      -- Compute Hom_S(radJ,radJ), using f as the common denominator.
      if verbosity >= 3 then <<"      small gen of radJ: " << f << endl << endl;
-
+     if verbosity >= 6 then << "rad J: " << netList flatten entries gens radJ << endl;
      if verbosity >= 2 then <<"      idlizer1:  " << flush;
      t1 = timing((He,fe) := endomorphisms(radJ,f));
      if verbosity >= 2 then << t1#0 << " seconds" << endl;
-
+     if verbosity >= 6 then << "endomorphisms returns: " << netList flatten entries He << endl;
      
      -- here is where we improve or change our fractions
      if He == 0 then (
@@ -2214,3 +2214,19 @@ J1 = radical J1
 R1 = T1/I1
 J1 = sub(J1,R1)
 (y*J1):J1  -- add in v/y
+
+-- another example from Doug Leonard ----------------------------
+S=ZZ/2[z,y,x,MonomialOrder=>{Weights=>{32,21,14}}];
+I=ideal(z^7+x^5*(x+1)^5*(x^2+x+1)^3,y^2+y*x+x*(x^2+x+1));
+R=S/I;
+time P=presentation(integralClosure(R));    -- used 4.73 seconds
+toString(gens gb P)
+
+loadPackage "FractionalIdeals"
+S=ZZ/2[z,y,x,MonomialOrder=>{2,1}];
+I=ideal(z^7+x^5*(x+1)^5*(x^2+x+1)^3,y^2+y*x+x*(x^2+x+1));
+R=S/I;
+time integralClosureHypersurface(R) -- doesn't work yet
+use R
+time integralClosureDenominator(R,x^16+x^14+x^13+x^11+x^10+x^8+x^7+x^5)
+-----------------------------------------------------------------

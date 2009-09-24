@@ -27,7 +27,7 @@ zerodimRadical = (I) -> (
      )
 
 radical00 = method()     
-radical00(Ideal,RingElement) := (I,u) -> time (
+radical00(Ideal,RingElement) := (I,u) -> (
      -- For each variable not in u, compute the 
      -- squarefree part (separable part)
      v := select(gens ring I, x -> u % x != 0);
@@ -56,7 +56,7 @@ rad Ideal := (Iorig) -> (
      while codim I <= n do (
 	  u := independentSets(I,Limit=>1);
 	  u = if #u === 0 then 1_R else first u;
-	  << " size(u) = " << # support u << endl;
+	  --<< " size(u) = " << # support u << endl;
 	  J := radical00(I,u);
 	  h := flatt(J,u);
 	  h = (intersect values h)_0;

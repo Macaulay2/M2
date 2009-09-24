@@ -8,6 +8,7 @@ I = ideal((3*x+y+z+w)^4, (7*x+2*y+3*z)^4 + x*w^3, (x+y+z)^4)
 -----------------------------------------------
 -- elim1-
 -- this is a good one...  hard in these other orders/situations
+-- this comes from trying to improve radical
 R = ZZ/32003[a..h] -- the GB here is easy
 A = ZZ/32003[b,c,g]
 K = frac A
@@ -15,7 +16,20 @@ R = K[a,d,f,h,e]
 R = ZZ/32003[a,d,f,h,b,c,e,g,MonomialOrder=>{4,4}]
 R = ZZ/32003[a,d,f,h,e,b,c,g,MonomialOrder=>{5,3}]
 R = ZZ/32003[a,d,f,h,e,b,c,g,MonomialOrder=>{4,4}]
+
+R = ZZ/32003[a,d,f,h,e,b,c,g,z,MonomialOrder=>{5,4}]
 I = ideal(-a-d+e+f+h,-2*a^2+2*a*d+2*c*e+2*b*f-a-1,3*a^3-3*a^2*d+3*c^2*e+3*b^2*f+3*a^2+4*a-d,6*a^3-6*a^2*d+6*b*e*g+6*a^2-3*a*d+4*a-d,-4*a^4+4*a^3*d+4*c^3*e+4*b^3*f-6*a^3-10*a^2+4*a*d-a-1,-8*a^4+8*a^3*d+8*b*c*e*g-12*a^3+4*a^2*d-14*a^2+4*a*d-3*a-1,-12*a^4+12*a^3*d+12*b^2*e*g-18*a^3+12*a^2*d-14*a^2+8*a*d-a-1,24*a^4-24*a^3*d+36*a^3-24*a^2*d+26*a^2-8*a*d+7*a+1)
+I = homogenize(I,z) -- this runs very quickly, where the inhomog version grounds to a halt.
+
+R = ZZ/32003[a,d,f,h,e,b,c,g,z]
+I = ideal(-a-d+e+f+h,-2*a^2+2*a*d+2*c*e+2*b*f-a-1,3*a^3-3*a^2*d+3*c^2*e+3*b^2*f+3*a^2+4*a-d,6*a^3-6*a^2*d+6*b*e*g+6*a^2-3*a*d+4*a-d,-4*a^4+4*a^3*d+4*c^3*e+4*b^3*f-6*a^3-10*a^2+4*a*d-a-1,-8*a^4+8*a^3*d+8*b*c*e*g-12*a^3+4*a^2*d-14*a^2+4*a*d-3*a-1,-12*a^4+12*a^3*d+12*b^2*e*g-18*a^3+12*a^2*d-14*a^2+8*a*d-a-1,24*a^4-24*a^3*d+36*a^3-24*a^2*d+26*a^2-8*a*d+7*a+1)
+I = homogenize(I,z) -- this runs very quickly, where the inhomog version grounds to a halt.
+debug PrimaryDecomposition
+gbTrace=1
+time rad I
+time decompose I -- .45 seconds
+
+R = ZZ/32003[a,d,f,h,e,b,c,g,z, MonomialOrder=>Lex]
 -----------------------------------------------
 -- lichtblau-32003
 debug ExampleIdeals

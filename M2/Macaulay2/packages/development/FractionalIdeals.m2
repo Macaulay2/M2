@@ -150,7 +150,7 @@ radical(FractionalIdeal, FractionalIdeal) := opts -> (F,R1) -> (
 	    radJ0 := rad J0;
 	    return (radJ0, fractionalIdeal trim promote(radJ0,ring F))
 	    );
-     R1' := ringFromFractions(R1, Variable=>symbol w); -- the generators correspond to elements of R1#1 (except the first, which 
+     time R1' := ringFromFractions(R1, Variable=>symbol w); -- the generators correspond to elements of R1#1 (except the first, which 
           -- corresponds to the unit).
      -- map F into A.  We need to know how to represent elements of F as elements in R1
      -- we assume: F = 1/g J \subset R1 = 1/f L
@@ -164,7 +164,11 @@ radical(FractionalIdeal, FractionalIdeal) := opts -> (F,R1) -> (
      J := ideal(v * sub(M, R1'));
      -- New computation of radical:
      J0 = first flattenRing J;
+     << " computing radical of " << endl;
+     << toString J0 << endl;
+     << toExternalString ring J0 << endl;
      time Jrad := rad J0;
+     --time Jrad := intersect decompose J0;
 {*
      -- do the radical
      J0 := first flattenRing J;
