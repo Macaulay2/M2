@@ -73,6 +73,33 @@ rad Ideal := (Iorig) -> (
      radI
      )
 
+rad(Ideal,ZZ) := (Iorig, codimlimit) -> (
+     -- returns the radical of Iorig
+     (I,F,G) := flattenRing(Iorig,Result=>(,,));
+     R := ring I;
+     n := numgens I;
+     radI := ideal(1_R);
+     c := codim I;
+     while codim I <= c + codimlimit do (
+	  u := independentSets(I,Limit=>1);
+	  u = if #u === 0 then 1_R else first u;
+	  --<< " size(u) = " << # support u << endl;
+	  J := radical00(I,u);
+	  h := flatt(J,u);
+	  h = (intersect values h)_0;
+	  radJ := saturate(J,h);
+	  radI = intersect(radI,radJ);
+	  if u === 1 then break;
+	  h = flatt(I,u);
+	  h = (intersect values h)_0;
+	  if h != 1 then 
+	    h = product factors h;
+          I = I + ideal(h);
+	  );
+     if ring I =!= ring Iorig then radI = trim(G radI);
+     radI
+     )
+
 end
 restart
 loadPackage "PrimaryDecomposition"
