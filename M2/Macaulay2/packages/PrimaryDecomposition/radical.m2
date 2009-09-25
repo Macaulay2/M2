@@ -80,6 +80,10 @@ rad(Ideal,ZZ) := (Iorig, codimlimit) -> (
      n := numgens I;
      radI := ideal(1_R);
      c := codim I;
+
+     << "R0 = " << toExternalString ring I << endl << flush;
+     << "J0 = " << toString I << endl << flush;
+
      while codim I <= c + codimlimit do (
 	  u := independentSets(I,Limit=>1);
 	  u = if #u === 0 then 1_R else first u;

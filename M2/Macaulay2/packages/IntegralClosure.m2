@@ -217,13 +217,19 @@ integralClosure1 = (F,G,J,nsteps,varname,strategies) -> (
 
      if verbosity >= 2 then << endl << "      radical " << flush;
      if nsteps == 0 then (
-       t1 := timing(radJ = trim codim1radical J);
+       -- MES: make a strategy that chooses here:
+       --t1 := timing(radJ = trim codim1radical J);
+       t1 := timing(radJ = trim rad(J,0));       
        )
      else (
      	  Jup := trim (flattenRing J)_0;
-	  t1 = timing(radJup := rad Jup);
+
+     << "about to compute radical" << endl << flush;
+     
+	  t1 = timing(radJup := rad(Jup,0));
 	  radJ = trim promote(radJup, ring J);
 	  );
+     << "done computing radical" << endl << flush;     
      if verbosity >= 2 then << t1#0 << " seconds" << endl;
 
      if radJ === null then (
