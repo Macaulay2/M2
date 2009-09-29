@@ -8,8 +8,8 @@
 ---------------------------------------------------------------------------
 newPackage("Polyhedra",
     Headline => "A package for computations with convex polyhedra",
-    Version => "1.0.5",
-    Date => "September 20, 2009",
+    Version => "1.0.6",
+    Date => "September 29, 2009",
     Authors => {
          {Name => "René Birkner",
 	  HomePage => "http://page.mi.fu-berlin.de/rbirkner/index.htm",
@@ -26,7 +26,8 @@ export {PolyhedralObject, Polyhedron, Cone, Fan, convexHull, posHull, intersecti
 	vertexFacetMatrix, 
 	affineHull, affineImage, affinePreimage, bipyramid, ccRefinement, coneToPolyhedron, directProduct, 
 	dualCone, imageFan, minkowskiSum, normalFan, polar, pyramid, sublatticeBasis, toSublattice,
-	crossPolytope, cyclicPolytope, emptyPolyhedron, hirzebruch, hypercube, newtonPolytope, posOrthant, statePolytope, stdSimplex,
+	crossPolytope, cyclicPolytope, ehrhart, emptyPolyhedron, hirzebruch, hypercube, newtonPolytope, posOrthant, statePolytope, 
+	stdSimplex,
 	saveSession}
 
 needsPackage "FourierMotzkin"
@@ -1371,7 +1372,32 @@ latticePoints Polyhedron := P -> (
 		    else (
 			 A := matrix drop((entries id_(QQ^n)),{pos,pos});
 			 apply(latticePointsRec affineImage(A,NP),v -> v^{0..(pos-1)} || matrix p || v^{pos..(n-2)})))));
-     latticePointsRec P)
+     -- Checking if the polytope is full dimensional
+     if (dim P == ambDim P) then latticePointsRec P
+     -- If not checking first if the affine hull of P contains lattice points at all and if so projecting the polytope down
+     -- so that it becomes full dimensional with a map that keeps the lattice
+     else (
+	  (M,v) := hyperplanes P;
+	  -- Finding a lattice point in the affine hull of P
+	  b := if all(entries M, e -> gcd e == 1) then (
+	       -- Computing the Smith Normal Form to solve the equation over ZZ
+	       (M1,Lmatrix,Rmatrix) := smithNormalForm substitute(M,ZZ);
+	       v1 := flatten entries (Lmatrix*v);
+	       w := apply(numRows M1, i -> M1_(i,i));
+	       -- Checking if the system is at least solvable over QQ
+	       if all(#w, i -> w#i != 0 or v1#i == 0) then (
+		    -- If it is, then solve over QQ
+		    w = apply(#w, i -> (v1#i/w#i,v1#i%w#i));
+		    if all(w, e -> e#1 == 0) then (
+			 -- If the solution is in fact in ZZ then return it
+			 w = transpose matrix{apply(w,first) | toList(numColumns M1 - numRows M1:0)};
+			 Rmatrix * w)));
+	  -- If there is no lattice point in the affine hull then P has none
+	  if b === null then {}
+	  else (
+	       A := gens ker substitute(M,ZZ);
+	       -- Project the translated polytope, compute the lattice points and map them back
+	       apply(latticePoints affinePreimage(A,P,b),e -> substitute(A*e + b,ZZ)))))
 
 
 
@@ -2242,6 +2268,17 @@ Polyhedron + Cone := minkowskiSum
 Cone + Polyhedron := minkowskiSum
 Cone + Cone := minkowskiSum
 
+-- PURPOSE : Scaling respectively the multiple Minkowski sum of a polyhedron
+--   INPUT : '(k,P)',  where 'k' is a strictly positive rational or integer number and 
+--     	    	             'P' is a Polyhedron
+--  OUTPUT : The polyehdron 'P' scaled by 'k'
+QQ * Polyhedron := (k,P) -> (
+     -- Checking for input errors
+     if k <= 0 then error("The factor must be strictly positiv");
+     convexHull(k*(vertices P),rays P | linSpace P))
+
+ZZ * Polyhedron := (k,P) -> promote(k,QQ) * P
+
 
 -- PURPOSE : Computing the inner normalFan of a polyhedron
 --   INPUT : 'P',  a Polyhedron
@@ -2363,6 +2400,20 @@ cyclicPolytope(ZZ,ZZ) := (d,n) -> (
      if d < 1 then error("The dimension must be positive");
      if n < 1 then error("There must be a positive number of points");
      convexHull map(ZZ^d, ZZ^n, (i,j) -> j^(i+1)))
+
+
+-- PURPOSE : Computing the Ehrhart polynomial of a polytope
+--   INPUT : 'P',  a polyhedron which must be compact, i.e. a polytope
+--  OUTPUT : A polynomial in QQ[x], the Ehrhart polynomial
+-- COMMENT : Compactness is checked within latticePoints
+ehrhart = method(TypicalValue => RingElement)
+ehrhart Polyhedron := P -> (
+	n := dim P;
+	v := matrix apply(n,k -> {-1+#latticePoints( (k+1)*P)});
+	M := promote(matrix apply(n,i -> reverse apply(n, j -> (i+1)^(j+1))),QQ);
+	M = flatten entries ((inverse M)*v);
+	R := QQ[x];
+	1+sum apply(n,i -> M#i * x^(n-i)))
 
 
 -- PURPOSE : Generating the empty polyhedron in n space
@@ -5592,6 +5643,29 @@ document {
      }
 
 document {
+    Key => {ehrhart, (ehrhart,Polyhedron)},
+    Headline => "calculates the Ehrhart polynomial of a polytope",
+    Usage => "f = ehrhart P",
+    Inputs => {
+         "P" => Polyhedron => {"which must be compact"}
+         },
+    Outputs => {
+         "f" => RingElement => {"Ehrhart polynomial as element of QQ[x]"}
+         },
+
+    PARA{}, TT "ehrhart"," can only be applied to polytopes, i.e. compact polyhedra. 
+    To calculate the Ehrhart polynomial, the number of lattice points in the first n 
+    dilations of the polytope are calculated, where n is the dimension of the polytope. 
+    A system of linear equations is then solved to find the polynomial.",
+
+    EXAMPLE {
+         " P = convexHull transpose matrix {{0,0,0},{1,0,0},{0,1,0},{1,1,3}}",
+         " ehrhart P"
+           }
+
+    }	
+
+document {
      Key => {emptyPolyhedron, (emptyPolyhedron,ZZ)},
      Headline => "generates the empty polyhedron in n-space",
      Usage => " P = emptyPolyhedron n",
@@ -5887,6 +5961,29 @@ document {
 	  " F == normalFan hypercube 3"
 	  }
           
+     }
+
+document {
+     Key => {(symbol *,QQ,Polyhedron), (symbol *,ZZ,Polyhedron)},
+     Headline => "rescales a polyhedron by a given positive factor",
+     Usage => " Q = k * P",
+     Inputs => {
+	  "k" => {TO ZZ," or ",TO QQ,", strictly positive"},
+	  "P" => Polyhedron
+	  },
+     Outputs => {
+	  "Q" => Polyhedron
+	  },
+     
+     PARA{}, "Rescales the ",TO Polyhedron," by the strictly positive factor
+     ",TT "k",".",
+     
+     EXAMPLE {
+	  " P = crossPolytope 3",
+	  " k = 3",
+	  " Q = k * P",
+	  " vertices Q"
+	  }
      }
 
 document {
@@ -6915,5 +7012,17 @@ assert(sublatticeBasis convexHull matrix {{1,2,2},{0,-1,2}} == matrix {{-1,1},{1
 assert(toSublattice convexHull matrix {{2,0},{0,3}} == convexHull matrix {{0,1}})
 ///
 
+-- Test 64
+-- Checking Scaling
+TEST ///
+assert(3/2 * hypercube(2,2) == hypercube(2,3))
+///
+
+-- Test 65
+-- Checking ehrhart
+TEST ///
+P = convexHull transpose matrix {{0,0,0},{1,0,0},{0,1,0},{0,1,0}};
+assert(ehrhart P == (1/2)*x^2+(3/2)*x+1)
+///
 
 end
