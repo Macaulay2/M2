@@ -37,7 +37,10 @@ export{"integralClosure", "idealizer", "ringFromFractions", "nonNormalLocus", "I
   "Vasconcelos", -- compute end(I^-1).  If both this and Endomorphisms are set:
                  -- compare them.
   "RecomputeJacobian",
-  "StartWithOneMinor"
+  "StartWithOneMinor",
+  "S2First", "S2Last", "S2None", -- when to do S2-ification
+  "RadicalCodim1",
+  "RadicalBuiltin" -- true: use 'intersect decompose' to get radical, other wise use 'rad' in PrimaryDecomposition package
 } 
 
 verbosity = 0
