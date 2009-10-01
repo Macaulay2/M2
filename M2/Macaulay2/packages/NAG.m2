@@ -218,7 +218,9 @@ track (List,List,List) := List => o -> (S,T,solsS) -> (
                "singular_solutions", "midpath_data"} do
           if fileExists f then removeFile f;
 	  return result;
-	  );
+	  )
+     else if not member(o.Software,{M2,M2engine,M2enginePrecookedSLPs}) 
+     then error "wrong Software option or implementation is not available";
      
      -- M2 (main code)  --------------------------------------------------------     
      setupStartTime := currentTime();
