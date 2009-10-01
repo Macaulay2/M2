@@ -4,8 +4,8 @@ DBG = 2;
 ------------------------------------------------------
 -- COMPARISON OF              -- PHCpack -- Bertini -- hom4ps2 --
 load "benchmarks.m2";
-I = katsura(8,CC);	    	-- 26      -- 18      -- 4       --
-I = stewartGough40real();     -- 883     -- >>0     -- 31      --
+I = katsuraBench 8;	    	
+-- I = stewartGough40real();     -- 883     -- >>0     -- 31      --
 --I = example2();
 
 P = solveSystem (I_*,Software=>PHCpack);

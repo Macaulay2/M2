@@ -30,6 +30,7 @@ solvePHCpack (List,HashTable) := List => (F,o) -> (
 
 trackPHCpack = method(TypicalValue => List)
 trackPHCpack (List,List,List,HashTable) := List => (S,T,solsS,o) -> (
+     R := ring first T;
      n := #T;
      targetfile := temporaryFileName() | 
      "PHCtarget";
