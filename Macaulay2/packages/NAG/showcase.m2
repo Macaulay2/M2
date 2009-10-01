@@ -24,14 +24,13 @@ for T in drop(systems,2) do (
 	       soft=>sortSolutions if soft===HOM4PS2 then solveSystem(T,Software=>soft)
 	       else track(S,T,solsS,gamma=>1+ii,Software=>soft))
 	       );
-     assert all(drop(softwares,1), soft->areEqual(sols#soft/(s->{first s}),sols#(first softwares),Tolerance=>1e-3));
+     --assert all(drop(softwares,1), soft->areEqual(sols#soft/(s->{first s}),sols#(first softwares),Tolerance=>1e-3));
      )
  
 end
 restart
 load "showcase.m2"
 M = sols#(first softwares);
-M = sols#Bertini;
 << "Multiple solutions: " << select(toList(0..#M-2), i->areEqual(first M#i,first M#(i+1),Tolerance=>1e-3)) << endl;
 assert all(#M, i->getSolution(i,SolutionAttributes=>SolutionStatus)=="REGULAR") 
 << "Large residual: " << select(toList(0..#M-2), i->norm sub(matrix {T}, matrix M#i)>0.001) << endl;
