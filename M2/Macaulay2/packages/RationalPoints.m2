@@ -170,7 +170,7 @@ superCombine = (theinfosubi, zips, els) -> (
      n := theinfosubi_3;
      if case == 1 then return zips;
      newstuff := toList (set els)^**n;
-     if n == 1 then newstuff = apply(newstuff, i -> {i}); --not needed in newest version of M2
+     --if n == 1 then newstuff = apply(newstuff, i -> {i}); --not needed in newest version of M2
      return flatten apply(newstuff, k -> apply(zips, l -> apply(scheme, (i,j) -> {k,l}#i#j))); 
      );
 
@@ -261,12 +261,12 @@ lowMemPoints = (Igens, els, A, k) -> (
      while i < endofloop do (
 	  lowMemIterate(evaluationat, loop+1);
 	  for p to stop do (
-	       if (map(k,A,toList evaluationat)) Igens_p != 0 then (
+	       if (map(k,A,els_(toList evaluationat))) Igens_p != 0 then (
 		    nonzeroflag = 1;
 		    break;
 		    )
 	       );
-     	  if nonzeroflag == 0 then zeroes = zeroes|{toList evaluationat};
+     	  if nonzeroflag == 0 then zeroes = zeroes|{els_(toList evaluationat)};
 	  i = i+1; 
 	  nonzeroflag = 0;
 	  );		    
@@ -299,7 +299,7 @@ rationalPoints(Ideal) := opts -> Iprime -> (
      if opts.Verbose then print Igens;
      if Igens === {} then (
 	  zips = toList (set els)^**m;
-	  if m == 1 then zips = apply(zips,i -> {i}); --take away this line for new versions
+	  --if m == 1 then zips = apply(zips,i -> {i}); --take away this line for new versions
 	  zips = apply(zips,i -> toList i);
 	  return zips;
 	  );
@@ -353,9 +353,8 @@ document {
 	  UseMinGens => Boolean => " turns on and off a mingens computation of the ideal that may change the chosen generators.",
 	  SortGens => Boolean => " sorts generators in order to make searching for zeroes more efficient.",
 	  LowMem => Boolean => " uses an alternative algorithm that is slower but much less memory intensive.",
-	  Amount => Boolean => " output changes to the number of zeroes.",
-	  Verbose => Boolean => "output includes the generators of the ideal that the computation uses. These may be modified
-	  by UseGB or UseMinGens"
+	  Amount => Boolean => " output changes to the number of zeroes.",	  
+	  Verbose => Boolean => "output includes the generators of the ideal that the computation uses. These may be modified by UseGB or UseMinGens",
 	  },
      Outputs => {
 	  "l" => List => { "a list of lists. Each internal list is an n-tuple of elements of the finite field such that the n-tuple represents a point  
