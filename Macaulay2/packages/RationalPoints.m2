@@ -170,7 +170,7 @@ superCombine = (theinfosubi, zips, els) -> (
      n := theinfosubi_3;
      if case == 1 then return zips;
      newstuff := toList (set els)^**n;
-     --if n == 1 then newstuff = apply(newstuff, i -> {i}); --not needed in newest version of M2
+     --if n == 1 then newstuff = apply(newstuff, i -> {i}); --take out in newest version of M2
      return flatten apply(newstuff, k -> apply(zips, l -> apply(scheme, (i,j) -> {k,l}#i#j))); 
      );
 
@@ -298,12 +298,16 @@ rationalPoints(Ideal) := opts -> Iprime -> (
      zips := {{}};
      if opts.Verbose then print Igens;
      if Igens === {} then (
+	  if opts.Amount then return (#els)^m;
 	  zips = toList (set els)^**m;
 	  --if m == 1 then zips = apply(zips,i -> {i}); --take away this line for new versions
 	  zips = apply(zips,i -> toList i);
 	  return zips;
 	  );
-     if opts.LowMem or class k === GaloisField then return lowMemPoints(Igens, els, A, k);
+     if opts.LowMem or class k === GaloisField then {
+	  if opts.Amount then return # lowMemPoints(Igens, els, A, k);
+	  if not opts.Amount then return lowMemPoints(Igens, els, A, k);
+	  };
      --note: as soon as polynomials over GF's can be factored the "or" here should be taken away
      unusedvars := {};
      (theinfo, usedvars) := superPrep(Igens,m-1);
@@ -369,6 +373,23 @@ document {
 	  "This symbol is provided by the package ", TO RationalPoints, "."
 	  }
 }
+
+TEST ///
+     R = ZZ/13[k];
+     I = ideal(k-2);
+     assert(# rationalPoints I == 1)
+     R = ZZ/5[x_1..x_4];
+     I = ideal(x_2^2+x_1*x_2+1, x_1*x_2*x_3*x_4+1);
+     assert(# rationalPoints I == 8)
+     k = GF 9;
+     R = k[m,n,j];
+     I = ideal(m+a, n*j);
+     assert(rationalPoints(I,Amount => true) == 17)
+     R = ZZ/13[b,c,d];
+     I = ideal (b-b);
+     assert(rationalPoints(I,Amount => true) == 2197)     
+     ///
+
 
 endPackage "RationalPoints"
 
