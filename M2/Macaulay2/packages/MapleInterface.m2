@@ -1,15 +1,16 @@
 newPackage(
 	"MapleInterface",
-    	Version => "0.25", 
-    	Date => "August 25, 2009",
+    	Version => "0.26", 
+    	Date => "September 20, 2009",
     	Authors => {{Name => "Janko Boehm", 
 		  Email => "boehm@math.uni-sb.de", 
 		  HomePage => "http://www.math.uni-sb.de/ag/schreyer/jb/"}
                   },
     	Headline => "Interface to Maple",
     	DebuggingMode => true,
-	AuxiliaryFiles => true,
-        Configuration => {"MapleCommand"=>"maple"}
+        Configuration => {"MapleCommand"=>"maple"},
+	CacheExampleOutput => true,
+	AuxiliaryFiles => true
         )
 
 -- For information see documentation key "MapleInterface" below.
@@ -34,7 +35,7 @@ filename2:= getFilename();
 filename3:= getFilename();
 ----------------------------------
 mapleprogram=mapleprogram|///
-fd := open("zzzzzzz.txt",WRITE):
+fd := open("placeholder3.txt",WRITE):
 fprintf(fd,convert(returnvalue,string)):
 close(fd):
 quit;
@@ -42,7 +43,7 @@ quit;
 ----------------------------------
 mapleprogram=replace("placeholder2",inputdata2,mapleprogram);
 mapleprogram=replace("placeholder1",L1,mapleprogram);
-mapleprogram=replace("zzzzzzz",externalPath|filename3,mapleprogram);
+mapleprogram=replace("placeholder3",externalPath|filename3,mapleprogram);
 F := openOut(filename|".txt");
 F<<mapleprogram<<endl;
 close F;
@@ -116,9 +117,6 @@ doc ///
 
       installPackage("MapleInterface")
 
-      If the command "maple" does not start the command line Maple in the shell, this will produce some errors running 
-      the examples due to the package not being able to find the Maple executeable.
-
       Edit the file init-MapleInterface.m2 in the directory .Macaulay2 in your home directory
       changing the line
 
@@ -146,11 +144,11 @@ doc ///
       
       (German Windows version).
       
-      Then do (if you are using M2 in Windows then first exit and then start M2 again)
+      To test whether the interface is working do, e.g.,
 
-      installPackage("MapleInterface",RerunExamples=>true)
+      callMaple("","","returnvalue:=1;")
 
-      to run the examples in the documentation. This should not give any error messages.
+      (which should return 1)
 
   Caveat
       Note that the file init-MapleInterface.m2 will be overwritten when you reinstall a newer version of the package, but there will be a backup.
@@ -178,11 +176,11 @@ doc ///
 
         The arguments inputdata1 and inputdata2 are here just for convenience and you can put the empty strings if you want.
 
-        But in the string inputdata1 we take care automatically of the main compatibility problem between Macaulay 2 and Maple
-        which is replacing in lists the curly brackets are by square brackets.
-
         Inside mapleprogram the string placeholder1 is then replaced by the string inputdata1
         and placeholder2 is replaced the string inputdata2.
+
+        In the string inputdata1 we take care automatically of the main compatibility problem between Macaulay 2 and Maple
+        which is replacing in lists the curly brackets are by square brackets.
 
         The Maple program has to write its output in the Maple variable returnvalue.
         This is converted in Maple into a string, square brackets are replaced by curly brackets
@@ -263,6 +261,13 @@ doc ///
   Description
    Text
      Read the result of a previous Maple computation stored in the file fn via the option @TO store@ of @TO callMaple@.
+
+     @TO callMaple@( ... , @TO store@=>fn);
+     readMaple(fn)
+
+     will return the same result as
+
+     callMaple( ... )
 ///
 
 {*
