@@ -1,7 +1,8 @@
+
 -- -*- coding: utf-8 -*-
 newPackage(
 	"SRdeformations",
-    	Version => "0.45", 
+    	Version => "0.46", 
     	Date => "Sept 5, 2009",
     	Authors => {{Name => "Janko Boehm", 
 		  Email => "boehm@math.uni-sb.de", 
@@ -72,7 +73,8 @@ CoComplex,coComplex,idealToCoComplex,coComplexToIdeal,
 selectFaces,link,closedStar,
 possibleDenominators,deformationsFace,
 globalSections,joinVectors,
-convHull,deform,PT1,tropDef,mirrorSphere,file,saveDeformations,loadDeformations}
+convHull,deform,PT1,tropDef,mirrorSphere,file,saveDeformations,loadDeformations,
+hull}
 
 ---------------------------------------------------------------------------------
 -- deformations of Stanley-Reisner rings
@@ -3312,6 +3314,98 @@ v=preImage(A,b)
 A*v
 *}
 
+---------------------------------------------------------------------------------------
+-- cones
+
+hull=method(Options=>{file=>null})
+hull(List):=opts->(L)->(
+-- use "Convex" if available
+if class(mPosHullFacesAndDuals)===MethodFunctionWithOptions then return(hullConvex(L,opts));
+vA:=joinVectors(L);
+P:=posHull vA;
+d:=P#"coneDimension";
+embdim:=P#"ambientDimension";
+if embdim!=d or P#"linSpaceDim">0 then error("expected cone of full dimension");
+A:=sub(transpose rays(P),ZZ);
+Adual:=-sub(transpose rays dualCone P,ZZ);
+n:=rank target A;
+dn:=rank target Adual;
+R:=QQ[y_0..y_(n-1)];
+R.grading=A;
+Rdual:=QQ[v_0..v_(dn-1)];
+Rdual.grading=-Adual;
+Cl:=newEmptyComplex(R);
+dCl:=newEmptyComplex(Rdual);
+--fc:=faces(1,P);
+--fc=apply(fc,j->sub(transpose vertices j,ZZ));
+--fc=apply(fc,j->face(matrixToVarlist(j,R),Cl));
+--L1:={};
+--for j from -1 to d-1 do (L1=append(L1,{}));
+--L1=append(L1,{face((entries vars R)#0,Cl)});
+--addFacetDataToComplex(Cl,L1);
+--L1:={{},{face({},Cl,-1,0)}};
+L1:={{face({},Cl,-1,0)}};
+for j from 1 to d-1 do (
+ fc:=faces(d-j,P);
+ fc=apply(fc,j->sub(transpose rays j,ZZ));
+ fc=apply(toList(0..(#fc-1)),jj->face(matrixToVarlist(fc#jj,R),Cl,j-1,jj));
+ L1=append(L1,fc);
+);
+L1=append(L1,{face((entries vars R)#0,Cl,d-1,0)});
+addFaceDataToComplex(Cl,L1);
+Cl.polytopalFacets=L1#(#L1-2);
+Cl.noBoundary=false;
+Cl.isPolytope=true;
+dCl.isPolytope=true;
+dCl.dualComplex=Cl;
+Cl.dualComplex=dCl;
+Cl.edim=Cl.edim-1;
+dCl.edim=dCl.edim-1;
+Cl)
+
+hull(String):=opts->(fn)->(
+{A,Adual,fcL}:=toSequence readPosHullFaces(fn);
+makeHull(A,Adual,fcL))
+
+
+hullConvex=method(Options=>{file=>null})
+hullConvex(List):=opts->(L)->(
+{A,Adual,fcL}:=toSequence mPosHullFacesAndDuals(L,toFile=>opts.file);
+makeHull(A,Adual,fcL))
+
+makeHull=method()
+makeHull(Matrix,Matrix,List):=(A,Adual,fcL)->(
+n:=rank target A;
+dn:=rank target Adual;
+y:=symbol y;
+R:=QQ[y_0..y_(n-1)];
+R.grading=A;
+v:= symbol v;
+Rdual:=QQ[v_0..v_(dn-1)];
+Rdual.grading=Adual;
+Cl:=newEmptyComplex(R);
+dCl:=newEmptyComplex(Rdual);
+fcL1:=apply(toList(0..(#fcL-1)),j->apply(toList(0..(#(fcL#j)-1)),jj->(
+    F:=face(numberFace(fcL#j#jj#0,R),Cl,j-1,jj);
+    dF:=face(numberFace(fcL#j#jj#1,Rdual),dCl,#fcL-2-j,jj);
+    F.dualFace=dF;
+    dF.dualFace=F;
+    {F,dF})
+));
+fcL2:=apply(fcL1,j->apply(j,jj->jj#0));
+dfcL1:=apply(fcL1,j->apply(j,jj->jj#1));
+dfcL1=apply(toList(1..#dfcL1),j->dfcL1#(#dfcL1-j));
+addFaceDataToComplex(Cl,fcL2);
+addFaceDataToComplex(dCl,dfcL1);
+Cl.polytopalFacets=Cl.fc_(-1+dim Cl);
+Cl.isPolytope=true;
+dCl.isPolytope=true;
+dCl.dualComplex=Cl;
+Cl.dualComplex=dCl;
+Cl.edim=Cl.edim-1;
+dCl.edim=dCl.edim-1;
+Cl)
+
 
 
 ----------------------------------------------------------------------------------------
@@ -3319,7 +3413,7 @@ A*v
 convHull=method(Options=>{file=>null})
 convHull(List):=opts->(L)->(
 -- use "Convex" if available
-if class(mFacesAndDuals)===MethodFunctionWithOptions then return(convHullConvex(L,opts));
+if class(mConvexHullFacesAndDuals)===MethodFunctionWithOptions then return(convHullConvex(L,opts));
 vA:=joinVectors(L);
 P:=convexHull vA;
 d:=P#"polyhedronDimension";
@@ -3361,12 +3455,12 @@ Cl.dualComplex=dCl;
 Cl)
 
 convHull(String):=opts->(fn)->(
-{A,Adual,fcL}:=toSequence readFaces(fn);
+{A,Adual,fcL}:=toSequence readConvexHullFaces(fn);
 makeConvHull(A,Adual,fcL))
 
 convHullConvex=method(Options=>{file=>null})
 convHullConvex(List):=opts->(L)->(
-{A,Adual,fcL}:=toSequence mFacesAndDuals(L,toFile=>opts.file);
+{A,Adual,fcL}:=toSequence mConvexHullFacesAndDuals(L,toFile=>opts.file);
 makeConvHull(A,Adual,fcL))
 
 makeConvHull=method()
@@ -3707,6 +3801,11 @@ doc ///
       and its tropical subcocomplex (see @TO tropDef@).      
 
       {\bf What' new:}
+
+        {\it Sept 20, 2009 (Version 0.46)}
+
+           Added a function @TO hull@ to compute the positive hull of a list of vectors.
+
 
         {\it Sept 8, 2009 (Version 0.45)}
 
@@ -6419,6 +6518,8 @@ doc ///
 
         @TO convHull@ -- The convex hull
 
+        @TO hull@ -- The positive hull
+
         @TO boundaryOfPolytope@ -- The boundary of a polytope
 
         @TO newEmptyComplex@ -- Generates an empty complex.
@@ -7552,6 +7653,7 @@ doc ///
     file
     [convHull,file]
     [PT1,file]
+    [hull,file]
   Headline
     Store result of a computation in a file.
   Description
@@ -7561,6 +7663,7 @@ doc ///
   SeeAlso
      PT1
      convHull
+     hull
   Caveat
     This works only when using the package ConvexInterface.
 ///
@@ -7614,6 +7717,51 @@ doc ///
      deform
   Caveat
      This does not changes deformation data which may be stored in the individual faces.
+///
+
+
+doc ///
+  Key
+    hull    
+    (hull,List)
+    (hull,String)
+  Headline
+    The positive hull complex.
+  Usage
+    hull(L)
+    hull(fn)
+  Inputs
+    L:List
+       of @TO Vector@s lying all in the same space.
+    fn:String
+  Outputs
+    C:Complex
+  Description
+   Text
+        Returns the cone which is the hull of lattice vectors in L.
+        The output has C.isPolytope==true.
+
+        If applied to the string fn the result of a previous computation stored via the option @TO file@ is read from the file fn.
+
+        The hull of L has to be strictly convex.
+        
+   Example
+    L= {{0,1,1,0,0},{0,1,0,1,0},{0,1,0,0,0},{1,0,0,0,1},{1,0,-1,-1,-1},{1,0,0,0,0}};
+    L=apply(L,vector)
+    C=hull L
+    C.grading
+    dC=dualize C
+    dC.grading
+  SeeAlso
+     Complex
+  Caveat
+     The cone is represented as a complex on its rays, hence if @TO (dim,Face)@ is applied to a @TO Face@ it
+     will return the dimension of the corresponding cone minus one.
+      
+     This uses the package Polyhedra.m2 to compute the facets. Too slow compared to Maple/convex.
+
+     If the package {\it ConvexInterface} is loaded, then this command calls Maple/Convex.
+     See the corresponding option explained at @TO SRdeformations@.
 ///
 
 
