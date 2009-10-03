@@ -47,8 +47,9 @@ document {
 	       TO2(Matrix, "matrix"), ", over the ring ", TT "R"}
 	  },
      PARA {
-	  "(For division of matrices, which is thought of as lifting
-	  one homomorphism over another, see ", TO (symbol //,Matrix, Matrix), ")."
+	  "(Disambiguation: for division of matrices, which is thought of as lifting
+	  one homomorphism over another, see instead ", TO (symbol //,Matrix, Matrix), ".  For lifting a map between modules to a map 
+	  between their free resolutions, see ", TO extend, ".)"
 	  },
      PARA {
 	  "The ring ", TT "R", " should be one of the base rings 

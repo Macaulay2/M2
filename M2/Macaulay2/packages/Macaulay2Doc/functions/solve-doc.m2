@@ -16,6 +16,11 @@ document {
 	  "x" => {"the same type of matrix, over the same ring, of size n by r,
 	       such that ", TT "Ax=b"}
 	  },
+     PARA {
+	  "(Disambiguation: for division of matrices, which can also be thought of as solving a
+	  system of linear equations, see instead ", TO (symbol //,Matrix, Matrix), ".  For lifting a map between modules to a map 
+	  between their free resolutions, see ", TO extend, ".)"
+	  },
      "There are several restrictions.  The first is that there are only a limited number of rings
      for which this function is implemented.  Second, over ", TO "RR", " or ", TO "CC", 
      ", the matrix ", TT "A", " must be a square
@@ -61,10 +66,6 @@ document {
           A'' = I // A
 	  norm(A' - A'')
           ///,
-     PARA {
-	  "For division of matrices, which can also be thought of as solving a
-	  system of linear equations, see ", TO (symbol //,Matrix, Matrix), "."
-	  },
      Caveat => {"This function is limited in scope, but is sometimes useful for very large 
 	  matrices"},
      SeeAlso => {LUdecomposition, SVD, MutableMatrix, norm, random}
