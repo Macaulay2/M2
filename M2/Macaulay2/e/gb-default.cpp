@@ -324,18 +324,13 @@ gbA::gbelem *gbA::gbelem_make(gbvector *f,  // grabs f
 
 void gbA::gbelem_text_out(buffer &o, int i, int nterms) const
 {
-  bool ismingen = false;
-  switch (gb[i]->minlevel) {
-  case 1: 
-    ismingen = true;
-    o << "GB elem: "; break;
-  case 2:
-    o << "GB elem: "; break;
-  case 3:
-    o << "reducer: "; break;
-  default:
-    o << "??:"; break;
-  }
+  gbelem_type minlevel = gb[i]->minlevel;
+  bool ismingen = (minlevel & ELEM_MINGEN);
+  bool ismingb = (minlevel & ELEM_MINGB);
+  if (ismingb)
+    o << "GB elem: ";
+  else
+    o << "reducer: ";
   o << "g" << i << " = ";
   R->gbvector_text_out(o, _F, gb[i]->g.f, nterms);
   o << " ["
@@ -849,7 +844,7 @@ void gbA::update_pairs(int id)
   for (int i=first_gb_element; i<id; i++)
     {
       gbelem *g = gb[i];
-      if (g->minlevel != ELEM_NON_MIN_GB && gbelem_COMPONENT(g) == x)
+      if ((g->minlevel & ELEM_MINGB) && gbelem_COMPONENT(g) == x)
 	{
 	  spair *s = spair_make(id,i);
 	  new_set.push_back(s);
@@ -1233,7 +1228,7 @@ void gbA::compute_s_pair(spair *p)
 
 
 // ZZZZ split
-bool gbA::reduce(spair *p)
+bool gbA::reduce_kk(spair *p)
 {
   /* Returns false iff we defer computing this spair. */
   /* If false is returned, this routine has grabbed the spair 'p'. */
@@ -1272,68 +1267,8 @@ bool gbA::reduce(spair *p)
       int gap,w;
       R->gbvector_get_lead_exponents(_F, p->f(), EXP_);
       int x = p->f()->comp;
-      if (over_ZZ())
-	{
-	  mpz_ptr c = p->f()->coeff.get_mpz();
-	  w = find_good_term_divisor_ZZ(c,EXP_,x,this_degree,gap);
+      w = find_good_divisor(EXP_,x,this_degree, gap); 
 
-	  // If w < 0, then no divisor was found.  Is there a GB element of
-	  // the same degree as this one, and with the same exponent vector?
-	  // If so, use gcdextended to find (g,u,v), 
-	  if (w < 0 || gap > 0)
-	  {
-	    MonomialTableZZ::mon_term *t = lookupZZ->find_exact_monomial(EXP_,
-									 x,
-									 first_in_degree);
-	    if (t != 0)
-	      {
-		// f <-- u*p+v*f (same with syz versions), need to change lookupZZ too?
-		// p <-- c*p-d*f
-#ifdef DEVELOPMENT
-#warning "quotient ring handling, lookupZZ needs to change too?"
-#endif
-		gbelem *g = gb[t->_val];
-		if (gbTrace >= 10)
-		  {
-		    buffer o;
-		    o << "  swapping with GB element " << t->_val;
-		    emit_line(o.str());
-		  }
-		R->gbvector_replace_2by2_ZZ(_F, _Fsyz, p->f(), p->fsyz(), g->g.f, g->g.fsyz);
-		// Before continuing, do remainder of g->g
-		tail_remainder_ZZ(g->g, this_degree);
-		lookupZZ->change_coefficient(t, g->g.f->coeff.get_mpz());
-
-		// If the element p is a generator, then we must assume that now the
-		// swapped g is a minimal generator.
-		if (p->type == SPAIR_GEN)
-		  g->minlevel = ELEM_POSSIBLE_MINGEN;
-		else if (g->minlevel = ELEM_POSSIBLE_MINGEN)
-		  p->type = SPAIR_GEN;
-
-		auto_reduce_by(t->_val);
-		if (gbTrace >= 10)
-		  {
-		    buffer o;
-		    o << "  swap yielded";
-		    emit_line(o.str()); o.reset();
-		    o << "      ";
-		    R->gbvector_text_out(o, _F, p->f(), 3);
-		    emit_line(o.str()); o.reset();
-		    o << "      ";
-		    R->gbvector_text_out(o, _F, g->g.f, 3);
-		    emit_line(o.str());
-		  }
-		continue;
-	      }
-	  }
-	}
-      else
-	{
-	  w = find_good_divisor(EXP_,x,this_degree, gap); 
-	}
-
-	
       // replaced gap, g.
       if (w < 0) break;
       if (gap > 0)
@@ -1341,22 +1276,14 @@ bool gbA::reduce(spair *p)
 	  POLY h;
 	  h.f = R->gbvector_copy(p->x.f.f);
 	  h.fsyz = R->gbvector_copy(p->x.f.fsyz);
-	  insert_gb(h,ELEM_NON_MIN_GB);
+	  insert_gb(h,(p->type == SPAIR_GEN ? ELEM_MINGEN : 0));
 	}
       POLY g = gb[w]->g;
 
-      if (over_ZZ())
-	{
-	  R->gbvector_reduce_lead_term_ZZ(_F,_Fsyz,p->f(), p->fsyz(),
-					  g.f, g.fsyz);
-	}
-      else
-	{
-	  R->gbvector_reduce_lead_term(_F, _Fsyz,
-				       0,
-				       p->f(), p->fsyz(), /* modifies these */
-				       g.f, g.fsyz);
-	}
+      R->gbvector_reduce_lead_term(_F, _Fsyz,
+				   0,
+				   p->f(), p->fsyz(), /* modifies these */
+				   g.f, g.fsyz);
 
       stats_nreductions++;
       if (gbTrace == 15)
@@ -1458,12 +1385,14 @@ bool gbA::reduce_ZZ(spair *p)
 	      tail_remainder_ZZ(g->g, this_degree);
 	      lookupZZ->change_coefficient(t, g->g.f->coeff.get_mpz());
 	      
-	      // If the element p is a generator, then we must assume that now the
-	      // swapped g is a minimal generator.
-	      if (p->type == SPAIR_GEN)
-		g->minlevel = ELEM_POSSIBLE_MINGEN;
-	      else if (g->minlevel = ELEM_POSSIBLE_MINGEN)
-		p->type = SPAIR_GEN;
+		// If the element p is a generator, then we must assume that now the
+		// swapped g is a (possible) minimal generator.
+	      g->minlevel |= ELEM_MINGB;
+		if (p->type == SPAIR_GEN || (g->minlevel & ELEM_MINGEN))
+		  {
+		    g->minlevel |= ELEM_MINGEN;
+		    p->type = SPAIR_GEN;
+		  }
 	      
 	      auto_reduce_by(t->_val);
 	      if (gbTrace >= 10)
@@ -1488,7 +1417,7 @@ bool gbA::reduce_ZZ(spair *p)
 	  POLY h;
 	  h.f = R->gbvector_copy(p->x.f.f);
 	  h.fsyz = R->gbvector_copy(p->x.f.fsyz);
-	  insert_gb(h,ELEM_MIN_GB);
+	  insert_gb(h,(p->type == SPAIR_GEN ? ELEM_MINGEN : 0));
 	}
       POLY g = gb[w]->g;
 
@@ -1524,6 +1453,13 @@ bool gbA::reduce_ZZ(spair *p)
       emit_wrapped(o.str());
     }
   return true;
+}
+
+
+bool gbA::reduceit(spair *p)
+{
+  if (over_ZZ()) return reduce_ZZ(p);
+  return reduce_kk(p);
 }
 
 /***********************
@@ -2065,57 +2001,6 @@ void gbA::collect_syzygy(gbvector *f)
     }
 }
 
-void gbA::handle_elem(POLY f, gbelem_type minlevel)
-{
-  if (!R->gbvector_is_zero(f.f))
-    {
-      insert_gb(f,minlevel);
-      if (gbTrace == 3)
-	emit_wrapped("m");
-    }
-  else 
-    {
-      originalR->get_quotient_info()->gbvector_normal_form(_Fsyz, f.fsyz);
-      if (!R->gbvector_is_zero(f.fsyz))
-	{
-	  /* This is a syzygy */
-	  collect_syzygy(f.fsyz);
-	  if (gbTrace == 3)
-	    emit_wrapped("z");
-	}
-      else
-	{
-	  if (gbTrace == 3)
-	    emit_wrapped("o");
-	}
-    }
-}
-
-bool gbA::s_pair_step()
-{
-  spair *p = spair_set_next();
-  if (!p) return false;
-
-  stats_npairs++;
-
-  bool not_deferred = (over_ZZ() ? reduce_ZZ(p) : reduce(p));
-
-  if (not_deferred)
-    //  if (reduce(p)) /* i.e. if the reduction is not deferred */
-    {
-      gbelem_type minlevel = (p->type == SPAIR_GEN ? ELEM_POSSIBLE_MINGEN : ELEM_MIN_GB);
-      if (p->type == SPAIR_GEN)
-	n_gens_left--;
-      POLY f = p->x.f;
-      p->x.f.f = 0;
-      p->x.f.fsyz = 0;
-      spair_delete(p);
-
-      handle_elem(f,minlevel);
-    }
-  return true;
-}
-
 void gbA::insert_gb(POLY f, gbelem_type minlevel)
 {
   /* Reduce this element as far as possible.  This either removes content, 
@@ -2206,11 +2091,12 @@ bool gbA::process_spair(spair *p)
 {
   stats_npairs++;
 
-  bool not_deferred = (over_ZZ() ? reduce_ZZ(p) : reduce(p));
+  bool not_deferred = reduceit(p);
 
   if (!not_deferred) return true;
 
-  gbelem_type minlevel = (p->type == SPAIR_GEN ? ELEM_POSSIBLE_MINGEN : ELEM_MIN_GB);
+  gbelem_type minlevel = (p->type == SPAIR_GEN ? ELEM_MINGEN : 0) | ELEM_MINGB;
+
   if (p->type == SPAIR_GEN) n_gens_left--;
   POLY f = p->x.f;
   p->x.f.f = 0;
@@ -2271,7 +2157,7 @@ Matrix *gbA::make_lead_term_matrix()
   for (int i=first_gb_element; i<gb.size(); i++)
     {
       gbelem *g = gb[i];
-      if (g->minlevel != ELEM_NON_MIN_GB)
+      if (g->minlevel & ELEM_MINGB)
 	{
 	  gbvector *f = g->g.f;
 	  assert(f != 0);
@@ -2335,7 +2221,7 @@ void gbA::do_computation()
 		    set_status(COMP_INTERRUPTED);
 		    return;
 		  }
-		if (gb[np_i]->minlevel != ELEM_NON_MIN_GB)
+		if (gb[np_i]->minlevel & ELEM_MINGB)
 		  update_pairs(np_i);
 		np_i++;
 	      }
@@ -2497,6 +2383,7 @@ void gbA::start_computation()
 	  o << "nsaved = " << nsaved_unneeded;
 	  emit_line(o.str());
 	}
+      show();
     }
 }
 
@@ -2513,7 +2400,7 @@ void gbA::minimalize_gb()
   VECTOR(POLY) polys;
   for (int i=first_gb_element; i<gb.size(); i++)
     {
-      if (gb[i]->minlevel != ELEM_NON_MIN_GB)
+      if (gb[i]->minlevel & ELEM_MINGB)
 	polys.push_back(gb[i]->g);
     }
 
@@ -2572,7 +2459,7 @@ const MatrixOrNull *gbA::get_mingens()
 {
   MatrixConstructor mat(_F,0);
   for (VECTOR(gbelem *)::iterator i = gb.begin(); i != gb.end(); i++)
-    if ((*i)->minlevel == ELEM_POSSIBLE_MINGEN)
+    if ((*i)->minlevel & ELEM_MINGEN)
       mat.append(originalR->translate_gbvector_to_vec(_F, (*i)->g.f));
   return mat.to_matrix();
 
