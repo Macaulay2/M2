@@ -1,15 +1,16 @@
 newPackage(
 	"ConvexInterface",
-    	Version =>"0.25", 
-    	Date =>"August 25, 2009",
+    	Version =>"0.30", 
+    	Date =>"September 20, 2009",
     	Authors =>{{Name =>"Janko Boehm", 
 		  Email =>"boehm@math.uni-sb.de", 
 		  HomePage =>"http://www.math.uni-sb.de/ag/schreyer/jb/"}
                   },
     	Headline =>"Interface to Convex",
     	DebuggingMode =>true,
-	AuxiliaryFiles => true,
-        Configuration =>{"ConvexPath"=>""}
+        Configuration =>{"ConvexPath"=>""},
+	CacheExampleOutput => true,
+	AuxiliaryFiles => true
         )
 
 -- For information see documentation key "ConvexInterface" below.
@@ -17,7 +18,7 @@ newPackage(
 
 needsPackage "MapleInterface"
 
-export({mFaces,mFacesAndDuals,mHomology,FinitelyGeneratedAbelianGroup,toFile,readFaces})
+export({mConvexHullFaces,mConvexHullFacesAndDuals,mHomology,FinitelyGeneratedAbelianGroup,toFile,readConvexHullFaces,mLatticePoints,mPosHullFaces,mPosHullFacesAndDuals,readPosHullFaces})
 
 
 -- if you want to put the library convex.m in a non standard directory
@@ -28,9 +29,71 @@ pathconvex:=((options ConvexInterface).Configuration)#"ConvexPath"
 
 pathconvex="\""|pathconvex|"\""
 
+mPosHullFaces=method(Options=>{toFile=>null})
+mPosHullFaces(List):=opts->(L)->(
+L1:=toString apply(L,entries);
+---------------------------------------
+mapleprogram:=
+///
+libname0:=libname:
+libname:=libname0,placeholder2;
+with(convex):
+P:=poshull(op(placeholder1));
+LP:=convert(P,list):
+fc:=convert(faces(P),list):
+fcvert:=[]:
+for j from 1 to nops(fc) do
+fcvert1:=[]:
+for jj from 1 to nops(fc[j]) do
+f:=convert(fc[j][jj],list);
+fcvert1:=[op(fcvert1),f[2]]:
+od:
+fcvert:=[op(fcvert),fcvert1]:
+od:
+returnvalue:=[LP[4],fcvert];
+///;
+---------------------------------------
+Lfc:=callMaple(L1,pathconvex,mapleprogram,store=>opts.toFile);
+{matrix Lfc#0,Lfc#1}
+)
 
-mFaces=method(Options=>{toFile=>null})
-mFaces(List):=opts->(L)->(
+{*
+    L= {{0,1,1,0,0},{0,1,0,1,0},{0,1,0,0,0},{1,0,0,0,1},{1,0,-1,-1,-1},{1,0,0,0,0}};
+    L=apply(L,vector)
+    C=hull L
+*}
+
+mPosHullFacesAndDuals=method(Options=>{toFile=>null})
+mPosHullFacesAndDuals(List):=opts->(L)->(
+L1:=toString apply(L,entries);
+---------------------------------------
+mapleprogram:=
+///
+libname0:=libname:
+libname:=libname0,placeholder2;
+with(convex):
+P:=poshull(op(placeholder1));
+LP:=convert(P,list):
+fc:=convert(faces(P),list):
+fcvert:=[]:
+for j from 1 to nops(fc) do
+fcvert1:=[]:
+for jj from 1 to nops(fc[j]) do
+f:=convert(fc[j][jj],list);
+fcvert1:=[op(fcvert1),[f[2],f[3]]]:
+od:
+fcvert:=[op(fcvert),fcvert1]:
+od:
+returnvalue:=[LP[4],LP[7],fcvert];
+///;
+---------------------------------------
+Lfc:=callMaple(L1,pathconvex,mapleprogram,store=>opts.toFile);
+{matrix Lfc#0,matrix Lfc#1,Lfc#2}
+)
+
+
+mConvexHullFaces=method(Options=>{toFile=>null})
+mConvexHullFaces(List):=opts->(L)->(
 L1:=toString apply(L,entries);
 ---------------------------------------
 mapleprogram:=
@@ -50,11 +113,11 @@ fcvert1:=[op(fcvert1),f[2]]:
 od:
 fcvert:=[op(fcvert),fcvert1]:
 od:
-returnvalue:=[LP[4],LP[7],fcvert];
+returnvalue:=[LP[4],fcvert];
 ///;
 ---------------------------------------
 Lfc:=callMaple(L1,pathconvex,mapleprogram,store=>opts.toFile);
-{matrix cutCone Lfc#0,matrix cutCone Lfc#1,Lfc#2}
+{matrix cutCone Lfc#0, Lfc#1}
 )
 
 cutCone=method()
@@ -64,6 +127,7 @@ a:=0;
 rat:=false;
 for j from 0 to #L-1 do (
   a=L#j#(#(L#j)-1);
+  if a==0 then error("0 not in interior");
   if a!=1 then rat=true;
   L1=append(L1,apply(toList(0..#(L#j)-2),jj->L#j#jj/a));
 );
@@ -72,13 +136,13 @@ apply(L1,j->apply(j,jj->sub(jj,ZZ))))
 
 {*
 L={vector {1,0,0},vector {-1,0,0},vector {0,1,0},vector {0,-1,0},vector {0,0,1},vector {0,0,-1}};
-P=mFaces(L)
+P=mConvexHullFaces(L)
 *}
 
 
 
-mFacesAndDuals=method(Options=>{toFile=>null})
-mFacesAndDuals(List):=opts->(L)->(
+mConvexHullFacesAndDuals=method(Options=>{toFile=>null})
+mConvexHullFacesAndDuals(List):=opts->(L)->(
 L1:=toString apply(L,entries);
 ---------------------------------------
 mapleprogram:=
@@ -107,16 +171,29 @@ Lfc:=callMaple(L1,pathconvex,mapleprogram,store=>opts.toFile);
 
 {*
 L={vector {1,0,0},vector {-1,0,0},vector {0,1,0},vector {0,-1,0},vector {0,0,1},vector {0,0,-1}};
-P=mFacesAndDuals(L)
+P=mConvexHullFacesAndDuals(L)
 *}
 
 
-readFaces=method()
-readFaces(String):=(fn)->(
+readConvexHullFaces=method()
+readConvexHullFaces(String):=(fn)->(
 Lfc:=readMaple(fn);
-{matrix cutCone Lfc#0,matrix cutCone Lfc#1,Lfc#2}
+if #Lfc==3 then (
+   return({matrix cutCone Lfc#0,matrix cutCone Lfc#1,Lfc#2})
+) else (
+   return({matrix cutCone Lfc#0,Lfc#1})
+)
 )
 
+readPosHullFaces=method()
+readPosHullFaces(String):=(fn)->(
+Lfc:=readMaple(fn);
+if #Lfc==3 then (
+   return({matrix Lfc#0,matrix Lfc#1,Lfc#2})
+) else (
+   return({matrix Lfc#0,Lfc#1})
+)
+)
 
 
 mHomology=method()
@@ -188,6 +265,47 @@ finitelyGeneratedAbelianGroup(List):=(L)->(
 --finitelyGeneratedAbelianGroup(2,{2,56})
 
 
+
+mLatticePoints=method()
+mLatticePoints(List):=(L)->(
+L1:=toString apply(L,entries);
+-------------------------
+mapleprogram:=
+///
+libname0:=libname:
+libname:=libname0,placeholder2;
+with(convex):
+latticePoints:=proc(L)
+local j,L1,C,H,n;
+L1:=[];
+for j from 1 to nops(L) do
+  L1:=[op(L1),[op(L[j]),1]];
+od:
+C:=poshull(op(L1));
+print(C);
+H:=hilbertbasis(C);
+print(H);
+n:=nops(L[1]);
+L1:=[];
+for j from 1 to nops(H) do
+  if H[j][n+1]=1 then L1:=[op(L1),[seq(H[j][jj],jj=1..n)]];fi;
+od:
+return(L1);
+end proc:
+returnvalue:=latticePoints(placeholder1);
+///;
+--------------------------
+Lfc:=callMaple(L1,pathconvex,mapleprogram);
+apply(Lfc,j->vector j))
+
+{*
+L={vector {3,-1,-1},vector {-1,3,-1},vector {-1,-1,3},vector {-1,-1,-1}};
+P=mLatticePoints(L)
+*}
+
+
+
+
 {*
 Copyright (C) [2009] [Janko Boehm]
 
@@ -211,12 +329,20 @@ doc ///
     Text
       {\bf What's new:}
 
+        {\it September 20, 2009:}
+        Added functions @TO mPosHullFaces@ and @TO mPosHullFacesAndDuals@ to compute the face complex of a cone.
+        They have an @TO Option@ @TO toFile@ to store the result of a computation
+        in a file, and a function @TO readPosHullFaces@ to read the file.
+
+        {\it September 10, 2009:}
+        Added a function @TO mLatticePoints@ to compute the lattice points of polytope.
+
         {\it August 28, 2009:}
         The interface now uses indexed vertices. This substantially improves computation time and memory usage.
 
         {\it August 25, 2009:}
-        Added an @TO Option@ @TO toFile@ to @TO mFaces@ and @TO mFacesAndDuals@ to store the result of a computation
-        in a file, and a function @TO readFaces@ to read the file.
+        Added an @TO Option@ @TO toFile@ to @TO mConvexHullFaces@ and @TO mConvexHullFacesAndDuals@ to store the result of a computation
+        in a file, and a function @TO readConvexHullFaces@ to read the file.
 
       {\bf Overview:}
       
@@ -224,7 +350,7 @@ doc ///
 
       The Convex package is distributed by Matthias Franz under the GNU General Public License, see 
 
-      http://www.math.uwo.ca/~mfranz/convex
+      @HREF"http://www.math.uwo.ca/~mfranz/convex"@
 
       for more information.
 
@@ -232,11 +358,17 @@ doc ///
 
       So far the follwing functions are accessible via ConvexInterface:
 
-      @TO mFaces@  -- compute the faces of a convex hull
+      @TO mConvexHullFaces@  -- compute the faces of a convex hull
 
-      @TO mFacesAndDuals@ -- computing the faces and their duals
+      @TO mConvexHullFacesAndDuals@ -- computing the faces and their duals
 
       @TO mHomology@ -- Compute the homology of a (not necessarily simplicial) complex
+
+      @TO mLatticePoints@ -- computing the lattice points of a convex hull
+
+      @TO mPosHullFaces@  -- compute the faces of a positive hull
+
+      @TO mPosHullFacesAndDuals@ -- computing the faces and their duals of a positive hull
 
 
       Other functions that may be interesting to access:
@@ -253,7 +385,7 @@ doc ///
 
       Install the convex package in Maple, i.e., put the file
 
-      http://www.math.uwo.ca/~mfranz/convex/files/current/convex.m
+      @HREF"http://www.math.uwo.ca/~mfranz/convex/files/current/convex.m"@
 
       into the lib directory inside your Maple program directory. You can test it in Maple by typing {\it with(convex);}
 
@@ -296,23 +428,22 @@ doc ///
       In Windows systems use double backslashes to separate directories
       and the triple-slash as string delimiter. See the beginning of the source code for an example.
 
-      Then do (if you are using M2 in Windows then first exit and then start M2 again)
 
-      installPackage("ConvexInterface",RerunExamples=>true)
+      To test whether the interface is set up properly do, e.g.,
 
-      to run the examples in the documentation. This should not give any error messages.
+      mPosHullFaces(\{vector \{2,3,4\}\})
 
 ///
 
 
 doc ///
   Key
-    mFaces    
-    (mFaces,List)
+    mConvexHullFaces    
+    (mConvexHullFaces,List)
   Headline
     Faces of a convex hull in Maple/Convex.
   Usage
-    mFaces(L)
+    mConvexHullFaces(L)
   Inputs
     L:List
        of @TO Vector@s
@@ -324,8 +455,6 @@ doc ///
 
         - a @TO Matrix@ A with the vertices of the convex hull of L in its rows
 
-        - a @TO Matrix@ Adual with the vertices of the dual in its rows
-
         - a list of lists with the faces of the convex hull sorted by increasing dimension.
 
 
@@ -335,18 +464,18 @@ doc ///
         
    Example
     L={vector {1,0,0},vector {-1,0,0},vector {0,1,0},vector {0,-1,0},vector {0,0,1},vector {0,0,-1}}
-    P=mFaces(L)
+    P=mConvexHullFaces(L)
 ///
 
 
 doc ///
   Key
-    mFacesAndDuals    
-    (mFacesAndDuals,List)
+    mConvexHullFacesAndDuals    
+    (mConvexHullFacesAndDuals,List)
   Headline
     Faces and their duals of a convex hull in Maple/Convex.
   Usage
-    mFacesAndDuals(L)
+    mConvexHullFacesAndDuals(L)
   Inputs
     L:List
        of @TO Vector@s
@@ -367,12 +496,90 @@ doc ///
 
         The vertices of the faces are represented by the indices of the rows of A.
 
+        This requires that the convex hull of L contains 0 in its interior.
+
         This uses the Convex functions convHull and faces.
         
    Example
     L={vector {1,0,0},vector {-1,0,0},vector {0,1,0},vector {0,-1,0},vector {0,0,1},vector {0,0,-1}}
-    P=mFacesAndDuals(L)
+    P=mConvexHullFacesAndDuals(L)
 ///
+
+
+
+doc ///
+  Key
+    mPosHullFaces    
+    (mPosHullFaces,List)
+  Headline
+    Faces of a positive hull in Maple/Convex.
+  Usage
+    mPosHullFaces(L)
+  Inputs
+    L:List
+       of @TO Vector@s
+  Outputs
+    :List
+  Description
+   Text
+        Returns a list of 
+
+        - a @TO Matrix@ A with the rays of the positive hull of L in its rows
+
+        - a list of lists with the faces of the convex hull sorted by increasing dimension.
+
+
+        The rays of the faces are represented by the indices of the rows of A.
+
+        This uses the Convex functions posHull and faces.
+
+        The positive hull of L is required to be strictly convex.
+        
+   Example
+    L= {{0,1,1,0,0},{0,1,0,1,0},{0,1,0,0,0},{1,0,0,0,1},{1,0,-1,-1,-1},{1,0,0,0,0}};
+    L=apply(L,vector)
+    P=mPosHullFaces(L)
+///
+
+
+doc ///
+  Key
+    mPosHullFacesAndDuals    
+    (mPosHullFacesAndDuals,List)
+  Headline
+    Faces and their duals of positive hull in Maple/Convex.
+  Usage
+    mPosHullFacesAndDuals(L)
+  Inputs
+    L:List
+       of @TO Vector@s
+  Outputs
+    :List
+  Description
+   Text
+        Returns a list of
+
+        - a @TO Matrix@ A with the rays of the positive hull of L in its rows
+
+        - a @TO Matrix@ Adual with the rays of the dual in its rows
+
+        - a list of lists with the faces of the positive hull sorted by increasing dimension.
+
+
+        Each face is a list with two elements. The first is a list of the vertices of the face, the second a list of the vertices of the dual face.
+
+        The rays of the faces are represented by the indices of the rows of A.
+
+        This uses the Convex functions posHull and faces.
+
+        The positive hull of L is required to be strictly convex and of full dimension.
+        
+   Example
+    L= {{0,1,1,0,0},{0,1,0,1,0},{0,1,0,0,0},{1,0,0,0,1},{1,0,-1,-1,-1},{1,0,0,0,0}};
+    L=apply(L,vector)
+    P=mPosHullFacesAndDuals(L)
+///
+
 
 
 doc ///
@@ -410,6 +617,29 @@ doc ///
      mHomology(C)
 ///
 
+doc ///
+  Key
+    mLatticePoints    
+    (mLatticePoints,List)
+  Headline
+    Compute the lattice points of a convex hull.
+  Usage
+    mLatticePoints(L)
+  Inputs
+    L:List
+       of @TO Vector@s.
+  Outputs
+    :List
+  Description
+   Text
+        Returns a list with the lattice points of the convex hull of L.
+
+        This uses the Convex functions convHull and hilbertbasis.
+        
+   Example
+    L={vector {3,-1,-1},vector {-1,3,-1},vector {-1,-1,3},vector {-1,-1,-1}};
+    P=mLatticePoints(L)
+///
 
 
 doc ///
@@ -434,34 +664,53 @@ doc ///
 doc ///
   Key
     toFile
-    [mFaces,toFile]
-    [mFacesAndDuals,toFile]
+    [mConvexHullFaces,toFile]
+    [mConvexHullFacesAndDuals,toFile]
+    [mPosHullFaces,toFile]
+    [mPosHullFacesAndDuals,toFile]
   Headline
     Store result in a file.
   Description
    Text
     If the option toFile=>fn with a @TO String@ fn is given
-    then @TO mFacesAndDuals@  stores the result in a file named fn.
+    then @TO mConvexHullFacesAndDuals@  stores the result in a file named fn.
 
-    This data can be read by the command @TO readFaces@.
+    This data can be read by the commands @TO readConvexHullFaces@ and @TO readPosHullFaces@.
 ///
 
 
 doc ///
   Key
-    readFaces    
-    (readFaces,String)
+    readConvexHullFaces    
+    (readConvexHullFaces,String)
   Headline
-    Read the result of a previous mFaces or mFacesAndDuals computation.
+    Read the result of a previous mConvexHullFaces or mConvexHullFacesAndDuals computation.
   Usage
-    readFaces(L)
+    readConvexHullFaces(L)
   Inputs
     fn:String
   Outputs
     :List
   Description
    Text
-     Read from the file fn the result of a previous @TO mFaces@ or @TO mFacesAndDuals@ computation stored via the @TO Option@ @TO toFile@.
+     Read from the file fn the result of a previous @TO mConvexHullFaces@ or @TO mConvexHullFacesAndDuals@ computation stored via the @TO Option@ @TO toFile@.
+///
+
+doc ///
+  Key
+    readPosHullFaces    
+    (readPosHullFaces,String)
+  Headline
+    Read the result of a previous mPosHullFaces or mPosHullFacesAndDuals computation.
+  Usage
+    readConvexHullFaces(L)
+  Inputs
+    fn:String
+  Outputs
+    :List
+  Description
+   Text
+     Read from the file fn the result of a previous @TO mPosHullFacesAndDuals@ or @TO mPosHullFaces@ computation stored via the @TO Option@ @TO toFile@.
 ///
 
 
