@@ -12,15 +12,23 @@
 
 class GBWeight;
 
+const int ELEM_IN_RING = 1;
+const int ELEM_MINGEN = 2;
+const int ELEM_MINGB = 4;
+
 class gbA : public GBComputation {
 public:
-  enum gbelem_type { 
-    ELEM_IN_RING,  // These are ring elements
-    ELEM_POSSIBLE_MINGEN,   // These are min GB elements which might also be min gens
-                            // In the graded case, they ARE minimal generators
-    ELEM_MIN_GB,    // These are elements which are minimal GB elements
-    ELEM_NON_MIN_GB // These are elements which are not minimal GB elements
-  };
+  typedef int gbelem_type;
+    // ELEM_IN_RING: a bit set.  If this is set, then the next two bits need to
+    //   off.
+    // ELEM_MINGEN: a bit set: 0 means it is provably not needed to 
+    //   generated the ideal or submodule.  1 means it might be a minimal generator.
+    //   NOTE: often the min gens obtained this way are not so good.  Exceptions are
+    //    for graded submodules.  Then the meaning of 1 is: it IS a min gen.
+    // ELEM_MINGB: a bit set: 0 means is not part of the min gb (so far).  1 means it is.
+    // SO: possible values are 0, 1, 2, 4, 6.
+    // Test using code like this:
+    //   if (g->minlevel & ELEM_MINGEN) { .. do this if it is a possible min gen .. } else { .. if not .. };
 
   struct gbelem {
     POLY g;
@@ -257,11 +265,9 @@ private:
   /* reduction */
   void auto_reduce_by(int id);
   void compute_s_pair(spair *p);
-  bool reduce(spair *p);
+  bool reduceit(spair *p);
   void collect_syzygy(gbvector *fsyz);
 
-  void handle_elem(POLY f, gbelem_type minlevel);
-  bool s_pair_step();
   enum ComputationStatusCode computation_is_complete();
 
 
@@ -272,6 +278,7 @@ private:
   /* Making the minimal GB */
 
   bool reduce_ZZ(spair *p);
+  bool reduce_kk(spair *p);
 
   void poly_auto_reduce(VECTOR(POLY) &mat);
   void poly_auto_reduce_ZZ(VECTOR(POLY) &mat);
