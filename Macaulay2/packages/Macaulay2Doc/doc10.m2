@@ -375,8 +375,9 @@ document {
      Key => factor,
      Headline => "factor a ring element or a ZZ-module",
      PARA {
-	  "For division of matrices, which can be thought of as factoring
-	  one homomorphism through another, see ", TO (symbol //,Matrix, Matrix), "."
+	  "(Disambiguation: for division of matrices, which can be thought of as factoring
+	  one homomorphism through another, instead see ", TO (symbol //,Matrix, Matrix), ".  For
+	  lifting a map between modules to a map between their free resolutions, see ", TO extend, ".)"
 	  }
      }
 
