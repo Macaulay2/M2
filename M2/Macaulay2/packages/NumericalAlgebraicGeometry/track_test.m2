@@ -1,6 +1,6 @@
 restart
-loadPackage "NAG"
-NAGtrace 1; debug NAG;
+loadPackage "NumericalAlgebraicGeometry"
+NAGtrace 1; debug NumericalAlgebraicGeometry;
 load "benchmarks.m2"
 
 -- small example with 2 solutions -------------------------------------------

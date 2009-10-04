@@ -1,5 +1,5 @@
 restart
-loadPackage "NAG"
+loadPackage "NumericalAlgebraicGeometry"
 DBG = 2;
 ------------------------------------------------------
 -- COMPARISON OF              -- PHCpack -- Bertini -- hom4ps2 --

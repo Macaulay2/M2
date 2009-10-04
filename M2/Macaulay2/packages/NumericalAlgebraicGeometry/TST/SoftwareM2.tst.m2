@@ -1,4 +1,4 @@
-loadPackage ("NAG", FileName=>"../../NAG.m2");
+loadPackage ("NumericalAlgebraicGeometry", FileName=>"../../NumericalAlgebraicGeometry.m2");
 needs "../benchmarks.m2"
 
 NAGtrace 1

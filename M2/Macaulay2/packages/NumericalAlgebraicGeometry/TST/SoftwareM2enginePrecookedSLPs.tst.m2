@@ -1,4 +1,4 @@
-loadPackage "NAG"
+loadPackage "NumericalAlgebraicGeometry"
 needs "../benchmarks.m2"
 NAGtrace 1
 for predictor in {RungeKutta4,Tangent,Euler} do (

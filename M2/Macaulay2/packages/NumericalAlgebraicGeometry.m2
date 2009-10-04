@@ -1,6 +1,6 @@
 -- -*- coding: utf-8 -*-
 newPackage(
-     "NAG",
+     "NumericalAlgebraicGeometry",
      Version => "1.2.1",
      Date => "8 Jun 2009",
      Headline => "Numerical Algebraic Geometry",
@@ -39,16 +39,16 @@ exportMutable {
 debug Core; -- to enable engine routines
 
 -- GLOBAL VARIABLES ----------------------------------
-PHCexe = NAG#Options#Configuration#"PHCpack";
-BERTINIexe = NAG#Options#Configuration#"Bertini";
-HOM4PS2exe = NAG#Options#Configuration#"HOM4PS2";
+PHCexe = NumericalAlgebraicGeometry#Options#Configuration#"PHCpack";
+BERTINIexe = NumericalAlgebraicGeometry#Options#Configuration#"Bertini";
+HOM4PS2exe = NumericalAlgebraicGeometry#Options#Configuration#"HOM4PS2";
 
 DBG = 0; -- debug level (10=keep temp files)
 SLPcounter = 0; -- the number of compiled SLPs (used in naming dynamic libraries)
 lastPathTracker = null; -- path tracker object used last
 
--- ./NAG/ FILES -------------------------------------
-load "./NAG/PHCpack/PHCpack.interface.m2" 
+-- ./NumericalAlgebraicGeometry/ FILES -------------------------------------
+load "./NumericalAlgebraicGeometry/PHCpack/PHCpack.interface.m2" 
 
 -- CONVENTIONS ---------------------------------------
 
@@ -215,7 +215,7 @@ track (List,List,List) := List => o -> (S,T,solsS) -> (
      -- PHCpack -------------------------------------------------------
      if o.Software == PHCpack then return trackPHCpack(S,T,solsS,o)
      else if o.Software == Bertini then (
-	  -- tempdir := temporaryFileName() | "NAG-bertini";
+	  -- tempdir := temporaryFileName() | "NumericalAlgebraicGeometry-bertini";
 	  -- mkdir tempdir; 	  
   	  makeBertiniInput(gens R, T, StartSystem=>S, StartSolutions=>solsS, gamma=>o.gamma);
      	  compStartTime = currentTime();      
@@ -890,7 +890,7 @@ solveSystem List := List => o -> F -> (
 	  )
      else if o.Software == PHCpack then result = solvePHCpack(F,o)
      else if o.Software == Bertini then (
-	  -- tempdir := temporaryFileName() | "NAG-bertini";
+	  -- tempdir := temporaryFileName() | "NumericalAlgebraicGeometry-bertini";
 	  -- mkdir tempdir; 	  
   	  makeBertiniInput(gens R, F);
   	  run(BERTINIexe);
@@ -1106,7 +1106,7 @@ moveSlice (HashTable, Matrix) := HashTable => o -> (W,S) -> (
      )
 ///
 restart
-loadPackage ("NAG", Configuration => { "PHCpack" => "./phc" }); debug NAG;
+loadPackage ("NumericalAlgebraicGeometry", Configuration => { "PHCpack" => "./phc" }); debug NumericalAlgebraicGeometry;
 R = CC[x,y,z]
 W1 = new HashTable from {
      equations=>{x^2+y^2+z^2-1},
@@ -1195,7 +1195,7 @@ regeneration List := HashTable => o -> F -> (
      )
 ///
 restart
-loadPackage ("NAG", Configuration => { "PHCpack" => "./phc", "Bertini" => "./bertini" }); debug NAG;
+loadPackage ("NumericalAlgebraicGeometry", Configuration => { "PHCpack" => "./phc", "Bertini" => "./bertini" }); debug NumericalAlgebraicGeometry;
 R = CC[x,y,z]
 regeneration({x^2+y^2+z^2-1,x,y*z} 
      ,Software=>PHCpack
@@ -1872,7 +1872,7 @@ inline mul(complex c)
 
 ///
 restart
-loadPackage "NAG"; debug NAG;
+loadPackage "NumericalAlgebraicGeometry"; debug NumericalAlgebraicGeometry;
 R = CC[x,y,z]
 g = 3*y^2+(2.1+ii)*x
 --g = 1 + 2*x^2 + 3*x*y^2 + 4*z^2
@@ -1984,15 +1984,15 @@ NAGtrace = method()
 NAGtrace ZZ := l -> (gbTrace=l; oldDBG=DBG; DBG=l; oldDBG);
 
 beginDocumentation()
-load "./NAG/doc.m2"
+load "./NumericalAlgebraicGeometry/doc.m2"
 
 TEST ///
      --assert(multistepPredictor(2_QQ,{0,0,0}) === {-3/8, 37/24, -59/24, 55/24}) -- Wikipedia: Adams-Bashforth
      --assert(multistepPredictor(2_QQ,{-1}) === {-1/8, 5/8}) -- computed by hand
      --assert(flatten entries (coefficients first multistepPredictorLooseEnd(2_QQ,{0,0,0}))#1=={1/120, 1/16, 11/72, 1/8})
-     load "./NAG/TST/SoftwareM2.tst.m2"
-     load "./NAG/TST/SoftwareM2engine.tst.m2"
-     load "./NAG/TST/SoftwareM2enginePrecookedSLPs.tst.m2"
+     load concatenate(NumericalAlgebraicGeometry#"source directory","./NumericalAlgebraicGeometry/TST/SoftwareM2.tst.m2")
+     load concatenate(NumericalAlgebraicGeometry#"source directory","./NumericalAlgebraicGeometry/TST/SoftwareM2engine.tst.m2")
+     load concatenate(NumericalAlgebraicGeometry#"source directory","./NumericalAlgebraicGeometry/TST/SoftwareM2enginePrecookedSLPs.tst.m2")
 ///
        
 end
@@ -2002,11 +2002,11 @@ end
 -- because loading stops when the symbol "end" is encountered.
 
 restart
-loadPackage "NAG"
-uninstallPackage "NAG"
-installPackage "NAG"
-installPackage("NAG", SeparateExec=>true, AbsoluteLinks=>false, RerunExamples=>true)
-check "NAG"
+loadPackage "NumericalAlgebraicGeometry"
+uninstallPackage "NumericalAlgebraicGeometry"
+installPackage "NumericalAlgebraicGeometry"
+installPackage("NumericalAlgebraicGeometry", SeparateExec=>true, AbsoluteLinks=>false, RerunExamples=>true)
+check "NumericalAlgebraicGeometry"
 
 R = CC[x,y,z]
 f1 = (y-x^2)*(x^2+y^2+z^2-1)*(x-0.5);
