@@ -18,7 +18,7 @@ assert all({1,2}, i->SM#i#2#1=="REGULAR")
 
 for predictor in {RungeKutta4,ProjectiveNewton} do (
      (S,T,solsS) = smallExample();
-     M = track(S,T,solsS, gamma=>0.6+0.8*ii, Software=>M2, Predictor=>predictor, Projectivize=>true);
+     M = track(S,T,solsS, gamma=>0.6+0.8*ii, Software=>M2, Predictor=>predictor, Projectivize=>true, Normalize=>true);
      SM = sortSolutions M;
      assert( SM/(s->s/round)@@first == {{-1, 0}, {0, -1}, {0, 1}, {1, 0}} )                                                                  
      )

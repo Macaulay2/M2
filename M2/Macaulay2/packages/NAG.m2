@@ -24,7 +24,7 @@ export {
      "gamma","tDegree","tStep","tStepMin","stepIncreaseFactor","numberSuccessesBeforeIncrease",
      "Predictor","RungeKutta4","Multistep","Tangent","Euler","Secant","MultistepDegree","ProjectiveNewton",
      "EndZoneFactor", "maxCorrSteps", "InfinityThreshold",
-     "Projectivize",
+     "Normalize", "Projectivize",
      "AffinePatches", "DynamicPatch",
      "SLP", "HornerForm", "CompiledHornerForm", "CorrectorTolerance", "SLPcorrector", "SLPpredictor",
      "NoOutput",
@@ -144,12 +144,21 @@ normalize = method(TypicalValue => Matrix)
 -- normalizes a column vector with CC entries
 normalize Matrix := v -> (1/norm2 v)*v;
 
+BombieriWeylScalarProduct = method(TypicalValue=>RingElement)
+BombieriWeylScalarProduct (RingElement,RingElement) := (f,g) -> sum(listForm f, a->(
+	  imc := product(a#0, d->d!) / (sum(a#0))!; -- inverse of multinomial coeff
+	  bc := coefficient((ring f)_(first a),g); -- coeff of corresponding monomial in g
+	  -- (old) if isField coefficientRing ring f then 
+	  imc*a#1*conjugate bc -- ring=CC[...]
+	  -- (old) else imc*a#1*sum(listForm a#1, b->(conjugate b#1) * (coefficientRing ring f)_(b#0)) -- ring=CC[t][...]
+	  ))
 BombieriWeylNormSquared = method(TypicalValue=>RingElement)
 BombieriWeylNormSquared RingElement := f -> sum(listForm f, a->(
-	       imc := product(a#0, d->d!) / (sum(a#0))!; -- inverse of multinomial coeff
-	       if isField coefficientRing ring f then imc*a#1*conjugate a#1 -- ring=CC[...]
-	       else imc*a#1*sum(listForm a#1, b->(conjugate b#1) * (coefficientRing ring f)_(b#0)) -- ring=CC[t][...]
-	       ))
+	  imc := product(a#0, d->d!) / (sum(a#0))!; -- inverse of multinomial coeff
+	  -- (old) if isField coefficientRing ring f then 
+	  imc*a#1*conjugate a#1 -- ring=CC[...]
+	  -- (old) else imc*a#1*sum(listForm a#1, b->(conjugate b#1) * (coefficientRing ring f)_(b#0)) -- ring=CC[t][...]
+	  ))
 
 ------------------------------------------------------
 track = method(TypicalValue => List, Options =>{
@@ -172,7 +181,8 @@ track = method(TypicalValue => List, Options =>{
 	  -- end of path
 	  EndZoneFactor => 0.05, -- EndZoneCorrectorTolerance = CorrectorTolerance*EndZoneFactor when 1-t<EndZoneFactor 
 	  InfinityThreshold => 100000, -- used to tell if the path is diverging
-	  -- projectivization
+	  -- projectivize and normalize
+	  Normalize => false, -- normalize in the Bombieri-Weyl norm
 	  Projectivize => false, 
 	  AffinePatches => DynamicPatch,
 	  -- slp's 
@@ -199,7 +209,9 @@ track (List,List,List) := List => o -> (S,T,solsS) -> (
      then error "M2enginePrecookedSLPs is implemented for Projectivize=>false and SLP != null";
      if o.Software===M2engine and o.Projectivize 
      then error "M2engine is not implemented for Projectivize=>true";
-
+     if o.Predictor===ProjectiveNewton and (o.Software=!=M2 or not o.Normalize or o.SLP=!=null)
+     then error "ProjectiveNewton (experimental) requires Software=>M2, Normalize=>true and o.SLP=>null";
+     
      -- PHCpack -------------------------------------------------------
      if o.Software == PHCpack then return trackPHCpack(S,T,solsS,o)
      else if o.Software == Bertini then (
@@ -224,6 +236,9 @@ track (List,List,List) := List => o -> (S,T,solsS) -> (
      
      -- M2 (main code)  --------------------------------------------------------     
      setupStartTime := currentTime();
+     -- threshholds and other tuning parameters (should include most of them as options)
+     stepDecreaseFactor := 1/o.stepIncreaseFactor;
+     theSmallestNumber := 1e-12;
      
      isProjective := false;
      if n != numgens R then (
@@ -281,30 +296,45 @@ track (List,List,List) := List => o -> (S,T,solsS) -> (
      Rt := K(monoid[gens R, t]); -- how do you cleanly extend the generators list: e.g., what if "t" is a var name?
      t = last gens Rt; 
      Kt := K(monoid[t]);
-     H := matrix {apply(#S, i->(
-		    (nS,nT) := if o.Predictor===ProjectiveNewton 
-		    then (1 / sqrt BombieriWeylNormSquared S#i, 1 / sqrt BombieriWeylNormSquared T#i)
-		    else (1,1);
-		    o.gamma*(1-t)^(o.tDegree)*nS*sub(S#i,Rt)+t^(o.tDegree)*nT*sub(T#i,Rt)
-		    ))};
-     JH := transpose jacobian H; 
-     Hx := JH_(toList(0..n-1));
-     Ht := JH_{n};
-
-     -- compute Bombieri-Weyl norm of the homotopy, define normalizing factor, supporting constants
-     if o.Predictor === ProjectiveNewton then (
-     	  BW2 := sum(flatten entries sub(H,Kt[gens R]), BombieriWeylNormSquared); -- this is a polynomial in K[t]
-	  normalizer := t -> 1 / sqrt sub(BW2, matrix{{t}}); -- normalizing factor
-	  normalizer' := t -> - (1/2) * (normalizer t)^3 * sub(diff(Kt_0,BW2), matrix{{t}}); -- its derivative 	  
+     (nS,nT) := if o.Normalize -- make Bomboeri-Weyl norm of the systems equal 1
+     then (apply(S, s->s/sqrt(#S * BombieriWeylNormSquared s)), apply(T, s->s/sqrt(#T * BombieriWeylNormSquared s)))
+     else (S,T);
+     if o.Predictor===ProjectiveNewton 
+     then (
+	  H := {o.gamma*matrix{nS},matrix{nT}}; -- a "linear" homotopy is cooked up at evaluation using nS and nT
+     	  -- old stuff: compute Bombieri-Weyl norm of the homotopy, define normalizing factor, supporting constants
+	  -- BW2 := sum(flatten entries sub(H,Kt[gens R]), BombieriWeylNormSquared); -- this is a polynomial in K[t]
+	  -- normalizer := t -> 1 / sqrt sub(BW2, matrix{{t}}); -- normalizing factor
+	  -- normalizer' := t -> - (1/2) * (normalizer t)^3 * sub(diff(Kt_0,BW2), matrix{{t}}); -- its derivative 	  
+	  -- end old stuff
 	  DMforPN := diagonalMatrix append(T/(f->1/sqrt first degree f),1);
 	  maxDegreeTo3halves := power(max(T/first@@degree),3/2);
-     	  );
+	  reBW'ST := realPart sum(#S, i->BombieriWeylScalarProduct(o.gamma*nS#i,nT#i));-- real Bombieri-Weyl scalar product
+	  sqrt'one'minus'reBW'ST'2 :=  sqrt(1-reBW'ST^2);
+	  arcsin := a -> ( -- find arcsin(a) via Newton's method
+	       x := a;
+	       dx := 1;
+	       while abs(dx)>theSmallestNumber do (
+		    dx = -(sin x - a)/cos x;
+		    x = x + dx;
+		    );
+	       x
+	       );
+	  bigT := arcsin sqrt'one'minus'reBW'ST'2; -- the linear homotopy interval is [0,bigT]
+	  Hx := H/transpose@@jacobian; -- store jacobians (for evalHx)
+     	  )	  
+     else (
+     	  H = matrix {apply(#S, i->o.gamma*(1-t)^(o.tDegree)*sub(nS#i,Rt)+t^(o.tDegree)*sub(nT#i,Rt))};
+     	  JH := transpose jacobian H; 
+     	  Hx = JH_(toList(0..n-1));
+     	  Ht := JH_{n};
+	  );
 
      -- evaluation times
      etH := 0;
      etHx := 0; 
      etHt := 0;
-     -- evaluation functions
+     -- evaluation functions using SLP
      if o.SLP =!= null and o.Software =!= M2engine then (
 	  toSLP := pre -> (
 	       (constMAT, prog) = (if o.SLP === HornerForm 
@@ -336,13 +366,20 @@ track (List,List,List) := List => o -> (S,T,solsS) -> (
 	       );
 	  );
      if o.Software==M2 then ( --------------- M2 section -------------------------------------------------------
-	
+
+     -- evaluation functions	
      evalH := (x0,t0)-> (
 	  tr := timing (
-	       if o.SLP =!= null then r := transpose fromSlpMatrix(slpH, transpose x0 | matrix {{t0}})
-     	       else r = lift(sub(transpose H, transpose x0 | matrix {{t0}}), K);
-	       if o.Predictor === ProjectiveNewton then ((normalizer t0)*r) || matrix{{0_K}}  
-	       else if dPatch === null then r
+	       r := if o.Predictor === ProjectiveNewton 
+	       then (
+		    sine := sin(t0*bigT); cosine := cos(t0*bigT);
+		    transpose( lift(sub(H#0,transpose x0),K)*(cosine-(reBW'ST/sqrt'one'minus'reBW'ST'2)*sine) 
+	       	    	 + lift(sub(H#1,transpose x0),K)*(sine/sqrt'one'minus'reBW'ST'2) )
+		    )
+	       else if o.SLP =!= null then transpose fromSlpMatrix(slpH, transpose x0 | matrix {{t0}})
+     	       else lift(sub(transpose H, transpose x0 | matrix {{t0}}), K);
+	       --(old) if o.Predictor === ProjectiveNewton then ((normalizer t0)*r) || matrix{{0_K}} else 
+	       if dPatch === null then r
 	       else r || matrix{{(dPatch*x0)_(0,0)-1}} -- patch equation evaluated  
 	       );
 	  etH = etH + tr#0;
@@ -358,9 +395,14 @@ track (List,List,List) := List => o -> (S,T,solsS) -> (
 	  tr#1
 	  );
      evalHxNoPatch := (x0,t0)-> (
-	  r := if o.SLP =!= null then fromSlpMatrix(slpHx, transpose x0 | matrix {{t0}})
+	  r := if o.Predictor === ProjectiveNewton then (
+	       sine := sin(t0*bigT); cosine := cos(t0*bigT);
+	       lift(sub(Hx#0,transpose x0),K)*(cosine-(reBW'ST/sqrt'one'minus'reBW'ST'2)*sine) 
+	       + lift(sub(Hx#1,transpose x0),K)*(sine/sqrt'one'minus'reBW'ST'2)   
+	       )
+	  else if o.SLP =!= null then fromSlpMatrix(slpHx, transpose x0 | matrix {{t0}})
      	  else lift(sub(Hx, transpose x0 | matrix {{t0}}), K);
-	  if o.Predictor === ProjectiveNewton then r = r * normalizer t0;
+	  --(old) if o.Predictor === ProjectiveNewton then r = r * normalizer t0;
 	  r
 	  );  
      evalHx := (x0,t0)->( 
@@ -374,9 +416,14 @@ track (List,List,List) := List => o -> (S,T,solsS) -> (
 	  );  
      evalHt := (x0,t0)->(
 	  tr := timing (
-	       if o.SLP =!= null then r := fromSlpMatrix(slpHt, transpose x0 | matrix {{t0}})
-     	       else r = lift(sub(Ht, transpose x0 | matrix {{t0}}), K);
-	       if o.Predictor === ProjectiveNewton then r = r * (normalizer t0) + evalHNoPatchNoNormalizer(x0,t0) * (normalizer' t0);
+	       r := if o.Predictor === ProjectiveNewton then (
+		    sine := sin(t0*bigT); cosine := cos(t0*bigT);
+		    transpose( lift(sub(H#0,transpose x0),K)*(-sine-(reBW'ST/sqrt'one'minus'reBW'ST'2)*cosine)
+		    + lift(sub(H#1,transpose x0),K)*(cosine/sqrt'one'minus'reBW'ST'2) )
+		    )
+	       else if o.SLP =!= null then fromSlpMatrix(slpHt, transpose x0 | matrix {{t0}})
+     	       else lift(sub(Ht, transpose x0 | matrix {{t0}}), K);
+	       --(old) if o.Predictor === ProjectiveNewton then r = r * (normalizer t0) + evalHNoPatchNoNormalizer(x0,t0) * (normalizer' t0);
 	       if dPatch === null then r
 	       else r || matrix {{0_K}}
 	       );
@@ -417,10 +464,6 @@ track (List,List,List) := List => o -> (S,T,solsS) -> (
 	  SLPcounter = SLPcounter + 1;
 	  );
      ); ----------------- end ----------- M2 section -------------------------------------          
-
-     -- threshholds and other tuning parameters (should include most of them as options)
-     stepDecreaseFactor := 1/o.stepIncreaseFactor;
-     theSmallestNumber := 1e-12;
 
      compStartTime = currentTime();      
      
@@ -584,16 +627,19 @@ track (List,List,List) := List => o -> (S,T,solsS) -> (
 		    else if o.Predictor == ProjectiveNewton then (
 			 Hx0 = evalHx(x0,t0);
 			 Ht0 = evalHt(x0,t0);
-			 dt = sqrt(1 + (norm2 solve(Hx0, Ht0))^2);
-			 dt = dt/min first SVD(DMforPN*Hx0);
-			 dt = 0.05/(maxDegreeTo3halves*dt);
+			 norm2'Ht := (max first SVD Ht0)^2;
+			 chi2 := sqrt(norm2'Ht + (norm2 solve(Hx0, Ht0))^2);
+			 chi1 := 1 / min first SVD(DMforPN*Hx0);
+			 dt = 0.04804448/(maxDegreeTo3halves*chi1*chi2);
 			 if dt<o.tStepMin then (
 			      if DBG > 2 then (
-				   << "norm2 solve(Hx0, Ht0) = " << norm2 solve(Hx0, Ht0) << endl;
-			      	   << "min first SVD(DMforPN*Hx0) = " << min first SVD(DMforPN*Hx0) << endl;
+				   << "chi1 = " << chi1 << endl;
+			      	   << "chi2 = " << chi2 << endl;
 				   );
 			      s'status = "MIN STEP (FAILURE)"; 
+			      error "too small step";
 			      );
+			 if dt > 1-t0 then dt = 1-t0;
 			 dx = 0;
 			 )
 		    else error "unknown Predictor";

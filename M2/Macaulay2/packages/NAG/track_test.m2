@@ -1,8 +1,6 @@
 restart
-loadPackage ("NAG", FileName=>"../NAG.m2", 
-     Configuration=>{"PHCpack"=>"./phc", "Bertini"=>"./bertini", "HOM4PS2"=>"./hom4ps2_in_out"})
---loadPackage "NAG";
-debug NAG; DBG = 2; printingPrecision = 20; 
+loadPackage "NAG"
+NAGtrace 1; debug NAG;
 load "benchmarks.m2"
 
 -- small example with 2 solutions -------------------------------------------
@@ -10,29 +8,31 @@ R = CC[x,y];
 S = {x^2-1,y^2-1};
 T = {x^2+y^2-1, x*y};
 solsS = {(1,-1),(1,1),(-1,1),(-1,-1)};
+T = (katsuraBench 6)_*; (S,solsS) = totalDegreeStartSystem T; 
 isH = false;
 -- same, but projective
-R = CC[x,y,z];
-T = {x^2+y^2-z^2, x*y};
-(S,solsS) = oneRootStartSystem T;
-isH = true;
+--R = CC[x,y,z];
+--T = {x^2+y^2-z^2, x*y};
+--(S,solsS) = oneRootStartSystem T;
+--isH = true;
 
-M = track(S,T,solsS, gamma=>1+0.5*ii,
+M = track(S,T,solsS, gamma=>0.8+0.6*ii,
      Software=>M2,
                --M2engine,
      	       --M2enginePrecookedSLPs,
      Projectivize=>not isH,
+     Normalize=>true,
      Predictor=>--Tangent,
-		Euler,
-		--ProjectiveNewton,
-     SLP=>null,
-          --CompiledHornerForm, 
-          --SLP=>HornerForm,
-     RandomSeed=>1
+		--Euler,
+		ProjectiveNewton
      );
-norm matrix refine(T, {{1.2_CC,0.2}}, Tolerance=>1e-3)
-sortSolutions M/(s->s#0)
-oo /(s->s/round)
+print sortSolutions M
+--print M /(s->first s/round)
+
+end 
+restart
+setRandomSeed 0
+load "track_test.m2"
 
 -- cyclic roots -------------------------------------------------------------
 n = 3;  T = (cyclic(n,CC))_*;
