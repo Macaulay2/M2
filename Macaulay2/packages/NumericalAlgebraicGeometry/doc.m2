@@ -1,5 +1,5 @@
 document {
-     Key => NAG,
+     Key => NumericalAlgebraicGeometry,
      Headline => "Numerical Algebraic Geometry",
      "The package ", EM "NAG4M2 (Numerical Algebraic Geometry for Macaulay 2)", " implements methods of polynomial homotopy continuation                                                                                                  
      to solve systems of polynomial equations and deal with complex algebraic varieties.",
@@ -9,7 +9,7 @@ document {
      "Instructions are posted at ", TT "http://www.math.uiuc.edu/Macaulay2/Downloads/SourceCode", ".",
      BR{}, BR{},"( Another way is to download the packages subdirectory only:", BR{}, 
      TT "svn co svn://macaulay2.math.uiuc.edu/Macaulay2/trunk/M2/Macaulay2/packages", BR{},
-     "and then use ", BR{}, TT "loadPackage(\"NAG\", FileName=>\"packages/NAG.m2\").", BR{},  
+     "and then use ", BR{}, TT "loadPackage(\"NumericalAlgebraicGeometry\", FileName=>\"packages/NumericalAlgebraicGeometry.m2\").", BR{},  
      "Note: in this case the functionality of the package is limited; in particular, SLP and M2engine options do not work. )", BR{},
      HEADER3 "Functions:",
      UL{
@@ -191,13 +191,13 @@ getSolution(1, SolutionAttributes=>(Coordinates, SolutionStatus, RCondition))
 
 document {
 	Key => {(NAGtrace, ZZ), NAGtrace},
-	Headline => "set the trace level in NAG package",
+	Headline => "set the trace level in NumericalAlgebraicGeometry package",
 	Usage => "a = NAGtrace b",
 	Inputs => { 
 	     {TT "b", ", new level"}
 	     },
 	Outputs => {{ TT "a", ", old level"}},
-	"Determines how talkative the procedures of NAG are. The most meaningful values are:", 
+	"Determines how talkative the procedures of NumericalAlgebraicGeometry are. The most meaningful values are:", 
 	UL{
 	     {"0", " -- silent"},
 	     {"1", " -- progress and timings"},

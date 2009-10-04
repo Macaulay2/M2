@@ -1,5 +1,5 @@
 -- PHCpack interface for NAG4M2
--- used by ../NAG.m2
+-- used by ../NumericalAlgebraicGeometry.m2
 
 solvePHCpack = method(TypicalValue => List)
 solvePHCpack (List,HashTable) := List => (F,o) -> (
@@ -145,7 +145,7 @@ solutionsToFile (List,Ring,String) := (S,R,name) -> (
      ) 
 ///
 restart
-loadPackage "NAG"; debug NAG;
+loadPackage "NumericalAlgebraicGeometry"; debug NumericalAlgebraicGeometry;
 R = CC[x,y,z]
 solutionsToFile( {(0,0,1),(0,0,-1)}, R, "PHCsols" )
 ///

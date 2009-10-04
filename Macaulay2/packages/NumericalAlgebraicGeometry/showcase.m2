@@ -1,4 +1,4 @@
-loadPackage "NAG"
+loadPackage "NumericalAlgebraicGeometry"
 NAGtrace 2
 load "benchmarks.m2"
 
