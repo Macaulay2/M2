@@ -1,0 +1,11 @@
+-- -*- M2-comint -*- {* hash: -925763705 *}
+--loading configuration for package "ConvexInterface" from file /home/janko/.Macaulay2/init-ConvexInterface.m2
+--loading configuration for package "MapleInterface" from file /home/janko/.Macaulay2/init-MapleInterface.m2
+
+i1 : callConvex("returnvalue:=convert(fvector(convhull([1,0],[0,1],[-1,0],[0,-1])),list);")
+
+o1 = {1, 4, 4, 1}
+
+o1 : List
+
+i2 : 
