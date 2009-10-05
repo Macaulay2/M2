@@ -3,7 +3,7 @@ needsPackage "XML"
 newPackage(
 	"OpenMath",
     	Version => "0.1", 
-    	Date => "July 14, 2009",
+    	Date => "October 5, 2009",
     	Authors => {
 			{Name => "Dan Roozemond", Email => "d.a.roozemond@tue.nl", HomePage => "http://www.win.tue.nl/~droozemo/"}
 		},
@@ -23,6 +23,7 @@ load "./OpenMath/expr.m2"
 load "./OpenMath/cds/arith1.m2"
 load "./OpenMath/cds/field3.m2"
 load "./OpenMath/cds/field4.m2"
+load "./OpenMath/cds/fieldname1.m2"
 load "./OpenMath/cds/finfield1.m2"
 load "./OpenMath/cds/fns1.m2"
 load "./OpenMath/cds/integer1.m2"
@@ -50,9 +51,7 @@ load "./OpenMath/cds/scscp_transient_1.m2"
 ----(LITTLE) DOCUMENTATION-----
 -------------------------------
 
---Should actually need to export little else than openMath
--- (and val XMLnode, obviously)
-export { "openMath", "val", "matrixGroup" }
+export { "openMath", "val", "matrixGroup"}
 
 beginDocumentation()
 document { 

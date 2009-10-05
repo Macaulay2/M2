@@ -2,18 +2,20 @@
 -- done (at least sort of)
 --  * call_id, 
 --  * error_system_specific, 
---  * option_return_cookie, option_return_nothing
+--  * option_return_cookie, option_return_nothing, option_return_object
 --  * procedure_call, procedure_completed, procedure_terminated 
+--  * info_runtime, info_message
 -- todo / not done:
---  * option_return_object
 --  * error_memory, error_runtime,
---  * info_memory, info_message, info_runtime, 
+--  * info_memory, 
 --  * option_debuglevel, option_max_memory, option_min_memory, option_runtime,
 
 doAttrs := (e, retopts) -> (
 	setOMAttr(e, OMS("scscp1", "call_id"), retopts.callid);
 	if (retopts.?tstart) then
 		setOMAttr(e, OMS("scscp1", "info_runtime"), OMI floor(1000*(cpuTime() - retopts.tstart)));
+	if (recentOMProblem =!= null) then
+		setOMAttr(e, OMS("scscp1", "info_message"), OMSTR concatenate("Possible problem: ", recentOMProblem));
 )
 
 constructProcTerm = method()
@@ -22,6 +24,7 @@ constructProcTerm (XMLnode, XMLnode) := (omenode, retopts) -> (
 	doAttrs(e, retopts);
 	e
 );
+constructProcTerm (XMLnode, MutableHashTable) := (omenode, retopts) -> constructProcTerm(omenode, new XMLnode from retopts);
 constructProcTerm (String, XMLnode) := (errmsg, retopts) -> constructProcTerm( OME(errmsg), retopts )
 constructProcComplObj = (x, retopts) -> (
 	e := OMA("scscp1", "procedure_completed", {x});
@@ -69,11 +72,10 @@ OMSEvaluators#"scscp1"#"procedure_call" = (args, attrs) -> (
 		return constructProcTerm("scscp1.procedure_call: 1st and only argument of pc should be an OMA.", retopts);
 
 	-- Try to evaluate: value will always exit, albeit sometimes with an OME
+	recentOMProblem = null;
 	evld = value(args#0);
-	if (class(e) === XMLnode) and (e.tag == "OME") then (
-		--Something went wrong :(
+	if (class(e) === XMLnode) and (e.tag == "OME") then 
 		return constructProcTerm(e, retopts);
-	);
 		
 	-- If we want to return nothing or a cookie, we are pretty much done!
 	if ret === "nothing" then
@@ -85,11 +87,9 @@ OMSEvaluators#"scscp1"#"procedure_call" = (args, attrs) -> (
 	e = toOpenMath(evld);
 
 	-- If the result is wrong...
-	if (class(e) === XMLnode) and (e.tag == "OME") then (
+	if (class(e) === XMLnode) and (e.tag == "OME") then 
 		--Something went wrong :(
 		return constructProcTerm(e, retopts);
-	);
-	
 	
 	-- If the result is right...
 	if ret === "object" then
