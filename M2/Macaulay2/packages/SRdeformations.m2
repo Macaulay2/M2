@@ -2,13 +2,13 @@
 -- -*- coding: utf-8 -*-
 newPackage(
 	"SRdeformations",
-    	Version => "0.46", 
-    	Date => "Sept 5, 2009",
+    	Version => "0.47", 
+    	Date => "Oct 4, 2009",
     	Authors => {{Name => "Janko Boehm", 
 		  Email => "boehm@math.uni-sb.de", 
 		  HomePage => "http://www.math.uni-sb.de/ag/schreyer/jb/"}
                   },
-    	Headline => "Deformations of Stanley-Reisner rings and tropical geometry",
+    	Headline => "Deformations of Stanley-Reisner rings and related computations",
     	DebuggingMode => true,
         Configuration => {"UseConvex"=>false}
         )
@@ -20,6 +20,8 @@ if ((options SRdeformations).Configuration)#"UseConvex"==true then (
   needsPackage "ConvexInterface"
 );
 needsPackage "Polyhedra"
+
+
 
 {*
 Before using "ConvexInterface" via giving the option 
@@ -70,7 +72,7 @@ dualize,
 boundaryOfPolytope,
 idealToComplex,minimalNonFaces,complexToIdeal,
 CoComplex,coComplex,idealToCoComplex,coComplexToIdeal,
-selectFaces,link,closedStar,
+link,closedStar,
 possibleDenominators,deformationsFace,
 globalSections,joinVectors,
 convHull,deform,PT1,tropDef,mirrorSphere,file,saveDeformations,loadDeformations,
@@ -3765,42 +3767,49 @@ doc ///
   Key
     SRdeformations
   Headline
-    Deformations of Stanley-Reisner rings, tropical geometry and mirror symmetry.
+    Deformations of Stanley-Reisner rings and related computations.
   Description
     Text
       {\bf Overview:}
       
-      The goal of this package is to provide the essential functions for deformations of Stanley-Reisner rings,
-      a toric version of it, the deformations polytope, its tropical subcomplex and the relations
-      to mirror symmetry.
+      The goal of this package is to provide a basic framework for deformations of Stanley-Reisner rings,
+      the deformations polytope, its tropical subcomplex and tropical mirror symmetry in general.
 
       This is work in progress, many interesting pieces still missing and more testing is necessary.
-      The efficiency of some of the pieces has to be improved.
+      The efficiency and robustness of some of the pieces has to be improved.
+
+      See the Macaulay 2 package repository for new versions of this file.
+
+      All suggestions and contributions are welcome.
 
       {\bf Contents:}
       
-      This package so far consists of the follwing parts:
+      This package so far consists of the following parts:
 
       The first part provides a data structure for deformations of monomial ideals
       (including a toric grading).
       The class @TO FirstOrderDeformation@ stores (and computes the dimension of) a big torus graded 
-      part of the vector space of first order deformations (specificed by a Laurent monomial).
+      part of the vector space of first order deformations (specified by a Laurent monomial).
 
-      The second part gives an 	implementation of (not neccessarily simplicial) embedded
+      The second part gives an implementation of (not necessarily simplicial) embedded
       complexes and co-complexes and their correspondence to monomial ideals. 
       The main focus here is on a flexible implementation, computing and 
       storing data only as soon as it is needed.
       See @TO Complex@, @TO CoComplex@, @TO Face@.
 
       The third part computes all first order deformations of Stanley-Reisner ideals using part one 
-      and two via the results of Altmann an Christophersen who reduce the problem to
-      links of faces of simplicial complexes. The implementation is done with also the toric case in mind.
+      and two via the results of Klaus Altmann and Jan Arthur Christophersen who reduce the problem to
+      links of faces of simplicial complexes.
       See @TO deformationsFace@ and @TO deform@.
 
-      The fourth part gives functions to compute the first order deformation polytope (see @TO PT1@)
-      and its tropical subcocomplex (see @TO tropDef@).      
+      The fourth part gives functions to compute the first order deformations polytope (see @TO PT1@)
+      and its tropical subcocomplex (see @TO tropDef@).
 
       {\bf What' new:}
+
+        {\it Oct 3, 2009 (Version 0.47)}
+
+           Improvements to the documentation.
 
         {\it Sept 20, 2009 (Version 0.46)}
 
@@ -3831,6 +3840,11 @@ doc ///
            Added functions @TO saveDeformations@ and @TO loadDeformations@ to save to and load from a
            file the deformations associated to a @TO Complex@.
       
+      {\bf Technical note:}
+  
+           In the future some of the methods and keys may change their name.
+
+           At some point @TO Complex@ and @TO CoComplex@ will get a common ancestor.
 
       {\bf Installation:}
 
@@ -3838,7 +3852,7 @@ doc ///
 
       {\bf Options:}
 
-      Computations with polyhedra are used in this package so far in by follwing functions:
+      Computations with polyhedra are used in this package so far in by following functions:
 
       @TO convHull@ -- The convex hull complex
 
@@ -3867,7 +3881,7 @@ doc ///
 
       {\it ConvexInterface}:
 
-      This package has to be installed first, see its documation for this.
+      This package has to be installed first, see its documentation for this.
 
       It calls the Maple package Convex and is several magnitudes faster than Polyhedra, hence the perferable choice.
       If you want to do non-trivial examples you have to go for it.
@@ -3885,9 +3899,6 @@ doc ///
 
       @TO mirrorSphere@ uses the above functions to compute the mirror sphere of a Calabi-Yau.
        
-      {\bf }
-        {\it }
-        {\it }
 ///
 
 
@@ -3913,6 +3924,7 @@ doc ///
    Text
         Gives the element in the @TO cokernel@ of A represented by v.
         The @TO Vector@ v has to lie in @TO target@ of A.
+
    Example
      A= matrix {{-1, -1, -1}, {1, 0, 0}, {0, 1, 0}, {0, 0, 1}}
      c1=cokerElement(vector {1,1,0,0},A)
@@ -3940,6 +3952,7 @@ doc ///
    Text
         Makes the test c == 0_@TO class@ c.
         Why does @TO zero@ not work for elements in the cokernel of a matrix?
+
    Example
      A= matrix {{-1, -1, -1}, {1, 0, 0}, {0, 1, 0}, {0, 0, 1}}
      c1=cokerElement(vector {1,1,0,0},A)
@@ -3971,6 +3984,7 @@ doc ///
    Text
         Converts the exponent vector v into a monomial in the variables of R.
         The number of variables of R has to match the length of v.
+
    Example
      R=QQ[x_0..x_4]
      m=vector {1,2,1,0,0}
@@ -4034,8 +4048,9 @@ doc ///
    Text
         The class of all first order deformations of reduced monomial ideals.
         Elements represent a big torus (i.e., torus on the variables of a @TO PolynomialRing@) 
-        graded part of the vector space of first order deformations.  By results of Altmann 
-        and Christophersen the dimension is either 0 or 1 (for manifolds, not required here).
+        graded part of the vector space of first order deformations.  By results of Klaus Altmann 
+        and Jan Arthur Christophersen the dimension is either 0 or 1 (for manifolds, though this is
+        not required by the implementation).
         
         First order deformations can be created by @TO firstOrderDeformation@ by
         specifying a matrix with generators of a reduced monomial ideal and the exponent vector
@@ -4232,7 +4247,7 @@ doc ///
   Headline
     The big torus degree of a deformation.
   Usage
-    simplexRing(f)
+    bigTorusDegree(f)
   Inputs
     f:FirstOrderDeformation
   Outputs
@@ -4385,7 +4400,7 @@ doc ///
   Headline
     The numerator monomial of a deformation.
   Usage
-    numerator(f)
+    numeratorMonomial(f)
   Inputs
     f:FirstOrderDeformation
   Outputs
@@ -4619,6 +4634,7 @@ doc ///
   Description
    Text
         Check whether f is non-zero.
+
    Example
         R=QQ[x_0..x_4];
         addCokerGrading(R);
@@ -4653,6 +4669,7 @@ doc ///
   Description
    Text
         Check whether f is trivial, i.e., @TO denominatorMonomial@ f has degree 1.
+
    Example
         R=QQ[x_0..x_4];
         addCokerGrading(R);
@@ -4855,7 +4872,7 @@ doc ///
     :Matrix
   Description
    Text
-        Computes the a @TO matrix@ whose columns correspond to the parameters of f (i.e., to the 
+        Computes a @TO matrix@ whose columns correspond to the parameters of f (i.e., to the 
         coefficients of the @TO image@s of the @TO generators@ of @TO (source,FirstOrderDeformation)@ f considering it as a homomorphism.
         
    Example
@@ -5059,17 +5076,17 @@ doc ///
         Faces can be created by @TO face@ by
         specifying a @TO List@ or @TO Set@ of variables of a @TO PolynomialRing@ and some more optional data.
         
-        Usually faces are accessed as faces of a @TO complex@ C using C.fc_(dimension of the face)_(index of the face).
+        Usually faces are accessed as faces of a @TO complex@ C using the @TO ScriptedFunctor@ C.fc with the subscripts "dimension of the face" and "index of the face".
         
         {\bf The data stored in a face F:}
         
         {\it F.vert}, a list with the vertices of F, which are variables of a @TO PolynomialRing@ R. We use a list to prevent Macaualy from reordering sets or monomials.
         
-        {\it f.ofComplex}, a list with the @TO Complex@es and @TO CoComplex@es of which F is a face (optional).
+        {\it F.ofComplex}, a list with the @TO Complex@es and @TO CoComplex@es of which F is a face (optional).
         
         {}it F.indices}, a list with the indices of the face in its complexes. An index is a list {dim F, index of F in C.fc_(dim F)}.
         
-        {\it f.dualFace}, the dual face of F (optional, is stored for later use when computed by @TO dualize@).
+        {\it F.dualFace}, the dual face of F (optional, is stored for later use when computed by @TO dualize@).
         Note that also the dual face dF of F then has dF.dualFace=F. 
         
         This data can also be accessed by the methods listed below.
@@ -5082,7 +5099,7 @@ doc ///
         In order to save memory identical faces are not created several times, e.g., 
         if sub@TO Complex@es are created from given ones any face of the subcomplex is identical to a face of the given one.
 
-        So far the list f.ofComplex is only used for the complex which created F, but later we will perhaps append also all other complexes F is a face of.
+        So far the list F.ofComplex is only used for the complex which created F, but later we will perhaps append also all other complexes F is a face of.
         As we will append to the list this will be backwards compatible.
                    
    Example
@@ -5271,7 +5288,7 @@ doc ///
     :Face
   Description
    Text
-        Computes the comlement face of a face of a simplex (or subcomples thereof).
+        Computes the complement face of a face of a simplex (or subcomples thereof).
         
    Example
         R=QQ[x_0..x_4]
@@ -5322,7 +5339,7 @@ doc ///
   Headline
     The coordinates of a face.
   Usage
-    complement(C)
+    coordinates(C)
   Inputs
     F:Face
   Outputs
@@ -5458,6 +5475,7 @@ doc ///
   Description
    Text
         Checks whether F and G are equal.
+
    Example
         R=QQ[x_0..x_4];
         face {x_0,x_1} == face {x_1,x_0}
@@ -5493,6 +5511,7 @@ doc ///
         Checks whether C1 and C2 are equal.
         
         Uses the facets of C1 and C2 (as in many examples the Stanley-Reisner ideal cannot be computed as it is too big to write down).
+
    Example
         R=QQ[x_0..x_4];
         C=simplex R;
@@ -5611,6 +5630,7 @@ doc ///
   Description
    Text
         The dimension of a face inside the vertex simplex, i.e., the number of @TO vert@ F minus 1.
+
    Example
        R=QQ[x_0..x_4];
        C=simplex R;
@@ -5666,6 +5686,7 @@ doc ///
   Description
    Text
         The vertices of F or C.
+
    Example
        R=QQ[x_0..x_4];
        addCokerGrading R;
@@ -5781,6 +5802,7 @@ doc ///
   Description
    Text
         The link of the face F of the complex C.
+
    Example
      R=QQ[x_0..x_4]
      C=boundaryOfPolytope simplex(R)
@@ -6283,7 +6305,7 @@ doc ///
   Usage
     coComplexToIdeal(C)
   Inputs
-    C:CoComple
+    C:CoComplex
   Outputs
     :Ideal
   Description
@@ -6426,7 +6448,7 @@ doc ///
     The co-complex associated to a reduced monomial ideal.
   Usage
     idealToCoComplex(I)
-    idealToCOComplex(I,C)
+    idealToCoComplex(I,C)
   Inputs
     I:Ideal
     I:MonomialIdeal
@@ -6697,7 +6719,7 @@ doc ///
 
         The following may be present (if known due to creation of C or due to calling some function):
 
-        {\it C.dualComplex}, the dual ccomplex of C in the sense of dual faces of a polytope. See @TO dualize@.
+        {\it C.dualComplex}, the dual complex of C in the sense of dual faces of a polytope. See @TO dualize@.
 
         {\it C.isPolytope}, a @TO Boolean@ indicating whether C is a polytope.
 
@@ -6749,7 +6771,7 @@ doc ///
    Text
       Make a complex from a list of faces and/or facets.
 
-      The is mostly used internally but may be occasionally useful for the end user.
+      This is mostly used internally but may be occasionally useful for the end user.
       
    Example
      R=QQ[x_0..x_5]
@@ -6770,7 +6792,7 @@ doc ///
     (complexFromFacets,PolynomialRing,List)
     (complexFromFacets,PolynomialRing,List,PolynomialRing)
   Headline
-    Make a complex.
+    Make a complex from its facets.
   Usage
     complexFromFacets(R,facetlist)
     complexFromFacets(R,facetlist,Rdual)
@@ -6785,7 +6807,7 @@ doc ///
    Text
       Make a complex from a list of faces and/or facets.
 
-      The is mostly used internally but may be occasionally useful for the end user.
+      This is mostly used internally but may be occasionally useful for the end user.
       
    Example
      R=QQ[x_0..x_5]
@@ -6831,7 +6853,7 @@ doc ///
    Text
       Make a co-complex from a list of faces and/or facets.
 
-      The is mostly used internally but may be occasionally useful for the end user.
+      This is mostly used internally but may be occasionally useful for the end user.
       
    Example
      R=QQ[x_0..x_5]
@@ -6857,7 +6879,7 @@ doc ///
   Headline
     The variables of a complex or co-complex.
   Usage
-    embeddingComplex(C)
+    variables(C)
   Inputs
     C:Complex
   Outputs
@@ -7262,8 +7284,8 @@ doc ///
      globalSections
   Caveat
      To homogenize the denominators of deformations (which are supported inside the link) we use
-     globalSections to deal with the toric case. For ordinary projective space homogenization with support on F
-     can be done of course much faster, and should be implemented.
+     globalSections to deal with the toric case. Speed of this should be improved. For ordinary 
+     projective space globalSections works much faster.
 ///
 
 
@@ -7373,7 +7395,8 @@ doc ///
   Headline
     Possible denominators of deformations.
   Usage
-    possibleDenominators(C)
+    possibleDenominators(I)
+    possibleDenominators(I,v)
   Inputs
     I:Ideal
         monomial, reduced.
@@ -7429,7 +7452,7 @@ doc ///
      A*v
 ///
 
-
+{*
 doc ///
   Key
     selectFaces
@@ -7440,21 +7463,15 @@ doc ///
     selectFaces(C,f)
   Inputs
     C:Complex
-    v:Vector
-        in @TO target@ A.
+    f:Function
   Outputs
-    :Vector
-        in @TO source@ A.
+    :Complex
   Description
    Text
-      Computes the preimage of v under A. If v is not in @TO image@ A then it returns false.
-      
-   Example
-     A=matrix {{1, 0}, {0, 1}, {-1, -1}}
-     b=vector {-2,2,0}
-     v=preImage(A,b)
-     A*v
+      Compute the subcomplex of faces satisfying a condition.
+           
 ///
+*}
 
 doc ///
   Key
@@ -7512,8 +7529,8 @@ doc ///
      tropDef
   Caveat
      To homogenize the denominators of deformations (which are supported inside the link) we use
-     globalSections to deal with the toric case. For ordinary projective space homogenization with support on F
-     can be done of course much faster, and should be implemented.
+     globalSections to deal with the toric case. The speed of this should be improved. For ordinary projective space 
+     homogenization with support on F is done much faster.
 ///
 
 
@@ -7536,6 +7553,8 @@ doc ///
    Text
     Computes the co-complex of tropical faces of the deformation polytope.
 
+    This is work in progress.
+
    Example
       R=QQ[x_0..x_3]
       I=ideal(x_0*x_1,x_2*x_3)
@@ -7550,7 +7569,7 @@ doc ///
     deform
   Caveat
     The implementation of testing whether a face is tropical so far uses
-    a trick to emulate higher order. For very complicated (non-complete intersections
+    a trick to emulate higher order. For complicated (non-complete intersections
     and non-Pfaffians) examples this may lead to an incorrect result. Use with care.
     This will be fixed at some point.
 
@@ -7571,6 +7590,8 @@ doc ///
   Description
    Text
       Example how to compute the mirror sphere as an @TO Complex@.
+
+      This is work in progress. Many interesting pieces are not yet implemented.
       
    Example
       R=QQ[x_0..x_4]
@@ -7685,7 +7706,7 @@ doc ///
        with all @TO FirstOrderDeformation@s.
   Description
    Text
-      Store result the deformation data of a complex C in a file with name fn.
+      Store the deformation data of a complex C in a file with name fn.
       
   SeeAlso
      loadDeformations
@@ -7716,7 +7737,7 @@ doc ///
      saveDeformations
      deform
   Caveat
-     This does not changes deformation data which may be stored in the individual faces.
+     This does not change deformation data which may be stored in the individual faces.
 ///
 
 
