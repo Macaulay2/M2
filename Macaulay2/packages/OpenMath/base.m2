@@ -21,6 +21,8 @@
 ------------------------
 -------- To OM ---------
 ------------------------
+recentOMProblem = null
+
 toOpenMath = method()
 toOpenMath String := x -> OMSTR(x)
 toOpenMath ZZ     := x -> OMI(x)
@@ -62,7 +64,7 @@ toOpenMath XMLnode := x -> (
 		attrs := x.OMattributes;
 		clearOMAttr(x);
 		OMATTR(x, attrs)
-	) else
+	) else 
 		x
 )
 
@@ -118,13 +120,16 @@ fromOpenMathOMOBJ = x->(
 fromOpenMathOMS = x->(
 	if not x#?"cd" then (theOMerror = "OMS has no cd"; error("whoops"));
 	if not x#?"name" then (theOMerror = "OMS has no name"; error("whoops"));
-		
+	
 	if OMSEvaluators#?(x#"cd") and OMSEvaluators#(x#"cd")#?(x#"name") then
 		-- We can parse it!
 		OMSEvaluators#(x#"cd")#(x#"name")
-	else
+	else (
 		-- We cannot parse it -- leave as is.
+		recentOMProblem = concatenate("Could not parse application of ", x#"cd", ".", x#"name");
+		print concatenate("WARNING -- ", recentOMProblem);		
 		x
+	)
 )
 
 fromOpenMathOMA = x->(
@@ -142,10 +147,10 @@ fromOpenMathOMA = x->(
 
 	if class(hd) === XMLnode then (
 		-- We cannot parse it -- leave as is.
-		if hd.tag === "OMS" then
-			print concatenate("WARNING -- Could not parse application of ", hd#"cd", ".", hd#"name")
-		else
-			print concatenate("WARNING -- Could not parse application of this ", hd.tag);
+		if hd.tag =!= "OMS" then (
+			recentOMProblem = concatenate("Could not parse application of this ", hd.tag);
+			print concatenate("WARNING -- ", recentOMProblem)
+		);
 		x
 	) else (
 		-- We can parse it!
@@ -293,7 +298,8 @@ fromOpenMath XMLnode := x->(
 	else if t === "OMR"      then  r = fromOpenMathOMR(x)
 	else if t === "OME"      then  r = x
 	else (
-		print concatenate("WARNING -- Could not parse XMLnode with tag ", t);
+		recentOMProblem = concatenate("Could not parse XMLnode with tag ", t);
+		print concatenate("WARNING -- ", recentOMProblem);
 		r = x
 	);
 
