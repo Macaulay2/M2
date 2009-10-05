@@ -1,7 +1,7 @@
 newPackage(
 	"MapleInterface",
-    	Version => "0.26", 
-    	Date => "September 20, 2009",
+    	Version => "0.27", 
+    	Date => "October 4, 2009",
     	Authors => {{Name => "Janko Boehm", 
 		  Email => "boehm@math.uni-sb.de", 
 		  HomePage => "http://www.math.uni-sb.de/ag/schreyer/jb/"}
@@ -28,6 +28,10 @@ getFilename = () -> (
 maplecommand:=((options MapleInterface).Configuration)#"MapleCommand"
 
 callMaple=method(Options=>{store=>null})
+
+callMaple(String):=opts->(mapleprogram)->(
+callMaple("","",mapleprogram,opts))
+
 callMaple(String,String,String):=opts->(inputdata1,inputdata2,mapleprogram)->(
 L1:=changeBrackets inputdata1;
 filename:= getFilename();
@@ -102,6 +106,9 @@ doc ///
     Text
       {\bf What's new:}
 
+        {\it October 4, 2009:}
+        Added method @TO (callMaple,String)@.
+
         {\it August 25, 2009:}
         Added an @TO Option@ @TO store@ to @TO callMaple@ to store the result of a computation
         in a file, and a function @TO readMaple@ to read the file.
@@ -112,6 +119,8 @@ doc ///
       The goal of this package is to provide an interface to run Maple scripts from Macaulay 2.
 
       {\bf Setup:}
+
+      This package is just an interface. To use it you need a licence for Maple and have the program installed on your machine.
 
       Install this package by doing
 
@@ -134,7 +143,7 @@ doc ///
 
       If you are using Macaulay 2 in cygwin and the Windows native Maple version
       best put the complete path to the Maple command line
-      executeable, e.g., StringWithMapleCommand could be
+      executeable, e.g., StringWithMapleCommand could be (depending on the Maple version)
       
       "C:/Program Files/Maple 9.5/bin.win/cmaple9.5.exe"
 
@@ -158,11 +167,13 @@ doc ///
 
 doc ///
   Key
-    callMaple    
+    callMaple
+    (callMaple,String)
     (callMaple,String,String,String)
   Headline
     Run a Maple program from Macaulay 2.
   Usage
+    callMaple(mapleprogram)
     callMaple(inputdata1,inputdata2,mapleprogram)
   Inputs
     inputdata1:String
@@ -174,7 +185,9 @@ doc ///
    Text
         This function calls a Mapleprogram given as a string mapleprogram.
 
-        The arguments inputdata1 and inputdata2 are here just for convenience and you can put the empty strings if you want.
+        Note that any command line there has to end with a semicolon.
+
+        The arguments inputdata1 and inputdata2 are here just for convenience and you can put the empty strings if you want or leave them away.
 
         Inside mapleprogram the string placeholder1 is then replaced by the string inputdata1
         and placeholder2 is replaced the string inputdata2.
