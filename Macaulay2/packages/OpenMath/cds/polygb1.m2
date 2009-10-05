@@ -58,7 +58,7 @@ toOpenMath GroebnerBasis := x -> (
 	m := entries(gens(x));
 	m = m#0;
 	
-	OMA("polyd1", "groebner_basis", 
+	OMA("polygb1", "groebner_basis", 
 		{ toOpenMathDMPL(m) }
 	)
 )
