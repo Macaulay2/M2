@@ -1,5 +1,7 @@
 --========================================================
 
+-- licensed under GPL v2 or any later version
+
 newPackage(
      "RationalPoints",
      Version => "0.95",
@@ -170,7 +172,7 @@ superCombine = (theinfosubi, zips, els) -> (
      n := theinfosubi_3;
      if case == 1 then return zips;
      newstuff := toList (set els)^**n;
-     --if n == 1 then newstuff = apply(newstuff, i -> {i}); --take out in newest version of M2
+     if n == 1 and versionTest() then newstuff = apply(newstuff, i -> {i}); --take out in newest version of M2
      return flatten apply(newstuff, k -> apply(zips, l -> apply(scheme, (i,j) -> {k,l}#i#j))); 
      );
 
@@ -273,6 +275,11 @@ lowMemPoints = (Igens, els, A, k) -> (
      return zeroes;
      );
 
+--this tests for a bug in versions of M2 at least less than or equal to 1.2
+versionTest = () -> (
+     return (toList (set {1})^**1)_0 === 1;
+     );
+
 rationalPoints = method(Options => {Verbose => false, UseGB => false, UseMinGens => false, SortGens => false, LowMem => false, Amount => false})     
 rationalPoints(Ideal) := opts -> Iprime -> (
      -- Initializing the variables. We change the ring so that it has the Lex ordering.
@@ -293,6 +300,7 @@ rationalPoints(Ideal) := opts -> Iprime -> (
      if opts.UseGB then Igens = flatten entries gens gb I 
      else if opts.UseMinGens then Igens = flatten entries mingens I
      else Igens = flatten entries gens I;
+     if Igens == {0} then Igens = {};
      Igens = orderIt(Igens, m);
      if opts.SortGens then (Igens, perm) = sortGens(Igens,A);
      zips := {{}};
@@ -300,7 +308,7 @@ rationalPoints(Ideal) := opts -> Iprime -> (
      if Igens === {} then (
 	  if opts.Amount then return (#els)^m;
 	  zips = toList (set els)^**m;
-	  --if m == 1 then zips = apply(zips,i -> {i}); --take away this line for new versions
+	  if m == 1 and versionTest() then zips = apply(zips,i -> {i}); --take away this line for new versions
 	  zips = apply(zips,i -> toList i);
 	  return zips;
 	  );
@@ -373,10 +381,9 @@ document {
 	  "This symbol is provided by the package ", TO RationalPoints, "."
 	  }
 }
-
-TEST ///
-     R = ZZ/13[k];
-     I = ideal(k-2);
+     TEST ///
+     R = ZZ/13[e];
+     I = ideal(e-2);
      assert(# rationalPoints I == 1)
      R = ZZ/5[x_1..x_4];
      I = ideal(x_2^2+x_1*x_2+1, x_1*x_2*x_3*x_4+1);
@@ -389,8 +396,6 @@ TEST ///
      I = ideal (b-b);
      assert(rationalPoints(I,Amount => true) == 2197)     
      ///
-
-
 endPackage "RationalPoints"
 
 --=========================================================================--
