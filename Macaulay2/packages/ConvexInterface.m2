@@ -1,7 +1,7 @@
 newPackage(
 	"ConvexInterface",
-    	Version =>"0.30", 
-    	Date =>"September 20, 2009",
+    	Version =>"0.32", 
+    	Date =>"October 4, 2009",
     	Authors =>{{Name =>"Janko Boehm", 
 		  Email =>"boehm@math.uni-sb.de", 
 		  HomePage =>"http://www.math.uni-sb.de/ag/schreyer/jb/"}
@@ -18,7 +18,7 @@ newPackage(
 
 needsPackage "MapleInterface"
 
-export({mConvexHullFaces,mConvexHullFacesAndDuals,mHomology,FinitelyGeneratedAbelianGroup,toFile,readConvexHullFaces,mLatticePoints,mPosHullFaces,mPosHullFacesAndDuals,readPosHullFaces})
+export({mConvexHullFaces,mConvexHullFacesAndDuals,mHomology,FinitelyGeneratedAbelianGroup,toFile,readConvexHullFaces,mLatticePoints,mPosHullFaces,mPosHullFacesAndDuals,readPosHullFaces,callConvex})
 
 
 -- if you want to put the library convex.m in a non standard directory
@@ -28,6 +28,19 @@ export({mConvexHullFaces,mConvexHullFacesAndDuals,mHomology,FinitelyGeneratedAbe
 pathconvex:=((options ConvexInterface).Configuration)#"ConvexPath"
 
 pathconvex="\""|pathconvex|"\""
+
+
+callConvex=method(Options=>{toFile=>null})
+callConvex(String):=opts->(convexprogram)->(
+mapleprogram:=
+///
+libname0:=libname:
+libname:=libname0,placeholder2;
+with(convex):
+///|convexprogram;
+callMaple("",pathconvex,mapleprogram,store=>opts.toFile))
+
+
 
 mPosHullFaces=method(Options=>{toFile=>null})
 mPosHullFaces(List):=opts->(L)->(
@@ -329,6 +342,9 @@ doc ///
     Text
       {\bf What's new:}
 
+        {\it October 4, 2009:}
+        Added a generic function @TO callConvex@ taking a string with a program written in Convex syntax.
+
         {\it September 20, 2009:}
         Added functions @TO mPosHullFaces@ and @TO mPosHullFacesAndDuals@ to compute the face complex of a cone.
         They have an @TO Option@ @TO toFile@ to store the result of a computation
@@ -354,9 +370,14 @@ doc ///
 
       for more information.
 
+      ConvexInterface is work in progress and so far accesses only a fraction of the functionality provided by Convex. 
+      If you would like to help to expand this you are welcome.
+
+      Note that there is a generic function @TO callConvex@ with takes a String containing a program written in the Syntax of Maple/Convex.
+
       {\bf Functions:}
 
-      So far the follwing functions are accessible via ConvexInterface:
+      So far the following functions are accessible via ConvexInterface:
 
       @TO mConvexHullFaces@  -- compute the faces of a convex hull
 
@@ -407,8 +428,6 @@ doc ///
 
       installPackage("MapleInterface")
 
-      As Maple will not find the convex package you will get some errors.
-
       Edit the file init-MapleInterface.m2 in the directory .Macaulay2 in your home directory
       changing the line
 
@@ -431,7 +450,9 @@ doc ///
 
       To test whether the interface is set up properly do, e.g.,
 
-      mPosHullFaces(\{vector \{2,3,4\}\})
+      callConvex("returnvalue:=convert(fvector(convhull([1,0],[0,1],[-1,0],[0,-1])),list);")
+
+      which should return \{1,4,4,1\}.
 
 ///
 
@@ -441,7 +462,7 @@ doc ///
     mConvexHullFaces    
     (mConvexHullFaces,List)
   Headline
-    Faces of a convex hull in Maple/Convex.
+    Faces of a convex hull.
   Usage
     mConvexHullFaces(L)
   Inputs
@@ -473,7 +494,7 @@ doc ///
     mConvexHullFacesAndDuals    
     (mConvexHullFacesAndDuals,List)
   Headline
-    Faces and their duals of a convex hull in Maple/Convex.
+    Faces and their duals of a convex hull.
   Usage
     mConvexHullFacesAndDuals(L)
   Inputs
@@ -512,7 +533,7 @@ doc ///
     mPosHullFaces    
     (mPosHullFaces,List)
   Headline
-    Faces of a positive hull in Maple/Convex.
+    Faces of a positive hull.
   Usage
     mPosHullFaces(L)
   Inputs
@@ -547,7 +568,7 @@ doc ///
     mPosHullFacesAndDuals    
     (mPosHullFacesAndDuals,List)
   Headline
-    Faces and their duals of positive hull in Maple/Convex.
+    Faces and their duals of positive hull.
   Usage
     mPosHullFacesAndDuals(L)
   Inputs
@@ -664,6 +685,7 @@ doc ///
 doc ///
   Key
     toFile
+    [callConvex,toFile]
     [mConvexHullFaces,toFile]
     [mConvexHullFacesAndDuals,toFile]
     [mPosHullFaces,toFile]
@@ -711,6 +733,28 @@ doc ///
   Description
    Text
      Read from the file fn the result of a previous @TO mPosHullFacesAndDuals@ or @TO mPosHullFaces@ computation stored via the @TO Option@ @TO toFile@.
+///
+
+doc ///
+  Key
+    callConvex    
+    (callConvex,String)
+  Headline
+    Generic function to run a Convex program.
+  Usage
+    callConvex(S)
+  Inputs
+    S:String
+  Outputs
+    :Thing
+  Description
+   Text
+     This is a generic function to run a Convex program given by the string S.
+
+     The result of the computation can be stored in a file via the @TO Option@ @TO toFile@.
+
+   Example
+     callConvex("returnvalue:=convert(fvector(convhull([1,0],[0,1],[-1,0],[0,-1])),list);")
 ///
 
 
