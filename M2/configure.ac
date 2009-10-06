@@ -446,6 +446,9 @@ AC_SUBST(PACKAGES, dnl the internal ones first, then after that, the oldest firs
   OpenMath
   SCSCP
   RationalPoints
+  SRdeformations
+  MapleInterface
+  ConvexInterface
 ")
 
 # convert the newlines in the list above to spaces
