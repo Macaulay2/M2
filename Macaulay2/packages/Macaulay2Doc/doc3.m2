@@ -260,12 +260,20 @@ document {
 document {
      Key => hash,
      Headline => "hash code of an object",
-     TT "hash x", " -- returns the hash code of ", TT "x", ".",
-     PARA{},
-     "The hash code of ", TT "x", " is an integer produced in a deterministic way
-     from ", TT "x", ", and perhaps from the hash codes of the contents of ", TT "x", ".
-     See ", TO "hashing", " for a discussion of the requirements that
-     the hash codes used here are designed to satisfy."
+     Usage => "hash x",
+     Inputs => { "x" => Thing },
+     Outputs => { ZZ => { "the hash code of ", TT "x" } },
+     PARA{
+	  "The hash code of ", TT "x", " is an integer produced in a deterministic way
+	  from ", TT "x", ", and perhaps from the hash codes of the contents of ", TT "x", ".
+	  See ", TO "hashing", " for a discussion of the requirements that
+	  the hash codes used here are designed to satisfy."
+	  },
+     PARA {
+	  "Hash codes may change from one version of Macaulay2 to the next, but changes to the hash codes
+	  of the basic types will be avoided, if possible.  That includes lists, sequences, strings, hash 
+	  tables, options, Boolean values, and numbers."
+	  }
      }
 
 document {
