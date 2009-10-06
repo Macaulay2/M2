@@ -1,23 +1,35 @@
--- done: field_by_conway
--- not done: conway_polynomial, discrete_log, is_primitive, is_primitive_poly, minimal_polynomial, primitive_element
+-- done: field_by_conway, primitive_element
+-- not done: conway_polynomial, discrete_log, is_primitive, is_primitive_poly, minimal_polynomial
+
+createdGFs = new MutableHashTable;
+getGF = (p,n) -> (
+	q := p^n;
+	r := null;
+	if (createdGFs#?q) then (
+		print concatenate("found GF ", toString q);
+		createdGFs#q
+	) else (
+		print concatenate("create GF ", toString q);
+		if n === 1 then r = GF(p) else r = GF(p,n);
+		createdGFs#q = r;
+		r
+	)
+);
 
 --- From OpenMath ---
 OMSEvaluators#"finfield1" = new MutableHashTable;
 OMSEvaluators#"finfield1"#"field_by_conway" = (args, attrs) -> (
 	a := apply(args, fromOpenMath);
-	GF(a#0, a#1)
+	getGF(a#0, a#1)
+)
+OMSEvaluators#"finfield1"#"primitive_element" = (args, attrs) -> (
+	if (#args =!= 1) then
+		(theOMerror = concatenate("finfield1.primitive_element only supported with one argument; ", toString #args, " given."); error("whoops"));
+	a = fromOpenMath args#0;
+	if (class a =!= ZZ) then
+		(theOMerror = "finfield1.primitive_element only supported with one integer argument."; error("whoops"));
+	
+	(getGF(a,1))_0
 )
 
 
-
---- To OpenMath ---
---I don't really like this too much, but can't find anything better for now.
-toOpenMath QuotientRing := autoCreateIDCheck(R -> (
-	if isField(R) and (ambient(R) === ZZ) then
-		OMA("finfield1", "field_by_conway", { OMI(char(R)), OMI(1) })
-	else
-		(theOMerror = concatenate("Cannot convert quotient ring ", toString(R), " to OpenMath"); error("whoops"))
-))
-toOpenMath GaloisField := autoCreateIDCheck(F -> (
-	OMA("finfield1", "field_by_conway", { OMI(F.char), OMI(F.degree) })
-))

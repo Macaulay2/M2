@@ -74,7 +74,7 @@ OMSEvaluators#"scscp1"#"procedure_call" = (args, attrs) -> (
 	-- Try to evaluate: value will always exit, albeit sometimes with an OME
 	recentOMProblem = null;
 	evld = value(args#0);
-	if (class(e) === XMLnode) and (e.tag == "OME") then 
+	if (class(evld) === XMLnode) and (evld.tag == "OME") then 
 		return constructProcTerm(e, retopts);
 		
 	-- If we want to return nothing or a cookie, we are pretty much done!

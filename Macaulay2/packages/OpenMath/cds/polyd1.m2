@@ -58,7 +58,7 @@ OMSEvaluators#"polyd1"#"poly_ring_d" = (args, attrs) -> (
 
 --Parses a term/an SDMP given the polynomial ring where the expression lives
 evalterm = (obj, R) -> (
-	args = take(obj.children, {1, #(obj.children)-1});
+	args := take(obj.children, {1, #(obj.children)-1});
 
 	gensR := gens(R);
 	if #args =!= (1 + #gensR) then
