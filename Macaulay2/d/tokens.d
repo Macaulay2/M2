@@ -583,9 +583,6 @@ export codeClass := newbasictype();
 export mysqlConnectionClass := newbasictype();
 export mysqlFieldClass := newbasictype();
 export mysqlResultClass := newbasictype();
-export pythonObjectClass := newbasictype();
-export xmlNodeClass := newbasictype();
-export xmlAttrClass := newbasictype();
 export functionBodyClass := newbasictype();
 export compiledFunctionBodyClass := newbasictype();
 export errorClass := newbasictype();
@@ -632,10 +629,14 @@ export rawFreeModuleClass := newtypeof(rawObjectClass);	    -- RawFreeModule
 export rawMatrixClass := newtypeof(rawObjectClass);	    -- RawMatrix
 export rawMutableMatrixClass := newtypeof(rawObjectClass);	    -- RawMutableMatrix
 export rawStraightLineProgramClass := newtypeof(rawObjectClass);    -- RawStraightLineProgram
-export rawPathTrackerClass := newtypeof(rawObjectClass);    -- RawStraightLineProgram
 export rawComputationClass := newtypeof(rawObjectClass);	    -- RawComputation
+export nothingClass := newbasictype(); -- we are testing, in basictests/hashcodes.m2, that the hash code of this one doesn't change
+export rawPathTrackerClass := newtypeof(rawObjectClass);    -- RawStraightLineProgram
+export pythonObjectClass := newbasictype();
+export xmlNodeClass := newbasictype();
+export xmlAttrClass := newbasictype();
+-- all new types and classes go just above this line, if possible, so hash codes don't change gratuitously!
 
-export nothingClass := newbasictype();
 export (x:SymbolClosure) === (y:SymbolClosure) : bool := (
      x == y || x.symbol == y.symbol && x.frame == y.frame
      );
