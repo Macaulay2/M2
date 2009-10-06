@@ -1,13 +1,13 @@
 -- -*- coding: utf-8 -*-
 newPackage(
            "Normaliz",
-           Version=>"0.2",
-           Date=>"March 06, 2009",
+           Version=>"0.2.1",
+           Date=>"July 16, 2009",
            Authors=>{{Name=> "Gesa Kaempf",
                     Email=>"gkaempf@mathematik.uni-osnabrueck.de"}},
            Headline=>"a package to use Normaliz in Macaulay 2",
-           AuxiliaryFiles => true,
-           CacheExampleOutput => true,
+         --  AuxiliaryFiles => true,
+        --   CacheExampleOutput => true,
            DebuggingMode => false
            )
 
@@ -53,7 +53,9 @@ nmzOptions= new MutableList from {
             new MutableList from {"dual",false,"-d",true},
             new MutableList from {"control",false,"-c",2},
             new MutableList from {"allf",false,"-a",2},
-            new MutableList from {"ignore",true,"-i",2}};
+            new MutableList from {"ignore",true,"-i",2},
+            new MutableList from {"errorcheck",false,"-e",2},
+            new MutableList from {"savememory",false,"-m",2}};
 -------------------------------------------------------------
 
 --  filenames and paths
@@ -207,7 +209,7 @@ setNmzExec=()->
 -- removes the files created for and by normaliz
 rmNmzFiles=()->
 (
-    suffixes:={"in","gen","out","sup","egn","esp","inv","tri","typ","hom","ext"};
+    suffixes:={"in","gen","out","sup","egn","esp","inv","tri","typ","ht1","ext"};
     if(nmzFilename=="" and nmzUserCalled) then error("rmNmzFiles: no filename specified");
     for i from 0 to #suffixes-1 
     do(
@@ -1075,7 +1077,9 @@ document {
      "Further options:",BR{},BR{},
      TT "-c",":   control" ,BR{}, 
      TT "-a",":   allf",BR{},
-     TT "-i",":   ignore",BR{},BR{},
+     TT "-i",":   ignore",BR{},
+     TT "-e",":   errorcheck",BR{},
+     TT "-m",":   savememory",BR{},BR{}
      },
      {"Note that it makes no sense to activate more than one of the run mode options. The ", TT "-f", " option is always set. The default value of all options is ", TT "false", " except for ", TT"ignore","."},
      EXAMPLE lines ///
