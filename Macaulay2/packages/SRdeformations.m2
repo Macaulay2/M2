@@ -2,14 +2,14 @@
 -- -*- coding: utf-8 -*-
 newPackage(
 	"SRdeformations",
-    	Version => "0.47", 
-    	Date => "Oct 4, 2009",
+    	Version => "0.48", 
+    	Date => "Oct 6, 2009",
     	Authors => {{Name => "Janko Boehm", 
 		  Email => "boehm@math.uni-sb.de", 
 		  HomePage => "http://www.math.uni-sb.de/ag/schreyer/jb/"}
                   },
     	Headline => "Deformations of Stanley-Reisner rings and related computations",
-    	DebuggingMode => true,
+    	DebuggingMode => false,
         Configuration => {"UseConvex"=>false}
         )
 
@@ -1432,8 +1432,8 @@ new Face from {symbol vert=>intersectLists(vert F1,vert F2)})
 intersectLists(List,List):=(L1,L2)->(
 toList((set L1)*(set L2)))
 
-union(List,List):=(L1,L2)->(
-toList((set L1)+(set L2)))
+--union(List,List):=(L1,L2)->(
+--toList((set L1)+(set L2)))
 
 
 {*intersectLists({x_1,x_2},{x_2,x_3})
@@ -3233,7 +3233,12 @@ Lv:=apply(L,j->sub(j,ZZ)-v);
 preLv:=apply(Lv,j->preImage(A,j));
 vt:=joinVectors(preLv);
 P:=convexHull vt;
-lP:=latticePoints P;
+-- this is needed for a bug in Polyhedra
+if dim(P)==0 then (
+  lP:={vertices P};
+) else (
+  lP=latticePoints P;
+);
 apply(lP,j->matrixToVector(A*j)));
 
 {*
@@ -3325,9 +3330,9 @@ hull(List):=opts->(L)->(
 if class(mPosHullFacesAndDuals)===MethodFunctionWithOptions then return(hullConvex(L,opts));
 vA:=joinVectors(L);
 P:=posHull vA;
-d:=P#"coneDimension";
-embdim:=P#"ambientDimension";
-if embdim!=d or P#"linSpaceDim">0 then error("expected cone of full dimension");
+d:=P#"dimension of the cone";
+embdim:=P#"ambient dimension";
+if embdim!=d or P#"dimension of lineality space">0 then error("expected cone of full dimension without lineality space");
 A:=sub(transpose rays(P),ZZ);
 Adual:=-sub(transpose rays dualCone P,ZZ);
 n:=rank target A;
@@ -3418,9 +3423,9 @@ convHull(List):=opts->(L)->(
 if class(mConvexHullFacesAndDuals)===MethodFunctionWithOptions then return(convHullConvex(L,opts));
 vA:=joinVectors(L);
 P:=convexHull vA;
-d:=P#"polyhedronDimension";
-embdim:=P#"ambientdimension";
-if embdim!=d or P#"linealityspacedimension">0 then error("expected polytope of full dimension");
+d:=P#"dimension of polyhedron";
+embdim:=P#"ambient dimension";
+if embdim!=d or P#"dimension of lineality space">0 then error("expected polytope of full dimension without lineality space");
 -- put QQ-ZZ test here !!!!!!!!!!!!
 A:=sub(transpose vertices(P),ZZ);
 Adual:=-sub(transpose vertices polar P,ZZ);
@@ -3807,6 +3812,11 @@ doc ///
 
       {\bf What' new:}
 
+        {\it Oct 6, 2009 (Version 0.48)}
+
+           Resolved a compatiblity issue with the new version of the M2 package {\it Polyhedra}.
+
+
         {\it Oct 3, 2009 (Version 0.47)}
 
            Improvements to the documentation.
@@ -3883,7 +3893,7 @@ doc ///
 
       This package has to be installed first, see its documentation for this.
 
-      It calls the Maple package Convex and is several magnitudes faster than Polyhedra, hence the perferable choice.
+      It calls the Maple package Convex and is faster than Polyhedra, hence the perferable choice.
       If you want to do non-trivial examples you have to go for it.
 
       To use it type
