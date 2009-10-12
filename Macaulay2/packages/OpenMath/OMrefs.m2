@@ -17,12 +17,12 @@ storedOMids = new MutableHashTable;
 storedOMrefCounter = 0;
 
 existsOMref = method()
-existsOMref String := x -> storedOMrefs#?(striphashsign x)
+existsOMref String := x -> storedOMrefs#?x;
 
 --Careful! getOMref returns a pair of "thing" and "XMLnode" ;
 --  the second one of these could be null
 getOMref = method()
-getOMref String := x -> storedOMrefs#(striphashsign x)
+getOMref String := x -> storedOMrefs#x;
 
 getNewLocalRef = x -> (
 	while (
@@ -43,8 +43,7 @@ getNewForRemoteRef = x -> (
 
 addOMref = method()
 addOMref (String, Thing, XMLnode) := (s,t,x) -> ( 
-	-- (a reference to "#x" will yield an id of "x")
-	if not x#?"id" then	x#"id" = striphashsign s;
+	if not x#?"id" then	x#"id" = s;
 	storedOMrefs#s = (t, x);
 	storedOMids#t = s;
 	s
@@ -122,7 +121,7 @@ replaceMultipleIDsRec = (found, x) -> (
 			found#(x#"id") = 1
 		) else (
 			--Second (or more) time around
-			return OMR("#"|x#"id")
+			return OMR(x#"id")
 		)
 	);
 
