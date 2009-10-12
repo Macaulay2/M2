@@ -10,17 +10,19 @@
 -- * values are the ids as strings.
 -- storedOMrefCounter is used to get serials for objects
 
+striphashsign = id -> (select("^#?(.*)$", "\\1", id))#0;
+
 storedOMrefs = new MutableHashTable;
 storedOMids = new MutableHashTable;
 storedOMrefCounter = 0;
 
 existsOMref = method()
-existsOMref String := x -> storedOMrefs#?x
+existsOMref String := x -> storedOMrefs#?(striphashsign x)
 
 --Careful! getOMref returns a pair of "thing" and "XMLnode" ;
 --  the second one of these could be null
 getOMref = method()
-getOMref String := x -> storedOMrefs#x
+getOMref String := x -> storedOMrefs#(striphashsign x)
 
 getNewLocalRef = x -> (
 	while (
@@ -42,7 +44,7 @@ getNewForRemoteRef = x -> (
 addOMref = method()
 addOMref (String, Thing, XMLnode) := (s,t,x) -> ( 
 	-- (a reference to "#x" will yield an id of "x")
-	if not x#?"id" then	x#"id" = (select("^#?(.*)$", "\\1", s))#0;
+	if not x#?"id" then	x#"id" = striphashsign s;
 	storedOMrefs#s = (t, x);
 	storedOMids#t = s;
 	s
