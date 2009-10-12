@@ -1,8 +1,8 @@
 -- -*- coding: utf-8 -*-
 newPackage(
      "NumericalAlgebraicGeometry",
-     Version => "1.2.1",
-     Date => "8 Jun 2009",
+     Version => "1.3",
+     Date => "Oct 15, 2009",
      Headline => "Numerical Algebraic Geometry",
      HomePage => "http://www.math.uic.edu/~leykin/NAG4M2",
      AuxiliaryFiles => true,
@@ -135,29 +135,28 @@ multistepPredictorLooseEnd (QQ,List) := List => (c,s) -> (
 	       ))
      )
 ------------------------------------------------------
-norm2 = method(TypicalValue=>RR)
 -- 2-norm of a column vector with CC entries
+norm2 = method(TypicalValue=>RR)
 norm2 Matrix := v -> sqrt(sum(flatten entries v, x->x*conjugate x));
+-- Frobenius norm of a matrix
+normF = method(TypicalValue=>RR)
+normF Matrix := M -> max first SVD M;
      
 
 normalize = method(TypicalValue => Matrix)
 -- normalizes a column vector with CC entries
 normalize Matrix := v -> (1/norm2 v)*v;
 
-BombieriWeylScalarProduct = method(TypicalValue=>RingElement)
-BombieriWeylScalarProduct (RingElement,RingElement) := (f,g) -> sum(listForm f, a->(
+BombieriWeylScalarProduct = method(TypicalValue=>CC)
+BombieriWeylScalarProduct (RingElement,RingElement) := CC => (f,g) -> sum(listForm f, a->(
 	  imc := product(a#0, d->d!) / (sum(a#0))!; -- inverse of multinomial coeff
 	  bc := coefficient((ring f)_(first a),g); -- coeff of corresponding monomial in g
-	  -- (old) if isField coefficientRing ring f then 
 	  imc*a#1*conjugate bc -- ring=CC[...]
-	  -- (old) else imc*a#1*sum(listForm a#1, b->(conjugate b#1) * (coefficientRing ring f)_(b#0)) -- ring=CC[t][...]
 	  ))
-BombieriWeylNormSquared = method(TypicalValue=>RingElement)
-BombieriWeylNormSquared RingElement := f -> sum(listForm f, a->(
+BombieriWeylNormSquared = method(TypicalValue=>RR)
+BombieriWeylNormSquared RingElement := RR => f -> realPart sum(listForm f, a->(
 	  imc := product(a#0, d->d!) / (sum(a#0))!; -- inverse of multinomial coeff
-	  -- (old) if isField coefficientRing ring f then 
 	  imc*a#1*conjugate a#1 -- ring=CC[...]
-	  -- (old) else imc*a#1*sum(listForm a#1, b->(conjugate b#1) * (coefficientRing ring f)_(b#0)) -- ring=CC[t][...]
 	  ))
 
 ------------------------------------------------------
@@ -637,7 +636,7 @@ track (List,List,List) := List => o -> (S,T,solsS) -> (
 			      	   << "chi2 = " << chi2 << endl;
 				   );
 			      s'status = "MIN STEP (FAILURE)"; 
-			      error "too small step";
+			      --error "too small step";
 			      );
 			 if dt > 1-t0 then dt = 1-t0;
 			 dx = 0;
@@ -846,6 +845,64 @@ totalDegreeStartSystem List := Sequence => T -> (
      (S, solsS)
      ) 
 
+randomGaussian = method()
+randomGaussian := () -> sum(12, i->random 1.0) - 6;
+
+randomInComplexUnitSphere = method()
+randomInComplexUnitSphere ZZ := Matrix => n->(
+     x := transpose matrix {apply(n, i->randomGaussian()+ii*randomGaussian())};
+     (1/norm2 x)*x
+     )
+
+randomInComplexUnitBall = method()
+randomInComplexUnitBall ZZ := Matrix => n->(
+     x := randomInComplexUnitSphere n; 
+     r := (random 1.)^(1/(2*n));
+     r*x
+     );  
+     
+--dimension of \cal H_{(d)}, where d is a degree vector
+dimHd = method()
+dimHd List := ZZ => d->sum(#d, i->binomial(#d+d#i,d#i));
+
+-- IN: R, polynomial ring in n+1 vars
+--     d, list of equation degrees
+-- OUT: conjectured (by Shub and Smale) good initial pair (f,z_0), f\in Hd, z\in P^n
+goodInitialPair = method()
+goodInitialPair (Ring,List) := (R,d) -> (
+     lastVar := last gens R;
+     n := numgens R - 1; 
+     ( transpose matrix{apply(n, i->(sqrt d#i)*lastVar^(d#i - 1)*R_i)}, 
+     	  transpose matrix{toList (n:0_CC) | {1}} )
+     )
+-- IN: ds, list of equation degrees                                                                                                         
+-- OUT: a random system in unit sphere S \subset Hd 
+randomSd = method()
+randomSd List := ds -> (
+     n := #ds;
+     x := symbol x;
+     R := CC_53(monoid [x_0..x_n]); 
+     sqrt'n := 1/sqrt n;
+     u := randomInComplexUnitSphere dimHd ds;     
+     i := -1; --counter
+     ret := apply(ds,d->sum( 
+	       ((ideal gens R)^d)_*, 
+	       m->(
+	       	    a := first first listForm m; -- exponent vector
+	       	    i = i + 1;
+     	       	    u_(i,0) * sqrt((sum a)! / product(a, d->d!))*m -- ... * sqrt of multinomial coeff
+	       	    )
+	       ));
+     assert(i+1 == dimHd ds);
+     ret          
+     );
+
+///
+restart 
+debug loadPackage "NumericalAlgebraicGeometry"
+sum(randomSd {2,3,4,5} / BombieriWeylNormSquared) -- should be 1
+///
+
 oneRootStartSystem = method(TypicalValue => Sequence)
 oneRootStartSystem List := Sequence => T -> (
 -- for a homogeneous system constructs a start system and one root 
@@ -854,13 +911,21 @@ oneRootStartSystem List := Sequence => T -> (
 --      S     = list of polynomials, 
 --      solsS = list of sequences
      R := ring first T;
-     lastVar := last gens R;
-     n := numgens R;
-     S := matrix{apply(n - 1, i->lastVar^(first degree T_i)*R_i)};
-     M := matrix fillMatrix(mutableMatrix(CC,n,n));
-     coordChange = map(R,R,(vars R) * M);
-     solsS = solve(M, transpose matrix{toList (numgens R - 1 : 0_CC) | {1}});
-     (flatten entries coordChange S, {flatten entries solsS})
+     n := numgens R - 1; 
+     Ml := flatten entries randomInComplexUnitBall dimHd(T/first@@degree);
+     M := map(CC^n, n+1, (i,j)->Ml#((n+1)*i+j)); -- n by n+1 matrix formed from n^2+n (first) entries of Ml    
+     coord'transform := last SVD M;
+     inv'coord'transform := solve(coord'transform, map CC^(n+1));
+     coord'change := map(R,R,(vars R) * transpose coord'transform);
+     (good'sys, good'sol) := goodInitialPair(R,T/first@@degree);
+     sol := inv'coord'transform * good'sol; -- root
+     h := coord'change good'sys;
+     ret := sqrt(1-(normF M)^2)*h + diagonalMatrix apply(T,f->(
+	       d := first degree f;
+	       (sum(numgens R, i->R_i*conjugate sol_(i,0)))^(d-1) * sqrt d 
+	       )) * M * transpose vars R;     
+     assert (norm2 sub(ret,transpose sol)<0.0001); -- just a check
+     (flatten entries ret, {flatten entries sol})
      )     
 
 -- INTERFACE part ------------------------------------
