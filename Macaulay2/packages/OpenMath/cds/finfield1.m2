@@ -6,10 +6,8 @@ getGF = (p,n) -> (
 	q := p^n;
 	r := null;
 	if (createdGFs#?q) then (
-		print concatenate("found GF ", toString q);
 		createdGFs#q
 	) else (
-		print concatenate("create GF ", toString q);
 		if n === 1 then r = GF(p) else r = GF(p,n);
 		createdGFs#q = r;
 		r

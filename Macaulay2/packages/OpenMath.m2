@@ -71,6 +71,17 @@ document {
 		t = parse ////<OMA><OMS cd="arith1" name="plus"/><OMI>1</OMI><OMI>2</OMI></OMA>////
 		val t
      	///,
+	TEST ///
+		s = toString toLibxmlNode openMath (hold 2*3)
+		assert (val parse s == 6)
+	///,
+	TEST ///
+		GF(25)[x,y]
+		s1 = toString toLibxmlNode (openMath (x+y))^2
+		s2 = toString toLibxmlNode (openMath (x^2 + 2*y*x + y^2))
+		assert ( s1 != s2 )
+		assert ( val parse s1 == val parse s2 )
+	///,
 	SeeAlso => {openMath}
 	}
 
@@ -90,6 +101,11 @@ document {
 		v = openMath (hold 2*3)
 		toLibxmlNode v
      	///,
+	TEST ///
+		s = toString toLibxmlNode openMath (hold 2*3)
+		s = replace("(\r|\n| )", "", s)
+		assert (s == "<OMA><OMScd=\"arith1\"name=\"times\"/><OMI>2</OMI><OMI>3</OMI></OMA>")
+	///,
 	SeeAlso => {(val, XMLnode)}
 	}
 	
