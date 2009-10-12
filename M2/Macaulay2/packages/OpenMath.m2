@@ -3,7 +3,7 @@ needsPackage "XML"
 newPackage(
 	"OpenMath",
     	Version => "0.1", 
-    	Date => "October 5, 2009",
+    	Date => "October 12, 2009",
     	Authors => {
 			{Name => "Dan Roozemond", Email => "d.a.roozemond@tue.nl", HomePage => "http://www.win.tue.nl/~droozemo/"}
 		},
