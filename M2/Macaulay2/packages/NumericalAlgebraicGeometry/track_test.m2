@@ -1,6 +1,6 @@
 restart
-loadPackage "NumericalAlgebraicGeometry"
-NAGtrace 1; debug NumericalAlgebraicGeometry;
+NAG = loadPackage "NumericalAlgebraicGeometry";
+NAGtrace 1; debug NAG;
 load "benchmarks.m2"
 
 -- small example with 2 solutions -------------------------------------------
@@ -8,22 +8,23 @@ R = CC[x,y];
 S = {x^2-1,y^2-1};
 T = {x^2+y^2-1, x*y};
 solsS = {(1,-1),(1,1),(-1,1),(-1,-1)};
-T = (katsuraBench 6)_*; (S,solsS) = totalDegreeStartSystem T; 
+T = (katsuraBench 7)_*; (S,solsS) = totalDegreeStartSystem T; 
+--(T,S,solsS) = randomGeneralizedEigenvalueProblem 5;
 isH = false;
 -- same, but projective
 --R = CC[x,y,z];
 --T = {x^2+y^2-z^2, x*y};
 --(S,solsS) = oneRootStartSystem T;
 --isH = true;
-
+--
 M = track(S,T,solsS, gamma=>0.8+0.6*ii,
      Software=>M2,
                --M2engine,
      	       --M2enginePrecookedSLPs,
+     tStepMin=>0.001,
      Projectivize=>not isH,
      Normalize=>true,
-     Predictor=>--Tangent,
-		--Euler,
+     Predictor=>--RungeKutta4
 		ProjectiveNewton
      );
 print sortSolutions M
