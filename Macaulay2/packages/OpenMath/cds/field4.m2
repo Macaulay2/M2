@@ -16,28 +16,28 @@ OMSEvaluators#"field4"#"field_by_poly_vector" = (args, attrs) -> (
 	
 	--The element
 	r := 0;
-	for i in 0..((R.degree)-1) do
+	for i in 0..((degree R)-1) do
 		r = r + ((a#1)#i)*g^i;
-		
+
 	--Done!
 	r
 )
 
 
 --- To OpenMath ---
-toOpenMathFFelt = idCheck(t -> (
+toOpenMathFFElt_Vector = t -> (
 	R := class t;
-	
+
 	--Get the polynomial (coefficients) for the element
 	lst := listForm(lift(t, ambient(R)));
-	r := new MutableList from apply(1..(R.degree), i->0);
+	r := new MutableList from apply(1..(degree R), i->0);
 	for i in lst do r#(((i#0)#0)) = i#1;
 	r = new List from r;
 	r = toOpenMath r;
-	
+
 	--Get the field itself
-	omR := toOpenMath R;
-	
+	omR := toOpenMathFieldByPoly R;
+
 	--Done!
 	OMA("field4", "field_by_poly_vector", {omR, r})
-))
+)

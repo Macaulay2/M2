@@ -26,5 +26,6 @@ toOpenMath QuotientRing := autoCreateIDCheck(R -> (
 		(theOMerror = concatenate("Cannot convert quotient ring ", toString(R), " to OpenMath"); error("whoops"))
 ))
 toOpenMath GaloisField := autoCreateIDCheck(F -> (
+	setGF(F.order, F);
 	OMA("setname2", "GFpn", { OMI(F.char), OMI(F.degree) })
 ))

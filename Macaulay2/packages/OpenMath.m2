@@ -1,9 +1,10 @@
 -- -*- coding: utf-8 -*-
 needsPackage "XML"
+needsPackage "ConwayPolynomials"
 newPackage(
 	"OpenMath",
-    	Version => "0.1", 
-    	Date => "October 12, 2009",
+    	Version => "0.2", 
+    	Date => "October 15, 2009",
     	Authors => {
 			{Name => "Dan Roozemond", Email => "d.a.roozemond@tue.nl", HomePage => "http://www.win.tue.nl/~droozemo/"}
 		},
@@ -12,6 +13,7 @@ newPackage(
 		AuxiliaryFiles => true
     	)
 needsPackage "XML"
+needsPackage "ConwayPolynomials"
 
 theOMerror = null;
 
@@ -20,6 +22,7 @@ load "./OpenMath/OMelts.m2"
 load "./OpenMath/OMrefs.m2"
 load "./OpenMath/base.m2"
 load "./OpenMath/expr.m2"
+load "./OpenMath/finitefield.m2"
 load "./OpenMath/cds/arith1.m2"
 load "./OpenMath/cds/field3.m2"
 load "./OpenMath/cds/field4.m2"
