@@ -10,6 +10,11 @@ startServer (String, String) := (host, port) -> (
 		dbgout(1) << "[Server] Cleaning up old socket." << endl;
 		close serverSocket;
 	);
+	
+	--Workaround: Creating the first finite field takes a while because the ConwayPolynomials
+	-- package needs to initialize. So, instead of having every single forked process do that,
+	-- we do it now.
+	GF(4);
 
 	--Here we go...
 	hostport := host|":"|port;

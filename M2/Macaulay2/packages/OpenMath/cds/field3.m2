@@ -1,5 +1,5 @@
--- done:
--- todo: field_by_poly, fraction_field, free_field
+-- done: field_by_poly 
+-- todo: fraction_field, free_field
 
 --- From OpenMath ---
 OMSEvaluators#"field3" = new MutableHashTable;
@@ -10,7 +10,19 @@ OMSEvaluators#"field3"#"field_by_poly" = (args, attrs) -> (
 		error("whoops");
 	);
 		
-	F := a#0;
+	R := a#0;
 	p := a#1;
-	toField(class(p)/p)
+	
+	F := toField(class(p)/p);
+
+	try F#OpenMathPrefEltRepr = FieldByPolyVector;
+
+	F
 )
+
+--- To OpenMath ---
+toOpenMathFieldByPoly = autoCreateIDCheck(F -> (
+	CR := toOpenMath coefficientRing ambient F;
+	R := toOpenMath (ideal ambient F)_0;
+	OMA("field3", "field_by_poly", {CR, R})
+))

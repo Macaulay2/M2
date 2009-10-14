@@ -44,15 +44,17 @@ toOpenMath RR     := idCheck(x -> (
 ))
 
 toOpenMath RingElement := p -> (
-	R := class(p);
+	R := class p;
 	if isPolynomialRing(R) then (
-		toOpenMathPoly(p)
-	) else if (class(R) === QuotientRing) and (ambient(R) === ZZ) then (
+		toOpenMathPoly p
+	) else if (class R === QuotientRing) and (ambient R === ZZ) then (
 		OMI(toString p)
-	) else if (class(R) === GaloisField) then (
-		toOpenMathFFelt(p)
+	) else if (class R === QuotientRing) and (char R != 0) then (
+		toOpenMathFFelt p
+	) else if (class R === GaloisField) then (
+		toOpenMathFFelt p
 	) else (
-		(theOMerror = concatenate("Cannot handle ring element '", toString(p), "'"); error("whoops"));
+		(theOMerror = concatenate("Cannot handle ring element '", toString(p), " ' in '", toString R, "'"); print theOMerror; error("whoops"));
 	)
 )
 
@@ -280,8 +282,8 @@ fromOpenMath XMLnode := x->(
 	r := null;
 	
 	--If we know what it is (by the id) then when just use that!
-	if x#?"id" and (class(x#"id") === String) and (existsOMref(x#"id")) then (
-		r = (getOMref(x#"id"))#0;
+	if x#?"id" and (class(x#"id") === String) and (existsOMref("#"|x#"id")) then (
+		r = (getOMref("#"|x#"id"))#0;
 		if r =!= null then return r;
 	);
 
@@ -308,7 +310,7 @@ fromOpenMath XMLnode := x->(
 		if (class(x#"id") =!= String) then (
 			theOMerror = "id was not a string"; error("whoops");
 		);
-		addOMref(x#"id", r, x);
+		addOMref("#"|x#"id", r, x);
 	);
 		
 	r
