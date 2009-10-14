@@ -75,7 +75,7 @@ OMSEvaluators#"scscp1"#"procedure_call" = (args, attrs) -> (
 	recentOMProblem = null;
 	evld = value(args#0);
 	if (class(evld) === XMLnode) and (evld.tag == "OME") then 
-		return constructProcTerm(e, retopts);
+		return constructProcTerm(evld, retopts);
 		
 	-- If we want to return nothing or a cookie, we are pretty much done!
 	if ret === "nothing" then
