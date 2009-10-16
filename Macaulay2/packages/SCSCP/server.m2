@@ -92,7 +92,8 @@ handleIncomingConnection = sock -> (
 	ans := ""; buf := ""; mtch := null;
 	waitfor := "<\\?scscp version=\"(.*)\" \\?>"; 
 	while (mtch = regex(waitfor, ans)) === null do (
-		buf = read sock;
+		buff = read sock;
+		buf = buff|"";
 
 		--Handle EOF
 		if atEndOfFile sock then (
@@ -117,7 +118,8 @@ handleIncomingConnection = sock -> (
 		dbgout(5) << "[handleIncoming " << cid << "] Waiting for pc...'" << "'" << endl;
 		waitfor = "(.*)<\\?scscp ([a-z]+)( [^>]*)? \\?>";
 		while (mtch = regex(waitfor, ans)) === null do (
-			buf = read sock;
+			buff = read sock;
+			buf = buff|"";
 
 			--Handle EOF
 			if atEndOfFile sock then (
@@ -144,12 +146,12 @@ handleIncomingConnection = sock -> (
 			ans = substring(ans, mtch#0#0 + mtch#0#1);
 		) else if keyw === "ack" then (
 			--<?scscp ack ?>
-			dbgout(5) << "[handleIncoming " << cid << "] 'ack' received" << endl;
+			dbgout(2) << "[handleIncoming " << cid << "] 'ack' received" << endl;
 			--take off this bit
 			ans = substring(ans, mtch#0#0 + mtch#0#1);
 		) else if keyw === "end" then (
 			--<?scscp end ?>
-			dbgout(5) << "[handleIncoming " << cid << "] 'end' received" << endl;
+			dbgout(2) << "[handleIncoming " << cid << "] 'end' received" << endl;
 			
 			question := substring(ans, 0, mtch#1#0);
 			ans = substring(ans, mtch#0#0 + mtch#0#1);
