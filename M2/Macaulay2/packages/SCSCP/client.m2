@@ -14,7 +14,8 @@ newConnection (String, String) := (host, port) -> (
 
 	ans := ""; buf := "";
 	while #ans === 0 or ans#-1 =!= "\n" do (
-		buf = read s#"fd";
+		buff = read s#"fd";
+		buf = buff|"";
 		if atEndOfFile s#"fd" then ( 
 			dbgout(0) << "[Client]  atEndOFFile" << endl; 
 			closeConnection s;		
@@ -41,7 +42,8 @@ newConnection (String, String) := (host, port) -> (
 	dbgout(2) << "[Client] Waiting for response to version request..." << endl;
 	ans = "";
 	while #ans == 0 or ans#-1 =!= "\n" do (
-		buf = read s#"fd";
+		buff = read s#"fd";
+		buf = buff|"";
 		if atEndOfFile s#"fd" then ( 
 			dbgout(0) << "[Client]  atEndOFFile" << endl; 
 			closeConnection s;		
@@ -108,7 +110,8 @@ compute (SCSCPConnection, XMLnode, String) := (s,x, ret) -> (
 	ans := "";
 	waitfor := "(.*)<\\?scscp end \\?>\n$";
 	while not match(waitfor, ans) do (
-		buf = read s#"fd";
+		buff = read s#"fd";
+		buf = buff|"";
 		if atEndOfFile s#"fd" then ( dbgout(0) << "[Client]  atEndOFFile" << endl; return null; );
 
 		ans = ans|buf;
