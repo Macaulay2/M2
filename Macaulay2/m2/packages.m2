@@ -75,6 +75,7 @@ checkAuthorOption := authors -> (
 
 newPackage = method( 
      Options => { 
+	  Certification => null,
 	  Version => "0.0",
 	  AuxiliaryFiles => false,
 	  DebuggingMode => false,
