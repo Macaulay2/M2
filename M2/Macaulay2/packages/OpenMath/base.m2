@@ -49,7 +49,7 @@ toOpenMath RingElement := p -> (
 		toOpenMathPoly p
 	) else if (class R === QuotientRing) and (ambient R === ZZ) then (
 		OMI(toString p)
-	) else if (class R === QuotientRing) and (char R != 0) then (
+	) else if (class R === QuotientRing) then (
 		toOpenMathFFelt p
 	) else if (class R === GaloisField) then (
 		toOpenMathFFelt p
