@@ -1,0 +1,24 @@
+-*- M2 -*-
+
+Title: Comprehensive (or Parametrized) Groebner bases
+
+Description: Given an ideal in a polynomial ring k[a,b,c...][x,y,z...],
+where we think of a,b,c... as "parameters", find a set of generators
+that is a GB under every specialization of a,b,c... to elements of k.
+
+Use the technique to compute flattening stratifications
+
+=============================================================================
+
+Proposed by: Adam Boocher
+Potential Advisor: David Eisenbud
+Project assigned to: Adam Boocher
+Current status: In progress
+
+=============================================================================
+
+Progress log: Boocher noticed that there had been
+an implementation in Risa/Asir, though its web
+site is now dead. DE wrote to Takayama. Meantime, Boocher is working
+on the project.
+
