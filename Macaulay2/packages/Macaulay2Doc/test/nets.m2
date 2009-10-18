@@ -20,5 +20,5 @@ assert ( toString net x === x )
 
 end
 -- Local Variables:
--- compile-command: "make -C $M2BUILDDIR/Macaulay2/test nets.out"
+-- compile-command: "make -C $M2BUILDDIR/Macaulay2/packages/Macaulay2Doc/test nets.out"
 -- End:

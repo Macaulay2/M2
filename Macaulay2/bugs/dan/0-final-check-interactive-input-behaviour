@@ -1,0 +1,119 @@
+interactive input behaviour
+
+try each of these, both in emacs (--no-readline) and in an xterm (with readline)
+follow each of them with a simple expression (e.g., "4"), to see if parsing has recovered
+
+current problem -- readline doesn't discard partial lines after SIGINT (?)
+
+   multiple statments per line:
+	1;
+	1;2;3
+	1;2+;3
+	1;2+ RETURN 3
+			i1 : 1;
+
+			i2 : 1;2;3
+
+			o4 = 3
+
+			i5 : 1;2+;3
+			stdio:8:5:(1):[0]: error: syntax error at ';'
+
+			i6 : 1;2+
+			     3
+
+			o7 = 5
+   interrupts (M2 ignores SIGINTs that readline gets):
+	///asdf RETURN CTRL-C
+	"asdf RETURN CTRL-C
+	1 + RETURN CTRL-C
+	{* RETURN CTRL-C
+			i8 : ///asdf
+			       C-c C-c
+
+			i8 : "asdf
+			       C-c C-c
+
+			i8 : 1 +
+			       C-c C-c
+
+			i8 : {*
+			       C-c C-c
+
+			i8 : 
+   blank lines
+	///asdf RETURN RETURN
+	"asdf RETURN RETURN
+	1 + RETURN RETURN
+	{* RETURN RETURN
+			i9 : ///asdf
+
+
+			i9 : "asdf
+
+
+			i9 : 1+
+
+
+			i9 : {*
+
+
+			i9 : 
+   comments
+	-- foo RETURN 4
+	-- foo RETURN 4+ RETURN 5
+	4 ; {* RETURN *} 5
+			i10 : -- foo
+			      4
+
+			o10 = 4
+
+			i11 : -- foo
+			      4+
+			      5
+
+			o11 = 9
+
+			i12 : 5 ; {*
+
+			i13 : *} 5			<=== oops, a silly prompt, fix this (later)
+
+			o13 = 5
+   EOF
+	EOF
+	/// RETURN EOF
+	" RETURN EOF
+	{* RETURN EOF
+			i14 : 
+
+			Process M2<2> finished
+
+			+ M2 --no-readline -q --print-width 156
+			Macaulay2, version 1.3
+			with packages: Elimination, IntegralClosure, LLLBases, PrimaryDecomposition, ReesAlgebra, SchurRings, TangentCone
+
+			i1 : ///
+
+			stdio:1:1:(0):[0]: error: EOF in string /// ... /// beginning here
+
+			Process M2<2> finished
+
+			+ M2 --no-readline -q --print-width 156
+			Macaulay2, version 1.3
+			with packages: Elimination, IntegralClosure, LLLBases, PrimaryDecomposition, ReesAlgebra, SchurRings, TangentCone
+
+			i1 : "
+
+			stdio:1:1:(0):[0]: error: EOF in string beginning here
+
+			Process M2<2> finished
+
+			+ M2 --no-readline -q --print-width 156
+			Macaulay2, version 1.3
+			with packages: Elimination, IntegralClosure, LLLBases, PrimaryDecomposition, ReesAlgebra, SchurRings, TangentCone
+
+			i1 : {*
+
+			stdio:1:1:(0):[0]: error: EOF in block comment {* ... *} beginning here
+
+			Process M2<2> finished

@@ -78,7 +78,7 @@ map(Ring,Ring,Matrix) := RingMap => opts -> (R,S,m) -> (
 	  mdegs = join(mdegs, promote(degrees A,A,S) / degmap);
 	  r := numgens source m;
 	  if r > n then (
-	       if instance(A,GaloisField) then (
+	       if instance(A,GaloisField) and A.rawGaloisField then (
 		    -- the engine wants to know where the primitive element will go
 		    p := map(R,ambient A,m_(toList(n .. r-1)));
 		    m' := new MutableMatrix from m;
@@ -91,7 +91,7 @@ map(Ring,Ring,Matrix) := RingMap => opts -> (R,S,m) -> (
 		    if A === R or member(A, R.baseRings) then (
 			 -- we can promote
 			 mE = mE | promote(vars A, R);
-			 if instance(A,GaloisField) then (
+			 if instance(A,GaloisField) and A.rawGaloisField then (
 		    	      -- the engine wants to know where the primitive element will go
 		    	      m = m | promote(A.PrimitiveElement, R)
 			      )
@@ -100,7 +100,7 @@ map(Ring,Ring,Matrix) := RingMap => opts -> (R,S,m) -> (
 		    else (
 			 mm := matrix(R, {apply(A.generatorSymbols, s -> if R.?indexSymbols and R.indexSymbols#?s then justonce s else 0_R)});
 			 mE = mE | mm;
-			 if instance(A,GaloisField) then (
+			 if instance(A,GaloisField) and A.rawGaloisField then (
 			      -- the engine wants to know where the primitive element will go
 			      m = m | matrix {{(map(R,ambient A,mm)) A.PrimitiveElement}}
 			      )
@@ -141,7 +141,7 @@ RingMap RingElement := RingElement => fff := (p,m) -> (
      R := source p;
      S := target p;
      if R =!= ring m then (
-	  m = promote(m,R);
+	  m = try promote(m,R) else error "ring element not in source of ring map, and not promotable to it";
 	  );
      promote(rawRingMapEval(raw p, raw m),S))
 

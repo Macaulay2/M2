@@ -26,6 +26,8 @@ export {
      }
 
 gfan'path = gfanInterface#Options#Configuration#"path"
+if gfan'path == "" then gfan'path = prefixDirectory | currentLayout#"programs"
+
 fig2dev'path = gfanInterface#Options#Configuration#"fig2devpath"
 
 needsPackage "FourierMotzkin"
@@ -74,7 +76,7 @@ render(String, Ideal) := opts-> (F, I) -> (
      error "expected prime field or QQ";
      -- Create the input file
      f := temporaryFileName();
-     << "using temporary file " << f << endl;
+     -- << "using temporary file " << f << endl;
      ex := "";
      if opts.Symmetries =!= {}
      then (
@@ -82,9 +84,10 @@ render(String, Ideal) := opts-> (F, I) -> (
 	  then error "Symmetries value should be a list of permutations (list of lists of integers)";
 	  ex = ex|" --symmetry";
 	  );
-     ex = gfan'path| "gfan " | ex | "  <" | f | " | gfan_render > " | F;
+     ex = gfan'path| "gfan " | ex | "  <" | f | " | "|gfan'path|"gfan_render > " | F;
      writeGfanIdeal(f, I, opts.Symmetries);
      runchk ex;
+     removeFile f;
   )
 
 renderStaircase = method()
@@ -117,13 +120,14 @@ renderStaircase(String,ZZ,ZZ,List) := (F,d,w,L) -> (
 
     ex := "";
     f := temporaryFileName();
-    << "using temporary file " << f << endl;
+    -- << "using temporary file " << f << endl;
 
      ex = gfan'path| "gfan_renderstaircase -m -d "| d | " -w " | w ;
 		 ex = ex | " < " | f |" >" | F;
 		
      writeGfanIdealList(f, L);
      runchk ex;
+     removeFile f;
     )
 
 groebnerCone = method()
@@ -242,7 +246,7 @@ gfan Ideal := opts -> (I) -> (
      error "expected prime field or QQ";
      -- Create the input file
      f := temporaryFileName();
-     << "using temporary file " << f << endl;
+     -- << "using temporary file " << f << endl;
      ex := "";
      if opts.Symmetries =!= {}
      then (
@@ -257,6 +261,9 @@ gfan Ideal := opts -> (I) -> (
      runchk ex2;
      L := readGfanIdeals(f | ".out");
      M := readGfanIdeals(f | ".lt");
+     removeFile f;
+     removeFile(f | ".out");
+     removeFile(f | ".lt");
      (M,L)
      )
 
@@ -275,7 +282,7 @@ groebnerFan Ideal := opts -> (I) -> (
      error "expected prime field or QQ";
      -- Create the input file
      f := temporaryFileName();
-     << "using temporary file " << f << endl;
+     -- << "using temporary file " << f << endl;
      ex := "";
      if opts.Symmetries =!= {}
      then (
@@ -283,10 +290,13 @@ groebnerFan Ideal := opts -> (I) -> (
 	  then error "Symmetries value should be a list of permutations (list of lists of integers)";
 	  ex = ex|" --symmetry";
 	  );
-     ex = gfan'path| "gfan " | ex | "  <" | f | "| gfan_topolyhedralfan" | ex | " >" | f | ".out";
+     ex = gfan'path| "gfan " | ex | "  <" | f | "| " | gfan'path | "gfan_topolyhedralfan" | ex | " >" | f | ".out";
      writeGfanIdeal(f, I, opts.Symmetries);
      runchk ex;
-     readGroebnerfan(f | ".out")
+     ret := readGroebnerfan(f | ".out");
+     removeFile f;
+     removeFile(f | ".out");
+     ret
      )
 
 beginDocumentation()

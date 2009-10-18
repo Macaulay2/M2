@@ -22,5 +22,5 @@ assert( annihilator Tor_1(M,N)==  annihilator Tor_1(N,M) )
 
 end
 -- Local Variables:
--- compile-command: "make -C $M2BUILDDIR/Macaulay2/test ann2.out"
+-- compile-command: "make -C $M2BUILDDIR/Macaulay2/packages/Macaulay2Doc/test ann2.out"
 -- End:

@@ -245,7 +245,7 @@ document {
 	       String * String = peek;
 	       "left" * "right" = "value"
 	  ///,
-	  PARA "Warning: the installation of new methods may supplant old ones, changing the behavior of Macaulay 2."
+	  PARA "Warning: the installation of new methods may supplant old ones, changing the behavior of Macaulay2."
 	  },
      SYNOPSIS {
 	  Heading => "using assignment methods for binary operators",
@@ -259,7 +259,7 @@ document {
 	       },
 	  Outputs => {
 	       { "the previously installed method for assignment to ", TT "X OP Y", " is called with arguments ", TT "(x,y,e)", ",
-		    and its return value is returned.  If no such method has been installed, then Macaulay 2 searches for a method
+		    and its return value is returned.  If no such method has been installed, then Macaulay2 searches for a method
 		    for assignment to ", TT "X' OP Y'", ", where ", TT "X'", " is an ancestor of ", TT "X", " and ", TT "Y'", " is an ancestor of ", TT "Y", "
 		    (see ", TO "inheritance", " for details)."
 		    }
@@ -320,7 +320,7 @@ document {
 	       - String = peek;
 	       - "foo" = "value"
 	  ///,
-	  PARA "Warning: the installation of new methods may supplant old ones, changing the behavior of Macaulay 2."
+	  PARA "Warning: the installation of new methods may supplant old ones, changing the behavior of Macaulay2."
 	  },
      SYNOPSIS {
 	  Heading => "using assignment methods for unary prefix operators",
@@ -362,7 +362,7 @@ document {
 	       String ~ = peek;
 	       "foo" ~ = "value"
 	  ///,
-	  PARA "Warning: the installation of new methods may supplant old ones, changing the behavior of Macaulay 2."
+	  PARA "Warning: the installation of new methods may supplant old ones, changing the behavior of Macaulay2."
 	  },
      SYNOPSIS {
 	  Heading => "using assignment methods for unary postfix operators",
@@ -510,7 +510,7 @@ g()
 	       String * String := peek;
 	       "left" * "right"
 	  ///,
-	  PARA "Warning: the installation of new methods may supplant old ones, changing the behavior of Macaulay 2."
+	  PARA "Warning: the installation of new methods may supplant old ones, changing the behavior of Macaulay2."
 	  },
      SYNOPSIS {
 	  Heading => "using methods for binary operators",
@@ -523,7 +523,7 @@ g()
 	       },
 	  Outputs => {
 	       { "the previously installed method for ", TT "X OP Y", " is called with arguments ", TT "(x,y)", ", and its return value is returned.
-		    If no such method has been installed, then Macaulay 2 searches for a method
+		    If no such method has been installed, then Macaulay2 searches for a method
 		    for ", TT "X' OP Y'", ", where ", TT "X'", " is an ancestor of ", TT "X", " and ", TT "Y'", " is an ancestor of ", TT "Y", "
 		    (see ", TO "inheritance", " for details)."
 		    }
@@ -565,7 +565,7 @@ g()
 	       - String := peek;
 	       - "foo"
 	  ///,
-	  PARA "Warning: the installation of new methods may supplant old ones, changing the behavior of Macaulay 2."
+	  PARA "Warning: the installation of new methods may supplant old ones, changing the behavior of Macaulay2."
 	  },
      SYNOPSIS {
 	  Heading => "using methods for unary prefix operators",
@@ -576,7 +576,7 @@ g()
 	       },
 	  Outputs => {
 	       { "the previously installed method for ", TT "OP X", " is called with argument ", TT "x", ", and its return value is returned.
-		    If no such method has been installed, then Macaulay 2 searches for a method
+		    If no such method has been installed, then Macaulay2 searches for a method
 		    for ", TT "OP X'", ", where ", TT "X'", " is an ancestor of ", TT "X", " (see ", TO "inheritance", " for details)." }
 	       },
 	  "The second line of the following example illustrates the syntax above.",
@@ -604,7 +604,7 @@ g()
 	       String ~ := peek;
 	       "foo" ~
 	  ///,
-	  PARA "Warning: the installation of new methods may supplant old ones, changing the behavior of Macaulay 2."
+	  PARA "Warning: the installation of new methods may supplant old ones, changing the behavior of Macaulay2."
 	  },
      SYNOPSIS {
 	  Heading => "using methods for unary postfix operators",
@@ -615,7 +615,7 @@ g()
 	       },
 	  Outputs => {
 	       { "the previously installed method for ", TT "X OP", " is called with argument= ", TT "x", ", and its return value is returned.
-		    If no such method has been installed, then Macaulay 2 searches for a method
+		    If no such method has been installed, then Macaulay2 searches for a method
 		    for to ", TT "X' OP", ", where ", TT "X'", " is an ancestor of ", TT "X", " (see ", TO "inheritance", " for details)." 
 		    }
 	       },
@@ -641,7 +641,7 @@ g()
 	       source String := peek;
 	       source "foo"
 	  ///,
-	  PARA "Warning: the installation of new methods may supplant old ones, changing the behavior of Macaulay 2."
+	  PARA "Warning: the installation of new methods may supplant old ones, changing the behavior of Macaulay2."
 	  },
      SYNOPSIS {
 	  Heading => "using unary methods for method functions",
@@ -677,7 +677,7 @@ g()
 	       source("foo",33)
 	       source("foo",3.3)
 	  ///,
-	  PARA "Warning: the installation of new methods may supplant old ones, changing the behavior of Macaulay 2.",
+	  PARA "Warning: the installation of new methods may supplant old ones, changing the behavior of Macaulay2.",
 	  PARA "The same syntax works for 3 or 4 arguments."
 	  },
      SYNOPSIS {
@@ -690,7 +690,7 @@ g()
 	       },
 	  Outputs => {
 	       { "the previously installed method for ", TT "f(X,Y)", " is called with arguments ", TT "(x,y)", ", and the return value is returned.
-  		    If no such method has been installed, then Macaulay 2 searches for a method
+  		    If no such method has been installed, then Macaulay2 searches for a method
 		    for ", TT "f(X',Y')", ", where ", TT "X'", " is an ancestor of ", TT "X", " and ", TT "Y'", " is an ancestor of ", TT "Y", "
 		    (see ", TO "inheritance", " for details)."
 		    }

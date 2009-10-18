@@ -1,0 +1,2 @@
+it would be nice if setRandomSeed would provide the previous seed, so we could
+put it back and resume a computation where we left off..

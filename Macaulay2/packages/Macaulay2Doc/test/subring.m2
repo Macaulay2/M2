@@ -75,5 +75,5 @@ assert ( image eg2() == image matrix {{e^2-d*f, a*c-d*f, a*b-d*e, c*e-b*f, c*d-b
 	       c^2-a*f, a^2-b*e, b*c-a*e, b^2-a*d}})
 end
 -- Local Variables:
--- compile-command: "make -C $M2BUILDDIR/Macaulay2/test subring.out"
+-- compile-command: "make -C $M2BUILDDIR/Macaulay2/packages/Macaulay2Doc/test subring.out"
 -- End:

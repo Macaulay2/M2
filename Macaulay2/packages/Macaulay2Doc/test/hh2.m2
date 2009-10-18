@@ -9,5 +9,5 @@ h = hilbertFunction(0,H)
 assert( h == 1 )
 end
 -- Local Variables:
--- compile-command: "make -C $M2BUILDDIR/Macaulay2/test hh2.out"
+-- compile-command: "make -C $M2BUILDDIR/Macaulay2/packages/Macaulay2Doc/test hh2.out"
 -- End:

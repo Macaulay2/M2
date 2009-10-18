@@ -28,7 +28,7 @@ scan( select (symbols, (nam,sym) -> isAlpha nam), (nam,sym) -> (
 f2 << close
 
 f << "   )" << endl
-f << "  " << format ///A list of the symbols available in Macaulay 2, for use with dynamic completion./// << endl
+f << "  " << format ///A list of the symbols available in Macaulay2, for use with dynamic completion./// << endl
 f << "  )" << endl
 
 f << ///

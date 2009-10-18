@@ -9,33 +9,36 @@ include $(DOTS)/../include/config.Makefile
 SRCDIR = @srcdir@
 include Makefile.test
 
+
 all:
 
-check::
-	$(MAKE) -C slow $@
-	: skipping obsolete raw engine tests: $(MAKE) -k -C engine $@
-clean::
-	$(MAKE) -C slow $@
-	$(MAKE) -C engine $@
+TARGETS = all check status
+CLEANTARGETS = clean distclean
+SUBDIRS = slow gigantic goals quarantine
+define do-in-subdirs
+$(foreach d,$(SUBDIRS),
+	$(eval .PHONY: $1-in-subdirs)
+	$(eval .PHONY $1 $1-in-subdirs:$1-in-$d)
+	$(eval $1-in-$d:; $$(MAKE) -C $d $1 $2))
+endef
+$(foreach t,$(TARGETS),$(eval $(call do-in-subdirs,$t)))
+$(foreach t,$(CLEANTARGETS),$(eval $(call do-in-subdirs,$t,DEPENDS=no)))
+
+check: check-deferred
+check-deferred:
+	@ cd @abs_srcdir@ && if grep -w deferred *.m2 >/dev/null 2>&1 ; \
+	  then echo "-- *** error: some tests in the following files have been deferred: `grep -lw deferred *.m2`" >&2 ; \
+	       false ; \
+	  fi
 
 ifneq "@DUMPDATA@" "no"
 RESULTS += dumpdata.out
 endif
 
-distclean::
-	$(MAKE) -C engine $@
-	$(MAKE) -C slow $@
-
 docStructure.out: docStructure.m2
 
 Makefile: Makefile.in; cd $(DOTS)/..; ./config.status Macaulay2/packages/Macaulay2Doc/test/Makefile
 Makefile.test: Makefile.test.in; cd $(DOTS)/..; ./config.status Macaulay2/packages/Macaulay2Doc/test/Makefile.test
-
-status::
-	: skipping: $(MAKE) -C engine $@
-	$(MAKE) -C slow $@
-	: skipping: $(MAKE) -C goals $@
-	: skipping: $(MAKE) -C gigantic $@
 
 MIKE_TESTS := $(wildcard @srcdir@/mt-*.m2 @srcdir@/gigantic/mt-*.m2)
 MIKE_RESULTS := $(patsubst @srcdir@/%.m2, %.out, $(MIKE_TESTS))

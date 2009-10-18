@@ -5,3 +5,7 @@ properly with the latest version of Macaulay 2.
 The file chapter.out.expected contains the original output from the program,
 and the file test.out.expected contains the current output from the program,
 used to verify that the program continues to give the same output.
+
+The answer on line o59 is different, starting with version 1.3 of M2, due to a
+repair to the "saturate" function.  See Macaulay2Doc/test/saturate5.m2 for the
+proof that the new answer is correct.

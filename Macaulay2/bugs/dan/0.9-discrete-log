@@ -1,0 +1,1 @@
+hook rawDiscreteLog into log for both log(a^99) and log(a^2,a^99)

@@ -11,19 +11,3 @@
 	D0 = ideal(P)
 	D = saturate(D0,z)
 	--gets error message
-
------------------------------------------------------------------------------
-
--- a problem with matrices formed from lists of vectors in a subquotient module
-
-stderr << currentFileName << ": test deferred" << endl
-exit 0
-
-R = QQ[x..z]
-m = ideal vars R
-M = m/m^2
-N = saturate 0_M					    -- low priority, dan will fix this later
-end
--- Local Variables:
--- compile-command: "make -C $M2BUILDDIR/Macaulay2/test saturate.out"
--- End:

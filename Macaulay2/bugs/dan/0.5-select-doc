@@ -1,2 +1,20 @@
 By the way, the doc node for "select" actually points to "partition"  
 -- which is not explained there. I think something (minor) is wrong.
+
+Probably it would look better if the "See also" were in small type and after the "Ways to use"
+
+    select -- select from a list, hash table, or string
+
+    See also
+
+	* partition -- partition a set or list by values of a function
+
+    Ways to use select :
+
+	* select(BasicList,Function) -- select elements from a list
+	* select(HashTable,Function) -- select part of a hash table
+	* select(String,String) -- select substrings matching a regular expression from a string
+	* select(String,String,String) -- select substrings matching a regular expression from a string
+	* select(ZZ,BasicList,Function) -- select a limited number of elements from a list
+	* select(ZZ,HashTable,Function) -- select a limited number of pairs from a hash table
+

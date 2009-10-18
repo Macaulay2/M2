@@ -2,5 +2,5 @@
 assert( a == 4 and b == 5 and c == 6 )
 end
 -- Local Variables:
--- compile-command: "make -C $M2BUILDDIR/Macaulay2/test parallel.out"
+-- compile-command: "make -C $M2BUILDDIR/Macaulay2/packages/Macaulay2Doc/test parallel.out"
 -- End:

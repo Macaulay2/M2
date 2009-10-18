@@ -34,7 +34,7 @@ document {
      EXAMPLE lines ///
      e = 1e-10;
      clean_e M'
-     clean_e norm (U^-1 - transpose U)
+     clean_e norm (1 - U * transpose U)
      ///,
      "Alternatively, if the only issue is display of the matrix, we may set the printing
      accuracy.",

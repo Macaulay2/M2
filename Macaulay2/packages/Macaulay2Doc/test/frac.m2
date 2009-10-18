@@ -124,5 +124,5 @@ assert not isField F
 
 end
 -- Local Variables:
--- compile-command: "make -C $M2BUILDDIR/Macaulay2/test frac.out"
+-- compile-command: "make -C $M2BUILDDIR/Macaulay2/packages/Macaulay2Doc/test frac.out"
 -- End:

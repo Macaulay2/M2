@@ -15,5 +15,5 @@ assert(r+s == t);
 
 end
 -- Local Variables:
--- compile-command: "make -C $M2BUILDDIR/Macaulay2/test global2.out"
+-- compile-command: "make -C $M2BUILDDIR/Macaulay2/packages/Macaulay2Doc/test global2.out"
 -- End:

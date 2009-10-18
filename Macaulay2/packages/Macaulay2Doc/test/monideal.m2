@@ -42,5 +42,5 @@ I = intersect(intersect(I1,I2),intersect(I3,I4))
 
 end
 -- Local Variables:
--- compile-command: "make -C $M2BUILDDIR/Macaulay2/test monideal.out"
+-- compile-command: "make -C $M2BUILDDIR/Macaulay2/packages/Macaulay2Doc/test monideal.out"
 -- End:

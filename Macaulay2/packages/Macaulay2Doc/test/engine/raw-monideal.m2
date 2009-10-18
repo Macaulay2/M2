@@ -72,5 +72,5 @@ intersect(I,monomialIdeal(a^3,b^3,c^3,d^3))
 independentSets I
 
 -- Local Variables:
--- compile-command: "make -C $M2BUILDDIR/Macaulay2/test/engine raw-monideal.out"
+-- compile-command: "make -C $M2BUILDDIR/Macaulay2/packages/Macaulay2Doc/test/engine raw-monideal.out"
 -- End:

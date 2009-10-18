@@ -34,7 +34,7 @@ undocumented {
 document { 
      Key => degree,
      "Degree is a common name, meaning different things for different 
-     kinds of mathematical objects.  In Macaulay 2, there are currently three
+     kinds of mathematical objects.  In Macaulay2, there are currently three
      related, yet different notions of degree: ",
      HEADER3 "Degree of polynomials or vectors of such",
 	  UL {

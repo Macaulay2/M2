@@ -43,7 +43,11 @@ getNewForRemoteRef = x -> (
 
 addOMref = method()
 addOMref (String, Thing, XMLnode) := (s,t,x) -> ( 
+--<<<<<<< .working
 	if not x#?"id" then	x#"id" = striphashsign s;
+--=======
+--	if not x#?"id" then	x#"id" = s;
+-->>>>>>> .merge-right.r9457
 	storedOMrefs#s = (t, x);
 	storedOMids#t = s;
 	s

@@ -9,13 +9,19 @@
 # Try
 #   gdb --osabi Darwin64
 #############################################################################
-DEBUG = yes
+PRODUCTION = no
+DEBUG = no
 PROFILE = no
-M64 = no
+M64 = yes
+
+# try this one if configuration fails because of an undefined symbol Unwind_Resume
 # CONFIGOPTIONS += LDFLAGS=-static-libgcc
+
 # CONFIGOPTIONS += --enable-build-libraries=gmp
 unexport DEBUG
 unexport PROFILE
+
+CONFIGOPTIONS += CPPFLAGS="-DM2_TEST_MACRO=1"
 
 ifeq ($(M64),yes)
 DIRBASE = mac64
@@ -46,6 +52,12 @@ DIRECTORY = $(DIRBASE)
 MACTARGETS += check install
 endif
 endif
+
+ifeq ($(PRODUCTION),yes)
+CONFIGOPTIONS += --disable-common-staging-area
+DIRECTORY = $(DIRBASE).production
+endif
+
 include Makefile.include
 
 default: $(MACTARGETS)

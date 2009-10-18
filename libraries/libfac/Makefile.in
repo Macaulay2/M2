@@ -1,3 +1,6 @@
+# license for libfac: freely, with copyright notice, state if modifications are made
+#   see file 00README for details
+
 # VERSION = 3.0.4
 VERSION = 3.1.0
 PATCHFILE = @abs_srcdir@/patch-3.1.0

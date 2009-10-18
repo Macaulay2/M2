@@ -17,5 +17,5 @@ time scanKeys(docFile,
 close docFile
 end
 -- Local Variables:
--- compile-command: "make -C $M2BUILDDIR/Macaulay2/test missingDoc.out"
+-- compile-command: "make -C $M2BUILDDIR/Macaulay2/packages/Macaulay2Doc/test missingDoc.out"
 -- End:

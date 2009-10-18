@@ -34,5 +34,5 @@ assert( substitute ( c , {x => 0_QQ} ) == 1/2 )
 
 end
 -- Local Variables:
--- compile-command: "make -C $M2BUILDDIR/Macaulay2/test subst3.out"
+-- compile-command: "make -C $M2BUILDDIR/Macaulay2/packages/Macaulay2Doc/test subst3.out"
 -- End:

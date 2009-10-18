@@ -5,7 +5,7 @@ fixtitle = method()
 fixtitle Nothing := identity
 fixtitle String := s -> replace("\"","&quot;",s)
 
-Macaulay2HomePage := () -> "http://www.math.uiuc.edu/Macaulay2/index-" | version#"VERSION" | ".html"
+Macaulay2HomePage := () -> "http://www.math.uiuc.edu/Macaulay2/"
 
 -----------------------------------------------------------------------------
 -- html output
@@ -16,7 +16,7 @@ Macaulay2HomePage := () -> "http://www.math.uiuc.edu/Macaulay2/index-" | version
 -- we've turned off checking for existence of files...
 
 local prefix; local topNodeButton
-local nullButton; local masterIndexButton; local tocButton; local homeButton; local directoryButton;
+local nullButton; local masterIndexButton; local tocButton; local homeButton; {* local directoryButton; *}
 local NEXT; local PREV; local UP; local tableOfContents; local linkTable; local SRC
 local nextButton; local prevButton; local upButton; local backwardButton; local forwardButton
 local masterIndex
@@ -28,6 +28,8 @@ numExampleErrors := 0;
 
 hadDocumentationWarning := false
 numDocumentationWarnings := 0;
+
+makingPackageIndex := false;
 
 hadDocumentationError := false
 
@@ -45,7 +47,8 @@ topDocumentTag := null
 topFileName := "index.html"				    -- top node's file name, constant
 indexFileName := "master.html"  			    -- file name for master index of topics in a package
 tocFileName := "toc.html"       			    -- file name for the table of contents of a package
-buildDirectory := null	   				    -- the root of the relative paths:
+buildPrefix := null	   				    -- the root of the relative paths:
+installPrefix := null	  	       	    	      	    -- the value of the option InstallPrefix; search also here for links
 htmlDirectory := ""					    -- relative path to the html directory, depends on the package
 installDirectory := ""					    -- absolute path to the install directory
 
@@ -57,17 +60,21 @@ initInstallDirectory := o -> installDirectory = minimizeFilename(runfun o.Instal
 -----------------------------------------------------------------------------
 
 absoluteLinks := false
-withAbsolutelinks := f -> (
-     t := absoluteLinks;
-     absoluteLinks = true;
-     r := f();
-     absoluteLinks = t;
-     r)
+
+-- withAbsolutelinks := f -> (
+--      t := absoluteLinks;
+--      absoluteLinks = true;
+--      r := f();
+--      absoluteLinks = t;
+--      r)
 
 isAbsoluteURL := url -> match( "^(#|mailto:|[a-z]+://)", url )
 
-searchPrefixPath = url -> (				    -- entries on the prefixPath may have different layouts
-     for i in prefixPath do (
+searchPrefixPath = url -> (
+     -- we also search the current InstallPrefix, first
+     -- entries on the prefixPath may have different layouts
+     pth := if buildPrefix === null then prefixPath else prepend(buildPrefix,prefixPath); -- what if buildPrefix has a left-over value from a previous invocation???
+     for i in pth do (
 	  p := i|url;
 	  if fileExists p then (
 	       if debugLevel > 5 then stderr << "--file " << url << " found in " << i << endl;
@@ -77,15 +84,25 @@ searchPrefixPath = url -> (				    -- entries on the prefixPath may have differe
      if debugLevel > 5 then stderr << "--file " << url << " not found in " << prefixPath << endl;
      )
 
-toURL := path -> (
-     if isAbsolutePath path then concatenate("file://", externalPath, path)
-     else if isAbsoluteURL path then path
+toURL := pth -> (
+     if isAbsolutePath pth then concatenate(rootURI, realpath pth)
+     else if isAbsoluteURL pth then pth
      else if absoluteLinks then (
-	  p := searchPrefixPath path;
+	  p := searchPrefixPath pth;
 	  if p =!= null
-	  then concatenate("file://", externalPath, p)
-	  else relativizeFilename(htmlDirectory, path))
-     else relativizeFilename(htmlDirectory, path))
+	  then concatenate(rootURI, realpath p)
+	  else (
+	       error("needed file not found on prefixPath (install package or use option AbsoluteLinks=>false): ",pth);
+	       -- relativizeFilename(htmlDirectory, pth)
+	       ))
+     else (
+	  r := relativizeFilename(htmlDirectory, pth);
+	  if debugLevel == 121 then (
+	       stderr << "--toURL: htmlDirectory   = " << htmlDirectory << endl;
+	       stderr << "--       pth             = " << pth << endl;
+	       stderr << "--       relative result = " << r << endl;
+	       );
+	  r))
 
 htmlFilename = method(Dispatch => Thing)
 htmlFilename Thing := x -> htmlFilename makeDocumentTag x
@@ -93,14 +110,20 @@ htmlFilename2 = (tag,layout) -> (
      fkey := (class tag).FormattedKey tag;
      pkgtitle := (class tag).Title tag;
      replace("PKG",pkgtitle,layout#"packagehtml") | if fkey === pkgtitle then topFileName else toFilename fkey|".html" )
+
 htmlFilename DocumentTag := tag -> (
      -- this one is used for storing the file, hence "installationLayout"
      htmlFilename2(tag,installationLayout))
+
+-- this was the old thinking:
+-- htmlFilename FinalDocumentTag := tag -> (
+--      -- this one is used for creating links to the file, hence "currentLayout", since the bifurcation of the layout
+--      -- into common and exec halves is not retained in the final installation; it's just a convenience while assembling
+--      -- the distribution, so common files can be shared among build trees
+--      htmlFilename2(tag,currentLayout))
 htmlFilename FinalDocumentTag := tag -> (
-     -- this one is used for creating links to the file, hence "currentLayout", since the bifurcation of the layout
-     -- into common and exec halves is not retained in the final installation; it's just a convenience while assembling
-     -- the distribution, so common files can be shared among build trees
-     htmlFilename2(tag,currentLayout))
+     -- this one is used for creating links to the file
+     htmlFilename2(tag,installationLayout))
 
 html IMG  := x -> (
      (o,cn) := override(IMG.Options,toSequence x);
@@ -166,31 +189,16 @@ backward := tag -> ( b := BACKWARD tag; ( if b =!= null then HREF { htmlFilename
 linkTitle := s -> concatenate( " title=\"", fixtitle s, "\"" )
 linkTitleTag := tag -> "title" => fixtitle concatenate(DocumentTag.FormattedKey tag, commentize headline tag)
 links := tag -> (
-     f := FORWARD tag;
-     b := BACKWARD tag;
-     nonnull splice (
-	  if topDocumentTag =!= null then LINK { "href" => toURL (htmlDirectory|topFileName), "rel" =>"Top", linkTitleTag topDocumentTag },
-	  LINK { "href" => toURL (htmlDirectory|indexFileName), "rel" => "Index" },
-	  LINK { "href" => toURL (htmlDirectory|tocFileName),   "rel" => "Table-of-Contents" },
-	  LINK { "href" => toURL Macaulay2HomePage(), "rel" => "Macaulay-2-Home-Page" },
-	  if f =!= null then LINK { "href" => toURL htmlFilename f, "rel" => "Next", linkTitleTag f},
-	  if b =!= null then LINK { "href" => toURL htmlFilename b, "rel" => "Previous", linkTitleTag b},
-	  if NEXT#?tag then (
-	       LINK { "href" => toURL htmlFilename NEXT#tag, "rel" => "Forward", linkTitleTag NEXT#tag},
-	       LINK { "href" => toURL htmlFilename LAST tag, "rel" => "Last", linkTitleTag LAST tag}
-	       ),
-	  if PREV#?tag then (
-	       LINK { "href" => toURL htmlFilename PREV#tag, "rel" => "Backward", linkTitleTag PREV#tag},
-	       LINK { "href" => toURL htmlFilename FIRST tag, "rel" => "First", linkTitleTag FIRST tag},
-	       ),
-	  if UP#?tag then LINK { "href" => toURL htmlFilename UP#tag, "rel" => "Up", linkTitleTag UP#tag},
-	  LINK { "href" => withAbsolutelinks (() -> toURL (replace("PKG","Style",installationLayout#"package") | "doc.css")), "rel" => "stylesheet", "type" => "text/css" },
-	  LINK { "href" => withAbsolutelinks (() -> toURL (replace("PKG","Style",installationLayout#"package") | "doc-no-buttons.css")), "rel" => "alternate stylesheet", "title" => "no buttons", "type" => "text/css" },
-	  if SRC#?tag then (
-     	       LINK { 
-		    "href" => concatenate("file://",externalPath, toAbsolutePath SRC#tag#0), 
-		    "rel" => concatenate("Source: see text above line ", toString SRC#tag#1),
-		    "type" => "text/plain" } ) ) )
+     -- we used to have several!
+     doccss := replace("PKG","Style",installationLayout#"package") | "doc.css";
+     if null === searchPrefixPath doccss
+     then error(
+	  if makingPackageIndex
+	  then "style file not found on prefixPath (install Style package or run 'M2 -q' to avoid making the package index) : "
+	  else "style file not found on prefixPath (install Style package) : ",
+	  doccss);
+     LINK { "href" => toURL doccss, "rel" => "stylesheet", "type" => "text/css" }
+     )
 
 BUTTON := (s,alt) -> (
      s = toURL s;
@@ -208,13 +216,13 @@ html HTML := t -> concatenate(
      "</html>\n"
      )
 
--- produce html form of documentation, for Macaulay 2 and for packages
+-- produce html form of documentation, for Macaulay2 and for packages
 
 buttonBar := (tag) -> ButtonTABLE {{ 
 	  DIV splice {
      	       forward tag, backward tag, next tag, prev tag, up tag,
      	       (if tag =!= topDocumentTag then topNodeButton else topNodeButton#-1, " | "),
-     	       masterIndexButton, " | ", tocButton, " | ", directoryButton, " | ", homeButton
+     	       masterIndexButton, " | ", tocButton, {* " | ", directoryButton, *} " | ", homeButton
 	       }}}
 
 upAncestors := tag -> reverse (
@@ -364,8 +372,8 @@ assembleTree := (pkg,nodes) -> (
 setupButtons := () -> (
      topNodeButton = HREF {htmlDirectory|topFileName, "top" };
      tocButton = HREF {htmlDirectory|tocFileName, "toc"};
-     homeButton = HREF {Macaulay2HomePage (), "Macaulay 2 web site"};
-     directoryButton = HREF { "file://" | externalPath | applicationDirectory() | "index.html", "directory"};
+     homeButton = HREF {Macaulay2HomePage (), "Macaulay2 web site"};
+     -- directoryButton = HREF { rootURI | applicationDirectory() | "index.html", "directory"};
      nullButton = "";
      masterIndexButton = HREF {htmlDirectory|indexFileName,"index"};
      forwardButton = "next";
@@ -387,18 +395,18 @@ capture String := s -> (
 
 -----------------------------------------------------------------------------
 -- installing packages -- eventually to be merged with 
--- the code above for making html for Macaulay 2 itself
+-- the code above for making html for Macaulay2 itself
 -----------------------------------------------------------------------------
 
 makeMasterIndex := (keylist,verbose) -> (
      numAnchorsMade = 0;
-     fn := buildDirectory | htmlDirectory | indexFileName;
+     fn := buildPrefix | htmlDirectory | indexFileName;
      title := "Symbol Index";
      if verbose then stderr << "--making '" << title << "' in " << fn << endl;
      r := HTML {
 	  HEAD splice { TITLE title, links() },
 	  BODY {
-	       DIV { topNodeButton, " | ", tocButton, " | ", directoryButton, " | ", homeButton },
+	       DIV { topNodeButton, " | ", tocButton, {* " | ", directoryButton, *} " | ", homeButton },
 	       HR{},
 	       HEADER1 title,
 	       DIV between(LITERAL "&nbsp;&nbsp;&nbsp;",apply(alpha, c -> HREF {"#"|c, c})), 
@@ -413,14 +421,14 @@ makeMasterIndex := (keylist,verbose) -> (
      )
 
 maketableOfContents := (verbose) -> (
-     fn := buildDirectory | htmlDirectory | tocFileName;
+     fn := buildPrefix | htmlDirectory | tocFileName;
      title := DocumentTag.FormattedKey topDocumentTag | " : Table of Contents";
      if verbose then stderr << "--making  " << title << "' in " << fn << endl;
      fn
      << html HTML {
 	  HEAD splice { TITLE title, links() },
 	  BODY {
-	       DIV { topNodeButton, " | ", masterIndexButton, " | ", directoryButton, " | ", homeButton },
+	       DIV { topNodeButton, " | ", masterIndexButton, {* " | ", directoryButton, *} " | ", homeButton },
 	       HR{},
 	       HEADER1 title,
 	       toDoc tableOfContents
@@ -430,7 +438,7 @@ maketableOfContents := (verbose) -> (
 
 utest := opt -> (
      cmd := "ulimit " | opt | "; ";
-     if run("2>/dev/null >/dev/null "|cmd) == 0 then cmd else ""
+     if chkrun("2>/dev/null >/dev/null "|cmd) == 0 then cmd else ""
      )
 ulimit := null
 
@@ -442,7 +450,7 @@ aftermatch := (pat,str) -> (
      m := regex(pat,str);
      if m === null then "" else substring(m#0#0,str))
 
-runFile := (inf,inputhash,outf,tmpf,desc,pkg,announcechange,rundir,usermode) -> ( -- return false if error
+runFile := (inf,inputhash,outf,tmpf,desc,pkg,announcechange,usermode) -> ( -- return false if error
      announcechange();
      stderr << "--making " << desc << " in file " << outf << endl;
      if fileExists outf then removeFile outf;
@@ -452,20 +460,43 @@ runFile := (inf,inputhash,outf,tmpf,desc,pkg,announcechange,rundir,usermode) -> 
      args := "--silent --print-width 77 --stop --int" | (if usermode then "" else " -q") | src | ldpkg;
      cmdname := commandLine#0;
      if ulimit === null then (
-	  ulimit = utest "-t 80" | utest "-m 200000"| utest "-v 200000" | utest "-s 8192";
+	  ulimit = utest "-t 160" | utest "-m 500000"| utest "-v 500000" | utest "-s 8192";
 	  );
      tmpf << "-- -*- M2-comint -*- {* hash: " << inputhash << " *}" << endl << close;
-     cmd := ulimit | "cd " | rundir | "; " | cmdname | " " | args | " <" | format inf | " >>" | format tmpf | " 2>&1";
+     rundir := temporaryFileName() | "-rundir/";
+     cmd := ulimit | "cd " | rundir | "; " | cmdname | " " | args | " <" | format inf | " >>" | format toAbsolutePath tmpf | " 2>&1";
      stderr << cmd << endl;
-     r := run cmd;
-     if r == 0 then (
+     makeDirectory rundir;
+     r := chkrun cmd;
+     if r == 512 then (
+	  stderr << newline;
+	  error("run: M2 subprocess interrupted, returns exit code 2");
+	  )
+     else if r == 0 then (
+	  scan(reverse findFiles rundir, f -> if isDirectory f then (
+		    -- under cygwin, it seems to take a random amount of time before the system knows the directory is no longer in use:
+		    try removeDirectory f
+		    else (
+			 stderr << "--warning: *** removing a directory failed, waiting..." << endl;
+			 sleep 1;
+		    	 try removeDirectory f
+			 else (
+			      stderr << "--warning: *** removing a directory failed again, waiting..." << endl;
+			      sleep 4;
+			      removeDirectory f
+			      )
+			 )
+		    ) else removeFile f);
 	  moveFile(tmpf,outf);
 	  return true;
 	  );
      stderr << tmpf << ":0: (output file) error: program exited with return code: (" << r//256 << "," << r%256 << ")" << endl;
      stderr << aftermatch(M2errorRegexp,get tmpf);
-     stderr << inf  << ":0: (input file)" << endl;
+     stderr << inf  << ":0: (input file) error: ..." << endl;
      scan(statusLines get inf, x -> stderr << x << endl);
+     if # findFiles rundir == 1
+     then removeDirectory rundir
+     else stderr << rundir << ": error: files remain in temporary run directory after program exits abnormally" << endl;
      if r == 2 then (
 	  removeFile tmpf;
 	  error "subprocess interrupted";
@@ -474,13 +505,14 @@ runFile := (inf,inputhash,outf,tmpf,desc,pkg,announcechange,rundir,usermode) -> 
 	  removeFile tmpf;
 	  error "subprocess terminated abnormally";
 	  );
+     if debugLevel == 124 then stderr << "-- r = " << r << endl;
      stderr << "M2: *** [check] Error " << r//256 << endl;
      hadExampleError = true;
      numExampleErrors = numExampleErrors + 1;
      return false;
      )
 
-runString := (x,pkg,rundir,usermode) -> (
+runString := (x,pkg,usermode) -> (
      tfn := temporaryFileName();
      inf := tfn | ".m2";
      tmpf := tfn | ".tmp";
@@ -488,12 +520,12 @@ runString := (x,pkg,rundir,usermode) -> (
      rm := fn -> if fileExists fn then removeFile fn;
      rmall := () -> rm \ {inf, tmpf, outf};
      inf << x << endl << close;
-     ret := runFile(inf,hash x,outf,tmpf,"test results",pkg,t->t,rundir,usermode);
+     ret := runFile(inf,hash x,outf,tmpf,"test results",pkg,t->t,usermode);
      if ret then (rm inf; rm outf;);
      ret)
 
 check = method(Options => {
-	  UserMode => true	  
+	  UserMode => null
 	  })
 prep := pkg -> (
      use pkg;
@@ -505,36 +537,39 @@ onecheck = (seqno,pkg,usermode) -> (
      (filename,lineno,s) := pkg#"test inputs"#seqno;
      stderr << "--running test " << seqno << " of package " << pkg << " on line " << lineno << " in file " << filename << endl;
      stderr << "--    rerun with: check_" << seqno << " \"" << pkg << "\"" << endl;
-     runString(s,pkg,".",usermode);
+     runString(s,pkg,usermode);
      )
 check(ZZ,Package) := opts -> (seqno,pkg) -> (
      pkg = prep pkg;
-     onecheck(seqno,pkg,opts.UserMode);
+     onecheck(seqno,pkg,if opts.UserMode === null then not noinitfile else opts.UserMode);
      if hadExampleError then error("error occurred running test for package ", toString pkg, ": ", toString seqno);
      )
 check(ZZ,String) := opts -> (seqno,pkg) -> check(seqno, needsPackage (pkg, LoadDocumentation => true), opts)
 check Package := opts -> pkg -> (
      pkg = prep pkg;
-     scan(keys pkg#"test inputs", seqno -> onecheck(seqno,pkg,opts.UserMode));
+     scan(keys pkg#"test inputs", seqno -> onecheck(seqno,pkg,if opts.UserMode === null then not noinitfile else opts.UserMode));
      if hadExampleError then error(toString numExampleErrors, " error(s) occurred running tests for package ", toString pkg);
      )
 check String := opts -> pkg -> check(needsPackage (pkg, LoadDocumentation => true), opts)
 
 setupNames := (opts,pkg) -> (
+     installPrefix = minimizeFilename(runfun opts.InstallPrefix | "/");
      buildPackage = pkg#"title";
-     buildDirectory = 
+     buildPrefix = 
      if opts.Encapsulate then (
 	  minimizeFilename(runfun opts.PackagePrefix | "/") | (
 	       if instance(opts.EncapsulateDirectory,Function) then opts.EncapsulateDirectory pkg
 	       else if instance(opts.EncapsulateDirectory,String) then opts.EncapsulateDirectory
 	       else error "expected EncapsulateDirectory option to be a function or a string"))
-     else minimizeFilename(runfun opts.InstallPrefix | "/"))
+     else installPrefix)
+unsetupNames := () -> buildPrefix = installPrefix = buildPackage = null
+
 
 installPackage = method(Options => {
 	  SeparateExec => false,
 	  PackagePrefix => () -> applicationDirectory() | "encap/",
           InstallPrefix => () -> applicationDirectory() | "local/",
-	  UserMode => true,
+	  UserMode => null,
 	  Encapsulate => false,
 	  EncapsulateDirectory => pkg -> pkg#"title"|"-"|pkg.Options.Version|"/",
 	  IgnoreExampleErrors => false,
@@ -618,18 +653,18 @@ installPackage Package := opts -> pkg -> (
      setupNames(opts,pkg);
      initInstallDirectory opts;
      
-     if verbose then stderr << "--installing package " << pkg << " in " << buildDirectory << endl;
+     if verbose then stderr << "--installing package " << pkg << " in " << buildPrefix << endl;
      
      currentSourceDir := pkg#"source directory";
      if verbose then stderr << "--using package sources found in " << currentSourceDir << endl;
 
      -- copy package source file
      pkgDirectory := installationLayout#"packages";
-     makeDirectory (buildDirectory|pkgDirectory);
+     makeDirectory (buildPrefix|pkgDirectory);
      bn := buildPackage | ".m2";
      fn := currentSourceDir|bn;
      if not fileExists fn then error("file ", fn, " not found");
-     copyFile(fn, buildDirectory|pkgDirectory|bn, Verbose => debugLevel > 5);
+     copyFile(fn, buildPrefix|pkgDirectory|bn, Verbose => debugLevel > 5);
 
      excludes := Exclude => {"^CVS$", "^\\.svn$"};
 
@@ -644,8 +679,8 @@ installPackage Package := opts -> pkg -> (
 	       if not (options pkg).AuxiliaryFiles
 	       then error ("package ",toString pkg," has auxiliary files in \"",dn,"\", but newPackage wasn't given AuxiliaryFiles=>true");
 	       if verbose then stderr << "--copying auxiliary source files from " << dn << endl;
-	       makeDirectory (buildDirectory|srcDirectory);
-	       copyDirectory(dn, buildDirectory|srcDirectory, UpdateOnly => true, Verbose => debugLevel > 0, excludes);
+	       makeDirectory (buildPrefix|srcDirectory);
+	       copyDirectory(dn, buildPrefix|srcDirectory, UpdateOnly => true, Verbose => debugLevel > 0, excludes);
 	       )
 	  else (
 	       if (options pkg).AuxiliaryFiles
@@ -654,10 +689,10 @@ installPackage Package := opts -> pkg -> (
      	  );
 
      -- copy package source subdirectory examples
-     exampleOutputDir := buildDirectory|replace("PKG",pkg#"title",installationLayout#"packageexampleoutput");
+     exampleOutputDir := buildPrefix|replace("PKG",pkg#"title",installationLayout#"packageexampleoutput");
 
      if opts.MakeDocumentation then (
-	  pkg#"package prefix" = buildDirectory;
+	  pkg#"package prefix" = buildPrefix;
 
 	  -- copy package doc subdirectory if we loaded the package from a distribution
      	  -- ... to be implemented, but we seem to be copying the examples already, but only partially
@@ -770,7 +805,7 @@ installPackage Package := opts -> pkg -> (
 			 )
 		    else (
 			 inf << concatenate apply(inputs, s -> s|"\n") << close;
-			 if runFile(inf,inputhash,outf,tmpf,desc,pkg,changefun,".",opts.UserMode)
+			 if runFile(inf,inputhash,outf,tmpf,desc,pkg,changefun,if opts.UserMode === null then not noinitfile else opts.UserMode)
 			 then (
 			      removeFile inf;
 			      possiblyCache();
@@ -871,7 +906,7 @@ installPackage Package := opts -> pkg -> (
 	  if opts.MakeInfo then (
 	       savePW := printWidth;
 	       printWidth = 79;
-	       infodir := buildDirectory|installationLayout#"info";
+	       infodir := buildPrefix|installationLayout#"info";
 	       makeDirectory infodir;
 	       infotitle := pkg#"title";
 	       infobasename := infotitle|".info";
@@ -879,11 +914,11 @@ installPackage Package := opts -> pkg -> (
 	       infofile := openOut (infodir|tmpinfobasename);
 	       if verbose then stderr << "--making info file in " << infofile << endl;
 	       upto30 := t -> concatenate(t,30-#t:" ");
-	       infofile << " -*- coding: utf-8 -*- This is " << infobasename << ", produced by Macaulay 2, version " << version#"VERSION" << endl << endl;
+	       infofile << " -*- coding: utf-8 -*- This is " << infobasename << ", produced by Macaulay2, version " << version#"VERSION" << endl << endl;
 	       infofile << "INFO-DIR-SECTION " << pkg.Options.InfoDirSection << endl;
 	       infofile << "START-INFO-DIR-ENTRY" << endl;
 	       infofile << upto30 concatenate( "* ", infotitle, ": (", infotitle, ").") << "  ";
-	       infofile << (if pkg.Options.Headline =!= null then pkg.Options.Headline else infotitle | ", a Macaulay 2 package") << endl;
+	       infofile << (if pkg.Options.Headline =!= null then pkg.Options.Headline else infotitle | ", a Macaulay2 package") << endl;
 	       infofile << "END-INFO-DIR-ENTRY" << endl << endl;
 	       byteOffsets := new MutableHashTable;
 	       topNodeName := DocumentTag.FormattedKey topDocumentTag;
@@ -918,13 +953,20 @@ installPackage Package := opts -> pkg -> (
 	  -- make html files
 	  htmlDirectory = replace("PKG",pkg#"title",installationLayout#"packagehtml"); -- if installationLayout =!= currentLayout, this may cause problems
 	  setupButtons();
-	  makeDirectory (buildDirectory|htmlDirectory);
-	  if verbose then stderr << "--making html pages in " << buildDirectory|htmlDirectory << endl;
+	  makeDirectory (buildPrefix|htmlDirectory);
+	  if verbose then stderr << "--making html pages in " << buildPrefix|htmlDirectory << endl;
 	  scan(nodes, tag -> if not isUndocumented tag then (
+	       fkey := DocumentTag.FormattedKey tag;
+	       fn := buildPrefix | htmlFilename tag;
+	       if fileExists fn then return;
+	       if isSecondary tag then return;
+	       if debugLevel > 0 then stderr << "--creating empty html page for " << tag << " in " << fn << endl;
+	       fn << close));
+     	  scan(nodes, tag -> if not isUndocumented tag then (
 	       -- key := DocumentTag.Key tag;
 	       fkey := DocumentTag.FormattedKey tag;
-	       fn := buildDirectory | htmlFilename tag;
-	       if fileExists fn and not opts.RemakeAllDocumentation and rawDocUnchanged#?fkey then return;
+	       fn := buildPrefix | htmlFilename tag;
+	       if fileExists fn and fileLength fn > 0 and not opts.RemakeAllDocumentation and rawDocUnchanged#?fkey then return;
 	       if isSecondary tag then return;
 	       if debugLevel > 0 then stderr << "--making html page for " << tag << endl;
 	       fn
@@ -953,13 +995,13 @@ installPackage Package := opts -> pkg -> (
      -- make postinstall and preremove files, if encap
      if opts.Encapsulate then (
 	  octal := s -> (n := 0 ; z := first ascii "0"; scan(ascii s, i -> n = 8*n + i - z); n);
-	  if verbose then stderr << "--making INSTALL, postinstall, preremove, and encapinfo files in " << buildDirectory << endl;
+	  if verbose then stderr << "--making INSTALL, postinstall, preremove, and encapinfo files in " << buildPrefix << endl;
      	  fix := s -> (
 	       s = replace("info/", installationLayout#"info", s);
 	       s = replace("bin/", installationLayout#"bin", s);
 	       s);
 	  -- postinstall
-	  f := buildDirectory | "postinstall" 
+	  f := buildPrefix | "postinstall" 
 	  << ///#! /bin/sh -e/// << endl
 	  << fix ///cd "$ENCAP_SOURCE/$ENCAP_PKGNAME/info/" || exit 0/// << endl
 	  << ///for i in *.info/// << endl
@@ -971,7 +1013,7 @@ installPackage Package := opts -> pkg -> (
 	  fileMode(octal "755",f);
 	  f << close;
 	  -- preremove
-     	  f = buildDirectory | "preremove"
+     	  f = buildPrefix | "preremove"
 	  << ///#! /bin/sh -x/// << endl
 	  << fix ///cd "$ENCAP_SOURCE/$ENCAP_PKGNAME/info/" || exit 0/// << endl
 	  << ///for i in *.info/// << endl
@@ -980,7 +1022,7 @@ installPackage Package := opts -> pkg -> (
 	  fileMode(octal "755",f);
  	  f << close;
 	  -- encapinfo
-	  f = buildDirectory | "encapinfo"
+	  f = buildPrefix | "encapinfo"
 	  << ///encap 2.0/// << endl
 	  << ///contact dan@math.uiuc.edu/// << endl;
 	  removeLastSlash := s -> if s#?0 and s#-1 === "/" then substring(s,0,#s-1) else s;
@@ -991,7 +1033,7 @@ installPackage Package := opts -> pkg -> (
 	  -- INSTALL
 	  if pkg#"title" == "Macaulay2Doc" then (
 	       assert( class installFile === String );
-	       f = buildDirectory | "INSTALL"
+	       f = buildPrefix | "INSTALL"
 	       << installFile;
 	       fileMode(octal "644",f);
 	       f << close;
@@ -1000,9 +1042,9 @@ installPackage Package := opts -> pkg -> (
 
      -- make symbolic links
      if opts.Encapsulate and opts.MakeLinks then (
-     	  if verbose then stderr << "--making symbolic links from \"" << installDirectory << "\" to \"" << buildDirectory << "\"" << endl;
+     	  if verbose then stderr << "--making symbolic links from \"" << installDirectory << "\" to \"" << buildPrefix << "\"" << endl;
 	  scan(unique {installationLayout#"common",installationLayout#"exec"}, d ->
-	       symlinkDirectory(buildDirectory|d, installDirectory,
+	       symlinkDirectory(buildPrefix|d, installDirectory,
 		    Verbose => debugLevel > 0, 
 		    Exclude => {
 			 "^encapinfo$", "^postinstall$", "^preremove$", -- configuration files for epkg
@@ -1016,23 +1058,24 @@ installPackage Package := opts -> pkg -> (
 	  iname << close;
 	  if verbose then stderr << "--file created: " << iname << endl;
 	  );
-     if verbose then << "--installed package " << pkg << " in " << buildDirectory << endl;
+     if verbose then stderr << "--installed package " << pkg << " in " << buildPrefix << endl;
      currentPackage = oldpkg;
      if not noinitfile then (
 	  userMacaulay2Directory();
 	  makePackageIndex();
 	  );
      installationLayout = oldlayout;
+     unsetupNames();
      )
 
 sampleInitFile = ///-- This is a sample init.m2 file provided with Macaulay2.
--- It contains Macaulay 2 code and is automatically loaded upon
+-- It contains Macaulay2 code and is automatically loaded upon
 -- startup of Macaulay2, unless you use the "-q" option.
 
--- Uncomment the following line to cause Macaulay 2 to load "start.m2" in the current working directory upon startup.
--- if fileExists "start.m2" then load(currentDirectory|"start.m2")
+-- Uncomment the following line to cause Macaulay2 to load "start.m2" in the current working directory upon startup.
+-- if fileExists "start.m2" then load(currentDirectory()|"start.m2")
 
--- Uncomment and edit the following lines to add your favorite directories containing Macaulay 2
+-- Uncomment and edit the following lines to add your favorite directories containing Macaulay2
 -- source code files to the load path.  Terminate each directory name with a "/".
 -- (To see your current load path, display the value of the variable "path".)
 -- path = join( { "~/" | "src/singularities/", "/usr/local/src/M2/" }, path )
@@ -1064,17 +1107,17 @@ automatically loaded upon startup of Macaulay2, unless you use the "-q" option.
 You may edit it to meet your needs.
 
 The web browser file "index.html" in this directory contains a list of links to
-the documentation of Macaulay 2 and its installed packages and is updated every
-time you start Macaulay 2 (unless you use the "-q" option).  To update it
+the documentation of Macaulay2 and its installed packages and is updated every
+time you start Macaulay2 (unless you use the "-q" option).  To update it
 manually, use "makePackageIndex()".  Point your web browser at that file and
 bookmark it.
 
-You may place Macaulay 2 source files in the subdirectory "code/".  It's on
+You may place Macaulay2 source files in the subdirectory "code/".  It's on
 your "path", so Macaulay2's "load" and "input" commands will automatically look
 there for your files.
 
-You may obtain source code for Macaulay 2 packages and install them yourself
-with the function "installPackage".  Behind the scenes, Macaulay 2 will use the
+You may obtain source code for Macaulay2 packages and install them yourself
+with the function "installPackage".  Behind the scenes, Macaulay2 will use the
 subdirectory "encap/" to house the code for those packages in separate
 subdirectories.  The subdirectory "local/" will hold a single merged directory
 tree for those packages, with symbolic links to the files of the packages.
@@ -1106,9 +1149,10 @@ makePackageIndex Sequence := x -> (
      makePackageIndex path    -- this might get too many files (formerly we used packagePath)
      )
 makePackageIndex List := path -> (
+     makingPackageIndex = true;
      initInstallDirectory options installPackage;
      absoluteLinks = true;
-     key := "Macaulay 2";
+     key := "Macaulay2";
      htmlDirectory = applicationDirectory();
      fn := htmlDirectory | "index.html";
      if notify then stderr << "--making index of installed packages in " << fn << endl;
@@ -1122,14 +1166,14 @@ makePackageIndex List := path -> (
 	  BODY { 
 	       -- buttonBar tag, HR{},
 	       PARA {
-		    "This is the directory for Macaulay 2 and its packages.
-		    Bookmark this page for future reference, or run the viewHelp command in Macaulay 2
+		    "This is the directory for Macaulay2 and its packages.
+		    Bookmark this page for future reference, or run the viewHelp command in Macaulay2
 		    to open up your browser on this page."
 		    },
 	       HEADER3 "Documentation",
 	       ul splice {
                	    if prefixDirectory =!= null 
-		    then HREF { prefixDirectory | replace("PKG","Macaulay2Doc",currentLayout#"packagehtml") | "index.html", "Macaulay 2" },
+		    then HREF { prefixDirectory | replace("PKG","Macaulay2Doc",currentLayout#"packagehtml") | "index.html", "Macaulay2" },
 		    splice apply(toSequence unique apply(select(path,isDirectory),realpath), pkgdir -> (
 			      if debugLevel > 10 then stderr << "--checking package directory " << pkgdir << endl;
 			      apply(toSequence values Layout, layout -> (
@@ -1138,12 +1182,13 @@ makePackageIndex List := path -> (
 					if debugLevel > 10 then stderr << "--package directory " << format pkgdir << " does not end with " << format packagelayout << endl;
 					return;
 					);
-				   prefixDirectory := minimizeFilename substring(pkgdir,0,#pkgdir-#packagelayout);
+				   prefixDirectory := substring(pkgdir,0,#pkgdir-#packagelayout);
 				   p := prefixDirectory | layout#"docdir";
 				   if docdirdone#?p then (
 					if debugLevel > 10 then stderr << "--documentation directory already checked: " << p << endl;
 					)
 				   else if isDirectory p then (
+					p = realpath p;
 					docdirdone#p = true;
 					if debugLevel > 10 then stderr << "--checking documentation directory " << p << endl;
 					r := readDirectory p;
@@ -1162,6 +1207,7 @@ makePackageIndex List := path -> (
 	       }
 	  } << endl
      << close;
+     makingPackageIndex = false;
      )
 
 runnable := fn -> (
@@ -1204,14 +1250,14 @@ show URL := x -> (
      )
 
 fix := fn -> (
-     r := "file://" | externalPath | replace(" ","%20",realpath fn); 		    -- might want to replace more characters
+     r := rootURI | replace(" ","%20",realpath fn); 		    -- might want to replace more characters
      if debugLevel > 0 then stderr << "--fixed URL: " << r << endl;
      r)
 showHtml = show Hypertext := x -> (
      fn := temporaryFileName() | ".html";
      fn << html HTML {
 	  HEAD {
-	       TITLE "Macaulay 2 Output"
+	       TITLE "Macaulay2 Output"
 	       },
      	  BODY {
 	       x

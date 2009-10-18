@@ -11,5 +11,5 @@ T = ZZ[x,Degrees => {3} ]
 assert( betti vars S =!= betti vars T )
 end
 -- Local Variables:
--- compile-command: "make -C $M2BUILDDIR/Macaulay2/test betti.out"
+-- compile-command: "make -C $M2BUILDDIR/Macaulay2/packages/Macaulay2Doc/test betti.out"
 -- End:

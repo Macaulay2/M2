@@ -1,0 +1,24 @@
+-- -*- M2 -*-
+
+-- Suppose we have a situation like this:
+
+	x = false
+	f = t -> (
+		if x then ...
+		else ...
+		)
+	g = method()
+	g A := a -> (x = true; t := f a; x = false; t)
+	g B := b -> f b
+	g C := c -> f c
+	g D := d -> f d
+     	    etc.
+
+-- Notice that an interrupt in f when it has been called by g A can leave x
+-- with the wrong value for g B, etc.
+
+-- This is exactly the situation with buildPrefix in m2/html.m2 !
+
+-- Dynamic scoping, as in lisp, has its uses!
+
+-- or with "catch" ?

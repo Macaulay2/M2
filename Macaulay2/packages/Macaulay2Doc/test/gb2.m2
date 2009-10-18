@@ -15,5 +15,5 @@ assert( g_(0,0) == 2 )					    -- code in 'char' depends on the first entry bein
 
 end
 -- Local Variables:
--- compile-command: "make -C $M2BUILDDIR/Macaulay2/test gb2.out"
+-- compile-command: "make -C $M2BUILDDIR/Macaulay2/packages/Macaulay2Doc/test gb2.out"
 -- End:

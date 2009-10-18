@@ -35,7 +35,7 @@ document {
 	  A = R/(a*b,a*c,a*d)
 	  ann a
 	  ///,
-     "Macaulay 2 uses two algorithms to compute annihilators.  The default
+     "Macaulay2 uses two algorithms to compute annihilators.  The default
      version is to compute the annihilator of each generator of the module ",
      TT "M", " and to intersect these two by two.  Each annihilator is
      done using a submodule quotient.  The other algorithm computes the annihilator in one large

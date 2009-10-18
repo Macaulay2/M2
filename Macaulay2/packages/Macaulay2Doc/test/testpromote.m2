@@ -66,5 +66,5 @@ assert( rawLift(raw C, f) == raw C_0 )
 
 end
 -- Local Variables:
--- compile-command: "make -C $M2BUILDDIR/Macaulay2/test testpromote.out"
+-- compile-command: "make -C $M2BUILDDIR/Macaulay2/packages/Macaulay2Doc/test testpromote.out"
 -- End:

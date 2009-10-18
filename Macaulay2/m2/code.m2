@@ -68,14 +68,14 @@ EDITOR := () -> if getenv "EDITOR" != "" then getenv "EDITOR" else "vi"
 editMethod := method(Dispatch => Thing)
 editMethod String := filename -> (
      editor := EDITOR();
-     run concatenate(
+     chkrun concatenate(
 	  if getenv "DISPLAY" != "" and editor != "emacs" then "xterm -e ",
 	  editor, " ", filename))
 EDIT := method(Dispatch => Thing)
 EDIT Nothing := arg -> (stderr << "--warning: source code not available" << endl;)
 EDIT Sequence := x -> ((filename,start,startcol,stop,stopcol,pos,poscol) -> (
      editor := EDITOR();
-     if 0 != run concatenate(
+     if 0 != chkrun concatenate(
 	  if getenv "DISPLAY" != "" and editor != "emacs" then "xterm -e ",
 	  editor,
 	  " +",toString start,
@@ -87,7 +87,7 @@ editMethod Command := c -> editMethod c#0
 editMethod Sequence := args -> (
      editor := EDITOR();
      if args === () 
-     then run concatenate(
+     then chkrun concatenate(
 	  if getenv "DISPLAY" != "" and editor != "emacs" then "xterm -e ",
 	  editor)
      else EDIT locate args

@@ -7,3 +7,6 @@ invv = substitute(-1/u^2,K)*v
 v*invv
 toField K
 1/v  -- actual crash.
+
+-- bug: it should be checked that a fraction field isn't over another fraction field
+-- or better, get it to work!

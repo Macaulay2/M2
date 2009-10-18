@@ -11,5 +11,5 @@ betti C
 gbTrace = 3
 time C = res(coker matrix entries vars A, LengthLimit=>5, Strategy=>1)
 -- Local Variables:
--- compile-command: "make -C $M2BUILDDIR/Macaulay2/test/slow roos2.out"
+-- compile-command: "make -C $M2BUILDDIR/Macaulay2/packages/Macaulay2Doc/test/slow roos2.out"
 -- End:

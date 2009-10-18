@@ -1,7 +1,7 @@
 
-document { Key => "packages provided with Macaulay 2",
+document { Key => "packages provided with Macaulay2",
      PARA{
-     	  "The packages that are distributed with Macaulay 2 are:"
+     	  "The packages that are distributed with Macaulay2 are:"
 	  },
      UL apply(sort select(separate_" " version#"packages", pkg -> pkg =!= "Macaulay2"), pkg -> LI TO (pkg|"::"|pkg)),
      PARA {
@@ -16,12 +16,12 @@ document { Key => "packages provided with Macaulay 2",
      }
 
 document { Key => "packages",
-     "A package is a body of Macaulay 2 source code devoted to a 
-     particular topic.  Many packages are distributed with Macaulay 2, 
+     "A package is a body of Macaulay2 source code devoted to a 
+     particular topic.  Many packages are distributed with Macaulay2, 
      and others are available from various users on the internet.",
      PARA{}, "For more detailed information about packages, see ", 
      TO Package, ".",
-     SeeAlso => { "packages provided with Macaulay 2" },
+     SeeAlso => { "packages provided with Macaulay2" },
      Subnodes => {
      "Using existing packages",
 	  TO needsPackage,
@@ -36,8 +36,8 @@ document { Key => "packages",
      }
 
 document { Key => "using packages",
-     "A package is a body of Macaulay 2 source code devoted to a 
-     particular topic.  Many packages are distributed with Macaulay 2, 
+     "A package is a body of Macaulay2 source code devoted to a 
+     particular topic.  Many packages are distributed with Macaulay2, 
      and others are available from various users on the internet.",
      PARA{}, "For more detailed information about packages, see ", 
      TO Package, ".",
@@ -46,17 +46,17 @@ document { Key => "using packages",
      PRE///    loadPackage "FirstPackage"///,
      "or",
      PRE///    needsPackage "FirstPackage"///,
-     "Macaulay 2 searches for the file FirstPackage.m2 on your search ", TO "path", ".
-     The packages provided with Macaulay 2 are on your search path,
+     "Macaulay2 searches for the file FirstPackage.m2 on your search ", TO "path", ".
+     The packages provided with Macaulay2 are on your search path,
      as is your current working directory.",
      PARA{},
-     "Documentation for the packages provided with Macaulay 2 is already installed.  TO
+     "Documentation for the packages provided with Macaulay2 is already installed.  TO
      install documentation for another package, use ", TO installPackage, ".",
      PRE///    installPackage FirstPackage///,
      "You may see what packages have been loaded with the variable ", TO "loadedPackages", ".",
      PRE///    loadedPackages///,
      SeeAlso => {
-     	  "packages provided with Macaulay 2",
+     	  "packages provided with Macaulay2",
 	  "creating a package"
 	  }
      }
@@ -105,7 +105,7 @@ document { Key => "loadedPackages",
 
      
 document { Key => "creating a package",
-	"There are four parts to a Macaulay 2 package: a preamble which 
+	"There are four parts to a Macaulay2 package: a preamble which 
 	is initiated by the ", TO "newPackage",
 	" function, a section where one defines which variables will be 
 	exported to global variables, a section containing 
@@ -118,7 +118,7 @@ document { Key => "creating a package",
   export{ ... }
   exportMutable{ ... }
 	
-  -- Macaulay 2 code goes here
+  -- Macaulay2 code goes here
 	
   beginDocumentation()
   document { ... }  -- several document's and TEST's, interspersed
@@ -147,7 +147,7 @@ document { Key => "creating a package",
 
 document {
      Key => "informing others about your package",
-     "We keep a list of user defined packages on the Macaulay 2 web site.
+     "We keep a list of user defined packages on the Macaulay2 web site.
      Contact Macaulay2@math.uiuc.edu to have your package placed on the
      list."
      }

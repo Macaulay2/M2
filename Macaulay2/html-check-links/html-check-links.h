@@ -16,3 +16,5 @@
 extern char *filename, *Dirname, *rootname;
 extern int lineno, column;
 extern char *demangle (char *);
+extern int ERRLIMIT;
+extern int abs_links;

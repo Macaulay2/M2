@@ -8,5 +8,5 @@ t = syz gb(g, Syzygies=>true, Hilbert => p)
 assert(rank source s == rank source t)
 end
 -- Local Variables:
--- compile-command: "make -C $M2BUILDDIR/Macaulay2/test 4-b.out"
+-- compile-command: "make -C $M2BUILDDIR/Macaulay2/packages/Macaulay2Doc/test 4-b.out"
 -- End:

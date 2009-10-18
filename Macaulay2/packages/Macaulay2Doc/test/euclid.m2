@@ -20,5 +20,5 @@ chk(x^10*(1+x+x^500),x^6*(1-x+x^2))
 chk(x^10*(1+x+x^500)*(1-x+x^2),x^6*(1-x+x^2))
 chk(x^10*(1+x+x^100)*(1-x+x^2),x^6*(1-x+x^2))
 -- Local Variables:
--- compile-command: "make -C $M2BUILDDIR/Macaulay2/test euclid.out"
+-- compile-command: "make -C $M2BUILDDIR/Macaulay2/packages/Macaulay2Doc/test euclid.out"
 -- End:

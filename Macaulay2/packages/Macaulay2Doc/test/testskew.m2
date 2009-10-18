@@ -21,5 +21,5 @@ T = (ring p)_0
 p // (1-T)^4
 end
 -- Local Variables:
--- compile-command: "make -C $M2BUILDDIR/Macaulay2/test testskew.out"
+-- compile-command: "make -C $M2BUILDDIR/Macaulay2/packages/Macaulay2Doc/test testskew.out"
 -- End:

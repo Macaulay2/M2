@@ -3,7 +3,7 @@
 document {
      Key => "ideals",
      HEADER2 "An overview",     
-     "In Macaulay 2, once a ring (see ",TO "rings", 
+     "In Macaulay2, once a ring (see ",TO "rings", 
      ") is defined, ideals are constructed in the usual way
      by giving a set of generators.",
      Subnodes => {
@@ -32,7 +32,7 @@ document {
      TO "modules", ".",
      PARA{},
       "For additional common operations and a comprehensive list of all routines
-     in Macaulay 2 which return or use ideals, see ", TO "Ideal", ".",
+     in Macaulay2 which return or use ideals, see ", TO "Ideal", ".",
      PARA{},						    -- debug me!!
      "The following link differs from the previous one in case only: ", 
      TO "ideal", "."
@@ -114,7 +114,7 @@ document {
        --     easiest way to do this is to use the 
        --     function ", TT "module", ".",
        "An ideal ", TT "I", " is also an ", TT "R", "-submodule.  In
-       Macaulay 2 we distinguish between when we are thinking of ", TT "I", " as
+       Macaulay2 we distinguish between when we are thinking of ", TT "I", " as
        as ideal or a module.  If it is first defined as an ideal, it is easily
        turned into a module using the function ", TO "module", " and for any
        submodule of the rank one free module ", TT "R", " we can obtain an ideal 
@@ -138,9 +138,9 @@ document {
      SUBSECTION "getting the quotient module corresponding to an ideal",
  "We also often work with ", TT "R/I", " as 
        an ", TT "R", "-module.  Simply typing ", TT "R/I", " at a prompt
-       in Macaulay 2 constructs the quotient ring (see ", 
+       in Macaulay2 constructs the quotient ring (see ", 
        TO "quotient rings", ").  
-       There are two ways to tell Macaulay 2 that we want to work with this 
+       There are two ways to tell Macaulay2 that we want to work with this 
        as a module.",
        EXAMPLE {
 	    "coker generators I",
@@ -148,7 +148,7 @@ document {
 	    },
 
      SUBSECTION "modules versus ideals for computations",
-       "Some functions in Macaulay 2 try to make an informed decision 
+       "Some functions in Macaulay2 try to make an informed decision 
        about ideal and modules.  For example, if ", TO "resolution", " is
        given an ideal ", TT "I", ", it will compute a resolution of
        the module ", TT "R^1/I", ", as in the following example.",
@@ -250,7 +250,7 @@ document {
      SUBSECTION "obtain a single generator as an element",
        "Once an ideal has been constructed it is possible to 
        obtain individual elements using ", TO "_", ".   As 
-       always in Macaulay 2, indexing starts at 0. ",
+       always in Macaulay2, indexing starts at 0. ",
        EXAMPLE {
 	    "R = ZZ[w,x,y,z];",
 	    "I = ideal(z*w-2*x*y, 3*w^3-z^3,w*x^2-4*y*z^2,x);",
@@ -451,7 +451,7 @@ document {
      SUBSECTION "warning",
        "Warning (15 May 2001):  If you stop a 
        function mid process and then run ", TT "minimalPrimes", " an 
-       error is given.  Restarting Macaulay 2 and then 
+       error is given.  Restarting Macaulay2 and then 
        running ", TT "minimalPrimes", " works around this.",
        PARA{},
        "See ", TO "associated primes of an ideal", " for information 
@@ -485,7 +485,7 @@ document {
      
      SUBSECTION "introduction",
        "It is now possible to find the primary decomposition 
-       of an ideal in Macaulay 2.  The 
+       of an ideal in Macaulay2.  The 
        function ", TO "primaryDecomposition", " applied to an 
        ideal ", TT "I", " returns a list of ideals.  These ideals 
        have two key features, first, their intersection is equal to 
@@ -516,7 +516,7 @@ document {
        Eisenbud-Huneke-Vasconcelos, ", TO "EisenbudHunekeVasconcelos", ", a 
        hybrid of these two algorithms (ShimoyamaYokoyama and EisenbudHunekeVasconcelos), ", TT "Hybrid", ", 
        and Gianni-Trager-Zacharias, ", TT "GTZ", ".  The 
-       default algorithm in Macaulay 2 is Shimoyama-Yokoyama.  Two 
+       default algorithm in Macaulay2 is Shimoyama-Yokoyama.  Two 
        other arguments for the strategy option are available.  These 
        arguments are ", TT "Monomial", " which computes the unique 
        irreducible decomposition of a monomial ideal 

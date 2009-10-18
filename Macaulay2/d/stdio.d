@@ -4,6 +4,12 @@ use system;
 use strings;
 use varstrin;
 use nets;
+use libfac;
+
+export determineExceptionFlag():void := (
+     exceptionFlag = interruptedFlag || steppingFlag || alarmedFlag;
+     interruptflag = if interruptedFlag then 1 else 0;
+     );
 
 export HashCounter := 1000000;
 export nextHash():int := (
@@ -74,6 +80,10 @@ export fileErrorMessage(o:file,msg:string):string := (
      o.errorMessage = syscallErrorMessage(msg);
      o.errorMessage);
 export fileError(o:file):bool := o.error;
+export clearFileError(o:file):void := (
+     o.error = false;
+     o.errorMessage = "";
+     );
 export fileErrorMessage(o:file):string := o.errorMessage;
 export noprompt():string := "";
 newbuffer():string := new string len bufsize do provide ' ';
@@ -349,7 +359,9 @@ simpleflush(o:file):int := (				    -- write to file or enlarge the buffer
      o.outbol = 0;
      if o.outindex == 0 then return 0;
      if o.outfd != -1 then (
-	  if interruptedFlag then return -1;
+	  -- why did we not want to flush output while attending to an interrupt?
+	  -- the output might be a relevant message
+	  -- if interruptedFlag then return -1;
 	  if write(o.outfd,o.outbuffer,o.outindex) == -1 then (
 	       fileErrorMessage(o,"writing");
 	       return -1;
@@ -604,16 +616,26 @@ export filbuf(o:file):int := (
      if o.fulllines then (
 	  for i from 0 to o.insize-1 do if o.inbuffer.i == '\n' then return 0;
 	  );
+     r := 0;     
      while true do (
 	  n := length(o.inbuffer) - o.insize;
-	  r := (
-	       if o.readline then (
-		    flush(stdout);
-		    readline(o.inbuffer,n,o.insize,o.prompt()))
-	       else (
-		    if o.bol then maybeprompt(o);
-		    flush(stdout);
-		    read(o.infd,o.inbuffer,n,o.insize)));
+	  if o.readline then (
+	       flush(stdout);
+	       if interruptedFlag then return ERROR;
+	       r = readline(o.inbuffer,n,o.insize,o.prompt());
+	       if interruptedFlag then (
+		    -- ignore interrupt flags set by our handler during calls to readline
+		    -- because readline uses interrupts for its own purposes
+		    interruptedFlag = false;
+		    determineExceptionFlag();
+		    );
+	       )
+	  else (
+	       if o.bol then maybeprompt(o);
+	       flush(stdout);
+	       if interruptedFlag then return ERROR;
+	       r = read(o.infd,o.inbuffer,n,o.insize);
+	       );
 	  if r == ERROR then (
 	       fileErrorMessage(o,"read");
 	       return r;
@@ -766,7 +788,7 @@ export read(o:file):(string or errmsg) := (
 	  if r == ERROR then return (string or errmsg)(errmsg(fileErrorMessage(o)));
 	  )
      else if o.bol && !o.readline then maybeprompt(o);
-     s := substr(o.inbuffer,o.inindex,o.insize);
+     s := substrAlwaysCopy(o.inbuffer,o.inindex,o.insize);
      o.insize = 0;
      o.inindex = 0;
      if o.echo then (

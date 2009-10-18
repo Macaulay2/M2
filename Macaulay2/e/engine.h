@@ -637,6 +637,11 @@ extern "C" {
 
   double rawCCAbs(const M2_CC a);
 
+  int rawDiscreteLog(const RingElement *h); /* drg: connected */
+  /* returns -1 if h is 0, or if elements of the ring of h
+     are not represented as powers of a primitive element.
+     Otherwise returns an integer in the range 0..q-1 */
+
   /**************************************************/
   /**** FreeModule routines *************************/
   /**************************************************/

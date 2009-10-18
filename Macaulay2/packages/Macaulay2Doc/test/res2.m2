@@ -4,5 +4,5 @@ M = Hom(I,I)
 C = res M
 end
 -- Local Variables:
--- compile-command: "make -C $M2BUILDDIR/Macaulay2/test res2.out"
+-- compile-command: "make -C $M2BUILDDIR/Macaulay2/packages/Macaulay2Doc/test res2.out"
 -- End:

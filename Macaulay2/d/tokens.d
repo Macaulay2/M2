@@ -119,6 +119,7 @@ export flush(f:TokenFile):void := (f.nexttoken=NULL; flush(f.posFile););
 export close(file:TokenFile):int := close(file.posFile);
 export fileErrorMessage(f:TokenFile):string := fileErrorMessage(f.posFile);
 export fileError(f:TokenFile):bool := fileError(f.posFile);
+export clearFileError(f:TokenFile):void := clearFileError(f.posFile);
 export isatty(f:TokenFile):bool := isatty(f.posFile);
 
 export CompiledFunction := {fn:fun,hash:int};
@@ -522,9 +523,11 @@ export unwindMessage := "unhandled unwind command";
 export interruptMessage := "interrupted";
 export alarmMessage := "alarm occurred";
 export steppingMessage := "--stepping limit reached";
-
 export buildErrorPacket(message:string):Expr := Expr(Error(dummyPosition,message,nullE,false,dummyFrame));
-
+export cwd():Expr := (
+     r := getcwd();
+     if r === "" then buildErrorPacket("can't get current working directory: " + syserrmsg())
+     else Expr(r));
 dummyDebuggerFun(f:Frame,c:Code):Expr := nullE;
 export debuggerFun := dummyDebuggerFun;
 export handleInterrupts := true;

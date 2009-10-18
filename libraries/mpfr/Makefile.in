@@ -1,9 +1,12 @@
-# version 3.0 will be distributed under LGPL 3+
-VERSION = 2.3.2
+# license: for mpfr version 2.4.1: LGPL 2.1 or later and GPL (version number unspecified)
+# license:          version 3.0  : might be distributed under LGPL 3+
+#VERSION = 2.3.2
+VERSION = 2.4.1
+# PATCHFILE = @abs_srcdir@/patch-$(VERSION)
+
 RELAX = yes
 URL = http://www.mpfr.org/mpfr-$(VERSION)
 # URL = http://macaulay2.com/Downloads/SourceCode
-# PATCHFILE = @abs_srcdir@/patch-$(VERSION)
 CONFIGOPTIONS += 
 ifeq (@SHARED@,no)
 CONFIGOPTIONS += --disable-shared

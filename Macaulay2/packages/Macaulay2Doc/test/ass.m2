@@ -1,7 +1,7 @@
 --8/13/02
 --author: Jessica Sidman
 
---Goal: Check the associated primes function in Macaulay 2, version 0.9.  The
+--Goal: Check the associated primes function in Macaulay2, version 0.9.  The
 --ideal P is the product of three linear ideals.  By a recent paper of Conca
 --and Herzog "Castelnuovo-Mumford regularity of products of ideals,"
 --Preprint, we already know a formula for the primary decomposition.
@@ -18,7 +18,7 @@ I3 = ideal(x_1, x_5)
 --The product ideal.
 P = I1*I2*I3
 
---Macaulay 2 says that P has associated primes I1, I2, I3, and I1+I2.
+--Macaulay2 says that P has associated primes I1, I2, I3, and I1+I2.
 associatedPrimes P
 
 --A result of Conca and Herzog says that if the associated primes are as
@@ -35,7 +35,7 @@ test2 = intersect(test1, (I1+I3)*(I1+I3), (I2+I3)*(I2+I3), m*m*m)
 isSubset(test2, P)
 isSubset(P, test2)
 
---We can also find elements of R = S/P that have annihilators that Macaulay 2
+--We can also find elements of R = S/P that have annihilators that Macaulay2
 --does not list in the output from the command "associatedPrimes P."
 R = S/P
 --x_1*x_3 has annihilator I2+I3

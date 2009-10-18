@@ -1,9 +1,0 @@
--- -*- M2-comint -*- {* hash: 999037403 *}
---warning: function parametersInIdeal redefined
-
-i1 : setNmzOption("triang",true);
-
-i2 : showNmzOptions()
-The following options are set:
- -f -v -i 
-i3 : 

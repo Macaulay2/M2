@@ -75,103 +75,165 @@ readeval4(file:TokenFile,printout:bool,dictionary:Dictionary,returnLastvalue:boo
      modePrint := list(mode,Expr(Print));
      modeAfterNoPrint := list(mode,Expr(AfterNoPrint));
      modeAfterPrint := list(mode,Expr(AfterPrint));
+     bumpLineNumber := true;
+     promptWanted := false;
+     issuePrompt := false;
      while true do (
-     	  if printout then setLineNumber(lineNumber + 1);
-	  clearAllFlags();
-	  while (
-	       t := peektoken(file,true).word;
-	       interruptedFlag = false;
-	       interruptPending = false;
-     	       determineExceptionFlag();
-	       if t == wordEOF then return if returnLastvalue then lastvalue else nullE;
-	       t == NewlineW || t == wordEOC
-	       )
-	  do (
-	       -- previousLineNumber = -1; -- so there will be a new prompt after a blank line
-	       -- but now we don't like so many extra prompts
-	       gettoken(file,true);
+	  if debugLevel == 123 then stderr <<  "------------ top of loop" << endl;
+	  if bumpLineNumber then (
+	       if debugLevel == 123 then stderr <<  "-- bumpLineNumber" << endl;
+     	       if printout then setLineNumber(lineNumber + 1);
+	       bumpLineNumber = false;
 	       );
-	  parsed := parse(file,SemicolonW.parse.precedence,true);
-	  if debugLevel == 123 then stderr << "parse tree size: " << size(parsed) << endl;
-	  if parsed == errorTree then (
-	       if fileError(file) then return buildErrorPacket(fileErrorMessage(file));
-	       if stopIfError || returnIfError then return buildErrorPacket("--backtrace: parse error--");
-	       )
-	  else (
-	       -- get the token that terminated the parsing of the expression
-	       -- it has parsing precedence at most that of the semicolon
-	       -- so it is end of file, end of cell, newline, semicolon, or one of the right parentheses : ) ] } 
-	       -- that explains the next error message
-	       s := gettoken(file,true);
-	       if !(s.word == SemicolonW || s.word == NewlineW || s.word == wordEOC || s.word == wordEOF)
-	       then (
-		    msg := "syntax error: unmatched " + s.word.name;
-		    printErrorMessage(s,msg);
-		    if stopIfError || returnIfError then return Expr(Error(position(s),msg,nullE,false,dummyFrame));
+	  if promptWanted then (
+	       if debugLevel == 123 then stderr <<  "-- promptWanted" << endl;
+     	       previousLineNumber = -1;	-- to force a prompt at the beginning of the next input line
+	       promptWanted = false;
+	       );
+	  if issuePrompt then (
+	       if debugLevel == 123 then stderr <<  "-- issuePrompt" << endl;
+	       previousLineNumber = -1;
+	       stdout << file.posFile.file.prompt();
+	       issuePrompt = false;
+	       );
+	  clearAllFlags();
+	  if debugLevel == 123 then (
+	       stderr << "-- file position: " << file.posFile.pos << endl;
+	       c := peek(file.posFile.file);
+	       stderr << "-- next character: ";
+	       if c == int('\n') then stderr << "NEWLINE" else if c >= 0 then stderr << char(c) else stderr << c;
+	       stderr << endl;
+	       );
+	  u := peektoken(file,true);
+	  interruptPending = false; determineExceptionFlag();
+	  if u == errorToken || interruptedFlag then (
+	       gettoken(file,true);
+	       if interruptedFlag then (
+		    if debugLevel == 123 then stderr <<  "-- token read interrupted" << endl;
+		    clearFileError(file);
+	       	    interruptedFlag = false; determineExceptionFlag();
+		    promptWanted = true;
+		    issuePrompt = true;
 		    )
 	       else (
-		    if localBind(parsed,dictionary) -- assign scopes to tokens, look up symbols
-		    then (		  
-			 -- result of BeforeEval is ignored unless error:
-			 -- BeforeEval method is independent of mode
-			 f := convert(parsed); -- convert to runnable code
-			 be := runmethod(BeforeEval,nullE);
-			 when be is err:Error do ( be = update(err,"before eval",f); if stopIfError || returnIfError then return be; ) else nothing;
-			 lastvalue = evalexcept(f);	  -- run it
-			 if lastvalue == endInput then return nullE;
-			 -- when f is globalAssignmentCode do lastvalue = nullE else nothing;
-			 when lastvalue is err:Error do (
-			      if err.message == returnMessage
-			      || err.message == continueMessage || err.message == continueMessageWithArg 
-			      || err.message == stepMessage || err.message == stepMessageWithArg 
-			      || err.message == breakMessage || err.message == throwMessage then (
-				   if stopIfBreakReturnContinue then return lastvalue;
-				   );
-			      if err.message == unwindMessage then (
-				   lastvalue = nullE;
-				   )
-			      else (
-				   if !err.printed then printErrorMessage(err);
-			      	   if stopIfError || returnIfError then return lastvalue;
-				   );
+		    if debugLevel == 123 then stderr <<  "-- token read error" << endl;
+		    promptWanted = true;
+	       	    if fileError(file) then return buildErrorPacket(fileErrorMessage(file));
+	       	    if stopIfError || returnIfError then return buildErrorPacket("--backtrace: token read error--");
+		    )
+	       )
+	  else (
+	       t := u.word;
+	       if t == wordEOF then (
+		    if debugLevel == 123 then stderr <<  "-- EOF token, returning: " << position(u) << endl;
+		    return if returnLastvalue then lastvalue else nullE;
+		    )
+	       else if t == NewlineW then (
+		    if debugLevel == 123 then stderr <<  "-- newline token, discarding: " << position(u) << endl;
+		    gettoken(file,true);
+		    )
+	       else if t == wordEOC then (
+		    if debugLevel == 123 then stderr <<  "-- end-of-cell token, discarding: " << position(u) << endl;
+		    gettoken(file,true);
+		    )
+	       else (
+	  	    previousLineNumber = lineNumber;
+		    promptWanted = true;
+		    if debugLevel == 123 then stderr <<  "-- ordinary token, ready to parse: " << position(u) << endl;
+		    parsed := parse(file,SemicolonW.parse.precedence,true);
+		    if parsed == errorTree then (
+			 if interruptedFlag then (
+		    	      if debugLevel == 123 then stderr <<  "-- parsing interrupted" << endl;
+		    	      clearFileError(file);
+	       	    	      interruptedFlag = false; determineExceptionFlag();
+			      promptWanted = true;
+			      -- issuePrompt = true;
 			      )
 			 else (
-			      if printout then (
-				   if mode != topLevelMode then (
-					mode = topLevelMode;
-					modeBeforePrint = list(mode,Expr(BeforePrint));
-					modeNoPrint = list(mode,Expr(NoPrint));
-					modePrint = list(mode,Expr(Print));
-					modeAfterNoPrint = list(mode,Expr(AfterNoPrint));
-					modeAfterPrint = list(mode,Expr(AfterPrint));
-					);
-				   -- result of AfterEval replaces lastvalue unless error, in which case 'null' replaces it:
-				   g := runmethod(AfterEval,lastvalue);
-				   when g is err:Error
-				   do (
-					g = update(err,"after eval",f); 
-					if stopIfError || returnIfError then return g;
-					lastvalue = nullE;
-					) 
-				   else lastvalue = g;
-				   -- result of BeforePrint is printed instead unless error:
-				   printvalue := nullE;
-				   g = runmethod(modeBeforePrint,lastvalue);
-				   when g is err:Error
-				   do ( g = update(err,"before print",f); if stopIfError || returnIfError then return g; )
-				   else printvalue = g;
-				   -- result of Print is ignored:
-				   g = runmethod(if s.word == SemicolonW then modeNoPrint else modePrint,printvalue);
-				   when g is err:Error do ( g = update(err,"at print",f); if stopIfError || returnIfError then return g; ) else nothing;
-				   -- result of AfterPrint is ignored:
-				   g = runmethod(if s.word == SemicolonW then modeAfterNoPrint else modeAfterPrint,lastvalue);
-				   when g is err:Error do ( g = update(err,"after print",f); if stopIfError || returnIfError then return g; ) else nothing;
-				   )
-			      )
+		    	      if debugLevel == 123 then stderr <<  "-- error during parsing" << endl;
+			      if fileError(file) then return buildErrorPacket(fileErrorMessage(file));
+			      if stopIfError || returnIfError then return buildErrorPacket("--backtrace: parse error--");
+			      );
 			 )
-		    else if isatty(file) 
-		    then flush(file)
-		    else return buildErrorPacket("error while loading file")))));
+		    else (
+			 if debugLevel == 123 then stderr <<  "-- parsing successful" << endl;
+		    	 if debugLevel == 123 then stderr << "-- parse tree size: " << size(parsed) << endl;
+     	       	    	 bumpLineNumber = true;
+			 -- { [ (
+			 -- get the token that terminated the parsing of the expression
+			 -- it has parsing precedence at most that of the semicolon
+			 -- so it is end of file, end of cell, newline, semicolon, or one of the right parentheses : ) ] } 
+			 -- that explains the next error message
+			 s := gettoken(file,true);
+			 if !(s.word == SemicolonW || s.word == NewlineW || s.word == wordEOC || s.word == wordEOF)
+			 then (
+			      msg := "syntax error: unmatched " + s.word.name;
+			      printErrorMessage(s,msg);
+			      if stopIfError || returnIfError then return Expr(Error(position(s),msg,nullE,false,dummyFrame));
+			      )
+			 else (
+			      if localBind(parsed,dictionary) -- assign scopes to tokens, look up symbols
+			      then (		  
+				   -- result of BeforeEval is ignored unless error:
+				   -- BeforeEval method is independent of mode
+				   f := convert(parsed); -- convert to runnable code
+				   be := runmethod(BeforeEval,nullE);
+				   when be is err:Error do ( be = update(err,"before eval",f); if stopIfError || returnIfError then return be; ) else nothing;
+				   lastvalue = evalexcept(f);	  -- run it
+				   if lastvalue == endInput then return nullE;
+				   -- when f is globalAssignmentCode do lastvalue = nullE else nothing;
+				   when lastvalue is err:Error do (
+					if err.message == returnMessage
+					|| err.message == continueMessage || err.message == continueMessageWithArg 
+					|| err.message == stepMessage || err.message == stepMessageWithArg 
+					|| err.message == breakMessage || err.message == throwMessage then (
+					     if stopIfBreakReturnContinue then return lastvalue;
+					     );
+					if err.message == unwindMessage then (
+					     lastvalue = nullE;
+					     )
+					else (
+					     if !err.printed then printErrorMessage(err);
+					     if stopIfError || returnIfError then return lastvalue;
+					     );
+					)
+				   else (
+					if printout then (
+					     if mode != topLevelMode then (
+						  mode = topLevelMode;
+						  modeBeforePrint = list(mode,Expr(BeforePrint));
+						  modeNoPrint = list(mode,Expr(NoPrint));
+						  modePrint = list(mode,Expr(Print));
+						  modeAfterNoPrint = list(mode,Expr(AfterNoPrint));
+						  modeAfterPrint = list(mode,Expr(AfterPrint));
+						  );
+					     -- result of AfterEval replaces lastvalue unless error, in which case 'null' replaces it:
+					     g := runmethod(AfterEval,lastvalue);
+					     when g is err:Error
+					     do (
+						  g = update(err,"after eval",f); 
+						  if stopIfError || returnIfError then return g;
+						  lastvalue = nullE;
+						  ) 
+					     else lastvalue = g;
+					     -- result of BeforePrint is printed instead unless error:
+					     printvalue := nullE;
+					     g = runmethod(modeBeforePrint,lastvalue);
+					     when g is err:Error
+					     do ( g = update(err,"before print",f); if stopIfError || returnIfError then return g; )
+					     else printvalue = g;
+					     -- result of Print is ignored:
+					     g = runmethod(if s.word == SemicolonW then modeNoPrint else modePrint,printvalue);
+					     when g is err:Error do ( g = update(err,"at print",f); if stopIfError || returnIfError then return g; ) else nothing;
+					     -- result of AfterPrint is ignored:
+					     g = runmethod(if s.word == SemicolonW then modeAfterNoPrint else modeAfterPrint,lastvalue);
+					     when g is err:Error do ( g = update(err,"after print",f); if stopIfError || returnIfError then return g; ) else nothing;
+					     )
+					)
+				   )
+			      else if isatty(file) 
+			      then flush(file)
+			      else return buildErrorPacket("error while loading file")))))));
 
 interpreterDepthS := setupvar("interpreterDepth",toExpr(0));
 incrementInterpreterDepth():void := (
@@ -219,15 +281,31 @@ readeval(file:TokenFile,returnLastvalue:bool,returnIfError:bool):Expr := (
 InputPrompt := makeProtectedSymbolClosure("InputPrompt");
 InputContinuationPrompt := makeProtectedSymbolClosure("InputContinuationPrompt");
 
+promptcount := 0;
 topLevelPrompt():string := (
+     if debugLevel == 123 then (
+	  stderr <<  "-- topLevelPrompt:" 
+	  << " previousLineNumber = " << previousLineNumber 
+	  << "; lineNumber = " << lineNumber 
+	  << endl;
+	  );
      method := lookup(
 	  ZZClass,
 	  list(topLevelMode, Expr(if lineNumber == previousLineNumber then InputContinuationPrompt else (previousLineNumber = lineNumber; InputPrompt))));
-     if method == nullE then ""
-     else when applyEE(method,toExpr(lineNumber)) is s:string do s
-     is n:ZZ do if isInt(n) then blanks(toInt(n)) else ""
-     else "\n<--bad prompt--> : " -- unfortunately, we are not printing the error message!
-     );
+     p := (
+	  if method == nullE then ""
+     	  else when applyEE(method,toExpr(lineNumber)) is s:string do s
+     	  is n:ZZ do if isInt(n) then blanks(toInt(n)) else ""
+     	  else "\n<--bad prompt--> : " -- unfortunately, we are not printing the error message!
+	  );
+     if debugLevel == 123 then (
+	  p = "[" + tostring(promptcount) + "]  " + p;
+	  stderr <<  "-- topLevelPrompt:" 
+	  << " prompt = \"" << present(p) << "\""
+	  << endl;
+	  );
+     promptcount = promptcount + 1;
+     p);
 
 loadprintstdin(dc:DictionaryClosure,stopIfBreakReturnContinue:bool,returnIfError:bool):Expr := (
      when openTokenFile("-")
@@ -448,7 +526,7 @@ internalCapture(e:Expr):Expr := (
 	  setLineNumber(0);
 	  setprompt(stringFile,topLevelPrompt);
 	  r := readeval3(stringFile,true,newStaticLocalDictionaryClosure(),false,false,true);
-	  out := substr(stdIO.outbuffer,0,stdIO.outindex);
+	  out := substrAlwaysCopy(stdIO.outbuffer,0,stdIO.outindex);
 	  stdIO.outfd = oldfd;
 	  stdIO.outbuffer = oldbuf;
 	  stdIO.outindex = 0;

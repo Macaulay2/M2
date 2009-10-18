@@ -1,0 +1,11 @@
+diff -ur --exclude=configure /home/dan/src/M2-1.3/BUILD/dan/builds.tmp/ubuntu32/libraries/glpk/tmp/glpk-4.14/src/glplib05.c glpk-4.14/src/glplib05.c
+--- /home/dan/src/M2-1.3/BUILD/dan/builds.tmp/ubuntu32/libraries/glpk/tmp/glpk-4.14/src/glplib05.c	2007-02-04 23:00:00.000000000 -0600
++++ glpk-4.14/src/glplib05.c	2009-10-10 14:18:37.000000000 -0500
+@@ -82,6 +82,7 @@
+ 
+ /* GNU/Linux version */
+ 
++#include <stdio.h>
+ #include <sys/time.h>
+ #include "glplib.h"
+ 

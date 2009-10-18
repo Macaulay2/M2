@@ -1,0 +1,13 @@
+After
+
+	loadPackage ("Macaulay2Doc", LoadDocumentation => true)
+
+some documentation seems to disappear!
+
+i4 : help "changes, 1.3"
+--warning: there is no documentation for 'changes, 1.3'
+
+o4 = changes, 1.3
+     ************
+
+o4 : DIV

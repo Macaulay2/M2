@@ -6,6 +6,7 @@ use system;
 import join(x:string,y:string):string;
 import substr(x:string,start:int,leng:int):string;
 import substr(x:string,start:int):string;
+import substrAlwaysCopy(x:string,start:int,leng:int):string;
 import enlarge(n:int,x:string):string;
 
 export concatenate(x:array(string)):string := (

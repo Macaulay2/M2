@@ -272,5 +272,5 @@ getChangeMatrix G
 transpose gens G - transpose((gens I) * getChangeMatrix G )
 end
 -- Local Variables:
--- compile-command: "make -C $M2BUILDDIR/Macaulay2/test gbZZbug.out"
+-- compile-command: "make -C $M2BUILDDIR/Macaulay2/packages/Macaulay2Doc/test gbZZbug.out"
 -- End:

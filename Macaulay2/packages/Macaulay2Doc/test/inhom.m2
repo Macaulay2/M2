@@ -32,5 +32,5 @@ K = cokernel generators intersect(I,J)
 time assert( I == ann Ext^2(K,S) )
 end
 -- Local Variables:
--- compile-command: "make -C $M2BUILDDIR/Macaulay2/test inhom.out"
+-- compile-command: "make -C $M2BUILDDIR/Macaulay2/packages/Macaulay2Doc/test inhom.out"
 -- End:

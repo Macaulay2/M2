@@ -6,7 +6,7 @@ load "booktex.m2"
 bookFile = openOut "M2book.tmp"
 --------------------------------------------
 bookFile << ///
-%% Macaulay 2 manual
+%% Macaulay2 manual
 %% latex
 %% Copyright 1996-1999, by Daniel R. Grayson and Michael E. Stillman
 
@@ -19,7 +19,7 @@ bookFile << ///
 % available from /ftp@sunsite.unc.edu:/pub/packages/TeX/macros/latex/contrib/supported/hyperref
 \usepackage[
 	bookmarksnumbered=true,
-        pdftitle={Macaulay 2},
+        pdftitle={Macaulay2},
         pdfsubject={symbolic algebra},
         pdfkeywords={syzygy Groebner resolution polynomials},
         pdfauthor={Daniel R. Grayson and Michael E. Stillman},
@@ -90,7 +90,7 @@ bookFile << ///
 % \font\headerFontSix=cmbx10
 
 \begin{document}
-        \title{Macaulay 2 \\ A system for computations in \\ algebraic geometry and commutative algebra}
+        \title{Macaulay2 \\ A system for computations in \\ algebraic geometry and commutative algebra}
         % \thanks{Supported by the NSF}
         \author[Grayson]{Daniel R. Grayson}
         \address{University of Illinois at Urbana-Champaign}

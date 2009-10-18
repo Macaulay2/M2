@@ -47,7 +47,7 @@ document {
      Headline => "convert to a readable string",
      Usage => "toExternalString x",
      Inputs => {
-	  "x" => "any Macaulay 2 object"
+	  "x" => "any Macaulay2 object"
 	  },
      Outputs => {
 	  String => {"a string representation of ", TT "x", ", which can be used, in conjunction with ", TO "value", ", to read the object back into the program later"}

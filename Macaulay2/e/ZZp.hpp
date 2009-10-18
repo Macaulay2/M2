@@ -31,6 +31,7 @@ public:
 
   CoefficientRingZZp * get_CoeffRing() const { return coeffR; }
   virtual int coerce_to_int(ring_elem a) const;
+  virtual int discrete_log(ring_elem a) const; // returns -1 if a is 0
 
   int to_int(int a) const;
 

@@ -20,24 +20,74 @@ getIndices = (R,v) -> unique apply(v, index)
 
 eliminate = method()
 
-eliminate (List, Ideal) := (v,I) -> (     
-     if #v === 0 then return I;
+-- The following was code MES wrote to give to Sottile's group (Spring, 2009).
+-- I still want to work this into the eliminate command...
+eliminateH = (v,I) -> (
+     -- v is a list of variables
+     -- I is an ideal
      R := ring I;
-     varlist := getIndices(ring I,v);
-     others := toList(set(0..numgens R-1) - set varlist);
-     perm := join(varlist,others);
+     h := local h;
+     S := (coefficientRing R)[gens R, h, MonomialSize => 8];
+     use R;
+     IS := homogenize(sub(trim I,S), h);
+     phi := map(R,S,vars R | matrix{{1_R}});
+     eS := eliminate(v,IS);
+     return trim phi eS;
+     )
+
+isFlatPolynomialRing := (R) -> (
+     -- R should be a ring
+     -- determines if R is a poly ring over ZZ or a field
+     kk := coefficientRing R;
+     isPolynomialRing R and (kk === ZZ or isField kk)
+     )
+
+eliminationRing = (elimvars, R) -> (
+     -- input: R: flat polynomial ring
+     --        elimvars: list of integer indices of vars to eliminate
+     --        homog:Boolean: whether to add another variable for homogenization
+     -- output: (F:R-->S, G:S-->R), where S is the new ring
+     -- S is the same as R, except that the variables have been permuted, the 
+     -- names of the variables are private, and the monomial ordering is an elim order.
+     -- If R is a WeylAlgebra, homogenized Weyl algebra, skew commutative ring, or poly
+     -- ring, then S will be the same, with the correct multiplication and grading
+     keepvars := sort toList(set(0..numgens R-1) - set elimvars);
+     perm := join(elimvars,keepvars);
      invperm := inversePermutation perm;
-     degs := (monoid R).Options.Degrees;
-     degs = apply(perm, i -> degs_i);
-     M := monoid [Variables=>numgens R,MonomialOrder=>ProductOrder{#varlist,#others}, Degrees=>degs, MonomialSize=>16];
+     vars := (options R).Variables;
+     degs := (options R).Degrees;
+     weyl := (options R).WeylAlgebra;
+     skew := (options R).SkewCommutative;
+     degs = degs_perm;
+     vars = vars_perm;
+     M := monoid [vars,MonomialOrder=>Eliminate(#elimvars), Degrees=>degs, 
+	  WeylAlgebra => weyl, SkewCommutative => skew, MonomialSize=>16];
      k := coefficientRing R;
      R1 := k M;
      toR1 := map(R1,R,apply(invperm,i->R1_i));
      toR := map(R,R1,apply(perm,i->R_i));
+     (toR1,toR)
+     )
+
+eliminate1 = (elimindices,I) -> (
+     -- at this point, I is an ideal in a flat ring, 
+     -- and elimindices represents the variables
+     -- to eliminate.
+     (toR1,toR) := eliminationRing(elimindices,ring I);
      J := toR1 I;
      if isHomogeneous I then
          (cokernel generators J).cache.poincare = poincare cokernel generators I;
      ideal mingens ideal toR selectInSubring(1,generators gb J)
+     )
+
+eliminate (List, Ideal) := (v,I) -> (     
+     R := ring I;
+     -- if R is a quotient ring, then give error
+     if not isFlatPolynomialRing R then
+       error "expected a polynomial ring over ZZ or a field";
+     if #v === 0 then return I;
+     varlist := getIndices(ring I,v);
+     eliminate1(varlist, I)
      )
 
 eliminate (Ideal, RingElement) := (I,v) -> eliminate({v},I)

@@ -5,6 +5,6 @@ all :
 		--build=x86_64-apple-darwin \
 		--enable-dmg \
 		--enable-download \
-		--enable-build-libraries="gc gdbm gmp mpfr readline ntl factory libfac frobby pari"
+		--enable-build-libraries="gc gdbm mpir mpfr readline ntl factory libfac frobby pari"
 
 

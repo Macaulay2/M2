@@ -20,62 +20,49 @@ newPackage(
 needsPackage "PrimaryDecomposition"
 debug PrimaryDecomposition
    
-export{"integralClosure", "idealizer", "ringFromFractions", "nonNormalLocus", "Index",
-"isNormal", "conductor", "icFractions", "icMap", "icFracP", "conductorElement",
-"reportSteps", "icPIdeal",
-  "canonicalIdeal", 
-  "parametersInIdeal",
-  "randomMinors",
-  "S2ification",
-  "endomorphisms",
-  "vasconcelos",
-  "Verbosity",
-  
-  "SimplifyFractions", -- simplify fractions
-  "StartWithS2", -- compute S2-ification first
-  "Endomorphisms", -- compute end(I)
-  "Vasconcelos", -- compute end(I^-1).  If both this and Endomorphisms are set:
+export{
+     "integralClosure", 
+     "Verbosity",
+     "Keep",
+     "conductor", 
+     "icFractions", 
+     "icMap", 
+     "isNormal", 
+
+     "icFracP", 
+     "ConductorElement",
+     "icPIdeal",
+
+--     "canonicalIdeal", 
+--     "parametersInIdeal",
+--     "randomMinors",
+     "makeS2",
+
+     "idealizer", 
+     "ringFromFractions", 
+     "Index",
+
+     "RadicalCodim1",
+     "AllCodimensions"
+     } 
+
+     "endomorphisms",
+     "vasconcelos",
+     "SimplifyFractions", -- simplify fractions
+     "Endomorphisms", -- compute end(I)
+     "Vasconcelos", -- compute end(I^-1).  If both this and Endomorphisms are set:
                  -- compare them.
-  "RecomputeJacobian",
-  "StartWithOneMinor",
-  "S2First", "S2Last", "S2None", -- when to do S2-ification
-  "RadicalCodim1",
-  "RadicalBuiltin" -- true: use 'intersect decompose' to get radical, other wise use 'rad' in PrimaryDecomposition package
-} 
+     "StartWithS2", -- compute S2-ification first
+     "RecomputeJacobian",
+     "StartWithOneMinor",
+     "S2First", 
+     "S2Last", 
+     "S2None", -- when to do S2-ification
+     "RadicalBuiltin" -- true: use 'intersect decompose' to get radical, other wise use 'rad' in PrimaryDecomposition package
 
 verbosity = 0
 
---needsPackage "Elimination"
 needsPackage "ReesAlgebra"
-
--- PURPOSE : Front end for the integralClosure function.  It governs
---           the iterative process using the helper function
---           integralClosureHelper. Generally implements DeJong's
---           algorthim to compute the integral closure using the
---           non-normal locus.
--- INPUT : any Ring that is a polynomial ring or a quotient of a
---         polynomial ring that is reduced. 
--- OUTPUT : a sequence of quotient rings R_1/I_1,..., R_n/I_n such
---          that the integral closure of R/I is the direct sum of
---          those rings 
--- HELPER FUNCTIONS: integralClosureHelper      
---                   nonNormalLocus  - computes the non-normal locus
---                   idealizer - a sequence consisting of a ring map
---                   from the ring of J to B/I, where B/I is
---                   isomorphic to Hom(J,J) = 1/f(f*J:J), and list of
---                   the fractions that are added to the ring of J to
---                   form B/I  .
--- COMMENTS: 
--- (1) The quotient rings are not necessarily domains.  The
--- algorithm can correctly proceed without decomposing a reduced ring
--- if it finds a non-zero divisor with which to compute 1/f(fJ:J). 
---
--- (2) The functional design is to allow a user to do individual steps
--- in DeJong's algorithm easily.  In particular, nonNormalLocus and
--- idealizer are now stand alone functions.  This could alow study of
--- the role of different choices of the non-zero element f in
--- idealizer, or of different possibly choices that "work" for the
--- nonNormalLocus. 
 
 --- Should Singh/Swanson be an option to integralClosure or its own
 --- program.  Right now it is well documented on its own.  I'm not
@@ -85,34 +72,27 @@ integralClosure = method(Options=>{
 	  Variable => global w,
 	  Limit => infinity,
 	  Strategy => {}, -- a mix of certain symbols
-     	  Verbosity => 0}
-	  )
+     	  Verbosity => 0,
+	  Keep => null -- list of variables to not simplify away.  Default is all original vars
+	  }
+	)
 
-integralClosure Ring := Ring => o -> (R) -> (
-     -- 1 argument: affine ring R.  We might be able to handle rings over ZZ
-     --   if we choose J in the non-normal ideal some other way.
-     -- 2 options: Limit, Variable
-     verbosity = o.Verbosity;
-     strategies := set o.Strategy;
-     (S,F) := flattenRing R;
-     P := ideal S;
-     startingCodim := codim P;
-     isCompleteIntersection := (startingCodim == numgens P);
-     G := map(frac R, frac S, substitute(F^-1 vars S, frac R));
-     nsteps := 0;
+idealInSingLocus = (S, opts) -> (
+     -- Input: flattened poly ring S = S'/I, where S' is a poly ring.
+     --        OptionTable from integralClosure
+     -- Output:
+     --        ideal in singular locus
+     --          could be entire sing locus, or could be
+     --          discriminant, etc.
+     -- private subroutine of integralClosure
 
-     if verbosity >= 1 then 
-     	  << "integral closure nvars " << numgens S << endl;
-
+     -- Step1: choose an ideal J contained in the radical of the ideal of the singular locus.
      -- Choose an ideal J here.  Allow option to start with a J?
-     --    J = nonNormalLocus S;
-     -- this one seems to be worse
-     --    J := promote(minors(codim ideal S, jacobian presentation S), S);
 
-     if verbosity >= 1 then (
+     if opts.Verbosity >= 1 then (
 	  << " [jacobian time " << flush;
 	  );
-     if member(StartWithOneMinor, strategies) then 
+     if member(StartWithOneMinor, opts.Strategy) then 
           t1 := timing (J := ideal nonzeroMinor(codim ideal S, jacobian S))
      else
           t1 = timing (J = minors(codim ideal S, jacobian S));
@@ -120,14 +100,95 @@ integralClosure Ring := Ring => o -> (R) -> (
      if verbosity >= 1 then (
         << t1#0 << " sec #minors " << numgens J << "]" << endl;
 	);
+     J
+     )
 
+integralClosure Ring := Ring => o -> (R) -> (
+     -- 1 argument: affine ring R.  We might be able to handle rings over ZZ
+     --   if we choose J in the non-normal ideal some other way.
+     if R.?icMap then return target R.icMap;
+     verbosity = o.Verbosity;
+     strategies := set o.Strategy;
+     (S,F) := flattenRing R;
+
+     -- right here, we will grab the variables to be excluded
+     -- this seems a bit awkward, perhaps there is a better way?
+     T := ambient S;
+     kk := ultimate(coefficientRing,T);
+     allgens := generators(T, CoefficientRing => kk);
+     keepvars := o.Keep;
+     if keepvars === null then keepvars = allgens;
+
+     P := ideal S;
+     startingCodim := codim P;
+     isCompleteIntersection := (startingCodim == numgens P);
+     G := map(frac R, frac S, substitute(F^-1 vars S, frac R));
+
+     isS2 := isCompleteIntersection; -- true means is, false means 'do not know'
+     nsteps := 0;
+     t1 := null;  -- used for timings
+
+     codim1only := not member(AllCodimensions, strategies);
+       -- this means: don't bother to compute the S2-ification
+       -- and don't try to take only the codim 1 part of the radical
+       -- of the jacobian locus.
+       
+     ------------------------------------------
+     -- Step 1: Find ideal in singular locus --
+     ------------------------------------------     
+     -- other possible things here: make a list of ideals, and we 
+     --   will compute End of each in turn.
+     --   (b) use discriminant
+     J := idealInSingLocus(S, o); -- returns ideal in S
+     codimJ := codim J;
+     isR1 := (codimJ > 1);
+
+     if verbosity >= 1 then (
+     	  << "integral closure nvars " << numgens S;
+	  << " numgens " << numgens ideal S;
+	  if isS2 then << " is S2";
+	  if isR1 then << " is R1";
+	  << " codim " << startingCodim;
+	  << " codimJ " << startingCodim + codimJ << endl;
+       << endl;
+       );
+
+     ------------------------------
+     -- Step 2: make the ring S2 --
+     ------------------------------
+     --  unless we are using an option that
+     --  doesn't require it.
+     if not isS2 and codim1only then (
+	  if verbosity >= 1 then 
+	  << "   S2-ification " << flush;
+	   t1 = (timing F'G' := makeS2 target F);
+	   if verbosity >= 1 then
+		<< t1#0 << " seconds" << endl;
+	   if F'G' === null then (
+		<< "warning: probabilistic computation of S2-ification failed " << endl;
+		<< "         reverting to standard algorithm" << endl;
+		strategies = strategies + set {AllCodimensions};
+		codim1only = false
+	   ) else (
+	   (F', G') := F'G';
+           F = F'*F;
+	   G = G*G';
+	   -- also extend J to be in this ring
+	   J = trim(F' J);
+	   isS2 = true;
+	   ));
+
+     -------------------------------------------
+     -- Step 3: incrementally add to the ring --
+     -------------------------------------------
+     if not isR1 or not codim1only then (     
      -- loop (note: F : R --> Rn, G : frac Rn --> frac R)
      while (
 	  F1 := F;
 
 	  if verbosity >= 1 then << " [step " << nsteps << ": " << flush;
 
-	  t1 = timing((F,G,J) = integralClosure1(F1,G,J,nsteps,o.Variable,strategies));
+	  t1 = timing((F,G,J) = integralClosure1(F1,G,J,nsteps,o.Variable,keepvars,strategies));
 
           if verbosity >= 1 then (
 		 if verbosity >= 5 then (
@@ -141,58 +202,88 @@ integralClosure Ring := Ring => o -> (R) -> (
 	  nsteps = nsteps + 1;
 	  nsteps < o.Limit and target F1 =!= target F
 	  ) do (
-	  );
+	  ));
      R.icFractions = first entries G.matrix;
      R.icMap = F;
-     if false and not isCompleteIntersection then (
-	  if verbosity >= 2 then 
-	  << "   S2-ification " << flush;
-	   t1 = (timing (F', G') := S2ification target F);
-	   if verbosity >= 1 then
-		<< t1#0 << " seconds" << endl;
-           R.icMap = F'*F;
-           R.icFractions = first entries((G*G').matrix)
-	   );
      target R.icMap
      )
 
--- integralClosure1(f : R --> R1, g : frac R1 --> frac R, J (radical) ideal in R1)
---  return (f2 : R --> R2, g2 : frac R2 --> frac R, sub(J,R2))
 
 doingMinimalization = true;
-
-
-codim1radical = (J) -> (
-     -- input: J:Ideal, in a domain R
-     --   keepOnlyCodim1:Boolean
-     -- output: Ideal,  the intersection of all prime components 
-     --   of J which have codimension one in R.
-     --   If there are none, then return null.
-     Jup := trim (flattenRing J)_0;
-     Jup = trim ideal apply(Jup_*, f -> product apply(apply(toList factor f, toList), first));
-
-     << "R0 = " << toExternalString ring Jup << endl;
-     << "J0 = " << toString Jup << endl;
-
-     if verbosity >= 2 then << "." << flush;
-     C := decompose Jup;
-     if verbosity >= 2 then << "." << flush;
-     C = apply(C, L -> promote(L,ring J));
-
-     codims := C/codim;
-     if verbosity >= 1 and any(codims, c -> c > 1)
-     then << "codim of comps of J: " << codims << endl << "                 ";
-     
-     C1 = select(C, L -> codim L == 1);
-     --time C1 := select(C, L -> ((a,b) := endomorphisms(L,L_0); a != 0));
-     if #C1 == 0 then null else trim intersect C1
-     )
 
 --the following finds an element in the intersection of the
 --principal ideals generated by the ring elements in a list.
 commonDenom = X -> findSmallGen intersect(apply (X, x->ideal x));
+
+radicalJ = (J,codim1only,nsteps,strategies) -> (
+     -- J is an ideal in R0.
+     -- compute the radical of J, or perhaps a list of 
+     -- components of J.  Possibly:
+     --  remove components of codim > 1 in R0.
+     --  add in new elements of the singular locus of J first, or after
+     --  computing the radical.
+     -- Choices for the radical:
+     --  (a) intersection of decompose
+     --  (b) use rad, limiting to codim 1
+     --  (c) what else?
+     useRadical := false;
+     useRadicalCodim1 := false;
+     useDecompose := true;
+     if member(RadicalCodim1, strategies) then useRadicalCodim1 = true;
+     if member(Radical, strategies) then useRadical = true;
      
-integralClosure1 = (F,G,J,nsteps,varname,strategies) -> (
+     R0 := ring J;
+     J = trim J;
+     if false and nsteps > 0 and member(AddMinors, strategies) then ( 
+	  -- MES: compute dimension of the orig ring above, so that we know the size of minors here,
+	                  -- with no extra computation
+	  newminors := ideal (0_R0);
+	  while newminors == 0 do
+	    newminors = ideal randomMinors(10,numgens R0 - dim R0,jacobian R0);
+	  J = J + newminors
+	  );
+     if codim1only and codim J > 1 then return {};
+
+     if verbosity >= 2 then (
+       	  << endl << "      radical " <<
+	  (if useRadical then "(use usual radical) "
+     	  else if useRadicalCodim1 then "(use codim1radical) "
+	  else "(use decompose) ")
+          << flush;
+	  );
+
+     Jup := trim first flattenRing J;
+     Jup = ideal apply(Jup_*, f -> product apply(apply(toList factor f, toList), first));
+     Jup = trim ideal gens gb Jup;
+     
+     if verbosity >= 5 then (
+       << "R0 = " << toExternalString ring Jup << endl;
+       << "J0 = " << toString Jup << endl;
+       );
+
+     t1 := timing(radJup = 
+       if useRadical then {radical Jup}
+       else if useRadicalCodim1 then {rad(Jup,0)}
+       else if useDecompose then decompose Jup);
+
+     radJ := apply(radJup, L -> trim promote(L, R0));
+     
+     if verbosity >= 4 then << "done computing radical" << endl << flush;     
+     if verbosity >= 2 then << t1#0 << " seconds" << endl;
+
+     if codim1only then radJ = select(radJ, J -> codim J == 1);
+     
+     if verbosity >= 5 then (
+	  << "dimension of components: " << apply(radJ, codim) << endl;
+	  << "components of radJ: " << endl;
+	  << netList radJ 
+	  << endl;
+	  );
+
+     radJ
+     )
+
+integralClosure1 = (F,G,J,nsteps,varname,keepvars,strategies) -> (
      -- F : R -> R0, R0 is assumed to be a domain
      -- G : frac R0 --> frac R
      -- J : ideal in the non-normal ideal of R0
@@ -204,48 +295,23 @@ integralClosure1 = (F,G,J,nsteps,varname,strategies) -> (
      --      G1 : frac R1 --> frac R
      --      J1 : is the extension of J to an ideal of R1.
      -- R1 is integrally closed iff target F === target F1
+     codim1only := not member(AllCodimensions, strategies);
+
      R0 := target F;
      J = trim J;
-     if false then ( -- for now, leave out this code.
-     if nsteps > 0 then ( -- MES: compute dimension of the orig ring above, so that we know the size of minors here,
-	                  -- with no extra computation
-	  newminors := ideal (0_R0);
-	  while newminors == 0 do
-	    newminors = ideal randomMinors(10,numgens R0 - dim R0,jacobian R0);
---	  error "look at J, newminors";
-	  J = J + newminors
-	  );
-       );
-     if codim J > 1 then return (F,G,ideal(1_R0));
+     radJ := radicalJ(J, codim1only, nsteps, strategies);
+     if #radJ == 0 then return (F,G,ideal(1_R0));
+     radJ = trim intersect radJ;
 
-     if verbosity >= 2 then << endl << "      radical " << flush;
-     if nsteps == 0 then (
-       -- MES: make a strategy that chooses here:
-       --t1 := timing(radJ = trim codim1radical J);
-       t1 := timing(radJ = trim rad(J,0));       
-       )
-     else (
-     	  Jup := trim (flattenRing J)_0;
-
-     << "about to compute radical" << endl << flush;
-     
-	  t1 = timing(radJup := rad(Jup,0));
-	  radJ = trim promote(radJup, ring J);
-	  );
-     << "done computing radical" << endl << flush;     
-     if verbosity >= 2 then << t1#0 << " seconds" << endl;
-
-     if radJ === null then (
-	  -- we are integrally closed
-	  return (F,G,ideal(1_R0))
-	  );
-     
      f := findSmallGen radJ; -- we assume that f is a non-zero divisor!!
      -- Compute Hom_S(radJ,radJ), using f as the common denominator.
+
      if verbosity >= 3 then <<"      small gen of radJ: " << f << endl << endl;
      if verbosity >= 6 then << "rad J: " << netList flatten entries gens radJ << endl;
      if verbosity >= 2 then <<"      idlizer1:  " << flush;
+
      t1 = timing((He,fe) := endomorphisms(radJ,f));
+
      if verbosity >= 2 then << t1#0 << " seconds" << endl;
      if verbosity >= 6 then << "endomorphisms returns: " << netList flatten entries He << endl;
      
@@ -337,7 +403,9 @@ integralClosure1 = (F,G,J,nsteps,varname,strategies) -> (
 
      if doingMinimalization then (
        if verbosity >= 2 then << "      minpres:   " << flush;
-       t1 = timing(R1 := minimalPresentation R1temp);
+       R1tempAmbient := ambient R1temp;
+       keepindices := apply(keepvars, x -> index substitute(x, R1tempAmbient));
+       t1 = timing(R1 := minimalPresentation(R1temp, Exclude => keepindices));
        if verbosity >= 2 then << t1#0 << " seconds" << endl;
        i := R1temp.minimalPresentationMap; -- R1temp --> R1
        iinv := R1temp.minimalPresentationMapInv.matrix; -- R1 --> R1temp
@@ -565,7 +633,7 @@ R2=ringFromFractions endomorphisms(K,f)
 betti res I -- NOT depth 2.
 time integralClosure(R, Strategy => {"vasconcelos"})
 time integralClosure(R, Strategy => {})
-S2ification R
+makeS2 R
 ///
 
 ///
@@ -588,41 +656,6 @@ codim J
 syz gens J
 
 ///
-
-
-nonNormalLocus = method()
-nonNormalLocus Ring := (R) -> (
-     -- This handles the first key step in DeJong's algorithm: finding
-     -- an ideal that contains the NNL locus. 
-     -- 1 argument: a ring. it must be flattened. normally it will be
-     -- a quotient ring. 
-     -- Return: an ideal containing the non-normal locus of R.   
-     local J;
-     I := ideal presentation R;
-     Jac := jacobian R;
-     if isHomogeneous I and #(first entries generators I)+#(generators ring I) <= 20 then (
-	  SIdets := minors(codim I, Jac);
-	   -- the codimension of the singular locus.
-	  cs := codim SIdets + codim R;  -- codim of SIdets in poly ring. 
-	  if cs === dim ring I or SIdets == 1
-	  -- i.e. the sing locus is empty.
-	  then (J = ideal vars R;)
-	  else (J = radical ideal SIdets_0);
-	  )           	       
-     else (
-	  n := 1;
-	  det1 := ideal (0_R);
-	  while det1 == ideal (0_R) do (
-	       det1 = minors(codim I, Jac, Limit=>n); -- this seems
-	       -- very slow - there must be a better way!!  
-	       n = n+1);
-	  if det1 == 1
-	    -- i.e. the sing locus is empty.
-	   then (J = ideal vars R;)
-	   else (J = radical det1)
-	  );	 
-     J
-     )
 
 -- PURPOSE: check if an affine domain is normal.  
 -- INPUT: any quotient ring.  
@@ -652,14 +685,27 @@ isNormal(Ring) := Boolean => (R) -> (
 
 --------------------------------------------------------------------
 conductor = method()
-conductor(RingMap) := Ideal => (F) -> (
+conductor RingMap := Ideal => (F) -> (
      --Input:  A ring map where the target is finitely generated as a 
      --module over the source.
      --Output: The conductor of the target into the source.
-     --NOTE:  If using this in conjunction with the command normalization,
-     --then the input is R#IIICCC#"map" where R is the name of the ring used as 
-     --input into normalization.  
-     if isHomogeneous (source F)
+     --Assumption: if R = source F, then R.icFractions is set
+     --  or R is homogeneous
+     R := source F;
+     if false and R.?icFractions
+       then (
+	    -- here we have a set of fractions which generate the integral closure
+	    L := R.icFractions;
+	    L = apply(L, h -> {numerator h, denominator h});
+	    L = select(L, h -> h#1 != 1);
+	    ans := ideal(1_R);
+	    scan(L, h -> (
+		      L1 := (ideal h#1) : h#0;
+		      ans = trim intersect(ans, L1);
+		      ));
+	    ans
+	    )
+     else if isHomogeneous (source F)
      	  then(M := presentation pushForward(F, (target F)^1);
      	       P := target M;
      	       intersect apply((numgens P)-1, i->(
@@ -667,6 +713,7 @@ conductor(RingMap) := Ideal => (F) -> (
 	       I:=ideal modulo(m,matrix{P_0}|M))))
 	  else error "conductor: expected a homogeneous ideal in a graded ring"
      )
+conductor Ring := (R) -> conductor icMap R
 
 icMap = method()
 icMap(Ring) := RingMap => R -> (
@@ -677,8 +724,10 @@ icMap(Ring) := RingMap => R -> (
      -- conductor and other methods that require this. 
      if R.?icMap then R.icMap
      else if isNormal R then id_R
-     else (S := integralClosure R;
-	  R.icMap)
+     else (
+	  integralClosure R;
+	  R.icMap
+	  )
      )
 
      
@@ -705,14 +754,14 @@ icFractions(Ring) := Matrix => (R) -> (
      if R.?icFractions then R.icFractions
      else if isNormal R then vars R
      else (
-	  if not R.?icFractions then integralClosure R;
+	  integralClosure R;
      	  R.icFractions	  
      )
 )
 
 --------------------------------------------------------------------
 
-icFracP = method(Options=>{conductorElement => null, Limit => infinity, reportSteps => false})
+icFracP = method(Options=>{ConductorElement => null, Limit => infinity, Verbosity => 0})
 icFracP Ring := List => o -> (R) -> (
      -- 1 argument: a ring whose base field has characteristic p.
      -- Returns: Fractions
@@ -723,11 +772,11 @@ icFracP Ring := List => o -> (R) -> (
      if ring ideal presentation R === ZZ then (
 	  D := 1_R;
 	  U := ideal(D);
-	  if o.reportSteps == true then print ("Number of steps: " | toString 0 | ",  Conductor Element: " | toString 1_R);
+	  if o.Verbosity > 0 then print ("Number of steps: " | toString 0 | ",  Conductor Element: " | toString 1_R);
 	  )    
      else if coefficientRing(R) === ZZ or coefficientRing(R) === QQ then error("Expected coefficient ring to be a finite field")
      else(
-	  if o.conductorElement === null then (
+	  if o.ConductorElement === null then (
      	       P := ideal presentation R;
      	       c := codim P;
      	       S := ring P;
@@ -741,7 +790,7 @@ icFracP Ring := List => o -> (R) -> (
 	       D = det1_0;
 	       D = (mingens(ideal(D)))_(0,0);
 	       )
-     	  else D = o.conductorElement;
+     	  else D = o.ConductorElement;
      	  p := char(R);
      	  K := ideal(1_R);
      	  U = ideal(0_R);
@@ -757,7 +806,7 @@ icFracP Ring := List => o -> (R) -> (
 	       	    );
                n = n+1;
      	       );
-     	  if o.reportSteps == true then print ("Number of steps: " | toString n | ",  Conductor Element: " | toString D);
+     	  if o.Verbosity > 0 then print ("Number of steps: " | toString n | ",  Conductor Element: " | toString D);
      	  );
      U = mingens U;
      if numColumns U == 0 then {1_R}
@@ -816,7 +865,7 @@ integralClosure(Ideal, ZZ) := opts -> (I,D) ->(
      z:= local z;
      w:= local w;
      Reesi := (flattenRing reesAlgebra(I,Variable =>z))_0;
-     Rbar := integralClosure(Reesi, Variable => w);
+     Rbar := integralClosure(Reesi, opts, Variable => w);
      zIdeal := ideal(map(Rbar,Reesi))((vars Reesi)_{0..numgens I -1});
      zIdealD := module zIdeal^D;
      RbarPlus := ideal(vars Rbar)_{0..numgens Rbar - numgens S-1};
@@ -829,10 +878,10 @@ integralClosure(Ideal, ZZ) := opts -> (I,D) ->(
      f := map(M, module ID, mapback gD);
      extendIdeal(ID,f)
      )
-integralClosure(Ideal) := opts -> I -> integralClosure(I,1)
+integralClosure(Ideal) := opts -> I -> integralClosure(I,1,opts)
 
 ----------------------------------------
--- Canonical ideal, S2ification --------
+-- Canonical ideal, makeS2 --------
 ----------------------------------------
 parametersInIdeal = method()
 
@@ -840,13 +889,13 @@ parametersInIdeal Ideal := I -> (
      --first find a maximal system of parameters in I, that is, a set of
      --c = codim I elements generating an ideal of codimension c.
      --assumes ring I is affine. 
-     --routine is probabilistic, often fails over ZZ/2, returns error when it fails.
+     --routine is probabilistic, often fails over ZZ/2, returns null when it fails.
      R := ring I;
      c := codim I;
      G := sort(gens I, DegreeOrder=>Ascending);
      s := 0; --  elements of G_{0..s-1} are already a sop (codim s)
      while s<c do(
-     	  t = s-1; -- elements of G_{0..t} generate an ideal of codim <= s
+     	  t := s-1; -- elements of G_{0..t} generate an ideal of codim <= s
      	  --make t maximal with this property, and then add one
      	  while codim ideal(G_{0..t})<=s and t<rank source G -1 do t=t+1;
      	  G1 = G_{s..t};
@@ -856,7 +905,10 @@ parametersInIdeal Ideal := I -> (
      	  newg := G1*coeffs;
      	  if s<c-1 then G = G_{0..s-1}|newg|G_{t..rank source G-1}
 	       else G = G_{0..s-1}|newg;
-	  if codim ideal G <s+1 then error ("random coeffs not general enough at step ",s);
+	  if codim ideal G <s+1 then (
+	       return null;
+	       error ("random coeffs not general enough at step ",s);
+	       );
 	  s = s+1);
       ideal G)
 ///
@@ -874,6 +926,7 @@ canonicalIdeal Ring := R -> (
      (S,f) := flattenRing R;
      P := ideal S;
      J := parametersInIdeal P;
+     if J === null then return null;
      Jp := J:P;
      trim promote(Jp,R)
      )
@@ -886,8 +939,8 @@ betti res PP
 w=canonicalIdeal (S/PP)
 ///     
 
-S2ification = method()
-S2ification Ring := R -> (
+makeS2 = method()
+makeS2 Ring := R -> (
      --find the S2-ification of a domain (or more generally a generically Gorenstein ring) R.
      --    Input: R, an affine ring
      --    Output: (like "idealizer") a sequence whose 
@@ -904,8 +957,12 @@ S2ification Ring := R -> (
 	  --or some such. How should this be done?? There should be a "general element"
 	  --routine...
      w := canonicalIdeal R;
+     if w === null then return null;
      if ideal(0_R):w_0 == 0 then idealizer(w,w_0)
-     else error"first generator of the canonical ideal was a zerodivisor"
+     else (
+	  return null;
+	  error"first generator of the canonical ideal was a zerodivisor"
+	  )
      )
 
 ///
@@ -914,200 +971,369 @@ S=kk[a,b,c,d]
 PP = monomialCurveIdeal(S,{1,3,4})
 betti res PP
 integralClosure(S/PP)
-integralClosure(target (S2ification(S/PP))_0)
+integralClosure(target (makeS2(S/PP))_0)
 ///     
 
 
 --------------------------------------------------------------------
---- integralClosure, idealizer, nonNormalLocus, Index,
---- isNormal, conductor, icFractions, icMap, icFracP, conductorElement,
---- reportSteps, icPIdeal, minPressy
 
 beginDocumentation()
 
-document {
-     Key => IntegralClosure,
-     ---------------------------------------------------------------------------
-     -- PURPOSE : Compute the integral closure of a ring via the algorithm 
-     --           in Theo De Jong's paper, An Algorithm for 
-     --           Computing the Integral Closure, J. Symbolic Computation, 
-     --           (1998) 26, 273-277. 
-     -- PROGRAMS : integralClosure
-     --            isNormal
-     --            ICFractions
-     --            ICMap
-     -- The fractions that generate the integral closure over R/I are obtained 
-     -- by the command icFractions(R/I).  
-     -- Included is a command conductor that computes the conductor of S into R
-     -- where S is the image of a ring map from R to S where S is finite over
-     -- R.  icMap constructs this map (the natural map R/I->R_j/I_j) for R 
-     -- into its integral closure and applying conductor to this map 
-     -- yeilds the conductor of the integral closure into R.
+doc ///
+  Key
+    IntegralClosure
+  Headline
+    routines for integral closure of affine domains and ideals
+  Description
+    Text
+      This package contains several algorithms for computing the
+      integral closure (i.e. normalization) of an affine domain,
+      and also of an ideal.
+      
+      The basic use of this package is shown in the following example.
+    Example
+      R = QQ[x,y,z]/(x^3-x^2*z^5-z^2*y^5)
+      S = integralClosure R
+    Text
+      Use @TO icFractions@ to see what fractions have been added.
+    Example
+      icFractions R
+    Text
+      Look at the ideal of S or the generators of S to see the structure of the
+      integral closure.
+    Example
+      gens S
+      trim ideal S
+    Text
+      If the characteristic is positive, yet small compared to the degree, but the
+      fraction ring is still separable over a subring, then use
+      @TO icFracP@, which is an implementation of an algorithm due to
+      Leonard-Pellikaan, and modified by Singh-Swanson (see arXiv:0901.0871).
+      However, the interface to this routine is likely to change in future
+      releases to more closely match the functions above.
+      
+      The method used by integralClosure is a modification of the basic 
+      algorithm explained in Theo De Jong's paper {\em An Algorithm for 
+	  Computing the Integral Closure}, J. Symbolic Computation, 
+	  (1998) 26, 273-277.
+///
 
-     -- PROGRAMMERs : This implementation was written by and is maintained by
-     --               Amelia Taylor.  
-     -- UPDATE HISTORY : 25 October 2006
-     ---------------------------------------------------------------------------
-     PARA {
-	  "This package computes the integral closure of a ring via the algorithm 
-	  in Theo De Jong's paper, ", EM "An Algorithm for 
-	  Computing the Integral Closure", ", J. Symbolic Computation, 
-	  (1998) 26, 273-277, for a ring in any characteristic. It
-	  also includes functions that uses 
-	  the algorithm of Anurag Singh and Irena Swanson given in
-	  arXiv:0901.0871 for rings in positive characteristic p.
-	  The fractions that generate the integral closure over R are obtained 
-     	  with the command ", TT "icFractions R", " if you use De
-	  Jong's algorithm via ", TT "integralClosure R", " and the output of
-	  Singh and Swanson's algorithm is already these
-	  fractions."
-	  }
-     }
+doc ///
+  Key
+    integralClosure
+  Headline
+    integral closure of an ideal or a domain
+///
 
-document {
-     Key => {isNormal, (isNormal, Ring)},
-     Headline => "determine if a reduced ring is normal",
-     Usage => "isNormal R",
-     Inputs => {"R" => {ofClass Ring}},
-     Outputs => {{ofClass Boolean, " that is true if ", TT "R", " is normal in the 
-	       sense of satisfying Serre's conditions S2 and R1 and false if one or 
-	       both conditions fail"}},      
-     EXAMPLE{
-	  "R = QQ[x,y,z]/ideal(x^6-z^6-y^2*z^4);",
-	  "isNormal R",
-	  "isNormal(integralClosure R)",
-	  },
-     PARA{},
-     "This function computes the jacobian of the ring which can be costly for 
+doc ///
+  Key
+    isNormal
+    (isNormal, Ring)
+  Headline
+    determine if a reduced ring is normal
+  Usage
+    isNormal R
+  Inputs
+    R:Ring
+      a reduced equidimensional ring
+  Outputs
+    :Boolean
+      whether {\tt R} is normal, that is, whether it satisfies
+      Serre's conditions S2 and R1
+  Description
+   Text
+     This function computes the jacobian of the ring which can be costly for 
      larger rings.  Therefore it checks the less costly S2 condition first and if 
-     true, then tests the R1 condition using the jacobian of ", TT "R", "."
-     }	 
+     true, then tests the R1 condition using the jacobian of {\tt R}.
+   Example
+     R = QQ[x,y,z]/ideal(x^6-z^6-y^2*z^4);
+     isNormal R
+     isNormal(integralClosure R)
+  Caveat
+    The ring {\tt R} must be an equidimensional ring.  If {\tt R} is a domain,
+    then sometimes computing the integral closure of {\tt R} can be faster than
+    this test.
+  SeeAlso
+    integralClosure
+    makeS2
+///
 
---- needs better examples and check on how it reads...
+doc ///
+  Key
+    (integralClosure, Ring)
+  Headline
+    compute the integral closure (normalization) of an affine domain
+  Usage
+    R' = integralClosure R
+  Inputs
+    R:Ring
+      a quotient of a polynomial ring over a field
+  Outputs
+    R':Ring
+      the integral closure of {\tt R}
+  Consequences
+    The inclusion map $R \rightarrow R'$
+      can be obtained with @TO icMap@.  
+    The fractions corresponding to the variables
+      of the ring {\tt R'} can be found with @TO icFractions@
+  Description
+   Text
+     The integral closure of a domain is the subring of the fraction field
+     consisting of all fractions integral over the domain.  For example,
+   Example
+     R = QQ[x,y,z]/ideal(x^6-z^6-y^2*z^4-z^3);
+     R' = integralClosure R
+     gens R'
+     icFractions R
+     icMap R
+     I = trim ideal R'
+   Text
+     Sometimes using @TO trim@ provides a cleaner set of generators.
+   Text
+   
+     If $R$ is not a domain, first decompose it, and collect all of the 
+     integral closures.
+   Example
+     S = ZZ/101[a..d]/ideal(a*(b-c),c*(b-d),b*(c-d));
+     C = decompose ideal S
+     Rs = apply(C, I -> (ring I)/I);
+     Rs/integralClosure
+     oo/prune
+   Text
+     This function is roughly based on
+     Theo De Jong's paper, {\em An Algorithm for 
+     Computing the Integral Closure}, J. Symbolic Computation, 
+     (1998) 26, 273-277. This algorithm is similar to the round two
+     algorithm of Zassenhaus in algebraic number theory.
+   Text
+     There are several optional parameters which allows the user to control
+     the way the integral closure is computed.  These options may change
+     in the future.
+  Caveat
+    This function requires that the degree of the field extension 
+    (over a pure transcendental subfield) be greater 
+    than the characteristic of the base field.  If not, use @TO icFracP@.
+    This function requires that the ring be finitely generated over a ring.  If not (e.g. 
+    if it is f.g. over the integers), then the result is integral, but not necessarily 
+    the entire integral closure. Finally, if the ring is not a domain, then
+    the answers will often be incorrect, or an obscure error will occur.
+  SeeAlso
+    icMap
+    icFractions
+    conductor
+    icFracP
+///
 
-document {
-     Key => {integralClosure, (integralClosure, Ring)},
-     Headline => "compute the integral closure of a reduced ring",
-     Usage => "integralClosure R",
-     Inputs => {
-	  "R" => {" that is reduced and presented as a quotient ring"},
-	  Variable => {" an unassigned symbol"},
-	  Limit => {" limits the depth of the recursion"},
-	  },
-     Outputs => {{ofClass Ring, " that is the integral closure of ", TT "R", " in its total 
-	       ring of fractions when ", TT "R", " is a domain.  When ", TT "R", 
-	       " is reduced, a list of rings is returned with the property that the 
-	       direct product of the rings is isomorphic to the integral closure 
-	       of ", TT "R", ". The output rings use new indexed variables based 
-	       on the symbol ", TT "w"}
-	  },
-     "The code for this function allows users to retrieve 
-     certain information if desired.  
-     The information of largest interest is the fractions that 
-     correspond to the added variables in this description of 
-     the integral closure.  Unfortunately, all of the added features 
-     currently only work on affine domains.
-     The map and the corresponding fractions are obtained as 
-     a matrix using the function ", TO "icFractions", " where R is 
-     an affine domain.  This function can be run without first 
-     using ", TO "integralClosure", ".  The natural map from ", TT "R", " into 
-     its integral closure is obtained using the function ", TO "icMap", " and 
-     the conductor of the integral closure of R into R is found 
-     using ", TT "conductor (icMap R)", ".  Note that 
-     both ", TO "icFractions", " and ", TO "icMap", " take the input 
-     ring ", TT "R", " as input rather than the output 
-     of ", TO "integralClosure", ".  In this way you can use these 
-     functions without running ", TO "integralClosure", ".  The 
-     function ", TO "integralClosure", " is based on
-     Theo De Jong's paper, An Algorithm for 
-     Computing the Integral Closure, J. Symbolic Computation, 
-     (1998) 26, 273-277.  This implementation is written and maintained 
-     by Amelia Taylor, ", HREF {"mailto:amelia.taylor@coloradocollege.edu", 
-     "<amelia.taylor@coloradocollege.edu>"}, ".",
-     PARA{
-     	  "A domain example."
-	  },
-      EXAMPLE {
-	  "R = QQ[x,y,z]/ideal(x^6-z^6-y^2*z^4);",
-      	  "integralClosure R"},
-     "In the case that the input ring ", TT "R", " is reduced, but not a domain, 
-     the direct sum of the rings returned is isomporphic to the integral closure 
-     of ", TT "R", ", but the rings returned are not necessarily all domains.",
-     PARA{},
-     "Currently, the algorithm requires the ring to be a domain.  To find the 
-     integral closure of a reduced non-domain, do it for each component.",
-     EXAMPLE lines ///
-         S = ZZ/101[a..d]/ideal(a*(b-c),c*(b-d),b*(c-d));
-	 C = decompose ideal S
-	 Rs = apply(C, I -> (ring I)/I);
-	 "Rs/integralClosure"
-         ///,
-     "The algorithm can correctly  proceed without decomposing a reduced ring 
-     if it finds a non-zero divisor ", TT "f", " with which to compute 1/f(fJ:J), 
-     where ", TT "J", " is the ideal defining the non-normal locus at that stage.",
-     PARA{},
-     "A package implementing product rings is in development.  When this package is 
-     complete, the interface for the integralClosure code will change.  
-     In particular, in the case of a non-domain, a quotient ring of a polynomial ring  
-     isomorphic to the direct product of the factors formed during the computation 
-     will be returned. The individual 
-     factors will be available either as a part of the ring, or via a function and in 
-     this case, all the rings returned will be domains.  This provides two advantages: 
-     first access to all the factors as domains and the ability to use other functions 
-     described below in the reduced case.",  
-     PARA{},
-     "The code for this function allows users to retrieve 
-     certain information if desired.  
-     The information of largest interest is the fractions that 
-     correspond to the added variables in this description of 
-     the integral closure.  Unfortunately, all of the added features 
-     currently only work on affine domains.
-     The map and the corresponding fractions are obtained as 
-     a matrix using the function where R is 
-     an affine domain.  This function can be run without first 
-     using ", TO "integralClosure", ".  The natural map from ", TT "R", " into 
-     its integral closure is obtained using the function ", TO "icMap", " and 
-     the conductor of the integral closure of R into R is found 
-     using ", TT "conductor (icMap R)", ".  Note that 
-     both ", TO "icFractions", " and ", TT "icMap", " take the input 
-     ring ", TT "R", " as input rather than the output 
-     of ", TO "integralClosure", ".  In this way you can use these 
-     functions without running ", TT "integralClosure", ".",
-     SeeAlso => {"icMap", "icFractions", "conductor", "isNormal"}
-     }
-    
-document {
-     Key => [integralClosure,Variable],
-     Headline=> "Sets the name of the indexed variables introduced in computing 
-     the integral closure of a reduced ring."
-     }
+doc ///
+  Key
+    [integralClosure, Keep]
+  Headline
+    list ring generators which should not be simplified away
+  Usage
+    integralClosure(R, Keep=>L)
+  Inputs
+    L:List
+      a list of variables in the ring R, or {\tt null} (the default).
+  Consequences
+    The given list of variables (or all of the outer generators, if L is null)
+    will be generators of the integral closure
+  Description
+   Text
+     Consider the cuspidal cubic, and three different possibilities for {\tt Keep}.
+   Example
+     R = QQ[x,y]/ideal(x^3-y^2);
+     R' = integralClosure(R, Variable => symbol t)
+     trim ideal R'
+   Example
+     R = QQ[x,y]/ideal(x^3-y^2);
+     R' = integralClosure(R, Variable => symbol t, Keep => {x})
+     trim ideal R'
+   Example
+     R = QQ[x,y]/ideal(x^3-y^2);
+     integralClosure(R, Variable => symbol t, Keep => {})
+///
 
-document {
-     Key => [integralClosure,Limit],
-     Headline=> "Sets the recursion level for the program allowing the
-     user to see results without computing the full integral closure."
-     }
+doc ///
+  Key
+    [integralClosure, Variable]
+  Headline
+    set the base letter for the indexed variables introduced while computing the integral closure
+  Usage
+    integralClosure(R, Variable=>x)
+  Inputs
+    x:Symbol
+  Consequences
+    The new variables will be subscripted using {\tt x}.
+  Description
+   Example
+     R = QQ[x,y,z]/ideal(x^6-z^6-y^2*z^4-z^3);
+     R' = integralClosure(R, Variable => symbol t)
+     trim ideal R'
+   Text
+     The algorithm works in stages, each time adding new fractions to the ring.
+     A variable {\tt t_(3,0)} represents the first (zero-th) variables added at stage 3.
+     In the future, the variables added will likely just be {\tt t_1, t_2, ...}.
+  Caveat
+    The base name should be a symbol
+///
 
-document {
-     Key => {idealizer, (idealizer, Ideal, RingElement)},
-     Headline => "Compute Hom(I,I) as quotient ring",
-     Usage => "idealizer(I, f)",
-     Inputs => {"I" => {ofClass Ideal},
-	  "f" => {{ofClass RingElement}, " that is a non-zero divisor in the
-	  ring of ", TT "I"},
-	  Variable => {" an unassigned symbol"},
-	  Index => {" an integer"}},
-     Outputs => {{ofClass Sequence, " where the first item is ", 
-	       ofClass RingMap, " from the ring of ", TT "I", " to a
-	       presentation of ", TT "Hom(I,I) = 1/f(f*J:J)", " and
-	       the second item is ", ofClass List,
-	       " consisting of the fractions that are added to the ring of J
-	       to form ", TT "Hom(I,I)", "."}},
-	       "We use this in integralClosure to complete a key step
-	       in deJong's algorithm. Interested users might want to
-	       use this to investigate different choices for ", 
-	       TT "f", " in the algorithm."
-     }
+doc ///
+  Key
+    [integralClosure,Limit]
+  Headline
+    do a partial integral closure
+  Usage
+    integralClosure(R, Limit => n)
+  Inputs
+    n:ZZ
+      how many steps to perform
+  Description
+   Text
+     The integral closure algorithm proceeds by finding a suitable ideal $J$,
+     and then computing $Hom_R(J,J)$, and repeating these steps.  This
+     optional argument limits the number of such steps to perform.
+     
+     The result is an integral extension, but is not necessarily integrally closed.
+   Example
+     R = QQ[x,y,z]/ideal(x^6-z^6-y^2*z^4-z^3);
+     R' = integralClosure(R, Variable => symbol t, Limit => 2)
+     trim ideal R'
+     icFractions R
+///
+
+doc ///
+  Key
+    [integralClosure,Verbosity]
+  Headline
+    display a certain amount of detail about the computation
+  Usage
+    integralClosure(R, Verbosity => n)
+  Inputs
+    n:ZZ
+      The higher the number, the more information is displayed.  A value
+      of 0 means: keep quiet.
+  Description
+   Text
+     When the computation takes a considerable time, this function can be used to 
+     decide if it will ever finish, or to get a feel for what is happening
+     during the computation.
+   Example
+     R = QQ[x,y,z]/ideal(x^8-z^6-y^2*z^4-z^3);
+     time R' = integralClosure(R, Verbosity => 2)
+     trim ideal R'
+     icFractions R
+  Caveat
+    The exact information displayed may change.
+///
+
+doc ///
+  Key
+    [integralClosure,Strategy]
+  Headline
+    control the algorithm used
+  Usage
+    integralClosure(R, Strategy=>L)
+  Inputs
+    L:List
+      of a subset of the following: {\tt RadicalCodim1, AllCodimensions}
+  Description
+   Text
+     {\tt RadicalCodim1} chooses an alternate, often much faster, sometimes much slower,
+     algorithm for computing the radical of ideals.  This will often produce a different
+     presentation for the integral closure.
+     
+     {\tt AllCodimensions} tels the algorithm to bypass the computation of the
+     S2-ification, but in each iteration of the algorithm, use the radical of
+     the extended Jacobian ideal from the previous step, instead of using only the
+     codimension 1 components of that.  This is useful when for some reason the
+     S2-ification is hard to compute, or if the probabilistic algorithm for 
+     computing it fails.  In general though, this option slows down the computation
+     for many examples.
+   Example
+     R = QQ[x,y,z]/ideal(x^8-z^6-y^2*z^4-z^3);
+     time R' = integralClosure(R, Strategy=>{RadicalCodim1})
+     R = QQ[x,y,z]/ideal(x^8-z^6-y^2*z^4-z^3);
+     time R' = integralClosure(R)
+     R = QQ[x,y,z]/ideal(x^8-z^6-y^2*z^4-z^3);
+     time R' = integralClosure(R, Strategy=>{AllCodimensions})
+     R = QQ[x,y,z]/ideal(x^8-z^6-y^2*z^4-z^3);
+     time R' = integralClosure(R, Strategy=>{RadicalCodim1, AllCodimensions})
+///
+
+doc ///
+  Key
+    (integralClosure,Ideal,ZZ)  
+    (integralClosure,Ideal)
+  Headline
+    integral closure of an ideal in an affine domain
+  Usage
+    integralClosure J
+    integralClosure(J, d)
+  Inputs
+    J:Ideal
+    d:ZZ
+      optional, default value 1
+  Outputs
+    :Ideal
+      the integral closure of $I^d$
+  Description
+   Text
+     The method used is described in Vasconcelos' book, 
+     {\em Computational methods in commutative algebra and algebraic
+	  geometry}, Springer, section 6.6.  Basically, one first
+     computes the Rees Algebra of the ideal, and then one reads off
+     the integral closure of any of the powers of the ideal, using
+     linear algebra.
+   Example
+     S = ZZ/32003[a,b,c];
+     F = a^2*b^2*c+a^3+b^3+c^3
+     J = ideal jacobian ideal F
+     time integralClosure J
+     time integralClosure(J, Strategy=>{RadicalCodim1})
+     integralClosure(J,2)
+  Caveat
+    It is usally much faster to use {\tt integralClosure(J,d)}
+    rather than {\tt integralClosure(J^d)}
+  SeeAlso
+    (integralClosure,Ring)
+    reesAlgebra
+///
+
+doc ///
+  Key
+    idealizer
+    (idealizer, Ideal, RingElement)
+  Headline
+    compute Hom(I,I) as a quotient ring
+  Usage
+    (F,G) = idealizer(I,f)
+  Inputs
+    I:Ideal
+      in a domain $R$
+    f:RingElement
+      an element of the ideal $I$
+    Variable:Symbol
+    Index:ZZ
+  Outputs
+    F:RingMap
+      The inclusion map from $R$ into $S = Hom_R(I,I)$
+    G:RingMap
+      $frac S \rightarrow frac R$, giving the fractions
+      corresponding to each generator of $S$.
+  Description
+   Text
+     This is a key subroutine used in the computation of 
+     integral closures.
+   Example
+     R = QQ[x,y]/(y^3-x^7)
+     I = ideal(x^2,y^2)
+     (F,G) = idealizer(I,x^2);
+     target F
+     first entries G.matrix
+  SeeAlso
+    ringFromFractions
+    integralClosure
+///
 
 document {
      Key => [idealizer,Variable],
@@ -1122,7 +1348,7 @@ document {
      "This option allows the user to select the starting index for the
      new variables added in computing Hom(J,J) as a ring.  The default
      value is 0 and is what most users will use.  The option is needed
-     for the recurion implemented in integralClosure."
+     for the iteration implemented in integralClosure."
 }
 
 
@@ -1136,149 +1362,233 @@ document {
      depending on the level of recursion involved. "
      }
 
-document {
-     Key => {nonNormalLocus, (nonNormalLocus, Ring)},
-     Headline => "an ideal containing the non normal locus of a ring",
-     Usage => "nonNormalLocus R",
-     Inputs => {"R" => {ofClass Ring}},
-     Outputs => {{ofClass Ideal, " an ideal containing the non-normal
-	  locus of ", TT "R"}},
-     	  "Primary use is as one step in deJong's algorithm for computing
-     	  the integral closure of a reduced ring. If the presenting
-	  ideal for the ring is homogeneous (e.g. the ring is graded)
-	  and it has fewer than 20 generators then the implementation
-	  checks to see if the singular locus is empty, if yes then
-	  the maximal ideal is returned. In all other cases it returns
-	  the radical of the first nonzero element of the jacobian ideal. "
-     }
+doc ///
+  Key
+    icMap
+    (icMap,Ring)
+  Headline
+    natural map from an affine domain into its integral closure
+  Usage
+    icMap R
+  Inputs
+    R:Ring
+      an affine domain
+  Outputs
+    :RingMap
+      from {\tt R} to its integral closure
+  Description
+   Text
+     If the integral closure of {\tt R} has not yet been computed, 
+     that computation is performed first.  No extra computation
+     is involved.  If {\tt R} is integrally closed, then the identity
+     map is returned.
+   Example
+     R = QQ[x,y]/(y^2-x^3)
+     icMap R
+   Text     
+   
+     This finite ring map can be used to compute the conductor,
+     that is, the ideal of elements of {\tt R} which are 
+     universal denominators for the integral closure (i.e. those d \in R
+	  such that d R' \subset R).
+   Example
+     S = QQ[a,b,c]/ideal(a^6-c^6-b^2*c^4);
+     F = icMap S;
+     conductor F
+  Caveat
+    If you want to control the computation of the integral closure via optional
+    arguments, then make sure you call @TO (integralClosure,Ring)@ first, since
+    {\tt icMap} does not have optional arguments.
+  SeeAlso
+    (integralClosure,Ring)
+    conductor
+///
 
---- I don't love the third example in icMap
-document {
-     Key => {icMap, (icMap,Ring)},
-     Headline => "natural map from an affine domain into its integral closure.",
-     Usage => "icMap R",
-     Inputs => {
-	  "R" => {ofClass Ring, " that is an affine domain"}
-	  },
-     Outputs => {
-	  	  {ofClass RingMap, " from ", TT "R", " to its integral closure"}
-	  },
-    "If an integrally closed ring is given as input, the identity map from 
-     the ring to itself is returned.", 
-     EXAMPLE{
-	  "R = QQ[x,y]/ideal(x+2);",
-	  "icMap R"},
-     "This finite map is needed to compute the ", TO "conductor", " of the integral closure 
-     into the original ring.",
-    	  EXAMPLE {
-	  "S = QQ[a,b,c]/ideal(a^6-c^6-b^2*c^4);",
-      	  "conductor(icMap S)"},
-     PARA{},
-     "If the user has already run the computation ", TT "integralClosure R", 
-     " then this map can also be obtained by typing ",
-     TT "R.icMap", ".",
-     EXAMPLE { 
-	  "integralClosure S;",
-	  "S.icMap"},
-     SeeAlso => {"conductor"},
-     }
-    
+doc ///
+  Key
+    icFractions
+    (icFractions, Ring)
+  Headline
+    fractions integral over an affine domain
+  Usage
+    icFractions R
+  Inputs
+    R:Ring
+      an affine domain
+  Outputs
+    :List
+      a list of fractions over {\tt R}, generating the
+      integral closure of {\tt R}, as an {\tt R}-algebra.
+  Description
+   Text
+     If the integral closure of {\tt R} has not yet been computed, 
+     that computation is performed first.  No extra computation
+     is then involved to find the fractions.
+   Example
+     R = QQ[x,y,z]/ideal(x^6-z^6-y^2*z^4);
+     icFractions R
+     R' = integralClosure R
+     gens R'
+     netList (ideal R')_*
+   Text
+     Notice that the $i$-th fraction corresponds to the $i$-th generator 
+     of the integral closure.  For instance, the variable $w_(3,0) = {x^2 \over z}$.
+  Caveat
+     (a) Currently in Macaulay2, fractions over quotients of polynomial rings
+     do not have a nice normal form.  In particular, sometimes
+     the fractions are 'simplified' to give much nastier looking fractions.
+     We hope that in the near future, this misfeature will be corrected.
+     (b)
+     If you want to control the computation of the integral closure via optional
+     arguments, then make sure you call @TO (integralClosure,Ring)@ first, since
+     {\tt icFractions} does not have optional arguments.
+  SeeAlso
+    integralClosure
+    icMap
+///
 
-document {
-     Key => {icFractions, (icFractions,Ring)},
-     Headline => "Compute the fractions integral over a domain.",
-     Usage => "icFractions R",
-     Inputs => {
-	  "R" => {ofClass Ring, " that is an affine domain"},
-	  },
-     Outputs => {
-  	  {ofClass List, " whose entries are fractions that generate the integral 
-     	       closure of ", TT "R", " over R."}
-	       },
-    	  EXAMPLE {
-	       "R = QQ[x,y,z]/ideal(x^6-z^6-y^2*z^4);",
-	       "integralClosure(R,Variable => a)",
-	       "icFractions R"
-	       },
-     	  "Thus the new variables ", TT "a_7", " and ", TT "a_6", " in
-	  the output from ", TT "integralClosure", " correspond to the 
-     	  last two fractions given.  The other fractions are those
-	  returned in intermediate recursive steps in the computation of the
-	  integral closure. ", TT "a_0", " for example corresponds to the first
-	  fraction to the left of the original ring variables.  
-	  The program currently also returns the original 
-    	  variables as part of the matrix.  In this way the user can see if any are 
-     	  simplified out of the ring during the process of computing the integral
-     	  closure.",
-     	  PARA{},
-	  "A future version of icFractions will return only the
-	  fractions corresponding to the variables returned by the
-	  function integralClosure. Thus the general format will be
-	  much easier to use"
---     	  "The fractions returned correspond to the variables returned by the function 
---     	  integralClosure.  The function integralClosure eliminates redundant fractions 
---     	  during its iteration.  If the user would like to see all fractions generated 
---     	  during the computation, use the optional argument ", TT "Strategy => Long", " as 
---     	  illustrated here.",
---	      	  EXAMPLE {
---	       "icFractions(R)"
---	       },
-     	  }
-
---document {
---     Key => [icFractions,Strategy],
---     Headline=> "Allows the user to obtain all of the fractions considered in the 
---     process of building the integral closure",
---     }
-
-document {
-     Key => {conductor,(conductor,RingMap)},
-     Headline => "compute the conductor of a finite ring map",
-     Usage => "conductor F",
-     Inputs => {
-	  "F" => {ofClass RingMap, " from a ring ", TT "R", " to a ring ", TT "S", 
-	       ". The map must be a finite."},
-	  },
-     Outputs => {
-	  {ofClass Ideal, " that is the conductor of ", TT "S", " into ", TT "R", "."}
-	  },
-     "Suppose that the ring map F : R --> S is finite: i.e. S is a finitely 
-     generated R-module.  The conductor of F is defined to be {",
-     TEX "g \\in R \\mid g S \\subset f(R)", "}.  One way to think
+doc ///
+  Key
+    conductor
+    (conductor,RingMap)
+    (conductor,Ring)
+  Headline
+    the conductor of a finite ring map
+  Usage
+    conductor F
+    conductor R
+  Inputs
+    F:RingMap
+      $R \rightarrow S$, a finite map with $R$ an affine reduced ring
+    R:Ring
+      an affine domain.  In this case, $F : R \rightarrow S$ is the 
+      inclusion map of $R$ into the integral closure $S$
+  Outputs
+    :Ideal
+      of $R$ consisting of all $d \in R$ such that $dS \subset F(R)$
+  Description
+   Text
+     Suppose that the ring map $F : R \rightarrow S$ is finite: i.e. $S$ is a finitely 
+     generated $R$-module.  The conductor of $F$ is defined to be 
+     $\{ g \in R \mid g S \subset F(R) \}$.
+     One way to think
      about this is that the conductor is the set of universal denominators
-     of ", TT "S", " over ", TT "R", ", or as the largest ideal of ", TT "R", " 
-     which is also an ideal in ", TT "S", ". On natural use is the
-     conductor of the map from a ring to its integral closure. ",
-     EXAMPLE {
-	  "R = QQ[x,y,z]/ideal(x^6-z^6-y^2*z^4);",
-	  "S = integralClosure R",
-	  "F = R.icMap",
-	  "conductor F"
-	  },
-     PARA{},
-     "The command ", TT "conductor", " calls the 
-     command ", TO pushForward, ".  Currently, the 
-     command ", TT "pushForward", 
-     " does not work if the source of the map ", TT "F", " is
-     inhomogeneous.  If the source of the map ", TT "F", " is not
-     homogeneous ", TT "conductor", " returns the message -- No
-     conductor for ", TT "F", ".",
-     SeeAlso =>{"pushForward", "integralClosure", "icMap"} 
-     }
+     of {\tt S} over {\tt R}, or as the largest ideal of {\tt R}
+     which is also an ideal in {\tt S}. An important case is the
+     conductor of the map from a ring to its integral closure.
+   Example
+     R = QQ[x,y,z]/ideal(x^7-z^7-y^2*z^5);
+     icFractions R
+     F = icMap R
+     conductor F
+   Text
+     If an affine domain (a ring finitely generated over a field) is given as input,
+     then the conductor of $R$ in its integral closure is returned.
+   Example
+     conductor R
+   Text
+   
+     If the map is not {\tt icFractions(R)}, then @TO pushForward@ is called to compute
+     the conductor.
+  Caveat
+    Currently this function only works if {\tt F} comes from a
+    integral closure computation, or is homogeneous
+  SeeAlso
+    integralClosure
+    icFractions
+    icMap
+    pushForward
+///
+
+doc ///
+  Key
+    ringFromFractions
+    (ringFromFractions,Matrix,RingElement)
+  Headline
+    find presentation for f.g. ring  
+  Usage
+    (F,G) = ringFromFractions(H,f)
+  Inputs
+    H:Matrix
+      a one row matrix over a ring $R$
+    f:RingElement
+  Outputs
+    F:RingMap
+      $R \rightarrow S$, where $S$ is the extension ring
+      of $R$ generated by the fractions $1/f H$
+    G:RingMap
+      $frac S \rightarrow frac R$, the fractions
+  Description
+   Text
+     Serious restriction: It is assumed that this ring R[1/f H] is an endomorphism ring
+     of an ideal in $R$.  This means that the Groebner basis, in a product order,
+     will have lead terms all quadratic monomials in the new variables,
+     together with other elements which are degree 0 or 1 in the new variables.
+   Example
+     R = QQ[x,y]/(y^2-x^3)
+     H = (y * ideal(x,y)) : ideal(x,y)
+     (F,G) = ringFromFractions(((gens H)_{1}), H_0);
+     S = target F
+     F
+     G
+///
+
+doc ///
+  Key
+    makeS2
+    (makeS2,Ring)
+  Headline
+    compute the S2ification of a reduced ring
+  Usage
+    (F,G) = makeS2 R
+  Inputs
+    R:Ring
+      an equidimensional reduced affine ring
+  Outputs
+    F:RingMap
+      $R \rightarrow S$, where $S$ is the so-called S2-ification of $R$
+    G:RingMap
+      $frac S \rightarrow frac R$, giving the corresponding fractions
+  Description
+   Text
+     A ring $S$ satisfies Serre's S2 condition if every principal ideal 
+     is equidimensional of codimension one.  If $R$ is an affine reduced ring, 
+     then there is a unique smallest $S$ satisfying S2, and then $S$ is finite 
+     over $R$.
+
+     There are several methods to compute $S$.  Currently, only one of these methods
+     is implemented in this package.  Stay tuned, or help write the other
+     methods!
+
+     One simple example is the rational quartic curve.
+   Example
+     A = ZZ/101[a..d];
+     I = monomialCurveIdeal(A,{1,3,4})
+     R = A/I;
+     (F,G) = makeS2 R
+   Text
+     This function is probabilistic, and can fail.  If it fails and the characteristic is not too small,
+     then simply rerun it.  If the characteristic is small, then another method needs to be used.  This
+     might mean that you need to either write it or ask us to do so!
+  Caveat
+     The return value of this function is likely to change in the future
+  SeeAlso
+    integralClosure
+///
 
 document {
      Key => {icFracP, (icFracP, Ring)},
      Headline => "compute the integral closure in prime characteristic",
-     Usage => "icFracP R, icFracP(R, conductorElement => D), icFracP(R, Limit => N), icFracP(R, reportSteps => Boolean)",
+     Usage => "icFracP R, icFracP(R, ConductorElement => D), icFracP(R, Limit => N), icFracP(R, Verbosity => ZZ)",
      Inputs => {
 	"R" => {"that is reduced, equidimensional,
            finitely and separably generated over a field of characteristic p"},
-	conductorElement => {"optionally provide a non-zerodivisor conductor element ",
-               TT "conductorElement => D", ";
+	ConductorElement => {"optionally provide a non-zerodivisor conductor element ",
+               TT "ConductorElement => D", ";
                the output is then the module generators of the integral closure.
                A good choice of ", TT "D", " may speed up the calculations?"},
 	Limit => {"if value N is given, perform N loop steps only"},
-	reportSteps => {"if value true is given, report the conductor element and number of steps in the loop"},
+	Verbosity => {"if value is greater than 0, report the conductor element and number of steps in the loop"},
 	},
      Outputs => {{"The module generators of the integral closure of ", TT "R",
                " in its total ring of fractions.  The generators are
@@ -1293,7 +1603,7 @@ document {
      " that is a non-zerodivisor;
      its existence is guaranteed by the separability assumption.
      The user may supply ", TT "D",
-     " with the optional ", TT "conductorElement => D", ".
+     " with the optional ", TT "ConductorElement => D", ".
      (Sometimes, but not always, supplying ", TT "D", " speeds up the computation.)
      In any case, with the non-zero divisor ", TT "D", ",
      the algorithm starts by setting the initial approximation of the integral closure
@@ -1304,7 +1614,7 @@ document {
      the repeated module is the integral closure of ", TT "R", ".
      The user may optionally provide ", TT "Limit => N", " to stop the loop
      after ", TT "N", " steps,
-     and the optional ", TT "reportSteps => true", " reports the conductor
+     and the optional ", TT "Verbosity => 1", " reports the conductor
      element and the number of steps it took for the loop to stabilize.
      The algorithm is based on the
      Leonard--Pellikaan--Singh--Swanson algorithm.",
@@ -1321,7 +1631,7 @@ document {
      EXAMPLE {
           "R = ZZ/5[x,y,u,v]/ideal(x^2*u-y^2*v);",
           "icFracP(R)",
-          "icFracP(R, conductorElement => x)",
+          "icFracP(R, ConductorElement => x)",
      },
      "In case ", TT "D", " is not in the conductor, the output is ",
      TT "V_e = (1/D) {r in R | r^(p^i) in (D^(p^i-1)) ", "for ",
@@ -1331,7 +1641,7 @@ document {
      EXAMPLE {
 	  "R=ZZ/2[u,v,w,x,y,z]/ideal(u^2*x^3+u*v*y^3+v^2*z^3);",
           "icFracP(R)",
-          "icFracP(R, conductorElement => x^2)"
+          "icFracP(R, ConductorElement => x^2)"
      },
      "The user may also supply an optional limit on the number of steps
      in the algorithm.  In this case, the output is a finitely generated ",
@@ -1348,25 +1658,26 @@ document {
      intermediate modules the program should compute or did compute
      in the loop to get the integral closure.  A shortcut for finding
      the number of steps performed is to supply the ",
-     TT "reportSteps => true", " option.",
+     TT "Verbosity => 1", " option.",
      EXAMPLE {
           "R=ZZ/3[u,v,w,x,y,z]/ideal(u^2*x^4+u*v*y^4+v^2*z^4);",
-          "icFracP(R, reportSteps => true)"
+          "icFracP(R, Verbosity => 1)"
      },
      "With this extra bit of information, the user can now compute
      integral closures of principal ideals in ", TT "R", " via ",
      TO icPIdeal, ".",
      SeeAlso => {"icPIdeal", "integralClosure", "isNormal"},
-     Caveat => "NOTE: mingens is not reliable, neither is kernel of the zero map!!!"
+     Caveat => "The interface to this algorithm will likely change in Macaulay2 1.4"
+--     Caveat => "NOTE: mingens is not reliable, neither is kernel of the zero map!!!"
 }
 
 document {
-     Key => conductorElement,
+     Key => ConductorElement,
      Headline => "Specifies a particular non-zerodivisor in the conductor."
 }
 
 document {
-     Key => [icFracP,conductorElement],
+     Key => [icFracP,ConductorElement],
      Headline => "Specifies a particular non-zerodivisor in the conductor.",
      "A good choice can possibly speed up the calculations.  See ",
      TO icFracP, "."
@@ -1375,37 +1686,40 @@ document {
 
 document {
      Key => [icFracP,Limit],
-     Headline => "Limits the number of computed intermediate modules.",
-     Caveat => "NOTE: How do I make M2 put icFracP on the list of all functions that use Limit?"
+     Headline => "Limits the number of computed intermediate modules."
+--     Caveat => "NOTE: How do I make M2 put icFracP on the list of all functions that use Limit?"
 }
 
-document {
-     Key => reportSteps,
-     Headline => "Optional in icFracP",
-     PARA{},
-     "With this option, ", TT "icFracP",
-     " prints out the conductor element and
-           the number of intermediate modules it computed;
-           in addition to the output being
-           the module generators of the integral closure of the ring.",
-     Caveat => "NOTE: There is probably a better name for this, or a better way of doing this."
-}
+doc ///
+  Key
+    Verbosity
+  Headline
+    optional argument describing how verbose the output should be
+  Description
+   Text
+     Specifying the optional argument {\tt Verbosity => n}, where $n$ is an integer
+     tells the routine how much output should be given.  A value of 0 means be silent.
+     The larger the value $n$, the more output one might see.
+  SeeAlso
+    integralClosure
+    icFracP
+///
 
 document {
-     Key => [icFracP,reportSteps],
+     Key => [icFracP,Verbosity],
      Headline => "Prints out the conductor element and
            the number of intermediate modules it computed.",
-     Usage => "icFracP(R, reportSteps => Boolean)",
+     Usage => "icFracP(R, Verbosity => ZZ)",
      "The main use of the extra information is in computing the
      integral closure of principal ideals in ", TT "R",
      ", via ", TO icPIdeal,
      ".",
      EXAMPLE {
           "R=ZZ/3[u,v,x,y]/ideal(u*x^2-v*y^2);",
-          "icFracP(R, reportSteps => true)",
+          "icFracP(R, Verbosity => 1)",
 	  "S = ZZ/3[x,y,u,v];",
           "R = S/kernel map(S,S,{x-y,x+y^2,x*y,x^2});",
-	  "icFracP(R, reportSteps => true)"
+	  "icFracP(R, Verbosity => 1)"
      },
 }
 
@@ -1428,16 +1742,51 @@ document {
      a non-zerodivisor conductor element ", TT "D",
      " and the number of steps ", TT "N", 
      " are the pieces of information obtained from ",
-     TT "icFracP(R, reportSteps => true)",
+     TT "icFracP(R, Verbosity => true)",
      ".  (See the Singh--Swanson paper, An algorithm for computing
      the integral closure, Remark 1.4.)",
      EXAMPLE {
           "R=ZZ/3[u,v,x,y]/ideal(u*x^2-v*y^2);",
-          "icFracP(R, reportSteps => true)",
+          "icFracP(R, Verbosity => 1)",
           "icPIdeal(x, x^2, 3)"
      },
-     SeeAlso => {"icFracP"}
+     SeeAlso => {"icFracP"},
+     Caveat => "The interface to this algorithm will likely change in Macaulay2 1.4"     
 }
+
+doc ///
+  Key
+    Keep
+  Headline
+    an optional argument for various functions
+  SeeAlso
+    (integralClosure,Ring)
+    (integralClosure,Ideal,ZZ)
+///
+
+doc ///
+  Key
+    RadicalCodim1
+  Headline
+    a symbol denoting a strategy element usable with integralClosure(...,Strategy=>...)
+  SeeAlso
+    (integralClosure,Ring)
+///
+
+TEST ///
+S = ZZ/32003[a,b,c,d,x,y,z,u]
+I = ideal(
+   a*x-b*y,
+   b*u^7+b*u^6-2*b*z*u^4+b*u^5-2*b*z*u^3-2*b*z*u^2+3*b*z^2+c*x,
+   a*u^7+a*u^6-2*a*z*u^4+a*u^5-2*a*z*u^3-2*a*z*u^2+3*a*z^2+c*y,
+   b*z*u^6+9142*b*z*u^5+13715*b*z^2*u^3-9143*b*z*u^4-9145*b*u^5-13716*b*z^2*u^2-13712*b*z^2*u-13713*b*z*u^2+4568*b*z^2+9145*c*x*u-9145*c*x+4572*d*x,
+   a*z*u^6+9142*a*z*u^5+13715*a*z^2*u^3-9143*a*z*u^4-9145*a*u^5-13716*a*z^2*u^2-13712*a*z^2*u-13713*a*z*u^2+4568*a*z^2+9145*c*y*u-9145*c*y+4572*d*y,
+   c*u^8+7111*c*z*u^6+3556*d*u^7+10667*c*z*u^5+3556*d*u^6+14224*c*z^2*u^3+14223*c*z*u^4-7112*d*z*u^4+3556*d*u^5+10668*c*z^2*u^2-7112*d*z*u^3+7112*c*z^2*u-7112*d*z*u^2+10668*d*z^2);
+R = S/I
+time R' = integralClosure(R, Strategy=>{RadicalCodim1})
+use R
+--assert(conductor icMap R == ideal"x,y,z-u,u2-u") -- MES: get conductor working on these...
+///
 
 -- integrally closed test
 TEST ///
@@ -1453,13 +1802,11 @@ TEST ///
 R = ZZ/101[symbol x..symbol z,Degrees=>{2,5,6}]/(z*y^2-x^5*z-x^8)
 time J = integralClosure (R,Variable => symbol b) 
 use ring ideal J
-answer = ideal(b_1*x^2-y*z, x^6-b_1*y+x^3*z, -b_1^2+x^4*z+x*z^2)
+answer = ideal(b_(1,0)*x^2-y*z, x^6-b_(1,0)*y+x^3*z, -b_(1,0)^2+x^4*z+x*z^2)
 assert(ideal J == answer)
 use R
 assert(conductor(R.icMap) == ideal(x^2,y))
-assert((icFractions R).matrix == substitute(matrix {{y*z/x^2, x, y, z}},frac R))
-target icFractions R === frac R
-source icFractions R === J
+assert((icFractions R) == first entries substitute(matrix {{y*z/x^2, x, y, z}},frac R))
 ///
 
 -- multigraded test
@@ -1467,8 +1814,9 @@ TEST ///
 R = ZZ/101[symbol x..symbol z,Degrees=>{{1,2},{1,5},{1,6}}]/(z*y^2-x^5*z-x^8)
 time J = integralClosure (R,Variable=>symbol a) 
 use ring ideal J
-assert(ideal J == ideal(-x^6+a_3*y-x^3*z,-a_3*x^2+y*z,a_3^2-x^4*z-x*z^2))
-assert(0 == (icFractions R).matrix - substitute(matrix {{y*z/x^2, x, y, z}},frac R))
+assert(ideal J == ideal(-x^6+a_(1,0)*y-x^3*z,-a_(1,0)*x^2+y*z,a_(1,0)^2-x^4*z-x*z^2))
+use R
+assert(0 == matrix{icFractions R} - matrix {{y*z/x^2, x, y, z}})
 ///
 
 -- multigraded homogeneous test
@@ -1476,12 +1824,9 @@ TEST ///
 R = ZZ/101[symbol x..symbol z,Degrees=>{{4,2},{10,5},{12,6}}]/(z*y^2-x^5*z-x^8)
 time J = integralClosure (R,Variable=>symbol a) 
 use ring ideal J
-assert(ideal J == ideal(a_1*x^2-y*z,a_1*y-x^6-x^3*z,a_1^2-x^4*z-x*z^2))
-assert(0 == (icFractions R).matrix - substitute(matrix {{y*z/x^2, x, y, z}},frac R))
--- This was the old answer, before changing choice of J0
---assert(ideal J == ideal(a_1*y-42*x^6-42*x^3*z,a_1^2-47*x^4*z-47*x*z^2,-12*a_1*x^2-z*y,-12*a_1*x*y-x^7-x^4
---      *z,43*a_1^2*x^2-x^6*z-x^3*z^2,-x^8-x^5*z+z*y^2))
+assert(ideal J == ideal(a_(1,0)*x^2-y*z,a_(1,0)*y-x^6-x^3*z,a_(1,0)^2-x^4*z-x*z^2))
 use R
+assert(0 == matrix {icFractions R} - matrix {{y*z/x^2, x, y, z}})
 assert(conductor(R.icMap) == ideal(x^2,y))
 ///
 
@@ -1490,11 +1835,11 @@ TEST ///
 S=ZZ/101[symbol a,symbol b,symbol c, symbol d]
 I=ideal(a*(b-c),c*(b-d),b*(c-d))
 R=S/I                              
-time V = integralClosure R  -- FAILS in new version
-assert(#V == 2)
-icMap R
--- assert false-- added: MES
--- the second ring is not a domain.  Anyway, the fractions are messed up here.
+compsR = apply(decompose ideal R, J -> S/J)
+ansR = compsR/integralClosure
+compsR/icFractions
+apply(decompose ideal R, J -> integralClosure(S/J))
+assert all(compsR/icMap, f -> f == 1)
 ///
 
 --Craig's example as a test
@@ -1503,13 +1848,11 @@ S=ZZ/101[symbol x,symbol y,symbol z,MonomialOrder => Lex]
 I=ideal(x^6-z^6-y^2*z^4)
 Q=S/I
 time J = integralClosure (Q, Variable => symbol a)
-time J = integralClosure (Q, Variable => symbol a, Verbosity=>1)
-
 use ring ideal J
-assert(ideal J == ideal (x^2-a_6*z, a_6*x-a_7*z, a_6^2-a_7*x, a_7^2-y^2-z^2))
+assert(ideal J == ideal (x^2-a_(3,0)*z, a_(3,0)*x-a_(4,0)*z, a_(3,0)^2-a_(4,0)*x, a_(4,0)^2-y^2-z^2))
 use Q
 assert(conductor(Q.icMap) == ideal(z^3,x*z^2,x^3*z,x^4))
-assert(icFractions Q == substitute(matrix{{x^3/z^2,x^2/z,x,y,z}},frac Q))
+assert(matrix{icFractions Q} == substitute(matrix{{x^3/z^2,x^2/z,x,y,z}},frac Q))
 ///
 
 --Mike's inhomogenous test
@@ -1517,17 +1860,23 @@ TEST ///
 R = QQ[symbol a..symbol d]
 I = ideal(a^5*b*c-d^2)
 Q = R/I
-L = time integralClosure(Q,Variable => symbol x)
+L = time integralClosure(Q,Variable => symbol x, Keep=>{})
 use ring ideal L
-assert(ideal L == ideal(x_1^2-a*b*c))
+assert(ideal L == ideal(x_(1,0)^2-a*b*c))
 use Q
-icFractions Q == substitute(matrix{{d/a^2,a,b,c}},frac Q)
+matrix{icFractions Q} == matrix{{d/a^2,a,b,c}}
 ///
 
+TEST ///
+-- rational quartic, to make sure S2 is not being forgotten!
+S = QQ[a..d]
+I = monomialCurveIdeal(S,{1,3,4})
+R = S/I
+R' = integralClosure R
+assert(numgens R' == 5)
+///
 --Ex from Wolmer's book - tests longer example and published result.
 TEST ///
-restart
-load "IntegralClosure.m2"
 R = ZZ/101[symbol a..symbol e]
 I = ideal(a^2*b*c^2+b^2*c*d^2+a^2*d^2*e+a*b^2*e^2+c^2*d*e^2,a*b^3*c+b*c^3*d+a^3*b*e+c*d^3*e+a*d*e^3,a^5+b^5+c^5+d^5-5*a*b*c*d*e+e^5,a^3*b^2*c*d-b*c^2*d^4+a*b^2*c^3*e-b^5*d*e-d^6*e+3*a*b*c*d^2*e^2-a^2*b*e^4-d*e^6,a*b*c^5-b^4*c^2*d-2*a^2*b^2*c*d*e+a*c^3*d^2*e-a^4*d*e^2+b*c*d^2*e^3+a*b*e^5,a*b^2*c^4-b^5*c*d-a^2*b^3*d*e+2*a*b*c^2*d^2*e+a*d^4*e^2-a^2*b*c*e^3-c*d*e^5,b^6*c+b*c^6+a^2*b^4*e-3*a*b^2*c^2*d*e+c^4*d^2*e-a^3*c*d*e^2-a*b*d^3*e^2+b*c*e^5,a^4*b^2*c-a*b*c^2*d^3-a*b^5*e-b^3*c^2*d*e-a*d^5*e+2*a^2*b*c*d*e^2+c*d^2*e^4)
 S = R/I
@@ -1535,10 +1884,12 @@ icFractions S
 time Sbar = integralClosure S
 M:=pushForward (icMap S, Sbar^1);
 assert(degree (M/(M_0)) == 2)
+assert(# icFractions S == 7)
+///
 
-
-time integralClosure (target((S2ification(S))_0), Verbosity => 3)
-StoSbar = (S2ification(S))_0;
+///  -- this is part of the above example.  But what to really place into the test?
+time integralClosure (target((makeS2(S))_0), Verbosity => 3)
+StoSbar = (makeS2(S))_0;
 M:=pushForward (StoSbar, (target StoSbar)^1);
 gens M
 N=prune(M/M_0)
@@ -1615,7 +1966,39 @@ R = QQ[x,y,z]/ideal(x^6-z^6-y^2*z^4)
 J = integralClosure(R);
 F = R.icMap
 assert(conductor F == ideal((R_2)^3, (R_0)*(R_2)^2, (R_0)^3*(R_2), (R_0)^4))
-(icFractions R).matrix
+icFractions R
+///
+
+TEST ///
+R = QQ[x,y]/(y^2-x^3)
+R' = integralClosure(R, Keep=>{})
+assert(numgens R' == 1)
+assert(numgens ideal R' == 0)
+assert(icFractions R == {y/x})
+F = icMap R
+assert(target F === R')
+assert(source F === R)
+///
+
+TEST ///
+--huneke2
+kk = ZZ/32003
+S = kk[a,b,c]
+F = a^2*b^2*c+a^4+b^4+c^4
+J = ideal jacobian ideal F
+substitute(J:F, kk) -- check local quasi-homogeneity!
+I=ideal first (flattenRing reesAlgebra J)
+betti I
+R = (ring I)/I
+--time R'=integralClosure(R, Strategy => {StartWithOneMinor}, Verbosity =>3 ) -- this is bad in the first step!
+time R'=integralClosure(R, Verbosity =>3) -- this one takes perhaps too long for a test
+assert(numgens R' == 13)
+assert(numgens ideal gens gb ideal R' == 54) -- this is not an invariant...!
+R = (ring I)/I
+time R'=integralClosure(R, Verbosity =>3, Strategy=>{RadicalCodim1})
+assert(numgens R' == 13)
+assert(numgens ideal gens gb ideal R' == 54) -- this is not an invariant!
+icFractions R
 ///
 
 end 
@@ -1626,7 +2009,7 @@ TEST ///
   factor discriminant(F,y)
   R=S/F
   R' = integralClosure R
-  (icFractions R).matrix
+  icFractions R
   describe R'
 ///
 
@@ -1669,7 +2052,6 @@ TEST ///
 
 ---- Homogeneous Ex
 loadPackage"IntegralClosure"
-loadPackage"ParameterSchemes"
 R = ZZ/101[x,y, z]
 I1 = ideal(x,y-z)
 I2 = ideal(x-3*z, y-5*z)
@@ -1708,7 +2090,6 @@ decompose oo
 factor F
 A = R/F
 loadPackage "IntegralClosure"
-nonNormalLocus A  -- crashes M2!
 
 ideal F + ideal jacobian matrix{{F}}
 decompose oo
@@ -1787,68 +2168,6 @@ leadTerm gens gb Inew
 radical ideal oo
 
 
------ Minimal Presentation Tests 
-///
-restart
-loadPackage "IntegralClosure"
-
-U = ZZ/101[x,y,z]
-f = x^2+x+2*y+z
-g = x^2+y^2+x
-h = x^2+3*x -2*y + 4*z
-
-I = ideal(f)
-J = ideal(z,g)
-
-S = U/I
-T= U/J
-
-P = ideal(x)
-
-minimalPresentation I
-minimalPresentation P
-minimalPresentation J
-
-minimalPresentation S
-minimalPresentation T
-
-S.minimalPresentationMap
-S.minimalPresentationMapInv
-F = map(R, target I.cache.minimalPresentationMapInv)
-
-C=ZZ/101[x,y,z,Degrees => {2,3,1}]/ideal(x-x^2-y,z+x*y)
-V= time minPressy(C)
-gens V == {x}
-degrees V == {{2}}
-
-C=ZZ/101[x,y,z,Degrees => {{1,2},{1,3},{1,1}}]/ideal(x-x^2-y,z+x*y)
-V = time minPressy(C)
-gens V == {a_0}
-degrees V == {{1,2}}
-
-C=ZZ/101[x,y,z,u,w]/ideal(x-x^2-y,z+x*y,w^2-u^2)
-V= time minPressy(C)
-gens V == {x,u,w}
-use ring ideal V
-ideal V == ideal(u^2-w^2)
-
-w = symbol w
-y = symbol y
-S = ZZ/101[w_16, w_11, w_12, w_13, w_14, w_15, w_8, w_9, w_10, y_1, y_2, y_3, y_4, y_5, y_6, y_7, y_8,
-     Degrees => {{1}, {1}, {2}, {2}, {2}, {2}, {2}, {3}, {3}, {1}, {1}, {1}, {1}, {1}, {1}, {1}, {1}}, MonomialOrder => ProductOrder {1, 5, 3, 8}, MonomialSize => 16]
-
-J=ideal(y_2*y_6-y_3*y_7,w_11*y_6-w_8,w_11*y_1-y_3*y_7,w_11^2-w_15,w_16*y_6-y_1*y_5,w_16*y_3-w_13,w_16*y_2-w_15,w_16*y_1-w_8,w_16*w_11-y_2*y_5,w_16^2-w_11*y_5,y_1*y_4*y_5-y_2*y_3*y_8,w_11*y_3*y_8-y_4*y_5*y_6,w_11*y_2*y_8-y_4*y_5*y_7,w_11*y_4*y_7-w_9,w_14*y_6-y_1*y_2*y_8,w_14*y_5-w_15*y_8,w_14*y_3-w_8*y_4,w_14*y_2-w_9,w_14*y_1-y_4*y_6*y_7,w_12*y_7-y_1*y_2*y_8,w_12*y_6-y_1*y_3*y_8,w_12*y_5-w_13*y_8,w_12*y_3-w_10,w_12*y_2-w_8*y_4,w_12*y_1-y_4*y_6^2,w_11*w_14-y_2^2*y_8,w_11*w_12-y_2*y_3*y_8,w_16*y_4*y_7-y_2^2*y_8,w_16*w_14-y_4*y_5*y_7,w_16*w_12-y_4*y_5*y_6,w_14^2-y_2*y_4*y_7*y_8,w_12*w_14-y_3*y_4*y_7*y_8,w_12^2-y_3*y_4*y_6*y_8)
-
-minPresIdeal(J) == ideal(y_2*y_6-y_3*y_7,y_1*y_5-w_16*y_6,w_11*y_1-y_3*y_7,w_16*y_1-w_11*y_6,w_11^2-w_16*y_2,w_16*w_11-y_2*y_5,w_16^2-w_11*y_5,y_4*y_5*y_7-w_11*y_2*y_8,w_16*y_4*y_7-y_2^2*y_8,w_12*y_7-y_1*y_2*y_8,y_4*y_5*y_6-w_11*y_3*y_8,w_14*y_6-y_1*y_2*y_8,w_12*y_6-y_1*y_3*y_8,w_16*y_4*y_6-y_2*y_3*y_8,w_14*y_5-w_16*y_2*y_8,w_12*y_5-w_16*y_3*y_8,w_14*y_3-w_11*y_4*y_6,w_14*y_2-w_11*y_4*y_7,w_12*y_2-w_11*y_4*y_6,w_14*y_1-y_4*y_6*y_7,w_12*y_1-y_4*y_6^2,w_11*w_14-y_2^2*y_8,w_16*w_14-w_11*y_2*y_8,w_11*w_12-y_2*y_3*y_8,w_16*w_12-w_11*y_3*y_8,w_14^2-y_2*y_4*y_7*y_8,w_12*w_14-y_3*y_4*y_7*y_8,w_12^2-y_3*y_4*y_6*y_8)
-
-C = S/J
-V = time minPressy(C,Variable => a)
-gens V == {a_0,a_1,a_2,a_3,a_4,a_5,a_6,a_7,a_8,a_9,a_10,a_11}
-use ring ideal V
-ideal V == ideal(a_5*a_9-a_6*a_10,a_4*a_8-a_0*a_9,a_1*a_4-a_6*a_10,a_0*a_4-a_1*a_9,a_1^2-a_0*a_5,a_0*a_1-a_5*a_8,a_0^2-a_1*a_8,a_7*a_8*a_10-a_1*a_5*a_11,a_0*a_7*a_10-a_5^2*a_11,a_2*a_10-a_4*a_5*a_11,a_7*a_8*a_9-a_1*a_6*a_11,a_3*a_9-a_4*a_5*a_11,a_2*a_9-a_4*a_6*a_11,a_0*a_7*a_9-a_5*a_6*a_11,a_3*a_8-a_0*a_5*a_11,a_2*a_8-a_0*a_6*a_11,a_3*a_6-a_1*a_7*a_9,a_3*a_5-a_1*a_7*a_10,a_2*a_5-a_1*a_7*a_9,a_3*a_4-a_7*a_9*a_10,a_2*a_4-a_7*a_9^2,a_1*a_3-a_5^2*a_11,a_0*a_3-a_1*a_5*a_11,a_1*a_2-a_5*a_6*a_11,a_0*a_2-a_1*a_6*a_11,a_3^2-a_5*a_7*a_10*a_11,a_2*a_3-a_6*a_7*a_10*a_11,a_2^2-a_6*a_7*a_9*a_11)
-///
-
-
 --- Recent tests and experiments for integral closure.
 ///
 restart
@@ -1856,182 +2175,17 @@ loadPackage"IntegralClosure"
 R=ZZ/2[x,y,Weights=>{{8,9},{0,1}}]
 I=ideal(y^8+y^2*x^3+x^9) -- eliminates x and y at some point. 
 R=ZZ/2[x,y,Weights=>{{31,12},{0,1}}]
-I=ideal"y12+y11+y10x2+y8x9+x31" -- really long
-S=integralClosure(R/I)
+I=ideal"y12+y11+y10x2+y8x9+x31" -- really long, should it really be this bad?
+A = R/I
+time A' = integralClosure(A, Verbosity => 1)
 transpose gens ideal S
-
-M = flattenRing (R/I)
-J = nonNormalLocus M_0
-phi = M_1
-fractions = gens M_0
-indexVar = 0
-
-S = target phi
-I = ideal presentation target phi
-R = ring I
-J1 = trim(ideal(0_S):J_0)
-J1 != ideal(0_S) 
-(newPhi, fracs) = idealizer(J, J_0, Index => indexVar);
-targ = target newPhi
-targ == S 
-newI1 = trim ideal presentation targ
-newJ1 = newPhi J
-newI = minimalPresentation(newI1)
-S = ring newI
-B2 = S/newI
-FF = substitute(((newI1).cache.minimalPresentationMap).matrix, B2)
-F = map(B2,target newPhi, FF)
-J = radical(F newJ1)
-fractions = join(fracs,fractions), 
-phi = F*newPhi*phi
-indexVar = indexVar + # gens targ - # gens source newPhi 
-
 ///
 
-
-------------------------------------------------------------------
--- Examples coming from Janko Boehm:
-loadPackage "IntegralClosure"
-kk = QQ
-kk = ZZ/32003
-S=kk[u,v,z]
-
-L={v^4-2*u^3*z+3*u^2*z^2-2*v^2*z^2,
-   (v^2-u*z)^2-u^3*z,
-   v^5+2*u*v^2*z^2+2*u*v^3*z+u^2*v*z^2-4*u^3*v*z+2*u^5,
-   25*u^8+184*u^7*v+518*u^6*v^2+720*u^5*v^3+576*u^4*v^4+282*u^3*v^5+84*u^2*v^6+14*u*v^7+v^8+244*u^7*z+1326*u^6*v*z+2646*u^5*v^2*z+2706*u^4*v^3*z+1590*u^3*v^4*z+546*u^2*v^5*z+102*u*v^6*z+8*v^7*z+854*u^6*z^2+3252*u^5*v*z^2+4770*u^4*v^2*z^2+3582*u^3*v^3*z^2+1476*u^2*v^4*z^2+318*u*v^5*z^2+28*v^6*z^2+1338*u^5*z^3+3740*u^4*v*z^3+4030*u^3*v^2*z^3+2124*u^2*v^3*z^3+550*u*v^4*z^3+56*v^5*z^3+1101*u^4*z^4+2264*u^3*v*z^4+1716*u^2*v^2*z^4+570*u*v^3*z^4+70*v^4*z^4+508*u^3*z^5+738*u^2*v*z^5+354*u*v^2*z^5+56*v^3*z^5+132*u^2*z^6+122*u*v*z^6+28*v^2*z^6+18*u*z^7+8*v*z^7+z^8,
-   u^6+3*u^4*v^2+3*u^2*v^4+v^6-4*u^4*z^2-34*u^3*v*z^2-7*u^2*v^2*z^2+12*u*v^3*z^2+6*v^4*z^2+36*u^2*z^4+36*u*v*z^4+9*v^2*z^4,
-   v^9+4*u*v^7*z+4*v^8*z+6*u^2*v^5*z^2+12*u*v^6*z^2+6*v^7*z^2+4*u^3*v^3*z^3+12*u^2*v^4*z^3+12*u*v^5*z^3+3*v^6*z^3+u^4*v*z^4+4*u^3*v^2*z^4+6*u^2*v^3*z^4+3*u*v^4*z^4-2*v^5*z^4+u^2*v^2*z^5+u*v^3*z^5-2*v^4*z^5+u^3*z^6+3*u^2*v*z^6-u*v^2*z^6-6*v^3*z^6-2*u^2*z^7-5*u*v*z^7-4*v^2*z^7-v*z^8,
-   36*u^7+64*u^6*v+1440*u^5*v^2+216*u^4*v^3+120*u^3*v^4+1728*u^2*v^5+243*u*v^6+36*v^7-96*u^6*z+108*u^5*v*z+16*u^4*v^2*z+576*u^3*v^3*z+216*u^2*v^4*z-12*u*v^5*z+216*v^6*z+88*u^5*z^2+3456*u^4*v*z^2+243*u^3*v^2*z^2+124*u^2*v^3*z^2+3816*u*v^4*z^2+297*v^5*z^2+162*u^4*z^3-20*u^3*v*z^3+936*u^2*v^2*z^3+342*u*v^3*z^3-96*v^4*z^3+1944*u^3*z^4+81*u^2*v*z^4-32*u*v^2*z^4+1536*v^3*z^4,
-   u^5*v^5+21*u^5*v^4*z-36*u^4*v^5*z-19*u^5*v^3*z^2+12*u^4*v^4*z^2+57*u^3*v^5*z^2+u^5*v^2*z^3+u^4*v^3*z^3-53*u^3*v^4*z^3-19*u^2*v^5*z^3+u^5*v*z^4+43*u^3*v^3*z^4+u*v^5*z^4+u^5*z^5-15*u^3*v^2*z^5+u^2*v^3*z^5+u*v^4*z^5+v^5*z^5,
-   u^4-14*u^2*v^2+v^4+8*u^2*v*z+8*v^3*z,
-   14440*u^5-16227*u^4*v+10812*u^3*v^2-13533*u^2*v^3+3610*u*v^4+1805*v^5+14440*u^4*z-18032*u^3*v*z+16218*u^2*v^2*z-12626*u*v^3*z+3610*v^4*z+3610*u^3*z^2-4508*u^2*v*z^2+5406*u*v^2*z^2-2703*v^3*z^2,
-   -24135/322*u^6-532037/6440*u^5*v+139459/560*u^4*v^2-1464887/12880*u^3*v^3+72187/25760*u^2*v^4+9/8*u*v^5+1/8*v^6-403511/3220*u^5*z-40817/920*u^4*v*z+10059/80*u^3*v^2*z-35445/1288*u^2*v^3*z+19/4*u*v^4*z+3/4*v^5*z-20743/805*u^4*z^2+126379/3220*u^3*v*z^2-423417/6440*u^2*v^2*z^2+11/2*u*v^3*z^2+3/2*v^4*z^2+3443/140*u^3*z^3+u^2*v*z^3+u*v^2*z^3+v^3*z^3,
-   u^9+u^7*v^2-u^6*v^3-6*u^5*v^4+3*u^4*v^5+4*u^3*v^6-3*u^2*v^7-u*v^8+v^9+4*u^8*z-u^7*v*z+5*u^6*v^2*z+9*u^5*v^3*z-21*u^4*v^4*z-6*u^3*v^5*z+16*u^2*v^6*z+u*v^7*z-5*v^8*z+6*u^7*z^2-4*u^6*v*z^2+3*u^5*v^2*z^2+30*u^4*v^3*z^2-12*u^3*v^4*z^2-27*u^2*v^5*z^2+6*u*v^6*z^2+10*v^7*z^2+4*u^6*z^3-6*u^5*v*z^3-8*u^4*v^2*z^3+25*u^3*v^3*z^3+15*u^2*v^4*z^3-14*u*v^5*z^3-10*v^6*z^3+u^5*z^4-4*u^4*v*z^4-10*u^3*v^2*z^4+2*u^2*v^3*z^4+11*u*v^4*z^4+5*v^5*z^4-u^3*v*z^5-3*u^2*v^2*z^5-3*u*v^3*z^5-v^4*z^5,
-   1251*v^4*z^3+5184*u*v^3*z^3+5354*u^2*v^2*z^3+115*u^4*z^3-9552*u*v^4*z^2-22496*u^2*v^3*z^2-5424*u^3*v^2*z^2-32*115/23*u^4*v*z^2+192*115*u^2*v^4*z+17472*u^3*v^3*z-13824*u^3*v^4,
-   -2*u*v^4*z^4+u^4*v^5+12*u^4*v^3*z^2+12*u^2*v^4*z^3-u^3*v*z^5+11*u^3*v^2*z^4-21*u^3*v^3*z^3-4*u^4*v*z^4+2*u^4*v^2*z^3-6*u^4*v^4*z+u^5*z^4-3*u^5*v^2*z^2+u^5*v^3*z-3*u*v^5*z^3-2*u^2*v^3*z^4+u^3*v^4*z^2+v^5*z^4,
-   u^10+6*u^9*v-30*u^7*v^3-15*u^6*v^4+u^5*v^5+u^4*v^6+6*u^3*v^7+u^2*v^8+7*u*v^9+v^10+5*u^9*z+24*u^8*v*z-30*u^7*v^2*z-120*u^6*v^3*z-43*u^5*v^4*z+5*u^4*v^5*z+20*u^3*v^6*z+10*u^2*v^7*z+29*u*v^8*z+5*v^9*z+10*u^8*z^2+36*u^7*v*z^2-105*u^6*v^2*z^2-179*u^5*v^3*z^2-38*u^4*v^4*z^2+25*u^3*v^5*z^2+25*u^2*v^6*z^2+46*u*v^7*z^2+10*v^8*z^2+10*u^7*z^3+24*u^6*v*z^3-135*u^5*v^2*z^3-117*u^4*v^3*z^3-u^3*v^4*z^3+25*u^2*v^5*z^3+34*u*v^6*z^3+10*v^7*z^3+5*u^6*z^4+6*u^5*v*z^4-75*u^4*v^2*z^4-27*u^3*v^3*z^4+10*u^2*v^4*z^4+11*u*v^5*z^4+5*v^6*z^4+u^5*z^5-15*u^3*v^2*z^5+u^2*v^3*z^5+u*v^4*z^5+v^5*z^5,
-   2*u^7+u^6*v+3*u^5*v^2+u^4*v^3+2*u^3*v^4+u^2*v^5+2*u*v^6+v^7-7780247/995328*u^6*z-78641/9216*u^5*v*z-10892131/995328*u^4*v^2*z-329821/31104*u^3*v^3*z-953807/331776*u^2*v^4*z-712429/248832*u*v^5*z+1537741/331776*v^6*z+2340431/248832*u^5*z^2+5154337/248832*u^4*v*z^2+658981/41472*u^3*v^2*z^2+1737757/124416*u^2*v^3*z^2-1234733/248832*u*v^4*z^2-1328329/82944*v^5*z^2-818747/248832*u^4*z^3-1822879/124416*u^3*v*z^3-415337/31104*u^2*v^2*z^3+1002655/124416*u*v^3*z^3+849025/82944*v^4*z^3,
-   u^11+3*u^10*v+2*u^9*v^2+u^8*v^3+2*u^7*v^4+u^6*v^5+3*u^5*v^6+u^4*v^7+2*u^3*v^8+u^2*v^9+2*u*v^10+v^11-37646523511/5159780352*u^10*z-12735172937/644972544*u^9*v*z-92722810205/5159780352*u^8*v^2*z-6771611725/322486272*u^7*v^3*z-79705721155/2579890176*u^6*v^4*z-5691795857/161243136*u^5*v^5*z-52315373005/2579890176*u^4*v^6*z+2598387077/322486272*u^3*v^7*z+157674139405/5159780352*u^2*v^8*z+9450269981/644972544*u*v^9*z-1350789043/1719926784*v^10*z+12849479611/644972544*u^9*z^2+3879535279/71663616*u^8*v*z^2+11488988309/161243136*u^7*v^2*z^2+16022496731/161243136*u^6*v^3*z^2+14783031067/107495424*u^5*v^4*z^2+34074776537/322486272*u^4*v^5*z^2-2606453339/161243136*u^3*v^6*z^2-7551362827/53747712*u^2*v^7*z^2-71147279173/644972544*u*v^8*z^2-4491673835/214990848*v^9*z^2-5255202913/214990848*u^8*z^3-8675467489/107495424*u^7*v*z^3-1706519429/11943936*u^6*v^2*z^3-22409190037/107495424*u^5*v^3*z^3-11738664739/53747712*u^4*v^4*z^3-1469700833/35831808*u^3*v^5*z^3+23678835685/107495424*u^2*v^6*z^3+24664591385/107495424*u*v^7*z^3+4743235967/71663616*v^8*z^3+1955990257/161243136*u^7*z^4+10614149851/161243136*u^6*v*z^4+23866276253/161243136*u^5*v^2*z^4+10551670493/53747712*u^4*v^3*z^4+14951486563/161243136*u^3*v^4*z^4-22801627471/161243136*u^2*v^5*z^4-32691689713/161243136*u*v^6*z^4-3808427873/53747712*v^7*z^4-362334499/322486272*u^6*z^5-596548295/26873856*u^5*v*z^5-21950924039/322486272*u^4*v^2*z^5-1124117785/20155392*u^3*v^3*z^5+1234417927/35831808*u^2*v^4*z^5+5479236793/80621568*u*v^5*z^5+2660429561/107495424*v^6*z^5,
-   5*v^6+7*v^2*u^4+6*u^6+21*v^2*u^3+12*u^5+21*v^2*u^2+6*u^4+7*v^2*u}
-
-
-R = S/L_3
-time integralClosure R
-icFractions R
-use S
-discriminant(L_2,v)
-factor oo
-
-A = kk[u,v]
-F = (map(A,S,{u,v,1})) L_3
-B = A/F
-time integralClosure B
-use ring F
-factor discriminant(F,u)
-factor discriminant(F,v)
-
-kk = ZZ/32003
-S = kk[u,v]
-I=ideal(5*v^6+7*v^2*u^4+6*u^6+21*v^2*u^3+12*u^5+21*v^2*u^2+6*u^4+7*v^2*u)
-R = S/I
-L = frac R
-ib=matrix {{1, v, v^2, v^3/(u+1), v^4/(u^2+u), (v^5-7/5*v*u^3+7/5*v*u)/(u^3+u^2)}}
-A = kk[x_0..x_5]
-map(frac R, A, matrix{{u}} | ib_{1..5})
-ker oo 
-flatten entries ib
-oo_4 * oo_5
-use S
-factor discriminant(I_0,u)
-factor discriminant(I_0,v)
-
-
--- Example of plane curve singularity
-restart
-S = QQ[y,x,MonomialOrder=>Lex]
-F = poly"y4-y2+x3+x4"
-factor discriminant(F,y)
-R=S/F
-basis(R, Variables=>{y})
-
-use S
-My = matrix"0,0,0,-x3-x4;
-  1,0,0,0;
-  0,1,0,1;
-  0,0,1,0"
-trace My^0
-trace My^2
-trace My^3
-trace My^4
-trace My^5
-trace My^6
-My^4-My^2
-W = matrix for i from 0 to 3 list for j from 0 to 3 list trace(My^(i+j))
-D = (det W)//16
-A = W || D*id_(S^4)
--- now do Hermitian row reduction on this matrix
-Kx = QQ[x]
-A = mutableMatrix sub(A,Kx)
-rowMult(A,0,1/2)
-rowMult(A,1,1/2)
-rowMult(A,2,1/2)
-rowMult(A,3,1/2)
-
--- One version
-rowSwap(A,0,2)
-rowAdd(A,2,-2,0)
-rowAdd(A,4,-A_(4,0),0)
-rowAdd(A,3,-A_(3,1),1)
-rowAdd(A,5,-A_(5,1),1)
-gcd(A_(2,2),A_(4,2),A_(6,2))
-rowAdd(A,4,-A_(4,2)//A_(2,2),2)
-rowAdd(A,6,-A_(6,2)//A_(2,2),2)
-gcd(A_(3,3),A_(5,3),A_(7,3))
-rowAdd(A,5,-A_(5,3)//A_(3,3),3)
-rowAdd(A,7,-A_(7,3)//A_(3,3),3)
-
-K = frac Kx
-sub(sub((matrix A)^{0..3},Kx), K)
-sub(D,K) * oo^-1
-
--- Another version, perhaps not as good
-A = W || D*id_(S^4)
-A = mutableMatrix sub(A,Kx)
-rowMult(A,1,3)
-rowMult(A,3,-2)
-rowAdd(A,3,1,1)
-rowSwap(A,3,7)
-rowAdd(A,1,-A_(1,3),7)
-rowAdd(A,3,-A_(3,3),7)
-rowSwap(A,0,6)
-rowAdd(A,0,-A_(0,2),6)
-rowAdd(A,2,-A_(2,2),6)
-gcd(A_(1,1),A_(3,1),A_(5,1))
-rowMult(A,1,1/6)
-rowSwap(A,1,5)
-rowAdd(A,1,-A_(1,1)//A_(5,1),5)
-rowAdd(A,3,-A_(3,1)//A_(5,1),5)
-rowSwap(A,2,4)
-rowAdd(A,0,-A_(0,0)//A_(4,0),4)
-rowAdd(A,2,-A_(2,0)//A_(4,0),4)
-
-K = frac Kx
-sub(sub((matrix A)^{4..7},Kx), K)
-sub(D,K) * oo^-1
-
-trim radical ideal sub(D,R)
-Hom(oo,oo)
-prune oo
 
 
 --------------
 -- Examples --
 --------------
-R = QQ[x,y]/(y^2-x^3)
-integralClosure R
-icFractions R
-icMap R
 
 R = QQ[y,x]/(y^2-x^4-x^7)
 integralClosure R
@@ -2115,11 +2269,9 @@ S = ZZ/32003[x,y];
 F = (y^2-3/4*y-15/17)^3-9*y*(y^2-3/4*y-15/17*x)-27*x^11
 R = S/F
 time R' = integralClosure R
+use ring F
 factor discriminant(F,y)
 factor discriminant(F,x)
-
-R = ZZ/32003[a,b,c]/(a^2-b*c)
-radical ideal(1_R)
 ----------------------------------------------
 
 restart
@@ -2145,84 +2297,19 @@ time R'=integralClosure(R) -- really long?
 transpose gens ideal S
 icFracP R -- very much faster!
 ----------------------------------------------
-restart
-loadPackage "IntegralClosure"
-loadPackage "ReesAlgebra"
 
----------------------------------
--- making a set of examples for improving radical computation
----------------------------------
 restart
 -- in IntegralClosure dir:
 load "runexamples.m2"
 runExamples(H,10,Verbosity=>3)
 
---huneke2
-kk = ZZ/32003
-S = kk[a,b,c]
-F = a^2*b^2*c+a^4+b^4+c^4
-J = ideal jacobian ideal F
-substitute(J:F, kk) -- check local quasi-homogeneity!
-I=ideal first (flattenRing first reesAlgebra J)
-betti I
-R = (ring I)/I
---time R'=integralClosure(R, Strategy => {StartWithOneMinor}, Verbosity =>3 ) -- this is bad in the first step!
-time R'=integralClosure(R, Verbosity =>3)
-icFractions R
 
----------------------------------------------
-
---rational quartic
-restart
-load "IntegralClosure.m2"
-kk = QQ
-S=kk[x_0..x_3]
-I = monomialCurveIdeal(S,{1,3,4})
-A=S/I
-integralClosure(A)
-icFractions A
-
-
-installPackage "IntegralClosure"
-check IntegralClosure
-viewHelp
-
-----------------------------------------------
 restart
 load "IntegralClosure.m2"
 kk = QQ
 S = kk[x,y,u]
 R = S/(u^2-x^3*y^3)
-J = trim radical ideal jacobian R
-Ja = ideal(x,u)
--- Let's keep computing Hom(rad Ja, rad Ja) until it stabilizes
-E1 = (x*Ja):Ja -- one new fraction u/x
-
-T1 = kk[x,y,u,v]
-I1 = saturate(ideal(u^2-x^3*y^3, v*x-u) ,x)
-R1 = T1/I1
-J2 = sub(Ja,R1)
-J2 = trim radical J2
-
-Jb = ideal(y,u)
-Jb = sub(Jb,R1)
-Jb = trim radical Jb
-
-(y*Jb):Jb  -- two new fractions?  u/y, v/y.  v/y = u/(x*y).
-
-E2 = (x*J2):J2 -- one new fraction v^2/x, actually it is already y^3
-T2 = kk[x,y,u,v,w]
-I2 = trim saturate(sub(I1,T2) + ideal(w*x-v^2),x)
-eliminate(
-
-I1 = eliminate(I1,u)
-
-
-J1 = trim(I1 + ideal jacobian I1)
-J1 = radical J1
-R1 = T1/I1
-J1 = sub(J1,R1)
-(y*J1):J1  -- add in v/y
+time integralClosure R
 
 -- another example from Doug Leonard ----------------------------
 S=ZZ/2[z,y,x,MonomialOrder=>{Weights=>{32,21,14}}];

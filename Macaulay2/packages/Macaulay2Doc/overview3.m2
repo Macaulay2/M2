@@ -4,8 +4,8 @@
 
 document {
      Key => "COPYING",
-     Headline => "the Macaulay 2 license agreement",
-     "This is the text of the license agreement under which Macaulay 2 is distributed.",
+     Headline => "the Macaulay2 license agreement",
+     "This is the text of the license agreement under which Macaulay2 is distributed.",
      PARA{},
      if prefixDirectory =!= null then PRE separate("\f",get(prefixDirectory | currentLayout#"docdir" | "COPYING"))
      else (
@@ -17,32 +17,56 @@ document {
 document {
      Key => "Copyright and license",
      PARA {
-	  "Macaulay 2, its object code and source code, and its documentation,
+	  "Macaulay2, its object code and source code, and its documentation,
 	  are copyright by Daniel R. Grayson and Michael E. Stillman.  We permit 
 	  you to use it under the terms of the GNU General Public License, version
 	  2, as published by the Free Software Foundation, and as contained in the file ", TO "COPYING", " accompanying the program."
 	  },
      PARA {
-      	  "The following free libraries have been compiled into (or linked with) Macaulay 2."
+      	  "Some free libraries have been compiled into (or linked with) Macaulay2, and some free programs, or packages
+	  of programs, with their libraries, have been compiled and distributed with Macaulay2:"
 	  },
      Subnodes => {
+	  "libraries",
 	  TO "Singular-Factory",
 	  TO "Singular-Libfac",
 	  TO "frobby",
 	  TO "pari",
-	  TO "GNU MP",
+	  TO "MPIR",
 	  TO "MPFR",
 	  TO "GC garbage collector",
 	  TO "LAPACK",
 	  TO "BLAS",
-	  TO "NTL library"
+	  TO "NTL library",
+	  "programs and their libraries",
+	  TO "4ti2",
+	  TO "gfan",
+	  TO "normaliz"
+     	  }
+     }
+
+document {
+     Key => "normaliz",
+     PARA {
+     	  "The program ", TT "normaliz", ", written by Winfried Bruns and Bogdan Ichim,
+	  provides computations in affine monoids, vector configurations, lattice polytopes, 
+     	  and rational cones.  It is available at ", HREF "http://www.mathematik.uni-osnabrueck.de/normaliz/", ".  The package
+     	  ", TO "Normaliz::Normaliz", " runs it."
 	  }
+     }
+
+document {
+     Key => "gfan",
+     "The program ", TT "gfan", " computes Groebner fans.
+     It is available at ", HREF "http://www.math.tu-berlin.de/~jensen/software/gfan/", ".
+     The packages ", TO "StatePolytope::StatePolytope", " and ", TO "gfanInterface::gfanInterface", "
+     run it."
      }
 
 document {
      Key => "LAPACK",
      PARA {
-	  "The ", TT "LAPACK", " library is used by Macaulay 2 for its linear algebra routines.  It is
+	  "The ", TT "LAPACK", " library is used by Macaulay2 for its linear algebra routines.  It is
 	  available at ", HREF "http://www.netlib.org/lapack/", "."
 	  }
      }
@@ -50,7 +74,7 @@ document {
 document {
      Key => "BLAS",
      PARA {
-	  "The ", TT "BLAS", " library is used by Macaulay 2 for its linear algebra routines.  It is
+	  "The ", TT "BLAS", " library is used by Macaulay2 for its linear algebra routines.  It is
 	  available at ", HREF "http://www.netlib.org/blas/", "."
 	  }
      }
@@ -58,7 +82,7 @@ document {
 document {
      Key => "NTL library",
      PARA {
-	  "The ", TT "NTL", " library, written by Victor Shoup, is used by Macaulay 2, through the ", TO "Singular-Factory", " library,
+	  "The ", TT "NTL", " library, written by Victor Shoup, is used by Macaulay2, through the ", TO "Singular-Factory", " library,
 	  for its algebraic routines.  It is available at ", HREF "http://shoup.net/ntl/", "."
 	  }
      }
@@ -66,7 +90,7 @@ document {
 document {
      Key => "MPFR",
      PARA {
-	  "The ", TT "MPFR", " library is used by Macaulay 2 for its arbitrary precision real number arithmetic
+	  "The ", TT "MPFR", " library is used by Macaulay2 for its arbitrary precision real number arithmetic
 	  and associated transcendental functions.  It is available at ", HREF "http://www.mpfr.org/", ".  The
 	  library is remarkable for the care taken to return correctly rounded
 	  results.  It is hoped that this will form a good base for experimentation
@@ -76,7 +100,7 @@ document {
 
 document {
      Key => "GC garbage collector",
-     "Macaulay 2 uses the excellent garbage collector GC, version ", version#"gc version", ",
+     "Macaulay2 uses the excellent garbage collector GC, version ", version#"gc version", ",
      written by Hans-J. Boehm and Alan J. Demers and generously licensed
      to the public.  It is available at
      ", HREF "http://www.hpl.hp.com/personal/Hans_Boehm/gc/", ".",
@@ -87,7 +111,7 @@ document {
 document {
      Key => "GC error messages",
      PARA {
-     	  "The ", TT "GC garbage collector", " is used by Macaulay 2 for its memory management.  It is reponsible
+     	  "The ", TT "GC garbage collector", " is used by Macaulay2 for its memory management.  It is reponsible
      	  for getting more memory from the operating system when needed for storage of data, and for recovering areas of memory no longer needed."
 	  },
      PARA {
@@ -107,7 +131,7 @@ document {
 document {
      Key => "pari",
      PARA {
-	  "Starting with version 1.2, Macaulay 2 incorporates ", TT "pari", ", a free library for fast computations in number theory,
+	  "Starting with version 1.2, Macaulay2 incorporates ", TT "pari", ", a free library for fast computations in number theory,
 	  available at ", HREF "http://pari.math.u-bordeaux.fr/", ",
 	  originally developed by Henri Cohen and his co-workers at Université Bordeaux I, France.
 	  It is used by ", TO (factor,ZZ), ", ", TO (factor,QQ), ", ", TO (isPseudoprime, ZZ), ", and ", TO (isPrime,ZZ), ".
@@ -118,7 +142,7 @@ document {
 document {
      Key => "frobby",
      PARA {
-	  "Starting with version 1.2, Macaulay 2 incorporates ", TT "frobby", ", a free library of routines for computing
+	  "Starting with version 1.2, Macaulay2 incorporates ", TT "frobby", ", a free library of routines for computing
 	  the Alexander dual of a monomial ideal (see ", TO (dual,MonomialIdeal), ", a method used internally
 	       by many routines), written
 	  by Bjarke Hammersholt Roune, and available at ", HREF "http://www.broune.com/frobby/", ".
@@ -130,7 +154,7 @@ document {
      Key => "Singular-Factory",
      "With the kind permission of the authors of Singular, 
      G.-M. Greuel, R. Stobbe, G. Pfister, H. Schoenemann, and J. Schmidt,
-     University of Kaiserslautern, Macaulay 2 incorporates ", TT "Singular-Factory", ",
+     University of Kaiserslautern, Macaulay2 incorporates ", TT "Singular-Factory", ",
      version ", version#"factory version", ", a free library of polynomial routines
      that provides for factorization of polynomials.  It is distributed under the
      terms of the GNU General Public License (version 2 (see ", TO "COPYING", ") or version 3) and is available at 
@@ -149,7 +173,7 @@ document {
 
 document {
      Key => "Singular-Libfac",
-     "With the kind permission of the author, Michael Messollen, Macaulay 2
+     "With the kind permission of the author, Michael Messollen, Macaulay2
      incorporates ", TT "Singular-Libfac", ", version ", version#"libfac version", ",
      a free library of routines, depending on ", TO "Singular-Factory", ", that provides
      factorization of multivariate polynomials over finite fields and computation of the minimal associated primes 
@@ -169,13 +193,29 @@ document {
      }
 
 document {
-     Key => "GNU MP",
-     "The GNU MP library, gmp, version ", version#"gmp version", " provides
+     Key => "MPIR",
+     "The MPIR library, version ", version#"mpir version", " provides
      routines for arbitrary precision integer and floating point arithmetic,
      and is distributed under the terms of the GNU Lesser General Public License (LGPL), version 2.1 or later.
-     It's available at ", HREF "ftp://ftp.gnu.org/gnu/gmp/", " and 
-     ", HREF "http://gmplib.org/", "."
+     It's available at ", HREF "http://www.mpir.org/", "."
      }
+
+
+document {
+     Key => "4ti2",
+     "The package of programs ", TT "4ti2", " is dedicated to algebraic, geometric and combinatorial
+     problems on linear spaces, and is distributed under the terms of the GNU General Public License (GPL), version 2 or later.
+     It is available at ", HREF "http://www.4ti2.de/", ".  The package ", TO "FourTiTwo::FourTiTwo", " runs it."
+     }
+
+-- document {
+--      Key => "GNU MP",
+--      "The GNU MP library, gmp, version ", version#"gmp version", " provides
+--      routines for arbitrary precision integer and floating point arithmetic,
+--      and is distributed under the terms of the GNU Lesser General Public License (LGPL), version 2.1 or later.
+--      It's available at ", HREF "ftp://ftp.gnu.org/gnu/gmp/", " and 
+--      ", HREF "http://gmplib.org/", "."
+--      }
 
 document {
      Key => "Acknowledgements",
@@ -198,9 +238,9 @@ document {
 
 document {
      Key => "prefixPath",
-     Headline => "absolute locations of Macaulay 2 files",
+     Headline => "absolute locations of Macaulay2 files",
      PARA {
-	  "The absolute location of a Macaulay 2 file can be obtained by concatenating three components: (a) the
+	  "The absolute location of a Macaulay2 file can be obtained by concatenating three components: (a) the
 	  prefix, which is one of the members of the list ", TO "prefixPath", "; (b) the relative location of the directory
 	  containing the file, as recorded in the hash table ", TO "Layout", "; and (c) the base name of the file.
 	  The value of ", TO "prefixPath", " is used by ", TO "installPackage", " when determining how to direct
@@ -211,14 +251,14 @@ document {
 	  If the variable ", TO "prefixDirectory", " was
 	  given a non-null value initially or by a ", TT "-e", " command line argument,
 	  then it will be the last element of ", TO "prefixPath", ".  If the ", TT "-q", " 
-	  option was not given on the command line used to invoke Macaulay 2, then the value of ", TT "applicationDirectory()|\"local/\"", "
+	  option was not given on the command line used to invoke Macaulay2, then the value of ", TT "applicationDirectory()|\"local/\"", "
 	  will be the first element of ", TO "prefixPath", ".  No attempt is made to synchronize the value of ", TO "prefixPath", "
 	  with the values of ", TO "prefixDirectory", " and of ", TT "applicationDirectory()", ", which may change."
 	  },
      PARA {
-	  "When running a newly compiled version of Macaulay 2, adding something like ", TT "-E 'prefixDirectory=\"/usr/\"'", " to
+	  "When running a newly compiled version of Macaulay2, adding something like ", TT "-E 'prefixDirectory=\"/usr/\"'", " to
 	  the command line is a good way to direct hyperlinks created by ", TO "installPackage", " to the documentation provided by
-	  an older copy of Macaulay 2 installed with the prefix ", TT "/usr/", ", and that, in turn, is easily done within
+	  an older copy of Macaulay2 installed with the prefix ", TT "/usr/", ", and that, in turn, is easily done within
 	  emacs by the keystroke sequence ", TT "CTRL-U f12", ", which offers you a chance to edit the command line."
 	  },
      PARA {
@@ -232,17 +272,17 @@ document {
 	  "The following example shows the list of places where we might find the source code of a package called ", TT "Foo", "
 	  after it has been installed by ", TO "installPackage", "."
 	  },
-     EXAMPLE ///apply(prefixPath, p -> p | Layout#1#"packages" | "Foo.m2")///,
+     EXAMPLE ///stack apply(prefixPath, p -> p | Layout#1#"packages" | "Foo.m2")///,
      PARA {
      	  "This example shows the list of places where we might reasonably find the html file documenting a
 	  function named ", TT "bar", " in a package called ", TT "Foo", "."
 	  },
-     EXAMPLE ///apply(prefixPath, p -> p | replace("PKG","Foo",Layout#1#"packagehtml") | "bar.html")///,
+     EXAMPLE ///stack apply(prefixPath, p -> p | replace("PKG","Foo",Layout#1#"packagehtml") | "bar.html")///,
      PARA {
      	  "This example shows the list of places where we might reasonably find the info file documenting a
 	  package called ", TT "Foo", "."
 	  },
-     EXAMPLE ///apply(prefixPath, p -> p | Layout#1#"info" | "Foo.info")///,
+     EXAMPLE ///stack apply(prefixPath, p -> p | Layout#1#"info" | "Foo.info")///,
      SeeAlso => {"commandLine", "Invoking the program", applicationDirectory, "prefixDirectory", "path", searchPath, load, loadPackage, needsPackage}
      }
 
@@ -251,32 +291,34 @@ doc := new HashTable from {
      "common" => "architecture independent files",
      "data" => "architecture independent data files",
      "doc" => "documentation",
-     "docdir" => "documentation for Macaulay 2 packages",
+     "docdir" => "documentation for Macaulay2 packages",
      "emacs" => "emacs source files (*.el, *.elc)",
      "exec" => "architecture dependent files",
      "info" => "documentation in info form",
      "lib" => "architecture dependent data and executable files",
-     "libraries" => "dynamically loadable libraries from third party packages linked with Macaulay 2",
+     "libraries" => "dynamically loadable libraries from third party packages linked with Macaulay2",
      "man" => "man pages",
-     "package" => "additional source files for the Macaulay 2 package PKG",
-     "packagecache" => "cached data files for the Macaulay 2 package PKG",
-     "packagedoc" => "documentation for the Macaulay 2 package PKG",
-     "packageexampleoutput" => "example output files for the Macaulay 2 package PKG",
-     "packagehtml" => "html documentation for the Macaulay 2 package PKG (*.html)",
-     "packageimages" => "images for the Macaulay 2 package PKG (*.jpg)",
-     "packagelib" => "architecture dependent files for the Macaulay 2 package PKG",
-     "packages" => "source files for Macaulay 2 packages; this directory appears on the path",
-     "packagetests" => "test files for the Macaulay 2 package PKG"
+     "package" => "additional source files for the Macaulay2 package PKG",
+     "packagecache" => "cached data files for the Macaulay2 package PKG",
+     "packagedoc" => "documentation for the Macaulay2 package PKG",
+     "packageexampleoutput" => "example output files for the Macaulay2 package PKG",
+     "packagehtml" => "html documentation for the Macaulay2 package PKG (*.html)",
+     "packageimages" => "images for the Macaulay2 package PKG (*.jpg)",
+     "packagelib" => "architecture dependent files for the Macaulay2 package PKG",
+     "packages" => "source files for Macaulay2 packages; this directory appears on the path",
+     "packagetests" => "test files for the Macaulay2 package PKG",
+     "programs" => "programs to be run by Macaulay2"
+     
      }
 assert( set keys Layout#1 === set keys Layout#2 )
 assert( set keys Layout#1 === set keys doc )
 
 document {
      Key => {"currentLayout", "Layout"},
-     Headline => "relative locations of Macaulay 2 files",
+     Headline => "relative locations of Macaulay2 files",
      PARA {
-	  "Macaulay 2 comes with a variety of types of files, and some of them are associated with a 
-	  particular Macaulay 2 package.  The hash table ", TT "currentLayout", " is a translation 
+	  "Macaulay2 comes with a variety of types of files, and some of them are associated with a 
+	  particular Macaulay2 package.  The hash table ", TT "currentLayout", " is a translation 
 	  table from names, corresponding to the various types of files, to directory paths.  The
 	  directory paths are to be interpreted relative to the path stored in ", TO "prefixDirectory", " or in one
 	  of the directories contained in the list ", TO "prefixPath", ".
@@ -291,7 +333,7 @@ document {
 	  is used otherwise."
 	  },
      PARA {
-	  "Basic Macaulay 2 files are regarded as being associated
+	  "Basic Macaulay2 files are regarded as being associated
 	  with a special package called ", TO2{"Macaulay2Doc::Core", "Core"}, ", and the corresponding documentation files
 	  are part of the package ", TT "Macaulay2Doc", "."
      	  },
@@ -306,9 +348,9 @@ document {
 document {
      Key => "mathematical examples",
      "In this section we present some tutorials which aim to introduce
-     the user to some mathematical ways of using Macaulay 2.  The tutorials
+     the user to some mathematical ways of using Macaulay2.  The tutorials
      are relatively independent of each other, and each one introduces the use
-     of some features of Macaulay 2 in a slow and leisurely way, assuming the
+     of some features of Macaulay2 in a slow and leisurely way, assuming the
      reader is already familiar with the mathematical concepts involved.  
      ", TO "David Eisenbud", " joins us as a co-author of these tutorials.",
      Subnodes => {
@@ -328,7 +370,7 @@ document {
      at Cornell University.  This course covers basic commutative
      algebra, at the level of Atiyah-Macdonald, and Greuel-Pfister.",
      PARA{},
-     "Macaulay 2 examples corresponding to the Singular examples in the
+     "Macaulay2 examples corresponding to the Singular examples in the
      book by Greuel-Pfister may also be found here.",
      Subnodes => {
 	  TO "Elementary uses of Groebner bases I. Math 634 Fall 2005",
@@ -389,7 +431,7 @@ document {
      "To communicate with the authors about the program, use this email address:
      ", HREF {"mailto:Macaulay2@math.uiuc.edu", "<Macaulay2@math.uiuc.edu>"}, ".",
      Subnodes => {
-     	  "The authors of Macaulay 2 and the bulk of this manual:",
+     	  "The authors of Macaulay2 and the bulk of this manual:",
 	  TO "Daniel R. Grayson",
 	  TO "Michael E. Stillman",
      	  "Our co-author for the tutorials:",
@@ -439,10 +481,10 @@ document {
      }
 
 document {
-     Key => "Other sources of information about Macaulay 2",
+     Key => "Other sources of information about Macaulay2",
      SUBSECTION "Web site",
      UL {
-	  (HREF "http://www.math.uiuc.edu/Macaulay2/", " -- the main Macaulay 2 web site: citations, binary distributions"),
+	  (HREF "http://www.math.uiuc.edu/Macaulay2/", " -- the main Macaulay2 web site: citations, binary distributions"),
 	  },
      SUBSECTION "Books",
      UL {
@@ -463,7 +505,7 @@ document {
 
 document {
      Key => "debugging",
-     "Macaulay 2 has a debugger.",
+     "Macaulay2 has a debugger.",
 	UL{
 	TO "the debugger",
 	},
@@ -558,7 +600,7 @@ document {
 	  following line of code can be placed in the file ", TT "init.m2", "."
 	  },
      PRE {
-	  ///if fileExists "start.m2" then load(currentDirectory|"start.m2")///
+	  ///if fileExists "start.m2" then load(currentDirectory()|"start.m2")///
 	  },
      PARA {
 	  "Warning: former versions of the program would also load a file named ", TT "init.m2", " found in the current directory."

@@ -47,5 +47,5 @@ x/2
 x//2
 end
 -- Local Variables:
--- compile-command: "make -C $M2BUILDDIR/Macaulay2/test rings.out"
+-- compile-command: "make -C $M2BUILDDIR/Macaulay2/packages/Macaulay2Doc/test rings.out"
 -- End:

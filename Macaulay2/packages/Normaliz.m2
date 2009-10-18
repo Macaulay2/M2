@@ -7,7 +7,7 @@ newPackage(
                     Email=>"gkaempf@mathematik.uni-osnabrueck.de"}},
            Headline=>"a package to use Normaliz in Macaulay 2",
            AuxiliaryFiles => true,
-          CacheExampleOutput => true,
+	   CacheExampleOutput => false,
            DebuggingMode => false
            )
 
@@ -30,7 +30,7 @@ export{setNmzExecPath, getNmzExecPath,
 
 
 -- initialising some values
-nmzExecPath="";
+nmzExecPath=prefixDirectory|currentLayout#"programs";
 nmzDataPath="";
 nmzFilename="";
 nmzUserCalled=true;  -- wether the user calls a method

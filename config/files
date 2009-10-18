@@ -40,6 +40,13 @@ libraries/gc/Makefile
 libraries/gdbm/Makefile
 libraries/gmp/Makefile
 libraries/mpfr/Makefile
+libraries/mpir/Makefile
+libraries/4ti2/Makefile
+libraries/gfan/Makefile
+libraries/cddlib/Makefile
+libraries/glpk/Makefile
+libraries/polymake/Makefile
+libraries/normaliz/Makefile
 libraries/pari/Makefile
 libraries/scscp/Makefile
 libraries/readline/Makefile
@@ -96,6 +103,8 @@ Macaulay2/packages/Macaulay2Doc/test/Makefile.test
 Macaulay2/packages/Macaulay2Doc/test/engine/Makefile
 Macaulay2/packages/Macaulay2Doc/test/slow/Makefile
 Macaulay2/packages/Macaulay2Doc/test/gigantic/Makefile
+Macaulay2/packages/Macaulay2Doc/test/goals/Makefile
+Macaulay2/packages/Macaulay2Doc/test/quarantine/Makefile
 Macaulay2/tests/rationality/Makefile
 Macaulay2/tests/Makefile
 Macaulay2/util/Makefile

@@ -2,7 +2,7 @@
 document {
      Key => {Macaulay2Doc,"Macaulay2"},
      PARA IMG ("src" => replace("PKG","Style",currentLayout#"package") | "9planets.gif", "alt" => "image of nine planets"),
-     "Macaulay 2 is a software system devoted to supporting research in 
+     "Macaulay2 is a software system devoted to supporting research in 
      algebraic geometry and commutative algebra, developed with funding
      from the National Science Foundation.  We are eager to help new users
      get started with it.",
@@ -11,7 +11,7 @@ document {
 	       TO "Copyright and license",
 	       TO "Acknowledgements",
 	       TO "The authors",
-	       TO "Other sources of information about Macaulay 2", -- node to be written, will point to our book, Hal's book, Mike's Arizona notes, Sage, etc
+	       TO "Other sources of information about Macaulay2", -- node to be written, will point to our book, Hal's book, Mike's Arizona notes, Sage, etc
 	  "For the New User",
 	       TO "getting started",
 	  "Mathematical Objects",
@@ -34,17 +34,17 @@ document {
      	       -- Mike wanted this, but it's in another package (!): TO "integralClosure",
      	       -- this is in another package now: TO "PrimaryDecomposition :: primaryDecomposition",
 	       TO "combinatorial functions",
-          "The Macaulay 2 Language",
-	       TO "The Macaulay 2 language",
+          "The Macaulay2 Language",
+	       TO "The Macaulay2 language",
 	  "Packages",
-	       TO "packages provided with Macaulay 2",
+	       TO "packages provided with Macaulay2",
      	  "Appendix",
-	       TO "changes to Macaulay 2, by version",
+	       TO "changes to Macaulay2, by version",
 	       TO "mathematical examples",
 	       TO "basic commutative algebra",
 	       -- Mike wanted this: TO "frequently encountered problems",
 	       TO "replacements for commands and scripts from Macaulay",
-	       TO "how Macaulay 2 finds its files",
+	       TO "how Macaulay2 finds its files",
      	  "Reference material",
 	       TO "Type",
 	       TO "Function"

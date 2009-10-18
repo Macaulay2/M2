@@ -86,5 +86,5 @@ time assert(m == F7inv m7)
 ------------------------------------------------------
 end
 -- Local Variables:
--- compile-command: "make -C $M2BUILDDIR/Macaulay2/test ringmap2.out"
+-- compile-command: "make -C $M2BUILDDIR/Macaulay2/packages/Macaulay2Doc/test ringmap2.out"
 -- End:

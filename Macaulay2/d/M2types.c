@@ -73,6 +73,20 @@ M2_string strings_substr(M2_string x, int start, int len)
   return p;
 }
 
+M2_string strings_substrAlwaysCopy(M2_string x, int start, int len)
+{
+  M2_string p;
+  if (start < 0) start += x->len;	/* start<0 means count from the end */
+  if (start < 0) len += start, start = 0;
+  if (start + len > (int)x->len) len = x->len - start;
+  if (len <= 0) return &emptyM2String;
+  /* if (start == 0 && len == (int)x->len) return x; */
+  p = (M2_string) getmem_atomic(sizeofarray(p,len));
+  p->len = len;
+  memcpy(p->array,x->array+start,len);
+  return p;
+}
+
 M2_string strings_substr_1(M2_string x, int start)
 {
   return strings_substr(x,start,x->len - start);

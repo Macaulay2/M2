@@ -27,3 +27,12 @@ On Debian-based systems the file COPYING is not provided.  Instead, refer to:
 
 This is free software.  There is no warranty; not even for merchantability or
 fitness for a particular purpose.
+
+Some programs or packages may be distributed along with Macaulay2 according to the terms of
+their own licenses, not affecting the license we offer you for Macaulay2
+itself.  These include the following programs: 4ti2, normaliz, and gfan.
+
+The source code for the libraries, programs, or packages that we use is
+available on our web site at
+	
+	http://www.math.uiuc.edu/Macaulay2/Downloads/OtherSourceCode/

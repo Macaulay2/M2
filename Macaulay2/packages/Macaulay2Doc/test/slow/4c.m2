@@ -35,5 +35,5 @@ assert( rank C_5 == 281 )
 assert( tally degrees C_3 === tally splice {51 : {3}, 1 : {4}} )
 assert( tally degrees C_5 === tally splice {216 : {5}, 65 : {6}} )
 -- Local Variables:
--- compile-command: "make -C $M2BUILDDIR/Macaulay2/test/slow 4c.out"
+-- compile-command: "make -C $M2BUILDDIR/Macaulay2/packages/Macaulay2Doc/test/slow 4c.out"
 -- End:

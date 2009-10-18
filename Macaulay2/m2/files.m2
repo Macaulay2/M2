@@ -236,7 +236,7 @@ toFilename String := s -> (
      -- other file names such as "index.html".
      -- Notice that the prefix character _ prevents the "!" character
      -- from occurring in the first position, where it would have a special
-     -- meaning to Macaulay 2.
+     -- meaning to Macaulay2.
      -- We should check which characters are allowed in URLs.
      s = concatenate("_",apply(characters s, c -> tt#c));
      s)
@@ -285,7 +285,7 @@ mungeFile = (filename, headerline, trailerline, text) -> (
 	       action = "insert text in";
 	       excerpt := first select(regexp, oldcontents);
 	       if 1 < length select(hdr,excerpt) or 1 < length select(tlr,excerpt) then (
-		    error("multiple Macaulay 2 insertion markers encountered in file: ", filename);
+		    error("multiple Macaulay2 insertion markers encountered in file: ", filename);
 		    );
 	       newcontents := replace(regexp, insert, oldcontents);
 	       if oldcontents == newcontents then (

@@ -279,7 +279,7 @@ document {
      SUBSECTION "Programming hint",
 	  "The chain complex ", TT "C", " is implemented as a hash table, 
 	  but since the computation of a projective resolution 
-	  can be stopped prematurely, Macaulay 2 doesn't bother
+	  can be stopped prematurely, Macaulay2 doesn't bother
 	  populating the hash table with the relevant free modules 
 	  until explicitly requested by the user, for example, in response to the
 	  command ", TT "C_i", " described above.  The hash table ", 
@@ -377,7 +377,7 @@ document {
 	  RingElement => "the (i,j)-th entry of the matrix M, where M_(0,0) is the 
 	   top left entry"
 	  },
-     "All indexing in Macaulay 2 is zero-based, so the indices start at zero.",
+     "All indexing in Macaulay2 is zero-based, so the indices start at zero.",
      EXAMPLE lines ///
      	  M = matrix{{1,2,3},{0,5,6}}
 	  M_(1,2)

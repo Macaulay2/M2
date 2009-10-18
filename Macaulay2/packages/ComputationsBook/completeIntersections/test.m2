@@ -1,3 +1,4 @@
+setRandomSeed();
 A = QQ[w,x,y,z]
 U = matrix {{w,x},{y,z}}
 C = chainComplex U

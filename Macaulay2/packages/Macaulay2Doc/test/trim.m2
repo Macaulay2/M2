@@ -15,5 +15,5 @@ trim I  -- fixed: this fails because it takes a long time...  It should stop aft
 
 end
 -- Local Variables:
--- compile-command: "make -C $M2BUILDDIR/Macaulay2/test trim.out"
+-- compile-command: "make -C $M2BUILDDIR/Macaulay2/packages/Macaulay2Doc/test trim.out"
 -- End:

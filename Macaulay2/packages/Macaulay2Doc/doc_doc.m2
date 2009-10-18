@@ -74,8 +74,8 @@ document {
 	Consequences => {"specifies the name under which the documentation is stored"},
 	"The document key is the the name of the node, specifically the one that allows 
 	users to find the documentation for the desired command. Some node names, rather than being strings, 
-	are sequences of Macaulay 2 objects that refer to specific method functions. If one is documenting 
-	a function of Macaulay 2, the key  will just be the function's name, as in the
+	are sequences of Macaulay2 objects that refer to specific method functions. If one is documenting 
+	a function of Macaulay2, the key  will just be the function's name, as in the
 	documentation for ", TO "resolution", ".",
 	PRE ///Key => resolution,///,
 	"However, if one is documenting a method for a  function, then the key will have a different form, as in the 

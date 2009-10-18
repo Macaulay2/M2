@@ -1,8 +1,0 @@
--- -*- M2-comint -*- {* hash: 2030645653 *}
---warning: function parametersInIdeal redefined
-
-i1 : getNmzExecPath()
-
-o1 = 
-
-i2 : 

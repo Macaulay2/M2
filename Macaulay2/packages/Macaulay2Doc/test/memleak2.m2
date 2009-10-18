@@ -44,5 +44,5 @@ assert ( K < k + n - 10 )
 assert ( K'< k'+ n - 10 )
 end
 -- Local Variables:
--- compile-command: "make -C $M2BUILDDIR/Macaulay2/test memleak2.out"
+-- compile-command: "make -C $M2BUILDDIR/Macaulay2/packages/Macaulay2Doc/test memleak2.out"
 -- End:

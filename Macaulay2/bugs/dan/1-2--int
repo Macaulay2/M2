@@ -1,0 +1,1 @@
+If --int is given on the command line and M2 is interrupted, the return code from the process should be 2, not 512.  Strange.

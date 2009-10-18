@@ -179,7 +179,7 @@ assert(R^{0,0} != R^{0,1})
 document {
      Key => GroebnerBasis,
      Headline => "the class of all Gröbner bases",
-     "A Gröbner basis in Macaulay 2 consists of a Gröbner basis
+     "A Gröbner basis in Macaulay2 consists of a Gröbner basis
      computation, and several associated matrices. Normally you don't
      need to refer to these objects directly, as many operations on
      matrices and modules create them, and refer to them.  For more

@@ -1,3 +1,5 @@
+# license for gdbm: GPL v2
+
 URL = ftp://ftp.gnu.org/gnu/gdbm
 VERSION = 1.8.3
 INSTALLOPTIONS = BINOWN=$(shell id -u) BINGRP=$(shell id -g)

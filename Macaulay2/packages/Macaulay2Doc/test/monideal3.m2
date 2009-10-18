@@ -7,6 +7,6 @@ mingens J'
 assert ( mingens J == mingens J' )
 end
 -- Local Variables:
--- compile-command: "make -C $M2BUILDDIR/Macaulay2/test monideal3.out"
+-- compile-command: "make -C $M2BUILDDIR/Macaulay2/packages/Macaulay2Doc/test monideal3.out"
 -- End:
 

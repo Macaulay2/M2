@@ -320,17 +320,17 @@ M2_arrayint rawMonomialIdealLCM(const MonomialIdeal *I)
 #if HAVE_FROBBY
 #include "frobby.h"
 
-class MyTermConsumer : public Frobby::TermConsumer, our_new_delete {
+class MyIdealConsumer : public Frobby::IdealConsumer, our_new_delete {
   int nv; // The size of exponentVector coming from frobby
   int *exp;
   MonomialIdeal *J;
 public:
-  MyTermConsumer(const PolynomialRing *R, int nv0) : nv(nv0)
+  MyIdealConsumer(const PolynomialRing *R, int nv0) : nv(nv0)
   {
     J = new MonomialIdeal(R);
     exp = newarray_atomic(int,nv);
   }
-  ~MyTermConsumer()
+  ~MyIdealConsumer()
   {
     deletearray(exp);
     J = 0;
@@ -376,7 +376,7 @@ static MonomialIdeal *FrobbyAlexanderDual(const MonomialIdeal *I, const mpz_t *t
     }
 
   // Now create the consumer object, and call Frobby
-  MyTermConsumer M(I->get_ring(), nv);
+  MyIdealConsumer M(I->get_ring(), nv);
   Frobby::alexanderDual(F, topvec, M);
   deletearray(exp);
   // Extract the answer as a MonomialIdeal

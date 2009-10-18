@@ -34,5 +34,5 @@ assert( length degree id_(k^1) == 0 )
 
 end
 -- Local Variables:
--- compile-command: "make -C $M2BUILDDIR/Macaulay2/test galois.out"
+-- compile-command: "make -C $M2BUILDDIR/Macaulay2/packages/Macaulay2Doc/test galois.out"
 -- End:

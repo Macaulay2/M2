@@ -19,5 +19,5 @@ assert( codim inIX' == 4 )
 assert( pdim coker gens inIX' == 4 )
 end
 -- Local Variables:
--- compile-command: "make -C $M2BUILDDIR/Macaulay2/test 4d.out"
+-- compile-command: "make -C $M2BUILDDIR/Macaulay2/packages/Macaulay2Doc/test 4d.out"
 -- End:

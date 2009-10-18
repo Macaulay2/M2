@@ -480,6 +480,6 @@ S = polyring(A,(symbol x, symbol y, symbol z))
   -- BUG: quotient element not re-introduced.
   
 -- Local Variables:
--- compile-command: "make -C $M2BUILDDIR/Macaulay2/test/engine raw4.out"
+-- compile-command: "make -C $M2BUILDDIR/Macaulay2/packages/Macaulay2Doc/test/engine raw4.out"
 -- compile-command: "M2 --debug-M2 --stop -e 'input \"raw4.m2\"' -e 'exit 0' "
 -- End:

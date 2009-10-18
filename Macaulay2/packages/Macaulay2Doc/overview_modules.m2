@@ -6,7 +6,7 @@ document {
      "See ", TO "modules", " for an overview of modules in Macaulay2.  See
      ", TO "modules in Macaulay2", " for a tutorial overview of modules.",
      PARA{},
-     "Modules in Macaulay 2 are implemented as ", TO "subquotient modules", ".  
+     "Modules in Macaulay2 are implemented as ", TO "subquotient modules", ".  
      Submodules and quotients of free modules are perhaps the most common and important
      modules, and subquotients form the smallest class
      of modules which naturally includes these cases.",
@@ -100,7 +100,7 @@ document {
      "For more operations in homological algebra, see ", 
      TO "chain complexes", ".  For additional common operations and a 
      comprehensive list of all routines
-     in Macaulay 2 which return or use modules, see ", TO Module, ".",
+     in Macaulay2 which return or use modules, see ", TO Module, ".",
      Subnodes => {
 	  "construction of modules",
 	  TO "free modules",
@@ -141,13 +141,13 @@ document {
      }
 
 document { Key => "right modules or left modules?",
-     "Macaulay 2 can handle non-commutative rings, and for such rings there is a difference between left modules and right modules.
-     In Macaulay 2, all the modules are left modules, but matrices act on the left, too.  The usual convention would be to have the matrices
+     "Macaulay2 can handle non-commutative rings, and for such rings there is a difference between left modules and right modules.
+     In Macaulay2, all the modules are left modules, but matrices act on the left, too.  The usual convention would be to have the matrices
      act on the right, so the homomorphism rule (", TT "f(av)=af(v)", ") becomes a consequence of associativity of matrix-vector-scalar
-     multiplication (", TT "(av)f=a(vf)", ").  Macaulay 2 makes things come out okay in the end -- a left ", TT "R", "-module can be regarded
+     multiplication (", TT "(av)f=a(vf)", ").  Macaulay2 makes things come out okay in the end -- a left ", TT "R", "-module can be regarded
      naturally as a right ", TT "R'", "-module, where ", TT "R'", " is the opposite ring of ", TT "R", ", obtained from the ring ", TT "R", "
      by reversing the multiplication.  Thus matrices over ", TT "R'", " can act on ", TT "R", "-modules from the left.  Matrices over ", TT "R", "
-     in Macaulay 2 are ", EM "really", " matrices over ", TT "R'", ".",
+     in Macaulay2 are ", EM "really", " matrices over ", TT "R'", ".",
      PARA{},
      "We illustrate this state of affairs with an example over a (noncommutative) Weyl algebra.  First observe the noncommutativity.",
      EXAMPLE lines ///
@@ -261,7 +261,7 @@ document {
 	  "coker F",
 	  "image F",
 	  },
-     "Some routines in Macaulay 2 have abbreviations, for example ", TT "ker", 
+     "Some routines in Macaulay2 have abbreviations, for example ", TT "ker", 
      " may be used for ", TT "kernel", ", and 
      ", TT "coker", " may be used for ", TT "cokernel", ".  
      The ", TT "image", " function has no abbreviated form.",
@@ -337,7 +337,7 @@ document {
 
 document {
      Key => "subquotient modules",
-     Headline => "the way Macaulay 2 represents modules",
+     Headline => "the way Macaulay2 represents modules",
      "Not all modules arise naturally as submodules or quotients of free modules.  As an example,
      consider the module ", TEX "$M = I/I^2$", " in the example below.",
      EXAMPLE {
@@ -345,7 +345,7 @@ document {
 	  "I = ideal(x*y,x*z,y*z)",
 	  "M = I/I^2"
 	  },
-     TEX "Macaulay 2 represents each module (at least conceptually) as a subquotient module, that is, a submodule of 
+     TEX "Macaulay2 represents each module (at least conceptually) as a subquotient module, that is, a submodule of 
      a quotient of an ambient free module.  A subquotient module is determined by two
      matrices $f : R^m \\rightarrow{} R^n$ and $g : R^p \\rightarrow{} R^n$.
      The {\\em subquotient module} with generators $f$ and relations $g$ is by definition the module
@@ -367,9 +367,9 @@ document {
  	  "N1 = (image f + image g)/(image g)",
 	  "M === N"
 	  },
-     "Notice that Macaulay 2 allows one to write (image f)/(image g), even though 
+     "Notice that Macaulay2 allows one to write (image f)/(image g), even though 
      mathematically this really means: (image f + image g)/(image g).  There is an important
-     difference however.  Modules in Macaulay 2 always come with an ordered set of generators,
+     difference however.  Modules in Macaulay2 always come with an ordered set of generators,
      and N1 has 4 more generators (all zero in the module!) than N.  The 
      modules M and N though are identical.",
      PARA{},
@@ -456,7 +456,7 @@ document {
 	  },
      "Notice that as is usual in Macaulay2, the target comes before the source.",
      PARA{},
-     "Macaulay 2 doesn't display the source and target, unless they are both free
+     "Macaulay2 doesn't display the source and target, unless they are both free
      modules.  Use ", TO target, " and ", TO source, " to get them.  The ",
      TO matrix, " routine recovers the matrix of free modules between the
      generators of the source and target.",
@@ -465,7 +465,7 @@ document {
 	  "target F == R^1",
 	  "matrix F"
 	  },
-     "Macaulay 2 also does not check that the homomorphism is well-defined
+     "Macaulay2 also does not check that the homomorphism is well-defined
      (i.e. the relations of the source map into the relations of the target).
      Use ", TO isWellDefined, " to check.  This generally requires a Gröbner
      basis computation (which is performed automatically, if it is required
@@ -723,14 +723,14 @@ document {
 	m_1 ** m_2 ** .. ** m_k = 0     if m_i = m_j for i != j
 	///,
 	"If ", TT "M", " is a free ", TT "R", "-module of rank ", TT "n", ", then the ", TT "k", "-th exterior power of ", TT "M",
-	" is a free ", TT "R", "-module of rank ", TT "binomial(n,k)", ". Macaulay 2 computes the ", TT "k", "-th
+	" is a free ", TT "R", "-module of rank ", TT "binomial(n,k)", ". Macaulay2 computes the ", TT "k", "-th
 	exterior power of a module ", TT "M", " with the command exteriorPower.",
 	EXAMPLE {
 		"R = ZZ/2[x,y]",
 		"exteriorPower(3,R^6)",
 		"binomial(6,3)"
 		},
-	"Macaulay 2 can compute exterior powers of modules which are not free as well.",
+	"Macaulay2 can compute exterior powers of modules which are not free as well.",
 	EXAMPLE {
 		"exteriorPower(2,R^1)",
 		"I = module ideal (x,y)",
@@ -803,7 +803,7 @@ document {
 document {
      Key => "extracting elements",
      "If M is an R-module, the best way to think of an element v of M
-     in Macaulay 2 is as a map of the ring into M, mapping 1 to v."
+     in Macaulay2 is as a map of the ring into M, mapping 1 to v."
      }
 
 -- no links to this node
@@ -851,8 +851,8 @@ document {
 document {
      Key => "what is a subquotient module?",
      "There are two basic types of modules over a ring R: submodules of R^n
-     and quotients of R^n.  Macaulay 2's notion of a module includes both
-     of these.  Macaulay 2 represents every module as a quotient image(f)/image(g),
+     and quotients of R^n.  Macaulay2's notion of a module includes both
+     of these.  Macaulay2 represents every module as a quotient image(f)/image(g),
      where f and g are both homomorphisms from free modules to F: f : F --> G and g : H --> G.
      The columns of f represent the generators of ", TT "M", ", and the columns of g represent the relations of the module M.",
      EXAMPLE {

@@ -26,6 +26,6 @@ time doGB(gens I,0,{Lex=>5,Position})
 ///
 end
 -- Local Variables:
--- compile-command: "make -C $M2BUILDDIR/Macaulay2/test lex.out"
+-- compile-command: "make -C $M2BUILDDIR/Macaulay2/packages/Macaulay2Doc/test lex.out"
 -- End:
 

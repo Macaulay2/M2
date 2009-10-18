@@ -1,3 +1,4 @@
+-- This one seems fixed.  10-12-09.
 kk = QQ[a..d]
 I = ideal"1/2a2bc-2/3c2,a-b"
 decompose I

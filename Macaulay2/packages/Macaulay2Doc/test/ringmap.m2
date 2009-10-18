@@ -12,5 +12,5 @@ assert(f 4 == -1)
 kernel f
 end
 -- Local Variables:
--- compile-command: "make -C $M2BUILDDIR/Macaulay2/test ringmap.out"
+-- compile-command: "make -C $M2BUILDDIR/Macaulay2/packages/Macaulay2Doc/test ringmap.out"
 -- End:

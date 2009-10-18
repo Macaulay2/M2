@@ -13,15 +13,34 @@ runExamples = method(Options=>options integralClosure)
 runExamples (HashTable,ZZ) := o -> (H,i) -> (
      I := value H#i#1;
      A = (ring I)/I;
-     t := timing (A' = integralClosure(A, o));
-     answer := {i, H#i#0, char ring I, numgens ring I, numgens I, t#0};
+     tim := timing (A' = integralClosure(A, o));
+     answer := {i, H#i#0, char ring I, numgens ring I, numgens I, tim#0};
      print answer;
      answer
      )
 runExamples (HashTable,List) := o -> (H,L) -> apply(L,a -> runExamples(H,a,o))
 runExamples HashTable := o -> (H) -> runExamples(H, sort keys H, o)
 
+
+runS2Examples = method(Options=>options integralClosure)
+runS2Examples (HashTable,ZZ) := o -> (H,i) -> (
+     I := value H#i#1;
+     A = (ring I)/I;
+     if numgens I > 1 and char A == 0 or char A > 7 then (
+       tim := timing ((F,G) = S2ification(A));
+       A' := target F;
+       if A' =!= A then print "NOT S2";
+       answer := {i, H#i#0, char ring I, numgens ring I, numgens I, numgens A', numgens ideal A', tim#0};
+       )
+     else answer = {i, H#i#0, char ring I};
+     print answer;
+     answer
+     )
+runS2Examples (HashTable,List) := o -> (H,L) -> apply(L,a -> runS2Examples(H,a,o))
+runS2Examples HashTable := o -> (H) -> runS2Examples(H, sort keys H, o)
+
 viewResults = (L) -> print netList(L, Boxes=>false, HorizontalSpace=>2)
+
 
 runSingularIC = method()
 runSingularIC Ideal := (I) -> (
@@ -64,16 +83,16 @@ others = sort toList(set keys H - set planecurves - set spacesurfaces)
 level1 = {1,2,6,7,8,15,16,24,27,
      29,30,31,32,33,34,35,36,37,38,
      41,44,45,48,51} -- these are examples that take roughly < 1 sec 
-level2 = {11,17,28,39,
+level2 = {3,4,11,17,28,39,
      43,46,49,50,53} -- these are examples that take roughly 1-10 sec
-level3 = {9,26,54,55} -- take 10-60 sec
+level3 = {9,25,26,54,55,65,80} -- take 10-60 sec
 level4 = {10} -- take 60-600 sec
 level5 = {} -- finish, but take > 600 sec
-levelbig = {3,4,5,12,13,14,18,
-     20,21,25,40,42,61,62,65} -- these have not successfully completed, or just have not been done yet
-levelbuggy = {19,22,23,47,52} -- ones that crash (currently -- these will be 
+levelbig = {5,12,13,14,18,
+     20,21,40,42,61,62} -- these have not successfully completed, or just have not been done yet
+levelbuggy = {19,22,23,47,52,79} -- ones that crash (currently -- these will be 
   --moved out to one of the ones above when they start working)
-leveltofile = {56, 57, 58, 59, 60, 63, 64, 66, 67, 68, 69, 70, 71, 72, 73, 74, 75, 76, 77, 78, 79, 80, 81, 82, 83, 84, 85}
+leveltofile = {56, 57, 58, 59, 60, 63, 64, 66, 67, 68, 69, 70, 71, 72, 73, 74, 75, 76, 77, 78, 81, 82, 83, 84, 85}
 end
 restart
 load "runexamples.m2"
@@ -85,8 +104,9 @@ viewResults runExamples(H, level1, Verbosity=>2, Strategy=>{SimplifyFractions})
 viewResults runExamples(H, level2, Verbosity=>0, Strategy=>{SimplifyFractions, ExtraMinors1})
 viewResults runExamples(H, level3)
 viewResults runExamples(H, level4)
+viewResults runExamples(H, level1, Verbosity=>1)
 runExamples(H, leveltofile)
-<<<<<<< .mine
+
 runExamples(H, 10, Verbosity => 3, Strategy =>{SimplifyFractions, ExtraMinors1})
 runExamples(H, 10, Verbosity => 6, Strategy =>{ReallySimplifyFractions})
 runExamples(H, 10, Verbosity => 3, Strategy =>{SimplifyFractionsInBase})
@@ -96,7 +116,7 @@ runExamples(H, 60, Verbosity => 3, Strategy =>{SimplifyFractions})
 runExamples(H, 60, Verbosity => 0, Strategy =>{SimplifyFractionsInBase})
 runExamples(H, 60, Verbosity => 0)
 =======
-
+runS2Examples H
 
 >>>>>>> .r8646
 -- level1 examples, r8637, 4/28/09, MBP 10.5.6
@@ -179,10 +199,29 @@ runExamples(H, 60, Verbosity => 0)
 -- where we stand at r8620, running on MBP 10.5.6:
 print netList runExamples(H, {40,42})
 
-print netList runExamples(H, level1)
-print netList runExamples(H, level2)
-print netList runExamples(H, level3)
-print netList runExamples(H, level4)
+viewResults time runExamples(H, level1)
+viewResults time runExamples(H, level1, Strategy=>{RadicalCodim1})
+
+viewResults time runExamples(H, level2, Verbosity=>1)
+viewResults time runExamples(H, level2, Verbosity=>0, Strategy=>{RadicalCodim1})
+
+print netList time runExamples(H, level2, Verbosity=>1)
+print netList time runExamples(H, level3, Verbosity => 1)
+print netList time runExamples(H, level3, Verbosity => 1, Strategy=>{RadicalCodim1})
+print netList time runExamples(H, level4, Verbosity => 1)
+print netList time runExamples(H, level4, Verbosity => 1, Strategy=>{RadicalCodim1})
+
+print netList time runExamples(H, leveltofile, Verbosity => 1)
+print netList time runExamples(H, leveltofile, Verbosity => 1, Strategy=>{RadicalCodim1})
+
+-- MES
+print netList time runExamples(H, levelbig, Verbosity => 1, Strategy=>{RadicalCodim1})
+
+print netList time runExamples(H, {5}, Verbosity => 1) -- not hard
+print netList time runExamples(H, {14,18,19,20,21,22,61}, Verbosity => 1, Strategy=>{RadicalCodim1}) -- not hard
+print netList time runExamples(H, {47,52,79}, Verbosity => 1, Strategy=>{RadicalCodim1}) -- actual error
+print netList time runExamples(H, {5,12,13,23,40,42,62}, Verbosity => 1, Strategy=>{RadicalCodim1}) -- hard?
+print netList time runExamples(H, {5,12,13,23,40,42,62}, Verbosity => 1) -- hard?
 
 +--+------------------+-----+-+-+-------+
 |1 |leonard1          |0    |2|1|.784942|
@@ -324,8 +363,17 @@ runExamples(H,56)
 runExamples(H,55)
 runExamples(H,54) -- {54, rees1-32003, 48.1293} (3-15-09)
 -----------------------------------------------------------
+-- Status on 10-8-09, getting ready for 1.3 release
+viewResults time runExamples(H, level1)
+viewResults time runExamples(H, level1, Strategy=>{RadicalCodim1})
 
+viewResults time runExamples(H, level2, Verbosity=>1)
+viewResults time runExamples(H, level2, Verbosity=>0, Strategy=>{RadicalCodim1})
 
+viewResults time runExamples(H, level3, Verbosity=>1)
+viewResults time runExamples(H, level3, Verbosity=>1, Strategy=>{RadicalCodim1})
+
+-----------------------------------------------------------
 runExamples H
 runExamples(H,20)
 netList runExamples(H,{1,2,3,4,5,6,7})
@@ -383,7 +431,8 @@ use ring F
 D = discriminant(F,x)
 factor D
 singularLocus C
-eliminate(o24_1,x)
+J = ideal oo
+eliminate(x,J)
 
 -- This one is really bad at the moment...
 kk = ZZ/32003

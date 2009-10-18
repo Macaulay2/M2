@@ -1,4 +1,4 @@
-AC_INIT(Macaulay 2, 1.2.1, Macaulay2@math.uiuc.edu, Macaulay2)
+AC_INIT(Macaulay 2, 1.2.99, Macaulay2@math.uiuc.edu, Macaulay2)
 AC_CONFIG_HEADERS(include/M2/config.h)
 AC_CONFIG_FILES(m4_include(config/files))
 AC_SUBST(CONFIGURED_FILES,"$ac_config_files")
@@ -67,7 +67,7 @@ AC_CHECK_PROGS(LINTIAN,lintian)
 AC_CHECK_PROGS(LDD,ldd)
 AC_CHECK_PROGS(FAKEROOT,fakeroot)
 AC_CHECK_PROGS(RPMLINT,rpmlint)
-AC_CHECK_PROGS(TAR,gtar tar)
+AC_CHECK_PROGS(TAR,gtar gnutar tar)
 AC_CHECK_PROGS(FIND,gfind find)
 AC_CHECK_PROGS(STRIPCMD,strip)
 if test "$STRIPCMD" != ""
@@ -393,11 +393,11 @@ test "$MEMDEBUG" = "yes" && DEBUG=yes
 test "$DEBUG" = "yes" && STRIP=no
 test "$PROFILING" = "yes" && CFLAGS="$CFLAGS -pg" CXXFLAGS="$CXXFLAGS -pg" LDFLAGS="$LDFLAGS -pg" STRIP=no
 
-AC_SUBST(PACKAGES, dnl the internal ones first, then after that, the oldest first:
+AC_SUBST(PACKAGES, dnl first Style, then Macaulay2Doc, then the other internal ones, then other ones, starting with the oldest
 "
+  Style
   Macaulay2Doc
   FirstPackage
-  Style
   Parsing
   Classic
   Browse
@@ -448,6 +448,7 @@ AC_SUBST(PACKAGES, dnl the internal ones first, then after that, the oldest firs
   RationalPoints
   MapleInterface
   ConvexInterface
+  SRdeformations
 ")
 # pending packages: SRdeformations
 
@@ -595,18 +596,35 @@ AC_COMPILE_IFELSE([# 1 "foo" 1 3 4
 
 AC_SUBST(BUILTLIBS,)
 
-# this list reflects dependencies
-#  factory needs ntl and gmp, libfac needs factory
-#  lapack includes blas, makes both libblas and liblapack
-#  mpfr needs gmp
-AC_SUBST(LIBLIST, "gc    gdbm    gmp    mpfr    pari    readline    ntl    factory        libfac         lapack    frobby    scscp")
-AC_SUBST(LIBFILES,"libgc libgdbm libgmp libmpfr libpari libreadline libntl libcf libcfmem libfac libblas liblapack libfrobby libscscp")
+# the list LIBLIST is the list of libraries that might be used and linked into M2
+# the list PROGLIST is the list of programs and libraries for them that are distributed with M2
+#     initially, we offer no option for not compiling some of them
+# it reflects dependencies, with prerequisites listed first
+# in particular, there are the following dependencies:
+#    factory needs ntl and gmp, libfac needs factory
+#    lapack includes blas, makes both libblas and liblapack
+#    mpfr needs gmp
+#    mpir is a plug-in replacement for gmp
+#    4ti2 needs glpk
+#    gfan needs cddlib
+#    polymake cannot be included in Macaulay2 because its compile/build/install procedure is flawed:
+#	it uses a dynamic readline library that can only be provided by fink and probably will not be copied into the install location
+#       it offers no way to provide a directory tree containing a readline library we've compiled
+#	it writes a file into the user's home directory called ".polymake"
+#	it asks questions
+#    normaliz needs mpir providing libgmp and libgmpxx, but we provide that, anyway
+AC_SUBST(PROGLIST, "glpk 4ti2 cddlib gfan normaliz")
+AC_SUBST(LIBLIST, "gc    gdbm    mpir    mpfr    pari    readline    ntl    factory        libfac         lapack    frobby    scscp	")
+AC_SUBST(LIBFILES,"libgc libgdbm libmpir libmpfr libpari libreadline libntl libcf libcfmem libfac libblas liblapack libfrobby libscscp")
 for i in $LIBLIST
 do eval BUILD_$i=no
 done
+for i in $PROGLIST
+do eval BUILD_$i=yes
+done
 
 LIBLIST=" $LIBLIST "
-AC_ARG_ENABLE(build-libraries, AS_HELP_STRING(--enable-build-libraries=...,list of libraries to build from downloaded source code (e.g., gc gdbm gmp mpfr readline pari ntl factory libfac lapack frobby scscp)),
+AC_ARG_ENABLE(build-libraries, AS_HELP_STRING(--enable-build-libraries=...,list of libraries to build from downloaded source code (e.g., gc gdbm mpir mpfr readline pari ntl factory libfac lapack frobby scscp)),
     [for i in $enableval
     do case $LIBLIST in
 	    *" $i "*) eval BUILD_$i=yes ;;
@@ -630,36 +648,70 @@ then AC_SEARCH_LIBS(add_history,history,,BUILD_readline=yes)
 fi
 test $BUILD_readline = yes && BUILTLIBS="-lreadline -lhistory $BUILTLIBS"
 
-if test $BUILD_gmp = no
+dnl We no longer link with gmp.
+dnl if test $BUILD_gmp = no
+dnl then :
+dnl      AC_LANG(C)
+dnl      AC_SEARCH_LIBS(__gmpz_init,gmp,,BUILD_gmp=yes)
+dnl      AC_CHECK_HEADER(gmp.h,,BUILD_gmp=yes)
+dnl      if test $BUILD_gmp = no
+dnl      then AC_MSG_CHECKING([whether gmp library is recent enough])
+dnl           # version 4.1.4 of gmp has a random number generator different from 4.2.1's
+dnl      	  AC_RUN_IFELSE( [[
+dnl      	  #include <gmp.h>
+dnl      	  #include <stdio.h>
+dnl      	  int main() {
+dnl      	    int A=4,B=2,a=0,b=0,c=0,r=sscanf(__gmp_version,"%d.%d.%d",&a,&b,&c), t;
+dnl      	    if (r < 2) {
+dnl      	      fprintf(stderr,"failed to parse gmp version number: %s\n", __gmp_version);
+dnl      	      return 1;
+dnl      	    }
+dnl      	    t = a>A || a==A && b>=B;
+dnl      	    printf("(gmp version %s %s %d.%d) ",__gmp_version, t ? ">=" : "<", A, B);
+dnl      	    return !t;
+dnl      	  }
+dnl      	  ]],
+dnl      	  [ AC_MSG_RESULT(yes) ],
+dnl      	  [ AC_MSG_RESULT(no); BUILD_gmp=yes ],
+dnl      	  [ AC_MSG_RESULT([cross-compiling, test not possible]) ])
+dnl      fi
+dnl fi
+dnl dnl frobby uses gmpxx
+dnl if test $BUILD_gmp = yes
+dnl then BUILTLIBS="-lgmpxx -lgmp $BUILTLIBS"
+dnl else LIBS="-lgmpxx $LIBS"
+dnl fi
+
+if test $BUILD_mpir = no
 then AC_LANG(C)
-     AC_SEARCH_LIBS(__gmpz_init,gmp,,BUILD_gmp=yes)
-     AC_CHECK_HEADER(gmp.h,,BUILD_gmp=yes)
-     if test $BUILD_gmp = no
-     then AC_MSG_CHECKING([whether gmp library is recent enough])
-          # version 4.1.4 of gmp has a random number generator different from 4.2.1's
+     AC_SEARCH_LIBS(__mpirz_init,mpir,,BUILD_mpir=yes)
+     AC_CHECK_HEADER(mpir.h,,BUILD_mpir=yes)
+     if test $BUILD_mpir = no
+     then AC_MSG_CHECKING([whether mpir library is recent enough])
+          # version 4.1.4 of mpir has a random number generator different from 4.2.1's
 	  AC_RUN_IFELSE( [[
-	  #include <gmp.h>
+	  #include <mpir.h>
 	  #include <stdio.h>
 	  int main() {
-	    int A=4,B=2,a=0,b=0,c=0,r=sscanf(__gmp_version,"%d.%d.%d",&a,&b,&c), t;
+	    int A=4,B=2,a=0,b=0,c=0,r=sscanf(__mpir_version,"%d.%d.%d",&a,&b,&c), t;
 	    if (r < 2) {
-	      fprintf(stderr,"failed to parse gmp version number: %s\n", __gmp_version);
+	      fprintf(stderr,"failed to parse mpir version number: %s\n", __mpir_version);
 	      return 1;
 	    }
 	    t = a>A || a==A && b>=B;
-	    printf("(gmp version %s %s %d.%d) ",__gmp_version, t ? ">=" : "<", A, B);
+	    printf("(mpir version %s %s %d.%d) ",__mpir_version, t ? ">=" : "<", A, B);
 	    return !t;
 	  }
 	  ]],
 	  [ AC_MSG_RESULT(yes) ],
-	  [ AC_MSG_RESULT(no); BUILD_gmp=yes ],
+	  [ AC_MSG_RESULT(no); BUILD_mpir=yes ],
 	  [ AC_MSG_RESULT([cross-compiling, test not possible]) ])
      fi
 fi
-dnl frobby uses gmpxx
-if test $BUILD_gmp = yes
-then BUILTLIBS="-lgmpxx -lgmp $BUILTLIBS"
-else LIBS="-lgmpxx $LIBS"
+dnl frobby uses mpirxx
+if test $BUILD_mpir = yes
+then BUILTLIBS="-lmpirxx -lmpir $BUILTLIBS"
+else LIBS="-lmpirxx $LIBS"
 fi
 
 if test "$PARI" = yes
@@ -697,6 +749,11 @@ then if test $BUILD_frobby = no
      test $BUILD_frobby = yes && BUILTLIBS="-lfrobby $BUILTLIBS"
 fi
 
+if test $BUILD_glpk = no
+then AC_LANG(C)
+     AC_CHECK_HEADER(glpk.h,,BUILD_glpk=yes)
+fi
+
 AC_SUBST(ULIMIT_T,yes)
 AC_SUBST(ULIMIT_M,yes)
 AC_SUBST(ULIMIT_V,yes)
@@ -706,7 +763,7 @@ AC_SUBST(ULIMIT_S,yes)
 ( ulimit -v 2000 2>/dev/null) || ULIMIT_V=no
 ( ulimit -s 2000 2>/dev/null) || ULIMIT_S=no
 
-if test $BUILD_gmp = yes
+if test $BUILD_mpir = yes
 then BUILD_mpfr=yes
 elif test $BUILD_mpfr = no
 then AC_LANG(C)
@@ -816,7 +873,7 @@ then AC_LANG(C++)
      fi
 
      if test $BUILD_ntl = no
-     then AC_MSG_CHECKING([whether ntl library is compiled with gmp, using NTL/config.h])
+     then AC_MSG_CHECKING([whether ntl library is compiled with gmp (or mpir), using NTL/config.h])
 	  AC_RUN_IFELSE([[
 		  #include <NTL/config.h>
 		  main () {
@@ -828,7 +885,7 @@ then AC_LANG(C++)
 			  #endif
 			  ); }]],
 	     [ AC_MSG_RESULT(yes) ],
-	     [ AC_MSG_RESULT([no, ntl compiled with gmp is required (ntl will be built from downloaded sources)]); BUILD_ntl=yes ])
+	     [ AC_MSG_RESULT([no, ntl compiled with gmp (or mpir) is required (ntl will be built from downloaded sources)]); BUILD_ntl=yes ])
      fi
 fi
 test $BUILD_ntl = yes && BUILTLIBS="-lntl $BUILTLIBS"
@@ -990,10 +1047,10 @@ AC_RUN_IFELSE([
     AC_MSG_RESULT([yes (cross-compiling, not tested)]))
 AC_DEFINE_UNQUOTED(GETADDRINFO_WORKS,$GETADDRINFO_WORKS,[whether getaddrinfo can handle numeric service (port) numbers])
 
-AC_SUBST(LIBRARIES,)
-for i in $LIBLIST
+AC_SUBST(BUILDLIST,)
+for i in $LIBLIST $PROGLIST
 do eval t=\$BUILD_$i
-   test "$t" = yes && LIBRARIES="$LIBRARIES $i"
+   test "$t" = yes && BUILDLIST="$BUILDLIST $i"
 done
 
 TESTFLAG=-Wno-strict-aliasing
@@ -1094,7 +1151,7 @@ do case $i in
    esac
 done
 
-AC_MSG_NOTICE([using LIBRARIES    = $LIBRARIES (libraries to be built from downloaded sources)])
+AC_MSG_NOTICE([using BUILDLIST    = $BUILDLIST (libraries and programs to be built from downloaded sources)])
 AC_MSG_NOTICE([using BUILTLIBS    = $BUILTLIBS])
 AC_MSG_NOTICE([using SINGULARLIBS = $SINGULARLIBS])
 AC_MSG_NOTICE([using LIBS_STATIC  = $LIBS_STATIC])
@@ -1103,7 +1160,7 @@ AC_MSG_NOTICE([using LIBS_DYNAMIC = $LIBS_DYNAMIC])
 
 BUILDING=yes
 AC_ARG_ENABLE(building, AS_HELP_STRING(--disable-building,disable automatic building of libraries), BUILDING=$enableval)
-if test "$BUILDING" = no -a "$LIBRARIES"
+if test "$BUILDING" = no -a "$BUILDLIST"
 then AC_MSG_ERROR([automatic building of libraries disabled, but some must be built])
 fi
 
@@ -1235,22 +1292,25 @@ AC_MSG_NOTICE([staging area for common files: $pre_prefix])
 AC_MSG_NOTICE([staging area for architecture dependent files: $pre_exec_prefix])
 
 AC_SUBST(packagesdir,$datadir/Macaulay2)
-AC_SUBST(libm2dir,$libdir/Macaulay2)
+AC_SUBST(libm2dir,$libdir/Macaulay2/$MACHINE)
 AC_SUBST(emacsdir,$datadir/emacs/site-lisp)
-AC_SUBST(librariesdir,$libm2dir/Core)
-AC_SUBST(packagecachecoredir,$libm2dir/Core/cache)
+AC_SUBST(librariesdir,$libm2dir/lib)
+AC_SUBST(programsdir,$libexecdir/Macaulay2/$MACHINE)
+AC_SUBST(packagecachecoredir,$libm2dir/cache)
 
 AC_SUBST(tail_packagesdir,$tail_datadir/Macaulay2)
-AC_SUBST(tail_libm2dir,$tail_libdir/Macaulay2)
+AC_SUBST(tail_libm2dir,$tail_libdir/Macaulay2/$MACHINE)
 AC_SUBST(tail_emacsdir,$tail_datadir/emacs/site-lisp)
-AC_SUBST(tail_librariesdir,$tail_libm2dir/Core)
-AC_SUBST(tail_packagecachecoredir,$tail_libm2dir/Core/cache)
+AC_SUBST(tail_librariesdir,$tail_libm2dir/lib)
+AC_SUBST(tail_programsdir,$tail_libexecdir/Macaulay2/$MACHINE)
+AC_SUBST(tail_packagecachecoredir,$tail_libm2dir/cache)
 
 AC_SUBST(pre_packagesdir,$pre_datadir/Macaulay2)
-AC_SUBST(pre_libm2dir,$pre_libdir/Macaulay2)
+AC_SUBST(pre_libm2dir,$pre_libdir/Macaulay2/$MACHINE)
 AC_SUBST(pre_emacsdir,$pre_datadir/emacs/site-lisp)
-AC_SUBST(pre_librariesdir,$pre_libm2dir/Core)
-AC_SUBST(pre_packagecachecoredir,$pre_libm2dir/Core/cache)
+AC_SUBST(pre_librariesdir,$pre_libm2dir/lib)
+AC_SUBST(pre_programsdir,$pre_libexecdir/Macaulay2/$MACHINE)
+AC_SUBST(pre_packagecachecoredir,$pre_libm2dir/cache)
 
 AC_OUTPUT()
 

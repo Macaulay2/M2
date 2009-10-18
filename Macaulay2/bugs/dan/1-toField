@@ -1,0 +1,9 @@
+Maybe toField should change behavior:
+
+toField R
+
+creates a new ring identical to R, except: monomial order has changed
+(Position=>Up is first), and it is now treated as a field.
+
+I like that better on many fronts, especially since it would not
+change R itself...

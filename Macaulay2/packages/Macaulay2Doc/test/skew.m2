@@ -8,5 +8,5 @@ E = ZZ/32003[x,y,z,a..f,SkewCommutative => {a,b,c,d,e,f}]
 
 end
 -- Local Variables:
--- compile-command: "make -C $M2BUILDDIR/Macaulay2/test skew.out"
+-- compile-command: "make -C $M2BUILDDIR/Macaulay2/packages/Macaulay2Doc/test skew.out"
 -- End:

@@ -44,7 +44,7 @@ document {
      Headline => "the process identifier",
      Usage => "processID()",
      Outputs => {
-	  ZZ => "the process identifier of the current Macaulay 2 process"
+	  ZZ => "the process identifier of the current Macaulay2 process"
 	  },
      EXAMPLE "processID()",
      SeeAlso => {groupID, setGroupID}
@@ -55,7 +55,7 @@ document {
      Headline => "the process group identifier",
      Usage => "groupID()",
      Outputs => {
-	  ZZ => "the process group identifier of the current Macaulay 2 process"
+	  ZZ => "the process group identifier of the current Macaulay2 process"
 	  },
      EXAMPLE "groupID()",
      SeeAlso => {processID, setGroupID}
@@ -98,7 +98,7 @@ document {
      Headline => "load state of the system from a file",
      TT "loaddata s", " -- load all data segments for the current process from 
      the file whose name is stored in the string ", TT "s", ".  The file must have been
-     created with ", TO "dumpdata", " and the same version of Macaulay 2.",
+     created with ", TO "dumpdata", " and the same version of Macaulay2.",
      PARA{},
      "The file should have been created with ", TO "dumpdata", ".  Everything will
      be returned to its former state except:",
@@ -697,7 +697,7 @@ document {
 	       CurrentVersion => String => {"the version currently installed"},
 	       Repository => String => {"the URL of the repository"},
 	       DebuggingMode => Boolean => {"the debugging mode to be passed to ", TO "installPackage"},
-	       UserMode => Boolean => {"the user mode to be passed to ", TO "installPackage"},
+	       UserMode => {"the user mode to be passed to ", TO "installPackage"},
 	       Configuration => List => {"the list of configuration values to be passed to ", TO "loadPackage"}
 	       },
 	  Outputs => {

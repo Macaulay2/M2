@@ -24,5 +24,5 @@ substitute(s^2,{s => 4})
 
 end
 -- Local Variables:
--- compile-command: "make -C $M2BUILDDIR/Macaulay2/test ringmap3.out"
+-- compile-command: "make -C $M2BUILDDIR/Macaulay2/packages/Macaulay2Doc/test ringmap3.out"
 -- End:

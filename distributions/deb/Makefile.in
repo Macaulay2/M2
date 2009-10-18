@@ -31,8 +31,11 @@ macaulay2/control.prelim : @srcdir@/macaulay2/control.prelim.in Makefile
 announce:
 	@ echo "============================================================================="
 	@ echo "package files prepared:"
-	@ echo "        $(PKG_DEB)"
 	@ echo "        $(PKG_COM_DEB)"
+	@ echo "        $(PKG_DEB)"
+	@ echo "    installation commands:"
+	@ echo "        sudo dpkg --install $(shell cd ../..; pwd)/$(PKG_COM_DEB)"
+	@ echo "        sudo dpkg --install $(shell cd ../..; pwd)/$(PKG_DEB)"
 	@ echo "============================================================================="
 ifeq ($(TIDY),yes)
 maybe-tidy: tidy_after

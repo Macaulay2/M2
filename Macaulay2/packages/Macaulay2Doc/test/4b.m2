@@ -35,5 +35,5 @@ assert( degree K == 16 )
 assert( degtan K == 88 )
 end
 -- Local Variables:
--- compile-command: "make -C $M2BUILDDIR/Macaulay2/test 4b.out"
+-- compile-command: "make -C $M2BUILDDIR/Macaulay2/packages/Macaulay2Doc/test 4b.out"
 -- End:

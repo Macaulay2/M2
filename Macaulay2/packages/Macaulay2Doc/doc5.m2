@@ -98,7 +98,7 @@ document {
      Headline => "execute another program",
 	Usage => "exec argv",
      TT "exec argv", "  uses the 'exec' operating system call to
-     start up another program, replacing the current Macaulay 2 process.
+     start up another program, replacing the current Macaulay2 process.
      Here ", TT "argv", " is a string, or a sequence or list of strings
      to be passed as arguments to the new process.  The first string
      is the name of the executable file."
@@ -106,7 +106,7 @@ document {
 
 document {
      Key => restart,
-     Headline => "restart Macaulay 2",
+     Headline => "restart Macaulay2",
      Usage => "restart",
      Consequences => { {"the program will be restarted from the beginning"} },
      PARA{
@@ -186,7 +186,7 @@ document {
      Key => benchmark,
      Headline => "accurate timing of execution",
      Inputs => {
-	     "s" => String => "a string containing Macaulay 2 code"
+	     "s" => String => "a string containing Macaulay2 code"
 	     },
      Outputs => {
 	     RR => {"the number of seconds it takes to evaluate the code in ", TT "s"}
@@ -194,7 +194,7 @@ document {
      Usage => "benchmark s",
      "Produces an accurate timing for the code contained in the string ", TT "s", ".  The value returned is the number of seconds.",
      EXAMPLE {
-		///benchmark "2^500"///
+		///benchmark "sqrt 2p3000000"///
 		},
      "The snippet of code provided will be run enough times to register
      meaningfully on the clock, and the garbage collector will be called
@@ -393,7 +393,7 @@ document {
 	  "set{1,3,2} === set{1,2,3}"
 	  },
      PARA{},
-     TO2(Ideal,"Ideals"), " in Macaulay 2 come equipped with a specific sequence of generators, so the following two ideals are not considered strictly equal,
+     TO2(Ideal,"Ideals"), " in Macaulay2 come equipped with a specific sequence of generators, so the following two ideals are not considered strictly equal,
      and thus the set containing them will appear to have two elements.",
      EXAMPLE {
      	  "I = ideal(a,b); J = ideal(b,a);",
@@ -593,7 +593,7 @@ document {
      Usage => "setRandomSeed()",
      Consequences => {
 	  {"Initializes the random number generator to a fixed state, identical to the
-	       initial state in version 1.2 and earlier of Macaulay 2.  After version 1.2,
+	       initial state in version 1.2 and earlier of Macaulay2.  After version 1.2,
 	       the random number seed is initially set to a number that depends on the current date, time (in seconds), and process id."}
 	  },
      EXAMPLE lines ///
@@ -687,10 +687,10 @@ document {
 	  {"the private dictionary of the package ", TT "p", " is added to ", TO "dictionaryPath", 
 	       " so its non-exported symbols are visible" }
 	  },
-     "For example, the private dictionary for Macaulay 2 may be opened using",
+     "For example, the private dictionary for Macaulay2 may be opened using",
      EXAMPLE"debug Core",
-     "This allows access to the low level (\"raw\") routines implemented by the Macaulay 2 engine,
-     although this is mainly useful for debugging Macaulay 2 itself.",
+     "This allows access to the low level (\"raw\") routines implemented by the Macaulay2 engine,
+     although this is mainly useful for debugging Macaulay2 itself.",
      EXAMPLE {
 	  "R = QQ[a..d];",
 	  "raw R"

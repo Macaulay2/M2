@@ -10,7 +10,7 @@ document {
 	  "pat" => String => "a regular expression pattern to match"
 	  },
      Outputs => {
-	  List => "of global symbols in Macaulay 2 matching the given pattern"
+	  List => "of global symbols in Macaulay2 matching the given pattern"
 	  },
      "In the simplest case, the list of symbols containing the given string is returned.",
      EXAMPLE {

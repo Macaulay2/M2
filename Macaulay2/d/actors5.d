@@ -664,6 +664,7 @@ import PARIVERSION:string;
 import SCSCPVERSION:string;
 import GCVERSION:string;
 import GMPVERSION:string;
+import MPIRVERSION:string;
 import MysqlVERSION:string;
 import PYTHONVERSION:string;
 import NTLVERSION:string;
@@ -699,6 +700,7 @@ storeInHashTable(x,Expr("gc version"),Expr(GCVERSION));
 storeInHashTable(x,Expr("mysql version"),Expr(MysqlVERSION));
 storeInHashTable(x,Expr("python version"),Expr(PYTHONVERSION));
 storeInHashTable(x,Expr("gmp version"),Expr(GMPVERSION));
+storeInHashTable(x,Expr("mpir version"),Expr(MPIRVERSION));
 storeInHashTable(x,Expr("ntl version"),Expr(NTLVERSION));
 storeInHashTable(x,Expr("libfac version"),Expr(LIBFACVERSION));
 storeInHashTable(x,Expr("frobby version"),Expr(FROBBYVERSION));
@@ -1800,17 +1802,11 @@ storeGlobalDictionaries(e:Expr):Expr := (			    -- called with (symbol,newvalue)
      else WrongNumArgs(2));
 storeInHashTable(globalAssignmentHooks,Expr(SymbolClosure(globalFrame,dictionaryPathS)),Expr(CompiledFunction(storeGlobalDictionaries,nextHash())));
 
--- getcwdfun(e:Expr):Expr := (
---      when e
---      is s:Sequence do
---      if length(s) == 0
---      then Expr(getcwd())
---      else WrongNumArgs(0)
---      else WrongNumArgs(0));
--- setupfun("currentDirectory",getcwdfun);
-currentDirectory := setupconst("currentDirectory",Expr(getcwd()));
-resetCurrentDirectory():void := setGlobalVariable(currentDirectory,Expr(getcwd()));
-everytime(resetCurrentDirectory);
+getcwdfun(e:Expr):Expr := (				    -- this has to be a function, because getcwd may fail
+     when e is s:Sequence do
+     if length(s) == 0 then cwd() else WrongNumArgs(0)
+     else WrongNumArgs(0));
+setupfun("currentDirectory",getcwdfun);
 
 export debuggerHook := nullE;
 

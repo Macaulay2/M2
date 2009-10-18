@@ -15,5 +15,5 @@ degrees E1
 min degrees E1
 end
 -- Local Variables:
--- compile-command: "make -C $M2BUILDDIR/Macaulay2/test varieties.out"
+-- compile-command: "make -C $M2BUILDDIR/Macaulay2/packages/Macaulay2Doc/test varieties.out"
 -- End:

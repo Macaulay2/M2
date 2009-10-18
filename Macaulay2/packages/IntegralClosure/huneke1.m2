@@ -8,6 +8,7 @@ I = ideal(
    c*u^8+7111*c*z*u^6+3556*d*u^7+10667*c*z*u^5+3556*d*u^6+14224*c*z^2*u^3+14223*c*z*u^4-7112*d*z*u^4+3556*d*u^5+10668*c*z^2*u^2-7112*d*z*u^3+7112*c*z^2*u-7112*d*z*u^2+10668*d*z^2);
 R = S/I
 time R' = integralClosure R
+time R' = integralClosure(R, Strategy=>{RadicalCodim1})
 
 end
 

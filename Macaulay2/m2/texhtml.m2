@@ -7,10 +7,12 @@ html TEX := str -> (
      abbrev := () -> format if #origstr > 20 then (substring(0,20,origstr) | "...") else origstr;
      f := (p,r) -> (
 	  n := replace(p,r,str);
-	  if n != str and debugLevel > 0 then (
+	  if n != str and debugLevel == 120 then (
 	       stderr << "html TEX: ///" << str << "/// matches ///" << p << "/// and becomes ///" << n << "///" << endl;
 	       );
 	  str = n);
+     f("<","--TEMPORARY AMPERSAND--lt;");					   -- as in htmlLiteral
+     f("]]>","]]--TEMPORARY AMPERSAND--gt;");					   -- as in htmlLiteral
      -- we could try replacing \$ by \dollar and then bring it back later...
      -- but watch out for \\$ and \\\\$ ...
      -- but replace \\\$ and \\\\\$ ...
@@ -200,7 +202,7 @@ html TEX := str -> (
      f(///\\xi\> *///,///&xi;///);
      f(///\\zeta\> *///,///&zeta;///);
      -- f(///Macaulay2///,///<i>Macaulay2</i>///); -- this is a bad idea because it interferes with URLs and filenames
-     f(///Macaulay 2///,///<i>Macaulay 2</i>///);
+     f(///Macaulay 2///,///<i>Macaulay2</i>///);
      while (
 	  oldstr = str;
      	  f(///\{([^{}]*)\}///,///\1///);
@@ -210,6 +212,7 @@ html TEX := str -> (
      f(///\\backslash\> *///,"--TEMPORARY BACKSLASH--");
      r := unique sort select("\\\\(.|[a-zA-Z]+)?",str);
      if #r > 0 then error("in conversion to html, unknown TeX control sequence(s): ",concatenate between(", ",r)," in string ",abbrev());
+     f("--TEMPORARY AMPERSAND--","&");
      f("--TEMPORARY BACKSLASH--",///\///);
      str)
 

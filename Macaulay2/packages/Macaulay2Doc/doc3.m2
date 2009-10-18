@@ -482,7 +482,7 @@ document {
 document {
      Key => {"operatorAttributes", Flexible, Binary, Prefix, Postfix},
      Usage => "operatorAttributes",
-     Outputs => {{ "an experimental hash table that give information about ", TO "operators", " in the Macaulay 2 language" }},
+     Outputs => {{ "an experimental hash table that give information about ", TO "operators", " in the Macaulay2 language" }},
      "Meanings of the symbols used:",
      UL {
 	  LI { TO "Flexible", " -- user defined methods may be installed" },
@@ -1027,7 +1027,7 @@ document { Key => cache,
 	  F === ZZ^3
      ///}
 document { Key => {(capture, String),capture},
-     Headline => "evaluate Macaulay 2 code and capture the output (under development)" }
+     Headline => "evaluate Macaulay2 code and capture the output (under development)" }
 document { Key => "catch",
      Headline => "catch a thrown exception", SeeAlso => {"throw"},
      Usage => "catch c",
@@ -1102,7 +1102,7 @@ document { Key => "continue",
      ///
      }
 document { Key => "copyright",
-     Headline => "a string containing the copyright notice for Macaulay 2",
+     Headline => "a string containing the copyright notice for Macaulay2",
      EXAMPLE "copyright" }
 document { Key => {listSymbols,(listSymbols, Dictionary), (listSymbols, List)},
      Headline => "compact display of symbols and their values",
@@ -1375,7 +1375,7 @@ document { Key => toAbsolutePath,
 	  checking the file system to see whether ", TT "x", " is a symbolic link.  For the other
 	  behavior, see ", TO "realpath", "."
 	  },
-     SeeAlso => {File,minimizeFilename, relativizeFilename, baseFilename, "path"}
+     SeeAlso => {File,minimizeFilename, relativizeFilename, baseFilename, "path", "rootPath", "rootURI"}
      }
 document { Key => baseFilename,
      Headline => "the base part of a filename or path",
@@ -1441,10 +1441,15 @@ document {
 	  ///temporaryFileName () | ".tex"///,
      	  ///temporaryFileName () | ".html"///,
 	  },
-     PARA{},
-     "This function will work under Unix, and also under Windows
-     if you have a directory on the same drive called ", TT "/tmp", ".",
-     SeeAlso => {File}
+     PARA{
+     	  "This function will work under Unix, and also under Windows
+     	  if you have a directory on the same drive called ", TT "/tmp", "."
+	  },
+     PARA {
+	  "If the name of the temporary file will be given to an external program, it may be necessary to
+	  concatenate it with ", TO "rootPath", " or ", TO "rootURI", " to enable the external program to find the file."
+	  },
+     SeeAlso => {File, "rootPath", "rootURI"}
      }
 
 
@@ -1794,7 +1799,7 @@ document { Key => toUpper,
 
 document { Key => "encapDirectory",
      Headline => "encapsulated installation directory",
-     "This variable contains the path to the encapsulation directory tree where the files of Macaulay 2 are located.",
+     "This variable contains the path to the encapsulation directory tree where the files of Macaulay2 are located.",
      SeeAlso => { "prefixDirectory" }
      }
 

@@ -17,3 +17,5 @@ I've seen a collision!
 Often one wants to create a collection of files, so they might was well all be
 in the same directory.  Perhaps better would be a function that makes a new
 temporary directory and returns the name of it.
+
+I've seen another collision.

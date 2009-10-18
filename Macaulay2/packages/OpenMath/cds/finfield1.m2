@@ -1,6 +1,20 @@
 -- done: field_by_conway, primitive_element
 -- not done: conway_polynomial, discrete_log, is_primitive, is_primitive_poly, minimal_polynomial
 
+-- warning: this routine might have been resurrected by my big merge from the 1.3 branch because of a conflict [drg]:
+createdGFs = new MutableHashTable;
+getGF = (p,n) -> (
+	q := p^n;
+	r := null;
+	if (createdGFs#?q) then (
+		createdGFs#q
+	) else (
+		if n === 1 then r = GF(p) else r = GF(p,n);
+		createdGFs#q = r;
+		r
+	)
+);
+
 --- To OpenMath ---
 toOpenMathFFElt_PowerOfPrimElt = x -> (
 	if (x == 0) then (

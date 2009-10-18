@@ -3,18 +3,28 @@ include ../include/config.Makefile
 BUILT_TARGETS = untar fetch all check reconfigure
 ALL_TARGETS = $(BUILT_TARGETS) clean distclean
 $(ALL_TARGETS): Makefile.library
-$(foreach d,@LIBLIST@ libtool M2,			\
+$(foreach d,@LIBLIST@ @PROGLIST@ libtool M2,			\
 	$(foreach t, $(ALL_TARGETS),			\
 		$(eval $t-in-$d:; $$(MAKE) -C $d $t)	\
 		$(eval .PHONY: $t $t-in-$d)))
-$(foreach d,@LIBRARIES@,			\
+$(foreach d,@BUILDLIST@,			\
 	$(foreach t, $(BUILT_TARGETS),		\
 		$(eval $t: $t-in-$d)		\
 		$(eval .PHONY: $t $t-in-$d)))
-$(foreach d,@LIBLIST@,				\
+$(foreach d,@LIBLIST@ @PROGLIST@,				\
 	$(foreach t, distclean clean,		\
 		$(eval $t: $t-in-$d)		\
 		$(eval .PHONY: $t $t-in-$d)))
+
+all:install-programs
+install-programs:
+	: installing programs in @pre_programsdir@
+	if [ -d final/bin ] ; \
+	then rm -rf @pre_programsdir@ ; \
+	     @INSTALL@ -d @pre_programsdir@ ; \
+	     @TAR@ cf - -C final/bin . | @TAR@ xf - -C @pre_programsdir@ ; \
+	fi
+
 ifeq (@SHARED@,yes)
 all:install-shared
 install-shared:
@@ -28,6 +38,7 @@ install-shared:
 endif
 $(foreach f,Makefile Makefile.library,					\
 	$(eval $f: $f.in; cd .. && ./config.status libraries/$f))
+show-licenses:; grep -wnH license @srcdir@/*/Makefile.in
 clean:; rm -rf final
 distclean:clean ; rm -f Makefile
 # Local Variables:

@@ -1,0 +1,1 @@
+document "run" about it ignoring interrupts, and returning the interrupt code, e.g., 2

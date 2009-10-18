@@ -115,7 +115,7 @@ document {
 	  f^7 % G
 	  gb I
      ///,
-     "In these homogeneous situations, Macaulay 2 only computes the
+     "In these homogeneous situations, Macaulay2 only computes the
      Gröbner basis as far as required, as shown below.",
      EXAMPLE lines ///
 	  I = ideal(M^3);

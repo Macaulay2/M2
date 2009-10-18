@@ -2027,6 +2027,11 @@ void gbA::insert_gb(POLY f, gbelem_type minlevel)
 
   stats_ngb++;
 
+
+  // Complete hack for getting bug fix to get test/isSubset.m2 to work again for 1.3:
+  // over ZZ, always make gb elements non reducers...
+  if (over_ZZ()) minlevel |= ELEM_MINGB;
+
   gbelem *g = gbelem_make(f.f, f.fsyz, minlevel, this_degree);
   minimal_gb_valid = false;
   int me = gb.size();
@@ -2383,7 +2388,7 @@ void gbA::start_computation()
 	  o << "nsaved = " << nsaved_unneeded;
 	  emit_line(o.str());
 	}
-      show();
+      if (gbTrace >= 15) show();
     }
 }
 

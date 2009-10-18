@@ -70,7 +70,7 @@ document {
      Headline => "convert to MathML format",
      Usage => "mathML x",
      Inputs => {
-	  "x" => "any Macaulay 2 object"
+	  "x" => "any Macaulay2 object"
 	  },
      Outputs => {
 	  String => {TT "x", " converted to ML format"}

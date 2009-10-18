@@ -253,6 +253,6 @@ assert ( i == -1 )
 
 end
 -- Local Variables:
--- compile-command: "make -C $M2BUILDDIR/Macaulay2/test/engine ring.out"
+-- compile-command: "make -C $M2BUILDDIR/Macaulay2/packages/Macaulay2Doc/test/engine ring.out"
 -- compile-command: "echo 'input \"ring.m2\"' | M2 -q --stop"
 -- End:

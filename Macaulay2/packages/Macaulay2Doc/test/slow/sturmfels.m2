@@ -16,5 +16,5 @@ I = ideal(
 time assert( 638 == degree( saturate( ideal(leadTerm gens gb I),ideal(t))) )
      -- used 232.26 seconds
 -- Local Variables:
--- compile-command: "make -C $M2BUILDDIR/Macaulay2/test/slow sturmfels.out"
+-- compile-command: "make -C $M2BUILDDIR/Macaulay2/packages/Macaulay2Doc/test/slow sturmfels.out"
 -- End:

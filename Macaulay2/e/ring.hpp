@@ -181,6 +181,7 @@ public:
   // Ring arithmetic ///
   //////////////////////
   virtual int coerce_to_int(ring_elem a) const;
+  virtual int discrete_log(ring_elem a) const; // returns -1 if ring has no discrete log implemented, or a == 0.
 
   ring_elem one() const { return oneV; }
   ring_elem minus_one() const { return minus_oneV; }

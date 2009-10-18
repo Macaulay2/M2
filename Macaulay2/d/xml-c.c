@@ -17,6 +17,7 @@ void initxml() {
   xmlGcMemSetup(freemem,(void *(*)(size_t))getmem,(void *(*)(size_t))getmem_atomic,(void *(*)(void *,size_t))getmoremem1,copystring);
 }
 
+#if 0
 static int level = 0;
 static void indent() { int i; for (i=2*level; i; i--) putchar(' '); }
 static void display(xmlDocPtr doc,xmlNodePtr t) {
@@ -92,6 +93,8 @@ static void show(xmlDocPtr doc,xmlNodePtr t) {
     }
   }
 }
+
+#endif
 
 /* void xml_parse(M2_string p) { */
 /*   xmlDocPtr doc = xmlReadMemory(p->array,p->len,"a string", NULL, 0); */

@@ -1,7 +1,7 @@
 -- -*- coding: utf-8 -*-
 -- In this tutorial we introduce a number of basic operations 
 -- using Gröbner bases, and at the same time become familiar
--- with a range of useful Macaulay 2 constructs.
+-- with a range of useful Macaulay2 constructs.
 
 ----------------------------
 -- A. A first Gröbner basis 
@@ -172,7 +172,7 @@ substitute(F, {y =>t^2+t+1, z=>t^3+1})
 -- F is the polynomial which gives an algebraic relation between
 -- $t^2+t+1$ and $t^3+1$.
 
--- Another way to accomplish this in Macaulay 2 is to use the
+-- Another way to accomplish this in Macaulay2 is to use the
 -- {\tt eliminate} function.  In this case, the monomial order of
 -- the ring is not important.
 R = KK[y,z,t]
@@ -236,7 +236,7 @@ F = a*b*c*d*e*f
 J = eliminate(I + ideal(t*F-1), t)
 transpose gens J
 
--- There is a builtin routine in Macaulay 2 for computing saturations:
+-- There is a builtin routine in Macaulay2 for computing saturations:
 R = KK[a..f]
 I = substitute(I,R)
 F = product gens R

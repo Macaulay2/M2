@@ -30,7 +30,7 @@ document {
 	  "See ", TO "subquotient modules", " for an overview of subquotient modules in Macaulay2."
 	  },
      PARA {
-     	  "The general form in which modules are represented in Macaulay 2 is as subquotients,
+     	  "The general form in which modules are represented in Macaulay2 is as subquotients,
 	  and subquotient modules are often returned as values of computations, as in the example below."
 	  },
      EXAMPLE lines ///

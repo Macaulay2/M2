@@ -33,10 +33,13 @@ document {
      Inputs => {
 	  "PACKAGENAME" => {"a ", TO String, " or ", TO Package},
 	  FileName => String => "the name of the file containing the source code of the package, from which it should be loaded",
-	  UserMode => Boolean => { "whether the installation will ignore packages installed in the user's 
-	       ", TO2{"applicationDirectory", "application directory"}, " and will ignore the user's ", TO "initialization file", " when running
-	       examples.  Not setting this to ", TO "false", " is necessary when installing an optional package that depends on another optional package,
-	       previously installed by the user." 
+	  UserMode => { "if ", TO "true", ", then do not give the ", TT "-q", " option to ", TT "M2", " when running 
+	       examples, thereby allowing it to load the user's ", TO "initialization file", ",
+	       allowing it to load packages previously installed in the user's ", TO2{"applicationDirectory", "application directory"}, ",
+	       and allowing packages it loads to read their configuration files from the 
+	       the user's ", TO2{"applicationDirectory", "application directory"}, ".
+	       If ", TO "false", ", then do give the option.
+	       If ", TO "null", ", then propagate the option from the current ", TO "commandLine", ", if one occurs there." 
 	       },
 	  DebuggingMode => Boolean => { "whether to enter ", TO "the debugger", " if an error occurs during installation" },
 	  RerunExamples => Boolean => "whether to rerun all the examples during installation",
@@ -47,19 +50,20 @@ document {
 	  MakeInfo => Boolean => { "whether to make the info pages.  This is a form of the documentation that can be viewed using the
 	       Unix command ", TT "info", " or using ", TT "emacs", "." 
 	       },
-	  InstallPrefix => { "the path to the directory where the files should be installed, in case encapsulation is not
-	       enabled, or where the links should be created, in case encapsulation is enabled.  The value of this option can
-	       be a string or a function of no arguments returning a string.  The default value is the subdirectory named ", TT "local", " of
-	       the user's ", TO "application directory", "." },
-	  PackagePrefix => { "the path to the directory where the files of the package should be installed in case encapsulation is
-	       enabled.  The default value is the subdirectory named ", TT "encap", " of the user's ", TO "application directory", ".
-	       (Note: in version 1.1 and before, the files were installed here also when encapsulation was not enabled.)" },
+	  InstallPrefix => { "the installation prefix for installation of the files of the package, in case encapsulation is not
+	       enabled, or for installation of the links to the files, in case encapsulation is enabled.  The value of 
+	       this option can be a string or a function of no arguments returning a string.  The default value is the 
+	       subdirectory named ", TT "local", " of the user's ", TO "application directory", "." },
+	  PackagePrefix => { "the installation prefix for installation of the files of the package in case encapsulation is
+	       enabled.  The value of this option can
+	       be a string or a function of no arguments returning a string.  
+	       The default value is the subdirectory named ", TT "encap", " of the user's ", TO "application directory", "." },
 	  Encapsulate => Boolean => { "whether to encapsulate all the installed files in a subdirectory of
 	       the directory specified by the ", TT "PackagePrefix", " option, 
 	       whose name is specified by the ", TT "EncapsulateDirectory", " option.
 	       Encapsulation makes it easy to delete all the files associated with a package
 	       (see ", TO "epkg", ").  On the other hand, encapsulation involves the use of symbolic links, which are of limited
-	       utility in a Cygwin version of Macaulay 2, because non-Cygwin programs don't understand them." 
+	       utility in a Cygwin version of Macaulay2, because non-Cygwin programs don't understand them." 
 	       },
 	  EncapsulateDirectory => { "a string that gives the name of the encapsulation subdirectory, terminated with a ", TT "/", ", in the case where
 	        the value of the ", TT "Encapsulate", " option is ", TT "true", ", or a function that accepts a package and returns
@@ -69,7 +73,17 @@ document {
 	       provided to ", TO "newPackage", "."
 	       },
 	  MakeLinks => Boolean => { "whether to make links to the files after installing them, in case encapsulation is enabled" },
-	  AbsoluteLinks => { "whether the links made should contain absolute paths, rather than relative paths" },
+	  AbsoluteLinks => Boolean => {
+	       "whether the links made should contain real absolute paths, rather than relative paths.  If set to
+	       ", TO "true", ", the default value, then the files linked to should already exist, either under the current installation prefix,
+	       or in any of the directory trees listed in ", TO "prefixPath", ".  (The other files to be created as part of the installation of 
+	       the current package will be made to exist (as empty files) in an earlier pass.)
+	       If the option is set to ", TO "false", ", then no absolute links will be made, and all references 
+	       to documentation nodes will point to locations in the same directory tree, even though the corresponding files may 
+	       not be there (yet).  This behaviour is useful only when installing documentation in the main ", EM "Macaulay2", " 
+	       documentation tree (given by ", TO "prefixDirectory", "), or for preparing documentation that will eventually be
+	       installed there."
+	       },
 	  RemakeAllDocumentation => { "whether to regenerate all of the help pages for this package.  The default action
      	       is to rebuild only the html pages of the documentation entries that have been changed since the last time
      	       the package was installed.  However, some changes to an entry, such as to its headline, will change the html of other pages
@@ -91,9 +105,9 @@ document {
 	  },
      Consequences => {
 	  {"The package is installed in a local directory, so that in the future, one may simply use ", TO "loadPackage", ".  Documentation for the
-	  package is also produced, running any Macaulay 2 examples that are requested in the package documentation." }
+	  package is also produced, running any Macaulay2 examples that are requested in the package documentation." }
 	  },
-     "The main action of this routine is to generate the documentation of the given package and install the Macaulay 2 package and documentation. ",
+     "The main action of this routine is to generate the documentation of the given package and install the Macaulay2 package and documentation. ",
      PARA{ "The actual file loaded is ", TT "PACKAGENAME.m2", ", which should be on the load ", TO "path", " and should contain a package named ", TT "PACKAGENAME", "."},
      PARA{ "In order to accomplish this, several steps are performed (or bypassed, depending on the values of the optional arguments)." },
      UL {
@@ -117,7 +131,7 @@ document {
 	  "It might be necessary to run ", TO "installPackage", " twice if a package with the same name is already installed:
 	  the second installation will redirect the hyperlinks to the freshly installed documentation, because the files will 
 	  have been installed by the first installation.
-	  This applies, for example, to those authors who are developing updates to packages already included with Macaulay 2."
+	  This applies, for example, to those authors who are developing updates to packages already included with Macaulay2."
 	  },
      PARA {
 	  "The files of the package are placed in subdirectories of the appropriate prefix directory as specified by ", TO "Layout", ", depending on

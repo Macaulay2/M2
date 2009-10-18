@@ -26,5 +26,5 @@ assert( drop(locate f, 1) === (4, 6, 4, 9) )		    -- we no longer give locations
 -- assert( drop(locate f, 1) === (4, 4, 4, 9) )
 end
 -- Local Variables:
--- compile-command: "make -C $M2BUILDDIR/Macaulay2/test newlines.out"
+-- compile-command: "make -C $M2BUILDDIR/Macaulay2/packages/Macaulay2Doc/test newlines.out"
 -- End:

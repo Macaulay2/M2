@@ -1,0 +1,12 @@
+diff -ur --exclude=configure /home/dan/src/M2-1.3/BUILD/dan/builds.tmp/ubuntu32/libraries/normaliz/tmp/Normaliz2.2Linux/source/Makefile Normaliz2.2Linux/source/Makefile
+--- /home/dan/src/M2-1.3/BUILD/dan/builds.tmp/ubuntu32/libraries/normaliz/tmp/Normaliz2.2Linux/source/Makefile	2009-08-04 09:45:31.000000000 -0500
++++ Normaliz2.2Linux/source/Makefile	2009-10-10 14:59:31.000000000 -0500
+@@ -36,7 +36,7 @@
+ 	@mkdir -p objBig
+ 	$(CXX) $(CXXFLAGS) $(NBIGFLAGS) -c $< -o $@
+ normbig: Normaliz.cpp $(NBIGOBJ)
+-	$(CXX) $(CXXFLAGS) $(NBIGFLAGS) $(GMPFLAGS) $(NBIGOBJ) -o normbig
++	$(CXX) $(CXXFLAGS) $(NBIGFLAGS) $(NBIGOBJ) $(GMPFLAGS) -o normbig
+ 
+ 
+ clean:

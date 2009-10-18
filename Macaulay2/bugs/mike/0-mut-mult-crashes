@@ -1,2 +1,0 @@
-m = mutableIdentity(QQ[x],6)
-x*m -- dies

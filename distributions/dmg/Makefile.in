@@ -4,7 +4,8 @@ TIDY = yes
 VPATH = @srcdir@
 DEPENDS = yes
 PKG_DMG = @package@-@ARCH@-@OS@-@REL@.dmg
-all: ../../$(PKG_DMG) maybe-tidy
+all: dmg maybe-tidy
+dmg: ../../$(PKG_DMG)
 ifeq ($(TIDY),yes)
 maybe-tidy: tidy
 else

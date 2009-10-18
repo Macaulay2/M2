@@ -15,5 +15,5 @@ J = substitute(ideal I,S);
 dim J
 end
 -- Local Variables:
--- compile-command: "make -C $M2BUILDDIR/Macaulay2/test sottile.out"
+-- compile-command: "make -C $M2BUILDDIR/Macaulay2/packages/Macaulay2Doc/test sottile.out"
 -- End:

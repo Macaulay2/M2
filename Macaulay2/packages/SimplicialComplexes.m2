@@ -357,7 +357,7 @@ document { Key => SimplicialComplexes,
      ", TT "D", " of
      these vertices, such that if ", TT "F", " is in ", TT "D", ", 
      then every subset of ", TT "F", " is also in ", TT "D", ".
-     In Macaulay 2, the vertices are variables in a polynomial ring,
+     In Macaulay2, the vertices are variables in a polynomial ring,
      and each subset is represented as a product of the
      corresponding variables.",
      PARA{},
@@ -458,7 +458,7 @@ document {
      ", TT "D", " of
      these vertices, such that if ", TT "F", " is in ", TT "D", ", 
      then every subset of ", TT "F", " is also in ", TT "D", ".
-     In Macaulay 2, the vertices are variables in a polynomial ring,
+     In Macaulay2, the vertices are variables in a polynomial ring,
      and each subset is represented as a product of the
      corresponding variables.",
      PARA{},

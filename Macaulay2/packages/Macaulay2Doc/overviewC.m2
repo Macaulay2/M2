@@ -4,7 +4,7 @@
 document {
      Key => "basic rings of numbers",
      "The following rings are initially present in every session with
-     Macaulay 2.",
+     Macaulay2.",
      UL { 
 	  TO "ZZ", 
 	  TO "QQ", 
@@ -101,9 +101,7 @@ document {
 	  "a^80",
 	  "a^40"
 	  },
-     "Note that, except for 0 and 1, every element is displayed as a power 
-     of the variable ", TT "a", 
-     ".  Use ", TO "ambient", " to see the quotient ring the field is made from.",
+     "Use ", TO "ambient", " to see the quotient ring the field is made from.",
      EXAMPLE "ambient F",
      "Now check that ", TT "a", " satisfies this equation.",
      EXAMPLE "a^4 + a - 1",
@@ -168,12 +166,12 @@ document {
 	  "A = ZZ/2[T]/(T^9+T+1)",
       	  "k = GF (A, PrimitiveElement => T^3+1)",
 	  },
-     "Notice that ", TT "T", " is still recorded as an element of its
-     quotient ring, rather than this finite field.",
+     "Notice that ", TT "T", " is now recorded as an element of this finite field.",
      EXAMPLE "T",
-     "Use ", TO "substitute", " to see how the generator ", TT "T", " appears as
-     an element of the finite field.",
-     EXAMPLE "substitute(T,k)",
+     "The generator of A can be obtained this way:",
+     EXAMPLE "A_0",
+     "Use ", TO "substitute", " to see map it to an element of the finite field.",
+     EXAMPLE "substitute(A_0,k)",
      "Conversely, a given element of the finite field can be transferred back
      to the quotient ring with ", TO "lift", ".",
      EXAMPLE "lift(k_0, ring T)",
@@ -520,7 +518,7 @@ document {
      mildly non-commutative, in that, for every x and y in the ring,
      y*x = (-1)^(deg(x) deg(y)) x*y, and that for every x of odd degree,
      x*x = 0.",
-     "In Macaulay 2, deg(x) is the degree of x, or the first degree of x, in case 
+     "In Macaulay2, deg(x) is the degree of x, or the first degree of x, in case 
      a multi-graded ring is being used.  The default degree for each variable is 1, so
      in this case, y*x = -x*y, if x and y are variables in the ring.",
      PARA{},
@@ -636,7 +634,7 @@ document {
 	  "dx*dy*x*y",
 	  "dx*x^5"
 	  },
-     "All modules over Weyl algebras are, in Macaulay 2, right modules.  This means that 
+     "All modules over Weyl algebras are, in Macaulay2, right modules.  This means that 
      multiplication of matrices is from the opposite side:",
      EXAMPLE {
 	  "dx*x",

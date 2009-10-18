@@ -13,5 +13,5 @@ assert( # gens(A,CoefficientRing=>ZZ/5) == 3 )
 
 end
 -- Local Variables:
--- compile-command: "make -C $M2BUILDDIR/Macaulay2/test gens.out"
+-- compile-command: "make -C $M2BUILDDIR/Macaulay2/packages/Macaulay2Doc/test gens.out"
 -- End:

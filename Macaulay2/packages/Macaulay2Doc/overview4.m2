@@ -45,7 +45,7 @@ document {
      performing the computation of Gröbner bases with Buchberger's
      algorithm.  It is coded directly in C++ for speed.",
      PARA{},
-     "The Macaulay 2 engine provides fast polynomial and matrix operations,
+     "The Macaulay2 engine provides fast polynomial and matrix operations,
      and Gröbner bases, syzygies, Hilbert functions, resolutions and
      other operations that we feel need to be implemented directly for
      efficiency reasons.",
@@ -357,7 +357,7 @@ document {
      }
 
 document { Key => "the debugger",
-     "We have a Macaulay 2 source file with a pair of functions in it that
+     "We have a Macaulay2 source file with a pair of functions in it that
      we can use for demonstrating the debugger.  Let's load it so we can
      run the functions in it.",
      EXAMPLE "load \"Macaulay2Doc/demo1.m2\"",
@@ -366,7 +366,7 @@ document { Key => "the debugger",
      "Let's peek at the code of the function ", TT "g", ".",
      EXAMPLE "code g",
      "We see that the function g calls a function ", TT "f", ", but ", TT "f", " is not visible to us
-     (because ", TT "f", " is a local variable).  In emacs' ", EM "Macaulay 2 Interaction Mode", ", pressing
+     (because ", TT "f", " is a local variable).  In emacs' ", EM "Macaulay2 Interaction Mode", ", pressing
      return (", TT "RET", " or ", TT "enter", ") after positioning the cursor on the output line displaying the file name and line number
      will bring up the source code in a new buffer.",
      PARA{"The first few times we use ", TT "g", ", it seems to work."},
