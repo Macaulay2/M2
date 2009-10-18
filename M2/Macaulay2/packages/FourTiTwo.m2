@@ -27,7 +27,6 @@ newPackage(
 	Configuration => { "path" => "",
 	     "keep files" => true
 	      },
-	AuxiliaryFiles => true,
     	DebuggingMode => false
     	)
 
