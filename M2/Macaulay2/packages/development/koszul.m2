@@ -3,7 +3,7 @@
 ----To: Macaulay2@math.uiuc.edu
 ----Date: Mon, 18 Feb 2002 20:02:47 -0600 (CST)
 ----
-----Enclosed, please find Macaulay 2 code for Koszul complexes, Koszul
+----Enclosed, please find Macaulay2 code for Koszul complexes, Koszul
 ----(co)homology, and the depth of a module with respect to an ideal.
 ----Enjoy.
 ----

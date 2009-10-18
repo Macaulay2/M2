@@ -52,7 +52,7 @@ document {
      Headline => "convert to a string",
      Usage => "toString x",
      Inputs => {
-	  "x" => "any Macaulay 2 object"
+	  "x" => "any Macaulay2 object"
 	  },
      Outputs => {
 	  String => {"a string representation of ", TT "x"}

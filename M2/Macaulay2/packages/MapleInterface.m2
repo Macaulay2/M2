@@ -17,8 +17,6 @@ newPackage(
 
 export({callMaple,store,readMaple})
 
-externalPath = replace("\\\\","/",value Core#"private dictionary"#"externalPath")
-
 getFilename = () -> (
      filename := temporaryFileName();
      while fileExists(filename) or fileExists(filename|".txt") do filename = temporaryFileName();
@@ -47,22 +45,22 @@ quit;
 ----------------------------------
 mapleprogram=replace("placeholder2",inputdata2,mapleprogram);
 mapleprogram=replace("placeholder1",L1,mapleprogram);
-mapleprogram=replace("placeholder3",externalPath|filename3,mapleprogram);
+mapleprogram=replace("placeholder3",rootPath|filename3,mapleprogram);
 F := openOut(filename|".txt");
 F<<mapleprogram<<endl;
 close F;
---run(maplecommand|" "|externalPath|filename|".txt >"|externalPath|filename2|".txt");
-run("\""|maplecommand|"\""|" "|externalPath|filename|".txt >"|externalPath|filename2|".txt");
-if fileExists(externalPath|filename3|".txt")==false then error("Maple returned errors, see file "|externalPath|filename2|".txt for the Maple-output and "|externalPath|filename|".txt for the Maple-input");
-F= openIn(externalPath|filename3|".txt");
+--run(maplecommand|" "|rootPath|filename|".txt >"|rootPath|filename2|".txt");
+run("\""|maplecommand|"\""|" "|rootPath|filename|".txt >"|rootPath|filename2|".txt");
+if fileExists(rootPath|filename3|".txt")==false then error("Maple returned errors, see file "|rootPath|filename2|".txt for the Maple-output and "|rootPath|filename|".txt for the Maple-input");
+F= openIn(rootPath|filename3|".txt");
 Lfc:=changeBrackets2(get(F));
 --close F;
-run("rm"|" "|externalPath|filename|".txt");
-run("rm"|" "|externalPath|filename2|".txt");
+run("rm"|" "|rootPath|filename|".txt");
+run("rm"|" "|rootPath|filename2|".txt");
 if class(opts.store)===String then (
-  run("cp"|" "|externalPath|filename3|".txt"|" "|(opts.store))
+  run("cp"|" "|rootPath|filename3|".txt"|" "|(opts.store))
 );
-run("rm"|" "|externalPath|filename3|".txt");
+run("rm"|" "|rootPath|filename3|".txt");
 value Lfc)
 
 

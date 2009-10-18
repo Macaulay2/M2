@@ -622,7 +622,7 @@ document {
 	  },
      Headline => "the class of all expressions",
      "An ", EM "expression", " is a symbolic representation of a mathematical expression.  It retains some of the semantics of the mathematical expression,
-     as well as enough information to print the expression nicely.  In Macaulay 2 expressions have two main functions: they are an intermediate phase in
+     as well as enough information to print the expression nicely.  In Macaulay2 expressions have two main functions: they are an intermediate phase in
      the conversion of a mathematical object to a ", TO "net", " that can be printed; and they are a way of holding and displaying a mathematical expression
      in an unevaluated form that can be both printed and evaluated.",
      PARA {},

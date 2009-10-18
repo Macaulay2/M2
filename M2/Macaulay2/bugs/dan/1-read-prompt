@@ -1,0 +1,12 @@
+an interrupt during "read" can leave the input prompt screwed up:
+
+    i8 : (alarm 5; read ">> ")
+    >> stdio:10:11:(1):[0]: error: failed to read file : interrupted
+
+    >> 2435
+
+    o9 = 2435
+    >> 6878876
+
+    o10 = 6878876
+    >> 

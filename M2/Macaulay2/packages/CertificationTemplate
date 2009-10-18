@@ -1,0 +1,15 @@
+-- -*- mode: M2 -*-
+
+	   Certification => {
+		"journal name" => "The Journal of Software for Algebra and Geometry: Macaulay2",
+		"journal URI" => "http://j-sag.org/",
+		"article title" => "...",
+		"acceptance date" => "...",
+		"published article URI" => "http://j-sag.org/Volume1/....pdf",
+		"published code URI" => "http://j-sag.org/Volume1/....m2",
+     	        "repository code URI" => "svn://macaulay2.math.uiuc.edu/Macaulay2/trunk/M2/Macaulay2/packages/....m2",
+		"release at publication" => ...,	    -- as an integer
+		"version at publication" => "...",
+		"volume number" => "1",
+		"volume URI" => "http://j-sag.org/Volume1/"
+		},

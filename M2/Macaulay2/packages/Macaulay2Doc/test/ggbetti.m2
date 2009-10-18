@@ -6,5 +6,5 @@ D = res (coker n, LengthLimit => 3)
 print betti D
 end
 -- Local Variables:
--- compile-command: "make -C $M2BUILDDIR/Macaulay2/test ggbetti.out"
+-- compile-command: "make -C $M2BUILDDIR/Macaulay2/packages/Macaulay2Doc/test ggbetti.out"
 -- End:

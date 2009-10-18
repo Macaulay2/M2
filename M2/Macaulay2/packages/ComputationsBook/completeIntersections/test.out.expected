@@ -1,101 +1,103 @@
 
-i1 : A = QQ[w,x,y,z]
+i1 : setRandomSeed();
 
-o1 = A
+i2 : A = QQ[w,x,y,z]
 
-o1 : PolynomialRing
+o2 = A
 
-i2 : U = matrix {{w,x},{y,z}}
+o2 : PolynomialRing
 
-o2 = | w x |
+i3 : U = matrix {{w,x},{y,z}}
+
+o3 = | w x |
      | y z |
 
              2       2
-o2 : Matrix A  <--- A
+o3 : Matrix A  <--- A
 
-i3 : C = chainComplex U
+i4 : C = chainComplex U
 
       2      2
-o3 = A  <-- A
+o4 = A  <-- A
              
      0      1
 
-o3 : ChainComplex
+o4 : ChainComplex
 
-i4 : L = HH_0 C
+i5 : L = HH_0 C
 
-o4 = cokernel | w x |
+o5 = cokernel | w x |
               | y z |
 
                             2
-o4 : A-module, quotient of A
+o5 : A-module, quotient of A
 
-i5 : f = -det U
+i6 : f = -det U
 
-o5 = x*y - w*z
+o6 = x*y - w*z
 
-o5 : A
+o6 : A
 
-i6 : f * L == 0
+i7 : f * L == 0
 
-o6 = true
+o7 = true
 
-i7 : s = nullhomotopy (-f * id_C)
+i8 : s = nullhomotopy (-f * id_C)
 
           2                     2
-o7 = 1 : A  <----------------- A  : 0
+o8 = 1 : A  <----------------- A  : 0
                {1} | z  -x |
                {1} | -y w  |
 
-o7 : ChainComplexMap
+o8 : ChainComplexMap
 
-i8 : s * C.dd + C.dd * s == -f
+i9 : s * C.dd + C.dd * s == -f
 
-o8 = true
+o9 = true
 
-i9 : V = s_0
+i10 : V = s_0
 
-o9 = {1} | z  -x |
-     {1} | -y w  |
+o10 = {1} | z  -x |
+      {1} | -y w  |
 
-             2       2
-o9 : Matrix A  <--- A
+              2       2
+o10 : Matrix A  <--- A
 
-i10 : A = QQ[x,y,z];
+i11 : A = QQ[x,y,z];
 
-i11 : f = x^3 + 3*y^3 - 2*y*z^2 + 5*z^3;
+i12 : f = x^3 + 3*y^3 - 2*y*z^2 + 5*z^3;
 
-i12 : B = A/f;
+i13 : B = A/f;
 
-i13 : m = ideal(x,y,z)
+i14 : m = ideal(x,y,z)
 
-o13 = ideal (x, y, z)
+o14 = ideal (x, y, z)
 
-o13 : Ideal of B
+o14 : Ideal of B
 
-i14 : M = B^1/m^2;
+i15 : M = B^1/m^2;
 
-i15 : F = resolution(M, LengthLimit=>8)
+i16 : F = resolution(M, LengthLimit=>8)
 
        1      6      9      9      9      9      9      9      9
-o15 = B  <-- B  <-- B  <-- B  <-- B  <-- B  <-- B  <-- B  <-- B
+o16 = B  <-- B  <-- B  <-- B  <-- B  <-- B  <-- B  <-- B  <-- B
                                                                
       0      1      2      3      4      5      6      7      8
 
-o15 : ChainComplex
+o16 : ChainComplex
 
-i16 : restrict1 = N -> coker(lift(presentation N,A) | f);
+i17 : restrict1 = N -> coker(lift(presentation N,A) | f);
 
-i17 : L = restrict1 cokernel F.dd_4;
+i18 : L = restrict1 cokernel F.dd_4;
 
-i18 : C = res L;
+i19 : C = res L;
 
-i19 : U = C.dd_1;
+i20 : U = C.dd_1;
 
               9       9
-o19 : Matrix A  <--- A
+o20 : Matrix A  <--- A
 
-i20 : print U
+i21 : print U
 {4} | x2 0  -2yz+5z2 0     y2-5/2yz yz-5/2z2 -5/2yz   0        0      |
 {4} | 0  x2 -3y2     xy    yz-5/2z2 0        yz-5/2z2 0        0      |
 {4} | 0  xy x2       y2    0        0        0        yz-5/2z2 0      |
@@ -106,14 +108,14 @@ i20 : print U
 {5} | 0  0  -z       0     1/2y     0        1/2y     -1/2x    0      |
 {5} | 0  0  0        1/3z  0        0        0        1/2y     x      |
 
-i21 : s = nullhomotopy (-f * id_C);
+i22 : s = nullhomotopy (-f * id_C);
 
-i22 : V = s_0;
+i23 : V = s_0;
 
               9       9
-o22 : Matrix A  <--- A
+o23 : Matrix A  <--- A
 
-i23 : print V
+i24 : print V
 {6} | -x  0  0   -3y2 -2yz+5z2 0         -2y2+5yz 0         0         |
 {6} | 0   -x 0   -3yz -3y2     -3xy      -2yz+5z2 0         0         |
 {6} | 0   y  -x  0    0        0         0        -2yz+5z2  0         |
@@ -124,15 +126,15 @@ i23 : print V
 {6} | 0   0  2z  0    0        0         2xy      2x2       -6y2      |
 {6} | 0   0  0   -z2  -yz      -xz       -y2      -xy       -x2       |
 
-i24 : U*V+f==0
-
-o24 = true
-
-i25 : V*U+f==0
+i25 : U*V+f==0
 
 o25 = true
 
-i26 : matrixFactorization = M -> (
+i26 : V*U+f==0
+
+o26 = true
+
+i27 : matrixFactorization = M -> (
          B := ring M;
          f := (ideal B)_0;
          e := numgens B;
@@ -146,158 +148,158 @@ i26 : matrixFactorization = M -> (
          assert( V*U + f == 0 );
          return (U,V));
 
-i27 : time (U,V) = matrixFactorization(B^1/m^3);
-     -- used 0.024001 seconds
+i28 : time (U,V) = matrixFactorization(B^1/m^3);
+     -- used 0.144009 seconds
 
-i28 : U;
-
-              15       15
-o28 : Matrix A   <--- A
-
-i29 : V;
+i29 : U;
 
               15       15
 o29 : Matrix A   <--- A
 
-i30 : F.dd_3 - F.dd_5 == 0
+i30 : V;
 
-o30 = false
+              15       15
+o30 : Matrix A   <--- A
 
-i31 : F.dd_4 - F.dd_6 == 0
+i31 : F.dd_3 - F.dd_5 == 0
 
 o31 = false
 
-i32 : F.dd_5 - F.dd_7 == 0
+i32 : F.dd_4 - F.dd_6 == 0
 
 o32 = false
 
-i33 : M = B^1/m^2;
+i33 : F.dd_5 - F.dd_7 == 0
 
-i34 : G = resolution(M, LengthLimit => 8, Strategy => 0)
+o33 = false
+
+i34 : M = B^1/m^2;
+
+i35 : G = resolution(M, LengthLimit => 8, Strategy => 0)
 
        1      6      9      9      9      9      9      9      9
-o34 = B  <-- B  <-- B  <-- B  <-- B  <-- B  <-- B  <-- B  <-- B
+o35 = B  <-- B  <-- B  <-- B  <-- B  <-- B  <-- B  <-- B  <-- B
                                                                
       0      1      2      3      4      5      6      7      8
 
-o34 : ChainComplex
+o35 : ChainComplex
 
-i35 : G.dd_3 - G.dd_5 == 0
-
-o35 = true
-
-i36 : G.dd_4 - G.dd_6 == 0
+i36 : G.dd_3 - G.dd_5 == 0
 
 o36 = true
 
-i37 : G.dd_5 - G.dd_7 == 0
+i37 : G.dd_4 - G.dd_6 == 0
 
 o37 = true
 
-i38 : M = B^1/m^3;
+i38 : G.dd_5 - G.dd_7 == 0
 
-i39 : F = resolution(M, LengthLimit=>8)
+o38 = true
+
+i39 : M = B^1/m^3;
+
+i40 : F = resolution(M, LengthLimit=>8)
 
        1      10      16      15      15      15      15      15      15
-o39 = B  <-- B   <-- B   <-- B   <-- B   <-- B   <-- B   <-- B   <-- B
+o40 = B  <-- B   <-- B   <-- B   <-- B   <-- B   <-- B   <-- B   <-- B
                                                                       
       0      1       2       3       4       5       6       7       8
 
-o39 : ChainComplex
+o40 : ChainComplex
 
-i40 : M' = restrict1 M;
+i41 : M' = restrict1 M;
 
-i41 : C = res M'
+i42 : C = res M'
 
        1      10      15      6
-o41 = A  <-- A   <-- A   <-- A  <-- 0
+o42 = A  <-- A   <-- A   <-- A  <-- 0
                                      
       0      1       2       3      4
 
-o41 : ChainComplex
+o42 : ChainComplex
 
-i42 : K = ZZ/103; 
+i43 : K = ZZ/103; 
 
-i43 : A = K[x,Degrees=>{5}];
+i44 : A = K[x,Degrees=>{5}];
 
-i44 : B = A/(x^3);
+i45 : B = A/(x^3);
 
-i45 : M = B^1/(x^2);
+i46 : M = B^1/(x^2);
 
-i46 : N = B^1/(x);
+i47 : N = B^1/(x);
 
-i47 : H = Ext(M,N);
+i48 : H = Ext(M,N);
 
-i48 : ring H
+i49 : ring H
 
-o48 = K[X , x]
+o49 = K[X , x]
          1
 
-o48 : PolynomialRing
+o49 : PolynomialRing
 
-i49 : degree \ gens ring H
+i50 : degree \ gens ring H
 
-o49 = {{-2, -15}, {0, 5}}
+o50 = {{-2, -15}, {0, 5}}
 
-o49 : List
+o50 : List
 
-i50 : S = ring H;
+i51 : S = ring H;
 
-i51 : H
+i52 : H
 
-o51 = cokernel {0, 0}    | 0 x |
+o52 = cokernel {0, 0}    | 0 x |
                {-1, -10} | x 0 |
 
                              2
-o51 : S-module, quotient of S
+o52 : S-module, quotient of S
 
-i52 : A = K[x,y];
+i53 : A = K[x,y];
 
-i53 : J = ideal(x^3,y^2);
+i54 : J = ideal(x^3,y^2);
 
-o53 : Ideal of A
+o54 : Ideal of A
 
-i54 : B = A/J;
+i55 : B = A/J;
 
-i55 : N = cokernel matrix{{x^2,x*y}}
+i56 : N = cokernel matrix{{x^2,x*y}}
 
-o55 = cokernel | x2 xy |
+o56 = cokernel | x2 xy |
 
                              1
-o55 : B-module, quotient of B
+o56 : B-module, quotient of B
 
-i56 : time H = Ext(N,N);
-     -- used 0.040002 seconds
+i57 : time H = Ext(N,N);
+     -- used 0.068004 seconds
 
-i57 : ring H
+i58 : ring H
 
-o57 = K[X , X , x, y]
+o58 = K[X , X , x, y]
          1   2
 
-o57 : PolynomialRing
+o58 : PolynomialRing
 
-i58 : S = ring H;
+i59 : S = ring H;
 
-i59 : transpose vars S
+i60 : transpose vars S
 
-o59 = {2, 2}  | X_1 |
+o60 = {2, 2}  | X_1 |
       {2, 3}  | X_2 |
       {0, -1} | x   |
       {0, -1} | y   |
 
               4       1
-o59 : Matrix S  <--- S
+o60 : Matrix S  <--- S
 
-i60 : trim J
+i61 : trim J
 
               2   3
-o60 = ideal (y , x )
+o61 = ideal (y , x )
 
-o60 : Ideal of A
+o61 : Ideal of A
 
-i61 : H
+i62 : H
 
-o61 = cokernel {0, 0}   | y2 xy x2 0 0 0 0 0 0 0 0 X_1y X_1x 0   0   0 0 |
+o62 = cokernel {0, 0}   | y2 xy x2 0 0 0 0 0 0 0 0 X_1y X_1x 0   0   0 0 |
                {-1, -1} | 0  0  0  y x 0 0 0 0 0 0 0    0    X_1 0   0 0 |
                {-1, -1} | 0  0  0  0 0 y x 0 0 0 0 0    0    0   X_1 0 0 |
                {-1, -1} | 0  0  0  0 0 0 0 y x 0 0 0    0    0   X_1 0 0 |
@@ -305,9 +307,9 @@ o61 = cokernel {0, 0}   | y2 xy x2 0 0 0 0 0 0 0 0 X_1y X_1x 0   0   0 0 |
                {-2, -2} | 0  0  0  0 0 0 0 0 0 0 0 0    0    0   0   y x |
 
                              6
-o61 : S-module, quotient of S
+o62 : S-module, quotient of S
 
-i62 : partSelector = predicate -> H -> (
+i63 : partSelector = predicate -> H -> (
          R := ring H;
          H' := prune image matrix {
              select(
@@ -317,29 +319,29 @@ i62 : partSelector = predicate -> H -> (
              };
          H');
 
-i63 : evenPart = partSelector even; oddPart = partSelector odd;
+i64 : evenPart = partSelector even; oddPart = partSelector odd;
 
-i65 : evenPart H
+i66 : evenPart H
 
-o65 = cokernel {0, 0}   | y2 xy x2 X_1y X_1x 0 0 |
+o66 = cokernel {0, 0}   | y2 xy x2 X_1y X_1x 0 0 |
                {-2, -2} | 0  0  0  0    0    y x |
 
                              2
-o65 : S-module, quotient of S
+o66 : S-module, quotient of S
 
-i66 : oddPart H
+i67 : oddPart H
 
-o66 = cokernel {-1, -1} | y x 0 0 0 0 0 0 X_1 0   |
+o67 = cokernel {-1, -1} | y x 0 0 0 0 0 0 X_1 0   |
                {-1, -1} | 0 0 y x 0 0 0 0 0   X_1 |
                {-1, -1} | 0 0 0 0 y x 0 0 0   X_1 |
                {-1, -1} | 0 0 0 0 0 0 y x 0   0   |
 
                              4
-o66 : S-module, quotient of S
+o67 : S-module, quotient of S
 
-i67 : print code(Ext,Module,Module)
+i68 : print code(Ext,Module,Module)
 -- code for method: Ext(Module,Module)
-/home/dan/src/M2/1.2/Macaulay2/m2/ext.m2:85:39-173:3: --source code:
+/home/dan/src/M2-1.3/Macaulay2/m2/ext.m2:85:39-173:3: --source code:
 Ext(Module,Module) := Module => (M,N) -> (
   cacheModule := M; -- we have no way to tell whether N is younger than M, sigh
   cacheKey := (Ext,M,N);
@@ -430,45 +432,45 @@ Ext(Module,Module) := Module => (M,N) -> (
   cacheModule.cache#cacheKey = tot;
   tot)
 
-i68 : A = K[x,y,z];
+i69 : A = K[x,y,z];
 
-i69 : J = trim ideal(x^3,y^4,z^5)
+i70 : J = trim ideal(x^3,y^4,z^5)
 
               3   4   5
-o69 = ideal (x , y , z )
+o70 = ideal (x , y , z )
 
-o69 : Ideal of A
+o70 : Ideal of A
 
-i70 : B = A/J;
+i71 : B = A/J;
 
-i71 : f = random (B^3, B^{-2,-3})
+i72 : f = random (B^3, B^{-2,-3})
 
-o71 = | -28x2-31xy-24y2-4xz-49yz-19z2  -44x2y-4xy2-49y3+30x2z-51xyz+51y2z+23xz2-19yz2+42z3 |
+o72 = | -28x2-31xy-24y2-4xz-49yz-19z2  -44x2y-4xy2-49y3+30x2z-51xyz+51y2z+23xz2-19yz2+42z3 |
       | 47x2-6xy-49y2+9xz+47yz-25z2    16x2y-9xy2-31y3+34x2z-2xyz-16y2z-23xz2+14yz2+50z3   |
       | -36x2-44xy-18y2+11xz-18yz+21z2 -36x2y+28xy2-21y3-x2z-8xyz+6y2z+37xz2+27yz2+43z3    |
 
               3       2
-o71 : Matrix B  <--- B
+o72 : Matrix B  <--- B
 
-i72 : f_{1}
+i73 : f_{1}
 
-o72 = | -44x2y-4xy2-49y3+30x2z-51xyz+51y2z+23xz2-19yz2+42z3 |
+o73 = | -44x2y-4xy2-49y3+30x2z-51xyz+51y2z+23xz2-19yz2+42z3 |
       | 16x2y-9xy2-31y3+34x2z-2xyz-16y2z-23xz2+14yz2+50z3   |
       | -36x2y+28xy2-21y3-x2z-8xyz+6y2z+37xz2+27yz2+43z3    |
 
               3       1
-o72 : Matrix B  <--- B
+o73 : Matrix B  <--- B
 
-i73 : M = cokernel f;
+i74 : M = cokernel f;
 
-i74 : time P = Ext(M,B^1/(x,y,z));
-     -- used 0.668042 seconds
+i75 : time P = Ext(M,B^1/(x,y,z));
+     -- used 1.29208 seconds
 
-i75 : S = ring P;
+i76 : S = ring P;
 
-i76 : transpose vars S
+i77 : transpose vars S
 
-o76 = {2, 3}  | X_1 |
+o77 = {2, 3}  | X_1 |
       {2, 4}  | X_2 |
       {2, 5}  | X_3 |
       {0, -1} | x   |
@@ -476,31 +478,31 @@ o76 = {2, 3}  | X_1 |
       {0, -1} | z   |
 
               6       1
-o76 : Matrix S  <--- S
+o77 : Matrix S  <--- S
 
-i77 : R = K[X_1..X_3,Degrees => {{-2,-3},{-2,-4},{-2,-5}}];
+i78 : R = K[X_1..X_3,Degrees => {{-2,-3},{-2,-4},{-2,-5}}];
 
-i78 : phi = map(R,S,{X_1,X_2,X_3,0,0,0})
+i79 : phi = map(R,S,{X_1,X_2,X_3,0,0,0})
 
-o78 = map(R,S,{X , X , X , 0, 0, 0})
+o79 = map(R,S,{X , X , X , 0, 0, 0})
                 1   2   3
 
-o78 : RingMap R <--- S
+o79 : RingMap R <--- S
 
-i79 : P = prune (phi ** P);
+i80 : P = prune (phi ** P);
 
-i80 : transpose vars ring P
+i81 : transpose vars ring P
 
-o80 = {2, 3} | X_1 |
+o81 = {2, 3} | X_1 |
       {2, 4} | X_2 |
       {2, 5} | X_3 |
 
               3       1
-o80 : Matrix R  <--- R
+o81 : Matrix R  <--- R
 
-i81 : evenPart P
+i82 : evenPart P
 
-o81 = cokernel {-2, -7}  | 0   0   0   0   0   0   0   0   0   0    |
+o82 = cokernel {-2, -7}  | 0   0   0   0   0   0   0   0   0   0    |
                {-2, -7}  | 0   0   0   0   0   0   0   0   0   0    |
                {-2, -7}  | 0   0   0   0   0   0   0   0   0   0    |
                {-2, -7}  | 0   0   0   0   0   0   0   0   0   0    |
@@ -512,11 +514,11 @@ o81 = cokernel {-2, -7}  | 0   0   0   0   0   0   0   0   0   0    |
                {-4, -10} | 0   0   0   0   0   0   0   0   0   -X_2 |
 
                              10
-o81 : R-module, quotient of R
+o82 : R-module, quotient of R
 
-i82 : oddPart P
+i83 : oddPart P
 
-o82 = cokernel {-1, -3} | X_2 X_1 0   0   0   0   0   0   |
+o83 = cokernel {-1, -3} | X_2 X_1 0   0   0   0   0   0   |
                {-3, -9} | 0   0   0   0   0   X_1 0   0   |
                {-3, -9} | 0   0   0   0   0   0   X_1 0   |
                {-3, -9} | 0   0   0   0   0   0   0   X_1 |
@@ -529,9 +531,9 @@ o82 = cokernel {-1, -3} | X_2 X_1 0   0   0   0   0   0   |
                {-1, -2} | 0   0   X_3 X_2 X_1 0   0   0   |
 
                              11
-o82 : R-module, quotient of R
+o83 : R-module, quotient of R
 
-i83 : changeRing = H -> (
+i84 : changeRing = H -> (
          S := ring H;
          K := coefficientRing S;
          degs := select(degrees source vars S,
@@ -541,25 +543,25 @@ i83 : changeRing = H -> (
          prune (phi ** H)
          );
 
-i84 : Ext(Module,Ring) := (M,k) -> (
+i85 : Ext(Module,Ring) := (M,k) -> (
          B := ring M;
          if ideal k != ideal vars B
          then error "expected the residue field of the module";
          changeRing Ext(M,coker vars B)
          );
 
-i85 : use B;
+i86 : use B;
 
-i86 : k = B/(x,y,z);
+i87 : k = B/(x,y,z);
 
-i87 : use B;
+i88 : use B;
 
-i88 : P = Ext(M,k);
+i89 : P = Ext(M,k);
 
-i89 : time oddPart P
-     -- used 0.012001 seconds
+i90 : time oddPart P
+     -- used 0.020002 seconds
 
-o89 = cokernel {-1, -3} | X_2 X_1 0   0   0   0   0   0   |
+o90 = cokernel {-1, -3} | X_2 X_1 0   0   0   0   0   0   |
                {-3, -9} | 0   0   0   0   0   X_1 0   0   |
                {-3, -9} | 0   0   0   0   0   0   X_1 0   |
                {-3, -9} | 0   0   0   0   0   0   0   X_1 |
@@ -572,22 +574,22 @@ o89 = cokernel {-1, -3} | X_2 X_1 0   0   0   0   0   0   |
                {-1, -2} | 0   0   X_3 X_2 X_1 0   0   0   |
 
                                                        11
-o89 : K[X , X , X ]-module, quotient of (K[X , X , X ])
+o90 : K[X , X , X ]-module, quotient of (K[X , X , X ])
          1   2   3                          1   2   3
 
-i90 : Ext(Ring,Module) := (k,M) -> (
+i91 : Ext(Ring,Module) := (k,M) -> (
          B := ring M;
          if ideal k != ideal vars B
          then error "expected the residue field of the module";
          changeRing Ext(coker vars B,M)
          );
 
-i91 : time I = Ext(k,M);
-     -- used 2.82018 seconds
+i92 : time I = Ext(k,M);
+     -- used 4.08025 seconds
 
-i92 : evenPart I
+i93 : evenPart I
 
-o92 = cokernel {0, 6} | 11X_2  11X_1  |
+o93 = cokernel {0, 6} | 11X_2  11X_1  |
                {0, 6} | -16X_2 -16X_1 |
                {0, 6} | -44X_2 -44X_1 |
                {0, 6} | 32X_2  32X_1  |
@@ -596,12 +598,12 @@ o92 = cokernel {0, 6} | 11X_2  11X_1  |
                {0, 6} | X_2    X_1    |
 
                                                        7
-o92 : K[X , X , X ]-module, quotient of (K[X , X , X ])
+o93 : K[X , X , X ]-module, quotient of (K[X , X , X ])
          1   2   3                          1   2   3
 
-i93 : oddPart I
+i94 : oddPart I
 
-o93 = cokernel {-1, 3} | 0      0      0      0   0   0      0      0      X_1    0   |
+o94 = cokernel {-1, 3} | 0      0      0      0   0   0      0      0      X_1    0   |
                {-1, 4} | 25X_1  23X_1  -X_1   0   0   25X_2  23X_2  -X_2   39X_2  0   |
                {-1, 4} | -41X_1 -6X_1  -51X_1 0   0   -41X_2 -6X_2  -51X_2 46X_2  0   |
                {-1, 4} | 22X_1  10X_1  15X_1  0   0   22X_2  10X_2  15X_2  -16X_2 0   |
@@ -616,12 +618,12 @@ o93 = cokernel {-1, 3} | 0      0      0      0   0   0      0      0      X_1  
                {-1, 5} | 0      0      0      0   0   -42X_3 -4X_3  50X_3  -38X_3 X_1 |
 
                                                        13
-o93 : K[X , X , X ]-module, quotient of (K[X , X , X ])
+o94 : K[X , X , X ]-module, quotient of (K[X , X , X ])
          1   2   3                          1   2   3
 
-i94 : T = ZZ[t,u,Inverses=>true,MonomialOrder=>RevLex,Weights=>{-3,-1}];
+i95 : T = ZZ[t,u,Inverses=>true,MonomialOrder=>RevLex,Weights=>{-3,-1}];
 
-i95 : poincareSeries2 = M -> (
+i96 : poincareSeries2 = M -> (
          B := ring M;
          k := B/ideal vars B;
          P := Ext(M,k);
@@ -630,26 +632,26 @@ i95 : poincareSeries2 = M -> (
          substitute(h, {T'_0=>t^-1,T'_1=>u^-1})
          );
 
-i96 : poincareSeries1 = M -> (
+i97 : poincareSeries1 = M -> (
          substitute(poincareSeries2 M, {u=>1_T})
          );
 
-i97 : A' = K[x,y,z];
+i98 : A' = K[x,y,z];
 
-i98 : B' = A'/(x^2,y^2,z^3);
+i99 : B' = A'/(x^2,y^2,z^3);
 
-i99 : C' = res(B'^1/(x,y,z), LengthLimit => 6)
+i100 : C' = res(B'^1/(x,y,z), LengthLimit => 6)
 
-        1       3       6       10       15       21       28
-o99 = B'  <-- B'  <-- B'  <-- B'   <-- B'   <-- B'   <-- B'
-                                                          
-      0       1       2       3        4        5        6
+         1       3       6       10       15       21       28
+o100 = B'  <-- B'  <-- B'  <-- B'   <-- B'   <-- B'   <-- B'
+                                                           
+       0       1       2       3        4        5        6
 
-o99 : ChainComplex
+o100 : ChainComplex
 
-i100 : M' = coker transpose C'.dd_5
+i101 : M' = coker transpose C'.dd_5
 
-o100 = cokernel {-5} | -y 0   0  0  z  0 0 0  0 0  0  0 0  0 0 |
+o101 = cokernel {-5} | -y 0   0  0  z  0 0 0  0 0  0  0 0  0 0 |
                 {-5} | -x -y  0  0  0  z 0 0  0 0  0  0 0  0 0 |
                 {-5} | 0  x   -y 0  0  0 z 0  0 0  0  0 0  0 0 |
                 {-5} | 0  0   x  -y 0  0 0 z  0 0  0  0 0  0 0 |
@@ -672,43 +674,43 @@ o100 = cokernel {-5} | -y 0   0  0  z  0 0 0  0 0  0  0 0  0 0 |
                 {-7} | 0  0   0  0  0  0 0 0  0 0  0  0 0  0 z |
 
                                 21
-o100 : B'-module, quotient of B'
+o101 : B'-module, quotient of B'
 
-i101 : poincareSeries2 M'
+i102 : poincareSeries2 M'
 
          -7     -6      -5      -6       -5       -4     2 -5      2 -4      2 -3      2 -2     3 -4      3 -3      3 -2     3 -1     4 -3     4 -2      4 -1      4    5 -2     5 -1     5      5     6 4     7 5    8 4     8 6     9 5    9 7     10 6    11 7
        3u   + 7u   + 11u   + t*u   + 5t*u   + 9t*u   - 6t u   - 14t u   - 22t u   - 11t u   - 2t u   - 10t u   - 18t u   - 9t u   + 3t u   + 7t u   + 11t u   + 15t  + t u   + 5t u   + 9t  + 13t u + t u  + 3t u  - t u  + 3t u  - 3t u  + t u  - 3t  u  - t  u
-o101 = ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+o102 = ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
                                                                                                                                 2 3       2 2 2
                                                                                                                           (1 - t u )(1 - t u )
 
-o101 : Expression of class Divide
+o102 : Expression of class Divide
 
-i102 : p = poincareSeries1 M
+i103 : p = poincareSeries1 M
 
                   2     3      4    5     6    7
        3 + 2t - 5t  + 4t  + 12t  + t  - 4t  - t
-o102 = -----------------------------------------
+o103 = -----------------------------------------
                       2       2       2
                 (1 - t )(1 - t )(1 - t )
 
-o102 : Expression of class Divide
+o103 : Expression of class Divide
 
-i103 : load "simplify.m2"
+i104 : load "simplify.m2"
 
-i104 : simplify p
+i105 : simplify p
 
                  2     3     4     5    6
        3 - t - 4t  + 8t  + 4t  - 3t  - t
-o104 = ----------------------------------
+o105 = ----------------------------------
                        2       3
                 (1 + t) (1 - t)
 
-o104 : Expression of class Divide
+o105 : Expression of class Divide
 
-i105 : T' = QQ[t,Inverses=>true,MonomialOrder=>RevLex,Weights=>{-1}];
+i106 : T' = QQ[t,Inverses=>true,MonomialOrder=>RevLex,Weights=>{-1}];
 
-i106 : expansion = (n,q) -> (
+i107 : expansion = (n,q) -> (
            t := T'_0;
            rho := map(T',T,{t,1});
            num := rho value numerator q;
@@ -718,43 +720,43 @@ i106 : expansion = (n,q) -> (
            (num + t^n) // den
            );
 
-i107 : expansion(20,p)
+i108 : expansion(20,p)
 
                   2      3      4      5      6      7      8      9      10       11       12       13       14       15       16       17       18       19       20
-o107 = 3 + 2t + 4t  + 10t  + 15t  + 25t  + 32t  + 46t  + 55t  + 73t  + 84t   + 106t   + 119t   + 145t   + 160t   + 190t   + 207t   + 241t   + 260t   + 298t   + 319t
+o108 = 3 + 2t + 4t  + 10t  + 15t  + 25t  + 32t  + 46t  + 55t  + 73t  + 84t   + 106t   + 119t   + 145t   + 160t   + 190t   + 207t   + 241t   + 260t   + 298t   + 319t
 
-o107 : T'
+o108 : T'
 
-i108 : psi = map(K,B)
+i109 : psi = map(K,B)
 
-o108 = map(K,B,{0, 0, 0})
+o109 = map(K,B,{0, 0, 0})
 
-o108 : RingMap K <--- B
+o109 : RingMap K <--- B
 
-i109 : apply(10, i -> rank (psi ** Ext^i(M,coker vars B)))
+i110 : apply(10, i -> rank (psi ** Ext^i(M,coker vars B)))
 
-o109 = {3, 2, 4, 10, 15, 25, 32, 46, 55, 73}
+o110 = {3, 2, 4, 10, 15, 25, 32, 46, 55, 73}
 
-o109 : List
+o110 : List
 
-i110 : use T;
+i111 : use T;
 
-i111 : complexity = M -> dim Ext(M,coker vars ring M);
+i112 : complexity = M -> dim Ext(M,coker vars ring M);
 
-i112 : complexity M
+i113 : complexity M
 
-o112 = 3
+o113 = 3
 
-i113 : k = coker vars ring H;
+i114 : k = coker vars ring H;
 
-i114 : prune Hom(k,H)
+i115 : prune Hom(k,H)
 
-o114 = 0
+o115 = 0
 
-o114 : K[X , X , x, y]-module
+o115 : K[X , X , x, y]-module
           1   2
 
-i115 : criticalDegree = M -> (
+i116 : criticalDegree = M -> (
           B := ring M;
           k := B / ideal vars B;
           P := Ext(M,k);
@@ -762,31 +764,31 @@ i115 : criticalDegree = M -> (
           - min ( first \ degrees source gens prune Hom(k,P))
           );
 
-i116 : criticalDegree M
+i117 : criticalDegree M
 
-o116 = 1
+o117 = 1
 
-i117 : criticalDegree M'
+i118 : criticalDegree M'
 
-o117 = 5
+o118 = 5
 
-i118 : supportVarietyIdeal = M -> (
+i119 : supportVarietyIdeal = M -> (
           B := ring M;
           k := B/ideal vars B;
           ann Ext(M,k)
           );
 
-i119 : K'' = ZZ/7;
+i120 : K'' = ZZ/7;
 
-i120 : A'' = K''[x,y,z];
+i121 : A'' = K''[x,y,z];
 
-i121 : J'' = ideal(x^7,y^7,z^7);
+i122 : J'' = ideal(x^7,y^7,z^7);
 
-o121 : Ideal of A''
+o122 : Ideal of A''
 
-i122 : B'' = A''/J'';
+i123 : B'' = A''/J'';
 
-i123 : scan((1,1) .. (3,3), (r,d) -> (
+i124 : scan((1,1) .. (3,3), (r,d) -> (
                V := cokernel random (B''^r,B''^{-d});
                << "------------------------------------------------------------------"
                << endl
@@ -798,51 +800,51 @@ i123 : scan((1,1) .. (3,3), (r,d) -> (
 V = cokernel | x-3y-2z |
 support variety ideal = ideal (X  + 3X , X  + 2X )
                                 2     3   1     3
-                        -- .072005 seconds
+                        -- .124008 seconds
 ------------------------------------------------------------------
 V = cokernel | 3x2-xy-3y2-xz+2yz-z2 |
 support variety ideal = ideal ()
-                        -- .336021 seconds
+                        -- .704044 seconds
 ------------------------------------------------------------------
 V = cokernel | -3x3+2xy2+3y3+2xyz-2y2z-3xz2-2yz2 |
 support variety ideal = ideal ()
-                        -- .368023 seconds
+                        -- .684043 seconds
 ------------------------------------------------------------------
 V = cokernel | -3x+2y-3z |
              | -x+3y     |
 support variety ideal = ideal(X  + 3X )
                                2     3
-                        -- .068004 seconds
+                        -- .16401 seconds
 ------------------------------------------------------------------
 V = cokernel | -2x2-3xy+2y2+3yz+2z2 |
              | 2x2-2xy-xz-2yz-z2    |
 support variety ideal = ideal ()
-                        -- .352022 seconds
+                        -- .32402 seconds
 ------------------------------------------------------------------
 V = cokernel | -2x2y+3xy2+y3-2xyz-2y2z+3xz2-2yz2+3z3 |
              | 2x3+3x2y+xy2-2x2z-2y2z-3xz2+3yz2-z3   |
 support variety ideal = ideal ()
-                        -- .47603 seconds
+                        -- .80005 seconds
 ------------------------------------------------------------------
 V = cokernel | -z     |
              | x-3y   |
              | -3x-3z |
 support variety ideal = ideal ()
-                        -- .128008 seconds
+                        -- .208013 seconds
 ------------------------------------------------------------------
 V = cokernel | 3x2-2xy-2xz-yz      |
              | -x2+2xy+3y2+xz+2z2  |
              | -3x2-2y2-3xz-yz-2z2 |
 support variety ideal = ideal ()
-                        -- .388024 seconds
+                        -- .348022 seconds
 ------------------------------------------------------------------
 V = cokernel | -x2y+2xy2-y3-2x2z-2y2z+3xz2                  |
              | -3x3+2x2y+2xy2+2y3+3xyz-2xz2+3yz2-z3         |
              | -x3-3x2y+2xy2+3y3-x2z+xyz+2y2z-2xz2-2yz2+2z3 |
 support variety ideal = ideal ()
-                        -- .432027 seconds
+                        -- .880055 seconds
 
-i124 : bassSeries2 = M -> (
+i125 : bassSeries2 = M -> (
           B := ring M;
           k := B/ideal vars B;
           I := Ext(k,M);
@@ -851,68 +853,68 @@ i124 : bassSeries2 = M -> (
           substitute(h, {T'_0=>t^-1, T'_1=>u})
           );
 
-i125 : bassSeries1 = M -> (
+i126 : bassSeries1 = M -> (
           substitute(bassSeries2 M, {u=>1_T})
           );
 
-i126 : use B;
+i127 : use B;
 
-i127 : L = B^1/(x,y,z);
+i128 : L = B^1/(x,y,z);
 
-i128 : p = poincareSeries2 L
+i129 : p = poincareSeries2 L
 
                         2 2    3 3
            1 + 3t*u + 3t u  + t u
-o128 = ------------------------------
+o129 = ------------------------------
              2 5       2 4       2 3
        (1 - t u )(1 - t u )(1 - t u )
 
-o128 : Expression of class Divide
+o129 : Expression of class Divide
 
-i129 : b = bassSeries2 L
+i130 : b = bassSeries2 L
 
                   -1     2 -2    3 -3
           1 + 3t*u   + 3t u   + t u
-o129 = ---------------------------------
+o130 = ---------------------------------
              2 -5       2 -4       2 -3
        (1 - t u  )(1 - t u  )(1 - t u  )
 
-o129 : Expression of class Divide
+o130 : Expression of class Divide
 
-i130 : b2 = bassSeries2 M
+i131 : b2 = bassSeries2 M
 
          6      3       4       5    2 2    2 3     3     3      3 2    4 -1     5 -3
        7u  + t*u  + 9t*u  + 3t*u  - t u  - t u  - 4t  - 3t u - 3t u  + t u   + 3t u
-o130 = ------------------------------------------------------------------------------
+o131 = ------------------------------------------------------------------------------
                                     2 -5       2 -4       2 -3
                               (1 - t u  )(1 - t u  )(1 - t u  )
 
-o130 : Expression of class Divide
+o131 : Expression of class Divide
 
-i131 : b1 = bassSeries1 M;
+i132 : b1 = bassSeries1 M;
 
-i132 : simplify b1
+i133 : simplify b1
 
                   2     3     4
        7 + 6t - 8t  - 2t  + 3t
-o132 = ------------------------
+o133 = ------------------------
                   2       3
            (1 + t) (1 - t)
 
-o132 : Expression of class Divide
+o133 : Expression of class Divide
 
-i133 : ext = (M,N) -> changeRing Ext(M,N);
+i134 : ext = (M,N) -> changeRing Ext(M,N);
 
-i134 : use B;
+i135 : use B;
 
-i135 : N = B^1/(x^2 + z^2,y^3);
+i136 : N = B^1/(x^2 + z^2,y^3);
 
-i136 : time rH = ext(M,N);
-     -- used 4.11626 seconds
+i137 : time rH = ext(M,N);
+     -- used 5.84036 seconds
 
-i137 : evenPart rH
+i138 : evenPart rH
 
-o137 = cokernel {0, 1}   | X_2 X_1 0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0      0   0      0   0   |
+o138 = cokernel {0, 1}   | X_2 X_1 0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0      0   0      0   0   |
                 {0, 2}   | 0   0   X_3 X_2 X_1 0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0      0   0      0   0   |
                 {0, 2}   | 0   0   0   0   0   X_3 X_2 X_1 0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0      0   0      0   0   |
                 {0, 2}   | 0   0   0   0   0   0   0   0   X_3 X_2 X_1 0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0      0   0      0   0   |
@@ -931,12 +933,12 @@ o137 = cokernel {0, 1}   | X_2 X_1 0   0   0   0   0   0   0   0   0   0   0   0
                 {-4, -9} | 0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0      0   0      0   X_1 |
 
                                                         17
-o137 : K[X , X , X ]-module, quotient of (K[X , X , X ])
+o138 : K[X , X , X ]-module, quotient of (K[X , X , X ])
           1   2   3                          1   2   3
 
-i138 : oddPart rH
+i139 : oddPart rH
 
-o138 = cokernel {-1, -1} | X_2 X_1 0   0   0   0   0   0   0   0   0   0   0   0   -18X_3 0   0   0   0   0   0   0   0   |
+o139 = cokernel {-1, -1} | X_2 X_1 0   0   0   0   0   0   0   0   0   0   0   0   -18X_3 0   0   0   0   0   0   0   0   |
                 {-1, -1} | 0   0   X_2 X_1 0   0   0   0   0   0   0   0   0   0   9X_3   0   0   0   0   0   0   0   0   |
                 {-1, -1} | 0   0   0   0   X_2 X_1 0   0   0   0   0   0   0   0   24X_3  0   0   0   0   0   0   0   0   |
                 {-1, -1} | 0   0   0   0   0   0   X_2 X_1 0   0   0   0   0   0   -31X_3 0   0   0   0   0   0   0   0   |
@@ -952,17 +954,17 @@ o138 = cokernel {-1, -1} | X_2 X_1 0   0   0   0   0   0   0   0   0   0   0   0
                 {-3, -6} | 0   0   0   0   0   0   0   0   0   0   0   0   0   0   0      0   0   0   0   0   0   0   X_1 |
 
                                                         14
-o138 : K[X , X , X ]-module, quotient of (K[X , X , X ])
+o139 : K[X , X , X ]-module, quotient of (K[X , X , X ])
           1   2   3                          1   2   3
 
-i139 : N' = B^1/(x^2 + z^2,y^3 - 2*z^3);
+i140 : N' = B^1/(x^2 + z^2,y^3 - 2*z^3);
 
-i140 : time rH' = ext(M,N');
-     -- used 3.78424 seconds
+i141 : time rH' = ext(M,N');
+     -- used 5.73236 seconds
 
-i141 : evenPart rH'
+i142 : evenPart rH'
 
-o141 = cokernel {0, 1}   | X_2 X_1 0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0      0      0      0   0   0      0      0      0     0      0      0      0      0   0   0      0      0         0              0              0              0         0         |
+o142 = cokernel {0, 1}   | X_2 X_1 0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0      0      0      0   0   0      0      0      0     0      0      0      0      0   0   0      0      0         0              0              0              0         0         |
                 {0, 1}   | 0   0   X_2 X_1 0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0      0      0      0   0   0      0      0      0     0      0      0      0      0   0   0      0      0         0              0              0              0         0         |
                 {0, 2}   | 0   0   0   0   X_3 X_2 X_1 0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0      0      0      0   0   0      0      0      0     0      0      0      0      0   0   0      0      0         0              0              0              0         0         |
                 {0, 2}   | 0   0   0   0   0   0   0   X_3 X_2 X_1 0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0      0      0      0   0   0      0      0      0     0      0      0      0      0   0   0      0      0         0              0              0              0         0         |
@@ -997,12 +999,12 @@ o141 = cokernel {0, 1}   | X_2 X_1 0   0   0   0   0   0   0   0   0   0   0   0
                 {-4, -8} | 0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0      0      0      0   0   0      0      0      0     0      0      0      0      0   0   0      0      0         0              0              -13X_2         -29X_2    30X_2     |
 
                                                         33
-o141 : K[X , X , X ]-module, quotient of (K[X , X , X ])
+o142 : K[X , X , X ]-module, quotient of (K[X , X , X ])
           1   2   3                          1   2   3
 
-i142 : oddPart rH'
+i143 : oddPart rH'
 
-o142 = cokernel {-1, -2} | X_2 X_1 0   0   0   0   0   0   0      0      0      0      0      0      |
+o143 = cokernel {-1, -2} | X_2 X_1 0   0   0   0   0   0   0      0      0      0      0      0      |
                 {-1, -2} | 0   0   X_2 X_1 0   0   0   0   0      0      0      0      0      0      |
                 {-1, -2} | 0   0   0   0   X_2 X_1 0   0   0      0      0      0      0      0      |
                 {-1, -2} | 0   0   0   0   0   0   X_2 X_1 0      0      0      0      0      0      |
@@ -1020,113 +1022,113 @@ o142 = cokernel {-1, -2} | X_2 X_1 0   0   0   0   0   0   0      0      0      
                 {-3, -6} | 0   0   0   0   0   0   0   0   34X_2  -30X_2 -51X_2 43X_2  47X_2  28X_2  |
 
                                                         16
-o142 : K[X , X , X ]-module, quotient of (K[X , X , X ])
+o143 : K[X , X , X ]-module, quotient of (K[X , X , X ])
           1   2   3                          1   2   3
 
-i143 : extgenSeries2 = (M,N) -> (
+i144 : extgenSeries2 = (M,N) -> (
           H := ext(M,N);
           h := hilbertSeries H;
           T':= degreesRing H;
           substitute(h, {T'_0=>t^-1,T'_1=>u^-1})
           );
 
-i144 : extgenSeries1 = (M,N) -> (
+i145 : extgenSeries1 = (M,N) -> (
           substitute(extgenSeries2(M,N), {u=>1_T})
           );
 
-i145 : time extgenSeries2(M,N)
-     -- used 0.016001 seconds
+i146 : time extgenSeries2(M,N)
+     -- used 0.036002 seconds
 
          -2    -1            2      2 2     2 3     2 4     3 4     3 5     3 6    3 7     4 5     4 6    4 7     4 8    4 9     5 8     5 9     6 10     6 11    6 12    7 13
        8u   + u   + 8t*u - 8t u - 9t u  - 9t u  + 7t u  - 8t u  - 8t u  + 4t u  + t u  + 8t u  + 9t u  + t u  - 2t u  + t u  + 8t u  - 4t u  - 8t u   + 2t u   - t u   - t u
-o145 = -----------------------------------------------------------------------------------------------------------------------------------------------------------------------
+o146 = -----------------------------------------------------------------------------------------------------------------------------------------------------------------------
                                                                                   2 5       2 4       2 3
                                                                             (1 - t u )(1 - t u )(1 - t u )
 
-o145 : Expression of class Divide
+o146 : Expression of class Divide
 
-i146 : g=time extgenSeries1(M,N)
-     -- used 0.024002 seconds
+i147 : g=time extgenSeries1(M,N)
+     -- used 0.040003 seconds
 
                    2      3      4     5     6    7
        9 + 8t - 19t  - 11t  + 17t  + 4t  - 7t  - t
-o146 = --------------------------------------------
+o147 = --------------------------------------------
                        2       2       2
                  (1 - t )(1 - t )(1 - t )
 
-o146 : Expression of class Divide
+o147 : Expression of class Divide
 
-i147 : simplify g
+i148 : simplify g
 
                  2     3    4
        9 - t - 9t  + 6t  + t
-o147 = ----------------------
+o148 = ----------------------
                          2
            (1 + t)(1 - t)
 
-o147 : Expression of class Divide
+o148 : Expression of class Divide
 
-i148 : time extgenSeries2(M,N')
-     -- used 0.032002 seconds
+i149 : time extgenSeries2(M,N')
+     -- used 0.048003 seconds
 
          -2     -1       2     2      2 2     2 3      2 4     3 5     3 6     3 7     4 5     4 6     4 7     4 8     4 9     5 9     5 10     6 10      6 11     6 12
        7u   + 2u   + 4t*u  - 7t u - 9t u  - 9t u  + 16t u  - 4t u  + 2t u  + 6t u  + 7t u  + 9t u  - 5t u  - 9t u  + 6t u  + 4t u  - 6t u   - 7t u   + 11t u   - 6t u
-o148 = ----------------------------------------------------------------------------------------------------------------------------------------------------------------
+o149 = ----------------------------------------------------------------------------------------------------------------------------------------------------------------
                                                                               2 5       2 4       2 3
                                                                         (1 - t u )(1 - t u )(1 - t u )
 
-o148 : Expression of class Divide
+o149 : Expression of class Divide
 
-i149 : g'=time extgenSeries1(M,N')
-     -- used 0.032002 seconds
+i150 : g'=time extgenSeries1(M,N')
+     -- used 0.052004 seconds
 
                   2     3     4     5     6
        9 + 4t - 9t  + 4t  + 8t  - 2t  - 2t
-o149 = ------------------------------------
+o150 = ------------------------------------
                    2       2       2
              (1 - t )(1 - t )(1 - t )
 
-o149 : Expression of class Divide
+o150 : Expression of class Divide
 
-i150 : simplify g'
+i151 : simplify g'
 
                   2     3     5
        9 - 5t - 4t  + 8t  - 2t
-o150 = ------------------------
+o151 = ------------------------
                   2       3
            (1 + t) (1 - t)
 
-o150 : Expression of class Divide
+o151 : Expression of class Divide
 
-i151 : complexityPair = (M,N) -> dim ext(M,N);
+i152 : complexityPair = (M,N) -> dim ext(M,N);
 
-i152 : time complexityPair(M,N)
-     -- used 0.016001 seconds
+i153 : time complexityPair(M,N)
+     -- used 0.028002 seconds
 
-o152 = 2
+o153 = 2
 
-i153 : time complexityPair(M,N')
-     -- used 0.028001 seconds
+i154 : time complexityPair(M,N')
+     -- used 0.036002 seconds
 
-o153 = 3
+o154 = 3
 
-i154 : supportVarietyPairIdeal = (M,N) -> ann ext(M,N);
+i155 : supportVarietyPairIdeal = (M,N) -> ann ext(M,N);
 
-i155 : time supportVarietyPairIdeal(M,N)
-     -- used 0.324021 seconds
+i156 : time supportVarietyPairIdeal(M,N)
+     -- used 0.15601 seconds
 
-o155 = ideal(X )
+o156 = ideal(X )
               1
-
-o155 : Ideal of K[X , X , X ]
-                   1   2   3
-
-i156 : time supportVarietyPairIdeal(M,N')
-     -- used 0.188011 seconds
-
-o156 = ideal ()
 
 o156 : Ideal of K[X , X , X ]
                    1   2   3
 
-i157 : 
+i157 : time supportVarietyPairIdeal(M,N')
+     -- used 0.300019 seconds
+
+o157 = ideal ()
+
+o157 : Ideal of K[X , X , X ]
+                   1   2   3
+
+i158 : 

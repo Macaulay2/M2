@@ -45,5 +45,5 @@ assert try ( x^(2^17) ; false ) else true
 
 end
 -- Local Variables:
--- compile-command: "make -C $M2BUILDDIR/Macaulay2/test overflow.out"
+-- compile-command: "make -C $M2BUILDDIR/Macaulay2/packages/Macaulay2Doc/test overflow.out"
 -- End:

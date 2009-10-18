@@ -7,7 +7,7 @@ document {
 	  (independentSets,Ideal),
 	  (independentSets,MonomialIdeal),
 	  [independentSets,Limit]},
-     Headline => "some maximal independent subsets of variables modulo an ideal",
+     Headline => "some size-maximal independent subsets of variables modulo an ideal",
      Usage => "independentSets J",
      Inputs => {
 	  "J" => Nothing => {ofClass Ideal, ", or ", ofClass MonomialIdeal},

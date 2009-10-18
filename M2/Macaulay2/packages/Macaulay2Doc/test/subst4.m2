@@ -6,5 +6,5 @@ leadMonomial a'
 baseName a'
 end
 -- Local Variables:
--- compile-command: "make -C $M2BUILDDIR/Macaulay2/test subst4.out"
+-- compile-command: "make -C $M2BUILDDIR/Macaulay2/packages/Macaulay2Doc/test subst4.out"
 -- End:

@@ -28,5 +28,5 @@ assert ( override (new OptionTable from {a=>1},((3,4,5),a=>2)) === (new OptionTa
 
 end
 -- Local Variables:
--- compile-command: "make -C $M2BUILDDIR/Macaulay2/test C05.out"
+-- compile-command: "make -C $M2BUILDDIR/Macaulay2/packages/Macaulay2Doc/test C05.out"
 -- End:

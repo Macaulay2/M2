@@ -42,7 +42,7 @@ norm(MutableMatrix) := (M) -> new RR from norm(numeric(precision M,infinity),raw
 mutableIdentity = method(Options => {Dense => true}, TypicalValue=>MutableMatrix)
 mutableIdentity(Ring,ZZ) := o -> (R,nrows) -> 
   map(R,rawMutableIdentity(raw R,nrows,o.Dense))
-mutableIdentity(RingFamily,ZZ) := o -> (R,nrows) -> mutableIdentity(R,nrows,o)
+mutableIdentity(RingFamily,ZZ) := o -> (R,nrows) -> mutableIdentity(default R,nrows,o)
 
 MutableMatrix _ Sequence := (m,rc) -> (
      n := (raw m)_rc;

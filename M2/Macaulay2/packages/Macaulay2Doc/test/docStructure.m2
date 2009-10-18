@@ -51,7 +51,7 @@ reach2 TOH := x -> (
 
 DocumentationProvided = set apply(topicList(), toString)
 scan(keys DocumentationProvided, s -> reachable#s = false)
-reach2 TO "Macaulay 2"
+reach2 TO "Macaulay2"
 
 o = "docStructure.out" << world << endl
 -- unreachable = applyPairs(new HashTable from reachable, (k,v) -> if not v then (k,true))
@@ -63,5 +63,5 @@ o << close
 << "Documentation structure written to file " << o << endl
 end
 -- Local Variables:
--- compile-command: "make -C $M2BUILDDIR/Macaulay2/test docStructure.out"
+-- compile-command: "make -C $M2BUILDDIR/Macaulay2/packages/Macaulay2Doc/test docStructure.out"
 -- End:

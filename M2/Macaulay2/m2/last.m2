@@ -53,13 +53,14 @@ addStartFunction(
      )
 
 addStartFunction( () -> (
+	  -- we use "realpath" to produce real paths, because Cygwin-style symbolic links are not understood by native Windows applications
 	  prefixPath = 
 	  if prefixDirectory === null 
 	  then {} 
 	  else nonnull {				    -- detect the layout used and accomodate searches for both layouts
-	       prefixDirectory,
-	       if isDirectory(prefixDirectory|"common/") then prefixDirectory|"common/",
-	       if isDirectory(prefixDirectory|version#"machine") then prefixDirectory|version#"machine"
+	       if isDirectory(prefixDirectory|"common/") then realpath(prefixDirectory|"common/"),
+	       if isDirectory prefixDirectory then realpath prefixDirectory,
+	       if isDirectory(prefixDirectory|version#"machine") then realpath(prefixDirectory|version#"machine")
 	       };
 	  if not noinitfile and getenv "HOME" =!= "" then (
 	       prefixPath = prepend(applicationDirectory()|"local/", prefixPath);
@@ -97,7 +98,7 @@ addStartFunction( () -> if not noinitfile then (
 		    if isDirectory fn and # readDirectory fn == 2 then removeDirectory fn else
 		    if readlink fn =!= null and not fileExists fn then removeFile fn
 		    ));
-	  if isDirectory d1 and isDirectory d2 then stderr << "--warning: both types of layout in use for user-installed packages" << endl
+	  -- if isDirectory d1 and isDirectory d2 then stderr << "--warning: both types of layout in use for user-installed packages" << endl
 	  ))
 
 addStartFunction( () -> if dumpdataFile =!= null and fileExists dumpdataFile then (

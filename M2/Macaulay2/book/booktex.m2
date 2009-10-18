@@ -91,7 +91,7 @@ reach2 TO := reach2 TOH := (x) -> (
 reach3 Thing := reach1
 reach3 UL := x -> scan(x,reach1)
 --------------- body of book
-reach1 documentationMemo "Macaulay 2"
+reach1 documentationMemo "Macaulay2"
 --------------- appendix
 -- sectionNumber = {"A"}
 -- document { "Appendix",

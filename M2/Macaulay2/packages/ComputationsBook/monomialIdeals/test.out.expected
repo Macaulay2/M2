@@ -434,7 +434,7 @@ o58 : Matrix ZZ  <--- ZZ
 
 i59 : IP(A, w2, b2)
 
-o59 = | 2 0 1 2 0 |
+o59 = | 0 2 3 0 0 |
 
                1        5
 o59 : Matrix ZZ  <--- ZZ

@@ -1,9 +1,0 @@
--- -*- M2-comint -*- {* hash: 1426496680 *}
-
-i1 : setNmzDataPath("d:/Normaliz2.1Windows/example"); 
-
-i2 : getNmzDataPath() 
-
-o2 = d:/Normaliz2.1Windows/example/
-
-i3 : 

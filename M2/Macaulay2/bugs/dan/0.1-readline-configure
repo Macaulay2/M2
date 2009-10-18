@@ -1,0 +1,11 @@
+compilation of readline gives a warning message that would be nice to avoid:
+
+gcc -m64 -dynamic -L/Users/dan/src/M2-1.3/BUILD/dan/builds.tmp/mac64.production/libraries/final/lib -bind_at_load -Wl,-search_paths_first -arch_only `/usr/bin/arch` -install_name /Users/dan/src/M2-1.3/BUILD/dan/builds.tmp/mac64.production/libraries/final/lib/libreadline.6.0.dylib -current_version 6.0 -compatibility_version 6 -v -o libreadline.6.0.dylib readline.so vi_mode.so funmap.so keymaps.so parens.so search.so rltty.so complete.so bind.so isearch.so display.so signals.so util.so kill.so undo.so macro.so input.so callback.so terminal.so text.so nls.so misc.so xmalloc.so history.so histexpand.so histfile.so histsearch.so shell.so mbutil.so tilde.so compat.so -lncurses
+Using built-in specs.
+Target: i686-apple-darwin9
+Configured with: /var/tmp/gcc/gcc-5493~1/src/configure --disable-checking -enable-werror --prefix=/usr --mandir=/share/man --enable-languages=c,objc,c++,obj-c++ --program-transform-name=/^[cg][^.-]*$/s/$/-4.0/ --with-gxx-include-dir=/include/c++/4.0.0 --with-slibdir=/usr/lib --build=i686-apple-darwin9 --with-arch=apple --with-tune=generic --host=i686-apple-darwin9 --target=i686-apple-darwin9
+Thread model: posix
+gcc version 4.0.1 (Apple Inc. build 5493)
+i686-apple-darwin9-gcc-4.0.1: -compatibility_version only allowed with -dynamiclib
+make[5]: *** [libreadline.6.0.dylib] Error 1
+make[5]: Leaving directory `/Users/dan/src/M2-1.3/BUILD/dan/builds.tmp/mac64.production/libraries/readline/build/readline-6.0/shlib'

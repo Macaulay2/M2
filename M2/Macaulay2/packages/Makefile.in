@@ -10,6 +10,7 @@ DEVEL = EllipticIntegrals
 RemakeAllDocumentation ?= false
 IgnoreExampleErrors ?= false
 CheckDocumentation ?= true
+Verbose ?= false
 RerunExamples ?= false
 debugLevel ?= 0
 
@@ -17,7 +18,7 @@ ARGS := RemakeAllDocumentation => $(RemakeAllDocumentation), \
 	IgnoreExampleErrors => $(IgnoreExampleErrors), \
 	RerunExamples => $(RerunExamples), \
 	CheckDocumentation => $(CheckDocumentation), \
-	AbsoluteLinks => false, UserMode => false, Verbose => false, \
+	AbsoluteLinks => false, UserMode => false, Verbose => $(Verbose), \
 	InstallPrefix => \"@LOCALSTAGINGAREA@/\", \
 	SeparateExec => true
 
@@ -86,6 +87,6 @@ all: @pre_packagesdir@/D-modules.m2
 # this one we need for compatibility with the book
 all: @pre_packagesdir@/LLL.m2
 # Local Variables:
-# compile-command: "make -C $M2BUILDDIR/Macaulay2/packages "
+# compile-command: "make -C $M2BUILDDIR/Macaulay2/packages RemakePackages=false RemakeAllDocumentation=false IgnoreExampleErrors=false Verbose=false debugLevel=0"
 # End:
 

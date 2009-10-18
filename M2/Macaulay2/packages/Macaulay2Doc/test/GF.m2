@@ -1,3 +1,6 @@
+GF 25
+assert( 24 == # unique apply(24, i -> a^i) )
+
 debug Core
 GF 97^2 [x]
 assert ( toString x == "x" )

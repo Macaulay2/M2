@@ -10,5 +10,5 @@ a = i:j							    -- used to take forever
 assert( a == ideal(8*y^2,3*x*y,6*x^3) )
 end
 -- Local Variables:
--- compile-command: "make -C $M2BUILDDIR/Macaulay2/test quotient.out"
+-- compile-command: "make -C $M2BUILDDIR/Macaulay2/packages/Macaulay2Doc/test quotient.out"
 -- End:

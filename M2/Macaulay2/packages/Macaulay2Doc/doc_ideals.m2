@@ -17,7 +17,7 @@ document {
      Key => Ideal,
      Headline => "the class of all ideals",
      SeeAlso => "ideals",
-     "For basic information about ideals in ", EM "Macaulay 2", ", see ",
+     "For basic information about ideals in ", EM "Macaulay2", ", see ",
      TO "ideals", ".",
      PARA{},
      "Common ways to make an ideal:",

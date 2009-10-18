@@ -7,5 +7,5 @@ assert( source g == QQ^3 )
 assert( target g == QQ^6 )
 end
 -- Local Variables:
--- compile-command: "make -C $M2BUILDDIR/Macaulay2/test linalg.out"
+-- compile-command: "make -C $M2BUILDDIR/Macaulay2/packages/Macaulay2Doc/test linalg.out"
 -- End:

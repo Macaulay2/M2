@@ -352,7 +352,6 @@ minPressy = (I,excludes) -> (
      --  if the ring I is a tower, flatten it first, and if the ring has quotient
      -- elements, add them to flatI
      R := ring I;
-     excludes = excludes/index;
      (flatI,F) := flattenRing I;
      flatR := ring flatI;
      (S,IS) := (flatR, flatI);
@@ -397,15 +396,12 @@ minPressyRing = (R, excludes) -> (
      )
 
 checkExcludes = (R,excludes) -> (
-     if instance(excludes,RingElement)
+     if instance(excludes,ZZ)
      then excludes = {excludes};
      if not instance(excludes,BasicList) 
-     then error"expected a variable or list of variables in a ring";
-     if any(excludes, e -> not instance(e,RingElement))
-        or any(excludes, e -> index e === null)
-     then error "the Exclude list must consist of variables in the ring";
-     if any(excludes, e -> not instance(e,R) and index substitute(e,R) === null)
-     then error "the Exclude list must consist of variables in the ring";
+     then error"expected an index or list of indices of variables in a ring";
+     if any(excludes, e -> not instance(e,ZZ))
+     then error "the Exclude list must consist of integer indices";
      )
 minimalPresentation Ideal := prune Ideal := Ideal => opts -> (I) -> (
      checkExcludes(ring I,opts.Exclude);

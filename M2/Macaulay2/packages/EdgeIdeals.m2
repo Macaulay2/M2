@@ -13,7 +13,7 @@ newPackage("EdgeIdeals",
 		"published article URI" => "http://j-sag.org/Volume1/jsag-1-2009.pdf",
 		"published code URI" => "http://j-sag.org/Volume1/EdgeIdeals.m2",
      	        "repository code URI" => "svn://macaulay2.math.uiuc.edu/Macaulay2/trunk/M2/Macaulay2/packages/EdgeIdeals.m2",
-		"release at publication" => "9342",
+		"release at publication" => 9342,
 		"version at publication" => "1.0.0",
 		"volume number" => "1",
 		"volume URI" => "http://j-sag.org/Volume1/"

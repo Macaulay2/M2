@@ -1,0 +1,13 @@
+
+i3 : errorDepth = 10
+
+o3 = 10
+
+i5 : load "/tmp/foo.m2"
+
+i6 : foo()
+{*dummy position*}[0]: error: hi			OOPS
+
+i7 : get "/tmp/foo.m2"
+
+o7 = foo = () -> (error "hi"; 2)

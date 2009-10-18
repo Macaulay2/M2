@@ -42,7 +42,7 @@ document {
 	  HardDegreeLimit => {
 	       "throws away all S-pairs of degrees beyond the limit. The computation
 	       will be re-initialized if higher degrees are required."},
-     	  Hilbert => {"informs Macaulay 2 that this is the ", TO poincare, 
+     	  Hilbert => {"informs Macaulay2 that this is the ", TO poincare, 
 	       " polynomial, and can be used to aid in the computation of the Gröbner basis (Hilbert driven)"},
       	  MaxReductionCount => ZZ => {
 	       "the maximum number of reductions of an S-pair done before requeueing it, if the 

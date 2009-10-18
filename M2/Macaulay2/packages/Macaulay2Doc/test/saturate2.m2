@@ -4,7 +4,4 @@ S=K[u,v,a,c,Degrees=>{2,3,1,2}];
 P=ideal(v^3-u^3*a^3,u*v^2-c^2*a^4);
 Q = saturate(P,a)
 
-stderr << currentFileName << ": test deferred" << endl
-exit 0
-
 assert( Q == quotient(Q,a) )

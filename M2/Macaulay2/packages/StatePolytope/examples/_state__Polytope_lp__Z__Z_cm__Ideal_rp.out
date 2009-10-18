@@ -1,5 +1,4 @@
--- -*- M2-comint -*- {* hash: -2059086193 *}
---warning: function parametersInIdeal redefined
+-- -*- M2-comint -*- {* hash: -340869498 *}
 
 i1 : R = QQ[a..d];
 
@@ -8,6 +7,12 @@ i2 : I = ideal(a*c-b^2,a*d-b*c,b*d-c^2);
 o2 : Ideal of R
 
 i3 : statePolytope(3,I)   
+LP algorithm being used: "cddgmp".
+polymake: used package cddlib
+ Implementation of the double description method of Motzkin et al.
+ Copyright by Komei Fukuda.
+ http://www.ifor.math.ethz.ch/~fukuda/cdd_home/cdd.html
+
 VERTICES
 1 9 6 6 9
 1 9 3 12 6

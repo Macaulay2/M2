@@ -1,9 +1,0 @@
-error messages from CTRL-C during input have a bad effect
-
-    i1 : code methods ..
-	   C-c C-c
-    {*dummy position*}[0]: error: read failed: Interrupted system call
-
-    Process M2 finished
-
-lossage: c o d e SPC m e t h o d s SPC . . <return> C-c C-c <return> C-x 1

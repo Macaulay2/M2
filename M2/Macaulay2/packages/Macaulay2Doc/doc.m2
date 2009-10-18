@@ -256,7 +256,7 @@ document {
 	  the process."
 	  },
      PARA {
-	  "After the core Macaulay 2 files are loaded, unless the command line option 
+	  "After the core Macaulay2 files are loaded, unless the command line option 
 	  ", TT "-q", " is encountered, the following subdirectories will be
 	  prepended to the path, based on the value of the ", TO "applicationDirectory", "
 	  for your system."
@@ -315,7 +315,7 @@ document {
 	  "maxPosition {1,6,4,2}"
 	  },
      "Notice that the position of the maximal element is 1, as indexing in
-     Macaulay 2 always starts at 0.",
+     Macaulay2 always starts at 0.",
      PARA{
 	  "For elements in a polynomial ring, the order used is the ", TO2("monomial orderings","monomial order"),
 	  " associated with the ring.",
@@ -345,7 +345,7 @@ document {
 	  "minPosition {1,6,4,2}"
 	  },
      "Notice that the position of the minimal element is 0, as indexing in
-     Macaulay 2 always starts at 0.",
+     Macaulay2 always starts at 0.",
      PARA{},
      "For elements in a polynomial ring, the order used is the ", 
      TO2("monomial orderings","monomial order"),
@@ -477,7 +477,7 @@ document {
 
 document {
      Key => input,
-     Headline => "read Macaulay 2 commands and echo",
+     Headline => "read Macaulay2 commands and echo",
      Usage => "input fn",
      Inputs => { "fn" => String },
      Consequences => {
@@ -563,8 +563,8 @@ document {
 
 document {
      Key => load,
-     Headline => "read Macaulay 2 commands",
-     TT "load \"f\"", " -- reads and executes Macaulay 2 expressions found
+     Headline => "read Macaulay2 commands",
+     TT "load \"f\"", " -- reads and executes Macaulay2 expressions found
      in the file named ", TT "f", ".",
      PARA{
 	  "The file is sought in the directory containing the file currently being loaded, if any, and then along
@@ -588,7 +588,7 @@ document {
 
 document {
      Key => needs,
-     Headline => "read Macaulay 2 commands if necessary",
+     Headline => "read Macaulay2 commands if necessary",
      Usage => "needs \"f\"",
      Consequences => {{"The file named ", TT "f", " is loaded with ", TO "load", " if it hasn't been loaded yet; if it
 	       has changed since the last time it was loaded, it will be loaded again, from
@@ -643,7 +643,7 @@ document {
 document {
      Key => "--",
      Headline => "comment",
-     Consequences => {"Macaulay 2 ignores commented text"},
+     Consequences => {"Macaulay2 ignores commented text"},
      "Use a double hyphen ", TT "--", " to introduce a comment in the text
      of a program.  The comment runs from to the end of the line.",
      PARA{},

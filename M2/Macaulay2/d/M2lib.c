@@ -248,8 +248,14 @@ bool interrupt_jump_set = FALSE;
 
 #undef ABORT
 
+#include <readline/readline.h>
+
 static void interrupt_handler(int sig)
 {
+     int r;
+     if (isatty(STDIN) && isatty(STDOUT) && !reading_from_readline) {
+        r = write(STDERR,"\n",1);
+     }
      if (system_interruptedFlag || system_interruptPending) {
 	  if (isatty(STDIN) && isatty(STDOUT)) while (TRUE) {
 	       char buf[10];
@@ -310,6 +316,10 @@ static void interrupt_handler(int sig)
 	       }
 	       evaluate_setInterruptFlag();
 	       libfac_interruptflag = TRUE;
+# if 0
+	       /* readline doesn't cancel the partially typed line, for some reason, and this doesn't help: */
+	       if (reading_from_readline) rl_free_line_state();
+#endif
 	       if (interrupt_jump_set) siglongjmp(interrupt_jump,1);
 	       }
 	  }
@@ -348,6 +358,7 @@ M2_string actors5_REL;
 M2_string actors5_timestamp;
 M2_string actors5_GCVERSION;
 M2_string actors5_GMPVERSION;
+M2_string actors5_MPIRVERSION;
 M2_string actors5_MysqlVERSION;
 M2_string actors5_PYTHONVERSION;
 M2_string actors5_startupString;
@@ -456,8 +467,6 @@ int system_getpgrp(void) {
 int system_setpgid(int pid0, int pgid) {
   return setpgid(pid0,pgid);
 }
-
-#include <readline/readline.h>
 
 static char *endianness() {
      static int32_t x[2] = {0x61626364,0};
@@ -720,7 +729,8 @@ char **argv;
 	       }
 	  actors5_GCVERSION = tostring(buf);
 	  }
-     actors5_GMPVERSION = tostring(__gmp_version);
+     actors5_GMPVERSION = tostring(/* __gmp_version */ "not present");
+     actors5_MPIRVERSION = tostring(__mpir_version);
      actors5_PYTHONVERSION = tostring(
 #ifdef HAVE_PYTHON
          PY_VERSION				      

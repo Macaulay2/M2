@@ -766,9 +766,9 @@ document {
      }
 
 document { Key => Core,
-     Headline => "the core part of Macaulay 2",
+     Headline => "the core part of Macaulay2",
      PARA {
-     	  "This package contains the core functionality of Macaulay 2, without the documentation, 
+     	  "This package contains the core functionality of Macaulay2, without the documentation, 
      	  which is in the package ", TO "Macaulay2Doc", "."
 	  }
      }

@@ -216,7 +216,7 @@ document {
 	  {"the standard error output file"}
 	  },
      PARA{
-	  "Macaulay 2 uses this file to display error messages on the user's screen.  In unix, it
+	  "Macaulay2 uses this file to display error messages on the user's screen.  In unix, it
 	  corresponds to file descriptor 2.  The user may use this file to display warning messages."
 	  },
      SeeAlso => {stdio}
@@ -328,7 +328,7 @@ document {
 	       standard output file descriptors.
 	       Warning: pipes hold only 4096 bites, so if you write more than that to the resulting input output
 	       file (as input for the command) without reading any data, you may block while the
-	       command is blocked waiting to write more output; in this case, Macaulay 2 will appear to hang."
+	       command is blocked waiting to write more output; in this case, Macaulay2 will appear to hang."
 	       },
 	  LI {
 	       "a string of the form ", TT format "$hostname:service", ": a connection will be
@@ -338,7 +338,7 @@ document {
 	       },
 	  LI {
 	       "a listener created previously by ", TO "openListener", ": a new connection will be created.  To avoid
-	       blocking the Macaulay 2 process while waiting for the incoming connection, use ", TO "isReady", "."
+	       blocking the Macaulay2 process while waiting for the incoming connection, use ", TO "isReady", "."
 	       }
 	  },
      PARA{
@@ -353,7 +353,7 @@ document {
 	  with ", TT ///openIn "!foo"///, " or with ", TT ///get "!foo"///, " the standard input of the command
 	  ", TT "foo", " is closed, but with ", TT ///openOut "!foo"///, " the
 	  standard output of the command ", TT "foo", " is connected to the
-	  standard output of the parent Macaulay 2 process."
+	  standard output of the parent Macaulay2 process."
 	  },
      SeeAlso => {openIn, openOut, openListener}
      }
@@ -806,7 +806,7 @@ document {
      Inputs => { "s" },
      Outputs => { {"the value obtained by evaluating the code in ", TT "s" } },
      "The contents of ", TT "s", " are treated as code in the
-     Macaulay 2 language, parsed it in its own scope (the same way a file is)
+     Macaulay2 language, parsed it in its own scope (the same way a file is)
      and evaluated.  The string may contain multiple lines.",
      {
 	  EXAMPLE {
@@ -1033,8 +1033,16 @@ document {
 document {
      Key => "currentDirectory",
      Headline => "current working directory",
-     TT "currentDirectory", " is the name of the current directory,
-     together with an extra slash (or appropriate path separator)."
+     Usage => "currentDirectory()",
+     Outputs => {
+	  "the complete path to the current directory, together with an extra slash"
+	  },
+     EXAMPLE lines ///
+     currentDirectory()
+     ///,
+     PARA {
+	  "If a component of the path to the current directory no longer exist, an error will be signalled."
+	  }
      }
 
 document {

@@ -7,12 +7,12 @@ document {
      Headline => "class of an object",
      Usage => "class x",
      Inputs => {
-	  "x" => Thing => "any Macaulay 2 object"
+	  "x" => Thing => "any Macaulay2 object"
 	  },
      Outputs => {
 	  Type => {"the class of ", TT "x"}
 	  },
-     "Every object in Macaulay 2 has a class, see ", TO "what a class is", " for more details.",
+     "Every object in Macaulay2 has a class, see ", TO "what a class is", " for more details.",
      EXAMPLE {
 	  "class {1,2,3}",
 	  "R = QQ[a..d]",

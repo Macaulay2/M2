@@ -81,6 +81,12 @@ int Z_mod::coerce_to_int(ring_elem a) const
   return to_int(a.int_val);
 }
 
+int Z_mod::discrete_log(ring_elem a) const
+{
+  if (a.int_val == _ZERO) return -1;
+  return a.int_val;
+}
+
 static inline int modulus_add(int a, int b, int p)
 {
   int t = a+b;

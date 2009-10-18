@@ -249,7 +249,7 @@ document {
      In all other cases, the default is ", TT "Strategy => ShimoyamaYokoyama", ".",
      HEADER3 "Strategy => Monomial",
      "This strategy only works for monomial ideals, and is the default strategy for such ideals.  See the chapter
-     \"Monomial Ideals\" in the Macaulay 2 book.",
+     \"Monomial Ideals\" in the Macaulay2 book.",
      EXAMPLE lines ///
      	  Q = QQ[x,y]
 	  I = ideal(x^2,x*y)

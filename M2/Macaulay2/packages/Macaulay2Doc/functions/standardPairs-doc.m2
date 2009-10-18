@@ -39,7 +39,7 @@ document {
      Implemented by Gregory G. Smith.",
      PARA{},
      "For more information, see the ", EM "Monomial ideals", " chapter in Computations 
-     in algebraic geometry with Macaulay 2, edited by David Eisenbud, Daniel R. Grayson, 
+     in algebraic geometry with Macaulay2, edited by David Eisenbud, Daniel R. Grayson, 
      Michael E. Stillman, and Bernd Sturmfels, Algorithms and Computations in Mathematics 8, 
      Springer-Verlag, 2001.",
      SeeAlso => {}

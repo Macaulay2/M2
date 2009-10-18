@@ -148,7 +148,7 @@ undocumented {(generateAssertions, List)}
 document { Key => {generateAssertions,(generateAssertions, String)},
      Headline => "generate assert statements from experimental input",
      Usage => "generateAssertions x",
-     Inputs => { "x" => { "a string whose non-comment non-blank lines are Macaulay 2 expressions to be evaluated" } },
+     Inputs => { "x" => { "a string whose non-comment non-blank lines are Macaulay2 expressions to be evaluated" } },
      Outputs => { { "a net whose lines are assert statements that assert that the expressions evaluate to the expected value, just computed" }},
      EXAMPLE {
 	  "generateAssertions ///
@@ -196,7 +196,7 @@ document { Key => tutorial,
      Usage => "tutorial x",
      Inputs => { "x" => String => "documentation in tutorial format" },
      Outputs => {{ "documentation in hypertext format" }},
-     PARA { "Some of the Macaulay 2 documentation is written in this format." },
+     PARA { "Some of the Macaulay2 documentation is written in this format." },
      EXAMPLE {
 	  "///-- We can compute $(x+y)^3$ as follows.
 R = QQ[x,y]
@@ -479,7 +479,7 @@ document { Key => FunctionClosure,
      }
 document { Key => CompiledFunction,
      Headline => "the class of all compiled functions",
-     "Compiled functions in Macaulay 2 are written in a special purpose language, translated to C during compilation and not available to general users.",
+     "Compiled functions in Macaulay2 are written in a special purpose language, translated to C during compilation and not available to general users.",
      EXAMPLE "class sin"
      }
 document { Key => CompiledFunctionClosure,
@@ -559,7 +559,7 @@ document { Key => PackageDictionary,
      }
 document { Key => Pseudocode,
      Headline => "the class of pseudocodes",
-     "The Macaulay 2 interpreter compiles its language into pseudocode, which is evaluated later, step by step.  At each
+     "The Macaulay2 interpreter compiles its language into pseudocode, which is evaluated later, step by step.  At each
      step, the evaluator is considering a pseudocode item.  These pseudocode items are normally not available to the user, but
      the interanl function ", TO "disassemble", " can display their contents, the function ", TO "pseudocode", " can convert
      a function closure to pseudocode, the function ", TO "value", " can evaluate it (bindings of values to local symbols
@@ -687,7 +687,7 @@ document { Key => "backupFileRegexp",
 document { Key => "prefixDirectory",
      Headline => "the prefix directory",
      PARA {
-	 "When Macaulay 2 is successfully installed, its files are installed in a directory tree whose layout, relative to the root, is determined
+	 "When Macaulay2 is successfully installed, its files are installed in a directory tree whose layout, relative to the root, is determined
 	 by the hash table ", TO "Layout", ".  When M2 starts up, it detects whether it is running in such a layout, and sets ", TO "prefixDirectory", "
 	 to the root of that directory tree.  The way it does that is that it locates the running M2 executable and determines whether it is
 	 located in a directory whose name is ", TT "bin", " that has a sibling directory called ", TT "share", " that leads to a directory
@@ -747,7 +747,7 @@ document { Key => {undocumented,(undocumented, Thing), (undocumented, List)},
      ///,
      }
 document { Key => "documentation keys",
-     PARA {"The Macaulay 2 documentation is linked together by cross-references from one documentation node to another.  Each node is identified by a
+     PARA {"The Macaulay2 documentation is linked together by cross-references from one documentation node to another.  Each node is identified by a
      	  string, which is the title of the node.  Some nodes, such as this one, have titles that are simply invented by the author.  Others have titles
      	  that are manufactured in a certain way from the aspect of the program being documented, for the sake of uniformity."
 	  },

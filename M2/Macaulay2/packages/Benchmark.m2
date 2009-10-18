@@ -1,7 +1,7 @@
 -- -*- coding: utf-8 -*-
 newPackage (
      "Benchmark",
-     Headline => "a standard Macaulay 2 benchmark",
+     Headline => "a standard Macaulay2 benchmark",
      Authors => {
 	  {Name => "Daniel R. Grayson", Email => "dan@math.uiuc.edu", HomePage => "http://www.math.uiuc.edu/~dan/"},
 	  {Name => "Michael E. Stillman", Email => "mike@math.cornell.edu", HomePage => "http://www.math.cornell.edu/People/Faculty/stillman.html"}
@@ -136,7 +136,7 @@ runBenchmarks0 = method()
 runBenchmarks0 List := x -> (
      << "-- beginning computation " << get "!date";
      << "-- " << first lines get "!uname -a" << endl;
-     << "-- Macaulay 2 " << version#"VERSION";
+     << "-- Macaulay2 " << version#"VERSION";
      << ", compiled with " << version#"compiler";
      << endl;
      scan(x,runBenchmark))

@@ -2,14 +2,14 @@
 
 document {
      Key => "replacements for commands and scripts from Macaulay",
-     "Macaulay 2 aims to provide all of the functionality of Macaulay, but
+     "Macaulay2 aims to provide all of the functionality of Macaulay, but
      the names of the functions are not the same, and there are
      other differences.  One major difference is the introduction of the
      notion of module, whereas in Macaulay, the pervasive concept was
      the matrix.",
      PARA{},
      "Here is a list of old Macaulay functions, together with pointers to
-     functions in Macaulay 2 that might be used to replace them.",
+     functions in Macaulay2 that might be used to replace them.",
      PARA{},
      UL {
 	  LI ("Macaulay commands:",
@@ -80,7 +80,7 @@ document {
 		    LI ("mc -- ", TO "not documented yet"),
 		    LI ("min -- ", TO "min"),
 		    LI ("modulo -- ", TO "modulo"),
-		    LI ("monitor -- ", TO "using Macaulay 2 with emacs"),
+		    LI ("monitor -- ", TO "using Macaulay2 with emacs"),
 		    LI ("monitoring -- ", TO "not documented yet"),
 		    LI ("monoms -- ", TO "not documented yet"),
 		    LI ("monprimes -- ", TO "not documented yet"),
@@ -337,7 +337,7 @@ document {
      "Compute the Gröbner basis of ", 
      TT "m", " up to a given degree, using ", TT "gb(m, DegreeLimit=>3)", 
      ".  Similarly,
-     if a computation in Macaulay 2 has been halted by pressing <CTRL>-C, 
+     if a computation in Macaulay2 has been halted by pressing <CTRL>-C, 
      the computation
      can be restarted from where it left off, by giving the original 
      command, e.g., ", TT "gb m", ".",
@@ -347,7 +347,7 @@ document {
      TT "rows", 
      " and ", TT "cols", ".  The resulting catalecticant matrix can 
      be obtained in
-     Macaulay 2 in the following way.",
+     Macaulay2 in the following way.",
      EXAMPLE {
 	  "R = QQ[a..h]",
      	  "rows = {0,1,2}",
@@ -381,7 +381,7 @@ document {
      "To obtain the degree of the ", TT "i", "-th column of a matrix ", 
      TT "m", ", use ", TT "(degrees source m)_i", ".  See ", TO "degrees",
      ".  Note that in Macaulay2, one can use multi-degrees, so the result
-     is a list of integers.  Also all indices in Macaulay 2 start at 0.",
+     is a list of integers.  Also all indices in Macaulay2 start at 0.",
      EXAMPLE {
 	  "R = QQ[a,b,Degrees=>{{1,0},{1,-1}}];",
      	  "m = matrix{{a*b, b^2}}",
@@ -393,7 +393,7 @@ document {
      allowed.",
      
      HEADER3 "commands",
-     "Using Macaulay 2 in emacs, type the first few letters of a command,
+     "Using Macaulay2 in emacs, type the first few letters of a command,
      then hit <TAB>. The list of all commands starting with those letters
      will be displayed, or if there is only one, emacs will complete the typing
      for you.",
@@ -406,7 +406,7 @@ document {
      "Concatenate matrices ", TT "m1", ", ", TT "m2", ", ..., ", TT "mn",
      " using ", TT "m1 | m2 | ... | mn", ".  See ", TO "|", 
      ".  The main difference is that
-     in Macaulay 2 this command does not overwrite the first matrix.",
+     in Macaulay2 this command does not overwrite the first matrix.",
      
      HEADER3 "continue",
      "In Macaulay2, one interrupts a computation using <CTRL>-C, as in 
@@ -420,7 +420,7 @@ document {
      arguments are not constrained to be matrices with one row.",
      
      HEADER3 "copy <existing matrix> <copy of matrix>",
-     "Since matrices in Macaulay 2 are immutable objects, this command is
+     "Since matrices in Macaulay2 are immutable objects, this command is
      no longer necessary.  One can still make a copy of a matrix.  For
      example",
      EXAMPLE {
@@ -623,7 +623,7 @@ document {
      TO "jacobian", ".",
      
      HEADER3 "jump <label>",
-     "Macaulay 2 has no go to statements.  Instead, you should use the
+     "Macaulay2 has no go to statements.  Instead, you should use the
      control structures.", -- Mike wanted this: "WRITE MORE",
      
      {*

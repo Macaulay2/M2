@@ -7,6 +7,8 @@
 #include "../c/compat.c"
 #include "debug.h"
 
+int reading_from_readline = FALSE;
+
 void
 #if defined(__STDC__)
 fatal(const char *s,...)   {
@@ -474,7 +476,12 @@ static int read_via_readline(char *buf,int len,char *prompt) {
   int r;			/* number of chars to return this time */
   if (len == 0) return 0;
   if (p == NULL) {
+    reading_from_readline = TRUE; /* for the interrupt handler */
     p = readline(prompt);
+    reading_from_readline = FALSE;
+#if 0
+    if (system_interruptedFlag) return ERROR; /* interrupted system call, for example */
+#endif
     if (p == NULL) return 0;	/* EOF */
     i = 0;
     plen = strlen(p);

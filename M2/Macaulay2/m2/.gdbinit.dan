@@ -4,8 +4,8 @@ echo -- loading .gdbinit\n
 # so we send a message to the loaddata routine to ignore that
 set environment LOADDATA_IGNORE_CHECKSUMS yes
 
-directory ../../libraries/gc/build/gc-7.1/
-directory ../../libraries/ntl/build/ntl-5.5/src/
+directory ../../libraries/gc/build/gc-7.2alpha2/
+directory ../../libraries/ntl/build/ntl-5.5.2/src/
 directory ../../libraries/factory/build/factory/
 directory ../../libraries/libfac/build/libfac/
 directory ../../libraries/libfac/build/libfac/factor/

@@ -351,7 +351,7 @@ document {
      monomials correspond to the irreducible representations of GL(n), and where 
      multiplication is given by the decomposition of the tensor product of representations",
      PARA{},
-     "We create such a ring in Macaulay 2 using the ", TO schurRing, " function:",
+     "We create such a ring in Macaulay2 using the ", TO schurRing, " function:",
      EXAMPLE "R = schurRing(s,4);",
      "A monomial represents the irreducible representation with a given highest weight. 
      The standard 4 dimensional representation is",

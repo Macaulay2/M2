@@ -65,8 +65,9 @@ f = d*(x^5+x-1);
 g = d*(x^6-a*x-1);
 assert(gcd(f,g) == d)
 w = gcdCoefficients(f,g)
-assert( w#0 == -d or w#0 == 2*d) -- actually, we'd like w#0 == d.  I wonder why factory doesn't ensure that?
 assert( w#0 == f * w#1 + g * w#2 )
+assert( w#0 % d == 0 ) -- test the two gcd's are associated; the precise (unit) factor varies
+assert( d % w#0 == 0 ) -- actually, we'd like w#0 == d.  I wonder why factory doesn't ensure that?
 
 debug Core
 R = QQ[x,y]
@@ -79,5 +80,5 @@ rawExtendedGCD( raw ( 1/2*f ), raw ( 1/3*g ))
 
 end
 -- Local Variables:
--- compile-command: "make -C $M2BUILDDIR/Macaulay2/test gcd.out"
+-- compile-command: "make -C $M2BUILDDIR/Macaulay2/packages/Macaulay2Doc/test gcd.out"
 -- End:

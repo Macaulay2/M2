@@ -1,9 +1,0 @@
--- -*- M2-comint -*- {* hash: 1517751202 *}
-
-i1 : writeNmzPaths();
-
-i2 : startNmz();
-nmzExecPath not set
-nmzDataPath not set
-
-i3 : 

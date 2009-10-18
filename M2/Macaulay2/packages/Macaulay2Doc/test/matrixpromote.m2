@@ -40,5 +40,5 @@ end
 -- M2-send-to-buffer: "*gud*"
 
 -- Local Variables:
--- compile-command: "make -C $M2BUILDDIR/Macaulay2/test matrixpromote.out"
+-- compile-command: "make -C $M2BUILDDIR/Macaulay2/packages/Macaulay2Doc/test matrixpromote.out"
 -- End:

@@ -5,5 +5,5 @@ j2 = ideal(4*y)
 assert( intersect(i:j1,i:j2) == i:(j1 + j2) )
 end
 -- Local Variables:
--- compile-command: "make -C $M2BUILDDIR/Macaulay2/test ragnar.out"
+-- compile-command: "make -C $M2BUILDDIR/Macaulay2/packages/Macaulay2Doc/test ragnar.out"
 -- End:

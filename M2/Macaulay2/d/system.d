@@ -6,11 +6,12 @@ import getpid():int;
 import getpgrp():int;
 import setpgid(pid:int,pgid:int):int;
 import exit(x:int):void;
-import exceptionFlag:bool;				    -- indicates interrupt, stepping, or alarm
 import interruptShield:bool;
-import interruptedFlag:bool;
 import interruptPending:bool;
 import alarmedFlag:bool;
+import interruptedFlag:bool;
+export steppingFlag := false;
+import exceptionFlag:bool;				    -- indicates interrupt, stepping, or alarm
 import write(fd:int, buffer:string, buffersize:int):int;
 import read(fd:int, buffer:string, buffersize:int):int;
 import read(fd:int, buffer:string, buffersize:int, offset:int):int;

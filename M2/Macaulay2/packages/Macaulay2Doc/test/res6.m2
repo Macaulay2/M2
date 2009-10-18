@@ -53,5 +53,5 @@ time betti res (M,Strategy=>2,LengthLimit=>5)
 time betti res (M,Strategy=>2,LengthLimit=>6)
 
 -- Local Variables:
--- compile-command: "make -C $M2BUILDDIR/Macaulay2/test res6.out"
+-- compile-command: "make -C $M2BUILDDIR/Macaulay2/packages/Macaulay2Doc/test res6.out"
 -- End:

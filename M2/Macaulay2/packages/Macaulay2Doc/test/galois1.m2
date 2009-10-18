@@ -56,3 +56,7 @@ assert( p c == (-t-2)^e )
 S = ZZ[t,q,r]
 p = map(S,R,{q*r,q^2,r^2,t})
 assert( p (c*x) == (-t-2)^e * q*r )
+
+-- # Local Variables:
+-- # compile-command: "make -k -C $M2BUILDDIR/Macaulay2/packages/Macaulay2Doc/test galois1.out "
+-- # End:

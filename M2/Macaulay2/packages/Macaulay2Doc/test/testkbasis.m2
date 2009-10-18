@@ -55,5 +55,5 @@ assert(super basis({3,-3},M) == map(super M,R^{{-3,3}}, {{a^2*d-d*f}}))
 assert(super basis({4,-3},M) == map(super M,R^{{-4,3}},{{a^3*d-a*d*f}}))
 end
 -- Local Variables:
--- compile-command: "make -C $M2BUILDDIR/Macaulay2/test testkbasis.out"
+-- compile-command: "make -C $M2BUILDDIR/Macaulay2/packages/Macaulay2Doc/test testkbasis.out"
 -- End:

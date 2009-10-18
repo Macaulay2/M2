@@ -361,7 +361,7 @@ document {
      functions for hash tables accept a key and retrieve the
      corresponding value.  Here are the details, together with a
      discussion of how we designed the hash table system seen in
-     Macaulay 2.",
+     Macaulay2.",
      PARA{},
      "The keys and values are stored in the hash table.  The hash table consists
      of a certain number of ", ITALIC "buckets", ", each of which can hold an
@@ -429,7 +429,7 @@ document {
 	       }
 	  },
      PARA{},
-     "In Macaulay 2, we chose the second approach listed above; we expect to
+     "In Macaulay2, we chose the second approach listed above; we expect to
      have many mutable things appearing as keys in hash tables, and we need
      the speed.  A counter with initial value 1000000 is incremented each time 
      a mutable thing is created, and its value is taken as the hash code of the
@@ -684,7 +684,7 @@ document {
 	  ///f = value get fn///,
 	  ///factor f///,
 	  },
-     "Often a file will contain code written in the Macaulay 2 language.
+     "Often a file will contain code written in the Macaulay2 language.
      Let's create such a file.",
      EXAMPLE {
 	  "fn << \"sample = 2^100\nprint sample\n\" << close"
@@ -774,7 +774,7 @@ document {
      "We have seen that nets (see ", TO Net, ") are potentially useful for two
      dimesional formatting of output to an ascii terminal with limited
      graphical ability.  We present now a few more hints about putting
-     this idea into practice.  Nets are used extensively in Macaulay 2
+     this idea into practice.  Nets are used extensively in Macaulay2
      for formatting, for example, for formatting of polynomials and
      matrices.",
      EXAMPLE lines ///
@@ -876,7 +876,7 @@ document {
      exclamation point; the rest of the file name will be taken as the
      command to run, as in the following example.",
      EXAMPLE ///"!grep a" << " ba \n bc \n ad \n ef \n" << close///,
-     "More often, one wants to write Macaulay 2 code to obtain
+     "More often, one wants to write Macaulay2 code to obtain
      and manipulate the output from the other program.  If the program
      requires no input data, then we can use ", TO "get", " with a file name whose first character is an
      exclamation point.  In the following example, we also peek at the string
@@ -888,7 +888,7 @@ document {
      ", TO "openInOut", " to create a file that serves as a bidirectional
      connection to a program.  That file is called an input output file.  In
      this example we open a connection to the unix utility ", TT "egrep", "
-     and use it to locate the symbol names in Macaulay 2 that begin with
+     and use it to locate the symbol names in Macaulay2 that begin with
      ", TT "in", ".",
      EXAMPLE {
 	  ///f = openInOut "!egrep '^in'"///,
@@ -1018,7 +1018,7 @@ document {
 
 document {
      Key => "what a class is",
-     "In Macaulay 2 the behavior of a function depends heavily on the types
+     "In Macaulay2 the behavior of a function depends heavily on the types
      of the arguments it's presented with.  For example, the expression ", TT "x+y", "
      means the sum if ", TT "x", " and ", TT "y", " are integers, but it
      means the union if ", TT "x", " and ", TT "y", " are sets.  To implement this

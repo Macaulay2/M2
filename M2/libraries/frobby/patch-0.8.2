@@ -1,0 +1,40 @@
+diff -ur --exclude=configure /home/dan/src/M2-1.3/BUILD/dan/builds.tmp/ubuntu32.debug/libraries/frobby/tmp/frobby_v0.8.2/src/DebugAllocator.cpp frobby_v0.8.2/src/DebugAllocator.cpp
+--- /home/dan/src/M2-1.3/BUILD/dan/builds.tmp/ubuntu32.debug/libraries/frobby/tmp/frobby_v0.8.2/src/DebugAllocator.cpp	2009-07-06 22:40:18.000000000 -0500
++++ frobby_v0.8.2/src/DebugAllocator.cpp	2009-10-10 19:13:31.000000000 -0500
+@@ -40,6 +40,7 @@
+ 	  reportError("Could not open file \"" + _inputFile + "\" for input.");
+ }
+ 
++#if 0
+ /** @todo consider off-by-one conditions on the allocation limit
+ 	conditions in this method.
+ 
+@@ -197,6 +198,8 @@
+   _limitAllocation = false;
+ }
+ 
++#endif
++
+ void* DebugAllocator::allocate(size_t size) {
+   return allocate(size, 0, 0);
+ }
+diff -ur --exclude=configure /home/dan/src/M2-1.3/BUILD/dan/builds.tmp/ubuntu32.debug/libraries/frobby/tmp/frobby_v0.8.2/src/test/TestSuite.cpp frobby_v0.8.2/src/test/TestSuite.cpp
+--- /home/dan/src/M2-1.3/BUILD/dan/builds.tmp/ubuntu32.debug/libraries/frobby/tmp/frobby_v0.8.2/src/test/TestSuite.cpp	2009-07-06 22:40:18.000000000 -0500
++++ frobby_v0.8.2/src/test/TestSuite.cpp	2009-10-10 17:37:12.000000000 -0500
+@@ -15,6 +15,7 @@
+    along with this program.  If not, see http://www.gnu.org/licenses/.
+ */
+ #include "stdinc.h"
++#include <algorithm>
+ #include "TestSuite.h"
+ 
+ #include "TestVisitor.h"
+@@ -40,7 +41,7 @@
+ }
+ 
+ void TestSuite::sortTests() {
+-  sort(begin(), end(), comparePointedToValue);
++  std::sort(begin(), end(), comparePointedToValue);
+ }
+ 
+ TestSuite::TestIterator TestSuite::begin() {

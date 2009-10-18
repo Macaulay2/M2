@@ -59,19 +59,22 @@ isAbsolutePath(s:string):bool := (                         			    -- purely text
      length(s) >= 3 && s.1 == ':' && s.2 == '/' ||
      s === "stdio"
      );
-absoluteFilename(filename:string):string := (					    -- purely textual
+absoluteFilename(filename:string):string := (
      if !isAbsolutePath(filename)
-     then filename = getcwd() + filename;		    -- using getcwd() instead of getenv("PWD"), which is what emacs thinks about
+     then (
+	  r := getcwd();
+	  if length(r) == 0 then (
+	       r = getenv("PWD") + "/";			    -- might be wrong ...
+	       if length(r) == 0 then (
+		    r = "/unknown-path-to-file/";
+		    )
+	       );
+	  filename = r + filename;
+	  );
      shorten(filename)
-     -- if we wanted to take real paths into account we would do it like this instead:
-     -- f := realpath(filename);
-     -- if length(filename) == 0 || filename.(length(filename)-1) == '/' && length(f)>0 && f.(length(f)-1) != '/' then f = f + '/';
-     -- f
      );
-export relativizeFilename(cwd:string,filename:string):string := (
-     cwd = absoluteFilename(cwd);
+relativize(cwd:string,filename:string):string := (	    -- purely textual
      if length(cwd) == 0 || cwd.(length(cwd)-1) != '/' then cwd = cwd + '/';
-     filename = absoluteFilename(filename);
      i := 0;
      while i < length(cwd) && i < length(filename) && cwd.i == filename.i do i = i+1;
      if i < length(cwd) && i == length(filename) && cwd.i == '/' then i = i+1;
@@ -82,11 +85,15 @@ export relativizeFilename(cwd:string,filename:string):string := (
 	  if cwd.i == '/' then filename = "../" + filename; 
 	  i = i+1);
      filename);
-export relativizeFilename(filename:string):string := relativizeFilename(getcwd(),filename);
+export relativizeFilename(wd:string,filename:string):string := relativize(absoluteFilename(wd),absoluteFilename(filename));
+export relativizeFilename(filename:string):string := (
+     r := getcwd();
+     if length(r) == 0 then filename else relativizeFilename(r,filename));
 export minimizeFilename(filename:string):string := (
      a := relativizeFilename(filename);
      b := absoluteFilename(filename);
      c := if length(a) <= length(b) then a else b;
+     c = if length(filename) <= length(c) then filename else c;
      if length(c) == 0 then c = "./";
      c);
 export verifyMinimizeFilename(filename:string):string := (
@@ -100,14 +107,17 @@ export verifyMinimizeFilename(filename:string):string := (
 	  return f;
 	  );
      pwd := getenv("PWD")+"/";
-     if pwd === getcwd() then return f;
-     h := when
-     realpath(getcwd()+f)			       -- this is correct
-     is null do return filename is s:string do s;
-     k := when
-     realpath(shorten(pwd+f))                    -- this simulates what emacs does, textually, which might be wrong
-     is null do return filename is s:string do s;
-     if k === h then f else h);
+     cwd := getcwd();
+     if length(cwd) == 0 then return f;			    -- f might be right, but we can't tell
+     if pwd === cwd then return f;
+     when realpath(cwd+f)			       -- this is correct
+     is null do return filename
+     is h:string do (
+	  when realpath(shorten(pwd+f))                    -- this simulates what emacs does, textually, which might be wrong
+     	  is null do return filename
+	  is k:string do (
+     	       if k === h then f else h
+	       )));
 export tostring(w:Position) : string := (
      if w == dummyPosition 
      then "{*dummy position*}"
@@ -118,7 +128,7 @@ export (o:file) << (w:Position) : file := (
 export SuppressErrors := false;
 cleanscreen():void := (
      flush(stdout);
-     if stdout.outfd == stderr.outfd && !atEndOfLine(stdout) then (
+     if stdout.outfd == stderr.outfd && !atEndOfLine(stdout) || interruptedFlag then (
 	  stdout << '\n';
      	  flush(stdout);
 	  )
@@ -148,6 +158,7 @@ export copy(p:Position):Position := Position(
 export PosFile := {file:file, lastchar:int, pos:Position};
 export dummyPosFile := PosFile(dummyfile,0,dummyPosition);
 export fileError(f:PosFile):bool := fileError(f.file);
+export clearFileError(f:PosFile):void := clearFileError(f.file);
 export fileErrorMessage(f:PosFile):string := fileErrorMessage(f.file);
 export makePosFile(o:file):PosFile := PosFile(o, 0,
      Position(o.filename, ushort(1), ushort(0), uchar(loadDepth)));
@@ -157,6 +168,7 @@ export peek(o:PosFile, offset:int):int := (
      c := 0;
      while (
 	  c = peek(o.file,i);
+	  if c == ERROR || c == EOF then return c;
 	  prevchar = c;
 	  i < offset
 	  )
@@ -173,12 +185,7 @@ export setprompt(o:PosFile,prompt:function():string):void := setprompt(o.file,pr
 export unsetprompt(o:PosFile):void := unsetprompt(o.file);
 export openPosIn(filename:string):(PosFile or errmsg) := (
      when openIn(filename)
-     is f:file do (PosFile or errmsg)(
-	  PosFile(f,0,Position(
-		    if isAbsolutePath(f.filename)
-		    then f.filename
-		    else getcwd() + f.filename,
-		    ushort(1),ushort(0),uchar(loadDepth))))
+     is f:file do (PosFile or errmsg)(PosFile(f,0,Position( absoluteFilename(f.filename), ushort(1),ushort(0),uchar(loadDepth))))
      is s:errmsg do (PosFile or errmsg)(s)
      );
 roundup(n:uchar,d:int):uchar := uchar(((int(n)+d-1)/d)*d);

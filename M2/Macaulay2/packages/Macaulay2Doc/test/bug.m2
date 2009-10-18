@@ -34,5 +34,5 @@ try MA % plgb						    -- this line crashed before
      	       	    	      	   	     	       	    -- now it just gives an error
 end
 -- Local Variables:
--- compile-command: "make -C $M2BUILDDIR/Macaulay2/test bug.out"
+-- compile-command: "make -C $M2BUILDDIR/Macaulay2/packages/Macaulay2Doc/test bug.out"
 -- End:

@@ -59,11 +59,11 @@ document {
 	       function ", TT "f", " by evaluating ", TT "f(i,j)", "."
 	       }
 	  },
-     "Recall that all indices in Macaulay 2 start at 0, so the upper left-most entry 
+     "Recall that all indices in Macaulay2 start at 0, so the upper left-most entry 
      of a matrix ", TT "f", " is ", TT "f_(0,0)", ".",
      PARA{},
      "This function is often used when you already know the source and target modules, 
-     including their gradings.  If you wish Macaulay 2 to compute the column degrees for
+     including their gradings.  If you wish Macaulay2 to compute the column degrees for
      you (so the resulting matrix will be homogeneous if possible), use ", 
      TO (map,Module,ZZ,Function), ".",
      EXAMPLE lines ///
@@ -74,7 +74,7 @@ document {
      to ensure the matrix would be homogeneous.",
      EXAMPLE "isHomogeneous f",
      SUBSECTION "Alternate approaches",
-     "We could have let Macaulay 2 take care of that for us, by replacing
+     "We could have let Macaulay2 take care of that for us, by replacing
      the source module by its desired rank.",
      EXAMPLE lines ///
 	  g = map(R^3,4,(i,j) -> R_i^j)
@@ -510,7 +510,7 @@ document {
      PARA{},
      "The ring maps which are created are not always mathematically well-defined.
      For example, the map F below is the natural quotient map, but
-     the map ", TT "G", " is not mathematically well-defined, although we can use it in Macaulay 2 to
+     the map ", TT "G", " is not mathematically well-defined, although we can use it in Macaulay2 to
      lift elements of ", TT "E", " to ", TT "D", ".",
      EXAMPLE lines ///
 	  D = QQ[x,y,z];

@@ -675,7 +675,7 @@ document {
 document {
      Key => ChainComplex,
      Headline => "the class of all chain complexes",
-     "For an overview of creating and using chain complexes in Macaulay 2, see ",
+     "For an overview of creating and using chain complexes in Macaulay2, see ",
      TO "chain complexes", ".",
      PARA{},
      "Common ways to create a chain complex",

@@ -6,5 +6,5 @@ assert( N === P )
 assert( directSum{M,N} === directSum{M,N} )
 end
 -- Local Variables:
--- compile-command: "make -C $M2BUILDDIR/Macaulay2/test direct.out"
+-- compile-command: "make -C $M2BUILDDIR/Macaulay2/packages/Macaulay2Doc/test direct.out"
 -- End:

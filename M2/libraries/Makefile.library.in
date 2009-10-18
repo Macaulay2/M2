@@ -36,7 +36,8 @@ BUILDCMD      ?= $(MAKE) $(BUILDOPTIONS) $(BUILDTARGET)
 INSTALLTARGET ?= install
 INSTALLCMD    ?= $(MAKE) $(INSTALLOPTIONS) prefix=$(LIBRARIESDIR) $(INSTALLTARGET)
 BUILDDIR      ?= $(UNTARDIR)/$(TARDIR)
-UNTARCMD      ?= @TAR@ xzf $(TARFILE_DIR)/$(TARFILE)
+TAROPTIONS    ?= --gzip
+UNTARCMD      ?= @TAR@ xf $(TARFILE_DIR)/$(TARFILE) $(TAROPTIONS)
 %.E: %.c; $(COMPILE.c) -E $(OUTPUT_OPTION) $<
 export PATH := @abs_top_srcdir@/autoconf/final/bin:$(PATH)
 all:prereq install post-install
@@ -75,10 +76,10 @@ endif
 	    fi
 	if [ -d $(UNTARDIR) ] ; then mv $(UNTARDIR) $(OLDUNTARDIR) ; fi
 	mkdir $(UNTARDIR)
-	$(UNTARCMD) -C $(UNTARDIR)
+	cd $(UNTARDIR) && $(UNTARCMD)
 	$(PATCHCMD)
 	touch $@
-.untarred2-$(VERSION) : $(TARFILE_DIR)/$(TARFILE) ; mkdir tmp ; $(UNTARCMD) -C tmp && touch $@
+.untarred2-$(VERSION) : $(TARFILE_DIR)/$(TARFILE) ; mkdir tmp ; (cd tmp && $(UNTARCMD)) && touch $@
 ifeq ($(FETCHER),)
 ifneq (@WGET@,)
 FETCHER = @WGET@

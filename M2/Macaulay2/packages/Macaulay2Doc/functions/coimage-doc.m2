@@ -23,7 +23,7 @@ document {
 	  },
      "In each of these cases, the coimage is isomorphic to the image, but the coimage is presented as
      a quotient object of the source of the map, whereas the image is presented as a subobject of the
-     target of the map.  For rings, we can represent quotient rings, but not subrings, in Macaulay 2.
+     target of the map.  For rings, we can represent quotient rings, but not subrings, in Macaulay2.
      Hence, for ring maps, we can compute the coimage, but not the image.",
      PARA "The isomorphism between coimage and image is not always obvious, as the following example shows.",
      EXAMPLE {

@@ -15,12 +15,17 @@ document {
 	  BaseFunction => check,
 	  Inputs => {
 	       "P" => {ofClass {Package, String}},
-	       UserMode => Boolean => { "whether the M2 processes started to run the tests will ignore packages installed in the user's 
-	       	    ", TO2{"applicationDirectory", "application directory"}, "."
+	       UserMode => { "if ", TO "true", ", then do not give the ", TT "-q", " option to ", TT "M2", " when running 
+		    tests, thereby allowing it to load the user's ", TO "initialization file", ",
+		    allowing it to load packages previously installed in the user's ", TO2{"applicationDirectory", "application directory"}, ",
+		    and allowing packages it loads to read their configuration files from the 
+		    the user's ", TO2{"applicationDirectory", "application directory"}, ".
+		    If ", TO "false", ", then do give the option.
+		    If ", TO "null", ", then propagate the option from the current ", TO "commandLine", ", if one occurs there." 
 		    }
 	       },
 	  Consequences => {
-	       "The tests in the package ", TT "P", " are run (in separate Macaulay 2 processes), and 
+	       "The tests in the package ", TT "P", " are run (in separate Macaulay2 processes), and 
 	       any errors are reported."
 	       },     
 	  PARA {
@@ -41,8 +46,13 @@ check LLLBases///,
 	  Inputs => {
 	       "i" => ZZ => "the number of the test to run",
 	       "P" => {ofClass {Package, String}},
-	       UserMode => Boolean => { "whether the M2 processes started to run the tessts will ignore packages installed in the user's 
-	       	    ", TO2{"applicationDirectory", "application directory"}, "."
+	       UserMode => { "if ", TO "true", ", then do not give the ", TT "-q", " option to ", TT "M2", " when running 
+		    tests, thereby allowing it to load the user's ", TO "initialization file", ",
+		    allowing it to load packages previously installed in the user's ", TO2{"applicationDirectory", "application directory"}, ",
+		    and allowing packages it loads to read their configuration files from the 
+		    the user's ", TO2{"applicationDirectory", "application directory"}, ".
+		    If ", TO "false", ", then do give the option.
+		    If ", TO "null", ", then propagate the option from the current ", TO "commandLine", ", if one occurs there." 
 		    }
 	       },
 	  Consequences => {

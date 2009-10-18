@@ -30,7 +30,9 @@ export {
      }
 
 
-gfanCommand = concatenate(///!///,((options(StatePolytope))#Configuration)#"gfan command");
+gfanCommand = (options StatePolytope)#Configuration#"gfan command"
+if gfanCommand === "gfan" then gfanCommand = prefixDirectory | currentLayout#"programs" | gfanCommand
+gfanCommand = "!" | gfanCommand
 
 --The next two functions print out the ring and the ideal in the format required by gfan
 

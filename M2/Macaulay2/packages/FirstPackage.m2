@@ -6,7 +6,7 @@ newPackage(
     	Authors => {{Name => "Jane Doe", 
 		  Email => "doe@math.uiuc.edu", 
 		  HomePage => "http://www.math.uiuc.edu/~doe/"}},
-    	Headline => "an example Macaulay 2 package",
+    	Headline => "an example Macaulay2 package",
     	DebuggingMode => true
     	)
 
@@ -18,7 +18,7 @@ firstFunction ZZ := String => n -> if n == 1 then "Hello World!" else "D'oh!"
 beginDocumentation()
 document { 
 	Key => FirstPackage,
-	Headline => "an example Macaulay 2 package",
+	Headline => "an example Macaulay2 package",
 	EM "FirstPackage", " is a basic package to be used as an example."
 	}
 document {

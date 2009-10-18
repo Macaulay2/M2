@@ -40,10 +40,11 @@ document {
 	  R.minimalPresentationMap
 	  R.minimalPresentationMapInv
 	  ///,
-     "If the Exclude option is present, then those variables are not simplified away.",
+     "If the Exclude option is present, then those variables with the given indices are not simplified away
+     (remember that ring variable indices start at 0).",
      EXAMPLE lines ///
 	  R = ZZ/101[x,y,z,u,w]/ideal(x-x^2-y,z+x*y,w^2-u^2);
-	  minimalPresentation(R, Exclude=>{y})
+	  minimalPresentation(R, Exclude=>{1})
           ///,
      SeeAlso => {(minimalPresentation, Ideal), (prune, Ideal), (trim, Ring), (trim, QuotientRing)}     
      }
@@ -80,11 +81,12 @@ document {
 	  "I.cache.minimalPresentationMap",
 	  "I.cache.minimalPresentationMapInv"
 	  },
-     "If the Exclude option is present, then those variables are not simplified away.",
+     "If the Exclude option is present, then those variables with the given indices are not simplified away
+     (remember that ring variable indices start at 0).",
      EXAMPLE lines ///
 	  R = ZZ/101[x,y,z,u,w];
 	  I = ideal(x-x^2-y,z+x*y,w^2-u^2);
-	  minimalPresentation(I, Exclude=>{y})
+	  minimalPresentation(I, Exclude=>{1})
           ///,
      SeeAlso => {(minimalPresentation,Ring), (trim, Ideal)}
      }

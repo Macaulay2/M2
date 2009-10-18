@@ -2,7 +2,7 @@
 document {
      Key => "rings",
 
-     "Macaulay 2 differs from other computer algebra systems such as 
+     "Macaulay2 differs from other computer algebra systems such as 
      Maple and Mathematica, in that before making a polynomial, 
      you must create a ring to contain it, deciding first
      the complete list of indeterminates and the type of coefficients 
@@ -10,7 +10,7 @@ document {
      satisfying familiar axioms, such as the distributive rule.  
      Examples include the ring of integers (", TO "ZZ", "), the
      ring of rational numbers (", TO "QQ", "), and the most 
-     important rings in Macaulay 2, polynomial rings.",
+     important rings in Macaulay2, polynomial rings.",
 
      PARA{},
      "The sections below describe the types of rings available and how to use them.",
@@ -39,14 +39,14 @@ document {
        	  },
      PARA{},
      "For additional common operations and a comprehensive list of all routines
-     in Macaulay 2 which return or use rings, see ", TO "Ring", "."
+     in Macaulay2 which return or use rings, see ", TO "Ring", "."
      }
 
 
 document { -- this node is used as an example in the node: Key
      Key => "chain complexes",
      "For additional common operations and a comprehensive list of all routines
-     in Macaulay 2 which return or use chain complexes or maps between chain complexes, see ", 
+     in Macaulay2 which return or use chain complexes or maps between chain complexes, see ", 
      TO "ChainComplex", " and ", TO "ChainComplexMap", ".",
      Subnodes => {
 	  TO "free resolutions of modules",

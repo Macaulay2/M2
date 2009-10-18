@@ -1,12 +1,16 @@
-VPATH = @srcdir@
+# license for frobby: GPL v2
+# author: Bjarke Roune <bjarke@cs.au.dk>
 #VERSION = 0.7.7-M2
-VERSION = mike3
+#VERSION = mike3
+VERSION = 0.8.2
 PATCHFILE = @abs_srcdir@/patch-$(VERSION)
+
+VPATH = @srcdir@
 TARDIR = frobby_v$(VERSION)
 TARFILE := frobby_v$(VERSION).tar.gz
 # this site was unreliable:
-# URL = http://www.broune.com/frobby
-URL = http://www.math.uiuc.edu/Macaulay2/Extra
+URL = http://www.broune.com/frobby
+# URL = http://www.math.uiuc.edu/Macaulay2/Extra
 BUILDTARGET = library
 BUILDOPTIONS = GMP_INC_DIR=$(LIBRARIESDIR)/include \
 	CFLAGS="$(CFLAGS)" \

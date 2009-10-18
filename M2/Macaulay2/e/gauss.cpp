@@ -40,9 +40,9 @@ void GaussElimComputation::insert(gm_elem *p)
     }
   else
     {
-      ring_elem lead = p->f->coeff;
-      R->divide_vec_to(p->f, lead);
-      R->divide_vec_to(p->fsyz, lead);
+      ring_elem leadinv = R->invert(p->f->coeff);
+      R->mult_vec_to(p->f, leadinv, false);
+      R->mult_vec_to(p->fsyz, leadinv, false);
       p->nterms = R->n_nonzero_terms(p->f);
       int i = p->f->comp;
       if (gb_list[i] == NULL)

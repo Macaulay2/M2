@@ -56,5 +56,5 @@ p = 101
 -- for the last s, can be done in less than time T, for various T, 1min, 1hr, 1day.
 end
 -- Local Variables:
--- compile-command: "make -C $M2BUILDDIR/Macaulay2/test schreyer.out"
+-- compile-command: "make -C $M2BUILDDIR/Macaulay2/packages/Macaulay2Doc/test schreyer.out"
 -- End:

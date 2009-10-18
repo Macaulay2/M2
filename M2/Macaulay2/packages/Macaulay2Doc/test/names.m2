@@ -1134,5 +1134,5 @@ assert( (toString zero) === "zero" )
 assert( (toString zeta) === "zeta" )
 
 -- Local Variables:
--- compile-command: "make -C $M2BUILDDIR/Macaulay2/test names.out"
+-- compile-command: "make -C $M2BUILDDIR/Macaulay2/packages/Macaulay2Doc/test names.out"
 -- End:

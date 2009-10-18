@@ -52,5 +52,5 @@ Y=1
 Z=1
 end
 -- Local Variables:
--- compile-command: "make -C $M2BUILDDIR/Macaulay2/test 00vars.out"
+-- compile-command: "make -C $M2BUILDDIR/Macaulay2/packages/Macaulay2Doc/test 00vars.out"
 -- End:

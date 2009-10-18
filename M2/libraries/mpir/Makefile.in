@@ -1,0 +1,12 @@
+# license for mpir: GNU LGPL v2.1
+VERSION = 1.2.1
+URL = http://www.mpir.org
+CONFIGOPTIONS += --enable-gmpcompat --enable-cxx
+ifeq (@SHARED@,no)
+CONFIGOPTIONS += --disable-shared
+endif
+include ../Makefile.library
+Makefile: @srcdir@/Makefile.in ; cd ../.. && ./config.status libraries/mpir/Makefile
+# Local Variables:
+# compile-command: "make -C $M2BUILDDIR/libraries/mpir "
+# End:

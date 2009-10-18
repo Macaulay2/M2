@@ -69,8 +69,8 @@ rad Ideal := (Iorig) -> (
 	    h = product factors h;
           I = I + ideal(h);
 	  );
-     if ring I =!= ring Iorig then radI = trim(G radI);
-     radI
+     if ring I =!= ring Iorig then radI = G radI;
+     trim radI
      )
 
 rad(Ideal,ZZ) := (Iorig, codimlimit) -> (
@@ -81,8 +81,8 @@ rad(Ideal,ZZ) := (Iorig, codimlimit) -> (
      radI := ideal(1_R);
      c := codim I;
 
-     << "R0 = " << toExternalString ring I << endl << flush;
-     << "J0 = " << toString I << endl << flush;
+     --<< "R0 = " << toExternalString ring I << endl << flush;
+     --<< "J0 = " << toString I << endl << flush;
 
      while codim I <= c + codimlimit do (
 	  u := independentSets(I,Limit=>1);
@@ -100,8 +100,8 @@ rad(Ideal,ZZ) := (Iorig, codimlimit) -> (
 	    h = product factors h;
           I = I + ideal(h);
 	  );
-     if ring I =!= ring Iorig then radI = trim(G radI);
-     radI
+     if ring I =!= ring Iorig then radI = G radI;
+     trim radI
      )
 
 end

@@ -499,6 +499,12 @@ M2_CCCorNull IM2_RingElement_to_BigComplex(const RingElement *a)
   return static_cast<M2_CCC>(f);
 }
 
+int rawDiscreteLog(const RingElement *h)
+{
+  const Ring *R = h->get_ring();
+  return R->discrete_log(h->get_value());
+}
+
 const RingElementOrNull *IM2_RingElement_make_var(const Ring *R, int v)
 {
      try {

@@ -264,8 +264,8 @@ struct Solution
   int num_steps; // number of steps taken along the path
   
   Solution() { status = UNDETERMINED; }
-  void make(int n, const complex* s_s) { this->n = n; x = newarray(complex,n); 
-    start_x = newarray(complex,n); copy_complex_array(n, s_s, start_x); }
+  void make(int m, const complex* s_s) { this->n = m; x = newarray(complex,m); 
+    start_x = newarray(complex,m); copy_complex_array(m, s_s, start_x); }
   ~Solution() { release(); }
   void release() { deletearray(x); deletearray(start_x); } 
 };

@@ -1,0 +1,3 @@
+implement a hash code for RR that does not depend on endianness
+
+see Macaulay2/packages/Macaulay2Doc/basictests/hashcodes.m2

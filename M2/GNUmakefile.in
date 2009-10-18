@@ -10,8 +10,6 @@ configured:include/configuration
 include/configuration: config.status; ./config.status
 check:configured check-in-Macaulay2
 check:; : +++ all Macaulay2 tests succeeded +++
-big-check:configured big-check-in-Macaulay2
-big-check-in-Macaulay2:; $(MAKE) -C Macaulay2 -k big-check
 check-machine:; @[ "@UNAME_INFO@" = "` @UNAME_INFO_COMMAND@ `" ] || (echo "error: reconfiguration required (uname output seems different)" >&2; false)
 distclean:clean distclean-in-subdirs
 	rm -f @CONFIGURED_FILES@ include/M2/config.h include/config.Makefile config.cache config.log configure.options config.status
@@ -90,7 +88,7 @@ recheck: $(CONFIG_FILES)
 protect-configs:; chmod a-w $(shell cat @srcdir@/config/files)
 check-for-undefined-configure-variables:
 	: "checking for strings that look like unsubstituted configure variables in all *.in files..."
-	@ ! egrep -nH '@[A-Za-z_]+@' $(shell cat @srcdir@/config/files) | sed -e 's=^\([^:]*\):=@srcdir@/\1.in:='  | egrep .
+	@ egrep -nH '@[A-Za-z_]+@' $(shell cat @srcdir@/config/files) | sed -e 's=^\([^:]*\):=@srcdir@/\1.in:='  | egrep . ; [ "$?" != 0 ]
 configure-help: $(CONFIG_FILES) ; @ @srcdir@/configure --help
 relink:; rm -f @pre_exec_prefix@/bin/M2@EXE@ && $(MAKE) -C Macaulay2/d @pre_exec_prefix@/bin/M2@EXE@
 relink-nostrip:; rm -f @pre_exec_prefix@/bin/M2@EXE@ && $(MAKE) -C Macaulay2/d STRIP=no @pre_exec_prefix@/bin/M2@EXE@
@@ -98,17 +96,17 @@ reconfigure-all: reconfigure reconfigure-libs
 reconfigure-libs:; $(MAKE) -C libraries reconfigure
 report-M2-location:
 	: : : : : : : : : : : : : : : : : : : : : : : : : : : : : : : :
-	: Macaulay 2 executable location:
+	: Macaulay2 executable location:
 	:    @pre_bindir@/M2@EXE@
 	: : : : : : : : : : : : : : : : : : : : : : : : : : : : : : : :
 help:
-	@ echo "Macaulay 2 version @PACKAGE_VERSION@"
+	@ echo "Macaulay2 version @PACKAGE_VERSION@"
 	@ echo ""
 	@ echo "make files configured with:"
 	@ echo "    OS=@OS@ REL=@REL@ ISSUE=@ISSUE@ ARCH=@ARCH@ STATIC=@STATIC@"
 	@ echo "    DEBUG=@DEBUG@ OPTIMIZE=@OPTIMIZE@ ENCAP=@ENCAP@"
 	@ echo ""
-	@ echo "Macaulay 2 executable location:"
+	@ echo "Macaulay2 executable location:"
 	@ echo "   @pre_bindir@/M2@EXE@"
 	@ echo ""
 	@ echo "usage: make ..."

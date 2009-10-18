@@ -1,15 +1,20 @@
 #-*- Makefile -*-
+
+PRODUCTION = yes
+DEBUG = no
+
+ifeq ($(PRODUCTION),yes)
+CONFIGOPTIONS += --disable-common-staging-area
+DIRECTORY = cygwin.production
+else
+DIRECTORY = cygwin
+endif
+
 CONFIGOPTIONS += --disable-pthreads
 CONFIGOPTIONS += --enable-cygwin
 CONFIGOPTIONS += --build=i486-pc-cygwin
-
-BUILDOPTIONS += RemakePackages=true RemakeAllDocumentation=true
-
-# so we use 4.2.1 even if a more modern version is available:
-CONFIGOPTIONS += --enable-build-libraries=gmp
-
+# BUILDOPTIONS += RemakePackages=true RemakeAllDocumentation=true
 INSTALLOPTIONS += prefix=/usr/local/encap
-DIRECTORY ?= cygwin
 include Makefile.include
 default:install check
 pre-install:;	rm -rf /usr/local/encap/Macaulay2-$(PACKAGE_VERSION)

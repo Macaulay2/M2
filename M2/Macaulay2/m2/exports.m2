@@ -983,6 +983,8 @@ export {
 	symbol returnCode,
 	symbol reverse,
 	symbol ring,
+	symbol rootPath,
+	symbol rootURI,
 	symbol rotate,
 	symbol round,
 	symbol rowAdd,

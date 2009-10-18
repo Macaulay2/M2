@@ -10,7 +10,7 @@ document {
      Headline => "convert to TeX and display on screen",
      Usage => "showTex x",
      Inputs => {
-	  "x" => "any Macaulay 2 object",
+	  "x" => "any Macaulay2 object",
 	  Format => "currently an unused option"
 	  },
      Consequences => {

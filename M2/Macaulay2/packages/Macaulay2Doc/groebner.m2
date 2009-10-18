@@ -12,7 +12,7 @@ document {
      in case it is needed later.",
      PARA{},
      "See ", TO GroebnerBasis, " for additional common operations and a comprehensive list of all routines
-     in Macaulay 2 which either take Groebner bases as arguments, or return one.",
+     in Macaulay2 which either take Groebner bases as arguments, or return one.",
      PARA{},
      "In Macaulay2, Groebner bases may be computed for ideals and submodules over the 
      following rings:",
@@ -74,7 +74,7 @@ document {
      then there is an element of $G$ whose lead term divides
      $cm$.///,
      PARA{},
-     "Macaulay 2 computes such strong Groebner bases over ZZ.",
+     "Macaulay2 computes such strong Groebner bases over ZZ.",
      EXAMPLE lines ///
        R = ZZ[x,y]
        F = y^2-(x^3+3*x+5)
@@ -229,7 +229,7 @@ document {
 	conditions: (1) $m > 1$, for every monomial m \neq 1, and (2) the order is
 	multiplicative: $m > n$ implies that $mp > np$, for all monomials $m$, $n$, $p$.///,
      PARA{},
-	"In Macaulay 2, each ring has a monomial order (also called a term order) 
+	"In Macaulay2, each ring has a monomial order (also called a term order) 
 	associated with it.  The default monomial order is ", TT "GRevLex", ". See
 	", TO "monomial orderings", " for more information.",
 	PARA{},
@@ -434,7 +434,7 @@ document {
 --      m > 1, for every monomial m \\neq 1, and (2) the order is multiplicative:
 --      m > n implies that mp > np, for all monomials m,n,p.",
 --      PARA{},
---      "In Macaulay 2, each ring has a multiplicative order associated with it.
+--      "In Macaulay2, each ring has a multiplicative order associated with it.
 --      The default is the graded reverse lexicographic order:",
 --      EXAMPLE {
 -- 	  "R = QQ[a..d,MonomialOrder=>GRevLex]",

@@ -113,6 +113,8 @@ recognize(file:PosFile):(null or Word) := (
 -- the next char from o will be " or ' - we return the string it delimits
 -- with the delimiters
 getstringslashes(o:PosFile):(null or Word) := (		    -- /// ... ///
+     line := o.pos.line;
+     column := o.pos.column;
      getc(o);		  -- pass '/'
      getc(o);		  -- pass '/'
      getc(o);		  -- pass '/'
@@ -121,11 +123,15 @@ getstringslashes(o:PosFile):(null or Word) := (		    -- /// ... ///
      tokenbuf << '\"';
      while true do (
 	  ch := getc(o);
-	  if ch == EOF
-	  || ch == ERROR				    -- is that the right thing to do?
-	  then (
+	  if ch == ERROR then (
+	       if !interruptedFlag
+	       then printErrorMessage(o.pos.filename,line,column,"ERROR in string /// ... /// beginning here: " + o.file.errorMessage);
 	       empty(tokenbuf);
-	       printErrorMessage(pos,"EOF or ERROR in string or character constant beginning here");
+	       return NULL;
+	       );
+	  if ch == EOF then (
+	       printErrorMessage(o.pos.filename,line,column,"EOF in string /// ... /// beginning here");
+	       empty(tokenbuf);
 	       return NULL;
 	       );
 	  -- this allows us to get 3,4,5,... slashes within the string by typing 4,6,8,... slashes
@@ -143,10 +149,8 @@ getstringslashes(o:PosFile):(null or Word) := (		    -- /// ... ///
 	  && peek(o,1) == int('/') then break;
 	  if ch == int('\"') || ch == int('\\') then tokenbuf << '\\';
      	  tokenbuf << char(ch);
-	  if isnewline(ch) && hadnewline && isatty(o) then (
-	       return NULL;	  -- user gets out with an extra NEWLINE
-	       );
-	  hadnewline = isnewline(ch)
+	  if ch == int('\n') && hadnewline && isatty(o) then return NULL; -- user gets out with an extra NEWLINE
+	  hadnewline = ch == int('\n')
 	  );
      getc(o);		  -- pass '/'
      getc(o);		  -- pass '/'
@@ -171,10 +175,14 @@ getstring(o:PosFile):(null or Word) := (
      unicode := 0;
      while true do (
 	  ch := getc(o);
-	  if ch == EOF 
-	  || ch == ERROR				    -- is that the right thing to do?
-	  then (
-	       printErrorMessage(o.pos.filename,line,column,"EOF or ERROR in string or character constant beginning here");
+	  if ch == ERROR then (
+	       if !interruptedFlag
+	       then printErrorMessage(o.pos.filename,line,column,"ERROR in string beginning here: " + o.file.errorMessage);
+	       empty(tokenbuf);
+	       return NULL;
+	       );
+	  if ch == EOF then (
+	       printErrorMessage(o.pos.filename,line,column,"EOF in string beginning here");
 	       empty(tokenbuf);
 	       return NULL;
 	       );
@@ -209,42 +217,77 @@ getstring(o:PosFile):(null or Word) := (
 	       )
 	  else if ch == delimiter then break
 	  else if ch == int('\\') then escaped = true;
-	  if isnewline(ch) && hadnewline && isatty(o) then (
-	       return NULL;	  -- user gets out with an extra NEWLINE
-	       );
-	  hadnewline = isnewline(ch);
+	  if ch == int('\n') && hadnewline && isatty(o) then return NULL;	-- user gets out with an extra NEWLINE
+	  hadnewline = ch == int('\n');
 	  );
      s := takestring(tokenbuf);
      Word(s,TCstring,0,parseWORD));
 ismore(file:PosFile):bool := ( c := peek(file); c != EOF && c != ERROR );
-skipwhite(file:PosFile):int := (			    -- return -1 for unterminated block comment
+swline := ushort(0);
+swcolumn := ushort(0);
+skipwhite(file:PosFile):int := (
+     -- skip white space
+     -- '\n' is not white space
+     -- white space include comments
+     -- return EOF, for unterminated block comment
+     --        ERROR, if interrupted
+     --        0, otherwise
      while true do (
+	  swline = file.pos.line;
+	  swcolumn = file.pos.column;
 	  c := peek(file);
-	  if iswhite(c) then (
-	       getc(file);
-	       )
-	  else if c == int('-') && peek(file,1) == int('-') then (
+	  d := 0;
+	  if c == ERROR then return ERROR
+	  else if iswhite(c) then ( getc(file); )
+	  else if c == int('\n') then return 0
+	  else if (
+	       d = peek(file,1);
+	       if d == ERROR then return ERROR;
+	       c == int('-') && d == int('-')
+	       ) then (
  	       -- comment: -- ...
      	       getc(file); getc(file);
-     	       until peek(file) == int('\n') || !ismore(file) do getc(file)
+     	       until (
+		    c = peek(file); if c == ERROR then return c; 
+		    c == int('\n') || c == EOF
+		    ) do getc(file);
 	       )
-	  else if c == int('#') && file.pos.line == ushort(1) && file.pos.column == ushort(0) && peek(file,1) == int('!') then (
+	  else if (
+	       c == int('#') && file.pos.line == ushort(1) && file.pos.column == ushort(0) && 
+	       d == int('!') 
+	       ) then (
 	       -- comment on line 1:  #! ...
      	       getc(file); getc(file);
-     	       until peek(file) == int('\n') || !ismore(file) do getc(file)
+     	       until (
+		    c = peek(file); 
+		    if c == ERROR then return c; 
+		    c == int('\n') || c == EOF
+		    ) do getc(file);
 	       )
 	  else if c == int('{') && peek(file,1) == int('*') then (
 	       -- block comment: {* ... *}
 	       getc(file); getc(file);
-     	       fulllines := file.file.fulllines;
-	       until peek(file) == int('*') && peek(file,1) == int('}')
-	       do (
-		    if fulllines && peek(file) == int('\n') then return -1;
-		    if !ismore(file) then return -1;
-		    getc(file)
-		    );
-	       getc(file); getc(file);
-	       )
+	       hadnewline := false;
+	       until (
+		    c = peek(file);
+		    if c == ERROR || c == EOF then return c;
+		    if c == int('\n') then (
+			 if hadnewline && isatty(file) then (
+			      getc(file);
+			      return ERROR; -- user gets out with an extra NEWLINE
+			      );
+			 hadnewline = true;
+			 )
+		    else hadnewline = false;
+		    c == int('*') && (
+			 getc(file);
+			 c = peek(file);
+		    	 if c == ERROR || c == EOF then return c; 
+		    	 c == int('}')			    -- {
+		    	 && (
+			      getc(file);
+			      true ) ) )
+	       do getc(file))
 	  else return 0));
 
 -- this errorToken means there was a parsing error or an error reading the file!
@@ -260,10 +303,11 @@ gettoken1(file:PosFile,sawNewline:bool):Token := (
      -- warning : tokenbuf is static
      while true do (
 	  rc := skipwhite(file);
-	  if rc != 0  then (
-	       printErrorMessage(file.pos,"unterminated block comment {* ... *}");
-	       empty(tokenbuf);
-	       while true do (ch2 := getc(file); if ch2 == EOF || ch2 == ERROR || ch2 == int('\n') then break;);
+	  if rc == ERROR then return errorToken;
+	  if rc == EOF  then (
+	       printErrorMessage(file.pos.filename,swline,swcolumn,"EOF in block comment {* ... *} beginning here");
+	       -- empty(tokenbuf);
+	       -- while true do (ch2 := getc(file); if ch2 == EOF || ch2 == ERROR || ch2 == int('\n') then break;);
      	       return errorToken;
 	       );
 	  line := file.pos.line;
@@ -271,7 +315,7 @@ gettoken1(file:PosFile,sawNewline:bool):Token := (
 	  ch := peek(file);
      	  if iseof(ch) then return Token(wordEOF,file.pos.filename, line, column, file.pos.loadDepth,globalDictionary,dummySymbol,sawNewline)
      	  else if iserror(ch) then return errorToken
-	  else if isnewline(ch) then (
+	  else if ch == int('\n') then (
 	       getc(file);
 	       return Token(
 		    if file.file.fulllines then wordEOC else NewlineW,

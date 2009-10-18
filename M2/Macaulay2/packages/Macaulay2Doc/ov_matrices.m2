@@ -3,8 +3,8 @@
 document {
      Key => "matrices",
      HEADER2 "An overview",     
-     "In Macaulay 2, each matrix is defined over a ring, (see ", TO "rings", "). 
-     Matrices are perhaps the most common data type in Macaulay 2.",
+     "In Macaulay2, each matrix is defined over a ring, (see ", TO "rings", "). 
+     Matrices are perhaps the most common data type in Macaulay2.",
      Subnodes => {
 	  "making matrices", 
 	  TO "inputting a matrix",
@@ -22,13 +22,13 @@ document {
 	  TO "Pfaffians",
 	  TO "exterior power of a matrix",
 	  "display of matrices and saving matrices to a file",
-	  TO "format and display of matrices in Macaulay 2",
+	  TO "format and display of matrices in Macaulay2",
 	  TO "importing and exporting matrices",
 	  },
      PARA{},
      -- Mike wanted this: "For an overview of matrices as homomorphisms between modules, see ", TO "homomorphisms of modules", ".  ",
      "For additional common operations and a comprehensive list of all routines
-     in Macaulay 2 which return or use matrices, see ", TO "Matrix", "."
+     in Macaulay2 which return or use matrices, see ", TO "Matrix", "."
      }
 
 document {
@@ -132,7 +132,7 @@ document {
 	  },
 
      SUBSECTION "target",
-       "From the above output, one sees that Macaulay 2 considers ", 
+       "From the above output, one sees that Macaulay2 considers ", 
        TT "f", " as a linear transformation. Use the ", 
        TO "target", " command to obtain the target of the 
        linear transformation ", TT "f", ".",
@@ -284,7 +284,7 @@ document {
 
 document {
      Key => "concatenating matrices",
-     "Before Macaulay 2 can concatenate matrices, the matrices in question ", 
+     "Before Macaulay2 can concatenate matrices, the matrices in question ", 
      EM "must", " have entries in the same ring.",
 
      SUBSECTION "concatenate horizontally",
@@ -390,8 +390,8 @@ document {
 
 document { -- something should be said about the degrees
 		 -- and also about line wrapping
-     Key => "format and display of matrices in Macaulay 2",
-     "By default, Macaulay 2 displays matrices in a compact form.",
+     Key => "format and display of matrices in Macaulay2",
+     "By default, Macaulay2 displays matrices in a compact form.",
      EXAMPLE {
 	  "QQ[x,y];",
 	  "f = matrix{{x^2, x*y},{x*y, y^2}}",
@@ -411,7 +411,7 @@ document { -- something should be said about the degrees
 	  "compactMatrixForm = false",
 	  "matrix{{x^2 + 3, x^4 + 1},{x^13 - 5, x^7 - 1}}"		
 	  },
-     "To have Macaulay 2 display matrices in compact form again, type:",
+     "To have Macaulay2 display matrices in compact form again, type:",
      EXAMPLE {
 	  "compactMatrixForm = true",
 	  "matrix{{x^2 + 3, x^4 + 1},{x^13 - 5, x^7 - 1}}"

@@ -68,5 +68,5 @@ F = presentation S
 
 end
 -- Local Variables:
--- compile-command: "make -C $M2BUILDDIR/Macaulay2/test testmulti.out"
+-- compile-command: "make -C $M2BUILDDIR/Macaulay2/packages/Macaulay2Doc/test testmulti.out"
 -- End:

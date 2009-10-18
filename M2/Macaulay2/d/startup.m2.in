@@ -143,8 +143,8 @@ if firstTime then (
      toAbsolutePath = pth -> if pth =!= "stdio" and not isAbsolutePath pth then "/" | relativizeFilename("/", pth) else pth;
 
      copyright = (
-	  "Macaulay 2, version " | version#"VERSION" | newline
-	  | "--Copyright 1993-2009, D. R. Grayson and M. E. Stillman" | newline
+	  "Macaulay2, version " | version#"VERSION" | newline
+	  | "--Copyright 2009 D. R. Grayson and M. E. Stillman" | newline
 	  | "--GC " | version#"gc version" | ", by H. Boehm and Alan J. Demers" | newline
 	  | "--Singular-Factory " | version#"factory version" | ", by G.-M. Greuel et al." | newline
 	  | "--Singular-Libfac " | version#"libfac version" | ", by M. Messollen" | newline
@@ -159,7 +159,8 @@ if firstTime then (
 	       else ""
 	       )
 	  | "--NTL " | version#"ntl version" | ", by V. Shoup" | newline
-     	  | "--GNU MP " | version#"gmp version" | ", by T. Granlund et al." | newline
+--     	  | "--GNU MP " | version#"gmp version" | ", by T. Granlund et al." | newline
+     	  | "--MPIR " | version#"mpir version" | ", by Free Software Foundation et al." | newline
      	  | "--MPFR " | version#"mpfr version" | ", by Free Software Foundation" | newline
 	  | "--BLAS and LAPACK 3.0" | ", by J. Dongarra et al."
 	  );
@@ -260,6 +261,7 @@ if firstTime then (
 	       "packages" => "@packagesdir@/",
 	       "docdir" => "@docdir@/",
 	       "libraries" => "@librariesdir@/",
+	       "programs" => "@programsdir@/",
 	       "package" => "@packagesdir@/PKG/",
 	       "packagedoc" => "@docdir@/PKG/",
 	       "packageimages" => "@docdir@/PKG/images/",
@@ -387,7 +389,7 @@ usage := arg -> (
      << "environment:"       << newline
      << "    M2ARCH             a hint to find the dumpdata file as" << newline
      << "                       bin/../cache/Macaulay2-$M2ARCH-data, where bin is the" << newline
-     << "                       directory containing the Macaulay 2 executable" << newline
+     << "                       directory containing the Macaulay2 executable" << newline
      << "    EDITOR             default text editor" << newline
      << "    LOADDATA_IGNORE_CHECKSUMS (loaddata: disable verification of memory map checksums)" << newline
      << "    COMPAREVDSO               (loaddata: enable verification for the vdso segment)" << newline
@@ -452,9 +454,9 @@ action := hashTable {
 	       topLevelMode = TeXmacs;
 	       addEndFunction(() -> if texmacsmode then (
 			 if restarting 
-			 then stderr << "Macaulay 2 restarting..." << endl << endl << flush
+			 then stderr << "Macaulay2 restarting..." << endl << endl << flush
 			 else (
-			      stderr << "Macaulay 2 exiting" << flush;
+			      stderr << "Macaulay2 exiting" << flush;
 			      << TeXmacsEnd << endl << flush)));
 	       )
 	  ),
@@ -536,9 +538,9 @@ exe = minimizeFilename (
      else 
      *}
      if isAbsolutePath commandLine#0 then commandLine#0 else
-     if isStablePath commandLine#0 then concatenate(currentDirectory|commandLine#0)
+     if isStablePath commandLine#0 then concatenate(currentDirectory()|commandLine#0)
      else pathsearch commandLine#0)
-if not isAbsolutePath exe then exe = currentDirectory | exe ;
+if not isAbsolutePath exe then exe = currentDirectory() | exe ;
 exe = concatenate(realpath dir exe, base exe)
 
 describePath := () -> (
@@ -563,7 +565,7 @@ loadSetup := () -> (
 
 dump = () -> (
      if not version#"dumpdata" then (
-	  error "not configured for dumping data with this version of Macaulay 2";
+	  error "not configured for dumping data with this version of Macaulay2";
 	  );
      arch := if getenv "M2ARCH" =!= "" then getenv "M2ARCH" else version#"architecture";
      fn := (
@@ -662,14 +664,14 @@ if class Core =!= Symbol and not core "noinitfile" then (
 processCommandLineOptions 4
 interpreterDepth = 0
 errorDepth = loadDepth+1      -- anticipate loadDepth being incremented
-n := interpreter()	      -- loadDepth is incremented by commandInterpreter
+n := 0
+n = interpreter()	      -- loadDepth is incremented by commandInterpreter
 if class n === ZZ and 0 <= n and n < 128 then exit n
 if n === null then exit 0
 debuggingMode = false
 stopIfError = true
 stderr << "error: can't interpret return value as an exit code" << endl
 exit 1
-
 -- Local Variables:
 -- compile-command: "make -C $M2BUILDDIR/Macaulay2/d startup.m2 all "
 -- End:

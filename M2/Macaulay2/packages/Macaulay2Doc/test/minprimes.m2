@@ -9,9 +9,9 @@ ideal S
 --              2                    2         2    2    2
 -- o8 = ideal (x  - w z, w x - w z, w  - w x, w  - y  - z )
 --                   6    6     7    6    7    7
-
-use ring ideal S
-assert( ideal S == ideal(x^2-w_6*z,w_6*x-w_7*z,w_6^2-w_7*x,w_7^2-y^2-z^2) ) -- this may change, but hopefully, not by much
+T = ring ideal S
+use T
+assert( ideal S == ideal(x^2-T_1*z,T_1*x-T_0*z,T_1^2-T_0*x,T_0^2-y^2-z^2) ) -- this may change and still be correct
 trim ideal S
 assert( 4 == numgens trim ideal S )			    -- the ideal has swelled since 1.1
 

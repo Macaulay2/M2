@@ -42,7 +42,7 @@ document {
      Headline => "convert to TeX format",
      Usage => "tex x",
      Inputs => {
-	  "x" => "any Macaulay 2 object"
+	  "x" => "any Macaulay2 object"
 	  },
      Outputs => {
 	  String => {TT "x", " converted to TeX format"}

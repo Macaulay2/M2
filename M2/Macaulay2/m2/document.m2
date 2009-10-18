@@ -780,15 +780,12 @@ ofClass ImmutableType := ofClass Type := X -> fixup (
      else SPAN {"an object of class ", TO X}
      )
 
-externalPath = (() -> (
-     -- on some operating systems the browser sees a bigger world than we do
-     if version#"operating system" === "MicrosoftWindows" 
-     then (
-	  f := select(lines get "!mount", match_" on / ");
-	  if #f == 0 then return "";	     -- maybe we should issue a warning
-	  replace(" on / .*","",first f))
-     else ""
-     ))()
+rootPath = "";
+rootURI = "file://";
+if version#"operating system" === "MicrosoftWindows" then (
+     rootPath = first lines get "!cygpath -m /"; 	   -- e.g.: "C:/cygwin"
+     rootURI = "file:///" | rootPath;		   -- e.g.: "file:///C:/cygwin"
+     )
 
 makeDocBody := method(Dispatch => Thing)
 makeDocBody Thing := key -> (
@@ -798,14 +795,13 @@ makeDocBody Thing := key -> (
      rec := fetchRawDocumentation ptag;
      fkey := DocumentTag.FormattedKey ptag;
      if rec =!= null then (
-	  comment := COMMENT{"file://",externalPath,toAbsolutePath rec#"filename",":",toString rec#"linenum"}; 
 	  docBody := extractBody rec;
 	  if docBody =!= null and #docBody > 0 then (
 	       docBody = processExamples(pkg, fkey, docBody);
 	       if class key === String 
-	       then DIV { comment, docBody}
-	       else DIV1 { comment, SUBSECTION "Description", DIV {docBody} })
-	  else DIV { comment }))
+	       then DIV { docBody}
+	       else DIV1 { SUBSECTION "Description", DIV {docBody} })
+	  else DIV { COMMENT "empty documentation body" }))
 
 topheader := s -> (
      h := headline s;
@@ -816,29 +812,29 @@ op := s -> if operator#?s then (
      if match("^[[:alpha:]]*$",ss) then ss = " "|ss|" ";
      fixup DIV {
 	  if binary#?s then DIV {
-	       DIV {
+	       PARA {
 	       	    "This operator may be used as a binary operator in an expression like ", TT ("x"|ss|"y"), ".  The user may install ", TO "binary methods", "
 	       	    for handling such expressions with code such as"
 		    },
 	       PRE if s === symbol SPACE then "         X Y := (x,y) -> ..." else "         X "|ss|" Y := (x,y) -> ...", 
-	       DIV {
+	       PARA {
 		    "where ", TT "X", " is the class of ", TT "x", " and ", TT "Y", " is the class of ", TT "y", "."
 		    }
 	       },
 	  if prefix#?s then DIV {
-	       DIV {"This operator may be used as a prefix unary operator in an expression like ", TT (ss|"y"), ".  The user may install a method for handling 
+	       PARA {"This operator may be used as a prefix unary operator in an expression like ", TT (ss|"y"), ".  The user may ", TO2{ "installing methods", "install a method" }, " for handling 
 	       	    such expressions with code such as"
 	       	    },
 	       PRE ("           "|ss|" Y := (y) -> ..."),
-	       DIV { "where ", TT "Y", " is the class of ", TT "y", "." }
+	       PARA { "where ", TT "Y", " is the class of ", TT "y", "." }
 	       },
 	  if postfix#?s then DIV {
-	       DIV {
-	       	    "This operator may be used as a postfix unary operator in an expression like ", TT ("x "|ss), ".  The user may install a method for handling 
+	       PARA {
+	       	    "This operator may be used as a postfix unary operator in an expression like ", TT ("x "|ss), ".  The user may ", TO2{ ":=", "install a method" }, " for handling 
 	       	    such expressions with code such as"
 		    },
-	       PRE ("         X "|ss|"   := (x,y) -> ..."),
-	       DIV { "where ", TT "X", " is the class of ", TT "x", "." }
+	       PRE ("         X "|ss|"   := (x) -> ..."),
+	       PARA { "where ", TT "X", " is the class of ", TT "x", "." }
 	       }
 	  }
      )
@@ -1210,13 +1206,50 @@ documentationValue(Symbol,Package) := (s,pkg) -> if pkg =!= Core then (
 			 )
 		    )
 	       },
-	  DIV1 { SUBSECTION "Version", "This documentation describes version ", pkg.Options.Version, " of ",
+	  if (cert := pkg.Options.Certification) =!= null then (
+	       if not instance(cert,List) then error(toString pkg, ": Certification option: expected a list");
+	       if not all(cert,x -> instance(x,Option) and #x==2) then error(toString pkg, ": Certification option: expected a list of options");
+	       cert = new HashTable from cert;
+	       DIV1 { 
+		    SUBSECTION "Certification",
+		    PARA {
+			 "Version ",BOLD cert#"version at publication"," of this package was accepted for
+			 publication in ",HREF{cert#"volume URI","volume " | cert#"volume number"}," of the 
+			 journal ",HREF{cert#"journal URI",cert#"journal name"}," on ",cert#"acceptance date",", in the 
+			 article ",HREF{cert#"published article URI",cert#"article title"},".  That version can be 
+			 obtained ", HREF{cert#"published code URI","from the journal"}, " or from the ", EM "Macaulay2", " source code
+			 repository, after installing ", HREF{"http://subversion.tigris.org/", "subversion"}, ",
+			 with the following shell command:"
+			 },
+		    PRE concatenate("   svn export -r ",toString(cert#"release at publication")," ",cert#"repository code URI"),
+		    PARA {
+			 "The following command will display the log messages accompanying any changes to the file in the repository since publication."
+			 },
+		    PRE concatenate("   svn log -r ",toString(cert#"release at publication"+1),":HEAD ",cert#"repository code URI"),
+		    PARA {
+			 "The following command will summarize the changes to the file in the repository since publication, in
+			 the format the program ", TT "diff", " uses: lines starting with ", TT "+", " have been added, and
+			 lines starting with ", TT "-", " have been removed.  (Changes to white space or end of line style will not
+			 be reported.)"
+			 },
+		    PRE concatenate("   svn diff -x \"-b --ignore-eol-style\" -r ",toString(cert#"release at publication"),":HEAD ",cert#"repository code URI"),
+		    PARA {
+			 "The differences between two releases in the repository mentioned in the log can be displayed by 
+			 replacing ",TT{toString(cert#"release at publication"),":HEAD"}," by the pair of release numbers separated by a colon."
+			 }
+		    }
+	       ),
+	  DIV1 { SUBSECTION "Version", "This documentation describes version ", BOLD pkg.Options.Version, " of ",
 	       if pkg#"title" === "Macaulay2Doc" then "Macaulay2" else pkg#"title",
 	       "." },
 	  if pkg#"title" =!= "Macaulay2Doc" 
 	  then DIV1 {
 	       SUBSECTION "Source code",
-	       "The source code is in the file ", HREF { installationLayout#"packages" | fn, fn }, "."
+	       "The source code from which this documentation is derived is in the file ", HREF { installationLayout#"packages" | fn, fn }, ".",
+	       if pkg#?"auxiliary files" then (
+		    "  The auxiliary files accompanying it are in the
+		    directory ", HREF { installationLayout#"packages" | pkg#"title" | "/", pkg#"title" | "/" }, "."
+		    )
 	       },
 	  if #e > 0 then DIV1 {
 	       SUBSECTION "Exports",
@@ -1307,7 +1340,7 @@ pager = x -> (
 infoHelp = key -> (
      tag := makeDocumentTag(key,Package=>null);
      t := infoTagConvert tag;
-     run ("info "|format t);)
+     chkrun ("info "|format t);)
 
 
 -----------------------------------------------------------------------------

@@ -1100,8 +1100,8 @@ showTex Thing := o -> x -> (
 \end{document}
 ///
      << close;
-     if 0 === run("cd /tmp; latex " | f)
-     then run("(xdvi "|f|".dvi; rm -f "|f|".tex "|f|".dvi "|f|".log "|f|".aux)&")
+     if 0 === chkrun("cd /tmp; latex " | f)
+     then chkrun("(xdvi "|f|".dvi; rm -f "|f|".tex "|f|".dvi "|f|".log "|f|".aux)&")
      else error ("latex failed on input file " | f | ".tex")
      )
 

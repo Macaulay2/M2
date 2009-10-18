@@ -18,8 +18,8 @@ document {
      is replaced with zero."},
      EXAMPLE lines ///
      	  e = 1e-11;
-     	  M = random(RR^4,RR^5)
-	  M * M^-1
+     	  M = random(RR^4,RR^4)
+	  M * (M + 1) + 1 - M^2 - M
 	  clean_e oo
 	  ///,
      "Cleaning a polynomial is a way to get rid of small terms.",

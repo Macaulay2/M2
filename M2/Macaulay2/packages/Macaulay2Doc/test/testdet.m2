@@ -178,5 +178,5 @@ testsame1(3,m)
 testsame2(3,m)
 end
 -- Local Variables:
--- compile-command: "make -C $M2BUILDDIR/Macaulay2/test testdet.out"
+-- compile-command: "make -C $M2BUILDDIR/Macaulay2/packages/Macaulay2Doc/test testdet.out"
 -- End:

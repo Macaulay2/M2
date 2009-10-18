@@ -93,7 +93,7 @@ minimalPrimes Ideal := decompose Ideal := (cacheValue symbol minimalPrimes) (
 	  (I',F) := flattenRing I; -- F is not needed
 	  A := ring I';
 	  G := map(R, A, generators(R, CoefficientRing => coefficientRing A));
-     	  I = I';	  
+     	  I = trim I';	  
 	  if not isPolynomialRing A then error "expected ideal in a polynomial ring or a quotient of one";
 	  if not isCommutative A then
 	    error "expected commutative polynomial ring";

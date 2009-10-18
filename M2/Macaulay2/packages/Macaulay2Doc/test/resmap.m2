@@ -10,5 +10,5 @@ h = Hom(g,R^1)
 assert( h * (source h).dd == (target h).dd * h )
 end
 -- Local Variables:
--- compile-command: "make -C $M2BUILDDIR/Macaulay2/test resmap.out"
+-- compile-command: "make -C $M2BUILDDIR/Macaulay2/packages/Macaulay2Doc/test resmap.out"
 -- End:

@@ -7,7 +7,7 @@ newPackage(
 	     {Name => "Jane Doe", Email => "doe@math.uiuc.edu"}
 	     },
     	HomePage => "http://www.math.uiuc.edu/~doe/",
-    	Headline => "an example Macaulay 2 package",
+    	Headline => "an example Macaulay2 package",
 	AuxiliaryFiles => false, -- set to true if package comes with auxiliary files
     	DebuggingMode => true		 -- set to true only during development
     	)
@@ -43,7 +43,7 @@ secondFunction(ZZ,List) := o -> (m,n) -> (
 beginDocumentation()
 document { 
 	Key => PackageTemplate,
-	Headline => "an example Macaulay 2 package",
+	Headline => "an example Macaulay2 package",
 	EM "PackageTemplate", " is an example package which can
 	be used as a template for user packages."
 	}

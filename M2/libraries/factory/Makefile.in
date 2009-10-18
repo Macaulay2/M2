@@ -1,3 +1,5 @@
+# license for singular: GPL v2 or v3
+
 # VERSION = 3.0.2
 # PATCHFILE = @abs_srcdir@/patch-$(VERSION)
 # TARDIR = factory

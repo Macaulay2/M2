@@ -79,7 +79,7 @@ newPackage = method(
 	  Version => "0.0",
 	  AuxiliaryFiles => false,
 	  DebuggingMode => false,
-	  InfoDirSection => "Macaulay 2 and its packages",
+	  InfoDirSection => "Macaulay2 and its packages",
 	  CacheExampleOutput => null,
 	  Headline => null,
 	  Authors => {}, -- e.g., Authors => { {Name => "Dan Grayson", Email => "dan@math.uiuc.edu", HomePage => "http://www.math.uiuc.edu/~dan/"} }
@@ -176,7 +176,7 @@ newPackage(String) := opts -> (title) -> (
 	       opts = merge(opts, new OptionTable from {DebuggingMode => loadOptions.DebuggingMode},last);
 	       );
 	  );
-     newpkg := new Package from {
+     newpkg := new Package from nonnull {
           "title" => title,
 	  symbol Options => opts,
      	  symbol Dictionary => new Dictionary, -- this is the global one
@@ -195,6 +195,7 @@ newPackage(String) := opts -> (title) -> (
 	  "exported mutable symbols" => {},
 	  "example results" => new MutableHashTable,
 	  "source directory" => toAbsolutePath currentFileDirectory,
+	  if opts.AuxiliaryFiles then "auxiliary files" => toAbsolutePath currentFileDirectory | title | "/",
 	  "source file" => toAbsolutePath currentFileName,
 	  "undocumented keys" => new MutableHashTable,
 	  "package prefix" => (
@@ -448,7 +449,7 @@ getPackage = method(Options => {
 	  Repository => "http://www.math.uiuc.edu/Macaulay2/Packages/",
 	  Version => null, 
 	  CurrentVersion => null,
-	  UserMode => true,
+	  UserMode => null,
 	  DebuggingMode => false,
 	  Configuration => {}
 	  })
@@ -486,7 +487,7 @@ getPackage String := opts -> pkgname -> (
 	  tgzfilenm << tgzfile << close;
 	  cmd := concatenate("cd ",tmp,"; tar xzf ",tfn);
 	  stderr << "--- " << cmd << endl;
-	  if 0 != run cmd then error("getPackage: failed to untar ",tfn);
+	  if 0 != chkrun cmd then error("getPackage: failed to untar ",tfn);
 	  if not fileExists filename then error("package file ",filename," missing");
 	  )
      else (

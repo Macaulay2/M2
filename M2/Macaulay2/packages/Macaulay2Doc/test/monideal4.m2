@@ -5,5 +5,5 @@ J1 = monomialIdeal(1_R)
 assert(J == monomialIdeal(1_R))
 end
 -- Local Variables:
--- compile-command: "make -C $M2BUILDDIR/Macaulay2/test monideal4.out"
+-- compile-command: "make -C $M2BUILDDIR/Macaulay2/packages/Macaulay2Doc/test monideal4.out"
 -- End:

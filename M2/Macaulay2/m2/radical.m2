@@ -1,5 +1,5 @@
 -- Based on the Macaulay (classic) scripts written by 
--- D. Eisenbud.  Translated to Macaulay 2 by M. Stillman
+-- D. Eisenbud.  Translated to Macaulay2 by M. Stillman
 
 -- Copyright 1996 by Michael E. Stillman
 

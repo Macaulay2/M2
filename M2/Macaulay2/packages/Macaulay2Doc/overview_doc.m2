@@ -2,12 +2,12 @@ document {
      Key => "writing documentation",
      HEADER3 "Introduction",
      "Documentation for user defined ", TO "packages", 
-     " and Macaulay 2 itself is written using 
+     " and Macaulay2 itself is written using 
      the ", TO document, " function, using a straightforward ",
      TO2("hypertext list format", "hypertext"), 
      " markup language. 
      It is then formatted via ", TO "installPackage", 
-     " as the documentation built in to Macaulay 2, 
+     " as the documentation built in to Macaulay2, 
      the online HTML documentation, and the info pages.
      Much of the format and structure of the documentation is 
      automatically generated.  Each documentation entry must be 
@@ -68,7 +68,7 @@ document {
 	"There are a few stylistic conventions which should be noted:",
 	UL {
 		{"Lowercase is used for all titles, unless a proper noun is being used."},
-		{"The name of any Macaulay 2 function, option, or variable, occurring in the documentation 
+		{"The name of any Macaulay2 function, option, or variable, occurring in the documentation 
 		should be an active hyperlink. This can be accomplished with the tag ", TO "TO", "."},
 		{"If one needs to refer to the ", TT "i", "-th coefficient of some object, then use the format as given here."}
 		},
@@ -83,7 +83,7 @@ document {
      "Documentation text is composed of a list of text 
      and hypertext items. A single text string, even though it is not a list, is 
      generally accepted as a hypertext list. Math support is currently
-     rudimentary.  Macaulay 2 examples may be included in the list",
+     rudimentary.  Macaulay2 examples may be included in the list",
      PARA{},
      "Each element of the list may be a text string, or one of the elements
      below.",
@@ -120,13 +120,13 @@ document {
        PRE///{ 
   HR{},
   "When referring to a ", 
-  EM "Macaulay 2", 
+  EM "Macaulay2", 
   " identifier such as ",
   TT "matrix",   
   ", use the TT element, or use a cross-reference, as in ",
   TO matrix, 
   ".  Incorporate ", 
-  EM "Macaulay 2", 
+  EM "Macaulay2", 
   " examples (during ",
   TO (installPackage,String), 
   ") as illustrated here.",
@@ -141,13 +141,13 @@ document {
 { 
   HR{},
   "When referring to a ", 
-  EM "Macaulay 2", 
+  EM "Macaulay2", 
   " identifier such as ",
   TT "matrix",   
   ", use the TT element, or use a cross-reference, as in ",
   TO matrix, 
   ".  Incorporate ", 
-  EM "Macaulay 2", 
+  EM "Macaulay2", 
   " examples (during ",
   TO (installPackage,String), 
   ") as illustrated here.",
@@ -357,7 +357,7 @@ document { Key => {SYNOPSIS,[SYNOPSIS, Usage],[SYNOPSIS, Outputs],[SYNOPSIS, Inp
 	       },
 	  Outputs => {
 	       { \"the previously installed method for \", TT \"f(X,Y)\", \" is called with arguments \", TT \"(x,y)\", \", and the return value is returned.
-  		    If no such method has been installed, then Macaulay 2 searches for a method
+  		    If no such method has been installed, then Macaulay2 searches for a method
 		    for \", TT \"f(X',Y')\", \", where \", TT \"X'\", \" is an ancestor of \", TT \"X\", \" and \", TT \"Y'\", \" is an ancestor of \", TT \"Y\", \"
 		    (see \", TO \"inheritance\", \" for details).\"
 		    }

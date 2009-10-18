@@ -859,7 +859,7 @@ document {
      The NTL version 
      (NTL is an excellent package written by Victor shoup) is
      generally the best, however, the top level version is written
-     in the Macaulay 2 language, and so is easily modifiable and
+     in the Macaulay2 language, and so is easily modifiable and
      can be used to understand the algorithm better.  There are also
      a number of approximate LLL variants implemented in NTL.  These
      use real numbers instead of exact integer arithmetic, and so are

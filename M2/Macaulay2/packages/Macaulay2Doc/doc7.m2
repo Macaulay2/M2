@@ -710,7 +710,7 @@ document {
 document {
      Key => leadTerm,
      Headline => "get the greatest term",
-     "Every polynomial ring in Macaulay 2 comes equipped with a monomial ordering.
+     "Every polynomial ring in Macaulay2 comes equipped with a monomial ordering.
      For ring elements and matrices, this function returns the greatest term in this order.",
      PARA{},
      "For an ideal, a Gröbner basis is first computed, and the ideal of lead terms is
@@ -1214,13 +1214,13 @@ document {
 	   (a^6-b^6)/(a^9-b^9)
 	   ///,
      "If the ring contains zero divisors, the fraction field is not defined.
-     Macaulay 2 will not inform you of this right away.  However, if computation
+     Macaulay2 will not inform you of this right away.  However, if computation
      finds a zero-divisor, an error message is generated.",
      EXAMPLE lines ///
      	  A = ZZ/101[a,b]/(a*b)
 	  (a+b)/(a-b)
 	  ///,
-     "At this point, if one types ", TT "a/b", ", then Macaulay 2 would give an error
+     "At this point, if one types ", TT "a/b", ", then Macaulay2 would give an error
      saying that a zero divisor was found in the denominator.",
      SeeAlso => {symbol //}
      }

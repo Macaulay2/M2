@@ -1,0 +1,12 @@
+Here's code that monitors every call to any method function of random, which should be incorporated into "on"
+
+debug Core
+scan( methods random, x -> (
+	  f := lookup x;
+	  assert( f =!= null );
+	  g := y -> (f opts) y;
+	  setAttribute(g,ReverseDictionary,symbol random);
+	  g = on g;
+	  installMethod append (x,opts -> y -> (<< "random" << drop(x,1) << " : " ; g y) );
+	  ))
+dictionaryPath = select(dictionaryPath, d -> d =!= Core#"private dictionary")

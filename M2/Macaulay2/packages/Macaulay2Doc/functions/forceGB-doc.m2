@@ -16,7 +16,7 @@ document {
      declaring itself complete, without computing any S-pairs.",
      PARA{},
      "Sometimes one knows that a set of polynomials (or columns of such)
-     form a Gröbner basis, but ", EM "Macaulay 2", " doesn't.  This is the
+     form a Gröbner basis, but ", EM "Macaulay2", " doesn't.  This is the
      way to inform the system of this fact.",
      EXAMPLE {
 	  "gbTrace = 3;",
@@ -40,7 +40,7 @@ document {
      }
 document { 
      Key => [forceGB, ChangeMatrix],
-     Headline => "inform Macaulay 2 about the change of basis matrix from GB to generators",
+     Headline => "inform Macaulay2 about the change of basis matrix from GB to generators",
      Usage => "forceGB(...,ChangeMatrix=>m)",
      Inputs => { "m" => Matrix },
      Consequences => {

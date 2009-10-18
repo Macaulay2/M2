@@ -80,7 +80,7 @@ document {
 document {
      Key => cacheFileName,
      Headline => "produce the name of a cache file",
-     "Macaulay 2 needs to remember some bits of data from one invocation to the next,
+     "Macaulay2 needs to remember some bits of data from one invocation to the next,
      so it stores this data in cache files.  The name and directory of the cache file
      depend on the data being stored.  For example, the input code for examples associated
      with one of the documentation node will be stored in a file whose name depends on

@@ -9,7 +9,7 @@ document {
 	  "R = QQ[x,y,z];",
           "R",
 	  },
-     "Notice that after assignment to a global variable, Macaulay 2
+     "Notice that after assignment to a global variable, Macaulay2
      knows the ring's name, and this name is used when printing the ring.",
      "The original description of the ring can be recovered
      with ", TO "describe", ".",
@@ -22,7 +22,7 @@ document {
       	  "11_R",
 	  },
      "Obtain the variables (generators) of the ring by subscripting the name of 
-     the ring.  As always in Macaulay 2, indexing starts at 0.",
+     the ring.  As always in Macaulay2, indexing starts at 0.",
      EXAMPLE "R_0^10+R_1^3+R_2",
      "The number of variables is provided by ", TO "numgens", ".",
      EXAMPLE {
@@ -66,7 +66,7 @@ document {
      ring.  A sequence of variables can be obtained as follows.",
      EXAMPLE "ZZ[b..k];",
      "In this example, if you had previously assigned either b or k a value that
-     was not a ring generator, then Macaulay 2 would complain about this: it would
+     was not a ring generator, then Macaulay2 would complain about this: it would
      no longer understand what variables you wanted.  To get around this, we could
      either do",
      EXAMPLE "ZZ[symbol b .. symbol k];",
@@ -105,7 +105,7 @@ document {
      ///,
      "Some things to watch out for when using polynomial rings:",
      UL {
-	  LI ("Defining a ring twice gives different rings, as far as Macaulay 2 is concerned:
+	  LI ("Defining a ring twice gives different rings, as far as Macaulay2 is concerned:
      	       We use the strict comparison operator ", TO "===", " to demonstrate this.",     
      	       EXAMPLE "ZZ[a,b,c] === ZZ[a,b,c]",
      	       "Thus it is a good idea to assign a new ring to a variable for future reference."
@@ -134,7 +134,7 @@ document {
 
 document {
      Key => "monomial orderings", 
-     "Every polynomial ring in Macaulay 2 comes equipped with an ordering on
+     "Every polynomial ring in Macaulay2 comes equipped with an ordering on
      the monomials.  See below for the definitions of all implemented
      orderings.  The default ordering is GRevLex, the graded reverse
      lexicographic order.",
@@ -283,10 +283,10 @@ document {
 
 document { 
      Key => "monomial orders for free modules",
-     TEX ///In Macaulay 2, each free module $F = R^s$ over a ring $R$ has a basis
+     TEX ///In Macaulay2, each free module $F = R^s$ over a ring $R$ has a basis
      of unit column vectors $F_0, F_1, ..., F_(s-1)$.  The monomials of $F$
      are the elements $m F_i$, where $m$ is a monomial of the ring $R$.
-     In Macaulay 2, orders on the monomials of $F$ are used for computing Gröbner bases and
+     In Macaulay2, orders on the monomials of $F$ are used for computing Gröbner bases and
      syzygies, and also to determine the initial, or lead term of elements of $F$.///,
      PARA{},
      TEX ///The ring $R$ comes equipped with a total order on the monomials of $R$.
@@ -307,7 +307,7 @@ document {
      "Induced monomial orders are another class of important orders on ", TT "F", ", see ",
      TO "Schreyer orders", " for their definition and use in Macaulay2.",
      PARA{},
-     "In Macaulay 2, free modules come equipped with a compatible order.  The default
+     "In Macaulay2, free modules come equipped with a compatible order.  The default
      order is: term over position up.
      This is called Position=>Up.  In the following example, the lead term is ",
      TEX "$a F_1$, since $a > b$.",
@@ -371,7 +371,7 @@ document {
      are scalar multiples of each other, and $i>j$, where $F_i$ are the unit column vectors of $F$
      ///,
      PARA{},
-     "In Macaulay 2, free modules with a Schreyer order on them can be created using ", 
+     "In Macaulay2, free modules with a Schreyer order on them can be created using ", 
      TO (schreyerOrder,Matrix), ".",
      EXAMPLE lines ///
 	  R = ZZ/101[a..f];
@@ -381,7 +381,7 @@ document {
 	  g = syz m1
 	  leadTerm g
 	  ///,
-     "In Macaulay 2, free modules are displayed without any indication of whether they are
+     "In Macaulay2, free modules are displayed without any indication of whether they are
      endowed with a Schreyer order or not.  To determine whether one is, use ", 
      TO (schreyerOrder,Module), ".  If the result is the zero matrix, then the monomial order
      associated with this free module is not a Schreyer order.  In that case, the monomial order
@@ -442,7 +442,7 @@ document {
      $degree(x^A) > degree(x^B)$ or $degree(x^A) = degree(x^B)$ and
      the LAST non-zero entry of the vector of integers $A-B$ is NEGATIVE. ///,
      PARA{},
-     TEX /// This is the default order in Macaulay 2, in large part because it is often
+     TEX /// This is the default order in Macaulay2, in large part because it is often
      the most efficient order for use with Gröbner bases.  By giving GRevLex
      a list of integers, one may change the definition of the order: $degree(x^A)$ is
      the dot product of $A$ with the argument of GRevLex.///,
@@ -616,7 +616,7 @@ document {
      orders, each with n1, n2, ..., nr variables.",
      PARA{},
      "This syntax is left here for compatibility with previous
-     Macaulay 2 versions.",
+     Macaulay2 versions.",
      EXAMPLE {
      	"R = ZZ[a..e, MonomialOrder => ProductOrder {3,2}];"
 	},
@@ -753,7 +753,7 @@ document {
      zero or negative.  The notion of small depends on the size of exponents one wants: the degree
      of each monomial occurring should fit in a 32 bit integer (or 64 bit integer, on 64 bit machines).",
      PARA{
-	 "Another restriction on degrees, at least if all the computational facilities of Macaulay 2 are
+	 "Another restriction on degrees, at least if all the computational facilities of Macaulay2 are
 	 needed, is that a heft vector exists for them.  A heft vector is a list of integers whose length is
 	 the same as the length of the degrees (see ", TO degreeLength, "), such that its dot product with
 	 the degree of each variable is positive.  Heft vectors are computed automatically for you,
@@ -788,7 +788,7 @@ document {
      to indicate a
      monomial ordering other than the default (graded reverse lexicographic).",
      PARA{},
-     "In Macaulay 2, each polynomial ring (and also each monoid) is equipped with a monomial order,
+     "In Macaulay2, each polynomial ring (and also each monoid) is equipped with a monomial order,
      which is used for display of polynomials (terms are listed in descending monomial order),
      and also for Gröbner basis computations.",
      PARA{},

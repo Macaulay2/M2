@@ -135,6 +135,13 @@ ring_elem GF::get_rep(ring_elem a) const
   return _originalR->power(_primitive_element->get_value(), a.int_val);
 }
 
+int GF::discrete_log(ring_elem a) const
+{
+  if (a.int_val == _ZERO) return -1;
+  if (a.int_val == Q1_) return 0;
+  return a.int_val;
+}
+
 inline int GF::to_int(int) const
 {
   // MES.  what to do here?

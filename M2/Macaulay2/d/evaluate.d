@@ -34,7 +34,6 @@ NumberErrorMessagesShown := 0;
 ----------------------------------------------------------------------------------------
 -- a forward reference: we have many mutually recursive functions in this file, too bad!
 export backtrace := true;
-export steppingFlag := false;
 stepCount := -1;
 microStepCount := -1;
 lastCode := dummyCode;
@@ -1164,9 +1163,6 @@ parallelAssignmentFun(x:parallelAssignmentCode):Expr := (
 
 -----------------------------------------------------------------------------
 
-export determineExceptionFlag():void := (
-     exceptionFlag = interruptedFlag || steppingFlag || alarmedFlag;
-     );
 export clearAlarm():void := (
      alarm(uint(0));
      );

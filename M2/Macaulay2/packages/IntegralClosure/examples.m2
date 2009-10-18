@@ -175,6 +175,8 @@ ideal"
 ---------------------------------------------------------------------
 --singular-vasconcelos
 kk = ZZ/32003
+w = symbol w
+t = symbol t
 R = kk[x,y,z,w,t]
 ideal"
   x2+zw,

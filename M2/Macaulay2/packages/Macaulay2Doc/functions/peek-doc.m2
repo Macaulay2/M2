@@ -8,7 +8,7 @@ document {
      Usage => "peek s",
      Inputs => { "s" },
      Outputs => { { "a net or string that displays the contents of ", TT "s", " to depth 1, bypassing installed methods for displaying the object" } },
-     "This function is used during debugging Macaulay 2 programs to examine the internal structure of objects.",
+     "This function is used during debugging Macaulay2 programs to examine the internal structure of objects.",
      EXAMPLE {
 	  "set {1,2,3}",
       	  "peek oo",

@@ -1,20 +1,20 @@
 document {
-     Key => "The Macaulay 2 language",
+     Key => "The Macaulay2 language",
      
-     "The Macaulay 2 language is a simple yet powerful interpreted language.  Every object has a type, such as ", TO "Type", ", ", TO "ZZ", "
+     "The Macaulay2 language is a simple yet powerful interpreted language.  Every object has a type, such as ", TO "Type", ", ", TO "ZZ", "
      (integer), ", TO "String", ", ", TO "HashTable", ", ", TO "Ring", ", ", TO "Matrix", ", ", TO "Function", ", etc.  User defined variables may
      hold values of any type.",
      
      PARA{},
 
-     "Expressions in Macaulay 2 include function calls, control structures (e.g., ", TO "for", " and ", TO "while", " loops), function definitions, and
+     "Expressions in Macaulay2 include function calls, control structures (e.g., ", TO "for", " and ", TO "while", " loops), function definitions, and
      operator expressions.  Every expression returns an object, although ", TO "null", " is often returned if the expression is being used only to
      produce some side effect.",
 
      PARA{},
 
      "There is special syntax for creating and accessing strings, lists, sequences, and hashtables.  These are the key data types underlying many new
-     types.  The Macaulay 2 engine implements rings, ring elements, and matrices, as instances of low-level types, and various high-level types,
+     types.  The Macaulay2 engine implements rings, ring elements, and matrices, as instances of low-level types, and various high-level types,
      visible to the user, are based on them.  Examples include ", TO "Ring", ", ", TO "RingElement", ", ", TO "Matrix", ", ", TO "Ideal", ", ", 
      TO "RingMap", ", ", TO "Module", ", and ", TO "ChainComplex", ".",
 
@@ -110,7 +110,7 @@ document {
      EXAMPLE {
 	  "o2",
 	  },
-     "Other symbols refer to functions built into Macaulay 2 that provide
+     "Other symbols refer to functions built into Macaulay2 that provide
      much of its functionality.",
      PARA{},
      "Sometimes, one wants the symbol, rather than the particular value it
@@ -194,7 +194,7 @@ document {
      EXAMPLE {
 	  "o2",
 	  },
-     "Other symbols refer to functions built into Macaulay 2 that provide
+     "Other symbols refer to functions built into Macaulay2 that provide
      much of its functionality, as we will learn.",
      PARA{},
      "The class of all symbols is ", TO "Symbol", "."
@@ -269,7 +269,7 @@ document {
      "The variable above is a local one.  Its value is not available to code
      in other files.",
      PARA{},
-     "Assume the code above is entered directly by the user into Macaulay 2.  Then
+     "Assume the code above is entered directly by the user into Macaulay2.  Then
      the variable is still a local one and is not available to code previously loaded
      or to functions previously defined, but it will be available to code 
      loaded subsequently.  We illustrate this below with the variable ", TT "j", ".",
@@ -287,7 +287,7 @@ document {
 
 document {
      Key => "viewing the symbols defined so far",
-     "After using Macaulay 2 for a while, you may have stored data in
+     "After using Macaulay2 for a while, you may have stored data in
      several variables.  The system also stores output values for you
      in output variables.  You may wish to free the memory space occupied
      by that data, or you may simply wish to remind yourself where you
@@ -357,7 +357,7 @@ document {
 
 document {
      Key => "using functions",
-     "There are many functions in Macaulay 2 that do various things.  You can
+     "There are many functions in Macaulay2 that do various things.  You can
      get a brief indication of what a function does by typing its name.",
      EXAMPLE "sin",
      "In this case, we see that the function ", TO "sin", " takes a single argument
@@ -990,7 +990,7 @@ dictionaryPath = select(dictionaryPath, d -> d =!= Core#"private dictionary")
 document {
      Key => seeParsing,
      Usage => "seeParsing()",
-     Headline => "display parsing precedence table for Macaulay 2 operators",
+     Headline => "display parsing precedence table for Macaulay2 operators",
      PARA {
 	  "We intend to eliminate this function in favor of ", TO "operatorAttributes", "."
 	  },

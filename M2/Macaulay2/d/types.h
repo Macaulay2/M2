@@ -185,6 +185,8 @@ extern bool interrupt_jump_set;
 
 extern M2_bool system_interruptedFlag;
 
+extern int reading_from_readline;
+
 /*
 // Local Variables:
 // compile-command: "make -C $M2BUILDDIR/Macaulay2/d "

@@ -77,5 +77,5 @@ assert( powermod(5,(3331333-1)*20000,3331333) == 1 )
 
 end
 -- Local Variables:
--- compile-command: "make -C $M2BUILDDIR/Macaulay2/test integer.out"
+-- compile-command: "make -C $M2BUILDDIR/Macaulay2/packages/Macaulay2Doc/test integer.out"
 -- End:

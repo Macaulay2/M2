@@ -84,7 +84,7 @@ assert ( 1 == numerator(b/b) )
 document {
      Key => FractionField,
      Headline => "the class of all fraction fields",
-     "Macaulay 2 provides for fraction fields of integral domains.",
+     "Macaulay2 provides for fraction fields of integral domains.",
      PARA{},
      "In some cases, normal forms of fractions makes sense, but in general
      for fraction fieldss of quotient rings, there is no notion of
@@ -196,7 +196,7 @@ document {
 document {
      Key => CC,
      Headline => "the class of all complex numbers",
-     "In Macaulay 2, complex numbers are represented as floating point numbers, and so are 
+     "In Macaulay2, complex numbers are represented as floating point numbers, and so are 
      only approximate.  The symbol ", TO "ii", " represents the square root of -1 in many numeric
      contexts.  A complex number is obtained by using the symbolic constant ", TO "ii", " or the conversion
      functions ", TO "toCC", " and ", TO "numeric", ", in combination with real numbers (see ", TO "RR", ").

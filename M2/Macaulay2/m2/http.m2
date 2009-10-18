@@ -119,7 +119,7 @@ Content-type: text/html; charset=utf-8
 --       Host: localhost:2500
 --       Accept: */*
 --  
---  Here is the way Macaulay 2 does it.
+--  Here is the way Macaulay2 does it.
 --  
 --  o12 = GET / HTTP/1.0
 --        User-Agent: Macaulay2

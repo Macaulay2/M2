@@ -812,9 +812,18 @@ export rawMultiDegree(e:Expr):Expr := (
      is x:RawMatrix do toExpr(
 	  Ccode(RawArrayIntOrNull, "(engine_RawArrayIntOrNull)IM2_Matrix_get_degree(",
 	       "(Matrix*)",x, ")" ) )
-     else WrongArg("a raw ring element")
+     else WrongArg("a raw ring element, matrix, or free module")
      );
 setupfun("rawMultiDegree",rawMultiDegree);
+
+export rawDiscreteLog(e:Expr):Expr := (
+     when e
+     is x:RawRingElement do (
+	  r := Ccode(int, "rawDiscreteLog((RingElement*)",x, ")" );
+	  if r == -1 then buildErrorPacket("discrete logarithm cannot be found") else toExpr(r))
+     else WrongArg("a raw ring element")
+     );
+setupfun("rawDiscreteLog",rawDiscreteLog);
 
 export rawWeightRange(e:Expr):Expr := (
      when e

@@ -1,15 +1,15 @@
 document {
      Key => Package,
      Headline => "the class of all packages",
-     "A package is a body of Macaulay 2 source code devoted to a 
-     particular topic.  Many packages are distributed with Macaulay 2, 
+     "A package is a body of Macaulay2 source code devoted to a 
+     particular topic.  Many packages are distributed with Macaulay2, 
      and others are available from various users on the internet.",
      PARA{},
      "See ", TO "packages", " for an overview about using and writing packages.",
      PARA{},
      BOLD "Available packages",
      UL {
-	  TO "packages provided with Macaulay 2",
+	  TO "packages provided with Macaulay2",
 	  {"The directory containing the packages is ", HREF { currentLayout#"packages",currentLayout#"packages" }}
 	  },
      PARA{},
@@ -112,13 +112,13 @@ document {
      Key => {makePackageIndex,(makePackageIndex, List), (makePackageIndex, Sequence)},
      Headline => "",
      Usage => "makePackageIndex()",
-     Consequences => {"Creates a file 'index.html' in your Macaulay 2 directory,
-     containing links to the documentation for Macaulay 2 and
+     Consequences => {"Creates a file 'index.html' in your Macaulay2 directory,
+     containing links to the documentation for Macaulay2 and
      all installed packages."},
      "This command may need to be run after installing a package via ", TO installPackage, ".",
      PARA {
 	 "This command is run each time the program is started, therefore 
-	 overwriting this file.  Thus, one can simply restart Macaulay 2 to
+	 overwriting this file.  Thus, one can simply restart Macaulay2 to
 	 obtain the same consequence."},
      SeeAlso => {"packages"}
      }
@@ -167,7 +167,7 @@ document {
      PARA {
 	  "Documentation for a package, and tests for the package, are 
 	  placed after this point in a package file.  This way, documentation can
-	  be loaded separately, Macaulay 2 examples in the documentation can
+	  be loaded separately, Macaulay2 examples in the documentation can
 	  be run, and the whole documentation can be stored in a database."},
      PARA { "For an example, see ", TO "an example of a package" },
      SeeAlso => { installPackage, check, "writing documentation" }
@@ -176,7 +176,7 @@ document {
      Key => {TEST, (TEST,String), (TEST,List)},
      Headline => "package item: register a test of the package",
      Usage => "TEST s",
-     Inputs => { "s" => {"a string or list of strings containing Macaulay 2 code"} },
+     Inputs => { "s" => {"a string or list of strings containing Macaulay2 code"} },
      Consequences => { {"Registers the string ", TT "s", " as a test of the current package"}},
      "This function should only occur in the documentation section of a package.  Use ", TO check, " to run all of the tests
      associated to a package.",
@@ -189,7 +189,8 @@ document {
 document {
      Key => {(newPackage,String), newPackage, Date, [newPackage,Date], Authors, [newPackage,Authors], Version, [newPackage, Version],
 	  [newPackage,Headline],HomePage, [newPackage,HomePage],[newPackage,DebuggingMode],Email,Name,Configuration,[newPackage,Configuration],
-	  InfoDirSection, [newPackage,InfoDirSection],AuxiliaryFiles,[newPackage,AuxiliaryFiles],[newPackage,CacheExampleOutput]
+	  InfoDirSection, [newPackage,InfoDirSection],AuxiliaryFiles,[newPackage,AuxiliaryFiles],[newPackage,CacheExampleOutput],
+	  [newPackage,Certification]
 	  }, 
      Headline => "package item: start a new package",
      Usage => "newPackage ( title )",
@@ -212,6 +213,11 @@ document {
 	       named ", TT "examples", ", for use in a future installation.  This value can be overridden by a value explicitly specified
 	       when ", TO "installPackage", " is called.  After the directory is created, it will necessary for the user also to specify
 	       ", TT "AuxiliaryFiles=>true", "."
+	       },
+	  Certification => List => {
+	       "the certfication block inserted by the maintainers of ", EM "Macaulay2", " after the package has been accepted for publication by a 
+	       journal, such as The Journal of Software for Algebra and Geometry: ", EM "Macaulay2", ".  Authors should
+	       not undertake to create such a certification block themselves."
 	       },
 	  Configuration => List => {"a list of configuration options for the package.  The keys and values should be constant expressions,
 	       such as strings and integers, not incorporating symbols to be exported by the package (and not yet defined).

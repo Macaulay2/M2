@@ -86,5 +86,5 @@ time minimalPrimes I
 assert ( 25 == # minimalPrimes I )
 end
 -- Local Variables:
--- compile-command: "make -C $M2BUILDDIR/Macaulay2/test decompose.out"
+-- compile-command: "make -C $M2BUILDDIR/Macaulay2/packages/Macaulay2Doc/test decompose.out"
 -- End:

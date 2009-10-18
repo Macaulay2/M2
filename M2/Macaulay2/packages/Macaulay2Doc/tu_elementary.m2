@@ -2,7 +2,7 @@
 -- 	In this tutorial we introduce a number
 -- of basic operations using Gröbner bases, and
 -- at the same time become familiar with a range
--- of useful Macaulay 2 constructs. The sections are:
+-- of useful Macaulay2 constructs. The sections are:
 --
 -- A.  First steps; example with a monomial curve
 --
@@ -354,7 +354,7 @@ J1 = substitute(J, S1)
 -- linear forms that define the projection 
 -- center.  Then we just take the kernel of
 -- this map!  (``Under the hood'', 
--- Macaulay 2 is doing a more refined version
+-- Macaulay2 is doing a more refined version
 -- of the same computation as before.)
 
 -- Here is the ring map
@@ -372,7 +372,7 @@ J1 = ker f
 -- computation of ideal quotients and 
 -- saturations.  Again we give an easy example
 -- that we can treat directly, and then 
--- introduce the tool used in Macaulay 2 to 
+-- introduce the tool used in Macaulay2 to 
 -- treat the general case.
 --
 -- If $I$ and $J$ are ideals in a ring $R$, we define

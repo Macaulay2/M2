@@ -7,7 +7,7 @@ scan((
 	  Inverses,WeylAlgebra,Degrees,MonomialSize,CheckDocumentation,IgnoreExampleErrors,MakeDocumentation,MakeInfo,MakeLinks,
 	  RemakeAllDocumentation,RerunExamples,UserMode,Generic,DegreeRank,Heft,Limit,SizeLimit,StopWithMinimalGenerators,
 	  StopBeforeComputation,DegreeLimit,BasisElementLimit,SyzygyLimit,PairLimit,CodimensionLimit,Strategy,Syzygies,
-	  ChangeMatrix,SyzygyRows,MinimalMatrix,SyzygyMatrix,
+	  ChangeMatrix,SyzygyRows,MinimalMatrix,SyzygyMatrix,Certification,
 	  KeepZeroes,Heading,ClosestFit,Density,Height,UpperTriangular,EncapsulateDirectory,Local,Binomial,Monomial,DegreeMap,DegreeLift,
 	  Join,CacheExampleOutput,Reduce,Result,SeparateExec),
      s -> if s =!= null then document {
@@ -29,7 +29,7 @@ scan((
 
 document {
      Key => "initial help",				    -- display by the help command by default
-     "Welcome to Macaulay 2",
+     "Welcome to Macaulay2",
      PARA{},
      "Try entering '2+2' at your next input prompt, which begins with ", TT "i", ".
      The two output prompts begin with ", TT "o", ".  The first one, with the
@@ -42,14 +42,14 @@ document {
      	  SPAN (///help "Macaulay2"///, ///                  -- top node of the documentation.///),
      	  SPAN (///help "reading the documentation"///, ///  -- ///),
      	  SPAN (///help "getting started"///, ///            -- ///),
-     	  SPAN (///help "a first Macaulay 2 session"///, /// -- ///),
+     	  SPAN (///help "a first Macaulay2 session"///, ///  -- ///),
      	  SPAN (///help x///, ///                            -- display the documentation for ///, TT ///x///),
      	  SPAN (///? f///, ///                               -- display brief documentation for a function ///, TT ///f///),
 	  SPAN (///printWidth = 80///, ///                   -- set print width to 80 characters///),
      	  SPAN (///viewHelp///, ///                          -- view documentation in a browser///),
      	  SPAN (///viewHelp x///, ///                        -- view documentation on ///, TT ///x///, /// in browser///),
 	  },
-     "To read the documentation in info form, in case you happen to be running Macaulay 2 in a 
+     "To read the documentation in info form, in case you happen to be running Macaulay2 in a 
      terminal window, replace ", TO "help", " by ", TO "infoHelp", " in any of the commands 
      above."
      }
@@ -58,7 +58,7 @@ document {
      Headline => "help command",
      "Various ways to get help:",
      UL {
-     	  (TT "help \"Macaulay 2\"", " -- displays the base of the online documentation tree."),
+     	  (TT "help \"Macaulay2\"", " -- displays the base of the online documentation tree."),
      	  (TT "help X", " -- displays the online documentation for ", TT "X"),
 	  (TT "help methods X", " -- displays help messages about the methods usable with things of type ", TT "X"),
 	  (TT "help methods res", " -- displays help messages about the methods usable with the function ", TT "res"),
@@ -96,9 +96,9 @@ document {
      "Some example uses:",
      UL {
 	  (TT "viewHelp", " -- top of local copy of the documentation, including installed packages"),	  
-	  (TT "viewHelp \"Macaulay 2\"", " -- top of Macaulay 2 doc"),
+	  (TT "viewHelp \"Macaulay2\"", " -- top of Macaulay2 doc"),
 	  (TT "viewHelp ideal", " -- online doc for the 'ideal' function"),
-	  (TT "viewHelp \"matrices\"", " -- overview of matrices in Macaulay 2"),
+	  (TT "viewHelp \"matrices\"", " -- overview of matrices in Macaulay2"),
 	  (TT "viewHelp (ideal,List)", " -- online doc for ideal(List) method"),
 	  (TT "viewHelp (diff,Matrix,Matrix)", " -- online doc for the diff function taking two matrices as arguments"),
 	  (TT "viewHelp [gb,DegreeLimit]", " -- view doc for the optional argument DegreeLimit to gb function"),
@@ -118,12 +118,12 @@ document {
 	  },
      Consequences => {
 	  "The given documentation page is displayed using info, if you are running
-	  Macaulay 2 in a terminal window."},
+	  Macaulay2 in a terminal window."},
      "Some example uses:",
      UL {
-	  (TT "infoHelp \"Macaulay 2\"", " -- top of Macaulay 2 doc"),
+	  (TT "infoHelp \"Macaulay2\"", " -- top of Macaulay2 doc"),
 	  (TT "infoHelp ideal", " -- online doc for the 'ideal' function"),
-	  (TT "infoHelp \"matrices\"", " -- overview of matrices in Macaulay 2"),
+	  (TT "infoHelp \"matrices\"", " -- overview of matrices in Macaulay2"),
 	  (TT "infoHelp (ideal,List)", " -- online doc for ideal(List) method"),
 	  (TT "infoHelp (diff,Matrix,Matrix)", " -- online doc for the diff function taking two matrices as arguments"),
 	  (TT "infoHelp [gb,DegreeLimit]", " -- view doc for the optional argument DegreeLimit to gb function"),
@@ -261,7 +261,7 @@ document {
 document {
      Key => Thing,
      Headline => "the class of all things",
-     "Everything in Macaulay 2 is a ", ITALIC "thing", ".  This 
+     "Everything in Macaulay2 is a ", ITALIC "thing", ".  This 
      includes numbers, strings, and lists.  More complicated things such as 
      polynomials, groups, rings, and chain complexes are implemented
      as ", ITALIC "hash tables", ".  See ", TO "Type", " for information 
@@ -1069,7 +1069,7 @@ document {
 	  "If ", TT "x", " is not a hash table, basic list, or sequence, then its class will be set to ", TT "A", " internally, essentially by wrapping it
 	  in a special kind of object designed solely to indicate the new class.  The new class ", TT "A", " must be a specialization of the class of ", TT "x", ".
 	  The parent cannot be reset this way.
-	  Not all of the internal code of Macaulay 2 is ready to recognize such wrapped objects, which are part of a new feature, except for the code that handles functions."
+	  Not all of the internal code of Macaulay2 is ready to recognize such wrapped objects, which are part of a new feature, except for the code that handles functions."
 	  },
      EXAMPLE lines ///
      	  t = 1..4

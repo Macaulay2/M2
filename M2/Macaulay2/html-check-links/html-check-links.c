@@ -4,6 +4,9 @@
 #include "html-check-links.h"
 #include "grammar.h"
 #include "getmem.h"
+int ERRLIMIT = 64;
+int abs_links = TRUE;
+int verbose = FALSE;
 extern FILE *yyin, *yyout;
 extern int yyparse(void);
 #ifdef DEBUG
@@ -82,6 +85,7 @@ static char *dir(char *s) {
 }
 
 static void process(char *f) {
+  if (verbose) fprintf(stderr,"--file: %s\n",f);
   yyin = fopen(f,"r");
   if (yyin == NULL) {
     error("can't open %s\n",f);
@@ -99,7 +103,25 @@ int main(int argc, char **argv) {
   /*    yydebug = 1; */
 # endif
   GC_init();
-  if (argc > i+1 && 0 == strcmp("--root",argv[i])) rootname = argv[i+1], i += 2;
+  while (TRUE) {
+    if (argc > i+1 && 0 == strcmp("--root",argv[i])) {
+      rootname = argv[i+1];
+      i += 2;
+    }
+    else if (argc > i && 0 == strcmp("--no-limit",argv[i])) {
+      ERRLIMIT = 0;
+      i++;
+    }
+    else if (argc > i && 0 == strcmp("--no-absolute-links",argv[i])) {
+      abs_links = FALSE;
+      i++;
+    }
+    else if (argc > i && 0 == strcmp("--verbose",argv[i])) {
+      verbose = TRUE;
+      i++;
+    }
+    else break;
+  }
   for (; i<argc; i++) process(argv[i]);
   return errors > 0 ? 1 : 0;
 }

@@ -1,0 +1,29 @@
+# license for polymake: GPL v2, not included yet
+# we haven't succeeded in making this build process work, but the user can install it.  e.g., with fink under Mac OS X.
+# http://www.opt.tu-darmstadt.de/polymake/
+# Gawrilow is the one to ask about porting issues
+# Joswig seems to be involved, too.
+VERSION = 2.9.7
+TAROPTIONS = --bzip2
+TARFILE = polymake-$(VERSION).tar.bz2
+URL = http://www.opt.tu-darmstadt.de/polymake/lib/exe/fetch.php/download
+include ../Makefile.library
+
+CONFIGURECMD = \
+ rm -f build*/conf.make ; \
+ ( echo CC="$(CC)" ; \
+   echo CXX="$(CXX)" ; \
+   echo Cflags="$(CPPFLAGS) -I$(LIBRARIESDIR)/include" ; \
+   echo CXXflags="$(CPPFLAGS) -I$(LIBRARIESDIR)/include" ; \
+   echo LDflags="-w -L$(LIBRARIESDIR)/lib $(LDFLAGS)" ; \
+   echo InstallTop=%p/share/%n ; echo InstallArch=%p/lib/%n ; echo InstallDoc=%p/share/doc/%n ; echo InstallBin=%p/bin ; \
+   echo ProcessDep=none ; echo JavaBuild= ; \
+   echo JAVAC=javac ; \
+   echo Arch=darwin.%m ; ) | tee /tmp/M2-polymake-configure.log | make configure && false
+
+BUILDTARGET = all
+
+Makefile: @srcdir@/Makefile.in ; cd ../.. && ./config.status libraries/polymake/Makefile
+# Local Variables:
+# compile-command: "make -C $M2BUILDDIR/libraries/polymake "
+# End:

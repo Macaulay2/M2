@@ -8,7 +8,7 @@
 We thank the United States National Science Foundation for generous funding
 to develop Macaulay 2.
 
-Macaulay 2 is copyright 1993-2008 by Daniel R. Grayson and Michael
+Macaulay 2 is copyright 1993-2009 by Daniel R. Grayson and Michael
 E. Stillman.  We permit you to use it under the terms of the GNU General
 Public License, version 2, as published by the Free Software Foundation; see
 the file Macaulay2/COPYING.  This is free software.  There is no warranty;
@@ -17,39 +17,6 @@ not even for merchantability or fitness for a particular purpose.
 This file describes how to build the software from sources and is not included
 in binary distributions.  Most users will prefer to download a binary
 distribution.
-
--------------------------------------------
-Compiling on multiple machine architectures
--------------------------------------------
-
-If multiple machine architectures are supported by your hardware and operating
-system, a good way to specify which one to use is to use the build option to
-autoconf's configure script with an architecture in config.guess format, as
-well as to specify names for the compilers that include the additional options
-for the architecture to be used.  This will work with gmp, for example, as it
-knows how to produce the additional options to the compilers:
-
-   ../configure --build=x86_64-apple-darwin CC="gcc -m64" CXX="g++ -m64"
-
-Another way to do it is to add the architecture option to CFLAGS and to
-CXXFLAGS.  The disadvantage of that approach is that the package might have its
-own idea about what values to use for those options and ignore these settings:
-
-   ../configure CFLAGS="-O2 -m64" CXXFLAGS="-O2 -m64"
-
-Sometimes a library will get confused by values for CC and CXX with spaces in
-them, or will try to parse the options, and get confused by the "-m64" option.
-In that case, the work-around is to create shell scripts on your path called
-something like gcc-m64 and g++-m64 that can be used as the compilers, and to
-use this instead.  In the shell script gcc-m64 put this single line:
-
-     exec gcc -m64 "$@"
-
-In the shell script g++-m64 put this single line:
-
-     exec g++ -m64 "$@"
-
-Mark both shell scripts executable.
 
 ---------
 Programs
@@ -201,6 +168,39 @@ The only one of these variables with a nonempty default value is
 CFLAGS, and its default value is "-g -O2".  That will be supplanted if
 you override it.
 
+-------------------------------------------
+Compiling on multiple machine architectures
+-------------------------------------------
+
+If multiple machine architectures are supported by your hardware and operating
+system, a good way to specify which one to use is to use the build option to
+autoconf's configure script with an architecture in config.guess format, as
+well as to specify names for the compilers that include the additional options
+for the architecture to be used.  This will work with gmp, for example, as it
+knows how to produce the additional options to the compilers:
+
+   ../configure --build=x86_64-apple-darwin CC="gcc -m64" CXX="g++ -m64"
+
+Another way to do it is to add the architecture option to CFLAGS and to
+CXXFLAGS.  The disadvantage of that approach is that the package might have its
+own idea about what values to use for those options and ignore these settings:
+
+   ../configure CFLAGS="-O2 -m64" CXXFLAGS="-O2 -m64"
+
+Sometimes a library will get confused by values for CC and CXX with spaces in
+them, or will try to parse the options, and get confused by the "-m64" option.
+In that case, the work-around is to create shell scripts on your path called
+something like gcc-m64 and g++-m64 that can be used as the compilers, and to
+use this instead.  In the shell script gcc-m64 put this single line:
+
+     exec gcc -m64 "$@"
+
+In the shell script g++-m64 put this single line:
+
+     exec g++ -m64 "$@"
+
+Mark both shell scripts executable.
+
 -----------------------
 Microsoft Windows XP and Vista notes
 -----------------------
@@ -244,7 +244,8 @@ There are several methods for installing Macaulay2 under Mac OS X.
 
 (3) Build from source yourself.  
     
-    For specific scripts that we use to build the disk images, see the file arch/M2-build-notes.
+    For specific scripts that we use to build the disk images,
+    see BUILD/mike/Makefile and BUILD/mike/darwin64/Makefile.
 
 -------------------------------
 -- Ubuntu linux, from source --

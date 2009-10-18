@@ -47,5 +47,5 @@ psi = map(K,B)
 rks2 = apply(m, i -> rank (psi ** Ext^i(M,coker vars B)))
 assert( rks1 == rks2 )
 -- Local Variables:
--- compile-command: "make -C $M2BUILDDIR/Macaulay2/test/slow complete-intersections.out"
+-- compile-command: "make -C $M2BUILDDIR/Macaulay2/packages/Macaulay2Doc/test/slow complete-intersections.out"
 -- End:

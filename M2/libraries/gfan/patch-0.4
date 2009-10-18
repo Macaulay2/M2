@@ -1,0 +1,12 @@
+diff -ur --exclude=configure /Users/dan/src/M2-1.3/BUILD/dan/builds.tmp/mac64/libraries/gfan/tmp/gfan0.4/vektor.cpp gfan0.4/vektor.cpp
+--- /Users/dan/src/M2-1.3/BUILD/dan/builds.tmp/mac64/libraries/gfan/tmp/gfan0.4/vektor.cpp	2009-05-31 03:55:08.000000000 -0500
++++ gfan0.4/vektor.cpp	2009-10-10 09:18:03.000000000 -0500
+@@ -64,7 +64,7 @@
+    The result is always positive.
+    Asserts if both integers are zero.
+  */
+-inline int gcd(int r, int s)
++/* inline */ int gcd(int r, int s)
+ {
+   if(r<0)r=-r;
+   if(s<0)s=-s;

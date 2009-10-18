@@ -9,6 +9,7 @@
 #include <stdlib.h>
 #include <string.h>
 #include <unistd.h>
+#include <ctype.h>
 extern unsigned lastcount;
 
 typedef struct { int lineno, column; char *opener; } location;
@@ -66,7 +67,6 @@ char errfmtnc[] = "%s:%d: %s\n";
 
 #define VA_START_HAS_TWO_ARGS
 
-#define ERRLIMIT 64
 int errors = 0;
 
 void fatal(char *s,...)
@@ -87,7 +87,7 @@ void fatal(char *s,...)
 
 void error(char *s,...)
 {
-     char buf[200];
+     char buf[20000];
      char *err = "error: ";
      char new_s[strlen(s) + strlen(err) + 1];
      va_list ap;
@@ -102,7 +102,7 @@ void error(char *s,...)
      fprintf(stderr,errfmt,filename,lineno,column-lastcount,buf);
      fflush(stderr);
      va_end(ap);
-     if (++errors > ERRLIMIT) fatal("too many errors");
+     if (ERRLIMIT && ++errors > ERRLIMIT) fatal("too many errors");
      }
 
 void warning(char *s,...)
@@ -146,37 +146,45 @@ static int strseg(char *s, char *t) {
   return TRUE;
 }
 
-static void checkURL(char *s) {
-  char *t, *u;
-  if (s[0] == '"' && s[strlen(s)-1] == '"') s++, s[strlen(s)-1]=0;
-  else if (s[0] == '\'' && s[strlen(s)-1] == '\'') s++, s[strlen(s)-1]=0;
+static void demangle_error(char *msg,char *s) {
+  char *p = demangle(s);
+  if (0 == strcmp(p,s)) 
+    error("%s: %s",msg,s);
+  else
+    error("%s: %s ==> %s",msg,s,p);
+}
+
+static void checkURL(char *s0) {
+  char *s;
+  if (s0[0] == '"' && s0[strlen(s0)-1] == '"') s0++, s0[strlen(s0)-1]=0;
+  else if (s0[0] == '\'' && s0[strlen(s0)-1] == '\'') s0++, s0[strlen(s0)-1]=0;
+  s = strdup(s0);
   if (strseg(s,"mailto:") || strseg(s,"http://") || strseg(s,"ftp://")) {
     /* warning("unchecked external link: %s",s); */
     return;
   }
   if (strseg(s,"file://")) s += 7;
-  t = strrchr(s,'#'); if (t != NULL) *t = 0;
+  {char *t; t = strrchr(s,'#'); if (t != NULL) *t = 0;}
   if (*s == 0) return;
-  s = concat(s[0] == '/' ? rootname : Dirname,s);
-  if (-1 == access(s, R_OK)) {
-    char *p = demangle(s);
-    if (0 == strcmp(p,s)) error("broken link: %s",s);
-    else error("broken link %s ==> %s",s,p);
-    u = concat(s,"");
-#if 0
-    {
-      char buf[1000];
-      t = rindex(u,'/'); 
-      if (t != NULL) {
-	*t = 0;
-	snprintf(buf,sizeof buf,
-		 "ls '%s'/* 2>/dev/null | egrep -i '^%s$' | sed 's/^/    but look at this: /'",u,s);
-      }
-      else {
-	snprintf(buf,sizeof buf,"ls * 2>/dev/null | egrep -i '^%s$' | sed 's/^/    but look at this: /'",s);
-      }
-      system(buf);
-    }
-#endif
+  if (s[0] == '/' && isascii(s[1]) && isupper(s[1]) && s[2] == ':') {
+    /* absolute path in Windows */
+    s++;
+    if (!abs_links) demangle_error("absolute link",s0);
   }
+  else if (s[0] == '/') {
+    /* absolute path */
+    if (!abs_links) demangle_error("absolute link",s0);
+    s = concat(rootname,s);
+  }
+  else {
+    /* relative path */
+    s = concat(Dirname,s);
+  }
+  if (-1 == access(s, R_OK)) demangle_error("broken link",s0);
 }
+
+/*
+ Local Variables:
+ compile-command: "make -C $M2BUILDDIR/Macaulay2/html-check-links "
+ End:
+*/
