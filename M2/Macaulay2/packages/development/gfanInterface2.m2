@@ -1,5 +1,5 @@
 
--- THIS FILE IS UNDER CONSTRUCTION!!  It will replace gfanInterface in 1.3?
+-- THIS FILE IS UNDER CONSTRUCTION!!  It will replace gfanInterface in 1.3? (Nope.)
 
 --needsPackage "Polymake"
 
@@ -27,6 +27,9 @@ export {
 	gfan, 
 	gfanBuchberger,
 	gfanDoesIdealContain,
+	gfanFanCommonRefinement, -- v0.4
+	gfanFanLink, -- v0.4
+	gfanFanProduct, -- v0.4
 	gfanGroebnerCone,
 	gfanHomogeneitySpace,
 	gfanHomogenize,
@@ -34,23 +37,33 @@ export {
 	gfanInteractive,
 	gfanIsMarkedGroebnerBasis,
 	gfanKrullDimension,
+	gfanLatticeIdeal, -- v0.4
 	gfanLeadingTerms,
 	gfanMarkPolynomialSet,
+	gfanMinkowskiSum, -- v0.4
+	gfanMinors, -- v0.4
 	gfanPolynomialSetUnion,
 	gfanRender, 
 	gfanRenderStaircase, 
 	gfanSaturation,
+	gfanSecondaryFan, -- v0.4
 	gfanStats,
 	gfanSubstitute,
 	gfanToLatex,
 	gfanToPolyhedralFan,
 	gfanTropicalBasis,
 	gfanTropicalBruteForce,
+	gfanTropicalEvaluation, -- v0.4
+	gfanTropicalFunction, -- v0.4
+	gfanTropicalHyperSurface, -- v0.4
 	gfanTropicalIntersection,
 	gfanTropicalLifting,
+	gfanTropicalLinearSpace, -- v0.4
 	gfanTropicalMultiplicity,
+	gfanTropicalRank, -- v0.4
 	gfanTropicalStartingCone,
 	gfanTropicalTraverse,
+	gfanTropicalWeilDivisor, -- v0.4
 	gfanFunctions -- for testing purposes
 }
 
@@ -459,7 +472,7 @@ argFuncs = {
 	"polynomialsetlist" => {gfanToLatex},
 	"restrict" => {gfanGroebnerCone,gfanToPolyhedralFan},
 	"shiftVariables" => {gfanRender},
-	"subspace" => {gfan},
+	-- "subspace" => {gfan}, -- missing v0.4
 	"symmetry" => {gfan,gfanTropicalTraverse,gfanToPolyhedralFan},
 	"tplane" => {gfanTropicalIntersection},
 }
@@ -471,8 +484,12 @@ argStrs = hashTable {
 	"g" => "-g",
 	"h" => "-h",
 	"i" => "-i",
+	"i1" => "-i1", -- should these be removed?
+	"i2" => "-i2", -- ibid
 	"L" => "-L",
 	"m" => "-m",
+	"n" => "-n",
+	"M2" => "-M2",
 	"r" => "-r",
 	"s" => "-s",
 	"t" => "-t",
@@ -480,17 +497,32 @@ argStrs = hashTable {
 	"W" => "-W",
 	"asfan" => "--asfan",
 	"disableSymmetryTest" => "--disablesymmetrytest",
+	"dressian" => "--dressian",
 	"help" => "--help",
 	"ideal" => "--ideal",
+	"kapranov" => "--kapranov",
+	"mark" => "--mark",
+	"names" => "--names",
+	"nocones" => "--nocones",
 	"noincidence" => "--noincidence",
 	"pair" => "--pair",
+	"pluckersymmetries" => "--pluckersymmetries",
 	"polynomialset" => "--polynomialset",
 	"polynomialsetlist" => "--polynomialsetlist",
 	"restrict" => "--restrict",
-	"symmetry" => "--symmetry",
-	"subspace" => "--subspace",
+	"scale" => "--scale",
 	"shiftVariables" => "--shiftVariables",
-	"tplane" => "--tplane"
+	"star" => "--star",
+	"symmetry" => "--symmetry",
+	"symmetryExploit" => "--symmetryExploit",
+	"symmetryPrinting" => "--symmetryPrinting",
+	"symsigns" => "--symsigns",
+	-- "subspace" => "--subspace", -- missing in v0.4
+	"tplane" => "--tplane",
+	"trees" => "--trees",
+	"unimodular" => "--unimodular",
+	"vectorinput" => "--vectorinput",
+	"xml" => "--xml"
 };
 
 
@@ -521,7 +553,7 @@ gfan = method( Options => {
 	"g" => false, 
 	"symmetry" => null, 
 	"e" => false, 
-	"subspace" => false, 
+	-- "subspace" => false,  -- missing from v0.4
 	"disableSymmetryTest" => false
 	}
 )
@@ -589,13 +621,59 @@ gfanDoesIdealContain (MarkedPolynomialList, List) := opts -> (I,J) -> (
 )
 
 --------------------------------------------------------
+-- gfan_fancommonrefinement
+--------------------------------------------------------
+
+gfanFanCommonRefinement = method( Options => {
+	"i1" => null,  -- should these be arguments instead?
+	"i2" => null
+	}
+)
+
+gfanFanCommonRefinement (String, String) := opts -> (F,G) -> (
+	-- version 0.4
+)
+
+--------------------------------------------------------
+-- gfan_fanlink
+--------------------------------------------------------
+
+gfanFanLink = method( Options => {
+	"i" => null,  -- should this be an argument instead?
+	"symmetry" => null,
+	"star" => false
+	}
+)
+
+gfanFanLink (String, List) := opts -> (F,V) -> (
+	-- version 0.4
+)
+
+--------------------------------------------------------
+-- gfan_fanproduct
+--------------------------------------------------------
+
+gfanFanProduct = method( Options => {
+	"i1" => null,  -- should this be an argument instead?
+	"i2" => null,
+	}
+)
+
+gfanFanProduct (String, String) := opts -> (F,G) -> (
+	-- version 0.4
+)
+
+
+--------------------------------------------------------
 -- gfan_groebnercone
 --------------------------------------------------------
 
 gfanGroebnerCone = method( Options => {
 	"restrict" => false,
 	"pair" => false,
-	"asfan" => false
+	"asfan" => false,
+	"xml" => false,
+	"vectorinput" => false
 	}
 )
 
@@ -683,9 +761,12 @@ gfanHomogenize (MarkedPolynomialList, Symbol) := opts -> (L,X) -> (
 --Does --pair and --ideal need to be marked? I would assume so.
 --So, is no --pair and no --ideal the only case where the output is not marked?
 
+--Hey! Version 0.4 clarifies this.
+
 gfanInitialForms = method( Options => {
 	"ideal" => false,
-	"pair" => false
+	"pair" => false,
+	"mark" => false
 	}
 )
 
@@ -725,7 +806,7 @@ gfanInteractive := opts -> () -> (
 
 gfanIsMarkedGroebnerBasis = method( Options => {} )
 
-gfanIsMarkedGroebnerBasis (List) := opts -> (L) -> (
+gfanIsMarkedGroebnerBasis (MarkedPolynomialList) := opts -> (L) -> (
 	input := gfanMPLToRingToString(L) 
 		| gfanMPLToString(L);
 	gfanParseBool runGfanCommand("gfan_ismarkedgroebnerbasis", opts, input)
@@ -746,17 +827,35 @@ gfanKrullDimension (List) := opts -> (L) -> (
 
 
 --------------------------------------------------------
+-- gfan_latticeideal
+--------------------------------------------------------
+
+gfanLatticeIdeal = method( Options => {
+	"t" => false
+	}
+)
+
+gfanLatticeIdeal (List) := opts -> (L) -> (
+	--version 0.4
+)
+
+
+--------------------------------------------------------
 -- gfan_leadingterms
 --------------------------------------------------------
 
-gfanLeadingTerms = method( Options => { "m" => false } )
+gfanLeadingTerms = method( Options => { 
+	"m" => false 
+	} 
+)
 
 gfanLeadingTerms (List) := opts -> (L) -> (
+	input := "";
 	if opts#"m" then (
-		input := gfanMPLToRingToString(first L) | gfanLMPLToString(L);
+		input = gfanMPLToRingToString(first L) | gfanLMPLToString(L);
 		return gfanParseIdeals runGfanCommand("gfan_leadingterms", opts, input);
 	) else (
-		input := gfanMPLToRingToString(L) | gfanMPLToString(L);
+		input = gfanMPLToRingToString(L) | gfanMPLToString(L);
 		return gfanParseIdeal runGfanCommand("gfan_leadingterms", opts, input);
 	)
 )
@@ -777,11 +876,49 @@ gfanMarkPolynomialSet (List, List) := opts -> (L,W) -> (
 
 
 --------------------------------------------------------
+-- gfan_minkowskisum
+--------------------------------------------------------
+
+gfanMinkowskiSum = method( Options => {
+	"symmetry" => null,
+	"disableSymmetryTest" => false,
+	"nocones" => false
+	}
+)
+
+gfanMinkowskiSum (List) := opts -> (L) -> (
+	--version 0.4
+)
+
+--------------------------------------------------------
+-- gfan_minors
+--------------------------------------------------------
+
+gfanMinors = method( Options => {
+	"r" => null, -- these should be arguments
+	"d" => null, -- ibid
+	"n" => null, -- "
+	"M2" => false,
+	"names" => null,
+	"dressian" => null,
+	"pluckersymmetries" => null
+	}
+)
+
+gfanMinors (ZZ,ZZ,ZZ) := opts -> (r,d,n) -> (
+	--version 0.4
+)
+
+
+--------------------------------------------------------
 -- gfan_polynomialsetunion
 --------------------------------------------------------
 
 --Should this be marked?
-gfanPolynomialSetUnion = method( Options => { "s"=>false } )
+gfanPolynomialSetUnion = method( Options => { 
+	"s"=>false 
+	}
+)
 
 gfanPolynomialSetUnion (List,List) := opts -> (L,K) -> (
 	input := gfanRingToString(ring first L) 
@@ -823,7 +960,12 @@ gfanRender (List) := opts -> (L) -> (
 -- gfan_renderstaircase
 --------------------------------------------------------
 
-gfanRenderStaircase = method(Options=>{"m"=>false, "d"=>8, "w"=>5, "help"=>false})
+gfanRenderStaircase = method( Options=> {
+	"m"=>false,
+	"d"=>8,
+	"w"=>5
+	}
+)
 gfanRenderStaircase (List) := opts -> (L) -> (
 	argStrs := {"-m", "-d " | opts#"d", "-w " | opts#"w", "--help"};
 	args := {opts#"m", opts#"d" != 8, opts#"w" != 5, opts#"help"};
@@ -847,6 +989,34 @@ gfanRenderStaircase (List) := opts -> (L) -> (
 	) else << "fig2dev path not set." << endl ;
 )
 
+--------------------------------------------------------
+-- gfan_saturation
+--------------------------------------------------------
+
+gfanSaturation = method( Options => {
+	"h" => false
+	}
+)
+
+gfanSaturation (Ideal) := opts -> (I) -> (
+	input := gfanRingToString(ring I) | gfanIdealToString(I);
+	gfanParseIdeal runGfanCommand("gfan_saturation", opts, input)
+)
+
+--------------------------------------------------------
+-- gfan_secondaryfan
+--------------------------------------------------------
+
+gfanSecondaryFan = method( Options => {
+	"unimodular" => false,
+	"scale" => null,
+	"symmetry" => null
+	}
+)
+
+gfanSecondaryFan (List) := opts -> (L) -> (
+	--version 0.4
+)
 
 --------------------------------------------------------
 -- gfan_stats
@@ -892,6 +1062,23 @@ gfanToLatex (List) := opts -> (L) -> (
 )
 
 --------------------------------------------------------
+-- gfan_topolyhedralfan
+--------------------------------------------------------
+
+gfanToPolyhedralFan = method( Options => {
+	"restrict" => false,
+	"symmetry" => null
+	}
+)
+
+gfanToPolyhedralFan List := opts -> (L) -> (
+	input := gfanMPLToRingToString(first L) 
+		| gfanSymmetriesToString(opts#"symmetry") 
+		| gfanLMPLToString(L);
+	runGfanCommand("gfan_topolyhedralfan", opts, input) --- PARSE AS POLYHEDRAL DATA
+)
+
+--------------------------------------------------------
 -- gfan_tropicalbasis
 --------------------------------------------------------
 
@@ -906,19 +1093,116 @@ gfanTropicalBasis (Ideal) := opts -> (I) -> (
 	gfanParseIdeal runGfanCommand("gfan_tropicalbasis", opts, input) -- should this be marked?
 )
 
+
+--------------------------------------------------------
+-- gfan_tropicalbruteforce
+--------------------------------------------------------
+
+gfanTropicalBruteForce = method( Options => {} )
+
+gfanTropicalBruteForce List := opts -> (L) -> (
+	input := gfanMPLToRingToString(L) | gfanMPLToString(L);
+	runGfanCommand("gfan_tropicalbruteforce", opts, input) ---- PARSE AS POLYHEDRAL DATA
+)
+
+
+--------------------------------------------------------
+-- gfan_tropicalevaluation
+--------------------------------------------------------
+
+gfanTropicalEvaluation = method( Options => {} )
+
+gfanTropicalEvaluation List := opts -> (L) -> (
+	--v0.4 -- note that the arguments are probably wrong.
+)
+
+
+--------------------------------------------------------
+-- gfan_tropicalfunction
+--------------------------------------------------------
+
+gfanTropicalFunction = method( Options => {} )
+
+gfanTropicalFunction Ideal := opts -> (I) -> (
+	--v0.4 -- note that the arguments are probably wrong.
+)
+
+
+--------------------------------------------------------
+-- gfan_tropicalhypersurface
+--------------------------------------------------------
+
+gfanTropicalHyperSurface = method( Options => {} )
+
+gfanTropicalHyperSurface Ideal := opts -> (I) -> (
+	--v0.4 -- note that the arguments are probably wrong.
+)
+
+
 --------------------------------------------------------
 -- gfan_tropicalintersection
 --------------------------------------------------------
 
 gfanTropicalIntersection = method( Options => {
 	"t" => false,
-	"tplane" => false
+	"tplane" => false,
+	"symmetryPrinting" => false,
+	"symmetryExploit" => false,
+	"restrict" => false
 	}
 )
 
 gfanTropicalIntersection (List) := opts -> (L) -> (
 	input := gfanRingToString(ring first L) | gfanPolynomialListToString(L);
 	runGfanCommand("gfan_tropicalintersection", opts, input) -- should this be parsed?
+)
+
+--------------------------------------------------------
+-- gfan_tropiciallifting
+--------------------------------------------------------
+
+gfanTropicalLifting = method( Options => {} )
+
+gfanTropicalLifting := opts -> () -> (
+	error "Not implemented";
+)
+
+--------------------------------------------------------
+-- gfan_tropiciallinearspace
+--------------------------------------------------------
+
+gfanTropicalLinearSpace = method( Options => {
+	"trees" => false
+	}
+)
+
+gfanTropicalLinearSpace (ZZ, ZZ) := opts -> (n, d) -> (
+	--v0.4
+)
+
+
+--------------------------------------------------------
+-- gfan_tropicalmultiplicity
+--------------------------------------------------------
+
+gfanTropicalMultiplicity = method( Options => {} )
+
+gfanTropicalMultiplicity (List) := opts -> (L) -> (
+	input := gfanMPLToRingToString(L) | gfanMPLToString(L);
+	gfanParseInteger runGfanCommand("gfan_tropicalmultiplicity", opts, input)
+)
+
+--------------------------------------------------------
+-- gfan_tropicalrank
+--------------------------------------------------------
+
+gfanTropicalRank = method( Options => {
+	"kapranov" => false
+	}
+)
+
+gfanTropicalRank (Matrix) := opts -> (M) -> (
+	--v0.4
 )
 
 --------------------------------------------------------
@@ -943,6 +1227,7 @@ gfanTropicalStartingCone (List) := opts -> (L) -> (
 
 gfanTropicalTraverse = method( Options => {
 	"symmetry"=>false,
+	"symsigns"=>false,
 	"noincidence"=>false
 	}
 )
@@ -955,140 +1240,73 @@ gfanTropicalTraverse (List) := opts -> (L) -> (
 	runGfanCommand("gfan_tropicaltraverse", opts, input) --- PARSE POLYHEDRAL DATA
 )
 
---------------------------------------------------------
--- gfan_tropicalmultiplicity
---------------------------------------------------------
-
-gfanTropicalMultiplicity = method( Options => {} )
-
-gfanTropicalMultiplicity (List) := opts -> (L) -> (
-	input := gfanMPLToRingToString(L) | gfanMPLToString(L);
-	gfanParseInteger runGfanCommand("gfan_tropicalmultiplicity", opts, input)
-)
-
 
 --------------------------------------------------------
--- gfan_saturation
+-- gfan_tropicalweildivisor
 --------------------------------------------------------
 
-gfanSaturation = method( Options => {} )
-
-gfanSaturation (Ideal) := opts -> (I) -> (
-	input := gfanRingToString(ring I) | gfanIdealToString(I);
-	gfanParseIdeal runGfanCommand("gfan_saturation", opts, input)
-)
-
---------------------------------------------------------
--- gfan_tropiciallifting
---------------------------------------------------------
-
-gfanTropicalLifting = method( Options => {} )
-
-gfanTropicalLifting := opts -> () -> (
-	error "Not implemented";
-)
-
---------------------------------------------------------
--- gfan_topolyhedralfan
---------------------------------------------------------
-
-gfanToPolyhedralFan = method( Options => {
-	"restrict"=>false,
-	"symmetry"=>false
+gfanTropicalWeilDivisor = method( Options => {
+	"i1" => null,  -- perhaps these should be removed
+	"i2" => null
 	}
 )
 
-gfanToPolyhedralFan List := opts -> (L) -> (
-	input := gfanMPLToRingToString(first L) 
-		| gfanSymmetriesToString(S) 
-		| gfanLMPLToString(L);
-	runGfanCommand("gfan_topolyhedralfan", opts, input) --- PARSE AS POLYHEDRAL DATA
+gfanTropicalTraverse (String, String) := opts -> (F,G) -> (
+	--v0.4
 )
 
---------------------------------------------------------
--- gfan_tropicalbruteforce
---------------------------------------------------------
 
-gfanTropicalBruteForce = method( Options => {} )
-
-gfanTropicalBruteForce List := opts -> (L) -> (
-	input := gfanMPLToRingToString(L) | gfanMPLToString(L);
-	runGfanCommand("gfan_tropicalbruteforce", opts, input) ---- PARSE AS POLYHEDRAL DATA
-)
+--------------------------------------------------------
+-- Documentation
+--------------------------------------------------------
 
 beginDocumentation()
 
-
-gfanFunctions = {
-	gfan, 
-	gfanBuchberger,
-	gfanDoesIdealContain,
-	gfanGroebnerCone,
-	gfanHomogeneitySpace,
-	gfanHomogenize,
-	gfanInitialForms,
-	gfanInteractive,
-	gfanIsMarkedGroebnerBasis,
-	gfanKrullDimension,
-	gfanLeadingTerms,
-	gfanMarkPolynomialSet,
-	gfanPolynomialSetUnion,
-	gfanRender, 
-	gfanRenderStaircase, 
-	gfanStats,
-	gfanSubstitute,
-	gfanToLatex,
-	gfanTropicalBasis,
-	gfanTropicalIntersection,
-	gfanTropicalLifting,
-	gfanTropicalStartingCone,
-	gfanTropicalTraverse,
-	gfanTropicalMultiplicity,
-	gfanSaturation,
-	gfanToPolyhedralFan,
-	gfanTropicalBruteForce
+gfanFunctions = hashTable {
+	gfan => "gfan", 
+	gfanBuchberger => "gfan_buchberger",
+	gfanDoesIdealContain => "gfan_doesidealcontain",
+	gfanFanCommonRefinement => "gfan_fancommonrefinement", -- v0.4
+	gfanFanLink => "gfan_fanlink", -- v0.4
+	gfanFanProduct => "gfan_fanproduct", -- v0.4
+	gfanGroebnerCone => "gfan_groebnercone",
+	gfanHomogeneitySpace => "gfan_homogeneityspace",
+	gfanHomogenize => "gfan_homogenize",
+	gfanInitialForms => "gfan_initialforms",
+	gfanInteractive => "gfan_interactive",
+	gfanIsMarkedGroebnerBasis => "gfan_ismarkedgroebnerbasis",
+	gfanKrullDimension => "gfan_krulldimension",
+	gfanLatticeIdeal => "gfan_latticeideal", -- v0.4
+	gfanLeadingTerms => "gfan_leadingterms",
+	gfanMarkPolynomialSet => "gfan_markpolynomialset",
+	gfanMinkowskiSum => "gfan_minkowskisum", -- v0.4
+	gfanMinors => "gfan_minors", -- v0.4
+	gfanPolynomialSetUnion => "gfan_polynomialsetunion",
+	gfanRender => "gfan_render", 
+	gfanRenderStaircase => "gfan_renderstaircase", 
+	gfanSaturation => "gfan_saturation",
+	gfanSecondaryFan => "gfan_secondaryfan", -- v0.4
+	gfanStats => "gfan_stats",
+	gfanSubstitute => "gfan_substitute",
+	gfanToLatex => "gfan_tolatex",
+	gfanToPolyhedralFan => "gfan_topolyhedralfan",
+	gfanTropicalBasis => "gfan_tropicalbasis",
+	gfanTropicalBruteForce => "gfan_tropicalbruteforce",
+	gfanTropicalEvaluation => "gfan_tropicalevaluation", -- v0.4
+	gfanTropicalFunction => "gfan_tropicalfunction", -- v0.4
+	gfanTropicalHyperSurface => "gfan_tropicalhypersurface", -- v0.4
+	gfanTropicalIntersection => "gfan_tropicalintersection",
+	gfanTropicalLifting => "gfan_tropicallifting",
+	gfanTropicalLinearSpace => "gfan_tropicallinearspace", -- v0.4
+	gfanTropicalMultiplicity => "gfan_tropicalmultiplicity",
+	gfanTropicalRank => "gfan_tropicalrank", -- v0.4
+	gfanTropicalStartingCone => "gfan_tropicalstartingcone",
+	gfanTropicalTraverse => "gfan_tropicaltraverse",
+	gfanTropicalWeilDivisor => "gfan_tropicalweildivisor" -- v0.4
 }
 
-gfanFunctionNames = {
-	"gfan", 
-	"gfan_buchberger",
-	"gfan_doesidealcontain",
-	"gfan_groebnercone",
-	"gfan_homogeneityspace",
-	"gfan_homogenize",
-	"gfan_initialforms",
-	"gfan_interactive",
-	"gfan_ismarkedgroebnerbasis",
-	"gfan_krulldimension",
-	"gfan_leadingterms",
-	"gfan_markpolynomialset",
-	"gfan_polynomialsetunion",
-	"gfan_render", 
-	"gfan_renderstaircase", 
-	"gfan_stats",
-	"gfan_substitute",
-	"gfan_tolatex",
-	"gfan_tropicalbasis",
-	"gfan_tropicalintersection",
-	"gfan_tropicallifting",
-	"gfan_tropicalstartingcone",
-	"gfan_tropicaltraverse",
-	"gfan_tropicalmultiplicity",
-	"gfan_saturation",
-	"gfan_topolyhedralfan",
-	"gfan_tropicalbruteforce"
-}
-
-
---scan(4..(#gfanFunctions)-1, i -> 
- --   document(
---	{ Key => {gfanFunctions#i} | toList methods gfanFunctions#i } 
---	| apply( lines runGfanCommandCaptureError(gfanFunctionNames#i, {"--help"}, {true}, "") , l->PARA {l}) 
-   --)
---)
-
-gfanHelp = hashTable apply(#gfanFunctions, i -> 
-	gfanFunctionNames#i => apply( lines runGfanCommandCaptureError(gfanFunctionNames#i, {"--help"}, {true}, "") , l->PARA {l}) 
+gfanHelp = hashTable apply(keys gfanFunctions, fn -> 
+	gfanFunctions#fn => apply( lines runGfanCommandCaptureError(gfanFunctions#fn, {"--help"}, {true}, "") , l->PARA {l}) 
 )
 
 doc ///
@@ -1367,6 +1585,51 @@ doc ///
 
 doc ///
 	Key
+		gfanFanCommonRefinement
+	Headline
+		placeholder
+	Usage
+		placeholder
+	Inputs
+	Outputs
+	Description
+		Text
+			@STRONG "gfan Documentation"@
+			@gfanHelp#"gfan_fancommonrefinement"@
+///
+
+doc ///
+	Key
+		gfanFanLink
+	Headline
+		placeholder
+	Usage
+		placeholder
+	Inputs
+	Outputs
+	Description
+		Text
+			@STRONG "gfan Documentation"@
+			@gfanHelp#"gfan_fanlink"@
+///
+
+doc ///
+	Key
+		gfanFanProduct
+	Headline
+		placeholder
+	Usage
+		placeholder
+	Inputs
+	Outputs
+	Description
+		Text
+			@STRONG "gfan Documentation"@
+			@gfanHelp#"gfan_fanproduct"@
+///
+
+doc ///
+	Key
 		gfanGroebnerCone
 		(gfanGroebnerCone, MarkedPolynomialList)
 		(gfanGroebnerCone, MarkedPolynomialList, MarkedPolynomialList)
@@ -1528,6 +1791,15 @@ doc ///
 			If the {\tt "ideals"} option is used, generators for the initial ideal are given.
 			If the {\tt "pair"} option is used, then the output is a pair of MarkedPolynomialLists.
 
+		Example
+			QQ[x,y,z]
+			L = {x + y, x + z}
+			gfanInitialForms(L, {1,2,1})
+			gfanInitialForms(L, {1,2,1}, "ideal"=>true)
+			gfanInitialForms(L, {1,2,1}, "ideal"=>true, "pair"=>true)
+
+		Text
+			
 			@STRONG "gfan Documentation"@
 			@gfanHelp#"gfan_initialforms"@
 ///
@@ -1548,14 +1820,13 @@ doc ///
 doc ///
 	Key
 		gfanIsMarkedGroebnerBasis
-		(gfanIsMarkedGroebnerBasis, List)
+		(gfanIsMarkedGroebnerBasis, MarkedPolynomialList)
 	Headline
 		check if a list of marked polynomials are a Groebner basis
 	Usage
 		B = gfanIsMarkedGroebnerBasis(L)
 	Inputs
-		L:List
-			of @TO2 {"Marked Groebner Basis Example", "marked polynomials"}@
+		L:MarkedPolynomialList
 	Outputs
 		B:Boolean
 			true if {\tt L} forms a Groebner basis
@@ -1583,6 +1854,21 @@ doc ///
 		Text
 			@STRONG "gfan Documentation"@
 			@gfanHelp#"gfan_krulldimension"@
+///
+
+doc ///
+	Key
+		gfanLatticeIdeal
+	Headline
+		placeholder
+	Usage
+		placeholder
+	Inputs
+	Outputs
+	Description
+		Text
+			@STRONG "gfan Documentation"@
+			@gfanHelp#"gfan_latticeideal"@
 ///
 
 doc ///
@@ -1625,6 +1911,36 @@ doc ///
 		Text
 			@STRONG "gfan Documentation"@
 			@gfanHelp#"gfan_markpolynomialset"@
+///
+
+doc ///
+	Key
+		gfanMinkowskiSum
+	Headline
+		placeholder
+	Usage
+		placeholder
+	Inputs
+	Outputs
+	Description
+		Text
+			@STRONG "gfan Documentation"@
+			@gfanHelp#"gfan_minkowskisum"@
+///
+
+doc ///
+	Key
+		gfanMinors
+	Headline
+		placeholder
+	Usage
+		placeholder
+	Inputs
+	Outputs
+	Description
+		Text
+			@STRONG "gfan Documentation"@
+			@gfanHelp#"gfan_minors"@
 ///
 
 doc ///
@@ -1721,6 +2037,21 @@ doc ///
 		Text
 			@STRONG "gfan Documentation"@
 			@gfanHelp#"gfan_saturation"@
+///
+
+doc ///
+	Key
+		gfanSecondaryFan
+	Headline
+		placeholder
+	Usage
+		placeholder
+	Inputs
+	Outputs
+	Description
+		Text
+			@STRONG "gfan Documentation"@
+			@gfanHelp#"gfan_secondaryfan"@
 ///
 
 doc ///
@@ -1846,6 +2177,51 @@ doc ///
 
 doc ///
 	Key
+		gfanTropicalEvaluation
+	Headline
+		placeholder
+	Usage
+		placeholder
+	Inputs
+	Outputs
+	Description
+		Text
+			@STRONG "gfan Documentation"@
+			@gfanHelp#"gfan_tropicalevaluation"@
+///
+
+doc ///
+	Key
+		gfanTropicalFunction
+	Headline
+		placeholder
+	Usage
+		placeholder
+	Inputs
+	Outputs
+	Description
+		Text
+			@STRONG "gfan Documentation"@
+			@gfanHelp#"gfan_tropicalfunction"@
+///
+
+doc ///
+	Key
+		gfanTropicalHyperSurface
+	Headline
+		placeholder
+	Usage
+		placeholder
+	Inputs
+	Outputs
+	Description
+		Text
+			@STRONG "gfan Documentation"@
+			@gfanHelp#"gfan_tropicalhypersurface"@
+///
+
+doc ///
+	Key
 		gfanTropicalIntersection
 		(gfanTropicalIntersection, List)
 	Headline
@@ -1879,6 +2255,21 @@ doc ///
 
 doc ///
 	Key
+		gfanTropicalLinearSpace
+	Headline
+		placeholder
+	Usage
+		placeholder
+	Inputs
+	Outputs
+	Description
+		Text
+			@STRONG "gfan Documentation"@
+			@gfanHelp#"gfan_tropicallinearspace"@
+///
+
+doc ///
+	Key
 		gfanTropicalMultiplicity
 		(gfanTropicalMultiplicity, List)
 	Headline
@@ -1895,6 +2286,21 @@ doc ///
 		Text
 			@STRONG "gfan Documentation"@
 			@gfanHelp#"gfan_tropicalmultiplicity"@
+///
+
+doc ///
+	Key
+		gfanTropicalRank
+	Headline
+		placeholder
+	Usage
+		placeholder
+	Inputs
+	Outputs
+	Description
+		Text
+			@STRONG "gfan Documentation"@
+			@gfanHelp#"gfan_tropicalrank"@
 ///
 
 doc ///
@@ -1939,17 +2345,59 @@ doc ///
 			@gfanHelp#"gfan_tropicaltraverse"@
 ///
 
+doc ///
+	Key
+		gfanTropicalWeilDivisor
+	Headline
+		placeholder
+	Usage
+		placeholder
+	Inputs
+	Outputs
+	Description
+		Text
+			@STRONG "gfan Documentation"@
+			@gfanHelp#"gfan_tropicalweildivisor"@
+///
+
 end
+
 
 -------------------------------------------------------------
 -------------------------------------------------------------
 -------------------------------------------------------------
+
+-- Code for extracting options and methods
+
+loadPackage "gfanInterface2"
+
+applyBinary = (L, f) -> (
+	S := null;
+	scan(L, i -> if S === null then S = i else S = f(i,S));
+	S
+)
+
+fns = select(gfanInterface2#"exported symbols", k -> 
+		substring(0,4,toString k) == "gfan" and class value k === MethodFunctionWithOptions)
+
+apply(fns, f -> f => (value f, options value f))
+
+opts = select(apply(fns, f -> options value f), o -> o =!= null)
+opts = applyBinary(opts, (x,y) -> x ++ y)
+sort keys opts
+
+-------------------------------------------------------------
+-------------------------------------------------------------
+-------------------------------------------------------------
+
 
 restart
 uninstallPackage "gfanInterface2"
 installPackage("gfanInterface2", UserMode=>true, DebuggingMode=>true)
+installPackage("gfanInterface2", Configuration => { "path" => "/opts/gfan/bin/"}) ---gfan version 0.4 for Andrew
 
 loadPackage "gfanInterface2"
+loadPackage("gfanInterface2", Configuration => { "path" => "/opts/gfan/bin/"}) ---gfan version 0.4 for Andrew
 
 viewHelp
 
