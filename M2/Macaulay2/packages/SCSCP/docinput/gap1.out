@@ -5,7 +5,7 @@ o1 = SCSCP Connection to GAP (4.dev) on 127.0.0.1:26135
 
 o1 : SCSCPConnection
 
-i2 : s(hold(2)+3)
+i2 : s( (hold 2) + 3)
 
 o2 = 5
 

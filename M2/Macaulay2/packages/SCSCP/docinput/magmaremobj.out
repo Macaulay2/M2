@@ -5,11 +5,11 @@ o1 = SCSCP Connection to Magma (0.3.0) on 127.0.0.1:26136
 
 o1 : SCSCPConnection
 
-i2 : s <== hold(2)^32
+i2 : s <== (hold 2)^32
 
 o2 = 4294967296
 
-i3 : s <=== hold(2)^333
+i3 : s <=== (hold 2)^333
 
 o3 = << Remote Magma object >>
 
