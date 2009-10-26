@@ -3,8 +3,8 @@ needsPackage "XML"
 needsPackage "ConwayPolynomials"
 newPackage(
 	"OpenMath",
-    	Version => "0.2", 
-    	Date => "October 15, 2009",
+    	Version => "0.2.1", 
+    	Date => "October 26, 2009",
     	Authors => {
 			{Name => "Dan Roozemond", Email => "d.a.roozemond@tue.nl", HomePage => "http://www.win.tue.nl/~droozemo/"}
 		},
