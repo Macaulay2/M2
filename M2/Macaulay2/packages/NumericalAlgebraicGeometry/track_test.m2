@@ -9,6 +9,7 @@ S = {x^2-1,y^2-1};
 T = {x^2+y^2-1, x*y};
 solsS = {(1,-1),(1,1),(-1,1),(-1,-1)};
 T = (katsuraBench 7)_*; (S,solsS) = totalDegreeStartSystem T; 
+T = (katsuraBench 4)_*; (S,solsS) = totalDegreeStartSystem T; 
 --(T,S,solsS) = randomGeneralizedEigenvalueProblem 5;
 isH = false;
 -- same, but projective
@@ -21,7 +22,7 @@ M = track(S,T,solsS, gamma=>0.8+0.6*ii,
      Software=>M2,
                --M2engine,
      	       --M2enginePrecookedSLPs,
-     tStepMin=>0.001,
+     --tStepMin=>0.001,
      Projectivize=>not isH,
      Normalize=>true,
      Predictor=>--RungeKutta4
@@ -94,6 +95,6 @@ rM = refine(T, select(M, v->norm matrix{first v}<100));
 t = currentTime(); M = solveSystem T; currentTime()-t
 t = currentTime(); P = solveSystem (T,Software=>PHCpack); currentTime()-t
 t = currentTime(); B = solveSystem (T,Software=>Bertini); currentTime()-t
-
+areEqual(sortSolutions P/(s->{first s}), sortSolutions M/(s->{first s}), Tolerance=>1e-3)
 
 
