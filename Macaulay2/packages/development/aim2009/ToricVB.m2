@@ -343,7 +343,7 @@ cocycleCheck ToricVectorBundle := tvb -> (
      n := tvb#"dimension of the variety";
      k := tvb#"rank of the vector bundle";
      bCT := tvb#"baseChangeTable";
-     topCones := keys tvb#"topConeTable";
+     topCones := sort keys tvb#"topConeTable";
      L := hashTable {};
      -- For each codim 2 Cone computing the list of topCones which have this Cone as a face
      -- and save the list of indices of these topCones as an element in L
@@ -358,7 +358,7 @@ cocycleCheck ToricVectorBundle := tvb -> (
 	       i := position(l, e -> dim intersection(topCones#a,topCones#e) == n-1);
 	       while i =!= null do (
 		    pairings = pairings | {(a,l#i)};
-		    a = l#1;
+		    a = l#i;
 		    l = drop(l,{i,i});
 		    i = position(l, e -> dim intersection(topCones#a,topCones#e) == n-1));
 	       if dim intersection(topCones#a,topCones#start) == n-1 then {pairings | {(a,start)}} else {}));
