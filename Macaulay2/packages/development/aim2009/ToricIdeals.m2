@@ -9,7 +9,7 @@ newPackage(
         DebuggingMode => true
         )
 
-export { "toricIdeal", "Fortitoo", "saturators" }
+export { "toricIdeal", "saturators" }
 
 needsPackage "LLLBases"
 
@@ -95,8 +95,10 @@ saturators Ideal := (J) -> (
 
 -- to be written
 
-toricIdeal4ti2 = (R,A) -> (
-     error "4ti2 toric ideal not yet implemented";
+toricIdeal4ti2 = (A,R) -> (
+     P := needsPackage "FourTiTwo";
+     toricMarkov := value P.Dictionary#"toricMarkov";
+     toricMarkov(A,R)
      )
 
 ------------------------
@@ -106,8 +108,8 @@ toricIdeal4ti2 = (R,A) -> (
 toricIdeal = method(Options => {Strategy=>null, CoefficientRing => ZZ/5, Variable => global x, Verbose => 0})
 
 toricIdeal(Matrix, Ring) := opts -> (A,R) -> (
-     if opts.Strategy === Fortitoo
-       then return toricIdeal4ti2(R,A);
+     if opts.Strategy === 4
+       then return toricIdeal4ti2(A,R);
      n := numColumns A;
      B := transpose LLL matrix syz A;
      J := ideal apply(entries B, b -> toBinomial(b, R));
@@ -196,7 +198,10 @@ A = matrix"1,1,1,1,1;
 	   1,4,9,16,25"
 R = ZZ/32003[a..e]
 J = toricIdeal(A,R,Verbose=>2)
+J = toricIdeal(A,R)
 assert(J == ideal"ad2-b2e,bd3-c3e,ac3-b3d")
+J1 = toricIdeal(A,R,Strategy=>4)
+assert(J == J1)
 ///
 
 
@@ -206,3 +211,4 @@ loadPackage "ToricIdeals"
 installPackage(ToricIdeals, AbsoluteLinks=>false) -- need to do this for bug in 1.3
 installPackage(ToricIdeals)
 viewHelp ToricIdeals
+
