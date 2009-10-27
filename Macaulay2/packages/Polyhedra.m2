@@ -8,8 +8,8 @@
 ---------------------------------------------------------------------------
 newPackage("Polyhedra",
     Headline => "A package for computations with convex polyhedra",
-    Version => "1.0.6",
-    Date => "September 29, 2009",
+    Version => "1.0.7",
+    Date => "October 27, 2009",
     Certification => {
 	 "journal name" => "The Journal of Software for Algebra and Geometry: Macaulay2",
 	 "journal URI" => "http://j-sag.org/",
@@ -27,20 +27,20 @@ newPackage("Polyhedra",
          {Name => "René Birkner",
 	  HomePage => "http://page.mi.fu-berlin.de/rbirkner/index.htm",
 	  Email => "rbirkner@mi.fu-berlin.de"}},
-    DebuggingMode => false
+    DebuggingMode => true
     )
 
-export {PolyhedralObject, Polyhedron, Cone, Fan, convexHull, posHull, intersection, makeFan, addCone, 
+export {PolyhedralObject, Polyhedron, Cone, Fan, convexHull, posHull, intersection, fan, addCone, 
         ambDim, cones, genCones, halfspaces, hyperplanes, linSpace, rays, vertices,
-        areCompatible, commonFace, contains, isCompact, isComplete, isEmpty, isFace, isPointed, isProjective, 
+        areCompatible, commonFace, contains, isCompact, isComplete, isEmpty, isFace, isPointed, isPolytopal, 
 	isPure, isSmooth,
 	faces, fVector, hilbertBasis, incompCones, inInterior, interiorPoint, interiorVector, latticePoints, maxFace, minFace, 
-	minkSummandCone, proximum, skeleton, smallestFace, smoothSubfan, tailCone, triangulate, volume, vertexEdgeMatrix, 
+	minkSummandCone, polytope, proximum, skeleton, smallestFace, smoothSubfan, tailCone, triangulate, volume, vertexEdgeMatrix, 
 	vertexFacetMatrix, 
 	affineHull, affineImage, affinePreimage, bipyramid, ccRefinement, coneToPolyhedron, directProduct, 
-	dualCone, imageFan, minkowskiSum, normalFan, polar, pyramid, sublatticeBasis, toSublattice,
-	crossPolytope, cyclicPolytope, ehrhart, emptyPolyhedron, hirzebruch, hypercube, newtonPolytope, posOrthant, statePolytope, 
-	stdSimplex,
+	dualCone, faceFan, imageFan, minkowskiSum, normalFan, polar, pyramid, sublatticeBasis, toSublattice,
+	crossPolytope, cellDecompose, cyclicPolytope, ehrhart, emptyPolyhedron, hirzebruch, hypercube, newtonPolytope, posOrthant, 
+	secondaryPolytope, statePolytope, stdSimplex,
 	saveSession}
 
 needsPackage "FourierMotzkin"
@@ -511,8 +511,8 @@ intersection List := L -> (
 -- PURPOSE : Building the Fan 'F'
 --   INPUT : 'L',  a list of cones and fans in the same ambient space
 --  OUTPUT : The fan of all Cones in 'L' and all Cones in of the fans in 'L' and all their faces
-makeFan = method(TypicalValue => Fan)
-makeFan List := L -> (
+fan = method(TypicalValue => Fan)
+fan List := L -> (
      -- Checking for input errors
      if L == {} then error("List of cones and fans must not be empty");
      if (not instance(L#0,Cone)) and (not instance(L#0,Fan)) then error("Input must be a list of cones and fans");
@@ -541,7 +541,8 @@ makeFan List := L -> (
 	  "number of rays" => #rayList,
 	  "isPure" => true,
 	  "faces" => set Ffaces,
-	  "isComplete" => completeness});
+	  "isComplete" => completeness,
+	  symbol cache => new CacheTable});
      -- Checking the remaining list for input errors and reducing fans in the list
      -- to their list of generating cones
      L = flatten apply(L, C -> if instance(C,Cone) then C else if instance(C,Fan) then toList(C#"generatingCones") else 
@@ -553,7 +554,7 @@ makeFan List := L -> (
 
 --   INPUT : 'C',  a Cone
 --  OUTPUT : The Fan given by 'C' and all of its faces
-makeFan Cone := C -> makeFan {C};
+fan Cone := C -> fan {C};
 
 
 
@@ -616,7 +617,8 @@ addCone (Cone,Fan) := (C,F) -> (
 	  "number of rays" => #rayList,
 	  "isPure" => true,
 	  "faces" => set Ffaces,
-	  "isComplete" => completeness})
+	  "isComplete" => completeness,
+	  symbol cache => new CacheTable})
 
 
 --   INPUT : '(L,F)',  where 'L' is a list of Cones in the same ambient space as the fan 'F'
@@ -635,6 +637,28 @@ addCone (Fan,Fan) := (F1,F) -> (
      if ambDim F != ambDim F1 then error("The fans must be in the same ambient space");
      L := toList F1#"generatingCones";
      addCone(L,F))
+
+
+Cone ? Cone := (C1,C2) -> (
+     if C1 == C2 then symbol == else (
+	  if ambDim C1 != ambDim C2 then ambDim C1 ? ambDim C2 else (
+	       if dim C1 != dim C2 then dim C1 ? dim C2 else (
+		    R1 := rays C1;
+		    R2 := rays C2;
+		    if R1 != R2 then (
+			 R1 = apply(numColumns R1, i -> R1_{i});
+			 R2 = apply(numColumns R2, i -> R2_{i});
+			 (a,b) := (set R1,set R2); 
+			 r := (sort matrix {join(select(R1,i->not b#?i),select(R2,i->not a#?i))})_{0};
+			 if a#?r then symbol > else symbol <)
+		    else (
+			 R1 = linSpace C1;
+			 R2 = linSpace C2;
+			 R1 = apply(numColumns R1, i -> R1_{i});
+			 R2 = apply(numColumns R2, i -> R2_{i});
+			 (c,d) := (set R1,set R2);
+			 l := (sort matrix {join(select(R1,i->not d#?i),select(R2,i->not c#?i))})_{0};
+			 if c#?l then symbol > else symbol <)))))
 
 
 -- PURPOSE : Giving the defining affine hyperplanes
@@ -739,7 +763,7 @@ linSpace Fan := F -> ((toList F#"generatingCones")#0)#"linealitySpace"
 -- PURPOSE : Giving the rays
 --   INPUT : 'P'  a Polyhedron
 --  OUTPUT : a Matrix, containing the rays of P as column vectors
-rays = method(TypicalValue => Matrix)
+rays = method()
 rays Polyhedron := P -> P#"rays"
 
 
@@ -810,6 +834,11 @@ commonFace(Fan,Cone) := (F,C) -> commonFace(C,F)
 --  OUTPUT : 'true' or 'false'
 -- COMMENT : For this it checks if all generating cones of 'F1' have a common face with every generating cone of 'F2'
 commonFace(Fan,Fan) := (F1,F2) -> all(genCones F1, C -> commonFace(C,F2))
+
+
+--   INPUT : 'L'  a List
+--  OUTPUT : 'true' or 'false'
+commonFace List := L -> all(#L-1, i -> all(i+1..#L-1, j -> commonFace(L#i,L#j)))
 
 
 
@@ -994,9 +1023,9 @@ isPointed Fan := F -> isPointed((toList F#"generatingCones")#0)
 -- PURPOSE : Tests if a Fan is projective
 --   INPUT : 'F'  a Fan
 --  OUTPUT : a Polyhedron, which has 'F' as normal fan, if 'F' is projective or the empty polyhedron
-isProjective = method(TypicalValue => Polyhedron)
-isProjective Fan := F -> (
-     resultingPolytope := emptyPolyhedron ambDim F;
+isPolytopal = method(TypicalValue => Polyhedron)
+isPolytopal Fan := F -> (
+     if not F.cache.?isPolytopal then F.cache.isPolytopal = false;
      -- First of all the fan must be complete
      if isComplete F then (
 	  -- Extracting the generating cones, the ambient dimension, the codim 1 
@@ -1088,8 +1117,9 @@ isProjective Fan := F -> (
 	       M = unique ((edgerecursion(i,p,vlist,M))#1);
 	       M = matrix transpose apply(M, m -> flatten entries m);
 	       -- Computing the convex hull
-	       resultingPolyhedron = convexHull M));
-     resultingPolyhedron)
+	       F.cache.polytope = convexHull M;
+	       F.cache.isPolytopal = true));
+     F.cache.isPolytopal)
 
 
 
@@ -1623,6 +1653,17 @@ minkSummandCone Polyhedron := P -> (
 
 
 
+-- PURPOSE : Returning a polytope of which the fan is the normal if the fan is polytopal
+--   INPUT : 'F',  a Fan
+--  OUTPUT : A Polytope of which 'F' is the normal fan
+polytope = method(TypicalValue => Polyhedron)
+polytope Fan := F -> (
+     if not F.cache.?isPolytopal then isPolytopal F;
+     if not F.cache.isPolytopal then error("The fan must be polytopal");
+     F.cache.polytope)
+
+
+
 -- PURPOSE : Computing the closest point of a polyhedron to a given point
 --   INPUT : (p,P),  where 'p' is a point given by a one column matrix over ZZ or QQ and
 --                   'P' is a Polyhedron
@@ -1726,7 +1767,7 @@ skeleton = method(TypicalValue => Fan)
 skeleton(ZZ,Fan) := (n,F) -> (
      -- Checking for input errors
      if n < 0 or dim F < n then error("The integer must be between 0 and dim F");
-     makeFan(cones(n,F)))
+     fan cones(n,F))
 
 
 -- PURPOSE : Computing the smallest face of 'P' containing 'p'
@@ -1781,8 +1822,7 @@ smoothSubfan Fan := F -> (
      -- and calls itself with the faces of the cone if the cone is not smooth
      facerecursion := L -> flatten apply(L, C -> if isSmooth C then C else facerecursion faces(1,C));
      L := toList F#"generatingCones";
-     makeFan facerecursion L)
-
+     fan facerecursion L)
 
 
 -- PURPOSE : Computing the tail cone of a given Polyhedron
@@ -1853,11 +1893,12 @@ triangulate Polyhedron := P -> (
      -- Making a list of the vertices of P
      P = vertices P;
      P = apply(numColumns P, i -> P_{i});
-     d := n;
-     -- Initiating the list of already computed triangulations
-     L := hashTable apply(n+1, i -> i => hashTable {});
-     (P,L) = recursiveFaceTriangulation(P,d,originalFacets,L,n);
-     P)
+     if #P == n+1 then {P} else (
+	  d := n;
+	  -- Initiating the list of already computed triangulations
+	  L := hashTable apply(n+1, i -> i => hashTable {});
+	  (P,L) = recursiveFaceTriangulation(P,d,originalFacets,L,n);
+	  P))
 
 
 
@@ -1868,8 +1909,14 @@ volume = method(TypicalValue => QQ)
 volume Polyhedron := P -> (
      d := dim P;
      -- Checking for input errors
-     if d != ambDim P then error("The polytope must be full dimensional.");
      if  not isCompact P then error("The polyhedron must be compact, i.e. a polytope.");
+     -- If P is not full dimensional then project it down
+     if d != ambDim P then (
+	  A := substitute((hyperplanes P)#0,ZZ);
+	  A = inverse (smithNormalForm A)#2;
+	  n := ambDim P;
+	  A = A^{n-d..n-1};
+	  P = affineImage(A,P));
      -- Computing the triangulation of P
      P = triangulate P;
      -- Computing the volume of each simplex without the dimension factor, by 
@@ -2120,7 +2167,7 @@ ccRefinement Matrix := M -> (
 	  -- starts over again if this list is not empty
 	  nConesfd = unique newCones);
      -- Compute the fan generated by the 'refCones'
-     makeFan refCones);
+     fan refCones);
 
 
 -- PURPOSE : Converts the Cone 'C' into itself as a Polyhedron 'P'
@@ -2186,7 +2233,7 @@ directProduct (Polyhedron,Cone) := (P,C) -> directProduct(P,coneToPolyhedron C)
 --  OUTPUT : A fan, the direct product
 directProduct (Fan,Fan) := (F1,F2) -> (
      -- computing the direct products of all pairs of generating cones
-     makeFan flatten apply(toList F1#"generatingCones", C1 -> apply(toList F2#"generatingCones", C2 -> directProduct(C1,C2))))
+     fan flatten apply(toList F1#"generatingCones", C1 -> apply(toList F2#"generatingCones", C2 -> directProduct(C1,C2))))
 
 
 Polyhedron * Polyhedron := directProduct
@@ -2204,6 +2251,13 @@ dualCone Cone := C -> (
 	genrays := (sort transpose C#"halfspaces",sort transpose C#"hyperplanes");
 	dualgens := (sort (-(C#"rays")),sort C#"linealitySpace");
 	coneBuilder(genrays,dualgens))
+   
+   
+faceFan = method(TypicalValue => Fan)
+faceFan Polyhedron := P -> (
+     -- Checking for input errors
+     if not inInterior(map(QQ^(ambDim P),QQ^1,0),P) then  error("The origin must be an interior point.");
+     fan apply(faces(1,P), posHull))
    
    
 -- PURPOSE : Computing the image fan of a cone
@@ -2239,7 +2293,7 @@ minkowskiSum(Polyhedron,Polyhedron) := (P1,P2) -> (
      R := rays P1 | rays P2 | map(target V1,QQ^1,0);
      Vnew := map(target V1,QQ^0,0);
      -- Collecting all sums of vertices of P1 with vertices of P2
-     Vnew = matrix transpose flatten apply(numColumns V1, i -> apply(numColumns V2, j -> flatten entries(V1_{i}+V2_{j})));
+     Vnew = matrix {unique flatten apply(numColumns V1, i -> apply(numColumns V2, j -> V1_{i}+V2_{j}))};
      convexHull(Vnew,R))
 
 
@@ -2301,7 +2355,7 @@ normalFan Polyhedron := P -> (
      -- Saving the vertices
      vm := vertices P;
      -- For every vertex translate P by -this vertex and take the dual cone of the positive hull of it
-     makeFan apply(numColumns vm, i -> (dualCone posHull affineImage(P,-vm_{i}))))
+     fan apply(numColumns vm, i -> (dualCone posHull affineImage(P,-vm_{i}))))
 
 
 -- PURPOSE : Computing the polar of a given polyhedron
@@ -2415,6 +2469,16 @@ cyclicPolytope(ZZ,ZZ) := (d,n) -> (
      convexHull map(ZZ^d, ZZ^n, (i,j) -> j^(i+1)))
 
 
+cellDecompose = method()
+cellDecompose (Polyhedron,Matrix) := (P,w) -> (
+     n := dim P;
+     LP := latticePoints P;
+     LP = matrix{LP}||w;
+     P = convexHull(LP,matrix (toList(dim P:{0})|{{1}}));
+     A := map(QQ^n,QQ^n,1) | map(QQ^n,QQ^1,0);
+     flatten apply(faces(1,P), f -> if isCompact f then affineImage(A,f) else {}))
+
+
 -- PURPOSE : Computing the Ehrhart polynomial of a polytope
 --   INPUT : 'P',  a polyhedron which must be compact, i.e. a polytope
 --  OUTPUT : A polynomial in QQ[x], the Ehrhart polynomial
@@ -2488,6 +2552,56 @@ newtonPolytope RingElement := p -> convexHull transpose matrix exponents p
 --  OUTPUT : The cone that is the positive orthant in n-space
 posOrthant = method(TypicalValue => Cone)
 posOrthant ZZ := n -> posHull map(QQ^n,QQ^n,1)
+
+
+secondaryPolytope = method(TypicalValue => Polyhedron)
+secondaryPolytope Polyhedron := P -> (
+     -- Checking for input errors
+     if not isCompact P then error("The polyhedron must be compact.");
+     -- Extracting necessary data
+     V := vertices P;
+     n := dim P;
+     m := numColumns V;
+     -- Computing the cell decomposition of P induced by the projection of the m-1 simplex onto P
+     nCells := apply(subsets(m,n+1), e -> convexHull V_e);
+     nCellsfd := select(nCells, C -> dim C == n);
+     nCellsfd = inclMinCones nCellsfd;
+     refCells := {};
+     while nCellsfd != {} do (
+	  newCells := {};
+	  -- scan through the 'n' dimensional cells and check for each of the cells generated by
+	  -- 'n+1' vertices if their intersection is 'n' dimensional and if the first one is not contained 
+	  -- in the latter. If true, then their intersection will be saved in the list 'newCells'.
+	  -- If false for every cone generated by 'n+1' vertices, then the 'n' dimensional cell will be 
+	  -- appended to the list 'refCells'
+	  refCells = refCells | (flatten apply(nCellsfd, C1 -> (
+			 toBeAdded := flatten apply(nCells, C2 -> (
+				   C := intersection(C2,C1);
+				   if dim C == n and (not contains(C2,C1)) then C
+				   else {}));
+			 if toBeAdded == {} then C1
+			 else (
+			      newCells = newCells | toBeAdded;
+			      {}))));
+	  -- now, the new intersections will be the 'n' dimensional cones and the same procedure 
+	  -- starts over again if this list is not empty
+	  nCellsfd = unique newCells);
+     refCells)
+
+--     refCells = if n != ambDim P then (
+--	  A := substitute((hyperplanes P)#0,ZZ);
+--	  A = inverse (smithNormalForm A)#2;
+--	  d := ambDim P;
+--	  A = A^{d-n..d-1};
+--	  apply(refCells, P -> (volume affineImage(A,P),interiorPoint P)))
+--     else apply(refCells, P -> (volume P,interiorPoint P));
+--     volP := sum apply(refCells,first);
+--     Id := -map(QQ^m,QQ^m,1);
+--     v := map(QQ^m,QQ^1,0);
+--     N := matrix{toList(m:1_QQ)} || V;
+--     w := matrix {{1_QQ}};
+--     sum apply(refCells, e -> (e#0/volP) * intersection(Id,v,N,w||e#1)))
+     
 
 
 -- PURPOSE : Computing the state polytope of the ideal 'I'
@@ -2874,7 +2988,7 @@ refineCones = L -> (
      F := ccRefinement M;
      -- Collect for each cone of the ccRef the intersection of all original cones, that contain
      -- the interior of that cone
-     makeFan apply(genCones F, C -> (
+     fan apply(genCones F, C -> (
 	       v := interiorVector(C);
 	       intersection select(L, c -> contains(c,v)))))
 
@@ -3289,7 +3403,7 @@ document {
      
      EXAMPLE {
 	  " C = posHull matrix {{1,0,0},{0,1,0},{0,0,1}}",
-	  " F = makeFan C"
+	  " F = fan C"
 	  },
      
      PARA{}, "By this, we have already constructed the fan consisting of the 
@@ -3340,7 +3454,7 @@ document {
 	  " C3 = posHull matrix {{-1,0,0},{0,1,0},{0,0,-1}};",
 	  " C4 = posHull matrix {{-1,0,0},{0,-1,0},{0,0,1}};",
 	  " C5 = posHull matrix {{-1,0,0},{0,-1,0},{0,0,-1}};",
-	  " F1 = makeFan {C2,C3,C4,C5}"
+	  " F1 = fan {C2,C3,C4,C5}"
 	  },
      
      PARA{}, "Furthermore, we could add a list of cones to an existing fan:",
@@ -3357,7 +3471,7 @@ document {
 	  " F1 = addCone(F,F1)"
 	  },
      
-     PARA{}, "So, ",TO makeFan," and ",TO addCone," are the methods to construct 
+     PARA{}, "So, ",TO fan," and ",TO addCone," are the methods to construct 
      fans ''from scratch'', but there are also methods to get fans directly, for example ",TO normalFan,", 
      which constructs the inner normal fan of a polytope.",
      
@@ -3370,7 +3484,7 @@ document {
      for example the direct product (",TO directProduct,":",
      
      EXAMPLE {
-	  " F3 = makeFan {posHull matrix {{1}},posHull matrix {{-1}}}",
+	  " F3 = fan {posHull matrix {{1}},posHull matrix {{-1}}}",
 	  " F1 = F3 * F1"},
      
      PARA{}, "The result is in the direct product of the ambient spaces.",
@@ -3399,7 +3513,7 @@ document {
 	  " C2 = posHull matrix {{1,1,1},{0,1,-1},{-1,1,1}};",
 	  " C3 = posHull matrix {{-1,-1,-1},{0,1,-1},{-1,1,1}};",
 	  " C4 = posHull matrix {{1,-1},{0,0},{-1,-1}};",
-	  " F = makeFan {C1,C2,C3,C4}"
+	  " F = fan {C1,C2,C3,C4}"
 	  },
      
      PARA{}, "This is not a ''very nice'' fan, as it is neither complete nor 
@@ -3422,7 +3536,7 @@ document {
      PARA{}, "For a complete fan we can check if it is projective:",
      
      EXAMPLE {
-	  " isProjective F"
+	  " isPolytopal F"
 	  },
      
      PARA{}, "If the fan is projective, the function returns a polyhedron such that  
@@ -3586,7 +3700,7 @@ document {
 	  " C2 = posHull matrix {{2,-2},{1,1}};",
 	  " C3 = posHull matrix {{-2,-2},{1,-1}};",
 	  " C4 = posHull matrix {{-2,2},{-1,-1}};",
-	  " F = makeFan {C1,C2,C3,C4}"
+	  " F = fan {C1,C2,C3,C4}"
 	  },
      
      PARA{}, "This fan is for example the normal fan of a ''flattened'' crosspolytope in 2-space.",
@@ -3855,9 +3969,9 @@ document {
      }
 
 document {
-     Key => {makeFan, (makeFan,Cone), (makeFan,List)},
+     Key => {fan, (fan,Cone), (fan,List)},
      Headline => "generates a Fan",
-     Usage => " F = makeFan C \nF = makeFan L",
+     Usage => " F = fan C \nF = fan L",
      Inputs => {
 	  "C" => Cone,
 	  "L" => List => {"with elements of class ", TO Cone, " or ", TO Fan}
@@ -3866,7 +3980,7 @@ document {
 	  "F" => Fan
 	  },
      
-     PARA{}, " If ",TT "makeFan", " is applied to a ", TO Cone, " it generates 
+     PARA{}, " If ",TT "fan", " is applied to a ", TO Cone, " it generates 
      the ", TO Fan, " given by the the Cone and all of its faces. If applied to 
      a ", TO List, " the list must only contain Cones and Fans in the same 
      ambient space. Then it adds the Cones in the List and the generating Cones 
@@ -3882,10 +3996,10 @@ document {
           
      EXAMPLE {
 	  " C = posHull matrix {{1,-1},{0,-1}}",
-	  " F = makeFan C",
+	  " F = fan C",
 	  " C1 = posHull matrix {{1,0},{0,1}};",
 	  " C2 = posHull matrix {{0,-1},{1,-1}};",
-	  " F = makeFan {C,C1,C2}"
+	  " F = fan {C,C1,C2}"
 	  }
      
      }
@@ -3925,7 +4039,7 @@ document {
      
      EXAMPLE {
 	  " C = posHull matrix {{1,0,0},{0,1,1},{0,0,1}};",
-	  " F = makeFan C",
+	  " F = fan C",
 	  " C = posHull matrix {{-1,0,0},{0,1,0},{0,0,1}};",
 	  " incompCones(C,F)"
 	  },
@@ -4329,7 +4443,7 @@ document {
 	  },
      
      PARA{}, TT "isComplete"," just calls an entry in the hash table of the Fan. The check for completeness 
-     is done while generating the fan. Whenever a full dimensional Cone is added (see ", TO makeFan," 
+     is done while generating the fan. Whenever a full dimensional Cone is added (see ", TO fan," 
      or ", TO addCone,") the set of faces of codimension 1 that appear only in one full dimensional Cone 
      is updated. The Fan is then complete if and only if this set is empty and there is at least one 
      full dimensional Cone.",
@@ -4338,7 +4452,7 @@ document {
 	  " C1 = posHull matrix {{1,0},{0,1}};",
 	  " C2 = posHull matrix {{1,-1},{0,-2}};",
 	  " C3 = posHull matrix {{0,-2},{1,-1}};",
-	  " F = makeFan {C1,C2,C3}",
+	  " F = fan {C1,C2,C3}",
 	  " isComplete F"
 	  },
      
@@ -4450,15 +4564,14 @@ document {
      }
 
 document {
-     Key => {isProjective, (isProjective,Fan)},
-     Headline => "checks if a Fan is projective",
-     Usage => "b = isProjective F",
+     Key => {isPolytopal, (isPolytopal,Fan)},
+     Headline => "checks if a Fan is polytopal",
+     Usage => "b = isPolytopal F",
      Inputs => {
 	  "F" => Fan
 	  },
      Outputs => {
-	  "P" => Polyhedron => {TO emptyPolyhedron," if the ", TO Fan," is not projective and a ", TO Polyhedron," such 
-	       that 'F' is its normal fan if 'F' is projective"}
+	  "b" => Boolean => {TO true, " if the ",TO Fan," is polytopal, ",TO false," otherwise"}
 	  },
      
      PARA{}, "If ",TT "F"," is projective, then there exists a polyhedron ",TT "P"," such that ",TT "F"," 
@@ -4471,6 +4584,9 @@ document {
      the space of edge lengths we get a Cone. Thus, there exists such a polytope if and only if there is a 
      vector in this cone with strictly positive entries, since every edge has to appear in the polytope.",
      
+     PARA{}, "IF ",TT "F"," is polytopal, the function ",TO polytope," returns a polytope of which ",TT "F"," is 
+     the normalFan.",
+     
      PARA{}, "Note that the function first checks if the fan is complete.",
      
      EXAMPLE {
@@ -4478,8 +4594,8 @@ document {
 	  " C2 = posHull matrix {{1,-1},{0,-2}};",
 	  " C3 = posHull matrix {{0,-2},{1,-1}};",
 	  " C4 = posHull matrix {{-1,-2},{-2,-1}};",
-	  " F = makeFan{C1,C2,C3,C4}",
-	  " isProjective F"
+	  " F = fan{C1,C2,C3,C4}",
+	  " isPolytopal F"
 	  }
      
      }
@@ -4504,7 +4620,7 @@ document {
      EXAMPLE {
 	  " C = posHull matrix {{1,0,0},{0,1,0},{0,0,1}}",
 	  " v = posHull matrix {{-1},{-1},{-1}}",
-	  " F = makeFan {C,v}",
+	  " F = fan {C,v}",
 	  " isPure F",
 	  },
      
@@ -4857,6 +4973,27 @@ document {
      }
 
 document {
+     Key => {polytope, (polytope,Fan)},
+     Headline => "returns a polytope of which the fan is the normal fan if it is polytopal",
+     Usage => " P = polytope F",
+     Inputs => {
+	  "F" => Fan
+	  },
+     Outputs => {
+	  "P" => Polyhedron
+	  },
+     
+     PARA{}, "If the fan ",TT "F"," is polytopal then ",TT "polytope"," returns a polytope ",TT "P",". ",TT "F"," is the 
+     normal fan of this polytope. Note that such a polytope is not unique."
+     
+     EXAMPLE {
+	  " F = fan {posHull matrix {{1,0},{0,1}},posHull matrix {{1,-1},{0,1}},posHull matrix {{-1,-1},{0,1}},posHull matrix {{-1,1},{0,-1}},posHull matrix {{1,1},{0,-1}}}",
+	  " P = polytope F"
+	  }
+     
+     }
+
+document {
      Key => {proximum, (proximum,Matrix,Polyhedron), (proximum,Matrix,Cone)},
      Headline => "computes the proximum of the Polyhedron/Cone to a point in euclidian metric",
      Usage => " q = proximum(p,P) \nq = proximum(p,C)",
@@ -4958,7 +5095,7 @@ document {
      
      EXAMPLE {
 	  " C = posHull  matrix {{1,-1,0},{1,1,0},{1,1,1}}",
-	  " F = makeFan C"
+	  " F = fan C"
 	  },
      
      PARA{}, "This cone is not smooth, therefore also the fan is not. But if we remove the interior and one 
@@ -6616,10 +6753,10 @@ assert (areCompatible(C1,C2))#0
 ///
 
 -- Test 30
--- Checking makeFan and Fan basics
+-- Checking fan and Fan basics
 TEST ///
 C = posHull matrix {{1,0,0},{0,1,0},{0,0,1}};
-F = makeFan C;
+F = fan C;
 assert(F#"generatingCones" === set {C})
 assert(F#"ambient dimension" == 3)
 assert(F#"top dimension of the cones" == 3)
@@ -6628,13 +6765,13 @@ assert not F#"isComplete"
 ///
 
 -- Test 31
--- Checking makeFan and addCone
+-- Checking fan and addCone
 TEST ///
 C = posHull matrix {{1,0,0},{0,1,0},{0,0,1}};
 C1 = posHull matrix {{1,0,0},{0,-1,0},{0,0,1}};
 C2 = posHull matrix {{-1,0,0},{0,1,0},{0,0,1}};
 C3 = posHull matrix {{1,0,0},{0,1,0},{0,0,-1}};
-F = makeFan {C,C1,C2,C3};
+F = fan {C,C1,C2,C3};
 assert(F#"generatingCones" === set {C,C1,C2,C3})
 assert(F#"ambient dimension" == 3)
 assert(F#"number of generating cones" == 4)
@@ -6649,16 +6786,16 @@ assert(F == F1)
 ///
 
 -- Test 32
--- Checking makeFan, skeleton, isComplete, isPure, addCone, isProjective
+-- Checking fan, skeleton, isComplete, isPure, addCone, isPolytopal
 TEST ///
 C = posHull matrix {{1,0,0},{0,1,0},{0,0,1}};
 C1 = posHull matrix {{1,0,0},{0,-1,0},{0,0,1}};
 C2 = posHull matrix {{-1,0,0},{0,1,0},{0,0,1}};
 C3 = posHull matrix {{1,0,0},{0,1,0},{0,0,-1}};
-F = makeFan {C,C1,C2,C3};
+F = fan {C,C1,C2,C3};
 L = {posHull matrix {{1,0},{0,-1},{0,0}},posHull matrix {{0,0},{0,-1},{1,0}},posHull matrix {{-1,0},{0,1},{0,0}},posHull matrix {{-1,0},{0,0},{0,1}},posHull matrix {{1,0},{0,0},{0,-1}},posHull matrix {{0,0},{1,0},{0,-1}},posHull matrix {{1,0},{0,1},{0,0}},posHull matrix {{1,0},{0,0},{0,1}},posHull matrix {{0,0},{1,0},{0,1}}};
 assert(set L === set cones(2,F))
-F1 = makeFan {posHull matrix {{1},{0},{0}},posHull matrix {{-1},{0},{0}},posHull matrix {{0},{1},{0}},posHull matrix {{0},{-1},{0}},posHull matrix {{0},{0},{1}},posHull matrix {{0},{0},{-1}}};
+F1 = fan {posHull matrix {{1},{0},{0}},posHull matrix {{-1},{0},{0}},posHull matrix {{0},{1},{0}},posHull matrix {{0},{-1},{0}},posHull matrix {{0},{0},{1}},posHull matrix {{0},{0},{-1}}};
 assert(skeleton(1,F) == F1)
 assert not isComplete F
 assert isPure F
@@ -6671,7 +6808,7 @@ assert(F#"number of generating cones" == 8)
 assert isPure F
 assert isComplete F
 assert isSmooth F
-P = isProjective F;
+P = isPolytopal F;
 assert(normalFan P == F)
 ///
 
@@ -6681,9 +6818,9 @@ TEST ///
 C1 = posHull matrix {{1,2},{2,1}};
 C2 = posHull matrix {{1,0},{2,1}};
 C3 = posHull matrix {{1,2},{0,1}};
-F = makeFan {C1,C2,C3};
+F = fan {C1,C2,C3};
 assert not isSmooth F
-F1 = makeFan {C2,C3};
+F1 = fan {C2,C3};
 assert(smoothSubfan F == F1)
 ///
 
@@ -6693,11 +6830,11 @@ TEST ///
 P = convexHull matrix {{1,0,0},{0,1,0}};
 F = normalFan P;
 L = {posHull matrix {{1,0},{0,1}},posHull matrix {{1,-1},{0,-1}},posHull matrix {{0,-1},{1,-1}}};
-assert(F == makeFan L)
+assert(F == fan L)
 P =  convexHull (matrix {{1,0,0},{0,1,0}},matrix {{1},{1}});
 F = normalFan P;
 L = {posHull matrix {{1,0},{0,1}},posHull matrix {{1,1},{0,-1}},posHull matrix {{0,-1},{1,1}}};
-assert(F == makeFan L)
+assert(F == fan L)
 ///
 
 -- Test 35
@@ -6705,7 +6842,7 @@ assert(F == makeFan L)
 TEST ///
 M = matrix {{1,-1,0,0},{0,0,1,-1},{1,1,1,1}};
 F = ccRefinement M;
-F1 = makeFan {posHull matrix {{1,0,0},{0,1,0},{1,1,1}},posHull matrix {{-1,0,0},{0,1,0},{1,1,1}},posHull matrix {{-1,0,0},{0,-1,0},{1,1,1}},posHull matrix {{1,0,0},{0,-1,0},{1,1,1}}};
+F1 = fan {posHull matrix {{1,0,0},{0,1,0},{1,1,1}},posHull matrix {{-1,0,0},{0,1,0},{1,1,1}},posHull matrix {{-1,0,0},{0,-1,0},{1,1,1}},posHull matrix {{1,0,0},{0,-1,0},{1,1,1}}};
 assert(F == F1)
 ///
 
@@ -6714,10 +6851,10 @@ assert(F == F1)
 TEST ///
 C = posHull matrix {{1,1,-1,-1},{1,-1,1,-1},{1,1,1,1}};
 F = imageFan(matrix {{1,0,0},{0,1,0}},C);
-F1 = makeFan {posHull matrix {{1,1},{1,-1}},posHull matrix {{1,-1},{1,1}},posHull matrix {{-1,-1},{1,-1}},posHull matrix {{1,-1},{-1,-1}}};
+F1 = fan {posHull matrix {{1,1},{1,-1}},posHull matrix {{1,-1},{1,1}},posHull matrix {{-1,-1},{1,-1}},posHull matrix {{1,-1},{-1,-1}}};
 assert(F == F1)
 F = imageFan(matrix {{1,2,0},{0,0,1}},C);
-F1 = makeFan {posHull matrix {{-3,-1},{1,1}},posHull matrix {{-1,1},{1,1}},posHull matrix {{1,3},{1,1}}};
+F1 = fan {posHull matrix {{-3,-1},{1,1}},posHull matrix {{-1,1},{1,1}},posHull matrix {{1,3},{1,1}}};
 assert(F == F1)
 ///
 
@@ -6878,7 +7015,7 @@ assert(P == Q)
 -- Checking hirzebruch
 TEST ///
 F = hirzebruch 3;
-F1 = makeFan {posHull matrix{{1,0},{0,1}},posHull matrix{{1,0},{0,-1}},posHull matrix{{0,-1},{1,3}},posHull matrix{{0,-1},{-1,3}}};
+F1 = fan {posHull matrix{{1,0},{0,1}},posHull matrix{{1,0},{0,-1}},posHull matrix{{0,-1},{1,3}},posHull matrix{{0,-1},{-1,3}}};
 assert(F == F1)
 ///
 
