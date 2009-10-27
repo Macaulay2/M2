@@ -105,7 +105,7 @@ toricIdeal4ti2 = (R,A) -> (
 
 toricIdeal = method(Options => {Strategy=>null, CoefficientRing => ZZ/5, Variable => global x, Verbose => 0})
 
-toricIdeal(Ring, Matrix) := opts -> (R,A) -> (
+toricIdeal(Matrix, Ring) := opts -> (A,R) -> (
      if opts.Strategy === Fortitoo
        then return toricIdeal4ti2(R,A);
      n := numColumns A;
@@ -113,7 +113,7 @@ toricIdeal(Ring, Matrix) := opts -> (R,A) -> (
      J := ideal apply(entries B, b -> toBinomial(b, R));
      satvars := saturators J;
      if opts.Verbose > 0 then 
-       << "-- using saturators: " << satvars << endl;
+       << "  -- using saturators: " << satvars << endl;
      if opts.Verbose <= 1 then
        scan(satvars, r -> J = saturate(J, r))
      else (
@@ -131,7 +131,7 @@ toricIdeal Matrix := opts -> (M) -> (
      x := opts.Variable;
      n := numColumns M;
      R := kk (monoid [x_1..x_n]);
-     toricIdeal(R,M,opts)
+     toricIdeal(M,R,opts)
      )
 
 beginDocumentation()
@@ -152,15 +152,15 @@ doc ///
 Key
   toricIdeal
   (toricIdeal,Matrix)
-  (toricIdeal,Ring,Matrix)
+  (toricIdeal,Matrix,Ring)
 Headline
   find the toric ideal
 Usage
-  toricIdeal M
-  toricIdeal(R,M)
+  toricIdeal A
+  toricIdeal(A,R)
 Inputs
-  M:Matrix
-    a $d \times n$ matrix over ZZ
+  A:Matrix
+    a $d \times{} n$ matrix over ZZ
   R:Ring
     a polynomial ring.  If not given, a poly ring over QQ is created
 Outputs
@@ -168,14 +168,24 @@ Outputs
     in the ring $R$.
 Description
   Text
+    Assuming that $R$ is a polynomial ring containing $n$ variables,
+    then the result is an ideal $J \subset R$ such that $R/J = k[m_1, \ldots, m_n]$,
+    where $m_i$ is the monomial in a poly ring with $d$ variables whose
+    exponent vector is the $i$th column of $A$.
+    
   Example
+    R = QQ[a..e]
+    A = matrix"
+      1,1,1,1,1;
+      1,2,3,4,5"
+    toricIdeal(A,R)
+    toricIdeal(A,R,Verbose=>2)
+  Text
+    See the book B. Sturmfels, "Convex Polytopes and Groebner bases", for more information.
 Caveat
+  The 4ti2 interface is not in place yet
 SeeAlso
-///
-
-TEST ///
--- test code and assertions here
--- may have as many TEST sections as needed
+  LLLBases
 ///
 
 TEST ///
@@ -185,17 +195,14 @@ A = matrix"1,1,1,1,1;
            1,2,3,4,5;
 	   1,4,9,16,25"
 R = ZZ/32003[a..e]
-toricIdeal(R,A,Verbose=>2)
-
-debug ToricIdeals
-B = syz A
-
-J = toric(B,R)
-saturators J
-toricIdeal(R,A)
-makeHash J
+J = toricIdeal(A,R,Verbose=>2)
+assert(J == ideal"ad2-b2e,bd3-c3e,ac3-b3d")
 ///
+
 
 end
 restart
 loadPackage "ToricIdeals"
+installPackage(ToricIdeals, AbsoluteLinks=>false) -- need to do this for bug in 1.3
+installPackage(ToricIdeals)
+viewHelp ToricIdeals
