@@ -1023,7 +1023,7 @@ isPointed Fan := F -> isPointed((toList F#"generatingCones")#0)
 -- PURPOSE : Tests if a Fan is projective
 --   INPUT : 'F'  a Fan
 --  OUTPUT : a Polyhedron, which has 'F' as normal fan, if 'F' is projective or the empty polyhedron
-isPolytopal = method(TypicalValue => Polyhedron)
+isPolytopal = method(TypicalValue => Boolean)
 isPolytopal Fan := F -> (
      if not F.cache.?isPolytopal then F.cache.isPolytopal = false;
      -- First of all the fan must be complete
