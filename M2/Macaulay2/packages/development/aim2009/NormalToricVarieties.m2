@@ -20,6 +20,7 @@ export {
      classGroup, 
      isDegenerate,
      isFan,
+     isProjective,
      isSimplicial, 
      weilDivisors, 
      cartierDivisors, 
@@ -172,7 +173,7 @@ isFan NormalToricVariety := X -> (
 		    if all(F, f -> #(f#0) == numColumns rays f#1) then (
 			 F = apply(F, f -> f#1);
 			 if commonFace F then (
-			      X.cache.Fan = makeFan F;
+			      X.cache.Fan = fan F;
 			      X.cache.isFan = true)))));
      X.cache.isFan)
 
@@ -186,10 +187,11 @@ isPure NormalToricVariety := X -> (
      if not X.cache.isFan then error("The data does not define a Fan");
      isPure X.cache.Fan)
 
+isProjective = method(TypicalValue => Boolean)
 isProjective NormalToricVariety := X -> (
      if not X.cache.?isFan then isFan X;
      if not X.cache.isFan then error("The data does not define a Fan");
-     isProjective X.cache.Fan)
+     isPolytopal X.cache.Fan)
 
 isSimplicial = method(TypicalValue => Boolean)
 isSimplicial NormalToricVariety := X -> (
@@ -208,7 +210,7 @@ isSmooth NormalToricVariety := X -> (
 	  if X.cache.smooth == true then X.cache.simplicial = true);
      X.cache.smooth)
 
-makeFan NormalToricVariety := X -> (
+fan NormalToricVariety := X -> (
      if not X.cache.?isFan then isFan X;
      if not X.cache.isFan then error("The data does not define a fan");
      X.cache.Fan)
