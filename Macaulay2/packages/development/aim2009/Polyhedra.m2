@@ -1656,7 +1656,7 @@ minkSummandCone Polyhedron := P -> (
 -- PURPOSE : Returning a polytope of which the fan is the normal if the fan is polytopal
 --   INPUT : 'F',  a Fan
 --  OUTPUT : A Polytope of which 'F' is the normal fan
-polytope = method(TypicalValue => Polyhedron)
+polytope = method(TypicalValue => Boolean)
 polytope Fan := F -> (
      if not F.cache.?isPolytopal then isPolytopal F;
      if not F.cache.isPolytopal then error("The fan must be polytopal");
@@ -6797,7 +6797,7 @@ assert(F == F1)
 ///
 
 -- Test 32
--- Checking fan, skeleton, isComplete, isPure, addCone, isPolytopal
+-- Checking fan, skeleton, isComplete, isPure, addCone, isPolytopal, polytope
 TEST ///
 C = posHull matrix {{1,0,0},{0,1,0},{0,0,1}};
 C1 = posHull matrix {{1,0,0},{0,-1,0},{0,0,1}};
@@ -6819,8 +6819,8 @@ assert(F#"number of generating cones" == 8)
 assert isPure F
 assert isComplete F
 assert isSmooth F
-P = isPolytopal F;
-assert(normalFan P == F)
+assert isPolytopal F
+assert(normalFan polytope F == F)
 ///
 
 -- Test 33
