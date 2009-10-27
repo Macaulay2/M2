@@ -10,19 +10,19 @@ newPackage("Polyhedra",
     Headline => "A package for computations with convex polyhedra",
     Version => "1.0.7",
     Date => "October 27, 2009",
-    Certification => {
-	 "journal name" => "The Journal of Software for Algebra and Geometry: Macaulay2",
-	 "journal URI" => "http://j-sag.org/",
-	 "article title" => "Polyhedra: a package for computations with convex polyhedral objects",
-	 "acceptance date" => "2009-09-07",
-	 "published article URI" => "http://j-sag.org/Volume1/jsag-3-2009.pdf",
-	 "published code URI" => "http://j-sag.org/Volume1/Polyhedra.m2",
-	 "repository code URI" => "svn://macaulay2.math.uiuc.edu/Macaulay2/trunk/M2/Macaulay2/packages/Polyhedra.m2",
-     	 "release at publication" => 9344,
-	 "version at publication" => "1.0.5",
-	 "volume number" => "1",
-	 "volume URI" => "http://j-sag.org/Volume1/"
-	 },
+--    Certification => {
+--	 "journal name" => "The Journal of Software for Algebra and Geometry: Macaulay2",
+--	 "journal URI" => "http://j-sag.org/",
+--	 "article title" => "Polyhedra: a package for computations with convex polyhedral objects",
+--	 "acceptance date" => "2009-09-07",
+--	 "published article URI" => "http://j-sag.org/Volume1/jsag-3-2009.pdf",
+--	 "published code URI" => "http://j-sag.org/Volume1/Polyhedra.m2",
+--	 "repository code URI" => "svn://macaulay2.math.uiuc.edu/Macaulay2/trunk/M2/Macaulay2/packages/Polyhedra.m2",
+--    	 "release at publication" => 9344,
+--	 "version at publication" => "1.0.5",
+--	 "volume number" => "1",
+--	 "volume URI" => "http://j-sag.org/Volume1/"
+--	 },
     Authors => {
          {Name => "René Birkner",
 	  HomePage => "http://page.mi.fu-berlin.de/rbirkner/index.htm",
@@ -35,8 +35,8 @@ export {PolyhedralObject, Polyhedron, Cone, Fan, convexHull, posHull, intersecti
         areCompatible, commonFace, contains, isCompact, isComplete, isEmpty, isFace, isPointed, isPolytopal, 
 	isPure, isSmooth,
 	faces, fVector, hilbertBasis, incompCones, inInterior, interiorPoint, interiorVector, latticePoints, maxFace, minFace, 
-	minkSummandCone, polytope, proximum, skeleton, smallestFace, smoothSubfan, tailCone, triangulate, volume, vertexEdgeMatrix, 
-	vertexFacetMatrix, 
+	minkSummandCone, polytope, proximum, skeleton, smallestFace, smoothSubfan, stellarSubdivision, tailCone, triangulate, 
+	volume, vertexEdgeMatrix, vertexFacetMatrix, 
 	affineHull, affineImage, affinePreimage, bipyramid, ccRefinement, coneToPolyhedron, directProduct, 
 	dualCone, faceFan, imageFan, minkowskiSum, normalFan, polar, pyramid, sublatticeBasis, toSublattice,
 	crossPolytope, cellDecompose, cyclicPolytope, ehrhart, emptyPolyhedron, hirzebruch, hypercube, newtonPolytope, posOrthant, 
@@ -1656,7 +1656,7 @@ minkSummandCone Polyhedron := P -> (
 -- PURPOSE : Returning a polytope of which the fan is the normal if the fan is polytopal
 --   INPUT : 'F',  a Fan
 --  OUTPUT : A Polytope of which 'F' is the normal fan
-polytope = method(TypicalValue => Polyhedron)
+polytope = method(TypicalValue => Boolean)
 polytope Fan := F -> (
      if not F.cache.?isPolytopal then isPolytopal F;
      if not F.cache.isPolytopal then error("The fan must be polytopal");
@@ -1823,6 +1823,17 @@ smoothSubfan Fan := F -> (
      facerecursion := L -> flatten apply(L, C -> if isSmooth C then C else facerecursion faces(1,C));
      L := toList F#"generatingCones";
      fan facerecursion L)
+
+
+-- PURPOSE : Computing the stellar subdivision
+--   INPUT : '(F,r)', where 'F' is a Fan and 'r' is a ray
+--  OUTPUT : A fan, which is the stellar subdivision
+stellarSubdivision = method(TypicalValue => Fan)
+stellarSubdivision (Fan,Matrix) := (F,r) -> (
+     -- Checking for input errors
+     if numColumns r != 1 or numRows r != ambDim F then error("The ray must be given by a one column matrix in the ambient dimension of the fan");
+     divider := (C,r) -> if dim C != 1 then flatten apply(faces(1,C), f -> if not contains(f,r) then posHull {f,r} else divider(f,r)) else {C};
+     fan flatten apply(genCones F, C -> if contains(C,r) then divider(C,r) else {C}));
 
 
 -- PURPOSE : Computing the tail cone of a given Polyhedron
@@ -6786,7 +6797,7 @@ assert(F == F1)
 ///
 
 -- Test 32
--- Checking fan, skeleton, isComplete, isPure, addCone, isPolytopal
+-- Checking fan, skeleton, isComplete, isPure, addCone, isPolytopal, polytope
 TEST ///
 C = posHull matrix {{1,0,0},{0,1,0},{0,0,1}};
 C1 = posHull matrix {{1,0,0},{0,-1,0},{0,0,1}};
@@ -6808,8 +6819,8 @@ assert(F#"number of generating cones" == 8)
 assert isPure F
 assert isComplete F
 assert isSmooth F
-P = isPolytopal F;
-assert(normalFan P == F)
+assert isPolytopal F
+assert(normalFan polytope F == F)
 ///
 
 -- Test 33
