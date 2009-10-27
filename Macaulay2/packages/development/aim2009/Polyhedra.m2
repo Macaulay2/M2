@@ -4995,7 +4995,7 @@ document {
 	  },
      
      PARA{}, "If the fan ",TT "F"," is polytopal then ",TT "polytope"," returns a polytope ",TT "P",". ",TT "F"," is the 
-     normal fan of this polytope. Note that such a polytope is not unique."
+     normal fan of this polytope. Note that such a polytope is not unique.",
      
      EXAMPLE {
 	  " F = fan {posHull matrix {{1,0},{0,1}},posHull matrix {{1,-1},{0,1}},posHull matrix {{-1,-1},{0,1}},posHull matrix {{-1,1},{0,-1}},posHull matrix {{1,1},{0,-1}}}",
