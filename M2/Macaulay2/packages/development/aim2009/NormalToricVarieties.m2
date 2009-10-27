@@ -1,3 +1,4 @@
+needsPackage "Polyhedra"
 newPackage(
      "NormalToricVarieties",
      Version => "0.5",
@@ -13,14 +14,13 @@ newPackage(
 export { 
      NormalToricVariety, 
      normalToricVariety, 
-     rays, 
      projectiveSpace, 
      hirzebruchSurface, 
      weightedProjectiveSpace, 
      classGroup, 
      isDegenerate,
+     isFan,
      isSimplicial, 
-     isSmooth,
      weilDivisors, 
      cartierDivisors, 
      cartierToWeil, 
@@ -33,6 +33,7 @@ export {
 -- CODE
 ---------------------------------------------------------------------------
 needsPackage "FourierMotzkin"
+needsPackage "Polyhedra"
 
 Ideal ^ Array := (I,p) -> ideal apply(I_*, i -> i^(p#0))
 
@@ -49,7 +50,20 @@ normalToricVariety (List, List) := (V,F) -> (
 	  symbol facets => F,
 	  symbol cache => new CacheTable})
 
-rays = method(TypicalValue => List)
+normalToricVariety Fan := F -> (
+     R := rays F;
+     Fs := apply(genCones F, C -> (Cr:=rays C; Cr = set apply(numColumns Cr, i -> Cr_{i}); positions(R,r -> Cr#?r)));
+     X := new NormalToricVariety from {
+	  symbol rays => apply(R, r -> flatten entries r),
+	  symbol facets => Fs,
+	  symbol cache => new CacheTable};
+     X.cache.isFan = true;
+     X.cache.Fan = F;
+     X)
+
+normalToricVariety Polyhedron := P -> normalToricVariety normalFan P
+
+--rays = method(TypicalValue => List)
 rays NormalToricVariety := List => X -> X.rays
 max NormalToricVariety := List => X -> X.facets
 
@@ -126,7 +140,7 @@ ideal NormalToricVariety := Ideal => X -> (
 	  n := numgens S;
 	  X.cache.ideal = ideal apply(max X, 
 	       L -> product(n, i -> if member(i,L) then 1_S else S_i)));
-	  X.cache.ideal)
+     X.cache.ideal)
 monomialIdeal NormalToricVariety := MonomialIdeal => X -> monomialIdeal ideal X
 
 NormalToricVariety * NormalToricVariety := NormalToricVariety => (X,Y) -> (
@@ -146,6 +160,37 @@ NormalToricVariety * NormalToricVariety := NormalToricVariety => (X,Y) -> (
 isDegenerate = method(TypicalValue => Boolean)
 isDegenerate NormalToricVariety := X -> kernel matrix rays X != 0
 
+isFan = method(TypicalValue => Boolean)
+isFan NormalToricVariety := X -> (
+     if not X.cache.?isFan then (
+	  X.cache.isFan = false;
+	  if all(rays X, r -> gcd r == 1) and sort unique flatten max X == toList(0..#(rays X)-1) then (
+	       F := max X;
+	       if all(#F-1, i -> all(i+1..#F-1, j -> not (isSubset(set F#i,set F#j) or isSubset(set F#j,set F#i)))) then (
+		    R := matrix transpose rays X;
+		    F = apply(F, f -> (f,posHull R_f));
+		    if all(F, f -> #(f#0) == numColumns rays f#1) then (
+			 F = apply(F, f -> f#1);
+			 if commonFace F then (
+			      X.cache.Fan = makeFan F;
+			      X.cache.isFan = true)))));
+     X.cache.isFan)
+
+isComplete NormalToricVariety := X -> (
+     if not X.cache.?isFan then isFan X;
+     if not X.cache.isFan then error("The data does not define a Fan");
+     isComplete X.cache.Fan)
+
+isPure NormalToricVariety := X -> (
+     if not X.cache.?isFan then isFan X;
+     if not X.cache.isFan then error("The data does not define a Fan");
+     isPure X.cache.Fan)
+
+isProjective NormalToricVariety := X -> (
+     if not X.cache.?isFan then isFan X;
+     if not X.cache.isFan then error("The data does not define a Fan");
+     isProjective X.cache.Fan)
+
 isSimplicial = method(TypicalValue => Boolean)
 isSimplicial NormalToricVariety := X -> (
      if not X.cache.?simplicial then (
@@ -153,7 +198,7 @@ isSimplicial NormalToricVariety := X -> (
      	  X.cache.simplicial = all(max X, s -> #s == rank V_s));
      X.cache.simplicial)
      
-isSmooth = method(TypicalValue => Boolean)
+--isSmooth = method(TypicalValue => Boolean)
 isSmooth NormalToricVariety := X -> (
      if not X.cache.?smooth then (
      	  V := transpose matrix rays X;
@@ -162,6 +207,11 @@ isSmooth NormalToricVariety := X -> (
 		    else abs det V_s == 1));
 	  if X.cache.smooth == true then X.cache.simplicial = true);
      X.cache.smooth)
+
+makeFan NormalToricVariety := X -> (
+     if not X.cache.?isFan then isFan X;
+     if not X.cache.isFan then error("The data does not define a fan");
+     X.cache.Fan)
 
 weilDivisors = method(TypicalValue => Module)
 weilDivisors NormalToricVariety := X -> (
@@ -405,7 +455,7 @@ document {
      geometric objects.  An introduction to the theory of normal toric
      varieties can be found in the following textbooks:",
      UL { 
-	  {"Günter Ewald, ", EM "Combinatorial convexity and algebraic
+	  {"GÃ¼nter Ewald, ", EM "Combinatorial convexity and algebraic
            geometry", ", Graduate Texts in Mathematics 168. 
 	   Springer-Verlag, New York, 1996. ISBN: 0-387-94755-8" },
 	  {"William Fulton, ", EM "Introduction to toric varieties",
@@ -481,7 +531,7 @@ document {
      }	
 
 document { 
-     Key => {rays, (rays, NormalToricVariety)},
+     Key => {(rays, NormalToricVariety)},
      Headline => "the rays of the fan",
      Usage => "rays X",
      Inputs => {"X" => NormalToricVariety},
@@ -969,7 +1019,7 @@ document {
      }     
 
 document { 
-     Key => {isSmooth, (isSmooth,NormalToricVariety)},
+     Key => {(isSmooth,NormalToricVariety)},
      Headline => "whether a toric variety is smooth",
      Usage => "isSmooth X",
      Inputs => {"X" => NormalToricVariety},
@@ -1409,7 +1459,7 @@ document {
      HREF("http://arxiv.org/abs/math.AC/0305214", "Multigraded
      Castelnuovo-Mumford regularity"), ", ", EM "J. Reine
      Angew. Math. ", BOLD "571", " (2004), 179-212.  The general case
-     uses the methods described in David Eisenbud, Mircea Mustaţǎ,
+     uses the methods described in David Eisenbud, Mircea MustaÅ£Ç,
      Mike Stillman, ", HREF("http://arxiv.org/abs/math.AG/0001159",
      "Cohomology on toric varieties and local cohomology with monomial
      supports"), ", ", EM "J. Symbolic Comput. ", BOLD "29", " (2000),
