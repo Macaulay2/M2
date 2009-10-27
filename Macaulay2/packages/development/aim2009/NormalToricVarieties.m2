@@ -457,7 +457,7 @@ document {
      geometric objects.  An introduction to the theory of normal toric
      varieties can be found in the following textbooks:",
      UL { 
-	  {"GÃ¼nter Ewald, ", EM "Combinatorial convexity and algebraic
+	  {"Günter Ewald, ", EM "Combinatorial convexity and algebraic
            geometry", ", Graduate Texts in Mathematics 168. 
 	   Springer-Verlag, New York, 1996. ISBN: 0-387-94755-8" },
 	  {"William Fulton, ", EM "Introduction to toric varieties",
@@ -1652,6 +1652,6 @@ end
 ---------------------------------------------------------------------------
 restart
 uninstallPackage "NormalToricVarieties"
-installPackage "NormalToricVarieties"
+installPackage("NormalToricVarieties", AbsoluteLinks => false)
 check NormalToricVarieties
 
