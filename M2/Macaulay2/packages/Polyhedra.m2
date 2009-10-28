@@ -526,11 +526,6 @@ fan List := L -> (
 	  rayList := rays C;
 	  -- Collecting the rays
 	  rayList = apply(numColumns rayList, i-> rayList_{i});
-	  Ffaces := {};
-	  completeness := false;
-	  if ad == dim C then (
-	       Ffaces = faces(1,C);
-	       completeness = Ffaces == {});
 	  -- Generating the new fan
 	  F = new Fan from {
 	  "generatingCones" => set {C},
@@ -540,8 +535,6 @@ fan List := L -> (
 	  "rays" => set rayList,
 	  "number of rays" => #rayList,
 	  "isPure" => true,
-	  "faces" => set Ffaces,
-	  "isComplete" => completeness,
 	  symbol cache => new CacheTable});
      -- Checking the remaining list for input errors and reducing fans in the list
      -- to their list of generating cones
@@ -594,15 +587,8 @@ addCone (Cone,Fan) := (C,F) -> (
      else GC = flatten GC;
      -- If 'C' was added to the Fan as a generating cone then the codim 1 faces on the boundary have to changed to check for 
      -- completeness
-     Ffaces := toList F#"faces";
-     completeness := F#"isComplete";
      rayList := toList F#"rays";
      if inserted then (
-	  if d == C#"ambient dimension" then (
-	       facets := faces(1,C);
-	       (sFfaces,sfacets) := (set Ffaces,set facets);
-	       Ffaces = join(select(Ffaces,i->not sfacets#?i),select(facets,i->not sFfaces#?i));
-	       completeness = Ffaces == {});
 	  -- The rays of 'C' have to be added
 	  rm := rays C;
 	  rm = apply(numColumns rm, i -> rm_{i});
@@ -616,8 +602,6 @@ addCone (Cone,Fan) := (C,F) -> (
 	  "rays" => set rayList,
 	  "number of rays" => #rayList,
 	  "isPure" => true,
-	  "faces" => set Ffaces,
-	  "isComplete" => completeness,
 	  symbol cache => new CacheTable})
 
 
@@ -960,7 +944,16 @@ isCompact Polyhedron := P -> P#"linealitySpace" == 0 and P#"rays" == 0
 --   INPUT : 'F'  a Fan
 --  OUTPUT : 'true' or 'false'
 isComplete = method(TypicalValue => Boolean)
-isComplete Fan := F -> F#"isComplete"
+isComplete Fan := F -> (
+     if not F.cache.?isComplete then (
+	  n := F#"top dimension of the cones";
+	  F.cache.isComplete = if n == ambDim F then (
+	       symmDiff := (x,y) -> ((x,y) = (set x,set y); toList ((x-y)+(y-x)));
+	       Lfaces := {};
+	       scan(genCones F, C -> if dim C == n then Lfaces = symmDiff(Lfaces,faces(1,C)));
+	       Lfaces == {})
+	  else false);
+     F.cache.isComplete)
 
 
 -- PURPOSE : Tests if a Polyhedron is empty
@@ -1829,7 +1822,18 @@ stellarSubdivision (Fan,Matrix) := (F,r) -> (
      -- Checking for input errors
      if numColumns r != 1 or numRows r != ambDim F then error("The ray must be given by a one column matrix in the ambient dimension of the fan");
      divider := (C,r) -> if dim C != 1 then flatten apply(faces(1,C), f -> if not contains(f,r) then posHull {f,r} else divider(f,r)) else {C};
-     fan flatten apply(genCones F, C -> if contains(C,r) then divider(C,r) else {C}));
+     L := flatten apply(genCones F, C -> if contains(C,r) then divider(C,r) else {C});
+     L = sort select(L, l -> all(L, e -> not contains(e,l) or e == l));
+     n := dim L#0;
+     new Fan from {
+	  "generatingCones" => set L,
+	  "ambient dimension" => ambDim L#0,
+	  "top dimension of the cones" => n,
+	  "number of generating cones" => #L,
+	  "rays" => set apply(rays X, r -> matrix transpose {r}),
+	  "number of rays" => numColumns R,
+	  "isPure" => dim L#0 == dim last L,
+	  symbol cache => new CacheTable})
 
 
 -- PURPOSE : Computing the tail cone of a given Polyhedron
@@ -6957,7 +6961,7 @@ assert(F#"generatingCones" === set {C})
 assert(F#"ambient dimension" == 3)
 assert(F#"top dimension of the cones" == 3)
 assert(F#"number of generating cones" == 1)
-assert not F#"isComplete"
+assert not isComplete F
 ///
 
 -- Test 31
@@ -6972,8 +6976,6 @@ assert(F#"generatingCones" === set {C,C1,C2,C3})
 assert(F#"ambient dimension" == 3)
 assert(F#"number of generating cones" == 4)
 assert(F#"isPure")
-L = set {posHull matrix {{1,0},{0,-1},{0,0}},posHull matrix {{0,0},{0,-1},{1,0}},posHull matrix {{-1,0},{0,1},{0,0}},posHull matrix {{-1,0},{0,0},{0,1}},posHull matrix {{1,0},{0,0},{0,-1}},posHull matrix {{0,0},{1,0},{0,-1}}};
-assert(L === F#"faces")
 L = set {matrix {{1_QQ},{0},{0}},matrix {{-1_QQ},{0},{0}},matrix {{0_QQ},{1},{0}},matrix {{0_QQ},{-1},{0}},matrix {{0_QQ},{0},{1}},matrix {{0_QQ},{0},{-1}}};
 assert(L === F#"rays")
 C = posHull matrix {{-1,0},{0,1},{0,0}};
