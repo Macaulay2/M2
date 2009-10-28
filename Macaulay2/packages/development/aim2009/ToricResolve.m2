@@ -112,18 +112,9 @@ resolveSingularities :=   X->(
 makeSimplicial = method
 makeSimplicial NormalToricVariety  := NormalToricVariety =>  X->(
      Y := fan X;
-     done := false;
-     while not done do (
-	  for i from 3 to dim Y do apply( cones(i,Y), sigma -> if #(rays sigma) > i then (
-		    rho := transpose matrix{flatten entries(rays sigma)_0};
-		    Y = stellarSubdivision (Y,rho);
-		    )
-	       );
-	  done = true;
-	  );
+     makeSimplicialFan Y;
      return normalToricVariety Y
      )
-
 
 makeSimplicial Fan  := Fan =>  X->(
      Y := X;
@@ -155,28 +146,108 @@ blowup (NormalToricVariety,Matrix)  :=  (X,rho)->(
 
 beginDocumentation()
 
-document {
-     Key => {makePos, (makePos, List, ZZ)}
-     Headline => "find a mod p representative of a vector with entries between 0 (inclusive) and p (exclusive)",
-     Usage => "makePos(v,p)",
-     Inputs => {
-		"v" => "a List of integers",
-		"p" => "an integer", 
-		},
-     Outputs => {List => "a mod p representative of a vector"},
---     Consequences => {
-          -- each effect is a hypertext list
---          },
-     "This is used to choose a rays while making a simplicial NormalToricVariety smooth.",
-     EXAMPLE {
-          "m2code",
-          "m2code",
-          "m2code"
-          },
---     "There can be explanatory prose here in the form of a hypertext list.",
-     Caveat => {"The List input should really be a matrix."}
-     }
+doc ///
+  Key	
+	makePos
+	(makePos, List, ZZ)
+  Headline
+	find a mod p representative of a vector with entries between 0 (inclusive) and p (exclusive)
+  Usage
+	makePos(v,p)
+  Inputs
+	v:List
+	  a List of integers
+	p:ZZ
+	  an integer
+  Outputs
+	w:List 
+	  a mod p representative of {\tt v}
+  Description
+   Text
+	This is used to find primitive vectors while resolving the singularities of a simplicial normal toric variety.
+   Text
+   Example
+   Text
+   Example
+  Caveat The List input/output should really be a matrix.
+--  SeeAlso
+///
 
 
+doc ///
+  Key
+	makeSimplicial
+	(makeSimplicial, NormalToricVariety)
+	(makeSimplicial, Fan)
+  Headline
+	make simplicial
+  Usage
+	makeSimplicial X	
+  Inputs
+	X:NormalToricVariety or Fan
+  Outputs
+	Y:NormalToricVariety or Fan 
+	  depends on input -----WHAT IS THE CORRECT WAY TO DOCUMENT THIS?
+  Description
+   Text
+   Text
+   Example
+   Text
+   Example
+  Caveat
+  SeeAlso
+///
+
+
+doc ///
+  Key
+	resolveSingularities
+	(resolveSingularities, NormalToricVariety)
+  Headline
+	resolve the singularities of a normal toric variety
+  Usage
+	Y = resolveSingularities X
+  Inputs
+	X:NormalToricVariety
+  Outputs
+	Y:NormalToricVariety
+	  a resolution of {\tt X}
+  Description
+   Text
+   Text
+   Example
+   Text
+   Example
+--  Caveat
+--  SeeAlso
+///
+
+
+
+
+doc ///
+  Key
+	blowup
+	(blowup,NormalToricVariety,Matrix)
+  Headline
+	the blowup of a normal toric variety
+  Usage
+	blowup(X,v)
+  Inputs
+	X = NormalToricVariety
+	v = Matrix
+  Outputs
+	Y:NormalToricVariety
+	  The normal toric variety obtained by adding the ray defined by {\tt v} to the fan of {\tt X}. 
+  Description
+   Text
+   Text
+   Example
+   Text
+   Example
+  Caveat
+	The input matrix {\tt v} must be a column vector in the ambient space of the fan of {\tt X}.
+--  SeeAlso
+///
 
 end
