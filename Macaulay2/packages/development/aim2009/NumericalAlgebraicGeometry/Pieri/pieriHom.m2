@@ -2,7 +2,7 @@ loadPackage ("NumericalAlgebraicGeometry", FileName=>"../../NumericalAlgebraicGe
 load "pieri.m2";
 
 H = new MutableHashTable
--- GT list of numerical matrices that define the start system
+-- G list of numerical matrices that define the start system
 G = {};
 
 launchSimpleSchubert = method()
