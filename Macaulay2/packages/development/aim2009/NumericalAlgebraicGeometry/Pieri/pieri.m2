@@ -23,10 +23,10 @@ skewSchubertVariety(ZZ,ZZ,List,List) := (k,n,l,m)->(
      )
      
 generateChildren = method(TypicalValue=>List)
-generateChildren List := m -> (
+generateChildren(Sequence, List) := (kn, m) -> (
+ (k,n):=kn;
  L := apply(#m, i->if n-k>=m#i+1 then take(m,i)|{m#i+1}|drop(m,i+1));
- print L;
- select(L, a-> a==reverse sort a)
+ select(L, a-> a=!=null and a==reverse sort a)
 )
 
 positionVariableChildren = method(TypicalValue=>ZZ)
@@ -43,18 +43,15 @@ insertSolution(List,List) := (v,s) ->(
    take(s,i)|{0}|drop(s,i)
 )
 precookPieriHomotopy = method(TypicalValue=>List)
-precookPieriHomotopy(Sequence,List,List,List) := (kn,l,m,M)->(
+precookPieriHomotopy(Sequence,List,List) := (kn,l,m)->(
      -- k and n are the integers defining the Grassmanian G(k,n)
      -- l and m are partitions of n
-     -- M is a list of children solutions {p,s} 
-     -- where p is a permutation, s is a list of solutions
      (k,n) := kn;
      if #l < k then for i from 1 to k-#l do (l=l|{0}); -- makes sure l have size k
      if #m < k then for i from 1 to k-#m do (m=m|{0}); -- makes sure m have size k
      E := skewSchubertVariety(k,n,l,m);
      d := (k*(n-k)-sum(l)-sum(m));
      S := QQ[x_1..x_d];
-   if #M == d then (
      P := 1..n;
      P = toList P;
      for j from 0 to k-1 do (
@@ -65,8 +62,6 @@ precookPieriHomotopy(Sequence,List,List,List) := (kn,l,m,M)->(
       apply(#P, j->G_(j,P_(j)-1)=1);
       F=matrix E || sub(matrix G, ring E);
       return F;
-   )
-     else "wrong size of M"
 )
 /// 
 restart
