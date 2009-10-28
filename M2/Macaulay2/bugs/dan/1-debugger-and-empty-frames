@@ -1,0 +1,29 @@
+-- -*- M2 -*- It's counter-intuitive that the debugger won't stop in g as we ascend the stack:
+
+    f = () -> (
+	 1/0;
+	 4)
+    g = () -> (
+	 3;
+	 if true then f();
+	 5)
+
+
+end
+load "1-debugger-and-empty-frames"
+g()
+
+
+
+Macaulay2, version 1.2.99
+with packages: ConwayPolynomials, Elimination, IntegralClosure, LLLBases, PrimaryDecomposition, ReesAlgebra, SchurRings, TangentCone
+
+i1 : load "1-debugger-and-empty-frames"
+
+i2 : g()
+1-debugger-and-empty-frames:4:11:(1):[2]: error: division by zero
+1-debugger-and-empty-frames:4:11:(1):[2]: --entering debugger (type help to see debugger commands)
+1-debugger-and-empty-frames:4:10-4:12: --source code:
+         1/0;
+
+ii3 : end

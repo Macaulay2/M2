@@ -217,7 +217,7 @@ document {
      	  ///,
      PARA{},
      "If you plan on using the same substitution over and over, it is
-     wise to create a ring map which will perform the same substitution.",
+     wise to create a ring map that will perform the same substitution.",
      PARA{},
      "For example, in the first example above, we can make ", ofClass RingMap, " ", TT "G", ", and then apply 
      it to ", TT "F", ".",

@@ -1,0 +1,10 @@
+We could introduce ;; as an operator that is like ';', except at top level, no
+output values are recorded and the line number is not incremented.  This would
+be a convenient way of inserting statements with no effect on subsequence line
+numbers, for convenience in comparing the output.
+
+    i1 : 1;;
+    stdio:1:3:(1):[0]: error: syntax error at ';'
+
+    i2 : 1;;3
+    stdio:1:6:(1):[0]: error: syntax error at ';'

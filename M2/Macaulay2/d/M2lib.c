@@ -252,10 +252,12 @@ bool interrupt_jump_set = FALSE;
 
 static void interrupt_handler(int sig)
 {
+#if 0
      int r;
      if (isatty(STDIN) && isatty(STDOUT) && !reading_from_readline) {
         r = write(STDERR,"\n",1);
      }
+#endif
      if (system_interruptedFlag || system_interruptPending) {
 	  if (isatty(STDIN) && isatty(STDOUT)) while (TRUE) {
 	       char buf[10];
@@ -729,8 +731,13 @@ char **argv;
 	       }
 	  actors5_GCVERSION = tostring(buf);
 	  }
-     actors5_GMPVERSION = tostring(/* __gmp_version */ "not present");
+#ifdef __MPIR_VERSION
+     actors5_GMPVERSION = tostring("not present");
      actors5_MPIRVERSION = tostring(__mpir_version);
+#else
+     actors5_GMPVERSION = tostring(__gmp_version);
+     actors5_MPIRVERSION = tostring("not present");
+#endif
      actors5_PYTHONVERSION = tostring(
 #ifdef HAVE_PYTHON
          PY_VERSION				      

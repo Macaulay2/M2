@@ -10,7 +10,7 @@ document {
 	  "f" => {"either a ", TO "Matrix", " or a ", TO "RingElement"}
 	  },
      Outputs => {
-	  Matrix => {"a one row matrix in the same ring with all of the monomials which
+	  Matrix => {"a one row matrix in the same ring with all of the monomials that
 	       appear in ", TT "f"}
 	  },
      "Each monomial only appears once, and the monomials are sorted in what order?",

@@ -236,7 +236,7 @@ document {
 	  },
      PARA{
 	  "Use ", TT "openInOut f", " to accept an incoming connection on the listener,
-	  returning a new input output file which serves as the connection.  The function
+	  returning a new input output file that serves as the connection.  The function
 	  ", TO "isReady", " can be used to determine whether an incoming connection has
 	  arrived, without blocking."
 	  },
@@ -669,7 +669,7 @@ protect incomparable
 document {
      Key => incomparable,
      Headline => "a result indicating incomparability",
-     TT "incomparable", " a symbol which may be returned by ", TO "?", "
+     TT "incomparable", " a symbol that may be returned by ", TO "?", "
      when the two things being compared are incomparable."
      }
 
@@ -745,7 +745,7 @@ document {
      Headline => "run an external command", 
      Usage => "run s",
      Inputs => { "s" => String => {"a command understandable by your operating system"} },
-     Outputs => { "the exit status of the command (a small integer which is normally zero)" } }
+     Outputs => { "the exit status of the command (a small integer that is normally zero)" } }
 document {
      Key => wait,
      Headline => "wait for child process", 
@@ -989,7 +989,7 @@ document {
      Headline => "deliver error message",
 	Usage => "error s",
 	Inputs => {
-		"s" => String => "a string or a sequence which can be converted to strings"
+		"s" => String => "a string or a sequence of things that can be converted to strings"
 		},
 	Consequences => {
 		"an error message is displayed"
@@ -997,7 +997,7 @@ document {
      TT "error s", " causes an error message s to be displayed.",
      PARA{},
      "The error message ", TT "s", " (which should be a string or a sequence of
-     things which can be converted to strings and concatenated) is printed.
+     things that can be converted to strings and concatenated) is printed.
      Execution of the code is interrupted, and control is returned
      to top level. Here is an explicit example showing how this command is used:",
      PRE///exampleCode = p -> (
@@ -1060,7 +1060,7 @@ document {
      and only if x is.",
      PARA{},
      "It is not advisable to copy such things as modules and rings,
-     for the operations which have already been installed for them will return
+     for the operations that have already been installed for them will return
      values in the original object, rather than in the copy.",
      PARA{},
      SeeAlso => { "newClass" }
@@ -1258,7 +1258,7 @@ document {
 document {
      Key => {symbol =>,(symbol =>, Thing, Thing)},
      Headline => "produce an Option",
-     TT "x => y", " a binary operator which produces a type of list called
+     TT "x => y", " a binary operator that produces a type of list called
      an ", TO "Option", "."
      }
 

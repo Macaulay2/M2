@@ -65,7 +65,7 @@ document {
 	       "which displays this page in your browser."}
 	  },
      HEADER3 "Documentation style conventions",
-	"There are a few stylistic conventions which should be noted:",
+	"There are a few stylistic conventions that should be noted:",
 	UL {
 		{"Lowercase is used for all titles, unless a proper noun is being used."},
 		{"The name of any Macaulay2 function, option, or variable, occurring in the documentation 
@@ -93,7 +93,7 @@ document {
 	  {TT "HR", " -- a horizontal rule (line)"},
 	  TO "PARA",
 	  },
-     "Items which take a text string (or other hypertext list) as argument",
+     "Items that take a text string (or other hypertext list) as argument",
      UL {
 	  {TT "TT s", " -- makes the argument ", TT "s", " into a 
 	                typewriter like, fixed font"},
@@ -104,7 +104,7 @@ document {
 	  {TT "SUB s", " -- subscript"},
 	  {TT "SUP s", " -- superscript"},
 	  },
-     "Items which place hyperlinks into the documentation",
+     "Items that place hyperlinks into the documentation",
      UL {
 	  TO TO,
 	  TO TOH,

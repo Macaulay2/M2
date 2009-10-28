@@ -18,23 +18,31 @@ CHECKCMD ?= $(MAKE) -C $(BUILDDIR) $(CHECKOPTIONS) $(CHECKTARGET)
 LIBRARIESDIR := $(PREFIX)
 PRECONFIGURE  ?= :
 CONFIGOPTIONS += --build=@build@ --host=@host@ --cache-file=/dev/null
-CONFIGENV     = env \
-	CPPFLAGS="$(CPPFLAGS)" \
-	CC="$(CC)" \
-	CFLAGS="$(CFLAGS)" \
-	CXX="@CXX@" \
+COMPILEFLAGS  = \
 	CXXFLAGS="$(CXXFLAGS)" \
-	LDFLAGS="$(LDFLAGS)" \
-	LOADLIBES="$(LOADLIBES)" \
-	LDLIBS="$(LDLIBS)" \
+	CFLAGS="$(CFLAGS)" \
 	FFLAGS="$(FCFLAGS)" \
 	FCFLAGS="$(FCFLAGS)"
+CONFIGENV     = env \
+	$(COMPILEFLAGS) \
+	CPPFLAGS="$(CPPFLAGS)" \
+	CC="$(CC)" \
+	CXX="@CXX@" \
+	LDFLAGS="$(LDFLAGS)" \
+	LOADLIBES="$(LOADLIBES)" \
+	LDLIBS="$(LDLIBS)"
 CONFIGURESCRIPT ?= configure
 CONFIGURECMD  ?= $(PRECONFIGURE) && $(CONFIGENV) ./$(CONFIGURESCRIPT) --prefix=$(LIBRARIESDIR) $(CONFIGOPTIONS)
 BUILDTARGET   ?= 
 BUILDCMD      ?= $(MAKE) $(BUILDOPTIONS) $(BUILDTARGET)
 INSTALLTARGET ?= install
 INSTALLCMD    ?= $(MAKE) $(INSTALLOPTIONS) prefix=$(LIBRARIESDIR) $(INSTALLTARGET)
+STRIPFILES    ?= 
+ifeq ($(STRIPFILES),)
+  STRIPCMD = true
+else
+  STRIPCMD = strip $(STRIPFILES)
+endif
 BUILDDIR      ?= $(UNTARDIR)/$(TARDIR)
 TAROPTIONS    ?= --gzip
 UNTARCMD      ?= @TAR@ xf $(TARFILE_DIR)/$(TARFILE) $(TAROPTIONS)
@@ -60,8 +68,8 @@ patch: .patched-$(VERSION)
 compile: .compiled-$(VERSION) config-chk
 configure: .configured-$(VERSION) config-chk
 config-chk:
-.installed-$(VERSION)  : .compiled-$(VERSION)   ; @ set -x ; ( cd $(BUILDDIR) && $(INSTALLCMD)   ) && touch $@
-.compiled-$(VERSION)   : .configured-$(VERSION) ; @ set -x ; ( cd $(BUILDDIR) && $(BUILDCMD)     ) && touch $@
+.installed-$(VERSION)  : .compiled-$(VERSION)   ; @ set -x ; ( cd $(BUILDDIR) && $(INSTALLCMD)  ) && touch $@
+.compiled-$(VERSION)   : .configured-$(VERSION) ; @ set -x ; ( cd $(BUILDDIR) && $(BUILDCMD) && $(STRIPCMD) ) && touch $@
 .configured-$(VERSION) : .patched-$(VERSION)    ; @ set -x ; ( cd $(BUILDDIR) && $(CONFIGURECMD) ) && touch $@
 ifneq ($(PATCHFILE),)
 .patched-$(VERSION) : $(PATCHFILE)
@@ -113,7 +121,7 @@ $(TARFILE_DIR)/$(TARFILE) :
 ifeq (@DOWNLOAD@,yes)
 	(cd $(TARFILE_DIR) && $(FETCHER) $(URL)/$(TARFILE) $(FETCHOPTS) && $(CHECKFETCHED))
 else
-	@ echo "error: third-party library source code not present: $(LIBNAME)" >&2
+	@ echo "error: third-party library or program source code not present: $(LIBNAME)" >&2
 	@ echo "       in file $@" >&2
 	@ echo "       and not configured for automatic downloading with --enable-download" >&2
 	@ false
@@ -121,7 +129,27 @@ endif
 distclean: package-distclean
 clean::; rm -rf .patched* .untarred* $(LIBNAME)* .compiled* .configured* .installed* .untarred2* diffs tmp $(TARDIR) $(UNTARDIR) $(OLDUNTARDIR)
 distclean: clean ; rm -rf Makefile
-check:; $(CHECKCMD)
+
+SLIMIT ?= 8192
+TLIMIT ?= 100
+MLIMIT ?= 400000
+VLIMIT ?= 400000
+LIMIT := :
+ifeq (@ULIMIT_T@,yes)
+LIMIT += ; ulimit -t $(TLIMIT)
+endif
+ifeq (@ULIMIT_M@,yes)
+LIMIT += ; ulimit -m $(MLIMIT)
+endif
+ifeq (@ULIMIT_V@,yes)
+LIMIT += ; ulimit -v $(VLIMIT)
+endif
+ifeq (@ULIMIT_S@,yes)
+LIMIT += ; ulimit -s $(SLIMIT)
+endif
+check:
+	$(LIMIT); time $(CHECKCMD)
+
 ls:; ls -la . tarfiles
 help:;
 	@ echo ""

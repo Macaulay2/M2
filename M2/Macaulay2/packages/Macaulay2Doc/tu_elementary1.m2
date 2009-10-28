@@ -65,7 +65,7 @@ F = random(R^1, R^{-2,-3})
 GB = gens gb F
 LT = leadTerm GB
 betti LT
--- betti is a routine which displays degrees of generators
+-- betti is a routine that displays degrees of generators
 -- and also in free resolutions (which we will learn about later).
 
 -- In this case, the output
@@ -169,7 +169,7 @@ GB = gens gb I
 F = GB_(0,0)
 substitute(F, {y =>t^2+t+1, z=>t^3+1})
 
--- F is the polynomial which gives an algebraic relation between
+-- F is the polynomial that gives an algebraic relation between
 -- $t^2+t+1$ and $t^3+1$.
 
 -- Another way to accomplish this in Macaulay2 is to use the

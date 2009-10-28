@@ -8,32 +8,33 @@ Macaulay2 on MacOS X
 Welcome to Macaulay2!
 
   This file tells how to get Macaulay2 installed and running on your
-  MacOS X 10.4 or 10.5 system, for either power pc, or intel macs.  If
+  MacOS X 10.4, 10.5 or 10.6 system, for either power pc, or intel macs.  If
   you have any difficulty with these instructions, please email us.
 
 Step 1.  Download Macaulay2.
 
   In your browser, download one of the files
 
-    http://www.math.uiuc.edu/Macaulay2/Downloads/MacOSX/Macaulay2-1.2-x86_64-MacOS-10.5.dmg
-    http://www.math.uiuc.edu/Macaulay2/Downloads/MacOSX/Macaulay2-1.2-i386-MacOS-10.5.dmg
-    http://www.math.uiuc.edu/Macaulay2/Downloads/MacOSX/Macaulay2-1.2-i386-MacOS-10.4.dmg
-    http://www.math.uiuc.edu/Macaulay2/Downloads/MacOSX/Macaulay2-1.2-powerpc-MacOS-10.4.dmg
+    http://www.math.uiuc.edu/Macaulay2/Downloads/MacOSX/Macaulay2-1.3-x86_64-MacOS-10.5.dmg
+    http://www.math.uiuc.edu/Macaulay2/Downloads/MacOSX/Macaulay2-1.3-i386-MacOS-10.5.dmg
+    http://www.math.uiuc.edu/Macaulay2/Downloads/MacOSX/Macaulay2-1.3-i386-MacOS-10.4.dmg
+    http://www.math.uiuc.edu/Macaulay2/Downloads/MacOSX/Macaulay2-1.3-powerpc-MacOS-10.4.dmg
 
   If there is a later version, use that instead. 
 
   You need to know 
-    (a) if you are running MacOS 10.4 or 10.5,
+    (a) if you are running MacOS 10.4 or 10.5 or 10.6
     (b) if you want powerpc, i386 (Intel Core Duo), or x86_64 (Intel Core 2 Duo).
 
   You can find this information by choosing "About this Mac" under the
   Apple menu.  The versions for 10.4 should run on 10.5, but the
-  versions for 10.5 do not work on 10.4!
+  versions for 10.5 do not work on 10.4! The 10.5 Macaulay2 binary appears to 
+  work fine for 10.6.
 
-Step 2. Important step for 10.5 users!!!
+Step 2. Important step for 10.5 and 10.6 users!!!
 
   If you are running MacOS 10.4, disregard this step.  If you are
-  running MacOS 10.5, first unmount the disk image, if Safari or Firefox
+  running MacOS 10.5 or 10.6, first unmount the disk image, if Safari or Firefox
   mounted it for you.
 
   Start the Terminal application (located in the Utilities folder in the
@@ -68,7 +69,7 @@ Step 4. Installation
   your Applications folder), and then run the 'setup' routine in
   Macaulay2:
 
-	cd /Applications/Macaulay2-1.2
+	cd /Applications/Macaulay2-1.3
 	cd bin
 	./M2
 	  setup()  -- this line and the next are typed inside 
@@ -94,7 +95,7 @@ Step 5. Try M2 in a terminal window
   correctly modified, then you should see a prompt such as this:
 
 	indigo% M2
-	Macaulay 2, version 1.2
+	Macaulay 2, version 1.3
 	with packages: Elimination, IntegralClosure, LLLBases, 
            PrimaryDecomposition, ReesAlgebra, SchurRings, TangentCone
 	i1 : 

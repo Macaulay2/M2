@@ -52,7 +52,7 @@ document {
      Thus the mathematical notion of a set ", TT "P", " and a subset ", TT "X", " 
      can modeled in this way.",
      PARA{},
-     "Things which don't have instances have the empty class, called
+     "Things that don't have instances have the empty class, called
      ", TO "Nothing", " as their parent.  The parent of ", TO "Thing", "
      is ", TO "Thing", " itself (because every thing is a thing).",
      PARA{},
@@ -459,7 +459,7 @@ document {
 	  },
      Headline => "real description",
      TT "describe x", " -- returns ", ofClass Net, " containing the 
-     real description of ", TT "x", ", bypassing the feature which causes
+     real description of ", TT "x", ", bypassing the feature that causes
      certain types of things to acquire, for brevity, the names of global variables to which
      they are assigned.  For polynomial rings, it also displays the options used at creation.",
      PARA{},

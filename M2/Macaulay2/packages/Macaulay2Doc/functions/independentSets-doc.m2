@@ -18,7 +18,7 @@ document {
 	    is a maximal independent subset of variables modulo ", TT "J"}
 	  },
      "An independent set of variables of an ideal ", TT "J", " in a polynomial ring ", TT "R", " is a 
-     set of variables which are algebraically independent modulo ", TT "J", " (i.e. there is no
+     set of variables that are algebraically independent modulo ", TT "J", " (i.e. there is no
 	  polynomial in ", TT "J", " involving only these sets of variables.",
      PARA{},
      "If the Krull dimension of ", TT "R/J", " is ", TT "d", ", then a maximal independent set is an independent set

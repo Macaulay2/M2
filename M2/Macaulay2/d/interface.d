@@ -698,7 +698,7 @@ export rawQuotientRing(e:Expr):Expr := (
  	       "(Ring *)", B,				    -- 1 by n matrix generating the ideal
  	       ")"
  	       ))
-     else WrongArgMatrix(2)
+     else WrongArg(2,"a raw ring or raw matrix")
      else WrongArg(1,"a raw ring")
      else WrongNumArgs(2)
      else WrongNumArgs(2));

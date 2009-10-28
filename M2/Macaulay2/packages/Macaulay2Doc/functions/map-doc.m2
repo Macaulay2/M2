@@ -50,7 +50,7 @@ document {
      }
 document {
      Key => (map,Module,Module,Function),
-     Headline => "create a matrix by specifying a function which gives each entry",
+     Headline => "create a matrix by specifying a function that gives each entry",
      Usage => "map(M,N,f)",
      Inputs => { "M", "N", "f" },
      Outputs => {
@@ -197,7 +197,7 @@ document {
 	  },
       "The input ", TT "d", " should be ", ofClass ZZ, ", or a list of integers.",
       PARA{},
-      "This routine is often used to take a matrix which has a non-zero degree, 
+      "This routine is often used to take a matrix that has a non-zero degree, 
       and make the degree zero.",
       PARA{},
       "For example, multiplication of a matrix by a scalar increases the 
@@ -244,7 +244,7 @@ document {
      }
 document {
      Key => (map,Module,ZZ,Function),
-     Headline => "create a matrix from a free module by specifying a function which gives each entry",
+     Headline => "create a matrix from a free module by specifying a function that gives each entry",
      Usage => "map(M,n,f)",
      Inputs => { "M", "n", "f" },
      Outputs => {
@@ -480,7 +480,7 @@ document {
      }
 document { 
      Key => (map,Ring,Ring),
-     Headline => "map which associates variables, rest maps to zero",
+     Headline => "make a ring map, using the names of the variables",
      Usage => "map(R,S)",
      Inputs => { "R", "S" },
      Outputs => {
@@ -508,7 +508,7 @@ document {
 	  oo === id_C
 	  ///,
      PARA{},
-     "The ring maps which are created are not always mathematically well-defined.
+     "The ring maps that are created are not always mathematically well-defined.
      For example, the map F below is the natural quotient map, but
      the map ", TT "G", " is not mathematically well-defined, although we can use it in Macaulay2 to
      lift elements of ", TT "E", " to ", TT "D", ".",
@@ -553,7 +553,7 @@ document {
 	  },
      "If the degree d is not given, then d=0 is assumed.",
      PARA{},
-     "The function ", TT "f", " is called only for those indices which represent spots
+     "The function ", TT "f", " is called only for those indices that represent spots
      occupied in both the source and target chain complexes.",
      Caveat => {"This function does not check that the maps ", TT "f(i)",
 	  " commute with the differential of the chain complexes."},

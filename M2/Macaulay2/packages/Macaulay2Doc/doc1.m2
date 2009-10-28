@@ -271,7 +271,7 @@ document {
      Key => Nothing,
      Headline => "the empty class",
      "This class is useful for representing the class of an argument
-     which is missing.  It is also used as the parent for those things which
+     that is missing.  It is also used as the parent for those things that
      are not themselves types, i.e., which do not have instances." 
      }
 document {
@@ -435,7 +435,7 @@ document {
      Headline => "flatten a list by unnesting lists",
      TT "flatten m", " -- produces a new list from ", TT "m", " by
      effectively removing the braces surrounding the elements
-     of any elements of m which happen to be lists.  Also works
+     of any elements of ", TT "m", " that happen to be lists.  Also works
      for matrices.",
      PARA{},
      EXAMPLE "flatten {{2,3,4},{{5}},6}"
@@ -456,7 +456,7 @@ document {
 		"f = matrix {{2, x},{y^2, 23},{z, z^3}}",
 		"flatten f"
 		},
-	"Note that this is the matrix given by unnesting the list which was used to enter the matrix.",
+	"Note that this is the matrix given by unnesting the list that was used to enter the matrix.",
      }
 document {
      Key => {image,(image, Matrix),(image, ChainComplexMap),(image, GradedModuleMap),(image, RingElement)},
@@ -511,7 +511,7 @@ document {
      }
 document {
      Key => GlobalReleaseHook,
-     TT "GlobalReleaseHook", " -- a method name which is consulted when an
+     TT "GlobalReleaseHook", " -- a method name that is consulted when an
      assignment to a global variable is about to occur.",
      PARA{},
      "The method should be a function of two variables: the symbol to which
@@ -536,7 +536,7 @@ document {
      by ", TO "resolution", ".",
      PARA{},
      "This is mainly intended for developers of new routines for chain
-     complexes which have to make use of their internal structure.
+     complexes that have to make use of their internal structure.
      Before running this routine, it is not possible to determine which
      spots in a chain complex are actually occupied by modules or maps."
      }
@@ -565,7 +565,7 @@ document { Key => drop,
      Headline => "drop some elements from a list or sequence", SeeAlso => "take" }
 document {
      Key => {(options, Function),(options, Command),(options, Sequence)},
-     Headline => "get optional arguments and default values for a function which accepts them",
+     Headline => "get optional arguments and default values for a function that accepts them",
      Usage => "options f",
      Inputs => { "f" },
      Outputs => {

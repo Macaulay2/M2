@@ -33,7 +33,7 @@ document {
 document {
      Key => Engine,
      Headline => "specify whether a ring is handled by the engine",
-     TT "Engine", " -- a key for rings which yields the value ", TT "true", " if this
+     TT "Engine", " -- a key for rings that yields the value ", TT "true", " if this
      ring is supported by the ", TO "engine", "."}
 
 
@@ -542,7 +542,7 @@ assert( M == N )
 "
 document {
      Key => Vector, 
-     Headline => "the class of all elements of free modules which are handled by the engine",
+     Headline => "the class of all elements of free modules that are handled by the engine",
      "If ", TT "R", " is a ring handled by the engine, and ", TT "M", " is a free
      module over ", TT "R", ", then M is a subclass of Vector.",
      PARA{},
@@ -797,7 +797,7 @@ document {
 document {
      Key => {super,(super, GradedModule),(super, CoherentSheaf),(super, Matrix),(super, Module)},
      Headline => "get the ambient module",
-     TT "super M", " -- yields the module which the module ", TT "M", " is a submodule of.",
+     TT "super M", " -- yields the module that the module ", TT "M", " is a submodule of.",
      BR{},
      TT "super f", " -- if ", TT "f", " is a map whose target is a submodule 
      of ", TT "M", ", yields the composite of ", TT "f", " with the inclusion into ", TT "M", ".",

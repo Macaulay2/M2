@@ -1,0 +1,6 @@
+these don't quite exist on macosx:
+     AC_SEARCH_LIBS(_rl_comment_begin,readline,,BUILD_readline=yes)
+     AC_SEARCH_LIBS(rl_completion_matches,readline,,BUILD_readline=yes)
+but completion_matches does, and _rl_comment_begin might not be so important,
+so if we avoided those in scclib.c, we might be able to link dynamically and
+not compile readline ourselves

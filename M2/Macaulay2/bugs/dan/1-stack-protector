@@ -1,0 +1,6 @@
+Maybe we should turn on this option in the debug mode:
+
+thallium$ cat foo.c
+main(){ char buf[100]; buf[101]=12; return 0; }
+thallium$ gcc -fstack-protector foo.c && ./a.out
+Abort trap

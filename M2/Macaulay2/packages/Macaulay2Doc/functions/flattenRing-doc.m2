@@ -75,6 +75,7 @@ document {
      PARA{"Once a ring has been declared to be a field with ", TO toField, ", then it will be used as the
      coefficient ring."},
      EXAMPLE lines ///
+     A = QQ[a]/(a^2-3);
      L = toField A
      B = L[x,y,z]/(a*x^2-y^2-z^2, y^3, z^3)
      (D,F) = flattenRing(B[s,t])
@@ -88,7 +89,7 @@ document {
      C3 = C2[p_0..p_4]/(a*s*p_0)[q]/(q^2-a*p_1);
      (D,F) = flattenRing(C3, CoefficientRing=>C2)
      describe D
-     (D,F) = flattenRing(C3, CoefficientRing=>ZZ)
+     (D,F) = flattenRing(C3, CoefficientRing=>QQ)
      describe D
      ///,
      SeeAlso => {presentation, coefficientRing, describe}

@@ -59,7 +59,7 @@ document {
 	  },
      "Sometimes the string representation is just the name.
      See also ", TO "toExternalString", " which will try to convert ", TT "x", "
-     to a string which can be read back into the program later.",
+     to a string that can be read back into the program later.",
      EXAMPLE {
 	  "toString {1,4,a,f,212312,2.123243242}"
 	  },

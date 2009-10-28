@@ -1,0 +1,17 @@
+Macaulay2, version 1.2.99
+with packages: ConwayPolynomials, Elimination, IntegralClosure, LLLBases, PrimaryDecomposition, ReesAlgebra, SchurRings, TangentCone
+
+i1 : A = ZZ/101[a,b]/(a*b)
+
+o1 = A
+
+o1 : QuotientRing
+
+i2 : L = toField A
+
+o2 = L
+
+o2 : PolynomialRing
+
+i3 : assert try (1/(a+b); false) else true
+--error message bumped: a non unit was found in a ring declared to be a field

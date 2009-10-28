@@ -23,7 +23,7 @@ document {
 	  },
      PARA{
 	  "This function is intended for internal use only, and is used in the processing
-     	  of optional arguments for method functions which accept them."
+     	  of optional arguments for method functions that accept them."
 	  },
      EXAMPLE {
 	  "defs = new HashTable from { a => 1, b => 2 };",
@@ -79,7 +79,7 @@ document {
      Key => clearOutput,
      Headline => "forget output values",
 	Usage => "clearOutput",
-     TT "clearOutput", " is a command which attempts to release memory by 
+     TT "clearOutput", " is a command that attempts to release memory by 
      clearing the values retained by the output line symbols.",
      SeeAlso => { "clearAll" }
      }
@@ -88,7 +88,7 @@ document {
      Key => clearAll,
      Headline => "forget everything",
 	Usage => "clearAll",
-     TT "clearAll", " is a command which attempts to release memory by clearing 
+     TT "clearAll", " is a command that attempts to release memory by clearing 
      the values retained by the output line symbols and all the user symbols.",
      SeeAlso => {"userSymbols", "clearOutput"}
      }
@@ -204,7 +204,7 @@ document {
 document {
      Key => {memoize,(memoize, Function),(memoize, Function, List)},
      Headline => "record results of function evaluation for future use",
-     TT "memoize f", " -- produces, from a function ", TT "f", ", a new function which
+     TT "memoize f", " -- produces, from a function ", TT "f", ", a new function that
      behaves the same as ", TT "f", ", but remembers previous answers to be provided
      the next time the same arguments are presented.",
      PARA{},

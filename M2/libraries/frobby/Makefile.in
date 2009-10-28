@@ -25,7 +25,7 @@ PATCHOPTIONS = --ignore-whitespace
 ifeq (@DEBUG@,yes)
 BUILDOPTIONS += MODE=debug
 endif
-CONFIGURECMD = :
+CONFIGURECMD = true
 INSTALLCMD = \
 	$(MKDIR_P) $(LIBRARIESDIR)/lib && \
 	$(MKDIR_P) $(LIBRARIESDIR)/include && \
@@ -34,6 +34,9 @@ INSTALLCMD = \
 	cp src/stdinc.h $(LIBRARIESDIR)/include/stdinc.h
 CHECKTARGET = test
 include ../Makefile.library
+ifeq (@OS@-@ISSUE@,MicrosoftWindows-Cygwin)
+LDFLAGS += -Wl,--enable-auto-import
+endif
 CFLAGS += -Wno-deprecated
 # CFLAGS += -Wfatal-errors
 Makefile: @srcdir@/Makefile.in ; cd ../.. && ./config.status libraries/frobby/Makefile

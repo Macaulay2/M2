@@ -1,0 +1,69 @@
+make source rpms
+
+-----------------------------------------------------------------------------
+
+Date: Mon, 19 Oct 2009 08:42:17 +0100 (BST)
+From: Dr Andrew C Aitchison <A.C.Aitchison@dpmms.cam.ac.uk>
+To: Macaulay2 <macaulay2@googlegroups.com>
+Subject: [Macaulay2] Re: advance release of 1.2.99
+Message-ID: <alpine.LRH.2.00.0910190754250.29748@brambling.dpmms.cam.ac.uk>
+References: <4b860897-447d-4f40-a916-c6127079fe14@d5g2000yqm.googlegroups.com>  <alpine.LRH.2.00.0910180845330.29572@brambling.dpmms.cam.ac.uk>  <d0e47fb8-4b8c-4311-8a82-8fa30514b39a@b15g2000yqd.googlegroups.com>  <alpine.LRH.2.00.0910181716160.28295@pheasant.dpmms.cam.ac.uk> <5b9acead-f48f-4d76-94dd-ce23b56e10f1@f16g2000yqm.googlegroups.com>
+
+On Sun, 18 Oct 2009, Dan Grayson wrote:
+
+> Probably that means I should automate the production of a source rpm
+> for Macaulay2 -- so far, I've automated only the production of a
+> binary rpm (bypassing rpm's way of building).
+
+You could do that.
+I was think of using the option to read the specfile from (possibly
+compressed) tarball, so people could just download
+Macaulay2-1.3-src.tar.bz2, put it in the right directory
+(usually /usr/src/redhat/SOURCES) and run
+ 	rpmbuild -ta Macaulay2-1.3-src.tar.bz2=20
+I must admit I hardly ever do this;
+ 	http://aaronhawley.livejournal.com/17061.html
+describes the process, and makes me think that a source rpm
+might be better after all.
+
+>  I could specify the
+> dependencies on other rpm's appropriately, and your system would just
+> install them.  For 3rd party libraries for which no rpm's exist, I
+> could just include the sources in our rpm, and we would disable the
+> option that allows our makefile to download those libraries' source
+> archives from the internet.
+
+You could do that, or you could leave the download in.
+There might be a problem for 3rd party libraries which have rpms
+but aren't in the distribution ...
+
+> Does that sound like a good plan?  If so, can you point me to the
+> appropriate documentation?
+
+The traditional doc for rpm is Ed Bailey's book "Maximum RPM"
+online at
+ 	http://www.redhat.com/docs/books/max-rpm/
+or
+ 	http://www.oldrpm.org/local/maximum-rpm.ps.gz
+
+Eric Foster-Johnson  has a more recent book "Red Hat RPM Guide"
+a late draft ow which is available at
+ 	http://fedora.redhat.com/docs/drafts/rpm-guide-en/
+
+More rpm docs at
+ 	http://www.oldrpm.org/
+
+> On Oct 18, 11:26=A0am, Dr Andrew C Aitchison
+> <A.C.Aitchi...@dpmms.cam.ac.uk> wrote:
+>> On Sun, 18 Oct 2009, Dan Grayson wrote:
+> ...
+>>
+>> I guess the number of third party libraries makes it difficult,
+>> but I'd really rather the time was spent making the source
+>> distribution easy to build on the standard OSes
+>> (I'm afraid that that might mean a different .spec files for SuSE,
+>> Red Hat and Fedora).
+>> I guess the version dependencies could become a nightmare,
+>> but then again if I already have gc, gdbm, gmp, pari, readline, libtool
+>> etc. installed would I want to build them again just for Macaulay2 ?
+> ..@dpmms.cam.ac.uk =A0 =A0http://www.dpmms.cam.ac.uk/~werdna

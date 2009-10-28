@@ -36,7 +36,7 @@ document {
 	  TO debug,
 	  TO check
 	  },
-     BOLD "Functions which are only rarely used.",
+     BOLD "Functions that are only rarely used.",
      UL {
 	  TO dismiss,
 	  TO uninstallPackage,
@@ -215,7 +215,7 @@ document {
 	       ", TT "AuxiliaryFiles=>true", "."
 	       },
 	  Certification => List => {
-	       "the certfication block inserted by the maintainers of ", EM "Macaulay2", " after the package has been accepted for publication by a 
+	       "the certification block inserted by the maintainers of ", EM "Macaulay2", " after the package has been accepted for publication by a 
 	       journal, such as The Journal of Software for Algebra and Geometry: ", EM "Macaulay2", ".  Authors should
 	       not undertake to create such a certification block themselves."
 	       },

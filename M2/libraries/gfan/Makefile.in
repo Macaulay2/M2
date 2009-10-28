@@ -4,10 +4,11 @@ PATCHFILE = @abs_srcdir@/patch-0.4
 URL = http://www.math.tu-berlin.de/~jensen/software/gfan
 TARFILE = gfan$(VERSION).tar.gz
 TARDIR = gfan$(VERSION)
-CONFIGURECMD = :
+CONFIGURECMD = true
 BUILDOPTIONS = gmppath=$(BUILTLIBPATH) cddpath=$(BUILTLIBPATH) CC="$(CC)" CCC="$(CXX)"
 INSTALLOPTIONS = PREFIX=$(LIBRARIESDIR)
 CHECKTARGET = .
+STRIPFILES = gfan
 include ../Makefile.library
 Makefile: @srcdir@/Makefile.in ; cd ../.. && ./config.status libraries/gfan/Makefile
 # Local Variables:

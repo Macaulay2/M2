@@ -214,14 +214,17 @@ singularLocus(Ideal) := QuotientRing => (I) -> singularLocus(ring I / I)
 
 toField = method()
 toField Ring := R -> (
+     if isField R then error "toField: ring is already a field";
      if R.?Engine and R.Engine then (
-	  rawDeclareField raw R;
-	  R / R := (x,y) -> x * y^-1;
-	  )
-     else notImplemented();
-     R)
-
-toField FractionField := F -> error "toField: fraction field is already a field"
+	  S := R[MonomialOrder => Position => Up, DegreeRank => 0, Join => false, DegreeMap => x -> {}, DegreeLift => x -> toList(degreeLength R : 0)];
+	  rawDeclareField raw S;
+	  remove(S,"has quotient elements");
+	  S.toField = true;
+	  S.isBasic = true;
+	  S / S := (x,y) -> x * y^-1;
+	  S.use = S -> if R.?generators and R.?generatorSymbols then scan(R.generatorSymbols,R.generators,(sym,val) -> sym <- promote(val,S));
+	  S)
+     else error "toField: no method for declaring this type of ring to be a field")
 
 getNonUnit = R -> if R.?Engine and R.Engine then (
      r := rawGetNonUnit raw R;

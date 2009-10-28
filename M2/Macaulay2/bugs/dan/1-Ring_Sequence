@@ -1,0 +1,12 @@
+David likes this idea:
+
+i12 : Ring _ Sequence := (R,s) -> apply(s,i->R_i);
+
+i14 : R = QQ[a,b,c,d];
+
+i15 : R_(1..3)
+
+o15 = (b, c, d)
+
+o15 : Sequence
+

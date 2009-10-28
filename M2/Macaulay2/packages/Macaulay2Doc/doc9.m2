@@ -814,7 +814,7 @@ document {
      "Here is part of an example provided by Luchezar Avramov.  We
      construct a random module over a complete intersection, resolve 
      it over the polynomial ring, and produce a null homotopy for the
-     map which is multiplication by one of the defining equations
+     map that is multiplication by one of the defining equations
      for the complete intersection.",
      EXAMPLE {
 	  "A = ZZ/101[x,y];",

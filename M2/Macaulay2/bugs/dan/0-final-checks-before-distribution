@@ -2,6 +2,15 @@ things to do manually before release
 
         see 0-final-check-interactive-input-behaviour if changes have been made to top level user interaction
 
+	see whether you can interrupt the printing out the following commands, e.g., in emacs with CTRL-C CTRL-C:
+	    		<< 1..50000
+			1..50000
+
+	run a benchmark and compare to previous versions to make sure optimization is on:
+		i1 : benchmark "scan(0..10000,i->i^3)"
+		loadPackage "Benchmark"
+		runBenchmarks
+
 	fix bugs
 
 	add test files
@@ -74,3 +83,4 @@ things to do manually before release
 		   ../Shared/src/M2/Macaulay2/packages/SCSCP/server.m2:21:22-21:32: --source code:
 				 g := openInOut serverSocket;
 
+ 

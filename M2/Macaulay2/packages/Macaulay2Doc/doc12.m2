@@ -517,7 +517,7 @@ document {
 	  (symbol SPACE, HeaderType, Sequence)
 	  },
      Headline => "a class of lists with abbreviated constructors",
-     "These are the types ", TT "X", " of lists which can be constructed
+     "These are the types ", TT "X", " of lists that can be constructed
      by expressions of the form ", TT "X {a,b,c,...}", ".  They also
      act on sequences.",
      PARA{},
@@ -535,7 +535,7 @@ document {
 	  (symbol SPACE, WrapperType, Thing)
 	  },
      Headline => "a class of lists with abbreviated constructors",
-     "These are the types ", TT "X", " of lists which can be constructed
+     "These are the types ", TT "X", " of lists that can be constructed
      by expressions of the form ", TT "X {a,b,c,...}", ", or, for lists of
      length one, by an expression of the form ", TT "X a", ".  They also act
      on sequences.",
@@ -557,7 +557,7 @@ document {
      Key => Holder,
      Headline => "the class of all holder expressions",
      PARA{},
-     "This type of expresssion is a container for a single, arbitrary, thing which
+     "This type of expresssion is a container for a single, arbitrary, thing that
      is basic enough that the correct method for printing does not depend
      on its neighbors in the containing expression.  A negative number would
      not be basic enough for this purpose, since as a member of a sum, it would

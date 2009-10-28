@@ -75,7 +75,7 @@ betti C
 -- generators of degree 2, one syzygy of degree 3, 2 syzygies of degree 4, and
 -- one second syzygy of degree 5.
 
--- The free resolution of a module which is not a cokernel:
+-- The free resolution of a module that is not a cokernel:
 C = res Nbar
 betti C
 C.dd

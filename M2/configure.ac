@@ -1,4 +1,4 @@
-AC_INIT(Macaulay 2, 1.2.99, Macaulay2@math.uiuc.edu, Macaulay2)
+AC_INIT(Macaulay 2, 1.3.0.1, Macaulay2@math.uiuc.edu, Macaulay2)
 AC_CONFIG_HEADERS(include/M2/config.h)
 AC_CONFIG_FILES(m4_include(config/files))
 AC_SUBST(CONFIGURED_FILES,"$ac_config_files")
@@ -180,10 +180,28 @@ dnl AC_ARG_VAR(CXX,C++ compiler to use)
 AC_PROG_RANLIB()
 AC_PROG_INSTALL()
 AC_PROG_AWK()
-AC_PROG_CC()
-AC_SUBST(GCC) # gets set to yes or no somehow
 
-AC_PROG_CXX()
+AC_SUBST(OPTIMIZE,yes) AC_ARG_ENABLE(optimize, AS_HELP_STRING(--disable-optimize,disable optimization), OPTIMIZE=$enableval)
+AC_SUBST(DEBUG,no)     AC_ARG_ENABLE(debug, AS_HELP_STRING(--enable-debug,enable debugging (and disable stripping)), DEBUG=$enableval)
+AC_SUBST(M2_CPPFLAGS,)
+
+if test "$DEBUG" = yes
+then M2_CPPFLAGS="$M2_CPPFLAGS -DDEBUG"
+else M2_CPPFLAGS="$M2_CPPFLAGS -DNDEBUG"
+fi
+
+if test "$OPTIMIZE" = yes
+then CFLAGS="-O3"
+     CXXFLAGS="-O3"
+else CFLAGS="-g -O0 -fno-inline"
+     CXXFLAGS="-g -O0 -fno-inline"
+     LDFLAGS="$LDFLAGS -g"
+fi
+
+AC_PROG_CC() 			# set CFLAGS before this
+AC_SUBST(GCC)			# gets set to yes or no by AC_PROG_CC
+AC_PROG_CXX()			# set CXXFLAGS before this
+AC_SUBST(GXX)			# gets set to yes or no by AC_PROG_CXX
 AC_PROG_YACC()
 
 dnl this macro is available only in autoconf 2.60, but most systems have 2.59 as the default:
@@ -304,8 +322,6 @@ AC_SUBST(PTHREADS,yes) AC_ARG_ENABLE(pthreads, AS_HELP_STRING(--disable-pthreads
 AC_SUBST(STRIP,yes)    AC_ARG_ENABLE(strip, AS_HELP_STRING(--disable-strip,do not strip the symbol table from the Macaulay 2 binary), STRIP=$enableval)
 AC_SUBST(STATIC,no)    AC_ARG_ENABLE(static, AS_HELP_STRING(--enable-static,enable static linking), STATIC=$enableval)
 AC_SUBST(MEMDEBUG,no)  AC_ARG_ENABLE(memdebug, AS_HELP_STRING(--enable-memdebug,enable memory allocation debugging), MEMDEBUG=$enableval)
-AC_SUBST(OPTIMIZE,yes) AC_ARG_ENABLE(optimize, AS_HELP_STRING(--disable-optimize,disable optimization), OPTIMIZE=$enableval)
-AC_SUBST(DEBUG,no)     AC_ARG_ENABLE(debug, AS_HELP_STRING(--enable-debug,enable debugging (and disable stripping)), DEBUG=$enableval)
 AC_SUBST(ENCAP,no)     AC_ARG_ENABLE(encap, AS_HELP_STRING(--enable-encap,encapsulate all files in a subdirectory at installation time), ENCAP=$enableval)
 AC_SUBST(XCODE,no)     AC_ARG_ENABLE(xcode, AS_HELP_STRING(--enable-xcode,create Macaulay2/d/interpret.a for use with xcode), XCODE=$enableval)
 
@@ -613,9 +629,10 @@ AC_SUBST(BUILTLIBS,)
 #	it writes a file into the user's home directory called ".polymake"
 #	it asks questions
 #    normaliz needs mpir providing libgmp and libgmpxx, but we provide that, anyway
-AC_SUBST(PROGLIST, "glpk 4ti2 cddlib gfan normaliz")
-AC_SUBST(LIBLIST, "gc    gdbm    mpir    mpfr    pari    readline    ntl    factory        libfac         lapack    frobby    scscp	")
-AC_SUBST(LIBFILES,"libgc libgdbm libmpir libmpfr libpari libreadline libntl libcf libcfmem libfac libblas liblapack libfrobby libscscp")
+AC_SUBST(PROGLIST, "4ti2 gfan normaliz")
+AC_SUBST(LIBLIST, "gc    gdbm    mpir    mpfr    pari    readline    ntl    factory        libfac         lapack    frobby    scscp	glpk    cddlib ")
+dnl I think we don't use this:
+dnl AC_SUBST(LIBFILES,"libgc libgdbm libmpir libmpfr libpari libreadline libntl libcf libcfmem libfac libblas liblapack libfrobby libscscp  libglpk ")
 for i in $LIBLIST
 do eval BUILD_$i=no
 done
@@ -639,9 +656,11 @@ AC_ARG_ENABLE(download, AS_HELP_STRING(--enable-download,enable automatic downlo
 AC_LANG(C)
 AC_SEARCH_LIBS(tgoto,ncurses curses,,AC_MSG_ERROR(libcurses and libncurses not found))
 if test $BUILD_readline = no
-then AC_SEARCH_LIBS(add_history,history,,BUILD_readline=yes)
+then AC_CHECK_HEADER(readline/readline.h,,BUILD_readline=yes)
+     AC_SEARCH_LIBS(_rl_comment_begin,readline,,BUILD_readline=yes)
+     AC_SEARCH_LIBS(rl_completion_matches,readline,,BUILD_readline=yes)
      AC_SEARCH_LIBS(readline,readline,,BUILD_readline=yes)
-     AC_CHECK_HEADER(readline/readline.h,,BUILD_readline=yes)
+     AC_SEARCH_LIBS(add_history,history readline,,BUILD_readline=yes)
      if test $BUILD_readline = yes
      then AC_MSG_NOTICE(readline library will be compiled)
      fi
@@ -684,29 +703,8 @@ dnl fi
 
 if test $BUILD_mpir = no
 then AC_LANG(C)
-     AC_SEARCH_LIBS(__mpirz_init,mpir,,BUILD_mpir=yes)
+     AC_SEARCH_LIBS(__mpir_version,mpir,,BUILD_mpir=yes)
      AC_CHECK_HEADER(mpir.h,,BUILD_mpir=yes)
-     if test $BUILD_mpir = no
-     then AC_MSG_CHECKING([whether mpir library is recent enough])
-          # version 4.1.4 of mpir has a random number generator different from 4.2.1's
-	  AC_RUN_IFELSE( [[
-	  #include <mpir.h>
-	  #include <stdio.h>
-	  int main() {
-	    int A=4,B=2,a=0,b=0,c=0,r=sscanf(__mpir_version,"%d.%d.%d",&a,&b,&c), t;
-	    if (r < 2) {
-	      fprintf(stderr,"failed to parse mpir version number: %s\n", __mpir_version);
-	      return 1;
-	    }
-	    t = a>A || a==A && b>=B;
-	    printf("(mpir version %s %s %d.%d) ",__mpir_version, t ? ">=" : "<", A, B);
-	    return !t;
-	  }
-	  ]],
-	  [ AC_MSG_RESULT(yes) ],
-	  [ AC_MSG_RESULT(no); BUILD_mpir=yes ],
-	  [ AC_MSG_RESULT([cross-compiling, test not possible]) ])
-     fi
 fi
 dnl frobby uses mpirxx
 if test $BUILD_mpir = yes
@@ -752,6 +750,11 @@ fi
 if test $BUILD_glpk = no
 then AC_LANG(C)
      AC_CHECK_HEADER(glpk.h,,BUILD_glpk=yes)
+fi
+
+if test $BUILD_cddlib = no
+then AC_LANG(C)
+     AC_CHECK_HEADER(cdd.h,,BUILD_cddlib=yes,[#include <setoper.h>])
 fi
 
 AC_SUBST(ULIMIT_T,yes)
@@ -1053,6 +1056,18 @@ do eval t=\$BUILD_$i
    test "$t" = yes && BUILDLIST="$BUILDLIST $i"
 done
 
+AC_SUBST(BUILDLIBLIST,)
+for i in $LIBLIST
+do eval t=\$BUILD_$i
+   test "$t" = yes && BUILDLIBLIST="$BUILDLIBLIST $i"
+done
+
+AC_SUBST(BUILDPROGLIST,)
+for i in $PROGLIST
+do eval t=\$BUILD_$i
+   test "$t" = yes && BUILDPROGLIST="$BUILDPROGLIST $i"
+done
+
 TESTFLAG=-Wno-strict-aliasing
 AC_MSG_CHECKING(whether $CC accepts $TESTFLAG)
 AC_SUBST(HAVE_NO_STRICT_ALIASING,)
@@ -1064,7 +1079,6 @@ M2_CPPFLAGS="$M2_CPPFLAGS $TESTFLAG"
 CFLAGS=$SAVE
 AC_MSG_RESULT($HAVE_NO_STRICT_ALIASING)
 
-AC_SUBST(M2_CPPFLAGS,)
 
 AC_MSG_CHECKING(whether $CC accepts -Wfatal-errors)
 AC_LANG(C)
@@ -1086,19 +1100,6 @@ IS_DECLARED(char **,h_errlist, [
       ])
 
 AC_SUBST(DUMPDATAFILE,Macaulay2-$ARCH-data)
-
-if test "$DEBUG" = yes
-then LDFLAGS="$LDFLAGS -g"
-     M2_CPPFLAGS="$M2_CPPFLAGS -DDEBUG"
-else M2_CPPFLAGS="$M2_CPPFLAGS -DNDEBUG"
-fi
-
-if test "$OPTIMIZE" = yes
-then CFLAGS="$CFLAGS -O3"
-     CXXFLAGS="$CXXFLAGS -O3"
-else CFLAGS="$CFLAGS -O0 -fno-inline"
-     CXXFLAGS="$CXXFLAGS -O0 -fno-inline"
-fi
 
 test "$MEMDEBUG" = yes && M2_CPPFLAGS="$M2_CPPFLAGS -DMEMDEBUG"
 test "$DEBUG" = yes && M2_CPPFLAGS="$M2_CPPFLAGS -DGC_DEBUG"
@@ -1151,16 +1152,21 @@ do case $i in
    esac
 done
 
-AC_MSG_NOTICE([using BUILDLIST    = $BUILDLIST (libraries and programs to be built from downloaded sources)])
-AC_MSG_NOTICE([using BUILTLIBS    = $BUILTLIBS])
-AC_MSG_NOTICE([using SINGULARLIBS = $SINGULARLIBS])
-AC_MSG_NOTICE([using LIBS_STATIC  = $LIBS_STATIC])
+AC_MSG_NOTICE([using BUILDLIBLIST  = $BUILDLIBLIST (libraries to be built from downloaded sources)])
+AC_MSG_NOTICE([using BUILDPROGLIST = $BUILDPROGLIST (programs to be built from downloaded sources)])
+AC_MSG_NOTICE([using BUILDLIST     = $BUILDLIST (libraries and programs to be built from downloaded sources)])
+AC_MSG_NOTICE([using BUILTLIBS     = $BUILTLIBS])
+AC_MSG_NOTICE([using SINGULARLIBS  = $SINGULARLIBS])
+AC_MSG_NOTICE([using LIBS_STATIC   = $LIBS_STATIC])
 AC_MSG_NOTICE([using LIBS_STATIC_OR_DYNAMIC  = $LIBS_STATIC_OR_DYNAMIC])
-AC_MSG_NOTICE([using LIBS_DYNAMIC = $LIBS_DYNAMIC])
+AC_MSG_NOTICE([using LIBS_DYNAMIC  = $LIBS_DYNAMIC])
+AC_MSG_NOTICE([using CFLAGS        = $CFLAGS])
+AC_MSG_NOTICE([using CXXFLAGS      = $CXXFLAGS])
+AC_MSG_NOTICE([using LDFLAGS       = $LDFLAGS])
 
 BUILDING=yes
 AC_ARG_ENABLE(building, AS_HELP_STRING(--disable-building,disable automatic building of libraries), BUILDING=$enableval)
-if test "$BUILDING" = no -a "$BUILDLIST"
+if test "$BUILDING" = no -a "$BUILDLIBLIST"
 then AC_MSG_ERROR([automatic building of libraries disabled, but some must be built])
 fi
 

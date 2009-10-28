@@ -200,7 +200,7 @@ document {
      argument. In the second case notice the terms of power series
      expansion up to, but not including, degree 5 are displayed rather
      than expressing the series as a rational function. The polynomial
-     expression is an element of a Laurent polynomial ring which is
+     expression is an element of a Laurent polynomial ring that is
      the ", TO2 (degreesRing,"degrees ring"), " of the ambient ring.",
      EXAMPLE {
 	  "R = ZZ/101[x,y];",

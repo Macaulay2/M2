@@ -114,7 +114,7 @@ document {
 document {
      Key => HardDegreeLimit,
      Headline => "compute only up to this degree",
-     TT "HardDegreeLimit", " -- keyword for an optional argument which specifies
+     TT "HardDegreeLimit", " -- keyword for an optional argument that specifies
      that information above a specified degree is to be discarded."
      }
 
@@ -152,7 +152,7 @@ document {
 document {
      Key => SortStrategy,
      Headline => "specify a strategy for sorting S-pairs",
-     TT "SortStrategy", " -- a keyword for an optional argument which 
+     TT "SortStrategy", " -- a keyword for an optional argument that 
      specifies the strategy to be used for sorting S-pairs."
      }
 

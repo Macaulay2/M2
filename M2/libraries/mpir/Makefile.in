@@ -6,6 +6,10 @@ ifeq (@SHARED@,no)
 CONFIGOPTIONS += --disable-shared
 endif
 include ../Makefile.library
+COMPILEFLAGS = 
+ifeq (@OS@-@ISSUE@,MicrosoftWindows-Cygwin)
+LDFLAGS += -Wl,--enable-auto-import
+endif
 Makefile: @srcdir@/Makefile.in ; cd ../.. && ./config.status libraries/mpir/Makefile
 # Local Variables:
 # compile-command: "make -C $M2BUILDDIR/libraries/mpir "

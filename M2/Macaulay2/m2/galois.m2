@@ -119,13 +119,14 @@ GF(Ring) := GaloisField => opts -> (S) -> (
 	  F.rawGaloisField = true;
 	  )
      else (
-	  S' := S;
-	  S = newRing(S, DegreeRank => 0, MonomialOrder=>{Position=>Up});
-	  F = new GaloisField from raw S;
+	  -- S' := S;
+	  T := toField(S);
+	  F = new GaloisField from raw T;		    -- this seems to throw out a lot of information about T!
+     	  F.toField = true;
 	  F.rawGaloisField = false;
 	  );
      F.degreeLength = 0;
-     F.PrimitiveElement = primitiveElement;		    -- is this (old way) right?
+     F.PrimitiveElement = primitiveElement;		    -- notice the primitive element is not in F
      F.isBasic = true;
      toString F := h -> toString expression h;
      net F := h -> net expression h;
@@ -133,14 +134,13 @@ GF(Ring) := GaloisField => opts -> (S) -> (
      F.promoteDegree = makepromoter 0;			    -- do this before commonEngineRingInitializations
      F.liftDegree = makepromoter degreeLength S;	    -- do this before commonEngineRingInitializations
      commonEngineRingInitializations F;
-     toField F;
      F.isCommutative = true;
      expression F := t -> expression lift(t, S);
      F.char = p;
      F.degree = n;
      F.order = p^n;
      F.frac = F;
-     F.generators = apply(generators S, m -> promote(m,F));
+     F.generators = apply(generators S, m -> promote(m,F)); -- this will be wrong if S is a tower
      if S.?generatorSymbols then F.generatorSymbols = S.generatorSymbols;
      if S.?generatorExpressions then F.generatorExpressions = (
 	  S.generatorExpressions
@@ -156,14 +156,14 @@ GF(Ring) := GaloisField => opts -> (S) -> (
      F.use F;
      F / F := (x,y) -> x // y;
      F % F := (x,y) -> if y == 0 then x else 0_F;
-     if S' =!= null then (
-     	  -- what really want is to modify newRing so when it's called above,
-     	  -- it makes the old ring into one of the base rings of the new ring,
-     	  -- or (?)
-     	  q := map(S,S');
-     	  promote(S',S) := (s,F) -> q s;
-     	  promote(S',F) := (s,F) -> promote(promote(s,S),F);
-     	  );
+     -- if S' =!= null then (
+     -- 	  -- what really want is to modify newRing so when it's called above,
+     -- 	  -- it makes the old ring into one of the base rings of the new ring,
+     -- 	  -- or (?)
+     -- 	  q := map(S,S');
+     -- 	  promote(S',S) := (s,F) -> q s;
+     -- 	  promote(S',F) := (s,F) -> promote(promote(s,S),F);
+     -- 	  );
      F)
 
 random GaloisField := opts -> F -> (

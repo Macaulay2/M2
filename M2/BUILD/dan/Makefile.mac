@@ -13,54 +13,53 @@ PRODUCTION = no
 DEBUG = no
 PROFILE = no
 M64 = yes
+FIX_UNWIND = no
 
+ifeq ($(FIX_UNWIND),yes)
 # try this one if configuration fails because of an undefined symbol Unwind_Resume
-# CONFIGOPTIONS += LDFLAGS=-static-libgcc
+CONFIGOPTIONS += LDFLAGS=-static-libgcc
+endif
 
-# CONFIGOPTIONS += --enable-build-libraries=gmp
 unexport DEBUG
 unexport PROFILE
 
-CONFIGOPTIONS += CPPFLAGS="-DM2_TEST_MACRO=1"
-
 ifeq ($(M64),yes)
-DIRBASE = mac64
+DIRECTORY := mac64
 CONFIGOPTIONS += CC="gcc -m64" CXX="g++ -m64" --build=x86_64-apple-darwin
 else
-DIRBASE = mac
+DIRECTORY := mac
 endif
 
-MACTARGETS = all
-ifeq ($(DEBUG),yes)
-INSTALLOPTIONS += prefix=/none
-CONFIGOPTIONS += --enable-debug
-# CONFIGOPTIONS += --disable-pthreads
-DIRECTORY = $(DIRBASE).debug
-else
-ifeq ($(PROFILE),yes)
-INSTALLOPTIONS += prefix=/none
-CONFIGOPTIONS += --enable-profile
-# CONFIGOPTIONS += --disable-pthreads
-DIRECTORY := $(DIRBASE).profile
-else
-INSTALLOPTIONS += prefix=$(HOME)/local/encap
+default: all
+
 # gc crashes if we enable pthreads, in testgc and in html-check-links
 # (under Mac OS 10.4 on power pc):
 # CONFIGOPTIONS += --disable-pthreads
-CONFIGOPTIONS += --enable-dmg
-DIRECTORY = $(DIRBASE)
-MACTARGETS += check install
-endif
-endif
 
 ifeq ($(PRODUCTION),yes)
-CONFIGOPTIONS += --disable-common-staging-area
-DIRECTORY = $(DIRBASE).production
+   default: check install
+   CONFIGOPTIONS += --disable-common-staging-area
+   DIRECTORY := $(DIRECTORY).production
+   CONFIGOPTIONS += --enable-dmg
+   INSTALLOPTIONS += prefix=$(HOME)/local/encap
+   ifeq ($(DEBUG),yes)
+      $(error PRODUCTION=yes and DEBUG=yes)
+   endif
+   ifeq ($(PROFILE),yes)
+      $(error PRODUCTION=yes and PROFILE=yes)
+   endif
 endif
-
+ifeq ($(DEBUG),yes)
+   INSTALLOPTIONS += prefix=/none
+   CONFIGOPTIONS += --enable-debug
+   DIRECTORY := $(DIRECTORY).debug
+endif
+ifeq ($(PROFILE),yes)
+   INSTALLOPTIONS += prefix=/none
+   CONFIGOPTIONS += --enable-profile
+   DIRECTORY := $(DIRECTORY).profile
+endif
 include Makefile.include
-
-default: $(MACTARGETS)
 pre-install:;	rm -rf /usr/local/encap/Macaulay2-$(PACKAGE_VERSION)
 # Local Variables:
 # compile-command: "time make -f Makefile.mac "

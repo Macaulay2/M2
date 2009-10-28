@@ -364,7 +364,7 @@ document {
 document {
      Key => {splice,(splice, BasicList)},
      Headline => "remove subsequences",
-     TT "splice v", " -- yields a new list v where any members of v which are sequences
+     TT "splice v", " -- yields a new list v where any members of v that are sequences
      are replaced by their elements.",
      PARA{},
      "Works also for sequences, and leaves other expressions unchanged.

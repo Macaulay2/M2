@@ -1,0 +1,46 @@
+-- -*- mode: M2 -*-
+    Macaulay2, version 1.3
+    with packages: ConwayPolynomials, Elimination, IntegralClosure, LLLBases, PrimaryDecomposition, ReesAlgebra, SchurRings, TangentCone
+
+    i1 : R=QQ[x_0..x_3];
+
+    i2 : class\(R_0..R_3)
+
+    o2 = (R, R, R, R)
+
+    o2 : Sequence
+
+    i3 : S=QQ[x_0..x_3];
+
+    i4 : class\(R_0..R_3)
+
+    o4 = (S, S, S, S)
+
+    o4 : Sequence
+
+    i5 : class\(R_0..R_3)
+
+*** o5 = (IndexedVariable, IndexedVariable, IndexedVariable, IndexedVariable)
+
+    o5 : Sequence
+
+
+The problem is here, where when v is changed, it is changed permanently!  Also notice that the first time through, it evaluates v first!
+So it's only the second time that v has the surprising value.
+
+
+scan(join(apply(methods baseName,last),{MonoidElement}), BType -> if BType =!= Symbol and BType =!= IndexedVariable and BType =!= Holder then (
+	  v := value;
+     	  bn := a -> (
+	       r := baseName a;
+	       if value r =!= a then v = identity;	-- don't take values afterwards if either endpoint is not assigned to its base name
+	       r);
+	  err1 := lookup(symbol .., Thing, Thing);
+	  BType .. Thing := (a,z) -> v \ (( try bn a else err1(a,z) ) .. z);
+	  Thing .. BType := (a,z) -> v \ (a .. (try bn z else err1(a,z) ));
+	  BType .. BType := (a,z) -> v \ (( try bn a else err1(a,z) ) .. (try bn z else err1(a,z) ));
+	  err2 := lookup(symbol ..<, Thing, Thing);
+	  BType ..< Thing := (a,z) -> v \ (( try bn a else err2(a,z) ) ..< z);
+	  Thing ..< BType := (a,z) -> v \ (a ..< (try bn z else err2(a,z) ));
+	  BType ..< BType := (a,z) -> v \ (( try bn a else err2(a,z) ) ..< (try bn z else err2(a,z) ));
+	  ))

@@ -16,6 +16,7 @@ $(foreach d,@LIBLIST@ @PROGLIST@,				\
 		$(eval $t: $t-in-$d)		\
 		$(eval .PHONY: $t $t-in-$d)))
 
+uninstall:; rm -rf */.installed* final
 all:install-programs
 install-programs:
 	: installing programs in @pre_programsdir@

@@ -9,7 +9,7 @@ document {
 	Outputs => {String => {}},
      TT "html x", " converts ", TT "x", " from ", TO "hypertext", " to html format",
      PARA{},
-     "The return value is a string which is suitable for use in an
+     "The return value is a string that is suitable for use in an
      html file, readable by a world wide web client such as Netscape.",
      SeeAlso => "mathML"
      }
@@ -36,7 +36,7 @@ document {
      Inputs => { "g" => "a function or a string" },
      Outputs => { { "a new command that will evaluate ", TT "g()", " if ", TT "g", " is a function, and will evaluate ", TT "run g", " if ", TT "g", " is a string" } },
      "A command behaves as a function does if it is followed by an adjacent
-     expression which can serve as its argument or argument list.  In addition,
+     expression that can serve as its argument or argument list.  In addition,
      if it appears as the value of an expression typed by the user at top
      level (i.e., not in a file), then it gets executed with empty argument list.",
      EXAMPLE {
@@ -339,8 +339,8 @@ document {
 	  ///
 	  ),
      "This function operates by examining those types that are values of
-     global symbols for keys which appear to be storing references to
-     methods.  Types which don't appear as values of global variables will
+     global symbols for keys that appear to be storing references to
+     methods.  Types that don't appear as values of global variables will
      not be examined, so perhaps not all methods will be found."
      }
 

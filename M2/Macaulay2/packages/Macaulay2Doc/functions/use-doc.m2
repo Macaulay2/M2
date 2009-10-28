@@ -62,7 +62,7 @@ document {
 	  a+b
 	  ///,
      PARA{},
-     "There are several functions which create rings for you.  Generally, their variables are not
+     "There are several functions that create rings for you.  Generally, their variables are not
      globally visible.  However, once you 'use' the ring, the variables are available.",
      "For example, the numerator of the Hilbert function is a polynomial in a ring with a variable T.",
      EXAMPLE lines ///
@@ -72,6 +72,6 @@ document {
 	 use ring hf
 	 T
 	 ///,
-     Caveat => {"Any values stored in the variables which have been assigned to are lost."},
+     Caveat => {"Any values stored in the variables that have been assigned to are lost."},
      SeeAlso => {GlobalAssignHook}
      }
