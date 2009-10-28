@@ -23,7 +23,7 @@
 ----------------------------------------------------------------
 
 --Procedure to return the largest prime dividing a number 
-maxPrime=n->(
+maxPrime = n->(
      f:=factor(n);
      return(max apply(#f,i->((f#i)#0)));
 );
@@ -33,7 +33,7 @@ maxPrime=n->(
 
 --Procedure to find the mod p representative of a vector v with
 --all entries between 0 (inclusive) and p (exclusive)
-makePos=(v,pp)->(
+makePos = (v,pp)->(
 	local i,j;
 	i=0;
 	while i<#v do (
@@ -50,7 +50,7 @@ makePos=(v,pp)->(
 
 ----------------------------------------------------------------
 
-makeSimplicial = method(TypicalValue => NormalToricVariety)
+makeSimplicial = method --(TypicalValue => NormalToricVariety)
 makeSimplicial (NormalToricVariety):= NormalToricVariety => X ->(
      Y := fan X;
      return normalToricVariety(makeSimplicial Y)
@@ -199,12 +199,11 @@ doc ///
   Usage
 	makeSimplicial X	
   Inputs
-	X:NormalToricVariety or Fan
+	X:(NormalToricVariety, Fan)
   Outputs
-	Y:NormalToricVariety or Fan 
-	  depends on input -----WHAT IS THE CORRECT WAY TO DOCUMENT THIS?
+	Y:(NormalToricVariety, Fan) 
+	  {\tt Y} will be of the same type as {\tt X}
   Description
-   Text
    Text
    Example
    Text
@@ -229,6 +228,38 @@ doc ///
 	  a resolution of {\tt X}
   Description
    Text
+   Text
+	The following are already smooth, so applying resolvesingularities will return X again.
+   Example
+	X = projectiveSpace 4;
+	resolveSingularities X == X
+   Example
+	X = hirzebruchSurface 2; 
+	resolveSingularities X == X
+   Text
+	The next example is not smooth. 
+   Example
+	X = weightedProjectiveSpace {1,2,3};
+	resolveSingularities X
+	time resolveSingularities X
+   Text
+	Here is the resolution of an affine toric surface.
+   Example
+	X = normalToricVariety({{4,-1},{0,1}},{{0,1}});
+	resolveSingularities X
+   Text
+	The following is 1-dimensional. 
+   Example
+	X = normalToricVariety({{4,-1},{0,1}},{{0},{1}});
+	resolveSingularities X
+   Text
+   Example
+	-- This takes too long. 
+	Here makeSimplicial does significant work: codim 2 cones need to be subdivided.
+   Text
+	Q = normalToricVariety({{-1,-1,-1},{1,-1,-1},{-1,1,-1},{1,1,-1},{-1,-1,1},{1,-1,1},{-1,1,1},{1,1,1}},{{0,2,4,6},{0,1,4,5},{0,1,2,3},{1,3,5,7},{2,3,6,7},{4,5,6,7}});
+	resolveSingularities Q
+   Example
    Text
    Example
    Text
