@@ -6,7 +6,7 @@ skewSchubertVariety(ZZ,ZZ,List,List) := (k,n,l,m)->(
      if #m < k then for i from 1 to k-#m do (m=m|{0}); -- makes sure m have size k
      d := (k*(n-k)-sum(l)-sum(m));  
      x := symbol x;
-     R := QQ[x_1..x_d]; -- ring where the variables for the matrix live
+     R := QQ[vars(53..d+52)]; -- ring where the variables for the matrix live
      r := 0;
      matrix (
       	  for i from 1 to k list (
@@ -14,7 +14,7 @@ skewSchubertVariety(ZZ,ZZ,List,List) := (k,n,l,m)->(
             	    if j==i+l_(k-i) then 1
             	    else if j>i+l_(k-i) and j<=(n-k+i-m_(i-1)) then ( 
 		     	          r=r+1; 
-		     	          x_r 
+		     	          R_(r-1) 
 		     	         )
             	    else 0
          	     ) 

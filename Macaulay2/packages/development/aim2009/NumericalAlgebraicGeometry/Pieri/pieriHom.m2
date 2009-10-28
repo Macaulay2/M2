@@ -42,7 +42,7 @@ solveSimpleSchubert(Sequence, List,List) := (kn,l,m)->(
       T = T/(t->sub(t,newR));
       print (S,T,start);
       H#(l,m) = track(S,T,start,gamma=>exp(2*pi*ii*random RR)
-      ,Software=>Bertini
+      --,Software=>PHCpack
       )
    )
 )
@@ -59,5 +59,5 @@ solveEasy(RingElement) := (p)->(
    {{toCC lift((-b)/a, coefficientRing R)}}
 --   )
 )
-launchSimpleSchubert((2,4),{1,0},{1,0})
---launchSimpleSchubert((3,7),{2,1,0},{1,1,0})
+--launchSimpleSchubert((2,4),{1,0},{1,0})
+launchSimpleSchubert((3,7),{2,1,0},{1,1,0})
