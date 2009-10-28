@@ -322,8 +322,8 @@ formatDocumentTag String   := s -> s
 
 fSeqInitialize := (toString,toString) -> new HashTable from {
      (4,NewOfFromMethod) => s -> ("new ", toString s#1, " of ", toString s#2, " from ", toString s#3),
-     (4,cohomology,ZZ  ) => s -> ("HH_", toString s#1, "^", toString s#2, " ", toString s#3),
-     (4,homology,ZZ    ) => s -> ("HH^", toString s#1, "_", toString s#2, " ", toString s#3),
+     (4,cohomology,ZZ  ) => s -> ("HH^", toString s#1, "(", toString s#2, ",", toString s#3, ")"),
+     (4,homology,ZZ    ) => s -> ("HH_", toString s#1, "(", toString s#2, ",", toString s#3, ")"),
      (3,NewFromMethod  ) => s -> ("new ", toString s#1, " from ", toString s#2),
      (3,NewOfMethod    ) => s -> ("new ", toString s#1, " of ", toString s#2),
      (3,symbol SPACE   ) => s -> (toString s#1, " ", toString s#2),
