@@ -1184,7 +1184,17 @@ faceLattice(ZZ,Polyhedron) := (k,P) -> (
 	       l = (toList l#0,toList l#1);
 	       (sort apply(l#0, e -> position(V, v -> v == e)),sort apply(l#1, e -> position(R, r -> r == e))))))
 
+faceLattice(ZZ,Cone) := (k,C) -> (
+     L := faceBuilderCone(k,C);
+     R := rays C;
+     R = apply(numColumns R, i -> R_{i});
+     apply(L, l -> sort apply(toList l, e -> position(R, r -> r == e))))
+
+
 faceLattice Polyhedron := P -> apply(dim P + 1, k -> faceLattice(dim P - k,P))
+
+
+faceLattice Cone := C -> apply(dim P + 1, k -> faceLattice(dim P - k,P))
      	  
 
 
@@ -1204,47 +1214,16 @@ faces(ZZ,Polyhedron) := (k,P) -> (
 	       if LS != 0 then R = R | LS | -LS;
 	       convexHull(V,R))))
 
---faces(ZZ,Cone) := (k,C) -> (
---     L := face
-
 
 --   INPUT : 'k'  an integer between 0 and the dimension of
 --     	     'C'  a polyhedron
 --  OUTPUT : a List, containing the faces as cones
 faces(ZZ,Cone) := (k,C) -> (
-     d := dim C - k;
-     dl := C#"dimension of lineality space";
+     L := faceBuilderCone(k,C);
      LS := linSpace C;
-     --Checking for input errors
-     if d < 0 or d > dim C then error("the codimension must be between 0 and the dimension of the cone")
-     -- for d = dim C it is the cone itself
-     else if d == dim C then {C}
-     -- for d = dl it is the lineality space
-     else if d == dl then {posHull(LS | -LS)}
-     -- for d = dl+1 it is the lineality space plus one of the rays
-     else if d == dl+1 then (
-	  -- Generating the list of cones given by one ray and the lineality space
-	  R := rays C;
-	  apply(numColumns R, i -> posHull(R_{i},LS)))
-     else if 0 <= d and d < dl then {}
-     else (
-	  -- Saving the half-spaces and hyperplanes
-	  HS := halfspaces C;
-	  HP := hyperplanes C;
-	  -- Generating the list of facets where each facet is given by a list of its vertices and a list of its rays
-	  F := apply(numRows HS, i -> intersection(HS,HP || HS^{i}));
-	  F = apply(F, f -> (
-		    R := rays f;
-		    (set apply(numColumns R, i -> R_{i}))));
-	  -- Duplicating the list of facets
-	  L := F;
-	  i := 1;
-	  -- Intersecting L k-1 times with F and returning the maximal inclusion sets. These are the faces of codim plus 1
-	  while i < k do (
-	       L = intersectionWithFacetsCone(L,F);
-	       i = i+1);
-	  -- Generating the corresponding polytopes out of the lists of vertices, rays and the lineality space
-	  apply(L, l -> posHull(matrix transpose apply(toList l, e -> flatten entries e),LS))))
+     -- Generating the corresponding polytopes out of the lists of vertices, rays and the lineality space
+     apply(L, l -> posHull(matrix transpose apply(toList l, e -> flatten entries e),LS)))
+
 
      
 -- PURPOSE : Computing the f-vector of a polyhedron
@@ -1840,7 +1819,7 @@ stellarSubdivision (Fan,Matrix) := (F,r) -> (
      L := flatten apply(genCones F, C -> if contains(C,r) then divider(C,r) else {C});
      L = sort select(L, l -> all(L, e -> not contains(e,l) or e == l));
      n := dim L#0;
-     R := unique(rays F|{r});
+     R := unique(rays F|{promote(r,QQ)});
      new Fan from {
 	  "generatingCones" => set L,
 	  "ambient dimension" => ambDim L#0,
@@ -2881,7 +2860,7 @@ faceBuilderCone = (k,C) -> (
      else if d == dl+1 then (
 	  -- Generating the list of cones given by one ray and the lineality space
 	  R1 := rays C;
-	  apply(numColumns R, i -> set {R1_{i}}))
+	  apply(numColumns R1, i -> set {R1_{i}}))
      else if 0 <= d and d < dl then {}
      else (
 	  if i == 0 then (
@@ -2985,7 +2964,8 @@ coneBuilder = (genrays,dualgens) -> (
 	   "halfspaces" => HS,
 	   "hyperplanes" => HP,
 	   "genrays" => genrays,
-	   "dualgens" => dualgens})
+	   "dualgens" => dualgens,
+	   symbol cache => new CacheTable})
    
    
 -- PURPOSE : check whether a matrix os over ZZ or QQ
