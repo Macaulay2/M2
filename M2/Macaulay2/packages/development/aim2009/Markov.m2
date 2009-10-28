@@ -9,6 +9,10 @@ newPackage("Markov",
      Version => "1.2"
      )
 
+-- 28.10.09 ---- 
+-- Version by the Working group at Aim 
+-- Ania K., Sonja Petrovic, Brandy Stigler, Amelia Taylor 
+
 
 ------------------------------------------
 -- markov ideals in Macaulay2
@@ -34,7 +38,6 @@ newPackage("Markov",
 ------------------------------------------
 
 
-
 export {makeGraph, displayGraph, localMarkovStmts, globalMarkovStmts, pairMarkovStmts,
        markovRing, marginMap, hideMap, markovMatrices, markovIdeal, writeDotFile, removeRedundants, 
        gaussRing, gaussMinors, gaussIdeal, gaussTrekIdeal, Graph}
@@ -43,6 +46,14 @@ exportMutable {dotBinary,jpgViewer}
 -------------------------
 -- Graph visualization --
 -------------------------
+
+---- Right now Graph is a DAG.  We need a Graph to be a DAG, undirected or 
+---- chain graph with conditions. Note that EdgeIdeals has a structure Graph 
+---- and these types should work with each other. 
+ 
+---- TASK --- generalize and make compatible Graphs.  This section is only 
+---- about visualization and the first makeGraph. 
+
 
 -- Give a graph as a hash table i => descendents
 -- Make a graph
@@ -121,6 +132,10 @@ displayGraph Graph := (G) -> (
 -- Statements -----------
 -------------------------
 
+----   Then this section needs appropriate functions for the new types of graphs. 
+----   Not sure yet what would need to be here, but likely less for nondirected and 
+----   many would be the same for chain graphs. 
+
 ------------------
 -- Graph basics --
 ------------------
@@ -152,10 +167,10 @@ removeNodes(Graph,List) := (G,v) -> (
      )
 removeNodes(Graph,ZZ) := (G,v) -> removeNodes(G, {v})
 
---------------------------
--- Statement calculus ----
---------------------------
--- A dependency is a list {A,B,C}
+-----------------------------------------------------------
+-- Statement calculus ----  Local and Global Statements ---
+-----------------------------------------------------------
+-- A dependency is a list {A,B,C}x
 --  where A,B,C are (disjoint) subsets of positive integers.
 --  The meaning is: A is independent of B given C.
 -- A dependency list is a list of dependencies
@@ -164,6 +179,10 @@ removeNodes(Graph,ZZ) := (G,v) -> removeNodes(G, {v})
 -- However, we have several very simple routines to remove
 -- the most obvious redundant elements
 -- If S and T represent exactly the same dependency, return true.
+
+
+---- M2 does seem to remove dependencies reasonably well.  
+---- This is the section where the local and global statements are done. 
 
 equivStmts = (S,T) -> S#2 === T#2 and set{S#0,S#1} === set{T#0,T#1}
 
@@ -355,7 +374,7 @@ globalMarkovStmts Graph := (G) -> (
 			      then 
 			          result = append(result, {A,B,C});
 	       )))));
-     removeRedundants result
+     {removeRedundants result, result}
      )
 -------------------
 -- Markov rings ---
