@@ -93,7 +93,7 @@ document {
 	Key =>elementarySymmetric,
 	Headline => "expression in terms of elementary symmetric polynomials",
 	Inputs => {"f, a symmetric", TO RingElement},
-	Outputs =>{"the epression of f in terms of the elementary symmetric functions e_i"},
+	Outputs =>{"the expression of f in terms of the elementary symmetric functions e_i"},
 	Usage => "elementalSymm f",
 	Caveat => {"if the input is not symmetric the function will announce this"},
 EXAMPLE lines ///
@@ -110,7 +110,7 @@ document {
 	Key =>(elementarySymmetric,RingElement),
 	Headline => "expression in terms of elementary symmetric polynomials",
 	Inputs => {"f"=> {"a symmetric", TO RingElement}},
-	Outputs =>{"the epression of f in terms of the elementary symmetric functions e_i"},
+	Outputs =>{"the expression of f in terms of the elementary symmetric functions e_i"},
 	Usage => "elementalSymm f",
 	Caveat => {"if the input is not symmetric the function will announce this"},
 EXAMPLE lines ///
