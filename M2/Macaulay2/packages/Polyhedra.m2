@@ -1825,13 +1825,14 @@ stellarSubdivision (Fan,Matrix) := (F,r) -> (
      L := flatten apply(genCones F, C -> if contains(C,r) then divider(C,r) else {C});
      L = sort select(L, l -> all(L, e -> not contains(e,l) or e == l));
      n := dim L#0;
+     R := unique(rays F|{r});
      new Fan from {
 	  "generatingCones" => set L,
 	  "ambient dimension" => ambDim L#0,
 	  "top dimension of the cones" => n,
 	  "number of generating cones" => #L,
-	  "rays" => set apply(rays X, r -> matrix transpose {r}),
-	  "number of rays" => numColumns R,
+	  "rays" => R,
+	  "number of rays" => #R,
 	  "isPure" => dim L#0 == dim last L,
 	  symbol cache => new CacheTable})
 
