@@ -211,14 +211,14 @@ isSmooth NormalToricVariety := X -> (
 
 fan NormalToricVariety := X -> (
      if not X.cache.?Fan then (
-	  R := matrix transpose rays X;
+	  R := promote(matrix transpose rays X,QQ);
 	  L := sort apply(max X, C -> posHull R_C);
 	  X.cache.Fan = new Fan from {
 	       "generatingCones" => set L,
 	       "ambient dimension" => numRows R,
 	       "top dimension of the cones" => dim L#0,
 	       "number of generating cones" => #L,
-	       "rays" => set apply(rays X, r -> matrix transpose {r}),
+	       "rays" => set apply(rays X, r -> promote(matrix transpose {r},QQ)),
 	       "number of rays" => numColumns R,
 	       "isPure" => dim L#0 == dim last L,
 	       symbol cache => new CacheTable});

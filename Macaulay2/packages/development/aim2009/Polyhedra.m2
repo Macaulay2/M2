@@ -992,12 +992,14 @@ isFace(Cone,Cone) := (C1,C2) -> (
 isNormal Polyhedron := P -> (
      -- Checking for input errors
      if not isCompact P then error ("The polyhedron must be compact");
-     -- Computing the Hilbert basis of the cone over 'P' on height 1
-     V := vertices P || map(QQ^1,source vertices P,(i,j) -> 1);
-     L := hilbertBasis posHull V;
-     n := ambDim P;
-     -- Do all lattice points lie in height one?
-     all(L,v -> v_(n,0) == 1))
+     if not P.cache.?normal then (
+	  -- Computing the Hilbert basis of the cone over 'P' on height 1
+	  V := vertices P || map(QQ^1,source vertices P,(i,j) -> 1);
+	  L := hilbertBasis posHull V;
+	  n := ambDim P;
+	  -- Do all lattice points lie in height one?
+	  P.cache.normal = all(L,v -> v_(n,0) == 1));
+     P.cache.normal)
      
 
 -- PURPOSE : Tests if a Cone is pointed
@@ -1009,7 +1011,9 @@ isPointed Cone := C -> rank C#"linealitySpace" == 0
 
 --   INPUT : 'F',  a Fan
 --  OUTPUT : 'true' or 'false'
-isPointed Fan := F -> isPointed((toList F#"generatingCones")#0)
+isPointed Fan := F -> (
+     if not F.cache.?isPointed then F.cache.isPointed=((toList F#"generatingCones")#0);
+     F.cache.isPointed)
 
 
 
@@ -1145,11 +1149,18 @@ isSmooth Cone := C -> (
 
 --   INPUT : 'F'  a Fan
 --  OUTPUT : 'true' or 'false'
-isSmooth Fan := F -> all(toList F#"generatingCones",isSmooth)
+isSmooth Fan := F -> (
+     if not F.cache.?isSmooth then F.cache.isSmooth = all(toList F#"generatingCones",isSmooth);
+     F.cache.isSmooth)
 
 
 
+-- PURPOSE : Compute the dual face lattice
 dualFaceLattice = method(TypicalValue => List)
+
+--   INPUT : '(k,P)',  where 'k' is an integer between 0 and dim 'P' where P is a Polyhedron
+--  OUTPUT :  a list, where each entry gives a face of 'P' of dim 'k'. Each entry is a list
+-- 	      of the positions of the defining halfspaces
 dualFaceLattice(ZZ,Polyhedron) := (k,P) -> (
      L := faceBuilder(dim P - k,P);
      HS := halfspaces P;
@@ -1158,6 +1169,8 @@ dualFaceLattice(ZZ,Polyhedron) := (k,P) -> (
 	       l = (toList l#0,toList l#1);
 	       positions(HS, hs -> (all(l#0, v -> (hs#0)*v - hs#1 == 0) and all(l#1, r -> (hs#0)*r == 0))))))
 
+--   INPUT : 'P',  a Polyhedron
+--  OUTPUT :  a list, where each entry is dual face lattice of a certain dimension going from 0 to dim 'P'
 dualFaceLattice Polyhedron := P -> apply(dim P + 1, k -> dualFaceLattice(dim P - k,P))
 
 faceLattice = method(TypicalValue => List)
@@ -1191,6 +1204,8 @@ faces(ZZ,Polyhedron) := (k,P) -> (
 	       if LS != 0 then R = R | LS | -LS;
 	       convexHull(V,R))))
 
+--faces(ZZ,Cone) := (k,C) -> (
+--     L := face
 
 
 --   INPUT : 'k'  an integer between 0 and the dimension of
@@ -1831,7 +1846,7 @@ stellarSubdivision (Fan,Matrix) := (F,r) -> (
 	  "ambient dimension" => ambDim L#0,
 	  "top dimension of the cones" => n,
 	  "number of generating cones" => #L,
-	  "rays" => R,
+	  "rays" => set R,
 	  "number of rays" => #R,
 	  "isPure" => dim L#0 == dim last L,
 	  symbol cache => new CacheTable})
@@ -2845,6 +2860,56 @@ faceBuilder = (k,P) -> (
 		    P.cache.faces#i = L);
 	       P.cache.faces#k)))
 
+
+faceBuilderCone = (k,C) -> (
+     d := dim C - k;
+     dl := C#"dimension of lineality space";
+     LS := linSpace C;
+     --Checking for input errors
+     if d < 0 or d > dim C then error("the codimension must be between 0 and the dimension of the cone");
+     if not C.cache.?faces then C.cache.faces = new MutableList;
+     i := #(C.cache.faces);
+     if k < i then C.cache.faces#k
+     -- for d = dim C it is the cone itself
+     else if d == dim C then (
+	  Rd := rays C;
+	  C.cache.faces#k = {set apply(numColumns Rd, i -> Rd_{i})};
+	  C.cache.faces#k)
+     -- for d = dl it is the lineality space
+     else if d == dl then {set {map(QQ^(ambDim C),QQ^1,0)}}
+     -- for d = dl+1 it is the lineality space plus one of the rays
+     else if d == dl+1 then (
+	  -- Generating the list of cones given by one ray and the lineality space
+	  R1 := rays C;
+	  apply(numColumns R, i -> set {R1_{i}}))
+     else if 0 <= d and d < dl then {}
+     else (
+	  if i == 0 then (
+	       R2 := rays C;
+	       C.cache.faces#0 = {set apply(numColumns R2, i -> R2_{i})};
+	       i = 1);
+	  if i == 1 then (
+	       -- Saving the half-spaces and hyperplanes
+	       HS := halfspaces C;
+	       HP := hyperplanes C;
+	       -- Generating the list of facets where each facet is given by a list of its vertices and a list of its rays
+	       F1 := apply(numRows HS, i -> intersection(HS,HP || HS^{i}));
+	       F1 = apply(F1, f -> (
+			 R := rays f;
+			 (set apply(numColumns R, i -> R_{i}))));
+	       i = 2;
+	       C.cache.faces#1 = F1);	       
+	  -- Duplicating the list of facets
+	  F := C.cache.faces#1;
+	  i = i-1;
+	  L := C.cache.faces#i;
+	  -- Intersecting L k-1 times with F and returning the maximal inclusion sets. These are the faces of codim plus 1
+	  while i < k do (
+	       L = intersectionWithFacetsCone(L,F);
+	       i = i+1;
+	       C.cache.faces#i = L);
+	  -- Generating the corresponding polytopes out of the lists of vertices, rays and the lineality space
+	  C.cache.faces#k))
 
 
 -- PURPOSE : Building the polyhedron 'P'
