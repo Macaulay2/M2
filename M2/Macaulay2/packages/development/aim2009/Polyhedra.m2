@@ -34,7 +34,7 @@ export {PolyhedralObject, Polyhedron, Cone, Fan, convexHull, posHull, intersecti
         ambDim, cones, genCones, halfspaces, hyperplanes, linSpace, rays, vertices,
         areCompatible, commonFace, contains, isCompact, isComplete, isEmpty, isFace, isPointed, isPolytopal, 
 	isPure, isSmooth,
-	faces, fVector, hilbertBasis, incompCones, inInterior, interiorPoint, interiorVector, latticePoints, maxFace, minFace, 
+	dualFaceLattice, faceLattice, faces, fVector, hilbertBasis, incompCones, inInterior, interiorPoint, interiorVector, latticePoints, maxFace, minFace, 
 	minkSummandCone, polytope, proximum, skeleton, smallestFace, smoothSubfan, stellarSubdivision, tailCone, triangulate, 
 	volume, vertexEdgeMatrix, vertexFacetMatrix, 
 	affineHull, affineImage, affinePreimage, bipyramid, ccRefinement, coneToPolyhedron, directProduct, 
@@ -1156,51 +1156,47 @@ isSmooth Fan := F -> all(toList F#"generatingCones",isSmooth)
 
 
 
+dualFaceLattice = method(TypicalValue => List)
+dualFaceLattice(ZZ,Polyhedron) := (k,P) -> (
+     L := faceBuilder(dim P - k,P);
+     HS := halfspaces P;
+     HS = apply(numRows HS#0, i -> ((HS#0)^{i},(HS#1)^{i}));
+     apply(L, l -> (
+	       l = (toList l#0,toList l#1);
+	       positions(HS, hs -> (all(l#0, v -> (hs#0)*v - hs#1 == 0) and all(l#1, r -> (hs#0)*r == 0))))))
+
+dualFaceLattice Polyhedron := P -> apply(dim P + 1, k -> dualFaceLattice(dim P - k,P))
+
+faceLattice = method(TypicalValue => List)
+faceLattice(ZZ,Polyhedron) := (k,P) -> (
+     L := faceBuilder(k,P);
+     V := vertices P;
+     R := rays P;
+     V = apply(numColumns V, i -> V_{i});
+     R = apply(numColumns R, i -> R_{i});
+     apply(L, l -> (
+	       l = (toList l#0,toList l#1);
+	       (sort apply(l#0, e -> position(V, v -> v == e)),sort apply(l#1, e -> position(R, r -> r == e))))))
+
+faceLattice Polyhedron := P -> apply(dim P + 1, k -> faceLattice(dim P - k,P))
+     	  
+
+
 -- PURPOSE : Computing the faces of codimension 'k' of 'P'
 --   INPUT : 'k'  an integer between 0 and the dimension of
 --     	     'P'  a polyhedron
 --  OUTPUT : a List, containing the faces as polyhedra
 faces = method(TypicalValue => List)
 faces(ZZ,Polyhedron) := (k,P) -> (
-     --Checking for input errors
-     if k < 0 or k > dim P then error("the codimension must be between 0 and the dimension of the polyhedron");
-     d := dim P - k;
-     dl := P#"dimension of lineality space";
-     -- Saving the lineality space of 'P', which is the also the lineality space of each face
-     LS := P#"linealitySpace";
-     -- for d = dim P it is the polyhedron itself
-     if d == dim P then {P}
-     -- for k=dim(P) the faces are the vertices
-     else if d == dl then (
-	  V := vertices P;
-	  -- Generating the list of vertices with each vertex as a polyhedron
-	  apply(numColumns V, i -> convexHull(V_{i},LS)))
-     else if d < dl then {}
-     else (
-	  -- Saving the half-spaces and hyperplanes
-	  (HS,v) := halfspaces P;
-	  (HP,w) := hyperplanes P;
-	  -- Generating the list of facets where each facet is given by a list of its vertices and a list of its rays
-	  F := apply(numRows HS, i -> intersection(HS,v,HP || HS^{i},w || v^{i}));
-	  F = apply(F, f -> (
-		    V := vertices f;
-		    R := rays f;
-		    (set apply(numColumns V, i -> V_{i}),set apply(numColumns R, i -> R_{i}))));
-	  -- Duplicating the list of facets
-	  L := F;
-	  i := 1;
-	  -- Intersecting L k-1 times with F and returning the maximal inclusion sets which are the faces of codim plus 1
-	  while i < k do (
-	       L = intersectionWithFacets(L,F);
-	       i = i+1);
-	  -- Generating the corresponding polytopes out of the lists of vertices, rays and the lineality space
-	  L = apply(L, l -> (
-		    l = (toList l#0,toList l#1);
-		    V := matrix transpose apply(l#0, e -> flatten entries e);
-		    R := if l#1 != {} then matrix transpose apply(l#1, e -> flatten entries e) else map(target V,QQ^1,0);
-		    if LS != 0 then R = R | LS | -LS;
-		    convexHull(V,R)));
-	  L))
+     L := faceBuilder(k,P);
+     LS := linSpace P;
+     -- Generating the corresponding polytopes out of the lists of vertices, rays and the lineality space
+     apply(L, l -> (
+	       l = (toList l#0,toList l#1);
+	       V := matrix transpose apply(l#0, e -> flatten entries e);
+	       R := if l#1 != {} then matrix transpose apply(l#1, e -> flatten entries e) else map(target V,QQ^1,0);
+	       if LS != 0 then R = R | LS | -LS;
+	       convexHull(V,R))))
 
 
 
@@ -2793,6 +2789,59 @@ saveSession String := F -> (
 -- >> not public <<
 ---------------------------------------
 
+faceBuilder = (k,P) -> (
+     --Checking for input errors
+     if k < 0 or k > dim P then error("the codimension must be between 0 and the dimension of the polyhedron");
+     if not P.cache.?faces then P.cache.faces = new MutableList;
+     i := #(P.cache.faces);
+     if k < i then P.cache.faces#k
+     else (
+	  d := dim P - k;
+	  dl := P#"dimension of lineality space";
+	  -- Saving the lineality space of 'P', which is the also the lineality space of each face
+	  LS := P#"linealitySpace";
+	  -- for d = dim P it is the polyhedron itself
+	  if d == dim P then (
+	       VP := vertices P;
+	       RP := rays P;
+	       P.cache.faces#k = {(set apply(numColumns VP, i -> VP_{i}),set apply(numColumns RP, i -> RP_{i}))};
+	       P.cache.faces#k)
+	  -- for k=dim(P) the faces are the vertices
+	  else if d == dl then (
+	       VP1 := vertices P;
+	       -- Generating the list of vertices with each vertex as a polyhedron
+	       apply(numColumns VP1, i -> (set {VP1_{i}},set {})))
+	  else if d < dl then {}
+	  else (
+	       if i == 0 then (
+		    VP2 := vertices P;
+		    RP2 := rays P;
+		    P.cache.faces#0 = {(set apply(numColumns VP2, i -> VP2_{i}),set apply(numColumns RP2, i -> RP2_{i}))};
+		    i = 1);
+	       if i == 1 then (
+		    -- Saving the half-spaces and hyperplanes
+		    (HS,v) := halfspaces P;
+		    (HP,w) := hyperplanes P;
+		    -- Generating the list of facets where each facet is given by a list of its vertices and a list of its rays
+		    Fl := apply(numRows HS, i -> intersection(HS,v,HP || HS^{i},w || v^{i}));
+		    Fl = apply(Fl, f -> (
+			      V := vertices f;
+			      R := rays f;
+			      (set apply(numColumns V, i -> V_{i}),set apply(numColumns R, i -> R_{i}))));
+		    i = 2;
+		    P.cache.faces#1 = Fl);
+	       F := P.cache.faces#1;
+	       i = i - 1;
+	       L := P.cache.faces#i;
+	       -- Intersecting L k-1 times with F and returning the maximal inclusion sets which are the faces of codim plus 1
+	       while i < k do (
+		    L = intersectionWithFacets(L,F);
+		    i = i+1;
+		    P.cache.faces#i = L);
+	       P.cache.faces#k)))
+
+
+
 -- PURPOSE : Building the polyhedron 'P'
 --   INPUT : '(hyperA,verticesA)',  a pair of two matrices each describing the homogenization of P
 --                                 directly ('verticesA') and in the dual description ('hyperA')
@@ -2838,7 +2887,8 @@ polyhedronBuilder = (hyperA,verticesA) -> (
 	     "halfspaces" => (H_{1..(numgens source H)-1},-H_{0}),
 	     "hyperplanes" => HP,
 	     "homogenizedVertices" => verticesA,
-	     "homogenizedHalfspaces" => hyperA})
+	     "homogenizedHalfspaces" => hyperA,
+	     symbol cache => new CacheTable})
    
    
 -- PURPOSE : Building the Cone 'C'
