@@ -214,11 +214,8 @@ ggConcatBlocks = (tar,src,mats) -> (			    -- we erase this later
      then f = map(target f, source f, f, Degree => degree mats#0#0);
      f)
 
-sameringMatrices = mats -> (
-     R := ring mats#0;
-     if not all ( mats, m -> ring m === R )
-     then error "expected matrices over the same ring";
-     R)
+sameringMatrices = mats -> apply(mats,
+     m -> promote(m,try ring sum apply(mats, m -> 0_(ring m)) else error "expected matrices over compatible rings"))
 
 directSum Matrix := f -> Matrix.directSum (1 : f)
 Matrix.directSum = args -> (
@@ -321,7 +318,7 @@ RingElement || RingElement := Matrix => (r,s) -> matrix {{r}} || matrix {{s}}
 concatCols = mats -> (
      mats = nonnull toList mats;
      if # mats === 1 then return mats#0;
-     sameringMatrices mats;
+     mats = sameringMatrices mats;
      sources := apply(mats,source);
      -- if not all(sources, F -> isFreeModule F) then error "expected sources to be free modules";
      targets := apply(mats,target);
@@ -331,7 +328,7 @@ concatCols = mats -> (
 concatRows = mats -> (
      mats = nonnull toList mats;
      if # mats === 1 then return mats#0;
-     sameringMatrices mats;
+     mats = sameringMatrices mats;
      sources := apply(mats,source);
      -- if not same sources then error "expected matrices in the same column to have equal sources";
      targets := apply(mats,target);
