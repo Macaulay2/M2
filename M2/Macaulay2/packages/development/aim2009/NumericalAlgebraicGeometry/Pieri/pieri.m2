@@ -24,8 +24,9 @@ skewSchubertVariety(ZZ,ZZ,List,List) := (k,n,l,m)->(
      
 generateChildren = method(TypicalValue=>List)
 generateChildren List := m -> (
- L := apply(#m, i->take(m,i)|{m#i+1}|drop(m,i+1));
- select(L, a->a==reverse sort a)
+ L := apply(#m, i->if n-k>=m#i+1 then take(m,i)|{m#i+1}|drop(m,i+1));
+ print L;
+ select(L, a-> a==reverse sort a)
 )
 
 positionVariableChildren = method(TypicalValue=>ZZ)
