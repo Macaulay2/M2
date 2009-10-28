@@ -1199,6 +1199,43 @@ readSolutionsBertini String := f -> (
 -- {equations, slice, points}
 -- caveat: we assume that #equations = dim(slice)   
 
+WitnessSet = new Type of MutableHashTable 
+-- Equations, Slice, Points
+WitnessSet.synonym = "witness set"
+dim WitnessSet := W -> #W.Slice
+codim WitnessSet := W -> numgens ring W - dim W
+ring WitnessSet := W -> ring W.Equations
+degree WitnessSet := W -> #W.Points
+net WitnessSet := W -> "(dim=" | net dim W |",deg="| net degree W | ")" 
+witnessSet = method()
+witnessSet (Ideal,Ideal,List) := (I,S,P) -> new WitnessSet from { Equations => I, Slice => S_*, Points => P}
+randomUnitaryMatrix = method()
+randomUnitaryMatrix ZZ := n -> last SVD random(CC^n,CC^n)     
+witnessSet Ideal := I -> (
+     n := numgens ring I;
+     d := dim I;
+     SM := (randomUnitaryMatrix n)^(toList(0..d-1));
+     S := ideal(SM * transpose vars ring I + random(CC^d,CC^1));
+     RM := (randomUnitaryMatrix numgens I)^(toList(0..n-d-1));
+     P := solveSystem(flatten entries (RM * transpose gens I) | S_*);
+     PP := select(P, p->norm sub(gens I, matrix p) < 1e-5);
+     witnessSet(I,S,PP/first)
+     )
+     
+///
+restart
+debug loadPackage "NumericalAlgebraicGeometry"
+CC[x,y]
+I = ideal (x^2+y)
+S = ideal (y-1)
+P = {{ii_CC,1_CC},{ii_CC,1_CC}}
+R = CC[x,y,z]
+I = ideal {z-x*y, x^2-y, y^2-z*x}
+W = witnessSet(I,S,P)
+W = witnessSet I
+W.Points
+///
+
 sliceEquations = method(TypicalValue=>List) 
 sliceEquations (Matrix, Ring) := (S,R) -> (
 -- make slicing plane equations 
