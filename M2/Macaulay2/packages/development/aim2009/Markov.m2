@@ -9,10 +9,10 @@ newPackage("Markov",
      Version => "1.2"
      )
 
--- 28.10.09 ---- 
--- Version by the Working group at Aim 
--- Ania K., Sonja Petrovic, Brandy Stigler, Amelia Taylor 
-
+---- 28.10.09 ---- 
+---- Version by the Working group at Aim 
+---- Ania K., Sonja Petrovic, Brandy Stigler, Amelia Taylor 
+---- Comments from this group have 4 dashes, those with 2 are Mike/Luis. 
 
 ------------------------------------------
 -- markov ideals in Macaulay2
@@ -43,6 +43,22 @@ export {makeGraph, displayGraph, localMarkovStmts, globalMarkovStmts, pairMarkov
        gaussRing, gaussMinors, gaussIdeal, gaussTrekIdeal, Graph}
 exportMutable {dotBinary,jpgViewer}
 
+---- List from Board at AIM.
+
+---- a)  Discrete   b) Gaussian
+----
+---- (0) CI models   (3.1) 
+---- (1) Undirected Graph  (3.2)
+---- (2) DAG    (3.2) 
+---- (3) Chain Graphs (DAG & undirected)   (3.2)
+----
+----  Local and Global Markov properties  (3.2)
+----  use, when appropriate thms that say local <=> global based on conditions
+----  
+----  parametrizations and for toric varieties the the corresponding matrix. 
+
+
+
 -------------------------
 -- Graph visualization --
 -------------------------
@@ -53,7 +69,11 @@ exportMutable {dotBinary,jpgViewer}
  
 ---- TASK --- generalize and make compatible Graphs.  This section is only 
 ---- about visualization and the first makeGraph. 
+---- It would be nice to have ideals for a set of independence relations.  We 
+---- should be able to do this already with code here, just needs to be 
+---- appropriately documented. At least for discrete models. 
 
+---- Where does Gaussian fit into ALL of this??
 
 -- Give a graph as a hash table i => descendents
 -- Make a graph
@@ -181,7 +201,10 @@ removeNodes(Graph,ZZ) := (G,v) -> removeNodes(G, {v})
 -- If S and T represent exactly the same dependency, return true.
 
 
----- M2 does seem to remove dependencies reasonably well.  
+---- M2 does seem to remove dependencies reasonably well in removeRedundants, but 
+---- it is definitely not finding all, only "obvious" ones in that function --- below 
+---- the comment suggests "more serious removal of redundancies."
+ 
 ---- This is the section where the local and global statements are done. 
 
 equivStmts = (S,T) -> S#2 === T#2 and set{S#0,S#1} === set{T#0,T#1}
@@ -528,6 +551,18 @@ gaussTrekIdeal(Ring, Graph) := (R,G) -> (
 	  );
      substitute(I,R)
      )
+
+----------------------
+-- Parameterization --
+----------------------
+
+---- We need this for both directed and undirected graphs. 
+
+
+--------------------
+-- Documentation  --
+--------------------
+
 beginDocumentation()
 
 doc ///
