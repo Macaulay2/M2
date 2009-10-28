@@ -1462,7 +1462,7 @@ document {
      HREF("http://arxiv.org/abs/math.AC/0305214", "Multigraded
      Castelnuovo-Mumford regularity"), ", ", EM "J. Reine
      Angew. Math. ", BOLD "571", " (2004), 179-212.  The general case
-     uses the methods described in David Eisenbud, Mircea MustaÅ£Ç,
+     uses the methods described in David Eisenbud, Mircea Mustaţǎ,
      Mike Stillman, ", HREF("http://arxiv.org/abs/math.AG/0001159",
      "Cohomology on toric varieties and local cohomology with monomial
      supports"), ", ", EM "J. Symbolic Comput. ", BOLD "29", " (2000),
