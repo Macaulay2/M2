@@ -108,6 +108,57 @@ trackPHCpack (List,List,List,HashTable) := List => (S,T,solsS,o) -> (
      return result;
      )
 
+refinePHCpack = method(TypicalValue => List, Options => {
+	  ResidualTolerance => 0, 
+	  ErrorTolerance => 1e-10,
+	  Iterations => null,
+	  Bits => 300
+	  }
+	  )
+refinePHCpack (List,List) := List => o -> (T,sols) -> (
+     -- T is a list of polynomials over CC
+     -- sols is a list of solutions
+     --  each solution is a list {point, other stuff after that}
+     R := ring first T;
+     n := #T;
+     targetfile := temporaryFileName() | 
+     "PHCtarget";
+     outfile := temporaryFileName() | 
+     "PHCoutput";
+     solsTfile := temporaryFileName() | 
+     "PHCsols";
+     batchfile := temporaryFileName() | 
+     "PHCbat";
+     {targetfile, outfile, batchfile, solsTfile} / (f->if fileExists f then removeFile f);
+     -- writing data to the corresponding files                                                                                                                                                                           
+     systemToFile(T,targetfile);
+     solutionsToFile(sols,R,targetfile, Append=>true);	  
+     -- making batch file (for phc -v)
+     bat := openOut batchfile;
+     bat << "3" << endl; -- option for newton's method using multiprecision
+     bat << "y" << endl; -- is the system in a file?
+     bat << targetfile << endl; -- name of input file
+     bat << outfile << endl; -- name of output file
+     -- set tolerance for error on root
+     bat << "3" << endl << o.ErrorTolerance << endl;
+     -- set tolerance for residual
+     bat << "4" << endl << o.ResidualTolerance << endl;
+     -- set #iterations
+     niterations := o.Iterations;
+     ndecimal := ceiling(o.Bits * log(2.) / log(10.));
+     bat << "6" << endl << niterations << endl;
+     bat << "7" << endl << ndecimal << endl;
+     -- now exit menu
+     bat << "0" << endl;
+     close bat;
+     compStartTime := currentTime();      
+     run(PHCexe|" -v <"|batchfile|" >phc_session.log");
+     if DBG>0 then << "PHCpack computation time: " << currentTime()-compStartTime << endl;
+     run(PHCexe|" -z "|outfile|" "|solsTfile);
+     -- parse and output the solutions                                                                                                                                                                                    
+     parseSolutions(solsTfile, R, Bits => o.Bits)
+     )
+
 -- service functions ------------------------------------------
 systemToFile = method(TypicalValue => Nothing)
 systemToFile (List,String) := (F,name) -> (
@@ -123,9 +174,12 @@ systemToFile (List,String) := (F,name) -> (
      close file;
      ) 
 
-solutionsToFile = method(TypicalValue => Nothing)
-solutionsToFile (List,Ring,String) := (S,R,name) -> (
-     file := openOut name;
+solutionsToFile = method(TypicalValue => Nothing,
+     Options => {Append => false})
+solutionsToFile (List,Ring,String) := o -> (S,R,name) -> (
+     file := if o.Append then openOutAppend name else openOut name;
+     if o.Append then 
+       file << endl << "THE SOLUTIONS :" << endl;
      file << #S << " " << numgens R << endl << 
      "===========================================================" << endl;
      scan(#S, i->( 
@@ -150,12 +204,15 @@ R = CC[x,y,z]
 solutionsToFile( {(0,0,1),(0,0,-1)}, R, "PHCsols" )
 ///
 
-parseSolutions = method(TypicalValue => Sequence)
-parseSolutions (String,Ring) := (s,R) -> (
+parseSolutions = method(TypicalValue => Sequence,
+     Options => {Bits => 53})
+parseSolutions (String,Ring) := o -> (s,R) -> (
 -- parses solutions in PHCpack format 
 -- IN:  s = string of solutions in PHCmaple format 
 --      V = list of variable names
 -- OUT: {list of solutions, list of multiplicities}
+     oldprec := defaultPrecision;
+     defaultPrecision = o.Bits;
      L := get s;
      L = replace("=", "=>", L);
      L = replace("I", "ii", L);
@@ -166,6 +223,22 @@ parseSolutions (String,Ring) := (s,R) -> (
      
      use R; 	  
      sols := toList apply(value L, x->new HashTable from toList x);
+     defaultPrecision = oldprec;
      sols/(x->{apply(gens R, v->x#v), x})
      )
 
+///
+restart
+debug loadPackage "NumericalAlgebraicGeometry"
+
+R = CC[x]
+L = {x^2-2}
+refinePHCpack(L, {{1.7}}, Iterations => 10, Bits => 400, ErrorTolerance => 1p400e-130)
+
+R = CC[x,y,z]
+L = {y-x^2,z-x^3,x+y+z-1}
+B = solveSystem(L,Software=>PHCpack)
+B = B/first
+C = apply(B, b -> refinePHCpack(L, {b}, Iterations => 10, Bits => 400, ErrorTolerance => 1p400e-130))
+C/first/first
+///
