@@ -29,19 +29,7 @@ maxPrime=n->(
 );
 
 
-----------------------------------------------------------------
-
---Procedure to form a matrix out of the vectors of A indexed by sigma
---mat=(A,sigma)->(
---return(matrix apply(sigma,i->A_i)););
-
-----------------------------------------------------------------
-
-
---Procedure to return the index of a cone
-
-
-----------------------------------------------------------------
+---------------------------------------------------------------
 
 --Procedure to find the mod p representative of a vector v with
 --all entries between 0 (inclusive) and p (exclusive)
@@ -61,19 +49,51 @@ makePos=(v,pp)->(
 )
 
 ----------------------------------------------------------------
-method resolveSingularities (typicalValue => NormalToricVariety)
-resolveSingularities :=   X->(
-    	A:=rays X;
-	if not isSimplicial(X) then  Xsimp=makeSimplicial X else Xsimp=X;
+
+makeSimplicial = method(TypicalValue => NormalToricVariety)
+makeSimplicial (NormalToricVariety):= NormalToricVariety => X ->(
+     Y := fan X;
+     return normalToricVariety(makeSimplicial Y)
+     )
+
+
+makeSimplicial (Fan)  := Fan =>  X->(
+     Y := X;
+     done := false;
+     while not done do (
+	  for i from 3 to dim Y do apply( cones(i,Y), sigma -> if #(rays sigma) > i then (
+		    rho := transpose matrix{flatten entries(rays sigma)_0};
+		    Y = stellarSubdivision (Y,rho);
+		    )
+	          );
+  	     done = true;
+	     );
+     return Y
+     )
+
+blowup = method(TypicalValue=>NormalToricVariety)
+blowup (NormalToricVariety,Matrix)  :=  (X,rho)->(
+     Y := fan X;
+     normalToricVariety stellarSubdivision (Y,rho)    
+     )
+
+-------------------------------------------------------------------------------------------
+
+
+--need to make work for non max cones
+resolveSingularities = method (TypicalValue => NormalToricVariety)
+resolveSingularities (NormalToricVariety) := NormalToricVariety =>   (X)->(
+    	if not isSimplicial(X) then  Xsimp=makeSimplicial X else Xsimp=X;
+	A:=rays Xsimp;
 	--Next we add the determinant to each simplex in our data
      	if (not Xsimp.cache.?index) then (
 	     Xsimp.cache.index={};
 	     maxDet:=0;
 	     scan(max Xsimp,sigma->(
-		       detSigma=abs(det(matrix toList apply(sigma,i->toList A_i)));
+		       detSigma=if #sigma>1 then abs(det(matrix toList apply(sigma,i->toList A_i)))else 1;
 		       maxDet=max(maxDet,detSigma);
 		       Xsimp.cache.index=append(Xsimp.cache.index,detSigma);
-	     	       );
+	     	       )
 	   	  );
 	     );
 	maxDet := max Xsimp.cache.index;
@@ -82,7 +102,7 @@ resolveSingularities :=   X->(
 		--First find a simplex with the maximum determinant
 		simplex:=(max Xsimp)_(position(Xsimp.cache.index,j->(j==maxDet)));
 		--Now find the vector in this simplex to add
-		p:=maxPrime(maxDet);
+		p:=maxPrime(floor maxDet);
 		R:=ZZ/p;
 		Ap:=substitute(transpose matrix toList apply(simplex,i->toList A_i), R);
 		K:=transpose gens ker Ap;
@@ -98,45 +118,40 @@ resolveSingularities :=   X->(
 		maxDet=0;
 		Xsimp.cache.index={};
 		scan(max Xsimp,sigma->(
-			  detSigma=abs(det(matrix toList apply(sigma,i->toList A_i)));
+			  detSigma=if # sigma>1 then abs(det(matrix toList apply(sigma,i->toList A_i))) else 1;
 			  maxDet=max(maxDet,detSigma);
 			  Xsimp.cache.index=append(Xsimp.cache.index,detSigma);
 	     		  )
 	   	     );
 		);
 	return Xsimp
-);
+)
 
 
-==========================================================
-makeSimplicial = method
-makeSimplicial NormalToricVariety  := NormalToricVariety =>  X->(
-     Y := fan X;
-     makeSimplicialFan Y;
-     return normalToricVariety Y
-     )
+--=====================================================
 
-makeSimplicial Fan  := Fan =>  X->(
-     Y := X;
-     done := false;
-     while not done do (
-	  for i from 3 to dim Y do apply( cones(i,Y), sigma -> if #(rays sigma) > i then (
-		    rho := transpose matrix{flatten entries(rays sigma)_0};
-		    Y = stellarSubdivision (Y,rho);
-		    )
-	          );
-  done = true;
-	  );
-     return Y
-     )
+--==Examples===
 
-blowup = method(TypicalValue=>NormalToricVariety)
-blowup (NormalToricVariety,Matrix)  :=  (X,rho)->(
-     Y := fan X;
-     normalToricVariety stellarSubdivision (Y,rho)    
-     )
+-- the following are already smooth so applying resolvesingularities will just give same X back
+X = projectiveSpace 4
+X = hirzebruchSurface 2
 
+-- this is not smooth
+X = weightedProjectiveSpace {1,2,3};
+resolveSingularities X
+time resolveSingularities X
 
+U = normalToricVariety({{4,-1},{0,1}},{{0,1}});
+resolveSingularities U
+
+--here the maximal cones are the rays 
+U' = normalToricVariety({{4,-1},{0,1}},{{0},{1}});
+resolveSingularities U'
+
+--this takes too long
+--here makeSimplicial does significant work: codim 2 cones need to be subdiveded
+Q = normalToricVariety({{-1,-1,-1},{1,-1,-1},{-1,1,-1},{1,1,-1},{-1,-1,1},{1,-1,1},{-1,1,1},{1,1,1}},{{0,2,4,6},{0,1,4,5},{0,1,2,3},{1,3,5,7},{2,3,6,7},{4,5,6,7}});
+resolveSingularities Q
 
 
 ---------------------------------------
