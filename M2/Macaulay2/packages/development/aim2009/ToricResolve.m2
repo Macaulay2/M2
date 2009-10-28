@@ -61,7 +61,6 @@ makePos=(v,pp)->(
 )
 
 ----------------------------------------------------------------
---???need to make work for nonmaximal cones!
 method resolveSingularities (typicalValue => NormalToricVariety)
 resolveSingularities :=   X->(
     	A:=rays X;
@@ -146,3 +145,38 @@ blowup (NormalToricVariety,Matrix)  :=  (X,rho)->(
      normalToricVariety stellarSubdivision (Y,rho)    
      )
 
+
+
+
+---------------------------------------
+-- DOCUMENTATION
+---------------------------------------
+
+
+beginDocumentation()
+
+document {
+     Key => {makePos, (makePos, List, ZZ)}
+     Headline => "find a mod p representative of a vector with entries between 0 (inclusive) and p (exclusive)",
+     Usage => "makePos(v,p)",
+     Inputs => {
+		"v" => "a List of integers",
+		"p" => "an integer", 
+		},
+     Outputs => {List => "a mod p representative of a vector"},
+--     Consequences => {
+          -- each effect is a hypertext list
+--          },
+     "This is used to choose a rays while making a simplicial NormalToricVariety smooth.",
+     EXAMPLE {
+          "m2code",
+          "m2code",
+          "m2code"
+          },
+--     "There can be explanatory prose here in the form of a hypertext list.",
+     Caveat => {"The List input should really be a matrix."}
+     }
+
+
+
+end
