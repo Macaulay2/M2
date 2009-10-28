@@ -32,7 +32,6 @@ idealOfGenericPoint(Ring, List, ZZ, ZZ) := (R, L, d, M) -> (
 	  B1 = B1 || matrix {apply(B, m -> floor(realPart (M*sub(m, matrix{L#i}))))}
 	  || matrix {apply(B, m -> floor(imaginaryPart (M*sub(m, matrix{L#i}))))};
 		    );
---     B1 := apply(B, m -> floor(M*sub(m, matrix{L})));
      G = id_(ZZ^#B) || B1;
      G1 := sub(LLL G,R);
 --     << "LLL matrix is " << G1 << endl;
@@ -127,8 +126,7 @@ RM = random(CC^d,CC^#T)
 RT = flatten entries (RM*transpose matrix{T})
 L = sum(gens R, v->v*random CC) + 1 
 points = solveSystem(RT|{L}) 
-point = points#2
-for i from 0 to #points-1 list norm (sub(K, matrix points#i))_*
+point = first select(points, pt -> norm (sub(K, matrix pt))_* < 10^(-9))
 apply(10, i->(
 	  L' = sum(gens R, v->v*random CC) + 1;
 	  track(RT|{L},RT|{L'},point)
