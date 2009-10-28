@@ -1362,7 +1362,7 @@ interiorPoint = method(TypicalValue => Matrix)
 interiorPoint Polyhedron := P -> (
      -- Checking for input errors
      if isEmpty P then error("The polyhedron must not be empty");
-     Vm := vertices P;
+     Vm := vertices P | rays P;
      n := numColumns Vm;
      ones := matrix toList(n:{1/n});
      -- Take the '1/n' weighted sum of the vertices
@@ -2359,6 +2359,17 @@ QQ * Polyhedron := (k,P) -> (
      convexHull(k*(vertices P),rays P | linSpace P))
 
 ZZ * Polyhedron := (k,P) -> promote(k,QQ) * P
+
+
+-- PURPOSE : Computing the normal cone of a face of a polytope
+--   INPUT : '(P,Q)',  two polyhedra
+--  OUTPUT : 'C',  a Cone, the inner normal cone of P in the face Q
+-- COMMENT : 'Q' must be a face of P
+normalCone (Polyhedron,Polyhedron) := opts -> (P,Q) -> (
+     -- Checking for input errors
+     if not isFace(Q,P) then error("The second polyhedron must be a face of the first one");
+     p := interiorPoint Q;
+     dualCone posHull affineImage(P,-p))
 
 
 -- PURPOSE : Computing the inner normalFan of a polyhedron
