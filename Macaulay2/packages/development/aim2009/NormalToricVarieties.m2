@@ -212,8 +212,24 @@ isSmooth NormalToricVariety := X -> (
      X.cache.smooth)
 
 fan NormalToricVariety := X -> (
-     if not X.cache.?isFan then isFan X;
-     if not X.cache.isFan then error("The data does not define a fan");
+     if not X.cache.?Fan then (
+	  R := matrix transpose rays X;
+	  L := sort apply(max X, C -> posHull R_C);
+	  n := dim L#0;
+	  Lfaces := {};
+	  symmDiff := (x,y) -> ((x,y) = (set x,set y); toList ((x-y)+(y-x)));
+	  scan(L, C -> if dim C == n then Lfaces = symmDiff(Lfaces,faces(1,C)));
+	  X.cache.Fan = new Fan from {
+	       "generatingCones" => set L,
+	       "ambient dimension" => numRows R,
+	       "top dimension of the cones" => n,
+	       "number of generating cones" => #L,
+	       "rays" => set apply(rays X, r -> matrix transpose {r}),
+	       "number of rays" => numColumns R,
+	       "isPure" => dim L#0 == dim last L,
+	       "faces" => set Lfaces,
+	       "isComplete" => Lfaces == {},
+	       symbol cache => new CacheTable});
      X.cache.Fan)
 
 weilDivisors = method(TypicalValue => Module)
