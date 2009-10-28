@@ -169,6 +169,7 @@ systemToFile (List,String) := (F,name) -> (
      	       L = replace("ii", "I", L);
      	       L = replace("e", "E", L);
 	       L = replace("p53","",L);
+	       L = replace("p[0-9]+","",L);
 	       file << L << ";" << endl;
 	       ));
      close file;
@@ -241,4 +242,17 @@ B = solveSystem(L,Software=>PHCpack)
 B = B/first
 C = apply(B, b -> refinePHCpack(L, {b}, Iterations => 10, Bits => 400, ErrorTolerance => 1p400e-130))
 C/first/first
+
+-- Using higher precision
+R = CC_53[x,y,z]
+R200 = CC_200[x,y,z]
+L = {y-x^2,z-x^3,x+y+z-.5p200}
+B = solveSystem(L,Software=>PHCpack)
+B = solveSystem(L)
+pt = B_0_0
+
+C = refinePHCpack(L, {pt}, Iterations => 10, Bits => 400, ErrorTolerance => 1p400e-130)
+pt1 = C_0_0
+pt_0
+pt1_0
 ///
