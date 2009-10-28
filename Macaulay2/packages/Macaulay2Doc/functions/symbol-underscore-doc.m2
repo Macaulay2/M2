@@ -64,7 +64,7 @@ document {
      "We can use this operation to compute composition of permutations represented as lists.",
      EXAMPLE "{4,2,3,1,0} _ {2,1,3,4,0}",
      PARA{},
-     "Remark: any subscripts which are sequences will have their elements spliced into the rest of the list.",
+     "Remark: any subscripts that are sequences will have their elements spliced into the rest of the list.",
      EXAMPLE "{a,b,c,d,e}_{2..4}",
      SeeAlso => {"ranges and repetitions", (symbol _, VisibleList, ZZ)}
      }

@@ -26,7 +26,7 @@ document {
 	  "f" => "a new method function"
 	  },
      SPAN {
-	  "The code above creates a method function which takes up to four
+	  "The code above creates a method function that takes up to four
 	  arguments, looking up the appropriate method according to the classes of 
 	  the arguments, with inheritance.  To install a method for two arguments,
 	  (x,y), of classes X and Y, use code like this:"

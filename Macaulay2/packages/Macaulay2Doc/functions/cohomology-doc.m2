@@ -99,12 +99,12 @@ document {
 	  },
      Outputs => {Module => {" M over the homogeneous coordinate ring of 
 	   the variety ", TT "X", " which agrees, at least in degrees n greater than 
-	   or equal to d, with the graded module which in degree n is the", TT "i", "-th 
+	   or equal to d, with the graded module that in degree n is the", TT "i", "-th 
 	   cohomology group of ", TT "F(n)", "."}
 	  },
      "The command computes a module over the homogeneous coordinate ring of 
       the variety ", TT "X", " which agrees, at least in degrees n greater than 
-      or equal to the given d, with the graded module which in degree n is 
+      or equal to the given d, with the graded module that in degree n is 
       the", TT "i", "-th cohomology group of ", TT "F(n)", ".",
      PARA{},
      "To discard the part of the module M of degree less than d, 

@@ -356,7 +356,7 @@ document {
 document {
      Key => "Schreyer orders",
      Headline => "induced monomial order on a free module",
-     "The Schreyer order is a monomial order on a free module which is particularly
+     "The Schreyer order is a monomial order on a free module that is particularly
      efficient for computing Gröbner bases and syzygies.  The size of Gröbner bases
      of submodules using such orders is often much much smaller than if a position over term
      or term over position order would be used.  We call these Schreyer orders, after

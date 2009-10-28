@@ -28,7 +28,7 @@ server/Macaulay2 : ; $(MKDIR_P) $@
 TIDY = yes
 tidy: maybe-tidy
 ifeq ($(TIDY),yes)
-maybe-tidy:; rm -rf files
+maybe-tidy:; sleep 1 ; rm -rf files
 else
 maybe-tidy:
 endif

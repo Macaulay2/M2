@@ -2,7 +2,6 @@
 DIRECTORY ?= linux64
 CONFIGOPTIONS += --enable-tarfile
 CONFIGOPTIONS += --enable-static
-CONFIGOPTIONS += --enable-build-libraries=gmp
 CONFIGOPTIONS += --disable-pthreads
 CONFIGOPTIONS += --with-issue=Generic
 include Makefile.include

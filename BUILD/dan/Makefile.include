@@ -24,6 +24,10 @@ distclean1:; $(MAKE) -C builds.tmp/$(DIRECTORY) distclean
 distclean2:; find builds.tmp/$(DIRECTORY) -type f | sed 's/^/=== /'
 install-it:; $(MAKE) -C builds.tmp/$(DIRECTORY) install -o all $(INSTALLOPTIONS)
 install:pre-install install-it post-install
+install-info:
+	[ -d ~/local/share/info ]
+	for i in builds.tmp/*/libraries/final/info/* builds.tmp/*/libraries/final/share/info/* ; do cp $$i ~/local/share/info ; done
+	cd ~/local/share/info ; for i in *.info ; do install-info --infodir=. $$i ; done
 pre-install post-install:
 rebuild-world: arch-chk distclean configure everything install check
 world: arch-chk configure all install check

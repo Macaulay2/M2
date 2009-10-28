@@ -13,7 +13,7 @@ URL = http://www.hpl.hp.com/personal/Hans_Boehm/gc/gc_source
 #TARDIR = gc-7.1
 
 VERSION = 7.2alpha2
-PATCHFILE = @abs_srcdir@/patch-7.2alpha2
+PATCHFILE = @abs_srcdir@/patch-$(VERSION)
 TARDIR = gc-$(VERSION)
 
 VPATH = @srcdir@

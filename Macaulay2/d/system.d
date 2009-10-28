@@ -12,9 +12,10 @@ import alarmedFlag:bool;
 import interruptedFlag:bool;
 export steppingFlag := false;
 import exceptionFlag:bool;				    -- indicates interrupt, stepping, or alarm
-import write(fd:int, buffer:string, buffersize:int):int;
-import read(fd:int, buffer:string, buffersize:int):int;
-import read(fd:int, buffer:string, buffersize:int, offset:int):int;
+import write(fd:int, buffer:string, buffersize:int):int; -- preserve the order of these declarations:
+import write(fd:int, buffer:string, buffersize:int, offset:int):int; -- preserve the order of these declarations:
+import read(fd:int, buffer:string, buffersize:int):int;	-- preserve the order of these declarations:
+import read(fd:int, buffer:string, buffersize:int, offset:int):int;	-- preserve the order of these declarations:
 import readline(buffer:string, buffersize:int, offset:int, prompt:string):int;
 import link(oldfilename:string,newfilename:string):int;
 import fchmod(fd:int,mode:int):int;

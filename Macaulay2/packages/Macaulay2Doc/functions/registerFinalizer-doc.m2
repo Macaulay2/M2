@@ -4,7 +4,7 @@
 
 document { 
      Key => {registerFinalizer},
-     Headline => "register a string which will be displayed when an object is garbage collected",
+     Headline => "register a string that will be displayed when an object is garbage collected",
      Usage => "registerFinalizer(x,str)",
      Inputs => {
 	  "x" => Thing,

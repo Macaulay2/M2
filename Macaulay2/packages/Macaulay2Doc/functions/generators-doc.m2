@@ -122,7 +122,7 @@ document {
      Outputs => { Matrix => {"the one-row matrix whose entries are the generators of ", TT "I"} },
      "Each ideal in ", EM "Macaulay2", " comes equipped with a one-row
      matrix with the generators of the ideal.
-     It is this matrix which is returned.",
+     It is this matrix that is returned.",
      EXAMPLE {
 	  "R = ZZ/101[a,b,c];",
       	  "I = ideal(a^2,a*b-2,c^4,a*c-1,a*c-1)",

@@ -4,7 +4,7 @@
 
 document { 
      Key => {clean, (clean,RR,Matrix), (clean,RR,MutableMatrix),(clean,RR,Number), (clean,RR,RingElement)},
-     Headline => "Set to zero elements which are approximately zero",
+     Headline => "Set to zero elements that are approximately zero",
      Usage => "clean(epsilon,M)\nclean_epsilon M",
      Inputs => {
 	  "epsilon" => RR,
@@ -14,7 +14,7 @@ document {
 	  {ofClass Matrix, ", or ", ofClass RingElement}
 	  },
      PARA{"If the input is ", ofClass Matrix, " or ", ofClass RingElement, ", then the result has the same type,
-     where each real or complex number coefficient which is less than ", TT "epsilon", " in absolute value
+     where each real or complex number coefficient that is less than ", TT "epsilon", " in absolute value
      is replaced with zero."},
      EXAMPLE lines ///
      	  e = 1e-11;

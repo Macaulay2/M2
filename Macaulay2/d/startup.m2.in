@@ -148,19 +148,27 @@ if firstTime then (
 	  | "--GC " | version#"gc version" | ", by H. Boehm and Alan J. Demers" | newline
 	  | "--Singular-Factory " | version#"factory version" | ", by G.-M. Greuel et al." | newline
 	  | "--Singular-Libfac " | version#"libfac version" | ", by M. Messollen" | newline
-	  | ( 
+	  |    ( 
 	       if version#"frobby version" =!= "not present" 
 	       then ("--frobby " | version#"frobby version" | ", by B. H. Roune" | newline)
 	       else ""
 	       )
-	  | ( 
+	  |    ( 
 	       if version#"pari version" =!= "not present" 
 	       then ("--pari " | version#"pari version" | ", the PARI Group, Bordeaux" | newline)
 	       else ""
 	       )
 	  | "--NTL " | version#"ntl version" | ", by V. Shoup" | newline
---     	  | "--GNU MP " | version#"gmp version" | ", by T. Granlund et al." | newline
-     	  | "--MPIR " | version#"mpir version" | ", by Free Software Foundation et al." | newline
+	  |    (
+	       if version#"gmp version" =!= "not present"
+	       then "--GNU MP " | version#"gmp version" | ", by T. Granlund et al." | newline
+	       else ""
+	       )
+     	  |    (
+	       if version#"mpir version" =!= "not present"
+	       then "--MPIR " | version#"mpir version" | ", by Free Software Foundation et al." | newline
+	       else ""
+	       )
      	  | "--MPFR " | version#"mpfr version" | ", by Free Software Foundation" | newline
 	  | "--BLAS and LAPACK 3.0" | ", by J. Dongarra et al."
 	  );

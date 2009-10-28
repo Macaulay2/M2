@@ -1,0 +1,3 @@
+from galois.m2:
+
+     F.generators = apply(generators S, m -> promote(m,F)); -- this will be wrong if S is a tower

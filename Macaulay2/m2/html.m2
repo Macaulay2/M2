@@ -85,7 +85,11 @@ searchPrefixPath = url -> (
      )
 
 toURL := pth -> (
-     if isAbsolutePath pth then concatenate(rootURI, realpath pth)
+     if isAbsolutePath pth then concatenate(rootURI,
+	  if fileExists pth then realpath pth 
+	  else (
+	       stderr << "-- *** warning: file needed for URL not found: " << pth << endl;
+	       pth))
      else if isAbsoluteURL pth then pth
      else if absoluteLinks then (
 	  p := searchPrefixPath pth;
@@ -1171,9 +1175,12 @@ makePackageIndex List := path -> (
 		    to open up your browser on this page."
 		    },
 	       HEADER3 "Documentation",
-	       ul splice {
+	       ul nonnull splice {
                	    if prefixDirectory =!= null 
-		    then HREF { prefixDirectory | replace("PKG","Macaulay2Doc",currentLayout#"packagehtml") | "index.html", "Macaulay2" },
+		    then (
+			 m2doc := prefixDirectory | replace("PKG","Macaulay2Doc",currentLayout#"packagehtml") | "index.html";
+			 if fileExists m2doc then HREF { m2doc, "Macaulay2" }
+			 ),
 		    splice apply(toSequence unique apply(select(path,isDirectory),realpath), pkgdir -> (
 			      if debugLevel > 10 then stderr << "--checking package directory " << pkgdir << endl;
 			      apply(toSequence values Layout, layout -> (
@@ -1272,7 +1279,9 @@ viewHelp = key -> (
      -- we have to rewrite this to check for secondary keys
      checkLoadDocumentation();
      if key === () then {
-	  show new URL from { fix (applicationDirectory() | "index.html") }
+	  i := applicationDirectory() | "index.html";
+	  if not fileExists i then error("missing file (run makePackageIndex() or start M2 without -q): ",i);
+	  show new URL from { fix i }
 	  }
      else (
 	  fn := htmlFilename2(toFinalDocumentTag getPrimary makeDocumentTag key,Layout#1);

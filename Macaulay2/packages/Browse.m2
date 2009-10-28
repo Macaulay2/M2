@@ -148,10 +148,10 @@ document {
 document {
      Key => browse,
      Headline => "browse the contents of an object",
-     TT "browse x", " -- provides an interactive mechanism which allows the user
+     TT "browse x", " -- provides an interactive mechanism that allows the user
      to explore the hash table or list ", TT "x", ".",
      PARA{},
-     "A menu of numbered items is presented to the user which allow the user to
+     "A menu of numbered items is presented to the user that allow the user to
      inspect the ", TO "class", " or ", TO "parent", " of ", TT "x", ".  For a
      hash table, the keys are presented so the user can visit the 
      corresponding values, and for a list, the entries are presented so the user 

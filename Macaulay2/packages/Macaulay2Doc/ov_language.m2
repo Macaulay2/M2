@@ -250,7 +250,7 @@ document {
      assignments with the operator ", TO "<-", " are occasionally done
      on the user's behalf by bits of code already in the system,
      for example, when creating a polynomial ring the prospective
-     variables are given new values which are the generators of the 
+     variables are given new values that are the generators of the 
      polynomial ring.",
      PARA{},
      SeeAlso => { "GlobalAssignHook", "GlobalReleaseHook" }

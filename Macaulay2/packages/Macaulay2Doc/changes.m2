@@ -11,88 +11,185 @@ document {
 document {
      Key => "changes, 1.3",
      UL {
-	  LI {
-	       "Fixed a long-standing bug in ", TO "saturate", " that caused it to give incorrect answers (too small)
-	       when the ring has a non-standard monomial ordering or degree length." -- make less vague before 1.3
+	  LI { "major improvements and additions:",
+	       UL {
+		    LI {
+			 "A new option ", TO "Certification", " for ", TO "newPackage", ", provides information about packages that have been
+			 accepted for publication in a refereed journal.  The information is displayed in the top documentation node of
+			 the package.  The first three packages so certified
+			 are ", TO "EdgeIdeals::EdgeIdeals", ", ", TO "PieriMaps::PieriMaps", ", and ", TO "Polyhedra::Polyhedra", "."
+			 },
+		    LI { "New packages ", TO "OpenMath::OpenMath", " and ", TO "SCSCP::SCSCP", " for communicating via SCSCP with OpenMath to 
+			 programs such as GAP and Maple have been developed, 
+			 thanks to Dan Roozemond.  They depend on the new package ", TO "XML::XML", ", which uses the ", TT "libxml2", " 
+			 library to parse ", TT "XML", " code." },
+		    LI { "The programs ", TO "4ti2", ", ", TO "gfan", ", and ", TO "normaliz", " are now included with ", EM "Macaulay2", " 
+			 binary distributions, and are compiled automatically during Macaulay2's build process, with automatic downloading
+			 available as an option.  This makes the packages ", 
+			 TO "FourTiTwo::FourTiTwo", ", ",
+			 TO "gfanInterface::gfanInterface", ", ",
+			 TO "Normaliz::Normaliz", ", and ",
+			 TO "StatePolytope::StatePolytope", ", each of which uses one or more of them, more readily usable.",
+			 },
+		    LI { "packages newly included:",
+			 UL {
+			      TO "ConvexInterface::ConvexInterface",
+			      TO "MapleInterface::MapleInterface",
+			      TO "OpenMath::OpenMath",
+			      TO "Posets::Posets",
+			      TO "RationalPoints::RationalPoints",
+			      TO "SCSCP::SCSCP",
+			      TO "SRdeformations::SRdeformations",
+			      TO "XML::XML"
+			      }
+			 },
+		    LI { "Improved handling of finite fields: ", TO "GF", " now uses ",
+			 TO2{"ConwayPolynomials :: ConwayPolynomials","Conway polynomials"}, " when possible.
+			 Maps between Galois fields made with them are now easy to produce 
+			 with ", TT "map(E,F)", ".  (This was advertised as a change to 1.2, when the package was introduced,
+			      but the package was not pre-loaded, whereas now it is.)." },
+		    LI {
+			 "Fixed a long-standing bug in ", TO "saturate", " that caused it to give incorrect answers (too small)
+			 in the case that the following three conditions all held:
+			 the ring has a non-standard monomial ordering, such as a weight vector; all variables had degree 1;
+			 and the degree of the element being used to saturate was equal to 1."
+			 },
+		    LI {
+			 "The function ", TO "toField", " has been changed so that the expression ", TT "F = toField A", " returns a new 
+			 ring ", TT "F", " isomorphic to ", TT "A", " and declares it to be field, whereas formerly ", TT "A", " was declared to 
+			 be a field, without creating a new ring.  Users of this function should check their code and ensure
+			 that the return value ", TT "F", " is used.
+			 The return value is a polynomial ring of no variables over A, with a new monomial ordering, and with degree length
+			 equal to 0.  The advantage is that now various computations in polynomial rings over the newly declared field will 
+			 provide correct answers."
+			 },
+		    LI { "Fixed a bug in degree(x,f) where the degrees of the grading were used instead of the actual exponents." },
+		    LI {
+			 "Fixed a bug in ", TO "read", " reported by Dan Roozemond: whenever it would return a string of length 4096, subsequent
+			 read operations would change the bytes in it."
+			 },
+		    LI {
+			 "The package ", TO "IntegralClosure::IntegralClosure", " has been rewritten.  The
+			 ring used as input for ", TO "Integral::integralClosure", " must be a
+			 domain, but the documentation describes how to get around this.  
+			 The function now provides correct output when it finishes, and it can handle much larger input 
+			 than before.  There are some new routines and some new strategies for the computation."
+			 },
+		    LI {
+			 "A bug in Gröbner bases over the integers was fixed, which, under certain situations, led to
+			 in incomplete Gröbner basis."},
+		    LI {
+			 "A bug in Gröbner bases over fields and the integers was fixed, which caused, under some situations,
+			 the list of \"trimmed\" generators to be incomplete (but the Gröbner basis itself was correct).
+			 This impacted functions which use ", TO "trim", ", epsecially ", TO "decompose", "."
+			 },
+		    LI {
+			 "The function ", TO "eliminate", , " has been fixed.  The function previously quietly assumed a flat polynomial ring,
+			 with no quotient elements, and also quietly assumed that the ring was commutative.  Now error
+			 messages are given when it would have produced incorrect answers, and it handles Weyl and skew 
+			 commutative poly rings correctly.  Addtionally, this function now uses an elimination order 
+			 rather than a product order, improving performance in many cases."
+			 },
+		    LI {
+			 "Fixed a a bug in ", TO "independentSets", ", which produced incorrect answers
+			 on the cygwin version.  A variable was not being initialized.  Thanks to B. Roune for
+			 reporting the bug and suggesting the fix."
+			 },
+		    LI {
+			 "A bug in ", TO "decompose", " was unearthed that could produce incorrect answers.  The problem
+			 was that ", TO "trim", " sometimes could produce incorrect answers (fixed)."
+			 },
+		    LI {
+			 "Fixed a bug where if the degrees of the variables in a ring were not all equal to 1, and weight vectors
+			 were present, then the monomial ordering was not the documented one."
+			 },
+		    LI {
+			 "Fixed a bug in ", TO "minimalPresentation", " of an ", TO "Ideal", " or ", TO "Ring", ", which would produce
+			 incorrect answers in rare situations."
+		    	 },
+	       	    }
 	       },
-	  LI { "Very long lists can now be parsed without overflowing the stack and causing the program to crash.
-	       This was a problem for MacOS with lists of length greater than about 90000.  In a future version
-	       we will reduce the amount of memory required to parse, translate, and then evaluate the list." },
-     	  LI { "The expression 'setRandomSeed()' can now be used to re-initialize the random number generator." },
-	  LI { "The initialization file 'init.m2' is now sought only in the user's application directory, and 
-	       not also in the current directory." },
-	  LI { "When the program starts, the random number seed is now initialized to a value that 
-	       depends on the date, time in seconds,
-	       and the process id.  The former initial state can be obtained with ", TT "setRandomSeed()", "." },
-	  LI { "A new variable, 'handleInterrupts', specifies whether Macaulay2's interrupt handlers for 
-	       SIGINT and SIGALRM are installed." },
-	  LI { "The CTRL-C interrupt signal SIGINT will now interrupt system calls (such as read and write) that are
-	       in progress; formerly, they were restarted by the kernel
-	       after the handler set a flag.  This necessitated reworking the handling of interrupts
-	       by the top level interpreter, which will now respond to them immediately.
-	       When the readline library is active and reading user input (such as
-	       when the emacs interface to Macaulay2 is not used), interrupts are handled just by it."
+	  LI { "functionality added or improved:",
+	       UL {
+		    LI {
+			 "The method function ", TO (minimalPresentation,Ring), " now allows an option, ", TO "Exclude", ", which takes a list
+			 of integers: the variables with these indices will not be eliminated.  Indices are used, because
+			 if the ring is a quotient by linear polynomials, then variables might have normal forms that are
+			 complicated polynomials."
+			 },
+		    LI {
+			 "The function ", TO "installPackage", " will now, when the option ", TO "AbsoluteLinks", " is set to ", TO "true", ",
+			 will now also search the installation prefix where the package is about to be installed for the files that are linked to.
+			 This should resolve the situation where a developer uses the function to modify a package that is already incorporated
+			 into ", EM "Macaulay2", " itself, and (some of) the links in the freshly installed package end up pointing to 
+			 the wrong web pages."
+			 },
+		    LI { "The expression ", TT "setRandomSeed()", " can now be used to re-initialize the random number generator;
+			 see ", TO "setRandomSeed", "." },
+		    LI { "The operator ", TO "..", " can now be used to generate sequences of consecutive strings." },
+		    LI { "A new binary operator ", TO "..<", " provides for the generation of sequences that stop one short of
+			 those provided by ", TO "..", " ." },
+		    LI { "The operator ", TO "..", ", will now deliver rectangular sequences of consecutive indexed variables, 
+			 e.g., ", TT "x_1 .. y_2", " will have the value ", TT "(x_1,x_2,y_1,y_2)", "."},	       
+		    LI { "A new variable, ", TO "handleInterrupts", ", specifies whether Macaulay2's interrupt handlers for 
+			 SIGINT and SIGALRM are installed." },
+		    LI { "The function ", TO "EXAMPLE", " will now accept objects of type ", TO "PRE", " to be interpreted as
+			 preformatted example output." },
+		    LI { "The function ", TO "openListener", " can now open a socket on a specified interface." },
+		    LI {
+			 "The function ", TO "SimpleDoc::doc", " will now handle example input expressions that span multiple lines: within in 
+			 each expression, indent lines after the first one more than the first."
+			 },
+		    LI {
+			 "Multiplication of a scalar and a mutable matrix is now not allowed.  Previously
+			 attempting this could cause ", EM "Macaulay2", " to crash."
+			 },
+		    LI { "Very long lists can now be parsed without overflowing the stack and causing the program to crash.
+			 This was a problem for MacOS with lists of length greater than about 90000.  In a future version
+			 we plan to reduce the amount of memory required to parse, translate, and then evaluate the list." 
+			 }
+		    }
 	       },
-	  LI { "New packages (OpenMath, SCSCP) for communicating via SCSCP with OpenMath to programs such as GAP and Maple 
-	       have been developed, 
-	       thanks to Dan Roozemond.  They depend on the new package XML, which uses the libxml2 
-	       library to parse xml code." },
-	  LI { "The function ", TO "realpath", " now returns a string ending in '/' if the path leads to a directory, for
-	       consistency with the convention elsewhere in Macaulay2 that directory names end in '/'." },
-	  LI { "The function ", TO "EXAMPLE", " will now accept objects of type ", TO "PRE", " to be interpreted as
-	       preformatted example output." },
-	  LI { "The function ", TO "openListener", " can now open a socket on a specified interface." },
-	  LI { "The operator ", TO "..", " can now be used to generate sequences of consecutive strings." },
-	  LI { "A new binary operator ", TO "..<", " provides for the generation of sequences that stop one short of
-	       those provided by ", TO "..", " ." },
-	  LI { "The operator ", TO "..", ", when applied to two generators a polynomial ring, will now give a sequence of
-	       consecutive generators abstracted from the list of all generators.  The old error-prone behavior involved 
-	       looking at the names
-	       of the generators, and generating a sequence of consecutive names, which were then evaluated." },
-	  LI { "The operator ", TO "..", ", will now deliver rectangular sequences of consecutive indexed variables, 
-	       e.g., ", TT "x_1 .. y_2", " will have the value ", TT "(x_1,x_2,y_1,y_2)", "."},	       
-	  LI { "New binary operators ", TO "<==", " and ", TO "<===", " have been introduced.  The operators are 
-	       flexible, i.e., the user can install methods for them." },
-	  LI {
-	       "The function \"SimpleDoc :: doc\" will now handle example expressions that span multiple lines: within in 
-	       each expression, indent lines after the first one more than the first."
+	  LI { "functionality changed:",
+	       UL {
+		    LI { "The CTRL-C interrupt signal SIGINT will now interrupt system calls (such as read and write) that are
+			 in progress; formerly, they were restarted by the kernel
+			 after the handler set a flag.  This necessitated reworking the handling of interrupts
+			 by the top level interpreter, which will now respond to them immediately.
+			 When the readline library is active and reading user input (such as
+			 when the emacs interface to Macaulay2 is not used), interrupts are handled just by it."
+			 },
+		    LI { TO "currentDirectory", " is now a function rather than a string constant, in order to postpone signalling 
+			 an error if a component of the path to the current working directory no longer exists."
+			 },
+		    LI { "When the program starts, the random number seed is now initialized to a value that 
+			 depends on the date, time in seconds,
+			 and the process id.  The former initial state can be obtained with ", TT "setRandomSeed()", "." },
+		    LI { "The function ", TO "realpath", " now returns a string ending in '/' if the path leads to a directory, for
+			 consistency with the convention elsewhere in Macaulay2 that directory names end in '/'." },
+		    LI { "The ", TO "UserMode", " option to ", TO "installPackage", " and ", TO "check", " now has 
+			 default value ", TO "null", ", meaning to propagate the command line option ", TT "-q", ", if present, to child 
+			 processes running M2 on examples and tests"
+			 },
+		    LI { "If you set the variable ", TO "gbTrace", " to 15, then now one sees a large amount of information
+			 about the S-pairs computed during a Gröbner basis computation, if the default algorithm is in use."
+			 },
+		    LI { "The initialization file ", TT "init.m2", " is now sought only in the user's application directory, and 
+			 not also in the current directory."
+			 }
+		    }
 	       },
-	  LI { "Fixed a bug in degree(x,f) where the degrees of the grading were used instead of the actual exponents." },
-	  LI { "The ", TO "UserMode", " option to ", TO "installPackage", " and ", TO "check", " now has 
-	       default value ", TO "null", ", meaning to propagate the command line option ", TT "-q", ", if present, to child 
-	       processes running M2 on examples and tests"
-	       },
-	  LI { TO "currentDirectory", " is now a function rather than a string constant, in order to postpone signalling 
-	       an error if a component of the path to the current working directory no longer exists."
-	       },
-	  LI { "The programs ", TT "4ti2", ", ", TT "gfan", ", and ", TT "normaliz", " are now included with Macaulay2 distributions,
-	       and are downloaded and compiled automatically during Macaulay2's build process."
-	       },
-	  LI {
-	       "New constants ", TO "rootPath", " and ", TO "rootURI", " provide prefixes to be prepended to absolute file paths so that
-	       native Microsoft Windows programs can find them."
-	       },
-	  LI {
-	       "A new option (called ", TO "Certification", ") for ", TO "newPackage", ", provides information about packages that have been
-	       accepted for publication in a refereed journal.  The information is displayed in the top documentation node of
-	       the package.  The first three packages so certified are ", TO "EdgeIdeals", ", ", TO "PieriMaps", ", and ", TO "Polyhedra", "."
-	       },
-	  LI {
-	       "Fixed a bug in ", TO "read", " reported by Dan Roozemond: whenever it would return a string of length 4096, subsequent
-	       read operations would change the bytes in it."
-	       },
-	  LI {
-	       "The function ", TO "installPackage", " will now, when the option ", TO "AbsoluteLinks", " is set to ", TO "true", ",
-	       will now also search the installation prefix where the package is about to be installed for the files that are linked to.
-	       This should resolve the situation where a developer uses the function to modify a package that is already incorporated
-	       into ", EM "Macaulay2", " itself, and (some of) the links in the freshly installed package end up pointing to 
-	       the wrong web pages."
-	       },
-	  LI { "Improved handling of finite fields: ", TO "GF", " now uses ",
-	       TO2{"ConwayPolynomials :: ConwayPolynomials","Conway polynomials"}, " when possible.
-	       Maps between Galois fields made with them are now easy to produce 
-	       with ", TT "map(E,F)", ".  (This was advertised as a change to 1.2, when the package was introduced,
-		    but the package was not pre-loaded, where as now it is.)." }
+	  LI { "new constants and operators:",
+	       UL {
+		    LI {
+			 "New constants ", TO "rootPath", " and ", TO "rootURI", " provide prefixes to be prepended to absolute file paths so that
+			 native Microsoft Windows programs can find them."
+			 },
+		    LI { "New binary operators ", TO "<==", " and ", TO "<===", " have been introduced.  The operators are 
+			 flexible, i.e., the user can install methods for them."
+			 }
+		    }
+	       }
 	  }
      }
 
@@ -427,7 +524,7 @@ document {
 			 is now much faster because strings are not copied."
 			 },
 		    LI {
-			 "The function ", TO "regex", " now has a form which restricts the range of the search."
+			 "The function ", TO "regex", " now has a form that restricts the range of the search."
 			 },
 		    LI {
 			 "Macaulay2 now incorporates ", TO "frobby", ", a free library for computing

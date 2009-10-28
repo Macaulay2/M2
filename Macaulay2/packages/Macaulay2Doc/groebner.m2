@@ -146,7 +146,7 @@ document {
      The first method we use is to compute a Groebner basis using an elimination
      order
      which eliminates the variables s,t, and then select those Groebner basis
-     elements which do not involve the variables s and t.",
+     elements that do not involve the variables s and t.",
      EXAMPLE lines ///
        R = QQ[s,t,x,y,z, MonomialOrder=>Eliminate 2];
        I = ideal(x-s^3-s*t-1, y-t^3-3*t^2-t, z-s*t^3)

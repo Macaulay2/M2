@@ -20,7 +20,7 @@ document {
 	  "isQuotientModule M"
 	  },
      "The image of a map from a free module to the first generator of ", TT "M", " yields an equivalent 
-     module which is ", EM "not", " presented as a quotient.",
+     module that is ", EM "not", " presented as a quotient.",
      EXAMPLE {
 	  "f = M_{0}",
 	  "N = image f",

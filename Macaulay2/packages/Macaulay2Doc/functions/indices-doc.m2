@@ -40,7 +40,7 @@ document {
 	  },
      "The first variable in a polynomial ring has index 0, the second has index 1, etc.
      This function returns a list (in ascending order) of the indices of all
-     of the variables which occur in ", TT "f", ".",
+     of the variables that occur in ", TT "f", ".",
      EXAMPLE lines ///
 	  R = QQ[a..g]
 	  F = a^3+b^2*c+3*f^10*d-1+e-e

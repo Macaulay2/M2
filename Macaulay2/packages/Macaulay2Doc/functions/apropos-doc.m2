@@ -17,7 +17,7 @@ document {
 	  "apropos \"atrix\""
 	  },
      TO2("regular expressions", "Regular expressions"), " allow for more complicated requests.  For example, to
-     find all functions which start with ", TT "mat", " or ", TT "Mat", ":",
+     find all functions that start with ", TT "mat", " or ", TT "Mat", ":",
      EXAMPLE {
 	  ///apropos "^[mM]at"///
 	  },

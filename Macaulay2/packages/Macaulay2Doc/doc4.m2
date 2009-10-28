@@ -210,7 +210,7 @@ document {
 	  (NewFromMethod, Manipulator, Function)
 	  },
      Headline => "the class of all file manipulators",
-     "A file manipulator is a type of list which, when put out to
+     "A file manipulator is a type of list that, when put out to
      a file with ", TO "<<", " causes a chosen function to be applied
      to the file.  Alternatively, a manipulator can be used the way a function is used.",
      EXAMPLE lines ///
@@ -307,7 +307,7 @@ document {
      Key => symbol newline,
      Headline => "the new line character sequence",
      TT "newline", " -- a string containing the character or sequence of
-     characters which represents the end of a line.  To end an output line,
+     characters that represents the end of a line.  To end an output line,
      you should use ", TO "endl", " instead, because there is more to 
      ending an output line than emitting the characters in ", TT "newline", ",
      especially when nets are being used.",
@@ -594,7 +594,7 @@ document {
 document {
      Key => profileSummary,
      Headline => "display profiling data",
-     TT "profileSummary", " -- a command which will display the data
+     TT "profileSummary", " -- a command that will display the data
      accumulated by running functions produced with ", TO "profile", "."
      }
 
@@ -639,7 +639,7 @@ document {
 	  "M",
 	  ChangeMatrix => List => {"of two Boolean elements.
 	  This determines whether the change of basis matrices ", TT "P", " and/or ", TT "Q", " are computed"},
-	  KeepZeroes => Boolean => "whether to keep rows and columns which are completely zero"
+	  KeepZeroes => Boolean => "whether to keep rows and columns that are completely zero"
 	  },
      Outputs => {
 	  "D" => Matrix => {"The Smith normal form of ", TT "M"},

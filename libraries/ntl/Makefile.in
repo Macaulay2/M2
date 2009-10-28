@@ -1,15 +1,14 @@
 # license for ntl: GPL v2
-
 # @configure_input@
 # http://www.shoup.net
 # a library for doing number theory
-#VERSION = 5.5
 VERSION = 5.5.2
 TARDIR = ntl-$(VERSION)
 BUILDDIR = $(UNTARDIR)/$(TARDIR)/src
 TARFILE = ntl-$(VERSION).tar.gz
 URL = http://shoup.net/ntl
-CONFIGURECMD = ./configure \
+CONFIGURECMD = ./configure $(CONFIGUREOPTIONS)
+CONFIGUREOPTIONS = \
 	PREFIX=@pre_librariesdir@ \
 	LIBDIR=@pre_librariesdir@/lib \
 	INCLUDEDIR=@pre_librariesdir@/include \
@@ -17,22 +16,28 @@ CONFIGURECMD = ./configure \
 	NTL_GMP_LIP=on NTL_STD_CXX=on NTL_NO_INIT_TRANS=on NTL_CXX_ONLY=on \
 	CC="@CXX@" \
 	CXX="@CXX@" \
-	CFLAGS="$(CFLAGS)" \
-	CXXFLAGS="$(CXXFLAGS)" \
+	CFLAGS="$(CFLAGS) -O2" \
+	CXXFLAGS="$(CXXFLAGS) -O2" \
 	CPPFLAGS="$(CPPFLAGS)" \
 	LDFLAGS="$(LDFLAGS)"
-
 ifeq (@DEBUG@,yes)
-CONFIGURECMD += WIZARD=off
+CONFIGUREOPTIONS += WIZARD=off
 endif
-
+BUILDOPTIONS := \
+	CFLAGS="$(CFLAGS) -O2" \
+	CXXFLAGS="$(CXXFLAGS) -O2"
+CHECKOPTIONS := \
+	CFLAGS="$(CFLAGS) -O2" \
+	CXXFLAGS="$(CXXFLAGS) -O2"
 INSTALLOPTIONS = \
+	CFLAGS="$(CFLAGS) -O2" \
+	CXXFLAGS="$(CXXFLAGS) -O2" \
 	PREFIX=$(LIBRARIESDIR) \
 	LIBDIR=$(LIBRARIESDIR)/lib \
 	INCLUDEDIR=$(LIBRARIESDIR)/include \
 	DOCDIR=$(LIBRARIESDIR)/share/doc
+INSTALLCMD = $(MAKE) $(INSTALLOPTIONS) install
 
-INSTALLCMD     = $(MAKE) $(INSTALLOPTIONS) install
 include ../Makefile.library
 check: check-once
 check-once: .installed-$(VERSION)

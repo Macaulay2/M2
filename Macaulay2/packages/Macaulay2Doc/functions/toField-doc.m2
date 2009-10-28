@@ -3,38 +3,38 @@
 --- author(s): MES
 --- notes: 
 
-undocumented {
-     (toField, FractionField)
-     }
-
 document {
      Key => {(toField,Ring),toField},
      Headline => "declare that a ring is a field",
-     Usage => "toField R",
+     Usage => "L = toField R",
      Inputs => {
 	  "R"
 	  },
-     Consequences => {
-	  { "The ring ", TT "R", " is declared to be a field." }
+     Outputs => {
+	  "L" => { "A new ring, isomorphic to ", TT "R", ", declared to be a field.
+	       Polynomial rings over it will support Gröbner basis operations." }
 	  },
      EXAMPLE lines ///
           A = QQ[i]/(i^2+1);
-	  toField A
-	  B = A[x,y,z]
+	  L = toField A
+	  B = L[x,y,z]
 	  I = ideal(i*x^2-y-i, i*y^2-z-i)
 	  gens gb I
           ///,
-     "The declaration is accomplished by setting ", TT "R.isField", " to be ", TT "true", ",
-     and, in case the ring is a ring handled by the engine, informing the
-     engine.  Polynomial rings over rings declared to be fields support
-     Gröbner basis operations.",
-     PARA{},
-     "If the engine eventually discovers that some nonzero element of ", TT "R", "
-     is not a unit, an error will be signalled.  The user may then use
-     ", TO "getNonUnit", " to obtain a non-invertible element of ", TT "R", ".
-     If a ring is probably a field, it can be used as a field until a
-     contradiction is found, and this may be a good way of discovering
-     whether a ring is a field.",
-     SeeAlso => getNonUnit
+     PARA{
+	  "If the engine eventually discovers that some nonzero element of ", TT "L", "
+	  is not a unit, an error will be signalled.  The user may then use
+	  ", TO "getNonUnit", " to obtain a non-invertible element of ", TT "L", ".
+	  If a ring probably is a field, it can be used as a field until a
+	  contradiction is found, and this may be a good way of discovering
+	  whether a ring is a field."
+	  },
+     EXAMPLE lines ///
+     A = ZZ[a]/(a^2+3);
+     L = toField A
+     L[x,y,z]
+     try gb ideal (a*x^2-y^2-z^2, y^3, z^3) else getNonUnit L
+     ///,
+     SeeAlso => { getNonUnit, "try" }
      }
 

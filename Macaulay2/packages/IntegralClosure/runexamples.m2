@@ -21,6 +21,21 @@ runExamples (HashTable,ZZ) := o -> (H,i) -> (
 runExamples (HashTable,List) := o -> (H,L) -> apply(L,a -> runExamples(H,a,o))
 runExamples HashTable := o -> (H) -> runExamples(H, sort keys H, o)
 
+debug IntegralClosure
+runCanonicalIdealExamples = method(Options=>options integralClosure)
+runCanonicalIdealExamples (HashTable,ZZ) := o -> (H,i) -> (
+     I := value H#i#1;
+     A = (ring I)/I;
+     tim := timing (A' = integralClosure(A, o));
+     << "answer: " << see trim ideal gens gb ideal A' << endl;
+     tim2 := timing (J = canonicalIdeal A');
+     << "canonical ideal : " << see J << endl;
+     answer := {i, H#i#0, char ring I, numgens ring I, numgens I, tim#0, tim2#0};
+     print answer;
+     answer
+     )
+runCanonicalIdealExamples (HashTable,List) := o -> (H,L) -> apply(L,a -> runCanonicalIdealExamples(H,a,o))
+runCanonicalIdealExamples HashTable := o -> (H) -> runCanonicalIdealExamples(H, sort keys H, o)
 
 runS2Examples = method(Options=>options integralClosure)
 runS2Examples (HashTable,ZZ) := o -> (H,i) -> (
@@ -222,6 +237,10 @@ print netList time runExamples(H, {14,18,19,20,21,22,61}, Verbosity => 1, Strate
 print netList time runExamples(H, {47,52,79}, Verbosity => 1, Strategy=>{RadicalCodim1}) -- actual error
 print netList time runExamples(H, {5,12,13,23,40,42,62}, Verbosity => 1, Strategy=>{RadicalCodim1}) -- hard?
 print netList time runExamples(H, {5,12,13,23,40,42,62}, Verbosity => 1) -- hard?
+
+debug IntegralClosure
+print netList time runCanonicalIdealExamples(H, level1, Verbosity => 1)
+print netList time runCanonicalIdealExamples(H, drop(level2,1), Verbosity => 1)
 
 +--+------------------+-----+-+-+-------+
 |1 |leonard1          |0    |2|1|.784942|

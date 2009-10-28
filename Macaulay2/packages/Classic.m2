@@ -145,7 +145,7 @@ document {
      Inputs => { "s" => { "in the form: ", TT "\"f1,f2,...,fr;g1,...,gr;...;h1,...,hr\"" } },
      Outputs => { Matrix },
      "Creates a matrix using an abbreviated format. Each polynomial has the form described in ", TO Classic, ".  The rows of the matrix are separated by semicolons, and
-     within each row, the polynomials are separated by commas.  Any entry which is missing is assumed to be 0. Spaces and newline characters are ignored. ",
+     within each row, the polynomials are separated by commas.  Any entry that is missing is assumed to be 0. Spaces and newline characters are ignored. ",
      EXAMPLE lines ///
 	  R = ZZ/32003[a..d,x_1..x_4];
 	  N = matrix "a,b,c,d;x[1],x[2],x[3],x[4]"

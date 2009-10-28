@@ -64,7 +64,7 @@ document {
      "Mutable matrices can either be encoded in a sparse manner (the matrix
      only encodes the non-zero elements), or in a dense manner (all elements
      are stored -- even zeros).  The distinction is an option to several of
-     the routines which create mutable matrices (", TO mutableMatrix, 
+     the routines that create mutable matrices (", TO mutableMatrix, 
 	  ", ", 
 	  TO mutableIdentity,
      ").  

@@ -63,7 +63,7 @@ document {
 	  ZZ => "number of generators of I"
 	  },
      "In Macaulay2, each ideal comes equipped with a matrix of generators.  It is the
-     number of columns of this matrix which is returned.  If the ideal is homogeneous,
+     number of columns of this matrix that is returned.  If the ideal is homogeneous,
      this may or may not be the number of minimal generators.",
      EXAMPLE {
 	  "R = QQ[a..d];",

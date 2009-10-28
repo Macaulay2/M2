@@ -52,7 +52,7 @@ document {
      Outputs => {
 	  String => {"a string representation of ", TT "x", ", which can be used, in conjunction with ", TO "value", ", to read the object back into the program later"}
 	  },
-     "See also ", TO "toString", " which simply converts ", TT "x", " to a string which can be displayed meaningfully.",     
+     "See also ", TO "toString", " which simply converts ", TT "x", " to a string that can be displayed meaningfully.",     
      EXAMPLE {
 	  "toString {1,4,a,f,212312,2.123243242}"
 	  },

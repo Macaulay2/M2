@@ -81,11 +81,11 @@ getNonUnit B
 isField B
 -----------------------------------------------------------------------------
 A = ZZ/101[a,b]/(a*b)
-toField A
+L = toField A
 assert try (1/(a+b); false) else true
+assert(getNonUnit L == a+b)
 assert not isField A
 B = frac A
-assert(getNonUnit A == a+b)
 
 A = ZZ/101[a,b]/(a*b)
 1/(a+b)

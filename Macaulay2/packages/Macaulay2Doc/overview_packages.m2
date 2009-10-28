@@ -105,7 +105,7 @@ document { Key => "loadedPackages",
 
      
 document { Key => "creating a package",
-	"There are four parts to a Macaulay2 package: a preamble which 
+	"There are four parts to a Macaulay2 package: a preamble, which 
 	is initiated by the ", TO "newPackage",
 	" function, a section where one defines which variables will be 
 	exported to global variables, a section containing 

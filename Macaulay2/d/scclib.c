@@ -86,8 +86,13 @@ int column;
      }
 
 int system_write(int fd, M2_string buffer, int len){
-     if ((int)buffer->len < len) fatalarrayindex(len,buffer->len,__FILE__,__LINE__,-1);
+     if ((int)buffer->len < len) fatalarrayindex(len-1,buffer->len,__FILE__,__LINE__,-1);
      return write(fd,buffer->array,len);
+     }
+
+int system_write_1(int fd, M2_string buffer, int len, int off){
+     if ((int)buffer->len < len+off) fatalarrayindex(len+off-1,buffer->len,__FILE__,__LINE__,-1);
+     return write(fd,buffer->array+off,len);
      }
 
 int system_sleep(int t) {

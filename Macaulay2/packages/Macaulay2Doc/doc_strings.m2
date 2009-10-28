@@ -118,7 +118,7 @@ document {
      Key => String,
      Headline => "the class of all strings",
      PARA{
-	  "A string is thing which contains a sequence of characters (bytes).
+	  "A string is thing that contains a sequence of characters (bytes).
 	  A string is normally entered as a sequence of characters surrounded 
 	  by quotation marks."
 	  },
@@ -138,7 +138,7 @@ document {
 document {
      Key => Net,
      Headline => "the class of all nets and strings",
-     "A net is a generalization of a string which is designed to facilitate
+     "A net is a generalization of a string that is designed to facilitate
      two-dimensional printing on ascii terminals.  It consists of a rectangular
      array of characters subdivided horizontally by an imaginary baseline.",
      PARA{},

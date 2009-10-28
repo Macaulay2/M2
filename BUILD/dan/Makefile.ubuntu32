@@ -8,11 +8,18 @@ else
 default: arch-chk all install check
 INSTALLOPTIONS += prefix=/usr/local/encap
 CONFIGOPTIONS += --enable-deb
-CONFIGOPTIONS += --enable-tar
+CONFIGOPTIONS += --enable-tarfile
 CONFIGOPTIONS += --disable-common-staging-area
 DIRECTORY = ubuntu32.production
-# i386 must be architecture for debian based systems; we should automate this deeper:
-CONFIGOPTIONS += --build=i386-pc-linux-gnu
+
+# i386 must be the architecture for debian based systems,
+# but mpir won't link if we do that (see 4ti2), then gcc gets -march=i386 when compiling mpir,
+# and we get this message later:
+#    /home/dan/src/M2-1.3/BUILD/dan/builds.tmp/ubuntu32.production/libraries/final/lib/libgmpxx.a(ismpznw.o): In function `__gmpz_operator_in_nowhite(std::basic_istream<char, std::char_traits<char> >&, __mpz_struct*, char)':
+#    ismpznw.cc:(.text+0x1ba): undefined reference to `__sync_fetch_and_add_4'
+# so we settle for i486
+CONFIGOPTIONS += --build=i486-pc-linux-gnu
+
 endif
 include Makefile.include
 pre-install:;	rm -rf /usr/local/encap/Macaulay2-$(PACKAGE_VERSION)

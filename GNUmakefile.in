@@ -94,6 +94,7 @@ relink:; rm -f @pre_exec_prefix@/bin/M2@EXE@ && $(MAKE) -C Macaulay2/d @pre_exec
 relink-nostrip:; rm -f @pre_exec_prefix@/bin/M2@EXE@ && $(MAKE) -C Macaulay2/d STRIP=no @pre_exec_prefix@/bin/M2@EXE@
 reconfigure-all: reconfigure reconfigure-libs 
 reconfigure-libs:; $(MAKE) -C libraries reconfigure
+remove-deps:; find . -name \*.dep -delete
 report-M2-location:
 	: : : : : : : : : : : : : : : : : : : : : : : : : : : : : : : :
 	: Macaulay2 executable location:

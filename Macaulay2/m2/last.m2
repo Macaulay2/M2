@@ -67,24 +67,6 @@ addStartFunction( () -> (
 	       userMacaulay2Directory();
 	       makePackageIndex())))
 
-addStartFunction( () -> if not noinitfile and prefixDirectory =!= null and getenv "HOME" =!= "" then (
-	  isprefix := (s,t) -> s === substring(0,#s,t);
-	  GLOBAL := prefixDirectory;			    -- installed doc
-	  LOCAL := applicationDirectory() | "local/";	    -- user's "local" application directory doc
-	  makeDirectory(LOCAL|currentLayout#"docdir");
-	  scan(join(
-		    {"Macaulay2"},			    -- this is a hold-over : M2 versions before 1.1 had a package called "Macaulay2" !
-     	       	    if isDirectory (GLOBAL|currentLayout#"docdir")
-		    then readDirectory (GLOBAL|currentLayout#"docdir")
-		    else {}
-		    ),
-	       fn -> if fn =!= "." and fn =!= ".." then (
-		    tardir := LOCAL|currentLayout#"docdir";
-		    tar := tardir|fn;
-		    src := GLOBAL|currentLayout#"docdir"|fn;
-		    if readlink tar =!= null and not isprefix(tardir,realpath readlink tar) then removeFile tar;
-		    ))))
-
 userpath' := userpath = {
 	  applicationDirectory() | "code/",
 	  d1 := applicationDirectory() | "local/" | Layout#1#"packages", 

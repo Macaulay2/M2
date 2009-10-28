@@ -39,7 +39,7 @@ scan({det,minors,exteriorPower}, fn -> document {
      "), then the ", TO "Cofactor", " algorithm is used.",
      PARA{},     
      Caveat => {
-	  {"The ", TO "Bareiss", " algorithm returns a ring element which may differ from the actual 
+	  {"The ", TO "Bareiss", " algorithm returns a ring element that may differ from the actual 
 	       determinant by a zero divisor in the ring.  Thus, an ", EM "incorrect", 
 	       " answer may be computed if the ring contains zero divisors."}
 	  },

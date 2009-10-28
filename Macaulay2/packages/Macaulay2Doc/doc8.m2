@@ -229,7 +229,7 @@ document {
      Key => Homogeneous,
      TT "Homogeneous", " -- a strategy used with the keyword ", TO "Strategy", ".",
      PARA{},
-     "This is an alternate Gröbner basis algorithm which can be used if the submodule
+     "This is an alternate Gröbner basis algorithm that can be used if the submodule
      is homogeneous, and the ring is a (quotient of) a polynomial ring over a field.",
      SeeAlso => {[gb,Strategy]}
      }
@@ -248,7 +248,7 @@ document {
      TT "LongPolynomial", " -- a strategy used with the keyword ", TO "Strategy", ".",
      PARA{},
      "Indicates that during computation of a Gröbner basis, the reduction
-     routine will be replaced by one which will handle long polynomials more
+     routine will be replaced by one that will handle long polynomials more
      efficiently using \"geobuckets\", which accomodate the terms in buckets
      of geometrically increasing length.  This method was first used
      successfully by Thomas Yan, graduate student in CS at Cornell.",

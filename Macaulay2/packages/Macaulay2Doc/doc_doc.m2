@@ -88,7 +88,7 @@ document {
 	TO "chain complexes", 
 	" then one would set up a document key of the form:",
     	PRE ///Key => "chain complexes",///,
-	Caveat => {"No two documentation nodes may have the same key or even a key which is a synonym for a key 
+	Caveat => {"No two documentation nodes may have the same key or even a key that is a synonym for a key 
 	     which is already used. However, sometimes there is a need for several documentation nodes to have the same  
 		key. This happens when a command that needs to be documented is a synonym for another already documented command. In this case the 
 		synonym's key should be stated in quotation marks. As an example, look at the documentation for ", TO "SUBSECTION", " and ", TO "HEADER2", "."},
@@ -180,7 +180,7 @@ document {
 	Headline => "side-effects of a function",
 	Usage => "document { ... , Consequences => {\"effects\" }, ... }",
 	BaseFunction => document,
-    	"Here is where one documents effects of a function which are not return values. As an 
+    	"Here is where one documents effects of a function that are not return values. As an 
 	example here is the ", TT "Consequences", " entry for the documentation node ", TO Headline, ":", 
 	PRE ///Consequences => {
 	  { "the headline string will be used to annotate itemized 

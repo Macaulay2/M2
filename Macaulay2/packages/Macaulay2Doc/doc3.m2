@@ -805,7 +805,7 @@ document { Key => GlobalDictionary,
      }
 document { Key => LocalDictionary,
      Headline => "the class of all local dictionaries",
-     "A local dictionary is one used in connection with a local scope, such as one which is bounded by the body of a function closure.
+     "A local dictionary is one used in connection with a local scope, such as one that is bounded by the body of a function closure.
      A local dictionary is created on the fly by the interpreter, and after the scope has been closed, the dictionary can be enlarged no further.
      Accessing local dictionaries can be a useful debugging tool.  The local dictionaries accessible to the user come with frames, so their symbols
      have values; thus they may be referred to as dictionary closures.",
@@ -1305,7 +1305,7 @@ document { Key => {frames,(frames, Symbol), (frames, Sequence), (frames, Pseudoc
 document {
      Key => globalAssignFunction,
      Headline => "the standard method for the global assignment hook",
-     TT "globalAssignFunction", " -- the standard function which can be used
+     TT "globalAssignFunction", " -- the standard function that can be used
      as a method for ", TO GlobalAssignHook, " so that certain types of
      things, when assigned to a global variable, will acquire
      the name of the global variable as their name.  The companion function
@@ -1333,7 +1333,7 @@ document {
 document {
      Key => globalReleaseFunction,
      Headline => "the standard method for the global variable release hook",
-     TT "globalReleaseFunction", " -- the standard function which can be used as
+     TT "globalReleaseFunction", " -- the standard function that can be used as
      a method for ", TO GlobalReleaseHook, " so that certain types of things, which
      have acquired as their name the name of a global variable to which they have
      been assigned, will lose that name when a different value is assigned to

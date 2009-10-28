@@ -36,7 +36,7 @@ document {
      generated R-module.",
      PARA{},
      "Assuming that it is, the push forward ", TT "F_*(M)", " is computed.  This is done
-     by first finding a presentation for ", TT "M", " in terms of a set of elements which generate
+     by first finding a presentation for ", TT "M", " in terms of a set of elements that generates
      ", TT "M", " as an ", TT "S", "-module, and then applying the routine ", TO "coimage", " to a map whose target
      is ", TT "M", " and whose source is a free module over ", TT "R", ".",
      SUBSECTION "Example: The Auslander-Buchsbaum formula",

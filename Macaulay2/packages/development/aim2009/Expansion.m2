@@ -1,6 +1,14 @@
 newPackage "Expansion"
 export "expand"
 
+Expression ? Thing := (x,y) -> symbol >
+Thing ? Expression := (y,x) -> symbol <
+Thing ? Power := (x,y) -> (x,1) ? (y#0,y#1,0)
+Power ? Thing := (x,y) -> (x#0,x#1,0) ? (y,1)
+Power ? Power := (x,y) -> toSequence x ? toSequence y
+Expression ? Expression := (x,y) -> (class x, toSequence x) ? (class y, toSequence y)
+Thing ? Thing := (x,y) -> (class x, hash x) ? (class y, hash y)
+
 add = method()
 multiply = method()
 exponentiate = method()
@@ -32,10 +40,13 @@ exponentiate(Sum,ZZ) := (x,n) -> (
 exponentiate(Thing,ZZ) := (x,n) -> if n === 0 then expression 1 else if n === 1 then x else new Power from {x,n}
 
 expand Thing := identity
-expand Product := x -> fold(multiply,expand \ toList x)
-expand Sum := x -> fold(add,expand \ toList x)
+expand Product := x -> fold(multiply,sort \\ expand \ toList x)
+expand Sum := x -> fold(add,sort \\ expand \ toList x)
 expand Power := x -> fold(exponentiate,expand \ toList x)
+
+
 
 end 
 loadPackage "Expansion"
-expand (hold x + y)^6
+hold x + y + 1 + (hold y)^-1 + (hold x)^5 + (hold x)^-5
+expand oo

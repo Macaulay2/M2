@@ -9,7 +9,7 @@ document {
      "Modules in Macaulay2 are implemented as ", TO "subquotient modules", ".  
      Submodules and quotients of free modules are perhaps the most common and important
      modules, and subquotients form the smallest class
-     of modules which naturally includes these cases.",
+     of modules that naturally includes these cases.",
      PARA{},
      "Common ways to make a module:",
      UL {
@@ -730,7 +730,7 @@ document {
 		"exteriorPower(3,R^6)",
 		"binomial(6,3)"
 		},
-	"Macaulay2 can compute exterior powers of modules which are not free as well.",
+	"Macaulay2 can compute exterior powers of modules that are not free as well.",
 	EXAMPLE {
 		"exteriorPower(2,R^1)",
 		"I = module ideal (x,y)",

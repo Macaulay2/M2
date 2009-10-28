@@ -312,7 +312,7 @@ document {
        "Also, the number input entries in each row must be equal.  It might 
        seem like we could form the same matrix with the 
        input ", TT "matrix{{id_(R^3),M,P},{random(R^1,R^8)}}", " 
-       since ", TT "random(R^1,R^8)", " will construct a 1 by 8 matrix which 
+       since ", TT "random(R^1,R^8)", " will construct a 1 by 8 matrix that 
        has the same number of columns as 
        matrix ", TT "matrix{{id_(R^3),M,P}}", " but as input into the 
        matrix function that row entry must have 3 entries.",

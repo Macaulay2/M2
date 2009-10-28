@@ -348,7 +348,7 @@ document {
      << "-- continuing the computation" << endl;
      ))///
 	  },
-     "If the user has a chain complex in hand which is known to be a
+     "If the user has a chain complex in hand that is known to be a
      projective resolution of ", TT "M", ", then it can be installed
      with ", TT "M.cache.resolution = C", ".",
      PARA{},

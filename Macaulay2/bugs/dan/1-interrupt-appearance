@@ -1,0 +1,16 @@
+It would be nice if this
+
+    i4 : f()
+      C-c C-c/tmp/bar.m2:1:17:(1):[1]: error: interrupted
+    /tmp/bar.m2:1:17:(1):[1]: --entering debugger (type help to see debugger commands)
+    /tmp/bar.m2:1:17-1:17: --source code:
+    f = () -> while true do 100!
+
+would look like this instead:
+
+    i4 : f()
+      C-c C-c
+    /tmp/bar.m2:1:17:(1):[1]: error: interrupted
+    /tmp/bar.m2:1:17:(1):[1]: --entering debugger (type help to see debugger commands)
+    /tmp/bar.m2:1:17-1:17: --source code:
+    f = () -> while true do 100!

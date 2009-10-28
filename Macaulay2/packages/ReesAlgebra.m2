@@ -1245,6 +1245,10 @@ doc ///
     Example
       f = gens i
       for a from 0 to 3 do(jhom=ideal (f*random(source f, S^{3-a:-2,a:-3})); print(i^6 == (i^5)*jhom))
+  Caveat
+     It is possible that the ideal returned is not a minimal reduction,
+     due to the probabilistic nature of the routine.  This will be addressed in a future version
+     of the package.  The larger the size of the base field, the less likely this is to happen.
   SeeAlso
     analyticSpread
     reductionNumber
@@ -1280,6 +1284,7 @@ doc ///
       London Mathematical Society Lecture Note Series, 336. Cambridge University Press, Cambridge, 2006.
       for further information.
     Example
+      setRandomSeed()
       kk = ZZ/101;
       S = kk[a..c];
       m = ideal vars S;
@@ -1287,6 +1292,14 @@ doc ///
       analyticSpread i
       minimalReduction i
       reductionNumber i
+  Caveat
+     It is possible for the routine to not finish in reasonable time, due to the
+     probabilistic nature of the routine.  What happens is that 
+     the routine @TO minimalReduction@ occasionally, but rarely, returns an ideal
+     which is not a minimal reduction.  In this case, the routine goes into an infinite loop.
+     This will be addressed in a future version
+     of the package.  In the meantime, simply interrupt the routine, and restart the
+     computation.
   SeeAlso
     analyticSpread
     minimalReduction
@@ -1298,7 +1311,7 @@ doc ///
     whichGm
     (whichGm, Ideal)
   Headline
-    smallest Gm satisfied by an ideal
+    largest Gm satisfied by an ideal
   Usage
     whichGm I
   Inputs

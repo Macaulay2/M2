@@ -8,8 +8,8 @@ RELAX = yes
 URL = ftp://ftp.gnu.org/gnu/readline
 PATCHURL = $(URL)/readline-$(VERSION)-patches
 
-BUILDTARGET = all
-INSTALLTARGET = install
+BUILDTARGET = all -o install-examples
+INSTALLTARGET = install -o install-examples
 
 ifeq (@SHARED@,no)
 CONFIGOPTIONS += --disable-shared

@@ -1,5 +1,8 @@
---old status: unexpected segmentation fault on rhodium, but it happens only occasionally, 
---old status:   and not in the debugger, so it is hard to fix
+-- old status message: unexpected segmentation fault on rhodium, but it happens only occasionally, and not in the debugger, so it is hard to fix
+-- this test has random numbers in it, and the execution time (at least) depends on that.
+-- I've added a random seed that makes it particularly slow, so we can try to debug it later
+end -- deferred:
+setRandomSeed 123423413
 twiddle = (A,B,e,p) ->(
 R:=ring(A);
 F:=coefficientRing(R);

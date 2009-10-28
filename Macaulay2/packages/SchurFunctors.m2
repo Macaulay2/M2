@@ -367,10 +367,13 @@ needsPackage "SchurRings"
 
 splitCharacter = method()
 splitCharacter RingElement := ce -> (
-     pe:=elementarySymmetric(ce);
+     pe:=elementarySymmetric(ce);  
+     -- Assumption: ring of pe: vars 0..n-1 
+     --   are orig vars, n..2n-1 are elem symm fcns
      n:=numgens source vars ring ce;
-     R2:=symmRing n;
-     toS substitute(pe,R2)
+     R2:=symmRing n; -- vars 0..n-1 are elem symm fcns
+     es := (vars R2)_{0..n-1};
+     toS substitute(pe,es|es)
      )
 
 beginDocumentation()
@@ -399,6 +402,12 @@ TEST ///
       v = straighten(new Filling from {{3,2,1}}, M)
       assert(v == vector{0_QQ,0,0,-1}) 
 ///     
+
+TEST ///
+c=character({{1,1,1},{2}},4)
+assert ( splitCharacter(c) == s_(4,1,1)+s_(3,3) )
+///
+
 end
 restart
 loadPackage "SchurFunctors"

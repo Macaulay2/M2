@@ -40,7 +40,7 @@ document {
 
 document {
      Key => "manipulating modules",
-     "Suppose we have a module which is represented as an image of a
+     "Suppose we have a module that is represented as an image of a
      matrix, and we want to represent it as a cokernel of a matrix.
      This task may be accomplished with ", TO "prune", ".",
      EXAMPLE {
@@ -133,7 +133,7 @@ document {
      "The default display for a chain complex shows the modules and
      the number of the stage at which they appear.  See the
      documentation of ", TO "resolution", " for details on
-     the options which can be used to control the computation.",
+     the options that can be used to control the computation.",
      PARA{},
      "The same function, applied to a map ", TT "f", ", will produce a map
      from a free resolution of the source of ", TT "f", " to a free resolution of
@@ -649,7 +649,7 @@ document {
      PARA{},
      "If long lines get displayed too slowly, such as in emacs, then the user may choose
      to put a line such as ", TT "truncateOutput 100", " into an ", TO "initialization file", ".
-     Time is still spent creating the wide output which is eventually truncated.",
+     Time is still spent creating the wide output that is eventually truncated.",
      EXAMPLE {
 	  "truncateOutput 50",
 	  "41!",
@@ -973,7 +973,7 @@ document {
      PARA{},
      "As an example, we may wish to implement quaternions as lists
      of four real numbers.  We know that lists already have a method
-     for addition which treats them as vectors, and we could use
+     for addition that treats them as vectors, and we could use
      the same code for addition of quaternions.",
      EXAMPLE {
 	  "Qu = new Type of List",
@@ -1128,7 +1128,7 @@ document {
      on the type of ", TT "x", ".  For example, the method for negating a polynomial
      differs from the method for negating an integer modulo 111.  Each
      method is a function of one variable, and is stored in the class 
-     of ", TT "x", " under a key which is referred to as the name of the method.
+     of ", TT "x", " under a key that is referred to as the name of the method.
      For some built-in methods the method name is a symbol, but for
      methods created with ", TO "method", ", the method name is the same
      as the function used for calling it up.",
@@ -1175,7 +1175,7 @@ document {
 
 document {
      Key => "inheritance",
-     "Each class has a parent class which can be used as a container
+     "Each class has a parent class that can be used as a container
      for bits of code that apply to a more general class of objects.
      In this section we show how this mechanism works in detail.",
      PARA{},

@@ -64,8 +64,8 @@ darwin32 : always
 		--prefix="`pwd`/installed" \
 		--enable-dmg \
 		--enable-download \
-		--enable-python \
 		--enable-build-libraries="gc gdbm mpir mpfr readline ntl factory libfac frobby pari"
+#		--enable-python
 
 debug32 : always
 	mkdir -p debug32

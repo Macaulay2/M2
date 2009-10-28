@@ -3,7 +3,7 @@
 URL = http://www.netlib.org/blas
 TARFILE = blas.tgz
 TARDIR = BLAS
-CONFIGURECMD = :
+CONFIGURECMD = true
 BUILDOPTIONS = BLASLIB=libblas.a
 INSTALLCMD = $(MKDIR_P) $(LIBRARIESDIR)/lib && @INSTALL_DATA@ libblas.a $(LIBRARIESDIR)/lib/libblas.a
 ifeq (@FC@,)

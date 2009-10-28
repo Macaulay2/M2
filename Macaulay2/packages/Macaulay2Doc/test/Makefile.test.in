@@ -46,7 +46,7 @@ check: $(RESULTS)
 else
 check: check-deferred-warning
 check-deferred-warning:
-	@ echo "-- *** warning: tests deferred:" $(patsubst %.out, %, $(RESULTS)) >&2
+	@ for i in $(TESTFILES) ; do echo "$$i:1: warning: test file deferred" >&2 ; done
 	@ false
 endif
 
@@ -63,7 +63,6 @@ status-files: $(TESTFILES)
 
 %.out : %.m2
 	@ echo testing: $<
-	@ egrep -n '^--status:' $< /dev/null || true
 	@ $(LIMIT) \
 		echo "--*- compilation -*-" >$*.errors; \
 		if (echo 'input "$<"'; echo 'collectGarbage()'; echo exit 0) | \
@@ -72,6 +71,7 @@ status-files: $(TESTFILES)
 		else a=$$?; \
 		     <$*.errors $(FILTER) ; \
 		     echo "$*.errors:0: error output left here for the errors above:" >&2 ; \
+		     egrep -n '^--status:' $< /dev/null || true ; \
 		     exit $$a ; \
 		fi
 %.out : %.m2-input
