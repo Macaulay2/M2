@@ -949,7 +949,7 @@ bool solve_via_lapack_without_transposition(
   */
   if (info > 0)       
     {
-      ERROR("according to zgesv, matrix is singular");
+      //ERROR("according to zgesv, matrix is singular");
       ret = false;
     }
   else if (info < 0)
@@ -1355,6 +1355,7 @@ int PathTracker::track(const Matrix* start_sols)
   Solution* t_s = raw_solutions; //current target solution
   complex* s_s = s_sols; //current start solution
   				
+
   for(int sol_n =0; sol_n<n_sols; sol_n++, s_s+=n, t_s++) {
     t_s->make(n,s_s); // cook a Solution
     t_s->status = PROCESSING;
@@ -1380,8 +1381,8 @@ int PathTracker::track(const Matrix* start_sols)
 	  *dt = complex(1 - end_zone_factor_dbl - t0->getreal()); 
 	}  
       
-      //printf("p: dt = %lf\n", dt->getreal()); 
-      
+      bool LAPACK_success;
+         
       // PREDICTOR in: x0t0,dt,pred_type
       //           out: dx
       switch(pred_type) {
@@ -1390,7 +1391,7 @@ int PathTracker::track(const Matrix* start_sols)
 	LHS = Hxt; 	
 	RHS = Hxt+n*n; 
 	multiply_complex_array_scalar(n,RHS,-*dt);
-	solve_via_lapack_without_transposition(n,LHS,1,RHS,dx);
+        LAPACK_success = solve_via_lapack_without_transposition(n,LHS,1,RHS,dx);
       } break;
       case EULER: {
 	slpHxtH->evaluate(n+1,x0t0, HxtH); // for Euler "H" is attached
@@ -1400,7 +1401,7 @@ int PathTracker::track(const Matrix* start_sols)
 	multiply_complex_array_scalar(n,Ht,*dt);
 	add_to_complex_array(n,RHS,Ht);
 	negate_complex_array(n,RHS);
-	solve_via_lapack_without_transposition(n,LHS,1,RHS,dx);
+	LAPACK_success = solve_via_lapack_without_transposition(n,LHS,1,RHS,dx);
       } break;
       case RUNGE_KUTTA: {
 	copy_complex_array(n+1,x0t0,xt);
@@ -1423,7 +1424,7 @@ int PathTracker::track(const Matrix* start_sols)
 	RHS = Hxt+n*n; 
 	//
 	negate_complex_array(n,RHS);
-	solve_via_lapack_without_transposition(n,LHS,1,RHS,dx2);
+	LAPACK_success = solve_via_lapack_without_transposition(n,LHS,1,RHS,dx2);
     
 	// dx3
 	multiply_complex_array_scalar(n,dx2,one_half*(*dt));
@@ -1436,7 +1437,7 @@ int PathTracker::track(const Matrix* start_sols)
 	RHS = Hxt+n*n; 
 	//
 	negate_complex_array(n,RHS);
-	solve_via_lapack_without_transposition(n,LHS,1,RHS,dx3);
+	LAPACK_success = LAPACK_success && solve_via_lapack_without_transposition(n,LHS,1,RHS,dx3);
     
 	// dx4
 	multiply_complex_array_scalar(n,dx3,*dt);
@@ -1449,7 +1450,7 @@ int PathTracker::track(const Matrix* start_sols)
 	RHS = Hxt+n*n; 
 	//
 	negate_complex_array(n,RHS);
-	solve_via_lapack_without_transposition(n,LHS,1,RHS,dx4);
+	LAPACK_success = LAPACK_success && solve_via_lapack_without_transposition(n,LHS,1,RHS,dx4);
     
 	// "dx1" = .5*dx1*dt, "dx2" = .5*dx2*dt, "dx3" = dx3*dt
 	multiply_complex_array_scalar(n,dx4,*dt);
@@ -1479,7 +1480,7 @@ int PathTracker::track(const Matrix* start_sols)
 	RHS = HxH+n*n; // i.e., H
 	//
 	negate_complex_array(n,RHS);
-	solve_via_lapack_without_transposition(n,LHS,1,RHS,dx);
+	LAPACK_success = LAPACK_success && solve_via_lapack_without_transposition(n,LHS,1,RHS,dx);
 	add_to_complex_array(n,x1t1,dx);
 	is_successful = norm2_complex_array(n,dx) < tol2*norm2_complex_array(n,x1t1);
 	//printf("c: |dx|^2 = %lf\n", norm2_complex_array(n,dx));
@@ -1503,6 +1504,8 @@ int PathTracker::track(const Matrix* start_sols)
       }
       if (norm2_complex_array(n,x0) > infinity_threshold2)
 	t_s->status = INFINITY_FAILED;
+      if (!LAPACK_success)
+	t_s->status = SINGULAR;
     }
     // record the solution
     copy_complex_array(n, x0, t_s->x);    

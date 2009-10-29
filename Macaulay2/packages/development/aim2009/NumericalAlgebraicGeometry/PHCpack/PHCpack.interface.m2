@@ -221,6 +221,7 @@ parseSolutions (String,Ring) := o -> (s,R) -> (
      L = replace("E", "e", L);
      L = replace("time", "\"time\"", L);
      L = replace("multiplicity", "\"mult\"", L);
+     L = replace("res", "\"res\"", L);
      
      use R; 	  
      sols := toList apply(value L, x->new HashTable from toList x);
