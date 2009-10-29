@@ -24,20 +24,23 @@ idealOfGenericPoint(Ring, List, ZZ, ZZ) := (R, L, d, M) -> (
      -- d is a degree bound
      -- Return value: an ideal in R of elements vanishing at the point L.
      --  all polys have degree <= d
-     B := flatten entries sort basis(-infinity, d, R);
+     Z := ZZ[gens R];
+--     Br := flatten entries sort basis(-infinity, d, R);
+     Bz := flatten entries sort basis(-infinity, d, Z);
      a := #L; 
-     B1 := matrix {apply(B, m -> floor(realPart (M*sub(m, matrix{L#0}))))} 
-     || matrix {apply(B, m -> floor(imaginaryPart (M*sub(m, matrix{L#0}))))};
+     B1 := matrix {apply(Bz, m -> floor(realPart (M*sub(m, matrix{L#0}))))} 
+     || matrix {apply(Bz, m -> floor(imaginaryPart (M*sub(m, matrix{L#0}))))};
      for i from 1 to a-1 do (
-	  B1 = B1 || matrix {apply(B, m -> floor(realPart (M*sub(m, matrix{L#i}))))}
-	  || matrix {apply(B, m -> floor(imaginaryPart (M*sub(m, matrix{L#i}))))};
+	  B1 = B1 || matrix {apply(Bz, m -> floor(realPart (M*sub(m, matrix{L#i}))))}
+	  || matrix {apply(Bz, m -> floor(imaginaryPart (M*sub(m, matrix{L#i}))))};
 		    );
-     G = id_(ZZ^#B) || B1;
-     G1 := sub(LLL G,R);
---     << "LLL matrix is " << G1 << endl;
-     << columnNorms(G1) << endl;
-     B2 := matrix{B}|matrix{{2*a:0_R}};
-     (G1, B2, (B2 * G1_{0})_(0,0))
+     G = id_(ZZ^#Bz) || B1;
+--     G1 := sub(LLL G,R);
+     G1z := LLL G;
+--     G1r := sub(G1z,R);
+     << columnNorms(G1z) << endl;
+     B2z := matrix{Bz}|matrix{{2*a:0_Z}}; 
+     (G1z, B2z) --, (B2 * G1_{0})_(0,0))
      )
 
 beginDocumentation()
@@ -98,7 +101,8 @@ rr = RR_nbits
 R = rr[a,b,c]
 p = numeric(nbits,pi)
 q = log numeric_nbits 2 
-idealOfGenericPoint(R,{{p,p^2,p^3},{q,q^2,q^3}},2,2^100)
+G = idealOfGenericPoint(R,{{p,p^2,p^3},{q,q^2,q^3}},2,2^100)
+ideal ((G#1)*(G#0)_{0..2})
 
 -- Example: minimal polynomial 
 
@@ -130,17 +134,20 @@ points = solveSystem(RT|{L})
 pt = first select(points, pt -> norm (sub(K, matrix pt))_* < 10^(-1))
 point = refinePHCpack((RT|{L}), pt, Iterations => 20, Bits => 500, ErrorTolerance => 1p500e-130)/first 
 norm (sub(sub(ideal (RT|{L}),CC_500[gens R]),matrix point))_*
-idealOfGenericPoint(R,point,3,2^300);
+G = idealOfGenericPoint(R,point,3,2^300);
+idl = ideal ((G#1)*(G#0)_{0..9})
+sub(idl,R) == K
 
-norm (sub(sub(ideal (RT|{L}),R'),matrix pt))_*
+--norm (sub(sub(ideal (RT|{L}),R'),matrix pt))_*
 apply(10, i->(
 	  L' = sum(gens R, v->v*random CC) + 1;
 	  track(RT|{L},RT|{L'},point)
 	  ))
 L = oo;
 M = for i from 0 to #L-1 list ((L#i)#0)#0
-idealOfGenericPoint(R,point,3,2^300);
-idealOfGenericPoint(R,pt,3,2^300);
+G = idealOfGenericPoint(R,M,2,2^300);
+idl = ideal ((G#1)*(G#0)_{0..9})
+idl == K
 
 -- Example: projection of a rational quintic
 
@@ -176,20 +183,75 @@ W = sub(W',Q)
 T = W_*
 L = sum(gens Q, v->v*random CC) + 1 
 points = solveSystem(T|{L}) 
-apply(10, i->(
+apply(20, i->(
 	  L' = sum(gens Q, v->v*random CC) + 1;
 	  track(T|{L},T|{L'},points#0)
 	  ))
 N = oo;
-M = for i from 0 to #N-1 list ((N#i)#0)#0
-G0 = idealOfGenericPoint(Q,M,1,2^50);
-line = ideal ((G0#1)*(G0#0)_{0,1})
+M = for i from 0 to #N-1 list ((N#i)#0)#0;
+G0 = idealOfGenericPoint(Q,M,3,2^50);
+idl = ideal ((G0#1)*(G0#0)_{0..5})
+sub(idl,S) == sub(sub(C,{d=>1}),S)
+
 apply(10, i->(
 	  L1 = sum(gens Q, v->v*random CC) + 1;
 	  track(T|{L},T|{L1},points#1)
 	  ))
-N = oo;
-M = for i from 0 to #N-1 list ((N#i)#0)#0
-G1 = idealOfGenericPoint(Q,M,3,2^50);
+N' = oo;
+M'= for i from 0 to #N'-1 list ((N'#i)#0)#0
+G1 = idealOfGenericPoint(Q,M',3,2^50);
 J = ideal ((G1#1)*(G1#0)_{0..5})
-for i from 0 to 5 list norm (sub(J,matrix points#i))_*
+J == W
+
+-- Example: blow-up
+
+restart 
+loadPackage "GenericPoints"
+nbits = 3000
+R = RR_nbits[x,y];
+p = numeric(nbits,pi)-3
+q = sqrt(p^2*(p+1))
+Q1 = 2*x^2+3*x*y+5*y^2+7*x+y
+Q2 = 3*x^2+7*x*y+3*y^2+4*x+5*y
+Q3 = 5*x^2+7*x*y+2*y^2+9*x+4*y 
+Q4 = x^2+2*x*y+3*y^2+4*x+5*y 
+L = {{sub(Q1,matrix{{p,q}}),sub(Q2,matrix{{p,q}}),sub(Q3,matrix{{p,q}}),sub(Q4,matrix{{p,q}})}}
+L' = {{L#0#0/L#0#3,L#0#1/L#0#3,L#0#2/L#0#3}}
+S = RR_nbits[a..c]
+G = idealOfGenericPoint(S,L',3,2^2900);
+I = ideal ((G#1)*(G#0)_{0..6})
+T = QQ[a..d]
+J = homogenize(sub(I,T),d)
+hilbertPolynomial J
+
+
+-- Example: Secant
+
+
+restart 
+loadPackage "GenericPoints"
+debug loadPackage "NumericalAlgebraicGeometry"
+rr = CC
+R = rr[a,b,c]
+p = numeric(pi)
+q = log numeric 2 
+pt1 = {0_CC,0_CC,0_CC,0_CC,p,p^2,p^3}
+pt2 = {0_CC,q,q^2,q^3,0_CC,0_CC,0_CC}
+pt3 = {1_CC,0_CC,0_CC,0_CC,p+q,p^2+q^2,p^3+q^3}
+R = QQ[a..c];
+L = minors (2,matrix{{a,b},{b,c},{c,1}});
+T = CC[s,x_0..x_2,a..c]
+num = # gens T
+Ly = sub(L,T);
+Lx = sub(L,matrix{{x_0..x_2}})
+W  = ideal (sub(matrix{{2,3,5}},T)-s*matrix{{a..c}}-matrix{{x_0..x_2}})
+W' = ideal (sub(matrix {{p+q,p^2+q^2,p^3+q^3}},T) - s*matrix{{a..c}}-matrix{{x_0..x_2}})
+IT' = Ly + Lx + W
+IS' = Ly + Lx + W'
+ncols = rank source gens IT'
+ran = random(T^num,T^ncols)
+IT = flatten entries (ran*transpose gens IT')
+IS = flatten entries (ran*transpose gens IS')
+sols = {pt1,pt2,pt3}
+track(IS,IT,sols)
+pt1
