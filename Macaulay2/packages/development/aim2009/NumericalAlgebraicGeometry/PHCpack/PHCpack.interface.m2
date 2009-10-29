@@ -159,6 +159,87 @@ refinePHCpack (List,List) := List => o -> (T,sols) -> (
      parseSolutions(solsTfile, R, Bits => o.Bits)
      )
 
+generalEquations = method()
+generalEquations WitnessSet := (W) -> (
+     -- change the equations to be general change of vars, if not a CI
+     -- the output is a new witness set, with the same points and slice.
+     R := ring W;
+     n := numgens R;
+     d := dim W;
+     ngens := numgens ideal W;
+     if ngens === n-d then W
+     else (
+	  -- take random combinations of the equations
+	  neweqns := (generators ideal W) * random(R^ngens, R^(n-d));
+	  witnessSet(ideal neweqns, ideal W.Slice, W.Points))
+     )
+
+addSlackVariables = method()
+addSlackVariables WitnessSet := (W) -> (
+     -- creates a new system of polynomials, in variables:
+     -- old set of variables, and zz1, ..., zzd, where
+     -- d is the dimension of W.
+     R := ring W;
+     n := numgens R;
+     d := dim W; -- this will be the number of slack variables to add
+     W1 := generalEquations W;
+     -- Add in new variables zz1, ..., zzd,
+     --  this changes the equations, the slice, and the points
+     slackvars := apply(d, i->getSymbol("zz"|toString (i+1)));
+     newR := (coefficientRing R)[gens R, slackvars];
+     newvars := (vars newR)_{n..n+d-1};
+     -- new slice:
+     newSlice := apply(d, i -> sub(W1.Slice#i,newR) + newR_(n + i));
+     -- add a linear matrix 
+     A := random(newR^(d),newR^(n-d));
+     AZ := transpose newvars * A;
+     newEqns := (sub(gens ideal W1, newR) + AZ) | newvars;
+     -- new points
+     zeros := toList apply(d, i -> 0_(coefficientRing R));
+     newPoints := apply(W1.Points, pt -> join(pt,zeros));
+     witnessSet(ideal newEqns, ideal newSlice, newPoints))
+
+monodromyBreakupPHC = method(Options => {})
+monodromyBreakupPHC WitnessSet := o -> (W) -> (
+     -- Input: a witness set (i.e. numerical equidimensional set)
+     -- Output: a list of witness sets, probably the irreducible
+     --  decomposition of W.
+     infile := temporaryFileName() | 
+     "PHCmonodromy";
+     targetfile := temporaryFileName() | 
+     "PHCtarget";
+     batchfile := temporaryFileName() | 
+     "PHCbat";
+     solsfile :=  temporaryFileName() | 
+     "PHCsolfile";
+     {infile, targetfile, batchfile} / (f->if fileExists f then removeFile f);
+     -- writing data to the corresponding files                                                                                                                                                                           
+     systemToFile(W.Equations_* | W.Slice,infile);
+     solutionsToFile(W.Points,ring W,infile, Append=>true);	  
+     -- making batch file (for phc -f)
+     bat := openOut batchfile;
+     bat << "2" << endl; -- option for newton's method using multiprecision
+     bat << infile << endl; -- name of input file
+     bat << targetfile << endl; -- name of output file
+     bat << if degree W < 15 then "2" else "1" << endl; -- this 15 is a problem
+     bat << "0" << endl;
+     close bat;
+     compStartTime := currentTime();      
+     run(PHCexe|" -f <"|batchfile|" >phc_session.log");
+     if DBG>0 then << "PHCpack computation time: " << currentTime()-compStartTime << endl;
+     -- Now we have to grab the files and get the points
+     i := 1;
+     filnames := while (
+	  fil := (infile|"_f"|i);
+     	  fileExists fil
+	  ) list fil do i=i+1;
+     for f in filnames list (
+	  if fileExists solsfile then removeFile solsfile;
+	  run(PHCexe|" -z "|f|" "|solsfile);
+	  witnessSet(W.Equations, ideal W.Slice, parseSolutions(solsfile, ring W))
+	  )
+     )
+
 -- service functions ------------------------------------------
 systemToFile = method(TypicalValue => Nothing)
 systemToFile (List,String) := (F,name) -> (
@@ -256,4 +337,24 @@ C = refinePHCpack(L, {pt}, Iterations => 10, Bits => 400, ErrorTolerance => 1p40
 pt1 = C_0_0
 pt_0
 pt1_0
+///
+
+///
+-- WitnessSet and monodromyBreakupPHC
+restart
+debug loadPackage "NumericalAlgebraicGeometry"
+
+R = QQ[x,y,z]
+I = ideal"x+y-2,y-z+3"
+J = ideal"x2+y2+z2-1,xy-z2"
+L = trim intersect(I,J)
+RC = CC[gens R]
+L = sub(L,RC)
+W = witnessSet L
+W1 = generalEquations W
+W2 = addSlackVariables W1
+monodromyBreakupPHC W2
+peek W2
+see ideal W2
+peek oo
 ///
