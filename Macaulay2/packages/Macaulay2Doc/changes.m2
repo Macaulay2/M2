@@ -4,7 +4,23 @@ document {
      Subnodes => {
 	  TO "changes, 1.0 and 1.1",
 	  TO "changes, 1.2",
-	  TO "changes, 1.3"
+	  TO "changes, 1.3",
+	  TO "changes, 1.3.1"
+	  }
+     }
+
+document {
+     Key => "changes, 1.3.1",
+     UL {
+	  LI {
+	       "Fixed a bug: determinants and minors in
+	       rings over RR or CC would give wrong answers
+	       or even crash M2.  The Bareiss strategy
+	       now gives an error in this case, and the Cofactor
+	       strategy is the default in this case.
+	       Additionally, pfaffians over such rings are now
+	       declared as not implemented."
+	       },
 	  }
      }
 

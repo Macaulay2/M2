@@ -16,7 +16,7 @@ getMinorsStrategy := (R,options) -> (
 	  -- a polynomial ring.  Note that if R is non-commutative
 	  -- then either algorithm is incorrect.  What is the correct
 	  -- thing to do in this case?
-	  if isQuotientRing R and not isField R then
+	  if precision R > 0 or (isQuotientRing R and not isField R) then
      	    cofactor
 	  else
 	    bareiss
