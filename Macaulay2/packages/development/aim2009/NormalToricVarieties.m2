@@ -203,9 +203,7 @@ isSimplicial NormalToricVariety := X -> (
 isSmooth NormalToricVariety := X -> (
      if not X.cache.?smooth then (
      	  V := transpose matrix rays X;
-     	  X.cache.smooth = all(max X, s -> #s == rank V_s and (
-	       	    if #s == 1 then gcd flatten entries transpose V_s == 1
-		    else abs det V_s == 1));
+     	  X.cache.smooth = all(max X, s -> #s == rank V_s and 1 == minors(#s,V_s));
 	  if X.cache.smooth == true then X.cache.simplicial = true);
      X.cache.smooth)
 
