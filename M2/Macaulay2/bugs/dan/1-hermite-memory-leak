@@ -1,0 +1,4 @@
+-- memory leak: -*- mode: M2 -*-
+
+M = random(ZZ^30,ZZ^30);
+scan(1000, i -> (hermite M;))

@@ -1,0 +1,3 @@
+this doesn't work but it should make its way into the documentation somehow
+
+combine(HashTable, HashTable, Function, Function, Function) := HashTable => combine
