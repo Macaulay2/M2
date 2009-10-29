@@ -1,9 +1,10 @@
 needsPackage ("NumericalAlgebraicGeometry", FileName=>"../../NumericalAlgebraicGeometry.m2", DebuggingMode=>true)
 
 skewSchubertVariety = method(TypicalValue=>Matrix)
-skewSchubertVariety(ZZ,ZZ,List,List) := (k,n,l,m)->(
+skewSchubertVariety(Sequence,List,List) := (kn,l,m)->(
      -- k and n are the integers defining the Grassmanian G(k,n)
      -- l and m are partitions of n
+     (k,n):=kn;
      if #l < k then for i from 1 to k-#l do (l=l|{0}); -- makes sure l have size k
      if #m < k then for i from 1 to k-#m do (m=m|{0}); -- makes sure m have size k
      d := (k*(n-k)-sum(l)-sum(m));  
@@ -40,7 +41,7 @@ positionVariableChildren(Sequence,List,List,List):=(kn,l,m,v)->(
 
 insertSolution = method(TypicalValue=>List)
 insertSolution(List,List) := (v,s) ->(
-   i:=positionVariableChildren((k,n),l,m,v);
+   i:=positionVariableChildren(kn,l,m,v);
    take(s,i)|{0}|drop(s,i)
 )
 precookPieriHomotopy = method(TypicalValue=>List)
@@ -50,7 +51,7 @@ precookPieriHomotopy(Sequence,List,List) := (kn,l,m)->(
      (k,n) := kn;
      if #l < k then for i from 1 to k-#l do (l=l|{0}); -- makes sure l have size k
      if #m < k then for i from 1 to k-#m do (m=m|{0}); -- makes sure m have size k
-     E := skewSchubertVariety(k,n,l,m);
+     E := skewSchubertVariety(kn,l,m);
      d := (k*(n-k)-sum(l)-sum(m));
      S := QQ[x_1..x_d];
      T:= apply(#m, i->n-k+i-m#i);
@@ -87,7 +88,7 @@ solveSimpleSchubert(Sequence, List,List) := (kn,l,m)->(
    -- l and m are partitions of n
    (k,n) := kn;
    d := k*(n-k)-sum(l)-sum(m);
-   E := skewSchubertVariety(k,n,l,m);
+   E := skewSchubertVariety(kn,l,m);
    if H#?(l,m) then(
    H # (l,m)
    )
@@ -108,7 +109,7 @@ solveSimpleSchubert(Sequence, List,List) := (kn,l,m)->(
       newR := CC_53(monoid[gens ring first S]);
       S = S/(s->sub(s,newR));
       T = T/(t->sub(t,newR));
-      -- print (S,T,start);
+      assert all(start, s->norm sub(matrix{S},matrix{s}) < 1e-3);
       H#(l,m) = track(S,T,start,gamma=>exp(2*pi*ii*random RR)
       --,Software=>PHCpack
       ) / first
