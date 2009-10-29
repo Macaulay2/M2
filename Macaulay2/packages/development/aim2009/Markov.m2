@@ -56,7 +56,24 @@ exportMutable {dotBinary,jpgViewer}
 ----  use, when appropriate thms that say local <=> global based on conditions
 ----  
 ----  parametrizations and for toric varieties the the corresponding matrix. 
+----  In the case of toric varieties the matrix is easy.  Here is the code, 
+----  commented out to be used later when we are ready. 
+---- 
+----  toAMatrix = method()
+----  toAMatrix List := Matrix => (M) -> (
+----      if any(M,isMonomial)
+----         then error "this parameterization does not correspond to a toric ideal." 
+----         else (
+----              Mexp := apply(M, exponents);
+----              transpose matrix apply(Mexp, flatten)))
+----
+---- isMonomial = method()
+---- isMonomial RingElement := Boolean => (m) -> (
+----      termList := terms m;
+----      if #termList == 1 then true else false)
 
+---- isMonomial works well as long as m is actually a polynomial or monomial and not 
+---- an element of ZZ, QQ, RR, etc.
 
 
 -------------------------
