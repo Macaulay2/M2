@@ -27,7 +27,7 @@ multiply(Sum,Sum) := (x,y) -> fold(add,flatten apply(toList x,t -> apply(toList 
 multiply(Sum,Thing) := (x,y) -> fold(add,apply(toList x,t -> multiply(t,y)))
 multiply(Thing,Sum) := (x,y) -> fold(add,apply(toList y,u -> multiply(x,u)))
 
-binomialate = (n,x,y) -> fold(add,apply(n+1,i->multiply(binomial(n,i),multiply(exponentiate(x,n-i),exponentiate(y,i)))))
+binomialate = (n,x,y) -> fold(add,apply(n+1,i->sum(binomial(n,i),multiply(exponentiate(x,n-i),exponentiate(y,i)))))
 
 exponentiate(Product,Thing) := (x,n) -> fold(multiply,apply(toList x, t -> exponentiate(t,n)))
 exponentiate(Thing,Sum) := (x,n) -> fold(multiply,apply(toList x, t -> exponentiate(t,n)))
