@@ -1,5 +1,5 @@
 -- -*- coding: utf-8 -*-
-newPackage("Markov",
+newPackage("GraphicalModels",
      Authors => {
 	  {Name => "Luis Garcia"},
 	  {Name => "Mike Stillman"}
@@ -104,11 +104,12 @@ exportMutable {dotBinary,jpgViewer}
 -- This routine produces a useful version of a 'graph'
 -- which we use in routines throughout this package.
 
-Graph = new Type of HashTable
+DiGraph = new Type of HashTable
      -- a directed graph is a hash table in the form:
      -- { A => set {B,C,...}, ...}, where there are edges A->B, A->C, ...
      -- and A,B,C are integers.  The nodes of the graph must be 1,2,...,N.
-     
+
+Graph = new Type of HashTable     
      -- an undirected graph is a hash table in the form { A => set {B,C, ...}, 
      -- where A < B, C, etc. and the edges are {A,B}, {A,C}.  Since C is not 
      -- less than A, C => {A} should not appear and does not make sense. The 
@@ -594,9 +595,9 @@ beginDocumentation()
 
 doc ///
   Key
-    Markov
+    GraphicalModels
   Headline
-    Markov ideals, arising from Bayesian networks in statistics
+    GraphicalModels ideals, arising from Bayesian networks in statistics
   Description
     Text
       This package is used to construct ideals corresponding to discrete graphical models,
