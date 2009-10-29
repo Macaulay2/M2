@@ -121,9 +121,11 @@ $(TARFILE_DIR)/$(TARFILE) :
 ifeq (@DOWNLOAD@,yes)
 	(cd $(TARFILE_DIR) && $(FETCHER) $(URL)/$(TARFILE) $(FETCHOPTS) && $(CHECKFETCHED))
 else
-	@ echo "error: third-party library or program source code not present: $(LIBNAME)" >&2
-	@ echo "       in file $@" >&2
-	@ echo "       and not configured for automatic downloading with --enable-download" >&2
+	@ echo "error: for the third-party library or program source \"$(LIBNAME)\"" >&2
+	@ echo "       the source code is not present in the file \"$@\"" >&2
+	@ echo "       so either download a \"fat\" tar file of the Macaulay2 source code" >&2
+	@ echo "       or rerun the Macaulay2 \"configure\" command with the added option \"--enable-download\"" >&2
+	@ echo "       to enable automatic downloading of the source code over the internet" >&2
 	@ false
 endif
 distclean: package-distclean
