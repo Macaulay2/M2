@@ -201,7 +201,9 @@ resolveSingularities2 (NormalToricVariety) := NormalToricVariety =>   (X)->(
 	     );
 	maxDet := max Xsimp.cache.index;
 	--Now the main part of the procedure
+	count := 0;
 	while(maxDet>1) do (
+     	       count = count +1;	     
 		--First find a simplex with the maximum determinant
 		simplex:=(max Xsimp)_(position(Xsimp.cache.index,j->(j==maxDet)));
 		--Now find the vector in this simplex to add
@@ -215,6 +217,7 @@ resolveSingularities2 (NormalToricVariety) := NormalToricVariety =>   (X)->(
 		gcdnewA=gcd(newA);
 		newA=toSequence ((1/gcdnewA)*newA);
 		newA=apply(newA,x->lift(x,ZZ));
+		print("blowup # ", count, " at ",newA);
 		time(Xsimp = blowup(Xsimp,transpose matrix {toList newA}));
 		A = rays Xsimp;
 		--Now update the maxDet
@@ -267,7 +270,7 @@ print("Example 6")
 Q = normalToricVariety({{-1,-1,-1},{1,-1,-1},{-1,1,-1},{1,1,-1},{-1,-1,1},{1,-1,1},{-1,1,1},{1,1,1}},{{0,2,4,6},{0,1,4,5},{0,1,2,3},{1,3,5,7},{2,3,6,7},{4,5,6,7}});
 time Y1 = resolveSingularities Q	  
 time Y2 = resolveSingularities2 Q
-Y1 == Y2
+
 
 ---------------------------------------
 -- DOCUMENTATION
