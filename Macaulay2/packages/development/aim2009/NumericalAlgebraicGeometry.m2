@@ -31,7 +31,8 @@ export {
      "Tolerance",
      "getSolution", "SolutionAttributes", "Coordinates", "SolutionStatus", "LastT", "RCondition", "NumberOfSteps",
      "NAGtrace",
-     "randomSd", "goodInitialPair", "randomInitialPair"
+     "randomSd", "goodInitialPair", "randomInitialPair",
+     "points"
      }
 exportMutable {
      }
@@ -1226,7 +1227,8 @@ witnessSet Ideal := I -> (
      PP := select(P, p->norm sub(gens I, matrix p) < 1e-5);
      witnessSet(I,S,PP/first)
      )
-     
+points = method()
+points WitnessSet := (W) -> apply(W.Points, first)
 ///
 restart
 debug loadPackage "NumericalAlgebraicGeometry"
