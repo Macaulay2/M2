@@ -827,6 +827,7 @@ randomSocleModule(List, ZZ) := opts -> (L, m) -> (
      )
      
 TEST ///
+setRandomSeed()
 L={0,1,3,4}
 B = pureBettiDiagram L
 assert(betti res randomSocleModule(L,1) == mat2betti matrix"1,2,1,0;
