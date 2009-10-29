@@ -122,6 +122,39 @@ findBranches(RingElement) := (F) -> (
 -- step 2: Hermite normal form
 -- step 3: p-trace radical
 
+rowWithMinimalDegree = (A,j) -> (
+     j + minPosition for k from j to numRows A - 1 list (
+	  a := A_(k,j);
+	  if a == 0 then infinity else first degree a
+	  )
+     )
+
+hermitianNF = method()
+hermitianNF Matrix := (M) -> (
+     -- assume for now that the ring of M is k[x]
+     A := mutableMatrix M;
+     nc := numColumns A;
+     nr := numRows A;
+     for j from 0 to nc-1 do (
+	  << "A = " << A << endl;
+	  k := rowWithMinimalDegree(A,j);
+	  while k >= j do (
+	   << "j k = " << j << " " << k << endl;
+	   if k > j then rowSwap(A,j,k);
+	   p := A_(j,j);
+	   if p != 0 then
+	    for i from j+1 to nr-1 do (
+		 q := A_(i,j) // p;
+		 if q != 0 then
+		   rowAdd(A, i, -q, j);
+		 );
+	   k = rowWithMinimalDegree(A,j);
+	   if k == j then k=-1; -- i.e. leave loop
+	  ));
+     -- need to still "backreduce" this matrix
+     matrix A     
+     )
+
 beginDocumentation()
 
 doc ///
@@ -280,3 +313,24 @@ F = sub(F, {y => x+y, z => z-x})
 A = R/F
 integralClosureHypersurface A
 disc(F,y)
+
+TEST ///
+restart
+loadPackage "IntegralBases"
+debug IntegralBases
+R = QQ[x]
+M = matrix"1,x-2,x-3;
+           x2-1,x3-1,x5-1;
+	   x2+1,x3+1,0"
+
+hermitianNF M
+A = mutableMatrix M
+rowWithMinimalDegree(A,0)
+rowSwap(A,0,0)
+rowAdd(A,1,-A_(1,0),0)
+rowAdd(A,2,-A_(2,0),0)
+rowWithMinimalDegree(A,1)
+A_(1,1)//A_(2,1)
+rowAdd(A,2, -A_(1,1)//A_(2,1), 1)
+
+///

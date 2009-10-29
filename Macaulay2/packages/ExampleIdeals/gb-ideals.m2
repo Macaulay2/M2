@@ -438,7 +438,12 @@ J1 = mayr(4,2,ZZ/101)
   time gb(J1, Algorithm=>Homogeneous2); -- sec
 *}
 ----------------------------------------------
---
+-- assocModel(4,5)
+-- problem: saturate with respect to the product of variables
+R = ZZ/5[a,c..t,b,MonomialSize=>8]
+I = ideal"bip-dfq,djm-ehn,-bim+cgn,-gmp+hkq,cnp-dkr,-bhk+cfl,anq-bks,-bhnr+cgms,-gnr+hls,-ior+jms,-bor+clt"
+time gb(I, Algorithm=>LinearAlgebra);
+time gb I;
 ----------------------------------------------
 --
 ----------------------------------------------
