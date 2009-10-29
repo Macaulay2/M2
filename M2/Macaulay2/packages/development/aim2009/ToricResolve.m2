@@ -51,13 +51,13 @@ makePos=(v,pp)->(
 ----------------------------------------------------------------
 
 makeSimplicial = method()
-makeSimplicial (NormalToricVariety):= NormalToricVariety => X ->(
+makeSimplicial (NormalToricVariety):= X ->(
      Y := fan X;
      return normalToricVariety(makeSimplicial Y)
      )
 
 
-makeSimplicial (Fan)  := Fan =>  X->(
+makeSimplicial (Fan)  :=  X->(
      Y := X;
      done := false;
      while not done do (
@@ -80,7 +80,7 @@ blowup (NormalToricVariety,Matrix)  :=  (X,rho)->(
 -------------------------------------------------------------------------------------------
 
 makeSmooth = method (TypicalValue => Fan)
-makeSmooth (Fan) := Fan =>   (X)->(
+makeSmooth (Fan) :=   (X)->(
     	if not isSimplicial(X) then  Xsimp=makeSimplicial X else Xsimp=X;
 	A:=rays X;
 	--Next we add the determinant to each simplex in our data
@@ -94,7 +94,7 @@ makeSmooth (Fan) := Fan =>   (X)->(
 	     	       )
 	   	  );
 	     );
-	maxDet := max Xsimp.cache.index;
+	maxDet = max Xsimp.cache.index;
 	--Now the main part of the procedure
 	while(maxDet>1) do (
 		--First find a simplex with the maximum determinant
@@ -132,7 +132,7 @@ makeSmooth (Fan) := Fan =>   (X)->(
  
  
 resolveSingularities = method (TypicalValue => NormalToricVariety)
-resolveSingularities (NormalToricVariety) := NormalToricVariety =>   (X)->(
+resolveSingularities (NormalToricVariety) :=   (X)->(
     	if not isSimplicial(X) then  Xsimp = makeSimplicial X else Xsimp = X;
 	print "Done making simplicial.";
     	Xsimp = normalToricVariety(toList apply(rays Xsimp, sig ->1/gcd(sig)*sig),max Xsimp);
@@ -148,7 +148,7 @@ resolveSingularities (NormalToricVariety) := NormalToricVariety =>   (X)->(
 	     	       )
 	   	  );
 	     );
-	maxDet := max Xsimp.cache.index;
+	maxDet = max Xsimp.cache.index;
 	--Now the main part of the procedure
 	while(maxDet>1) do (
 		--First find a simplex with the maximum determinant
@@ -160,8 +160,8 @@ resolveSingularities (NormalToricVariety) := NormalToricVariety =>   (X)->(
 		K:=transpose gens ker Ap;
 		k:=flatten entries substitute(matrix({(entries(K))_0}),ZZ);
 		k=matrix {makePos(k,p)};
-		newA= flatten entries (k*matrix(toList apply(simplex,i->toList A_i)));
-		gcdnewA=gcd(newA);
+		newA:= flatten entries (k*matrix(toList apply(simplex,i->toList A_i)));
+		gcdnewA:=gcd(newA);
 		newA=toSequence ((1/gcdnewA)*newA);
 		newA=apply(newA,x->lift(x,ZZ));
 		time(Xsimp = blowup(Xsimp,transpose matrix {toList newA}));
@@ -176,15 +176,14 @@ resolveSingularities (NormalToricVariety) := NormalToricVariety =>   (X)->(
 	     		  )
 	   	     );
 		);
-	   print "got here";
-	return Xsimp ;
+	Xsimp 
 )
 
 
 --=====================================================
 
 resolveSingularities2 = method (TypicalValue => NormalToricVariety)
-resolveSingularities2 (NormalToricVariety) := NormalToricVariety =>   (X)->(
+resolveSingularities2 (NormalToricVariety) :=    (X)->(
     	Xsimp = normalToricVariety(toList apply(rays X, sig ->1/gcd(sig)*sig),max X);
 	A = rays Xsimp;
 	--Next we add the maximum minor to each facet in our data
@@ -199,7 +198,7 @@ resolveSingularities2 (NormalToricVariety) := NormalToricVariety =>   (X)->(
 	     	       )
 	   	  );
 	     );
-	maxDet := max Xsimp.cache.index;
+	maxDet = max Xsimp.cache.index;
 	--Now the main part of the procedure
 	count := 0;
 	while(maxDet>1) do (
@@ -230,10 +229,10 @@ resolveSingularities2 (NormalToricVariety) := NormalToricVariety =>   (X)->(
 	     		  )
 	   	     );
 		);
-	   print "got here";
-	return Xsimp ;
+	 Xsimp 
 )
 
+end
 --===============================================================================
 
 --==Examples===
