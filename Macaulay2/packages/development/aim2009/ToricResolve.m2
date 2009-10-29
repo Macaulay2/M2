@@ -23,7 +23,7 @@
 ----------------------------------------------------------------
 
 --Procedure to return the largest prime dividing a number 
-maxPrime = n->(
+maxPrime=n->(
      f:=factor(n);
      return(max apply(#f,i->((f#i)#0)));
 );
@@ -33,7 +33,7 @@ maxPrime = n->(
 
 --Procedure to find the mod p representative of a vector v with
 --all entries between 0 (inclusive) and p (exclusive)
-makePos = (v,pp)->(
+makePos=(v,pp)->(
 	local i,j;
 	i=0;
 	while i<#v do (
@@ -50,7 +50,7 @@ makePos = (v,pp)->(
 
 ----------------------------------------------------------------
 
-makeSimplicial = method --(TypicalValue => NormalToricVariety)
+makeSimplicial = method()
 makeSimplicial (NormalToricVariety):= NormalToricVariety => X ->(
      Y := fan X;
      return normalToricVariety(makeSimplicial Y)
@@ -63,7 +63,7 @@ makeSimplicial (Fan)  := Fan =>  X->(
      while not done do (
 	  for i from 3 to dim Y do apply( cones(i,Y), sigma -> if #(rays sigma) > i then (
 		    rho := transpose matrix{flatten entries(rays sigma)_0};
-		    Y = stellarSubdivision (Y,rho);
+		    time Y = stellarSubdivision (Y,rho);
 		    )
 	          );
   	     done = true;
@@ -79,12 +79,64 @@ blowup (NormalToricVariety,Matrix)  :=  (X,rho)->(
 
 -------------------------------------------------------------------------------------------
 
-
---need to make work for non max cones
+makeSmooth = method (TypicalValue => Fan)
+makeSmooth (Fan) := Fan =>   (X)->(
+    	if not isSimplicial(X) then  Xsimp=makeSimplicial X else Xsimp=X;
+	A:=rays X;
+	--Next we add the determinant to each simplex in our data
+     	if (not X.cache.?index) then (
+	     Xsimp.cache.index={};
+	     maxDet:=0;
+	     scan(genCones X,sigma->(
+		       detSigma=if #(rays sigma)<2 then 1 else if #(rays sigma)>(ambDim sigma +1) then infinity else max apply(minors(transpose matrix apply(rays X,i-> flatten entries i)) ,#(rays sigma));
+		       maxDet=max(maxDet,detSigma);
+		       Xsimp.cache.index=append(Xsimp.cache.index,detSigma);
+	     	       )
+	   	  );
+	     );
+	maxDet := max Xsimp.cache.index;
+	--Now the main part of the procedure
+	while(maxDet>1) do (
+		--First find a simplex with the maximum determinant
+		simplex:=(max Xsimp)_(position(Xsimp.cache.index,j->(j==maxDet)));
+		--Now find the vector in this simplex to add
+		p:=maxPrime(floor maxDet);
+		R:=ZZ/p;
+		Ap:=substitute(transpose matrix toList apply(simplex,i->toList A_i), R);
+		K:=transpose gens ker Ap;
+		k:=flatten entries substitute(matrix({(entries(K))_0}),ZZ);
+		k=matrix {makePos(k,p)};
+		newA= flatten entries (k*matrix(toList apply(simplex,i->toList A_i)));
+		gcdnewA=gcd(newA);
+		newA=toSequence ((1/gcdnewA)*newA);
+		newA=apply(newA,x->lift(x,ZZ));
+		time(Xsimp = blowup(Xsimp,transpose matrix {toList newA}));
+		A = rays Xsimp;
+		--Now update the maxDet
+		maxDet=0;
+		Xsimp.cache.index={};
+		scan(max Xsimp,sigma->(
+			  detSigma=if # sigma>1 then abs(det(matrix toList apply(sigma,i->toList A_i))) else 1;
+			  maxDet=max(maxDet,detSigma);
+			  Xsimp.cache.index=append(Xsimp.cache.index,detSigma);
+	     		  )
+	   	     );
+		);
+	return Xsimp
+)
+ 
+ 
+ 
+ 
+ --=========================================================================
+ 
+ 
 resolveSingularities = method (TypicalValue => NormalToricVariety)
 resolveSingularities (NormalToricVariety) := NormalToricVariety =>   (X)->(
-    	if not isSimplicial(X) then  Xsimp=makeSimplicial X else Xsimp=X;
-	A:=rays Xsimp;
+    	if not isSimplicial(X) then  Xsimp = makeSimplicial X else Xsimp = X;
+	print "Done making simplicial.";
+    	Xsimp = normalToricVariety(toList apply(rays Xsimp, sig ->1/gcd(sig)*sig),max Xsimp);
+	A = rays Xsimp;
 	--Next we add the determinant to each simplex in our data
      	if (not Xsimp.cache.?index) then (
 	     Xsimp.cache.index={};
@@ -112,7 +164,7 @@ resolveSingularities (NormalToricVariety) := NormalToricVariety =>   (X)->(
 		gcdnewA=gcd(newA);
 		newA=toSequence ((1/gcdnewA)*newA);
 		newA=apply(newA,x->lift(x,ZZ));
-		Xsimp = blowup(Xsimp,transpose matrix {toList newA});
+		time(Xsimp = blowup(Xsimp,transpose matrix {toList newA}));
 		A = rays Xsimp;
 		--Now update the maxDet
 		maxDet=0;
@@ -124,35 +176,98 @@ resolveSingularities (NormalToricVariety) := NormalToricVariety =>   (X)->(
 	     		  )
 	   	     );
 		);
-	return Xsimp
+	   print "got here";
+	return Xsimp ;
 )
 
 
 --=====================================================
 
+resolveSingularities2 = method (TypicalValue => NormalToricVariety)
+resolveSingularities2 (NormalToricVariety) := NormalToricVariety =>   (X)->(
+    	Xsimp = normalToricVariety(toList apply(rays X, sig ->1/gcd(sig)*sig),max X);
+	A = rays Xsimp;
+	--Next we add the maximum minor to each facet in our data
+     	if (not Xsimp.cache.?index) then (
+	     Xsimp.cache.index={};
+	     maxDet:=0;
+	     scan(max Xsimp,sigma->(
+		       -- this only works for pure X 
+		       detSigma=if #sigma>1 then max apply(subsets(sigma,dim Xsimp),tau->abs(det(matrix toList apply(tau,i->toList A_i)))) else 1;
+		       maxDet=max(maxDet,detSigma);
+		       Xsimp.cache.index=append(Xsimp.cache.index,detSigma);
+	     	       )
+	   	  );
+	     );
+	maxDet := max Xsimp.cache.index;
+	--Now the main part of the procedure
+	while(maxDet>1) do (
+		--First find a simplex with the maximum determinant
+		simplex:=(max Xsimp)_(position(Xsimp.cache.index,j->(j==maxDet)));
+		--Now find the vector in this simplex to add
+		p:=maxPrime(floor maxDet);
+		R:=ZZ/p;
+		Ap:=substitute(transpose matrix toList apply(simplex,i->toList A_i), R);
+		K:=transpose gens ker Ap;
+		k:=flatten entries substitute(matrix({(entries(K))_0}),ZZ);
+		k=matrix {makePos(k,p)};
+		newA= flatten entries (k*matrix(toList apply(simplex,i->toList A_i)));
+		gcdnewA=gcd(newA);
+		newA=toSequence ((1/gcdnewA)*newA);
+		newA=apply(newA,x->lift(x,ZZ));
+		time(Xsimp = blowup(Xsimp,transpose matrix {toList newA}));
+		A = rays Xsimp;
+		--Now update the maxDet
+		maxDet=0;
+		Xsimp.cache.index={};
+		scan(max Xsimp,sigma->(
+  		       	  detSigma=if #sigma>1 then max apply(subsets(sigma,dim Xsimp),tau->abs(det(matrix toList apply(tau,i->toList A_i)))) else 1;
+			  maxDet=max(maxDet,detSigma);
+			  Xsimp.cache.index=append(Xsimp.cache.index,detSigma);
+	     		  )
+	   	     );
+		);
+	   print "got here";
+	return Xsimp ;
+)
+
+--===============================================================================
+
 --==Examples===
 
--- the following are already smooth so applying resolvesingularities will just give same X back
-X = projectiveSpace 4
-X = hirzebruchSurface 2
 
--- this is not smooth
-X = weightedProjectiveSpace {1,2,3};
-resolveSingularities X
+-- the following are already smooth so applying resolvesingularities will just give same X back
+print("Example 1")
+X = projectiveSpace 4
 time resolveSingularities X
 
-U = normalToricVariety({{4,-1},{0,1}},{{0,1}});
-resolveSingularities U
+print("Example 2")
+X = hirzebruchSurface 2
+time resolveSingularities X
 
+print("Example 3")
+-- this is not smooth
+X = weightedProjectiveSpace {1,2,3};
+--resolveSingularities X
+time resolveSingularities X
+time resolveSingularities2 X
+
+print("Example 4")
+U = normalToricVariety({{4,-1},{0,1}},{{0,1}});
+time resolveSingularities U
+
+print("Example 5")
 --here the maximal cones are the rays 
 U' = normalToricVariety({{4,-1},{0,1}},{{0},{1}});
-resolveSingularities U'
+time resolveSingularities U'
 
+print("Example 6")
 --this takes too long
 --here makeSimplicial does significant work: codim 2 cones need to be subdiveded
 Q = normalToricVariety({{-1,-1,-1},{1,-1,-1},{-1,1,-1},{1,1,-1},{-1,-1,1},{1,-1,1},{-1,1,1},{1,1,1}},{{0,2,4,6},{0,1,4,5},{0,1,2,3},{1,3,5,7},{2,3,6,7},{4,5,6,7}});
-resolveSingularities Q
-
+time Y1 = resolveSingularities Q	  
+time Y2 = resolveSingularities2 Q
+Y1 == Y2
 
 ---------------------------------------
 -- DOCUMENTATION
@@ -161,32 +276,6 @@ resolveSingularities Q
 
 beginDocumentation()
 
-doc ///
-  Key	
-	makePos
-	(makePos, List, ZZ)
-  Headline
-	find a mod p representative of a vector with entries between 0 (inclusive) and p (exclusive)
-  Usage
-	makePos(v,p)
-  Inputs
-	v:List
-	  a List of integers
-	p:ZZ
-	  an integer
-  Outputs
-	w:List 
-	  a mod p representative of {\tt v}
-  Description
-   Text
-	This is used to find primitive vectors while resolving the singularities of a simplicial normal toric variety.
-   Text
-   Example
-   Text
-   Example
-  Caveat The List input/output should really be a matrix.
---  SeeAlso
-///
 
 
 doc ///
@@ -199,11 +288,12 @@ doc ///
   Usage
 	makeSimplicial X	
   Inputs
-	X:(NormalToricVariety, Fan)
+	X:NormalToricVariety or Fan
   Outputs
-	Y:(NormalToricVariety, Fan) 
-	  {\tt Y} will be of the same type as {\tt X}
+	Y:NormalToricVariety or Fan 
+	  depends on input -----WHAT IS THE CORRECT WAY TO DOCUMENT THIS?
   Description
+   Text
    Text
    Example
    Text
@@ -228,38 +318,6 @@ doc ///
 	  a resolution of {\tt X}
   Description
    Text
-   Text
-	The following are already smooth, so applying resolvesingularities will return X again.
-   Example
-	X = projectiveSpace 4;
-	resolveSingularities X == X
-   Example
-	X = hirzebruchSurface 2; 
-	resolveSingularities X == X
-   Text
-	The next example is not smooth. 
-   Example
-	X = weightedProjectiveSpace {1,2,3};
-	resolveSingularities X
-	time resolveSingularities X
-   Text
-	Here is the resolution of an affine toric surface.
-   Example
-	X = normalToricVariety({{4,-1},{0,1}},{{0,1}});
-	resolveSingularities X
-   Text
-	The following is 1-dimensional. 
-   Example
-	X = normalToricVariety({{4,-1},{0,1}},{{0},{1}});
-	resolveSingularities X
-   Text
-   Example
-	-- This takes too long. 
-	Here makeSimplicial does significant work: codim 2 cones need to be subdivided.
-   Text
-	Q = normalToricVariety({{-1,-1,-1},{1,-1,-1},{-1,1,-1},{1,1,-1},{-1,-1,1},{1,-1,1},{-1,1,1},{1,1,1}},{{0,2,4,6},{0,1,4,5},{0,1,2,3},{1,3,5,7},{2,3,6,7},{4,5,6,7}});
-	resolveSingularities Q
-   Example
    Text
    Example
    Text
