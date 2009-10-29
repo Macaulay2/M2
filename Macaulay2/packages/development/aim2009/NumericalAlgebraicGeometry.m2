@@ -48,6 +48,8 @@ DBG = 0; -- debug level (10=keep temp files)
 SLPcounter = 0; -- the number of compiled SLPs (used in naming dynamic libraries)
 lastPathTracker = null; -- path tracker object used last
 
+WitnessSet = new Type of MutableHashTable 
+
 -- ./NumericalAlgebraicGeometry/ FILES -------------------------------------
 load "./NumericalAlgebraicGeometry/PHCpack/PHCpack.interface.m2" 
 
@@ -1200,24 +1202,26 @@ readSolutionsBertini String := f -> (
 -- {equations, slice, points}
 -- caveat: we assume that #equations = dim(slice)   
 
-WitnessSet = new Type of MutableHashTable 
 -- Equations, Slice, Points
 WitnessSet.synonym = "witness set"
 dim WitnessSet := W -> #W.Slice
 codim WitnessSet := W -> numgens ring W - dim W
 ring WitnessSet := W -> ring W.Equations
 degree WitnessSet := W -> #W.Points
+ideal WitnessSet := W -> W.Equations
 net WitnessSet := W -> "(dim=" | net dim W |",deg="| net degree W | ")" 
 witnessSet = method()
-witnessSet (Ideal,Ideal,List) := (I,S,P) -> new WitnessSet from { Equations => I, Slice => S_*, Points => P}
+witnessSet (Ideal,Ideal,List) := (I,S,P) -> new WitnessSet from { Equations => I, Slice => S_*, Points => VerticalList P}
 randomUnitaryMatrix = method()
 randomUnitaryMatrix ZZ := n -> last SVD random(CC^n,CC^n)     
 witnessSet Ideal := I -> (
      n := numgens ring I;
      d := dim I;
      SM := (randomUnitaryMatrix n)^(toList(0..d-1));
+     SM = promote(SM,ring I);
      S := ideal(SM * transpose vars ring I + random(CC^d,CC^1));
      RM := (randomUnitaryMatrix numgens I)^(toList(0..n-d-1));
+     RM = promote(RM,ring I);
      P := solveSystem(flatten entries (RM * transpose gens I) | S_*);
      PP := select(P, p->norm sub(gens I, matrix p) < 1e-5);
      witnessSet(I,S,PP/first)
