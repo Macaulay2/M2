@@ -516,7 +516,7 @@ const MatrixOrNull * IM2_Matrix_symm(int p, const Matrix *M)
      }
 }
 
-const Matrix * IM2_Matrix_exterior(int p, const Matrix *M, int strategy)
+const MatrixOrNull * IM2_Matrix_exterior(int p, const Matrix *M, int strategy)
 {
   return M->exterior(p,strategy); 
 }
@@ -535,18 +535,18 @@ M2_arrayint_OrNull IM2_Matrix_sort_columns(const Matrix *M,
 }
 
 
-const Matrix * IM2_Matrix_minors(int p, const Matrix *M, int strategy)
+const MatrixOrNull * IM2_Matrix_minors(int p, const Matrix *M, int strategy)
 {
   return M->minors(p,strategy);
 }
 
-const Matrix * rawMinors(int p, 
+const MatrixOrNull * rawMinors(int p, 
 			 const Matrix *M, 
 			 int strategy,
 			 int n_minors_to_compute, /* -1 means all */
 			 M2_arrayint_OrNull first_row_set,
 			 M2_arrayint_OrNull first_col_set
-			 ) /* Dan: please connect rawMinors to this version */
+			 ) 
 /* If first_row_set or first_col_set is not NULL, they should both be non-NULL,
    and both have length p.  If not, NULL is returned.
    Compute n_minors_to_compute minors, starting at (first_row_set,first_col_set) if given,

@@ -97,8 +97,13 @@ ring_elem PfaffianComputation::calc_pfaff(int *r, int p2)
   return result;
 }
 
-Matrix *Matrix::pfaffians(int p) const
+MatrixOrNull *Matrix::pfaffians(int p) const
 {
+  if (get_ring()->get_precision() > 0)
+    {
+      ERROR("pfaffian computations over RR or CC not yet implemented");
+      return 0;
+    }
   PfaffianComputation *d = new PfaffianComputation(this,p);
   d->calc(-1);
   Matrix *result = d->pfaffians();

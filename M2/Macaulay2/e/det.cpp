@@ -310,8 +310,14 @@ ring_elem DetComputation::calc_det(int *r, int *c, int p0)
   return answer;
 }
 
-Matrix *Matrix::exterior(int p,int strategy) const
+MatrixOrNull *Matrix::exterior(int p,int strategy) const
 {
+  if (strategy == DET_BAREISS && get_ring()->get_precision() > 0)
+    {
+      ERROR("determinant computations over RR or CC requires Strategy=>Cofactor");
+      return 0;
+    }
+
   DetComputation *d = new DetComputation(this,p,1,strategy);
   d->calc(-1);
   Matrix *result = d->determinants();
@@ -319,8 +325,13 @@ Matrix *Matrix::exterior(int p,int strategy) const
   return result;
 }
 
-Matrix *Matrix::minors(int p,int strategy) const
+MatrixOrNull *Matrix::minors(int p,int strategy) const
 {
+  if (strategy == DET_BAREISS && get_ring()->get_precision() > 0)
+    {
+      ERROR("determinant computations over RR or CC requires Strategy=>Cofactor");
+      return 0;
+    }
   DetComputation *d = new DetComputation(this,p,0,strategy);
   d->calc(-1);
   Matrix *result = d->determinants();
@@ -328,13 +339,18 @@ Matrix *Matrix::minors(int p,int strategy) const
   return result;
 }
 
-Matrix *Matrix::minors(int p,
+MatrixOrNull *Matrix::minors(int p,
 		       int strategy, 
 		       int n_to_compute, // -1 means all
 		       M2_arrayint_OrNull first_row, // possibly NULL
 		       M2_arrayint_OrNull first_col // possibly NULL
 		       ) const
 {
+  if (strategy == DET_BAREISS && get_ring()->get_precision() > 0)
+    {
+      ERROR("determinant computations over RR or CC requires Strategy=>Cofactor");
+      return 0;
+    }
   if (first_row != 0 || first_col != 0)
     {
       // Make sure these are the correct size, and both are given

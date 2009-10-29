@@ -956,17 +956,16 @@ extern "C" {
 
   const MatrixOrNull * IM2_Matrix_symm(int p, const Matrix *M); /* drg: connected rawSymmetricPower*/
 
-  const Matrix * IM2_Matrix_exterior(int p, const Matrix *M, int strategy); /* drg: connected rawExteriorPower*/
+  const MatrixOrNull * IM2_Matrix_exterior(int p, const Matrix *M, int strategy); /* drg: connected rawExteriorPower*/
 
   M2_arrayint IM2_Matrix_sort_columns(const Matrix *M, 
 					    int deg_order, 
 					    int mon_order); /* drg: connected rawSortColumns*/
 
 
-  const Matrix * IM2_Matrix_minors(int p, const Matrix *M, int strategy); /* drg: unconnected*/
-  /* can this really not return null ? */
+  const MatrixOrNull * IM2_Matrix_minors(int p, const Matrix *M, int strategy); /* drg: unconnected*/
 
-  const Matrix * rawMinors(int p, 
+  const MatrixOrNull * rawMinors(int p, 
 			   const Matrix *M, 
 			   int strategy,
 			   int n_minors_to_compute, /* -1 means all */
