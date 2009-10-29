@@ -253,4 +253,20 @@ s = solveSystem {x^2+y^2-1, x*y}
 areEqual(sortSolutions s, {{{-1, 0}}, {{0, -1}}, {{0, 1}}, {{1, 0}}})
      	///
 	}
+
+document {
+	Key => {randomSd, (randomSd, List)},
+	Headline => "a random homogeneous system of polynomial equations",
+	Usage => "T = randomSd d",
+	Inputs => { 
+	     {TT "d", ", the list of the degrees"}
+	     },
+	Outputs => {{ TT "T", ", "}},
+	"Comparisons are done coordinatewise using ", TO Tolerance, " as the measure for closeness.",
+        EXAMPLE lines ///
+	T = randomSd {2,3};
+s = solveSystem {x^2+y^2-1, x*y}
+areEqual(sortSolutions s, {{{-1, 0}}, {{0, -1}}, {{0, 1}}, {{1, 0}}})
+     	///
+	}
 													 

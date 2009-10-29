@@ -30,7 +30,8 @@ export {
      "NoOutput",
      "Tolerance",
      "getSolution", "SolutionAttributes", "Coordinates", "SolutionStatus", "LastT", "RCondition", "NumberOfSteps",
-     "NAGtrace"
+     "NAGtrace",
+     "randomSd", "goodInitialPair", "randomInitialPair"
      }
 exportMutable {
      }
@@ -952,8 +953,8 @@ debug loadPackage "NumericalAlgebraicGeometry"
 sum(randomSd {2,3,4,5} / BombieriWeylNormSquared) -- should be 1
 ///
 
-randomStartPair = method(TypicalValue => Sequence)
-randomStartPair List := Sequence => T -> (
+randomInitialPair = method(TypicalValue => Sequence)
+randomInitialPair List := Sequence => T -> (
 -- for a homogeneous system constructs a start system and one root 
 -- IN:  T = list of polynomials 
 -- OUT: (S,solsS}, where 
