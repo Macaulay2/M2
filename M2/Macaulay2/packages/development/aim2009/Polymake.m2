@@ -2,7 +2,7 @@ needsPackage "Polyhedra"
 
 newPackage(
 	"Polymake",
-    	Version => "0.1", 
+    	Version => "0.2", 
     	Date => "October 28, 2009",
     	Authors => {{Name => "Josephine Yu", 
 		  Email => "josephine.yu@gmail.com", 
@@ -11,7 +11,7 @@ newPackage(
     	DebuggingMode => true
     	)
 
-export {toPolymakeFormat, writePolymakeFile, runPolymake, getProperty, getMatrixProperty, getListProperty, getVectorProperty, makevec, makemat }
+export {PolymakeObject, polymakeObject, toPolymakeFormat, writePolymakeFile, runPolymake,getPropertyNames, getProperty, getMatrixProperty, getListProperty, getVectorProperty, makevec, makemat }
 
 
 ---------------------------------------------------------------------------
@@ -22,23 +22,24 @@ needsPackage "Polyhedra"
 needsPackage "SimpleDoc"
 
 
---PolymakeObject = new Type of MutableHashTable
+PolymakeObject = new Type of MutableHashTable
 
---polymakeObject = method()
---polymakeObject(String, List) := (filename, properties) -> (
-  --   F := removeComments lines get filename;
-  --   new PolymakeObject from apply(properties, p -> p => getMatrixProperty(F,p))
-   --  )
---polymakeObject(String) := (filename) -> (    
-  --   F := removeComments lines get filename;
-  --   properties = getPropertyNames(F);
-  --   new PolymakeObject from apply(properties, p -> p => getMatrixProperty(F,p))
-  --   )
+polymakeObject = method()
+polymakeObject(String, List) := (filename, properties) -> (
+ --    F := removeComments lines get filename;
+     new PolymakeObject from apply(properties, p -> p => getMatrixProperty(filename,p))
+     )
+polymakeObject(String) := (filename) -> (    
+ --    F := removeComments lines get filename;
+ --    properties = getPropertyNames(F);
+     properties = getPropertyNames(filename);
+     new PolymakeObject from apply(properties, p -> p => getMatrixProperty(filename,p))
+     )
 
 ---------------------------------------------------------------------------
 -- toPolymakeFormat
 
-toPolymakeFormat = method()
+toPolymakeFormat = method(TypicalValue => String)
 toPolymakeFormat(String, Matrix) := (propertyname, M) -> (
      if M === null then ""
      else(
@@ -64,9 +65,9 @@ toPolymakeFormat(String,ZZ) := (propertyname,x) -> (
      	  S
      	  )
      )
---toPolymakeFormat(PolymakeObject) := (P) -> (
- --    concatenate apply(pairs P, a -> toPolymakeFormat(a)|"\n\n")
- --    )
+toPolymakeFormat(PolymakeObject) := (P) -> (
+     concatenate apply(pairs P, a -> toPolymakeFormat(a)|"\n\n")
+     )
 toPolymakeFormat(Polyhedron) := (P) -> (
      if P === null then ""
      else(
@@ -98,17 +99,18 @@ writePolymakeFile(Polyhedron) := (P) ->(
      )
 
 ---------------------------------------------------------------------------
+----- Run Polymake
 
 runPolymake = method(TypicalValue => String)
 runPolymake(String,String) := (filename, propertyname)->(
      get("!"|"polymake "|filename|" "|propertyname)
      )
---runPolymake(PolymakeObject, String) := (P, propertyname) -> (
- --    filename := temporaryFileName()|currentTime()|".poly";
- --    << "using temporary file " << filename << endl;
- --    filename << toPolymakeFormat(P) << endl << close;
- --    runPolymake(filename, propertyname)
- --    )
+runPolymake(PolymakeObject, String) := (P, propertyname) -> (
+     filename := temporaryFileName()|currentTime()|".poly";
+     << "using temporary file " << filename << endl;
+     filename << toPolymakeFormat(P) << endl << close;
+     runPolymake(filename, propertyname)
+     )
 runPolymake(Polyhedron, String) := (P, propertyname) -> (
      filename := temporaryFileName()|currentTime()|".poly";
      << "using temporary file " << filename << endl;
@@ -117,7 +119,7 @@ runPolymake(Polyhedron, String) := (P, propertyname) -> (
      )
 
 ---------------------------------------------------------------------------
-
+----- Utilities
 
 isBlankLine = (s) -> (
      #s == 0 or
@@ -159,8 +161,38 @@ removeComment = (str) -> (
 
 ------------------------------------------------------------------------------
 -------  Getting Properties of Polyhedra using Polymake
- 
-getProperty = method()
+
+-- This is for Polymake version 2
+      -- returns a list of strings, names of known properties
+getPropertyNames = method(TypicalValue => String)
+getPropertyNames(List) := (F) -> (
+      -- F is a list of lines, as from a polymake file
+      nameLines = select(F, s-> match("property name", s) );
+      apply(nameLines, s->  
+	   replace( "\".*$"  , "" ,replace("^.*property name=\"", "", s))
+	   )
+     )
+getPropertyNames(String) := (filename) -> (
+      -- filename is the name of a polymake file (XML format)
+      F = lines get filename;
+      nameLines = select(F, s-> match("property name", s) );
+      apply(nameLines, s->  
+	   replace( "\".*$"  , "" ,replace("^.*property name=\"", "", s))
+	   )
+     )
+
+----- Old Version -----
+--getPropertyNames(List) := (F) -> (
+      -- F is a list of lines, as from a polymake file
+      -- returns a list of strings, names of known properties
+  --    FF = removeComments(F);
+  --    PP = select(FF, s-> match("^[[:space:]]*[[:alpha:]]", s));
+  --    apply(PP, s -> toString s)    
+  -- )
+
+------------------------------------------------------------------------------
+
+getProperty = method(TypicalValue => List)
 getProperty(List, String) := (F, section) -> (
      -- F is a list of lines, as from a polymake file
      n := position(F, s -> match("^"|section|///[:space:]*$///,s) or
@@ -185,7 +217,7 @@ getProperty(Polyhedron,String) := (P, propertyname) -> (
 
 ---------------------------------------------------------------------------
 
-getMatrixProperty = method()
+getMatrixProperty = method(TypicalValue => Matrix)
 getMatrixProperty(List, String) := (F, section) -> (
      L := getProperty(F,section);
      if L === null then null
@@ -203,7 +235,7 @@ getMatrixProperty(Polyhedron,String) := (P, propertyname) -> (
 ---------------------------------------------------------------------------
 
 
-getListProperty = method()
+getListProperty = method(TypicalValue => List)
 getListProperty(List, String) := (F, section) -> (
 		 L := getProperty(F,section);
 		 if L === null then null
@@ -221,7 +253,7 @@ getListProperty(Polyhedron,String) := (P, propertyname) -> (
 ---------------------------------------------------------------------------
 
 
-getVectorProperty = method()
+getVectorProperty = method(TypicalValue => List)
 getVectorProperty(List, String) := (F, section) -> (
      L := getProperty(F,section);
      if L === null then null
@@ -264,26 +296,106 @@ doc ///
      getVectorProperty(P, "F_VECTOR")
      getMatrixProperty(P, "VERTEX_NORMALS")
    Text
-     Instead of creating new temporary files every time, we can reuse one.
+     Instead of creating a new temporary file every time, we can reuse one and also save computation time.
    Example
-     polyFileName = temporaryFileName();
-     writePolymakeFile(P, polyFileName)
-     runPolymake(polyFileName, "F_VECTOR")
-     runPolymake(polyFileName, "VERTEX_NORMALS")
-     runPolymake(polyFileName, "VERTICES_IN_FACETS")
+     polyFile = writePolymakeFile(P)
+     runPolymake(polyFile, "F_VECTOR")
+     runPolymake(polyFile, "VERTEX_NORMALS")
+   Text
+     Look in the polymake file for the properties already computed.
+   Example
+     getPropertyNames(polyFile)
+     runPolymake(polyFile, "VERTICES_IN_FACETS")
    Text
      We can save the {\tt Polymake} output as a vector, a matrix or a list of things.
    Example
-     getVectorProperty(polyFileName, "VERTEX_DEGREES")
-     getMatrixProperty(polyFileName, "VERTEX_NORMALS")
-     getListProperty(polyFileName, "VERTICES_IN_FACETS")
-     getProperty(polyFileName, "SIMPLICIAL")
+     getVectorProperty(polyFile, "VERTEX_DEGREES")
+     getMatrixProperty(polyFile, "VERTEX_NORMALS")
+     getListProperty(polyFile, "VERTICES_IN_FACETS")
+     getProperty(polyFile, "SIMPLICIAL")
+     removeFile(polyFile)
   Caveat
      You may need to manually remove the temporary files created in {\tt /tmp}.
   SeeAlso
      Polyhedra
 ///;
 
+
+doc ///
+  Key
+    PolymakeObject
+  Headline
+
+  Usage
+
+  Inputs
+
+  Outputs
+
+  Consequences
+
+  Description
+   Text
+   Text
+   Example
+   Text
+   Example
+  Caveat
+  SeeAlso
+///
+
+
+doc ///
+  Key
+    polymakeObject
+    (polymakeObject,String)
+    (polymakeObject,String,List)
+  Headline
+    Makes PolymakeObject either from the name of a polymake file, or the file name and a list of properties.
+  Usage
+
+  Inputs
+
+  Outputs
+
+  Consequences
+
+  Description
+   Text
+   Text
+   Example
+   Text
+   Example
+  Caveat
+  SeeAlso
+///
+
+
+
+doc ///
+  Key
+    getPropertyNames
+    (getPropertyNames, String)
+    (getPropertyNames, List)
+  Headline
+     Get the list of known properties in a polymake file or a list containing lines of a polymake (xml) format file.
+  Usage
+
+  Inputs
+
+  Outputs
+
+  Consequences
+
+  Description
+   Text
+   Text
+   Example
+   Text
+   Example
+  Caveat
+  SeeAlso
+///
 
 
 doc ///
@@ -328,8 +440,11 @@ doc ///
 doc ///
   Key
     getMatrixProperty
+    (getMatrixProperty,String,String) 
+    (getMatrixProperty,Polyhedron,String)
+    (getMatrixProperty,List,String)
   Headline
-
+    Get a property as a matrix, given a @TO Polyhedra::Polyhedron@, a polymake file name, or a list of lines in a polymake output.
   Usage
 
   Inputs
@@ -351,6 +466,9 @@ doc ///
 doc ///
   Key
     getProperty
+    (getProperty,List,String)
+    (getProperty,Polyhedron,String)
+    (getProperty,String,String)
   Headline
 
   Usage
@@ -375,6 +493,9 @@ doc ///
 doc ///
   Key
     getVectorProperty
+    (getVectorProperty,List,String)
+    (getVectorProperty,Polyhedron,String) 
+    (getVectorProperty,String,String)
   Headline
 
   Usage
@@ -444,6 +565,9 @@ doc ///
 doc ///
   Key
     runPolymake
+    (runPolymake,Polyhedron,String) 
+    (runPolymake,PolymakeObject,String) 
+    (runPolymake,String,String)
   Headline
 
   Usage
@@ -467,6 +591,11 @@ doc ///
 doc ///
   Key
     toPolymakeFormat
+    (toPolymakeFormat,Polyhedron) 
+    (toPolymakeFormat,PolymakeObject)
+    (toPolymakeFormat,String,Matrix)
+    (toPolymakeFormat,String,Vector)
+    (toPolymakeFormat,String,ZZ) 
   Headline
 
   Usage
@@ -490,6 +619,8 @@ doc ///
 doc ///
   Key
     writePolymakeFile
+    (writePolymakeFile,Polyhedron)
+    (writePolymakeFile,Polyhedron,String) 
   Headline
 
   Usage
@@ -526,7 +657,7 @@ end
 ---------------------------------------------------------------------------
 
 restart
-installPackage("Polymake", FileName => "~/Documents/math/M2codes/packageRepository/development/aim2009/Polymake.m2", MakeDocumentation => true)
+installPackage("Polymake", FileName => "~/Documents/math/M2codes/packageRepository/development/aim2009/Polymake.m2", RemakeAllDocumentation => true)
 viewHelp(Polymake)
 
 P = cyclicPolytope(3,5)
@@ -537,14 +668,9 @@ Rays = transpose(matrix{{1,2,3,4},{1,-2,-3,-4}})
 P3 = convexHull(Vertices,Rays)
 P4 = convexHull(transpose (matrix {{1, 0, 0, -1}, {1, -1,-1,1}, {1, 2, 4, -7}, {1, -10, 9, 0}, {8, 4,-16, 4}}))
 
-toPolymakeFormat(P)
-toPolymakeFormat(P2)
-toPolymakeFormat(P3)
-toPolymakeFormat(P4)
-
 runPolymake(P, "FACETS")
-filename = "/tmp/M2-3149-3.poly";
-S = runPolymake(filename, "FACETS")
+filename = writePolymakeFile(P)
+runPolymake(filename, "PROPERTY_NAMES")
 
 getProperty(filename, "AMBIENT_DIM")
 getProperty(filename, "VERTICES")
