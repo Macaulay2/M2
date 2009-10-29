@@ -22,14 +22,15 @@ document {
 	Key => {(solveSystem, List),solveSystem},
 	Headline => "solve a square system of polynomial equations",
 	Usage => "s = solveSystem F",
-	Inputs => { {"F", ", polynomials"} },
-	Outputs => {{ TT "s", ", solutions to the system ", TT "F=0" }},
-        -- SourceCode => {(solveSystem, List)},
+	Inputs => { {"F", ", polynomials with complex coefficients"} },
+	Outputs => {{ TT "s", ", all complex solutions to the system ", TT "F=0" }},
+	"Solve a system of polynomial equations using homotopy continuation methods.",
 	EXAMPLE lines ///
 R = CC[x,y];
 F = {x^2+y^2-1, x*y};
 solveSystem F / first 			 	     
-     	///
+     	///,
+	Caveat => {"The system is assumed to be square (#equations = #variables) and have finitely many solutions."}	
 	}
 document {
 	Key => { (track, List, List, List), track, 
