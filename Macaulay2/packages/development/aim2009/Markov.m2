@@ -108,12 +108,22 @@ Graph = new Type of HashTable
      -- a directed graph is a hash table in the form:
      -- { A => set {B,C,...}, ...}, where there are edges A->B, A->C, ...
      -- and A,B,C are integers.  The nodes of the graph must be 1,2,...,N.
+     
+     -- an undirected graph is a hash table in the form { A => set {B,C, ...}, 
+     -- where A < B, C, etc. and the edges are {A,B}, {A,C}.  Since C is not 
+     -- less than A, C => {A} should not appear and does not make sense. The 
+     -- nodes of the graph must be 1,2,...,N. 
 
 makeGraph = method()
 makeGraph List := (g) -> (
+     -- Input:  A list of lists.  The first list has key 1, the second key 2, etc.  
+     -- Output:  A hashtable that can be interpreted as either a directed graph or 
+     -- an undirected graph.  However, for undirected graphs a key A only points to 
+     -- nodes larger than that.  
      h := new MutableHashTable;
      scan(#g, i -> h#(i+1) = set g#i);
      new Graph from h)
+
 
 -- dotBinary = "/sw/bin/dot"
 dotBinary = "dot"
