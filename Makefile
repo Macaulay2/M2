@@ -1,6 +1,10 @@
 .PHONY : all monitor
 
-all: check-make check-autoconf configure monitor include/M2/config.h.in.stamp
+VERBOSE = yes
+
+all: check-make check-autoconf configure monitor include/M2/config.h.in.stamp helpful
+helpful:
+ifeq ($(VERBOSE),yes)
 	@echo '--: The configure script in this directory has been prepared.'
 	@echo '--: To configure and build Macaulay2:'
 	@echo '--: '
@@ -18,6 +22,7 @@ all: check-make check-autoconf configure monitor include/M2/config.h.in.stamp
 	@echo '--: '
 	@echo '     ./configure --help'
 	@echo '--: '
+endif
 
 MAJOR = 2
 MINOR = 59
@@ -74,7 +79,7 @@ include/M2/config.h.in.stamp : configure.ac # aclocal.m4
 	touch "$@"
 
 monitor:
-	@[ -f include/config.h.in ] || (set -x ; rm -f include/config.h.in.stamp)
+	@ if [ ! -f include/config.h.in -a -f include/config.h.in.stamp ]; then set -x; rm include/config.h.in.stamp; fi
 
 count count-source-code-lines:
 	find . \( \
