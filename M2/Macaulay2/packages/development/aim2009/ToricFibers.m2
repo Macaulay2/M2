@@ -56,6 +56,9 @@ buildFiberGraph (Matrix) := A ->(
      --1st level built.
      -- now build all others:
      apply(k=2..r, k-> buildLevel(k,G) );
+--new HashTable from apply(keys G, l->new HashTable from 
+{l=>apply(keys G#l, b->new HashTable from {b=>apply(keys 
+G#l#b, w->new HashTable from {w=>G#l#b#w})})})
      return G;
      )--end of function buildFiberGraph.
 
