@@ -3,18 +3,20 @@ newPackage(
     	Version => "1.0", 
     	Date => "October 29, 2009",
     	Authors => {
-         {Name => "Serkan hosten", Email => "serkan@math.sfsu.edu", HomePage => "http://math.sfsu.edu/serkan"},
+         {Name => "Serkan Hosten", Email => "serkan@math.sfsu.edu", HomePage => "http://math.sfsu.edu/serkan"},
          {Name => "Sonja Petrovic", Email => "petrovic@math.uic.edu", HomePage => "http://www.math.uic.edu/~petrovic"},
-         {Name => "Brandy Stigler", Email => "bstigler@smu.edu", HomePage => "http://faculty.smu.edu/bstigler"},
+         {Name => "Brandy Stigler", Email => "bstigler@smu.edu", HomePage => "http://faculty.smu.edu/bstigler"}
          },
     	Headline => "a package for computing fibers of a normal toric ideal",
-    	DebuggingMode => true
+    	DebuggingMode => false
     	)
 
 export {buildFiberGraph,
         isDegree,
         getFiberTree,
-        getGenerator 
+        getGenerator,
+	Edges,
+	Support
 }
 
 ----------------------------------------------------------------
@@ -65,6 +67,8 @@ buildFiberGraph (Matrix) := A ->(
 -- that are a nonnegative linear combination of l columns of the design matrix A.
 ------------------------------------
 buildLevel = (k,G) ->(
+     E:="Edges";
+     S:="Support";
      G#k = new MutableHashTable; --the table for level k
      --keys G#(k-1) are all b's on the lower leve, k-1
      apply  ( keys G#(k-1) , bLower -> ( 
@@ -126,6 +130,8 @@ isDegree (Matrix, Vector) := (A,b) -> (
 )
 
 isDegree (MutableHashTable, Vector) := (G, b) -> (
+     E:="Edges";
+     S:="Support";
      L := 0;
      --first of all, is b a key in the table?
      scan(keys G , l ->  (
@@ -133,7 +139,7 @@ isDegree (MutableHashTable, Vector) := (G, b) -> (
 	       )
 	   );
      --note if L=0 at the end of this, then b is not in the cone(A).
-     if L==0 then error("--fiber is empty; this vector is not a valid degree.")
+     if L==0 then error "--fiber is empty; this vector is not a valid degree."
      else (
      	  if (# ( G#L#b#S) > 1 ) then
                return true
@@ -210,6 +216,8 @@ getGenerator (Matrix,Vector) := (A,b)->(
 )
 
 getGenerator (Matrix, MutableHashTable,Vector) := (A,G,b)->( 
+     E:="Edges";
+     S:="Support";
 	  if isDegree(G,b) then (
 	       -- b is located at level L.
 	       T := getFiberTree(A,G,b);
@@ -290,19 +298,18 @@ doc ///
         Structure of G: hash table of tables:
         table's set of keys = level, entries = subtable
         subtable's set of keys = the "b" vectors, entries = subsubtables with keys "Edges" and "Support"
-        at each T#l#b we store: 
+        at each "T#l#b" we store: 
         	(1) a list of outgoing edges and 
         	(2) a set of supports (disjoint union)
         start at level 0: b=0, supports = empty; edges = empty
     Example
-        -- the 3x3 independence model
         A = matrix"
         1,1,1,0,0,0,0,0,0;
         0,0,0,1,1,1,0,0,0;
         0,0,0,0,0,0,1,1,1;
         1,0,0,1,0,0,1,0,0;
         0,1,0,0,1,0,0,1,0;
-        0,0,1,0,0,1,0,0,1"
+        0,0,1,0,0,1,0,0,1" --the 3x3 indep model
         G = buildFiberGraph(A);
         peek G
     Text
@@ -425,6 +432,33 @@ doc ///
     isDegree
 ///
 
+doc ///
+  Key
+    Edges
+  Description
+    Text
+        This is a key for the hash table G#l#b, where l is a level of the hash table G, and b is a vector in the fiber graph G at level l.
+        At each T#l#b we store: 
+        a list of outgoing edges, SONJA ADD DESCRIPTION HERE.
+    Example
+    Text
+        Add example 
+///
+
+doc ///
+  Key
+    Support
+  Description
+    Text
+        This is a key for the hash table G#l#b, where l is a level of the hash table G, and b is a vector in the fiber graph G at level l.
+        At each T#l#b we store: 
+        a set of supports (disjoint union), SONJA ADD DESCRIPTION HERE.
+    Example
+    Text
+        Add example.
+///
+
+
 TEST///
 
 ///
@@ -504,6 +538,16 @@ apply(#K,j->(
 
 
 
+restart
+--load "4ti2.m2"
+installPackage ("ToricFibers", RemakeAllDocumentation => true, UserMode=>true)
+installPackage("ToricFibers",UserMode=>true,DebuggingMode => true)
+viewHelp ToricFibers
+
+
+--check FourTiTwo
+
+--debug FourTiTwo
 
 
 
