@@ -204,6 +204,7 @@ monodromyBreakupPHC WitnessSet := o -> (W) -> (
      -- Input: a witness set (i.e. numerical equidimensional set)
      -- Output: a list of witness sets, probably the irreducible
      --  decomposition of W.
+     W = addSlackVariables generalEquations W;
      infile := temporaryFileName() | 
      "PHCmonodromy";
      targetfile := temporaryFileName() | 
@@ -353,7 +354,9 @@ L = sub(L,RC)
 W = witnessSet L
 W1 = generalEquations W
 W2 = addSlackVariables W1
-monodromyBreakupPHC W2
+W3s = monodromyBreakupPHC W
+apply(W3s, points)
+W3s/degree
 peek W2
 see ideal W2
 peek oo
