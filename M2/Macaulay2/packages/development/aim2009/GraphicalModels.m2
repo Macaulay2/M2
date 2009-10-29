@@ -41,6 +41,7 @@ newPackage("GraphicalModels",
 export {makeGraph, makeDiGraph, displayGraph, localMarkovStmts, globalMarkovStmts, pairMarkovStmts,
        markovRing, marginMap, hideMap, markovMatrices, markovIdeal, writeDotFile, removeRedundants, 
        gaussRing, gaussMinors, gaussIdeal, gaussTrekIdeal, Graph, DiGraph}
+     --  descendents, nondescendents, parents, children, removeNodes,neighbors, nonneighbors
 exportMutable {dotBinary,jpgViewer}
 
 ---- List from Board at AIM.
@@ -104,6 +105,11 @@ exportMutable {dotBinary,jpgViewer}
 -- This routine produces a useful version of a 'graph'
 -- which we use in routines throughout this package.
 
+
+------------------------------------------------
+-- Set graph types and constructor functions. -- 
+------------------------------------------------
+
 DiGraph = new Type of HashTable
      -- a directed graph is a hash table in the form:
      -- { A => set {B,C,...}, ...}, where there are edges A->B, A->C, ...
@@ -135,6 +141,9 @@ makeGraph List := (g) -> (
      scan(#g, i -> h#(i+1) = set g#i);
      new Graph from h)
 
+-----------------------------
+-- Graph Display Functions --
+-----------------------------
 
 -- dotBinary = "/sw/bin/dot"
 dotBinary = "dot"
@@ -220,6 +229,7 @@ displayGraph DiGraph := (G) -> (
      displayGraph(dotfilename,G);
      --removeFile dotfilename;
      )
+
 -------------------------
 -- Statements -----------
 -------------------------
@@ -233,7 +243,7 @@ displayGraph DiGraph := (G) -> (
 ------------------
 
 descendents = method()
-descendents(Graph,ZZ) := (G,v) -> (
+descendents(DiGraph,ZZ) := (G,v) -> (
      -- returns a set of vertices
      result := G#v;
      scan(reverse(1..v-1), i -> (
@@ -242,22 +252,32 @@ descendents(Graph,ZZ) := (G,v) -> (
      result)
 
 nondescendents = method()
-nondescendents(Graph,ZZ) := (G,v) -> set(1..#G) - descendents(G,v) - set {v}
+nondescendents(DiGraph,ZZ) := (G,v) -> set(1..#G) - descendents(G,v) - set {v}
 
 parents = method()
-parents(Graph,ZZ) := (G,v) -> set select(1..#G, i -> member(v, G#i))
+parents(DiGraph,ZZ) := (G,v) -> set select(1..#G, i -> member(v, G#i))
 
 children = method()
-children(Graph,ZZ) := (G,v) -> G#v
+children(DiGraph,ZZ) := (G,v) -> G#v
+
+neighbors = method()
+neighbors(Graph,ZZ) := (G,v) -> (
+     L := for i from 1 to v-1 list (
+	  if member(v,G#i) then i else continue);
+     G#v + set(L)  --- may need to sort the list. 
+     )
+
+nonneighbors = method()
+nonneighbors(Graph, ZZ) := (G,v) -> set(1..#G) - neighbors(G,v)-set{v}
 
 removeNodes = method()
-removeNodes(Graph,List) := (G,v) -> (
+removeNodes(DiGraph,List) := (G,v) -> (
      v = set v;
      G = select(pairs G, x -> not member(x#0,v));
      G = apply(G, x -> (x#0, x#1 - v));
-     new Graph from G
+     new DiGraph from G
      )
-removeNodes(Graph,ZZ) := (G,v) -> removeNodes(G, {v})
+removeNodes(DiGraph,ZZ) := (G,v) -> removeNodes(G, {v})
 
 -----------------------------------------------------------
 -- Statement calculus ----  Local and Global Statements ---
