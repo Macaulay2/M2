@@ -22,7 +22,7 @@ export {
      isDegenerate,
      isFan,
      isProjective,
-     isSimplicial, 
+     isSimplicial,
      weilDivisors, 
      cartierDivisors, 
      cartierToWeil, 
@@ -221,6 +221,53 @@ fan NormalToricVariety := X -> (
 	       "isPure" => dim L#0 == dim last L,
 	       symbol cache => new CacheTable});
      X.cache.Fan)
+
+
+stellarSubdivision (NormalToricVariety,List) := (X,r) -> (
+     replacement := {};
+     rm := matrix transpose {r};
+     n := #(rays X);
+     R := matrix rays X;
+     newMax := flatten apply(max X, C -> (
+	       M := promote(R^C,QQ);
+	       if replacement == {} then (		    
+		    if rank M == #C then (
+			 -- Simplicial Cone
+			 M = inverse M;
+			 v := flatten entries (transpose M * rm);
+			 if all(v, i -> i >= 0) then (
+			      replacement = positions(v, i -> i > 0);
+			      replacement = apply(replacement, i -> C#i);
+			      C = toList (set C - set replacement) | {n};
+			      apply(#replacement, i -> sort(C|drop(replacement,{i,i}))))
+			 else {C})
+		    else (
+			 -- Non-simplicial Cone
+			 HS := halfspaces posHull transpose M;
+			 w := flatten entries (HS * rm);
+			 if all(w, i -> i >= 0) then (
+			      replacement = positions(w, i -> i == 0);
+			      correctFaces := submatrix'(HS,replacement);
+			      HS = HS^replacement;
+			      replacement = select(C, i -> HS * (transpose R^{i}) == 0);
+			      apply(numRows correctFaces, i -> select(C, j -> (correctFaces^{i}) * (transpose R^{j}) == 0) | {n}))
+			 else {C}))
+	       else (
+		    if isSubset(set replacement,set C) then (
+			 if rank M == #C then (
+			      -- Simplicial Cone
+			      C = toList (set C - set replacement) | {n};
+			      apply(#replacement, i -> sort(C|drop(replacement,{i,i}))))
+			 else (
+			      HS1 := halfspaces posHull transpose M;
+			      for i from 0 to numRows HS1 -1 list (
+				   if HS1^{i} * (transpose R^replacement) == 0 then continue else select(C, j -> HS1^{i} * (transpose R^{j}) == 0) | {n})))
+		    else {C})));
+     newRays := rays X | {r};
+     new NormalToricVariety from {
+	  symbol rays => newRays,
+	  symbol facets => newMax,
+	  symbol cache => new CacheTable})
 
 weilDivisors = method(TypicalValue => Module)
 weilDivisors NormalToricVariety := X -> (
