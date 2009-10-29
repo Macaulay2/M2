@@ -15,7 +15,8 @@ newPackage("ToricVB",
 
 export {ToricVectorBundle, ToricVectorBundleK,
         makeVB, makeVBK, addBase, addBaseChange, addDegrees, addFiltration, cocycleCheck, details, makeCompatible, regCheck, 
-	charts, cohom, cotangentBundle, cotangentBundleK, deltaE, dsum, dualVB, extPower, symmProd, tangentBundle,  tangentBundleK, tproduct, 
+	charts, cohom, cotangentBundle, cotangentBundleK, deltaE, dsum, dualVB, extPower, isGeneral, randomDeformation, 
+	symmProd, tangentBundle,  tangentBundleK, tproduct, 
 	weilToCartier, hirzebruchfan, hypercubefan}
 
 needsPackage "Polyhedra"
@@ -1111,6 +1112,60 @@ extPower (ZZ,ToricVectorBundle) := (l,tvb) -> (
 	  "topConeTable" => tvb#"topConeTable"})
 
 
+isGeneral = method()
+isGeneral ToricVectorBundleK := tvb -> (
+     intersectMatrices := (M,N) -> (
+	  m := numColumns M;
+	  N = gens ker(M | N);
+	  N = N^{0..m-1};
+	  gens trim image(M*N));
+     fT := tvb#"filtrationMatricesTable";
+     fT = hashTable apply(pairs fT, p -> p#0 => flatten entries p#1);
+     bT :=tvb#"baseTable";
+     L := hashTable apply(pairs fT, (j,q) -> j => apply(sort unique q, i -> (bT#j)_(positions(fT#j, e -> e <= i))));     
+     recursiveCheck := (L,Es) -> (
+	  if L != {} then all(L#0, l -> recursiveCheck(drop(L,1),Es|{l}))
+	  else (
+	       n := numRows Es#0;
+	       codimSum := sum apply(Es, A -> n - numColumns A);
+	       codimSum = min(codimSum,n);	       
+	       R := ring Es#0;
+	       E := map(R^n,R^n,1);
+	       Es = select(Es, e -> numColumns e != n);
+	       scan(Es, A -> E = intersectMatrices(E,A));
+	       n - numColumns E == codimSum));
+     F := genCones tvb#"ToricVariety";
+     rT := hashTable apply(pairs tvb#"rayTable", p -> p#1 => p#0);
+     all(F, C -> (
+	       C = rays C;
+	       C = apply(numColumns C, i -> C_{i});
+	       recursiveCheck(apply(C, r -> L#(rT#r)),{}))))
+
+
+
+randomDeformation = method()
+randomDeformation (ToricVectorBundleK,ZZ,ZZ) := (tvb,l,h) -> (
+     k := tvb#"rank of the vector bundle";
+     bT := hashTable apply(pairs tvb#"baseTable", p -> (
+	       A := 0 * p#1;
+	       while det A == 0 do A = generateRandomMatrix(k,k,l,h);
+	       p#0 => promote(A,tvb#"ring")));
+     new ToricVectorBundleK from {
+	  "ring" => tvb#"ring",
+	  "rayTable" => tvb#"rayTable",
+	  "baseTable" => bT,
+	  "filtrationMatricesTable" => tvb#"filtrationMatricesTable",
+	  "filtrationTable" => tvb#"filtrationTable",
+	  "ToricVariety" => tvb#"ToricVariety",
+	  "number of affine charts" => tvb#"number of affine charts",
+	  "dimension of the variety" => tvb#"dimension of the variety",
+	  "rank of the vector bundle" => tvb#"rank of the vector bundle",
+	  "number of rays" => tvb#"number of rays"})
+
+randomDeformation (ToricVectorBundleK,ZZ) := (tvb,h) -> randomDeformation(tvb,0,h)
+	       
+
+
 -- PURPOSE : Giving the rays of the underlying Fan of a toric vector bundle
 --   INPUT : 'tvb',  a TorcVectorBundleK
 --  OUTPUT : 'L',  a List containing the rays of the Fan underlying the bundle
@@ -1380,6 +1435,10 @@ hypercubefan ZZ := n -> normalFan hypercube n
 
 hirzebruchfan = method()
 hirzebruchfan ZZ := n -> hirzebruch n
+
+generateRandomMatrix = method(TypicalValue => Matrix)
+generateRandomMatrix (ZZ,ZZ,ZZ) := (m,n,h) -> matrix apply(m, i -> apply(n, j -> random(h+1)))
+generateRandomMatrix (ZZ,ZZ,ZZ,ZZ) := (m,n,l,h) -> matrix apply(m, i -> apply(n, j -> random(l,h)))
 
 ---------------------------------------
 -- DOCUMENTATION
