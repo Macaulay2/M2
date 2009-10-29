@@ -87,15 +87,15 @@ all = method(TypicalValue => Boolean)
 all(ZZ,Function) := all(HashTable,Function) := all(BasicList,Function) := (x,p) -> not any(x, i -> not p i)
 all(BasicList,BasicList,Function) := (x,y,p) -> not any(apply(x,y,identity), ij -> not p ij)
 
-same = v -> (
-     -- this could be compiled for speed
-     if # v === 0
-     then true
-     else (
-	  w := v#0;
-	  all(1 .. # v - 1, i -> w === v#i)
-	  )
-     )
+same = v -> #v <= 1 or (
+     w := v#0;
+     for i from 1 to #v-1 do if w =!= v#i then return false;
+     true)
+
+sameresult = (f,v) -> #v <= 1 or (
+     w := f v#0;
+     for i from 1 to #v-1 do if w =!= f v#i then return false;
+     true)
 
 member(Thing,VisibleList) := Boolean => (c,x) -> any(x, i -> c===i)
 

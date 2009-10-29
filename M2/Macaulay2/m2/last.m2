@@ -4,22 +4,6 @@
 
 recursionLimit = 300
 
-scan(join(apply(methods baseName,last),{MonoidElement}), BType -> if BType =!= Symbol and BType =!= IndexedVariable and BType =!= Holder then (
-	  v := value;
-     	  bn := a -> (
-	       r := baseName a;
-	       if value r =!= a then v = identity;	-- don't take values afterwards if either endpoint is not assigned to its base name
-	       r);
-	  err1 := lookup(symbol .., Thing, Thing);
-	  BType .. Thing := (a,z) -> v \ (( try bn a else err1(a,z) ) .. z);
-	  Thing .. BType := (a,z) -> v \ (a .. (try bn z else err1(a,z) ));
-	  BType .. BType := (a,z) -> v \ (( try bn a else err1(a,z) ) .. (try bn z else err1(a,z) ));
-	  err2 := lookup(symbol ..<, Thing, Thing);
-	  BType ..< Thing := (a,z) -> v \ (( try bn a else err2(a,z) ) ..< z);
-	  Thing ..< BType := (a,z) -> v \ (a ..< (try bn z else err2(a,z) ));
-	  BType ..< BType := (a,z) -> v \ (( try bn a else err2(a,z) ) ..< (try bn z else err2(a,z) ));
-	  ))
-
 addStartFunction(() -> setRandomSeed((currentTime() << 16) + processID()))
 addStartFunction(() -> path = unique apply( path, minimizeFilename))
 addEndFunction(() -> scan(openFiles(), f -> if isOutputFile f then flush f))
