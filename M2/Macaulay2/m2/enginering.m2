@@ -31,9 +31,9 @@ liftable(RingElement,Number) :=
 liftable(Number,Number) := (f,R) -> null =!= lift(f,R,Verify=>false)
 
 --- new lift and promote, version 3
-basicLift = opts -> (r,B) -> (
-     s := rawLift(raw B, raw r);
-     if s =!= null then new B from s
+basicLift = opts -> (r,Brawring,Bclass) -> (
+     s := rawLift(Brawring, raw r);
+     if s =!= null then new Bclass from s
      else if opts.Verify then error "cannot lift given ring element")
 multipleBasicLift = opts -> (r,v) -> ( 
      r = raw r; 
@@ -123,7 +123,8 @@ commonEngineRingInitializations = (F) -> (
      lifters  := apply(baserings, R -> if R.?liftDegree then R.liftDegree else identity);
      scan(n, i -> (
 	       A := baserings#i;
-	       Aclass := class 0_A;			    -- A might be RR_200 and Aclass would then be RR
+	       Aclass := class 0_A;			    -- A might be RR_200 and Aclass would then be RR; sometimes A is RR, too (?)
+	       rawA := raw ring 0_A;
 	       if i == n-1 then (
 		    promoter := promoters#n;
 		    lifter := lifters#n;
@@ -131,7 +132,7 @@ commonEngineRingInitializations = (F) -> (
 			 if ancestor(Number, A) 
 		    	 then (n,R) -> new R from rawFromNumber(raw R,n)
 	       	    	 else basicPromote);
-		    lift(F,A) := opts -> (F,A) -> (basicLift opts)(F,A);
+		    lift(F,A) := opts -> (F,A) -> (basicLift opts)(F,rawA,Aclass);
 		    promote(Matrix,A,F) := (m,A,F) -> basicPromoteMatrix(m,F,promoter);
 		    lift(Matrix,F,A) := opts -> (m,F,A) -> (basicLiftMatrix opts)(m,A,lifter);
 		    promote(List,A,F) := (m,A,F) -> promoter m;
