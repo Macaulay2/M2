@@ -34,7 +34,8 @@ export {PolyhedralObject, Polyhedron, Cone, Fan, convexHull, posHull, intersecti
         ambDim, cones, genCones, halfspaces, hyperplanes, linSpace, rays, vertices,
         areCompatible, commonFace, contains, isCompact, isComplete, isEmpty, isFace, isPointed, isPolytopal, 
 	isPure, isSmooth,
-	dualFaceLattice, faceLattice, faces, fVector, hilbertBasis, incompCones, inInterior, interiorPoint, interiorVector, latticePoints, maxFace, minFace, 
+	dualFaceLattice, faceLattice, faces, fVector, hilbertBasis, incompCones, inInterior, interiorPoint, interiorVector, 
+	latticePoints, maxFace, minFace, objectiveVector,
 	minkSummandCone, polytope, proximum, skeleton, smallestFace, smoothSubfan, stellarSubdivision, tailCone, triangulate, 
 	volume, vertexEdgeMatrix, vertexFacetMatrix, 
 	affineHull, affineImage, affinePreimage, bipyramid, ccRefinement, coneToPolyhedron, directProduct, 
@@ -1161,6 +1162,13 @@ dualFaceLattice = method(TypicalValue => List)
 --   INPUT : '(k,P)',  where 'k' is an integer between 0 and dim 'P' where P is a Polyhedron
 --  OUTPUT :  a list, where each entry gives a face of 'P' of dim 'k'. Each entry is a list
 -- 	      of the positions of the defining halfspaces
+dualFaceLattice(ZZ,Cone) := (k,C) -> (
+     L := faceBuilderCone(dim C - k,C);
+     HS := halfspaces C;
+     HS = apply(numRows HS, i -> HS^{i});
+     apply(L, l -> positions(HS, hs -> all(toList l, v -> hs*v == 0))))
+
+
 dualFaceLattice(ZZ,Polyhedron) := (k,P) -> (
      L := faceBuilder(dim P - k,P);
      HS := halfspaces P;
@@ -1172,6 +1180,8 @@ dualFaceLattice(ZZ,Polyhedron) := (k,P) -> (
 --   INPUT : 'P',  a Polyhedron
 --  OUTPUT :  a list, where each entry is dual face lattice of a certain dimension going from 0 to dim 'P'
 dualFaceLattice Polyhedron := P -> apply(dim P + 1, k -> dualFaceLattice(dim P - k,P))
+
+dualFaceLattice Cone := C -> apply(dim C + 1, k -> dualFaceLattice(dim C - k,C))
 
 faceLattice = method(TypicalValue => List)
 faceLattice(ZZ,Polyhedron) := (k,P) -> (
@@ -1194,7 +1204,7 @@ faceLattice(ZZ,Cone) := (k,C) -> (
 faceLattice Polyhedron := P -> apply(dim P + 1, k -> faceLattice(dim P - k,P))
 
 
-faceLattice Cone := C -> apply(dim P + 1, k -> faceLattice(dim P - k,P))
+faceLattice Cone := C -> apply(dim C + 1, k -> faceLattice(dim C - k,C))
      	  
 
 
@@ -1633,6 +1643,18 @@ minkSummandCone Polyhedron := P -> (
 		     zerovec :=  map(source R,QQ^1,0);
 		     Q := intersection(negId,zerovec,R,onevec);
 		     (C,summList,vertices(Q))))))
+ 
+ 
+objectiveVector = method()
+objectiveVector (Polyhedron,Polyhedron) := (P,Q) -> (
+     -- Checking for input errors
+     if not isFace(Q,P) then error("The second polyhedron must be a face of the first one");
+     (HS,w) := halfspaces P;
+     V := vertices Q;
+     R := rays Q;
+     V = apply(numColumns V, i -> V_{i});
+     v := select(toList (0..(numRows HS)-1), i -> all(V, v -> HS^{i} * v - w^{i} == 0) and HS^{i} * R == 0);
+     sum apply(v, i -> transpose HS^{i}))
 
 
 
