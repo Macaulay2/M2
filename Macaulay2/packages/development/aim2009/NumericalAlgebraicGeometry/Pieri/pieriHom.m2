@@ -8,7 +8,7 @@ skewSchubertVariety(Sequence,List,List) := (kn,l,m)->(
      if #l < k then for i from 1 to k-#l do (l=l|{0}); -- makes sure l have size k
      if #m < k then for i from 1 to k-#m do (m=m|{0}); -- makes sure m have size k
      d := (k*(n-k)-sum(l)-sum(m));  
-     R := QQ[vars(53..d+52)]; -- ring where the variables for the matrix live
+     R := CC[vars(53..d+52)]; -- ring where the variables for the matrix live
      r := 0;
      matrix (
       	  for i from 1 to k list (
@@ -53,7 +53,7 @@ precookPieriHomotopy(Sequence,List,List) := (kn,l,m)->(
      if #m < k then for i from 1 to k-#m do (m=m|{0}); -- makes sure m have size k
      E := skewSchubertVariety(kn,l,m);
      d := (k*(n-k)-sum(l)-sum(m));
-     S := QQ[x_1..x_d];
+     S := CC[x_1..x_d];
      T:= apply(#m, i->n-k+i-m#i);
       P:=toList(set toList(0..n-1)-T);
       G:=mutableMatrix(S,n-k,n);
@@ -78,7 +78,7 @@ launchSimpleSchubert(Sequence, List, List) := (kn,l,m)->(
    -- l and m are partitions of n
    (k,n) := kn;
    d := k*(n-k)-sum(l)-sum(m);
-   G = apply(d, i->matrix apply(n-k,i->apply(n,j->random QQ)));
+   G = apply(d, i->matrix apply(n-k,i->apply(n,j->random CC)));
    H = new MutableHashTable from {};
    solveSimpleSchubert(kn,l,m)
    )
@@ -94,7 +94,7 @@ solveSimpleSchubert(Sequence, List,List) := (kn,l,m)->(
    )
    else if d == 1 then (
       -- solve linear equation
-      H#(l,m) = solveEasy det (matrix E || sub(G#0, ring E))
+      H#(l,m) = solveEasy det (matrix E || sub(G#0, ring E), Strategy=>Cofactor)
    )
    else(
       L:=generateChildren(kn, l,m);
@@ -104,24 +104,27 @@ solveSimpleSchubert(Sequence, List,List) := (kn,l,m)->(
          apply(C,c->insert(i-1,0,c))
          )
       );
-      S := apply(take(G,d-1), g->det( matrix E || sub(g, ring E))) | {det(precookPieriHomotopy(kn,l,m))};
-      T := apply(take(G,d), g->det( matrix E || sub(g, ring E))); 
+      S := apply(take(G,d-1), g->det( matrix E || sub(g, ring E),Strategy=>Cofactor)) | {det(precookPieriHomotopy(kn,l,m), Strategy=>Cofactor)};
+      T := apply(take(G,d), g->det( matrix E || sub(g, ring E), Strategy=>Cofactor)); 
       newR := CC_53(monoid[gens ring first S]);
       S = S/(s->sub(s,newR));
       T = T/(t->sub(t,newR));
       assert all(start, s->norm sub(matrix{S},matrix{s}) < 1e-3);
-      H#(l,m) = track(S,T,start,gamma=>exp(2*pi*ii*random RR)
+      H#(l,m) = track(S,T,start,gamma=>exp(2*pi*ii*random RR) 
+      --,Software=>Bertini
       --,Software=>PHCpack
-      ) / first
+      ) / first;
+      assert all(H#(l,m), s->norm sub(matrix{T},matrix{s}) < 1e-3);
+      H#(l,m)
    )
 )
 
-solveEasy = method(TypicalValue=>QQ)
+solveEasy = method(TypicalValue=>CC)
 solveEasy(RingElement) := (p)->(
    R:=ring p;
    var:=support p;
    b:=part(0,p);
    a:=p_(var_(0));
    -- print(p,a,b);
-   {{toCC lift((-b)/a, coefficientRing R)}}
+   {{toCC sub((-b)/a, coefficientRing R)}}
 )
