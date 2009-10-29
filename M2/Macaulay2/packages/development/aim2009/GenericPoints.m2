@@ -108,7 +108,7 @@ q = sqrt numeric 3
 G = idealOfGenericPoint(R,{{p+q}},4,2^50)
 
 
--- Example: 
+-- Example: 3x3 minors of a 3x5 matrix in C^4
 
 restart
 loadPackage "GenericPoints"
@@ -118,7 +118,7 @@ A = random(U^{3:0},U^{5:-1})
 S = RR[a..d,f]
 I = minors(3,sub(A,S),Strategy => Cofactor);
 J = sub(I,{f=>1});
-KK = CC_20
+KK = CC_500
 R = KK[a..d] 
 K = sub(J,R);
 T = K_*;
@@ -126,20 +126,12 @@ D = 3;
 RM = random(KK^D,KK^#T)
 RT = flatten entries (RM*transpose matrix{T})
 L = sum(gens R, v->v*random KK) + 1 
---R' = CC_53[gens R]
---RT' = (sub(ideal RT,R'))_*
---L' = ((sub(ideal L,R'))_*)#0
 points = solveSystem(RT|{L}) 
 pt = first select(points, pt -> norm (sub(K, matrix pt))_* < 10^(-1))
 point = refinePHCpack((RT|{L}), pt, Iterations => 20, Bits => 500, ErrorTolerance => 1p500e-130)/first 
 norm (sub(sub(ideal (RT|{L}),CC_500[gens R]),matrix point))_*
+idealOfGenericPoint(R,point,3,2^300);
 
-ev1 = map(CC_500, R, point_0)
-ev2 = map(CC_500, R, pt_0)
-ev1 RT_1
-ev2 RT_1
-ev1 L
-ev2 L
 norm (sub(sub(ideal (RT|{L}),R'),matrix pt))_*
 apply(10, i->(
 	  L' = sum(gens R, v->v*random CC) + 1;
@@ -166,17 +158,7 @@ S = rr[x,a..d,MonomialOrder=>Eliminate 1]
 sub (selectInSubring(1,gens gb ideal (sub(vars R,S) - matrix{{x,x^2,x^4,x^5}})),R)
 gens gb J
 
-
-restart
-debug loadPackage "NumericalAlgebraicGeometry"
-R = CC[x,y,z]
-L = {y-x^2,z-x^3,x+y+z-1}
-B = solveSystem(L,Software=>PHCpack)
-b = B/first/first
-refinePHCpack(L, {b}, Iterations => 10, Bits => 400, ErrorTolerance => 1p400e-130)
-C = apply(B, b -> refinePHCpack(L, {b}, Iterations => 10, Bits => 400, ErrorTolerance => 1p400e-130))
-C/first/first
-///
+-- Example: Union of a line and a degree 5 curve. 
 
 restart 
 loadPackage "GenericPoints"
@@ -192,15 +174,8 @@ W' = sub(V,{d=>1})
 Q = CC[a..c]
 W = sub(W',Q)
 T = W_*
---D = 3;
---RM = random(KK^D,KK^#T)
---RT = flatten entries (RM*transpose matrix{T})
 L = sum(gens Q, v->v*random CC) + 1 
---R' = CC_53[gens R]
---RT' = (sub(ideal RT,R'))_*
---L' = ((sub(ideal L,R'))_*)#0
 points = solveSystem(T|{L}) 
---pt = first select(points, pt -> norm (sub(K, matrix pt))_* < 10^(-1))
 apply(10, i->(
 	  L' = sum(gens Q, v->v*random CC) + 1;
 	  track(T|{L},T|{L'},points#0)
@@ -209,7 +184,6 @@ N = oo;
 M = for i from 0 to #N-1 list ((N#i)#0)#0
 G0 = idealOfGenericPoint(Q,M,1,2^50);
 line = ideal ((G0#1)*(G0#0)_{0,1})
-
 apply(10, i->(
 	  L1 = sum(gens Q, v->v*random CC) + 1;
 	  track(T|{L},T|{L1},points#1)
@@ -218,4 +192,4 @@ N = oo;
 M = for i from 0 to #N-1 list ((N#i)#0)#0
 G1 = idealOfGenericPoint(Q,M,3,2^50);
 J = ideal ((G1#1)*(G1#0)_{0..5})
-
+for i from 0 to 5 list norm (sub(J,matrix points#i))_*
