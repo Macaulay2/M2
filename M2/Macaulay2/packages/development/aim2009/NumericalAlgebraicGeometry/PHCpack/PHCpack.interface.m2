@@ -236,7 +236,7 @@ R = CC[x]
 L = {x^2-2}
 refinePHCpack(L, {{1.7}}, Iterations => 10, Bits => 400, ErrorTolerance => 1p400e-130)
 
-R = CC[x,y,z]
+R = CC_200[x,y,z]
 L = {y-x^2,z-x^3,x+y+z-1}
 B = solveSystem(L,Software=>PHCpack)
 B = B/first
