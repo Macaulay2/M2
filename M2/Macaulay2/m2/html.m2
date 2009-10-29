@@ -958,14 +958,23 @@ installPackage Package := opts -> pkg -> (
 	  htmlDirectory = replace("PKG",pkg#"title",installationLayout#"packagehtml"); -- if installationLayout =!= currentLayout, this may cause problems
 	  setupButtons();
 	  makeDirectory (buildPrefix|htmlDirectory);
-	  if verbose then stderr << "--making html pages in " << buildPrefix|htmlDirectory << endl;
+	  if verbose then stderr << "--making empty html pages in " << buildPrefix|htmlDirectory << endl;
 	  scan(nodes, tag -> if not isUndocumented tag then (
-	       fkey := DocumentTag.FormattedKey tag;
-	       fn := buildPrefix | htmlFilename tag;
-	       if fileExists fn then return;
-	       if isSecondary tag then return;
-	       if debugLevel > 0 then stderr << "--creating empty html page for " << tag << " in " << fn << endl;
-	       fn << close));
+		    fkey := DocumentTag.FormattedKey tag;
+		    fn := buildPrefix | htmlFilename tag;
+		    if fileExists fn then return;
+		    if isSecondary tag then return;
+		    if debugLevel > 0 then stderr << "--creating empty html page for " << tag << " in " << fn << endl;
+		    fn << close));
+	  for n in (topFileName, indexFileName, tocFileName) do (
+	       fn := buildPrefix | replace("PKG",pkg#"title",installationLayout#"packagehtml") | n;
+	       if not fileExists fn then (
+		    if debugLevel > 0 then stderr << "--creating empty html page " << fn << endl;
+		    fn << close)
+	       else (
+		    if debugLevel > 0 then stderr << "--html page exists: " << fn << endl;
+		    ));
+	  if verbose then stderr << "--making html pages in " << buildPrefix|htmlDirectory << endl;
      	  scan(nodes, tag -> if not isUndocumented tag then (
 	       -- key := DocumentTag.Key tag;
 	       fkey := DocumentTag.FormattedKey tag;
