@@ -142,7 +142,27 @@ dotBinary = "dot"
 jpgViewer = "open"
 
 writeDotFile = method()
-writeDotFile(String,Graph) := (filename,G) -> (
+writeDotFile(String, Graph) := (filename, G) -> (
+     fil := openOut filename;
+     fil << "graph G {" << endl;
+     q := pairs G;
+     for i from 0 to #q-1 do (
+	  e := q#i;
+	  fil << "  " << toString e#0;
+	  if #e#1 === 0 then
+	    fil << ";" << endl
+	  else (
+	    fil << " -- {";
+	    links := toList e#1;
+	    for j from 0 to #links-1 do
+		 fil << toString links#j << ";";
+     	    fil << "};" << endl;
+	    )
+	  );
+     fil << "}" << endl << close;
+     )
+
+writeDotFile(String, DiGraph) := (filename, G) -> (
      fil := openOut filename;
      fil << "digraph G {" << endl;
      q := pairs G;
@@ -185,7 +205,21 @@ displayGraph Graph := (G) -> (
      displayGraph(dotfilename,G);
      --removeFile dotfilename;
      )
-
+displayGraph(String, String, DiGraph) := (dotfilename,jpgfilename,G) -> (
+     writeDotFile(dotfilename,G);
+     runcmd(dotBinary | " -Tjpg "|dotfilename | " -o "|jpgfilename);
+     runcmd(jpgViewer | " " | jpgfilename);
+     )
+displayGraph(String,DiGraph) := (dotfilename,G) -> (
+     jpgfilename := temporaryFileName() | ".jpg";
+     displayGraph(dotfilename,jpgfilename,G);
+     --removeFile jpgfilename;
+     )
+displayGraph DiGraph := (G) -> (
+     dotfilename := temporaryFileName() | ".dot";
+     displayGraph(dotfilename,G);
+     --removeFile dotfilename;
+     )
 -------------------------
 -- Statements -----------
 -------------------------
