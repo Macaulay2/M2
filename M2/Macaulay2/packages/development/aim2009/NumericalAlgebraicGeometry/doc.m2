@@ -45,8 +45,8 @@ document {
      	     Projectivize, [track,Projectivize], AffinePatches, [track,AffinePatches], DynamicPatch, 
 	     SLP, [track,SLP], HornerForm, CompiledHornerForm, 
 	     CorrectorTolerance, [track,CorrectorTolerance], 
-     	     [track,SLPcorrector], [track,SLPpredictor], [track,NoOutput], 
-	     SLPcorrector, SLPpredictor, NoOutput
+     	     [track,SLPcorrector], [track,SLPpredictor], [track,NoOutput], [track,Normalize], 
+	     SLPcorrector, SLPpredictor, NoOutput, Normalize
 	     },
 	Headline => "track a user homotopy",
 	Usage => "solsT = track(S,T,solsS)",
@@ -67,6 +67,7 @@ document {
      	     EndZoneFactor => {"size of `end zone'"},  
 	     InfinityThreshold => {"paths are truncated if the norm of the approximation exceeds the threshold"},
      	     Projectivize => {"if true then the system is homogenized and projective tracker is executed"},
+	     Normalize => {"normalize the start and target systems w.r.t. Bombieri-Weyl norm"},
 	     NoOutput => {"if true, no output is produced (useful in combination with ", TO "getSolution", ")"} 	     
 	     },
 	Outputs => {{ TT "solsT", ", solutions of ", TT "T=0", " obtained by continuing ", TT "solsS" }},
@@ -82,14 +83,22 @@ track(S,T,solsS) / first
 	}
 
 document {
-	Key => {(refine, List, List), refine, [refine, Iterations], [refine, Software]},
+	Key => {
+	     (refine, List, List), refine, 
+	     [refine, Iterations], [refine, Bits], [refine,ErrorTolerance], [refine,ResidualTolerance],
+	     Iterations, Bits, ErrorTolerance, ResidualTolerance
+	     },
 	Headline => "refine numerical solutions to a system of polynomial equations",
 	Usage => "solsR = refine(T,sols)",
 	Inputs => { 
-	     {"T", ", polynomials of the system"},
-	     {"sols", ", solutions (lists of coordinates)"}
+	     "T" => {"polynomials of the system"},
+	     "sols" => {"solutions (lists of coordinates)"},
+	     Iterations => {"number of refining iterations of Newton's methods"}, 
+	     Bits => {"number of bits of precision"}, 
+	     ErrorTolerance => {"a bound on the desired estimated error"},
+	     ResidualTolerance => {"a bound on desired residual"}
 	     },
-	Outputs => {{ TT "solsR", ", refined solutions" }},
+	Outputs => {"solsR" => {"refined solutions" }},
 	"Uses Newton's method to correct the given solutions so that the resluting approximation 
 	has its estimated relative error bound by ", TT "Tolerance", 
 	"; the number of iterations is at most ", TT "maxCorrSteps", ".",
@@ -102,7 +111,7 @@ R = CC[x,y];
 S = {x^2-1,y^2-1};
 T = {x^2+y^2-1, x*y};
 sols = { {1.1_CC,0.1}, {-0.1,1.2} };
-refine(T, sols, Software=>M2, Tolerance=>.001, maxCorrSteps=>10)
+refine(T, sols, Software=>M2, ErrorTolerance=>.001, Iterations=>10)
      	///
 	}
 
@@ -128,7 +137,8 @@ totalDegreeStartSystem T
 	}
 
 document {
-     Key => {[solveSystem,Software],[track,Software], "Software","M2","M2engine","M2enginePrecookedSLPs"},
+     Key => {[solveSystem,Software],[track,Software],[refine, Software], "Software",
+	  "M2","M2engine","M2enginePrecookedSLPs"},
      Headline => "specify software for the solver",
      UL{
 	  {"M2", " -- use top-level Macaulay2 homotopy continuation routines"},
@@ -269,11 +279,12 @@ M = track(S,T,solsS,gamma=>0.6+0.8*ii,Software=>M2)
 	}
 
 document {
-	Key => {goodInitialPair, (goodInitialPair, List)},
+	Key => {goodInitialPair, (goodInitialPair, List), [goodInitialPair,GeneralPosition]},
 	Headline => "a good (conjectured by Shub and Smale) initial pair",
 	Usage => "(S,sol) = goodInitialPair T",
 	Inputs => { 
-	     {TT "T", ", list of polynomials"}
+	     "T" => {"a list of polynomials"},
+	     GeneralPosition => {"make a random unitary change of coordinates"} 
 	     },
 	Outputs => {{ TT "S", ", list of polynomials"},
 	     { TT "sol", ", a list containing (one) solution of S"}},

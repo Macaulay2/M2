@@ -32,7 +32,8 @@ export {
      "getSolution", "SolutionAttributes", "Coordinates", "SolutionStatus", "LastT", "RCondition", "NumberOfSteps",
      "NAGtrace",
      "randomSd", "goodInitialPair", "randomInitialPair", "GeneralPosition",
-     "points"
+     "Bits", "Iterations", "ResidualTolerance", "ErrorTolerance",
+     "points" 
      }
 exportMutable {
      }
@@ -788,7 +789,7 @@ refine (List,List) := List => o -> (T,solsT) -> (
 	       -- corrector step
 	       dx = 1; -- dx = + infinity
 	       nCorrSteps := 0;
-	       while norm dx > o.ErrorTolerance * norm x1 and nCorrSteps < o.maxCorrSteps do ( 
+	       while norm dx > o.ErrorTolerance * norm x1 and nCorrSteps < o.Iterations do ( 
 		    if DBG > 3 then << "x=" << toString x1 << " res=" <<  toString evalT(x1) << " dx=" << dx << endl;
 		    dx = solve(evalJ(x1), -evalT(x1));
 		    x1 = x1 + dx;
@@ -2179,8 +2180,8 @@ end
 restart
 loadPackage "NumericalAlgebraicGeometry"
 uninstallPackage "NumericalAlgebraicGeometry"
-installPackage "NumericalAlgebraicGeometry"
 installPackage("NumericalAlgebraicGeometry", SeparateExec=>true, AbsoluteLinks=>false, RerunExamples=>true)
+installPackage "NumericalAlgebraicGeometry"
 check "NumericalAlgebraicGeometry"
 
 R = CC[x,y,z]
