@@ -209,6 +209,7 @@ frac Ring := R -> (
 coefficientRing FractionField := F -> coefficientRing last F.baseRings
    degreeLength FractionField := F -> degreeLength last F.baseRings
         degrees FractionField := F -> degrees last F.baseRings
+      precision FractionField := F -> precision last F.baseRings
        toString FractionField := F -> (
 	    if hasAttribute(F,ReverseDictionary)
 	    then toString getAttribute(F,ReverseDictionary)
