@@ -30,7 +30,7 @@ export {
      picardGroup,
      picardToClass,
      nef,
-     primitiveVector
+     makePrimitive
      }
 
 ---------------------------------------------------------------------------
@@ -530,8 +530,8 @@ toricIdeal = (A,S) -> (
      J);
 
 
-primitiveVector = method()
-primitiveVector List := w -> (g := gcd w; if g < 1 then apply(w, e -> lift((1/g)*e,ZZ)) else apply(w, e -> lift(e//g,ZZ)))
+makePrimitive = method()
+makePrimitive List := w -> (g := gcd w; if g < 1 then apply(w, e -> lift((1/g)*e,ZZ)) else apply(w, e -> lift(e//g,ZZ)))
 
 
 
