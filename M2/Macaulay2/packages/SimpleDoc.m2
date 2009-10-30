@@ -96,7 +96,7 @@ DescriptionFcns = new HashTable from {
 	  splitByIndent(text,indents),
 	  (i,j) -> concatenate between(newline,apply(i .. j, k -> (if indents#k =!= infinity then indents#k - indents#0 : " ", text#k)))),
      "Text" => toSequence @@ markup,
-     "Code" => (text, indents) -> ( m := min indents; value concatenate apply(indents, text, (ind,line) -> (ind-m,line,"\n")) )
+     "Code" => (text, indents) -> ( m := min indents; value concatenate ("(",apply(indents, text, (ind,line) -> (ind-m,line,"\n")),")"))
      }
 
 applySplit = (fcns, text, indents) ->
