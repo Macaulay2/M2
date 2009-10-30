@@ -15,6 +15,7 @@ newPackage(
 export { 
      NormalToricVariety, 
      normalToricVariety, 
+	latticeIndex, 
      projectiveSpace, 
      hirzebruchSurface, 
      weightedProjectiveSpace, 
@@ -1846,7 +1847,3 @@ restart
 uninstallPackage "NormalToricVarieties"
 installPackage("NormalToricVarieties", AbsoluteLinks => false)
 check NormalToricVarieties
-
-hello
-hello
-
