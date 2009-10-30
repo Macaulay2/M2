@@ -16,7 +16,7 @@ Description
 	  with packages: ConwayPolynomials, Elimination, IntegralClosure, LLLBases,
 	         PrimaryDecomposition, ReesAlgebra, SchurRings, TangentCone///}
      Code
-     	 SUBSECTION "Part I: Arithmetic with integers, rings and ideals"
+     	 SUBSECTION "Arithmetic with integers, rings and ideals"
      Text
 
 	  You can immediately do arithmetic with integers, such as
@@ -86,15 +86,15 @@ Description
      Text
 	  In case you forget any of these things, help is available! The most
 	  useful way to get it is often to type something like 
-
-	  viewHelp Ideal
-
+     Code
+     	  EXAMPLE { PRE ///viewHelp Ideal/// }
+     Text
 	  Since we capitalized "Ideal", we get the documentation for the class of all ideals.
 	  To get just the documentation for the function "ideal" that we've been using
 	  to create ideals one would do
-
-	  viewHelp ideal
-
+     Code
+     	  EXAMPLE { PRE ///viewHelp ideal/// }
+     Text
 	  and then choose either "ideal(List)" or "ideal(String)" (since the expression 
 	  in quotes is a string.)
 
@@ -139,22 +139,14 @@ Description
 	  Note the alternate syntax for defining a matrix, parallel to that for an ideal.
 
 	  Before going on, the reader might want to explore the many possibilities under
-
-	  viewHelp
-
-	  and click on the Macaulay2 link at the top.
-
-
-
-	  II. Properties of Ideals and Modules
-
-
-
-
-	  A.  First steps; example with a monomial curve
-
-
-
+     Code
+     	  EXAMPLE { PRE "viewHelp" }
+     Text
+	  and click on the Macaulay2 link at the top. 
+     Code
+     	 SUBSECTION "Properties of ideals and modules",
+	 HEADER4 "First steps; example with a monomial curve"
+     Text
 	  To compute the Gröbner basis of an ideal
 	  $(x^2y,xy^2+x^3)$ in the polynomial ring in
 	  four variables we proceed as follows:
@@ -180,9 +172,9 @@ Description
 	  monomial order on the ring. In fact, the ring we defined above has
 	  a default monomial order, the graded reverse lex order. For many
 	  other possibilities see
-
-	  viewHelp MonomialOrder
-
+     Code
+     	  EXAMPLE { PRE "viewHelp MonomialOrder" }
+     Text
 	  The analogue for ideals of factorization is primary decomposition.
 	  For example, we can begin by intersecting three ideals
      Example
@@ -279,9 +271,9 @@ Description
      Text
 	  It's possible to manipulate the numerator and denominator of this
 	  expression, but the syntax for doing so isn't obvious; see
-
-	  viewHelp hilbertSeries 
-
+     Code
+     	  EXAMPLE { PRE "viewHelp hilbertSeries" }
+     Text
 	  One way to get information about
 	  a module $M$ is to see its free resolution. For an example, we begin
 	  by turning R/I into a module. Here R^1 is the free module of rank 1 over R.
@@ -318,11 +310,9 @@ Description
      Example
 	  pdim M
 	  regularity M
+     Code
+     	  SUBSECTION "Division With Remainder"
      Text
-
-
-	  B. Division With Remainder
-
 	  A major application of Gröbner bases is
 	  to give a normal form for an element modulo an
 	  ideal, allowing one, for example, to decide whether
@@ -348,13 +338,12 @@ Description
 	  in R. The expression "for p from 1 to 10 do" specifies a 
 	  "for loop" that executes the following "print (Tr^p % I)"
 	  with 10 consecutive values of p. For more information on such loops see
-
-	  viewHelp "for"
-
+     Code
+     	  EXAMPLE { PRE ///"for"/// }
+     Text
 	  (Here we have put quotes around "for" because without the quotes
 	  "for" would be a keyword. In general, it's always safe to use
 	  quotes with viewHelp.)
-
 
 	  We see from the output of these commands that the 6-th power
 	  of the trace is NOT in the ideal of entries of the cube of M,
@@ -362,13 +351,9 @@ Description
 	  by using the division algorithm, denoted in this setting by //:
      Example
 	  Tr^7//(gens I)
+     Code
+     	  SUBSECTION "Elimination Theory"
      Text
-
-
-
-
-	  C. Elimination Theory
-
 	  Consider the problem of projecting the
 	  ``twisted cubic'', a curve in ${\bf P}^3$ defined
 	  by the three $2 \times 2$ minors of a certain
@@ -432,9 +417,9 @@ Description
 	  f*J is contained in I:
      Example
 	  ideal"u3w,uv":ideal"u"
+     Code
+     	  SUBSECTION "Defining functions and loading packages"
      Text
-	  D. defining functions and loading packages
-
 	  It is easy to define your own functions in M2, and this
 	  can save a lot of typing. Functions are defined with the 
 	  symbol ->. For example, the famous Collatz Conjecture
@@ -452,13 +437,14 @@ Description
 	  Collatz 27
      Text
 	  If you don't understand this code easily, try typing
-
-	  viewHelp Function
+     Code
+     	  EXAMPLE { PRE "viewHelp Function" }
+     Text
 
 	  and/or
-
-	  viewHelp "while"
-
+     Code
+     	  EXAMPLE { PRE ///viewHelp "while"/// }
+     Text
 	  In order to understand a process it is often useful to tabulate the 
 	  results of applying it many times. One feature of the Collatz process
 	  is how many steps it takes to get to 1. We can tabulate this statistic
@@ -501,23 +487,23 @@ Description
 	  of a function) a semicolon has  effect of 
 	  suppressing output--this can be very useful when the output
 	  would be large. See
-
-	  viewHelp "The Macaulay2 language" 
-
+     Code
+     	  EXAMPLE { PRE ///viewHelp "The Macaulay2 language"/// }
+     Text
 	  (you don't need to italicize!) for more information.
 	  There are many packages of ready-made functions available for
 	  your use, many written by other users (perhaps you'll contribute one
 	  someday!) A list can be found with
-
-	  viewHelp 
-
+     Code
+     	  EXAMPLE { PRE ///viewHelp/// }
+     Text
 	  For example, there is such a package called EdgeIdeals. 
 	  Click on its link on the page you just got to in order
 	  to see what's in it. Then, after
      Example
 	  loadPackage "EdgeIdeals"
      Text
-	  you can call it's functions, such as randomGraph and edgeIdeal:
+	  you can call its functions, such as randomGraph and edgeIdeal:
      Example
 	  R = kk[vars(0..10)]
 	  G=randomGraph (R,20)
@@ -528,7 +514,7 @@ Description
 	  Often one wants to run a random function a LOT of times.
 	  Here's some typical code that one might use to study
 	  a random graph ideal.  The first block defines a list L
-	  and suppresses it's printing by ending the function that creates
+	  and suppresses its printing by ending the function that creates
 	  it with a ";". Each entry of L is a triple consisting of the
 	  codimension, degree, and Betti table of a graph ideal
 	  on 10 vertices having only 4 edges.
@@ -545,8 +531,8 @@ Description
      Example
 	  tally L
 	  #tally L
-     Text
-	  E. Ext, Tor, and cohomology
+     Code
+     	  SUBSECTION "Ext, Tor, and cohomology"
      Text
 	  Macaulay2 can compute the homology of complexes;
 	  for example, let's compute the homology of a
