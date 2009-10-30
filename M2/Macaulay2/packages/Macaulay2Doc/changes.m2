@@ -5,7 +5,49 @@ document {
 	  TO "changes, 1.0 and 1.1",
 	  TO "changes, 1.2",
 	  TO "changes, 1.3",
-	  TO "changes, 1.3.1"
+	  TO "changes, 1.3.1",
+	  TO "list of obsolete functions"
+	  }
+     }
+
+document {
+     Key => "list of obsolete functions",
+     UL {
+	  LI {
+	       "obsolete functions",
+	       UL {
+		    LI "'mutableZero' has been replaced by mutableMatrix",
+		    LI "'unlist' has been replaced by toSequence",
+		    LI "'evaluate' has been replaced by 'value'",
+		    LI "'seq x' has been replaced by 'singleton x', which has been replaced by '1:x'",
+		    LI "'verticalJoin' has been replaced by 'stack'",
+		    LI "'netRows' has been replaced by 'unstack'",
+		    LI "'name' has been replaced by 'toString'",
+		    LI "'quote' has been replaced by 'symbol'",
+		    LI "'Numeric' has been replaced by 'numeric'",
+		    LI "'submodule' has been removed",
+		    LI "'monomialCurve' has been replaced by 'monomialCurveIdeal'",
+		    LI "'assign' has been replaced by '<-'",
+		    LI "'minprimes' has been replaced by 'independentSets'",
+		    LI "function 'elapsedTime' has been renamed to 'cpuTime'",
+		    LI "function 'pushForward1(f,M)' has been replaced by 'relations coimage map(M,f)'"
+		    }
+	       },
+	  LI {
+	       "obsolete methods",
+	       UL {
+		    LI "'map(Ideal)' has been removed: use 'map(module I,module I, 1)' instead",
+		    LI "'map(Ideal,Ideal)' has been removed: use 'map(module I,module J)' instead",
+		    LI "'map(Module,Matrix)' has been replaced: use 'map(M,,f)' instead",
+		    LI "'map(Module,RingElement)' has been removed: use 'map(M,M,r)' instead",
+		    LI "'RingElement _ ZZ' has been replaced: use 'part(n,f)' instead",
+		    LI "'RingElement _ List' has been replaced: use 'part(d,f)' instead",
+		    LI "'diff(RingElement)' has been removed: use 'diff(vars ring f, f)' instead",
+		    LI "'diff(Matrix)' has been removed: use 'diff(vars ring f, f)' instead",
+		    LI "'map(Module,Module)' has been removed: use 'inducedMap' instead",
+		    LI "'monomialIdeal(R)' has been removed: use 'monomialIdeal(0_R)' instead"
+		    }
+	       }
 	  }
      }
 
