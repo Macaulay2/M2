@@ -584,6 +584,8 @@ generators Module := Matrix => opts -> M -> (
      else if M.cache.?generators then M.cache.generators
      else M.cache.generators = id_(ambient M))
 
+Module_* := M -> apply(numgens M, i -> M_i)
+
 relations Module := Matrix => M -> (
      if M.?relations then M.relations 
      else (
