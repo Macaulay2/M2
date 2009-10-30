@@ -4,7 +4,7 @@
 --(ie the triangulation spans all of R^n, and is regular)
 
 --Written by Diane Maclagan, maclagan@math.stanford.edu
---Last updated: November 9, 2002
+--Last updated: November 9, 2002, now October 29, 2009.
 
 --Input:  A list "A" of points (the first lattice points on the 1D rays of the 
 --fan, and a list "Delta" of simplices in the cones.  The points are lists of 
@@ -18,6 +18,24 @@
 
 
 ----------------------------------------------------------------
+-- Still to do:
+----------------------------------------------------------------
+-- Need prime # for makePos? If yes, add check. If no, change documentation. 
+
+-- combinatorialStellarSubdivision for non-simplicial cones?
+-- isSmooth X
+-- makePrimitive X
+-- dim(sigma,X)  -- sigma a face of X
+-- index(sigma,X)  --use ``smartMinors"
+-- maxDet X
+-- maxPrime vs minPrime --experiment
+
+
+
+
+
+
+
 ----------------------------------------------------------------
 --Preliminary procedures
 ----------------------------------------------------------------
@@ -73,13 +91,129 @@ makeSimplicial (Fan)  :=  X->(
 
 blowup = method(TypicalValue=>NormalToricVariety)
 blowup (NormalToricVariety,Matrix)  :=  (X,rho)->(
-     Y := fan X;
-     normalToricVariety stellarSubdivision (Y,rho)    
+--     Y := fan X;
+--     normalToricVariety stellarSubdivision (Y,rho)    
+	stellarSubdivision(X,flatten entries rho)
      )
 
--------------------------------------------------------------------------------------------
+--------------------------------------------------------------------------------------
+--needs "NormalToricVarieties"
+--loadPackage "NormalToricVarieties"
 
-makeSmooth = method (TypicalValue => Fan)
+PP2 = projectiveSpace 2;
+#rays PP2
+max PP2
+
+rho = {{-1, -1}, {1, 0}, {0, 1}, {2,0}}
+chi = {{0, 1,3}, {0, 2}, {1, 2,3}}
+X = normalToricVariety(rho,chi)
+
+rho = {{1,0,1},{0,1,1},{-1,0,1},{0,-1,1}}
+chi = {{0,1,2,3}}
+X = normalToricVariety(rho,chi)
+--fan X
+sigma = (max X)_0
+A=rays X
+M = matrix toList apply(sigma,i->toList A_i)
+
+rho = {{2,0,2},{0,1,1},{-1,0,1},{0,-1,1}}
+chi = {{0,1,2,3}}
+X = normalToricVariety(rho,chi)
+Y = fan X
+
+
+rho = {{1,1,1},{1,1,-1},{1,-1,1},{-1,1,1},{1,-1,-1},{-1,1,-1},{-1,-1,1},{-1,-1,-1}}
+chi = {{0,1,2,4},{0,2,3,6},{0,1,3,5},{1,4,5,7},{2,4,6,7},{3,5,6,7}}
+X = normalToricVariety(rho,chi)
+fan X
+--------------------------------------------------------------------------------
+
+-- To make the matrix from a list of ray indices:
+-- matrix (rays X)_sigma
+
+
+dim (List,NormalToricVariety):= (sigma,X) ->( rank matrix (rays X)_sigma )
+
+
+latticeIndex = method()
+latticeIndex (List,NormalToricVariety):= (sigma,X) ->(
+	if #sigma>1 then smartMinors matrix (rays X)_sigma
+)
+--Caveat: sigma should be in max X
+
+
+smartMinors = method()
+smartMinors (Matrix):= M ->(
+	--	mingens minors (rank M,M)
+	product toList apply(rank M,i->( ((smithNormalForm M)_0)_i_i ))
+)
+--smartMinors should be changed to minors after minors is updated
+
+
+makePrimitive = method()
+makePrimitive NormalToricVariety:= X ->(
+    	normalToricVariety(toList apply(rays X, sig -> 1/gcd(sig)*sig ),max X)
+)
+-- replaces rays with primitive vectors along the rays
+
+--=====================================================
+
+resolveSingularities3 = method (TypicalValue => NormalToricVariety)
+resolveSingularities3 (NormalToricVariety) :=    (X)->(
+	Xsimp:=X;
+	if not isSimplicial X then Xsimp = makeSimplicial X else Xsimp=X;
+	-- now we have a simplicial toric variety and we need to make it smooth;
+	-- There will be a problem until makeSimplicial returns integer vectors for the rays
+	if isSmooth Xsimp then Xsimp else makeSmooth Xsimp
+	)
+
+
+-- make a simplicial toric variety smooth
+makeSmooth = method()
+makeSmooth (NormalToricVariety) := Xsimp ->(
+	if not isSimplicial Xsimp then print "input not simplicial" ;
+	--Next we add the maximum minor to each facet in our data
+     	if (not Xsimp.cache.?index) then Xsimp.cache.index = apply(max Xsimp, sigma-> latticeIndex(sigma,Xsimp) ); 
+	maxDet := max Xsimp.cache.index;
+	--Now the main part of the procedure
+	count := 0;
+	while(maxDet>1) do (
+     	       count = count +1;	     
+		--First find a facet with the maximum determinant
+		sigma := (max Xsimp)_(position(Xsimp.cache.index,j->(j==maxDet)));
+		--Now find the vector in this sigma to add
+		p := maxPrime(floor maxDet);
+		R := ZZ/p;
+		Ap := substitute(transpose matrix (rays Xsimp)_sigma, R);
+		K := transpose gens ker Ap;
+		k := flatten entries substitute(matrix({(entries(K))_0}),ZZ);
+		k = matrix {makePos(k,p)};
+		newA = flatten entries (k*matrix (rays Xsimp)_sigma);
+		gcdnewA := gcd(newA);
+		newA = toSequence ((1/gcdnewA)*newA);
+		newA = apply(newA,x->lift(x,ZZ));
+		print("blowup # ", count, " at ",newA);
+		time(Xsimp = blowup(Xsimp,transpose matrix {toList newA}));
+		--Now update maxDet
+		maxDet=0;
+		Xsimp.cache.index={};
+		Xsimp.cache.index = apply(max Xsimp, sigma -> latticeIndex(sigma,Xsimp) );   --append(Xsimp.cache.index,latticeIndex(sigma,Xsimp));
+		maxDet = max Xsimp.cache.index;
+	);
+	Xsimp
+)
+
+
+
+
+
+
+
+
+
+--------------------------------------------------------------------------------------
+
+--makeSmooth = method()
 makeSmooth (Fan) :=   (X)->(
     	if not isSimplicial(X) then  Xsimp=makeSimplicial X else Xsimp=X;
 	A:=rays X;
@@ -135,7 +269,7 @@ resolveSingularities = method (TypicalValue => NormalToricVariety)
 resolveSingularities (NormalToricVariety) :=   (X)->(
     	if not isSimplicial(X) then  Xsimp = makeSimplicial X else Xsimp = X;
 	print "Done making simplicial.";
-    	Xsimp = normalToricVariety(toList apply(rays Xsimp, sig ->1/gcd(sig)*sig),max Xsimp);
+--    	Xsimp = normalToricVariety(toList apply(rays Xsimp, sig ->1/gcd(sig)*sig),max Xsimp);
 	A = rays Xsimp;
 	--Next we add the determinant to each simplex in our data
      	if (not Xsimp.cache.?index) then (
@@ -147,8 +281,7 @@ resolveSingularities (NormalToricVariety) :=   (X)->(
 		       Xsimp.cache.index=append(Xsimp.cache.index,detSigma);
 	     	       )
 	   	  );
-	     );
-	maxDet = max Xsimp.cache.index;
+	     ) else maxDet = max X.cache.index;
 	--Now the main part of the procedure
 	while(maxDet>1) do (
 		--First find a simplex with the maximum determinant
@@ -184,7 +317,8 @@ resolveSingularities (NormalToricVariety) :=   (X)->(
 
 resolveSingularities2 = method (TypicalValue => NormalToricVariety)
 resolveSingularities2 (NormalToricVariety) :=    (X)->(
-    	Xsimp = normalToricVariety(toList apply(rays X, sig ->1/gcd(sig)*sig),max X);
+     	Xsimp = X;
+--    	Xsimp = normalToricVariety(toList apply(rays X, sig -> 1/gcd(sig)*sig ),max X);
 	A = rays Xsimp;
 	--Next we add the maximum minor to each facet in our data
      	if (not Xsimp.cache.?index) then (
@@ -197,8 +331,8 @@ resolveSingularities2 (NormalToricVariety) :=    (X)->(
 		       Xsimp.cache.index=append(Xsimp.cache.index,detSigma);
 	     	       )
 	   	  );
-	     );
-	maxDet = max Xsimp.cache.index;
+	     ) 
+	else	maxDet = max Xsimp.cache.index;
 	--Now the main part of the procedure
 	count := 0;
 	while(maxDet>1) do (
@@ -229,7 +363,8 @@ resolveSingularities2 (NormalToricVariety) :=    (X)->(
 	     		  )
 	   	     );
 		);
-	 Xsimp 
+--	Xsimp = makeSimplicial Xsimp;
+	Xsimp
 )
 
 end
