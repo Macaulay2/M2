@@ -77,6 +77,10 @@ document {
 		    LI {
 			 "Matrices over different rings can now be joined together (see ", TO (symbol |,Matrix,Matrix), ",
 			 ", TO (symbol ||,Matrix,Matrix), ", and ", TO (symbol ++,Matrix,Matrix), ")."
+			 },
+		    LI {
+			 "The functions used with ", TO "merge", " and ", TO "combine", " now have a way to indicate that the resulting
+			 hashtable should have no entry corresponding to the current key."
 			 }
 		    }
 	       },

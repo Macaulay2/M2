@@ -182,7 +182,7 @@ clearAll = Command (() -> (
 generateAssertions = method(TypicalValue => Net)
 generateAssertions String := s -> generateAssertions select(lines s, x -> not match("^[[:space:]]*(--.*)?$",x))
 generateAssertions List := y -> (
-     nogens := {PolynomialRing, QuotientRing};
+     nogens := {PolynomialRing, QuotientRing,Function};
      good := t -> (
 	  not mutable t
 	  and

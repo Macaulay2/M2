@@ -205,9 +205,7 @@ diff(ProjectiveHilbertPolynomial,ZZ) := ProjectiveHilbertPolynomial => (P,i) -> 
 	  (n,c) -> n >= 0
 	  ))
 diff ProjectiveHilbertPolynomial := ProjectiveHilbertPolynomial => (P) -> diff(P,1)
-ProjectiveHilbertPolynomial + ProjectiveHilbertPolynomial := ProjectiveHilbertPolynomial => (h,k) -> (
-     select( merge(h,k,plus), c -> c =!= 0 )
-     )
+ProjectiveHilbertPolynomial + ProjectiveHilbertPolynomial := ProjectiveHilbertPolynomial => (h,k) -> merge(h,k,continueIfZero @@ plus)
 - ProjectiveHilbertPolynomial := ProjectiveHilbertPolynomial => h -> applyValues(h,minus)
 ProjectiveHilbertPolynomial - ProjectiveHilbertPolynomial := ProjectiveHilbertPolynomial => (h,k) -> h + -k
 ProjectiveHilbertPolynomial == ProjectiveHilbertPolynomial := (h,k) -> h === k

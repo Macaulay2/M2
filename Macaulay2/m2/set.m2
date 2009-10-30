@@ -23,19 +23,24 @@ Tally ^** ZZ := Tally => (x,n) -> (
      scan(n-2, i -> y = combine(y,x,append,times,));
      y)
 
-Tally ? Tally := (x,y) -> (
-     w := values select(merge(x,applyValues(y,minus),plus),i -> i =!= 0);
-     if #w === 0 then symbol ==
-     else if all(w,i -> i>0) then symbol >
-     else if all(w,i -> i<0) then symbol <
-     else incomparable)
+continueIfZero = n -> if n == 0 then continue else n
+continueIfNonPositive = n -> if n <= 0 then continue else n
 
 Tally + Tally := Tally => (x,y) -> merge(x,y,plus)
 Tally - Tally := Tally => (x,y) -> select(merge(x,applyValues(y,minus),plus),i -> i > 0)
 
 VirtualTally = new Type of Tally
 VirtualTally.synonym = "virtual tally"
-VirtualTally - VirtualTally := VirtualTally => (x,y) -> select(merge(x,applyValues(y,minus),plus),i -> i != 0)
+- VirtualTally := y -> applyValues(y,minus)
+VirtualTally + VirtualTally := VirtualTally => (x,y) -> merge(x,y,continueIfNonPositive @@ plus)
+VirtualTally - VirtualTally := VirtualTally => (x,y) -> x + -y
+
+Tally ? Tally := (x,y) -> (
+     w := values ((new VirtualTally from x) - (new VirtualTally from y));
+     if #w === 0 then symbol ==
+     else if all(w,i -> i>0) then symbol >
+     else if all(w,i -> i<0) then symbol <
+     else incomparable)
      
 sum(Tally) := (w) -> sum(pairs w, (k,v) -> v * k)
 product(Tally) := (w) -> product(pairs w, (k,v) -> k^v)
