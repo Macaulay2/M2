@@ -79,6 +79,7 @@ launchSimpleSchubert(Sequence, List, List) := (kn,l,m)->(
    (k,n) := kn;
    d := k*(n-k)-sum(l)-sum(m);
    G = apply(d, i->matrix apply(n-k,i->apply(n,j->random CC)));
+   print G;
    H = new MutableHashTable from {};
    solveSimpleSchubert(kn,l,m)
    )
