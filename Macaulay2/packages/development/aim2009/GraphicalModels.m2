@@ -40,7 +40,7 @@ newPackage("GraphicalModels",
 
 export {graph, diGraph, displayGraph, localMarkovStmts, globalMarkovStmts, pairMarkovStmts,
        markovRing, marginMap, hideMap, markovMatrices, markovIdeal, writeDotFile, removeRedundants, 
-       gaussRing, gaussMinors, gaussIdeal, gaussTrekIdeal, Graph, DiGraph}
+       gaussRing, gaussMinors, gaussIdeal, gaussTrekIdeal, Graph, DiGraph, simpleGraph}
      --  descendents, nondescendents, parents, children, removeNodes,neighbors, nonneighbors
 exportMutable {dotBinary,jpgViewer}
 
@@ -152,19 +152,28 @@ dotBinary = "dot"
 -- jpgViewer = "/usr/bin/open"
 jpgViewer = "open"
 
---simpleGraph := H -> (
---     q := pairs G;
---     edges := for i to #q-1 list(H#(q#i#0));
---     vertices := keys H;
---     apply (#vertices, i -> (
---     	       for j from i to #q-1 list (if member(vertices#i, set edges#j), 
---     h := new MutableHashTable;
---     apply(#vertices, i -> h#(vertices#i) = set edges#i);
-     
-     
+union = S -> (
+     x = new MutableHashTable;
+     for t in S do scanKeys(t, z -> x#z = 1);
+     new Set from x)  
 
+simpleGraph = method()
+simpleGraph(Graph) := H -> (
+     q = pairs H;
+     qmute = new MutableList;
+     for i to #q-1 do qmute#i = q#i;
+     for k from 1 to #q-1 do (
+	  testVertices = set for i to k-1 list qmute#i#0;
+      	  qmute#k = (qmute#k#0, qmute#k#1-testVertices)
+	  );
+     newGraph := new MutableHashTable;
+     for k to #q-1 do newGraph#(qmute#k#0) = qmute#k#1;
+     new Graph from newGraph)
+
+ 
 writeDotFile = method()
 writeDotFile(String, Graph) := (filename, G) -> (
+     G = simpleGraph G;
      fil := openOut filename;
      fil << "graph G {" << endl;
      q := pairs G;
@@ -175,7 +184,7 @@ writeDotFile(String, Graph) := (filename, G) -> (
 	    fil << ";" << endl
 	  else (
 	    fil << " -- {";
-	    links := for i to #e#1 list (if any(q, j -> member(e#1#j, j#1)) then continue);--midprocess
+	    links := toList e#1;
 	    for j from 0 to #links-1 do
 		 fil << toString links#j << ";";
      	    fil << "};" << endl;
