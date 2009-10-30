@@ -82,21 +82,25 @@ Description
 	  I*I
 	  I+ideal"a2"
      Text
-	  In case you forget any of these things, help is available! The most
-	  useful way to get it is often to type something like 
+	  In case you forget any of these things, @TO help@ is available! The most
+	  useful way to get it is often to type something like:
      Code
      	  EXAMPLE { PRE ///viewHelp Ideal/// }
      Text
-	  Since we capitalized "Ideal", we get the documentation for the class of all ideals.
+
 	  To get just the documentation for the function "ideal" that we've been using
-	  to create ideals one would do
+	  to create ideals one would do:
      Code
      	  EXAMPLE { PRE ///viewHelp ideal/// }
      Text
-	  and then choose either "ideal(List)" or "ideal(String)" (since the expression 
-	  in quotes is a string.)
+	  On the other hand, we might have wanted information about the @TO class@ of all ideals.
+	  Not too surprisingly, this class is called @TO Ideal@. We could get information about
+	  what functions create or use ideals by typing
+     Code                                                                                                                                                                                                
+          EXAMPLE { PRE ///viewHelp Ideal/// }                                                                                                                                                           
+     Text                                                                                                                                                                                                
 
-	  Some other basic types are defined similarly
+	  Here are some basic operations on matrices:
      Example
 	  M= matrix{{a,b,c},{b,c,d},{c,d,e}}
 	  M^2
@@ -104,22 +108,23 @@ Description
 	  trace M
 	  M-transpose M
      Text
-	  To get the entries of a matrix do
-     Example
-	  flatten entries M
-     Text
-	  (the command
+	  The command:
      Example
 	  entries M
      Text
-	  produces a list of lists, one for each row of M.)
-
-	  If you want a particular entry, say the one in the upper left corner, do
+	  produces a list of lists, one for each row of M.
+	  The command @TO flatten@ puts together the elements of such 
+	  lists into a single list. Thus to get
+	  a list of all entries of the matrix do:
+     Example
+	  flatten entries M
+     Text
+	  If you want a particular entry, say the one in the upper left corner, do;
      Example
 	  M_(0,0)
      Text
-	  Note that here as everywhere in M2, all indexing starts with 0.
-	  For example
+	  Here, as everywhere in {\em Macaulay2}, all indexing starts with 0.
+	  For example:
      Example
 	  I_0
      Text
@@ -215,7 +220,7 @@ Description
      Example
 	  phi = map(kk[s,t],R,{s^4, s^3*t, s*t^3, t^4})
      Text
-	  Here the syntax puts the target ring first (maps in M2 generally go from right to left!)
+	  Here the syntax puts the target ring first (maps in {\em Macaulay2} generally go from right to left!)
 	  The last entry is a list of the elements to which to send the variables of the source ring.
 	  The ideal we want is the kernel of this map:
      Example
@@ -250,7 +255,7 @@ Description
      Example
 	  hilbertPolynomial(R/I, Projective => false)
      Text
-	  In this the construction Projective => false is the way that M2 specifies
+	  In this the construction Projective => false is the way that {\em Macaulay2} specifies
 	  options to functions. The form we used first could also have been written
      Example
 	  hilbertPolynomial(R/I, Projective => true)
@@ -418,7 +423,7 @@ Description
      Code
      	  SUBSECTION "Defining functions and loading packages"
      Text
-	  It is easy to define your own functions in M2, and this
+	  It is easy to define your own functions in {\em Macaulay2}, and this
 	  can save a lot of typing. Functions are defined with the 
 	  symbol ->. For example, the famous Collatz Conjecture
 	  (also called the "hailstone problem") asks
@@ -540,7 +545,7 @@ Description
      Example
 	  S^{-2,-3} 
      Text
-	  is the M2 notation
+	  is the {\em Macaulay2} notation
 	  for $S(-2)\oplus S(-2)$.
      Example
 	  S = kk[x,y]
