@@ -141,3 +141,4 @@ mult = (f1, f2) ->
   if d1 <= d2 then act(giambelli f1, f2) else act(giambelli f2, f1)
 );
 
+s_{2,1}^2
