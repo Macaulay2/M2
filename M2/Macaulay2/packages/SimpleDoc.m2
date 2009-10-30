@@ -124,6 +124,7 @@ toDoc = (text) -> (
      -- perform translations to 'document' format
      -- text is a string
      text = lines text;
+     text = select(text, l -> not match("^--",l));
      t := apply(text, indentationLevel);
      text = apply(t, last);
      indents := apply(t, first);
