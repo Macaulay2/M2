@@ -143,6 +143,8 @@ vars GeneralOrderedMonoid := M -> M.generators
 degreesMonoid GeneralOrderedMonoid := Monoid => M -> if M.?degreesMonoid then M.degreesMonoid else error "no degrees monoid present"
 degreesRing GeneralOrderedMonoid := Monoid => M -> if M.?degreesRing then M.degreesRing else error "no degrees ring present"
 
+GeneralOrderedMonoid_* := M -> generators M
+
 standardForm(MonoidElement) := (m) -> new HashTable from rawSparseListFormMonomial raw m
 exponents(MonoidElement) :=
 listForm(MonoidElement) := (m) -> (
