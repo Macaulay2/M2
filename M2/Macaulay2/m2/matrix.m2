@@ -214,11 +214,14 @@ ggConcatBlocks = (tar,src,mats) -> (			    -- we erase this later
      then f = map(target f, source f, f, Degree => degree mats#0#0);
      f)
 
-sameringMatrices = mats -> apply(mats,
-     m -> promote(m,try ring sum apply(mats, m -> 0_(ring m)) else error "expected matrices over compatible rings"))
+sameringMatrices = mats -> (
+     if sameresult(ring,mats) then mats else (
+     	  mats = apply(mats, m -> promote(m,try ring sum apply(toList mats, m -> 0_(ring m)) else error "expected matrices over compatible rings"));
+     	  mats))
 
 directSum Matrix := f -> Matrix.directSum (1 : f)
 Matrix.directSum = args -> (
+     args = sameringMatrices args;
      R := ring args#0;
      if not all(args, f -> ring f === R) then error "expected matrices all over the same ring";
      new Matrix from {
