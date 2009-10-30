@@ -13,6 +13,13 @@ document {
      Key => "changes, 1.3.1",
      UL {
 	  LI { "major improvements and additions:",
+	       UL {
+		    LI { "packages newly included:",
+			 UL {
+			      TO "NumericalAlgebraicGeometry::NumericalAlgebraicGeometry"
+			      }
+			 }
+		    }
 	       },
 	  LI { "functionality added or improved:",
 	       UL {
@@ -24,6 +31,10 @@ document {
 			 strategy is the default in this case.
 			 Additionally, pfaffians over such rings are now
 			 declared as not implemented."
+			 },
+		    LI {
+			 "Matrices over different rings can now be joined together (see ", TO (symbol |,Matrix,Matrix), ",
+			 ", TO (symbol ||,Matrix,Matrix), ", and ", TO (symbol ++,Matrix,Matrix), ")."
 			 }
 		    }
 	       },
