@@ -38,7 +38,7 @@ newPackage("GraphicalModels",
 ------------------------------------------
 
 
-export {makeGraph, makeDiGraph, displayGraph, localMarkovStmts, globalMarkovStmts, pairMarkovStmts,
+export {graph, diGraph, displayGraph, localMarkovStmts, globalMarkovStmts, pairMarkovStmts,
        markovRing, marginMap, hideMap, markovMatrices, markovIdeal, writeDotFile, removeRedundants, 
        gaussRing, gaussMinors, gaussIdeal, gaussTrekIdeal, Graph, DiGraph}
      --  descendents, nondescendents, parents, children, removeNodes,neighbors, nonneighbors
@@ -113,34 +113,36 @@ exportMutable {dotBinary,jpgViewer}
 DiGraph = new Type of HashTable
      -- a directed graph is a hash table in the form:
      -- { A => set {B,C,...}, ...}, where there are edges A->B, A->C, ...
-     -- and A,B,C are integers.  The nodes of the graph must be 1,2,...,N.
+     -- and A,B,C are integers.  
 
-Graph = new Type of HashTable     
+Graph = new Type of DiGraph   
      -- an undirected graph is a hash table in the form { A => set {B,C, ...}, 
-     -- where A < B, C, etc. and the edges are {A,B}, {A,C}.  Since C is not 
-     -- less than A, C => {A} should not appear and does not make sense. The 
-     -- nodes of the graph must be 1,2,...,N. 
+     -- where the set consists of the neighbors of A. 
 
-makeDiGraph = method()
-makeDiGraph List := (g) -> (
-     -- Input:  A list of lists.  The first list has key 1, the second key 2, etc.  
-     -- Output:  A hashtable that can be interpreted as either a directed graph or 
-     -- an undirected graph.  However, for undirected graphs a key A only points to 
-     -- nodes larger than that.  
+graph = method()
+graph List := (g) -> (
+     -- Input:  A list of lists.  The first list is the names of the nodes, the second 
+     -- list is a list of lists giving the neighbors for each node.
+     -- Output:  A hashtable with keys the names of the nodes with the 
+     -- children/neighbors assigned. 
      h := new MutableHashTable;
-     scan(#g, i -> h#(i+1) = set g#i);
-     new DiGraph from h)
-
-makeGraph = method()
-makeGraph List := (g) -> (
-     -- Input:  A list of lists.  The first list has key 1, the second key 2, etc.  
-     -- Output:  A hashtable that can be interpreted as either a directed graph or 
-     -- an undirected graph.  However, for undirected graphs a key A only points to 
-     -- nodes larger than that.  
-     h := new MutableHashTable;
-     scan(#g, i -> h#(i+1) = set g#i);
+     vertices := g#0;
+     edges := g#1;
+     apply(#vertices, i -> h#(vertices#i) = set edges#i);
      new Graph from h)
 
+diGraph = method()
+diGraph List := (g) -> (
+     -- Input:  A list of lists.  The first list is the names of the nodes, the second 
+     -- list is a list of lists giving the children for each node.
+     -- Output:  A hashtable with keys the names of the nodes with the 
+     -- children assigned. 
+     h := new MutableHashTable;
+     vertices := g#0;
+     children := g#1;
+     apply(#vertices, i -> h#(vertices#i) = set children#i);
+     new DiGraph from h)
+     
 -----------------------------
 -- Graph Display Functions --
 -----------------------------
@@ -150,6 +152,9 @@ dotBinary = "dot"
 -- jpgViewer = "/usr/bin/open"
 jpgViewer = "open"
 
+--simpleNeighbors := H -> (
+     
+
 writeDotFile = method()
 writeDotFile(String, Graph) := (filename, G) -> (
      fil := openOut filename;
@@ -158,11 +163,11 @@ writeDotFile(String, Graph) := (filename, G) -> (
      for i from 0 to #q-1 do (
 	  e := q#i;
 	  fil << "  " << toString e#0;
-	  if #e#1 === 0 then
+	  if #e#1 === 0 or all(q, i->member(e#0,q#i#1)) then
 	    fil << ";" << endl
 	  else (
 	    fil << " -- {";
-	    links := toList e#1;
+	    links := for i to #e#1 list (if any(q, i -> member(e#1#i, q#i#1)) then continue);--midprocess
 	    for j from 0 to #links-1 do
 		 fil << toString links#j << ";";
      	    fil << "};" << endl;
@@ -199,22 +204,7 @@ runcmd := cmd -> (
 
 displayGraph = method()
 
-displayGraph(String,String,Graph) := (dotfilename,jpgfilename,G) -> (
-     writeDotFile(dotfilename,G);
-     runcmd(dotBinary | " -Tjpg "|dotfilename | " -o "|jpgfilename);
-     runcmd(jpgViewer | " " | jpgfilename);
-     )
-displayGraph(String,Graph) := (dotfilename,G) -> (
-     jpgfilename := temporaryFileName() | ".jpg";
-     displayGraph(dotfilename,jpgfilename,G);
-     --removeFile jpgfilename;
-     )
-displayGraph Graph := (G) -> (
-     dotfilename := temporaryFileName() | ".dot";
-     displayGraph(dotfilename,G);
-     --removeFile dotfilename;
-     )
-displayGraph(String, String, DiGraph) := (dotfilename,jpgfilename,G) -> (
+displayGraph(String,String,DiGraph) := (dotfilename,jpgfilename,G) -> (
      writeDotFile(dotfilename,G);
      runcmd(dotBinary | " -Tjpg "|dotfilename | " -o "|jpgfilename);
      runcmd(jpgViewer | " " | jpgfilename);
