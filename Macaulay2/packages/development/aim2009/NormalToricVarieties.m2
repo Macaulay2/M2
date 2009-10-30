@@ -203,7 +203,7 @@ isSimplicial NormalToricVariety := X -> (
 isSmooth NormalToricVariety := X -> (
      if not X.cache.?smooth then (
      	  V := transpose matrix rays X;
-     	  X.cache.smooth = all(max X, s -> #s == rank V_s and ideal 1 == minors(#s,lift(V_s,ZZ)));
+     	  X.cache.smooth = all(max X, s -> #s == rank V_s and 1 == minors(#s,V_s));
 	  if X.cache.smooth == true then X.cache.simplicial = true);
      X.cache.smooth)
 
@@ -1105,7 +1105,6 @@ document {
      EXAMPLE lines ///
 	  code(isSmooth,NormalToricVariety)
 	  ///,
---     Caveat => {"This assumes that X is smooth."}
      SeeAlso => {(rays,NormalToricVariety), (max, NormalToricVariety), 
 	  isSimplicial}
      }     
