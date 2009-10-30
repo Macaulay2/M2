@@ -32,6 +32,8 @@ export isNegative(x:ZZ):bool := isNegative0(x);
 export isEven    (x:ZZ):bool := Ccode(bool, "mpz_even_p((__mpz_struct *)", x, ")");
 export isOdd     (x:ZZ):bool := Ccode(bool, "mpz_odd_p((__mpz_struct *)", x, ")");
 
+export isUShort(x:ZZ):bool := 0 != Ccode(int, "mpz_fits_ushort_p((__mpz_struct *)", x, ")");
+export toUShort(x:ZZ):ushort := ushort(Ccode(ulong, "mpz_get_ui((__mpz_struct *)", x, ")"));
 export isInt(x:ZZ):bool := 0 != Ccode(int, "mpz_fits_sint_p((__mpz_struct *)", x, ")");
 export toInt(x:ZZ):int  := int(Ccode(long, "mpz_get_si((__mpz_struct *)", x, ")"));
 export isLong(x:ZZ):bool := 0 != Ccode(int, "mpz_fits_slong_p((__mpz_struct *)", x, ")");
@@ -98,6 +100,8 @@ export toInteger(i:int):ZZ := (
 	  init(x);
 	  set(x,i);
 	  x));
+
+export toInteger(i:ushort):ZZ := toInteger(int(i));
 
 export toInteger(i:ulong):ZZ := (
      if i <= ulong(possmall)

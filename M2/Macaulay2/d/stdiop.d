@@ -15,9 +15,9 @@ use strings;
 use stdio;
 use ctype;
 
-export Position := {filename:string, line:ushort, column:ushort, loadDepth:uchar};
+export Position := {filename:string, line:ushort, column:ushort, loadDepth:ushort};
 export (s:Position) === (t:Position) : bool := s == t || s.filename === t.filename && s.line == t.line && s.column == t.column;
-export dummyPosition := Position("{*dummy file name*}",ushort(0),ushort(0),uchar(loadDepth));
+export dummyPosition := Position("{*dummy file name*}",ushort(0),ushort(0),loadDepth);
 shorten(s:string):string := (				    -- purely textual
      -- shorten filenames like "/a/b/c/../d////e/f" to "/a/b/d/e/f"
      while true do (
@@ -148,20 +148,19 @@ export printErrorMessage(position:Position,message:string):void := (
      );
 export printWarningMessage(position:Position,message:string):void := printMessage(position,"warning: "+message);
 export printErrorMessage(filename:string,line:ushort,column:ushort,message:string):void := (
-     printErrorMessage(Position(filename,line,column,uchar(0)), message);
+     printErrorMessage(Position(filename,line,column,ushort(0)), message);
      );
 export (o:file) << (p:(null or Position)):file := (
      when p is null do o is w:Position do o << w
      );
-export copy(p:Position):Position := Position(
-     p.filename, p.line, p.column, uchar(loadDepth));
-export PosFile := {file:file, lastchar:int, pos:Position};
-export dummyPosFile := PosFile(dummyfile,0,dummyPosition);
+export copy(p:Position):Position := Position(p.filename, p.line, p.column, loadDepth);
+export PosFile := {file:file, lastchar:int, filename:string, line:ushort, column:ushort};
+export position(file:PosFile):Position := Position(file.filename,file.line,file.column,loadDepth);
+export dummyPosFile := PosFile(dummyfile,0,"{*dummy file name*}",ushort(0),ushort(0));
 export fileError(f:PosFile):bool := fileError(f.file);
 export clearFileError(f:PosFile):void := clearFileError(f.file);
 export fileErrorMessage(f:PosFile):string := fileErrorMessage(f.file);
-export makePosFile(o:file):PosFile := PosFile(o, 0,
-     Position(o.filename, ushort(1), ushort(0), uchar(loadDepth)));
+export makePosFile(o:file):PosFile := PosFile(o, 0, o.filename, ushort(1), ushort(0));
 export peek(o:PosFile, offset:int):int := (
      i := 0;
      prevchar := o.lastchar;
@@ -185,7 +184,7 @@ export setprompt(o:PosFile,prompt:function():string):void := setprompt(o.file,pr
 export unsetprompt(o:PosFile):void := unsetprompt(o.file);
 export openPosIn(filename:string):(PosFile or errmsg) := (
      when openIn(filename)
-     is f:file do (PosFile or errmsg)(PosFile(f,0,Position( absoluteFilename(f.filename), ushort(1),ushort(0),uchar(loadDepth))))
+     is f:file do (PosFile or errmsg)(PosFile(f,0,absoluteFilename(f.filename), ushort(1),ushort(0)))
      is s:errmsg do (PosFile or errmsg)(s)
      );
 roundup(n:uchar,d:int):uchar := uchar(((int(n)+d-1)/d)*d);
@@ -196,14 +195,14 @@ export getc(o:PosFile):int := (
      if c == ERROR || c == EOF then return c;
      o.lastchar = c;
      if c == int('\n') then (
-	  o.pos.line = o.pos.line + 1;
-	  o.pos.column = ushort(0);
+	  o.line = o.line + 1;
+	  o.column = ushort(0);
 	  )
      else if c == int('\t') then (
-	  o.pos.column = ushort(((int(o.pos.column)+8)/8)*8);
+	  o.column = ushort(((int(o.column)+8)/8)*8);
 	  )
      else (
-	  o.pos.column = o.pos.column + 1;
+	  o.column = o.column + 1;
 	  );
      c );
 export flush(o:PosFile):void := flushinput(o.file);

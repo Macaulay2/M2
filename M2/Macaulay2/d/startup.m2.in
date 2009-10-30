@@ -4,7 +4,7 @@
 -- this file gets incorporated into the executable file bin/M2 as the string 'startupString'
 -- we want to ignore the --datarootdir setting, whatever that means, so here we we mention it: @datarootdir@
 
-errorDepth = 0						    -- without this, we may see no error messages the second time through
+interpreterDepth = loadDepth = errorDepth = 0
 debuggingMode = true
 stopIfError = false
 gotarg := arg -> any(commandLine, s -> s == arg)
@@ -495,8 +495,6 @@ action2 := hashTable {
 scriptCommandLine = {}
 
 processCommandLineOptions := phase0 -> (			    -- 3 passes
-     ld := loadDepth;
-     loadDepth = loadDepth + 1;
      phase = phase0;
      argno = 1;
      if commandLine#?1 and commandLine#1 == "--script" then (
@@ -532,7 +530,6 @@ processCommandLineOptions := phase0 -> (			    -- 3 passes
 		    );
 	       argno = argno+1;
 	       );
-	  loadDepth = ld;
 	  ))
 
 if firstTime then processCommandLineOptions 1
@@ -586,7 +583,6 @@ dump = () -> (
      runEndFunctions();
      dumpdataFile = toAbsolutePath fn;					    -- so we know after "loaddata" where we put the file
      collectGarbage();
-     interpreterDepth = 0;
      stderr << "--dumping to " << fntmp << endl;
      dumpdata fntmp;
      stderr << "--success" << endl;
@@ -648,7 +644,9 @@ processCommandLineOptions 2				    -- just for path to core files and packages
 
 path = join(initialPath, path)
 
+loadDepth = 1
 if firstTime and not nosetup then loadSetup()
+loadDepth = 0
 
 -- remove the Core private dictionary -- it was added by "debug" above
 -- and install a local way to use private global symbols
@@ -660,20 +658,24 @@ if not nosetup then (
      core = nm -> value getGlobalSymbol nm
      )
 
+loadDepth = 3
 processCommandLineOptions 3
+loadDepth = 0
 (core "runStartFunctions")()
 
-errorDepth = loadDepth
 if class Core =!= Symbol and not core "noinitfile" then (
      -- the location of init.m2 is documented in the node "initialization file"
      tryLoad ("init.m2", applicationDirectory() | "init.m2");
      );
 
+loadDepth = 3
 processCommandLineOptions 4
-interpreterDepth = 0
-errorDepth = loadDepth+1      -- anticipate loadDepth being incremented
+loadDepth = 0
+
 n := 0
-n = interpreter()	      -- loadDepth is incremented by commandInterpreter
+errorDepth = loadDepth = 3
+n = interpreter()
+loadDepth = 0
 if class n === ZZ and 0 <= n and n < 128 then exit n
 if n === null then exit 0
 debuggingMode = false

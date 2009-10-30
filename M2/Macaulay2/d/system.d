@@ -52,7 +52,7 @@ import getcwd():string;
 import dumpdata(filename:string):int;
 import loaddata(notify:int,filename:string):int;
 import errfmt(filename:string,lineno:int,colno:int,loaddepth:int):string;
-import loadDepth:int;
+import loadDepth:ushort;
 import dbmopen(filename:string,write:bool):int;
 import dbmerror():string;
 import dbmclose(handle:int):int;

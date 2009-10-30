@@ -98,7 +98,7 @@ readeval4(file:TokenFile,printout:bool,dictionary:Dictionary,returnLastvalue:boo
 	       );
 	  clearAllFlags();
 	  if debugLevel == 123 then (
-	       stderr << "-- file position: " << file.posFile.pos << endl;
+	       stderr << "-- file: " << file.posFile.filename << ":" << file.posFile.line << ":" << file.posFile.column << endl;
 	       c := peek(file.posFile.file);
 	       stderr << "-- next character: ";
 	       if c == int('\n') then stderr << "NEWLINE" else if c >= 0 then stderr << char(c) else stderr << c;
@@ -367,7 +367,7 @@ setupfun("simpleLoad",load);
 
 currentLineNumber(e:Expr):Expr := (
      when e is s:Sequence do
-     if length(s) == 0 then Expr(toInteger(int(currentPosFile.pos.line)))
+     if length(s) == 0 then Expr(toInteger(int(currentPosFile.line)))
      else WrongNumArgs(0)
      else WrongNumArgs(0));
 setupfun("currentLineNumber",currentLineNumber);
@@ -435,8 +435,8 @@ export topLevel():bool := (
 commandInterpreter(dc:DictionaryClosure):Expr := loadprint("-",dc,false);
 commandInterpreter(f:Frame):Expr := commandInterpreter(newStaticLocalDictionaryClosure(localDictionaryClosure(f)));
 commandInterpreter(e:Expr):Expr := (
-     saveLoadDepth := loadDepth;
-     setLoadDepth(loadDepth+1);
+     --saveLoadDepth := loadDepth;
+     --setLoadDepth(loadDepth+1);
      incrementInterpreterDepth();
        ret := 
        when e is s:Sequence do (
@@ -453,7 +453,7 @@ commandInterpreter(e:Expr):Expr := (
        is s:SpecialExpr do commandInterpreter(s.e)
        else WrongArg("a function, symbol, dictionary, pseudocode, or ()");
      decrementInterpreterDepth();
-     setLoadDepth(saveLoadDepth);
+     --setLoadDepth(saveLoadDepth);
      ret);
 setupfun("commandInterpreter",commandInterpreter);
 
@@ -558,7 +558,7 @@ export process():void := (
      stderr.outisatty =   0 != isatty(2) ;
      setstopIfError(false);				    -- this is usually true after loaddata(), we want to reset it
      sethandleInterrupts(true);
-     setLoadDepth(loadDepth);				    -- loaddata() in M2lib.c increments it, so we have to reflect that at top level
+     -- setLoadDepth(loadDepth);				    -- loaddata() in M2lib.c increments it, so we have to reflect that at top level
      everytimeRun();
      -- we don't know the right directory; calls commandInterpreter and eventually returns:
      ret := readeval(stringTokenFile(startupFile,startupString),false,false);

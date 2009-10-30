@@ -253,6 +253,10 @@ newPackage(String) := opts -> (title) -> (
      setAttribute(newpkg#"private dictionary",PrintNames,title | "#\"private dictionary\"");
      debuggingMode = opts.DebuggingMode;		    -- last step before turning control back to code of package
      if title =!= "SimpleDoc" and title =!= "Core" then needsPackage "SimpleDoc";
+     if not debuggingMode then (
+	  newpkg.loadDepth = loadDepth;
+	  loadDepth = 2;
+	  );
      newpkg)
 
 export = method(Dispatch => Thing)
@@ -386,6 +390,10 @@ endPackage String := title -> (
      remove(pkg,"previous currentPackage");
      debuggingMode = pkg#"old debuggingMode"; remove(pkg,"old debuggingMode");
      if notify then stderr << "--package \"" << pkg << "\" loaded" << endl;
+     if pkg.?loadDepth then (
+	  loadDepth = pkg.loadDepth;
+	  remove(pkg,loadDepth);
+	  );
      pkg)
 
 package = method (Dispatch => Thing)

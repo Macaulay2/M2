@@ -857,11 +857,11 @@ int system_loaddata(int notify, M2_string datafilename){
      volatile int fence0 = FENCE;
      sigjmp_buf save_loaddata_jump;
      volatile int fence1 = FENCE;
-     int loadDepth = system_loadDepth;
+     /* int loadDepth = system_loadDepth; */
      memcpy(save_loaddata_jump,loaddata_jump,sizeof(loaddata_jump));
      if (ERROR == loaddata(notify,datafilename_s)) return ERROR;
      memcpy(loaddata_jump,save_loaddata_jump,sizeof(loaddata_jump));
-     system_loadDepth = loadDepth + 1;
+     /* system_loadDepth = loadDepth + 1; */
      if (fence0 != FENCE || fence1 != FENCE) {
        putstderr("--internal error: fence around loaddata longjmp save area on stack destroyed, aborting");
        abort();

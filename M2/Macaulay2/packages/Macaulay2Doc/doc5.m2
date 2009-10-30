@@ -154,18 +154,18 @@ document {
 document {
      Key => "errorDepth",
      Headline => "set the error printing depth",
-     TT "errorDepth i", " -- sets the error depth to ", TT "i", ", which should be
+     TT "errorDepth = i", " -- sets the error depth to ", TT "i", ", which should be
      a small integer, returning the old value.",
-     BR{},
-     TT "errorDepth()", " -- returns the current error depth.",
-     PARA{},
-     "During the backtrace after an error message, a position in interpreted
-     code is displayed only if the load depth was at least as large at the
-     time the code was parsed as the error depth is now.  Typically, the
-     error depth is set so that messages from code pre-interpreted and
-     reloaded with ", TO "loaddata", " will not appear in the backtrace.",
-     PARA{},
-     "To increase the size of the stack trace, reduce the ", TT "errorDepth", ".",
+     PARA{
+	  "During the backtrace after an error message, a position in interpreted
+	  code is displayed only if the load depth was at least as large at the
+	  time the code was parsed as the error depth is now.  Typically, the
+	  error depth is set so that messages from code pre-interpreted and
+	  reloaded with ", TO "loaddata", " will not appear in the backtrace.",
+	  },
+     PARA{
+     	  "To increase the size of the stack trace for debugging, reduce the ", TT "errorDepth", ".",
+	  },
      SeeAlso => { "loadDepth" }
      }
 
@@ -174,12 +174,19 @@ document {
      Headline => "the load depth",
      TT "loadDepth = i", " -- sets the load depth to ", TT "i", ", which should be
      a small integer, returning the old value.",
-     PARA{},
-     "During the backtrace after an error message, a position in interpreted
-     code is displayed only if the load depth was at least as large at the
-     time the code was parsed as the error depth is now.  The load depth 
-     is incremented each time ", TO "loaddata", " is run.",
-     SeeAlso => { "errorDepth" }
+     PARA{
+	  "During the backtrace after an error message, a position in interpreted
+	  code is displayed only if the load depth was at least as large at the
+	  time the code was parsed as the error depth is now.  The load depth 
+	  is set to 0 initially, is set to 1 when the files of the ", TO "Core::Core", "
+	  package are being loaded, is set to 2 while loading a package with the ", TO "debuggingMode", " option
+	  set to ", TO "false", ", and is set to 3 for user input."
+	  },
+     PARA {
+	  "The value of ", TO "loadDepth", " active when code is parsed is referred to later when
+	  error messages are being handled: see ", TO "errorDepth", "."
+	  },
+     Caveat => { "The user should not attempt to adjust the value of ", TO "loadDepth", "." },
      }
 
 document {
