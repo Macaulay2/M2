@@ -241,11 +241,57 @@ monodromyBreakupPHC WitnessSet := o -> (W) -> (
 	  )
      )
 
+cascadePHC = method()
+cascadePHC Ideal := (I) -> (
+     -- returns a list of WitnessSet's -- or at it will...
+     infile := temporaryFileName() | 
+     "PHCmonodromy";
+     targetfile := temporaryFileName() | 
+     "PHCtarget";
+     batchfile := temporaryFileName() | 
+     "PHCbat";
+     solsfile :=  temporaryFileName() | 
+     "PHCsolfile";
+     {infile, targetfile, solsfile, batchfile} / (f->if fileExists f then removeFile f);
+     systemToFile(I_*, infile);
+     -- making batch file (for phc -c)
+     bat := openOut batchfile;
+     bat << "0" << endl;
+     bat << "y" << endl;
+     bat << infile << endl; -- name of input file
+     bat << targetfile << endl; -- name of output file
+     bat << numgens ring I - 1 << endl;
+     bat << "n" << endl;
+     bat << "0" << endl;
+     close bat;
+     compStartTime := currentTime();      
+     run(PHCexe|" -c <"|batchfile|" >phc_session.log");
+     if DBG>0 then << "PHCpack computation time: " << currentTime()-compStartTime << endl;
+     -- Now we have to grab the files and get the points
+     i := numgens ring I - 1;
+     filnames := while (
+	  fil := (targetfile|"_sw"|i);
+     	  i >=0 and fileExists fil
+	  ) list i => fil do i=i-1;
+     for ff in filnames list (
+	  (j,f) := toSequence ff;
+     	  --  1. read file, and make sure that there are solutions.  If not, return null
+     	  S := get f;
+     	  if not match("THE SOLUTIONS", S) 
+	  then null
+	  else (
+     	   --  2. now clean the equations
+     	   if fileExists solsfile then removeFile solsfile;
+     	   run(PHCexe|" -z "|f|" "|solsfile);
+	   ff => parseSolutions(solsfile, ring I)
+	  ))
+     )
+
 -- service functions ------------------------------------------
 systemToFile = method(TypicalValue => Nothing)
 systemToFile (List,String) := (F,name) -> (
      file := openOut name;
-     file << #F << endl;
+     file << #F << " " << numgens ring F#0 << endl;
      scan(F, f->( 
      	       L := toExternalString f;
      	       L = replace("ii", "I", L);
@@ -352,8 +398,32 @@ L = trim intersect(I,J)
 RC = CC[gens R]
 L = sub(L,RC)
 W = witnessSet L
-W1 = generalEquations W
-W2 = addSlackVariables W1
+--W1 = generalEquations W
+--W2 = addSlackVariables W1
+W3s = monodromyBreakupPHC W
+apply(W3s, points)
+W3s/degree
+peek W2
+see ideal W2
+peek oo
+///
+
+///
+-- cascade interface
+restart
+debug loadPackage "NumericalAlgebraicGeometry"
+
+R = QQ[x,y,z,w]
+I = ideal"x+y-2,y2-z+3"
+J = ideal"x2+y2+z2-1,xy-z2,x2+w2"
+L = trim intersect(I,J)
+RC = CC[gens R]
+L = sub(L,RC)
+cascadePHC L
+
+W = witnessSet L
+--W1 = generalEquations W
+--W2 = addSlackVariables W1
 W3s = monodromyBreakupPHC W
 apply(W3s, points)
 W3s/degree
