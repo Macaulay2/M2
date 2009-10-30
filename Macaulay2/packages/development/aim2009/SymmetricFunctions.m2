@@ -1,3 +1,17 @@
+newPackage(
+     "SymmetricFunctions",
+     version => "0.1",
+     Date => "October 30, 2009",
+     Authors => { {Name => "Anders Buch"} },
+     Headline => "symmetric functions",
+     DebuggingMode => false
+     )
+
+export {
+     SymmetricFunction,
+     symmetricFunction
+     }
+
 SymmetricFunction = new Type of HashTable;
 
 symmetricFunction = (lst) -> new SymmetricFunction from lst;
