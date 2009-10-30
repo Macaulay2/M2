@@ -1,6 +1,6 @@
 newPackage(
      "SymmetricFunctions",
-     version => "0.1",
+     Version => "0.1",
      Date => "October 30, 2009",
      Authors => { {Name => "Anders Buch"} },
      Headline => "symmetric functions",
