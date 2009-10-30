@@ -66,10 +66,8 @@ toExpression SymmetricFunction := (lc) ->
 
 pieriSet0 = (i, la, cols) ->
 (
-  if i==0 then
-    return {la}
-  else if #la == 0 then
-    return {{i}};
+  if i==0 then return {la};
+  if #la == 0 then return {{i}};
   flatten(apply(toList(max(la_0,i)..min(la_0+i,cols)), j ->
     apply(pieriSet(i-j+la_0,la_(toList(1..#la-1)),la_0), x->flatten({j,x})))
   )
@@ -92,10 +90,8 @@ local numHVars;
 
 giambelliPart0 = (la) ->
 (
-  if #la == 0 then
-    return 1
-  else if #la == 1 then
-    return h_(la_0);
+  if #la == 0 then return 1;
+  if #la == 1 then return h_(la_0);
   i  := la_0;
   mu := la_(toList(1..#la-1));
   h_i*giambelliPart(mu) -
