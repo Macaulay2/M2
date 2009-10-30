@@ -8,8 +8,8 @@ newPackage(
      )
 
 export {
-     SymmetricFunction,
-     symmetricFunction
+     "SymmetricFunction",
+     "symmetricFunction"
      }
 
 SymmetricFunction = new Type of HashTable;
@@ -32,8 +32,10 @@ SymmetricFunction ^ ZZ := (f,n) ->
 
 net SymmetricFunction := f -> (net toExpression(f));
 
-SymmetricFunctionSymbol = new Type of Symbol;
-s = new SymmetricFunctionSymbol from symbol s;
+SymmetricFunctionSymbol = new Type of List
+s = new SymmetricFunctionSymbol from {symbol s};
+net SymmetricFunctionSymbol := s -> net s#0
+toString SymmetricFunctionSymbol := s -> toString s#0
 SymmetricFunctionSymbol _ ZZ := (ss,i) ->
   symmetricFunction {{i}=>1};
 SymmetricFunctionSymbol _ List := (ss,la) -> 
