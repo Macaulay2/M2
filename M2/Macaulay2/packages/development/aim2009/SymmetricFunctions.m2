@@ -8,8 +8,11 @@ newPackage(
      )
 
 export {
-     "SymmetricFunction",
-     "symmetricFunction"
+     SymmetricFunction,
+     symmetricFunction,
+     toExpression,
+     pieri,
+     giambelli
      }
 
 SymmetricFunction = new Type of HashTable;
@@ -23,7 +26,7 @@ ZZ * SymmetricFunction := (a,f) -> act(a_(ring h_1), f);
 
 SymmetricFunction * ZZ := (f,a) -> act(a_(ring h_1), f);
 
-SymmetricFunction * SymmetricFunction := (f1,f2) -> act(giambelli(f1),f2);
+SymmetricFunction * SymmetricFunction := (f1,f2) -> mult(f1,f2);
 
 SymmetricFunction - SymmetricFunction := (f1,f2) -> f1 + (-1)*f2;
 
@@ -93,6 +96,9 @@ giambelliPart0 = (la) ->
     sum(apply(pieriSet(i,mu,infinity) - set {la}, giambelliPart))
 );
 
+local giambelliPart;
+local numHVars;
+
 numHVars = 0;
 setNumHVars := (n) ->
 (
@@ -126,5 +132,12 @@ act = (ex, lc) ->
   ex0 := sub(ex, {h_i => 0});
   ex1 := (ex - ex0) // h_i;
   select(merge(pieri(i, act(ex1, lc)), act(ex0, lc), plus), x -> (x != 0))
+);
+
+mult = (f1, f2) ->
+(
+  d1 := max(apply(keys f1, sum));
+  d2 := max(apply(keys f2, sum));
+  if d1 <= d2 then act(giambelli f1, f2) else act(giambelli f2, f1)
 );
 
