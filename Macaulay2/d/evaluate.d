@@ -37,7 +37,7 @@ export backtrace := true;
 stepCount := -1;
 microStepCount := -1;
 lastCode := dummyCode;
-lastCodePosition := Position("",ushort(0),ushort(0),uchar(0));
+lastCodePosition := Position("",ushort(0),ushort(0),ushort(0));
 export eval(c:Code):Expr;
 export applyEE(f:Expr,e:Expr):Expr;
 export evalAllButTail(c:Code):Code := while true do c = (
@@ -1204,7 +1204,7 @@ export clearSteppingFlag():void := (
      );
 steppingFurther(c:Code):bool := steppingFlag && (
      p := codePosition(c);
-     if p == dummyPosition || int(p.loadDepth) < errorDepth then return true;
+     if p == dummyPosition || p.loadDepth < errorDepth then return true;
      if stepCount >= 0 then (
 	  if lastCodePosition.filename != p.filename
 	  || lastCodePosition.line != p.line
@@ -1242,7 +1242,7 @@ handleError(c:Code,e:Expr):Expr := (
 	  p := codePosition(c);
 	  clearAllFlags();
 	  clearAlarm();
-	  if int(p.loadDepth) >= errorDepth && !err.position === p then (
+	  if p.loadDepth >= errorDepth && !err.position === p then (
 	       oldReportFrame := err.frame;
 	       err.frame = noRecycle(localFrame);
 	       err.position = p;
@@ -1314,9 +1314,11 @@ export eval(c:Code):Expr := (
 		    when z is Error do z
 		    else ff.fn(z,ff.env))
 	       is s:SpecialExpr do (
-		    z := eval(b.rhs);
-		    when z is Error do z
-		    else applyEE(s.e,z))
+		    when s.e
+		    is fc:FunctionClosure do applyFCC(fc,b.rhs)
+		    is ff:CompiledFunction do ( z := eval(b.rhs); when z is Error do z else ff.fn(z))
+		    is ff:CompiledFunctionClosure do ( z := eval(b.rhs); when z is Error do z else ff.fn(z,ff.env))
+     	       	    else binarymethod(left,b.rhs,AdjacentS))
 	       is Error do left
 	       else binarymethod(left,b.rhs,AdjacentS))
 	  is m:functionCode do return Expr(FunctionClosure(noRecycle(localFrame),m))

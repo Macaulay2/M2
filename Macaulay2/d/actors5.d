@@ -75,10 +75,7 @@ dumpdatafun(e:Expr):Expr := (
 	  stdin.insize = 0;
 	  stdin.eof = false;
 	  stdin.inindex = 0;
-	  olderrorDepth := errorDepth;
-	  errorDepth = loadDepth + 1;
 	  r := dumpdata(s);
-	  errorDepth = olderrorDepth;
 	  stdin.insize = o;
 	  stdin.eof = p;
 	  stdin.inindex = q;
@@ -1875,11 +1872,11 @@ export setDebuggingMode(b:bool):void := (
      debuggingMode = b;
      setGlobalVariable(debuggingModeS,toExpr(b));
      );
-export setLoadDepth(b:int):void := (
+export setLoadDepth(b:ushort):void := (
      loadDepth = b;
      setGlobalVariable(loadDepthS,toExpr(b));
      );
-export setErrorDepth(b:int):void := (
+export setErrorDepth(b:ushort):void := (
      errorDepth = b;
      setGlobalVariable(errorDepthS,toExpr(b));
      );
@@ -1930,11 +1927,17 @@ store(e:Expr):Expr := (			    -- called with (symbol,newvalue)
 		    then return buildErrorPacket("value for defaultPrecision out of range");
 		    defaultPrecision = prec;
 		    e)
+	       else if sym === loadDepthS then (
+		    if !isUShort(i) then return buildErrorPacket("loadDepth: expected integer in range 0 .. 255");
+		    loadDepth = toUShort(i);
+		    e)
+	       else if sym === errorDepthS then (
+		    if !isUShort(i) then return buildErrorPacket("errorDepth: expected integer in range 0 .. 255");
+		    errorDepth = toUShort(i);
+		    e)
 	       else if isInt(i) then (
 		    n := toInt(i);
-		    if sym === loadDepthS then (loadDepth = n; e)
-		    else if sym === errorDepthS then (errorDepth = n; e)
-		    else if sym === debugLevelS then (debugLevel = n; e)
+		    if sym === debugLevelS then (debugLevel = n; e)
 		    else if sym === engineDebugLevelS then (engineDebugLevel = n; e)
 		    else if sym === recursionLimitS then (recursionLimit = n; e)
 		    else if sym === lineNumberS then (lineNumber = n; e)

@@ -265,16 +265,16 @@ export TooManyArgs(name:string,m:int):Expr := (
      then buildErrorPacket(quoteit(name) + " expected at most 1 argument")
      else buildErrorPacket(quoteit(name) + " expected at most " 
 	  + tostring(m) + " arguments"));
-export errorDepth := 0;
+export errorDepth := ushort(0);
 export printErrorMessageE(c:Code,message:string):Expr := (
      p := codePosition(c);
-     if int(p.loadDepth) >= errorDepth
+     if p.loadDepth >= errorDepth
      then Expr(
 	  printError					    -- keep this in so "update" can emit error messages
 	  (Error(p,message,nullE,false,dummyFrame)))
      else buildErrorPacket(message));
 export printErrorMessageE(p:Position,message:string):Expr := ( -- for use when we have no code
-     if int(p.loadDepth) >= errorDepth
+     if p.loadDepth >= errorDepth
      then Expr(
 	  printError					    -- keep this in so "update" can emit error messages
 	  (Error(p,message,nullE,false,dummyFrame)))

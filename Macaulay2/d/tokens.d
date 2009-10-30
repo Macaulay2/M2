@@ -69,7 +69,7 @@ export Dictionary := {
      };
 export Token := {		-- a word, as encountered in the input
      word:Word,			--   the word
-     filename:string, line:ushort, column:ushort, loadDepth:uchar, -- position:Position, --   the location where it was encountered
+     filename:string, line:ushort, column:ushort, loadDepth:ushort, -- position:Position, --   the location where it was encountered
      dictionary:Dictionary,	--   the dictionary active at the time it was encountered
      entry:Symbol,     	  	--   the symbol table entry, found in the dictionary above, or one for wider lexical scope
      followsNewline:bool        --   whether it followed white space with a newline in it

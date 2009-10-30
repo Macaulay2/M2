@@ -58,13 +58,20 @@ document {
 	       UL {
 		    LI { "packages newly included:",
 			 UL {
-			      TO "NumericalAlgebraicGeometry::NumericalAlgebraicGeometry"
+			      TO "NumericalAlgebraicGeometry::NumericalAlgebraicGeometry",
+			      TO "BeginningMacaulay2::BeginningMacaulay2"
 			      }
 			 }
 		    }
 	       },
 	  LI { "functionality added or improved:",
 	       UL {
+		    LI {
+			 "The behavior of ", TO "loadDepth", " has been reworked, with the goal being to arrange for
+			 error messages, signalled by code in a package that has been loaded without debugging mode enabled
+			 (see ", TO "newPackage", " and ", TO "loadPackage", "), to appear to come from the user's code
+			 instead (when the filename, line number, and column number of the error are displayed)."
+			 },
 		    LI {
 			 "Fixed a bug: determinants and minors in
 			 rings over RR or CC would give wrong answers
