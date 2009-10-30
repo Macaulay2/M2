@@ -128,24 +128,28 @@ Description
      Example
 	  I_0
      Text
-	  is the first generator of I, and you can a list of the generators with
+	  is the first generator of I. You can list all the generators with:
      Example
 	  I_*
      Text
 
-	  You can define a module as a cokernel, kernel, or image
+	  You can define a module as a cokernel, kernel, image, or even subquotient:
      Example
-	  P=coker M     
-	  Q=image M
-	  R=kernel matrix"a,b,0;0,a,b"
+	  coker M     
+	  image M
+	  kernel matrix"a,b,0;0,a,b"
+	  N = matrix{{a,b},{b,c},{c,d}}
+	  (image M)/(image N)
+	  subquotient(M,N)
      Text
-	  Note the alternate syntax for defining a matrix, parallel to that for an ideal.
+	 Note that the matrix $N$ above was defined with an
+	 alternate syntax, which is parallel to the alternate syntax for @TO ideal@.
 
-	  Before going on, the reader might want to explore the many possibilities under
+	  Before going on, the reader might want to explore a bit. A good place to 
+	  start is the top of the documentation tree, which can be reached, for
+	  example, by typing:
      Code
-     	  EXAMPLE { PRE "viewHelp" }
-     Text
-	  and click on the {\em Macaulay2} link at the top. 
+     	  EXAMPLE { PRE "viewHelp Macaulay2Doc" }
      Code
      	 SUBSECTION "Properties of ideals and modules",
 	 HEADER4 "First steps; example with a monomial curve"
