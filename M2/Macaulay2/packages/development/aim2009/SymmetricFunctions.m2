@@ -8,32 +8,33 @@ newPackage(
      )
 
 export {
-     SymmetricFunction,
-     symmetricFunction,
-     toExpression,
-     pieri,
-     giambelli
+     "SymmetricFunction",
+     "symmetricFunction",
+     "toExpression",
+     "pieri",
+     "giambelli",
+     "act"
      }
 
 SymmetricFunction = new Type of HashTable;
 
 symmetricFunction = (lst) -> new SymmetricFunction from lst;
 
-SymmetricFunction + SymmetricFunction := (f1,f2) ->
-  select(merge(f1,f2, plus), la -> (la != 0));
+SymmetricFunction + SymmetricFunction := (lc1,lc2) ->
+  select(merge(lc1,lc2, plus), la -> (la != 0));
 
-ZZ * SymmetricFunction := (a,f) -> act(a_(ring h_1), f);
+ZZ * SymmetricFunction := (a,lc) -> act(a_(ring h_1), lc);
 
-SymmetricFunction * ZZ := (f,a) -> act(a_(ring h_1), f);
+SymmetricFunction * ZZ := (lc,a) -> act(a_(ring h_1), lc);
 
-SymmetricFunction * SymmetricFunction := (f1,f2) -> mult(f1,f2);
+SymmetricFunction * SymmetricFunction := (lc1,lc2) -> mult(lc1,lc2);
 
-SymmetricFunction - SymmetricFunction := (f1,f2) -> f1 + (-1)*f2;
+SymmetricFunction - SymmetricFunction := (lc1,lc2) -> lc1 + (-1)*lc2;
 
-SymmetricFunction ^ ZZ := (f,n) ->
-  ( g := f; for i from 2 to n do g = f*g; g );
+SymmetricFunction ^ ZZ := (lc,n) ->
+  ( g := lc; for i from 2 to n do g = lc*g; g );
 
-net SymmetricFunction := f -> (net toExpression(f));
+net SymmetricFunction := (lc) -> (net toExpression(lc));
 
 SymmetricFunctionSymbol = new Type of List
 s = new SymmetricFunctionSymbol from {symbol s};
@@ -50,11 +51,12 @@ SymmetricFunctionSymbol List := (ss,la) ->
 SymmetricFunctionSymbol Array := (ss,la) ->
   symmetricFunction {la=>1};
 
-toExpression = (f) ->
+toExpression = method();
+toExpression SymmetricFunction := (lc) ->
 (
-  Sum apply(keys f, la ->
+  Sum apply(keys lc, la ->
   (
-    c := f#la;
+    c := lc#la;
     t := (hold s)_(if #la==1 then la_0 else toSequence(la));
     if abs(c)>1 then t = Product(abs(c),t);
     if c<0 then t = Minus(t);
@@ -74,7 +76,8 @@ pieriSet0 = (i, la, cols) ->
 );
 pieriSet = memoize pieriSet0;
 
-pieri = (i, lc) ->
+pieri = method();
+pieri(ZZ,SymmetricFunction) := (i, lc) ->
 (
   res := new SymmetricFunction;
   scanKeys(lc, la ->
@@ -109,7 +112,8 @@ setNumHVars := (n) ->
 );
 setNumHVars(10);
 
-giambelli = (lc) ->
+giambelli = method();
+giambelli SymmetricFunction := (lc) ->
 (
   setNumHVars(max(apply(keys lc, sum)));
   res := 0;
@@ -134,11 +138,12 @@ act = (ex, lc) ->
   select(merge(pieri(i, act(ex1, lc)), act(ex0, lc), plus), x -> (x != 0))
 );
 
-mult = (f1, f2) ->
+mult = (lc1, lc2) ->
 (
-  d1 := max(apply(keys f1, sum));
-  d2 := max(apply(keys f2, sum));
-  if d1 <= d2 then act(giambelli f1, f2) else act(giambelli f2, f1)
+  d1 := max(apply(keys lc1, sum));
+  d2 := max(apply(keys lc2, sum));
+  if d1 <= d2 then act(giambelli lc1, lc2) else act(giambelli lc2, lc1)
 );
 
-s_{2,1}^2
+end
+
