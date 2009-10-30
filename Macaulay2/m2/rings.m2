@@ -26,6 +26,8 @@ generators Ring := opts -> R -> (
      else if opts.CoefficientRing === ZZ and R === QQ then {} -- where should we really stash this special case? (QQ is not in the class FractionField)
      else errorGenCoeff())
 
+Ring_* := R -> generators R
+
 numgens Ring := R -> #generators R
 
 ring = method(TypicalValue => Ring)
