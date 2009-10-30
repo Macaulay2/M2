@@ -95,7 +95,8 @@ DescriptionFcns = new HashTable from {
      "Example" => (text,indents) -> EXAMPLE apply(
 	  splitByIndent(text,indents),
 	  (i,j) -> concatenate between(newline,apply(i .. j, k -> (if indents#k =!= infinity then indents#k - indents#0 : " ", text#k)))),
-     "Text" => markup
+     "Text" => toSequence @@ markup,
+     "Code" => (text, indents) -> ( m := min indents; value concatenate apply(indents, text, (ind,line) -> (ind-m,line,"\n")) )
      }
 
 applySplit = (fcns, text, indents) ->
@@ -109,6 +110,7 @@ description = (text, indents) -> toSequence applySplit(DescriptionFcns, text, in
 KeyFcns = new HashTable from {
      "Key" => (text, indents) -> Key => apply(text,value),
      "SeeAlso" => (text, indents) -> SeeAlso => apply(text,value),
+     "Subnodes" => (text, indents) -> Subnodes => apply(text,p -> if match("^:",p) then substring(1,p) else TO value p),
      "Usage" => (text, indents) -> multiString(Usage, text),
      "Headline" => (text, indents) -> singleString(Headline, text),
      "Description" => (text, indents) -> description(text,indents),
@@ -125,7 +127,7 @@ toDoc = (text) -> (
      t := apply(text, indentationLevel);
      text = apply(t, last);
      indents := apply(t, first);
-     splice applySplit(KeyFcns, text, indents)
+     deepSplice applySplit(KeyFcns, text, indents)
      )
 
 docExample = "
@@ -220,6 +222,7 @@ SeeAlso
 doc ///
 Key
 Headline
+Usage
 Inputs
 Outputs
 Consequences

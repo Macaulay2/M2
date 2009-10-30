@@ -24,8 +24,8 @@
     be further indented.
 
     The valid keywords are: @TO Key@, @TO Headline@, @TO Usage@, @TO Inputs@,
-    @TO Outputs@, @TO Consequences@, @TO Description@, @TO SeeAlso@, and @TO
-    Caveat@.
+    @TO Outputs@, @TO Consequences@, @TO Description@, @TO SeeAlso@, @TO
+    Subnodes@, and @TO Caveat@.
 
     The only keyword which is always required is @TO Key@.
 
@@ -58,7 +58,7 @@
     above.
 
     The text in the @TO Description@ section occurs in subsections labeled
-    with the keywords @TO Text@ and {\tt Example}.  The text in a @TO Text@
+    with the keywords {\tt Text}, {\tt Example}, and {\tt Code}.  The text in a @TO Text@
     subsection can be separated into paragraphs with blank lines.  Each
     paragraph can contain markup as described above.  The text in an {\tt
     Example} subsection consists of lines of code to be used as examples in the
