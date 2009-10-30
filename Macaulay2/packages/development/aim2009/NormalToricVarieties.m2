@@ -23,6 +23,7 @@ export {
      isFan,
      isProjective,
      isSimplicial,
+     makeSimplicial,
      weilDivisors, 
      cartierDivisors, 
      cartierToWeil, 
@@ -223,7 +224,59 @@ fan NormalToricVariety := X -> (
      X.cache.Fan)
 
 
+makeSimplicial = method()
+makeSimplicial (NormalToricVariety):= NormalToricVariety => X ->(
+     if not X.cache.?halfspaces then X.cache.halfspaces = new MutableHashTable;
+     R := rays X;
+     Rm := matrix rays X;
+     Cones := partition(l -> rank Rm^l == #l,max X);
+     simpCones := if Cones#?true then Cones#true else {};
+     Cones = if Cones#?false then Cones#false else {};
+     while Cones != {} do (
+	  C := Cones#0;
+	  HS := -((fourierMotzkin transpose Rm^C)#0);
+	  X.cache.halfspaces#C = transpose HS;
+	  FL := reverse faceLatticeSimple(transpose Rm^C,HS);
+	  r := {};
+	  for i from 1 to #FL-1 do (
+	       nonsimpFace := select(1,FL#i, e -> #(toList e#0) != i+2);
+	       if nonsimpFace != {} then (r = flatten entries sum toList nonsimpFace#0#0; break));
+	  Y := normalToricVariety(R,Cones);
+	  Y.cache.halfspaces = X.cache.halfspaces;
+	  X = stellarSubdivision(Y,r);
+	  if not X.cache.?halfspaces then X.cache.halfspaces = new MutableHashTable;
+	  R = rays X;
+	  Rm = matrix R;
+	  Cones = partition(l -> rank Rm^l == #l, max X);
+	  if Cones#?true then simpCones = simpCones | Cones#true;
+	  if Cones#?false then Cones = Cones#false else Cones = {});
+     Xsimp := new NormalToricVariety from {
+	  symbol rays => R,
+	  symbol facets => simpCones,
+	  symbol cache => new CacheTable};
+     Xsimp.cache.halfspaces = X.cache.halfspaces;
+     Xsimp)
+
+
+faceLatticeSimple = (R,HS) -> (
+     d := rank R;
+     R = apply(numColumns R, i -> R_{i});
+     HS = apply(numColumns HS, i -> transpose HS_{i});
+     L := {(set R,set {},set HS)};
+     {L}|apply(d-2, i -> (
+	       Lnew := flatten apply(L, l -> (
+			 l = (toList l#0,toList l#1,toList l#2);
+			 lnew := apply(#(l#2), j -> (
+				   hs := (l#2)#j;
+				   newrs := select(l#0, r -> hs * r == 0);
+				   newHS := select(drop(l#2,{j,j}), k -> any(newrs, r -> k * r == 0));
+				   (set newrs,set(l#1|{hs}),set newHS)));
+			 lnew = select(lnew, e -> all(lnew, f -> not isSubset(e#0,f#0) or e === f))));
+	       L = unique Lnew)))
+
+
 stellarSubdivision (NormalToricVariety,List) := (X,r) -> (
+     if not X.cache.?halfspaces then X.cache.halfspaces = new MutableHashTable;
      replacement := {};
      rm := matrix transpose {r};
      n := #(rays X);
@@ -243,7 +296,8 @@ stellarSubdivision (NormalToricVariety,List) := (X,r) -> (
 			 else {C})
 		    else (
 			 -- Non-simplicial Cone
-			 HS := halfspaces posHull transpose M;
+			 if not X.cache.halfspaces#?C then X.cache.halfspaces#C = halfspaces posHull transpose M;
+			 HS := X.cache.halfspaces#C;
 			 w := flatten entries (HS * rm);
 			 if all(w, i -> i >= 0) then (
 			      replacement = positions(w, i -> i == 0);
@@ -259,15 +313,18 @@ stellarSubdivision (NormalToricVariety,List) := (X,r) -> (
 			      C = toList (set C - set replacement) | {n};
 			      apply(#replacement, i -> sort(C|drop(replacement,{i,i}))))
 			 else (
-			      HS1 := halfspaces posHull transpose M;
+			      if not X.cache.halfspaces#?C then X.cache.halfspaces#C = halfspaces posHull transpose M;
+			      HS1 := X.cache.halfspaces#C;
 			      for i from 0 to numRows HS1 -1 list (
 				   if HS1^{i} * (transpose R^replacement) == 0 then continue else select(C, j -> HS1^{i} * (transpose R^{j}) == 0) | {n})))
 		    else {C})));
      newRays := rays X | {r};
-     new NormalToricVariety from {
+     Y = new NormalToricVariety from {
 	  symbol rays => newRays,
 	  symbol facets => newMax,
-	  symbol cache => new CacheTable})
+	  symbol cache => new CacheTable};
+     Y.cache.halfspaces = X.cache.halfspaces;
+     Y)
 
 weilDivisors = method(TypicalValue => Module)
 weilDivisors NormalToricVariety := X -> (
