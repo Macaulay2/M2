@@ -5,7 +5,7 @@ Headline
      Mathematicians' Introduction to  Macaulay2
 Description
      Text
-	  We assume you've installed Macaulay2 and can type
+	  We assume you've installed {\em Macaulay2} and can type
      Code
           EXAMPLE { PRE ///M2/// }
      Text
@@ -18,8 +18,7 @@ Description
      Code
      	 SUBSECTION "Arithmetic with integers, rings and ideals"
      Text
-
-	  You can immediately do arithmetic with integers, such as
+	  You can immediately do arithmetic with integers:
      Example
 	  2+2
 	  107*431
@@ -27,58 +26,57 @@ Description
 	  binomial(5,4)
 	  factor 32004
      Text
-	  Most Macaulay2 applications involve polynomial rings over fields,
-	  and their factor rings. Fields can be made in various ways, such as
+	  Most {\em Macaulay2} applications involve polynomial rings over fields
+	  and their quotient rings. Fields can be made in various ways:
      Example
-	  kk=ZZ/101
-	  kk=QQ
-	  kk=GF(2^5)
-	  kk=toField (QQ[i]/(i^2+1))
+	  ZZ/101
+	  QQ
+	  GF 2^5
+	  k = toField (QQ[i]/(i^2+1))
      Text
-	  after which we might do
+	  After making {\tt k} we can compute in it:
      Example
 	  1/i
      Text
 	  Computation is often fastest and needs least
 	  memory when performed over finite prime fields, and when
 	  these are large they look a lot like the rational numbers,
-	  so we mostly use fields of the form \ZZ/p. The prime p
+	  so we mostly use fields of the form $\ZZ/p$. The prime $p$
 	  can range up to 32749.
 
-	  To make a polynomial ring in 5 variables over \ZZ/101
+	  We make a polynomial ring in 5 variables over $\ZZ/101$:
      Example
 	  kk=ZZ/101
 	  S=kk[x_1..x_5]
      Text
-	  or
+	  Here is another way:
      Example
 	  S=kk[a,b,c,d,e] 
      Text
-	  and then one can do arithmetic on polynomials such as
+	  Then one can do arithmetic on polynomials:
      Example
 	  (3*a^2+1)^5
      Text
-	  We can make an ideal in S with
+	  We make an ideal in $S$:
      Example
 	  I=ideal(a^3-b^3, a+b+c+d+e)
      Text
-	  and the corresponding factor ring with
+	  We make the corresponding quotient ring:
      Example
 	  R=S/I
      Text
-	  Another way to make an ideal, with more compact notation (which will be
-	  familiar to anyone who used the classic Macaulay) is
+	  Another way to make an ideal, with more compact notation (familiar to anyone who used the
+	  classic Macaulay) is:
      Example
 	  use S
 	  I=ideal"3(a+b)3, 4c5"
      Text
-	  Note the command "use S" which specifies 
-	  that we want to work in the polynomial ring S again;
-	  otherwise M2 would have assumed that the variables a,b,c 
-	  had the values last given to them, so they would have
-	  been variables in R, not S.
+	  Note the command {\tt use S}, which specifies 
+	  that we want to work with the generators of the polynomial ring S again;
+	  otherwise the variables {\tt a}, {\tt b}, and {\tt c}
+	  would still have had values in $R$ instead of in $S$.
 
-	  Arithmetic works for ideals, too, for example
+	  Algebraic operations on ideals are available:
      Example
 	  I^2
 	  I*I
@@ -142,7 +140,7 @@ Description
      Code
      	  EXAMPLE { PRE "viewHelp" }
      Text
-	  and click on the Macaulay2 link at the top. 
+	  and click on the {\em Macaulay2} link at the top. 
      Code
      	 SUBSECTION "Properties of ideals and modules",
 	 HEADER4 "First steps; example with a monomial curve"
@@ -497,13 +495,13 @@ Description
      Code
      	  EXAMPLE { PRE ///viewHelp/// }
      Text
-	  For example, there is such a package called EdgeIdeals. 
+	  For example, there is such a package called @TO "EdgeIdeals::EdgeIdeals"@. 
 	  Click on its link on the page you just got to in order
-	  to see what's in it. Then, after
+	  to see what's in it. Load the package:
      Example
 	  loadPackage "EdgeIdeals"
      Text
-	  you can call its functions, such as randomGraph and edgeIdeal:
+	  After loading it, you can call its functions, such as @TO "EdgeIdeals::randomGraph"@ and @TO "EdgeIdeals::edgeIdeal"@:
      Example
 	  R = kk[vars(0..10)]
 	  G=randomGraph (R,20)
@@ -534,7 +532,7 @@ Description
      Code
      	  SUBSECTION "Ext, Tor, and cohomology"
      Text
-	  Macaulay2 can compute the homology of complexes;
+	  {\em Macaulay2} can compute the homology of complexes;
 	  for example, let's compute the homology of a
 	  Koszul complex that is not a resolution,
 	  $$ {\bf K}(x^2, x*y^2):\ \  0 --> S(-5) --> S(-3)\oplus S(-2) --> S. $$
@@ -567,7 +565,7 @@ Description
 	  Either way, homology is S/x = (x^2):(xy^2)/x^2, in accord
 	  with general theory.
 
-	  Since Macaulay2 can compute resolutions and homology, it can
+	  Since {\em Macaulay2} can compute resolutions and homology, it can
 	  compute things like Ext, Tor and sheaf cohomology, as in the 
 	  following examples. The first uses Serre's formula to  compute
 	  the multiplicity with which a 2-plane meets the union
