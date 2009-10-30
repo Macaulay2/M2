@@ -84,6 +84,9 @@ pieri = (i, lc) ->
   select(res, x -> (x != 0))
 );
 
+local giambelliPart;
+local numHVars;
+
 giambelliPart0 = (la) ->
 (
   if #la == 0 then
@@ -95,9 +98,6 @@ giambelliPart0 = (la) ->
   h_i*giambelliPart(mu) -
     sum(apply(pieriSet(i,mu,infinity) - set {la}, giambelliPart))
 );
-
-local giambelliPart;
-local numHVars;
 
 numHVars = 0;
 setNumHVars := (n) ->
