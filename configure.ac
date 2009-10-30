@@ -466,6 +466,7 @@ AC_SUBST(PACKAGES, dnl first Style, then Macaulay2Doc, then the other internal o
   ConvexInterface
   SRdeformations
   NumericalAlgebraicGeometry
+  BeginningMacaulay2
 ")
 # pending packages: SRdeformations
 
