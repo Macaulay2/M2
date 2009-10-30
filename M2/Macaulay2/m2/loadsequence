@@ -5,7 +5,6 @@ option.m2
 methods.m2
 profile.m2
 autoload.m2
-convert.m2
 system.m2
 debugging.m2
 remember.m2
@@ -32,7 +31,6 @@ enginering.m2
 rationals.m2
 reals.m2
 quotient.m2
-monoids.m2
 powers.m2
 orderedmonoidrings.m2
 variables.m2
@@ -81,7 +79,6 @@ varieties.m2
 mathml.m2
 texmacs.m2
 pretty.m2
-mysql.m2
 undoc.m2
 obsolete.m2
 exports.m2

@@ -630,10 +630,6 @@ dispatcherMethod := m -> m#-1 === Sequence and (
      f := lookup m;
      any(dispatcherFunctions, g -> functionBody f === functionBody g))
 
-
--- get installFile
-load "install.m2"
-
 installPackage Package := opts -> pkg -> (
      verbose := opts.Verbose or debugLevel > 0;
      oldlayout := installationLayout;
@@ -1043,14 +1039,6 @@ installPackage Package := opts -> pkg -> (
 	       k -> f << "linkdir" << " " << removeLastSlash replace("PKG","*",installationLayout#k) << endl);
 	  fileMode(octal "644",f);
 	  f << close;
-	  -- INSTALL
-	  if pkg#"title" == "Macaulay2Doc" then (
-	       assert( class installFile === String );
-	       f = buildPrefix | "INSTALL"
-	       << installFile;
-	       fileMode(octal "644",f);
-	       f << close;
-	       );
 	  );
 
      -- make symbolic links
