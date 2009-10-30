@@ -36,11 +36,13 @@ skewSchubertVariety = method(TypicalValue=>Matrix)
 skewSchubertVariety(Sequence,List,List) := (kn,l,m)->(
      -- k and n are the integers defining the Grassmanian G(k,n)
      -- l and m are partitions of n
-     ----- make sure both partitions are of size k  ----
-     if #l < k then for i from 1 to k-#l do (l=l|{0}); 
-     if #m < k then for i from 1 to k-#m do (m=m|{0}); 
-     ---------------------------------------------------
      (k,n):=kn;
+     ----- make sure both partitions are of size k  ----
+     if #l < k then x := for i to k-#l-1 list 0;
+     l = l | x; -- makes sure l have size k
+     if #m < k then x := for i to k-#l-1 list 0;
+     m = m | x; -- makes sure m have size k
+     ---------------------------------------------------
      d := (k*(n-k)-sum(l)-sum(m));  
      R := CC[vars(53..d+52)]; -- ring where the variables for the matrix lie
      r := 0;
@@ -110,8 +112,10 @@ precookPieriHomotopy(Sequence,List,List) := (kn,l,m)->(
      -- k and n are the integers defining the Grassmanian G(k,n)
      -- l and m are partitions of n
      (k,n) := kn;
-     if #l < k then for i from 1 to k-#l do (l=l|{0}); -- makes sure l have size k
-     if #m < k then for i from 1 to k-#m do (m=m|{0}); -- makes sure m have size k
+     if #l < k then x := for i to k-#l-1 list 0;
+     l = l | x; -- makes sure l have size k
+     if #m < k then x := for i to k-#l-1 list 0;
+     m = m | x; -- makes sure m have size k
      E := skewSchubertVariety(kn,l,m);
      ------------
      -- d is the number of variables i.e. the codimension of the Schubert variety E_{l,m}
@@ -235,9 +239,9 @@ doc ///
      Example
        -- for l = 2,1 and m = 1,1
        -- in Gr(3,7)
-       skewSchubertVariety(3,7,{2,1},{1,1})
-   Caveat
+       skewSchubertVariety((3,7),{2,1},{1,1})
    SeeAlso
+      solveSimpleSchubert
 ///
 
 doc ///
@@ -260,7 +264,7 @@ doc ///
          solutions of the simple Schubert Problem defined by l and m with respect to the flags G_1,...,G_d
    Description
       Text
-         Given partitions l and m in the Grassmannian Gr(k,n), and a set of fixed flags G_1,...,G_d, where d=k*(k-n) + sum(l) + sum(m). The function solves the system taking the first $d-1$ flags, and replacing the last one for a simpler one G_m. Then it uses homotopy continuation to track the solutions of this simpler system to solutions of the original system.
+         Given partitions l and m in the Grassmannian Gr(k,n), and a set of fixed flags G_1,...,G_d, where d=k*(k-n) - sum(l) - sum(m). The function solves the system taking the first $d-1$ flags, and replacing the last one for a simpler one G_m. Then it uses homotopy continuation to track the solutions of this simpler system to solutions of the original system.
          
          This function is used to solve Simple Schubert Problems, as described in the paper: 
          
@@ -298,13 +302,15 @@ doc ///
          random fixed flags
    Description
       Text
-         Creates the matrix $E_{l,m}$ that parametrizes the skew Schubert variety $Y_{l,m} = Y_l \cap Y_m$.
+         Creates a list of d matrices with random numbers, where d = k*(n-k)-sum(m)-sum(l).
      Example
        -- for l = 2,1 and m = 1,1
        -- in Gr(3,7)
-       skewSchubertVariety(3,7,{2,1},{1,1})
-   Caveat
+       createRandomFlagsForSimpleSchubert(3,7),{2,1,0},{1,1,0}
+       G = oo
+       skewSchubertVariety((3,7),{2,1},{1,1}, G)
    SeeAlso
+      solveSimpleSchubert
 ///
 
 TEST ///
