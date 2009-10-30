@@ -44,9 +44,6 @@ loads.m2: loads.awk loadsequence
 	: making $@
 	@awk -f $^ >$@
 
-############################## install.m2
-DUMPEDM2FILES += install.m2
-install.m: install.m2.in ; cd ../.. && ./config.status Macaulay2/m2/install.m2
 ############################## tvalues.m2
 DUMPEDM2FILES += tvalues.m2
 TVFILES := $(shell egrep -l -e "-- . typical value: " @srcdir@/../d/*.d)
