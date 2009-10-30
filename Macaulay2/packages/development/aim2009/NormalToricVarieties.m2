@@ -29,7 +29,8 @@ export {
      cartierToWeil, 
      picardGroup,
      picardToClass,
-     nef
+     nef,
+     primitiveVector
      }
 
 ---------------------------------------------------------------------------
@@ -199,7 +200,7 @@ isSimplicial NormalToricVariety := X -> (
      	  V := transpose matrix rays X;
      	  X.cache.simplicial = all(max X, s -> #s == rank V_s));
      X.cache.simplicial)
-
+     
 --isSmooth = method(TypicalValue => Boolean)
 isSmooth NormalToricVariety := X -> (
      if not X.cache.?smooth then (
@@ -527,6 +528,10 @@ toricIdeal = (A,S) -> (
      J := ideal apply(entries B, b -> toBinomial(b,S));
      scan(gens S, f -> J = saturate(J,f));
      J);
+
+
+primitiveVector = method()
+primitiveVector List := w -> (g := gcd w; if g < 1 then apply(w, e -> lift((1/g)*e,ZZ)) else apply(w, e -> lift(e//g,ZZ)))
 
 
 
