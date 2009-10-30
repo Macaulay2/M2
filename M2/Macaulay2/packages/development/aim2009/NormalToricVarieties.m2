@@ -147,7 +147,7 @@ ideal NormalToricVariety := Ideal => X -> (
      X.cache.ideal)
 monomialIdeal NormalToricVariety := MonomialIdeal => X -> monomialIdeal ideal X
 
-NormalToricVariety * NormalToricVariety := NormalToricVariety => (X,Y) -> (
+NormalToricVariety ** NormalToricVariety := NormalToricVariety => (X,Y) -> (
      V1 := transpose matrix rays X;
      V2 := transpose matrix rays Y;
      V := entries transpose (V1 ++ V2);
@@ -991,7 +991,7 @@ document {
      "For a product of projective spaces, the total coordinate ring has a 
      bigrading.",
      EXAMPLE lines ///
-	  X = projectiveSpace(2) * projectiveSpace(3);
+	  X = projectiveSpace(2) ** projectiveSpace(3);
 	  gens ring X
 	  degrees ring X
 	  ///,
@@ -1035,7 +1035,7 @@ document {
      "The irrelevant ideal for a product of toric varieties is
      intersection of the irrelevant ideal of the factors.",
      EXAMPLE lines ///
-	  X = projectiveSpace(3) * projectiveSpace(4);
+	  X = projectiveSpace(3) ** projectiveSpace(4);
 	  S = ring X;
 	  I = ideal X
 	  primaryDecomposition I
@@ -1057,9 +1057,9 @@ document {
      }     
 
 document { 
-     Key => {(symbol *,NormalToricVariety,NormalToricVariety)},
+     Key => {(symbol **,NormalToricVariety,NormalToricVariety)},
      Headline => "the cartesian product",
-     Usage => "X * Y",
+     Usage => "X ** Y",
      Inputs => {"X", "Y" => NormalToricVariety },
      Outputs => {{"the product of ", TT "X", " and ", TT "Y"}},
      "The cartesian product of two varieties, both defined the same 
@@ -1069,7 +1069,7 @@ document {
      EXAMPLE lines ///
 	  PP2 = projectiveSpace 2;
 	  FF2 = hirzebruchSurface 2;
-	  X = FF2 * PP2;
+	  X = FF2 ** PP2;
 	  #rays X == #rays FF2 + #rays PP2
      	  transpose matrix rays X
      	  transpose matrix rays FF2 ++ transpose matrix rays PP2
