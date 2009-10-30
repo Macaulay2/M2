@@ -11,23 +11,29 @@ newPackage(
     	DebuggingMode => false
     	)
 
+--loadDepth = loadDepth - 1
+
 export {buildFiberGraph,
         isDegree,
+	isInFiberGraph,
         getFiberTree,
-        getGenerator,
+        getGenerators,
 	Edges,
-	Support
+	Support,
+	MaxLevel
 }
 
 ----------------------------------------------------------------
 -----------------------------------------
 --Given a design (dxn)-matrix A of a normal toric model,
---buildFiberGraph returns the (mutable) hash table representing the graph of the overlap of fiber trees, 
+--buildFiberGraph returns the  hash table representing the graph of the overlap of fiber trees, 
 --for all possible vectors b in the cone(A) such that b is a linear combination of at most d columns of A.
 -----------------------------------------
-buildFiberGraph = method(TypicalValue=>MutableHashTable);
-buildFiberGraph (Matrix) := A ->(
-     r:=rank A; --this will be use to stop the computation at level r
+buildFiberGraph = method(TypicalValue=>HashTable, Options=>{MaxLevel => infinity});
+buildFiberGraph (Matrix) := ZZ => opts -> A ->(
+     --     r:=rank A; --this will be use to stop the computation at level r
+     if opts.MaxLevel =!= infinity  then r:=opts.MaxLevel else r=rank A;
+     --     r :=min(opts.MaxLevel, rank A);
      d:=numRows A;
      n:=numRows transpose A; --numCols
      G := new MutableHashTable;
@@ -56,10 +62,7 @@ buildFiberGraph (Matrix) := A ->(
      --1st level built.
      -- now build all others:
      apply(k=2..r, k-> buildLevel(k,G) );
---new HashTable from apply(keys G, l->new HashTable from 
-{l=>apply(keys G#l, b->new HashTable from {b=>apply(keys 
-G#l#b, w->new HashTable from {w=>G#l#b#w})})})
-     return G;
+     return hashTable apply(keys G, l-> l=>hashTable apply(keys G#l, b->b=>hashTable apply(keys G#l#b, w-> w=> G#l#b#w)));
      )--end of function buildFiberGraph.
 
 
@@ -132,23 +135,28 @@ isDegree (Matrix, Vector) := (A,b) -> (
     return isDegree(G,b)
 )
 
-isDegree (MutableHashTable, Vector) := (G, b) -> (
-     E:="Edges";
+isDegree (HashTable, Vector) := (G, b) -> (
      S:="Support";
-     L := 0;
      --first of all, is b a key in the table?
-     scan(keys G , l ->  (
-	       if (G#l #? b) then L=l;
-	       )
-	   );
-     --note if L=0 at the end of this, then b is not in the cone(A).
-     if L==0 then error "--fiber is empty; this vector is not a valid degree."
-     else (
-     	  if (# ( G#L#b#S) > 1 ) then
-               return true
-     	  else return false; 
-     	  )
-     )--end of isDegree
+     if (not isInFiberGraph(G,b)) then error "fiber is empty; this vector is not a valid degree.";
+     --if condition below is true then true is returned, otherwise false
+     #(G#L#b#S) > 1
+)--end of isDegree
+
+----------------------------------------------------------------
+----------------------------------------------------------------
+isInFiberGraph=method(TypicalValue=>Boolean);
+isInFiberGraph (Matrix, Vector) := (A,b) -> (
+    G = buildFiberGraph(A);
+    return isInFiberGraph(G,b)
+)
+
+isInFiberGraph (HashTable, Vector) := (G, b) -> (
+     (any( keys G, l-> G#l #? b )) --then 
+)--end of isInFiberGraph
+----------------------------------------------------------------
+----------------------------------------------------------------
+
 
 
 ----------------------------------------------------------------
@@ -166,16 +174,13 @@ getFiberTree(Matrix, Vector) := (A, b) -> (
     return getFiberTree(A, G, b)   
 )
 
-getFiberTree (Matrix, MutableHashTable, Vector) := (A, G, b) ->(
+getFiberTree (Matrix, HashTable, Vector) := (A, G, b) ->(
      --is b a key in the table?
-     L := 0;
-     scan(keys G , l ->  (
+     if not any (keys G , l ->  (
 	       if (G#l #? b) then L=l;
 	       )
-	   );
-     if L==0 then error("--b is not a valid degree")
-     else (
-	  -- b is located at level L.
+	   ) then error("b is not a valid degree");
+     -- b is located at level L.
      E:="Edges"; --export these keywords ..
      S:="Support";
      T := new MutableHashTable; 
@@ -198,9 +203,9 @@ getFiberTree (Matrix, MutableHashTable, Vector) := (A, G, b) ->(
 		    )--end of loop that goes through the vectors at level l
 	       ) 
      	  );--end of the loop that changes levels
-     );--end of else
      -- return the fiber graph (tree)
-     return (new HashTable from T);
+     --return (new HashTable from T);
+     return hashTable apply(keys T, l-> l=>hashTable apply(keys T#l, b->b=>hashTable apply(keys T#l#b, w-> w=> T#l#b#w)));
      ) -- end of getFiberTree
 
 
@@ -212,13 +217,13 @@ getFiberTree (Matrix, MutableHashTable, Vector) := (A, G, b) ->(
 -- G is an optional input to getFiberTree.
 ----------------------------------------------------------------
 
-getGenerator = method(TypicalValue=>List);
-getGenerator (Matrix,Vector) := (A,b)->(
+getGenerators = method(TypicalValue=>List);
+getGenerators (Matrix,Vector) := (A,b)->(
     G := buildFiberGraph(A);
-    return getGenerator(A,G,b)
+    return getGenerators(A,G,b)
 )
 
-getGenerator (Matrix, MutableHashTable,Vector) := (A,G,b)->( 
+getGenerators (Matrix, HashTable,Vector) := (A,G,b)->( 
      E:="Edges";
      S:="Support";
 	  if isDegree(G,b) then (
@@ -243,7 +248,7 @@ getGenerator (Matrix, MutableHashTable,Vector) := (A,G,b)->(
 			 )
 		    );--end apply
 	       )
-	  else error("--this vector does not give rise to a generator.");
+	  else error("this vector does not give rise to a generator.");
      --return the exponent vector u-v of the binomial x^u - x^v where Au = Av = b.
      geners:={};
      apply ( #paths-1, j-> (
@@ -258,6 +263,8 @@ getGenerator (Matrix, MutableHashTable,Vector) := (A,G,b)->(
 -------------------------------------------------------------------------
 -------------------------------------------------------------------------
 -------------------------------------------------------------------------
+
+--loadDepth = loadDepth + 1
 
 beginDocumentation()
 needsPackage "SimpleDoc"
@@ -285,13 +292,13 @@ doc ///
     A:Matrix
         whose columns parametrize a normal toric variety.
   Outputs
-    G:MutableHashTable
+    G:HashTable
         keys are the levels of the graph
-        values are mutable hash tables with keys being vectors b in cone(A) and values being information necessary to recover the fiber A^(-1)b
+        values are hash tables with keys being vectors b in cone(A) and values being information necessary to recover the fiber $A^{-1}b$
   Description
     Text
         Given a design (dxn)-matrix A of a normal toric model,
-        buildFiberGraph returns the (mutable) hash table representing the graph of the overlap of fiber trees, 
+        buildFiberGraph returns the hash table representing the graph of the overlap of fiber trees, 
         for all possible vectors b in the cone(A) such that b is a linear combination of at most d columns of A.
 
         Input:  A = d x n matrix        
@@ -326,7 +333,7 @@ doc ///
   Key
     isDegree
     (isDegree,Matrix,Vector)
-    (isDegree,MutableHashTable,Vector)
+    (isDegree,HashTable,Vector)
   Headline
     Check if b contributes to a generator of I_A(G)  
   Usage
@@ -336,7 +343,7 @@ doc ///
         whose columns parametrize a normal toric variety
     b:Vector
         degree vector
-    G:MutableHashTable
+    G:HashTable
         which represents the fiber graph of A
   Outputs
     :Boolean
@@ -346,7 +353,7 @@ doc ///
         Given a design (dxn)-matrix A of a normal toric model and a vector b (representing a sufficient statistic of the model assoc. to A),
         isDegree returns true if 
         b contributes to a generator of I_A(G), 
-        i.e. the fiber A^(-1)b is disconnected, 
+        i.e. the fiber $A^{-1}b$ is disconnected, 
         i.e. b is a (multigraded) degree of a minimal generator of the toric ideal I_A.
         The function isDegree uses the fiber graph G associated to A;
         so, G is an optional input to isDegree.
@@ -358,13 +365,49 @@ doc ///
     buildFiberGraph
 ///
 
+
+doc ///
+  Key
+    isInFiberGraph
+    (isInFiberGraph,Matrix, Vector) 
+    (isInFiberGraph,HashTable, Vector)
+  Headline
+    Check if b contributes to a generator of I_A(G)  
+  Usage
+    isInFiberGraph(A,b) or isInFiberGraph(G,b)
+  Inputs
+    A:Matrix
+        whose columns parametrize a normal toric variety
+    b:Vector
+        degree vector
+    G:HashTable
+        which represents the fiber graph of A
+  Outputs
+    :Boolean
+        true if b is a node in the fiber graph of A
+  Description
+    Text
+        Given a design (dxn)-matrix A of a normal toric model and a vector b (representing a sufficient statistic of the model assoc. to A),
+        isDegree returns true if 
+        b is anywhere in the fiber graph.
+    Example
+    Text
+        Add text 
+  SeeAlso
+    ToricFibers
+    buildFiberGraph
+    isDegree
+///
+
+
+
 doc ///
   Key
     getFiberTree
     (getFiberTree,Matrix,Vector)
-    (getFiberTree,Matrix,MutableHashTable,Vector)
+    (getFiberTree,Matrix,HashTable,Vector)
   Headline
-    Computes the fiber A^(-1)b  
+    Computes the fiber $A^{-1}b$
   Usage
     T=getFiberTree(A,b) or T=getFiberTree(A,G,b)
   Inputs
@@ -372,7 +415,7 @@ doc ///
         whose columns parametrize a normal toric variety
     b:Vector
         degree vector
-    G:MutableHashTable
+    G:HashTable
         which represents the fiber graph of A
   Outputs
     T:HashTable
@@ -380,7 +423,7 @@ doc ///
   Description
     Text
         Given a design matrix A and a vector b (representing a sufficient statistic of the model assoc. to A),
-        getFiberTree computes all vectors u that are in the fiber A^(-1)b and the vectors are grouped into disjoint sets.
+        getFiberTree computes all vectors u that are in the fiber $A^{-1}b$ and the vectors are grouped into disjoint sets.
         Each set contains vectors with pairwise intersecting supports.
         getFiberTree returns a hash table representing the subgraph of the fiber graph of all vectors in the fiber.
         Since the function extracts the tree from the fiber graph G associated to A,
@@ -401,19 +444,19 @@ doc ///
 
 doc ///
   Key
-    getGenerator
-    (getGenerator,Matrix,Vector)
-    (getGenerator,Matrix,MutableHashTable,Vector)
+    getGenerators
+    (getGenerators,Matrix,Vector)
+    (getGenerators,Matrix,HashTable,Vector)
   Headline
     Computes the exponent vectors of all minimal generators of I_A of degree b, if they exist  
   Usage
-    L=getGenerator(A,b) or L=getGenerator(A,G,b)
+    L=getGenerators(A,b) or L=getGenerators(A,G,b)
   Inputs
     A:Matrix
         whose columns parametrize a normal toric variety
     b:Vector
         degree vector
-    G:MutableHashTable
+    G:HashTable
         which represents the fiber graph of A
   Outputs
     L:List
