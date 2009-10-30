@@ -152,7 +152,15 @@ dotBinary = "dot"
 -- jpgViewer = "/usr/bin/open"
 jpgViewer = "open"
 
---simpleNeighbors := H -> (
+--simpleGraph := H -> (
+--     q := pairs G;
+--     edges := for i to #q-1 list(H#(q#i#0));
+--     vertices := keys H;
+--     apply (#vertices, i -> (
+--     	       for j from i to #q-1 list (if member(vertices#i, set edges#j), 
+--     h := new MutableHashTable;
+--     apply(#vertices, i -> h#(vertices#i) = set edges#i);
+     
      
 
 writeDotFile = method()
@@ -163,11 +171,11 @@ writeDotFile(String, Graph) := (filename, G) -> (
      for i from 0 to #q-1 do (
 	  e := q#i;
 	  fil << "  " << toString e#0;
-	  if #e#1 === 0 or all(q, i->member(e#0,q#i#1)) then
+	  if #e#1 === 0 or all(q, j->member(e#0,j#1)) then
 	    fil << ";" << endl
 	  else (
 	    fil << " -- {";
-	    links := for i to #e#1 list (if any(q, i -> member(e#1#i, q#i#1)) then continue);--midprocess
+	    links := for i to #e#1 list (if any(q, j -> member(e#1#j, j#1)) then continue);--midprocess
 	    for j from 0 to #links-1 do
 		 fil << toString links#j << ";";
      	    fil << "};" << endl;
@@ -251,14 +259,10 @@ children = method()
 children(DiGraph,ZZ) := (G,v) -> G#v
 
 neighbors = method()
-neighbors(Graph,ZZ) := (G,v) -> (
-     L := for i from 1 to v-1 list (
-	  if member(v,G#i) then i else continue);
-     G#v + set(L)  --- may need to sort the list. 
-     )
+neighbors(Graph,Thing) := (G,v) -> G#v  
 
 nonneighbors = method()
-nonneighbors(Graph, ZZ) := (G,v) -> set(1..#G) - neighbors(G,v)-set{v}
+nonneighbors(Graph, Thing) := (G,v) -> set(1..#G) - neighbors(G,v)-set{v}
 
 removeNodes = method()
 removeNodes(DiGraph,List) := (G,v) -> (
