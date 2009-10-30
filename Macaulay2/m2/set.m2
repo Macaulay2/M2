@@ -7,7 +7,7 @@ elements = method()
 elements Set := x -> keys x
 elements Tally := x -> splice apply(pairs x, (k,v) -> v:k)
 
-toString Tally := x -> concatenate( "new ", toString class x, " from {", demark(", ", apply(pairs x, (v,i) -> (toString v, " => ", toString i))), "}" )
+toString Tally := x -> concatenate( "new ", toString class x, " from {", demark(", ", sort apply(pairs x, (v,i) -> (toString v, " => ", toString i))), "}" )
 
 net Tally := t -> peek t
 
@@ -42,12 +42,12 @@ product(Tally) := (w) -> product(pairs w, (k,v) -> k^v)
 
 new Set from List := Set => (X,x) -> set x
 
-net Set := x -> "set " | net keys x
+net Set := x -> "set " | net sort (net \ keys x)
 toString Set := x -> (
      -- unpleasant hack
      if class x === Set
-     then "set " | toString keys x
-     else "new " | toString class x | " from " | toString keys x
+     then "set " | toString sort (toString \ keys x)
+     else "new " | toString class x | " from " | toString sort (toString \ keys x)
      )
 Set + Set := Set => (x,y) -> merge(x,y,(i,j)->i)
 -- Set ++ Set := Set => (x,y) -> applyKeys(x,i->(0,i)) + applyKeys(y,j->(1,j))
