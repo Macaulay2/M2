@@ -19,8 +19,8 @@
 ---------------------------------------------------------------------------
 newPackage(
 	"ReesAlgebra",
-    	Version => "1.0", 
-    	Date => "February 8, 2009",
+    	Version => "1.1", 
+    	Date => "October 30, 2009",
     	Authors => {{
 		  Name => "David Eisenbud",
 		  Email => "de@msri.org"},
@@ -35,22 +35,26 @@ newPackage(
     	)
 
 export{
+  
   analyticSpread, 
   associatedGradedRing, 
   distinguished,
   distinguishedAndMult,
   isLinearType, 
   minimalReduction,
+  isReduction,
   multiplicity,
   normalCone, 
   reductionNumber,
   reesIdeal,
   reesAlgebra,
   specialFiberIdeal,
+  specialFiber,
   symmetricKernel, 
   universalEmbedding,
-  whichGm
-}
+  whichGm,
+  Tries
+  }
 
 -- Comment : The definition of Rees algebra used in this package is 
 -- R(M) = Sym(M)/(intersection over g of L_g) where the intersection 
@@ -265,11 +269,14 @@ use S
 I = ideal"x3, x2y,y3"
 multiplicity I
 degree(S^1/I)
-viewHelp TEST
+
 ///
 
 --Special fiber is here defined to be the fiber of the blowup over the
---homogeneous maximal ideal of the original ring.
+--subvariety defined by the vars of the original ring. Note that if the
+--original ring is a tower ring, this might not be the fiber over the
+--closed point! ***put this into the documentation!*** to get the closed
+--fiber, flatten the base ring first. 
 
 specialFiberIdeal=method(TypicalValue=>Ideal, Options=>{Variable=>w})
 
@@ -284,6 +291,91 @@ specialFiberIdeal(Module,RingElement):= o->(i,a)->(
      Reesi:= reesIdeal(i, a, Variable=>o.Variable);
      trim(Reesi + promote(ideal vars ring i, ring Reesi))     
      )
+
+---------The following returns a ring with just the new vars.
+--The order of the generators is supposed to be the same as the order
+--of the given generators of I.
+specialFiber=method(TypicalValue=>Ring, Options=>{Variable=>w})
+
+specialFiber(Ideal):= 
+specialFiber(Module):= o->i->(
+     Reesi:= reesIdeal(i, Variable=>o.Variable);
+     S := ring Reesi;
+     --is the coefficient ring of Reesi automatically flattened? NO
+     kk := ultimate(coefficientRing, S);
+     T := kk[gens S];
+     minimalpres := map(T,S);
+     T/(minimalpres Reesi)
+     )
+ 
+specialFiber(Ideal, RingElement):=
+specialFiber(Module,RingElement):= o->(i,a)->(
+     Reesi:= reesIdeal(i, a, Variable=>o.Variable);
+     S := ring Reesi;
+     --is the coefficient ring of Reesi automatically flattened? NO
+     kk := ultimate(coefficientRing, S);
+     T := kk[gens S];
+     minimalpres := map(T,S);
+     T/(minimalpres Reesi)
+     )
+
+isReduction=method(TypicalValue=>Boolean, Options=>{Variable=>w})
+
+--tests whether the SECOND arg is a reduction of the FIRST arg
+
+isReduction(Module,Module):= 
+isReduction(Ideal,Ideal):= o->(I,J)->(
+     Sfib:= specialFiber(I, Variable=>o.Variable);
+     Ifib:=ideal presentation Sfib;
+     kk := coefficientRing Sfib;
+     M = sub(gens J // gens I, kk);
+     M = promote(M, Sfib);
+     L =(vars Sfib)*M; 
+     0===dim ideal L)
+
+isReduction(Module,Module,RingElement):= 
+isReduction(Ideal,Ideal,RingElement):= o->(I,J,a)->(
+     Sfib :=specialFiber(I, a, Variable=>o.Variable); 
+     Ifib:= ideal presentation Sfib;
+     kk := coefficientRing Sfib;
+     M = sub(gens J // gens I, kk);
+     M = promote(M, Sfib);
+     L =(vars Sfib)*M; 
+     0===dim ideal L)
+
+
+
+///
+####
+restart
+uninstallPackage "ReesAlgebra"
+installPackage "ReesAlgebra"
+
+
+peek loadedFiles
+S = kk[s,t][x,y,z]
+I = ideal"x2, xy+y4"
+--II=reesIdeal I
+SF = specialFiber I
+ideal presentation SF
+J = minimalReduction I
+(gens J) ==(gens I)*(gens J//gens I)
+isReduction(I, J, I_0)
+
+analyticSpread I
+
+time tally for n from 1 to 100 list isReduction(I, minimalReduction I, I_0)
+
+setRandomSeed(314159268)
+scan({2,3,5,7,11,101,32003}, p ->(
+	  kk=ZZ/p;
+	  S = kk[a,b,c,d];
+	  I = monomialCurveIdeal(S, {1,3,4});
+	  T:=tally for n from 1 to 100 list isReduction(I, minimalReduction I);
+	  print (p, T#false, T#true))
+)	  
+
+///
 
 -- PURPOSE : Analytic spread of a module as defined in M2 by a matrix, 
 --           a module or ideal over a quotient ring R/I.
@@ -406,32 +498,84 @@ distinguishedAndMult(Ideal,RingElement) := List => o -> (i,a) -> (
        	  {(degree Pcomponent)/(degree P), kernel(map(S/P, R))})))
  
 
-minimalReduction = method()
-minimalReduction Ideal := i -> (
+minimalReduction = method(Options=>{Tries => 20})
+minimalReduction Ideal := Ideal => o -> i -> (
+     --if the following is true, then we can compute the minimal reduction homogeneously
+     h := isHomogeneous i and (d:=min degrees i) == max degrees i;
      S:=ring i;
      ell:=analyticSpread i;
-     if isHomogeneous i and (d:=min degrees i) == max degrees i then
-     ideal ((gens i)*random(source gens i, (ring i)^{ell:-d})) else 
-     (
-	  print"Warning: minimal reduction is not necessarily homogeneous";
-     	  ideal (map(S^1, S^(rank source gens i), gens i)*random(S^(rank source gens i), S^ell))
-     ))
+     
+     J:=null;
+     --o.Tries defaults to 20
+     for b from 1 to o.Tries do(
+     
+     if h then
+          J = ideal ((gens i)*random(source gens i, (ring i)^{ell:-d})) 
+     else 
+     	  J = ideal (map(S^1, S^(rank source gens i), gens i)*random(S^(rank source gens i), S^ell));
+	  
+     if isReduction(i,J) then (
+--	  if b>1 then print b; 
+	  return J));
+
+     << bound <<" iterations were not enough to randomly find a minimal reduction"; endl;
+     error("not random enough")
+          )
+
+///
+restart
+load "ReesAlgebra.m2"
+
+kk=ZZ/2
+S = kk[a,b,c,d];
+I = monomialCurveIdeal(S, {1,3,4});
+
+I = ideal random(S^4, S^{5:-2})
+J = minimalReduction I
+
+time reductionNumber(I,J)
+time reductionNumber(I,J, "1")
+
+time for n from 1 to 100 do(m=m+1; minimalReduction I)
+
+scan({2,3,5,7,11,101,32003}, p ->(
+	  kk=ZZ/p;
+	  S = kk[a,b,c,d];
+	  I = monomialCurveIdeal(S, {1,3,4});
+	  T:=tally for n from 1 to 100 list isReduction(I, minimalReduction I);
+	  print (p, T#false, T#true))
+)	  
+
+///
 
 reductionNumber = method()
-reductionNumber Ideal := i -> (
-     J:=minimalReduction i; -- will be a power of i times the minimal reduction
+
+///
+--The following seems to  be much slower!
+reductionNumber (Ideal, Ideal, String) := (i,j,s) -> (
+     Ifib := specialFiber(I);
+     Pfib := (ring Ifib); -- ambient ring of the fiber
+     n := numgens Pfib;
+     kk := coefficientRing Pfib;
+     M := sub(gens J // gens I, kk);
+     M = promote(M, Pfib);
+     L := (vars Pfib)*M; 
+     regularity (Pfib^1/ideal(leadTerm(Ifib+ideal L)))
+	  )
+///
+reductionNumber (Ideal,Ideal) := (i,j) -> (
      I:=i; -- will be a power of i
      M:= ideal vars ring i; -- we're pretending to be in a local ring
      rN:=0;
-     if isHomogeneous J then (
-     	  while not ((gens I)%J)==0 do (
+     if isHomogeneous j then (
+     	  while not ((gens I)%j)==0 do (
 	       I = trim (i*I);
-	       J= trim(i*J);
+	       j= trim(i*j);
      	       rN =rN+1))
      else(
-     	  while not ((gens I)%(J+M*I))==0 do (
+     	  while not ((gens I)%(j+M*I))==0 do (
 	       I = trim(i*I);
-	       J= i*J;
+	       j= i*j;
      	       rN =rN+1));
      rN)
 
@@ -553,6 +697,7 @@ doc ///
     [normalCone, Variable]
     [associatedGradedRing, Variable]
     [specialFiberIdeal, Variable]
+    [specialFiber, Variable]
     [distinguished, Variable]
     [distinguishedAndMult, Variable]
   Headline
@@ -564,12 +709,15 @@ doc ///
     normalCone(...,Variable=>w)
     associatedGradedRing(...,Variable=>w)
     specialFiberIdeal(...,Variable=>w)
+    specialFiber(...,Variable=>w)    
     distinguished(...,Variable=>w)
     distinguishedAndMult(...,Variable=>w)
   Description
     Text
       Each of these functions creates a new ring of the form R[w_0, \ldots, w_r]
-      or R[w_0, \ldots, w_r]/J, where R is the ring of the input ideal or module.
+      or R[w_0, \ldots, w_r]/J, where R is the ring of the input ideal or module
+      (except for @TO specialFiber@, which creates a ring $K[w_0, \ldots, w_r]$, 
+      where $K$ is the ultimate coefficient ring of the input ideal or module.)
       This option allows the user to change the names of the new variables in this ring.
       The default variable is {\tt w}.
     Example
@@ -594,6 +742,26 @@ doc ///
     flattenRing
     newRing
     substitute
+///
+doc ///
+  Key
+    [minimalReduction, Tries]
+  Headline
+    Set the number of random tries to compute a minimal reduction
+  Usage
+    minimalReduction(..., Tries => 20)
+  Description
+    Text
+      When searching for a minimal reduction of an ideal over a field with
+      a small number of elements, random choices of generators are often
+      not good enough. This option controls how many times the routine
+      will try new random choices before giving up and reporting an error.
+    Example
+      setRandomSeed(314159268)
+      kk=ZZ/2
+      S = kk[a,b,c,d];
+      I = monomialCurveIdeal(S, {1,3,4});
+      minimalReduction(I, Tries=>30);
 ///
 
 doc ///
@@ -1076,6 +1244,49 @@ doc ///
 
 doc ///
   Key
+    specialFiber
+    (specialFiber, Module)
+    (specialFiber, Ideal)
+    (specialFiber, Module, RingElement)
+    (specialFiber, Ideal, RingElement)
+  Headline
+     special fiber of a blowup     
+  Usage
+     specialFiber M
+     specialFiber(M,f)
+  Inputs
+     M:Module
+       or @ofClass Ideal@
+     f:RingElement
+       an optional element, which is a non-zerodivisor modulo {\tt M} and the ring of {\tt M}
+  Outputs
+     :Ring
+  Description
+   Text
+     Let $M$ be an $R = k[x_1,\ldots,x_n]/J$-module (for example an ideal), and
+     let $mm=ideal vars R = (x_1,\ldots,x_n)$, and suppose that $M$ is a
+     homomorphic image of the free module $F$ with $m+1$ generators. Let $T$ be the Rees algebra of
+     $M$. The call specialFiber(M) returns the ideal $J\subset k[w_0,\dots,w_m]$
+     such that $k[w_0,\dots,w_m]/J \cong T/mm*T$; that is, specialFiber(M) =
+     reesIdeal(M)+mm*Sym(F). This routine differs from @TO specialFiberIdeal@ in that
+     the ambient ring of the output ideal is $k[w_0,\dots,w_m]$ rather than
+     $R[w_0,\dots,w_m]$. The coefficient ring $k$ used is always the @TO ultimate@
+     @TO coefficientRing@ of $R$.
+     
+     The name derives from the fact that $Proj(T/mm*T)$ is the special fiber of
+     the blowup of $Spec R$ along the subscheme defined by $I$.
+   Example
+     R=QQ[a,b,c,d,e,f]
+     M=matrix{{a,c,e},{b,d,f}}
+     analyticSpread image M
+     specialFiber image M
+  SeeAlso
+     reesIdeal
+     specialFiberIdeal
+///
+
+doc ///
+  Key
     analyticSpread
     (analyticSpread, Module)
     (analyticSpread, Ideal)
@@ -1218,7 +1429,11 @@ doc ///
       such that $I$ is integrally dependent on $J$. 
      
       This routine is probabilistic: $J$ is computed as the ideal generated by the
-      right number of random linear combinations of the generators of $I$.
+      right number of random linear combinations of the generators of $I$. However, the
+      routine checks rigorously that the output ideal is a reduction, and tries
+      probabilistically again if it is not. If it cannot find a minimal reduction after
+      a certain number of tries, it returns an error. The number of tries defaults
+      to 20, but can be set with the optional argument @TO Tries@.
 
       To say that $I$ is integrally dependent on $J$ means that
       $JI^k = I^{k+1}$ for some non-negative integer $k$.  The smallest $k$ with this
@@ -1258,27 +1473,27 @@ doc ///
 doc ///
   Key
     reductionNumber
-    (reductionNumber, Ideal)
+    (reductionNumber, Ideal, Ideal)
   Headline
-    reduction number of an ideal
+    reduction number of one ideal with respect to another
   Usage
-    k = reductionNumber I
+    k = reductionNumber(I,J)
   Inputs
     I:Ideal
+    J:Ideal
   Outputs
     :ZZ
       the reduction number of $I$ (defined below)
   Description
     Text
-      reductionNumber takes an ideal $I$ that is homogeneous or inhomogeneous
+      reductionNumber takes a pair of ideals $I,J$, homogeneous or inhomogeneous
       (in the latter case the ideal is to be regarded as an ideal in the 
-      localization of the polynomial ring at the origin.). It returns the integer $k$
-      such that for a generic minimal reduction $J$ of $I$, 
+      localization of the polynomial ring at the origin.).
+      The ideal $J$ must be a reduction of $I$ (that is, $J\subset I$
+      and $I$ is integrally dependent on $J$. This condition is checked by
+      the function @TO isReduction@. It returns the smallest integer $k$ such that
       $JI^k = I^{k+1}$.
       
-      The routine is probabilistic, since it depends on 
-      the routine @TO minimalReduction@.
-
       See the book 
       Huneke, Craig; Swanson, Irena: Integral closure of ideals, rings, and modules. 
       London Mathematical Society Lecture Note Series, 336. Cambridge University Press, Cambridge, 2006.
@@ -1290,8 +1505,8 @@ doc ///
       m = ideal vars S;
       i = (ideal"a,b")*m+ideal"c3"
       analyticSpread i
-      minimalReduction i
-      reductionNumber i
+      j=minimalReduction i
+      reductionNumber (i,j)
   Caveat
      It is possible for the routine to not finish in reasonable time, due to the
      probabilistic nature of the routine.  What happens is that 
@@ -1717,3 +1932,7 @@ for t from 1 to 100 do(
      )
 i=ideal(b^2*c^3,a^2,a*c^3,b^5*c,b^4*c)
 I=specialFiberIdeal i
+
+-- Local Variables:
+-- compile-command: "make -C $M2BUILDDIR/Macaulay2/packages PACKAGES=BeginningMacaulay2 RemakeAllDocumentation=true IgnoreExampleErrors=false"
+-- End:
