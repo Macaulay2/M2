@@ -30,10 +30,10 @@ export {
      "NoOutput",
      "Tolerance",
      "getSolution", "SolutionAttributes", "Coordinates", "SolutionStatus", "LastT", "RCondition", "NumberOfSteps",
-     "NAGtrace",
      "randomSd", "goodInitialPair", "randomInitialPair", "GeneralPosition",
      "Bits", "Iterations", "ResidualTolerance", "ErrorTolerance",
-     "points" 
+     --"points", 
+     "NAGtrace"
      }
 exportMutable {
      }
@@ -803,7 +803,7 @@ refine (List,List) := List => o -> (T,solsT) -> (
 -- possible solution statuses returned by engine
 solutionStatusLIST := {"UNDETERMINED", "PROCESSING", "REGULAR", "SINGULAR", "INFINITY (FAILURE)", "MIN STEP (FAILURE)"}
 
-getSolution = method(Options =>{SolutionAttributes=>Coordinates})
+getSolution = method(Options =>{SolutionAttributes=>(Coordinates, SolutionStatus, LastT, RCondition, NumberOfSteps)})
 getSolution ZZ := Thing => o -> i -> (
 -- gets specified solution from the engine
 -- IN:  the number of solution
@@ -2180,7 +2180,7 @@ end
 restart
 loadPackage "NumericalAlgebraicGeometry"
 uninstallPackage "NumericalAlgebraicGeometry"
-installPackage("NumericalAlgebraicGeometry", SeparateExec=>true, AbsoluteLinks=>false, RerunExamples=>true)
+installPackage("NumericalAlgebraicGeometry", SeparateExec=>true, AbsoluteLinks=>false)
 installPackage "NumericalAlgebraicGeometry"
 check "NumericalAlgebraicGeometry"
 

@@ -176,7 +176,7 @@ document {
 	Outputs => {{ TT "s", ", (an) attributes of the solution"}},
 	"Returns attribute(s) of the ", TT "i", "-th solution specified in the option", TO "SolutionAttributes", 
 	", which could be either a sequence or a single attribute.", BR{}, 
-	"Attributes include:",
+	"SolutionAttributes include:",
 	UL{
 	  {"Coordinates", " -- the list of coordinates"},
 	  {"SolutionStatus", " -- REGULAR, SINGULAR, FAILED, etc."},
@@ -279,7 +279,7 @@ M = track(S,T,solsS,gamma=>0.6+0.8*ii,Software=>M2)
 	}
 
 document {
-	Key => {goodInitialPair, (goodInitialPair, List), [goodInitialPair,GeneralPosition]},
+	Key => {goodInitialPair, (goodInitialPair, List), [goodInitialPair,GeneralPosition], GeneralPosition},
 	Headline => "a good (conjectured by Shub and Smale) initial pair",
 	Usage => "(S,sol) = goodInitialPair T",
 	Inputs => { 
