@@ -21,23 +21,29 @@ export CXXFLAGS =
 export LDFLAGS =
 export SINGULARLIBS =
 export ISSUE =
+export PYTHONPATH =
 export DISTRIBUTION =
-export PATH = $(shell echo ":$(PATH)" | sed -e 's=:/sw/[^:]*==g' -e 's=:/usr/local/[^:]*==g' -e 's=:$(HOME)[^:]*==g' | sed -e 's=^:==')
+export PATH := $(shell echo ":$(PATH)" | sed -e 's=:/sw/[^:]*==g' -e 's=:/usr/local/[^:]*==g' -e 's=:/usr/X11[^:]*==g' -e 's=:/Applications/Macaulay2[^:]*==g' -e 's=:$(HOME)[^:]*==g' | sed -e 's=^:==')
+
+DIRECTORY := builds.tmp/naive
+MAKEOPTIONS := -C $(DIRECTORY) TARFILE_DIR=$(shell pwd)/$(DIRECTORY)/tarfiles
 
 all: check-environment make-configure-script configure build
 check-environment:
-	if printenv | egrep "[=:](/sw|/usr/local)/" ; then false ; else true ; fi
+	printenv PATH
 make-configure-script:
 	$(MAKE) -C ../.. VERBOSE=no
-configure: builds.tmp/naive/.configured
-reconfigure builds.tmp/naive/.configured:
-	mkdir -p builds.tmp/naive
-	cd builds.tmp/naive && ../../../../configure --prefix=`pwd`/install-directory --enable-downloads
+configure: $(DIRECTORY)/.configured
+reconfigure $(DIRECTORY)/.configured:
+	mkdir -p $(DIRECTORY)
+	cd $(DIRECTORY) && ../../../../configure --prefix=`pwd`/install-directory --enable-download
 	touch $@
 build:
-	$(MAKE) -C builds.tmp/naive 
-	$(MAKE) -C builds.tmp/naive install
-	$(MAKE) -C builds.tmp/naive check
+	$(MAKE) $(MAKEOPTIONS) 
+	$(MAKE) $(MAKEOPTIONS) install
+	$(MAKE) $(MAKEOPTIONS) check
+clean:
+	rm -rf "$(DIRECTORY)"
 # Local Variables:
 # compile-command: "time make -f Makefile.naive "
 # End:
