@@ -1092,12 +1092,13 @@ document {
      Usage => "z = merge(x,y,g)",
      Inputs => { "x", "y",
 	  "g" => {"a function of two variables to be used to combine a value of ", TT "x", " with a value of ", TT "y", " when the 
-	       corresponding keys coincide" } },
+	       corresponding keys coincide." } },
      Outputs => {
 	  "z" => { "a new hash table whose keys are the keys occurring in ", TT "x", "
 	       or in ", TT "y", "; the same values are used, except that if if a key ", TT "k", " occurs in both arguments, then
-	       ", TT "g(x#k,y#k)", " is used instead." } },
-     "If ", TT "x", " and ", TT "y", " have the same class and parent, then so will ", TT "z", ".",
+	       ", TT "g(x#k,y#k)", " is used instead, unless ", TT "g", " evaluated ", TO "continue", ", in which
+	       case the key ", TT "k", " does not appear in the result." } },
+     "If ", TT "x", " and ", TT "y", " have the same class and have the same parent, then so will ", TT "z", ".",
      PARA {
 	  "This function is useful for multiplying monomials or adding polynomials.  We illustrate that with
 	  a simple-minded implmentation of the free abelian group on the set of strings, representing an element as a type of hash table
@@ -1140,7 +1141,10 @@ document {
 	       whenever ", TT "x", " contains the pair ", TT "p => b", "
 	       and ", TT "y", " contains the pair ", TT "q => c", ",
 	       except that ", TT "h", " is used to combine values when two keys
-	       coincide."
+	       coincide.  If ", TT "f", " or ", TT "g", " evaluates ", TO "continue", ", then
+	       nothing is contributed to the resulting hash table.  If ", TT "h", " evaluates
+	       ", TO "continue", ", then, at that point, the entry stored under the key ", TT "f(p,q)", " 
+	       in the hash table under construction is removed."
 	       }
 	  },
      "The function ", TT "f", " is applied to every pair ", TT "(p,q)", "

@@ -1680,8 +1680,12 @@ merge(e:Expr):Expr := (
 			 val := lookup1(z,q.key,q.hash);
 			 if val != notfoundE then (
 			      t := applyEEE(g,val,q.value);
-			      when t is Error do return t else nothing;
-			      storeInHashTable(z,q.key,q.hash,t);
+			      when t is err:Error do (
+			      	   if err.message != continueMessage then return t else remove(z,q.key);
+			      	   )
+			      else (
+				   storeInHashTable(z,q.key,q.hash,t);
+				   )
 			      )
 			 else (
 			      storeInHashTable(z,q.key,q.hash,q.value);
@@ -1707,8 +1711,12 @@ merge(e:Expr):Expr := (
 			 val := lookup1(z,q.key,q.hash);
 			 if val != notfoundE then (
 			      t := applyEEE(g,q.value,val);
-			      when t is Error do return t else nothing;
-			      storeInHashTable(z,q.key,q.hash,t);
+			      when t is err:Error do (
+			      	   if err.message != continueMessage then return t else remove(z,q.key);
+			      	   )
+			      else (
+				   storeInHashTable(z,q.key,q.hash,t);
+				   )
 			      )
 			 else (
 			      storeInHashTable(z,q.key,q.hash,q.value);
@@ -1739,19 +1747,35 @@ combine(f:Expr,g:Expr,h:Expr,x:HashTable,y:HashTable):Expr := (
 		    q := qq;
 		    while q != q.next do (
 			 pqkey := applyEEE(f,p.key,q.key);
-			 when pqkey is Error do return pqkey else nothing;
-			 pqvalue := applyEEE(g,p.value,q.value);
-			 when pqvalue is Error do return pqvalue else nothing;
-			 pqhash := hash(pqkey);
-			 previous := lookup1(z,pqkey,pqhash);
-			 r := storeInHashTable(z,pqkey,pqhash,
-			      if previous == notfoundE
-			      then pqvalue
+			 when pqkey 
+			 is err:Error do (
+			      if err.message != continueMessage then return pqkey;
+			      )
+			 else (
+			      pqvalue := applyEEE(g,p.value,q.value);
+			      when pqvalue
+			      is err:Error do (
+				   if err.message != continueMessage then return pqvalue else nothing;
+				   )
 			      else (
-				   t := applyEEE(h,previous,pqvalue);
-				   when t is Error do return t else nothing;
-				   t));
-			 when r is Error do return r else nothing;
+				   pqhash := hash(pqkey);
+				   previous := lookup1(z,pqkey,pqhash);
+				   if previous == notfoundE
+				   then (
+					r := storeInHashTable(z,pqkey,pqhash,pqvalue);
+					when r is Error do return r else nothing;
+					)
+				   else (
+					t := applyEEE(h,previous,pqvalue);
+					when t is err:Error do (
+					     if err.message == continueMessage
+					     then remove(z,pqkey)
+					     else return t;
+					     )
+					else (
+					     r := storeInHashTable(z,pqkey,pqhash,t);
+					     when r is Error do return r else nothing;
+					     ))));
 			 q = q.next);
 		    );
 	       p = p.next));
