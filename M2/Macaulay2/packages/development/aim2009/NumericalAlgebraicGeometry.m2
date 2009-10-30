@@ -31,7 +31,7 @@ export {
      "Tolerance",
      "getSolution", "SolutionAttributes", "Coordinates", "SolutionStatus", "LastT", "RCondition", "NumberOfSteps",
      "NAGtrace",
-     "randomSd", "goodInitialPair", "randomInitialPair",
+     "randomSd", "goodInitialPair", "randomInitialPair", "GeneralPosition",
      "points"
      }
 exportMutable {
@@ -754,7 +754,13 @@ track (List,List,List) := List => o -> (S,T,solsS) -> (
      ret
      )
 
-refine = method(TypicalValue => List, Options =>{Software=>M2engine, Tolerance=>1e-8, maxCorrSteps=>30})
+refine = method(TypicalValue => List, Options =>{
+	  Software=>M2engine, 
+      	  ResidualTolerance => 0, 
+	  ErrorTolerance => 1e-10,
+	  Iterations => null,
+	  Bits => 300
+	  })
 refine (List,List) := List => o -> (T,solsT) -> (
 -- tracks solutions from start system to target system
 -- IN:  T = list of polynomials in target system
@@ -763,8 +769,11 @@ refine (List,List) := List => o -> (T,solsT) -> (
      if o.Software === M2engine then (
 	  if lastPathTracker === null 
 	  then error "path tracker is not set up"
-	  else return entries map(CC_53, rawRefinePT(lastPathTracker, raw matrix solsT, o.Tolerance, o.maxCorrSteps));
-     	  );
+	  else return entries map(CC_53, rawRefinePT(lastPathTracker, raw matrix solsT, o.ErrorTolerance, 
+		    if o.Iteration===null then 30 else o.Iteration));
+     	  ) else if o.Software === PHCpack then (
+	  refinePHCpack(T,solsT,Iterations=>o.Iterations,Bits=>o.Bits,ErrorTolerance=>o.ErrorTolerance)
+	  );
      n := #T; 
      if n > 0 then R := ring first T else error "expected nonempty target system";
      if n != numgens R then error "expected a square system";
@@ -779,7 +788,7 @@ refine (List,List) := List => o -> (T,solsT) -> (
 	       -- corrector step
 	       dx = 1; -- dx = + infinity
 	       nCorrSteps := 0;
-	       while norm dx > o.Tolerance * norm x1 and nCorrSteps < o.maxCorrSteps do ( 
+	       while norm dx > o.ErrorTolerance * norm x1 and nCorrSteps < o.maxCorrSteps do ( 
 		    if DBG > 3 then << "x=" << toString x1 << " res=" <<  toString evalT(x1) << " dx=" << dx << endl;
 		    dx = solve(evalJ(x1), -evalT(x1));
 		    x1 = x1 + dx;
@@ -886,7 +895,9 @@ dimHd List := ZZ => d->sum(#d, i->binomial(#d+d#i,d#i));
 -- OUT: conjectured (by Shub and Smale) good initial pair (f,z_0), f\in Hd, z\in P^n
 --      f, List; z_0, List of one element
 goodInitialPair = method(Options=>{GeneralPosition=>false})
-goodInitialPair (Ring,List) := o -> (R,d) -> (
+goodInitialPair List := o -> T -> (
+     R := ring first T;
+     d := T/first@@degree;
      lastVar := last gens R;
      n := numgens R - 1;
      (S, solsS) := ( transpose matrix{apply(n, i->(sqrt d#i)*lastVar^(d#i - 1)*R_i)}, 
@@ -956,8 +967,8 @@ debug loadPackage "NumericalAlgebraicGeometry"
 sum(randomSd {2,3,4,5} / BombieriWeylNormSquared) -- should be 1
 ///
 
-randomInitialPair = method(TypicalValue => Sequence)
-randomInitialPair List := Sequence => T -> (
+randomInitialPair = method()
+randomInitialPair List := T -> (
 -- for a homogeneous system constructs a start system and one root 
 -- IN:  T = list of polynomials 
 -- OUT: (S,solsS}, where 

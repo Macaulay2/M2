@@ -404,7 +404,7 @@ W3s = monodromyBreakupPHC W
 apply(W3s, points)
 W3s/degree
 peek W2
-see ideal W2
+netList (ideal W2)_*
 peek oo
 ///
 
