@@ -234,14 +234,14 @@ makeSimplicial (NormalToricVariety):= NormalToricVariety => X ->(
      if not X.cache.?halfspaces then X.cache.halfspaces = new MutableHashTable;
      R := rays X;
      Rm := matrix rays X;
-     Cones := partition(l -> rank Rm^l == #l,max X);
+     Cones := partition(l -> dim(l,X) == #l,max X);
      simpCones := if Cones#?true then Cones#true else {};
      Cones = if Cones#?false then Cones#false else {};
      while Cones != {} do (
 	  C := Cones#0;
 	  HS := -((fourierMotzkin transpose Rm^C)#0);
 	  X.cache.halfspaces#C = transpose HS;
-	  FL := reverse faceLatticeSimple(transpose Rm^C,HS);
+	  FL := reverse faceLatticeSimple(dim(C,X),transpose Rm^C,HS);
 	  r := {};
 	  for i from 1 to #FL-1 do (
 	       nonsimpFace := select(1,FL#i, e -> #(toList e#0) != i+2);
@@ -252,7 +252,7 @@ makeSimplicial (NormalToricVariety):= NormalToricVariety => X ->(
 	  if not X.cache.?halfspaces then X.cache.halfspaces = new MutableHashTable;
 	  R = rays X;
 	  Rm = matrix R;
-	  Cones = partition(l -> rank Rm^l == #l, max X);
+	  Cones = partition(l -> dim(l,X) == #l, max X);
 	  if Cones#?true then simpCones = simpCones | Cones#true;
 	  if Cones#?false then Cones = Cones#false else Cones = {});
      Xsimp := new NormalToricVariety from {
@@ -263,8 +263,7 @@ makeSimplicial (NormalToricVariety):= NormalToricVariety => X ->(
      Xsimp)
 
 
-faceLatticeSimple = (R,HS) -> (
-     d := rank R;
+faceLatticeSimple = (d,R,HS) -> (
      R = apply(numColumns R, i -> R_{i});
      HS = apply(numColumns HS, i -> transpose HS_{i});
      L := {(set R,set {},set HS)};
@@ -289,7 +288,7 @@ stellarSubdivision (NormalToricVariety,List) := (X,r) -> (
      newMax := flatten apply(max X, C -> (
 	       M := promote(R^C,QQ);
 	       if replacement == {} then (		    
-		    if rank M == #C then (
+		    if dim(C,X) == #C then (
 			 -- Simplicial Cone
 			 M = inverse M;
 			 v := flatten entries (transpose M * rm);
@@ -313,7 +312,7 @@ stellarSubdivision (NormalToricVariety,List) := (X,r) -> (
 			 else {C}))
 	       else (
 		    if isSubset(set replacement,set C) then (
-			 if rank M == #C then (
+			 if dim(C,X) == #C then (
 			      -- Simplicial Cone
 			      C = toList (set C - set replacement) | {n};
 			      apply(#replacement, i -> sort(C|drop(replacement,{i,i}))))
