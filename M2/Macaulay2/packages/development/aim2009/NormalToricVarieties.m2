@@ -75,6 +75,11 @@ dim NormalToricVariety := ZZ => X -> (
      if not X.cache.?dim then X.cache.dim = #(rays X)#0;
      X.cache.dim)
 
+dim (List,NormalToricVariety) := ZZ => (sigma,X) -> (
+     if not X.cache.?rank then X.cache.rank = new MutableHashTable;
+     if not X.cache.rank#?sigma then X.cache.rank#sigma = rank matrix (rays X)_sigma;
+     X.cache.rank#sigma)
+
 projectiveSpace = method(TypicalValue => NormalToricVariety)
 projectiveSpace ZZ := d -> (
      if d < 0 then error "-- expected nonnegative integer";
@@ -531,7 +536,9 @@ toricIdeal = (A,S) -> (
 
 
 makePrimitive = method()
-makePrimitive List := w -> (g := gcd w; if g < 1 then apply(w, e -> lift((1/g)*e,ZZ)) else apply(w, e -> lift(e//g,ZZ)))
+makePrimitive List := w -> (g := gcd w; apply(w, e -> e//g)
+
+
 
 
 
