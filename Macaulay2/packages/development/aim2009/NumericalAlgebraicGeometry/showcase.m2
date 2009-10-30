@@ -1,4 +1,4 @@
-loadPackage "NumericalAlgebraicGeometry"
+needsPackage "NumericalAlgebraicGeometry"
 NAGtrace 2
 load "benchmarks.m2"
 
@@ -15,8 +15,8 @@ systems = {
      (T = (katsuraBench 12)_*, -- #sols=2048, M2:11, H:19, B:37, P:102
 	  (S,solsS) = totalDegreeStartSystem T; (T,S,solsS)), 
      -- random generalized eigenvalue problem
-     (setRandomSeed 0; randomGeneralizedEigenvalueProblem 35) -- #sols=35, M2:1, B:16, P:432 
-};
+     (setRandomSeed 0; randomGeneralizedEigenvalueProblem 35) -- #sols=35, M2:3, B:40, P:323 
+     };
 softwares = {M2engine,Bertini,PHCpack,HOM4PS2};
 
 for system in systems do (
@@ -26,8 +26,9 @@ for system in systems do (
 	       << "---------- COMPUTING with " << soft << "-----------------" << endl; 
 	       << "---------------------------------------------------------" << endl;
 	       soft=>sortSolutions if soft===HOM4PS2 then solveSystem(T,Software=>soft)
-	       else track(S,T,solsS,gamma=>1+ii,Software=>soft))
-	       );
+	       else 
+	       track(S,T,solsS,gamma=>1+ii,Software=>soft)
+	       ));
      --assert all(drop(softwares,1), soft->areEqual(sols#soft/(s->{first s}),sols#(first softwares),Tolerance=>1e-3));
      --on large problems some of the softwares do not refine solutions to high enough precision -- can't check the match
      )
