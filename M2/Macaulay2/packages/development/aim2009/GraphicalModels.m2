@@ -38,11 +38,11 @@ newPackage("GraphicalModels",
 ------------------------------------------
 
 
-export {graph, diGraph, displayGraph, localMarkovStmts, globalMarkovStmts, pairMarkovStmts,
+export {localMarkovStmts, globalMarkovStmts, pairMarkovStmts,
        markovRing, marginMap, hideMap, markovMatrices, markovIdeal, writeDotFile, removeRedundants, 
-       gaussRing, gaussMinors, gaussIdeal, gaussTrekIdeal, Graph, DiGraph, simpleGraph}
-     --  descendents, nondescendents, parents, children, removeNodes,neighbors, nonneighbors
-exportMutable {dotBinary,jpgViewer}
+       gaussRing, gaussMinors, gaussIdeal, gaussTrekIdeal}
+     --  simpleGraph, descendents, nondescendents, parents, children, removeNodes,neighbors, nonneighbors
+--exportMutable {dotBinary,jpgViewer}
 
 ---- List from Board at AIM.
 
@@ -110,132 +110,6 @@ exportMutable {dotBinary,jpgViewer}
 -- Set graph types and constructor functions. -- 
 ------------------------------------------------
 
-DiGraph = new Type of HashTable
-     -- a directed graph is a hash table in the form:
-     -- { A => set {B,C,...}, ...}, where there are edges A->B, A->C, ...
-     -- and A,B,C are integers.  
-
-Graph = new Type of DiGraph   
-     -- an undirected graph is a hash table in the form { A => set {B,C, ...}, 
-     -- where the set consists of the neighbors of A. 
-
-graph = method()
-graph List := (g) -> (
-     -- Input:  A list of lists.  The first list is the names of the nodes, the second 
-     -- list is a list of lists giving the neighbors for each node.
-     -- Output:  A hashtable with keys the names of the nodes with the 
-     -- children/neighbors assigned. 
-     h := new MutableHashTable;
-     vertices := g#0;
-     edges := g#1;
-     apply(#vertices, i -> h#(vertices#i) = set edges#i);
-     new Graph from h)
-
-diGraph = method()
-diGraph List := (g) -> (
-     -- Input:  A list of lists.  The first list is the names of the nodes, the second 
-     -- list is a list of lists giving the children for each node.
-     -- Output:  A hashtable with keys the names of the nodes with the 
-     -- children assigned. 
-     h := new MutableHashTable;
-     vertices := g#0;
-     children := g#1;
-     apply(#vertices, i -> h#(vertices#i) = set children#i);
-     new DiGraph from h)
-     
------------------------------
--- Graph Display Functions --
------------------------------
-
--- dotBinary = "/sw/bin/dot"
-dotBinary = "dot"
--- jpgViewer = "/usr/bin/open"
-jpgViewer = "open"
-
-union = S -> (
-     x = new MutableHashTable;
-     for t in S do scanKeys(t, z -> x#z = 1);
-     new Set from x)  
-
-simpleGraph = method()
-simpleGraph(Graph) := H -> (
-     q = pairs H;
-     qmute = new MutableList;
-     for i to #q-1 do qmute#i = q#i;
-     for k from 1 to #q-1 do (
-	  testVertices = set for i to k-1 list qmute#i#0;
-      	  qmute#k = (qmute#k#0, qmute#k#1-testVertices)
-	  );
-     newGraph := new MutableHashTable;
-     for k to #q-1 do newGraph#(qmute#k#0) = qmute#k#1;
-     new Graph from newGraph)
-
- 
-writeDotFile = method()
-writeDotFile(String, Graph) := (filename, G) -> (
-     G = simpleGraph G;
-     fil := openOut filename;
-     fil << "graph G {" << endl;
-     q := pairs G;
-     for i from 0 to #q-1 do (
-	  e := q#i;
-	  fil << "  " << toString e#0;
-	  if #e#1 === 0 or all(q, j->member(e#0,j#1)) then
-	    fil << ";" << endl
-	  else (
-	    fil << " -- {";
-	    links := toList e#1;
-	    for j from 0 to #links-1 do
-		 fil << toString links#j << ";";
-     	    fil << "};" << endl;
-	    )
-	  );
-     fil << "}" << endl << close;
-     )
-
-writeDotFile(String, DiGraph) := (filename, G) -> (
-     fil := openOut filename;
-     fil << "digraph G {" << endl;
-     q := pairs G;
-     for i from 0 to #q-1 do (
-	  e := q#i;
-	  fil << "  " << toString e#0;
-	  if #e#1 === 0 then
-	    fil << ";" << endl
-	  else (
-	    fil << " -> {";
-	    links := toList e#1;
-	    for j from 0 to #links-1 do
-		 fil << toString links#j << ";";
-     	    fil << "};" << endl;
-	    )
-	  );
-     fil << "}" << endl << close;
-     )
-
-runcmd := cmd -> (
-     stderr << "--running: " << cmd << endl;
-     r := run cmd;
-     if r != 0 then error("--command failed, error return code ",r);
-     )
-
-displayGraph = method()
-
-displayGraph(String,String,DiGraph) := (dotfilename,jpgfilename,G) -> (
-     writeDotFile(dotfilename,G);
-     runcmd(dotBinary | " -Tjpg "|dotfilename | " -o "|jpgfilename);
-     runcmd(jpgViewer | " " | jpgfilename);
-     )
-displayGraph(String,DiGraph) := (dotfilename,G) -> (
-     jpgfilename := temporaryFileName() | ".jpg";
-     displayGraph(dotfilename,jpgfilename,G);
-     --removeFile jpgfilename;
-     )
-displayGraph DiGraph := (G) -> (
-     dotfilename := temporaryFileName() | ".dot";
-     displayGraph(dotfilename,G);
-     --removeFile dotfilename;
-     )
 
 -------------------------
 -- Statements -----------
@@ -444,7 +318,7 @@ bayesBall = (A,C,G) -> (
 -- Markov relationships --
 --------------------------
 pairMarkovStmts = method()
-pairMarkovStmts Graph := (G) -> (
+pairMarkovStmts DiGraph := (G) -> (
      -- given a graph G, returns a list of triples {A,B,C}
      -- where A,B,C are disjoint sets, and for every vertex v
      -- and non-descendent w of v,
@@ -455,7 +329,7 @@ pairMarkovStmts Graph := (G) -> (
 	       apply(toList W, w -> {set {v}, set{w}, ND - set{w}}))))
 
 localMarkovStmts = method()			 
-localMarkovStmts Graph := (G) -> (
+localMarkovStmts DiGraph := (G) -> (
      -- Given a graph G, return a list of triples {A,B,C}
      -- of the form {v, nondescendents - parents, parents}
      result := {};
@@ -467,7 +341,7 @@ localMarkovStmts Graph := (G) -> (
      removeRedundants result)
 
 globalMarkovStmts = method()
-globalMarkovStmts Graph := (G) -> (
+globalMarkovStmts DiGraph := (G) -> (
      -- Given a graph G, return a complete list of triples {A,B,C}
      -- so that A and B are d-separated by C (in the graph G).
      -- If G is large, this should maybe be rewritten so that
@@ -630,7 +504,7 @@ gaussIdeal(Ring, List) := (R,Stmts) -> (
 gaussIdeal(Ring,Graph) := (R,G) -> gaussIdeal(R,globalMarkovStmts G)
 
 gaussTrekIdeal = method()
-gaussTrekIdeal(Ring, Graph) := (R,G) -> (
+gaussTrekIdeal(Ring, DiGraph) := (R,G) -> (
      n := max keys G;
      P := toList apply(1..n, i -> toList parents(G,i));
      nv := max(P/(p -> #p));
@@ -724,12 +598,12 @@ document {
      }
 
 document { 
-     Key => {gaussIdeal, (gaussIdeal,Ring,Graph), (gaussIdeal,Ring,List)},
+     Key => {gaussIdeal, (gaussIdeal,Ring,DiGraph), (gaussIdeal,Ring,List)},
      Headline => "correlation ideal of a Bayesian network of joint Gaussian variables",
      Usage => "gaussIdeal(R,G)",
      Inputs => { 
 	  "R" => Ring => {"created with ", TO  "gaussRing", ""},
-	  "G" => {ofClass Graph, " or ", ofClass List}
+	  "G" => {ofClass DiGraph, " or ", ofClass List}
 	   },
      Outputs => {
 	  "the ideal in R of the relations in the correlations of the random variables implied by the
