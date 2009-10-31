@@ -219,6 +219,6 @@ document {
 	  TO "another link name"
 	  },///,
      "The ", TT "Subnodes", " option defines how the tree structure of the documentation is constructed. This is relevant when printing the documentation.",   
-     SeeAlso => {document, TO}
+     SeeAlso => {document, TO, "SimpleDoc::doc"}
      }
 
