@@ -15,7 +15,6 @@ newPackage(
 export { 
      NormalToricVariety, 
      normalToricVariety, 
-	latticeIndex, 
      projectiveSpace, 
      hirzebruchSurface, 
      weightedProjectiveSpace, 
@@ -24,6 +23,7 @@ export {
      isFan,
      isProjective,
      isSimplicial,
+     latticeIndex,
      makeSimplicial,
      weilDivisors, 
      cartierDivisors, 
@@ -269,7 +269,7 @@ makeSimplicial (NormalToricVariety) := NormalToricVariety => X ->(
 	  r := {};
 	  for i from 1 to #FL-1 do (
 	       nonsimpFace := select(1,FL#i, e -> #(toList e#0) != i+2);
-	       if nonsimpFace != {} then (r = flatten entries sum toList nonsimpFace#0#0; break));
+	       if nonsimpFace != {} then (r = makePrimitive flatten entries sum toList nonsimpFace#0#0; break));
 	  Y := normalToricVariety(R,Cones);
 	  Y.cache.halfspaces = X.cache.halfspaces;
 	  Y.cache.cones = X.cache.cones;
@@ -279,10 +279,7 @@ makeSimplicial (NormalToricVariety) := NormalToricVariety => X ->(
 	  Cones = partition(l -> dim(l,X) == #l, max X);
 	  if Cones#?true then simpCones = simpCones | Cones#true;
 	  if Cones#?false then Cones = Cones#false else Cones = {});
-     Xsimp := new NormalToricVariety from {
-	  symbol rays => R,
-	  symbol facets => simpCones,
-	  symbol cache => new CacheTable};
+     Xsimp := normalToricVariety(R,simpCones);
      Xsimp.cache.cones = X.cache.cones;
      if X.cache.?halfspaces then Xsimp.cache.halfspaces = X.cache.halfspaces;
      Xsimp)
@@ -1851,3 +1848,7 @@ restart
 uninstallPackage "NormalToricVarieties"
 installPackage("NormalToricVarieties", AbsoluteLinks => false)
 check NormalToricVarieties
+
+hello
+hello
+
