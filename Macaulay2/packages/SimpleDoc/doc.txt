@@ -1,3 +1,5 @@
+-- -*- mode: M2; coding: utf-8 -*-
+
   Key
     (doc,String)
     doc
@@ -15,6 +17,10 @@
     available via @TO help@ and @TO viewHelp@
   Description
    Text
+
+    The text used to create the documentation node you are currently reading is
+    displayed below.
+
     The string {\tt s} contains text describing the
     documentation to be produced.
 
@@ -59,16 +65,16 @@
     The text in the @TO Consequences@ section can be marked up as described
     above.
 
-    The text in the @TO Description@ section occurs in subsections labeled
-    with the keywords {\bf Text}, {\bf Example}, and {\bf Code}.  The text in a @TO Text@
-    subsection can be separated into paragraphs with blank lines.  Each
+    The text in the @TO Description@ section occurs in subsections labeled with
+    the keywords {\bf Text}, {\bf Example}, and {\bf Code}.  The text in a @TO
+    Text@ subsection can be separated into paragraphs with blank lines.  Each
     paragraph can contain markup as described above.  The text in an {\bf
     Example} subsection consists of lines of code to be used as examples in the
-    documentation node.  Within in each complete expression, indent lines
-    after the first one more than the first.  The text in a {\bf Code} section,
-    with common indentation removed, is wrapped with parentheses and evaluated; 
-    the result is spliced into the list of documentation items at the
-    appropriate point before passing the list to @TO document@.
+    documentation node.  Within in each complete expression, indent lines after
+    the first one more than the first.  The text in a {\bf Code} section, with
+    common indentation removed, is wrapped with parentheses and evaluated; the
+    result is spliced into the list of documentation items at the appropriate
+    point before passing the list to @TO document@.
 
     The lines in the @TO Subnodes@ section not beginning with a colon are keys
     giving links to the subnodes of the current documentation node.  The
@@ -76,13 +82,26 @@
     as in a book.  The lines in the @TO Subnodes@ section beginning with a
     colon are subheadings used to classify the subnodes.
 
+    Here is some example code:
    Example
      ourfcn = method()
      ourfcn ZZ := (n) -> (
          n+1)
      ourfcn 3
 
+   Text
+    Here is the text used to create this file:
+   Code
+     EXAMPLE { 
+	  PRE concatenate between("\n", select(
+	       lines get(first searchPath "SimpleDoc/doc.txt" | "SimpleDoc/doc.txt"),
+	       p -> not match("^--",p)))}
+
   SeeAlso
     document
     "docExample"
     "docTemplate"
+
+-- Local Variables:
+-- compile-command: "make -C $M2BUILDDIR/Macaulay2/packages PACKAGES=SimpleDoc RemakePackages=true RemakeAllDocumentation=true IgnoreExampleErrors=false RerunExamples=true"
+-- End:
