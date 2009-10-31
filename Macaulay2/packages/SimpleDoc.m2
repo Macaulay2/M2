@@ -15,8 +15,6 @@ newPackage(
     	DebuggingMode => false
     	)
 
-ppp = x -> (stderr << "-- " << x << endl ; x )
-
 export {doc, docTemplate, docExample, packageTemplate, simpleDocFrob}
 
 needsPackage "Text"
@@ -62,7 +60,7 @@ markup2 = (text, indents) -> (
      sp := separateRegexp(///(^|[^\])(@)///, 2, s);
      sp = apply(sp, s -> replace(///\\@///,"@",s));
      if not odd(#sp) then error "unmatched @";
-     for i from 0 to #sp-1 list if even i then if sp#i != "" then TEX sp#i else "" else value ppp sp#i
+     for i from 0 to #sp-1 list if even i then if sp#i != "" then TEX sp#i else "" else value sp#i
      )
 
 markup = (text, indents) -> (
@@ -86,7 +84,7 @@ items = (text, indents) -> (
 	       ps := separateRegexp("[[:space:]]*:[[:space:]]*", s);
 	       if #ps =!= 2 then error("first line should contain a colon: ",s);
 	       result := if i === j then "" else markup2(text_{i+1..j}, indents_{i+1..j});
-	       if ps#1 != "" then result = value ppp ps#1 => result;
+	       if ps#1 != "" then result = value ps#1 => result;
 	       if ps#0 != "" then result = ps#0 => result;
 	       result
 	       ))
@@ -97,7 +95,7 @@ DescriptionFcns = new HashTable from {
 	  splitByIndent(text,indents),
 	  (i,j) -> concatenate between(newline,apply(i .. j, k -> (if indents#k =!= infinity then indents#k - indents#0 : " ", text#k)))),
      "Text" => toSequence @@ markup,
-     "Code" => (text, indents) -> ( m := min indents; value ppp concatenate ("(",apply(indents, text, (ind,line) -> (ind-m,line,"\n")),")"))
+     "Code" => (text, indents) -> ( m := min indents; value concatenate ("(",apply(indents, text, (ind,line) -> (ind-m,line,"\n")),")"))
      }
 
 applySplit = (fcns, text, indents) ->
@@ -109,9 +107,9 @@ applySplit = (fcns, text, indents) ->
 description = (text, indents) -> toSequence applySplit(DescriptionFcns, text, indents)
 
 KeyFcns = new HashTable from {
-     "Key" => (text, indents) -> Key => apply(text,value @@ ppp),
-     "SeeAlso" => (text, indents) -> SeeAlso => apply(text,value @@ ppp),
-     "Subnodes" => (text, indents) -> Subnodes => apply(text,p -> if match("^:",p) then substring(1,p) else TO value ppp p),
+     "Key" => (text, indents) -> Key => apply(text,value),
+     "SeeAlso" => (text, indents) -> SeeAlso => apply(text,value),
+     "Subnodes" => (text, indents) -> Subnodes => apply(text,p -> if match("^:",p) then substring(1,p) else TO value p),
      "Usage" => (text, indents) -> multiString(Usage, text),
      "Headline" => (text, indents) -> singleString(Headline, text),
      "Description" => (text, indents) -> description(text,indents),
