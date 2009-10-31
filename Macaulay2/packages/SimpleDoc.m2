@@ -108,7 +108,7 @@ description = (text, indents) -> toSequence applySplit(DescriptionFcns, text, in
 
 KeyFcns = new HashTable from {
      "Key" => (text, indents) -> Key => apply(text,value),
-     "SeeAlso" => (text, indents) -> SeeAlso => apply(text,value),
+     "SeeAlso" => (text, indents) -> SeeAlso => apply(select(text,p -> #p>0),value),
      "Subnodes" => (text, indents) -> Subnodes => apply(text,p -> if match("^:",p) then substring(1,p) else TO value p),
      "Usage" => (text, indents) -> multiString(Usage, text),
      "Headline" => (text, indents) -> singleString(Headline, text),

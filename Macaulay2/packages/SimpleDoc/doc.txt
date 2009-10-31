@@ -96,12 +96,11 @@
 	  PRE concatenate between("\n", select(
 	       lines get(first searchPath "SimpleDoc/doc.txt" | "SimpleDoc/doc.txt"),
 	       p -> not match("^--",p)))}
-
   SeeAlso
     document
     "docExample"
     "docTemplate"
-
+    
 -- Local Variables:
 -- compile-command: "make -C $M2BUILDDIR/Macaulay2/packages PACKAGES=SimpleDoc RemakePackages=true RemakeAllDocumentation=true IgnoreExampleErrors=false RerunExamples=true"
 -- End:
