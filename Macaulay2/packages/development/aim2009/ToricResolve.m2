@@ -5,29 +5,24 @@
 
 --Written by Diane Maclagan, maclagan@math.stanford.edu
 --Edited by Christine Berkesch and Alexandra Seceleanu
---Last updated: October 29, 2009.
-
---Input:  NormalToricVariety
---Output: NormalToricVariety
-
+--Last updated: October 30, 2009.
 
 ----------------------------------------------------------------
 -- To consider for the future:
 ----------------------------------------------------------------
--- Need prime # for makePos? If yes, add check. If no, change documentation. 
+-- Add: Strategy options for (maxPrime, minPrime) in findNewRay? 
+--	(Then experiment with resolutions.)
+-- Think about: Is it necessary to input a prime # to makePos? 
 -- combinatorialStellarSubdivision for non-simplicial cones?
--- maxPrime vs minPrime --experiment
-
 
 ----------------------------------------------------------------
 ----------------------------------------------------------------
-----------------------------------------------------------------
+
 needsPackage "NormalToricVarieties"
 
 ----------------------------------------------------------------
---Preliminary procedures
+--Internal procedures
 ----------------------------------------------------------------
-
 --Procedure to return the largest prime dividing a number 
 maxPrime=n->(
      f:=factor(n);
@@ -39,8 +34,6 @@ minPrime=n->(
      f:=factor(n);
      return(min apply(#f,i->((f#i)#0)));
 );
-
----------------------------------------------------------------
 
 --Procedure to find the mod p representative of a vector v with
 --all entries between 0 (inclusive) and p (exclusive)
@@ -59,37 +52,19 @@ makePos=(v,pp)->(
 	v
 )
 
---------------------------------------------------------------------------------
-
---returns the dimension of the affine span of a face of the fan of X
---dim (List,NormalToricVariety):= (sigma,X) ->( rank matrix (rays X)_sigma )
---this will now be cached under rank(List)
-
-
--- computes the lattice index of a facet in (ambient lattice intersect its linear span)
-latticeIndex = method()
-latticeIndex (List,NormalToricVariety):= (sigma,X) ->(
-	if #sigma>1 then smartMinors matrix (rays X)_sigma
+-- computes maximal lattice index of facets of X (X is NOT required to be pure or simplicial)
+maxIndex = method()
+maxIndex (NormalToricVariety):= X ->(
+	max apply(max X,sigma-> latticeIndex(sigma,X))
 )
 
---smartMinors should be changed to minors after minors is updated
-smartMinors = method()
-smartMinors (Matrix):= M ->(
-	N := (smithNormalForm M)_0;  --N := hermite M;
-	product toList apply(rank N, i-> N_(i,i) )
-)
-
---Do we want this function? It's redundant.
---Procedure to blow up a NormalToricVariety by introducing a ray
-blowup = method(TypicalValue=>NormalToricVariety)
-blowup (NormalToricVariety,List)  :=  (X,rho)->(
-	stellarSubdivision(X,rho)
-)
-
+-------------------------------------------------------------------------
+--This is currently an internal procedure, but a Strategy option could be added.
+-------------------------------------------------------------------------
 findNewRay = method()
---Strategy: maxPrime
+--Add Strategy option: maxPrime or minPrime 
 findNewRay (NormalToricVariety,ZZ):=(X,maxInd) ->(
-	sigma := (select(1,keys X.cache.index, j -> X.cache.index#j == maxInd))#0;
+	sigma := (select(1,keys X.cache.cones, j -> (X.cache.cones#j)#1 == maxInd))#0;
 	--Now find the vector in this sigma to add
 	p := maxPrime(floor maxInd);
 	R := ZZ/p;
@@ -103,28 +78,21 @@ findNewRay (NormalToricVariety,ZZ):=(X,maxInd) ->(
 	--output next ray (as a List) at which to subdivide
 )
 
--- This should call a new function that caches latticeIndex whenever it's computed.
--- computes maximal lattice index of facets of X (X is NOT required to be pure or simplicial)
-maxIndex = method()
-maxIndex (NormalToricVariety):= X ->(
-	if (not X.cache.?index) then X.cache.index = hashTable apply(max X, sigma -> sigma => latticeIndex(sigma,X)) 
-	else X.cache.index = hashTable apply(max X, sigma -> (
-		if X.cache.index#?sigma then sigma => X.cache.index#sigma else sigma => latticeIndex(sigma,X)));
-	max values X.cache.index	
-)
-
--- make a simplicial toric variety smooth
+----------------------------------------------------------------
+--Procedures
+----------------------------------------------------------------
+-- resolve a simplicial normal toric variety
 makeSmooth = method()
 makeSmooth (NormalToricVariety) := X ->(
-	Xsimp := X;
+	Xsimp := X; 
 	maxInd := maxIndex Xsimp;
 	--Now the main part of the procedure
 	count := 0;
 	while(maxInd > 1) do (
 		count = count +1;	     
 		newA := findNewRay(Xsimp,maxInd);
-		print("blowup # ", count, " at ", newA, " with facet index ", maxInd);
-		time( Xsimp = stellarSubdivision( Xsimp, newA ) );
+		print concatenate{"blowup #",toString count," at ",toString newA," with lattice index ",toString maxInd};
+		Xsimp = stellarSubdivision( Xsimp, newA );
 		--Now update maxInd
 		maxInd = maxIndex Xsimp;
 	);
@@ -137,9 +105,178 @@ resolveSingularities (NormalToricVariety) := X ->(
 	if isSimplicial X then Xsimp = X else Xsimp = makeSimplicial X;
 	if isSmooth Xsimp then Xsimp else makeSmooth Xsimp
 )
---First make X simplicial, then make it smooth. 
+
+----------------------------------------------
+-- This function is now unnecessary.
+----------------------------------------------
+blowup = method(TypicalValue=>NormalToricVariety)
+blowup (NormalToricVariety,List)  :=  (X,rho)->(
+	stellarSubdivision(X,rho)
+)
 
 end
+
+---------------------------------------
+-- DOCUMENTATION
+---------------------------------------
+beginDocumentation()
+
+doc ///
+  Key
+	makeSmooth
+	(makeSmooth, NormalToricVariety)
+  Headline
+	resolve a simplicial normal toric variety
+  Usage
+	Y = makeSmooth X
+  Inputs
+	X:NormalToricVariety
+  Outputs
+	Y:NormalToricVariety
+  Description
+	Resolves the singularities of a simplicial {\tt X}, yielding a smooth {\tt Y}.
+   Text
+   Text
+   Example
+   Text
+   Example
+  Caveat
+	{\tt X} is assumed to be simplicial.
+  SeeAlso
+///
+
+doc ///
+  Key
+	resolveSingularities
+	(resolveSingularities, NormalToricVariety)
+  Headline
+	resolve the singularities of a normal toric variety
+  Usage
+	Y = resolveSingularities X
+  Inputs
+	X:NormalToricVariety
+  Outputs
+	Y:NormalToricVariety
+	  a resolution of {\tt X}
+  Description
+	This function returns the resolution of X obtained by applying makeSimplicial and then makeSmooth. 
+   Text
+   Text
+   Example
+   Text
+   Example
+--  Caveat
+--  SeeAlso
+///
+
+----------------------------------------------
+-- This function is now unnecessary.
+----------------------------------------------
+doc ///
+  Key
+	blowup
+	(blowup,NormalToricVariety,Matrix)
+  Headline
+	the blowup of a normal toric variety
+  Usage
+	Y = blowup(X,v)
+  Inputs
+	X = NormalToricVariety
+	v = List
+  Outputs
+	Y:NormalToricVariety
+	  The normal toric variety obtained by adding the ray defined by {\tt v} to the fan of {\tt X}. 
+  Description
+   Text
+   Text
+   Example
+   Text
+   Example
+  Caveat
+	The input matrix {\tt v} must be a column vector in the ambient space of the fan of {\tt X}.
+--  SeeAlso
+///
+
+end
+
+
+--------------------------------------------------------------------------
+-- The next two have already been added, but more documentation is needed. 
+--------------------------------------------------------------------------
+dim (List,NormalToricVariety):= (sigma,X) ->(
+	if (not X.cache.?cones) then X.cache.cones = new MutableHashTable;
+	if (not X.cache.cones#?sigma) then (
+		X.cache.cones#sigma = if #sigma>1 then (
+			N := (smithNormalForm matrix (rays X)_sigma)_0;
+			(rank N,  product toList apply(rank N, i-> N_(i,i)))
+			) else (1,1));
+	X.cache.cones#sigma#0
+)
+
+doc ///
+  Key
+	dim
+	(dim,List,NormalToricVariety)
+  Headline
+	the dimension of a cone in the fan of a normal toric variety
+  Usage
+	d = dim(sigma,X)
+  Inputs
+	X:NormalToricVariety
+	sigma:List
+	  of integers indexing a subset of (rays X)
+  Outputs
+	d:ZZ
+	  The dimension of the cone in the fan of {\tt X} defined by the rays indexed by {\tt sigma}.
+  Description
+   Text
+   Text
+   Example
+   Text
+   Example
+  Caveat 
+	It is not checked that {\tt sigma} actually defines a face of the fan of X.
+  SeeAlso
+///
+
+---------------------------------------
+
+latticeIndex = method()
+latticeIndex (List,NormalToricVariety):= (sigma,X) ->(
+	if (not X.cache.?cones) then X.cache.cones = new MutableHashTable;
+	if (not X.cache.cones#?sigma) then ( 
+		X.cache.cones#sigma = if #sigma>1 then (
+			N := (smithNormalForm matrix (rays X)_sigma)_0;
+			(rank N,  product toList apply(rank N, i-> N_(i,i)))
+			) else (1,1));
+	X.cache.cones#sigma#1
+)
+
+doc ///
+  Key
+	latticeIndex
+	(latticeIndex,List,NormalToricVariety)
+  Headline
+	the index in the ambient lattice of a lattice generated by primitive vectors in the fan of a normal toric variety
+  Usage
+	m = latticeIndex(sigma, X)
+  Inputs
+	X:NormalToricVariety
+	sigma:List
+	  of integers indexing a subset of (rays X)
+  Outputs
+	m:ZZ
+	  The index in the ambient lattice of the lattice generated by the rays indexed by {\tt sigma}.
+  Description
+   Text
+   Text
+   Example
+   Text
+   Example
+  Caveat
+	It is not checked that {\tt sigma} actually defines a face of the fan of X.
+  SeeAlso
+///
 
 
 --=========================================================================
@@ -222,62 +359,20 @@ time Y1 = resolveSingularities Q
 time Y2 = resolveSingularities2 Q
 
 
----------------------------------------
--- DOCUMENTATION
----------------------------------------
+--------------------------------------------------------------------------
+--------------------------------------------------------------------------
+--No longer need this.
+-----------------------
+--smartMinors should be changed to minors after minors is updated
+smartMinors = method()
+smartMinors (ZZ,Matrix):= (r,M) ->(
+	N := (smithNormalForm M)_0;  --N := hermite M;
+	product toList apply(r, i-> N_(i,i) )
+)
+
+smartMinors (Matrix):= M ->(
+	N := (smithNormalForm M)_0;  --N := hermite M;
+	product toList apply(rank N, i-> N_(i,i) )
+)
 
 
-beginDocumentation()
-
-doc ///
-  Key
-	resolveSingularities
-	(resolveSingularities, NormalToricVariety)
-  Headline
-	resolve the singularities of a normal toric variety
-  Usage
-	Y = resolveSingularities X
-  Inputs
-	X:NormalToricVariety
-  Outputs
-	Y:NormalToricVariety
-	  a resolution of {\tt X}
-  Description
-   Text
-   Text
-   Example
-   Text
-   Example
---  Caveat
---  SeeAlso
-///
-
-
-
-
-doc ///
-  Key
-	blowup
-	(blowup,NormalToricVariety,Matrix)
-  Headline
-	the blowup of a normal toric variety
-  Usage
-	blowup(X,v)
-  Inputs
-	X = NormalToricVariety
-	v = Matrix
-  Outputs
-	Y:NormalToricVariety
-	  The normal toric variety obtained by adding the ray defined by {\tt v} to the fan of {\tt X}. 
-  Description
-   Text
-   Text
-   Example
-   Text
-   Example
-  Caveat
-	The input matrix {\tt v} must be a column vector in the ambient space of the fan of {\tt X}.
---  SeeAlso
-///
-
-end
