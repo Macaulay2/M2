@@ -64,7 +64,7 @@ maxIndex (NormalToricVariety):= X ->(
 findNewRay = method()
 --Add Strategy option: maxPrime or minPrime 
 findNewRay (NormalToricVariety,ZZ):=(X,maxInd) ->(
-	sigma := (select(1,keys X.cache.cones, j -> (X.cache.cones#j)#1 == maxInd))#0;
+	sigma := (select(1,max X, C -> latticeIndex(C,X) == maxInd))#0;
 	--Now find the vector in this sigma to add
 	p := maxPrime(floor maxInd);
 	R := ZZ/p;
@@ -73,10 +73,10 @@ findNewRay (NormalToricVariety,ZZ):=(X,maxInd) ->(
 	k := flatten entries substitute(matrix({(entries(K))_0}),ZZ);
 	k = matrix {makePos(k,p)};
 	newA := flatten entries (k*matrix (rays X)_sigma);
-	newA = toSequence ((1/gcd(newA))*newA);
-	newA = toList apply(newA,x->lift(x,ZZ)) 
-	--output next ray (as a List) at which to subdivide
-)
+	makePrimitive newA)-- = toSequence ((1/gcd(newA))*newA);
+--	newA = toList apply(newA,x->lift(x,ZZ)) 
+--	--output next ray (as a List) at which to subdivide
+--)
 
 ----------------------------------------------------------------
 --Procedures
