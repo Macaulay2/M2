@@ -18,6 +18,8 @@
     The string {\tt s} contains text describing the
     documentation to be produced.
 
+    Lines beginning with two hyphens are ignored.
+
     The text is divided into sections, each of which begins
     with a keyword alone on a line; the keywords must all
     be indented to the same level, and everything else must
@@ -58,12 +60,21 @@
     above.
 
     The text in the @TO Description@ section occurs in subsections labeled
-    with the keywords {\tt Text}, {\tt Example}, and {\tt Code}.  The text in a @TO Text@
+    with the keywords {\bf Text}, {\bf Example}, and {\bf Code}.  The text in a @TO Text@
     subsection can be separated into paragraphs with blank lines.  Each
-    paragraph can contain markup as described above.  The text in an {\tt
+    paragraph can contain markup as described above.  The text in an {\bf
     Example} subsection consists of lines of code to be used as examples in the
     documentation node.  Within in each complete expression, indent lines
-    after the first one more than the first.
+    after the first one more than the first.  The text in a {\bf Code} section,
+    with common indentation removed, is wrapped with parentheses and evaluated; 
+    the result is spliced into the list of documentation items at the
+    appropriate point before passing the list to @TO document@.
+
+    The lines in the @TO Subnodes@ section not beginning with a colon are keys
+    giving links to the subnodes of the current documentation node.  The
+    purpose to allow the documentation of the package to be arranged linearly,
+    as in a book.  The lines in the @TO Subnodes@ section beginning with a
+    colon are subheadings used to classify the subnodes.
 
    Example
      ourfcn = method()

@@ -168,25 +168,22 @@ doc ///
 
 docTemplate = "
 doc ///
-  Key
-  Headline
-
-  Usage
-
-  Inputs
-
-  Outputs
-
-  Consequences
-
-  Description
-   Text
-   Text
-   Example
-   Text
-   Example
-  Caveat
-  SeeAlso
+   Key
+   Headline
+   Usage
+   Inputs
+   Outputs
+   Consequences
+   Description
+      Text
+      Code
+      Example
+      Text
+      Code
+      Example
+   Subnodes
+   Caveat
+   SeeAlso
 ///
 "
 
@@ -379,3 +376,6 @@ toDoc ///
 endPackage "SimpleDoc"
 -- this needs to go at the end:
 needsPackage "Text"
+-- Local Variables:
+-- compile-command: "make -C $M2BUILDDIR/Macaulay2/packages PACKAGES=SimpleDoc RemakePackages=true RemakeAllDocumentation=true IgnoreExampleErrors=false RerunExamples=true"
+-- End:
