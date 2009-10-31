@@ -39,17 +39,24 @@ graph List := opts -> (g) -> (
      gSetsUnion := union gSets;
      if opts.Singletons === null then (
 	  vertices := toList gSetsUnion;
-	  edges := g;)
+	  neighbors := for j to #vertices-1 list( for k to #g-1 list (if member(vertices#j, set g#k) then set g#k - set {vertices#j} else continue));
+	  neighbors = apply(neighbors, i -> union i);
+	  )
      else ( vertices = join(toList gSetsUnion, opts.Singletons);
-	  newEdges := for i to #opts.Singletons - 1 list {};
-	  edges = join(g,newEdges);
+	  newEdges := apply(for i to #opts.Singletons - 1 list {}, i -> set i);
+	  neighbors = for j to #vertices-1 list( for k to #g-1 list (if member(vertices#j, set g#k) then set g#k - set {vertices#j} else continue));
+	  neighbors = apply(neighbors, i -> union i);
+	  neighbors = join(neighbors,newEdges);
 --	  error "what is vertices";
 	  );
-     apply(#vertices, i -> h#(vertices#i) = set edges#i);
+     apply(#vertices, i -> h#(vertices#i) = neighbors#i);
      new Graph from h)
 
+--graph MutableHashTable := opts -> (g) -> (
+--     new Graph from h)
+
 graph HashTable := opts -> (g) -> (
-     new Graph from h)
+     new Graph from g)
 
 digraph = method()
 digraph List := (g) -> (
