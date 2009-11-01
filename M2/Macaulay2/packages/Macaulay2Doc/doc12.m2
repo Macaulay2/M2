@@ -201,12 +201,17 @@ document {
      }
 
 document {
-     Key => {positions,(positions, VisibleList, Function)},
+     Key => {(positions, VisibleList, Function),positions},
      Headline => "which elements of a list satisfy a condition",
-     TT "positions(v,f)", " -- yields a list of integers giving the positions of the
-     elements of the list ", TT "v", " which yield the value ", TT "true", " when
-     the function ", TT "f", " is applied.",
-     SeeAlso => "position"
+     Usage => "positions(v,f)",
+     Inputs => { "v", "f" => { "which, when applied to an element of ", TT "v", ", yields ", TO "true", " or ", TO "false", "" }},
+     Outputs => {
+	  List => { "the list of integers ", TT "k", ", in ascending order, such that the ", TT "f v#k", " is ", TO "true" }
+	  },
+     EXAMPLE lines ///
+     positions(100..110,isPrime)
+     ///,
+     SeeAlso => {position,select}
      }
 
 TEST "
