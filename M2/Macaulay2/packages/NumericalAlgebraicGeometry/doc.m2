@@ -1,35 +1,25 @@
 document {
      Key => NumericalAlgebraicGeometry,
      Headline => "Numerical Algebraic Geometry",
-     "The package ", EM "NAG4M2 (Numerical Algebraic Geometry for Macaulay 2)", " implements methods of polynomial homotopy continuation                                                                                                  
-     to solve systems of polynomial equations and deal with complex algebraic varieties.",
-     HEADER3 "Under construction:",
-     "The package will be included in the future releases of Macaulay 2.", BR{},
-     "In order to run the current version of the package Macaulay 2 needs to be compiled from the source code. ",
-     "Instructions are posted at ", TT "http://www.math.uiuc.edu/Macaulay2/Downloads/SourceCode", ".",
-     BR{}, BR{},"( Another way is to download the packages subdirectory only:", BR{}, 
-     TT "svn co svn://macaulay2.math.uiuc.edu/Macaulay2/trunk/M2/Macaulay2/packages", BR{},
-     "and then use ", BR{}, TT "loadPackage(\"NumericalAlgebraicGeometry\", FileName=>\"packages/NumericalAlgebraicGeometry.m2\").", BR{},  
-     "Note: in this case the functionality of the package is limited; in particular, SLP and M2engine options do not work. )", BR{},
-     HEADER3 "Functions:",
-     UL{
-	  TO{"solveSystem"},
-	  TO{"track"}
-	  }
+     "The package ", EM "NAG4M2 (Numerical Algebraic Geometry for Macaulay 2)", 
+     " implements methods of polynomial homotopy continuation                                                                                                  
+     to solve systems of polynomial equations and describe positive-dimensional complex algebraic varieties.", BR{},
+     "The current version focuses on solving square systems with finite number of solutions." 
      }
 					
 document {
 	Key => {(solveSystem, List),solveSystem},
 	Headline => "solve a square system of polynomial equations",
 	Usage => "s = solveSystem F",
-	Inputs => { {"F", ", polynomials"} },
-	Outputs => {{ TT "s", ", solutions to the system ", TT "F=0" }},
-        -- SourceCode => {(solveSystem, List)},
+	Inputs => { {"F", ", polynomials with complex coefficients"} },
+	Outputs => {{ TT "s", ", all complex solutions to the system ", TT "F=0" }},
+	"Solve a system of polynomial equations using homotopy continuation methods.",
 	EXAMPLE lines ///
 R = CC[x,y];
 F = {x^2+y^2-1, x*y};
 solveSystem F / first 			 	     
-     	///
+     	///,
+	Caveat => {"The system is assumed to be square (#equations = #variables) and have finitely many solutions."}	
 	}
 document {
 	Key => { (track, List, List, List), track, 
@@ -44,36 +34,36 @@ document {
      	     Projectivize, [track,Projectivize], AffinePatches, [track,AffinePatches], DynamicPatch, 
 	     SLP, [track,SLP], HornerForm, CompiledHornerForm, 
 	     CorrectorTolerance, [track,CorrectorTolerance], 
-     	     [track,SLPcorrector], [track,SLPpredictor], [track,NoOutput], 
-	     SLPcorrector, SLPpredictor, NoOutput
+     	     [track,SLPcorrector], [track,SLPpredictor], [track,NoOutput], [track,Normalize], 
+	     SLPcorrector, SLPpredictor, NoOutput, Normalize
 	     },
 	Headline => "track a user homotopy",
 	Usage => "solsT = track(S,T,solsS)",
 	Inputs => { 
-	     {"S", ", polynomials in the start system"},
-	     {"T", ", polynomials in the target system"},
-	     {"solsS", ", start solutions"}
+	     "S" => {TO List, " of polynomials in the start system"},
+	     "T" => {TO List, " of polynomials in the target system"},
+	     "solsS" => {TO List, " of start solutions"},
+	     gamma => {"a parameter in the homotopy: H(t)=(1-t)^tDegree S + gamma t^tDegree T"}, 
+	     tDegree => {"a parameter in the homotopy: H(t)=(1-t)^tDegree S + gamma t^tDegree T"},
+	     tStep => {"initial step size"}, 
+	     tStepMin => {"minimal step size"},
+	     stepIncreaseFactor => {"determine how step size is adjusted"},
+	     numberSuccessesBeforeIncrease => {"determine how step size is adjusted"},
+	     Predictor => {"a method to predict the next point on the homotopy path: 
+		  choose between ", TO "RungeKutta4", ", ", TO "Tangent", ", ", 
+		  TO "Euler", ", ", TO "Secant", ", ", TO "ProjectiveNewton", ". The latter provides certified tracking."},
+	     maxCorrSteps => {"max number of steps corrector takes before a failure is declared"}, 
+	     CorrectorTolerance => {"corrector succeeds if the relative error does not esceed this tolerance"},
+     	     EndZoneFactor => {"size of `end zone'"},  
+	     InfinityThreshold => {"paths are truncated if the norm of the approximation exceeds the threshold"},
+     	     Projectivize => {"if true then the system is homogenized and projective tracker is executed"},
+	     Normalize => {"normalize the start and target systems w.r.t. Bombieri-Weyl norm"},
+	     NoOutput => {"if true, no output is produced (useful in combination with ", TO "getSolution", ")"} 	     
 	     },
 	Outputs => {{ TT "solsT", ", solutions of ", TT "T=0", " obtained by continuing ", TT "solsS" }},
 	"Polynomial homotopy continuation techniques are used to obtain solutions 
 	of the target system given a start system.", BR{},
-	"Main options:",
-	UL {
-	     {TT "gamma", " and ", TT "tDegree", " specify homotopy: H(t)=(1-t)^tDegree S + gamma t^tDegree T"}, 
-	     {TT "tStep", " -- initial step size"}, 
-	     {TT "tStepMin", " -- minimal step size"},
-	     {TT "stepIncreaseFactor", " and ", TT "numberSuccessesBeforeIncrease", 
-		  " determine how step size is adjusted"},
-	     {TT "Predictor", " -- choose between ", TO "RungeKutta4", ", ", TO "Tangent", ", ", 
-		  TO "Euler", ", ", TO "Secant", ", ", TO "ProjectiveNewton"},
-	     {TT "maxCorrSteps", " -- max number of steps corrector takes before a failure is declared"}, 
-	     {TT "CorrectorTolerance", " -- corrector succeeds if the relative error does not esceed this tolerance"},
-     	     {TT "EndZoneFactor", "  -- size of `end zone'"},  
-	     {TT "InfinityThreshold", 
-		  " -- paths are truncated if the norm of the approximation exceeds the threshold"},
-     	     {TT "Projectivize", " -- if true then the system is homogenized and projective tracker is executed"},
-	     {TT "NoOutput", " -- if true, no output is produced (useful in combination with ", TO "getSolution", ")"} 	     
-	     },
+	Caveat => {"Predictor=>ProjectiveNewton works only with Software=>M2 and Normalize=>true"},
 	EXAMPLE lines ///
 R = CC[x,y];
 S = {x^2-1,y^2-1};
@@ -84,14 +74,22 @@ track(S,T,solsS) / first
 	}
 
 document {
-	Key => {(refine, List, List), refine, [refine, maxCorrSteps], [refine, Software]},
+	Key => {
+	     (refine, List, List), refine, 
+	     [refine, Iterations], [refine, Bits], [refine,ErrorTolerance], [refine,ResidualTolerance],
+	     Iterations, Bits, ErrorTolerance, ResidualTolerance
+	     },
 	Headline => "refine numerical solutions to a system of polynomial equations",
 	Usage => "solsR = refine(T,sols)",
 	Inputs => { 
-	     {"T", ", polynomials of the system"},
-	     {"sols", ", solutions (lists of coordinates)"}
+	     "T" => {"polynomials of the system"},
+	     "sols" => {"solutions (lists of coordinates)"},
+	     Iterations => {"number of refining iterations of Newton's methods"}, 
+	     Bits => {"number of bits of precision"}, 
+	     ErrorTolerance => {"a bound on the desired estimated error"},
+	     ResidualTolerance => {"a bound on desired residual"}
 	     },
-	Outputs => {{ TT "solsR", ", refined solutions" }},
+	Outputs => {"solsR" => {"refined solutions" }},
 	"Uses Newton's method to correct the given solutions so that the resluting approximation 
 	has its estimated relative error bound by ", TT "Tolerance", 
 	"; the number of iterations is at most ", TT "maxCorrSteps", ".",
@@ -104,11 +102,11 @@ R = CC[x,y];
 S = {x^2-1,y^2-1};
 T = {x^2+y^2-1, x*y};
 sols = { {1.1_CC,0.1}, {-0.1,1.2} };
-refine(T, sols, Software=>M2, Tolerance=>.001, maxCorrSteps=>10)
+refine(T, sols, Software=>M2, ErrorTolerance=>.001, Iterations=>10)
      	///
 	}
 
-document { Key => {Tolerance, [refine,Tolerance], [sortSolutions,Tolerance], [areEqual,Tolerance]},
+document { Key => {Tolerance, [sortSolutions,Tolerance], [areEqual,Tolerance]},
      Headline => "specifies the tolerance of a numerical computation" 
      }
 
@@ -130,7 +128,8 @@ totalDegreeStartSystem T
 	}
 
 document {
-     Key => {[solveSystem,Software],[track,Software], "Software","M2","M2engine","M2enginePrecookedSLPs"},
+     Key => {[solveSystem,Software],[track,Software],[refine, Software], "Software",
+	  "M2","M2engine","M2enginePrecookedSLPs"},
      Headline => "specify software for the solver",
      UL{
 	  {"M2", " -- use top-level Macaulay2 homotopy continuation routines"},
@@ -168,7 +167,7 @@ document {
 	Outputs => {{ TT "s", ", (an) attributes of the solution"}},
 	"Returns attribute(s) of the ", TT "i", "-th solution specified in the option", TO "SolutionAttributes", 
 	", which could be either a sequence or a single attribute.", BR{}, 
-	"Attributes include:",
+	"SolutionAttributes include:",
 	UL{
 	  {"Coordinates", " -- the list of coordinates"},
 	  {"SolutionStatus", " -- REGULAR, SINGULAR, FAILED, etc."},
@@ -206,6 +205,7 @@ document {
 	"The progress is displayed as follows: ", 
 	UL{
 	     {"'.' = regular solution found"   },
+   	     {"'S' = singular solution (or encountered a singular point on the path)"   },
 	     {"'I' = a homotopy path (most probably) diverged to infinity"},
 	     {"'M' = minimum step bound reached"}
 	     },
@@ -252,4 +252,61 @@ s = solveSystem {x^2+y^2-1, x*y}
 areEqual(sortSolutions s, {{{-1, 0}}, {{0, -1}}, {{0, 1}}, {{1, 0}}})
      	///
 	}
+
+document {
+	Key => {randomSd, (randomSd, List)},
+	Headline => "a random homogeneous system of polynomial equations",
+	Usage => "T = randomSd d",
+	Inputs => { 
+	     {TT "d", ", list of degrees"}
+	     },
+	Outputs => {{ TT "T", ", list of polynomials"}},
+	"Generates a system of homogeneous polynomials T_i such that deg T_i = d_i. 
+	The system is normalized, so that it is on a unit sphere in the Bombieri-Weyl norm.",
+        EXAMPLE lines ///
+T = randomSd {2,3}
+(S,solsS) = goodInitialPair T;
+M = track(S,T,solsS,gamma=>0.6+0.8*ii,Software=>M2)
+     	///
+	}
+
+document {
+	Key => {goodInitialPair, (goodInitialPair, List), [goodInitialPair,GeneralPosition], GeneralPosition},
+	Headline => "a good (conjectured by Shub and Smale) initial pair",
+	Usage => "(S,sol) = goodInitialPair T",
+	Inputs => { 
+	     "T" => {"a list of polynomials"},
+	     GeneralPosition => {"make a random unitary change of coordinates"} 
+	     },
+	Outputs => {{ TT "S", ", list of polynomials"},
+	     { TT "sol", ", a list containing (one) solution of S"}},
+	"Generates a start system S that is conjectured to have good complexity when used in linear homotopy 
+       	with target system T leading to one solution. ",
+        EXAMPLE lines ///
+T = randomSd {2,3};
+(S,solsS) = goodInitialPair T
+M = track(S,T,solsS,gamma=>0.6+0.8*ii,Software=>M2)
+     	///
+	}
+
+document {
+	Key => {randomInitialPair, (randomInitialPair, List)},
+	Headline => "a random initial pair",
+	Usage => "(S,sol) =randomInitialPair T",
+	Inputs => { 
+	     {TT "T", ", list of polynomials"}
+	     },
+	Outputs => {{ TT "S", ", list of polynomials"},
+	     { TT "sol", ", a list containing (one) solution of S"}},
+	"Generates a start system S that has and equal chance of reaching any of the solutions of 
+       	the target system T. ",
+        EXAMPLE lines ///
+T = randomSd {2,3};
+(S,solsS) = randomInitialPair T
+M = track(S,T,solsS,gamma=>0.6+0.8*ii,Software=>M2)
+     	///
+	}
+								
+					 
 													 
+							   

@@ -1,13 +1,13 @@
 -- -*- coding: utf-8 -*-
 newPackage(
      "NumericalAlgebraicGeometry",
-     Version => "1.3",
-     Date => "Oct 15, 2009",
+     Version => "1.3.0.1",
+     Date => "Oct 30, 2009",
      Headline => "Numerical Algebraic Geometry",
      HomePage => "http://www.math.uic.edu/~leykin/NAG4M2",
      AuxiliaryFiles => true,
      Authors => {
-	  {Name => "Anton Leykin", Email => "leykin@math.uic.edu"}
+	  {Name => "Anton Leykin", Email => "leykin@math.gatech.edu"}
 	  },
      Configuration => { "PHCpack" => "phc",  "Bertini" => "bertini", "HOM4PS2" => "hom4ps2" },	
      -- DebuggingMode should be true while developing a package, 
@@ -30,6 +30,9 @@ export {
      "NoOutput",
      "Tolerance",
      "getSolution", "SolutionAttributes", "Coordinates", "SolutionStatus", "LastT", "RCondition", "NumberOfSteps",
+     "randomSd", "goodInitialPair", "randomInitialPair", "GeneralPosition",
+     "Bits", "Iterations", "ResidualTolerance", "ErrorTolerance",
+     --"points", 
      "NAGtrace"
      }
 exportMutable {
@@ -46,6 +49,8 @@ HOM4PS2exe = NumericalAlgebraicGeometry#Options#Configuration#"HOM4PS2";
 DBG = 0; -- debug level (10=keep temp files)
 SLPcounter = 0; -- the number of compiled SLPs (used in naming dynamic libraries)
 lastPathTracker = null; -- path tracker object used last
+
+WitnessSet = new Type of MutableHashTable 
 
 -- ./NumericalAlgebraicGeometry/ FILES -------------------------------------
 load "./NumericalAlgebraicGeometry/PHCpack/PHCpack.interface.m2" 
@@ -750,21 +755,33 @@ track (List,List,List) := List => o -> (S,T,solsS) -> (
      ret
      )
 
-refine = method(TypicalValue => List, Options =>{Software=>M2engine, Tolerance=>1e-8, maxCorrSteps=>30})
+refine = method(TypicalValue => List, Options =>{
+	  Software=>M2engine, 
+      	  ResidualTolerance => 0, 
+	  ErrorTolerance => 1e-10,
+	  Iterations => null,
+	  Bits => 300
+	  })
 refine (List,List) := List => o -> (T,solsT) -> (
 -- tracks solutions from start system to target system
 -- IN:  T = list of polynomials in target system
 --      solsT = list of solutions to T
 -- OUT: solsR = list of refined solutions 
+     n := #T; 
+     if n > 0 then R := ring first T else error "expected nonempty target system";
+     if any(T, f->ring f =!= R)
+     then error "expected all polynomials in the same ring";
+     if n != numgens R then error "expected a square system";
+
      if o.Software === M2engine then (
 	  if lastPathTracker === null 
 	  then error "path tracker is not set up"
-	  else return entries map(CC_53, rawRefinePT(lastPathTracker, raw matrix solsT, o.Tolerance, o.maxCorrSteps));
-     	  );
-     n := #T; 
-     if n > 0 then R := ring first T else error "expected nonempty target system";
-     if n != numgens R then error "expected a square system";
-          
+	  else return entries map(CC_53, rawRefinePT(lastPathTracker, raw matrix solsT, o.ErrorTolerance, 
+		    if o.Iteration===null then 30 else o.Iteration));
+     	  ) else if o.Software === PHCpack then (
+	  refinePHCpack(T,solsT,Iterations=>o.Iterations,Bits=>o.Bits,ErrorTolerance=>o.ErrorTolerance)
+	  );
+               
      T = matrix {T};
      J = transpose jacobian T; 
      evalT := x0 -> lift(sub(transpose T, transpose x0), CC);
@@ -775,7 +792,7 @@ refine (List,List) := List => o -> (T,solsT) -> (
 	       -- corrector step
 	       dx = 1; -- dx = + infinity
 	       nCorrSteps := 0;
-	       while norm dx > o.Tolerance * norm x1 and nCorrSteps < o.maxCorrSteps do ( 
+	       while norm dx > o.ErrorTolerance * norm x1 and nCorrSteps < o.Iterations do ( 
 		    if DBG > 3 then << "x=" << toString x1 << " res=" <<  toString evalT(x1) << " dx=" << dx << endl;
 		    dx = solve(evalJ(x1), -evalT(x1));
 		    x1 = x1 + dx;
@@ -789,7 +806,7 @@ refine (List,List) := List => o -> (T,solsT) -> (
 -- possible solution statuses returned by engine
 solutionStatusLIST := {"UNDETERMINED", "PROCESSING", "REGULAR", "SINGULAR", "INFINITY (FAILURE)", "MIN STEP (FAILURE)"}
 
-getSolution = method(Options =>{SolutionAttributes=>Coordinates})
+getSolution = method(Options =>{SolutionAttributes=>(Coordinates, SolutionStatus, LastT, RCondition, NumberOfSteps)})
 getSolution ZZ := Thing => o -> i -> (
 -- gets specified solution from the engine
 -- IN:  the number of solution
@@ -882,7 +899,9 @@ dimHd List := ZZ => d->sum(#d, i->binomial(#d+d#i,d#i));
 -- OUT: conjectured (by Shub and Smale) good initial pair (f,z_0), f\in Hd, z\in P^n
 --      f, List; z_0, List of one element
 goodInitialPair = method(Options=>{GeneralPosition=>false})
-goodInitialPair (Ring,List) := o -> (R,d) -> (
+goodInitialPair List := o -> T -> (
+     R := ring first T;
+     d := T/first@@degree;
      lastVar := last gens R;
      n := numgens R - 1;
      (S, solsS) := ( transpose matrix{apply(n, i->(sqrt d#i)*lastVar^(d#i - 1)*R_i)}, 
@@ -952,8 +971,8 @@ debug loadPackage "NumericalAlgebraicGeometry"
 sum(randomSd {2,3,4,5} / BombieriWeylNormSquared) -- should be 1
 ///
 
-randomStartPair = method(TypicalValue => Sequence)
-randomStartPair List := Sequence => T -> (
+randomInitialPair = method()
+randomInitialPair List := T -> (
 -- for a homogeneous system constructs a start system and one root 
 -- IN:  T = list of polynomials 
 -- OUT: (S,solsS}, where 
@@ -1198,6 +1217,46 @@ readSolutionsBertini String := f -> (
 -- WITNESS SET
 -- {equations, slice, points}
 -- caveat: we assume that #equations = dim(slice)   
+
+-- Equations, Slice, Points
+WitnessSet.synonym = "witness set"
+dim WitnessSet := W -> #W.Slice
+codim WitnessSet := W -> numgens ring W - dim W
+ring WitnessSet := W -> ring W.Equations
+degree WitnessSet := W -> #W.Points
+ideal WitnessSet := W -> W.Equations
+net WitnessSet := W -> "(dim=" | net dim W |",deg="| net degree W | ")" 
+witnessSet = method()
+witnessSet (Ideal,Ideal,List) := (I,S,P) -> new WitnessSet from { Equations => I, Slice => S_*, Points => VerticalList P}
+randomUnitaryMatrix = method()
+randomUnitaryMatrix ZZ := n -> last SVD random(CC^n,CC^n)     
+witnessSet Ideal := I -> (
+     n := numgens ring I;
+     d := dim I;
+     SM := (randomUnitaryMatrix n)^(toList(0..d-1));
+     SM = promote(SM,ring I);
+     S := ideal(SM * transpose vars ring I + random(CC^d,CC^1));
+     RM := (randomUnitaryMatrix numgens I)^(toList(0..n-d-1));
+     RM = promote(RM,ring I);
+     P := solveSystem(flatten entries (RM * transpose gens I) | S_*);
+     PP := select(P, p->norm sub(gens I, matrix p) < 1e-5);
+     witnessSet(I,S,PP/first)
+     )
+points = method()
+points WitnessSet := (W) -> apply(W.Points, first)
+///
+restart
+debug loadPackage "NumericalAlgebraicGeometry"
+CC[x,y]
+I = ideal (x^2+y)
+S = ideal (y-1)
+P = {{ii_CC,1_CC},{ii_CC,1_CC}}
+R = CC[x,y,z]
+I = ideal {z-x*y, x^2-y, y^2-z*x}
+W = witnessSet(I,S,P)
+W = witnessSet I
+W.Points
+///
 
 sliceEquations = method(TypicalValue=>List) 
 sliceEquations (Matrix, Ring) := (S,R) -> (
@@ -2124,8 +2183,8 @@ end
 restart
 loadPackage "NumericalAlgebraicGeometry"
 uninstallPackage "NumericalAlgebraicGeometry"
+installPackage("NumericalAlgebraicGeometry", SeparateExec=>true, AbsoluteLinks=>false)
 installPackage "NumericalAlgebraicGeometry"
-installPackage("NumericalAlgebraicGeometry", SeparateExec=>true, AbsoluteLinks=>false, RerunExamples=>true)
 check "NumericalAlgebraicGeometry"
 
 R = CC[x,y,z]

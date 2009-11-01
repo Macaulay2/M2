@@ -1,13 +1,13 @@
 -- -*- coding: utf-8 -*-
 newPackage(
      "NumericalAlgebraicGeometry",
-     Version => "1.3",
-     Date => "Oct 15, 2009",
+     Version => "1.3.0.1",
+     Date => "Oct 30, 2009",
      Headline => "Numerical Algebraic Geometry",
      HomePage => "http://www.math.uic.edu/~leykin/NAG4M2",
      AuxiliaryFiles => true,
      Authors => {
-	  {Name => "Anton Leykin", Email => "leykin@math.uic.edu"}
+	  {Name => "Anton Leykin", Email => "leykin@math.gatech.edu"}
 	  },
      Configuration => { "PHCpack" => "phc",  "Bertini" => "bertini", "HOM4PS2" => "hom4ps2" },	
      -- DebuggingMode should be true while developing a package, 
@@ -767,6 +767,12 @@ refine (List,List) := List => o -> (T,solsT) -> (
 -- IN:  T = list of polynomials in target system
 --      solsT = list of solutions to T
 -- OUT: solsR = list of refined solutions 
+     n := #T; 
+     if n > 0 then R := ring first T else error "expected nonempty target system";
+     if any(T, f->ring f =!= R)
+     then error "expected all polynomials in the same ring";
+     if n != numgens R then error "expected a square system";
+
      if o.Software === M2engine then (
 	  if lastPathTracker === null 
 	  then error "path tracker is not set up"
@@ -775,10 +781,7 @@ refine (List,List) := List => o -> (T,solsT) -> (
      	  ) else if o.Software === PHCpack then (
 	  refinePHCpack(T,solsT,Iterations=>o.Iterations,Bits=>o.Bits,ErrorTolerance=>o.ErrorTolerance)
 	  );
-     n := #T; 
-     if n > 0 then R := ring first T else error "expected nonempty target system";
-     if n != numgens R then error "expected a square system";
-          
+               
      T = matrix {T};
      J = transpose jacobian T; 
      evalT := x0 -> lift(sub(transpose T, transpose x0), CC);

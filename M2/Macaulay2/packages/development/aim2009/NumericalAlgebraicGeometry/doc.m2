@@ -1,21 +1,10 @@
 document {
      Key => NumericalAlgebraicGeometry,
      Headline => "Numerical Algebraic Geometry",
-     "The package ", EM "NAG4M2 (Numerical Algebraic Geometry for Macaulay 2)", " implements methods of polynomial homotopy continuation                                                                                                  
-     to solve systems of polynomial equations and deal with complex algebraic varieties.",
-     HEADER3 "Under construction:",
-     "The package will be included in the future releases of Macaulay 2.", BR{},
-     "In order to run the current version of the package Macaulay 2 needs to be compiled from the source code. ",
-     "Instructions are posted at ", TT "http://www.math.uiuc.edu/Macaulay2/Downloads/SourceCode", ".",
-     BR{}, BR{},"( Another way is to download the packages subdirectory only:", BR{}, 
-     TT "svn co svn://macaulay2.math.uiuc.edu/Macaulay2/trunk/M2/Macaulay2/packages", BR{},
-     "and then use ", BR{}, TT "loadPackage(\"NumericalAlgebraicGeometry\", FileName=>\"packages/NumericalAlgebraicGeometry.m2\").", BR{},  
-     "Note: in this case the functionality of the package is limited; in particular, SLP and M2engine options do not work. )", BR{},
-     HEADER3 "Functions:",
-     UL{
-	  TO{"solveSystem"},
-	  TO{"track"}
-	  }
+     "The package ", EM "NAG4M2 (Numerical Algebraic Geometry for Macaulay 2)", 
+     " implements methods of polynomial homotopy continuation                                                                                                  
+     to solve systems of polynomial equations and describe positive-dimensional complex algebraic varieties.", BR{},
+     "The current version focuses on solving square systems with finite number of solutions." 
      }
 					
 document {
@@ -60,8 +49,9 @@ document {
 	     tStepMin => {"minimal step size"},
 	     stepIncreaseFactor => {"determine how step size is adjusted"},
 	     numberSuccessesBeforeIncrease => {"determine how step size is adjusted"},
-	     Predictor => {"choose between ", TO "RungeKutta4", ", ", TO "Tangent", ", ", 
-		  TO "Euler", ", ", TO "Secant", ", ", TO "ProjectiveNewton"},
+	     Predictor => {"a method to predict the next point on the homotopy path: 
+		  choose between ", TO "RungeKutta4", ", ", TO "Tangent", ", ", 
+		  TO "Euler", ", ", TO "Secant", ", ", TO "ProjectiveNewton", ". The latter provides certified tracking."},
 	     maxCorrSteps => {"max number of steps corrector takes before a failure is declared"}, 
 	     CorrectorTolerance => {"corrector succeeds if the relative error does not esceed this tolerance"},
      	     EndZoneFactor => {"size of `end zone'"},  
@@ -73,6 +63,7 @@ document {
 	Outputs => {{ TT "solsT", ", solutions of ", TT "T=0", " obtained by continuing ", TT "solsS" }},
 	"Polynomial homotopy continuation techniques are used to obtain solutions 
 	of the target system given a start system.", BR{},
+	Caveat => {"Predictor=>ProjectiveNewton works only with Software=>M2 and Normalize=>true"},
 	EXAMPLE lines ///
 R = CC[x,y];
 S = {x^2-1,y^2-1};
@@ -214,6 +205,7 @@ document {
 	"The progress is displayed as follows: ", 
 	UL{
 	     {"'.' = regular solution found"   },
+   	     {"'S' = singular solution (or encountered a singular point on the path)"   },
 	     {"'I' = a homotopy path (most probably) diverged to infinity"},
 	     {"'M' = minimum step bound reached"}
 	     },

@@ -135,13 +135,13 @@ katsuraBench = n -> (
 
 randomGeneralizedEigenvalueProblem = n -> (
      R := CC[symbol lambda, vars(53..n+52)];
-     A := sub(matrix randomMutableMatrix(n,n,0.,100), R);
-     B := sub(matrix randomMutableMatrix(n,n,0.,100), R);
+     A := sub(random(CC^n,CC^n), R);
+     B := sub(random(CC^n,CC^n), R);
      x := transpose matrix{drop(gens R,1)};
      T := flatten entries (A*x-R_0*B*x) | {n - 1 - sum flatten entries x};
      S := apply(n,i->(R_0-exp(ii*i/(2*pi*n)))*(x_(i,0)-1)) | {n - 1 - sum flatten entries x};
      solsS := apply(n,i->toSequence({exp(ii*i/(2*pi*n))} | toList(i:1) | {0} | toList(n-i-1:1)));
-     (S,T,solsS)
+     (T,S,solsS)
      )
 
 sottileW = () -> (
