@@ -17,7 +17,15 @@ CHECKOPTIONS ?=
 CHECKCMD ?= $(MAKE) -C $(BUILDDIR) $(CHECKOPTIONS) $(CHECKTARGET)
 LIBRARIESDIR := $(PREFIX)
 PRECONFIGURE  ?= :
-CONFIGOPTIONS += --build=@build@ --host=@host@ --cache-file=/dev/null
+ifneq (@build_alias@,)
+# it was ../configure --build=@build_alias@
+CONFIGOPTIONS += --build=@build_alias@
+endif
+ifneq (@host_alias@,)
+# it was ../configure --build=@host_alias@ (for cross compiling)
+CONFIGOPTIONS += --host=@host_alias@
+endif
+CONFIGOPTIONS += --cache-file=/dev/null
 COMPILEFLAGS  = \
 	CXXFLAGS="$(CXXFLAGS)" \
 	CFLAGS="$(CFLAGS)" \
