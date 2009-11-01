@@ -41,8 +41,8 @@ newPackage("GraphicalModels",
 export {localMarkovStmts, globalMarkovStmts, pairMarkovStmts,
        markovRing, marginMap, hideMap, markovMatrices, markovIdeal, writeDotFile, removeRedundants, 
        gaussRing, gaussMinors, gaussIdeal, gaussTrekIdeal}
-     --  simpleGraph, descendents, nondescendents, parents, children, removeNodes,neighbors, nonneighbors
---exportMutable {dotBinary,jpgViewer}
+     
+needsPackage"Graphs"
 
 ---- List from Board at AIM.
 
@@ -77,38 +77,6 @@ export {localMarkovStmts, globalMarkovStmts, pairMarkovStmts,
 ---- an element of ZZ, QQ, RR, etc.
 
 
--------------------------
--- Graph visualization --
--------------------------
-
----- Right now Graph is a DAG.  We need a Graph to be a DAG, undirected or 
----- chain graph with conditions. Note that EdgeIdeals has a structure Graph 
----- and these types should work with each other. 
- 
----- TASK --- generalize and make compatible Graphs.  This section is only 
----- about visualization and the first makeGraph. 
----- It would be nice to have ideals for a set of independence relations.  We 
----- should be able to do this already with code here, just needs to be 
----- appropriately documented. At least for discrete models. 
-
----- Where does Gaussian fit into ALL of this??
-
--- Give a graph as a hash table i => descendents
--- Make a graph
--- Input: a directed acyclic graph in the form of a 
---        list of lists of children.
---        the vertices must be named 1..n, some n.
---        ASSUMPTION: we assume that the descendents of vertex
---        i are all less than i.  This only represents DAGS.
--- Output: A hashtable G with keys 1..n, and G#i is the
---        the set of all children of the vertex i.
--- This routine produces a useful version of a 'graph'
--- which we use in routines throughout this package.
-
-
-------------------------------------------------
--- Set graph types and constructor functions. -- 
-------------------------------------------------
 
 
 -------------------------
@@ -122,30 +90,6 @@ export {localMarkovStmts, globalMarkovStmts, pairMarkovStmts,
 ------------------
 -- Graph basics --
 ------------------
-
-descendents = method()
-descendents(DiGraph,ZZ) := (G,v) -> (
-     -- returns a set of vertices
-     result := G#v;
-     scan(reverse(1..v-1), i -> (
-	  if member(i,result) then result = result + G#i;
-     ));
-     result)
-
-nondescendents = method()
-nondescendents(DiGraph,ZZ) := (G,v) -> set(1..#G) - descendents(G,v) - set {v}
-
-parents = method()
-parents(DiGraph,ZZ) := (G,v) -> set select(1..#G, i -> member(v, G#i))
-
-children = method()
-children(DiGraph,ZZ) := (G,v) -> G#v
-
-neighbors = method()
-neighbors(Graph,Thing) := (G,v) -> G#v  
-
-nonneighbors = method()
-nonneighbors(Graph, Thing) := (G,v) -> set(1..#G) - neighbors(G,v)-set{v}
 
 removeNodes = method()
 removeNodes(DiGraph,List) := (G,v) -> (

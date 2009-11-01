@@ -5,23 +5,34 @@ newPackage("Graphs",
 	  {Name => "Others"}
 	  },
      DebuggingMode => false,
-     Headline => "Data types for graphs",
+     Headline => "Data types, visualization, and basic funcitons for graphs",
      Version => "0.1"
      )
 
-export {Graph, Digraph, graph, digraph, Singletons}
-     --  simpleGraph, descendents, nondescendents, parents, children, removeNodes,neighbors, nonneighbors
---exportMutable {dotBinary,jpgViewer}
+export {Graph, Digraph, graph, digraph, Singletons, descendents, nondescendents, 
+     parents, children, neighbors, nonneighbors}
+exportMutable {dotBinary,jpgViewer}
 
+
+------------------------------------------------
+-- Set graph types and constructor functions. -- 
+------------------------------------------------
+
+-- Give a graph as a hash table i => children for DAG and neighbors 
+--                                   for undirected graphs. 
 
 Digraph = new Type of HashTable
      -- a directed graph is a hash table in the form:
      -- { A => set {B,C,...}, ...}, where there are edges A->B, A->C, ...
-     -- and A,B,C are integers.  
+     -- and A,B,C are symbols or integers. 
 
 Graph = new Type of Digraph   
-     -- an undirected graph is a hash table in the form { A => set {B,C, ...}, 
-     -- where the set consists of the neighbors of A. 
+     -- an undirected graph is a hash table in the form:
+     -- { A => set {B,C, ...}, where the set consists of 
+     -- the neighbors of A. OR it is the neighbors for that 
+     -- edge that are not a key earlier in the hash table. This 
+     -- version removes the redunancy of each edge appearing twice. 
+     -- simpleGraph is an internal conversion function. 
 
 union := S -> (
      x = new MutableHashTable;
@@ -30,24 +41,29 @@ union := S -> (
 
 graph = method(Options => {Singletons => null})
 graph List := opts -> (g) -> (
-     -- Input:  A list of lists.  The first list is the names of the nodes, the second 
-     -- list is a list of lists giving the neighbors for each node.
-     -- Output:  A hashtable with keys the names of the nodes with the 
-     -- children/neighbors assigned. 
+     -- Input:  A list of lists with two elements which describe the 
+     --         edges of the graph. 
+     -- Output:  A hash table with keys the names of the nodes and the 
+     --          values are the neighbors corresponding to that node. 
      h := new MutableHashTable;
-     gSets := apply(g, i -> set i);
-     gSetsUnion := union gSets;
+     vertices := toList set flatten g;
      if opts.Singletons === null then (
-	  vertices := toList gSetsUnion;
-	  neighbors := for j to #vertices-1 list( for k to #g-1 list (if member(vertices#j, set g#k) then set g#k - set {vertices#j} else continue));
+	  neighbors := for j to #vertices-1 list( 
+	       for k to #g-1 list (if member(vertices#j, set g#k) 
+		    then set g#k - set {vertices#j} 
+		    else continue)
+	       );
 	  neighbors = apply(neighbors, i -> union i);
 	  )
-     else ( vertices = join(toList gSetsUnion, opts.Singletons);
+     else (vertices = join(vertices, opts.Singletons);
 	  newEdges := apply(for i to #opts.Singletons - 1 list {}, i -> set i);
-	  neighbors = for j to #vertices-1 list( for k to #g-1 list (if member(vertices#j, set g#k) then set g#k - set {vertices#j} else continue));
+	  neighbors = for j to #vertices-1 list( 
+	       for k to #g-1 list (if member(vertices#j, set g#k) 
+		    then set g#k - set {vertices#j} 
+		    else continue)
+	       );
 	  neighbors = apply(neighbors, i -> union i);
 	  neighbors = join(neighbors,newEdges);
---	  error "what is vertices";
 	  );
      apply(#vertices, i -> h#(vertices#i) = neighbors#i);
      new Graph from h)
@@ -56,19 +72,27 @@ graph List := opts -> (g) -> (
 --     new Graph from h)
 
 graph HashTable := opts -> (g) -> (
+     -- Input:  A hash table with keys the names of the nodes of 
+     --         the graph and the values the neighbors of that node. 
+     -- Output: A hash table of type Graph. 
      new Graph from g)
 
 digraph = method()
 digraph List := (g) -> (
-     -- Input:  A list of lists.  The first list is the names of the nodes, the second 
-     -- list is a list of lists giving the children for each node.
-     -- Output:  A hashtable with keys the names of the nodes with the 
-     -- children assigned. 
+     -- Input:  A list pairs where the first element is the 
+     --         name of the node and the second is the set of 
+     --         children for that node. 
+     -- Output:  A hashtable with keys the names of the nodes 
+     --          with values the children.
      h := new MutableHashTable;
-     vertices := g#0;
-     children := g#1;
-     apply(#vertices, i -> h#(vertices#i) = set children#i);
+     apply(#g, i -> h#(g#i#0) = set g#i#1);
      new Digraph from h)
+
+digraph HashTable := (g) -> (
+     -- Input:  A hash table with keys the names of the nodes of 
+     --         the graph and the values the children of that node. 
+     -- Output: A hash table of type Diraph. 
+     new Diraph from g)
      
 -----------------------------
 -- Graph Display Functions --
@@ -80,16 +104,14 @@ dotBinary = "dot"
 jpgViewer = "open"
 
 simpleGraph := H -> (
-     q := pairs H;
-     qmute := new MutableList;
-     for i to #q-1 do qmute#i = q#i;
-     for k from 1 to #q-1 do (
-	  testVertices := set for i to k-1 list qmute#i#0;
-      	  qmute#k = (qmute#k#0, qmute#k#1-testVertices)
+     -- Input: A Graph.
+     -- Output: A new Graph that has 
+     pairH := new MutableList from pairs H;
+     for k from 1 to #pairH-1 do (
+	  testVertices := set for i to k-1 list pairH#i#0;
+      	  pairH#k = (pairH#k#0, pairH#k#1-testVertices)
 	  );
-     newGraph := new MutableHashTable;
-     for k to #q-1 do newGraph#(qmute#k#0) = qmute#k#1;
-     new Graph from newGraph)
+     new Graph from hashTable pairH)
 
  
 writeDotFile = method()
