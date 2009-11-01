@@ -207,6 +207,40 @@ AC_PROG_YACC()
 dnl this macro is available only in autoconf 2.60, but most systems have 2.59 as the default:
 dnl AC_PROG_MKDIR_P()
 
+AC_CHECK_SIZEOF([int *])
+AC_SUBST(SIZEOF_INT_P,$ac_cv_sizeof_int_p)
+
+dnl Now we make the 32 bit / 64 bit choice explicit, because config.guess may guess it's a 32 bit system even though gcc compiles
+dnl 64 bit object code by default, and then mpir's configure script (versions 1.2.1 and 1.3.0-rc1) gets confused.
+dnl if test "$GCC" = yes
+dnl then if test "$SIZEOF_INT_P" = 4
+dnl      then case " $CC $CFLAGS " in
+dnl      	    *" -m32 "*) ;;
+dnl 	    *) CC="$CC -m32" ;;
+dnl 	  esac
+dnl      fi
+dnl      if test "$SIZEOF_INT_P" = 8
+dnl      then case " $CC $CFLAGS " in
+dnl      	    *" -m64 "*) ;;
+dnl 	    *) CC="$CC -m64" ;;
+dnl 	  esac
+dnl      fi
+dnl fi
+dnl if test "$GXX" = yes
+dnl then if test "$SIZEOF_INT_P" = 4
+dnl      then case " $CXX $CFLAGS " in
+dnl      	    *" -m32 "*) ;;
+dnl 	    *) CXX="$CXX -m32" ;;
+dnl 	  esac
+dnl      fi
+dnl      if test "$SIZEOF_INT_P" = 8
+dnl      then case " $CXX $CFLAGS " in
+dnl      	    *" -m64 "*) ;;
+dnl 	    *) CXX="$CXX -m64" ;;
+dnl 	  esac
+dnl      fi
+dnl fi
+
 AC_MSG_CHECKING([whether linking C++ programs with C compiler $CC works])
 cat >unwindtest-main.cpp <<EOF
 #include "unwindtest-monomials.hpp"
@@ -768,6 +802,11 @@ AC_SUBST(ULIMIT_S,yes)
 ( ulimit -v 2000 2>/dev/null) || ULIMIT_V=no
 ( ulimit -s 2000 2>/dev/null) || ULIMIT_S=no
 
+AC_SUBST(MPIR_CONFIG_OPTIONS,)
+AC_ARG_WITH(mpir_config_options,
+	AS_HELP_STRING(--with-mpir-config-options=...,specify additional options for the configure script used with mpir),
+	MPIR_CONFIG_OPTIONS=$withval)
+
 if test $BUILD_mpir = yes
 then BUILD_mpfr=yes
 elif test $BUILD_mpfr = no
@@ -1162,7 +1201,9 @@ AC_MSG_NOTICE([using SINGULARLIBS  = $SINGULARLIBS])
 AC_MSG_NOTICE([using LIBS_STATIC   = $LIBS_STATIC])
 AC_MSG_NOTICE([using LIBS_STATIC_OR_DYNAMIC  = $LIBS_STATIC_OR_DYNAMIC])
 AC_MSG_NOTICE([using LIBS_DYNAMIC  = $LIBS_DYNAMIC])
+AC_MSG_NOTICE([using CC            = $CC])
 AC_MSG_NOTICE([using CFLAGS        = $CFLAGS])
+AC_MSG_NOTICE([using CXX           = $CXX])
 AC_MSG_NOTICE([using CXXFLAGS      = $CXXFLAGS])
 AC_MSG_NOTICE([using LDFLAGS       = $LDFLAGS])
 

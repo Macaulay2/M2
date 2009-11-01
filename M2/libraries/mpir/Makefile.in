@@ -1,5 +1,7 @@
 # license for mpir: GNU LGPL v2.1
 VERSION = 1.2.1
+# still beta:
+# VERSION = 1.3.0
 URL = http://www.mpir.org
 CONFIGOPTIONS += --enable-gmpcompat --enable-cxx
 ifeq (@SHARED@,no)
@@ -10,6 +12,7 @@ COMPILEFLAGS =
 ifeq (@OS@-@ISSUE@,MicrosoftWindows-Cygwin)
 LDFLAGS += -Wl,--enable-auto-import
 endif
+CONFIGOPTIONS += @MPIR_CONFIG_OPTIONS@
 Makefile: @srcdir@/Makefile.in ; cd ../.. && ./config.status libraries/mpir/Makefile
 # Local Variables:
 # compile-command: "make -C $M2BUILDDIR/libraries/mpir "

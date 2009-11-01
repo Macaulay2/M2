@@ -2,7 +2,6 @@
 # here we try to compile with no special options, to see if we have a smart configure script
 
 export PERL5LIB =
-export LD_LIBRARY_PATH =
 export MANPATH =
 export OLDMANPATH =
 export NEWMANPATH =
@@ -24,19 +23,23 @@ export ISSUE =
 export PYTHONPATH =
 export DISTRIBUTION =
 export PATH := $(shell echo ":$(PATH)" | sed -e 's=:/sw/[^:]*==g' -e 's=:/usr/local/[^:]*==g' -e 's=:/usr/X11[^:]*==g' -e 's=:/Applications/Macaulay2[^:]*==g' -e 's=:$(HOME)[^:]*==g' | sed -e 's=^:==')
+export LD_LIBRARY_PATH := $(shell echo ":$(LD_LIBRARY_PATH)" | sed -e 's=:/sw/[^:]*==g' -e 's=:/usr/local/[^:]*==g' -e 's=:/usr/X11[^:]*==g' -e 's=:/Applications/Macaulay2[^:]*==g' -e 's=:$(HOME)[^:]*==g' | sed -e 's=^:==')
 
 DIRECTORY := builds.tmp/naive
 MAKEOPTIONS := -C $(DIRECTORY) TARFILE_DIR=$(shell pwd)/$(DIRECTORY)/tarfiles
 
+.PHONY : all check-environment make-configure-script configure reconfigure build clean
+
 all: check-environment make-configure-script configure build
 check-environment:
-	printenv PATH
+	printenv PATH LD_LIBRARY_PATH
 make-configure-script:
 	$(MAKE) -C ../.. VERBOSE=no
 configure: $(DIRECTORY)/.configured
-reconfigure $(DIRECTORY)/.configured:
+reconfigure:
 	mkdir -p $(DIRECTORY)
 	cd $(DIRECTORY) && ../../../../configure --prefix=`pwd`/install-directory --enable-download
+$(DIRECTORY)/.configured: reconfigure
 	touch $@
 build:
 	$(MAKE) $(MAKEOPTIONS) 
