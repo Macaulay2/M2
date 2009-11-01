@@ -116,5 +116,5 @@ document {
 	  "select({1,2,3,4,5}, odd)",
 	  "select([1,2,3,4,5], odd)",
 	  },
-     SeeAlso => {(select,ZZ,BasicList,Function), partition}
+     SeeAlso => {(select,ZZ,BasicList,Function), partition, positions}
      }
