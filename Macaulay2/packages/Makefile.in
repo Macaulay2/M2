@@ -39,7 +39,7 @@ $(foreach i,\
 	$(sort $(PACKAGES) $(DEVEL)),\
 	$(eval check::; \
 		if ! grep "CacheExampleOutput => true" @srcdir@/$i.m2 >/dev/null ;\
-		then @pre_bindir@/M2@EXE@ -q $(STOP) -e "needsPackage(\"$i\",LoadDocumentation=>true); check($i,UserMode=>false); exit 0" ;\
+		then @pre_bindir@/M2@EXE@ -q $(STOP) -e "needsPackage(\"$i\",LoadDocumentation=>true,DebuggingMode=>true); check($i,UserMode=>false); exit 0" ;\
 		fi ))
 info-dir: @pre_infodir@ @pre_infodir@/dir
 @pre_infodir@:; $(MKDIR_P) $@
@@ -52,7 +52,7 @@ all: info-dir @pre_libm2dir@/$1/.installed
 	@echo "make: Entering directory \`$(shell pwd)/$1-temporary'"
 	cd $1-temporary && @pre_bindir@/M2@EXE@ $(M2DIRS) \
 	    -q $(STOP) \
-	    -e errorDepth=0 \
+	    -e errorDepth=2 \
 	    -e debugLevel=$(debugLevel) \
 	    $(EARGS) \
 	    -e "installPackage(\"$1\", $(ARGS)); exit 0"
