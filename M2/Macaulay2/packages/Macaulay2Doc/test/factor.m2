@@ -10,3 +10,8 @@ ZZ[x..z]
 f = (x+3*y-14)^15*(x^2+y^4+z^7-x*y-13*x*z^2+12)^3;
 factor f
 collectGarbage ()					    -- GC_check_heap_block: found smashed heap objects:
+
+-- an example in the Dmodules package depends on this:
+ZZ[s]
+g = (s - 2)*(2*s - 3)*(4*s - 9)*(4*s - 7)*(6*s - 13)*(6*s - 11)*(12*s - 25)*(12*s - 23)*(12*s - 19)*(12*s - 17)*2^80*3^28
+assert( # factor g == 11 )
