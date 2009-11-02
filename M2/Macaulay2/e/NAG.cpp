@@ -1521,6 +1521,7 @@ int PathTracker::track(const Matrix* start_sols)
       case REGULAR: printf("."); break;
       case INFINITY_FAILED: printf("I"); break;
       case MIN_STEP_FAILED: printf("M"); break;
+      case SINGULAR: printf("S"); break;
       default: printf("-"); 
       }
       fflush(stdout);
