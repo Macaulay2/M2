@@ -77,7 +77,7 @@ Description
 	  use S
 	  I=ideal"3(a+b)3, 4c5"
      Text
-	  Note the command {\tt use S}, which specifies 
+	  Note the command ``{\tt use S}'', which specifies 
 	  that we want to work with the generators of the polynomial ring S again;
 	  otherwise the variables {\tt a}, {\tt b}, and {\tt c}
 	  would still have had values in $R$ instead of in $S$.
@@ -351,29 +351,31 @@ Description
 	  I = ideal M^3
      Text
 	  This gives the ideal of entries of the matrix. In the expression
-	  "M = genericMatrix(R,a,3,3)" the arguments R,a,3,3 specify the
+	  ``{\tt M = genericMatrix(R,a,3,3)}'' the arguments ``{\tt R,a,3,3}'' specify the
 	  ring, the first variable to use, and the number of rows and columns
-	  desired. The ring must have enough variables! -- in this case 9.
+	  desired.
      Example
 	  Tr = trace M 
-	  for p from 1 to 10 do print (Tr^p % I)
+	  for p from 1 to 10 do print (p, Tr^p % I)
      Text
-	  The expression Tr^p % I is the normal form for the p-th power
-	  of the trace Tr with respect to the Gröbner basis of I computed
-	  in R. The expression "for p from 1 to 10 do" specifies a 
-	  "for loop" that executes the following "print (Tr^p % I)"
-	  with 10 consecutive values of p. For more information on such loops see:
+	  The expression ``@ TT "Tr^p % I"@'' computes the normal form for the p-th power
+	  of the trace {\tt Tr} with respect to the Gröbner basis of I.
+	  The expression ``@ TT "for p from 1 to 10 do" @'' specifies a 
+	  {\em for loop} that executes the following expression, ``@ TT "print (p, Tr^p % I)" @'',
+	  with 10 consecutive values of {\tt p}. For more information on such loops see @ TO "for" @
+	  or type:
      Code
-     	  EXAMPLE { PRE ///"for"/// }
+     	  EXAMPLE { PRE ///viewHelp "for"/// }
      Text
-	  (Here we have put quotes around "for" because without the quotes
-	  "for" would be a keyword. In general, it's always safe to use
+	  Here we have put quotes around ``for'' because
+	  ``for'' is a keyword in the {\em Macaulay2} language.  (In general, it's always safe to use
 	  quotes with viewHelp.)
 
 	  We see from the output of these commands that the 6-th power
 	  of the trace is NOT in the ideal of entries of the cube of M,
-	  but the 7-th power is. We can compute the expression for it 
-	  by using the division algorithm, denoted in this setting by //:
+	  but the 7-th power is. We can compute the coefficients in the expression for it 
+	  using the division algorithm, denoted in this setting by @ TO2 {(symbol //, RingElement,
+	  Matrix), "//"} @:
      Example
 	  Tr^7//(gens I)
      Code
