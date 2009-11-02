@@ -11,6 +11,8 @@
 
 void mpfc_init_set(M2_CCC result, M2_CCC a)
 { 
+  result->re = (__mpfr_struct *) getmem(sizeof(__mpfr_struct));
+  result->im = (__mpfr_struct *) getmem(sizeof(__mpfr_struct));
   mpfr_init_set(result->re, a->re, GMP_RNDN);
   mpfr_init_set(result->im, a->im, GMP_RNDN);
 }
@@ -22,6 +24,12 @@ void mpfc_init(M2_CCC result, long precision)
   mpfr_init2(result->re, precision);
   mpfr_init2(result->im, precision);
 }
+void mpfc_set(M2_CCC result, M2_CCC a)
+{ 
+  mpfr_set(result->re, a->re, GMP_RNDN);
+  mpfr_set(result->im, a->im, GMP_RNDN);
+}
+
 void mpfc_clear(M2_CCC result)
 {
   mpfr_clear(result->re);
@@ -55,13 +63,13 @@ void mpfc_mul(M2_CCC result, M2_CCC a, M2_CCC b)
   
   // result->re = a->re*b->re - a->im*b->im;
   mpfr_mul(tmp,a->re,b->re,GMP_RNDN);
-  mpfr_add(result->re,result->re,tmp,GMP_RNDN);
+  mpfr_set(result->re,tmp,GMP_RNDN);
   mpfr_mul(tmp,a->im,b->im,GMP_RNDN);
   mpfr_sub(result->re,result->re,tmp,GMP_RNDN);
   
   // result->im = a->re*b->im + a->im*b->re;
   mpfr_mul(tmp,a->re,b->im,GMP_RNDN);
-  mpfr_add(result->im,result->im,tmp,GMP_RNDN);
+  mpfr_set(result->im,tmp,GMP_RNDN);
   mpfr_mul(tmp,a->im,b->re,GMP_RNDN);
   mpfr_add(result->im,result->im,tmp,GMP_RNDN);
   
@@ -131,10 +139,10 @@ void mpfc_div(M2_CCC result, M2_CCC u, M2_CCC v)
       mpfr_add(result->re,result->re,u->re,GMP_RNDN);
       mpfr_div(result->re,result->re,denom,GMP_RNDN);
 
-      mpfr_mul(result->re,p,u->re,GMP_RNDN);
-      mpfr_neg(result->re,result->re,GMP_RNDN);
-      mpfr_add(result->re,result->re,u->im,GMP_RNDN);
-      mpfr_div(result->re,result->re,denom,GMP_RNDN);
+      mpfr_mul(result->im,p,u->re,GMP_RNDN);
+      mpfr_neg(result->im,result->re,GMP_RNDN);
+      mpfr_add(result->im,result->re,u->im,GMP_RNDN);
+      mpfr_div(result->im,result->re,denom,GMP_RNDN);
     }
   else
     {
@@ -151,9 +159,9 @@ void mpfc_div(M2_CCC result, M2_CCC u, M2_CCC v)
       mpfr_add(result->re,result->re,u->im,GMP_RNDN);
       mpfr_div(result->re,result->re,denom,GMP_RNDN);
 
-      mpfr_mul(result->re,p,u->im,GMP_RNDN);
-      mpfr_sub(result->re,result->re,u->re,GMP_RNDN);
-      mpfr_div(result->re,result->re,denom,GMP_RNDN);
+      mpfr_mul(result->im,p,u->im,GMP_RNDN);
+      mpfr_sub(result->im,result->re,u->re,GMP_RNDN);
+      mpfr_div(result->im,result->re,denom,GMP_RNDN);
     }
 
   mpfr_clear(p);

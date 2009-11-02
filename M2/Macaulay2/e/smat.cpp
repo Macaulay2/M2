@@ -93,7 +93,7 @@ void SMat<CoeffRing>::vec_set_entry(sparsevec *&v, long r, const elem &a) const
 	  vec_remove_node(tmp);
 	}
       else
-	p->next->coeff = a;
+	coeffR->set(p->next->coeff, a);
     }
   v = head.next;
 }
@@ -327,6 +327,7 @@ void SMat<CoeffRing>::vec_row_op(sparsevec *&v, long r1, const elem &a, long r2)
       }
   if (vec2 == 0) return;
   elem c;
+  coeffR->set_zero(c);
   coeffR->mult(c, vec2->coeff, a);
   if (coeffR->is_zero(c)) return; // nothing to change
 
@@ -369,6 +370,11 @@ void SMat<CoeffRing>::vec_row_op2(sparsevec *&v,
   // v[row r1] = a1 * v[r1] + a2 * v[r2]
   // v[row r2] = b1 * v[r1] + b2 * v[r2]
   elem e1,e2, c1,c2,c3,c4;
+
+  coeffR->set_zero(c1);
+  coeffR->set_zero(c2);
+  coeffR->set_zero(c3);
+  coeffR->set_zero(c4);
   bool r1_nonzero = vec_get_entry(v,r1,e1);
   bool r2_nonzero = vec_get_entry(v,r2,e2);
   if (!r1_nonzero && !r2_nonzero) return;
@@ -378,20 +384,10 @@ void SMat<CoeffRing>::vec_row_op2(sparsevec *&v,
       coeffR->mult(c1, a1, e1);
       coeffR->mult(c3, b1, e1);
     }
-  else
-    {
-      coeffR->set_zero(c1);
-      coeffR->set_zero(c3);
-    }
   if (r2_nonzero)
     {
       coeffR->mult(c2,a2,e2);
       coeffR->mult(c4,b2,e2);
-    }
-  else
-    {
-      coeffR->set_zero(c2);
-      coeffR->set_zero(c4);
     }
 
   coeffR->add(c1,c1,c2);
@@ -413,11 +409,11 @@ template<typename CoeffRing>
 void SMat<CoeffRing>::vec_dot_product(sparsevec *v, sparsevec *w, elem &result) const
 {
   elem a;
+  coeffR->set_zero(a);
   coeffR->set_zero(result);
   while (true)
     {
-      if (v == 0) return;
-      if (w == 0) return;
+      if (v == 0 || w == 0) return;
       if (v->row > w->row)
 	v = v->next;
       else if (v->row < w->row)
@@ -879,30 +875,6 @@ SMat<CoeffRing> * SMat<CoeffRing>::submatrix(M2_arrayint rows,
 	result->set_entry(r,c,f);
       }
   return result;
-
-#if 0
-//   // 6/1/2005: the following is faulty, if rows has duplicate entries.
-//   int *trans = newarray_atomic(int,nrows_);
-//   for (int i=0; i<nrows_; i++)
-//     trans[i] = -1;
-// 
-//   for (unsigned j=0; j<r->len; j++)
-//     if (r->array[j] >= 0 && r->array[j] < nrows_)
-//       trans[r->array[j]] = j;
-// 
-//   for (unsigned int i=0; i<c->len; i++)
-//     {
-//       result->columns_[i] = subvector(trans, columns_[i]);
-//     }
-//   deletearray(trans);
-//   return result;
-// 
-//       vec v = elem(c->array[i]);
-//       for ( ; v != NULL; v = v->next)
-// 	if (trans[v->comp] != -1)
-// 	  mat.set_entry(trans[v->comp], i, v->coeff);
-//     }
-#endif
 }
 
 template<typename CoeffRing>

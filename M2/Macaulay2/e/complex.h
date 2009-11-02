@@ -18,6 +18,7 @@ extern "C" {
   void mpfc_clear(M2_CCC result);
   void mpfc_init_set(M2_CCC result, M2_CCC a);
   void mpfc_set_si(M2_CCC result, long re);
+  void mpfc_set(M2_CCC result, M2_CCC a);
   int mpfc_is_zero(M2_CCC a);
   void mpfc_add(M2_CCC result, M2_CCC a, M2_CCC b);
   void mpfc_sub(M2_CCC result, M2_CCC a, M2_CCC b);

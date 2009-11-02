@@ -111,7 +111,7 @@ long DMat<CoeffRing>::lead_row(long col, elem &result) const
     {
       if (!coeffR->is_zero(*loc))
 	{
-	  result = *loc;
+	  coeffR->set(result, *loc);
 	  return loc-last;
 	}
     }
@@ -136,7 +136,7 @@ template<typename CoeffRing>
 void DMat<CoeffRing>::set_entry(long r, long c, const elem &a)
 {
   long loc = c * nrows_ + r;
-  array_[loc] = a;
+  coeffR->set(array_[loc], a);
 }
 
 template<typename CoeffRing>
@@ -225,9 +225,10 @@ void DMat<CoeffRing>::row_op(long i, const elem &r, long j)
   elem *loc1 = array_ + i;
   elem *loc2 = array_ + j;
 
+  elem f;
+  coeffR->set_zero(f);
   for (long c=0; c<ncols_; c++)
     {
-      elem f;
       coeffR->mult(f,r,*loc2);
       coeffR->add(*loc1, f, *loc1);
       loc1 += nrows_;
@@ -242,9 +243,10 @@ void DMat<CoeffRing>::column_op(long i, const elem &r, long j)
   elem *loc1 = array_ + nrows_*i;
   elem *loc2 = array_ + nrows_*j;
 
+  elem f;
+  coeffR->set_zero(f);
   for (long a=0; a<nrows_; a++)
     {
-      elem f;
       coeffR->mult(f,r,*loc2);
       coeffR->add(*loc1, *loc1, f);
       loc1++;
@@ -262,10 +264,14 @@ void DMat<CoeffRing>::row2by2(long r1, long r2,
 {
   elem *loc1 = array_ + r1;
   elem *loc2 = array_ + r2;
+
+  elem f1,f2,g1,g2;
+  coeffR->set_zero(f1);
+  coeffR->set_zero(f2);
+  coeffR->set_zero(g1);
+  coeffR->set_zero(g2);
   for (long i=0; i<ncols_; i++)
     {
-      elem f1,f2,g1,g2;
-
       coeffR->mult(f1,a1,*loc1);
       coeffR->mult(f2,a2,*loc2);
       coeffR->mult(g1,b1,*loc1);
@@ -273,8 +279,8 @@ void DMat<CoeffRing>::row2by2(long r1, long r2,
 
       coeffR->add(f1,f1,f2);
       coeffR->add(g1,g1,g2);
-      *loc1 = f1;
-      *loc2 = g1;
+      coeffR->set(*loc1, f1);
+      coeffR->set(*loc2, g1);
       loc1 += nrows_;
       loc2 += nrows_;
     }
@@ -291,10 +297,13 @@ void DMat<CoeffRing>::column2by2(long c1, long c2,
   elem *loc1 = array_ + c1 * nrows_;
   elem *loc2 = array_ + c2 * nrows_;
 
+  elem f1,f2,g1,g2;
+  coeffR->set_zero(f1);
+  coeffR->set_zero(f2);
+  coeffR->set_zero(g1);
+  coeffR->set_zero(g2);
   for (long i=0; i<nrows_; i++)
     {
-      elem f1,f2,g1,g2;
-
       coeffR->mult(f1,a1,*loc1);
       coeffR->mult(f2,a2,*loc2);
       coeffR->mult(g1,b1,*loc1);
@@ -302,8 +311,8 @@ void DMat<CoeffRing>::column2by2(long c1, long c2,
 
       coeffR->add(f1,f1,f2);
       coeffR->add(g1,g1,g2);
-      *loc1++ = f1;
-      *loc2++ = g1;
+      coeffR->set(*loc1++, f1);
+      coeffR->set(*loc2++, g1);
     }
 }
 
@@ -313,9 +322,11 @@ void DMat<CoeffRing>::dot_product(long i, long j, elem &result) const
   elem *loc1 = array_ + nrows_*i;
   elem *loc2 = array_ + nrows_*j;
   coeffR->set_zero(result);
+
+  elem f;
+  coeffR->set_zero(f);
   for (long r=0; r<nrows_; r++)
     {
-      elem f;
       coeffR->mult(f,*loc1++,*loc2++);
       coeffR->add(result,result, f);
     }
