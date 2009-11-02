@@ -228,7 +228,7 @@ factorBFunction(RingElement) := Product => f -> (
      f = select(f, u-> first degree u#0 > 0);
      
      result := apply(f, u->(
-	       if first degree u#0 != 1 then error "incorrect b-function";
+	       if first degree u#0 != 1 then error "internal error: incorrect b-function";
 	       coeff := listForm u#0 / (v->v#1);
 	       Power(R_0 + (if #coeff> 1 then (coeff#1/coeff#0) else 0), u#1)
 	       ));
