@@ -5,7 +5,7 @@ solveBertini = method(TypicalValue => List)
 solveBertini (List,HashTable) := List => (F,o) -> (
 	  -- tempdir := temporaryFileName() | "NumericalAlgebraicGeometry-bertini";
 	  -- mkdir tempdir; 	  
-  	  makeBertiniInput(gens R, F);
+  	  makeBertiniInput F;
   	  run(BERTINIexe|" >bertini_session.log");
 	  sols := readSolutionsBertini("finite_solutions");
 	  result = sols;
