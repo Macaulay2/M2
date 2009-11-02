@@ -457,6 +457,17 @@ void SMat<CoeffRing>::vec_sort(sparsevec *&f) const
 template<typename CoeffRing>
 void SMat<CoeffRing>::vec_permute(sparsevec *&v, long start_row, M2_arrayint perm) const
 {
+  int *perminv = newarray_atomic(int,perm->len);
+  for (long i=0; i<perm->len; i++)
+    perminv[perm->array[i]] = i;
+			    
+  long end_row = start_row + perm->len;
+
+  for (sparsevec *w = v; w != 0; w = w->next)
+    if (w->row >= start_row && w->row < end_row)
+      w->row = start_row + perminv[w->row - start_row];
+  vec_sort(v);
+  deletearray(perminv);
 }
 
 template<typename CoeffRing>
@@ -723,9 +734,9 @@ bool SMat<CoeffRing>::row_permute(long start_row, M2_arrayint perm)
 template<typename CoeffRing>
 bool SMat<CoeffRing>::column_permute(long start_col, M2_arrayint perm)
 {
-  // We copy one column to another location for each cycle in 'perm' of length > 1.
   long ncols_to_permute = perm->len;
   bool *done = newarray_atomic(bool,ncols_to_permute);
+  sparsevec **tmpvecs = newarray(sparsevec *, ncols_to_permute);
   for (long i=0; i<ncols_to_permute; i++)
     done[i] = true;
   for (long i=0; i<ncols_to_permute; i++)
@@ -739,34 +750,11 @@ bool SMat<CoeffRing>::column_permute(long start_col, M2_arrayint perm)
 	}
       done[j] = false;
     }
-  sparsevec *tmp = 0;
-  long next = 0;
-  while (next < ncols_to_permute)
-    {
-      if (done[next] || perm->array[next] == next)
-	{
-	  next++;
-	}
-      else
-	{
-	  // store col 'next' into tmp
-	  tmp = columns_[start_col + next];
-	  long r = next;
-	  for (;;)
-	    {
-	      // copy col perm[r] to col r
-	      columns_[start_col + r] = columns_[start_col + perm->array[r]];
-	      done[r] = true;
-	      long next_r = perm->array[r];
-	      if (next_r == next) break; // and so r is the previous one
-	      r = perm->array[r];
-	    }
-	  // Now copy tmp back
-	  columns_[r] = tmp;
-	  done[r] = true;
-	}
-    }
-  deletearray(tmp);
+  for (long i=0; i<ncols_to_permute; i++)
+    tmpvecs[i] = columns_[start_col + perm->array[i]];
+  for (long i=0; i<ncols_to_permute; i++)
+    columns_[start_col + i] = tmpvecs[i];
+  deletearray(tmpvecs);
   deletearray(done);
   return true;
 }
