@@ -47,7 +47,7 @@ Description
 	  Fortunately, when the characteristic $p$ is not too small,
 	  qualitative questions often have similar answers over
 	  $\ZZ/p$ and over $\QQ$, so we mostly use the former.
-	  in {\em Macaulay2} the prime $p$
+	  In {\em Macaulay2} the prime $p$
 	  can range up to 32749.
 
 	  We make a polynomial ring in 5 variables over $\ZZ/101$:
@@ -91,14 +91,11 @@ Description
 	  In case you forget any of these things, @TO help@ is available! The most
 	  useful way to get it is often to type something like:
      Code
-     	  EXAMPLE { PRE ///viewHelp Ideal/// }
-     Text
-
-	  To get just the documentation for the function "ideal" that we've been using
-	  to create ideals one would do:
-     Code
      	  EXAMPLE { PRE ///viewHelp ideal/// }
      Text
+     	  Then a browser window will pop up that contains documentation about the function {\tt
+          ideal} that we've been using; links on that page allow one to explore all of the {\em Macaulay2} documentation.
+
 	  On the other hand, we might have wanted information about the @TO class@ of all ideals.
 	  Not too surprisingly, this class is called @TO Ideal@. We could get information about
 	  what functions create or use ideals by typing:
@@ -106,7 +103,7 @@ Description
           EXAMPLE { PRE ///viewHelp Ideal/// }                                                                                                                                                           
      Text                                                                                                                                                                                                
           To see the names of classes, you can begin by looking at the output
-	  of commands; the last line output usually contains the name of the 
+	  of commands; the second line output (the one introduced by a colon) often contains the name of the 
 	  class of the result.
 	  
 	  Here are some basic operations on matrices:
@@ -117,19 +114,18 @@ Description
 	  trace M
 	  M-transpose M
      Text
-	  The command:
+	  The function @TO entries@ gives the entries of a matrix:
      Example
 	  entries M
      Text
-	  produces a list of lists, one for each row of M.
-	  The command @TO flatten@ puts together the elements of such 
-	  lists into a single list. Thus to get
-	  a list of all entries of the matrix do:
+	  The result is a list of lists, one for each row of the matrix $M$.
+	  The function @TO flatten@ can be used to merge the
+	  lists into a single list:
      Example
 	  flatten entries M
      Text
 	  If you want a particular entry, say the one in the upper left corner, 
-	  you can use the underscore operator _:
+	  you can use the underscore operator @TO2 {(symbol _,Matrix,Sequence),"_"}@:
      Example
 	  M_(0,0)
      Text
@@ -143,7 +139,7 @@ Description
 	  I_*
      Text
 
-	  You can define a module as a cokernel, kernel, image, or even subquotient:
+	  A {\em module} can be defined as a cokernel, kernel, image, or even as a subquotient:
      Example
 	  coker M     
 	  image M
@@ -153,7 +149,7 @@ Description
 	  subquotient(M,N)
      Text
 	 Note that the matrix $N$ above was defined with an
-	 alternate syntax, which is parallel to the alternate syntax for @TO ideal@.
+	 alternate syntax, parallel to the alternate syntax for @TO ideal@.
 
 	  Before going on, the reader might want to explore a bit. A good place to 
 	  start is the top of the documentation tree, which can be reached, for
@@ -178,14 +174,14 @@ Description
      Example
 	  I = ideal(x^2*y,x*y^2+x^3)
      Text
-	  Now the punch line. We can compute the Gröbner basis with:
+	  Now the punch line. We can compute the Gröbner basis with the @ TO groebnerBasis @ function:
      Example
 	  J = groebnerBasis I
      Text
 	  Gr\"obner bases are always computed with respect to a particular
 	  monomial order on the ring. In fact, the ring we defined above has
 	  a default monomial order, the graded reverse lex order. For many
-	  other possibilities see:
+	  other possibilities see @ TO MonomialOrder @ or type:
      Code
      	  EXAMPLE { PRE "viewHelp MonomialOrder" }
      Text
@@ -195,50 +191,51 @@ Description
      Example
 	  I= intersect (ideal"x2,y3", ideal"y2,z3", (ideal"x,y,z")^4)
      Text
-	  We can---almost---undo this operation by computing
+	  We can almost undo this operation by computing
 	  a primary decomposition:
      Example
 	  primaryDecomposition I
      Text
-          Inspecting the output, we see that the first two ideals output
+          Inspecting the output, we see that the first two ideals
 	  are the same as the first two ideals we intersected, but the 
-	  third output is different than the third input to ``intersect''.
+	  third one differs from the corresponding input ideal.
 	  This is because only the primary components corresponding
-	  to minimal primes---the first two in the example here---are unique. All three of the input ideals
-	  are primary, so that representation of $I$ is a primary decomposition
-	  different than the one {\em Macaulay2} output.
+	  to minimal primes (here, the first two) are unique. All three of the input ideals
+	  are primary, so they constitute a primary decomposition of $I$
+	  different from the one provided by {\em Macaulay2} on the output line.
 	  
 	  For larger examples, primary decomposition is computationally challenging!
 	  Sometimes it is easier to compute just the minimal primes. To do
-	  this we can use:
+	  this we can use @ TO decompose @: 
      Example
 	  decompose I
      Text
-	  Using Gröbner bases we can compute the
-	  codimension, dimension,
-	  degree, and the whole Hilbert
-	  function and polynomial.  
+
+	  Using Gröbner bases we can compute 
+	  codimensions, dimensions,
+	  degrees, Hilbert
+	  functions, and Hilbert polynomials.  
 	  This will be more fun if we work with a
 	  meaningful example.  We will use
-	  an the ideal defining a smooth
-	  rational quartic curve in ${\bf P}^3$. The quartic can be given
-	  parametrically in an affine representation
-	  by 
-	  	$$t \mapsto{} (t,t^3,t^4).$$
+	  the ideal defining the smooth
+	  rational quartic curve in $\PP^3$ given
+	  parametrically (in an affine representation)
+	  by $$t \mapsto{} (t,t^3,t^4).$$
 	  (The reader more interested in algebra than geometry
 	  may simply treat the ideal given below as a 
-	  gift from the gods... .)
-	  We obtain the ideal by first making the 
-	  polynomial ring in 4 variables (the
-	  homogeneous coordinate ring of ${\bf P}^3$):
+	  gift from the gods.)
+	  First we make the
+	  polynomial ring in 4 variables, to serve as the
+	  homogeneous coordinate ring of $\PP^3$:
      Example
 	  R = kk[a..d]
      Text
-	  We then compute the kernel of the ring map $R \to kk[s,t]$ defined by:
+	  We introduce the ring map $\phi: R \to kk[s,t]$ defined by 
+     	  $(a,b,c,d) \mapsto{} (s^4, s^3 t, s t^3, t^4)$:	  
      Example
 	  phi = map(kk[s,t],R,{s^4, s^3*t, s*t^3, t^4})
      Text
-	  Here the syntax of the command has the target ring $kk[s,t]$ first:
+	  Here the syntax of the command has the target ring first and the source ring second:
 	  maps in {\em Macaulay2} generally go from right to left!
 	  The last input to the command is a 
 	  list of the elements to which to send the variables of the source ring.
@@ -246,40 +243,41 @@ Description
      Example
 	  I = ker phi
      Text
-	  There is a shortcut notation for this construction:
+	  Shortcut notation for this construction is provided by the function @ TO
+	  monomialCurveIdeal @:
      Example
 	  I = monomialCurveIdeal(R,{1,3,4})
      Text
-	  We can compute the dimension,  codimension (also called height) 
-	  and degree of this ideal with:
+	  We can compute the @ TO2 {(dim,Ideal),"dimension"}@, @ TO2{(codim,Ideal), "codimension"}@ (also called the
+	  height) and @ TO2{(degree,Ideal),"degree"} @ of this ideal:
      Example
 	  dim I
 	  codim I
 	  degree I
      Text
-	  The Hilbert polynomial is obtained with:
+	  The Hilbert polynomial is obtained with the function @ TO hilbertPolynomial@:
      Example
 	  hilbertPolynomial(R/I)
      Text
-	  The output of this command may not be what the user expected:
-	  The term ${\bf P}_i$ represents the Hilbert polynomial of
-	  projective $i$-space.  This formula tells
+	  The output above may not be what the user expected:
+	  the term ${\bf P}_m$ represents the Hilbert polynomial of
+	  projective $m$-space.  Thus the output tells
 	  us that the Hilbert polynomial of $M$ is
-	  $H(m) = -3*1+4*(m+1) = 4m + 1$.  Thus the degree
+	  $i \mapsto{} -3*1+4*(i+1) = 4i + 1$.  Thus the degree
 	  is four, the dimension of the projective variety
-	  which is the support of $M$ is 1 (and so the affine
-	  dimension is 2), and the (arithmetic) genus is 0 (1 minus the
-	  constant term of the Hilbert polynomial.)
+	  that is the support of $M$ is 1 (and so the affine
+	  dimension is 2), and the (arithmetic) genus is 0 (obtained as 1 minus the
+	  constant term of the polynomial.)
 
 	  The more usual expression for the Hilbert polynomial can
-	  also be obtained:
+	  be obtained as follows:
      Example
 	  hilbertPolynomial(R/I, Projective => false)
      Text
-	  The construction Projective => false is our first example of
+	  The construction {\tt Projective => false} is our first example of
 	  an {\em option} to a function: we specified that the option 
-	  Projective was to have the value false.
-	  The form we used first could also have been written
+	  {\tt Projective} was to have the value {\tt false}.
+	  The form we used first could also have been written this way:
      Example
 	  hilbertPolynomial(R/I, Projective => true)
      Text
@@ -293,49 +291,47 @@ Description
 	  as a rational function with denominator equal to (1-T)^n, where
 	  n is the number of variables in R. 
 	  Since R/I has dimension 2, it can also be written
-	  with denominator (1-t)^2. To see it in this form, use:
+	  with denominator (1-t)^2. To see it in this form, use @ TO reduceHilbert @:
      Example
 	  reduceHilbert hilbertSeries (R/I)
      Text
 	  It's possible to manipulate the numerator and denominator of this
-	  expression. To learn how to do so, see:
+	  expression. To learn how to do so, see @ TO hilbertSeries @ or type:
      Code
      	  EXAMPLE { PRE "viewHelp hilbertSeries" }
      Text
 	  A great deal of subtle information about a module is visible using
 	  free resolutions. For an example, we begin
-	  by turning R/I into a module. Here R^1 is the free module of rank 1 over R.
+	  by turning $R/I$ into a module. Here the code @ TT "R^1" @ produces the free module of
+	  rank 1 over $R$, and @ TO2 {(resolution,Module),"res"} @ computes a free resolution:
      Example
 	  M=R^1/I
 	  Mres = res M
      Text
 	  To get more precise information about {\tt Mres},
-	  we could compute its Betti table:
+	  we could compute its Betti table with @ TO2{(betti,GradedModule), "betti"} @:
      Example
 	  betti Mres
      Text
 	  The display is chosen for compactness. Each column of the
 	  table corresponds
 	  to a free module in the resolution. The column's heading
-	  specifies the {\em homological degree} (how many
-	  steps back in the resolution this free
-	  module is)
+	  specifies the {\em homological degree} (the position of the free
+	  module in the resolution).
 	  The entry just below the homological degree
 	  is the rank of the free module, also called the
 	  {\em total betti 
 	  number}. The remaining entries in the column
           tell us how many generators of each degree this free
-	  module requires: In the $j$th column, the
-	  number $n$ in the the
-	  row that begins with a number ``$d$:'' means that the $j$th
-	  free module requires $n$ generators of degree
-	  $n+j$.  Thus for example in our case, the one
-	  generator of the third (last) free module in the
+	  module has: the number in the column labelled $j$ and in the row labelled $d$
+	  tells how many generators of degree $j+d$ the $j$-th free module has.
+	  Thus, in our case, the single
+	  generator of the third (and last) free module in the
 	  resolution has degree $3+2=5$.
 
 	  Commonly computed homological invariants
-	  such as projective dimension and regularity
-	  are (also) available directly:
+	  such as @ TO2 { (pdim,Module), "projective dimension" } @ and @ TO2 {(regularity,Module),
+	  "regularity"} @ are (also) available directly:
      Example
 	  pdim M
 	  regularity M
@@ -343,9 +339,9 @@ Description
      	  SUBSECTION "Division With Remainder"
      Text
 	  A major application of Gröbner bases is
-	  to give a normal form for an element modulo an
+	  to give the normal form for an element modulo an
 	  ideal, allowing one, for example, to decide whether
-	  the element is  in the ideal.
+	  the element is in the ideal.
 	  For example, we can decide which power of the trace
 	  of a generic 3x3 matrix is expressible in terms of the entries of the 
 	  cube of the matrix with the following code:
@@ -384,7 +380,7 @@ Description
      	  SUBSECTION "Elimination Theory"
      Text
 	  Consider the problem of projecting the
-	  ``twisted cubic'', a curve in ${\bf P}^3$ defined
+	  ``twisted cubic'', a curve in $\PP^3$ defined
 	  by the three $2 \times 2$ minors of a certain
 	  $2 \times 3$ matrix into the plane.  
 	  We already have the simplest tools for solving
@@ -394,7 +390,7 @@ Description
      Example
 	  x = symbol x
      Text
-	  Since we are going to deal with a curve in ${\bf P}^3$,
+	  Since we are going to deal with a curve in $\PP^3$,
 	  we begin with a polynomial ring in four variables:
      Example
 	  R = kk[x_0..x_3] 
