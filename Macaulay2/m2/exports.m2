@@ -688,6 +688,7 @@ export {
 	symbol gradedModuleMap,
 	symbol graphIdeal,
 	symbol graphRing,
+	symbol groebnerBasis,
 	symbol groupID,
 	symbol hash,
 	symbol hashTable,

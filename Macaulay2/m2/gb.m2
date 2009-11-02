@@ -80,6 +80,7 @@ gbGetSuitable := (f,type) -> (
      )
 
 gb = method( TypicalValue => GroebnerBasis, Options => gbDefaults )
+groebnerBasis = x -> generators gb x
 
 strategyCodes := new HashTable from { -- must match values in e/engine.h in enum StrategyValues
      LongPolynomial => 1,

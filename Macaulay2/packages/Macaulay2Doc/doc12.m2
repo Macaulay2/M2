@@ -206,7 +206,7 @@ document {
      Usage => "positions(v,f)",
      Inputs => { "v", "f" => { "which, when applied to an element of ", TT "v", ", yields ", TO "true", " or ", TO "false", "" }},
      Outputs => {
-	  List => { "the list of integers ", TT "k", ", in ascending order, such that the ", TT "f v#k", " is ", TO "true" }
+	  List => { "the list of integers ", TT "k", ", in ascending order, such that ", TT "f v#k", " evaluates to ", TO "true" }
 	  },
      EXAMPLE lines ///
      positions(100..110,isPrime)
