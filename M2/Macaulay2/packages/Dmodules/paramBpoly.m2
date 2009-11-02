@@ -480,7 +480,7 @@ factorBFunctionZmodP RingElement := Product => f -> (
      S := symbol S;
      QR := QQ[S];
      result := apply(f, u->(
-	       if first degree u#0 != 1 then error "incorrect b-function";
+	       if first degree u#0 != 1 then error "internal error: incorrect b-function";
 	       coeff := listForm u#0 / (v->v#1);
 	       pInfo(666, {"coeff = ", coeff});
      	       Power(QR_0 + (if #coeff> 1 then ZmodP2Q(coeff#1//coeff#0) else 0), u#1)
