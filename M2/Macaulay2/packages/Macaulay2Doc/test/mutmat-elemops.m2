@@ -151,11 +151,12 @@ rings = {ZZ, ZZ/101, QQ, QQ[x,y], frac(QQ[x,y]), RR_53, RR_100, CC_53, CC_100}
 rings/testops
 rings/testops2
 rings/testops3
+rings/testops4
 
 end
 
 load "~/src/M2/Macaulay2/packages/Macaulay2Doc/test/mutmat-elemops.m2"
-
+R = ZZ/101
 
 testops4 ZZ
 testops = testops4tmp
