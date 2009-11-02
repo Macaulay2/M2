@@ -1,3 +1,4 @@
+plus' = (x,y) -> ( z := x+y ; if z == 0 then continue ; z )
 Poly = new Type of HashTable
 assert( (one = new Poly from {1 => 1}) === new Poly from {1 => 1} )
 assert( (T = new Poly from {2 => 1}) === new Poly from {2 => 1} )
