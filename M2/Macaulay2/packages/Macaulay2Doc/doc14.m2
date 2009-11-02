@@ -792,6 +792,19 @@ document {
      SeeAlso => {"rootPath"}
      }
 
+document {
+     Key => groebnerBasis,
+     Headline => "Gröbner basis, as a matrix",
+     Usage => "groebnerBasis x",
+     Inputs => { "x" },
+     Outputs => { Matrix => { "the matrix whose columns are the ", TO "generators", " of the Gröbner basis of ", TT "x", ", where 
+	       ", TT "x", " is any input acceptable to ", TO "gb" } },
+     EXAMPLE lines ///
+     R = QQ[a..d]
+     transpose groebnerBasis random(R^1,R^{4:-2})
+     ///
+     }
+
 -- Local Variables:
 -- compile-command: "make -C $M2BUILDDIR/Macaulay2/m2 "
 -- End:
