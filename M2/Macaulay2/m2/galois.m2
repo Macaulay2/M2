@@ -12,6 +12,8 @@ net GaloisField := k -> (
      else net expression k)
 describe GaloisField := F -> net expression F
 
+precision GaloisField := F -> infinity
+
 generators GaloisField := opts -> (F) -> (
      if opts.CoefficientRing === null then F.generators
      else if opts.CoefficientRing === F then {}
