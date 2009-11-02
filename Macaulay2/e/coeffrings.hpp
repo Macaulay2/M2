@@ -75,6 +75,11 @@ public:
     result = 0;
   }
 
+  void set(elem &result, elem a) const
+  {
+    result = a;
+  }
+
   bool is_zero(elem result) const 
   { 
     return result == 0; 
@@ -188,6 +193,8 @@ public:
 
   void set_zero(elem &result) const { result = zero; }
 
+  void set(elem &result, elem a) const { result = a; }
+
   bool is_zero(elem result) const { return result == zero; }
 
   void invert(elem &result, elem a) const
@@ -289,6 +296,8 @@ public:
     mpfr_set_si(&result, 0, GMP_RNDN); 
   }
 
+  void set(elem &result, elem a) const { mpfr_set(&result, &a, GMP_RNDN); }
+
   bool is_zero(elem result) const { return mpfr_cmp_si(&result, 0) == 0; }
 
   void invert(elem &result, elem a) const { mpfr_si_div(&result, 1, &a, GMP_RNDN); }
@@ -310,7 +319,7 @@ public:
 
   void from_ring_elem(elem &result, const ring_elem &a) const
   {
-    result = * reinterpret_cast<mpfr_ptr>(a.poly_val);
+    mpfr_init_set(&result, reinterpret_cast<mpfr_ptr>(a.poly_val), GMP_RNDN);
   }
 
   void swap(elem &a, elem &b) const
@@ -460,6 +469,8 @@ public:
     mpfc_set_si(&result, 0);
   }
 
+  void set(elem &result, elem a) const { mpfc_set(&result, &a); }
+
   bool is_zero(elem result) const { return mpfc_is_zero(&result); }
 
   void add(elem &result, elem a, elem b) const { mpfc_add(&result,&a,&b); }
@@ -513,6 +524,8 @@ public:
   void init_set(elem &result, elem a) const { result = a; }
 
   void set_zero(elem &result) const { result = R->zero(); }
+
+  void set(elem &result, elem a) const { result = a; }
 
   bool is_zero(elem result) const { return R->is_zero(result); }
 
@@ -576,6 +589,8 @@ public:
   void init_set(elem &result, const elem &a) const { result = a; }
 
   void set_zero(elem &result) const { result = 0; }
+
+  void set(elem &result, const elem &a) const { result = a; }
 
   bool is_zero(const elem &result) const { return result == 0; }
 
