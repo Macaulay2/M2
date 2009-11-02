@@ -15,6 +15,9 @@ Description
 	  PRE ///Macaulay2, version 1.3
 	  with packages: ConwayPolynomials, Elimination, IntegralClosure, LLLBases,
 	         PrimaryDecomposition, ReesAlgebra, SchurRings, TangentCone///}
+     Text
+          We suggest you do that now, so that you can experiment while you read
+	  this Tutorial!
      Code
      	 SUBSECTION "Arithmetic with integers, rings and ideals"
      Text
@@ -39,9 +42,12 @@ Description
 	  1/i
      Text
 	  Computation is often fastest and needs least
-	  memory when performed over finite prime fields, and when
-	  these are large they look a lot like the rational numbers,
-	  so we mostly use fields of the form $\ZZ/p$. The prime $p$
+	  memory when performed over finite prime fields of the form 
+	  $\ZZ/p$.
+	  Fortunately, when the characteristic $p$ is not too small,
+	  qualitative questions often have similar answers over
+	  $\ZZ/p$ and over $\QQ$, so we mostly use the former.
+	  in {\em Macaulay2} the prime $p$
 	  can range up to 32749.
 
 	  We make a polynomial ring in 5 variables over $\ZZ/101$:
@@ -53,7 +59,7 @@ Description
      Example
 	  S=kk[a,b,c,d,e] 
      Text
-	  Then one can do arithmetic on polynomials:
+	  One can do arithmetic on polynomials:
      Example
 	  (3*a^2+1)^5
      Text
@@ -61,7 +67,7 @@ Description
      Example
 	  I=ideal(a^3-b^3, a+b+c+d+e)
      Text
-	  We make the corresponding quotient ring:
+	  Using this ideal, we can make a factor ring:
      Example
 	  R=S/I
      Text
@@ -95,11 +101,14 @@ Description
      Text
 	  On the other hand, we might have wanted information about the @TO class@ of all ideals.
 	  Not too surprisingly, this class is called @TO Ideal@. We could get information about
-	  what functions create or use ideals by typing
+	  what functions create or use ideals by typing:
      Code                                                                                                                                                                                                
           EXAMPLE { PRE ///viewHelp Ideal/// }                                                                                                                                                           
      Text                                                                                                                                                                                                
-
+          To see the names of classes, you can begin by looking at the output
+	  of commands; the last line output usually contains the name of the 
+	  class of the result.
+	  
 	  Here are some basic operations on matrices:
      Example
 	  M= matrix{{a,b,c},{b,c,d},{c,d,e}}
@@ -119,7 +128,8 @@ Description
      Example
 	  flatten entries M
      Text
-	  If you want a particular entry, say the one in the upper left corner, do;
+	  If you want a particular entry, say the one in the upper left corner, 
+	  you can use the underscore operator _:
      Example
 	  M_(0,0)
      Text
@@ -157,57 +167,65 @@ Description
 	  To compute the Gröbner basis of an ideal
 	  $(x^2y,xy^2+x^3)$ in the polynomial ring in
 	  four variables we proceed as follows:
-	  Our favorite field
+	  A favorite field:
      Example
 	  kk = ZZ/32003
      Text
-	  The polynomial ring
+	  The polynomial ring:
      Example
 	  R = kk[x,y,z,w]
      Text
-	  and the ideal
+	  The ideal:
      Example
 	  I = ideal(x^2*y,x*y^2+x^3)
      Text
-	  now the punch line: we can compute the Gröbner basis with
+	  Now the punch line. We can compute the Gröbner basis with:
      Example
 	  J = gens gb I
      Text
-	  (here gb I is an object with lots of information in it; gens gb I
-	  extracts just what we want, the generators in a Gröbner basis.)
+	  (here @TO gb@ I is an object with lots of information in it. The
+	  command ``gens gb I''
+	  Extracts Just what we want, the generators in a Gröbner basis.)
 	  Note that Gröbner bases are always computed with respect to a particular
-	  monomial order on the ring. In fact, the ring we defined above has
+	  monomial @TO order@ on the ring. In fact, the ring we defined above has
 	  a default monomial order, the graded reverse lex order. For many
-	  other possibilities see
+	  other possibilities see:
      Code
      	  EXAMPLE { PRE "viewHelp MonomialOrder" }
      Text
-	  The analogue for ideals of factorization is primary decomposition.
-	  For example, we can begin by intersecting three ideals
+	  The analogue of factorization in the theory of ideals
+	  is primary decomposition.
+	  For example, we can begin by intersecting three ideals:
      Example
 	  I= intersect (ideal"x2,y3", ideal"y2,z3", (ideal"x,y,z")^4)
      Text
-	  and then take the primary decomposition with
+	  We can---almost---undo this operation by computing
+	  a primary decomposition:
      Example
 	  primaryDecomposition I
      Text
-	  Although the three ideals we intersected were all primary, we
-	  did not get the last one back -- we got a different primary ideal
-	  instead. This is because only the primary components corresponding
-	  to minimal primes are unique.
-	  For larger examples, this can be computationally challenging!
-	  Somewhat easier is to find just the minimal primes. We use:
+          Inspecting the output, we see that the first two ideals output
+	  are the same as the first two ideals we intersected, but the 
+	  third output is different than the third input.
+	  This is because only the primary components corresponding
+	  to minimal primes are unique. All three of the input ideals
+	  are primary, so that representation of $I$ is a primary decomposition
+	  different than the one {\em Macaulay2} output.
+	  
+	  For larger examples, primary decomposition is computationally challenging!
+	  Sometimes it is easier to compute just the minimal primes. To do
+	  this we can use:
      Example
 	  decompose I
      Text
-	  From Gröbner bases we can also compute the
+	  Using Gröbner bases we can compute the
 	  codimension, dimension,
 	  degree, and the whole Hilbert
 	  function and polynomial.  
-	  This will be more fun if we work with an
-	  example having some meaning.  We choose
-	  to work with the ideal defining the
-	  rational quartic curve in ${\bf P}^3$ given
+	  This will be more fun if we work with a
+	  meaningful example.  We will use
+	  an the ideal defining a smooth
+	  rational quartic curve in ${\bf P}^3$. The quartic can be given
 	  parametrically in an affine representation
 	  by 
 	  	$$t \mapsto{} (t,t^3,t^4).$$
@@ -216,11 +234,11 @@ Description
 	  gift from the gods... .)
 	  We obtain the ideal by first making the 
 	  polynomial ring in 4 variables (the
-	  homogeneous coordinate ring of ${\bf P}^3$)
+	  homogeneous coordinate ring of ${\bf P}^3$):
      Example
 	  R = kk[a..d]
      Text
-	  and taking the kernel of the ring map $R \to kk[s,t]$ defined by
+	  We then compute the kernel of the ring map $R \to kk[s,t]$ defined by:
      Example
 	  phi = map(kk[s,t],R,{s^4, s^3*t, s*t^3, t^4})
      Text
@@ -230,21 +248,22 @@ Description
      Example
 	  I = ker phi
      Text
-	  This is such a useful construction that there's a shortcut notation:
+	  There is a shortcut notation for this construction:
      Example
 	  I = monomialCurveIdeal(R,{1,3,4})
      Text
-	  We can compute the dimension,  codimension (=height) and degree of this ideal with
+	  We can compute the dimension,  codimension (also called height) 
+	  and degree of this ideal with:
      Example
 	  dim I
 	  codim I
 	  degree I
      Text
-	  The Hilbert polynomial is obtained by
+	  The Hilbert polynomial is obtained with:
      Example
 	  hilbertPolynomial(R/I)
      Text
-	  This may not be what the user expected:
+	  The output of this command may not be what the user expected:
 	  The term ${\bf P}_i$ represents the Hilbert polynomial of
 	  projective $i$-space.  This formula tells
 	  us that the Hilbert polynomial of $M$ is
