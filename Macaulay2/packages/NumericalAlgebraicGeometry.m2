@@ -4,7 +4,7 @@ newPackage(
      Version => "1.3.0.1",
      Date => "Oct 30, 2009",
      Headline => "Numerical Algebraic Geometry",
-     HomePage => "http://www.math.uic.edu/~leykin/NAG4M2",
+     HomePage => "http://people.math.gatech.edu/~aleykin3/NAG4M2",
      AuxiliaryFiles => true,
      Authors => {
 	  {Name => "Anton Leykin", Email => "leykin@math.gatech.edu"}
@@ -1313,7 +1313,7 @@ evalPoly (RingElement, List) := (f,x) -> (
      sub(sub(f, sub(matrix{x},ring f)), coefficientRing ring f)
      )
 
-diffSolutions = method(TypicalValue=>Sequence, Options=>{Tolerance=>1e-6})
+diffSolutions = method(TypicalValue=>Sequence, Options=>{Tolerance=>1e-3})
 -- in:  A, B (presumably sorted)
 -- out: (a,b), where a and b are lists of indices where A and B differ
 diffSolutions (List,List) := o -> (A,B) -> (
