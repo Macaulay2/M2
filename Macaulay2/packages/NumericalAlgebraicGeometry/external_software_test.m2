@@ -1,5 +1,5 @@
 restart
-loadPackage "NumericalAlgebraicGeometry"
+debug loadPackage "NumericalAlgebraicGeometry"
 DBG = 2;
 ------------------------------------------------------
 -- COMPARISON OF              -- PHCpack -- Bertini -- hom4ps2 --
@@ -19,16 +19,3 @@ Hs = sortSolutions H;
 difBP = diffSolutions(Bs/first, Ps/first);
 difBH = diffSolutions(Bs/first, Hs/first);
 assert(#difBP#0+#difBP#1+#difBH#0+#difBH#1==0) 
-
---remove temp files
-removeFile "tasols"; removeFile "target"; removeFile "output"; removeFile "input";
-for f in {"failed_paths", "nonsingular_solutions",
-               "raw_data", "start", "input", "output", "raw_solutions",
-               "main_data", "real_finite_solutions", "finite_solutions",
-               "midpath_data", "singular_solutions", "real_solutions",
-               "singular_solutions", "midpath_data", "arr.out", "deg.out", 
-	       "eval2.out", "jacP.out", "names.out", "par.out", "const.out",  
-	       "eval.out",  "finalFile.out",  "jacV.out", "num.out", "paramDerivs.out", 
-	       "config", "func_input", "nonhom_start", "preproc_data"} do
-          if fileExists f then removeFile f; 
-
