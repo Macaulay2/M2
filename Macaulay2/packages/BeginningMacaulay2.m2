@@ -1,5 +1,5 @@
 -- -*- coding: utf-8 -*-
-newPackage( "BeginningMacaulay2", Version => "0.1", Date => "June 2, 2009",
+newPackage( "BeginningMacaulay2", Version => "1.0", Date => "November 3, 2009",
      Authors => {
 	  {Name => "David Eisenbud", Email => "de@msri.org", HomePage => "http://www.msri.org/~de"},
 	  {Name => "Mike Stillman", Email => "mike@math.cornell.edu", HomePage => "http://www.math.cornell.edu/~mike"}
