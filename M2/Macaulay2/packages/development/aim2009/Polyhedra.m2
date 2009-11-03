@@ -4,25 +4,25 @@
 -- PURPOSE: Computations with convex polyhedra 
 -- PROGRAMMER : René Birkner 
 -- UPDATE HISTORY : April 2008, December 2008, March 2009, Juli 2009,
---     	    	    September 2009
+--     	    	    September 2009, October 2009
 ---------------------------------------------------------------------------
 newPackage("Polyhedra",
     Headline => "A package for computations with convex polyhedra",
-    Version => "1.0.7",
-    Date => "October 27, 2009",
---    Certification => {
---	 "journal name" => "The Journal of Software for Algebra and Geometry: Macaulay2",
---	 "journal URI" => "http://j-sag.org/",
---	 "article title" => "Polyhedra: a package for computations with convex polyhedral objects",
---	 "acceptance date" => "2009-09-07",
---	 "published article URI" => "http://j-sag.org/Volume1/jsag-3-2009.pdf",
---	 "published code URI" => "http://j-sag.org/Volume1/Polyhedra.m2",
---	 "repository code URI" => "svn://macaulay2.math.uiuc.edu/Macaulay2/trunk/M2/Macaulay2/packages/Polyhedra.m2",
---    	 "release at publication" => 9344,
---	 "version at publication" => "1.0.5",
---	 "volume number" => "1",
---	 "volume URI" => "http://j-sag.org/Volume1/"
---	 },
+    Version => "1.0.8",
+    Date => "November 2, 2009",
+    Certification => {
+	 "journal name" => "The Journal of Software for Algebra and Geometry: Macaulay2",
+	 "journal URI" => "http://j-sag.org/",
+	 "article title" => "Polyhedra: a package for computations with convex polyhedral objects",
+	 "acceptance date" => "2009-09-07",
+	 "published article URI" => "http://j-sag.org/Volume1/jsag-3-2009.pdf",
+	 "published code URI" => "http://j-sag.org/Volume1/Polyhedra.m2",
+	 "repository code URI" => "svn://macaulay2.math.uiuc.edu/Macaulay2/trunk/M2/Macaulay2/packages/Polyhedra.m2",
+   	 "release at publication" => 9344,
+	 "version at publication" => "1.0.5",
+	 "volume number" => "1",
+	 "volume URI" => "http://j-sag.org/Volume1/"
+	 },
     Authors => {
          {Name => "René Birkner",
 	  HomePage => "http://page.mi.fu-berlin.de/rbirkner/index.htm",
@@ -364,7 +364,7 @@ intersection(Matrix,Matrix) := (M,N) -> (
 		dualgens = fourierMotzkin genrays;
 		coneBuilder(genrays, dualgens))
 	-- or the Cone C={p | M*p >= N=0}
-	else if N == 0*N then (
+	else if numRows N == 0 then (
 		genrays = fourierMotzkin (-transpose M);
 		dualgens = fourierMotzkin genrays;
 		coneBuilder(genrays,dualgens))
@@ -1013,7 +1013,7 @@ isPointed Cone := C -> rank C#"linealitySpace" == 0
 --   INPUT : 'F',  a Fan
 --  OUTPUT : 'true' or 'false'
 isPointed Fan := F -> (
-     if not F.cache.?isPointed then F.cache.isPointed=((toList F#"generatingCones")#0);
+     if not F.cache.?isPointed then F.cache.isPointed = isPointed((toList F#"generatingCones")#0);
      F.cache.isPointed)
 
 
@@ -1134,18 +1134,12 @@ isSmooth = method(TypicalValue => Boolean)
 --   INPUT : 'C'  a Cone
 --  OUTPUT : 'true' or 'false'
 isSmooth Cone := C -> (
-      -- generating the non-linealityspace cone of C
-      smooth := false;
-      R := rays C;
-      C = posHull R;
-      -- if the cone is full dimensional then it is smooth iff its rays form a basis over ZZ
-      if dim C == ambDim C then numColumns R == numRows R and abs det R == 1
-      -- otherwise the rays must be part of a basis over ZZ
-      else (
-	   if numColumns R == dim C then (
-		A := (smithNormalForm R)#0;
-		det(A^{0..(numColumns A)-1}) == 1)
-	   else false))
+     -- generating the non-linealityspace cone of C
+     R := lift(transpose rays C,ZZ);
+     n := dim C - C#"dimension of lineality space";
+     -- if the cone is full dimensional then it is smooth iff its rays form a basis over ZZ
+     numRows R == n and (M := (smithNormalForm R)#0; product apply(n, i -> M_(i,i)) == 1))
+     
 	   
 
 --   INPUT : 'F'  a Fan
@@ -1408,8 +1402,10 @@ latticePoints Polyhedron := P -> (
 		    else (
 			 A := matrix drop((entries id_(QQ^n)),{pos,pos});
 			 apply(latticePointsRec affineImage(A,NP),v -> v^{0..(pos-1)} || matrix p || v^{pos..(n-2)})))));
+     -- Checking if the polytope is just a point
+     if dim P == 0 then {lift(vertices P,ZZ)}
      -- Checking if the polytope is full dimensional
-     if (dim P == ambDim P) then latticePointsRec P
+     else if (dim P == ambDim P) then latticePointsRec P
      -- If not checking first if the affine hull of P contains lattice points at all and if so projecting the polytope down
      -- so that it becomes full dimensional with a map that keeps the lattice
      else (
@@ -2382,7 +2378,7 @@ ZZ * Polyhedron := (k,P) -> promote(k,QQ) * P
 --   INPUT : '(P,Q)',  two polyhedra
 --  OUTPUT : 'C',  a Cone, the inner normal cone of P in the face Q
 -- COMMENT : 'Q' must be a face of P
-normalCone (Polyhedron,Polyhedron) := opts -> (P,Q) -> (
+normalCone (Polyhedron,Polyhedron) := Cone => opts -> (P,Q) -> (
      -- Checking for input errors
      if not isFace(Q,P) then error("The second polyhedron must be a face of the first one");
      p := interiorPoint Q;
@@ -4815,6 +4811,163 @@ document {
      }
 
 document {
+     Key => dualFaceLattice,
+     Headline => "computes the dual face lattice of a cone or polyhedron"
+     }
+
+document {
+     Key => {(dualFaceLattice,ZZ,Cone), (dualFaceLattice,Cone)},
+     Headline => "computes the dual face lattice of a cone",
+     Usage => " L = dualFaceLattice C \nL = dualFaceLattice(k,C)",
+     Inputs => {
+	  "k" => ZZ => {"between 0 and the dimension of ",TT "C"},
+	  "C" => Cone
+   	  },
+     Outputs => {
+	  "L" => List
+	  },
+     
+     PARA{}, "The dual face lattice of a cone ",TT "C"," displays for each",TT "k"," the faces of 
+     dimension ",TT "k"," as a list of integers, indicating the bounding halfspaces of ",TT "C"," that generate 
+     this face together with the hyperplanes. If no integer is given the function returns the faces of all dimensions in a list, 
+     starting with the Cone itself.",
+     
+     EXAMPLE{
+	  " C = posOrthant 4",
+	  " dualFaceLattice(2,C)"
+	  },
+     
+     PARA{}, "Returns the faces of dimension two, where the integers give the rows in the halfspaces
+     matrix of the cone:",
+     
+     EXAMPLE{
+	  " R = halfspaces C"
+	  },
+     
+     PARA{}, "The complete dual face lattice is returned if no integer is given:",
+     
+     EXAMPLE{
+	  " dualFaceLattice C",
+	  }
+     }
+
+document {
+     Key => {(dualFaceLattice,ZZ,Polyhedron), (dualFaceLattice,Polyhedron)},
+     Headline => "computes the dual face lattice of a polyhedron",
+     Usage => " L = dualFaceLattice P \nL = dualFaceLattice(k,P)",
+     Inputs => {
+	  "k" => ZZ => {"between 0 and the dimension of ",TT "X"},
+	  "P" => Polyhedron
+	  },
+     Outputs => {
+	  "L" => List
+	  },
+     
+     PARA{}, "The dual face lattice of a polyhedron ",TT "P"," displays for each",TT "k"," the faces of 
+     dimension ",TT "k"," as a list of integers, indicating the halfspaceces of ",TT "P"," that generate this 
+     face together with the hyperplanes. If no integer is given the function returns the faces of all dimensions 
+     in a list, starting with the polyhedron itself.",
+     
+     EXAMPLE{
+	  " P = convexHull(matrix{{1,1,-1,-1},{1,-1,1,-1},{1,1,1,1}},matrix {{0},{0},{-1}})",
+	  " dualFaceLattice(2,P)"
+	  },
+     
+     PARA{}, "Returns the faces of dimension two where each list of integers gives the rows in the halfspaces
+     matrix of the polyhedron:",
+     
+     EXAMPLE{
+	  " V = halfspaces P"
+	  },
+     
+     PARA{}, "The complete face lattice is returned if no integer is given:",
+     
+     EXAMPLE{
+	  " faceLattice P",
+	  }
+     }
+
+document {
+     Key => faceLattice,
+     Headline => "computes the face lattice of a cone or polyhedron"
+     }
+
+document {
+     Key => {(faceLattice,ZZ,Cone), (faceLattice,Cone)},
+     Headline => "computes the face lattice of a cone",
+     Usage => " L = faceLattice C \nL = faceLattice(k,C)",
+     Inputs => {
+	  "k" => ZZ => {"between 0 and the dimension of ",TT "C"},
+	  "C" => Cone
+	  },
+     Outputs => {
+	  "L" => List
+	  },
+     
+     PARA{}, "The face lattice of a cone ",TT "C"," displays for each",TT "k"," the faces of 
+     codimension ",TT "k"," as a list of integers, indicating the rays of ",TT "C"," that generate 
+     this face together with the lineality space. If no integer is given the function returns the faces of all codimensions in a list, 
+     starting with the 0 dimensional face.",
+     
+     EXAMPLE{
+	  " C = posOrthant 4",
+	  " faceLattice(1,C)"
+	  },
+     
+     PARA{}, "Returns the faces of codimension one where the integers give the columns in the rays 
+     matrix of the cone:",
+     
+     EXAMPLE{
+	  " R = rays C"
+	  },
+     
+     PARA{}, "The complete face lattice is returned if no integer is given:",
+     
+     EXAMPLE{
+	  " faceLattice C",
+	  }
+     }
+
+document {
+     Key => {(faceLattice,ZZ,Polyhedron), (faceLattice,Polyhedron)},
+     Headline => "computes the face lattice of a polyhedron",
+     Usage => " L = faceLattice P \nL = faceLattice(k,P)",
+     Inputs => {
+	  "k" => ZZ => {"between 0 and the dimension of ",TT "P"},
+	  "P" => Polyhedron
+	  },
+     Outputs => {
+	  "L" => List
+	  },
+     
+     PARA{}, "The face lattice of a polyhedron ",TT "P"," displays for each",TT "k"," the faces of 
+     codimension ",TT "k"," as two lists of integers, the first indicating the vertices of ",TT "P"," and 
+     the second indicating the rays of ",TT "P"," that generate this face together with the lineality space. 
+     If no integer is given the function returns the faces of all codimensions in a list, 
+     starting with the 0 dimensional faces",
+     
+     EXAMPLE{
+	  " P = convexHull(matrix{{1,1,-1,-1},{1,-1,1,-1},{1,1,1,1}},matrix {{0},{0},{-1}})",
+	  " faceLattice(1,P)"
+	  },
+     
+     PARA{}, "Returns the faces of codimension one where the first list of integers give the columns in the vertices
+     matrix of the polyhedron and the second list the columns in the rays matrix of the polyhedron:",
+     
+     EXAMPLE{
+	  " V = vertices P",
+	  " R = rays P"
+	  },
+     
+     PARA{}, "The complete face lattice is returned if no integer is given:",
+     
+     EXAMPLE{
+	  " faceLattice P",
+	  }
+     }
+
+
+document {
      Key => {faces, (faces,ZZ,Cone), (faces,ZZ,Polyhedron)},
      Headline => "computes all faces of a certain codimension of a Cone or Polyhedron",
      Usage => " L = faces(k,C) \nL = faces(k,P)",
@@ -5126,6 +5279,58 @@ document {
 	  " M"
 	  }
 	  
+     }
+
+document {
+     Key => {objectiveVector, (objectiveVector,Polyhedron,Polyhedron)},
+     Headline => "computes an objective vector of a face of a polyhedron",
+     Usage => " v = objectiveVector(P,Q)",
+     Inputs => {
+	  "P" => Polyhedron,
+	  "Q" => Polyhedron => {"which must be a face of ",TT "P"}
+	  },
+     Outputs => {
+	  "v" => Matrix => {"one column vector over ",TO QQ," representing a vector"}
+	  },
+     
+     PARA{}, "An objective vector ",TT "v"," of a face ",TT "Q"," of a polyhedron ",TT "P"," is vector 
+     such that ",TT "Q = {p in P | v*p = max over P}"," i.e. it is the face on which ",TT "v"," attains 
+     its maximum.",
+     
+     EXAMPLE{
+	  " P = hypercube 3",
+	  " Q = convexHull matrix {{1,1,-1,-1},{1,-1,1,-1},{1,1,1,1}}",
+	  " v = objectiveVector(P,Q)"
+	  },
+     
+     PARA{}, "Since it is the face on which ",TT "v"," attains its maximum it can be recovered with ",TO maxFace,":",
+     
+     EXAMPLE{
+	  " Q == maxFace(v,P)"
+	  }
+     }
+
+document {
+     Key => (normalCone,Polyhedron,Polyhedron),
+     Headline => "computes the normal cone of a face of a polyhedron",
+     Usage => " C = normalCone(P,Q)",
+     Inputs => {
+	  "P" => Polyhedron,
+	  "Q" => Polyhedron => {"which must be a face of ",TT "P"}
+	  },
+     Outputs => {
+	  "C" => Cone
+	  },
+     
+     PARA{}, "The normal cone of a face ",TT "Q"," of a polyhedron ",TT "P"," is the cone in the normal fan (see ",TO normalFan,")
+     that corresponds to this face. This is the cone of all vectors attaining their maximum on this face.",
+     
+     EXAMPLE{
+	  " P = hypercube 3",
+	  " Q = convexHull matrix {{1,1,-1,-1},{1,-1,1,-1},{1,1,1,1}}",
+	  " C = normalCone(P,Q)",
+	  " rays C"
+	  }
      }
 
 document {
