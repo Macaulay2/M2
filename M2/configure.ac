@@ -187,15 +187,15 @@ AC_SUBST(M2_CPPFLAGS,)
 
 if test "$DEBUG" = yes
 then M2_CPPFLAGS="$M2_CPPFLAGS -DDEBUG"
+     CFLAGS="$CFLAGS -g"
+     CXXFLAGS="$CXXFLAGS -g"
+     LDFLAGS="$LDFLAGS -g"
 else M2_CPPFLAGS="$M2_CPPFLAGS -DNDEBUG"
 fi
 
 if test "$OPTIMIZE" = yes
-then CFLAGS="-O3"
-     CXXFLAGS="-O3"
-else CFLAGS="-g -O0 -fno-inline"
-     CXXFLAGS="-g -O0 -fno-inline"
-     LDFLAGS="$LDFLAGS -g"
+then CFLAGS="$CFLAGS -O3"
+     CXXFLAGS="$CFLAGS -O3"
 fi
 
 AC_PROG_CC() 			# set CFLAGS before this
