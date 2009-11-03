@@ -1340,39 +1340,50 @@ TEST ///
     (b,c) = hermite(m1,ChangeMatrix=>true) -- comes out in a different format than 'gb'
     assert(a == b)
     assert(m1*c == b)
+///
 
+TEST ///
     -- A simple one:
     m = matrix{{1,1,1,1},{0,1,2,3}}  
     mh = hermite m
     (mh1,mz) = hermite(m,ChangeMatrix=>true)
     assert(m * mz == mh)
+///
 
+TEST ///
     -- Test from Havas et al paper 1998:
     m = map(ZZ^10, ZZ^10, (j,i) -> (i+1)^3 * (j+1)^2 + i + j + 2)
     time (mh,mz) = hermite(m, ChangeMatrix=>true)
     assert(m * mz == mh)
+///
 
+TEST ///
     -- Random entries
     m = matrix randomMutableMatrix(10,15,.9,5)
     time (mh,mz) = hermite(m, ChangeMatrix=>true)
     assert(m * mz == mh)
+///
 
+TEST ///
     -- Random entries
     m = matrix randomMutableMatrix(20,35,.9,5)
     time (mh,mz) = hermite(m, ChangeMatrix=>true)
     assert(m * mz == mh)
+///
 
+TEST ///
     -- Random entries
     m = matrix randomMutableMatrix(20,35,.1,10)
     time (mh,mz) = hermite(m, ChangeMatrix=>true)
     assert(m * mz == mh)
     det mz
-    
+///
+
+TEST ///
     -- One that caused an error in an earlier version:
     m = matrix {{0, 0, 0, 2, -2, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0}, {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0}, {-4, 0, 0, 0, 0, 2, 0, -1, 0, 0, -1, 0, 0, 0, 0}, {-4, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, -5}, {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0}, {0, 0, 0, 0, 0, 0, 0, -2, 0, 0, 0, 0, 0, 0, 0}, {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0}, {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0}, {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0}, {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0}}
     time (mh,mz) = hermite(m, ChangeMatrix=>true)
     assert(m * mz == mh)
-
 ///
 
 
@@ -1405,7 +1416,9 @@ TEST ///
      time (g,mz) = gcdLLL(arandomlist, Strategy=>Hermite)
      gcd arandomlist == g
      assert(matrix{arandomlist} * mz == map(ZZ^1, ZZ^(#arandomlist-1), 0) | matrix{{g}})
+///
 
+TEST ///
      time gcdLLL {116085838, 181081878, 314252913, 10346840}
      time gcdLLL( {116085838, 181081878, 314252913, 10346840}, Strategy=>Hermite)
 
