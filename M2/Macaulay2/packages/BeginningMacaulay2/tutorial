@@ -17,7 +17,7 @@ Description
 	         PrimaryDecomposition, ReesAlgebra, SchurRings, TangentCone///}
      Text
           We suggest you do that now, so that you can experiment while you read
-	  this Tutorial!
+	  this tutorial!
      Code
      	 SUBSECTION "Arithmetic with integers, rings and ideals"
      Text
@@ -29,6 +29,7 @@ Description
 	  binomial(5,4)
 	  factor 32004
      Text
+
 	  Most {\em Macaulay2} applications involve polynomial rings over fields
 	  and their quotient rings. Fields can be made in various ways:
      Example
@@ -41,6 +42,7 @@ Description
      Example
 	  1/i
      Text
+
 	  Computation is often fastest and needs least
 	  memory when performed over finite prime fields of the form 
 	  $\ZZ/p$.
@@ -63,6 +65,7 @@ Description
      Example
 	  (3*a^2+1)^5
      Text
+
 	  We make an ideal in $S$:
      Example
 	  I=ideal(a^3-b^3, a+b+c+d+e)
@@ -88,13 +91,14 @@ Description
 	  I*I
 	  I+ideal"a2"
      Text
+
 	  In case you forget any of these things, @TO help@ is available! The most
 	  useful way to get it is often to type something like:
      Code
      	  EXAMPLE { PRE ///viewHelp ideal/// }
      Text
-     	  Then a browser window will pop up that contains documentation about the function {\tt
-          ideal} that we've been using; links on that page allow one to explore all of the {\em Macaulay2} documentation.
+     	  Then a browser window will pop up that contains documentation about the function @ TO
+          ideal @ that we've been using; links on that page allow one to explore all of the {\em Macaulay2} documentation.
 
 	  On the other hand, we might have wanted information about the @TO class@ of all ideals.
 	  Not too surprisingly, this class is called @TO Ideal@. We could get information about
@@ -157,27 +161,28 @@ Description
      Code
      	  EXAMPLE { PRE "viewHelp Macaulay2Doc" }
      Code
-     	 SUBSECTION "Properties of ideals and modules",
+     	  SUBSECTION "Properties of ideals and modules",
      Text
 	  To compute the Gröbner basis of an ideal
 	  $(x^2y,xy^2+x^3)$ in the polynomial ring in
-	  four variables we proceed as follows:
-	  A favorite field:
+	  four variables we proceed as follows.
+	  First we make our favorite field:
      Example
 	  kk = ZZ/32003
      Text
-	  The polynomial ring:
+	  Then the polynomial ring:
      Example
 	  R = kk[x,y,z,w]
      Text
-	  The ideal:
+	  And then the ideal:
      Example
 	  I = ideal(x^2*y,x*y^2+x^3)
      Text
-	  Now the punch line. We can compute the Gröbner basis with the @ TO groebnerBasis @ function:
+	  Now the punch line.  We compute the Gröbner basis with the @ TO groebnerBasis @ function:
      Example
 	  J = groebnerBasis I
      Text
+
 	  Gr\"obner bases are always computed with respect to a particular
 	  monomial order on the ring. In fact, the ring we defined above has
 	  a default monomial order, the graded reverse lex order. For many
@@ -185,6 +190,7 @@ Description
      Code
      	  EXAMPLE { PRE "viewHelp MonomialOrder" }
      Text
+
 	  The analogue of factorization in the theory of ideals
 	  is primary decomposition.
 	  For example, we can begin by intersecting three ideals:
@@ -235,7 +241,7 @@ Description
      Example
 	  phi = map(kk[s,t],R,{s^4, s^3*t, s*t^3, t^4})
      Text
-	  Here the syntax of the command has the target ring first and the source ring second:
+	  Here the syntax of the function @ TO2 {(map,Ring,Ring,List),"map"} @ has the target ring first and the source ring second:
 	  maps in {\em Macaulay2} generally go from right to left!
 	  The last input to the command is a 
 	  list of the elements to which to send the variables of the source ring.
@@ -295,11 +301,12 @@ Description
      Example
 	  reduceHilbert hilbertSeries (R/I)
      Text
-	  It's possible to manipulate the numerator and denominator of this
+	  It is possible to manipulate the numerator and denominator of this
 	  expression. To learn how to do so, see @ TO hilbertSeries @ or type:
      Code
      	  EXAMPLE { PRE "viewHelp hilbertSeries" }
      Text
+
 	  A great deal of subtle information about a module is visible using
 	  free resolutions. For an example, we begin
 	  by turning $R/I$ into a module. Here the code @ TT "R^1" @ produces the free module of
@@ -434,7 +441,7 @@ Description
      Example
 	  saturate K
      Text
-	  We have just seen the "saturate" command in its most
+	  We have just seen the @ TO saturate @ function in its most
 	  common use: to saturate with respect to the maximal ideal.
 	  but we can also find the saturation of any ideal with
 	  respect to another:
@@ -478,14 +485,14 @@ Description
 	  In order to understand a process it is often useful to tabulate the 
 	  results of applying it many times. One feature of the Collatz process
 	  is how many steps it takes to get to 1. We can tabulate this statistic
-	  for the first 25 values of n with the command @ TO tally @, as follows:
+	  for the first 25 values of n with the function @ TO tally @, as follows:
      Example
 	  tally for n from 1 to 30 list length Collatz n
      Text
 	  A line of the form
      Code
      	  EXAMPLE { 
-	       PRE "18 => 3"
+	       PRE "            18 => 3"
 	       }
      Text
 	  in the result means that a Collatz sequence of length 18
@@ -501,20 +508,21 @@ Description
 		    then (record = l; (n,l))
 		    else continue)
      Text
-	  If you only want to see a list of the successive records, 
+	  If you want to see a list of just the successive records, 
 	  you can apply the 
 	  function @ TO last @ to each element of the list $L$. 
 	  A convenient way to do this is with this syntax:
      Example
 	  L/last
      Text
+
 	  Note that in
 	  writing functions of more than one expression (usually
 	  there's one expression per line), the expressions must be
 	  separated by semicolons. For example in the ``for'' loop
 	  above, the first expression was ``{\tt l = length Collatz n}''. 
 	  After the last expression of an input line or of a function body,
-	  a semicolon suppressese output, useful when the output
+	  a semicolon suppresses output, useful when the output
 	  would be large. 	  
 	  
 	  There are many packages of ready-made functions available for
@@ -546,7 +554,7 @@ Description
 	  large number of randomly chosen
 	  examples.
 	  Here's some typical code that one might use to study
-	  a random graph ideal.  First we construct a list {\tt L}
+	  a random graph ideal.  First we use ``{\tt for ... list ...}'' to construct a list {\tt L}
 	  and suppress its printing by ending the line that creates
 	  it with a ``;''.  Each entry of {\tt L} is a triple consisting of the
 	  codimension, degree, and Betti table of a random graph ideal
@@ -570,9 +578,9 @@ Description
      Text
 	  {\em Macaulay2} can compute the homology of complexes;
 	  for example, let's compute the homology of a
-	  Koszul complex that is not a resolution,
-	  $$ {\bf K}(x^2, x*y^2):\ \  0 --> S(-5) --> S(-3)\oplus S(-2) --> S. $$
-	  The free module $S(-2)\oplus S(-2)$ can be defined with the
+	  Koszul complex that is not a resolution:
+	  $$ {\bf K}(x^2, x y^2):\ \  0 \rightarrow{} S(-5) \rightarrow{} S(-2)\oplus S(-3) \rightarrow{} S \rightarrow 0 $$
+	  The free module $S(-2) \oplus{} S(-3)$ can be defined with this
 	  syntax:
      Example
 	  S^{-2,-3} 
@@ -592,32 +600,45 @@ Description
 	  (ker phi1)/(image phi2)
      Text
 	  We could also use the data type @TO ChainComplex@ 
-	  and  use a built-in facility to take homology (in our case H_1):
+	  and use a built-in facility to take homology (in our case $H_1$):
      Example
 	  FF = chainComplex(phi1,phi2)
+	  FF.dd
 	  homology FF
 	  presentation (homology FF)_1
      Text
-	  Either way, homology is S/x = (x^2):(xy^2)/x^2, in accord
+	  Either way, the first homology is $((x^2):(xy^2)) / (x^2) \cong{} S/(x)$, in accord
 	  with general theory.
 
+     	  There are other ways to construct Koszul complexes.  One way is as the tensor product of
+	  chain complexes of length 1:
+     Example
+     	  FF = chainComplex matrix {{x^2}} ** chainComplex matrix {{x*y^2}}
+	  FF.dd
+     Text
+     	  Another way is by using the function @ TO koszul @, designed for that purpose:
+     Example
+     	  FF = koszul matrix {{x^2, x*y^2}}
+	  FF.dd
+     Text
+
 	  Since {\em Macaulay2} can compute resolutions and homology, it can
-	  compute things like Ext, Tor and sheaf cohomology, as in the 
-	  following examples. The first uses Serre's formula to  compute
+	  compute things such as $Ext$, $Tor$ and sheaf cohomology, as in the 
+	  following examples. The first uses Serre's formula to compute
 	  the multiplicity with which a 2-plane meets the union
 	  of two 2-planes in 4-space (this is the first case in which
 	  the length of the intersection scheme is NOT the right answer.)
-	  The notation M**N denotes the tensor product of the modules M and N.
-	  We take the opportunity to show off the syntactical forms
-	  "for j from 0 to 4 list" to list some results and
-	  "sum(0..4, j-> )" to sum some results.
+	  The notation ``{\tt M**N}'' denotes the tensor product of the modules $M$ and $N$.
+	  We use the syntactical forms
+	  ``{\tt for j from 0 to 4 list ...}'' to list some results and
+	  ``{\tt sum(0..4, j -> ...)}'' to sum some results.
      Example
 	  S=kk[a,b,c,d]
 	  IX = intersect(ideal(a,b), ideal(c,d))
 	  IY = ideal(a-c, b-d)
-	  degree ( (S^1/IX) ** (S^1/IY))
-	  L=for j from 0 to 4 list degree Tor_j(S^1/IX, S^1/IY)
-	  sum(0..4, j-> (-1)^j*degree Tor_j(S^1/IX, S^1/IY))
+	  degree ((S^1/IX) ** (S^1/IY))
+	  for j from 0 to 4 list degree Tor_j(S^1/IX, S^1/IY)
+	  sum(0..4, j-> (-1)^j * degree Tor_j(S^1/IX, S^1/IY))
      Text
 	  Similarly, we can compute Hom and Ext:
      Example
@@ -625,13 +646,14 @@ Description
 	  Ext^1(IX, S^1/IX)
      Text
 	  or the cohomology of the sheaf associated to a module. 
+
 	  Here is how to compute
 	  the first cohomology of the structure
-	  sheaf twisted by -2 of the curve Proj(S/IX) -- 
-	  in this case the disjoint union of two
-	  lines in P^3.
+	  sheaf twisted by $-2$ of the curve $Proj(S/IX)$, which
+	  in this case is the disjoint union of two
+	  lines in $\PP^3$:
      Example
-	  HH^1(sheaf (S^{-2}**(S^1/IX)))
+	  HH^1 (sheaf (S^{-2}**(S^1/IX)))
 -- Local Variables:
 -- compile-command: "make -C $M2BUILDDIR/Macaulay2/packages PACKAGES=BeginningMacaulay2 RemakeAllDocumentation=true IgnoreExampleErrors=false"
 -- End:
