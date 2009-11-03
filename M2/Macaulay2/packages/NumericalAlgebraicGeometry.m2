@@ -1,4 +1,5 @@
 -- -*- coding: utf-8 -*-
+-- licensed under GPL v2 or any later version
 newPackage(
      "NumericalAlgebraicGeometry",
      Version => "1.3.0.1",
