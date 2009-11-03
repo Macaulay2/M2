@@ -14,6 +14,31 @@ else
 DIRECTORY = cygwin
 endif
 
+# packages to install:
+#   autoconf
+#   bison
+#   emacs
+#   emacs-X11
+#   emacs-el
+#   flex
+#   gcc
+#   gdbm
+#   lapack
+
+#   libgdbm-devel
+#   make
+#   patchutils
+#   readline
+#   subversion
+#   vim
+#   wget
+
+#   libxml2-devel
+#   xconsole
+#   xinit
+#   xkill
+#   xsetroot
+
 CONFIGOPTIONS += --disable-pthreads
 CONFIGOPTIONS += --enable-cygwin
 CONFIGOPTIONS += --build=i486-pc-cygwin
