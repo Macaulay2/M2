@@ -364,7 +364,7 @@ intersection(Matrix,Matrix) := (M,N) -> (
 		dualgens = fourierMotzkin genrays;
 		coneBuilder(genrays, dualgens))
 	-- or the Cone C={p | M*p >= N=0}
-	else if N == 0*N then (
+	else if numRows N == 0 then (
 		genrays = fourierMotzkin (-transpose M);
 		dualgens = fourierMotzkin genrays;
 		coneBuilder(genrays,dualgens))
@@ -1013,7 +1013,7 @@ isPointed Cone := C -> rank C#"linealitySpace" == 0
 --   INPUT : 'F',  a Fan
 --  OUTPUT : 'true' or 'false'
 isPointed Fan := F -> (
-     if not F.cache.?isPointed then F.cache.isPointed=((toList F#"generatingCones")#0);
+     if not F.cache.?isPointed then F.cache.isPointed = isPointed((toList F#"generatingCones")#0);
      F.cache.isPointed)
 
 
@@ -1134,18 +1134,12 @@ isSmooth = method(TypicalValue => Boolean)
 --   INPUT : 'C'  a Cone
 --  OUTPUT : 'true' or 'false'
 isSmooth Cone := C -> (
-      -- generating the non-linealityspace cone of C
-      smooth := false;
-      R := rays C;
-      C = posHull R;
-      -- if the cone is full dimensional then it is smooth iff its rays form a basis over ZZ
-      if dim C == ambDim C then numColumns R == numRows R and abs det R == 1
-      -- otherwise the rays must be part of a basis over ZZ
-      else (
-	   if numColumns R == dim C then (
-		A := (smithNormalForm R)#0;
-		det(A^{0..(numColumns A)-1}) == 1)
-	   else false))
+     -- generating the non-linealityspace cone of C
+     R := lift(transpose rays C,ZZ);
+     n := dim C - C#"dimension of lineality space";
+     -- if the cone is full dimensional then it is smooth iff its rays form a basis over ZZ
+     numRows R == n and (M := (smithNormalForm R)#0; product apply(n, i -> M_(i,i)) == 1))
+     
 	   
 
 --   INPUT : 'F'  a Fan
@@ -1408,8 +1402,10 @@ latticePoints Polyhedron := P -> (
 		    else (
 			 A := matrix drop((entries id_(QQ^n)),{pos,pos});
 			 apply(latticePointsRec affineImage(A,NP),v -> v^{0..(pos-1)} || matrix p || v^{pos..(n-2)})))));
+     -- Checking if the polytope is just a point
+     if dim P == 0 then {lift(vertices P,ZZ)}
      -- Checking if the polytope is full dimensional
-     if (dim P == ambDim P) then latticePointsRec P
+     else if (dim P == ambDim P) then latticePointsRec P
      -- If not checking first if the affine hull of P contains lattice points at all and if so projecting the polytope down
      -- so that it becomes full dimensional with a map that keeps the lattice
      else (
