@@ -8,9 +8,14 @@ TARDIR = libfac
 TARFILE := libfac-$(shell echo $(VERSION) | sed 's/\./-/g').tar.gz
 URL = ftp://www.mathematik.uni-kl.de/pub/Math/Singular/Libfac
 CONFIGOPTIONS += --enable-NTL
+ifeq (@DEBUG@,yes)
+CONFIGOPTIONS += --with-debug
+endif
 ifeq (@OPTIMIZE@,yes)
 CXXFLAGS += -Wno-deprecated --no-rtti --no-exceptions
 endif
+
+## CONFIGOPTIONS += --build=@build@
 
 # libfac tests fail under MacOS 10.4 32 bit intel and MacOS 64 bit intel:
 # CHECKTARGET = tests
