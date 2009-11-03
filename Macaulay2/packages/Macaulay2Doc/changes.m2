@@ -90,10 +90,6 @@ document {
 			 hashtable should have no entry corresponding to the current key."
 			 }
 		    }
-	       },
-	  LI { "functionality changed:",
-	       },
-	  LI { "new constants and operators:",
 	       }
 	  }
      }
