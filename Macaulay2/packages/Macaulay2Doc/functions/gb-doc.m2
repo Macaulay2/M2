@@ -82,6 +82,7 @@ document {
 	  },
      SeeAlso => {
 	  "Gröbner bases",
+	  groebnerBasis,
 	  (generators,GroebnerBasis),
 	  "gbTrace",
 	  installHilbertFunction,
