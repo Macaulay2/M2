@@ -61,6 +61,7 @@ tiger32 : always
 darwin32 : always
 	mkdir -p darwin32
 	cd darwin32; LDFLAGS=-shared-libgcc ../../../configure \
+		--build=i386-apple-darwin9 \
 		--prefix="`pwd`/installed" \
 		--enable-dmg \
 		--enable-download \
