@@ -96,6 +96,14 @@ opt : always
 		--prefix="`pwd`/installed" \
 		--enable-tarfile \
 		--enable-download \
+		--enable-build-libraries="gc gdbm mpir mpfr readline ntl factory libfac lapack frobby pa
+opt64-ubuntu : always
+	mkdir -p opt
+	cd opt;	../../../configure \
+		--prefix="`pwd`/installed" \
+		--build=x86_64-unknown-linux-gnu \
+		--enable-tarfile \
+		--enable-download \
 		--enable-build-libraries="gc gdbm mpir mpfr readline ntl factory libfac lapack frobby pari"
 
 debug : always
