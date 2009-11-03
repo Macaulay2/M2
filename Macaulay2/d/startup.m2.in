@@ -644,9 +644,7 @@ processCommandLineOptions 2				    -- just for path to core files and packages
 
 path = join(initialPath, path)
 
-loadDepth = 1
-if firstTime and not nosetup then loadSetup()
-loadDepth = 0
+(loadDepth = 1; if firstTime and not nosetup then loadSetup(); loadDepth = 0)
 
 -- remove the Core private dictionary -- it was added by "debug" above
 -- and install a local way to use private global symbols
@@ -658,9 +656,7 @@ if not nosetup then (
      core = nm -> value getGlobalSymbol nm
      )
 
-loadDepth = 3
-processCommandLineOptions 3
-loadDepth = 0
+(loadDepth = 3; processCommandLineOptions 3; loadDepth = 0)
 (core "runStartFunctions")()
 
 if class Core =!= Symbol and not core "noinitfile" then (
@@ -668,14 +664,9 @@ if class Core =!= Symbol and not core "noinitfile" then (
      tryLoad ("init.m2", applicationDirectory() | "init.m2");
      );
 
-loadDepth = 3
-processCommandLineOptions 4
-loadDepth = 0
-
+(loadDepth = 3; processCommandLineOptions 4; loadDepth = 0)
 n := 0
-errorDepth = loadDepth = 3
-n = interpreter()
-loadDepth = 0
+(errorDepth = loadDepth = 3; n = interpreter(); loadDepth = 0)
 if class n === ZZ and 0 <= n and n < 128 then exit n
 if n === null then exit 0
 debuggingMode = false
