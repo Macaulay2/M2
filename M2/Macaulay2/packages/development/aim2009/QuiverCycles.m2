@@ -13,7 +13,7 @@ export {
      "vertexOrder",
      "cycleIdeal",
      "cycleClass",
-     "classLeadingTerm",
+     "leadingQuiverCoefficient",
      "quiverCoefficients"
      }
 
@@ -232,7 +232,7 @@ laurent2ps = (ex, d) ->
 );
 
 
-classLeadingTerm = (Q, dv, gcls, d) ->
+leadingQuiverCoefficient = (Q, dv, gcls, d) ->
 -- Q is a Quiver without oriented cycles
 -- dv is a dimension vector
 -- gcls is a K-theory class, e.g. returned by cycleClass()
@@ -286,12 +286,12 @@ quiverCoefficients = (Q, dv, gcls) ->
   d := 1;
   while r1 != 0 do
   (
-    lt := classLeadingTerm(Q, dv, r1, d);
+    lt := leadingQuiverCoefficient(Q, dv, r1, d);
     while lt === false do
     (
       print concatenate("---- (", toString(d), ")");
       d = d+1;
-      lt = classLeadingTerm(Q, dv, r1, d);
+      lt = leadingQuiverCoefficient(Q, dv, r1, d);
     );
     print (lt_1 => lt_0);
     
@@ -304,11 +304,343 @@ quiverCoefficients = (Q, dv, gcls) ->
 
 
 beginDocumentation()
-document {
-  Key => "QuiverCycles",
-  Headline => "quiver cycles",
-  EM "QuiverCycles", " is a package for computing classes and quiver coefficients of quiver cycles."
-  }
+needsPackage "SimpleDoc"
+debug SimpleDoc
+
+doc ///
+  Key
+    QuiverCycles
+  Headline
+    Classes of quiver cycles
+  Description
+    Text
+      QuiverCycles is a package for computing the Grothendieck classes
+      of quiver cycles as well as the associated quiver coefficients.
+      The definitions are given in the paper {\em Quiver coefficients
+      of Dynkin type}, Michigan Math. J. 57 (2008), 93-120.
+ 
+      A @TO Quiver@ object is created using @TO quiver@.
+      The ideal of a @TO "quiver cycle"@ is computed with @TO
+      cycleIdeal@ and its @TO "K-theory class"@ is computed
+      with @TO cycleClass@.  The corresponding quiver coefficients are
+      obtained with @TO quiverCoefficients@.
+ 
+  SeeAlso
+    Quiver
+    "dimension vector"
+    "quiver representation"
+    cycleIdeal
+    cycleClass
+    quiverCoefficients
+///
+
+doc ///
+  Key
+    quiver
+  Headline
+    Create a Quiver object.
+  Usage
+    Q = quiver(n, tailList, headList)
+  Inputs
+    n: ZZ
+    tailList: List
+    headList: List
+  Outputs
+    Q: Quiver
+  Description
+    Text
+      See @TO Quiver@ for details.
+///
+
+doc ///
+  Key
+    Quiver
+  Headline
+    The class of all quivers.
+  Description
+    Text
+      A quiver is a finite directed graph, represented by a number 
+      vertices, a list of arrow tails, and a list of arrow heads.
+      Quiver objects can be created with the function @TO quiver@.
+
+    Example
+      Q = quiver(3, {0,2}, {1,1})
+
+    Text
+      The above example creates a quiver {\tt Q} with three vertices called
+      {\tt 0, 1, 2} and two arrows.  
+      The first arrow goes from {\tt 0} to {\tt 1}
+      and the second arrow goes from {\tt 2} to {\tt 1}.  
+      In other words, {\tt Q} looks like {\tt 0 --> 1 <-- 2}.
+
+  SeeAlso
+    QuiverCycles
+    quiver
+    vertexOrder
+    cycleIdeal
+    cycleClass
+    quiverCoefficients
+///
+
+doc ///
+  Key
+    vertexOrder
+  Headline
+    Arrange quiver vertices in head-to-tail order.
+  Usage
+    ord = vertexOrder(Q)
+  Inputs
+    Q: Quiver
+  Outputs
+    ord: List
+  Description
+    Text
+      If {\tt Q} is a @TO Quiver@ without oriented cycles, then
+      {\tt vertexOrder} creates a permutation {\tt ord} of the vertices 
+      of {\tt Q}, such
+      that if {\tt i <= j} then {\tt Q} contains no arrows from {\tt
+      ord_i} to {\tt ord_j}.
+    
+    Example
+      Q = quiver(3, {0,2}, {1,1})
+      vertexOrder Q
+
+  SeeAlso
+    QuiverCycles
+    Quiver
+///
+
+doc ///
+  Key
+    cycleIdeal
+  Headline
+    Compute the ideal of a quiver cycle.
+  Usage
+    I = cycleIdeal(Q, dv, rep)
+  Inputs
+    Q   : Quiver
+    dv  : List
+    rep : List
+  Outputs
+    I   : Ideal
+  Description
+    Text
+      Compute the ideal of the closure of the orbit of the
+      @TO "quiver representation"@ {\tt rep} in the 
+      affine @TO "space of quiver representations"@.
+      The variables of the coordinate ring of this space are called
+      {\tt x_{(a,i,j)}} where {\tt a} is an arrow of {\tt Q} and {\tt i}
+      and {\tt j} are row and column numbers (starting with zero.)
+    
+    Example
+      Q = quiver(3, {0,1}, {1,2});
+      dv = {3,2,2};
+      rep = { matrix{{0,0,0},{0,0,0}}, matrix{{1,0},{0,0}} }
+      cycleIdeal(Q, dv, rep)
+      
+  SeeAlso
+    QuiverCycles
+    Quiver
+    quiver
+///
+
+doc ///
+  Key
+    "quiver representation"
+    "space of quiver representations"
+    "quiver cycle"
+  Headline
+    Representation of a Quiver.
+  Description
+    Text
+      Let {\tt Q} be a @TO Quiver@ and let {\tt dv} be a @TO 
+      "dimension vector"@ for {\tt Q}.  A representation of {\tt Q} 
+      of dimension {\tt dv} is a list of matrices.  If the {\tt a}-th arrow
+      of {\tt Q} goes from vertex {\tt i} to vertex {\tt j}, then the
+      {\tt a}-th matrix of the representation must have
+      {\tt dv_j} rows and {\tt dv_i} columns.
+    
+    Example
+      Q = quiver(2, {0}, {1});
+      dv = {2,3};
+      rep = { matrix{{1,0},{0,0},{0,0}} }
+      
+    Text
+      The set of all representations of {\tt Q} of dimension
+      {\tt dv} form an affine space.  This space has a conjugation
+      action of the product of groups {\tt GL(dv_i)}.   A quiver cycle
+      is any irreducible subvariety of the representation space that
+      is stable for the conjugation action.
+
+  SeeAlso
+    QuiverCycles
+    Quiver
+    quiver
+    cycleClass
+    cycleIdeal
+///
+
+doc ///
+  Key
+    "dimension vector"
+  Headline
+    A list of non-negative integers.
+  Description
+    Text
+      Let {\tt Q} be a @TO Quiver@ with {\tt n} vertices.  A dimension
+      vector for {\tt Q} is a list {\tt dv} of {\tt n} non-negative
+      integers.  The entries of {\tt dv} indicate dimensions of vector
+      spaces associated to the vertices of {\tt Q}.  A @TO "quiver
+      representation"@ of {\tt Q} of dimension {\tt dv}
+      assigns a linear map between these vector spaces to each arrow
+      of {\tt Q}.
+///
+
+doc ///
+  Key
+    cycleClass
+  Headline
+    Compute the K-theory class of a quiver cycle.
+  Usage
+    cc = cycleClass(Q, dv, rep)
+  Inputs
+    Q   : Quiver
+    dv  : List
+    rep : List
+  Outputs
+    cc  : PolynomialRing
+  Description
+    Text
+      Compute the @TO "K-theory class"@ of the closure of the orbit of
+      the @TO "quiver representation"@ {\tt rep}.
+
+    Example
+      Q = quiver(2, {0}, {1});
+      dv = {2,1};
+      rep = { matrix{{0,0}} };
+      cycleClass(Q, dv, rep)
+
+    Example
+      Q = quiver(2, {0,1}, {1,0});
+      dv = {2,2};
+      rep = { matrix{{1,0},{0,0}}, matrix{{0,0},{0,1}} };
+      cycleClass(Q, dv, rep)
+  
+  SeeAlso
+    QuiverCycles
+    quiverCoefficients
+    Quiver
+    quiver
+///
+
+doc ///
+  Key
+    quiverCoefficients
+  Headline
+    Compute the quiver coefficients associated to a K-theory class.
+  Usage
+    qc = quiverCoefficients(Q, dv, cc)
+  Inputs
+    Q   : Quiver
+    dv  : List
+    cc  : PolynomialRing
+  Outputs
+    qc  : HashTable
+  Description
+    Text
+      Compute the quiver coefficients associated to a @TO 
+      "K-theory class"@ {\tt cc}.  
+      This function terminates only if the class
+      {\tt cc} can be expressed using finitely many quiver
+      coefficients.  The following is posed in 
+      {\em Quiver coefficients
+      of Dynkin type}, Michigan Math. J. 57 (2008), 93-120:
+ 
+      {\bf Conjecture:}
+      Assume that {\tt cc} is the class of a quiver cycle.  Then {\tt
+      cc} can be expressed using finitely many quiver coefficients, and
+      the quiver coefficients of lowest degree are non-negative.  If
+      the quiver cycle has rational singularities, then the quiver
+      coefficients have signs that alternate with degree.
+      
+    Example
+      Q = quiver(3, {0,1}, {1,2})
+      dv = {2,3,2}
+      rep = { matrix{{1,0},{0,0},{0,0}}, matrix{{0,0,0},{0,0,1}} }
+      cc = cycleClass(Q, dv, rep);
+      quiverCoefficients(Q, dv, cc)
+
+  SeeAlso
+    QuiverCycles
+    Quiver
+    quiver
+    cycleClass
+    leadingQuiverCoefficient
+///
+
+doc ///
+  Key
+    leadingQuiverCoefficient
+  Headline
+    Find leading quiver coefficient of K-theory class.
+  Usage
+    lc = leadingQuiverCoefficient(Q, dv, cc, d)
+  Inputs
+    Q   : Quiver
+    dv  : List
+    cc  : PolynomialRing
+    d   : ZZ
+  Outputs
+    lc  : List
+  Description
+    Text
+      If {\tt cc} is a non-zero @TO "K-theory class"@ whose leading quiver
+      coefficient has degree at most {\tt d}, then return the list
+      {\tt lc = \{c, partlist\}}, where {\tt c} is the quiver
+      coefficient and {\tt partlist} is the associated list of 
+      partitions.  Otherwise return @TO false@.
+      
+    Example
+      Q = quiver(2, {0}, {1});
+      dv = {1, 1};
+      rep = { matrix{{0}} };
+      cc = cycleClass(Q, dv, rep);
+      leadingQuiverCoefficient(Q, dv, cc, 3)
+      
+  SeeAlso
+    QuiverCycles
+    quiver
+    cycleClass
+    quiverCoefficients
+///
+
+doc ///
+  Key
+    "K-theory class"
+  Headline
+    Torus equivariant K-theory class
+  Description
+    Text
+      Given a @TO Quiver@ {\tt Q} and a @TO "dimension vector"@ {\tt
+      dv}, the @TO "space of quiver representations"@ of dimension
+      {\tt dv} has an action of the product of the general linear
+      groups {\tt GL(dv_i)}.  Let T be the torus of tuples of diagonal
+      matrices.  In this package, a "K-theory class" means an element
+      in the T-equivariant K-theory of the representation space.  It
+      can be naturally identified with a virtual representation of T.
+      The variable {\tt t_{(i,j)}} represents the action of T on the
+      complex numbers
+      using the {\tt j}-th coordinate of the {\tt i}-th torus.
+      See @TO cycleClass@ for examples.
+      
+  SeeAlso
+    QuiverCycles
+    Quiver
+    quiver
+    cycleClass
+    quiverCoefficients
+///
+
 
 TEST ///
 
