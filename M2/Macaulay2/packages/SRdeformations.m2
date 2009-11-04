@@ -1,8 +1,9 @@
+
 -- -*- coding: utf-8 -*-
 newPackage(
 	"SRdeformations",
-    	Version => "0.48", 
-    	Date => "Oct 6, 2009",
+    	Version => "0.50", 
+    	Date => "Oct 27, 2009",
     	Authors => {{Name => "Janko Boehm", 
 		  Email => "boehm@math.uni-sb.de", 
 		  HomePage => "http://www.math.uni-sb.de/ag/schreyer/jb/"}
@@ -474,10 +475,23 @@ n:=(rank source vars R)-1;
 A:=raysPPn(n);
 addCokerGrading(R,A))
 
+addCokerGrading(PolynomialRing,List):=(R,wt)->(
+addCokerGrading(R,raysPPn(wt)))
+
+
+raysPPn=method()
+-- standard rays of weighted projective space
+raysPPn(List):=(wt)->(
+if (wt#0)!=1 then error("expected first entry to be 1");
+if #wt<2 then error("expected weight vector of length at least 2");
+n:=-1+#wt;
+E:=id_(ZZ^n);
+(matrix({{apply(1..n,j->-wt#j)}}))||E)
+--raysPPn({1,1,2,2,3})
+
 
 -- standard rays of projective space
 -- >> export
-raysPPn=method()
 raysPPn(ZZ):=(n)->(
 if n<1 then error("expected positive argument");
 E:=id_(ZZ^n);
@@ -3159,6 +3173,48 @@ L:=globalSectionsPPn(v1,d);
 L=apply(L,j->extendCoordinates(j,var,n));
 apply(L,j->j-v));
 
+
+
+
+globalSectionsPPn(List,Vector):=(degs,v)->(
+M:=entries v;
+n:=#M;
+d:=sum toList(apply(0..n-1,j->degs#j*M#j));
+g:=symbol g;
+R:=QQ[g_1..g_n,Degrees=>degs];
+--print(d,basis(d,R));
+L:=apply((entries basis(d,R))#0,monomialToVector);
+apply(L,j->j-v));
+
+--degs={1,1,2,2,3}
+--globalSectionsPPn(degs,vector {0,0,1,1,0})
+
+
+
+globalSectionsPPn(List,Vector,List):=(degs,v,var)->(
+M:=entries v;
+n:=#M;
+d:=sum toList(apply(0..n-1,j->degs#j*M#j));
+v1:=selectCoordinates(v,var);
+degs1:=selectCoordinates(degs,var);
+L:=globalSectionsPPn(degs1,v1,d);
+L=apply(L,j->extendCoordinates(j,var,n));
+apply(L,j->j-v));
+
+globalSectionsPPn(List,Vector,ZZ):=(degs,v,d)->(
+M:=entries v;
+n:=#M;
+g:=symbol g;
+R:=QQ[g_1..g_n,Degrees=>degs];
+d1:=sum degs;
+L:=apply((entries((product toList(g_1..g_n))*basis(d-d1,R)))#0,monomialToVector);
+L);
+
+--globalSectionsPPn(degs,vector {0,0,1,1,0},{1,2})
+
+
+
+
 {*
 A=raysPPn(4)
 b=vector {2,3,0,0,0}
@@ -3172,6 +3228,9 @@ selectCoordinates=method()
 selectCoordinates(Vector,List):=(v,var)->(
 L:=entries v;
 vector apply(var,j->L#j))
+
+selectCoordinates(List,List):=(L,var)->(
+apply(var,j->L#j))
 
 extendCoordinates=method()
 extendCoordinates(Vector,List,ZZ):=(v,var,n)->(
@@ -3193,6 +3252,8 @@ vector L)
 globalSections=method()
 globalSections(Matrix,Vector):=(A,v)->(
 if A==raysPPn(-1+rank target A) then return(globalSectionsPPn(v));
+degs:=prepend(1,(entries(-A))#0);
+if A==raysPPn(degs) then return(globalSectionsPPn(degs,v));
 le:=linesEquations(A,v);
 be:=boundaryEquations(A);
 C:=posHull(be,le);
@@ -3219,6 +3280,8 @@ globalSections(A,b)
 
 globalSections(Matrix,Vector,List):=(A,v,var)->(
 if A==raysPPn(-1+rank target A) then return(globalSectionsPPn(v,var));
+degs:=prepend(1,(entries(-A))#0);
+if A==raysPPn(degs) then return(globalSectionsPPn(degs,v,var));
 cL:=sort toList(set(0..-1+rank target A) - set var);
 le:=linesEquations(A,v);
 be:=boundaryEquations(A);
@@ -3427,15 +3490,10 @@ embdim:=P#"ambient dimension";
 if embdim!=d or P#"dimension of lineality space">0 then error("expected polytope of full dimension without lineality space");
 -- put QQ-ZZ test here !!!!!!!!!!!!
 A:=sub(transpose vertices(P),ZZ);
-Adual:=-sub(transpose vertices polar P,ZZ);
 n:=rank target A;
-dn:=rank target Adual;
 R:=QQ[y_0..y_(n-1)];
 R.grading=A;
-Rdual:=QQ[v_0..v_(dn-1)];
-Rdual.grading=Adual;
 Cl:=newEmptyComplex(R);
-dCl:=newEmptyComplex(Rdual);
 --fc:=faces(1,P);
 --fc=apply(fc,j->sub(transpose vertices j,ZZ));
 --fc=apply(fc,j->face(matrixToVarlist(j,R),Cl));
@@ -3444,8 +3502,10 @@ dCl:=newEmptyComplex(Rdual);
 --L1=append(L1,{face((entries vars R)#0,Cl)});
 --addFacetDataToComplex(Cl,L1);
 L1:={{face({},Cl,-1,0)}};
+AdualL:={};
 for j from 0 to d-1 do (
  fc:=faces(d-j,P);
+ if j==d-1 then AdualL=apply(fc,j1->-1/((j1#"hyperplanes"#1)_(0,0))*(entries(j1#"hyperplanes"#0))#0);
  fc=apply(fc,j->sub(transpose vertices j,ZZ));
  fc=apply(toList(0..(#fc-1)),jj->face(matrixToVarlist(fc#jj,R),Cl,j,jj));
  L1=append(L1,fc);
@@ -3455,6 +3515,14 @@ addFaceDataToComplex(Cl,L1);
 Cl.polytopalFacets=L1#(#L1-2);
 Cl.noBoundary=false;
 Cl.isPolytope=true;
+--print(AdualL);
+--Adual:=transpose vertices polar P;
+--print(Adual);
+Adual:=matrix AdualL;
+dn:=rank target Adual;
+Rdual:=QQ[v_0..v_(dn-1)];
+Rdual.grading=Adual;
+dCl:=newEmptyComplex(Rdual);
 dCl.isPolytope=true;
 dCl.dualComplex=Cl;
 Cl.dualComplex=dCl;
@@ -3810,6 +3878,15 @@ doc ///
       and its tropical subcocomplex (see @TO tropDef@).
 
       {\bf What' new:}
+
+        {\it Oct 24, 2009 (Version 0.50)}
+
+           Added methods @TO (addCokerGrading,PolynomialRing,List)@ and @TO (raysPPn,List)@ to give the rays of the standard fan of weighted projective space.
+           Fixed a bug in the multigrading.
+
+        {\it Oct 18, 2009 (Version 0.49)}
+
+           Fixed a problem in @TO convHull@ (correspondence of P.polytopalFacets with the vertices of the dual). This was only a problem when using Polyhedra.m2.
 
         {\it Oct 6, 2009 (Version 0.48)}
 
@@ -5010,14 +5087,17 @@ doc ///
   Key
     addCokerGrading
     (addCokerGrading,PolynomialRing)
+    (addCokerGrading,PolynomialRing,List)
     (addCokerGrading,PolynomialRing,Matrix)
   Headline
     Stores a cokernel grading in a polynomial ring.
   Usage
     addCokerGrading(R)
+    addCokerGrading(R,L)
     addCokerGrading(R,A)
   Inputs
     R:PolynomialRing
+    L:List
     A:Matrix
   Outputs
     :Matrix
@@ -5033,12 +5113,22 @@ doc ///
        
        If A is not specified, @TO raysPPn@ R is used.
        
+       If L is specified then the grading of a weighted projective space is added.
+       
        This command does not change the behaviour of R with respect to the standard
        Macaualy2 image grading, which we want to use independently.
 
    Example
         R=QQ[x_0..x_4];
         addCokerGrading(R);
+        R.grading
+   Text
+   
+        Weighted projective space:
+       
+   Example
+        R=QQ[x_0..x_4];
+        addCokerGrading(R,{1,1,2,2,3});
         R.grading
   SeeAlso
      FirstOrderDeformation
@@ -5051,18 +5141,21 @@ doc ///
   Key
     raysPPn
     (raysPPn,ZZ)
+    (raysPPn,List)
   Headline
-    The rays of the standard fan of projective space.
+    The rays of the standard fan of projective space or weighted projective space.
   Usage
     raysPPn(n)
   Inputs
     n:ZZ
        positive
+    L:List
+       with at least 2 elements and first entry 1
   Outputs
     :Matrix
   Description
    Text
-      Returns a matrix which has in its rows the rays of the standard fan of projective space of dimension n.
+      Returns a matrix which has in its rows the rays of the standard fan of projective space of dimension n or weighted projective space with the weights L.
    Example
         raysPPn(2)
   SeeAlso
