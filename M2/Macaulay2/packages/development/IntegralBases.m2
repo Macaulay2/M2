@@ -155,6 +155,77 @@ hermitianNF Matrix := (M) -> (
      matrix A     
      )
 
+debug Core
+row2by2 = (ri, rj, c, A, V) -> (
+     -- modifies A, V
+     a := A_(ri,c);
+     b := A_(rj,c);
+     (g,u,v) := toSequence gcdCoefficients(a,b);
+     a' := - a//g;
+     b' := b//g; 
+     print (g, u, v, b', a');
+     rawMatrixRowOperation2(raw A, ri, rj, raw u, raw v, raw b', raw a', false);
+     rawMatrixRowOperation2(raw V, ri, rj, raw u, raw v, raw b', raw a', false);
+     A
+     )
+
+column2by2 = (ci, cj, r, A, V) -> (
+     -- modifies A, V
+     a := A_(r,ci);
+     b := A_(r,cj);
+     (g,u,v) := toSequence gcdCoefficients(a,b);
+     cg := leadCoefficient g;
+     if cg != 1 then (
+	  cginv = 1/cg;
+	  g = cginv * g;
+	  u = cginv * u;
+	  v = cginv * v);
+     a' := - a//g;
+     b' := b//g;
+     print (g, u, v, b', a');
+     rawMatrixColumnOperation2(raw A, ci, cj, raw u, raw v, raw b', raw a', false);
+     rawMatrixColumnOperation2(raw V, ci, cj, raw u, raw v, raw b', raw a', false);
+     A
+     )
+
+makemonic = (s,t,A,V) -> (
+     -- for poly rings kk[x]
+     a := A_(s,t);
+     ca := leadCoefficient a;
+     columnMult(A, t, 1/ca);
+     columnMult(V, t, 1/ca);
+     )
+
+HNF0 = (t, A,V) -> (
+     m := numRows A;
+     c := -1; -- this is a column index
+     for s from 0 to m-1 do (
+	  if A_(s,c+1) != 0 or A_(s,t) != 0 then (
+             c = c+1;
+	     if t == c then makemonic(s,t,A,V)
+	     else column2by2(c,t, s, A,V);
+	     if t == c then return s;
+	     );
+	  ))
+
+HNF = method()
+HNF(MutableMatrix, MutableMatrix) := (A,V) -> (
+     -- A is m by n
+     -- V is n by n unimodular.
+     -- A and V are modified, but A*V is the same
+     n := numColumns A;
+     pivotrows := for t from 0 to n-1 list HNF0(t, A,V);
+     -- now: make the other entries smaller
+     for c from 1 to n-1 do (
+       s := pivotrows#c;
+       for ell from 0 to c-1 do (
+	  q := A_(s,ell) // A_(s,c);
+	  if q != 0 then (
+	       columnAdd(A, ell, -q, c);
+	       columnAdd(V, ell, -q, c);
+	       )));
+     )
+
 beginDocumentation()
 
 doc ///
@@ -322,6 +393,20 @@ R = QQ[x]
 M = matrix"1,x-2,x-3;
            x2-1,x3-1,x5-1;
 	   x2+1,x3+1,0"
+	   
+A = mutableMatrix M
+V = mutableIdentity(R, 3)
+HNF(A,V)
+A
+HNF0(0, A,V)
+HNF0(1, A,V)
+A, V
+HNF0(2, A,V)
+print(A, V);
+column2by2(0,1, 0,A,V)
+A
+V
+row2by2(0,1,0,A,V)
 
 hermitianNF M
 A = mutableMatrix M
@@ -332,5 +417,9 @@ rowAdd(A,2,-A_(2,0),0)
 rowWithMinimalDegree(A,1)
 A_(1,1)//A_(2,1)
 rowAdd(A,2, -A_(1,1)//A_(2,1), 1)
+
+M = matrix"4x2+3x+5, 4x2+3x+4, 6x2+1;
+           3x+6, 3x+5, 3+x;
+	   6x2+4x+2, 6x2, 2x2+x"
 
 ///
