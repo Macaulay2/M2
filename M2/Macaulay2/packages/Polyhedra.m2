@@ -9,7 +9,7 @@
 newPackage("Polyhedra",
     Headline => "A package for computations with convex polyhedra",
     Version => "1.0.8",
-    Date => "November 2, 2009",
+    Date => "November 6, 2009",
     Certification => {
 	 "journal name" => "The Journal of Software for Algebra and Geometry: Macaulay2",
 	 "journal URI" => "http://j-sag.org/",
@@ -18,7 +18,7 @@ newPackage("Polyhedra",
 	 "published article URI" => "http://j-sag.org/Volume1/jsag-3-2009.pdf",
 	 "published code URI" => "http://j-sag.org/Volume1/Polyhedra.m2",
 	 "repository code URI" => "svn://macaulay2.math.uiuc.edu/Macaulay2/trunk/M2/Macaulay2/packages/Polyhedra.m2",
-   	 "release at publication" => 9344,
+  	 "release at publication" => 9344,
 	 "version at publication" => "1.0.5",
 	 "volume number" => "1",
 	 "volume URI" => "http://j-sag.org/Volume1/"
@@ -31,7 +31,7 @@ newPackage("Polyhedra",
     )
 
 export {PolyhedralObject, Polyhedron, Cone, Fan, convexHull, posHull, intersection, fan, addCone, 
-        ambDim, cones, genCones, halfspaces, hyperplanes, linSpace, rays, vertices,
+        ambDim, cones, maxCones, halfspaces, hyperplanes, linSpace, rays, vertices,
         areCompatible, commonFace, contains, isCompact, isComplete, isEmpty, isFace, isPointed, isPolytopal, 
 	isPure, isSmooth,
 	dualFaceLattice, faceLattice, faces, fVector, hilbertBasis, incompCones, inInterior, interiorPoint, interiorVector, 
@@ -694,8 +694,8 @@ dim Fan := F -> F#"top dimension of the cones"
 -- PURPOSE : Giving the generating Cones of the Fan
 --   INPUT : 'F'  a Fan
 --  OUTPUT : a List of Cones
-genCones = method(TypicalValue => List)
-genCones Fan := F -> toList F#"generatingCones"
+maxCones = method(TypicalValue => List)
+maxCones Fan := F -> toList F#"generatingCones"
 
 
 
@@ -806,7 +806,7 @@ commonFace(Cone,Cone) := (C1,C2) -> (
 --   INPUT : '(C,F)'  a Cone and a Fan
 --  OUTPUT : 'true' or 'false'
 -- COMMENT : For this it checks if the cone has a common face with every generating cone of the fan
-commonFace(Cone,Fan) := (C,F) -> if C#"ambient dimension" == F#"ambient dimension" then all(genCones F, C1 -> commonFace(C,C1)) else false
+commonFace(Cone,Fan) := (C,F) -> if C#"ambient dimension" == F#"ambient dimension" then all(maxCones F, C1 -> commonFace(C,C1)) else false
 
 
 --   INPUT : '(F,C)'  a Fan and a Cone
@@ -818,7 +818,7 @@ commonFace(Fan,Cone) := (F,C) -> commonFace(C,F)
 --   INPUT : '(F1,F2)'  two Fans
 --  OUTPUT : 'true' or 'false'
 -- COMMENT : For this it checks if all generating cones of 'F1' have a common face with every generating cone of 'F2'
-commonFace(Fan,Fan) := (F1,F2) -> all(genCones F1, C -> commonFace(C,F2))
+commonFace(Fan,Fan) := (F1,F2) -> all(maxCones F1, C -> commonFace(C,F2))
 
 
 --   INPUT : 'L'  a List
@@ -951,7 +951,7 @@ isComplete Fan := F -> (
 	  F.cache.isComplete = if n == ambDim F then (
 	       symmDiff := (x,y) -> ((x,y) = (set x,set y); toList ((x-y)+(y-x)));
 	       Lfaces := {};
-	       scan(genCones F, C -> if dim C == n then Lfaces = symmDiff(Lfaces,faces(1,C)));
+	       scan(maxCones F, C -> if dim C == n then Lfaces = symmDiff(Lfaces,faces(1,C)));
 	       Lfaces == {})
 	  else false);
      F.cache.isComplete)
@@ -1310,19 +1310,19 @@ incompCones List := L -> (
 --   INPUT : '(C,F)',  a cone and a fan
 --  OUTPUT : 'Lpairs',  a list, empty if there is no pair of incompatible cones, otherwise it contains the pairs of 'C' with the cones of 
 --                 	'F' that are not compatible
-incompCones(Cone,Fan) := (C,F) -> select(apply(genCones F, f -> (C,f)), p -> not commonFace p)
+incompCones(Cone,Fan) := (C,F) -> select(apply(maxCones F, f -> (C,f)), p -> not commonFace p)
 
 
 --   INPUT : '(F,C)',  a fan and a cone
 --  OUTPUT : 'Lpairs',  a list, empty if there is no pair of incompatible cones, otherwise it contains the pairs of 'C' with the cones of 
 --                 	'F' that are not compatible
-incompCones(Fan,Cone) := (F,C) -> select(apply(genCones F, f -> (f,C)), p -> not commonFace p)
+incompCones(Fan,Cone) := (F,C) -> select(apply(maxCones F, f -> (f,C)), p -> not commonFace p)
 
 
 --   INPUT : '(F1,F2)',  two fans
 --  OUTPUT : 'Lpairs',  a list, empty if there is no pair of incompatible cones, otherwise it contains the pairs of cones of 'F1' and cones of 
 --                 	'F2' that are not compatible
-incompCones(Fan,Fan) := (F1,F2) -> flatten apply(genCones F1, C1 -> flatten apply(genCones F2, C2 -> if not commonFace(C1,C2) then (C1,C2) else {}))
+incompCones(Fan,Fan) := (F1,F2) -> flatten apply(maxCones F1, C1 -> flatten apply(maxCones F2, C2 -> if not commonFace(C1,C2) then (C1,C2) else {}))
      
 
 
@@ -1376,60 +1376,62 @@ interiorVector Cone := C -> (
 --  OUTPUT : 'L',  a list containing the lattice points of 'P'
 latticePoints = method(TypicalValue => List)
 latticePoints Polyhedron := P -> (
-     -- Checking for input errors
-     if  not isCompact P then error("The polyhedron must be compact");
-     -- Recursive function that intersects the polyhedron with paralell hyperplanes in the axis direction
-     -- in which P has its minimum extension
-     latticePointsRec := P -> (
-	  -- Finding the direction with minimum extension of P
-	  V := entries vertices P;
-	  n := ambDim P;
-	  minv := apply(V,min);
-	  maxv := apply(V,max);
-	  minmaxv := maxv-minv;
-	  pos := min minmaxv;
-	  pos = position(minmaxv,v -> v == pos);
-	  -- Determining the lattice heights in this direction
-	  L := toList({{ceiling minv_pos}}..{{floor maxv_pos}});
-	  -- If the dimension is one, than it is just a line and we take the lattice points
-	  if n == 1 then apply(L,matrix)
-	  -- Otherwise intersect with the hyperplanes and project into the hyperplane
-	  else flatten apply(L,p -> (
-		    NP := intersection {P,{map(QQ^1,QQ^n,(i,j) -> if j == pos then 1 else 0),matrix p}};
-		    if NP#"number of vertices" == 1 then (
-			 v := vertices NP;
-			 if promote(substitute(v,ZZ),QQ) == v then substitute(v,ZZ) else {})
-		    else (
-			 A := matrix drop((entries id_(QQ^n)),{pos,pos});
-			 apply(latticePointsRec affineImage(A,NP),v -> v^{0..(pos-1)} || matrix p || v^{pos..(n-2)})))));
-     -- Checking if the polytope is just a point
-     if dim P == 0 then {lift(vertices P,ZZ)}
-     -- Checking if the polytope is full dimensional
-     else if (dim P == ambDim P) then latticePointsRec P
-     -- If not checking first if the affine hull of P contains lattice points at all and if so projecting the polytope down
-     -- so that it becomes full dimensional with a map that keeps the lattice
-     else (
-	  (M,v) := hyperplanes P;
-	  -- Finding a lattice point in the affine hull of P
-	  b := if all(entries M, e -> gcd e == 1) then (
-	       -- Computing the Smith Normal Form to solve the equation over ZZ
-	       (M1,Lmatrix,Rmatrix) := smithNormalForm substitute(M,ZZ);
-	       v1 := flatten entries (Lmatrix*v);
-	       w := apply(numRows M1, i -> M1_(i,i));
-	       -- Checking if the system is at least solvable over QQ
-	       if all(#w, i -> w#i != 0 or v1#i == 0) then (
-		    -- If it is, then solve over QQ
-		    w = apply(#w, i -> (v1#i/w#i,v1#i%w#i));
-		    if all(w, e -> e#1 == 0) then (
-			 -- If the solution is in fact in ZZ then return it
-			 w = transpose matrix{apply(w,first) | toList(numColumns M1 - numRows M1:0)};
-			 Rmatrix * w)));
-	  -- If there is no lattice point in the affine hull then P has none
-	  if b === null then {}
+     if not P.cache.?latticePoints then (
+	  -- Checking for input errors
+	  if  not isCompact P then error("The polyhedron must be compact");
+	  -- Recursive function that intersects the polyhedron with paralell hyperplanes in the axis direction
+	  -- in which P has its minimum extension
+	  latticePointsRec := P -> (
+	       -- Finding the direction with minimum extension of P
+	       V := entries vertices P;
+	       n := ambDim P;
+	       minv := apply(V,min);
+	       maxv := apply(V,max);
+	       minmaxv := maxv-minv;
+	       pos := min minmaxv;
+	       pos = position(minmaxv,v -> v == pos);
+	       -- Determining the lattice heights in this direction
+	       L := toList({{ceiling minv_pos}}..{{floor maxv_pos}});
+	       -- If the dimension is one, than it is just a line and we take the lattice points
+	       if n == 1 then apply(L,matrix)
+	       -- Otherwise intersect with the hyperplanes and project into the hyperplane
+	       else flatten apply(L,p -> (
+			 NP := intersection {P,{map(QQ^1,QQ^n,(i,j) -> if j == pos then 1 else 0),matrix p}};
+			 if NP#"number of vertices" == 1 then (
+			      v := vertices NP;
+			      if promote(substitute(v,ZZ),QQ) == v then substitute(v,ZZ) else {})
+			 else (
+			      A := matrix drop((entries id_(QQ^n)),{pos,pos});
+			      apply(latticePointsRec affineImage(A,NP),v -> v^{0..(pos-1)} || matrix p || v^{pos..(n-2)})))));
+	  -- Checking if the polytope is just a point
+	  if dim P == 0 then P.cache.latticePoints = {lift(vertices P,ZZ)}
+	  -- Checking if the polytope is full dimensional
+	  else if (dim P == ambDim P) then P.cache.latticePoints = latticePointsRec P
+	  -- If not checking first if the affine hull of P contains lattice points at all and if so projecting the polytope down
+	  -- so that it becomes full dimensional with a map that keeps the lattice
 	  else (
-	       A := gens ker substitute(M,ZZ);
-	       -- Project the translated polytope, compute the lattice points and map them back
-	       apply(latticePoints affinePreimage(A,P,b),e -> substitute(A*e + b,ZZ)))))
+	       (M,v) := hyperplanes P;
+	       -- Finding a lattice point in the affine hull of P
+	       b := if all(entries M, e -> gcd e == 1) then (
+		    -- Computing the Smith Normal Form to solve the equation over ZZ
+		    (M1,Lmatrix,Rmatrix) := smithNormalForm substitute(M,ZZ);
+		    v1 := flatten entries (Lmatrix*v);
+		    w := apply(numRows M1, i -> M1_(i,i));
+		    -- Checking if the system is at least solvable over QQ
+		    if all(#w, i -> w#i != 0 or v1#i == 0) then (
+			 -- If it is, then solve over QQ
+			 w = apply(#w, i -> (v1#i/w#i,v1#i%w#i));
+			 if all(w, e -> e#1 == 0) then (
+			      -- If the solution is in fact in ZZ then return it
+			      w = transpose matrix{apply(w,first) | toList(numColumns M1 - numRows M1:0)};
+			      Rmatrix * w)));
+	       -- If there is no lattice point in the affine hull then P has none
+	       if b === null then P.cache.latticePoints = {}
+	       else (
+		    A := gens ker substitute(M,ZZ);
+		    -- Project the translated polytope, compute the lattice points and map them back
+		    P.cache.latticePoints = apply(latticePoints affinePreimage(A,P,b),e -> substitute(A*e + b,ZZ)))));
+     P.cache.latticePoints)
 
 
 
@@ -1834,7 +1836,7 @@ stellarSubdivision (Fan,Matrix) := (F,r) -> (
      -- Checking for input errors
      if numColumns r != 1 or numRows r != ambDim F then error("The ray must be given by a one column matrix in the ambient dimension of the fan");
      divider := (C,r) -> if dim C != 1 then flatten apply(faces(1,C), f -> if not contains(f,r) then posHull {f,r} else divider(f,r)) else {C};
-     L := flatten apply(genCones F, C -> if contains(C,r) then divider(C,r) else {C});
+     L := flatten apply(maxCones F, C -> if contains(C,r) then divider(C,r) else {C});
      L = sort select(L, l -> all(L, e -> not contains(e,l) or e == l));
      n := dim L#0;
      R := unique(rays F|{promote(r,QQ)});
@@ -2379,10 +2381,13 @@ ZZ * Polyhedron := (k,P) -> promote(k,QQ) * P
 --  OUTPUT : 'C',  a Cone, the inner normal cone of P in the face Q
 -- COMMENT : 'Q' must be a face of P
 normalCone (Polyhedron,Polyhedron) := Cone => opts -> (P,Q) -> (
-     -- Checking for input errors
-     if not isFace(Q,P) then error("The second polyhedron must be a face of the first one");
-     p := interiorPoint Q;
-     dualCone posHull affineImage(P,-p))
+     if not P.cache.?normalCone then P.cache.normalCone = new MutableHashTable;
+     if not P.cache.normalCone#?Q then (
+	  -- Checking for input errors
+	  if not isFace(Q,P) then error("The second polyhedron must be a face of the first one");
+	  p := interiorPoint Q;
+	  P.cache.normalCone = dualCone posHull affineImage(P,-p));
+     P.cache.normalCone#Q)
 
 
 -- PURPOSE : Computing the inner normalFan of a polyhedron
@@ -2390,10 +2395,26 @@ normalCone (Polyhedron,Polyhedron) := Cone => opts -> (P,Q) -> (
 --  OUTPUT : 'F',  a Fan, the inner normalFan of 'P'
 normalFan = method(TypicalValue => Fan)
 normalFan Polyhedron := P -> (
-     -- Saving the vertices
-     vm := vertices P;
-     -- For every vertex translate P by -this vertex and take the dual cone of the positive hull of it
-     fan apply(numColumns vm, i -> (dualCone posHull affineImage(P,-vm_{i}))))
+     if not P.cache.?normalFan then (
+	  -- Saving the vertices
+	  vm := vertices P;
+	  -- For every vertex translate P by -this vertex and take the dual cone of the positive hull of it
+	  L := sort apply(numColumns vm, i -> (dualCone posHull affineImage(P,-vm_{i})));
+	  HS := transpose (halfspaces P)#0;
+	  HS = apply(numColumns HS, i -> -HS_{i});
+	  F := new Fan from {
+	       "generatingCones" => set L,
+	       "ambient dimension" => ambDim P,
+	       "top dimension of the cones" => dim L#0,
+	       "number of generating cones" => #L,
+	       "rays" => set HS,
+	       "number of rays" => #HS,
+	       "isPure" => true,
+	       symbol cache => new CacheTable};
+	  F.cache.isPolytopal = true;
+	  F.cache.polytope = P;
+	  P.cache.normalFan = F);
+     P.cache.normalFan)
 
 
 -- PURPOSE : Computing the polar of a given polyhedron
@@ -3137,7 +3158,7 @@ refineCones = L -> (
      F := ccRefinement M;
      -- Collect for each cone of the ccRef the intersection of all original cones, that contain
      -- the interior of that cone
-     fan apply(genCones F, C -> (
+     fan apply(maxCones F, C -> (
 	       v := interiorVector(C);
 	       intersection select(L, c -> contains(c,v)))))
 
@@ -3560,7 +3581,7 @@ document {
      of the fan, which can be accessed by:",
      
      EXAMPLE {
-	  "genCones F"
+	  "maxCones F"
 	  },
      
      PARA{}, "Now we could expand the fan by adding more cones, for example the following:",
@@ -4257,9 +4278,9 @@ document {
      }
 
 document {
-     Key => {genCones, (genCones,Fan)},
+     Key => {maxCones, (maxCones,Fan)},
      Headline => "displays the generating Cones of a Fan",
-     Usage => " L = genCones F",
+     Usage => " L = maxCones F",
      Inputs => {
 	  "F" => Fan
 	  },
@@ -4267,14 +4288,14 @@ document {
 	  "L" => List
 	  },
      
-     PARA{}, TT "genCones", " displays the ", TO List, " of generating cones 
+     PARA{}, TT "maxCones", " displays the ", TO List, " of generating cones 
      of the ", TO Fan, ", i.e. all Cones that are not a face of one 
      of the other cones. These are all of the same dimension if and only if 
      the Fan is pure (see: ", TO isPure,").",
      
      EXAMPLE {
 	  " F = normalFan crossPolytope 3",
-	  " L = genCones F",
+	  " L = maxCones F",
 	  " apply(L,rays)"
 	  }
      
@@ -5402,7 +5423,7 @@ document {
 	  " P = convexHull matrix{{1,0,0,0},{0,1,0,0},{0,0,1,0}}",
 	  " F = normalFan P",
 	  " F1 = skeleton(2,F)",
-	  " apply(genCones F1,rays)"
+	  " apply(maxCones F1,rays)"
 	  }
      
      }
@@ -5464,7 +5485,7 @@ document {
      
      EXAMPLE {
 	  " F1 = smoothSubfan F",
-	  " apply(genCones F1, rays)"
+	  " apply(maxCones F1, rays)"
 	  }
      
      }
@@ -5978,7 +5999,7 @@ document {
      EXAMPLE {
 	  " P = hypercube 2",
 	  " F = faceFan P",
-	  "apply(genCones F, rays)"
+	  "apply(maxCones F, rays)"
 	  }
      }
 
@@ -6056,7 +6077,7 @@ document {
      EXAMPLE {
 	  " P = convexHull matrix{{1,0,0},{0,1,0}}",
 	  " F = normalFan P",
-	  " apply(genCones F,rays)"
+	  " apply(maxCones F,rays)"
 	  }
      
      }
@@ -6279,7 +6300,7 @@ document {
      
      EXAMPLE {
 	  " F = hirzebruch 3",
-	  " apply(genCones F,rays)"
+	  " apply(maxCones F,rays)"
 	  }
      
      }
@@ -7610,7 +7631,7 @@ L = {posHull matrix{{1,0},{1,1}},posHull matrix{{1,0},{0,-1}},posHull matrix{{-1
 assert(incompCones L == {(L#0,L#4),(L#3,L#4)})
 L = L_{0..3}|{hirzebruch 3};
 assert(incompCones L == {(L#0,L#4),(L#2,L#4),(L#3,L#4)})
-assert(incompCones(L#2,L#4) == {(L#2,posHull matrix {{0,-1},{-1,3}}),(L#2,posHull matrix {{0,-1},{1,3}})})
+assert(incompCones(L#2,L#4) == {(L#2,posHull matrix {{0,-1},{1,3}}),(L#2,posHull matrix {{0,-1},{-1,3}})})
 L = {posHull matrix {{-1,0},{0,1}},posHull matrix {{-1,0},{0,-1}},posHull matrix {{0,-1},{-1,3}},posHull matrix {{0,-1},{1,3}}};
 L = {(L#0,L#2),(L#0,L#3),(L#1,L#2)};
 assert(set incompCones(normalFan hypercube 2,hirzebruch 3) === set L)
