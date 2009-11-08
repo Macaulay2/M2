@@ -593,10 +593,11 @@ cechComplex (ZZ,ToricVectorBundleKlyachko,Matrix) := (k,T,u) -> (
      n := T#"dimension of the variety";
      -- if k==n+1 the chain is 0 and there is no map
      if k == n+1 then (hashTable {0 => ({},map(tvbR^tvbrank,tvbR^0,0))},hashTable {},hashTable {}) else (
+	  rT := T#"rayTable";
+	  bT := T#"baseTable";
 	  if not T.cache.cech#?(k,u) then (
 	       -- rT will be used to sort the rays
-	       rT := T#"rayTable";
-	       bT := T#"baseTable";
+	       
 	       -- if the previous chain has not been computed we have to compute the cones of the right dimension (n-k)
 	       if not T.cache.cech#?(k-1,u) or k == 0 then (
 		    -- if k==n then the chain is the "complete bundle" and the next chain is 0
