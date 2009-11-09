@@ -112,7 +112,7 @@ gbw (Matrix, List) := (m, w) -> (
 	  w#(W.dpairInds#0#i) + w#(W.dpairInds#1#i) > 0)
      then (
 	  if not W.?CommAlgebra then createCommAlgebra W;
-	  tempW := (coefficientRing W)(monoid [(entries vars W)#0,
+	  tempW := (coefficientRing W)(monoid [gens W,
 	       WeylAlgebra => W.monoid.Options.WeylAlgebra,
 	       Weights => w, Global=>false]);
 	  WtotempW := map(tempW, W, vars tempW);

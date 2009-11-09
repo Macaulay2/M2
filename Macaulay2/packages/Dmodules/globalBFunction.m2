@@ -162,18 +162,20 @@ globalBFunction RingElement := RingElement => o -> f -> (
 -- global generalized Bernstein-Sato polynomial
 generalB = method(Options => {
 	  -- GuessedRoots => null, -- should this be removed?
-	  Strategy => ViaLinearAlgebra
+	  Strategy => ViaLinearAlgebra,
+	  Exponent => 1
 	  })
 generalB List := RingElement => o-> F -> generalB(F, 1_(ring first F), o)     
 generalB (List, RingElement) := RingElement => o->(F,g) -> (
 -- Input:   F = {f_1,...,f_r}, a list of polynomials in n variables                                                                                                                                       
---                             (f_i has to be an element of A_n, the Weyl algebra).                                                                                                                       
 --          g, a polynomial
--- Output:  a generalized B-S polynomial, an element of QQ[s]
+-- Output:  b_{f,g}^{(m)}, a generalized B-S polynomial, an element of QQ[s]
+     m := o.Exponent;
+     if class m =!= ZZ or m<1 then error "expected a positive integer for Exponent";
      if #F == 0 then error "the list is empty";
      if #(options (ring first F).monoid)#WeylAlgebra == 0 -- not WA 
      then (
-	  D := makeWeylAlgebra(ring f,SetVariables=>false);
+	  D := makeWeylAlgebra(ring first F,SetVariables=>false);
 	  F = apply(F, f->sub(f,D));
 	  g = sub(g,D);
 	  );
@@ -184,7 +186,10 @@ generalB (List, RingElement) := RingElement => o->(F,g) -> (
      n := numgens DY // 2 - r; -- DY = k[x_1,...,x_n,t_1,...,t_r,dx_1,...,dx_n,dt_1,...,dt_r]
      I0 := if g==1 then AnnI else intersect(AnnI, ideal sub(g, DY));
      w := toList(n:0) | toList(r:1);
-     I1 := inw(I0, -w|w);
+     --I1 := inw(I0, -w|w); 
+     --I1 := inw(I0, w|(-w)); 
+     Istar := star(I0,-w|w);
+     I1 = Istar + (sub(ideal F, DY))^m;
      s := symbol s; 
      if o.Strategy === ViaLinearAlgebra then (
 	  P := -sum(r,i->DY_(2*n+r+i)*DY_(n+i)); -- s = -(dt_1*t_1 + ... + dt_r*t_r)
