@@ -1,6 +1,6 @@
 export { 
      localBFunction,
-     bFunctionRoots, lct, GeneralBernsteinSato, ViaBFunction, generalB, 
+     bFunctionRoots, lct, GeneralBernsteinSato, ViaBFunction, generalB, Exponent, 
      --GuessedRoots, 
      ViaLinearAlgebra,
      ExternalProduct,TwistMap,twistMap,twistInvMap,projMap1,projMap2,

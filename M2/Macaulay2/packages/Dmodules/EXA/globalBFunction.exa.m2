@@ -116,6 +116,13 @@ next one takes > 1 day
 
 ///
 
+-- example of generalB with Exponent > 1
+restart
+loadPackage "Dmodules"
+R = QQ[x,y];
+F = {x*y*(x+y)*(x+2*y)}; g = 1_R; m = 2;
+factorBFunction generalB (F,g, Exponent=>m)
+ 
 
 -- b = {1_W,x_1,x_2,x_3} / (g->print factorBFunction generalB (F,g,GuessedRoots=>{-2}))
 --time factorBFunction generalB (F,x_2)
