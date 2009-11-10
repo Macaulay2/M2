@@ -18,7 +18,7 @@ newPackage("Polyhedra",
 --	 "published article URI" => "http://j-sag.org/Volume1/jsag-3-2009.pdf",
 --	 "published code URI" => "http://j-sag.org/Volume1/Polyhedra.m2",
 --	 "repository code URI" => "svn://macaulay2.math.uiuc.edu/Macaulay2/trunk/M2/Macaulay2/packages/Polyhedra.m2",
---  	 "release at publication" => 9344,
+-- 	 "release at publication" => 9344,
 --	 "version at publication" => "1.0.5",
 --	 "volume number" => "1",
 --	 "volume URI" => "http://j-sag.org/Volume1/"
@@ -1023,100 +1023,101 @@ isPointed Fan := F -> (
 --  OUTPUT : a Polyhedron, which has 'F' as normal fan, if 'F' is projective or the empty polyhedron
 isPolytopal = method(TypicalValue => Boolean)
 isPolytopal Fan := F -> (
-     if not F.cache.?isPolytopal then F.cache.isPolytopal = false;
-     -- First of all the fan must be complete
-     if isComplete F then (
-	  -- Extracting the generating cones, the ambient dimension, the codim 1 
-	  -- cones (corresponding to the edges of the polytope if it exists)
-	  i := 0;
-	  L := hashTable apply(toList F#"generatingCones", l -> (i=i+1; i=>l));
-	  n := F#"ambient dimension";
-	  edges := cones(n-1,F);
-	  -- Making a table that indicates in which generating cones each 'edge' is contained
-	  edgeTCTable := hashTable apply(edges, e -> select(1..#L, j -> contains(L#j,e)) => e);
-	  i = 0;
-	  -- Making a table of all the edges where each entry consists of the pair of top cones corr. to
-	  -- this edge, the codim 1 cone, an index number i, and the edge direction from the first to the
-	  -- second top Cone
-	  edgeTable := apply(pairs edgeTCTable, e -> (i=i+1; 
-		    v := transpose hyperplanes e#1;
-		    if not contains(dualCone L#((e#0)#0),v) then v = -v;
-		    (e#0, e#1, i, v)));
-	  edgeTCNoTable := hashTable apply(edgeTable, e -> e#0 => (e#2,e#3));
-	  edgeTable = hashTable apply(edgeTable, e -> e#1 => (e#2,e#3));
-	  -- Computing the list of correspondencies, i.e. for each codim 2 cone ( corresponding to 2dim-faces of the polytope) save 
-	  -- the indeces of the top cones containing it
-	  corrList := hashTable {};
-	  scan(keys L, j -> (corrList = merge(corrList,hashTable apply(faces(2,L#j), C -> C => {j}),join)));
-	  corrList = pairs corrList;
-	  --  Generating the 0 matrix for collecting the conditions on the edges
-	  m := #(keys edgeTable);
-	  NM := map(QQ^n,QQ^m,0);
-	  -- for each entry of corrlist another matrix is added to HP
-	  HP := flatten apply(#corrList, j -> (
-		    v := corrList#j#1;
-		    HPnew := NM;
-		    -- Scanning trough the top cones containing the active codim2 cone and order them in a circle by their 
-		    -- connecting edges
-		    v = apply(v, e -> L#e);
-		    C := v#0;
-		    v = drop(v,1);
-		    C1 := C;
-		    nv := #v;
-		    scan(nv, i -> (
-			      i = position(v, e -> dim intersection(C1,e) == n-1);
-			      C2 := v#i;
-			      v = drop(v,{i,i});
-			      (a,b) := edgeTable#(intersection(C1,C2));
-			      if not contains(dualCone C2,b) then b = -b;
-			      -- 'b' is the edge direction inserted in column 'a', the index of this edge
-			      HPnew = HPnew_{0..a-2} | b | HPnew_{a..m-1};
-			      C1 = C2));
-		    C3 := intersection(C,C1);
-		    (a,b) := edgeTable#C3;
-		    if not contains(dualCone C,b) then b = -b;
-		    -- 'b' is the edge direction inserted in column 'a', the index of this edge
-		    -- the new restriction is that the edges ''around'' this codim2 Cone must add up to 0
-		    entries(HPnew_{0..a-2} | b | HPnew_{a..m-1})));
-	  if HP != {} then HP = matrix HP
-	  else HP = map(QQ^0,QQ^m,0);
-	  -- Find an interior vector in the cone of all positive vectors satisfying the restrictions
-	  v := flatten entries interiorVector intersection(id_(QQ^m),HP);
-	  M := {};
-	  -- If the vector is strictly positive then there is a polytope with 'F' as normalFan
-	  if all(v, e -> e > 0) then (
-	       -- Construct the polytope
-	       i = 1;
-	       -- Start with the origin
-	       p := map(QQ^n,QQ^1,0);
-	       M = {p};
-	       Lyes := {};
-	       Lno := {};
-	       vlist := apply(keys edgeTCTable,toList);
-	       -- Walk along all edges recursively
-	       edgerecursion := (i,p,vertexlist,Mvertices) -> (
-		    vLyes := {};
-		    vLno := {};
-		    -- Sorting those edges into 'vLyes' who emerge from vertex 'i' and the rest in 'vLno'
-		    vertexlist = partition(w -> member(i,w),vertexlist);
-		    if vertexlist#?true then vLyes = vertexlist#true;
-		    if vertexlist#?false then vLno = vertexlist#false;
-		    -- Going along the edges in 'vLyes' with the length given in 'v' and calling edgerecursion again with the new index of the new 
-		    -- top Cone, the new computed vertex, the remaining edges in 'vLno' and the extended matrix of vertices
-		    scan(vLyes, w -> (
-			      w = toSequence w;
-			      j := edgeTCNoTable#w;
-			      if w#0 == i then (
-				   (vLno,Mvertices) = edgerecursion(w#1,p+(j#1)*(v#((j#0)-1)),vLno,append(Mvertices,p+(j#1)*(v#((j#0)-1)))))
-			      else (
-				   (vLno,Mvertices) = edgerecursion(w#0,p-(j#1)*(v#((j#0)-1)),vLno,append(Mvertices,p-(j#1)*(v#((j#0)-1)))))));
-		    (vLno,Mvertices));
-	       -- Start the recursion with vertex '1', the origin, all edges and the vertexmatrix containing already the origin
-	       M = unique ((edgerecursion(i,p,vlist,M))#1);
-	       M = matrix transpose apply(M, m -> flatten entries m);
-	       -- Computing the convex hull
-	       F.cache.polytope = convexHull M;
-	       F.cache.isPolytopal = true));
+     if not F.cache.?isPolytopal then (
+	  F.cache.isPolytopal = false;
+	  -- First of all the fan must be complete
+     	  if isComplete F then (
+	       -- Extracting the generating cones, the ambient dimension, the codim 1 
+	       -- cones (corresponding to the edges of the polytope if it exists)
+	       i := 0;
+	       L := hashTable apply(toList F#"generatingCones", l -> (i=i+1; i=>l));
+	       n := F#"ambient dimension";
+	       edges := cones(n-1,F);
+	       -- Making a table that indicates in which generating cones each 'edge' is contained
+	       edgeTCTable := hashTable apply(edges, e -> select(1..#L, j -> contains(L#j,e)) => e);
+	       i = 0;
+	       -- Making a table of all the edges where each entry consists of the pair of top cones corr. to
+	       -- this edge, the codim 1 cone, an index number i, and the edge direction from the first to the
+	       -- second top Cone
+	       edgeTable := apply(pairs edgeTCTable, e -> (i=i+1; 
+		    	 v := transpose hyperplanes e#1;
+		    	 if not contains(dualCone L#((e#0)#0),v) then v = -v;
+		    	 (e#0, e#1, i, v)));
+	       edgeTCNoTable := hashTable apply(edgeTable, e -> e#0 => (e#2,e#3));
+	       edgeTable = hashTable apply(edgeTable, e -> e#1 => (e#2,e#3));
+	       -- Computing the list of correspondencies, i.e. for each codim 2 cone ( corresponding to 2dim-faces of the polytope) save 
+	       -- the indeces of the top cones containing it
+	       corrList := hashTable {};
+	       scan(keys L, j -> (corrList = merge(corrList,hashTable apply(faces(2,L#j), C -> C => {j}),join)));
+	       corrList = pairs corrList;
+	       --  Generating the 0 matrix for collecting the conditions on the edges
+	       m := #(keys edgeTable);
+	       NM := map(QQ^n,QQ^m,0);
+	       -- for each entry of corrlist another matrix is added to HP
+	       HP := flatten apply(#corrList, j -> (
+		    	 v := corrList#j#1;
+		    	 HPnew := NM;
+		    	 -- Scanning trough the top cones containing the active codim2 cone and order them in a circle by their 
+		    	 -- connecting edges
+		    	 v = apply(v, e -> L#e);
+		    	 C := v#0;
+		    	 v = drop(v,1);
+		    	 C1 := C;
+		    	 nv := #v;
+		    	 scan(nv, i -> (
+			      	   i = position(v, e -> dim intersection(C1,e) == n-1);
+			      	   C2 := v#i;
+			      	   v = drop(v,{i,i});
+			      	   (a,b) := edgeTable#(intersection(C1,C2));
+			      	   if not contains(dualCone C2,b) then b = -b;
+			      	   -- 'b' is the edge direction inserted in column 'a', the index of this edge
+			      	   HPnew = HPnew_{0..a-2} | b | HPnew_{a..m-1};
+			      	   C1 = C2));
+		    	 C3 := intersection(C,C1);
+		    	 (a,b) := edgeTable#C3;
+		    	 if not contains(dualCone C,b) then b = -b;
+		    	 -- 'b' is the edge direction inserted in column 'a', the index of this edge
+		    	 -- the new restriction is that the edges ''around'' this codim2 Cone must add up to 0
+		    	 entries(HPnew_{0..a-2} | b | HPnew_{a..m-1})));
+	       if HP != {} then HP = matrix HP
+	       else HP = map(QQ^0,QQ^m,0);
+	       -- Find an interior vector in the cone of all positive vectors satisfying the restrictions
+	       v := flatten entries interiorVector intersection(id_(QQ^m),HP);
+	       M := {};
+	       -- If the vector is strictly positive then there is a polytope with 'F' as normalFan
+	       if all(v, e -> e > 0) then (
+	       	    -- Construct the polytope
+	       	    i = 1;
+	       	    -- Start with the origin
+	       	    p := map(QQ^n,QQ^1,0);
+	       	    M = {p};
+	       	    Lyes := {};
+	       	    Lno := {};
+	       	    vlist := apply(keys edgeTCTable,toList);
+	       	    -- Walk along all edges recursively
+	       	    edgerecursion := (i,p,vertexlist,Mvertices) -> (
+		    	 vLyes := {};
+		    	 vLno := {};
+		    	 -- Sorting those edges into 'vLyes' who emerge from vertex 'i' and the rest in 'vLno'
+		    	 vertexlist = partition(w -> member(i,w),vertexlist);
+		    	 if vertexlist#?true then vLyes = vertexlist#true;
+		    	 if vertexlist#?false then vLno = vertexlist#false;
+		    	 -- Going along the edges in 'vLyes' with the length given in 'v' and calling edgerecursion again with the new index of the new 
+		    	 -- top Cone, the new computed vertex, the remaining edges in 'vLno' and the extended matrix of vertices
+		    	 scan(vLyes, w -> (
+			      	   w = toSequence w;
+			      	   j := edgeTCNoTable#w;
+			      	   if w#0 == i then (
+				   	(vLno,Mvertices) = edgerecursion(w#1,p+(j#1)*(v#((j#0)-1)),vLno,append(Mvertices,p+(j#1)*(v#((j#0)-1)))))
+			      	   else (
+				   	(vLno,Mvertices) = edgerecursion(w#0,p-(j#1)*(v#((j#0)-1)),vLno,append(Mvertices,p-(j#1)*(v#((j#0)-1)))))));
+		    	 (vLno,Mvertices));
+	       	    -- Start the recursion with vertex '1', the origin, all edges and the vertexmatrix containing already the origin
+	       	    M = unique ((edgerecursion(i,p,vlist,M))#1);
+	       	    M = matrix transpose apply(M, m -> flatten entries m);
+	       	    -- Computing the convex hull
+	       	    F.cache.polytope = convexHull M;
+	       	    F.cache.isPolytopal = true)));
      F.cache.isPolytopal)
 
 
@@ -2286,7 +2287,10 @@ faceFan = method(TypicalValue => Fan)
 faceFan Polyhedron := P -> (
      -- Checking for input errors
      if not inInterior(map(QQ^(ambDim P),QQ^1,0),P) then  error("The origin must be an interior point.");
-     fan apply(faces(1,P), posHull))
+     F := fan apply(faces(1,P), posHull);
+     F.cache.isPolytopal = true;
+     F.cache.polytope = polar P;
+     F)
    
    
 -- PURPOSE : Computing the image fan of a cone
@@ -2502,8 +2506,12 @@ crossPolytope(ZZ,QQ) := (d,s) -> (
      -- Checking for input errors
      if d < 1 then error("dimension must at least be 1");
      if s <= 0 then error("size of the crosspolytope must be positive");
-     M := map(QQ^d,QQ^d,s) | map(QQ^d,QQ^d,-s);
-     convexHull M)
+     constructMatrix := (d,v) -> (
+	  if d != 0 then flatten {constructMatrix(d-1,v|{-1}),constructMatrix(d-1,v|{1})}
+	  else {v});
+     homHalf := (sort (promote(matrix constructMatrix(d,{}),QQ) | matrix toList(2^d:{s})),map(QQ^(d+1),QQ^0,0));
+     homVert := (sort (matrix {toList(2*d:1_QQ)} || (map(QQ^d,QQ^d,s) | map(QQ^d,QQ^d,-s))),map(QQ^(d+1),QQ^0,0));
+     polyhedronBuilder(homHalf,homVert))
 
 
 --   INPUT : '(d,s)',  where 'd' is a strictly positive integer, the dimension of the polytope, and 's' is a
@@ -2565,7 +2573,7 @@ emptyPolyhedron ZZ := n -> (
      -- Checking for input errors
      if n < 1 then error("The ambient dimension must be positive");
      verticesA := 2:map(QQ^(n+1),QQ^0,0);
-     hyperA := fourierMotzkin verticesA;
+     hyperA := (map(QQ^(n+1),QQ^0,0),map(QQ^(n+1),QQ^(n+1),1));
      polyhedronBuilder(hyperA,verticesA));
 
 
@@ -2577,7 +2585,27 @@ hirzebruch = method(TypicalValue => Fan)
 hirzebruch ZZ := r -> (
      -- Checking for input errors
      if r < 0 then error ("Input must be a positive integer");
-     normalFan convexHull matrix {{0,1,0,1+r},{0,0,1,1}})
+     L := {((matrix{{0,-1},{1,r}},map(QQ^2,QQ^0,0)),(matrix{{1,-r},{0,-1}},map(QQ^2,QQ^0,0))),
+	   ((matrix{{0,-1},{-1,r}},map(QQ^2,QQ^0,0)),(matrix{{1,r},{0,1}},map(QQ^2,QQ^0,0))),
+	   ((matrix{{1,0},{0,1}},map(QQ^2,QQ^0,0)),(matrix{{-1,0},{0,-1}},map(QQ^2,QQ^0,0))),
+	   ((matrix{{1,0},{0,-1}},map(QQ^2,QQ^0,0)),(matrix{{-1,0},{0,1}},map(QQ^2,QQ^0,0)))};
+     L = apply(L,coneBuilder);
+     F := new Fan from {
+	  "generatingCones" => set L,
+	  "ambient dimension" => 2,
+	  "top dimension of the cones" => 2,
+	  "number of generating cones" => 4,
+	  "rays" => set {matrix{{0_QQ}, {-1}},matrix{{1}, {0}},matrix{{-1}, {2}},matrix{{0}, {1}}},
+	  "number of rays" => 4,
+	  "isPure" => true,
+	  symbol cache => new CacheTable};
+     F.cache.isComplete = true;
+     F.cache.isPointed = true;
+     F.cache.isPolytopal = true;
+     F.cache.isSmooth = true;
+     F.cache.polytope = polyhedronBuilder((map(QQ^3,QQ^4,{{0, -1, 0, -1}, {-1, 1, 0, 0}, {0, -r, -1, 1}}),map(QQ^3,0,0)),
+			 (map(QQ^3,QQ^4,{{1, 1, 1, 1}, {0, 1, 0, 1+r}, {0, 0, 1, 1}}),map(QQ^3,0,0)));
+     F)
 
 
 
