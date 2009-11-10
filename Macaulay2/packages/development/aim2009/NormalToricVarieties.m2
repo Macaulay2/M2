@@ -56,8 +56,8 @@ normalToricVariety (List, List) := (V,F) -> (
 	  symbol cache => new CacheTable})
 
 normalToricVariety Fan := F -> (
-     R := rays F;
-     Fs := apply(genCones F, C -> (Cr:=rays C; Cr = set apply(numColumns Cr, i -> Cr_{i}); positions(R,r -> Cr#?r)));
+     R := apply(rays F, e -> lift(e,ZZ));
+     Fs := apply(maxCones F, C -> (Cr:= lift(rays C,ZZ); Cr = set apply(numColumns Cr, i -> Cr_{i}); positions(R,r -> Cr#?r)));
      X := new NormalToricVariety from {
 	  symbol rays => apply(R, r -> flatten entries r),
 	  symbol facets => Fs,
@@ -105,7 +105,7 @@ projectiveSpace ZZ := d -> (
      V := entries transpose (map(ZZ^d,ZZ^1, i -> -1) | map(ZZ^d,ZZ^d,1));
      F := subsets(d+1,d);
      X := normalToricVariety(V,F);
-     X.cache.cones = new MutableHashTable from apply(F, f -> f => (1,1));
+     X.cache.cones = new MutableHashTable from apply(F, f -> f => (d,1));
      X)
 
 hirzebruchSurface = method(TypicalValue => NormalToricVariety)
@@ -114,7 +114,7 @@ hirzebruchSurface ZZ := a -> (
      F := {{0,1}, {1,2}, {2,3}, {0,3}};
      X := normalToricVariety(V,F);
      classGroup(X, matrix{{1,-a,1,0},{0,1,0,1}});
-     X.cache.cones = new MutableHashTable from apply(F, f -> f => (1,1));
+     X.cache.cones = new MutableHashTable from apply(F, f -> f => (2,1));
      X)
 
 weightedProjectiveSpace = method(TypicalValue => NormalToricVariety)
@@ -174,7 +174,7 @@ ideal NormalToricVariety := Ideal => X -> (
      X.cache.ideal)
 monomialIdeal NormalToricVariety := MonomialIdeal => X -> monomialIdeal ideal X
 
-NormalToricVariety ** NormalToricVariety := NormalToricVariety => (X,Y) -> (
+NormalToricVariety * NormalToricVariety := NormalToricVariety => (X,Y) -> (
      V1 := transpose matrix rays X;
      V2 := transpose matrix rays Y;
      V := entries transpose (V1 ++ V2);
@@ -302,6 +302,7 @@ faceLatticeSimple = (d,R,HS) -> (
 
 
 stellarSubdivision (NormalToricVariety,List) := (X,r) -> (
+     if not X.cache.?halfspaces then X.cache.halfspaces = new MutableHashTable;
      replacement := {};
      rm := matrix transpose {r};
      n := #(rays X);
@@ -1069,7 +1070,7 @@ document {
      "For a product of projective spaces, the total coordinate ring has a 
      bigrading.",
      EXAMPLE lines ///
-	  X = projectiveSpace(2) ** projectiveSpace(3);
+	  X = projectiveSpace(2) * projectiveSpace(3);
 	  gens ring X
 	  degrees ring X
 	  ///,
@@ -1113,7 +1114,7 @@ document {
      "The irrelevant ideal for a product of toric varieties is
      intersection of the irrelevant ideal of the factors.",
      EXAMPLE lines ///
-	  X = projectiveSpace(3) ** projectiveSpace(4);
+	  X = projectiveSpace(3) * projectiveSpace(4);
 	  S = ring X;
 	  I = ideal X
 	  primaryDecomposition I
@@ -1135,9 +1136,9 @@ document {
      }     
 
 document { 
-     Key => {(symbol **,NormalToricVariety,NormalToricVariety)},
+     Key => {(symbol *,NormalToricVariety,NormalToricVariety)},
      Headline => "the cartesian product",
-     Usage => "X ** Y",
+     Usage => "X * Y",
      Inputs => {"X", "Y" => NormalToricVariety },
      Outputs => {{"the product of ", TT "X", " and ", TT "Y"}},
      "The cartesian product of two varieties, both defined the same 
@@ -1147,7 +1148,7 @@ document {
      EXAMPLE lines ///
 	  PP2 = projectiveSpace 2;
 	  FF2 = hirzebruchSurface 2;
-	  X = FF2 ** PP2;
+	  X = FF2 * PP2;
 	  #rays X == #rays FF2 + #rays PP2
      	  transpose matrix rays X
      	  transpose matrix rays FF2 ++ transpose matrix rays PP2
