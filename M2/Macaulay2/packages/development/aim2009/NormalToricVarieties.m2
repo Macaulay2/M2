@@ -2,14 +2,15 @@
 needsPackage "Polyhedra"
 newPackage(
      "NormalToricVarieties",
-     Version => "0.5",
-     Date => "20 June 2009",
+     AuxiliaryFiles => true,
+     Version => "0.75",
+     Date => "10 November 2009",
      Authors => {{
 	       Name => "Gregory G. Smith", 
 	       Email => "ggsmith@mast.queensu.ca", 
 	       HomePage => "http://www.mast.queensu.ca/~ggsmith"}},
      Headline => "normal toric varieties",
-     DebuggingMode => false
+     DebuggingMode => true
      )
 
 export { 
@@ -31,7 +32,7 @@ export {
      picardGroup,
      picardToClass,
      nef,
-     makePrimitive
+     smoothFanoToricVariety
      }
 
 ---------------------------------------------------------------------------
@@ -40,8 +41,16 @@ export {
 needsPackage "FourierMotzkin"
 needsPackage "Polyhedra"
 
+
+---------------------------------------------------------------------------
+-- some local functions
+makePrimitive = method()
+makePrimitive List := w -> (g := gcd w; apply(w, e -> e//g))
+
 Ideal ^ Array := (I,p) -> ideal apply(I_*, i -> i^(p#0))
 
+
+---------------------------------------------------------------------------
 NormalToricVariety = new Type of Variety
 NormalToricVariety.synonym = "normal toric variety"
 NormalToricVariety.GlobalAssignHook = globalAssignFunction
@@ -52,31 +61,19 @@ normalToricVariety = method(TypicalValue => NormalToricVariety)
 normalToricVariety (List, List) := (V,F) -> (
      new NormalToricVariety from {
 	  symbol rays => V,
-	  symbol facets => F,
+	  symbol max => F,
 	  symbol cache => new CacheTable})
-
-normalToricVariety Fan := F -> (
-     R := apply(rays F, e -> lift(e,ZZ));
-     Fs := apply(maxCones F, C -> (Cr:= lift(rays C,ZZ); Cr = set apply(numColumns Cr, i -> Cr_{i}); positions(R,r -> Cr#?r)));
-     X := new NormalToricVariety from {
-	  symbol rays => apply(R, r -> flatten entries r),
-	  symbol facets => Fs,
-	  symbol cache => new CacheTable};
-     X.cache.isFan = true;
-     X.cache.Fan = F;
-     X)
-
-normalToricVariety Polyhedron := P -> normalToricVariety normalFan P
 
 --rays = method(TypicalValue => List)
 rays NormalToricVariety := List => X -> X.rays
-max NormalToricVariety := List => X -> X.facets
+max NormalToricVariety := List => X -> X.max
 
 dim NormalToricVariety := ZZ => X -> (
      if not X.cache.?dim then X.cache.dim = #(rays X)#0;
-     X.cache.dim)
+     return X.cache.dim)
 
-dim (List,NormalToricVariety):= (sigma,X) ->(
+--??
+dim (List,NormalToricVariety):= ZZ => (sigma,X) -> (
 	if (not X.cache.?cones) then X.cache.cones = new MutableHashTable;
 	if (not X.cache.cones#?sigma) then (
 		X.cache.cones#sigma = if #sigma>1 then (
@@ -86,7 +83,7 @@ dim (List,NormalToricVariety):= (sigma,X) ->(
 	X.cache.cones#sigma#0
 )
 
-
+--??
 latticeIndex = method()
 latticeIndex (List,NormalToricVariety):= (sigma,X) ->(
 	if (not X.cache.?cones) then X.cache.cones = new MutableHashTable;
@@ -98,7 +95,6 @@ latticeIndex (List,NormalToricVariety):= (sigma,X) ->(
 	X.cache.cones#sigma#1
 )
 
-
 projectiveSpace = method(TypicalValue => NormalToricVariety)
 projectiveSpace ZZ := d -> (
      if d < 0 then error "-- expected nonnegative integer";
@@ -106,6 +102,7 @@ projectiveSpace ZZ := d -> (
      F := subsets(d+1,d);
      X := normalToricVariety(V,F);
      X.cache.cones = new MutableHashTable from apply(F, f -> f => (d,1));
+     -- add basic cache information?
      X)
 
 hirzebruchSurface = method(TypicalValue => NormalToricVariety)
@@ -115,6 +112,7 @@ hirzebruchSurface ZZ := a -> (
      X := normalToricVariety(V,F);
      classGroup(X, matrix{{1,-a,1,0},{0,1,0,1}});
      X.cache.cones = new MutableHashTable from apply(F, f -> f => (2,1));
+     -- add basic cache information?     
      X)
 
 weightedProjectiveSpace = method(TypicalValue => NormalToricVariety)
@@ -128,6 +126,20 @@ weightedProjectiveSpace List := q -> (
      F := subsets(d+1,d);
      normalToricVariety(V,F))
 
+NormalToricVariety ** NormalToricVariety := NormalToricVariety => (X,Y) -> (
+     V1 := transpose matrix rays X;
+     V2 := transpose matrix rays Y;
+     V := entries transpose (V1 ++ V2);
+     F1 := max X;
+     F2 := max Y;
+     n := #rays X;
+     F2 = apply(F2, s -> apply(s, i -> i+n));
+     F := flatten table(F1,F2, (s,t) -> s|t);
+     new NormalToricVariety from {
+	  symbol rays => V,
+	  symbol max => F,
+	  symbol cache => new CacheTable})
+
 classGroup = method(TypicalValue => Module)
 classGroup NormalToricVariety := X -> (
      if not X.cache.?classGroup then (
@@ -135,6 +147,8 @@ classGroup NormalToricVariety := X -> (
      	  X.cache.classGroup = C; 
      	  X.cache.degreeMap = (C.cache.pruningMap)^-1);
      X.cache.classGroup)
+
+-- eliminate this function by making it an option on normalToricVariety
 classGroup (NormalToricVariety,Matrix) := (X,A) -> (
      rawC := cokernel matrix rays X;
      C := prune rawC;
@@ -174,182 +188,23 @@ ideal NormalToricVariety := Ideal => X -> (
      X.cache.ideal)
 monomialIdeal NormalToricVariety := MonomialIdeal => X -> monomialIdeal ideal X
 
-NormalToricVariety * NormalToricVariety := NormalToricVariety => (X,Y) -> (
-     V1 := transpose matrix rays X;
-     V2 := transpose matrix rays Y;
-     V := entries transpose (V1 ++ V2);
-     F1 := max X;
-     F2 := max Y;
-     n := #rays X;
-     F2 = apply(F2, s -> apply(s, i -> i+n));
-     F := flatten table(F1,F2, (s,t) -> s|t);
-     new NormalToricVariety from {
-	  symbol rays => V,
-	  symbol facets => F,
-	  symbol cache => new CacheTable})
-
 isDegenerate = method(TypicalValue => Boolean)
 isDegenerate NormalToricVariety := X -> kernel matrix rays X != 0
-
-isFan = method(TypicalValue => Boolean)
-isFan NormalToricVariety := X -> (
-     if not X.cache.?isFan then (
-	  X.cache.isFan = false;
-	  if all(rays X, r -> gcd r == 1) and sort unique flatten max X == toList(0..#(rays X)-1) then (
-	       F := max X;
-	       if all(#F-1, i -> all(i+1..#F-1, j -> not (isSubset(set F#i,set F#j) or isSubset(set F#j,set F#i)))) then (
-		    R := matrix transpose rays X;
-		    F = apply(F, f -> (f,posHull R_f));
-		    if all(F, f -> #(f#0) == numColumns rays f#1) then (
-			 F = apply(F, f -> f#1);
-			 if commonFace F then (
-			      X.cache.Fan = fan F;
-			      X.cache.isFan = true)))));
-     X.cache.isFan)
-
-isComplete NormalToricVariety := X -> (
-     if not X.cache.?Fan or not X.cache.?isComplete then X.cache.isComplete = isComplete fan X;
-     X.cache.isComplete)
-
-isPure NormalToricVariety := X -> (
-     if not X.cache.?Fan or not X.cache.?isPure then X.cache.isPure = isPure fan X;
-     X.cache.isPure)
-
-isProjective = method(TypicalValue => Boolean)
-isProjective NormalToricVariety := X -> (
-     if not X.cache.?isFan then isFan X;
-     if not X.cache.isFan then error("The data does not define a Fan");
-     isPolytopal X.cache.Fan)
 
 isSimplicial = method(TypicalValue => Boolean)
 isSimplicial NormalToricVariety := X -> (
      if not X.cache.?simplicial then (
-     	  X.cache.simplicial = all(max X, s -> #s == dim(s,X)));
-     X.cache.simplicial)
+     	  V := transpose matrix rays X;
+     	  X.cache.simplicial = all(max X, s -> #s == rank V_s));
+     return X.cache.simplicial)
      
---isSmooth = method(TypicalValue => Boolean)
 isSmooth NormalToricVariety := X -> (
      if not X.cache.?smooth then (
-     	  X.cache.smooth = all(max X, s -> #s == dim(s,X) and 1 == latticeIndex(s,X));
+     	  V := transpose matrix rays X;
+     	  X.cache.smooth = all(max X, s -> #s == rank V_s and 1 == minors(#s,V_s));
 	  if X.cache.smooth == true then X.cache.simplicial = true);
      X.cache.smooth)
 
-fan NormalToricVariety := X -> (
-     if not X.cache.?Fan then (
-	  R := promote(matrix transpose rays X,QQ);
-	  L := sort apply(max X, C -> posHull R_C);
-	  X.cache.Fan = new Fan from {
-	       "generatingCones" => set L,
-	       "ambient dimension" => numRows R,
-	       "top dimension of the cones" => dim L#0,
-	       "number of generating cones" => #L,
-	       "rays" => set apply(rays X, r -> promote(matrix transpose {r},QQ)),
-	       "number of rays" => numColumns R,
-	       "isPure" => dim L#0 == dim last L,
-	       symbol cache => new CacheTable});
-     X.cache.Fan)
-
-
-halfspaces (List,NormalToricVariety) := Matrix => (sigma,X) -> (
-     if not X.cache.?halfspaces then X.cache.halfspaces = new MutableHashTable;
-     if not X.cache.halfspaces#?sigma then X.cache.halfspaces#sigma = -(fourierMotzkin matrix transpose ((rays X)_sigma))#0;
-     X.cache.halfspaces#sigma)
-
-makeSimplicial = method()
-makeSimplicial (NormalToricVariety) := NormalToricVariety => X ->(
-     R := rays X;
-     Rm := matrix rays X;
-     Cones := partition(l -> dim(l,X) == #l,max X);
-     simpCones := if Cones#?true then Cones#true else {};
-     Cones = if Cones#?false then Cones#false else {};
-     while Cones != {} do (
-	  C := Cones#0;
-	  HS := halfspaces(C,X);
-	  FL := reverse faceLatticeSimple(dim(C,X),transpose Rm^C,HS);
-	  r := {};
-	  for i from 1 to #FL-1 do (
-	       nonsimpFace := select(1,FL#i, e -> #(toList e#0) != i+2);
-	       if nonsimpFace != {} then (r = makePrimitive flatten entries sum toList nonsimpFace#0#0; break));
-	  Y := normalToricVariety(R,Cones);
-	  Y.cache.halfspaces = X.cache.halfspaces;
-	  Y.cache.cones = X.cache.cones;
-	  X = stellarSubdivision(Y,r);
-	  R = rays X;
-	  Rm = matrix R;
-	  Cones = partition(l -> dim(l,X) == #l, max X);
-	  if Cones#?true then simpCones = simpCones | Cones#true;
-	  if Cones#?false then Cones = Cones#false else Cones = {});
-     Xsimp := normalToricVariety(R,simpCones);
-     Xsimp.cache.cones = X.cache.cones;
-     if X.cache.?halfspaces then Xsimp.cache.halfspaces = X.cache.halfspaces;
-     Xsimp)
-
-
-faceLatticeSimple = (d,R,HS) -> (
-     R = apply(numColumns R, i -> R_{i});
-     HS = apply(numColumns HS, i -> transpose HS_{i});
-     L := {(set R,set {},set HS)};
-     {L}|apply(d-2, i -> (
-	       Lnew := flatten apply(L, l -> (
-			 l = (toList l#0,toList l#1,toList l#2);
-			 lnew := apply(#(l#2), j -> (
-				   hs := (l#2)#j;
-				   newrs := select(l#0, r -> hs * r == 0);
-				   newHS := select(drop(l#2,{j,j}), k -> any(newrs, r -> k * r == 0));
-				   (set newrs,set(l#1|{hs}),set newHS)));
-			 lnew = select(lnew, e -> all(lnew, f -> not isSubset(e#0,f#0) or e === f))));
-	       L = unique Lnew)))
-
-
-stellarSubdivision (NormalToricVariety,List) := (X,r) -> (
-     if not X.cache.?halfspaces then X.cache.halfspaces = new MutableHashTable;
-     replacement := {};
-     rm := matrix transpose {r};
-     n := #(rays X);
-     R := matrix rays X;
-     newMax := flatten apply(max X, C -> (
-	       M := promote(R^C,QQ);
-	       if replacement == {} then (		    
-		    if dim(C,X) == #C then (
-			 -- Simplicial Cone
-			 M = inverse M;
-			 v := flatten entries (transpose M * rm);
-			 if all(v, i -> i >= 0) then (
-			      replacement = positions(v, i -> i > 0);
-			      replacement = apply(replacement, i -> C#i);
-			      C = toList (set C - set replacement) | {n};
-			      apply(#replacement, i -> sort(C|drop(replacement,{i,i}))))
-			 else {C})
-		    else (
-			 -- Non-simplicial Cone
-			 HS := transpose halfspaces(C,X);
-			 w := flatten entries (HS * rm);
-			 if all(w, i -> i >= 0) then (
-			      replacement = positions(w, i -> i == 0);
-			      correctFaces := submatrix'(HS,replacement);
-			      HS = HS^replacement;
-			      replacement = select(C, i -> HS * (transpose R^{i}) == 0);
-			      apply(numRows correctFaces, i -> select(C, j -> (correctFaces^{i}) * (transpose R^{j}) == 0) | {n}))
-			 else {C}))
-	       else (
-		    if isSubset(set replacement,set C) then (
-			 if dim(C,X) == #C then (
-			      -- Simplicial Cone
-			      C = toList (set C - set replacement) | {n};
-			      apply(#replacement, i -> sort(C|drop(replacement,{i,i}))))
-			 else (
-			      HS1 := transpose halfspaces(C,X);
-			      for i from 0 to numRows HS1 -1 list (
-				   if HS1^{i} * (transpose R^replacement) == 0 then continue else select(C, j -> HS1^{i} * (transpose R^{j}) == 0) | {n})))
-		    else {C})));
-     newRays := rays X | {r};
-     Y := new NormalToricVariety from {
-	  symbol rays => newRays,
-	  symbol facets => newMax,
-	  symbol cache => new CacheTable};
-     Y.cache.halfspaces = X.cache.halfspaces;
-     Y.cache.cones = X.cache.cones;
-     Y)
 
 weilDivisors = method(TypicalValue => Module)
 weilDivisors NormalToricVariety := X -> (
@@ -535,32 +390,196 @@ nef NormalToricVariety := X -> (
      scan(B_*, m -> outer = outer | (fourierMotzkin A_(apply(support(m), z -> index z)))#0 );
      entries transpose ((fourierMotzkin outer)#0)^{0..(#rays X - dim X-1)})
 
+-- creating a HashTable with the defining data of low dimensional smooth
+-- Fano toric varieties
+fanoFile := currentFileDirectory | "NormalToricVarieties/smoothFanoToricVarieties.txt"
+getFano := memoize(
+     () -> (
+	  if notify then stderr << "--loading file " << fanoFile << endl;
+	  hashTable apply( lines get fanoFile,
+	       x -> (
+	       	    x = value x;
+	       	    ((x#0,x#1),drop(x,2))))))
+
+smoothFanoToricVariety = method(TypicalValue => NormalToricVariety)
+smoothFanoToricVariety (ZZ,ZZ) := (d,i) -> (
+     if d < 0 or i < 0 then error "expected positive integers"
+     else if d == 1 and i > 0 then error "there is only one smooth Fano toric curve"
+     else if d == 2 and i > 4 then error "there are only five smooth Fano toric surfaces"
+     else if d == 3 and i > 17 then error "there are only 18 smooth Fano toric 3-folds"
+     else if d == 4 and i > 123 then error "there are only 124 smooth Fano toric 4-folds"
+     else if d > 4 then error "database doesn't (yet?) include smooth Fano toric varieties of dimension greater than 4"
+     else (
+	  s := (getFano())#(d,i);
+	  X := normalToricVariety(s#0,s#1);
+	  C := classGroup(X,transpose matrix s#2);
+	  return X))
 
 
--- this code is not currently used or exported
-toBinomial = (a,S) -> (
-     pos := 1_S;
-     neg := 1_S;
-     scan(#a, i -> if a_i > 0 then pos = pos*S_i^(a_i)
-	  else if a_i < 0 then neg = neg*S_i^(-a_i));
-     pos - neg);
 
-toricIdeal = (A,S) -> (
-     n := rank source A;
-     if numgens S < n then error("not enough variables in your ring");
-     B := transpose LLL syz A;
-     J := ideal apply(entries B, b -> toBinomial(b,S));
-     scan(gens S, f -> J = saturate(J,f));
-     J);
+---------------------------------------------------------------------------
+-- code that interfaces with the Polyhedra package
+
+normalToricVariety Fan := F -> (
+     R := rays F;
+     Fs := apply(genCones F, C -> (Cr:=rays C; Cr = set apply(numColumns Cr, i -> Cr_{i}); positions(R,r -> Cr#?r)));
+     X := new NormalToricVariety from {
+	  symbol rays => apply(R, r -> flatten entries r),
+	  symbol max => Fs,
+	  symbol cache => new CacheTable};
+     X.cache.isFan = true;
+     X.cache.Fan = F;
+     X)
+
+normalToricVariety Polyhedron := P -> normalToricVariety normalFan P
+
+isFan = method(TypicalValue => Boolean)
+isFan NormalToricVariety := X -> (
+     if not X.cache.?isFan then (
+	  X.cache.isFan = false;
+	  if all(rays X, r -> gcd r == 1) and sort unique flatten max X == toList(0..#(rays X)-1) then (
+	       F := max X;
+	       if all(#F-1, i -> all(i+1..#F-1, j -> not (isSubset(set F#i,set F#j) or isSubset(set F#j,set F#i)))) then (
+		    R := matrix transpose rays X;
+		    F = apply(F, f -> (f,posHull R_f));
+		    if all(F, f -> #(f#0) == numColumns rays f#1) then (
+			 F = apply(F, f -> f#1);
+			 if commonFace F then (
+			      X.cache.Fan = fan F;
+			      X.cache.isFan = true)))));
+     X.cache.isFan)
+
+isComplete NormalToricVariety := X -> (
+     if not X.cache.?Fan or not X.cache.?isComplete then X.cache.isComplete = isComplete fan X;
+     X.cache.isComplete)
+
+isPure NormalToricVariety := X -> (
+     if not X.cache.?Fan or not X.cache.?isPure then X.cache.isPure = isPure fan X;
+     X.cache.isPure)
+
+isProjective = method(TypicalValue => Boolean)
+isProjective NormalToricVariety := X -> (
+     if not X.cache.?isFan then isFan X;
+     if not X.cache.isFan then error("The data does not define a Fan");
+     isPolytopal X.cache.Fan)
+
+fan NormalToricVariety := X -> (
+     if not X.cache.?Fan then (
+	  R := promote(matrix transpose rays X,QQ);
+	  L := sort apply(max X, C -> posHull R_C);
+	  X.cache.Fan = new Fan from {
+	       "generatingCones" => set L,
+	       "ambient dimension" => numRows R,
+	       "top dimension of the cones" => dim L#0,
+	       "number of generating cones" => #L,
+	       "rays" => set apply(rays X, r -> promote(matrix transpose {r},QQ)),
+	       "number of rays" => numColumns R,
+	       "isPure" => dim L#0 == dim last L,
+	       symbol cache => new CacheTable});
+     X.cache.Fan)
 
 
-makePrimitive = method()
-makePrimitive List := w -> (g := gcd w; apply(w, e -> e//g))
+halfspaces (List,NormalToricVariety) := Matrix => (sigma,X) -> (
+     if not X.cache.?halfspaces then X.cache.halfspaces = new MutableHashTable;
+     if not X.cache.halfspaces#?sigma then X.cache.halfspaces#sigma = -(fourierMotzkin matrix transpose ((rays X)_sigma))#0;
+     X.cache.halfspaces#sigma)
+
+makeSimplicial = method()
+makeSimplicial (NormalToricVariety) := NormalToricVariety => X ->(
+     R := rays X;
+     Rm := matrix rays X;
+     Cones := partition(l -> dim(l,X) == #l,max X);
+     simpCones := if Cones#?true then Cones#true else {};
+     Cones = if Cones#?false then Cones#false else {};
+     while Cones != {} do (
+	  C := Cones#0;
+	  HS := halfspaces(C,X);
+	  FL := reverse faceLatticeSimple(dim(C,X),transpose Rm^C,HS);
+	  r := {};
+	  for i from 1 to #FL-1 do (
+	       nonsimpFace := select(1,FL#i, e -> #(toList e#0) != i+2);
+	       if nonsimpFace != {} then (r = makePrimitive flatten entries sum toList nonsimpFace#0#0; break));
+	  Y := normalToricVariety(R,Cones);
+	  Y.cache.halfspaces = X.cache.halfspaces;
+	  Y.cache.cones = X.cache.cones;
+	  X = stellarSubdivision(Y,r);
+	  R = rays X;
+	  Rm = matrix R;
+	  Cones = partition(l -> dim(l,X) == #l, max X);
+	  if Cones#?true then simpCones = simpCones | Cones#true;
+	  if Cones#?false then Cones = Cones#false else Cones = {});
+     Xsimp := normalToricVariety(R,simpCones);
+     Xsimp.cache.cones = X.cache.cones;
+     if X.cache.?halfspaces then Xsimp.cache.halfspaces = X.cache.halfspaces;
+     Xsimp)
 
 
+faceLatticeSimple = (d,R,HS) -> (
+     R = apply(numColumns R, i -> R_{i});
+     HS = apply(numColumns HS, i -> transpose HS_{i});
+     L := {(set R,set {},set HS)};
+     {L}|apply(d-2, i -> (
+	       Lnew := flatten apply(L, l -> (
+			 l = (toList l#0,toList l#1,toList l#2);
+			 lnew := apply(#(l#2), j -> (
+				   hs := (l#2)#j;
+				   newrs := select(l#0, r -> hs * r == 0);
+				   newHS := select(drop(l#2,{j,j}), k -> any(newrs, r -> k * r == 0));
+				   (set newrs,set(l#1|{hs}),set newHS)));
+			 lnew = select(lnew, e -> all(lnew, f -> not isSubset(e#0,f#0) or e === f))));
+	       L = unique Lnew)))
 
 
+stellarSubdivision (NormalToricVariety,List) := (X,r) -> (
+     replacement := {};
+     rm := matrix transpose {r};
+     n := #(rays X);
+     R := matrix rays X;
+     newMax := flatten apply(max X, C -> (
+	       M := promote(R^C,QQ);
+	       if replacement == {} then (		    
+		    if dim(C,X) == #C then (
+			 -- Simplicial Cone
+			 M = inverse M;
+			 v := flatten entries (transpose M * rm);
+			 if all(v, i -> i >= 0) then (
+			      replacement = positions(v, i -> i > 0);
+			      replacement = apply(replacement, i -> C#i);
+			      C = toList (set C - set replacement) | {n};
+			      apply(#replacement, i -> sort(C|drop(replacement,{i,i}))))
+			 else {C})
+		    else (
+			 -- Non-simplicial Cone
+			 HS := transpose halfspaces(C,X);
+			 w := flatten entries (HS * rm);
+			 if all(w, i -> i >= 0) then (
+			      replacement = positions(w, i -> i == 0);
+			      correctFaces := submatrix'(HS,replacement);
+			      HS = HS^replacement;
+			      replacement = select(C, i -> HS * (transpose R^{i}) == 0);
+			      apply(numRows correctFaces, i -> select(C, j -> (correctFaces^{i}) * (transpose R^{j}) == 0) | {n}))
+			 else {C}))
+	       else (
+		    if isSubset(set replacement,set C) then (
+			 if dim(C,X) == #C then (
+			      -- Simplicial Cone
+			      C = toList (set C - set replacement) | {n};
+			      apply(#replacement, i -> sort(C|drop(replacement,{i,i}))))
+			 else (
+			      HS1 := transpose halfspaces(C,X);
+			      for i from 0 to numRows HS1 -1 list (
+				   if HS1^{i} * (transpose R^replacement) == 0 then continue else select(C, j -> HS1^{i} * (transpose R^{j}) == 0) | {n})))
+		    else {C})));
+     newRays := rays X | {r};
+     Y := new NormalToricVariety from {
+	  symbol rays => newRays,
+	  symbol facets => newMax,
+	  symbol cache => new CacheTable};
+     Y.cache.halfspaces = X.cache.halfspaces;
+     Y.cache.cones = X.cache.cones;
+     Y)
 
+---------------------------------------------------------------------------
 -- THINGS TO IMPLEMENT?
 --   isFano
 --   cotangentBundle
@@ -582,7 +601,7 @@ makePrimitive List := w -> (g := gcd w; apply(w, e -> e//g))
 -- DOCUMENTATION
 ---------------------------------------------------------------------------
 beginDocumentation()
-
+    
 document { 
      Key => NormalToricVarieties,
      Headline => "normal toric varieties",
@@ -594,10 +613,10 @@ document {
      theory of normal toric varieties very explicit and computable.",
      PARA{},     
 
-     "This ", EM "Macaulay 2", " package is designed to help
-     manipulate and investigate normal toric varieties and related
-     geometric objects.  An introduction to the theory of normal toric
-     varieties can be found in the following textbooks:",
+     "This ", EM "Macaulay 2", " package is designed to manipulate
+     normal toric varieties and related geometric objects.  An
+     introduction to the theory of normal toric varieties can be found
+     in the following textbooks:",     
      UL { 
 	  {"Günter Ewald, ", EM "Combinatorial convexity and algebraic
            geometry", ", Graduate Texts in Mathematics 168. 
@@ -610,6 +629,18 @@ document {
 	   Ergebnisse der Mathematik und ihrer Grenzgebiete (3) 15,
 	   Springer-Verlag, Berlin, 1988. ISBN: 3-540-17600-4" },
 	   },
+     
+     SUBSECTION "Contributors",
+     
+     "The following people have generously contributed code or worked
+     on our code.",     
+     UL {
+	  {HREF("http://www.math.purdue.edu/~cberkesc/","Christine Berkesch")},	  
+	  {HREF("http://page.mi.fu-berlin.de/rbirkner/indexen.htm","René Birkner")},
+     	  {HREF("http://www.warwick.ac.uk/staff/D.Maclagan/","Diane Maclagan")},
+	  {HREF("http://www.math.uiuc.edu/~asecele2/","Alexandra Seceleanu")},
+	  },
+     Subnodes => {TO "NormalToricVariety"}
      }  
 
 document { 
@@ -617,13 +648,19 @@ document {
      Headline => "the class of all normal toric varieties",   
      "A normal toric variety corresponds to a strongly convex rational
      polyhedral fan in affine space.", 
-     PARA{}, 
-     "In this package, the fan associated to a normal ", TT "d",
-     "-dimensional toric variety lies in ", TT "N = ZZ", TT SUP "d",
-     TT " ** QQ", ", the ", TT "d", "-dimensional rational vector
-     space obtained from the lattice ", TT "ZZ", TT SUP "d", ".  The
-     fan is encoded by the minimal nonzero lattice points on its rays
-     and the set of rays defining the maximal cones.",
+     PARA{},
+      
+     "In this package, the fan associated to a normal ", TEX ///d///,
+     "-dimensional toric variety lies in the ", TEX ///d///,
+     "-dimensional rational vector space ", 
+     TEX ///N_{\mathbb Q} = {\mathbb Q}^d///, " with underlying
+     lattice ", TEX ///N = {\mathbb Z}^d///, ".  The fan is encoded by
+     the minimal nonzero lattice points on its rays and the set of
+     rays defining the maximal cones.",
+     
+     Subnodes => {
+	  TO "normalToricVariety",
+	  }
      }  
 
 document { 
@@ -631,10 +668,10 @@ document {
      Headline => "create a normal toric variety",
      Usage => "normalToricVariety(Rho,Sigma)",
      Inputs => {
-	  "Rho" => List => "of lists; each entry is the minimal nonzero
-	  lattice point on a ray in the fan",
-	  "Sigma" => List => "of lists; each entry indexes the rays 
-	  defining a maximal cone in the fan", 
+	  "Rho" => List => "of lists of integers; each entry is the
+	  minimal nonzero lattice point on a ray in the fan",
+	  "Sigma" => List => "of lists of nonnegative integers; each
+	  entry indexes the rays defining a maximal cone in the fan",	  
           },
      Outputs => {NormalToricVariety => "the normal toric variety
 	  determined by the fan" },
@@ -670,8 +707,12 @@ document {
 	  max PP4
 	  dim PP4
           ///,     
-     SeeAlso => {(rays, NormalToricVariety), (max,NormalToricVariety),
-	  projectiveSpace, weightedProjectiveSpace, hirzebruchSurface}
+     Subnodes => {
+	  TO "projectiveSpace",
+	  TO "weightedProjectiveSpace",
+	  TO "hirzebruchSurface"
+	  },	  
+     SeeAlso => {(rays, NormalToricVariety), (max,NormalToricVariety)}
      }	
 
 document { 
@@ -1708,6 +1749,42 @@ document {
      SeeAlso => {classGroup}
      }     
 
+document { 
+     Key => {smoothFanoToricVariety, (smoothFanoToricVariety,ZZ,ZZ)},
+     Headline => "database of smooth Fano toric varieties",
+     Usage => "smoothFanoToricVariety(d,i)",
+     Inputs => {
+	  "d" => ZZ => " dimension of toric variety",
+	  "i" => ZZ => " index of toric variety in database",
+	  },
+     Outputs => {NormalToricVariety => " a smooth Fano toric variety"},
+     "This function accesses a database of all smooth Fano toric
+     varieties of dimension at most 4.  The enumeration of the toric
+     varieties follows ",  
+     HREF("http://www.mathematik.uni-tuebingen.de/~batyrev/batyrev.html.en", "Victor V. Batyrev's"), 
+     " classification; see ", 
+     HREF("http://arxiv.org/abs/math/9801107", TT "arXiv:math/9801107v2"), " and ",
+     HREF("http://arxiv.org/abs/math/9911022", TT "arXiv:math/9011022"),     
+     PARA{},
+     "For all ", TT "d", ", ", TT "smoothFanoToricVariety(d,0)", "
+     yields projective ", TT "d", "-space.",
+     EXAMPLE lines ///
+     	  PP1 = smoothFanoToricVariety(1,0);
+     	  rays PP1	  
+     	  max PP1
+     	  PP4 = smoothFanoToricVariety(4,0);
+     	  rays PP4
+     	  max PP4
+	  ///,
+     "The following example was missing from Batyrev's table",
+     EXAMPLE lines ///
+	  W = smoothFanoToricVariety(4,123);
+	  rays W
+	  max W
+	  ///,
+     SeeAlso => {normalToricVariety}
+     }     
+
 ---------------------------------------------------------------------------
 -- TEST
 ---------------------------------------------------------------------------
@@ -1847,9 +1924,8 @@ end
 ---------------------------------------------------------------------------
 restart
 uninstallPackage "NormalToricVarieties"
-installPackage("NormalToricVarieties", AbsoluteLinks => false)
+installPackage "NormalToricVarieties"
 check NormalToricVarieties
 
-hello
-hello
+
 
