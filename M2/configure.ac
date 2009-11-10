@@ -949,7 +949,10 @@ AC_DEFINE_UNQUOTED(LAPACK,$val,whether to link with lapack)
 # we need to control the position of -lfac -lcf in the link line, so we don't add them to $LIBS nor to $BUILTLIBS, putting them in $SINGULARLIBS instead
 SAVELIBS=$LIBS
 if ! test "$SINGULARLIBS"
-then SINGULARLIBS="-lfac -lcf"
+then if test "$DEBUG" = yes
+     then SINGULARLIBS="-lfac-g -lcf"
+     else SINGULARLIBS="-lfac -lcf"
+     fi
 fi
 AC_SUBST(SINGULARLIBS) # no initial value
 while test $BUILD_factory = no -o $BUILD_libfac = no
