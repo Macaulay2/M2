@@ -16,8 +16,8 @@ newPackage("ToricVectorBundles",
 
 export {ToricVectorBundleKaneyama, ToricVectorBundleKlyachko,
         toricVectorBundle, addBase, addBaseChange, addDegrees, addFiltration, 
-	cocycleCheck, details, regCheck, eulerChi, charts, cohom, cotangentBundle, 
-	deltaE, dsum, extPower, isGeneral, randomDeformation, 
+	areIsomorphic, cocycleCheck, details, regCheck, eulerChi, charts, cohom, cotangentBundle, 
+	deltaE, dsum, existsDecomposition, extPower, findWeights, isGeneral, isomorphism, isVectorBundle, randomDeformation, 
 	symmProd, tangentBundle, tproduct, twist, weilToCartier, 
 	pp1ProductFan, projectiveSpaceFan, hirzebruchFan}
 
@@ -156,8 +156,8 @@ makeVBKlyachko = method(TypicalValue => ToricVectorBundleKlyachko)
 makeVBKlyachko (ZZ,Fan) := (k,F) -> (
      -- Checking for input errors
      if k < 1 then error("The vector bundle must have a positive rank");
-     if not isPure F then error("Fan must be of pure dimension");
-     if dim F != ambDim F then error("Fan must be of full dimension");
+--     if not isPure F then error("Fan must be of pure dimension");
+--     if dim F != ambDim F then error("Fan must be of full dimension");
      if not isPointed F then error("The Fan must be pointed");
      -- Writing the table of rays
      rayTable := rays F;
@@ -517,6 +517,9 @@ regCheck ToricVectorBundleKlyachko := tvb -> (
 ----------------------------------------------------------------------------
 
 
+liftable (Matrix,ZZ) := (M,R) -> all(flatten entries M, e -> liftable(e,R))
+
+
 
 -- PURPOSE : Computing the intersection of the images of two matrices
 --   INPUT : '(M,N)', two matrices with the same target
@@ -526,6 +529,51 @@ intersectMatrices = (M,N) -> (
 	       N = gens ker(M | N);
 	       N = N^{0..m-1};
 	       gens trim image(M*N));
+	  
+	  
+areIsomorphic = method(TypicalValue => Boolean)
+areIsomorphic (ToricVectorBundleKlyachko,ToricVectorBundleKlyachko) := (T1,T2) -> (
+     if not T1.cache.?isomorphic then (
+	  T1.cache.isomorphic = new MutableHashTable;
+	  if not T1.cache.?isoMatrix then T1.cache.isoMatrix = new MutableHashTable);
+     if not T2.cache.?isomorphic then (
+	  T2.cache.isomorphic = new MutableHashTable;
+	  if not T2.cache.?isoMatrix then T2.cache.isoMatrix = new MutableHashTable);     
+     if not T1.cache.isomorphic#?T2 then (
+	  local isoMatrix;
+	  T1.cache.isomorphic#T2 =(
+	       T1#"ToricVariety" == T2#"ToricVariety" and T1#"ring" === T2#"ring" and T1#"rank of the vector bundle" == T2#"rank of the vector bundle" and (
+		    fMT1 := T1#"filtrationMatricesTable";
+		    fMT2 := T2#"filtrationMatricesTable";
+		    bT1 := T1#"baseTable";
+		    bT2 := T2#"baseTable";
+		    bundleRing := T1#"ring";
+		    R := rays T1;
+		    r0 := R#0;
+		    R = drop(R,1);
+		    if sort fMT1#r0 != sort fMT2#r0 then false
+		    else (
+			 A := submatrix'(sort(promote(fMT1#r0,bundleRing) || bT1#r0),{0},);
+			 B := submatrix'(sort(promote(fMT2#r0,bundleRing) || bT2#r0),{0},);
+			 isoMatrix = B*(A^-1);
+			 all(R, r -> (
+				   f1 := flatten entries fMT1#r;
+				   f2 := flatten entries fMT2#r;
+				   sort f1 == sort f2 and all(unique f1, e -> (
+					     E1 := (bT1#r)_(positions(f1, i -> i <= e));
+					     E2 := (bT2#r)_(positions(f2, i -> i <= e));
+					     image(isoMatrix*E1) == image E2)))))));
+	  if T1.cache.isomorphic#T2 then (
+	       T1.cache.isoMatrix#T2 = isoMatrix;
+	       T2.cache.isomorphic#T1 = true;
+	       T2.cache.isoMatrix#T1 = isoMatrix^-1));
+     T1.cache.isomorphic#T2)
+
+isomorphism = method(TypicalValue => Matrix)
+isomorphism (ToricVectorBundleKlyachko,ToricVectorBundleKlyachko) := (T1,T2) -> (
+     if not areIsomorphic(T1,T2) then error("The bundles are not isomorphic");
+     T1.cache.isoMatrix#T2)				
+	       
 	  
 
 
@@ -684,199 +732,209 @@ cohom = method()
 --   INPUT : '(k,tvb,u)',  'k' for the 'k'th cohomology group, 'tvb' a ToricVectorBundleKaneyama, and 'u' the degree
 --  OUTPUT : 'ZZ',	     the dimension of the degree 'u' part of the 'k'th cohomology group of 'tvb'
 cohom (ZZ,ToricVectorBundleKaneyama,Matrix) := (k,tvb,u) -> (
-     -- Checking for input errors
-     if numRows u != tvb#"dimension of the variety" or numColumns u != 1 then error("The degree matrix must be a vector of variety dimension");
-     if ring u =!= ZZ then error("The degree must be an integer vector");
-     if k < 0 or tvb#"dimension of the variety" < k then error("k must be between 0 and the variety dimension for the k-th cohomolgy");
-     -- Extracting the neccesary data
-     rk := tvb#"rank of the vector bundle";
-     l := tvb#"number of affine charts";
-     tCT := sort keys tvb#"topConeTable";
-     bCT := tvb#"baseChangeTable";
-     dT := tvb#"degreeTable";
-     -- Recursive function that finds a path over codim 1 cones from one topdim cone ('i') to another ('j')
-     -- using the steps in 'pl'
-     findpath := (i,j,pl) -> (
-	  -- Recursive function finds a path from the actual cone 'i' to the Cone 'j' using the steps in 'pl'
-	  -- where 'cl' is the  sequence of steps taken so far from the original 'i' and 'minpath' is the 
-	  -- shortest path found so far
-	  findrecursive := (i,j,pl,cl,minpath) -> (
-	       -- If the last step from 'i' to 'j' is part of 'pl' then add '(i,j)' to 'cl'
-	       if ((member((i,j),pl)) or (member((j,i),pl))) then (
-		    cl = append(cl,(i,j));
-		    -- Check if the new found path is shorter than shortest so far
-		    if (#cl < #minpath) or (minpath == {}) then (
-			 minpath = cl))
-	       -- otherwise find a path with the remaining steps in 'pl'
-	       else (
-		    L1 := {};
-		    L2 := {};
-		    -- Sort the remaining possible steps into those containing 'i'in 'L1' and those who not in 'L2'
-		    scan(pl, e -> ( 
-			      if (member(i,e)) then ( L1 = append(L1,e))
-			      else ( L2 = append(L2,e))));
-		    -- Call findrecursive for each step in 'L1', with new starting cone the other index in the pair and new 
-		    -- remaining pairs list 'L2' and add the step to 'cl'
-		    scan(L1, e -> ( 
-			      if (e#0 == i) then (
-				   minpath = findrecursive(e#1,j,L2,append(cl,e),minpath))
-			      else ( 
-				   minpath = findrecursive(e#0,j,L2,append(cl,(e#1,e#0)),minpath)))));
-	       minpath);
-	  -- Start with an empty sequence of steps, no minimal path yet and all possible stepsd
-	  cl := {};
-	  minpath := {};
-	  findrecursive(i,j,pl,cl,minpath));
-     local M1;
-     local M2;
-     -- For the 'k'th cohomology group one needs all intersections of 'k', of 'k+1', and of 'k+2' charts of the covering
-     -- given by the maximal dimensional cones which are 'l' many, if 'k' is strictly positive. 
-     if (k > 0) then (
-	  -- Collecting all intersections of 'k' top cones together with the degrees 'd' of the first cone which satisfy
-	  -- u-d in the dual cone of the intersection
-	  M1 = subsets(0..l-1,k);
-	  M1 = hashTable apply(M1, cl -> (
-		    C := intersection apply(cl, i -> tCT#i);
-		    degs := dT#(tCT#(cl#0));
-		    L := select(toList(0..rk-1), i -> ( contains(dualCone(C),u-(degs_{i}))));
-		    cl => (L,C)));
-	  -- Collecting all intersections of 'k+1' top cones together with the degrees 'd' of the first cone which satisfy
-	  -- u-d in the dual cone of the intersection by taking each intersection of M1 and adding one cone
-	  M2 = {};
-	  scan(pairs M1, p -> (
-		    L := select(toList(0..rk-1), i -> (not member(i,p#1#0)));
-		    scan((last(p#0)+1)..(l-1), i -> (
-			      cl :=append(p#0,i);
-			      C := intersection(p#1#1,tCT#i);
-			      degs := dT#(tCT#(cl#0));
-			      M2 = append(M2,cl => (sort(unique(join(p#1#0,select(L, i -> ( contains(dualCone(C),u-(degs_{i}))))))),C))))));
-	  M2 = hashTable M2;
-	  M1 = hashTable apply(pairs M1, p -> ( p#0 => p#1#0)))
-     -- Otherwise take only the 'k+1' and 'k+2' intersections
-     else (
-	  -- The same as above
-	  M2 = subsets(0..l-1,k+1);
-	  M2 = hashTable apply(M2, cl -> (
-		    C := intersection apply(cl, i -> tCT#i);
-		    degs := dT#(tCT#(cl#0));
-		    L := select(toList(0..rk-1), i -> ( contains(dualCone(C),u-(degs_{i}))));
-		    cl => (L,C))));
-     -- Collecting all intersections of 'k+2' top cones together with the degrees 'd' of the first cone which satisfy
-     -- u-d in the dual cone of the intersection by taking each intersection of M2 and adding one cone
-     M3 := {};
-     scan(pairs M2, p -> (
+     if not tvb.cache.?HH then tvb.cache.HH = new MutableHashTable;
+     if not tvb.cache.HH#?(k,u) then (
+	  -- Checking for input errors
+     	  if numRows u != tvb#"dimension of the variety" or numColumns u != 1 then error("The degree matrix must be a vector of variety dimension");
+     	  if ring u =!= ZZ then error("The degree must be an integer vector");
+     	  if k < 0 or tvb#"dimension of the variety" < k then error("k must be between 0 and the variety dimension for the k-th cohomolgy");
+     	  -- Extracting the neccesary data
+     	  rk := tvb#"rank of the vector bundle";
+     	  l := tvb#"number of affine charts";
+     	  tCT := sort keys tvb#"topConeTable";
+     	  bCT := tvb#"baseChangeTable";
+     	  dT := tvb#"degreeTable";
+     	  -- Recursive function that finds a path over codim 1 cones from one topdim cone ('i') to another ('j')
+     	  -- using the steps in 'pl'
+     	  findpath := (i,j,pl) -> (
+	       -- Recursive function finds a path from the actual cone 'i' to the Cone 'j' using the steps in 'pl'
+	       -- where 'cl' is the  sequence of steps taken so far from the original 'i' and 'minpath' is the 
+	       -- shortest path found so far
+	       findrecursive := (i,j,pl,cl,minpath) -> (
+	       	    -- If the last step from 'i' to 'j' is part of 'pl' then add '(i,j)' to 'cl'
+	       	    if ((member((i,j),pl)) or (member((j,i),pl))) then (
+		    	 cl = append(cl,(i,j));
+		    	 -- Check if the new found path is shorter than shortest so far
+		    	 if (#cl < #minpath) or (minpath == {}) then (
+			      minpath = cl))
+	       	    -- otherwise find a path with the remaining steps in 'pl'
+	       	    else (
+		    	 L1 := {};
+		    	 L2 := {};
+		    	 -- Sort the remaining possible steps into those containing 'i'in 'L1' and those who not in 'L2'
+		    	 scan(pl, e -> ( 
+			      	   if (member(i,e)) then ( L1 = append(L1,e))
+			      	   else ( L2 = append(L2,e))));
+		    	 -- Call findrecursive for each step in 'L1', with new starting cone the other index in the pair and new 
+		    	 -- remaining pairs list 'L2' and add the step to 'cl'
+		    	 scan(L1, e -> ( 
+			      	   if (e#0 == i) then (
+				   	minpath = findrecursive(e#1,j,L2,append(cl,e),minpath))
+			      	   else ( 
+				   	minpath = findrecursive(e#0,j,L2,append(cl,(e#1,e#0)),minpath)))));
+	       	    minpath);
+	       -- Start with an empty sequence of steps, no minimal path yet and all possible stepsd
+	       cl := {};
+	       minpath := {};
+	       findrecursive(i,j,pl,cl,minpath));
+     	  local M1;
+     	  local M2;
+     	  -- For the 'k'th cohomology group one needs all intersections of 'k', of 'k+1', and of 'k+2' charts of the covering
+     	  -- given by the maximal dimensional cones which are 'l' many, if 'k' is strictly positive. 
+     	  if (k > 0) then (
+	       -- Collecting all intersections of 'k' top cones together with the degrees 'd' of the first cone which satisfy
+	       -- u-d in the dual cone of the intersection
+	       M1 = subsets(0..l-1,k);
+	       M1 = hashTable apply(M1, cl -> (
+		    	 C := intersection apply(cl, i -> tCT#i);
+		    	 degs := dT#(tCT#(cl#0));
+		    	 L := select(toList(0..rk-1), i -> ( contains(dualCone(C),u-(degs_{i}))));
+		    	 cl => (L,C)));
+	       -- Collecting all intersections of 'k+1' top cones together with the degrees 'd' of the first cone which satisfy
+	       -- u-d in the dual cone of the intersection by taking each intersection of M1 and adding one cone
+	       M2 = {};
+	       scan(pairs M1, p -> (
+		    	 L := select(toList(0..rk-1), i -> (not member(i,p#1#0)));
+		    	 scan((last(p#0)+1)..(l-1), i -> (
+			      	   cl :=append(p#0,i);
+			      	   C := intersection(p#1#1,tCT#i);
+			      	   degs := dT#(tCT#(cl#0));
+			      	   M2 = append(M2,cl => (sort(unique(join(p#1#0,select(L, i -> ( contains(dualCone(C),u-(degs_{i}))))))),C))))));
+	       M2 = hashTable M2;
+	       M1 = hashTable apply(pairs M1, p -> ( p#0 => p#1#0)))
+     	  -- Otherwise take only the 'k+1' and 'k+2' intersections
+     	  else (
+	       -- The same as above
+	       M2 = subsets(0..l-1,k+1);
+	       M2 = hashTable apply(M2, cl -> (
+		    	 C := intersection apply(cl, i -> tCT#i);
+		    	 degs := dT#(tCT#(cl#0));
+		    	 L := select(toList(0..rk-1), i -> ( contains(dualCone(C),u-(degs_{i}))));
+		    	 cl => (L,C))));
+     	  -- Collecting all intersections of 'k+2' top cones together with the degrees 'd' of the first cone which satisfy
+     	  -- u-d in the dual cone of the intersection by taking each intersection of M2 and adding one cone
+     	  M3 := {};
+     	  scan(pairs M2, p -> (
 		    L := select(toList(0..rk-1), i -> (not member(i,p#1#0)));
 		    scan((last(p#0)+1)..(l-1), i -> (
 			      cl :=append(p#0,i);
 			      C := intersection(p#1#1,tCT#i);
 			      degs := dT#(tCT#(cl#0));
 			      M3 = append(M3,cl => sort(unique(join(p#1#0,select(toList(0..rk-1), i -> ( contains(dualCone(C),u-(degs_{i}))))))))))));
-     M3 = hashTable M3;  
-     M2 = hashTable apply(pairs M2, p -> ( p#0 => p#1#0));
-     -- Constructing the zero map over QQ
-     d1 := map(QQ^0,QQ^0,0);
-     -- Constructing the matrix of the sequence for the cohomology
-     if k > 0 then (
-	  scan(pairs M1, (a,b) -> (
-	       -- 'A' will be a column of the matrix d1 of the sequence
-	       A := map(QQ^0,QQ^(#b),0);
-	       -- One intersection in M1 is selected, by going through the intersections in M2 we get the first "column" of block matrices in A 
-	       -- by looking at the images in all intersections in M2
-	       scan(pairs(M2), (c,d) -> (
-			 -- Only if the intersection is made by intersecting with one more cone, the resulting matrix has to be computed, 
-			 -- because otherwise it is automatically zero
-			 if (isSubset(a,c)) then (
-			      -- get the signum by looking at the position the new cone is inserted
-			      signum := (-1)^(#c-(position(c, e -> (not member(e,a))))-1);
-			      i := a#0;
-			      j := c#0;
-			      -- if i == j then no base change between the two representations has to be made, so the submatrix of the 
-			      -- identity inserting the positions of the degrees 'b' into the degrees 'd' is added in this column
-			      if (i == j) then (
-				   A = A || (signum*(((map(QQ^rk,QQ^rk,1))_b))))
-			      -- Otherwise we have to find the transition matrix from cone 'i' to Cone 'j'
-			      else (
-				   -- find the transition matrix
-				   mpath := findpath(i,j,keys(bCT));
-				   -- If the path has one element then we take the 'b'-'d' part of that matrix, otherwise the multiplication 
-				   -- of the matrices corresponding to the steps in the path and add the path as a new step with corresponding matrix
-				   if (#mpath == 1) then (
-					if (i < j) then (
-					     A = A || (signum*(((bCT#(i,j))_b))))
-					else (
-					     A = A || (signum*(((inverse(bCT#(j,i)))_b)))))
-				   else (
-					A1 := map(QQ^rk,QQ^rk,1);
-					scan(mpath, p -> (
-						  if (p#0 < p#1) then (
-						       A1 = bCT#p * A1)
+     	  M3 = hashTable M3;  
+     	  M2 = hashTable apply(pairs M2, p -> ( p#0 => p#1#0));
+     	  -- Constructing the zero map over QQ
+     	  d1 := map(QQ^0,QQ^0,0);
+     	  -- Constructing the matrix of the sequence for the cohomology
+     	  if k > 0 then (
+	       scan(pairs M1, (a,b) -> (
+	       		 -- 'A' will be a column of the matrix d1 of the sequence
+	       		 A := map(QQ^0,QQ^(#b),0);
+	       		 -- One intersection in M1 is selected, by going through the intersections in M2 we get the first "column" of block matrices in A 
+	       		 -- by looking at the images in all intersections in M2
+	       		 scan(pairs(M2), (c,d) -> (
+			 	   -- Only if the intersection is made by intersecting with one more cone, the resulting matrix has to be computed, 
+			 	   -- because otherwise it is automatically zero
+			 	   if (isSubset(a,c)) then (
+			      		-- get the signum by looking at the position the new cone is inserted
+			      		signum := (-1)^(#c-(position(c, e -> (not member(e,a))))-1);
+			      		i := a#0;
+			      		j := c#0;
+			      		-- if i == j then no base change between the two representations has to be made, so the submatrix of the 
+			      		-- identity inserting the positions of the degrees 'b' into the degrees 'd' is added in this column
+			      		if (i == j) then (
+				   	     A = A || (signum*(((map(QQ^rk,QQ^rk,1))_b))))
+			      		-- Otherwise we have to find the transition matrix from cone 'i' to Cone 'j'
+			      		else (
+				   	     -- find the transition matrix
+				   	     mpath := findpath(i,j,keys(bCT));
+				   	     -- If the path has one element then we take the 'b'-'d' part of that matrix, otherwise the multiplication 
+				   	     -- of the matrices corresponding to the steps in the path and add the path as a new step with corresponding matrix
+				   	     if (#mpath == 1) then (
+						  if (i < j) then (
+					     	       A = A || (signum*(((bCT#(i,j))_b))))
 						  else (
-						       A1 = (inverse(bCT#(p#1,p#0)))*A1)));
-					if (i < j) then (
-					     bCT = hashTable join(apply(pairs bCT, ps -> (ps#0 => ps#1)), {(i,j) => A1}))
-					else (
-					     bCT = hashTable join(apply(pairs bCT, ps -> (ps#0 => ps#1)), {(j,i) => inverse(A1)}));
-					A = A || (signum*((A1_b))))))
-			 else (
-			      A = A || map(QQ^(rk),QQ^(#b),0))));
-	       -- Adding the new column to d1
-	       if (d1 == map(QQ^0,QQ^0,0)) then (
-		    d1 = A)
-	       else (
-		    d1 = d1 | A))));
-     -- constructing d2 in the same way as d1
-     d2 := map(QQ^0,QQ^0,0);
-     scan(pairs(M2), (a,b) -> (
-	       A := map(QQ^0,QQ^(#b),0);
-	       scan(pairs(M3), (c,d) -> (
-			 if (isSubset(a,c)) then (
-			      signum := (-1)^(#c-(position(c, e -> (not member(e,a))))-1);
-			      i := a#0;
-			      j := c#0;
-			      if (i == j) then (
-				   A = A || (signum*(((map(QQ^rk,QQ^rk,1))_b))))
-			      else (
-				   mpath := findpath(i,j,keys(bCT));
-				   if (#mpath == 1) then (
-					if (i < j) then (
-					     A = A || (signum*(((bCT#(i,j))_b))))
-					else (
-					     A = A || (signum*(((inverse(bCT#(j,i)))_b)))))
-				   else (
-					A1 := map(QQ^rk,QQ^rk,1);
-					scan(mpath, p -> (
-						  if (p#0 < p#1) then (
-						       A1 = bCT#p * A1)
+					     	       A = A || (signum*(((inverse(bCT#(j,i)))_b)))))
+				   	     else (
+						  A1 := map(QQ^rk,QQ^rk,1);
+						  scan(mpath, p -> (
+						  	    if (p#0 < p#1) then (
+						       		 A1 = bCT#p * A1)
+						  	    else (
+						       		 A1 = (inverse(bCT#(p#1,p#0)))*A1)));
+						  if (i < j) then (
+					     	       bCT = hashTable join(apply(pairs bCT, ps -> (ps#0 => ps#1)), {(i,j) => A1}))
 						  else (
-						       A1 = (inverse(bCT#(p#1,p#0)))*A1)));
-					if (i < j) then (
-					     bCT = hashTable join(apply(pairs bCT, ps -> (ps#0 => ps#1)), {(i,j) => A1}))
-					else (
-					     bCT = hashTable join(apply(pairs bCT, ps -> (ps#0 => ps#1)), {(j,i) => inverse(A1)}));
-					A = A || (signum*((A1_b))))))
-			 else (
-			      A = A || map(QQ^(rk),QQ^(#b),0))));
-	       if (d2 == map(QQ^0,QQ^0,0)) then (
-		    d2 = A)
-	       else (
-		    d2 = d2 | A)));
-     if (k == 0) then ( (rank(ker(d2))))
-     else ((rank(ker(d2))-rank(image(d1)))))
+					     	       bCT = hashTable join(apply(pairs bCT, ps -> (ps#0 => ps#1)), {(j,i) => inverse(A1)}));
+						  A = A || (signum*((A1_b))))))
+			 	   else (
+			      		A = A || map(QQ^(rk),QQ^(#b),0))));
+	       		 -- Adding the new column to d1
+	       		 if (d1 == map(QQ^0,QQ^0,0)) then (
+		    	      d1 = A)
+	       		 else (
+		    	      d1 = d1 | A))));
+     	  -- constructing d2 in the same way as d1
+     	  d2 := map(QQ^0,QQ^0,0);
+     	  scan(pairs(M2), (a,b) -> (
+	       	    A := map(QQ^0,QQ^(#b),0);
+	       	    scan(pairs(M3), (c,d) -> (
+			      if (isSubset(a,c)) then (
+			      	   signum := (-1)^(#c-(position(c, e -> (not member(e,a))))-1);
+			      	   i := a#0;
+			      	   j := c#0;
+			      	   if (i == j) then (
+				   	A = A || (signum*(((map(QQ^rk,QQ^rk,1))_b))))
+			      	   else (
+				   	mpath := findpath(i,j,keys(bCT));
+				   	if (#mpath == 1) then (
+					     if (i < j) then (
+					     	  A = A || (signum*(((bCT#(i,j))_b))))
+					     else (
+					     	  A = A || (signum*(((inverse(bCT#(j,i)))_b)))))
+				   	else (
+					     A1 := map(QQ^rk,QQ^rk,1);
+					     scan(mpath, p -> (
+						       if (p#0 < p#1) then (
+						       	    A1 = bCT#p * A1)
+						       else (
+						       	    A1 = (inverse(bCT#(p#1,p#0)))*A1)));
+					     if (i < j) then (
+					     	  bCT = hashTable join(apply(pairs bCT, ps -> (ps#0 => ps#1)), {(i,j) => A1}))
+					     else (
+					     	  bCT = hashTable join(apply(pairs bCT, ps -> (ps#0 => ps#1)), {(j,i) => inverse(A1)}));
+					     A = A || (signum*((A1_b))))))
+			      else (
+			      	   A = A || map(QQ^(rk),QQ^(#b),0))));
+	       	    if (d2 == map(QQ^0,QQ^0,0)) then (
+		    	 d2 = A)
+	       	    else (
+		    	 d2 = d2 | A)));
+     	  d := if (k == 0) then ( (rank(ker(d2))))
+     	  else ((rank(ker(d2))-rank(image(d1))));
+     	  if not T.cache.?gradedRing then T.cache.gradedRing = QQ[DegreeRank => dim T];
+     	  T.cache.HH#(k,u) = (T.cache.gradedRing)^(toList(d:flatten entries(-u))));
+     T.cache.HH#(k,u))
 
 --   INPUT : '(k,tvb,u)',  'k' for the 'k'th cohomology group, 'tvb' a ToricVectorBundleKlyachko, and 'u' the degree
 --  OUTPUT : 'ZZ',	     the dimension of the degree 'u' part of the 'k'th cohomology group of 'tvb'
 cohom (ZZ,ToricVectorBundleKlyachko,Matrix) := (k,T,u) -> (
-     -- Get the k-1 th, k th and k+1 th chain in the Cech complex
-     (F1,F1columns,F1toF2) := cechComplex(k-1,T,u);
-     (F2,F2columns,F2toF3) := cechComplex(k,T,u);
-     F3 := (cechComplex(k+1,T,u))#0;
-     tvbR := T#"ring";
-     tvbrank := T#"rank of the vector bundle";
-     -- Generate the two boundary operators
-     MapF1toF2 := matrix apply(#F2, j -> apply(#F1, i -> if F1toF2#?(i,j) then F1toF2#(i,j) else map(tvbR^tvbrank,tvbR^(F1columns#i),0)));
-     MapF2toF3 := matrix apply(#F3, j -> apply(#F2, i -> if F2toF3#?(i,j) then F2toF3#(i,j) else map(tvbR^tvbrank,tvbR^(F2columns#i),0)));
-     -- Compute the cohomology
-     (rank ker MapF2toF3)-(rank image MapF1toF2))
+     if not T.cache.?HH then T.cache.HH = new MutableHashTable;
+     if not T.cache.HH#?(k,u) then (
+	  -- Get the k-1 th, k th and k+1 th chain in the Cech complex
+     	  (F1,F1columns,F1toF2) := cechComplex(k-1,T,u);
+     	  (F2,F2columns,F2toF3) := cechComplex(k,T,u);
+     	  F3 := (cechComplex(k+1,T,u))#0;
+     	  tvbR := T#"ring";
+     	  tvbrank := T#"rank of the vector bundle";
+     	  -- Generate the two boundary operators
+     	  MapF1toF2 := matrix apply(#F2, j -> apply(#F1, i -> if F1toF2#?(i,j) then F1toF2#(i,j) else map(tvbR^tvbrank,tvbR^(F1columns#i),0)));
+     	  MapF2toF3 := matrix apply(#F3, j -> apply(#F2, i -> if F2toF3#?(i,j) then F2toF3#(i,j) else map(tvbR^tvbrank,tvbR^(F2columns#i),0)));
+     	  -- Compute the cohomology
+     	  d := (rank ker MapF2toF3)-(rank image MapF1toF2);
+     	  if not T.cache.?gradedRing then T.cache.gradedRing = tvbR[DegreeRank => dim T];
+     	  T.cache.HH#(k,u) = (T.cache.gradedRing)^(toList(d:flatten entries(-u))));
+     T.cache.HH#(k,u))
 
 
 -- PURPOSE : Computing the cohomology of a given ToricVectorBundleKaneyama
@@ -896,8 +954,8 @@ cohomology(ZZ,ToricVectorBundleKaneyama,List) := opts -> (i,T,P)-> (
 	if opts.Degree == 1 then print ("Number of degrees to calculate: "|(toString (#P)));
 	L := apply(#P, j -> (
 		  if opts.Degree == 1 then << "." << flush;
-		  {P_j,cohomology(i,T,P_j)}));
-	select(L,e-> (e_1 != 0)))
+		  cohomology(i,T,P_j)));
+	select(L,e-> (e != 0)))
 
 -- PURPOSE : Computing the cohomology of a given ToricVectorBundleKlyachko
 --   INPUT : '(i,T,P)',  'i' for the 'i'th cohomology group, 'T' a ToricVectorBundleKlyachko, and 'P' a list of degrees
@@ -906,8 +964,8 @@ cohomology(ZZ,ToricVectorBundleKlyachko,List) := opts -> (i,T,P)-> (
 	if opts.Degree == 1 then print ("Number of degrees to calculate: "|(toString (#P)));
 	L := apply(#P, j -> (
 		  if opts.Degree == 1 then << "." << flush;
-		  {P_j,cohomology(i,T,P_j)}));
-	select(L,e-> (e_1 != 0))) 
+		  cohomology(i,T,P_j)));
+	select(L,e-> (e != 0))) 
 
 -- PURPOSE : Computing the cohomology of a given ToricVectorBundleKaneyama
 --   INPUT : '(i,T)',  'i' for the 'i'th cohomology group, 'T' a ToricVectorBundleKaneyama
@@ -915,7 +973,11 @@ cohomology(ZZ,ToricVectorBundleKlyachko,List) := opts -> (i,T,P)-> (
 --     	    	      	      dimension of the cohomology group together with the corresponding dimension if the option "Degree" => 1 is given
 cohomology(ZZ,ToricVectorBundleKaneyama) := opts -> (i,T)-> (
      L := cohomology(i,T,latticePoints deltaE T,Degree => opts.Degree);
-     if opts.Degree == 1 then L else sum apply(L,last))
+     if L == {} then (
+	  if not T.cache.?gradedRing then T.cache.gradedRing = QQ[DegreeRank => dim T];
+	  (T.cache.gradedRing)^0)
+     else directSum L)
+     --if opts.Degree == 1 then L else sum apply(L,last))
 
 -- PURPOSE : Computing the cohomology of a given ToricVectorBundleKlyachko
 --   INPUT : '(i,T)',  'i' for the 'i'th cohomology group, 'T' a ToricVectorBundleKlyachko
@@ -923,8 +985,22 @@ cohomology(ZZ,ToricVectorBundleKaneyama) := opts -> (i,T)-> (
 --     	    	      	      dimension of the cohomology group together with the corresponding dimension if the option "Degree" => 1 is given
 cohomology(ZZ,ToricVectorBundleKlyachko) := opts -> (i,T)-> (
      L := cohomology(i,T,latticePoints deltaE T,Degree => opts.Degree);
-     if opts.Degree == 1 then L else sum apply(L,last))
+     if L != {} then directSum L else (
+	  if not T.cache.?gradedRing then T.cache.gradedRing = (T#"ring")[DegreeRank => dim T];
+	  (T.cache.gradedRing)^0))
+     --if opts.Degree == 1 then L else sum apply(L,last))
+     
+hh(ZZ,Sequence) := (i,S) -> (
+     -- Checking for input errors
+     if #S != 2 then error("The Sequence must contain a toric vector bundle and a weight vector");
+     if not instance(S#1,Matrix) then error("The second argument must be a weight vector given by a matrix");
+     if not instance(S#0,ToricVectorBundleKaneyama) and not instance(S#0,ToricVectorBundleKlyachko) then error("The first argument must be a toric vector bundle");
+     (T,u) := S;
+     rank cohomology(i,T,u))
 
+hh(ZZ,ToricVectorBundleKlyachko) := ZZ => (i,T) -> rank cohomology(i,T)
+
+hh(ZZ,ToricVectorBundleKaneyama) := ZZ => (i,T) -> rank cohomology(i,T)
 
 -- PURPOSE : Computing the coker bundle of a toric vector bundle
 --   INPUT : '(T,M)', where 'T' is a ToricVectorBundleKlyachko and 'M' a matrix with the bundle space as target
@@ -1175,6 +1251,45 @@ dual ToricVectorBundleKlyachko := {} >> opts -> tvb -> (
 		    "rank of the vector bundle" => tvb#"rank of the vector bundle",
 		    "number of rays" => tvb#"number of rays",
 		    symbol cache => new CacheTable})
+	  
+existsDecomposition = method()
+existsDecomposition (ToricVectorBundleKlyachko,List) := (T,L) -> (
+     L = apply(L, l -> if instance(l,List) then l else if instance(l,Matrix) then {l} else error("The elements of the list must be either matrices or lists of them"));
+     if not T.cache.?degreesList then T.cache.degreesList = {};
+     mC := maxCones T;
+     mC = apply(mC, C -> (C = rays C; apply(numColumns C, i -> C_{i})));
+     -- Checking for input errors
+     if #mC != #L then error("There must be a degree matrix or list of degree matrices for each maximal cone of the fan");
+     if any(T.cache.degreesList, dl -> all(toList(0..#dl-1), i -> (set(L#i))#?(dl#i))) then true 
+     else (
+     	  mC = apply(#mC, i -> (mC#i, if instance(L#i,List) then L#i else {L#i}));
+     	  allRaysTable := tableForAllRays T;
+     	  n := dim T;
+     	  k := rank T;
+     	  R := T#"ring";
+     	  recursiveCheck := (fList,Es,D) -> (
+	       -- if there is still a list of filtration steps, call recursiveCheck again for each entry
+	       if fList != {} then (
+	       	    Lr := (fList#0)#1;
+	       	    r := (fList#0)#0;
+	       	    all(Lr, l -> recursiveCheck(drop(fList,1),intersectMatrices(Es,l#1),select(D, d -> (d * r)_(0,0) <= l#0))))
+	       -- otherwise we have a choice of filtration steps and check the condition
+	       else numColumns Es == #D);
+     	  E := map(R^k,R^k,1);
+     	  L = for C in mC list (
+	       fList := apply(C#0, r -> (r,allRaysTable#r));
+	       d := select(1,C#1, D -> (
+		    	 D = promote(D,QQ);
+		    	 D = apply(numColumns D, i -> transpose D_{i});
+		    	 recursiveCheck(fList,E,D)));
+	       if d == {} then break {} else d#0);
+     	  if L != {} then (
+	       if not T.cache.?isVB then T.cache.isVB = true;
+	       T.cache.degreesList = T.cache.degreesList|{L};
+	       true)
+	  else false))
+	  
+	       
 
 -- PURPOSE : Computing the 'l'-th exterior power of a ToricVectorBundleKlyachko
 extPower = method()
@@ -1246,6 +1361,55 @@ fan ToricVectorBundleKaneyama := T -> T#"ToricVariety"
 --   INPUT : 'T',  a ToricVectorBundleKlyachko
 --  OUTPUT : a Fan
 fan ToricVectorBundleKlyachko := T -> T#"ToricVariety"
+
+
+findWeights = method(TypicalValue => List)
+findWeights ToricVectorBundleKlyachko := T -> (
+     if not T.cache.?weights then (
+     	  mC := maxCones T;
+     	  mC = apply(mC, C -> (C = rays C; apply(numColumns C, i -> C_{i})));
+     	  n := dim T;
+     	  k := rank T;
+     	  recursiveColumnsConstructer := (E,L,R,newColumn) -> (
+	       if L != {} then (
+	       	    l := L#0;
+	       	    L = drop(L,1);
+	       	    lunique = unique l;
+	       	    flatten for e in lunique list (
+		    	 if ker(E|e#1) != 0 then (
+			      i := position(l, le -> le == e);
+			      recursiveColumnsConstructer(intersectMatrices(E,e#1),L,R|{drop(l,{i,i})},newColumn|{e#0}))
+		    	 else continue))
+	       else {(R,newColumn)});
+     	  recursiveMatricesConstructer := (Elist,L,M) -> (
+	       Lnew := recursiveColumnsConstructer((Elist#0)#1,L,{},{(Elist#0)#0});
+	       if #(L#0) != 1 then flatten apply(Lnew, ln -> recursiveMatricesConstructer(drop(Elist,1),ln#0,M|{ln#1}))
+	       else apply(Lnew, ln -> M|{ln#1}));
+     	  fMT := T#"filtrationMatricesTable";
+     	  bT := T#"baseTable";
+     	  bundleRing := T#"ring";
+	  allRaysTable := tableForAllRays T;
+     	  T.cache.weights = apply(mC, C -> (
+	       	    L := apply(C, r -> allRaysTable#r);
+	       	    E := L#0;
+	       	    Flist := recursiveMatricesConstructer(E,drop(L,1),{});
+	       	    Flist = apply(Flist, m -> promote(transpose matrix m,QQ));
+	       	    R := transpose matrix {C};
+		    Rrank := rank R;
+		    if Rrank != n then (
+			 M := R^{0..Rrank-1};
+			 for F in Flist list (
+			      D := systemSolver(M,F^{0..Rrank-1});
+			      if liftable(D,ZZ) and R*D == F then lift(D,ZZ)
+			      else continue))
+		    else (
+			 Rn := inverse R^{0..n-1};
+			 for F in Flist list (
+			      Dn := Rn * (F^{0..Rrank-1});
+			      if liftable(Dn,ZZ) and R*Dn == F then lift(Dn,ZZ)
+			      else continue)))));
+     T.cache.weights)
+
 
 
 -- PURPOSE : Computing the image bundle of a toric vector bundle
@@ -1334,6 +1498,14 @@ isGeneral ToricVectorBundleKlyachko := tvb -> (
 	       C = rays C;
 	       C = apply(numColumns C, i -> C_{i});
 	       recursiveCheck(apply(C, r -> L#r),{}))))
+
+
+isVectorBundle = method()
+isVectorBundle ToricVectorBundleKlyachko := T -> (
+     if not T.cache.?isVB then (
+	  L := findWeights T;
+	  T.cache.isVB = if any(L, l -> l == {}) then false else existsDecomposition(T,L));
+     T.cache.isVB)
 
 
 -- PURPOSE : Computing the kernel bundle of a toric vector bundle
@@ -1524,6 +1696,23 @@ symmProd(ZZ,ToricVectorBundleKaneyama) := (l,tvb) -> (
 	  symbol cache => new CacheTable})
 
 
+systemSolver = (R,F) -> (
+     (R1,Lmatrix,Rmatrix) := smithNormalForm lift(R,ZZ);
+     F1 := entries(Lmatrix * F);
+     Rmatrix *((matrix apply(numRows R1, i -> (F1#i)/R1_(i,i))) || map(QQ^(numColumns R1 - numRows R1),QQ^(#(F1#0)),0)))
+
+
+tableForAllRays = method(TypicalValue => HashTable)
+tableForAllRays ToricVectorBundleKlyachko := T -> (
+     if not T.cache.?allRaysTable then (
+	  fMT := T#"filtrationMatricesTable";
+     	  bT := T#"baseTable";
+	  T.cache.allRaysTable = hashTable apply(rays T, r -> (
+		    fT := flatten entries fMT#r;
+	       	    r => apply(fT, e -> (e,(bT#r)_(positions(fT, i -> i <= e)))))));
+     T.cache.allRaysTable)
+
+
 -- PURPOSE : Computing the tangent bundle on a smooth, pure, and full dimensional Toric Variety 
 --   INPUT : 'F',  a smooth, pure, and full dimensional Fan
 --  OUTPUT : 'tvb',  a ToricVectorBundleKaneyama or ToricVectorBundleKlyachko
@@ -1539,7 +1728,7 @@ tangentBundle Fan := opts -> F -> (
 tangentBundleKlyachko = F -> (
      -- Checking for input errors
      if not isSmooth F then error("The Toric Variety must be smooth");
-     if not isPure F or dim F != ambDim F then error("The Toric Variety must be pure and full dimensional");
+--     if not isPure F or dim F != ambDim F then error("The Toric Variety must be pure and full dimensional");
      -- Generating the trivial bundle of dimension n
      n := dim F;
      tvb := makeVBKlyachko(n,F);
@@ -1647,11 +1836,11 @@ weilToCartier = method(Options => {"Type" => "Klyachko"})
 weilToCartier (List,Fan) := opts -> (L,F) -> (
      rl := rays F;
      -- Checking for input errors
-     if not isPure F or ambDim F != dim F then error("The Fan must be pure of maximal dimension.");
      if #L != #rl then error("The number of weights must equal the number of rays.");
      n := ambDim F;
      if opts#"Type" == "Kaneyama" then (
-	  -- Creating 0 matrices to compute interssection of hyperplanes to  compute the degrees
+	  if not isPure F or ambDim F != dim F then error("The Fan must be pure of maximal dimension.");
+     	  -- Creating 0 matrices to compute interssection of hyperplanes to  compute the degrees
 	  Mfull := matrix {toList(n:0)};
 	  vfull := matrix {{0}};
 	  -- Checking for further errors and assigning the weights to the rays
@@ -1675,7 +1864,7 @@ weilToCartier (List,Fan) := opts -> (L,F) -> (
 		    w := vertices intersection(Mfull,vfull,transpose rC1,v);
 		    -- Checking if w also fulfils the equations given by the remaining rays
 		    if numColumns rC != n then (
-			 v = v || matrix apply(n..(numColumns rC)-1, i -> {-(L#(rC_{i}))});
+			 v = v || matrix apply(toList(n..(numColumns rC)-1), i -> {-(L#(rC_{i}))});
 			 if (transpose rC)*w != v then error("The weights do not define a Cartier divisor."));
 		    -- Check if w is QQ-Cartier
 		    scan(flatten entries w, e -> denom = lcm(denominator e ,denom));
@@ -2351,6 +2540,32 @@ document {
      }
 
 document {
+     Key => {(hh,ZZ,ToricVectorBundleKaneyama), (hh,ZZ,ToricVectorBundleKlyachko)},--, (hh,ZZ,Sequence)},
+     Headline => " computes the rank of the i-th cohomology group",
+     Usage => " d = hh^i T \nd = hh^i (T,u)",
+     Inputs => {
+	  "T" => {ofClass ToricVectorBundleKaneyama ," or ", ofClass ToricVectorBundleKlyachko},
+	  "u" => {ofClass Matrix ,", over ",TO ZZ,", giving a point in the lattice of the fan"}
+	  },
+     Outputs => {
+	  "d" => ZZ
+	  },
+     
+     PARA{}, TT "hh^i"," computes the rank of the i-th cohomology group. If no further argument is given then it returns the rank of 
+     the complete cohomology group. If in addition a one column matrix ",TT "u"," over ",TO ZZ," is given it returns the rank of the 
+     degree ",TT "u"," part of the cohomology group.",
+     
+     EXAMPLE {
+	  " T = tangentBundle hirzebruchFan 2",
+	  " u = matrix{{0},{0}}",
+	  " hh^0 (T,u)",
+	  " hh^0 T"
+	  }
+     
+     }
+     
+
+document {
      Key => {isGeneral, (isGeneral,ToricVectorBundleKlyachko)},
      Headline => " checks whether a toric vector bundle is general",
      Usage => " b = isGeneral T",
@@ -2362,8 +2577,8 @@ document {
 	  },
      
      PARA{}, "A toric vector bundle in Klyachko's description is general if for every maximal cone C in the fan the following condition holds: Let 
-     r1,...,rl be the rays of C. Then for every choice of filtration steps i_1,...,i_l for each ray, i.e. choose in integer for each ray where 
-     the filtration enlarges, the  equation",
+     r1,...,rl be the rays of C. Then for every choice of filtration steps i_1,...,i_l for each ray, i.e. choose an integer for each ray where 
+     the filtration enlarges, the equation",
      
      PARA{}, "codim \\bigcap T^rj(i_j) = min {\\sum codim T^rj(i_j),rank T}",
      
@@ -2377,7 +2592,7 @@ document {
 
 document {
      Key => {(maxCones,ToricVectorBundleKaneyama), (maxCones,ToricVectorBundleKlyachko)},
-     Headline => " returns the lis of maximal cones of the underlying fan",
+     Headline => " returns the list of maximal cones of the underlying fan",
      Usage => " L = maxCones T",
      Inputs => {
 	  "T" => {ofClass ToricVectorBundleKaneyama ," or ", ofClass ToricVectorBundleKlyachko}
@@ -2586,9 +2801,9 @@ document {
 	  "c" => {ofClass ZZ ," or ", ofClass List}
 	  },
      
-     PARA{}, "Computes the ",TT "i","-th cohomology of the toric vector bundle ",TT "T",". The output is the i-th cohomology of no further 
-     option is given. If the option ",TT "\"Degree\" => 1"," is given a list is returned, where each entry is a pair 
-     consisting of a degree vector and the cohomology of that degree. ",TT "i"," must be between 0 and the rank of the vector bundle.",
+     PARA{}, "Computes the ",TT "i","-th cohomology group of the toric vector bundle ",TT "T",". The output is the i-th cohomology group 
+     as a multigraded module. If the option ",TT "\"Degree\" => 1"," it displays the number of degrees for which it computes the 
+     cohomology. ",TT "i"," must be between 0 and the rank of the vector bundle.",
      
      EXAMPLE {
 	  " T = tangentBundle hirzebruchFan 3",
@@ -2611,7 +2826,7 @@ document {
 	  "c" => ZZ
 	  },
      
-     PARA{}, "Computes the ",TT "i","-th cohomology of the toric vector bundle ",TT "T"," of degree ",TT "u"," where ",TT "u"," must be a 
+     PARA{}, "Computes the ",TT "i","-th cohomology group of the toric vector bundle ",TT "T"," of degree ",TT "u"," where ",TT "u"," must be a 
      one column matrix giving a point in the lattice of the Fan over which ",TT "T"," is defined and ",TT "i"," must be between 0 and 
      the rank of the vector bundle.",
      
@@ -2695,7 +2910,7 @@ document {
      }
 
 document {
-     Key => {(cokernel,ToricVectorBundleKlyachko,Matrix)},
+     Key => {(coker,ToricVectorBundleKlyachko,Matrix)},
      Headline => " computes the cokernel vector bundle",
      Usage => " T1 = coker(T,M)",
      Inputs => {
