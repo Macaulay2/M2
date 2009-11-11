@@ -612,7 +612,6 @@ document {
      namely strongly convex rational polyhedral fans.  This makes the
      theory of normal toric varieties very explicit and computable.",
      PARA{},     
-
      "This ", EM "Macaulay 2", " package is designed to manipulate
      normal toric varieties and related geometric objects.  An
      introduction to the theory of normal toric varieties can be found
@@ -629,9 +628,7 @@ document {
 	   Ergebnisse der Mathematik und ihrer Grenzgebiete (3) 15,
 	   Springer-Verlag, Berlin, 1988. ISBN: 3-540-17600-4" },
 	   },
-     
      SUBSECTION "Contributors",
-     
      "The following people have generously contributed code or worked
      on our code.",     
      UL {
@@ -645,21 +642,20 @@ document {
 
 document { 
      Key => NormalToricVariety,
-     Headline => "the class of all normal toric varieties",   
+     Headline => "the class of all normal toric varieties",  
      "A normal toric variety corresponds to a strongly convex rational
      polyhedral fan in affine space.", 
-     PARA{},
-      
+     PARA{},     
      "In this package, the fan associated to a normal ", TEX ///d///,
-     "-dimensional toric variety lies in the ", TEX ///d///,
-     "-dimensional rational vector space ", 
-     TEX ///N_{\mathbb Q} = {\mathbb Q}^d///, " with underlying
-     lattice ", TEX ///N = {\mathbb Z}^d///, ".  The fan is encoded by
-     the minimal nonzero lattice points on its rays and the set of
-     rays defining the maximal cones.",
-     
+     "-dimensional toric variety lies in the rational vector space ",
+     TEX ///{\mathbb Q}^d///, " with underlying lattice ", 
+     TEX ///N = {\mathbb Z}^d///, ".  The fan is encoded by the
+     minimal nonzero lattice points on its rays and the set of rays
+     defining the maximal cones.",
      Subnodes => {
-	  TO "normalToricVariety",
+	  TO normalToricVariety,
+	  TO (rays,NormalToricVariety),
+	  TO (max,NormalToricVariety),
 	  }
      }  
 
@@ -675,22 +671,22 @@ document {
           },
      Outputs => {NormalToricVariety => "the normal toric variety
 	  determined by the fan" },
-     "In this package, the fan associated to a normal ", TT "d",
-     "-dimensional toric variety lies in ", TT "N = ZZ", TT SUP "d",
-     TT " ** QQ", ", the ", TT "d", "-dimensional rational vector
-     space obtained from the lattice ", TT "ZZ", TT SUP "d", ".  The
-     fan is encoded by the minimal nonzero lattice points on its rays
-     and the set of rays defining the maximal cones.  More precisely,
-     ", TT "Rho", " lists the minimal nonzero lattice points on each ray
+     "In this package, the fan associated to a normal ", TEX ///d///,
+     "-dimensional toric variety lies in the rational vector space ",
+     TEX ///{\mathbb Q}^d///, " with underlying lattice ", 
+     TEX ///N = {\mathbb Z}^d///, ".  The fan is encoded by the
+     minimal nonzero lattice points on its rays and the set of rays
+     defining the maximal cones.  More precisely, ", TT "Rho", " lists
+     the minimal nonzero lattice points on each ray
      (a.k.a. one-dimensional cone) in the fan.  Each lattice point is
      a ", TO2(List,"list"), " of ", TO2(ZZ,"integers"), ".  The rays
-     are ordered; they are indexed by nonnegative integers: ", TT "0,
-     ..., n", ".  Using this indexing, a maximal cone in the fan
-     corresponds to a sublist of ", TT "{0, ..., n}", ".  All maximal
-     cones are listed in ", TT "Sigma", ".",
+     are ordered; they are indexed by nonnegative integers: ", 
+     TT "0, ..., n", ".  Using this indexing, a maximal cone in the
+     fan corresponds to a sublist of ", TT "{0, ..., n}", ".  All
+     maximal cones are listed in ", TT "Sigma", ".",
      PARA{},
-     "The first example is projective ", TT "2", "-space blown up at
-     two points",
+     "The first example is projective ", TEX ///2///, "-space blown up
+     at two points",
      EXAMPLE lines ///
 	  Rho = {{1,0},{0,1},{-1,1},{-1,0},{0,-1}}
           Sigma = {{0,1},{1,2},{2,3},{3,4},{0,4}}
@@ -700,7 +696,7 @@ document {
 	  dim X
 	  ///,	 
      "The second example illustrates the data defining projective ",
-     TT "4", "-space.",     
+     TEX ///4///, "-space.",     
      EXAMPLE lines ///	  
 	  PP4 = projectiveSpace 4;
 	  rays PP4
@@ -712,7 +708,10 @@ document {
 	  TO "weightedProjectiveSpace",
 	  TO "hirzebruchSurface"
 	  },	  
-     SeeAlso => {(rays, NormalToricVariety), (max,NormalToricVariety)}
+     SeeAlso => {
+	  (rays, NormalToricVariety), 
+	  (max,NormalToricVariety)
+	  }
      }	
 
 document { 
@@ -720,18 +719,22 @@ document {
      Headline => "the rays of the fan",
      Usage => "rays X",
      Inputs => {"X" => NormalToricVariety},
-     Outputs => {List => " of lists; each entry corresponds to a
-          minimal nonzero lattice point on the ray in the fan" },
-     "In this package, the fan associated to a normal ", TT "d",
-     "-dimensional toric variety lies in ", TT "N = ZZ", TT SUP "d",
-     TT " ** QQ", ", the ", TT "d", "-dimensional rational vector
-     space obtained from the lattice ", TT "ZZ", TT SUP "d", ".  As a
-     result, each ray in the fan is determined by the minimal nonzero
-     lattice point it contains.  Each such lattice point is given as
-     ", TO2(List,"list"), " of ", TT "d", " ", TO2(ZZ,"integers"), ".",
+     Outputs => {List => " of lists of integers; each entry
+          corresponds to a minimal nonzero lattice point on the ray in
+          the fan" },
+     "In this package, the fan associated to a normal ", TEX ///d///,
+     "-dimensional toric variety lies in the rational vector space ",
+     TEX ///{\mathbb Q}^d///, " with underlying lattice ", 
+     TEX ///N = {\mathbb Z}^d///, ".  The fan is encoded by the
+     minimal nonzero lattice points on its rays and the set of rays
+     defining the maximal cones.  As a result, each ray in the fan is
+     determined by the minimal nonzero lattice point it contains.
+     Each such lattice point is given as ", TO2(List,"list"), " of ",
+     TEX ///d///, " ", TO2(ZZ,"integers"), ".",
      PARA{},
      "The examples show the rays for the projective plane, projective
-     3-space, a Hirzebruch surface, and a weighted projective space.",
+     ", TEX ///3///, "-space, a Hirzebruch surface, and a weighted
+     projective space.",
      EXAMPLE lines ///
 	  PP2 = projectiveSpace 2;
 	  rays PP2
@@ -761,8 +764,11 @@ document {
           ///,
      "An ordered list of the minimal nonzero lattice points on the
      rays in the fan is part of the defining data of a toric variety.",
-     SeeAlso => {normalToricVariety, (max, NormalToricVariety),
-	  (ring, NormalToricVariety)} 
+     SeeAlso => {
+	  normalToricVariety, 
+	  (max, NormalToricVariety),
+	  (ring, NormalToricVariety)
+	  } 
      }
 
 document { 
@@ -770,8 +776,9 @@ document {
      Headline => "the maximal cones in the fan",
      Usage => "max X",
      Inputs => {"X" => NormalToricVariety},
-     Outputs => {List => " of lists; each entry indexes the rays which 
-	  generate a maximal cone in the fan"},
+     Outputs => {List => " of lists of nonnegative integers; each
+	  entry indexes the rays which generate a maximal cone in the
+	  fan"},	  
      "In this package, the rays in the fan are indexed by nonnegative
      integers: ", TT "{0, ...,n}", ".  Each maximal cone corresponds
      to a sublist of  ", TT "{0, ...,n}", "; the entries index the rays 
@@ -780,6 +787,7 @@ document {
      "The examples show the maximal cones for the projective plane,
      projective 3-space, a Hirzebruch surface, and a weighted
      projective space.",
+     
      EXAMPLE lines ///
 	  PP2 = projectiveSpace 2;
 	  #rays PP2
@@ -799,10 +807,13 @@ document {
 	  X = weightedProjectiveSpace {1,2,3};
 	  #rays X
 	  max X
-	  ///,     	 
+	  ///,   
      "A list corresponding to the maximal cones in the fan is part of the 
      defining data of a toric variety.",
-     SeeAlso => {normalToricVariety, (rays, NormalToricVariety)}
+     SeeAlso => {
+	  normalToricVariety, 
+	  (rays, NormalToricVariety)
+	  }
      }     
 
 document { 
@@ -813,7 +824,7 @@ document {
 	  "d" => "a nonnegative integer",
 	  },
      Outputs => {NormalToricVariety => {"projective ", TT "d", "-space"}},
-     "Projective ", TT "d", "-space is a smooth complete normal toric
+     "Projective ", TEX ///d///, "-space is a smooth complete normal toric
      variety.",
      PARA{},
      "The examples illustrate the projective line and projective
@@ -833,14 +844,19 @@ document {
 	  dim PP3
 	  ring(PP3,ZZ/32003)
 	  ideal PP3
-	  ///,
-     "We can also create a point as projective 0-space",
+	  ///,	  
+     "We can also create a point as projective ", TEX ///0///,
+     "-space",
      EXAMPLE lines ///
 	  projectiveSpace 0
 	  dim projectiveSpace 0
           ///,
-     SeeAlso => {normalToricVariety, weightedProjectiveSpace,
-	  (ring,NormalToricVariety), (ideal,NormalToricVariety)}
+     SeeAlso => {
+	  normalToricVariety, 
+	  weightedProjectiveSpace,
+	  (ring,NormalToricVariety), 
+	  (ideal,NormalToricVariety)
+	  }
      }     
 
 document { 
@@ -1111,7 +1127,7 @@ document {
      "For a product of projective spaces, the total coordinate ring has a 
      bigrading.",
      EXAMPLE lines ///
-	  X = projectiveSpace(2) * projectiveSpace(3);
+	  X = projectiveSpace(2) ** projectiveSpace(3);
 	  gens ring X
 	  degrees ring X
 	  ///,
@@ -1155,7 +1171,7 @@ document {
      "The irrelevant ideal for a product of toric varieties is
      intersection of the irrelevant ideal of the factors.",
      EXAMPLE lines ///
-	  X = projectiveSpace(3) * projectiveSpace(4);
+	  X = projectiveSpace(3) ** projectiveSpace(4);
 	  S = ring X;
 	  I = ideal X
 	  primaryDecomposition I
@@ -1177,9 +1193,9 @@ document {
      }     
 
 document { 
-     Key => {(symbol *,NormalToricVariety,NormalToricVariety)},
+     Key => {(symbol **, NormalToricVariety, NormalToricVariety)},
      Headline => "the cartesian product",
-     Usage => "X * Y",
+     Usage => "X ** Y",
      Inputs => {"X", "Y" => NormalToricVariety },
      Outputs => {{"the product of ", TT "X", " and ", TT "Y"}},
      "The cartesian product of two varieties, both defined the same 
@@ -1189,7 +1205,7 @@ document {
      EXAMPLE lines ///
 	  PP2 = projectiveSpace 2;
 	  FF2 = hirzebruchSurface 2;
-	  X = FF2 * PP2;
+	  X = FF2 ** PP2;
 	  #rays X == #rays FF2 + #rays PP2
      	  transpose matrix rays X
      	  transpose matrix rays FF2 ++ transpose matrix rays PP2
