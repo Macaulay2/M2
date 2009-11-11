@@ -2585,17 +2585,17 @@ hirzebruch = method(TypicalValue => Fan)
 hirzebruch ZZ := r -> (
      -- Checking for input errors
      if r < 0 then error ("Input must be a positive integer");
-     L := {((matrix{{0,-1},{1,r}},map(QQ^2,QQ^0,0)),(matrix{{1,-r},{0,-1}},map(QQ^2,QQ^0,0))),
-	   ((matrix{{0,-1},{-1,r}},map(QQ^2,QQ^0,0)),(matrix{{1,r},{0,1}},map(QQ^2,QQ^0,0))),
-	   ((matrix{{1,0},{0,1}},map(QQ^2,QQ^0,0)),(matrix{{-1,0},{0,-1}},map(QQ^2,QQ^0,0))),
-	   ((matrix{{1,0},{0,-1}},map(QQ^2,QQ^0,0)),(matrix{{-1,0},{0,1}},map(QQ^2,QQ^0,0)))};
+     L := {((matrix{{0_QQ,-1},{1,r}},map(QQ^2,QQ^0,0)),(matrix{{1_QQ,-r},{0,-1}},map(QQ^2,QQ^0,0))),
+	   ((matrix{{0_QQ,-1},{-1,r}},map(QQ^2,QQ^0,0)),(matrix{{1_QQ,r},{0,1}},map(QQ^2,QQ^0,0))),
+	   ((matrix{{1_QQ,0},{0,1}},map(QQ^2,QQ^0,0)),(matrix{{-1_QQ,0},{0,-1}},map(QQ^2,QQ^0,0))),
+	   ((matrix{{1_QQ,0},{0,-1}},map(QQ^2,QQ^0,0)),(matrix{{-1_QQ,0},{0,1}},map(QQ^2,QQ^0,0)))};
      L = apply(L,coneBuilder);
      F := new Fan from {
 	  "generatingCones" => set L,
 	  "ambient dimension" => 2,
 	  "top dimension of the cones" => 2,
 	  "number of generating cones" => 4,
-	  "rays" => set {matrix{{0_QQ}, {-1}},matrix{{1}, {0}},matrix{{-1}, {2}},matrix{{0}, {1}}},
+	  "rays" => set {matrix{{0_QQ}, {-1}},matrix{{1_QQ}, {0}},matrix{{-1_QQ}, {2}},matrix{{0_QQ}, {1}}},
 	  "number of rays" => 4,
 	  "isPure" => true,
 	  symbol cache => new CacheTable};
