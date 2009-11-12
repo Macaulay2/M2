@@ -16,6 +16,7 @@ newPackage(
 needsPackage "UPolynomials"
 needsPackage "FractionalIdeals"
 needsPackage "Puiseux"
+needsPackage "MatrixNormalForms"
 
 export {
      integralBasis,
@@ -25,7 +26,9 @@ export {
      makeEquations,
      findPuiseuxSeries,
      puiseuxTruncations,
-     findBranches
+     findBranches,
+     traceRadical,
+     trager
      }
 
 principalPart = (P, f, truncdegree) -> (
@@ -122,108 +125,57 @@ findBranches(RingElement) := (F) -> (
 -- step 2: Hermite normal form
 -- step 3: p-trace radical
 
-rowWithMinimalDegree = (A,j) -> (
-     j + minPosition for k from j to numRows A - 1 list (
-	  a := A_(k,j);
-	  if a == 0 then infinity else first degree a
-	  )
-     )
+needsPackage "TraceForm"
 
-hermitianNF = method()
-hermitianNF Matrix := (M) -> (
-     -- assume for now that the ring of M is k[x]
-     A := mutableMatrix M;
-     nc := numColumns A;
-     nr := numRows A;
-     for j from 0 to nc-1 do (
-	  << "A = " << A << endl;
-	  k := rowWithMinimalDegree(A,j);
-	  while k >= j do (
-	   << "j k = " << j << " " << k << endl;
-	   if k > j then rowSwap(A,j,k);
-	   p := A_(j,j);
-	   if p != 0 then
-	    for i from j+1 to nr-1 do (
-		 q := A_(i,j) // p;
-		 if q != 0 then
-		   rowAdd(A, i, -q, j);
-		 );
-	   k = rowWithMinimalDegree(A,j);
-	   if k == j then k=-1; -- i.e. leave loop
+selectdisc = (L) -> L#0#0
+
+trager1 = (vs, omega, Ms, dx) -> (
+     n := #vs;
+     KA := ring omega;
+     A := KA.baseRings#-1;
+     M := dx*id_(A^n) | lift(omega,A);
+     H := hermiteNF(M, ChangeMatrix=>false);
+     H = submatrix(H, 0..n-1);
+     H = transpose sub(H,KA);
+     -- columns of dx * H^-1 are the A-generators of rad(dx)
+     -- 1/dx * H is the change of basis matrix from vs to gens or rad(dx).
+     -- Now compute Hom(rad(dx),rad(dx)).
+     Hinv := dx * H^-1; -- columns are the A1-basis of the radical of dx.
+     -- First, compute the mult maps for each A1-gen of rad(dx).
+     Msnewbasis := apply(entries transpose lift(Hinv,A), rs -> (
+	  sum apply(#rs, i -> rs#i * Ms#i)
 	  ));
-     -- need to still "backreduce" this matrix
-     matrix A     
+     MM := matrix{apply(Msnewbasis, m -> transpose(1/dx * H * m))};
+     MM = lift(MM,A);
+     L := hermiteNF(MM, ChangeMatrix => false);
+     L = transpose submatrix(L, 0..n-1);
+     (sub(L,KA))^-1
+     --(H, Hinv, Msnewbasis, MM, L)
      )
 
-debug Core
-row2by2 = (ri, rj, c, A, V) -> (
-     -- modifies A, V
-     a := A_(ri,c);
-     b := A_(rj,c);
-     (g,u,v) := toSequence gcdCoefficients(a,b);
-     a' := - a//g;
-     b' := b//g; 
-     print (g, u, v, b', a');
-     rawMatrixRowOperation2(raw A, ri, rj, raw u, raw v, raw b', raw a', false);
-     rawMatrixRowOperation2(raw V, ri, rj, raw u, raw v, raw b', raw a', false);
-     A
-     )
-
-column2by2 = (ci, cj, r, A, V) -> (
-     -- modifies A, V
-     a := A_(r,ci);
-     b := A_(r,cj);
-     (g,u,v) := toSequence gcdCoefficients(a,b);
-     cg := leadCoefficient g;
-     if cg != 1 then (
-	  cginv = 1/cg;
-	  g = cginv * g;
-	  u = cginv * u;
-	  v = cginv * v);
-     a' := - a//g;
-     b' := b//g;
-     print (g, u, v, b', a');
-     rawMatrixColumnOperation2(raw A, ci, cj, raw u, raw v, raw b', raw a', false);
-     rawMatrixColumnOperation2(raw V, ci, cj, raw u, raw v, raw b', raw a', false);
-     A
-     )
-
-makemonic = (s,t,A,V) -> (
-     -- for poly rings kk[x]
-     a := A_(s,t);
-     ca := leadCoefficient a;
-     columnMult(A, t, 1/ca);
-     columnMult(V, t, 1/ca);
-     )
-
-HNF0 = (t, A,V) -> (
-     m := numRows A;
-     c := -1; -- this is a column index
-     for s from 0 to m-1 do (
-	  if A_(s,c+1) != 0 or A_(s,t) != 0 then (
-             c = c+1;
-	     if t == c then makemonic(s,t,A,V)
-	     else column2by2(c,t, s, A,V);
-	     if t == c then return s;
-	     );
-	  ))
-
-HNF = method()
-HNF(MutableMatrix, MutableMatrix) := (A,V) -> (
-     -- A is m by n
-     -- V is n by n unimodular.
-     -- A and V are modified, but A*V is the same
-     n := numColumns A;
-     pivotrows := for t from 0 to n-1 list HNF0(t, A,V);
-     -- now: make the other entries smaller
-     for c from 1 to n-1 do (
-       s := pivotrows#c;
-       for ell from 0 to c-1 do (
-	  q := A_(s,ell) // A_(s,c);
-	  if q != 0 then (
-	       columnAdd(A, ell, -q, c);
-	       columnAdd(V, ell, -q, c);
-	       )));
+trager = method(Options => {Verbosity => 0})
+trager Ring := opts -> (R) -> (
+     -- R should be of the form: K[ys]/I, where
+     -- KK = frac(kk[x]).
+     (vs, omega, Ms) := traceFormAll R;
+     n := #vs;
+     KA := coefficientRing R;
+     A := KA.baseRings#-1;
+     D := lift(det omega, A);
+     Ds := (factor D)//toList/toList/(x -> if x#1 >= 2 then {x#0,floor(x#1/2)} else null);
+     Ds = select(Ds, x -> x =!= null);
+     S := id_(KA^n);
+     while (
+	 dx := selectdisc(Ds);
+	 L = trager1(vs, omega, Ms, dx);
+	 L != 1)
+       do (
+	 omega = (transpose L) * omega * L;
+	 -- change Ds
+	 S = S * L;
+	 << "at end of loop, L = " << L << " and S = " << S << endl;
+	 );
+     matrix{vs} * S
      )
 
 beginDocumentation()
@@ -385,41 +337,74 @@ A = R/F
 integralClosureHypersurface A
 disc(F,y)
 
-TEST ///
+-- Trager algorithm
+-- 
 restart
-loadPackage "IntegralBases"
-debug IntegralBases
-R = QQ[x]
-M = matrix"1,x-2,x-3;
-           x2-1,x3-1,x5-1;
-	   x2+1,x3+1,0"
-	   
-A = mutableMatrix M
-V = mutableIdentity(R, 3)
-HNF(A,V)
-A
-HNF0(0, A,V)
-HNF0(1, A,V)
-A, V
-HNF0(2, A,V)
-print(A, V);
-column2by2(0,1, 0,A,V)
-A
-V
-row2by2(0,1,0,A,V)
+debug loadPackage "IntegralBases"
+loadPackage "MatrixNormalForms"
+loadPackage "TraceForm"
 
-hermitianNF M
-A = mutableMatrix M
-rowWithMinimalDegree(A,0)
-rowSwap(A,0,0)
-rowAdd(A,1,-A_(1,0),0)
-rowAdd(A,2,-A_(2,0),0)
-rowWithMinimalDegree(A,1)
-A_(1,1)//A_(2,1)
-rowAdd(A,2, -A_(1,1)//A_(2,1), 1)
+A1 = QQ[x]
+B1 = frac A1
+R = QQ[x,y]
+F = y^4 - y^2 + (x^3 + x^4)
 
-M = matrix"4x2+3x+5, 4x2+3x+4, 6x2+1;
-           3x+6, 3x+5, 3+x;
-	   6x2+4x+2, 6x2, 2x2+x"
+D = sub(discriminant(F,y), A1)
+Ds = select((factor D)//toList/toList, x -> x#1 > 1)
 
-///
+C1 = B1[y]
+D1 = C1/sub(F,C1)
+(vs, omega, Ms) = traceFormAll D1
+trager D1
+P = trager1(vs, omega, Ms, Ds#0#0)
+(transpose P) * omega * P
+trager1(vs, omega, Ms, dx)
+-- Compute the radical
+n = #vs
+dx = sub(Ds#0#0,A1)
+M = dx*id_(A1^n) | lift(omega,A1)
+H = hermiteNF(M, ChangeMatrix=>false)
+H = submatrix(H, 0..n-1)
+H = transpose sub(H,B1)
+-- change of basis matrix from vs to radical generators:
+1/dx * H
+Hinv = dx * H^-1 -- columns are the A1-basis of the radical of dx.
+
+-- Now compute Hom(rad(dx),rad(dx)).
+-- First, compute the mult maps for each A1-gen of rad(dx).
+Msnewbasis = apply(entries transpose lift(Hinv,A1), rs -> (
+	  sum apply(#rs, i -> rs#i * Ms#i)
+	  ))
+M = matrix{apply(Msnewbasis, m -> transpose(1/dx * H * lift(m,A1)))}
+-- Second, concat these together, do hermite.
+M = matrix {Msnewbasis}
+M = lift(M, A1)
+M = H * M
+
+M = lift(M,A1)
+L = hermiteNF(M, ChangeMatrix => false)
+L = submatrix(L, 0..n-1)
+-- Third, this gives the changes of basis vs to the new basis.
+--   Use this to change omega for the next step.
+L = sub(transpose L,B1)
+L^-1 -- columns are the new basis elements
+(transpose L) * omega * L
+L^-1
+matrix {vs} * oo
+
+
+transpose H
+H1 = sub(transpose H, ring Ms_0)
+use ring Ms_0
+use coefficientRing ring Ms_0
+x*Ms_0
+H * (x*Ms_0)
+H * (x*Ms_1)
+H * (x*Ms_2)
+H * (Ms_3-Ms_1)
+H * matrix{{x*Ms_0, x*Ms_1, x*Ms_2, Ms_3-Ms_1}}
+sub(oo,A1)
+hermiteNF(oo, ChangeMatrix=>false)
+submatrix(oo,{0..3})
+sub(oo,B1)
+transpose(oo^-1)
