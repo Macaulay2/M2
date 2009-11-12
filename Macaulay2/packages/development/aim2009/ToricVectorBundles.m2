@@ -172,7 +172,7 @@ makeVBKlyachko (ZZ,Fan) := (k,F) -> (
 	       L1 := sort unique L;
 	       p#0 => hashTable ({(min L1-1) => {}} | apply(L1, l -> l => positions(L,e -> e == l)))));
      -- Generating the vector bundle
-     new ToricVectorBundleKlyachko from {
+     T := new ToricVectorBundleKlyachko from {
 	  "ring" => QQ,
 	  "rayTable" => rayTable,
 	  "baseTable" => baseTable,
@@ -183,7 +183,9 @@ makeVBKlyachko (ZZ,Fan) := (k,F) -> (
 	  "dimension of the variety" => dim F,
 	  "rank of the vector bundle" => k,
 	  "number of rays" => #rayTable,
-	  symbol cache => new CacheTable})
+	  symbol cache => new CacheTable};
+     T.cache.isVB = true;
+     T)
 
 
 --   INPUT : '(k,F,baseList,filtrationList)',  a strictly positive integer 'k', a pure and full dimensional
@@ -443,74 +445,76 @@ regCheck ToricVectorBundleKaneyama := tvb -> (
 				   (if A^{i}_{j} != 0 then contains(C,rj-ri) else true) and (if A^{j}_{i} != 0 then contains(C,ri-rj) else true))))))));
 
 
+
+-- THIS IS SUPERFLUOS NOW
 -- PURPOSE : Checking if a ToricVectorBundleKlyachko satisfies the compatability condition
 --   INPUT : 'tvb', a ToricVectorBundleKlyachko
 --  OUTPUT : 'true' or 'false'
 -- COMMENT : This function is for checking ToricVectorBundles whose bases and filtration matrices 
 --     	     are inserted by hand. Those generated for example by tangentBundle fulfill the 
 --     	     conditions automatically. Caveat: This function is not complete yet.
-regCheck ToricVectorBundleKlyachko := tvb -> (
-  -- if the Fan is smooth, the condition is automatically satisfied
-  if (isSmooth(tvb#"ToricVariety")) then (
-       true)
-  else ( 
-     -- Extracting the neccesary data
-     baseT := tvb#"baseTable";
-     filtrationT := tvb#"filtrationTable";
-     -- Computing the actual bases of the filtrations for each ray
-     filtrationT = hashTable apply(pairs filtrationT, p -> (
-	       previous := 0;
-	       Lfilt := {};
-	       Bfilt := baseT#(p#0);
-	       filt := sort keys p#1;
-	       filt = hashTable apply(filt, q -> (
-			 prev := previous;
-			 previous = q;
-			 Lfilt = Lfilt | (p#1)#q;
-			 q => (Bfilt_Lfilt,prev)));
-	       p#0 => filt));
-     -- Extracting more data
-     k := tvb#"rank of the vector bundle";
-     n := tvb#"dimension of the variety";
-     F := tvb#"ToricVariety";
-     reg := true;
-     L := maxCones F;
-     -- Checking the condition from theorem 2.3 for every generating cone
-     while (reg) and (L != {}) do (
-	  -- Taking the rays of the active generating cone
-	  R := rays L#0;
-	  -- Drop the active cone
-	  L = drop(L,1);
-	  -- Make a list of the rays
-	  R = apply(numColumns R, i -> R_{i});
-	  -- Selecting the basis of the first ray is our "standard basis"
-	  B := baseT#(R#0);
-	  i := 0;
-	  -- Scanning the basis vectors of B
-	  while reg and (i < k) do (
-	       b := image(B_{i});
-	       -- Generating the matrix of condition vectors for the Eigenspaces degrees
-	       M := map(QQ^0,QQ^n,0);
-	       v := map(ZZ^0,ZZ^1,0);
-	       v1 := v;
-	       -- for every ray find the index of the filtration where the actual b appears for the 
-	       -- first time and add it to v and the ray to M
-	       scan(R, r -> (
-			 s := (select(pairs filtrationT#r, p -> (isSubset(b,image(p#1#0)))))#0;
-			 M = M || transpose(r);
-			 v = v || matrix{{s#0}};
-			 v1 = v1 || matrix{{(s#0)-1}}));
-	       -- intersect these to get the polytope of possible degrees for the Eigenspace containing 'b'
-	       P := intersection(M || (-M),v || (-v1));
-	       P = latticePoints P;
-	       v1 = substitute(v1,QQ);
-	       -- Check which lattice points of 'P' are not in one of the previous Filtration steps
-	       Plist = select(P, p -> (all(numRows M, j -> (((M^{j})*p) != (v1^{j})))));
-	       -- If such a lattce point exists the Filtrations satisfy the condition
-	       reg = (Plist != {});
-	       i = i+1));
-     reg))
-       
+--regCheck ToricVectorBundleKlyachko := tvb -> (
+--  -- if the Fan is smooth, the condition is automatically satisfied
+--  if (isSmooth(tvb#"ToricVariety")) then (
+--       true)
+--  else ( 
+--     -- Extracting the neccesary data
+--     baseT := tvb#"baseTable";
+--     filtrationT := tvb#"filtrationTable";
+--     -- Computing the actual bases of the filtrations for each ray
+--     filtrationT = hashTable apply(pairs filtrationT, p -> (
+--	       previous := 0;
+--	       Lfilt := {};
+--	       Bfilt := baseT#(p#0);
+--	       filt := sort keys p#1;
+--	       filt = hashTable apply(filt, q -> (
+--			 prev := previous;
+--			 previous = q;
+--			 Lfilt = Lfilt | (p#1)#q;
+--			 q => (Bfilt_Lfilt,prev)));
+--	       p#0 => filt));
+--     -- Extracting more data
+--     k := tvb#"rank of the vector bundle";
+--     n := tvb#"dimension of the variety";
+--     F := tvb#"ToricVariety";
+--     reg := true;
+--     L := maxCones F;
+--     -- Checking the condition from theorem 2.3 for every generating cone
+--     while (reg) and (L != {}) do (
+--	  -- Taking the rays of the active generating cone
+--	  R := rays L#0;
+--	  -- Drop the active cone
+--	  L = drop(L,1);
+--	  -- Make a list of the rays
+--	  R = apply(numColumns R, i -> R_{i});
+--	  -- Selecting the basis of the first ray is our "standard basis"
+--	  B := baseT#(R#0);
+---	  i := 0;
+--	  -- Scanning the basis vectors of B
+--	  while reg and (i < k) do (
+--	       b := image(B_{i});
+--	       -- Generating the matrix of condition vectors for the Eigenspaces degrees
+--	       M := map(QQ^0,QQ^n,0);
+--	       v := map(ZZ^0,ZZ^1,0);
+--	       v1 := v;
+--	       -- for every ray find the index of the filtration where the actual b appears for the 
+--	       -- first time and add it to v and the ray to M
+--	       scan(R, r -> (
+--			 s := (select(pairs filtrationT#r, p -> (isSubset(b,image(p#1#0)))))#0;
+--			 M = M || transpose(r);
+--			 v = v || matrix{{s#0}};
+--			 v1 = v1 || matrix{{(s#0)-1}}));
+--	       -- intersect these to get the polytope of possible degrees for the Eigenspace containing 'b'
+--	       P := intersection(M || (-M),v || (-v1));
+--	       P = latticePoints P;
+--	       v1 = substitute(v1,QQ);
+--	       -- Check which lattice points of 'P' are not in one of the previous Filtration steps
+--	       Plist = select(P, p -> (all(numRows M, j -> (((M^{j})*p) != (v1^{j})))));
+--	       -- If such a lattce point exists the Filtrations satisfy the condition
+--	       reg = (Plist != {});
+--	       i = i+1));
+--     reg))
+--       
 
 ----------------------------------------------------------------------------
 -- OPERATIONS ON TORIC VECTOR BUNDLES
@@ -1043,7 +1047,7 @@ coker (ToricVectorBundleKlyachko,Matrix) := (T,M) -> (
 	       L1 := sort unique L;
 	       p#0 => hashTable ({(min L1-1) => {}} | apply(L1, l -> l => positions(L,e -> e == l)))));
      bT = hashTable apply(pairs bT, p -> p#0 => matrix {apply(p#1,first)});
-     new ToricVectorBundleKlyachko from {
+     Tnew := new ToricVectorBundleKlyachko from {
 	  "ring" => T#"ring",
 	  "rayTable" => T#"rayTable",
 	  "baseTable" => bT,
@@ -1054,7 +1058,9 @@ coker (ToricVectorBundleKlyachko,Matrix) := (T,M) -> (
 	  "dimension of the variety" => T#"dimension of the variety",
 	  "rank of the vector bundle" => newRank,
 	  "number of rays" => T#"number of rays",
-	  symbol cache => new CacheTable})
+	  symbol cache => new CacheTable};
+     if T.cache.?isVB and T.cache.isVB then Tnew.cache.isVB = T.cache.isVB;
+     Tnew)
 
      	       
 	       
@@ -1201,7 +1207,9 @@ dsum (ToricVectorBundleKlyachko,ToricVectorBundleKlyachko) := (tvb1,tvb2) -> (
 	  filtrationTable := apply(rays tvb, r -> ( fT1#r | fT2#r));
 	  baseTable := apply(rays tvb, r -> ( (bT1#r | map(R^k1,R^k2,0)) || (map(R^k2,R^k1,0) | bT1#r)));
 	  tvb = addFiltration(tvb,filtrationTable);
-	  addBase(tvb,baseTable))
+	  tvb = addBase(tvb,baseTable);
+	  if tvb1.cache.?isVB and tvb2.cache.?isVB and tvb1.cache.isVB and tvb2.cache.isVB then tvb.cache.isVB = true;
+	  tvb)
 
      
 ToricVectorBundleKaneyama ++ ToricVectorBundleKaneyama := (tvb1,tvb2) -> dsum(tvb1,tvb2)
@@ -1239,7 +1247,7 @@ dual ToricVectorBundleKlyachko := {} >> opts -> tvb -> (
      fMT := hashTable apply(pairs fT, q -> q#0 => (q1new:= hashTable flatten apply(pairs q#1, p -> apply(p#1, i -> i => p#0)); matrix {apply(#q1new, j -> q1new#j)}));
      -- The orthogonal complement is given by the transpose of the inverse matrix
      bT := hashTable apply(pairs tvb#"baseTable", p -> p#0 => transpose inverse p#1);
-     new ToricVectorBundleKlyachko from {
+     T := new ToricVectorBundleKlyachko from {
 		    "ring" => tvb#"ring",
 		    "rayTable" => tvb#"rayTable",
 		    "baseTable" => bT,
@@ -1250,7 +1258,9 @@ dual ToricVectorBundleKlyachko := {} >> opts -> tvb -> (
 		    "dimension of the variety" => tvb#"dimension of the variety",
 		    "rank of the vector bundle" => tvb#"rank of the vector bundle",
 		    "number of rays" => tvb#"number of rays",
-		    symbol cache => new CacheTable})
+		    symbol cache => new CacheTable};
+     if tvb.cache.?isVB and tvb.cache.isVB then T.cache.isVB = true;
+     T)
 	  
 existsDecomposition = method()
 existsDecomposition (ToricVectorBundleKlyachko,List) := (T,L) -> (
@@ -1322,7 +1332,9 @@ extPower (ZZ,ToricVectorBundleKlyachko) := (l,tvb) -> (
      filtrationTable = apply(Rs, r -> (
 	       filt := filtrationTable#r;
 	       matrix {apply(ind, j -> ( sum flatten entries filt_j))}));
-     makeVBKlyachko(#ind,F,baseTable,filtrationTable))
+     T := makeVBKlyachko(#ind,F,baseTable,filtrationTable);
+     if tvb.cache.?isVB and tvb.cache.isVB then T.cache.isVB = true;
+     T)
 
 
 --   INPUT : '(l,tvb)',  where 'l' is a strictly positive integer and 'tvb'is a ToricVectorBundleKaneyama
@@ -1451,7 +1463,7 @@ image (ToricVectorBundleKlyachko,Matrix) := (T,M) -> (
 	       L1 := sort unique L;
 	       p#0 => hashTable ({(min L1-1) => {}} | apply(L1, l -> l => positions(L,e -> e == l)))));
      bT = hashTable apply(pairs bT, p -> p#0 => matrix {apply(p#1,first)});
-     new ToricVectorBundleKlyachko from {
+     Tnew := new ToricVectorBundleKlyachko from {
 	  "ring" => T#"ring",
 	  "rayTable" => T#"rayTable",
 	  "baseTable" => bT,
@@ -1462,7 +1474,9 @@ image (ToricVectorBundleKlyachko,Matrix) := (T,M) -> (
 	  "dimension of the variety" => T#"dimension of the variety",
 	  "rank of the vector bundle" => ranknew,
 	  "number of rays" => T#"number of rays",
-	  symbol cache => new CacheTable})
+	  symbol cache => new CacheTable};
+     if T.cache.?isVB and T.cache.isVB then Tnew.cache.isVB = true;
+     Tnew)
 
 
 
@@ -1475,29 +1489,31 @@ image (ToricVectorBundleKlyachko,Matrix) := (T,M) -> (
 --     	     holds.
 isGeneral = method()
 isGeneral ToricVectorBundleKlyachko := tvb -> (
-     fT := tvb#"filtrationMatricesTable";
-     fT = hashTable apply(pairs fT, p -> p#0 => flatten entries p#1);
-     bT :=tvb#"baseTable";
-     L := hashTable apply(pairs fT, (j,q) -> j => apply(sort unique q, i -> (bT#j)_(positions(fT#j, e -> e <= i))));     
-     -- recursive function to check every combination of filtration steps
-     recursiveCheck := (L,Es) -> (
-	  -- if there is still a list of filtration steps, call recursiveCheck again for each entry
-	  if L != {} then all(L#0, l -> recursiveCheck(drop(L,1),Es|{l}))
-	  -- otherwise we have a choice of filtration steps and check the condition
-	  else (
-	       n := numRows Es#0;
-	       codimSum := sum apply(Es, A -> n - numColumns A);
-	       codimSum = min(codimSum,n);	       
-	       R := ring Es#0;
-	       E := map(R^n,R^n,1);
-	       Es = select(Es, e -> numColumns e != n);
-	       scan(Es, A -> E = intersectMatrices(E,A));
-	       n - numColumns E == codimSum));
-     F := maxCones tvb#"ToricVariety";
-     all(F, C -> (
-	       C = rays C;
-	       C = apply(numColumns C, i -> C_{i});
-	       recursiveCheck(apply(C, r -> L#r),{}))))
+     if not tvb.cache.?isGeneral then (
+	  fT := tvb#"filtrationMatricesTable";
+     	  fT = hashTable apply(pairs fT, p -> p#0 => flatten entries p#1);
+     	  bT :=tvb#"baseTable";
+     	  L := hashTable apply(pairs fT, (j,q) -> j => apply(sort unique q, i -> (bT#j)_(positions(fT#j, e -> e <= i))));     
+     	  -- recursive function to check every combination of filtration steps
+     	  recursiveCheck := (L,Es) -> (
+	       -- if there is still a list of filtration steps, call recursiveCheck again for each entry
+	       if L != {} then all(L#0, l -> recursiveCheck(drop(L,1),Es|{l}))
+	       -- otherwise we have a choice of filtration steps and check the condition
+	       else (
+	       	    n := numRows Es#0;
+	       	    codimSum := sum apply(Es, A -> n - numColumns A);
+	       	    codimSum = min(codimSum,n);	       
+	       	    R := ring Es#0;
+	       	    E := map(R^n,R^n,1);
+	       	    Es = select(Es, e -> numColumns e != n);
+	       	    scan(Es, A -> E = intersectMatrices(E,A));
+	       	    n - numColumns E == codimSum));
+     	  F := maxCones tvb#"ToricVariety";
+     	  tvb.cache.isGeneral = all(F, C -> (
+	       	    C = rays C;
+	       	    C = apply(numColumns C, i -> C_{i});
+	       	    recursiveCheck(apply(C, r -> L#r),{}))));
+     tvb.cache.isGeneral)
 
 
 isVectorBundle = method()
@@ -1545,7 +1561,7 @@ ker (ToricVectorBundleKlyachko,Matrix) := opts -> (T,M) -> (
 	       L1 := sort unique L;
 	       p#0 => hashTable ({(min L1-1) => {}} | apply(L1, l -> l => positions(L,e -> e == l)))));
      bT = hashTable apply(pairs bT, p -> p#0 => matrix {apply(p#1,first)});
-     new ToricVectorBundleKlyachko from {
+     Tnew := new ToricVectorBundleKlyachko from {
 	  "ring" => T#"ring",
 	  "rayTable" => T#"rayTable",
 	  "baseTable" => bT,
@@ -1556,7 +1572,9 @@ ker (ToricVectorBundleKlyachko,Matrix) := opts -> (T,M) -> (
 	  "dimension of the variety" => T#"dimension of the variety",
 	  "rank of the vector bundle" => ranknew,
 	  "number of rays" => T#"number of rays",
-	  symbol cache => new CacheTable})
+	  symbol cache => new CacheTable};
+     if T.cache.?isVB and T.cache.isVB then Tnew.cache.isVB = true;
+     Tnew)
      
 
 
@@ -1652,7 +1670,9 @@ symmProd(ZZ,ToricVectorBundleKlyachko) := (l,tvb) -> (
      filtrationTable = apply(Rs, r -> (
 	       filt := filtrationTable#r;
 	       matrix {apply(ind, j -> sum flatten entries filt_j)}));
-     makeVBKlyachko(#ind,F,baseTable,filtrationTable))
+     T := makeVBKlyachko(#ind,F,baseTable,filtrationTable);
+     if tvb.cache.?isVB and tvb.cache.isVB then T.cache.isVB=true;
+     T)
 
 
 --   INPUT : '(l,tvb)',  where 'l' is a strictly positive integer and 'tvb'is a TorcVectorBundle
@@ -1740,7 +1760,9 @@ tangentBundleKlyachko = F -> (
      baseTable := apply(rayTable, r -> r | complement r);
      -- Adding bases filtration matrices to the bundle
      tvb = addFiltration(tvb,filtrationTable);
-     addBase(tvb,baseTable))
+     tvb = addBase(tvb,baseTable);
+     tvb.cache.isVB = true;
+     tvb)
 
 
 -- PURPOSE : Checking if the two ToricVectorBundleKaneyama are equal
@@ -1804,7 +1826,9 @@ tproduct (ToricVectorBundleKlyachko,ToricVectorBundleKlyachko) := ToricVectorBun
 	       matrix {flatten apply(flatten entries f1, e1 -> apply(flatten entries f2, e2 -> e1 + e2))}));
      -- Writing the new Tables into the bundle
      tvb = addBase(tvb,baseTable);
-     addFiltration(tvb,filtrationTable))
+     tvb = addFiltration(tvb,filtrationTable);
+     if tvb1.cache.?isVB and tvb2.cache.?isVB and tvb1.cache.isVB and tvb2.cache.isVB then tvb.cache.isVB = true;
+     tvb)
 
      
 ToricVectorBundleKaneyama ** ToricVectorBundleKaneyama := tproduct
@@ -1876,7 +1900,8 @@ weilToCartier (List,Fan) := opts -> (L,F) -> (
 	  addDegrees(tvb,gC))
      else if opts#"Type" == "Klyachko" then (
 	  if any(L, l -> not instance(l,ZZ)) then error("The weights must be in ZZ.");
-	  makeVBKlyachko(1,F,apply(L, l -> matrix{{1_QQ}}),apply(L, l -> matrix{{-l}})))
+	  T := makeVBKlyachko(1,F,apply(L, l -> matrix{{1_QQ}}),apply(L, l -> matrix{{-l}}));
+	  if not isVectorBundle T then error("The weights do not define a Cartier divisor.") else T)
      else error("Type must be Klyachko or Kaneyama"))
 
 
@@ -2082,14 +2107,14 @@ document {
      is defined. Note that in ",TT "T"," the rays are already sorted and that the basis matrices in ",TT "L"," will be assigned to the 
      rays in that order. To see the order use ",TT "rays T",".",
      
-     PARA{}, "The matrices must not satisfy the compatability condition. This can be checked with ",TO regCheck,".",
+     PARA{}, "The matrices must not satisfy the compatability condition. This can be checked with ",TO isVectorBundle,".",
      
      EXAMPLE {
 	  " T = toricVectorBundle(2,pp1ProductFan 2)",
 	  " details T",
 	  " T1 = addBase(T,{matrix{{1,2},{3,1}},matrix{{-1,0},{3,1}},matrix{{1,2},{-3,-1}},matrix{{-1,0},{-3,-1}}})",
 	  " details T1",
-	  " regCheck T1"
+	  " isVectorBundle T1"
 	  }
      
      }
@@ -2114,14 +2139,14 @@ document {
      
      PARA{}, "The filtration on the vector bundle over a ray is given by the filtration matrix for this ray in the following way. The 
      first index j such that the i-th basis vector in the basis over this ray appears in the j-th filtration is the i-th entry of 
-     the filtration matrix. The matrices must not satisfy the compatability condition. This can be checked with ",TO regCheck,".",
+     the filtration matrix. The matrices must not satisfy the compatability condition. This can be checked with ",TO isVectorBundle,".",
      
      EXAMPLE {
 	  " T = toricVectorBundle(2,pp1ProductFan 2)",
 	  " details T",
 	  " T1 = addFiltration(T,{matrix{{1,3}},matrix{{-1,3}},matrix{{2,-3}},matrix{{0,-1}}})",
 	  " details T1",
-	  " regCheck T1"
+	  " isVectorBundle T1"
 	  },
      
      PARA{}, "This means that for example over the first ray the first basis vector of ",TT "T1"," appears at 1 and the second at 3"
@@ -2270,7 +2295,7 @@ document {
      } 
 
 document {
-     Key => {regCheck, (regCheck,ToricVectorBundleKaneyama), (regCheck,ToricVectorBundleKlyachko)},
+     Key => {regCheck, (regCheck,ToricVectorBundleKaneyama)},
      Headline => " checking the regularity condition for a toric vector bundle",
      Usage => " b = regCheck(T)",
      Inputs => {
@@ -2289,19 +2314,6 @@ document {
      
      EXAMPLE {
 	  " T = tangentBundle(pp1ProductFan 2,\"Type\" => \"Kaneyama\")",
-	  " regCheck T"
-	  },
-     
-     PARA{}, "For a toric vector bundle in Klyachko's description, the regularity condition means that for every maximal cone there is 
-     a decomposition into torus eigenspaces such that the filtration for each ray is induced by this decomposition (See: " , EM "Computing 
-     Cech Cohomology of Vector Bundles on Toric Varieties", ", R. Birkner, N. O. Ilten, and L. Petersen, in preparation). Note that this 
-     is only neccessary for toric vector bundles generated 'by hand' using ",TO addBase," and ",TO addFiltration,", since bundles generated 
-     for example by ",TO tangentBundle," satisfy the condition autmatically.",
-     
-     PARA{}, "CAVEAT: This function is not yet correct, it has to be corrected.",
-     
-     EXAMPLE {
-	  " T = tangentBundle pp1ProductFan 2",
 	  " regCheck T"
 	  }
      
@@ -2588,6 +2600,12 @@ document {
 	  " T = cotangentBundle hirzebruchFan 2",
 	  " isGeneral T"
 	  }
+     }
+
+document {
+     Key => {isVectorBundle, (isVectorBundle,ToricVectorBundleKlyachko)},
+     Headline => " has to be documented yet"
+     
      }
 
 document {
