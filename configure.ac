@@ -10,13 +10,13 @@ AC_SUBST(CONFIG_CMD,"'$0' $ac_configure_args")
 
 define(TO_UPPER,[translit($1, [a-z], [A-Z])])
 AC_DEFUN(IS_DECLARED,[
-  AC_CACHE_CHECK(whether $2 is declared, m2_cv_$2_is_declared,
-        AC_LANG(C)
-	AC_COMPILE_IFELSE([
-	    $3
+  AC_CACHE_CHECK([whether $2 is declared],[m2_cv_$2_is_declared],
+  	[AC_LANG(C)]
+	[AC_COMPILE_IFELSE([$3
 	    int main () { $1 x = $2 ; } ],
-	m2_cv_$2_is_declared=yes,
-	m2_cv_$2_is_declared=no))
+	 m2_cv_$2_is_declared=yes,
+	 m2_cv_$2_is_declared=no)
+	])
   test $m2_cv_$2_is_declared = no; val=$?
   AC_DEFINE_UNQUOTED(TO_UPPER($2_IS_DECLARED),$val,[whether $2 is declared in errno.h or stdio.h])
 ])
@@ -1136,12 +1136,10 @@ CFLAGS=$SAVE
 
 IS_DECLARED(char **,sys_errlist, [
       #include <stdio.h>
-      #include <errno.h>
-      ])
+      #include <errno.h>])
 IS_DECLARED(char **,h_errlist, [
       #include <stdio.h>
-      #include <errno.h>
-      ])
+      #include <errno.h>])
 
 AC_SUBST(DUMPDATAFILE,Macaulay2-$ARCH-data)
 
