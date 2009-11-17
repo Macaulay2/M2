@@ -139,6 +139,10 @@ isDegree (HashTable, Vector) := (G, b) -> (
      S:="Support";
      --first of all, is b a key in the table?
      if (not isInFiberGraph(G,b)) then error "fiber is empty; this vector is not a valid degree.";
+     scan (keys G , l ->  (
+      	       if (G#l #? b) then L:=l;
+	       )
+	   )
      --if condition below is true then true is returned, otherwise false
      #(G#L#b#S) > 1
 )--end of isDegree
@@ -152,7 +156,7 @@ isInFiberGraph (Matrix, Vector) := (A,b) -> (
 )
 
 isInFiberGraph (HashTable, Vector) := (G, b) -> (
-     (any( keys G, l-> G#l #? b )) --then 
+     (any( keys G, l-> G#l #? b )) 
 )--end of isInFiberGraph
 ----------------------------------------------------------------
 ----------------------------------------------------------------
