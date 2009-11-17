@@ -1,7 +1,7 @@
 newPackage(
 	"ToricFibers",
     	Version => "1.0", 
-    	Date => "October 29, 2009",
+    	Date => "November 16, 2009",
     	Authors => {
          {Name => "Serkan Hosten", Email => "serkan@math.sfsu.edu", HomePage => "http://math.sfsu.edu/serkan"},
          {Name => "Sonja Petrovic", Email => "petrovic@math.uic.edu", HomePage => "http://www.math.uic.edu/~petrovic"},
@@ -11,7 +11,7 @@ newPackage(
     	DebuggingMode => false
     	)
 
---loadDepth = loadDepth - 1
+--loadDepth = loadDepth - 1 --- i have no idea what this is supposed to be for.
 
 export {buildFiberGraph,
         isDegree,
@@ -31,7 +31,7 @@ export {buildFiberGraph,
 -----------------------------------------
 buildFiberGraph = method(TypicalValue=>HashTable, Options=>{MaxLevel => infinity});
 buildFiberGraph (Matrix) := ZZ => opts -> A ->(
-     --     r:=rank A; --this will be use to stop the computation at level r
+     --     r:=rank A; --this will be used to stop the computation at level r
      if opts.MaxLevel =!= infinity  then r:=opts.MaxLevel else r=rank A;
      --     r :=min(opts.MaxLevel, rank A);
      d:=numRows A;
@@ -139,8 +139,8 @@ isDegree (HashTable, Vector) := (G, b) -> (
      S:="Support";
      --first of all, is b a key in the table?
      if (not isInFiberGraph(G,b)) then error "fiber is empty; this vector is not a valid degree.";
-     scan (keys G , l ->  (
-      	       if (G#l #? b) then L:=l;
+     apply (keys G , lev ->  (
+      	       if (G#lev #? b) then L=lev;
 	       )
 	   )
      --if condition below is true then true is returned, otherwise false
@@ -263,17 +263,21 @@ getGenerators (Matrix, HashTable,Vector) := (A,G,b)->(
      return geners;     
      --
      )--end of getGenerator
-
--------------------------------------------------------------------------
--------------------------------------------------------------------------
 -------------------------------------------------------------------------
 
---loadDepth = loadDepth + 1
+
+
+----------------------------------------------------------------
+-- DOCUMENTATION
+----------------------------------------------------------------
 
 beginDocumentation()
 needsPackage "SimpleDoc"
 debug SimpleDoc
 
+----------------------------------------------------------------
+-- DOC for ToricFibers
+----------------------------------------------------------------
 doc ///
   Key
     ToricFibers
@@ -284,6 +288,9 @@ doc ///
        The goal of this package is ... (theory and defs go here)
 ///
 
+----------------------------------------------------------------
+-- DOC for buildFiberGraph
+----------------------------------------------------------------
 doc ///
   Key
     buildFiberGraph
@@ -327,12 +334,26 @@ doc ///
         G = buildFiberGraph(A);
         peek G
     Text
-        Add text 
+    	Here you can see all columns of A are at level 1:
+    Example
+	keys G#1 / peek 
+    Text
+    	Here you can see all vectors that are at level 2:
+    Example     
+	keys G#2 / peek 
+    Text
+        There is an optional input for maximum level, to stop the computation sooner then the default level (the rank of A).
+    Example
+    	G2 = buildFiberGraph(A,MaxLevel=>2);
+	peek G2
   SeeAlso
     ToricFibers
     getFiberTree
 ///
 
+----------------------------------------------------------------
+-- DOC for isDegree
+----------------------------------------------------------------
 doc ///
   Key
     isDegree
@@ -361,15 +382,38 @@ doc ///
         i.e. b is a (multigraded) degree of a minimal generator of the toric ideal I_A.
         The function isDegree uses the fiber graph G associated to A;
         so, G is an optional input to isDegree.
+	For example, consider the following matrix:
     Example
+    	A = matrix"
+	1,1,1,0,0,0,0,0,0;
+	0,0,0,1,1,1,0,0,0;
+	0,0,0,0,0,0,1,1,1;
+	1,0,0,1,0,0,1,0,0;
+	0,1,0,0,1,0,0,1,0;
+	0,0,1,0,0,1,0,0,1"
     Text
-        Add text 
+   	There are three possible scenarios:
+    Example
+    	b1=vector{1,0,1,1,1,0}; --the fiber of b1 is disconnected:
+	isDegree(A,b1)
+	b2 = vector{1,0,0,1,0,0}; -- b2 is in the graph, but its fiber is connected:
+	isDegree(A,b2)
+	b3 = vector{1,2,3,4,5,6}; -- b3 is not even in the graph:
+	isDegree(A,b3)
+    Text 
+    	If we have already computed the graph G once, we may reuse it when calling isDegree:
+    Example
+	G = buildFiberGraph(A);
+    	isDegree(G,b1) -- pass the graph G instead of the matrix A.
   SeeAlso
     ToricFibers
     buildFiberGraph
 ///
 
 
+----------------------------------------------------------------
+-- DOC for isInFiberGraph
+----------------------------------------------------------------
 doc ///
   Key
     isInFiberGraph
@@ -395,8 +439,20 @@ doc ///
         isDegree returns true if 
         b is anywhere in the fiber graph.
     Example
+    	A = matrix"
+	1,1,1,0,0,0,0,0,0;
+	0,0,0,1,1,1,0,0,0;
+	0,0,0,0,0,0,1,1,1;
+	1,0,0,1,0,0,1,0,0;
+	0,1,0,0,1,0,0,1,0;
+	0,0,1,0,0,1,0,0,1"
+    	b1=vector{1,0,1,1,1,0}; 
+	isInFiberGraph(A,b1)
+	b3 = vector{1,2,3,4,5,6}; 
+	G = buildFiberGraph(A);
+	isInFiberGraph(G,b3)
     Text
-        Add text 
+        This function is called from isDegree.
   SeeAlso
     ToricFibers
     buildFiberGraph
@@ -405,6 +461,9 @@ doc ///
 
 
 
+----------------------------------------------------------------
+-- DOC for getFiberTree
+----------------------------------------------------------------
 doc ///
   Key
     getFiberTree
@@ -438,14 +497,29 @@ doc ///
         1) given b extract the graph and if it is connected
         2) if disc. trace the paths to get the monomials (note: need to do this since we are not storing squares at any node b).
     Example
+    	A = matrix"
+	1,1,1,1,1,1;
+	1,2,3,4,5,6;
+	0,0,1,0,1,1"
+	G = buildFiberGraph(A);
+	b=vector{2,10,1};
     Text
-        Add text 
+    	Vector b is obtained by a linear combination of two columns of A (i.e. it is on the second level of the fiber graph G):
+    Example
+	peek G#2#b
+    Text
+     	Let us extract just its fiber tree:    
+    Example
+    	T= getFiberTree(A, G, b) 
   SeeAlso
     ToricFibers
     buildFiberGraph
     isDegree
 ///
 
+----------------------------------------------------------------
+-- DOC for getGenerator
+----------------------------------------------------------------
 doc ///
   Key
     getGenerators
@@ -474,14 +548,29 @@ doc ///
         Since the function uses the fiber graph G associated to A,
         G is an optional input to getFiberTree.
     Example
+    	A = matrix"
+	1,1,1,1,1,1;
+	1,2,3,4,5,6;
+	0,0,1,0,1,1"
+	G = buildFiberGraph(A);
+	b=vector{2,7,1};
     Text
-        Add text 
+    	Vector b is obtained by a linear combination of two columns of A (i.e. it is on the second level of the fiber graph G):
+    Example
+    	peek G#2#b
+    Text
+     	Let us extract all minimal generators of degree b: 
+    Example
+    	getGenerators(A,G,b) 
   SeeAlso
     ToricFibers
     buildFiberGraph
     isDegree
 ///
 
+----------------------------------------------------------------
+-- DOC for Edges
+----------------------------------------------------------------
 doc ///
   Key
     Edges
@@ -495,6 +584,9 @@ doc ///
         Add example 
 ///
 
+----------------------------------------------------------------
+-- DOC for Support
+----------------------------------------------------------------
 doc ///
   Key
     Support
@@ -507,16 +599,62 @@ doc ///
     Text
         Add example.
 ///
+----------------------------------------------------------------
+----------------------------------------------------------------
 
+
+
+
+----------------------------------------------------------------
+-- TESTS 
+----------------------------------------------------------------
+
+----------------------------------------------------------------
+-- TEST for ToricFibers ......
+----------------------------------------------------------------
 
 TEST///
 
 ///
 
 end
+----------------------------------------------------------------
+----------------------------------------------------------------
+
+
+
 
 ----------------------------------------------------------------
--- EXAMPLE:
+-- CODE FOR INSTALLING THE PACKAGE:
+----------------------------------------------------------------
+
+restart
+--load "4ti2.m2"
+installPackage ("ToricFibers", RemakeAllDocumentation => true, UserMode=>true)
+installPackage("ToricFibers",UserMode=>true,DebuggingMode => true)
+viewHelp ToricFibers
+
+
+--check FourTiTwo
+
+--debug FourTiTwo
+----------------------------------------------------------------
+----------------------------------------------------------------
+----------------------------------------------------------------
+
+
+
+
+
+----------------------------------------------------------------
+----------------------------------------------------------------
+-- various examples that can be erased ONLY AFTER the tests have been written!!
+----------------------------------------------------------------
+----------------------------------------------------------------
+
+
+----------------------------------------------------------------
+-- EXAMPLEs:
 -- the 3x3 independence model
 ----------------------------------------------------------------
 A = matrix"
@@ -540,7 +678,7 @@ isDegree(G,bFalse)
 bStupid = vector{1,2,3,4,5,6};
 isDegree(G,bStupid)
 
-peek G
+--peek G
 
 T= getFiberTree(A, G, bTrue) --perhaps attach A to G somehow? nah... the user knows A.
 T = getFiberTree(A, G, bFalse) 
@@ -579,25 +717,116 @@ apply(#K,j->(
 	  )
      )
 --PERFECT!!
+
+
+
+
 ----------------------------------------------------------------
+-- EXAMPLE:
+-- the 3x3 independence model
 ----------------------------------------------------------------
+A = matrix"
+1,1,1,0,0,0,0,0,0;
+0,0,0,1,1,1,0,0,0;
+0,0,0,0,0,0,1,1,1;
+1,0,0,1,0,0,1,0,0;
+0,1,0,0,1,0,0,1,0;
+0,0,1,0,0,1,0,0,1"
+
+G = buildFiberGraph(A);
+G2 = buildFiberGraph(A,MaxLevel=>2); --generators up to degree 2. 
+--so this is great b/c you can extact generators up to a etain degree and study fibers without knowing the whole markov basis!!
+--peek G2
+
+--now just to make sure that this works for higher levels:
+--G = buildFiberGraph(A,MaxLevel=>7);
+keys G
+keys G2
+
+bTrue=vector{1,0,1,1,1,0};
+isDegree(G,bTrue)
+bFalse = vector{1,0,0,1,0,0}; --in the graph but not a degree of a min g en.
+isDegree(G,bFalse)
+bStupid = vector{1,2,3,4,5,6};
+isDegree(G,bStupid)
+
+peek G
+-- ok let's print out level 2 :
+l=2; 
+K = keys G#l;
+apply(#K,j->(key=K_j;(key, new HashTable from G#l#key)))
+
+keys G#1 / peek
+keys G#2 / peek
+
+
+T= getFiberTree(A, G, bTrue) ;
+peek T
+keys T#1
+keys T#2
+K=keys T#1
+apply(#K,j->(key=K_j;(key, new HashTable from T#1#key)))
+
+G
+H=hashTable apply(keys G, l-> l=>hashTable apply(keys G#l, b->b=>hashTable apply(keys G#l#b, w-> w=> G#l#b#w)));
+H#0
+H#1
+H#2
+new HashTable from apply(keys G, l->new HashTable from {l=>apply(keys G#l, b->new HashTable from {b=>apply(keys G#l#b, w->new HashTable from {w=>G#l#b#w})})})
+     
+
+T= getFiberTree(A, G, bFalse) 
+--T= getFiberTree(A, G, bStupid) 
+
+--getGenerator(A,G,bFalse)
+getGenerator(A,G,bTrue)
+
+------ test for our example A that there are no gens of degree 3, that is, there are no b's such that the Support has more then one set (the graph G_b is connected).
+l=3; 
+K = keys G#l;
+apply(#K,j->( key=K_j;  (# unique (G#l#key#"Support") ) ) )
+
+
 ----------------------------------------------------------------
-
-
-
-
-
-
+-- EXAMPLE:
+-- some random matrix whose toric ideal isn't generated by quadrics!
+----------------------------------------------------------------
 restart
---load "4ti2.m2"
-installPackage ("ToricFibers", RemakeAllDocumentation => true, UserMode=>true)
-installPackage("ToricFibers",UserMode=>true,DebuggingMode => true)
-viewHelp ToricFibers
+needsPackage "ToricFibers"
+
+A = matrix"
+1,1,1,1,1,1;
+1,2,3,4,5,6;
+0,0,1,0,1,1
+"
+G = buildFiberGraph(A);
+peek G
+b=vector{2,10,1};
+peek G#2#b
+isDegree(G,b)
+
+apply(keys G#2, b-> if( isDegree(G,b)) then print b);
+b=vector{2,7,1};
+peek G#2#b
+getGenerators(A,G,b) 
+--actually getGenerator returns all minimal generators of degree b,
+-- as seen in the last example.
 
 
---check FourTiTwo
+--------------
+--- let's try another.
+b=vector{0,1,2,1,2,0};
+isDegree(G,b) 
+--ker A
+bTrue=2*A_2+A_3+A_4
+isDegree(G,bTrue)
+getGenerator(A,G,bTrue)
 
---debug FourTiTwo
+
+
+----------------------------------------------------------------
+----------------------------------------------------------------
+----------------------------------------------------------------
 
 
 
