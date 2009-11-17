@@ -1,3 +1,8 @@
+fix this by removing the lines asking for the source code of those functions
+but only after adding a test in the distribution to detect this problem (by loading the doc)
+
+-----------------------------------------------------------------------------
+
 Date: Mon, 4 May 2009 11:48:01 -0500
 From: "Daniel R. Grayson" <dan@math.uiuc.edu>
 To: Thomas Kahle <kahle@mis.mpg.de>
