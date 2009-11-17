@@ -1,0 +1,3 @@
+for distributions on systems where polymake exists, make Macaulay2 depend on it
+
+how to distinguish the others and clarify to the user the need to download it?
