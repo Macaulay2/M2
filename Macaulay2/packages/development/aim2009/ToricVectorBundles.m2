@@ -521,7 +521,7 @@ regCheck ToricVectorBundleKaneyama := tvb -> (
 ----------------------------------------------------------------------------
 
 
-liftable (Matrix,ZZ) := (M,R) -> all(flatten entries M, e -> liftable(e,R))
+--liftable (Matrix,ZZ) := (M,R) -> all(flatten entries M, e -> liftable(e,R))
 
 
 
