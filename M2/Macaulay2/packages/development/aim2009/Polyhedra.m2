@@ -1405,7 +1405,7 @@ latticePoints Polyhedron := P -> (
 			      A := matrix drop((entries id_(QQ^n)),{pos,pos});
 			      apply(latticePointsRec affineImage(A,NP),v -> v^{0..(pos-1)} || matrix p || v^{pos..(n-2)})))));
 	  -- Checking if the polytope is just a point
-	  if dim P == 0 then P.cache.latticePoints = {lift(vertices P,ZZ)}
+	  if dim P == 0 then P.cache.latticePoints = if liftable(vertices P,ZZ) then {lift(vertices P,ZZ)} else {}
 	  -- Checking if the polytope is full dimensional
 	  else if (dim P == ambDim P) then P.cache.latticePoints = latticePointsRec P
 	  -- If not checking first if the affine hull of P contains lattice points at all and if so projecting the polytope down
@@ -2854,6 +2854,9 @@ saveSession String := F -> (
 -- DECLARING AUXILIARY FUNCTIONS
 -- >> not public <<
 ---------------------------------------
+
+liftable (Matrix,Number) := (f,k) -> try (lift(f,k); true) else false; 
+
 
 faceBuilder = (k,P) -> (
      --Checking for input errors
