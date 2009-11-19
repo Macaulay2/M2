@@ -2,6 +2,7 @@
 #PATCHES = 001 002 003 004 005 006 007 008 009 010 011 012 013
 
 VERSION = 6.0
+PATCHVERSION = 60
 PATCHES = 001 002 003 004
 
 RELAX = yes
@@ -21,8 +22,8 @@ endif
 include ../Makefile.library
 Makefile: @srcdir@/Makefile.in ; cd ../.. && ./config.status libraries/readline/Makefile
 
-PATCHFILES := $(addprefix tarfiles/readline52-,$(PATCHES))
-$(PATCHFILES) :; rm -f $@; cd tarfiles && wget $(PATCHURL)/$(notdir $@)
+PATCHFILES := $(addprefix $(TARFILE_DIR)/readline$(PATCHVERSION)-,$(PATCHES))
+$(PATCHFILES) :; rm -f $@; cd $(TARFILE_DIR) && wget $(PATCHURL)/$(notdir $@)
 fetch: $(PATCHFILES)
 
 clean::
