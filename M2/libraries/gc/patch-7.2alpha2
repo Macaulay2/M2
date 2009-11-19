@@ -1,6 +1,22 @@
-diff -ur --exclude=configure /Users/dan/src/M2-1.3/BUILD/dan/builds.tmp/mac64/libraries/gc/tmp/gc-7.2alpha2/mach_dep.c gc-7.2alpha2/mach_dep.c
---- /Users/dan/src/M2-1.3/BUILD/dan/builds.tmp/mac64/libraries/gc/tmp/gc-7.2alpha2/mach_dep.c	2009-06-08 23:39:12.000000000 -0500
-+++ gc-7.2alpha2/mach_dep.c	2009-10-17 06:20:26.000000000 -0500
+diff -ur --exclude=configure /Users/dan/src/M2/trunk/BUILD/dan/builds.tmp/mac64.production/libraries/gc/tmp/gc-7.2alpha2/libatomic_ops-1.2/configure.ac gc-7.2alpha2/libatomic_ops-1.2/configure.ac
+--- /Users/dan/src/M2/trunk/BUILD/dan/builds.tmp/mac64.production/libraries/gc/tmp/gc-7.2alpha2/libatomic_ops-1.2/configure.ac	2006-07-11 17:55:09.000000000 -0500
++++ gc-7.2alpha2/libatomic_ops-1.2/configure.ac	2009-11-18 19:44:07.000000000 -0600
+@@ -60,7 +60,9 @@
+ AM_CONDITIONAL(NEED_ASM, test x$need_asm = xtrue)
+ 
+ AC_CONFIG_FILES([Makefile src/Makefile src/atomic_ops/Makefile src/atomic_ops/sysdeps/Makefile doc/Makefile tests/Makefile])
+-AC_CONFIG_COMMANDS([default],[[]],[[PICFLAG=${PICFLAG}
+-CC=${CC}
+-DEFS=${DEFS}]])
++AC_CONFIG_COMMANDS([default],[[]],[[
++PICFLAG="${PICFLAG}"
++CC="${CC}"
++DEFS="${DEFS}"
++]])
+ AC_OUTPUT
+diff -ur --exclude=configure /Users/dan/src/M2/trunk/BUILD/dan/builds.tmp/mac64.production/libraries/gc/tmp/gc-7.2alpha2/mach_dep.c gc-7.2alpha2/mach_dep.c
+--- /Users/dan/src/M2/trunk/BUILD/dan/builds.tmp/mac64.production/libraries/gc/tmp/gc-7.2alpha2/mach_dep.c	2009-06-08 23:39:12.000000000 -0500
++++ gc-7.2alpha2/mach_dep.c	2009-11-18 19:37:11.000000000 -0600
 @@ -161,7 +161,7 @@
  
  #if !defined(HAVE_PUSH_REGS) && defined(UNIX_LIKE)

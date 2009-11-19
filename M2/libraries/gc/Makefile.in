@@ -16,6 +16,8 @@ VERSION = 7.2alpha2
 PATCHFILE = @abs_srcdir@/patch-$(VERSION)
 TARDIR = gc-$(VERSION)
 
+PRECONFIGURE = (cd libatomic_ops-1.2 && autoconf)
+
 VPATH = @srcdir@
 ifeq (@PTHREADS@,yes)
 CONFIGOPTIONS += --enable-threads=posix
