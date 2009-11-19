@@ -1,10 +1,11 @@
 # -*- Makefile -*-
 CONFIGOPTIONS += --build=i386-pc-linux-gnu
-INSTALLOPTIONS += prefix=/usr/local/encap
+CONFIGOPTIONS += --with-mpir-config-options="ABI=32 --build=i486-pc-linux-gnu"
+INSTALLOPTIONS += prefix=/none
 CONFIGOPTIONS += --enable-deb
 DIRECTORY = debian32
 include Makefile.include
-default: install check
+default: check
 pre-install:; rm -rf /usr/local/encap/Macaulay2-$(PACKAGE_VERSION)
 arch-chk:; [ `hostname` = debian32 -o `hostname` = debian ]
 

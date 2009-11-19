@@ -63,6 +63,21 @@ The Filename: entry gives the filename, relative to the URL, i.e., the file is a
 
 =============================================================================
 
+For ubuntu releases, take a look here:
+
+    http://security.ubuntu.com/ubuntu/dists/
+
+    There you see these releases:
+
+	dapper		6.06
+	hardy		8.04
+	intrepid	8.10
+	jaunty		9.04
+	karmic		9.10
+	lucid		10.04
+
+=============================================================================
+
 A debian archive is an archive made with the "ar" program, with three files in it, in a certain order:
 
     % ar tv /home/25/dan/local/to/Macaulay2/Downloads/macaulay2-0.9.91_i686-Linux-usr-2_all.deb

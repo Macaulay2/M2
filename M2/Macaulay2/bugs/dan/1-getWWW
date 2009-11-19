@@ -1,0 +1,3 @@
+This doesn't work:
+
+i3 : getWWW "http://online.wsj.com/xml/rss/3_7041.xml"

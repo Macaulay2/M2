@@ -5,7 +5,8 @@ $(TARGETS): banner
 banner:; @echo "-*- mode: compilation; default-directory: \"`pwd`/\" -*-"
 DIRECTORY ?= none
 ifneq ($(DIRECTORY),none)
-include builds.tmp/$(DIRECTORY)/include/configuration
+# why did I think this was a good idea ??
+# include builds.tmp/$(DIRECTORY)/include/configuration
 else
 $(warning DIRECTORY variable unset)
 endif

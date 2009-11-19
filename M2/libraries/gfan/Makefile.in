@@ -8,7 +8,7 @@ CONFIGURECMD = true
 BUILDOPTIONS = gmppath=$(BUILTLIBPATH) cddpath=$(BUILTLIBPATH) CC="$(CC)" CCC="$(CXX)"
 INSTALLOPTIONS = PREFIX=$(LIBRARIESDIR)
 CHECKTARGET = .
-STRIPFILES = gfan
+STRIPFILES = gfan@EXEEXT@
 include ../Makefile.library
 Makefile: @srcdir@/Makefile.in ; cd ../.. && ./config.status libraries/gfan/Makefile
 # Local Variables:

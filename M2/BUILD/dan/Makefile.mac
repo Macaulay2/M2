@@ -9,6 +9,10 @@
 # Try
 #   gdb --osabi Darwin64
 #############################################################################
+
+export CC =
+export CXX = 
+
 PRODUCTION = no
 DEBUG = no
 PROFILE = no
@@ -27,7 +31,8 @@ ifeq ($(M64),yes)
 DIRECTORY := mac64
 CONFIGOPTIONS += CC="gcc -m64" CXX="g++ -m64" --build=x86_64-apple-darwin
 else
-DIRECTORY := mac
+DIRECTORY := mac32
+CONFIGOPTIONS += CC="gcc -m32" CXX="g++ -m32" --build=i386-apple-darwin
 endif
 
 default: all

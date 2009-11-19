@@ -18,6 +18,8 @@ Description
      Text
           We suggest you do that now, so that you can experiment while you read
 	  this tutorial!
+
+
      Code
      	 SUBSECTION "Arithmetic with integers, rings and ideals"
      Text
@@ -160,6 +162,9 @@ Description
 	  example, by typing:
      Code
      	  EXAMPLE { PRE "viewHelp Macaulay2Doc" }
+     Text
+          
+
      Code
      	  SUBSECTION "Properties of ideals and modules",
      Text
@@ -186,7 +191,7 @@ Description
 	  Gr\"obner bases are always computed with respect to a particular
 	  monomial order on the ring. In fact, the ring we defined above has
 	  a default monomial order, the graded reverse lex order. For many
-	  other possibilities see @ TO MonomialOrder @ or type:
+	  other possibilities, see @ TO MonomialOrder @, or type:
      Code
      	  EXAMPLE { PRE "viewHelp MonomialOrder" }
      Text
@@ -342,6 +347,9 @@ Description
      Example
 	  pdim M
 	  regularity M
+     Text
+
+     
      Code
      	  SUBSECTION "Division With Remainder"
      Text
@@ -385,6 +393,9 @@ Description
 	  Matrix), "//"} @:
      Example
 	  Tr^7//(gens I)
+     Text
+     
+     
      Code
      	  SUBSECTION "Elimination Theory"
      Text
@@ -395,7 +406,7 @@ Description
 	  We already have the simplest tools for solving
 	  such a problem.
 	  We first clear the earlier meaning of {\tt x} 
-	  to allow it to be used as a subscripted variable
+	  to allow it to be used as a subscripted variable:
      Example
 	  x = symbol x
      Text
@@ -421,7 +432,7 @@ Description
 	  is the kernel of the ring map $S=kk[u,v,w] \to R/I$
 	  sending the variables
 	  of S to the generators of {\tt pIdeal},
-	  regarded as elements of $R/I$.  This is the same the more usual formulation:
+	  regarded as elements of $R/I$.  This is the same as the more usual formulation:
 	  $$J = I \cap{} kk[x_0+x_3, x_1, x_x]$$ 
 	  To compute this we first substitute {\tt pIdeal} into $R/I$, and then form
 	  the necessary ring map:
@@ -454,6 +465,9 @@ Description
 	  f*J is contained in I:
      Example
 	  ideal"u3w,uv":ideal"u"
+     Text
+     
+     
      Code
      	  SUBSECTION "Defining functions and loading packages"
      Text
@@ -573,6 +587,9 @@ Description
 	  We can determine how many distinct patterns were found:
      Example
 	  #tally L
+     Text
+     
+     
      Code
      	  SUBSECTION "Ext, Tor, and cohomology"
      Text
