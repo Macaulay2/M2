@@ -1,30 +1,31 @@
 # -*- Makefile -*-
+
+# sudo apt-get install -y openssh-server xbase-clients subversion make autoconf gcc libc6-dev g++ gfortran flex bison liblapack-dev libgdbm-dev libgc-dev libpari-dev libreadline5-dev patch libmpfr-dev libntl-dev libcdd-dev libxml2-dev
+
+export CC =
+export CXX = 
+
 ifeq ($(DEBUG),yes)
 default: arch-chk all
 INSTALLOPTIONS += prefix=/none
 CONFIGOPTIONS += --enable-debug --disable-pthreads
 DIRECTORY = ubuntu32.debug
 else
-default: arch-chk all install check
-INSTALLOPTIONS += prefix=/usr/local/encap
+default: arch-chk all check
+INSTALLOPTIONS += prefix=$(HOME)/local/encap
 CONFIGOPTIONS += --enable-deb
-CONFIGOPTIONS += --enable-tarfile
 CONFIGOPTIONS += --disable-common-staging-area
-CONFIGOPTIONS += --with-mpir-config-options="ABI=32"
 DIRECTORY = ubuntu32.production
+endif
 
-# i386 must be the architecture for debian based systems,
-# but mpir won't link if we do that (see 4ti2), then gcc gets -march=i386 when compiling mpir,
-# and we get this message later:
-#    /home/dan/src/M2-1.3/BUILD/dan/builds.tmp/ubuntu32.production/libraries/final/lib/libgmpxx.a(ismpznw.o): In function `__gmpz_operator_in_nowhite(std::basic_istream<char, std::char_traits<char> >&, __mpz_struct*, char)':
-#    ismpznw.cc:(.text+0x1ba): undefined reference to `__sync_fetch_and_add_4'
-# so we settle for i486
-# CONFIGOPTIONS += --build=i486-pc-linux-gnu
-
-# but try it, anyway, to see if ABI=32 helps:
+# i386 must be the architecture for debian based systems
 CONFIGOPTIONS += --build=i386-pc-linux-gnu
 
-endif
+# but we get this message later (when linking 4ti2):
+#    /home/dan/src/M2-1.3/BUILD/dan/builds.tmp/ubuntu32.production/libraries/final/lib/libgmpxx.a(ismpznw.o): In function `__gmpz_operator_in_nowhite(std::basic_istream<char, std::char_traits<char> >&, __mpz_struct*, char)':
+#    ismpznw.cc:(.text+0x1ba): undefined reference to `__sync_fetch_and_add_4'
+CONFIGOPTIONS += --with-mpir-config-options="ABI=32 --build=i486-pc-linux-gnu"
+
 include Makefile.include
 pre-install:;	rm -rf /usr/local/encap/Macaulay2-$(PACKAGE_VERSION)
 arch-chk:; grep -q Ubuntu /etc/issue && [ `uname -m` = i686 ]

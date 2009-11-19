@@ -1,9 +1,11 @@
 #-*- Makefile -*-
+export CC =
+export CXX = 
 ifeq ($(DEBUG),yes)
 default: arch-chk all
 INSTALLOPTIONS += prefix=/none
 CONFIGOPTIONS += --enable-debug --disable-pthreads
-DIRECTORY = ubuntu32.debug
+DIRECTORY = ubuntu64.debug
 else
 default: arch-chk all install check
 INSTALLOPTIONS += prefix=$HOME/local/encap
@@ -11,6 +13,8 @@ CONFIGOPTIONS += --enable-deb
 CONFIGOPTIONS += --disable-common-staging-area
 DIRECTORY = ubuntu64.production
 endif
+CONFIGOPTIONS += --build=x86_64-unknown-linux-gnu
+CONFIGOPTIONS += --with-mpir-config-options="ABI=64"
 include Makefile.include
 pre-install:;	rm -rf /usr/local/encap/Macaulay2-$(PACKAGE_VERSION)
 arch-chk:; grep -q Ubuntu /etc/issue && [ `uname -m` = x86_64 ]

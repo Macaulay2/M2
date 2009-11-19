@@ -1,0 +1,5 @@
+Provide this function to the user:
+
+    	temporaryDirectory = () -> while true do try (dn := temporaryFileName(); makeDirectory dn; return dn)
+
+and also a function for removing it and its contents

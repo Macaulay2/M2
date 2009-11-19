@@ -1,4 +1,4 @@
-AC_INIT(Macaulay 2, 1.3.0.1, Macaulay2@math.uiuc.edu, Macaulay2)
+AC_INIT(Macaulay 2, 1.3.1, Macaulay2@math.uiuc.edu, Macaulay2)
 AC_CONFIG_HEADERS(include/M2/config.h)
 AC_CONFIG_FILES(m4_include(config/files))
 AC_SUBST(CONFIGURED_FILES,"$ac_config_files")
@@ -685,6 +685,16 @@ AC_ARG_ENABLE(build-libraries, AS_HELP_STRING(--enable-build-libraries=...,list 
        esac
     done])
 
+PROGLIST=" $PROGLIST "
+AC_ARG_WITH(unbuilt-programs, 
+    [AS_HELP_STRING(--with-unbuilt-programs=...,list of programs not to build from downloaded source code (e.g., $PROGLIST))],
+    [for i in $withval
+     do case $PROGLIST in
+	     *" $i "*) eval BUILD_$i=no ;;
+	     *) AC_MSG_ERROR(unrecognized program name: $i) ;;
+	esac
+     done])
+
 AC_SUBST(DOWNLOAD,no)
 AC_ARG_ENABLE(download, AS_HELP_STRING(--enable-download,enable automatic downloading of needed third-party libraries), DOWNLOAD=$enableval)
 
@@ -693,15 +703,40 @@ AC_LANG(C)
 AC_SEARCH_LIBS(tgoto,ncurses curses,,AC_MSG_ERROR(libcurses and libncurses not found))
 if test $BUILD_readline = no
 then AC_CHECK_HEADER(readline/readline.h,,BUILD_readline=yes)
-     AC_SEARCH_LIBS(_rl_comment_begin,readline,,BUILD_readline=yes)
-     AC_SEARCH_LIBS(rl_completion_matches,readline,,BUILD_readline=yes)
-     AC_SEARCH_LIBS(readline,readline,,BUILD_readline=yes)
-     AC_SEARCH_LIBS(add_history,history readline,,BUILD_readline=yes)
-     if test $BUILD_readline = yes
-     then AC_MSG_NOTICE(readline library will be compiled)
-     fi
 fi
-test $BUILD_readline = yes && BUILTLIBS="-lreadline -lhistory $BUILTLIBS"
+if test $BUILD_readline = no
+then AC_MSG_CHECKING([for library containing common symbol _rl_comment_begin and text symbol rl_set_prompt])
+     FOUND=
+     SAVELIBS=$LIBS
+     for lib in "" "-lreadline" "-lreadline -lhistory"
+     do  test "$lib" && LIBS="$lib $LIBS"
+	 AC_LINK_IFELSE(
+	     [[ extern int rl_set_prompt(); extern int _rl_comment_begin; int main () { return rl_set_prompt() + _rl_comment_begin; } ]],
+	     FOUND=yes; break;,
+	     LIBS=$SAVELIBS)
+     done
+     if test "$FOUND"
+     then if test "$lib"
+	 then AC_MSG_RESULT([yes, $lib])
+	 else AC_MSG_RESULT([none required])
+	 fi
+     else AC_MSG_RESULT(no)
+	 BUILD_readline=yes
+     fi 
+fi
+if test $BUILD_readline = no
+then AC_SEARCH_LIBS(rl_completion_matches,readline,,BUILD_readline=yes)
+fi
+if test $BUILD_readline = no
+then AC_SEARCH_LIBS(readline,readline,,BUILD_readline=yes)
+fi
+if test $BUILD_readline = no
+then AC_SEARCH_LIBS(add_history,history readline,,BUILD_readline=yes)
+fi
+if test $BUILD_readline = yes
+then AC_MSG_NOTICE(readline library will be compiled)
+     BUILTLIBS="-lreadline -lhistory $BUILTLIBS"
+fi
 
 dnl We no longer link with gmp.
 dnl if test $BUILD_gmp = no

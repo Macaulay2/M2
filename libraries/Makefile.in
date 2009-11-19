@@ -2,6 +2,7 @@ VPATH = @srcdir@
 include ../include/config.Makefile
 BUILT_TARGETS = untar fetch all check reconfigure
 ALL_TARGETS = $(BUILT_TARGETS) clean distclean
+all:fetch
 $(ALL_TARGETS): Makefile.library
 $(foreach d,@LIBLIST@ @PROGLIST@ libtool M2,			\
 	$(foreach t, $(ALL_TARGETS),			\

@@ -1,11 +1,14 @@
 #-*- Makefile -*-
 
+# things to install with cygwin setup:
+#   unzip
+
 PRODUCTION = yes
 DEBUG = no
 
-CC  = gcc -B/usr/lib/gcc/i686-pc-cygwin/3.4.4
-CXX = g++ -B/usr/lib/gcc/i686-pc-cygwin/3.4.4
-FC  = gfortran -B/usr/lib/gcc/i686-pc-cygwin/3.4.4
+# CC  = gcc -B/usr/lib/gcc/i686-pc-cygwin/3.4.4
+# CXX = g++ -B/usr/lib/gcc/i686-pc-cygwin/3.4.4
+# FC  = gfortran -B/usr/lib/gcc/i686-pc-cygwin/3.4.4
 
 ifeq ($(PRODUCTION),yes)
 CONFIGOPTIONS += --disable-common-staging-area
@@ -47,7 +50,7 @@ INSTALLOPTIONS += prefix=/usr/local/encap
 include Makefile.include
 default:install check
 pre-install:;	rm -rf /usr/local/encap/Macaulay2-$(PACKAGE_VERSION)
-arch-chk:; [ `uname -s` = CYGWIN_NT-6.0 ] && [ `uname -m` = i686 ]
+arch-chk:; [ `uname -s` = CYGWIN_NT-5.0 ] && [ `uname -m` = i686 ]
 # Local Variables:
 # compile-command: "time make -f Makefile.cygwin "
 # End:
