@@ -238,14 +238,15 @@ sortSolutions s
 	}
 
 document {
-	Key => {areEqual, (areEqual,CC,CC), (areEqual,List,List), (areEqual,Matrix,Matrix)},
+	Key => {areEqual, (areEqual,CC,CC), (areEqual,List,List), (areEqual,Matrix,Matrix), [areEqual,Projective]},
 	Headline => "determine if solutions are equal",
 	Usage => "b = areEqual(x,y)",
 	Inputs => { 
 	     {TT "x",TT "y", " solutions or lists of solutions"}
 	     },
-	Outputs => {{ TT "b", ", true = approximately equal"}},
-	"Comparisons are done coordinatewise using ", TO Tolerance, " as the measure for closeness.",
+	Outputs => {"b"=>{"true, if approximately equal"},
+	     Projective=>{"if true, then solutions are considered as representatives of points in the projective space"}},
+	"The function returns false if Riemannian distance exceeds ", TO Tolerance, " and true, otherwise.",
         EXAMPLE lines ///
 R = CC[x,y];
 s = solveSystem {x^2+y^2-1, x*y}
