@@ -138,7 +138,7 @@ Node
      Constructs the projective space {\tt P} of 1-quotients of the trivial bundle on
      the base variety  {\tt baseVariety}. The Chow ring is set to be the polynomial ring 
      over the Chow ring of {\tt baseVariety}, with variable {\tt h}. The tangent bundle
-     of X is available as an @TO AbstractSheaf@, accessed by {\tt X.TangentBundle}.
+     of X is available as @ofClass AbstractSheaf@, accessed by {\tt X.TangentBundle}.
      Here baseVariety and VariableName are optional.
    Example
      P = projectiveSpace 3
@@ -254,19 +254,19 @@ Node
 	by Hermann Schubert in 1879.
 
 	We will first illustrate the method by computing the number
-	of lines on a cubic surface in P3.
+	of lines on a cubic surface in $\PP^3$.
 
-	We first construct an @TO AbstractVariety@ representing
-	the Grassmannian of lines in P3 with its tautological sub-
+	We first construct @ofClass AbstractVariety@ representing
+	the Grassmannian of lines in $\PP^3$ with its tautological sub-
 	and quotient bundles.
    Example
      G = flagBundle({2,2}, VariableNames => {,c})
      (S,Q) = G.Bundles
    Text
-	Any cubic surface is given by a cubic form on P3,
+	Any cubic surface is given by a cubic form on $\PP^3$,
 	that is, an element of the third symmetric power of the
 	space of linear forms, which is the trivial rank 4 bundle
-	on P3.  Its image in the third symmetric power
+	on $\PP^3$.  Its image in the third symmetric power
 	{\tt symmetricPower(3,Q)}  of the
 	quotient bundle {\tt Q} vanishes at those points of the
 	Grassmannian that correspond to lines on which the
@@ -290,7 +290,7 @@ Node
 	Note: In characteristic zero, using Bertini's theorem,
 	the numbers computed can be proved to be equal
 	to the actual numbers of distinct lines 
-	for general hypersurfaces.  In P3, every smooth cubic
+	for general hypersurfaces.  In $\PP^3$, every smooth cubic
 	surface in characteristic zero have exactly 27 lines.
 	In higher dimensions there may be smooth hypersurfaces for which
 	the number of lines is different from the "expected" number

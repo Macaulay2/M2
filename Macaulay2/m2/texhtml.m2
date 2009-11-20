@@ -1,4 +1,4 @@
--- tex to html conversion
+-- tex to html conversion -*- coding: utf-8 -*-
 
 html TEX := str -> (
      local oldstr;
@@ -159,7 +159,7 @@ html TEX := str -> (
      f(///\\ldots\> *///,///...///);
      f(///\\leftarrow\> *///,///&larr;///);
      f(///\\leq?\> *///,///&le;///);
-     f(///\\mapsto\> *///,///&rarr;///);
+     f(///\\mapsto\> *///,///↦///);
      f(///\\mathbb\> *///,//////);
      f(///\\mathbf\> *///,//////);
      f(///\\mathcal\> *///,//////);
