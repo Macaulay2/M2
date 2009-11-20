@@ -1,9 +1,8 @@
 -- In this file we translate many examples from Schubert into Schubert2
 -- We include section III (EXAMPLES) from schubertmanual.txt in comments.
+-- We also include assertions (with "assert()") so this file can serve as a test file for the package.
 
-path = prepend("../", path)
-
-loadPackage "Schubert2";
+needsPackage "Schubert2";
 
 ---- III.  EXAMPLES:
 ---- 
@@ -16,7 +15,7 @@ loadPackage "Schubert2";
 pt = base n
 Ph = projectiveSpace(3,pt,VariableName=>h) -- this applies "use" to the variety, and to its intersection ring, giving h a value
 factor chi OO(n*h)
-                assert( value oo == (n+1)*(n+2)*(n+3)*(1/6) )
+     	        assert( oo === new Product from {new Power from {n+1,1},new Power from {n+2,1},new Power from {n+3,1},new Power from {1/6 + 0*n,1}} )
 
 ---- > Ph[toddclass_];
 ----                                            2  2    3  3
@@ -66,11 +65,17 @@ assert( oo == 1+d_1+(d_1^2-d_2)+(d_1^3-2*d_1*d_2+d_3)+(d_1^4-3*d_1^2*d_2+d_2^2+2
 
 chern(A**B)
 
+     assert( oo === 1+(3*c_1+2*d_1)
+	  +(3*c_1^2+3*c_2+5*c_1*d_1+d_1^2+2*d_2)
+	  +(c_1^3+6*c_1*c_2+4*c_1^2*d_1+4*c_2*d_1+2*c_1*d_1^2+4*c_1*d_2+2*d_1*d_2+2*d_3)
+	  +(3*c_1^2*c_2+3*c_2^2+c_1^3*d_1+6*c_1*c_2*d_1+c_1^2*d_1^2+2*c_2*d_1^2+3*c_1^2*d_2+3*c_1*d_1*d_2+d_2^2+3*c_1*d_3+2*d_1*d_3))
+
 ---- > chern(3,symm(3,dual(A)));
 ----                                      3
 ----                                - 6 c1  - 30 c1 c2
 
 chern(3,symmetricPower(3,dual(A)))
+     assert( oo == -6*c_1^3-30*c_1*c_2 )
 
 ---- > segre(2,Hom(wedge(2,A),wedge(2,B)));
 ----                               2                 2
@@ -78,6 +83,7 @@ chern(3,symmetricPower(3,dual(A)))
 ---- 
 
 segre(2,Hom(exteriorPower(2,A),exteriorPower(2,B)))
+     assert( oo == 6*c_1^2-8*c_1*d_1+3*d_1^2-d_2 )
 
 ---- #-------------------------------------------------------------------------
 ---- ## Grassmannian of lines in P3:
@@ -92,6 +98,7 @@ Gb = flagBundle({2,2}, pt, VariableNames => {,b})
 ----                             n  + 1 + 1/6 n  + 11/6 n
 
 chi symmetricPower(n,Qb)
+     assert( oo == (1/6)*n^3+n^2+(11/6)*n+1 )
 
 ---- > chi(Gb,o(n*b1));
 ----                            4        3    23   2
@@ -119,7 +126,6 @@ assert( (n-2)*(n^3-18*n^2+71*n-6)*(1/12) == chi (det Qb)^**n )
 
 use projectiveSpace(5,pt,VariableName=>H)
 chi(OO(n*H)-OO((n-2)*H))
-
 assert( oo == 1/12*n^4+2/3*n^3+23/12*n^2+7/3*n+1 )
 
 ---- #-------------------------------------------------------------------------
@@ -145,7 +151,6 @@ c6 = chern(rank B,B)
 ----                                       2875
 
 integral c6
-
 assert( oo == 2875 )
 
 -- lines on a cubic surface, in a similar way
@@ -190,13 +195,11 @@ X.StructureMap_* c11
 ----                                      609250
 
 integral oo
-
 assert( oo == 609250 )
 
 -- here's a short cut:
 
 integral chern A
-
 assert( oo == 609250 )
 
 ---- #-------------------------------------------------------------------------
@@ -362,6 +365,7 @@ X = base(3, Bundle=>(L,1,D), Bundle=>(T,3,b))
 X.TangentBundle = T
 chern L
 part_3(chi L)
+assert( oo == (1/6)*D_1^3+(1/4)*D_1^2*b_1+(1/12)*D_1*b_1^2+(1/12)*D_1*b_2+(1/24)*b_1*b_2 )
 
 A0 = QQ[D,K,c_2,c_3, Degrees => {1,1,2,3}]
 A = A0/truncate(4,ideal vars A0)
@@ -370,6 +374,7 @@ L = OO(D)
 T = abstractSheaf(X,Rank=>3,ChernClass=>1-K+c_2+c_3)
 X.TangentBundle = T
 part_3(todd X * ch L)
+assert( oo == (1/6)*D^3-(1/4)*D^2*K+(1/12)*D*K^2+(1/12)*D*c_2-(1/24)*K*c_2 )
 
 ---- #-------------------------------------------------------------------------
 ---- # number of bitangents to a plane curve

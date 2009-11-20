@@ -200,8 +200,8 @@ base Sequence := args -> (
 	  else if instance(x,Symbol) or instance(x,IndexedVariable) then x
 	  else error ("base: unusable as variable: ",toString x));
      goodsym := x -> (
-	  if instance(x,RingElement) then x = baseName x;
-	  if instance(x,Symbol) or instance(x,IndexedVariableTable) then x
+	  if instance(x,RingElement) or instance(x,IndexedVariableTable) then baseName x
+	  else if instance(x,Symbol) then x
 	  else error ("base: unusable as subscripted symbol: ",toString x));
      scan(args, x -> (
 	       if instance(x,Symbol) or instance(x,IndexedVariable) then newvr(x,0)
@@ -629,7 +629,10 @@ schubertCycle(FlagBundle,List) := (X,b) -> (
 
 beginDocumentation()
 multidoc get (currentFileDirectory | "Schubert2/doc")
+TEST ///
+input "Schubert2/demo.m2"
+///
 
 -- Local Variables:
--- compile-command: "make -C $M2BUILDDIR/Macaulay2/packages PACKAGES=Schubert2 pre-install"
+-- compile-command: "make -C $M2BUILDDIR/Macaulay2/packages PACKAGES=Schubert2 "
 -- End:
