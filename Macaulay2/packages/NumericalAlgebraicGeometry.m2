@@ -142,9 +142,10 @@ multistepPredictorLooseEnd (QQ,List) := List => (c,s) -> (
 	       ))
      )
 ------------------------------------------------------
--- 2-norm of a column vector with CC entries
+-- 2-norm of a vector with CC entries
 norm2 = method(TypicalValue=>RR)
-norm2 Matrix := v -> sqrt(sum(flatten entries v, x->x*conjugate x));
+norm2 List := v -> sqrt(sum(v, x->x*conjugate x));
+norm2 Matrix := v -> norm2 flatten entries v;
 -- Frobenius norm of a matrix
 normF = method(TypicalValue=>RR)
 normF Matrix := M -> max first SVD M;
@@ -301,16 +302,7 @@ track (List,List,List) := List => o -> (S,T,solsS) -> (
 	  maxDegreeTo3halves := power(max(T/first@@degree),3/2);
 	  reBW'ST := realPart sum(#S, i->BombieriWeylScalarProduct(o.gamma*nS#i,nT#i));-- real Bombieri-Weyl scalar product
 	  sqrt'one'minus'reBW'ST'2 :=  sqrt(1-reBW'ST^2);
-	  arcsin := a -> ( -- find arcsin(a) via Newton's method
-	       x := a;
-	       dx := 1;
-	       while abs(dx)>theSmallestNumber do (
-		    dx = -(sin x - a)/cos x;
-		    x = x + dx;
-		    );
-	       x
-	       );
-	  bigT := arcsin sqrt'one'minus'reBW'ST'2; -- the linear homotopy interval is [0,bigT]
+	  bigT := asin sqrt'one'minus'reBW'ST'2; -- the linear homotopy interval is [0,bigT]
 	  Hx := H/transpose@@jacobian; -- store jacobians (for evalHx)
      	  )	  
      else (
@@ -480,7 +472,6 @@ track (List,List,List) := List => o -> (S,T,solsS) -> (
 	       s'status := "PROCESSING";
 	       endZone := false;
 	       CorrectorTolerance := ()->(if endZone then o.EndZoneFactor else 1)*o.CorrectorTolerance;
-	       if DBG > 0 then << "." << if (sN+1)%100 == 0 then endl else flush;
 	       if DBG > 2 then << "tracking solution " << toString s << endl;
      	       tStep := o.tStep;
 	       predictorSuccesses := 0;
@@ -699,6 +690,12 @@ track (List,List,List) := List => o -> (S,T,solsS) -> (
 			 );
 		    );        	    
 	       if s'status==="PROCESSING" then s'status = "REGULAR";
+	       if DBG > 0 then << (if s'status == "REGULAR" then "."
+		    else if s'status == "SINGULAR" then "S"
+		    else if s'status == "MIN STEP (FAILURE)" then "M"
+		    else if s'status == "INFINITY (FAILURE)" then "I"
+		    else error "unknown solution status"
+		    ) << if (sN+1)%100 == 0 then endl else flush;
 	       -- create a solution record 
 	       (x0,
 		    "#steps"=>count-1, -- number of points - 1 
@@ -727,12 +724,14 @@ track (List,List,List) := List => o -> (S,T,solsS) -> (
 	       );
      if DBG>0 then (
 	  if o.Software==M2 then (
-	       << "Number of solutions = " << #ret << endl << "Average number of steps per path = " << toRR sum(ret,s->s#1#1)/#ret << endl
-     	       << "Evaluation time (M2 measured): Hx = " << etHx << " , Ht = " << etHt << " , H = " << etH << endl;
-	       if o.SLP =!= null
-	       then << "Hx SLP: " << slpHx << endl << "Ht SLP: " << slpHt << endl << "H SLP: " << slpH << endl;  
+	       << "Number of solutions = " << #ret << endl << "Average number of steps per path = " << toRR sum(ret,s->s#1#1)/#ret << endl;
+     	       if DBG>1 then (
+	       	    if o.SLP =!= null 
+	       	    then << "Hx SLP: " << slpHx << endl << "Ht SLP: " << slpHt << endl << "H SLP: " << slpH << endl
+	       	    else << "Evaluation time (M2 measured): Hx = " << etHx << " , Ht = " << etHt << " , H = " << etH << endl;
+		    )
 	       )
-	  else if o.Software==M2enginePrecookedLSLPs then (
+	  else if o.Software==M2enginePrecookedSLPs and DBG>1 then (
 	       << "Hxt SLP: " << slpHxt << endl << "HxH SLP: " << slpHxH << endl;  
 	       );
 	  << "Setup time: " << compStartTime - setupStartTime << endl;
@@ -757,31 +756,50 @@ refine (List,List) := List => o -> (T,solsT) -> (
      if n > 0 then R := ring first T else error "expected nonempty target system";
      if any(T, f->ring f =!= R)
      then error "expected all polynomials in the same ring";
-     if n != numgens R then error "expected a square system";
+     isProjective := false;
+     if n != numgens R then (
+	  if numgens R == n+1 and all(T, isHomogeneous) 
+	  then ( 
+	       isProjective = true; 
+	       n = n+1;
+	       )  
+	  else error "expected a square system";
+     	  );
 
-     if o.Software === M2engine then (
-	  if lastPathTracker === null 
-	  then error "path tracker is not set up"
-	  else return entries map(CC_53, rawRefinePT(lastPathTracker, raw matrix solsT, o.ErrorTolerance, 
-		    if o.Iteration===null then 30 else o.Iteration));
-     	  ) else if o.Software === PHCpack then (
-	  refinePHCpack(T,solsT,Iterations=>o.Iterations,Bits=>o.Bits,ErrorTolerance=>o.ErrorTolerance)
+     if not isProjective then (
+     	  if o.Software === M2engine then (
+	       if lastPathTracker === null 
+	       then error "path tracker is not set up"
+	       else return entries map(CC_53, rawRefinePT(lastPathTracker, raw matrix solsT, o.ErrorTolerance, 
+		    	 if o.Iteration===null then 30 else o.Iteration));
+     	       ) else if o.Software === PHCpack then (
+	       return refinePHCpack(T,solsT,Iterations=>o.Iterations,Bits=>o.Bits,ErrorTolerance=>o.ErrorTolerance)
+	       );
 	  );
-               
+     -- M2 part 
+     n'iterations := if o.Iterations != null then o.Iterations else 100; -- infinity
      T = matrix {T};
      J = transpose jacobian T; 
-     evalT := x0 -> lift(sub(transpose T, transpose x0), CC);
-     evalJ := x0 -> lift(sub(J, transpose x0), CC);
+     evalT := x0 -> (
+	  ret := lift(sub(transpose T, transpose x0), CC); 
+	  if isProjective then ret || matrix{{0_CC}} else ret
+	  );
+     evalJ := x0 -> (
+	  ret := lift(sub(J, transpose x0), CC);
+	  if isProjective then ret || matrix{ flatten entries x0 / conjugate} else ret
+	  );
      
      solsR := apply(solsT, s->(
 	       x1 := sub(transpose matrix {s}, CC); -- convert to vector 
+	       if isProjective then x1 = normalize x1;
 	       -- corrector step
-	       dx = 1; -- dx = + infinity
+	       dx := 1; -- dx = + infinity
 	       nCorrSteps := 0;
-	       while norm dx > o.ErrorTolerance * norm x1 and nCorrSteps < o.Iterations do ( 
+	       while norm dx > o.ErrorTolerance * norm x1 and nCorrSteps < n'iterations do ( 
 		    if DBG > 3 then << "x=" << toString x1 << " res=" <<  toString evalT(x1) << " dx=" << dx << endl;
 		    dx = solve(evalJ(x1), -evalT(x1));
 		    x1 = x1 + dx;
+		    if isProjective then x1 = normalize x1;
 		    nCorrSteps = nCorrSteps + 1;
 		    );
 	       x1
@@ -880,6 +898,47 @@ randomInComplexUnitBall ZZ := Matrix => n->(
 dimHd = method()
 dimHd List := ZZ => d->sum(#d, i->binomial(#d+d#i,d#i));
 
+randomDiagonalUnitaryMatrix = method()
+randomDiagonalUnitaryMatrix ZZ := n -> diagonalMatrix apply(n, i->exp(ii*random(2*pi)))
+
+--random unitary n-by-n matrix (w.r.t. Haar measure)
+randomUnitaryMatrix = method()
+randomUnitaryMatrix ZZ := n -> (
+     Ml := flatten entries randomInComplexUnitBall(n^2);
+     M := map(CC^n, n, (i,j)->Ml#(n*i+j)); -- n+1 by n+1 matrix                         
+     randomDiagonalUnitaryMatrix n * (last SVD M) 
+     )
+
+--follows the algorithm of Zyczkowski, Kus "Random Unitary Matrices"
+--(it works, but seems to produce a wrong distribution)  
+randomUnitary = method()
+randomUnitary ZZ := n -> (
+     E := (i,j,phi'psi'xi) -> (
+	  (phi,psi,xi) := phi'psi'xi;
+	  map(CC^n,n,(a,b)->
+	       if a==b then (
+	       	    if a==i then cos(phi)*exp(ii*psi)
+		    else if b==j then cos(phi)*exp(-ii*psi)
+		    else 1
+	       	    )
+	       else (
+		    if a==i and b==j then sin(phi)*exp(ii*xi)
+		    else if b==i and a==j then -sin(phi)*exp(-ii*xi)
+		    else 0
+		    )
+	       )
+     	  );
+     ijs := reverse apply(toList select((0,0)..(n-1,n-1), ij -> ij#0<ij#1), ij->(ij#1-ij#0-1,n-ij#0-1));
+     alpha := random(2*pi); 
+     exp(ii*alpha)*product(ijs, ij->(
+	       (i,j) := ij;
+	       phi := asin(random(1_RR)^(1/(2*(i+1))));
+	       psi := random(2*pi);
+	       xi := if i!=0 then 0 else random(2*pi);
+	       E(i,j,(phi,psi,xi))
+	       ))
+     )
+
 -- IN: R, polynomial ring in n+1 vars
 --     d, list of equation degrees
 -- OUT: conjectured (by Shub and Smale) good initial pair (f,z_0), f\in Hd, z\in P^n
@@ -893,9 +952,7 @@ goodInitialPair List := o -> T -> (
      (S, solsS) := ( transpose matrix{apply(n, i->(sqrt d#i)*lastVar^(d#i - 1)*R_i)}, 
      	  transpose matrix{toList (n:0_CC) | {1}} );
       if o.GeneralPosition === true then (
-     	  Ml := flatten entries randomInComplexUnitBall((n+1)^2);
-     	  M := map(CC^(n+1), n+1, (i,j)->Ml#((n+1)*i+j)); -- n by n+1 matrix formed from n^2+n (first) entries of Ml                         
-     	  coord'transform := last SVD M;
+	  coord'transform := randomUnitaryMatrix(n+1);
      	  inv'coord'transform := solve(coord'transform, map CC^(n+1));
      	  coord'change := map(R,R,(vars R) * transpose coord'transform);	       	    
      	  base'S := flatten entries coord'change ((map(R,ring S, vars R)) S);
@@ -1092,8 +1149,6 @@ ideal WitnessSet := W -> W.Equations
 net WitnessSet := W -> "(dim=" | net dim W |",deg="| net degree W | ")" 
 witnessSet = method()
 witnessSet (Ideal,Ideal,List) := (I,S,P) -> new WitnessSet from { Equations => I, Slice => S_*, Points => VerticalList P}
-randomUnitaryMatrix = method()
-randomUnitaryMatrix ZZ := n -> last SVD random(CC^n,CC^n)     
 witnessSet Ideal := I -> (
      n := numgens ring I;
      d := dim I;
@@ -1251,20 +1306,25 @@ regeneration({x^2+y^2+z^2-1,x*y,y*z}
 ///
 -----------------------------------------------------------------------
 -- AUXILIARY FUNCTIONS
+projectiveDistance = method()
+projectiveDistance (List,List) := (a,b) -> acos((abs sum(a,b,(x,y)->x*conjugate y)) / ((norm2 a) * (norm2 b)));
 
-areEqual = method(TypicalValue=>Boolean, Options=>{Tolerance=>1e-6})
+areEqual = method(TypicalValue=>Boolean, Options=>{Tolerance=>1e-6, Projective=>false})
 areEqual (List,List) := o -> (a,b) -> (
-     if class last a === List then (
-	  #a == #b and all(#a, i->areEqual(a#i,b#i, Tolerance=>o.Tolerance))
+     if class first a === List then (
+	  #a == #b and all(#a, i->areEqual(a#i,b#i,o))
 	  ) else (
-     	  #a == #b and norm matrix {a-b} < o.Tolerance
+     	  #a == #b and ( if o.Projective 
+	       then projectiveDistance(a,b) < o.Tolerance
+	       else norm2 {a-b} < o.Tolerance * norm2 {a}
+	       )
 	  )
      ) 
 areEqual (CC,CC) := o -> (a,b) -> (
      abs(a-b) < o.Tolerance
      ) 
 areEqual (Matrix,Matrix) := o -> (a,b) -> (
-     areEqual(flatten entries a, flatten entries b, Tolerance=>o.Tolerance)
+     areEqual(flatten entries a, flatten entries b, o)
      ) 
 
 isGEQ := method(TypicalValue=>Boolean, Options=>{Tolerance=>1e-6})

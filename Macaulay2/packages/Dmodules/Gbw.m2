@@ -5,7 +5,11 @@
 -- a weight vector w.
 inw = method()
 inw (RingElement, List) := (L, w) -> (
-     (inw(matrix{{L}}, w))_(0,0)
+     R := ring L;
+     if #w != numgens R then error "wrong length of weight vector";
+     lf := listForm L;
+     mw := max apply(lf,t->sum(#w,i->t#0#i*w#i));
+     part(mw,w,L)
      )
 
 inw (Ideal, List) := (I, w) -> (
