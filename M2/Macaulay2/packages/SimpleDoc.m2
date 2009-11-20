@@ -15,15 +15,12 @@ newPackage(
     	DebuggingMode => false
     	)
 
-export {doc, docTemplate, docExample, packageTemplate, simpleDocFrob}
+export {multidoc, doc, docTemplate, docExample, packageTemplate, simpleDocFrob}
 
 needsPackage "Text"
 
 simpleDocFrob = method()
 simpleDocFrob(ZZ,Matrix) := (n,M) -> directSum(n:M)
-
-doc = method()
-doc String := (s) -> document toDoc s
 
 splitByIndent = (text, indents) -> (
      m := infinity;
@@ -119,16 +116,23 @@ KeyFcns = new HashTable from {
      "Outputs" => (text, indents) -> Outputs => items(text, indents)
      }
 
-toDoc = (text) -> (
-     -- perform translations to 'document' format
-     -- text is a string
+NodeFcns = new HashTable from {
+     "Node" => (text, indents) -> deepSplice applySplit(KeyFcns, text, indents)
+     }
+
+toDoc = (funtab,text) -> (
      text = lines text;
      text = select(text, l -> not match("^--",l));
      t := apply(text, indentationLevel);
      text = apply(t, last);
      indents := apply(t, first);
-     deepSplice applySplit(KeyFcns, text, indents)
-     )
+     deepSplice applySplit(funtab, text, indents))
+
+doc = method()
+doc String := (s) -> document toDoc(KeyFcns,s)
+
+multidoc = method()
+multidoc String := (s) -> document \ toDoc(NodeFcns,s)
 
 docExample = "
 doc ///
