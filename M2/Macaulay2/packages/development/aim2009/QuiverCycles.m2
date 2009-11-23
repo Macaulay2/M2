@@ -58,6 +58,31 @@ invPerm = (w) ->
 );
 
 
+ring(Quiver,List) := (Q, dv) ->
+(
+  n := Q#"numVertices";
+  tl := Q#"tailList";
+  hl := Q#"headList";
+  ord := vertexOrder(Q);
+  if ord === false then ord = toList(0..n-1);
+  tdegs := for v from 0 to n-1 list
+    for i from 0 to dv_v-1 list
+      splice(
+      for j in ord list
+        if j==v then splice((i:0), 1, (dv_v-1-i:0)) else (dv_j:0)
+      );
+  Vdegs := flatten flatten(for a from 0 to length(tl)-1 list
+    for i from 0 to dv_(hl_a)-1 list
+      for j from 0 to dv_(tl_a)-1 list
+	tdegs_(tl_a)_j - tdegs_(hl_a)_i
+  );
+  ZZ/2003[splice(
+    for a from 0 to length(tl)-1 list
+      (symbol x)_(a,0,0) .. (symbol x)_(a,dv_(hl_a)-1,dv_(tl_a)-1)),
+    Degrees=>Vdegs]
+);
+
+
 cycleIdeal = (Q, dv, A) ->
 -- Q is a quiver
 -- dv is a dimension vector of length Q#"numVertices"
@@ -78,26 +103,8 @@ cycleIdeal = (Q, dv, A) ->
     GR0 / ideal(for v in toList(detidx) list 1 - dt_v * det(Gmat_v))
   else
     GR0;
-
-  ord := vertexOrder(Q);
-  if ord === false then ord = toList(0..n-1);
-  tdegs := for v from 0 to n-1 list
-    for i from 0 to dv_v-1 list
-      splice(
-      for j in ord list
-        if j==v then splice((i:0), 1, (dv_v-1-i:0)) else (dv_j:0)
-      );
-  Vdegs := flatten flatten(for a from 0 to length(tl)-1 list
-    for i from 0 to dv_(hl_a)-1 list
-      for j from 0 to dv_(tl_a)-1 list
-	tdegs_(tl_a)_j - tdegs_(hl_a)_i
-  );
-
-  VR := ZZ/2003[splice(
-    for a from 0 to length(tl)-1 list
-      (symbol x)_(a,0,0) .. (symbol x)_(a,dv_(hl_a)-1,dv_(tl_a)-1)),
-    Degrees=>Vdegs];
-
+  VR := ring(Q, dv);
+  
   Vmat := for a from 0 to length(tl)-1 list
     matrix pack(dv_(tl_a), 
       x_(a,0,0) .. x_(a,dv_(hl_a)-1,dv_(tl_a)-1));
@@ -131,14 +138,16 @@ cycleIdeal = (Q, dv, A) ->
 );
 
 
-cycleClass = (Q, dv, A) ->
+cycleClass0 := (Q, dv, I) ->
 -- Q is a Quiver
 -- dv is a dimension vector
--- A is a representation of Q of dimension dv
+-- I ideal
 -- Return K-theory class of orbit closure defined by A
 (
-  I := cycleIdeal(Q, dv, A);
+  if not isHomogeneous(I) then error "ideal not homogeneous";
   C = prune res I;
+  if not isHomogeneous(C) then 
+    error "computed resolution not homogeneous, this should not happen";
   
   ord := vertexOrder(Q);
   if ord === false then ord = toList(0..Q#"numVertices"-1);
@@ -147,7 +156,12 @@ cycleClass = (Q, dv, A) ->
            MonomialOrder=>Lex, Inverses=>true];
   sum flatten(for j from 0 to length C list
     for wt in degrees(C_j) list (-1)^j * KT_wt)
-)
+);
+
+cycleClass = method();
+cycleClass(Quiver,List,Ideal) := cycleClass0;
+cycleClass(Quiver,List,List) :=
+  (Q, dv, A) -> cycleClass0(Q, dv, cycleIdeal(Q,dv,A));
 
 
 sgroth0 = (la, xx, yy) ->
@@ -311,7 +325,7 @@ doc ///
   Key
     QuiverCycles
   Headline
-    Classes of quiver cycles
+    Classes of quiver cycles.
   Description
     Text
       QuiverCycles is a package for computing the Grothendieck classes
@@ -329,9 +343,44 @@ doc ///
     Quiver
     "dimension vector"
     "quiver representation"
+    "ring(Quiver,List)"
     cycleIdeal
     cycleClass
     quiverCoefficients
+///
+
+doc ///
+  Key
+    (ring,Quiver,List)
+  Headline
+    Coordinate ring of representation space.
+  Usage
+    R = ring(Q, dv)
+  Inputs
+    Q: Quiver
+    dv: List
+  Outputs
+    R: Ring
+
+  Description
+    Text
+      Construct the coordinate ring of the affine space of @TO "quiver
+      representation"@s for {\tt Q} of @TO "dimension vector"@ {\tt
+      dv}.  This is a @TO PolynomialRing@.  The variables are called
+      {\tt x_{(a,i,j)}}, where {\tt a} is an arrow number and {\tt i}
+      and {\tt j} represent the row and column number in the matrix
+      associated to arrow number {\tt a}.  These variables are assigned
+      multidegrees that are used by the function @TO cycleClass@.
+      
+    Example
+      Q = quiver(3, {0,2}, {1,1});
+      dv = {1,2,3};
+      ring(Q, dv)
+
+  SeeAlso
+    QuiverCycles
+    cycleIdeal
+    cycleClass
 ///
 
 doc ///
@@ -440,8 +489,8 @@ doc ///
       
   SeeAlso
     QuiverCycles
-    Quiver
-    quiver
+    "ring(Quiver,List)"
+    cycleClass
 ///
 
 doc ///
@@ -499,20 +548,24 @@ doc ///
 doc ///
   Key
     cycleClass
+    (cycleClass,Quiver,List,Ideal)
+    (cycleClass,Quiver,List,List)
   Headline
     Compute the K-theory class of a quiver cycle.
   Usage
-    cc = cycleClass(Q, dv, rep)
+    cc = cycleClass(Q, dv, I)
   Inputs
     Q   : Quiver
     dv  : List
-    rep : List
+    I   : Ideal
   Outputs
     cc  : PolynomialRing
   Description
     Text
-      Compute the @TO "K-theory class"@ of the closure of the orbit of
-      the @TO "quiver representation"@ {\tt rep}.
+      Compute the @TO "K-theory class"@ of the quiver cycle with ideal
+      {\tt I}.  The third argument can also be a @TO "quiver
+      representation"@, in which case @TO cycleIdeal@ is used to
+      obtain the ideal.
 
     Example
       Q = quiver(2, {0}, {1});
@@ -525,12 +578,18 @@ doc ///
       dv = {2,2};
       rep = { matrix{{1,0},{0,0}}, matrix{{0,0},{0,1}} };
       cycleClass(Q, dv, rep)
+
+    Example
+      Q = quiver(2, {0}, {1});
+      dv = {1,1};
+      ring(Q,dv)
+      I = ideal(x_(0,0,0));
+      cycleClass(Q, dv, I)
   
   SeeAlso
     QuiverCycles
+    cycleIdeal
     quiverCoefficients
-    Quiver
-    quiver
 ///
 
 doc ///
