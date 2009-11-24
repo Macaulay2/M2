@@ -84,6 +84,7 @@ graphIdeal RingMap := Ideal => opts -> (f) -> (
      m := numgens R;
      n := numgens S;
      k := coefficientRing R;
+     if not isCommutative S then error "expected source of ring map to be a commutative ring";
      if S === k then return ideal map(R^1,R^0,0);
      if not ( isAffineRing R and isAffineRing S and k === coefficientRing S ) then error "expected polynomial rings over the same ring";
      gensk := generators(k, CoefficientRing => ZZ);
