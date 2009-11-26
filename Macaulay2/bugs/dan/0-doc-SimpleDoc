@@ -1,0 +1,9 @@
+new features of SimpleDoc to document
+
+new function
+    multidoc
+    	takes a string containing several nodes
+
+a way to handle optional inputs
+    Inputs
+    	Foo => Type
