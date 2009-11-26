@@ -44,7 +44,7 @@ AbstractVariety#{Standard,AfterPrint} = X -> (
      << "an abstract variety of dimension " << X.dim << endl;
      )
 
-intersectionRing = method()
+intersectionRing = method(TypicalValue => Ring)
 intersectionRing AbstractVariety := X -> X.IntersectionRing
 
 FlagBundle = new Type of AbstractVariety
@@ -65,7 +65,7 @@ FlagBundleStructureMap = new Type of AbstractVarietyMap
 FlagBundleStructureMap.synonym = "abstract flag bundle structure map"
 AbstractVarietyMap ^* := f -> f.PullBack
 AbstractVarietyMap _* := f -> f.PushForward
-lowerstar = method()
+lowerstar = method(TypicalValue => RingElement)
 lowerstar(AbstractVarietyMap,Thing) := (f,x) -> f.PushForward x
 globalAssignment AbstractVarietyMap
 source AbstractVarietyMap := f -> f.source
@@ -80,7 +80,7 @@ AbstractVarietyMap#{Standard,AfterPrint} = f -> (
      << "a map to " << target f << " from " << source f << endl;
      )
 
-sectionClass = method()
+sectionClass = method(TypicalValue => RingElement)
 sectionClass AbstractVarietyMap := f -> f.SectionClass
 
 AbstractSheaf = new Type of MutableHashTable
@@ -95,13 +95,15 @@ AbstractSheaf#{Standard,AfterPrint} = E -> (
      << "an abstract sheaf of rank " << rank E << " on " << variety E << endl;
      )
 
-abstractSheaf = method(Options => {
+abstractSheaf = method(
+     TypicalValue => AbstractSheaf,
+     Options => {
 	  Name => null,
 	  ChernClass => null,
 	  ChernCharacter => null,
-	  Rank => null
+	  Rank => null,
 	  })
-abstractSheaf(AbstractVariety) := opts -> X -> (
+abstractSheaf AbstractVariety := opts -> X -> (
      local ch; local rk;
      if opts.ChernCharacter =!= null then (
 	  ch = opts.ChernCharacter;
@@ -136,7 +138,7 @@ bydegree := net -> f -> (
      tms = apply(tms, e -> if instance(e,Sum) then new Parenthesize from {e} else e);
      net new Sum from tms)
 
-abstractVariety = method(Options => { Type => AbstractVariety })
+abstractVariety = method(TypicalValue => AbstractVariety, Options => { Type => AbstractVariety })
 abstractVariety(ZZ,Ring) := opts -> (d,A) -> (
      if A.?VarietyDimension then error "ring already in use as an intersection ring";
      A.VarietyDimension = d;
@@ -148,7 +150,7 @@ abstractVariety(ZZ,Ring) := opts -> (d,A) -> (
      	  };
      A.Variety = X)
 
-tangentBundle = method()
+tangentBundle = method(TypicalValue => AbstractSheaf)
 tangentBundle AbstractVariety := X -> (
      if not X.?TangentBundle then error "variety has no tangent bundle";
      X.TangentBundle)
@@ -156,7 +158,7 @@ tangentBundle AbstractVarietyMap := f -> (
      if not f.?TangentBundle then error "variety map has no relative tangent bundle";
      f.TangentBundle)
 
-AbstractSheaf QQ := AbstractSheaf ZZ := (F,n) -> (
+AbstractSheaf QQ := AbstractSheaf ZZ := AbstractSheaf => (F,n) -> (
      if n == 0 then return F;
      X := variety F;
      if not X.?TautologicalLineBundle then error "expected a variety with a tautological line bundle";
@@ -166,7 +168,7 @@ AbstractSheaf QQ := AbstractSheaf ZZ := (F,n) -> (
 	  else abstractSheaf(X, Rank => 1, ChernClass => 1 + n * chern_1 X.TautologicalLineBundle)
 	  );
      F ** L)
-AbstractSheaf RingElement := (F,n) -> (
+AbstractSheaf RingElement := AbstractSheaf => (F,n) -> (
      if n == 0 then return F;
      X := variety F;
      A := intersectionRing X;
@@ -185,11 +187,11 @@ AbstractSheaf RingElement := (F,n) -> (
      else error "expected element of degree 0 or 1"
      )     
 
-integral = method()
+integral = method(TypicalValue => RingElement)
 
 protect Bundle
 
-base = method(Dispatch => Thing)
+base = method(Dispatch => Thing, TypicalValue => AbstractVariety)
 base Thing := s -> base (1:s)
 base Sequence := args -> (
      -- up to one integer, specifying the dimension of the base
@@ -243,18 +245,17 @@ base Sequence := args -> (
 point = base()
 
 dim AbstractVariety := X -> X.dim
-part(ZZ,QQ) := (n,r) -> if n === 0 then r else 0_QQ
 
-chern = method()
+chern = method(TypicalValue => RingElement)
 chern AbstractSheaf := (cacheValue ChernClass) (F -> expp F.ChernCharacter)
 chern(ZZ, AbstractSheaf) := (p,F) -> part(p,chern F)
-chern(ZZ, ZZ, AbstractSheaf) := (p,q,F) -> toList apply(p..q, i -> chern(i,F))
+chern(ZZ, ZZ, AbstractSheaf) := List => (p,q,F) -> toList apply(p..q, i -> chern(i,F))
 chern(ZZ,Symbol) := (n,E) -> value new ChernClassSymbol from {n,E}
 
-ctop = method()
+ctop = method(TypicalValue => RingElement)
 ctop AbstractSheaf := F -> chern_(rank F) F
 
-ch = method()
+ch = method(TypicalValue => RingElement)
 ch AbstractSheaf := (F) -> F.ChernCharacter
 ch(ZZ,AbstractSheaf) := (n,F) -> part_n ch F
 
@@ -266,11 +267,11 @@ value ChernClassSymbol := c -> if chernClassValues#?c then chernClassValues#c el
 expression ChernClassSymbol := c -> new FunctionApplication from {new Subscript from {symbol c,c#0}, c#1}
 net ChernClassSymbol := net @@ expression
 
-installMethod(symbol _,OO,AbstractVariety, (OO,X) -> (
+installMethod(symbol _, OO, AbstractVariety, AbstractSheaf => (OO,X) -> (
      A := intersectionRing X;
      abstractSheaf(X, Rank => 1, ChernClass => 1_A, ChernCharacter => 1_A)))
 
-AbstractSheaf ^ ZZ := (E,n) -> new AbstractSheaf from {
+AbstractSheaf ^ ZZ := AbstractSheaf => (E,n) -> new AbstractSheaf from {
      global AbstractVariety => E.AbstractVariety,
      ChernCharacter => n * E.ChernCharacter,
      symbol rank => E.rank * n,
@@ -287,14 +288,15 @@ geometricSeries = (t,n,dim) -> (			    -- computes (1-t)^n assuming t^(dim+1) ==
 	  ti = ti * t;
 	  bin * ti))
 
-AbstractSheaf ^** ZZ := (E,n) -> (
+AbstractSheaf ^** ZZ := AbstractSheaf => (E,n) -> (
      if n < 0 then (
 	  if rank E =!= 1 then error "negative power of abstract sheaf of rank not equal to 1 requested";
 	  E = dual E;
 	  n = - n;
 	  );
      abstractSheaf(variety E, ChernCharacter => (ch E)^n))
-AbstractSheaf ^** QQ := AbstractSheaf ^** RingElement := (E,n) -> (
+
+AbstractSheaf ^** QQ := AbstractSheaf ^** RingElement := AbstractSheaf => (E,n) -> (
      if rank E != 1 then error "symbolic power works for invertible sheafs only";
      t := 1 - ch E;
      ti := 1;
@@ -302,15 +304,15 @@ AbstractSheaf ^** QQ := AbstractSheaf ^** RingElement := (E,n) -> (
      abstractSheaf(variety E, Rank => 1, ChernCharacter => geometricSeries(1 - ch E, n, dim variety E)))
 
 rank AbstractSheaf := E -> E.rank
-variety AbstractSheaf := E -> E.AbstractVariety
-variety Ring := R -> R.Variety
+variety AbstractSheaf := AbstractVariety => E -> E.AbstractVariety
+variety Ring := R -> AbstractVariety => R.Variety
 
 tangentBundle FlagBundle := (stashValue TangentBundle) (FV -> tangentBundle FV.Base + tangentBundle FV.StructureMap)
 
 assignable = s -> instance(v,Symbol) or null =!= lookup(symbol <-, class v)
 
 offset := 1
-flagBundle = method(Options => { VariableNames => null })
+flagBundle = method(Options => { VariableNames => null }, TypicalValue => AbstractVariety)
 flagBundle(List) := opts -> (bundleRanks) -> flagBundle(bundleRanks,point,opts)
 flagBundle(List,AbstractVariety) := opts -> (bundleRanks,X) -> flagBundle(bundleRanks,OO_X^(sum bundleRanks),opts)
 flagBundle(List,AbstractSheaf) := opts -> (bundleRanks,E) -> (
@@ -390,7 +392,7 @@ flagBundle(List,AbstractSheaf) := opts -> (bundleRanks,E) -> (
      integral C := r -> integral p_* r;
      FV)
 
-use AbstractVariety := X -> (
+use AbstractVariety := AbstractVariety => X -> (
      use intersectionRing X;
      if X#?"bundles" then scan(X#"bundles",(sym,shf) -> sym <- shf);
      X)
@@ -400,20 +402,20 @@ tangentBundle FlagBundleStructureMap := (stashValue TangentBundle) (
 	  bundles := (source p).Bundles;
 	  sum(1 .. #bundles-1, i -> sum(i, j -> Hom(bundles#j,bundles#i)))))
 
-installMethod(symbol SPACE,OO,RingElement, (OO,h) -> OO_(variety ring h) (h))
+installMethod(symbol SPACE, OO, RingElement, AbstractSheaf => (OO,h) -> OO_(variety ring h) (h))
 
-projectiveBundle = method(Options => { VariableNames => null })
+projectiveBundle = method(Options => { VariableNames => null }, TypicalValue => AbstractVariety)
 projectiveBundle ZZ := opts -> n -> flagBundle({n,1},opts)
 projectiveBundle(ZZ,AbstractVariety) := opts -> (n,X) -> flagBundle({n,1},X,opts)
 projectiveBundle AbstractSheaf := opts -> E -> flagBundle({rank E - 1, 1},E,opts)
 
-projectiveSpace = method(Options => { VariableName => global h })
+projectiveSpace = method(Options => { VariableName => global h }, TypicalValue => AbstractVariety)
 projectiveSpace ZZ := opts -> n -> flagBundle({n,1},VariableNames => {,{opts.VariableName}})
 projectiveSpace(ZZ,AbstractVariety) := opts -> (n,X) -> flagBundle({n,1},X,VariableNames => {,{opts.VariableName}})
 
 PP = new ScriptedFunctor from { superscript => i -> projectiveSpace i }
 
-reciprocal = method()
+reciprocal = method(TypicalValue => RingElement)
 reciprocal RingElement := (A) -> (
      -- computes 1/A (mod degree >=(d+1))
      -- ASSUMPTION: part(0,A) == 1.
@@ -426,7 +428,7 @@ reciprocal RingElement := (A) -> (
      sum toList recip
      )
 
-logg = method()
+logg = method(TypicalValue => RingElement)
 logg RingElement := (C) -> (
      -- C is the total chern class in an intersection ring
      -- The chern character of C is returned.
@@ -439,7 +441,7 @@ logg RingElement := (C) -> (
      sum for i from 1 to d list 1/i! * (-1)^i * p#i
      )
 
-expp = method()
+expp = method(TypicalValue => RingElement)
 expp RingElement := (A) -> (
      -- A is the chern character
      -- the total chern class of A is returned
@@ -453,7 +455,7 @@ expp RingElement := (A) -> (
      sum toList e
      )
 
-todd = method()
+todd = method(TypicalValue => RingElement)
 todd AbstractSheaf := E -> todd ch E
 todd AbstractVariety := X -> todd tangentBundle X
 todd AbstractVarietyMap := p -> todd tangentBundle p
@@ -478,10 +480,10 @@ todd RingElement := (A) -> (
      expp A1
      )
 
-chi = method()
+chi = method(TypicalValue => RingElement)
 chi AbstractSheaf := F -> integral(todd variety F * ch F)
 
-segre = method()
+segre = method(TypicalValue => RingElement)
 segre AbstractSheaf := E -> reciprocal chern dual E
 segre(ZZ, AbstractSheaf) := (p,F) -> part(p,segre F)
 -- we don't need this one:
@@ -498,11 +500,11 @@ coerce := (F,G) -> (
      error "expected abstract sheaves on compatible or equal varieties";
      )
 
-AbstractSheaf ++ ZZ := AbstractSheaf + ZZ := (F,n) -> n ++ F
-ZZ ++ AbstractSheaf := ZZ + AbstractSheaf := (n,F) -> if n === 0 then F else OO_(variety F)^n ++ F
+AbstractSheaf ++ ZZ := AbstractSheaf + ZZ := AbstractSheaf => (F,n) -> n ++ F
+ZZ ++ AbstractSheaf := ZZ + AbstractSheaf := AbstractSheaf => (n,F) -> if n === 0 then F else OO_(variety F)^n ++ F
 
 AbstractSheaf ++ AbstractSheaf :=
-AbstractSheaf + AbstractSheaf := (
+AbstractSheaf + AbstractSheaf := AbstractSheaf => (
      (F,G) -> abstractSheaf nonnull (
 	  variety F, Rank => rank F + rank G,
 	  ChernCharacter => ch F + ch G,
@@ -511,25 +513,25 @@ AbstractSheaf + AbstractSheaf := (
 	  )) @@ coerce
 
 adams = method()
-adams(ZZ,RingElement) := (k,ch) -> (
+adams(ZZ,RingElement) := RingElement => (k,ch) -> (
      d := first degree ch;
      sum(0 .. d, i -> k^i * part_i ch))
-adams(ZZ,AbstractSheaf) := (k,E) -> abstractSheaf nonnull (variety E, Rank => rank E, 
+adams(ZZ,AbstractSheaf) := AbstractSheaf => (k,E) -> abstractSheaf nonnull (variety E, Rank => rank E, 
      ChernCharacter => adams(k, ch E),
      if E.cache.?ChernClass then ChernClass => adams(k, E.cache.ChernClass)
      )
-dual AbstractSheaf := {} >> o -> E -> adams(-1,E)
+dual AbstractSheaf := AbstractSheaf => {} >> o -> E -> adams(-1,E)
 
-- AbstractSheaf := E -> abstractSheaf(variety E, Rank => - rank E, ChernCharacter => - ch E)
-AbstractSheaf - AbstractSheaf := (F,G) -> F + -G
+- AbstractSheaf := AbstractSheaf => E -> abstractSheaf(variety E, Rank => - rank E, ChernCharacter => - ch E)
+AbstractSheaf - AbstractSheaf := AbstractSheaf => (F,G) -> F + -G
 
 AbstractSheaf ** AbstractSheaf :=
 AbstractSheaf * AbstractSheaf := AbstractSheaf => ((F,G) -> abstractSheaf(variety F, Rank => rank F * rank G, ChernCharacter => ch F * ch G)) @@ coerce
 
-Hom(AbstractSheaf, AbstractSheaf) := ((F,G) -> dual F ** G) @@ coerce
-End AbstractSheaf := (F) -> Hom(F,F)
+Hom(AbstractSheaf, AbstractSheaf) := AbstractSheaf => ((F,G) -> dual F ** G) @@ coerce
+End AbstractSheaf := AbstractSheaf => (F) -> Hom(F,F)
 
-det AbstractSheaf := opts -> (F) -> abstractSheaf(variety F, Rank => 1, ChernClass => 1 + part(1,ch F))
+det AbstractSheaf := AbstractSheaf => opts -> (F) -> abstractSheaf(variety F, Rank => 1, ChernClass => 1 + part(1,ch F))
 
 computeWedges = (n,A) -> (
      -- compute the chern characters of wedge(i,A), for i = 0..n, given a chern character
@@ -541,7 +543,7 @@ computeWedges = (n,A) -> (
      toList wedge
      )
 
-exteriorPower(ZZ, AbstractSheaf) := opts -> (n,E) -> (
+exteriorPower(ZZ, AbstractSheaf) := AbstractSheaf => opts -> (n,E) -> (
      -- wedge is an array 0..n of the chern characters of the exerior 
      -- powers of E.  The last one is what we want.
      if 2*n > rank E then return det(E) ** dual exteriorPower(rank E - n, E);
@@ -549,7 +551,7 @@ exteriorPower(ZZ, AbstractSheaf) := opts -> (n,E) -> (
      abstractSheaf(variety E, ChernCharacter => wedge#n)
      )
 
-symmetricPower(RingElement, AbstractSheaf) := (n,F) -> (
+symmetricPower(RingElement, AbstractSheaf) := AbstractSheaf => (n,F) -> (
      X := variety F;
      A := intersectionRing X;
      try n = promote(n,A);
@@ -564,7 +566,7 @@ symmetricPower(RingElement, AbstractSheaf) := (n,F) -> (
      )
 
 symmetricPower(ZZ, AbstractSheaf) := 
-symmetricPower(QQ, AbstractSheaf) := (n,E) -> (
+symmetricPower(QQ, AbstractSheaf) := AbstractSheaf => (n,E) -> (
      A := ch E;
      wedge := computeWedges(n,A);
      symms := new MutableList from splice{0..n};
@@ -577,7 +579,7 @@ symmetricPower(QQ, AbstractSheaf) := (n,E) -> (
      abstractSheaf(variety E, ChernCharacter => symms#n)
      )
 
-schur = method()
+schur = method(TypicalValue => AbstractSheaf)
 schur(List, AbstractSheaf) := (p,E) -> (
      -- Make sure that p is a monotone descending sequence of non-negative integers
      --q := conjugate new Partition from p;
@@ -592,9 +594,9 @@ schur(List, AbstractSheaf) := (p,E) -> (
      abstractSheaf(variety E, ChernCharacter => ans)
      )
 
-schubertCycle = method()
-FlagBundle _ Sequence := schubertCycle
-FlagBundle _ List := schubertCycle
+schubertCycle = method(TypicalValue => RingElement)
+FlagBundle _ Sequence := RingElement => schubertCycle
+FlagBundle _ List := RingElement => schubertCycle
 giambelli =  (r,E,b) -> (
      p := matrix for i from 0 to r-1 list for j from 0 to r-1 list chern(b#i-i+j,E); -- Giambelli's formula, also called Jacobi-Trudi
      if debugLevel > 15 then stderr << "giambelli : " << p << endl;
