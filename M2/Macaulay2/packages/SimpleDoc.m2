@@ -52,7 +52,7 @@ multiString = (key, text) -> (				    -- written by Andrew Hoefel originally
      key => concatenate between(newline, text)
      )
 
-markup2 = (text, indents) -> (
+markup2 = (text, indents, linenums, keylinenum) -> (
      s := concatenate between(" ",text);
      sp := separateRegexp(///(^|[^\])(@)///, 2, s);
      sp = apply(sp, s -> replace(///\\@///,"@",s));
@@ -60,13 +60,14 @@ markup2 = (text, indents) -> (
      for i from 0 to #sp-1 list if even i then if sp#i != "" then TEX sp#i else "" else value sp#i
      )
 
-markup = (text, indents) -> (
+markup = (text, indents, linenums, keylinenum) -> (
+     if #linenums == 0 then linenums = {"unknown"} else linenums = prepend(linenums#0-1,linenums);
      text = prepend("",text);
      indents = prepend(infinity,indents);
      indents = apply(indents, n -> if n === infinity then -1 else n);
      splits := splitByIndent(text, indents);
      apply(splits, (i,j) -> (
-	       m := markup2(text_{i+1..j},indents_{i+1..j});
+	       m := markup2(text_{i+1..j},indents_{i+1..j},linenums_{i+1..j},linenums#i);
 	       if not (#m == 3 and m#0 === "" and instance(m#1,UL) and m#2 === "") 
 	       then m = (
 		    -- LI{PARA{...},PARA{...},PARA{...}} results in too much vertical space at top and bottom when viewed
@@ -75,64 +76,78 @@ markup = (text, indents) -> (
 		    ) m;
 	       m)))
     
-items = (text, indents) -> (
+items = (text, indents, linenums, keylinenum) -> (
      apply(splitByIndent(text, indents), (i,j) -> (
 	       s := text#i;
 	       ps := separateRegexp("[[:space:]]*:[[:space:]]*", s);
-	       if #ps =!= 2 then error("first line should contain a colon: ",s);
-	       result := if i === j then "" else markup2(text_{i+1..j}, indents_{i+1..j});
+	       if #ps =!= 2 then (
+	       	    val := value;
+	       	    ps = separateRegexp("[[:space:]]*=>[[:space:]]*", s);
+	       	    if #ps =!= 2 then error("first line should contain a colon or a double arrow: ",s);
+		    )
+	       else (
+		    val = identity;
+		    );
+	       result := if i === j then "" else markup2(text_{i+1..j}, indents_{i+1..j}, linenums_{i+1..j}, linenums#i);
 	       if ps#1 != "" then result = value ps#1 => result;
-	       if ps#0 != "" then result = ps#0 => result;
+	       if ps#0 != "" then result = val ps#0 => result;
 	       result
 	       ))
      )
 
-DescriptionFcns = new HashTable from {
-     "Example" => (text,indents) -> EXAMPLE apply(
+DescriptionFunctions = new HashTable from {
+     "Example" => (text,indents,linenums,keylinenum) -> EXAMPLE apply(
 	  splitByIndent(text,indents),
 	  (i,j) -> concatenate between(newline,apply(i .. j, k -> (if indents#k =!= infinity then indents#k - indents#0 : " ", text#k)))),
      "Text" => toSequence @@ markup,
-     "Code" => (text, indents) -> ( m := min indents; value concatenate ("(",apply(indents, text, (ind,line) -> (ind-m,line,"\n")),")"))
+     "Code" => (text, indents, linenums, keylinenum) -> ( m := min indents; value concatenate ("(",apply(indents, text, (ind,line) -> (ind-m,line,"\n")),")"))
      }
 
-applySplit = (fcns, text, indents) ->
+applySplit = (fcns, text, indents, linenums) ->
      apply(splitByIndent(text,indents), (i,j) -> (
 	       key := text#i;
-	       if not fcns#?key then error("unrecognized keyword: ",format key);
-	       fcns#key(text_{i+1..j}, indents_{i+1..j})))
+	       if not fcns#?key then error("unrecognized keyword, line ",toString linenums#i,": ",format key);
+	       fcns#key(text_{i+1..j}, indents_{i+1..j}, linenums_{i+1..j}, linenums#i)))
 
-description = (text, indents) -> toSequence applySplit(DescriptionFcns, text, indents)
+description = (text, indents, linenums, keylinenum) -> toSequence applySplit(DescriptionFunctions, text, indents, linenums)
+nonnull = x -> select(x, i -> i =!= null)
 
-KeyFcns = new HashTable from {
-     "Key" => (text, indents) -> Key => apply(text,value),
-     "SeeAlso" => (text, indents) -> SeeAlso => apply(select(text,p -> #p>0),value),
-     "Subnodes" => (text, indents) -> Subnodes => apply(text,p -> if match("^:",p) then substring(1,p) else TO value p),
-     "Usage" => (text, indents) -> multiString(Usage, text),
-     "Headline" => (text, indents) -> singleString(Headline, text),
-     "Description" => (text, indents) -> description(text,indents),
-     "Caveat" => (text, indents) -> Caveat => {markup(text,indents)},
-     "Consequences" => (text, indents) -> Consequences => {markup(text,indents)},
-     "Inputs" => (text, indents) -> Inputs => items(text, indents),
-     "Outputs" => (text, indents) -> Outputs => items(text, indents)
+KeyFunctions = new HashTable from {
+     "Key" => (text, indents, linenums, keylinenum) -> Key => (
+	  r := nonnull apply(text,value);
+	  if length r == 0 then error("Key (line ",toString keylinenum,"): at least one key needed");
+	  r),
+     "SeeAlso" => (text, indents, linenums, keylinenum) -> SeeAlso => apply(select(text,p -> #p>0),value),
+     "Subnodes" => (text, indents, linenums, keylinenum) -> Subnodes => apply(text,p -> if match("^:",p) then substring(1,p) else TO value p),
+     "Usage" => (text, indents, linenums, keylinenum) -> multiString(Usage, text),
+     "Headline" => (text, indents, linenums, keylinenum) -> singleString(Headline, text),
+     "Description" => (text, indents, linenums, keylinenum) -> description(text,indents, linenums, keylinenum),
+     "Caveat" => (text, indents, linenums, keylinenum) -> Caveat => {markup(text,indents, linenums, keylinenum)},
+     "Consequences" => (text, indents, linenums, keylinenum) -> Consequences => {markup(text,indents, linenums, keylinenum)},
+     "Inputs" => (text, indents, linenums, keylinenum) -> Inputs => items(text, indents, linenums, keylinenum),
+     "Outputs" => (text, indents, linenums, keylinenum) -> Outputs => items(text, indents, linenums, keylinenum)
      }
 
-NodeFcns = new HashTable from {
-     "Node" => (text, indents) -> deepSplice applySplit(KeyFcns, text, indents)
+NodeFunctions = new HashTable from {
+     "Node" => (text, indents, linenums, keylinenum) -> deepSplice applySplit(KeyFunctions, text, indents, linenums)
      }
 
 toDoc = (funtab,text) -> (
      text = lines text;
-     text = select(text, l -> not match("^--",l));
+     text = apply(text,1 .. #text,identity);		    -- append line numbers
+     text = select(text, (l,n) -> not match("^--",l));
+     linenums := apply(text,last);
+     text = apply(text,first);
      t := apply(text, indentationLevel);
      text = apply(t, last);
      indents := apply(t, first);
-     deepSplice applySplit(funtab, text, indents))
+     deepSplice applySplit(funtab, text, indents, linenums))
 
 doc = method()
-doc String := (s) -> document toDoc(KeyFcns,s)
+doc String := (s) -> document toDoc(KeyFunctions,s)
 
 multidoc = method()
-multidoc String := (s) -> document \ toDoc(NodeFcns,s)
+multidoc String := (s) -> document \ toDoc(NodeFunctions,s)
 
 docExample = "
 doc ///
