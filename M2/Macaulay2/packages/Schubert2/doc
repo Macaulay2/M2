@@ -126,22 +126,25 @@ Node
 
 Node
   Key
+    (projectiveSpace,ZZ,AbstractVariety)
     projectiveSpace
+    (projectiveSpace,ZZ)
+    [projectiveSpace,VariableName]
   Headline
     Makes an AbstractVariety representing projective space
   Usage
-    P = projectiveSpace(n)
-    P = projectiveSpace(n, baseVariety)
-    P = projectiveSpace(n, baseVariety, VariableName => h)
+    projectiveSpace(n)
+    projectiveSpace(n, baseVariety)
+    projectiveSpace(n, baseVariety, VariableName => h)
   Inputs
-    n: ZZ
-    baseVariety: AbstractVariety
-    h: Symbol
+    n :
+    baseVariety :
+    VariableName => Symbol
   Outputs
-    P:AbstractVariety
+    :AbstractVariety
   Description
    Text
-     Constructs the projective space {\tt P} of 1-quotients of the trivial bundle on
+     Constructs the projective space of 1-quotients of the trivial bundle on
      the base variety  {\tt baseVariety}. The Chow ring is set to be the polynomial ring 
      over the Chow ring of {\tt baseVariety}, with variable {\tt h}. The tangent bundle
      of X is available as @ofClass AbstractSheaf@, accessed by {\tt X.TangentBundle}.
@@ -169,6 +172,8 @@ Node
 Node
   Key
     base
+    (base,Sequence)
+    (base,Thing)
   Headline
     an abstract variety, defined with some parameters and some bundles
   Usage
@@ -354,15 +359,18 @@ Node
 Node
   Key
       schubertCycle
+      (schubertCycle,FlagBundle,List)
+      (schubertCycle,FlagBundle,Sequence)
   Headline
       Schubert Cycles on a Grassmannian in terms of Chern classes of the Tautological bundle.
   Usage
      c=schubertCycle(F,s)
   Inputs
      F:FlagBundle 
-     s:Sequence
+     s:
+       @ ofClass{Sequence,List} @
   Outputs
-     c:RingElement 
+     c:
   Description
    Text
      If F is the flag bundle parametrizing subspaces of dimension s and their respective
@@ -376,8 +384,707 @@ Node
      The mechanism @ TT "F_(a_1..a_q)" @, where $0 \le{} a_1 \le{} ... a_q \le{} n-1$,
      produces the class of the Schubert cycle consisting of those
      (q-1)-planes meeting $A_i$ in dimensions $a_1 ... a_q$.
+     
+     EXPLAIN: the difference between providing a list s and a sequence s
   Caveat
     The code only deals with Grassmannians, not with general flag bundles.
+
+Node
+  Key
+    (abstractSheaf,AbstractVariety,RingElement)
+    abstractSheaf
+    [abstractSheaf,Name]
+    [abstractSheaf,Rank]
+    [abstractSheaf,ChernClass]
+    [abstractSheaf,ChernCharacter]
+    (abstractSheaf,AbstractVariety)
+  Headline
+    make an abstract sheaf
+  Usage
+    abstractSheaf(X,c,Rank=>n)
+    abstractSheaf(X,ChernClass=>c,Rank=>n)
+    abstractSheaf(X,ChernCharacter=>cc)
+  Inputs
+    X:
+    c:
+      an element of the intersection ring of {\tt X}
+    Rank => ZZ
+    ChernCharacter => RingElement
+    ChernClass => RingElement
+    Name => Thing
+  Outputs
+    :AbstractSheaf
+      the abstract sheaf over {\tt X} whose total Chern class is {\tt c}
+  Description
+    Text
+      TO BE WRITTEN
+
+Node
+  Key
+    abstractVariety
+    (abstractVariety,ZZ,Ring)
+  Description
+    Text
+      TO BE WRITTEN
+
+Node
+  Key
+    AbstractVarietyMap
+  Description
+    Text
+      TO BE WRITTEN
+
+Node
+  Key
+    adams
+    (adams,ZZ,AbstractSheaf)
+    (adams,ZZ,RingElement)
+  Description
+    Text
+      TO BE WRITTEN
+  
+Node
+  Key
+    Base
+  Description
+    Text
+      TO BE WRITTEN
+
+Node
+  Key
+    BundleRanks
+  Description
+    Text
+      TO BE WRITTEN
+
+Node
+  Key
+    Bundles
+  Description
+    Text
+      TO BE WRITTEN
+
+Node
+  Key
+    VarietyDimension
+  Description
+    Text
+      TO BE WRITTEN
+
+Node
+  Key
+    Bundle
+  Description
+    Text
+      TO BE WRITTEN
+
+Node
+  Key
+    TautologicalLineBundle
+  Description
+    Text
+      TO BE WRITTEN
+
+Node
+  Key
+    ch
+    (ch,AbstractSheaf)
+    (ch,ZZ,AbstractSheaf)
+  Description
+    Text
+      TO BE WRITTEN
+
+Node
+  Key
+    chern
+    (chern,AbstractSheaf)
+    (chern,ZZ,AbstractSheaf)
+    (chern,ZZ,Symbol)
+  Description
+    Text
+      TO BE WRITTEN
+
+Node
+  Key
+    ChernCharacter
+  Description
+    Text
+      TO BE WRITTEN
+
+Node
+  Key
+    ChernClass
+  Description
+    Text
+      TO BE WRITTEN
+
+Node
+  Key
+    ChernClassSymbol
+  Description
+    Text
+      TO BE WRITTEN
+
+Node
+  Key
+    chi
+    (chi,AbstractSheaf)
+  Description
+    Text
+      TO BE WRITTEN
+
+Node
+  Key
+    ctop
+    (ctop,AbstractSheaf)
+  Description
+    Text
+      TO BE WRITTEN
+
+Node
+  Key
+    expp
+    (expp,RingElement)
+  Description
+    Text
+      TO BE WRITTEN
+
+Node
+  Key
+    FlagBundle
+  Description
+    Text
+      TO BE WRITTEN
+
+Node
+  Key
+    flagBundle
+    (flagBundle,List)
+    (flagBundle,List,AbstractSheaf)
+    (flagBundle,List,AbstractVariety)
+    [flagBundle,VariableNames]
+  Description
+    Text
+      TO BE WRITTEN
+
+Node
+  Key
+    projectiveBundle
+    (projectiveBundle,AbstractSheaf)
+    (projectiveBundle,ZZ)
+    (projectiveBundle,ZZ,AbstractVariety)
+    [projectiveBundle,VariableNames]
+  Description
+    Text
+      TO BE WRITTEN
+
+Node
+  Key
+    PP
+  Description
+    Text
+      TO BE WRITTEN
+
+Node
+  Key
+    FlagBundleStructureMap
+  Description
+    Text
+      TO BE WRITTEN
+
+Node
+  Key
+    integral
+  Description
+    Text
+      TO BE WRITTEN
+
+Node
+  Key
+    IntersectionRing
+  Description
+    Text
+      TO BE WRITTEN
+
+Node
+  Key
+    (intersectionRing,AbstractVariety)
+    intersectionRing
+  Description
+    Text
+      TO BE WRITTEN
+
+Node
+  Key
+    (logg,RingElement)
+    logg
+  Description
+    Text
+      TO BE WRITTEN
+
+Node
+  Key
+    PullBack
+  Description
+    Text
+      TO BE WRITTEN
+
+Node
+  Key
+    PushForward
+  Description
+    Text
+      TO BE WRITTEN
+
+Node
+  Key
+    Rank
+  Description
+    Text
+      TO BE WRITTEN
+
+Node
+  Key
+    (reciprocal,RingElement)
+    reciprocal
+  Description
+    Text
+      TO BE WRITTEN
+
+Node
+  Key
+    (lowerstar,AbstractVarietyMap,Thing)
+    lowerstar
+  Description
+    Text
+      TO BE WRITTEN
+
+Node
+  Key
+    (schur,List,AbstractSheaf)
+    schur
+  Description
+    Text
+      TO BE WRITTEN
+
+Node
+  Key
+    SectionClass
+  Description
+    Text
+      TO BE WRITTEN
+
+Node
+  Key
+    (sectionClass,AbstractVarietyMap)
+    sectionClass
+  Description
+    Text
+      TO BE WRITTEN
+
+Node
+  Key
+    (segre,ZZ,AbstractSheaf)
+    (segre,AbstractSheaf)
+    segre
+  Description
+    Text
+      TO BE WRITTEN
+
+Node
+  Key
+    StructureMap
+  Description
+    Text
+      TO BE WRITTEN
+
+Node
+  Key
+    TangentBundle
+  Description
+    Text
+      TO BE WRITTEN
+
+Node
+  Key
+    tangentBundle
+    (tangentBundle,AbstractVariety)
+    (tangentBundle,AbstractVarietyMap)
+    (tangentBundle,FlagBundle)
+    (tangentBundle,FlagBundleStructureMap)
+  Description
+    Text
+      TO BE WRITTEN
+
+Node
+  Key
+    todd
+    (todd,AbstractSheaf)
+    (todd,AbstractVariety)
+    (todd,AbstractVarietyMap)
+    (todd,RingElement)
+  Description
+    Text
+      TO BE WRITTEN
+
+Node
+  Key
+    ToddClass
+  Description
+    Text
+      TO BE WRITTEN
+
+Node
+  Key
+    VariableNames
+  Description
+    Text
+      TO BE WRITTEN
+
+Node
+  Key
+    VariableName
+  Description
+    Text
+      TO BE WRITTEN
+
+Node
+  Key
+    SubBundles
+  Description
+    Text
+      TO BE WRITTEN
+
+Node
+  Key
+    QuotientBundles
+  Description
+    Text
+      TO BE WRITTEN
+
+Node
+  Key
+    point
+  Description
+    Text
+      TO BE WRITTEN
+
+Node
+  Key
+    (symbol *,AbstractSheaf,AbstractSheaf)
+  Description
+    Text
+      TO BE WRITTEN
+
+Node
+  Key
+    (symbol **,AbstractSheaf,AbstractSheaf)
+  Description
+    Text
+      TO BE WRITTEN
+
+Node
+  Key
+    (symbol +,AbstractSheaf,AbstractSheaf)
+  Description
+    Text
+      TO BE WRITTEN
+
+Node
+  Key
+    (symbol +,AbstractSheaf,ZZ)
+  Description
+    Text
+      TO BE WRITTEN
+
+Node
+  Key
+    (symbol ++,AbstractSheaf,AbstractSheaf)
+    (symbol ++,AbstractSheaf,ZZ)
+    (symbol ++,ZZ,AbstractSheaf)
+  Description
+    Text
+      TO BE WRITTEN
+
+Node
+  Key
+    (symbol -,AbstractSheaf,AbstractSheaf)
+  Description
+    Text
+      TO BE WRITTEN
+
+Node
+  Key
+    (symbol ^,AbstractSheaf,ZZ)
+  Description
+    Text
+      TO BE WRITTEN
+
+Node
+  Key
+    (symbol ^**,AbstractSheaf,QQ)
+  Description
+    Text
+      TO BE WRITTEN
+
+Node
+  Key
+    (symbol ^**,AbstractSheaf,RingElement)
+  Description
+    Text
+      TO BE WRITTEN
+
+Node
+  Key
+    (symbol ^**,AbstractSheaf,ZZ)
+  Description
+    Text
+      TO BE WRITTEN
+
+Node
+  Key
+    (symbol SPACE,AbstractSheaf,QQ)
+  Description
+    Text
+      TO BE WRITTEN
+
+Node
+  Key
+    (symbol SPACE,AbstractSheaf,RingElement)
+  Description
+    Text
+      TO BE WRITTEN
+
+Node
+  Key
+    (symbol SPACE,AbstractSheaf,ZZ)
+  Description
+    Text
+      TO BE WRITTEN
+
+Node
+  Key
+    (exteriorPower,ZZ,AbstractSheaf)
+  Description
+    Text
+      TO BE WRITTEN
+
+Node
+  Key
+    (symbol _,FlagBundle,List)
+  Description
+    Text
+      TO BE WRITTEN
+
+Node
+  Key
+    (symbol _,FlagBundle,Sequence)
+  Description
+    Text
+      TO BE WRITTEN
+
+Node
+  Key
+    (Hom,AbstractSheaf,AbstractSheaf)
+  Description
+    Text
+      TO BE WRITTEN
+
+Node
+  Key
+    (symbol _,OO,AbstractVariety)
+  Description
+    Text
+      TO BE WRITTEN
+
+Node
+  Key
+    (symbol SPACE,OO,RingElement)
+  Description
+    Text
+      TO BE WRITTEN
+
+Node
+  Key
+    (symmetricPower,QQ,AbstractSheaf)
+  Description
+    Text
+      TO BE WRITTEN
+
+Node
+  Key
+    (symmetricPower,RingElement,AbstractSheaf)
+  Description
+    Text
+      TO BE WRITTEN
+
+Node
+  Key
+    (symmetricPower,ZZ,AbstractSheaf)
+  Description
+    Text
+      TO BE WRITTEN
+
+Node
+  Key
+    (symbol +,ZZ,AbstractSheaf)
+  Description
+    Text
+      TO BE WRITTEN
+
+Node
+  Key
+    (symbol -,AbstractSheaf)
+  Description
+    Text
+      TO BE WRITTEN
+
+Node
+  Key
+    (determinant,AbstractSheaf)
+  Description
+    Text
+      TO BE WRITTEN
+
+Node
+  Key
+    (dual,AbstractSheaf)
+  Description
+    Text
+      TO BE WRITTEN
+
+Node
+  Key
+    (End,AbstractSheaf)
+  Description
+    Text
+      TO BE WRITTEN
+
+Node
+  Key
+    (net,AbstractSheaf)
+  Description
+    Text
+      TO BE WRITTEN
+
+Node
+  Key
+    (rank,AbstractSheaf)
+  Description
+    Text
+      TO BE WRITTEN
+
+Node
+  Key
+    (variety,AbstractSheaf)
+  Description
+    Text
+      TO BE WRITTEN
+
+Node
+  Key
+    (dim,AbstractVariety)
+  Description
+    Text
+      TO BE WRITTEN
+
+Node
+  Key
+    (net,AbstractVariety)
+  Description
+    Text
+      TO BE WRITTEN
+
+Node
+  Key
+    (use,AbstractVariety)
+  Description
+    Text
+      TO BE WRITTEN
+
+Node
+  Key
+    (symbol ^*,AbstractVarietyMap)
+  Description
+    Text
+      TO BE WRITTEN
+
+Node
+  Key
+    (symbol _*,AbstractVarietyMap)
+  Description
+    Text
+      TO BE WRITTEN
+
+Node
+  Key
+    (dim,AbstractVarietyMap)
+  Description
+    Text
+      TO BE WRITTEN
+
+Node
+  Key
+    (net,AbstractVarietyMap)
+  Description
+    Text
+      TO BE WRITTEN
+
+Node
+  Key
+    (source,AbstractVarietyMap)
+  Description
+    Text
+      TO BE WRITTEN
+
+Node
+  Key
+    (target,AbstractVarietyMap)
+  Description
+    Text
+      TO BE WRITTEN
+
+Node
+  Key
+    (baseName,ChernClassSymbol)
+  Description
+    Text
+      TO BE WRITTEN
+
+Node
+  Key
+    (symbol <-,ChernClassSymbol)
+  Description
+    Text
+      TO BE WRITTEN
+
+Node
+  Key
+    (expression,ChernClassSymbol)
+  Description
+    Text
+      TO BE WRITTEN
+
+Node
+  Key
+    (net,ChernClassSymbol)
+  Description
+    Text
+      TO BE WRITTEN
+
+Node
+  Key
+    (value,ChernClassSymbol)
+  Description
+    Text
+      TO BE WRITTEN
+
+Node
+  Key
+    (net,FlagBundle)
+  Description
+    Text
+      TO BE WRITTEN
 
 -- Local Variables:
 -- mode: M2
