@@ -12,7 +12,7 @@ isHomogeneous I
 gI = gens gb I
 leadTerm gI
 
---
+clearAll
 
 isSymmetric = method();
 compactMatrixForm = false
@@ -33,8 +33,7 @@ isSymmetric T := t -> isSymmetric lift(t,R);
 b = apply(flatten entries last coefficients g, r -> promote(lift(r,R),T));
 netList toList apply(1 .. 8, j -> toList apply(0 .. j, i -> isSymmetric(b_1^i*b_2^(j-i))))
 
---
-
+clearAll
 
 compactMatrixForm = false
 r = 2;
@@ -50,7 +49,7 @@ isHomogeneous J
 gI = gens gb J;
 leadTerm gI
 
---
+clearAll
 
 isSymmetric = method();
 compactMatrixForm = false
@@ -73,7 +72,7 @@ isSymmetric U := t -> isSymmetric lift(t,R);
 b = apply(flatten entries last coefficients (g), r -> promote(lift(r,R),U));
 netList toList apply(0 .. 12, j -> toList prepend(j, apply(0 .. j, i -> if isSymmetric(b_1^i*b_2^(j-i)) then ".." else "NO")))
 
---
+clearAll
 
 compactMatrixForm = false
 cyclic = n -> (
@@ -82,63 +81,63 @@ cyclic = n -> (
 I = cyclic 6
 transpose leadTerm gens gb I
 
-      |           48          |
-o13 = |          x            |
-      |           6           |
-      |                       |
-      |                 2 12  |
-      |   1387545279120x x    |
-      |                 5 6   |
-      |                       |
-      |                  3 6  |
-      |   25438330117200x x   |
-      |                  5 6  |
-      |                       |
-      |                    6  |
-      |   1322793166094400x   |
-      |                    5  |
-      |                       |
-      |                     6 |
-      | 11905138494849600x x  |
-      |                   4 6 |
-      |                       |
-      |  5952569247424800x x  |
-      |                   4 5 |
-      |                       |
-      |                    3  |
-      |   1984189749141600x   |
-      |                    4  |
-      |                       |
-      |                    6  |
-      |   72152354514240x x   |
-      |                  3 6  |
-      |                       |
-      |  7936758996566400x x  |
-      |                   3 5 |
-      |                       |
-      | 23810276989699200x x  |
-      |                   3 4 |
-      |                       |
-      |                  3    |
-      |     801692827936x     |
-      |                  3    |
-      |                       |
-      |                     6 |
-      | 11905138494849600x x  |
-      |                   2 6 |
-      |                       |
-      | 11905138494849600x x  |
-      |                   2 5 |
-      |                       |
-      |  7936758996566400x x  |
-      |                   2 4 |
-      |                       |
-      | 23810276989699200x x  |
-      |                   2 3 |
-      |                       |
-      |                    2  |
-      |   3968379498283200x   |
-      |                    2  |
-      |                       |
-      |           x           |
-      |            1          |
+--       |           48          |
+-- o13 = |          x            |
+--       |           6           |
+--       |                       |
+--       |                 2 12  |
+--       |   1387545279120x x    |
+--       |                 5 6   |
+--       |                       |
+--       |                  3 6  |
+--       |   25438330117200x x   |
+--       |                  5 6  |
+--       |                       |
+--       |                    6  |
+--       |   1322793166094400x   |
+--       |                    5  |
+--       |                       |
+--       |                     6 |
+--       | 11905138494849600x x  |
+--       |                   4 6 |
+--       |                       |
+--       |  5952569247424800x x  |
+--       |                   4 5 |
+--       |                       |
+--       |                    3  |
+--       |   1984189749141600x   |
+--       |                    4  |
+--       |                       |
+--       |                    6  |
+--       |   72152354514240x x   |
+--       |                  3 6  |
+--       |                       |
+--       |  7936758996566400x x  |
+--       |                   3 5 |
+--       |                       |
+--       | 23810276989699200x x  |
+--       |                   3 4 |
+--       |                       |
+--       |                  3    |
+--       |     801692827936x     |
+--       |                  3    |
+--       |                       |
+--       |                     6 |
+--       | 11905138494849600x x  |
+--       |                   2 6 |
+--       |                       |
+--       | 11905138494849600x x  |
+--       |                   2 5 |
+--       |                       |
+--       |  7936758996566400x x  |
+--       |                   2 4 |
+--       |                       |
+--       | 23810276989699200x x  |
+--       |                   2 3 |
+--       |                       |
+--       |                    2  |
+--       |   3968379498283200x   |
+--       |                    2  |
+--       |                       |
+--       |           x           |
+--       |            1          |

@@ -1,8 +1,6 @@
 -- Here are some more demos based on examples from classic schubert, not from the Schubert manual, some with Schubert code in comments
 
-path = prepend("../", path)
-
-loadPackage "Schubert2"
+needsPackage "Schubert2"
 
 pt = base()
 

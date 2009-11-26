@@ -629,10 +629,12 @@ schubertCycle(FlagBundle,List) := (X,b) -> (
 
 beginDocumentation()
 multidoc get (currentFileDirectory | "Schubert2/doc")
-TEST ///
-input (Schubert2#"source directory"|"Schubert2/demo.m2")
-///
+TEST /// input (Schubert2#"source directory"|"Schubert2/demo.m2") ///
+TEST /// input (Schubert2#"source directory"|"Schubert2/demo2.m2") ///
+TEST /// input (Schubert2#"source directory"|"Schubert2/demo3.m2") ///
+TEST /// input (Schubert2#"source directory"|"Schubert2/test-dan.m2") ///
+TEST /// input (Schubert2#"source directory"|"Schubert2/test2-dan.m2") ///
 
 -- Local Variables:
--- compile-command: "make -C $M2BUILDDIR/Macaulay2/packages PACKAGES=Schubert2 "
+-- compile-command: "make -C $M2BUILDDIR/Macaulay2/packages PACKAGES=Schubert2 all check-Schubert2 "
 -- End:
