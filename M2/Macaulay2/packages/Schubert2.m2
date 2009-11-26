@@ -15,15 +15,22 @@ newPackage(
     	DebuggingMode => true
     	)
 
-export { AbstractSheaf, abstractSheaf, AbstractVariety, abstractVariety, schubertCycle,
-     AbstractVarietyMap, adams, Base, BundleRanks, Bundles, VarietyDimension, Bundle,
-     TautologicalLineBundle, ch, chern, protect ChernCharacter, protect ChernClass, ChernClassSymbol, chi, ctop, expp, FlagBundle,
-     flagBundle, projectiveBundle, projectiveSpace, PP, FlagBundleStructureMap, integral, protect IntersectionRing,
-     intersectionRing, logg, PullBack, PushForward, Rank, reciprocal, lowerstar,
-     schur, SectionClass, sectionClass, segre, StructureMap, protect TangentBundle, tangentBundle, todd, protect ToddClass,
-     VariableNames, VariableName, SubBundles, QuotientBundles, point, base}
+export { "AbstractSheaf", "abstractSheaf", "AbstractVariety", "abstractVariety", "schubertCycle",
+     "AbstractVarietyMap", "adams", "Base", "BundleRanks", "Bundles", "VarietyDimension", "Bundle",
+     "TautologicalLineBundle", "ch", "chern", "ChernCharacter", "ChernClass", "ChernClassSymbol", "chi", "ctop", "expp", "FlagBundle",
+     "flagBundle", "projectiveBundle", "projectiveSpace", "PP", "FlagBundleStructureMap", "integral", "IntersectionRing",
+     "intersectionRing", "logg", "PullBack", "PushForward", "Rank", "reciprocal", "lowerstar",
+     "schur", "SectionClass", "sectionClass", "segre", "StructureMap", "TangentBundle", "tangentBundle", "todd", "ToddClass",
+     "VariableNames", "VariableName", "SubBundles", "QuotientBundles", "point", "base"}
 
-debug Core						    -- needed only for FlatMonoid, sigh; also for getAttribute
+protect ChernCharacter
+protect ChernClass
+protect IntersectionRing
+protect TangentBundle
+protect ToddClass
+
+hasAttribute = value Core#"private dictionary"#"hasAttribute"
+getAttribute = value Core#"private dictionary"#"hasAttribute"
 
 AbstractVariety = new Type of MutableHashTable
 AbstractVariety.synonym = "abstract variety"
