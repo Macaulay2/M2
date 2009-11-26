@@ -332,6 +332,13 @@ part(ZZ,ZZ,RingElement) := RingElement => (d,e,f) -> part(d,e,defaultWeight f,f)
 part(ZZ,RingElement) := RingElement => (d,f) -> part(d,d,f)
 part(ZZ,VisibleList,RingElement) := RingElement => (d,wts,f) -> part(d,d,wts,f)
 
+part(InfiniteNumber,InfiniteNumber,Number) := 
+part(ZZ,InfiniteNumber,Number) := 
+part(InfiniteNumber,ZZ,Number) := 
+part(ZZ,ZZ,Number) := (d,e,r) -> if d <= 0 and e >= 0 then r else 0_(ring r)
+
+part(ZZ,Number) := (d,r) -> part(d,d,r)
+
 part(List,RingElement) := RingElement => (d,f) -> (
      if degreeLength ring f =!= #d then error ("degree length of ring element doesn't match specified degree");
      u := select(terms f, t -> d === degree t);		    -- this is slow!
