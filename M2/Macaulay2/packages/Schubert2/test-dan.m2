@@ -1,7 +1,3 @@
-compactMatrixForm = false
-path = prepend("../", path)
-loadPackage "Schubert2"
-
 P3 = flagBundle{3,1}
 (R,Q) = P3.Bundles
 p = P3.StructureMap
