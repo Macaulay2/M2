@@ -94,19 +94,19 @@ Node
      as an element of the intersection ring of $X$.
 
      For example, the Horrocks-Mumford bundle on projective 4-space
-     can be constructed with the following code.  We first produce a ``base point'' {\tt pt}
+     can be constructed with the following code.  We first produce a base point
      whose intersection ring contains a variable named {\tt n}, in 
      terms of which we can compute the Hilbert polynomial.
    Example
-    pt = base(n)
+     pt = base(n)
    Text
-     Then we create the projective space dimension 4 over the base variety {\tt pt}, 
+     Then we create the projective space of dimension 4 over the base point, 
      using the {\tt VariableName} option to specify that $h$ is the variable to use to represent the first
      Chern class of the tautological quotient line bundle on the projective space.
    Example
     X = projectiveSpace(4,pt,VariableName => h)
    Text
-     Now we create an abstract sheaf of rank 2 and with $1 + 5 h + 10 h^2$ as its total Chern class.
+     Now we create an abstract sheaf of rank 2 with $1 + 5 h + 10 h^2$ as its total Chern class.
    Example
      F = abstractSheaf(X, Rank => 2, ChernClass => 1 + 5*h + 10*h^2)
    Text
@@ -116,11 +116,13 @@ Node
    Text
      Now we compute the Hilbert polynomial of $F$.
    Example
-    chi(F**OO_X(n*h))
+    chi F(n*h)
   SeeAlso
     AbstractVariety
-    abstractSheaf
     projectiveSpace
+    abstractSheaf
+    chi
+    (symbol SPACE,AbstractSheaf,RingElement)
 
 Node
   Key
