@@ -1,5 +1,3 @@
---*- M2; coding: utf-8 -*-
-
 Node
   Key
     Schubert2
@@ -89,34 +87,40 @@ Node
   Key
     AbstractSheaf 
   Headline
-    the class of sheaves given by their Chern classes
+    the class of all abstract sheaves
   Description
    Text
-     This is the class of a sheaf as defined in the package
-     @TO Schubert2@.
-     An abstract sheaf is really the data of its base variety
-     (see @TO AbstractVariety@), @TO Rank@, @TO ChernClass@...
+     A virtual {\em abstract sheaf} over @ofClass AbstractVariety@ $X$ is specified by giving its rank and its total Chern class,
+     as an element of the intersection ring of $X$.
 
      For example, the Horrocks-Mumford bundle on projective 4-space
-     can be represented by the following text. We first compute a ``base variety''
-     that is a point {\tt pt}, and a variable integer named {\tt n}, in 
+     can be constructed with the following code.  We first produce a ``base point'' {\tt pt}
+     whose intersection ring contains a variable named {\tt n}, in 
      terms of which we can compute the Hilbert polynomial.
-
    Example
     pt = base(n)
-    X = projectiveSpace(4,pt,VariableName => h)
-    F = abstractSheaf(X, Rank => 2, ChernClass => 1 + 5*h + 10*h^2)
-    chi(F**OO_X(n*h))
-
    Text
-     Here in the description of X the number 4 is the rank of the trivial bundle, pt 
-     is the base variety of the projective space (in general, we allow
-     projective spaces over an arbitrary base AbstractVariety), and the 
-     variable name specifies the variable to use to represent the first
-     Chern Class of the tautological quotient line bundle on the projective space.
+     Then we create the projective space dimension 4 over the base variety {\tt pt}, 
+     using the {\tt VariableName} option to specify that $h$ is the variable to use to represent the first
+     Chern class of the tautological quotient line bundle on the projective space.
+   Example
+    X = projectiveSpace(4,pt,VariableName => h)
+   Text
+     Now we create an abstract sheaf of rank 2 and with $1 + 5 h + 10 h^2$ as its total Chern class.
+   Example
+     F = abstractSheaf(X, Rank => 2, ChernClass => 1 + 5*h + 10*h^2)
+   Text
+     Its class is @ TO AbstractSheaf @:
+   Example
+     class F
+   Text
+     Now we compute the Hilbert polynomial of $F$.
+   Example
+    chi(F**OO_X(n*h))
   SeeAlso
     AbstractVariety
-
+    abstractSheaf
+    projectiveSpace
 
 Node
   Key
@@ -283,19 +287,17 @@ Node
    Example
 	f = n->(G = flagBundle({n-1,2}); integral chern(symmetricPower(2*n-3,(G.Bundles)_1)))
 	for n from 2 to 8 do print( time f(n))
+	time f 20
    Text
-	The function {\tt time f 20} takes 16 seconds on a
-	64-bit MacBook Pro and produces a number of 53 digits.
-
 	Note: In characteristic zero, using Bertini's theorem,
 	the numbers computed can be proved to be equal
 	to the actual numbers of distinct lines 
 	for general hypersurfaces.  In $\PP^3$, every smooth cubic
-	surface in characteristic zero have exactly 27 lines.
+	surface in characteristic zero has exactly 27 lines.
 	In higher dimensions there may be smooth hypersurfaces for which
 	the number of lines is different from the "expected" number
 	that we have computed above.
-	For example, the Fermat quintic threefold has an infite number
+	For example, the Fermat quintic threefold has an infinite number
 	of lines on it.
   SeeAlso       
      "Conics on a quintic threefold"
@@ -307,43 +309,45 @@ Node
      Example using Schubert2
   Description
    Text
-     The number of conics (=rational curves of degree 2) on a general
+     The number of conics (rational curves of degree 2) on a general
      quintic hypersurface in $\PP^4$ was computed by S. Katz in 1985.  Here
      is how the computation can be made with {\em Schubert2}.
 
-     Any conic in $\PP^4$ spans a unique plane.  Hence the space of conics in
-     $\PP^4$ is a certain $\PP^5$-bundle over the Grassmannian {\tt G} of planes in $\PP^4$.  This
-     space is called {\tt X} in the following code:
+     Any conic in $\PP^4$ spans a unique plane, and the conics in a plane correspond to the points
+     of $\PP^5$.  Hence the space of conics in
+     $\PP^4$ is a certain $\PP^5$-bundle $X$ over the Grassmannian $G$ of planes in $\PP^4$.
    Example
-     G = flagBundle{2,3}    -- Grassmannian of planes in P4
-     (S,Q) = G.Bundles        -- Q = rank 3 tautological quotient bundle
-     B = symmetricPower(2,Q)  -- The bundle of quadratic forms on the variable plane
+     G = flagBundle{2,3}
+     (S,Q) = G.Bundles        -- (Q is the rank 3 tautological quotient bundle)
+     B = symmetricPower(2,Q)  -- (the bundle of quadratic forms on the variable plane)
    Text
-     As a matter of convention, a projectiveBundle in {\em Schubert2} parametrizes the
-     rank 1 quotients.  The $\PP^5$-bundle of conics is given by sublinebundles of B, so
-     we take the dual in the following:
+     As a matter of convention, a {\em projective bundle} constructed by the function @ TO projectiveBundle @
+     in {\em Schubert2} parametrizes 
+     rank 1 quotients of the sheaf provided.  The $\PP^5$-bundle of conics is given by sublinebundles of $B$, or
+     equivalently, by rank 1 quotients of the dual, $B^*$, as in the following code:
    Example  
      X = projectiveBundle(dual B, VariableNames => {,{z}})
    Text
      The equation of the general quintic is a section of the fifth symmetric
      power of the space of linear forms on $\PP^4$.  The induced equation on any given
      conic is an element in the corresponding closed fiber of a certain vector
-     bundle {\tt A} of rank 11 on the parameter space {\tt X}.  On any given plane P,
-     and conic C in P, we get the following exact sequence:
+     bundle $A$ of rank 11 on the parameter space $X$.  On any given plane $P$,
+     and for any conic $C$ in $P$, we get the following exact sequence:
 	   $$ 0 \to{} H^0(O_P(3)) \to{} H^0(O_P(5)) \to{} H^0(O_C(5)) \to{} 0$$
-     As C varies, these sequences glue to a short exact sequence of bundles on X,
-     to give
+     As $C$ varies, these sequences glue to a short exact sequence of bundles on $X$:
+	   $$ 0 \to{} Symm^3 Q \otimes O(-z) \to{} Symm^5 Q \to{} A \to{} 0$$
+     We compute the class of $A$ in the Grothendieck group:
    Example
      A = symmetricPower_5 Q - symmetricPower_3 Q ** OO(-z)
    Text
      A given conic is contained in the quintic if and only if the equation of the
      quintic vanishes identically on the conic.  Hence the class of the locus of
-     conics contained in the quintic is the top Chern class of {\tt A}.  Hence
-     their number is the integral of this Chern class:
+     conics contained in the quintic is the top Chern class of $A$.  Hence
+     the number of them is the integral of this Chern class:
    Example
      integral chern A
   SeeAlso
-    "Lines on hypersurfaces"
+     "Lines on hypersurfaces"
 
 Node
   Key
@@ -373,9 +377,9 @@ Node
   Caveat
     The code only deals with Grassmannians, not with general flag bundles.
 
-
--- keep these next lines at the end of this file
 -- Local Variables:
--- compile-command: "make -C $M2BUILDDIR/Macaulay2/packages PACKAGES=Schubert2 pre-install"
+-- mode: M2
+-- coding: utf-8
+-- compile-command: "make -C $M2BUILDDIR/Macaulay2/packages PACKAGES=Schubert2 "
 -- End:
-
+-- keep the previous lines at the end of this file
