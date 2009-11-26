@@ -630,7 +630,7 @@ schubertCycle(FlagBundle,List) := (X,b) -> (
 beginDocumentation()
 multidoc get (currentFileDirectory | "Schubert2/doc")
 TEST ///
-input "Schubert2/demo.m2"
+input (Schubert2#"source directory"|"Schubert2/demo.m2")
 ///
 
 -- Local Variables:
