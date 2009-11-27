@@ -595,8 +595,7 @@ schur(List, AbstractSheaf) := (p,E) -> (
      )
 
 schubertCycle = method(TypicalValue => RingElement)
-FlagBundle _ Sequence := RingElement => schubertCycle
-FlagBundle _ List := RingElement => schubertCycle
+FlagBundle _ Sequence := FlagBundle _ List := RingElement => (F,s) -> schubertCycle(s,F)
 giambelli =  (r,E,b) -> (
      p := matrix for i from 0 to r-1 list for j from 0 to r-1 list chern(b#i-i+j,E); -- Giambelli's formula, also called Jacobi-Trudi
      if debugLevel > 15 then stderr << "giambelli : " << p << endl;
@@ -606,7 +605,7 @@ listtoseq = (r,b) -> toSequence apply(#b, i -> r + i - b#i)
 seqtolist = (r,b) ->            apply(#b, i -> r + i - b#i)
 dualpart  = (r,b) -> splice for i from 0 to #b list ((if i === #b then r else b#(-i-1)) - (if i === 0 then 0 else b#-i)) : #b - i
 
-schubertCycle(FlagBundle,Sequence) := (X,a) -> (
+schubertCycle(Sequence,FlagBundle) := (a,X) -> (
      if #X.BundleRanks != 2 then error "expected a Grassmannian";
      n := X.Rank;
      E := last X.Bundles;
@@ -620,7 +619,7 @@ schubertCycle(FlagBundle,Sequence) := (X,a) -> (
 	  if not (ai < n) then error("expected a sequence of integers less than ",toString n);
 	  );
      giambelli(r',E,dualpart(r',seqtolist(r',a))))
-schubertCycle(FlagBundle,List) := (X,b) -> (
+schubertCycle(List,FlagBundle) := (b,X) -> (
      -- see page 271 of Fulton's Intersection Theory for this notation
      if #X.BundleRanks != 2 then error "expected a Grassmannian";
      E := last X.Bundles;
