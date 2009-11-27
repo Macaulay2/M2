@@ -293,38 +293,40 @@ Node
     (base,Sequence)
     (base,Thing)
   Headline
-    an abstract variety, defined with some parameters and some bundles
+    make an abstract variety from nothing, equipped with some parameters and some bundles
   Usage
     X = base()
     X = base(p)
     X = base(n,p)
-    X = base(n,p,q,..,Bundle=>(A,r,a),..)
+    X = base(n,p,...,Bundle=>(A,r,a),...)
   Inputs
     n:ZZ
+      if omitted, the value $0$ is used
     p:Symbol
-    q:Symbol
     A:Symbol
     r:ZZ
     a:Symbol
   Outputs
-    X:AbstractVariety
-  Consequences
-    X has dimension n (if n is present; else 0) and has symbols p,q... defined in its Chow ring (if they are present.
-    A is a  bundle defined on X with rank r and Chern classes a_1..a_r (if this option is present).
+    :AbstractVariety
+      a variety of dimension $n$, with variables $p$, ..., in its intersection ring,
+      usable as (integer) variables in intersection ring computations,
+      and with variables $a_1 ... a_r$ representing the Chern classes of a bundle
+      of rank $r$ assigned to the symbol $A$
   Description
-   Text
-     The symbols p,q... can be used as integer variables in Chow ring computations
    Example
      X = base(1,p,q,Bundle =>(A,1,a), Bundle => (B,1,b))
      Y = projectiveSpace(3,X,VariableName => H)
      f = Y.StructureMap
-     x = chern f_*((f^*(OO_X(p*a_1)))*OO_Y(q*H))
-     y = chern f_*OO_Y((f^*(p*a_1))+q*H)
+     x = chern f_* (f^* OO_X(p*a_1) * OO_Y(q*H))
+     y = chern f_* OO_Y((f^*(p*a_1))+q*H)
      x == y
   Caveat
-     Be sure that A... are symbols; if they have already been defined there will be trouble.
+     Be sure that {\tt A},..., are symbols; if they have already been defined there will be trouble.
   SeeAlso
     projectiveSpace
+    base
+    StructureMap
+    chern
 
 Node
   Key
