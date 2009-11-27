@@ -194,10 +194,11 @@ protect Bundle
 base = method(Dispatch => Thing, TypicalValue => AbstractVariety)
 base Thing := s -> base (1:s)
 base Sequence := args -> (
-     -- up to one integer, specifying the dimension of the base
+     -- up to one integer, specifying the dimension d of the base
      -- some symbols or indexed variables, to be used as parameter variables of degree 0
      -- some options Bundle => (B,n,b), where B is a symbol or an indexed variable, b is a symbol, and n is an integer, 
-     --    specifying that we should provide a bundle named B of rank n whose Chern classes are b_1,...,b_n
+     --    specifying that we should provide a bundle named B of rank n whose Chern classes are b_1,...,b_n,
+     --    but if n > d then it goes b_1,...,b_d
      degs := vrs := ();
      bdls := {};
      newvr  := (x,d) -> (vrs = (vrs,x);degs = (degs,d));
@@ -218,13 +219,15 @@ base Sequence := args -> (
 	       else if instance(x,Option) and #x==2 and x#0 === Bundle and instance(x#1,Sequence) and #x#1== 3 then (
 		    (B,n,b) := x#1;
 		    if not instance(n,ZZ) then oops x;
+     		    if d === null then d = 0;
 		    b = goodsym b;
-		    vrs = (vrs,apply(1..n,i->b_i));
-		    degs = (degs,1..n);
+		    vrs = (vrs,apply(1..min(n,d),i->b_i));
+		    degs = (degs,1..min(n,d));
 		    B = goodvar B;
 		    newbdl (B,n,b);
 		    )
 	       else if instance(x,ZZ) then (
+		    if #bdls > 0 then error "base: integer argument (the dimension) should be first";
 		    if d =!= null then error "base: more than one integer argument encountered (as the dimension)";
 		    d = x)
 	       else oops x));
@@ -237,7 +240,7 @@ base Sequence := args -> (
      integral intersectionRing X := identity;		    -- this will usually be wrong, but it's the "base"
      X#"bundles" = apply(bdls,(B,n,b) -> (
 	       globalReleaseFunction(B,value B);
-	       B <- abstractSheaf(X, Name => B, Rank => n, ChernClass => 1_A + sum(1 .. n, i -> A_(b_i)));
+	       B <- abstractSheaf(X, Name => B, Rank => n, ChernClass => 1_A + sum(1 .. min(n,d), i -> A_(b_i)));
 	       globalAssignFunction(B,value B);
 	       (B,value B)));
      X.args = args;
