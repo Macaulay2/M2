@@ -5,18 +5,15 @@ Node
     computation in intersection theory
   Description
     Text
-      The primary purpose of this package is to help compute with intersection theory
+      This package supports computation in intersection theory
       on smooth varieties.  An @TO2{AbstractVariety,"abstract variety"}@ is not given by equations.
       Instead, one gives its intersection ring (usually modulo numerical equivalence),
       its dimension, the Chern class of its tangent bundle, and a method for
-      computing integrals.  An @TO2{AbstractSheaf,"abstract sheaf"}@ is represented by its total Chern class (or by its Chern
+      computing integrals.  An @TO2{AbstractSheaf,"abstract sheaf"}@ on an abstract variety is represented
+      by its total Chern class (or by its Chern
       character).  An @TO2{AbstractVarietyMap,"abstract variety map"}@ is a map between abstract
       varieties: the information encoded is the pull-back and push-forward
       maps between the corresponding intersection rings.
-
-      This package and its documentation are still rather incomplete, but see the examples in
-      @TO "Lines on hypersurfaces"@ and @TO "Conics on a quintic threefold"@, which should
-      be enough to figure out some of what's possible.
   Subnodes
     "Lines on hypersurfaces"
     "Conics on a quintic threefold"
@@ -29,59 +26,174 @@ Node
 
 Node
   Key
+     "Lines on hypersurfaces"
+  Headline
+     an example
+  Description
+   Text
+	There are d+1 conditions for a line to be
+	contained in a general hypersurface of degree d in $\PP^n$.
+	The Grassmannian of lines in $\PP^n$ has dimension 2(n-1).  Therefore,
+	when d+1 = 2(n-1), we should expect a finite number of lines.
+	Here is a way of computing the number using {\em Schubert2}.  In the case
+	of lines on a quintic hypersurface in $\PP^4$, this computation was done
+	by Hermann Schubert in 1879.
+
+	We will first illustrate the method by computing the number
+	of lines on a cubic surface in $\PP^3$.
+
+	We first construct @ofClass AbstractVariety@ representing
+	the Grassmannian of lines in $\PP^3$ and then retrieve its tautological sub-
+	and quotient bundles.
+   Example
+     G = flagBundle({2,2}, VariableNames => {,c})
+     (S,Q) = G.Bundles
+   Text
+	Any cubic surface is given by a cubic form on $\PP^3$,
+	that is, an element of the third symmetric power of the
+	space of linear forms, which is the trivial rank 4 bundle
+	on $\PP^3$.  Its image in the third symmetric power $Symm^3 Q$  of the
+	quotient bundle $Q$ vanishes at those points of the
+	Grassmannian that correspond to lines on which the
+	cubic form vanishes identically, that is, lines
+	contained in the cubic surface.  The class of this
+	locus is the top Chern class of this bundle.
+   Example
+	B = symmetricPower(3,Q)
+	c = chern(rank B,B)
+	integral c
+   Text
+	We can do the same thing for any n, (with d = 2n-3) as
+	follows:
+   Example
+	f = n -> (
+	     G := flagBundle({n-1,2});
+	     integral chern symmetricPower_(2*n-3) last G.Bundles
+	     )
+	for n from 2 to 8 list time f n
+	time f 20
+   Text
+	Note: in characteristic zero, using Bertini's theorem,
+	the numbers computed can be proved to be equal
+	to the actual numbers of distinct lines 
+	for general hypersurfaces.  In $\PP^3$, every smooth cubic
+	surface in characteristic zero has exactly 27 lines.
+	In higher dimensions there may be smooth hypersurfaces for which
+	the number of lines is different from the ``expected'' number
+	that we have computed above.
+	For example, the Fermat quintic threefold has an infinite number
+	of lines on it.
+  SeeAlso       
+     "Conics on a quintic threefold"
+
+Node
+  Key
+     "Conics on a quintic threefold"       
+  Headline
+     an example
+  Description
+   Text
+     The number of conics (rational curves of degree 2) on a general
+     quintic hypersurface in $\PP^4$ was computed by S. Katz in 1985.  Here
+     is how the computation can be made with {\em Schubert2}.
+
+     Any conic in $\PP^4$ spans a unique plane, and the conics in a plane correspond to the points
+     of $\PP^5$.  Hence the space of conics in
+     $\PP^4$ is a certain $\PP^5$-bundle $X$ over the Grassmannian $G$ of planes in $\PP^4$.
+   Example
+     G = flagBundle{2,3}
+   Text
+     We extract the rank 2 tautological subbundle $S$ and the rank 3 tautological quotient bundle $Q$:
+   Example
+     (S,Q) = G.Bundles
+   Text
+     We form the bundle of quadratic forms on the variable planes:
+   Example
+     B = symmetricPower(2,Q)
+   Text
+     As a matter of convention, a {\em projective bundle} constructed by the function @ TO projectiveBundle @
+     in {\em Schubert2} parametrizes 
+     rank 1 {\em quotients} of the sheaf provided.  The $\PP^5$-bundle of conics is given by sublinebundles of $B$, or
+     equivalently, by rank 1 quotients of the dual, $B^*$, as in the following code:
+   Example  
+     X = projectiveBundle(dual B, VariableNames => {,{z}})
+   Text
+     The equation of the general quintic is a section of the fifth symmetric
+     power of the space of linear forms on $\PP^4$.  The induced equation on any given
+     conic is an element in the corresponding closed fiber of a certain vector
+     bundle $A$ of rank 11 on the parameter space $X$.  On any given plane $P$,
+     and for any conic $C$ in $P$, we get the following exact sequence:
+	   $$ 0 \to{} H^0(O_P(3)) \to{} H^0(O_P(5)) \to{} H^0(O_C(5)) \to{} 0$$
+     As $C$ varies, these sequences glue to a short exact sequence of bundles on $X$:
+	   $$ 0 \to{} Symm^3 Q \otimes O(-z) \to{} Symm^5 Q \to{} A \to{} 0$$
+     We compute the class of $A$ in the Grothendieck group:
+   Example
+     A = symmetricPower_5 Q - symmetricPower_3 Q ** OO(-z)
+   Text
+     A given conic is contained in the quintic if and only if the equation of the
+     quintic vanishes identically on the conic.  Hence the class of the locus of
+     conics contained in the quintic is the top Chern class of $A$.  Hence
+     the number of them is the integral of this Chern class:
+   Example
+     integral chern A
+  SeeAlso
+     "Lines on hypersurfaces"
+
+Node
+  Key
     AbstractVariety
   Headline
-    The Schubert2 data type of an abstract variety
+    the class of all abstract varieties
   Description
    Text
      An abstract variety in {\em Schubert2} 
-     is defined by its dimension and a $\QQ$-algebra, interpreted as the rational Chow ring.
-     For example, the following code defines the abstract variety corresponding to $\PP^2$,
-     with its Chow ring A. Once the variety X is created, we can access its structure
-     sheaf OO_X, represented by its Chern class.
-
+     is defined by its dimension and by a $\QQ$-algebra $A$, interpreted as the intersection ring.
+     For example, the following code defines the abstract variety corresponding to $\PP^2$. 
    Example
      A=QQ[t]/ideal(t^3)
      X=abstractVariety(2,A)
+   Text
+     Once the variety $X$ is created, we can access its structure
+     sheaf $O_X$ via the operator {\tt OO}, and view its Chern class:
+   Example
      OO_X
      chern OO_X
    Text
-     A variable of type AbstractVariety is actually of type MutableHashTable, and can
-     contain other information, such as its @TO TangentBundle@. Once this is defined,
-     we can compute the Todd class.
+     A variable of type @ TO AbstractVariety @ is implemented as @ ofClass MutableHashTable @, and can
+     contain other information, such as the variety's tangent bundle, stored under the key @ TO TangentBundle @.
+     Installation of a variety's tangent bundle enables the computation of its Todd class.
    Example
 	X.TangentBundle  = abstractSheaf(X,Rank=>2, ChernClass=>(1+t)^3)
 	todd X
    Text
-     If we want things like the Euler characteristic of a sheaf, we must also
-     specify a method to take the @TO integral@ for the Chow ring A; in the case
-     where A is Gorenstein, as is the Chow ring of a complete nonsingular variety,
-     this is a functional that takes the highest degree component. 
-     In the following example, The sheaf OO_X is
-     the structure sheaf of X, and OO_X(2t) is the line bundle with first Chern class 2t.
-     The computation of the Euler Characteristic is made using the Todd class and the 
-     Riemann-Roch formula.
+     To enable the computation of such things as the Euler characteristic of a
+     sheaf, we must also specify a method to take the @TO integral@ of an
+     element of the intersection ring $A$; in the case where $A$ is Gorenstein,
+     as is the case for the intersection ring modulo numerical equivalence of a
+     complete nonsingular variety, the integral can often be implemented as the
+     functional that takes the coefficient of the highest degree component with
+     respect to a suitable basis of monomials.
    Example
-     integral A := f -> coefficient(t^2,f)    
-     chi(OO_X(2*t))
+     integral A := f -> coefficient(t^2,f);
+   Text
+     Now we can compute the Euler characteristic of the line bundle whose first Chern class 
+     is $2t$; the algorithm uses the Todd class and the Riemann-Roch formula:
+   Example
+     chi OO_X(2*t)
    Text
       There are several other methods for constructing abstract varieties: the following functions
-      construct basic useful varieties (often returning the corresponding structure map).
+      construct basic useful varieties:
       @TO projectiveSpace@,
       @TO projectiveBundle@,
-      @TO flagBundle@,
+      @TO flagBundle@, and
       @TO base@.
-
-      This package and its documentation are still rather incomplete, but see the examples
-      @TO "Lines on hypersurfaces"@ and @TO "Conics on a quintic threefold"@, which should
-      be enough to figure out some of what's possible.
   SeeAlso
+    abstractVariety
     AbstractSheaf
     chern
     chi
     TangentBundle
     todd
-
 
 Node
   Key
@@ -248,113 +360,6 @@ Node
      chern(E*OO(n*h))
   SeeAlso
     segre
-
-Node
-  Key
-     "Lines on hypersurfaces"
-  Headline
-     Example using Schubert2
-  Description
-   Text
-	There are d+1 conditions for a line to be
-	contained in a general hypersurface of degree d in $\PP^n$.
-	The Grassmannian of lines in $\PP^n$ has dimension 2(n-1).  Therefore,
-	when d+1=2(n-1), we should expect a finite number of lines.
-	Here is a way of computing the number using {\em Schubert2}.  In the case
-	of lines on a quintic hypersurface in $\PP^4$, this computation was done
-	by Hermann Schubert in 1879.
-
-	We will first illustrate the method by computing the number
-	of lines on a cubic surface in $\PP^3$.
-
-	We first construct @ofClass AbstractVariety@ representing
-	the Grassmannian of lines in $\PP^3$ with its tautological sub-
-	and quotient bundles.
-   Example
-     G = flagBundle({2,2}, VariableNames => {,c})
-     (S,Q) = G.Bundles
-   Text
-	Any cubic surface is given by a cubic form on $\PP^3$,
-	that is, an element of the third symmetric power of the
-	space of linear forms, which is the trivial rank 4 bundle
-	on $\PP^3$.  Its image in the third symmetric power
-	{\tt symmetricPower(3,Q)}  of the
-	quotient bundle {\tt Q} vanishes at those points of the
-	Grassmannian that correspond to lines on which the
-	cubic form vanishes identically, that is, lines
-	contained in the cubic surface.  The class of this
-	locus is the top Chern class of this bundle.
-   Example
-	B = symmetricPower(3,Q)
-	c = chern(rank B,B)
-	integral c
-   Text
-	We can do the same thing for any n, (with d=2n-3) as
-	follows:
-   Example
-	f = n->(G = flagBundle({n-1,2}); integral chern(symmetricPower(2*n-3,(G.Bundles)_1)))
-	for n from 2 to 8 do print( time f(n))
-	time f 20
-   Text
-	Note: In characteristic zero, using Bertini's theorem,
-	the numbers computed can be proved to be equal
-	to the actual numbers of distinct lines 
-	for general hypersurfaces.  In $\PP^3$, every smooth cubic
-	surface in characteristic zero has exactly 27 lines.
-	In higher dimensions there may be smooth hypersurfaces for which
-	the number of lines is different from the "expected" number
-	that we have computed above.
-	For example, the Fermat quintic threefold has an infinite number
-	of lines on it.
-  SeeAlso       
-     "Conics on a quintic threefold"
-
-Node
-  Key
-     "Conics on a quintic threefold"       
-  Headline
-     Example using Schubert2
-  Description
-   Text
-     The number of conics (rational curves of degree 2) on a general
-     quintic hypersurface in $\PP^4$ was computed by S. Katz in 1985.  Here
-     is how the computation can be made with {\em Schubert2}.
-
-     Any conic in $\PP^4$ spans a unique plane, and the conics in a plane correspond to the points
-     of $\PP^5$.  Hence the space of conics in
-     $\PP^4$ is a certain $\PP^5$-bundle $X$ over the Grassmannian $G$ of planes in $\PP^4$.
-   Example
-     G = flagBundle{2,3}
-     (S,Q) = G.Bundles        -- (Q is the rank 3 tautological quotient bundle)
-     B = symmetricPower(2,Q)  -- (the bundle of quadratic forms on the variable plane)
-   Text
-     As a matter of convention, a {\em projective bundle} constructed by the function @ TO projectiveBundle @
-     in {\em Schubert2} parametrizes 
-     rank 1 quotients of the sheaf provided.  The $\PP^5$-bundle of conics is given by sublinebundles of $B$, or
-     equivalently, by rank 1 quotients of the dual, $B^*$, as in the following code:
-   Example  
-     X = projectiveBundle(dual B, VariableNames => {,{z}})
-   Text
-     The equation of the general quintic is a section of the fifth symmetric
-     power of the space of linear forms on $\PP^4$.  The induced equation on any given
-     conic is an element in the corresponding closed fiber of a certain vector
-     bundle $A$ of rank 11 on the parameter space $X$.  On any given plane $P$,
-     and for any conic $C$ in $P$, we get the following exact sequence:
-	   $$ 0 \to{} H^0(O_P(3)) \to{} H^0(O_P(5)) \to{} H^0(O_C(5)) \to{} 0$$
-     As $C$ varies, these sequences glue to a short exact sequence of bundles on $X$:
-	   $$ 0 \to{} Symm^3 Q \otimes O(-z) \to{} Symm^5 Q \to{} A \to{} 0$$
-     We compute the class of $A$ in the Grothendieck group:
-   Example
-     A = symmetricPower_5 Q - symmetricPower_3 Q ** OO(-z)
-   Text
-     A given conic is contained in the quintic if and only if the equation of the
-     quintic vanishes identically on the conic.  Hence the class of the locus of
-     conics contained in the quintic is the top Chern class of $A$.  Hence
-     the number of them is the integral of this Chern class:
-   Example
-     integral chern A
-  SeeAlso
-     "Lines on hypersurfaces"
 
 Node
   Key
@@ -977,6 +982,13 @@ Node
 Node
   Key
     (variety,AbstractSheaf)
+  Description
+    Text
+      TO BE WRITTEN
+
+Node
+  Key
+    (variety,Ring)
   Description
     Text
       TO BE WRITTEN
