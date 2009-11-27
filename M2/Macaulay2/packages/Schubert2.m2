@@ -305,7 +305,7 @@ AbstractSheaf ^** QQ := AbstractSheaf ^** RingElement := AbstractSheaf => (E,n) 
 
 rank AbstractSheaf := E -> E.rank
 variety AbstractSheaf := AbstractVariety => E -> E.AbstractVariety
-variety Ring := R -> AbstractVariety => R.Variety
+variety Ring := AbstractVariety => R -> R.Variety
 
 tangentBundle FlagBundle := (stashValue TangentBundle) (FV -> tangentBundle FV.Base + tangentBundle FV.StructureMap)
 
