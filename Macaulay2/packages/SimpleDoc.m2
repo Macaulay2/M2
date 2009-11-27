@@ -129,7 +129,12 @@ KeyFunctions = new HashTable from {
      }
 
 NodeFunctions = new HashTable from {
-     "Node" => (text, indents, linenums, keylinenum) -> deepSplice applySplit(KeyFunctions, text, indents, linenums)
+     "Node" => (text, indents, linenums, keylinenum) -> (
+	  r := deepSplice applySplit(KeyFunctions, text, indents, linenums);
+	  if any(r, i -> member(first i,{Inputs,Outputs}))
+	  and not any(r, i -> first i === Usage)
+	  then error("multidoc node, line ",toString keylinenum,": Inputs or Outputs specified, but Usage not provided");
+	  r)
      }
 
 toDoc = (funtab,text) -> (
