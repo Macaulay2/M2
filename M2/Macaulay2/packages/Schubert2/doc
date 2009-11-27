@@ -310,64 +310,114 @@ Node
     :AbstractVariety
       a variety of dimension $n$, with variables $p$, ..., in its intersection ring,
       usable as (integer) variables in intersection ring computations,
-      and with variables $a_1 ... a_r$ representing the Chern classes of a bundle
-      of rank $r$ assigned to the symbol $A$
+      and with variables $a_1, ..., a_r$ representing the Chern classes of a bundle
+      of rank $r$ assigned to the symbol $A$, and so on, for each bundle specification given
   Description
    Example
      X = base(1,p,q,Bundle =>(A,1,a), Bundle => (B,1,b))
+     intersectionRing X
      Y = projectiveSpace(3,X,VariableName => H)
+     intersectionRing Y
      f = Y.StructureMap
      x = chern f_* (f^* OO_X(p*a_1) * OO_Y(q*H))
      y = chern f_* OO_Y((f^*(p*a_1))+q*H)
      x == y
   Caveat
-     Be sure that {\tt A},..., are symbols; if they have already been defined there will be trouble.
+     Ensure that {\tt A},..., are symbols; if they have already been defined there will be trouble.
   SeeAlso
     projectiveSpace
     base
     StructureMap
     chern
 
+
+Node
+  Headline
+    compute Chern classes of a sheaf
+  Key
+    chern
+
+Node
+  Key
+    (chern,AbstractSheaf)
+  Headline
+    compute the total Chern class of a sheaf
+  Usage
+    chern A
+  Inputs
+    A:
+  Outputs
+    :
+    	 the total Chern class of {\tt A}
+  Description
+    Example
+      base(3, Bundle => (A,2,a), Bundle => (B,3,b))
+      chern B
+      chern(-A)
+    Text
+      The next example gives the total Chern class of a twist of
+      a rank 2 vector bundle on the projective plane.
+    Example
+      pt = base(n,p,q)
+      P2 = projectiveSpace_2 pt
+      E = abstractSheaf(P2, Rank=>2, ChernClass=>1+p*h+q*h^2)
+      chern E(n*h)
+  SeeAlso
+     segre
+
+Node
+  Key
+    (chern,ZZ,Symbol)
+  Description
+    Text
+      TO BE WRITTEN
+
+Node
+  Key
+    (chern,ZZ,AbstractSheaf)
+  Headline
+     compute a Chern class of a sheaf
+  Usage
+    chern(n,A)
+    chern_n A
+  Inputs
+    n:
+    A:
+  Outputs
+    :
+     the {\tt n}-th Chern class of {\tt A}
+  Description
+    Example
+      base(3, Bundle => (A,2,a), Bundle => (B,3,b))
+      chern_3 B
+      chern(2,A*B)
+  SeeAlso
+     (segre,ZZ,AbstractSheaf)
+
 Node
   Key
     (chern,ZZ,ZZ,AbstractSheaf)
   Headline
-    Get the Chern class of an abstract sheaf 
+    compute several Chern classes of an abstract sheaf 
   Usage
-    c = chern(n,m,A)
+    chern(n,m,A)
   Inputs
-    n:ZZ
-    m:ZZ
-    A:AbstractSheaf
+    n :
+    m :
+    A :
   Outputs
-    c: List
+    : List
+    	 the list $ \{ c_n A .. c_m A \} $ of Chern classes of $A$
   Description
    Text
-     Chern classes of an abstract sheaf are computed.  If called with
-     three arguments as above, a list of the Chern classes {\tt c_n(A) ..
-     c_m(A)} are returned.  Here {\tt 0\le n\le m} are integers.
-     {\tt chern} may also be called without one or both of these integer
-     arguments, in which case just one Chern class, or the total Chern
-     class is returned, respectively.
      In the following example, we consider two vector bundles
-     {\tt A} and {\tt B} of ranks 2 and 3, respectively, on a variety
-     of which we only know that its dimension is 3.  
+     {\tt A} and {\tt B} of ranks 2 and 3 on a variety of dimension 4.
    Example
-     base(3, Bundle => (A,2,a), Bundle => (B,3,b))
-     chern B
-     chern(-A)
-     chern(2,A*B)
-     chern(2,3,B-A)
-   Text
-     The next example gives the Chern classes of the twists of
-     a rank-2 vector bundle on the projective plane
-   Example
-     pt = base(n,p,q)
-     P2 = projectiveSpace(2,pt)
-     E = abstractSheaf(P2, Rank=>2, ChernClass=>1+p*h+q*h^2)
-     chern(E*OO(n*h))
-  SeeAlso
-    segre
+     base(4,Bundle => (A,2,a), Bundle => (B,3,b))
+     netList chern(2,4,B-A)
+ SeeAlso
+    base
+    netList
 
 Node
   Key
@@ -503,16 +553,6 @@ Node
     ch
     (ch,AbstractSheaf)
     (ch,ZZ,AbstractSheaf)
-  Description
-    Text
-      TO BE WRITTEN
-
-Node
-  Key
-    chern
-    (chern,AbstractSheaf)
-    (chern,ZZ,AbstractSheaf)
-    (chern,ZZ,Symbol)
   Description
     Text
       TO BE WRITTEN
