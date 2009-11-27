@@ -365,13 +365,6 @@ Node
 
 Node
   Key
-    (chern,ZZ,Symbol)
-  Description
-    Text
-      TO BE WRITTEN
-
-Node
-  Key
     (chern,ZZ,AbstractSheaf)
   Headline
      compute a Chern class of a sheaf
@@ -493,11 +486,21 @@ Node
 
 Node
   Key
-    abstractVariety
     (abstractVariety,ZZ,Ring)
+    abstractVariety
+  Usage
+    abstractVariety(d,A)
+  Inputs
+    d:
+    A:
+  Outputs
+   :
+    whose intersection ring is {\tt A}
   Description
-    Text
-      TO BE WRITTEN
+    Example
+      X = abstractVariety(3, QQ[c,d,e,Degrees=>{1,2,3}])
+      F = abstractSheaf(X, ChernCharacter => 3+c+d+e)
+      chern F
 
 Node
   Key
@@ -1137,6 +1140,13 @@ Node
 Node
   Key
     (net,FlagBundle)
+  Description
+    Text
+      TO BE WRITTEN
+
+Node
+  Key
+    (chern,ZZ,Symbol)
   Description
     Text
       TO BE WRITTEN

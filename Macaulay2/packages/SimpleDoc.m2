@@ -83,7 +83,7 @@ items = (text, indents, linenums, keylinenum) -> (
 	       if #ps =!= 2 then (
 	       	    val := value;
 	       	    ps = separateRegexp("[[:space:]]*=>[[:space:]]*", s);
-	       	    if #ps =!= 2 then error("first line should contain a colon or a double arrow: ",s);
+	       	    if #ps =!= 2 then error("line ",toString linenums#i,": expected line containing a colon or a double arrow");
 		    )
 	       else (
 		    val = identity;
