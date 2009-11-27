@@ -238,48 +238,54 @@ Node
 
 Node
   Key
-    (projectiveSpace,ZZ,AbstractVariety)
     projectiveSpace
+    (projectiveSpace,ZZ,AbstractVariety)
     (projectiveSpace,ZZ)
     [projectiveSpace,VariableName]
   Headline
-    Makes an AbstractVariety representing projective space
+    make a projective space
   Usage
-    projectiveSpace(n)
-    projectiveSpace(n, baseVariety)
-    projectiveSpace(n, baseVariety, VariableName => h)
+    projectiveSpace n
+    projectiveSpace(n, S)
+    projectiveSpace_n S
   Inputs
-    n :
-    baseVariety :
+    n : ZZ
+    S : AbstractVariety
+      if omitted, then @ TO point @ is used for it
     VariableName => Symbol
+      the symbol to use for the variable representing the first Chern class of the tautological line bundle on the resulting projective space
   Outputs
-    :AbstractVariety
+    :
+       the projective space of rank 1 quotient bundles of the trivial bundle of rank $n+1$ on
+       the base variety {\tt S}.
   Description
-   Text
-     Constructs the projective space of 1-quotients of the trivial bundle on
-     the base variety  {\tt baseVariety}. The Chow ring is set to be the polynomial ring 
-     over the Chow ring of {\tt baseVariety}, with variable {\tt h}. The tangent bundle
-     of X is available as @ofClass AbstractSheaf@, accessed by {\tt X.TangentBundle}.
-     Here baseVariety and VariableName are optional.
    Example
      P = projectiveSpace 3
+     tangentBundle P
+     chern tangentBundle P
      todd P
      chi OO_P(3)
    Text
-     If we want a projective space where we can compute the Hilbert Polynomial of a sheaf,
-     we need a variable to represent an integer. We define a base variety that is a point {\tt pt}
-     containing this variable.
+     To compute the Hilbert polynomial of a sheaf on projective space, we work
+     over a base variety of dimension zero whose intersection ring contains a
+     {\em free} variable $n$, instead of working over @ TO point @:
    Example
      pt = base n
-     Q = projectiveSpace(4,pt, VariableName => h)
+     Q = projectiveSpace_4 pt
      chi OO_Q(n)
    Text
-     If be build a projective space over another variety, the dimensions add:
+     The base variety may itself be a projective space:
    Example
-     baseVariety = projectiveSpace(4, VariableName => h)
-     P = projectiveSpace (3,baseVariety, VariableName => H)
+     S = projectiveSpace(4, VariableName => h)
+     P = projectiveSpace(3, S, VariableName => H)
      dim P
      todd P
+  SeeAlso
+     tangentBundle
+     todd
+     chi
+     base
+     (symbol _,OO,AbstractVariety)
 
 Node
   Key
