@@ -35,7 +35,7 @@ getAttribute = value Core#"private dictionary"#"hasAttribute"
 AbstractVariety = new Type of MutableHashTable
 AbstractVariety.synonym = "abstract variety"
 globalAssignment AbstractVariety
-net AbstractVariety := X -> (
+toString AbstractVariety := net AbstractVariety := X -> (
      if hasAttribute(X,ReverseDictionary) then toString getAttribute(X,ReverseDictionary)
      else "a variety")
 AbstractVariety#{Standard,AfterPrint} = X -> (
@@ -50,7 +50,7 @@ intersectionRing AbstractVariety := X -> X.IntersectionRing
 FlagBundle = new Type of AbstractVariety
 FlagBundle.synonym = "abstract flag bundle"
 globalAssignment FlagBundle
-net FlagBundle := X -> (
+net FlagBundle := toString FlagBundle := X -> (
      if hasAttribute(X,ReverseDictionary) then toString getAttribute(X,ReverseDictionary)
      else "a flag bundle")
 FlagBundle#{Standard,AfterPrint} = X -> (
@@ -71,7 +71,7 @@ globalAssignment AbstractVarietyMap
 source AbstractVarietyMap := f -> f.source
 target AbstractVarietyMap := f -> f.target
 dim AbstractVarietyMap := f -> dim source f - dim target f
-net AbstractVarietyMap := X -> (
+toString AbstractVarietyMap := net AbstractVarietyMap := X -> (
      if hasAttribute(X,ReverseDictionary) then toString getAttribute(X,ReverseDictionary)
      else "a variety map")
 AbstractVarietyMap#{Standard,AfterPrint} = f -> (
@@ -85,8 +85,9 @@ sectionClass AbstractVarietyMap := f -> f.SectionClass
 
 AbstractSheaf = new Type of MutableHashTable
 AbstractSheaf.synonym = "abstract sheaf"
+baseName AbstractSheaf := F -> if F.?Name then F.Name else error "unnamed abstract sheaf"
 globalAssignment AbstractSheaf
-net AbstractSheaf := X -> (
+net AbstractSheaf := toString AbstractSheaf := X -> (
      if hasAttribute(X,ReverseDictionary) then toString getAttribute(X,ReverseDictionary)
      else "a sheaf")
 AbstractSheaf#{Standard,AfterPrint} = E -> (
@@ -205,10 +206,7 @@ base Sequence := args -> (
      newbdl := x -> bdls = append(bdls,x);
      d := null;
      oops := x -> error ("base: unrecognizable argument ",toString x);
-     goodvar := x -> (
-	  if instance(x,RingElement) then baseName x
-	  else if instance(x,Symbol) or instance(x,IndexedVariable) then x
-	  else error ("base: unusable as variable: ",toString x));
+     goodvar := x -> try baseName x else error ("base: unusable as variable: ",toString x);
      goodsym := x -> (
 	  if instance(x,RingElement) or instance(x,IndexedVariableTable) then baseName x
 	  else if instance(x,Symbol) then x
@@ -269,6 +267,7 @@ installMethod(symbol <-, ChernClassSymbol, (c,x) -> chernClassValues#c = x)
 value ChernClassSymbol := c -> if chernClassValues#?c then chernClassValues#c else c
 expression ChernClassSymbol := c -> new FunctionApplication from {new Subscript from {symbol c,c#0}, c#1}
 net ChernClassSymbol := net @@ expression
+toString ChernClassSymbol := toString @@ expression
 
 installMethod(symbol _, OO, AbstractVariety, AbstractSheaf => (OO,X) -> (
      A := intersectionRing X;
