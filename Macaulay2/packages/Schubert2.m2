@@ -11,8 +11,7 @@ newPackage(
 	     {Name => "David Eisenbud", Email => "de@msri.org", HomePage => "http://www.msri.org/~de/"}
 	     },
 	HomePage => "http://www.math.uiuc.edu/Macaulay2/",
-    	Headline => "computations of characteristic classes for varieties without equations",
-    	DebuggingMode => true
+    	Headline => "computations of characteristic classes for varieties without equations"
     	)
 
 export { "AbstractSheaf", "abstractSheaf", "AbstractVariety", "abstractVariety", "schubertCycle",
@@ -638,7 +637,25 @@ schubertCycle(List,FlagBundle) := (b,X) -> (
      giambelli(r',E,dualpart(r',b)))
 
 beginDocumentation()
+assert( (options Schubert2).DebuggingMode )
+if loadDepth != 3 then error ("loadDepth == ", toString loadDepth)
+     
 multidoc get (currentFileDirectory | "Schubert2/doc")
+undocumented {
+     (net,AbstractSheaf),
+     (net,AbstractVariety),
+     (net,AbstractVarietyMap),
+     (net,ChernClassSymbol),
+     (net,FlagBundle),
+     (baseName,ChernClassSymbol),
+     (expression,ChernClassSymbol),
+     (baseName,AbstractSheaf),
+     (toString,AbstractSheaf),
+     (toString,AbstractVariety),
+     (toString,AbstractVarietyMap),
+     (toString,ChernClassSymbol),
+     (toString,FlagBundle)
+     }
 TEST /// input (Schubert2#"source directory"|"Schubert2/demo.m2") ///
 TEST /// input (Schubert2#"source directory"|"Schubert2/demo2.m2") ///
 TEST /// input (Schubert2#"source directory"|"Schubert2/demo3.m2") ///
