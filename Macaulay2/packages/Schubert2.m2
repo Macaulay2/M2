@@ -82,7 +82,7 @@ AbstractVarietyMap#{Standard,AfterPrint} = f -> (
 sectionClass = method(TypicalValue => RingElement)
 sectionClass AbstractVarietyMap := f -> f.SectionClass
 
-AbstractSheaf = new Type of MutableHashTable
+AbstractSheaf = new Type of HashTable
 AbstractSheaf.synonym = "abstract sheaf"
 baseName AbstractSheaf := F -> if F.?Name then F.Name else error "unnamed abstract sheaf"
 globalAssignment AbstractSheaf
