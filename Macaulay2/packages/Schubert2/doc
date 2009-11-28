@@ -487,6 +487,8 @@ Node
   Key
     (abstractVariety,ZZ,Ring)
     abstractVariety
+    [abstractVariety,ReturnType]
+    ReturnType
   Headline
     make an abstrace variety
   Usage
@@ -494,13 +496,16 @@ Node
   Inputs
     d:
     A:
+    ReturnType => Type
+     a type of AbstractVariety
   Outputs
    :
-    whose intersection ring is {\tt A}
+    of dimension {\tt d} whose intersection ring is {\tt A} and whose @ TO class @
+    is the value of the ReturnType option
   Description
     Example
-      X = abstractVariety(3, QQ[c,d,e,Degrees=>{1,2,3}])
-      F = abstractSheaf(X, ChernCharacter => 3+c+d+e)
+      X = abstractVariety(3, QQ[c,d,Degrees=>{1,2}])
+      F = abstractSheaf(X, ChernCharacter => 3+c+d)
       chern F
 --------
 Node

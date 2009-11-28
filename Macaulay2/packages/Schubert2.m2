@@ -14,7 +14,7 @@ newPackage(
     	Headline => "computations of characteristic classes for varieties without equations"
     	)
 
-export { "AbstractSheaf", "abstractSheaf", "AbstractVariety", "abstractVariety", "schubertCycle",
+export { "AbstractSheaf", "abstractSheaf", "AbstractVariety", "abstractVariety", "schubertCycle", "ReturnType",
      "AbstractVarietyMap", "adams", "Base", "BundleRanks", "Bundles", "VarietyDimension", "Bundle",
      "TautologicalLineBundle", "ch", "chern", "ChernCharacter", "ChernClass", "ChernClassSymbol", "chi", "ctop", "FlagBundle",
      "flagBundle", "projectiveBundle", "projectiveSpace", "PP", "FlagBundleStructureMap", "integral", "IntersectionRing",
@@ -138,13 +138,14 @@ bydegree := net -> f -> (
      tms = apply(tms, e -> if instance(e,Sum) then new Parenthesize from {e} else e);
      net new Sum from tms)
 
-abstractVariety = method(TypicalValue => AbstractVariety, Options => { Type => AbstractVariety })
+abstractVariety = method(TypicalValue => AbstractVariety, Options => { ReturnType => AbstractVariety })
 abstractVariety(ZZ,Ring) := opts -> (d,A) -> (
      if A.?VarietyDimension then error "ring already in use as an intersection ring";
      A.VarietyDimension = d;
      net A := bydegree net;
      toString A := bydegree toString;
-     X := new opts#Type from {
+     if not ancestor(AbstractVariety,opts#ReturnType) then error "expected value of Type option to be a type of AbstractVariety";
+     X := new opts#ReturnType from {
 	  global dim => d,
      	  IntersectionRing => A
      	  };
@@ -360,7 +361,7 @@ flagBundle(List,AbstractSheaf) := opts -> (bundleRanks,E) -> (
      C := B; H := identity;
      -- use C;
      d := dim X + sum(n, i -> sum(i+1 .. n-1, j -> bundleRanks#i * bundleRanks#j));
-     FV := C.Variety = abstractVariety(d,C,Type => FlagBundle);
+     FV := C.Variety = abstractVariety(d,C,ReturnType => FlagBundle);
      FV.BundleRanks = bundleRanks;
      FV.Rank = rk;
      FV.Base = X;
@@ -637,9 +638,6 @@ schubertCycle(List,FlagBundle) := (b,X) -> (
      giambelli(r',E,dualpart(r',b)))
 
 beginDocumentation()
-assert( (options Schubert2).DebuggingMode )
-if loadDepth != 3 then error ("loadDepth == ", toString loadDepth)
-     
 multidoc get (currentFileDirectory | "Schubert2/doc")
 undocumented {
      (net,AbstractSheaf),
