@@ -700,10 +700,21 @@ Node
 --------
 Node
   Key
-    ChernClassSymbol
+    ChernClassVariable
+  Headline
+    the class of all Chern class variables
   Description
-    Text
-      TO BE WRITTEN
+   Text
+    This class supports the creation of variables, analogous to @ TO2{IndexedVariable,"indexed variables"} @,
+    that can be used as generators of intersection rings
+    of abstract varieties that are displayed in the form {\tt c_iE}, where {\tt i} is a natural number
+    and {\tt E} is the name of an abstract sheaf.
+   Example
+    F = flagBundle({2,2},VariableNames => {{chern_1 S,chern_2 S},{chern_1 Q,chern_2 Q}})
+    A = intersectionRing F
+    (S,Q) = F.Bundles
+    chern Q
+    chern S
 --------
 Node
   Key
@@ -1237,14 +1248,14 @@ Node
 --------
 Node
   Key
-    (symbol <-,ChernClassSymbol)
+    (symbol <-,ChernClassVariable)
   Description
     Text
       TO BE WRITTEN
 --------
 Node
   Key
-    (value,ChernClassSymbol)
+    (value,ChernClassVariable)
   Description
     Text
       TO BE WRITTEN
@@ -1255,7 +1266,13 @@ Node
   Description
     Text
       TO BE WRITTEN
-
+-------
+Node
+  Key
+    (symbol _,Ring,ChernClassVariable)
+  Description
+    Text
+      TO BE WRITTEN
 -- Local Variables:
 -- mode: M2
 -- coding: utf-8
