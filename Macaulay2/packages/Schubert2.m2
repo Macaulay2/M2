@@ -16,7 +16,7 @@ newPackage(
 
 export { "AbstractSheaf", "abstractSheaf", "AbstractVariety", "abstractVariety", "schubertCycle", "ReturnType",
      "AbstractVarietyMap", "adams", "Base", "BundleRanks", "Bundles", "VarietyDimension", "Bundle",
-     "TautologicalLineBundle", "ch", "chern", "ChernCharacter", "ChernClass", "ChernClassSymbol", "chi", "ctop", "FlagBundle",
+     "TautologicalLineBundle", "ch", "chern", "ChernCharacter", "ChernClass", "ChernClassVariable", "chi", "ctop", "FlagBundle",
      "flagBundle", "projectiveBundle", "projectiveSpace", "PP", "FlagBundleStructureMap", "integral", "IntersectionRing",
      "intersectionRing", "PullBack", "PushForward", "Rank", "reciprocal", "lowerstar",
      "schur", "SectionClass", "sectionClass", "segre", "StructureMap", "TangentBundle", "tangentBundle", "todd", "ToddClass",
@@ -31,6 +31,7 @@ protect ToddClass
 hasAttribute = value Core#"private dictionary"#"hasAttribute"
 getAttribute = value Core#"private dictionary"#"getAttribute"
 ReverseDictionary = value Core#"private dictionary"#"ReverseDictionary"
+indexSymbols = value Core#"private dictionary"#"indexSymbols"
 
 AbstractVariety = new Type of MutableHashTable
 AbstractVariety.synonym = "abstract variety"
@@ -251,7 +252,6 @@ chern = method(TypicalValue => RingElement)
 chern AbstractSheaf := (cacheValue ChernClass) (F -> expp F.ChernCharacter)
 chern(ZZ, AbstractSheaf) := (p,F) -> part(p,chern F)
 chern(ZZ, ZZ, AbstractSheaf) := List => (p,q,F) -> toList apply(p..q, i -> chern(i,F))
-chern(ZZ,Symbol) := (n,E) -> value new ChernClassSymbol from {n,E}
 
 ctop = method(TypicalValue => RingElement)
 ctop AbstractSheaf := F -> chern_(rank F) F
@@ -261,13 +261,16 @@ ch AbstractSheaf := (F) -> F.ChernCharacter
 ch(ZZ,AbstractSheaf) := (n,F) -> part_n ch F
 
 chernClassValues = new MutableHashTable
-ChernClassSymbol = new Type of BasicList
-baseName ChernClassSymbol := identity
-installMethod(symbol <-, ChernClassSymbol, (c,x) -> chernClassValues#c = x)
-value ChernClassSymbol := c -> if chernClassValues#?c then chernClassValues#c else c
-expression ChernClassSymbol := c -> new FunctionApplication from {new Subscript from {symbol c,c#0}, c#1}
-net ChernClassSymbol := net @@ expression
-toString ChernClassSymbol := toString @@ expression
+ChernClassVariable = new Type of BasicList
+ChernClassVariable.synonym = "Chern class variable"
+chern(ZZ,Symbol) := (n,E) -> value new ChernClassVariable from {n,E}
+Ring _ ChernClassVariable := (R,s) -> R#indexSymbols#s
+baseName ChernClassVariable := identity
+installMethod(symbol <-, ChernClassVariable, (c,x) -> chernClassValues#c = x)
+value ChernClassVariable := c -> if chernClassValues#?c then chernClassValues#c else c
+expression ChernClassVariable := c -> new FunctionApplication from {new Subscript from {symbol c,c#0}, c#1}
+net ChernClassVariable := net @@ expression
+toString ChernClassVariable := toString @@ expression
 
 installMethod(symbol _, OO, AbstractVariety, AbstractSheaf => (OO,X) -> (
      A := intersectionRing X;
@@ -643,15 +646,15 @@ undocumented {
      (net,AbstractSheaf),
      (net,AbstractVariety),
      (net,AbstractVarietyMap),
-     (net,ChernClassSymbol),
+     (net,ChernClassVariable),
      (net,FlagBundle),
-     (baseName,ChernClassSymbol),
-     (expression,ChernClassSymbol),
+     (baseName,ChernClassVariable),
+     (expression,ChernClassVariable),
      (baseName,AbstractSheaf),
      (toString,AbstractSheaf),
      (toString,AbstractVariety),
      (toString,AbstractVarietyMap),
-     (toString,ChernClassSymbol),
+     (toString,ChernClassVariable),
      (toString,FlagBundle)
      }
 TEST /// input (Schubert2#"source directory"|"Schubert2/demo.m2") ///
