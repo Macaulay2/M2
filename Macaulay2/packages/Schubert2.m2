@@ -18,9 +18,11 @@ export { "AbstractSheaf", "abstractSheaf", "AbstractVariety", "abstractVariety",
      "AbstractVarietyMap", "adams", "Base", "BundleRanks", "Bundles", "VarietyDimension", "Bundle",
      "TautologicalLineBundle", "ch", "chern", "ChernCharacter", "ChernClass", "ChernClassVariable", "chi", "ctop", "FlagBundle",
      "flagBundle", "projectiveBundle", "projectiveSpace", "PP", "FlagBundleStructureMap", "integral", "IntersectionRing",
-     "intersectionRing", "PullBack", "PushForward", "Rank", "reciprocal", "lowerstar",
+     "intersectionRing", "PullBack", "PushForward", "Rank",
      "schur", "SectionClass", "sectionClass", "segre", "StructureMap", "TangentBundle", "tangentBundle", "todd", "ToddClass",
      "VariableNames", "VariableName", "SubBundles", "QuotientBundles", "point", "base"}
+
+-- not exported, for now: "logg", "expp", "reciprocal"
 
 protect ChernCharacter
 protect ChernClass
@@ -65,8 +67,6 @@ FlagBundleStructureMap = new Type of AbstractVarietyMap
 FlagBundleStructureMap.synonym = "abstract flag bundle structure map"
 AbstractVarietyMap ^* := f -> f.PullBack
 AbstractVarietyMap _* := f -> f.PushForward
-lowerstar = method(TypicalValue => RingElement)
-lowerstar(AbstractVarietyMap,Thing) := (f,x) -> f.PushForward x
 globalAssignment AbstractVarietyMap
 source AbstractVarietyMap := f -> f.source
 target AbstractVarietyMap := f -> f.target
@@ -409,12 +409,12 @@ tangentBundle FlagBundleStructureMap := (stashValue TangentBundle) (
 
 installMethod(symbol SPACE, OO, RingElement, AbstractSheaf => (OO,h) -> OO_(variety ring h) (h))
 
-projectiveBundle = method(Options => { VariableNames => null }, TypicalValue => AbstractVariety)
+projectiveBundle = method(Options => { VariableNames => null }, TypicalValue => FlagBundle)
 projectiveBundle ZZ := opts -> n -> flagBundle({n,1},opts)
 projectiveBundle(ZZ,AbstractVariety) := opts -> (n,X) -> flagBundle({n,1},X,opts)
 projectiveBundle AbstractSheaf := opts -> E -> flagBundle({rank E - 1, 1},E,opts)
 
-projectiveSpace = method(Options => { VariableName => global h }, TypicalValue => AbstractVariety)
+projectiveSpace = method(Options => { VariableName => global h }, TypicalValue => FlagBundle)
 projectiveSpace ZZ := opts -> n -> flagBundle({n,1},VariableNames => {,{opts.VariableName}})
 projectiveSpace(ZZ,AbstractVariety) := opts -> (n,X) -> flagBundle({n,1},X,VariableNames => {,{opts.VariableName}})
 
@@ -643,6 +643,10 @@ schubertCycle(List,FlagBundle) := (b,X) -> (
 beginDocumentation()
 multidoc get (currentFileDirectory | "Schubert2/doc")
 undocumented {
+     (tangentBundle,FlagBundle),
+     (tangentBundle,FlagBundleStructureMap),
+     (symmetricPower,QQ,AbstractSheaf),
+     (symmetricPower,ZZ,AbstractSheaf),
      (net,AbstractSheaf),
      (net,AbstractVariety),
      (net,AbstractVarietyMap),

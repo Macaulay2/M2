@@ -322,14 +322,12 @@ Node
     base
     StructureMap
     chern
-
 --------
 Node
   Headline
     compute Chern classes of a sheaf
   Key
     chern
---------
 Node
   Key
     (chern,AbstractSheaf)
@@ -357,7 +355,6 @@ Node
       chern E(n*h)
   SeeAlso
      segre
---------
 Node
   Key
     (chern,ZZ,AbstractSheaf)
@@ -376,7 +373,7 @@ Node
     Example
       base(3, Bundle => (A,2,a), Bundle => (B,3,b))
       chern_3 B
-      chern(2,A*B)
+      chern(2,A**B)
   SeeAlso
      (segre,ZZ,AbstractSheaf)
 --------
@@ -451,6 +448,7 @@ Node
     (abstractSheaf,AbstractVariety,RingElement)
     abstractSheaf
     ChernCharacter
+    Rank
     ChernClass
     [abstractSheaf,Name]
     [abstractSheaf,Rank]
@@ -788,8 +786,9 @@ Node
     If no value is provided, then @ TT "H_(i,j)" @ = $H_{i,j}$ denotes the j-th Chern class of i-th tautological sheaf.
     If its value is a symbol, then that symbol is used instead of {\tt H}.
     If its value is a list, then for each i, its i-th entry specifies how the Chern classes of the i-th tautological sheaf are to be named.
+    If the i-th entry is omitted (i.e., is @ TO null @), then the default names are used.
     If the i-th entry is a symbol, say {\tt c}, then the names are @ TT "c_1 .. c_(r_i)" @.
-    If the i-th entry is a list, its entries are used as the names.    
+    If the i-th entry is a list, its entries are used as the names.
   Outputs
    :FlagBundle
     the flag bundle over the variety of $E$ parametrizing filtrations $0 = E_0 \subseteq{} E_1 \subseteq{}
@@ -812,139 +811,361 @@ Node
     (projectiveBundle,ZZ)
     (projectiveBundle,ZZ,AbstractVariety)
     [projectiveBundle,VariableNames]
+  Headline
+   make a projective bundle from an abstract sheaf
+  Usage
+    projectiveBundle F
+    projectiveBundle(n,X)
+    projectiveBundle n
+  Inputs
+    F : AbstractSheaf
+    n : ZZ
+    X : AbstractVariety
+    VariableNames => Thing
+      see @ TO [flagBundle,VariableNames] @
+  Outputs
+    :
+       the projective bundle of rank 1 quotient bundles of the abstract sheaf $F$.
+       If $F$ is omitted, then a projective space of dimension $n$ over $X$ is produced.
+       If $X$ is omitted, then @ TO point @ is used as the base.
   Description
-    Text
-      TO BE WRITTEN
+   Example
+    X = projectiveBundle 4
+    F = OO_X(2) ++ OO_X(3) ++ OO_X(4)
+    Y = projectiveBundle F
+    dim Y
+    integral (chern_1 OO_Y(1))^(dim Y)
+    lift(oo,ZZ)
+    factor oo
+  Caveat
+   Perhaps this should be merged with @ TO projectiveSpace @.  (The optional arguments are slightly different.)
 --------
 Node
   Key
-    PP
+   PP
+  Headline
+   make a projective space
+  Usage
+   PP^n
+  Inputs
+   n:ZZ
+  Outputs
+   :FlagBundle
+    a projective space over @ TO point @ of dimension $n$
   Description
-    Text
-      TO BE WRITTEN
+   Example
+    X = PP^4
+    X.Base
+    dim X
 --------
 Node
   Key
-    FlagBundleStructureMap
-  Description
-    Text
-      TO BE WRITTEN
+   FlagBundleStructureMap
+  Headline
+   the class of all abstract flag bundle structure maps
 --------
 Node
   Key
-    integral
+   integral
+  Headline
+   compute an integral (push forward a cycle to the base)
+  Usage
+   integral f
+  Inputs
+   f:RingElement
+    a cycle class in the intersection ring of an abstract variety
+  Outputs
+   :RingElement
+    the integral of $f$.
   Description
-    Text
-      TO BE WRITTEN
+   Text
+    In this example we compute the number of lines meeting four lines in space.
+   Example
+    G = flagBundle {2,2}
+    dim G
+    A = intersectionRing G
+    f = (chern_1 OO_G(1))^4
+    integral f
+   Text
+    Normally this integral will be an element of the intersection ring of
+    @ TO point @, and thus will essentially be a rational number, but it could be in any base variety,
+    and would be obtained by pushing forward along the structure maps of flag bundles until
+    the (ultimate) base variety is reached.
+   Example
+    pt = base n
+    F = flagBundle_{2,2} pt
+    integral (chern_1 OO_F(n))^4
 --------
 Node
   Key
-    IntersectionRing
+   IntersectionRing
+  Headline
+   a key used for storing the intersection ring in an abstract variety
   Description
-    Text
-      TO BE WRITTEN
+   Text
+    This symbol is used as a key internally.
+  SeeAlso
+   intersectionRing
 --------
 Node
   Key
     (intersectionRing,AbstractVariety)
     intersectionRing
+  Headline
+   get the intersection ring of an abstract variety
+  Usage
+   intersectionRing X
+  Inputs
+   X:
+  Outputs
+   :
+    the intersection ring of $X$
   Description
-    Text
-      TO BE WRITTEN
+   Example
+    intersectionRing PP^3
+   Text
+    The variables may not have been assigned their values in the intersection ring yet:
+   Example
+    H_(1,1)
+   Text
+    The function @ TO use @ will arrange for the assignment of values:
+   Example
+    use ooo
+    H_(1,1), H_(1,2), H_(1,3)
+  SeeAlso
+   IntersectionRing
 --------
 Node
   Key
-    PullBack
-  Description
-    Text
-      TO BE WRITTEN
+   PullBack
+  Headline
+   a symbol used internally as a key for storing the pull back map in an abstract variety map
+  SeeAlso
+   (symbol ^*,AbstractVarietyMap)
 --------
 Node
   Key
     PushForward
-  Description
-    Text
-      TO BE WRITTEN
---------
-Node
-  Key
-    Rank
-  Description
-    Text
-      TO BE WRITTEN
---------
-Node
-  Key
-    (reciprocal,RingElement)
-    reciprocal
-  Description
-    Text
-      TO BE WRITTEN
---------
-Node
-  Key
-    (lowerstar,AbstractVarietyMap,Thing)
-    lowerstar
-  Description
-    Text
-      TO BE WRITTEN
+  Headline
+   a symbol used internally as a key for storing the push forward map in an abstract variety map
+  SeeAlso
+   (symbol _*,AbstractVarietyMap)
 --------
 Node
   Key
     (schur,List,AbstractSheaf)
     schur
+  Headline
+   apply a Schur functor to an abstract sheaf
+  Usage
+   schur(p,E)
+   schur_p E
+  Inputs
+   p:
+    a partition, specified by a descending list of non-negative integers
+   E:
+  Outputs
+   :
+    the result of applying the Schur functor corresponding to the partition $p$ to $E$
   Description
-    Text
-      TO BE WRITTEN
+   Example
+    base(3, Bundle => (E,3,c))
+    chern E
+    chern schur_{1,1,1} E
+    chern schur_{2,1} E
+    chern schur_{3} E
+  SeeAlso
+   (exteriorPower,ZZ,AbstractSheaf)
+   (symmetricPower,RingElement,AbstractSheaf)
 --------
 Node
   Key
-    SectionClass
+   (exteriorPower,ZZ,AbstractSheaf)
+  Usage
+   exteriorPower(n,F)
+   exteriorPower_n F
+  Inputs
+   n:
+   F:
+  Outputs
+   :
+    the $n$-th exterior power of $F$
   Description
-    Text
-      TO BE WRITTEN
+   Example
+    tangentBundle PP^4
+    exteriorPower_4 oo
+    chern oo
+  SeeAlso
+   (symmetricPower,RingElement,AbstractSheaf)
+   (schur,List,AbstractSheaf)
 --------
 Node
   Key
-    (sectionClass,AbstractVarietyMap)
-    sectionClass
+   (symmetricPower,RingElement,AbstractSheaf)
+  Headline
+   symmetric power of an abstract sheaf
+  Usage
+   symmetricPower(n,F)
+   symmetricPower_n F
+  Inputs
+   n:
+   F:
+  Outputs
+   :
+    the $n$-th symmetric power of $F$
   Description
-    Text
-      TO BE WRITTEN
+   Text
+    In the first example, we let $n$ be a natural number.
+   Example
+    tangentBundle PP^4
+    symmetricPower_4 oo
+    chern oo
+   Text
+    In the next example, we let $n$ be a free parameter in the ``intersection ring'' of the base variety.
+   Example
+    pt = base n
+    X = projectiveSpace_2 pt
+    tangentBundle X
+    symmetricPower_n oo
+    chern oo
+    ch ooo
+  SeeAlso
+   (exteriorPower,ZZ,AbstractSheaf)
+   (schur,List,AbstractSheaf)
 --------
+Node
+  Key
+   SectionClass
+  Headline
+   a symbol used internally as a key
+  SeeAlso
+   sectionClass
+--------
+Node
+  Key
+   (sectionClass,AbstractVarietyMap)
+   sectionClass
+  Headline
+   get the class of the image of a section of a map of abstract varieties
+  Usage
+   sectionClass f
+  Inputs
+   f:
+  Outputs
+   :
+    the class of a section of $f$.  (This means, more or less, any cycle class of relative 
+    dimension zero whose integral is 1.)
+  Description
+   Example
+    X = PP^4
+    f = X.StructureMap
+    sectionClass f
+    integral oo
+    G = flagBundle {2,2}
+    G.StructureMap
+    sectionClass oo
+    integral oo
+--------
+Node
+  Headline
+    compute Segre classes of a sheaf
+  Key
+    segre
+Node
+  Key
+    (segre,AbstractSheaf)
+  Headline
+    compute the total Segre class of a sheaf
+  Usage
+    segre A
+  Inputs
+    A:
+  Outputs
+    :
+     the total Segre class of {\tt A}
+  Description
+    Example
+      base(4, Bundle => (B,3,b))
+      chern B
+      segre B
+  SeeAlso
+     chern
 Node
   Key
     (segre,ZZ,AbstractSheaf)
-    (segre,AbstractSheaf)
-    segre
+  Headline
+     compute a Segre class of a sheaf
+  Usage
+    segre(n,A)
+    segre_n A
+  Inputs
+    n:
+    A:
+  Outputs
+    :
+     the {\tt n}-th Segre class of {\tt A}
   Description
-    Text
-      TO BE WRITTEN
+    Example
+      base(3, Bundle => (A,2,a), Bundle => (B,3,b))
+      segre_3 B
+      segre(2,A**B)
+  SeeAlso
+     (chern,ZZ,AbstractSheaf)
 --------
 Node
   Key
-    StructureMap
+   StructureMap
+  Headline
+   get the structure map of a flag bundle
+  Usage
+   F.StructureMap
+  Inputs
+   F:FlagBundle
+  Outputs
+   :FlagBundleStructureMap
+    the structure map of $F$
   Description
-    Text
-      TO BE WRITTEN
+   Example
+    F = PP^2
+    f = F.StructureMap
+    source f
+    f_* OO_F
+    f_* OO_F(1)
+    target f
+    f^* OO_point
 --------
 Node
   Key
-    TangentBundle
-  Description
-    Text
-      TO BE WRITTEN
+   TangentBundle
+  Headline
+   a symbol used internally as a key
+  SeeAlso
+   tangentBundle
 --------
 Node
   Key
     tangentBundle
     (tangentBundle,AbstractVariety)
     (tangentBundle,AbstractVarietyMap)
-    (tangentBundle,FlagBundle)
-    (tangentBundle,FlagBundleStructureMap)
+  Headline
+   get the tangent bundle
+  Usage
+   tangentBundle X
+   tangentBundle f
+  Inputs
+   X:AbstractVariety
+   f:AbstractVarietyMap
+  Outputs
+   :AbstractSheaf
+    the (absolute) tangent bundle of $X$ or the (relative) tangent bundle of $f$
   Description
-    Text
-      TO BE WRITTEN
+   Example
+    X = projectiveSpace 2
+    Y = projectiveSpace_2 X
+    tangentBundle Y
+    chern oo
+    tangentBundle Y.StructureMap
+    chern oo
 --------
 Node
   Key
@@ -1094,13 +1315,6 @@ Node
 --------
 Node
   Key
-    (exteriorPower,ZZ,AbstractSheaf)
-  Description
-    Text
-      TO BE WRITTEN
---------
-Node
-  Key
     (Hom,AbstractSheaf,AbstractSheaf)
   Description
     Text
@@ -1116,27 +1330,6 @@ Node
 Node
   Key
     (symbol SPACE,OO,RingElement)
-  Description
-    Text
-      TO BE WRITTEN
---------
-Node
-  Key
-    (symmetricPower,QQ,AbstractSheaf)
-  Description
-    Text
-      TO BE WRITTEN
---------
-Node
-  Key
-    (symmetricPower,RingElement,AbstractSheaf)
-  Description
-    Text
-      TO BE WRITTEN
---------
-Node
-  Key
-    (symmetricPower,ZZ,AbstractSheaf)
   Description
     Text
       TO BE WRITTEN
