@@ -16,9 +16,9 @@ newPackage(
 
 export { "AbstractSheaf", "abstractSheaf", "AbstractVariety", "abstractVariety", "schubertCycle",
      "AbstractVarietyMap", "adams", "Base", "BundleRanks", "Bundles", "VarietyDimension", "Bundle",
-     "TautologicalLineBundle", "ch", "chern", "ChernCharacter", "ChernClass", "ChernClassSymbol", "chi", "ctop", "expp", "FlagBundle",
+     "TautologicalLineBundle", "ch", "chern", "ChernCharacter", "ChernClass", "ChernClassSymbol", "chi", "ctop", "FlagBundle",
      "flagBundle", "projectiveBundle", "projectiveSpace", "PP", "FlagBundleStructureMap", "integral", "IntersectionRing",
-     "intersectionRing", "logg", "PullBack", "PushForward", "Rank", "reciprocal", "lowerstar",
+     "intersectionRing", "PullBack", "PushForward", "Rank", "reciprocal", "lowerstar",
      "schur", "SectionClass", "sectionClass", "segre", "StructureMap", "TangentBundle", "tangentBundle", "todd", "ToddClass",
      "VariableNames", "VariableName", "SubBundles", "QuotientBundles", "point", "base"}
 
@@ -313,7 +313,7 @@ tangentBundle FlagBundle := (stashValue TangentBundle) (FV -> tangentBundle FV.B
 assignable = s -> instance(v,Symbol) or null =!= lookup(symbol <-, class v)
 
 offset := 1
-flagBundle = method(Options => { VariableNames => null }, TypicalValue => AbstractVariety)
+flagBundle = method(Options => { VariableNames => null }, TypicalValue => FlagBundle)
 flagBundle(List) := opts -> (bundleRanks) -> flagBundle(bundleRanks,point,opts)
 flagBundle(List,AbstractVariety) := opts -> (bundleRanks,X) -> flagBundle(bundleRanks,OO_X^(sum bundleRanks),opts)
 flagBundle(List,AbstractSheaf) := opts -> (bundleRanks,E) -> (
