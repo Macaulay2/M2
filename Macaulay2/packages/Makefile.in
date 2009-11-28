@@ -20,7 +20,8 @@ ARGS := RemakeAllDocumentation => $(RemakeAllDocumentation), \
 	CheckDocumentation => $(CheckDocumentation), \
 	AbsoluteLinks => false, UserMode => false, Verbose => $(Verbose), \
 	InstallPrefix => \"@LOCALSTAGINGAREA@/\", \
-	SeparateExec => true
+	SeparateExec => true, \
+	DebuggingMode => true
 
 ifeq (${RemakePackages},true)
 RemakePackagesOption:
@@ -53,7 +54,7 @@ all: info-dir @pre_libm2dir@/$1/.installed
 	@echo "make: Entering directory \`$(shell pwd)/$1-temporary'"
 	cd $1-temporary && @pre_bindir@/M2@EXE@ $(M2DIRS) \
 	    -q $(STOP) \
-	    -e errorDepth=2 \
+	    -e errorDepth=3 \
 	    -e debugLevel=$(debugLevel) \
 	    $(EARGS) \
 	    -e "installPackage(\"$1\", $(ARGS)); exit 0"
