@@ -22,7 +22,20 @@ needsPackage "Text"
 simpleDocFrob = method()
 simpleDocFrob(ZZ,Matrix) := (n,M) -> directSum(n:M)
 
-splitByIndent = (text, indents) -> (
+-- We represent a line of text by a triple (text,indent,linenum) where 
+--   text : String     	    the content of the line, with indentation removed, or null if the line was empty (?)
+--   indent : ZZ     	    the number of spaces of indentation removed, or infinity if the line was empty
+--   linenum : ZZ     	    the source line number
+-- We use these access functions uniformly:
+getText = textline -> textline#0
+getIndent = textline -> textline#1
+getLinenum = textline -> textline#2
+-- We use this creation function:
+makeTextline = (text,indent,linenum) -> (text,indent,linenum)
+
+splitByIndent = (textlines,empties) -> (
+     indents := for x in textlines list getIndent x;
+     if empties then indents = apply(indents, n -> if n === infinity then -1 else n);
      m := infinity;
      indents = append(indents,infinity);
      r := for i from 0 to #indents-1 list if indents#i >= m+1 then continue else (m = indents#i; i);
@@ -41,54 +54,51 @@ indentationLevel = (s) -> (
      (infinity, "")
      )
 
-singleString = (key, text) -> (
-     if #text =!= 1 then 
-       error("expected single indented line after "|toString key);
-     key => text#0)
+singleString = (key, textlines, keylinenum) -> (
+     if #textlines =!= 1 then 
+       error("line ",toString getLinenum textlines#1," of string: expected single indented line after "|toString key);
+     key => getText textlines#0)
 
-multiString = (key, text) -> (				    -- written by Andrew Hoefel originally
-     if #text === 0 then
-       error("expected at least one indented line after "|toString key);
-     key => concatenate between(newline, text)
+multiString = (key, textlines, keylinenum) -> (				    -- written by Andrew Hoefel originally
+     if #textlines === 0 then
+       error("line ",toString keylinenum," of string: expected at least one indented line after "|toString key);
+     key => concatenate between(newline, getText \ textlines)
      )
 
-markup2 = (text, indents, linenums, keylinenum) -> (
-     s := concatenate between(" ",text);
+markup2 = (textlines, keylinenum) -> (
+     s := concatenate between(" ",getText \ textlines);
      sp := separateRegexp(///(^|[^\])(@)///, 2, s);
      sp = apply(sp, s -> replace(///\\@///,"@",s));
      if not odd(#sp) then error "unmatched @";
      for i from 0 to #sp-1 list if even i then if sp#i != "" then TEX sp#i else "" else value sp#i
      )
 
-markup = (text, indents, linenums, keylinenum) -> (
-     if #linenums == 0 then linenums = {"unknown"} else linenums = prepend(linenums#0-1,linenums);
-     text = prepend("",text);
-     indents = prepend(infinity,indents);
-     indents = apply(indents, n -> if n === infinity then -1 else n);
-     splits := splitByIndent(text, indents);
+markup = (textlines, keylinenum) -> (
+     textlines = prepend(makeTextline("",infinity,if #textlines == 0 then "unknown" else getLinenum first textlines - 1), textlines);
+     splits := splitByIndent(textlines,true);
      apply(splits, (i,j) -> (
-	       m := markup2(text_{i+1..j},indents_{i+1..j},linenums_{i+1..j},linenums#i);
+	       m := markup2(textlines_{i+1..j},getLinenum textlines#i);
 	       if not (#m == 3 and m#0 === "" and instance(m#1,UL) and m#2 === "") 
 	       then m = (
 		    -- LI{PARA{...},PARA{...},PARA{...}} results in too much vertical space at top and bottom when viewed
 		    -- in a browser, so here we try to arrange for LI{DIV{...},PARA{...},DIV{...}}
-		    if i+1 != 0 and j+1 != #text then PARA else DIV
+		    if i+1 != 0 and j+1 != #textlines then PARA else DIV
 		    ) m;
 	       m)))
     
-items = (text, indents, linenums, keylinenum) -> (
-     apply(splitByIndent(text, indents), (i,j) -> (
-	       s := text#i;
+items = (textlines, keylinenum) -> (
+     apply(splitByIndent(textlines, false), (i,j) -> (
+	       s := getText textlines#i;
 	       ps := separateRegexp("[[:space:]]*:[[:space:]]*", s);
 	       if #ps =!= 2 then (
 	       	    val := value;
 	       	    ps = separateRegexp("[[:space:]]*=>[[:space:]]*", s);
-	       	    if #ps =!= 2 then error("line ",toString linenums#i,": expected line containing a colon or a double arrow");
+	       	    if #ps =!= 2 then error("line ",toString getLinenum textlines#i," of string: expected line containing a colon or a double arrow");
 		    )
 	       else (
 		    val = identity;
 		    );
-	       result := if i === j then "" else markup2(text_{i+1..j}, indents_{i+1..j}, linenums_{i+1..j}, linenums#i);
+	       result := if i === j then "" else markup2(textlines_{i+1..j}, getLinenum textlines#i);
 	       if ps#1 != "" then result = value ps#1 => result;
 	       if ps#0 != "" then result = val ps#0 => result;
 	       result
@@ -96,44 +106,50 @@ items = (text, indents, linenums, keylinenum) -> (
      )
 
 DescriptionFunctions = new HashTable from {
-     "Example" => (text,indents,linenums,keylinenum) -> EXAMPLE apply(
-	  splitByIndent(text,indents),
-	  (i,j) -> concatenate between(newline,apply(i .. j, k -> (if indents#k =!= infinity then indents#k - indents#0 : " ", text#k)))),
+     "Example" => (textlines,keylinenum) -> EXAMPLE apply(
+	  splitByIndent(textlines,false),
+	  (i,j) -> concatenate between(
+	       newline,
+	       apply(i .. j, k -> (
+			 if getIndent textlines#k =!= infinity then getIndent textlines#k - getIndent textlines#0 : " ",
+			 getText textlines#k)))),
      "Text" => toSequence @@ markup,
-     "Code" => (text, indents, linenums, keylinenum) -> ( m := min indents; value concatenate ("(",apply(indents, text, (ind,line) -> (ind-m,line,"\n")),")"))
+     "Code" => (textlines, keylinenum) -> ( 
+	  m := min\\getIndent\textlines; 
+	  value concatenate ("(",apply(textlines, x -> (getIndent x - m, getText x, "\n")),")"))
      }
 
-applySplit = (fcns, text, indents, linenums) ->
-     apply(splitByIndent(text,indents), (i,j) -> (
-	       key := text#i;
-	       if not fcns#?key then error("unrecognized keyword, line ",toString linenums#i,": ",format key);
-	       fcns#key(text_{i+1..j}, indents_{i+1..j}, linenums_{i+1..j}, linenums#i)))
+applySplit = (fcns, textlines) ->
+     apply(splitByIndent(textlines,false), (i,j) -> (
+	       key := getText textlines#i;
+	       if not fcns#?key then error("unrecognized keyword, line ",toString getLinenum textlines#i," of string: ",format key);
+	       fcns#key(textlines_{i+1..j}, getLinenum textlines#i)))
 
-description = (text, indents, linenums, keylinenum) -> toSequence applySplit(DescriptionFunctions, text, indents, linenums)
+description = (textlines, keylinenum) -> toSequence applySplit(DescriptionFunctions, textlines)
 nonnull = x -> select(x, i -> i =!= null)
 
 KeyFunctions = new HashTable from {
-     "Key" => (text, indents, linenums, keylinenum) -> Key => (
-	  r := nonnull apply(text,value);
-	  if length r == 0 then error("Key (line ",toString keylinenum,"): at least one key needed");
+     "Key" => (textlines, keylinenum) -> Key => (
+	  r := nonnull apply(getText \ textlines,value);
+	  if length r == 0 then error("Key (line ",toString keylinenum," of string): expected at least one key");
 	  r),
-     "SeeAlso" => (text, indents, linenums, keylinenum) -> SeeAlso => apply(select(text,p -> #p>0),value),
-     "Subnodes" => (text, indents, linenums, keylinenum) -> Subnodes => apply(text,p -> if match("^:",p) then substring(1,p) else TO value p),
-     "Usage" => (text, indents, linenums, keylinenum) -> multiString(Usage, text),
-     "Headline" => (text, indents, linenums, keylinenum) -> singleString(Headline, text),
-     "Description" => (text, indents, linenums, keylinenum) -> description(text,indents, linenums, keylinenum),
-     "Caveat" => (text, indents, linenums, keylinenum) -> Caveat => {markup(text,indents, linenums, keylinenum)},
-     "Consequences" => (text, indents, linenums, keylinenum) -> Consequences => {markup(text,indents, linenums, keylinenum)},
-     "Inputs" => (text, indents, linenums, keylinenum) -> Inputs => items(text, indents, linenums, keylinenum),
-     "Outputs" => (text, indents, linenums, keylinenum) -> Outputs => items(text, indents, linenums, keylinenum)
+     "SeeAlso" => (textlines, keylinenum) -> SeeAlso => apply(select(getText\textlines,p -> #p>0),value),
+     "Subnodes" => (textlines, keylinenum) -> Subnodes => apply(getText\textlines, p -> if match("^:",p) then substring(1,p) else TO value p),
+     "Usage" => (textlines, keylinenum) -> multiString(Usage, textlines, keylinenum),
+     "Headline" => (textlines, keylinenum) -> singleString(Headline, textlines, keylinenum),
+     "Description" => (textlines, keylinenum) -> description(textlines, keylinenum),
+     "Caveat" => (textlines, keylinenum) -> Caveat => {markup(textlines, keylinenum)},
+     "Consequences" => (textlines, keylinenum) -> Consequences => {markup(textlines, keylinenum)},
+     "Inputs" => (textlines, keylinenum) -> Inputs => items(textlines, keylinenum),
+     "Outputs" => (textlines, keylinenum) -> Outputs => items(textlines, keylinenum)
      }
 
 NodeFunctions = new HashTable from {
-     "Node" => (text, indents, linenums, keylinenum) -> (
-	  r := deepSplice applySplit(KeyFunctions, text, indents, linenums);
+     "Node" => (textlines, keylinenum) -> (
+	  r := deepSplice applySplit(KeyFunctions, textlines);
 	  if any(r, i -> member(first i,{Inputs,Outputs}))
 	  and not any(r, i -> first i === Usage)
-	  then error("multidoc node, line ",toString keylinenum,": Inputs or Outputs specified, but Usage not provided");
+	  then error("multidoc node, line ",toString keylinenum," of string: Inputs or Outputs specified, but Usage not provided");
 	  r)
      }
 
@@ -146,7 +162,8 @@ toDoc = (funtab,text) -> (
      t := apply(text, indentationLevel);
      text = apply(t, last);
      indents := apply(t, first);
-     deepSplice applySplit(funtab, text, indents, linenums))
+     textlines := for i from 0 to #text-1 list makeTextline(text#i,indents#i,linenums#i);
+     deepSplice applySplit(funtab, textlines))
 
 doc = method()
 doc String := (s) -> document toDoc(KeyFunctions,s)
