@@ -720,26 +720,33 @@ Node
 --------
 Node
   Key
-    ctop
     (ctop,AbstractSheaf)
+    ctop
+  Headline
+   the top Chern class of an abstract sheaf
+  Usage
+   ctop F
+  Inputs
+   F:
+  Outputs
+   :
+    the top Chern class of $F$
   Description
-    Text
-      TO BE WRITTEN
---------
-Node
-  Key
-    expp
-    (expp,RingElement)
-  Description
-    Text
-      TO BE WRITTEN
+   Text
+    Here we compute the top Chern class of a vector bundle of rank 6 on the way toward getting
+    the number of lines on quintic threefold.
+   Example
+    G = flagBundle{3,2}
+    B = symmetricPower_5 last G.Bundles
+    ctop B
+    degree oo
+    integral ooo
 --------
 Node
   Key
     FlagBundle
-  Description
-    Text
-      TO BE WRITTEN
+  Headline
+    the class of all flag bundles
 --------
 Node
   Key
@@ -748,9 +755,37 @@ Node
     (flagBundle,List,AbstractSheaf)
     (flagBundle,List,AbstractVariety)
     [flagBundle,VariableNames]
+  Headline
+   make a flag bundle
+  Usage
+   flagBundle(r,E)
+  Inputs
+   r:List
+    a list $\{r_0, ..., r_{n-1}\}$ of non-negative integers
+   E:AbstractSheaf
+    whose rank is the sum of the integers.  If $E$ is, instead, @ ofClass AbstractVariety @ then a trivial sheaf
+    on it is used.  If $E$ is omitted, then a trivial sheaf on @ TO point @ is used.
+   VariableNames => Thing
+    used for specifying how the generators of the intersection ring of the resulting flag bundle are to be named.
+    If no value is provided, then @ TT "H_(i,j)" @ = $H_{i,j}$ denotes the j-th Chern class of i-th tautological sheaf.
+    If its value is a symbol, then that symbol is used instead of {\tt H}.
+    If its value is a list, then for each i, its i-th entry specifies how the Chern classes of the i-th tautological sheaf are to be named.
+    If the i-th entry is a symbol, say {\tt c}, then the names are @ TT "c_1 .. c_(r_i)" @.
+    If the i-th entry is a list, its entries are used as the names.    
+  Outputs
+   :FlagBundle
+    the flag bundle over the variety of $E$ parametrizing filtrations $0 = E_0 \subseteq{} E_1 \subseteq{}
+    ... \subseteq{} E_n = E$ of $E$ whose successive subquotients are vector bundles $E_{i+1}/E_i$
+    of rank $r_i$
   Description
-    Text
-      TO BE WRITTEN
+    Example
+      base(3,Bundle => (E,4,c))
+      F = flagBundle({2,2},E)
+      F.Bundles
+      rank \ oo
+      chern \ ooo
+      product toList oo
+      intersectionRing flagBundle({2,2},E,VariableNames=>{{a,b},t})
 --------
 Node
   Key
@@ -795,14 +830,6 @@ Node
   Key
     (intersectionRing,AbstractVariety)
     intersectionRing
-  Description
-    Text
-      TO BE WRITTEN
---------
-Node
-  Key
-    (logg,RingElement)
-    logg
   Description
     Text
       TO BE WRITTEN
