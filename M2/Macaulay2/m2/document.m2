@@ -1252,6 +1252,7 @@ documentationValue(Symbol,Package) := (s,pkg) -> if pkg =!= Core then (
 		    )
 	       },
 	  if #e > 0 then DIV1 {
+	       "class" => "exports",
 	       SUBSECTION "Exports",
 	       fixup UL {
 		    if #b > 0 then DIV1 {"Types", smenu b},

@@ -69,6 +69,11 @@ div.waystouse {
      line-height: 110%;
 }
 
+div.exports {
+     font-size: 80%;
+     line-height: 110%;
+}
+
 /* css tables */
 
 div.list {
