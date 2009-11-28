@@ -17,12 +17,6 @@ Node
   Subnodes
     "Lines on hypersurfaces"
     "Conics on a quintic threefold"
-    AbstractVariety
-    AbstractSheaf
-    chern
-    chi
-    tangentBundle
-    todd
 --------
 Node
   Key
@@ -456,6 +450,8 @@ Node
   Key
     (abstractSheaf,AbstractVariety,RingElement)
     abstractSheaf
+    ChernCharacter
+    ChernClass
     [abstractSheaf,Name]
     [abstractSheaf,Rank]
     [abstractSheaf,ChernClass]
@@ -639,34 +635,61 @@ Node
     :AbstractSheaf
      the tautological line bundle of $X$
   Description
+    Text
+      This is for internal use only.
     Example
       X = projectiveSpace 3
       L = X.TautologicalLineBundle
       rank L
       chern L
+    Text
+      Here is the preferred way to get the tautological line bundle:
+    Example
+      OO_X(1)
+      L === oo
 --------
 Node
   Key
     ch
+  Headline
+    Chern character of an abstract sheaf
+Node
+  Key
     (ch,AbstractSheaf)
+  Headline
+    total Chern character of an abstract sheaf
+  Usage
+   ch F
+  Inputs
+   F:
+  Outputs
+   :
+    the total Chern character of $F$
+  Description
+    Example
+     X = projectiveSpace 3
+     L = OO_X(1)
+     chern L
+     ch L
+Node
+  Key
     (ch,ZZ,AbstractSheaf)
+  Headline
+    the i-th Chern character of an abstract sheaf
+  Usage
+   ch F
+  Inputs
+   i:
+   F:
+  Outputs
+   :
+    the $i$-th Chern character of $F$
   Description
-    Text
-      TO BE WRITTEN
---------
-Node
-  Key
-    ChernCharacter
-  Description
-    Text
-      TO BE WRITTEN
---------
-Node
-  Key
-    ChernClass
-  Description
-    Text
-      TO BE WRITTEN
+    Example
+     X = projectiveSpace 3
+     L = OO_X(1)
+     chern L
+     ch_1 L, ch_2 L, ch_3 L
 --------
 Node
   Key
@@ -677,11 +700,23 @@ Node
 --------
 Node
   Key
-    chi
     (chi,AbstractSheaf)
+    chi
+  Headline
+    compute the Euler characteristic of an abstract sheaf
+  Usage
+   chi F
+  Inputs
+   F:
+  Outputs
+   :
+    the Euler characteristic of $F$
   Description
-    Text
-      TO BE WRITTEN
+   Example
+    X = projectiveSpace 2
+    chi OO_X(-1), chi OO_X(0), chi OO_X(1), chi OO_X(2), chi OO_X(3)
+    Y = projectiveSpace(2, base n)
+    chi OO_Y(n)
 --------
 Node
   Key
