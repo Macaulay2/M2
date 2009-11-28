@@ -17,13 +17,13 @@ Node
   Subnodes
     "Lines on hypersurfaces"
     "Conics on a quintic threefold"
-  SeeAlso
+    AbstractVariety
     AbstractSheaf
     chern
     chi
-    TangentBundle
+    tangentBundle
     todd
-
+--------
 Node
   Key
      "Lines on hypersurfaces"
@@ -85,7 +85,7 @@ Node
 	of lines on it.
   SeeAlso       
      "Conics on a quintic threefold"
-
+--------
 Node
   Key
      "Conics on a quintic threefold"       
@@ -138,7 +138,7 @@ Node
      integral chern A
   SeeAlso
      "Lines on hypersurfaces"
-
+--------
 Node
   Key
     AbstractVariety
@@ -194,7 +194,7 @@ Node
     chi
     TangentBundle
     todd
-
+--------
 Node
   Key
     AbstractSheaf 
@@ -235,7 +235,7 @@ Node
     abstractSheaf
     chi
     (symbol SPACE,AbstractSheaf,RingElement)
-
+--------
 Node
   Key
     projectiveSpace
@@ -286,7 +286,7 @@ Node
      chi
      base
      (symbol _,OO,AbstractVariety)
-
+--------
 Node
   Key
     base
@@ -328,13 +328,13 @@ Node
     StructureMap
     chern
 
-
+--------
 Node
   Headline
     compute Chern classes of a sheaf
   Key
     chern
-
+--------
 Node
   Key
     (chern,AbstractSheaf)
@@ -362,7 +362,7 @@ Node
       chern E(n*h)
   SeeAlso
      segre
-
+--------
 Node
   Key
     (chern,ZZ,AbstractSheaf)
@@ -384,7 +384,7 @@ Node
       chern(2,A*B)
   SeeAlso
      (segre,ZZ,AbstractSheaf)
-
+--------
 Node
   Key
     (chern,ZZ,ZZ,AbstractSheaf)
@@ -409,7 +409,7 @@ Node
  SeeAlso
     base
     netList
-
+--------
 Node
   Key
       schubertCycle
@@ -450,7 +450,7 @@ Node
      schubertCycle((1,3,5),F)
      F_(1,3,5)
      schubertCycle({3,2,0},F)
-
+--------
 Node
   Key
     (abstractSheaf,AbstractVariety,RingElement)
@@ -483,11 +483,13 @@ Node
       F = abstractSheaf(X, ChernCharacter => 3 + a_1)
       ch F
       chern F
-
+--------
 Node
   Key
     (abstractVariety,ZZ,Ring)
     abstractVariety
+  Headline
+    make an abstrace variety
   Usage
     abstractVariety(d,A)
   Inputs
@@ -501,14 +503,13 @@ Node
       X = abstractVariety(3, QQ[c,d,e,Degrees=>{1,2,3}])
       F = abstractSheaf(X, ChernCharacter => 3+c+d+e)
       chern F
-
+--------
 Node
   Key
     AbstractVarietyMap
-  Description
-    Text
-      TO BE WRITTEN
-
+  Headline
+    the class of all abstract variety maps
+--------
 Node
   Key
     adams
@@ -524,42 +525,42 @@ Node
   Description
     Text
       TO BE WRITTEN
-
+--------
 Node
   Key
     BundleRanks
   Description
     Text
       TO BE WRITTEN
-
+--------
 Node
   Key
     Bundles
   Description
     Text
       TO BE WRITTEN
-
+--------
 Node
   Key
     VarietyDimension
   Description
     Text
       TO BE WRITTEN
-
+--------
 Node
   Key
     Bundle
   Description
     Text
       TO BE WRITTEN
-
+--------
 Node
   Key
     TautologicalLineBundle
   Description
     Text
       TO BE WRITTEN
-
+--------
 Node
   Key
     ch
@@ -568,28 +569,28 @@ Node
   Description
     Text
       TO BE WRITTEN
-
+--------
 Node
   Key
     ChernCharacter
   Description
     Text
       TO BE WRITTEN
-
+--------
 Node
   Key
     ChernClass
   Description
     Text
       TO BE WRITTEN
-
+--------
 Node
   Key
     ChernClassSymbol
   Description
     Text
       TO BE WRITTEN
-
+--------
 Node
   Key
     chi
@@ -597,7 +598,7 @@ Node
   Description
     Text
       TO BE WRITTEN
-
+--------
 Node
   Key
     ctop
@@ -605,7 +606,7 @@ Node
   Description
     Text
       TO BE WRITTEN
-
+--------
 Node
   Key
     expp
@@ -613,14 +614,14 @@ Node
   Description
     Text
       TO BE WRITTEN
-
+--------
 Node
   Key
     FlagBundle
   Description
     Text
       TO BE WRITTEN
-
+--------
 Node
   Key
     flagBundle
@@ -631,7 +632,7 @@ Node
   Description
     Text
       TO BE WRITTEN
-
+--------
 Node
   Key
     projectiveBundle
@@ -642,35 +643,35 @@ Node
   Description
     Text
       TO BE WRITTEN
-
+--------
 Node
   Key
     PP
   Description
     Text
       TO BE WRITTEN
-
+--------
 Node
   Key
     FlagBundleStructureMap
   Description
     Text
       TO BE WRITTEN
-
+--------
 Node
   Key
     integral
   Description
     Text
       TO BE WRITTEN
-
+--------
 Node
   Key
     IntersectionRing
   Description
     Text
       TO BE WRITTEN
-
+--------
 Node
   Key
     (intersectionRing,AbstractVariety)
@@ -678,7 +679,7 @@ Node
   Description
     Text
       TO BE WRITTEN
-
+--------
 Node
   Key
     (logg,RingElement)
@@ -686,28 +687,28 @@ Node
   Description
     Text
       TO BE WRITTEN
-
+--------
 Node
   Key
     PullBack
   Description
     Text
       TO BE WRITTEN
-
+--------
 Node
   Key
     PushForward
   Description
     Text
       TO BE WRITTEN
-
+--------
 Node
   Key
     Rank
   Description
     Text
       TO BE WRITTEN
-
+--------
 Node
   Key
     (reciprocal,RingElement)
@@ -715,7 +716,7 @@ Node
   Description
     Text
       TO BE WRITTEN
-
+--------
 Node
   Key
     (lowerstar,AbstractVarietyMap,Thing)
@@ -723,7 +724,7 @@ Node
   Description
     Text
       TO BE WRITTEN
-
+--------
 Node
   Key
     (schur,List,AbstractSheaf)
@@ -731,14 +732,14 @@ Node
   Description
     Text
       TO BE WRITTEN
-
+--------
 Node
   Key
     SectionClass
   Description
     Text
       TO BE WRITTEN
-
+--------
 Node
   Key
     (sectionClass,AbstractVarietyMap)
@@ -746,7 +747,7 @@ Node
   Description
     Text
       TO BE WRITTEN
-
+--------
 Node
   Key
     (segre,ZZ,AbstractSheaf)
@@ -755,21 +756,21 @@ Node
   Description
     Text
       TO BE WRITTEN
-
+--------
 Node
   Key
     StructureMap
   Description
     Text
       TO BE WRITTEN
-
+--------
 Node
   Key
     TangentBundle
   Description
     Text
       TO BE WRITTEN
-
+--------
 Node
   Key
     tangentBundle
@@ -780,7 +781,7 @@ Node
   Description
     Text
       TO BE WRITTEN
-
+--------
 Node
   Key
     todd
@@ -791,77 +792,77 @@ Node
   Description
     Text
       TO BE WRITTEN
-
+--------
 Node
   Key
     ToddClass
   Description
     Text
       TO BE WRITTEN
-
+--------
 Node
   Key
     VariableNames
   Description
     Text
       TO BE WRITTEN
-
+--------
 Node
   Key
     VariableName
   Description
     Text
       TO BE WRITTEN
-
+--------
 Node
   Key
     SubBundles
   Description
     Text
       TO BE WRITTEN
-
+--------
 Node
   Key
     QuotientBundles
   Description
     Text
       TO BE WRITTEN
-
+--------
 Node
   Key
     point
   Description
     Text
       TO BE WRITTEN
-
+--------
 Node
   Key
     (symbol *,AbstractSheaf,AbstractSheaf)
   Description
     Text
       TO BE WRITTEN
-
+--------
 Node
   Key
     (symbol **,AbstractSheaf,AbstractSheaf)
   Description
     Text
       TO BE WRITTEN
-
+--------
 Node
   Key
     (symbol +,AbstractSheaf,AbstractSheaf)
   Description
     Text
       TO BE WRITTEN
-
+--------
 Node
   Key
     (symbol +,AbstractSheaf,ZZ)
   Description
     Text
       TO BE WRITTEN
-
+--------
 Node
   Key
     (symbol ++,AbstractSheaf,AbstractSheaf)
@@ -870,280 +871,231 @@ Node
   Description
     Text
       TO BE WRITTEN
-
+--------
 Node
   Key
     (symbol -,AbstractSheaf,AbstractSheaf)
   Description
     Text
       TO BE WRITTEN
-
+--------
 Node
   Key
     (symbol ^,AbstractSheaf,ZZ)
   Description
     Text
       TO BE WRITTEN
-
+--------
 Node
   Key
     (symbol ^**,AbstractSheaf,QQ)
   Description
     Text
       TO BE WRITTEN
-
+--------
 Node
   Key
     (symbol ^**,AbstractSheaf,RingElement)
   Description
     Text
       TO BE WRITTEN
-
+--------
 Node
   Key
     (symbol ^**,AbstractSheaf,ZZ)
   Description
     Text
       TO BE WRITTEN
-
+--------
 Node
   Key
     (symbol SPACE,AbstractSheaf,QQ)
   Description
     Text
       TO BE WRITTEN
-
+--------
 Node
   Key
     (symbol SPACE,AbstractSheaf,RingElement)
   Description
     Text
       TO BE WRITTEN
-
+--------
 Node
   Key
     (symbol SPACE,AbstractSheaf,ZZ)
   Description
     Text
       TO BE WRITTEN
-
+--------
 Node
   Key
     (exteriorPower,ZZ,AbstractSheaf)
   Description
     Text
       TO BE WRITTEN
-
+--------
 Node
   Key
     (Hom,AbstractSheaf,AbstractSheaf)
   Description
     Text
       TO BE WRITTEN
-
+--------
 Node
   Key
     (symbol _,OO,AbstractVariety)
   Description
     Text
       TO BE WRITTEN
-
+--------
 Node
   Key
     (symbol SPACE,OO,RingElement)
   Description
     Text
       TO BE WRITTEN
-
+--------
 Node
   Key
     (symmetricPower,QQ,AbstractSheaf)
   Description
     Text
       TO BE WRITTEN
-
+--------
 Node
   Key
     (symmetricPower,RingElement,AbstractSheaf)
   Description
     Text
       TO BE WRITTEN
-
+--------
 Node
   Key
     (symmetricPower,ZZ,AbstractSheaf)
   Description
     Text
       TO BE WRITTEN
-
+--------
 Node
   Key
     (symbol +,ZZ,AbstractSheaf)
   Description
     Text
       TO BE WRITTEN
-
+--------
 Node
   Key
     (symbol -,AbstractSheaf)
   Description
     Text
       TO BE WRITTEN
-
+--------
 Node
   Key
     (determinant,AbstractSheaf)
   Description
     Text
       TO BE WRITTEN
-
+--------
 Node
   Key
     (dual,AbstractSheaf)
   Description
     Text
       TO BE WRITTEN
-
+--------
 Node
   Key
     (End,AbstractSheaf)
   Description
     Text
       TO BE WRITTEN
-
-Node
-  Key
-    (net,AbstractSheaf)
-  Description
-    Text
-      TO BE WRITTEN
-
+--------
 Node
   Key
     (rank,AbstractSheaf)
   Description
     Text
       TO BE WRITTEN
-
+--------
 Node
   Key
     (variety,AbstractSheaf)
   Description
     Text
       TO BE WRITTEN
-
+--------
 Node
   Key
     (variety,Ring)
   Description
     Text
       TO BE WRITTEN
-
+--------
 Node
   Key
     (dim,AbstractVariety)
   Description
     Text
       TO BE WRITTEN
-
-Node
-  Key
-    (net,AbstractVariety)
-  Description
-    Text
-      TO BE WRITTEN
-
+--------
 Node
   Key
     (use,AbstractVariety)
   Description
     Text
       TO BE WRITTEN
-
+--------
 Node
   Key
     (symbol ^*,AbstractVarietyMap)
   Description
     Text
       TO BE WRITTEN
-
+--------
 Node
   Key
     (symbol _*,AbstractVarietyMap)
   Description
     Text
       TO BE WRITTEN
-
+--------
 Node
   Key
     (dim,AbstractVarietyMap)
   Description
     Text
       TO BE WRITTEN
-
-Node
-  Key
-    (net,AbstractVarietyMap)
-  Description
-    Text
-      TO BE WRITTEN
-
+--------
 Node
   Key
     (source,AbstractVarietyMap)
   Description
     Text
       TO BE WRITTEN
-
+--------
 Node
   Key
     (target,AbstractVarietyMap)
   Description
     Text
       TO BE WRITTEN
-
-Node
-  Key
-    (baseName,ChernClassSymbol)
-  Description
-    Text
-      TO BE WRITTEN
-
+--------
 Node
   Key
     (symbol <-,ChernClassSymbol)
   Description
     Text
       TO BE WRITTEN
-
-Node
-  Key
-    (expression,ChernClassSymbol)
-  Description
-    Text
-      TO BE WRITTEN
-
-Node
-  Key
-    (net,ChernClassSymbol)
-  Description
-    Text
-      TO BE WRITTEN
-
+--------
 Node
   Key
     (value,ChernClassSymbol)
   Description
     Text
       TO BE WRITTEN
-
-Node
-  Key
-    (net,FlagBundle)
-  Description
-    Text
-      TO BE WRITTEN
-
+--------
 Node
   Key
     (chern,ZZ,Symbol)
