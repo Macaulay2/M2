@@ -29,7 +29,8 @@ protect TangentBundle
 protect ToddClass
 
 hasAttribute = value Core#"private dictionary"#"hasAttribute"
-getAttribute = value Core#"private dictionary"#"hasAttribute"
+getAttribute = value Core#"private dictionary"#"getAttribute"
+ReverseDictionary = value Core#"private dictionary"#"ReverseDictionary"
 
 AbstractVariety = new Type of MutableHashTable
 AbstractVariety.synonym = "abstract variety"
@@ -48,7 +49,6 @@ intersectionRing AbstractVariety := X -> X.IntersectionRing
 
 FlagBundle = new Type of AbstractVariety
 FlagBundle.synonym = "abstract flag bundle"
-globalAssignment FlagBundle
 net FlagBundle := toString FlagBundle := X -> (
      if hasAttribute(X,ReverseDictionary) then toString getAttribute(X,ReverseDictionary)
      else "a flag bundle")

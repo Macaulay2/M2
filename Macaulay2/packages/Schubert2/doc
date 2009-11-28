@@ -513,18 +513,61 @@ Node
 Node
   Key
     adams
+  Headline
+    compute Adams operations
+Node
+  Key
     (adams,ZZ,AbstractSheaf)
-    (adams,ZZ,RingElement)
+  Usage
+    adams(i,F)
+    adams_i F
+  Inputs
+    i:
+    F:
+  Outputs
+    :
+     the effect of $i$-th Adams operation on $F$
   Description
-    Text
-      TO BE WRITTEN
-  
+    Example
+      X = abstractVariety(3, QQ[c,d,e,Degrees=>{1,2,3}])
+      F = abstractSheaf(X, ChernCharacter => 1 + c + d + e)
+      adams_3 F
+      ch oo
+Node
+  Key
+    (adams,ZZ,RingElement)
+  Usage
+    adams(i,f)
+    adams_i f
+  Inputs
+    i:
+    f:
+  Outputs
+    :
+     the Chern character of the effect of $i$-th Adams operation on the abstract sheaf whose Chern character is $f$
+  Description
+    Example
+      X = abstractVariety(3, QQ[c,d,e,Degrees=>{1,2,3}])
+      adams(3, 1 + c + d + e)
+-------  
 Node
   Key
     Base
+  Headline
+    get the base variety of a flag bundle
+  Usage
+    F.Base
+  Inputs
+    F:FlagBundle
+  Outputs
+    :AbstractVariety
+      the base variety of $F$
   Description
-    Text
-      TO BE WRITTEN
+    Example
+      X = projectiveSpace 4
+      X.Base
+      Y = projectiveSpace_3 X
+      Y.Base
 --------
 Node
   Key
