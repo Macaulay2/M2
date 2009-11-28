@@ -290,6 +290,7 @@ Node
 Node
   Key
     base
+    Bundle
     (base,Sequence)
     (base,Thing)
   Headline
@@ -572,37 +573,77 @@ Node
 Node
   Key
     BundleRanks
+  Headline
+    get the ranks of the tautological sheaves on a flag bundle
+  Usage
+    F.BundleRanks
+  Inputs
+    F:FlagBundle
+  Outputs
+    :List
+      the list of ranks of the tautological sheaves on $F$
   Description
-    Text
-      TO BE WRITTEN
+    Example
+      G = projectiveSpace 7
+      G.BundleRanks
+      X = flagBundle {1,2,3}
+      X.BundleRanks
 --------
 Node
   Key
     Bundles
+  Headline
+    get the tautological sheaves on a flag bundle
+  Usage
+    F.Bundles
+  Inputs
+    F:FlagBundle
+  Outputs
+    :Sequence
+      the list of the tautological sheaves on $F$
   Description
-    Text
-      TO BE WRITTEN
+    Example
+      G = projectiveSpace 7
+      G.Bundles
+      rank \ oo
+      X = flagBundle {1,2,3}
+      X.Bundles
+      rank \ oo
 --------
 Node
   Key
     VarietyDimension
+  Headline
+    get the dimension of a variety from its intersection ring
+  Usage
+    A.VarietyDimension
+  Inputs
+    A:Ring
+      the intersection ring of an abstract variety
   Description
-    Text
-      TO BE WRITTEN
---------
-Node
-  Key
-    Bundle
-  Description
-    Text
-      TO BE WRITTEN
+    Example
+      X = projectiveSpace 3
+      A =intersectionRing X
+      A.VarietyDimension
 --------
 Node
   Key
     TautologicalLineBundle
+  Headline
+    get the tautological line bundle of an abstract variety
+  Usage
+    X.TautologicalLineBundle
+  Inputs
+    X:AbstractVariety
+  Outputs
+    :AbstractSheaf
+     the tautological line bundle of $X$
   Description
-    Text
-      TO BE WRITTEN
+    Example
+      X = projectiveSpace 3
+      L = X.TautologicalLineBundle
+      rank L
+      chern L
 --------
 Node
   Key
