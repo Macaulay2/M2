@@ -473,11 +473,13 @@ Node
     Name => Thing
   Outputs
     :AbstractSheaf
-      the abstract sheaf over {\tt X} whose total Chern class is {\tt c}
+      the abstract sheaf over {\tt X} whose total Chern class is {\tt c} (or the value of
+      the ChernClass option) and whose rank is the value of the Rank option.  Alternatively,
+      it suffices to provide a value for just the ChernCharacter option.
   Description
     Example
-      X = base(3, Bundle => (A,3,a))
-      F = abstractSheaf(X, ChernCharacter => 3 + a_1)
+      X = abstractVariety(3, QQ[c])
+      F = abstractSheaf(X, ChernCharacter => 3 + c)
       ch F
       chern F
 --------
