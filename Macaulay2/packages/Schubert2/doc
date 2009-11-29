@@ -1391,20 +1391,20 @@ Node
    (symbol SPACE,AbstractSheaf,ZZ)
    (symbol SPACE,OO,RingElement)
   Headline
-   twist by a (tensor) power of the tautological line bundle
+   twist by a divisor class
   Usage
    F(n)
   Inputs
    F:
    n:
-    in (or promotable to) the intersection ring of the variety of $F$, homogeneous of degree 0 or 1
+    in (or promotable to) the intersection ring of the variety of $F$, homogeneous of degree 1 or 0
   Outputs
    :
     which depends on the degree of {\tt n}.
     In the case where {\tt n} has degree 0, the sheaf returned is the tensor product of {\tt F} with
     the {\tt n}-th (tensor) power of the tautological line bundle on the variety of {\tt F}.
     In the case where {\tt n} has degree 1, the sheaf returned is the tensor product of {\tt F} with
-    the abstract line bundle whose Chern class is {\tt 1+n}
+    the line bundle whose first Chern class is {\tt n}.
   Description
    Example
     X = projectiveSpace 4
@@ -1416,16 +1416,13 @@ Node
     chi oo
    Text
     The notation {\tt OO(n)} is an abbreviation for {\tt OO_X(n)}, where {\tt X} is the variety whose intersection
-    ring {\tt n} is in.
+    ring {\tt n} is in.  By default, the first Chern class of the tautological line bundle on a projective space
+    or projective bundle is called {\tt h}, so we may use {\tt OO(h)} as alternative notation for {\tt OO_Y(1)}:
    Example
     A = intersectionRing Y
-    h    
+    chern OO_Y(1)
     OO(h)
     chern oo
-    n * 1_A
-    OO(oo)
-    chern oo
-    chi ooo
   Caveat
    Beware the low parsing precedence of the adjacency operator @ TO symbol SPACE @.
 --------
@@ -1469,8 +1466,9 @@ Node
 --------
 Node
   Key
-    (symbol -,AbstractSheaf)
+   (symbol -,AbstractSheaf)
   Description
+  
     Text
       TO BE WRITTEN
 --------
