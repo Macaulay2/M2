@@ -1243,24 +1243,43 @@ Node
 --------
 Node
   Key
+   point
+  Headline
+   the default base variety of dimension 0
+  Usage
+   point
+  Outputs
+   :AbstractVariety
+    the default base variety of dimension 0, with intersection ring isomorphic to @ TO QQ @
+  Description
+   Example
     point
-  Description
-    Text
-      TO BE WRITTEN
+    dim point
+    intersectionRing point
+    X = PP^4
+    f = X.StructureMap
+    target f
 --------
 Node
   Key
-    (symbol *,AbstractSheaf,AbstractSheaf)
+   (symbol **,AbstractSheaf,AbstractSheaf)
+   (symbol *,AbstractSheaf,AbstractSheaf)
+  Headline
+   tensor product of two virtual sheaves
+  Usage
+   F**G
+   F*G
+  Inputs
+   F:
+   G:
+  Outputs
+   :
+    the (tensor) product of $F$ and $G$
   Description
-    Text
-      TO BE WRITTEN
---------
-Node
-  Key
-    (symbol **,AbstractSheaf,AbstractSheaf)
-  Description
-    Text
-      TO BE WRITTEN
+   Example
+    X = PP^1
+    OO_X(1) * OO_X(2)
+    chi oo
 --------
 Node
   Key
