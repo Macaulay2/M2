@@ -235,7 +235,8 @@ base Sequence := args -> (
      degs = toList deepSplice degs;
      A := QQ[vrs,Degrees => degs, DegreeRank => 1];
      X := abstractVariety(d,A);
-     X.TangentBundle = abstractSheaf(X,Rank => d);  -- trivial tangent bundle, for now, user can replace it
+     X.TangentBundle = abstractSheaf(X,Rank => d);          -- it's the base; user can replace it
+     X.TautologicalLineBundle = abstractSheaf(X,Rank => 1); -- it's the base; user can replace it
      integral intersectionRing X := identity;		    -- this will usually be wrong, but it's the "base"
      X#"bundles" = apply(bdls,(B,n,b) -> (
 	       globalReleaseFunction(B,value B);
@@ -285,13 +286,15 @@ AbstractSheaf ^ ZZ := AbstractSheaf => (E,n) -> new AbstractSheaf from {
 	  }
      }
 
-geometricSeries = (t,n,dim) -> (			    -- computes (1-t)^n assuming t^(dim+1) == 0
+geometricSeries = (t,n,dim) -> (			    -- computes (1+t)^n assuming t^(dim+1) == 0
      ti := 1;
      bin := 1;
-     1 + sum for i from 1 to dim list ( 
+     r := 1;
+     for i from 1 to dim do (
 	  bin = (1/i) * (n-(i-1)) * bin;
 	  ti = ti * t;
-	  bin * ti))
+	  r = r + bin * ti);
+     r)
 
 AbstractSheaf ^** ZZ := AbstractSheaf => (E,n) -> (
      if n < 0 then (
@@ -303,10 +306,7 @@ AbstractSheaf ^** ZZ := AbstractSheaf => (E,n) -> (
 
 AbstractSheaf ^** QQ := AbstractSheaf ^** RingElement := AbstractSheaf => (E,n) -> (
      if rank E != 1 then error "symbolic power works for invertible sheafs only";
-     t := 1 - ch E;
-     ti := 1;
-     bin := 1;
-     abstractSheaf(variety E, Rank => 1, ChernCharacter => geometricSeries(1 - ch E, n, dim variety E)))
+     abstractSheaf(variety E, Rank => 1, ChernCharacter => geometricSeries(ch E - 1, n, dim variety E)))
 
 rank AbstractSheaf := E -> E.rank
 variety AbstractSheaf := AbstractVariety => E -> E.AbstractVariety
@@ -500,9 +500,12 @@ coerce := (F,G) -> (
      X := variety F;
      Y := variety G;
      if X === Y then return (F,G);
-     if X.?StructureMap and target X.StructureMap === Y then return (F, X.StructureMap^* G);
-     if Y.?StructureMap and target Y.StructureMap === X then return (Y.StructureMap^* F, G);
-     error "expected abstract sheaves on compatible or equal varieties";
+     AX := intersectionRing X;
+     AY := intersectionRing Y;
+     z := try 0_AX + 0_AY else error "expected abstract sheaves on compatible or equal varieties";
+     if ring z === AX
+     then (F,abstractSheaf(X,z + ch G))
+     else (abstractSheaf(Y,z + ch F),G)
      )
 
 AbstractSheaf ++ ZZ := AbstractSheaf + ZZ := AbstractSheaf => (F,n) -> n ++ F
@@ -528,12 +531,12 @@ adams(ZZ,AbstractSheaf) := AbstractSheaf => (k,E) -> abstractSheaf nonnull (vari
 dual AbstractSheaf := AbstractSheaf => {} >> o -> E -> adams(-1,E)
 
 - AbstractSheaf := AbstractSheaf => E -> abstractSheaf(variety E, Rank => - rank E, ChernCharacter => - ch E)
-AbstractSheaf - AbstractSheaf := AbstractSheaf => (F,G) -> F + -G
+AbstractSheaf - AbstractSheaf := AbstractSheaf => ((F,G) -> F + -G) @@ coerce
 
 AbstractSheaf ** AbstractSheaf :=
 AbstractSheaf * AbstractSheaf := AbstractSheaf => ((F,G) -> abstractSheaf(variety F, Rank => rank F * rank G, ChernCharacter => ch F * ch G)) @@ coerce
 
-Hom(AbstractSheaf, AbstractSheaf) := AbstractSheaf => ((F,G) -> dual F ** G) @@ coerce
+Hom(AbstractSheaf, AbstractSheaf) := AbstractSheaf => (F,G) -> dual F ** G
 End AbstractSheaf := AbstractSheaf => (F) -> Hom(F,F)
 
 det AbstractSheaf := AbstractSheaf => opts -> (F) -> abstractSheaf(variety F, Rank => 1, ChernClass => 1 + part(1,ch F))
