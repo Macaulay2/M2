@@ -233,6 +233,7 @@ Node
 Node
   Key
     projectiveSpace
+    VariableName
     (projectiveSpace,ZZ,AbstractVariety)
     (projectiveSpace,ZZ)
     [projectiveSpace,VariableName]
@@ -767,6 +768,7 @@ Node
 Node
   Key
     flagBundle
+    VariableNames
     (flagBundle,List)
     (flagBundle,List,AbstractSheaf)
     (flagBundle,List,AbstractVariety)
@@ -1174,44 +1176,70 @@ Node
     (todd,AbstractVariety)
     (todd,AbstractVarietyMap)
     (todd,RingElement)
+  Headline
+   compute the Todd class of an abstract sheaf, variety, map, or Chern character
+  Usage
+   todd F
+   todd X
+   todd f
+   todd cc
+  Inputs
+   F:AbstractSheaf
+   X:AbstractVariety
+   f:AbstractVarietyMap
+   cc:RingElement
+  Outputs
+   :RingElement
+    the Todd class of $F$, of the (absolute) tangent bundle of $X$,
+    of the (relative) tangent bundle of $f$, or of the abstract sheaf
+    whose Chern character is $cc$
   Description
-    Text
-      TO BE WRITTEN
+   Example
+    todd PP^6
 --------
 Node
   Key
-    ToddClass
+   SubBundles
+  Headline
+   get the subbundles of the tautological filtration on a flag bundle
+  Usage
+   F.SubBundles
+  Inputs
+   F:FlagBundle
+  Outputs
+   :
+    @ ofClass List @ whose elements are the subbundles $0 = E_0 \subseteq{} E_1 \subseteq{} ... \subseteq{} E_n = f^* B$
+    in the tautological filtration of $f^* B$, where $F$ is a flag bundle parametrizing filtrations of an abstract sheaf
+    $B$ on a variety $X$, and $f : F \rightarrow X$ is the structure map of $F$    
   Description
-    Text
-      TO BE WRITTEN
+   Example
+    F = flagBundle {1,1,2}
+    F.SubBundles
+    rank \ oo
+    netList \\ chern \ ooo
 --------
 Node
   Key
-    VariableNames
+   QuotientBundles
+  Headline
+   get the quotient bundles of the tautological filtration on a flag bundle
+  Usage
+   F.QuotientBundles
+  Inputs
+   F:FlagBundle
+  Outputs
+   :
+    @ ofClass List @ $\{E_n/E_n, E_n/E_{n-1}, ..., E_n/E_1, E_n/E_0\}$
+    whose elements are the quotient bundles 
+    in the tautological filtration $0 = E_0 \subseteq{} E_1 \subseteq{} ... \subseteq{} E_n = f^* B$,
+    where $F$ is a flag bundle parametrizing filtrations of an abstract sheaf
+    $B$ on a variety $X$, and $f : F \rightarrow X$ is the structure map of $F$    
   Description
-    Text
-      TO BE WRITTEN
---------
-Node
-  Key
-    VariableName
-  Description
-    Text
-      TO BE WRITTEN
---------
-Node
-  Key
-    SubBundles
-  Description
-    Text
-      TO BE WRITTEN
---------
-Node
-  Key
-    QuotientBundles
-  Description
-    Text
-      TO BE WRITTEN
+   Example
+    F = flagBundle {1,1,2}
+    F.QuotientBundles
+    rank \ oo
+    netList \\ chern \ ooo
 --------
 Node
   Key
