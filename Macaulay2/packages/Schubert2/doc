@@ -1265,7 +1265,7 @@ Node
    (symbol **,AbstractSheaf,AbstractSheaf)
    (symbol *,AbstractSheaf,AbstractSheaf)
   Headline
-   tensor product of two virtual sheaves
+   (tensor) product of two abstract sheaves
   Usage
    F**G
    F*G
@@ -1283,40 +1283,67 @@ Node
 --------
 Node
   Key
-    (symbol +,AbstractSheaf,AbstractSheaf)
-  Description
-    Text
-      TO BE WRITTEN
---------
-Node
-  Key
-    (symbol +,AbstractSheaf,ZZ)
-  Description
-    Text
-      TO BE WRITTEN
---------
-Node
-  Key
     (symbol ++,AbstractSheaf,AbstractSheaf)
+    (symbol +,AbstractSheaf,ZZ)
+    (symbol +,AbstractSheaf,AbstractSheaf)
+    (symbol +,ZZ,AbstractSheaf)
     (symbol ++,AbstractSheaf,ZZ)
     (symbol ++,ZZ,AbstractSheaf)
+  Headline
+   (direct) sum of two abstract sheaves
+  Usage
+   F++G
+   F+G
+  Inputs
+   F:
+   G:
+  Outputs
+   :
+    the (direct) sum of $F$ and $G$
   Description
-    Text
-      TO BE WRITTEN
+   Example
+    X = PP^1
+    OO_X(1) + OO_X(2)
+    chi oo
 --------
 Node
   Key
-    (symbol -,AbstractSheaf,AbstractSheaf)
+   (symbol -,AbstractSheaf,AbstractSheaf)
+  Headline
+   difference of two abstract sheaves
+  Usage
+   F-G
+  Inputs
+   F:
+   G:
+  Outputs
+   :
+    the difference of $F$ and $G$
   Description
-    Text
-      TO BE WRITTEN
+   Example
+    X = PP^1
+    OO_X(1) - OO_X(2)
+    chi oo
 --------
 Node
   Key
-    (symbol ^,AbstractSheaf,ZZ)
+   (symbol ^,AbstractSheaf,ZZ)
+  Headline
+   power of an abstract sheaf
+  Usage
+   F^n
+  Inputs
+   F:
+   n:
+  Outputs
+   :
+    the $n$-th power of $F$
   Description
-    Text
-      TO BE WRITTEN
+   Example
+    X = PP^1
+    F = OO_X(1)
+    F^10
+    chi oo
 --------
 Node
   Key
@@ -1377,13 +1404,6 @@ Node
 Node
   Key
     (symbol SPACE,OO,RingElement)
-  Description
-    Text
-      TO BE WRITTEN
---------
-Node
-  Key
-    (symbol +,ZZ,AbstractSheaf)
   Description
     Text
       TO BE WRITTEN
