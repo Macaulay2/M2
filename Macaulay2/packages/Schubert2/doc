@@ -1280,6 +1280,8 @@ Node
     X = PP^1
     OO_X(1) * OO_X(2)
     chi oo
+   Text
+    The sheaves can be on different varieties if one of the varieties is over the other.
 --------
 Node
   Key
@@ -1305,6 +1307,15 @@ Node
     X = PP^1
     OO_X(1) + OO_X(2)
     chi oo
+   Text
+    The sheaves can be on different varieties if one of the varieties is over the other.
+   Example
+    ch OO_X(1)
+    Y = projectiveSpace(3,X,VariableName=>k)
+    ch OO_Y(2)
+    OO_Y(2) ++ OO_X(1)
+    ch oo
+    chi ooo
 --------
 Node
   Key
@@ -1324,6 +1335,8 @@ Node
     X = PP^1
     OO_X(1) - OO_X(2)
     chi oo
+   Text
+    The sheaves can be on different varieties if one of the varieties is over the other.
 --------
 Node
   Key
@@ -1347,66 +1360,112 @@ Node
 --------
 Node
   Key
-    (symbol ^**,AbstractSheaf,QQ)
+   (symbol ^**,AbstractSheaf,RingElement)
+   (symbol ^**,AbstractSheaf,QQ)
+   (symbol ^**,AbstractSheaf,ZZ)
+  Headline
+   tensor power of an abstract sheaf
+  Usage
+   F^**n
+  Inputs
+   F:
+    of rank 1 if {\tt n} is not an integer
+   n:
+    in (or promotable to) the intersection ring of the variety of $F$
+  Outputs
+   :
+    the $n$-th tensor power of $F$
   Description
-    Text
-      TO BE WRITTEN
+   Example
+    pt = base n
+    X = projectiveSpace(3,pt)
+    A = intersectionRing X
+    ch ((OO_X(1)) ^** 2)
+    ch ((OO_X(1)) ^** 3)
+    ch ((OO_X(1)) ^** n)
 --------
 Node
   Key
-    (symbol ^**,AbstractSheaf,RingElement)
+   (symbol SPACE,AbstractSheaf,RingElement)
+   (symbol SPACE,AbstractSheaf,QQ)
+   (symbol SPACE,AbstractSheaf,ZZ)
+   (symbol SPACE,OO,RingElement)
+  Headline
+   twist by a (tensor) power of the tautological line bundle
+  Usage
+   F(n)
+  Inputs
+   F:
+   n:
+    in (or promotable to) the intersection ring of the variety of $F$, homogeneous of degree 0 or 1
+  Outputs
+   :
+    which depends on the degree of {\tt n}.
+    In the case where {\tt n} has degree 0, the sheaf returned is the tensor product of {\tt F} with
+    the {\tt n}-th (tensor) power of the tautological line bundle on the variety of {\tt F}.
+    In the case where {\tt n} has degree 1, the sheaf returned is the tensor product of {\tt F} with
+    the abstract line bundle whose Chern class is {\tt 1+n}
   Description
-    Text
-      TO BE WRITTEN
+   Example
+    X = projectiveSpace 4
+    OO_X(3)
+    chi oo
+    pt = base n
+    Y = projectiveSpace(4,pt)
+    OO_Y(n)
+    chi oo
+   Text
+    The notation {\tt OO(n)} is an abbreviation for {\tt OO_X(n)}, where {\tt X} is the variety whose intersection
+    ring {\tt n} is in.
+   Example
+    A = intersectionRing Y
+    h    
+    OO(h)
+    chern oo
+    n * 1_A
+    OO(oo)
+    chern oo
+    chi ooo
+  Caveat
+   Beware the low parsing precedence of the adjacency operator @ TO symbol SPACE @.
 --------
 Node
   Key
-    (symbol ^**,AbstractSheaf,ZZ)
+   (Hom,AbstractSheaf,AbstractSheaf)
+  Headline
+   Hom between abstract sheaves
+  Usage
+   Hom(E,F)
+  Inputs
+   E:
+   F:
+  Outputs
+   :
+    the tensor product of $F$ with the dual of $E$
   Description
-    Text
-      TO BE WRITTEN
+   Example
+    X = PP^1
+    Hom(OO_X(3),OO_X)
+    chi oo
 --------
 Node
   Key
-    (symbol SPACE,AbstractSheaf,QQ)
+   (symbol _,OO,AbstractVariety)
+  Headline
+   the structure sheaf of an abstract variety
+  Usage
+   OO_X
+  Inputs
+   X:AbstractVariety
+  Outputs
+   :
+    the structure sheaf of {\tt X}
   Description
-    Text
-      TO BE WRITTEN
---------
-Node
-  Key
-    (symbol SPACE,AbstractSheaf,RingElement)
-  Description
-    Text
-      TO BE WRITTEN
---------
-Node
-  Key
-    (symbol SPACE,AbstractSheaf,ZZ)
-  Description
-    Text
-      TO BE WRITTEN
---------
-Node
-  Key
-    (Hom,AbstractSheaf,AbstractSheaf)
-  Description
-    Text
-      TO BE WRITTEN
---------
-Node
-  Key
-    (symbol _,OO,AbstractVariety)
-  Description
-    Text
-      TO BE WRITTEN
---------
-Node
-  Key
-    (symbol SPACE,OO,RingElement)
-  Description
-    Text
-      TO BE WRITTEN
+   Example
+    X = PP^4
+    OO_X
+    rank oo
+    chi ooo
 --------
 Node
   Key
