@@ -1,4 +1,12 @@
-AC_INIT(Macaulay 2, 1.3.1, Macaulay2@math.uiuc.edu, Macaulay2)
+dnl This is the only place where the Macaulay2 version number appears:
+
+    AC_INIT(Macaulay 2, 1.3.1.1, Macaulay2@math.uiuc.edu, Macaulay2)
+
+dnl The convention for version numbers of Macaulay2 is this:
+dnl   1.3 .   : a relatively major release, such as occurs every six months
+dnl   1.3.1   : a minor update, such as might occur a week after a major release
+dnl   1.3.1.1 : a development version, with no binary distributions
+
 AC_CONFIG_HEADERS(include/M2/config.h)
 AC_CONFIG_FILES(m4_include(config/files))
 AC_SUBST(CONFIGURED_FILES,"$ac_config_files")
