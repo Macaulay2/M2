@@ -19,10 +19,10 @@ export { "AbstractSheaf", "abstractSheaf", "AbstractVariety", "abstractVariety",
      "TautologicalLineBundle", "ch", "chern", "ChernCharacter", "ChernClass", "ChernClassVariable", "chi", "ctop", "FlagBundle",
      "flagBundle", "projectiveBundle", "projectiveSpace", "PP", "FlagBundleStructureMap", "integral", "IntersectionRing",
      "intersectionRing", "PullBack", "PushForward", "Rank",
-     "schur", "SectionClass", "sectionClass", "segre", "StructureMap", "TangentBundle", "tangentBundle", "todd", "ToddClass",
+     "schur", "SectionClass", "sectionClass", "segre", "StructureMap", "TangentBundle", "tangentBundle", "todd",
      "VariableNames", "VariableName", "SubBundles", "QuotientBundles", "point", "base"}
 
--- not exported, for now: "logg", "expp", "reciprocal"
+-- not exported, for now: "logg", "expp", "reciprocal", "ToddClass"
 
 protect ChernCharacter
 protect ChernClass
@@ -371,8 +371,8 @@ flagBundle(List,AbstractSheaf) := opts -> (bundleRanks,E) -> (
      bundles := FV.Bundles = apply(0 .. n-1, i -> (
 	       bdl := abstractSheaf(FV, Rank => bundleRanks#i, ChernClass => H promote(chclasses#i,B));
 	       bdl));
-     FV.SubBundles = (() -> ( t := 0; for i from 0 to n-2 list t = t + bundles#i ))();
-     FV.QuotientBundles = (() -> ( t := 0; for i from 0 to n-2 list t = t + bundles#(n-1-i) ))();
+     FV.SubBundles = (() -> ( t := OO_FV^0; for i from 0 to n list if i == 0 then t else t = t + bundles#(i-1)))();
+     FV.QuotientBundles = (() -> ( t := OO_FV^0; for i from 0 to n list if i == 0 then t else t = t + bundles#(n-i)))();
      FV.TautologicalLineBundle = OO_FV(sum(1 .. #bundles - 1, i -> i * chern(1,bundles#i)));
      pullback := method();
      pushforward := method();
