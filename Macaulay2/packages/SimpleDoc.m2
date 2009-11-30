@@ -128,6 +128,10 @@ applySplit = (fcns, textlines) ->
 description = (textlines, keylinenum) -> toSequence applySplit(DescriptionFunctions, textlines)
 nonnull = x -> select(x, i -> i =!= null)
 
+ConsequencesFuntions = new HashTable from {
+     "Item" => (textlines, keylinenum) -> markup(textlines, keylinenum)
+     }
+
 KeyFunctions = new HashTable from {
      "Key" => (textlines, keylinenum) -> Key => (
 	  r := nonnull apply(getText \ textlines,value);
@@ -139,7 +143,7 @@ KeyFunctions = new HashTable from {
      "Headline" => (textlines, keylinenum) -> singleString(Headline, textlines, keylinenum),
      "Description" => (textlines, keylinenum) -> description(textlines, keylinenum),
      "Caveat" => (textlines, keylinenum) -> Caveat => {markup(textlines, keylinenum)},
-     "Consequences" => (textlines, keylinenum) -> Consequences => {markup(textlines, keylinenum)},
+     "Consequences" => (textlines, keylinenum) -> Consequences => applySplit(ConsequencesFuntions, textlines),
      "Inputs" => (textlines, keylinenum) -> Inputs => items(textlines, keylinenum),
      "Outputs" => (textlines, keylinenum) -> Outputs => items(textlines, keylinenum)
      }

@@ -1132,8 +1132,10 @@ doc ///
     R':Ring
       the integral closure of {\tt R}
   Consequences
+   Item
     The inclusion map $R \rightarrow R'$
       can be obtained with @TO icMap@.  
+   Item
     The fractions corresponding to the variables
       of the ring {\tt R'} can be found with @TO icFractions@
   Description
