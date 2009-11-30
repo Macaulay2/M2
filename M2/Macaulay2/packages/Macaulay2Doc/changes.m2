@@ -6,6 +6,7 @@ document {
 	  TO "changes, 1.2",
 	  TO "changes, 1.3",
 	  TO "changes, 1.3.1",
+	  TO "changes, 1.4",
 	  TO "list of obsolete functions"
 	  }
      }
@@ -47,6 +48,34 @@ document {
 		    LI "'map(Module,Module)' has been removed: use 'inducedMap' instead",
 		    LI "'monomialIdeal(R)' has been removed: use 'monomialIdeal(0_R)' instead"
 		    }
+	       }
+	  }
+     }
+
+document {
+     Key => "changes, 1.4",
+     UL {
+	  LI { "major improvements and additions:",
+	       UL {
+		    LI { TO "Schubert2::Schubert2", " has been well documented and slightly improved." }
+		    }
+	       },
+	  LI { "functionality added or improved:",
+	       UL {
+		    LI {
+			 TO "SimpleDoc::SimpleDoc"
+			 -- multidoc
+			 -- Consequences Item
+			 }
+		    }
+	       },
+	  LI { "functionality changed:",
+	       -- UL {
+	       -- 	    }
+	       },
+	  LI { "new constants and operators:",
+	       -- UL {
+	       -- 	    }
 	       }
 	  }
      }

@@ -489,7 +489,7 @@ Node
     [abstractVariety,ReturnType]
     ReturnType
   Headline
-    make an abstrace variety
+    make an abstract variety
   Usage
     abstractVariety(d,A)
   Inputs
@@ -1000,6 +1000,7 @@ Node
   SeeAlso
    (symmetricPower,RingElement,AbstractSheaf)
    (schur,List,AbstractSheaf)
+   (determinant,AbstractSheaf)
 --------
 Node
   Key
@@ -1301,11 +1302,13 @@ Node
    G:
   Outputs
    :
-    the (direct) sum of $F$ and $G$
+    the (direct) sum of $F$ and $G$.  If one of the arguments is an integer, it represents the trivial sheaf of that rank.
   Description
    Example
     X = PP^1
     OO_X(1) + OO_X(2)
+    chi oo
+    1 + OO_X(1)
     chi oo
    Text
     The sheaves can be on different varieties if one of the varieties is over the other.
@@ -1431,6 +1434,8 @@ Node
    (Hom,AbstractSheaf,AbstractSheaf)
   Headline
    Hom between abstract sheaves
+  SeeAlso
+   dual
   Usage
    Hom(E,F)
   Inputs
@@ -1467,80 +1472,208 @@ Node
 Node
   Key
    (symbol -,AbstractSheaf)
+  Headline
+   negation of an abstract sheaf
+  Usage
+   -F
+  Inputs
+   F:
+  Outputs
+   :
+    the negation of {\tt F}, as a virtual sheaf.
   Description
-  
-    Text
-      TO BE WRITTEN
+   Example
+    X = PP^2
+    - OO_X(1)
+    chern oo
 --------
 Node
   Key
-    (determinant,AbstractSheaf)
+   (determinant,AbstractSheaf)
+  SeeAlso
+   (exteriorPower,ZZ,AbstractSheaf)
+  Headline
+   determinant of an abstract sheaf
+  Usage
+   det F
+  Inputs
+   F:
+  Outputs
+   :
+    the determinant of {\tt F}
   Description
-    Text
-      TO BE WRITTEN
+   Text
+    The determinant of {\tt F} is the $n$-th exterior power of {\tt F}, where $n$ is the rank of {\tt F}.
+   Example
+    X = PP^1
+    F = OO_X(1) ++ OO_X(1) ++ OO_X(3)
+    det F
+    chern oo
+    rank ooo
 --------
 Node
   Key
-    (dual,AbstractSheaf)
+   (dual,AbstractSheaf)
+  SeeAlso
+   (Hom,AbstractSheaf,AbstractSheaf)
+  Headline
+   the dual of an abstract sheaf
+  Usage
+   dual F
+  Inputs
+   F:
+  Outputs
+   :
+    the dual of {\tt F}
   Description
-    Text
-      TO BE WRITTEN
+   Example
+    X = PP^1
+    dual OO_X(-1)
+    chi oo
 --------
 Node
   Key
-    (End,AbstractSheaf)
+   (rank,AbstractSheaf)
+  Usage
+   rank F
+  Inputs
+   F:
+  Outputs
+   :
+    the rank of {\tt F}
   Description
-    Text
-      TO BE WRITTEN
+   Example
+    rank tangentBundle PP^4
 --------
 Node
   Key
-    (rank,AbstractSheaf)
+   (variety,AbstractSheaf)
+  Headline
+   the variety of an abstract sheaf
+  Usage
+   variety F
+  Inputs
+   F:
+  Outputs
+   :
+    the variety of {\tt F}
   Description
-    Text
-      TO BE WRITTEN
+   Example
+    X = PP^4
+    tangentBundle X
+    variety oo
 --------
 Node
   Key
-    (variety,AbstractSheaf)
+   (variety,Ring)
+  Headline
+   the variety of an intersection ring
+  Usage
+   variety A
+  Inputs
+   A:
+    the intersection ring of a variety $X$, say
+  Outputs
+   :
+    $X$, the variety of {\tt A}
   Description
-    Text
-      TO BE WRITTEN
+   Example
+    X = PP^1
+    intersectionRing X
+    variety oo
 --------
 Node
   Key
-    (variety,Ring)
+   (dim,AbstractVariety)
+  Headline
+   the dimension of an abstract variety
+  Usage
+   dim X
+  Inputs
+   X:
+  Outputs
+   :
+    the dimension of {\tt X}
   Description
-    Text
-      TO BE WRITTEN
+   Example
+    dim PP^4
 --------
 Node
   Key
-    (dim,AbstractVariety)
+   (use,AbstractVariety)
+  Headline
+   assign values to variables associated with a variety
+  Usage
+   use X
+  Inputs
+   X:
+  Outputs
+   :AbstractVariety
+    {\tt X}
+  Consequences
+   Item
+    The generators of the intersection ring of {\tt X} are assigned to their variables.  See @ TO (use,Ring) @.
+   Item
+    The named bundles on {\tt X} are assigned to their variables.
   Description
-    Text
-      TO BE WRITTEN
+   Example
+    S = base(n, Bundle => (E,3,c))
+    E
+    n
+    n = E = 4;
+    E
+    n
+    use S
+    E
+    n
 --------
 Node
   Key
-    (use,AbstractVariety)
+   (symbol ^*,AbstractVarietyMap)
+  Headline
+   pull back operator associated to a map of varieties
+  SeeAlso
+   (symbol _*,AbstractVarietyMap)
+  Usage
+   f^*
+  Inputs
+   f:
+  Outputs
+   :
+    the pull back operator associated to {\tt f}, a function that can be applied to an abstract sheaf or a cycle class
   Description
-    Text
-      TO BE WRITTEN
+   Example
+    S = base(4, Bundle => (E,4,c) )
+    X = flagBundle( {2,2}, E )
+    f = X.StructureMap
+    chern E
+    f^* oo
+    f^* E
+    chern oo
 --------
 Node
   Key
-    (symbol ^*,AbstractVarietyMap)
+   (symbol _*,AbstractVarietyMap)
+  Headline
+   push forward operator associated to a map of varieties
+  Usage
+   f_*
+  Inputs
+   f:
+  Outputs
+   :
+    the push forward operator associated to {\tt f}, a function that can be applied to an abstract sheaf or a cycle class
+  SeeAlso
+   integral
+   (symbol ^*,AbstractVarietyMap)
   Description
-    Text
-      TO BE WRITTEN
---------
-Node
-  Key
-    (symbol _*,AbstractVarietyMap)
-  Description
-    Text
-      TO BE WRITTEN
+   Example
+    X = PP^4
+    f = X.StructureMap
+    OO_X(1)
+    f_* oo
+    ch OO_X(1)
+    f_* oo
 --------
 Node
   Key
