@@ -868,7 +868,8 @@ types Sequence := x -> (
      else (
 	  x' := select(drop(toList x,1), T -> not ancestor(Nothing,T)); -- putting something like OO in the key indicates a fake dispatch
 	  if instance(x#0,Sequence) and #x#0 === 2 and x#0#1 === symbol =
-          then ( x' | { Thing }, { typicalValue x } ) -- it's an assignment method
+	  or #x == 2 and x#0 === symbol <-
+          then ( x' | { Thing }, { Thing } )	   -- it's an assignment method
 	  else ( x'            , { typicalValue x } )
 	  ))
 
