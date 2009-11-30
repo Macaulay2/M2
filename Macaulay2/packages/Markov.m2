@@ -625,6 +625,7 @@ doc ///
       A polynomial ring with d1*d2*...*dr variables $p_{(i1,...,ir)}$,
       with each i_j satisfying 1 <= i_j <= d_j.
   Consequences
+   Item
     Information about this sequence of integers is placed into the ring, and is used 
     by other functions in this package.  Also, at most one ring for each such sequence
     is created: the results are cached.
