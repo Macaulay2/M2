@@ -1677,52 +1677,135 @@ Node
 --------
 Node
   Key
-    (dim,AbstractVarietyMap)
+   (dim,AbstractVarietyMap)
+  Headline
+   the dimenstion of an abstract variety
+  Usage
+   dim X
+  Inputs
+   X:
+  Outputs
+   :
+    the dimenstion {\tt X}
   Description
-    Text
-      TO BE WRITTEN
+   Example
+    dim PP^4
 --------
 Node
   Key
-    (source,AbstractVarietyMap)
+   (source,AbstractVarietyMap)
+  Headline
+   the source of a map of abstract varieties
+  Usage
+   source f
+  Inputs
+   f:
+  Outputs
+   :
+    the source of {\tt f}
   Description
-    Text
-      TO BE WRITTEN
+   Example
+    X = PP^4
+    f = X.StructureMap
+    source f
 --------
 Node
   Key
-    (target,AbstractVarietyMap)
+   (target,AbstractVarietyMap)
+  Headline
+   the target of a map of abstract varieties
+  Usage
+   target f
+  Inputs
+   f:
+  Outputs
+   :
+    the target of {\tt f}
   Description
-    Text
-      TO BE WRITTEN
+   Example
+    X = PP^4
+    f = X.StructureMap
+    target f
 --------
 Node
   Key
-    (symbol <-,ChernClassVariable)
+   (symbol <-,ChernClassVariable)
+  Headline
+   assignment to a Chern class variable
+  Usage
+   v <- x
+  Inputs
+   v:
+   x:
+  Outputs
+   :
+    {\tt x}
+  Consequences
+   Item
+    {\tt x} is assigned to the variable {\tt v}
   Description
-    Text
-      TO BE WRITTEN
+   Text
+    This intended for internal use by {\em Schubert2}.
+   Example
+    chern_3 E
+    chern_3 E <- 444
+    chern_3 E
 --------
 Node
   Key
-    (value,ChernClassVariable)
+   (value,ChernClassVariable)
+  Headline
+   the value of a Chern class symbol
+  Usage
+   value v
+  Inputs
+   v:
+  Outputs
+   :
+    The value of {\tt v}.
   Description
-    Text
-      TO BE WRITTEN
+   Example
+    x = chern_3 E
+    chern_3 E <- 444
+    x
+    value x
 --------
 Node
   Key
-    (chern,ZZ,Symbol)
+   (chern,ZZ,Symbol)
+  Headline
+   make a Chern class symbol
+  Usage
+   chern(i,E)
+   chern_i E
+  Inputs
+   i:
+   E:
+  Outputs
+   :
+    based on {\tt i} and on {\tt E}
   Description
-    Text
-      TO BE WRITTEN
+   Example
+    chern_3 E
 -------
 Node
   Key
-    (symbol _,Ring,ChernClassVariable)
+   (symbol _,Ring,ChernClassVariable)
+  Headline
+   get a ring generator corresponding to a Chern class variable
+  Usage
+   R_v
+  Inputs
+   R:
+   v:
+  Outputs
+   :
+    the generator of {\tt R} corresponding to {\tt v}
   Description
-    Text
-      TO BE WRITTEN
+   Example
+    x = chern_3 E
+    R = QQ[chern_1 E,chern_2 E,chern_3 E]
+    R_x
 -- Local Variables:
 -- mode: M2
 -- coding: utf-8

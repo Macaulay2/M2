@@ -264,7 +264,7 @@ ch(ZZ,AbstractSheaf) := (n,F) -> part_n ch F
 chernClassValues = new MutableHashTable
 ChernClassVariable = new Type of BasicList
 ChernClassVariable.synonym = "Chern class variable"
-chern(ZZ,Symbol) := (n,E) -> value new ChernClassVariable from {n,E}
+chern(ZZ,Symbol) := ChernClassVariable => (n,E) -> value new ChernClassVariable from {n,E}
 Ring _ ChernClassVariable := (R,s) -> R#indexSymbols#s
 baseName ChernClassVariable := identity
 installMethod(symbol <-, ChernClassVariable, (c,x) -> chernClassValues#c = x)
