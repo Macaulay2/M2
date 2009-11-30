@@ -11,6 +11,7 @@
     s:String
       See the example below for the format of {\tt s}
   Consequences
+   Item
     Documentation is created and stored so that after 
     @TO installPackage@ or @TO getPackage@ is used, 
     the corresponding documentation is
@@ -62,8 +63,9 @@
     be executed, yielding appropriate hypertext.  For example, {\tt \@TO Key\@}
     will insert a link to another node of the documentation.
 
-    The text in the @TO Consequences@ section can be marked up as described
-    above.
+    Each subsection of the @TO Consequences@ section should start with the
+    keyword {\bf Item}; the text in each subsection can be marked up as
+    described above.
 
     The text in the @TO Description@ section occurs in subsections labeled with
     the keywords {\bf Text}, {\bf Example}, and {\bf Code}.  The text in a @TO
