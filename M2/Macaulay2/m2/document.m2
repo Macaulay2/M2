@@ -936,7 +936,7 @@ document List := opts -> args -> (
      scan(args, arg -> if class arg === Option then (
 	       key := arg#0;
 	       if not documentOptions#?key then error("unknown documentation option '", key, "'") ;
-	       if o#?key then error("option ",key," encountered twice");
+	       if o#?key then error("option ",toString key," encountered twice");
 	       o#key = arg#1));
      args = select(args, arg -> class arg =!= Option);
      if not o.?Key then error "missing Key";
@@ -1183,9 +1183,19 @@ documentationValue(Symbol,Package) := (s,pkg) -> if pkg =!= Core then (
      e := toSequence pkg#"exported symbols";
      a := select(e,x -> instance(value x,Function));	    -- functions
      b := select(e,x -> instance(value x,Type));	    -- types
-     -- this doesn't get the methods of the form f T := ... :
-     m := unique flatten apply(b, T -> select(keys value T, 
-	       i -> class i === Sequence and #i > 1 and ( instance(i#0, Symbol) and i#1 =!= symbol = or instance(i#0, Function) ) and isDocumentableMethod i)); -- methods
+     m := unique flatten for T in b list for i in keys value T list (-- methods
+	  if (
+	       class i === Sequence and #i > 1
+	       and ( 
+		    instance(i#0, Symbol) and i#1 =!= symbol =
+		    or
+		    instance(i#0, Function)
+		    ) 
+	       and isDocumentableMethod i)
+	  then i
+	  else if (instance(i,Keyword) or instance(i,Function)) and isDocumentableMethod (i,value T)
+	  then (i,value T)
+	  else continue);
      c := select(e,x -> instance(value x,Symbol));	    -- symbols
      d := toList(set e - set a - set b - set c); -- other things
      fn := pkg#"title" | ".m2";
