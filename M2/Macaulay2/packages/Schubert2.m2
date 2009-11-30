@@ -65,11 +65,11 @@ AbstractVarietyMap = new Type of MutableHashTable
 AbstractVarietyMap.synonym = "abstract variety map"
 FlagBundleStructureMap = new Type of AbstractVarietyMap
 FlagBundleStructureMap.synonym = "abstract flag bundle structure map"
-AbstractVarietyMap ^* := f -> f.PullBack
-AbstractVarietyMap _* := f -> f.PushForward
+AbstractVarietyMap ^* := Function => f -> f.PullBack
+AbstractVarietyMap _* := Function => f -> f.PushForward
 globalAssignment AbstractVarietyMap
-source AbstractVarietyMap := f -> f.source
-target AbstractVarietyMap := f -> f.target
+source AbstractVarietyMap := AbstractVariety => f -> f.source
+target AbstractVarietyMap := AbstractVariety => f -> f.target
 dim AbstractVarietyMap := f -> dim source f - dim target f
 toString AbstractVarietyMap := net AbstractVarietyMap := X -> (
      if hasAttribute(X,ReverseDictionary) then toString getAttribute(X,ReverseDictionary)
@@ -382,7 +382,7 @@ flagBundle(List,AbstractSheaf) := opts -> (bundleRanks,E) -> (
      pushforward C := r -> coefficient(sec,r);
      pullback AbstractSheaf := E -> (
 	  if variety E =!= X then "pullback: variety mismatch";
-	  abstractSheaf(FV,ChernCharacter => pullback ch E));
+	  abstractSheaf(FV,Rank => rank E, ChernClass => pullback chern E));
      p := new FlagBundleStructureMap from {
 	  global target => X,
 	  global source => FV,
@@ -537,7 +537,6 @@ AbstractSheaf ** AbstractSheaf :=
 AbstractSheaf * AbstractSheaf := AbstractSheaf => ((F,G) -> abstractSheaf(variety F, Rank => rank F * rank G, ChernCharacter => ch F * ch G)) @@ coerce
 
 Hom(AbstractSheaf, AbstractSheaf) := AbstractSheaf => (F,G) -> dual F ** G
-End AbstractSheaf := AbstractSheaf => (F) -> Hom(F,F)
 
 det AbstractSheaf := AbstractSheaf => opts -> (F) -> abstractSheaf(variety F, Rank => 1, ChernClass => 1 + part(1,ch F))
 
