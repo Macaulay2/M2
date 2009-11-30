@@ -180,7 +180,7 @@ doc ///
   Key
     (simpleDocFrob,ZZ,Matrix)
   Headline
-    A sample documentation node
+    a sample documentation node
   Usage
     x = simpleDocFrob(n,M)
   Inputs
@@ -193,7 +193,10 @@ doc ///
       A block diagonal matrix with {\\tt n} 
       copies of {\\tt M} along the diagonal
   Consequences
-    This section is used if the function causes side effects.
+   Item
+    The first side effect of the function, if any, is described here.
+   Item
+    The second side effect of the function is described here, and so on.
   Description
    Text
      Each paragraph of text begins with \"Text\".  The following 
@@ -203,7 +206,7 @@ doc ///
      M = matrix\"1,2;3,4\";
      simpleDocFrob(3,M)
   Caveat
-    This is not a particularly useful function
+    This is not a particularly useful function.
   SeeAlso
     matrix
     (directSum,List)
@@ -218,6 +221,8 @@ doc ///
    Inputs
    Outputs
    Consequences
+    Item
+    Item
    Description
       Text
       Code
@@ -362,64 +367,6 @@ doc ///
   SeeAlso
     "docExample"
 ///
-
-end
-restart
-loadPackage "SimpleDoc"
-installPackage SimpleDoc
-viewHelp doc
-debug SimpleDoc
-flup = method()
-flup ZZ := (n) -> -n
-D = toDoc get "doc.eg"
-document D
-help flup
-
-print docTemplate
-print docExample
-simpleDocFrob = method()
-simpleDocFrob(ZZ,Matrix) := (n,M) -> M
-value docExample
-
-toDoc ///
-  Key
-    (simpleDocFrob,ZZ,Matrix)
-    simpleDocFrob
-  Headline
-    A sample documentation node
-  Usage
-    x = from(n,M)
-  Inputs
-    n:ZZ
-      positive
-    M:Matrix
-      which is square
-  Outputs
-    x:Matrix
-      A block diagonal matrix with {\tt n}
-      copies of {\tt M} along the diagonal
-  Consequences
-    This section is used if there are side effects
-    that this function performs
-  Description
-   Text
-     Each paragraph of text begins with the word Text.  The following 
-     line starts a sequence of Macaulay2 example input lines.
-     However, see @TO (matrix,List)@.
-   Example
-     M = matrix{{1,2},{3,4}}
-     simpleDocFrob(3,M)
-  Caveat
-    This is not a particularly useful function
-  SeeAlso
-    "Introduction"
-    matrix
-    (directSum,List)
-///
-
-endPackage "SimpleDoc"
--- this needs to go at the end:
-needsPackage "Text"
 -- Local Variables:
 -- compile-command: "make -C $M2BUILDDIR/Macaulay2/packages PACKAGES=SimpleDoc RemakePackages=true RemakeAllDocumentation=true IgnoreExampleErrors=false RerunExamples=true"
 -- End:

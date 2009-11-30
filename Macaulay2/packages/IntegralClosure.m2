@@ -1197,6 +1197,7 @@ doc ///
     L:List
       a list of variables in the ring R, or {\tt null} (the default).
   Consequences
+   Item
     The given list of variables (or all of the outer generators, if L is null)
     will be generators of the integral closure
   Description
@@ -1225,6 +1226,7 @@ doc ///
   Inputs
     x:Symbol
   Consequences
+   Item
     The new variables will be subscripted using {\tt x}.
   Description
    Example
