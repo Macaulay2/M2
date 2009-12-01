@@ -13,8 +13,8 @@ Node
       known).  The intersection ring is represented as a {\em Macaulay2} @ TO2{Ring,"ring"} @, and its elements are {\em
       Macaulay2} @ TO2{RingElement,"ring elements"} @.
       
-      An @TO2{AbstractSheaf,"abstract sheaf"}@ on an abstract variety is represented by an object of class @ TO
-      AbstractSheaf @ that contains the total Chern character of the sheaf.  It should be thought of as an element of
+      An @TO2{AbstractSheaf,"abstract sheaf"}@ on an abstract variety is represented by an object of class 
+      @ TO AbstractSheaf @ that contains the total Chern character of the sheaf.  It should be thought of as an element of
       the Grothendieck ring of the variety tensored with the degree zero part of the intersection ring.  By the
       Grothendieck-Riemann-Roch theorem, since we are working over the rational numbers, the Chern character provides a
       ring isomorphism from Grothendieck ring (tensored as before) to the intersection ring.
@@ -29,6 +29,7 @@ Node
     "Lines on hypersurfaces"
     "Conics on a quintic threefold"
     "The Horrocks-Mumford bundle"
+    "Examples from Schubert, translated"
     "Ideas for future development"
 --------
 Node
@@ -520,7 +521,9 @@ Node
     :AbstractSheaf
       the abstract sheaf over {\tt X} with total Chern class {\tt c},
       rank {\tt n}, and total Chern character {\tt cc}.  When just the
-      rank is specified, the Chern class is taken to be 1.
+      rank is specified, the Chern class is taken to be 1.  If the Rank and ChernCharacter options are both given,
+      the value of the Rank option is ignored.  If
+      the ChernClass and ChernCharacter options are both given, the values are used without checking for compatibility.
   Description
     Example
       X = abstractVariety(3, QQ[c])
@@ -1931,6 +1934,27 @@ Node
     x = chern_3 E
     R = QQ[chern_1 E,chern_2 E,chern_3 E]
     R_x
+-------
+Node
+ Key
+  "Examples from Schubert, translated"
+ Subnodes
+  "Hilbert polynomial and Todd class of projective 3-space"
+Node
+ Key
+  "Hilbert polynomial and Todd class of projective 3-space"
+ Description
+  Pre
+   > proj(3,h,all): factor(chi(o(n*h)));
+			     1/6 (n + 3) (n + 2) (n + 1)
+  Example
+   Ph = projectiveSpace_3 base n; factor chi OO(n*h)
+  Pre
+   > Ph[toddclass_];
+					      2  2    3  3
+			    1 + 2 h t + 11/6 h  t  + h  t
+  Example
+   todd Ph
 -- Local Variables:
 -- mode: M2
 -- coding: utf-8

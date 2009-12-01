@@ -114,8 +114,6 @@ abstractSheaf AbstractVariety := opts -> X -> (
 	  ch = opts.ChernCharacter;
 	  ch = promote(ch,A);
 	  rk = part(0,opts.ChernCharacter);
-     	  if opts.Rank =!= null then error "expected Rank and ChernCharacter options both given";
-     	  if opts.ChernClass =!= null then error "expected ChernClass and ChernCharacter options both given";
 	  )
      else if opts.Rank =!= null then (
 	  ch = rk = promote(opts.Rank,A);
@@ -282,7 +280,9 @@ net ChernClassVariable := net @@ expression
 toString ChernClassVariable := toString @@ expression
 
 installMethod(symbol _, OO, AbstractVariety, AbstractSheaf => 
-     (OO,X) -> abstractSheaf(X, Rank => 1, ChernCharacter => 1_(intersectionRing X))
+     (OO,X) -> (
+	  A := intersectionRing X;
+	  abstractSheaf(X, Rank => 1, ChernCharacter => 1_A, ChernClass => 1_A))
      )
 
 AbstractSheaf * RingElement := 
@@ -297,8 +297,8 @@ AbstractSheaf * ZZ :=
 AbstractSheaf ^ ZZ := AbstractSheaf => (E,n) -> new AbstractSheaf from {
      global AbstractVariety => E.AbstractVariety,
      ChernCharacter => n * E.ChernCharacter,
-     symbol rank => E.rank * n,
      symbol cache => new CacheTable from {
+     	  global rank => E.cache.rank * n,
 	  if E.cache.?ChernClass then ChernClass => E.cache.ChernClass ^ n
 	  }
      }
@@ -325,7 +325,7 @@ AbstractSheaf ^** QQ := AbstractSheaf ^** RingElement := AbstractSheaf => (E,n) 
      if rank E != 1 then error "non-integer tensor power of sheaf of rank not equal to 1 requested";
      abstractSheaf(variety E, Rank => 1, ChernCharacter => geometricSeries(ch E - 1, n, dim variety E)))
 
-rank AbstractSheaf := RingElement => E -> E.rank
+rank AbstractSheaf := RingElement => E -> E.cache.rank
 variety AbstractSheaf := AbstractVariety => E -> E.AbstractVariety
 variety Ring := AbstractVariety => R -> R.Variety
 

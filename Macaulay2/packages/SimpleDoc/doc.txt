@@ -1,8 +1,93 @@
 -- -*- mode: M2; coding: utf-8 -*-
-
+Node
+ Key
+  multidoc
+  (multidoc,String)
+ Headline
+  a simple documentation function, allowing multiple documentation nodes
+ Usage
+  multidoc s
+ Inputs
+  s:String
+ Consequences
+  Item
+   The string {\tt s} is handled by parsing it the same way @ TO doc @ does, but
+   expecting the least indented keyword to be {\bf Node}, which can occur
+   multiple times.  The text following each such keyword is handled just as by @
+   TO doc @, resulting in a documentation node.
+Node
   Key
-    (doc,String)
+    packageTemplate
+    (packageTemplate,String)
+  Headline
+    a template for a package
+  Usage
+    packageTemplate s
+  Inputs
+    s:String
+      the name of the package
+  Description
+   Text
+     This routine returns a barebones package template
+     that you can use to start writing a package.
+   Example
+     print packageTemplate "WonderfulModules"
+  SeeAlso
+    "docExample"
+Node
+  Key
+    "docTemplate"
+  Headline
+    a template for a documentation node
+  Usage
+    docTemplate
+  Description
+   Text
+     docTemplate is a @TO String@, which can
+     be cut and paste into a text file,
+     to be used as a template for writing
+     documentation for functions and other objects
+     in a package.
+   Example
+     print docTemplate
+  SeeAlso
+    "docExample"
+Node
+  Key
+    simpleDocFrob
+  Headline
+    an example of a function to document
+Node
+  Key
+    "docExample"
+  Headline
+    an example documentation node
+  Usage
+    docExample
+  Description
+   Text
+     The variable docExample is a @TO String@ containing an example of
+     the use of @TO (doc,String)@ to write a documentation page, visible
+     @TO2 {(simpleDocFrob,ZZ,Matrix), "here"}@.
+   Example
+     docExample
+  SeeAlso
+    "docTemplate"
+Node
+  Key
+    SimpleDoc
+  Headline
+    simpler documentation for functions and methods
+  Subnodes
     doc
+    "docExample"
+    multidoc
+    packageTemplate
+    "docTemplate"
+Node
+  Key
+    doc
+    (doc,String)
   Headline
     a simple documentation function
   Usage
@@ -51,9 +136,10 @@
     first line of each subsection contains the name of the variable
     corresponding to it, as referred to in the usage line, a colon, and the
     type of the variable.  For example, the first line might be {\tt s:String}.
-    The variable name and type are both optional.  Subsequent lines of the
-    subsection, indented further, describe the variable.  These lines may
-    include markup.
+    The variable name and type are both optional.  (For optional inputs, one
+    puts the name of the option, a double arrow, and the expected type of value;
+    for example, the first line might be {\tt Precision => ZZ}.)  Subsequent lines of the
+    subsection, indented further, describe the variable and may include markup.
 
     Markup allowed includes many TeX commands, as allowed in @TO TEX@; for
     details and examples see @TO (html,TEX)@, allowing various mathematical
@@ -68,15 +154,17 @@
     described above.
 
     The text in the @TO Description@ section occurs in subsections labeled with
-    the keywords {\bf Text}, {\bf Example}, and {\bf Code}.  The text in a @TO
-    Text@ subsection can be separated into paragraphs with blank lines.  Each
-    paragraph can contain markup as described above.  The text in an {\bf
-    Example} subsection consists of lines of code to be used as examples in the
-    documentation node.  Within in each complete expression, indent lines after
-    the first one more than the first.  The text in a {\bf Code} section, with
-    common indentation removed, is wrapped with parentheses and evaluated; the
-    result is spliced into the list of documentation items at the appropriate
-    point before passing the list to @TO document@.
+    the keywords {\bf Text}, {\bf Example}, {\bf Pre}, and {\bf Code}.  The
+    text in a @TO Text@ subsection can be separated into paragraphs with blank
+    lines.  Each paragraph can contain markup as described above.  The text in
+    an {\bf Example} subsection consists of lines of code to be used as
+    examples in the documentation node.  Within in each complete expression,
+    indent lines after the first one more than the first.  The text in a {\bf
+    Pre} section, with common indentation removed, is wrapped with @ TO PRE @.
+    The text in a {\bf Code} section, with common indentation removed, is
+    wrapped with parentheses and evaluated; the result is spliced into the list
+    of documentation items at the appropriate point before passing the list to
+    @TO document@.
 
     The lines in the @TO Subnodes@ section not beginning with a colon are keys
     giving links to the subnodes of the current documentation node.  The
@@ -102,7 +190,6 @@
     document
     "docExample"
     "docTemplate"
-    
 -- Local Variables:
 -- compile-command: "make -C $M2BUILDDIR/Macaulay2/packages PACKAGES=SimpleDoc RemakePackages=true RemakeAllDocumentation=true IgnoreExampleErrors=false RerunExamples=true"
 -- End:
