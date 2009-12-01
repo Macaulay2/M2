@@ -531,6 +531,14 @@ Node
    :
     of dimension {\tt d} whose intersection ring is {\tt A} and whose @ TO class @
     is the value of the ReturnType option
+  Consequences
+   Item
+    The ring {\tt A} is altered so it knows what abstract variety it is associated with
+    (see @ TO (variety,Ring) @),
+    preventing it from being used in this way more than once.  The
+    methods for converting its elements to strings and nets are replaced by methods that
+    display monomials of higher degree further to the right, parenthesizing multiple
+    terms of the same degree.
   Description
     Example
       X = abstractVariety(3, QQ[c,d,Degrees=>{1,2}])
@@ -822,10 +830,23 @@ Node
     If the i-th entry is a symbol, say {\tt c}, then the names are @ TT "c_1 .. c_(r_i)" @.
     If the i-th entry is a list, its entries are used as the names.
   Outputs
-   :FlagBundle
+   F:FlagBundle
     the flag bundle over the variety of $E$ parametrizing filtrations $0 = E_0 \subseteq{} E_1 \subseteq{}
     ... \subseteq{} E_n = E$ of $E$ whose successive subquotients are vector bundles $E_{i+1}/E_i$
     of rank $r_i$
+  Consequences
+   Item
+    The list {\tt r} of ranks can be obtained later with {\tt F.BundleRanks}, see @ TO BundleRanks @.
+    Its sum can be obtained with {\tt F.Rank}.
+   Item
+    The list of consecutive quotients in the tautological filtration can be obtained later with {\tt F.Bundles}, see @ TO Bundles @.
+    See also @ TO SubBundles @ and @ TO QuotientBundles @.
+   Item
+    The (relative) tautological line bundle can be obtained later with {\tt OO_F(1)}.
+   Item
+    The structure map from {\tt F} to the variety of {\tt E} can be obtained later with {\tt F.StructureMap}, see @ TO StructureMap @.
+    Abstract sheaves and cycle classes can be pulled back and pushed forward, see @ TO (symbol ^*, AbstractVarietyMap) @
+    and  @ TO (symbol _*, AbstractVarietyMap) @.  Integration will work if it works on the variety of {\tt E}, see @ TO integral @.
   Description
     Example
       base(3,Bundle => (E,4,c))

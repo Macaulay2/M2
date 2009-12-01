@@ -114,13 +114,14 @@ abstractSheaf AbstractVariety := opts -> X -> (
 	  ch = opts.ChernCharacter;
 	  ch = promote(ch,A);
 	  rk = part(0,opts.ChernCharacter);
-     	  if opts.Rank =!= null and rk != opts.Rank then error "expected rank and Chern character to be compatible";
+     	  if opts.Rank =!= null then error "expected Rank and ChernCharacter options both given";
+     	  if opts.ChernClass =!= null then error "expected ChernClass and ChernCharacter options both given";
 	  )
      else if opts.Rank =!= null then (
 	  ch = rk = promote(opts.Rank,A);
 	  if opts.ChernClass =!= null then ch = ch + logg promote(opts.ChernClass,A);
 	  )
-     else error "expected rank or Chern character";
+     else error "expected Rank or ChernCharacter option";
      try rk = lift(rk,ZZ) else try rk = lift(rk,QQ);
      new AbstractSheaf from {
      	  global AbstractVariety => X,
@@ -149,15 +150,12 @@ bydegree := net -> f -> (
 abstractVariety = method(TypicalValue => AbstractVariety, Options => { ReturnType => AbstractVariety })
 abstractVariety(ZZ,Ring) := opts -> (d,A) -> (
      if A.?VarietyDimension then error "ring already in use as an intersection ring";
+     if ultimate(coefficientRing,A) =!= QQ then error "expected a QQ-algebra";
      A.VarietyDimension = d;
      net A := bydegree net;
      toString A := bydegree toString;
-     if not ancestor(AbstractVariety,opts#ReturnType) then error "expected value of Type option to be a type of AbstractVariety";
-     X := new opts#ReturnType from {
-	  global dim => d,
-     	  IntersectionRing => A
-     	  };
-     A.Variety = X)
+     if not ancestor(AbstractVariety,opts#ReturnType) then error "expected value of ReturnType option to be a type of AbstractVariety";
+     A.Variety = new opts#ReturnType from { global dim => d, IntersectionRing => A })
 
 tangentBundle = method(TypicalValue => AbstractSheaf)
 cotangentBundle = method(TypicalValue => AbstractSheaf)
@@ -217,11 +215,11 @@ base Sequence := args -> (
      newbdl := x -> bdls = append(bdls,x);
      d := null;
      oops := x -> error ("base: unrecognizable argument ",toString x);
-     goodvar := x -> try baseName x else error ("base: unusable as variable: ",toString x);
+     goodvar := x -> try baseName x else error ("unusable as variable: ",toString x);
      goodsym := x -> (
-	  if instance(x,RingElement) or instance(x,IndexedVariableTable) then baseName x
-	  else if instance(x,Symbol) then x
-	  else error ("base: unusable as subscripted symbol: ",toString x));
+	  s := try baseName x else x;
+	  if not instance(s,Symbol) then error ("unusable as subscripted symbol: ",toString x);
+	  s);
      scan(args, x -> (
 	       if instance(x,Symbol) or instance(x,IndexedVariable) then newvr(x,0)
 	       else if instance(x,RingElement) then newvr(baseName x,0)
@@ -236,8 +234,8 @@ base Sequence := args -> (
 		    newbdl (B,n,b);
 		    )
 	       else if instance(x,ZZ) then (
-		    if #bdls > 0 then error "base: integer argument (the dimension) should be first";
-		    if d =!= null then error "base: more than one integer argument encountered (as the dimension)";
+		    if #bdls > 0 then error "integer argument (the dimension) should be first";
+		    if d =!= null then error "more than one integer argument encountered (as the dimension)";
 		    d = x)
 	       else oops x));
      if d === null then d = 0;
@@ -247,7 +245,7 @@ base Sequence := args -> (
      X := abstractVariety(d,A);
      X.TangentBundle = abstractSheaf(X,Rank => d);          -- it's the base; user can replace it
      X.TautologicalLineBundle = abstractSheaf(X,Rank => 1); -- it's the base; user can replace it
-     integral intersectionRing X := identity;		    -- this will usually be wrong, but it's the "base"
+     integral intersectionRing X := identity;		    -- it's the base; user can replace it
      X#"bundles" = apply(bdls,(B,n,b) -> (
 	       globalReleaseFunction(B,value B);
 	       B <- abstractSheaf(X, Name => B, Rank => n, ChernClass => 1_A + sum(1 .. min(n,d), i -> A_(b_i)));
@@ -283,9 +281,9 @@ expression ChernClassVariable := c -> new FunctionApplication from {new Subscrip
 net ChernClassVariable := net @@ expression
 toString ChernClassVariable := toString @@ expression
 
-installMethod(symbol _, OO, AbstractVariety, AbstractSheaf => (OO,X) -> (
-     A := intersectionRing X;
-     abstractSheaf(X, Rank => 1, ChernClass => 1_A, ChernCharacter => 1_A)))
+installMethod(symbol _, OO, AbstractVariety, AbstractSheaf => 
+     (OO,X) -> abstractSheaf(X, Rank => 1, ChernCharacter => 1_(intersectionRing X))
+     )
 
 AbstractSheaf * RingElement := 
 AbstractSheaf * QQ := (E,n) -> n*E
@@ -317,14 +315,14 @@ geometricSeries = (t,n,dim) -> (			    -- computes (1+t)^n assuming t^(dim+1) ==
 
 AbstractSheaf ^** ZZ := AbstractSheaf => (E,n) -> (
      if n < 0 then (
-	  if rank E =!= 1 then error "negative power of abstract sheaf of rank not equal to 1 requested";
+	  if rank E =!= 1 then error "negative tensor power of sheaf of rank not equal to 1 requested";
 	  E = dual E;
 	  n = - n;
 	  );
      abstractSheaf(variety E, ChernCharacter => (ch E)^n))
 
 AbstractSheaf ^** QQ := AbstractSheaf ^** RingElement := AbstractSheaf => (E,n) -> (
-     if rank E != 1 then error "symbolic power works for invertible sheafs only";
+     if rank E != 1 then error "non-integer tensor power of sheaf of rank not equal to 1 requested";
      abstractSheaf(variety E, Rank => 1, ChernCharacter => geometricSeries(ch E - 1, n, dim variety E)))
 
 rank AbstractSheaf := RingElement => E -> E.rank
