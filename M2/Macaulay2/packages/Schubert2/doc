@@ -469,6 +469,8 @@ Node
 Node
   Key
     (abstractSheaf,AbstractVariety,RingElement)
+    (abstractSheaf,AbstractVariety,QQ)
+    (abstractSheaf,AbstractVariety,ZZ)
     abstractSheaf
     ChernCharacter
     Rank
@@ -482,21 +484,27 @@ Node
     make an abstract sheaf
   Usage
     abstractSheaf(X,c,Rank=>n)
+    abstractSheaf(X,Rank=>n)
     abstractSheaf(X,ChernClass=>c,Rank=>n)
     abstractSheaf(X,ChernCharacter=>cc)
   Inputs
     X:
     c:
       an element of the intersection ring of {\tt X}
-    Rank => ZZ
+    Rank => RingElement
     ChernCharacter => RingElement
     ChernClass => RingElement
     Name => Thing
+  Consequences
+   Item
+    The value of the {\tt Name} option should be a symbol or indexed variable to which the sheaf will be assigned.
+    The function @ TO baseName @ will return it, so the sheaf can be used in situations where a symbol is expected.
+    The sheaves created by @ TO base @ use this facility.
   Outputs
     :AbstractSheaf
-      the abstract sheaf over {\tt X} whose total Chern class is {\tt c} (or the value of
-      the ChernClass option) and whose rank is the value of the Rank option.  Alternatively,
-      it suffices to provide a value for just the ChernCharacter option.
+      the abstract sheaf over {\tt X} with total Chern class {\tt c},
+      rank {\tt n}, and total Chern character {\tt cc}.  When just the
+      rank is specified, the Chern class is taken to be 1.
   Description
     Example
       X = abstractVariety(3, QQ[c])

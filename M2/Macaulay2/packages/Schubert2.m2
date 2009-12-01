@@ -24,6 +24,9 @@ export { "AbstractSheaf", "abstractSheaf", "AbstractVariety", "abstractVariety",
 
 -- not exported, for now: "logg", "expp", "reciprocal", "ToddClass"
 
+{* to do:
+*}
+
 protect ChernCharacter
 protect ChernClass
 protect IntersectionRing
@@ -85,7 +88,7 @@ sectionClass AbstractVarietyMap := f -> f.SectionClass
 
 AbstractSheaf = new Type of HashTable
 AbstractSheaf.synonym = "abstract sheaf"
-baseName AbstractSheaf := F -> if F.?Name then F.Name else error "unnamed abstract sheaf"
+baseName AbstractSheaf := F -> if F.cache.?Name then F.cache.Name else error "unnamed abstract sheaf"
 globalAssignment AbstractSheaf
 net AbstractSheaf := toString AbstractSheaf := X -> (
      if hasAttribute(X,ReverseDictionary) then toString getAttribute(X,ReverseDictionary)
@@ -106,27 +109,31 @@ abstractSheaf = method(
 	  })
 abstractSheaf AbstractVariety := opts -> X -> (
      local ch; local rk;
+     A := intersectionRing X;
      if opts.ChernCharacter =!= null then (
 	  ch = opts.ChernCharacter;
+	  ch = promote(ch,A);
 	  rk = part(0,opts.ChernCharacter);
-	  try rk = lift(rk,ZZ) else try rk = lift(rk,QQ);
-     	  if opts.Rank =!= null and rk != opts.Rank then error "abstractSheaf: expected rank and Chern character to be compatible";
+     	  if opts.Rank =!= null and rk != opts.Rank then error "expected rank and Chern character to be compatible";
 	  )
-     else (
-     	  if opts.Rank === null then error "abstractSheaf: expected rank or Chern character";
-	  rk = opts.Rank;
-     	  ch = if opts.ChernClass === null then ch = promote(rk,intersectionRing X) else rk + logg opts.ChernClass;
-	  );
+     else if opts.Rank =!= null then (
+	  ch = rk = promote(opts.Rank,A);
+	  if opts.ChernClass =!= null then ch = ch + logg promote(opts.ChernClass,A);
+	  )
+     else error "expected rank or Chern character";
+     try rk = lift(rk,ZZ) else try rk = lift(rk,QQ);
      new AbstractSheaf from {
      	  global AbstractVariety => X,
-     	  global rank => rk,
 	  ChernCharacter => ch,
-	  if opts.Name =!= null then Name => opts.Name,
 	  global cache => new CacheTable from {
+	       if opts.Name =!= null then Name => opts.Name,
+     	       global rank => rk,
 	       if opts.ChernClass =!= null then ChernClass => opts.ChernClass
 	       }
      	  }
      )
+abstractSheaf(AbstractVariety,ZZ) := 
+abstractSheaf(AbstractVariety,QQ) := 
 abstractSheaf(AbstractVariety,RingElement) := opts -> (X,f) -> abstractSheaf(X, ChernCharacter => f)
 
 bydegree := net -> f -> (
