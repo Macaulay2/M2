@@ -5,18 +5,29 @@ Node
     computation in intersection theory
   Description
     Text
-      This package supports computation in intersection theory
-      on smooth varieties.  An @TO2{AbstractVariety,"abstract variety"}@ is not given by equations.
-      Instead, one gives its intersection ring (usually modulo numerical equivalence),
-      its dimension, the Chern class of its tangent bundle, and a method for
-      computing integrals.  An @TO2{AbstractSheaf,"abstract sheaf"}@ on an abstract variety is represented
-      by its total Chern character (which can be computed from its Chern
-      character).  An @TO2{AbstractVarietyMap,"abstract variety map"}@ is a map between abstract
-      varieties: the information encoded is the pull-back and push-forward
-      maps between the corresponding intersection rings.
+
+      This package supports computation in intersection theory on smooth varieties.  An @TO2{AbstractVariety,"abstract
+      variety"}@ is not given by equations.  Instead, one gives its intersection ring of algebraic cycle classes (modulo
+      either numerical equivalence or rational equivalence), its dimension, and the Chern class of its tangent bundle
+      (if known).  The intersection ring is represented as a {\em Macaulay2} @ TO2{Ring,"ring"} @, and its elements are
+      {\em Macaulay2} @ TO2{RingElement,"ring elements"} @.
+      
+      An @TO2{AbstractSheaf,"abstract sheaf"}@ on an abstract variety is represented by an object of class @ TO
+      AbstractSheaf @ that contains the total Chern character of the sheaf.  It should be thought of as an element of
+      the Grothendieck ring of the variety tensored with the degree zero part of the intersection ring.  By the
+      Grothendieck-Riemann-Roch theorem, the Chern character provides a ring isomorphism from Grothendieck ring
+      (tensored as before) to the intersection ring.
+
+      An @TO2{AbstractVarietyMap,"abstract variety map"}@ is a map between abstract varieties: the information encoded
+      is the pull-back and push-forward maps between the corresponding intersection rings.
+
+      One may start with a {\em base variety} whose intersection ring contains variables of degree 0 that can represent
+      unknown integers in formulas, along with variables of positive degree that can be used as Chern classes of
+      generic abstract sheaves.
   Subnodes
     "Lines on hypersurfaces"
     "Conics on a quintic threefold"
+    "The Horrocks-Mumford bundle"
 --------
 Node
   Key
@@ -196,39 +207,49 @@ Node
     the class of all abstract sheaves
   Description
    Text
-     A virtual {\em abstract sheaf} over @ofClass AbstractVariety@ $X$ is specified by giving its rank and its total Chern class,
-     as an element of the intersection ring of $X$.
-
-     For example, the Horrocks-Mumford bundle on projective 4-space
+     A virtual {\em abstract sheaf} over @ofClass AbstractVariety@ $X$ is specified by its total Chern character.
+-------
+Node
+  Key
+   "The Horrocks-Mumford bundle"
+  Headline
+   an example
+  Description
+   Text
+     The Horrocks-Mumford bundle on projective 4-space
      can be constructed with the following code.  We first produce a base point
      whose intersection ring contains a variable named {\tt n}, in 
      terms of which we can compute the Hilbert polynomial.
    Example
      pt = base(n)
    Text
-     Then we create the projective space of dimension 4 over the base point, 
-     using the {\tt VariableName} option to specify that $h$ is the variable to use to represent the first
-     Chern class of the tautological quotient line bundle on the projective space.
+     Then we create the projective space of dimension 4 over the base point.
    Example
-    X = projectiveSpace(4,pt,VariableName => h)
+    X = projectiveSpace_4 pt
    Text
-     Now we create an abstract sheaf of rank 2 with $1 + 5 h + 10 h^2$ as its total Chern class.
+    On projective spaces, the first Chern class of the tautological line bundle is assigned to the variable {\tt h}:
+   Example
+     chern_1 OO_X(1)
+   Text
+     Now we create an abstract sheaf of rank 2 with $1 + 5 h + 10 h^2$ as its total Chern class:
    Example
      F = abstractSheaf(X, Rank => 2, ChernClass => 1 + 5*h + 10*h^2)
    Text
-     Its class is @ TO AbstractSheaf @:
+    Alternatively, we can use the representation of the Horrocks-Mumford bundle as the cohomology of the monad
+    $$0 \rightarrow{} O_X(-1)^5 \rightarrow{} \Omega_X^2(2)^2 \rightarrow{} O_X^5 \rightarrow{} 0$$
+    to produce a construction:
    Example
-     class F
+    F' = 2 * (exteriorPower_2 cotangentBundle X)(2) - 5 * OO_X(-1) - 5 * OO_X
+    chern F'
+    rank F'
+   Text
+    Here is the relationship between the two bundles:
+   Example
+    F === dual F'(-2)
    Text
      Now we compute the Hilbert polynomial of $F$.
    Example
     chi F(n*h)
-  SeeAlso
-    AbstractVariety
-    projectiveSpace
-    abstractSheaf
-    chi
-    (symbol SPACE,AbstractSheaf,RingElement)
 --------
 Node
   Key
@@ -1152,6 +1173,8 @@ Node
     (tangentBundle,AbstractVarietyMap)
   Headline
    get the tangent bundle
+  SeeAlso
+   cotangentBundle
   Usage
    tangentBundle X
    tangentBundle f
@@ -1168,6 +1191,33 @@ Node
     tangentBundle Y
     chern oo
     tangentBundle Y.StructureMap
+    chern oo
+-------
+Node
+  Key
+    cotangentBundle
+    (cotangentBundle,AbstractVariety)
+    (cotangentBundle,AbstractVarietyMap)
+  Headline
+   get the cotangent bundle
+  SeeAlso
+   tangentBundle
+  Usage
+   cotangentBundle X
+   cotangentBundle f
+  Inputs
+   X:AbstractVariety
+   f:AbstractVarietyMap
+  Outputs
+   :AbstractSheaf
+    the (absolute) cotangent bundle of $X$ or the (relative) cotangent bundle of $f$
+  Description
+   Example
+    X = projectiveSpace 2
+    Y = projectiveSpace_2 X
+    cotangentBundle Y
+    chern oo
+    cotangentBundle Y.StructureMap
     chern oo
 --------
 Node
@@ -1263,13 +1313,19 @@ Node
 --------
 Node
   Key
-   (symbol **,AbstractSheaf,AbstractSheaf)
    (symbol *,AbstractSheaf,AbstractSheaf)
+   (symbol **,AbstractSheaf,AbstractSheaf)
+   (symbol *,QQ,AbstractSheaf)
+   (symbol *,RingElement,AbstractSheaf)
+   (symbol *,AbstractSheaf,QQ)
+   (symbol *,AbstractSheaf,RingElement)
+   (symbol *,AbstractSheaf,ZZ)
+   (symbol *,ZZ,AbstractSheaf)
   Headline
    (tensor) product of two abstract sheaves
   Usage
-   F**G
    F*G
+   F**G
   Inputs
    F:
    G:
@@ -1277,6 +1333,8 @@ Node
    :
     the (tensor) product of $F$ and $G$
   Description
+   Text
+    If {\tt F} or {\tt G} is a ring element of degree 0, it represents a trivial bundle of that rank.
    Example
     X = PP^1
     OO_X(1) * OO_X(2)
@@ -1286,17 +1344,25 @@ Node
 --------
 Node
   Key
+    (symbol +,AbstractSheaf,AbstractSheaf)
     (symbol ++,AbstractSheaf,AbstractSheaf)
     (symbol +,AbstractSheaf,ZZ)
-    (symbol +,AbstractSheaf,AbstractSheaf)
     (symbol +,ZZ,AbstractSheaf)
     (symbol ++,AbstractSheaf,ZZ)
     (symbol ++,ZZ,AbstractSheaf)
+    (symbol ++,AbstractSheaf,QQ)
+    (symbol ++,AbstractSheaf,RingElement)
+    (symbol ++,QQ,AbstractSheaf)
+    (symbol ++,RingElement,AbstractSheaf)
+    (symbol +,AbstractSheaf,QQ)
+    (symbol +,AbstractSheaf,RingElement)
+    (symbol +,QQ,AbstractSheaf)
+    (symbol +,RingElement,AbstractSheaf)
   Headline
    (direct) sum of two abstract sheaves
   Usage
-   F++G
    F+G
+   F++G
   Inputs
    F:
    G:
@@ -1323,6 +1389,12 @@ Node
 Node
   Key
    (symbol -,AbstractSheaf,AbstractSheaf)
+   (symbol -,AbstractSheaf,QQ)
+   (symbol -,AbstractSheaf,RingElement)
+   (symbol -,AbstractSheaf,ZZ)
+   (symbol -,QQ,AbstractSheaf)
+   (symbol -,RingElement,AbstractSheaf)
+   (symbol -,ZZ,AbstractSheaf)
   Headline
    difference of two abstract sheaves
   Usage
@@ -1332,7 +1404,7 @@ Node
    G:
   Outputs
    :
-    the difference of $F$ and $G$
+    the difference of $F$ and $G$.  If one of the arguments is an integer, it represents the trivial sheaf of that rank.
   Description
    Example
     X = PP^1
@@ -1353,13 +1425,14 @@ Node
    n:
   Outputs
    :
-    the $n$-th power of $F$
+    the {\tt n}-th Cartesian power of {\tt F}, which amounts to multiplication by {\tt n} in the Grothendieck group
   Description
+   Text
+    Maybe we should remove this operation, in favor of @ TO (symbol *, ZZ, AbstractSheaf) @.
    Example
     X = PP^1
     F = OO_X(1)
-    F^10
-    chi oo
+    chi F^10
 --------
 Node
   Key
@@ -1679,14 +1752,14 @@ Node
   Key
    (dim,AbstractVarietyMap)
   Headline
-   the dimenstion of an abstract variety
+   the dimension of an abstract variety
   Usage
    dim X
   Inputs
    X:
   Outputs
    :
-    the dimenstion {\tt X}
+    the dimension {\tt X}
   Description
    Example
     dim PP^4
