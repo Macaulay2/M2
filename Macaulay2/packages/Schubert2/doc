@@ -29,7 +29,23 @@ Node
     "Lines on hypersurfaces"
     "Conics on a quintic threefold"
     "The Horrocks-Mumford bundle"
+    "Ideas for future development"
 --------
+Node
+ Key
+  "Ideas for future development"
+ Description
+  Text
+   @
+    UL {
+	 LI {"Introduce the notation F/S for the structure map from F to S, and extend it to towers of structure 
+	      maps.  Then we could downplay ", TO StructureMap, ".  We could also change ", TT "tangentBundle F", "
+	      so it yields the relative tangent bundle over the immediate predecessor, and let ", 
+	      TT "tangentBundle(F/point)", " serve as the notation for the absolute tangent bundle 
+	      (see ", TO "tangentBundle", ")."}
+	 }
+   @
+-------
 Node
   Key
      "Lines on hypersurfaces"
@@ -183,7 +199,7 @@ Node
      integral A := f -> coefficient(t^2,f);
    Text
      Now we can compute the Euler characteristic of the line bundle whose first Chern class 
-     is $2t$; the algorithm uses the Todd class and the Riemann-Roch formula:
+     is $2t$ (the algorithm uses the Todd class and the Riemann-Roch formula):
    Example
      chi OO_X(2*t)
    Text
@@ -772,6 +788,8 @@ Node
     chi OO_X(-1), chi OO_X(0), chi OO_X(1), chi OO_X(2), chi OO_X(3)
     Y = projectiveSpace(2, base n)
     chi OO_Y(n)
+   Text
+    The algorithm uses the Hirzebruch-Riemann-Roch theorem.
 --------
 Node
   Key
@@ -815,6 +833,9 @@ Node
    make a flag bundle
   Usage
    flagBundle(r,E)
+  SeeAlso
+   projectiveSpace
+   projectiveBundle
   Inputs
    r:List
     a list $\{r_0, ..., r_{n-1}\}$ of non-negative integers
@@ -847,6 +868,7 @@ Node
     The structure map from {\tt F} to the variety of {\tt E} can be obtained later with {\tt F.StructureMap}, see @ TO StructureMap @.
     Abstract sheaves and cycle classes can be pulled back and pushed forward, see @ TO (symbol ^*, AbstractVarietyMap) @
     and  @ TO (symbol _*, AbstractVarietyMap) @.  Integration will work if it works on the variety of {\tt E}, see @ TO integral @.
+    The (relative) tangent bundle can be obtained from it, see @ TO (tangentBundle,AbstractVarietyMap) @.
   Description
     Example
       base(3,Bundle => (E,4,c))
