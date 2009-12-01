@@ -1050,8 +1050,8 @@ SYNOPSIS Thing := SYNOPSIS Sequence := o -> x -> (
 	  UL {
 	       LI o.Usage,
 	       if # o.Inputs > 0 then LI { "Inputs:", UL ( proc \ o.Inputs ) },
-	       if # o.Consequences > 0 and #o.Consequences > 0 then LI { "Consequences:", UL o.Consequences },
-	       if # o.Outputs > 0 then LI { "Outputs:", UL ( proc \ o.Outputs ) }
+	       if # o.Outputs > 0 then LI { "Outputs:", UL ( proc \ o.Outputs ) },
+	       if # o.Consequences > 0 and #o.Consequences > 0 then LI { "Consequences:", UL o.Consequences }
 	       },
 	  x
 	  })
@@ -1082,8 +1082,8 @@ briefSynopsis := key -> (
 	       then SPAN { "Operator: ", TO key#0#0 }	    -- assignment operator for this operator
 	       ),
 	  if o.?Inputs then DIV1 { "Inputs:", UL o.Inputs },
-	  if o.?Consequences and #o.Consequences > 0 then DIV1 { "Consequences:", UL o.Consequences },
 	  if o.?Outputs then DIV1 { "Outputs:", UL o.Outputs },
+	  if o.?Consequences and #o.Consequences > 0 then DIV1 { "Consequences:", UL o.Consequences },
 	  if o#?"optional inputs" then DIV1 { TO2{ "using functions with optional inputs", "Optional inputs"}, ":", UL o#"optional inputs" },
 	  };
      if #r > 0 then fixup UL r)
