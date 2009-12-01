@@ -19,7 +19,7 @@ export { "AbstractSheaf", "abstractSheaf", "AbstractVariety", "abstractVariety",
      "TautologicalLineBundle", "ch", "chern", "ChernCharacter", "ChernClass", "ChernClassVariable", "chi", "ctop", "FlagBundle",
      "flagBundle", "projectiveBundle", "projectiveSpace", "PP", "FlagBundleStructureMap", "integral", "IntersectionRing",
      "intersectionRing", "PullBack", "PushForward", "Rank",
-     "schur", "SectionClass", "sectionClass", "segre", "StructureMap", "TangentBundle", "tangentBundle", "todd",
+     "schur", "SectionClass", "sectionClass", "segre", "StructureMap", "TangentBundle", "tangentBundle", "cotangentBundle", "todd",
      "VariableNames", "VariableName", "SubBundles", "QuotientBundles", "point", "base"}
 
 -- not exported, for now: "logg", "expp", "reciprocal", "ToddClass"
@@ -153,12 +153,15 @@ abstractVariety(ZZ,Ring) := opts -> (d,A) -> (
      A.Variety = X)
 
 tangentBundle = method(TypicalValue => AbstractSheaf)
+cotangentBundle = method(TypicalValue => AbstractSheaf)
 tangentBundle AbstractVariety := X -> (
      if not X.?TangentBundle then error "variety has no tangent bundle";
      X.TangentBundle)
+cotangentBundle AbstractVariety := X -> dual tangentBundle X
 tangentBundle AbstractVarietyMap := f -> (
      if not f.?TangentBundle then error "variety map has no relative tangent bundle";
      f.TangentBundle)
+cotangentBundle AbstractVarietyMap := f -> dual tangentBundle f
 
 AbstractSheaf QQ := AbstractSheaf ZZ := AbstractSheaf => (F,n) -> (
      if n == 0 then return F;
@@ -277,6 +280,15 @@ installMethod(symbol _, OO, AbstractVariety, AbstractSheaf => (OO,X) -> (
      A := intersectionRing X;
      abstractSheaf(X, Rank => 1, ChernClass => 1_A, ChernCharacter => 1_A)))
 
+AbstractSheaf * RingElement := 
+AbstractSheaf * QQ := (E,n) -> n*E
+RingElement * AbstractSheaf := (n,E) -> (
+     if degree n =!= {0} then error "expected a ring element of degree 0";
+     abstractSheaf(variety E, ChernCharacter => n * ch E))
+QQ * AbstractSheaf := AbstractSheaf => (n,E) -> abstractSheaf(variety E, ChernCharacter => n * ch E)
+
+ZZ * AbstractSheaf := AbstractSheaf => (n,E) -> E^n
+AbstractSheaf * ZZ := 
 AbstractSheaf ^ ZZ := AbstractSheaf => (E,n) -> new AbstractSheaf from {
      global AbstractVariety => E.AbstractVariety,
      ChernCharacter => n * E.ChernCharacter,
@@ -308,7 +320,7 @@ AbstractSheaf ^** QQ := AbstractSheaf ^** RingElement := AbstractSheaf => (E,n) 
      if rank E != 1 then error "symbolic power works for invertible sheafs only";
      abstractSheaf(variety E, Rank => 1, ChernCharacter => geometricSeries(ch E - 1, n, dim variety E)))
 
-rank AbstractSheaf := E -> E.rank
+rank AbstractSheaf := RingElement => E -> E.rank
 variety AbstractSheaf := AbstractVariety => E -> E.AbstractVariety
 variety Ring := AbstractVariety => R -> R.Variety
 
@@ -434,6 +446,7 @@ reciprocal RingElement := (A) -> (
      )
 
 logg = method(TypicalValue => RingElement)
+logg QQ := logg ZZ := (n) -> 0
 logg RingElement := (C) -> (
      -- C is the total chern class in an intersection ring
      -- The chern character of C is returned.
@@ -447,6 +460,7 @@ logg RingElement := (C) -> (
      )
 
 expp = method(TypicalValue => RingElement)
+expp QQ := expp ZZ := (n) -> 1
 expp RingElement := (A) -> (
      -- A is the chern character
      -- the total chern class of A is returned
@@ -464,11 +478,13 @@ todd = method(TypicalValue => RingElement)
 todd AbstractSheaf := E -> todd ch E
 todd AbstractVariety := X -> todd tangentBundle X
 todd AbstractVarietyMap := p -> todd tangentBundle p
-todd RingElement := (A) -> (
-     -- A is the chern character
+todd RingElement := (r) -> (
+     -- r is the chern character
      -- the (total) todd class is returned
-     if not (ring A).?VarietyDimension then error "expected a ring with its variety dimension set";
-     d := (ring A).VarietyDimension;
+     A := ring r;
+     if not A.?VarietyDimension then error "expected a ring with its variety dimension set";
+     if r == 0 then return 1_A;
+     d := A.VarietyDimension;
      -- step 1: find the first part of the Taylor series for t/(1-exp(-t))
      denom := for i from 0 to d list (-1)^i /(i+1)!;
      invdenom := new MutableList from splice{d+1:0};
@@ -481,9 +497,7 @@ todd RingElement := (A) -> (
      td := logg sum for i from 0 to d list invdenom#i * R_0^i;
      td = for i from 0 to d list coefficient(R_0^i,td);
      -- step 3.  exp
-     A1 := sum for i from 0 to d list i! * td#i * part(i,A);
-     expp A1
-     )
+     expp sum for i from 0 to d list i! * td#i * part(i,r))
 
 chi = method(TypicalValue => RingElement)
 chi AbstractSheaf := F -> integral(todd variety F * ch F)
@@ -504,12 +518,26 @@ coerce := (F,G) -> (
      AY := intersectionRing Y;
      z := try 0_AX + 0_AY else error "expected abstract sheaves on compatible or equal varieties";
      if ring z === AX
-     then (F,abstractSheaf(X,z + ch G))
-     else (abstractSheaf(Y,z + ch F),G)
+     then (F, abstractSheaf(X,Rank => rank G, ChernClass => chern G)   )
+     else (   abstractSheaf(Y,Rank => rank F, ChernClass => chern F), G)
      )
 
-AbstractSheaf ++ ZZ := AbstractSheaf + ZZ := AbstractSheaf => (F,n) -> n ++ F
-ZZ ++ AbstractSheaf := ZZ + AbstractSheaf := AbstractSheaf => (n,F) -> if n === 0 then F else OO_(variety F)^n ++ F
+AbstractSheaf ++ RingElement := 
+AbstractSheaf + RingElement := AbstractSheaf => (F,n) -> (
+     if degree n =!= {0} then error "expected a ring element of degree 0";
+     abstractSheaf(variety F, ChernCharacter => ch F + n))
+AbstractSheaf ++ QQ := 
+AbstractSheaf + QQ := 
+AbstractSheaf ++ ZZ := 
+AbstractSheaf + ZZ := AbstractSheaf => (F,n) -> abstractSheaf(variety F, ChernCharacter => ch F + n)
+RingElement + AbstractSheaf := 
+RingElement ++ AbstractSheaf := AbstractSheaf => (n,F) -> (
+     if degree n =!= {0} then error "expected a ring element of degree 0";
+     abstractSheaf(variety F, ChernCharacter => n + ch F))
+QQ ++ AbstractSheaf := 
+QQ + AbstractSheaf := 
+ZZ ++ AbstractSheaf := 
+ZZ + AbstractSheaf := AbstractSheaf => (n,F) -> abstractSheaf(variety F, ChernCharacter => n + ch F)
 
 AbstractSheaf ++ AbstractSheaf :=
 AbstractSheaf + AbstractSheaf := AbstractSheaf => (
@@ -532,9 +560,26 @@ dual AbstractSheaf := AbstractSheaf => {} >> o -> E -> adams(-1,E)
 
 - AbstractSheaf := AbstractSheaf => E -> abstractSheaf(variety E, Rank => - rank E, ChernCharacter => - ch E)
 AbstractSheaf - AbstractSheaf := AbstractSheaf => ((F,G) -> F + -G) @@ coerce
+AbstractSheaf - RingElement := AbstractSheaf => (F,n) -> (
+     if degree n =!= {0} then error "expected a ring element of degree 0";
+     abstractSheaf(variety F, ChernCharacter => ch F - n))
+AbstractSheaf - QQ := 
+AbstractSheaf - ZZ := AbstractSheaf => (F,n) -> abstractSheaf(variety F, ChernCharacter => ch F - n)
+RingElement - AbstractSheaf := AbstractSheaf => (n,F) -> (
+     if degree n =!= {0} then error "expected a ring element of degree 0";
+     abstractSheaf(variety F, ChernCharacter => n - ch F))
+QQ - AbstractSheaf := 
+ZZ - AbstractSheaf := AbstractSheaf => (n,F) -> abstractSheaf(variety F, ChernCharacter => n - ch F)
 
 AbstractSheaf ** AbstractSheaf :=
-AbstractSheaf * AbstractSheaf := AbstractSheaf => ((F,G) -> abstractSheaf(variety F, Rank => rank F * rank G, ChernCharacter => ch F * ch G)) @@ coerce
+AbstractSheaf * AbstractSheaf := AbstractSheaf => (
+     (F,G) -> (
+	  f := ch F;
+	  g := ch G;
+	  if f == 1 then G
+	  else if g == 1 then F
+	  else abstractSheaf (variety F, Rank => rank F * rank G, ChernCharacter => f*g))
+     ) @@ coerce
 
 Hom(AbstractSheaf, AbstractSheaf) := AbstractSheaf => (F,G) -> dual F ** G
 
