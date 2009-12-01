@@ -1940,6 +1940,7 @@ Node
   "Examples from Schubert, translated"
  Subnodes
   "Hilbert polynomial and Todd class of projective 3-space"
+  "Generation of formulas"
 Node
  Key
   "Hilbert polynomial and Todd class of projective 3-space"
@@ -1948,13 +1949,66 @@ Node
    > proj(3,h,all): factor(chi(o(n*h)));
 			     1/6 (n + 3) (n + 2) (n + 1)
   Example
-   Ph = projectiveSpace_3 base n; factor chi OO(n*h)
+   Ph = projectiveSpace_3 base n
+   factor chi OO(n*h)
   Pre
    > Ph[toddclass_];
 					      2  2    3  3
 			    1 + 2 h t + 11/6 h  t  + h  t
   Example
    todd Ph
+Node
+ Key
+  "Generation of formulas"
+ Description
+  Pre
+   > DIM:=4:
+   > A:=bundle(2,c):        # a bundle with Chern classes c1,c2 and rank 2
+   > B:=bundle(3,d):        # a bundle with Chern classes d1,d2,d3 and rank 3
+  Example
+   base(4, Bundle => (A,2,c), Bundle => (B,3,d))
+  Pre
+   > chern(A);
+                                                  2
+                                   1 + c1 t + c2 t
+  Example
+   chern A
+  Pre
+   > segre(B);
+                                2        2      3                  3
+                  1 + d1 t + (d1  - d2) t  + (d1  - 2 d1 d2 + d3) t
+   
+                            4          2               2   4
+                       + (d1  - 3 d2 d1  + 2 d1 d3 + d2 ) t
+  Example
+   segre B
+  Pre
+   > chern(A&*B);           # The Chern class of the tensor product
+                            2                 2                 2
+   1 + (2 d1 + 3 c1) t + (d1  + 5 c1 d1 + 3 c1  + 2 d2 + 3 c2) t  +
+   
+                            3                           2                    2   3
+     (6 c1 c2 + 2 d1 d2 + c1  + 2 d3 + 4 c1 d2 + 2 c1 d1  + 4 d1 c2 + 4 d1 c1 ) t
+   
+                                       2          2               2
+      + (3 c1 d1 d2 + 6 d1 c1 c2 + 3 c2  + 3 c2 c1  + 2 d1 d3 + d2  + 3 c1 d3
+   
+               2       2        2   2        3   4
+      + 2 c2 d1  + 3 c1  d2 + c1  d1  + d1 c1 ) t
+  Example
+   chern(A**B)
+  Pre
+   > chern(3,symm(3,dual(A)));
+                                        3
+                                  - 6 c1  - 30 c1 c2
+  Example
+   chern_3 symmetricPower_3 dual A
+  Pre
+   > segre(2,Hom(wedge(2,A),wedge(2,B)));
+                                 2                 2
+                             3 d1  - 8 c1 d1 + 6 c1  - d2
+  Example
+   segre_2 Hom(exteriorPower_2 A,exteriorPower_2 B)
 -- Local Variables:
 -- mode: M2
 -- coding: utf-8
