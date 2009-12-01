@@ -1,8 +1,8 @@
 -- -*- coding: utf-8 -*-
 newPackage(
 	"SimpleDoc",
-    	Version => "1.0", 
-    	Date => "October 26, 2008",
+    	Version => "1.1", 
+    	Date => "December 1, 2009",
 	AuxiliaryFiles=>true,
     	Authors => {
 	     {Name => "Dan Grayson", 
@@ -65,12 +65,24 @@ multiString = (key, textlines, keylinenum) -> (				    -- written by Andrew Hoef
      key => concatenate between(newline, getText \ textlines)
      )
 
+reassemble = (indent,textlines) -> concatenate between(newline,
+     for x in textlines list ( if getIndent x =!= infinity then getIndent x - indent : " ", getText x )
+     )
+
+safevalue = t -> (
+     try value t else (
+	  stderr << "in the evaluation of: " << stack lines t << endl;
+	  value t
+	  )
+     )
+
 markup2 = (textlines, keylinenum) -> (
+     if #textlines === 0 then return "";
      s := concatenate between(" ",getText \ textlines);
      sp := separateRegexp(///(^|[^\])(@)///, 2, s);
      sp = apply(sp, s -> replace(///\\@///,"@",s));
      if not odd(#sp) then error "unmatched @";
-     for i from 0 to #sp-1 list if even i then if sp#i != "" then TEX sp#i else "" else value sp#i
+     for i from 0 to #sp-1 list if even i then if sp#i != "" then TEX sp#i else "" else safevalue concatenate("(",sp#i,")")
      )
 
 markup = (textlines, keylinenum) -> (
@@ -108,12 +120,9 @@ items = (textlines, keylinenum) -> (
 DescriptionFunctions = new HashTable from {
      "Example" => (textlines,keylinenum) -> EXAMPLE apply(
 	  splitByIndent(textlines,false),
-	  (i,j) -> concatenate between(
-	       newline,
-	       apply(i .. j, k -> (
-			 if getIndent textlines#k =!= infinity then getIndent textlines#k - getIndent textlines#0 : " ",
-			 getText textlines#k)))),
+	  (i,j) -> reassemble(getIndent textlines#0, take(textlines, {i,j}))),
      "Text" => toSequence @@ markup,
+     "Pre" => (textlines, keylinenum) -> PRE reassemble(min\\getIndent\textlines, textlines),
      "Code" => (textlines, keylinenum) -> ( 
 	  m := min\\getIndent\textlines; 
 	  value concatenate ("(",apply(textlines, x -> (getIndent x - m, getText x, "\n")),")"))
@@ -122,7 +131,11 @@ DescriptionFunctions = new HashTable from {
 applySplit = (fcns, textlines) ->
      apply(splitByIndent(textlines,false), (i,j) -> (
 	       key := getText textlines#i;
-	       if not fcns#?key then error("unrecognized keyword, line ",toString getLinenum textlines#i," of string: ",format key);
+	       if not fcns#?key then error splice(
+		    "unrecognized keyword, line ",toString getLinenum textlines#i,
+		    " of string: ",format key,
+		    "; valid keyword(s): ", toSequence between(" ",sort keys fcns)
+		    );
 	       fcns#key(textlines_{i+1..j}, getLinenum textlines#i)))
 
 description = (textlines, keylinenum) -> toSequence applySplit(DescriptionFunctions, textlines)
@@ -175,8 +188,7 @@ doc String := (s) -> document toDoc(KeyFunctions,s)
 multidoc = method()
 multidoc String := (s) -> document \ toDoc(NodeFunctions,s)
 
-docExample = "
-doc ///
+docExample = "doc ///
   Key
     (simpleDocFrob,ZZ,Matrix)
   Headline
@@ -205,13 +217,14 @@ doc ///
    Example
      M = matrix\"1,2;3,4\";
      simpleDocFrob(3,M)
+   Text
+     See @ TO \"docExample\" @ for the code used to create this documentation.
   Caveat
     This is not a particularly useful function.
   SeeAlso
     matrix
     (directSum,List)
-///
-"
+///"
 
 docTemplate = "
 doc ///
@@ -222,14 +235,11 @@ doc ///
    Outputs
    Consequences
     Item
-    Item
    Description
-      Text
-      Code
-      Example
-      Text
-      Code
-      Example
+    Text
+    Code
+    Pre
+    Example
    Subnodes
    Caveat
    SeeAlso
@@ -276,6 +286,8 @@ Consequences
 Description
   Text
   Example
+  Code
+  Pre
 Caveat
 SeeAlso
 ///
@@ -290,83 +302,12 @@ packageTemplate = method()
 packageTemplate String := (packagename) -> 
      replace("%%NAME%%", packagename, packagetemplate)
 
-document { 
-	Key => SimpleDoc,
-	Headline => "simpler documentation for functions and methods",
-	EM "SimpleDoc", " contains a function to simplify writing documentation for functions "
-	}
-
 beginDocumentation()
 
-doc get (currentFileDirectory | "SimpleDoc/doc.txt")
+multidoc get (currentFileDirectory | "SimpleDoc/doc.txt")
 
 value docExample
 
-doc ///
-  Key
-    "docExample"
-  Headline
-    an example documentation node
-  Usage
-    docExample
-  Description
-   Text
-     The variable docExample is a @TO String@ containing an example of
-     the use of @TO (doc,String)@ to write a documentation page, visible
-     @TO2 {(simpleDocFrob,ZZ,Matrix), "here"}@.
-   Example
-     print docExample
-  SeeAlso
-    "docTemplate"
-///
-
-doc ///
-  Key
-    simpleDocFrob
-  Headline
-    an example of a function to document
-///
-
-doc ///
-  Key
-    "docTemplate"
-  Headline
-    a template for a documentation node
-  Usage
-    docTemplate
-  Description
-   Text
-     docTemplate is a @TO String@, which can
-     be cut and paste into a text file,
-     to be used as a template for writing
-     documentation for functions and other objects
-     in a package.
-   Example
-     print docTemplate
-  SeeAlso
-    "docExample"
-///
-
-doc ///
-  Key
-    packageTemplate
-    (packageTemplate,String)
-  Headline
-    a template for a package
-  Usage
-    packageTemplate s
-  Inputs
-    s:String
-      the name of the package
-  Description
-   Text
-     This routine returns a barebones package template
-     that you can use to start writing a package.
-   Example
-     print packageTemplate "WonderfulModules"
-  SeeAlso
-    "docExample"
-///
 -- Local Variables:
 -- compile-command: "make -C $M2BUILDDIR/Macaulay2/packages PACKAGES=SimpleDoc RemakePackages=true RemakeAllDocumentation=true IgnoreExampleErrors=false RerunExamples=true"
 -- End:

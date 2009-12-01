@@ -57,15 +57,16 @@ document {
      UL {
 	  LI { "major improvements and additions:",
 	       UL {
-		    LI { TO "Schubert2::Schubert2", " has been well documented and slightly improved." }
+		    LI { "The ", TO "Schubert2::Schubert2", " package has been well documented and slightly improved." }
 		    }
 	       },
 	  LI { "functionality added or improved:",
 	       UL {
 		    LI {
-			 TO "SimpleDoc::SimpleDoc"
-			 -- multidoc
-			 -- Consequences Item
+			 "The ", TO "SimpleDoc::SimpleDoc", " package has a new function, ", TO "multidoc", ",
+			 that allows multiple documentation nodes per string.  The format of the ", BOLD "Consequences", "
+			 section has changed.  There is a new keyword, ", BOLD "Pre", ", that allows preformatted
+			 text to be easily inserted."
 			 }
 		    }
 	       },
