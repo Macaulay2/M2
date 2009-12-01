@@ -3,14 +3,14 @@ needsPackage "Polyhedra"
 newPackage(
      "NormalToricVarieties",
      AuxiliaryFiles => true,
-     Version => "0.75",
+     Version => "0.76",
      Date => "12 November 2009",
      Authors => {{
 	       Name => "Gregory G. Smith", 
 	       Email => "ggsmith@mast.queensu.ca", 
 	       HomePage => "http://www.mast.queensu.ca/~ggsmith"}},
      Headline => "normal toric varieties",
-     DebuggingMode => true
+     DebuggingMode => false
      )
 
 export { 
@@ -19,6 +19,7 @@ export {
      projectiveSpace, 
      hirzebruchSurface, 
      weightedProjectiveSpace, 
+     kleinschmidt,
      classGroup, 
      isDegenerate,
      isProjective,
@@ -42,7 +43,6 @@ export {
 ---------------------------------------------------------------------------
 needsPackage "FourierMotzkin"
 needsPackage "Polyhedra"
-
 
 ---------------------------------------------------------------------------
 -- some local functions
@@ -80,7 +80,7 @@ projectiveSpace ZZ := NormalToricVariety => d -> (
      if d < 0 then error "-- expected nonnegative integer";
      V := entries transpose (map(ZZ^d,ZZ^1, i -> -1) | map(ZZ^d,ZZ^d,1));
      F := subsets(d+1,d);
-     X := normalToricVariety(V,F),
+     X := normalToricVariety(V,F);
      return X)
 
 hirzebruchSurface = method()
@@ -113,6 +113,22 @@ NormalToricVariety ** NormalToricVariety := NormalToricVariety => (X,Y) -> (
      F := flatten table(F1,F2, (s,t) -> s|t);
      XY := normalToricVariety(V,F);
      return XY)
+
+kleinschmidt = method()
+kleinschmidt (ZZ,List) := NormalToricVariety => (d,a) -> (
+     if d < 0 then error "-- expected nonnegative integer";
+     r := #a;
+     if r >= d then error ("-- expected a list of at most " | toString(d-1)  | " elements");
+     s := d-r+1;
+     e := entries id_(ZZ^d);
+     V := apply(r, i -> e#i) | {sum(r, i -> -e#i)};
+     V = V | apply(s-1, j -> e#(r+j));
+     V = V | {sum(r, i -> a#i*e#i)- sum(s-1, j -> e#(r+j))};
+     L := toList(0..r+s);
+     F := flatten table(toList(0..r),toList(r+1..r+s), 
+	  (i,j) -> select(L, k -> i =!= k and j =!= k));
+     X := normalToricVariety(V,F);
+     return X)
 
 dim NormalToricVariety := ZZ => (cacheValue symbol dim)(X -> #(rays X)#0)
 
@@ -396,7 +412,7 @@ smoothFanoToricVariety (ZZ,ZZ) := NormalToricVariety => (d,i) -> (
      else if i === 0 then return projectiveSpace d
      else (
 	  s := (getFano())#(d,i);
-	  X := normalToricVariety(s#0,s#1, WeilToClass => matrix s#2);
+	  X := normalToricVariety(s#0,s#1, WeilToClass => transpose matrix s#2);
 	  return X))
 
 
@@ -556,9 +572,9 @@ stellarSubdivision (NormalToricVariety,List) := (X,r) -> (
      newRays := rays X | {r};
      Y := new NormalToricVariety from {
 	  symbol rays => newRays,
-	  symbol max => newMax,
+	  symbol facets => newMax,
 	  symbol cache => new CacheTable};
-     if X.cache.?halfspaces then Y.cache.halfspaces = X.cache.halfspaces;
+     Y.cache.halfspaces = X.cache.halfspaces;
      Y.cache.cones = X.cache.cones;
      Y)
 
@@ -665,7 +681,7 @@ document {
      "In this package, the fan associated to a normal ", 
      TEX ///$d$///, "-dimensional toric variety lies in the rational
      vector space ", TEX ///$\QQ^d$///, " with underlying
-     lattice ", TEX ///$N = \ZZ^d$///, ".  As a result, each
+     lattice ", TEX ///$N = {\ZZ}^d$///, ".  As a result, each
      ray in the fan is determined by the minimal nonzero lattice point
      it contains.  Each such lattice point is given as a ",
      TO2(List,"list"), " of ", TEX ///$d$///, " ", TO2(ZZ,"integers"),
@@ -908,7 +924,8 @@ document {
 	  TO weightedProjectiveSpace,
 	  TO hirzebruchSurface,
 	  TO (symbol **, NormalToricVariety, NormalToricVariety),
-	  TO smoothFanoToricVariety,	  
+	  TO smoothFanoToricVariety,
+	  TO kleinschmidt,	  
 	  TO WeilToClass
 	  },	  
      SeeAlso => {
@@ -1023,6 +1040,7 @@ document {
      SeeAlso => {
 	  normalToricVariety, 
 	  (ring,NormalToricVariety), 
+	  kleinschmidt,
 	  nef
 	  }
      }     
@@ -1116,6 +1134,55 @@ document {
           ///,
      SeeAlso => {normalToricVariety}
      }  
+
+document { 
+     Key => {kleinschmidt, 
+	  (kleinschmidt,ZZ,List)},
+     Headline => "smooth toric varieties with Picard rank two",
+     Usage => "kleinschmidt(d,a)",
+     Inputs => {
+	  "d" => ZZ => " dimension of toric variety",
+	  "a" => {" an increasing list of at most ", TT "d-1",
+	       "nonnegative integers"},
+	  },
+     Outputs => {NormalToricVariety => "a smooth toric variety with
+     	  Picard rank two"},
+     "Peter Kleinschmidt constructs (up to isomorphism) all smooth
+     normal toric varieties with dimension ", TEX ///$d$///, " and ",
+     TEX ///$d+2$///, " rays; see P. Kleinschmidt, A classification of
+     toric varieties with few generators, ", EM "Aequationes
+     Mathematicae ", STRONG "35", " (1998) 254-266.",
+     PARA{},
+     "When ", TEX ///$d=2$///, ", we obtain a variety isomorphic to a
+     Hirzebruch surface.",
+     EXAMPLE lines ///
+     	  X = kleinschmidt(2,{3});
+	  rays X
+	  max X
+	  FF3 = hirzebruchSurface 3;
+	  rays FF3
+	  max FF3
+          ///,
+     "The normal toric variety associated to the pair ",
+     TEX ///$(d,A)$///, " is Fano if and only if ", 
+     TEX ///\sum_{i=0}^{r-1} a_i < d-r+1///, ".",
+     EXAMPLE lines ///
+     	  X1 = kleinschmidt(3,{0,1});	  
+	  transpose matrix rays X1
+	  Y1 = smoothFanoToricVariety(3,3);
+	  transpose matrix rays Y1
+     	  X2 = kleinschmidt(4,{0,0});	  
+	  transpose matrix rays X2
+	  Y2 = smoothFanoToricVariety(4,9);
+	  transpose matrix rays Y2
+	  P22 = projectiveSpace(2) ** projectiveSpace(2);
+	  transpose matrix rays P22
+          ///,
+     SeeAlso => {
+	  normalToricVariety, 
+     	  hirzebruchSurface
+	  }
+     }    
 
 document { 
      Key => {smoothFanoToricVariety, 
