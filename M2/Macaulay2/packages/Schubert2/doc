@@ -7,16 +7,17 @@ Node
     Text
 
       This package supports computation in intersection theory on smooth varieties.  An @TO2{AbstractVariety,"abstract
-      variety"}@ is not given by equations.  Instead, one gives its intersection ring of algebraic cycle classes (modulo
-      either numerical equivalence or rational equivalence), its dimension, and the Chern class of its tangent bundle
-      (if known).  The intersection ring is represented as a {\em Macaulay2} @ TO2{Ring,"ring"} @, and its elements are
-      {\em Macaulay2} @ TO2{RingElement,"ring elements"} @.
+      variety"}@ is not given by equations.  Instead, one gives its graded intersection ring of algebraic cycle classes
+      (modulo either numerical equivalence or rational equivalence, and tensored with the rational numbers and perhaps
+      also with some algebra over the rational numbers), its dimension, and the Chern class of its tangent bundle (if
+      known).  The intersection ring is represented as a {\em Macaulay2} @ TO2{Ring,"ring"} @, and its elements are {\em
+      Macaulay2} @ TO2{RingElement,"ring elements"} @.
       
       An @TO2{AbstractSheaf,"abstract sheaf"}@ on an abstract variety is represented by an object of class @ TO
       AbstractSheaf @ that contains the total Chern character of the sheaf.  It should be thought of as an element of
       the Grothendieck ring of the variety tensored with the degree zero part of the intersection ring.  By the
-      Grothendieck-Riemann-Roch theorem, the Chern character provides a ring isomorphism from Grothendieck ring
-      (tensored as before) to the intersection ring.
+      Grothendieck-Riemann-Roch theorem, since we are working over the rational numbers, the Chern character provides a
+      ring isomorphism from Grothendieck ring (tensored as before) to the intersection ring.
 
       An @TO2{AbstractVarietyMap,"abstract variety map"}@ is a map between abstract varieties: the information encoded
       is the pull-back and push-forward maps between the corresponding intersection rings.
