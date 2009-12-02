@@ -1939,11 +1939,14 @@ Node
  Key
   "Examples from Schubert, translated"
  Subnodes
-  "Hilbert polynomial and Todd class of projective 3-space"
-  "Generation of formulas"
+  "Example from Schubert: Hilbert polynomial and Todd class of projective 3-space"
+  "Example from Schubert: Generation of formulas"
+  "Example from Schubert: Grassmannian of lines in P3"
+  "Example from Schubert: Lines on a quintic threefold"
+  "Example from Schubert: Conics on a quintic threefold"
 Node
  Key
-  "Hilbert polynomial and Todd class of projective 3-space"
+  "Example from Schubert: Hilbert polynomial and Todd class of projective 3-space"
  Description
   Pre
    > proj(3,h,all): factor(chi(o(n*h)));
@@ -1959,7 +1962,7 @@ Node
    todd Ph
 Node
  Key
-  "Generation of formulas"
+  "Example from Schubert: Generation of formulas"
  Description
   Pre
    > DIM:=4:
@@ -2009,9 +2012,109 @@ Node
                              3 d1  - 8 c1 d1 + 6 c1  - d2
   Example
    segre_2 Hom(exteriorPower_2 A,exteriorPower_2 B)
+Node
+ Key
+  "Example from Schubert: Grassmannian of lines in P3"
+ Description
+  Pre
+   > grass(2,4,b,all): 
+  Example
+   Gb = flagBundle({2,2}, base n, VariableNames => {,b})
+   Qb = last Gb.Bundles
+  Pre
+   > chi(Gb,Symm(n,Qb));
+                                2            3
+                               n  + 1 + 1/6 n  + 11/6 n
+  Example
+   chi symmetricPower_n Qb
+  Pre
+   > chi(Gb,o(n*b1));
+                              4        3    23   2
+                        1/12 n  + 2/3 n  + ---- n  + 7/3 n + 1
+                                            12
+  Example
+   chi OO_Gb(n*b_1)
+  Pre
+   > 
+   ## This should be a quadric in P5:
+   > 
+   > proj(5,H,all): chi(o(n*H)-o((n-2)*H));
+                              4        3    23   2
+                        1/12 n  + 2/3 n  + ---- n  + 7/3 n + 1
+                                            12
+  Example
+   P5 = projectiveSpace(5,base n,VariableName=>H)
+   chi(OO(n*H)-OO((n-2)*H))
+Node
+ Key
+  "Example from Schubert: Lines on a quintic threefold"
+ Description
+  Pre
+   # Lines on a quintic threefold.  This is the top Chern class of the 
+   # 5th symmetric power of the universal quotient bundle on the Grassmannian
+   # of lines.
+   > 
+   > grass(2,5,c):        # Lines in P^4. 
+  Example
+   Gc = flagBundle({3,2}, VariableNames => {,c})
+   (Sc,Qc) = Gc.Bundles
+  Pre
+   > B:=symm(5,Qc):       # Qc is the rank 2 quotient bundle, B its 5th 
+   >                      # symmetric power.
+  Example
+   B = symmetricPower(5,Qc)
+  Pre
+   > c6:=chern(rank(B),B):# the 6th Chern class of this rank 6 bundle.
+  Example
+   c6 = chern(rank B,B)
+  Pre
+   > integral(c6);
+                                         2875
+  Example
+   integral c6
+Node
+ Key
+  "Example from Schubert: Conics on a quintic threefold"
+ Description
+  Pre
+   # Conics on a quintic threefold. This is the top Chern class of the 
+   # quotient of the 5th symmetric power of the universal quotient on the
+   # Grassmannian of 2 planes in P^5 by the subbundle of quintic containing the 
+   # tautological conic over the moduli space of conics.
+   > 
+   > grass(3,5,c):         # 2-planes in P^4.  
+  Example
+   Gc = flagBundle({2,3}, VariableNames => {,c})
+   (Sc,Qc) = Gc.Bundles
+  Pre
+   > B:=Symm(2,Qc):        # The bundle of conics in the 2-plane. 
+  Example
+   B = symmetricPower(2,Qc)
+  Pre
+   > Proj(X,dual(B),z):    # X is the projective bundle of all conics. 
+  Example
+   X = projectiveBundle(dual B, VariableNames => {,{z}})
+  Pre
+   > A:=Symm(5,Qc)-Symm(3,Qc)&*o(-z):  # The rank 11 bundle of quintics 
+   >                                   # restricted to the universal conic. 
+  Example
+   A = symmetricPower_5 Qc - symmetricPower_3 Qc ** OO(-z)
+  Pre
+   > c11:=chern(rank(A),A):# its top Chern class.
+  Example
+   c11 = chern(rank A, A)
+  Pre
+   > lowerstar(X,c11):     # push down to G(3,5).
+  Example
+   X.StructureMap_* c11
+  Pre
+   > integral(Gc,");       # and integrate there.
+--"
+                                        609250
+  Example
+   integral oo
 -- Local Variables:
 -- mode: M2
 -- coding: utf-8
 -- compile-command: "make -C $M2BUILDDIR/Macaulay2/packages PACKAGES=Schubert2 "
 -- End:
--- keep the previous lines at the end of this file
