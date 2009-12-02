@@ -1125,9 +1125,10 @@ Node
     pt = base n
     X = projectiveSpace_2 pt
     tangentBundle X
-    symmetricPower_n oo
-    chern oo
-    ch ooo
+    F = symmetricPower_n oo
+    chern F
+    ch F
+    chi F
   SeeAlso
    (exteriorPower,ZZ,AbstractSheaf)
    (schur,List,AbstractSheaf)
