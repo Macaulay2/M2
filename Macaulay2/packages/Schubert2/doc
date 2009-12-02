@@ -43,7 +43,11 @@ Node
 	      maps.  Then we could downplay ", TO StructureMap, ".  We could also change ", TT "tangentBundle F", "
 	      so it yields the relative tangent bundle over the immediate predecessor, and let ", 
 	      TT "tangentBundle(F/point)", " serve as the notation for the absolute tangent bundle 
-	      (see ", TO "tangentBundle", ")."}
+	      (see ", TO "tangentBundle", ")."
+	      },
+	 LI {
+	      "Maybe we should distinguish between cohomology and homology."
+	      }
 	 }
    @
 -------
@@ -479,26 +483,29 @@ Node
      s:
        @ ofClass{Sequence} @ $(s_0, ..., s_{q-1})$ of length $q$ of integers, with $0 \le{} s_0 < ... < s_{q-1} < n$,
        or
-       @ ofClass{List} @  $(s_0, ..., s_{q-1})$ of length $q$ of integers, with $n-q \ge{} s_0 \ge{} ... \ge{} s_{q-1} \ge{} 0$
+       @ ofClass{List} @  $\{s_0, ..., s_{q-1}\}$ of length $q$ of integers, with $n-q \ge{} s_0 \ge{} ... \ge{} s_{q-1} \ge{} 0$
   Outputs
      c:
-       the appropriate Schubert cycle, depending on the the type of {\tt s}.
+       the appropriate {\em Schubert class} or {\em Schubert variety}, depending on the the type of {\tt s}.  See 
+       page 271 of Fulton's book, {\em Intersection Theory} for the notations.
 
-       In the case where {\tt s} is a sequence, the value returned is the class of the Schubert cycle in $F$ consisting
-       of those points corresponding to $(q-1)$-planes of $\PP(A)$ that meet $W_j$ in dimension at least $i$ with $0 \le{} i < q$, for each
-       $i$, where $j = s_i$, and where $W_i$ is the projective subspace of dimension $i$ in a fixed (complete) flag $0 =
-       W_0 \subset W_1 \subset ... \subset W_{n-1} = \PP(A)$.
+       In the case where {\tt s} is a sequence, the value returned is the {\em homology} class of the {\em Schubert variety} in
+       $ F $ consisting of those points corresponding to $(q-1)$-planes of $\PP(A)$ that meet $ W_j $ in dimension at least
+       $ i $ with $0 \le{} i < q$, for each $ i $, where $ j = s_i $, and where $ W_i $ is the projective subspace of dimension
+       $ i $ in a fixed (complete) flag $0 = W_0 \subset{} W_1 \subset{} ... \subset{} W_{n-1} = \PP(A) $.
        
-       In the case where {\tt s} is a @ ofClass List @, the class returned is
-       the one described on page 271 of Fulton's {\em Intersection Theory}.  (FILL IN DEFINITION.)
+       In the case where {\tt s} is a @ ofClass List @, the result is the corresponding {\em Schubert class} in
+       cohomology.  In {\em Schubert2} homology and cohomology are identified with each other.
+       Given a sequence $(s_0, ..., s_{q-1})$, one can convert it to a list yielding the same Schubert
+       class by the formula $ \{..., n-q+i-s_i, ...\} $.
   Description
    Example
-     base(0, Bundle=>(A, 8, a))
-     F = flagBundle ({5,3},A)
+     base(0, Bundle=>(A, n=8, a))
+     F = flagBundle ({5,q=3},A)
      CH = intersectionRing F;
-     schubertCycle((1,3,5),F)
      F_(1,3,5)
-     schubertCycle({3,2,0},F)
+     {n-q+0-1,n-q+1-3,n-q+2-5}
+     F_oo
 --------
 Node
   Key
@@ -561,6 +568,7 @@ Node
   Inputs
     d:
     A:
+     of degree length 1
     ReturnType => Type
      a type of AbstractVariety
   Outputs
