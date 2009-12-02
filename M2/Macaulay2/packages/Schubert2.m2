@@ -149,6 +149,7 @@ abstractVariety = method(TypicalValue => AbstractVariety, Options => { ReturnTyp
 abstractVariety(ZZ,Ring) := opts -> (d,A) -> (
      if A.?VarietyDimension then error "ring already in use as an intersection ring";
      if ultimate(coefficientRing,A) =!= QQ then error "expected a QQ-algebra";
+     if degreeLength A != 1 then error "expected a ring with degree length 1";
      A.VarietyDimension = d;
      net A := bydegree net;
      toString A := bydegree toString;
