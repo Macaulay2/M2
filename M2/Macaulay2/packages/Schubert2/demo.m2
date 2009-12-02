@@ -367,13 +367,10 @@ chern L
 part_3(chi L)
 assert( oo == (1/6)*D_1^3+(1/4)*D_1^2*b_1+(1/12)*D_1*b_1^2+(1/12)*D_1*b_2+(1/24)*b_1*b_2 )
 
-A0 = QQ[D,K,c_2,c_3, Degrees => {1,1,2,3}]
-A = A0/truncate(4,ideal vars A0)
-X = abstractVariety(3,A)
-L = OO(D)
-T = abstractSheaf(X,Rank=>3,ChernClass=>1-K+c_2+c_3)
-X.TangentBundle = T
-part_3(todd X * ch L)
+X = abstractVariety(3,QQ[K,c_2,c_3, Degrees => {1..3}][D,Join=>false])
+X.TangentBundle = abstractSheaf(X,Rank=>3,ChernClass=>1-K+c_2+c_3)
+integral intersectionRing X := part_3;
+chi OO(D)
 assert( oo == (1/6)*D^3-(1/4)*D^2*K+(1/12)*D*K^2+(1/12)*D*c_2-(1/24)*K*c_2 )
 
 ---- #-------------------------------------------------------------------------
