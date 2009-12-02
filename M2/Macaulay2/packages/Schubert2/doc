@@ -31,6 +31,7 @@ Node
     "The Horrocks-Mumford bundle"
     "Riemann-Roch on a curve"
     "Riemann-Roch on a surface"
+    "Riemann-Roch without denominators"
     "Examples from Schubert, translated"
     "Ideas for future development"
     :methods not involving something exported by this package:
@@ -808,6 +809,25 @@ Node
     chern S
 --------
 Node
+ Key
+  (symbol ..,ChernClassVariable,ChernClassVariable)
+ Headline
+  generate a sequence of Chern class variables
+ Usage
+  v .. w
+ Inputs
+  v:
+   equal to @ TT "chern_i E" @, say
+  w:
+   equal to @ TT "chern_j E" @, say
+ Outputs
+  :Sequence
+   the sequence whose elements are the Chern class variables @ TT "chern_k E" @ as k ranges from i to j
+ Description
+  Example
+   chern_1 E .. chern_10 E
+--------
+Node
   Key
     (chi,AbstractSheaf)
     chi
@@ -1090,6 +1110,25 @@ Node
   SeeAlso
    (exteriorPower,ZZ,AbstractSheaf)
    (symmetricPower,RingElement,AbstractSheaf)
+--------
+Node
+ Key
+  (exteriorPower,AbstractSheaf)
+ Usage
+  exteriorPower F
+ Headline
+  alternating sum of exterior powers
+ Inputs
+  F:
+   which should be {\em effective}
+ Outputs
+  :
+ Description
+  Example
+   base(7, Bundle => (E,4,c))
+   E
+   exteriorPower E
+   chern oo
 --------
 Node
   Key
@@ -2322,7 +2361,23 @@ Node
     factor p_a (n*h)
     Z = projectiveSpace_1( use projectiveSpace_1 base(m,n), VariableName => k)
     factor p_a (m*h + n*k)
--- Local Variables:
+-------
+Node
+ Key
+  "Riemann-Roch without denominators"
+ Description
+  Text
+   We display some of the universal polynomials described in Lemma 15.3 of Fulton's book, {\em Intersection Theory}.
+  Example
+    f = (n,d,e) -> (
+	X = base(n, 
+	     Bundle => (symbol D,d,chern_1 symbol D .. chern_d symbol D),
+	     Bundle => (symbol E,e,chern_1 symbol E .. chern_e symbol E));
+	p := chern(exteriorPower dual D * E) - 1;
+	assert( p % ctop D == 0 );
+	p // ctop D );
+    n = 4;
+    for d from 1 to 3 do for e from 1 to 4 do << endl << "d=" << d << " e=" << e << " P(D,E) = " << f(n,d,e) << endl
 -- mode: M2
 -- coding: utf-8
 -- compile-command: "make -C $M2BUILDDIR/Macaulay2/packages PACKAGES=Schubert2 "
