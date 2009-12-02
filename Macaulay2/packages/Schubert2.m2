@@ -289,6 +289,9 @@ expression ChernClassVariable := c -> new FunctionApplication from {new Subscrip
 net ChernClassVariable := net @@ expression
 toString ChernClassVariable := toString @@ expression
 
+installMethod(symbol _, OO, RingElement, AbstractSheaf => (OO,D) -> (
+	  if D != 0 and degree D != {1} then error "expected a cycle class of degree 1 (a divisor class)";
+	  1 - OO_(variety D)(-D)))
 installMethod(symbol _, OO, AbstractVariety, AbstractSheaf => 
      (OO,X) -> (
 	  A := intersectionRing X;
@@ -338,6 +341,7 @@ AbstractSheaf ^** QQ := AbstractSheaf ^** RingElement := AbstractSheaf => (E,n) 
 rank AbstractSheaf := RingElement => E -> E.cache.rank
 variety AbstractSheaf := AbstractVariety => E -> E.AbstractVariety
 variety Ring := AbstractVariety => R -> R.Variety
+variety RingElement := AbstractVariety => r -> variety ring r
 
 tangentBundle FlagBundle := (stashValue TangentBundle) (FV -> tangentBundle FV.Base + tangentBundle FV.StructureMap)
 

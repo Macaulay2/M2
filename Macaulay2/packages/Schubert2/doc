@@ -29,8 +29,14 @@ Node
     "Lines on hypersurfaces"
     "Conics on a quintic threefold"
     "The Horrocks-Mumford bundle"
+    "Riemann-Roch on a curve"
+    "Riemann-Roch on a surface"
     "Examples from Schubert, translated"
     "Ideas for future development"
+    :methods not involving something exported by this package:
+    (symbol _, OO, RingElement)
+    (variety, RingElement)
+    (symbol SPACE,OO,RingElement)
 --------
 Node
  Key
@@ -584,8 +590,9 @@ Node
     display monomials of higher degree further to the right, parenthesizing multiple
     terms of the same degree.
    Item
-    A default method for integration of elements of {\tt A} is installed, which returns
-    the degree {\tt d} part of the element.
+    A default method for integration of elements of {\tt A} is installed, which returns the degree {\tt d} part of the
+    element; the other parts would die anyway under another method for integration.  Formulas produced using the default
+    integration method should be interpreted as requiring one further integration.
   Description
     Example
       X = abstractVariety(3, QQ[c,d,Degrees=>{1,2}])
@@ -1608,6 +1615,46 @@ Node
     chi oo
 --------
 Node
+ Key
+  (symbol _,OO,RingElement)
+ Headline
+  the abstract structure sheaf of a divisor class
+ Usage
+  OO_D
+ Inputs
+  D:
+   of degree 1, representing a divisor class on an abstract variety
+ Outputs
+  :
+   the abstract sheaf $O_D$, defined as $1 - O(-D)$
+ Description
+  Example
+   X = PP^4
+   h
+   F = OO_h
+   chern F
+   ch F
+--------
+Node
+ Key
+  (variety,RingElement)
+ Headline
+  get the variety of a cycle class
+ Usage
+  variety c
+ Inputs
+  c:
+   contained in the intersection ring of an abstract variety $X$, say
+ Outputs
+  :
+    $X$
+ Description
+  Example
+   X = PP^4
+   h
+   variety h
+--------
+Node
   Key
    (symbol _,OO,AbstractVariety)
   Headline
@@ -2238,6 +2285,43 @@ Node
    Ans =  2734099200
   Example
    integral chern A
+-------
+Node
+ Key
+  "Riemann-Roch on a curve"
+ Description
+  Text
+   We follow Example 15.2.1 of Fulton's book, {\em Intersection Theory}.
+  Example
+    X = abstractVariety(1,QQ[r,s,e_1,f_1,D,K,Degrees=>{2:0,4:1}])
+    X.TangentBundle = abstractSheaf(X,Rank=>1,ChernClass=>1-K)
+    chi OO_X
+    chi OO(D)
+    E = abstractSheaf(X,Rank => r, ChernClass => 1+e_1)
+    F = abstractSheaf(X,Rank => s, ChernClass => 1+f_1)
+    chi Hom(E,F)
+-------
+Node
+ Key
+  "Riemann-Roch on a surface"
+ Description
+  Text
+   We follow Example 15.2.2 of Fulton's book, {\em Intersection Theory}.
+  Example
+    X = abstractVariety(2,QQ[r,D,d_1,K,c_2,d_2,Degrees=>{0,3:1,2:2}])
+    X.TangentBundle = abstractSheaf(X,Rank=>2,ChernClass=>1-K+c_2)
+    todd X
+    chi OO_X
+    E = abstractSheaf(X,Rank => r, ChernClass => 1+d_1+d_2)
+    chi E - rank E * chi OO_X
+    chi OO(D) - chi OO_X
+    chi OO_D
+    p_a = D -> 1 - chi OO_D;
+    p_a D
+    Y = projectiveSpace_2 base n
+    factor p_a (n*h)
+    Z = projectiveSpace_1( use projectiveSpace_1 base(m,n), VariableName => k)
+    factor p_a (m*h + n*k)
 -- Local Variables:
 -- mode: M2
 -- coding: utf-8
