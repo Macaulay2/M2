@@ -1946,6 +1946,7 @@ Node
    Here we present some examples from the Schubert documentation, translated line by line
    into {\em Schubert2} code.
  Subnodes
+  :Examples from Schubert's documentation
   "Example from Schubert: Hilbert polynomial and Todd class of projective 3-space"
   "Example from Schubert: Generation of formulas"
   "Example from Schubert: Grassmannian of lines in P3"
@@ -1954,6 +1955,8 @@ Node
   "Example from Schubert: Count the number of space conics intersecting 8 given lines"
   "Example from Schubert: Euler characteristic of Horrocks-Mumford bundle"
   "Example from Schubert: Riemann-Roch formulas"
+  :Other examples
+  "Example from Schubert: The number of elliptic cubics on a sextic 4-fold"
 Node
  Key
   "Example from Schubert: Hilbert polynomial and Todd class of projective 3-space"
@@ -2178,6 +2181,37 @@ Node
           integral(X, 1/6 D  - 1/4 K D  + (1/12 K  + 1/12 c2) D - 1/24 K c2)
   Example
    chi OO(D)
+Node
+ Key
+  "Example from Schubert: The number of elliptic cubics on a sextic 4-fold"
+ Description
+  Text
+   We thank Rahul Pandharipande for this classic Schubert example.  See
+   @ HREF{ "http://arxiv.org/abs/math/0702189", "Enumerative Geometry of Calabi-Yau 4-Folds"}  @.
+  Pre
+   > grass(3,6,c):
+  Example
+   Gc = flagBundle({3,3}, VariableNames => {,c})
+   (Sc,Qc) = Gc.Bundles
+  Pre
+   > B:=Symm(3,Qc):
+  Example
+   B = symmetricPower_3 Qc
+  Pre
+   > Proj(X,dual(B),z):
+  Example
+   X = projectiveBundle(dual B, VariableNames => {,{z}})
+  Pre
+   > A:=Symm(6,Qc)-Symm(3,Qc)&@o(-z):
+  Example
+   A = symmetricPower_6 Qc - symmetricPower_3 Qc ** OO(-z)
+  Pre
+   > c18:=chern(rank(A),A):
+   > lowerstar(X,c18):
+   > integral(Gc,%);
+   Ans =  2734099200
+  Example
+   integral chern A
 -- Local Variables:
 -- mode: M2
 -- coding: utf-8
