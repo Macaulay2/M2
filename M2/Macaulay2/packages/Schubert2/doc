@@ -332,30 +332,47 @@ Node
   Usage
     X = base()
     X = base(p)
-    X = base(n,p)
-    X = base(n,p,...,Bundle=>(A,r,a),...)
+    X = base(d,p)
+    X = base(d,p,...,Bundle=>(B,r,b),...)
   Inputs
-    n:ZZ
+    d:ZZ
       if omitted, the value $0$ is used
     p:Symbol
-    A:Symbol
+    B:Symbol
     r:ZZ
-    a:Symbol
+    b:
+      either @ ofClass Symbol @ or @ ofClass List @ of @ TO2{Symbol,"symbols"} @, 
+      @ TO2{IndexedVariable,"indexed variables"} @, or @ TO2{ChernClassVariable,"Chern class variables"} @ 
   Outputs
     :AbstractVariety
-      a variety of dimension $n$, with variables $p$, ..., in its intersection ring,
-      usable as (integer) variables in intersection ring computations,
-      and with variables $a_1, ..., a_r$ representing the Chern classes of a bundle
-      of rank $r$ assigned to the symbol $A$, and so on, for each bundle specification given
+      a variety of dimension $d$ with an intersection ring containing specified variables
+      and specified Chern classes of abstract sheaves
+  Consequences
+   Item
+    Variables $p$, ..., of degree 0 are in the intersection ring of the variety.
+    They are usable as (integer) variables (auxiliary parameters) in intersection ring computations.
+   Item
+    For each option {\tt Bundle=>(B,r,b)}, an abstract sheaf of rank {\tt r} is created and assigned to the variable {\tt B}.
+    If {\tt b} is a symbol, then the Chern classes of $B$ are assigned to
+    the indexed variables @ TT "b_1, ..., b_k" @, where $k = min(r,d)$.
+    If {\tt b} is a list of length $k$, then the Chern classes are assigned to its elements.
   Description
+   Text
+    First we make a base variety and illustrate a computation with its two abstract sheaves:
    Example
-     X = base(1,p,q,Bundle =>(A,1,a), Bundle => (B,1,b))
+     S = base(2,p,q,Bundle =>(A,1,a), Bundle => (B,2,{b1,b2}))
+     intersectionRing S
+     degrees oo
+     chern (A*B)
+   Text
+    Then we make a projective space over it and use the auxiliary parameters {\tt p} and {\tt q} in a computation
+    that checks the projection formula.
+   Example
+     X = projectiveSpace(3,S,VariableName => H)
      intersectionRing X
-     Y = projectiveSpace(3,X,VariableName => H)
-     intersectionRing Y
-     f = Y.StructureMap
-     x = chern f_* (f^* OO_X(p*a_1) * OO_Y(q*H))
-     y = chern f_* OO_Y((f^*(p*a_1))+q*H)
+     f = X.StructureMap
+     x = chern f_* (f^* OO_S(p*a_1) * OO_X(q*H))
+     y = chern f_* OO_X((f^*(p*a_1))+q*H)
      x == y
   SeeAlso
     projectiveSpace
