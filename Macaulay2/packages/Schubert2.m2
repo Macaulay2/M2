@@ -288,6 +288,9 @@ value ChernClassVariable := c -> if chernClassValues#?c then chernClassValues#c 
 expression ChernClassVariable := c -> new FunctionApplication from {new Subscript from {symbol c,c#0}, c#1}
 net ChernClassVariable := net @@ expression
 toString ChernClassVariable := toString @@ expression
+ChernClassVariable .. ChernClassVariable := (a,b) -> (
+     if a#1 =!= b#1 then error "expected Chern class variables based on the same symbol";
+     apply(a#0 .. b#0, i -> new ChernClassVariable from {i,a#1} ))
 
 installMethod(symbol _, OO, RingElement, AbstractSheaf => (OO,D) -> (
 	  if D != 0 and degree D != {1} then error "expected a cycle class of degree 1 (a divisor class)";
@@ -312,7 +315,7 @@ AbstractSheaf ^ ZZ := AbstractSheaf => (E,n) -> new AbstractSheaf from {
      ChernCharacter => n * E.ChernCharacter,
      symbol cache => new CacheTable from {
      	  global rank => E.cache.rank * n,
-	  if E.cache.?ChernClass then ChernClass => E.cache.ChernClass ^ n
+	  if E.cache.?ChernClass and n >= 0 then ChernClass => E.cache.ChernClass ^ n
 	  }
      }
 
@@ -620,6 +623,11 @@ exteriorPower(ZZ, AbstractSheaf) := AbstractSheaf => opts -> (n,E) -> (
      if 2*n > rank E then return det(E) ** dual exteriorPower(rank E - n, E);
      wedge := computeWedges(n,ch E);
      abstractSheaf(variety E, ChernCharacter => wedge#n)
+     )
+
+exteriorPower AbstractSheaf := AbstractSheaf => opts -> (E) -> (
+     -- really only makes sense if E is "effective"
+     sum for i from 0 to rank E list (-1)^i * exteriorPower(i,E)
      )
 
 symmetricPower(RingElement, AbstractSheaf) := AbstractSheaf => (n,F) -> (
