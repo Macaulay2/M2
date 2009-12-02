@@ -153,6 +153,7 @@ abstractVariety(ZZ,Ring) := opts -> (d,A) -> (
      net A := bydegree net;
      toString A := bydegree toString;
      if not ancestor(AbstractVariety,opts#ReturnType) then error "expected value of ReturnType option to be a type of AbstractVariety";
+     integral A := part_d;
      A.Variety = new opts#ReturnType from { global dim => d, IntersectionRing => A })
 
 tangentBundle = method(TypicalValue => AbstractSheaf)
@@ -223,11 +224,19 @@ base Sequence := args -> (
 	       else if instance(x,RingElement) then newvr(baseName x,0)
 	       else if instance(x,Option) and #x==2 and x#0 === Bundle and instance(x#1,Sequence) and #x#1== 3 then (
 		    (B,n,b) := x#1;
+		    nd := min(n,d);
 		    if not instance(n,ZZ) then oops x;
      		    if d === null then d = 0;
-		    b = goodsym b;
-		    vrs = (vrs,apply(1..min(n,d),i->b_i));
-		    degs = (degs,1..min(n,d));
+		    if instance(b,VisibleList) then (
+			 if length b != nd then error("expected ",toString nd," variables for the Chern classes of ",toString B);
+			 b = apply(toSequence b, goodvar);
+			 )
+		    else (
+		    	 b = goodsym b;
+			 b = apply(1..nd,i->b_i);
+			 );
+		    vrs = (vrs,b);
+		    degs = (degs,1..nd);
 		    B = goodvar B;
 		    newbdl (B,n,b);
 		    )
@@ -246,7 +255,7 @@ base Sequence := args -> (
      integral intersectionRing X := identity;		    -- it's the base; user can replace it
      X#"bundles" = apply(bdls,(B,n,b) -> (
 	       globalReleaseFunction(B,value B);
-	       B <- abstractSheaf(X, Name => B, Rank => n, ChernClass => 1_A + sum(1 .. min(n,d), i -> A_(b_i)));
+	       B <- abstractSheaf(X, Name => B, Rank => n, ChernClass => 1_A + sum(1 .. min(n,d), i -> A_(b#(i-1))));
 	       globalAssignFunction(B,value B);
 	       (B,value B)));
      X.args = args;

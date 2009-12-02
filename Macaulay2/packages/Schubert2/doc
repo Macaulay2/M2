@@ -558,6 +558,9 @@ Node
     methods for converting its elements to strings and nets are replaced by methods that
     display monomials of higher degree further to the right, parenthesizing multiple
     terms of the same degree.
+   Item
+    A default method for integration of elements of {\tt A} is installed, which returns
+    the degree {\tt d} part of the element.
   Description
     Example
       X = abstractVariety(3, QQ[c,d,Degrees=>{1,2}])
@@ -1938,12 +1941,19 @@ Node
 Node
  Key
   "Examples from Schubert, translated"
+ Description
+  Text
+   Here we present some examples from the Schubert documentation, translated line by line
+   into {\em Schubert2} code.
  Subnodes
   "Example from Schubert: Hilbert polynomial and Todd class of projective 3-space"
   "Example from Schubert: Generation of formulas"
   "Example from Schubert: Grassmannian of lines in P3"
   "Example from Schubert: Lines on a quintic threefold"
   "Example from Schubert: Conics on a quintic threefold"
+  "Example from Schubert: Count the number of space conics intersecting 8 given lines"
+  "Example from Schubert: Euler characteristic of Horrocks-Mumford bundle"
+  "Example from Schubert: Riemann-Roch formulas"
 Node
  Key
   "Example from Schubert: Hilbert polynomial and Todd class of projective 3-space"
@@ -2113,6 +2123,61 @@ Node
                                         609250
   Example
    integral oo
+Node
+ Key
+  "Example from Schubert: Count the number of space conics intersecting 8 given lines"
+ Description
+  Pre
+   > grass(3,4,d,all):
+  Example
+   Gd = flagBundle({1,3}, VariableNames => {,d})
+   (Sd,Qd) = Gd.Bundles
+  Pre
+   > Proj(f,dual(symm(2,Qd)),e):
+  Example
+   f = projectiveBundle(dual symmetricPower_2 Qd, VariableNames => {,{e}})
+  Pre
+   > integral(Gd,lowerstar(f,(2*d1+e)^8));
+                                          92
+  Example
+   integral (2*d_1 + e)^8
+Node
+ Key
+  "Example from Schubert: Euler characteristic of Horrocks-Mumford bundle"
+ Description
+  Pre
+   > proj(4,h,tang):            # need tangentbundle for chi
+  Example
+   X = projectiveSpace(4,base n,VariableName => h)
+  Pre
+   > F:=sheaf(2,[5*h,10*h^2]):  # defines the Horrocks-Mumford bundle
+  Example
+   F = abstractSheaf(X, Rank => 2, ChernClass => 1 + 5*h + 10*h^2)
+  Pre
+   > chi(F&*o(n*h));            # computes chi of its twists
+                             4        3   125  2
+                       1/12 n  + 5/3 n  + --- n  + 125/6 n + 2
+                                           12
+  Example
+   chi (F ** OO(n*h))
+Node
+ Key
+  "Example from Schubert: Riemann-Roch formulas"
+ Description
+  Pre
+   # Line bundle O(D) on a threefold.
+   > 
+   > variety(X,dim=3,tan=sheaf(3,[-K,c2,c3])): # traditionally, -K is 
+   >                                           # used instead of c1
+  Example
+   X = abstractVariety(3,QQ[K,c_2,c_3, Degrees => {1..3}][D,Join=>false])
+   X.TangentBundle = abstractSheaf(X,Rank=>3,ChernClass=>1-K+c_2+c_3)
+  Pre
+   > chi(o(D));
+                           3          2          2
+          integral(X, 1/6 D  - 1/4 K D  + (1/12 K  + 1/12 c2) D - 1/24 K c2)
+  Example
+   chi OO(D)
 -- Local Variables:
 -- mode: M2
 -- coding: utf-8
