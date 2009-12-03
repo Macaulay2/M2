@@ -572,9 +572,9 @@ stellarSubdivision (NormalToricVariety,List) := (X,r) -> (
      newRays := rays X | {r};
      Y := new NormalToricVariety from {
 	  symbol rays => newRays,
-	  symbol facets => newMax,
+	  symbol max => newMax,
 	  symbol cache => new CacheTable};
-     Y.cache.halfspaces = X.cache.halfspaces;
+     if X.cache.?halfspaces then Y.cache.halfspaces = X.cache.halfspaces;
      Y.cache.cones = X.cache.cones;
      Y)
 
