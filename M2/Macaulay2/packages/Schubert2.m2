@@ -82,8 +82,27 @@ AbstractVarietyMap#{Standard,AfterPrint} = f -> (
      << concatenate(interpreterDepth:"o") << lineNumber << " : "
      << "a map to " << target f << " from " << source f << endl;
      )
+AbstractVarietyMap * AbstractVarietyMap := AbstractVarietyMap => (f,g) -> new AbstractVarietyMap from {
+     symbol source => source g,
+     symbol target => target f,
+     PullBack => g.PullBack @@ f.PullBack,
+     PushForward => f.PushForward @@ g.PushForward,	    -- may not be efficient
+     SectionClass => g.SectionClass * g.PullBack f.SectionClass
+     }
 
-map(FlagBundle,AbstractVarietyMap,List) := x -> notImplemented()
+map(FlagBundle,AbstractVarietyMap,List) := AbstractVarietyMap => x -> notImplemented()
+map(FlagBundle,AbstractVariety,List) := AbstractVarietyMap => x -> notImplemented()
+AbstractVariety#id = (X) -> new AbstractVarietyMap from {
+     symbol source => X,
+     symbol target => X,
+     Pullback => id_(intersectionRing X),
+     PushForward => identity,
+     SectionClass => 1_(intersectionRing X)
+     }
+AbstractVariety / AbstractVariety := AbstractVarietyMap => (X,S) -> (
+     maps := while X =!= S and X.?StructureMap list (f := X.StructureMap; X = target f; f);
+     if #maps == 0 then id_X
+     else fold(maps,(f,g) -> f * g))
 
 sectionClass = method(TypicalValue => RingElement)
 sectionClass AbstractVarietyMap := f -> f.SectionClass

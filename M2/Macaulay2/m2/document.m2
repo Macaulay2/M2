@@ -1194,7 +1194,7 @@ documentationValue(Symbol,Package) := (s,pkg) -> if pkg =!= Core then (
 		    ) 
 	       and isDocumentableMethod i)
 	  then i
-	  else if (instance(i,Keyword) or instance(i,Function)) and isDocumentableMethod (i,value T)
+	  else if (instance(i,Keyword) or instance(i,Function) or instance(i,ScriptedFunctor)) and isDocumentableMethod (i,value T)
 	  then (i,value T)
 	  else continue);
      c := select(e,x -> instance(value x,Symbol));	    -- symbols

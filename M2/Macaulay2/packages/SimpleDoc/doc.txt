@@ -140,11 +140,13 @@ Node
     subsections, each of which corresponds to one input or output value.  The
     first line of each subsection contains the name of the variable
     corresponding to it, as referred to in the usage line, a colon, and the
-    type of the variable.  For example, the first line might be {\tt s:String}.
-    The variable name and type are both optional.  (For optional inputs, one
-    puts the name of the option, a double arrow, and the expected type of value;
-    for example, the first line might be {\tt Precision => ZZ}.)  Subsequent lines of the
-    subsection, indented further, describe the variable and may include markup.
+    type of the variable.  The name of the variable must be a nonempty string
+    of alphanumeric characters or quotation marks.  For example, the first line
+    might be {\tt s2:String}.  The variable name and type are both optional.
+    (For optional inputs, one puts the name of the option, a double arrow, and
+    the expected type of value; for example, the first line might be {\tt
+    Precision => ZZ}.)  Subsequent lines of the subsection, indented further,
+    describe the variable and may include markup.
 
     Markup allowed includes many TeX commands, as allowed in @TO TEX@; for
     details and examples see @TO (html,TEX)@, allowing various mathematical

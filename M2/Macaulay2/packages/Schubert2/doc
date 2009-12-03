@@ -50,7 +50,8 @@ Node
 	      maps.  Then we could downplay ", TO StructureMap, ".  We could also change ", TT "tangentBundle F", "
 	      so it yields the relative tangent bundle over the immediate predecessor, and let ", 
 	      TT "tangentBundle(F/point)", " serve as the notation for the absolute tangent bundle 
-	      (see ", TO "tangentBundle", ")."
+	      (see ", TO "tangentBundle", ").  We could also adopt the notation ", TT "OO_(F/S)(n)", " for
+	      tautological sheaves."
 	      },
 	 LI {
 	      "Maybe we should distinguish between cohomology and homology."
@@ -2382,15 +2383,19 @@ Node
 Node
  Key
   (map,FlagBundle,AbstractVarietyMap,List)
+  (map,FlagBundle,AbstractVariety,List)
  Headline
   make a map from an abstract variety to a flag bundle
  Usage
   map(F,f,b)
+  map(F,X,b)
  Inputs
   F:
    over a variety {\tt S}, of the form $flagBundle(\{r_0, ..., r_{n-1}\},E)$, say, where $E$ is an abstract sheaf on $S$
-  f:
-   from a variety $X$, say, to $S$
+  :
+   {\tt f}, @ ofClass AbstractVarietyMap @ from a variety $X$, say, to $S$;
+   or
+   {\tt X}, @ ofClass AbstractVariety @, with a structure map $f : X \rightarrow{} S$
   b:
    of the form $\{B_0,...B_{n-1}\}$ whose elements are abstract sheaves on {\tt X}, with $rank B_i = r_i$, for each i.
    The sheaves should be {\em effective} in the sense that $c_j B_i = 0$ for $j > r_i$.
@@ -2410,6 +2415,60 @@ Node
  Description
   Text
    Not implemented yet.
+-------
+Node
+ Key
+  (symbol /,AbstractVariety,AbstractVariety)
+ Headline
+  get a structure map
+ Usage
+  X/S
+ Inputs
+  X:
+  S:
+ Outputs
+  :
+   the structure map or composition of structure maps $X \rightarrow{} S$
+ Description
+  Text
+   Not implemented yet.
+--
+Node
+ Key
+  (id, AbstractVariety)
+ Headline
+  the identity map of an abstract variety
+ Usage
+  id_X
+ Inputs
+  X:
+ Outputs
+  :
+   the identity map from {\tt X} to itself
+ Description
+  Example
+   X = PP^4
+   id_X
+---
+Node
+ Key
+  (symbol *,AbstractVarietyMap,AbstractVarietyMap)
+ Headline
+  composition of maps of abstract varieties
+ Usage
+  g*f
+ Inputs
+  g:
+  f:
+ Outputs
+  :
+   the compostion of {\tt g} and {\tt f}
+ Description
+  Example
+   X = projectiveSpace_3 point
+   Y = projectiveSpace_4 X
+   Y.StructureMap
+   X.StructureMap * Y.StructureMap
 -- mode: M2
 -- coding: utf-8
 -- compile-command: "make -C $M2BUILDDIR/Macaulay2/packages PACKAGES=Schubert2 "
