@@ -644,7 +644,7 @@ symmetricPower(RingElement, AbstractSheaf) := AbstractSheaf => (n,F) -> (
      h := local h;
      PF := projectiveBundle(F, VariableNames => h);
      f := PF.StructureMap;
-     abstractSheaf(X, f_*(part(0,dim X,ch OO_PF(n) * todd f))))
+     abstractSheaf(X, f_*(part(0,dim PF,ch OO_PF(n) * todd f))))
 
 symmetricPower(ZZ, AbstractSheaf) := 
 symmetricPower(QQ, AbstractSheaf) := AbstractSheaf => (n,E) -> (

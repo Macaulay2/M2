@@ -114,7 +114,8 @@ chi (det Qb)^**n
 factor oo
 p = Gb.StructureMap
 p_* (det Qb)^**n
-assert( (n-2)*(n^3-18*n^2+71*n-6)*(1/12) == chi (det Qb)^**n )
+chi (det Qb)^**n
+assert( 1/12*n^4+2/3*n^3+23/12*n^2+7/3*n+1 == oo )
 
 ---- > 
 ---- ## This should be a quadric in P5:
