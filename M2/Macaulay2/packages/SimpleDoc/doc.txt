@@ -15,6 +15,11 @@ Node
    expecting the least indented keyword to be {\bf Node}, which can occur
    multiple times.  The text following each such keyword is handled just as by @
    TO doc @, resulting in a documentation node.
+ Description
+  Text
+   Here is the input submitted to @ TO multidoc @ to document (most of) this package:
+  Code
+   EXAMPLE { PRE concatenate between("\n", lines get(SimpleDoc#"source directory" | "SimpleDoc/doc.txt")) }
 Node
   Key
     packageTemplate
@@ -178,15 +183,8 @@ Node
      ourfcn ZZ := (n) -> (
          n+1)
      ourfcn 3
-
-   Text
-    Here is the text used to create this file:
-   Code
-     EXAMPLE { 
-	  PRE concatenate between("\n", select(
-	       lines get(first searchPath "SimpleDoc/doc.txt" | "SimpleDoc/doc.txt"),
-	       p -> not match("^--",p)))}
   SeeAlso
+    multidoc
     document
     "docExample"
     "docTemplate"
