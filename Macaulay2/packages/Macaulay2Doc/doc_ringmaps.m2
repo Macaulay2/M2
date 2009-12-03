@@ -133,22 +133,29 @@ document {
 		 ofClass Expression, " over a ring ", TT "R"},
 	  "v" => {ofClass Ring, ", ",
 	       ofClass Matrix, ", ",
-	       ofClass Option, ", or a list of options: variable => value"}
+	       ofClass Option, ", or ", ofClass List, " of ", TO2{Option,"options"}}
 	  },
      Outputs => {
 	  {"An object of the same sort as ", TT "f", ", obtained by substituting values for
 	  the variables in the ring ", TT "R", " of ", TT "f", " using ", TT "v", "."}
 	  },
-     "A convenient abbreviation for ", TO "substitute", " is ", TT "sub", ".",
-     PARA{},
+     PARA{
+	  "A convenient abbreviation for ", TO "substitute", " is ", TT "sub", "."
+	  },
      "This function allows you to substitute values for some variables.  There are three ways to describe
      the kind of substitution, depending on the second argument ", TT "v", ".",
      UL {
-	  "give specific values for (some of) the variables",
-	  "give a matrix, the entries determines the values of each of the variables",
-	  "give a ring, the effect will be to substitute variables with variables of the same name, into this new ring"
+	  LI {
+	       "give specific values for (some of) the variables.  An option ", TT "x=>r", " specifies that a generator
+	       ", TT "x", " should be replaced by the ring element ", TT "r", ".  Generators not mentioned will be preserved."
+	       },
+	  LI {
+	       "give a matrix, the entries determines the values of each of the variables"
+	       },
+	  LI {
+	       "give a ring, the effect will be to substitute variables with variables of the same name, into this new ring"
+	       }
 	  },
-     PARA{},
      EXAMPLE lines ///
           A = QQ[a..f]; B = QQ[a..d]; C = ZZ/101[x,y];
 	  F = 3*a^2-b-d+101*c
@@ -183,7 +190,6 @@ document {
      EXAMPLE lines ///
           sub(1/3*a*b, {a=>1_QQ, b=>1, c=>1, d=>1})	  
           ///,
-     PARA{},
      "If ", TT "f", " is an ideal or a submodule of a free module over ", TT "R", ", then substitution amounts to substitution
      in the matrix of generators of ", TT "f", ".  This is
      not the same as tensor product!",
@@ -200,7 +206,6 @@ document {
      	  M' = prune M
 	  N' = coker substitute(presentation M', {a=>b+c,c=>1})
      	  ///,
-     PARA{},
      "Unevaluated expressions (i.e. from ", TO hilbertSeries, ") may also
      have variables substituted in all of the ways mentioned so far.",
      EXAMPLE lines ///
@@ -215,12 +220,14 @@ document {
 	  value oo
 	  oo == value sub(hf1, T=>a)
      	  ///,
-     PARA{},
-     "If you plan on using the same substitution over and over, it is
-     wise to create a ring map that will perform the same substitution.",
-     PARA{},
-     "For example, in the first example above, we can make ", ofClass RingMap, " ", TT "G", ", and then apply 
-     it to ", TT "F", ".",
+     PARA{
+	  "If you plan on using the same substitution over and over, it is
+	  wise to create a ring map that will perform the same substitution.",
+	  },
+     PARA{
+	  "For example, in the first example above, we can make ", ofClass RingMap, " ", TT "G", ", and then apply 
+	  it to ", TT "F", ".",
+	  },
      EXAMPLE lines ///
      	  use B;
      	  G = map(B,B,{a=>1, b=>b^4})
