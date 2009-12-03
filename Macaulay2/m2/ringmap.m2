@@ -331,16 +331,19 @@ sub2 = (S,R,v) -> (
      A := R;
      while try (A = coefficientRing A; true) else false
      do m = join(m, generators A);
-     h := hashTable apply(#m, i -> m#i => i);
-     if #h < #m then error "not all generators of the ring are distinct";
+     h := new MutableHashTable;
+     for i from 0 to #m-1 do h#(m#i) = if h#?(m#i) then (h#(m#i),i) else 1:i;
+     h = new HashTable from apply(pairs h, (x,i) -> (x,deepSplice i));
      m = new MutableList from (#m:symbol m);
-     scan(v, opt -> (
-	       if class opt =!= Option or #opt =!= 2 then error "expected a list of options";
-	       x := opt#0;
-	       y := opt#1;
-	       if not h#?x then error( "expected ", toString x, " to be a generator of ", toString R );
-	       m#(h#x) = y)
-	  );
+     for opt in v do (
+	  if class opt =!= Option or #opt =!= 2 then error "expected a list of options";
+	  x := opt#0;
+	  y := opt#1;
+	  if not h#?x then error( "expected ", toString x, " to be a generator of ", toString R );
+	  for i in h#x do (
+	       if m#i =!= symbol m and m#i =!= y then error "multiple destinations specified for a generator";
+	       m#i = y;
+	       ));
      if any(m,x -> x === symbol m) then error "destinations not specified for every generator";
      f := if S === null then matrix{toList m} else matrix(S,{toList m});
      map(ring f,R,f))
