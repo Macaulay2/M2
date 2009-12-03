@@ -2378,6 +2378,32 @@ Node
 	p // ctop D );
     n = 4;
     for d from 1 to 3 do for e from 1 to 4 do << endl << "d=" << d << " e=" << e << " P(D,E) = " << f(n,d,e) << endl
+-------
+Node
+ Key
+  (map,FlagBundle,AbstractVarietyMap,List)
+ Headline
+  make a map from an abstract variety to a flag bundle
+ Usage
+  map(F,f,b)
+ Inputs
+  F:
+   over a variety {\tt S}, of the form $flagBundle(\{r_0, ..., r_{n-1}\},E)$, say, where $E$ is an abstract sheaf on $S$
+  f:
+   from a variety $X$, say, to $S$
+  b:
+   of the form $\{B_0,...B_{n-1}\}$ whose elements are abstract sheaves on {\tt X}, with $rank B_i = r_i$, for each i.
+   The sheaves should be {\em effective} in the sense that $c_j B_i = 0$ for $j > r_i$.
+   The sum of the sheaves should equal $f^* E$; alternatively, one of them can be omitted and it will be deduced from
+   the condition on the sum.
+ Outputs
+  :AbstractVarietyMap
+   the map of abstract varieties $g : X \rightarrow{} F$ over $S$ such that $g^* (E_{i+1}/E_i) = B_i$, for each i, where 
+   $0 = E_0 \subseteq{} E_1 \subseteq{} ... \subseteq{} E_n = p^* E$ is the tautological filtration on $F$, 
+   and where $p : F \rightarrow{} S$ is the structure map of $F$.
+ Description
+  Text
+   Not implemented yet.
 -- mode: M2
 -- coding: utf-8
 -- compile-command: "make -C $M2BUILDDIR/Macaulay2/packages PACKAGES=Schubert2 "

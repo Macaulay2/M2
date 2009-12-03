@@ -83,6 +83,8 @@ AbstractVarietyMap#{Standard,AfterPrint} = f -> (
      << "a map to " << target f << " from " << source f << endl;
      )
 
+map(FlagBundle,AbstractVarietyMap,List) := x -> notImplemented()
+
 sectionClass = method(TypicalValue => RingElement)
 sectionClass AbstractVarietyMap := f -> f.SectionClass
 
