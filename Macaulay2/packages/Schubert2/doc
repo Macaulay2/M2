@@ -2430,8 +2430,14 @@ Node
   :
    the structure map or composition of structure maps $X \rightarrow{} S$
  Description
-  Text
-   Not implemented yet.
+  Example
+   X = projectiveSpace_3 point
+   Y = projectiveSpace_2 X
+   Z = projectiveSpace_1 Y
+   Z/Z
+   Z/Y
+   Z/X
+   Z/point
 --
 Node
  Key
