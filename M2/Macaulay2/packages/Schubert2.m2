@@ -102,7 +102,7 @@ AbstractVariety#id = (X) -> new AbstractVarietyMap from {
 AbstractVariety / AbstractVariety := AbstractVarietyMap => (X,S) -> (
      maps := while X =!= S and X.?StructureMap list (f := X.StructureMap; X = target f; f);
      if #maps == 0 then id_X
-     else fold(maps,(f,g) -> f * g))
+     else fold(maps,(f,g) -> g * f))
 
 sectionClass = method(TypicalValue => RingElement)
 sectionClass AbstractVarietyMap := f -> f.SectionClass
