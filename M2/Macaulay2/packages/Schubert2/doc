@@ -2396,6 +2396,12 @@ Node
    The sheaves should be {\em effective} in the sense that $c_j B_i = 0$ for $j > r_i$.
    The sum of the sheaves should equal $f^* E$; alternatively, one of them can be omitted and it will be deduced from
    the condition on the sum.
+  Degree => Nothing
+   the value of this option is ignored
+  DegreeLift => Nothing
+   the value of this option is ignored
+  DegreeMap => Nothing
+   the value of this option is ignored
  Outputs
   :AbstractVarietyMap
    the map of abstract varieties $g : X \rightarrow{} F$ over $S$ such that $g^* (E_{i+1}/E_i) = B_i$, for each i, where 

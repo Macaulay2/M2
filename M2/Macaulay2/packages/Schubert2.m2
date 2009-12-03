@@ -337,7 +337,7 @@ AbstractSheaf ^** ZZ := AbstractSheaf => (E,n) -> (
 	  E = dual E;
 	  n = - n;
 	  );
-     abstractSheaf(variety E, ChernCharacter => (ch E)^n))
+     abstractSheaf(variety E, ChernCharacter => part(0,dim variety E,(ch E)^n)))
 
 AbstractSheaf ^** QQ := AbstractSheaf ^** RingElement := AbstractSheaf => (E,n) -> (
      if rank E != 1 then error "non-integer tensor power of sheaf of rank not equal to 1 requested";
@@ -600,22 +600,23 @@ AbstractSheaf * AbstractSheaf := AbstractSheaf => (
      (F,G) -> (
 	  f := ch F;
 	  g := ch G;
+	  X := variety F;
 	  if f == 1 then G
 	  else if g == 1 then F
-	  else abstractSheaf (variety F, Rank => rank F * rank G, ChernCharacter => f*g))
+	  else abstractSheaf(X, ChernCharacter => part(0,dim X,f*g)))
      ) @@ coerce
 
 Hom(AbstractSheaf, AbstractSheaf) := AbstractSheaf => (F,G) -> dual F ** G
 
 det AbstractSheaf := AbstractSheaf => opts -> (F) -> abstractSheaf(variety F, Rank => 1, ChernClass => 1 + part(1,ch F))
 
-computeWedges = (n,A) -> (
-     -- compute the chern characters of wedge(i,A), for i = 0..n, given a chern character
+computeWedges = (n,A,d) -> (
+     -- compute the chern characters of wedge(i,A), for i = 0..n, given a chern character, truncating above degree d
      wedge := new MutableList from splice{0..n};
      wedge#0 = 1_(ring A);
      wedge#1 = A;
      for p from 2 to n do
-	  wedge#p = 1/p * sum for m from 0 to p-1 list (-1)^(p-m+1) * wedge#m * adams(p-m,A);
+	  wedge#p = 1/p * sum for m from 0 to p-1 list (-1)^(p-m+1) * part(0,d,wedge#m * adams(p-m,A));
      toList wedge
      )
 
@@ -623,7 +624,7 @@ exteriorPower(ZZ, AbstractSheaf) := AbstractSheaf => opts -> (n,E) -> (
      -- wedge is an array 0..n of the chern characters of the exerior 
      -- powers of E.  The last one is what we want.
      if 2*n > rank E then return det(E) ** dual exteriorPower(rank E - n, E);
-     wedge := computeWedges(n,ch E);
+     wedge := computeWedges(n,ch E,dim variety E);
      abstractSheaf(variety E, ChernCharacter => wedge#n)
      )
 
@@ -643,19 +644,19 @@ symmetricPower(RingElement, AbstractSheaf) := AbstractSheaf => (n,F) -> (
      h := local h;
      PF := projectiveBundle(F, VariableNames => h);
      f := PF.StructureMap;
-     abstractSheaf(X, f_*(ch OO_PF(n) * todd f))
-     )
+     abstractSheaf(X, f_*(part(0,dim X,ch OO_PF(n) * todd f))))
 
 symmetricPower(ZZ, AbstractSheaf) := 
 symmetricPower(QQ, AbstractSheaf) := AbstractSheaf => (n,E) -> (
+     d := dim variety E;
      A := ch E;
-     wedge := computeWedges(n,A);
+     wedge := computeWedges(n,A,d);
      symms := new MutableList from splice{0..n};
      symms#0 = 1_(ring A);
      symms#1 = A;
      for p from 2 to n do (
 	  r := min(p, rank E);
-	  symms#p = sum for m from 1 to r list (-1)^(m+1) * wedge#m * symms#(p-m);
+	  symms#p = sum for m from 1 to r list (-1)^(m+1) * part(0,d,wedge#m * symms#(p-m));
 	  );
      abstractSheaf(variety E, ChernCharacter => symms#n)
      )
@@ -667,7 +668,7 @@ schur(List, AbstractSheaf) := (p,E) -> (
      q := p;
      n := sum p;
      R := symmRing n;
-     wedges := computeWedges(n,ch E);
+     wedges := computeWedges(n,ch E,dim variety E);
      J := jacobiTrudi(q,R); -- so the result will be a poly in the wedge powers
      F := map(ring ch E, R, join(apply(splice{0..n-1}, i -> R_i => wedges#(i+1)), 
 	                         apply(splice{n..2*n-1}, i -> R_i => 0)));

@@ -986,7 +986,9 @@ installPackage Package := opts -> pkg -> (
 			 },
 		    BODY { 
 			 buttonBar tag,
-			 if UP#?tag then DIV between(" > ", apply(upAncestors tag, i -> TO i)),
+			 if UP#?tag
+			 then DIV between(" > ", apply(upAncestors tag, i -> TO i))
+			 else DIV (TO topDocumentTag, " :: ", TO tag),
 			 HR{}, 
 			 getPDoc fkey
 			 }
