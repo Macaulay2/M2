@@ -326,25 +326,41 @@ substitute(Matrix,ZZ) := Matrix => (m,i) -> (
      else error "expected integer to be zero"
      )
 
-sub2 = (S,R,v) -> (
-     m := generators R;
+sub2 = (S,R,v) -> (				   -- S is the target ring or might be null, meaning target ring not known yet
+     commonzero := if S === null then 0 else 0_S;  -- the 0 element of the target ring
+     local dummy;
+     g := generators R;
      A := R;
      while try (A = coefficientRing A; true) else false
-     do m = join(m, generators A);
+     do g = join(g, generators A);
      h := new MutableHashTable;
-     for i from 0 to #m-1 do h#(m#i) = if h#?(m#i) then (h#(m#i),i) else 1:i;
+     for i from 0 to #g-1 do h#(g#i) = if h#?(g#i) then (h#(g#i),i) else 1:i;
      h = new HashTable from apply(pairs h, (x,i) -> (x,deepSplice i));
-     m = new MutableList from (#m:symbol m);
+     m := new MutableList from (#g:symbol dummy);
+     -- if source==target, then the default is to leave generators alone
      for opt in v do (
 	  if class opt =!= Option or #opt =!= 2 then error "expected a list of options";
 	  x := opt#0;
 	  y := opt#1;
+	  if not instance(y,RingElement) and not instance(y,Number) then error "expected substitution values to be ring elements or numbers";
+	  if S === null
+	  then try commonzero = commonzero + 0_(ring y) else error "expected substitution values to be in compatible rings"
+	  else try y = promote(y,S) else error "expected to be able to promote value to target ring";
 	  if not h#?x then error( "expected ", toString x, " to be a generator of ", toString R );
 	  for i in h#x do (
-	       if m#i =!= symbol m and m#i =!= y then error "multiple destinations specified for a generator";
+	       if m#i =!= symbol dummy and m#i =!= y then error "multiple destinations specified for a generator";
 	       m#i = y;
 	       ));
-     if any(m,x -> x === symbol m) then error "destinations not specified for every generator";
+     if S === null then (
+	  if any(m,x -> x === symbol dummy) then (
+	       try commonzero = commonzero + 0_R else error "expected original ring to be compatible with the ring of substitution values";
+	       for i from 0 to #m-1 do if m#i === symbol dummy then m#i = g#i;
+	       );
+	  for i from 0 to #m-1 do m#i = promote(m#i, ring commonzero);
+	  )
+     else (
+	  if any(m,x -> x === symbol dummy) then error "destinations not specified for every generator";
+	  );
      f := if S === null then matrix{toList m} else matrix(S,{toList m});
      map(ring f,R,f))
 
