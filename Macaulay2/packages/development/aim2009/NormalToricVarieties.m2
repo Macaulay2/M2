@@ -1,4 +1,5 @@
 -- -*- coding: utf-8 -*-
+--------------------------------------------------------------------------------
 needsPackage "Polyhedra"
 newPackage(
      "NormalToricVarieties",
@@ -37,30 +38,33 @@ export {
      WeilToClass,
      weilToClass
      }
-
----------------------------------------------------------------------------
--- CODE
----------------------------------------------------------------------------
+--------------------------------------------------------------------------------
 needsPackage "FourierMotzkin"
 needsPackage "Polyhedra"
 
----------------------------------------------------------------------------
--- some local functions
-makePrimitive = method()
-makePrimitive List := w -> (g := gcd w; apply(w, e -> e//g))
-
----------------------------------------------------------------------------
+--------------------------------------------------------------------------------
+-- CODE
+--------------------------------------------------------------------------------
 NormalToricVariety = new Type of Variety
 NormalToricVariety.synonym = "normal toric variety"
 NormalToricVariety.GlobalAssignHook = globalAssignFunction
 NormalToricVariety.GlobalReleaseHook = globalReleaseFunction
-expression NormalToricVariety := X -> new FunctionApplication from { normalToricVariety, Adjacent{rays X, Adjacent{",",max X}}}
 
-normalToricVariety = method(TypicalValue => NormalToricVariety, Options => {
+expression NormalToricVariety := X -> new FunctionApplication from { 
+     normalToricVariety, Adjacent{rays X, Adjacent{",",max X}}}
+
+-- The methods 'rays' is defined in 'Polyhedra'
+-- rays = method(TypicalValue => List)
+rays NormalToricVariety := List => X -> X.rays
+max  NormalToricVariety := List => X -> X.max
+
+normalToricVariety = method(
+     TypicalValue => NormalToricVariety, 
+     Options => {
 	  CoefficientRing => QQ,
 	  Variable => symbol x,	  
-	  WeilToClass => null
-	  })
+	  WeilToClass => null})
+
 normalToricVariety (List, List) := opts -> (V,F) -> (
      X := new NormalToricVariety from {
 	  symbol rays => V,
@@ -71,68 +75,116 @@ normalToricVariety (List, List) := opts -> (V,F) -> (
      X.cache.Variable = opts.Variable;
      return X)
 
---rays = method(TypicalValue => List)
-rays NormalToricVariety := List => X -> X.rays
-max NormalToricVariety := List => X -> X.max
+
 
 projectiveSpace = method()
 projectiveSpace ZZ := NormalToricVariety => d -> (
-     if d < 0 then error "-- expected nonnegative integer";
-     V := entries transpose (map(ZZ^d,ZZ^1, i -> -1) | map(ZZ^d,ZZ^d,1));
+     if d < 0 then (
+	  error "-- expected a nonnegative integer");
+     
+     V := {toList(d:-1)} | entries id_(ZZ^d);
      F := subsets(d+1,d);
      X := normalToricVariety(V,F);
      return X)
 
+
+
 hirzebruchSurface = method()
 hirzebruchSurface ZZ := NormalToricVariety => a -> (
-     V := {{1, 0}, {0, 1}, { -1, a}, {0, -1}};
-     F := {{0,1}, {1,2}, {2,3}, {0,3}};
-     X := normalToricVariety(V,F,WeilToClass => matrix{{1,-a,1,0},{0,1,0,1}});
+     V := {{1,0},{0,1},{-1,a},{0,-1}};
+     F := {{0,1},{1,2},{2,3},{0,3}};
+     W := matrix{{1,-a,1,0},{0,1,0,1}};
+     X := normalToricVariety(V,F, WeilToClass => W);
      return X)
+
 
 weightedProjectiveSpace = method()
 weightedProjectiveSpace List := NormalToricVariety => q -> (
-     if not all(q, i -> i > 0) then error "-- expected positive integers";
-     if gcd q != 1 then error "-- expected the gcd to be one";
+     if not all(q, i -> i > 0) then (
+	  error "-- expected positive integers");
+     if gcd q != 1 then (
+	  error "-- expected the gcd to be one");
+     
      d := #q-1;
      Q := transpose matrix{q};
      N := prune cokernel Q;
      V := transpose entries (N.cache.pruningMap)^-1;
      F := subsets(d+1,d);
+     
      X := normalToricVariety(V,F);
      return X)
+
 
 NormalToricVariety ** NormalToricVariety := NormalToricVariety => (X,Y) -> (
      V1 := transpose matrix rays X;
      V2 := transpose matrix rays Y;
      V := entries transpose (V1 ++ V2);
+     
      F1 := max X;
      F2 := max Y;
      n := #rays X;
      F2 = apply(F2, s -> apply(s, i -> i+n));
      F := flatten table(F1,F2, (s,t) -> s|t);
+     
      XY := normalToricVariety(V,F);
      return XY)
 
+
 kleinschmidt = method()
 kleinschmidt (ZZ,List) := NormalToricVariety => (d,a) -> (
-     if d < 0 then error "-- expected nonnegative integer";
+     if d < 0 then (
+	  error "-- expected a nonnegative integer");
      r := #a;
-     if r >= d then error ("-- expected a list of at most " | toString(d-1)  | " elements");
      s := d-r+1;
      e := entries id_(ZZ^d);
+     if r >= d then (
+	  error "-- list is too long"); 
+     
      V := apply(r, i -> e#i) | {sum(r, i -> -e#i)};
      V = V | apply(s-1, j -> e#(r+j));
      V = V | {sum(r, i -> a#i*e#i)- sum(s-1, j -> e#(r+j))};
+     
      L := toList(0..r+s);
      F := flatten table(toList(0..r),toList(r+1..r+s), 
 	  (i,j) -> select(L, k -> i =!= k and j =!= k));
+     
      X := normalToricVariety(V,F);
      return X)
 
+
+-- This local function creates a HashTable with the defining data for the low
+-- dimensional smooth Fano toric varieties.
+file := currentFileDirectory | "NormalToricVarieties/smoothFanoToricVarieties.txt"
+getFano := memoize(
+     () -> (
+	  if notify then stderr << "--loading file " << file << endl;
+	  hashTable apply( lines get file,
+	       x -> (
+	       	    x = value x;
+	       	    ((x#0,x#1),drop(x,2))))))
+
+smoothFanoToricVariety = method()
+smoothFanoToricVariety (ZZ,ZZ) := NormalToricVariety => (d,i) -> (
+     if d < 0 or i < 0 then (
+	  error "-- expected positive integers")
+     else if d === 1 and i > 0 then (
+	  error "-- there is only one smooth Fano toric curve")
+     else if d === 2 and i > 4 then (
+	  error "-- there are only five smooth Fano toric surfaces")
+     else if d === 3 and i > 17 then (
+	  error "-- there are only 18 smooth Fano toric 3-folds")
+     else if d === 4 and i > 123 then (
+	  error "-- there are only 124 smooth Fano toric 4-folds")
+     else if d > 4 then (
+	  error "-- database doesn't include varieties with dimension > 4")
+     else if i === 0 then return projectiveSpace d
+     else (
+	  s := (getFano())#(d,i);
+	  X := normalToricVariety(s#0,s#1, WeilToClass => transpose matrix s#2);
+	  return X))
+
+
 dim NormalToricVariety := ZZ => (cacheValue symbol dim)(X -> #(rays X)#0)
-
-
 --??
 dim (List,NormalToricVariety):= ZZ => (sigma,X) -> (
 	if (not X.cache.?cones) then X.cache.cones = new MutableHashTable;
@@ -142,6 +194,7 @@ dim (List,NormalToricVariety):= ZZ => (sigma,X) -> (
 			(rank N,  product toList apply(rank N, i-> N_(i,i)))
 			) else (1,1));
 	X.cache.cones#sigma#0)
+
 
 --??
 latticeIndex = method()
@@ -153,40 +206,57 @@ latticeIndex (List,NormalToricVariety):= (sigma,X) ->(
 			(rank N,  product toList apply(rank N, i-> N_(i,i)))
 			) else (1,1));
 	X.cache.cones#sigma#1)
-
+   
 isDegenerate = method()
-isDegenerate NormalToricVariety := Boolean => (cacheValue symbol isDegenerate)(X -> kernel matrix rays X != 0)
+isDegenerate NormalToricVariety := Boolean => (cacheValue symbol isDegenerate)(
+     X -> kernel matrix rays X != 0)
+
 
 isSimplicial = method()
-isSimplicial NormalToricVariety := Boolean => (cacheValue symbol isSimplicial)(X -> (
+isSimplicial NormalToricVariety := Boolean => (cacheValue symbol isSimplicial)(
+     X -> (
      	  V := transpose matrix rays X;
      	  return all(max X, s -> #s == rank V_s)))
+
      
-isSmooth NormalToricVariety := Boolean => (cacheValue symbol isSmooth)(X -> (
+isSmooth NormalToricVariety := Boolean => (cacheValue symbol isSmooth)(
+     X -> (
      	  V := transpose matrix rays X;
      	  b := all(max X, s -> #s == rank V_s and 1 == minors(#s,V_s));
 	  if b == true then X.cache.simplicial = true;
 	  return b))
 
+
 classGroup = method()
-classGroup NormalToricVariety := Module => (cacheValue symbol classGroup)(X -> (
+classGroup NormalToricVariety := Module => (cacheValue symbol classGroup)(
+     X -> (
 	  rawC := cokernel matrix rays X;
 	  C := prune rawC;
+	  
+	  -- We also compute the map to the group of Weil divisors
 	  W := weilDivisors X;
-	  if X.cache.?weilToClass then X.cache.WeilToClass = map(C, W, matrix X.cache.weilToClass)
-	  else X.cache.weilToClass = map(C, W, matrix (C.cache.pruningMap)^-1);
+	  local A;
+	  if X.cache.?weilToClass then A = matrix X.cache.weilToClass
+	  else A = map(C, W, matrix (C.cache.pruningMap)^-1);
+	  X.cache.weilToClass = map(C,W,A);
+	  
      	  return C))
+
 
 weilToClass = method()
 weilToClass NormalToricVariety := Matrix => X -> (
      if not X.cache.?classGroup then classGroup X;
      return X.cache.weilToClass)
 
+
 weilDivisors = method()
-weilDivisors NormalToricVariety := Module => (cacheValue symbol weilDivisors)(X -> ZZ^(#rays X))
+weilDivisors NormalToricVariety := Module => (cacheValue symbol weilDivisors)(
+     X -> ZZ^(#rays X))
+
 
 cartierDivisors = method()
-cartierDivisors NormalToricVariety := Module => (cacheValue symbol CDiv)(X -> (
+cartierDivisors NormalToricVariety := Module => (cacheValue symbol CDiv)(
+     X -> (
 	  local CDiv;
 	  if isSmooth X then (
 	       CDiv = weilDivisors X;
@@ -195,38 +265,55 @@ cartierDivisors NormalToricVariety := Module => (cacheValue symbol CDiv)(X -> (
 	  else (
 	       V := transpose matrix rays X;
 	       F := max X;
-	       d := rank target V;
+	       d := dim X;
 	       n := #rays X;
-	       H1 := new HashTable from apply(F, s -> {s, coker (fourierMotzkin V_s)#1});
-	       H2 := new HashTable from flatten apply(toList(0..#F-1), 
-     	       	    i -> apply(toList(i+1..#F-1), j -> (
-	       		      s := select(F#i, k -> member(k,F#j));
-	       		      if #s > 0 then {(F#i,F#j), coker (fourierMotzkin V_s)#1})));
-	       K := keys H1;	       
+	       
+	       H1 := new HashTable from (
+		    apply(F, s -> {s, coker (fourierMotzkin V_s)#1}));
+	       H2 := new HashTable from (
+		    flatten apply(toList(0..#F-1), 
+     	       	    	 i -> apply(toList(i+1..#F-1), 
+			      j -> (
+	       		      	   s := select(F#i, k -> member(k,F#j));
+	       		      	   if #s > 0 then (
+					M := coker (fourierMotzkin V_s)#1;
+					{(F#i,F#j), M})))));
+	       K := keys H1;
 	       P1 := directSum apply(K, k -> k => H1#k);
 	       local D;
-	       if #keys H2 == 0 then D = ker map(ZZ^0,P1,0) else (
+	       if #keys H2 == 0 then D = ker map(ZZ^0,P1,0) 
+	       else (
      		    P2 := directSum apply(keys H2, k -> k => H2#k);
-     		    M := transpose matrix table(K, keys H2, (j,k) -> if j == k#0 then 1 
+     		    M := transpose matrix table(K, keys H2, 
+			 (j,k) -> if j == k#0 then 1 
      	  		 else if j == k#1 then -1 else 0);
      		    D = kernel map(P2,P1,M ** id_(ZZ^d)));
 	       CDiv = prune D;
+	       
 	       L := apply(n, i -> position(K, s -> member(i,s)));
-	       inc := matrix table(n,keys H1, (i,s) -> if s == K#(L#i) then 1 else 0);
+	       inc := matrix table(n,keys H1, 
+		    (i,s) -> if s == K#(L#i) then 1 else 0);
+	       
+	       -- We also compute the map to the group of Weil divisors
 	       local iota;
 	       iota = inc^{0} ** transpose V_{0};
-	       scan(#L -1, i -> iota = iota || inc^{i+1} ** transpose V_{i+1});
+	       scan(#L - 1, i -> iota = iota || inc^{i+1} ** transpose V_{i+1});
 	       iota = map(weilDivisors X, D, iota * gens D);
-	       X.cache.cartierToWeil = map(weilDivisors X, CDiv, iota * (CDiv.cache.pruningMap));
+	       eta := CDiv.cache.pruningMap;
+	       X.cache.cartierToWeil = map(weilDivisors X, CDiv, iota * eta);
+	       
 	       return CDiv)))
+
 
 cartierToWeil = method()
 cartierToWeil NormalToricVariety := Matrix => X -> (
      if not X.cache.?cartierToWeil then cartierDivisors X;
      return X.cache.cartierToWeil)
 
+
 picardGroup = method()
-picardGroup NormalToricVariety := Module => (cacheValue symbol picardGroup)(X -> (
+picardGroup NormalToricVariety := Module => (cacheValue symbol picardGroup)(
+     X -> (
 	  local C;
 	  if isSmooth X then (
 	       C = classGroup X;
@@ -248,10 +335,12 @@ picardGroup NormalToricVariety := Module => (cacheValue symbol picardGroup)(X ->
                X.cache.picardToClass = eta * theta * iota;
 	       return P)))
 
+
 picardToClass = method()
 picardToClass NormalToricVariety := Matrix => X -> (
      if not X.cache.?picardToClass then picardGroup X;
      return X.cache.picardToClass)
+
 
 cartierToPicard = method()
 cartierToPicard NormalToricVariety := Matrix => X -> (
@@ -261,7 +350,8 @@ cartierToPicard NormalToricVariety := Matrix => X -> (
 
 nef = method()
 nef NormalToricVariety := List => X -> (
-     if not isSimplicial X then error "not yet implemented for non-simplicial toric varieties";
+     if not isSimplicial X then (
+	  error "-- not yet implemented for non-simplicial toric varieties");
      B := ideal X;
      A := transpose matrix degrees ring X;
      outer := 0 * A_{0};
@@ -269,51 +359,72 @@ nef NormalToricVariety := List => X -> (
      entries transpose ((fourierMotzkin outer)#0)^{0..(#rays X - dim X-1)})
 
 
-ring NormalToricVariety := PolynomialRing => (cacheValue symbol ring)(X -> (
-	  if isDegenerate X then error "--total coordinate ring for degenerate varieties is not yet implemented";
-	  if not isFreeModule classGroup X then error "--gradings by torsion groups not yet implemented";	  
+
+ring NormalToricVariety := PolynomialRing => (cacheValue symbol ring)(
+     X -> (
+	  if isDegenerate X then (
+	       error "-- not yet implemented for degenerate varieties");
+	  if not isFreeModule classGroup X then (
+	       error "-- gradings by torsion groups not yet implemented");
+
+	  K := X.cache.CoefficientRing;	  
+	  x := X.cache.Variable;	  
 	  n := #rays X;
-	  A := matrix weilToClass X;
-	  deg := entries transpose A;
-	  x := X.cache.Variable;
-	  K := X.cache.CoefficientRing;
+	  deg := entries transpose matrix weilToClass X;
 	  return K(monoid[x_0..x_(n-1), Degrees => deg])))
 
-ideal NormalToricVariety := Ideal => (cacheValue symbol ideal)(X -> (
+
+ideal NormalToricVariety := Ideal => (cacheValue symbol ideal)(
+     X -> (
 	  S := ring X;
 	  n := numgens S;
-	  return ideal apply(max X, L -> product(n, i -> if member(i,L) then 1_S else S_i))))
+	  return ideal apply(max X, L -> product(n, 
+		    i -> if member(i,L) then 1_S else S_i))))
+
 monomialIdeal NormalToricVariety := MonomialIdeal => X -> monomialIdeal ideal X
 
+
+
 sheaf (NormalToricVariety,Module) := CoherentSheaf => (X,M) -> (
-     if ring M =!= ring X then error "expected module and variety to have the same ring";
-     if not isHomogeneous M then error "expected a homogeneous module";
+     if ring M =!= ring X then (
+	  error "-- expected module and variety to have the same ring");
+     if not isHomogeneous M then (
+	  error "-- expected a homogeneous module");
+     
      new CoherentSheaf from {
 	  symbol module => M,
 	  symbol variety => X})
+
+
 sheaf (NormalToricVariety,Ring) := SheafOfRings => (X,R) -> (
-     if ring X =!= R then error "expected the ring of the variety";
+     if ring X =!= R then (
+	  error "-- expected the ring of the variety");
      if not X.cache.?structureSheaf then (
      	  X.cache.structureSheaf = new SheafOfRings from { 
 	       symbol variety => X, 
-	       symbol ring => R });
+	       symbol ring    => R });
      X.cache.structureSheaf)
+
 sheaf NormalToricVariety := X -> sheaf_X ring X
 
 installMethod(symbol _, OO, NormalToricVariety, (OO,X) -> sheaf(X, ring X))
 
-CoherentSheaf Sequence := CoherentSheaf => (F,a) -> sheaf(variety F, F.module ** (ring F)^{toList(a)})
+CoherentSheaf Sequence := CoherentSheaf => (F,a) -> sheaf(variety F, 
+     F.module ** (ring F)^{toList(a)})
+
 SheafOfRings Sequence := CoherentSheaf => (O,a) -> O^1 a
 
 super   CoherentSheaf := CoherentSheaf => F -> sheaf(variety F, super   module F)
 ambient CoherentSheaf := CoherentSheaf => F -> sheaf(variety F, ambient module F)
 cover   CoherentSheaf := CoherentSheaf => F -> sheaf(variety F, cover   module F)
 
--- internal code which creates a HashTable describing the cohomology
--- of all twists of the structure sheaf; see Propositon~3.2 in 
--- Maclagan-Smith "Multigraded regularity"
+
+-- This local function creates a HashTable describing the cohomology of all 
+-- twists of the structure sheaf.  For more information, see Propositon~3.2 
+-- in Maclagan-Smith "Multigraded regularity"
 setupHHOO = X -> (
      X.cache.emsBound = new MutableHashTable;
+
      -- create a fine graded version of the total coordinate ring
      S := ring X;
      n := numgens S;
@@ -322,36 +433,38 @@ setupHHOO = X -> (
      R := QQ(monoid [gens S, Degrees => fineDeg, Heft => h]);
      RfromS := map(R, S, gens R);
      B := RfromS ideal X;
+     
      -- use simplicial cohomology find the support sets 
-     quasiCech := Hom(res (R^1/B), R^1);
+     quasiCech := Hom( res(R^1/B), R^1);
      supSets := delete({},subsets(toList(0..n-1)));
      d := dim X;
      sigma := new MutableHashTable;
      sigma#0 = {{}};
-     scan(1..d, i -> (
-	       sHH := prune HH^(i+1)(quasiCech);
-	       sigma#i = select(supSets, 
-		    s -> basis(-degree product(s, j -> R_j), sHH) != 0)));
+     for i from 1 to d do (
+	  sHH := prune HH^(i+1)(quasiCech);
+	  sigma#i = select(supSets, s -> (
+		    m := product(s, j -> R_j);
+		    basis(-degree m, sHH) != 0)));
+     
      -- create rings
      degS := degrees S; 
-     X.cache.rawHHOO = new HashTable from apply(d+1, 
-	  i -> {i,apply(sigma#i, s -> (
+     X.cache.rawHHOO = new HashTable from (
+	  apply(d+1, i -> {i, apply(sigma#i, s -> (
 		    v := - degree product(n, 
 			 j -> if member(j,s) then S_j else 1_S);
 		    degT := apply(n, 
 			 j -> if member(j,s) then -degS#j else degS#j);
 		    T := (ZZ/2)(monoid [gens S, Degrees => degT]);
-		    {v,T,s}))});)
+		    {v,T,s}))})))
 
 
-
--- internal code for the Frobenius power of an ideal
+-- This local function defines the Frobenius power of an ideal
 Ideal ^ Array := (I,p) -> ideal apply(I_*, i -> i^(p#0))
 
--- internal code which creates a HashTable which stores data for 
--- determining the appropriate Frobenius power need to compute
--- the cohomology of a general coherent sheaf; see Proposition~4.1
--- in Eisenbud-Mustata-Stillman
+
+-- This local function creates a HastTable which stores the data for determining
+-- the appropriate Frobenius power needed to compute the cohomology of a general
+-- coherent sheaf; see Proposition 4.1 in Eisenbud-Mustata-Stillman.
 emsbound = (i,X,deg) -> (
      if not X.cache.emsBound#?{i,deg} then (
 	  if i < 0 or i > dim X then X.cache.emsBound#{i,deg} = 1
@@ -361,10 +474,12 @@ emsbound = (i,X,deg) -> (
      X.cache.emsBound#{i,deg})
 
 cohomology (ZZ,NormalToricVariety,CoherentSheaf) := Module => opts -> (i,X,F) -> (
-     if ring F =!= ring X then error "expected a coherent sheaf on the toric variety";
+     if ring F =!= ring X then (
+	  error "-- expected a coherent sheaf on the toric variety");
      S := ring X;
      kk := coefficientRing S;
-     if not isField kk then error "expected a toric variety over a field";
+     if not isField kk then (
+	  error "-- expected a toric variety over a field");
      if i < 0 or i > dim X then kk^0
      else (
      	  if not X.cache.?rawHHOO then setupHHOO X;
@@ -388,36 +503,12 @@ cohomology (ZZ,NormalToricVariety,CoherentSheaf) := Module => opts -> (i,X,F) ->
      	  	    h1 := rank source basis(deg, Ext^(i+1)(S^1/B^[b],M));
      	  	    h0 := rank source basis(deg, Ext^i(S^1/B^[b1],M));
      	  	    kk^(rank source basis(deg,M) + h1 - h0)))))
-cohomology (ZZ,NormalToricVariety,SheafOfRings) := Module => opts -> (i,X,O) -> HH^i(X,O^1)
 
--- internal code creating a HashTable with the defining data of low dimensional smooth
--- Fano toric varieties
-fanoFile := currentFileDirectory | "NormalToricVarieties/smoothFanoToricVarieties.txt"
-getFano := memoize(
-     () -> (
-	  if notify then stderr << "--loading file " << fanoFile << endl;
-	  hashTable apply( lines get fanoFile,
-	       x -> (
-	       	    x = value x;
-	       	    ((x#0,x#1),drop(x,2))))))
-
-smoothFanoToricVariety = method()
-smoothFanoToricVariety (ZZ,ZZ) := NormalToricVariety => (d,i) -> (
-     if d < 0 or i < 0 then error "expected positive integers"
-     else if d === 1 and i > 0 then error "there is only one smooth Fano toric curve"
-     else if d === 2 and i > 4 then error "there are only five smooth Fano toric surfaces"
-     else if d === 3 and i > 17 then error "there are only 18 smooth Fano toric 3-folds"
-     else if d === 4 and i > 123 then error "there are only 124 smooth Fano toric 4-folds"
-     else if d > 4 then error "database doesn't (yet?) include smooth Fano toric varieties of dimension greater than 4"
-     else if i === 0 then return projectiveSpace d
-     else (
-	  s := (getFano())#(d,i);
-	  X := normalToricVariety(s#0,s#1, WeilToClass => transpose matrix s#2);
-	  return X))
+cohomology (ZZ,NormalToricVariety,SheafOfRings) := Module => opts -> (
+     (i,X,O) -> HH^i(X,O^1))
 
 
-
----------------------------------------------------------------------------
+--------------------------------------------------------------------------------
 -- code that interfaces with the Polyhedra package
 
 normalToricVariety Fan := F -> (
@@ -578,7 +669,11 @@ stellarSubdivision (NormalToricVariety,List) := (X,r) -> (
      Y.cache.cones = X.cache.cones;
      Y)
 
----------------------------------------------------------------------------
+makePrimitive = method()
+makePrimitive List := w -> (g := gcd w; apply(w, e -> e//g))
+
+
+--------------------------------------------------------------------------------
 -- THINGS TO IMPLEMENT?
 --   isFano
 --   cotangentBundle
@@ -596,9 +691,9 @@ stellarSubdivision (NormalToricVariety,List) := (X,r) -> (
 --   isSemiprojective
 --
 
----------------------------------------------------------------------------
+--------------------------------------------------------------------------------
 -- DOCUMENTATION
----------------------------------------------------------------------------
+--------------------------------------------------------------------------------
 beginDocumentation()
     
 document { 
@@ -2201,10 +2296,9 @@ document {
 	  }
      }     
 
- 
----------------------------------------------------------------------------
+-------------------------------------------------------------------------------- 
 -- TEST
----------------------------------------------------------------------------
+--------------------------------------------------------------------------------
 
 TEST ///
 PP4 = projectiveSpace 4;
@@ -2336,9 +2430,9 @@ assert(picardGroup Q == ZZ^1)
 
 end     
 
----------------------------------------------------------------------------
+--------------------------------------------------------------------------------
 -- SCRATCH SPACE
----------------------------------------------------------------------------
+--------------------------------------------------------------------------------
 uninstallPackage "NormalToricVarieties"
 restart
 installPackage "NormalToricVarieties"
