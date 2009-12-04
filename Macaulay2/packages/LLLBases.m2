@@ -457,7 +457,7 @@ doKernelLLL = (C,count) -> (
 	       );
 	  );
      -- Finally time to return:
-     << newline;
+     -- << newline;
      if k > n then C.isDone = true;
      )
 
