@@ -618,7 +618,8 @@ document {
      UL { 
 	  {"David A. Cox, John B. Little, Hal Schenck, ", EM "Toric
 	  varieties", ", preprint available at ", 
-	  HREF("http://www.cs.amherst.edu/~dac/toric.html", TT "www.cs.amherst.edu/~dac/toric.html")},	       
+	  HREF("http://www.cs.amherst.edu/~dac/toric.html", 
+	       TT "www.cs.amherst.edu/~dac/toric.html")},	       
 	  {"Günter Ewald, ", EM "Combinatorial convexity and algebraic
            geometry", ", Graduate Texts in Mathematics 168. 
 	   Springer-Verlag, New York, 1996. ISBN: 0-387-94755-8" },
@@ -635,7 +636,8 @@ document {
      on our code.",     
      UL {
 	  {HREF("http://www.math.purdue.edu/~cberkesc/","Christine Berkesch")},	  
-	  {HREF("http://page.mi.fu-berlin.de/rbirkner/indexen.htm","René Birkner")},
+	  {HREF("http://page.mi.fu-berlin.de/rbirkner/indexen.htm",
+		    "René Birkner")},
      	  {HREF("http://www.warwick.ac.uk/staff/D.Maclagan/","Diane Maclagan")},
 	  {HREF("http://www.math.uiuc.edu/~asecele2/","Alexandra Seceleanu")},
 	  },
