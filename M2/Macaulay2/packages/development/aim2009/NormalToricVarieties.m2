@@ -5,7 +5,7 @@ newPackage(
      "NormalToricVarieties",
      AuxiliaryFiles => true,
      Version => "0.76",
-     Date => "12 November 2009",
+     Date => "4 December 2009",
      Authors => {{
 	       Name => "Gregory G. Smith", 
 	       Email => "ggsmith@mast.queensu.ca", 
@@ -76,17 +76,15 @@ normalToricVariety (List, List) := opts -> (V,F) -> (
      return X)
 
 
-
 projectiveSpace = method()
 projectiveSpace ZZ := NormalToricVariety => d -> (
-     if d < 0 then (
-	  error "-- expected a nonnegative integer");
+     if d < 1 then (
+	  error "-- expected a positive integer");
      
      V := {toList(d:-1)} | entries id_(ZZ^d);
      F := subsets(d+1,d);
      X := normalToricVariety(V,F);
      return X)
-
 
 
 hirzebruchSurface = method()
@@ -102,13 +100,11 @@ weightedProjectiveSpace = method()
 weightedProjectiveSpace List := NormalToricVariety => q -> (
      if not all(q, i -> i > 0) then (
 	  error "-- expected positive integers");
-     if gcd q != 1 then (
-	  error "-- expected the gcd to be one");
-     
      d := #q-1;
-     Q := transpose matrix{q};
-     N := prune cokernel Q;
-     V := transpose entries (N.cache.pruningMap)^-1;
+     if not all(subsets(q,d), s -> gcd s === 1) then (
+	  error ("-- " | toString d | "-elements have a common factor"));
+
+     V := entries kernelLLL matrix {q};
      F := subsets(d+1,d);
      
      X := normalToricVariety(V,F);
@@ -165,8 +161,8 @@ getFano := memoize(
 
 smoothFanoToricVariety = method()
 smoothFanoToricVariety (ZZ,ZZ) := NormalToricVariety => (d,i) -> (
-     if d < 0 or i < 0 then (
-	  error "-- expected positive integers")
+     if d < 1 or i < 0 then (
+	  error "-- expected positive dimension or nonnegative index")
      else if d === 1 and i > 0 then (
 	  error "-- there is only one smooth Fano toric curve")
      else if d === 2 and i > 4 then (
@@ -206,6 +202,65 @@ latticeIndex (List,NormalToricVariety):= (sigma,X) ->(
 			(rank N,  product toList apply(rank N, i-> N_(i,i)))
 			) else (1,1));
 	X.cache.cones#sigma#1)
+
+
+isWellDefined NormalToricVariety := Boolean => X -> (
+     V := rays X;
+     F := max X;
+     m := #F;
+     flag := true;
+     dualCones := new MutableHashTable;
+     -- check whether every ray appears in some maximal cone
+     if set toList(0..#V-1) =!= set flatten F then (
+	  if debugLevel > 0 then (
+	       << "-- some ray does not appear in maximal cone" << endl);
+	  flag = false);
+     
+     -- loop over all maximal cones
+     if flag === true then for i to m-1 do (
+	  f := F#i;
+	  -- check whether the rays in the cone have the same length
+	  try C := transpose matrix apply(f, i -> V#i) else (
+	       if debugLevel > 0 then (
+		    << "-- not all rays have the same length" << endl);
+	       flag = false; 
+	       break);
+	  -- check whether the rays are lists of integers
+	  if ZZ =!= ring C then (
+	       if debugLevel > 0 then (
+		    << "-- not all rays are lists of integers" << endl);
+	       flag = false; 
+	       break);
+	  H := fourierMotzkin C;
+     	  dualCones#i = H#0 | H#1 | -H#1;
+	  (C',L) := fourierMotzkin H;
+	  -- check whether the maximal cone is strongly convex
+	  if L != 0 then (
+	       if debugLevel > 0 then (
+		    << "-- not all maximal cones are strongly convex" << endl);
+	       flag = false; 
+	       break);
+	  -- check whether the rays are the primitive generators of the cone
+	  if set entries transpose C' =!= set entries transpose C then (
+	       if debugLevel > 0 then (
+		    << "-- the rays are not the primitive generators" << endl);
+	       flag = false; 
+	       break));
+     
+     -- check whether the intersection of each pair of maximal cones is a cone
+     if flag === true then for i to m-2 do (
+	  for j from i+1 to m-1 do (
+	       C := set apply(toList(set(F#i)*set(F#j)), k -> V#k);	       
+     	       (C',L) := fourierMotzkin (dualCones#i | dualCones#j);
+	       if C =!= set entries transpose C' then (
+		    if debugLevel > 0 then (
+			 << "-- intersection of cones is not a cone" << endl);
+		    flag = false; 
+		    break)));
+
+     return flag)     
+
+
    
 isDegenerate = method()
 isDegenerate NormalToricVariety := Boolean => (cacheValue symbol isDegenerate)(
@@ -524,20 +579,6 @@ normalToricVariety Fan := F -> (
 
 normalToricVariety Polyhedron := P -> normalToricVariety normalFan P
 
-isWellDefined NormalToricVariety := Boolean => X -> (
-     if not X.cache.?isFan then (
-	  X.cache.isFan = false;
-	  if all(rays X, r -> gcd r == 1) and sort unique flatten max X == toList(0..#(rays X)-1) then (
-	       F := max X;
-	       if all(#F-1, i -> all(i+1..#F-1, j -> not (isSubset(set F#i,set F#j) or isSubset(set F#j,set F#i)))) then (
-		    R := matrix transpose rays X;
-		    F = apply(F, f -> (f,posHull R_f));
-		    if all(F, f -> #(f#0) == numColumns rays f#1) then (
-			 F = apply(F, f -> f#1);
-			 if commonFace F then (
-			      X.cache.Fan = fan F;
-			      X.cache.isFan = true)))));
-     X.cache.isFan)
 
 isComplete NormalToricVariety := X -> (
      if not X.cache.?Fan or not X.cache.?isComplete then X.cache.isComplete = isComplete fan X;
@@ -730,7 +771,7 @@ document {
      "The following people have generously contributed code or worked
      on our code.",     
      UL {
-	  {HREF("http://www.math.purdue.edu/~cberkesc/","Christine Berkesch")},	  
+	  {HREF("http://www.math.purdue.edu/~cberkesc/","Christine Berkesch")},
 	  {HREF("http://page.mi.fu-berlin.de/rbirkner/indexen.htm",
 		    "René Birkner")},
      	  {HREF("http://www.warwick.ac.uk/staff/D.Maclagan/","Diane Maclagan")},
@@ -744,6 +785,7 @@ document {
 	  TO "Resolution of singularities",
 	  }
      }  
+
 
 document { 
      Key => NormalToricVariety,
@@ -764,6 +806,7 @@ document {
 	  TO normalToricVariety,	  
 	  }
      }  
+
 
 document { 
      Key => {(rays, NormalToricVariety)},
@@ -824,6 +867,7 @@ document {
 	  } 
      }
 
+
 document { 
      Key => {(max, NormalToricVariety)},
      Headline => "the maximal cones in the fan",
@@ -878,6 +922,7 @@ document {
 	  }
      }     
 
+
 document { 
      Key => {(expression, NormalToricVariety)},
      Headline => "expression used to format for printing",
@@ -912,6 +957,7 @@ document {
 	  (max,NormalToricVariety)
 	  }
      }   
+
 
 document { 
      Key => {normalToricVariety, 
@@ -990,7 +1036,8 @@ document {
 	  source A == weilDivisors PP2
 	  target A == classGroup PP2
 	  degrees ring PP2
-     	  X = normalToricVariety(rays PP2, max PP2, WeilToClass => matrix{{-1,-1,-1}});
+	  deg = matrix {toList(3:-1)}
+     	  X = normalToricVariety(rays PP2, max PP2, WeilToClass => deg);
 	  A' = weilToClass X
 	  source A' == weilDivisors X
 	  target A' == classGroup X	  
@@ -1005,10 +1052,13 @@ document {
      blow-up of the projective plane such that the nef cone is the
      positive quadrant.",     
      EXAMPLE lines ///
-          Y = normalToricVariety({{1,0},{0,1},{-1,1},{-1,0},{0,-1}},{{0,1},{1,2},{2,3},{3,4},{0,4}});
+     	  Rho = {{1,0},{0,1},{-1,1},{-1,0},{0,-1}};
+	  Sigma = {{0,1},{1,2},{2,3},{3,4},{0,4}};
+          Y = normalToricVariety(Rho,Sigma);
      	  weilToClass Y
 	  nef Y
-          Y' = normalToricVariety(rays Y, max Y, WeilToClass => matrix{{1,-1,1,0,0},{0,1,-1,1,0},{0,0,1,-1,1}});	  
+	  deg = matrix{{1,-1,1,0,0},{0,1,-1,1,0},{0,0,1,-1,1}}
+          Y' = normalToricVariety(rays Y, max Y, WeilToClass => deg);	  
      	  weilToClass Y'
 	  nef Y'
      	  ///,	  	  
@@ -1031,6 +1081,7 @@ document {
 	  }
      }	
 
+
 document { 
      Key => {WeilToClass},
      Headline => "name for an optional argument",
@@ -1049,7 +1100,7 @@ document {
      Headline => "projective space",
      Usage => "projectiveSpace d",
      Inputs => {
-	  "d" => "a nonnegative integer",
+	  "d" => "a positive integer",
 	  },
      Outputs => {NormalToricVariety => {"projective ", TT "d", "-space"}},
      "Projective ", TEX ///$d$///, "-space is a smooth complete normal toric
@@ -1077,12 +1128,6 @@ document {
 	  ring PP3
 	  ideal PP3
 	  ///,	  
-     "We can also create a point as projective ", TEX ///$0$///,
-     "-space",
-     EXAMPLE lines ///
-	  projectiveSpace 0
-	  dim projectiveSpace 0
-          ///,
      SeeAlso => {
 	  normalToricVariety, 
 	  weightedProjectiveSpace,
@@ -1090,6 +1135,7 @@ document {
 	  (ideal,NormalToricVariety)
 	  }
      }     
+
 
 document { 
      Key => {hirzebruchSurface, 
@@ -1142,20 +1188,22 @@ document {
 	  }
      }     
 
+
 document { 
      Key => {weightedProjectiveSpace, 
 	  (weightedProjectiveSpace,List)},
      Headline => "weighted projective space",
      Usage => "weightedProjectiveSpace q",
      Inputs => {
-	  "q" => {" a ", TO(List), " of relatively prime positive integers"}
+	  "q" => {" a ", TO2(List,"list"), " of relatively prime positive 
+	       integers"}
 	  },
      Outputs => {NormalToricVariety => "a weighted projective space"},
      "The weighted projective space associated to a list ", 
-     TEX ///$\{q_0,\dots, q_d \}$///, ",  where ", 
-     TEX ///$gcd(q_0,\dots, q_d) = 1$///, ", is a normal
-     toric variety built from a fan in ", 
-     TEX ///$N = \ZZ^{d+1}/\ZZ(q_0,\dots,q_d)$///, 
+     TEX ///$\{q_0,\dots, q_d \}$///, ", where no ", TEX ///$d$///,
+     "-element subset of ", TEX ///$q_0,\dots, q_d$///, " has a
+     nontrivial common factor, is a normal toric variety built from a
+     fan in ", TEX ///$N = \ZZ^{d+1}/\ZZ(q_0,\dots,q_d)$///, 
       ".  The rays are generated by the images of the standard basis
      for ", TEX ///$\ZZ^{d+1}$///, " and the maximal cones in the fan
      correspond to the ", TEX ///$d$///, "-element subsets of ", 
@@ -1207,6 +1255,7 @@ document {
 	  } 
      }     
 
+
 document { 
      Key => {(symbol **,NormalToricVariety,NormalToricVariety)},
      Headline => "the cartesian product",
@@ -1231,6 +1280,7 @@ document {
           ///,
      SeeAlso => {normalToricVariety}
      }  
+
 
 document { 
      Key => {kleinschmidt, 
@@ -1281,6 +1331,7 @@ document {
 	  }
      }    
 
+
 document { 
      Key => {smoothFanoToricVariety, 
 	  (smoothFanoToricVariety,ZZ,ZZ)},
@@ -1294,9 +1345,11 @@ document {
      "This function accesses a database of all smooth Fano toric
      varieties of dimension at most 4.  The enumeration of the toric
      varieties follows ",  
-     HREF("http://www.mathematik.uni-tuebingen.de/~batyrev/batyrev.html.en", "Victor V. Batyrev's"), 
+     HREF("http://www.mathematik.uni-tuebingen.de/~batyrev/batyrev.html.en", 
+	  "Victor V. Batyrev's"), 
      " classification; see ", 
-     HREF("http://arxiv.org/abs/math/9801107", TT "arXiv:math/9801107v2"), " and ",
+     HREF("http://arxiv.org/abs/math/9801107", TT "arXiv:math/9801107v2"), 
+     " and ",
      HREF("http://arxiv.org/abs/math/9911022", TT "arXiv:math/9011022"),   
      ".  There is a unique smooth Fano toric curve, five smooth Fano
      toric surfaces, eighteen smooth Fano toric threefolds, and ", 
@@ -1321,6 +1374,7 @@ document {
      SeeAlso => {normalToricVariety}
      }     
 
+
 document { 
      Key => "Basic properties and invariants",
      "Once a ", TO2(NormalToricVariety, "normal toric variety"), " has
@@ -1336,6 +1390,7 @@ document {
 	  TO (isWellDefined,NormalToricVariety)
 	  }
      }  
+
 
 document { 
      Key => {(dim, NormalToricVariety)},
@@ -1354,7 +1409,7 @@ document {
      "The following examples illustrate normal toric varieties of
      various dimensions.",
      EXAMPLE lines ///
-     	  dim projectiveSpace 0
+     	  dim projectiveSpace 1
 	  dim projectiveSpace 5
 	  dim hirzebruchSurface 7
 	  dim weightedProjectiveSpace {1,2,2,3,4}
@@ -1365,6 +1420,7 @@ document {
      Subnodes => {TO (dim,List,NormalToricVariety)},
      SeeAlso => {normalToricVariety, (rays, NormalToricVariety)}
      }  
+
 
 doc ///
   Key
@@ -1417,6 +1473,7 @@ doc ///
   SeeAlso
 ///
 
+
 document { 
      Key => {isDegenerate, 
 	  (isDegenerate,NormalToricVariety)},
@@ -1444,6 +1501,7 @@ document {
 	  (ring, NormalToricVariety)}
      }     
 
+
 document { 
      Key => {isProjective, (isProjective,NormalToricVariety)},
      Headline => "whether a toric variety is projective",
@@ -1456,6 +1514,7 @@ document {
 	  (max, NormalToricVariety)
 	  }
      }     
+
 
 document { 
      Key => {isSimplicial, 
@@ -1504,6 +1563,7 @@ document {
 	  isSmooth}
      }     
 
+
 document { 
      Key => {(isSmooth,NormalToricVariety)},
      Headline => "whether a toric variety is smooth",
@@ -1548,21 +1608,93 @@ document {
 	  isSimplicial}
      }     
 
+
 document { 
      Key => {(isWellDefined,NormalToricVariety)},
-     Headline => "whether a toric variety is well defined",
+     Headline => "whether a toric variety is well-defined",
      Usage => "isWellDefined X",
      Inputs => {"X" => NormalToricVariety},
      Outputs => {{TO2(true,"true"), " if the lists of rays and maximal
 	       cones associated to ", TT "X", " determine a strongly
 	       convex rational polyhedral fan" }},
-     "Insert information.",
+     "A pair of lists ", TT "(Rho,Sigma)", " correspond to a
+     well-defined normal toric variety if the following conditions
+     hold:",
+     UL {
+	  {"the union of the elements of ", TT "Sigma", " equals the
+	  set of indices of elements of ", TT "Rho"},
+	  {"all elements of ", TT "Rho", " have the same length"},
+	  {"all elements of ", TT "Rho", " are lists of integers"},
+	  {"the rays indexed by an element of ", TT "Sigma", "
+	  generate a strongly convex cone"},
+	  {"the rays indexed by an element of ", TT "Sigma", " are the
+	  unique minimal lattice points for the cone they generate"},
+	  {"the intersection of the cones associated to two elements
+	  of ", TT "Sigma", " is a face of each cone."}
+	  },
+     PARA{},
+     "The first examples illustrate that small projective spaces
+     are well-defined.",
+     EXAMPLE lines ///
+     	  for d from 1 to 6 list isWellDefined projectiveSpace d
+          ///,     	  
+     "The second examples show that a randomly selected Kleinschmidt
+     toric variety and a weighted projective space are also
+     well-defined.",     
+     EXAMPLE lines ///
+          setRandomSeed(currentTime());
+	  a = sort apply(3, i -> random(7))
+	  isWellDefined kleinschmidt(4,a)
+	  ///,
+     EXAMPLE {
+          "q = apply(5, j -> random(1,9));",
+	  "while not all(subsets(q,#q-1), s -> gcd s === 1) do (
+	       q = apply(5, j -> random(1,9)));",
+	  "q",
+	  "isWellDefined weightedProjectiveSpace q"
+	  },
+     "The next seven examples illustrate various ways that two lists
+     can fail to define a normal toric variety.  By making the current
+     debugging level greater than one, one gets some addition information 
+     about the nature of the failure.",
+     EXAMPLE lines ///
+     	  Sigma = max projectiveSpace 2;
+          X1 = normalToricVariety({{-1,-1},{1,0},{0,1},{-1,0}},Sigma);
+          isWellDefined X1
+     	  debugLevel = 1;
+          isWellDefined X1	  	  
+	  ///,
+     EXAMPLE lines ///	  
+	  X2 = normalToricVariety({{-1,-1},{1,0},{0,1,1}},Sigma);
+	  isWellDefined X2
+	  ///,
+     EXAMPLE lines ///	  
+	  X3 = normalToricVariety({{-1,-1/1},{1,0},{0,1}},Sigma);
+	  isWellDefined X3
+	  ///,
+     EXAMPLE lines ///	  
+	  X4 = normalToricVariety({{1,0},{0,1},{-1,0}},{{0,1,2}});
+	  isWellDefined X4
+	  ///,
+     EXAMPLE lines ///	  
+	  X5 = normalToricVariety({{1,0},{0,1},{1,1}},{{0,1,2}});
+	  isWellDefined X5
+	  ///,
+     EXAMPLE lines ///	  
+	  X6 = normalToricVariety({{1,0,0},{0,1,0},{0,0,2}},{{0,1,2}});
+	  isWellDefined X6
+	  ///,
+     EXAMPLE lines ///	  
+	  X7 = normalToricVariety({{1,0},{0,1},{1,1}},{{0,1},{1,2}});
+	  isWellDefined X7
+	  ///,
      SeeAlso => {
 	  (NormalToricVariety), 
 	  (rays, NormalToricVariety),
 	  (max, NormalToricVariety)
 	  }
-     }     
+     }   
+  
 
 document { 
      Key => "Working with Cartier and Weil divisors",
@@ -1666,6 +1798,7 @@ document {
 	  (ring,NormalToricVariety)}
 
      }   
+
 
 document { 
      Key => {classGroup, 
@@ -2323,26 +2456,6 @@ assert(apply(6, i -> rank HH^0(PP4,F(i))) == apply(6, i -> binomial(4+i,i)))
 ///
 
 TEST ///
-PP0 = projectiveSpace 0;
-assert(rays PP0 == {{}})
-assert(max PP0 == {{}})
-assert(dim PP0 == 0)
-assert(isSimplicial PP0 == true)
-assert(isSmooth PP0 == true)
-assert(isDegenerate PP0 == false)
-assert(cartierDivisors PP0 == ZZ^1)
-assert(weilDivisors PP0 == ZZ^1)
-assert(cartierToWeil PP0 == id_(ZZ^1))
-assert(classGroup PP0 == ZZ^1)
-assert(degrees ring PP0 == {{1}})
-assert(picardGroup PP0 == ZZ^1)
-assert(picardToClass PP0 == id_(ZZ^1))
-assert(ideal PP0 == ideal gens ring PP0)
-assert(nef PP0 == {{1}})
-assert(apply(6, i -> rank HH^0(PP0,OO_PP0(i))) == apply(6, i -> binomial(0+i,i)))
-///
-
-TEST ///
 FF2 = hirzebruchSurface 2;
 assert(rays FF2 == {{1,0},{0,1},{-1,2},{0,-1}})
 assert(max FF2 == {{0,1},{1,2},{2,3},{0,3}})	  
@@ -2364,7 +2477,7 @@ assert(apply(6, i -> rank HH^0(FF2,OO_FF2(0,i))) == apply(6, i -> rank source ba
 
 TEST ///
 X = weightedProjectiveSpace {1,2,3};
-assert(rays X == {{-2,3},{1,0},{0,-1}})
+assert(rays X == {{-2,-3},{1,0},{0,1}})
 assert(max X == {{0,1},{0,2},{1,2}})
 assert(dim X == 2)	  
 assert(degrees ring X == {{1},{2},{3}})
