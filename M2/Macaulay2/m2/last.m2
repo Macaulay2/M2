@@ -89,7 +89,7 @@ Function.GlobalReleaseHook = (X,x) -> (
 endPackage "Core" -- after this point, private global symbols, such as noinitfile, are no longer visible, and public symbols have been exported
 flagLookup \ vars (0 .. 51)
 scan(Core#"pre-installed packages",	-- initialized in the file installedpackages.m2, which is made from the file installedpackages
-     pkg -> needsPackage(pkg, DebuggingMode => not stopIfError))
+     needsPackage)
 Core#"base packages" = join(Core#"pre-installed packages",Core#"base packages")
 if not noinitfile' then path = join(userpath',path)
 if #OutputDictionary > 0 then error("symbols entered into OutputDictionary during startup phase: ",toString keys OutputDictionary)
