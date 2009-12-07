@@ -10,3 +10,5 @@ if not supported by fast routines in the engine, would be good for usability.
 ---
 
 Kahle, in particular, would like results of toField to still have a list of generators obtainable with "gens".
+
+See also test/fieldgens.m2
