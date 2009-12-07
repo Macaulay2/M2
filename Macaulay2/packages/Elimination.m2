@@ -86,6 +86,7 @@ eliminate (List, Ideal) := (v,I) -> (
      if not isFlatPolynomialRing R then
        error "expected a polynomial ring over ZZ or a field";
      if #v === 0 then return I;
+     if not all(v, x -> class x === R) then error "expected a list of elements in the ring of the ideal";
      varlist := getIndices(ring I,v);
      eliminate1(varlist, I)
      )
