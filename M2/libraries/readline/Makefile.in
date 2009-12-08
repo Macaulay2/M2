@@ -23,7 +23,13 @@ include ../Makefile.library
 Makefile: @srcdir@/Makefile.in ; cd ../.. && ./config.status libraries/readline/Makefile
 
 PATCHFILES := $(addprefix $(TARFILE_DIR)/readline$(PATCHVERSION)-,$(PATCHES))
-$(PATCHFILES) :; rm -f $@; cd $(TARFILE_DIR) && wget $(PATCHURL)/$(notdir $@)
+$(PATCHFILES) :
+	rm -f $@
+ifneq (@WGET@,)
+	cd $(TARFILE_DIR) && @WGET@ $(PATCHURL)/$(notdir $@)
+else
+	cd $(TARFILE_DIR) && @CURL@ -o $(notdir $@) $(PATCHURL)/$(notdir $@)
+endif
 fetch: $(PATCHFILES)
 
 clean::
