@@ -337,7 +337,6 @@ sub2 = (S,R,v) -> (				   -- S is the target ring or might be null, meaning targ
      for i from 0 to #g-1 do h#(g#i) = if h#?(g#i) then (h#(g#i),i) else 1:i;
      h = new HashTable from apply(pairs h, (x,i) -> (x,deepSplice i));
      m := new MutableList from (#g:symbol dummy);
-     -- if source==target, then the default is to leave generators alone
      for opt in v do (
 	  if class opt =!= Option or #opt =!= 2 then error "expected a list of options";
 	  x := opt#0;
@@ -357,6 +356,10 @@ sub2 = (S,R,v) -> (				   -- S is the target ring or might be null, meaning targ
 	       for i from 0 to #m-1 do if m#i === symbol dummy then m#i = g#i;
 	       );
 	  for i from 0 to #m-1 do m#i = promote(m#i, ring commonzero);
+	  )
+     else if R === S and S === ring commonzero then (
+     	  -- if source==target, then the default is to leave generators alone
+	  for i from 0 to #m-1 do if m#i === symbol dummy then m#i = g#i;
 	  )
      else (
 	  if any(m,x -> x === symbol dummy) then error "destinations not specified for every generator";
