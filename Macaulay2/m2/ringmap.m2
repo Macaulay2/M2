@@ -352,7 +352,7 @@ sub2 = (S,R,v) -> (				   -- S is the target ring or might be null, meaning targ
 	       ));
      if S === null then (
 	  if any(m,x -> x === symbol dummy) then (
-	       try commonzero = commonzero + 0_R else error "expected original ring to be compatible with the ring of substitution values";
+	       try commonzero = commonzero + 0_R else error "destinations not specified for every generator, so expected original ring to be compatible with the ring of substitution values";
 	       for i from 0 to #m-1 do if m#i === symbol dummy then m#i = g#i;
 	       );
 	  for i from 0 to #m-1 do m#i = promote(m#i, ring commonzero);
