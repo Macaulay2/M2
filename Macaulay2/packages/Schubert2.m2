@@ -246,9 +246,9 @@ base Sequence := args -> (
 	       else if instance(x,RingElement) then newvr(baseName x,0)
 	       else if instance(x,Option) and #x==2 and x#0 === Bundle and instance(x#1,Sequence) and #x#1== 3 then (
 		    (B,n,b) := x#1;
-		    nd := min(n,d);
 		    if not instance(n,ZZ) then oops x;
      		    if d === null then d = 0;
+		    nd := min(n,d);
 		    if instance(b,VisibleList) then (
 			 if length b != nd then error("expected ",toString nd," variables for the Chern classes of ",toString B);
 			 b = apply(toSequence b, goodvar);
