@@ -777,7 +777,7 @@ refine (List,List) := List => o -> (T,solsT) -> (
 	       );
 	  );
      -- M2 part 
-     n'iterations := if o.Iterations != null then o.Iterations else 100; -- infinity
+     n'iterations := if o.Iterations =!= null then o.Iterations else 100; -- infinity
      T = matrix {T};
      J = transpose jacobian T; 
      evalT := x0 -> (
@@ -1316,7 +1316,7 @@ areEqual (List,List) := o -> (a,b) -> (
 	  ) else (
      	  #a == #b and ( if o.Projective 
 	       then projectiveDistance(a,b) < o.Tolerance
-	       else norm2 {a-b} < o.Tolerance * norm2 {a}
+	       else norm2 (a-b) < o.Tolerance * norm2 a
 	       )
 	  )
      ) 
