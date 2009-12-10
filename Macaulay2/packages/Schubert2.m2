@@ -719,7 +719,7 @@ schubertCycle(Sequence,FlagBundle) := (a,X) -> (
 	  if i>0 and not (a#(i-1) < a#i) then error "expected a strictly increasing sequence of integers";
 	  if not (ai < n) then error("expected a sequence of integers less than ",toString n);
 	  );
-     giambelli(r',E,dualpart(r',seqtolist(r',a))))
+     giambelli(r',E,{* dualpart(r',seqtolist(r',a)) *} a))
 schubertCycle(List,FlagBundle) := (b,X) -> (
      -- see page 271 of Fulton's Intersection Theory for this notation
      if #X.BundleRanks != 2 then error "expected a Grassmannian";
@@ -734,7 +734,7 @@ schubertCycle(List,FlagBundle) := (b,X) -> (
 	  if i>0 and not (b#(i-1) >= b#i) then error "expected a decreasing list of integers";
 	  if not (bi <= r') then error("expected a list of integers bounded by ",toString(n-r));
 	  );
-     giambelli(r',E,dualpart(r',b)))
+     giambelli(r',E,{* dualpart(r',b) *} b))
 
 beginDocumentation()
 multidoc get (currentFileDirectory | "Schubert2/doc")
