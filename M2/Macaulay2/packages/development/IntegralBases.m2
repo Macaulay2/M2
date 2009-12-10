@@ -127,13 +127,20 @@ findBranches(RingElement) := (F) -> (
 
 needsPackage "TraceForm"
 
-selectdisc = (L) -> L#0#0
+improveDenoms = (Ds, F) -> (
+     D := product(Ds, fn -> fn#0 ^(fn#1));
+     D = D//F;
+     (factor D)//toList/toList
+     )
 
-trager1 = (vs, omega, Ms, dx) -> (
-     n := #vs;
+selectdisc = (L) -> L#0#0
+selectdisc = (L) -> L/first//product
+
+trager1 = (omega, Ms, dx) -> (
+     n := numRows omega;
      KA := ring omega;
      A := KA.baseRings#-1;
-     M := dx*id_(A^n) | lift(omega,A);
+     M := dx*id_(A^n) | sub(omega,A);
      H := hermiteNF(M, ChangeMatrix=>false);
      H = submatrix(H, 0..n-1);
      H = transpose sub(H,KA);
@@ -142,14 +149,15 @@ trager1 = (vs, omega, Ms, dx) -> (
      -- Now compute Hom(rad(dx),rad(dx)).
      Hinv := dx * H^-1; -- columns are the A1-basis of the radical of dx.
      -- First, compute the mult maps for each A1-gen of rad(dx).
-     Msnewbasis := apply(entries transpose lift(Hinv,A), rs -> (
+     Msnewbasis := apply(entries transpose sub(Hinv,A), rs -> (
 	  sum apply(#rs, i -> rs#i * Ms#i)
 	  ));
      MM := matrix{apply(Msnewbasis, m -> transpose(1/dx * H * m))};
-     MM = lift(MM,A);
+     --MM = lift(MM,A); -- for some reason thi sfails now!
+     MM = sub(MM,A);
      L := hermiteNF(MM, ChangeMatrix => false);
      L = transpose submatrix(L, 0..n-1);
-     (sub(L,KA))^-1
+     (L, (sub(L,KA))^-1)
      --(H, Hinv, Msnewbasis, MM, L)
      )
 
@@ -161,18 +169,28 @@ trager Ring := opts -> (R) -> (
      n := #vs;
      KA := coefficientRing R;
      A := KA.baseRings#-1;
-     D := lift(det omega, A);
+     D := sub(det omega, A);
      Ds := (factor D)//toList/toList/(x -> if x#1 >= 2 then {x#0,floor(x#1/2)} else null);
      Ds = select(Ds, x -> x =!= null);
+     << "disc: " << Ds << endl;
      S := id_(KA^n);
+     L := Linv := null;
+     detL := null;
      while (
+	 if #Ds === 0 then break;
 	 dx := selectdisc(Ds);
-	 L = trager1(vs, omega, Ms, dx);
-	 L != 1)
+	 (L, Linv) = trager1(omega, Ms, dx);
+	 detL = det L;
+	 << "det L: " << detL << endl;
+	 not isUnit(detL))
        do (
-	 omega = (transpose L) * omega * L;
+	 omega = (transpose Linv) * omega * Linv;
+	 Ds = improveDenoms(Ds, detL);
+	 Ms0 := apply(entries transpose Linv, rs -> sum apply(#rs, i -> rs#i * Ms#i));
+	 Ms = apply(Ms0, m -> L * m * Linv);
+	 << "new sqroot of disc: " << Ds << endl;
 	 -- change Ds
-	 S = S * L;
+	 S = S * Linv;
 	 << "at end of loop, L = " << L << " and S = " << S << endl;
 	 );
      matrix{vs} * S
@@ -354,57 +372,35 @@ Ds = select((factor D)//toList/toList, x -> x#1 > 1)
 
 C1 = B1[y]
 D1 = C1/sub(F,C1)
-(vs, omega, Ms) = traceFormAll D1
 trager D1
-P = trager1(vs, omega, Ms, Ds#0#0)
-(transpose P) * omega * P
-trager1(vs, omega, Ms, dx)
--- Compute the radical
-n = #vs
-dx = sub(Ds#0#0,A1)
-M = dx*id_(A1^n) | lift(omega,A1)
-H = hermiteNF(M, ChangeMatrix=>false)
-H = submatrix(H, 0..n-1)
-H = transpose sub(H,B1)
--- change of basis matrix from vs to radical generators:
-1/dx * H
-Hinv = dx * H^-1 -- columns are the A1-basis of the radical of dx.
-
--- Now compute Hom(rad(dx),rad(dx)).
--- First, compute the mult maps for each A1-gen of rad(dx).
-Msnewbasis = apply(entries transpose lift(Hinv,A1), rs -> (
-	  sum apply(#rs, i -> rs#i * Ms#i)
-	  ))
-M = matrix{apply(Msnewbasis, m -> transpose(1/dx * H * lift(m,A1)))}
--- Second, concat these together, do hermite.
-M = matrix {Msnewbasis}
-M = lift(M, A1)
-M = H * M
-
-M = lift(M,A1)
-L = hermiteNF(M, ChangeMatrix => false)
-L = submatrix(L, 0..n-1)
--- Third, this gives the changes of basis vs to the new basis.
---   Use this to change omega for the next step.
-L = sub(transpose L,B1)
-L^-1 -- columns are the new basis elements
-(transpose L) * omega * L
-L^-1
-matrix {vs} * oo
 
 
-transpose H
-H1 = sub(transpose H, ring Ms_0)
-use ring Ms_0
-use coefficientRing ring Ms_0
-x*Ms_0
-H * (x*Ms_0)
-H * (x*Ms_1)
-H * (x*Ms_2)
-H * (Ms_3-Ms_1)
-H * matrix{{x*Ms_0, x*Ms_1, x*Ms_2, Ms_3-Ms_1}}
-sub(oo,A1)
-hermiteNF(oo, ChangeMatrix=>false)
-submatrix(oo,{0..3})
-sub(oo,B1)
-transpose(oo^-1)
+(m,p,q) := (9,2,9); -- q =2..9 -- modifying these gives other good examples
+A1 = QQ[x]
+B1 = frac A1
+S = B1[y]
+R = S/(y^m - x^p*(x - 1)^q)
+
+trager R
+
+R = QQ[x,y]/(y^m - x^p*(x - 1)^q)
+time integralClosure R
+icFractions R
+ideal ooo
+see ideal gens gb oo
+
+
+--leonard1
+S = QQ[x,y]
+ideal((y^2-y-x/3)^3-y*x^4*(y^2-y-x/3)-x^11)
+R = S/oo
+time integralClosure oo
+icFractions R
+
+A1 = QQ[x]
+B1 = frac A1
+S = B1[y]
+R = S/ideal((y^2-y-x/3)^3-y*x^4*(y^2-y-x/3)-x^11)
+time trager R
+ideal oo
+
