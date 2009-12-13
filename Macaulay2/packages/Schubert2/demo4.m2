@@ -5,6 +5,7 @@ intersectionRing oo
 intersectionRing G
 G.Bundles
 (S,Q) = G.Bundles
+G.BundleRanks
 Q
 chern Q
 chern S
@@ -44,8 +45,11 @@ A = symmetricPower_5 Q - symmetricPower_3 Q ** OO(-z)
 -- the number of conics lying in a quintic hypersurface
 integral chern A
 -- intersection rings with parameters:
-pt = base n
+pt = base symbol n
 X = projectiveSpace_1 pt
+chi OO_X(1)
+chi OO_X(2)
+chi OO_X(3)
 chi OO_X(n)
 X = projectiveSpace_2 pt
 chi OO_X(n)
@@ -75,3 +79,37 @@ chern A
 B
 chern B
 chern(A*B)
+X = projectiveSpace(3,S,VariableName => H)
+intersectionRing X
+f = X.StructureMap
+-- check the projection formula:
+x = chern f_* (f^* OO_S(p*a_1) * OO_X(q*H))
+y = chern f_* OO_X((f^*(p*a_1))+q*H)
+x == y
+-- schubertCycle()
+base(2, Bundle=>(A, n=8, a))
+F = flagBundle ({5,q=3},A)
+CH = intersectionRing F;
+describe CH
+F_(1,3,5)
+{n-q+0-1,n-q+1-3,n-q+2-5}
+-- abstractVariety
+A = QQ[c,d,Degrees=>{1,2}]
+X = abstractVariety(3,A)
+peek A
+intersectionRing X
+F = abstractSheaf(X, ChernCharacter => 3+c+d)
+ch F
+rank F
+chern F
+adams_101 F
+ch oo
+chern ooo
+-- Chern class variables:
+S = symbol S
+Q = symbol Q
+F = flagBundle({3,2},VariableNames => {{chern_1 S,chern_2 S,chern_3 S},{chern_1 Q,chern_2 Q}})
+A = intersectionRing F
+(S,Q) = F.Bundles
+chern Q
+chern S
