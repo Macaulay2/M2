@@ -734,7 +734,7 @@ schubertCycle(List,FlagBundle) := (b,X) -> (
 	  if i>0 and not (b#(i-1) >= b#i) then error "expected a decreasing list of integers";
 	  if not (bi <= r') then error("expected a list of integers bounded by ",toString(n-r));
 	  );
-     giambelli(r',E,{* dualpart(r',b) *} b))
+     giambelli(r',E,dualpart(r',b)))
 
 beginDocumentation()
 multidoc get (currentFileDirectory | "Schubert2/doc")
