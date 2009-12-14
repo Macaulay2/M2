@@ -1,6 +1,7 @@
 G = flagBundle({2,2}, VariableNames => {b,c})
 G.StructureMap
-target G.StructureMap
+g = G/point
+target g
 intersectionRing oo
 intersectionRing G
 G.Bundles
@@ -19,16 +20,16 @@ c_1^2
 c_1^3
 c_1^4
 integral oo
-sectionClass G.StructureMap
+sectionClass (G/point)
 -- Lines on hypersurfaces:
 B = symmetricPower_3 Q
 integral chern B
 chern B
 ctop B
 code(integral, class chern B)
-G.StructureMap_*
-G.StructureMap_* chern B
-code(G.StructureMap_*, class chern B)
+g_*
+g_* chern B
+code(g_*, class chern B)
 f = n -> (
      -- number of lines in P^n lying on a hypersurface
      -- of degree 2n-3
@@ -84,7 +85,7 @@ chern B
 chern(A*B)
 X = projectiveSpace(3,S,VariableName => H)
 intersectionRing X
-f = X.StructureMap
+f = X/S
 -- check the projection formula:
 x = chern f_* (f^* OO_S(p*a_1) * OO_X(q*H))
 y = chern f_* OO_X((f^*(p*a_1))+q*H)
@@ -270,7 +271,7 @@ for d from 1 to 3 do for e from 1 to 4 do << endl << "d=" << d << " e=" << e << 
    -- > c11:=chern(rank(A),A):# its top Chern class.
    c11 = chern(rank A, A)
    -- > lowerstar(X,c11):     # push down to G(3,5).
-   X.StructureMap_* c11
+   (X/Gc)_* c11
    -- > integral(Gc,");       # and integrate there.
    --                                      609250
    integral oo
