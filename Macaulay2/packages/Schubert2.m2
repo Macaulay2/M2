@@ -18,7 +18,7 @@ export { "AbstractSheaf", "abstractSheaf", "AbstractVariety", "abstractVariety",
      "AbstractVarietyMap", "adams", "Base", "BundleRanks", "Bundles", "VarietyDimension", "Bundle",
      "TautologicalLineBundle", "ch", "chern", "ChernCharacter", "ChernClass", "ChernClassVariable", "chi", "ctop", "FlagBundle",
      "flagBundle", "projectiveBundle", "projectiveSpace", "PP", "FlagBundleStructureMap", "integral", "IntersectionRing",
-     "intersectionRing", "PullBack", "PushForward", "Rank",
+     "intersectionRing", "PullBack", "PushForward", "Rank", "ChernClassVariableTable",
      "schur", "SectionClass", "sectionClass", "segre", "StructureMap", "TangentBundle", "tangentBundle", "cotangentBundle", "todd",
      "VariableNames", "VariableName", "SubBundles", "QuotientBundles", "point", "base"}
 
@@ -298,14 +298,25 @@ ch = method(TypicalValue => RingElement)
 ch AbstractSheaf := (F) -> F.ChernCharacter
 ch(ZZ,AbstractSheaf) := (n,F) -> part_n ch F
 
-chernClassValues = new MutableHashTable
+ChernClassVariableTable = new Type of MutableHashTable
+net ChernClassVariableTable := Etable -> net Etable # symbol$
+baseName ChernClassVariableTable := Etable -> Etable # symbol$
 ChernClassVariable = new Type of BasicList
 ChernClassVariable.synonym = "Chern class variable"
-chern(ZZ,Symbol) := ChernClassVariable => (n,E) -> value new ChernClassVariable from {n,E}
+getCCVTable = E -> (
+     Etable := value E;
+     if not instance(Etable,ChernClassVariableTable) then (
+	  if E =!= Etable then stderr << "--warning: clearing value of symbol " << E << " to allow access to Chern class variables based on it" << endl;
+	  E <- Etable = new ChernClassVariableTable;
+	  Etable#symbol$ = E;
+	  );
+     Etable)
+chern(ZZ,Symbol) := ChernClassVariable => (n,E) -> ( getCCVTable E; new ChernClassVariable from {n,E} )
+chern(ZZ,ChernClassVariableTable) := (n,E) -> if E#?n then E#n else new ChernClassVariable from {n,E#symbol$}
 Ring _ ChernClassVariable := (R,s) -> R#indexSymbols#s
 baseName ChernClassVariable := identity
-installMethod(symbol <-, ChernClassVariable, (c,x) -> chernClassValues#c = x)
-value ChernClassVariable := c -> if chernClassValues#?c then chernClassValues#c else c
+installMethod(symbol <-, ChernClassVariable, (c,x) -> (getCCVTable c#1)#(c#0) = x)
+value ChernClassVariable := c -> ( n := c#0; E := c#1; Etable := value E; if instance(Etable,ChernClassVariableTable) then Etable#n else c)
 expression ChernClassVariable := c -> new FunctionApplication from {new Subscript from {symbol c,c#0}, c#1}
 net ChernClassVariable := net @@ expression
 toString ChernClassVariable := toString @@ expression
@@ -381,6 +392,13 @@ flagBundle(List,AbstractSheaf) := opts -> (bundleRanks,E) -> (
      if not all(bundleRanks,r -> instance(r,ZZ) and r>=0) then error "expected bundle ranks to be non-negative integers";
      n := #bundleRanks;
      rk := sum bundleRanks;
+     HR := degreesRing {1};
+     T := HR_0;
+     vn := dualpart(0,rsort bundleRanks);
+     hilbertSeriesHint := new Divide from {
+	  product for i from 0 to n-1 list ( k := sum take(bundleRanks,i); product for j from k+1 to k+bundleRanks#i list 1 - T^j ),
+	  new Product from reverse for i from 1 to #vn list new Power from {1 - T^i, vn#(i-1)}
+	  };
      if rank E =!= rk then error "expected rank of bundle to equal sum of bundle ranks";
      verror := () -> error "flagBundle VariableNames option: expected a good name or list of names";
      varNames = (
@@ -396,6 +414,7 @@ flagBundle(List,AbstractSheaf) := opts -> (bundleRanks,E) -> (
 		    if h === null then apply(toList(1 .. r), j -> new IndexedVariable from {h$,(i+offset,j)})
 		    else if instance(h,Symbol) then apply(toList(1 .. r), j -> new IndexedVariable from {h,j})
 		    else if instance(h,List) then (
+			 h = splice h;
 			 if #h != r then error("flagBundle: expected variable name sublist of length ",toString r);
 			 apply(h, v -> (
 				   try v = baseName v;
@@ -408,16 +427,19 @@ flagBundle(List,AbstractSheaf) := opts -> (bundleRanks,E) -> (
      X := variety E;
      dgs := splice apply(bundleRanks, r -> 1 .. r);
      S := intersectionRing X;
-     T := S(monoid [flatten varNames, Degrees => dgs, MonomialOrder => apply(bundleRanks, n -> Ord => n), Join => false]);
-     -- (A,F) := flattenRing T; G := F^-1 ;
-     A := T; F := identity;
-     chclasses := apply(varNames, x -> F (1 + sum(x,v -> T_v)));
-     rlns := product chclasses - F promote(chern E,T);
+     U := S(monoid [flatten varNames, Degrees => dgs, MonomialOrder => apply(bundleRanks, n -> Ord => n), Join => false]);
+     -- (A,F) := flattenRing U; G := F^-1 ;
+     A := U; F := identity;
+     chclasses := apply(varNames, x -> F (1 + sum(x,v -> U_v)));
+     rlns := product chclasses - F promote(chern E,U);
      rlns = sum @@ last \ sort pairs partition(degree,terms(QQ,rlns));
+     rlns = ideal rlns;
+     if heft S =!= null and degreesRing S === HR then gb(rlns, Hilbert => numerator hilbertSeriesHint * numerator hilbertSeries S);
      B := A/rlns;
      -- (C,H) := flattenRing B; I := H^-1;
      C := B; H := identity;
      -- use C;
+     C#"hilbert Function hint" = hilbertSeriesHint;
      d := dim X + sum(n, i -> sum(i+1 .. n-1, j -> bundleRanks#i * bundleRanks#j));
      FV := C.Variety = abstractVariety(d,C,ReturnType => FlagBundle);
      FV.BundleRanks = bundleRanks;
@@ -432,7 +454,7 @@ flagBundle(List,AbstractSheaf) := opts -> (bundleRanks,E) -> (
      pullback := method();
      pushforward := method();
      pullback ZZ := pullback QQ := r -> pullback promote(r,S);
-     pullback S := r -> H promote(F promote(r,T), B);
+     pullback S := r -> H promote(F promote(r,U), B);
      sec := product(1 .. n-1, i -> (ctop bundles#i)^(sum(i, j -> rank bundles#j)));
      pushforward C := r -> coefficient(sec,r);
      pullback AbstractSheaf := E -> (
@@ -642,13 +664,16 @@ computeWedges = (n,A,d) -> (
 exteriorPower(ZZ, AbstractSheaf) := AbstractSheaf => opts -> (n,E) -> (
      -- wedge is an array 0..n of the chern characters of the exerior 
      -- powers of E.  The last one is what we want.
-     if 2*n > rank E then return det(E) ** dual exteriorPower(rank E - n, E);
+
+     -- this line of code is incorrect for virtual bundles:
+     -- if 2*n > rank E then return det(E) ** dual exteriorPower(rank E - n, E);
+
      wedge := computeWedges(n,ch E,dim variety E);
      abstractSheaf(variety E, ChernCharacter => wedge#n)
      )
 
 exteriorPower AbstractSheaf := AbstractSheaf => opts -> (E) -> (
-     -- really only makes sense if E is "effective"
+     -- really only makes sense if E is "effective", but it's useful, anyway
      sum for i from 0 to rank E list (-1)^i * exteriorPower(i,E)
      )
 
@@ -743,6 +768,7 @@ undocumented {
      (tangentBundle,FlagBundleStructureMap),
      (symmetricPower,QQ,AbstractSheaf),
      (symmetricPower,ZZ,AbstractSheaf),
+     (net,ChernClassVariableTable),
      (net,AbstractSheaf),
      (net,AbstractVariety),
      (net,AbstractVarietyMap),
@@ -751,6 +777,7 @@ undocumented {
      (baseName,ChernClassVariable),
      (expression,ChernClassVariable),
      (baseName,AbstractSheaf),
+     (baseName,ChernClassVariableTable),
      (toString,AbstractSheaf),
      (toString,AbstractVariety),
      (toString,AbstractVarietyMap),
@@ -764,5 +791,5 @@ TEST /// input (Schubert2#"source directory"|"Schubert2/test-dan.m2") ///
 TEST /// input (Schubert2#"source directory"|"Schubert2/test2-dan.m2") ///
 
 -- Local Variables:
--- compile-command: "make -C $M2BUILDDIR/Macaulay2/packages PACKAGES=Schubert2 all check-Schubert2 "
+-- compile-command: "make -C $M2BUILDDIR/Macaulay2/packages PACKAGES=Schubert2 all check-Schubert2 RemakeAllDocumentation=true "
 -- End:

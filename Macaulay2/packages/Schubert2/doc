@@ -803,11 +803,13 @@ Node
     of abstract varieties that are displayed in the form {\tt c_iE}, where {\tt i} is a natural number
     and {\tt E} is the name of an abstract sheaf.
    Example
-    F = flagBundle({2,2},VariableNames => {{chern_1 S,chern_2 S},{chern_1 Q,chern_2 Q}})
+    F = flagBundle({3,2},VariableNames => {{chern_1 S .. chern_3 S},{chern_1 Q,chern_2 Q}})
     A = intersectionRing F
     (S,Q) = F.Bundles
     chern Q
     chern S
+  SeeAlso
+   ChernClassVariableTable
 --------
 Node
  Key
@@ -2011,8 +2013,11 @@ Node
    Example
     x = chern_3 E
     chern_3 E <- 444
+    E
     x
     value x
+  SeeAlso
+   ChernClassVariableTable
 --------
 Node
   Key
@@ -2475,6 +2480,45 @@ Node
    Y = projectiveSpace_4 X
    Y.StructureMap
    X.StructureMap * Y.StructureMap
+Node
+ Key
+  ChernClassVariableTable
+ Headline
+  the class of all Chern class variable tables
+ Description
+  Text
+   After creating a Chern class variable such as @ TT "chern_3 E" @, the base symbol {\tt E} acquires as value 
+   a hash table that holds the values of the Chern class variables based on it.  If something else is assigned
+   to {\tt E}, the values are no longer referred to by {\tt E}, and will the space they occupy be collected
+   and reused unless other references to them remain.
+  Example
+   chern_3 E
+   E
+   peek E
+   chern_3 symbol E <- 44
+   chern_3 E
+   peek E
+   E = 55
+   chern_3 symbol E <- 44
+Node
+ Key
+  (chern,ZZ,ChernClassVariableTable)
+ Headline
+  get value of a Chern class variable
+ Usage
+  chern_i E
+ Inputs
+  i:
+  E:
+ Outputs
+  :
+   the value of the Chern class variable @ TT "chern_i E" @
+ Description
+  Example
+   chern_3 E <- 44
+   E
+   chern_3 E
+-- Local Variables:
 -- mode: M2
 -- coding: utf-8
 -- compile-command: "make -C $M2BUILDDIR/Macaulay2/packages PACKAGES=Schubert2 "

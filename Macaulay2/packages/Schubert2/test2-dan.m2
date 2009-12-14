@@ -1,5 +1,30 @@
 --*- coding: utf-8 -*-
 
+base(3, Bundle => (E,4,e))
+chern E
+chern schur_{1,1,1,1} E
+chern exteriorPower_4 E
+assert( oo === ooo )
+
+chern schur_{3,1} E
+chern schur_{2,2} E
+chern schur_{2,1,1} E
+
+chern schur_{4} E
+chern symmetricPower_4 E
+assert( oo === ooo )
+
+chern schur_{1,1,1,1,1} E
+chern exteriorPower_5 E
+assert( oo === ooo )
+
+base(3, Bundle => (E,3,e),Bundle => (F,3,f))
+P = exteriorPower_4 (E+F)
+Q = exteriorPower_4 E + (exteriorPower_3 E) * F + (exteriorPower_2 E) * (exteriorPower_2 F) + E * (exteriorPower_3 F) + exteriorPower_4 F
+assert( P === Q )
+
+clearAll
+
 compactMatrixForm = false
 n = 5;
 m = 2;

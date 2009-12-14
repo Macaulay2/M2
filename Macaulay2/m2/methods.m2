@@ -560,6 +560,15 @@ Function Thing = (f,x,e) -> (
 -- replace
 replace(String,String,String) := String => replaceStrings
 
+-- baseName
+baseName Thing := R -> (
+     if hasAttribute(R,ReverseDictionary) then (
+	  x := getAttribute(R,ReverseDictionary);
+	  if not mutable x then error("baseName: base name ",toString x," is not mutable, hence not available for use as a variable");
+	  x)
+     else error "baseName: no base name available"
+     )
+
 -- Local Variables:
 -- compile-command: "make -C $M2BUILDDIR/Macaulay2/m2 "
 -- End:
