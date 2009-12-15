@@ -291,6 +291,7 @@ base Sequence := args -> (
      X.args = args;
      X)
 point = base()
+integral intersectionRing point := r -> if liftable(r,ZZ) then lift(r,ZZ) else lift(r,QQ)
 
 dim AbstractVariety := X -> X.dim
 
