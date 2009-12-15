@@ -408,20 +408,35 @@ document {
 	       "a new function with the property that ", TT "g(y)", "
 	       returns the value of  ", TT "f(x,y)", ", that
 	       ", TT "g(y,z)", " returns the value of ", TT "f(x,y,z)", ", and
-	       so on."
+	       so on.  If ", TT "x", " is itself a sequence, its members will be spliced
+	       into the sequence of arguments of ", TT "f", "."
 	       }
 	  },
      PARA {
      	  "This abbreviation allows us to save a bit of typing, and in some
-     	  cases, agrees with standard mathematical notation."},
+     	  cases, agrees with standard mathematical notation."
+	  },
+     PARA {
+	  "We use the identity function in the following examples, so we can exactly what
+	  sequence of arguments is constructed."
+	  },
      EXAMPLE lines ///
-	  R = ZZ[a .. i];
-	  f = genericMatrix(R,a,3,3)
-	  exteriorPower(2,f)
-	  exteriorPower_2 f
-	  p = prepend_7
-	  p {8,9,10}
-	  ///
+     identity_a x
+     identity_a (x,y)
+     identity_(a,b) x
+     identity_(a,b) (x,y)
+     ///,
+     PARA {
+	  "In the following examples, we show more typical uses of this notation."
+	  },
+     EXAMPLE lines ///
+     R = ZZ[a .. i];
+     f = genericMatrix(R,a,3,3)
+     exteriorPower(2,f)
+     exteriorPower_2 f
+     p = prepend_7
+     p {8,9,10}
+     ///
      }
 
 document {
