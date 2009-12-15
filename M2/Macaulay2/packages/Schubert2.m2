@@ -175,7 +175,11 @@ abstractVariety(ZZ,Ring) := opts -> (d,A) -> (
      net A := bydegree net;
      toString A := bydegree toString;
      if not ancestor(AbstractVariety,opts#ReturnType) then error "expected value of ReturnType option to be a type of AbstractVariety";
-     integral A := part_d;
+     integral A := (
+	  if d === 0
+	  then x -> part(d,x)
+	  else x -> (hold integral) part(d,x)
+	  );	  
      A.Variety = new opts#ReturnType from { global dim => d, IntersectionRing => A })
 
 tangentBundle = method(TypicalValue => AbstractSheaf)
@@ -274,7 +278,11 @@ base Sequence := args -> (
      X := abstractVariety(d,A);
      X.TangentBundle = abstractSheaf(X,Rank => d);          -- it's the base; user can replace it
      X.TautologicalLineBundle = abstractSheaf(X,Rank => 1); -- it's the base; user can replace it
-     integral intersectionRing X := identity;		    -- it's the base; user can replace it
+     integral intersectionRing X := (
+	  if d === 0
+	  then x -> part(d,x)
+	  else x -> (hold integral) part(d,x)
+	  );
      X#"bundles" = apply(bdls,(B,n,b) -> (
 	       globalReleaseFunction(B,value B);
 	       B <- abstractSheaf(X, Name => B, Rank => n, ChernClass => 1_A + sum(1 .. min(n,d), i -> A_(b#(i-1))));
@@ -472,6 +480,7 @@ flagBundle(List,AbstractSheaf) := opts -> (bundleRanks,E) -> (
 	  if variety E =!= FV then "pushforward: variety mismatch";
 	  abstractSheaf(X,ChernCharacter => pushforward (ch E * todd p)));
      integral C := r -> integral p_* r;
+     use FV;
      FV)
 
 use AbstractVariety := AbstractVariety => X -> (
@@ -791,5 +800,5 @@ TEST /// input (Schubert2#"source directory"|"Schubert2/test-dan.m2") ///
 TEST /// input (Schubert2#"source directory"|"Schubert2/test2-dan.m2") ///
 
 -- Local Variables:
--- compile-command: "make -C $M2BUILDDIR/Macaulay2/packages PACKAGES=Schubert2 all check-Schubert2 RemakeAllDocumentation=true "
+-- compile-command: "make -C $M2BUILDDIR/Macaulay2/packages PACKAGES=Schubert2 all check-Schubert2 RemakeAllDocumentation=true RerunExamples=true RemakePackages=true"
 -- End:

@@ -365,14 +365,13 @@ assert( oo == 1/12*n^4+5/3*n^3+125/12*n^2+125/6*n+2 )
 X = base(3, Bundle=>(L,1,D), Bundle=>(T,3,b))
 X.TangentBundle = T
 chern L
-part_3(chi L)
-assert( oo == (1/6)*D_1^3+(1/4)*D_1^2*b_1+(1/12)*D_1*b_1^2+(1/12)*D_1*b_2+(1/24)*b_1*b_2 )
+chi L
+assert( oo === (hold integral)((1/6)*D_1^3+(1/4)*D_1^2*b_1+(1/12)*D_1*b_1^2+(1/12)*D_1*b_2+(1/24)*b_1*b_2) )
 
 X = abstractVariety(3,QQ[K,c_2,c_3, Degrees => {1..3}][D,Join=>false])
 X.TangentBundle = abstractSheaf(X,Rank=>3,ChernClass=>1-K+c_2+c_3)
-integral intersectionRing X := part_3;
 chi OO(D)
-assert( oo == (1/6)*D^3-(1/4)*D^2*K+(1/12)*D*K^2+(1/12)*D*c_2-(1/24)*K*c_2 )
+assert( oo === (hold integral)((1/6)*D^3-(1/4)*D^2*K+(1/12)*D*K^2+(1/12)*D*c_2-(1/24)*K*c_2) )
 
 ---- #-------------------------------------------------------------------------
 ---- # number of bitangents to a plane curve

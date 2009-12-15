@@ -207,7 +207,12 @@ Node
      as is the case for the intersection ring modulo numerical equivalence of a
      complete nonsingular variety, the integral can often be implemented as the
      functional that takes the coefficient of the highest degree component with
-     respect to a suitable basis of monomials.
+     respect to a suitable basis of monomials.  The default integration method
+     installed by such functions as @ TO base @ and @ TO abstractVariety @ for varieties
+     of dimension greater than 0 returns
+     a symbolic expression indicating the further integration that ought to be done.
+     In this example, we choose to implement the integral by taking the coefficient of the
+     monomoial in our ring of top degree.
    Example
      integral A := f -> coefficient(t^2,f);
    Text
@@ -277,7 +282,7 @@ Node
    Example
     F === dual F'(-2)
    Text
-     Now we compute the Hilbert polynomial of $F$.
+     Now we compute the Hilbert polynomial of $F$.  This computation makes use of the Riemann-Roch Theorem.
    Example
     chi F(n*h)
 --------
@@ -327,6 +332,8 @@ Node
      dim P
      todd P
   SeeAlso
+     projectiveBundle
+     flagBundle
      tangentBundle
      todd
      chi
@@ -368,14 +375,19 @@ Node
     If {\tt b} is a symbol, then the Chern classes of $B$ are assigned to
     the indexed variables @ TT "b_1, ..., b_k" @, where $k = min(r,d)$.
     If {\tt b} is a list of length $k$, then the Chern classes are assigned to its elements.
+   Item
+    A default method for integration of elements of the intersection ring is installed, which returns a
+    formal @ TO2{Expression,"expression"} @ representing the integral of the degree $d$ part of the element when $d$ is
+    greater than zero, and simply returns the degree 0 part of the element when $d$ is zero.
   Description
    Text
     First we make a base variety and illustrate a computation with its two abstract sheaves:
    Example
-     S = base(2,p,q,Bundle =>(A,1,a), Bundle => (B,2,{b1,b2}))
+     S = base(2,p,q, Bundle =>(A,1,a), Bundle => (B,2,{b1,b2}))
      intersectionRing S
      degrees oo
      chern (A*B)
+     integral oo
    Text
     Then we make a projective space over it and use the auxiliary parameters {\tt p} and {\tt q} in a computation
     that checks the projection formula.
@@ -592,14 +604,15 @@ Node
     display monomials of higher degree further to the right, parenthesizing multiple
     terms of the same degree.
    Item
-    A default method for integration of elements of {\tt A} is installed, which returns the degree {\tt d} part of the
-    element; the other parts would die anyway under another method for integration.  Formulas produced using the default
-    integration method should be interpreted as requiring one further integration.
+    A default method for integration of elements of the intersection ring is installed, which returns a
+    formal @ TO2{Expression,"expression"} @ representing the integral of the degree $d$ part of the element when $d$ is
+    greater than zero, and simply returns the degree 0 part of the element when $d$ is zero.
   Description
     Example
       X = abstractVariety(3, QQ[c,d,Degrees=>{1,2}])
       F = abstractSheaf(X, ChernCharacter => 3+c+d)
       chern F
+      integral oo
 --------
 Node
   Key
@@ -949,6 +962,9 @@ Node
     [projectiveBundle,VariableNames]
   Headline
    make a projective bundle from an abstract sheaf
+  SeeAlso
+   projectiveSpace
+   flagBundle
   Usage
     projectiveBundle F
     projectiveBundle(n,X)
@@ -971,8 +987,6 @@ Node
     Y = projectiveBundle F
     dim Y
     integral (chern_1 OO_Y(1))^(dim Y)
-    lift(oo,ZZ)
-    factor oo
   Caveat
    Perhaps this should be merged with @ TO projectiveSpace @.  (The optional arguments are slightly different.)
 --------
@@ -2358,15 +2372,27 @@ Node
     todd X
     chi OO_X
     E = abstractSheaf(X,Rank => r, ChernClass => 1+d_1+d_2)
-    chi E - rank E * chi OO_X
-    chi OO(D) - chi OO_X
+    chi ( E - rank E * OO_X )
+    chi ( OO(D) - OO_X )
     chi OO_D
+  Text
+    We define a function to compute the arithmetic genus and use it to compute
+    the arithmetic genus of a curve on $X$ whose divisor class is $D$:
+  Example
     p_a = D -> 1 - chi OO_D;
     p_a D
+  Text
+    We we compute the arithmetic genus of a curve of degree $n$ in $\PP^2$:
+  Example
     Y = projectiveSpace_2 base n
     factor p_a (n*h)
-    Z = projectiveSpace_1( use projectiveSpace_1 base(m,n), VariableName => k)
+  Text
+   Here we compute the arithmetic genus of a curve on with $\PP^1 \times \PP^1$:
+  Example
+    Z = projectiveSpace_(1,VariableName => k) projectiveSpace_1 base(m,n)
     factor p_a (m*h + n*k)
+  Text
+   In the code above we have used the notation {\tt f_(a,b) x} as an abbreviation for {\tt f(a,b,x)}, see @ TO (symbol _,Function,Thing) @.
 -------
 Node
  Key
