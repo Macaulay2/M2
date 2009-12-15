@@ -1,0 +1,8 @@
+
+i85 : getSymbol("d10--")
+
+i86 : getSymbol("d10--")
+
+o86 = d10--
+
+o86 : Symbol
