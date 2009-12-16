@@ -25,6 +25,10 @@ Node
       One may start with a {\em base variety} whose intersection ring contains variables of degree 0 that can represent
       unknown integers in formulas, along with variables of positive degree that can be used as Chern classes of
       generic abstract sheaves.
+
+      This package is inspired by @ HREF{"http://stromme.uib.no/home/schubert/", "schubert"} @, which was written by
+      @ HREF{"http://www.math.uiuc.edu/~katz/", "Sheldon Katz"} @ and Stein A. Strømme.
+
   Subnodes
     "Lines on hypersurfaces"
     "Conics on a quintic threefold"
