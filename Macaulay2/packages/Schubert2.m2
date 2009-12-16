@@ -7,7 +7,7 @@ newPackage(
 	Authors => {
 	     {Name => "Daniel R. Grayson", Email => "dan@math.uiuc.edu", HomePage => "http://www.math.uiuc.edu/~dan/"},
 	     {Name => "Michael E. Stillman", Email => "mike@math.cornell.edu", HomePage => "http://www.math.cornell.edu/People/Faculty/stillman.html"},
-	     {Name => "Stein A. Strømme", Email => "stromme@math.uib.no"},
+	     {Name => "Stein A. Strømme", Email => "stromme@math.uib.no", HomePage => "http://stromme.uib.no/home/" },
 	     {Name => "David Eisenbud", Email => "de@msri.org", HomePage => "http://www.msri.org/~de/"}
 	     },
 	HomePage => "http://www.math.uiuc.edu/Macaulay2/",
@@ -257,6 +257,9 @@ base Sequence := args -> (
 			 if length b != nd then error("expected ",toString nd," variables for the Chern classes of ",toString B);
 			 b = apply(toSequence b, goodvar);
 			 )
+		    else if instance(b,String) then (
+			 b = apply(1..nd,i->getSymbol(b|toString i));
+			 )
 		    else (
 		    	 b = goodsym b;
 			 b = apply(1..nd,i->b_i);
@@ -422,6 +425,7 @@ flagBundle(List,AbstractSheaf) := opts -> (bundleRanks,E) -> (
 		    try h = baseName h;
 		    if h === null then apply(toList(1 .. r), j -> new IndexedVariable from {h$,(i+offset,j)})
 		    else if instance(h,Symbol) then apply(toList(1 .. r), j -> new IndexedVariable from {h,j})
+		    else if instance(h,String) then apply(toList(1 .. r), j -> getSymbol(h|toString j))
 		    else if instance(h,List) then (
 			 h = splice h;
 			 if #h != r then error("flagBundle: expected variable name sublist of length ",toString r);

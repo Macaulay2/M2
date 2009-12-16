@@ -360,7 +360,7 @@ Node
     B:Symbol
     r:ZZ
     b:
-      either @ ofClass Symbol @ or @ ofClass List @ of @ TO2{Symbol,"symbols"} @, 
+      either @ ofClass Symbol @, @ ofClass String @, @ ofClass List @ of @ TO2{Symbol,"symbols"} @, 
       @ TO2{IndexedVariable,"indexed variables"} @, or @ TO2{ChernClassVariable,"Chern class variables"} @ 
   Outputs
     :AbstractVariety
@@ -374,6 +374,8 @@ Node
     For each option {\tt Bundle=>(B,r,b)}, an abstract sheaf of rank {\tt r} is created and assigned to the variable {\tt B}.
     If {\tt b} is a symbol, then the Chern classes of $B$ are assigned to
     the indexed variables @ TT "b_1, ..., b_k" @, where $k = min(r,d)$.
+    If {\tt b} is a string, {\tt "d"}, say, then the Chern classes of $B$ are assigned to 
+    the variables whose names are {\tt d1}, {\tt d2}, {\tt d3}, ... .
     If {\tt b} is a list of length $k$, then the Chern classes are assigned to its elements.
    Item
     A default method for integration of elements of the intersection ring is installed, which returns a
@@ -383,7 +385,7 @@ Node
    Text
     First we make a base variety and illustrate a computation with its two abstract sheaves:
    Example
-     S = base(2,p,q, Bundle =>(A,1,a), Bundle => (B,2,{b1,b2}))
+     S = base(2,p,q, Bundle =>(A,1,a), Bundle => (B,2,"b"))
      intersectionRing S
      degrees oo
      chern (A*B)
@@ -923,6 +925,7 @@ Node
     If its value is a list, then for each i, its i-th entry specifies how the Chern classes of the i-th tautological sheaf are to be named.
     If the i-th entry is omitted (i.e., is @ TO null @), then the default names are used.
     If the i-th entry is a symbol, say {\tt c}, then the names are @ TT "c_1 .. c_(r_i)" @.
+    If the i-th entry is a string, say {\tt c}, then the names are {\tt c1}, {\tt c2}, {\tt c3}, ... .
     If the i-th entry is a list, its entries are used as the names.
   Outputs
    F:FlagBundle
@@ -2265,7 +2268,7 @@ Node
   Pre
    > grass(3,4,d,all):
   Example
-   Gd = flagBundle({1,3}, VariableNames => {,d})
+   Gd = flagBundle({1,3}, VariableNames => {,"d"})
    (Sd,Qd) = Gd.Bundles
   Pre
    > Proj(f,dual(symm(2,Qd)),e):
@@ -2275,7 +2278,7 @@ Node
    > integral(Gd,lowerstar(f,(2*d1+e)^8));
                                           92
   Example
-   integral (2*d_1 + e)^8
+   integral (2*d1 + e)^8
 Node
  Key
   "Example from Schubert: Euler characteristic of Horrocks-Mumford bundle"
