@@ -6,7 +6,13 @@ pluralsynonym := T -> try pluralize T.synonym else "objects of class "|toString 
 notsamering := (X,Y) -> (
      if X === Y then error("expected ",pluralsynonym X, " for the same ring")
      else error("expected ",X.synonym," and ",Y.synonym," for the same ring"))
+nottosamering := (X,Y) -> (
+     if X === Y then error("expected ",pluralsynonym X, " for compatible rings")
+     else error("expected ",X.synonym," and ",Y.synonym," for compatible rings"))
 samering := (M,N) -> if ring M === ring N then (M,N) else notsamering(class M,class N)
+tosamering := (M,N) -> if ring M === ring N then (M,N) else (
+     z := try 0_(ring M) + 0_(ring N) else nottosamering(class M,class N);
+     (promote(M,ring z),promote(N,ring z)))
 
 module Ring := Module => R -> R^1
 
@@ -258,11 +264,13 @@ matrixTable := opts -> (f) -> (
      else fixDegree(mm,opts.Degree)
      )
 
-matrix(Matrix) := Matrix => options -> (m) -> (
-     if isFreeModule target m and isFreeModule source m
+matrix(Matrix) := Matrix => opts -> (m) -> (
+     if isFreeModule target m and isFreeModule source m and (not opts.?Degree or degree m === opts.Degree or degree m === {opts.Degree} )
      then m
-     else map(cover target m, cover source m, m, Degree => degree m)
+     else map(cover target m, cover source m, m, Degree => if opts.?Degree then opts.Degree else degree m)
      )
+
+matrix RingElement := matrix Number := opts -> r -> matrix({{r}}, opts)
 
 matrix(List) := Matrix => opts -> (m) -> (
      if #m === 0 then error "expected nonempty list";
@@ -524,8 +532,9 @@ Ideal ^ ZZ := Ideal => (I,n) -> ideal symmetricPower(n,generators I)
 Ideal * Ideal := Ideal => ((I,J) -> ideal flatten (generators I ** generators J)) @@ samering
 Ideal * Module := Module => ((I,M) -> subquotient (generators I ** generators M, relations M)) @@ samering
 dim Ideal := I -> dim cokernel generators I
-Ideal + Ideal := Ideal => ((I,J) -> ideal (generators I | generators J)) @@ samering
-Ideal + RingElement := ((I,r) -> I + ideal r) @@ samering
+Ideal + Ideal := Ideal => ((I,J) -> ideal (generators I | generators J)) @@ tosamering
+Ideal + RingElement := Ideal + Number := ((I,r) -> I + ideal r) @@ tosamering
+RingElement + Ideal := Number + Ideal := ((r,I) -> ideal r + I) @@ tosamering
 degree Ideal := I -> degree cokernel generators I
 trim Ideal := Ideal => opts -> (cacheValue (symbol trim => opts)) ((I) -> ideal trim(module I, opts))
 Ideal _ ZZ := RingElement => (I,n) -> (generators I)_(0,n)
