@@ -2146,6 +2146,20 @@ Node
 -------
 Node
  Key
+  (euler,AbstractVariety)
+ Usage
+  euler X
+ Inputs
+  X:
+ Outputs
+  :ZZ
+   the topological Euler characteristic of the variety {\tt X}
+ Description
+  Example
+   euler PP^5
+-------
+Node
+ Key
   "Examples from Schubert, translated"
  Description
   Text
