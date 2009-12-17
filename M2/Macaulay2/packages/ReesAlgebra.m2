@@ -945,12 +945,12 @@ doc ///
       {\bf Historical Background}: The Rees Algebra of an ideal is the basic
       commutative algebra analogue of the blow up operation in algebraic
       geometry. It has many applications, and a great deal of modern work in
-      commutative algebra has been devoted to it.  The term "Rees Algebra" (of
+      commutative algebra has been devoted to it.  The term ``Rees Algebra'' (of
       an ideal $I$ in a ring $R$, say) is used here to refer to the ring
-      $R[It]\subset R[t]$ which is sometimes called the "blowup algebra"
-      instead. (The origin of the name may be traced to a paper by David Rees,
-      (On a problem of Zariski. Illinois J. Math. (1958)145Ã¢ÂÂ149) where Rees
-      used the ring $R[It,t^{-1}$, now also called the ``extended Rees
+      $R[It]\subset R[t]$ which is sometimes called the ``blowup algebra''
+      instead. (The origin of the name may be traced to a paper by David Rees
+      ({\em On a problem of Zariski}, Illinois J. Math. (1958) 145-149), where Rees
+      used the ring $R[It,t^{-1}]$, now also called the ``extended Rees
       Algebra.'')
    Example
       kk = ZZ/101;
@@ -1934,5 +1934,5 @@ i=ideal(b^2*c^3,a^2,a*c^3,b^5*c,b^4*c)
 I=specialFiberIdeal i
 
 -- Local Variables:
--- compile-command: "make -C $M2BUILDDIR/Macaulay2/packages PACKAGES=BeginningMacaulay2 RemakeAllDocumentation=true IgnoreExampleErrors=false"
+-- compile-command: "make -C $M2BUILDDIR/Macaulay2/packages PACKAGES=ReesAlgebra RemakeAllDocumentation=true IgnoreExampleErrors=false"
 -- End:
