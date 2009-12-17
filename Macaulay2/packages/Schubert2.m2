@@ -194,6 +194,8 @@ tangentBundle AbstractVarietyMap := f -> (
      f.TangentBundle)
 cotangentBundle AbstractVarietyMap := f -> dual tangentBundle f
 
+euler AbstractVariety := X -> integral ctop tangentBundle X
+
 AbstractSheaf QQ := AbstractSheaf ZZ := AbstractSheaf => (F,n) -> (
      if n == 0 then return F;
      X := variety F;
