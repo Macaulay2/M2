@@ -2098,6 +2098,9 @@ Node
    integral oo
    chi ((tangentBundle Y)(n))
  Caveat
+  The intersection ring provided for the zero locus contains only those classes arising by pull-back
+  from the ambient variety: there is no algorithm to compute the intersection ring.
+
   We haven't yet implemented an easy way to get the embedding of Y into X.
 Node
  Key
