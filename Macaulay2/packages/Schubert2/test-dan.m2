@@ -70,3 +70,11 @@ assert( value parts ch Q == ch Q )
 
 p = P.StructureMap
 p_* (chern_1 W)^2
+
+clearAll
+
+X = base(5, Bundle => (L,1,{l}), Bundle => (M,1,{m}), Bundle => (N,1,{n}))
+assert ( degeneracyLocus(0,L+M+N,OO_X) == l*m*n )
+assert ( degeneracyLocus(0,OO_X,L+M+N) == -l*m*n )
+assert( degeneracyLocus(1,L+M+N,2*OO_X) == l*m + l*n + m*n )
+assert( degeneracyLocus(2,L+M+N,3*OO_X) == l + m + n )

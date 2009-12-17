@@ -20,6 +20,7 @@ export { "AbstractSheaf", "abstractSheaf", "AbstractVariety", "abstractVariety",
      "flagBundle", "projectiveBundle", "projectiveSpace", "PP", "FlagBundleStructureMap", "integral", "IntersectionRing",
      "intersectionRing", "PullBack", "PushForward", "Rank", "ChernClassVariableTable",
      "schur", "SectionClass", "sectionClass", "segre", "StructureMap", "TangentBundle", "tangentBundle", "cotangentBundle", "todd",
+     "sectionZeroLocus", "degeneracyLocus",
      "VariableNames", "VariableName", "SubBundles", "QuotientBundles", "point", "base"}
 
 -- not exported, for now: "logg", "expp", "reciprocal", "ToddClass"
@@ -723,6 +724,7 @@ schur = method(TypicalValue => AbstractSheaf)
 schur(List, AbstractSheaf) := (p,E) -> (
      -- Make sure that p is a monotone descending sequence of non-negative integers
      --q := conjugate new Partition from p;
+     p = splice p;
      q := p;
      n := sum p;
      R := symmRing n;
@@ -730,9 +732,7 @@ schur(List, AbstractSheaf) := (p,E) -> (
      J := jacobiTrudi(q,R); -- so the result will be a poly in the wedge powers
      F := map(ring ch E, R, join(apply(splice{0..n-1}, i -> R_i => wedges#(i+1)), 
 	                         apply(splice{n..2*n-1}, i -> R_i => 0)));
-     ans := F J;
-     abstractSheaf(variety E, ChernCharacter => ans)
-     )
+     abstractSheaf(variety E, ChernCharacter => F J))
 
 schubertCycle = method(TypicalValue => RingElement)
 FlagBundle _ Sequence := FlagBundle _ List := RingElement => (F,s) -> schubertCycle(s,F)
@@ -774,6 +774,24 @@ schubertCycle(List,FlagBundle) := (b,X) -> (
 	  if not (bi <= r') then error("expected a list of integers bounded by ",toString(n-r));
 	  );
      giambelli(r',E,dualpart(r',b)))
+
+sectionZeroLocus = method(TypicalValue => AbstractVariety)
+sectionZeroLocus AbstractSheaf := (F) -> (
+     -- adapted from Schubert's bundlesection
+     X := variety F;
+     A := intersectionRing X;
+     classZ := ctop F;
+     B := A[Join=>false];		      -- a way to get a copy of A
+     Z := abstractVariety(dim X - rank F, B);
+     integral B := m -> integral( lift(m,A) * classZ );
+     if X.?TangentBundle then Z.TangentBundle = abstractSheaf(Z, ChernCharacter => ch tangentBundle X - ch F);
+     Z)
+
+degeneracyLocus = method(TypicalValue => RingElement)
+degeneracyLocus(ZZ,AbstractSheaf,AbstractSheaf) := (k,B,A) -> (
+     m := rank A;
+     n := rank B;
+     part( (m-k)*(n-k), ch schur( { n - k : m - k }, B - A )))
 
 beginDocumentation()
 multidoc get (currentFileDirectory | "Schubert2/doc")
