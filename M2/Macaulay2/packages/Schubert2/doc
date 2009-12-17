@@ -2079,6 +2079,55 @@ Node
 -------
 Node
  Key
+  (sectionZeroLocus,AbstractSheaf)
+  sectionZeroLocus
+ Usage
+  sectionZeroLocus F
+ Inputs
+  F:
+ Outputs
+  :
+   the zero locus of a generic section of {\tt F}
+ Description
+  Example
+   X = base(5, n, Bundle => (E,3,c), Bundle => (T,5,t), Bundle => (L,1,{h}))
+   X.TangentBundle = T
+   Y = sectionZeroLocus E
+   Y.TautologicalLineBundle = OO_Y(h)
+   chern tangentBundle Y
+   integral oo
+   chi ((tangentBundle Y)(n))
+ Caveat
+  We haven't yet implemented an easy way to get the embedding of Y into X.
+Node
+ Key
+  (degeneracyLocus,ZZ,AbstractSheaf,AbstractSheaf)
+  degeneracyLocus
+ Usage
+  degeneracyLocus(k,B,A)
+ Inputs
+  k:
+  B:
+  A:
+ Outputs
+  :
+   the cycle class of the locus where the rank of a generic map from {\tt A} to {\tt B} is at most {\tt k}
+ Description
+  Example
+   X = base(5, Bundle => (L,1,{l}), Bundle => (M,1,{m}), Bundle => (N,1,{n}))
+   degeneracyLocus(0,L+M+N,OO_X)
+   degeneracyLocus(1,L+M+N,2*OO_X)
+   degeneracyLocus(2,L+M+N,3*OO_X)
+   X = base(5, Bundle => (A,3,a), Bundle => (B,3,b))
+   degeneracyLocus(0,B,OO_X)
+   degeneracyLocus(1,B,2*OO_X)
+   degeneracyLocus(2,B,3*OO_X)
+   degeneracyLocus(1,B,A)
+   degeneracyLocus(2,B,A)
+   degeneracyLocus(3,B,A)
+-------
+Node
+ Key
   "Examples from Schubert, translated"
  Description
   Text
