@@ -27,6 +27,14 @@ document {
 	  "I = ideal(12,18)",
 	  "mingens I"
 	  },
+     PARA {
+	  "An empty list or sequence of generators will yield an ideal of ", TO "ZZ", ", which
+	  can be promoted to another ring, if desired."
+	  },
+     EXAMPLE lines ///
+     ideal ()
+     promote(oo,R)
+     ///,
      SeeAlso => {Ideal, PolynomialRing}
      }
 document { 
@@ -66,6 +74,20 @@ document {
 	  "f = x^2+y^2;",
 	  "ideal f"
 	  },
+     PARA {
+	  "The zero ideal with one generator can be made:"
+	  },
+     EXAMPLE "ideal 0_R",
+     PARA {
+	  "Alternatively, the zero ideal with no generators can be made in one of these ways:"
+	  },
+     EXAMPLE lines ///
+     ideal id_(R^0)
+     promote(ideal(), R)
+     ///,
+     PARA {
+	  "See ", TO promote, ", ", TO (id,Module), ", and ", TO (ideal,Sequence), ".",
+	  }
      }
 document { 
      Key => {(ideal,Ring), (ideal,QuotientRing)},
