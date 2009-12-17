@@ -1,0 +1,35 @@
+From: =?iso-8859-1?Q?Stein_Arild_Str=F8mme?= <stromme@math.uib.no>
+Date: Tue, 15 Dec 2009 20:52:44 +0100
+Subject: Old file
+To: "Daniel R. Grayson" <dan@math.uiuc.edu>,
+        Michael Stillman <mike@math.cornell.edu>
+
+Dear Dan and Mike,
+
+I just came over this old letter to Collino, kind of documenting how Geir and I
+computed various numbers using Bott's formula, among them numbers of twisted
+cubics.  It probably refers G. Ellingsrud, S. A. Str=F8mme, Bott's formula and
+enumerative geometry, J. Amer. Math. Soc. 9, 175-193 (1996).
+
+I think it would be wonderful if you were able to decipher that code, as you
+have done with schubert!
+
+SA
+
+	filename=letter_to_collino.txt
+-----------------------------------------------------------------------------
+Subject: Computing twisted cubics and elliptic quartics with Bott's residue formula
+From: =?iso-8859-1?Q?Stein_Arild_Str=F8mme?= <stromme@math.uib.no>
+Date: Tue, 15 Dec 2009 21:10:10 +0100
+Cc: "Daniel R. Grayson" <dan@math.uiuc.edu>,
+        Michael Stillman <mike@math.cornell.edu>
+
+This may be a simpler file containing the essentials:
+
+	filename=toricubics.txt
+
+
+For elliptic quartic curves, a reasonably similar story:
+
+	filename=elliptic_quartics.txt
+

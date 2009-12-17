@@ -1,0 +1,421 @@
+
+## This file generates the numbers of elliptic curves in theorem
+## 1.3. Unfortunately, it is not very structured or well documented,
+## but we hope it can be understood after reading the following brief
+## outline.
+
+## The irreducible component of the Hilbert scheme containing elliptic
+## quartic curves in P^3 is the Grassmannian of pencils of quadrics
+## blown up twice, as explained by Avritzer and Vain- sencher. The
+## fixpoints of the Grassmannian corresponding to pencils without a
+## common factor are called regular fixpoints
+
+## The first blowup corresponds to adding a cubic form to the ideal.
+## The fixpoints of type B, are by definition those who get mapped to
+## <x0*x1,x0*x2> in the Grassmannian. These have to be blown up once.
+
+## The fixpoints of type C are by definition those with quadratic part
+## of the form <x0^2,x0*x1>. Some of these are OK after the first
+## blowup, but some need the second blowup as well. This is done by
+## adding an extra quartic form in those cases.
+
+## Just run the file through maple; it will take a very long time to
+## get the larger numbers. You may have to divide the main loop
+## (bottom of file) into smaller pieces if you run into memory
+## problems.
+
+##############################################################
+## Here are some general-purpose procedure for computing in the
+## representation ring of a torus. 
+
+setuptorus:=proc(N,M) 
+  global  V, dualsubstring, variables, ranksubstring:
+  local genf,i,k:
+  genf:=expand(convert(series(1/product('1-x.i*t',i=0..N),t,M+1),polynom)):
+  for i from 0 to M do 
+    V[i]:= sort(coeff(genf,t,i)) 
+  od:i:='i':
+  dualsubstring:=seq(x.i=x.i^(-1),i=0..N):
+  variables:=[seq(x.i,i=0..N),seq(x.i^(-1),i=0..N)]:
+  ranksubstring:=seq(x.i=1,i=0..N):
+  #lprint(`dimension =`,N,`maximal degree =`,M):
+end:
+
+setuptorus(3,15):  ## the torus of P^3
+
+dualrep:=proc(C) sort(expand(subs(dualsubstring,C))) end:
+rank   :=proc(C) sort(expand(subs(ranksubstring,C))) end:
+Hom    :=proc(A,B) sort(expand(dualrep(A)*B)) end:
+
+simpleweight:=proc(p) local mon;
+  expand(p): if p=0 then RETURN(0) fi:
+  coeffs(",variables,'mon'):
+  convert([mon],`+`):
+end:
+
+# compute higher twists of an ideal, as representation:
+
+twistup:=proc(J,k) simpleweight(J*V[k]) end:
+
+# product of weights of a representation f:
+
+prodwts:=proc(f) local t,cof,mon,res,i:
+  cof:=[coeffs(f,variables,mon)]:
+  mon:=subs(x0=t^w0,x1=t^w1,x2=t^w2,x3=t^w3,[mon]):
+  res:=1:
+  for i from 1 to nops(mon) do
+    res:=res*subs(t=1,diff(mon[i],t))^cof[i]:
+  od:
+  res:
+end:
+
+
+# permut(elem,lis) is the action of a permutation "elem" 
+# on a list "lis". The permutation is represented as a 
+# product of disjoint cycles, as a list of lists. (As in
+# the Maple "group" package).
+
+permut:=proc(elem,ls)  local k,res,m,cyc,i,top:
+  res:=ls:
+  for m from 1 to nops(elem) do 
+    cyc:=elem[m]:
+    top:=res[cyc[1]]:
+    for i from 1 to nops(cyc)-1 do
+      res:=subsop(cyc[i]=res[cyc[i+1]],res)
+    od:
+    res:=subsop(cyc[i]=top,res):
+  od:
+  res
+end:
+
+# next we start working with the case of pencils of quadrics. First we
+# look at the isotropy groups of the various types.
+
+with(group):
+
+# these are isotropy groups for the regular fixpoints:
+
+isot[1]:=permgroup(4,{[[1,2]],[[3,4]]}): # (aut of x0^2,x1^2)
+isot[2]:=permgroup(4,{[[2,3]]}):         # (aut of x0^2,x1*x2)
+isot[3]:=permgroup(4,{[[1,3],[2,4]],[[1,2]],[[1,4],[2,3]],[[3,4]]}):
+                                         # (aut of x0*x1,x2*x3)
+
+# and the irregular ones:
+
+isot[4]:=permgroup(4,{[[2,3]]}):  # <x0*x1,x0*x2>
+isot[5]:=permgroup(4,{[[3,4]]}):  # <x0^2,x0*x1>
+
+S4:=permgroup(4,{[[1,2]],[[1,2,3,4]]}):  # symmetric group on x0,x1,x2,x3
+for i to 5 do 
+  orb[i]:=cosets(S4,isot[i]) 
+od:                                     # representatives modulo isotropy 
+
+##########################################################################
+# blowup takes the tangentspace of the ambient space and the one
+# of the locus to be blown up at a point and returns the list of 
+# tangentspaces of the fixpoints in the fibre. Cubiclist is just the 
+# list of the weights of the normalbundle of locus in ambient in the same 
+# order as the weights of the tngntspaces are given. 
+
+blowup:=proc(locus,ambient,blownup,cubiclist)
+    local i,NBundle:
+    NBundle:=ambient-locus:
+    for i from 1 to nops(NBundle) do
+       blownup[i]:=sort(expand(locus+NBundle*
+                   dualrep(op(i,NBundle))-1+op(i,NBundle))):
+       cubiclist[i]:=op(i,NBundle):
+    od:
+end:
+
+###########################################################################
+# Here we treat the three regular fixpoints:
+# the regular pencils (i.e. base locus in codim 2):
+
+RegularPencils:=[x0^2+x1^2,x0^2+x1*x2,x0*x1+x2*x3]:
+
+for i from 1 to 3 do
+   TangentWts[1][i]:=
+      prodwts(Hom(RegularPencils[i],V[2]-RegularPencils[i])):
+od:
+
+MakeRegularWeights:=proc(List,degree) local i:
+   for i from 1 to 3 do
+      List[i]:=prodwts(V[degree]-twistup(RegularPencils[i],degree-2)):
+   od:
+end:
+##############################################################
+
+# Then those of type B
+
+# We compute the fixpoints of type B, i.e. those who get mapped to
+# <x0*x1,x0*x2> in the Grassmannian. These have to be blown up once.
+
+
+# the tangent space to the Grassmannian in the point corresponding to
+# the pencil x0*x1+x0*x2
+
+TangentGrass:=Hom(x0*x1+x0*x2,V[2]-x0*x1-x0*x2):
+
+# tangent space to the subvariety B that we are going to blow up,
+# in the point corresponding to the pencil <x0*x1,x0*x2>
+
+TangentB:=Hom(x0, V[1]-x0)+Hom(x1+x2,V[1]-x1-x2):
+
+# We blow up. The tangent spaces in the fixpoints in the fiber are
+# listed in the variable TangListe, while the extra cubic needed in
+# the ideal is listed in CubListB
+
+blowup(TangentB,TangentGrass,TangListe,CubListB):
+
+# Remove denominators to get the cubics.
+
+CubListB:=map(proc(p) x0*x1*x2*p end,CubListB):
+
+# TangentWts[2] contains the tangent space weights
+
+TangentWts[2]:=map(prodwts,TangListe):
+
+# We make the ideals in degree "degr" of the corresponding quartics:
+
+MakeBWeights:=proc(List,degr)
+  global  j:
+  for j from 1 to 9 do
+     List[j]:=prodwts(V[degr]-
+         twistup(twistup(x0*x1+x0*x2,1)+CubListB[j],degr-3))
+  od:
+end:
+
+
+##################################################################
+# We compute the fixpoints of type C, i.e. those that get mapped to
+# <x0^2,x0*x1> in the Grassmannian of pencils.
+
+#the tangent space to the Grassmannian at <x0^2,x0*x1>.
+TangentGrassC:=Hom(x0^2+x0*x1,V[2]-x0^2-x0*x1):
+
+# the tangent space to B at the same point
+TangentBC:=Hom(x0, V[1]-x0)+Hom(x0+x1,V[1]-x0-x1):
+
+# We blow up.
+blowup(TangentBC,TangentGrassC,TangListC,CubListC):
+
+# Remove denominators and get a list of extra cubics. 
+CubListC:=map(proc(p) x0^2*x1*p end,CubListC):
+
+#######################################
+# The first three
+# will have to be blown up once more, the remaining six are OK.
+
+TangentWts[3]:=map(prodwts,TangListC):
+# TangentWts[3] contains the product of the weights for the
+# tangent space representations.
+
+# Then we make the ideals in degree "degr" of the corresponding
+# quartics.
+
+MakeCWeights:=proc(List,degr)
+  global  j:
+  for j from 1 to 6 do
+    List[j]:=prodwts(V[degr]-
+      twistup(twistup(x0^2+x0*x1,1)+CubListC[j+3],degr-3))
+  od:
+end:
+
+########################################
+# Next we treat the exceptional, i.e. the first three C-points blown
+# up.
+
+# We need the tangent space of the locus to be blown up:
+
+TangentExLocUpstairs:=proc(q):
+    Hom(q,x0*x2*x3+x0*x2^2+x0*x3^2-q)+
+        Hom(x1,V[1]-x1-x0)+Hom(x0,V[1]-x0):
+end:
+
+# SomeCubics is the three cubics that correspond to points
+# that have to be blown up once more.
+SomeCubics:=[CubListC[1],CubListC[2],CubListC[3]]:
+
+for i from 1 to 3 do
+  blowup(TangentExLocUpstairs(SomeCubics[i]),
+  TangListC[i],TangListExType.i,Quartics.i):
+od:
+
+# We make two lists TangListExType.i and Quartics.i for i=1..3.
+# The first represents the tangent space in the points of the 
+# blowup, the second the extra quartics needed in the ideal.
+
+for i from 1 to 3 do
+  for j from 1 to 9 do
+     TangentWts[3+i][j]:=prodwts(TangListExType.i[j]):
+  od: 
+od:
+
+QuarticList1:=map(proc(p) x1*SomeCubics[1]*p end,Quartics1):
+QuarticList2:=map(proc(p) x1*SomeCubics[2]*p end,Quartics2):
+QuarticList3:=map(proc(p) x1*SomeCubics[3]*p end,Quartics3):
+
+# We make lists of the extra quartics needed.
+
+MakeExWeights:=proc(List,degr,i)
+  global  j:
+  for j from 1 to 9 do
+    List[j]:=prodwts(V[degr]-
+      twistup(twistup(twistup(x0^2+x0*x1,1)+
+      SomeCubics[i],1)+QuarticList.i[j],degr-4)):
+  od:
+end:
+
+############################################
+# Now we make all weight lists for \Gamma(\O_C(degs)).
+
+MakeWghtList:=proc(lisst,degs) local i:
+ for i to nops(degs) do
+  MakeRegularWeights(lisst[1][i],degs[i]):
+  MakeBWeights(lisst[2][i],degs[i]):
+  MakeCWeights(lisst[3][i],degs[i]):
+  MakeExWeights(lisst[4][i],degs[i],1):
+  MakeExWeights(lisst[5][i],degs[i],2):
+  MakeExWeights(lisst[6][i],degs[i],3):
+ od:
+end:
+
+#############################
+
+# We fix now a P^3 and deal with that, i.e. we give
+# it weights [a0,a1,a2,a3]=:A, and compute its contribution.
+
+# FixOneP takes also global variables:
+# FellesNevner (meaning "common denominator"),
+# totsum, grad ("degree") and antall ("number").
+# "grad" is a list where the components are degrees 
+# of the hypersurfaces defining the complete intersection CY.
+# "antall" counts the number of fixpoints, and "totsum"
+# accumulates the sum of Bott's formula.
+
+FixOneP:=proc(A) 
+  global grad, totsum, antall, FellesNevner:
+  local Nevner, Teller, kk, PermA,i,j,k,l:
+
+  for i from 1 to 3 do
+    for j from 1 to nops(orb[i]) do
+      PermA:=permut(orb[i][j],A):
+      Nevner:=subs(w0=PermA[1],w1=PermA[2],w2=PermA[3],w3=PermA[4],
+          TangentWts[1][i])*FellesNevner:
+      Teller:=1:
+      for kk to nops(grad) do
+        Teller:=subs(w0=PermA[1],w1=PermA[2],w2=PermA[3],w3=PermA[4],
+          QList[1][kk][i])*Teller:
+      od:
+      antall:=antall+1:
+      totsum:=totsum+Teller/Nevner:
+    od:
+  od:
+
+# this was the regular ones. Next type B:
+
+  for j from 1 to nops(orb[4]) do
+    PermA:=permut(orb[4][j],A):
+
+    for k from 1 to 9 do
+      Nevner:=subs(w0=PermA[1],w1=PermA[2],w2=PermA[3],w3=PermA[4],
+        TangentWts[2][k])*FellesNevner:
+      Teller:=1:
+      for kk to nops(grad) do
+        Teller:=subs(w0=PermA[1],w1=PermA[2],
+          w2=PermA[3],w3=PermA[4],QList[2][kk][k])*Teller:
+      od:
+      antall:=antall+1:
+      totsum:=totsum+Teller/Nevner:
+    od:
+  od:
+
+# Then comes type C, first non-exceptional:
+
+  for j from 1 to nops(orb[5]) do
+    PermA:=permut(orb[5][j],A):
+
+    for k from 1 to 6 do
+      Nevner:=subs(w0=PermA[1],w1=PermA[2],w2=PermA[3],w3=PermA[4],
+          TangentWts[3][k+3])*FellesNevner:
+      Teller:=1:
+      for kk to nops(grad) do
+          Teller:=subs(w0=PermA[1],w1=PermA[2],
+                w2=PermA[3],w3=PermA[4],QList[3][kk][k])*Teller:
+      od:
+      antall:=antall+1:
+      totsum:=totsum+Teller/Nevner:
+    od:
+
+# and finally the three exceptional types:
+
+    for k from 4 to 6 do
+      for l from 1 to 9 do
+        Nevner:=
+          subs(w0=PermA[1],w1=PermA[2],w2=PermA[3],w3=PermA[4],
+          TangentWts[k][l])*FellesNevner:
+        Teller:=1:
+        for kk to nops(grad) do
+           Teller:=subs(w0=PermA[1],w1=PermA[2],w2=PermA[3],
+               w3=PermA[4],QList[k][kk][l])*Teller:
+        od:
+        antall:=antall+1:
+        totsum:=totsum+Teller/Nevner:
+      od:
+    od:
+  od:
+# And that's that.
+end:
+
+## Now the main loop: numberofellipticquartics(n,[d1,...,dk])
+## returns the number of elliptic quartic curves contained in the
+## CY in P^n which is the complete intersection of general
+## hypersurfaces of degrees d1,...,dk, where of course sum(d.i)=n+1.
+
+numberofellipticquartics:=proc(n,degs) 
+  global  QList,grad, totsum, antall, a, FellesNevner, mm, GrsPrd:
+  local i,j,k,l:
+  MakeWghtList(QList,degs): #Set up the necessary lists
+
+  grad:=degs:
+  totsum:=0:antall:=0:        #initiate
+
+  #choose generic one-parameter subtorus:
+  for i from 0 to n-1 do a[i]:=5^i od: a[n]:=0:
+
+  ## The following iterated loop runs over the fixed P^3's inside P^n.
+
+  for i from 0 to n-3 do
+    for j from i+1 to n-2 do
+      for k from j+1 to n-1 do
+        for l from k+1 to n do
+
+          # Now make a common denominator, from the Grassmannian
+          # of P^3's in P^n:
+
+          FellesNevner:=1:
+          for mm from 0 to n do
+           GrsPrd:= (a[i]-a[mm])*(a[j]-a[mm])*(a[k]-a[mm])*(a[l]-a[mm]):
+           if " <>0 then
+             FellesNevner:=FellesNevner*GrsPrd
+           fi:
+          od:
+
+          FixOneP([a[i],a[j],a[k],a[l]]):
+
+        od:
+      od:
+    od:
+  od:
+end:
+
+gc(0):
+for dd from 3 to 4 do
+ lprint(dd,time(),  numberofellipticquartics(dd-1,[dd]))
+od:
+
+#numberofellipticquartics
+
+#quit;
+########################### end of file ##########################
+

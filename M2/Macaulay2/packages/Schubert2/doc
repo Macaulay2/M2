@@ -59,7 +59,22 @@ Node
 	      },
 	 LI {
 	      "Maybe we should distinguish between cohomology and homology."
-	      }
+	      },
+	 LI {"eliminate the generators from the intersection ring of a flag bundle that correspond to
+	      the Chern classes of the first tautological subquotient bundle"},
+	 LI {"change the default names ", TT "H_(i,j)", " for the Chern classes of the tautological subquotient bundles
+	      on a flag variety to ", TT "chern_j E_i"},
+	 LI {"make an easy way to specify maps from a variety to a flag bundle, by specifying where all (but one)
+	      of the tautological subquotients go"},
+	 LI {"make it possible to call the toric package"},
+	 LI {"add the blow up of a subvariety with known normal bundle and known restriction function"},
+	 LI {"add a function that goes from the Hilbert series of a sheaf on projective space to the Chern class"},
+	 LI {"add knowledge of the intersection ring of an abelian variety, in particular of the Jacobian of a curve"},
+	 LI {"add knowledge of the tautological ring (as far as it's known!) of M_(g,n)"},
+	 LI {"add excess intersection formula"},
+	 LI {"add double (and multiple) point formula"},
+	 LI {"add Bott's formula, useful for counting twisted cubics, as described in ",
+	      HREF{Schubert2#"source directory"|"Schubert2/Stromme/.","Schubert2/Stromme/"}, "," }
 	 }
    @
 -------

@@ -1,7 +1,0 @@
-Schubert2 ideas from David:
-
--- make it possible to call the toric package
--- add the blow up of a subvariety with known normal bundle and known restriction function.
--- add a function that goes from the Hilbert series of a sheaf on projective space to the Chern class.
--- add knowledge of the intersection ring of an abelian variety, in particular of the Jacobian of a curve
--- add knowledge of the tautological ring (as far as it's known!) of M_(g,n).
