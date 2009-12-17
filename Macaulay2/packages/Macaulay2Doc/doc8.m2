@@ -210,7 +210,7 @@ document {
 	  "r       - an S-pair has been removed.",
 	  "{2}     - beginning to reduce the S-pairs of degree 2.",
 	  "(7)     - 7 more S-pairs need to be reduced.",
-	  "(8,9)   - there are 8 S-pairs to do in this degree, and 9 more in higher degrees.",
+	  LI {"(8,9)   - 9 S-pairs, 8 predicted basis elements (", TO [gb,Hilbert], ")"},
 	  ".       - a minor has been computed, or something has happened while computing a resolution.",
 	  }
      }
