@@ -78,3 +78,24 @@ assert ( degeneracyLocus(0,L+M+N,OO_X) == l*m*n )
 assert ( degeneracyLocus(0,OO_X,L+M+N) == -l*m*n )
 assert( degeneracyLocus(1,L+M+N,2*OO_X) == l*m + l*n + m*n )
 assert( degeneracyLocus(2,L+M+N,3*OO_X) == l + m + n )
+
+clearAll
+
+-- from arxiv:9906119 by Tjotta
+V = OO_point^7
+P = projectiveBundle( exteriorPower_2 V, VariableNames => {,{p}} )
+PG = flagBundle( {4,3}, (P/point)^* V, VariableNames => {beta,gamma} )
+(U,Q) = PG.Bundles
+A = exteriorPower_2 ( (PG/point)^* V  )  *  OO(p) - exteriorPower_2 U * OO(p)
+M = sectionZeroLocus A
+B = intersectionRing M
+p = promote(p,B)
+g2 = promote(gamma_2,B)
+integral ( p^17 )
+assert( oo == 14 )
+integral ( g2 * p^15 )
+assert( oo == 28 )
+integral ( g2^2 * p^13 )
+assert( oo == 59 )
+integral ( g2^3 * p^11 )
+assert( oo == 117 )
