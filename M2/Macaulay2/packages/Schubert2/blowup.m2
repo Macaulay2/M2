@@ -32,10 +32,10 @@ blowup(AbstractVariety, AbstractVariety, RingMap, Matrix) :=
      PN := projectiveBundle(dual N, VariableNames => {,{x}});
      F := first PN.Bundles;
      C := intersectionRing PN;
-     (BasAModule, bas, jlower) := pushFwd iupper;
-     -- jlower(element b of B) = one column matrix over A whose product with bas is b
+     (BasAModule, bas, iLowerMod) := pushFwd iupper;
+     -- iLowerMod(element b of B) = one column matrix over A whose product with bas is b
      n := numgens BasAModule;
-     D1 := A[E_0..E_(n-1)];
+     D1 := A[E_0..E_(n-1), Join=>false];
      alphas := first entries bas;
      Ndual := dual N;
      blist := for i from 1 to d list chern(d-i, Ndual);
@@ -46,18 +46,31 @@ blowup(AbstractVariety, AbstractVariety, RingMap, Matrix) :=
      I2 := ideal flatten (
              for i from 1 to n-1 list 
 	       for j from i to n-1 list (
-		    f := (vars D1) * jlower (alphas#i * alphas#j);
+		    f := (vars D1) * iLowerMod (alphas#i * alphas#j);
 		    E_i * E_j - E_0 * f
 	  ));
      if I2 == 0 then I2 = trim ideal(0_D1);
      -- 3. linear relations
      I3 := ideal for i from 0 to n-1 list (
-     	  f1 := matrix ilower * (jlower alphas#i);
+     	  f1 := matrix ilower * (iLowerMod alphas#i);
 	  f2 := sum for j from 0 to d-1 list (
-     	       E_0^j * ((vars D1) * jlower(blist#j * alphas#i))
+     	       E_0^j * ((vars D1) * iLowerMod(blist#j * alphas#i))
 	       );
 	  f1-f2);
-     I1 + I2 + I3
+     D := D1/(I1 + I2 + I3);
+     Ytilde := abstractVariety(dim Y, D);
+     xpowers := matrix {for i from 0 to d-1 list x^i};
+     E0powers := transpose matrix {for i from 0 to d-1 list (-E_0)^i};
+     jLower := (f) -> (
+	  -- takes an element f of C, returns an element of D
+	  cf := last coefficients(f, Monomials => xpowers);
+	  cf = lift(cf, B);
+	  cfA := matrix {apply(flatten entries cf, iLowerMod)};
+	  ((vars D) * cfA * E0powers)_(0,0)
+	  );
+     -- Now compute the tangent bundle
+     Ytilde.TangentBundle = xx;
+     jLower, C
      )
 
 end
@@ -88,7 +101,11 @@ sub(sub(ideal {-k, k^2, -k^3, k^4, -k^5, k}, {k=>2*k}),
 
 restart
 load "blowup.m2"
-blowup(P2,P5,iupper,ilower)
+(F,C) = blowup(P2,P5,iupper,ilower)
+AYtilde = ring (F (C_2))
+C_2
+F (C_2)
+F (C_2^2)
 g h
 
 viewHelp coefficients

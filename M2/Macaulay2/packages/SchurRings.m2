@@ -417,6 +417,63 @@ document {
      }
 
 end
+
+restart
+loadPackage "SchurRings"
+
+///
+-- Test of code in this package
+R = symmRing 4
+F = e_1*e_2
+G = toP F
+H = toS F
+assert(toE G == F)
+H
+
+
+e_1*e_3-e_4
+dim toS oo
+
+-- missing: going from S to E or P.
+-- how about to/from H rep too?
+
+-- These all work, it seems:
+R = symmRing 4
+F =jacobiTrudi({3,2,1},R)
+G = toS F     
+toE F
+toP F
+toE oo
+SF = toS F
+
+-- How about getting partition info from schurRings?
+exponents SF -- works great now
+terms SF
+listForm SF
+dim SF
+-- toE, toP should work on these...
+
+-- plethysms?
+debug SchurRings
+R = symmRing 4
+F = e_2
+dim toS F -- dim is 6
+G = toS plethysm({1,1},F)
+plethysmMap
+plethysm
+
+-- the following are used as subroutines
+etos
+PtoE
+EtoP
+
+-- not used
+toSold
+symmRing0
+
+
+///
+
 -----------------------------------------------------------------------------
 -- the rest of this file used to be schur.m2
 -----------------------------------------------------------------------------
@@ -672,7 +729,7 @@ toS PtoE(4,R)
 PtoE(4,R)
 
 toS (jacobiTrudi({2,1},R))^2
-R.Schur_{2,1}^2
+R.Schur_{2,1}^2 -- WRONG??
 
 f = toS plethysm(jacobiTrudi({2},R), jacobiTrudi({2},R)) -- assert(f == {({4}, 1), ({2, 2}, 1)})
 f = toS plethysm(jacobiTrudi({3},R), jacobiTrudi({2},R)) -- assert(f == 
