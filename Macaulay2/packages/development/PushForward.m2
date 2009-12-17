@@ -15,58 +15,19 @@ pushFwd=method()
 pushFwd(RingMap):=(f)->
 (
      A:=source f;
-     B:=target f;
-     pols:=f.matrix;
-          
-     kA:=A;
-     varsA:={};
-     kB:=B;
-     varsB:={};
-               
-     while (not isField kA) do
-     (
-	  varsA=varsA|gens kA;
-	  kA=coefficientRing kA;
-	  );
+     B:=target f;     
+     psh:=pushAux f;
+     matB:=psh_0;
+     k:=psh_1;
      
-     while (kA=!=kB) do 
-     (
-	  varsB=varsB|gens kB;
-      	  kB=coefficientRing kB;
-	  );
-
-     x:=symbol x;
-     y:=symbol y;
-     kk:=kA;
-     m:=length varsA;
-     PA:=kk[x_1..x_m];
-     idealA:=kernel map(A,PA,varsA);
-     n:=length varsB;
-     PB:=kk[y_1..y_n];
-     idealB:=kernel map(B,PB,varsB);
-          
-     R:=kk[y_1..y_n,x_1..x_m,MonomialOrder=>{n,m}];
-     iA:=sub(idealA,matrix{{x_1..x_m}});
-     iB:=sub(idealB,matrix{{y_1..y_n}});
-     iGraph:=ideal(matrix{{x_1..x_m}}-sub(pols,matrix{{y_1..y_n}}));
-     I:=iA+iB+iGraph;
-     inI:=leadTerm I;
-     
-     r:=ideal(sub(inI,matrix{{y_1..y_n,m:0}}));     
-     if radical r != ideal(y_1..y_n) then error "map is not finite";
-     mat:=lift(basis(R/(r+ideal(x_1..x_m))),R);
-     k:=numgens source mat;
-     matB:=sub(mat,matrix{varsB|toList(m:0_B)});
      ke:=kernel map(B^1,A^k,f,matB);
      A^k/ke,matB --the output should remember the generators as elts of the ring 
      )
 
 pushFwd(Module,RingMap):=(N,f)->
 (
-     mat:=(pushFwd f)_1;
-     auxN:=ambient N/image relations N;
-     ke:=kernel map(auxN,,f,mat**gens N);
-     (super ke)/ke     
+     matB:=(pushAux f)_0;
+     makeModule(N,f,matB)
      )
 
 pushFwd(ModuleMap,RingMap):=(d,f)->
@@ -77,66 +38,29 @@ pushFwd(ModuleMap,RingMap):=(d,f)->
      M:=source d;
      N:=target d;
           
-     kA:=A;
-     varsA:={};
-     kB:=B;
-     varsB:={};
-               
-     while (not isField kA) do
-     (
-	  varsA=varsA|gens kA;
-	  kA=coefficientRing kA;
-	  );
+     psh:=pushAux f;
+     matB:=psh_0;
+     k:=psh_1;
+     R:=psh_2;
+     I:=psh_3;
+     mat:=psh_4;
+     n:=psh_5;
+     varsA:=psh_6;
      
-     while (kA=!=kB) do 
-     (
-	  varsB=varsB|gens kB;
-      	  kB=coefficientRing kB;
-	  );
-
-     x:=symbol x;
-     y:=symbol y;
-     kk:=kA;
-     m:=length varsA;
-     PA:=kk[x_1..x_m];
-     idealA:=kernel map(A,PA,varsA);
-     n:=length varsB;
-     PB:=kk[y_1..y_n];
-     idealB:=kernel map(B,PB,varsB);
-          
-     R:=kk[y_1..y_n,x_1..x_m,MonomialOrder=>{n,m}];
-     iA:=sub(idealA,matrix{{x_1..x_m}});
-     iB:=sub(idealB,matrix{{y_1..y_n}});
-     iGraph:=ideal(matrix{{x_1..x_m}}-sub(pols,matrix{{y_1..y_n}}));
-     I:=iA+iB+iGraph;
-     inI:=leadTerm I;
-     
-     r:=ideal(sub(inI,matrix{{y_1..y_n,m:0}}));     
-     if radical r != ideal(y_1..y_n) then error "map is not finite";
-     mat:=lift(basis(R/(r+ideal(x_1..x_m))),R);
-     k:=numgens source mat;
-     matB:=sub(mat,matrix{varsB|toList(m:0_B)});
-
-     auxM:=ambient M/image relations M;
-     keM:=kernel map(auxM,,f,matB**gens M);
-     pushM:=(super keM)/keM;
-
-     auxN:=ambient N/image relations N;
-     keN:=kernel map(auxN,,f,matB**gens N);
-     pushN:=(super keN)/keN;
+     vR:=matrix{(gens R)_{0..(n-1)}};     
+     pushM:=makeModule(M,f,matB);
+     pushN:=makeModule(N,f,matB);
      
      matMap:=symbol matMap;
      
      if d!=0 then
      (
-            dR:=sub(matrix d,matrix{{y_1..y_n}});
-     	    gR:=mat**dR;
-     
+     dR:=sub(matrix d,vR);
+     gR:=mat**dR;
      c:=degree source gR;
      l:=degree target gR;
      matMap=mutableMatrix(A,k*l,c);
      
-     --i1:=symbol i1;...?
      for i1 from 0 to c-1 do
      	  for i2 from 0 to l-1 do
 	  (
@@ -149,8 +73,69 @@ pushFwd(ModuleMap,RingMap):=(d,f)->
      (
      matMap=mutableMatrix(A,numgens pushM,numgens pushN);	  
      );
-     indMap:=map(pushN,pushM,matrix matMap);
-     indMap     
+     map(pushN,pushM,matrix matMap)
+     )
+
+makeModule=method()
+makeModule(Module,RingMap,Matrix):=(N,f,matB)->
+(
+     auxN:=ambient N/image relations N;
+     ke:=kernel map(auxN,,f,matB**gens N);
+     (super ke)/ke          
+     )
+
+pushAux=method()
+pushAux(RingMap):=(f)->
+(
+     A:=source f;
+     B:=target f;
+     pols:=f.matrix;
+          
+     kA:=A;
+     varsA:={};
+     kB:=B;
+     varsB:={};
+               
+     while (not isField kA) or (not any(B.baseRings,r->r===kA)) do
+     (
+	  varsA=varsA|gens kA;
+	  kA=coefficientRing kA;
+	  );
+     
+     while (kA=!=kB) do 
+     (
+	  varsB=varsB|gens kB;
+      	  kB=coefficientRing kB;
+	  );
+
+     x:=symbol x;
+     y:=symbol y;
+     kk:=kA;
+     m:=length varsA;
+     PA:=kk[x_1..x_m];
+     idealA:=kernel map(A,PA,varsA);
+     n:=length varsB;
+     PB:=kk[y_1..y_n];
+     idealB:=kernel map(B,PB,varsB);
+     
+     pols=pols_{0..(m-1)};
+          
+     R:=kk[y_1..y_n,x_1..x_m,MonomialOrder=>{n,m}];
+     iA:=sub(idealA,matrix{{x_1..x_m}});
+     iB:=sub(idealB,matrix{{y_1..y_n}});
+     iGraph:=ideal(matrix{{x_1..x_m}}-sub(pols,matrix{{y_1..y_n}}));
+     I:=iA+iB+iGraph;
+     inI:=leadTerm I;
+     
+     r:=ideal(sub(inI,matrix{{y_1..y_n,m:0}}));     
+     for i from 1 to n do
+	if ideal(sub(gens r,matrix{{(i-1):0,y_i,(m+n-i):0}}))==ideal(0_R) then
+     	  error "map is not finite";
+	  
+     mat:=lift(basis(R/(r+ideal(x_1..x_m))),R);
+     k:=numgens source mat;
+     matB:=sub(mat,matrix{varsB|toList(m:0_B)});
+     matB,k,R,I,mat,n,varsA
      )
 
 end
@@ -217,7 +202,8 @@ trim ann oo
 ---
 
 --triple node
-kk=QQ
+kkk=ZZ/23
+kk=frac(kkk[u])
 T=kk[t]
 x=symbol x
 PR=kk[x_0,x_1]
@@ -246,7 +232,7 @@ trim (pushFwd rs)_0
 --last three outputs should be all the same
 
 --
-kk=ZZ/23
+kk=ZZ/2
 T1=kk[x]/(x^2)
 T2=T1[y]/(y^3)
 
@@ -262,7 +248,7 @@ pushFwd(g,f)
 
 --example
 kk=QQ
-R=kk[x,y]
+R=kk[i1,i2]
 S=kk[z,t]
 f=map(S,R,{z^2,t^2})
 
@@ -270,3 +256,23 @@ M=ideal(z,t)/ideal(z^2,t^2)
 g=map(M,M,matrix{{z*t,1},{0,1}})
 pushFwd(g,f)
 --
+
+--
+kk=ZZ/3
+T=frac(kk[t])
+A=T[x,y]/(x^2-t*y)
+
+--
+R=A[p]/(p^3-t^2*x^2)
+S=A[q]/(t^3*(q-1)^6-t^2*x^2)
+f=map(S,R,{t*(q-1)^2})
+pushFwd f
+
+p=symbol p
+R=A[p_1,p_2]/(p_1^3-t*p_2^2)
+S=A[q]
+f=map(S,R,{t*q^2,t*q^3})
+pushFwd f
+
+i=ideal(q^2-t*x,q*x*y-t)
+pushFwd(i/i^3,f)
