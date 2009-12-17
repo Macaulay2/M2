@@ -3,16 +3,6 @@
 loadPackage "Schubert2"
 loadPackage "PushForward"
 
--- this is difficult!
--- instead, let's create the rings by hand:
-A = QQ[H]/H^6
-B = QQ[h]/h^3
-P5 = abstractVariety(5, A)
-P2 = abstractVariety(2, B)
-P5.TangentBundle = abstractSheaf(P5, Rank=>5, ChernClass=>(1+H)^6)
-P2.TangentBundle = abstractSheaf(P2, Rank=>2, ChernClass=>(1+h)^3)
-iupper = map(B,A,{2*h})
-ilower = map(A^1, A^1/(H^3), {{4*H^3}})
 
 blowup = method()
 blowup(AbstractVariety, AbstractVariety, RingMap, Matrix) := 
@@ -69,8 +59,9 @@ blowup(AbstractVariety, AbstractVariety, RingMap, Matrix) :=
 	  ((vars D) * cfA * E0powers)_(0,0)
 	  );
      -- Now compute the tangent bundle
-     Ytilde.TangentBundle = xx;
-     jLower, C
+     Ytilde.TangentBundle = abstractSheaf(Ytilde, 
+	  ChernCharacter => ch tangentBundle Y + jLower(ch tangentBundle(PN/X) * (todd OO(-x))^-1));
+     (Ytilde, PN, jLower)
      )
 
 end
@@ -101,12 +92,38 @@ sub(sub(ideal {-k, k^2, -k^3, k^4, -k^5, k}, {k=>2*k}),
 
 restart
 load "blowup.m2"
-(F,C) = blowup(P2,P5,iupper,ilower)
-AYtilde = ring (F (C_2))
-C_2
-F (C_2)
-F (C_2^2)
-g h
+
 
 viewHelp coefficients
 
+-- this is difficult!
+-- instead, let's create the rings by hand:
+A = QQ[H]/H^6
+B = QQ[h]/h^3
+P5 = abstractVariety(5, A)
+P2 = abstractVariety(2, B)
+P5.TangentBundle = abstractSheaf(P5, Rank=>5, ChernClass=>(1+H)^6)
+P2.TangentBundle = abstractSheaf(P2, Rank=>2, ChernClass=>(1+h)^3)
+iupper = map(B,A,{2*h})
+ilower = map(A^1, A^1/(H^3), {{4*H^3}})
+
+(Ytilde,Xtilde,jlower) = blowup(P2,P5,iupper,ilower)
+ctop tangentBundle Ytilde
+
+restart
+load "blowup.m2"
+-- Let's blowup a point on P^2
+A = QQ[H]/H^3
+B = QQ[h]/(h)
+P2 = abstractVariety(2, A)
+pt = abstractVariety(0, B)
+P2.TangentBundle = abstractSheaf(P2, Rank=>5, ChernClass=>(1+H)^3)
+pt.TangentBundle = abstractSheaf(pt, Rank=>0, ChernClass=>1_B)
+iupper = map(B,A)
+ilower = map(A^1, A^1/(H), {{H^2}})
+
+(Ytilde,Xtilde,jlower) = blowup(pt,P2,iupper,ilower)
+tangentBundle Ytilde
+
+intersectionRing Ytilde
+Xtilde
