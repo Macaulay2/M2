@@ -23,7 +23,8 @@ document {
 	       "the ", TT "m", " by ", TT "n", " matrix ", TT "C", " such that ", TT "C_(i,j)", " is
 	       the coefficient in ", TT "f_(0,j)", " of the monomial ", TT "M_(0,i)", ".
 	       In other words, ", TT "C", " is the unique matrix not involving the (specified) variables
-	       such that ", TT "M*C == f"
+	       such that ", TT "M*C == f", ", unless a value was specified for the ", TT "Monomials", " option that did not include
+	       all the monomials in the variables ", TT "v", " used by ", TT "f"
 	       }
 	  },
      EXAMPLE lines ///
