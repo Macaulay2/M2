@@ -2179,10 +2179,18 @@ Node
    X = base(5, Bundle => (A,3,a), Bundle => (B,3,b))
    E = kernelBundle(2,B,A)
    Z = variety E
+   i = Z/X
+   i_* 1
+   i_* chern_1 E
+   i_* (chern_1 E)^2
+   i_* (chern_1 E)^3
+   i_* E
    integral (chern_1 E)^4
    integral ch E
-   Z/X
-   (Z/X)_* 1
+   F = kernelBundle(1,B,A)
+   W = variety F
+   j = W/X
+   j_* chern_1 F
 -------
 Node
  Key
