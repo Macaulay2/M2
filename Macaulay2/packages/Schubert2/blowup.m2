@@ -1,7 +1,7 @@
 -- Code to be included in Schubert2
 
-loadPackage "Schubert2"
-loadPackage "PushForward"
+needsPackage "Schubert2"
+needs "pushfor.m2"
 
 
 blowup = method()
@@ -56,11 +56,11 @@ blowup(AbstractVariety, AbstractVariety, RingMap, Matrix) :=
 	  cf := last coefficients(f, Monomials => xpowers);
 	  cf = lift(cf, B);
 	  cfA := matrix {apply(flatten entries cf, iLowerMod)};
-	  ((vars D) * cfA * E0powers)_(0,0)
+	  (vars D * cfA * E0powers)_(0,0)
 	  );
      -- Now compute the tangent bundle
      Ytilde.TangentBundle = abstractSheaf(Ytilde, 
-	  ChernCharacter => ch tangentBundle Y + jLower(ch tangentBundle(PN/X) * (todd OO(-x))^-1));
+	  ChernCharacter => ch tangentBundle Y - jLower(ch tangentBundle(PN/X) * (todd OO(x))^-1));
      (Ytilde, PN, jLower)
      )
 
@@ -101,7 +101,9 @@ viewHelp coefficients
 A = QQ[H]/H^6
 B = QQ[h]/h^3
 P5 = abstractVariety(5, A)
+integral A := coefficient_(H^5)
 P2 = abstractVariety(2, B)
+integral B := coefficient_(h^2)
 P5.TangentBundle = abstractSheaf(P5, Rank=>5, ChernClass=>(1+H)^6)
 P2.TangentBundle = abstractSheaf(P2, Rank=>2, ChernClass=>(1+h)^3)
 iupper = map(B,A,{2*h})
@@ -109,6 +111,7 @@ ilower = map(A^1, A^1/(H^3), {{4*H^3}})
 
 (Ytilde,Xtilde,jlower) = blowup(P2,P5,iupper,ilower)
 ctop tangentBundle Ytilde
+use A
 
 restart
 load "blowup.m2"
