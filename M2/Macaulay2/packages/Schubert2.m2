@@ -817,6 +817,7 @@ degeneracyLocus(ZZ,AbstractSheaf,AbstractSheaf) := (k,B,A) -> (
      m := rank A;
      n := rank B;
      G := flagBundle({m-k,k},A);
+     tangentBundle G;					    -- compute it!
      S := first G.Bundles;
      sectionZeroLocus Hom(S,(G/X)^* B))
 
