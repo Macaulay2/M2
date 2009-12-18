@@ -818,7 +818,6 @@ degeneracyLocus(ZZ,AbstractSheaf,AbstractSheaf) := (k,B,A) -> (
      n := rank B;
      G := flagBundle({m-k,k},A);
      S := first G.Bundles;
-     print ctop Hom(S,(G/X)^* B);
      sectionZeroLocus Hom(S,(G/X)^* B))
 
 kernelBundle = method(TypicalValue => AbstractVariety)
