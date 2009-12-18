@@ -797,7 +797,7 @@ sectionZeroLocus AbstractSheaf := (F) -> (
      	  PushForward => pushforward,
 	  TangentBundle => abstractSheaf(Z, ChernCharacter => - ch F)
 	  };
-     pushforward AbstractSheaf := E -> abstractSheaf(X,ChernCharacter => pushforward (ch E * todd p));
+     pushforward AbstractSheaf := E -> abstractSheaf(X,ChernCharacter => pushforward (ch E * todd i));
      integral B := m -> integral( lift(m,A) * classZ );
      if X.?TangentBundle then Z.TangentBundle = abstractSheaf(Z, ChernCharacter => ch tangentBundle X - ch F);
      Z)
@@ -818,6 +818,7 @@ degeneracyLocus(ZZ,AbstractSheaf,AbstractSheaf) := (k,B,A) -> (
      n := rank B;
      G := flagBundle({m-k,k},A);
      S := first G.Bundles;
+     print ctop Hom(S,(G/X)^* B);
      sectionZeroLocus Hom(S,(G/X)^* B))
 
 kernelBundle = method(TypicalValue => AbstractVariety)
@@ -827,7 +828,7 @@ kernelBundle(ZZ,AbstractSheaf,AbstractSheaf) := (k,B,A) -> (
      G := target Z.StructureMap;
      S := first G.Bundles;
      K := (Z/G)^* S;
-     Z.StructureMap := Z/X;
+     Z.StructureMap = Z/X;
      K)
 
 beginDocumentation()
