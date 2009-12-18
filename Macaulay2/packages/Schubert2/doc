@@ -57,6 +57,7 @@ Node
 	      (see ", TO "tangentBundle", ").  We could also adopt the notation ", TT "OO_(F/S)(n)", " for
 	      tautological sheaves."
 	      },
+	 LI {"compare logg and expp to the routines in Schubert, and try to speed them up"},
 	 LI {
 	      "Maybe we should distinguish between cohomology and homology."
 	      },
@@ -73,8 +74,7 @@ Node
 	 LI {"add knowledge of the tautological ring (as far as it's known!) of M_(g,n)"},
 	 LI {"add excess intersection formula"},
 	 LI {"add double (and multiple) point formula"},
-	 LI {"add Bott's formula, useful for counting twisted cubics, as described in ",
-	      HREF{Schubert2#"source directory"|"Schubert2/Stromme/.","Schubert2/Stromme/"}, "," }
+	 LI {"add Bott's formula, useful for counting twisted cubics, as described in ", TT "Schubert2/Stromme/" }
 	 }
    @
 -------
