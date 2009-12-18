@@ -20,13 +20,10 @@ export { "AbstractSheaf", "abstractSheaf", "AbstractVariety", "abstractVariety",
      "flagBundle", "projectiveBundle", "projectiveSpace", "PP", "FlagBundleStructureMap", "integral", "IntersectionRing",
      "intersectionRing", "PullBack", "PushForward", "Rank", "ChernClassVariableTable",
      "schur", "SectionClass", "sectionClass", "segre", "StructureMap", "TangentBundle", "tangentBundle", "cotangentBundle", "todd",
-     "sectionZeroLocus", "degeneracyLocus",
+     "sectionZeroLocus", "degeneracyLocus", "degeneracyLocus2", "kernelBundle",
      "VariableNames", "VariableName", "SubBundles", "QuotientBundles", "point", "base"}
 
 -- not exported, for now: "logg", "expp", "reciprocal", "ToddClass"
-
-{* to do:
-*}
 
 protect ChernCharacter
 protect ChernClass
@@ -88,7 +85,7 @@ AbstractVarietyMap * AbstractVarietyMap := AbstractVarietyMap => (f,g) -> new Ab
      symbol target => target f,
      PullBack => g.PullBack @@ f.PullBack,
      PushForward => f.PushForward @@ g.PushForward,	    -- may not be efficient
-     SectionClass => g.SectionClass * g.PullBack f.SectionClass
+     if g.?SectionClass and f.?SectionClass then SectionClass => g.SectionClass * g.PullBack f.SectionClass
      }
 
 map(FlagBundle,AbstractVarietyMap,List) := AbstractVarietyMap => x -> notImplemented()
@@ -469,7 +466,7 @@ flagBundle(List,AbstractSheaf) := opts -> (bundleRanks,E) -> (
      FV.TautologicalLineBundle = OO_FV(sum(1 .. #bundles - 1, i -> i * chern(1,bundles#i)));
      pullback := method();
      pushforward := method();
-     pullback ZZ := pullback QQ := r -> pullback promote(r,S);
+     pullback ZZ := pullback QQ := r -> promote(r,C);
      pullback S := r -> H promote(F promote(r,U), B);
      sec := product(1 .. n-1, i -> (ctop bundles#i)^(sum(i, j -> rank bundles#j)));
      pushforward C := r -> coefficient(sec,r);
@@ -785,15 +782,53 @@ sectionZeroLocus AbstractSheaf := (F) -> (
      classZ := ctop F;
      B := A[Join=>false];		      -- a way to get a copy of A
      Z := abstractVariety(dim X - rank F, B);
+     pullback := method();
+     pullback ZZ := pullback QQ := pullback A := r -> promote(r,B);
+     pullback AbstractSheaf := E -> (
+	  if variety E =!= X then "pullback: variety mismatch";
+	  abstractSheaf(Z, Rank => rank E, ChernClass => pullback chern E));
+     pushforward := method();
+     pushforward ZZ := pushforward QQ := r -> pushforward promote(r,B);
+     pushforward B := b -> lift(b,A) * classZ;
+     i := Z.StructureMap = new AbstractVarietyMap from {
+     	  symbol source => Z,
+     	  symbol target => X,
+     	  PullBack => pullback,
+     	  PushForward => pushforward,
+	  TangentBundle => abstractSheaf(Z, ChernCharacter => - ch F)
+	  };
+     pushforward AbstractSheaf := E -> abstractSheaf(X,ChernCharacter => pushforward (ch E * todd p));
      integral B := m -> integral( lift(m,A) * classZ );
      if X.?TangentBundle then Z.TangentBundle = abstractSheaf(Z, ChernCharacter => ch tangentBundle X - ch F);
      Z)
 
-degeneracyLocus = method(TypicalValue => RingElement)
-degeneracyLocus(ZZ,AbstractSheaf,AbstractSheaf) := (k,B,A) -> (
+degeneracyLocus2 = method(TypicalValue => RingElement)
+degeneracyLocus2(ZZ,AbstractSheaf,AbstractSheaf) := (k,B,A) -> (
+     X := variety B;
+     if X =!= variety A then error "expected sheaves on the same variety";
      m := rank A;
      n := rank B;
      part( (m-k)*(n-k), ch schur( { n - k : m - k }, B - A )))
+
+degeneracyLocus = method(TypicalValue => AbstractVariety)
+degeneracyLocus(ZZ,AbstractSheaf,AbstractSheaf) := (k,B,A) -> (
+     X := variety B;
+     if X =!= variety A then error "expected sheaves on the same variety";
+     m := rank A;
+     n := rank B;
+     G := flagBundle({m-k,k},A);
+     S := first G.Bundles;
+     sectionZeroLocus Hom(S,(G/X)^* B))
+
+kernelBundle = method(TypicalValue => AbstractVariety)
+kernelBundle(ZZ,AbstractSheaf,AbstractSheaf) := (k,B,A) -> (
+     X := variety A;
+     Z := degeneracyLocus(k,B,A);
+     G := target Z.StructureMap;
+     S := first G.Bundles;
+     K := (Z/G)^* S;
+     Z.StructureMap := Z/X;
+     K)
 
 beginDocumentation()
 multidoc get (currentFileDirectory | "Schubert2/doc")
