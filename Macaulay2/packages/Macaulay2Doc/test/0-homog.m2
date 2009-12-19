@@ -3,6 +3,7 @@ k = GF 97^2
 assert isHomogeneous matrix 1_k
 assert( 101^2 > (options GF).SizeLimit )
 k = GF 101^2
+-- tell Dimitri Markouchevitch <Dimitri.Markouchevitch@math.univ-lille1.fr> when this works:
 assert isHomogeneous matrix 1_k				  -- error, unexplained
 
 R = QQ[x, y, z]/(-z^9+x*y^2)
