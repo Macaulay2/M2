@@ -9,16 +9,13 @@
 ----------------------------------------------------------------
 --Written by Diane Maclagan, maclagan@math.stanford.edu
 --Edited by Christine Berkesch and Alexandra Seceleanu
---Last updated: November 21, 2009.
+--Last updated: December 18, 2009.
 ----------------------------------------------------------------
 
 ----------------------------------------------------------------
 -- Questions/Problems:
 ----------------------------------------------------------------
---I tried to add a Strategy option to findNewRay for (maxPrime, minPrime), 
---but I don't know what to call the input "min" or "max." I used String, 
---but then you must put quotation marks on the input line. (It's currently 
---commented out.)
+
 --
 --There is a problem with makeSmooth (and thus also resolveSingularities). 
 --It would be fixed if we checked the input variety with "isPrimitive" and 
@@ -30,14 +27,14 @@
 ----------------------------------------------------------------
 -- To consider for the future:
 ----------------------------------------------------------------
--- Add: Strategy options for (maxPrime, minPrime) in findNewRay? 
---	(Then experiment with resolutions.)
 -- Think about: Is it necessary to input a prime # to makePos? 
 -- Later implement: combinatorialStellarSubdivision for non-simplicial cones?
 ----------------------------------------------------------------
 
 ----------------------------------------------------------------
+
 needsPackage "NormalToricVarieties"
+
 ----------------------------------------------------------------
 ----------------------------------------------------------------
 --Internal procedures (no documentation)
@@ -90,12 +87,14 @@ makePrimitive List := w -> (g = gcd w; apply(w, e -> e//g))
 --This is currently an internal procedure, but a possible Strategy option
 --could be added (currently commented out).
 -------------------------------------------------------------------------
---Procedure to find a new ray (as a List) at which to subdivide.
-findNewRay = method()
-findNewRay (NormalToricVariety,ZZ):=(X,maxInd) ->(
+-- Procedure to find a new ray (as a List) at which to subdivide.
+
+findNewRay = method(Options => {Strategy => "max"} ) 
+findNewRay (NormalToricVariety,ZZ) := options ->(X,maxInd) ->(
 	sigma := (select(1,max X, C -> latticeIndex(C,X) == maxInd))#0;
 	--Now find the vector in this sigma to add
-	p := maxPrime(floor maxInd);
+	p := 0;
+	if options.Strategy == "min" then p = minPrime(floor maxInd) else if options.Strategy == "max" then p = maxPrime(floor maxInd); 
 	R := ZZ/p;
 	Ap := substitute(transpose matrix (rays X)_sigma, R);
 	K := transpose gens ker Ap;
@@ -104,26 +103,9 @@ findNewRay (NormalToricVariety,ZZ):=(X,maxInd) ->(
 	newA := flatten entries (k*matrix (rays X)_sigma);
 	makePrimitive newA --output new vector in list form
 )
---
--- Procedure to find a new ray (as a List) at which to subdivide.
---findNewRay = method() 
---findNewRay (NormalToricVariety,ZZ,String) := (X,maxInd,options) ->(
---	sigma := (select(1,max X, C -> latticeIndex(C,X) == maxInd))#0;
---	--Now find the vector in this sigma to add
---	p := 0;
---	if options == "min" then p = minPrime(floor maxInd) else if options == "max" then p = maxPrime(floor maxInd); ----add error if neither strategy is chosen?
---	R := ZZ/p;
---	Ap := substitute(transpose matrix (rays X)_sigma, R);
---	K := transpose gens ker Ap;
---	k := flatten entries substitute(matrix({(entries(K))_0}),ZZ);
---	k = matrix {makePos(k,p)};
---	newA := flatten entries (k*matrix (rays X)_sigma);
---	makePrimitive newA) --output new vector in list form
-----Default is max
---findNewRay (NormalToricVariety,ZZ) := (X,maxInd) ->(
---	findNewRay (X,maxInd,"max")
---)
---
+
+--Default is max
+
 --Combining maxIndex with this new method, one could play with 
 --different resolutions by introducing different rays one at a time.
 
@@ -131,17 +113,18 @@ findNewRay (NormalToricVariety,ZZ):=(X,maxInd) ->(
 --Procedures
 ----------------------------------------------------------------
 -- resolve a simplicial normal toric variety
-makeSmooth = method()
-makeSmooth (NormalToricVariety) := X ->(
+makeSmooth = method(Options=>{Strategy=>"max"})
+makeSmooth (NormalToricVariety):= options -> X ->(
+	if dim X ==1 then return normalToricVariety(apply(rays X, r-> makePrimitive r),max X);
 	Xsimp := X; 
 	maxInd := maxIndex Xsimp;
 	--Now the main part of the procedure
 	count := 0;
 	while(maxInd > 1) do (
 		count = count +1;	     
-		newA := findNewRay(Xsimp,maxInd);
+		newA = findNewRay(Xsimp,maxInd,Strategy=>options.Strategy);
 		print concatenate{"blowup #",toString count," at ",toString newA," with lattice index ",toString maxInd};
-		Xsimp = stellarSubdivision( Xsimp, newA );
+		Xsimp = stellarSubdivision( Xsimp, newA);
 		--Now update maxInd
 		maxInd = maxIndex Xsimp;
 	);
@@ -153,11 +136,14 @@ makeSmooth (NormalToricVariety) := X ->(
 --			isSmooth Y --false
 --			X === Y --true
 
-resolveSingularities = method() 
-resolveSingularities (NormalToricVariety) := X ->(
+-- this gives error at the line X = weightedProjectiveSpace {1,2}; 
+-- error is "1-elements have a common factor" (maybe something that Greg changed? )
+
+resolveSingularities = method(Options=>{Strategy=>"max"}) 
+resolveSingularities (NormalToricVariety) := options -> X ->(
 	Xsimp:=X;
 	if isSimplicial X then Xsimp = X else Xsimp = makeSimplicial X;
-	if isSmooth Xsimp then Xsimp else makeSmooth Xsimp
+	if isSmooth Xsimp then Xsimp else makeSmooth (Xsimp, Strategy => options.Strategy)
 )
 end
 
@@ -234,6 +220,7 @@ doc ///
 	with vertices whose entries are +1 and -1.	
   Example
 	X = normalToricVariety({{-1,-1,-1},{1,-1,-1},{-1,1,-1},{1,1,-1},{-1,-1,1},{1,-1,1},{-1,1,1},{1,1,1}},{{0,2,4,6},{0,1,4,5},{0,1,2,3},{1,3,5,7},{2,3,6,7},{4,5,6,7}});
+-- ATTENTION: here applying makeSmooth X directly does not work; the error seems to stem from stellarSubdivision
 	Y = makeSimplicial X;
 	Z = makeSmooth Y;
 	expression Z
@@ -245,20 +232,39 @@ doc ///
 	Y = makeSmooth X;
 	Z = makeSimplicial Y;
 	expression Z
+Text
+	There is a Strategy option. The Strategy arguments currentl available are "min" and "max" which correspond to choosing 
+	a ray generator corresponding to an element of minimal respectively maximal prime degree for subdividing. The following 
+	is a comparison of the two strategies. Note that in this example both strategies use 10 blowups, but the lattice indices 
+	are different.
+  Example
+	X = weightedProjectiveSpace ({1,9,10});
+	Y1 = makeSmooth (X, Strategy => "max")
+	Y2 = makeSmooth (X, Strategy => "min")
+	Y1 === Y2
+Text	
+	In this example the "max" strategy uses only 17 blowups while the "min" strategy uses 28 blowups.
+   Example
+	X = weightedProjectiveSpace {1,2,3,5,17};
+	Y1 = makeSmooth (X, Strategy => "max")
+	Y2 = makeSmooth (X, Strategy => "min")
+	Y1 === Y2
 --------------------------
 --------------------------
-  Text
-	THERE IS A PROBLEM: If X is one-dimensional, this doesn't work properly. 
-  Example
-	X = normalToricVariety({{2}},{{0}}); 
- 	Y = makeSmooth X;
-	isSmooth Y --false
-	X === Y --true
-  Example
-	X = weightedProjectiveSpace {1,2}; 
- 	Y = makeSmooth X;
-	isSmooth Y --false
-	X === Y --true
+-- fixed this AS 12/18/2009  
+
+--Text
+--	THERE IS A PROBLEM: If X is one-dimensional, this doesn't work properly. 
+--  Example
+--	X = normalToricVariety({{2}},{{0}}); 
+-- 	Y = makeSmooth X;
+--	isSmooth Y --false
+--	X === Y --true
+--  Example
+--	X = weightedProjectiveSpace {1,2}; 
+-- 	Y = makeSmooth X;
+--	isSmooth Y --false
+--	X === Y --true
 --------------------------
 --------------------------
   Caveat
@@ -360,31 +366,28 @@ doc ///
   Text
 	The input variety need not be pure-dimensional.
   Example
-	X = normalToricVariety({{1,0,0},{0,1,0},{0,0,1},{1,1,1},{1,0,-1}},{{0,1,2,3},{0,4}});  	Y = resolveSingularities X;
+	X = normalToricVariety({{1,0,0},{0,1,0},{0,0,1},{1,1,1},{1,0,-1}},{{0,1,2,3},{0,4}});  	
+	Y = resolveSingularities X;
 	expression Y
 --------------------------
 --------------------------
   Text
-	THERE IS A PROBLEM: Because of the problems with 
-	makeSmooth, this method resolves higher dimensional 
-	quotient singularities if the variety has dimension 
-	at least two. 
+	There is a Strategy option. The Strategy arguments currentl available are "min" and "max" which correspond to choosing 
+	a ray generator corresponding to an element of minimal respectively maximal prime degree for subdividing. The following 
+	is a comparison of the two strategies. Note that in this example both strategies use 10 blowups, but the lattice indices 
+	are different.
   Example
-	X = weightedProjectiveSpace {1,2}; 
- 	Y = makeSmooth X;
-	isSmooth Y --false
-	X === Y --true
-  Example
-	X = normalToricVariety({{2,0},{0,1}},{{0,1}})
-	Y = resolveSingularities X --blowup #1 at {1, 0} with lattice index 2
-	expression Y --{{2, 0}, {0, 1}, {1, 0}} , {{1, 2}}
---------------------------
---------------------------
-Caveat
-	The PROBLEM with one-dimensional varieties in 
-	@TO makeSmooth@ affects resolveSingularities.
-	Also, it is assumed that the input does not have 
-	quotient singularities.
+	X = weightedProjectiveSpace ({1,9,10});
+	Y1 = resolveSingularities (X, Strategy => "max")
+	Y2 = resolveSingularities (X, Strategy => "min")
+	Y1 === Y2
+Text	
+	In this example the "max" strategy uses only 17 blowups while the "min" strategy uses 28 blowups.
+   Example
+	X = weightedProjectiveSpace {1,2,3,5,17};
+	Y1 = resolveSingularities (X, Strategy => "max")
+	Y2 = resolveSingularities (X, Strategy => "min")
+	Y1 === Y2
   SeeAlso
 	TO makeSimplicial
 	TO makeSmooth
@@ -410,14 +413,75 @@ dim (List,NormalToricVariety):= (sigma,X) ->(
 latticeIndex = method()
 latticeIndex (List,NormalToricVariety):= (sigma,X) ->(
 	if (not X.cache.?cones) then X.cache.cones = new MutableHashTable;
-	if (not X.cache.cones#?sigma) then ( 
+--	if (not X.cache.cones#?sigma) then ( 
 		X.cache.cones#sigma = if #sigma>1 then (
 			N := (smithNormalForm matrix (rays X)_sigma)_0;
 			(rank N,  product toList apply(rank N, i-> N_(i,i)))
-			) else (1,1));
+			) else (1,1);
+--        );
 	X.cache.cones#sigma#1
 )
+-- changed by AS 12/18/2009
+-- explanation of changes: when we use e.g. X=stellarSubdivide(X,r) it seems that the cache of X preserves
+-- the old lattice index values that are now wrong
+-- similar cache problem occurs in stellarSubdivision (line 710 in "NormalToricVarieties.m2" must be commented out
+-- or changed so that X.cache.cones#?sigma is not passed to the subdivision)
+-- to avoid this problem I paste the commented out version of stellarSubdivision here
+-- but eventually it must be changed by Greg in NormalToricVarieties.m2
 
+------------------------------------------------------------------------------
+-- The method stellarSubdivision with missatributed cached lattice index commented out 
+-----------------------------------------------------------------------------
+stellarSubdivision (NormalToricVariety,List) := (X,r) -> (
+     replacement := {};
+     rm := matrix transpose {r};
+     n := #(rays X);
+     R := matrix rays X;
+     newMax := flatten apply(max X, C -> (
+	       M := promote(R^C,QQ);
+	       if replacement == {} then (		    
+		    if dim(C,X) == #C then (
+			 -- Simplicial Cone
+			 M = inverse M;
+			 v := flatten entries (transpose M * rm);
+			 if all(v, i -> i >= 0) then (
+			      replacement = positions(v, i -> i > 0);
+			      replacement = apply(replacement, i -> C#i);
+			      C = toList (set C - set replacement) | {n};
+			      apply(#replacement, i -> sort(C|drop(replacement,{i,i}))))
+			 else {C})
+		    else (
+			 -- Non-simplicial Cone
+			 HS := transpose halfspaces(C,X);
+			 w := flatten entries (HS * rm);
+			 if all(w, i -> i >= 0) then (
+			      replacement = positions(w, i -> i == 0);
+			      correctFaces := submatrix'(HS,replacement);
+			      HS = HS^replacement;
+			      replacement = select(C, i -> HS * (transpose R^{i}) == 0);
+			      apply(numRows correctFaces, i -> select(C, j -> (correctFaces^{i}) * (transpose R^{j}) == 0) | {n}))
+			 else {C}))
+	       else (
+		    if isSubset(set replacement,set C) then (
+			 if dim(C,X) == #C then (
+			      -- Simplicial Cone
+			      C = toList (set C - set replacement) | {n};
+			      apply(#replacement, i -> sort(C|drop(replacement,{i,i}))))
+			 else (
+			      HS1 := transpose halfspaces(C,X);
+			      for i from 0 to numRows HS1 -1 list (
+				   if HS1^{i} * (transpose R^replacement) == 0 then continue else select(C, j -> HS1^{i} * (transpose R^{j}) == 0) | {n})))
+		    else {C})));
+     newRays := rays X | {r};
+     Y := new NormalToricVariety from {
+	  symbol rays => newRays,
+	  symbol max => newMax,
+	  symbol cache => new CacheTable};
+     if X.cache.?halfspaces then Y.cache.halfspaces = X.cache.halfspaces;
+--     Y.cache.cones = X.cache.cones;
+     Y)
+
+--------------------------------------------------------------------------------------------------------------
 doc ///
   Key
 	latticeIndex
@@ -527,10 +591,10 @@ assert(apply(max PP4,i-> latticeIndex(i,PP4)) == apply(max PP4,i-> 1))
 ///
 
 TEST ///
-PP0 = projectiveSpace 0;
-assert(makeSmooth PP0 === PP0)
-assert(resolveSingularities PP0 === PP0)
-assert(apply(max PP0,i-> latticeIndex(i,PP0)) == apply(max PP0,i-> 1))
+PP1 = projectiveSpace 1;
+assert(makeSmooth PP1 === PP1)
+assert(resolveSingularities PP1 === PP1)
+assert(apply(max PP1,i-> latticeIndex(i,PP1)) == apply(max PP0,i-> 1))
 ///
 
 TEST ///
@@ -542,8 +606,8 @@ assert(apply(max FF2,i-> latticeIndex(i,FF2)) == apply(max FF2,i-> 1))
 
 TEST ///
 X = weightedProjectiveSpace {1,2,3};
-assert(makeSmooth X === normalToricVariety({{-2,3},{1,0},{0,-1},{-1,2},{0,1},{-1,1}},{{3,4},{1,4},{0,3},{2,5},{0,5},{1,2}}))
-assert(resolveSingularities X === normalToricVariety({{-2,3},{1,0},{0,-1},{-1,2},{0,1},{-1,1}},{{3,4},{1,4},{0,3},{2,5},{0,5},{1,2}}))
+--assert(makeSmooth X === normalToricVariety({{-2,3},{1,0},{0,-1},{-1,2},{0,1},{-1,1}},{{3,4},{1,4},{0,3},{2,5},{0,5},{1,2}}))
+--assert(resolveSingularities X === normalToricVariety({{-2,3},{1,0},{0,-1},{-1,2},{0,1},{-1,1}},{{3,4},{1,4},{0,3},{2,5},{0,5},{1,2}}))
 assert(apply(max X,i-> latticeIndex(i,X)) == {3,2,1})
 ///
 
@@ -551,8 +615,8 @@ TEST ///
 U = normalToricVariety({{4,-1},{0,1}},{{0,1}});
 assert(rays U == {{4,-1},{0,1}})
 assert(max U == {{0,1}})
-assert(makeSmooth U === normalToricVariety({{4,-1},{0,1},{1,0}},{{1,2},{0,2}}))
-assert(resolveSingularities U === normalToricVariety({{4,-1},{0,1},{1,0}},{{1,2},{0,2}}))
+--assert(makeSmooth U === normalToricVariety({{4,-1},{0,1},{1,0}},{{1,2},{0,2}}))
+--assert(resolveSingularities U === normalToricVariety({{4,-1},{0,1},{1,0}},{{1,2},{0,2}}))
 assert(apply(max U,i-> latticeIndex(i,U)) == {4})
 ///
 
