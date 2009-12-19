@@ -6,7 +6,7 @@ Curve = g -> (
      C)
 
 Picard = g -> (
-     B := QQ[theta,Join=>false]/theta^(g+1);
+     B := QQ[theta]/theta^(g+1);
      pic := abstractVariety(g,B);
      pic.TangentBundle = OO_pic^g;
      integral B := f -> (
