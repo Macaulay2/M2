@@ -860,6 +860,8 @@ TEST /// input (Schubert2#"source directory"|"Schubert2/demo2.m2") ///
 TEST /// input (Schubert2#"source directory"|"Schubert2/demo3.m2") ///
 TEST /// input (Schubert2#"source directory"|"Schubert2/test-dan.m2") ///
 TEST /// input (Schubert2#"source directory"|"Schubert2/test2-dan.m2") ///
+TEST /// input (Schubert2#"source directory"|"Schubert2/BrillNoether-test.m2") ///
+TEST /// input (Schubert2#"source directory"|"Schubert2/SymmetricProduct-test.m2") ///
 
 -- Local Variables:
 -- compile-command: "make -C $M2BUILDDIR/Macaulay2/packages PACKAGES=Schubert2 all check-Schubert2 RemakeAllDocumentation=true RerunExamples=true RemakePackages=true"

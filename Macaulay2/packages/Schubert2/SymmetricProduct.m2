@@ -1,5 +1,5 @@
 needsPackage "Schubert2"
-load "BrillNoether.m2"
+load "Schubert2/BrillNoether.m2"
 
 
 CxCd = (g,d) -> (
@@ -38,7 +38,7 @@ CxCd = (g,d) -> (
      CxCd.PoincareBundle = abstractSheaf(CxCd,
 	  Rank => 1,
 	  ChernClass => 1 + d*eta + gamma+x');
-     pf2 = method();
+     pf2 := method();
      pi1 := new AbstractVarietyMap from {
 	  symbol source => CxCd,
 	  symbol target => C
@@ -67,20 +67,3 @@ CxCd = (g,d) -> (
      Cd.TangentBundle = pi2_* (OO(CxCd.UniversalDivisor)-1);
      CxCd.projections = {pi1,pi2};
      CxCd);
-
-
-end
-restart
-
-load "SymmetricProduct.m2"
-g = 5
-X = CxCd(g,g-1)
-Cd = target X.projections_1
-euler Cd
-ch Cd.TangentBundle
-todd(OO(X.UniversalDivisor))
-X.UniversalDivisor
-
-X = CxCd(g,2)
-Cd = target X.projections_1
-euler Cd

@@ -1,3 +1,5 @@
+needsPackage "Schubert2"
+
 Curve = g -> (
      B := QQ[P]/P^2;
      C := abstractVariety(1,B);
@@ -70,20 +72,3 @@ BrillNoetherBundle = (g,r,d) -> (
 	  abstractSheaf(pic, Rank => rankA,
 	       ChernClass => sum for i from 0 to g list (-1)^i/i! * theta^i
 	       )))
-
-end
-
-load "BrillNoether.m2"
-E = BrillNoetherBundle(5,1,4)
-Wrd = variety E
-euler Wrd
-assert(euler Wrd === -20)
-
-load "BrillNoether.m2"
-CxP = CxPic(3,5)
-assert( ch CxP.PoincareBundle == 1 + (gamma + 5*eta) - theta*eta )
-pi2 = CxP.projections#1
-E = pi2_* CxP.PoincareBundle
-ch E
-use ring oo
-assert( ch E == 3 - theta )
