@@ -187,8 +187,9 @@ tangentBundle AbstractVariety := X -> (
      X.TangentBundle)
 cotangentBundle AbstractVariety := X -> dual tangentBundle X
 tangentBundle AbstractVarietyMap := f -> (
-     if not f.?TangentBundle then error "variety map has no relative tangent bundle";
-     f.TangentBundle)
+     if not f.?TangentBundle 
+     then tangentBundle source f - f^* tangentBundle target f
+     else f.TangentBundle)
 cotangentBundle AbstractVarietyMap := f -> dual tangentBundle f
 
 euler AbstractVariety := X -> integral ctop tangentBundle X
