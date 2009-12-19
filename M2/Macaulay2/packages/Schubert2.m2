@@ -860,6 +860,7 @@ TEST /// input (Schubert2#"source directory"|"Schubert2/demo2.m2") ///
 TEST /// input (Schubert2#"source directory"|"Schubert2/demo3.m2") ///
 TEST /// input (Schubert2#"source directory"|"Schubert2/test-dan.m2") ///
 TEST /// input (Schubert2#"source directory"|"Schubert2/test2-dan.m2") ///
+TEST /// input (Schubert2#"source directory"|"Schubert2/blowup-test.m2") ///
 TEST /// input (Schubert2#"source directory"|"Schubert2/BrillNoether-test.m2") ///
 TEST /// input (Schubert2#"source directory"|"Schubert2/SymmetricProduct-test.m2") ///
 
