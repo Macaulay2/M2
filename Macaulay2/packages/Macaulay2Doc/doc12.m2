@@ -396,6 +396,28 @@ document {
      TT "sum v", " yields the sum of the elements in the list ", TT "v", ".",
      PARA{},
      EXAMPLE "sum {1,2,3,4,5}",
+     PARA {
+	  "The sum of an empty list is the integer 0."
+	  },
+     EXAMPLE lines ///
+     sum {}
+     class oo
+     ///,
+     PARA {
+	  "When summing a possibly empty list of elements from a ring, one may
+	  use ", TO "promote", " to ensure the result is always in the same ring."
+	  },
+     EXAMPLE lines ///
+     R = QQ[x_1 .. x_10];
+     f = n -> sum for i from 1 to n list x_i;
+     f 4
+     f 0
+     class oo
+     g = n -> promote(sum for i from 1 to n list x_i, R);
+     g 10
+     g 0
+     class oo
+     ///,     
      SeeAlso => "sum"
      }
 document {

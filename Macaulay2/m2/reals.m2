@@ -218,6 +218,7 @@ toString Constant := net Constant := c -> toString c#0
 toExternalString Constant := c -> toString c#0
 numeric Constant := c -> c#1 defaultPrecision
 numeric(ZZ,Constant) := (prec,c) -> c#1 prec
+exp Constant := c -> exp numeric c
 
 Constant + Constant := (c,d) -> numeric c + numeric d
 Constant + RingElement := 

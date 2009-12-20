@@ -29,13 +29,12 @@ blowup(AbstractVariety, AbstractVariety, RingMap, Matrix) :=
      -- 1. relations on the generators of B as an A-module
      I1 := ideal((vars D1 * (relations BasAModule)));
      -- 2. mult map on the E_i and E_j
-     I2 := ideal flatten (
+     I2 := promote( ideal select( flatten (
              for i from 1 to n-1 list 
 	       for j from i to n-1 list (
 		    f := (vars D1) * iLowerMod (alphas#i * alphas#j);
 		    E_i * E_j - E_0 * f
-	  ));
-     if I2 == 0 then I2 = trim ideal(0_D1);
+	  )), x -> x != 0), D1);
      -- 3. linear relations
      I3 := ideal for i from 0 to n-1 list (
      	  f1 := matrix ilower * (iLowerMod alphas#i);
@@ -54,7 +53,6 @@ blowup(AbstractVariety, AbstractVariety, RingMap, Matrix) :=
 	  cfA := matrix {apply(flatten entries cf, iLowerMod)};
 	  (vars D * cfA * E0powers)_(0,0)
 	  );
-     -- Now compute the tangent bundle
      Ytilde.TangentBundle = abstractSheaf(Ytilde, 
 	  ChernCharacter => ch tangentBundle Y - jLower(ch tangentBundle(PN/X) * (todd OO(x))^-1));
      (Ytilde, PN, jLower)

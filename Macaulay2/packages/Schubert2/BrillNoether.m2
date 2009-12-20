@@ -5,7 +5,7 @@ Curve = g -> (
      C := abstractVariety(1,B);
      integral C := coefficient_P;
      C.TangentBundle = abstractSheaf(C, Rank => 1, ChernClass => 1 + (2-2*g)*P);
-     C)
+     use C)
 
 Picard = g -> (
      B := QQ[theta]/theta^(g+1);
@@ -14,7 +14,7 @@ Picard = g -> (
      integral B := f -> (
 	  i := g! * coefficient(theta^g,f);
 	  try lift(i,ZZ) else lift(i,QQ));
-     pic)
+     use pic)
 
 CxPic = (g,d) -> (
      B := QQ[theta, gamma, eta]/(
@@ -62,13 +62,10 @@ CxPic = (g,d) -> (
 	  ChernCharacter => pf2 (ch E * todd pi2)
 	  );
      CxPic.projections = {pi1,pi2};
-     CxPic);
+     use CxPic);
 
 BrillNoetherBundle = (g,r,d) -> (
      pic := Picard g;
      e := g+1;						 -- minimize this later
      rankA = d+1-g+e;
-     kernelBundle(rankA -(r+1), OO_pic^e, 
-	  abstractSheaf(pic, Rank => rankA,
-	       ChernClass => sum for i from 0 to g list (-1)^i/i! * theta^i
-	       )))
+     kernelBundle(rankA -(r+1), OO_pic^e, abstractSheaf(pic, Rank => rankA, ChernClass => exp(-theta))))

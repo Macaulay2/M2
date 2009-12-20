@@ -942,13 +942,13 @@ tanh(e:Expr):Expr := (
 setupfun("tanh",tanh);
 exp(e:Expr):Expr := (
      when e
-     is x:CC do Expr(exp(x))			-- # typical value: exp, CC, CC
-     is x:RR do Expr(exp(x))			-- # typical value: exp, RR, RR
-     is x:ZZ do Expr(exp(toRR(x)))			    -- # typical value: exp, ZZ, RR
-     is x:QQ do Expr(exp(toRR(x)))			    -- # typical value: exp, QQ, RR
+     is x:CC do Expr(exp(x))
+     is x:RR do Expr(exp(x))
+     is x:ZZ do Expr(exp(toRR(x)))
+     is x:QQ do Expr(exp(toRR(x)))
      else buildErrorPacket("expected a number")
      );
-setupfun("exp",exp);
+setupfun("exp'",exp);
 log(e:Expr):Expr := (
      when e
      is a:Sequence do if length(a) != 2 then WrongNumArgs(1,2) 

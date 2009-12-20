@@ -148,7 +148,9 @@ checkHilbertHint = f -> (
      )
 
 gbGetHilbertHint := (f,opts) -> (
-     if opts.Hilbert =!= null then opts.Hilbert
+     if opts.Hilbert =!= null then (
+	  if ring opts.Hilbert =!= degreesRing ring f then error "expected Hilbert option to be in the degrees ring of the ring of the matrix";
+	  opts.Hilbert)
      else if f.cache.?cokernel and f.cache.cokernel.cache.?poincare and checkHilbertHint f then f.cache.cokernel.cache.poincare
      else (
 	  if f.?generators then (
